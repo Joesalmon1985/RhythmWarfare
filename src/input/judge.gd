@@ -146,13 +146,14 @@ func press(lane: String, now: float, touch_id: int = 0) -> Dictionary:
 		return stray
 	var note: Dictionary = notes[best]
 	var kind := "perfect" if best_delta <= perfect_s else "good"
+	var delta_ms: float = (now - float(note["time"])) * 1000.0
 	if note["type"] == "hold":
 		_state[best] = State.HOLDING
-		_active_hold[lane] = {"index": best, "touch": touch_id, "kind": kind}
-		var started := {"kind": "hold_start", "judgement": kind, "lane": lane, "note_id": note["id"], "index": best, "time": now}
+		_active_hold[lane] = {"index": best, "touch": touch_id, "kind": kind, "delta_ms": delta_ms}
+		var started := {"kind": "hold_start", "judgement": kind, "lane": lane, "note_id": note["id"], "index": best, "time": now, "delta_ms": delta_ms}
 		_events.append(started)
 		return started
-	return _hit(best, kind, now)
+	return _hit(best, kind, now, delta_ms)
 
 
 ## The finger or key leaves the lane.
@@ -196,11 +197,12 @@ func active_hold_progress(lane: String) -> float:
 
 func _complete_hold(lane: String, i: int, _why: String) -> void:
 	var kind: String = _active_hold[lane]["kind"] if _active_hold.has(lane) else "good"
+	var delta: float = float(_active_hold[lane].get("delta_ms", 0.0)) if _active_hold.has(lane) else 0.0
 	_active_hold.erase(lane)
-	_hit(i, kind, notes[i]["end_time"])
+	_hit(i, kind, notes[i]["end_time"], delta)
 
 
-func _hit(i: int, kind: String, at: float) -> Dictionary:
+func _hit(i: int, kind: String, at: float, delta_ms: float = 0.0) -> Dictionary:
 	var n: Dictionary = notes[i]
 	_state[i] = State.HIT
 	if kind == "perfect":
@@ -210,7 +212,7 @@ func _hit(i: int, kind: String, at: float) -> Dictionary:
 	combo += 1
 	best_combo = maxi(best_combo, combo)
 	rewards[n["lane"]] += 1
-	var ev := {"kind": kind, "lane": n["lane"], "note_id": n["id"], "index": i, "tick": n["tick"], "time": at, "reward": true}
+	var ev := {"kind": kind, "lane": n["lane"], "note_id": n["id"], "index": i, "tick": n["tick"], "time": at, "reward": true, "delta_ms": delta_ms}
 	_events.append(ev)
 	return ev
 

@@ -112,10 +112,12 @@ func _autoplay_step(t: float) -> void:
 
 
 func _build_layout() -> void:
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_battle_area = Control.new()
 	_battle_area.name = "BattleArea"
 	_battle_area.anchor_right = 1.0
 	_battle_area.anchor_bottom = BATTLE_FRACTION
+	_battle_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_battle_area)
 
 	battle_view = BattleView.new()
@@ -139,6 +141,7 @@ func _build_layout() -> void:
 	lane_view.anchor_right = 1.0
 	lane_view.anchor_bottom = 1.0
 	lane_view.setup(level, match_ref.judge, clock)
+	lane_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(lane_view)
 
 	# debug panel (F3): stem toggles prove muting and restoration without a restart (M0 evidence)
@@ -282,13 +285,16 @@ func _process(_delta: float) -> void:
 
 func _on_judge_event(ev: Dictionary, wall: float) -> void:
 	var lane: String = ev.get("lane", "")
+	var offset := ""
+	if ev.has("delta_ms"):
+		offset = "  %+d ms" % int(round(float(ev["delta_ms"])))
 	match ev["kind"]:
 		"perfect":
-			lane_view.show_feedback(lane, "PERFECT", Color(1.0, 0.95, 0.6), wall)
+			lane_view.show_feedback(lane, "PERFECT" + offset, Color(1.0, 0.95, 0.6), wall)
 		"good":
-			lane_view.show_feedback(lane, "GOOD", Color(0.7, 0.95, 0.7), wall)
+			lane_view.show_feedback(lane, "GOOD" + offset, Color(0.7, 0.95, 0.7), wall)
 		"hold_start":
-			lane_view.show_feedback(lane, "HOLD", Color(0.7, 0.85, 1.0), wall)
+			lane_view.show_feedback(lane, "HOLD" + offset, Color(0.7, 0.85, 1.0), wall)
 		"miss", "hold_fail":
 			lane_view.show_feedback(lane, "MISS", Color(1.0, 0.45, 0.4), wall)
 		"stray":

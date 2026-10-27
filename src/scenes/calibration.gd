@@ -45,7 +45,7 @@ func _audio_time() -> float:
 	return _player.get_playback_position() + AudioServer.get_time_since_last_mix() - _latency
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if not _running:
 		return
 	var is_tap := false

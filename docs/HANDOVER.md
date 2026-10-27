@@ -79,6 +79,15 @@ A12 by `docs/BALANCE.md`; A13 on desktop only (p95 20.8 ms at 438 live units); A
 - Moving units slip past stationary friends (soft separation) so rear ranks reach the fight.
 - Bullets damage their target only if it is still within a cell of the aim point; missiles home.
 
+## Input and timing notes
+
+- Lane touches and keys are read in `_input` (before the GUI), because the screen-sized Controls of the level
+  would otherwise consume them; those Controls use `MOUSE_FILTER_IGNORE`, and the pause button still receives
+  its clicks. Fixed 28 Oct after the owner reported no presses registering on phone and Windows.
+- Every Perfect or Good shows its offset in milliseconds (positive = late). A consistent offset is device latency:
+  run the calibration screen (menu) or set it by hand; the sign convention is in `docs/TIMING.md`.
+- Judgement windows are the PRD's: Perfect 45 ms, Good 100 ms, hold release tolerance 60 ms.
+
 ## Known issues and polish backlog
 
 1. Real stems: replace the synthesised placeholder audio when the owner's WAVs arrive; re-check alignment with the

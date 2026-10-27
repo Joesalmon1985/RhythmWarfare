@@ -16,7 +16,9 @@ var _touch_lane: Dictionary = {}  # touch index -> lane
 var _key_down: Dictionary = {"kick": false, "bass": false, "snare": false}
 
 
-func _unhandled_input(event: InputEvent) -> void:
+## Runs in _input, before the GUI: a screen-sized Control would otherwise consume every touch and click and
+## the lanes would never hear them. Only touches inside a lane button and the lane keys are marked handled.
+func _input(event: InputEvent) -> void:
 	if not enabled:
 		return
 	if event is InputEventScreenTouch:
@@ -29,12 +31,13 @@ func _unhandled_input(event: InputEvent) -> void:
 				return
 			_touch_lane[t.index] = lane
 			lane_pressed.emit(lane, t.index)
+			get_viewport().set_input_as_handled()
 		else:
 			if _touch_lane.has(t.index):
 				var lane: String = _touch_lane[t.index]
 				_touch_lane.erase(t.index)
 				lane_released.emit(lane, t.index)
-		get_viewport().set_input_as_handled()
+				get_viewport().set_input_as_handled()
 	elif event is InputEventKey:
 		var k := event as InputEventKey
 		if k.echo:
