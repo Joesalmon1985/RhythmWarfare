@@ -25,6 +25,18 @@ const WEAPON_FX := {
 	"Nike": {"muzzle": "muzzle", "muzzle_forward": 0, "projectile": "missile", "impact": "med_explosion_air"},
 	"ZSU-23": {"muzzle": "muzzle", "muzzle_forward": 520, "projectile": "", "impact": "small_explosion_air"},
 	"FireballLauncher": {"muzzle": "", "muzzle_forward": 512, "projectile": "fb1", "impact": "napalm"},
+	"M60mg": {"muzzle": "muzzle", "muzzle_forward": 0, "projectile": "", "impact": "piff"},
+	"Vulcan": {"muzzle": "muzzle", "muzzle_forward": 0, "projectile": "", "impact": "piffs"},
+	"Grenade": {"muzzle": "", "muzzle_forward": 0, "projectile": "bomb", "impact": "small_explosion"},
+	"Dragon": {"muzzle": "", "muzzle_forward": 0, "projectile": "dragon", "impact": "small_explosion"},
+	"RedEye": {"muzzle": "", "muzzle_forward": 0, "projectile": "dragon", "impact": "med_explosion_air"},
+	"Flamer": {"muzzle": "", "muzzle_forward": 0, "projectile": "fb3", "impact": "small_napalm"},
+	"FLAK-23-AA": {"muzzle": "muzzle", "muzzle_forward": 520, "projectile": "", "impact": "small_explosion_air"},
+	"FLAK-23-AG": {"muzzle": "muzzle", "muzzle_forward": 520, "projectile": "", "impact": "small_explosion"},
+	"155mm": {"muzzle": "muzzle", "muzzle_forward": 768, "projectile": "120mm", "impact": "artillery_explosion"},
+	"SCUD": {"muzzle": "", "muzzle_forward": 0, "projectile": "v2", "impact": "large_explosion"},
+	"120mm": {"muzzle": "muzzle", "muzzle_forward": 768, "projectile": "120mm", "impact": "small_explosion"},
+	"MammothTusk": {"muzzle": "", "muzzle_forward": 0, "projectile": "dragon", "impact": "small_explosion"},
 }
 const DEFAULT_FX := {"muzzle": "", "muzzle_forward": 0, "projectile": "", "impact": "piffs"}
 
@@ -346,7 +358,7 @@ class _SideLayer:
 	func _draw_building(e: BattleSim.Ent) -> void:
 		var bank: SpriteBank = view.bank
 		var damaged := e.hp * 2 < e.max_hp
-		if e.role == "wall":
+		if e.is_wall:
 			_draw_wall(e, damaged)
 			return
 		var tint := Color.WHITE
@@ -385,9 +397,9 @@ class _SideLayer:
 		var sim: BattleSim = view.sim
 		match e.role:
 			"factory":
-				return sim.spawn_queue[e.side].has("tank")
+				return sim.queue_has(e.side, "tank")
 			"barracks":
-				return sim.spawn_queue[e.side].has("infantry")
+				return sim.queue_has(e.side, "infantry")
 			"pad":
 				var a: BattleSim.Ent = sim.get_entity(int(sim.slots[e.side][e.slot]["aircraft"]))
 				return a != null and a.alive and a.air == BattleSim.Air.REARMING
@@ -404,7 +416,7 @@ class _SideLayer:
 	func _wall_at(e: BattleSim.Ent, dx: int, dy: int) -> bool:
 		var id: int = int(view.sim._blocked.get(Vector2i(e.cx + dx, e.cy + dy), -2))
 		var o: BattleSim.Ent = view.sim.get_entity(id)
-		return o != null and o.alive and o.role == "wall" and o.side == e.side
+		return o != null and o.alive and o.is_wall and o.actor == e.actor and o.side == e.side
 
 	func _draw_unit(e: BattleSim.Ent) -> void:
 		var bank: SpriteBank = view.bank
@@ -415,9 +427,11 @@ class _SideLayer:
 			if e.moving and bank.has_sequence(e.actor, "run"):
 				seq = "run"
 				anim = view.anim_index(e.actor, "run", e.id)
-			elif e.target >= 0 and bank.has_sequence(e.actor, "shoot"):
-				seq = "shoot"
-				anim = view.anim_index(e.actor, "shoot", e.id)
+			elif e.target >= 0:
+				var attack := bank.pick(e.actor, ["shoot", "throw"])
+				if not attack.is_empty():
+					seq = attack
+					anim = view.anim_index(e.actor, seq, e.id)
 			view.blit(self, e.actor, seq, e.heading, anim, c)
 		else:
 			view.blit(self, e.actor, "idle", e.heading, 0, c)

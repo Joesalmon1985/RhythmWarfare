@@ -1714,6 +1714,1039 @@
     },
     "ProvidesPrerequisite@buildingname": {}
    }
+  },
+  "e2": {
+   "name": "E2",
+   "hp": 5000,
+   "armor": "None",
+   "speed": 68,
+   "cost": 150,
+   "queue": "Infantry",
+   "prerequisites": "~barr, ~techlevel.infonly",
+   "armaments": [
+    "Grenade"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50",
+     "ProneOffset": "256,64,-331"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    }
+   }
+  },
+  "e3": {
+   "name": "E3",
+   "hp": 4500,
+   "armor": "None",
+   "speed": 54,
+   "cost": 300,
+   "queue": "Infantry",
+   "prerequisites": "~barracks, ~techlevel.infonly",
+   "armaments": [
+    "RedEye",
+    "Dragon"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50",
+     "ProneOffset": "384,0,-395"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "ScanRadius": "5"
+    }
+   }
+  },
+  "e4": {
+   "name": "E4",
+   "hp": 4000,
+   "armor": "None",
+   "speed": 54,
+   "cost": 300,
+   "queue": "Infantry",
+   "prerequisites": "~barr, ftur, ~techlevel.low",
+   "armaments": [
+    "Flamer"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50",
+     "ProneOffset": "160,0,-288"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    }
+   }
+  },
+  "jeep": {
+   "name": "JEEP",
+   "hp": 15000,
+   "armor": "Light",
+   "speed": 164,
+   "cost": 500,
+   "queue": "Vehicle",
+   "prerequisites": "~vehicles.allies, ~techlevel.low",
+   "armaments": [
+    "M60mg"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "wheeled",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "7c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {},
+    "Cargo": {
+     "Types": "Infantry",
+     "MaxWeight": "1",
+     "LoadingCondition": "notmobile"
+    }
+   }
+  },
+  "apc": {
+   "name": "APC",
+   "hp": 35000,
+   "armor": "Heavy",
+   "speed": 128,
+   "cost": 850,
+   "queue": "Vehicle",
+   "prerequisites": "~vehicles.soviet, ~techlevel.low",
+   "armaments": [
+    "M60mg"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "tracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "Cargo": {
+     "Types": "Infantry",
+     "MaxWeight": "5",
+     "LoadingCondition": "notmobile"
+    }
+   }
+  },
+  "arty": {
+   "name": "ARTY",
+   "hp": 10000,
+   "armor": "Light",
+   "speed": 72,
+   "cost": 850,
+   "queue": "Vehicle",
+   "prerequisites": "dome, ~vehicles.allies, ~techlevel.medium",
+   "armaments": [
+    "155mm"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "lighttracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackFrontal": {
+     "TargetFrozenActors": "True",
+     "ForceFireIgnoresActors": "True",
+     "FacingTolerance": "0"
+    }
+   }
+  },
+  "v2rl": {
+   "name": "V2RL",
+   "hp": 20000,
+   "armor": "Light",
+   "speed": 72,
+   "cost": 900,
+   "queue": "Vehicle",
+   "prerequisites": "dome, ~vehicles.soviet, ~techlevel.medium",
+   "armaments": [
+    "SCUD"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "wheeled",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "ScanRadius": "10"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackFrontal": {
+     "TargetFrozenActors": "True",
+     "ForceFireIgnoresActors": "True",
+     "FacingTolerance": "0"
+    }
+   }
+  },
+  "ftrk": {
+   "name": "FTRK",
+   "hp": 15000,
+   "armor": "Light",
+   "speed": 113,
+   "cost": 600,
+   "queue": "Vehicle",
+   "prerequisites": "~vehicles.soviet, ~techlevel.low",
+   "armaments": [
+    "FLAK-23-AA",
+    "FLAK-23-AG"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "wheeled",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {}
+   }
+  },
+  "4tnk": {
+   "name": "4TNK",
+   "hp": 90000,
+   "armor": "Heavy",
+   "speed": 43,
+   "cost": 2000,
+   "queue": "Vehicle",
+   "prerequisites": "fix, stek, ~vehicles.soviet, ~techlevel.high",
+   "armaments": [
+    "120mm",
+    "MammothTusk"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "heavytracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {},
+    "ChangesHealth": {
+     "Step": "100",
+     "Delay": "3",
+     "StartIfBelow": "50",
+     "DamageCooldown": "150"
+    }
+   }
+  },
+  "pbox": {
+   "name": "PBOX",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 0,
+   "cost": 600,
+   "queue": "Defense",
+   "prerequisites": "tent, ~structures.allies, ~techlevel.low",
+   "armaments": [
+    "Vulcan"
+   ],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "Defense"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "detect": {
+    "range": 6.0,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "Defense"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "Cargo": {
+     "Types": "Infantry",
+     "MaxWeight": "1",
+     "InitialUnits": "e1"
+    },
+    "AttackGarrisoned": {
+     "PauseOnCondition": "build-incomplete",
+     "Armaments": "garrisoned",
+     "PortOffsets": "384,0,128, 224,-341,128, -224,-341,128, -384,0,128, -224,341,128, 224,341,128",
+     "PortYaws": "0, 176, 341, 512, 682, 853",
+     "PortCones": "88, 88, 88, 88, 88, 88"
+    },
+    "Power": {
+     "Amount": "-20"
+    }
+   },
+   "note": "Armament Weapon: Vulcan written by hand from mods/ra/rules/structures.yaml PBOX (the upstream importer kept no armament for garrison-style attackers)"
+  },
+  "dome": {
+   "name": "DOME",
+   "hp": 100000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 1500,
+   "queue": "Building",
+   "prerequisites": "proc, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing",
+     "RepairCondition": "repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForExploration": {
+     "PlayerExperience": "10",
+     "Types": "SpyInfiltrate"
+    },
+    "RevealsShroud": {
+     "MinRange": "6c0",
+     "Range": "10c0",
+     "RequiresCondition": "!disabled",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@Offline": {
+     "Range": "5c0",
+     "RequiresCondition": "disabled"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "6c0",
+     "RequiresCondition": "!disabled"
+    },
+    "Power": {
+     "Amount": "-40"
+    },
+    "ProvidesPrerequisite@buildingname": {}
+   }
+  },
+  "fix": {
+   "name": "FIX",
+   "hp": 80000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 1200,
+   "queue": "Building",
+   "prerequisites": "weap, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "_+_ +++ _+_",
+    "dimensions": "3,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "RepairsUnits": {
+     "PlayerExperience": "5",
+     "HpPerStep": "1000",
+     "Interval": "7",
+     "StartRepairingNotification": "Repairing",
+     "StartRepairingTextNotification": "notification-repairing",
+     "FinishRepairingNotification": "UnitRepaired",
+     "FinishRepairingTextNotification": "notification-unit-repaired"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "Reservable": {},
+    "Power": {
+     "Amount": "-30"
+    },
+    "ProvidesPrerequisite@buildingname": {}
+   }
   }
  },
  "weapons": {
@@ -2040,6 +3073,425 @@
      ]
     }
    ]
+  },
+  "M60mg": {
+   "range": 4.0,
+   "min_range": 0.0,
+   "reload": 30,
+   "burst": 5,
+   "burst_delay": 5,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 1000,
+     "spread": 0.125,
+     "versus": {
+      "None": 150,
+      "Wood": 10,
+      "Light": 30,
+      "Heavy": 10,
+      "Concrete": 10
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "Grenade": {
+   "range": 4.0,
+   "min_range": 0.0,
+   "reload": 60,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 136,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 6000,
+     "spread": 0.25,
+     "versus": {
+      "None": 60,
+      "Wood": 100,
+      "Light": 25,
+      "Concrete": 100,
+      "Heavy": 25
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "Dragon": {
+   "range": 5.0,
+   "min_range": 0.5,
+   "reload": 50,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Missile",
+   "projectile_speed": 213,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 5000,
+     "spread": 0.125,
+     "versus": {
+      "None": 10,
+      "Wood": 74,
+      "Light": 34,
+      "Heavy": 100,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "RedEye": {
+   "range": 7.5,
+   "min_range": 0.5,
+   "reload": 50,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Missile",
+   "projectile_speed": 298,
+   "valid_targets": [
+    "AirborneActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 2400,
+     "spread": 0.125,
+     "versus": {
+      "None": 10,
+      "Wood": 74,
+      "Light": 100,
+      "Heavy": 100,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "AirborneActor"
+     ]
+    }
+   ]
+  },
+  "Flamer": {
+   "range": 5.0,
+   "min_range": 0.0,
+   "reload": 50,
+   "burst": 15,
+   "burst_delay": 1,
+   "projectile": "Bullet",
+   "projectile_speed": 170,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor",
+    "Trees"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 1000,
+     "spread": 0.3330078125,
+     "versus": {
+      "None": 70,
+      "Wood": 80,
+      "Tree": 80,
+      "Light": 40,
+      "Heavy": 20,
+      "Concrete": 10
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor",
+      "Trees"
+     ]
+    }
+   ]
+  },
+  "FLAK-23-AA": {
+   "range": 8.0,
+   "min_range": 0.0,
+   "reload": 10,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "AirborneActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 1200,
+     "spread": 0.2080078125,
+     "versus": {},
+     "valid_targets": [
+      "AirborneActor"
+     ]
+    }
+   ]
+  },
+  "FLAK-23-AG": {
+   "range": 6.0,
+   "min_range": 0.0,
+   "reload": 10,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 2000,
+     "spread": 0.2080078125,
+     "versus": {
+      "None": 40,
+      "Wood": 10,
+      "Light": 60,
+      "Heavy": 10,
+      "Concrete": 20
+     },
+     "valid_targets": [
+      "AirborneActor",
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "155mm": {
+   "range": 12.0,
+   "min_range": 4.0,
+   "reload": 85,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 170,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 23000,
+     "spread": 0.416015625,
+     "versus": {
+      "None": 60,
+      "Wood": 40,
+      "Light": 60,
+      "Concrete": 50,
+      "Heavy": 25
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "SCUD": {
+   "range": 10.0,
+   "min_range": 4.0,
+   "reload": 215,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 170,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 4500,
+     "spread": 0.3330078125,
+     "versus": {
+      "None": 90,
+      "Wood": 75,
+      "Light": 70,
+      "Heavy": 40,
+      "Concrete": 100,
+      "Tree": 75
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor",
+      "Trees"
+     ]
+    }
+   ]
+  },
+  "120mm": {
+   "range": 4.75,
+   "min_range": 0.0,
+   "reload": 90,
+   "burst": 2,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 682,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [
+    "Air",
+    "Infantry"
+   ],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 6000,
+     "spread": 0.125,
+     "versus": {
+      "None": 30,
+      "Wood": 75,
+      "Light": 75,
+      "Concrete": 50,
+      "Heavy": 115
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "MammothTusk": {
+   "range": 6.5,
+   "min_range": 0.5,
+   "reload": 60,
+   "burst": 2,
+   "burst_delay": 5,
+   "projectile": "Missile",
+   "projectile_speed": 341,
+   "valid_targets": [
+    "AirborneActor",
+    "Infantry"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 5000,
+     "spread": 0.25,
+     "versus": {
+      "None": 100,
+      "Wood": 74,
+      "Light": 60,
+      "Heavy": 24,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "AirborneActor",
+      "Infantry"
+     ]
+    }
+   ]
+  },
+  "Vulcan": {
+   "range": 6.0,
+   "min_range": 0.0,
+   "reload": 35,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 1000,
+     "spread": 0.125,
+     "versus": {
+      "None": 200,
+      "Wood": 50,
+      "Light": 50,
+      "Heavy": 20,
+      "Concrete": 20
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    },
+    {
+     "type": "SpreadDamage",
+     "damage": 1000,
+     "spread": 0.125,
+     "versus": {
+      "None": 200,
+      "Wood": 50,
+      "Light": 50,
+      "Heavy": 20,
+      "Concrete": 20
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ],
+     "delay": 2
+    }
+   ],
+   "note": "transcribed by hand from mods/ra/weapons/smallcaliber.yaml (Vulcan inherits ^HeavyMG; the second warhead is Warhead@4Dam_2 with Delay 2, applied here on impact)"
   }
  },
  "locomotors": {

@@ -1,6 +1,6 @@
 {
  "id": "openra_mvp_01",
- "note": "Mirrored MVP roster. Both sides use the same actors; the Allied tent barracks has no art, so barr serves both.",
+ "note": "Mirrored roster. Both sides use the same actors (the Allied tent barracks has no art, so barr serves both). Kicks walk through vehicle_cycle in order (one vehicle per kick); each snare takes the next infantry_per_snare entries of infantry_pattern, so squads mix riflemen with grenadiers, rocket soldiers and flamethrowers.",
  "roles": {
   "tank": "1tnk",
   "infantry": "e1",
@@ -10,11 +10,17 @@
   "factory": "weap",
   "barracks": "barr",
   "power": "powr",
+  "dome": "dome",
+  "depot": "fix",
   "wall": "sbag",
+  "brick": "brik",
   "turret": "gun",
+  "pillbox": "pbox",
   "aa": "agun",
   "sam": "sam"
  },
+ "vehicle_cycle": ["1tnk", "jeep", "2tnk", "1tnk", "apc", "arty", "1tnk", "ftrk", "3tnk", "jeep", "v2rl", "4tnk"],
+ "infantry_pattern": ["e1", "e1", "e1", "e2", "e1", "e3", "e1", "e1", "e4", "e1", "e2", "e3"],
  "aircraft": {
   "ammo": 8,
   "rearm_delay_ticks": 50,

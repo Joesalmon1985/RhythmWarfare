@@ -1,86 +1,92 @@
 class_name LaneInput
 extends Node
-## Turns touches and keys into lane press/release events with stable touch identifiers, so a bass hold can
-## coexist with kick and snare taps. Key repeat, a finger that stays down and extra fingers on a lane never
-## produce extra presses: each touch id presses once on the way down and releases once on the way up.
-## Desktop keys use the same rules as touch (negative touch ids). Button rectangles come from the lane view.
+## Turns touches and keys into button press/release events (buttons 1 to 4) with stable touch identifiers, so a
+## bass hold on one button can coexist with taps on the others. Key repeat, a finger that stays down and extra
+## fingers on a button never produce extra presses: each touch id presses once on the way down and releases once
+## on the way up. Desktop keys (D, F, J, K) use the same rules as touch (negative touch ids). Button rectangles
+## come from the lane view.
 
-signal lane_pressed(lane: String, touch_id: int)
-signal lane_released(lane: String, touch_id: int)
+signal button_pressed(button: int, touch_id: int)
+signal button_released(button: int, touch_id: int)
 
-const KEY_TOUCH_ID := {"kick": -1, "bass": -2, "snare": -3}
+const KEY_TOUCH_ID := {1: -1, 2: -2, 3: -3, 4: -4}
 
 var enabled := true
-var rect_provider: Callable  # returns Dictionary lane -> Rect2 in viewport coordinates, queried on each touch
-var _touch_lane: Dictionary = {}  # touch index -> lane
-var _key_down: Dictionary = {"kick": false, "bass": false, "snare": false}
+var rect_provider: Callable  # returns Dictionary button (int) -> Rect2 in viewport coordinates, queried on each touch
+var _touch_button: Dictionary = {}  # touch index -> button
+var _key_down: Dictionary = {1: false, 2: false, 3: false, 4: false}
+
+
+static func action_name(button: int) -> String:
+	return "button_%d" % button
 
 
 ## Runs in _input, before the GUI: a screen-sized Control would otherwise consume every touch and click and
-## the lanes would never hear them. Only touches inside a lane button and the lane keys are marked handled.
+## the buttons would never hear them. Only touches inside a button and the button keys are marked handled.
 func _input(event: InputEvent) -> void:
 	if not enabled:
 		return
 	if event is InputEventScreenTouch:
 		var t := event as InputEventScreenTouch
 		if t.pressed:
-			if _touch_lane.has(t.index):
+			if _touch_button.has(t.index):
 				return
-			var lane := _lane_at(t.position)
-			if lane.is_empty():
+			var button := _button_at(t.position)
+			if button <= 0:
 				return
-			_touch_lane[t.index] = lane
-			lane_pressed.emit(lane, t.index)
+			_touch_button[t.index] = button
+			button_pressed.emit(button, t.index)
 			get_viewport().set_input_as_handled()
 		else:
-			if _touch_lane.has(t.index):
-				var lane: String = _touch_lane[t.index]
-				_touch_lane.erase(t.index)
-				lane_released.emit(lane, t.index)
+			if _touch_button.has(t.index):
+				var button: int = _touch_button[t.index]
+				_touch_button.erase(t.index)
+				button_released.emit(button, t.index)
 				get_viewport().set_input_as_handled()
 	elif event is InputEventKey:
 		var k := event as InputEventKey
 		if k.echo:
 			return
-		for lane in KEY_TOUCH_ID:
-			if k.is_action_pressed("lane_" + lane, false, true):
-				if not _key_down[lane]:
-					_key_down[lane] = true
-					lane_pressed.emit(lane, KEY_TOUCH_ID[lane])
+		for button in KEY_TOUCH_ID:
+			var action := action_name(button)
+			if k.is_action_pressed(action, false, true):
+				if not _key_down[button]:
+					_key_down[button] = true
+					button_pressed.emit(button, KEY_TOUCH_ID[button])
 				get_viewport().set_input_as_handled()
-			elif k.is_action_released("lane_" + lane, true):
-				if _key_down[lane]:
-					_key_down[lane] = false
-					lane_released.emit(lane, KEY_TOUCH_ID[lane])
+			elif k.is_action_released(action, true):
+				if _key_down[button]:
+					_key_down[button] = false
+					button_released.emit(button, KEY_TOUCH_ID[button])
 				get_viewport().set_input_as_handled()
 
 
 ## Release everything (pause, scene end). Emits releases so holds can be cleaned up by the owner if needed.
 func clear(emit_releases: bool = false) -> void:
-	for idx in _touch_lane.keys():
+	for idx in _touch_button.keys():
 		if emit_releases:
-			lane_released.emit(_touch_lane[idx], idx)
-	_touch_lane.clear()
-	for lane in _key_down:
-		if _key_down[lane] and emit_releases:
-			lane_released.emit(lane, KEY_TOUCH_ID[lane])
-		_key_down[lane] = false
+			button_released.emit(_touch_button[idx], idx)
+	_touch_button.clear()
+	for button in _key_down:
+		if _key_down[button] and emit_releases:
+			button_released.emit(button, KEY_TOUCH_ID[button])
+		_key_down[button] = false
 
 
-func is_lane_down(lane: String) -> bool:
-	if _key_down.get(lane, false):
+func is_button_down(button: int) -> bool:
+	if _key_down.get(button, false):
 		return true
-	for idx in _touch_lane:
-		if _touch_lane[idx] == lane:
+	for idx in _touch_button:
+		if _touch_button[idx] == button:
 			return true
 	return false
 
 
-func _lane_at(pos: Vector2) -> String:
+func _button_at(pos: Vector2) -> int:
 	if not rect_provider.is_valid():
-		return ""
+		return 0
 	var rects: Dictionary = rect_provider.call()
-	for lane in rects:
-		if (rects[lane] as Rect2).has_point(pos):
-			return lane
-	return ""
+	for button in rects:
+		if (rects[button] as Rect2).has_point(pos):
+			return int(button)
+	return 0

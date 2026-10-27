@@ -52,6 +52,37 @@ With the first, simpler combat model the chosen schedule was ramp 0.5 to 0.9 (pe
 behaviour model is much bloodier at the front and the enemy's production is now the pacing lever, hence the lower
 ramp.
 
+## Level 01 after the four-button, mixed-roster, fortified-base rework (28 Oct 2026)
+
+The bases gained a brick wall line with pillboxes at the ends of an eight-cell opening, a second SAM site, a radar
+dome, a service depot and a third power plant; kicks now cycle through nine vehicle types and snares produce mixed
+squads (`data/rosters/openra_mvp_01.json`); wide warheads splash. Two things changed the assault:
+
+- Crowd push. The soft separation shoved a column pressing into a wall opening back as fast as its front walked,
+  so perfect play with the old schedule never reached the enemy base. A moving unit now takes only the sideways
+  part of the crowd push, capped at half a step (`BattleSim._separate`).
+- The chokepoint. Idle enemy units rallied in the corridor between the two walls and plugged the opening; the
+  rally point is inside the inner wall again.
+
+With those fixed the schedule was re-authored: `--enemy-profile ramp --enemy-start 0.22 --enemy-end 0.42`
+(105 of 321 events; per section intro 23%, build 26%, drop_1 29%, breakdown 33%, drop_2 37%, finale 41%).
+Candidates measured (perfect / 0.85 / 0.7): ramp 0.28-0.50 lost / lost / lost (perfect broke in at 83 s only after
+the crowd fix); 0.25-0.45 won at 72 s / lost / lost; 0.22-0.42 won at 68 s / won at 70 s / lost. Seed 1:
+
+| Player policy | Outcome | Time | Player built (vehicles/infantry/aircraft) | Enemy built | Peak live units P/E |
+| --- | --- | ---: | --- | --- | --- |
+| perfect | victory | 68.2 s | 104 / 415 / 5 | 32 / 85 / 5 (+14 replacements) | 391 / 43 |
+| accuracy 0.85 | victory | 69.5 s | 89 / 375 / 5 | 32 / 85 / 5 | 322 / 43 |
+| accuracy 0.70 | defeat (song end, both bases intact) | 88.3 s | 94 / 430 / 5 | 48 / 160 / 5 | 245 / 46 |
+| accuracy 0.50 | defeat (song end, both bases intact) | 88.3 s | 66 / 270 / 5 | 48 / 160 / 5 | 164 / 61 |
+| none | defeat (main base destroyed) | 64.9 s | 0 | 32 / 90 / 5 | 0 / 118 |
+
+The fortified base is the point: 70% accuracy no longer wins, and the field between the walls is where the song is
+decided. Outcomes between 0.7 and 0.85 are chaotic (a roster variant with less anti-air lost where the fuller one
+won); when the owner's new tracks arrive, re-run this table before choosing their ramp. The air wing does fire
+(ammo spent in about a third of the trace samples) but rocket soldiers and flak trucks make the Rush AI air squad
+cautious, as in OpenRA.
+
 ## Known tuning items
 
 - Peak live units reach about 440 with perfect play. Desktop (RTX 3060, 1280x720): average 17.4 ms, p95 20.8 ms,

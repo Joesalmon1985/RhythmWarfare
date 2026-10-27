@@ -27,5 +27,6 @@ func _ready() -> void:
 			b.grab_focus()
 	$Box/Calibrate.text = "Calibrate timing (now %+.0f ms)" % Session.calibration_ms
 	$Box/Calibrate.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://src/scenes/calibration.tscn"))
-	$Box/Help.text = "Three buttons. KICK (left) makes a tank. SNARE (right) makes five infantry. BASS (middle, tap or hold) builds and launches helicopters.\nHit each note as it reaches the line. Lose a factory and its instrument falls silent. Destroy the enemy base before the song ends."
+	$Box/Help.text = "Four buttons, no labels: the notes tell you what they make. Round notes on the left button are kicks (vehicles), diamonds on the right button are snares (an infantry squad), bars are bass (tap or hold: helipads and helicopter sorties) and run across all four buttons.
+Hit each note as it reaches the line. Lose a factory and its instrument falls silent. Destroy the enemy base before the song ends. Keys: D F J K."
 	$Box/Version.text = "Rhythm Warfare  ·  Godot %s" % Engine.get_version_info()["string"]

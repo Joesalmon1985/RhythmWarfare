@@ -23,6 +23,8 @@ const PRONE_TICKS := 50
 const SCAN_MIN := 3
 const SCAN_MAX := 8
 const WORLD := 1024.0
+const SPLASH_MIN_SPREAD := 0.2       # warheads with a smaller Spread (rifles, cannons) hit one actor only
+const SPLASH_FALLOFF := [100, 37, 14, 5, 0]  # SpreadDamage Falloff defaults at 0, 1, 2, 3, 4 x Spread
 
 enum Kind { UNIT, BUILDING, AIRCRAFT }
 enum Air { READY, SORTIE, RETURNING, LANDING, REARMING, WAITING, DEAD }
@@ -31,8 +33,9 @@ enum Air { READY, SORTIE, RETURNING, LANDING, REARMING, WAITING, DEAD }
 class Ent:
 	var id := 0
 	var kind := Kind.UNIT
-	var actor := ""      # actor id (1tnk, e1, heli, hpad...)
-	var role := ""       # roster role (tank, infantry, aircraft, pad, main, factory, barracks, power, wall, turret, sam)
+	var actor := ""      # actor id (1tnk, jeep, e1, e3, heli, hpad, pbox...)
+	var role := ""       # roster role: tank (any war-factory vehicle), infantry (any barracks unit), aircraft, pad, main,
+	                     # factory, barracks, power, dome, depot, wall (sandbag), brick (brick wall), turret, pillbox, sam
 	var side := 0
 	var x := 0.0
 	var y := 0.0
@@ -55,7 +58,9 @@ class Ent:
 	var firing := 0        # ticks left to show the shooting pose
 	var prone_ticks := 0
 	var crushes_infantry := false
-	var crushes_walls := false
+	var crushes_walls := false        # sandbags (Locomotor Crushes: wall)
+	var crushes_heavy_walls := false  # brick walls (Crushes: heavywall; only the mammoth tank)
+	var has_turret := true            # AttackTurreted: aims with the turret; otherwise the body turns to aim
 	var target_types: Array = []
 	var hits_ground := false  # any weapon valid against GroundActor (precomputed at spawn)
 	var hits_air := false     # any weapon valid against AirborneActor
@@ -115,7 +120,7 @@ var outcome_reason := ""
 var events: Array = []
 var credits: Array[int] = [0, 0]
 var slots: Array = []     # per side: Array of {pad: id|-1, aircraft: id|-1, used: bool, origin}
-var spawn_queue: Array = []  # per side: pending unit roles
+var spawn_queue: Array = []  # per side: pending units [{role, actor}]
 var producer_ids: Array = []  # per side: role -> id
 var stats: Dictionary = {}
 var projectiles: Array = []  # {weapon, kind, from, to, damage, speed, x, y, tx, ty, heading, age, types}
@@ -134,6 +139,10 @@ var _airfield_limit := 5
 var _aircraft_limit := 5
 var _tank_per_kick := 1
 var _infantry_per_snare := 5
+var _vehicle_cycle: Array = []    # roster vehicle_cycle: the actor each successive kick produces, round robin
+var _infantry_pattern: Array = [] # roster infantry_pattern: each snare takes the next infantry_per_snare entries
+var _vehicle_index: Array[int] = [0, 0]
+var _infantry_index: Array[int] = [0, 0]
 
 
 func setup(p_rules: Rules, level_rules: Dictionary, p_seed: int) -> void:
@@ -146,6 +155,20 @@ func setup(p_rules: Rules, level_rules: Dictionary, p_seed: int) -> void:
 	_infantry_per_snare = int(level_rules.get("infantry_per_snare", 5))
 	var budget := int(level_rules.get("repair_budget_credits_per_side", 5000))
 	credits = [budget, budget]
+	_vehicle_cycle = []
+	for a in rules.vehicle_cycle:
+		if rules.actors.has(str(a)):
+			_vehicle_cycle.append(str(a))
+	if _vehicle_cycle.is_empty():
+		_vehicle_cycle = [rules.actor_id_for_role("tank")]
+	_infantry_pattern = []
+	for a in rules.infantry_pattern:
+		if rules.actors.has(str(a)):
+			_infantry_pattern.append(str(a))
+	if _infantry_pattern.is_empty():
+		_infantry_pattern = [rules.actor_id_for_role("infantry")]
+	_vehicle_index = [0, 0]
+	_infantry_index = [0, 0]
 	var bf := rules.battlefield
 	width = int(bf.get("width", 28))
 	height = int(bf.get("height", 10))
@@ -163,7 +186,7 @@ func setup(p_rules: Rules, level_rules: Dictionary, p_seed: int) -> void:
 			_astar_foot.set_point_solid(c, true)
 			_astar_track.set_point_solid(c, true)
 	stats = {"produced": [{"tank": 0, "infantry": 0, "aircraft": 0, "pad": 0}, {"tank": 0, "infantry": 0, "aircraft": 0, "pad": 0}],
-		"lost": [{}, {}], "air_busy": [0, 0], "blocked": [{}, {}], "squads": [0, 0], "rushes": [0, 0], "flees": [0, 0]}
+		"units": [{}, {}], "lost": [{}, {}], "air_busy": [0, 0], "blocked": [{}, {}], "squads": [0, 0], "rushes": [0, 0], "flees": [0, 0]}
 	slots = [[], []]
 	spawn_queue = [[], []]
 	producer_ids = [{}, {}]
@@ -266,21 +289,37 @@ func produce(side: int, action: String) -> Dictionary:
 			if not producer_alive(side, "factory"):
 				_count_blocked(side, action)
 				return {"action": action, "result": "no_factory"}
+			var vehicles: Array = []
 			for i in _tank_per_kick:
-				spawn_queue[side].append("tank")
+				var actor: String = _vehicle_cycle[_vehicle_index[side] % _vehicle_cycle.size()]
+				_vehicle_index[side] += 1
+				spawn_queue[side].append({"role": "tank", "actor": actor})
+				vehicles.append(actor)
 			stats["produced"][side]["tank"] += _tank_per_kick
-			return {"action": action, "result": "queued", "count": _tank_per_kick}
+			return {"action": action, "result": "queued", "count": _tank_per_kick, "actors": vehicles}
 		"snare":
 			if not producer_alive(side, "barracks"):
 				_count_blocked(side, action)
 				return {"action": action, "result": "no_barracks"}
+			var squad: Array = []
 			for i in _infantry_per_snare:
-				spawn_queue[side].append("infantry")
+				var actor: String = _infantry_pattern[_infantry_index[side] % _infantry_pattern.size()]
+				_infantry_index[side] += 1
+				spawn_queue[side].append({"role": "infantry", "actor": actor})
+				squad.append(actor)
 			stats["produced"][side]["infantry"] += _infantry_per_snare
-			return {"action": action, "result": "queued", "count": _infantry_per_snare}
+			return {"action": action, "result": "queued", "count": _infantry_per_snare, "actors": squad}
 		"bass":
 			return _bass_action(side)
 	return {"action": action, "result": "unknown"}
+
+
+## True while a unit of this role waits in the physical spawn queue (the building shows its production overlay).
+func queue_has(side: int, role: String) -> bool:
+	for q in spawn_queue[side]:
+		if q["role"] == role:
+			return true
+	return false
 
 
 func _count_blocked(side: int, action: String) -> void:
@@ -422,15 +461,16 @@ func _spawn_building(side: int, role: String, bx: int, by: int, bw: int, bh: int
 	e.max_hp = e.hp
 	e.armor = str(def.get("armor", "Wood"))
 	e.value = int(def.get("cost", 0))
-	e.is_defence = role in ["turret", "aa", "sam"]
+	e.is_defence = role in ["turret", "aa", "sam", "pillbox", "flame"]
 	e.radius = maxf(bw, bh) * 0.5
 	e.weapons = _make_weapons(def)
 	_weapon_flags(e)
-	e.is_wall = role == "wall"
+	e.is_wall = role in ["wall", "brick"]
+	e.has_turret = def.get("abilities", {}).has("AttackTurreted")
 	e.heading = 0.0 if side == 0 else PI
 	e.turret_heading = e.heading
 	e.turret_turn = _wangle_to_rad(48 if role == "turret" else 120)
-	e.target_types = ["GroundActor", "Structure"] + (["Defense"] if e.is_defence else []) + (["Wall", "NoAutoTarget"] if role == "wall" else [])
+	e.target_types = ["GroundActor", "Structure"] + (["Defense"] if e.is_defence else []) + (["Wall", "NoAutoTarget"] if e.is_wall else [])
 	entities.append(e)
 	by_id[e.id] = e
 	for i in bw:
@@ -440,17 +480,22 @@ func _spawn_building(side: int, role: String, bx: int, by: int, bw: int, bh: int
 			if c.x >= 0 and c.y >= 0 and c.x < width and c.y < height:
 				_astar_foot.set_point_solid(c, true)
 				if role != "wall":
-					_astar_track.set_point_solid(c, true)
+					_astar_track.set_point_solid(c, true)  # sandbags are crushed, not avoided; brick walls block everyone
 	return e
 
 
-func _spawn_unit(side: int, role: String, at: Vector2) -> Ent:
-	var def := rules.actor_for_role(role)
+## A ground unit of a specific actor. Its class (infantry or vehicle), what it crushes and whether it aims with a
+## turret come from the actor's OpenRA locomotor and traits, so a jeep, an artillery piece and a mammoth tank all
+## behave as their rules say.
+func _spawn_unit(side: int, role: String, at: Vector2, actor: String = "") -> Ent:
+	if actor.is_empty():
+		actor = rules.actor_id_for_role(role)
+	var def: Dictionary = rules.actors.get(actor, {})
 	var e := Ent.new()
 	e.id = _next_id
 	_next_id += 1
 	e.kind = Kind.UNIT
-	e.actor = rules.actor_id_for_role(role)
+	e.actor = actor
 	e.role = role
 	e.side = side
 	e.x = at.x
@@ -459,16 +504,21 @@ func _spawn_unit(side: int, role: String, at: Vector2) -> Ent:
 	e.max_hp = e.hp
 	e.armor = str(def.get("armor", "None"))
 	e.speed = float(def.get("speed", 50)) / WORLD
-	if role == "infantry":
+	var locomotor := str(def.get("locomotor", "foot" if role == "infantry" else "tracked"))
+	var crushes: Array = rules.locomotors.get(locomotor, {}).get("crushes", [])
+	e.has_turret = def.get("abilities", {}).has("AttackTurreted")
+	if locomotor == "foot":
 		e.radius = 0.18
 		e.turn_speed = TAU  # AlwaysTurnInPlace with TurnSpeed 512: instant
+		e.has_turret = false
 		e.target_types = ["GroundActor", "Infantry"]
 	else:
 		e.radius = 0.42
 		e.turn_speed = _wangle_to_rad(20)
 		e.turret_turn = _wangle_to_rad(28)
-		e.crushes_infantry = true
-		e.crushes_walls = true
+		e.crushes_infantry = "infantry" in crushes
+		e.crushes_walls = "wall" in crushes
+		e.crushes_heavy_walls = "heavywall" in crushes
 		e.target_types = ["GroundActor", "Vehicle"]
 	e.heading = 0.0 if side == 0 else PI
 	e.turret_heading = e.heading
@@ -477,7 +527,9 @@ func _spawn_unit(side: int, role: String, at: Vector2) -> Ent:
 	e.scan_timer = rng.randi_range(SCAN_MIN, SCAN_MAX - 1)
 	entities.append(e)
 	by_id[e.id] = e
-	events.append({"kind": "spawned", "side": side, "role": role, "id": e.id})
+	var units: Dictionary = stats["units"][side]
+	units[actor] = int(units.get(actor, 0)) + 1
+	events.append({"kind": "spawned", "side": side, "role": role, "actor": actor, "id": e.id})
 	return e
 
 
@@ -586,7 +638,7 @@ func _process_spawn_queues() -> void:
 		var q: Array = spawn_queue[side]
 		if q.is_empty():
 			continue
-		var role: String = q[0]
+		var role: String = q[0]["role"]
 		var producer := "factory" if role == "tank" else "barracks"
 		if not producer_alive(side, producer):
 			q.pop_front()
@@ -599,8 +651,8 @@ func _process_spawn_queues() -> void:
 		var at := _free_spawn_cell(exit_pos, 2)
 		if at.x < 0.0:
 			continue
-		q.pop_front()
-		var u := _spawn_unit(side, role, at)
+		var entry: Dictionary = q.pop_front()
+		var u := _spawn_unit(side, role, at, str(entry.get("actor", "")))
 		# leave the factory for the rally point (OpenRA RallyPoint), with a little spread
 		var rally := mirrored(Vector2(float(rally_cfg[0]) + 0.5, float(rally_cfg[1]) + 0.5), side)
 		rally += Vector2(rng.randf_range(-1.5, 1.5), rng.randf_range(-3.0, 3.0))
@@ -800,7 +852,7 @@ func _unit_step(e: Ent) -> void:
 	if t != null:
 		var ts := Time.get_ticks_usec()
 		_engage(e, t)
-		if e.moving and e.role != "infantry":
+		if e.moving and e.has_turret:
 			_opportunity_fire(e, t)
 		profile["engage"] += Time.get_ticks_usec() - ts
 		return
@@ -817,7 +869,7 @@ func _unit_step(e: Ent) -> void:
 				profile["move"] += Time.get_ticks_usec() - ts
 		_:
 			e.moving = false
-			if e.turret_heading != e.heading and e.kind == Kind.UNIT and e.role != "infantry":
+			if e.turret_heading != e.heading and e.kind == Kind.UNIT and e.has_turret:
 				e.turret_heading = _turn(e.turret_heading, e.heading, e.turret_turn)  # realign (RealignDelay ignored)
 
 
@@ -838,8 +890,13 @@ func _engage(e: Ent, t: Ent) -> void:
 		if e.role == "infantry":
 			e.heading = aim
 			e.turret_heading = aim
-		else:
+		elif e.has_turret:
 			e.turret_heading = _turn(e.turret_heading, aim, e.turret_turn)
+		elif e.kind == Kind.UNIT:
+			e.heading = _turn(e.heading, aim, e.turn_speed)  # AttackFrontal: the whole vehicle turns to face the target
+			e.turret_heading = e.heading
+		else:
+			e.turret_heading = aim  # a pillbox fires in any direction
 		var aligned := absf(angle_difference(e.turret_heading, aim)) < 0.02 or e.role == "infantry"
 		if aligned:
 			for w in e.weapons:
@@ -847,9 +904,18 @@ func _engage(e: Ent, t: Ent) -> void:
 				if t.targetable_as() in def.get("valid_targets", []) and d <= float(def["range"]) and d >= float(def.get("min_range", 0.0)):
 					_fire(e, w, t)
 		return
-	# close in: path toward the target (chase without a leash), stopping `approach` short of a moving one
+	if not e.is_mobile():
+		return
+	# close in: path toward the target (chase without a leash), stopping `approach` short of a moving one;
+	# artillery and rocket launchers inside their minimum range back away instead
 	var goal := t.center()
-	if t.kind == Kind.BUILDING:
+	if d < rmin:
+		var away := (e.center() - t.center()).normalized()
+		if away == Vector2.ZERO:
+			away = Vector2.RIGHT if e.side == 1 else Vector2.LEFT
+		goal = e.center() + away * (rmin - d + 0.5)
+		goal = Vector2(clampf(goal.x, 0.5, width - 0.5), clampf(goal.y, 0.5, height - 0.5))
+	elif t.kind == Kind.BUILDING:
 		goal = Vector2(clampf(e.x, t.cx, t.cx + t.w), clampf(e.y, t.cy, t.cy + t.h))
 	elif d > approach and approach > 0.5:
 		goal = t.center() + (e.center() - t.center()).normalized() * (approach - 0.3)
@@ -921,17 +987,11 @@ func _shot(e: Ent, w: Dictionary, t: Ent) -> void:
 			return
 		e.ammo -= 1
 	var def: Dictionary = w["def"]
-	var total := 0
-	var types: Array = []
-	for wh in def.get("warheads", []):
-		if wh.get("type", "") != "SpreadDamage":
-			continue
-		if not (t.targetable_as() in wh.get("valid_targets", ["GroundActor"])):
-			continue
-		total += Rules.damage_versus(wh, t.armor)
-		types = wh.get("damage_types", types)
+	var total := _damage_against(def, t)
 	var aim := t.center()
 	e.turret_heading = (aim - e.center()).angle()
+	if not e.has_turret and e.kind == Kind.UNIT:
+		e.heading = e.turret_heading
 	e.firing = 6
 	events.append({"kind": "shot", "from": e.id, "to": t.id, "weapon": w["name"], "x": e.x, "y": e.y, "tx": aim.x, "ty": aim.y, "heading": e.turret_heading})
 	var speed := float(def.get("projectile_speed", 0)) / WORLD
@@ -943,6 +1003,40 @@ func _shot(e: Ent, w: Dictionary, t: Ent) -> void:
 		"weapon": w["name"], "kind": kind, "from": e.id, "to": t.id, "damage": total, "speed": speed,
 		"x": e.x, "y": e.y, "tx": aim.x, "ty": aim.y, "heading": e.turret_heading, "age": 0,
 	})
+
+
+## Damage of every SpreadDamage warhead of a weapon against one actor's armour, at the centre of the burst.
+func _damage_against(def: Dictionary, t: Ent) -> int:
+	var total := 0
+	for wh in def.get("warheads", []):
+		if wh.get("type", "") != "SpreadDamage":
+			continue
+		if not (t.targetable_as() in wh.get("valid_targets", ["GroundActor"])):
+			continue
+		total += Rules.damage_versus(wh, t.armor)
+	return total
+
+
+## Largest Spread (cells) among a weapon's damage warheads; below SPLASH_MIN_SPREAD the round hits one actor.
+static func weapon_spread(def: Dictionary) -> float:
+	var spread := 0.0
+	for wh in def.get("warheads", []):
+		if wh.get("type", "") == "SpreadDamage":
+			spread = maxf(spread, float(wh.get("spread", 0.0)))
+	return spread
+
+
+## SpreadDamage falloff: 100% at the burst, then the Falloff table at every further Spread of distance.
+static func splash_percent(distance: float, spread: float) -> int:
+	if spread <= 0.0:
+		return 100 if distance <= 0.0 else 0
+	var k := distance / spread
+	var i := int(floor(k))
+	if i >= SPLASH_FALLOFF.size() - 1:
+		return 0
+	var a := float(SPLASH_FALLOFF[i])
+	var b := float(SPLASH_FALLOFF[i + 1])
+	return int(round(a + (b - a) * (k - float(i))))
 
 
 func _projectiles_step() -> void:
@@ -980,10 +1074,39 @@ static func range_to_point(t: Ent, p: Vector2) -> float:
 	return t.center().distance_to(p)
 
 
+## A round arrives. Weapons with a wide Spread (grenades, artillery, rockets, flame) burst where they land and hurt
+## every enemy inside four Spreads with the falloff table, whether or not the aimed-at actor is still there;
+## narrow weapons damage the aimed-at actor only. Deviation from OpenRA: splash never hurts the shooter's own
+## side (friendly fire inside a bot-driven blob only punished the side with more artillery).
 func _impact(t: Ent, damage: int, by: Ent, weapon: String, at: Vector2, hit: bool) -> void:
 	events.append({"kind": "impact", "weapon": weapon, "x": at.x, "y": at.y, "hit": hit, "target": t.id if t != null else -1})
+	var def := rules.weapon(weapon)
+	var spread := weapon_spread(def)
+	if spread < SPLASH_MIN_SPREAD or by == null:
+		if hit and t != null:
+			_damage(t, damage, by)
+		return
+	var radius := spread * float(SPLASH_FALLOFF.size() - 1)
+	var air_burst := t != null and t.airborne()
+	var targets := _candidates_near(at, radius)
 	if hit and t != null:
-		_damage(t, damage, by)
+		targets.append(t)  # the aimed-at actor counts even before it is in this tick's grid
+	var seen := {}
+	for o in targets:
+		if seen.has(o.id) or not o.alive or o.side == by.side or o.is_wall:
+			continue
+		seen[o.id] = true
+		if o.airborne() != air_burst:
+			continue
+		var d := range_to_point(o, at)
+		if d > radius:
+			continue
+		var pct := splash_percent(d, spread)
+		if pct <= 0:
+			continue
+		var amount := (_damage_against(def, o) if o != t else damage) * pct / 100
+		if amount > 0:
+			_damage(o, amount, by)
 
 
 func _damage(t: Ent, amount: int, by: Ent) -> void:
@@ -996,13 +1119,13 @@ func _damage(t: Ent, amount: int, by: Ent) -> void:
 		t.prone_ticks = PRONE_TICKS
 	t.hp -= amount
 	events.append({"kind": "hit", "id": t.id, "amount": amount, "x": t.x, "y": t.y})
-	if t.kind == Kind.BUILDING and t.role != "wall" and t.hp < t.max_hp and not t.repairing:
+	if t.kind == Kind.BUILDING and not t.is_wall and t.hp < t.max_hp and not t.repairing:
 		_start_repair(t)
 	if by != null and by.alive and by.side != t.side:
 		# return fire: an idle unit shot from anywhere turns on its attacker (AllowMove: it will walk there)
 		if t.kind == Kind.UNIT and t.target < 0 and t.order in ["idle", "move"] and can_hit(t, by):
 			t.target = by.id
-		if t.kind == Kind.BUILDING and t.role != "wall" and not by.airborne():
+		if t.kind == Kind.BUILDING and not t.is_wall and not by.airborne():
 			bots[t.side].respond_to_attack(by.id)
 	if t.hp <= 0:
 		t.hp = 0
@@ -1152,8 +1275,9 @@ func _try_step(e: Ent, step: Vector2) -> bool:
 	var blocker_id: int = int(_blocked.get(cell, -2))
 	if blocker_id != -2:
 		var blocker: Ent = by_id.get(blocker_id)
-		if blocker != null and blocker.alive and blocker.role == "wall" and e.crushes_walls and blocker.side != e.side:
-			_kill(blocker, e, true)  # tracked vehicles crush sandbags
+		var crushable := blocker != null and blocker.alive and blocker.side != e.side and blocker.is_wall and ((blocker.role == "wall" and e.crushes_walls) or (blocker.role == "brick" and e.crushes_heavy_walls))
+		if crushable:
+			_kill(blocker, e, true)  # tracked vehicles crush sandbags; only the mammoth tank crushes brick
 		else:
 			return false
 	e.x = nx
@@ -1200,6 +1324,17 @@ func _separate(e: Ent) -> void:
 				elif len <= 0.0001:
 					push += Vector2(0.0, 0.02 * (1 if e.id % 2 == 0 else -1))
 	if push != Vector2.ZERO:
+		# A column pressing into a wall opening must not be shoved back by its own rear ranks: a moving unit only
+		# takes the sideways part of the crowd push, and no push ever exceeds half a step, so the front keeps
+		# walking while the mass spreads along the wall (OpenRA cells simply hold five infantry each).
+		if e.moving:
+			var forward := Vector2(cos(e.heading), sin(e.heading))
+			var along := push.dot(forward)
+			if along < 0.0:
+				push -= forward * along
+		var cap := maxf(e.speed * 0.5, 0.01)
+		if push.length() > cap:
+			push = push.normalized() * cap
 		var nx := clampf(e.x + push.x, 0.2, width - 0.2)
 		var ny := clampf(e.y + push.y, 0.2, height - 0.2)
 		if not _blocked.has(Vector2i(int(floor(nx)), int(floor(ny)))):

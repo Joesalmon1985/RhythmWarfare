@@ -52,7 +52,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch and event.pressed:
 		is_tap = true
 	elif event is InputEventKey and event.pressed and not event.echo:
-		is_tap = event.is_action("lane_kick") or event.is_action("lane_bass") or event.is_action("lane_snare")
+		is_tap = event.is_action("button_1") or event.is_action("button_2") or event.is_action("button_3") or event.is_action("button_4")
 	if is_tap:
 		_taps.append(_audio_time())
 		$Box/Result.text = "taps: %d" % _taps.size()

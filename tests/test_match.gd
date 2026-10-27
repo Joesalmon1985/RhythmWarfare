@@ -56,7 +56,7 @@ func test_rewards_reach_the_battle_and_retry_resets_everything() -> void:
 		while next < level.notes.size() and level.notes[next]["time"] <= t:
 			var n: Dictionary = level.notes[next]
 			if n["type"] == "tap":
-				m.press(n["lane"], n["time"])
+				m.press(int(n["button"]), n["time"])
 				pressed += 1
 			next += 1
 		m.advance(t)
@@ -141,9 +141,9 @@ func test_same_input_trace_gives_same_production_log() -> void:
 			while next < level.notes.size() and level.notes[next]["time"] <= t:
 				var n: Dictionary = level.notes[next]
 				if next % 3 != 0:
-					m.press(n["lane"], n["time"])
+					m.press(int(n["button"]), n["time"])
 					if n["type"] == "hold":
-						m.release(n["lane"], n["end_time"] + 0.01)
+						m.release(int(n["button"]), n["end_time"] + 0.01)
 				next += 1
 			m.advance(t)
 		logs.append(JSON.stringify(m.production_log))

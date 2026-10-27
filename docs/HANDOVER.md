@@ -6,12 +6,17 @@ https://github.com/Joesalmon1985/RhythmWarfare (local git only before that date)
 
 ## What the game is
 
-A mobile rhythm game: play a 174 BPM drum and bass track on three touch lanes (kick, bass, snare) and every
-successful note produces Red Alert units for your side (one light tank per kick, five riflemen per snare, a
-helipad or a Longbow sortie per bass action, five pads and five aircraft at most). Both armies are run by OpenRA's
-Rush AI squad logic; the player never commands units. Losing the war factory mutes the kick stem and disables its
-lane, losing the barracks does the same for snare, losing the last helipad mutes bass until a bass action rebuilds
-one. Destroy the enemy construction yard before the song ends to win.
+A mobile rhythm game: play a 174 BPM drum and bass track on four unlabelled touch buttons and every successful
+note produces Red Alert units for your side. Kick notes sit on button 1 and each makes one vehicle (the roster's
+`vehicle_cycle`: light tank, jeep, medium tank, APC, artillery, flak truck, heavy tank, V2 launcher, mammoth
+tank, in turn); snare notes sit on button 4 and each makes a five-strong squad drawn from `infantry_pattern`
+(riflemen with grenadiers, rocket soldiers and flamethrowers mixed in); bass notes may use any of the four buttons,
+so a bass line runs across all of them, and each bass action builds a helipad or launches a Longbow sortie (five
+pads and five aircraft at most). The note's colour and shape say what it makes (round kick, diamond snare, bar
+bass); the buttons carry no labels. Both armies are run by OpenRA's Rush AI squad logic; the player never commands
+units. Losing the war factory mutes the kick stem and makes kick notes unavailable, losing the barracks does the
+same for snare, losing the last helipad mutes bass until a bass action rebuilds one. Destroy the enemy
+construction yard before the song ends to win.
 
 ## Where it stands against the PRD milestones
 
@@ -37,6 +42,11 @@ A12 by `docs/BALANCE.md`; A13 on desktop only (p95 20.8 ms at 438 live units); A
   with OpenRA's bot AI on both sides. That is implemented; keep it.
 - Sandbags in player colour are correct (their pixels sit in the remappable palette range in Red Alert itself).
 - Phone: the owner sideloads the APK themselves and reports back.
+- 28 Oct 2026 (this supersedes the PRD's "three buttons"): four unlabelled buttons; kick on button 1, snare on
+  button 4, bass across all four; a chart never runs bass at the same time as kicks and snares (the owner's new
+  MIDI will be authored that way; Level 01 still overlaps them, so its bass sits on the inner buttons). More unit
+  types than riflemen and light tanks, and bigger, better defended bases. The owner will supply a new set of track
+  MIDI files next; `tools/make_song_pack.py` assigns bass buttons from MIDI pitch.
 
 ## How the code is organised
 
@@ -45,9 +55,12 @@ A12 by `docs/BALANCE.md`; A13 on desktop only (p95 20.8 ms at 438 live units); A
   `session.gd` (autoload: selected pack, calibration, env overrides `RW_PACK`, `RW_AUTOPLAY`, `RW_ENEMY_FRACTION`,
   `RW_CALIBRATION_MS`, `RW_SCENE=play`).
 - `src/audio/stem_transport.gd`: one player, four substreams, 30 ms gain ramps, never stops a stem.
-- `src/input/judge.gd` (pure judgement state machine) and `lane_input.gd` (touch ids and keys F, Space, J).
-- `src/sim/battle_sim.gd`: the deterministic 25 Hz simulation with OpenRA rule values; `bot_ai.gd`: the Rush AI
-  squad manager; `rules.gd`: data loading. Pure GDScript, no nodes, so it runs headless.
+- `src/input/judge.gd` (pure judgement state machine over buttons 1 to 4; a note's `button` says where it is
+  played, its `lane` what it rewards) and `lane_input.gd` (touch ids and keys D, F, J, K = buttons 1 to 4).
+- `src/sim/battle_sim.gd`: the deterministic 25 Hz simulation with OpenRA rule values (unit class, crushing and
+  turret from each actor's locomotor and traits; SpreadDamage splash with the engine's falloff table for wide
+  warheads; sandbag and brick walls); `bot_ai.gd`: the Rush AI squad manager; `rules.gd`: data loading
+  (`vehicle_cycle`, `infantry_pattern`, locomotors). Pure GDScript, no nodes, so it runs headless.
 - `src/ui/`: `battle_view.gd` (sequence-driven renderer: terrain, bibs, buildings, walls by adjacency, units,
   aircraft, projectiles, muzzle flashes, explosions, deaths, craters, smoke), `sprite_bank.gd` (sequences.json,
   OpenRA facing rules, frame cache), `faction_remap.gdshader` (player-colour ramp keyed on alpha 253 pixels),
@@ -56,8 +69,11 @@ A12 by `docs/BALANCE.md`; A13 on desktop only (p95 20.8 ms at 438 live units); A
 - `assets/openra/`: 2,378 native frames plus `sequences.json` and `PROVENANCE.md`; regenerate with
   `tools/extract_openra.py` (needs the pinned OpenRA checkout and the owner's Red Alert content; paths in the
   provenance file).
-- `data/`: `openra_rules.json` (actors, weapons, locomotors, repair at commit e7e9e4ad), `rosters/`,
-  `battlefields/mvp_mirrored_01.json` (building layout, exits, rally, air hold points), `maps/strip_53x20.json`.
+- `data/`: `openra_rules.json` (actors, weapons, locomotors, repair at commit e7e9e4ad; the pillbox's Vulcan is
+  transcribed by hand), `rosters/openra_mvp_01.json` (roles, `vehicle_cycle`, `infantry_pattern`),
+  `battlefields/mvp_mirrored_01.json` (building layout, exits, rally, air hold points: two wall lines with eight-cell
+  openings, pillboxes, gun turrets, two SAM sites, radar dome, service depot, three power plants per side),
+  `maps/strip_53x20.json`.
 - `songs/level_01/` (the level), `songs/test_16/` (for tests); `tools/make_song_pack.py` builds packs from the
   MIDI pack and synthesises placeholder stems; `songs/README.md` has the exact commands.
 - `tools/`: `test.sh`, `balance.sh` and `autoplay.gd` (headless scripted matches with `RW_DEBUG_EVERY` traces and a
@@ -78,6 +94,11 @@ A12 by `docs/BALANCE.md`; A13 on desktop only (p95 20.8 ms at 438 live units); A
 - Repair budget 500 credits per side (the PRD's 5,000 at Red Alert cost scaling repaired indefinitely).
 - Moving units slip past stationary friends (soft separation) so rear ranks reach the fight.
 - Bullets damage their target only if it is still within a cell of the aim point; missiles home.
+- Splash (SpreadDamage with Spread >= 0.2 cells: grenades, artillery, V2, flame, flak) hurts every enemy within
+  four Spreads of the burst with the engine's falloff table, but never the shooter's own side (OpenRA has friendly
+  fire; inside bot-driven blobs it only punished the side with more artillery).
+- Brick walls are solid for every pathfinder; only the mammoth tank (Crushes: heavywall) can crush one by driving
+  into it, and no unit ever auto-targets a wall (NoAutoTarget), so armies go through the openings.
 
 ## Input and timing notes
 
@@ -87,6 +108,10 @@ A12 by `docs/BALANCE.md`; A13 on desktop only (p95 20.8 ms at 438 live units); A
 - Every Perfect or Good shows its offset in milliseconds (positive = late). A consistent offset is device latency:
   run the calibration screen (menu) or set it by hand; the sign convention is in `docs/TIMING.md`.
 - Judgement windows are the PRD's: Perfect 45 ms, Good 100 ms, hold release tolerance 60 ms.
+- Buttons: a press matches the nearest unjudged note on that button; a kick or snare note whose producer is dead
+  swallows the press (inert, not a stray) while a bass note on the same button still plays. One button can only
+  be asked for one thing at a time: the loader rejects two notes at one tick on a button or a note inside a hold
+  on the same button, and warns when three buttons are needed at once.
 
 ## Known issues and polish backlog
 
@@ -110,6 +135,18 @@ A12 by `docs/BALANCE.md`; A13 on desktop only (p95 20.8 ms at 438 live units); A
 9. `tests/test_battle.gd::test_a06` depends on the air squad finding a target; if air behaviour changes, update it.
 10. The repository holds 17 MB of extracted frames; they are the owner's own Red Alert content and must not be
     redistributed beyond this project (see `assets/openra/PROVENANCE.md`).
+11. Unit art: husks for destroyed vehicles are extracted (`2tnk.destroyed`, `3tnk.destroyed`, `4tnk.destroyed`) but
+    not drawn; the APC's `open`/`unload`, the V2's `empty-idle` after a launch and the infantry `idle1`/`idle2`
+    fidgets are unused. The Tesla coil (lightning art) and the flame turret are not in the layout.
+12. Level 01's bass runs under its drums, so its bass notes sit on buttons 2 and 3; the four-button spread needs the
+    owner's next charts, which keep bass phrases and drum phrases apart.
+
+## Balance after the 28 Oct 2026 changes
+
+The fortified bases and the mixed roster make the assault slower, so Level 01's enemy schedule was re-authored
+(`--enemy-start 0.22 --enemy-end 0.42`, 105 of 321 events); the measurements are at the end of `docs/BALANCE.md`.
+When the owner's new MIDI arrives, run `bash tools/balance.sh` before choosing its ramp. `tools/probe.gd` dumps
+unit positions, orders and the wall cells at a given second for pathing questions.
 
 ## Everyday commands
 

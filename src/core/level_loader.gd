@@ -2,11 +2,16 @@ class_name LevelLoader
 extends RefCounted
 ## Reads and validates a song pack (PRD section 9). Returns {"level": Level or null, "errors": [], "warnings": []}.
 ## A pack is a directory holding level.json and the stems it names (paths relative to the pack root).
+##
+## Buttons: every note is played on one of four unlabelled buttons. Kick notes are button 1, snare notes button
+## 4 (an explicit `button` on them must agree); bass notes carry a `button` of 1 to 4 and default to the inner
+## buttons 2 and 3 alternately when the chart gives none. Conflicts are checked per button, so a bass hold on
+## button 1 and a kick at the same time is an error even though they are different lanes.
 
 const SCHEMA_VERSION := 1
 const STEM_ALIGNMENT_TOLERANCE_S := 0.005
-const SAME_LANE_MIN_GAP_TICKS := 0  # same-tick notes on one lane are a conflict; closer spacing is warned below
-const SAME_LANE_WARN_GAP_MS := 200.0  # two notes on one lane closer than twice the Good window cannot both be judged cleanly
+const SAME_LANE_MIN_GAP_TICKS := 0  # same-tick notes on one button are a conflict; closer spacing is warned below
+const SAME_LANE_WARN_GAP_MS := 200.0  # two notes on one button closer than twice the Good window cannot both be judged cleanly
 
 
 static func load_pack(pack_dir: String) -> Dictionary:
@@ -110,6 +115,7 @@ static func parse(d: Dictionary, pack_dir: String, errors: Array, warnings: Arra
 	if typeof(raw_notes) != TYPE_ARRAY:
 		errors.append("notes must be an array")
 		raw_notes = []
+	var bass_default := 0
 	for raw in raw_notes:
 		if typeof(raw) != TYPE_DICTIONARY:
 			errors.append("note entries must be objects")
@@ -120,6 +126,7 @@ static func parse(d: Dictionary, pack_dir: String, errors: Array, warnings: Arra
 			"lane": str(raw.get("lane", "")),
 			"type": str(raw.get("type", "tap")),
 			"duration_ticks": int(raw.get("duration_ticks", 0)),
+			"button": 0,
 		}
 		if n["id"].is_empty() or ids.has(n["id"]):
 			errors.append("note id missing or duplicated: '%s'" % n["id"])
@@ -128,6 +135,19 @@ static func parse(d: Dictionary, pack_dir: String, errors: Array, warnings: Arra
 			errors.append("note %s has unsupported lane '%s'" % [n["id"], n["lane"]])
 		if not Level.NOTE_TYPES.has(n["type"]):
 			errors.append("note %s has unsupported type '%s'" % [n["id"], n["type"]])
+		# button: fixed for kick and snare, any of the four for bass
+		var fixed := int(Level.FIXED_BUTTON.get(n["lane"], 0))
+		if raw.has("button"):
+			n["button"] = int(raw["button"])
+			if n["button"] < 1 or n["button"] > Level.BUTTONS:
+				errors.append("note %s: button must be 1..%d" % [n["id"], Level.BUTTONS])
+			elif fixed > 0 and n["button"] != fixed:
+				errors.append("note %s: %s notes are played on button %d, not %d" % [n["id"], n["lane"], fixed, n["button"]])
+		elif fixed > 0:
+			n["button"] = fixed
+		else:
+			n["button"] = int(Level.DEFAULT_BASS_BUTTONS[bass_default % Level.DEFAULT_BASS_BUTTONS.size()])
+			bass_default += 1
 		if n["tick"] < 0:
 			errors.append("note %s has a negative tick" % n["id"])
 		if n["tick"] >= level.duration_ticks and level.duration_ticks > 0:
@@ -146,7 +166,7 @@ static func parse(d: Dictionary, pack_dir: String, errors: Array, warnings: Arra
 		n["end_time"] = level.tick_to_seconds(n["end_tick"]) if level.bpm > 0 and level.ticks_per_beat > 0 else 0.0
 		level.notes.append(n)
 	level.notes.sort_custom(_note_order)
-	_check_lane_conflicts(level, errors, warnings)
+	_check_button_conflicts(level, errors, warnings)
 	_check_chords(level, warnings)
 
 	# enemy events
@@ -180,7 +200,7 @@ static func parse(d: Dictionary, pack_dir: String, errors: Array, warnings: Arra
 static func _note_order(a: Dictionary, b: Dictionary) -> bool:
 	if a["tick"] != b["tick"]:
 		return a["tick"] < b["tick"]
-	return Level.LANES.find(a["lane"]) < Level.LANES.find(b["lane"])
+	return int(a["button"]) < int(b["button"])
 
 
 static func _safe_relative(rel: String) -> bool:
@@ -192,40 +212,49 @@ static func _safe_relative(rel: String) -> bool:
 	return true
 
 
-static func _check_lane_conflicts(level: Level, errors: Array, warnings: Array) -> void:
-	for lane in Level.LANES:
+## One button can only be asked for one thing at a time: no two notes at one tick, nothing inside a hold.
+static func _check_button_conflicts(level: Level, errors: Array, warnings: Array) -> void:
+	for button in range(1, Level.BUTTONS + 1):
 		var prev: Dictionary = {}
 		for n in level.notes:
-			if n["lane"] != lane:
+			if int(n["button"]) != button:
 				continue
 			if not prev.is_empty():
 				if n["tick"] == prev["tick"]:
-					errors.append("notes %s and %s share lane %s at tick %d" % [prev["id"], n["id"], lane, n["tick"]])
+					errors.append("notes %s and %s share button %d at tick %d" % [prev["id"], n["id"], button, n["tick"]])
 				elif n["tick"] < prev["end_tick"]:
-					errors.append("note %s starts inside hold %s on lane %s" % [n["id"], prev["id"], lane])
+					errors.append("note %s starts inside hold %s on button %d" % [n["id"], prev["id"], button])
 				elif (n["time"] - prev["end_time"]) * 1000.0 < SAME_LANE_WARN_GAP_MS:
-					warnings.append("notes %s and %s on lane %s are only %.0f ms apart" % [prev["id"], n["id"], lane, (n["time"] - prev["end_time"]) * 1000.0])
+					warnings.append("notes %s and %s on button %d are only %.0f ms apart" % [prev["id"], n["id"], button, (n["time"] - prev["end_time"]) * 1000.0])
 			prev = n
 
 
-## Flags unavoidable three-touch chords: a kick and a snare on the same tick while a bass hold is active.
+## Flags unavoidable three-touch chords: three or more buttons needed at one tick (taps there plus holds
+## active across it).
 static func _check_chords(level: Level, warnings: Array) -> void:
 	var holds: Array = []
 	for n in level.notes:
 		if n["type"] == "hold":
 			holds.append(n)
-	var by_tick := {}
+	var taps_by_tick := {}
 	for n in level.notes:
-		if n["lane"] == "bass":
-			continue
-		by_tick[n["tick"]] = by_tick.get(n["tick"], 0) + 1
-	for tick in by_tick:
-		if by_tick[tick] < 2:
-			continue
+		if not taps_by_tick.has(n["tick"]):
+			taps_by_tick[n["tick"]] = {}
+		taps_by_tick[n["tick"]][int(n["button"])] = true
+	var flagged := {}
+	for tick in taps_by_tick:
+		var buttons: Dictionary = taps_by_tick[tick].duplicate()
+		var inside := ""
 		for h in holds:
 			if tick > h["tick"] and tick < h["end_tick"]:
-				warnings.append("three-touch chord at tick %d inside bass hold %s (author review)" % [tick, h["id"]])
-				break
+				buttons[int(h["button"])] = true
+				inside = h["id"]
+		if buttons.size() >= 3 and not flagged.has(tick):
+			flagged[tick] = true
+			if inside.is_empty():
+				warnings.append("three-touch chord at tick %d (author review)" % tick)
+			else:
+				warnings.append("three-touch chord at tick %d inside bass hold %s (author review)" % [tick, inside])
 
 
 ## Decodes each stem to check it exists and that all four have the same length.

@@ -50,18 +50,30 @@ PALETTE_FILE = "temperat.pal"
 TRANSPARENT_INDEX = 0
 SHADOW_INDEX = 4
 SHADOW_ALPHA = 140
+REMAP_INDICES = range(80, 96)  # the player-colour ramp (PlayerColorRemap); marked with alpha 253 for the faction shader
+REMAP_ALPHA = 253
 CELL = 24  # RA cell size in pixels
 
 # image name -> (sequence yaml file, sequence names or None for "all but icons")
 NEEDED: dict[str, tuple[str, list[str] | None]] = {
     # infantry
     "e1": ("infantry.yaml", None),
+    "e2": ("infantry.yaml", None),
+    "e3": ("infantry.yaml", None),
+    "e4": ("infantry.yaml", None),
     # vehicles (+ the husk images that reuse the same shp)
     "1tnk": ("vehicles.yaml", None),
     "2tnk": ("vehicles.yaml", None),
     "3tnk": ("vehicles.yaml", None),
     "2tnk.destroyed": ("vehicles.yaml", None),
     "3tnk.destroyed": ("vehicles.yaml", None),
+    "4tnk": ("vehicles.yaml", None),
+    "4tnk.destroyed": ("vehicles.yaml", None),
+    "jeep": ("vehicles.yaml", None),
+    "apc": ("vehicles.yaml", None),
+    "arty": ("vehicles.yaml", None),
+    "v2rl": ("vehicles.yaml", None),
+    "ftrk": ("vehicles.yaml", None),
     # aircraft
     "heli": ("aircraft.yaml", None),
     # structures
@@ -76,6 +88,9 @@ NEEDED: dict[str, tuple[str, list[str] | None]] = {
     "agun": ("structures.yaml", None),
     "sam": ("structures.yaml", None),
     "ftur": ("structures.yaml", None),
+    "pbox": ("structures.yaml", None),
+    "dome": ("structures.yaml", None),
+    "fix": ("structures.yaml", None),
     # projectiles
     "120mm": ("misc.yaml", None),
     "50cal": ("misc.yaml", None),
@@ -83,6 +98,10 @@ NEEDED: dict[str, tuple[str, list[str] | None]] = {
     "missile": ("misc.yaml", None),
     "fb1": ("misc.yaml", None),
     "fb2": ("misc.yaml", None),
+    "fb3": ("misc.yaml", None),
+    "fb4": ("misc.yaml", None),
+    "bomb": ("misc.yaml", None),
+    "v2": ("misc.yaml", None),
     # impacts / explosions (water splashes and the nuke are left out)
     "explosion": (
         "misc.yaml",
@@ -612,6 +631,8 @@ def load_palette(pal_path: Path) -> np.ndarray:
     rgba = np.concatenate([eight, np.full((256, 1), 255, dtype=np.uint8)], axis=1)
     rgba[TRANSPARENT_INDEX] = (0, 0, 0, 0)
     rgba[SHADOW_INDEX] = (0, 0, 0, SHADOW_ALPHA)
+    for i in REMAP_INDICES:
+        rgba[i, 3] = REMAP_ALPHA  # src/ui/faction_remap.gdshader keys the player colour on this alpha
     return rgba
 
 
@@ -751,7 +772,8 @@ def write_provenance(prov: Path, engine: Path, results: list[ExtractResult], out
              f"(the mod's content search order from `mods/ra/mod.yaml`: {', '.join(p.split('|')[-1].split(':')[0] for p in content_packages(engine))}). "
              "The utility does not report which package a file came from; shp/tem art is in conquer.mix / hires.mix / temperat.mix / expand.",
              f"- Palette: `{PALETTE_FILE}` converted like `ImmutablePalette` ((v << 2) | (v >> 4)); "
-             f"index {TRANSPARENT_INDEX} fully transparent, index {SHADOW_INDEX} (RA `ShadowIndex`) black with alpha {SHADOW_ALPHA}.",
+             f"index {TRANSPARENT_INDEX} fully transparent, index {SHADOW_INDEX} (RA `ShadowIndex`) black with alpha {SHADOW_ALPHA}, "
+             f"indices {REMAP_INDICES.start}..{REMAP_INDICES.stop - 1} (the player-colour ramp) with alpha {REMAP_ALPHA} so the faction shader can recolour them.",
              "- Commands (run with `ENGINE_DIR` and `MOD_SEARCH_PATHS` pointing at the checkout, cwd = scratch dir):",
              "  `OpenRA.Utility.exe ra --extract <file>` then `OpenRA.Utility.exe ra --png <file> temperat.pal`; "
              "the indexed PNGs are then converted to RGBA by the script.",
@@ -870,9 +892,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         size: tuple[int, int] | None = None
         for i in range(r.frames):
             src = args.work / f"{r.stem}-{i:04d}.png"
-            if not src.exists():  # 0x0 frames are skipped by the utility
+            dst = out / f"{r.stem}-{i:04d}.png"
+            if not src.exists():
+                # 0x0 frames (the off frames of a muzzle flash, say) are skipped by the utility; write a transparent
+                # pixel so every frame a sequence table names exists and the renderer never looks for a missing file
+                if not dst.exists():
+                    Image.new("RGBA", (1, 1), (0, 0, 0, 0)).save(dst, optimize=True)
                 continue
-            s = convert_frame(src, out / f"{r.stem}-{i:04d}.png", lut)
+            s = convert_frame(src, dst, lut)
             size = size or s
         file_info[r.stem] = {"source": r.filename, "frames": r.frames, "size": list(size) if size else None}
 

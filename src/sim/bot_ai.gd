@@ -23,7 +23,7 @@ const PROTECTION_SCAN_RADIUS := 8.0
 const STUCK_TICKS := 63
 const RESPOND_COOLDOWN := 30
 const MISSILE_UNIT_MULTIPLIER := 3
-const PROTECTION_TYPES := ["main", "factory", "barracks", "power", "pad", "turret", "sam"]
+const PROTECTION_TYPES := ["main", "factory", "barracks", "power", "dome", "depot", "pad", "turret", "pillbox", "sam"]
 
 class Squad:
 	var id := 0
@@ -171,7 +171,7 @@ func _new_squad(type: String) -> Squad:
 func _find_enemies(candidates: Array, source: BattleSim.Ent) -> Array:
 	var out := []
 	for o in candidates:
-		if o == null or not o.alive or o.side == side or o.airborne() or o.role == "wall":
+		if o == null or not o.alive or o.side == side or o.airborne() or o.is_wall:
 			continue
 		if source != null and not sim.can_hit(source, o):
 			continue
@@ -254,7 +254,7 @@ func _set_target(s: Squad, t: BattleSim.Ent) -> void:
 func _random_own_building() -> Vector2:
 	var own := []
 	for e in sim.entities:
-		if e.alive and e.side == side and e.kind == BattleSim.Kind.BUILDING and e.role != "wall":
+		if e.alive and e.side == side and e.kind == BattleSim.Kind.BUILDING and not e.is_wall:
 			own.append(e)
 	if own.is_empty():
 		return sim.mirrored(Vector2(5.0, sim.height * 0.5), side)
@@ -379,7 +379,7 @@ func _units_of(s: Squad) -> Array:
 func _should_flee(s: Squad, own: Array, rush: bool) -> bool:
 	var c := _squad_centre(s)
 	for e in sim.entities:
-		if e.alive and e.side == side and e.kind == BattleSim.Kind.BUILDING and e.role != "wall" and e.center().distance_to(c) <= DANGER_SCAN_RADIUS:
+		if e.alive and e.side == side and e.kind == BattleSim.Kind.BUILDING and not e.is_wall and e.center().distance_to(c) <= DANGER_SCAN_RADIUS:
 			return false
 	var enemies := []
 	var friends := []
@@ -639,7 +639,7 @@ func _count_anti_air(actors: Array) -> int:
 func _enemies_near(pos: Vector2, radius: float) -> Array:
 	var out := []
 	for o in sim.entities:
-		if o.alive and o.side != side and not o.airborne() and o.role != "wall" and o.center().distance_to(pos) <= radius:
+		if o.alive and o.side != side and not o.airborne() and not o.is_wall and o.center().distance_to(pos) <= radius:
 			out.append(o)
 	return out
 
@@ -657,7 +657,7 @@ func _near_to_pos_safely(count: int, pos: Vector2) -> Dictionary:
 func _air_should_flee(s: Squad, units: Array) -> bool:
 	var c := _squad_centre(s)
 	for e in sim.entities:
-		if e.alive and e.side == side and e.kind == BattleSim.Kind.BUILDING and e.role != "wall" and e.center().distance_to(c) <= DANGER_SCAN_RADIUS:
+		if e.alive and e.side == side and e.kind == BattleSim.Kind.BUILDING and not e.is_wall and e.center().distance_to(c) <= DANGER_SCAN_RADIUS:
 			return false
 	var enemies := _enemies_near(c, DANGER_SCAN_RADIUS)
 	return _count_anti_air(enemies) * MISSILE_UNIT_MULTIPLIER > units.size()

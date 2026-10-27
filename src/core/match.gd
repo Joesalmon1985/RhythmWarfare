@@ -16,7 +16,7 @@ var outcome := ""
 var outcome_reason := ""
 var outcome_time := -1.0
 var stems_muted := {"kick": false, "snare": false, "bass": false, "other": false}
-var _pending_rewards: Array = []  # {lane, time}
+var _pending_rewards: Array = []  # {lane, button, time}
 var _enemy_index := 0
 var _events: Array = []  # presentation events (sim events plus mix/lane changes)
 var production_log: Array = []  # [{time, side, action, result}]
@@ -35,17 +35,18 @@ func setup(p_level: Level, p_rules: Rules = null) -> void:
 	outcome = ""
 
 
-func press(lane: String, t: float, touch_id: int = 0) -> Dictionary:
+## A press or release on one of the four buttons (1 to 4).
+func press(button: int, t: float, touch_id: int = 0) -> Dictionary:
 	if not outcome.is_empty():
 		return {"kind": "ended"}
-	var r := judge.press(lane, t, touch_id)
+	var r := judge.press(button, t, touch_id)
 	return r
 
 
-func release(lane: String, t: float, touch_id: int = 0) -> Dictionary:
+func release(button: int, t: float, touch_id: int = 0) -> Dictionary:
 	if not outcome.is_empty():
 		return {"kind": "ended"}
-	return judge.release(lane, t, touch_id)
+	return judge.release(button, t, touch_id)
 
 
 func pause_interrupt() -> void:
@@ -66,7 +67,7 @@ func advance(t: float) -> Array:
 	var judge_events := judge.drain_events()
 	for ev in judge_events:
 		if ev.get("reward", false):
-			_pending_rewards.append({"lane": ev["lane"], "time": ev["time"]})
+			_pending_rewards.append({"lane": ev["lane"], "button": int(ev.get("button", 0)), "time": ev["time"]})
 	var target_ticks := int(floor(maxf(t, 0.0) / BattleSim.TICK_S))
 	while sim_ticks < target_ticks and outcome.is_empty():
 		var tick_end := float(sim_ticks + 1) * BattleSim.TICK_S
@@ -86,7 +87,7 @@ func _apply_rewards_before(tick_end: float) -> void:
 		var r: Dictionary = _pending_rewards.pop_front()
 		var res := sim.produce(0, r["lane"])
 		production_log.append({"time": r["time"], "side": 0, "action": r["lane"], "result": res["result"]})
-		_events.append({"kind": "production", "side": 0, "action": r["lane"], "result": res})
+		_events.append({"kind": "production", "side": 0, "action": r["lane"], "button": r["button"], "result": res})
 
 
 func _apply_enemy_before(tick_end: float) -> void:

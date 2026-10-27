@@ -63,7 +63,7 @@ static func run(m: Match, level: Level, policy: String, rng: RandomNumberGenerat
 		var hit: bool = rng.randf() < hit_prob and float(n["time"]) < until and not (no_bass and str(n["lane"]) == "bass")
 		plan.append(hit)
 	var next_note := 0
-	var holding: Dictionary = {}  # lane -> end_time
+	var holding: Dictionary = {}  # button -> end_time
 	var t := -1.0
 	var peak := [0, 0]
 	var timeline: Array = []
@@ -79,14 +79,14 @@ static func run(m: Match, level: Level, policy: String, rng: RandomNumberGenerat
 		while next_note < level.notes.size() and level.notes[next_note]["time"] <= t:
 			var n: Dictionary = level.notes[next_note]
 			if plan[next_note]:
-				m.press(n["lane"], n["time"], 1)
+				m.press(int(n["button"]), n["time"], 1)
 				if n["type"] == "hold":
-					holding[n["lane"]] = n["end_time"]
+					holding[int(n["button"])] = n["end_time"]
 			next_note += 1
-		for lane in holding.keys():
-			if t >= holding[lane] + 0.02:
-				m.release(lane, holding[lane] + 0.02, 1)
-				holding.erase(lane)
+		for button in holding.keys():
+			if t >= holding[button] + 0.02:
+				m.release(button, holding[button] + 0.02, 1)
+				holding.erase(button)
 		m.advance(t)
 		for ev in m.drain_events():
 			match ev["kind"]:

@@ -24,6 +24,12 @@ In both modes the enemy schedule mirrors the player's notes at a seeded accuracy
 (--enemy-profile mirror|ramp), the four stems are synthesised with numpy from every note,
 encoded to Ogg Vorbis with ffmpeg, length-checked with ffprobe, and level.json is validated
 the way the importer will.
+
+Buttons: the game has four unlabelled buttons. Kick notes are button 1 and snare notes button 4;
+bass notes carry a `button` (1 to 4) chosen from the note's MIDI pitch (lowest pitch in the
+song on the left, highest on the right), so a bass line runs across all four buttons. A bass
+note that would land on button 1 or 4 while a kick or snare is within HOLD_PRESS_GUARD_TICKS
+of it (or inside its hold) is moved to the nearest inner button instead.
 """
 from __future__ import annotations
 
@@ -428,6 +434,7 @@ class BassNote:
     tick: int
     kind: str          # "tap" or "hold"
     duration: int      # hold length in ticks, 0 for taps
+    pitch: int = 0     # MIDI pitch, used to spread the bass line over the four buttons
 
 
 def resolve_bass(selected: Sequence[Hit], duration_ticks: int) -> list[BassNote]:
@@ -442,12 +449,59 @@ def resolve_bass(selected: Sequence[Hit], duration_ticks: int) -> list[BassNote]
         if i + 1 < len(sel):
             dur = min(dur, sel[i + 1].tick - BASS_GAP_TICKS - h.tick)
         if dur >= HOLD_MIN_TICKS:
-            out.append(BassNote(h.tick, "hold", dur))
+            out.append(BassNote(h.tick, "hold", dur, h.pitch))
             prev_end = h.tick + dur
         else:
-            out.append(BassNote(h.tick, "tap", 0))
+            out.append(BassNote(h.tick, "tap", 0, h.pitch))
             prev_end = h.tick
     return out
+
+
+# --------------------------------------------------------------------------------------
+# Buttons (four unlabelled touch buttons; kick = 1, snare = 4, bass anywhere)
+# --------------------------------------------------------------------------------------
+BUTTONS = 4
+FIXED_BUTTON = {"kick": 1, "snare": 4}
+
+
+def pitch_buttons(pitches: Iterable[int]) -> dict[int, int]:
+    """Distinct pitches, low to high, spread evenly over buttons 1..4 (one pitch: button 2)."""
+    distinct = sorted(set(pitches))
+    if not distinct:
+        return {}
+    if len(distinct) == 1:
+        return {distinct[0]: 2}
+    n = len(distinct)
+    return {pch: 1 + int(round((BUTTONS - 1) * i / (n - 1))) for i, pch in enumerate(distinct)}
+
+
+def assign_buttons(chart: list[dict], pitches: dict[int, int]) -> None:
+    """Set `button` on every note in place. `pitches` maps a bass note's tick to its MIDI pitch.
+
+    Kick and snare are fixed. A bass note takes the button of its pitch, then moves inward (1 -> 2,
+    4 -> 3) when a kick or snare on that button lies within HOLD_PRESS_GUARD_TICKS of its press or
+    anywhere inside its hold, so one button is never asked for two things at once.
+    """
+    by_pitch = pitch_buttons(pitches.values())
+    drum_ticks: dict[int, list[int]] = {1: [], 4: []}
+    for n in chart:
+        if n["lane"] in FIXED_BUTTON:
+            n["button"] = FIXED_BUTTON[n["lane"]]
+            drum_ticks[n["button"]].append(n["tick"])
+    for ticks in drum_ticks.values():
+        ticks.sort()
+    for n in chart:
+        if n["lane"] != "bass":
+            continue
+        button = by_pitch.get(pitches.get(n["tick"], 0), 2)
+        if button in drum_ticks:
+            start = n["tick"] - HOLD_PRESS_GUARD_TICKS
+            end = n["tick"] + int(n.get("duration_ticks", 0)) + HOLD_PRESS_GUARD_TICKS
+            ticks = drum_ticks[button]
+            k = bisect.bisect_left(ticks, start)
+            if k < len(ticks) and ticks[k] <= end:
+                button = 2 if button == 1 else 3
+        n["button"] = button
 
 
 def near_hold_press(tick: int, hold_starts: Sequence[int]) -> bool:
@@ -842,7 +896,7 @@ def validate_level(level: dict, pack_dir: Path) -> list[str]:
 
     ids: set[str] = set()
     last_tick = -1
-    lane_busy_until: dict[str, int] = {}
+    button_busy_until: dict[int, int] = {}
     for note in level["notes"]:
         nid = note.get("id")
         if nid in ids:
@@ -878,9 +932,15 @@ def validate_level(level: dict, pack_dir: Path) -> list[str]:
                     errors.append(f"{nid}: hold ends at {end}, beyond the song end {duration}")
         elif "duration_ticks" in note:
             errors.append(f"{nid}: taps must not carry duration_ticks")
-        if tick < lane_busy_until.get(lane, -1):
-            errors.append(f"{nid}: overlaps the previous {lane} note")
-        lane_busy_until[lane] = max(end, tick + 1)
+        button = note.get("button")
+        if not isinstance(button, int) or not 1 <= button <= BUTTONS:
+            errors.append(f"{nid}: button must be 1..{BUTTONS}")
+            continue
+        if lane in FIXED_BUTTON and button != FIXED_BUTTON[lane]:
+            errors.append(f"{nid}: {lane} notes are played on button {FIXED_BUTTON[lane]}")
+        if tick < button_busy_until.get(button, -1):
+            errors.append(f"{nid}: overlaps the previous note on button {button}")
+        button_busy_until[button] = max(end, tick + 1)
 
     eids: set[str] = set()
     last_tick = -1
@@ -918,12 +978,18 @@ def validate_level(level: dict, pack_dir: Path) -> list[str]:
     if expected != duration:
         errors.append(f"sections cover ticks 0..{expected}, song is {duration}")
 
-    # Flag three-touch chords (kick + snare + bass on one tick) for author review.
-    by_tick: dict[int, set[str]] = {}
+    # Flag three-touch chords (three buttons needed at one tick, holds included) for author review.
+    by_tick: dict[int, set[int]] = {}
+    holds = [(n["tick"], n["tick"] + int(n.get("duration_ticks", 0)), n.get("button"))
+             for n in level["notes"] if n.get("type") == "hold"]
     for note in level["notes"]:
-        by_tick.setdefault(note["tick"], set()).add(note["lane"])
-    for tick, lanes in by_tick.items():
-        if len(lanes) >= 3:
+        by_tick.setdefault(note["tick"], set()).add(note.get("button"))
+    for tick, buttons in by_tick.items():
+        pressed = set(buttons)
+        for start, end, button in holds:
+            if start < tick < end:
+                pressed.add(button)
+        if len(pressed) >= 3:
             errors.append(f"three-touch chord at tick {tick}")
     return errors
 
@@ -1005,11 +1071,14 @@ def build_from_library(args: argparse.Namespace) -> Build:
 
     chart: list[dict] = [{"tick": h.tick, "lane": "kick", "type": "tap"} for h in kick_chart]
     chart += [{"tick": h.tick, "lane": "snare", "type": "tap"} for h in snare_chart]
+    bass_pitches: dict[int, int] = {}
     for b in bass_chart:
         entry: dict = {"tick": b.tick, "lane": "bass", "type": b.kind}
         if b.kind == "hold":
             entry["duration_ticks"] = b.duration
         chart.append(entry)
+        bass_pitches[b.tick] = b.pitch
+    assign_buttons(chart, bass_pitches)
 
     # ---- audio plan: every real hit ----
     plan = StemPlan(file_names=dict(LIBRARY_STEM_FILES))
@@ -1169,6 +1238,7 @@ def build_from_midi_pack(args: argparse.Namespace) -> Build:
         sys.exit(f"error: bass MIDI has {len(bass_mf.note_ons)} note-ons but {len(bass_mf.notes)} "
                  "note-on/off pairs; every note-on needs a note-off")
     taps = holds = 0
+    bass_pitches: dict[int, int] = {}
     for n in bass_mf.notes:
         length = n.end - n.start
         if length >= hold_min:
@@ -1177,7 +1247,9 @@ def build_from_midi_pack(args: argparse.Namespace) -> Build:
         else:
             chart.append({"tick": n.start, "lane": "bass", "type": "tap"})
             taps += 1
+        bass_pitches[n.start] = n.pitch
     chart.sort(key=lambda n: (n["tick"], LANE_ORDER[n["lane"]]))
+    assign_buttons(chart, bass_pitches)
 
     # Expected totals from the manifest.
     expected = manifest.get("player_event_counts", {})

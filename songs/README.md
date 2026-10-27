@@ -7,8 +7,12 @@ The full contract is PRD section 9 (`docs/PRD.md`); the essentials:
   `song_offset_ms`, `duration_ticks` (bars x 3840, bar 1 = tick 0), `seed`, `stems` (relative
   paths for `kick`, `snare`, `bass`, `other`; wav, ogg or mp3), `battlefield`, `roster`, `rules`,
   `sections` (contiguous, covering tick 0 to `duration_ticks`), `notes` (`id`, `tick`, `lane`
-  kick/snare/bass, `type` tap/hold, bass holds carry `duration_ticks`) and `enemy_events`
+  kick/snare/bass, `button` 1-4, `type` tap/hold, bass holds carry `duration_ticks`) and `enemy_events`
   (`id`, `tick`, `action`).
+- Buttons: the game shows four unlabelled buttons. Kick notes are button 1 and snare notes button 4 (a
+  `button` on them must say so, or be left out); bass notes carry any button 1-4, so a bass line can run
+  across all four. A bass note with no `button` goes to buttons 2 and 3 alternately. One button never holds
+  two notes at one tick or a note inside a hold.
 - `event_seconds = song_offset_ms / 1000 + tick * 60 / (bpm * ticks_per_beat)`.
 - Every stem starts at the same timeline point (bar 1 at sample 0), has the same sample rate and
   the same length. Nothing starts at or after `duration_ticks`; holds end inside the song; a lane
@@ -35,13 +39,18 @@ does not change because the MIDI, not the audio, is its source.
 - Kick and snare: every positive-velocity note-on in `01_Kick.mid` / `02_Snare.mid` is one tap.
   Lanes come from the files, not the MIDI channel; note lengths, velocity and pitch are ignored.
 - Bass: every note-on in `03_Bass.mid` is one event; its length (note-off minus note-on) is a
-  tap below 480 ticks and otherwise a hold with that `duration_ticks`.
+  tap below 480 ticks and otherwise a hold with that `duration_ticks`. Its `button` comes from the
+  note's pitch: the distinct bass pitches of the song are spread low-to-high over buttons 1 to 4. A
+  bass note that would share button 1 or 4 with a kick or snare within 240 ticks (or anywhere inside
+  its hold) moves to the inner button beside it; Level 01 runs bass under its drums, so almost all of
+  its bass sits on buttons 2 and 3. Charts that keep bass phrases and drum phrases apart (the owner's
+  plan for the next tracks) get the full four-button spread.
 - Sections come from the MIDI section markers and are checked against the fragment.
 - No density caps, no subsetting. The tool refuses to write the pack if the generated notes differ
   from `Player_Chart_Fragment.json` in any way.
-- Enemy schedule: the authored level uses `--enemy-profile ramp --enemy-start 0.35 --enemy-end 0.63`
-  (a seeded subset of the player's notes whose share climbs per section from 37% to 61%; 161 of 321
-  events). `--enemy-profile mirror --enemy-accuracy f` keeps a flat fraction instead. The choice and
+- Enemy schedule: the authored level uses `--enemy-profile ramp --enemy-start 0.22 --enemy-end 0.42`
+  (a seeded subset of the player's notes whose share climbs per section from 23% to 41%; 105 of 321
+  events; re-authored on 28 Oct 2026 for the fortified bases and the mixed roster). `--enemy-profile mirror --enemy-accuracy f` keeps a flat fraction instead. The choice and
   the measured outcomes are in `docs/BALANCE.md`.
 
 ## Regenerating

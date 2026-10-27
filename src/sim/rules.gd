@@ -9,6 +9,9 @@ var battlefield: Dictionary = {}
 var map: Dictionary = {}  # terrain: tiles, decorations and blocked cells (data/maps/<id>.json), may be empty
 var repair: Dictionary = {}
 var aircraft: Dictionary = {}
+var locomotors: Dictionary = {}
+var vehicle_cycle: Array = []      # actor ids produced by successive kicks (round robin)
+var infantry_pattern: Array = []   # actor ids produced by successive snares (infantry_per_snare at a time)
 
 
 static func load_default(roster_id: String = "openra_mvp_01", battlefield_id: String = "mvp_mirrored_01") -> Rules:
@@ -16,10 +19,13 @@ static func load_default(roster_id: String = "openra_mvp_01", battlefield_id: St
 	var rules: Dictionary = _read_json("res://data/openra_rules.json")
 	r.actors = rules.get("actors", {})
 	r.weapons = rules.get("weapons", {})
+	r.locomotors = rules.get("locomotors", {})
 	var ros: Dictionary = _read_json("res://data/rosters/%s.json" % roster_id)
 	r.roster = ros.get("roles", {})
 	r.repair = ros.get("repair", {})
 	r.aircraft = ros.get("aircraft", {})
+	r.vehicle_cycle = ros.get("vehicle_cycle", [])
+	r.infantry_pattern = ros.get("infantry_pattern", [])
 	r.battlefield = _read_json("res://data/battlefields/%s.json" % battlefield_id)
 	var map_id := str(r.battlefield.get("map", ""))
 	if not map_id.is_empty() and FileAccess.file_exists("res://data/maps/%s.json" % map_id):

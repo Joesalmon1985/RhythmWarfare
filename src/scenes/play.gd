@@ -58,8 +58,8 @@ func _ready() -> void:
 	lane_input = LaneInput.new()
 	add_child(lane_input)
 	lane_input.rect_provider = lane_view.button_rects
-	lane_input.lane_pressed.connect(_on_lane_pressed)
-	lane_input.lane_released.connect(_on_lane_released)
+	lane_input.button_pressed.connect(_on_button_pressed)
+	lane_input.button_released.connect(_on_button_released)
 	transport.song_finished.connect(_on_song_finished)
 
 	_started_wall = float(Time.get_ticks_msec()) / 1000.0
@@ -101,14 +101,14 @@ func _autoplay_step(t: float) -> void:
 	while _auto_next < level.notes.size() and level.notes[_auto_next]["time"] <= t:
 		var n: Dictionary = level.notes[_auto_next]
 		if _auto_plan[_auto_next]:
-			match_ref.press(n["lane"], n["time"], 1)
+			match_ref.press(int(n["button"]), n["time"], 1)
 			if n["type"] == "hold":
-				_auto_holding[n["lane"]] = n["end_time"]
+				_auto_holding[int(n["button"])] = n["end_time"]
 		_auto_next += 1
-	for lane in _auto_holding.keys():
-		if t >= _auto_holding[lane] + 0.02:
-			match_ref.release(lane, _auto_holding[lane] + 0.02, 1)
-			_auto_holding.erase(lane)
+	for button in _auto_holding.keys():
+		if t >= _auto_holding[button] + 0.02:
+			match_ref.release(button, _auto_holding[button] + 0.02, 1)
+			_auto_holding.erase(button)
 
 
 func _build_layout() -> void:
@@ -261,19 +261,19 @@ func _process(_delta: float) -> void:
 		match ev["kind"]:
 			"stem":
 				transport.set_stem_muted(ev["stem"], ev["muted"])
-			"air_busy":
-				if ev["side"] == 0:
-					lane_view.show_feedback("bass", "AIR WING BUSY", Color(0.8, 0.85, 1.0), wall)
 			"production":
 				if ev["side"] == 0 and ev["action"] == "bass":
 					var res: String = ev["result"]["result"]
+					var button := int(ev.get("button", 0))
 					if res == "pad_built":
-						lane_view.show_feedback("bass", "PAD BUILT", Color(0.7, 0.9, 1.0), wall)
+						lane_view.show_feedback(button, "PAD BUILT", Color(0.7, 0.9, 1.0), wall)
 					elif res == "sortie" or res == "aircraft_replaced":
-						lane_view.show_feedback("bass", "SORTIE", Color(0.7, 0.9, 1.0), wall)
+						lane_view.show_feedback(button, "SORTIE", Color(0.7, 0.9, 1.0), wall)
+					elif res == "air_busy":
+						lane_view.show_feedback(button, "AIR WING BUSY", Color(0.8, 0.85, 1.0), wall)
 	battle_view.push_events(events)
-	for lane in LaneView.LANE_ORDER:
-		lane_view.lane_down[lane] = lane_input.is_lane_down(lane)
+	for b in range(1, LaneView.BUTTONS + 1):
+		lane_view.button_down[b] = lane_input.is_button_down(b)
 	if _debug_panel.visible:
 		var j := match_ref.judge
 		_debug_label.text = "t=%6.2f s  bar %d  tick %d  P %d G %d M %d stray %d  latency %.1f ms  cal %+.0f ms  fps %d" % [
@@ -284,7 +284,7 @@ func _process(_delta: float) -> void:
 
 
 func _on_judge_event(ev: Dictionary, wall: float) -> void:
-	var lane: String = ev.get("lane", "")
+	var lane: int = int(ev.get("button", 0))
 	var offset := ""
 	if ev.has("delta_ms"):
 		offset = "  %+d ms" % int(round(float(ev["delta_ms"])))
@@ -301,16 +301,16 @@ func _on_judge_event(ev: Dictionary, wall: float) -> void:
 			lane_view.show_feedback(lane, "...", Color(0.7, 0.7, 0.7), wall)
 
 
-func _on_lane_pressed(lane: String, touch_id: int) -> void:
+func _on_button_pressed(button: int, touch_id: int) -> void:
 	if _ended or clock.state == SongClock.State.PAUSED:
 		return
-	match_ref.press(lane, clock.judge_time(), touch_id)
+	match_ref.press(button, clock.judge_time(), touch_id)
 
 
-func _on_lane_released(lane: String, touch_id: int) -> void:
+func _on_button_released(button: int, touch_id: int) -> void:
 	if _ended:
 		return
-	match_ref.release(lane, clock.judge_time(), touch_id)
+	match_ref.release(button, clock.judge_time(), touch_id)
 
 
 func _unhandled_input(event: InputEvent) -> void:

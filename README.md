@@ -1,6 +1,7 @@
 # Rhythm Warfare
 
-Play a drum and bass track to command an army. Kicks make tanks, snares make infantry, bass holds build and launch helicopters.
+Play a drum and bass track to command an army on four unlabelled buttons. Kicks (button 1) make vehicles, snares
+(button 4) make infantry squads, bass notes (any button) build and launch helicopters.
 Standalone Godot 4.5 project; the PRD is the design authority (`docs/PRD.md`).
 
 ## Layout
@@ -16,8 +17,8 @@ Standalone Godot 4.5 project; the PRD is the design authority (`docs/PRD.md`).
 ## Running
 
 Godot 4.5.1: open `project.godot` and press Play, or run the Windows build from `build/windows/` after exporting
-(`docs/EXPORT.md`). Keys on desktop: F = kick, Space = bass (hold), J = snare, Esc = pause, F3 = debug panel with
-the stem mute toggles.
+(`docs/EXPORT.md`). Keys on desktop: D, F, J, K = buttons 1 to 4 (kick on D, snare on K, bass holds on whichever
+button the note is on), Esc = pause, F3 = debug panel with the stem mute toggles.
 
 - Tests: `bash tools/test.sh` (headless; refreshes the class cache, then `tests/run_tests.gd`).
 - Balance runs: `bash tools/balance.sh res://songs/level_01 1.0 perfect "accuracy:0.85" none` (see `docs/BALANCE.md`).
