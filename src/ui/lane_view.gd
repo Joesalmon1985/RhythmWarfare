@@ -11,9 +11,9 @@ const LANE_COLORS := {
 	"snare": Color(0.88, 0.35, 0.31),
 }
 const LANE_LABELS := {"kick": "KICK  tank", "bass": "BASS  air", "snare": "SNARE  infantry"}
-const LOOKAHEAD_S := 1.4
-const BUTTON_H := 120.0
-const LINE_FROM_BOTTOM := 100.0
+const LOOKAHEAD_S := 1.2
+const BUTTON_H := 100.0
+const LINE_FROM_BOTTOM := 84.0
 const FEEDBACK_S := 0.5
 
 var level: Level

@@ -6,6 +6,7 @@ var actors: Dictionary = {}
 var weapons: Dictionary = {}
 var roster: Dictionary = {}
 var battlefield: Dictionary = {}
+var map: Dictionary = {}  # terrain: tiles, decorations and blocked cells (data/maps/<id>.json), may be empty
 var repair: Dictionary = {}
 var aircraft: Dictionary = {}
 
@@ -20,7 +21,18 @@ static func load_default(roster_id: String = "openra_mvp_01", battlefield_id: St
 	r.repair = ros.get("repair", {})
 	r.aircraft = ros.get("aircraft", {})
 	r.battlefield = _read_json("res://data/battlefields/%s.json" % battlefield_id)
+	var map_id := str(r.battlefield.get("map", ""))
+	if not map_id.is_empty() and FileAccess.file_exists("res://data/maps/%s.json" % map_id):
+		r.map = _read_json("res://data/maps/%s.json" % map_id)
 	return r
+
+
+## Cells no ground unit can enter because of terrain (trees, rocks), as Vector2i.
+func terrain_blocked() -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	for c in map.get("blocked", []):
+		out.append(Vector2i(int(c[0]), int(c[1])))
+	return out
 
 
 static func _read_json(path: String) -> Dictionary:

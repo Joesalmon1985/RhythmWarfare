@@ -148,7 +148,16 @@ static func _debug_line(m: Match, t: float, shots: Array, kills: Array) -> void:
 				with_target += 1
 				targets[tg.role] = int(targets.get(tg.role, 0)) + 1
 				var d := e.center().distance_to(tg.center()) - (tg.radius if tg.kind == BattleSim.Kind.BUILDING else 0.0)
-				if d <= sim._max_range(e):
+				if d <= sim.max_range(e):
 					in_range += 1
-		line += " | S%d units %3d tgt %3d inrange %3d moving %3d stuck %3d front %5.1f shots %4d kills %3d targets %s" % [side, units, with_target, in_range, moving, stuck, front, shots[side], kills[side], targets]
+		var bot: BotAi = sim.bots[side]
+		var sq := []
+		for s in bot.squads:
+			var tg: BattleSim.Ent = sim.get_entity(s.target)
+			sq.append("%s/%s n=%d tgt=%s" % [s.type, s.state, s.units.size(), tg.role if tg != null else "-"])
+		var air := []
+		for e in sim.entities:
+			if e.alive and e.side == side and e.kind == BattleSim.Kind.AIRCRAFT:
+				air.append("%s%d" % [BattleSim.Air.keys()[e.air].substr(0, 3), e.ammo])
+		line += " | S%d units %3d tgt %3d inrange %3d moving %3d front %5.1f shots %4d kills %3d idle %d squads %s air %s" % [side, units, with_target, in_range, moving, front, shots[side], kills[side], bot.idle_pool.size(), sq, air]
 	print(line)

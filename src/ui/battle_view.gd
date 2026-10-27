@@ -1,27 +1,54 @@
 class_name BattleView
 extends Control
-## Fixed-camera view of the whole battlefield. Reads the simulation every frame; never advances it.
-## Two sprite layers (one per faction, each with its own colour-remap material) and an effects layer on top.
+## Fixed-camera view of the whole battlefield at native Red Alert pixel scale, drawn the way OpenRA draws it:
+## terrain tiles, building bibs, buildings (idle / damaged-idle / make / production and resupply overlays), walls by
+## adjacency, units with facing frames and animations, aircraft with rotor and shadow, projectiles, muzzle flashes,
+## impact explosions, death animations, craters and smoke. Reads the simulation every frame; never advances it.
 
+const PIXEL_SCALE := 1  # integer multiple of the native 24 px cell, so sprites keep every pixel
 const FACTION_BASE := [Color(0.35, 0.62, 1.0), Color(1.0, 0.36, 0.30)]
-const SHOT_LIFE := 0.08
-const HIT_LIFE := 0.3
-const EXPLOSION_LIFE := 0.65
+const AIR_ALTITUDE_PX := 30.0
+const DEAD_TINT := Color(0.45, 0.45, 0.45, 1.0)
+const WORLD_PER_CELL := 1024.0
+
+## Weapon -> presentation from mods/ra/weapons and the actor Armaments (docs/OPENRA_BEHAVIOUR_SPEC.md).
+## muzzle: sequence of the shooter's own image; muzzle_forward: Armament LocalOffset x in world units;
+## projectile: image drawn in flight ("" for instant hits); impact: explosion sequence where the round lands.
+const WEAPON_FX := {
+	"25mm": {"muzzle": "muzzle", "muzzle_forward": 768, "projectile": "50cal", "impact": "small_explosion"},
+	"90mm": {"muzzle": "muzzle", "muzzle_forward": 720, "projectile": "120mm", "impact": "small_explosion"},
+	"105mm": {"muzzle": "muzzle", "muzzle_forward": 768, "projectile": "120mm", "impact": "small_explosion"},
+	"TurretGun": {"muzzle": "muzzle", "muzzle_forward": 512, "projectile": "120mm", "impact": "small_explosion"},
+	"M1Carbine": {"muzzle": "", "muzzle_forward": 0, "projectile": "", "impact": "piff"},
+	"HellfireAG": {"muzzle": "", "muzzle_forward": 0, "projectile": "dragon", "impact": "small_explosion"},
+	"HellfireAA": {"muzzle": "", "muzzle_forward": 0, "projectile": "dragon", "impact": "med_explosion_air"},
+	"Nike": {"muzzle": "muzzle", "muzzle_forward": 0, "projectile": "missile", "impact": "med_explosion_air"},
+	"ZSU-23": {"muzzle": "muzzle", "muzzle_forward": 520, "projectile": "", "impact": "small_explosion_air"},
+	"FireballLauncher": {"muzzle": "", "muzzle_forward": 512, "projectile": "fb1", "impact": "napalm"},
+}
+const DEFAULT_FX := {"muzzle": "", "muzzle_forward": 0, "projectile": "", "impact": "piffs"}
 
 var sim: BattleSim
 var bank := SpriteBank.new()
-var cell := 45.0
+var map: Dictionary = {}
+var cell := 24.0
 var origin := Vector2.ZERO
 var _layers: Array[Node2D] = []
 var _fx: Node2D
-var _effects: Array = []  # {kind, pos, t0, life, ...}
+var _ground: Node2D
+var _effects: Array = []  # {image, seq, pos(cells), heading, t0, life, side, layer, loop, lift}
+var _decals: Array = []   # permanent craters and scorches: {image, seq, frame, pos}
 var _wall := 0.0
-var _rotor := 0.0
+var _pending: Array = []
+var _anim_phase: Dictionary = {}  # entity id -> wall time the current animation started
 
 
 func _ready() -> void:
 	bank.load()
 	var shader := load("res://src/ui/faction_remap.gdshader") as Shader
+	_ground = _GroundLayer.new()
+	_ground.view = self
+	add_child(_ground)
 	for side in 2:
 		var layer := _SideLayer.new()
 		layer.view = self
@@ -42,18 +69,19 @@ func _ready() -> void:
 
 func setup(p_sim: BattleSim) -> void:
 	sim = p_sim
+	map = sim.rules.map if sim.rules != null else {}
 	_layout()
 
 
 func _layout() -> void:
 	if sim == null:
 		return
-	cell = floor(minf(size.x / sim.width, size.y / sim.height))
-	origin = Vector2((size.x - cell * sim.width) * 0.5, (size.y - cell * sim.height) * 0.5)
+	cell = SpriteBank.RA_CELL_PX * PIXEL_SCALE
+	origin = Vector2(floor((size.x - cell * sim.width) * 0.5), floor((size.y - cell * sim.height) * 0.5))
 
 
 func to_px(p: Vector2) -> Vector2:
-	return origin + p * cell
+	return (origin + p * cell).floor()
 
 
 func _ramp_from(rgb_list: Array) -> PackedVector3Array:
@@ -65,7 +93,6 @@ func _ramp_from(rgb_list: Array) -> PackedVector3Array:
 	return out
 
 
-## A faction ramp with the same brightness steps as the gold source ramp.
 func _faction_ramp(base: Color) -> PackedVector3Array:
 	var out := PackedVector3Array()
 	var src := _ramp_from(bank.remap_ramp)
@@ -77,59 +104,191 @@ func _faction_ramp(base: Color) -> PackedVector3Array:
 	return out
 
 
+func push_events(events: Array) -> void:
+	_pending.append_array(events)
+
+
 func _process(delta: float) -> void:
 	_wall += delta
-	_rotor += delta * 30.0
 	if sim == null:
 		return
-	for ev in _pending_events:
+	for ev in _pending:
 		_add_effect(ev)
-	_pending_events.clear()
+	_pending.clear()
 	var keep := []
 	for fx in _effects:
-		if _wall - fx["t0"] < fx["life"]:
+		if _wall - float(fx["t0"]) < float(fx["life"]):
 			keep.append(fx)
 	_effects = keep
-	queue_redraw()
+	_ground.queue_redraw()
 	for l in _layers:
 		l.queue_redraw()
 	_fx.queue_redraw()
 
 
-var _pending_events: Array = []
+static func fx_for(weapon: String) -> Dictionary:
+	return WEAPON_FX.get(weapon, DEFAULT_FX)
 
 
-## Feed presentation events from the match (shot, hit, destroyed...).
-func push_events(events: Array) -> void:
-	_pending_events.append_array(events)
+func seq_life(image: String, seq: String) -> float:
+	var n := bank.length(image, seq)
+	return maxf(0.05, n * bank.tick_ms(image, seq) / 1000.0)
+
+
+func _anim(image: String, seq: String, pos: Vector2, heading: float, layer: int = 2, extra: Dictionary = {}) -> void:
+	if not bank.has_sequence(image, seq):
+		return
+	var fx := {"image": image, "seq": seq, "pos": pos, "heading": heading, "t0": _wall, "life": seq_life(image, seq), "layer": layer, "lift": 0.0}
+	for k in extra:
+		fx[k] = extra[k]
+	_effects.append(fx)
 
 
 func _add_effect(ev: Dictionary) -> void:
-	match ev.get("kind", ""):
+	match str(ev.get("kind", "")):
 		"shot":
-			_effects.append({"kind": "shot", "t0": _wall, "life": SHOT_LIFE, "from": Vector2(ev["x"], ev["y"]), "to": Vector2(ev["tx"], ev["ty"]), "weapon": ev["weapon"]})
-		"hit":
-			_effects.append({"kind": "hit", "t0": _wall, "life": HIT_LIFE, "pos": Vector2(ev["x"], ev["y"])})
+			var shooter: BattleSim.Ent = sim.get_entity(int(ev["from"]))
+			if shooter == null:
+				return
+			var fx := fx_for(str(ev["weapon"]))
+			var seq := str(fx["muzzle"])
+			if seq.is_empty() or not bank.has_sequence(shooter.actor, seq):
+				return
+			var heading := float(ev.get("heading", 0.0))
+			var forward := float(fx["muzzle_forward"]) / WORLD_PER_CELL
+			var pos := Vector2(float(ev["x"]), float(ev["y"])) + Vector2(cos(heading), sin(heading)) * forward
+			var lift := AIR_ALTITUDE_PX if shooter.kind == BattleSim.Kind.AIRCRAFT else 0.0
+			_anim(shooter.actor, seq, pos, heading, 2, {"lift": lift, "side": shooter.side})
+		"impact":
+			var fx := fx_for(str(ev["weapon"]))
+			_anim("explosion", str(fx["impact"]), Vector2(float(ev["x"]), float(ev["y"])), 0.0)
 		"destroyed":
-			var big: bool = ev.get("role", "") in ["main", "factory", "barracks", "power", "pad", "turret", "aa", "sam"]
-			_effects.append({"kind": "explosion", "t0": _wall, "life": EXPLOSION_LIFE * (1.6 if big else 1.0), "pos": Vector2(ev["x"], ev["y"]), "big": big})
+			var role := str(ev.get("role", ""))
+			var pos := Vector2(float(ev["x"]), float(ev["y"]))
+			var e: BattleSim.Ent = sim.get_entity(int(ev["id"]))
+			if e == null:
+				return
+			if role == "infantry":
+				var deaths: Array = []
+				for i in range(1, 7):
+					if bank.has_sequence(e.actor, "die%d" % i):
+						deaths.append("die%d" % i)
+				if not deaths.is_empty():
+					var seq: String = deaths[e.id % deaths.size()]
+					_anim(e.actor, seq, pos, e.heading, 1, {"side": e.side, "life": seq_life(e.actor, seq) + 2.0, "hold": true})
+				return
+			if e.kind == BattleSim.Kind.AIRCRAFT:
+				_anim("explosion", "med_explosion_air", pos, 0.0, 2, {"lift": AIR_ALTITUDE_PX})
+				_anim("explosion", "small_explosion", pos, 0.0)
+				return
+			if e.kind == BattleSim.Kind.UNIT:
+				_anim("explosion", "med_explosion", pos, 0.0)
+				_decals.append({"image": "craters", "seq": "cr%d" % (1 + e.id % 6), "frame": 0, "pos": pos})
+				return
+			# buildings: fireball, lasting smoke, a crater field under the footprint
+			_anim("explosion", "building", pos, 0.0)
+			_anim("smoke_m", "idle", pos + Vector2(0, -0.5), 0.0, 2, {"life": 8.0, "loop": true})
+			for i in e.w:
+				for j in e.h:
+					if (i + j) % 2 == 0:
+						_decals.append({"image": "craters", "seq": "cr%d" % (1 + (e.id + i * 3 + j) % 6), "frame": 0, "pos": Vector2(e.cx + i + 0.5, e.cy + j + 0.5)})
+		"pad_built", "spawned":
+			_anim_phase[int(ev["id"])] = _wall
 
 
-func _draw() -> void:
-	# ground
-	draw_rect(Rect2(Vector2.ZERO, size), Color(0.18, 0.22, 0.15))
-	if sim == null:
+## Current animation frame index for a looping sequence.
+func anim_index(image: String, seq: String, phase_key: int = -1) -> int:
+	var n := bank.length(image, seq)
+	if n <= 1:
+		return 0
+	var t := _wall - float(_anim_phase.get(phase_key, 0.0))
+	return int(t * 1000.0 / bank.tick_ms(image, seq)) % n
+
+
+## Draw one frame centred on `centre_px` (OpenRA draws frames centred on the actor), honouring the sequence offset.
+func blit(canvas: CanvasItem, image: String, seq: String, heading: float, anim: int, centre_px: Vector2, tint: Color = Color.WHITE) -> void:
+	var tex := bank.texture_for(image, seq, heading, anim)
+	if tex == null:
 		return
-	var field := Rect2(origin, Vector2(sim.width, sim.height) * cell)
-	draw_rect(field, Color(0.22, 0.27, 0.18))
-	for i in range(1, sim.width):
-		var x := origin.x + i * cell
-		draw_line(Vector2(x, origin.y), Vector2(x, origin.y + sim.height * cell), Color(0, 0, 0, 0.06))
-	for j in range(1, sim.height):
-		var y := origin.y + j * cell
-		draw_line(Vector2(origin.x, y), Vector2(origin.x + sim.width * cell, y), Color(0, 0, 0, 0.06))
-	var mid := origin.x + sim.width * cell * 0.5
-	draw_line(Vector2(mid, origin.y), Vector2(mid, origin.y + sim.height * cell), Color(1, 1, 1, 0.08), 2.0)
+	_blit_tex(canvas, tex, centre_px + bank.offset(image, seq) * PIXEL_SCALE, tint)
+
+
+func blit_frame(canvas: CanvasItem, image: String, seq: String, n: int, centre_px: Vector2, tint: Color = Color.WHITE) -> void:
+	var tex := bank.texture_frame(image, seq, n)
+	if tex == null:
+		return
+	_blit_tex(canvas, tex, centre_px + bank.offset(image, seq) * PIXEL_SCALE, tint)
+
+
+func _blit_tex(canvas: CanvasItem, tex: Texture2D, centre_px: Vector2, tint: Color) -> void:
+	var sz := Vector2(tex.get_width(), tex.get_height()) * PIXEL_SCALE
+	canvas.draw_texture_rect(tex, Rect2((centre_px - sz * 0.5).floor(), sz), false, tint)
+
+
+## Buildings: the sprite is centred horizontally on the footprint and its top row sits on the footprint's top row
+## (OpenRA centres on the Dimensions rectangle with LocalCenterOffset; for this roster that is the same thing).
+func blit_building(canvas: CanvasItem, image: String, seq: String, anim: int, e: BattleSim.Ent, tint: Color = Color.WHITE) -> void:
+	var tex := bank.texture_for(image, seq, 0.0, anim)
+	if tex == null:
+		return
+	var sz := Vector2(tex.get_width(), tex.get_height()) * PIXEL_SCALE
+	var top_centre := to_px(Vector2(e.cx + e.w * 0.5, e.cy))
+	var top_left := (top_centre - Vector2(sz.x * 0.5, 0) + bank.offset(image, seq) * PIXEL_SCALE).floor()
+	canvas.draw_texture_rect(tex, Rect2(top_left, sz), false, tint)
+
+
+func building_centre_px(e: BattleSim.Ent) -> Vector2:
+	return to_px(Vector2(e.cx + e.w * 0.5, e.cy + e.h * 0.5))
+
+
+func health_bar(canvas: CanvasItem, top_left: Vector2, width: float, frac: float, repairing: bool) -> void:
+	canvas.draw_rect(Rect2(top_left, Vector2(width, 3)), Color(0, 0, 0, 0.6))
+	var c := Color(0.3, 0.9, 0.3) if frac > 0.5 else (Color(0.95, 0.8, 0.2) if frac > 0.25 else Color(0.95, 0.3, 0.2))
+	canvas.draw_rect(Rect2(top_left, Vector2(width * frac, 3)), c)
+	if repairing and bank.has_sequence("allyrepair", "repair"):
+		blit(canvas, "allyrepair", "repair", 0.0, anim_index("allyrepair", "repair"), top_left + Vector2(width * 0.5, 10))
+
+
+class _GroundLayer:
+	extends Node2D
+	var view: BattleView
+
+	func _draw() -> void:
+		draw_rect(Rect2(Vector2.ZERO, view.size), Color(0.1, 0.12, 0.08))
+		if view.sim == null:
+			return
+		var tiles: Array = view.map.get("tiles", [])
+		var field := Rect2(view.origin, Vector2(view.sim.width, view.sim.height) * view.cell)
+		if tiles.is_empty():
+			draw_rect(field, Color(0.22, 0.27, 0.18))
+		else:
+			for y in mini(tiles.size(), view.sim.height):
+				var row: Array = tiles[y]
+				for x in mini(row.size(), view.sim.width):
+					var t: Dictionary = row[x]
+					var tex := view.bank.texture("res://assets/openra/%s-%04d.png" % [str(t.get("t", "clear1")), int(t.get("f", 0))])
+					if tex != null:
+						draw_texture_rect(tex, Rect2(view.to_px(Vector2(x, y)), Vector2(view.cell, view.cell)), false)
+		for d in view._decals:
+			view.blit_frame(self, d["image"], d["seq"], int(d["frame"]), view.to_px(d["pos"]))
+		# bibs: the building's own 'bib' sequence as a strip of tiles whose last row is the footprint's bottom row
+		for e in view.sim.entities:
+			if e.kind != BattleSim.Kind.BUILDING or not e.alive or not view.bank.has_sequence(e.actor, "bib"):
+				continue
+			var n := view.bank.length(e.actor, "bib")
+			var width := 3 if n >= 6 else (2 if n >= 2 else 1)
+			var rows := maxi(1, n / width)
+			for i in n:
+				var cx := e.cx + i % width
+				var cy := e.cy + e.h - 1 + i / width - (rows - 1) + (rows - 1)
+				var centre := view.to_px(Vector2(cx + 0.5, cy + 0.5))
+				view.blit_frame(self, e.actor, "bib", view.bank.frame_at(e.actor, "bib", 0, i), centre)
+		for d in view.map.get("decorations", []):
+			var img := str(d.get("image", ""))
+			var seq := str(d.get("sequence", "idle"))
+			if view.bank.has_sequence(img, seq):
+				var c := view.to_px(Vector2(float(d["x"]) + float(d.get("w", 1)) * 0.5, float(d["y"]) + float(d.get("h", 1)) * 0.5))
+				view.blit(self, img, seq, 0.0, 0, c)
 
 
 class _SideLayer:
@@ -140,144 +299,142 @@ class _SideLayer:
 	func _draw() -> void:
 		if view.sim == null:
 			return
-		var sim: BattleSim = view.sim
-		# buildings first (ground), then units sorted by y, then aircraft
-		var units: Array = []
-		var aircraft: Array = []
-		for e in sim.entities:
-			if e.side != side:
-				continue
-			if e.kind == BattleSim.Kind.BUILDING:
-				_draw_building(e)
-			elif e.alive and e.kind == BattleSim.Kind.UNIT:
-				units.append(e)
-			elif e.alive and e.kind == BattleSim.Kind.AIRCRAFT:
-				aircraft.append(e)
-		units.sort_custom(func(a: BattleSim.Ent, b: BattleSim.Ent) -> bool: return a.y < b.y)
-		for e in units:
-			_draw_unit(e)
-		for e in aircraft:
-			_draw_aircraft(e)
+		var ordered: Array = []
+		for e in view.sim.entities:
+			if e.side == side and (e.kind == BattleSim.Kind.BUILDING or e.alive):
+				ordered.append(e)
+		ordered.sort_custom(_painter_order)
+		for e in ordered:
+			match e.kind:
+				BattleSim.Kind.BUILDING:
+					_draw_building(e)
+				BattleSim.Kind.UNIT:
+					_draw_unit(e)
+				BattleSim.Kind.AIRCRAFT:
+					_draw_aircraft(e)
+		for fx in view._effects:
+			if int(fx.get("layer", 2)) == 1 and int(fx.get("side", -1)) == side:
+				var age: float = view._wall - float(fx["t0"])
+				var n := view.bank.length(fx["image"], fx["seq"])
+				var idx := mini(int(age * 1000.0 / view.bank.tick_ms(fx["image"], fx["seq"])), n - 1)
+				view.blit(self, fx["image"], fx["seq"], float(fx["heading"]), idx, view.to_px(fx["pos"]))
+		# muzzle flashes carry the faction remap too, so they are drawn in the side layer
+		for fx in view._effects:
+			if int(fx.get("layer", 2)) == 2 and int(fx.get("side", -1)) == side:
+				var age: float = view._wall - float(fx["t0"])
+				var n := view.bank.length(fx["image"], fx["seq"])
+				var idx := int(age * 1000.0 / view.bank.tick_ms(fx["image"], fx["seq"]))
+				if idx < n:
+					view.blit(self, fx["image"], fx["seq"], float(fx["heading"]), idx, view.to_px(fx["pos"]) + Vector2(0, -float(fx.get("lift", 0.0))))
 
-	func _tex(path: String) -> Texture2D:
-		return view.bank.texture(path)
+	static func _painter_order(a: BattleSim.Ent, b: BattleSim.Ent) -> bool:
+		var a_air := a.kind == BattleSim.Kind.AIRCRAFT
+		var b_air := b.kind == BattleSim.Kind.AIRCRAFT
+		if a_air != b_air:
+			return b_air
+		var ya := float(a.cy + a.h) if a.kind == BattleSim.Kind.BUILDING else a.y
+		var yb := float(b.cy + b.h) if b.kind == BattleSim.Kind.BUILDING else b.y
+		return ya < yb
 
 	func _draw_building(e: BattleSim.Ent) -> void:
 		var bank: SpriteBank = view.bank
-		var state := "idle"
+		var damaged := e.hp * 2 < e.max_hp
+		if e.role == "wall":
+			_draw_wall(e, damaged)
+			return
+		var tint := Color.WHITE
+		var seq := ""
+		var anim := 0
 		if not e.alive:
-			state = "damaged"
-		elif e.hp * 2 < e.max_hp:
-			state = "damaged"
-		var frames := bank.building_frames(e.actor, state)
-		if frames.is_empty():
+			seq = bank.pick(e.actor, ["dead", "damaged-idle", "idle"])
+			if seq != "dead":
+				tint = view.DEAD_TINT
+		else:
+			var since_make: float = view._wall - float(view._anim_phase.get(e.id, -100.0))
+			var make_len := bank.length(e.actor, "make")
+			if make_len > 0 and since_make < make_len * bank.tick_ms(e.actor, "make") / 1000.0:
+				seq = "make"
+				anim = mini(int(since_make * 1000.0 / bank.tick_ms(e.actor, "make")), make_len - 1)
+			else:
+				seq = bank.pick(e.actor, ["damaged-idle", "idle"] if damaged else ["idle"])
+				anim = view.anim_index(e.actor, seq, e.id)
+		if seq.is_empty():
 			return
-		var fps := bank.state_fps(e.actor, state)
-		var idx := 0
-		if fps > 0 and frames.size() > 1 and e.alive:
-			idx = int(view._wall * fps) % frames.size()
-		var tex := _tex(frames[idx])
-		if tex == null:
-			return
-		var scale := view.cell / SpriteBank.RA_CELL_PX
-		var size_px := Vector2(tex.get_width(), tex.get_height()) * scale
-		# anchor the sprite's bottom-left to the footprint's bottom-left cell edge
-		var foot_bl := view.to_px(Vector2(e.cx, e.cy + e.h))
-		var top_left := Vector2(foot_bl.x, foot_bl.y - size_px.y)
-		var tint := Color(1, 1, 1, 1) if e.alive else Color(0.35, 0.35, 0.35, 0.9)
-		draw_texture_rect(tex, Rect2(top_left, size_px), false, tint)
-		if e.alive and e.role == "turret":
-			var tframe := SpriteBank.facing_index(e.turret_heading, 32)
-			var ttex := _tex(SpriteBank.frame_path("gun", tframe))
-			if ttex != null:
-				draw_texture_rect(ttex, Rect2(top_left, size_px), false, tint)
-		elif e.alive and e.role == "aa":
-			var it := bank.item("agun")
-			var tfiles: Array = it.get("states", {}).get("turret", {}).get("files", [])
-			if not tfiles.is_empty():
-				var tframe := SpriteBank.facing_index(e.turret_heading, tfiles.size())
-				var ttex := _tex(tfiles[tframe])
-				if ttex != null:
-					var tsize := Vector2(ttex.get_width(), ttex.get_height()) * scale
-					draw_texture_rect(ttex, Rect2(Vector2(top_left.x, top_left.y), tsize), false, tint)
+		view.blit_building(self, e.actor, seq, anim, e, tint)
+		if e.alive and seq != "make":
+			if _is_busy(e):
+				var ov := bank.pick(e.actor, ["damaged-build-top", "damaged-active"] if damaged else ["build-top", "active"])
+				if not ov.is_empty():
+					view.blit_building(self, e.actor, ov, view.anim_index(e.actor, ov, e.id), e)
+			var turret := bank.pick(e.actor, ["damaged-turret", "turret"] if damaged else ["turret"])
+			if not turret.is_empty():
+				view.blit(self, e.actor, turret, e.turret_heading, 0, view.building_centre_px(e))
+			if damaged and bank.has_sequence("smoke_m", "idle"):
+				view.blit(self, "smoke_m", "idle", 0.0, view.anim_index("smoke_m", "idle", e.id), view.to_px(Vector2(e.cx + e.w * 0.5, e.cy + 0.3)))
 		if e.alive and e.hp < e.max_hp:
-			_health_bar(Vector2(top_left.x, top_left.y - 6), size_px.x, float(e.hp) / e.max_hp, e.repairing)
+			view.health_bar(self, view.to_px(Vector2(e.cx, e.cy)) + Vector2(0, -5), e.w * view.cell, float(e.hp) / e.max_hp, e.repairing)
+
+	func _is_busy(e: BattleSim.Ent) -> bool:
+		var sim: BattleSim = view.sim
+		match e.role:
+			"factory":
+				return sim.spawn_queue[e.side].has("tank")
+			"barracks":
+				return sim.spawn_queue[e.side].has("infantry")
+			"pad":
+				var a: BattleSim.Ent = sim.get_entity(int(sim.slots[e.side][e.slot]["aircraft"]))
+				return a != null and a.alive and a.air == BattleSim.Air.REARMING
+		return false
+
+	func _draw_wall(e: BattleSim.Ent, damaged: bool) -> void:
+		var mask := SpriteBank.wall_mask(_wall_at(e, 0, -1), _wall_at(e, 1, 0), _wall_at(e, 0, 1), _wall_at(e, -1, 0))
+		var seq := view.bank.pick(e.actor, ["damaged-idle", "idle"] if (damaged or not e.alive) else ["idle"])
+		if seq.is_empty():
+			return
+		var n := view.bank.frame_at(e.actor, seq, 0, mask)
+		view.blit_frame(self, e.actor, seq, n, view.building_centre_px(e), Color.WHITE if e.alive else view.DEAD_TINT)
+
+	func _wall_at(e: BattleSim.Ent, dx: int, dy: int) -> bool:
+		var id: int = int(view.sim._blocked.get(Vector2i(e.cx + dx, e.cy + dy), -2))
+		var o: BattleSim.Ent = view.sim.get_entity(id)
+		return o != null and o.alive and o.role == "wall" and o.side == e.side
 
 	func _draw_unit(e: BattleSim.Ent) -> void:
 		var bank: SpriteBank = view.bank
-		var it := bank.item(e.actor)
-		if it.is_empty():
-			return
-		var scale := view.cell / SpriteBank.RA_CELL_PX
-		var pos := view.to_px(e.center())
-		var hotspot: Array = it.get("hotspot", [12, 12])
-		var facings := int(it.get("facings", 32))
-		var frame := SpriteBank.facing_index(e.heading, facings)
-		if it.has("layers"):
-			var l: Dictionary = it["layers"]
-			var body := _tex(SpriteBank.frame_path(str(l["body_prefix"]), frame))
-			var turret := _tex(SpriteBank.frame_path(str(l["turret_prefix"]), SpriteBank.facing_index(e.turret_heading, facings)))
-			if body != null:
-				_blit(body, pos, hotspot, scale)
-			if turret != null:
-				_blit(turret, pos, hotspot, scale)
+		var c := view.to_px(e.center())
+		if e.role == "infantry":
+			var seq := "stand"
+			var anim := 0
+			if e.moving and bank.has_sequence(e.actor, "run"):
+				seq = "run"
+				anim = view.anim_index(e.actor, "run", e.id)
+			elif e.target >= 0 and bank.has_sequence(e.actor, "shoot"):
+				seq = "shoot"
+				anim = view.anim_index(e.actor, "shoot", e.id)
+			view.blit(self, e.actor, seq, e.heading, anim, c)
 		else:
-			var idx := frame
-			if e.role == "infantry":
-				var run_start := int(it.get("run_start", 16))
-				var run_len := int(it.get("run_length", 6))
-				if e.moving:
-					var anim := int(view._wall * 10.0 + e.id) % run_len
-					idx = run_start + frame * run_len + anim
-				else:
-					idx = int(it.get("stand_start", 0)) + frame
-			var tex := _tex(SpriteBank.frame_path(str(it["prefix"]), idx))
-			if tex != null:
-				_blit(tex, pos, hotspot, scale)
+			view.blit(self, e.actor, "idle", e.heading, 0, c)
+			if bank.has_sequence(e.actor, "turret"):
+				view.blit(self, e.actor, "turret", e.turret_heading, 0, c)
 		if e.hp < e.max_hp:
-			_health_bar(pos + Vector2(-view.cell * 0.4, -view.cell * 0.75), view.cell * 0.8, float(e.hp) / e.max_hp, false)
+			view.health_bar(self, c + Vector2(-10, -14), 20, float(e.hp) / e.max_hp, false)
 
 	func _draw_aircraft(e: BattleSim.Ent) -> void:
 		var bank: SpriteBank = view.bank
-		var it := bank.item(e.actor)
-		if it.is_empty():
-			return
-		var scale := view.cell / SpriteBank.RA_CELL_PX
 		var airborne := e.air in [BattleSim.Air.SORTIE, BattleSim.Air.RETURNING, BattleSim.Air.LANDING, BattleSim.Air.WAITING]
-		var pos := view.to_px(e.center())
-		var hotspot: Array = it.get("hotspot", [23, 24])
-		var frame := SpriteBank.facing_index(e.heading, int(it.get("facings", 32)))
-		var tex := _tex(SpriteBank.frame_path(str(it["prefix"]), frame))
-		if tex == null:
-			return
+		var ground := view.to_px(e.center())
+		var body := ground
 		if airborne:
-			# shadow on the ground, body lifted
-			_blit(tex, pos + Vector2(6, 10), hotspot, scale, Color(0, 0, 0, 0.35))
-			pos += Vector2(0, -view.cell * 0.9 + sin(view._wall * 3.0 + e.id) * 2.0)
-		_blit(tex, pos, hotspot, scale)
-		if airborne or e.air == BattleSim.Air.REARMING:
-			# rotor
-			var r := view.cell * 0.45
-			var a := view._rotor + e.id
-			draw_line(pos + Vector2(cos(a), sin(a) * 0.5) * r, pos - Vector2(cos(a), sin(a) * 0.5) * r, Color(0.9, 0.9, 0.9, 0.7), 2.0)
+			view.blit(self, e.actor, "idle", e.heading, 0, ground + Vector2(4, 6), Color(0, 0, 0, 0.45))
+			body = ground + Vector2(0, -view.AIR_ALTITUDE_PX + sin(view._wall * 3.0 + e.id))
+		view.blit(self, e.actor, "idle", e.heading, 0, body)
+		var rotor := "rotor" if airborne else bank.pick(e.actor, ["slow-rotor", "rotor"])
+		if bank.has_sequence(e.actor, rotor) and (airborne or e.air != BattleSim.Air.READY):
+			view.blit(self, e.actor, rotor, e.heading, view.anim_index(e.actor, rotor, e.id), body)
 		if e.hp < e.max_hp:
-			_health_bar(pos + Vector2(-view.cell * 0.4, -view.cell * 0.8), view.cell * 0.8, float(e.hp) / e.max_hp, false)
-		# ammo pips
+			view.health_bar(self, body + Vector2(-10, -16), 20, float(e.hp) / e.max_hp, false)
 		for i in e.ammo_max:
-			var c := Color(1, 0.85, 0.3, 0.9) if i < e.ammo else Color(0, 0, 0, 0.5)
-			draw_rect(Rect2(pos + Vector2(-view.cell * 0.4 + i * 5.0, view.cell * 0.45), Vector2(4, 4)), c)
-
-	func _blit(tex: Texture2D, pos: Vector2, hotspot: Array, scale: float, tint: Color = Color.WHITE) -> void:
-		var size_px := Vector2(tex.get_width(), tex.get_height()) * scale
-		var top_left := pos - Vector2(float(hotspot[0]), float(hotspot[1])) * scale + Vector2(0, size_px.y * 0.25)
-		draw_texture_rect(tex, Rect2(top_left, size_px), false, tint)
-
-	func _health_bar(top_left: Vector2, width: float, frac: float, repairing: bool) -> void:
-		draw_rect(Rect2(top_left, Vector2(width, 4)), Color(0, 0, 0, 0.6))
-		var c := Color(0.3, 0.9, 0.3) if frac > 0.5 else (Color(0.95, 0.8, 0.2) if frac > 0.25 else Color(0.95, 0.3, 0.2))
-		draw_rect(Rect2(top_left, Vector2(width * frac, 4)), c)
-		if repairing:
-			draw_rect(Rect2(top_left + Vector2(width - 6, -6), Vector2(6, 6)), Color(1, 1, 1, 0.8))
+			draw_rect(Rect2(body + Vector2(-10 + i * 3, 10), Vector2(2, 2)), Color(1, 0.85, 0.3, 0.9) if i < e.ammo else Color(0, 0, 0, 0.5))
 
 
 class _FxLayer:
@@ -286,31 +443,24 @@ class _FxLayer:
 
 	func _draw() -> void:
 		var bank: SpriteBank = view.bank
-		var scale := view.cell / SpriteBank.RA_CELL_PX
+		for p in view.sim.projectiles:
+			var fx := BattleView.fx_for(str(p["weapon"]))
+			var img := str(fx["projectile"])
+			var pos := view.to_px(Vector2(float(p["x"]), float(p["y"])))
+			var shooter: BattleSim.Ent = view.sim.get_entity(int(p["from"]))
+			if shooter != null and shooter.kind == BattleSim.Kind.AIRCRAFT:
+				pos.y -= view.AIR_ALTITUDE_PX * 0.5
+			if not img.is_empty() and bank.has_sequence(img, "idle"):
+				view.blit(self, img, "idle", float(p["heading"]), 0, pos)
 		for fx in view._effects:
-			var age: float = view._wall - fx["t0"]
-			var k: float = age / fx["life"]
-			match fx["kind"]:
-				"shot":
-					var a := view.to_px(fx["from"])
-					var b := view.to_px(fx["to"])
-					var col := Color(1, 0.95, 0.6, 1.0 - k)
-					if str(fx["weapon"]).begins_with("Hellfire") or fx["weapon"] == "Nike":
-						col = Color(1, 0.6, 0.3, 1.0 - k)
-					draw_line(a, b, col, 2.0)
-					draw_circle(a, 3.0, Color(1, 1, 0.8, 1.0 - k))
-				"hit":
-					var frames: Array = bank.item("piff").get("frames_godot", [])
-					if not frames.is_empty():
-						var tex := bank.texture(frames[mini(int(k * frames.size()), frames.size() - 1)])
-						if tex != null:
-							var sz := Vector2(tex.get_width(), tex.get_height()) * scale
-							draw_texture_rect(tex, Rect2(view.to_px(fx["pos"]) - sz * 0.5, sz), false)
-				"explosion":
-					var frames: Array = bank.item("explosion").get("frames_godot", [])
-					if not frames.is_empty():
-						var tex := bank.texture(frames[mini(int(k * frames.size()), frames.size() - 1)])
-						if tex != null:
-							var s := scale * (2.0 if fx["big"] else 1.0)
-							var sz := Vector2(tex.get_width(), tex.get_height()) * s
-							draw_texture_rect(tex, Rect2(view.to_px(fx["pos"]) - sz * 0.5, sz), false)
+			if int(fx.get("layer", 2)) != 2 or fx.has("side"):
+				continue
+			var age: float = view._wall - float(fx["t0"])
+			var n := bank.length(fx["image"], fx["seq"])
+			var idx := int(age * 1000.0 / bank.tick_ms(fx["image"], fx["seq"]))
+			if bool(fx.get("loop", false)):
+				idx = idx % maxi(n, 1)
+			elif idx >= n:
+				continue
+			var pos := view.to_px(fx["pos"]) + Vector2(0, -float(fx.get("lift", 0.0)))
+			view.blit(self, fx["image"], fx["seq"], float(fx["heading"]), idx, pos)

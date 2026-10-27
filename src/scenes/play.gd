@@ -4,7 +4,7 @@ extends Control
 
 const COUNTDOWN_S := 2.0
 const RESUME_COUNTDOWN_S := 3.0
-const BATTLE_FRACTION := 0.625
+const BATTLE_FRACTION := 2.0 / 3.0
 const END_FADE_S := 0.6
 
 var level: Level
@@ -143,7 +143,7 @@ func _build_layout() -> void:
 
 	# debug panel (F3): stem toggles prove muting and restoration without a restart (M0 evidence)
 	_debug_panel = VBoxContainer.new()
-	_debug_panel.position = Vector2(12, 110)
+	_debug_panel.position = Vector2(12, 300)
 	_debug_panel.visible = Session.debug
 	_battle_area.add_child(_debug_panel)
 	_debug_label = Label.new()
@@ -165,9 +165,9 @@ func _build_layout() -> void:
 	pause_btn.anchor_left = 0.5
 	pause_btn.anchor_right = 0.5
 	pause_btn.offset_left = -32
-	pause_btn.offset_top = 52
+	pause_btn.offset_top = 62
 	pause_btn.offset_right = 32
-	pause_btn.offset_bottom = 96
+	pause_btn.offset_bottom = 100
 	pause_btn.pressed.connect(_pause)
 	_battle_area.add_child(pause_btn)
 
@@ -323,7 +323,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
-		if clock != null and not _ended and clock.state in [SongClock.State.PLAYING, SongClock.State.COUNTDOWN]:
+		if _auto_plan.is_empty() and clock != null and not _ended and clock.state in [SongClock.State.PLAYING, SongClock.State.COUNTDOWN]:
 			_pause()
 
 

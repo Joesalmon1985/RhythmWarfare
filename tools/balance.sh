@@ -14,7 +14,7 @@ for pol in "${POLICIES[@]}"; do
 import sys, json
 txt = sys.stdin.read()
 try:
-    d = json.loads(txt[txt.index('{'):])
+    d = json.loads(txt[txt.index('{'):txt.rindex('}') + 1])
 except Exception as ex:
     print('$pol: ERROR', txt[:1500]); sys.exit(0)
 p = d['produced']; l = d['lost']
