@@ -1,20 +1,26 @@
 extends SceneTree
-## Headless test runner:  godot --headless --path . -s tests/run_tests.gd [--filter name]
-## Discovers tests/test_*.gd, runs every test_* method, prints a summary and exits 0 on success.
+## Headless test runner:  godot --headless --path . -s tests/run_tests.gd -- [--filter name]
+## Discovers tests/test_*.gd, runs every test_* method (coroutines are awaited), prints a summary, exits 0 on success.
+
+var _filter := ""
 
 
 func _init() -> void:
-	var filter := ""
 	var args := OS.get_cmdline_user_args()
 	for i in args.size():
 		if args[i] == "--filter" and i + 1 < args.size():
-			filter = args[i + 1]
+			_filter = args[i + 1]
+	_run()
+
+
+func _run() -> void:
+	await process_frame
 	var total_checks := 0
 	var total_failures: Array[String] = []
 	var files := _test_files()
 	files.sort()
 	for path in files:
-		if not filter.is_empty() and not path.contains(filter):
+		if not _filter.is_empty() and not path.contains(_filter):
 			continue
 		var script: GDScript = load(path)
 		if script == null:
@@ -26,8 +32,9 @@ func _init() -> void:
 			if not name.begins_with("test_"):
 				continue
 			var case: TestCase = script.new()
+			case.tree = self
 			case.set_current("%s.%s" % [path.get_file(), name])
-			case.call(name)
+			await case.call(name)
 			count += 1
 			total_checks += case.checks
 			total_failures.append_array(case.failures)

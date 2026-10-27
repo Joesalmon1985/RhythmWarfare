@@ -13,4 +13,17 @@ Standalone Godot 4.5 project; the PRD is the design authority (`docs/PRD.md`).
 
 ## Running
 
-Godot 4.5.1: open `project.godot`, or headless `godot --headless --path . --quit-after 3`.
+Godot 4.5.1: open `project.godot` and press Play, or run the Windows build from `build/windows/` after exporting
+(`docs/EXPORT.md`). Keys on desktop: F = kick, Space = bass (hold), J = snare, Esc = pause, F3 = debug panel with
+the stem mute toggles.
+
+- Tests: `bash tools/test.sh` (headless; refreshes the class cache, then `tests/run_tests.gd`).
+- Balance runs: `bash tools/balance.sh res://songs/level_01 1.0 perfect "accuracy:0.85" none` (see `docs/BALANCE.md`).
+- Scripted play in the real level screen: `RW_PACK=res://songs/level_01 RW_AUTOPLAY=perfect godot --path .`
+  prints a `PERF` line with p95 frame time and peak live units at the end (A13 evidence on a phone via logcat).
+- Screenshots: `godot --path . -s tools/shoot.gd -- res://src/scenes/play.tscn docs/shots 300:shot:name`.
+
+## Design documents
+
+`docs/PRD.md` (the product requirements), `docs/TIMING.md` (clocks and offset signs), `docs/BALANCE.md`
+(enemy schedule evidence), `docs/EXPORT.md` (Android and Windows builds), `assets/openra/PROVENANCE.md`.

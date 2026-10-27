@@ -249,6 +249,7 @@ func _process(_delta: float) -> void:
 	elif clock.state == SongClock.State.PLAYING and not _countdown_label.text.is_empty():
 		_countdown_label.text = ""
 	var wall := float(Time.get_ticks_msec()) / 1000.0
+	_perf_sample(_delta)
 	_autoplay_step(t)
 	for ev in match_ref.advance(t):
 		_on_judge_event(ev, wall)
@@ -372,8 +373,45 @@ func _finish() -> void:
 	transport.fade_out(END_FADE_S)
 	var r := match_ref.result()
 	r["duration_s"] = float(Time.get_ticks_msec()) / 1000.0 - _started_wall
+	r["perf"] = _perf_report()
 	Session.last_result = r
+	if not _perf_frames.is_empty():
+		print("PERF ", JSON.stringify(r["perf"]))
 	_banner.text = {"victory": "VICTORY", "defeat": "DEFEAT"}.get(r["outcome"], "SONG OVER")
 	await get_tree().create_timer(1.4).timeout
 	transport.stop()
 	get_tree().change_scene_to_file("res://src/scenes/result.tscn")
+
+
+# --- frame-time evidence for A13 (always sampled while playing; printed when RW_AUTOPLAY or debug is on) ---
+var _perf_frames: PackedFloat32Array = PackedFloat32Array()
+var _perf_peak_units := 0
+
+
+func _perf_sample(delta: float) -> void:
+	if clock.state != SongClock.State.PLAYING:
+		return
+	_perf_frames.append(delta * 1000.0)
+	var live := match_ref.sim.count_alive(0, BattleSim.Kind.UNIT) + match_ref.sim.count_alive(1, BattleSim.Kind.UNIT)
+	_perf_peak_units = maxi(_perf_peak_units, live)
+
+
+func _perf_report() -> Dictionary:
+	if _perf_frames.is_empty():
+		return {}
+	var sorted := _perf_frames.duplicate()
+	sorted.sort()
+	var sum := 0.0
+	for v in sorted:
+		sum += v
+	var p95: float = sorted[mini(int(floor(sorted.size() * 0.95)), sorted.size() - 1)]
+	var over33 := 0
+	for v in sorted:
+		if v > 33.0:
+			over33 += 1
+	return {
+		"frames": sorted.size(), "avg_ms": snappedf(sum / sorted.size(), 0.01), "p95_ms": snappedf(p95, 0.01),
+		"max_ms": snappedf(sorted[sorted.size() - 1], 0.01), "frames_over_33ms": over33,
+		"peak_live_units": _perf_peak_units, "static_memory_mb": snappedf(float(OS.get_static_memory_usage()) / 1048576.0, 0.1),
+		"device": OS.get_model_name(), "os": OS.get_name(), "renderer": RenderingServer.get_video_adapter_name(),
+	}

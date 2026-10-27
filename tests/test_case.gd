@@ -4,6 +4,7 @@ extends RefCounted
 
 var failures: Array[String] = []
 var checks := 0
+var tree: SceneTree
 var _current := ""
 
 

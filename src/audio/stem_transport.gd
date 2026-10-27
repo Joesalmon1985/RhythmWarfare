@@ -75,7 +75,7 @@ func is_playing() -> bool:
 
 
 func is_paused() -> bool:
-	return player.playing and player.stream_paused
+	return player.stream_paused
 
 
 ## Seconds into the stems as mixed so far (the audio thread's position). Sub-mix accuracy comes from
