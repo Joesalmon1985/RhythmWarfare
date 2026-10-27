@@ -33,7 +33,7 @@ static func _kill(sim: BattleSim, e: BattleSim.Ent) -> void:
 func test_initial_layout_is_mirrored() -> void:
 	var sim := _sim()
 	for side in 2:
-		for role in ["main", "factory", "barracks", "power", "turret", "aa", "sam", "wall"]:
+		for role in ["main", "factory", "barracks", "power", "turret", "sam", "wall"]:
 			assert_true(_find(sim, side, role) != null, "side %d has %s" % [side, role])
 		assert_eq(sim.pads_alive(side), 0, "no initial airfields")
 	var pm := sim.main_base(0)

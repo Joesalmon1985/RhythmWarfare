@@ -63,7 +63,52 @@ func _ready() -> void:
 	transport.song_finished.connect(_on_song_finished)
 
 	_started_wall = float(Time.get_ticks_msec()) / 1000.0
+	_setup_autoplay()
 	clock.begin_countdown(COUNTDOWN_S)
+
+
+# --- scripted play for device performance runs and screenshots (RW_AUTOPLAY=perfect|accuracy:<f>|none) ---
+var _auto_plan: Array = []
+var _auto_next := 0
+var _auto_holding: Dictionary = {}
+
+
+func _setup_autoplay() -> void:
+	if not OS.has_environment("RW_AUTOPLAY"):
+		return
+	var policy := OS.get_environment("RW_AUTOPLAY")
+	var prob := 1.0
+	if policy.begins_with("accuracy:"):
+		prob = float(policy.substr(9))
+	elif policy == "none":
+		prob = 0.0
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1
+	for n in level.notes:
+		_auto_plan.append(rng.randf() < prob)
+	if OS.has_environment("RW_ENEMY_FRACTION"):
+		var frac := float(OS.get_environment("RW_ENEMY_FRACTION"))
+		var kept: Array = []
+		for e in level.enemy_events:
+			if rng.randf() < frac:
+				kept.append(e)
+		level.enemy_events = kept
+
+
+func _autoplay_step(t: float) -> void:
+	if _auto_plan.is_empty():
+		return
+	while _auto_next < level.notes.size() and level.notes[_auto_next]["time"] <= t:
+		var n: Dictionary = level.notes[_auto_next]
+		if _auto_plan[_auto_next]:
+			match_ref.press(n["lane"], n["time"], 1)
+			if n["type"] == "hold":
+				_auto_holding[n["lane"]] = n["end_time"]
+		_auto_next += 1
+	for lane in _auto_holding.keys():
+		if t >= _auto_holding[lane] + 0.02:
+			match_ref.release(lane, _auto_holding[lane] + 0.02, 1)
+			_auto_holding.erase(lane)
 
 
 func _build_layout() -> void:
@@ -204,6 +249,7 @@ func _process(_delta: float) -> void:
 	elif clock.state == SongClock.State.PLAYING and not _countdown_label.text.is_empty():
 		_countdown_label.text = ""
 	var wall := float(Time.get_ticks_msec()) / 1000.0
+	_autoplay_step(t)
 	for ev in match_ref.advance(t):
 		_on_judge_event(ev, wall)
 	var events := match_ref.drain_events()

@@ -487,13 +487,15 @@ func _target_classes(e: Ent) -> Array:
 	return [0, 1, 2]  # units, defences, other buildings
 
 
-## Priority: nearest enemy unit or aircraft, then nearest defence, then nearest other building (walls last, only
-## when stuck). Weapons' target filters decide what can be hit at all.
-func _acquire(e: Ent, acquire_range: float, include_walls: bool) -> int:
+## Something to shoot right now: among enemies already inside weapon range, units and aircraft first, then
+## defences, then other buildings, walls last and only when the unit is stuck against them. Weapons' target
+## filters decide what can be hit at all.
+func _acquire(e: Ent, _acquire_range: float, include_walls: bool) -> int:
 	var best := -1
 	var best_class := 99
 	var best_d := INF
 	var p := e.center()
+	var range := _max_range(e)
 	for o in entities:
 		if not o.alive or o.side == e.side or o.id == e.id:
 			continue
@@ -509,12 +511,26 @@ func _acquire(e: Ent, acquire_range: float, include_walls: bool) -> int:
 				continue
 			cls = 3
 		var d := p.distance_to(o.center()) - (o.radius if o.kind == Kind.BUILDING else 0.0)
-		var limit := acquire_range if cls == 0 else maxf(_max_range(e), 0.5) + (ACQUIRE_EXTRA_CELLS if cls == 1 else 0.0)
-		if d > limit:
+		if d > range:
 			continue
 		if cls < best_class or (cls == best_class and d < best_d):
 			best = o.id
 			best_class = cls
+			best_d = d
+	return best
+
+
+## Nothing in range: the nearest enemy unit a little beyond range is worth closing on; otherwise advance.
+func _nearest_enemy_unit(e: Ent, within: float) -> int:
+	var best := -1
+	var best_d := INF
+	var p := e.center()
+	for o in entities:
+		if not o.alive or o.side == e.side or o.kind == Kind.BUILDING or not _can_hit(e, o):
+			continue
+		var d := p.distance_to(o.center())
+		if d <= within and d < best_d:
+			best = o.id
 			best_d = d
 	return best
 
@@ -542,13 +558,11 @@ func _unit_step(e: Ent) -> void:
 		e.target = -1
 	if e.rescan <= 0 or t == null:
 		e.rescan = TARGET_RESCAN_TICKS
-		var found := _acquire(e, _max_range(e) + ACQUIRE_EXTRA_CELLS, e.stuck > WALL_STUCK_TICKS)
-		if found >= 0 and (t == null or found != t.id):
-			var cand: Ent = by_id[found]
-			# keep a current unit target unless the new one is a unit too (units always outrank buildings)
-			if t == null or t.kind == Kind.BUILDING or cand.kind != Kind.BUILDING:
-				e.target = found
-				t = cand
+		var found := _acquire(e, 0.0, e.stuck > WALL_STUCK_TICKS)
+		if found < 0:
+			found = _nearest_enemy_unit(e, _max_range(e) + ACQUIRE_EXTRA_CELLS)
+		e.target = found
+		t = by_id.get(found)
 	_tick_weapons(e)
 	if t != null:
 		var tp := t.center()
@@ -559,12 +573,25 @@ func _unit_step(e: Ent) -> void:
 				in_range = true
 				_fire(e, w, t)
 		if in_range:
-			e.moving = false
 			e.turret_heading = (tp - e.center()).angle()
+			if t.kind == Kind.BUILDING:
+				e.moving = false  # siege: stand and shoot
+				return
+			# fire on the move: keep rolling forward so the larger army actually arrives
+			_move_toward(e, _advance_goal(e), true)
 			return
 		_move_toward(e, tp)
 		return
-	_move_toward(e, _enemy_main_pos(e.side))
+	_move_toward(e, _advance_goal(e))
+
+
+## March straight ahead in the unit's own row until level with the enemy base, then close on it. A wide front
+## instead of every unit converging on one point.
+func _advance_goal(e: Ent) -> Vector2:
+	var main := _enemy_main_pos(e.side)
+	if absf(e.x - main.x) > 4.0:
+		return Vector2(main.x, clampf(e.y, 0.5, height - 0.5))
+	return main
 
 
 func _tick_weapons(e: Ent) -> void:
@@ -658,7 +685,7 @@ func _kill(t: Ent, by: Ent) -> void:
 		events.append({"kind": "aircraft_lost", "side": t.side, "slot": t.slot, "id": t.id})
 
 
-func _move_toward(e: Ent, goal: Vector2) -> void:
+func _move_toward(e: Ent, goal: Vector2, keep_turret: bool = false) -> void:
 	var p := e.center()
 	var to := goal - p
 	if to.length() < 0.05:
@@ -675,7 +702,8 @@ func _move_toward(e: Ent, goal: Vector2) -> void:
 	if moved:
 		e.stuck = 0
 		e.heading = step.angle()
-		e.turret_heading = e.heading
+		if not keep_turret:
+			e.turret_heading = e.heading
 		e.moving = true
 	else:
 		e.stuck += 1

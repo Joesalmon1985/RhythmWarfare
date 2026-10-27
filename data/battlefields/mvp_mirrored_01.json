@@ -2,7 +2,7 @@
  "id": "mvp_mirrored_01",
  "width": 28,
  "height": 10,
- "note": "Cells. Side 0 (player) builds from the left edge and attacks towards +x; side 1 is the mirror image (x' = width - x - footprint_w). Air slots sit deepest at x 0-1; walls at x 8 leave rows 3-6 open as exits.",
+ "note": "Cells. Side 0 (player) builds from the left edge and attacks towards +x; side 1 is the mirror image (x' = width - x - footprint_w). Air slots sit deepest at x 0-1; walls at x 8 leave rows 3-6 open; units spawn inside the wall at x 6 and walk out through the gap.",
  "buildings": [
   {"role": "pad", "slot": 0, "x": 0, "y": 0, "w": 2, "h": 2},
   {"role": "pad", "slot": 1, "x": 0, "y": 2, "w": 2, "h": 2},
@@ -13,8 +13,7 @@
   {"role": "main", "x": 2, "y": 3, "w": 3, "h": 3},
   {"role": "power", "x": 2, "y": 8, "w": 2, "h": 2},
   {"role": "factory", "x": 5, "y": 0, "w": 3, "h": 3},
-  {"role": "sam", "x": 6, "y": 4, "w": 2, "h": 1},
-  {"role": "aa", "x": 4, "y": 6, "w": 1, "h": 1},
+  {"role": "sam", "x": 3, "y": 6, "w": 2, "h": 1},
   {"role": "barracks", "x": 5, "y": 7, "w": 2, "h": 2},
   {"role": "wall", "x": 8, "y": 0, "w": 1, "h": 1},
   {"role": "wall", "x": 8, "y": 1, "w": 1, "h": 1},
@@ -25,7 +24,7 @@
   {"role": "turret", "x": 9, "y": 1, "w": 1, "h": 1},
   {"role": "turret", "x": 9, "y": 8, "w": 1, "h": 1}
  ],
- "exits": {"factory": [8, 3], "barracks": [8, 6]},
+ "exits": {"factory": [6, 3], "barracks": [6, 6]},
  "air_hold": [12, 5],
  "air_wait": [1, 5]
 }
