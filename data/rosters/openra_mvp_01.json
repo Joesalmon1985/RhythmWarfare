@@ -1,0 +1,30 @@
+{
+ "id": "openra_mvp_01",
+ "note": "Mirrored MVP roster. Both sides use the same actors; the Allied tent barracks has no art, so barr serves both.",
+ "roles": {
+  "tank": "1tnk",
+  "infantry": "e1",
+  "aircraft": "heli",
+  "pad": "hpad",
+  "main": "fact",
+  "factory": "weap",
+  "barracks": "barr",
+  "power": "powr",
+  "wall": "sbag",
+  "turret": "gun",
+  "aa": "agun",
+  "sam": "sam"
+ },
+ "aircraft": {
+  "ammo": 8,
+  "rearm_delay_ticks": 50,
+  "rearm_count": 1,
+  "note": "AmmoPool Ammo 8 from HELI; ReloadAmmoPool defaults Delay 50 / Count 1 at the pinned commit"
+ },
+ "repair": {
+  "repair_percent": 20,
+  "repair_interval": 24,
+  "repair_step": 700,
+  "note": "RepairableBuilding.cs defaults with the RA ^Building RepairStep 700 override; walls are not ^Building and never repair"
+ }
+}

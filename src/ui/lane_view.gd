@@ -116,6 +116,8 @@ func _draw() -> void:
 		var col: Color = LANE_COLORS[lane]
 		var cx := lane_x(lane) + w * 0.5
 		var y0 := hy - (t_start - now) * px_per_s
+		if y0 > hy + 28.0 and n["type"] != "hold":
+			continue  # past the line and resolved: keep the button area clear
 		var alpha := 1.0
 		if st == Judge.State.MISS:
 			alpha = 0.35
@@ -123,11 +125,14 @@ func _draw() -> void:
 			alpha = 0.18
 		if n["type"] == "hold":
 			var y1 := hy - (t_end - now) * px_per_s
-			var top := minf(y0, y1)
 			var holding := st == Judge.State.HOLDING
-			draw_rect(Rect2(cx - w * 0.22, top, w * 0.44, absf(y0 - y1)), Color(col, (0.75 if holding else 0.45) * alpha), true)
-			draw_rect(Rect2(cx - w * 0.22, top, w * 0.44, absf(y0 - y1)), Color(col, alpha), false, 2.0)
-			_draw_note_head(lane, cx, minf(y0, hy) if holding else y0, col, alpha)
+			var bottom := minf(y0, hy) if (holding or st == Judge.State.MISS) else y0
+			if y1 > hy:
+				continue  # whole hold is behind the line
+			var top := minf(y1, bottom)
+			draw_rect(Rect2(cx - w * 0.22, top, w * 0.44, bottom - top), Color(col, (0.75 if holding else 0.45) * alpha), true)
+			draw_rect(Rect2(cx - w * 0.22, top, w * 0.44, bottom - top), Color(col, alpha), false, 2.0)
+			_draw_note_head(lane, cx, bottom, col, alpha)
 		else:
 			_draw_note_head(lane, cx, y0, col, alpha)
 

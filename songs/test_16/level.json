@@ -427,8 +427,8 @@
     },
     {
       "id": "e003",
-      "tick": 2880,
-      "action": "snare"
+      "tick": 2400,
+      "action": "kick"
     },
     {
       "id": "e004",
@@ -452,8 +452,8 @@
     },
     {
       "id": "e008",
-      "tick": 8640,
-      "action": "snare"
+      "tick": 7680,
+      "action": "bass"
     },
     {
       "id": "e009",
@@ -482,8 +482,8 @@
     },
     {
       "id": "e014",
-      "tick": 15360,
-      "action": "bass"
+      "tick": 14400,
+      "action": "snare"
     },
     {
       "id": "e015",
@@ -512,8 +512,8 @@
     },
     {
       "id": "e020",
-      "tick": 22080,
-      "action": "snare"
+      "tick": 21504,
+      "action": "bass"
     },
     {
       "id": "e021",
@@ -537,8 +537,8 @@
     },
     {
       "id": "e025",
-      "tick": 27840,
-      "action": "snare"
+      "tick": 26880,
+      "action": "bass"
     },
     {
       "id": "e026",
@@ -567,8 +567,8 @@
     },
     {
       "id": "e031",
-      "tick": 34560,
-      "action": "kick"
+      "tick": 33600,
+      "action": "snare"
     },
     {
       "id": "e032",
@@ -597,8 +597,8 @@
     },
     {
       "id": "e037",
-      "tick": 42240,
-      "action": "kick"
+      "tick": 41280,
+      "action": "snare"
     },
     {
       "id": "e038",
@@ -622,8 +622,8 @@
     },
     {
       "id": "e042",
-      "tick": 48960,
-      "action": "snare"
+      "tick": 48480,
+      "action": "kick"
     },
     {
       "id": "e043",
@@ -652,8 +652,8 @@
     },
     {
       "id": "e048",
-      "tick": 56640,
-      "action": "snare"
+      "tick": 56160,
+      "action": "kick"
     },
     {
       "id": "e049",

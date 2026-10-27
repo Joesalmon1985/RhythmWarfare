@@ -1,24 +1,29 @@
-"""Build a Rhythm Warfare song pack from the owner's 174 BPM MIDI clip library.
+"""Build a Rhythm Warfare song pack (level.json + four aligned placeholder stems).
 
-Run from the project root, pointing at the EXTRACTED library (the folder that holds
-01_Assembly_Placements.csv), e.g.:
+Two sources are supported. Run from the project root with `python -I` because both read
+untrusted downloaded data (this script only reads bytes/CSV/JSON from them, never code):
 
-    python -I tools/make_song_pack.py --library <extracted dir> --out songs/dev_dnb \
-        --bars 513-832 --seed 27 --level-id dev_dnb --title "Dev: DnB section"
+1. A MIDI pack (the owner's per-lane MIDI files plus Authoring_Manifest.json), the source of
+   truth for a real level. Every positive-velocity note-on in the kick and snare files is one
+   tap; every bass note-on is a tap (< 480 ticks) or a hold (>= 480 ticks, duration = note
+   length). Nothing is subsetted. If Player_Chart_Fragment.json is present the generated chart
+   must equal it exactly, and sections come from the MIDI section markers.
 
-What it does:
-  1. Walks 01_Assembly_Placements.csv for the requested global bar range, applying repeats,
-     and collects every drum note-on (track 13_Drums, General MIDI note numbers) plus the
-     sub-bass notes (11_Sub preferred, then 09_Reese, then 08_Growl per bar).
-  2. Picks a deterministic, evenly spread, strong-beat-preferring subset of the real hits
-     as the chart (see --kicks-per-bar / --snares-per-bar / --bass-per-bar), mirrors them
-     as enemy events at --enemy-accuracy, and derives sections from 02_Section_Roadmap.csv.
-  3. Synthesises four aligned placeholder stems (kick, snare, bass, other) with numpy from
-     EVERY hit in the MIDI, writes them as Ogg Vorbis via ffmpeg, verifies their lengths
-     with ffprobe, writes level.json and validates it the way the importer will.
+       python -I tools/make_song_pack.py --midi-pack <dir> --out songs/level_01 \
+           --level-id level_01 --title "First Contact" --seed 27
 
-The library is untrusted downloaded data: this script only reads bytes and CSV text from it
-and never executes anything found there. Run it with `python -I`.
+2. The 174 BPM clip library (01_Assembly_Placements.csv + MIDI clips), for placeholder packs:
+   a bar range is assembled from the placement sheet, and a deterministic, evenly spread,
+   strong-beat-preferring subset of the real hits is charted (--kicks-per-bar etc., or
+   --all-hits).
+
+       python -I tools/make_song_pack.py --library <dir> --out songs/test_16 --bars 513-528 \
+           --seed 7 --level-id test_16 --title "Test: 16 bars" --all-hits
+
+In both modes the enemy schedule mirrors the player's notes at a seeded accuracy
+(--enemy-profile mirror|ramp), the four stems are synthesised with numpy from every note,
+encoded to Ogg Vorbis with ffmpeg, length-checked with ffprobe, and level.json is validated
+the way the importer will.
 """
 from __future__ import annotations
 
@@ -34,7 +39,7 @@ import struct
 import subprocess
 import sys
 import wave
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Iterable, Sequence
 
@@ -66,13 +71,14 @@ GM_CRASH = {49, 57, 55, 52}
 GM_RIDE = {51, 59, 53}
 GM_TOMS = {41, 43, 45, 47, 48, 50}
 
+# Clip-library chart rules.
 HOLD_MIN_TICKS = TICKS_PER_BEAT          # a sub note >= 1 beat becomes a hold
 HOLD_MAX_TICKS = 4 * TICKS_PER_BAR       # holds are clamped to 4 bars
 BASS_GAP_TICKS = 480                     # minimum gap between a bass note's end and the next start
 HOLD_PRESS_GUARD_TICKS = 240             # kicks/snares keep clear of a hold's press moment +/- this
 
 LANE_ORDER = {"kick": 0, "snare": 1, "bass": 2}
-STEM_FILES = {"kick": "01_Kicks", "snare": "02_Snares", "bass": "03_Bass", "other": "04_Other"}
+LIBRARY_STEM_FILES = {"kick": "01_Kicks", "snare": "02_Snares", "bass": "03_Bass", "other": "04_Other"}
 
 RULES = {
     "airfield_limit": 5,
@@ -83,6 +89,8 @@ RULES = {
     "repair_budget_credits_per_side": 5000,
     "song_end_result": "defeat",
 }
+BATTLEFIELD = "mvp_mirrored_01"
+ROSTER = "openra_mvp_01"
 
 
 # --------------------------------------------------------------------------------------
@@ -93,8 +101,26 @@ class MidiNote:
     channel: int
     pitch: int
     velocity: int
-    start: int   # chart ticks (960 per beat) relative to the clip's bar 1
+    start: int   # chart ticks (960 per beat) relative to the file's bar 1
     end: int     # chart ticks, exclusive
+
+
+@dataclass(frozen=True)
+class NoteOn:
+    channel: int
+    pitch: int
+    velocity: int
+    tick: int    # chart ticks
+
+
+@dataclass
+class MidiFile:
+    ppq: int
+    fmt: int
+    notes: list[MidiNote] = field(default_factory=list)       # note-on/off pairs
+    note_ons: list[NoteOn] = field(default_factory=list)      # every positive-velocity note-on
+    markers: list[tuple[int, str]] = field(default_factory=list)  # (chart tick, text) meta 0x06
+    end_tick: int = 0                                         # latest track end, chart ticks
 
 
 class MidiParseError(ValueError):
@@ -114,9 +140,8 @@ def _read_vlq(data: bytes, pos: int) -> tuple[int, int]:
     raise MidiParseError("variable-length quantity longer than 4 bytes")
 
 
-def _parse_track(chunk: bytes, ppq: int) -> list[MidiNote]:
-    """Walk one MTrk chunk body and return the completed notes in chart ticks."""
-    notes: list[MidiNote] = []
+def _parse_track(chunk: bytes, ppq: int, out: MidiFile) -> None:
+    """Walk one MTrk chunk body, appending notes, note-ons and markers (in chart ticks)."""
     open_notes: dict[tuple[int, int], list[tuple[int, int]]] = {}  # (ch, pitch) -> [(start_tick, vel)]
     pos = 0
     abs_tick = 0
@@ -130,7 +155,7 @@ def _parse_track(chunk: bytes, ppq: int) -> list[MidiNote]:
         if stack:
             start, vel = stack.pop(0)
             if tick > start:
-                notes.append(MidiNote(channel, pitch, vel, to_chart(start), to_chart(tick)))
+                out.notes.append(MidiNote(channel, pitch, vel, to_chart(start), to_chart(tick)))
 
     while pos < len(chunk):
         delta, pos = _read_vlq(chunk, pos)
@@ -153,7 +178,10 @@ def _parse_track(chunk: bytes, ppq: int) -> list[MidiNote]:
             meta_type = chunk[pos]
             pos += 1
             length, pos = _read_vlq(chunk, pos)
+            payload = chunk[pos:pos + length]
             pos += length
+            if meta_type == 0x06:
+                out.markers.append((to_chart(abs_tick), payload.decode("utf-8", "replace").strip()))
             if meta_type == 0x2F:  # end of track
                 break
             continue
@@ -175,6 +203,7 @@ def _parse_track(chunk: bytes, ppq: int) -> list[MidiNote]:
         pos += 2
         if kind == 0x90 and d2 > 0:
             open_notes.setdefault((channel, d1), []).append((abs_tick, d2))
+            out.note_ons.append(NoteOn(channel, d1, d2, to_chart(abs_tick)))
         elif kind == 0x80 or (kind == 0x90 and d2 == 0):
             close(channel, d1, abs_tick)
 
@@ -182,11 +211,11 @@ def _parse_track(chunk: bytes, ppq: int) -> list[MidiNote]:
     for (channel, pitch), stack in open_notes.items():
         for start, vel in stack:
             if abs_tick > start:
-                notes.append(MidiNote(channel, pitch, vel, to_chart(start), to_chart(abs_tick)))
-    return notes
+                out.notes.append(MidiNote(channel, pitch, vel, to_chart(start), to_chart(abs_tick)))
+    out.end_tick = max(out.end_tick, to_chart(abs_tick))
 
 
-def parse_midi(path: Path) -> list[MidiNote]:
+def parse_midi_file(path: Path) -> MidiFile:
     data = path.read_bytes()
     if data[:4] != b"MThd":
         raise MidiParseError(f"{path.name}: not a Standard MIDI File")
@@ -197,8 +226,8 @@ def parse_midi(path: Path) -> list[MidiNote]:
         raise MidiParseError(f"{path.name}: SMPTE time division is not supported")
     if division == 0:
         raise MidiParseError(f"{path.name}: zero PPQ")
+    out = MidiFile(ppq=division, fmt=fmt)
     pos = 8 + header_len
-    notes: list[MidiNote] = []
     seen = 0
     while pos + 8 <= len(data) and seen < ntracks:
         chunk_id = data[pos:pos + 4]
@@ -206,14 +235,20 @@ def parse_midi(path: Path) -> list[MidiNote]:
         body = data[pos + 8:pos + 8 + chunk_len]
         pos += 8 + chunk_len
         if chunk_id == b"MTrk":
-            notes.extend(_parse_track(body, division))
+            _parse_track(body, division, out)
             seen += 1
-    notes.sort(key=lambda n: (n.start, n.channel, n.pitch))
-    return notes
+    out.notes.sort(key=lambda n: (n.start, n.channel, n.pitch))
+    out.note_ons.sort(key=lambda n: (n.tick, n.channel, n.pitch))
+    out.markers.sort(key=lambda m: m[0])
+    return out
+
+
+def parse_midi(path: Path) -> list[MidiNote]:
+    return parse_midi_file(path).notes
 
 
 # --------------------------------------------------------------------------------------
-# Placement sheet -> notes in the requested bar range
+# Placement sheet -> notes in the requested bar range (clip-library mode)
 # --------------------------------------------------------------------------------------
 @dataclass(frozen=True)
 class Placement:
@@ -298,7 +333,7 @@ def bars_covered(placements: Sequence[Placement], track: str, first_bar: int, la
 
 
 # --------------------------------------------------------------------------------------
-# Chart selection
+# Chart selection (clip-library mode)
 # --------------------------------------------------------------------------------------
 @dataclass(frozen=True)
 class Hit:
@@ -394,10 +429,6 @@ class BassNote:
     kind: str          # "tap" or "hold"
     duration: int      # hold length in ticks, 0 for taps
 
-    @property
-    def end(self) -> int:
-        return self.tick + self.duration
-
 
 def resolve_bass(selected: Sequence[Hit], duration_ticks: int) -> list[BassNote]:
     """Turn selected sub notes into taps/holds that never overlap and all end inside the song."""
@@ -424,6 +455,12 @@ def near_hold_press(tick: int, hold_starts: Sequence[int]) -> bool:
     return k < len(hold_starts) and hold_starts[k] <= tick + HOLD_PRESS_GUARD_TICKS
 
 
+# --------------------------------------------------------------------------------------
+# Enemy schedule
+# --------------------------------------------------------------------------------------
+ENEMY_PROFILES = ("mirror", "ramp")
+
+
 def even_subset(count: int, fraction: float, rng: random.Random) -> list[bool]:
     """A keep-mask with round(count*fraction) True entries, the False ones spread evenly."""
     keep = [True] * count
@@ -440,6 +477,41 @@ def even_subset(count: int, fraction: float, rng: random.Random) -> list[bool]:
     return keep
 
 
+def enemy_schedule(chart: Sequence[dict], sections: Sequence[dict], bars: int, profile: str,
+                   accuracy: float, ramp_start: float, ramp_end: float,
+                   rng: random.Random) -> tuple[list[dict], list[tuple[str, float]]]:
+    """Mirror the player's notes as enemy events, keeping a seeded fraction of them.
+
+    mirror: one accuracy for the whole song.
+    ramp:   per section, accuracy interpolates linearly from ramp_start at bar 1 to ramp_end
+            at the last bar, evaluated at the section's middle bar, so early bars are easy.
+    Returns the events (ids assigned, sorted) and the (section id, accuracy) pairs used.
+    """
+    chart = sorted(chart, key=lambda n: (n["tick"], LANE_ORDER[n["lane"]]))
+    used: list[tuple[str, float]] = []
+    kept: list[dict] = []
+    if profile == "mirror":
+        keep = even_subset(len(chart), accuracy, rng)
+        kept = [n for n, k in zip(chart, keep) if k]
+        used.append(("all", accuracy))
+    elif profile == "ramp":
+        for sec in sections:
+            start = int(sec["start_tick"])
+            end = start + int(sec["length_bars"]) * TICKS_PER_BAR
+            mid_bar = start / TICKS_PER_BAR + (int(sec["length_bars"]) - 1) / 2.0  # 0-based
+            frac = mid_bar / (bars - 1) if bars > 1 else 1.0
+            acc = ramp_start + (ramp_end - ramp_start) * frac
+            notes = [n for n in chart if start <= n["tick"] < end]
+            keep = even_subset(len(notes), acc, rng)
+            kept.extend(n for n, k in zip(notes, keep) if k)
+            used.append((str(sec["id"]), acc))
+    else:
+        raise ValueError(f"unknown enemy profile {profile}")
+    kept.sort(key=lambda n: (n["tick"], LANE_ORDER[n["lane"]]))
+    events = [{"id": f"e{i + 1:03d}", "tick": n["tick"], "action": n["lane"]} for i, n in enumerate(kept)]
+    return events, used
+
+
 # --------------------------------------------------------------------------------------
 # Sections
 # --------------------------------------------------------------------------------------
@@ -448,36 +520,58 @@ def slug(text: str) -> str:
     return s or "section"
 
 
-def build_sections(library: Path, first_bar: int, last_bar: int) -> list[dict[str, int | str]]:
-    roadmap = library / "02_Section_Roadmap.csv"
+def dedupe_ids(pieces: Sequence[tuple[int, int, str]]) -> list[dict[str, int | str]]:
+    """(start_tick, length_bars, name) -> section dicts with unique slug ids."""
+    sections: list[dict[str, int | str]] = []
+    used: set[str] = set()
+    for start_tick, length_bars, name in pieces:
+        sid = slug(name)
+        if sid in used:
+            sid = f"{sid}_{start_tick // TICKS_PER_BAR + 1}"
+        used.add(sid)
+        sections.append({"id": sid, "start_tick": start_tick, "length_bars": length_bars})
+    return sections
+
+
+def sixteen_bar_sections(bars: int) -> list[dict[str, int | str]]:
     pieces: list[tuple[int, int, str]] = []
+    bar = 0
+    while bar < bars:
+        length = min(16, bars - bar)
+        pieces.append((bar * TICKS_PER_BAR, length, f"part_{len(pieces) + 1}"))
+        bar += length
+    return dedupe_ids(pieces)
+
+
+def build_sections_from_roadmap(library: Path, first_bar: int, last_bar: int) -> list[dict[str, int | str]]:
+    roadmap = library / "02_Section_Roadmap.csv"
+    rows: list[tuple[int, int, str]] = []
     if roadmap.is_file():
         for row in read_csv_rows(roadmap):
             a, b = int(row["start_bar"]), int(row["end_bar"])
             a2, b2 = max(a, first_bar), min(b, last_bar)
             if a2 <= b2:
-                pieces.append((a2, b2, row.get("section", "").strip() or f"bars_{a2}_{b2}"))
-    pieces.sort()
-    contiguous = bool(pieces) and pieces[0][0] == first_bar and pieces[-1][1] == last_bar and all(
-        pieces[i][1] + 1 == pieces[i + 1][0] for i in range(len(pieces) - 1))
+                rows.append((a2, b2, row.get("section", "").strip() or f"bars_{a2}_{b2}"))
+    rows.sort()
+    contiguous = bool(rows) and rows[0][0] == first_bar and rows[-1][1] == last_bar and all(
+        rows[i][1] + 1 == rows[i + 1][0] for i in range(len(rows) - 1))
     if not contiguous:
-        pieces = []
-        bar = first_bar
-        n = 1
-        while bar <= last_bar:
-            end = min(bar + 15, last_bar)
-            pieces.append((bar, end, f"part_{n}"))
-            bar = end + 1
-            n += 1
-    sections: list[dict[str, int | str]] = []
-    used: set[str] = set()
-    for a, b, name in pieces:
-        sid = slug(name)
-        if sid in used:
-            sid = f"{sid}_{a}"
-        used.add(sid)
-        sections.append({"id": sid, "start_tick": (a - first_bar) * TICKS_PER_BAR, "length_bars": b - a + 1})
-    return sections
+        return sixteen_bar_sections(last_bar - first_bar + 1)
+    return dedupe_ids([((a - first_bar) * TICKS_PER_BAR, b - a + 1, name) for a, b, name in rows])
+
+
+def sections_from_markers(markers: Sequence[tuple[int, str]], duration_ticks: int) -> list[dict[str, int | str]] | None:
+    """Sections bounded by MIDI markers; None if they do not tile the song in whole bars."""
+    marks = sorted((t, name) for t, name in markers if 0 <= t < duration_ticks)
+    if not marks or marks[0][0] != 0:
+        return None
+    pieces: list[tuple[int, int, str]] = []
+    for i, (t, name) in enumerate(marks):
+        end = marks[i + 1][0] if i + 1 < len(marks) else duration_ticks
+        if end <= t or (end - t) % TICKS_PER_BAR != 0:
+            return None
+        pieces.append((t, (end - t) // TICKS_PER_BAR, name))
+    return dedupe_ids(pieces)
 
 
 # --------------------------------------------------------------------------------------
@@ -573,6 +667,23 @@ def synth_tom(sr: int, velocity: int, pitch: int) -> np.ndarray:
     return np.sin(phase) * np.exp(-t / 0.12) * 0.6 * vel_gain(velocity)
 
 
+def synth_riser(sr: int, rng: np.random.Generator, n: int) -> np.ndarray:
+    """Band-passed noise whose centre climbs 200 Hz -> 6 kHz while the level swells, cut at the end."""
+    hop = max(n // 64, 1)
+    win_n = 2 * hop
+    window = np.hanning(win_n)
+    out = np.zeros(n + win_n)
+    steps = int(math.ceil(n / hop))
+    for i in range(steps):
+        frac = i / max(steps - 1, 1)
+        centre = 200.0 * (30.0 ** frac)
+        chunk = shaped_noise(rng, win_n, sr, centre / 1.4, centre * 1.4) * window
+        out[i * hop:i * hop + win_n] += chunk
+    out = out[:n]
+    env = np.linspace(0.0, 1.0, n) ** 2 * 0.45
+    return out * env
+
+
 def adsr(n: int, sr: int, sustain: float = 0.85) -> np.ndarray:
     """Attack/decay to `sustain`, with 10 ms linear fades at both ends so nothing clicks."""
     fade = max(1, min(int(0.010 * sr), n // 2))
@@ -625,88 +736,62 @@ def write_wav(path: Path, samples: np.ndarray, sr: int) -> None:
 
 
 @dataclass
-class AudioSources:
-    drums: list[PlacedNote]
-    bass: list[PlacedNote]
-    chords: list[PlacedNote]
-    chord_bars: set[int]  # pack-local bar numbers (1-based) the chord placements cover
+class StemPlan:
+    """Everything the renderer needs: notes to voice on each stem, in pack-local ticks."""
+    kicks: list[PlacedNote] = field(default_factory=list)
+    snares: list[tuple[PlacedNote, str]] = field(default_factory=list)       # kind: snare/rim/clap
+    bass: list[PlacedNote] = field(default_factory=list)
+    percussion: list[tuple[PlacedNote, str]] = field(default_factory=list)   # kind: closed/pedal/open/crash/ride/tom
+    pad_bars: list[list[int]] = field(default_factory=list)                  # chord pitches, one list per bar
+    riser_ends: list[int] = field(default_factory=list)                      # ticks a 4-bar riser lands on
+    file_names: dict[str, str] = field(default_factory=lambda: dict(LIBRARY_STEM_FILES))
 
 
-def render_stems(sources: AudioSources, total_samples: int, sr: int, bars: int, seed: int,
-                 out_dir: Path) -> dict[str, Path]:
+def render_stems(plan: StemPlan, total_samples: int, sr: int, seed: int, out_dir: Path) -> dict[str, Path]:
     """Render the four stems (equal length) to WAV files; returns stem name -> path."""
     paths: dict[str, Path] = {}
 
-    # kick stem
     rng = np.random.default_rng(seed + 1)
     buf = np.zeros(total_samples, dtype=np.float32)
-    for n in sources.drums:
-        if n.pitch in GM_KICK:
-            add_at(buf, tick_to_sample(n.tick, sr), synth_kick(sr, rng, n.velocity))
-    paths["kick"] = out_dir / f"{STEM_FILES['kick']}.wav"
+    for n in plan.kicks:
+        add_at(buf, tick_to_sample(n.tick, sr), synth_kick(sr, rng, n.velocity))
+    paths["kick"] = out_dir / f"{plan.file_names['kick']}.wav"
     write_wav(paths["kick"], finalize(buf), sr)
 
-    # snare stem
     rng = np.random.default_rng(seed + 2)
     buf = np.zeros(total_samples, dtype=np.float32)
-    for n in sources.drums:
-        if n.pitch in GM_SNARE:
-            add_at(buf, tick_to_sample(n.tick, sr), synth_snare(sr, rng, n.velocity, "snare"))
-        elif n.pitch in GM_RIM:
-            add_at(buf, tick_to_sample(n.tick, sr), synth_snare(sr, rng, n.velocity, "rim"))
-        elif n.pitch in GM_CLAP:
-            add_at(buf, tick_to_sample(n.tick, sr), synth_snare(sr, rng, n.velocity, "clap"))
-    paths["snare"] = out_dir / f"{STEM_FILES['snare']}.wav"
+    for n, kind in plan.snares:
+        add_at(buf, tick_to_sample(n.tick, sr), synth_snare(sr, rng, n.velocity, kind))
+    paths["snare"] = out_dir / f"{plan.file_names['snare']}.wav"
     write_wav(paths["snare"], finalize(buf), sr)
 
-    # bass stem
     buf = np.zeros(total_samples, dtype=np.float32)
-    for n in sources.bass:
+    for n in plan.bass:
         s0 = tick_to_sample(n.tick, sr)
         s1 = min(tick_to_sample(n.end, sr), total_samples)
         if s1 > s0:
             add_at(buf, s0, synth_bass_note(sr, n.pitch, n.velocity, s1 - s0))
-    paths["bass"] = out_dir / f"{STEM_FILES['bass']}.wav"
+    paths["bass"] = out_dir / f"{plan.file_names['bass']}.wav"
     write_wav(paths["bass"], finalize(buf), sr)
 
-    # other stem: hats, cymbals, toms, anything else on the drum track, plus a quiet pad
     rng = np.random.default_rng(seed + 4)
     buf = np.zeros(total_samples, dtype=np.float32)
-    for n in sources.drums:
+    for n, kind in plan.percussion:
         s = tick_to_sample(n.tick, sr)
-        if n.pitch in GM_KICK | GM_SNARE | GM_RIM | GM_CLAP:
-            continue
-        if n.pitch in GM_CLOSED_HAT:
-            add_at(buf, s, synth_hat(sr, rng, n.velocity, "closed"))
-        elif n.pitch in GM_PEDAL_HAT:
-            add_at(buf, s, synth_hat(sr, rng, n.velocity, "pedal"))
-        elif n.pitch in GM_OPEN_HAT:
-            add_at(buf, s, synth_hat(sr, rng, n.velocity, "open"))
-        elif n.pitch in GM_CRASH:
-            add_at(buf, s, synth_hat(sr, rng, n.velocity, "crash"))
-        elif n.pitch in GM_RIDE:
-            add_at(buf, s, synth_hat(sr, rng, n.velocity, "ride"))
-        else:
+        if kind == "tom":
             add_at(buf, s, synth_tom(sr, n.velocity, n.pitch))
-    chord_notes = sorted(sources.chords, key=lambda c: c.tick)
-    last_pitches: list[int] = [49, 56]  # C#3 + G#3 drone, the piece's home key
-    for bar in range(1, bars + 1):
-        b0 = (bar - 1) * TICKS_PER_BAR
-        b1 = b0 + TICKS_PER_BAR
-        on_downbeat = sorted({c.pitch for c in chord_notes if c.tick < b0 + TICKS_PER_BEAT and c.end > b0})
-        anywhere = sorted({c.pitch for c in chord_notes if c.tick < b1 and c.end > b0})
-        if on_downbeat:
-            pitches = on_downbeat
-        elif anywhere:
-            pitches = anywhere
-        elif bar in sources.chord_bars:
-            pitches = last_pitches     # a rest inside a chord placement: carry the chord
         else:
-            pitches = [49, 56]
-        last_pitches = pitches
-        s0, s1 = tick_to_sample(b0, sr), tick_to_sample(b1, sr)
-        add_at(buf, s0, synth_pad_bar(sr, pitches[:6], s1 - s0))
-    paths["other"] = out_dir / f"{STEM_FILES['other']}.wav"
+            add_at(buf, s, synth_hat(sr, rng, n.velocity, kind))
+    for bar, pitches in enumerate(plan.pad_bars):
+        s0, s1 = tick_to_sample(bar * TICKS_PER_BAR, sr), tick_to_sample((bar + 1) * TICKS_PER_BAR, sr)
+        if pitches:
+            add_at(buf, s0, synth_pad_bar(sr, pitches[:6], s1 - s0))
+    for end_tick in plan.riser_ends:
+        start_tick = max(end_tick - 4 * TICKS_PER_BAR, 0)
+        s0, s1 = tick_to_sample(start_tick, sr), tick_to_sample(end_tick, sr)
+        if s1 > s0:
+            add_at(buf, s0, synth_riser(sr, rng, s1 - s0))
+    paths["other"] = out_dir / f"{plan.file_names['other']}.wav"
     write_wav(paths["other"], finalize(buf), sr)
     return paths
 
@@ -833,8 +918,7 @@ def validate_level(level: dict, pack_dir: Path) -> list[str]:
     if expected != duration:
         errors.append(f"sections cover ticks 0..{expected}, song is {duration}")
 
-    # Three-touch chords cannot be produced by this tool (kick and snare never share a tick),
-    # but flag them anyway for author review.
+    # Flag three-touch chords (kick + snare + bass on one tick) for author review.
     by_tick: dict[int, set[str]] = {}
     for note in level["notes"]:
         by_tick.setdefault(note["tick"], set()).add(note["lane"])
@@ -845,43 +929,25 @@ def validate_level(level: dict, pack_dir: Path) -> list[str]:
 
 
 # --------------------------------------------------------------------------------------
-# Main
+# Build results shared by both modes
 # --------------------------------------------------------------------------------------
-def parse_bars(text: str) -> tuple[int, int]:
-    m = re.fullmatch(r"\s*(\d+)\s*-\s*(\d+)\s*", text)
-    if not m:
-        raise argparse.ArgumentTypeError("--bars must look like 513-832")
-    a, b = int(m.group(1)), int(m.group(2))
-    if a < 1 or b < a:
-        raise argparse.ArgumentTypeError("--bars must be 1-based with start <= end")
-    return a, b
+@dataclass
+class Build:
+    bars: int
+    chart: list[dict]                    # notes without ids: tick, lane, type[, duration_ticks]
+    sections: list[dict[str, int | str]]
+    plan: StemPlan
+    info: list[str]                      # extra summary lines
+    bar_label: str                       # e.g. "global 513-832"
 
 
-def main(argv: Sequence[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--library", type=Path, required=True, help="extracted clip library folder")
-    ap.add_argument("--out", type=Path, required=True, help="song pack folder to write")
-    ap.add_argument("--bars", type=parse_bars, required=True, help="global bar range, e.g. 513-832")
-    ap.add_argument("--seed", type=int, default=27)
-    ap.add_argument("--title", default=None)
-    ap.add_argument("--level-id", default=None)
-    ap.add_argument("--kicks-per-bar", type=float, default=0.25, help="max average charted kicks per bar")
-    ap.add_argument("--snares-per-bar", type=float, default=0.1, help="max average charted snares per bar")
-    ap.add_argument("--bass-per-bar", type=float, default=0.125, help="max average charted bass notes per bar")
-    ap.add_argument("--all-hits", action="store_true", help="chart every hit (stress testing)")
-    ap.add_argument("--enemy-accuracy", type=float, default=0.85)
-    ap.add_argument("--sample-rate", type=int, default=48000)
-    ap.add_argument("--keep-wav", action="store_true")
-    args = ap.parse_args(argv)
-
+# --------------------------------------------------------------------------------------
+# Mode 1: clip library + placement sheet
+# --------------------------------------------------------------------------------------
+def build_from_library(args: argparse.Namespace) -> Build:
     first_bar, last_bar = args.bars
     bars = last_bar - first_bar + 1
     duration_ticks = bars * TICKS_PER_BAR
-    level_id = args.level_id or args.out.name
-    title = args.title or level_id
-    if not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
-        sys.exit("error: ffmpeg and ffprobe must be on PATH")
-
     placements = load_placements(args.library)
     piece_end = max(p.end_bar for p in placements)
     if last_bar > piece_end:
@@ -904,7 +970,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     uncovered = bars - sum(source_counts.values())
 
     chord_track = next((t for t in CHORD_TRACKS if bars_covered(placements, t, first_bar, last_bar)), None)
-    chords = [n for n in notes if n.track == chord_track] if chord_track else []
+    chords = sorted((n for n in notes if n.track == chord_track), key=lambda c: c.tick) if chord_track else []
     chord_bars = ({b - first_bar + 1 for b in bars_covered(placements, chord_track, first_bar, last_bar)}
                   if chord_track else set())
 
@@ -913,12 +979,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     kick_cands = unique_hits(drums, GM_KICK)
     snare_cands = unique_hits(drums, GM_SNARE)
     bass_cands = bass_candidates(bass_notes)
+    n_kick_cands, n_snare_cands = len(kick_cands), len(snare_cands)
 
     if args.all_hits:
         bass_sel = bass_cands
     else:
-        bass_budget = int(math.floor(args.bass_per_bar * bars))
-        bass_sel = spread_select(bass_cands, bass_budget, duration_ticks,
+        bass_sel = spread_select(bass_cands, int(math.floor(args.bass_per_bar * bars)), duration_ticks,
                                  lambda h: (h.duration, h.velocity, -h.pitch), rng)
     bass_chart = resolve_bass(bass_sel, duration_ticks)
     hold_starts = sorted(b.tick for b in bass_chart if b.kind == "hold")
@@ -937,25 +1003,308 @@ def main(argv: Sequence[str] | None = None) -> int:
         snare_chart = spread_select(snare_cands, int(math.floor(args.snares_per_bar * bars)), duration_ticks,
                                     lambda h: (beat_score(h.tick, "snare"), h.velocity), rng)
 
-    chart: list[dict] = []
-    for h in kick_chart:
-        chart.append({"tick": h.tick, "lane": "kick", "type": "tap"})
-    for h in snare_chart:
-        chart.append({"tick": h.tick, "lane": "snare", "type": "tap"})
+    chart: list[dict] = [{"tick": h.tick, "lane": "kick", "type": "tap"} for h in kick_chart]
+    chart += [{"tick": h.tick, "lane": "snare", "type": "tap"} for h in snare_chart]
     for b in bass_chart:
         entry: dict = {"tick": b.tick, "lane": "bass", "type": b.kind}
         if b.kind == "hold":
             entry["duration_ticks"] = b.duration
         chart.append(entry)
+
+    # ---- audio plan: every real hit ----
+    plan = StemPlan(file_names=dict(LIBRARY_STEM_FILES))
+    for n in drums:
+        if n.pitch in GM_KICK:
+            plan.kicks.append(n)
+        elif n.pitch in GM_SNARE:
+            plan.snares.append((n, "snare"))
+        elif n.pitch in GM_RIM:
+            plan.snares.append((n, "rim"))
+        elif n.pitch in GM_CLAP:
+            plan.snares.append((n, "clap"))
+        elif n.pitch in GM_CLOSED_HAT:
+            plan.percussion.append((n, "closed"))
+        elif n.pitch in GM_PEDAL_HAT:
+            plan.percussion.append((n, "pedal"))
+        elif n.pitch in GM_OPEN_HAT:
+            plan.percussion.append((n, "open"))
+        elif n.pitch in GM_CRASH:
+            plan.percussion.append((n, "crash"))
+        elif n.pitch in GM_RIDE:
+            plan.percussion.append((n, "ride"))
+        else:
+            plan.percussion.append((n, "tom"))
+    plan.bass = list(bass_notes)
+    drone = [49, 56]  # C#3 + G#3, the piece's home key
+    last_pitches = drone
+    for bar in range(1, bars + 1):
+        b0 = (bar - 1) * TICKS_PER_BAR
+        b1 = b0 + TICKS_PER_BAR
+        on_downbeat = sorted({c.pitch for c in chords if c.tick < b0 + TICKS_PER_BEAT and c.end > b0})
+        anywhere = sorted({c.pitch for c in chords if c.tick < b1 and c.end > b0})
+        if on_downbeat:
+            pitches = on_downbeat
+        elif anywhere:
+            pitches = anywhere
+        elif bar in chord_bars:
+            pitches = last_pitches     # a rest inside a chord placement: carry the chord
+        else:
+            pitches = drone
+        last_pitches = pitches
+        plan.pad_bars.append(pitches)
+
+    gm_counts: dict[int, int] = {}
+    for n in drums:
+        gm_counts[n.pitch] = gm_counts.get(n.pitch, 0) + 1
+    info = [
+        "drum hits (GM):  " + ", ".join(f"{k}:{v}" for k, v in sorted(gm_counts.items())),
+        "bass source:     " + ", ".join(f"{t} {c} bars" for t, c in source_counts.items() if c)
+        + (f", {uncovered} bars without bass" if uncovered else "") + f"; {len(bass_cands)} notes",
+        f"pad source:      {chord_track or 'drone only'} ({len(chords)} notes)",
+        f"candidates:      kicks {n_kick_cands}, snares {n_snare_cands}",
+    ]
+    sections = build_sections_from_roadmap(args.library, first_bar, last_bar)
+    return Build(bars, chart, sections, plan, info, f"global {first_bar}-{last_bar}")
+
+
+# --------------------------------------------------------------------------------------
+# Mode 2: per-lane MIDI pack with an authoring manifest
+# --------------------------------------------------------------------------------------
+# README chord table for the first level, used only for the placeholder pad in the "other" stem.
+# Voicings sit in a higher register (C#4..F#5) so they support rather than double the bass.
+CHORD_VOICINGS = {
+    "C#m": [61, 64, 68],        # C#4 E4 G#4
+    "A": [64, 69, 73],          # E4 A4 C#5
+    "E": [64, 68, 71],          # E4 G#4 B4
+    "B": [63, 66, 71],          # D#4 F#4 B4
+    "G#7": [63, 66, 68, 72],    # D#4 F#4 G#4 B#4
+}
+
+
+def level_01_chord_for_bar(bar: int) -> str:
+    """The README's optional chord table, bar (1-based) -> chord name."""
+    if bar <= 8:
+        return "C#m"
+    if bar <= 16:
+        return ["C#m", "A", "E", "G#7"][(bar - 9) // 2]
+    if bar <= 32:
+        return ["C#m", "A", "E", "B"][((bar - 17) // 2) % 4]
+    if bar <= 40:
+        return ["C#m", "A", "E", "B"][(bar - 33) // 2]
+    if bar <= 56:
+        return ["C#m", "A", "E", "B"][((bar - 41) // 2) % 4]
+    if bar <= 62:
+        return ["C#m", "A", "E"][(bar - 57) // 2]
+    if bar == 63:
+        return "G#7"
+    return "C#m"
+
+
+def load_manifest(pack: Path) -> dict:
+    path = pack / "Authoring_Manifest.json"
+    if not path.is_file():
+        sys.exit(f"error: {path} not found; --midi-pack must be the folder that holds it")
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    if int(manifest.get("bpm", 0)) != BPM:
+        sys.exit(f"error: manifest bpm {manifest.get('bpm')} differs from the game's fixed {BPM}")
+    if int(manifest.get("ticks_per_beat", 0)) != TICKS_PER_BEAT:
+        sys.exit(f"error: manifest ticks_per_beat {manifest.get('ticks_per_beat')} is not {TICKS_PER_BEAT}")
+    if list(manifest.get("time_signature", [])) != [4, 4]:
+        sys.exit("error: manifest time_signature is not 4/4")
+    bars = int(manifest["bars"])
+    if int(manifest.get("duration_ticks", bars * TICKS_PER_BAR)) != bars * TICKS_PER_BAR:
+        sys.exit("error: manifest duration_ticks does not equal bars x 3840")
+    for lane in ("kick", "snare", "bass"):
+        rel = str(manifest["midi_files"][lane]).replace("\\", "/")
+        full = (pack / rel).resolve()
+        if pack.resolve() not in full.parents or not full.is_file():
+            sys.exit(f"error: manifest midi file for {lane} is missing or escapes the pack: {rel}")
+    return manifest
+
+
+def pack_midi_path(pack: Path, manifest: dict, lane: str) -> Path:
+    return (pack / str(manifest["midi_files"][lane]).replace("\\", "/")).resolve()
+
+
+def chart_matches_fragment(chart: Sequence[dict], fragment_notes: Sequence[dict]) -> list[str]:
+    """Differences between the generated notes (with ids) and the reference conversion."""
+    diffs: list[str] = []
+    if len(chart) != len(fragment_notes):
+        diffs.append(f"note count {len(chart)} != fragment {len(fragment_notes)}")
+    keys = ("id", "tick", "lane", "type", "duration_ticks")
+    for i, (a, b) in enumerate(zip(chart, fragment_notes)):
+        ta = tuple(a.get(k) for k in keys)
+        tb = tuple(b.get(k) for k in keys)
+        if ta != tb:
+            diffs.append(f"note {i + 1}: generated {ta} != fragment {tb}")
+            if len(diffs) >= 10:
+                diffs.append("...")
+                break
+    return diffs
+
+
+def build_from_midi_pack(args: argparse.Namespace) -> Build:
+    pack: Path = args.midi_pack
+    manifest = load_manifest(pack)
+    bars = int(manifest["bars"])
+    duration_ticks = bars * TICKS_PER_BAR
+    rules = manifest.get("midi_interpretation", {}).get("bass", {})
+    hold_min = int(rules.get("hold_if_duration_at_least_ticks", 480))
+
+    files = {lane: parse_midi_file(pack_midi_path(pack, manifest, lane)) for lane in ("kick", "snare", "bass")}
+    for lane, mf in files.items():
+        if mf.ppq != TICKS_PER_BEAT:
+            print(f"note: {lane} MIDI uses {mf.ppq} PPQ; ticks were rescaled to {TICKS_PER_BEAT}")
+        bad = [n for n in mf.note_ons if n.tick >= duration_ticks]
+        if bad:
+            sys.exit(f"error: {lane} MIDI has {len(bad)} note-ons at or beyond the song end")
+
+    # Kick / snare: every positive-velocity note-on is a tap (lane = file, not channel).
+    chart: list[dict] = []
+    for lane in ("kick", "snare"):
+        chart += [{"tick": n.tick, "lane": lane, "type": "tap"} for n in files[lane].note_ons]
+    # Bass: one event per note-on; duration from its note-off; hold if long enough.
+    bass_mf = files["bass"]
+    if len(bass_mf.notes) != len(bass_mf.note_ons):
+        sys.exit(f"error: bass MIDI has {len(bass_mf.note_ons)} note-ons but {len(bass_mf.notes)} "
+                 "note-on/off pairs; every note-on needs a note-off")
+    taps = holds = 0
+    for n in bass_mf.notes:
+        length = n.end - n.start
+        if length >= hold_min:
+            chart.append({"tick": n.start, "lane": "bass", "type": "hold", "duration_ticks": length})
+            holds += 1
+        else:
+            chart.append({"tick": n.start, "lane": "bass", "type": "tap"})
+            taps += 1
     chart.sort(key=lambda n: (n["tick"], LANE_ORDER[n["lane"]]))
+
+    # Expected totals from the manifest.
+    expected = manifest.get("player_event_counts", {})
+    for lane, count in expected.items():
+        got = sum(1 for n in chart if n["lane"] == lane)
+        if int(count) != got:
+            sys.exit(f"error: manifest expects {count} {lane} events, the MIDI gives {got}")
+    if "bass_holds" in manifest and int(manifest["bass_holds"]) != holds:
+        sys.exit(f"error: manifest expects {manifest['bass_holds']} bass holds, the MIDI gives {holds}")
+    if "bass_taps" in manifest and int(manifest["bass_taps"]) != taps:
+        sys.exit(f"error: manifest expects {manifest['bass_taps']} bass taps, the MIDI gives {taps}")
+
+    # Sections: MIDI markers (from the kick file's conductor track; all files must agree).
+    info: list[str] = []
+    marker_sets = {lane: tuple(mf.markers) for lane, mf in files.items()}
+    if len(set(marker_sets.values())) != 1:
+        print("note: the three MIDI files carry different section markers; using the kick file's")
+    marker_sections = sections_from_markers(files["kick"].markers, duration_ticks)
+    fragment_path = pack / "Player_Chart_Fragment.json"
+    fragment = json.loads(fragment_path.read_text(encoding="utf-8")) if fragment_path.is_file() else None
+    if fragment is not None:
+        frag_sections = [dict(s) for s in fragment.get("sections", [])]
+        same_bounds = marker_sections is not None and [(s["start_tick"], s["length_bars"]) for s in marker_sections] \
+            == [(s["start_tick"], s["length_bars"]) for s in frag_sections]
+        if same_bounds and marker_sections is not None:
+            # Boundaries agree: keep the marker boundaries with the fragment's short ids.
+            sections = [{"id": f["id"], "start_tick": m["start_tick"], "length_bars": m["length_bars"]}
+                        for m, f in zip(marker_sections, frag_sections)]
+            info.append("sections:        MIDI markers agree with the fragment ("
+                        + ", ".join(f"{m['id']}={f['id']}" for m, f in zip(marker_sections, frag_sections)) + ")")
+        else:
+            print("warning: MIDI section markers do not match the fragment's sections; using the fragment's")
+            sections = frag_sections
+        if int(fragment.get("duration_ticks", duration_ticks)) != duration_ticks:
+            sys.exit("error: fragment duration_ticks differs from the manifest")
+        with_ids = [{"id": f"n{i + 1:04d}", **n} for i, n in enumerate(chart)]
+        diffs = chart_matches_fragment(with_ids, fragment.get("notes", []))
+        if diffs:
+            print("error: the chart generated from the MIDI does not equal Player_Chart_Fragment.json:")
+            for d in diffs:
+                print("  -", d)
+            sys.exit(1)
+        info.append(f"fragment check:  {len(with_ids)} notes identical to Player_Chart_Fragment.json")
+    elif marker_sections is not None:
+        sections = marker_sections
+        info.append("sections:        from MIDI markers")
+    else:
+        sections = sixteen_bar_sections(bars)
+        info.append("sections:        16-bar fallback (no usable markers, no fragment)")
+
+    # ---- audio plan ----
+    names = {}
+    for stem in ("kick", "snare", "bass", "other"):
+        future = str(manifest.get("expected_future_audio", {}).get(stem, f"audio/0{LANE_ORDER.get(stem, 3) + 1}_{stem.title()}.wav"))
+        names[stem] = Path(future).stem
+    plan = StemPlan(file_names=names)
+    plan.kicks = [PlacedNote("kick", n.pitch, n.velocity, n.tick, n.tick) for n in files["kick"].note_ons]
+    plan.snares = [(PlacedNote("snare", n.pitch, n.velocity, n.tick, n.tick), "snare") for n in files["snare"].note_ons]
+    plan.bass = [PlacedNote("bass", n.pitch, n.velocity, n.start, n.end) for n in bass_mf.notes]
+    # Other: closed hats on every 8th from bar 5, a 4-bar riser into bars 17 and 41, and the chord pad.
+    hat_start_bar = 5
+    for tick in range((hat_start_bar - 1) * TICKS_PER_BAR, duration_ticks, TICKS_PER_BEAT // 2):
+        vel = 96 if tick % TICKS_PER_BEAT == 0 else 72
+        plan.percussion.append((PlacedNote("hat", 42, vel, tick, tick), "closed"))
+    plan.riser_ends = [t for t in (16 * TICKS_PER_BAR, 40 * TICKS_PER_BAR) if t <= duration_ticks]
+    plan.pad_bars = [CHORD_VOICINGS[level_01_chord_for_bar(bar)] for bar in range(1, bars + 1)]
+
+    info.insert(0, f"midi pack:       {pack} ({manifest.get('title', '')!r}), {bars} bars, "
+                   f"PPQ {files['kick'].ppq}, {len(files['kick'].markers)} markers")
+    return Build(bars, chart, sections, plan, info, f"bars 1-{bars}")
+
+
+# --------------------------------------------------------------------------------------
+# Main
+# --------------------------------------------------------------------------------------
+def parse_bars(text: str) -> tuple[int, int]:
+    m = re.fullmatch(r"\s*(\d+)\s*-\s*(\d+)\s*", text)
+    if not m:
+        raise argparse.ArgumentTypeError("--bars must look like 513-832")
+    a, b = int(m.group(1)), int(m.group(2))
+    if a < 1 or b < a:
+        raise argparse.ArgumentTypeError("--bars must be 1-based with start <= end")
+    return a, b
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    src = ap.add_mutually_exclusive_group(required=True)
+    src.add_argument("--midi-pack", type=Path, help="folder holding Authoring_Manifest.json and the lane MIDIs")
+    src.add_argument("--library", type=Path, help="extracted 174 BPM clip library folder")
+    ap.add_argument("--out", type=Path, required=True, help="song pack folder to write")
+    ap.add_argument("--bars", type=parse_bars, help="(library) global bar range, e.g. 513-832")
+    ap.add_argument("--seed", type=int, default=27)
+    ap.add_argument("--title", default=None)
+    ap.add_argument("--level-id", default=None)
+    ap.add_argument("--kicks-per-bar", type=float, default=0.25, help="(library) max average charted kicks per bar")
+    ap.add_argument("--snares-per-bar", type=float, default=0.1, help="(library) max average charted snares per bar")
+    ap.add_argument("--bass-per-bar", type=float, default=0.125, help="(library) max average charted bass notes per bar")
+    ap.add_argument("--all-hits", action="store_true", help="(library) chart every hit, for stress testing")
+    ap.add_argument("--enemy-profile", choices=ENEMY_PROFILES, default="mirror",
+                    help="mirror: keep --enemy-accuracy of the player's notes; "
+                         "ramp: accuracy climbs per section from --enemy-start to --enemy-end")
+    ap.add_argument("--enemy-accuracy", type=float, default=0.85)
+    ap.add_argument("--enemy-start", type=float, default=0.6, help="(ramp) accuracy at bar 1")
+    ap.add_argument("--enemy-end", type=float, default=0.95, help="(ramp) accuracy at the last bar")
+    ap.add_argument("--sample-rate", type=int, default=48000)
+    ap.add_argument("--keep-wav", action="store_true")
+    args = ap.parse_args(argv)
+    if args.library is not None and args.bars is None:
+        ap.error("--bars is required with --library")
+    for name in ("enemy_accuracy", "enemy_start", "enemy_end"):
+        if not 0.0 <= getattr(args, name) <= 1.0:
+            ap.error(f"--{name.replace('_', '-')} must be between 0 and 1")
+    if not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
+        sys.exit("error: ffmpeg and ffprobe must be on PATH")
+
+    build = build_from_midi_pack(args) if args.midi_pack is not None else build_from_library(args)
+    bars = build.bars
+    duration_ticks = bars * TICKS_PER_BAR
+    level_id = args.level_id or args.out.name
+    title = args.title or level_id
+
+    chart = sorted(build.chart, key=lambda n: (n["tick"], LANE_ORDER[n["lane"]]))
     level_notes = [{"id": f"n{i + 1:04d}", **n} for i, n in enumerate(chart)]
-
-    keep = even_subset(len(chart), args.enemy_accuracy, rng)
-    enemy_events = [{"tick": n["tick"], "action": n["lane"]} for n, k in zip(chart, keep) if k]
-    enemy_events.sort(key=lambda e: (e["tick"], LANE_ORDER[e["action"]]))
-    enemy_events = [{"id": f"e{i + 1:03d}", **e} for i, e in enumerate(enemy_events)]
-
-    sections = build_sections(args.library, first_bar, last_bar)
+    rng = random.Random(args.seed ^ 0x5EED)
+    enemy_events, accuracies = enemy_schedule(chart, build.sections, bars, args.enemy_profile,
+                                              args.enemy_accuracy, args.enemy_start, args.enemy_end, rng)
 
     # ---- audio ----
     sr = args.sample_rate
@@ -963,12 +1312,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     total_samples = int(math.ceil(duration_seconds * sr)) + int(TAIL_SECONDS * sr)
     audio_dir = args.out / "audio"
     audio_dir.mkdir(parents=True, exist_ok=True)
-    wavs = render_stems(AudioSources(drums, bass_notes, chords, chord_bars), total_samples, sr, bars,
-                        args.seed, audio_dir)
+    wavs = render_stems(build.plan, total_samples, sr, args.seed, audio_dir)
     stems: dict[str, str] = {}
     ogg_durations: dict[str, float] = {}
     for stem, wav in wavs.items():
-        ogg = audio_dir / f"{STEM_FILES[stem]}.ogg"
+        ogg = wav.with_suffix(".ogg")
         encode_ogg(wav, ogg, sr)
         if not args.keep_wav:
             wav.unlink()
@@ -990,10 +1338,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         "duration_ticks": duration_ticks,
         "seed": args.seed,
         "stems": {k: stems[k] for k in ("kick", "snare", "bass", "other")},
-        "battlefield": "mvp_mirrored_01",
-        "roster": "openra_mvp_01",
+        "battlefield": BATTLEFIELD,
+        "roster": ROSTER,
         "rules": dict(RULES),
-        "sections": sections,
+        "sections": build.sections,
         "notes": level_notes,
         "enemy_events": enemy_events,
     }
@@ -1007,25 +1355,22 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 1
 
     # ---- summary ----
-    taps = sum(1 for b in bass_chart if b.kind == "tap")
-    holds = len(bass_chart) - taps
-    gm_counts: dict[int, int] = {}
-    for n in drums:
-        gm_counts[n.pitch] = gm_counts.get(n.pitch, 0) + 1
+    kicks = sum(1 for n in chart if n["lane"] == "kick")
+    snares = sum(1 for n in chart if n["lane"] == "snare")
+    taps = sum(1 for n in chart if n["lane"] == "bass" and n["type"] == "tap")
+    holds = sum(1 for n in chart if n["lane"] == "bass" and n["type"] == "hold")
     print(f"pack:            {args.out}  ({level_id}: {title!r})")
-    print(f"bars:            {bars} (global {first_bar}-{last_bar}), seed {args.seed}")
+    print(f"bars:            {bars} ({build.bar_label}), seed {args.seed}")
     print(f"duration:        {duration_ticks} ticks = {duration_seconds:.3f} s (+{TAIL_SECONDS:.0f} s audio tail)")
-    print(f"drum hits (GM):  " + ", ".join(f"{k}:{v}" for k, v in sorted(gm_counts.items())))
-    print(f"bass source:     " + ", ".join(f"{t} {c} bars" for t, c in source_counts.items() if c)
-          + (f", {uncovered} bars without bass" if uncovered else "") + f"; {len(bass_cands)} notes")
-    print(f"pad source:      {chord_track or 'drone only'} ({len(chords)} notes)")
-    print(f"candidates:      kicks {len(unique_hits(drums, GM_KICK))}, snares {len(unique_hits(drums, GM_SNARE))}")
-    print(f"charted:         kicks {len(kick_chart)}, snares {len(snare_chart)}, bass taps {taps}, bass holds {holds}"
+    for line in build.info:
+        print(line)
+    print(f"charted:         kicks {kicks}, snares {snares}, bass taps {taps}, bass holds {holds}"
           f" (total {len(level_notes)})")
-    print(f"enemy events:    {len(enemy_events)} ({args.enemy_accuracy:.0%} of {len(level_notes)})")
-    print(f"max per side:    {len(kick_chart)} tanks, {len(snare_chart) * RULES['infantry_per_snare']} infantry")
-    print(f"sections:        {len(sections)}: " + ", ".join(str(s['id']) for s in sections))
-    print("audio (ogg):     " + ", ".join(f"{STEM_FILES[k]} {v:.3f} s" for k, v in ogg_durations.items())
+    acc_text = ", ".join(f"{sid} {acc:.0%}" for sid, acc in accuracies)
+    print(f"enemy events:    {len(enemy_events)} of {len(level_notes)} (profile {args.enemy_profile}: {acc_text})")
+    print(f"max per side:    {kicks} tanks, {snares * RULES['infantry_per_snare']} infantry")
+    print(f"sections:        {len(build.sections)}: " + ", ".join(str(s['id']) for s in build.sections))
+    print("audio (ogg):     " + ", ".join(f"{Path(stems[k]).stem} {v:.3f} s" for k, v in ogg_durations.items())
           + f" (spread {spread * 1000:.2f} ms)")
     print(f"wrote:           {level_path}")
     return 0

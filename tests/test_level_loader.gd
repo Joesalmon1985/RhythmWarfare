@@ -100,7 +100,7 @@ func test_three_touch_chord_is_flagged_for_review() -> void:
 
 
 func test_real_packs_load_with_aligned_stems() -> void:
-	for pack in ["songs/test_16", "songs/dev_dnb"]:
+	for pack in ["songs/test_16", "songs/level_01"]:
 		var path := TestCase.project_path(pack)
 		if not FileAccess.file_exists(path.path_join("level.json")):
 			fail("pack missing: %s" % path)

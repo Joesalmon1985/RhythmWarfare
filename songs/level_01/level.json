@@ -1,0 +1,3396 @@
+{
+  "schema_version": 1,
+  "level_id": "level_01",
+  "title": "First Contact",
+  "bpm": 174,
+  "time_signature": [
+    4,
+    4
+  ],
+  "ticks_per_beat": 960,
+  "song_offset_ms": 0,
+  "duration_ticks": 245760,
+  "seed": 27,
+  "stems": {
+    "kick": "audio/01_Kick.ogg",
+    "snare": "audio/02_Snare.ogg",
+    "bass": "audio/03_Bass.ogg",
+    "other": "audio/04_Other.ogg"
+  },
+  "battlefield": "mvp_mirrored_01",
+  "roster": "openra_mvp_01",
+  "rules": {
+    "airfield_limit": 5,
+    "aircraft_limit": 5,
+    "initial_airfields": 0,
+    "tank_per_kick": 1,
+    "infantry_per_snare": 5,
+    "repair_budget_credits_per_side": 5000,
+    "song_end_result": "defeat"
+  },
+  "sections": [
+    {
+      "id": "intro",
+      "start_tick": 0,
+      "length_bars": 8
+    },
+    {
+      "id": "build",
+      "start_tick": 30720,
+      "length_bars": 8
+    },
+    {
+      "id": "drop_1",
+      "start_tick": 61440,
+      "length_bars": 16
+    },
+    {
+      "id": "breakdown",
+      "start_tick": 122880,
+      "length_bars": 8
+    },
+    {
+      "id": "drop_2",
+      "start_tick": 153600,
+      "length_bars": 16
+    },
+    {
+      "id": "finale",
+      "start_tick": 215040,
+      "length_bars": 8
+    }
+  ],
+  "notes": [
+    {
+      "id": "n0001",
+      "tick": 0,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0002",
+      "tick": 1920,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0003",
+      "tick": 3840,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0004",
+      "tick": 5760,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0005",
+      "tick": 7680,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0006",
+      "tick": 9600,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0007",
+      "tick": 11520,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0008",
+      "tick": 13440,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0009",
+      "tick": 15360,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0010",
+      "tick": 16320,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0011",
+      "tick": 17280,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0012",
+      "tick": 18240,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0013",
+      "tick": 19200,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0014",
+      "tick": 20160,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0015",
+      "tick": 21120,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0016",
+      "tick": 22080,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0017",
+      "tick": 23040,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0018",
+      "tick": 24000,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0019",
+      "tick": 24960,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0020",
+      "tick": 25920,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0021",
+      "tick": 26880,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0022",
+      "tick": 27840,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0023",
+      "tick": 28800,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0024",
+      "tick": 29760,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0025",
+      "tick": 30720,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0026",
+      "tick": 30720,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0027",
+      "tick": 31680,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0028",
+      "tick": 33120,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0029",
+      "tick": 33600,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0030",
+      "tick": 34560,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0031",
+      "tick": 34560,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0032",
+      "tick": 35520,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0033",
+      "tick": 36960,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0034",
+      "tick": 37440,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0035",
+      "tick": 38400,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0036",
+      "tick": 38400,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0037",
+      "tick": 39360,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0038",
+      "tick": 40800,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0039",
+      "tick": 41280,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0040",
+      "tick": 42240,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0041",
+      "tick": 42240,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0042",
+      "tick": 43200,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0043",
+      "tick": 44640,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0044",
+      "tick": 45120,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0045",
+      "tick": 46080,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0046",
+      "tick": 46080,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0047",
+      "tick": 47040,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0048",
+      "tick": 48480,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0049",
+      "tick": 48960,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0050",
+      "tick": 49920,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0051",
+      "tick": 49920,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0052",
+      "tick": 50880,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0053",
+      "tick": 52320,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0054",
+      "tick": 52800,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0055",
+      "tick": 53760,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0056",
+      "tick": 53760,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0057",
+      "tick": 54720,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0058",
+      "tick": 56160,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0059",
+      "tick": 56640,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0060",
+      "tick": 57600,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0061",
+      "tick": 57600,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0062",
+      "tick": 58560,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0063",
+      "tick": 60000,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0064",
+      "tick": 60480,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0065",
+      "tick": 61440,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0066",
+      "tick": 61440,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0067",
+      "tick": 62400,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0068",
+      "tick": 63360,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 960
+    },
+    {
+      "id": "n0069",
+      "tick": 63840,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0070",
+      "tick": 64320,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0071",
+      "tick": 65280,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0072",
+      "tick": 65760,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0073",
+      "tick": 66240,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0074",
+      "tick": 66720,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0075",
+      "tick": 67680,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0076",
+      "tick": 68160,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0077",
+      "tick": 69120,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0078",
+      "tick": 69120,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0079",
+      "tick": 70080,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0080",
+      "tick": 71040,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0081",
+      "tick": 71040,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0082",
+      "tick": 72000,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0083",
+      "tick": 72960,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0084",
+      "tick": 72960,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 2880
+    },
+    {
+      "id": "n0085",
+      "tick": 73920,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0086",
+      "tick": 74400,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0087",
+      "tick": 75360,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0088",
+      "tick": 75840,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0089",
+      "tick": 76800,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0090",
+      "tick": 76800,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0091",
+      "tick": 77760,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0092",
+      "tick": 78720,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 960
+    },
+    {
+      "id": "n0093",
+      "tick": 79200,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0094",
+      "tick": 79680,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0095",
+      "tick": 80640,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0096",
+      "tick": 81120,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0097",
+      "tick": 81600,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0098",
+      "tick": 82080,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0099",
+      "tick": 83040,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0100",
+      "tick": 83520,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0101",
+      "tick": 84480,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0102",
+      "tick": 84480,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0103",
+      "tick": 85440,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0104",
+      "tick": 86400,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0105",
+      "tick": 86400,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0106",
+      "tick": 87360,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0107",
+      "tick": 88320,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0108",
+      "tick": 88320,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 2880
+    },
+    {
+      "id": "n0109",
+      "tick": 89280,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0110",
+      "tick": 89760,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0111",
+      "tick": 90720,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0112",
+      "tick": 91200,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0113",
+      "tick": 92160,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0114",
+      "tick": 92160,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0115",
+      "tick": 93120,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0116",
+      "tick": 94080,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 960
+    },
+    {
+      "id": "n0117",
+      "tick": 94560,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0118",
+      "tick": 95040,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0119",
+      "tick": 96000,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0120",
+      "tick": 96480,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0121",
+      "tick": 96960,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0122",
+      "tick": 97440,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0123",
+      "tick": 98400,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0124",
+      "tick": 98880,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0125",
+      "tick": 99840,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0126",
+      "tick": 99840,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0127",
+      "tick": 100800,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0128",
+      "tick": 101760,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0129",
+      "tick": 101760,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0130",
+      "tick": 102720,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0131",
+      "tick": 103680,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0132",
+      "tick": 103680,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 2880
+    },
+    {
+      "id": "n0133",
+      "tick": 104640,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0134",
+      "tick": 105120,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0135",
+      "tick": 106080,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0136",
+      "tick": 106560,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0137",
+      "tick": 107520,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0138",
+      "tick": 107520,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0139",
+      "tick": 108480,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0140",
+      "tick": 109440,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 960
+    },
+    {
+      "id": "n0141",
+      "tick": 109920,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0142",
+      "tick": 110400,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0143",
+      "tick": 111360,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0144",
+      "tick": 111840,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0145",
+      "tick": 112320,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0146",
+      "tick": 112800,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0147",
+      "tick": 113760,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0148",
+      "tick": 114240,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0149",
+      "tick": 115200,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0150",
+      "tick": 115200,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0151",
+      "tick": 116160,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0152",
+      "tick": 117120,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0153",
+      "tick": 117120,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0154",
+      "tick": 118080,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0155",
+      "tick": 119040,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0156",
+      "tick": 119040,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 2880
+    },
+    {
+      "id": "n0157",
+      "tick": 120000,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0158",
+      "tick": 120480,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0159",
+      "tick": 121440,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0160",
+      "tick": 121920,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0161",
+      "tick": 122880,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 3840
+    },
+    {
+      "id": "n0162",
+      "tick": 130560,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 3840
+    },
+    {
+      "id": "n0163",
+      "tick": 138240,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0164",
+      "tick": 138240,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 3840
+    },
+    {
+      "id": "n0165",
+      "tick": 139200,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0166",
+      "tick": 140160,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0167",
+      "tick": 141120,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0168",
+      "tick": 142080,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0169",
+      "tick": 143040,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0170",
+      "tick": 144000,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0171",
+      "tick": 144960,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0172",
+      "tick": 145920,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0173",
+      "tick": 145920,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 3840
+    },
+    {
+      "id": "n0174",
+      "tick": 146880,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0175",
+      "tick": 147840,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0176",
+      "tick": 148800,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0177",
+      "tick": 149760,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0178",
+      "tick": 150720,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0179",
+      "tick": 151680,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0180",
+      "tick": 152640,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0181",
+      "tick": 153600,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0182",
+      "tick": 153600,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0183",
+      "tick": 154560,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0184",
+      "tick": 155520,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 960
+    },
+    {
+      "id": "n0185",
+      "tick": 156000,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0186",
+      "tick": 156480,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0187",
+      "tick": 157440,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0188",
+      "tick": 157920,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0189",
+      "tick": 158400,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0190",
+      "tick": 158880,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0191",
+      "tick": 159840,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0192",
+      "tick": 160320,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0193",
+      "tick": 161280,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0194",
+      "tick": 161280,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0195",
+      "tick": 162240,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0196",
+      "tick": 163200,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0197",
+      "tick": 163200,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0198",
+      "tick": 164160,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0199",
+      "tick": 165120,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0200",
+      "tick": 165120,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 2880
+    },
+    {
+      "id": "n0201",
+      "tick": 166080,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0202",
+      "tick": 166560,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0203",
+      "tick": 167520,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0204",
+      "tick": 168000,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0205",
+      "tick": 168960,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0206",
+      "tick": 168960,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0207",
+      "tick": 169920,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0208",
+      "tick": 170880,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 960
+    },
+    {
+      "id": "n0209",
+      "tick": 171360,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0210",
+      "tick": 171840,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0211",
+      "tick": 172800,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0212",
+      "tick": 173280,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0213",
+      "tick": 173760,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0214",
+      "tick": 174240,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0215",
+      "tick": 175200,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0216",
+      "tick": 175680,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0217",
+      "tick": 176640,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0218",
+      "tick": 176640,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0219",
+      "tick": 177600,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0220",
+      "tick": 178560,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0221",
+      "tick": 178560,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0222",
+      "tick": 179520,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0223",
+      "tick": 180480,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0224",
+      "tick": 180480,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 2880
+    },
+    {
+      "id": "n0225",
+      "tick": 181440,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0226",
+      "tick": 181920,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0227",
+      "tick": 182880,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0228",
+      "tick": 183360,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0229",
+      "tick": 184320,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0230",
+      "tick": 184320,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0231",
+      "tick": 185280,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0232",
+      "tick": 186240,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 960
+    },
+    {
+      "id": "n0233",
+      "tick": 186720,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0234",
+      "tick": 187200,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0235",
+      "tick": 188160,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0236",
+      "tick": 188640,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0237",
+      "tick": 189120,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0238",
+      "tick": 189600,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0239",
+      "tick": 190560,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0240",
+      "tick": 191040,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0241",
+      "tick": 192000,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0242",
+      "tick": 192000,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0243",
+      "tick": 192960,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0244",
+      "tick": 193920,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0245",
+      "tick": 193920,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0246",
+      "tick": 194880,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0247",
+      "tick": 195840,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0248",
+      "tick": 195840,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 2880
+    },
+    {
+      "id": "n0249",
+      "tick": 196800,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0250",
+      "tick": 197280,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0251",
+      "tick": 198240,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0252",
+      "tick": 198720,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0253",
+      "tick": 199680,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0254",
+      "tick": 199680,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0255",
+      "tick": 200640,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0256",
+      "tick": 201600,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 960
+    },
+    {
+      "id": "n0257",
+      "tick": 202080,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0258",
+      "tick": 202560,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0259",
+      "tick": 203520,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0260",
+      "tick": 204000,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0261",
+      "tick": 204480,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0262",
+      "tick": 204960,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0263",
+      "tick": 205920,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0264",
+      "tick": 206400,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0265",
+      "tick": 207360,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0266",
+      "tick": 207360,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0267",
+      "tick": 208320,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0268",
+      "tick": 209280,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0269",
+      "tick": 209280,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0270",
+      "tick": 210240,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0271",
+      "tick": 211200,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0272",
+      "tick": 211200,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 2880
+    },
+    {
+      "id": "n0273",
+      "tick": 212160,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0274",
+      "tick": 212640,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0275",
+      "tick": 213600,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0276",
+      "tick": 214080,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0277",
+      "tick": 215040,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0278",
+      "tick": 215040,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0279",
+      "tick": 216000,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0280",
+      "tick": 216960,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 960
+    },
+    {
+      "id": "n0281",
+      "tick": 217440,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0282",
+      "tick": 217920,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0283",
+      "tick": 218880,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0284",
+      "tick": 219360,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0285",
+      "tick": 219840,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0286",
+      "tick": 220320,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0287",
+      "tick": 221280,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0288",
+      "tick": 221760,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0289",
+      "tick": 222720,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0290",
+      "tick": 222720,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0291",
+      "tick": 223680,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0292",
+      "tick": 224640,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0293",
+      "tick": 224640,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0294",
+      "tick": 225600,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0295",
+      "tick": 226560,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0296",
+      "tick": 226560,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 2880
+    },
+    {
+      "id": "n0297",
+      "tick": 227520,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0298",
+      "tick": 228000,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0299",
+      "tick": 228960,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0300",
+      "tick": 229440,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0301",
+      "tick": 230400,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0302",
+      "tick": 230400,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0303",
+      "tick": 231360,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0304",
+      "tick": 232320,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 960
+    },
+    {
+      "id": "n0305",
+      "tick": 232800,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0306",
+      "tick": 233280,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0307",
+      "tick": 234240,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0308",
+      "tick": 234720,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0309",
+      "tick": 235200,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0310",
+      "tick": 235680,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0311",
+      "tick": 236640,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0312",
+      "tick": 237120,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0313",
+      "tick": 238080,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0314",
+      "tick": 238080,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0315",
+      "tick": 239040,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0316",
+      "tick": 240000,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0317",
+      "tick": 240000,
+      "lane": "bass",
+      "type": "tap"
+    },
+    {
+      "id": "n0318",
+      "tick": 240960,
+      "lane": "snare",
+      "type": "tap"
+    },
+    {
+      "id": "n0319",
+      "tick": 241920,
+      "lane": "kick",
+      "type": "tap"
+    },
+    {
+      "id": "n0320",
+      "tick": 241920,
+      "lane": "bass",
+      "type": "hold",
+      "duration_ticks": 1920
+    },
+    {
+      "id": "n0321",
+      "tick": 242880,
+      "lane": "snare",
+      "type": "tap"
+    }
+  ],
+  "enemy_events": [
+    {
+      "id": "e001",
+      "tick": 0,
+      "action": "kick"
+    },
+    {
+      "id": "e002",
+      "tick": 1920,
+      "action": "kick"
+    },
+    {
+      "id": "e003",
+      "tick": 5760,
+      "action": "kick"
+    },
+    {
+      "id": "e004",
+      "tick": 7680,
+      "action": "kick"
+    },
+    {
+      "id": "e005",
+      "tick": 9600,
+      "action": "kick"
+    },
+    {
+      "id": "e006",
+      "tick": 11520,
+      "action": "kick"
+    },
+    {
+      "id": "e007",
+      "tick": 13440,
+      "action": "kick"
+    },
+    {
+      "id": "e008",
+      "tick": 16320,
+      "action": "snare"
+    },
+    {
+      "id": "e009",
+      "tick": 17280,
+      "action": "kick"
+    },
+    {
+      "id": "e010",
+      "tick": 18240,
+      "action": "snare"
+    },
+    {
+      "id": "e011",
+      "tick": 19200,
+      "action": "kick"
+    },
+    {
+      "id": "e012",
+      "tick": 20160,
+      "action": "snare"
+    },
+    {
+      "id": "e013",
+      "tick": 21120,
+      "action": "kick"
+    },
+    {
+      "id": "e014",
+      "tick": 23040,
+      "action": "kick"
+    },
+    {
+      "id": "e015",
+      "tick": 24000,
+      "action": "snare"
+    },
+    {
+      "id": "e016",
+      "tick": 24960,
+      "action": "kick"
+    },
+    {
+      "id": "e017",
+      "tick": 25920,
+      "action": "snare"
+    },
+    {
+      "id": "e018",
+      "tick": 26880,
+      "action": "kick"
+    },
+    {
+      "id": "e019",
+      "tick": 27840,
+      "action": "snare"
+    },
+    {
+      "id": "e020",
+      "tick": 29760,
+      "action": "snare"
+    },
+    {
+      "id": "e021",
+      "tick": 30720,
+      "action": "kick"
+    },
+    {
+      "id": "e022",
+      "tick": 30720,
+      "action": "bass"
+    },
+    {
+      "id": "e023",
+      "tick": 31680,
+      "action": "snare"
+    },
+    {
+      "id": "e024",
+      "tick": 33120,
+      "action": "kick"
+    },
+    {
+      "id": "e025",
+      "tick": 34560,
+      "action": "kick"
+    },
+    {
+      "id": "e026",
+      "tick": 34560,
+      "action": "bass"
+    },
+    {
+      "id": "e027",
+      "tick": 35520,
+      "action": "snare"
+    },
+    {
+      "id": "e028",
+      "tick": 36960,
+      "action": "kick"
+    },
+    {
+      "id": "e029",
+      "tick": 37440,
+      "action": "snare"
+    },
+    {
+      "id": "e030",
+      "tick": 38400,
+      "action": "kick"
+    },
+    {
+      "id": "e031",
+      "tick": 39360,
+      "action": "snare"
+    },
+    {
+      "id": "e032",
+      "tick": 40800,
+      "action": "kick"
+    },
+    {
+      "id": "e033",
+      "tick": 41280,
+      "action": "snare"
+    },
+    {
+      "id": "e034",
+      "tick": 42240,
+      "action": "kick"
+    },
+    {
+      "id": "e035",
+      "tick": 42240,
+      "action": "bass"
+    },
+    {
+      "id": "e036",
+      "tick": 43200,
+      "action": "snare"
+    },
+    {
+      "id": "e037",
+      "tick": 45120,
+      "action": "snare"
+    },
+    {
+      "id": "e038",
+      "tick": 46080,
+      "action": "kick"
+    },
+    {
+      "id": "e039",
+      "tick": 46080,
+      "action": "bass"
+    },
+    {
+      "id": "e040",
+      "tick": 47040,
+      "action": "snare"
+    },
+    {
+      "id": "e041",
+      "tick": 48480,
+      "action": "kick"
+    },
+    {
+      "id": "e042",
+      "tick": 49920,
+      "action": "kick"
+    },
+    {
+      "id": "e043",
+      "tick": 49920,
+      "action": "bass"
+    },
+    {
+      "id": "e044",
+      "tick": 50880,
+      "action": "snare"
+    },
+    {
+      "id": "e045",
+      "tick": 52320,
+      "action": "kick"
+    },
+    {
+      "id": "e046",
+      "tick": 52800,
+      "action": "snare"
+    },
+    {
+      "id": "e047",
+      "tick": 53760,
+      "action": "kick"
+    },
+    {
+      "id": "e048",
+      "tick": 54720,
+      "action": "snare"
+    },
+    {
+      "id": "e049",
+      "tick": 56160,
+      "action": "kick"
+    },
+    {
+      "id": "e050",
+      "tick": 56640,
+      "action": "snare"
+    },
+    {
+      "id": "e051",
+      "tick": 57600,
+      "action": "kick"
+    },
+    {
+      "id": "e052",
+      "tick": 57600,
+      "action": "bass"
+    },
+    {
+      "id": "e053",
+      "tick": 58560,
+      "action": "snare"
+    },
+    {
+      "id": "e054",
+      "tick": 60480,
+      "action": "snare"
+    },
+    {
+      "id": "e055",
+      "tick": 61440,
+      "action": "kick"
+    },
+    {
+      "id": "e056",
+      "tick": 61440,
+      "action": "bass"
+    },
+    {
+      "id": "e057",
+      "tick": 62400,
+      "action": "snare"
+    },
+    {
+      "id": "e058",
+      "tick": 63360,
+      "action": "bass"
+    },
+    {
+      "id": "e059",
+      "tick": 64320,
+      "action": "snare"
+    },
+    {
+      "id": "e060",
+      "tick": 65280,
+      "action": "kick"
+    },
+    {
+      "id": "e061",
+      "tick": 65760,
+      "action": "bass"
+    },
+    {
+      "id": "e062",
+      "tick": 66240,
+      "action": "snare"
+    },
+    {
+      "id": "e063",
+      "tick": 66720,
+      "action": "kick"
+    },
+    {
+      "id": "e064",
+      "tick": 67680,
+      "action": "kick"
+    },
+    {
+      "id": "e065",
+      "tick": 69120,
+      "action": "kick"
+    },
+    {
+      "id": "e066",
+      "tick": 69120,
+      "action": "bass"
+    },
+    {
+      "id": "e067",
+      "tick": 70080,
+      "action": "snare"
+    },
+    {
+      "id": "e068",
+      "tick": 71040,
+      "action": "kick"
+    },
+    {
+      "id": "e069",
+      "tick": 71040,
+      "action": "bass"
+    },
+    {
+      "id": "e070",
+      "tick": 72000,
+      "action": "snare"
+    },
+    {
+      "id": "e071",
+      "tick": 72960,
+      "action": "bass"
+    },
+    {
+      "id": "e072",
+      "tick": 73920,
+      "action": "snare"
+    },
+    {
+      "id": "e073",
+      "tick": 74400,
+      "action": "kick"
+    },
+    {
+      "id": "e074",
+      "tick": 75360,
+      "action": "kick"
+    },
+    {
+      "id": "e075",
+      "tick": 75840,
+      "action": "snare"
+    },
+    {
+      "id": "e076",
+      "tick": 76800,
+      "action": "kick"
+    },
+    {
+      "id": "e077",
+      "tick": 77760,
+      "action": "snare"
+    },
+    {
+      "id": "e078",
+      "tick": 78720,
+      "action": "bass"
+    },
+    {
+      "id": "e079",
+      "tick": 79200,
+      "action": "kick"
+    },
+    {
+      "id": "e080",
+      "tick": 79680,
+      "action": "snare"
+    },
+    {
+      "id": "e081",
+      "tick": 80640,
+      "action": "kick"
+    },
+    {
+      "id": "e082",
+      "tick": 81600,
+      "action": "snare"
+    },
+    {
+      "id": "e083",
+      "tick": 82080,
+      "action": "kick"
+    },
+    {
+      "id": "e084",
+      "tick": 83040,
+      "action": "kick"
+    },
+    {
+      "id": "e085",
+      "tick": 83520,
+      "action": "snare"
+    },
+    {
+      "id": "e086",
+      "tick": 84480,
+      "action": "kick"
+    },
+    {
+      "id": "e087",
+      "tick": 84480,
+      "action": "bass"
+    },
+    {
+      "id": "e088",
+      "tick": 86400,
+      "action": "kick"
+    },
+    {
+      "id": "e089",
+      "tick": 86400,
+      "action": "bass"
+    },
+    {
+      "id": "e090",
+      "tick": 87360,
+      "action": "snare"
+    },
+    {
+      "id": "e091",
+      "tick": 88320,
+      "action": "kick"
+    },
+    {
+      "id": "e092",
+      "tick": 88320,
+      "action": "bass"
+    },
+    {
+      "id": "e093",
+      "tick": 89280,
+      "action": "snare"
+    },
+    {
+      "id": "e094",
+      "tick": 90720,
+      "action": "kick"
+    },
+    {
+      "id": "e095",
+      "tick": 91200,
+      "action": "snare"
+    },
+    {
+      "id": "e096",
+      "tick": 92160,
+      "action": "kick"
+    },
+    {
+      "id": "e097",
+      "tick": 92160,
+      "action": "bass"
+    },
+    {
+      "id": "e098",
+      "tick": 93120,
+      "action": "snare"
+    },
+    {
+      "id": "e099",
+      "tick": 94560,
+      "action": "kick"
+    },
+    {
+      "id": "e100",
+      "tick": 95040,
+      "action": "snare"
+    },
+    {
+      "id": "e101",
+      "tick": 96000,
+      "action": "kick"
+    },
+    {
+      "id": "e102",
+      "tick": 96480,
+      "action": "bass"
+    },
+    {
+      "id": "e103",
+      "tick": 96960,
+      "action": "snare"
+    },
+    {
+      "id": "e104",
+      "tick": 97440,
+      "action": "kick"
+    },
+    {
+      "id": "e105",
+      "tick": 98880,
+      "action": "snare"
+    },
+    {
+      "id": "e106",
+      "tick": 99840,
+      "action": "kick"
+    },
+    {
+      "id": "e107",
+      "tick": 99840,
+      "action": "bass"
+    },
+    {
+      "id": "e108",
+      "tick": 100800,
+      "action": "snare"
+    },
+    {
+      "id": "e109",
+      "tick": 101760,
+      "action": "kick"
+    },
+    {
+      "id": "e110",
+      "tick": 101760,
+      "action": "bass"
+    },
+    {
+      "id": "e111",
+      "tick": 103680,
+      "action": "kick"
+    },
+    {
+      "id": "e112",
+      "tick": 103680,
+      "action": "bass"
+    },
+    {
+      "id": "e113",
+      "tick": 104640,
+      "action": "snare"
+    },
+    {
+      "id": "e114",
+      "tick": 105120,
+      "action": "kick"
+    },
+    {
+      "id": "e115",
+      "tick": 106080,
+      "action": "kick"
+    },
+    {
+      "id": "e116",
+      "tick": 107520,
+      "action": "kick"
+    },
+    {
+      "id": "e117",
+      "tick": 107520,
+      "action": "bass"
+    },
+    {
+      "id": "e118",
+      "tick": 108480,
+      "action": "snare"
+    },
+    {
+      "id": "e119",
+      "tick": 109440,
+      "action": "bass"
+    },
+    {
+      "id": "e120",
+      "tick": 109920,
+      "action": "kick"
+    },
+    {
+      "id": "e121",
+      "tick": 110400,
+      "action": "snare"
+    },
+    {
+      "id": "e122",
+      "tick": 111840,
+      "action": "bass"
+    },
+    {
+      "id": "e123",
+      "tick": 112320,
+      "action": "snare"
+    },
+    {
+      "id": "e124",
+      "tick": 112800,
+      "action": "kick"
+    },
+    {
+      "id": "e125",
+      "tick": 113760,
+      "action": "kick"
+    },
+    {
+      "id": "e126",
+      "tick": 114240,
+      "action": "snare"
+    },
+    {
+      "id": "e127",
+      "tick": 115200,
+      "action": "kick"
+    },
+    {
+      "id": "e128",
+      "tick": 116160,
+      "action": "snare"
+    },
+    {
+      "id": "e129",
+      "tick": 117120,
+      "action": "kick"
+    },
+    {
+      "id": "e130",
+      "tick": 117120,
+      "action": "bass"
+    },
+    {
+      "id": "e131",
+      "tick": 118080,
+      "action": "snare"
+    },
+    {
+      "id": "e132",
+      "tick": 119040,
+      "action": "kick"
+    },
+    {
+      "id": "e133",
+      "tick": 120000,
+      "action": "snare"
+    },
+    {
+      "id": "e134",
+      "tick": 120480,
+      "action": "kick"
+    },
+    {
+      "id": "e135",
+      "tick": 121440,
+      "action": "kick"
+    },
+    {
+      "id": "e136",
+      "tick": 121920,
+      "action": "snare"
+    },
+    {
+      "id": "e137",
+      "tick": 122880,
+      "action": "bass"
+    },
+    {
+      "id": "e138",
+      "tick": 130560,
+      "action": "bass"
+    },
+    {
+      "id": "e139",
+      "tick": 138240,
+      "action": "bass"
+    },
+    {
+      "id": "e140",
+      "tick": 139200,
+      "action": "snare"
+    },
+    {
+      "id": "e141",
+      "tick": 140160,
+      "action": "kick"
+    },
+    {
+      "id": "e142",
+      "tick": 141120,
+      "action": "snare"
+    },
+    {
+      "id": "e143",
+      "tick": 142080,
+      "action": "kick"
+    },
+    {
+      "id": "e144",
+      "tick": 143040,
+      "action": "snare"
+    },
+    {
+      "id": "e145",
+      "tick": 144960,
+      "action": "snare"
+    },
+    {
+      "id": "e146",
+      "tick": 145920,
+      "action": "kick"
+    },
+    {
+      "id": "e147",
+      "tick": 145920,
+      "action": "bass"
+    },
+    {
+      "id": "e148",
+      "tick": 146880,
+      "action": "snare"
+    },
+    {
+      "id": "e149",
+      "tick": 147840,
+      "action": "kick"
+    },
+    {
+      "id": "e150",
+      "tick": 149760,
+      "action": "kick"
+    },
+    {
+      "id": "e151",
+      "tick": 150720,
+      "action": "snare"
+    },
+    {
+      "id": "e152",
+      "tick": 151680,
+      "action": "kick"
+    },
+    {
+      "id": "e153",
+      "tick": 152640,
+      "action": "snare"
+    },
+    {
+      "id": "e154",
+      "tick": 153600,
+      "action": "kick"
+    },
+    {
+      "id": "e155",
+      "tick": 153600,
+      "action": "bass"
+    },
+    {
+      "id": "e156",
+      "tick": 155520,
+      "action": "bass"
+    },
+    {
+      "id": "e157",
+      "tick": 156000,
+      "action": "kick"
+    },
+    {
+      "id": "e158",
+      "tick": 156480,
+      "action": "snare"
+    },
+    {
+      "id": "e159",
+      "tick": 157440,
+      "action": "kick"
+    },
+    {
+      "id": "e160",
+      "tick": 157920,
+      "action": "bass"
+    },
+    {
+      "id": "e161",
+      "tick": 158400,
+      "action": "snare"
+    },
+    {
+      "id": "e162",
+      "tick": 159840,
+      "action": "kick"
+    },
+    {
+      "id": "e163",
+      "tick": 160320,
+      "action": "snare"
+    },
+    {
+      "id": "e164",
+      "tick": 161280,
+      "action": "kick"
+    },
+    {
+      "id": "e165",
+      "tick": 161280,
+      "action": "bass"
+    },
+    {
+      "id": "e166",
+      "tick": 162240,
+      "action": "snare"
+    },
+    {
+      "id": "e167",
+      "tick": 163200,
+      "action": "kick"
+    },
+    {
+      "id": "e168",
+      "tick": 164160,
+      "action": "snare"
+    },
+    {
+      "id": "e169",
+      "tick": 165120,
+      "action": "kick"
+    },
+    {
+      "id": "e170",
+      "tick": 165120,
+      "action": "bass"
+    },
+    {
+      "id": "e171",
+      "tick": 166080,
+      "action": "snare"
+    },
+    {
+      "id": "e172",
+      "tick": 166560,
+      "action": "kick"
+    },
+    {
+      "id": "e173",
+      "tick": 168000,
+      "action": "snare"
+    },
+    {
+      "id": "e174",
+      "tick": 168960,
+      "action": "kick"
+    },
+    {
+      "id": "e175",
+      "tick": 168960,
+      "action": "bass"
+    },
+    {
+      "id": "e176",
+      "tick": 169920,
+      "action": "snare"
+    },
+    {
+      "id": "e177",
+      "tick": 170880,
+      "action": "bass"
+    },
+    {
+      "id": "e178",
+      "tick": 171360,
+      "action": "kick"
+    },
+    {
+      "id": "e179",
+      "tick": 172800,
+      "action": "kick"
+    },
+    {
+      "id": "e180",
+      "tick": 173280,
+      "action": "bass"
+    },
+    {
+      "id": "e181",
+      "tick": 173760,
+      "action": "snare"
+    },
+    {
+      "id": "e182",
+      "tick": 174240,
+      "action": "kick"
+    },
+    {
+      "id": "e183",
+      "tick": 175200,
+      "action": "kick"
+    },
+    {
+      "id": "e184",
+      "tick": 175680,
+      "action": "snare"
+    },
+    {
+      "id": "e185",
+      "tick": 176640,
+      "action": "bass"
+    },
+    {
+      "id": "e186",
+      "tick": 177600,
+      "action": "snare"
+    },
+    {
+      "id": "e187",
+      "tick": 178560,
+      "action": "kick"
+    },
+    {
+      "id": "e188",
+      "tick": 178560,
+      "action": "bass"
+    },
+    {
+      "id": "e189",
+      "tick": 179520,
+      "action": "snare"
+    },
+    {
+      "id": "e190",
+      "tick": 180480,
+      "action": "bass"
+    },
+    {
+      "id": "e191",
+      "tick": 181440,
+      "action": "snare"
+    },
+    {
+      "id": "e192",
+      "tick": 181920,
+      "action": "kick"
+    },
+    {
+      "id": "e193",
+      "tick": 182880,
+      "action": "kick"
+    },
+    {
+      "id": "e194",
+      "tick": 183360,
+      "action": "snare"
+    },
+    {
+      "id": "e195",
+      "tick": 184320,
+      "action": "kick"
+    },
+    {
+      "id": "e196",
+      "tick": 185280,
+      "action": "snare"
+    },
+    {
+      "id": "e197",
+      "tick": 186240,
+      "action": "bass"
+    },
+    {
+      "id": "e198",
+      "tick": 186720,
+      "action": "kick"
+    },
+    {
+      "id": "e199",
+      "tick": 187200,
+      "action": "snare"
+    },
+    {
+      "id": "e200",
+      "tick": 188160,
+      "action": "kick"
+    },
+    {
+      "id": "e201",
+      "tick": 188640,
+      "action": "bass"
+    },
+    {
+      "id": "e202",
+      "tick": 189600,
+      "action": "kick"
+    },
+    {
+      "id": "e203",
+      "tick": 190560,
+      "action": "kick"
+    },
+    {
+      "id": "e204",
+      "tick": 191040,
+      "action": "snare"
+    },
+    {
+      "id": "e205",
+      "tick": 192000,
+      "action": "kick"
+    },
+    {
+      "id": "e206",
+      "tick": 192000,
+      "action": "bass"
+    },
+    {
+      "id": "e207",
+      "tick": 193920,
+      "action": "kick"
+    },
+    {
+      "id": "e208",
+      "tick": 193920,
+      "action": "bass"
+    },
+    {
+      "id": "e209",
+      "tick": 194880,
+      "action": "snare"
+    },
+    {
+      "id": "e210",
+      "tick": 195840,
+      "action": "kick"
+    },
+    {
+      "id": "e211",
+      "tick": 195840,
+      "action": "bass"
+    },
+    {
+      "id": "e212",
+      "tick": 196800,
+      "action": "snare"
+    },
+    {
+      "id": "e213",
+      "tick": 198240,
+      "action": "kick"
+    },
+    {
+      "id": "e214",
+      "tick": 198720,
+      "action": "snare"
+    },
+    {
+      "id": "e215",
+      "tick": 199680,
+      "action": "kick"
+    },
+    {
+      "id": "e216",
+      "tick": 199680,
+      "action": "bass"
+    },
+    {
+      "id": "e217",
+      "tick": 200640,
+      "action": "snare"
+    },
+    {
+      "id": "e218",
+      "tick": 201600,
+      "action": "bass"
+    },
+    {
+      "id": "e219",
+      "tick": 202560,
+      "action": "snare"
+    },
+    {
+      "id": "e220",
+      "tick": 203520,
+      "action": "kick"
+    },
+    {
+      "id": "e221",
+      "tick": 204000,
+      "action": "bass"
+    },
+    {
+      "id": "e222",
+      "tick": 204480,
+      "action": "snare"
+    },
+    {
+      "id": "e223",
+      "tick": 204960,
+      "action": "kick"
+    },
+    {
+      "id": "e224",
+      "tick": 206400,
+      "action": "snare"
+    },
+    {
+      "id": "e225",
+      "tick": 207360,
+      "action": "kick"
+    },
+    {
+      "id": "e226",
+      "tick": 207360,
+      "action": "bass"
+    },
+    {
+      "id": "e227",
+      "tick": 208320,
+      "action": "snare"
+    },
+    {
+      "id": "e228",
+      "tick": 209280,
+      "action": "kick"
+    },
+    {
+      "id": "e229",
+      "tick": 209280,
+      "action": "bass"
+    },
+    {
+      "id": "e230",
+      "tick": 211200,
+      "action": "kick"
+    },
+    {
+      "id": "e231",
+      "tick": 211200,
+      "action": "bass"
+    },
+    {
+      "id": "e232",
+      "tick": 212160,
+      "action": "snare"
+    },
+    {
+      "id": "e233",
+      "tick": 212640,
+      "action": "kick"
+    },
+    {
+      "id": "e234",
+      "tick": 213600,
+      "action": "kick"
+    },
+    {
+      "id": "e235",
+      "tick": 214080,
+      "action": "snare"
+    },
+    {
+      "id": "e236",
+      "tick": 215040,
+      "action": "bass"
+    },
+    {
+      "id": "e237",
+      "tick": 216000,
+      "action": "snare"
+    },
+    {
+      "id": "e238",
+      "tick": 216960,
+      "action": "bass"
+    },
+    {
+      "id": "e239",
+      "tick": 217440,
+      "action": "kick"
+    },
+    {
+      "id": "e240",
+      "tick": 217920,
+      "action": "snare"
+    },
+    {
+      "id": "e241",
+      "tick": 219360,
+      "action": "bass"
+    },
+    {
+      "id": "e242",
+      "tick": 219840,
+      "action": "snare"
+    },
+    {
+      "id": "e243",
+      "tick": 220320,
+      "action": "kick"
+    },
+    {
+      "id": "e244",
+      "tick": 221280,
+      "action": "kick"
+    },
+    {
+      "id": "e245",
+      "tick": 221760,
+      "action": "snare"
+    },
+    {
+      "id": "e246",
+      "tick": 222720,
+      "action": "kick"
+    },
+    {
+      "id": "e247",
+      "tick": 223680,
+      "action": "snare"
+    },
+    {
+      "id": "e248",
+      "tick": 224640,
+      "action": "kick"
+    },
+    {
+      "id": "e249",
+      "tick": 224640,
+      "action": "bass"
+    },
+    {
+      "id": "e250",
+      "tick": 225600,
+      "action": "snare"
+    },
+    {
+      "id": "e251",
+      "tick": 226560,
+      "action": "kick"
+    },
+    {
+      "id": "e252",
+      "tick": 226560,
+      "action": "bass"
+    },
+    {
+      "id": "e253",
+      "tick": 228000,
+      "action": "kick"
+    },
+    {
+      "id": "e254",
+      "tick": 228960,
+      "action": "kick"
+    },
+    {
+      "id": "e255",
+      "tick": 229440,
+      "action": "snare"
+    },
+    {
+      "id": "e256",
+      "tick": 230400,
+      "action": "kick"
+    },
+    {
+      "id": "e257",
+      "tick": 230400,
+      "action": "bass"
+    },
+    {
+      "id": "e258",
+      "tick": 231360,
+      "action": "snare"
+    },
+    {
+      "id": "e259",
+      "tick": 232800,
+      "action": "kick"
+    },
+    {
+      "id": "e260",
+      "tick": 233280,
+      "action": "snare"
+    },
+    {
+      "id": "e261",
+      "tick": 234240,
+      "action": "kick"
+    },
+    {
+      "id": "e262",
+      "tick": 234720,
+      "action": "bass"
+    },
+    {
+      "id": "e263",
+      "tick": 235200,
+      "action": "snare"
+    },
+    {
+      "id": "e264",
+      "tick": 236640,
+      "action": "kick"
+    },
+    {
+      "id": "e265",
+      "tick": 237120,
+      "action": "snare"
+    },
+    {
+      "id": "e266",
+      "tick": 238080,
+      "action": "kick"
+    },
+    {
+      "id": "e267",
+      "tick": 238080,
+      "action": "bass"
+    },
+    {
+      "id": "e268",
+      "tick": 239040,
+      "action": "snare"
+    },
+    {
+      "id": "e269",
+      "tick": 240000,
+      "action": "kick"
+    },
+    {
+      "id": "e270",
+      "tick": 240960,
+      "action": "snare"
+    },
+    {
+      "id": "e271",
+      "tick": 241920,
+      "action": "kick"
+    },
+    {
+      "id": "e272",
+      "tick": 241920,
+      "action": "bass"
+    },
+    {
+      "id": "e273",
+      "tick": 242880,
+      "action": "snare"
+    }
+  ]
+}

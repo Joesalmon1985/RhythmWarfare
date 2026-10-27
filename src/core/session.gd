@@ -11,6 +11,10 @@ var debug := false
 
 func _ready() -> void:
 	load_settings()
+	if OS.has_environment("RW_PACK"):  # scripted runs and tests pick a pack without touching saved settings
+		pack_dir = OS.get_environment("RW_PACK")
+	if OS.has_environment("RW_CALIBRATION_MS"):
+		calibration_ms = float(OS.get_environment("RW_CALIBRATION_MS"))
 
 
 func load_settings() -> void:
