@@ -25,6 +25,10 @@ the stem mute toggles.
   prints a `PERF` line with p95 frame time and peak live units at the end (A13 evidence on a phone via logcat).
 - Screenshots: `godot --path . -s tools/shoot.gd -- res://src/scenes/play.tscn docs/shots 300:shot:name`.
 
+## Handover
+
+Start with `docs/HANDOVER.md`: milestone state, settled decisions, code map, deliberate deviations and the polish backlog.
+
 ## Design documents
 
 `docs/PRD.md` (the product requirements), `docs/TIMING.md` (clocks and offset signs), `docs/BALANCE.md`

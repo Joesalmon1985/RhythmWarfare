@@ -233,7 +233,7 @@ static func _check_stems(level: Level, errors: Array, warnings: Array) -> void:
 	var lengths: Dictionary = {}
 	for key in level.stems:
 		var path: String = level.stems[key]
-		if not FileAccess.file_exists(path):
+		if not stream_exists(path):
 			errors.append("stem '%s' file not found: %s" % [key, path])
 			continue
 		var stream := load_stream(path)
@@ -253,6 +253,14 @@ static func _check_stems(level: Level, errors: Array, warnings: Array) -> void:
 		errors.append("stem lengths differ by %.1f ms (tolerance %.0f ms); export every stem from the same timeline start" % [(hi - lo) * 1000.0, STEM_ALIGNMENT_TOLERANCE_S * 1000.0])
 	if lo + 0.001 < level.duration_seconds():
 		errors.append("stems are %.2f s long but the chart runs to %.2f s" % [lo, level.duration_seconds()])
+
+
+## In an exported build only the imported form of a res:// audio file is packed, so the original path fails a
+## plain file check; ResourceLoader knows about it. Absolute (user://) packs are checked on disk.
+static func stream_exists(path: String) -> bool:
+	if path.begins_with("res://"):
+		return ResourceLoader.exists(path) or FileAccess.file_exists(path)
+	return FileAccess.file_exists(path)
 
 
 ## Loads an audio file from an absolute path or a res:// path, by extension.

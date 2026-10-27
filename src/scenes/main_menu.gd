@@ -3,6 +3,10 @@ extends Control
 
 
 func _ready() -> void:
+	if OS.has_environment("RW_SCENE") and OS.get_environment("RW_SCENE") == "play":
+		# scripted runs on exported builds (which take no scene argument) jump straight into the level
+		get_tree().change_scene_to_file.call_deferred("res://src/scenes/play.tscn")
+		return
 	var list: VBoxContainer = $Box/Packs
 	var packs := Session.available_packs()
 	if packs.is_empty():
