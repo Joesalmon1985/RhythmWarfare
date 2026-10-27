@@ -20,11 +20,11 @@ one. Destroy the enemy construction yard before the song ends to win.
 | M0 music and input | Done. Four stems in one `AudioStreamSynchronized`, audio-derived monotonic clock, calibration screen, pause and resume with countdown, debug stem toggles (F3). `docs/TIMING.md`. |
 | M1 ground battle | Done. 53x20 temperate map at native pixels, mirrored bases, authored enemy schedule, autonomous combat, outcomes. |
 | M2 air and damage | Done. Five slots, finite ammo (8), rearm 1 per 50 ticks, bass-driven sorties with the PRD priority, pad loss and rebuild tied to the bass stem. |
-| M3 complete mobile level | Mostly done. Automatic OpenRA repair, readable result screen, offline Android APK exported and verified to load the pack (28 Oct fix: exported builds check stems through `ResourceLoader`, not `FileAccess`). **Not done:** the real song stems (placeholder synthesised audio is in use), and the device run for the performance evidence (A13) and the install check (A14). |
+| M3 complete mobile level | Mostly done. Automatic OpenRA repair, readable result screen, offline Android APK exported and verified to load the pack (28 Oct fix: exported builds check stems through `ResourceLoader`, not `FileAccess`). Owner confirmed on 28 Oct 2026 that the APK installs and runs on their phone and that timing feels right after calibration on both phone and Windows (A14, and the playable half of A09). **Not done:** the real song stems (placeholder synthesised audio is in use) and the measured phone frame-time evidence (A13). |
 
 Acceptance evidence: A01, A02, A03, A04, A05, A06, A07, A08, A10, A11 are covered by `tests/` (425 headless
 checks, `bash tools/test.sh`); A09 structurally by `tests/test_transport.gd` (device alignment still to measure);
-A12 by `docs/BALANCE.md`; A13 on desktop only (p95 20.8 ms at 438 live units); A14 pending the phone.
+A12 by `docs/BALANCE.md`; A13 on desktop only (p95 20.8 ms at 438 live units); A14 confirmed by the owner on the phone (the `PERF` line from a phone run is still to be captured).
 
 ## Owner decisions that are settled (do not re-ask)
 
