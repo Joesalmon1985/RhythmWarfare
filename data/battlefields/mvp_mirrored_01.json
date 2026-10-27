@@ -34,7 +34,7 @@
   {"role": "turret", "x": 12, "y": 14, "w": 1, "h": 1}
  ],
  "exits": {"factory": [10, 8], "barracks": [10, 11]},
- "rally": [15, 10],
+ "rally": [9, 10],
  "air_hold": [24, 10],
  "air_wait": [2, 10]
 }

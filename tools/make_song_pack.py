@@ -86,7 +86,7 @@ RULES = {
     "initial_airfields": 0,
     "tank_per_kick": 1,
     "infantry_per_snare": 5,
-    "repair_budget_credits_per_side": 5000,
+    "repair_budget_credits_per_side": 500,
     "song_end_result": "defeat",
 }
 BATTLEFIELD = "mvp_mirrored_01"

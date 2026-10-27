@@ -19,6 +19,7 @@ var shadow_index := 4
 var remap_ramp: Array = []
 var _textures: Dictionary = {}
 var _missing: Dictionary = {}
+var _file_frames: Dictionary = {}  # file -> Array[Texture2D | false] indexed by frame number
 
 
 func load() -> void:
@@ -138,13 +139,23 @@ func path_for_frame(image: String, seq: String, n: int) -> String:
 
 
 func texture_for(image: String, seq: String, heading: float, anim: int) -> Texture2D:
-	var path := path_for_frame(image, seq, frame_number(image, seq, heading, anim))
-	return texture(path) if not path.is_empty() else null
+	return texture_frame(image, seq, frame_number(image, seq, heading, anim))
 
 
+## Texture by file and frame number, cached per file in an array so the hot path does no string formatting.
 func texture_frame(image: String, seq: String, n: int) -> Texture2D:
-	var path := path_for_frame(image, seq, n)
-	return texture(path) if not path.is_empty() else null
+	if n < 0:
+		return null
+	var file := str(sequence(image, seq).get("file", image))
+	var arr: Array = _file_frames.get(file, [])
+	if n < arr.size() and arr[n] != null:
+		return arr[n] if arr[n] is Texture2D else null
+	var tex := texture("res://assets/openra/%s-%04d.png" % [file, n])
+	if arr.size() <= n:
+		arr.resize(n + 1)
+		_file_frames[file] = arr
+	arr[n] = tex if tex != null else false  # false marks a known-missing frame
+	return tex
 
 
 func texture(path: String) -> Texture2D:

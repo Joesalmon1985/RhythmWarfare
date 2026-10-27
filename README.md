@@ -6,7 +6,9 @@ Standalone Godot 4.5 project; the PRD is the design authority (`docs/PRD.md`).
 ## Layout
 
 - `src/` game code: `core/` (clock, level loading), `audio/` (four-stem transport), `chart/` (JSON chart, scheduling), `input/` (touch and key judgement), `sim/` (deterministic battle simulation, no scene nodes), `ui/` (lanes, buttons, HUD), `scenes/` (entry points).
-- `assets/openra/` Red Alert sprites plus `catalogue.json` and `PROVENANCE.md`; regenerate with `python -I tools/import_openra_assets.py`.
+- `assets/openra/` Red Alert sprite frames at native pixel size plus `sequences.json` (every OpenRA sequence resolved to frame tables), `catalogue.json` (the player-colour ramp) and `PROVENANCE.md`; regenerate with `python -I tools/extract_openra.py` (needs the pinned OpenRA checkout and the Red Alert content; see the provenance file).
+- `data/maps/strip_53x20.json` the temperate map (tiles, tree clumps, blocked cells) the battlefield layout `data/battlefields/mvp_mirrored_01.json` sits on.
+- `src/sim/bot_ai.gd` OpenRA's Rush AI squad manager, driving both sides' units; `docs/OPENRA_BEHAVIOUR_SPEC.md` is the engine-sourced specification it and the unit behaviour follow, with the deviations noted in code.
 - `data/openra_rules.json` actor, weapon, locomotor and repair values at the pinned OpenRA commit.
 - `songs/<pack>/` a song pack: `level.json` plus `audio/` stems.
 - `tools/` authoring and import scripts (Python 3). `tests/` headless GDScript tests.
@@ -26,4 +28,4 @@ the stem mute toggles.
 ## Design documents
 
 `docs/PRD.md` (the product requirements), `docs/TIMING.md` (clocks and offset signs), `docs/BALANCE.md`
-(enemy schedule evidence), `docs/EXPORT.md` (Android and Windows builds), `assets/openra/PROVENANCE.md`.
+(enemy schedule evidence), `docs/OPENRA_BEHAVIOUR_SPEC.md` (unit and bot behaviour from the OpenRA source), `docs/EXPORT.md` (Android and Windows builds), `assets/openra/PROVENANCE.md`.

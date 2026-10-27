@@ -41,6 +41,7 @@ var _decals: Array = []   # permanent craters and scorches: {image, seq, frame, 
 var _wall := 0.0
 var _pending: Array = []
 var _anim_phase: Dictionary = {}  # entity id -> wall time the current animation started
+var _ground_dirty := true
 
 
 func _ready() -> void:
@@ -78,6 +79,7 @@ func _layout() -> void:
 		return
 	cell = SpriteBank.RA_CELL_PX * PIXEL_SCALE
 	origin = Vector2(floor((size.x - cell * sim.width) * 0.5), floor((size.y - cell * sim.height) * 0.5))
+	_ground_dirty = true
 
 
 func to_px(p: Vector2) -> Vector2:
@@ -120,7 +122,9 @@ func _process(delta: float) -> void:
 		if _wall - float(fx["t0"]) < float(fx["life"]):
 			keep.append(fx)
 	_effects = keep
-	_ground.queue_redraw()
+	if _ground_dirty:
+		_ground_dirty = false
+		_ground.queue_redraw()
 	for l in _layers:
 		l.queue_redraw()
 	_fx.queue_redraw()
@@ -163,6 +167,7 @@ func _add_effect(ev: Dictionary) -> void:
 			var fx := fx_for(str(ev["weapon"]))
 			_anim("explosion", str(fx["impact"]), Vector2(float(ev["x"]), float(ev["y"])), 0.0)
 		"destroyed":
+			_ground_dirty = true
 			var role := str(ev.get("role", ""))
 			var pos := Vector2(float(ev["x"]), float(ev["y"]))
 			var e: BattleSim.Ent = sim.get_entity(int(ev["id"]))
@@ -194,6 +199,8 @@ func _add_effect(ev: Dictionary) -> void:
 						_decals.append({"image": "craters", "seq": "cr%d" % (1 + (e.id + i * 3 + j) % 6), "frame": 0, "pos": Vector2(e.cx + i + 0.5, e.cy + j + 0.5)})
 		"pad_built", "spawned":
 			_anim_phase[int(ev["id"])] = _wall
+			if str(ev["kind"]) == "pad_built":
+				_ground_dirty = true
 
 
 ## Current animation frame index for a looping sequence.

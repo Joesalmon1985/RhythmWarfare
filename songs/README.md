@@ -39,8 +39,8 @@ does not change because the MIDI, not the audio, is its source.
 - Sections come from the MIDI section markers and are checked against the fragment.
 - No density caps, no subsetting. The tool refuses to write the pack if the generated notes differ
   from `Player_Chart_Fragment.json` in any way.
-- Enemy schedule: the authored level uses `--enemy-profile ramp --enemy-start 0.5 --enemy-end 0.9`
-  (a seeded subset of the player's notes whose share climbs per section from 50% to 90%; 230 of 321
+- Enemy schedule: the authored level uses `--enemy-profile ramp --enemy-start 0.35 --enemy-end 0.63`
+  (a seeded subset of the player's notes whose share climbs per section from 37% to 61%; 161 of 321
   events). `--enemy-profile mirror --enemy-accuracy f` keeps a flat fraction instead. The choice and
   the measured outcomes are in `docs/BALANCE.md`.
 

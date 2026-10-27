@@ -57,6 +57,9 @@ class Ent:
 	var crushes_infantry := false
 	var crushes_walls := false
 	var target_types: Array = []
+	var hits_ground := false  # any weapon valid against GroundActor (precomputed at spawn)
+	var hits_air := false     # any weapon valid against AirborneActor
+	var is_wall := false
 	# orders (from BotAi)
 	var order := "idle"    # idle | move | attack_move | attack
 	var order_pos := Vector2.ZERO
@@ -117,9 +120,13 @@ var producer_ids: Array = []  # per side: role -> id
 var stats: Dictionary = {}
 var projectiles: Array = []  # {weapon, kind, from, to, damage, speed, x, y, tx, ty, heading, age, types}
 var bots: Array = []      # BotAi per side
+var profile: Dictionary = {"grid_spawn": 0, "bots": 0, "units": 0, "aircraft": 0, "buildings": 0, "entity_loop_overhead": 0, "projectiles_repair": 0, "ticks": 0, "move": 0, "engage": 0, "scan": 0}
 var rng := RandomNumberGenerator.new()
 var _blocked: Dictionary = {}  # Vector2i -> building id, or -1 for terrain
 var _grid: Dictionary = {}     # Vector2i -> Array[int] unit ids (rebuilt each tick)
+var _grid_side: Array = [{}, {}]  # per side: Vector2i -> Array[int] unit ids (rebuilt each tick)
+var _aim_count: Dictionary = {}  # entity id -> how many enemies currently target it (rebuilt each tick)
+var _static_targets: Array = []  # alive buildings and aircraft (rebuilt each tick; they are few)
 var _astar_foot := AStarGrid2D.new()   # infantry: walls block
 var _astar_track := AStarGrid2D.new()  # tracked vehicles: sandbag walls are crushed, not avoided
 var _next_id := 1
@@ -375,6 +382,7 @@ func _spawn_aircraft(side: int, slot: int, pad: Ent) -> Ent:
 	a.ready_since = tick_count
 	a.heading = 0.0 if side == 0 else PI
 	a.weapons = _make_weapons(def)
+	_weapon_flags(a)
 	a.target_types = ["GroundActor", "Vehicle"]
 	entities.append(a)
 	by_id[a.id] = a
@@ -417,6 +425,8 @@ func _spawn_building(side: int, role: String, bx: int, by: int, bw: int, bh: int
 	e.is_defence = role in ["turret", "aa", "sam"]
 	e.radius = maxf(bw, bh) * 0.5
 	e.weapons = _make_weapons(def)
+	_weapon_flags(e)
+	e.is_wall = role == "wall"
 	e.heading = 0.0 if side == 0 else PI
 	e.turret_heading = e.heading
 	e.turret_turn = _wangle_to_rad(48 if role == "turret" else 120)
@@ -463,6 +473,7 @@ func _spawn_unit(side: int, role: String, at: Vector2) -> Ent:
 	e.heading = 0.0 if side == 0 else PI
 	e.turret_heading = e.heading
 	e.weapons = _make_weapons(def)
+	_weapon_flags(e)
 	e.scan_timer = rng.randi_range(SCAN_MIN, SCAN_MAX - 1)
 	entities.append(e)
 	by_id[e.id] = e
@@ -490,33 +501,80 @@ func tick() -> void:
 	if not outcome.is_empty():
 		return
 	tick_count += 1
+	if tick_count % 250 == 0:
+		_compact()
+	var t0 := Time.get_ticks_usec()
 	_rebuild_grid()
 	_process_spawn_queues()
+	var t1 := Time.get_ticks_usec()
 	for bot in bots:
 		bot.tick()
+	var t2 := Time.get_ticks_usec()
+	var tu := 0
+	var ta := 0
+	var tb := 0
 	for e in entities:
 		if not e.alive:
 			continue
+		var ts := Time.get_ticks_usec()
 		match e.kind:
 			Kind.UNIT:
 				_unit_step(e)
+				tu += Time.get_ticks_usec() - ts
 			Kind.AIRCRAFT:
 				_aircraft_step(e)
+				ta += Time.get_ticks_usec() - ts
 			Kind.BUILDING:
 				_building_step(e)
+				tb += Time.get_ticks_usec() - ts
+	var t3 := Time.get_ticks_usec()
 	_projectiles_step()
 	_repair_step()
 	_check_outcome()
+	var t4 := Time.get_ticks_usec()
+	profile["grid_spawn"] += t1 - t0
+	profile["bots"] += t2 - t1
+	profile["units"] += tu
+	profile["aircraft"] += ta
+	profile["buildings"] += tb
+	profile["entity_loop_overhead"] += (t3 - t2) - tu - ta - tb
+	profile["projectiles_repair"] += t4 - t3
+	profile["ticks"] += 1
+
+
+## Drop dead units and aircraft from the entity list (dead buildings stay: the view draws their ruins).
+func _compact() -> void:
+	var keep: Array[Ent] = []
+	for e in entities:
+		if e.alive or e.kind == Kind.BUILDING:
+			keep.append(e)
+		else:
+			by_id.erase(e.id)
+	entities = keep
 
 
 func _rebuild_grid() -> void:
 	_grid.clear()
+	_grid_side[0].clear()
+	_grid_side[1].clear()
+	_aim_count.clear()
+	_static_targets.clear()
 	for e in entities:
-		if e.alive and e.kind == Kind.UNIT:
+		if not e.alive:
+			continue
+		if e.target >= 0:
+			_aim_count[e.target] = int(_aim_count.get(e.target, 0)) + 1
+		if e.kind == Kind.UNIT:
 			var key := e.cell()
 			if not _grid.has(key):
 				_grid[key] = []
 			_grid[key].append(e.id)
+			var gs: Dictionary = _grid_side[e.side]
+			if not gs.has(key):
+				gs[key] = []
+			gs[key].append(e.id)
+		else:
+			_static_targets.append(e)
 
 
 func _process_spawn_queues() -> void:
@@ -536,10 +594,11 @@ func _process_spawn_queues() -> void:
 			continue
 		var ex: Array = exits.get(producer, [8, 4])
 		var exit_pos := mirrored(Vector2(float(ex[0]) + 0.5, float(ex[1]) + 0.5), side)
-		var lane_offset := float((tick_count / SPAWN_INTERVAL_TICKS) % 3 - 1) * 0.3
-		var at := exit_pos + Vector2(0.0, lane_offset)
-		if _occupied_near(at, EXIT_BLOCK_RADIUS):
-			continue  # keep the award in the physical queue; never discard it
+		# OpenRA's Exit spawns on the exit cell or the nearest free cell beside it; the award waits in the
+		# physical queue only while every cell around the exit is occupied (never discarded)
+		var at := _free_spawn_cell(exit_pos, 2)
+		if at.x < 0.0:
+			continue
 		q.pop_front()
 		var u := _spawn_unit(side, role, at)
 		# leave the factory for the rally point (OpenRA RallyPoint), with a little spread
@@ -547,6 +606,23 @@ func _process_spawn_queues() -> void:
 		rally += Vector2(rng.randf_range(-1.5, 1.5), rng.randf_range(-3.0, 3.0))
 		u.order = "move"
 		u.order_pos = Vector2(clampf(rally.x, 0.5, width - 0.5), clampf(rally.y, 0.5, height - 0.5))
+
+
+func _free_spawn_cell(exit_pos: Vector2, max_radius: int) -> Vector2:
+	if not _occupied_near(exit_pos, EXIT_BLOCK_RADIUS):
+		return exit_pos
+	for r in range(1, max_radius + 1):
+		for dx in range(-r, r + 1):
+			for dy in range(-r, r + 1):
+				if absi(dx) != r and absi(dy) != r:
+					continue
+				var c := Vector2(exit_pos.x + dx, exit_pos.y + dy)
+				var cell := Vector2i(int(floor(c.x)), int(floor(c.y)))
+				if cell.x < 0 or cell.y < 0 or cell.x >= width or cell.y >= height or _blocked.has(cell):
+					continue
+				if not _occupied_near(c, EXIT_BLOCK_RADIUS):
+					return c
+	return Vector2(-1, -1)
 
 
 func _occupied_near(p: Vector2, r: float) -> bool:
@@ -571,11 +647,18 @@ func _neighbours(p: Vector2) -> Array:
 # ---------------------------------------------------------------- targeting (AutoTarget, spec 3.3)
 
 func can_hit(shooter: Ent, target: Ent) -> bool:
-	var tt := target.targetable_as()
-	for w in shooter.weapons:
-		if tt in w["def"].get("valid_targets", []):
-			return true
-	return false
+	return shooter.hits_air if target.airborne() else shooter.hits_ground
+
+
+static func _weapon_flags(e: Ent) -> void:
+	e.hits_ground = false
+	e.hits_air = false
+	for w in e.weapons:
+		var vt: Array = w["def"].get("valid_targets", [])
+		if "GroundActor" in vt:
+			e.hits_ground = true
+		if "AirborneActor" in vt:
+			e.hits_air = true
 
 
 func max_range(e: Ent) -> float:
@@ -620,19 +703,62 @@ func target_valid(e: Ent, t: Ent) -> bool:
 
 ## AutoTarget scan: the closest enemy inside the weapon range that a weapon is valid against; walls never
 ## (NoAutoTarget); stance AttackAnything (both sides are bots) includes structures.
+## Deviation: a target already aimed at by many friends counts as a little farther away, so a hundred units do
+## not all shoot the same rifleman while the rest of the enemy stands untouched (overkill).
 func scan_for_target(e: Ent, radius: float) -> int:
 	var best := -1
-	var best_d := INF
-	for o in entities:
-		if not o.alive or o.side == e.side or o.id == e.id:
+	var best_score := INF
+	var side := e.side
+	var ex := e.x
+	var ey := e.y
+	var r2 := radius * radius
+	if e.hits_ground:
+		var enemy_grid: Dictionary = _grid_side[1 - side]
+		var r := int(ceil(radius))
+		var cx := int(floor(ex))
+		var cy := int(floor(ey))
+		for i in range(-r, r + 1):
+			for j in range(-r, r + 1):
+				var list: Array = enemy_grid.get(Vector2i(cx + i, cy + j), [])
+				for id in list:
+					var o: Ent = by_id[id]
+					var ddx: float = o.x - ex
+					var ddy: float = o.y - ey
+					var d2 := ddx * ddx + ddy * ddy
+					if d2 > r2:
+						continue
+					var score := sqrt(d2) + 0.4 * minf(float(_aim_count.get(o.id, 0)), 8.0)
+					if score < best_score:
+						best = o.id
+						best_score = score
+	for o in _static_targets:
+		if o.side == side or not o.alive or o.is_wall:
 			continue
-		if o.role == "wall" or not can_hit(e, o):
+		if not (e.hits_air if o.airborne() else e.hits_ground):
 			continue
 		var d := range_to(e, o)
-		if d <= radius and d < best_d:
+		if d > radius:
+			continue
+		var score := d + 0.4 * minf(float(_aim_count.get(o.id, 0)), 8.0)
+		if score < best_score:
 			best = o.id
-			best_d = d
+			best_score = score
 	return best
+
+
+## Ground units from the spatial grid within `radius` cells, plus every building and aircraft (few of each).
+func _candidates_near(p: Vector2, radius: float) -> Array:
+	var out: Array = []
+	var r := int(ceil(radius))
+	var cx := int(floor(p.x))
+	var cy := int(floor(p.y))
+	for i in range(-r, r + 1):
+		for j in range(-r, r + 1):
+			var list: Array = _grid.get(Vector2i(cx + i, cy + j), [])
+			for id in list:
+				out.append(by_id[id])
+	out.append_array(_static_targets)
+	return out
 
 
 # ---------------------------------------------------------------- ground units (spec 3.4, 3.5, 5)
@@ -665,14 +791,18 @@ func _unit_step(e: Ent) -> void:
 	# is already in range over chasing; it keeps mass battles from dissolving into everyone chasing everyone.
 	if e.scan_timer <= 0 and e.order != "move" and (t == null or range_to(e, t) > max_range_vs(e, t)):
 		e.scan_timer = rng.randi_range(SCAN_MIN, SCAN_MAX - 1)
+		var ts0 := Time.get_ticks_usec()
 		var found := scan_for_target(e, max_range(e))
+		profile["scan"] += Time.get_ticks_usec() - ts0
 		if found >= 0:
 			t = by_id[found]
 			e.target = found
 	if t != null:
+		var ts := Time.get_ticks_usec()
 		_engage(e, t)
 		if e.moving and e.role != "infantry":
 			_opportunity_fire(e, t)
+		profile["engage"] += Time.get_ticks_usec() - ts
 		return
 	e.firing = 0
 	match e.order:
@@ -682,7 +812,9 @@ func _unit_step(e: Ent) -> void:
 				e.moving = false
 				e.path = PackedVector2Array()
 			else:
+				var ts := Time.get_ticks_usec()
 				_move_toward(e, e.order_pos)
+				profile["move"] += Time.get_ticks_usec() - ts
 		_:
 			e.moving = false
 			if e.turret_heading != e.heading and e.kind == Kind.UNIT and e.role != "infantry":
@@ -727,6 +859,8 @@ func _engage(e: Ent, t: Ent) -> void:
 ## AttackFollow OpportunityFire: a turreted unit on the move fires at the closest enemy inside its range even
 ## while it is chasing something else (no PersistentTargeting bookkeeping; the scan is cheap enough per tick).
 func _opportunity_fire(e: Ent, chasing: Ent) -> void:
+	if (tick_count + e.id) % 3 != 0:
+		return
 	var found := scan_for_target(e, max_range(e))
 	if found < 0 or found == chasing.id:
 		return
@@ -1025,31 +1159,46 @@ func _try_step(e: Ent, step: Vector2) -> bool:
 	e.x = nx
 	e.y = ny
 	if e.crushes_infantry:
-		for id in _neighbours(e.center()):
-			var o: Ent = by_id[id]
-			if o.alive and o.side != e.side and o.role == "infantry" and o.center().distance_to(e.center()) < 0.35:
-				_kill(o, e, true)
+		var enemy_grid: Dictionary = _grid_side[1 - e.side]
+		var c := e.cell()
+		for i in range(-1, 2):
+			for j in range(-1, 2):
+				for id in enemy_grid.get(Vector2i(c.x + i, c.y + j), []):
+					var o: Ent = by_id[id]
+					if o.alive and o.role == "infantry" and o.center().distance_to(e.center()) < 0.35:
+						_kill(o, e, true)
 	return true
 
 
 ## Soft separation. A unit on the move slips past stationary friends (OpenRA packs five infantry into a cell and
 ## nudges idle blockers aside), so the rear ranks of a squad reach the fight instead of queueing behind the front.
 func _separate(e: Ent) -> void:
+	if (tick_count + e.id) % 2 == 1:
+		return
 	var p := e.center()
 	var push := Vector2.ZERO
-	for id in _neighbours(p):
-		if id == e.id:
-			continue
-		var o: Ent = by_id[id]
-		var d := p - o.center()
-		var min_d := e.radius + o.radius
-		if o.side == e.side and e.moving:
-			min_d *= 0.5 if o.moving else 0.25
-		var len := d.length()
-		if len < min_d and len > 0.0001:
-			push += d / len * (min_d - len) * 0.5
-		elif len <= 0.0001:
-			push += Vector2(0.0, 0.01 * (1 if e.id % 2 == 0 else -1))
+	var checked := 0
+	var cxi := int(floor(p.x))
+	var cyi := int(floor(p.y))
+	for i in range(-1, 2):
+		for j in range(-1, 2):
+			var list: Array = _grid.get(Vector2i(cxi + i, cyi + j), [])
+			for id in list:
+				if id == e.id:
+					continue
+				checked += 1
+				if checked > 12:
+					break
+				var o: Ent = by_id[id]
+				var d := p - o.center()
+				var min_d := e.radius + o.radius
+				if o.side == e.side and e.moving:
+					min_d *= 0.5 if o.moving else 0.25
+				var len := d.length()
+				if len < min_d and len > 0.0001:
+					push += d / len * (min_d - len)
+				elif len <= 0.0001:
+					push += Vector2(0.0, 0.02 * (1 if e.id % 2 == 0 else -1))
 	if push != Vector2.ZERO:
 		var nx := clampf(e.x + push.x, 0.2, width - 0.2)
 		var ny := clampf(e.y + push.y, 0.2, height - 0.2)

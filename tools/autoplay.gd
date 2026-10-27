@@ -117,6 +117,9 @@ static func run(m: Match, level: Level, policy: String, rng: RandomNumberGenerat
 	r["enemy_events_used"] = level.enemy_events.size()
 	r["timeline"] = timeline
 	r["blocked"] = m.sim.stats["blocked"]
+	r["profile_ms"] = {}
+	for k in m.sim.profile:
+		r["profile_ms"][k] = m.sim.profile[k] if k == "ticks" else snappedf(float(m.sim.profile[k]) / 1000.0, 0.1)
 	return r
 
 
@@ -159,5 +162,12 @@ static func _debug_line(m: Match, t: float, shots: Array, kills: Array) -> void:
 		for e in sim.entities:
 			if e.alive and e.side == side and e.kind == BattleSim.Kind.AIRCRAFT:
 				air.append("%s%d" % [BattleSim.Air.keys()[e.air].substr(0, 3), e.ammo])
-		line += " | S%d units %3d tgt %3d inrange %3d moving %3d front %5.1f shots %4d kills %3d idle %d squads %s air %s" % [side, units, with_target, in_range, moving, front, shots[side], kills[side], bot.idle_pool.size(), sq, air]
+		var bands := [0, 0, 0, 0, 0]
+		var worst_building := 100
+		for e in sim.entities:
+			if e.alive and e.side == side and e.kind == BattleSim.Kind.UNIT:
+				bands[clampi(int(e.x / 11.0), 0, 4)] += 1
+			if e.alive and e.side != side and e.kind == BattleSim.Kind.BUILDING and e.role != "wall":
+				worst_building = mini(worst_building, e.hp * 100 / e.max_hp)
+		line += " | S%d units %3d tgt %3d inrange %3d moving %3d front %5.1f shots %4d kills %3d idle %d xbands %s enemyBldgMin %d%% squads %s air %s" % [side, units, with_target, in_range, moving, front, shots[side], kills[side], bot.idle_pool.size(), bands, worst_building, sq, air]
 	print(line)

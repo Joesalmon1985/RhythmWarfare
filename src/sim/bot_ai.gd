@@ -6,8 +6,10 @@ extends RefCounted
 ## noted inline: the fuzzy attack-or-flee comparison is the crisp approximation from the spec, and the air
 ## squad's approach-safety test uses the intended semantics (the source has the comparison inverted).
 
-const SQUAD_SIZE := 20
-const SQUAD_SIZE_RANDOM_BONUS := 30
+# Rush AI uses SquadSize 20 + Random(30), paced for a half-hour match. An 88-second song needs waves every few
+# seconds, so the squad threshold is scaled down to 10 + Random(10); everything else keeps the engine's values.
+const SQUAD_SIZE := 10
+const SQUAD_SIZE_RANDOM_BONUS := 10
 const ASSIGN_ROLES_INTERVAL := 50
 const RUSH_INTERVAL := 600
 const ATTACK_FORCE_INTERVAL := 75
@@ -196,6 +198,17 @@ func _closest_enemy(source: BattleSim.Ent, radius: float = INF) -> BattleSim.Ent
 	return best
 
 
+## Deviation from the closest-enemy rule (spec 1.4): assault and rush squads are sent at the enemy construction
+## yard, the way TryToRushAttack does, fighting whatever they meet within AttackScanRadius on the way. With
+## continuous music-driven production a "closest enemy" is always being spawned next to the enemy wall, so the
+## engine rule never let a winning army walk the last ten cells.
+func _attack_objective(source: BattleSim.Ent) -> BattleSim.Ent:
+	var cy: BattleSim.Ent = sim.main_base(1 - side)
+	if cy != null and cy.alive and source != null and sim.can_hit(source, cy):
+		return cy
+	return _closest_enemy(source)
+
+
 func _squad_centre(s: Squad) -> Vector2:
 	var sum := Vector2.ZERO
 	var n := 0
@@ -361,18 +374,25 @@ func _units_of(s: Squad) -> Array:
 
 
 ## StateBase.ShouldFlee: around the squad centre, never flee near an own building; otherwise ask the comparison.
+## Deviation: the own side of the comparison is every friendly ground unit inside the danger circle, not only this
+## squad, so several squads fighting side by side do not each conclude they are outnumbered and leave piecemeal.
 func _should_flee(s: Squad, own: Array, rush: bool) -> bool:
 	var c := _squad_centre(s)
 	for e in sim.entities:
 		if e.alive and e.side == side and e.kind == BattleSim.Kind.BUILDING and e.role != "wall" and e.center().distance_to(c) <= DANGER_SCAN_RADIUS:
 			return false
 	var enemies := []
+	var friends := []
 	for o in sim.entities:
-		if o.alive and o.side != side and not o.airborne() and not o.weapons.is_empty() and o.center().distance_to(c) <= DANGER_SCAN_RADIUS:
+		if not o.alive or o.airborne() or o.center().distance_to(c) > DANGER_SCAN_RADIUS:
+			continue
+		if o.side != side and not o.weapons.is_empty():
 			enemies.append(o)
+		elif o.side == side and o.kind == BattleSim.Kind.UNIT:
+			friends.append(o)
 	if enemies.is_empty():
 		return false
-	return not _can_attack(own, enemies, rush)
+	return not _can_attack(friends if friends.size() > own.size() else own, enemies, rush)
 
 
 # ---------------------------------------------------------------- ground squads (spec 1.4, 1.5)
@@ -405,17 +425,13 @@ func _update_ground(s: Squad) -> void:
 	var rush := s.type == "rush"
 	match s.state:
 		"idle":
-			var leader := _leader(s)
-			if not _target_valid(s, leader):
-				leader = _elect_leader(s)
-				var t := _closest_enemy(leader)
-				_set_target(s, t)
-				if t == null:
-					return
-			var enemies := _enemies_in_circle(s.target_pos, IDLE_SCAN_RADIUS, leader)
-			if enemies.is_empty():
+			var leader := _elect_leader(s)
+			var t := _attack_objective(leader)
+			_set_target(s, t)
+			if t == null:
 				return
-			if _can_attack(own, enemies, rush):
+			var enemies := _enemies_in_circle(s.target_pos, IDLE_SCAN_RADIUS, leader)
+			if enemies.is_empty() or _can_attack(own, enemies, rush):
 				_order_attack_move(s.units, s.target_pos)
 				s.state = "attack_move"
 				s.last_updated = sim.tick_count
@@ -425,7 +441,7 @@ func _update_ground(s: Squad) -> void:
 			var leader := _leader(s)
 			if not _target_valid(s, leader):
 				leader = _elect_leader(s)
-				var t := _closest_enemy(leader)
+				var t := _attack_objective(leader)
 				_set_target(s, t)
 				if t == null:
 					_flee(s)
@@ -453,12 +469,16 @@ func _update_ground(s: Squad) -> void:
 		"attack":
 			var leader := _leader(s)
 			if not _target_valid(s, leader):
+				# the fight is over: carry on towards the objective instead of hunting the next closest unit
 				leader = _elect_leader(s)
-				var t := _closest_enemy(leader)
+				var t := _attack_objective(leader)
 				_set_target(s, t)
 				if t == null:
 					_flee(s)
 					return
+				_order_attack_move(s.units, s.target_pos)
+				s.state = "attack_move"
+				return
 			if _stuck_check(s, leader):
 				s.state = "idle"
 				return
