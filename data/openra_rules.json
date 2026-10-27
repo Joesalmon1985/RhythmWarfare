@@ -1,0 +1,2186 @@
+{
+ "source": "OpenRA bleed e7e9e4ad mods/ra rules + weapons",
+ "openra_commit": "e7e9e4ad270221d7fb9725b348c75504d48c1ebd",
+ "actors": {
+  "1tnk": {
+   "name": "1TNK",
+   "hp": 23000,
+   "armor": "Heavy",
+   "speed": 113,
+   "cost": 700,
+   "queue": "Vehicle",
+   "prerequisites": "~vehicles.allies, ~techlevel.low",
+   "armaments": [
+    "25mm"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "tracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {}
+   }
+  },
+  "2tnk": {
+   "name": "2TNK",
+   "hp": 46000,
+   "armor": "Heavy",
+   "speed": 72,
+   "cost": 850,
+   "queue": "Vehicle",
+   "prerequisites": "fix, ~vehicles.allies, ~techlevel.medium",
+   "armaments": [
+    "90mm"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "tracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {}
+   }
+  },
+  "3tnk": {
+   "name": "3TNK",
+   "hp": 60000,
+   "armor": "Heavy",
+   "speed": 64,
+   "cost": 1150,
+   "queue": "Vehicle",
+   "prerequisites": "fix, ~vehicles.soviet, ~techlevel.medium",
+   "armaments": [
+    "105mm"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Vehicle"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "tracked",
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "Demolishable": {},
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Passenger": {
+     "CargoType": "Vehicle"
+    },
+    "ProximityCaptor": {
+     "Types": "Vehicle"
+    },
+    "Capturable": {
+     "Types": "vehicle",
+     "CancelActivity": "True"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "AttackTurreted": {}
+   }
+  },
+  "e1": {
+   "name": "E1",
+   "hp": 5000,
+   "armor": "None",
+   "speed": 54,
+   "cost": 100,
+   "queue": "Infantry",
+   "prerequisites": "~barracks, ~techlevel.infonly",
+   "armaments": [
+    "M1Carbine"
+   ],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "Soldier",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    },
+    "Passenger": {
+     "CargoType": "Infantry",
+     "CargoCondition": "disable-experience"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ChangesHealth@HOSPITAL": {
+     "Step": "500",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "hospitalheal"
+    },
+    "ProximityCaptor": {
+     "Types": "Infantry"
+    },
+    "TakeCover": {
+     "DamageTriggers": "TriggerProne",
+     "Duration": "50"
+    },
+    "AttackFrontal": {
+     "FacingTolerance": "0"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    }
+   }
+  },
+  "heli": {
+   "name": "HELI",
+   "hp": 12000,
+   "armor": "Light",
+   "speed": 149,
+   "cost": 2000,
+   "queue": "Aircraft",
+   "prerequisites": "~hpad, atek, ~techlevel.high",
+   "armaments": [
+    "HellfireAA",
+    "HellfireAG"
+   ],
+   "target_types": [],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "fly",
+   "build_at": "Helicopter",
+   "targetable": {
+    "Targetable@GROUND": {
+     "types": [
+      "GroundActor",
+      "Vehicle"
+     ],
+     "requires": "!airborne"
+    },
+    "Targetable@AIRBORNE": {
+     "types": [
+      "AirborneActor"
+     ],
+     "requires": "airborne"
+    },
+    "Targetable@REPAIR": {
+     "types": [
+      "Repair"
+     ],
+     "requires": "!airborne && damaged"
+    }
+   },
+   "abilities": {
+    "Aircraft": {
+     "AirborneCondition": "airborne",
+     "CanHover": "True",
+     "CruisingCondition": "cruising",
+     "WaitDistanceFromResupplyBase": "4c0",
+     "TakeOffOnResupply": "true",
+     "VTOL": "true",
+     "LandableTerrainTypes": "Clear, Rough, Road, Ore, Beach, Gems",
+     "Crushes": "crate, mine, infantry",
+     "CanSlide": "True",
+     "TurnSpeed": "16",
+     "Speed": "149"
+    },
+    "ProximityCaptor": {
+     "Types": "Plane"
+    },
+    "Capturable": {
+     "Types": "aircraft",
+     "RequiresCondition": "!airborne"
+    },
+    "GainsExperience": {
+     "LevelUpNotification": "LevelUp",
+     "LevelUpTextNotification": "notification-unit-promoted",
+     "LevelUpImage": "crate-effects"
+    },
+    "ChangesHealth@ELITE": {
+     "Step": "0",
+     "PercentageStep": "5",
+     "Delay": "100",
+     "StartIfBelow": "100",
+     "DamageCooldown": "125",
+     "RequiresCondition": "rank-elite"
+    },
+    "Repairable": {
+     "RepairActors": "fix"
+    },
+    "Hovers@CRUISING": {
+     "RequiresCondition": "cruising"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything",
+     "InitialStance": "HoldFire",
+     "InitialStanceAI": "HoldFire"
+    },
+    "RevealsShroud": {
+     "MinRange": "10c0",
+     "Range": "12c0",
+     "Type": "GroundPosition",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "10c0",
+     "Type": "GroundPosition"
+    },
+    "AttackAircraft": {
+     "FacingTolerance": "80",
+     "PersistentTargeting": "false",
+     "AttackType": "Hover",
+     "OpportunityFire": "False"
+    },
+    "AmmoPool": {
+     "Ammo": "8",
+     "AmmoCondition": "ammo"
+    }
+   }
+  },
+  "hpad": {
+   "name": "HPAD",
+   "hp": 80000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 500,
+   "queue": "Building",
+   "prerequisites": "dome, ~structures.allies, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "produces": [
+    "Aircraft",
+    "Helicopter"
+   ],
+   "exits": [
+    {
+     "exit_cell": [
+      0,
+      0
+     ],
+     "spawn_offset": [
+      0,
+      -256,
+      0
+     ],
+     "facing": 896
+    }
+   ],
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForSupportPower": {
+     "PlayerExperience": "10",
+     "Proxy": "aircraft.upgraded",
+     "Types": "SpyInfiltrate"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "Reservable": {},
+    "Power": {
+     "Amount": "-10"
+    },
+    "ProvidesPrerequisite@allies": {
+     "Factions": "allies, england, france, germany",
+     "Prerequisite": "aircraft.allies"
+    },
+    "ProvidesPrerequisite@alliesvanilla": {
+     "Factions": "allies",
+     "Prerequisite": "aircraft.alliesvanilla"
+    },
+    "ProvidesPrerequisite@england": {
+     "Factions": "england",
+     "Prerequisite": "aircraft.england"
+    },
+    "ProvidesPrerequisite@france": {
+     "Factions": "france",
+     "Prerequisite": "aircraft.france"
+    },
+    "ProvidesPrerequisite@germany": {
+     "Factions": "germany",
+     "Prerequisite": "aircraft.germany"
+    },
+    "ProvidesPrerequisite@alliedstructure": {
+     "RequiresPrerequisites": "structures.allies",
+     "Prerequisite": "aircraft.allies"
+    },
+    "ProvidesPrerequisite@alliedvanillastructure": {
+     "RequiresPrerequisites": "structures.alliesvanilla",
+     "Prerequisite": "aircraft.alliesvanilla"
+    },
+    "ProvidesPrerequisite@englishstructure": {
+     "RequiresPrerequisites": "structures.england",
+     "Prerequisite": "aircraft.england"
+    },
+    "ProvidesPrerequisite@frenchstructure": {
+     "RequiresPrerequisites": "structures.france",
+     "Prerequisite": "aircraft.france"
+    },
+    "ProvidesPrerequisite@germanstructure": {
+     "RequiresPrerequisites": "structures.germany",
+     "Prerequisite": "aircraft.germany"
+    },
+    "ProvidesPrerequisite@buildingname": {}
+   }
+  },
+  "powr": {
+   "name": "POWR",
+   "hp": 40000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 300,
+   "queue": "Building",
+   "prerequisites": "~techlevel.infonly",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForPowerOutage": {
+     "Types": "SpyInfiltrate",
+     "PlayerExperience": "0"
+    },
+    "Power": {
+     "RequiresCondition": "!disabled",
+     "Amount": "100"
+    },
+    "ProvidesPrerequisite": {
+     "Prerequisite": "anypower"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    }
+   }
+  },
+  "fact": {
+   "name": "FACT",
+   "hp": 150000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 2000,
+   "queue": "Building",
+   "prerequisites": "~disabled",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xxX xxx XxX ===",
+    "dimensions": "3,4",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "produces": [
+    "Building",
+    "Defense"
+   ],
+   "exits": [],
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !chrono-vortex && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "ProvidesPrerequisite@allies": {
+     "Factions": "allies, england, france, germany",
+     "Prerequisite": "structures.allies"
+    },
+    "ProvidesPrerequisite@alliesvanilla": {
+     "Factions": "allies",
+     "Prerequisite": "structures.alliesvanilla"
+    },
+    "ProvidesPrerequisite@england": {
+     "Factions": "england",
+     "Prerequisite": "structures.england"
+    },
+    "ProvidesPrerequisite@france": {
+     "Factions": "france",
+     "Prerequisite": "structures.france"
+    },
+    "ProvidesPrerequisite@germany": {
+     "Factions": "germany",
+     "Prerequisite": "structures.germany"
+    },
+    "ProvidesPrerequisite@soviet": {
+     "Factions": "soviet, russia, ukraine",
+     "Prerequisite": "structures.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanilla": {
+     "Factions": "soviet",
+     "Prerequisite": "structures.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russia": {
+     "Factions": "russia",
+     "Prerequisite": "structures.russia"
+    },
+    "ProvidesPrerequisite@ukraine": {
+     "Factions": "ukraine",
+     "Prerequisite": "structures.ukraine"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "Transforms": {
+     "RequiresCondition": "factundeploy",
+     "PauseOnCondition": "chrono-vortex || being-captured || being-demolished || build-incomplete",
+     "IntoActor": "mcv",
+     "Offset": "1,1",
+     "Facing": "384"
+    },
+    "Power": {
+     "Amount": "0"
+    },
+    "ProvidesPrerequisite@buildingname": {}
+   }
+  },
+  "weap": {
+   "name": "WEAP",
+   "hp": 150000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 2000,
+   "queue": "Building",
+   "prerequisites": "proc, ~techlevel.low",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xxx xxx ===",
+    "dimensions": "3,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "produces": [
+    "Vehicle"
+   ],
+   "exits": [
+    {
+     "exit_cell": [
+      1,
+      2
+     ],
+     "spawn_offset": [
+      213,
+      -128,
+      0
+     ],
+     "facing": 0
+    }
+   ],
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForSupportPower": {
+     "PlayerExperience": "10",
+     "Proxy": "vehicles.upgraded",
+     "Types": "SpyInfiltrate"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "ProvidesPrerequisite@allies": {
+     "Factions": "allies, england, france, germany",
+     "Prerequisite": "vehicles.allies"
+    },
+    "ProvidesPrerequisite@alliesvanilla": {
+     "Factions": "allies",
+     "Prerequisite": "vehicles.alliesvanilla"
+    },
+    "ProvidesPrerequisite@england": {
+     "Factions": "england",
+     "Prerequisite": "vehicles.england"
+    },
+    "ProvidesPrerequisite@france": {
+     "Factions": "france",
+     "Prerequisite": "vehicles.france"
+    },
+    "ProvidesPrerequisite@germany": {
+     "Factions": "germany",
+     "Prerequisite": "vehicles.germany"
+    },
+    "ProvidesPrerequisite@soviet": {
+     "Factions": "soviet, russia, ukraine",
+     "Prerequisite": "vehicles.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanilla": {
+     "Factions": "soviet",
+     "Prerequisite": "vehicles.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russia": {
+     "Factions": "russia",
+     "Prerequisite": "vehicles.russia"
+    },
+    "ProvidesPrerequisite@ukraine": {
+     "Factions": "ukraine",
+     "Prerequisite": "vehicles.ukraine"
+    },
+    "ProvidesPrerequisite@alliedstructure": {
+     "RequiresPrerequisites": "structures.allies",
+     "Prerequisite": "vehicles.allies"
+    },
+    "ProvidesPrerequisite@alliedvanillastructure": {
+     "RequiresPrerequisites": "structures.alliesvanilla",
+     "Prerequisite": "vehicles.alliesvanilla"
+    },
+    "ProvidesPrerequisite@englishstructure": {
+     "RequiresPrerequisites": "structures.england",
+     "Prerequisite": "vehicles.england"
+    },
+    "ProvidesPrerequisite@frenchstructure": {
+     "RequiresPrerequisites": "structures.france",
+     "Prerequisite": "vehicles.france"
+    },
+    "ProvidesPrerequisite@germanstructure": {
+     "RequiresPrerequisites": "structures.germany",
+     "Prerequisite": "vehicles.germany"
+    },
+    "ProvidesPrerequisite@sovietstructure": {
+     "RequiresPrerequisites": "structures.soviet",
+     "Prerequisite": "vehicles.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanillastructure": {
+     "RequiresPrerequisites": "structures.sovietvanilla",
+     "Prerequisite": "vehicles.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russianstructure": {
+     "RequiresPrerequisites": "structures.russia",
+     "Prerequisite": "vehicles.russia"
+    },
+    "ProvidesPrerequisite@ukrainianstructure": {
+     "RequiresPrerequisites": "structures.ukraine",
+     "Prerequisite": "vehicles.ukraine"
+    },
+    "Power": {
+     "Amount": "-30"
+    },
+    "ProvidesPrerequisite@buildingname": {}
+   }
+  },
+  "barr": {
+   "name": "BARR",
+   "hp": 60000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 500,
+   "queue": "Building",
+   "prerequisites": "anypower, ~structures.soviet, ~techlevel.infonly",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "produces": [
+    "Infantry",
+    "Soldier"
+   ],
+   "exits": [
+    {
+     "exit_cell": [
+      1,
+      2
+     ],
+     "spawn_offset": [
+      -170,
+      810,
+      0
+     ],
+     "facing": 0
+    },
+    {
+     "exit_cell": [
+      0,
+      2
+     ],
+     "spawn_offset": [
+      -725,
+      640,
+      0
+     ],
+     "facing": 0
+    }
+   ],
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForSupportPower": {
+     "PlayerExperience": "10",
+     "Proxy": "barracks.upgraded",
+     "Types": "SpyInfiltrate"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "ProvidesPrerequisite": {
+     "Prerequisite": "barracks"
+    },
+    "ProvidesPrerequisite@soviet": {
+     "Factions": "soviet, russia, ukraine",
+     "Prerequisite": "infantry.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanilla": {
+     "Factions": "soviet",
+     "Prerequisite": "infantry.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russia": {
+     "Factions": "russia",
+     "Prerequisite": "infantry.russia"
+    },
+    "ProvidesPrerequisite@ukraine": {
+     "Factions": "ukraine",
+     "Prerequisite": "infantry.ukraine"
+    },
+    "ProvidesPrerequisite@sovietstructure": {
+     "RequiresPrerequisites": "structures.soviet",
+     "Prerequisite": "infantry.soviet"
+    },
+    "ProvidesPrerequisite@sovietvanillastructure": {
+     "RequiresPrerequisites": "structures.sovietvanilla",
+     "Prerequisite": "infantry.sovietvanilla"
+    },
+    "ProvidesPrerequisite@russianstructure": {
+     "RequiresPrerequisites": "structures.russia",
+     "Prerequisite": "infantry.russia"
+    },
+    "ProvidesPrerequisite@ukrainianstructure": {
+     "RequiresPrerequisites": "structures.ukraine",
+     "Prerequisite": "infantry.ukraine"
+    },
+    "Power": {
+     "Amount": "-20"
+    },
+    "ProvidesPrerequisite@buildingname": {}
+   }
+  },
+  "tent": {
+   "name": "TENT",
+   "hp": 60000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 500,
+   "queue": "Building",
+   "prerequisites": "anypower, ~structures.allies, ~techlevel.infonly",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "SpyInfiltrate"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx ==",
+    "dimensions": "2,3",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "produces": [
+    "Infantry",
+    "Soldier"
+   ],
+   "exits": [
+    {
+     "exit_cell": [
+      1,
+      2
+     ],
+     "spawn_offset": [
+      -42,
+      810,
+      0
+     ],
+     "facing": 0
+    },
+    {
+     "exit_cell": [
+      0,
+      2
+     ],
+     "spawn_offset": [
+      -725,
+      640,
+      0
+     ],
+     "facing": 0
+    }
+   ],
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "SpyInfiltrate"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "GivesBuildableArea": {
+     "AreaTypes": "building, fake"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "InfiltrateForSupportPower": {
+     "PlayerExperience": "10",
+     "Proxy": "barracks.upgraded",
+     "Types": "SpyInfiltrate"
+    },
+    "RevealsShroud": {
+     "MinRange": "4c0",
+     "Range": "5c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "4c0"
+    },
+    "ProvidesPrerequisite@barracks": {
+     "Prerequisite": "barracks"
+    },
+    "ProvidesPrerequisite@allies": {
+     "Factions": "allies, england, france, germany",
+     "Prerequisite": "infantry.allies"
+    },
+    "ProvidesPrerequisite@alliesvanilla": {
+     "Factions": "allies",
+     "Prerequisite": "infantry.alliesvanilla"
+    },
+    "ProvidesPrerequisite@england": {
+     "Factions": "england",
+     "Prerequisite": "infantry.england"
+    },
+    "ProvidesPrerequisite@france": {
+     "Factions": "france",
+     "Prerequisite": "infantry.france"
+    },
+    "ProvidesPrerequisite@germany": {
+     "Factions": "germany",
+     "Prerequisite": "infantry.germany"
+    },
+    "ProvidesPrerequisite@alliedstructure": {
+     "RequiresPrerequisites": "structures.allies",
+     "Prerequisite": "infantry.allies"
+    },
+    "ProvidesPrerequisite@alliedvanillastructure": {
+     "RequiresPrerequisites": "structures.alliesvanilla",
+     "Prerequisite": "infantry.alliesvanilla"
+    },
+    "ProvidesPrerequisite@englishstructure": {
+     "RequiresPrerequisites": "structures.england",
+     "Prerequisite": "infantry.england"
+    },
+    "ProvidesPrerequisite@frenchstructure": {
+     "RequiresPrerequisites": "structures.france",
+     "Prerequisite": "infantry.france"
+    },
+    "ProvidesPrerequisite@germanstructure": {
+     "RequiresPrerequisites": "structures.germany",
+     "Prerequisite": "infantry.germany"
+    },
+    "Power": {
+     "Amount": "-20"
+    },
+    "ProvidesPrerequisite@buildingname": {}
+   }
+  },
+  "brik": {
+   "name": "BRIK",
+   "hp": 40000,
+   "armor": "Concrete",
+   "speed": 0,
+   "cost": 200,
+   "queue": "Defense",
+   "prerequisites": "fact, ~techlevel.medium",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "DetonateAttack",
+    "Wall",
+    "NoAutoTarget"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 7
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "DetonateAttack",
+      "Wall",
+      "NoAutoTarget"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "Crushable": {
+     "CrushClasses": "heavywall"
+    },
+    "Sellable": {
+     "SellSounds": "cashturn.aud"
+    }
+   }
+  },
+  "sbag": {
+   "name": "SBAG",
+   "hp": 15000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 30,
+   "queue": "Defense",
+   "prerequisites": "fact, ~structures.allies, ~techlevel.low",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "DetonateAttack",
+    "Wall",
+    "NoAutoTarget"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 7
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "DetonateAttack",
+      "Wall",
+      "NoAutoTarget"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "Crushable": {
+     "CrushClasses": "wall"
+    },
+    "Sellable": {
+     "SellSounds": "cashturn.aud"
+    }
+   }
+  },
+  "gun": {
+   "name": "GUN",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 0,
+   "cost": 800,
+   "queue": "Defense",
+   "prerequisites": "tent, ~structures.allies, ~techlevel.medium",
+   "armaments": [
+    "TurretGun"
+   ],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "Defense"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "detect": {
+    "range": 6.0,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "Defense"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c512",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "AttackTurreted": {
+     "PauseOnCondition": "build-incomplete"
+    },
+    "Power": {
+     "Amount": "-40"
+    }
+   }
+  },
+  "agun": {
+   "name": "AGUN",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 0,
+   "cost": 800,
+   "queue": "Defense",
+   "prerequisites": "dome, ~structures.allies, ~techlevel.medium",
+   "armaments": [
+    "ZSU-23"
+   ],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "Defense"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "Defense"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing",
+     "RepairCondition": "repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "AutoTarget": {},
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "AttackTurreted": {
+     "PauseOnCondition": "disabled || build-incomplete"
+    },
+    "Power": {
+     "Amount": "-50"
+    }
+   }
+  },
+  "sam": {
+   "name": "SAM",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 0,
+   "cost": 700,
+   "queue": "Defense",
+   "prerequisites": "dome, ~structures.soviet, ~techlevel.medium",
+   "armaments": [
+    "Nike"
+   ],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "Defense"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx",
+    "dimensions": "2,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "Defense"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing",
+     "RepairCondition": "repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "AutoTarget": {},
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "8c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "AttackTurreted": {
+     "PauseOnCondition": "disabled || build-incomplete"
+    },
+    "Power": {
+     "Amount": "-40"
+    }
+   }
+  },
+  "ftur": {
+   "name": "FTUR",
+   "hp": 40000,
+   "armor": "Heavy",
+   "speed": 0,
+   "cost": 600,
+   "queue": "Defense",
+   "prerequisites": "barr, ~structures.soviet, ~techlevel.low",
+   "armaments": [
+    "FireballLauncher"
+   ],
+   "target_types": [
+    "GroundActor",
+    "C4",
+    "DetonateAttack",
+    "Structure",
+    "Defense"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "detect": {
+    "range": 5.0,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "C4",
+      "DetonateAttack",
+      "Structure",
+      "Defense"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RepairableBuilding": {
+     "RepairStep": "700",
+     "PlayerExperience": "0",
+     "RepairingNotification": "Repairing"
+    },
+    "WithMakeAnimation": {
+     "Condition": "build-incomplete"
+    },
+    "Capturable": {
+     "RequiresCondition": "!build-incomplete",
+     "Types": "building"
+    },
+    "Sellable": {
+     "RequiresCondition": "!build-incomplete && !being-captured && !being-demolished",
+     "SellSounds": "cashturn.aud",
+     "Notification": "StructureSold"
+    },
+    "AutoTarget": {
+     "AttackAnythingCondition": "stance-attackanything"
+    },
+    "RevealsShroud": {
+     "MinRange": "5c0",
+     "Range": "6c0",
+     "RevealGeneratedShroud": "False"
+    },
+    "RevealsShroud@GAPGEN": {
+     "Range": "5c0"
+    },
+    "AttackTurreted": {
+     "PauseOnCondition": "build-incomplete"
+    },
+    "Power": {
+     "Amount": "-20"
+    },
+    "ProvidesPrerequisite@buildingname": {}
+   }
+  }
+ },
+ "weapons": {
+  "105mm": {
+   "range": 4.75,
+   "min_range": 0.0,
+   "reload": 70,
+   "burst": 2,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 682,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 4000,
+     "spread": 0.125,
+     "versus": {
+      "None": 30,
+      "Wood": 75,
+      "Light": 75,
+      "Concrete": 50,
+      "Heavy": 115
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "25mm": {
+   "range": 4.75,
+   "min_range": 0.0,
+   "reload": 21,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 853,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 2500,
+     "spread": 0.125,
+     "versus": {
+      "None": 32,
+      "Wood": 52,
+      "Light": 116,
+      "Concrete": 32,
+      "Heavy": 48
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "90mm": {
+   "range": 4.75,
+   "min_range": 0.0,
+   "reload": 50,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 682,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 4000,
+     "spread": 0.125,
+     "versus": {
+      "None": 30,
+      "Wood": 75,
+      "Light": 75,
+      "Concrete": 50,
+      "Heavy": 115
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "FireballLauncher": {
+   "range": 5.0,
+   "min_range": 0.0,
+   "reload": 70,
+   "burst": 2,
+   "burst_delay": 20,
+   "projectile": "Bullet",
+   "projectile_speed": 250,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor",
+    "Trees"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 15000,
+     "spread": 0.2080078125,
+     "versus": {
+      "None": 90,
+      "Wood": 50,
+      "Tree": 50,
+      "Light": 50,
+      "Heavy": 25,
+      "Concrete": 20
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor",
+      "Trees"
+     ]
+    }
+   ]
+  },
+  "HellfireAA": {
+   "range": 4.0,
+   "min_range": 1.25,
+   "reload": 30,
+   "burst": 2,
+   "burst_delay": 10,
+   "projectile": "Missile",
+   "projectile_speed": 492,
+   "valid_targets": [
+    "AirborneActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 3000,
+     "spread": 0.125,
+     "versus": {
+      "None": 10,
+      "Wood": 74,
+      "Light": 100,
+      "Heavy": 100,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "AirborneActor"
+     ]
+    }
+   ]
+  },
+  "HellfireAG": {
+   "range": 5.0,
+   "min_range": 1.25,
+   "reload": 34,
+   "burst": 2,
+   "burst_delay": 10,
+   "projectile": "Missile",
+   "projectile_speed": 256,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 6000,
+     "spread": 0.125,
+     "versus": {
+      "None": 30,
+      "Wood": 90,
+      "Light": 90,
+      "Heavy": 100,
+      "Concrete": 100
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "M1Carbine": {
+   "range": 5.0,
+   "min_range": 0.0,
+   "reload": 20,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 1000,
+     "spread": 0.125,
+     "versus": {
+      "None": 150,
+      "Wood": 30,
+      "Light": 40,
+      "Heavy": 10,
+      "Concrete": 10
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "Nike": {
+   "range": 7.5,
+   "min_range": 0.5,
+   "reload": 15,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Missile",
+   "projectile_speed": 341,
+   "valid_targets": [
+    "AirborneActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 4500,
+     "spread": 0.125,
+     "versus": {
+      "None": 10,
+      "Wood": 74,
+      "Light": 100,
+      "Heavy": 100,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "AirborneActor"
+     ]
+    }
+   ]
+  },
+  "TurretGun": {
+   "range": 6.5,
+   "min_range": 0.0,
+   "reload": 30,
+   "burst": 1,
+   "burst_delay": 5,
+   "projectile": "Bullet",
+   "projectile_speed": 682,
+   "valid_targets": [
+    "Ground",
+    "Water",
+    "GroundActor",
+    "WaterActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 6000,
+     "spread": 0.125,
+     "versus": {
+      "None": 20,
+      "Wood": 50,
+      "Light": 75,
+      "Concrete": 50
+     },
+     "valid_targets": [
+      "GroundActor",
+      "WaterActor"
+     ]
+    }
+   ]
+  },
+  "ZSU-23": {
+   "range": 10.0,
+   "min_range": 0.0,
+   "reload": 6,
+   "burst": 2,
+   "burst_delay": 0,
+   "projectile": "InstantHit",
+   "projectile_speed": 0,
+   "valid_targets": [
+    "AirborneActor"
+   ],
+   "invalid_targets": [],
+   "warheads": [
+    {
+     "type": "SpreadDamage",
+     "damage": 900,
+     "spread": 0.2080078125,
+     "versus": {},
+     "valid_targets": [
+      "AirborneActor"
+     ]
+    }
+   ]
+  }
+ },
+ "locomotors": {
+  "foot": {
+   "speeds": {
+    "Clear": 100,
+    "Rough": 89,
+    "Road": 111,
+    "Bridge": 111,
+    "Ore": 89,
+    "Gems": 89,
+    "Beach": 89
+   },
+   "crushes": [
+    "mine",
+    "crate"
+   ]
+  },
+  "wheeled": {
+   "speeds": {
+    "Clear": 100,
+    "Rough": 50,
+    "Road": 125,
+    "Bridge": 125,
+    "Ore": 88,
+    "Gems": 88,
+    "Beach": 50
+   },
+   "crushes": [
+    "mine",
+    "crate"
+   ]
+  },
+  "heavywheeled": {
+   "speeds": {
+    "Clear": 100,
+    "Rough": 50,
+    "Road": 125,
+    "Bridge": 125,
+    "Ore": 88,
+    "Gems": 88,
+    "Beach": 50
+   },
+   "crushes": [
+    "wall",
+    "mine",
+    "crate",
+    "infantry"
+   ]
+  },
+  "lighttracked": {
+   "speeds": {
+    "Clear": 100,
+    "Rough": 88,
+    "Road": 125,
+    "Bridge": 125,
+    "Ore": 88,
+    "Gems": 88,
+    "Beach": 88
+   },
+   "crushes": [
+    "wall",
+    "mine",
+    "crate"
+   ]
+  },
+  "tracked": {
+   "speeds": {
+    "Clear": 100,
+    "Rough": 88,
+    "Road": 125,
+    "Bridge": 125,
+    "Ore": 88,
+    "Gems": 88,
+    "Beach": 88
+   },
+   "crushes": [
+    "wall",
+    "infantry",
+    "mine",
+    "crate"
+   ]
+  },
+  "heavytracked": {
+   "speeds": {
+    "Clear": 100,
+    "Rough": 88,
+    "Road": 125,
+    "Bridge": 125,
+    "Ore": 88,
+    "Gems": 88,
+    "Beach": 88
+   },
+   "crushes": [
+    "wall",
+    "infantry",
+    "mine",
+    "crate",
+    "heavywall"
+   ]
+  },
+  "naval": {
+   "speeds": {
+    "Water": 100
+   },
+   "crushes": [
+    "crate"
+   ]
+  },
+  "lcraft": {
+   "speeds": {
+    "Water": 100,
+    "Beach": 70
+   },
+   "crushes": [
+    "crate"
+   ]
+  }
+ },
+ "repair": {
+  "FCOM": {
+   "file": "campaign-rules.yaml",
+   "RepairStep": "700",
+   "PlayerExperience": "5",
+   "RepairingNotification": "Repairing"
+  },
+  "^Building": {
+   "file": "defaults.yaml",
+   "RepairStep": "700",
+   "PlayerExperience": "0",
+   "RepairingNotification": "Repairing"
+  },
+  "^DisableOnLowPowerOrPowerDown": {
+   "file": "defaults.yaml",
+   "RepairCondition": "repairing"
+  }
+ },
+ "repair_trait_defaults": {
+  "RepairPercent": 20,
+  "RepairInterval": 24,
+  "RepairStep": 7,
+  "note": "RepairableBuilding.cs defaults at the pinned commit; mods/ra ^Building overrides RepairStep to 700"
+ }
+}
