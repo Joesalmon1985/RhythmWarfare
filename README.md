@@ -13,6 +13,7 @@ Standalone Godot 4.5 project; the PRD is the design authority (`docs/PRD.md`).
 - `data/openra_rules.json` actor, weapon, locomotor and repair values at the pinned OpenRA commit.
 - `songs/<pack>/` a song pack: `level.json` plus `audio/` stems.
 - `tools/` authoring and import scripts (Python 3). `tests/` headless GDScript tests.
+- `campaign/` the defense campaign starter pack (29 Oct 2026): first-three musical MIDI per slot, section focus maps, compiled reference charts, proposed waves, instrument catalogue, ten-level plan and the reference authoring tools. Source data, not docs; `.gdignore` keeps Godot out of it.
 
 ## Running
 
@@ -29,6 +30,7 @@ button the note is on), Esc = pause, F3 = debug panel with the stem mute toggles
 ## Handover
 
 Start with `docs/HANDOVER.md`: milestone state, settled decisions, code map, deliberate deviations and the polish backlog.
+The next phase (defense campaign) is planned in `docs/CAMPAIGN_PLAN.md`; `docs/NEXT_AGENT_PROMPT.md` is the paste-ready brief for the agent doing it.
 
 ## Design documents
 

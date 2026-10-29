@@ -1,5 +1,10 @@
 # Rhythm Warfare: handover for the next agent
 
+> **29 October 2026:** the owner's defense campaign pack is committed under `campaign/` and the next phase is
+> planned in `docs/CAMPAIGN_PLAN.md` (paste-ready brief: `docs/NEXT_AGENT_PROMPT.md`). The campaign supersedes the
+> duel outcome, lane-based production and four fixed stems described below for schema 2 packs; everything below
+> remains true for the existing duel packs, which stay as a legacy mode during the build.
+
 State on 28 October 2026. Read this first, then `docs/PRD.md` (the product requirements, the authority on rules)
 and `README.md` (layout and commands). Everything described here is committed on `main` at
 https://github.com/Joesalmon1985/RhythmWarfare (local git only before that date).
