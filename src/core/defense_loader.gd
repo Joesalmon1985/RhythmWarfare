@@ -43,6 +43,8 @@ static func parse(d: Dictionary, pack_dir: String, options: Dictionary, errors: 
 	level.seed = int(d.get("seed", 0))
 	level.battlefield = str(d.get("battlefield", ""))
 	level.roster = str(d.get("roster", ""))
+	var rules: Variant = d.get("rules", {})
+	level.rules = rules if typeof(rules) == TYPE_DICTIONARY else {}
 	var src: Variant = d.get("source", {})
 	level.source = src if typeof(src) == TYPE_DICTIONARY else {}
 	var parts: Variant = d.get("parts", [])
@@ -293,6 +295,34 @@ static func _check_touches(level: Level, errors: Array) -> void:
 		if held.size() > MAX_TOUCHES:
 			errors.append("more than %d simultaneous touches at tick %d" % [MAX_TOUCHES, tick])
 			return
+
+
+## Checks that need the battlefield: every wave names a known entry, defense point and objective, and every actor
+## exists. Returns error strings.
+static func validate_battlefield(level: Level, bf: Dictionary, actors: Dictionary) -> Array:
+	var errors: Array = []
+	var entry_ids := {}
+	for e in bf.get("entries", []):
+		entry_ids[str(e["id"])] = true
+	var point_ids := {}
+	for p in bf.get("defense_points", []):
+		point_ids[str(p["id"])] = true
+	var objective_ids := {}
+	for o in bf.get("objectives", []):
+		objective_ids[str(o["id"])] = true
+	if point_ids.size() != 3:
+		errors.append("a defense battlefield needs exactly three defense points")
+	for w in level.waves:
+		if not entry_ids.has(str(w.get("entry", ""))):
+			errors.append("wave %s: unknown entry '%s'" % [w["id"], w.get("entry", "")])
+		if not point_ids.has(str(w.get("via_defense_point", ""))):
+			errors.append("wave %s: unknown defense point '%s'" % [w["id"], w.get("via_defense_point", "")])
+		if not objective_ids.has(str(w.get("target_objective", ""))):
+			errors.append("wave %s: unknown objective '%s'" % [w["id"], w.get("target_objective", "")])
+		for g in w["groups"]:
+			if not actors.has(str(g["actor"])):
+				errors.append("wave %s: unknown actor '%s'" % [w["id"], g["actor"]])
+	return errors
 
 
 static func _parse_waves(d: Dictionary, level: Level, errors: Array) -> void:

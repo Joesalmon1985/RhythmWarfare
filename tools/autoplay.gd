@@ -2,7 +2,9 @@ extends SceneTree
 ## Headless balance harness (acceptance A08, A12): plays a level with a scripted input policy against its authored
 ## enemy schedule, with no audio and no rendering, and prints the trace.
 ##
-##   godot --headless --path . -s tools/autoplay.gd -- <pack dir> [policy] [enemy_fraction] [seed]
+##   godot --headless --path . -s tools/autoplay.gd -- <pack dir> [policy] [enemy_fraction] [seed] [chart id]
+## Schema 2 (defense) packs: enemy_fraction is ignored, seed also seeds the simulation, and the report adds the
+## objective health, every wave's spawn / arrival / clear times, the production log summary and the group cycle.
 ##
 ## policy:  perfect            every note hit at its exact time
 ##          accuracy:<f>       each note hit with probability f (seeded), otherwise ignored
@@ -24,7 +26,8 @@ func _init() -> void:
 	var policy: String = args[1] if args.size() > 1 else "perfect"
 	var enemy_fraction := float(args[2]) if args.size() > 2 else 1.0
 	var seed_value := int(args[3]) if args.size() > 3 else 1
-	var loaded := LevelLoader.load_pack(pack)
+	var chart_id: String = args[4] if args.size() > 4 else ""
+	var loaded := LevelLoader.load_pack(pack, {"chart_id": chart_id})
 	if loaded["level"] == null:
 		push_error("pack rejected: " + str(loaded["errors"]))
 		quit(2)
@@ -32,7 +35,9 @@ func _init() -> void:
 	var level: Level = loaded["level"]
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value
-	if enemy_fraction < 1.0:
+	if level.is_defense():
+		level.seed = level.seed * 10 + seed_value
+	if enemy_fraction < 1.0 and not level.is_defense():
 		var kept: Array = []
 		for e in level.enemy_events:
 			if rng.randf() < enemy_fraction:
@@ -90,7 +95,7 @@ static func run(m: Match, level: Level, policy: String, rng: RandomNumberGenerat
 		m.advance(t)
 		for ev in m.drain_events():
 			match ev["kind"]:
-				"producer_lost", "pad_lost", "outcome", "stem":
+				"producer_lost", "pad_lost", "outcome", "stem", "wave":
 					timeline.append({"t": snappedf(t, 0.01), "event": ev})
 				"shot":
 					var shooter: BattleSim.Ent = m.sim.get_entity(ev["from"])
@@ -114,7 +119,12 @@ static func run(m: Match, level: Level, policy: String, rng: RandomNumberGenerat
 	r["song_duration_s"] = duration
 	r["player_main_hp"] = m.sim.main_base(0).hp if m.sim.main_base(0) != null else 0
 	r["enemy_main_hp"] = m.sim.main_base(1).hp if m.sim.main_base(1) != null else 0
+	if level.is_defense():
+		r["player_main_hp"] = m.sim.objective_hp("command_core")
 	r["enemy_events_used"] = level.enemy_events.size()
+	if level.is_defense():
+		r["seed"] = level.seed
+		r["production_summary"] = _production_summary(m)
 	r["timeline"] = timeline
 	r["blocked"] = m.sim.stats["blocked"]
 	r["profile_ms"] = {}
@@ -125,6 +135,24 @@ static func run(m: Match, level: Level, policy: String, rng: RandomNumberGenerat
 
 static func _debug_line(m: Match, t: float, shots: Array, kills: Array) -> void:
 	var sim := m.sim
+	if sim.defense:
+		var orders := {}
+		var xs := []
+		var tg := 0
+		for e in sim.entities:
+			if e.alive and e.side == 1 and e.kind == BattleSim.Kind.UNIT:
+				var key: String = "%s/%d" % [e.order, e.stage]
+				orders[key] = int(orders.get(key, 0)) + 1
+				xs.append(snappedf(e.x, 0.1))
+				if e.target >= 0:
+					tg += 1
+		xs.sort()
+		var mine := 0
+		for e in sim.entities:
+			if e.alive and e.side == 0 and e.kind == BattleSim.Kind.UNIT:
+				mine += 1
+		print("t=%5.1f mine %d enemies %d with_target %d orders %s xs %s" % [t, mine, xs.size(), tg, orders, xs.slice(0, 12)])
+		return
 	var line := "t=%5.1f" % t
 	for side in 2:
 		var units := 0
@@ -171,3 +199,17 @@ static func _debug_line(m: Match, t: float, shots: Array, kills: Array) -> void:
 				worst_building = mini(worst_building, e.hp * 100 / e.max_hp)
 		line += " | S%d units %3d tgt %3d inrange %3d moving %3d front %5.1f shots %4d kills %3d idle %d xbands %s enemyBldgMin %d%% squads %s air %s" % [side, units, with_target, in_range, moving, front, shots[side], kills[side], bot.idle_pool.size(), bands, worst_building, sq, air]
 	print(line)
+
+
+static func _production_summary(m: Match) -> Dictionary:
+	var by_slot := {}
+	var points := [0, 0, 0]
+	var failed := 0
+	for e in m.production_log:
+		if e.get("result", "") == "queued":
+			var slot: String = e["slot_id"]
+			by_slot[slot] = int(by_slot.get(slot, 0)) + 1
+			points[int(e["point"])] += 1
+		else:
+			failed += 1
+	return {"groups_by_slot": by_slot, "groups_by_point": points, "failed": failed}

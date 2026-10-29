@@ -72,6 +72,15 @@ class Ent:
 	var resume_attack_move := false
 	var squad := -1
 	var wait_ticks := 0
+	# defense mode (DefenseAi): a player unit belongs to a production group holding a defense point; an enemy
+	# wave unit walks via a defense point to an objective
+	var group := -1
+	var home := Vector2.ZERO
+	var leash := 6.0
+	var objective := -1      # entity id of the objective a wave unit is attacking
+	var via := Vector2.ZERO
+	var ignore_structures := false  # wave units fight units and their objective, not every building on the way
+	var stage := 0           # wave route stage: 0 walking to the via point, 1 walking to the objective
 	# buildings
 	var cx := 0
 	var cy := 0
@@ -124,7 +133,15 @@ var spawn_queue: Array = []  # per side: pending units [{role, actor}]
 var producer_ids: Array = []  # per side: role -> id
 var stats: Dictionary = {}
 var projectiles: Array = []  # {weapon, kind, from, to, damage, speed, x, y, tx, ty, heading, age, types}
-var bots: Array = []      # BotAi per side
+var bots: Array = []      # BotAi per side (duel only)
+## Defense mode (data/battlefields/defense_01.json): one base, required objectives, defense points, wave entries.
+var defense := false
+var objectives: Array = []       # [{id, role, ent: entity id, required}]
+var defense_points: Array = []   # [{id, pos: Vector2}]
+var entries: Dictionary = {}     # entry id -> Vector2
+var defense_ai: DefenseAi
+var groups: Dictionary = {}      # group id -> {point, size, units: Array[int], side}
+var leash_cells := 6.0
 var profile: Dictionary = {"grid_spawn": 0, "bots": 0, "units": 0, "aircraft": 0, "buildings": 0, "entity_loop_overhead": 0, "projectiles_repair": 0, "ticks": 0, "move": 0, "engage": 0, "scan": 0}
 var rng := RandomNumberGenerator.new()
 var _blocked: Dictionary = {}  # Vector2i -> building id, or -1 for terrain
@@ -194,7 +211,14 @@ func setup(p_rules: Rules, level_rules: Dictionary, p_seed: int) -> void:
 		for i in _airfield_limit:
 			slots[side].append({"pad": -1, "aircraft": -1, "used": false, "origin": Vector2i.ZERO})
 	var initial_pads := int(level_rules.get("initial_airfields", 0))
-	for side in SIDES:
+	defense = str(bf.get("mode", "")) == "defense"
+	objectives = []
+	defense_points = []
+	entries = {}
+	groups = {}
+	defense_ai = null
+	leash_cells = float(bf.get("leash_cells", 6.0))
+	for side in (1 if defense else SIDES):
 		for b in bf.get("buildings", []):
 			var role := str(b["role"])
 			var bw := int(b.get("w", 1))
@@ -215,10 +239,32 @@ func setup(p_rules: Rules, level_rules: Dictionary, p_seed: int) -> void:
 			if role in ["main", "factory", "barracks"]:
 				producer_ids[side][role] = e.id
 	bots = []
-	for side in SIDES:
-		var bot := BotAi.new()
-		bot.setup(self, side, p_seed * 7 + side)
-		bots.append(bot)
+	if defense:
+		for o in bf.get("objectives", []):
+			var ent: Ent = by_id.get(producer_ids[0].get(str(o["role"]), -1))
+			if ent == null:
+				for e in entities:
+					if e.role == str(o["role"]) and e.side == 0:
+						ent = e
+						break
+			objectives.append({"id": str(o["id"]), "role": str(o["role"]), "ent": ent.id if ent != null else -1, "required": bool(o.get("required", true))})
+		var hp_override: Dictionary = level_rules.get("objective_hp", {})
+		for o in objectives:  # a level may give its objective less health than the OpenRA building (balance data)
+			var ent: Ent = by_id.get(o["ent"])
+			if ent != null and hp_override.has(o["id"]):
+				ent.hp = int(hp_override[o["id"]])
+				ent.max_hp = ent.hp
+		for dp in bf.get("defense_points", []):
+			defense_points.append({"id": str(dp["id"]), "pos": Vector2(float(dp["x"]) + 0.5, float(dp["y"]) + 0.5)})
+		for en in bf.get("entries", []):
+			entries[str(en["id"])] = Vector2(float(en["x"]) + 0.5, float(en["y"]) + 0.5)
+		defense_ai = DefenseAi.new()
+		defense_ai.setup(self)
+	else:
+		for side in SIDES:
+			var bot := BotAi.new()
+			bot.setup(self, side, p_seed * 7 + side)
+			bots.append(bot)
 	_check_outcome()
 
 
@@ -312,6 +358,90 @@ func produce(side: int, action: String) -> Dictionary:
 		"bass":
 			return _bass_action(side)
 	return {"action": action, "result": "unknown"}
+
+
+## The producer building an actor needs: its OpenRA production queue decides (vehicles need the war factory,
+## infantry the barracks, aircraft a pad). Empty for anything not produced by a building.
+func producer_role_for(actor: String) -> String:
+	match str(rules.actors.get(actor, {}).get("queue", "")):
+		"Infantry":
+			return "barracks"
+		"Vehicle":
+			return "factory"
+		"Aircraft":
+			return "pad"
+	return ""
+
+
+## Defense mode: queue one production group (a recipe step) for the player. Every unit needs its producer alive;
+## otherwise nothing is queued and the caller must not advance any counter. The group walks to its defense point
+## (`point` indexes defense_points) and stays together there.
+func produce_group(side: int, units: Array, group_id: int, point: int) -> Dictionary:
+	if not outcome.is_empty():
+		return {"result": "ended"}
+	var expanded: Array = []
+	for u in units:
+		for i in int(u["count"]):
+			expanded.append(str(u["actor"]))
+	for actor in expanded:
+		var role := producer_role_for(actor)
+		if role.is_empty() or not rules.actors.has(actor):
+			return {"result": "unknown_actor", "actor": actor}
+		if not producer_alive(side, role):
+			_count_blocked(side, "group_" + role)
+			return {"result": "no_producer", "missing": role, "actor": actor}
+	var idx := point % defense_points.size()
+	var pt: Dictionary = defense_points[idx]
+	groups[group_id] = {"point": idx, "size": expanded.size(), "units": [], "side": side}
+	var k := 0
+	for actor in expanded:
+		var ang := float(k) / float(maxi(expanded.size(), 1)) * TAU + 0.6
+		var ring := 0.7 + 0.5 * float(k % 2)
+		var home: Vector2 = pt["pos"] + Vector2(cos(ang), sin(ang)) * ring
+		var role := "infantry" if producer_role_for(actor) == "barracks" else "tank"
+		spawn_queue[side].append({"role": role, "actor": actor, "group": group_id, "home": home})
+		k += 1
+		stats["produced"][side]["infantry" if role == "infantry" else "tank"] += 1
+	return {"result": "queued", "group_id": group_id, "point": idx, "point_id": pt["id"], "actors": expanded}
+
+
+## Defense mode: one enemy wave unit appears at an entry (no producer, no queue) and sets off for its objective via
+## a defense point. Returns the entity, or null when the entry cell is occupied (the caller retries next tick).
+func spawn_wave_unit(actor: String, entry: String, via_point: String, objective_id: String) -> Ent:
+	if not entries.has(entry) or not rules.actors.has(actor):
+		return null
+	var at := _free_spawn_cell(entries[entry], 3)
+	if at.x < 0.0:
+		return null
+	var role := "infantry" if producer_role_for(actor) == "barracks" else "tank"
+	var u := _spawn_unit(1, role, at, actor)
+	u.ignore_structures = true
+	u.order = "idle"
+	u.stage = 0
+	for dp in defense_points:
+		if dp["id"] == via_point:
+			u.via = dp["pos"]
+	for o in objectives:
+		if o["id"] == objective_id:
+			u.objective = int(o["ent"])
+	stats["produced"][1]["infantry" if role == "infantry" else "tank"] += 1
+	return u
+
+
+func objective_hp(id: String) -> int:
+	for o in objectives:
+		if o["id"] == id:
+			var e: Ent = by_id.get(o["ent"])
+			return e.hp if e != null and e.alive else 0
+	return 0
+
+
+func objective_max_hp(id: String) -> int:
+	for o in objectives:
+		if o["id"] == id:
+			var e: Ent = by_id.get(o["ent"])
+			return e.max_hp if e != null else 1
+	return 1
 
 
 ## True while a unit of this role waits in the physical spawn queue (the building shows its production overlay).
@@ -561,6 +691,8 @@ func tick() -> void:
 	var t1 := Time.get_ticks_usec()
 	for bot in bots:
 		bot.tick()
+	if defense_ai != null:
+		defense_ai.tick()
 	var t2 := Time.get_ticks_usec()
 	var tu := 0
 	var ta := 0
@@ -653,6 +785,15 @@ func _process_spawn_queues() -> void:
 			continue
 		var entry: Dictionary = q.pop_front()
 		var u := _spawn_unit(side, role, at, str(entry.get("actor", "")))
+		if entry.has("group"):
+			u.group = int(entry["group"])
+			u.home = entry["home"]
+			u.leash = leash_cells
+			if groups.has(u.group):
+				groups[u.group]["units"].append(u.id)
+			u.order = "move"
+			u.order_pos = u.home
+			continue
 		# leave the factory for the rally point (OpenRA RallyPoint), with a little spread
 		var rally := mirrored(Vector2(float(rally_cfg[0]) + 0.5, float(rally_cfg[1]) + 0.5), side)
 		rally += Vector2(rng.randf_range(-1.5, 1.5), rng.randf_range(-3.0, 3.0))
@@ -785,6 +926,8 @@ func scan_for_target(e: Ent, radius: float) -> int:
 						best_score = score
 	for o in _static_targets:
 		if o.side == side or not o.alive or o.is_wall:
+			continue
+		if e.ignore_structures and o.kind == Kind.BUILDING and o.id != e.objective:
 			continue
 		if not (e.hits_air if o.airborne() else e.hits_ground):
 			continue
@@ -1125,7 +1268,7 @@ func _damage(t: Ent, amount: int, by: Ent) -> void:
 		# return fire: an idle unit shot from anywhere turns on its attacker (AllowMove: it will walk there)
 		if t.kind == Kind.UNIT and t.target < 0 and t.order in ["idle", "move"] and can_hit(t, by):
 			t.target = by.id
-		if t.kind == Kind.BUILDING and not t.is_wall and not by.airborne():
+		if t.kind == Kind.BUILDING and not t.is_wall and not by.airborne() and bots.size() > t.side:
 			bots[t.side].respond_to_attack(by.id)
 	if t.hp <= 0:
 		t.hp = 0
@@ -1500,6 +1643,15 @@ func _repair_step() -> void:
 func _check_outcome() -> void:
 	if not outcome.is_empty():
 		return
+	if defense:
+		for o in objectives:
+			var ent: Ent = by_id.get(o["ent"])
+			if o["required"] and (ent == null or not ent.alive):
+				outcome = "defeat"
+				outcome_reason = "objective_destroyed:%s" % o["id"]
+				events.append({"kind": "outcome", "outcome": outcome, "reason": outcome_reason, "tick": tick_count})
+				return
+		return
 	var player_main := main_base(0)
 	var enemy_main := main_base(1)
 	var player_dead := player_main == null or not player_main.alive
@@ -1516,6 +1668,13 @@ func _check_outcome() -> void:
 
 ## The song ended without a decision.
 func end_by_song() -> void:
+	if defense:
+		_check_outcome()  # an objective lost in the final tick still wins over the survival
+		if outcome.is_empty():
+			outcome = "victory"
+			outcome_reason = "survived"
+			events.append({"kind": "outcome", "outcome": outcome, "reason": outcome_reason, "tick": tick_count})
+		return
 	if outcome.is_empty():
 		outcome = "defeat"
 		outcome_reason = "song_end"

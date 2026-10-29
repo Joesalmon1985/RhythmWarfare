@@ -1,0 +1,135 @@
+{
+ "battlefield": "defense_01",
+ "rules": {
+  "objective_hp": {
+   "command_core": 60000
+  }
+ },
+ "waves": [
+  {
+   "id": "wave_01",
+   "start_tick": 15360,
+   "start_bar": 5,
+   "entry": "center",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 10,
+     "spawn_spacing_ticks": 240
+    }
+   ]
+  },
+  {
+   "id": "wave_02",
+   "start_tick": 30720,
+   "start_bar": 9,
+   "entry": "center",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 11,
+     "spawn_spacing_ticks": 240
+    }
+   ]
+  },
+  {
+   "id": "wave_03",
+   "start_tick": 46080,
+   "start_bar": 13,
+   "entry": "center",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 13,
+     "spawn_spacing_ticks": 240
+    }
+   ]
+  },
+  {
+   "id": "wave_04",
+   "start_tick": 61440,
+   "start_bar": 17,
+   "entry": "center",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 15,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_05",
+   "start_tick": 76800,
+   "start_bar": 21,
+   "entry": "center",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 17,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_06",
+   "start_tick": 92160,
+   "start_bar": 25,
+   "entry": "center",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 19,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_07",
+   "start_tick": 107520,
+   "start_bar": 29,
+   "entry": "center",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 21,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  }
+ ]
+}

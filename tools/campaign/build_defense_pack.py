@@ -143,11 +143,31 @@ def profiles_for(catalogue: list[dict], family: str, default_profile: str) -> li
     return ids
 
 
+def load_waves(number: int, level_dir: Path) -> tuple[dict, Path]:
+    wave_file = ROOT / "data" / "campaign" / "waves" / f"level_{number:02d}.json"
+    src = wave_file if wave_file.exists() else level_dir / "waves.proposed.json"
+    return json.loads(src.read_text()), src
+
+
+def rewrite_waves(number: int) -> None:
+    """Refresh waves and rules in an existing level.json without touching audio (for balance iteration)."""
+    spec = LEVELS[number]
+    path = ROOT / "songs" / spec["pack"] / "level.json"
+    level = json.loads(path.read_text())
+    waves, src = load_waves(number, CAMPAIGN / "First_Three" / f"level_{number:02d}")
+    level["waves"] = waves["waves"]
+    level["rules"] = waves.get("rules", {})
+    level["battlefield"] = waves.get("battlefield", level["battlefield"])
+    level["source"]["wave_source"] = src.relative_to(ROOT).as_posix()
+    path.write_text(json.dumps(level, indent=1) + "\n")
+    print(f"level {number}: waves refreshed from {src.relative_to(ROOT).as_posix()}")
+
+
 def build_level(number: int) -> None:
     spec = LEVELS[number]
     level_dir = CAMPAIGN / "First_Three" / f"level_{number:02d}"
     song = json.loads((level_dir / "song.json").read_text())
-    catalogue = json.loads((CAMPAIGN / "Plan" / "instrument_catalogue.proposed.json").read_text())["instruments"]
+    catalogue = json.loads((ROOT / "data" / "instruments" / "catalogue.json").read_text())["instruments"]
     midi_hashes = verify_midi_hashes(level_dir, song)
     charts = compile_charts(level_dir, spec["rules"])
     out_dir = ROOT / "songs" / spec["pack"]
@@ -180,9 +200,7 @@ def build_level(number: int) -> None:
     renders["other"] = {"accompaniment": {"file": "audio/other.ogg", "source_sha256": other_hash, "sample_rate": SAMPLE_RATE,
                                           "frames": frames, "placeholder": True, "profile_default": True}}
 
-    wave_file = ROOT / "data" / "campaign" / "waves" / f"level_{number:02d}.json"
-    waves_src = wave_file if wave_file.exists() else level_dir / "waves.proposed.json"
-    waves = json.loads(waves_src.read_text())
+    waves, waves_src = load_waves(number, level_dir)
 
     level = {
         "schema_version": 2,
@@ -196,7 +214,8 @@ def build_level(number: int) -> None:
         "song_offset_ms": 0,
         "duration_ticks": duration_ticks,
         "seed": 1000 + number,
-        "battlefield": "defense_01",
+        "battlefield": waves.get("battlefield", "defense_01"),
+        "rules": waves.get("rules", {}),
         "roster": "openra_mvp_01",
         "source": {"midi_sha256": midi_hashes, "importer_version": IMPORTER_VERSION, "wave_source": waves_src.relative_to(ROOT).as_posix()},
         "parts": [{"id": p["id"], "family": p["family"], "slot_id": p["slot_id"], "render_bus": p["render_bus"]} for p in song["parts"]],
@@ -214,9 +233,10 @@ def build_level(number: int) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("level", help="1, 2, 3 or all")
+    parser.add_argument("--waves-only", action="store_true", help="refresh waves and rules in level.json, no audio")
     args = parser.parse_args()
     for n in (LEVELS if args.level == "all" else [int(args.level)]):
-        build_level(n)
+        rewrite_waves(n) if args.waves_only else build_level(n)
 
 
 if __name__ == "__main__":

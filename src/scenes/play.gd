@@ -139,6 +139,7 @@ func _build_layout() -> void:
 		hud.anchor_right = 1.0
 		hud.anchor_bottom = 1.0
 		hud.match_ref = match_ref
+		hud.view = battle_view
 		_battle_area.add_child(hud)
 	else:
 		_info_label = Label.new()
@@ -276,6 +277,11 @@ func _process(_delta: float) -> void:
 		match ev["kind"]:
 			"stem":
 				transport.set_stem_muted(ev["stem"], ev["muted"])
+			"group":
+				if ev["result"] == "queued":
+					lane_view.show_feedback(int(ev["button"]), "GROUP > POINT %d" % (int(ev["point"]) + 1), Color(0.8, 1.0, 0.8), wall)
+				else:
+					lane_view.show_feedback(int(ev["button"]), "NO PRODUCER", Color(1.0, 0.6, 0.5), wall)
 			"production":
 				if ev.get("side", -1) == 0 and ev.get("action", "") == "bass":
 					var res: String = ev["result"]["result"]

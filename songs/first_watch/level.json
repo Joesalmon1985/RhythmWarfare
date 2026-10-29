@@ -23,7 +23,7 @@
    "other_hats": "4e96eb804bbb25e5fd6bab5748ff8420b893682b320a46d847f6098a95dc31a2"
   },
   "importer_version": 1,
-  "wave_source": "campaign/First_Three/level_01/waves.proposed.json"
+  "wave_source": "data/campaign/waves/level_01.json"
  },
  "parts": [
   {
@@ -790,7 +790,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 10,
      "spawn_spacing_ticks": 240
     }
    ]
@@ -805,7 +805,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 6,
+     "count": 11,
      "spawn_spacing_ticks": 240
     }
    ]
@@ -820,7 +820,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 7,
+     "count": 13,
      "spawn_spacing_ticks": 240
     }
    ]
@@ -835,12 +835,12 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 8,
+     "count": 15,
      "spawn_spacing_ticks": 240
     },
     {
      "actor": "jeep",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ]
@@ -855,12 +855,12 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 9,
+     "count": 17,
      "spawn_spacing_ticks": 240
     },
     {
      "actor": "jeep",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ]
@@ -875,12 +875,12 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 10,
+     "count": 19,
      "spawn_spacing_ticks": 240
     },
     {
      "actor": "jeep",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ]
@@ -895,15 +895,20 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 11,
+     "count": 21,
      "spawn_spacing_ticks": 240
     },
     {
      "actor": "jeep",
-     "count": 2,
+     "count": 4,
      "spawn_spacing_ticks": 480
     }
    ]
   }
- ]
+ ],
+ "rules": {
+  "objective_hp": {
+   "command_core": 60000
+  }
+ }
 }

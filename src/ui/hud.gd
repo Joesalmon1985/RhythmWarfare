@@ -5,6 +5,7 @@ extends Control
 ## accuracy. Labels and shapes, not colour alone.
 
 var match_ref: Match
+var view: BattleView  # the battlefield behind this overlay (defense mode draws points and routes on it)
 var _font: Font
 
 
@@ -22,6 +23,9 @@ func _draw() -> void:
 		return
 	var sim := match_ref.sim
 	var judge := match_ref.judge
+	if sim.defense:
+		_draw_defense()
+		return
 	var cx := size.x * 0.5
 	var band := Rect2(cx - 300, 0, 600, 58)
 	draw_rect(band, Color(0, 0, 0, 0.45))
@@ -68,6 +72,54 @@ func _draw() -> void:
 					txt = "NOPAD"
 			draw_string(_font, Vector2(box.position.x + 2, box.position.y + 10), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color(1, 1, 1))
 	draw_string(_font, Vector2(cx + 186, y), "army %d v %d" % [sim.count_alive(0, BattleSim.Kind.UNIT), sim.count_alive(1, BattleSim.Kind.UNIT)], HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 1, 1, 0.7))
+
+
+## Defense mode: objective health, time left, producers, the three defense points with their defenders and the
+## telegraphed route of the next wave (entry marker and a line to its defense point).
+func _draw_defense() -> void:
+	var sim := match_ref.sim
+	var judge := match_ref.judge
+	var level := match_ref.level
+	var cx := size.x * 0.5
+	var now := float(match_ref.sim_ticks) * BattleSim.TICK_S
+	draw_rect(Rect2(cx - 300, 0, 600, 58), Color(0, 0, 0, 0.45))
+	for i in sim.objectives.size():
+		var o: Dictionary = sim.objectives[i]
+		var hp := sim.objective_hp(o["id"])
+		var frac := float(hp) / float(maxi(sim.objective_max_hp(o["id"]), 1))
+		var pos := Vector2(cx - 292, 6 + 18 * i)
+		draw_rect(Rect2(pos, Vector2(230, 14)), Color(0, 0, 0, 0.55))
+		draw_rect(Rect2(pos, Vector2(230 * frac, 14)), Color(0.35, 0.62, 1.0) if frac > 0.34 else Color(1.0, 0.45, 0.35))
+		draw_rect(Rect2(pos, Vector2(230, 14)), Color(1, 1, 1, 0.5), false, 1.0)
+		draw_string(_font, pos + Vector2(5, 11), "%s %d%%" % [str(o["id"]).replace("_", " ").to_upper(), int(round(frac * 100.0))], HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(1, 1, 1))
+	var left := maxf(level.duration_seconds() - now, 0.0)
+	draw_string(_font, Vector2(cx - 40, 20), "%d:%02d  combo %d  %.0f%%" % [int(left) / 60, int(left) % 60, judge.combo, judge.accuracy() * 100.0], HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(1, 1, 1, 0.95))
+	var x := cx - 292
+	for item in [["factory", "FACTORY"], ["barracks", "BARRACKS"]]:
+		var alive := sim.producer_alive(0, item[0])
+		var col := Color(0.85, 1.0, 0.85) if alive else Color(1.0, 0.5, 0.45)
+		draw_string(_font, Vector2(x, 50), item[1] if alive else item[1] + " LOST", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, col)
+		x += 120
+	draw_string(_font, Vector2(cx + 180, 50), "enemies %d" % sim.count_alive(1, BattleSim.Kind.UNIT), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 1, 1, 0.8))
+	if view == null:
+		return
+	var counts := match_ref.defenders_per_point()
+	for i in sim.defense_points.size():
+		var p: Vector2 = view.to_px(sim.defense_points[i]["pos"]) - global_position + view.global_position
+		draw_arc(p, 20.0, 0.0, TAU, 28, Color(0.7, 0.9, 1.0, 0.55), 2.0)
+		draw_string(_font, p + Vector2(-5, 5), str(i + 1), HORIZONTAL_ALIGNMENT_CENTER, 12, 16, Color(0.8, 0.95, 1.0, 0.9))
+		draw_string(_font, p + Vector2(-40, 36), "%d defenders" % counts[i], HORIZONTAL_ALIGNMENT_CENTER, 80, 10, Color(0.8, 0.95, 1.0, 0.8))
+	var w := match_ref.upcoming_wave()
+	if not w.is_empty() and float(w["in_s"]) <= 6.0 and sim.entries.has(w["entry"]):
+		var pulse := 0.55 + 0.45 * sin(float(Time.get_ticks_msec()) / 120.0)
+		var a: Vector2 = view.to_px(sim.entries[w["entry"]]) - global_position + view.global_position
+		var via: Vector2 = a
+		for dp in sim.defense_points:
+			if dp["id"] == w["via"]:
+				via = view.to_px(dp["pos"]) - global_position + view.global_position
+		draw_line(a, via, Color(1.0, 0.4, 0.3, 0.6 * pulse), 3.0)
+		draw_circle(a, 14.0, Color(1.0, 0.35, 0.3, 0.5 * pulse))
+		draw_string(_font, Vector2(cx - 150, 124), "WAVE %d INCOMING  %s  %.0f s" % [int(w["number"]), str(w["entry"]).to_upper(), float(w["in_s"])], HORIZONTAL_ALIGNMENT_CENTER, 300, 18, Color(1.0, 0.7, 0.55, pulse))
 
 
 func _base_bar(pos: Vector2, width: float, base: BattleSim.Ent, label: String, col: Color, right: bool) -> void:
