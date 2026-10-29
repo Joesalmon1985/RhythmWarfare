@@ -18,6 +18,23 @@ The full contract is PRD section 9 (`docs/PRD.md`); the essentials:
   the same length. Nothing starts at or after `duration_ticks`; holds end inside the song; a lane
   never overlaps itself; a kick and a snare never share a tick.
 
+## Schema 2 (defense campaign) packs
+
+`first_watch/`, `second_pulse/` and `hold_the_line/` (campaign levels 1 to 3) are schema 2 packs built by one
+command per level from `campaign/First_Three/level_0N/`:
+
+```
+python tools/campaign/build_defense_pack.py all     # or 1, 2, 3
+```
+
+The importer verifies the part MIDI hashes against `campaign/Musical_Source_Integrity.json`, compiles each chart from
+the MIDI and `chart_rules*.json` (it must equal the pack's `player_chart*.json` note for note), synthesises
+placeholder stems per slot and profile (`audio/<slot>__<profile>.ogg`, plus `audio/other.ogg`), and writes
+`level.json` with hashes and the render manifest. The field list is PRD section 14. Notes carry an explicit `button`,
+`slot_id`, `part_id`, `source_note_id` and `family`; there is no `lane`. All audio is synthesised placeholder sound and
+is marked `placeholder: true`; the owner's renders replace the files one for one (check them with
+`tools/campaign/audio_preflight.py`). The packs below this heading are the legacy schema 1 duel packs.
+
 ## Packs
 
 | Pack | What it is | Chart |

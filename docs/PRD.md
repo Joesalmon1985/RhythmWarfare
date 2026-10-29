@@ -274,3 +274,80 @@ No implementation tests were run while authoring this PRD. These are delivery re
 - [Godot 4.5 synchronised streams](https://docs.godotengine.org/en/4.5/classes/class_audiostreamsynchronized.html) and [audio/gameplay synchronisation guidance](https://docs.godotengine.org/en/4.5/tutorials/audio/sync_with_audio.html): audio implementation references. The latter page marks itself as not yet updated for 4.5, so device validation remains necessary.
 
 Product rules come from this design conversation. Items explicitly marked as draft defaults require playtesting or owner refinement, not additional engine research.
+
+## 14. Defense campaign (supersedes sections 2, 5, 6 and 9 for schema 2 packs)
+
+Written 29 October 2026 from the owner's `campaign/Claude_Defense_Campaign_Prompt.md`; where that prompt and sections
+1 to 13 disagree, the prompt wins for `schema_version` 2. Schema 1 packs (`songs/level_01`, `songs/test_16`) keep the
+duel rules above and stay loadable as the legacy "Free play" mode. Implementation plan: `docs/CAMPAIGN_PLAN.md`.
+
+### Rules of the game
+
+- One-sided defense. There is no enemy base, enemy producer or enemy construction yard. Enemy units arrive in authored
+  waves at map entries and attack the player's required objectives (`command_core`; later levels add `tech_core`).
+  The player performs the rhythm chart only; there are no commands during the song.
+- Outcome: any required objective destroyed is an immediate defeat (`objective_destroyed:<id>`); reaching
+  `duration_ticks` with every required objective alive is a victory (`survived`), enemies still on the map or not. In
+  one tick the order is rewards, combat, objective loss, then the survival win, so a same-tick tie is a defeat. The
+  stems carry a one-bar release tail after `duration_ticks`; it never extends the deadline.
+- Production: a successful, available reward (Perfect or Good alike, a hold once at its tail) is resolved through the
+  note's `slot_id` to the equipped instrument profile and its production recipe. A recipe is a deterministic cycle of
+  steps, each step a list of `{actor, count}`. The per-slot counter advances only on a successful available reward and
+  resets every run. `family` is musical metadata; it never selects the unit.
+- Defense points: three, in an arc in front of the base opening. Successive successfully queued groups are assigned
+  point 1, 2, 3, 1, ... (one step per group, not per unit). A group stays together, holds its point, fights inside a
+  leash and returns after a limited pursuit. Unavailable or failed notes never advance the cycle. The production log
+  records `group_id`, `point`, `slot_id`, `profile_id` and the units.
+- Waves are scheduled by `start_tick`, bypass producers, do not depend on the player's accuracy and spawn their groups
+  at the entry with the authored spacing, each unit attack-moving via its defense point to its target objective.
+- Producer gating is per slot: a profile declares `required_producers` (`barracks`, `war_factory`, later `air_support`);
+  the slot is available while every one is alive. An unavailable slot's notes are inert and excluded from accuracy, its
+  stem is muted (gain restored at the current position when it returns) and its counters do not advance. A change of
+  input focus (drums or bass) never mutes anything.
+- No one-miss failure, no direct objective damage for a miss, the timing windows of section 4 unchanged, no random
+  button remapping at runtime, no silent moving of note-ons or shortening of holds.
+
+### Input and chart rules
+
+- Four unlabelled buttons. A note carries its `button` (1 to 4) explicitly; it never implies what it produces.
+  Left thumb: buttons 1 and 2; right thumb: 3 and 4. At most two simultaneous touches.
+- Each section has `mode` `drums` or `bass`. In drum sections kick and snare parts generate prompts; in bass sections
+  bass parts do. Whole-bar exclusivity includes hold tails (a hold may not reach into a section of the other mode).
+  Other parts are accompaniment and never create prompts or misses.
+- Loader errors: a note with `lane`; missing or out-of-range `button`; two notes on one button at one tick or inside a
+  hold; a note on button 2 while button 1 is held (or 3 while 4 is held, and the reverse); a hold of a non-bass family;
+  a hold crossing a section of another mode; an unknown `slot_id`; a wave after `duration_ticks` or naming an unknown
+  entry, point or objective; a recipe actor with no producer; a render whose hash differs from the source MIDI hash it
+  claims. Loader warnings: same-thumb onsets under 960 ticks after a tap or under 480 ticks after a hold ends (design
+  targets awaiting a phone test), placeholder renders.
+- Chart timing, sections and notes come from the importer (`tools/campaign/build_defense_pack.py`), which reads the
+  part MIDI files and `chart_rules.json`. The MIDI is never edited. Every chart problem is a build error for the author.
+
+### Schema 2 pack (`level.json`)
+
+```
+schema_version 2, mode "defense", level_id, campaign_level (1..), title, bpm 174, time_signature [4,4],
+ticks_per_beat 960, song_offset_ms, duration_ticks, seed,
+source        {midi_sha256 {part_id: hex}, importer_version}
+battlefield   id under data/battlefields/ (objectives, defense_points, entries, base layout)
+parts         [{id, family, slot_id or null, render_bus}]
+loadout       {active_slots [...], default {slot_id: profile_id}}
+renders       {slot_id: {profile_id: {file, source_sha256, sample_rate, frames, placeholder}}, "other": {...}}
+stems         {"other": relative path}   (per-slot stems come from the equipped profile's render)
+charts        [{chart_id, play_mode "campaign"|"practice", progression bool, sections [{id, start_tick,
+                length_bars, mode}], notes [{id, tick, button, type, duration_ticks, slot_id, part_id,
+                source_note_id, family}]}]
+waves         [{id, start_tick, entry, via_defense_point, target_objective, groups [{actor, count,
+                spawn_spacing_ticks}]}]
+```
+
+Every render of a level has the same sample rate and frame count and covers `duration_ticks` plus one tail bar.
+`placeholder: true` renders are synthesised stand-ins and are labelled so on the loadout screen; the owner's Ableton
+renders replace them file for file (`audio/<slot>__<profile>.ogg|wav`). Audio preflight: `tools/campaign/audio_preflight.py`.
+
+### Acceptance (replaces the duel criteria A11 and A12 for schema 2)
+
+Immediate loss when an objective dies; survival win at `duration_ticks` including with enemies alive; same-tick tie is
+a defeat; deterministic waves; round-robin groups with unavailable notes inert; the same bass slot produces its group
+on each of buttons 1 to 4; a kick profile makes infantry and another alternates vehicles regardless of button; seeded
+trials (perfect, 0.85, 0.6, none) in `docs/BALANCE.md`: perfect and 0.85 survive, no input loses.
