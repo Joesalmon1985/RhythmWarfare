@@ -13,12 +13,12 @@ const LANE_COLORS := {
 	"snare": Color(0.88, 0.35, 0.31),
 }
 const BUTTON_COLOR := Color(0.85, 0.88, 0.95)
-const LOOKAHEAD_S := 1.2
 const BUTTON_H := 100.0
 const LINE_FROM_BOTTOM := 84.0
 const FEEDBACK_S := 0.5
 
 var level: Level
+var lookahead_s := 1.2  # note approach window in seconds (schema 2 levels take Session.lookahead_s)
 var judge: Judge
 var clock: SongClock
 var button_down: Dictionary = {1: false, 2: false, 3: false, 4: false}
@@ -96,13 +96,15 @@ func _draw() -> void:
 	draw_line(Vector2(0, hy), Vector2(size.x, hy), Color(1, 1, 1, 0.85), 3.0)
 	if level == null or judge == null:
 		return
-	# notes: time -> y. A note at `now` sits on the line; LOOKAHEAD_S earlier is the top edge.
-	var px_per_s := hy / LOOKAHEAD_S
+	if level.is_defense():
+		_draw_focus_cues(now, hy)
+	# notes: time -> y. A note at `now` sits on the line; lookahead_s earlier is the top edge.
+	var px_per_s := hy / lookahead_s
 	for i in level.notes.size():
 		var n: Dictionary = level.notes[i]
 		var t_start: float = n["time"]
 		var t_end: float = n["end_time"] if n["type"] == "hold" else t_start
-		if t_end < now - 0.25 or t_start > now + LOOKAHEAD_S:
+		if t_end < now - 0.25 or t_start > now + lookahead_s:
 			continue
 		var st := judge.state_of(i)
 		if st == Judge.State.HIT or st == Judge.State.VOID:
@@ -145,3 +147,30 @@ func _draw_note_head(lane: String, cx: float, y: float, col: Color, alpha: float
 		_:
 			draw_rect(Rect2(cx - column_width() * 0.22, y - 9, column_width() * 0.44, 18), c, true)
 			draw_rect(Rect2(cx - column_width() * 0.22, y - 9, column_width() * 0.44, 18), Color(1, 1, 1, alpha), false, 2.0)
+
+
+## Drums / bass focus: the current mode in the corner, and a labelled marker that scrolls in with the notes at
+## every change of mode. In the last bar before a change the corner label announces it.
+func _draw_focus_cues(now: float, hy: float) -> void:
+	var px_per_s := hy / lookahead_s
+	var bar_s := level.tick_to_seconds(level.ticks_per_bar()) - level.tick_to_seconds(0)
+	var current := ""
+	var upcoming := ""
+	var upcoming_in := INF
+	for i in level.sections.size():
+		var s: Dictionary = level.sections[i]
+		var t0 := level.tick_to_seconds(int(s["start_tick"]))
+		if t0 <= now:
+			current = str(s["mode"])
+		elif upcoming.is_empty() and i > 0 and s["mode"] != level.sections[i - 1]["mode"]:
+			upcoming = str(s["mode"])
+			upcoming_in = t0 - now
+		if i > 0 and s["mode"] != level.sections[i - 1]["mode"] and t0 > now - 0.15 and t0 < now + lookahead_s:
+			var y := hy - (t0 - now) * px_per_s
+			draw_line(Vector2(0, y), Vector2(size.x, y), Color(1, 1, 1, 0.55), 2.0)
+			draw_string(_font, Vector2(8, y - 6), str(s["mode"]).to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color(1, 1, 1, 0.9))
+	if current.is_empty():
+		current = str(level.sections[0]["mode"])
+	draw_string(_font, Vector2(10, 24), current.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color(1, 1, 1, 0.8))
+	if upcoming_in <= bar_s:
+		draw_string(_font, Vector2(size.x - 220, 24), "NEXT: " + upcoming.to_upper(), HORIZONTAL_ALIGNMENT_RIGHT, 210, 20, Color(1, 0.9, 0.5, 1.0))

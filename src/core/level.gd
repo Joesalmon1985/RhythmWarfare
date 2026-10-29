@@ -13,11 +13,28 @@ const ACTIONS := ["kick", "snare", "bass"]
 const NOTE_TYPES := ["tap", "hold"]
 const STEM_KEYS := ["kick", "snare", "bass", "other"]
 const BUTTONS := 4
+const FAMILIES := ["kick", "snare", "bass"]
+## Left thumb plays buttons 1 and 2, right thumb 3 and 4 (schema 2 charts are validated per thumb).
+const THUMB_OF_BUTTON := {1: 0, 2: 0, 3: 1, 4: 1}
 const FIXED_BUTTON := {"kick": 1, "snare": 4}
 ## Bass notes that carry no button alternate between the two inner buttons, which kick and snare never use.
 const DEFAULT_BASS_BUTTONS := [2, 3]
 
 var pack_dir: String = ""
+var schema_version := 1
+var mode := "duel"  # "duel" (schema 1) or "defense" (schema 2)
+var campaign_level := 0
+var chart_id := ""
+var play_mode := "campaign"  # "campaign" or "practice" (schema 2 chart)
+var progression := true
+var charts: Array = []  # schema 2: every chart of the pack ({chart_id, play_mode, progression, sections, notes})
+var renders: Dictionary = {}  # schema 2: slot id -> profile id -> {file, source_sha256, sample_rate, frames, placeholder}
+var loadout_active_slots: Array = []
+var loadout_default: Dictionary = {}
+var loadout: Dictionary = {}  # slot id -> profile id actually equipped for this load
+var waves: Array = []
+var source: Dictionary = {}
+var parts: Array = []
 var level_id: String = ""
 var title: String = ""
 var bpm: float = 174.0
@@ -31,7 +48,7 @@ var battlefield: String = ""
 var roster: String = ""
 var rules: Dictionary = {}
 var sections: Array = []  # [{id, start_tick, length_bars}]
-var notes: Array = []  # [{id, tick, lane, button, type, duration_ticks, time, end_time}] sorted by tick then button
+var notes: Array = []  # schema 1: [{id, tick, lane, button, type, duration_ticks, time, end_time}] sorted by tick then button
 var enemy_events: Array = []  # [{id, tick, action, time}] sorted by tick
 var stem_lengths: Dictionary = {}  # stem key -> seconds, when the loader could decode them
 
@@ -54,6 +71,34 @@ func duration_seconds() -> float:
 
 func bar_of_tick(tick: int) -> int:
 	return tick / ticks_per_bar() + 1
+
+
+func is_defense() -> bool:
+	return mode == "defense"
+
+
+func chart_ids() -> Array:
+	var out: Array = []
+	for c in charts:
+		out.append(c["chart_id"])
+	return out
+
+
+## Slot ids of the notes of the loaded chart in first-appearance order.
+func slot_ids() -> Array:
+	var out: Array = []
+	for n in notes:
+		if not out.has(n["slot_id"]):
+			out.append(n["slot_id"])
+	return out
+
+
+func is_placeholder_audio() -> bool:
+	for slot in loadout:
+		var r: Dictionary = renders.get(slot, {}).get(loadout[slot], {})
+		if r.get("placeholder", false):
+			return true
+	return false
 
 
 func notes_in_lane(lane: String) -> Array:

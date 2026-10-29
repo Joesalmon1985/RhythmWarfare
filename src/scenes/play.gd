@@ -5,6 +5,7 @@ extends Control
 const COUNTDOWN_S := 2.0
 const RESUME_COUNTDOWN_S := 3.0
 const BATTLE_FRACTION := 2.0 / 3.0
+const HEADER_FRACTION := 0.14  # the rhythm-only playtest: a header strip instead of the battlefield
 const END_FADE_S := 0.6
 
 var level: Level
@@ -15,10 +16,12 @@ var lane_input: LaneInput
 var lane_view: LaneView
 var battle_view: BattleView
 var hud: Hud
+var battle_on := true
 
 var _battle_area: Control
 var _debug_panel: VBoxContainer
 var _debug_label: Label
+var _info_label: Label
 var _countdown_label: Label
 var _banner: Label
 var _pause_panel: PanelContainer
@@ -35,7 +38,7 @@ func _ready() -> void:
 			_fatal("No song packs found in songs/")
 			return
 		pack = packs[0]["dir"]
-	var loaded := LevelLoader.load_pack(pack)
+	var loaded := LevelLoader.load_pack(pack, {"chart_id": Session.chart_id, "loadout": Session.loadout})
 	if loaded["level"] == null:
 		_fatal("Song pack rejected:\n" + "\n".join(PackedStringArray(loaded["errors"])))
 		return
@@ -51,8 +54,9 @@ func _ready() -> void:
 		return
 	clock = SongClock.new(transport)
 	clock.calibration_ms = Session.calibration_ms
+	battle_on = Session.battle_on or not level.is_defense()  # the duel always has its battlefield
 	match_ref = Match.new()
-	match_ref.setup(level)
+	match_ref.setup(level, null, battle_on)
 
 	_build_layout()
 	lane_input = LaneInput.new()
@@ -113,35 +117,46 @@ func _autoplay_step(t: float) -> void:
 
 func _build_layout() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var split := BATTLE_FRACTION if battle_on else HEADER_FRACTION
 	_battle_area = Control.new()
 	_battle_area.name = "BattleArea"
 	_battle_area.anchor_right = 1.0
-	_battle_area.anchor_bottom = BATTLE_FRACTION
+	_battle_area.anchor_bottom = split
 	_battle_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_battle_area)
 
-	battle_view = BattleView.new()
-	battle_view.name = "Battlefield"
-	battle_view.anchor_right = 1.0
-	battle_view.anchor_bottom = 1.0
-	battle_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_battle_area.add_child(battle_view)
-	battle_view.setup(match_ref.sim)
+	if battle_on:
+		battle_view = BattleView.new()
+		battle_view.name = "Battlefield"
+		battle_view.anchor_right = 1.0
+		battle_view.anchor_bottom = 1.0
+		battle_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_battle_area.add_child(battle_view)
+		battle_view.setup(match_ref.sim)
 
-	hud = Hud.new()
-	hud.name = "Hud"
-	hud.anchor_right = 1.0
-	hud.anchor_bottom = 1.0
-	hud.match_ref = match_ref
-	_battle_area.add_child(hud)
+		hud = Hud.new()
+		hud.name = "Hud"
+		hud.anchor_right = 1.0
+		hud.anchor_bottom = 1.0
+		hud.match_ref = match_ref
+		_battle_area.add_child(hud)
+	else:
+		_info_label = Label.new()
+		_info_label.position = Vector2(14, 8)
+		_info_label.add_theme_font_size_override("font_size", 18)
+		_info_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_battle_area.add_child(_info_label)
 
 	lane_view = LaneView.new()
 	lane_view.name = "Lanes"
-	lane_view.anchor_top = BATTLE_FRACTION
+	lane_view.anchor_top = split
 	lane_view.anchor_right = 1.0
 	lane_view.anchor_bottom = 1.0
 	lane_view.setup(level, match_ref.judge, clock)
+	if level.is_defense():
+		lane_view.lookahead_s = Session.lookahead_s
 	lane_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lane_view.clip_contents = true
 	add_child(lane_view)
 
 	# debug panel (F3): stem toggles prove muting and restoration without a restart (M0 evidence)
@@ -154,7 +169,7 @@ func _build_layout() -> void:
 	_debug_panel.add_child(_debug_label)
 	var row := HBoxContainer.new()
 	_debug_panel.add_child(row)
-	for key in StemTransport.STEM_ORDER:
+	for key in transport.stem_keys:
 		var cb := CheckButton.new()
 		cb.text = "mute " + key
 		cb.focus_mode = Control.FOCUS_NONE
@@ -165,12 +180,12 @@ func _build_layout() -> void:
 	pause_btn.text = "II"
 	pause_btn.focus_mode = Control.FOCUS_NONE
 	pause_btn.custom_minimum_size = Vector2(64, 48)
-	pause_btn.anchor_left = 0.5
-	pause_btn.anchor_right = 0.5
-	pause_btn.offset_left = -32
-	pause_btn.offset_top = 62
-	pause_btn.offset_right = 32
-	pause_btn.offset_bottom = 100
+	pause_btn.anchor_left = 0.5 if battle_on else 1.0
+	pause_btn.anchor_right = 0.5 if battle_on else 1.0
+	pause_btn.offset_left = -32 if battle_on else -84
+	pause_btn.offset_top = 62 if battle_on else 8
+	pause_btn.offset_right = 32 if battle_on else -20
+	pause_btn.offset_bottom = 100 if battle_on else 56
 	pause_btn.pressed.connect(_pause)
 	_battle_area.add_child(pause_btn)
 
@@ -262,7 +277,7 @@ func _process(_delta: float) -> void:
 			"stem":
 				transport.set_stem_muted(ev["stem"], ev["muted"])
 			"production":
-				if ev["side"] == 0 and ev["action"] == "bass":
+				if ev.get("side", -1) == 0 and ev.get("action", "") == "bass":
 					var res: String = ev["result"]["result"]
 					var button := int(ev.get("button", 0))
 					if res == "pad_built":
@@ -271,9 +286,15 @@ func _process(_delta: float) -> void:
 						lane_view.show_feedback(button, "SORTIE", Color(0.7, 0.9, 1.0), wall)
 					elif res == "air_busy":
 						lane_view.show_feedback(button, "AIR WING BUSY", Color(0.8, 0.85, 1.0), wall)
-	battle_view.push_events(events)
+	if battle_view != null:
+		battle_view.push_events(events)
 	for b in range(1, LaneView.BUTTONS + 1):
 		lane_view.button_down[b] = lane_input.is_button_down(b)
+	if _info_label != null:
+		var j2 := match_ref.judge
+		_info_label.text = "%s   %s   accuracy %.0f%%  combo %d
+%s" % [level.title, level.chart_id, j2.accuracy() * 100.0, j2.combo,
+			"RHYTHM PLAYTEST (battlefield hidden)" + ("   PLACEHOLDER AUDIO" if level.is_placeholder_audio() else "")]
 	if _debug_panel.visible:
 		var j := match_ref.judge
 		_debug_label.text = "t=%6.2f s  bar %d  tick %d  P %d G %d M %d stray %d  latency %.1f ms  cal %+.0f ms  fps %d" % [
@@ -364,7 +385,8 @@ func _quit() -> void:
 
 func _on_song_finished() -> void:
 	if not _ended and match_ref.outcome.is_empty():
-		match_ref.sim.end_by_song()
+		if not level.is_defense():
+			match_ref.sim.end_by_song()
 		match_ref.advance(level.duration_seconds())
 		_finish()
 
@@ -383,7 +405,7 @@ func _finish() -> void:
 	Session.last_result = r
 	if not _perf_frames.is_empty():
 		print("PERF ", JSON.stringify(r["perf"]))
-	_banner.text = {"victory": "VICTORY", "defeat": "DEFEAT"}.get(r["outcome"], "SONG OVER")
+	_banner.text = {"victory": "VICTORY", "defeat": "DEFEAT", "complete": "SONG COMPLETE"}.get(r["outcome"], "SONG OVER")
 	await get_tree().create_timer(1.4).timeout
 	transport.stop()
 	get_tree().change_scene_to_file("res://src/scenes/result.tscn")
@@ -398,6 +420,8 @@ func _perf_sample(delta: float) -> void:
 	if clock.state != SongClock.State.PLAYING:
 		return
 	_perf_frames.append(delta * 1000.0)
+	if not battle_on:
+		return
 	var live := match_ref.sim.count_alive(0, BattleSim.Kind.UNIT) + match_ref.sim.count_alive(1, BattleSim.Kind.UNIT)
 	_perf_peak_units = maxi(_perf_peak_units, live)
 

@@ -63,7 +63,7 @@ def validate_thumb_layout(notes, rules):
                 raise ValueError(f"Same-thumb onset gap too small: {a['id']} -> {b['id']}")
 
 
-def compile_chart(directory, rules_name="chart_rules.json", output_name="player_chart.json"):
+def compile_chart(directory, rules_name="chart_rules.json", output_name="player_chart.json", write=True):
     directory = Path(directory).resolve()
     song = json.loads((directory / "song.json").read_text())
     rules_path, output_path = (directory / rules_name).resolve(), (directory / output_name).resolve()
@@ -168,6 +168,9 @@ def compile_chart(directory, rules_name="chart_rules.json", output_name="player_
            "time_signature": song["time_signature"], "ticks_per_beat": ppq, "song_offset_ms": 0, "duration_ticks": end,
            "sections": sections, "notes": notes, "source_sha256": source_hashes,
            "runtime_compatibility": "Proposed interchange; Claude must adapt the game's loader and reward path."}
+    if not write:
+        out["omitted_notes"] = omitted
+        return out
     output_path.write_text(json.dumps(out, indent=2) + "\n")
     audit_name = "chart_audit.json" if output_name == "player_chart.json" else output_path.stem + "_audit.json"
     (output_path.parent / audit_name).write_text(json.dumps({"omitted_notes": omitted, "max_required_touches": peak, "changed_musical_lengths": [], "changed_musical_onsets": []}, indent=2) + "\n")

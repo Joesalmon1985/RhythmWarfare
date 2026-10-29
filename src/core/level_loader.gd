@@ -14,7 +14,9 @@ const SAME_LANE_MIN_GAP_TICKS := 0  # same-tick notes on one button are a confli
 const SAME_LANE_WARN_GAP_MS := 200.0  # two notes on one button closer than twice the Good window cannot both be judged cleanly
 
 
-static func load_pack(pack_dir: String) -> Dictionary:
+## options (schema 2 only): {"chart_id": String, "loadout": {slot id: profile id}}; empty picks the first chart
+## and the pack's default loadout.
+static func load_pack(pack_dir: String, options: Dictionary = {}) -> Dictionary:
 	var result := {"level": null, "errors": [], "warnings": []}
 	var errors: Array = result["errors"]
 	var warnings: Array = result["warnings"]
@@ -28,7 +30,11 @@ static func load_pack(pack_dir: String) -> Dictionary:
 	if typeof(parsed) != TYPE_DICTIONARY:
 		errors.append("level.json is not a JSON object")
 		return result
-	var level := parse(parsed, dir, errors, warnings)
+	var level: Level
+	if int(parsed.get("schema_version", -1)) == DefenseLoader.SCHEMA_VERSION:
+		level = DefenseLoader.parse(parsed, dir, options, errors, warnings)
+	else:
+		level = parse(parsed, dir, errors, warnings)
 	if errors.is_empty():
 		_check_stems(level, errors, warnings)
 	if errors.is_empty():
@@ -128,6 +134,9 @@ static func parse(d: Dictionary, pack_dir: String, errors: Array, warnings: Arra
 			"duration_ticks": int(raw.get("duration_ticks", 0)),
 			"button": 0,
 		}
+		n["slot_id"] = n["lane"]
+		n["family"] = n["lane"]
+		n["part_id"] = n["lane"]
 		if n["id"].is_empty() or ids.has(n["id"]):
 			errors.append("note id missing or duplicated: '%s'" % n["id"])
 		ids[n["id"]] = true
@@ -271,7 +280,7 @@ static func _check_stems(level: Level, errors: Array, warnings: Array) -> void:
 			continue
 		lengths[key] = stream.get_length()
 	level.stem_lengths = lengths
-	if lengths.size() < Level.STEM_KEYS.size():
+	if lengths.size() < level.stems.size():
 		return
 	var lo: float = INF
 	var hi: float = -INF

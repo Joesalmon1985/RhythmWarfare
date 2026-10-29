@@ -4,10 +4,11 @@ extends RefCounted
 ## Every note resolves exactly once. Rewards are queued as events for the battle to consume; they are never
 ## accumulated or deferred to phrase boundaries.
 ##
-## Presses arrive per button (1 to 4). A note's button says where it is played; its lane says what it rewards
-## and whether it is still available (a destroyed war factory makes kick notes unavailable, a destroyed barracks
-## snare notes; bass notes never become unavailable). Bass notes may sit on any button, so one button can carry
-## kick taps in one phrase and bass holds in the next.
+## Presses arrive per button (1 to 4). A note's button says where it is played; its slot_id says what it rewards
+## and whether it is still available. In schema 1 packs the slot id is the lane (a destroyed war factory makes
+## kick notes unavailable, a destroyed barracks snare notes; bass notes never become unavailable). In schema 2
+## packs every equipped slot has its own availability, set by the match from the slot's producers. A note's button
+## never decides what it rewards, so one button can carry kick taps in one phrase and bass holds in the next.
 ##
 ## Note states: UNJUDGED -> HIT | MISS | UNAVAILABLE | VOID, with HOLDING as the transient state of a bass hold.
 
@@ -25,7 +26,7 @@ var notes: Array = []  # chart notes (dictionaries from Level), sorted by tick
 var _state: Array[int] = []
 var _button_notes: Dictionary = {}  # button -> Array[int] note indexes in time order
 var _button_cursor: Dictionary = {}  # button -> first index into _button_notes that may still be unresolved
-var _lane_available: Dictionary = {"kick": true, "snare": true, "bass": true}
+var _slot_available: Dictionary = {}  # slot id -> bool; a slot not listed is available
 var _active_hold: Dictionary = {}  # button -> {"index": int, "touch": int, "kind", "delta_ms"}
 var _events: Array = []
 var _now := 0.0
@@ -36,7 +37,7 @@ var misses := 0
 var strays := 0
 var combo := 0
 var best_combo := 0
-var rewards := {"kick": 0, "snare": 0, "bass": 0}
+var rewards := {"kick": 0, "snare": 0, "bass": 0}  # reward count per slot id
 
 
 func setup(chart_notes: Array) -> void:
@@ -48,8 +49,15 @@ func setup(chart_notes: Array) -> void:
 	for b in range(1, Level.BUTTONS + 1):
 		_button_notes[b] = []
 		_button_cursor[b] = 0
+	for n in notes:  # hand-built notes (tests, schema 1) carry a lane only: the lane is their slot
+		if not n.has("slot_id"):
+			n["slot_id"] = n.get("lane", "")
+		if not n.has("lane"):
+			n["lane"] = n.get("family", n["slot_id"])
+		n["part_id"] = n.get("part_id", n["slot_id"])
+		n["source_note_id"] = n.get("source_note_id", "")
 	for i in notes.size():
-		var b := int(notes[i].get("button", Level.FIXED_BUTTON.get(notes[i]["lane"], 2)))
+		var b := int(notes[i].get("button", Level.FIXED_BUTTON.get(notes[i].get("lane", ""), 2)))
 		if not _button_notes.has(b):
 			_button_notes[b] = []
 			_button_cursor[b] = 0
@@ -61,7 +69,7 @@ func setup(chart_notes: Array) -> void:
 	combo = 0
 	best_combo = 0
 	rewards = {"kick": 0, "snare": 0, "bass": 0}
-	_lane_available = {"kick": true, "snare": true, "bass": true}
+	_slot_available = {}
 	_active_hold.clear()
 	_events.clear()
 	_now = 0.0
@@ -71,16 +79,24 @@ func state_of(index: int) -> int:
 	return _state[index]
 
 
+func is_slot_available(slot: String) -> bool:
+	return _slot_available.get(slot, true)
+
+
+## Producer gone: future notes of the slot become UNAVAILABLE as they come up and presses on them are inert.
+func set_slot_available(slot: String, available: bool) -> void:
+	_slot_available[slot] = available
+
+
 func is_lane_available(lane: String) -> bool:
-	return _lane_available[lane]
+	return is_slot_available(lane)
 
 
-## Producer destroyed (kick/snare): future notes on the lane become UNAVAILABLE as they come up and presses on
-## them are inert. The bass lane is never made unavailable: rebuilding is its recovery function.
+## Schema 1: the bass lane is never made unavailable (rebuilding a pad is its recovery function).
 func set_lane_available(lane: String, available: bool) -> void:
 	if lane == "bass":
 		return
-	_lane_available[lane] = available
+	set_slot_available(lane, available)
 
 
 ## Counted notes exclude UNAVAILABLE and VOID ones (they never required an input).
@@ -111,7 +127,7 @@ func update(now: float) -> void:
 			var st := _state[i]
 			if st == State.UNJUDGED:
 				if _now > n["time"] + good_s:
-					if _lane_available[n["lane"]]:
+					if is_slot_available(n["slot_id"]):
 						_resolve(i, State.MISS, "miss")
 					else:
 						_resolve(i, State.UNAVAILABLE, "unavailable")
@@ -146,7 +162,7 @@ func press(button: int, now: float, touch_id: int = 0) -> Dictionary:
 			continue
 		if delta < -good_s:
 			break  # notes are in time order; nothing later can match
-		if not _lane_available[n["lane"]]:
+		if not is_slot_available(n["slot_id"]):
 			unavailable_in_window = true
 			continue
 		# Nearest eligible note wins; on an exact tie the earlier note wins because the scan is in time order
@@ -169,7 +185,7 @@ func press(button: int, now: float, touch_id: int = 0) -> Dictionary:
 	if note["type"] == "hold":
 		_state[best] = State.HOLDING
 		_active_hold[button] = {"index": best, "touch": touch_id, "kind": kind, "delta_ms": delta_ms}
-		var started := {"kind": "hold_start", "judgement": kind, "lane": note["lane"], "button": button, "note_id": note["id"], "index": best, "time": now, "delta_ms": delta_ms}
+		var started := {"kind": "hold_start", "judgement": kind, "lane": note["lane"], "slot_id": note["slot_id"], "button": button, "note_id": note["id"], "index": best, "time": now, "delta_ms": delta_ms}
 		_events.append(started)
 		return started
 	return _hit(best, kind, now, delta_ms)
@@ -190,10 +206,10 @@ func release(button: int, now: float, touch_id: int = 0) -> Dictionary:
 	var n: Dictionary = notes[i]
 	if now >= n["end_time"] - hold_tolerance_s:
 		# Released inside the tolerance: the reward still resolves at the scheduled tail, not now.
-		return {"kind": "hold_release_ok", "lane": n["lane"], "button": button, "note_id": n["id"]}
+		return {"kind": "hold_release_ok", "lane": n["lane"], "slot_id": n["slot_id"], "button": button, "note_id": n["id"]}
 	_active_hold.erase(button)
 	_resolve(i, State.MISS, "hold_fail")
-	return {"kind": "hold_fail", "lane": n["lane"], "button": button, "note_id": n["id"]}
+	return {"kind": "hold_fail", "lane": n["lane"], "slot_id": n["slot_id"], "button": button, "note_id": n["id"]}
 
 
 ## Pause interrupts an active hold: it is voided with no reward and no penalty (PRD section 8).
@@ -202,7 +218,7 @@ func void_active_holds() -> void:
 		var i: int = _active_hold[button]["index"]
 		if _state[i] == State.HOLDING:
 			_state[i] = State.VOID
-			_events.append({"kind": "void", "lane": notes[i]["lane"], "button": button, "note_id": notes[i]["id"], "index": i})
+			_events.append({"kind": "void", "lane": notes[i]["lane"], "slot_id": notes[i]["slot_id"], "button": button, "note_id": notes[i]["id"], "index": i})
 	_active_hold.clear()
 
 
@@ -230,8 +246,8 @@ func _hit(i: int, kind: String, at: float, delta_ms: float = 0.0) -> Dictionary:
 		good += 1
 	combo += 1
 	best_combo = maxi(best_combo, combo)
-	rewards[n["lane"]] += 1
-	var ev := {"kind": kind, "lane": n["lane"], "button": int(n["button"]), "note_id": n["id"], "index": i, "tick": n["tick"], "time": at, "reward": true, "delta_ms": delta_ms}
+	rewards[n["slot_id"]] = int(rewards.get(n["slot_id"], 0)) + 1
+	var ev := {"kind": kind, "lane": n["lane"], "slot_id": n["slot_id"], "part_id": n["part_id"], "source_note_id": n["source_note_id"], "button": int(n["button"]), "note_id": n["id"], "index": i, "tick": n["tick"], "time": at, "reward": true, "delta_ms": delta_ms}
 	_events.append(ev)
 	return ev
 
@@ -242,4 +258,4 @@ func _resolve(i: int, state: int, kind: String) -> void:
 	if state == State.MISS:
 		misses += 1
 		combo = 0
-	_events.append({"kind": kind, "lane": n["lane"], "button": int(n["button"]), "note_id": n["id"], "index": i, "tick": n["tick"]})
+	_events.append({"kind": kind, "lane": n["lane"], "slot_id": n["slot_id"], "button": int(n["button"]), "note_id": n["id"], "index": i, "tick": n["tick"]})

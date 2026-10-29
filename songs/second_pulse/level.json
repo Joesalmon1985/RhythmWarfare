@@ -1,0 +1,2161 @@
+{
+ "schema_version": 2,
+ "mode": "defense",
+ "level_id": "level_02",
+ "campaign_level": 2,
+ "title": "Second Pulse",
+ "bpm": 174,
+ "time_signature": [
+  4,
+  4
+ ],
+ "ticks_per_beat": 960,
+ "song_offset_ms": 0,
+ "duration_ticks": 153600,
+ "seed": 1002,
+ "battlefield": "defense_01",
+ "roster": "openra_mvp_01",
+ "source": {
+  "midi_sha256": {
+   "kick_1": "a6d34fd1719217f54d4138d82ee4b2c4b59ad820f643501bcc2d7f4e925afc77",
+   "kick_2": "d4aa1e0b211c00b57224fdb4477463875b5d95b585d83a8b00d9cf5c85f15e12",
+   "snare_1": "6057f3df188b134ba95a253e3734402af9d1315a4d2e0c76639b977b9df898cd",
+   "other_pad": "e2f880576fbd09194056a6477df482d6fd2b803fda32c7f6011595e85cddd9d8",
+   "other_hats": "02e0ee963e5194bffa3cace63d2806e093ea3a89b854aa7508253435f4e3f0ae"
+  },
+  "importer_version": 1,
+  "wave_source": "campaign/First_Three/level_02/waves.proposed.json"
+ },
+ "parts": [
+  {
+   "id": "kick_1",
+   "family": "kick",
+   "slot_id": "kick_1",
+   "render_bus": "kick_1"
+  },
+  {
+   "id": "kick_2",
+   "family": "kick",
+   "slot_id": "kick_2",
+   "render_bus": "kick_2"
+  },
+  {
+   "id": "snare_1",
+   "family": "snare",
+   "slot_id": "snare_1",
+   "render_bus": "snare_1"
+  },
+  {
+   "id": "other_pad",
+   "family": "other",
+   "slot_id": null,
+   "render_bus": "other"
+  },
+  {
+   "id": "other_hats",
+   "family": "other",
+   "slot_id": null,
+   "render_bus": "other"
+  }
+ ],
+ "loadout": {
+  "active_slots": [
+   "kick_1",
+   "kick_2",
+   "snare_1"
+  ],
+  "default": {
+   "kick_1": "kick_march",
+   "snare_1": "snare_guard",
+   "kick_2": "kick_armour"
+  }
+ },
+ "renders": {
+  "kick_1": {
+   "kick_march": {
+    "file": "audio/kick_1__kick_march.ogg",
+    "source_sha256": "a6d34fd1719217f54d4138d82ee4b2c4b59ad820f643501bcc2d7f4e925afc77",
+    "sample_rate": 48000,
+    "frames": 2714483,
+    "placeholder": true,
+    "profile_default": true
+   },
+   "kick_armour": {
+    "file": "audio/kick_1__kick_armour.ogg",
+    "source_sha256": "a6d34fd1719217f54d4138d82ee4b2c4b59ad820f643501bcc2d7f4e925afc77",
+    "sample_rate": 48000,
+    "frames": 2714483,
+    "placeholder": true,
+    "profile_default": false
+   }
+  },
+  "kick_2": {
+   "kick_march": {
+    "file": "audio/kick_2__kick_march.ogg",
+    "source_sha256": "d4aa1e0b211c00b57224fdb4477463875b5d95b585d83a8b00d9cf5c85f15e12",
+    "sample_rate": 48000,
+    "frames": 2714483,
+    "placeholder": true,
+    "profile_default": false
+   },
+   "kick_armour": {
+    "file": "audio/kick_2__kick_armour.ogg",
+    "source_sha256": "d4aa1e0b211c00b57224fdb4477463875b5d95b585d83a8b00d9cf5c85f15e12",
+    "sample_rate": 48000,
+    "frames": 2714483,
+    "placeholder": true,
+    "profile_default": true
+   }
+  },
+  "snare_1": {
+   "snare_guard": {
+    "file": "audio/snare_1__snare_guard.ogg",
+    "source_sha256": "6057f3df188b134ba95a253e3734402af9d1315a4d2e0c76639b977b9df898cd",
+    "sample_rate": 48000,
+    "frames": 2714483,
+    "placeholder": true,
+    "profile_default": true
+   }
+  },
+  "other": {
+   "accompaniment": {
+    "file": "audio/other.ogg",
+    "source_sha256": "c0a4a2c6f12de05fca0dc1773e73c95ac49cd93157ca2d0afb8d1ddabde898f1",
+    "sample_rate": 48000,
+    "frames": 2714483,
+    "placeholder": true,
+    "profile_default": true
+   }
+  }
+ },
+ "stems": {
+  "other": "audio/other.ogg"
+ },
+ "charts": [
+  {
+   "chart_id": "level_02.campaign",
+   "play_mode": "campaign",
+   "progression": true,
+   "sections": [
+    {
+     "id": "drums_1",
+     "start_tick": 0,
+     "length_bars": 8,
+     "mode": "drums"
+    },
+    {
+     "id": "drums_2",
+     "start_tick": 30720,
+     "length_bars": 8,
+     "mode": "drums"
+    },
+    {
+     "id": "drums_3",
+     "start_tick": 61440,
+     "length_bars": 8,
+     "mode": "drums"
+    },
+    {
+     "id": "drums_4",
+     "start_tick": 92160,
+     "length_bars": 8,
+     "mode": "drums"
+    },
+    {
+     "id": "drums_5",
+     "start_tick": 122880,
+     "length_bars": 8,
+     "mode": "drums"
+    }
+   ],
+   "notes": [
+    {
+     "id": "n0001",
+     "tick": 0,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0001",
+     "family": "kick"
+    },
+    {
+     "id": "n0002",
+     "tick": 1920,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0001",
+     "family": "snare"
+    },
+    {
+     "id": "n0003",
+     "tick": 3840,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0002",
+     "family": "kick"
+    },
+    {
+     "id": "n0004",
+     "tick": 5760,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0002",
+     "family": "snare"
+    },
+    {
+     "id": "n0005",
+     "tick": 7680,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0003",
+     "family": "kick"
+    },
+    {
+     "id": "n0006",
+     "tick": 9600,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0003",
+     "family": "snare"
+    },
+    {
+     "id": "n0007",
+     "tick": 11520,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0004",
+     "family": "kick"
+    },
+    {
+     "id": "n0008",
+     "tick": 13440,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0004",
+     "family": "snare"
+    },
+    {
+     "id": "n0009",
+     "tick": 15360,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0005",
+     "family": "kick"
+    },
+    {
+     "id": "n0010",
+     "tick": 17280,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0005",
+     "family": "snare"
+    },
+    {
+     "id": "n0011",
+     "tick": 19200,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0006",
+     "family": "kick"
+    },
+    {
+     "id": "n0012",
+     "tick": 21120,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0006",
+     "family": "snare"
+    },
+    {
+     "id": "n0013",
+     "tick": 23040,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0007",
+     "family": "kick"
+    },
+    {
+     "id": "n0014",
+     "tick": 24960,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0007",
+     "family": "snare"
+    },
+    {
+     "id": "n0015",
+     "tick": 26880,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0008",
+     "family": "kick"
+    },
+    {
+     "id": "n0016",
+     "tick": 28800,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0008",
+     "family": "snare"
+    },
+    {
+     "id": "n0017",
+     "tick": 30720,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0009",
+     "family": "kick"
+    },
+    {
+     "id": "n0018",
+     "tick": 32640,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0009",
+     "family": "snare"
+    },
+    {
+     "id": "n0019",
+     "tick": 33600,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0001",
+     "family": "kick"
+    },
+    {
+     "id": "n0020",
+     "tick": 34560,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0010",
+     "family": "kick"
+    },
+    {
+     "id": "n0021",
+     "tick": 36480,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0010",
+     "family": "snare"
+    },
+    {
+     "id": "n0022",
+     "tick": 38400,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0011",
+     "family": "kick"
+    },
+    {
+     "id": "n0023",
+     "tick": 40320,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0011",
+     "family": "snare"
+    },
+    {
+     "id": "n0024",
+     "tick": 41280,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0002",
+     "family": "kick"
+    },
+    {
+     "id": "n0025",
+     "tick": 42240,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0012",
+     "family": "kick"
+    },
+    {
+     "id": "n0026",
+     "tick": 44160,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0012",
+     "family": "snare"
+    },
+    {
+     "id": "n0027",
+     "tick": 46080,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0013",
+     "family": "kick"
+    },
+    {
+     "id": "n0028",
+     "tick": 48000,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0013",
+     "family": "snare"
+    },
+    {
+     "id": "n0029",
+     "tick": 48960,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0003",
+     "family": "kick"
+    },
+    {
+     "id": "n0030",
+     "tick": 49920,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0014",
+     "family": "kick"
+    },
+    {
+     "id": "n0031",
+     "tick": 51840,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0014",
+     "family": "snare"
+    },
+    {
+     "id": "n0032",
+     "tick": 53760,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0015",
+     "family": "kick"
+    },
+    {
+     "id": "n0033",
+     "tick": 55680,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0015",
+     "family": "snare"
+    },
+    {
+     "id": "n0034",
+     "tick": 56640,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0004",
+     "family": "kick"
+    },
+    {
+     "id": "n0035",
+     "tick": 57600,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0016",
+     "family": "kick"
+    },
+    {
+     "id": "n0036",
+     "tick": 59520,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0016",
+     "family": "snare"
+    },
+    {
+     "id": "n0037",
+     "tick": 61440,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0017",
+     "family": "kick"
+    },
+    {
+     "id": "n0038",
+     "tick": 63360,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0017",
+     "family": "snare"
+    },
+    {
+     "id": "n0039",
+     "tick": 64320,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0005",
+     "family": "kick"
+    },
+    {
+     "id": "n0040",
+     "tick": 65280,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0018",
+     "family": "kick"
+    },
+    {
+     "id": "n0041",
+     "tick": 67200,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0018",
+     "family": "snare"
+    },
+    {
+     "id": "n0042",
+     "tick": 69120,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0019",
+     "family": "kick"
+    },
+    {
+     "id": "n0043",
+     "tick": 71040,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0019",
+     "family": "snare"
+    },
+    {
+     "id": "n0044",
+     "tick": 72000,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0006",
+     "family": "kick"
+    },
+    {
+     "id": "n0045",
+     "tick": 72960,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0020",
+     "family": "kick"
+    },
+    {
+     "id": "n0046",
+     "tick": 74880,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0020",
+     "family": "snare"
+    },
+    {
+     "id": "n0047",
+     "tick": 76800,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0021",
+     "family": "kick"
+    },
+    {
+     "id": "n0048",
+     "tick": 78720,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0021",
+     "family": "snare"
+    },
+    {
+     "id": "n0049",
+     "tick": 79680,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0007",
+     "family": "kick"
+    },
+    {
+     "id": "n0050",
+     "tick": 80640,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0022",
+     "family": "kick"
+    },
+    {
+     "id": "n0051",
+     "tick": 82560,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0022",
+     "family": "snare"
+    },
+    {
+     "id": "n0052",
+     "tick": 84480,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0023",
+     "family": "kick"
+    },
+    {
+     "id": "n0053",
+     "tick": 86400,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0023",
+     "family": "snare"
+    },
+    {
+     "id": "n0054",
+     "tick": 87360,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0008",
+     "family": "kick"
+    },
+    {
+     "id": "n0055",
+     "tick": 88320,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0024",
+     "family": "kick"
+    },
+    {
+     "id": "n0056",
+     "tick": 90240,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0024",
+     "family": "snare"
+    },
+    {
+     "id": "n0057",
+     "tick": 92160,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0025",
+     "family": "kick"
+    },
+    {
+     "id": "n0058",
+     "tick": 94080,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0025",
+     "family": "snare"
+    },
+    {
+     "id": "n0059",
+     "tick": 95040,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0009",
+     "family": "kick"
+    },
+    {
+     "id": "n0060",
+     "tick": 96000,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0026",
+     "family": "kick"
+    },
+    {
+     "id": "n0061",
+     "tick": 97920,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0026",
+     "family": "snare"
+    },
+    {
+     "id": "n0062",
+     "tick": 99840,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0027",
+     "family": "kick"
+    },
+    {
+     "id": "n0063",
+     "tick": 101760,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0027",
+     "family": "snare"
+    },
+    {
+     "id": "n0064",
+     "tick": 102720,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0010",
+     "family": "kick"
+    },
+    {
+     "id": "n0065",
+     "tick": 103680,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0028",
+     "family": "kick"
+    },
+    {
+     "id": "n0066",
+     "tick": 105600,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0028",
+     "family": "snare"
+    },
+    {
+     "id": "n0067",
+     "tick": 107520,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0029",
+     "family": "kick"
+    },
+    {
+     "id": "n0068",
+     "tick": 109440,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0029",
+     "family": "snare"
+    },
+    {
+     "id": "n0069",
+     "tick": 110400,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0011",
+     "family": "kick"
+    },
+    {
+     "id": "n0070",
+     "tick": 111360,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0030",
+     "family": "kick"
+    },
+    {
+     "id": "n0071",
+     "tick": 113280,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0030",
+     "family": "snare"
+    },
+    {
+     "id": "n0072",
+     "tick": 115200,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0031",
+     "family": "kick"
+    },
+    {
+     "id": "n0073",
+     "tick": 117120,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0031",
+     "family": "snare"
+    },
+    {
+     "id": "n0074",
+     "tick": 118080,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0012",
+     "family": "kick"
+    },
+    {
+     "id": "n0075",
+     "tick": 119040,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0032",
+     "family": "kick"
+    },
+    {
+     "id": "n0076",
+     "tick": 120960,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0032",
+     "family": "snare"
+    },
+    {
+     "id": "n0077",
+     "tick": 122880,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0033",
+     "family": "kick"
+    },
+    {
+     "id": "n0078",
+     "tick": 124800,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0033",
+     "family": "snare"
+    },
+    {
+     "id": "n0079",
+     "tick": 125760,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0013",
+     "family": "kick"
+    },
+    {
+     "id": "n0080",
+     "tick": 126720,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0034",
+     "family": "kick"
+    },
+    {
+     "id": "n0081",
+     "tick": 128640,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0034",
+     "family": "snare"
+    },
+    {
+     "id": "n0082",
+     "tick": 130560,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0035",
+     "family": "kick"
+    },
+    {
+     "id": "n0083",
+     "tick": 132480,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0035",
+     "family": "snare"
+    },
+    {
+     "id": "n0084",
+     "tick": 133440,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0014",
+     "family": "kick"
+    },
+    {
+     "id": "n0085",
+     "tick": 134400,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0036",
+     "family": "kick"
+    },
+    {
+     "id": "n0086",
+     "tick": 136320,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0036",
+     "family": "snare"
+    },
+    {
+     "id": "n0087",
+     "tick": 138240,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0037",
+     "family": "kick"
+    },
+    {
+     "id": "n0088",
+     "tick": 140160,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0037",
+     "family": "snare"
+    },
+    {
+     "id": "n0089",
+     "tick": 141120,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0015",
+     "family": "kick"
+    },
+    {
+     "id": "n0090",
+     "tick": 142080,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0038",
+     "family": "kick"
+    },
+    {
+     "id": "n0091",
+     "tick": 144000,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0038",
+     "family": "snare"
+    },
+    {
+     "id": "n0092",
+     "tick": 145920,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0039",
+     "family": "kick"
+    },
+    {
+     "id": "n0093",
+     "tick": 147840,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0039",
+     "family": "snare"
+    },
+    {
+     "id": "n0094",
+     "tick": 148800,
+     "button": 2,
+     "type": "tap",
+     "slot_id": "kick_2",
+     "part_id": "kick_2",
+     "source_note_id": "kick_2:0016",
+     "family": "kick"
+    },
+    {
+     "id": "n0095",
+     "tick": 149760,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0040",
+     "family": "kick"
+    },
+    {
+     "id": "n0096",
+     "tick": 151680,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0040",
+     "family": "snare"
+    }
+   ]
+  },
+  {
+   "chart_id": "level_02.practice",
+   "play_mode": "practice",
+   "progression": false,
+   "sections": [
+    {
+     "id": "drums_1",
+     "start_tick": 0,
+     "length_bars": 8,
+     "mode": "drums"
+    },
+    {
+     "id": "drums_2",
+     "start_tick": 30720,
+     "length_bars": 8,
+     "mode": "drums"
+    },
+    {
+     "id": "drums_3",
+     "start_tick": 61440,
+     "length_bars": 8,
+     "mode": "drums"
+    },
+    {
+     "id": "drums_4",
+     "start_tick": 92160,
+     "length_bars": 8,
+     "mode": "drums"
+    },
+    {
+     "id": "drums_5",
+     "start_tick": 122880,
+     "length_bars": 8,
+     "mode": "drums"
+    }
+   ],
+   "notes": [
+    {
+     "id": "n0001",
+     "tick": 0,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0001",
+     "family": "kick"
+    },
+    {
+     "id": "n0002",
+     "tick": 1920,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0001",
+     "family": "snare"
+    },
+    {
+     "id": "n0003",
+     "tick": 3840,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0002",
+     "family": "kick"
+    },
+    {
+     "id": "n0004",
+     "tick": 5760,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0002",
+     "family": "snare"
+    },
+    {
+     "id": "n0005",
+     "tick": 7680,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0003",
+     "family": "kick"
+    },
+    {
+     "id": "n0006",
+     "tick": 9600,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0003",
+     "family": "snare"
+    },
+    {
+     "id": "n0007",
+     "tick": 11520,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0004",
+     "family": "kick"
+    },
+    {
+     "id": "n0008",
+     "tick": 13440,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0004",
+     "family": "snare"
+    },
+    {
+     "id": "n0009",
+     "tick": 15360,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0005",
+     "family": "kick"
+    },
+    {
+     "id": "n0010",
+     "tick": 17280,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0005",
+     "family": "snare"
+    },
+    {
+     "id": "n0011",
+     "tick": 19200,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0006",
+     "family": "kick"
+    },
+    {
+     "id": "n0012",
+     "tick": 21120,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0006",
+     "family": "snare"
+    },
+    {
+     "id": "n0013",
+     "tick": 23040,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0007",
+     "family": "kick"
+    },
+    {
+     "id": "n0014",
+     "tick": 24960,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0007",
+     "family": "snare"
+    },
+    {
+     "id": "n0015",
+     "tick": 26880,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0008",
+     "family": "kick"
+    },
+    {
+     "id": "n0016",
+     "tick": 28800,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0008",
+     "family": "snare"
+    },
+    {
+     "id": "n0017",
+     "tick": 30720,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0009",
+     "family": "kick"
+    },
+    {
+     "id": "n0018",
+     "tick": 32640,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0009",
+     "family": "snare"
+    },
+    {
+     "id": "n0019",
+     "tick": 34560,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0010",
+     "family": "kick"
+    },
+    {
+     "id": "n0020",
+     "tick": 36480,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0010",
+     "family": "snare"
+    },
+    {
+     "id": "n0021",
+     "tick": 38400,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0011",
+     "family": "kick"
+    },
+    {
+     "id": "n0022",
+     "tick": 40320,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0011",
+     "family": "snare"
+    },
+    {
+     "id": "n0023",
+     "tick": 42240,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0012",
+     "family": "kick"
+    },
+    {
+     "id": "n0024",
+     "tick": 44160,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0012",
+     "family": "snare"
+    },
+    {
+     "id": "n0025",
+     "tick": 46080,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0013",
+     "family": "kick"
+    },
+    {
+     "id": "n0026",
+     "tick": 48000,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0013",
+     "family": "snare"
+    },
+    {
+     "id": "n0027",
+     "tick": 49920,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0014",
+     "family": "kick"
+    },
+    {
+     "id": "n0028",
+     "tick": 51840,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0014",
+     "family": "snare"
+    },
+    {
+     "id": "n0029",
+     "tick": 53760,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0015",
+     "family": "kick"
+    },
+    {
+     "id": "n0030",
+     "tick": 55680,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0015",
+     "family": "snare"
+    },
+    {
+     "id": "n0031",
+     "tick": 57600,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0016",
+     "family": "kick"
+    },
+    {
+     "id": "n0032",
+     "tick": 59520,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0016",
+     "family": "snare"
+    },
+    {
+     "id": "n0033",
+     "tick": 61440,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0017",
+     "family": "kick"
+    },
+    {
+     "id": "n0034",
+     "tick": 63360,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0017",
+     "family": "snare"
+    },
+    {
+     "id": "n0035",
+     "tick": 65280,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0018",
+     "family": "kick"
+    },
+    {
+     "id": "n0036",
+     "tick": 67200,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0018",
+     "family": "snare"
+    },
+    {
+     "id": "n0037",
+     "tick": 69120,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0019",
+     "family": "kick"
+    },
+    {
+     "id": "n0038",
+     "tick": 71040,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0019",
+     "family": "snare"
+    },
+    {
+     "id": "n0039",
+     "tick": 72960,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0020",
+     "family": "kick"
+    },
+    {
+     "id": "n0040",
+     "tick": 74880,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0020",
+     "family": "snare"
+    },
+    {
+     "id": "n0041",
+     "tick": 76800,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0021",
+     "family": "kick"
+    },
+    {
+     "id": "n0042",
+     "tick": 78720,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0021",
+     "family": "snare"
+    },
+    {
+     "id": "n0043",
+     "tick": 80640,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0022",
+     "family": "kick"
+    },
+    {
+     "id": "n0044",
+     "tick": 82560,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0022",
+     "family": "snare"
+    },
+    {
+     "id": "n0045",
+     "tick": 84480,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0023",
+     "family": "kick"
+    },
+    {
+     "id": "n0046",
+     "tick": 86400,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0023",
+     "family": "snare"
+    },
+    {
+     "id": "n0047",
+     "tick": 88320,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0024",
+     "family": "kick"
+    },
+    {
+     "id": "n0048",
+     "tick": 90240,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0024",
+     "family": "snare"
+    },
+    {
+     "id": "n0049",
+     "tick": 92160,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0025",
+     "family": "kick"
+    },
+    {
+     "id": "n0050",
+     "tick": 94080,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0025",
+     "family": "snare"
+    },
+    {
+     "id": "n0051",
+     "tick": 96000,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0026",
+     "family": "kick"
+    },
+    {
+     "id": "n0052",
+     "tick": 97920,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0026",
+     "family": "snare"
+    },
+    {
+     "id": "n0053",
+     "tick": 99840,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0027",
+     "family": "kick"
+    },
+    {
+     "id": "n0054",
+     "tick": 101760,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0027",
+     "family": "snare"
+    },
+    {
+     "id": "n0055",
+     "tick": 103680,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0028",
+     "family": "kick"
+    },
+    {
+     "id": "n0056",
+     "tick": 105600,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0028",
+     "family": "snare"
+    },
+    {
+     "id": "n0057",
+     "tick": 107520,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0029",
+     "family": "kick"
+    },
+    {
+     "id": "n0058",
+     "tick": 109440,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0029",
+     "family": "snare"
+    },
+    {
+     "id": "n0059",
+     "tick": 111360,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0030",
+     "family": "kick"
+    },
+    {
+     "id": "n0060",
+     "tick": 113280,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0030",
+     "family": "snare"
+    },
+    {
+     "id": "n0061",
+     "tick": 115200,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0031",
+     "family": "kick"
+    },
+    {
+     "id": "n0062",
+     "tick": 117120,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0031",
+     "family": "snare"
+    },
+    {
+     "id": "n0063",
+     "tick": 119040,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0032",
+     "family": "kick"
+    },
+    {
+     "id": "n0064",
+     "tick": 120960,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0032",
+     "family": "snare"
+    },
+    {
+     "id": "n0065",
+     "tick": 122880,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0033",
+     "family": "kick"
+    },
+    {
+     "id": "n0066",
+     "tick": 124800,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0033",
+     "family": "snare"
+    },
+    {
+     "id": "n0067",
+     "tick": 126720,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0034",
+     "family": "kick"
+    },
+    {
+     "id": "n0068",
+     "tick": 128640,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0034",
+     "family": "snare"
+    },
+    {
+     "id": "n0069",
+     "tick": 130560,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0035",
+     "family": "kick"
+    },
+    {
+     "id": "n0070",
+     "tick": 132480,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0035",
+     "family": "snare"
+    },
+    {
+     "id": "n0071",
+     "tick": 134400,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0036",
+     "family": "kick"
+    },
+    {
+     "id": "n0072",
+     "tick": 136320,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0036",
+     "family": "snare"
+    },
+    {
+     "id": "n0073",
+     "tick": 138240,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0037",
+     "family": "kick"
+    },
+    {
+     "id": "n0074",
+     "tick": 140160,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0037",
+     "family": "snare"
+    },
+    {
+     "id": "n0075",
+     "tick": 142080,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0038",
+     "family": "kick"
+    },
+    {
+     "id": "n0076",
+     "tick": 144000,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0038",
+     "family": "snare"
+    },
+    {
+     "id": "n0077",
+     "tick": 145920,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0039",
+     "family": "kick"
+    },
+    {
+     "id": "n0078",
+     "tick": 147840,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0039",
+     "family": "snare"
+    },
+    {
+     "id": "n0079",
+     "tick": 149760,
+     "button": 1,
+     "type": "tap",
+     "slot_id": "kick_1",
+     "part_id": "kick_1",
+     "source_note_id": "kick_1:0040",
+     "family": "kick"
+    },
+    {
+     "id": "n0080",
+     "tick": 151680,
+     "button": 4,
+     "type": "tap",
+     "slot_id": "snare_1",
+     "part_id": "snare_1",
+     "source_note_id": "snare_1:0040",
+     "family": "snare"
+    }
+   ]
+  }
+ ],
+ "waves": [
+  {
+   "id": "wave_01",
+   "start_tick": 15360,
+   "start_bar": 5,
+   "entry": "left",
+   "via_defense_point": "defense_1",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 6,
+     "spawn_spacing_ticks": 240
+    }
+   ]
+  },
+  {
+   "id": "wave_02",
+   "start_tick": 30720,
+   "start_bar": 9,
+   "entry": "center",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 7,
+     "spawn_spacing_ticks": 240
+    }
+   ]
+  },
+  {
+   "id": "wave_03",
+   "start_tick": 46080,
+   "start_bar": 13,
+   "entry": "right",
+   "via_defense_point": "defense_3",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 8,
+     "spawn_spacing_ticks": 240
+    }
+   ]
+  },
+  {
+   "id": "wave_04",
+   "start_tick": 61440,
+   "start_bar": 17,
+   "entry": "left",
+   "via_defense_point": "defense_1",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 9,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_05",
+   "start_tick": 76800,
+   "start_bar": 21,
+   "entry": "center",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 10,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_06",
+   "start_tick": 92160,
+   "start_bar": 25,
+   "entry": "right",
+   "via_defense_point": "defense_3",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 11,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "1tnk",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_07",
+   "start_tick": 107520,
+   "start_bar": 29,
+   "entry": "left",
+   "via_defense_point": "defense_1",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 12,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "1tnk",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_08",
+   "start_tick": 122880,
+   "start_bar": 33,
+   "entry": "center",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 13,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "1tnk",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_09",
+   "start_tick": 138240,
+   "start_bar": 37,
+   "entry": "right",
+   "via_defense_point": "defense_3",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 14,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "1tnk",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  }
+ ]
+}

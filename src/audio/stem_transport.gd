@@ -1,6 +1,7 @@
 class_name StemTransport
 extends Node
-## Plays the four stems as one AudioStreamSynchronized through one AudioStreamPlayer: one start, one transport,
+## Plays the level's stems (four in schema 1; one per equipped slot plus "other" in schema 2, up to the 32 that
+## AudioStreamSynchronized allows) as one AudioStreamSynchronized through one AudioStreamPlayer: one start, one transport,
 ## one pause state, one playhead. Muting only changes a substream's gain with a short ramp; it never stops or
 ## restarts a stem, so a muted stem keeps its position and comes back at the current song position.
 
@@ -8,8 +9,10 @@ signal song_finished
 
 const RAMP_S := 0.03
 const SILENT_DB := -80.0
-const STEM_ORDER := ["kick", "snare", "bass", "other"]
+const STEM_ORDER := ["kick", "snare", "bass", "other"]  # the schema 1 stem keys
+const MAX_STREAMS := 32
 
+var stem_keys: Array = []  # the loaded level's stem keys, in substream order
 var player: AudioStreamPlayer
 var sync_stream: AudioStreamSynchronized
 var _target: Dictionary = {}  # key -> linear gain target (0 or 1)
@@ -30,10 +33,15 @@ func _ready() -> void:
 
 ## Decodes and attaches the level's stems. Returns an error string, empty on success.
 func load_level(level: Level) -> String:
+	stem_keys = level.stems.keys()
+	if stem_keys.is_empty() or stem_keys.size() > MAX_STREAMS:
+		return "a level needs 1 to %d stems, this one has %d" % [MAX_STREAMS, stem_keys.size()]
 	sync_stream = AudioStreamSynchronized.new()
-	sync_stream.stream_count = STEM_ORDER.size()
-	for i in STEM_ORDER.size():
-		var key: String = STEM_ORDER[i]
+	sync_stream.stream_count = stem_keys.size()
+	_target.clear()
+	_current.clear()
+	for i in stem_keys.size():
+		var key: String = stem_keys[i]
 		var path: String = level.stems.get(key, "")
 		var stream := LevelLoader.load_stream(path)
 		if stream == null:
@@ -107,8 +115,8 @@ func _process(delta: float) -> void:
 	if not _loaded:
 		return
 	var step := delta / RAMP_S
-	for i in STEM_ORDER.size():
-		var key: String = STEM_ORDER[i]
+	for i in stem_keys.size():
+		var key: String = stem_keys[i]
 		var cur: float = _current[key]
 		var tgt: float = _target[key]
 		if cur != tgt:

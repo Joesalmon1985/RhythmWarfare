@@ -16,14 +16,31 @@ var outcome := ""
 var outcome_reason := ""
 var outcome_time := -1.0
 var stems_muted := {"kick": false, "snare": false, "bass": false, "other": false}
+## Schema 2: false is the rhythm-only playtest (no battlefield, no waves, nothing produced); the chart is judged and
+## the run ends at duration_ticks with outcome "complete".
+var battle_enabled := true
 var _pending_rewards: Array = []  # {lane, button, time}
 var _enemy_index := 0
 var _events: Array = []  # presentation events (sim events plus mix/lane changes)
 var production_log: Array = []  # [{time, side, action, result}]
 
 
-func setup(p_level: Level, p_rules: Rules = null) -> void:
+func setup(p_level: Level, p_rules: Rules = null, p_battle := true) -> void:
 	level = p_level
+	battle_enabled = p_battle
+	production_log.clear()
+	if level.is_defense():
+		stems_muted = {}
+		for key in level.stems:
+			stems_muted[key] = false
+		judge.setup(level.notes)
+		sim_ticks = 0
+		_pending_rewards.clear()
+		_events.clear()
+		outcome = ""
+		outcome_reason = ""
+		outcome_time = -1.0
+		return
 	rules = p_rules if p_rules != null else Rules.load_default(level.roster if not level.roster.is_empty() else "openra_mvp_01",
 		level.battlefield if not level.battlefield.is_empty() else "mvp_mirrored_01")
 	judge.setup(level.notes)
@@ -63,6 +80,8 @@ func drain_events() -> Array:
 func advance(t: float) -> Array:
 	if not outcome.is_empty():
 		return []
+	if level.is_defense():
+		return _advance_defense(t)
 	judge.update(t)
 	var judge_events := judge.drain_events()
 	for ev in judge_events:
@@ -79,6 +98,24 @@ func advance(t: float) -> Array:
 	if outcome.is_empty() and t >= level.duration_seconds():
 		sim.end_by_song()
 		_process_sim_events(t)
+	return judge_events
+
+
+func _advance_defense(t: float) -> Array:
+	judge.update(t)
+	var judge_events := judge.drain_events()
+	for ev in judge_events:
+		if ev.get("reward", false):
+			_pending_rewards.append(ev)
+	if not battle_enabled:
+		while not _pending_rewards.is_empty():
+			var r: Dictionary = _pending_rewards.pop_front()
+			production_log.append({"time": r["time"], "slot_id": r["slot_id"], "button": int(r["button"]), "source_note_id": r["source_note_id"], "result": "rhythm_only"})
+		if t >= level.duration_seconds():
+			outcome = "complete"
+			outcome_reason = "rhythm_only"
+			outcome_time = t
+		return judge_events
 	return judge_events
 
 
@@ -131,6 +168,28 @@ func _set_stem(key: String, muted: bool, now: float) -> void:
 
 
 func result() -> Dictionary:
+	if level.is_defense():
+		return {
+			"mode": "defense",
+			"outcome": outcome if not outcome.is_empty() else "incomplete",
+			"reason": outcome_reason,
+			"level": level.title,
+			"level_id": level.level_id,
+			"chart_id": level.chart_id,
+			"play_mode": level.play_mode,
+			"progression": level.progression,
+			"campaign_level": level.campaign_level,
+			"accuracy": judge.accuracy(),
+			"perfect": judge.perfect,
+			"good": judge.good,
+			"misses": judge.misses,
+			"strays": judge.strays,
+			"best_combo": judge.best_combo,
+			"judged": judge.judged_count(),
+			"rewards": judge.rewards.duplicate(),
+			"battle": battle_enabled,
+			"outcome_time_s": outcome_time,
+		}
 	return {
 		"outcome": outcome if not outcome.is_empty() else "incomplete",
 		"reason": outcome_reason,
