@@ -38,6 +38,7 @@ LEVELS = {
     3: {"pack": "hold_the_line", "rules": ["chart_rules.json"]},
 }
 NOTE_FIELDS = ("id", "tick", "button", "type", "duration_ticks", "slot_id", "part_id", "source_note_id", "family")
+PLACEHOLDER_GAIN = 0.55  # each stem is limited to 0.8 by the synth; five stems must still sum below full scale
 MAX_LEVEL_FOR_RENDERS = 3  # profiles unlocked by level 3 get placeholder renders for every active slot of that family
 
 
@@ -129,7 +130,7 @@ def render_other(parts: list[tuple[dict, list[dict]]], total: int, seed: int) ->
 def write_ogg(samples: np.ndarray, ogg: Path) -> int:
     with tempfile.TemporaryDirectory() as tmp:
         wav = Path(tmp) / "x.wav"
-        msp.write_wav(wav, msp.finalize(samples), SAMPLE_RATE)
+        msp.write_wav(wav, msp.finalize(samples) * PLACEHOLDER_GAIN, SAMPLE_RATE)
         with wave.open(str(wav)) as wf:
             frames = wf.getnframes()
         msp.encode_ogg(wav, ogg, SAMPLE_RATE)
@@ -141,6 +142,27 @@ def profiles_for(catalogue: list[dict], family: str, default_profile: str) -> li
     if default_profile not in ids:
         ids.insert(0, default_profile)
     return ids
+
+
+def travel_report(level: dict) -> None:
+    """Prints how long each wave's actors need from their entry to the defense point and on to the wall opening, so a
+    wave author can see when contact happens (straight-line distance at the actor's rules speed, cells per second)."""
+    bf = json.loads((ROOT / "data" / "battlefields" / f"{level['battlefield']}.json").read_text())
+    actors = json.loads((ROOT / "data" / "openra_rules.json").read_text())["actors"]
+    entries = {e["id"]: (e["x"] + 0.5, e["y"] + 0.5) for e in bf["entries"]}
+    points = {p["id"]: (p["x"] + 0.5, p["y"] + 0.5) for p in bf["defense_points"]}
+    opening = (15.5, 10.0)
+    seconds_per_tick = 60.0 / (level["bpm"] * level["ticks_per_beat"])
+    print("  travel (seconds from spawn): wave, entry -> point, actors to the point / to the wall opening")
+    for w in level["waves"]:
+        a, b = entries[w["entry"]], points[w["via_defense_point"]]
+        d1 = ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
+        d2 = ((b[0] - opening[0]) ** 2 + (b[1] - opening[1]) ** 2) ** 0.5
+        bits = []
+        for actor in sorted({g["actor"] for g in w["groups"]}):
+            cps = actors[actor]["speed"] / 1024.0 * 25.0
+            bits.append(f"{actor} {d1 / cps:.1f}s/{(d1 + d2) / cps:.1f}s")
+        print(f"    {w['id']} at {w['start_tick'] * seconds_per_tick:5.1f}s  {w['entry']:>6} -> {w['via_defense_point']}: " + ", ".join(bits))
 
 
 def load_waves(number: int, level_dir: Path) -> tuple[dict, Path]:
@@ -161,6 +183,7 @@ def rewrite_waves(number: int) -> None:
     level["source"]["wave_source"] = src.relative_to(ROOT).as_posix()
     path.write_text(json.dumps(level, indent=1) + "\n")
     print(f"level {number}: waves refreshed from {src.relative_to(ROOT).as_posix()}")
+    travel_report(level)
 
 
 def build_level(number: int) -> None:
@@ -228,6 +251,7 @@ def build_level(number: int) -> None:
     (out_dir / "level.json").write_text(json.dumps(level, indent=1) + "\n")
     counts = {c["chart_id"]: len(c["notes"]) for c in charts}
     print(f"level {number} -> songs/{spec['pack']}: charts {counts}, {len(renders)} render groups, {sum(len(v) for v in renders.values())} files")
+    travel_report(level)
 
 
 def main() -> None:

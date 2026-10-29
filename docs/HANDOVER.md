@@ -1,167 +1,165 @@
 # Rhythm Warfare: handover for the next agent
 
-> **29 October 2026:** the owner's defense campaign pack is committed under `campaign/` and the next phase is
-> planned in `docs/CAMPAIGN_PLAN.md` (paste-ready brief: `docs/NEXT_AGENT_PROMPT.md`). The campaign supersedes the
-> duel outcome, lane-based production and four fixed stems described below for schema 2 packs; everything below
-> remains true for the existing duel packs, which stay as a legacy mode during the build.
+State on 29 October 2026, after the defense campaign build. Read this first, then `docs/PRD.md` (section 14 is the
+rule set for the campaign; sections 1 to 13 still describe the legacy duel), `README.md` (layout and commands) and
+`docs/CAMPAIGN_PLAN.md` (the plan this build followed; its divergences are listed below). Everything is committed on
+`main` at https://github.com/Joesalmon1985/RhythmWarfare.
 
-State on 28 October 2026. Read this first, then `docs/PRD.md` (the product requirements, the authority on rules)
-and `README.md` (layout and commands). Everything described here is committed on `main` at
-https://github.com/Joesalmon1985/RhythmWarfare (local git only before that date).
+## What the game is now
 
-## What the game is
+A mobile rhythm game with a three-level defense campaign. You play a chart on four unlabelled buttons; every
+successful note builds a **group** of OpenRA units (the recipe of the instrument equipped in that note's slot) that
+walks to one of three defense points in front of your base, round robin, and holds it. Enemy waves arrive from three
+entries on a schedule that ignores your accuracy; they walk via a defense point to your **command core**. Lose the
+core and the run is over at once; reach the end of the song with it alive and you win, enemies or not. There is no
+enemy base. Clearing a level unlocks the next level and its instruments. Misses cost production only.
 
-A mobile rhythm game: play a 174 BPM drum and bass track on four unlabelled touch buttons and every successful
-note produces Red Alert units for your side. Kick notes sit on button 1 and each makes one vehicle (the roster's
-`vehicle_cycle`: light tank, jeep, medium tank, APC, artillery, flak truck, heavy tank, V2 launcher, mammoth
-tank, in turn); snare notes sit on button 4 and each makes a five-strong squad drawn from `infantry_pattern`
-(riflemen with grenadiers, rocket soldiers and flamethrowers mixed in); bass notes may use any of the four buttons,
-so a bass line runs across all of them, and each bass action builds a helipad or launches a Longbow sortie (five
-pads and five aircraft at most). The note's colour and shape say what it makes (round kick, diamond snare, bar
-bass); the buttons carry no labels. Both armies are run by OpenRA's Rush AI squad logic; the player never commands
-units. Losing the war factory mutes the kick stem and makes kick notes unavailable, losing the barracks does the
-same for snare, losing the last helipad mutes bass until a bass action rebuilds one. Destroy the enemy
-construction yard before the song ends to win.
+| Level | Song | Chart | Equipped by default | What it teaches |
+| --- | --- | --- | --- | --- |
+| 1 First Watch | 32 bars, 44.1 s | 64 taps on buttons 1 and 4 | March Kick (2 riflemen), Guard Snare (1 jeep) | steady half-time pulse |
+| 2 Second Pulse | 40 bars, 55.2 s | 96 taps on buttons 1, 2, 4 (practice chart: 80) | + Armour Kick (light tank, jeep, repeating) | a third input, a second kick |
+| 3 Hold the Line | 48 bars, 66.2 s | 60 drum taps + 29 bass holds, drums and bass alternating every 8 bars | + Patrol Sub (2 riflemen + 1 rocket soldier per hold) | bass holds across all four buttons |
 
-## Where it stands against the PRD milestones
+The old two-sided duel (`songs/level_01`, `songs/test_16`, schema 1) is still in the game as "Free play" and still
+passes its tests; delete it only when the owner says so.
 
-| Milestone | State |
-| --- | --- |
-| M0 music and input | Done. Four stems in one `AudioStreamSynchronized`, audio-derived monotonic clock, calibration screen, pause and resume with countdown, debug stem toggles (F3). `docs/TIMING.md`. |
-| M1 ground battle | Done. 53x20 temperate map at native pixels, mirrored bases, authored enemy schedule, autonomous combat, outcomes. |
-| M2 air and damage | Done. Five slots, finite ammo (8), rearm 1 per 50 ticks, bass-driven sorties with the PRD priority, pad loss and rebuild tied to the bass stem. |
-| M3 complete mobile level | Mostly done. Automatic OpenRA repair, readable result screen, offline Android APK exported and verified to load the pack (28 Oct fix: exported builds check stems through `ResourceLoader`, not `FileAccess`). Owner confirmed on 28 Oct 2026 that the APK installs and runs on their phone and that timing feels right after calibration on both phone and Windows (A14, and the playable half of A09). **Not done:** the real song stems (placeholder synthesised audio is in use) and the measured phone frame-time evidence (A13). |
+## Verified and not verified
 
-Acceptance evidence: A01, A02, A03, A04, A05, A06, A07, A08, A10, A11 are covered by `tests/` (425 headless
-checks, `bash tools/test.sh`); A09 structurally by `tests/test_transport.gd` (device alignment still to measure);
-A12 by `docs/BALANCE.md`; A13 on desktop only (p95 20.8 ms at 438 live units); A14 confirmed by the owner on the phone (the `PERF` line from a phone run is still to be captured).
+Verified (29 Oct 2026, this machine):
+- `bash tools/test.sh`: 1,750 headless checks, 0 failures (the old duel tests plus the schema 2 loader, importer
+  regression, judge-by-slot, transport with five streams, defense simulation, catalogue, campaign save, balance guard
+  rails). One expected `Parse JSON failed` line is the corrupt-save test.
+- `python tools/campaign/validate_campaign.py campaign`: the pack's 102 structural checks pass.
+- The importer reproduces the pack's compiled charts exactly (64 / 96 / 89 events, practice 80) and the 18 MIDI hashes
+  match `campaign/Musical_Source_Integrity.json` (a test re-hashes them).
+- Seeds 1 to 3 for perfect, 0.85, 0.6 and no input on all three levels (`docs/BALANCE.md`): perfect and 0.85 survive,
+  no input loses; 0.6 is reported (level 3 loses it).
+- Desktop real-window run of level 3 with perfect autoplay: p95 16.67 ms (vsync-capped 60 Hz), 1 of 3,971 frames over
+  33 ms, peak 176 live units. Windows export runs the level 2 pack headless; the Android APK (42.8 MB) exports and
+  signs and contains the packs and data.
+- Screenshots of the playtest, battle, menu and loadout screens were looked at; nothing was played by a person.
+
+**Not verified:** a phone run (touch feel, thumb gaps, frame time on the device), real stems (all audio is
+synthesised placeholder sound), any human playtest of difficulty or of the charts, alignment of stems by ear, the result
+screen's look after a real clear (the logic is tested, the screen was not screenshotted after a clear), the 0.6
+accuracy difficulty as the owner wants it.
+
+## How to run the phone check (the owner's)
+
+1. Build and install: `docs/EXPORT.md` (`--export-debug "Android" build/android/RhythmWarfare-debug.apk`, then
+   `adb install -r build\android\RhythmWarfare-debug.apk`).
+2. Open the app, press Calibrate once, then play **Level 3** by hand (the heaviest: five stems, bass holds, about 100
+   to 180 live units). The note approach slider is under the level list (default 2.2 s).
+3. Read the frame times afterwards: `adb logcat -s godot` prints a `PERF {...}` line when a run ends (p95, frames over
+   33 ms, peak units, device). Report that line and whether any press felt missed on the held-thumb passages.
+4. Thumb layout to judge: left thumb buttons 1 and 2, right thumb 3 and 4; the chart avoids same-thumb gaps under 960
+   ticks (345 ms) and 480 ticks after a hold. These are design targets, untested on a phone.
+
+## Replacing the placeholder audio with real stems
+
+One WAV (or Ogg) per slot and profile, 48 kHz, same start and length for every stem of a song, rendered from bar 1
+through one tail bar (level 1 ends at the start of bar 34, level 2 at 42, level 3 at 50; `Render_Checklist.csv` in each
+`campaign/First_Three/level_0N/` folder names the files). Put them in `songs/<pack>/audio/` under the names already in
+that pack's `level.json` (`kick_1__kick_march.ogg`, `other.ogg`, ...) or change the file names in `renders`, set
+`"placeholder": false`, and run `python tools/campaign/audio_preflight.py songs/<pack>`: it checks existence, decoding,
+rate, equal frames, coverage of the song plus tail, headroom, that `source_sha256` still matches the MIDI, and prints
+the times to listen at (start, each focus change, the deadline). A profile with no render for a song shows as locked
+for that song on the loadout screen; only renders that exist can be equipped. Do not run `build_defense_pack.py` for a
+level whose audio you replaced by hand: it regenerates the placeholders (use `--waves-only` for balance changes).
 
 ## Owner decisions that are settled (do not re-ask)
 
-- Standalone Godot 4.5.1 project; the DuelMasterBattle repository is only an asset source, never edited.
-- Whole track playable; landscape; the chart is the owner's Level 01 MIDI pack (138 kicks, 111 snares, 72 bass
-  actions) with no hidden production cap. The owner will supply four aligned WAV stems named `audio/01_Kick.wav`
-  etc.; drop them into `songs/level_01/audio/` and change the four stem paths in `level.json` (or keep `.ogg`
-  names and convert with ffmpeg). The loader accepts wav, ogg and mp3 and rejects stems whose lengths differ.
-- The game must look like OpenRA (native pixel art, the real animations) and units must behave like OpenRA units
-  with OpenRA's bot AI on both sides. That is implemented; keep it.
-- Sandbags in player colour are correct (their pixels sit in the remappable palette range in Red Alert itself).
-- Phone: the owner sideloads the APK themselves and reports back.
-- 28 Oct 2026 (this supersedes the PRD's "three buttons"): four unlabelled buttons; kick on button 1, snare on
-  button 4, bass across all four; a chart never runs bass at the same time as kicks and snares (the owner's new
-  MIDI will be authored that way; Level 01 still overlaps them, so its bass sits on the inner buttons). More unit
-  types than riflemen and light tanks, and bigger, better defended bases. The owner will supply a new set of track
-  MIDI files next; `tools/make_song_pack.py` assigns bass buttons from MIDI pitch.
+- Standalone Godot 4.5.1; DuelMasterBattle is an asset source only, never edited.
+- The campaign prompt's rules win over the old PRD for schema 2: survival win, no enemy base, three defense points with
+  round-robin groups, slot-based recipes, four unlabelled buttons with authored placement, 2 kick / 2 snare / 3 bass
+  loadout caps, per-slot stems, no one-miss failure, windows unchanged (45 / 100 ms, hold release 60 ms).
+- Work on `main`, staged commits, duel path kept as legacy, no new branch.
+- Look: OpenRA native pixel art with real animations and OpenRA unit behaviour; the owner sideloads the APK and reports.
+- Placeholder sound is labelled as such everywhere (pack manifest, loadout screen, pack loader warning).
 
-## How the code is organised
+## How the code is organised (campaign additions in bold)
 
-- `src/core/`: `level.gd` and `level_loader.gd` (song-pack contract and validation), `song_clock.gd`,
-  `match.gd` (one play-through: judgement rewards -> production, enemy schedule, battle, stem mute decisions),
-  `session.gd` (autoload: selected pack, calibration, env overrides `RW_PACK`, `RW_AUTOPLAY`, `RW_ENEMY_FRACTION`,
-  `RW_CALIBRATION_MS`, `RW_SCENE=play`).
-- `src/audio/stem_transport.gd`: one player, four substreams, 30 ms gain ramps, never stops a stem.
-- `src/input/judge.gd` (pure judgement state machine over buttons 1 to 4; a note's `button` says where it is
-  played, its `lane` what it rewards) and `lane_input.gd` (touch ids and keys D, F, J, K = buttons 1 to 4).
-- `src/sim/battle_sim.gd`: the deterministic 25 Hz simulation with OpenRA rule values (unit class, crushing and
-  turret from each actor's locomotor and traits; SpreadDamage splash with the engine's falloff table for wide
-  warheads; sandbag and brick walls); `bot_ai.gd`: the Rush AI squad manager; `rules.gd`: data loading
-  (`vehicle_cycle`, `infantry_pattern`, locomotors). Pure GDScript, no nodes, so it runs headless.
-- `src/ui/`: `battle_view.gd` (sequence-driven renderer: terrain, bibs, buildings, walls by adjacency, units,
-  aircraft, projectiles, muzzle flashes, explosions, deaths, craters, smoke), `sprite_bank.gd` (sequences.json,
-  OpenRA facing rules, frame cache), `faction_remap.gdshader` (player-colour ramp keyed on alpha 253 pixels),
-  `lane_view.gd`, `hud.gd`.
-- `src/scenes/`: `main_menu`, `play` (the level screen), `calibration`, `result`.
-- `assets/openra/`: 2,378 native frames plus `sequences.json` and `PROVENANCE.md`; regenerate with
-  `tools/extract_openra.py` (needs the pinned OpenRA checkout and the owner's Red Alert content; paths in the
-  provenance file).
-- `data/`: `openra_rules.json` (actors, weapons, locomotors, repair at commit e7e9e4ad; the pillbox's Vulcan is
-  transcribed by hand), `rosters/openra_mvp_01.json` (roles, `vehicle_cycle`, `infantry_pattern`),
-  `battlefields/mvp_mirrored_01.json` (building layout, exits, rally, air hold points: two wall lines with eight-cell
-  openings, pillboxes, gun turrets, two SAM sites, radar dome, service depot, three power plants per side),
-  `maps/strip_53x20.json`.
-- `songs/level_01/` (the level), `songs/test_16/` (for tests); `tools/make_song_pack.py` builds packs from the
-  MIDI pack and synthesises placeholder stems; `songs/README.md` has the exact commands.
-- `tools/`: `test.sh`, `balance.sh` and `autoplay.gd` (headless scripted matches with `RW_DEBUG_EVERY` traces and a
-  per-phase profile), `shoot.gd` (scripted screenshots), `extract_openra.py`, `import_openra_assets.py` (the first,
-  now superseded, importer; kept for provenance).
-- `docs/`: `PRD.md`, `TIMING.md`, `BALANCE.md`, `OPENRA_BEHAVIOUR_SPEC.md` (engine-sourced spec the sim follows),
-  `EXPORT.md`, `shots/` (verification screenshots).
+- `src/core/`: `level.gd`, `level_loader.gd` (schema 1 and dispatch), **`defense_loader.gd`** (schema 2: chart rules,
+  thumb checks, render hashes, waves, `equip`), **`catalogue.gd`** (instrument profiles, recipe validation, loadout
+  validation), **`campaign.gd`** (levels, saved progress, unlocks, loadouts), `match.gd` (schema 1 duel flow and the
+  schema 2 defense flow: rewards -> slot -> profile -> recipe step -> group, waves by time, slot gating), `session.gd`
+  (autoload: pack, chart id, loadout, `lookahead_s`, campaign, env overrides `RW_PACK`, `RW_CHART`, `RW_BATTLE=off`,
+  `RW_LOOKAHEAD`, `RW_AUTOPLAY`, `RW_CALIBRATION_MS`, `RW_SCENE=play`), `song_clock.gd`.
+- `src/audio/stem_transport.gd`: one player, any number of substreams (3 to 5 used, 32 allowed), gain ramps, never
+  stops a stem.
+- `src/input/judge.gd`: judgement over buttons, availability and rewards keyed by `slot_id`; `lane_input.gd` (keys D F J K).
+- `src/sim/battle_sim.gd`: the deterministic 25 Hz OpenRA simulation. Defense mode (battlefield `mode: defense`):
+  objectives, defense points, entries, `produce_group`, `spawn_wave_unit`, outcome rules. **`defense_ai.gd`** replaces
+  the Rush AI there (`bot_ai.gd` is duel only). `rules.gd` loads data.
+- `src/ui/`: `battle_view.gd`, `hud.gd` (duel HUD and the defense HUD: core health, time left, defenders per point,
+  wave warning with route), `lane_view.gd` (notes, focus cue, `lookahead_s`), `sprite_bank.gd`.
+- `src/scenes/`: `main_menu` (campaign list, free play, rhythm playtest, calibration, approach slider), **`loadout`**,
+  `play`, `result`, `calibration`.
+- `data/`: `battlefields/defense_01.json` (+ the duel's `mvp_mirrored_01.json`), **`campaign/campaign.json`**,
+  **`campaign/waves/level_0N.json`** (tuned waves and level rules), **`instruments/catalogue.json`**, `openra_rules.json`,
+  rosters, map.
+- `songs/`: `first_watch`, `second_pulse`, `hold_the_line` (schema 2) plus the two duel packs.
+- `tools/campaign/`: `build_defense_pack.py` (one command per level; importer, placeholder stems, level.json),
+  `gen_waves.py`, `audio_preflight.py`, and the pack's reference `compile_chart.py` / `validate_campaign.py` /
+  `build_campaign.py` (unchanged except `compile_chart(write=False)`). `tools/balance.sh`, `balance_report.py`,
+  `autoplay.gd` (headless harness), `shoot.gd` (screenshots), `probe.gd` (duel pathing).
+- `campaign/` is the owner's starter pack (source data; `.gdignore` keeps Godot out of it). Never edit the MIDI.
 
-## Deviations from OpenRA that are deliberate (all commented in code)
+## Divergences from `docs/CAMPAIGN_PLAN.md` (all intentional)
 
-- Squads form at 10 + Random(10) idle units (Rush AI: 20 + Random(30)); assault squads attack-move at the enemy
-  construction yard and fight what they meet within 12 cells (the engine chases the closest enemy, which a
-  music-driven production trickle keeps supplying next to its own wall); the flee comparison counts every friendly
-  unit in the 10-cell danger circle; targets already aimed at by many friends count as slightly farther (overkill);
-  a unit whose target left range re-scans and prefers something already in range; the air squad's approach test
-  uses the intended semantics (the source comparison is inverted); the fuzzy attack-or-flee logic is a crisp
-  approximation (spec section 1.6).
-- Repair budget 500 credits per side (the PRD's 5,000 at Red Alert cost scaling repaired indefinitely).
-- Moving units slip past stationary friends (soft separation) so rear ranks reach the fight.
-- Bullets damage their target only if it is still within a cell of the aim point; missiles home.
-- Splash (SpreadDamage with Spread >= 0.2 cells: grenades, artillery, V2, flame, flak) hurts every enemy within
-  four Spreads of the burst with the engine's falloff table, but never the shooter's own side (OpenRA has friendly
-  fire; inside bot-driven blobs it only punished the side with more artillery).
-- Brick walls are solid for every pathfinder; only the mammoth tank (Crushes: heavywall) can crush one by driving
-  into it, and no unit ever auto-targets a wall (NoAutoTarget), so armies go through the openings.
+1. Producer gating reads the actor's production **queue** (Infantry -> barracks, Vehicle -> war factory, Aircraft -> pad)
+   because `openra_rules.json` only has `build_at` for infantry and aircraft. The catalogue's tags are validated against it.
+2. The production core (recipes, groups, round robin) landed in stage 2 so level 1 was playable; stage 3 added the
+   catalogue validation, loadout rules and the tests.
+3. The pack's `waves.proposed.json` is replaced by tuned files in `data/campaign/waves/` (scaled counts plus level
+   rules such as `objective_hp`); entries moved to 14-17 cells beyond the wall (x = 31), not the map edge.
+4. The command core's hit points are a level rule (60,000, not the building's 150,000): see `docs/BALANCE.md`.
+5. Enemy wave units ignore buildings other than their objective (`Ent.ignore_structures`), or they park at the
+   pillboxes forever. Defenders keep the normal auto-target behaviour.
+6. Placeholder renders exist for **every** catalogue profile unlocked by level 3 in each active slot's family (not only
+   the defaults), so the loadout screen can swap instruments; their timbres differ only by pitch and a buzzier bass.
+7. Practice on the loadout screen is rhythm only (battlefield hidden, nothing saved) on the practice chart when the
+   level has one (level 2) and on the campaign chart otherwise.
+8. Placeholder stems are scaled (0.55) so the five-stem sum stays under full scale; `audio_preflight.py` fails a loadout
+   whose stems sum above 1.0.
+9. The loader, not only the importer, enforces the rules (the importer's reference compiler rejects thumb gaps; the
+   loader turns those two gaps into warnings and the hold-plus-tap into an error, as planned).
+10. `_on_song_finished` in `play.gd` is a fallback only: survival resolves at `duration_ticks` and nothing past the
+    deadline tick is simulated.
+11. Levels 4 to 10 exist as campaign data entries only (`pack: ""`, status planned).
+12. Test count: the duel suite is now 1,750 checks with the new files (the earlier handover quoted 425).
 
-## Input and timing notes
+## Deliberate deviations from OpenRA (duel and campaign)
 
-- Lane touches and keys are read in `_input` (before the GUI), because the screen-sized Controls of the level
-  would otherwise consume them; those Controls use `MOUSE_FILTER_IGNORE`, and the pause button still receives
-  its clicks. Fixed 28 Oct after the owner reported no presses registering on phone and Windows.
-- Every Perfect or Good shows its offset in milliseconds (positive = late). A consistent offset is device latency:
-  run the calibration screen (menu) or set it by hand; the sign convention is in `docs/TIMING.md`.
-- Judgement windows are the PRD's: Perfect 45 ms, Good 100 ms, hold release tolerance 60 ms.
-- Buttons: a press matches the nearest unjudged note on that button; a kick or snare note whose producer is dead
-  swallows the press (inert, not a stray) while a bass note on the same button still plays. One button can only
-  be asked for one thing at a time: the loader rejects two notes at one tick on a button or a note inside a hold
-  on the same button, and warns when three buttons are needed at once.
+Unchanged from the duel build (all commented in code): crisp attack-or-flee approximation, overkill-aware target
+scoring, splash never hurts the shooter's own side, repair budget 500 credits per side, moving units slip past
+stationary friends, bullets hit only if the target is still within a cell, brick walls solid except for mammoth tanks.
+Campaign additions: defenders have a 6-cell leash and walk home; wave units fight units and their objective only.
 
-## Known issues and polish backlog
+## Known issues and backlog
 
-1. Real stems: replace the synthesised placeholder audio when the owner's WAVs arrive; re-check alignment with the
-   loader (it rejects a length mismatch above 5 ms) and listen for muting artefacts.
-2. Phone evidence: run `RW_AUTOPLAY=perfect` on the device (the `PERF` line prints p95 frame time and peak units;
-   `adb logcat -s godot`), confirm 60 FPS with about 440 live units, and the two-thumb touch feel. The sprites are
-   drawn at 1:1; `BattleView.PIXEL_SCALE = 2` halves the map if they are too small on a phone.
-3. Balance feel: 70% accuracy still wins with 17 s to spare; raise the ramp ends in `songs/README.md`'s command if
-   the first level should be harder. Outcomes between 50% and 70% are sensitive to squad timing.
-4. Presentation polish: idle infantry fidgets (`idle1`/`idle2`), prone sprites when hit, vehicle husks and the
-   falling helicopter husk, building `dead` ruins for every building (only fact and powr have ruin art), scorch
-   marks for napalm, camera shake, sound effects (none yet: no unit, weapon or UI sounds), lane note skins, a
-   proper title screen and result screen art.
-5. Dead buildings are drawn as their damaged frame darkened; OpenRA leaves rubble and craters only.
-6. Tanks path straight through sandbag lines (crushing), which is OpenRA-correct but makes walls weak; consider
-   brick walls (`brik`, not crushable) if the owner wants the base to hold longer.
-7. The HUD is functional, not styled; the lanes and buttons are flat rectangles.
-8. Gun and SAM `idle` sequences are intentionally empty frames (the turret sprite is the whole visible building),
-   so the two empty PNGs `gunmake-0000.png` and `hpadmake-0000.png` must stay.
-9. `tests/test_battle.gd::test_a06` depends on the air squad finding a target; if air behaviour changes, update it.
-10. The repository holds 17 MB of extracted frames; they are the owner's own Red Alert content and must not be
-    redistributed beyond this project (see `assets/openra/PROVENANCE.md`).
-11. Unit art: husks for destroyed vehicles are extracted (`2tnk.destroyed`, `3tnk.destroyed`, `4tnk.destroyed`) but
-    not drawn; the APC's `open`/`unload`, the V2's `empty-idle` after a launch and the infantry `idle1`/`idle2`
-    fidgets are unused. The Tesla coil (lightning art) and the flame turret are not in the layout.
-12. Level 01's bass runs under its drums, so its bass notes sit on buttons 2 and 3; the four-button spread needs the
-    owner's next charts, which keep bass phrases and drum phrases apart.
-
-## Balance after the 28 Oct 2026 changes
-
-The fortified bases and the mixed roster make the assault slower, so Level 01's enemy schedule was re-authored
-(`--enemy-start 0.22 --enemy-end 0.42`, 105 of 321 events); the measurements are at the end of `docs/BALANCE.md`.
-When the owner's new MIDI arrives, run `bash tools/balance.sh` before choosing its ramp. `tools/probe.gd` dumps
-unit positions, orders and the wall cells at a given second for pathing questions.
+1. Real stems and the phone run (above). Retune `docs/BALANCE.md` after the owner has played: the wave scales are
+   starting points chosen by a harness, not by a human.
+2. Enemy peaks reach 100 to 230 live units on levels 2 and 3 when the defenders thin out; fine on the desktop, unmeasured
+   on a phone. `BattleView.PIXEL_SCALE = 2` halves the map if sprites are too small or slow.
+3. Levels 4 to 10, the air-service recipe (recognised by the catalogue, used by no level), second objective (`tech_core`)
+   and battlefield variants with more defenses are planned in `campaign/Plan/`, not built.
+4. The loadout screen is functional, not styled; no audition of an instrument's sound (renders play only in the level).
+5. Duel backlog items (idle fidgets, ruins, sound effects, title art) still apply; none is campaign-critical.
 
 ## Everyday commands
 
 ```
-bash tools/test.sh                                         # 425 headless checks
-bash tools/balance.sh res://songs/level_01 1.0 perfect "accuracy:0.85" none
-RW_PACK=res://songs/level_01 RW_AUTOPLAY=perfect <godot> --path .          # scripted run, prints PERF at the end
-<godot> --path . -s tools/shoot.gd -- res://src/scenes/play.tscn docs/shots 3000:shot:name
-<godot> --headless --path . --export-debug "Android" build/android/RhythmWarfare-debug.apk   # docs/EXPORT.md
+bash tools/test.sh                                                   # 1,750 headless checks (about 35 s)
+python tools/campaign/build_defense_pack.py all                      # rebuild packs + placeholder stems (about 15 s)
+python tools/campaign/build_defense_pack.py all --waves-only         # after editing data/campaign/waves/*.json
+RW_CHART=level_03.campaign RW_SEEDS="1 2 3" bash tools/balance.sh res://songs/hold_the_line 1.0 perfect "accuracy:0.85" none
+python tools/campaign/audio_preflight.py songs/hold_the_line
+RW_PACK=res://songs/hold_the_line RW_CHART=level_03.campaign RW_AUTOPLAY=perfect RW_SCENE=play <godot> --path .   # PERF line
+RW_PACK=res://songs/second_pulse RW_CHART=level_02.practice RW_BATTLE=off <godot> --path .                        # rhythm only
+<godot> --headless --path . --export-debug "Android" build/android/RhythmWarfare-debug.apk                        # docs/EXPORT.md
 ```
 
 `<godot>` is `C:\Users\joesa\Downloads\Godot_v4.5.1-stable_win64.exe\Godot_v4.5.1-stable_win64_console.exe` on the
-owner's machine. New `class_name` scripts need a `--import` before headless runs; `tools/test.sh` does that.
+owner's machine. New `class_name` scripts need a `--import` before headless runs; `tools/test.sh` does that. In this
+shell, long quoted Python in heredocs fails when it contains apostrophes: write scripts to files.
