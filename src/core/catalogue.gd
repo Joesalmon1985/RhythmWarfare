@@ -12,8 +12,11 @@ const PRODUCER_ROLE := {"barracks": "barracks", "war_factory": "factory", "air_s
 ## Production queue of an actor (openra_rules.json) -> the producer tag it needs.
 const QUEUE_TAG := {"Infantry": "barracks", "Vehicle": "war_factory", "Aircraft": "air_support"}
 const CAPS := {"kick": 2, "snare": 2, "bass": 3}
-const UNIT_NAMES := {"e1": "rifleman", "e2": "grenadier", "e3": "rocket soldier", "e4": "flamethrower", "jeep": "jeep", "1tnk": "light tank",
-	"2tnk": "medium tank", "3tnk": "heavy tank", "4tnk": "mammoth tank", "apc": "APC", "arty": "artillery", "ftrk": "flak truck", "v2rl": "V2 launcher"}
+## actor -> [singular, plural] for the loadout screen's unit mix text
+const UNIT_NAMES := {"e1": ["rifleman", "riflemen"], "e2": ["grenadier", "grenadiers"], "e3": ["rocket soldier", "rocket soldiers"],
+	"e4": ["flamethrower", "flamethrowers"], "jeep": ["jeep", "jeeps"], "1tnk": ["light tank", "light tanks"], "2tnk": ["medium tank", "medium tanks"],
+	"3tnk": ["heavy tank", "heavy tanks"], "4tnk": ["mammoth tank", "mammoth tanks"], "apc": ["APC", "APCs"], "arty": ["artillery", "artillery"],
+	"ftrk": ["flak truck", "flak trucks"], "v2rl": ["V2 launcher", "V2 launchers"]}
 
 var profiles: Dictionary = {}  # id -> profile dictionary
 var order: Array = []          # ids in catalogue order
@@ -71,8 +74,8 @@ func unit_mix_text(id: String) -> String:
 	for step in steps(id):
 		var bits: Array[String] = []
 		for u in step["units"]:
-			var name: String = UNIT_NAMES.get(str(u["actor"]), str(u["actor"]))
-			bits.append(("%d " % int(u["count"]) if int(u["count"]) > 1 else "1 ") + name + ("s" if int(u["count"]) > 1 else ""))
+			var names: Array = UNIT_NAMES.get(str(u["actor"]), [str(u["actor"]), str(u["actor"])])
+			bits.append("%d %s" % [int(u["count"]), names[1] if int(u["count"]) > 1 else names[0]])
 		parts.append(" + ".join(PackedStringArray(bits)))
 	if production_type(id) != "cycle":
 		return "air service (not used before level 7)"
