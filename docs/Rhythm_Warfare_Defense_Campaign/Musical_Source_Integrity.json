@@ -1,0 +1,43 @@
+{
+  "before_sha256": {
+    "First_Three/level_01/Music/other_pad.mid": "dc6503536e9ccd6d1131ea2ae5b12d7e1730aad9d764d3db8d1db1e9c6e28bae",
+    "First_Three/level_01/Music/kick_1.mid": "dd7c5beac3f605216ca9039d47608d1c669452432a1a0f3edb8b8541cdf95b6d",
+    "First_Three/level_01/Music/snare_1.mid": "391238fc6a3d396575628756ecab7f3ea820549c5f47d64cbc79db5fe7518150",
+    "First_Three/level_01/Music/other_hats.mid": "4e96eb804bbb25e5fd6bab5748ff8420b893682b320a46d847f6098a95dc31a2",
+    "First_Three/level_01/References/Full_Music_Master.mid": "e9ca2d33a909c62b0a3b15ce7561406cec41fe49f3901c53e2597ea516e6f80a",
+    "First_Three/level_03/Music/other_pad.mid": "b127e670a2cbe1c3053c41078505a75da532157c7a9f5fcf7a7accddc56f119c",
+    "First_Three/level_03/Music/kick_1.mid": "5710248b6abe29de7d5aae34a87353a635d62bff768575afbc1455c6d591645e",
+    "First_Three/level_03/Music/snare_1.mid": "4056281a6615aa0bf08c7fa5293a1b6b106b9e7892cde0c4ba910d004eb8eaf8",
+    "First_Three/level_03/Music/other_hats.mid": "99251c97a0e86a7f1b565ece64d643bf2ef6d0141ee9b238b76fdb3aea2425bd",
+    "First_Three/level_03/Music/bass_1.mid": "92187b626eed37d0b5c12f310df875c7c106fdeb5790dbaac30bdc7cc30bc4ed",
+    "First_Three/level_03/Music/kick_2.mid": "ebc7196b0dae8a5efd018fb2a454eb6512ad0bb7ba2dd337c0b5f0bfbd0dbe8a",
+    "First_Three/level_03/References/Full_Music_Master.mid": "5c2650f22c1ef1b327a1a81d296caf8f928996be81b6bbe95b721e4e3f6eb37d",
+    "First_Three/level_02/Music/other_pad.mid": "e2f880576fbd09194056a6477df482d6fd2b803fda32c7f6011595e85cddd9d8",
+    "First_Three/level_02/Music/kick_1.mid": "a6d34fd1719217f54d4138d82ee4b2c4b59ad820f643501bcc2d7f4e925afc77",
+    "First_Three/level_02/Music/snare_1.mid": "6057f3df188b134ba95a253e3734402af9d1315a4d2e0c76639b977b9df898cd",
+    "First_Three/level_02/Music/other_hats.mid": "02e0ee963e5194bffa3cace63d2806e093ea3a89b854aa7508253435f4e3f0ae",
+    "First_Three/level_02/Music/kick_2.mid": "d4aa1e0b211c00b57224fdb4477463875b5d95b585d83a8b00d9cf5c85f15e12",
+    "First_Three/level_02/References/Full_Music_Master.mid": "b467288d1bf3d296d72068c7b57b659853826a53e847ff4bde791e92769b0f94"
+  },
+  "after_sha256": {
+    "First_Three/level_01/Music/other_pad.mid": "dc6503536e9ccd6d1131ea2ae5b12d7e1730aad9d764d3db8d1db1e9c6e28bae",
+    "First_Three/level_01/Music/kick_1.mid": "dd7c5beac3f605216ca9039d47608d1c669452432a1a0f3edb8b8541cdf95b6d",
+    "First_Three/level_01/Music/snare_1.mid": "391238fc6a3d396575628756ecab7f3ea820549c5f47d64cbc79db5fe7518150",
+    "First_Three/level_01/Music/other_hats.mid": "4e96eb804bbb25e5fd6bab5748ff8420b893682b320a46d847f6098a95dc31a2",
+    "First_Three/level_01/References/Full_Music_Master.mid": "e9ca2d33a909c62b0a3b15ce7561406cec41fe49f3901c53e2597ea516e6f80a",
+    "First_Three/level_03/Music/other_pad.mid": "b127e670a2cbe1c3053c41078505a75da532157c7a9f5fcf7a7accddc56f119c",
+    "First_Three/level_03/Music/kick_1.mid": "5710248b6abe29de7d5aae34a87353a635d62bff768575afbc1455c6d591645e",
+    "First_Three/level_03/Music/snare_1.mid": "4056281a6615aa0bf08c7fa5293a1b6b106b9e7892cde0c4ba910d004eb8eaf8",
+    "First_Three/level_03/Music/other_hats.mid": "99251c97a0e86a7f1b565ece64d643bf2ef6d0141ee9b238b76fdb3aea2425bd",
+    "First_Three/level_03/Music/bass_1.mid": "92187b626eed37d0b5c12f310df875c7c106fdeb5790dbaac30bdc7cc30bc4ed",
+    "First_Three/level_03/Music/kick_2.mid": "ebc7196b0dae8a5efd018fb2a454eb6512ad0bb7ba2dd337c0b5f0bfbd0dbe8a",
+    "First_Three/level_03/References/Full_Music_Master.mid": "5c2650f22c1ef1b327a1a81d296caf8f928996be81b6bbe95b721e4e3f6eb37d",
+    "First_Three/level_02/Music/other_pad.mid": "e2f880576fbd09194056a6477df482d6fd2b803fda32c7f6011595e85cddd9d8",
+    "First_Three/level_02/Music/kick_1.mid": "a6d34fd1719217f54d4138d82ee4b2c4b59ad820f643501bcc2d7f4e925afc77",
+    "First_Three/level_02/Music/snare_1.mid": "6057f3df188b134ba95a253e3734402af9d1315a4d2e0c76639b977b9df898cd",
+    "First_Three/level_02/Music/other_hats.mid": "02e0ee963e5194bffa3cace63d2806e093ea3a89b854aa7508253435f4e3f0ae",
+    "First_Three/level_02/Music/kick_2.mid": "d4aa1e0b211c00b57224fdb4477463875b5d95b585d83a8b00d9cf5c85f15e12",
+    "First_Three/level_02/References/Full_Music_Master.mid": "b467288d1bf3d296d72068c7b57b659853826a53e847ff4bde791e92769b0f94"
+  },
+  "all_18_unchanged": true
+}

@@ -1,0 +1,767 @@
+{
+  "omitted_notes": [
+    {
+      "source_note_id": "other_pad:0001",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0002",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0003",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0004",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0005",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0006",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0007",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0008",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0009",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0010",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0011",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0012",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0013",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0014",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0015",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0016",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0017",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0018",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0019",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0020",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0021",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0022",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0023",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0024",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0025",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0026",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0027",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0028",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0029",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0030",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0031",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0032",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0033",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0034",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0035",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0036",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0037",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0038",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0039",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0040",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0041",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0042",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0043",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0044",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0045",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0046",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0047",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0048",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0049",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0050",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0051",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0052",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0053",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0054",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0055",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0056",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0057",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0058",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0059",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0060",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0061",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0062",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0063",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0064",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0065",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0066",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0067",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0068",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0069",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0070",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0071",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0072",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0073",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0074",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0075",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0076",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0077",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0078",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0079",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0080",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0081",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0082",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0083",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0084",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0085",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0086",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0087",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0088",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0089",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0090",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0091",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0092",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0093",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0094",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0095",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_pad:0096",
+      "part_id": "other_pad",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0001",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0002",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0003",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0004",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0005",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0006",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0007",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0008",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0009",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0010",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0011",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0012",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0013",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0014",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0015",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0016",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0017",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0018",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0019",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0020",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0021",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0022",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0023",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0024",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0025",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0026",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0027",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0028",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0029",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0030",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0031",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0032",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0033",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0034",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0035",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0036",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0037",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0038",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0039",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0040",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0041",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0042",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0043",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0044",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0045",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0046",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0047",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0048",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0049",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0050",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0051",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0052",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0053",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0054",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0055",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    },
+    {
+      "source_note_id": "other_hats:0056",
+      "part_id": "other_hats",
+      "reason": "accompaniment"
+    }
+  ],
+  "max_required_touches": 1,
+  "changed_musical_lengths": [],
+  "changed_musical_onsets": []
+}

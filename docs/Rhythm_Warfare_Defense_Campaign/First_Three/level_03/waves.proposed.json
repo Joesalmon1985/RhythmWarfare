@@ -1,0 +1,245 @@
+{
+  "format": "defense_waves.proposed.v1",
+  "status": "Untuned authored starting point, not tested battle balance. Spawn one burst per wave group, never an enemy producer/base.",
+  "parallel_groups_within_wave": true,
+  "critical_objectives": [
+    "command_core"
+  ],
+  "waves": [
+    {
+      "id": "wave_01",
+      "start_tick": 15360,
+      "start_bar": 5,
+      "entry": "left",
+      "via_defense_point": "defense_1",
+      "target_objective": "command_core",
+      "groups": [
+        {
+          "actor": "e1",
+          "count": 7,
+          "spawn_spacing_ticks": 240
+        }
+      ]
+    },
+    {
+      "id": "wave_02",
+      "start_tick": 30720,
+      "start_bar": 9,
+      "entry": "center",
+      "via_defense_point": "defense_2",
+      "target_objective": "command_core",
+      "groups": [
+        {
+          "actor": "e1",
+          "count": 8,
+          "spawn_spacing_ticks": 240
+        }
+      ]
+    },
+    {
+      "id": "wave_03",
+      "start_tick": 46080,
+      "start_bar": 13,
+      "entry": "right",
+      "via_defense_point": "defense_3",
+      "target_objective": "command_core",
+      "groups": [
+        {
+          "actor": "e1",
+          "count": 9,
+          "spawn_spacing_ticks": 240
+        }
+      ]
+    },
+    {
+      "id": "wave_04",
+      "start_tick": 61440,
+      "start_bar": 17,
+      "entry": "left",
+      "via_defense_point": "defense_1",
+      "target_objective": "command_core",
+      "groups": [
+        {
+          "actor": "e1",
+          "count": 10,
+          "spawn_spacing_ticks": 240
+        },
+        {
+          "actor": "jeep",
+          "count": 1,
+          "spawn_spacing_ticks": 480
+        }
+      ]
+    },
+    {
+      "id": "wave_05",
+      "start_tick": 76800,
+      "start_bar": 21,
+      "entry": "center",
+      "via_defense_point": "defense_2",
+      "target_objective": "command_core",
+      "groups": [
+        {
+          "actor": "e1",
+          "count": 11,
+          "spawn_spacing_ticks": 240
+        },
+        {
+          "actor": "jeep",
+          "count": 1,
+          "spawn_spacing_ticks": 480
+        }
+      ]
+    },
+    {
+      "id": "wave_06",
+      "start_tick": 92160,
+      "start_bar": 25,
+      "entry": "right",
+      "via_defense_point": "defense_3",
+      "target_objective": "command_core",
+      "groups": [
+        {
+          "actor": "e1",
+          "count": 12,
+          "spawn_spacing_ticks": 240
+        },
+        {
+          "actor": "jeep",
+          "count": 1,
+          "spawn_spacing_ticks": 480
+        },
+        {
+          "actor": "1tnk",
+          "count": 1,
+          "spawn_spacing_ticks": 480
+        }
+      ]
+    },
+    {
+      "id": "wave_07",
+      "start_tick": 107520,
+      "start_bar": 29,
+      "entry": "left",
+      "via_defense_point": "defense_1",
+      "target_objective": "command_core",
+      "groups": [
+        {
+          "actor": "e1",
+          "count": 13,
+          "spawn_spacing_ticks": 240
+        },
+        {
+          "actor": "jeep",
+          "count": 2,
+          "spawn_spacing_ticks": 480
+        },
+        {
+          "actor": "1tnk",
+          "count": 1,
+          "spawn_spacing_ticks": 480
+        }
+      ]
+    },
+    {
+      "id": "wave_08",
+      "start_tick": 122880,
+      "start_bar": 33,
+      "entry": "center",
+      "via_defense_point": "defense_2",
+      "target_objective": "command_core",
+      "groups": [
+        {
+          "actor": "e1",
+          "count": 14,
+          "spawn_spacing_ticks": 240
+        },
+        {
+          "actor": "jeep",
+          "count": 2,
+          "spawn_spacing_ticks": 480
+        },
+        {
+          "actor": "1tnk",
+          "count": 1,
+          "spawn_spacing_ticks": 480
+        }
+      ]
+    },
+    {
+      "id": "wave_09",
+      "start_tick": 138240,
+      "start_bar": 37,
+      "entry": "right",
+      "via_defense_point": "defense_3",
+      "target_objective": "command_core",
+      "groups": [
+        {
+          "actor": "e1",
+          "count": 15,
+          "spawn_spacing_ticks": 240
+        },
+        {
+          "actor": "jeep",
+          "count": 2,
+          "spawn_spacing_ticks": 480
+        },
+        {
+          "actor": "1tnk",
+          "count": 1,
+          "spawn_spacing_ticks": 480
+        }
+      ]
+    },
+    {
+      "id": "wave_10",
+      "start_tick": 153600,
+      "start_bar": 41,
+      "entry": "left",
+      "via_defense_point": "defense_1",
+      "target_objective": "command_core",
+      "groups": [
+        {
+          "actor": "e1",
+          "count": 16,
+          "spawn_spacing_ticks": 240
+        },
+        {
+          "actor": "jeep",
+          "count": 2,
+          "spawn_spacing_ticks": 480
+        },
+        {
+          "actor": "1tnk",
+          "count": 1,
+          "spawn_spacing_ticks": 480
+        }
+      ]
+    },
+    {
+      "id": "wave_11",
+      "start_tick": 168960,
+      "start_bar": 45,
+      "entry": "center",
+      "via_defense_point": "defense_2",
+      "target_objective": "command_core",
+      "groups": [
+        {
+          "actor": "e1",
+          "count": 17,
+          "spawn_spacing_ticks": 240
+        },
+        {
+          "actor": "jeep",
+          "count": 2,
+          "spawn_spacing_ticks": 480
+        },
+        {
+          "actor": "1tnk",
+          "count": 1,
+          "spawn_spacing_ticks": 480
+        }
+      ]
+    }
+  ]
+}

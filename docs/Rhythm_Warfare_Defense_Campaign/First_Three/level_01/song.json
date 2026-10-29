@@ -1,0 +1,65 @@
+{
+  "format": "rhythm_warfare.defense_song_authoring.v1",
+  "level_id": "level_01",
+  "title": "First Watch",
+  "bpm": 174,
+  "ticks_per_beat": 960,
+  "time_signature": [
+    4,
+    4
+  ],
+  "key": "C# minor",
+  "bars": 32,
+  "parts": [
+    {
+      "id": "kick_1",
+      "family": "kick",
+      "slot_id": "kick_1",
+      "midi": "Music/kick_1.mid",
+      "render_bus": "kick_1"
+    },
+    {
+      "id": "snare_1",
+      "family": "snare",
+      "slot_id": "snare_1",
+      "midi": "Music/snare_1.mid",
+      "render_bus": "snare_1"
+    },
+    {
+      "id": "other_pad",
+      "family": "other",
+      "slot_id": null,
+      "midi": "Music/other_pad.mid",
+      "render_bus": "other"
+    },
+    {
+      "id": "other_hats",
+      "family": "other",
+      "slot_id": null,
+      "midi": "Music/other_hats.mid",
+      "render_bus": "other"
+    }
+  ],
+  "active_loadout_slots": [
+    "kick_1",
+    "snare_1"
+  ],
+  "default_loadout": {
+    "kick_1": "kick_march",
+    "snare_1": "snare_guard"
+  },
+  "recommended_export": {
+    "sample_rate_hz": 48000,
+    "pcm_bits": 16,
+    "start_bar": 1,
+    "end_bar_exclusive": 34,
+    "seconds_including_one_bar_tail": 45.51724137931034,
+    "separate_buses": [
+      "kick_1",
+      "snare_1",
+      "other"
+    ],
+    "normalize": false
+  },
+  "runtime_status": "Authoring example only. WAVs, engine migration, map and balance validation are outstanding."
+}

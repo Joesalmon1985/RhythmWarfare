@@ -1,0 +1,83 @@
+[
+  {
+    "level_id": "level_01",
+    "title": "First Watch",
+    "bars": 32,
+    "duration_seconds": 44.13793103448276,
+    "source_note_counts": {
+      "kick_1": 32,
+      "snare_1": 32,
+      "other_pad": 96,
+      "other_hats": 56
+    },
+    "charted_notes": 64,
+    "charted_parts": {
+      "kick_1": 32,
+      "snare_1": 32
+    },
+    "holds": 0,
+    "physical_buttons_used": [
+      1,
+      4
+    ],
+    "wave_count": 7,
+    "balance_tested": false
+  },
+  {
+    "level_id": "level_02",
+    "title": "Second Pulse",
+    "bars": 40,
+    "duration_seconds": 55.172413793103445,
+    "source_note_counts": {
+      "kick_1": 40,
+      "kick_2": 16,
+      "snare_1": 40,
+      "other_pad": 120,
+      "other_hats": 144
+    },
+    "charted_notes": 96,
+    "charted_parts": {
+      "kick_1": 40,
+      "snare_1": 40,
+      "kick_2": 16
+    },
+    "holds": 0,
+    "physical_buttons_used": [
+      1,
+      2,
+      4
+    ],
+    "wave_count": 9,
+    "balance_tested": false
+  },
+  {
+    "level_id": "level_03",
+    "title": "Hold the Line",
+    "bars": 48,
+    "duration_seconds": 66.20689655172414,
+    "source_note_counts": {
+      "kick_1": 48,
+      "kick_2": 24,
+      "snare_1": 48,
+      "bass_1": 41,
+      "other_pad": 144,
+      "other_hats": 176
+    },
+    "charted_notes": 89,
+    "charted_parts": {
+      "kick_1": 24,
+      "snare_1": 24,
+      "kick_2": 12,
+      "bass_1": 29
+    },
+    "holds": 29,
+    "physical_buttons_used": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "wave_count": 11,
+    "balance_tested": false
+  }
+]

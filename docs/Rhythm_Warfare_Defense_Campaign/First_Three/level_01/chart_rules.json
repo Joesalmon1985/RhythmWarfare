@@ -1,0 +1,46 @@
+{
+  "format": "defense_chart_rules.v1",
+  "chart_id": "level_01.campaign",
+  "play_mode": "campaign",
+  "hold_min_ticks": 480,
+  "hold_release_gap_ticks": 240,
+  "max_simultaneous_touches": 2,
+  "sections": [
+    {
+      "id": "drums_1",
+      "start_bar": 1,
+      "bars": 8,
+      "mode": "drums"
+    },
+    {
+      "id": "drums_2",
+      "start_bar": 9,
+      "bars": 8,
+      "mode": "drums"
+    },
+    {
+      "id": "drums_3",
+      "start_bar": 17,
+      "bars": 8,
+      "mode": "drums"
+    },
+    {
+      "id": "drums_4",
+      "start_bar": 25,
+      "bars": 8,
+      "mode": "drums"
+    }
+  ],
+  "button_rules": {
+    "kick_1": {
+      "button": 1
+    },
+    "snare_1": {
+      "button": 4
+    }
+  },
+  "thumb_constraints": {
+    "min_hold_release_to_same_thumb_press_ticks": 480,
+    "min_same_thumb_onset_gap_ticks": 960
+  }
+}

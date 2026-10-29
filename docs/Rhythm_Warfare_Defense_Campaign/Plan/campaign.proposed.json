@@ -1,0 +1,237 @@
+{
+  "format": "defense_campaign.proposed.v1",
+  "unlock_policy": "Clearing level n unlocks level n+1 and its entry profiles; no accuracy threshold blocks the main ladder.",
+  "loadout_caps": {
+    "kick": 2,
+    "snare": 2,
+    "bass": 3
+  },
+  "distinct_profiles_within_family": true,
+  "levels": [
+    {
+      "number": 1,
+      "level_id": "level_01",
+      "title": "First Watch",
+      "bars": 32,
+      "bpm": 174,
+      "duration_seconds": 44.13793103448276,
+      "learning_goal": "Two outer buttons; steady half-time pulse",
+      "active_slots": [
+        "kick_1",
+        "snare_1"
+      ],
+      "profiles_available_on_entry": [
+        "kick_march",
+        "snare_guard"
+      ],
+      "battle_goal": "One approach; one core",
+      "critical_objectives": 1,
+      "status": "authored_reference"
+    },
+    {
+      "number": 2,
+      "level_id": "level_02",
+      "title": "Second Pulse",
+      "bars": 40,
+      "bpm": 174,
+      "duration_seconds": 55.172413793103445,
+      "learning_goal": "Add a third input and a second kick",
+      "active_slots": [
+        "kick_1",
+        "kick_2",
+        "snare_1"
+      ],
+      "profiles_available_on_entry": [
+        "kick_armour"
+      ],
+      "battle_goal": "Alternating approaches; one core",
+      "critical_objectives": 1,
+      "status": "authored_reference"
+    },
+    {
+      "number": 3,
+      "level_id": "level_03",
+      "title": "Hold the Line",
+      "bars": 48,
+      "bpm": 174,
+      "duration_seconds": 66.20689655172414,
+      "learning_goal": "Introduce bass mode and long holds across all four buttons",
+      "active_slots": [
+        "kick_1",
+        "kick_2",
+        "snare_1",
+        "bass_1"
+      ],
+      "profiles_available_on_entry": [
+        "bass_patrol"
+      ],
+      "battle_goal": "Three approaches; one core",
+      "critical_objectives": 1,
+      "status": "authored_reference"
+    },
+    {
+      "number": 4,
+      "level_id": "level_04",
+      "title": "Backbeat",
+      "bars": 48,
+      "bpm": 174,
+      "duration_seconds": 66.20689655172414,
+      "learning_goal": "Second snare and first full-time drum passages",
+      "active_slots": [
+        "kick_1",
+        "kick_2",
+        "snare_1",
+        "snare_2",
+        "bass_1"
+      ],
+      "profiles_available_on_entry": [
+        "snare_crack"
+      ],
+      "battle_goal": "Staggered infantry groups",
+      "critical_objectives": 1,
+      "status": "planned"
+    },
+    {
+      "number": 5,
+      "level_id": "level_05",
+      "title": "Counterpoint",
+      "bars": 56,
+      "bpm": 174,
+      "duration_seconds": 77.24137931034483,
+      "learning_goal": "Second bass voice; hold plus opposite-thumb answering line",
+      "active_slots": [
+        "kick_1",
+        "kick_2",
+        "snare_1",
+        "snare_2",
+        "bass_1",
+        "bass_2"
+      ],
+      "profiles_available_on_entry": [
+        "bass_reese"
+      ],
+      "battle_goal": "Two simultaneous approach waves",
+      "critical_objectives": 1,
+      "status": "planned"
+    },
+    {
+      "number": 6,
+      "level_id": "level_06",
+      "title": "Fortress",
+      "bars": 56,
+      "bpm": 174,
+      "duration_seconds": 77.24137931034483,
+      "learning_goal": "Review learned rhythms; support loadout and two objectives",
+      "active_slots": [
+        "kick_1",
+        "kick_2",
+        "snare_1",
+        "snare_2",
+        "bass_1",
+        "bass_2"
+      ],
+      "profiles_available_on_entry": [
+        "kick_siege"
+      ],
+      "battle_goal": "Armour support; two cores",
+      "critical_objectives": 2,
+      "status": "planned"
+    },
+    {
+      "number": 7,
+      "level_id": "level_07",
+      "title": "Airbridge",
+      "bars": 64,
+      "bpm": 174,
+      "duration_seconds": 88.27586206896552,
+      "learning_goal": "Three audible bass voices; chart at most two thumb roles",
+      "active_slots": [
+        "kick_1",
+        "kick_2",
+        "snare_1",
+        "snare_2",
+        "bass_1",
+        "bass_2",
+        "bass_3"
+      ],
+      "profiles_available_on_entry": [
+        "bass_growl"
+      ],
+      "battle_goal": "Ground threats pressure three points",
+      "critical_objectives": 2,
+      "status": "planned"
+    },
+    {
+      "number": 8,
+      "level_id": "level_08",
+      "title": "Crossfire",
+      "bars": 64,
+      "bpm": 174,
+      "duration_seconds": 88.27586206896552,
+      "learning_goal": "Opposite-hand accents; anti-air loadout before enemy air",
+      "active_slots": [
+        "kick_1",
+        "kick_2",
+        "snare_1",
+        "snare_2",
+        "bass_1",
+        "bass_2",
+        "bass_3"
+      ],
+      "profiles_available_on_entry": [
+        "snare_flak"
+      ],
+      "battle_goal": "Mixed ground/air waves",
+      "critical_objectives": 2,
+      "status": "planned"
+    },
+    {
+      "number": 9,
+      "level_id": "level_09",
+      "title": "Iron Rhythm",
+      "bars": 64,
+      "bpm": 174,
+      "duration_seconds": 88.27586206896552,
+      "learning_goal": "Heavy/light tank cycle and more syncopation",
+      "active_slots": [
+        "kick_1",
+        "kick_2",
+        "snare_1",
+        "snare_2",
+        "bass_1",
+        "bass_2",
+        "bass_3"
+      ],
+      "profiles_available_on_entry": [
+        "kick_heavy"
+      ],
+      "battle_goal": "Coordinated armour pushes",
+      "critical_objectives": 2,
+      "status": "planned"
+    },
+    {
+      "number": 10,
+      "level_id": "level_10",
+      "title": "Last Light",
+      "bars": 80,
+      "bpm": 174,
+      "duration_seconds": 110.34482758620689,
+      "learning_goal": "Combine rehearsed motifs with recovery phrases",
+      "active_slots": [
+        "kick_1",
+        "kick_2",
+        "snare_1",
+        "snare_2",
+        "bass_1",
+        "bass_2",
+        "bass_3"
+      ],
+      "profiles_available_on_entry": [
+        "bass_command"
+      ],
+      "battle_goal": "Final multi-route survival; two cores",
+      "critical_objectives": 2,
+      "status": "planned"
+    }
+  ]
+}

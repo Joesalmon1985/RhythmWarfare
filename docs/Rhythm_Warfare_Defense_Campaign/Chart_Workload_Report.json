@@ -1,0 +1,77 @@
+{
+  "status": "diagnostics, not a validated difficulty score",
+  "charts": [
+    {
+      "chart_id": "level_01.campaign",
+      "play_mode": "campaign",
+      "notes": 64,
+      "duration_seconds": 44.13793103448276,
+      "average_note_heads_per_second": 1.45,
+      "peak_note_heads_in_2s": 4,
+      "hands": {
+        "left": {
+          "note_heads": 32,
+          "hold_seconds": 0.0
+        },
+        "right": {
+          "note_heads": 32,
+          "hold_seconds": 0.0
+        }
+      }
+    },
+    {
+      "chart_id": "level_02.campaign",
+      "play_mode": "campaign",
+      "notes": 96,
+      "duration_seconds": 55.172413793103445,
+      "average_note_heads_per_second": 1.7400000000000002,
+      "peak_note_heads_in_2s": 4,
+      "hands": {
+        "left": {
+          "note_heads": 56,
+          "hold_seconds": 0.0
+        },
+        "right": {
+          "note_heads": 40,
+          "hold_seconds": 0.0
+        }
+      }
+    },
+    {
+      "chart_id": "level_02.practice",
+      "play_mode": "practice",
+      "notes": 80,
+      "duration_seconds": 55.172413793103445,
+      "average_note_heads_per_second": 1.4500000000000002,
+      "peak_note_heads_in_2s": 3,
+      "hands": {
+        "left": {
+          "note_heads": 40,
+          "hold_seconds": 0.0
+        },
+        "right": {
+          "note_heads": 40,
+          "hold_seconds": 0.0
+        }
+      }
+    },
+    {
+      "chart_id": "level_03.campaign",
+      "play_mode": "campaign",
+      "notes": 89,
+      "duration_seconds": 66.20689655172414,
+      "average_note_heads_per_second": 1.3442708333333333,
+      "peak_note_heads_in_2s": 4,
+      "hands": {
+        "left": {
+          "note_heads": 51,
+          "hold_seconds": 14.482758620689655
+        },
+        "right": {
+          "note_heads": 38,
+          "hold_seconds": 17.93103448275862
+        }
+      }
+    }
+  ]
+}

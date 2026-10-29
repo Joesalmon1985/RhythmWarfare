@@ -1,0 +1,67 @@
+{
+  "format": "rhythm_warfare.chart_design_refinement.proposed.v1",
+  "review_date": "2026-10-28",
+  "source_report": "Rhythm_Game_Research_and_Refinements.md",
+  "authoring_pipeline": [
+    "musical_candidates",
+    "phrase_foreground",
+    "authored_selection",
+    "repeated_pattern_placement",
+    "thumb_validation",
+    "sound_playtest",
+    "compile"
+  ],
+  "first_three_constraints": {
+    "max_simultaneous_touches": 2,
+    "first_three_actual_maximum": 1,
+    "thumb_zones": {
+      "left": [
+        1,
+        2
+      ],
+      "right": [
+        3,
+        4
+      ]
+    },
+    "min_same_thumb_onset_gap_ticks": 960,
+    "min_hold_release_to_same_thumb_press_ticks": 480,
+    "initial_lookahead_seconds_to_playtest": 2.2,
+    "timing_windows_change_with_difficulty": false,
+    "numeric_values_are_proposals_not_industry_standards": true
+  },
+  "difficulty_diagnostics": [
+    "global_note_head_density",
+    "peak_2s_note_head_density",
+    "per_thumb_density",
+    "same_thumb_reach",
+    "hold_duty_and_release_gaps",
+    "simultaneous_inputs",
+    "rhythmic_subdivision",
+    "focus_transitions",
+    "local_workload_spikes"
+  ],
+  "practice_demo": {
+    "level_id": "level_02",
+    "practice_chart_id": "level_02.practice",
+    "practice_notes": 80,
+    "campaign_chart_id": "level_02.campaign",
+    "campaign_notes": 96,
+    "audio_is_shared": true,
+    "practice_has_waves": false,
+    "practice_grants_progression_or_persistent_rewards": false
+  },
+  "combat_balance_identity": [
+    "chart_id",
+    "wave_plan_id",
+    "loadout"
+  ],
+  "do_not_use_as_generic_difficulty": [
+    "automatic_tempo_increase",
+    "automatic_scroll_speed_increase",
+    "mandatory_longer_songs",
+    "note_count_alone"
+  ],
+  "gameplay_penalties": "Misses lose their production opportunity; no additional direct core damage or one-miss song stop.",
+  "runtime_status": "proposal; no Godot implementation or phone validation in this pass"
+}

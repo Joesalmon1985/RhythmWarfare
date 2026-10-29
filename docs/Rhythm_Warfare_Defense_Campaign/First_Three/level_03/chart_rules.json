@@ -1,0 +1,119 @@
+{
+  "format": "defense_chart_rules.v1",
+  "chart_id": "level_03.campaign",
+  "play_mode": "campaign",
+  "hold_min_ticks": 480,
+  "hold_release_gap_ticks": 240,
+  "max_simultaneous_touches": 2,
+  "sections": [
+    {
+      "id": "drums_1",
+      "start_bar": 1,
+      "bars": 8,
+      "mode": "drums"
+    },
+    {
+      "id": "bass_1",
+      "start_bar": 9,
+      "bars": 8,
+      "mode": "bass"
+    },
+    {
+      "id": "drums_2",
+      "start_bar": 17,
+      "bars": 8,
+      "mode": "drums"
+    },
+    {
+      "id": "bass_2",
+      "start_bar": 25,
+      "bars": 8,
+      "mode": "bass"
+    },
+    {
+      "id": "drums_3",
+      "start_bar": 33,
+      "bars": 8,
+      "mode": "drums"
+    },
+    {
+      "id": "bass_3",
+      "start_bar": 41,
+      "bars": 8,
+      "mode": "bass"
+    }
+  ],
+  "button_rules": {
+    "kick_1": {
+      "button": 1
+    },
+    "snare_1": {
+      "button": 4
+    },
+    "kick_2": {
+      "button": 2
+    },
+    "bass_1": {
+      "pitch_ranges": [
+        {
+          "min": 0,
+          "max": 33,
+          "button": 1
+        },
+        {
+          "min": 34,
+          "max": 35,
+          "button": 2
+        },
+        {
+          "min": 36,
+          "max": 39,
+          "button": 3
+        },
+        {
+          "min": 40,
+          "max": 127,
+          "button": 4
+        }
+      ]
+    }
+  },
+  "thumb_constraints": {
+    "min_hold_release_to_same_thumb_press_ticks": 480,
+    "min_same_thumb_onset_gap_ticks": 960
+  },
+  "note_button_overrides": {
+    "bass_1:0005": 1,
+    "bass_1:0006": 4,
+    "bass_1:0007": 1,
+    "bass_1:0008": 3,
+    "bass_1:0009": 2,
+    "bass_1:0010": 3,
+    "bass_1:0011": 2,
+    "bass_1:0012": 3,
+    "bass_1:0013": 2,
+    "bass_1:0014": 4,
+    "bass_1:0019": 1,
+    "bass_1:0020": 4,
+    "bass_1:0021": 1,
+    "bass_1:0022": 3,
+    "bass_1:0023": 2,
+    "bass_1:0024": 3,
+    "bass_1:0025": 2,
+    "bass_1:0026": 3,
+    "bass_1:0027": 2,
+    "bass_1:0028": 4,
+    "bass_1:0033": 1,
+    "bass_1:0034": 4,
+    "bass_1:0035": 1,
+    "bass_1:0036": 3,
+    "bass_1:0037": 2,
+    "bass_1:0038": 3,
+    "bass_1:0039": 2,
+    "bass_1:0040": 3,
+    "bass_1:0041": 1
+  },
+  "expected_source_sha256": {
+    "bass_1": "92187b626eed37d0b5c12f310df875c7c106fdeb5790dbaac30bdc7cc30bc4ed"
+  }
+}

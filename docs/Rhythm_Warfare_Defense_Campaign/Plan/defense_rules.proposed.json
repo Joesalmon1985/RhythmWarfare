@@ -1,0 +1,31 @@
+{
+  "format": "defense_rules.proposed.v1",
+  "game_mode": "defense",
+  "critical_objective_policy": "All required objectives must remain alive; lose immediately when any is destroyed; win at authored song end otherwise.",
+  "outcome_tie_policy": "Process rewards and combat through the boundary, then objective losses, then song-end survival. Objective loss takes precedence in the same tick.",
+  "defense_points": [
+    "defense_1",
+    "defense_2",
+    "defense_3"
+  ],
+  "assignment": "Round-robin per successful production group, not per member. Members go together; next group advances the point. Failed/unavailable rewards do not advance it.",
+  "friendly_behavior": "Move to assigned point, defend locally, return after limited pursuit. Successive groups rotate points; troops are not required to patrol all three points.",
+  "enemy_behavior": "Authored off-map/boundary entry waves; follow route via a defense point toward a critical objective, fighting nearby blockers. No enemy base or producer exists.",
+  "producer_availability": "Each equipped instrument slot is enabled only while all of its production profile's required producer tags are available. Disable prompts and mute that slot's audio when unavailable; restore slot gain in place if eligibility returns. Mode changes do not mute audio.",
+  "repair": "Reuse finite, data-driven OpenRA repair; tune per level. Required core destruction cannot be reversed to cancel a loss.",
+  "hold_reward": "One successful reward at the held note's tail. No repeated income while held.",
+  "input": {
+    "physical_buttons": 4,
+    "max_required_touches": 2,
+    "labels": "unlabelled; musical placement is authored independently of instrument, slot and unit reward"
+  },
+  "level_01_to_03_objectives": [
+    "command_core"
+  ],
+  "level_06_onward_objectives": [
+    "command_core",
+    "tech_core"
+  ],
+  "wave_balance_status": "untuned",
+  "runtime_status": "proposal; requires new map/simulation/loader integration"
+}

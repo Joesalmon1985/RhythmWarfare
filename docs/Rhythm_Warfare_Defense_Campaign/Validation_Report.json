@@ -1,0 +1,441 @@
+{
+  "passed": true,
+  "checks_passed": 102,
+  "checks_total": 102,
+  "levels": [
+    {
+      "level_id": "level_01",
+      "notes": 64,
+      "holds": 0,
+      "maximum_required_touches": 1,
+      "balance_tested": false
+    },
+    {
+      "level_id": "level_02",
+      "notes": 96,
+      "holds": 0,
+      "maximum_required_touches": 1,
+      "balance_tested": false
+    },
+    {
+      "level_id": "level_03",
+      "notes": 89,
+      "holds": 29,
+      "maximum_required_touches": 1,
+      "balance_tested": false
+    }
+  ],
+  "godot_integration_tested": false,
+  "wave_balance_tested": false,
+  "audio_rendered_or_aligned": false,
+  "checks": [
+    {
+      "check": "ten ordered levels and caps 2 kick / 2 snare / 3 bass",
+      "passed": true
+    },
+    {
+      "check": "duration is not used as a mandatory difficulty ladder",
+      "passed": true
+    },
+    {
+      "check": "future levels are plans, not claimed generated music",
+      "passed": true
+    },
+    {
+      "check": "kick can produce infantry independently of button/family",
+      "passed": true
+    },
+    {
+      "check": "heavy kick deterministically alternates heavy and light tanks",
+      "passed": true
+    },
+    {
+      "check": "level_01: expected event/hold/button progression",
+      "passed": true
+    },
+    {
+      "check": "level_01: positive, ordered unique inputs",
+      "passed": true
+    },
+    {
+      "check": "level_01: proposed chart does not claim runtime compatibility",
+      "passed": true
+    },
+    {
+      "check": "level_01: slots have unlocked family-compatible default profiles",
+      "passed": true
+    },
+    {
+      "check": "level_01: slot caps respected",
+      "passed": true
+    },
+    {
+      "check": "level_01: every required part has an equipped default",
+      "passed": true
+    },
+    {
+      "check": "level_01: kick_1 exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_01: kick_1 source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_01: snare_1 exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_01: snare_1 source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_01: other_pad exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_01: other_pad source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_01: other_hats exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_01: other_hats source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_01: all and only selected-family source notes charted",
+      "passed": true
+    },
+    {
+      "check": "level_01: chart retains actual musical timing/pitch/velocity",
+      "passed": true
+    },
+    {
+      "check": "level_01: long holds retain full source durations",
+      "passed": true
+    },
+    {
+      "check": "level_01: full musical master is exact union, not chart subset",
+      "passed": true
+    },
+    {
+      "check": "level_01: no mixed drum/bass bars including held tails",
+      "passed": true
+    },
+    {
+      "check": "level_01: no same-button conflicts",
+      "passed": true
+    },
+    {
+      "check": "level_01: at most two required touches",
+      "passed": true
+    },
+    {
+      "check": "level_01: per-thumb occupancy and release gaps validated",
+      "passed": true
+    },
+    {
+      "check": "level_01: waves start after teaching/build-up and finish spawning before song end",
+      "passed": true
+    },
+    {
+      "check": "level_01: waves explicitly untuned",
+      "passed": true
+    },
+    {
+      "check": "level_01: separate equipped-slot renders plus Other",
+      "passed": true
+    },
+    {
+      "check": "level_02: expected event/hold/button progression",
+      "passed": true
+    },
+    {
+      "check": "level_02: positive, ordered unique inputs",
+      "passed": true
+    },
+    {
+      "check": "level_02: proposed chart does not claim runtime compatibility",
+      "passed": true
+    },
+    {
+      "check": "level_02: slots have unlocked family-compatible default profiles",
+      "passed": true
+    },
+    {
+      "check": "level_02: slot caps respected",
+      "passed": true
+    },
+    {
+      "check": "level_02: every required part has an equipped default",
+      "passed": true
+    },
+    {
+      "check": "level_02: kick_1 exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_02: kick_1 source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_02: kick_2 exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_02: kick_2 source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_02: snare_1 exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_02: snare_1 source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_02: other_pad exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_02: other_pad source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_02: other_hats exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_02: other_hats source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_02: all and only selected-family source notes charted",
+      "passed": true
+    },
+    {
+      "check": "level_02: chart retains actual musical timing/pitch/velocity",
+      "passed": true
+    },
+    {
+      "check": "level_02: long holds retain full source durations",
+      "passed": true
+    },
+    {
+      "check": "level_02: full musical master is exact union, not chart subset",
+      "passed": true
+    },
+    {
+      "check": "level_02: no mixed drum/bass bars including held tails",
+      "passed": true
+    },
+    {
+      "check": "level_02: no same-button conflicts",
+      "passed": true
+    },
+    {
+      "check": "level_02: at most two required touches",
+      "passed": true
+    },
+    {
+      "check": "level_02: per-thumb occupancy and release gaps validated",
+      "passed": true
+    },
+    {
+      "check": "level_02: waves start after teaching/build-up and finish spawning before song end",
+      "passed": true
+    },
+    {
+      "check": "level_02: waves explicitly untuned",
+      "passed": true
+    },
+    {
+      "check": "level_02: separate equipped-slot renders plus Other",
+      "passed": true
+    },
+    {
+      "check": "level_02: practice and campaign share identical source audio/MIDI identity",
+      "passed": true
+    },
+    {
+      "check": "level_02: practice selects 80 essential notes while 16 extra kicks remain in music",
+      "passed": true
+    },
+    {
+      "check": "level_02: practice has separate chart ID and no progression",
+      "passed": true
+    },
+    {
+      "check": "level_03: expected event/hold/button progression",
+      "passed": true
+    },
+    {
+      "check": "level_03: positive, ordered unique inputs",
+      "passed": true
+    },
+    {
+      "check": "level_03: proposed chart does not claim runtime compatibility",
+      "passed": true
+    },
+    {
+      "check": "level_03: slots have unlocked family-compatible default profiles",
+      "passed": true
+    },
+    {
+      "check": "level_03: slot caps respected",
+      "passed": true
+    },
+    {
+      "check": "level_03: every required part has an equipped default",
+      "passed": true
+    },
+    {
+      "check": "level_03: kick_1 exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_03: kick_1 source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_03: kick_2 exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_03: kick_2 source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_03: snare_1 exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_03: snare_1 source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_03: bass_1 exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_03: bass_1 source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_03: other_pad exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_03: other_pad source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_03: other_hats exact tempo and common MIDI end",
+      "passed": true
+    },
+    {
+      "check": "level_03: other_hats source hash matches",
+      "passed": true
+    },
+    {
+      "check": "level_03: all and only selected-family source notes charted",
+      "passed": true
+    },
+    {
+      "check": "level_03: chart retains actual musical timing/pitch/velocity",
+      "passed": true
+    },
+    {
+      "check": "level_03: long holds retain full source durations",
+      "passed": true
+    },
+    {
+      "check": "level_03: full musical master is exact union, not chart subset",
+      "passed": true
+    },
+    {
+      "check": "level_03: no mixed drum/bass bars including held tails",
+      "passed": true
+    },
+    {
+      "check": "level_03: no same-button conflicts",
+      "passed": true
+    },
+    {
+      "check": "level_03: at most two required touches",
+      "passed": true
+    },
+    {
+      "check": "level_03: per-thumb occupancy and release gaps validated",
+      "passed": true
+    },
+    {
+      "check": "level_03: waves start after teaching/build-up and finish spawning before song end",
+      "passed": true
+    },
+    {
+      "check": "level_03: waves explicitly untuned",
+      "passed": true
+    },
+    {
+      "check": "level_03: separate equipped-slot renders plus Other",
+      "passed": true
+    },
+    {
+      "check": "level_03: one bass instrument uses all four physical buttons",
+      "passed": true
+    },
+    {
+      "check": "level_03: half/full/two-bar bass holds all present",
+      "passed": true
+    },
+    {
+      "check": "level_03: music drums remain audible candidates during bass sections",
+      "passed": true
+    },
+    {
+      "check": "level_03: bass_1 bass motif alternates thumbs",
+      "passed": true
+    },
+    {
+      "check": "level_03: bass_2 bass motif alternates thumbs",
+      "passed": true
+    },
+    {
+      "check": "level_03: bass_3 bass motif alternates thumbs",
+      "passed": true
+    },
+    {
+      "check": "converter rejects tempo_mismatch",
+      "passed": true
+    },
+    {
+      "check": "converter rejects hold_crosses_mode",
+      "passed": true
+    },
+    {
+      "check": "converter rejects button_collision",
+      "passed": true
+    },
+    {
+      "check": "converter rejects thumb_reach_conflict",
+      "passed": true
+    },
+    {
+      "check": "converter rejects source_override_stale",
+      "passed": true
+    },
+    {
+      "check": "two touches on one thumb's side are rejected despite global two-touch allowance",
+      "passed": true
+    },
+    {
+      "check": "all 18 musical MIDI files byte-identical to the pre-research pack",
+      "passed": true
+    }
+  ]
+}
