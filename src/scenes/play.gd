@@ -406,6 +406,9 @@ func _finish() -> void:
 	clock.end()
 	transport.fade_out(END_FADE_S)
 	var r := match_ref.result()
+	r["practice"] = Session.practice
+	if Session.campaign_level_id != "" and not Session.practice and _auto_plan.is_empty():  # scripted runs never touch the save
+		r["campaign"] = Session.campaign.record_result(r)
 	r["duration_s"] = float(Time.get_ticks_msec()) / 1000.0 - _started_wall
 	r["perf"] = _perf_report()
 	Session.last_result = r

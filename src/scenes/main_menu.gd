@@ -1,5 +1,6 @@
 extends Control
-## Level select: the available song packs, the control explanation and calibration.
+## Main menu: the campaign (levels 1 to 3 playable, later levels planned), free play (the legacy duel packs), the
+## developer rhythm playtest per chart, timing calibration and the note approach setting.
 
 
 func _ready() -> void:
@@ -7,42 +8,95 @@ func _ready() -> void:
 		# scripted runs on exported builds (which take no scene argument) jump straight into the level
 		get_tree().change_scene_to_file.call_deferred("res://src/scenes/play.tscn")
 		return
-	var list: VBoxContainer = $Box/Packs
+	var campaign := Session.campaign
+	var box: VBoxContainer = $Scroll/Box
+	var camp: VBoxContainer = $Scroll/Box/Campaign
+	var list: VBoxContainer = $Scroll/Box/Packs
+	if campaign.recovered_from_corrupt:
+		camp.add_child(_header("Saved progress was unreadable and has been reset (the old file is kept as campaign.json.bad)."))
+	camp.add_child(_header("CAMPAIGN"))
+	var shown_planned := false
+	var focus_btn: Button = null
+	var last_open: Button = null
+	for l in campaign.levels:
+		var n := int(l["number"])
+		if not campaign.is_playable(n):
+			if not shown_planned:
+				shown_planned = true
+				camp.add_child(_header("Levels %d to %d: planned, data only." % [n, campaign.levels.size()]))
+			continue
+		var unlocked := campaign.is_unlocked(n)
+		var cleared := campaign.is_cleared(str(l["level_id"]))
+		var b := Button.new()
+		b.custom_minimum_size = Vector2(0, 56)
+		b.add_theme_font_size_override("font_size", 22)
+		if unlocked:
+			var rec: Dictionary = campaign.progress["cleared"].get(str(l["level_id"]), {})
+			b.text = "Level %d  %s%s" % [n, l["title"], ("   cleared  best %.0f%%" % (float(rec.get("best_accuracy", 0.0)) * 100.0)) if cleared else ""]
+			b.pressed.connect(func() -> void:
+				Session.loadout_level_number = n
+				get_tree().change_scene_to_file("res://src/scenes/loadout.tscn"))
+			last_open = b
+			if focus_btn == null and not cleared:
+				focus_btn = b
+		else:
+			b.text = "Level %d  %s   locked: clear level %d first" % [n, l["title"], n - 1]
+			b.disabled = true
+		camp.add_child(b)
+
+	if focus_btn == null:
+		focus_btn = last_open
+	if focus_btn != null:
+		focus_btn.grab_focus()
 	var packs := Session.available_packs()
-	if packs.is_empty():
-		var l := Label.new()
-		l.text = "No song packs found. Put a pack in songs/ (see songs/README.md)."
-		list.add_child(l)
+	var free := false
+	for p in packs:
+		if int(p["schema"]) != 2:
+			if not free:
+				free = true
+				list.add_child(_header("FREE PLAY (the legacy two-sided duel)"))
+			_add_play_button(list, "Play: %s" % p["title"], p, "", true)
+	var tests := false
 	for p in packs:
 		if int(p["schema"]) == 2:
+			if not tests:
+				tests = true
+				list.add_child(_header("RHYTHM PLAYTEST (no battle; the chart over its placeholder stems)"))
 			for c in p["charts"]:
 				var tag: String = "practice chart" if c["play_mode"] == "practice" else "chart"
-				_add_play_button(list, "Rhythm playtest: %s  (%s %s, %d notes)" % [p["title"], tag, c["chart_id"], c["notes"]], p, str(c["chart_id"]), false)
-		else:
-			_add_play_button(list, "Play: %s" % p["title"], p, "", true)
+				_add_play_button(list, "%s  (%s %s, %d notes)" % [p["title"], tag, c["chart_id"], c["notes"]], p, str(c["chart_id"]), false)
 	_add_lookahead_row()
-	$Box/Calibrate.text = "Calibrate timing (now %+.0f ms)" % Session.calibration_ms
-	$Box/Calibrate.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://src/scenes/calibration.tscn"))
-	$Box/Help.text = "Four buttons, no labels: the notes tell you what they make. Round notes on the left button are kicks (vehicles), diamonds on the right button are snares (an infantry squad), bars are bass (tap or hold: helipads and helicopter sorties) and run across all four buttons.
-Hit each note as it reaches the line. Lose a factory and its instrument falls silent. Destroy the enemy base before the song ends. Keys: D F J K."
-	$Box/Version.text = "Rhythm Warfare  ·  Godot %s" % Engine.get_version_info()["string"]
+	$Scroll/Box/Calibrate.text = "Calibrate timing (now %+.0f ms)" % Session.calibration_ms
+	$Scroll/Box/Calibrate.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://src/scenes/calibration.tscn"))
+	$Scroll/Box/Help.text = "Four buttons, no labels. Play the notes as they reach the line: every note you hit builds a defending group that holds one of three points in front of your base. Survive until the song ends. Keys: D F J K."
+	$Scroll/Box/Version.text = "Rhythm Warfare  ·  Godot %s" % Engine.get_version_info()["string"]
+	box.queue_sort()
+
+
+func _header(text: String) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_size_override("font_size", 18)
+	l.modulate = Color(0.75, 0.85, 1.0)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	return l
 
 
 func _add_play_button(list: VBoxContainer, text: String, p: Dictionary, chart_id: String, battle: bool) -> void:
 	var b := Button.new()
 	b.text = text
-	b.custom_minimum_size = Vector2(0, 56)
-	b.add_theme_font_size_override("font_size", 22)
+	b.custom_minimum_size = Vector2(0, 52)
+	b.add_theme_font_size_override("font_size", 20)
 	b.pressed.connect(func() -> void:
 		Session.pack_dir = p["dir"]
 		Session.chart_id = chart_id
 		Session.battle_on = battle if not OS.has_environment("RW_BATTLE") else Session.battle_on
 		Session.loadout = {}
+		Session.practice = false
+		Session.campaign_level_id = ""
 		Session.save_settings()
 		get_tree().change_scene_to_file("res://src/scenes/play.tscn"))
 	list.add_child(b)
-	if Session.pack_dir == p["dir"] and (chart_id.is_empty() or chart_id == Session.chart_id):
-		b.grab_focus()
 
 
 ## Note approach window (readability), independent of tempo and timing calibration.
@@ -64,5 +118,5 @@ func _add_lookahead_row() -> void:
 		Session.save_settings())
 	row.add_child(label)
 	row.add_child(slider)
-	$Box.add_child(row)
-	$Box.move_child(row, $Box/Calibrate.get_index() + 1)
+	$Scroll/Box.add_child(row)
+	$Scroll/Box.move_child(row, $Scroll/Box/Calibrate.get_index() + 1)

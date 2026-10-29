@@ -59,6 +59,15 @@ static func parse(d: Dictionary, pack_dir: String, options: Dictionary, errors: 
 	_parse_loadout(d, level, errors)
 	_parse_renders(d, level, part_slot, errors, warnings)
 	_resolve_stems(d, level, pack_dir, errors)
+	var wanted: Variant = options.get("loadout", {})
+	if typeof(wanted) == TYPE_DICTIONARY:
+		for slot in wanted:
+			if not level.loadout_active_slots.has(slot):
+				errors.append("loadout names slot '%s', which this level does not use" % slot)
+			elif str(wanted[slot]) != str(level.loadout.get(slot, "")):
+				var why := equip(level, str(slot), str(wanted[slot]))
+				if not why.is_empty():
+					errors.append(why)
 	_parse_chart(d, level, str(options.get("chart_id", "")), errors, warnings)
 	_parse_waves(d, level, errors)
 	return level

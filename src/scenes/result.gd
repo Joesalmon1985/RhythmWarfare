@@ -33,6 +33,39 @@ func _show_defense(r: Dictionary, rewards: Dictionary) -> void:
 	lines.append("Rewards: " + ", ".join(PackedStringArray(per_slot)))
 	if not bool(r.get("battle", true)):
 		lines.append("Rhythm-only playtest: no battle was played.")
+	if str(r.get("outcome", "")) == "defeat":
+		lines.append("Defeat: %s" % str(r.get("reason", "")).replace("objective_destroyed:", "lost the ").replace("_", " "))
+	elif str(r.get("outcome", "")) == "victory":
+		var hp: Dictionary = r.get("objective_hp", {}).get("command_core", {"hp": 0, "max": 1})
+		lines.append("Survived to the end with the command core at %d%%." % int(round(100.0 * float(hp["hp"]) / maxf(float(hp["max"]), 1.0))))
+	var camp: Dictionary = r.get("campaign", {})
+	if bool(r.get("practice", false)):
+		lines.append("Practice: nothing was saved.")
+	elif not camp.is_empty():
+		if camp.get("first_clear", false):
+			lines.append("LEVEL CLEARED.")
+			if int(camp.get("unlocked_level", 0)) > 0:
+				lines.append("Level %d, %s, is unlocked." % [int(camp["unlocked_level"]), camp.get("unlocked_title", "")])
+			var names: Array[String] = []
+			for id in camp.get("new_profiles", []):
+				names.append(Session.campaign.catalogue.display_name(str(id)))
+			if not names.is_empty():
+				lines.append("New instruments: " + ", ".join(PackedStringArray(names)))
+		else:
+			lines.append("Replay: your clears and unlocks are kept; bests only improve.")
+		if not camp.get("saved", true):
+			lines.append("Warning: progress could not be saved.")
+	var next_n := int(camp.get("unlocked_level", 0))
+	if next_n > 0 and Session.campaign.is_playable(next_n):
+		var nb := Button.new()
+		nb.text = "Next level"
+		nb.custom_minimum_size = Vector2(0, 56)
+		nb.add_theme_font_size_override("font_size", 24)
+		nb.pressed.connect(func() -> void:
+			Session.loadout_level_number = next_n
+			get_tree().change_scene_to_file("res://src/scenes/loadout.tscn"))
+		$Box.add_child(nb)
+		$Box.move_child(nb, $Box/Retry.get_index())
 	$Box/Stats.text = "
 ".join(PackedStringArray(lines))
 	$Box/Retry.pressed.connect(func() -> void: get_tree().change_scene_to_file("res://src/scenes/play.tscn"))

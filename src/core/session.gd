@@ -6,6 +6,10 @@ const SETTINGS_PATH := "user://settings.cfg"
 const LOOKAHEAD_MIN_S := 1.2
 const LOOKAHEAD_MAX_S := 3.0
 
+var campaign: Campaign  # saved progress (user://campaign.json) and the campaign data
+var campaign_level_id := ""  # set while a campaign level is being played ("" for free play and playtests)
+var loadout_level_number := 1  # the level the loadout screen is showing
+var practice := false  # a practice run: rhythm only, writes no progress
 var pack_dir := ""
 var chart_id := ""  # schema 2: which chart of the pack to play ("" = the pack's first)
 var battle_on := true  # false: the rhythm-only playtest (battlefield hidden, no waves)
@@ -17,6 +21,7 @@ var debug := false
 
 
 func _ready() -> void:
+	campaign = Campaign.load_data()
 	load_settings()
 	if OS.has_environment("RW_PACK"):  # scripted runs and tests pick a pack without touching saved settings
 		pack_dir = OS.get_environment("RW_PACK")
