@@ -110,16 +110,36 @@ func _draw_defense() -> void:
 		draw_string(_font, p + Vector2(-5, 5), str(i + 1), HORIZONTAL_ALIGNMENT_CENTER, 12, 16, Color(0.8, 0.95, 1.0, 0.9))
 		draw_string(_font, p + Vector2(-40, 36), "%d defenders" % counts[i], HORIZONTAL_ALIGNMENT_CENTER, 80, 10, Color(0.8, 0.95, 1.0, 0.8))
 	var w := match_ref.upcoming_wave()
-	if not w.is_empty() and float(w["in_s"]) <= 6.0 and sim.entries.has(w["entry"]):
+	if not w.is_empty() and float(w["in_s"]) <= 8.0 and sim.entries.has(w["entry"]):
 		var pulse := 0.55 + 0.45 * sin(float(Time.get_ticks_msec()) / 120.0)
-		var a: Vector2 = view.to_px(sim.entries[w["entry"]]) - global_position + view.global_position
-		var via: Vector2 = a
+		var shift := view.global_position - global_position
+		var win := view.window_px()
+		win.position += shift
+		var entry_px: Vector2 = view.to_px(sim.entries[w["entry"]]) + shift
+		var via := entry_px
 		for dp in sim.defense_points:
 			if dp["id"] == w["via"]:
-				via = view.to_px(dp["pos"]) - global_position + view.global_position
-		draw_line(a, via, Color(1.0, 0.4, 0.3, 0.6 * pulse), 3.0)
-		draw_circle(a, 14.0, Color(1.0, 0.35, 0.3, 0.5 * pulse))
-		draw_string(_font, Vector2(cx - 150, 124), "WAVE %d INCOMING  %s  %.0f s" % [int(w["number"]), str(w["entry"]).to_upper(), float(w["in_s"])], HORIZONTAL_ALIGNMENT_CENTER, 300, 18, Color(1.0, 0.7, 0.55, pulse))
+				via = view.to_px(dp["pos"]) + shift
+		# the entry lies outside the picture: mark the edge it will come in at and draw the route from there
+		var inner := Rect2(win.position + Vector2(26.0, 40.0), win.size - Vector2(52.0, 66.0))  # clear of the top bar
+		var edge := Vector2(clampf(entry_px.x, inner.position.x, inner.end.x), clampf(entry_px.y, inner.position.y, inner.end.y))
+		var dir := (entry_px - win.get_center()).normalized()
+		var side := _direction_word(entry_px, win)
+		draw_line(edge, via, Color(1.0, 0.4, 0.3, 0.6 * pulse), 3.0)
+		var tip := edge + dir * 16.0
+		var across := Vector2(-dir.y, dir.x) * 16.0
+		draw_colored_polygon(PackedVector2Array([tip, edge - dir * 10.0 + across, edge - dir * 10.0 - across]), Color(1.0, 0.35, 0.3, 0.55 + 0.4 * pulse))
+		draw_string(_font, Vector2(cx - 250, 124), "WAVE %d INCOMING FROM THE %s  %.0f s" % [int(w["number"]), side, float(w["in_s"])], HORIZONTAL_ALIGNMENT_CENTER, 500, 18, Color(1.0, 0.7, 0.55, pulse))
+
+
+## LEFT, RIGHT or TOP (BOTTOM for completeness): the side of the window an entry lies beyond.
+func _direction_word(entry_px: Vector2, win: Rect2) -> String:
+	var d := entry_px - win.get_center()
+	var nx := d.x / maxf(win.size.x, 1.0)
+	var ny := d.y / maxf(win.size.y, 1.0)
+	if absf(nx) >= absf(ny):
+		return "RIGHT" if nx > 0.0 else "LEFT"
+	return "BOTTOM" if ny > 0.0 else "TOP"
 
 
 func _base_bar(pos: Vector2, width: float, base: BattleSim.Ent, label: String, col: Color, right: bool) -> void:

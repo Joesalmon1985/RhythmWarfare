@@ -787,10 +787,10 @@
  "waves": [
   {
    "id": "wave_01",
-   "start_tick": 15360,
-   "start_bar": 5,
-   "entry": "center",
-   "via_defense_point": "defense_2",
+   "start_tick": 1392,
+   "start_bar": 1,
+   "entry": "left",
+   "via_defense_point": "defense_1",
    "target_objective": "command_core",
    "groups": [
     {
@@ -798,13 +798,15 @@
      "count": 10,
      "spawn_spacing_ticks": 240
     }
-   ]
+   ],
+   "authored_start_tick": 15360,
+   "contact_tick": 35179
   },
   {
    "id": "wave_02",
-   "start_tick": 30720,
-   "start_bar": 9,
-   "entry": "center",
+   "start_tick": 20616,
+   "start_bar": 6,
+   "entry": "top",
    "via_defense_point": "defense_2",
    "target_objective": "command_core",
    "groups": [
@@ -813,14 +815,16 @@
      "count": 11,
      "spawn_spacing_ticks": 240
     }
-   ]
+   ],
+   "authored_start_tick": 30720,
+   "contact_tick": 48068
   },
   {
    "id": "wave_03",
-   "start_tick": 46080,
-   "start_bar": 13,
-   "entry": "center",
-   "via_defense_point": "defense_2",
+   "start_tick": 27170,
+   "start_bar": 8,
+   "entry": "right",
+   "via_defense_point": "defense_3",
    "target_objective": "command_core",
    "groups": [
     {
@@ -828,14 +832,16 @@
      "count": 13,
      "spawn_spacing_ticks": 240
     }
-   ]
+   ],
+   "authored_start_tick": 46080,
+   "contact_tick": 60957
   },
   {
    "id": "wave_04",
-   "start_tick": 61440,
-   "start_bar": 17,
-   "entry": "center",
-   "via_defense_point": "defense_2",
+   "start_tick": 40058,
+   "start_bar": 11,
+   "entry": "left",
+   "via_defense_point": "defense_1",
    "target_objective": "command_core",
    "groups": [
     {
@@ -848,13 +854,15 @@
      "count": 2,
      "spawn_spacing_ticks": 480
     }
-   ]
+   ],
+   "authored_start_tick": 61440,
+   "contact_tick": 73846
   },
   {
    "id": "wave_05",
-   "start_tick": 76800,
-   "start_bar": 21,
-   "entry": "center",
+   "start_tick": 59282,
+   "start_bar": 16,
+   "entry": "top",
    "via_defense_point": "defense_2",
    "target_objective": "command_core",
    "groups": [
@@ -868,14 +876,16 @@
      "count": 2,
      "spawn_spacing_ticks": 480
     }
-   ]
+   ],
+   "authored_start_tick": 76800,
+   "contact_tick": 86734
   },
   {
    "id": "wave_06",
-   "start_tick": 92160,
-   "start_bar": 25,
-   "entry": "center",
-   "via_defense_point": "defense_2",
+   "start_tick": 65836,
+   "start_bar": 18,
+   "entry": "right",
+   "via_defense_point": "defense_3",
    "target_objective": "command_core",
    "groups": [
     {
@@ -888,14 +898,16 @@
      "count": 2,
      "spawn_spacing_ticks": 480
     }
-   ]
+   ],
+   "authored_start_tick": 92160,
+   "contact_tick": 99623
   },
   {
    "id": "wave_07",
-   "start_tick": 107520,
-   "start_bar": 29,
-   "entry": "center",
-   "via_defense_point": "defense_2",
+   "start_tick": 78725,
+   "start_bar": 21,
+   "entry": "left",
+   "via_defense_point": "defense_1",
    "target_objective": "command_core",
    "groups": [
     {
@@ -908,7 +920,9 @@
      "count": 4,
      "spawn_spacing_ticks": 480
     }
-   ]
+   ],
+   "authored_start_tick": 107520,
+   "contact_tick": 112512
   }
  ]
 }

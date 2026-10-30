@@ -145,24 +145,33 @@ def profiles_for(catalogue: list[dict], family: str, default_profile: str) -> li
 
 
 def travel_report(level: dict) -> None:
-    """Prints how long each wave's actors need from their entry to the defense point and on to the wall opening, so a
-    wave author can see when contact happens (straight-line distance at the actor's rules speed, cells per second)."""
+    """Prints, per wave, when it spawns, how long each actor needs from its entry to the defense point and on to the
+    command core (straight lines at the actor's rules speed, cells per second), when the first and last unit reach the
+    defense point and whether that is after the opening bars and before the song ends."""
     bf = json.loads((ROOT / "data" / "battlefields" / f"{level['battlefield']}.json").read_text())
     actors = json.loads((ROOT / "data" / "openra_rules.json").read_text())["actors"]
     entries = {e["id"]: (e["x"] + 0.5, e["y"] + 0.5) for e in bf["entries"]}
     points = {p["id"]: (p["x"] + 0.5, p["y"] + 0.5) for p in bf["defense_points"]}
-    opening = (15.5, 10.0)
-    seconds_per_tick = 60.0 / (level["bpm"] * level["ticks_per_beat"])
-    print("  travel (seconds from spawn): wave, entry -> point, actors to the point / to the wall opening")
+    core = next(b for b in bf["buildings"] if b["role"] == "main")
+    core_c = (core["x"] + core["w"] / 2.0, core["y"] + core["h"] / 2.0)
+    ticks_per_second = level["bpm"] * level["ticks_per_beat"] / 60.0
+    opening_s = 4 * level["time_signature"][0] * level["ticks_per_beat"] / ticks_per_second
+    duration_s = level["duration_ticks"] / ticks_per_second
+    print("  travel per wave: spawn s, entry -> defense point, per actor seconds to the point / to the core, contact (first .. last unit) s")
     for w in level["waves"]:
         a, b = entries[w["entry"]], points[w["via_defense_point"]]
         d1 = ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5
-        d2 = ((b[0] - opening[0]) ** 2 + (b[1] - opening[1]) ** 2) ** 0.5
-        bits = []
-        for actor in sorted({g["actor"] for g in w["groups"]}):
-            cps = actors[actor]["speed"] / 1024.0 * 25.0
-            bits.append(f"{actor} {d1 / cps:.1f}s/{(d1 + d2) / cps:.1f}s")
-        print(f"    {w['id']} at {w['start_tick'] * seconds_per_tick:5.1f}s  {w['entry']:>6} -> {w['via_defense_point']}: " + ", ".join(bits))
+        d2 = ((b[0] - core_c[0]) ** 2 + (b[1] - core_c[1]) ** 2) ** 0.5
+        bits, first, last = [], 1e9, 0.0
+        for g in sorted(w["groups"], key=lambda g: g["actor"]):
+            cps = actors[g["actor"]]["speed"] / 1024.0 * 25.0
+            bits.append(f"{g['actor']} {d1 / cps:.1f}/{(d1 + d2) / cps:.1f}")
+            first = min(first, w["start_tick"] / ticks_per_second + d1 / cps)
+            last = max(last, (w["start_tick"] + (g["count"] - 1) * g["spawn_spacing_ticks"]) / ticks_per_second + d1 / cps)
+        flags = ("  !! BEFORE THE OPENING BARS END" if first < opening_s else "") + ("  !! LAST UNIT AFTER THE SONG ENDS" if last >= duration_s else "")
+        print(f"    {w['id']} spawn {w['start_tick'] / ticks_per_second:5.1f}s {w['entry']:>5} -> {w['via_defense_point']}: " + ", ".join(bits)
+              + f"   contact {first:5.1f} .. {last:5.1f} s{flags}")
+    print(f"  (opening bars end at {opening_s:.1f} s, song ends at {duration_s:.1f} s)")
 
 
 def load_waves(number: int, level_dir: Path) -> tuple[dict, Path]:

@@ -58,7 +58,7 @@ func test_there_is_no_enemy_base_and_no_instant_victory() -> void:
 func test_survival_wins_with_enemies_alive_and_loss_is_immediate() -> void:
 	var sim := BattleSim.new()
 	sim.setup(_rules(), {}, 1)
-	var u := sim.spawn_wave_unit("e1", "center", "defense_2", "command_core")
+	var u := sim.spawn_wave_unit("e1", "top", "defense_2", "command_core")
 	assert_true(u != null)
 	for i in 50:
 		sim.tick()

@@ -1124,8 +1124,59 @@
  "waves": [
   {
    "id": "wave_01",
-   "start_tick": 15360,
-   "start_bar": 5,
+   "start_tick": 1392,
+   "start_bar": 1,
+   "entry": "left",
+   "via_defense_point": "defense_1",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 7,
+     "spawn_spacing_ticks": 240
+    }
+   ],
+   "authored_start_tick": 15360,
+   "contact_tick": 35179
+  },
+  {
+   "id": "wave_02",
+   "start_tick": 21700,
+   "start_bar": 6,
+   "entry": "top",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 8,
+     "spawn_spacing_ticks": 240
+    }
+   ],
+   "authored_start_tick": 30720,
+   "contact_tick": 49153
+  },
+  {
+   "id": "wave_03",
+   "start_tick": 29339,
+   "start_bar": 8,
+   "entry": "right",
+   "via_defense_point": "defense_3",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 9,
+     "spawn_spacing_ticks": 240
+    }
+   ],
+   "authored_start_tick": 46080,
+   "contact_tick": 63126
+  },
+  {
+   "id": "wave_04",
+   "start_tick": 43312,
+   "start_bar": 12,
    "entry": "left",
    "via_defense_point": "defense_1",
    "target_objective": "command_core",
@@ -1134,14 +1185,21 @@
      "actor": "e1",
      "count": 10,
      "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
+     "spawn_spacing_ticks": 480
     }
-   ]
+   ],
+   "authored_start_tick": 61440,
+   "contact_tick": 77099
   },
   {
-   "id": "wave_02",
-   "start_tick": 30720,
-   "start_bar": 9,
-   "entry": "center",
+   "id": "wave_05",
+   "start_tick": 63620,
+   "start_bar": 17,
+   "entry": "top",
    "via_defense_point": "defense_2",
    "target_objective": "command_core",
    "groups": [
@@ -1149,30 +1207,76 @@
      "actor": "e1",
      "count": 11,
      "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
+     "spawn_spacing_ticks": 480
     }
-   ]
+   ],
+   "authored_start_tick": 76800,
+   "contact_tick": 91072
   },
   {
-   "id": "wave_03",
-   "start_tick": 46080,
-   "start_bar": 13,
+   "id": "wave_06",
+   "start_tick": 71258,
+   "start_bar": 19,
    "entry": "right",
    "via_defense_point": "defense_3",
    "target_objective": "command_core",
    "groups": [
     {
      "actor": "e1",
-     "count": 13,
+     "count": 12,
      "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "1tnk",
+     "count": 1,
+     "spawn_spacing_ticks": 480
     }
-   ]
+   ],
+   "authored_start_tick": 92160,
+   "contact_tick": 105046
   },
   {
-   "id": "wave_04",
-   "start_tick": 61440,
-   "start_bar": 17,
+   "id": "wave_07",
+   "start_tick": 85232,
+   "start_bar": 23,
    "entry": "left",
    "via_defense_point": "defense_1",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 13,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "1tnk",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "authored_start_tick": 107520,
+   "contact_tick": 119019
+  },
+  {
+   "id": "wave_08",
+   "start_tick": 105540,
+   "start_bar": 28,
+   "entry": "top",
+   "via_defense_point": "defense_2",
    "target_objective": "command_core",
    "groups": [
     {
@@ -1182,17 +1286,24 @@
     },
     {
      "actor": "jeep",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "1tnk",
      "count": 1,
      "spawn_spacing_ticks": 480
     }
-   ]
+   ],
+   "authored_start_tick": 122880,
+   "contact_tick": 132992
   },
   {
-   "id": "wave_05",
-   "start_tick": 76800,
-   "start_bar": 21,
-   "entry": "center",
-   "via_defense_point": "defense_2",
+   "id": "wave_09",
+   "start_tick": 113178,
+   "start_bar": 30,
+   "entry": "right",
+   "via_defense_point": "defense_3",
    "target_objective": "command_core",
    "groups": [
     {
@@ -1202,17 +1313,51 @@
     },
     {
      "actor": "jeep",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "1tnk",
      "count": 1,
      "spawn_spacing_ticks": 480
     }
-   ]
+   ],
+   "authored_start_tick": 138240,
+   "contact_tick": 146965
   },
   {
-   "id": "wave_06",
-   "start_tick": 92160,
-   "start_bar": 25,
-   "entry": "right",
-   "via_defense_point": "defense_3",
+   "id": "wave_10",
+   "start_tick": 127151,
+   "start_bar": 34,
+   "entry": "left",
+   "via_defense_point": "defense_1",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 16,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "1tnk",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "authored_start_tick": 153600,
+   "contact_tick": 160939
+  },
+  {
+   "id": "wave_11",
+   "start_tick": 147460,
+   "start_bar": 39,
+   "entry": "top",
+   "via_defense_point": "defense_2",
    "target_objective": "command_core",
    "groups": [
     {
@@ -1222,7 +1367,7 @@
     },
     {
      "actor": "jeep",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     },
     {
@@ -1230,132 +1375,9 @@
      "count": 1,
      "spawn_spacing_ticks": 480
     }
-   ]
-  },
-  {
-   "id": "wave_07",
-   "start_tick": 107520,
-   "start_bar": 29,
-   "entry": "left",
-   "via_defense_point": "defense_1",
-   "target_objective": "command_core",
-   "groups": [
-    {
-     "actor": "e1",
-     "count": 18,
-     "spawn_spacing_ticks": 240
-    },
-    {
-     "actor": "jeep",
-     "count": 3,
-     "spawn_spacing_ticks": 480
-    },
-    {
-     "actor": "1tnk",
-     "count": 1,
-     "spawn_spacing_ticks": 480
-    }
-   ]
-  },
-  {
-   "id": "wave_08",
-   "start_tick": 122880,
-   "start_bar": 33,
-   "entry": "center",
-   "via_defense_point": "defense_2",
-   "target_objective": "command_core",
-   "groups": [
-    {
-     "actor": "e1",
-     "count": 20,
-     "spawn_spacing_ticks": 240
-    },
-    {
-     "actor": "jeep",
-     "count": 3,
-     "spawn_spacing_ticks": 480
-    },
-    {
-     "actor": "1tnk",
-     "count": 1,
-     "spawn_spacing_ticks": 480
-    }
-   ]
-  },
-  {
-   "id": "wave_09",
-   "start_tick": 138240,
-   "start_bar": 37,
-   "entry": "right",
-   "via_defense_point": "defense_3",
-   "target_objective": "command_core",
-   "groups": [
-    {
-     "actor": "e1",
-     "count": 21,
-     "spawn_spacing_ticks": 240
-    },
-    {
-     "actor": "jeep",
-     "count": 3,
-     "spawn_spacing_ticks": 480
-    },
-    {
-     "actor": "1tnk",
-     "count": 1,
-     "spawn_spacing_ticks": 480
-    }
-   ]
-  },
-  {
-   "id": "wave_10",
-   "start_tick": 153600,
-   "start_bar": 41,
-   "entry": "left",
-   "via_defense_point": "defense_1",
-   "target_objective": "command_core",
-   "groups": [
-    {
-     "actor": "e1",
-     "count": 22,
-     "spawn_spacing_ticks": 240
-    },
-    {
-     "actor": "jeep",
-     "count": 3,
-     "spawn_spacing_ticks": 480
-    },
-    {
-     "actor": "1tnk",
-     "count": 1,
-     "spawn_spacing_ticks": 480
-    }
-   ]
-  },
-  {
-   "id": "wave_11",
-   "start_tick": 168960,
-   "start_bar": 45,
-   "entry": "center",
-   "via_defense_point": "defense_2",
-   "target_objective": "command_core",
-   "groups": [
-    {
-     "actor": "e1",
-     "count": 24,
-     "spawn_spacing_ticks": 240
-    },
-    {
-     "actor": "jeep",
-     "count": 3,
-     "spawn_spacing_ticks": 480
-    },
-    {
-     "actor": "1tnk",
-     "count": 1,
-     "spawn_spacing_ticks": 480
-    }
-   ]
+   ],
+   "authored_start_tick": 168960,
+   "contact_tick": 174912
   }
  ]
 }

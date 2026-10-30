@@ -181,12 +181,12 @@ func _build_layout() -> void:
 	pause_btn.text = "II"
 	pause_btn.focus_mode = Control.FOCUS_NONE
 	pause_btn.custom_minimum_size = Vector2(64, 48)
-	pause_btn.anchor_left = 0.5 if battle_on else 1.0
-	pause_btn.anchor_right = 0.5 if battle_on else 1.0
-	pause_btn.offset_left = -32 if battle_on else -84
-	pause_btn.offset_top = 62 if battle_on else 8
-	pause_btn.offset_right = 32 if battle_on else -20
-	pause_btn.offset_bottom = 100 if battle_on else 56
+	pause_btn.anchor_left = 1.0  # top right: the top defense point sits under the centre of the battle area
+	pause_btn.anchor_right = 1.0
+	pause_btn.offset_left = -84
+	pause_btn.offset_top = 8
+	pause_btn.offset_right = -20
+	pause_btn.offset_bottom = 56
 	pause_btn.pressed.connect(_pause)
 	_battle_area.add_child(pause_btn)
 

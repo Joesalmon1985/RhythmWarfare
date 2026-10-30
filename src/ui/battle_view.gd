@@ -1,6 +1,9 @@
 class_name BattleView
 extends Control
-## Fixed-camera view of the whole battlefield at native Red Alert pixel scale, drawn the way OpenRA draws it:
+## Fixed-camera view of a window of the battlefield at native Red Alert pixel scale, drawn the way OpenRA draws it.
+## The map is larger than the window (data/battlefields/defense_01.json "view": centre and maximum size in cells), so
+## wave units enter from outside the picture; anything outside the window is masked. The duel's map fits entirely.
+## Drawn:
 ## terrain tiles, building bibs, buildings (idle / damaged-idle / make / production and resupply overlays), walls by
 ## adjacency, units with facing frames and animations, aircraft with rotor and shadow, projectiles, muzzle flashes,
 ## impact explosions, death animations, craters and smoke. Reads the simulation every frame; never advances it.
@@ -45,6 +48,8 @@ var bank := SpriteBank.new()
 var map: Dictionary = {}
 var cell := 24.0
 var origin := Vector2.ZERO
+var window := Rect2()  # the visible part of the map, in cells
+var _mask: Node2D
 var _layers: Array[Node2D] = []
 var _fx: Node2D
 var _ground: Node2D
@@ -76,6 +81,9 @@ func _ready() -> void:
 	_fx = _FxLayer.new()
 	_fx.view = self
 	add_child(_fx)
+	_mask = _MaskLayer.new()
+	_mask.view = self
+	add_child(_mask)
 	resized.connect(_layout)
 	_layout()
 
@@ -90,8 +98,35 @@ func _layout() -> void:
 	if sim == null:
 		return
 	cell = SpriteBank.RA_CELL_PX * PIXEL_SCALE
-	origin = Vector2(floor((size.x - cell * sim.width) * 0.5), floor((size.y - cell * sim.height) * 0.5))
+	var cfg: Dictionary = sim.rules.battlefield.get("view", {}) if sim.rules != null else {}
+	window = window_rect(size / cell, Vector2(sim.width, sim.height), cfg)
+	var top_left := ((size - window.size * cell) * 0.5).floor()
+	origin = (top_left - window.position * cell).floor()
 	_ground_dirty = true
+
+
+## The visible window in cells for an area of `area_cells` on a map of `map_cells`: the battlefield's view centre (default
+## the map centre) with at most `max_cells` (default the whole area), never larger than the map, kept inside it.
+static func window_rect(area_cells: Vector2, map_cells: Vector2, cfg: Dictionary) -> Rect2:
+	var size_c := area_cells
+	var cap: Array = cfg.get("max_cells", [])
+	if cap.size() == 2:
+		size_c = Vector2(minf(size_c.x, float(cap[0])), minf(size_c.y, float(cap[1])))
+	size_c = Vector2(minf(size_c.x, map_cells.x), minf(size_c.y, map_cells.y))
+	var centre_cfg: Array = cfg.get("center", [])
+	var centre := map_cells * 0.5 if centre_cfg.size() != 2 else Vector2(float(centre_cfg[0]), float(centre_cfg[1]))
+	var top_left := centre - size_c * 0.5
+	top_left = Vector2(clampf(top_left.x, 0.0, map_cells.x - size_c.x), clampf(top_left.y, 0.0, map_cells.y - size_c.y))
+	return Rect2(top_left, size_c)
+
+
+## The window in this control's pixels.
+func window_px() -> Rect2:
+	return Rect2(origin + window.position * cell, window.size * cell)
+
+
+func in_window(p: Vector2, margin_cells: float = 0.0) -> bool:
+	return window.grow(margin_cells).has_point(p)
 
 
 func to_px(p: Vector2) -> Vector2:
@@ -137,6 +172,7 @@ func _process(delta: float) -> void:
 	if _ground_dirty:
 		_ground_dirty = false
 		_ground.queue_redraw()
+		_mask.queue_redraw()
 	for l in _layers:
 		l.queue_redraw()
 	_fx.queue_redraw()
@@ -485,3 +521,20 @@ class _FxLayer:
 				continue
 			var pos := view.to_px(fx["pos"]) + Vector2(0, -float(fx.get("lift", 0.0)))
 			view.blit(self, fx["image"], fx["seq"], float(fx["heading"]), idx, pos)
+
+
+## Hides the map outside the window (a wider or taller screen than the window shows the dark ground colour instead).
+class _MaskLayer:
+	extends Node2D
+	var view: BattleView
+
+	func _draw() -> void:
+		if view.sim == null:
+			return
+		var w := view.window_px()
+		var col := Color(0.1, 0.12, 0.08)
+		var full := Rect2(Vector2.ZERO, view.size)
+		draw_rect(Rect2(full.position, Vector2(full.size.x, maxf(w.position.y - full.position.y, 0.0))), col)
+		draw_rect(Rect2(Vector2(full.position.x, w.end.y), Vector2(full.size.x, maxf(full.end.y - w.end.y, 0.0))), col)
+		draw_rect(Rect2(Vector2(full.position.x, w.position.y), Vector2(maxf(w.position.x - full.position.x, 0.0), w.size.y)), col)
+		draw_rect(Rect2(Vector2(w.end.x, w.position.y), Vector2(maxf(full.end.x - w.end.x, 0.0), w.size.y)), col)

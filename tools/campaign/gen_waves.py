@@ -4,7 +4,8 @@
 
 The proposed waves were authored for entries at the map edge and a 150000 hp core; the tuned files record the
 scales that the balance harness (tools/balance.sh, docs/BALANCE.md) settled on. Edit the JSON by hand afterwards if
-a level needs a different shape; this script only produces the starting point."""
+a level needs a different shape; this script only produces the starting point. It keeps the proposed entries, so run
+tools/campaign/retime_waves.py afterwards to assign left / right / top entries and spawn times for the centred base."""
 import json
 import sys
 from pathlib import Path
