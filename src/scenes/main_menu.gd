@@ -15,6 +15,8 @@ func _ready() -> void:
 	if campaign.recovered_from_corrupt:
 		camp.add_child(_header("Saved progress was unreadable and has been reset (the old file is kept as campaign.json.bad)."))
 	camp.add_child(_header("CAMPAIGN"))
+	if campaign.unlock_all:
+		camp.add_child(_header("Unlock-all is ON (testing): every level and instrument is open. Saves still record clears. Turn off in data/campaign/campaign.json."))
 	var shown_planned := false
 	var focus_btn: Button = null
 	var last_open: Button = null

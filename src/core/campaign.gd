@@ -9,6 +9,7 @@ extends RefCounted
 const DATA_PATH := "res://data/campaign/campaign.json"
 const DEFAULT_SAVE_PATH := "user://campaign.json"
 const SAVE_VERSION := 1
+const UNLOCK_ENV := "RW_UNLOCK_ALL"  # "1" / "0" overrides "unlock_all" in the data file (scripted runs)
 
 var levels: Array = []  # data/campaign/campaign.json "levels"
 var caps: Dictionary = {}
@@ -16,9 +17,13 @@ var save_path := DEFAULT_SAVE_PATH
 var catalogue: Catalogue
 var progress: Dictionary = {}
 var recovered_from_corrupt := false
+## Testing switch: every playable level is open and a level offers every profile that enters at or below it. Clears and
+## bests are still saved as usual and the saved unlocks never depend on it. data/campaign/campaign.json "unlock_all".
+var unlock_all := false
 
 
-static func load_data(path: String = DEFAULT_SAVE_PATH) -> Campaign:
+## `unlock_override`: -1 reads the data file and RW_UNLOCK_ALL, 0 forces the normal ladder, 1 forces unlock-all.
+static func load_data(path: String = DEFAULT_SAVE_PATH, unlock_override: int = -1) -> Campaign:
 	var c := Campaign.new()
 	c.save_path = path
 	c.catalogue = Catalogue.load_default()
@@ -26,6 +31,11 @@ static func load_data(path: String = DEFAULT_SAVE_PATH) -> Campaign:
 	if typeof(parsed) == TYPE_DICTIONARY:
 		c.levels = parsed.get("levels", [])
 		c.caps = parsed.get("loadout_caps", {})
+		c.unlock_all = bool(parsed.get("unlock_all", false))
+	if OS.has_environment(UNLOCK_ENV):
+		c.unlock_all = OS.get_environment(UNLOCK_ENV).to_lower() in ["1", "true", "on", "yes"]
+	if unlock_override >= 0:
+		c.unlock_all = unlock_override == 1
 	c.load_progress()
 	return c
 
@@ -89,8 +99,14 @@ func is_cleared(level_id: String) -> bool:
 	return progress["cleared"].has(level_id)
 
 
-## Level 1 is open from the start; clearing level n opens n + 1.
+## Level 1 is open from the start; clearing level n opens n + 1. With unlock_all every playable level is open.
 func is_unlocked(number: int) -> bool:
+	if unlock_all and is_playable(number):
+		return true
+	return _ladder_unlocked(number)
+
+
+func _ladder_unlocked(number: int) -> bool:
 	if number <= 1:
 		return true
 	var prev := level_data(number - 1)
@@ -105,11 +121,23 @@ func highest_unlocked() -> int:
 	return n
 
 
-## Profiles available now: those whose entry level is open (level n's profiles come with level n).
-func unlocked_profiles() -> Array:
+func _ladder_highest() -> int:
+	var n := 1
+	for l in levels:
+		if _ladder_unlocked(int(l["number"])):
+			n = maxi(n, int(l["number"]))
+	return n
+
+
+## Profiles available now: those whose entry level is open (level n's profiles come with level n). With unlock_all,
+## `for_level` (a level number; 0 = the highest playable) also opens every profile that enters at or below it.
+func unlocked_profiles(for_level: int = 0) -> Array:
+	var ceiling := _ladder_highest()
+	if unlock_all:
+		ceiling = maxi(ceiling, for_level if for_level > 0 else highest_unlocked())
 	var out: Array = []
 	for id in catalogue.order:
-		if progress["unlocked_profiles"].has(id) or catalogue.unlock_level(id) <= highest_unlocked():
+		if progress["unlocked_profiles"].has(id) or catalogue.unlock_level(id) <= ceiling:
 			out.append(id)
 	return out
 
@@ -117,7 +145,7 @@ func unlocked_profiles() -> Array:
 func _refresh_unlocks() -> void:
 	var list: Array = progress["unlocked_profiles"]
 	for id in catalogue.order:
-		if catalogue.unlock_level(id) <= highest_unlocked() and not list.has(id):
+		if catalogue.unlock_level(id) <= _ladder_highest() and not list.has(id):
 			list.append(id)
 
 
@@ -160,9 +188,10 @@ func record_result(result: Dictionary) -> Dictionary:
 func loadout_for(level_id: String, level_default: Dictionary, active_slots: Array) -> Dictionary:
 	var saved: Dictionary = progress["loadouts"].get(level_id, {})
 	var out := {}
+	var open := unlocked_profiles(int(level_by_id(level_id).get("number", 0)))
 	for slot in active_slots:
 		var profile := str(saved.get(slot, ""))
-		if profile.is_empty() or not unlocked_profiles().has(profile):
+		if profile.is_empty() or not open.has(profile):
 			profile = str(level_default.get(slot, ""))
 		out[slot] = profile
 	return out
@@ -179,7 +208,7 @@ func validate_loadout(level: Level, selection: Dictionary) -> Array:
 	for p in level.parts:
 		if p.get("slot_id") != null:
 			families[str(p["slot_id"])] = str(p["family"])
-	var errors := catalogue.validate_loadout(selection, families, level.loadout_active_slots, unlocked_profiles())
+	var errors := catalogue.validate_loadout(selection, families, level.loadout_active_slots, unlocked_profiles(level.campaign_level))
 	for slot in selection:
 		if level.renders.has(slot) and not level.renders[slot].has(str(selection[slot])):
 			errors.append("slot %s: no render of %s for this song" % [slot, catalogue.display_name(str(selection[slot]))])

@@ -17,7 +17,7 @@ func _win(level_id: String, accuracy := 0.9, core := 0.8) -> Dictionary:
 
 func test_fresh_state_only_level_one_open() -> void:
 	_clean()
-	var c := Campaign.load_data(PATH)
+	var c := Campaign.load_data(PATH, 0)
 	assert_true(c.is_unlocked(1))
 	assert_false(c.is_unlocked(2))
 	assert_false(c.is_unlocked(3))
@@ -32,7 +32,7 @@ func test_fresh_state_only_level_one_open() -> void:
 
 func test_first_clear_unlocks_next_level_and_its_profiles_and_persists() -> void:
 	_clean()
-	var c := Campaign.load_data(PATH)
+	var c := Campaign.load_data(PATH, 0)
 	var r := c.record_result(_win("level_01"))
 	assert_true(r["first_clear"])
 	assert_eq(r["unlocked_level"], 2)
@@ -43,7 +43,7 @@ func test_first_clear_unlocks_next_level_and_its_profiles_and_persists() -> void
 	assert_true(c.unlocked_profiles().has("kick_armour"))
 	assert_false(c.is_unlocked(3))
 	assert_false(FileAccess.file_exists(PATH + ".tmp"), "the temp file is moved into place")
-	var again := Campaign.load_data(PATH)
+	var again := Campaign.load_data(PATH, 0)
 	assert_true(again.is_cleared("level_01"))
 	assert_true(again.is_unlocked(2))
 	assert_true(again.unlocked_profiles().has("kick_armour"))
@@ -56,7 +56,7 @@ func test_first_clear_unlocks_next_level_and_its_profiles_and_persists() -> void
 
 func test_replays_never_reset_and_only_improve_bests() -> void:
 	_clean()
-	var c := Campaign.load_data(PATH)
+	var c := Campaign.load_data(PATH, 0)
 	c.record_result(_win("level_01", 0.9, 0.8))
 	c.record_result(_win("level_02", 0.8, 0.5))
 	var replay := c.record_result(_win("level_01", 0.7, 0.4))
@@ -80,7 +80,7 @@ func test_replays_never_reset_and_only_improve_bests() -> void:
 
 func test_practice_and_rhythm_only_runs_write_nothing() -> void:
 	_clean()
-	var c := Campaign.load_data(PATH)
+	var c := Campaign.load_data(PATH, 0)
 	var practice := _win("level_02")
 	practice["progression"] = false
 	practice["play_mode"] = "practice"
@@ -105,25 +105,25 @@ func test_corrupt_save_is_kept_aside_and_replaced() -> void:
 	var f := FileAccess.open(PATH, FileAccess.WRITE)
 	f.store_string("{ this is not json")
 	f.close()
-	var c := Campaign.load_data(PATH)
+	var c := Campaign.load_data(PATH, 0)
 	assert_true(c.recovered_from_corrupt)
 	assert_true(FileAccess.file_exists(PATH + ".bad"), "the damaged file is kept")
 	assert_false(FileAccess.file_exists(PATH))
 	assert_true(c.is_unlocked(1) and not c.is_unlocked(2))
 	assert_true(c.record_result(_win("level_01"))["saved"])
-	assert_false(Campaign.load_data(PATH).recovered_from_corrupt)
+	assert_false(Campaign.load_data(PATH, 0).recovered_from_corrupt)
 	# a well-formed file of the wrong shape is also treated as corrupt
 	_clean()
 	f = FileAccess.open(PATH, FileAccess.WRITE)
 	f.store_string('{"version": 1, "cleared": 5}')
 	f.close()
-	assert_true(Campaign.load_data(PATH).recovered_from_corrupt)
+	assert_true(Campaign.load_data(PATH, 0).recovered_from_corrupt)
 	_clean()
 
 
 func test_loadouts_are_stored_per_level_and_validated() -> void:
 	_clean()
-	var c := Campaign.load_data(PATH)
+	var c := Campaign.load_data(PATH, 0)
 	var loaded := LevelLoader.load_pack(TestCase.project_path("songs/hold_the_line"))
 	var level: Level = loaded["level"]
 	var defaults := c.loadout_for(level.level_id, level.loadout_default, level.loadout_active_slots)
@@ -152,7 +152,7 @@ func test_loadouts_are_stored_per_level_and_validated() -> void:
 	assert_contains(c.validate_loadout(level, norender), "no render")
 	# a stored loadout comes back from disk, and a stored locked profile falls back to the default
 	c.store_loadout(level.level_id, {"kick_1": "kick_armour", "kick_2": "kick_march", "snare_1": "snare_guard", "bass_1": "bass_patrol"})
-	var reloaded := Campaign.load_data(PATH)
+	var reloaded := Campaign.load_data(PATH, 0)
 	assert_eq(reloaded.loadout_for(level.level_id, level.loadout_default, level.loadout_active_slots)["kick_1"], "kick_armour")
 	reloaded.progress["loadouts"][level.level_id]["bass_1"] = "bass_command"
 	assert_eq(reloaded.loadout_for(level.level_id, level.loadout_default, level.loadout_active_slots)["bass_1"], "bass_patrol")
@@ -171,3 +171,26 @@ func test_loader_applies_the_chosen_loadout_to_the_stems() -> void:
 	assert_contains(bad["errors"], "no render")
 	var bad_slot := LevelLoader.load_pack(path, {"loadout": {"bass_1": "bass_patrol"}})
 	assert_contains(bad_slot["errors"], "does not use")
+
+
+func test_unlock_all_opens_levels_and_profiles_per_level_without_touching_the_save() -> void:
+	_clean()
+	var c := Campaign.load_data(PATH, 1)
+	assert_true(c.unlock_all)
+	assert_true(c.is_unlocked(1) and c.is_unlocked(2) and c.is_unlocked(3))
+	assert_false(c.is_unlocked(4), "unplayable levels stay closed")
+	assert_true(c.unlocked_profiles(1).has("snare_guard") and not c.unlocked_profiles(1).has("kick_armour"), "level 1 offers only level 1 profiles")
+	assert_true(c.unlocked_profiles(2).has("kick_armour") and not c.unlocked_profiles(2).has("bass_patrol"))
+	assert_true(c.unlocked_profiles(3).has("bass_patrol"))
+	assert_false(c.progress["unlocked_profiles"].has("bass_patrol"), "the stored unlocks do not follow the switch")
+	var level: Level = LevelLoader.load_pack(TestCase.project_path("songs/hold_the_line"))["level"]
+	assert_eq(c.validate_loadout(level, level.loadout_default), [], "the level 3 default loadout is valid straight away")
+	# clears and bests still save
+	var r := c.record_result(_win("level_03"))
+	assert_true(r["saved"])
+	assert_true(Campaign.load_data(PATH, 0).is_cleared("level_03"))
+	assert_false(Campaign.load_data(PATH, 0).is_unlocked(2), "with the switch off the ladder is unchanged")
+	_clean()
+	var off := Campaign.load_data(PATH, 0)
+	assert_false(off.unlock_all)
+	assert_false(off.is_unlocked(2))

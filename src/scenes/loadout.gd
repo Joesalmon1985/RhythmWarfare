@@ -95,7 +95,7 @@ func _slot_row(slot: String) -> Control:
 	opt.custom_minimum_size = Vector2(0, 48)
 	opt.add_theme_font_size_override("font_size", 18)
 	var ids: Array = []
-	var unlocked := campaign.unlocked_profiles()
+	var unlocked := campaign.unlocked_profiles(int(data["number"]))
 	for id in campaign.catalogue.profiles_of_family(family):
 		var text := "%s: %s" % [campaign.catalogue.display_name(id), campaign.catalogue.unit_mix_text(id)]
 		var disabled := false

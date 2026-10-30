@@ -1,5 +1,7 @@
 {
  "format": "defense_campaign.v1",
+ "unlock_all": true,
+ "unlock_all_note": "Testing switch. true opens every playable level and, per level, every instrument profile that enters at or below it. Set false (or run with RW_UNLOCK_ALL=0) for the normal ladder; RW_UNLOCK_ALL=1 forces it on.",
  "unlock_policy": "Clearing level n unlocks level n+1 and its entry profiles; no accuracy threshold blocks the main ladder.",
  "loadout_caps": {
   "kick": 2,
