@@ -14,7 +14,7 @@ drum and bass duel remains as "Free play". Standalone Godot 4.5 project; the PRD
 - `src/sim/bot_ai.gd` OpenRA's Rush AI squad manager, driving both sides' units; `docs/OPENRA_BEHAVIOUR_SPEC.md` is the engine-sourced specification it and the unit behaviour follow, with the deviations noted in code.
 - `data/openra_rules.json` actor, weapon, locomotor and repair values at the pinned OpenRA commit.
 - `songs/<pack>/` a song pack: `level.json` plus `audio/` stems. `first_watch`, `second_pulse` and `hold_the_line` are the schema 2 campaign levels (placeholder audio), `level_01` and `test_16` the legacy duel packs.
-- `data/campaign/` the campaign (ten levels, three playable) and the tuned waves; `data/instruments/catalogue.json` the instrument profiles and unit recipes; `data/battlefields/defense_01.json` the defense map.
+- `data/campaign/` the campaign (ten levels, three playable) and the tuned waves; `data/instruments/catalogue.json` the instrument profiles and unit recipes; `data/battlefields/defense_01.json` the centred-base defense map (80 x 40 cells, with `data/maps/field_80x40.json`).
 - `tools/` authoring and import scripts (Python 3); `tools/campaign/` builds the campaign packs from the owner's MIDI (`build_defense_pack.py`), derives waves and checks rendered audio. `tests/` headless GDScript tests.
 - `campaign/` the defense campaign starter pack (29 Oct 2026): first-three musical MIDI per slot, section focus maps, compiled reference charts, proposed waves, instrument catalogue, ten-level plan and the reference authoring tools. Source data, not docs; `.gdignore` keeps Godot out of it.
 

@@ -1,6 +1,6 @@
 # Rhythm Warfare: handover for the next agent
 
-State on 29 October 2026, after the defense campaign build. Read this first, then `docs/PRD.md` (section 14 is the
+State on 30 October 2026, after the defense campaign build and the owner's three layout requests (centred base, off-screen entries, unlock-all). Read this first, then `docs/PRD.md` (section 14 is the
 rule set for the campaign; sections 1 to 13 still describe the legacy duel), `README.md` (layout and commands) and
 `docs/CAMPAIGN_PLAN.md` (the plan this build followed; its divergences are listed below). Everything is committed on
 `main` at https://github.com/Joesalmon1985/RhythmWarfare.
@@ -9,8 +9,9 @@ rule set for the campaign; sections 1 to 13 still describe the legacy duel), `RE
 
 A mobile rhythm game with a three-level defense campaign. You play a chart on four unlabelled buttons; every
 successful note builds a **group** of OpenRA units (the recipe of the instrument equipped in that note's slot) that
-walks to one of three defense points in front of your base, round robin, and holds it. Enemy waves arrive from three
-entries on a schedule that ignores your accuracy; they walk via a defense point to your **command core**. Lose the
+walks to one of three defense points outside your base, round robin, and holds it. The base sits in the middle of the
+screen; enemy waves walk on from off screen at the **left, right and top** (nothing from below, the lane is there) on a
+schedule that ignores your accuracy; they walk via the defense point of their side to your **command core**. Lose the
 core and the run is over at once; reach the end of the song with it alive and you win, enemies or not. There is no
 enemy base. Clearing a level unlocks the next level and its instruments. Misses cost production only.
 
@@ -23,23 +24,55 @@ enemy base. Clearing a level unlocks the next level and its instruments. Misses 
 The old two-sided duel (`songs/level_01`, `songs/test_16`, schema 1) is still in the game as "Free play" and still
 passes its tests; delete it only when the owner says so.
 
+## Layout change of 30 October 2026 (centred base, off-screen entries, unlock-all)
+
+- **Map**: `data/maps/field_80x40.json` (80 x 40 cells) and `data/battlefields/defense_01.json`, both written by
+  `python tools/campaign/build_battlefield.py` (edit the script, not the JSON). One brick compound, ring x 28 to 50,
+  y 16 to 25, five-cell openings left (rows 19 to 23), right and top (columns 37 to 41), one pillbox at the end of each
+  opening, factory, barracks, core, power plant and dome inside; defense points 1 left (24,21), 2 top (39,13),
+  3 right (54,21); entries `left` (8,21), `top` (39,0), `right` (70,21). `view.center` (39.5, 20.5) and
+  `view.max_cells` (53.4 x 20) define the window.
+- **View**: `BattleView.window_rect()` picks the visible window (never larger than `max_cells`, centred on `view.center`),
+  everything outside it is masked, sprites stay at native scale; a screen wider than 16:9 shows dark bars beside the
+  window rather than the spawn area. The pause button moved to the top right (the top defense point is under the
+  centre). The HUD wave warning says `WAVE n INCOMING FROM THE LEFT|RIGHT|TOP s`, draws an arrow at that edge and the
+  route to the defense point.
+- **Waves**: every level uses all three approaches (round robin spreads defenders over all three points, so one
+  approach wastes two thirds of them). `tools/campaign/retime_waves.py` assigns entries and spawn ticks from contact
+  times (first contact 12.6 s, last unit 2 s before the song ends); `build_defense_pack.py` prints travel times per actor
+  and flags a wave that breaks either limit. Order of work after any edit: `gen_waves.py` (counts), `retime_waves.py`,
+  `build_defense_pack.py <n> --waves-only`, `tools/test.sh`, `tools/balance.sh`.
+- **Unlock-all** (testing): `"unlock_all": true` in `data/campaign/campaign.json` opens every playable level from the
+  menu and, per level, every profile whose `available_from_level` is at or below it; clears and bests still save, the
+  stored unlocks ignore the switch, the menu shows a note. **To turn it off set it to `false`** in that file (or run with
+  `RW_UNLOCK_ALL=0`; `RW_UNLOCK_ALL=1` forces it on) and rebuild the exports. It is on now.
+- Tests: `tests/test_defense_layout.gd` (entries outside the window on 16:9, 21:9 and 4:3, base centred, wave units walk
+  in unseen, production leaves the compound, first contact after the opening bars and last arrival before the end),
+  plus the unlock-all test in `tests/test_campaign.gd`. Other tests needed only the entry id changed.
+- Balance after the change: `docs/BALANCE.md` (perfect and 0.85 survive, none loses on all three levels; 0.6 reported).
+  Nobody has played this layout: see "Not verified" below.
+
 ## Verified and not verified
 
-Verified (29 Oct 2026, this machine):
-- `bash tools/test.sh`: 1,750 headless checks, 0 failures (the old duel tests plus the schema 2 loader, importer
+Verified (30 Oct 2026, this machine; the 29 Oct list that follows was re-run where marked):
+- `bash tools/test.sh`: 1,892 headless checks, 0 failures (the old duel tests plus the schema 2 loader, importer
   regression, judge-by-slot, transport with five streams, defense simulation, catalogue, campaign save, balance guard
   rails). One expected `Parse JSON failed` line is the corrupt-save test.
 - `python tools/campaign/validate_campaign.py campaign`: the pack's 102 structural checks pass.
 - The importer reproduces the pack's compiled charts exactly (64 / 96 / 89 events, practice 80) and the 18 MIDI hashes
   match `campaign/Musical_Source_Integrity.json` (a test re-hashes them).
-- Seeds 1 to 3 for perfect, 0.85, 0.6 and no input on all three levels (`docs/BALANCE.md`): perfect and 0.85 survive,
-  no input loses; 0.6 is reported (level 3 loses it).
-- Desktop real-window run of level 3 with perfect autoplay: p95 16.67 ms (vsync-capped 60 Hz), 1 of 3,971 frames over
-  33 ms, peak 176 live units. Windows export runs the level 2 pack headless; the Android APK (42.8 MB) exports and
+- Seeds 1 to 3 for perfect, 0.85, 0.6 and no input on all three levels (`docs/BALANCE.md`, re-run 30 Oct on the centred
+  layout): perfect and 0.85 survive, no input loses; 0.6 is reported (levels 1 and 3 lose it, level 2 loses one seed).
+- Screenshots of a real-window run of level 3 (30 Oct): base centred, entries off screen, units walking in from the
+  left and right edges, direction arrow and text warning, pause button top right. Looked at by the agent, not by a person.
+- Desktop real-window run of level 3 with perfect autoplay (re-run 30 Oct, centred layout): p95 16.67 ms (vsync-capped
+  60 Hz), 0 of 3,970 frames over 33 ms, max 25.1 ms, peak 163 live units. Windows export runs the level 2 pack headless; the Android APK (42.8 MB) exports and
   signs and contains the packs and data.
 - Screenshots of the playtest, battle, menu and loadout screens were looked at; nothing was played by a person.
 
-**Not verified:** a phone run (touch feel, thumb gaps, frame time on the device), real stems (all audio is
+**Not verified:** the new layout on any screen but a 1280 x 720 desktop window (wide phones show dark bars, a 4:3 tablet
+shows a 20-row window with bars above and below), whether 12 s of visible walking before contact feels right, whether
+the top approach (10 s, near the HUD bar) is readable, whether enemy waves are fun with three points; a phone run (touch feel, thumb gaps, frame time on the device), real stems (all audio is
 synthesised placeholder sound), any human playtest of difficulty or of the charts, alignment of stems by ear, the result
 screen's look after a real clear (the logic is tested, the screen was not screenshotted after a clear), the 0.6
 accuracy difficulty as the owner wants it.
@@ -92,10 +125,10 @@ level whose audio you replaced by hand: it regenerates the placeholders (use `--
   objectives, defense points, entries, `produce_group`, `spawn_wave_unit`, outcome rules. **`defense_ai.gd`** replaces
   the Rush AI there (`bot_ai.gd` is duel only). `rules.gd` loads data.
 - `src/ui/`: `battle_view.gd`, `hud.gd` (duel HUD and the defense HUD: core health, time left, defenders per point,
-  wave warning with route), `lane_view.gd` (notes, focus cue, `lookahead_s`), `sprite_bank.gd`.
+  wave warning with direction and route), `lane_view.gd` (notes, focus cue, `lookahead_s`), `sprite_bank.gd`.
 - `src/scenes/`: `main_menu` (campaign list, free play, rhythm playtest, calibration, approach slider), **`loadout`**,
   `play`, `result`, `calibration`.
-- `data/`: `battlefields/defense_01.json` (+ the duel's `mvp_mirrored_01.json`), **`campaign/campaign.json`**,
+- `data/`: `battlefields/defense_01.json` (centred base, 80 x 40 map `maps/field_80x40.json`; + the duel's `mvp_mirrored_01.json`), **`campaign/campaign.json`**,
   **`campaign/waves/level_0N.json`** (tuned waves and level rules), **`instruments/catalogue.json`**, `openra_rules.json`,
   rosters, map.
 - `songs/`: `first_watch`, `second_pulse`, `hold_the_line` (schema 2) plus the two duel packs.
@@ -111,8 +144,8 @@ level whose audio you replaced by hand: it regenerates the placeholders (use `--
    because `openra_rules.json` only has `build_at` for infantry and aircraft. The catalogue's tags are validated against it.
 2. The production core (recipes, groups, round robin) landed in stage 2 so level 1 was playable; stage 3 added the
    catalogue validation, loadout rules and the tests.
-3. The pack's `waves.proposed.json` is replaced by tuned files in `data/campaign/waves/` (scaled counts plus level
-   rules such as `objective_hp`); entries moved to 14-17 cells beyond the wall (x = 31), not the map edge.
+3. The pack's `waves.proposed.json` is replaced by tuned files in `data/campaign/waves/` (scaled counts, entries
+   left / right / top and spawn ticks from `retime_waves.py`, plus level rules such as `objective_hp`).
 4. The command core's hit points are a level rule (60,000, not the building's 150,000): see `docs/BALANCE.md`.
 5. Enemy wave units ignore buildings other than their objective (`Ent.ignore_structures`), or they park at the
    pillboxes forever. Defenders keep the normal auto-target behaviour.
@@ -141,7 +174,7 @@ Campaign additions: defenders have a 6-cell leash and walk home; wave units figh
 1. Real stems and the phone run (above). Retune `docs/BALANCE.md` after the owner has played: the wave scales are
    starting points chosen by a harness, not by a human.
 2. Enemy peaks reach 100 to 230 live units on levels 2 and 3 when the defenders thin out; fine on the desktop, unmeasured
-   on a phone. `BattleView.PIXEL_SCALE = 2` halves the map if sprites are too small or slow.
+   on a phone. `BattleView.PIXEL_SCALE = 2` doubles the sprites (the window then shows half as many cells; revisit `view.max_cells`).
 3. Levels 4 to 10, the air-service recipe (recognised by the catalogue, used by no level), second objective (`tech_core`)
    and battlefield variants with more defenses are planned in `campaign/Plan/`, not built.
 4. The loadout screen is functional, not styled; no audition of an instrument's sound (renders play only in the level).
@@ -150,9 +183,11 @@ Campaign additions: defenders have a 6-cell leash and walk home; wave units figh
 ## Everyday commands
 
 ```
-bash tools/test.sh                                                   # 1,750 headless checks (about 35 s)
+bash tools/test.sh                                                   # 1,892 headless checks (about 35 s)
 python tools/campaign/build_defense_pack.py all                      # rebuild packs + placeholder stems (about 15 s)
-python tools/campaign/build_defense_pack.py all --waves-only         # after editing data/campaign/waves/*.json
+python tools/campaign/build_defense_pack.py all --waves-only         # after editing data/campaign/waves/*.json (prints travel times)
+python tools/campaign/build_battlefield.py                           # rewrite the map and defense_01.json
+python tools/campaign/gen_waves.py 2 60000 1.4 && python tools/campaign/retime_waves.py 2   # scale counts, then entries and times
 RW_CHART=level_03.campaign RW_SEEDS="1 2 3" bash tools/balance.sh res://songs/hold_the_line 1.0 perfect "accuracy:0.85" none
 python tools/campaign/audio_preflight.py songs/hold_the_line
 RW_PACK=res://songs/hold_the_line RW_CHART=level_03.campaign RW_AUTOPLAY=perfect RW_SCENE=play <godot> --path .   # PERF line

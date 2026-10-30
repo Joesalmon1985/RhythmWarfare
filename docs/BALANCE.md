@@ -97,7 +97,7 @@ cautious, as in OpenRA.
 
 # Defense campaign balance (schema 2 packs, levels 1 to 3)
 
-Added 29 October 2026. Everything below the duel history in this file (above this section) belongs to the legacy
+Added 29 October 2026, re-tuned 30 October 2026 for the centred base (below). Everything below the duel history in this file (above this section) belongs to the legacy
 two-sided duel. The campaign is measured with the same headless harness:
 
 ```
@@ -109,101 +109,113 @@ One line per policy and seed (with `RW_WAVES=1`, also each wave's spawn, first a
 note hit exactly), `accuracy:<f>` (each note hit with that probability, seeded, misses simply not pressed) and `none`.
 `tests/test_defense_balance.gd` keeps the headline guard rails (perfect survives, no input loses) in the headless suite.
 
-## What was tuned and how
+## What was tuned and how (centred base, 30 October 2026)
 
-- The pack's `waves.proposed.json` assumed entries at the map edge. Entries now sit 14 to 17 cells beyond the wall
-  opening (`data/battlefields/defense_01.json`); riflemen take 8.3 s from the entry to the centre defense point and
-  12.2 s to the wall opening, jeeps 2.7 s and 4.0 s (the build prints this per wave: `python tools/campaign/build_defense_pack.py 1`).
+The owner asked for the base in the middle of the screen with enemies walking on from off screen. The battlefield
+(`data/battlefields/defense_01.json`, built by `tools/campaign/build_battlefield.py`) is now an 80 x 40 cell map; the
+player sees a window of 53 x 20 cells centred on the command core. One walled compound (ring x 28 to 50, y 16 to 25)
+has five-cell openings on the left, right and top and one pillbox at the end of each opening (three in all, no gun
+turrets or SAM sites); the bottom of the screen is the rhythm lane. Defense points sit 3.5 cells outside each opening
+(1 left, 2 top, 3 right) and the entries 4 to 10 cells outside the window: left x = 8, right x = 70, top y = 0.
+
+- **Travel**: riflemen about 1.3 cells/s need 12.1 s from the left or right entry to its defense point and 9.9 s from
+  the top; light tanks 5.8 s (4.7 s), jeeps 4.0 s (3.2 s); to the core add 11 s (5 s) for riflemen. The build prints
+  this for every wave (`python tools/campaign/build_defense_pack.py <n> --waves-only`), with the first and last unit's
+  contact time and a warning if first contact comes before the four opening bars or the last unit arrives after the end.
+- **Entries**: production is a round robin over the three defense points, so a level that sends everything down one
+  approach wastes two thirds of the defenders (a first try with all of level 1 from the right lost with perfect play).
+  Every level now uses all three approaches (`tools/campaign/retime_waves.py`): level 1 sweeps left, top, right;
+  level 2 goes left, right, top; level 3 sweeps again for eleven waves.
+- **Timing**: the longer walk made the authored schedule (spawn at bar 5, 9, ...) arrive after the song. The retime
+  script keeps the authored order and proportions but chooses spawn ticks from contact times: first contact 12.6 s
+  (after the four opening bars end at 5.5 s), the last unit of the last wave at the defense point 2 s before the song
+  ends (40.4 s of 44.1 s, 50.3 of 55.2 s, 62.2 of 66.2 s). The authored tick stays in each wave as
+  `authored_start_tick`, the contact time as `contact_tick`. `tests/test_defense_layout.gd` checks both limits.
+- **Counts**: contact now comes in at a steadier pace than the authored one, so the scales dropped: level 1 x1.9
+  (unchanged), level 2 x2.4 to x1.4, level 3 x1.4 to x1.0 (`python tools/campaign/gen_waves.py <level> 60000 <scale>`,
+  then `retime_waves.py <level>` and `build_defense_pack.py <level> --waves-only`). The files in
+  `data/campaign/waves/` are authoritative and a test keeps the packs in step with them.
 - The command core keeps the OpenRA construction yard's armour but its hit points are a level setting
-  (`rules.objective_hp`): 60,000 against the building's 150,000. At 150,000 the proposed waves rarely killed it within a
-  44 to 66 s song, so the no-input run did not reliably lose.
-- Wave sizes are the proposed waves multiplied (infantry and vehicles alike): level 1 x1.9, level 2 x2.4, level 3 x1.4
-  (`python tools/campaign/gen_waves.py <level> 60000 <scale>`, then `build_defense_pack.py <level> --waves-only`). The files
-  in `data/campaign/waves/` are the authoritative result and a test keeps the packs in step with them. Level 3's
-  scale is lower because its song gives the player the third recipe (bass groups of two riflemen and a rocket
-  soldier) and eleven waves; at x1.7 even perfect play lost.
-- Enemy wave units ignore buildings other than their objective (they fight units and the core); otherwise a wave
-  parks in front of the pillboxes and shoots at them forever, which no recipe of this roster can break. The
-  pillboxes and walls of `defense_01` still shoot and block.
+  (`rules.objective_hp`): 60,000 against the building's 150,000.
+- Enemy wave units ignore buildings other than their objective (they fight units and the core); the pillboxes and
+  walls still shoot and block.
 - Recipes are the catalogue's, unchanged: March Kick two riflemen, Guard Snare one jeep, Armour Kick light tank then
-  jeep, Patrol Sub two riflemen and a rocket soldier. They were not rebalanced against each other: a tuned
-  sidegrade set is outside the first three levels.
+  jeep, Patrol Sub two riflemen and a rocket soldier. They were not rebalanced against each other.
 
-## Results (seeds 1 to 3, desktop headless run on 29 October 2026)
+## Results (seeds 1 to 3, desktop headless run on 30 October 2026, centred layout)
 
 ### Level 1, First Watch (32 bars, 44.1 s, command core 60,000 hp, waves = proposed x1.9)
 
 | Policy | Seed | Outcome | Ended | Accuracy | Core left | Groups (by point 1/2/3) | Player units lost | Enemy units killed | Peak live units P/E |
 | --- | ---: | --- | ---: | ---: | ---: | --- | ---: | ---: | --- |
-| perfect | 1 | victory (survived) | 44.1 s | 100% | 100% | 64 (22/21/21) | 59 | 34 | 46 / 87 |
-| perfect | 2 | victory (survived) | 44.1 s | 100% | 100% | 64 (22/21/21) | 68 | 29 | 44 / 94 |
-| perfect | 3 | victory (survived) | 44.1 s | 100% | 100% | 64 (22/21/21) | 68 | 27 | 45 / 93 |
-| accuracy:0.85 | 1 | victory (survived) | 44.1 s | 92% | 100% | 59 (20/20/19) | 68 | 29 | 42 / 89 |
-| accuracy:0.85 | 2 | victory (survived) | 44.1 s | 84% | 100% | 54 (18/18/18) | 71 | 26 | 39 / 91 |
-| accuracy:0.85 | 3 | victory (survived) | 44.1 s | 81% | 100% | 52 (18/17/17) | 64 | 30 | 41 / 89 |
-| accuracy:0.6 | 1 | victory (survived) | 44.1 s | 56% | 14% | 36 (12/12/12) | 47 | 12 | 20 / 106 |
-| accuracy:0.6 | 2 | victory (survived) | 44.1 s | 64% | 100% | 41 (14/14/13) | 57 | 21 | 24 / 96 |
-| accuracy:0.6 | 3 | victory (survived) | 44.1 s | 66% | 100% | 42 (14/14/14) | 56 | 20 | 27 / 99 |
-| none | 1 | defeat (core destroyed) | 39.9 s | 0% | 0% | 0 (0/0/0) | 1 | 18 | 0 / 93 |
-| none | 2 | defeat (core destroyed) | 39.8 s | 0% | 0% | 0 (0/0/0) | 1 | 18 | 0 / 91 |
-| none | 3 | defeat (core destroyed) | 42.9 s | 0% | 0% | 0 (0/0/0) | 1 | 19 | 0 / 98 |
+| perfect | 1 | victory (survived) | 44.1 s | 100% | 100% | 64 (22/21/21) | 67 | 60 | 47 / 84 |
+| perfect | 2 | victory (survived) | 44.1 s | 100% | 100% | 64 (22/21/21) | 67 | 54 | 47 / 83 |
+| perfect | 3 | victory (survived) | 44.1 s | 100% | 100% | 64 (22/21/21) | 56 | 61 | 48 / 80 |
+| accuracy:0.85 | 1 | victory (survived) | 44.1 s | 92% | 100% | 59 (20/20/19) | 80 | 41 | 37 / 88 |
+| accuracy:0.85 | 2 | victory (survived) | 44.1 s | 84% | 100% | 54 (18/18/18) | 73 | 49 | 40 / 87 |
+| accuracy:0.85 | 3 | victory (survived) | 44.1 s | 81% | 100% | 52 (18/17/17) | 71 | 48 | 40 / 88 |
+| accuracy:0.6 | 1 | defeat (core destroyed) | 41.9 s | 54% | 0% | 33 (11/11/11) | 46 | 25 | 18 / 99 |
+| accuracy:0.6 | 2 | defeat (core destroyed) | 40.4 s | 64% | 0% | 38 (13/13/12) | 49 | 19 | 25 / 101 |
+| accuracy:0.6 | 3 | defeat (core destroyed) | 42.0 s | 64% | 0% | 39 (13/13/13) | 55 | 28 | 24 / 94 |
+| none | 1 | defeat (core destroyed) | 31.2 s | 0% | 0% | 0 (0/0/0) | 1 | 16 | 0 / 102 |
+| none | 2 | defeat (core destroyed) | 31.7 s | 0% | 0% | 0 (0/0/0) | 1 | 16 | 0 / 102 |
+| none | 3 | defeat (core destroyed) | 31.8 s | 0% | 0% | 0 (0/0/0) | 1 | 16 | 0 / 102 |
 
-### Level 2, Second Pulse (40 bars, 55.2 s, command core 60,000 hp, waves = proposed x2.4)
-
-| Policy | Seed | Outcome | Ended | Accuracy | Core left | Groups (by point 1/2/3) | Player units lost | Enemy units killed | Peak live units P/E |
-| --- | ---: | --- | ---: | ---: | ---: | --- | ---: | ---: | --- |
-| perfect | 1 | victory (survived) | 55.2 s | 100% | 100% | 96 (32/32/32) | 115 | 76 | 65 / 171 |
-| perfect | 2 | victory (survived) | 55.2 s | 100% | 100% | 96 (32/32/32) | 112 | 81 | 64 / 168 |
-| perfect | 3 | victory (survived) | 55.2 s | 100% | 100% | 96 (32/32/32) | 115 | 79 | 67 / 167 |
-| accuracy:0.85 | 1 | victory (survived) | 55.2 s | 89% | 100% | 85 (29/28/28) | 112 | 80 | 52 / 165 |
-| accuracy:0.85 | 2 | victory (survived) | 55.2 s | 85% | 100% | 82 (28/27/27) | 115 | 47 | 43 / 198 |
-| accuracy:0.85 | 3 | victory (survived) | 55.2 s | 81% | 100% | 78 (26/26/26) | 107 | 52 | 50 / 194 |
-| accuracy:0.6 | 1 | defeat (core destroyed) | 53.2 s | 57% | 0% | 53 (18/18/17) | 78 | 20 | 23 / 226 |
-| accuracy:0.6 | 2 | victory (survived) | 55.2 s | 66% | 38% | 63 (21/21/21) | 89 | 31 | 26 / 214 |
-| accuracy:0.6 | 3 | victory (survived) | 55.2 s | 61% | 14% | 59 (20/20/19) | 84 | 36 | 26 / 209 |
-| none | 1 | defeat (core destroyed) | 35.2 s | 0% | 0% | 0 (0/0/0) | 1 | 12 | 0 / 116 |
-| none | 2 | defeat (core destroyed) | 36.1 s | 0% | 0% | 0 (0/0/0) | 1 | 14 | 0 / 118 |
-| none | 3 | defeat (core destroyed) | 35.0 s | 0% | 0% | 0 (0/0/0) | 1 | 12 | 0 / 114 |
-
-### Level 3, Hold the Line (48 bars, 66.2 s, command core 60,000 hp, waves = proposed x1.4)
+### Level 2, Second Pulse (40 bars, 55.2 s, command core 60,000 hp, waves = proposed x1.4)
 
 | Policy | Seed | Outcome | Ended | Accuracy | Core left | Groups (by point 1/2/3) | Player units lost | Enemy units killed | Peak live units P/E |
 | --- | ---: | --- | ---: | ---: | ---: | --- | ---: | ---: | --- |
-| perfect | 1 | victory (survived) | 66.2 s | 100% | 100% | 89 (30/30/29) | 148 | 76 | 95 / 134 |
-| perfect | 2 | victory (survived) | 66.2 s | 100% | 100% | 89 (30/30/29) | 153 | 79 | 93 / 130 |
-| perfect | 3 | victory (survived) | 66.2 s | 100% | 100% | 89 (30/30/29) | 133 | 106 | 96 / 105 |
-| accuracy:0.85 | 1 | victory (survived) | 66.2 s | 89% | 100% | 79 (27/26/26) | 155 | 73 | 70 / 136 |
-| accuracy:0.85 | 2 | victory (survived) | 66.2 s | 85% | 100% | 76 (26/25/25) | 138 | 85 | 64 / 126 |
-| accuracy:0.85 | 3 | victory (survived) | 66.2 s | 80% | 98% | 71 (24/24/23) | 141 | 59 | 58 / 152 |
-| accuracy:0.6 | 1 | defeat (core destroyed) | 58.5 s | 58% | 0% | 48 (16/16/16) | 90 | 29 | 22 / 152 |
-| accuracy:0.6 | 2 | defeat (core destroyed) | 61.0 s | 63% | 0% | 53 (18/18/17) | 98 | 36 | 28 / 152 |
-| accuracy:0.6 | 3 | defeat (core destroyed) | 61.8 s | 62% | 0% | 52 (18/17/17) | 100 | 50 | 39 / 149 |
-| none | 1 | defeat (core destroyed) | 40.8 s | 0% | 0% | 0 (0/0/0) | 1 | 16 | 0 / 90 |
-| none | 2 | defeat (core destroyed) | 41.4 s | 0% | 0% | 0 (0/0/0) | 1 | 17 | 0 / 90 |
-| none | 3 | defeat (core destroyed) | 40.9 s | 0% | 0% | 0 (0/0/0) | 1 | 16 | 0 / 90 |
+| perfect | 1 | victory (survived) | 55.2 s | 100% | 100% | 96 (32/32/32) | 69 | 96 | 69 / 77 |
+| perfect | 2 | victory (survived) | 55.2 s | 100% | 100% | 96 (32/32/32) | 67 | 104 | 74 / 76 |
+| perfect | 3 | victory (survived) | 55.2 s | 100% | 100% | 96 (32/32/32) | 67 | 86 | 71 / 80 |
+| accuracy:0.85 | 1 | victory (survived) | 55.2 s | 89% | 100% | 85 (29/28/28) | 83 | 85 | 63 / 84 |
+| accuracy:0.85 | 2 | victory (survived) | 55.2 s | 85% | 100% | 82 (28/27/27) | 73 | 81 | 55 / 86 |
+| accuracy:0.85 | 3 | victory (survived) | 55.2 s | 81% | 100% | 78 (26/26/26) | 76 | 85 | 51 / 79 |
+| accuracy:0.6 | 1 | victory (survived) | 55.2 s | 57% | 100% | 55 (19/18/18) | 64 | 67 | 25 / 106 |
+| accuracy:0.6 | 2 | victory (survived) | 55.2 s | 66% | 100% | 63 (21/21/21) | 75 | 55 | 34 / 102 |
+| accuracy:0.6 | 3 | defeat (core destroyed) | 52.8 s | 62% | 0% | 57 (19/19/19) | 59 | 51 | 28 / 97 |
+| none | 1 | defeat (core destroyed) | 36.9 s | 0% | 0% | 0 (0/0/0) | 1 | 21 | 0 / 97 |
+| none | 2 | defeat (core destroyed) | 34.5 s | 0% | 0% | 0 (0/0/0) | 1 | 20 | 0 / 80 |
+| none | 3 | defeat (core destroyed) | 34.5 s | 0% | 0% | 0 (0/0/0) | 1 | 20 | 0 / 80 |
+
+### Level 3, Hold the Line (48 bars, 66.2 s, command core 60,000 hp, waves = proposed x1.0)
+
+| Policy | Seed | Outcome | Ended | Accuracy | Core left | Groups (by point 1/2/3) | Player units lost | Enemy units killed | Peak live units P/E |
+| --- | ---: | --- | ---: | ---: | ---: | --- | ---: | ---: | --- |
+| perfect | 1 | victory (survived) | 66.2 s | 100% | 100% | 89 (30/30/29) | 107 | 96 | 89 / 79 |
+| perfect | 2 | victory (survived) | 66.2 s | 100% | 100% | 89 (30/30/29) | 102 | 111 | 85 / 76 |
+| perfect | 3 | victory (survived) | 66.2 s | 100% | 100% | 89 (30/30/29) | 93 | 97 | 101 / 76 |
+| accuracy:0.85 | 1 | victory (survived) | 66.2 s | 89% | 92% | 79 (27/26/26) | 103 | 88 | 77 / 79 |
+| accuracy:0.85 | 2 | victory (survived) | 66.2 s | 85% | 91% | 76 (26/25/25) | 99 | 96 | 70 / 80 |
+| accuracy:0.85 | 3 | victory (survived) | 66.2 s | 80% | 92% | 71 (24/24/23) | 140 | 69 | 59 / 96 |
+| accuracy:0.6 | 1 | defeat (core destroyed) | 57.6 s | 57% | 0% | 47 (16/16/15) | 77 | 41 | 26 / 111 |
+| accuracy:0.6 | 2 | defeat (core destroyed) | 63.6 s | 64% | 0% | 56 (19/19/18) | 97 | 54 | 39 / 101 |
+| accuracy:0.6 | 3 | defeat (core destroyed) | 58.0 s | 61% | 0% | 51 (17/17/17) | 81 | 57 | 39 / 97 |
+| none | 1 | defeat (core destroyed) | 37.8 s | 0% | 0% | 0 (0/0/0) | 1 | 18 | 0 / 61 |
+| none | 2 | defeat (core destroyed) | 38.0 s | 0% | 0% | 0 (0/0/0) | 1 | 19 | 0 / 62 |
+| none | 3 | defeat (core destroyed) | 37.8 s | 0% | 0% | 0 (0/0/0) | 1 | 18 | 0 / 61 |
 
 ## Reading the tables
 
-- **Perfect and 0.85 accuracy survive every seed on all three levels**, with the command core at 100% except one
-  0.85 run on level 3 (98%).
-- **No input loses every seed on all three levels**, at 40 to 43 s of 44 s on level 1, about 35 s of 55 s on level 2
-  and about 41 s of 66 s on level 3. Level 1 is the narrow one: with no input the first waves still need most of the
-  song to reach and kill the core.
-- **0.6 accuracy is reported, not tuned for**: level 1 survives all three seeds (one with the core at 14%), level 2
-  survives two of three (core 38% and 14%) and loses one at 53 s, level 3 loses all three at 58 to 62 s. A player who
-  misses four notes in ten is meant to feel the defense thin out; whether that is the right difficulty is the
-  owner's call after a phone playtest.
-- Misses cost production only (no direct core damage). The by-point column shows the round robin: the three defense
-  points get equal shares of the groups (22/21/21 of 64 on level 1).
-- Enemy peaks of 100 to 230 live units (the unclamped waves pile up when the defenders thin out) are the worst case for
-  frame time; see the `PERF` line below.
+- **Perfect and 0.85 accuracy survive every seed on all three levels.** The core is at 100% on levels 1 and 2 and at
+  91 to 92% for 0.85 on level 3.
+- **No input loses every seed on all three levels**, after 31 to 32 s of 44 s (level 1), 34 to 37 s of 55 s (level 2)
+  and about 38 s of 66 s (level 3).
+- **0.6 accuracy is reported, not tuned for**: level 1 loses all three seeds (40 to 42 s), level 2 survives two of
+  three and loses one at 52.8 s, level 3 loses all three (58 to 64 s). The old tables (29 October, one-sided layout)
+  had level 1 surviving 0.6; the centred layout spreads the defenders over three points, which leaves each
+  approach thinner when the player misses. Whether that is the right difficulty is the owner's call after a play test.
+- Misses cost production only (no direct core damage). The by-point column shows the round robin: equal shares.
+- Enemy peaks are now 60 to 110 live units (earlier 90 to 230): waves are smaller and killed sooner.
+- This is a harness result for a layout nobody has played: the wave scales are starting points.
 
 ## Desktop frame time
 
 `RW_PACK=res://songs/hold_the_line RW_CHART=level_03.campaign RW_AUTOPLAY=perfect RW_SCENE=play`, a real window on the
-development PC (RTX 3060, vsync 60 Hz), 66 s: 3,971 frames, average 16.68 ms, p95 16.67 ms, maximum 58.3 ms, one frame
-over 33 ms, peak 176 live units. That is the perfect-play case; the 0.6 runs reach a higher peak (about 230 enemies on
-level 2) but were measured headless only. The phone measurement (A13) is still the owner's run: see
+development PC (RTX 3060, vsync 60 Hz), 66 s, re-measured 30 October 2026 on the centred layout: 3,970 frames, average
+16.68 ms, p95 16.67 ms, maximum 25.1 ms, no frame over 33 ms, peak 163 live units (29 October, one-sided layout: maximum
+58.3 ms, one frame over 33 ms, peak 176). That is the perfect-play case; the 0.6 runs reach a higher peak (about 110 enemies now)
+but were measured headless only. The phone measurement (A13) is still the owner's run: see
 `docs/HANDOVER.md` for the exact command.
 
 ## Not verified
