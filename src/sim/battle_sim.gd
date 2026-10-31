@@ -286,6 +286,8 @@ func setup(p_rules: Rules, level_rules: Dictionary, p_seed: int) -> void:
 		for sk in bf.get("sockets", []):
 			if int(sk["order"]) < sockets_per_point:
 				sockets.append({"id": str(sk["id"]), "point": int(sk["point"]), "order": int(sk["order"]), "x": int(sk["x"]), "y": int(sk["y"]), "ent": -1, "reserved": false})
+		for wl in level_rules.get("walls", []):  # mission cover: [x, y] cells of sandbag walls (never on a route; the build checks)
+			_spawn_building(0, "wall", int(wl[0]), int(wl[1]), 1, 1)
 		for pb in level_rules.get("prebuilt", []):  # defenses standing at the start: {"reward": "pillbox", "socket": "s1_1"}
 			for i in sockets.size():
 				if sockets[i]["id"] == str(pb["socket"]):

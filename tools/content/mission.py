@@ -457,6 +457,7 @@ class Mission:
         battle = self.data["battle"]
         rules = dict(waves.get("rules", {}))
         rules.update(battle.get("rules", {}))
+        self._check_walls(rules, battle.get("battlefield", waves.get("battlefield", "defense_02")))
         return {
             "schema_version": 3,
             "mode": "defense",
@@ -490,6 +491,16 @@ class Mission:
         }
 
     VIA = {"left": "defense_1", "top": "defense_2", "right": "defense_3"}
+
+    def _check_walls(self, rules: dict, battlefield: str) -> None:
+        """Sandbag cells (rules.walls) must keep every route open and stay off sockets, buildings and the map edge."""
+        bf = read_json(ROOT / "data" / "battlefields" / f"{battlefield}.json")
+        taken = {(b["x"] + i, b["y"] + j) for b in bf["buildings"] for i in range(b["w"]) for j in range(b["h"])}
+        taken |= {(sk["x"], sk["y"]) for sk in bf.get("sockets", [])}
+        for x, y in rules.get("walls", []):
+            on_route = (19 <= y <= 23 and (x < 28 or x > 50)) or (37 <= x <= 41 and y < 16)
+            if on_route or (x, y) in taken or not (0 < x < bf["width"] - 1 and 0 < y < bf["height"] - 1):
+                self.err(f"wall cell ({x}, {y}) is on a route, a socket or a building")
 
     def _wave(self, w: dict) -> dict:
         """Waves are authored by bar (start_bar, 1-based, fractions allowed) or tick; the defense point follows the

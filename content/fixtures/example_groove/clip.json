@@ -1,0 +1,11 @@
+{
+ "id": "example_groove",
+ "kind": "groove",
+ "name": "Example Groove",
+ "bars": 2,
+ "tempo_bpm": 174,
+ "note": "Copy this folder to content/library/<your_id>/, set id (= folder name) and name, replace kick.mid and snare.mid with your Ableton MIDI exports and add <part>__<sound_id>.wav renders.",
+ "source": {
+  "type": "owner"
+ }
+}

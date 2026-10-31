@@ -1,0 +1,59 @@
+{
+ "level_id": "level_fixture",
+ "number": 99,
+ "title": "Fixture",
+ "pack": "fixture_mission",
+ "bars": 8,
+ "seed": 99,
+ "note": "Test fixture: the replacement tests build it into a temporary folder.",
+ "battle": {
+  "battlefield": "defense_02",
+  "waves": "content/fixtures/waves_fixture.json"
+ },
+ "choices": {
+  "kick_sound": {
+   "count": 1,
+   "pool": [
+    "kick_march",
+    "kick_armour"
+   ],
+   "default": [
+    "kick_march"
+   ]
+  },
+  "groove": {
+   "count": 1,
+   "pool": [
+    "groove_watch",
+    "example_groove"
+   ],
+   "default": [
+    "groove_watch"
+   ]
+  }
+ },
+ "phases": [
+  {
+   "bars": 4,
+   "mode": "drums",
+   "groove": 1,
+   "kick_sound": 1,
+   "snare_sound": "snare_guard",
+   "sequence_bars": 4,
+   "rewards": [
+    "pillbox"
+   ]
+  },
+  {
+   "bars": 4,
+   "mode": "drums",
+   "groove": 1,
+   "kick_sound": 1,
+   "snare_sound": "snare_guard",
+   "sequence_bars": 4,
+   "rewards": [
+    "e3"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,21 @@
+{
+ "note": "Test fixture only.",
+ "rules": {
+  "objective_hp": {
+   "command_core": 60000
+  }
+ },
+ "waves": [
+  {
+   "id": "wave_01",
+   "start_bar": 1,
+   "entry": "left",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 2
+    }
+   ]
+  }
+ ]
+}
