@@ -474,6 +474,7 @@ class Mission:
             "rules": rules,
             "sequence_threshold": float(self.data.get("sequence_threshold", RULES["sequence"]["threshold"])),
             "intro": self.data.get("intro", ""),
+            "intro_bar": int(self.data.get("intro_bar", 1)),
             "placeholder": placeholder,
             "source": {"mission": rel(self.path), "waves": rel(waves_path), "builder": "tools/content/build.py"},
             "choices": [{"id": cid, "label": c["label"], "count": c["count"], "default": c["default"],
@@ -485,8 +486,23 @@ class Mission:
             "sequences": self.sequences,
             "previews": previews,
             "content": {k: stats[k] for k in ("files", "placeholder_files", "owner_files", "default_mix_peak_db")},
-            "waves": waves["waves"],
+            "waves": [self._wave(w) for w in waves["waves"]],
         }
+
+    VIA = {"left": "defense_1", "top": "defense_2", "right": "defense_3"}
+
+    def _wave(self, w: dict) -> dict:
+        """Waves are authored by bar (start_bar, 1-based, fractions allowed) or tick; the defense point follows the
+        entry and the objective defaults to the command core."""
+        out = dict(w)
+        if "start_bar" in w and "start_tick" not in w:
+            out["start_tick"] = int(round((float(w["start_bar"]) - 1.0) * TICKS_PER_BAR))
+        out.setdefault("via_defense_point", self.VIA.get(w["entry"], "defense_1"))
+        out.setdefault("target_objective", "command_core")
+        out["groups"] = [{**g, "spawn_spacing_ticks": int(g.get("spawn_spacing_ticks", 480))} for g in w["groups"]]
+        if not 0 <= out["start_tick"] < self.duration_ticks:
+            self.err(f"wave {w['id']} starts outside the song")
+        return out
 
     def _fixed_ids(self) -> set:
         out = set()

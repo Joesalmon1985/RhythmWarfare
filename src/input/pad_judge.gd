@@ -193,6 +193,7 @@ func release(pad: int, now: float, touch_id: int = 0) -> Dictionary:
 
 ## Pause ends every active hold where it stands (coverage so far, nothing more), as a release would.
 func pause_interrupt(now: float) -> void:
+	update(now)  # a tail already passed completes normally first
 	for pad in _active.keys():
 		var i: int = _active[pad]["index"]
 		_finish_hold(pad, i, now, false)

@@ -19,7 +19,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from common import CONTENT, LIBRARY, MISSIONS, SONGS, TICKS_PER_BAR, ContentError, rel, tick_to_seconds  # noqa: E402
+from common import CONTENT, LIBRARY, MISSIONS, ROOT, SONGS, TICKS_PER_BAR, ContentError, rel, tick_to_seconds, write_json  # noqa: E402
 from library import Library  # noqa: E402
 import mission as mission_mod  # noqa: E402
 
@@ -55,6 +55,9 @@ def run(only: list[str] | None = None, check: bool = False, library: Path = LIBR
         lib.save_state()
         if not check:
             write_report(lib, built, warnings, report or (library.parent / "REPORT.md"))
+            if songs == SONGS:
+                names = {**{s.id: s.name for s in lib.sounds.values()}, **{c.id: c.name for c in lib.clips.values()}}
+                write_json(ROOT / "data" / "campaign" / "library_names.json", dict(sorted(names.items())))
     if not quiet:
         for line in lib.log:
             print("  " + line)

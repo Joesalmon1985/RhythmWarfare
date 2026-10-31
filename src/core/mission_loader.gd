@@ -30,6 +30,7 @@ static func parse(d: Dictionary, pack_dir: String, options: Dictionary, errors: 
 	level.rules = d.get("rules", {})
 	level.sequence_threshold = float(d.get("sequence_threshold", 0.6))
 	level.intro = str(d.get("intro", ""))
+	level.intro_bar = int(d.get("intro_bar", 1))
 	level.choices = d.get("choices", [])
 	level.names = d.get("names", {})
 	level.previews = d.get("previews", {})

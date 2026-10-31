@@ -61,7 +61,7 @@ func audio_time() -> float:
 		State.IDLE:
 			return 0.0
 		State.COUNTDOWN:
-			return -_countdown_remaining()
+			return transport.start_at - _countdown_remaining()
 		State.PAUSED, State.ENDED:
 			return _frozen
 	var t := transport.playback_position() + AudioServer.get_time_since_last_mix() - output_latency
@@ -82,7 +82,7 @@ func pause() -> void:
 		transport.pause()
 		state = State.PAUSED
 	elif state == State.COUNTDOWN:
-		_frozen = -_countdown_remaining()
+		_frozen = transport.start_at - _countdown_remaining()
 		state = State.PAUSED
 
 
@@ -90,8 +90,8 @@ func pause() -> void:
 func resume() -> void:
 	if state != State.PAUSED:
 		return
-	if _frozen < 0.0:
-		begin_countdown(-_frozen)
+	if _frozen < transport.start_at:
+		begin_countdown(transport.start_at - _frozen)
 		return
 	_last = _frozen
 	transport.resume()

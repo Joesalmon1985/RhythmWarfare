@@ -78,37 +78,48 @@ func _draw() -> void:
 ## telegraphed route of the next wave (entry marker and a line to its defense point).
 func _draw_defense() -> void:
 	var sim := match_ref.sim
-	var judge := match_ref.judge
 	var level := match_ref.level
+	var mission := level.is_mission()
+	var combo := match_ref.pad_judge.combo if mission else match_ref.judge.combo
+	var acc := match_ref.pad_judge.accuracy() if mission else match_ref.judge.accuracy()
 	var cx := size.x * 0.5
 	var now := float(match_ref.sim_ticks) * BattleSim.TICK_S
 	draw_rect(Rect2(cx - 300, 0, 600, 58), Color(0, 0, 0, 0.45))
+	var row := 0
 	for i in sim.objectives.size():
 		var o: Dictionary = sim.objectives[i]
+		if not o["required"]:
+			continue
 		var hp := sim.objective_hp(o["id"])
 		var frac := float(hp) / float(maxi(sim.objective_max_hp(o["id"]), 1))
-		var pos := Vector2(cx - 292, 6 + 18 * i)
+		var pos := Vector2(cx - 292, 6 + 18 * row)
+		row += 1
 		draw_rect(Rect2(pos, Vector2(230, 14)), Color(0, 0, 0, 0.55))
 		draw_rect(Rect2(pos, Vector2(230 * frac, 14)), Color(0.35, 0.62, 1.0) if frac > 0.34 else Color(1.0, 0.45, 0.35))
 		draw_rect(Rect2(pos, Vector2(230, 14)), Color(1, 1, 1, 0.5), false, 1.0)
 		draw_string(_font, pos + Vector2(5, 11), "%s %d%%" % [str(o["id"]).replace("_", " ").to_upper(), int(round(frac * 100.0))], HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(1, 1, 1))
 	var left := maxf(level.duration_seconds() - now, 0.0)
-	draw_string(_font, Vector2(cx - 40, 20), "%d:%02d  combo %d  %.0f%%" % [int(left) / 60, int(left) % 60, judge.combo, judge.accuracy() * 100.0], HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(1, 1, 1, 0.95))
-	var x := cx - 292
+	draw_string(_font, Vector2(cx - 40, 20), "%d:%02d  combo %d  %.0f%%" % [int(left) / 60, int(left) % 60, combo, acc * 100.0], HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(1, 1, 1, 0.95))
+	var x := cx - 40
 	for item in [["factory", "FACTORY"], ["barracks", "BARRACKS"]]:
-		var alive := sim.producer_alive(0, item[0])
-		var col := Color(0.85, 1.0, 0.85) if alive else Color(1.0, 0.5, 0.45)
-		draw_string(_font, Vector2(x, 50), item[1] if alive else item[1] + " LOST", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, col)
-		x += 120
+		if not sim.producer_alive(0, item[0]):  # only a loss is news; units need their producer
+			draw_string(_font, Vector2(x, 50), item[1] + " LOST", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1.0, 0.5, 0.45))
+			x += 110
+	if mission:
+		draw_string(_font, Vector2(cx - 40, 38), "defenses %d" % sim.defense_count(), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0.75, 1.0, 0.75))
 	draw_string(_font, Vector2(cx + 180, 50), "enemies %d" % sim.count_alive(1, BattleSim.Kind.UNIT), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 1, 1, 0.8))
 	if view == null:
 		return
 	var counts := match_ref.defenders_per_point()
+	var shift0 := view.global_position - global_position
 	for i in sim.defense_points.size():
-		var p: Vector2 = view.to_px(sim.defense_points[i]["pos"]) - global_position + view.global_position
+		var p: Vector2 = view.to_px(sim.defense_points[i]["pos"]) + shift0
 		draw_arc(p, 20.0, 0.0, TAU, 28, Color(0.7, 0.9, 1.0, 0.55), 2.0)
 		draw_string(_font, p + Vector2(-5, 5), str(i + 1), HORIZONTAL_ALIGNMENT_CENTER, 12, 16, Color(0.8, 0.95, 1.0, 0.9))
-		draw_string(_font, p + Vector2(-40, 36), "%d defenders" % counts[i], HORIZONTAL_ALIGNMENT_CENTER, 80, 10, Color(0.8, 0.95, 1.0, 0.8))
+		var info := "%d defenders" % counts[i] if not mission else "%d units" % counts[i]
+		draw_string(_font, p + Vector2(-40, 36), info, HORIZONTAL_ALIGNMENT_CENTER, 80, 10, Color(0.8, 0.95, 1.0, 0.8))
+	if mission:
+		_draw_sockets(sim, shift0)
 	var w := match_ref.upcoming_wave()
 	if not w.is_empty() and float(w["in_s"]) <= 8.0 and sim.entries.has(w["entry"]):
 		var pulse := 0.55 + 0.45 * sin(float(Time.get_ticks_msec()) / 120.0)
@@ -130,6 +141,35 @@ func _draw_defense() -> void:
 		var across := Vector2(-dir.y, dir.x) * 16.0
 		draw_colored_polygon(PackedVector2Array([tip, edge - dir * 10.0 + across, edge - dir * 10.0 - across]), Color(1.0, 0.35, 0.3, 0.55 + 0.4 * pulse))
 		draw_string(_font, Vector2(cx - 250, 124), "WAVE %d INCOMING FROM THE %s  %.0f s" % [int(w["number"]), side, float(w["in_s"])], HORIZONTAL_ALIGNMENT_CENTER, 500, 18, Color(1.0, 0.7, 0.55, pulse))
+
+
+## Missions: free sockets as faint corner marks, rewards being prepared as an outline with a countdown ring and name.
+func _draw_sockets(sim: BattleSim, shift: Vector2) -> void:
+	var cell := view.cell
+	for i in sim.sockets.size():
+		var sk: Dictionary = sim.sockets[i]
+		if not sim._socket_free(i):
+			continue
+		var tl: Vector2 = view.to_px(Vector2(float(sk["x"]), float(sk["y"]))) + shift
+		var c := Color(1, 1, 1, 0.22)
+		for corner in [Vector2.ZERO, Vector2(cell, 0), Vector2(0, cell), Vector2(cell, cell)]:
+			var d := Vector2(signf(cell * 0.5 - corner.x), signf(cell * 0.5 - corner.y)) * cell * 0.25
+			draw_line(tl + corner, tl + corner + Vector2(d.x, 0), c, 1.0)
+			draw_line(tl + corner, tl + corner + Vector2(0, d.y), c, 1.0)
+	for pr in sim.pending_rewards:
+		var total := maxf(float(int(pr["ready_tick"]) - int(pr["start_tick"])), 1.0)
+		var frac := clampf(float(sim.tick_count - int(pr["start_tick"])) / total, 0.0, 1.0)
+		var centre: Vector2
+		if int(pr["socket"]) >= 0:
+			var sk: Dictionary = sim.sockets[int(pr["socket"])]
+			centre = view.to_px(Vector2(float(sk["x"]) + 0.5, float(sk["y"]) + 0.5)) + shift
+			draw_rect(Rect2(centre - Vector2(cell, cell) * 0.5, Vector2(cell, cell)), Color(0.6, 1.0, 0.6, 0.8), false, 2.0)
+		elif int(pr["point"]) >= 0:
+			centre = view.to_px(sim.defense_points[int(pr["point"])]["pos"]) + shift + Vector2(0, -26)
+		else:
+			continue
+		draw_arc(centre, cell * 0.75, -PI * 0.5, -PI * 0.5 + TAU * frac, 24, Color(0.6, 1.0, 0.6, 0.9), 3.0)
+		draw_string(_font, centre + Vector2(-60, -cell), str(pr["label"]), HORIZONTAL_ALIGNMENT_CENTER, 120, 11, Color(0.75, 1.0, 0.75))
 
 
 ## LEFT, RIGHT or TOP (BOTTOM for completeness): the side of the window an entry lies beyond.

@@ -7,6 +7,7 @@
  "seed": 1003,
  "note": "First bass phases: one bass voice on one pad, long holds. Drums keep playing under the bass and the bass under the drums, but only one family is cued at a time. Default content: the Hold the Line MIDI.",
  "intro": "Bass: press as the ring closes and keep holding while the pad stays lit.",
+ "intro_bar": 8,
  "battle": {"battlefield": "defense_02", "waves": "data/campaign/waves/level_03.json"},
  "choices": {
   "kick_sound": {"count": 1, "pool": ["kick_march", "kick_armour"], "default": ["kick_march"]},

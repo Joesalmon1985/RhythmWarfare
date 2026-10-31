@@ -13,6 +13,7 @@ const STEM_ORDER := ["kick", "snare", "bass", "other"]  # the schema 1 stem keys
 const MAX_STREAMS := 32
 
 var stem_keys: Array = []  # the loaded level's stem keys, in substream order
+var start_at := 0.0  # song second the transport starts from (practice of one phase); 0 for a whole run
 var player: AudioStreamPlayer
 var sync_stream: AudioStreamSynchronized
 var _target: Dictionary = {}  # key -> linear gain target (0 or 1)
@@ -62,7 +63,7 @@ func start() -> void:
 	_fade_master = 1.0
 	_fade_target = 1.0
 	player.volume_db = 0.0
-	player.play(0.0)
+	player.play(start_at)
 
 
 func pause() -> void:

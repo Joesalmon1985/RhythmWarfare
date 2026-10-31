@@ -108,7 +108,7 @@ print(f"map {W}x{H}, {len(decorations)} decorations, {len(blocked)} blocked cell
 # list order per approach; missions open the first n of each (rules.sockets_per_point).
 SOCKETS = {
     0: [(25, 18), (25, 24), (21, 17), (21, 25), (17, 18)],  # left
-    1: [(35, 14), (43, 14), (34, 11), (44, 11), (31, 13)],  # top
+    1: [(35, 14), (43, 14), (34, 12), (44, 12), (31, 13)],  # top
     2: [(53, 18), (53, 24), (57, 17), (57, 25), (61, 18)],  # right (mirror x' = 78 - x)
 }
 b2 = [b if b["role"] != "pillbox" else {**b, "role": "brick"} for b in buildings]

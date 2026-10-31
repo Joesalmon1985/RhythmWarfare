@@ -1,11 +1,10 @@
 extends Control
-## The level screen: song transport and clock, the match (judgement + enemy schedule + battle), the battlefield
-## view, the HUD and the lanes. Pause freezes music, notes, enemy events, combat and repair together.
+## The play screen: song transport and clock, the match (recognition, sequences, rewards, waves, battle), the battlefield
+## view with its HUD on top and the four pads below. Pause freezes music, cues, construction, waves and combat together.
+## Missions (schema 3) and the legacy duel (schema 1) both play on the pads.
 
 const COUNTDOWN_S := 2.0
 const RESUME_COUNTDOWN_S := 3.0
-const BATTLE_FRACTION := 2.0 / 3.0
-const HEADER_FRACTION := 0.14  # the rhythm-only playtest: a header strip instead of the battlefield
 const END_FADE_S := 0.6
 
 var level: Level
@@ -13,7 +12,7 @@ var transport: StemTransport
 var clock: SongClock
 var match_ref: Match
 var lane_input: LaneInput
-var lane_view: LaneView
+var pad_view: PadView
 var battle_view: BattleView
 var hud: Hud
 var battle_on := true
@@ -22,29 +21,32 @@ var _battle_area: Control
 var _debug_panel: VBoxContainer
 var _debug_label: Label
 var _info_label: Label
+var _intro_label: Label
 var _countdown_label: Label
 var _banner: Label
 var _pause_panel: PanelContainer
+var _settings_panel: Control
 var _resume_at_wall := -1.0
 var _ended := false
 var _started_wall := 0.0
+var _start_s := 0.0  # practice of one phase starts the song here
 
 
 func _ready() -> void:
 	var pack := Session.pack_dir
 	if pack.is_empty():
-		var packs := Session.available_packs()
-		if packs.is_empty():
-			_fatal("No song packs found in songs/")
-			return
-		pack = packs[0]["dir"]
-	var loaded := LevelLoader.load_pack(pack, {"chart_id": Session.chart_id, "loadout": Session.loadout})
+		_fatal("No mission selected")
+		return
+	var opts := {"chart_id": Session.chart_id, "selection": Session.selection, "practice": Session.practice}
+	var loaded := LevelLoader.load_pack(pack, opts)
 	if loaded["level"] == null:
 		_fatal("Song pack rejected:\n" + "\n".join(PackedStringArray(loaded["errors"])))
 		return
 	level = loaded["level"]
 	for w in loaded["warnings"]:
 		print("warning: ", w)
+	if level.is_mission() and Session.practice and Session.practice_phase >= 0:
+		_trim_to_phase(Session.practice_phase)
 
 	transport = StemTransport.new()
 	add_child(transport)
@@ -52,6 +54,7 @@ func _ready() -> void:
 	if not err.is_empty():
 		_fatal(err)
 		return
+	transport.start_at = _start_s
 	clock = SongClock.new(transport)
 	clock.calibration_ms = Session.calibration_ms
 	battle_on = Session.battle_on or not level.is_defense()  # the duel always has its battlefield
@@ -61,7 +64,7 @@ func _ready() -> void:
 	_build_layout()
 	lane_input = LaneInput.new()
 	add_child(lane_input)
-	lane_input.rect_provider = lane_view.button_rects
+	lane_input.rect_provider = pad_view.button_rects
 	lane_input.button_pressed.connect(_on_button_pressed)
 	lane_input.button_released.connect(_on_button_released)
 	transport.song_finished.connect(_on_song_finished)
@@ -69,6 +72,25 @@ func _ready() -> void:
 	_started_wall = float(Time.get_ticks_msec()) / 1000.0
 	_setup_autoplay()
 	clock.begin_countdown(COUNTDOWN_S)
+
+
+## Practice of one phase: only its cues and sequences, the song from one bar before it to its end.
+func _trim_to_phase(index: int) -> void:
+	var ph: Dictionary = level.sections[clampi(index, 0, level.sections.size() - 1)]
+	var a := int(ph["start_tick"])
+	var b := int(ph["end_tick"])
+	var notes: Array = []
+	for n in level.notes:
+		if int(n["tick"]) >= a and int(n["tick"]) < b:
+			notes.append(n)
+	level.notes = notes
+	var seqs: Array = []
+	for s in level.sequences:
+		if int(s["start_tick"]) >= a and int(s["end_tick"]) <= b:
+			seqs.append(s)
+	level.sequences = seqs
+	level.duration_ticks = b
+	_start_s = maxf(level.tick_to_seconds(a - level.ticks_per_bar()), 0.0)
 
 
 # --- scripted play for device performance runs and screenshots (RW_AUTOPLAY=perfect|accuracy:<f>|none) ---
@@ -90,34 +112,36 @@ func _setup_autoplay() -> void:
 	rng.seed = 1
 	for n in level.notes:
 		_auto_plan.append(rng.randf() < prob)
-	if OS.has_environment("RW_ENEMY_FRACTION"):
-		var frac := float(OS.get_environment("RW_ENEMY_FRACTION"))
-		var kept: Array = []
-		for e in level.enemy_events:
-			if rng.randf() < frac:
-				kept.append(e)
-		level.enemy_events = kept
 
 
 func _autoplay_step(t: float) -> void:
 	if _auto_plan.is_empty():
 		return
+	for pad in _auto_holding.keys():
+		if t >= _auto_holding[pad]:
+			match_ref.release(pad, _auto_holding[pad], 1)
+			_auto_holding.erase(pad)
 	while _auto_next < level.notes.size() and level.notes[_auto_next]["time"] <= t:
 		var n: Dictionary = level.notes[_auto_next]
+		var pad := PadView._pad_of(n)
 		if _auto_plan[_auto_next]:
-			match_ref.press(int(n["button"]), n["time"], 1)
+			match_ref.press(pad, n["time"], 1)
 			if n["type"] == "hold":
-				_auto_holding[int(n["button"])] = n["end_time"]
+				_auto_holding[pad] = float(n["end_time"])
 		_auto_next += 1
-	for button in _auto_holding.keys():
-		if t >= _auto_holding[button] + 0.02:
-			match_ref.release(button, _auto_holding[button] + 0.02, 1)
-			_auto_holding.erase(button)
 
 
 func _build_layout() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var split := BATTLE_FRACTION if battle_on else HEADER_FRACTION
+	var bg := ColorRect.new()
+	bg.color = UiStyle.BG
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(bg)
+	var pad_share: float = Session.PAD_SIZES[clampi(Session.pad_size, 0, 2)]
+	if not battle_on:
+		pad_share = 0.5
+	var split := 1.0 - pad_share
 	_battle_area = Control.new()
 	_battle_area.name = "BattleArea"
 	_battle_area.anchor_right = 1.0
@@ -143,24 +167,45 @@ func _build_layout() -> void:
 		_battle_area.add_child(hud)
 	else:
 		_info_label = Label.new()
-		_info_label.position = Vector2(14, 8)
-		_info_label.add_theme_font_size_override("font_size", 18)
+		_info_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_info_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_info_label.add_theme_font_size_override("font_size", 26)
 		_info_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_battle_area.add_child(_info_label)
 
-	lane_view = LaneView.new()
-	lane_view.name = "Lanes"
-	lane_view.anchor_top = split
-	lane_view.anchor_right = 1.0
-	lane_view.anchor_bottom = 1.0
-	lane_view.setup(level, match_ref.judge, clock)
-	if level.is_defense():
-		lane_view.lookahead_s = Session.lookahead_s
-	lane_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	lane_view.clip_contents = true
-	add_child(lane_view)
+	pad_view = PadView.new()
+	pad_view.name = "Pads"
+	pad_view.anchor_top = split
+	pad_view.anchor_right = 1.0
+	pad_view.anchor_bottom = 1.0
+	pad_view.setup(level, clock)
+	pad_view.lead_in_s = Session.cue_lead_in_s
+	pad_view.high_contrast = Session.high_contrast
+	pad_view.reduced_effects = Session.reduced_effects
+	pad_view.show_keys = Session.show_keys
+	pad_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if level.is_mission():
+		pad_view.holding_fn = match_ref.pad_judge.hold_progress
+		pad_view.progress_fn = match_ref.tracker.progress_at
+	else:
+		pad_view.holding_fn = func(pad: int, _now: float) -> float: return match_ref.judge.active_hold_progress(pad)
+	add_child(pad_view)
 
-	# debug panel (F3): stem toggles prove muting and restoration without a restart (M0 evidence)
+	_intro_label = Label.new()
+	_intro_label.anchor_left = 0.2
+	_intro_label.anchor_right = 0.8
+	_intro_label.anchor_top = split - 0.09
+	_intro_label.anchor_bottom = split - 0.01
+	_intro_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_intro_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	_intro_label.add_theme_font_size_override("font_size", 22)
+	_intro_label.add_theme_color_override("font_outline_color", Color.BLACK)
+	_intro_label.add_theme_constant_override("outline_size", 6)
+	_intro_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_intro_label)
+
+	# debug panel (F3): stem toggles prove muting and restoration without a restart
 	_debug_panel = VBoxContainer.new()
 	_debug_panel.position = Vector2(12, 300)
 	_debug_panel.visible = Session.debug
@@ -168,36 +213,26 @@ func _build_layout() -> void:
 	_debug_label = Label.new()
 	_debug_label.add_theme_font_size_override("font_size", 13)
 	_debug_panel.add_child(_debug_label)
-	var row := HBoxContainer.new()
-	_debug_panel.add_child(row)
-	for key in transport.stem_keys:
-		var cb := CheckButton.new()
-		cb.text = "mute " + key
-		cb.focus_mode = Control.FOCUS_NONE
-		cb.toggled.connect(func(on: bool) -> void: transport.set_stem_muted(key, on))
-		row.add_child(cb)
 
 	var pause_btn := Button.new()
 	pause_btn.text = "II"
 	pause_btn.focus_mode = Control.FOCUS_NONE
-	pause_btn.custom_minimum_size = Vector2(64, 48)
+	pause_btn.add_theme_font_size_override("font_size", 24)
 	pause_btn.anchor_left = 1.0  # top right: the top defense point sits under the centre of the battle area
 	pause_btn.anchor_right = 1.0
-	pause_btn.offset_left = -84
+	pause_btn.offset_left = -92
 	pause_btn.offset_top = 8
 	pause_btn.offset_right = -20
-	pause_btn.offset_bottom = 56
+	pause_btn.offset_bottom = 64
 	pause_btn.pressed.connect(_pause)
-	_battle_area.add_child(pause_btn)
+	add_child(pause_btn)
 
-	_countdown_label = _centre_label(96, 0.35)
-	_banner = _centre_label(64, 0.5)
+	_countdown_label = _centre_label(110, 0.32)
+	_banner = _centre_label(64, 0.4)
 
 	_pause_panel = PanelContainer.new()
-	_pause_panel.anchor_left = 0.5
-	_pause_panel.anchor_right = 0.5
-	_pause_panel.anchor_top = 0.5
-	_pause_panel.anchor_bottom = 0.5
+	_pause_panel.add_theme_stylebox_override("panel", UiStyle.panel_box())
+	_pause_panel.set_anchors_preset(Control.PRESET_CENTER)
 	_pause_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	_pause_panel.grow_vertical = Control.GROW_DIRECTION_BOTH
 	_pause_panel.visible = false
@@ -205,23 +240,20 @@ func _build_layout() -> void:
 	var pv := VBoxContainer.new()
 	pv.add_theme_constant_override("separation", 12)
 	_pause_panel.add_child(pv)
-	var title := Label.new()
-	title.text = "Paused"
-	title.add_theme_font_size_override("font_size", 36)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	pv.add_child(title)
-	for item in [["Resume", _resume], ["Retry", _retry], ["Quit to menu", _quit]]:
-		var b := Button.new()
-		b.text = item[0]
-		b.custom_minimum_size = Vector2(320, 56)
-		b.add_theme_font_size_override("font_size", 24)
-		b.pressed.connect(item[1])
-		pv.add_child(b)
+	pv.add_child(UiStyle.title("Paused", 36))
+	var items := [["Resume", _resume], ["Restart", _retry], ["Settings", _open_settings]]
+	if level.is_mission():
+		items.append(["Mission setup", _to_setup])
+	items.append(["Quit to menu", _quit])
+	for item in items:
+		pv.add_child(UiStyle.button(item[0], item[1], 340))
 
 
 func _centre_label(font_size: int, anchor_y: float) -> Label:
 	var l := Label.new()
 	l.add_theme_font_size_override("font_size", font_size)
+	l.add_theme_color_override("font_outline_color", Color.BLACK)
+	l.add_theme_constant_override("outline_size", 10)
 	l.anchor_left = 0.5
 	l.anchor_right = 0.5
 	l.anchor_top = anchor_y
@@ -274,58 +306,106 @@ func _process(_delta: float) -> void:
 		_on_judge_event(ev, wall)
 	var events := match_ref.drain_events()
 	for ev in events:
-		match ev["kind"]:
-			"stem":
-				transport.set_stem_muted(ev["stem"], ev["muted"])
-			"group":
-				if ev["result"] == "queued":
-					lane_view.show_feedback(int(ev["button"]), "GROUP > POINT %d" % (int(ev["point"]) + 1), Color(0.8, 1.0, 0.8), wall)
-				else:
-					lane_view.show_feedback(int(ev["button"]), "NO PRODUCER", Color(1.0, 0.6, 0.5), wall)
-			"production":
-				if ev.get("side", -1) == 0 and ev.get("action", "") == "bass":
-					var res: String = ev["result"]["result"]
-					var button := int(ev.get("button", 0))
-					if res == "pad_built":
-						lane_view.show_feedback(button, "PAD BUILT", Color(0.7, 0.9, 1.0), wall)
-					elif res == "sortie" or res == "aircraft_replaced":
-						lane_view.show_feedback(button, "SORTIE", Color(0.7, 0.9, 1.0), wall)
-					elif res == "air_busy":
-						lane_view.show_feedback(button, "AIR WING BUSY", Color(0.8, 0.85, 1.0), wall)
+		_on_match_event(ev, wall)
 	if battle_view != null:
 		battle_view.push_events(events)
-	for b in range(1, LaneView.BUTTONS + 1):
-		lane_view.button_down[b] = lane_input.is_button_down(b)
+	for b in range(1, PadView.BUTTONS + 1):
+		pad_view.button_down[b] = lane_input.is_button_down(b)
+	_update_banner(t)
 	if _info_label != null:
-		var j2 := match_ref.judge
-		_info_label.text = "%s   %s   accuracy %.0f%%  combo %d
-%s" % [level.title, level.chart_id, j2.accuracy() * 100.0, j2.combo,
-			"RHYTHM PLAYTEST (battlefield hidden)" + ("   PLACEHOLDER AUDIO" if level.is_placeholder_audio() else "")]
+		_info_label.text = "%s\n%s" % [level.title, "PRACTICE (no battle, nothing saved)" if Session.practice else "RHYTHM PLAYTEST (battlefield hidden)"]
 	if _debug_panel.visible:
-		var j := match_ref.judge
-		_debug_label.text = "t=%6.2f s  bar %d  tick %d  P %d G %d M %d stray %d  latency %.1f ms  cal %+.0f ms  fps %d" % [
-			t, level.bar_of_tick(level.seconds_to_tick(maxf(t, 0.0))), match_ref.sim_ticks, j.perfect, j.good, j.misses, j.strays,
+		_debug_label.text = "t=%6.2f s  bar %d  tick %d  latency %.1f ms  cal %+.0f ms  fps %d" % [
+			t, level.bar_of_tick(level.seconds_to_tick(maxf(t, 0.0))), match_ref.sim_ticks,
 			clock.output_latency * 1000.0, clock.calibration_ms, Engine.get_frames_per_second()]
 	if not match_ref.outcome.is_empty():
 		_finish()
 
 
+## The in-play banner: the incoming family one bar before a mode change and the first bar of a new mode. The intro line
+## of the mission shows during its first bars. Neither reveals anything beyond the next change.
+func _update_banner(t: float) -> void:
+	if not level.is_mission():
+		return
+	var tick := level.seconds_to_tick(maxf(t, 0.0))
+	var bar := level.ticks_per_bar()
+	var text := ""
+	for i in level.sections.size():
+		var s: Dictionary = level.sections[i]
+		var start := int(s["start_tick"])
+		var prev_mode := str(level.sections[i - 1]["mode"]) if i > 0 else ""
+		if prev_mode == str(s["mode"]):
+			continue
+		if tick >= start - bar and tick < start:
+			text = ("%s NEXT" % str(s["mode"]).to_upper()) if i > 0 else ""
+		elif tick >= start and tick < start + bar:
+			text = str(s["mode"]).to_upper()
+	pad_view.banner_text = text
+	var intro_from := level.tick_to_seconds((level.intro_bar - 1) * bar)
+	var intro_on := not level.intro.is_empty() and t >= intro_from - 0.5 and t < intro_from + level.tick_to_seconds(4 * bar)
+	_intro_label.text = level.intro if intro_on and not Session.practice else ""
+
+
 func _on_judge_event(ev: Dictionary, wall: float) -> void:
-	var lane: int = int(ev.get("button", 0))
+	var pad: int = int(ev.get("pad", ev.get("button", 0)))
 	var offset := ""
-	if ev.has("delta_ms"):
-		offset = "  %+d ms" % int(round(float(ev["delta_ms"])))
+	if Session.debug and ev.has("delta_ms"):
+		offset = " %+d" % int(round(float(ev["delta_ms"])))
 	match ev["kind"]:
 		"perfect":
-			lane_view.show_feedback(lane, "PERFECT" + offset, Color(1.0, 0.95, 0.6), wall)
-		"good":
-			lane_view.show_feedback(lane, "GOOD" + offset, Color(0.7, 0.95, 0.7), wall)
+			pad_view.show_feedback(pad, "PERFECT" + offset, Color(1.0, 0.95, 0.6), wall)
+			_buzz()
+		"great", "good":
+			pad_view.show_feedback(pad, "GREAT" + offset, Color(0.7, 0.95, 0.7), wall)
+			_buzz()
+		"ok":
+			pad_view.show_feedback(pad, "OK" + offset, Color(0.75, 0.85, 0.9), wall)
+			_buzz()
 		"hold_start":
-			lane_view.show_feedback(lane, "HOLD" + offset, Color(0.7, 0.85, 1.0), wall)
+			pad_view.show_feedback(pad, "HOLD", Color(0.75, 0.85, 1.0), wall)
+			_buzz()
+		"hold_complete":
+			pad_view.flash_complete(pad, wall)
+			pad_view.show_feedback(pad, "HELD", Color(0.8, 1.0, 0.8), wall)
+		"hold_partial":
+			pad_view.show_feedback(pad, "LET GO", Color(0.85, 0.8, 0.7), wall)
 		"miss", "hold_fail":
-			lane_view.show_feedback(lane, "MISS", Color(1.0, 0.45, 0.4), wall)
+			pad_view.show_feedback(pad, "MISS", Color(1.0, 0.5, 0.45), wall)
 		"stray":
-			lane_view.show_feedback(lane, "...", Color(0.7, 0.7, 0.7), wall)
+			pad_view.show_feedback(pad, "·", Color(0.7, 0.7, 0.7), wall)
+
+
+func _buzz() -> void:
+	if Session.vibration and OS.has_feature("mobile"):
+		Input.vibrate_handheld(18)
+
+
+func _on_match_event(ev: Dictionary, wall: float) -> void:
+	match ev["kind"]:
+		"stem":
+			transport.set_stem_muted(ev["stem"], ev["muted"])
+		"sequence":
+			var r: Dictionary = ev["result"]
+			if r["passed"]:
+				var what := MissionRules.reward_name(str(r["reward"]))
+				pad_view.show_status("%s earned · %s %.1f s" % [what, str(r["grade"]), float(r["delay_s"])], Color(0.7, 1.0, 0.7), wall)
+			else:
+				pad_view.show_status("Sequence missed: no reward", Color(1.0, 0.7, 0.6), wall)
+		"reward_done":
+			var res := str(ev.get("result", ""))
+			var msg := ""
+			match res:
+				"built", "unit":
+					msg = "%s ready" % str(ev["label"])
+				"repaired":
+					msg = "All sockets full: repaired %d defenses" % int(ev.get("count", 0)) if ev.get("capacity", false) else "Repair crew: %d defenses repaired" % int(ev.get("count", 0))
+				"reinforced":
+					msg = "Sockets full: a defense was reinforced"
+				"full_strength":
+					msg = "Every defense is at full strength"
+				_:
+					msg = "%s: %s" % [str(ev["label"]), res]
+			pad_view.show_status(msg, Color(0.75, 0.95, 1.0), wall)
 
 
 func _on_button_pressed(button: int, touch_id: int) -> void:
@@ -344,6 +424,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		if _ended:
 			_quit()
+		elif _settings_panel != null:
+			_close_settings()
 		elif clock.state == SongClock.State.PAUSED:
 			_resume()
 		else:
@@ -364,7 +446,7 @@ func _pause() -> void:
 	if _ended or clock.state == SongClock.State.PAUSED or _resume_at_wall >= 0.0:
 		return
 	clock.pause()
-	match_ref.pause_interrupt()
+	match_ref.pause_interrupt(clock.judge_time())
 	lane_input.clear()
 	lane_input.enabled = false
 	_pause_panel.visible = true
@@ -378,9 +460,34 @@ func _resume() -> void:
 	_resume_at_wall = float(Time.get_ticks_msec()) / 1000.0 + RESUME_COUNTDOWN_S
 
 
+func _open_settings() -> void:
+	_pause_panel.visible = false
+	_settings_panel = SettingsPanel.new()
+	_settings_panel.in_game = true
+	_settings_panel.closed.connect(_close_settings)
+	add_child(_settings_panel)
+
+
+func _close_settings() -> void:
+	if _settings_panel != null:
+		_settings_panel.queue_free()
+		_settings_panel = null
+	pad_view.lead_in_s = Session.cue_lead_in_s
+	pad_view.high_contrast = Session.high_contrast
+	pad_view.reduced_effects = Session.reduced_effects
+	pad_view.show_keys = Session.show_keys
+	clock.calibration_ms = Session.calibration_ms
+	_pause_panel.visible = true
+
+
 func _retry() -> void:
 	transport.stop()
 	get_tree().reload_current_scene()
+
+
+func _to_setup() -> void:
+	transport.stop()
+	get_tree().change_scene_to_file("res://src/scenes/mission_setup.tscn")
 
 
 func _quit() -> void:
@@ -414,13 +521,13 @@ func _finish() -> void:
 	Session.last_result = r
 	if not _perf_frames.is_empty():
 		print("PERF ", JSON.stringify(r["perf"]))
-	_banner.text = {"victory": "VICTORY", "defeat": "DEFEAT", "complete": "SONG COMPLETE"}.get(r["outcome"], "SONG OVER")
+	_banner.text = {"victory": "VICTORY", "defeat": "DEFEAT", "complete": "PRACTICE COMPLETE" if Session.practice else "SONG COMPLETE"}.get(r["outcome"], "SONG OVER")
 	await get_tree().create_timer(1.4).timeout
 	transport.stop()
 	get_tree().change_scene_to_file("res://src/scenes/result.tscn")
 
 
-# --- frame-time evidence for A13 (always sampled while playing; printed when RW_AUTOPLAY or debug is on) ---
+# --- frame-time evidence (always sampled while playing; printed when the run ends) ---
 var _perf_frames: PackedFloat32Array = PackedFloat32Array()
 var _perf_peak_units := 0
 
@@ -452,5 +559,5 @@ func _perf_report() -> Dictionary:
 		"frames": sorted.size(), "avg_ms": snappedf(sum / sorted.size(), 0.01), "p95_ms": snappedf(p95, 0.01),
 		"max_ms": snappedf(sorted[sorted.size() - 1], 0.01), "frames_over_33ms": over33,
 		"peak_live_units": _perf_peak_units, "static_memory_mb": snappedf(float(OS.get_static_memory_usage()) / 1048576.0, 0.1),
-		"device": OS.get_model_name(), "os": OS.get_name(), "renderer": RenderingServer.get_video_adapter_name(),
+		"streams": level.stems.size(), "device": OS.get_model_name(), "os": OS.get_name(), "renderer": RenderingServer.get_video_adapter_name(),
 	}

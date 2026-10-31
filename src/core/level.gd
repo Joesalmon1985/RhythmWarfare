@@ -22,19 +22,12 @@ const DEFAULT_BASS_BUTTONS := [2, 3]
 
 var pack_dir: String = ""
 var schema_version := 1
-var mode := "duel"  # "duel" (schema 1) or "defense" (schema 2)
+var mode := "duel"  # "duel" (schema 1) or "defense" (schema 3 missions)
 var campaign_level := 0
 var chart_id := ""
-var play_mode := "campaign"  # "campaign" or "practice" (schema 2 chart)
+var play_mode := "campaign"  # "campaign" or "practice" (missions)
 var progression := true
-var charts: Array = []  # schema 2: every chart of the pack ({chart_id, play_mode, progression, sections, notes})
-var renders: Dictionary = {}  # schema 2: slot id -> profile id -> {file, source_sha256, sample_rate, frames, placeholder}
-var loadout_active_slots: Array = []
-var loadout_default: Dictionary = {}
-var loadout: Dictionary = {}  # slot id -> profile id actually equipped for this load
 var waves: Array = []
-var source: Dictionary = {}
-var parts: Array = []
 var level_id: String = ""
 var title: String = ""
 var bpm: float = 174.0
@@ -63,6 +56,7 @@ var stem_family: Dictionary = {}  # stem key -> kick, snare, bass, other
 var sequences: Array = []  # [{index, phase, mode, start_tick, end_tick, start_time, end_time, reward, cues}]
 var sequence_threshold := 0.6
 var intro := ""
+var intro_bar := 1  # the in-play intro shows for four bars from this bar
 
 
 func ticks_per_bar() -> int:
@@ -113,30 +107,8 @@ func voice_name(ref: String) -> String:
 	return str(names.get(ref, ref))
 
 
-func chart_ids() -> Array:
-	var out: Array = []
-	for c in charts:
-		out.append(c["chart_id"])
-	return out
-
-
-## Slot ids of the notes of the loaded chart in first-appearance order.
-func slot_ids() -> Array:
-	var out: Array = []
-	for n in notes:
-		if not out.has(n["slot_id"]):
-			out.append(n["slot_id"])
-	return out
-
-
 func is_placeholder_audio() -> bool:
-	if is_mission():
-		return placeholder_stems > 0
-	for slot in loadout:
-		var r: Dictionary = renders.get(slot, {}).get(loadout[slot], {})
-		if r.get("placeholder", false):
-			return true
-	return false
+	return placeholder_stems > 0
 
 
 func notes_in_lane(lane: String) -> Array:

@@ -14,8 +14,7 @@ const SAME_LANE_MIN_GAP_TICKS := 0  # same-tick notes on one button are a confli
 const SAME_LANE_WARN_GAP_MS := 200.0  # two notes on one button closer than twice the Good window cannot both be judged cleanly
 
 
-## options (schema 2 only): {"chart_id": String, "loadout": {slot id: profile id}}; empty picks the first chart
-## and the pack's default loadout.
+## options (schema 3): {"selection": {choice id: [option ids]}, "practice": bool}; empty uses the mission's defaults.
 static func load_pack(pack_dir: String, options: Dictionary = {}) -> Dictionary:
 	var result := {"level": null, "errors": [], "warnings": []}
 	var errors: Array = result["errors"]
@@ -33,8 +32,9 @@ static func load_pack(pack_dir: String, options: Dictionary = {}) -> Dictionary:
 	var level: Level
 	if int(parsed.get("schema_version", -1)) == MissionLoader.SCHEMA_VERSION:
 		level = MissionLoader.parse(parsed, dir, options, errors, warnings)
-	elif int(parsed.get("schema_version", -1)) == DefenseLoader.SCHEMA_VERSION:
-		level = DefenseLoader.parse(parsed, dir, options, errors, warnings)
+	elif int(parsed.get("schema_version", -1)) == 2:
+		errors.append("schema 2 packs were retired on 31 Oct 2026; missions are schema 3 (tools/content/build.py)")
+		return result
 	else:
 		level = parse(parsed, dir, errors, warnings)
 	if errors.is_empty():

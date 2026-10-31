@@ -171,19 +171,20 @@ static func plan_inputs(level: Level, policy: String, rng: RandomNumberGenerator
 		if rng.randf() < stray_rate:
 			var ts := t0 - 0.3 + rng.randf() * 0.1
 			var sp := 1 + rng.randi() % 4
-			ev.append({"t": ts, "pad": sp, "down": true})
-			ev.append({"t": ts + 0.05, "pad": sp, "down": false})
+			ev.append({"t": ts, "pad": sp, "down": true, "id": -1 - ev.size()})
+			ev.append({"t": ts + 0.05, "pad": sp, "down": false, "id": -ev.size()})
 		if rng.randf() >= hit_prob:
 			continue
 		var err := clampf(_gauss(rng) * sigma_ms + late_bias_ms, -130.0, 130.0) / 1000.0 if sigma_ms > 0.0 else 0.0
 		var t := t0 + err
-		ev.append({"t": t, "pad": int(n["pad"]), "down": true})
+		var nid := ev.size()
+		ev.append({"t": t, "pad": int(n["pad"]), "down": true, "id": nid})
 		var up := t + 0.08
 		if n["type"] == "hold":
 			up = float(n["end_time"]) + 0.02
 			if rng.randf() < early_release:
 				up = t0 + (float(n["end_time"]) - t0) * (0.4 + 0.5 * rng.randf())
-		ev.append({"t": up, "pad": int(n["pad"]), "down": false})
+		ev.append({"t": up, "pad": int(n["pad"]), "down": false, "id": nid})
 	ev.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["t"] < b["t"] if a["t"] != b["t"] else (not a["down"] and b["down"]))
 	return ev
 
@@ -194,8 +195,8 @@ static func _mash_inputs(level: Level) -> Array:
 	while t < level.duration_seconds():
 		var ph := level.phase_at(level.seconds_to_tick(t))
 		for pad in ph.get("pads", {}).keys():
-			ev.append({"t": t, "pad": int(pad), "down": true})
-			ev.append({"t": t + 0.03, "pad": int(pad), "down": false})
+			ev.append({"t": t, "pad": int(pad), "down": true, "id": ev.size()})
+			ev.append({"t": t + 0.03, "pad": int(pad), "down": false, "id": ev.size() - 1})
 		t += 0.06
 	ev.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["t"] < b["t"])
 	return ev
@@ -218,11 +219,12 @@ static func run_mission(m: Match, level: Level, policy: String, rng: RandomNumbe
 		while k < plan.size() and float(plan[k]["t"]) <= t:
 			var e: Dictionary = plan[k]
 			if e["down"]:
-				if not down.get(e["pad"], false):
-					down[e["pad"]] = true
-					m.press(int(e["pad"]), float(e["t"]), int(e["pad"]))
-			elif down.get(e["pad"], false):
-				down[e["pad"]] = false
+				if down.has(e["pad"]):  # a thumb lifts before it presses the same pad again
+					m.release(int(e["pad"]), float(e["t"]), int(e["pad"]))
+				down[e["pad"]] = e["id"]
+				m.press(int(e["pad"]), float(e["t"]), int(e["pad"]))
+			elif down.get(e["pad"], null) == e["id"]:  # only the press it belongs to
+				down.erase(e["pad"])
 				m.release(int(e["pad"]), float(e["t"]), int(e["pad"]))
 			k += 1
 		m.advance(t)
