@@ -2,7 +2,22 @@
 
 Two kinds of pack live here.
 
-## Missions (schema 3): `m01_first_watch/` to `m10_*`
+## Missions (schema 3): `m01_first_watch/` to `m10_last_light/`
+
+| Pack | Mission | Stem files | Ogg size | Streams at once |
+| --- | --- | --- | --- | --- |
+| `m01_first_watch` | 1 First Watch | 4 | 0.5 MB | 3 |
+| `m02_second_pulse` | 2 Second Pulse | 13 | 1.2 MB | 5 |
+| `m03_hold_the_line` | 3 Hold the Line | 11 | 2.0 MB | 6 |
+| `m04_backbeat` | 4 Backbeat | 19 | 3.3 MB | 5 |
+| `m05_counterpoint` | 5 Counterpoint | 31 | 6.8 MB | 7 |
+| `m06_fortress` | 6 Fortress | 54 | 6.8 MB | 8 |
+| `m07_crossroads` | 7 Crossroads | 102 | 11.9 MB | 12 |
+| `m08_crossfire` | 8 Crossfire | 53 | 8.6 MB | 6 |
+| `m09_iron_rhythm` | 9 Iron Rhythm | 122 | 11.6 MB | 12 |
+| `m10_last_light` | 10 Last Light | 152 | 13.9 MB | 16 |
+
+Sizes include the auditions in `preview/`; all placeholder sound as of 31 October 2026.
 
 Written by `python tools/content/build.py` from `content/` (the loop library and the mission files); never edit them by
 hand. Each holds `level.json` (schema 3, `docs/PRD.md` section 15), `audio/sNN__<clip>__<sound>.ogg` (one full-length

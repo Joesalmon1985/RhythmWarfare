@@ -1,4 +1,9 @@
-# Balance evidence (acceptance A08, A12)
+# Balance evidence
+
+The ten missions are the second part of this file ("Missions balance"). The first part is the legacy duel
+(acceptance A08, A12), kept for the multiplayer mode that will build on it.
+
+# Legacy duel (acceptance A08, A12)
 
 Method: `tools/balance.sh <pack> <enemy_fraction> <policies...>` runs `tools/autoplay.gd`, a headless harness that
 drives `Match` (judgement, enemy schedule, battle simulation with the Rush AI squads on both sides; no audio, no
@@ -95,131 +100,277 @@ cautious, as in OpenRA.
   margin with the ramp end if a gentler difficulty is wanted.
 - Air: 72 bass actions, only 5 aircraft per side ever exist; most bass actions find the wing busy, by design.
 
-# Defense campaign balance (schema 2 packs, levels 1 to 3)
+# Missions balance (schema 3, ten missions, 31 October 2026)
 
-Added 29 October 2026, re-tuned 30 October 2026 for the centred base (below). Everything below the duel history in this file (above this section) belongs to the legacy
-two-sided duel. The campaign is measured with the same headless harness:
+This part replaces the schema 2 campaign tables of 29 and 30 October (round-robin groups, per-note recipes), which no
+longer exist. Everything above this heading is the legacy duel. The rule set is `docs/PRD.md` section 15 and
+`data/campaign/rules.json`; the waves are `data/campaign/waves/level_NN.json` and are baked into each pack by
+`python tools/content/build.py`. **Rebuild the packs after editing a wave file**, or the harness and the game keep
+playing the old waves.
+
+## Method
 
 ```
-RW_CHART=level_02.campaign RW_SEEDS="1 2 3" RW_WAVES=1 bash tools/balance.sh res://songs/second_pulse 1.0 perfect "accuracy:0.85" "accuracy:0.6" none
+python tools/balance_missions.py --seeds 1 2 3 --policies perfect beginner sloppy none > out.md   # every mission
+python tools/balance_missions.py --missions m05 m10 --seeds 4 5 6 --policies perfect beginner     # a subset
+RW_SEEDS="1 2 3" bash tools/balance.sh res://songs/m03_hold_the_line 1.0 perfect beginner         # one pack, raw lines
 ```
 
-One line per policy and seed (with `RW_WAVES=1`, also each wave's spawn, first arrival at the wall and clear time);
-`seed` offsets the simulation seed (`level.seed * 10 + seed`) and the accuracy draws. The policies are `perfect` (every
-note hit exactly), `accuracy:<f>` (each note hit with that probability, seeded, misses simply not pressed) and `none`.
-`tests/test_defense_balance.gd` keeps the headline guard rails (perfect survives, no input loses) in the headless suite.
+`tools/autoplay.gd` drives `Match` headless (pad judge, sequence tracker, rewards, the 25 Hz battle simulation; no audio,
+no rendering) with a scripted input policy at 60 Hz. One row per mission, policy and seed. The policies:
 
-## What was tuned and how (centred base, 30 October 2026)
+| Policy | What it does |
+| --- | --- |
+| `perfect` | every cue pressed on time, every hold held to its tail |
+| `beginner` | presses 85% of cues with a timing error drawn from N(+15 ms, 55 ms), lets go of 30% of holds early, adds a stray press on 12% of cues |
+| `sloppy` | presses 70% of cues, N(+25 ms, 85 ms), 50% early releases, 25% strays |
+| `mash` | presses every pad on every sixteenth (not in the table: it passes sequences, only as loose, see `tests/test_sequences.gd`) |
+| `none` | never presses |
 
-The owner asked for the base in the middle of the screen with enemies walking on from off screen. The battlefield
-(`data/battlefields/defense_01.json`, built by `tools/campaign/build_battlefield.py`) is now an 80 x 40 cell map; the
-player sees a window of 53 x 20 cells centred on the command core. One walled compound (ring x 28 to 50, y 16 to 25)
-has five-cell openings on the left, right and top and one pillbox at the end of each opening (three in all, no gun
-turrets or SAM sites); the bottom of the screen is the rhythm lane. Defense points sit 3.5 cells outside each opening
-(1 left, 2 top, 3 right) and the entries 4 to 10 cells outside the window: left x = 8, right x = 70, top y = 0.
+Seeds change the battle simulation and the input draws. A simulation pass is evidence about the waves, not about how
+hard a mission feels to a person: nobody has played these missions.
 
-- **Travel**: riflemen about 1.3 cells/s need 12.1 s from the left or right entry to its defense point and 9.9 s from
-  the top; light tanks 5.8 s (4.7 s), jeeps 4.0 s (3.2 s); to the core add 11 s (5 s) for riflemen. The build prints
-  this for every wave (`python tools/campaign/build_defense_pack.py <n> --waves-only`), with the first and last unit's
-  contact time and a warning if first contact comes before the four opening bars or the last unit arrives after the end.
-- **Entries**: production is a round robin over the three defense points, so a level that sends everything down one
-  approach wastes two thirds of the defenders (a first try with all of level 1 from the right lost with perfect play).
-  Every level now uses all three approaches (`tools/campaign/retime_waves.py`): level 1 sweeps left, top, right;
-  level 2 goes left, right, top; level 3 sweeps again for eleven waves.
-- **Timing**: the longer walk made the authored schedule (spawn at bar 5, 9, ...) arrive after the song. The retime
-  script keeps the authored order and proportions but chooses spawn ticks from contact times: first contact 12.6 s
-  (after the four opening bars end at 5.5 s), the last unit of the last wave at the defense point 2 s before the song
-  ends (40.4 s of 44.1 s, 50.3 of 55.2 s, 62.2 of 66.2 s). The authored tick stays in each wave as
-  `authored_start_tick`, the contact time as `contact_tick`. `tests/test_defense_layout.gd` checks both limits.
-- **Counts**: contact now comes in at a steadier pace than the authored one, so the scales dropped: level 1 x1.9
-  (unchanged), level 2 x2.4 to x1.4, level 3 x1.4 to x1.0 (`python tools/campaign/gen_waves.py <level> 60000 <scale>`,
-  then `retime_waves.py <level>` and `build_defense_pack.py <level> --waves-only`). The files in
-  `data/campaign/waves/` are authoritative and a test keeps the packs in step with them.
-- The command core keeps the OpenRA construction yard's armour but its hit points are a level setting
-  (`rules.objective_hp`): 60,000 against the building's 150,000.
-- Enemy wave units ignore buildings other than their objective (they fight units and the core); the pillboxes and
-  walls still shoot and block.
-- Recipes are the catalogue's, unchanged: March Kick two riflemen, Guard Snare one jeep, Armour Kick light tank then
-  jeep, Patrol Sub two riflemen and a rocket soldier. They were not rebalanced against each other.
+## Results (seeds 1 to 6 for perfect and beginner, 1 to 3 for sloppy and none; desktop headless, 31 Oct 2026)
 
-## Results (seeds 1 to 3, desktop headless run on 30 October 2026, centred layout)
+Per mission, every run's sequences passed, defenses alive at the end (built and prebuilt) and the command core's health.
 
-### Level 1, First Watch (32 bars, 44.1 s, command core 60,000 hp, waves = proposed x1.9)
+| Mission | perfect | beginner | sloppy | none |
+| --- | --- | --- | --- | --- |
+| 1 First Watch | 6/6 wins; seq 8/8 8/8 8/8 8/8 8/8 8/8; defenses 6/6/6/6/6/6; core 100%/100%/100%/100%/100%/100% | 6/6 wins; seq 8/8 8/8 8/8 8/8 8/8 8/8; defenses 5/5/5/5/5/5; core 100%/100%/100%/100%/100%/100% | 3/3 wins; seq 7/8 8/8 6/8; defenses 5/5/4; core 100%/100%/100% | 0/3 wins; lost at 40.8 s, 42.2 s, 37.8 s |
+| 2 Second Pulse | 6/6 wins; seq 10/10 10/10 10/10 10/10 10/10 10/10; defenses 8/8/8/8/8/8; core 100%/100%/100%/100%/100%/100% | 6/6 wins; seq 10/10 10/10 10/10 10/10 10/10 10/10; defenses 7/7/7/7/7/7; core 100%/100%/100%/100%/100%/100% | 2/3 wins; seq 9/10 10/10 5/10; defenses 6/7/3; core 100%/100%/0%; lost s3 32.6 s | 0/3 wins; lost at 28.4 s, 28.5 s, 28.5 s |
+| 3 Hold the Line | 6/6 wins; seq 12/12 12/12 12/12 12/12 12/12 12/12; defenses 5/4/4/4/5/5; core 100%/100%/100%/100%/100%/100% | 6/6 wins; seq 11/12 11/12 12/12 12/12 10/12 11/12; defenses 5/5/5/4/4/5; core 100%/100%/100%/100%/100%/100% | 3/3 wins; seq 8/12 8/12 12/12; defenses 3/5/5; core 100%/100%/100% | 0/3 wins; lost at 39.0 s, 39.1 s, 39.6 s |
+| 4 Backbeat | 6/6 wins; seq 12/12 12/12 12/12 12/12 12/12 12/12; defenses 7/8/8/7/7/7; core 100%/100%/100%/100%/100%/100% | 6/6 wins; seq 12/12 11/12 12/12 12/12 12/12 12/12; defenses 8/7/8/8/8/8; core 100%/100%/100%/100%/100%/100% | 3/3 wins; seq 11/12 11/12 9/12; defenses 7/5/5; core 100%/100%/100% | 0/3 wins; lost at 30.1 s, 30.1 s, 30.1 s |
+| 5 Counterpoint | 6/6 wins; seq 14/14 14/14 14/14 14/14 14/14 14/14; defenses 5/5/6/5/5/5; core 28%/100%/100%/100%/100%/100% | 6/6 wins; seq 14/14 13/14 14/14 14/14 13/14 14/14; defenses 4/3/4/5/5/6; core 100%/100%/100%/100%/2%/100% | 3/3 wins; seq 12/14 12/14 11/14; defenses 4/5/5; core 10%/80%/82% | 0/3 wins; lost at 33.6 s, 33.6 s, 33.5 s |
+| 6 Fortress | 6/6 wins; seq 14/14 14/14 14/14 14/14 14/14 14/14; defenses 5/4/4/6/6/5; core 100%/100%/100%/100%/100%/100% | 6/6 wins; seq 14/14 13/14 14/14 14/14 14/14 14/14; defenses 6/6/6/5/5/5; core 100%/100%/100%/100%/100%/100% | 3/3 wins; seq 13/14 12/14 11/14; defenses 6/3/1; core 100%/40%/70% | 0/3 wins; lost at 55.7 s, 54.8 s, 54.2 s |
+| 7 Crossroads | 6/6 wins; seq 16/16 16/16 16/16 16/16 16/16 16/16; defenses 9/9/9/9/9/9; core 100%/100%/100%/100%/100%/100% | 6/6 wins; seq 16/16 15/16 16/16 16/16 16/16 16/16; defenses 9/9/9/9/9/9; core 100%/100%/100%/100%/100%/100% | 3/3 wins; seq 13/16 13/16 9/16; defenses 6/7/2; core 100%/100%/69% | 0/3 wins; lost at 42.6 s, 42.6 s, 41.1 s |
+| 8 Crossfire | 6/6 wins; seq 16/16 16/16 16/16 16/16 16/16 16/16; defenses 6/4/7/4/3/3; core 100%/100%/100%/100%/100%/100% | 6/6 wins; seq 16/16 15/16 16/16 16/16 16/16 16/16; defenses 5/7/4/4/4/4; core 100%/100%/100%/100%/100%/100% | 3/3 wins; seq 15/16 15/16 14/16; defenses 6/4/4; core 100%/100%/100% | 0/3 wins; lost at 36.0 s, 36.0 s, 36.0 s |
+| 9 Iron Rhythm | 6/6 wins; seq 16/16 16/16 16/16 16/16 16/16 16/16; defenses 5/4/6/5/5/6; core 100%/100%/100%/100%/100%/100% | 6/6 wins; seq 15/16 13/16 15/16 15/16 14/16 15/16; defenses 4/3/6/2/4/4; core 100%/92%/100%/100%/100%/100% | 2/3 wins; seq 13/16 11/16 11/16; defenses 4/2/1; core 100%/0%/93%; lost s2 86.4 s | 0/3 wins; lost at 36.4 s, 36.6 s, 36.3 s |
+| 10 Last Light | 6/6 wins; seq 20/20 20/20 20/20 20/20 20/20 20/20; defenses 4/2/2/3/2/3; core 100%/32%/49%/100%/58%/74% | 6/6 wins; seq 20/20 19/20 19/20 19/20 18/20 20/20; defenses 3/2/3/3/2/4; core 32%/57%/7%/85%/18%/99% | 2/3 wins; seq 16/20 14/20 14/20; defenses 4/1/0; core 63%/0%/42%; lost s2 100.7 s | 0/3 wins; lost at 67.5 s, 67.7 s, 67.3 s |
 
-| Policy | Seed | Outcome | Ended | Accuracy | Core left | Groups (by point 1/2/3) | Player units lost | Enemy units killed | Peak live units P/E |
-| --- | ---: | --- | ---: | ---: | ---: | --- | ---: | ---: | --- |
-| perfect | 1 | victory (survived) | 44.1 s | 100% | 100% | 64 (22/21/21) | 67 | 60 | 47 / 84 |
-| perfect | 2 | victory (survived) | 44.1 s | 100% | 100% | 64 (22/21/21) | 67 | 54 | 47 / 83 |
-| perfect | 3 | victory (survived) | 44.1 s | 100% | 100% | 64 (22/21/21) | 56 | 61 | 48 / 80 |
-| accuracy:0.85 | 1 | victory (survived) | 44.1 s | 92% | 100% | 59 (20/20/19) | 80 | 41 | 37 / 88 |
-| accuracy:0.85 | 2 | victory (survived) | 44.1 s | 84% | 100% | 54 (18/18/18) | 73 | 49 | 40 / 87 |
-| accuracy:0.85 | 3 | victory (survived) | 44.1 s | 81% | 100% | 52 (18/17/17) | 71 | 48 | 40 / 88 |
-| accuracy:0.6 | 1 | defeat (core destroyed) | 41.9 s | 54% | 0% | 33 (11/11/11) | 46 | 25 | 18 / 99 |
-| accuracy:0.6 | 2 | defeat (core destroyed) | 40.4 s | 64% | 0% | 38 (13/13/12) | 49 | 19 | 25 / 101 |
-| accuracy:0.6 | 3 | defeat (core destroyed) | 42.0 s | 64% | 0% | 39 (13/13/13) | 55 | 28 | 24 / 94 |
-| none | 1 | defeat (core destroyed) | 31.2 s | 0% | 0% | 0 (0/0/0) | 1 | 16 | 0 / 102 |
-| none | 2 | defeat (core destroyed) | 31.7 s | 0% | 0% | 0 (0/0/0) | 1 | 16 | 0 / 102 |
-| none | 3 | defeat (core destroyed) | 31.8 s | 0% | 0% | 0 (0/0/0) | 1 | 16 | 0 / 102 |
+Totals: **perfect 60 of 60 wins, beginner 60 of 60, sloppy 27 of 30, no input 0 of 30** (every no-input run loses,
+between 28 and 68 s in). Sloppy loses mission 2 seed 3 (only 5 of 10 sequences passed, the left approach falls at
+32.6 s), mission 9 seed 2 (86.4 s of 88.3) and mission 10 seed 2 (100.7 s of 110.3).
 
-### Level 2, Second Pulse (40 bars, 55.2 s, command core 60,000 hp, waves = proposed x1.4)
+Reading them:
 
-| Policy | Seed | Outcome | Ended | Accuracy | Core left | Groups (by point 1/2/3) | Player units lost | Enemy units killed | Peak live units P/E |
-| --- | ---: | --- | ---: | ---: | ---: | --- | ---: | ---: | --- |
-| perfect | 1 | victory (survived) | 55.2 s | 100% | 100% | 96 (32/32/32) | 69 | 96 | 69 / 77 |
-| perfect | 2 | victory (survived) | 55.2 s | 100% | 100% | 96 (32/32/32) | 67 | 104 | 74 / 76 |
-| perfect | 3 | victory (survived) | 55.2 s | 100% | 100% | 96 (32/32/32) | 67 | 86 | 71 / 80 |
-| accuracy:0.85 | 1 | victory (survived) | 55.2 s | 89% | 100% | 85 (29/28/28) | 83 | 85 | 63 / 84 |
-| accuracy:0.85 | 2 | victory (survived) | 55.2 s | 85% | 100% | 82 (28/27/27) | 73 | 81 | 55 / 86 |
-| accuracy:0.85 | 3 | victory (survived) | 55.2 s | 81% | 100% | 78 (26/26/26) | 76 | 85 | 51 / 79 |
-| accuracy:0.6 | 1 | victory (survived) | 55.2 s | 57% | 100% | 55 (19/18/18) | 64 | 67 | 25 / 106 |
-| accuracy:0.6 | 2 | victory (survived) | 55.2 s | 66% | 100% | 63 (21/21/21) | 75 | 55 | 34 / 102 |
-| accuracy:0.6 | 3 | defeat (core destroyed) | 52.8 s | 62% | 0% | 57 (19/19/19) | 59 | 51 | 28 / 97 |
-| none | 1 | defeat (core destroyed) | 36.9 s | 0% | 0% | 0 (0/0/0) | 1 | 21 | 0 / 97 |
-| none | 2 | defeat (core destroyed) | 34.5 s | 0% | 0% | 0 (0/0/0) | 1 | 20 | 0 / 80 |
-| none | 3 | defeat (core destroyed) | 34.5 s | 0% | 0% | 0 (0/0/0) | 1 | 20 | 0 / 80 |
+- **Missions 1 to 4 teach and forgive**: perfect and beginner keep the core at 100% and end with 5 to 8 defenses
+  standing (the brief's 6 to 10 for a good early run: 6 in mission 1, 8 in mission 2; mission 3 also earns units, so
+  fewer buildings). Mission 1's first drum sequence builds one pillbox.
+- **Missions 5 to 10 press harder**: armour, artillery and V2 launchers wear defenses down, so 2 to 6 defenses are
+  left at the end; the core takes damage in mission 10 even with perfect play (32 to 100%). Beginners still win every
+  seed run, sometimes narrowly (mission 5 seed 5 ends at 2%, mission 10 seed 3 at 7%).
+- **Outcomes are chaotic past mission 5**: one wave changed (mission 5's two flamethrowers to one) moved results of
+  other seeds both ways. Treat single seeds as samples, not as a ranking of policies; beginner occasionally beats
+  perfect because a different reward order puts a building where the next wave walks.
+- **Accuracy never changes the waves**, only what gets built and how fast (sharp 0.5 s, steady 1.5 s, loose 3 s).
 
-### Level 3, Hold the Line (48 bars, 66.2 s, command core 60,000 hp, waves = proposed x1.0)
+## What was tuned (31 October 2026)
 
-| Policy | Seed | Outcome | Ended | Accuracy | Core left | Groups (by point 1/2/3) | Player units lost | Enemy units killed | Peak live units P/E |
-| --- | ---: | --- | ---: | ---: | ---: | --- | ---: | ---: | --- |
-| perfect | 1 | victory (survived) | 66.2 s | 100% | 100% | 89 (30/30/29) | 107 | 96 | 89 / 79 |
-| perfect | 2 | victory (survived) | 66.2 s | 100% | 100% | 89 (30/30/29) | 102 | 111 | 85 / 76 |
-| perfect | 3 | victory (survived) | 66.2 s | 100% | 100% | 89 (30/30/29) | 93 | 97 | 101 / 76 |
-| accuracy:0.85 | 1 | victory (survived) | 66.2 s | 89% | 92% | 79 (27/26/26) | 103 | 88 | 77 / 79 |
-| accuracy:0.85 | 2 | victory (survived) | 66.2 s | 85% | 91% | 76 (26/25/25) | 99 | 96 | 70 / 80 |
-| accuracy:0.85 | 3 | victory (survived) | 66.2 s | 80% | 92% | 71 (24/24/23) | 140 | 69 | 59 / 96 |
-| accuracy:0.6 | 1 | defeat (core destroyed) | 57.6 s | 57% | 0% | 47 (16/16/15) | 77 | 41 | 26 / 111 |
-| accuracy:0.6 | 2 | defeat (core destroyed) | 63.6 s | 64% | 0% | 56 (19/19/18) | 97 | 54 | 39 / 101 |
-| accuracy:0.6 | 3 | defeat (core destroyed) | 58.0 s | 61% | 0% | 51 (17/17/17) | 81 | 57 | 39 / 97 |
-| none | 1 | defeat (core destroyed) | 37.8 s | 0% | 0% | 0 (0/0/0) | 1 | 18 | 0 / 61 |
-| none | 2 | defeat (core destroyed) | 38.0 s | 0% | 0% | 0 (0/0/0) | 1 | 19 | 0 / 62 |
-| none | 3 | defeat (core destroyed) | 37.8 s | 0% | 0% | 0 (0/0/0) | 1 | 18 | 0 / 61 |
+1. Waves per mission by bar (`start_bar`), every approach used, first contact after the first sequence's reward.
+   Command core hit points as a level rule (60,000 in 1 to 4, rising to 125,000 in mission 10); power plant and radar
+   dome become required objectives in 6, 8 and 10, with some waves sent at them.
+2. Sockets open per approach rise from 3 (mission 1) to 5 (7 to 10). Prebuilt defenses from mission 6 on compensate
+   for long-range enemies arriving before the player has built much.
+3. Sandbag walls beside the sockets (cover) from mission 4.
+4. Simulation changes (missions only; the duel is unaffected, its tests unchanged):
+   - Defenses measure range from their own footprint edge, as their attackers measure to it. Before, a flame tower
+     (range 5) never fired at riflemen (range 5) grinding it from 5.6 cells.
+   - **Sorties**: a defender may leave its 6-cell leash, up to 16 cells from its point, to attack an enemy that is
+     shooting something of ours at that point from beyond the leash (artillery, V2 launchers). Before, they shelled a
+     defense point all game unanswered.
+   - The reward placement hint is the approach that most enemies are walking towards now, else the next wave's. Before,
+     the first reward went to the second wave's approach and the first wave walked in unopposed.
+5. After those changes: mission 5's right-hand waves carry one flamethrower instead of two, mission 10's left wave at
+   bar 49 brings a medium tank instead of a second mammoth tank, and the cores of missions 5 (80,000 to 90,000) and 10
+   (110,000 to 125,000) got more health. That brought beginner from 10 of 12 to 12 of 12 on those two missions over
+   seeds 1 to 6.
 
-## Reading the tables
+## Coverage: every ground actor and building
 
-- **Perfect and 0.85 accuracy survive every seed on all three levels.** The core is at 100% on levels 1 and 2 and at
-  91 to 92% for 0.85 on level 3.
-- **No input loses every seed on all three levels**, after 31 to 32 s of 44 s (level 1), 34 to 37 s of 55 s (level 2)
-  and about 38 s of 66 s (level 3).
-- **0.6 accuracy is reported, not tuned for**: level 1 loses all three seeds (40 to 42 s), level 2 survives two of
-  three and loses one at 52.8 s, level 3 loses all three (58 to 64 s). The old tables (29 October, one-sided layout)
-  had level 1 surviving 0.6; the centred layout spreads the defenders over three points, which leaves each
-  approach thinner when the player misses. Whether that is the right difficulty is the owner's call after a play test.
-- Misses cost production only (no direct core damage). The by-point column shows the round robin: equal shares.
-- Enemy peaks are now 60 to 110 live units (earlier 90 to 230): waves are smaller and killed sooner.
-- This is a harness result for a layout nobody has played: the wave scales are starting points.
+Enemy counts are totals per mission (`3x2` = mission 3, two units). Rewards are sequence rewards per mission.
 
-## Desktop frame time
+| Actor | As enemy (mission x count) | As reward (mission x count) | Role and limits |
+| --- | --- | --- | --- |
+| e1 rifleman | every mission (35 to 50) | 8x1 | the bulk of every wave |
+| e2 grenadier | 2x6, 4 to 10 (7 to 10 each) | 4x2, 10x1 | splash against infantry crowds |
+| e3 rocket soldier | 3x3, 5 to 10 (2 or 3 each) | 1 to 5, 8 to 10 | anti-armour; the first unit reward (mission 1) |
+| e4 flamethrower | 4x8, 5 to 10 (4 to 8 each) | 7x2, 10x1 | heavy against buildings and infantry |
+| jeep | every mission (1 to 7) | 3x2, 5x2, 9x1 | fast harasser |
+| apc | 4x2, 5, 7 to 10 (1 or 2) | 6x2, 8x1, 10x1 | **gun only**: it carries no troops (the name says "APC (gun only)" in game) |
+| 1tnk light tank | 3x2, 5 to 10 | 5x2, 9x1, 10x1 | |
+| 2tnk medium tank | 6x3, 7 to 10 | 6 to 10 | |
+| 3tnk heavy tank | 8x2, 9x2, 10x1 | none | enemy only |
+| 4tnk mammoth tank | 9x1, 10x1 | none | enemy only; the only unit that crushes brick walls |
+| arty artillery | 6x2, 8x1, 10x1 | 7x2, 8 to 10 | outranges the defenses; answered by sorties |
+| v2rl V2 launcher | 7x2, 8x1, 9x2, 10x2 | none | outranges the defenses; answered by sorties |
+| ftrk flak truck | 7x3, 8x1, 10x1 | 7x1, 10x1 | its flak hits ground targets in these rules |
 
-`RW_PACK=res://songs/hold_the_line RW_CHART=level_03.campaign RW_AUTOPLAY=perfect RW_SCENE=play`, a real window on the
-development PC (RTX 3060, vsync 60 Hz), 66 s, re-measured 30 October 2026 on the centred layout: 3,970 frames, average
-16.68 ms, p95 16.67 ms, maximum 25.1 ms, no frame over 33 ms, peak 163 live units (29 October, one-sided layout: maximum
-58.3 ms, one frame over 33 ms, peak 176). That is the perfect-play case; the 0.6 runs reach a higher peak (about 110 enemies now)
-but were measured headless only. The phone measurement (A13) is still the owner's run: see
-`docs/HANDOVER.md` for the exact command.
+| Building | Use |
+| --- | --- |
+| fact (construction yard) as **command core** | required objective in every mission; losing it ends the run |
+| powr (power plant) | required objective in 6 and 10 (50,000 / 70,000 hp), otherwise scenery that can be destroyed |
+| dome (radar dome) | required objective in 8 and 10 (60,000 / 70,000 hp) |
+| barr (barracks), weap (war factory) | where rewarded infantry and vehicles come out; the HUD names them only when lost |
+| pbox (pillbox) | reward `pillbox`; prebuilt at every approach in 6 and 10, at the top in 8 and 9 |
+| gun (gun turret) | reward `turret`; prebuilt at the top in 7 to 10 |
+| ftur (flame tower) | reward `flame_tower`, from mission 4 |
+| brik (brick wall) | the compound ring of `defense_02.json`; enemies walk through its openings |
+| sbag (sandbags) | cover beside the sockets, missions 4 to 10 (`rules.walls`) |
+| repair (no building) | reward `repair`, and what any reward becomes at capacity: a repair crew for the most damaged approach, or +50% health once for the oldest defense when nothing is damaged |
+
+Not used, on purpose: `agun` (AA gun) and `sam` (SAM site) only shoot aircraft and there is no air threat, so they
+would be decorative; `hpad`, helicopters and air-service rewards are out of scope (brief, section 5); `fix` (service
+depot) has art but no unit-repair behaviour in the simulation, so it is not offered rather than offered as a fake;
+`tent` (allied barracks) has no art in the extracted set.
+
+## Desktop frame time and sizes
+
+`RW_MISSION=10 RW_SCENE=play RW_AUTOPLAY=perfect`, a real 1280 x 720 window on the development PC (RTX 3060, vsync
+60 Hz), mission 10 with its 16 streams, 31 October 2026: 6,608 frames, average 16.7 ms, p95 16.67 ms, 5 frames over
+33 ms (maximum 76 ms, during loading), static memory 58.8 MB. A phone has not run it.
+
+| Mission | Bars, seconds | Phases (D drums, B bass) | Sequences | Choices (pick of pool) | Streams at once | Pack (Ogg) |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 First Watch | 32, 44.1 s | DDDD | 8 | kick sound 1 of 2 | 3 | 0.5 MB |
+| 2 Second Pulse | 40, 55.2 s | DDDDD | 10 | groove 1/2, kick 1/2, snare 1/2 | 5 | 1.2 MB |
+| 3 Hold the Line | 48, 66.2 s | DBDBDB | 12 | kick 1/2, snare 1/2, bass voice 1/2 | 6 | 2.0 MB |
+| 4 Backbeat | 48, 66.2 s | DDDDDD | 12 | groove 1/2, kick 1/3, snare 1/3 | 5 | 3.3 MB |
+| 5 Counterpoint | 56, 77.2 s | DBDBDBD | 14 | groove 1/2, kick 1/3, snare 1/3, bass 1/2, voices 2/3 | 7 | 6.8 MB |
+| 6 Fortress | 56, 77.2 s | DDDDDDD | 14 | grooves 2/3, kicks 2/4, snare 1/3 | 8 | 6.8 MB |
+| 7 Crossroads | 64, 88.3 s | DBDBDBDB | 16 | groove 1/3, kick 1/4, snare 1/3, bass 2/3, voices 3/4 | 12 | 11.9 MB |
+| 8 Crossfire | 64, 88.3 s | DDDDDDDD | 16 | groove 1/3, fill 1/2, kick 1/4, snares 2/4 | 6 | 8.6 MB |
+| 9 Iron Rhythm | 64, 88.3 s | DDBDDBDD | 16 | grooves 2/3, fills 2/3, kicks 2/4, snare 1/4, bass 1/3, voices 2/4 | 12 | 11.6 MB |
+| 10 Last Light | 80, 110.3 s | DDBDBDBDBD | 20 | grooves 3/3, fills 2/3, kicks 2/3, snares 2/3, basses 2/3, voices 4/5 | 16 | 13.9 MB |
+
+The Ogg files of all ten packs come to 67 MB (every offered combination is pre-assembled; only the selected ones load).
 
 ## Not verified
 
-No phone playthrough, no real stems (all audio is synthesised), no human playtest of the charts or of the difficulty.
-The same-thumb gaps (960 / 480 ticks) are design targets that the loader only warns about; none of the three charts
-triggers a warning.
+No phone run (frame time, memory, touch feel, the 16-stream mission 10 on a phone CPU), no real stems, no human
+playtest of any mission or of the difficulty curve, no listening check of the assembled stems beyond the build's
+sample-exact placement test. The beginner and sloppy policies are models of mistakes, not people.
+
+## Raw rows (seeds 1 to 3, all policies)
+
+| Mission | Policy | Seed | Outcome | At | Sequences (sharp/steady/loose) | Built | Units | Repairs | Defenses alive | Core | Enemies killed | Peak units (you / enemy) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 First Watch | perfect | 1 | victory | 44.1 s | 8/8 (8/0/0) | 6 | 2 | 0 | 6 | 100% | 28 | 1 / 32 |
+| 1 First Watch | perfect | 2 | victory | 44.1 s | 8/8 (8/0/0) | 6 | 2 | 0 | 6 | 100% | 29 | 2 / 32 |
+| 1 First Watch | perfect | 3 | victory | 44.1 s | 8/8 (8/0/0) | 6 | 2 | 0 | 6 | 100% | 29 | 2 / 32 |
+| 1 First Watch | beginner | 1 | victory | 44.1 s | 8/8 (0/8/0) | 6 | 2 | 0 | 5 | 100% | 28 | 2 / 33 |
+| 1 First Watch | beginner | 2 | victory | 44.1 s | 8/8 (2/5/1) | 6 | 2 | 0 | 5 | 100% | 29 | 2 / 33 |
+| 1 First Watch | beginner | 3 | victory | 44.1 s | 8/8 (3/5/0) | 6 | 2 | 0 | 5 | 100% | 29 | 1 / 32 |
+| 1 First Watch | sloppy | 1 | victory | 44.1 s | 7/8 (0/5/2) | 6 | 1 | 0 | 5 | 100% | 29 | 1 / 33 |
+| 1 First Watch | sloppy | 2 | victory | 44.1 s | 8/8 (0/3/5) | 6 | 2 | 0 | 5 | 100% | 28 | 1 / 33 |
+| 1 First Watch | sloppy | 3 | victory | 44.1 s | 6/8 (0/3/3) | 4 | 2 | 0 | 4 | 100% | 20 | 2 / 36 |
+| 1 First Watch | none | 1 | defeat | 40.8 s | 0/8 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 45 |
+| 1 First Watch | none | 2 | defeat | 42.2 s | 0/8 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 45 |
+| 1 First Watch | none | 3 | defeat | 37.8 s | 0/8 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 45 |
+| 2 Second Pulse | perfect | 1 | victory | 55.2 s | 10/10 (10/0/0) | 8 | 2 | 0 | 8 | 100% | 31 | 2 / 43 |
+| 2 Second Pulse | perfect | 2 | victory | 55.2 s | 10/10 (10/0/0) | 8 | 2 | 0 | 8 | 100% | 29 | 2 / 43 |
+| 2 Second Pulse | perfect | 3 | victory | 55.2 s | 10/10 (10/0/0) | 8 | 2 | 0 | 8 | 100% | 29 | 2 / 43 |
+| 2 Second Pulse | beginner | 1 | victory | 55.2 s | 10/10 (0/10/0) | 8 | 2 | 0 | 7 | 100% | 31 | 2 / 43 |
+| 2 Second Pulse | beginner | 2 | victory | 55.2 s | 10/10 (0/9/1) | 8 | 2 | 0 | 7 | 100% | 30 | 2 / 43 |
+| 2 Second Pulse | beginner | 3 | victory | 55.2 s | 10/10 (4/5/1) | 8 | 2 | 0 | 7 | 100% | 31 | 1 / 43 |
+| 2 Second Pulse | sloppy | 1 | victory | 55.2 s | 9/10 (0/6/3) | 7 | 2 | 0 | 6 | 100% | 30 | 1 / 43 |
+| 2 Second Pulse | sloppy | 2 | victory | 55.2 s | 10/10 (0/3/7) | 8 | 2 | 0 | 7 | 100% | 30 | 2 / 43 |
+| 2 Second Pulse | sloppy | 3 | defeat | 32.6 s | 5/10 (0/1/4) | 4 | 1 | 0 | 3 | 0% | 11 | 1 / 33 |
+| 2 Second Pulse | none | 1 | defeat | 28.4 s | 0/10 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 35 |
+| 2 Second Pulse | none | 2 | defeat | 28.5 s | 0/10 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 35 |
+| 2 Second Pulse | none | 3 | defeat | 28.5 s | 0/10 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 35 |
+| 3 Hold the Line | perfect | 1 | victory | 66.2 s | 12/12 (12/0/0) | 6 | 6 | 0 | 5 | 100% | 44 | 3 / 32 |
+| 3 Hold the Line | perfect | 2 | victory | 66.2 s | 12/12 (12/0/0) | 6 | 6 | 0 | 4 | 100% | 33 | 3 / 35 |
+| 3 Hold the Line | perfect | 3 | victory | 66.2 s | 12/12 (12/0/0) | 6 | 6 | 0 | 4 | 100% | 34 | 3 / 34 |
+| 3 Hold the Line | beginner | 1 | victory | 66.2 s | 11/12 (1/9/1) | 6 | 5 | 0 | 5 | 100% | 35 | 2 / 32 |
+| 3 Hold the Line | beginner | 2 | victory | 66.2 s | 11/12 (0/11/0) | 6 | 5 | 0 | 5 | 100% | 42 | 3 / 32 |
+| 3 Hold the Line | beginner | 3 | victory | 66.2 s | 12/12 (1/9/2) | 6 | 6 | 0 | 5 | 100% | 44 | 3 / 32 |
+| 3 Hold the Line | sloppy | 1 | victory | 66.2 s | 8/12 (1/3/4) | 5 | 3 | 0 | 3 | 100% | 34 | 1 / 34 |
+| 3 Hold the Line | sloppy | 2 | victory | 66.2 s | 8/12 (0/1/7) | 6 | 2 | 0 | 5 | 100% | 41 | 1 / 33 |
+| 3 Hold the Line | sloppy | 3 | victory | 66.2 s | 12/12 (1/4/7) | 6 | 6 | 0 | 5 | 100% | 39 | 2 / 35 |
+| 3 Hold the Line | none | 1 | defeat | 39.0 s | 0/12 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 41 |
+| 3 Hold the Line | none | 2 | defeat | 39.1 s | 0/12 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 41 |
+| 3 Hold the Line | none | 3 | defeat | 39.6 s | 0/12 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 41 |
+| 4 Backbeat | perfect | 1 | victory | 66.2 s | 12/12 (12/0/0) | 8 | 4 | 0 | 7 | 100% | 49 | 2 / 46 |
+| 4 Backbeat | perfect | 2 | victory | 66.2 s | 12/12 (12/0/0) | 8 | 4 | 0 | 8 | 100% | 51 | 2 / 44 |
+| 4 Backbeat | perfect | 3 | victory | 66.2 s | 12/12 (12/0/0) | 8 | 4 | 0 | 8 | 100% | 48 | 2 / 45 |
+| 4 Backbeat | beginner | 1 | victory | 66.2 s | 12/12 (0/12/0) | 8 | 4 | 0 | 8 | 100% | 41 | 2 / 48 |
+| 4 Backbeat | beginner | 2 | victory | 66.2 s | 11/12 (0/11/0) | 8 | 3 | 0 | 7 | 100% | 41 | 2 / 46 |
+| 4 Backbeat | beginner | 3 | victory | 66.2 s | 12/12 (2/10/0) | 8 | 4 | 0 | 8 | 100% | 43 | 2 / 47 |
+| 4 Backbeat | sloppy | 1 | victory | 66.2 s | 11/12 (0/3/8) | 8 | 3 | 0 | 7 | 100% | 41 | 1 / 52 |
+| 4 Backbeat | sloppy | 2 | victory | 66.2 s | 11/12 (0/4/7) | 7 | 4 | 0 | 5 | 100% | 25 | 2 / 52 |
+| 4 Backbeat | sloppy | 3 | victory | 66.2 s | 9/12 (0/4/5) | 6 | 3 | 0 | 5 | 100% | 21 | 1 / 49 |
+| 4 Backbeat | none | 1 | defeat | 30.1 s | 0/12 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 34 |
+| 4 Backbeat | none | 2 | defeat | 30.1 s | 0/12 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 34 |
+| 4 Backbeat | none | 3 | defeat | 30.1 s | 0/12 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 34 |
+| 5 Counterpoint | perfect | 1 | victory | 77.2 s | 14/14 (14/0/0) | 8 | 6 | 0 | 5 | 28% | 38 | 2 / 27 |
+| 5 Counterpoint | perfect | 2 | victory | 77.2 s | 14/14 (14/0/0) | 8 | 6 | 0 | 5 | 100% | 42 | 2 / 27 |
+| 5 Counterpoint | perfect | 3 | victory | 77.2 s | 14/14 (14/0/0) | 8 | 6 | 0 | 6 | 100% | 45 | 2 / 26 |
+| 5 Counterpoint | beginner | 1 | victory | 77.2 s | 14/14 (1/13/0) | 8 | 6 | 0 | 4 | 100% | 40 | 2 / 29 |
+| 5 Counterpoint | beginner | 2 | victory | 77.2 s | 13/14 (1/11/1) | 7 | 6 | 0 | 3 | 100% | 39 | 2 / 29 |
+| 5 Counterpoint | beginner | 3 | victory | 77.2 s | 14/14 (1/13/0) | 8 | 6 | 0 | 4 | 100% | 37 | 2 / 30 |
+| 5 Counterpoint | sloppy | 1 | victory | 77.2 s | 12/14 (0/4/8) | 7 | 5 | 0 | 4 | 10% | 37 | 2 / 34 |
+| 5 Counterpoint | sloppy | 2 | victory | 77.2 s | 12/14 (0/5/7) | 7 | 5 | 0 | 5 | 80% | 37 | 2 / 29 |
+| 5 Counterpoint | sloppy | 3 | victory | 77.2 s | 11/14 (0/6/5) | 7 | 4 | 0 | 5 | 82% | 41 | 2 / 28 |
+| 5 Counterpoint | none | 1 | defeat | 33.6 s | 0/14 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 27 |
+| 5 Counterpoint | none | 2 | defeat | 33.6 s | 0/14 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 27 |
+| 5 Counterpoint | none | 3 | defeat | 33.5 s | 0/14 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 27 |
+| 6 Fortress | perfect | 1 | victory | 77.2 s | 14/14 (14/0/0) | 8 | 4 | 2 | 5 | 100% | 40 | 3 / 33 |
+| 6 Fortress | perfect | 2 | victory | 77.2 s | 14/14 (14/0/0) | 8 | 4 | 2 | 4 | 100% | 37 | 3 / 35 |
+| 6 Fortress | perfect | 3 | victory | 77.2 s | 14/14 (14/0/0) | 8 | 4 | 2 | 4 | 100% | 39 | 3 / 34 |
+| 6 Fortress | beginner | 1 | victory | 77.2 s | 14/14 (0/14/0) | 8 | 4 | 2 | 6 | 100% | 49 | 3 / 36 |
+| 6 Fortress | beginner | 2 | victory | 77.2 s | 13/14 (0/13/0) | 7 | 4 | 2 | 6 | 100% | 46 | 3 / 34 |
+| 6 Fortress | beginner | 3 | victory | 77.2 s | 14/14 (1/13/0) | 8 | 4 | 2 | 6 | 100% | 45 | 3 / 34 |
+| 6 Fortress | sloppy | 1 | victory | 77.2 s | 13/14 (0/4/9) | 7 | 4 | 2 | 6 | 100% | 62 | 3 / 32 |
+| 6 Fortress | sloppy | 2 | victory | 77.2 s | 12/14 (0/2/10) | 7 | 3 | 2 | 3 | 40% | 45 | 2 / 36 |
+| 6 Fortress | sloppy | 3 | victory | 77.2 s | 11/14 (0/6/5) | 6 | 3 | 2 | 1 | 70% | 36 | 2 / 40 |
+| 6 Fortress | none | 1 | defeat | 55.7 s | 0/14 (0/0/0) | 0 | 0 | 0 | 0 | 77% | 22 | 0 / 39 |
+| 6 Fortress | none | 2 | defeat | 54.8 s | 0/14 (0/0/0) | 0 | 0 | 0 | 0 | 72% | 21 | 0 / 34 |
+| 6 Fortress | none | 3 | defeat | 54.2 s | 0/14 (0/0/0) | 0 | 0 | 0 | 0 | 83% | 22 | 0 / 34 |
+| 7 Crossroads | perfect | 1 | victory | 88.3 s | 16/16 (16/0/0) | 8 | 6 | 2 | 9 | 100% | 55 | 3 / 18 |
+| 7 Crossroads | perfect | 2 | victory | 88.3 s | 16/16 (16/0/0) | 8 | 6 | 2 | 9 | 100% | 57 | 3 / 20 |
+| 7 Crossroads | perfect | 3 | victory | 88.3 s | 16/16 (16/0/0) | 8 | 6 | 2 | 9 | 100% | 57 | 3 / 19 |
+| 7 Crossroads | beginner | 1 | victory | 88.3 s | 16/16 (1/15/0) | 8 | 6 | 2 | 9 | 100% | 57 | 3 / 20 |
+| 7 Crossroads | beginner | 2 | victory | 88.3 s | 15/16 (2/13/0) | 8 | 5 | 2 | 9 | 100% | 60 | 3 / 24 |
+| 7 Crossroads | beginner | 3 | victory | 88.3 s | 16/16 (2/14/0) | 8 | 6 | 2 | 9 | 100% | 58 | 4 / 19 |
+| 7 Crossroads | sloppy | 1 | victory | 88.3 s | 13/16 (0/8/5) | 8 | 3 | 2 | 6 | 100% | 57 | 2 / 22 |
+| 7 Crossroads | sloppy | 2 | victory | 88.3 s | 13/16 (0/8/5) | 6 | 6 | 1 | 7 | 100% | 64 | 4 / 24 |
+| 7 Crossroads | sloppy | 3 | victory | 88.3 s | 9/16 (0/1/8) | 5 | 3 | 1 | 2 | 69% | 41 | 2 / 29 |
+| 7 Crossroads | none | 1 | defeat | 42.6 s | 0/16 (0/0/0) | 0 | 0 | 0 | 1 | 0% | 3 | 0 / 36 |
+| 7 Crossroads | none | 2 | defeat | 42.6 s | 0/16 (0/0/0) | 0 | 0 | 0 | 1 | 0% | 3 | 0 / 36 |
+| 7 Crossroads | none | 3 | defeat | 41.1 s | 0/16 (0/0/0) | 0 | 0 | 0 | 1 | 0% | 3 | 0 / 36 |
+| 8 Crossfire | perfect | 1 | victory | 88.3 s | 16/16 (16/0/0) | 8 | 5 | 3 | 6 | 100% | 64 | 4 / 25 |
+| 8 Crossfire | perfect | 2 | victory | 88.3 s | 16/16 (16/0/0) | 8 | 5 | 3 | 4 | 100% | 59 | 3 / 26 |
+| 8 Crossfire | perfect | 3 | victory | 88.3 s | 16/16 (16/0/0) | 8 | 5 | 3 | 7 | 100% | 65 | 3 / 27 |
+| 8 Crossfire | beginner | 1 | victory | 88.3 s | 16/16 (0/16/0) | 8 | 5 | 3 | 5 | 100% | 64 | 4 / 27 |
+| 8 Crossfire | beginner | 2 | victory | 88.3 s | 15/16 (1/14/0) | 8 | 4 | 3 | 7 | 100% | 62 | 3 / 28 |
+| 8 Crossfire | beginner | 3 | victory | 88.3 s | 16/16 (2/14/0) | 8 | 5 | 2 | 4 | 100% | 54 | 3 / 26 |
+| 8 Crossfire | sloppy | 1 | victory | 88.3 s | 15/16 (0/5/10) | 7 | 5 | 2 | 6 | 100% | 66 | 4 / 22 |
+| 8 Crossfire | sloppy | 2 | victory | 88.3 s | 15/16 (0/5/10) | 7 | 5 | 3 | 4 | 100% | 62 | 3 / 26 |
+| 8 Crossfire | sloppy | 3 | victory | 88.3 s | 14/16 (0/5/9) | 6 | 5 | 3 | 4 | 100% | 59 | 3 / 25 |
+| 8 Crossfire | none | 1 | defeat | 36.0 s | 0/16 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 5 | 0 / 30 |
+| 8 Crossfire | none | 2 | defeat | 36.0 s | 0/16 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 5 | 0 / 30 |
+| 8 Crossfire | none | 3 | defeat | 36.0 s | 0/16 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 5 | 0 / 30 |
+| 9 Iron Rhythm | perfect | 1 | victory | 88.3 s | 16/16 (16/0/0) | 8 | 5 | 3 | 5 | 100% | 61 | 3 / 28 |
+| 9 Iron Rhythm | perfect | 2 | victory | 88.3 s | 16/16 (16/0/0) | 8 | 5 | 3 | 4 | 100% | 62 | 3 / 31 |
+| 9 Iron Rhythm | perfect | 3 | victory | 88.3 s | 16/16 (16/0/0) | 8 | 5 | 3 | 6 | 100% | 59 | 3 / 30 |
+| 9 Iron Rhythm | beginner | 1 | victory | 88.3 s | 15/16 (0/15/0) | 8 | 4 | 3 | 4 | 100% | 54 | 2 / 32 |
+| 9 Iron Rhythm | beginner | 2 | victory | 88.3 s | 13/16 (0/13/0) | 7 | 3 | 3 | 3 | 92% | 48 | 2 / 33 |
+| 9 Iron Rhythm | beginner | 3 | victory | 88.3 s | 15/16 (1/14/0) | 8 | 4 | 3 | 6 | 100% | 54 | 2 / 33 |
+| 9 Iron Rhythm | sloppy | 1 | victory | 88.3 s | 13/16 (0/6/7) | 8 | 2 | 3 | 4 | 100% | 46 | 1 / 32 |
+| 9 Iron Rhythm | sloppy | 2 | defeat | 86.4 s | 11/16 (0/2/9) | 7 | 1 | 3 | 2 | 0% | 50 | 1 / 30 |
+| 9 Iron Rhythm | sloppy | 3 | victory | 88.3 s | 11/16 (1/5/5) | 5 | 4 | 2 | 1 | 93% | 58 | 2 / 26 |
+| 9 Iron Rhythm | none | 1 | defeat | 36.4 s | 0/16 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 5 | 0 / 30 |
+| 9 Iron Rhythm | none | 2 | defeat | 36.6 s | 0/16 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 5 | 0 / 30 |
+| 9 Iron Rhythm | none | 3 | defeat | 36.3 s | 0/16 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 5 | 0 / 30 |
+| 10 Last Light | perfect | 1 | victory | 110.3 s | 20/20 (20/0/0) | 8 | 8 | 4 | 4 | 100% | 63 | 4 / 26 |
+| 10 Last Light | perfect | 2 | victory | 110.3 s | 20/20 (20/0/0) | 8 | 8 | 4 | 2 | 32% | 60 | 3 / 29 |
+| 10 Last Light | perfect | 3 | victory | 110.3 s | 20/20 (20/0/0) | 8 | 8 | 4 | 2 | 49% | 59 | 3 / 26 |
+| 10 Last Light | beginner | 1 | victory | 110.3 s | 20/20 (0/19/1) | 8 | 8 | 4 | 3 | 32% | 68 | 3 / 29 |
+| 10 Last Light | beginner | 2 | victory | 110.3 s | 19/20 (2/16/1) | 8 | 7 | 4 | 2 | 57% | 50 | 3 / 29 |
+| 10 Last Light | beginner | 3 | victory | 110.3 s | 19/20 (3/16/0) | 8 | 7 | 4 | 3 | 7% | 63 | 3 / 30 |
+| 10 Last Light | sloppy | 1 | victory | 110.3 s | 16/20 (0/8/8) | 8 | 4 | 4 | 4 | 63% | 67 | 2 / 24 |
+| 10 Last Light | sloppy | 2 | defeat | 100.7 s | 14/20 (0/6/8) | 8 | 4 | 2 | 1 | 0% | 54 | 2 / 25 |
+| 10 Last Light | sloppy | 3 | victory | 110.3 s | 14/20 (0/8/6) | 6 | 4 | 4 | 0 | 42% | 55 | 2 / 26 |
+| 10 Last Light | none | 1 | defeat | 67.5 s | 0/20 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 28 | 0 / 33 |
+| 10 Last Light | none | 2 | defeat | 67.7 s | 0/20 (0/0/0) | 0 | 0 | 0 | 1 | 0% | 28 | 0 / 33 |
+| 10 Last Light | none | 3 | defeat | 67.3 s | 0/20 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 28 | 0 / 33 |
