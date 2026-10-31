@@ -7,12 +7,12 @@
   {"number": 1, "level_id": "level_01", "title": "First Watch", "pack": "m01_first_watch", "new_options": ["kick_march", "kick_armour", "snare_guard"]},
   {"number": 2, "level_id": "level_02", "title": "Second Pulse", "pack": "m02_second_pulse", "new_options": ["groove_push", "groove_straight", "snare_crack"]},
   {"number": 3, "level_id": "level_03", "title": "Hold the Line", "pack": "m03_hold_the_line", "new_options": ["bass_patrol", "bass_reese"]},
-  {"number": 4, "level_id": "level_04", "title": "Backbeat", "pack": "", "new_options": []},
-  {"number": 5, "level_id": "level_05", "title": "Counterpoint", "pack": "", "new_options": []},
-  {"number": 6, "level_id": "level_06", "title": "Fortress", "pack": "", "new_options": []},
-  {"number": 7, "level_id": "level_07", "title": "Crossroads", "pack": "", "new_options": []},
-  {"number": 8, "level_id": "level_08", "title": "Crossfire", "pack": "", "new_options": []},
-  {"number": 9, "level_id": "level_09", "title": "Iron Rhythm", "pack": "", "new_options": []},
-  {"number": 10, "level_id": "level_10", "title": "Last Light", "pack": "", "new_options": []}
+  {"number": 4, "level_id": "level_04", "title": "Backbeat", "pack": "m04_backbeat", "new_options": ["groove_twostep", "kick_siege", "snare_clap", "fill_snare_run"]},
+  {"number": 5, "level_id": "level_05", "title": "Counterpoint", "pack": "m05_counterpoint", "new_options": ["bass_steps", "bass_growl", "bass_hold_b"]},
+  {"number": 6, "level_id": "level_06", "title": "Fortress", "pack": "m06_fortress", "new_options": ["groove_roller", "kick_heavy"]},
+  {"number": 7, "level_id": "level_07", "title": "Crossroads", "pack": "m07_crossroads", "new_options": ["bass_command", "bass_octaves"]},
+  {"number": 8, "level_id": "level_08", "title": "Crossfire", "pack": "m08_crossfire", "new_options": ["fill_break", "snare_rim"]},
+  {"number": 9, "level_id": "level_09", "title": "Iron Rhythm", "pack": "m09_iron_rhythm", "new_options": ["fill_kick_drop"]},
+  {"number": 10, "level_id": "level_10", "title": "Last Light", "pack": "m10_last_light", "new_options": ["bass_hollow"]}
  ]
 }

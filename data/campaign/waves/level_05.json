@@ -1,0 +1,17 @@
+{
+ "note": "Mission 5 Counterpoint (56 bars, 77 s). Adds rocket soldiers and light tanks to the enemy mix; the first APC pair arrives in the last third.",
+ "rules": {"objective_hp": {"command_core": 90000}, "sockets_per_point": 4, "walls": [[26, 18], [26, 24], [36, 14], [42, 14], [52, 18], [52, 24]]},
+ "waves": [
+  {"id": "wave_01", "start_bar": 1, "entry": "left", "groups": [{"actor": "e1", "count": 3, "spawn_spacing_ticks": 720}]},
+  {"id": "wave_02", "start_bar": 6, "entry": "left", "groups": [{"actor": "e1", "count": 4, "spawn_spacing_ticks": 600}]},
+  {"id": "wave_03", "start_bar": 10, "entry": "top", "groups": [{"actor": "e1", "count": 3}, {"actor": "e2", "count": 2}]},
+  {"id": "wave_04", "start_bar": 14, "entry": "right", "groups": [{"actor": "e1", "count": 3}, {"actor": "e3", "count": 1}, {"actor": "jeep", "count": 1}]},
+  {"id": "wave_05", "start_bar": 18, "entry": "left", "groups": [{"actor": "e1", "count": 3}, {"actor": "e4", "count": 2}]},
+  {"id": "wave_06", "start_bar": 22, "entry": "top", "groups": [{"actor": "e1", "count": 3}, {"actor": "e2", "count": 1}, {"actor": "jeep", "count": 1}]},
+  {"id": "wave_07", "start_bar": 26, "entry": "right", "groups": [{"actor": "e1", "count": 3}, {"actor": "e4", "count": 1}, {"actor": "jeep", "count": 1}]},
+  {"id": "wave_08", "start_bar": 30, "entry": "left", "groups": [{"actor": "e1", "count": 3}, {"actor": "e3", "count": 1}, {"actor": "jeep", "count": 1}]},
+  {"id": "wave_09", "start_bar": 34, "entry": "top", "groups": [{"actor": "e1", "count": 3}, {"actor": "e2", "count": 2}, {"actor": "1tnk", "count": 1}]},
+  {"id": "wave_10", "start_bar": 38, "entry": "right", "groups": [{"actor": "e1", "count": 3}, {"actor": "e4", "count": 1}, {"actor": "apc", "count": 1}]},
+  {"id": "wave_11", "start_bar": 42, "entry": "left", "groups": [{"actor": "e1", "count": 4}, {"actor": "e2", "count": 2}, {"actor": "1tnk", "count": 1}]}
+ ]
+}

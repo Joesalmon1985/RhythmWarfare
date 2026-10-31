@@ -1,0 +1,26 @@
+{
+ "level_id": "level_06",
+ "number": 6,
+ "title": "Fortress",
+ "pack": "m06_fortress",
+ "bars": 56,
+ "seed": 1006,
+ "note": "Drums only, two grooves and two kick sounds. Groove slot 1 always plays with kick slot 1 (pad 1) and groove slot 2 with kick slot 2 (pad 2), alternating every 8 bars (slot 1 at bars 1, 17, 33, 49; slot 2 at 9, 25, 41), so the kick moves between the two left-thumb pads and the snare stays on pad 4. New groove Roller (doubled kick on 1) and new Heavy Kick. The fixed Snare Run fill closes bars 24, 48 and 56. The power plant is a required objective for the first time; some left waves aim at it. The fortress starts with one pillbox at the first socket of each approach (rules.prebuilt). Rewards add medium tanks, APCs and repair crews; artillery appears as the first enemy that outranges the defenses.",
+ "intro": "Two kick sounds: the kick moves between the two left pads.",
+ "battle": {"battlefield": "defense_02", "waves": "data/campaign/waves/level_06.json"},
+ "choices": {
+  "groove": {"count": 2, "pool": ["groove_twostep", "groove_push", "groove_roller"], "default": ["groove_twostep", "groove_roller"]},
+  "kick_sound": {"count": 2, "pool": ["kick_march", "kick_armour", "kick_siege", "kick_heavy"], "default": ["kick_march", "kick_heavy"]},
+  "snare_sound": {"count": 1, "pool": ["snare_guard", "snare_crack", "snare_clap"], "default": ["snare_guard"]}
+ },
+ "accompaniment": [{"clip": "acc_fortress", "start_bar": 1, "bars": 56}],
+ "phases": [
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["pillbox", "pillbox"]},
+  {"bars": 8, "mode": "drums", "groove": 2, "kick_sound": 2, "snare_sound": 1, "sequence_bars": 4, "rewards": ["turret", "2tnk"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["flame_tower", "apc"]},
+  {"bars": 8, "mode": "drums", "groove": 2, "kick_sound": 2, "snare_sound": 1, "sequence_bars": 4, "rewards": ["turret", "repair"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["pillbox", "2tnk"]},
+  {"bars": 8, "mode": "drums", "groove": 2, "fill": "fill_snare_run", "kick_sound": 2, "snare_sound": 1, "sequence_bars": 4, "rewards": ["turret", "apc"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["repair", "turret"]}
+ ]
+}

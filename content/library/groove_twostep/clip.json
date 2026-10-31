@@ -1,0 +1,16 @@
+{
+ "id": "groove_twostep",
+ "kind": "groove",
+ "name": "Two-Step",
+ "bars": 2,
+ "cue_min_velocity": 64,
+ "tempo_bpm": 174,
+ "note": "Full time: kick on 1 and the 'and' of 3, snare on 2 and 4; quiet ghost snares (not cued). Generated for mission 4.",
+ "source": {
+  "type": "generated",
+  "patterns": {
+   "kick": "x.........x.....|x.........x.....",
+   "snare": "....x.......x...|....x..g....x..g"
+  }
+ }
+}

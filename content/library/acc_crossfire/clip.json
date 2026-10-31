@@ -1,0 +1,36 @@
+{
+ "id": "acc_crossfire",
+ "kind": "accompaniment",
+ "name": "Crossfire accompaniment",
+ "bars": 8,
+ "key": "C# minor",
+ "tempo_bpm": 174,
+ "note": "Descending chords and driving hats. Generated for mission 8.",
+ "source": {
+  "type": "generated",
+  "chords": [
+   [
+    "C#m",
+    2
+   ],
+   [
+    "B",
+    2
+   ],
+   [
+    "A",
+    2
+   ],
+   [
+    "G#sus4",
+    1
+   ],
+   [
+    "G#",
+    1
+   ]
+  ],
+  "hats": "x.x.xxx.x.x.xxo.",
+  "hats_from_bar": 1
+ }
+}

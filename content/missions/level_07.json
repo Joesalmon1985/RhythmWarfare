@@ -1,0 +1,30 @@
+{
+ "level_id": "level_07",
+ "number": 7,
+ "title": "Crossroads",
+ "pack": "m07_crossroads",
+ "bars": 64,
+ "seed": 1007,
+ "note": "Three bass voices and two bass lines. Drum and bass phases alternate every 8 bars (drums at 1, 17, 33, 49; bass at 9, 25, 41, 57). Bass line slot 1 plays the phases at bars 9 and 41 with voices 1, 2, 3, 2 (two bars each: pads 2, 3, 1, 3), bass line slot 2 the phases at 25 and 57 with voices 3, 2, 1, 2 (pads 1, 3, 2, 3), so the voice always crosses to the other thumb and the right thumb keeps voice 2. New bass line Octaves (long low root, short tap an octave up) and new voice Command Saw. One groove, one kick and one snare choice; the fixed Snare Run closes bars 24 and 56; under the drums a fixed Long Line on Patrol Sub keeps playing (not cued; one stem instead of one per choice). Rewards: drums build defenses and a repair crew; bass sequences send flamethrowers, flak trucks, artillery and a medium tank, plus one turret and one repair. Enemies add flak trucks, V2 launchers and medium tanks; a gun turret stands at the top road from the start (rules.prebuilt), the shortest route.",
+ "intro": "Three bass voices: the lit pad tells you which one plays.",
+ "intro_bar": 8,
+ "battle": {"battlefield": "defense_02", "waves": "data/campaign/waves/level_07.json"},
+ "choices": {
+  "groove": {"count": 1, "pool": ["groove_twostep", "groove_push", "groove_roller"], "default": ["groove_roller"]},
+  "kick_sound": {"count": 1, "pool": ["kick_march", "kick_armour", "kick_siege", "kick_heavy"], "default": ["kick_march"]},
+  "snare_sound": {"count": 1, "pool": ["snare_guard", "snare_crack", "snare_clap"], "default": ["snare_crack"]},
+  "bass": {"count": 2, "pool": ["bass_steps", "bass_octaves", "bass_hold_b"], "default": ["bass_steps", "bass_octaves"]},
+  "bass_voice": {"count": 3, "pool": ["bass_patrol", "bass_reese", "bass_growl", "bass_command"], "default": ["bass_patrol", "bass_reese", "bass_command"]}
+ },
+ "accompaniment": [{"clip": "acc_crossroads", "start_bar": 1, "bars": 64}],
+ "phases": [
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["pillbox", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2, 3, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["e4", "ftrk"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["turret", "flame_tower"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 2, "bass_voice": [3, 2, 1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["arty", "turret"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["pillbox", "turret"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2, 3, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["e4", "2tnk"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["turret", "repair"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 2, "bass_voice": [3, 2, 1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["arty", "repair"]}
+ ]
+}

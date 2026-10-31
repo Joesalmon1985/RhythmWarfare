@@ -198,8 +198,12 @@ func _apply_sequences_before(tick_end: float) -> void:
 		reward_log.append(entry)
 
 
-## Index of the defense point the next wave walks through (the reward placement hint), -1 when none is left.
+## The reward placement hint: the defense point most enemies are walking towards now, else the one the next wave
+## walks through, -1 when none is left.
 func _next_wave_point() -> int:
+	var live := sim.approaching_point()
+	if live >= 0:
+		return live
 	var now := float(sim_ticks) * BattleSim.TICK_S
 	for w in level.waves:
 		if level.tick_to_seconds(int(w["start_tick"])) + 4.0 > now:

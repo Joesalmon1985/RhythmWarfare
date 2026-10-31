@@ -11,7 +11,6 @@ extends Control
 const BUTTONS := 4
 const FAMILY_COLOR := {"kick": Color(0.98, 0.62, 0.25), "snare": Color(0.35, 0.85, 0.98), "bass": Color(0.72, 0.55, 1.0)}
 const HC_COLOR := {"kick": Color(1.0, 0.75, 0.2), "snare": Color(0.2, 1.0, 1.0), "bass": Color(1.0, 0.4, 1.0)}
-const KEY_NAMES := {1: "D", 2: "F", 3: "J", 4: "K"}
 const FEEDBACK_S := 0.45
 const PULSE_S := 0.12
 
@@ -46,6 +45,15 @@ func setup(p_level: Level, p_clock: SongClock) -> void:
 		var pad := _pad_of(level.notes[i])
 		if _pad_notes.has(pad):
 			_pad_notes[pad].append(i)
+
+
+## The key actually bound to a pad (InputMap action button_N), so the label always agrees with the controls.
+static func key_name(pad: int) -> String:
+	for ev in InputMap.action_get_events(LaneInput.action_name(pad)):
+		if ev is InputEventKey:
+			var k := ev as InputEventKey
+			return OS.get_keycode_string(k.keycode if k.keycode != KEY_NONE else k.physical_keycode)
+	return ""
 
 
 static func _pad_of(n: Dictionary) -> int:
@@ -198,7 +206,7 @@ func _draw_pad(pad: int, r: Rect2, now: float, tick: int, wall: float) -> void:
 		draw_string(_font, Vector2(r.position.x, r.position.y + fs + 6.0), label, HORIZONTAL_ALIGNMENT_CENTER, r.size.x, fs,
 			Color(1, 1, 1, 0.92 if active else 0.4))
 	if show_keys and not OS.has_feature("mobile"):
-		draw_string(_font, Vector2(r.end.x - fs * 1.4, r.end.y - 8.0), KEY_NAMES[pad], HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(1, 1, 1, 0.45))
+		draw_string(_font, Vector2(r.end.x - fs * 1.4, r.end.y - 8.0), key_name(pad), HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(1, 1, 1, 0.45))
 	var fb: Dictionary = _feedback.get(pad, {})
 	if not fb.is_empty() and wall < float(fb["until"]):
 		var a := clampf((float(fb["until"]) - wall) / FEEDBACK_S, 0.0, 1.0)

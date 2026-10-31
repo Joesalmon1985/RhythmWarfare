@@ -1,0 +1,19 @@
+{
+ "note": "Mission 9 Iron Rhythm (64 bars, 88 s). Armour: one heavy weapon per approach in turn (heavy tanks from the top at 33 and the right at 48, V2 launchers, one mammoth tank from the right at bar 37). A prebuilt pillbox and gun turret hold the top road.",
+ "rules": {"objective_hp": {"command_core": 90000}, "sockets_per_point": 5, "prebuilt": [{"reward": "pillbox", "socket": "s2_1"}, {"reward": "turret", "socket": "s2_2"}], "walls": [[26, 18], [26, 24], [36, 14], [42, 14], [52, 18], [52, 24]]},
+ "waves": [
+  {"id": "wave_01", "start_bar": 1, "entry": "left", "groups": [{"actor": "e1", "count": 4, "spawn_spacing_ticks": 600}]},
+  {"id": "wave_02", "start_bar": 5, "entry": "left", "groups": [{"actor": "e1", "count": 3}, {"actor": "e2", "count": 1}]},
+  {"id": "wave_03", "start_bar": 9, "entry": "top", "groups": [{"actor": "e1", "count": 4}, {"actor": "e4", "count": 1}]},
+  {"id": "wave_04", "start_bar": 13, "entry": "right", "groups": [{"actor": "e1", "count": 3}, {"actor": "e2", "count": 2}, {"actor": "jeep", "count": 1}]},
+  {"id": "wave_05", "start_bar": 17, "entry": "left", "groups": [{"actor": "e1", "count": 3}, {"actor": "e4", "count": 1}, {"actor": "1tnk", "count": 1}]},
+  {"id": "wave_06", "start_bar": 21, "entry": "top", "groups": [{"actor": "e1", "count": 3}, {"actor": "e3", "count": 1}, {"actor": "apc", "count": 1}]},
+  {"id": "wave_07", "start_bar": 25, "entry": "right", "groups": [{"actor": "e1", "count": 3}, {"actor": "e2", "count": 2}, {"actor": "v2rl", "count": 1}]},
+  {"id": "wave_08", "start_bar": 29, "entry": "left", "groups": [{"actor": "e1", "count": 3}, {"actor": "e4", "count": 1}, {"actor": "2tnk", "count": 1}]},
+  {"id": "wave_09", "start_bar": 33, "entry": "top", "groups": [{"actor": "e1", "count": 3}, {"actor": "e2", "count": 2}, {"actor": "3tnk", "count": 1}]},
+  {"id": "wave_10", "start_bar": 37, "entry": "right", "groups": [{"actor": "e1", "count": 3}, {"actor": "e3", "count": 1}, {"actor": "4tnk", "count": 1}]},
+  {"id": "wave_11", "start_bar": 41, "entry": "left", "groups": [{"actor": "e1", "count": 3}, {"actor": "e4", "count": 1}, {"actor": "jeep", "count": 1}]},
+  {"id": "wave_12", "start_bar": 45, "entry": "top", "groups": [{"actor": "e1", "count": 3}, {"actor": "e4", "count": 1}, {"actor": "v2rl", "count": 1}]},
+  {"id": "wave_13", "start_bar": 48, "entry": "right", "groups": [{"actor": "e1", "count": 3}, {"actor": "e2", "count": 2}, {"actor": "3tnk", "count": 1}]}
+ ]
+}

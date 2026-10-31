@@ -1,0 +1,32 @@
+{
+ "id": "acc_crossroads",
+ "kind": "accompaniment",
+ "name": "Crossroads accompaniment",
+ "bars": 8,
+ "key": "C# minor",
+ "tempo_bpm": 174,
+ "note": "Open sus2 chords and sixteenth-feel hats. Generated for mission 7.",
+ "source": {
+  "type": "generated",
+  "chords": [
+   [
+    "C#m",
+    2
+   ],
+   [
+    "Asus2",
+    2
+   ],
+   [
+    "E",
+    2
+   ],
+   [
+    "Bsus2",
+    2
+   ]
+  ],
+  "hats": "x.xxx.x.x.xxx.o.",
+  "hats_from_bar": 1
+ }
+}

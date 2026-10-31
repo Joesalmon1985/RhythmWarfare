@@ -1,5 +1,10 @@
 # Defense campaign: implementation plan
 
+> **Superseded on 31 October 2026.** This plan built the schema 2 campaign (per-note production, instrument recipes, a lane
+> view). `docs/BRIEF_PADS_SEQUENCES_TEN_MISSIONS.md` replaced that model with pads, sequences and ten missions; the rules are
+> `docs/PRD.md` section 15 and the current state is `docs/HANDOVER.md`. Kept for the record.
+
+
 Written 29 October 2026 after reading the starter pack (`campaign/`) against the code on `main` at commit
 `3b84de2`. This is the working plan for the next agent. The owner's decisions in
 `campaign/Claude_Defense_Campaign_Prompt.md` are the requirements; this document maps them onto the existing

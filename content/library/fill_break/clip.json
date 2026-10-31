@@ -1,0 +1,16 @@
+{
+ "id": "fill_break",
+ "kind": "fill",
+ "name": "Break",
+ "bars": 1,
+ "cue_min_velocity": 64,
+ "tempo_bpm": 174,
+ "note": "Syncopated break: kicks on 1, the 'and' of 2 and the 'and' of 3; snares on 2, the 'and' of 3, 4 and the 'and' of 4. Generated for mission 8.",
+ "source": {
+  "type": "generated",
+  "patterns": {
+   "kick": "x.....x...x.....",
+   "snare": "....x..g..x.x.a."
+  }
+ }
+}

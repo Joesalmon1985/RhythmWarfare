@@ -1,0 +1,30 @@
+{
+ "level_id": "level_09",
+ "number": 9,
+ "title": "Iron Rhythm",
+ "pack": "m09_iron_rhythm",
+ "bars": 64,
+ "seed": 1009,
+ "note": "Two grooves, two kick sounds, two fills, and two bass phases. Groove slot 1 plays with kick slot 1 (pad 1) at bars 1, 25 and 49, groove slot 2 with kick slot 2 (pad 2) at 9, 33 and 57; the snare stays on pad 4. Fill slot 1 closes the slot-1 phases at bars 32 and 56, fill slot 2 the slot-2 phases at 40 and 64 (new fill: Kick Drop, an eighth-note kick run). Bass phases at bars 17 and 41 trade the two chosen voices every two bars (pads 2 and 3) over one chosen bass line, while groove 1 keeps playing uncued; under the drum phases a fixed Long Line on Patrol Sub plays. Enemies bring heavy tanks, V2 launchers and the first mammoth tank; a pillbox and a gun turret hold the top road from the start.",
+ "intro": "Grooves, kicks and fills now change from phase to phase.",
+ "battle": {"battlefield": "defense_02", "waves": "data/campaign/waves/level_09.json"},
+ "choices": {
+  "groove": {"count": 2, "pool": ["groove_twostep", "groove_push", "groove_roller"], "default": ["groove_twostep", "groove_roller"]},
+  "fill": {"count": 2, "pool": ["fill_snare_run", "fill_break", "fill_kick_drop"], "default": ["fill_break", "fill_kick_drop"]},
+  "kick_sound": {"count": 2, "pool": ["kick_march", "kick_armour", "kick_siege", "kick_heavy"], "default": ["kick_siege", "kick_heavy"]},
+  "snare_sound": {"count": 1, "pool": ["snare_guard", "snare_crack", "snare_clap", "snare_rim"], "default": ["snare_crack"]},
+  "bass": {"count": 1, "pool": ["bass_steps", "bass_octaves", "bass_hold_b"], "default": ["bass_octaves"]},
+  "bass_voice": {"count": 2, "pool": ["bass_patrol", "bass_reese", "bass_growl", "bass_command"], "default": ["bass_growl", "bass_command"]}
+ },
+ "accompaniment": [{"clip": "acc_iron", "start_bar": 1, "bars": 64}],
+ "phases": [
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["pillbox", "turret"]},
+  {"bars": 8, "mode": "drums", "groove": 2, "kick_sound": 2, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["pillbox", "flame_tower"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["2tnk", "e3"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["turret", "repair"]},
+  {"bars": 8, "mode": "drums", "groove": 2, "fill": 2, "kick_sound": 2, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["turret", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["arty", "1tnk"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["turret", "repair"]},
+  {"bars": 8, "mode": "drums", "groove": 2, "fill": 2, "kick_sound": 2, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["repair", "jeep"]}
+ ]
+}

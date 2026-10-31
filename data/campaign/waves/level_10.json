@@ -1,0 +1,22 @@
+{
+ "note": "Mission 10 Last Light (80 bars, 110 s). The whole ground roster; one mammoth tank (top at bar 45; the left wave at bar 49 brings a medium tank since the sortie rule of 31 Oct). All three objectives are required; left waves marked power_plant and the right wave marked radar_dome goes for those. A pillbox stands at each approach and a gun turret at the top road from the start.",
+ "rules": {"objective_hp": {"command_core": 125000, "power_plant": 70000, "radar_dome": 70000}, "required_objectives": ["command_core", "power_plant", "radar_dome"], "sockets_per_point": 5, "prebuilt": [{"reward": "pillbox", "socket": "s1_1"}, {"reward": "pillbox", "socket": "s2_1"}, {"reward": "turret", "socket": "s2_2"}, {"reward": "pillbox", "socket": "s3_1"}], "walls": [[26, 18], [26, 24], [36, 14], [42, 14], [52, 18], [52, 24]]},
+ "waves": [
+  {"id": "wave_01", "start_bar": 1, "entry": "left", "groups": [{"actor": "e1", "count": 4, "spawn_spacing_ticks": 600}]},
+  {"id": "wave_02", "start_bar": 5, "entry": "left", "groups": [{"actor": "e1", "count": 3}, {"actor": "e2", "count": 1}]},
+  {"id": "wave_03", "start_bar": 9, "entry": "top", "groups": [{"actor": "e1", "count": 4}, {"actor": "e4", "count": 1}]},
+  {"id": "wave_04", "start_bar": 13, "entry": "right", "groups": [{"actor": "e1", "count": 3}, {"actor": "e2", "count": 2}, {"actor": "jeep", "count": 1}]},
+  {"id": "wave_05", "start_bar": 17, "entry": "left", "groups": [{"actor": "e1", "count": 3}, {"actor": "e4", "count": 1}, {"actor": "1tnk", "count": 1}]},
+  {"id": "wave_06", "start_bar": 21, "entry": "top", "groups": [{"actor": "e1", "count": 3}, {"actor": "e3", "count": 1}, {"actor": "apc", "count": 1}]},
+  {"id": "wave_07", "start_bar": 25, "entry": "right", "groups": [{"actor": "e1", "count": 2}, {"actor": "e2", "count": 2}, {"actor": "ftrk", "count": 1}], "target_objective": "radar_dome"},
+  {"id": "wave_08", "start_bar": 29, "entry": "left", "groups": [{"actor": "e1", "count": 3}, {"actor": "e4", "count": 1}, {"actor": "2tnk", "count": 1}]},
+  {"id": "wave_09", "start_bar": 33, "entry": "top", "groups": [{"actor": "e1", "count": 2}, {"actor": "e2", "count": 2}, {"actor": "arty", "count": 1}]},
+  {"id": "wave_10", "start_bar": 37, "entry": "right", "groups": [{"actor": "e1", "count": 2}, {"actor": "e4", "count": 1}, {"actor": "3tnk", "count": 1}]},
+  {"id": "wave_11", "start_bar": 41, "entry": "left", "groups": [{"actor": "e1", "count": 3}, {"actor": "e3", "count": 1}, {"actor": "v2rl", "count": 1}], "target_objective": "power_plant"},
+  {"id": "wave_12", "start_bar": 45, "entry": "top", "groups": [{"actor": "e1", "count": 2}, {"actor": "e4", "count": 1}, {"actor": "4tnk", "count": 1}]},
+  {"id": "wave_13", "start_bar": 49, "entry": "left", "groups": [{"actor": "e1", "count": 2}, {"actor": "e3", "count": 1}, {"actor": "2tnk", "count": 1}]},
+  {"id": "wave_14", "start_bar": 53, "entry": "right", "groups": [{"actor": "e1", "count": 2}, {"actor": "e2", "count": 1}, {"actor": "apc", "count": 1}]},
+  {"id": "wave_15", "start_bar": 57, "entry": "right", "groups": [{"actor": "e1", "count": 2}, {"actor": "e4", "count": 1}, {"actor": "jeep", "count": 1}]},
+  {"id": "wave_16", "start_bar": 61, "entry": "top", "groups": [{"actor": "e1", "count": 2}, {"actor": "e2", "count": 2}, {"actor": "v2rl", "count": 1}]}
+ ]
+}

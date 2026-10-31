@@ -1,0 +1,32 @@
+{
+ "level_id": "level_10",
+ "number": 10,
+ "title": "Last Light",
+ "pack": "m10_last_light",
+ "bars": 80,
+ "seed": 1010,
+ "note": "The finale: everything learned, in ten 8-bar phases alternating drums and bass after an opening pair of drum phases. Three grooves (the player orders Two-Step, Push and Roller into slots), two kick and two snare sounds, two fills, two bass lines and four bass voices (new: Hollow Sub). Drum phases: groove 1 with kick 1 / snare 1 (pads 1 and 4) at bars 1 and 73, groove 2 with kick 2 / snare 2 (pads 2 and 3) at 9 and 41, groove 3 with kick 1 / snare 1 at 25 and 57; fill 1 closes the kick-1 phases at bars 32, 64 and 80, fill 2 the kick-2 phases at 16 and 48. Bass phases: line 1 with voices 1 and 2 (pads 2 and 3) at bars 17 and 49, line 2 with voices 3 and 4 (pads 1 and 4) at 33 and 65, two bars per voice. Pools are trimmed (three grooves, three kick and three snare sounds) to keep the pack near 14 MB with 16 stems loaded. All three objectives must survive (command core 110000 HP, power plant and radar dome 70000). The base starts with a pillbox at each approach and a gun turret at the top road (rules.prebuilt). Bass rewards are the mobile units (medium and light tank, artillery, flak truck, APC, infantry); moving them to buildings made the balance worse in trials.",
+ "intro": "Last light: every pad, every voice.",
+ "battle": {"battlefield": "defense_02", "waves": "data/campaign/waves/level_10.json"},
+ "choices": {
+  "groove": {"count": 3, "pool": ["groove_twostep", "groove_push", "groove_roller"], "default": ["groove_twostep", "groove_roller", "groove_push"]},
+  "fill": {"count": 2, "pool": ["fill_snare_run", "fill_break", "fill_kick_drop"], "default": ["fill_snare_run", "fill_kick_drop"]},
+  "kick_sound": {"count": 2, "pool": ["kick_march", "kick_siege", "kick_heavy"], "default": ["kick_march", "kick_siege"]},
+  "snare_sound": {"count": 2, "pool": ["snare_crack", "snare_clap", "snare_rim"], "default": ["snare_crack", "snare_rim"]},
+  "bass": {"count": 2, "pool": ["bass_steps", "bass_octaves", "bass_hold_b"], "default": ["bass_steps", "bass_octaves"]},
+  "bass_voice": {"count": 4, "pool": ["bass_patrol", "bass_reese", "bass_growl", "bass_command", "bass_hollow"], "default": ["bass_reese", "bass_command", "bass_hollow", "bass_growl"]}
+ },
+ "accompaniment": [{"clip": "acc_last_light", "start_bar": 1, "bars": 80}],
+ "phases": [
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["pillbox", "turret"]},
+  {"bars": 8, "mode": "drums", "groove": 2, "fill": 2, "kick_sound": 2, "snare_sound": 2, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["flame_tower", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["2tnk", "e3"]},
+  {"bars": 8, "mode": "drums", "groove": 3, "fill": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["turret", "repair"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 2, "bass_voice": [3, 4], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["arty", "ftrk"]},
+  {"bars": 8, "mode": "drums", "groove": 2, "fill": 2, "kick_sound": 2, "snare_sound": 2, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["turret", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["1tnk", "e2"]},
+  {"bars": 8, "mode": "drums", "groove": 3, "fill": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["repair", "turret"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 2, "bass_voice": [3, 4], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["apc", "e4"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["repair", "repair"]}
+ ]
+}

@@ -1,0 +1,32 @@
+{
+ "id": "acc_backbeat",
+ "kind": "accompaniment",
+ "name": "Backbeat accompaniment",
+ "bars": 8,
+ "key": "C# minor",
+ "tempo_bpm": 174,
+ "note": "Chords and eighth hats. Generated for mission 4.",
+ "source": {
+  "type": "generated",
+  "chords": [
+   [
+    "C#m",
+    2
+   ],
+   [
+    "A",
+    2
+   ],
+   [
+    "E",
+    2
+   ],
+   [
+    "B",
+    2
+   ]
+  ],
+  "hats": "x.x.x.x.x.x.x.x.",
+  "hats_from_bar": 1
+ }
+}

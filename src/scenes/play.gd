@@ -25,6 +25,7 @@ var _intro_label: Label
 var _countdown_label: Label
 var _banner: Label
 var _pause_panel: PanelContainer
+var _dim: ColorRect
 var _settings_panel: Control
 var _resume_at_wall := -1.0
 var _ended := false
@@ -133,6 +134,7 @@ func _autoplay_step(t: float) -> void:
 
 func _build_layout() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	theme = UiStyle.theme()
 	var bg := ColorRect.new()
 	bg.color = UiStyle.BG
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -167,9 +169,11 @@ func _build_layout() -> void:
 		_battle_area.add_child(hud)
 	else:
 		_info_label = Label.new()
-		_info_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_info_label.anchor_right = 1.0
+		_info_label.anchor_bottom = 0.3
+		_info_label.offset_top = 16
 		_info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		_info_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_info_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 		_info_label.add_theme_font_size_override("font_size", 26)
 		_info_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_battle_area.add_child(_info_label)
@@ -185,6 +189,7 @@ func _build_layout() -> void:
 	pad_view.reduced_effects = Session.reduced_effects
 	pad_view.show_keys = Session.show_keys
 	pad_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	pad_view.clip_contents = true
 	if level.is_mission():
 		pad_view.holding_fn = match_ref.pad_judge.hold_progress
 		pad_view.progress_fn = match_ref.tracker.progress_at
@@ -230,6 +235,11 @@ func _build_layout() -> void:
 	_countdown_label = _centre_label(110, 0.32)
 	_banner = _centre_label(64, 0.4)
 
+	_dim = ColorRect.new()
+	_dim.color = Color(0, 0, 0, 0.55)
+	_dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_dim.visible = false
+	add_child(_dim)
 	_pause_panel = PanelContainer.new()
 	_pause_panel.add_theme_stylebox_override("panel", UiStyle.panel_box())
 	_pause_panel.set_anchors_preset(Control.PRESET_CENTER)
@@ -450,6 +460,7 @@ func _pause() -> void:
 	lane_input.clear()
 	lane_input.enabled = false
 	_pause_panel.visible = true
+	_dim.visible = true
 	_countdown_label.text = ""
 
 
@@ -457,6 +468,7 @@ func _resume() -> void:
 	if clock.state != SongClock.State.PAUSED:
 		return
 	_pause_panel.visible = false
+	_dim.visible = false
 	_resume_at_wall = float(Time.get_ticks_msec()) / 1000.0 + RESUME_COUNTDOWN_S
 
 

@@ -1,0 +1,16 @@
+{
+ "id": "fill_snare_run",
+ "kind": "fill",
+ "name": "Snare Run",
+ "bars": 1,
+ "cue_min_velocity": 64,
+ "tempo_bpm": 174,
+ "note": "Kick on 1 and the 'and' of 3, snare on 2, then a run of eighth-note snares into the next bar. Generated for mission 4.",
+ "source": {
+  "type": "generated",
+  "patterns": {
+   "kick": "x.........x.....",
+   "snare": "....x...x.x.a.a."
+  }
+ }
+}

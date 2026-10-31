@@ -1,43 +1,51 @@
 # Rhythm Warfare
 
-A rhythm defense game: play a chart on four unlabelled buttons and every note you hit builds a group of Red Alert units
-(the recipe of the instrument equipped in that note's slot) that holds one of three defense points; survive the enemy
-waves until the song ends. Three campaign levels with a loadout screen, saved progress and unlocks; the older two-sided
-drum and bass duel remains as "Free play". Standalone Godot 4.5 project; the PRD is the design authority
-(`docs/PRD.md`, section 14 for the campaign).
+A rhythm defense game in landscape for phones: play four illuminated instrument pads in time with a 174 BPM drum and bass
+track; every completed sequence builds one defense (a pillbox, a turret, a flame tower) or sends one unit to hold an
+approach, and your Red Alert base in the middle of the screen must survive the enemy waves until the song ends. Ten
+missions, each an arrangement of a loop library with a few musical choices of your own. The older two-sided duel stays
+in the developer area for a later multiplayer mode. Standalone Godot 4.5.1 project; the rule set is `docs/PRD.md`
+section 15 and `data/campaign/rules.json`.
 
 ## Layout
 
-- `src/` game code: `core/` (clock, level loading), `audio/` (four-stem transport), `chart/` (JSON chart, scheduling), `input/` (touch and key judgement), `sim/` (deterministic battle simulation, no scene nodes), `ui/` (lanes, buttons, HUD), `scenes/` (entry points).
-- `assets/openra/` Red Alert sprite frames at native pixel size plus `sequences.json` (every OpenRA sequence resolved to frame tables), `catalogue.json` (the player-colour ramp) and `PROVENANCE.md`; regenerate with `python -I tools/extract_openra.py` (needs the pinned OpenRA checkout and the Red Alert content; see the provenance file).
-- `data/maps/strip_53x20.json` the temperate map (tiles, tree clumps, blocked cells) the battlefield layout `data/battlefields/mvp_mirrored_01.json` sits on.
-- `src/sim/bot_ai.gd` OpenRA's Rush AI squad manager, driving both sides' units; `docs/OPENRA_BEHAVIOUR_SPEC.md` is the engine-sourced specification it and the unit behaviour follow, with the deviations noted in code.
-- `data/openra_rules.json` actor, weapon, locomotor and repair values at the pinned OpenRA commit.
-- `songs/<pack>/` a song pack: `level.json` plus `audio/` stems. `first_watch`, `second_pulse` and `hold_the_line` are the schema 2 campaign levels (placeholder audio), `level_01` and `test_16` the legacy duel packs.
-- `data/campaign/` the campaign (ten levels, three playable) and the tuned waves; `data/instruments/catalogue.json` the instrument profiles and unit recipes; `data/battlefields/defense_01.json` the centred-base defense map (80 x 40 cells, with `data/maps/field_80x40.json`).
-- `tools/` authoring and import scripts (Python 3); `tools/campaign/` builds the campaign packs from the owner's MIDI (`build_defense_pack.py`), derives waves and checks rendered audio. `tests/` headless GDScript tests.
-- `campaign/` the defense campaign starter pack (29 Oct 2026): first-three musical MIDI per slot, section focus maps, compiled reference charts, proposed waves, instrument catalogue, ten-level plan and the reference authoring tools. Source data, not docs; `.gdignore` keeps Godot out of it.
+- `src/` game code: `core/` (song clock, pack loading: `mission_loader.gd` for missions, `level_loader.gd` for the duel;
+  `match.gd` drives a run; `sequence_tracker.gd`, `mission_rules.gd`, `campaign.gd` saves and unlocks, `session.gd`
+  settings), `audio/` (one synchronized transport for all stems), `input/` (`pad_judge.gd` for missions, `judge.gd` for the
+  duel, `lane_input.gd` touches and keys), `sim/` (deterministic 25 Hz OpenRA battle simulation, no scene nodes), `ui/`
+  (`pad_view.gd` the pads, `battle_view.gd`, `hud.gd`, `ui_style.gd`, `settings_panel.gd`), `scenes/` (home, missions,
+  mission setup, play, result, settings, calibration, developer).
+- `content/` the loop library (`library/<clip>/`: MIDI per part, owner WAV renders, generated placeholders), sounds,
+  the ten mission files, fixtures; Godot ignores it. `tools/content/build.py` turns it into `songs/m01_*` to `m10_*`.
+- `songs/` the built mission packs (schema 3: `level.json`, `audio/` stems, `preview/` auditions) and the two legacy duel
+  packs (`level_01`, `test_16`, schema 1).
+- `data/` OpenRA rules, roster, maps, battlefields (`defense_02.json` is the mission map with building sockets),
+  `campaign/` (`campaign.json` the mission ladder and unlocks, `rules.json` the rule set, `waves/` per mission).
+- `assets/openra/` Red Alert sprite frames at native pixel size, sequences and provenance.
+- `campaign/` the owner's original starter pack (First_Three MIDI is the default content of missions 1 to 3; never edit it).
+- `tools/` authoring scripts; `tests/` headless GDScript tests; `tools/content/test_content.py` the content build tests.
 
 ## Running
 
-Godot 4.5.1: open `project.godot` and press Play, or run the Windows build from `build/windows/` after exporting
-(`docs/EXPORT.md`). Keys on desktop: D, F, J, K = buttons 1 to 4 (kick on D, snare on K, bass holds on whichever
-button the note is on), Esc = pause, F3 = debug panel with the stem mute toggles.
+Godot 4.5.1: open `project.godot` and press Play, or run the Windows build from `build/windows/` (`docs/EXPORT.md`).
+Desktop keys: D F J K = pads 1 to 4, Esc = pause, F3 = debug line.
 
-- Tests: `bash tools/test.sh` (headless; refreshes the class cache, then `tests/run_tests.gd`).
-- Rebuild the campaign packs and placeholder stems: `python tools/campaign/build_defense_pack.py all` (needs `pip install mido==1.3.3`, numpy, ffmpeg).
-- Balance runs: `RW_CHART=level_03.campaign RW_SEEDS="1 2 3" bash tools/balance.sh res://songs/hold_the_line 1.0 perfect "accuracy:0.85" none` (see `docs/BALANCE.md`).
-- Scripted play in the real level screen: `RW_PACK=res://songs/hold_the_line RW_CHART=level_03.campaign RW_AUTOPLAY=perfect RW_SCENE=play godot --path .`
-  prints a `PERF` line with p95 frame time and peak live units at the end (a normal run prints it too; phone via logcat).
-- Rhythm-only playtest of any chart: `RW_PACK=res://songs/second_pulse RW_CHART=level_02.practice RW_BATTLE=off godot --path .`
-- Screenshots: `godot --path . -s tools/shoot.gd -- res://src/scenes/play.tscn docs/shots 300:shot:name`.
+```
+bash tools/test.sh                                   # all headless tests + the content build tests
+python tools/content/build.py                        # rebuild every mission pack from content/ (placeholders and your renders)
+python tools/content/render_list.py                  # rewrite docs/CONTENT_TO_RENDER.md
+python tools/balance_missions.py > /tmp/balance.md   # seeded trials, every mission (docs/BALANCE.md)
+RW_SEEDS="1 2 3" bash tools/balance.sh res://songs/m03_hold_the_line 1.0 perfect beginner sloppy none   # one mission
+RW_MISSION=3 RW_SCENE=play RW_AUTOPLAY=perfect godot --path .    # scripted run in the real play screen, prints PERF
+RW_UNLOCK_ALL=1 godot --path .                       # every mission and option open for one run (developer switch)
+```
 
-## Handover
+Screenshots: `godot --path . -s tools/shoot.gd -- res://src/scenes/mission_setup.tscn <out_dir> 20:shot:name`.
 
-Start with `docs/HANDOVER.md`: milestone state, settled decisions, code map, deliberate deviations and the polish backlog.
-The defense campaign was built from `docs/CAMPAIGN_PLAN.md` (`docs/NEXT_AGENT_PROMPT.md` was its brief); the handover lists every divergence and what was and was not verified.
+## Documents
 
-## Design documents
-
-`docs/PRD.md` (the product requirements), `docs/TIMING.md` (clocks and offset signs), `docs/BALANCE.md`
-(duel schedule evidence and the campaign balance tables), `docs/OPENRA_BEHAVIOUR_SPEC.md` (unit and bot behaviour from the OpenRA source), `docs/EXPORT.md` (Android and Windows builds), `assets/openra/PROVENANCE.md`.
+`docs/HANDOVER.md` (start here: state, decisions, what was verified and what was not), `docs/PRD.md` (section 15 the
+mission rules; 1 to 13 the duel), `docs/CONTENT_TO_RENDER.md` (every WAV and MIDI to make in Ableton),
+`docs/BALANCE.md` (seeded trials, coverage and tuning), `docs/BRIEF_PADS_SEQUENCES_TEN_MISSIONS.md` (the brief this
+build implements), `docs/EXPORT.md` (Android and Windows builds), `docs/TIMING.md`, `docs/OPENRA_BEHAVIOUR_SPEC.md`,
+`content/README.md`, `songs/README.md`.

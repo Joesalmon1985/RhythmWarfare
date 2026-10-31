@@ -1,0 +1,29 @@
+{
+ "level_id": "level_05",
+ "number": 5,
+ "title": "Counterpoint",
+ "pack": "m05_counterpoint",
+ "bars": 56,
+ "seed": 1005,
+ "note": "Two bass voices. Drum and bass phases alternate every 8 bars (drums at bars 1, 17, 33, 49; bass at 9, 25, 41). In bass phases the two chosen voices trade every two bars: voice 1 on pad 2 (left thumb), voice 2 on pad 3 (right thumb), so one thumb rests while the other holds. Bass lines: the new Steps (one- and two-beat holds) or Answer Line from mission 3, both 8 bars. In drum phases the bass keeps playing (voice 1, not cued); the fixed Snare Run fill closes bars 24 and 56. Rewards: drums build pillboxes first (infantry-heavy early waves), then turrets for the light tanks and one flame tower, bass sequences send jeeps, rocket soldiers and the first light tanks.",
+ "intro": "Two bass voices now: they take turns, one pad each.",
+ "intro_bar": 8,
+ "battle": {"battlefield": "defense_02", "waves": "data/campaign/waves/level_05.json"},
+ "choices": {
+  "groove": {"count": 1, "pool": ["groove_twostep", "groove_push"], "default": ["groove_twostep"]},
+  "kick_sound": {"count": 1, "pool": ["kick_march", "kick_armour", "kick_siege"], "default": ["kick_march"]},
+  "snare_sound": {"count": 1, "pool": ["snare_guard", "snare_crack", "snare_clap"], "default": ["snare_guard"]},
+  "bass": {"count": 1, "pool": ["bass_steps", "bass_hold_b"], "default": ["bass_steps"]},
+  "bass_voice": {"count": 2, "pool": ["bass_patrol", "bass_reese", "bass_growl"], "default": ["bass_patrol", "bass_reese"]}
+ },
+ "accompaniment": [{"clip": "acc_counterpoint", "start_bar": 1, "bars": 56}],
+ "phases": [
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["jeep", "e3"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["turret", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["1tnk", "jeep"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["turret", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["e3", "1tnk"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["flame_tower", "turret"]}
+ ]
+}

@@ -11,3 +11,7 @@ func test_every_scene_and_ui_script_loads() -> void:
 				assert_true(res != null, "%s loads" % name)
 				if res is PackedScene:
 					assert_true((res as PackedScene).can_instantiate(), "%s instantiates" % name)
+
+
+func test_pad_key_labels_match_the_input_map() -> void:
+	assert_eq([PadView.key_name(1), PadView.key_name(2), PadView.key_name(3), PadView.key_name(4)], ["D", "F", "J", "K"])

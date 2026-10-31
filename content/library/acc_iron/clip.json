@@ -1,0 +1,32 @@
+{
+ "id": "acc_iron",
+ "kind": "accompaniment",
+ "name": "Iron Rhythm accompaniment",
+ "bars": 8,
+ "key": "C# minor",
+ "tempo_bpm": 174,
+ "note": "Minor-seventh colour and steady hats. Generated for mission 9.",
+ "source": {
+  "type": "generated",
+  "chords": [
+   [
+    "C#m7",
+    2
+   ],
+   [
+    "A",
+    2
+   ],
+   [
+    "E",
+    2
+   ],
+   [
+    "B",
+    2
+   ]
+  ],
+  "hats": "x.x.x.x.x.x.x.o.",
+  "hats_from_bar": 1
+ }
+}

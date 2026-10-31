@@ -1,0 +1,16 @@
+{
+ "id": "fill_kick_drop",
+ "kind": "fill",
+ "name": "Kick Drop",
+ "bars": 1,
+ "cue_min_velocity": 64,
+ "tempo_bpm": 174,
+ "note": "Snare on 2, then a run of eighth-note kicks from beat 3 into the next downbeat. Generated for mission 9.",
+ "source": {
+  "type": "generated",
+  "patterns": {
+   "kick": "x.......x.x.x.a.",
+   "snare": "....x..g........"
+  }
+ }
+}

@@ -1,0 +1,28 @@
+{
+ "level_id": "level_08",
+ "number": 8,
+ "title": "Crossfire",
+ "pack": "m08_crossfire",
+ "bars": 64,
+ "seed": 1008,
+ "note": "Drums only, two snare sounds and the first fill choice. Snare slot 1 (pad 4) plays the phases at bars 1, 17, 33, 49; snare slot 2 (pad 3) the phases at 9, 25, 41, 57, each closed by the chosen fill (Snare Run or the new Break) in its last bar. The kick stays on pad 1 throughout, so the right thumb moves between the two snare pads phase by phase. New sound: Rimshot. The radar dome is a required objective; some right-hand waves aim at it. Rewards cover most of the arsenal (defenses, rifleman, rocket soldier, medium tank, artillery, APC) with repair crews late. A pillbox and a gun turret hold the top road from the start (rules.prebuilt): the infantry crowds that gather there outlast turrets alone.",
+ "intro": "Two snare sounds: the snare moves between the two right pads.",
+ "battle": {"battlefield": "defense_02", "waves": "data/campaign/waves/level_08.json"},
+ "choices": {
+  "groove": {"count": 1, "pool": ["groove_twostep", "groove_push", "groove_roller"], "default": ["groove_twostep"]},
+  "fill": {"count": 1, "pool": ["fill_snare_run", "fill_break"], "default": ["fill_break"]},
+  "kick_sound": {"count": 1, "pool": ["kick_march", "kick_armour", "kick_siege", "kick_heavy"], "default": ["kick_armour"]},
+  "snare_sound": {"count": 2, "pool": ["snare_guard", "snare_crack", "snare_clap", "snare_rim"], "default": ["snare_clap", "snare_rim"]}
+ },
+ "accompaniment": [{"clip": "acc_crossfire", "start_bar": 1, "bars": 64}],
+ "phases": [
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["pillbox", "turret"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": 1, "kick_sound": 1, "snare_sound": 2, "sequence_bars": 4, "rewards": ["pillbox", "e3"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["turret", "flame_tower"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": 1, "kick_sound": 1, "snare_sound": 2, "sequence_bars": 4, "rewards": ["2tnk", "repair"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["turret", "pillbox"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": 1, "kick_sound": 1, "snare_sound": 2, "sequence_bars": 4, "rewards": ["arty", "e1"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["turret", "repair"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": 1, "kick_sound": 1, "snare_sound": 2, "sequence_bars": 4, "rewards": ["apc", "repair"]}
+ ]
+}

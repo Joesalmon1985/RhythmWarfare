@@ -1,0 +1,16 @@
+{
+ "id": "groove_roller",
+ "kind": "groove",
+ "name": "Roller",
+ "bars": 2,
+ "cue_min_velocity": 64,
+ "tempo_bpm": 174,
+ "note": "Full time with a doubled kick on 1 and 1-and, then the 'and' of 3; bar 2 adds a kick on 4. Snare on 2 and 4 with ghosts (not cued). Generated for mission 6.",
+ "source": {
+  "type": "generated",
+  "patterns": {
+   "kick": "x.x.......x.....|x.........x.x...",
+   "snare": "....x..g....x...|....x..g....x..g"
+  }
+ }
+}

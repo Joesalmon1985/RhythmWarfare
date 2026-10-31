@@ -515,6 +515,23 @@ func _as_capacity(entry: Dictionary, hint_point: int) -> void:
 	entry["label"] = "Repair crew"
 
 
+## The defense point that most live wave units are still walking towards, -1 when none is on its way.
+func approaching_point() -> int:
+	var counts: Array = []
+	counts.resize(defense_points.size())
+	counts.fill(0)
+	for e in entities:
+		if e.alive and e.side == 1 and e.defenses_only and e.stage == 0:
+			for i in defense_points.size():
+				if defense_points[i]["pos"] == e.via:
+					counts[i] += 1
+	var best := -1
+	for i in counts.size():
+		if counts[i] > 0 and (best < 0 or counts[i] > counts[best]):
+			best = i
+	return best
+
+
 ## Defenses (live or reserved) at an approach.
 func defenses_at(point: int) -> int:
 	var n := 0
@@ -1117,6 +1134,12 @@ func range_to(e: Ent, t: Ent) -> float:
 		# distance to the footprint rectangle (HitShape edge)
 		var dx := maxf(maxf(t.cx - e.x, 0.0), e.x - (t.cx + t.w))
 		var dy := maxf(maxf(t.cy - e.y, 0.0), e.y - (t.cy + t.h))
+		d = sqrt(dx * dx + dy * dy)
+	elif e.kind == Kind.BUILDING and waves_fight_defenses:
+		# missions only (deviation): a defense measures from its own footprint edge, as its attackers measure to it,
+		# so a flame tower and a rifleman of equal range trade fire instead of the rifleman out-reaching the tower
+		var dx := maxf(maxf(e.cx - t.x, 0.0), t.x - (e.cx + e.w))
+		var dy := maxf(maxf(e.cy - t.y, 0.0), t.y - (e.cy + e.h))
 		d = sqrt(dx * dx + dy * dy)
 	return d
 
