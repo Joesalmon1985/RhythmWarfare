@@ -51,6 +51,18 @@ var sections: Array = []  # [{id, start_tick, length_bars}]
 var notes: Array = []  # schema 1: [{id, tick, lane, button, type, duration_ticks, time, end_time}] sorted by tick then button
 var enemy_events: Array = []  # [{id, tick, action, time}] sorted by tick
 var stem_lengths: Dictionary = {}  # stem key -> seconds, when the loader could decode them
+# schema 3 (missions, MissionLoader): the player's choices, the chosen selection, sequences with rewards
+var choices: Array = []  # [{id, label, count, default, pool: [{id, name}]}]
+var selection: Dictionary = {}  # choice id -> [option ids in slot order]
+var names: Dictionary = {}  # library id -> friendly name
+var previews: Dictionary = {}  # choice id -> option id -> preview file (relative to the pack)
+var content: Dictionary = {}  # build report: files, placeholder_files, owner_files, default_mix_peak_db
+var placeholder := false
+var placeholder_stems := 0
+var stem_family: Dictionary = {}  # stem key -> kick, snare, bass, other
+var sequences: Array = []  # [{index, phase, mode, start_tick, end_tick, start_time, end_time, reward, cues}]
+var sequence_threshold := 0.6
+var intro := ""
 
 
 func ticks_per_bar() -> int:
@@ -77,6 +89,30 @@ func is_defense() -> bool:
 	return mode == "defense"
 
 
+func is_mission() -> bool:
+	return schema_version == 3
+
+
+## The phase (section) at a song tick, or {} outside the song.
+func phase_at(tick: int) -> Dictionary:
+	for s in sections:
+		if tick >= int(s["start_tick"]) and tick < int(s["end_tick"]):
+			return s
+	return {}
+
+
+## Friendly name of a selected voice reference such as "kick_sound#1" or a fixed sound id.
+func voice_name(ref: String) -> String:
+	if ref.contains("#"):
+		var bits := ref.split("#")
+		var picked: Array = selection.get(bits[0], [])
+		var slot := int(bits[1]) - 1
+		if slot >= 0 and slot < picked.size():
+			return str(names.get(picked[slot], picked[slot]))
+		return ref
+	return str(names.get(ref, ref))
+
+
 func chart_ids() -> Array:
 	var out: Array = []
 	for c in charts:
@@ -94,6 +130,8 @@ func slot_ids() -> Array:
 
 
 func is_placeholder_audio() -> bool:
+	if is_mission():
+		return placeholder_stems > 0
 	for slot in loadout:
 		var r: Dictionary = renders.get(slot, {}).get(loadout[slot], {})
 		if r.get("placeholder", false):

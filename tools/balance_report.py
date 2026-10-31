@@ -11,6 +11,17 @@ try:
 except Exception:
     print(label + ": ERROR", txt[:1500])
     sys.exit(0)
+if d.get("mode") == "mission":
+    core = d["objective_hp"].get("command_core", {"hp": 0, "max": 1})
+    g = d["grades"]
+    print("%-10s seed %-2s %-8s %-30s t=%5.1fs acc=%3.0f%% seq %2d/%2d (sharp %d steady %d loose %d) built %2d units %d repairs %d alive %2d core %3d%% lost P:%s E:%s peak=%s" % (
+        d["policy"], str(d["seed"])[-1], d["outcome"], d["reason"], d["outcome_time_s"], d["accuracy"] * 100, d["sequences_passed"], d["sequences"],
+        g["sharp"], g["steady"], g["loose"], d["built"], d["units"], d["repairs"], d["defenses_alive"],
+        round(100 * core["hp"] / core["max"]), sum(d["lost"][0].values()), sum(d["lost"][1].values()), d["peak_live_units"]))
+    if show_waves:
+        for wid, w in sorted(d["waves"].items()):
+            print("      %-8s spawned %2d/%2d killed %2d  first %6.1fs cleared %6.1fs" % (wid, w["spawned"], w["total"], w["killed"], w["first_spawn_s"], w["cleared_s"]))
+    sys.exit(0)
 if d.get("mode") == "defense":
     core = d["objective_hp"].get("command_core", {"hp": 0, "max": 1})
     ps = d["production_summary"]

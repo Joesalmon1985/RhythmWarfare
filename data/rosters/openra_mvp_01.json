@@ -15,6 +15,7 @@
   "wall": "sbag",
   "brick": "brik",
   "turret": "gun",
+  "flame": "ftur",
   "pillbox": "pbox",
   "aa": "agun",
   "sam": "sam"

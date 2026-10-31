@@ -79,7 +79,9 @@ class Ent:
 	var leash := 6.0
 	var objective := -1      # entity id of the objective a wave unit is attacking
 	var via := Vector2.ZERO
-	var ignore_structures := false  # wave units fight units and their objective, not every building on the way
+	var defenses_only := false  # wave units fight units, defensive structures and their objective, not every building
+	var socket := -1           # mission defenses: index into BattleSim.sockets
+	var reinforced := false    # a capacity reward raised this defense's health once
 	var stage := 0           # wave route stage: 0 walking to the via point, 1 walking to the objective
 	# buildings
 	var cx := 0
@@ -142,6 +144,16 @@ var entries: Dictionary = {}     # entry id -> Vector2
 var defense_ai: DefenseAi
 var groups: Dictionary = {}      # group id -> {point, size, units: Array[int], side}
 var leash_cells := 6.0
+## Missions (schema 3): prepared sockets for rewarded buildings and the rewards waiting for their construction delay.
+var sockets: Array = []          # [{id, point, order, x, y, ent: entity id or -1, reserved: bool}]
+var sockets_per_point := 5
+var pending_rewards: Array = []  # [{id, ready_tick, start_tick, kind, reward, point, socket, label}] in ready order
+var units_per_point := 6
+var reinforce_factor := 1.5
+var _reward_seq := 0
+var _group_seq := 0
+## Missions: wave units attack defensive structures on their way (schema 2 waves ignored every building but their goal).
+var waves_fight_defenses := false
 var profile: Dictionary = {"grid_spawn": 0, "bots": 0, "units": 0, "aircraft": 0, "buildings": 0, "entity_loop_overhead": 0, "projectiles_repair": 0, "ticks": 0, "move": 0, "engage": 0, "scan": 0}
 var rng := RandomNumberGenerator.new()
 var _blocked: Dictionary = {}  # Vector2i -> building id, or -1 for terrain
@@ -249,6 +261,10 @@ func setup(p_rules: Rules, level_rules: Dictionary, p_seed: int) -> void:
 						break
 			objectives.append({"id": str(o["id"]), "role": str(o["role"]), "ent": ent.id if ent != null else -1, "required": bool(o.get("required", true))})
 		var hp_override: Dictionary = level_rules.get("objective_hp", {})
+		var required: Array = level_rules.get("required_objectives", [])
+		if not required.is_empty():
+			for o in objectives:
+				o["required"] = required.has(o["id"]) or o["id"] == "command_core"
 		for o in objectives:  # a level may give its objective less health than the OpenRA building (balance data)
 			var ent: Ent = by_id.get(o["ent"])
 			if ent != null and hp_override.has(o["id"]):
@@ -258,6 +274,22 @@ func setup(p_rules: Rules, level_rules: Dictionary, p_seed: int) -> void:
 			defense_points.append({"id": str(dp["id"]), "pos": Vector2(float(dp["x"]) + 0.5, float(dp["y"]) + 0.5)})
 		for en in bf.get("entries", []):
 			entries[str(en["id"])] = Vector2(float(en["x"]) + 0.5, float(en["y"]) + 0.5)
+		sockets = []
+		pending_rewards = []
+		_reward_seq = 0
+		_group_seq = 0
+		waves_fight_defenses = bf.has("sockets")
+		sockets_per_point = int(level_rules.get("sockets_per_point", 5))
+		var caps: Dictionary = MissionRules.data().get("capacity", {})
+		units_per_point = int(level_rules.get("units_per_point", caps.get("units_per_point", 6)))
+		reinforce_factor = float(caps.get("reinforce_factor", 1.5))
+		for sk in bf.get("sockets", []):
+			if int(sk["order"]) < sockets_per_point:
+				sockets.append({"id": str(sk["id"]), "point": int(sk["point"]), "order": int(sk["order"]), "x": int(sk["x"]), "y": int(sk["y"]), "ent": -1, "reserved": false})
+		for pb in level_rules.get("prebuilt", []):  # defenses standing at the start: {"reward": "pillbox", "socket": "s1_1"}
+			for i in sockets.size():
+				if sockets[i]["id"] == str(pb["socket"]):
+					_build_at_socket(i, str(MissionRules.reward(str(pb["reward"])).get("role", "pillbox")))
 		defense_ai = DefenseAi.new()
 		defense_ai.setup(self)
 	else:
@@ -415,7 +447,7 @@ func spawn_wave_unit(actor: String, entry: String, via_point: String, objective_
 		return null
 	var role := "infantry" if producer_role_for(actor) == "barracks" else "tank"
 	var u := _spawn_unit(1, role, at, actor)
-	u.ignore_structures = true
+	u.defenses_only = true
 	u.order = "idle"
 	u.stage = 0
 	for dp in defense_points:
@@ -427,6 +459,202 @@ func spawn_wave_unit(actor: String, entry: String, via_point: String, objective_
 	stats["produced"][1]["infantry" if role == "infantry" else "tank"] += 1
 	return u
 
+
+# ---------------------------------------------------------------- mission rewards (schema 3)
+
+## Queue one sequence reward (data/campaign/rules.json "rewards") for `ready_tick`. The placement is chosen now, so the
+## view can show what is being prepared and where: a building takes the first free socket of the approach with the
+## fewest defenses (ties: `hint_point`, the approach of the next wave, then the lowest index); a unit holds the point
+## with the fewest defenders. At capacity (no free socket, or every point at units_per_point) the reward becomes a
+## repair of that approach, or a reinforcement when nothing is damaged. Returns what was scheduled.
+func schedule_reward(reward_id: String, ready_tick: int, hint_point: int = -1) -> Dictionary:
+	if not outcome.is_empty():
+		return {"result": "ended"}
+	var def := MissionRules.reward(reward_id)
+	var kind := str(def.get("type", ""))
+	var entry := {"id": _reward_seq, "ready_tick": maxi(ready_tick, tick_count + 1), "start_tick": tick_count, "reward": reward_id,
+		"kind": kind, "point": -1, "socket": -1, "label": str(def.get("name", reward_id)), "capacity": false}
+	_reward_seq += 1
+	if kind == "build":
+		var pt := _pick_point(hint_point, true)
+		if pt >= 0:
+			for i in sockets.size():
+				if int(sockets[i]["point"]) == pt and _socket_free(i):
+					sockets[i]["reserved"] = true
+					entry["point"] = pt
+					entry["socket"] = i
+					entry["role"] = str(def.get("role", "pillbox"))
+					break
+		if entry["socket"] < 0:
+			_as_capacity(entry, hint_point)
+	elif kind == "unit":
+		var pt := _pick_point(hint_point, false)
+		if pt >= 0:
+			entry["point"] = pt
+			entry["actor"] = str(def.get("actor", "e1"))
+		else:
+			_as_capacity(entry, hint_point)
+	elif kind == "repair":
+		entry["point"] = _most_damaged_point(hint_point)
+	else:
+		return {"result": "unknown_reward", "reward": reward_id}
+	pending_rewards.append(entry)
+	pending_rewards.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["ready_tick"] < b["ready_tick"] or (a["ready_tick"] == b["ready_tick"] and a["id"] < b["id"]))
+	var out := entry.duplicate()
+	out["result"] = "scheduled"
+	events.append({"kind": "reward_scheduled", "entry": out})
+	return out
+
+
+func _as_capacity(entry: Dictionary, hint_point: int) -> void:
+	entry["capacity"] = true
+	entry["kind"] = "repair"
+	entry["point"] = _most_damaged_point(hint_point)
+	entry["label"] = "Repair crew"
+
+
+## Defenses (live or reserved) at an approach.
+func defenses_at(point: int) -> int:
+	var n := 0
+	for i in sockets.size():
+		if int(sockets[i]["point"]) == point and not _socket_free(i):
+			n += 1
+	return n
+
+
+## Defenders holding a point, counting those queued and those still being prepared.
+func units_at(point: int) -> int:
+	var n := 0
+	for e in entities:
+		if e.alive and e.side == 0 and e.kind == Kind.UNIT and e.group >= 0 and groups.has(e.group) and int(groups[e.group]["point"]) == point:
+			n += 1
+	for q in spawn_queue[0]:
+		if q.has("group") and groups.has(int(q["group"])) and int(groups[int(q["group"])]["point"]) == point:
+			n += 1
+	for p in pending_rewards:
+		if p["kind"] == "unit" and int(p["point"]) == point:
+			n += 1
+	return n
+
+
+func _socket_free(i: int) -> bool:
+	var sk: Dictionary = sockets[i]
+	if sk["reserved"]:
+		return false
+	var e: Ent = by_id.get(int(sk["ent"]))
+	return e == null or not e.alive
+
+
+func _pick_point(hint_point: int, building: bool) -> int:
+	var best := -1
+	var best_n := 1 << 30
+	for pt in defense_points.size():
+		var n := defenses_at(pt) if building else units_at(pt)
+		var room := false
+		if building:
+			for i in sockets.size():
+				if int(sockets[i]["point"]) == pt and _socket_free(i):
+					room = true
+					break
+		else:
+			room = n < units_per_point
+		if not room:
+			continue
+		if n < best_n or (n == best_n and pt == hint_point and best != hint_point):
+			best = pt
+			best_n = n
+	return best
+
+
+## The approach whose defenses miss the most health; `hint_point` (or the first) when nothing is damaged.
+func _most_damaged_point(hint_point: int) -> int:
+	var best := hint_point if hint_point >= 0 else 0
+	var worst := 0
+	for pt in defense_points.size():
+		var missing := 0
+		for i in sockets.size():
+			var e: Ent = by_id.get(int(sockets[i]["ent"]))
+			if int(sockets[i]["point"]) == pt and e != null and e.alive:
+				missing += e.max_hp - e.hp
+		if missing > worst:
+			worst = missing
+			best = pt
+	return best
+
+
+func _build_at_socket(i: int, role: String) -> Ent:
+	var sk: Dictionary = sockets[i]
+	var e := _spawn_building(0, role, int(sk["x"]), int(sk["y"]), 1, 1)
+	e.socket = i
+	sk["ent"] = e.id
+	sk["reserved"] = false
+	return e
+
+
+## Rewards whose construction delay has run out take effect at the start of the tick.
+func _process_rewards() -> void:
+	while not pending_rewards.is_empty() and int(pending_rewards[0]["ready_tick"]) <= tick_count:
+		var p: Dictionary = pending_rewards.pop_front()
+		var done := {"kind": "reward_done", "reward": p["reward"], "point": p["point"], "label": p["label"], "id": p["id"], "capacity": p["capacity"]}
+		match str(p["kind"]):
+			"build":
+				var e := _build_at_socket(int(p["socket"]), str(p["role"]))
+				done["result"] = "built"
+				done["x"] = e.x
+				done["y"] = e.y
+				done["entity"] = e.id
+			"unit":
+				_group_seq += 1
+				var res := produce_group(0, [{"actor": p["actor"], "count": 1}], _group_seq, int(p["point"]))
+				done["result"] = "unit" if res["result"] == "queued" else str(res["result"])
+				if res["result"] != "queued":
+					done.merge(_repair_point(int(p["point"])), true)
+			_:
+				done.merge(_repair_point(int(p["point"])), true)
+		events.append(done)
+
+
+## Repair every damaged defense of an approach to full (the most damaged approach when this one is whole); when nothing
+## is damaged, reinforce the oldest defense that was never reinforced (+50% health). Returns {result, point, count}.
+func _repair_point(point: int) -> Dictionary:
+	var pt := point
+	var damaged: Array = []
+	for i in sockets.size():
+		var e: Ent = by_id.get(int(sockets[i]["ent"]))
+		if e != null and e.alive and e.hp < e.max_hp and int(sockets[i]["point"]) == pt:
+			damaged.append(e)
+	if damaged.is_empty():
+		pt = _most_damaged_point(point)
+		for i in sockets.size():
+			var e: Ent = by_id.get(int(sockets[i]["ent"]))
+			if e != null and e.alive and e.hp < e.max_hp and int(sockets[i]["point"]) == pt:
+				damaged.append(e)
+	if not damaged.is_empty():
+		for e in damaged:
+			e.hp = e.max_hp
+			e.repairing = false
+		return {"result": "repaired", "point": pt, "count": damaged.size()}
+	var oldest: Ent = null
+	for i in sockets.size():
+		var e: Ent = by_id.get(int(sockets[i]["ent"]))
+		if e != null and e.alive and not e.reinforced and (oldest == null or e.id < oldest.id):
+			oldest = e
+	if oldest != null:
+		oldest.reinforced = true
+		oldest.max_hp = int(round(float(oldest.max_hp) * reinforce_factor))
+		oldest.hp = oldest.max_hp
+		return {"result": "reinforced", "point": sockets[oldest.socket]["point"], "count": 1, "x": oldest.x, "y": oldest.y}
+	return {"result": "full_strength", "point": pt, "count": 0}
+
+
+## Live rewarded defenses.
+func defense_count() -> int:
+	var n := 0
+	for i in sockets.size():
+		var e: Ent = by_id.get(int(sockets[i]["ent"]))
+		if e != null and e.alive:
+			n += 1
+	return n
 
 func objective_hp(id: String) -> int:
 	for o in objectives:
@@ -687,6 +915,7 @@ func tick() -> void:
 		_compact()
 	var t0 := Time.get_ticks_usec()
 	_rebuild_grid()
+	_process_rewards()
 	_process_spawn_queues()
 	var t1 := Time.get_ticks_usec()
 	for bot in bots:
@@ -927,7 +1156,7 @@ func scan_for_target(e: Ent, radius: float) -> int:
 	for o in _static_targets:
 		if o.side == side or not o.alive or o.is_wall:
 			continue
-		if e.ignore_structures and o.kind == Kind.BUILDING and o.id != e.objective:
+		if e.defenses_only and o.kind == Kind.BUILDING and o.id != e.objective and not (o.is_defence and waves_fight_defenses):
 			continue
 		if not (e.hits_air if o.airborne() else e.hits_ground):
 			continue

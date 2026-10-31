@@ -1,4 +1,6 @@
-"""Writes data/maps/field_80x40.json and data/battlefields/defense_01.json (the centred-base defense map).
+"""Writes data/maps/field_80x40.json, data/battlefields/defense_01.json (the centred-base defense map of the schema 2
+build, kept for its layout tests) and data/battlefields/defense_02.json (the mission map: the same compound with no
+pre-placed pillboxes, prepared sockets for rewarded buildings and a second and third optional objective).
 
     python tools/campaign/build_battlefield.py
 
@@ -100,3 +102,38 @@ bf = {
 }
 (ROOT / "data/battlefields/defense_01.json").write_text(json.dumps(bf, indent=1) + "\n")
 print(f"map {W}x{H}, {len(decorations)} decorations, {len(blocked)} blocked cells; battlefield with {len(buildings)} buildings")
+
+# --- defense_02: the mission battlefield (sockets for rewarded defenses, no pre-placed pillboxes) -------------------
+# Sockets flank each route outside the wall, inside the visible window, never on the route itself. Fill order is the
+# list order per approach; missions open the first n of each (rules.sockets_per_point).
+SOCKETS = {
+    0: [(25, 18), (25, 24), (21, 17), (21, 25), (17, 18)],  # left
+    1: [(35, 14), (43, 14), (34, 11), (44, 11), (31, 13)],  # top
+    2: [(53, 18), (53, 24), (57, 17), (57, 25), (61, 18)],  # right (mirror x' = 78 - x)
+}
+b2 = [b if b["role"] != "pillbox" else {**b, "role": "brick"} for b in buildings]
+taken = {(b["x"] + i, b["y"] + j) for b in b2 for i in range(b["w"]) for j in range(b["h"])} | {tuple(c) for c in blocked}
+view_x = (VIEW_CENTER[0] - 26.7, VIEW_CENTER[0] + 26.7)
+view_y = (VIEW_CENTER[1] - 10.0, VIEW_CENTER[1] + 10.0)
+sockets = []
+for point, cells in SOCKETS.items():
+    for order, (x, y) in enumerate(cells):
+        assert (x, y) not in taken, ("socket on a blocked cell", x, y)
+        assert view_x[0] <= x and x + 1 <= view_x[1] and view_y[0] <= y and y + 1 <= view_y[1], ("socket outside the window", x, y)
+        assert not (point in (0, 2) and 19 <= y <= 23) and not (point == 1 and 37 <= x <= 41), ("socket on a route", x, y)
+        sockets.append({"id": f"s{point + 1}_{order + 1}", "point": point, "order": order, "x": x, "y": y})
+bf2 = dict(bf)
+bf2["id"] = "defense_02"
+bf2["buildings"] = b2
+bf2["sockets"] = sockets
+bf2["objectives"] = [
+    {"id": "command_core", "role": "main", "required": True},
+    {"id": "power_plant", "role": "power", "required": False},
+    {"id": "radar_dome", "role": "dome", "required": False},
+]
+bf2["note"] = ("The mission map (schema 3): defense_01's compound and routes with no pre-placed pillboxes. Rewarded buildings go to "
+               "prepared sockets, five per approach, flanking each route outside the wall and inside the visible window (missions "
+               "open the first sockets_per_point of each). The power plant and the radar dome are objectives a mission may make "
+               "required (rules.required_objectives); the command core always is.")
+(ROOT / "data/battlefields/defense_02.json").write_text(json.dumps(bf2, indent=1) + "\n")
+print(f"defense_02: {len(sockets)} sockets")

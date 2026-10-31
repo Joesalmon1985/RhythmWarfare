@@ -31,7 +31,9 @@ static func load_pack(pack_dir: String, options: Dictionary = {}) -> Dictionary:
 		errors.append("level.json is not a JSON object")
 		return result
 	var level: Level
-	if int(parsed.get("schema_version", -1)) == DefenseLoader.SCHEMA_VERSION:
+	if int(parsed.get("schema_version", -1)) == MissionLoader.SCHEMA_VERSION:
+		level = MissionLoader.parse(parsed, dir, options, errors, warnings)
+	elif int(parsed.get("schema_version", -1)) == DefenseLoader.SCHEMA_VERSION:
 		level = DefenseLoader.parse(parsed, dir, options, errors, warnings)
 	else:
 		level = parse(parsed, dir, errors, warnings)

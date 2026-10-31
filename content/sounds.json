@@ -1,0 +1,19 @@
+{
+ "note": "Every sound a mission can offer. A sound renders library clips of its family; the owner's render of clip X with sound Y is content/library/X/<part>__Y.wav. 'synth' only shapes the generated placeholder.",
+ "sounds": [
+  {"id": "kick_march", "family": "kick", "name": "March Kick", "synth": {"type": "kick", "pitch": 1.0}},
+  {"id": "kick_armour", "family": "kick", "name": "Armour Kick", "synth": {"type": "kick", "pitch": 0.78, "decay": 0.11}},
+  {"id": "kick_siege", "family": "kick", "name": "Siege Kick", "synth": {"type": "kick", "pitch": 1.25, "decay": 0.06, "click": 0.6}},
+  {"id": "kick_heavy", "family": "kick", "name": "Heavy Kick", "synth": {"type": "kick", "pitch": 0.68, "decay": 0.13, "drive": 0.5}},
+  {"id": "snare_guard", "family": "snare", "name": "Guard Snare", "synth": {"type": "snare", "kind": "snare"}},
+  {"id": "snare_crack", "family": "snare", "name": "Crack Snare", "synth": {"type": "snare", "kind": "crack", "tone": 240}},
+  {"id": "snare_clap", "family": "snare", "name": "Field Clap", "synth": {"type": "snare", "kind": "clap"}},
+  {"id": "snare_rim", "family": "snare", "name": "Rimshot", "synth": {"type": "snare", "kind": "rim"}},
+  {"id": "bass_patrol", "family": "bass", "name": "Patrol Sub", "synth": {"type": "bass", "wave": "sine"}},
+  {"id": "bass_reese", "family": "bass", "name": "Reese", "synth": {"type": "bass", "wave": "reese", "gain": 0.9}},
+  {"id": "bass_growl", "family": "bass", "name": "Growl", "synth": {"type": "bass", "wave": "growl", "gain": 0.9}},
+  {"id": "bass_command", "family": "bass", "name": "Command Saw", "synth": {"type": "bass", "wave": "saw", "gain": 0.85}},
+  {"id": "bass_hollow", "family": "bass", "name": "Hollow Sub", "synth": {"type": "bass", "wave": "triangle", "octave": 1}},
+  {"id": "ensemble", "family": "other", "name": "Ensemble", "synth": {"type": "other"}}
+ ]
+}

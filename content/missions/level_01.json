@@ -1,0 +1,21 @@
+{
+ "level_id": "level_01",
+ "number": 1,
+ "title": "First Watch",
+ "pack": "m01_first_watch",
+ "bars": 32,
+ "seed": 1001,
+ "note": "Teaches the two drum pads at a half-time feel. Default content: the First Watch MIDI (campaign/First_Three/level_01), cut into a two-bar groove and one long accompaniment clip.",
+ "intro": "Tap a pad as its ring closes onto it.",
+ "battle": {"battlefield": "defense_02", "waves": "data/campaign/waves/level_01.json"},
+ "choices": {
+  "kick_sound": {"count": 1, "pool": ["kick_march", "kick_armour"], "default": ["kick_march"]}
+ },
+ "accompaniment": [{"clip": "acc_first_watch", "start_bar": 1, "bars": 32}],
+ "phases": [
+  {"bars": 8, "mode": "drums", "groove": "groove_watch", "kick_sound": 1, "snare_sound": "snare_guard", "sequence_bars": 4, "rewards": ["pillbox", "pillbox"]},
+  {"bars": 8, "mode": "drums", "groove": "groove_watch", "kick_sound": 1, "snare_sound": "snare_guard", "sequence_bars": 4, "rewards": ["pillbox", "e3"]},
+  {"bars": 8, "mode": "drums", "groove": "groove_watch", "kick_sound": 1, "snare_sound": "snare_guard", "sequence_bars": 4, "rewards": ["pillbox", "pillbox"]},
+  {"bars": 8, "mode": "drums", "groove": "groove_watch", "kick_sound": 1, "snare_sound": "snare_guard", "sequence_bars": 4, "rewards": ["e3", "pillbox"]}
+ ]
+}

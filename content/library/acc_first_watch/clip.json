@@ -1,0 +1,30 @@
+{
+ "id": "acc_first_watch",
+ "kind": "accompaniment",
+ "name": "First Watch accompaniment",
+ "bars": 32,
+ "key": "C# minor",
+ "note": "Pad and hats of the whole song, kept as one long clip (its bars do not repeat as a loop). From First Watch.",
+ "source": {
+  "type": "derived",
+  "parts": {
+   "other": [
+    {
+     "file": "campaign/First_Three/level_01/Music/other_pad.mid",
+     "bars": [
+      1,
+      32
+     ]
+    },
+    {
+     "file": "campaign/First_Three/level_01/Music/other_hats.mid",
+     "bars": [
+      1,
+      32
+     ]
+    }
+   ]
+  }
+ },
+ "tempo_bpm": 174
+}

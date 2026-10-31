@@ -1,0 +1,31 @@
+{
+ "id": "groove_watch",
+ "kind": "groove",
+ "name": "Watch",
+ "bars": 2,
+ "note": "Half-time: kick on beat 1, then beat 2 of the second bar; snare on beat 3. From First Watch.",
+ "source": {
+  "type": "derived",
+  "parts": {
+   "kick": [
+    {
+     "file": "campaign/First_Three/level_01/Music/kick_1.mid",
+     "bars": [
+      1,
+      2
+     ]
+    }
+   ],
+   "snare": [
+    {
+     "file": "campaign/First_Three/level_01/Music/snare_1.mid",
+     "bars": [
+      1,
+      2
+     ]
+    }
+   ]
+  }
+ },
+ "tempo_bpm": 174
+}

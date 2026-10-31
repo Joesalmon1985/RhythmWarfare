@@ -1,6 +1,23 @@
 # Song packs
 
-A song pack is one folder: `level.json` plus an `audio/` directory holding four aligned stems.
+Two kinds of pack live here.
+
+## Missions (schema 3): `m01_first_watch/` to `m10_*`
+
+Written by `python tools/content/build.py` from `content/` (the loop library and the mission files); never edit them by
+hand. Each holds `level.json` (schema 3, `docs/PRD.md` section 15), `audio/sNN__<clip>__<sound>.ogg` (one full-length
+stem per offered clip and sound combination of each usage, 48 kHz stereo Ogg Vorbis, one bar of release tail after the
+song) and `preview/<choice>__<option>.ogg` (four-bar auditions for the mission setup screen). The game loads the stems
+that match the player's selection and plays them through the one synchronized transport.
+
+Whether a pack still uses placeholder audio is in its `level.json` (`placeholder`, `content`) and in
+`content/REPORT.md`. To replace the placeholders with renders from Ableton, follow `docs/CONTENT_TO_RENDER.md`.
+
+## Legacy duel packs (schema 1): `level_01/`, `test_16/`
+
+The two-sided duel of October 2026, kept working for a later multiplayer mode ("Free play" in the developer area).
+
+A schema 1 pack is one folder: `level.json` plus an `audio/` directory holding four aligned stems.
 The full contract is PRD section 9 (`docs/PRD.md`); the essentials:
 
 - `level.json` (`schema_version` 1): `bpm` 174, `time_signature` [4, 4], `ticks_per_beat` 960,
@@ -17,23 +34,6 @@ The full contract is PRD section 9 (`docs/PRD.md`); the essentials:
 - Every stem starts at the same timeline point (bar 1 at sample 0), has the same sample rate and
   the same length. Nothing starts at or after `duration_ticks`; holds end inside the song; a lane
   never overlaps itself; a kick and a snare never share a tick.
-
-## Schema 2 (defense campaign) packs
-
-`first_watch/`, `second_pulse/` and `hold_the_line/` (campaign levels 1 to 3) are schema 2 packs built by one
-command per level from `campaign/First_Three/level_0N/`:
-
-```
-python tools/campaign/build_defense_pack.py all     # or 1, 2, 3
-```
-
-The importer verifies the part MIDI hashes against `campaign/Musical_Source_Integrity.json`, compiles each chart from
-the MIDI and `chart_rules*.json` (it must equal the pack's `player_chart*.json` note for note), synthesises
-placeholder stems per slot and profile (`audio/<slot>__<profile>.ogg`, plus `audio/other.ogg`), and writes
-`level.json` with hashes and the render manifest. The field list is PRD section 14. Notes carry an explicit `button`,
-`slot_id`, `part_id`, `source_note_id` and `family`; there is no `lane`. All audio is synthesised placeholder sound and
-is marked `placeholder: true`; the owner's renders replace the files one for one (check them with
-`tools/campaign/audio_preflight.py`). The packs below this heading are the legacy schema 1 duel packs.
 
 ## Packs
 

@@ -1,0 +1,31 @@
+{
+ "id": "groove_straight",
+ "kind": "groove",
+ "name": "Straight",
+ "bars": 2,
+ "note": "Half-time: kick on 1, snare on 3, every bar. From Second Pulse bars 1-2.",
+ "source": {
+  "type": "derived",
+  "parts": {
+   "kick": [
+    {
+     "file": "campaign/First_Three/level_02/Music/kick_1.mid",
+     "bars": [
+      1,
+      2
+     ]
+    }
+   ],
+   "snare": [
+    {
+     "file": "campaign/First_Three/level_02/Music/snare_1.mid",
+     "bars": [
+      1,
+      2
+     ]
+    }
+   ]
+  }
+ },
+ "tempo_bpm": 174
+}

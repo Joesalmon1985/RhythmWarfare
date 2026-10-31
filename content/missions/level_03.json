@@ -1,0 +1,25 @@
+{
+ "level_id": "level_03",
+ "number": 3,
+ "title": "Hold the Line",
+ "pack": "m03_hold_the_line",
+ "bars": 48,
+ "seed": 1003,
+ "note": "First bass phases: one bass voice on one pad, long holds. Drums keep playing under the bass and the bass under the drums, but only one family is cued at a time. Default content: the Hold the Line MIDI.",
+ "intro": "Bass: press as the ring closes and keep holding while the pad stays lit.",
+ "battle": {"battlefield": "defense_02", "waves": "data/campaign/waves/level_03.json"},
+ "choices": {
+  "kick_sound": {"count": 1, "pool": ["kick_march", "kick_armour"], "default": ["kick_march"]},
+  "snare_sound": {"count": 1, "pool": ["snare_guard", "snare_crack"], "default": ["snare_guard"]},
+  "bass_voice": {"count": 1, "pool": ["bass_patrol", "bass_reese"], "default": ["bass_patrol"]}
+ },
+ "accompaniment": [{"clip": "acc_hold_the_line", "start_bar": 1, "bars": 48}],
+ "phases": [
+  {"bars": 8, "mode": "drums", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_b", "bass_voice": 1, "sequence_bars": 4, "rewards": ["e3", "jeep"]},
+  {"bars": 8, "mode": "drums", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": 1, "sequence_bars": 4, "rewards": ["turret", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_b", "bass_voice": 1, "sequence_bars": 4, "rewards": ["e3", "e3"]},
+  {"bars": 8, "mode": "drums", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "turret"]},
+  {"bars": 8, "mode": "bass", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_end", "bass_voice": 1, "sequence_bars": 4, "rewards": ["jeep", "e3"]}
+ ]
+}

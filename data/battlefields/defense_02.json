@@ -1,0 +1,565 @@
+{
+ "id": "defense_02",
+ "mode": "defense",
+ "map": "field_80x40",
+ "width": 80,
+ "height": 40,
+ "view": {
+  "center": [
+   39.5,
+   20.5
+  ],
+  "max_cells": [
+   53.4,
+   20.0
+  ]
+ },
+ "note": "The mission map (schema 3): defense_01's compound and routes with no pre-placed pillboxes. Rewarded buildings go to prepared sockets, five per approach, flanking each route outside the wall and inside the visible window (missions open the first sockets_per_point of each). The power plant and the radar dome are objectives a mission may make required (rules.required_objectives); the command core always is.",
+ "objectives": [
+  {
+   "id": "command_core",
+   "role": "main",
+   "required": true
+  },
+  {
+   "id": "power_plant",
+   "role": "power",
+   "required": false
+  },
+  {
+   "id": "radar_dome",
+   "role": "dome",
+   "required": false
+  }
+ ],
+ "defense_points": [
+  {
+   "id": "defense_1",
+   "x": 24,
+   "y": 21
+  },
+  {
+   "id": "defense_2",
+   "x": 39,
+   "y": 13
+  },
+  {
+   "id": "defense_3",
+   "x": 54,
+   "y": 21
+  }
+ ],
+ "entries": [
+  {
+   "id": "left",
+   "x": 8,
+   "y": 21
+  },
+  {
+   "id": "top",
+   "x": 39,
+   "y": 0
+  },
+  {
+   "id": "right",
+   "x": 70,
+   "y": 21
+  }
+ ],
+ "leash_cells": 6.0,
+ "buildings": [
+  {
+   "role": "main",
+   "x": 38,
+   "y": 19,
+   "w": 3,
+   "h": 3
+  },
+  {
+   "role": "factory",
+   "x": 33,
+   "y": 17,
+   "w": 3,
+   "h": 3
+  },
+  {
+   "role": "barracks",
+   "x": 44,
+   "y": 17,
+   "w": 2,
+   "h": 2
+  },
+  {
+   "role": "power",
+   "x": 33,
+   "y": 23,
+   "w": 2,
+   "h": 2
+  },
+  {
+   "role": "dome",
+   "x": 45,
+   "y": 23,
+   "w": 2,
+   "h": 2
+  },
+  {
+   "role": "brick",
+   "x": 28,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 29,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 30,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 31,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 32,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 33,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 34,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 35,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 36,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 42,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 43,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 44,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 45,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 46,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 47,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 48,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 49,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 50,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 28,
+   "y": 17,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 50,
+   "y": 17,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 28,
+   "y": 18,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 50,
+   "y": 18,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 28,
+   "y": 24,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 50,
+   "y": 24,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 28,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 29,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 30,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 31,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 32,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 33,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 34,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 35,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 36,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 37,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 38,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 39,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 40,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 41,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 42,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 43,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 44,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 45,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 46,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 47,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 48,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 49,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 50,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  }
+ ],
+ "exits": {
+  "factory": [
+   34,
+   20
+  ],
+  "barracks": [
+   44,
+   19
+  ]
+ },
+ "rally": [
+  39,
+  23
+ ],
+ "air_hold": [
+  39,
+  23
+ ],
+ "air_wait": [
+  39,
+  23
+ ],
+ "sockets": [
+  {
+   "id": "s1_1",
+   "point": 0,
+   "order": 0,
+   "x": 25,
+   "y": 18
+  },
+  {
+   "id": "s1_2",
+   "point": 0,
+   "order": 1,
+   "x": 25,
+   "y": 24
+  },
+  {
+   "id": "s1_3",
+   "point": 0,
+   "order": 2,
+   "x": 21,
+   "y": 17
+  },
+  {
+   "id": "s1_4",
+   "point": 0,
+   "order": 3,
+   "x": 21,
+   "y": 25
+  },
+  {
+   "id": "s1_5",
+   "point": 0,
+   "order": 4,
+   "x": 17,
+   "y": 18
+  },
+  {
+   "id": "s2_1",
+   "point": 1,
+   "order": 0,
+   "x": 35,
+   "y": 14
+  },
+  {
+   "id": "s2_2",
+   "point": 1,
+   "order": 1,
+   "x": 43,
+   "y": 14
+  },
+  {
+   "id": "s2_3",
+   "point": 1,
+   "order": 2,
+   "x": 34,
+   "y": 11
+  },
+  {
+   "id": "s2_4",
+   "point": 1,
+   "order": 3,
+   "x": 44,
+   "y": 11
+  },
+  {
+   "id": "s2_5",
+   "point": 1,
+   "order": 4,
+   "x": 31,
+   "y": 13
+  },
+  {
+   "id": "s3_1",
+   "point": 2,
+   "order": 0,
+   "x": 53,
+   "y": 18
+  },
+  {
+   "id": "s3_2",
+   "point": 2,
+   "order": 1,
+   "x": 53,
+   "y": 24
+  },
+  {
+   "id": "s3_3",
+   "point": 2,
+   "order": 2,
+   "x": 57,
+   "y": 17
+  },
+  {
+   "id": "s3_4",
+   "point": 2,
+   "order": 3,
+   "x": 57,
+   "y": 25
+  },
+  {
+   "id": "s3_5",
+   "point": 2,
+   "order": 4,
+   "x": 61,
+   "y": 18
+  }
+ ]
+}

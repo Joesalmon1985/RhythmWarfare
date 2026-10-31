@@ -1,0 +1,1428 @@
+{
+ "schema_version": 3,
+ "mode": "defense",
+ "level_id": "level_02",
+ "campaign_level": 2,
+ "title": "Second Pulse",
+ "bpm": 174,
+ "time_signature": [
+  4,
+  4
+ ],
+ "ticks_per_beat": 960,
+ "song_offset_ms": 0,
+ "duration_ticks": 153600,
+ "seed": 1002,
+ "battlefield": "defense_02",
+ "roster": "openra_mvp_01",
+ "rules": {
+  "objective_hp": {
+   "command_core": 60000
+  }
+ },
+ "sequence_threshold": 0.6,
+ "intro": "",
+ "placeholder": true,
+ "source": {
+  "mission": "content/missions/level_02.json",
+  "waves": "data/campaign/waves/level_02.json",
+  "builder": "tools/content/build.py"
+ },
+ "choices": [
+  {
+   "id": "groove",
+   "label": "Groove",
+   "count": 1,
+   "default": [
+    "groove_push"
+   ],
+   "pool": [
+    {
+     "id": "groove_push",
+     "name": "Push"
+    },
+    {
+     "id": "groove_straight",
+     "name": "Straight"
+    }
+   ]
+  },
+  {
+   "id": "kick_sound",
+   "label": "Kick sound",
+   "count": 1,
+   "default": [
+    "kick_march"
+   ],
+   "pool": [
+    {
+     "id": "kick_march",
+     "name": "March Kick"
+    },
+    {
+     "id": "kick_armour",
+     "name": "Armour Kick"
+    }
+   ]
+  },
+  {
+   "id": "snare_sound",
+   "label": "Snare sound",
+   "count": 1,
+   "default": [
+    "snare_guard"
+   ],
+   "pool": [
+    {
+     "id": "snare_guard",
+     "name": "Guard Snare"
+    },
+    {
+     "id": "snare_crack",
+     "name": "Crack Snare"
+    }
+   ]
+  }
+ ],
+ "names": {
+  "kick_march": "March Kick",
+  "kick_armour": "Armour Kick",
+  "snare_guard": "Guard Snare",
+  "snare_crack": "Crack Snare",
+  "ensemble": "Ensemble",
+  "acc_second_pulse": "Second Pulse accompaniment",
+  "groove_push": "Push",
+  "groove_straight": "Straight"
+ },
+ "phases": [
+  {
+   "id": "p01",
+   "start_tick": 0,
+   "end_tick": 30720,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "kick_sound#1"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "snare_sound#1"
+    }
+   }
+  },
+  {
+   "id": "p02",
+   "start_tick": 30720,
+   "end_tick": 61440,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "kick_sound#1"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "snare_sound#1"
+    }
+   }
+  },
+  {
+   "id": "p03",
+   "start_tick": 61440,
+   "end_tick": 92160,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "kick_sound#1"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "snare_sound#1"
+    }
+   }
+  },
+  {
+   "id": "p04",
+   "start_tick": 92160,
+   "end_tick": 122880,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "kick_sound#1"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "snare_sound#1"
+    }
+   }
+  },
+  {
+   "id": "p05",
+   "start_tick": 122880,
+   "end_tick": 153600,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "kick_sound#1"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "snare_sound#1"
+    }
+   }
+  }
+ ],
+ "stems": [
+  {
+   "key": "s01",
+   "family": "kick",
+   "deps": [
+    "groove#1",
+    "kick_sound#1"
+   ],
+   "files": {
+    "groove_push|kick_march": {
+     "file": "audio/s01__groove_push__kick_march.ogg",
+     "placeholder": true,
+     "clip": "groove_push",
+     "sound": "kick_march",
+     "peak_db": -8.05
+    },
+    "groove_push|kick_armour": {
+     "file": "audio/s01__groove_push__kick_armour.ogg",
+     "placeholder": true,
+     "clip": "groove_push",
+     "sound": "kick_armour",
+     "peak_db": -8.52
+    },
+    "groove_straight|kick_march": {
+     "file": "audio/s01__groove_straight__kick_march.ogg",
+     "placeholder": true,
+     "clip": "groove_straight",
+     "sound": "kick_march",
+     "peak_db": -8.34
+    },
+    "groove_straight|kick_armour": {
+     "file": "audio/s01__groove_straight__kick_armour.ogg",
+     "placeholder": true,
+     "clip": "groove_straight",
+     "sound": "kick_armour",
+     "peak_db": -8.88
+    }
+   }
+  },
+  {
+   "key": "s02",
+   "family": "kick",
+   "deps": [
+    "kick_sound#1"
+   ],
+   "files": {
+    "kick_march": {
+     "file": "audio/s02__groove_straight__kick_march.ogg",
+     "placeholder": true,
+     "clip": "groove_straight",
+     "sound": "kick_march",
+     "peak_db": -8.34
+    },
+    "kick_armour": {
+     "file": "audio/s02__groove_straight__kick_armour.ogg",
+     "placeholder": true,
+     "clip": "groove_straight",
+     "sound": "kick_armour",
+     "peak_db": -8.88
+    }
+   }
+  },
+  {
+   "key": "s03",
+   "family": "other",
+   "deps": [],
+   "files": {
+    "": {
+     "file": "audio/s03__acc_second_pulse__ensemble.ogg",
+     "placeholder": true,
+     "clip": "acc_second_pulse",
+     "sound": "ensemble",
+     "peak_db": -13.89
+    }
+   }
+  },
+  {
+   "key": "s04",
+   "family": "snare",
+   "deps": [
+    "groove#1",
+    "snare_sound#1"
+   ],
+   "files": {
+    "groove_push|snare_guard": {
+     "file": "audio/s04__groove_push__snare_guard.ogg",
+     "placeholder": true,
+     "clip": "groove_push",
+     "sound": "snare_guard",
+     "peak_db": -9.55
+    },
+    "groove_push|snare_crack": {
+     "file": "audio/s04__groove_push__snare_crack.ogg",
+     "placeholder": true,
+     "clip": "groove_push",
+     "sound": "snare_crack",
+     "peak_db": -9.42
+    },
+    "groove_straight|snare_guard": {
+     "file": "audio/s04__groove_straight__snare_guard.ogg",
+     "placeholder": true,
+     "clip": "groove_straight",
+     "sound": "snare_guard",
+     "peak_db": -9.56
+    },
+    "groove_straight|snare_crack": {
+     "file": "audio/s04__groove_straight__snare_crack.ogg",
+     "placeholder": true,
+     "clip": "groove_straight",
+     "sound": "snare_crack",
+     "peak_db": -10.62
+    }
+   }
+  },
+  {
+   "key": "s05",
+   "family": "snare",
+   "deps": [
+    "snare_sound#1"
+   ],
+   "files": {
+    "snare_guard": {
+     "file": "audio/s05__groove_straight__snare_guard.ogg",
+     "placeholder": true,
+     "clip": "groove_straight",
+     "sound": "snare_guard",
+     "peak_db": -9.56
+    },
+    "snare_crack": {
+     "file": "audio/s05__groove_straight__snare_crack.ogg",
+     "placeholder": true,
+     "clip": "groove_straight",
+     "sound": "snare_crack",
+     "peak_db": -10.62
+    }
+   }
+  }
+ ],
+ "cue_blocks": [
+  {
+   "phase": 0,
+   "family": "kick",
+   "pad": 1,
+   "voice": "kick_sound#1",
+   "deps": [],
+   "start_tick": 0,
+   "end_tick": 30720,
+   "options": {
+    "groove_straight": [
+     [
+      0,
+      0
+     ],
+     [
+      3840,
+      0
+     ],
+     [
+      7680,
+      0
+     ],
+     [
+      11520,
+      0
+     ],
+     [
+      15360,
+      0
+     ],
+     [
+      19200,
+      0
+     ],
+     [
+      23040,
+      0
+     ],
+     [
+      26880,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 0,
+   "family": "snare",
+   "pad": 4,
+   "voice": "snare_sound#1",
+   "deps": [],
+   "start_tick": 0,
+   "end_tick": 30720,
+   "options": {
+    "groove_straight": [
+     [
+      1920,
+      0
+     ],
+     [
+      5760,
+      0
+     ],
+     [
+      9600,
+      0
+     ],
+     [
+      13440,
+      0
+     ],
+     [
+      17280,
+      0
+     ],
+     [
+      21120,
+      0
+     ],
+     [
+      24960,
+      0
+     ],
+     [
+      28800,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 1,
+   "family": "kick",
+   "pad": 1,
+   "voice": "kick_sound#1",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 30720,
+   "end_tick": 61440,
+   "options": {
+    "groove_push": [
+     [
+      30720,
+      0
+     ],
+     [
+      33600,
+      0
+     ],
+     [
+      34560,
+      0
+     ],
+     [
+      38400,
+      0
+     ],
+     [
+      41280,
+      0
+     ],
+     [
+      42240,
+      0
+     ],
+     [
+      46080,
+      0
+     ],
+     [
+      48960,
+      0
+     ],
+     [
+      49920,
+      0
+     ],
+     [
+      53760,
+      0
+     ],
+     [
+      56640,
+      0
+     ],
+     [
+      57600,
+      0
+     ]
+    ],
+    "groove_straight": [
+     [
+      30720,
+      0
+     ],
+     [
+      34560,
+      0
+     ],
+     [
+      38400,
+      0
+     ],
+     [
+      42240,
+      0
+     ],
+     [
+      46080,
+      0
+     ],
+     [
+      49920,
+      0
+     ],
+     [
+      53760,
+      0
+     ],
+     [
+      57600,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 1,
+   "family": "snare",
+   "pad": 4,
+   "voice": "snare_sound#1",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 30720,
+   "end_tick": 61440,
+   "options": {
+    "groove_push": [
+     [
+      32640,
+      0
+     ],
+     [
+      36480,
+      0
+     ],
+     [
+      40320,
+      0
+     ],
+     [
+      44160,
+      0
+     ],
+     [
+      48000,
+      0
+     ],
+     [
+      51840,
+      0
+     ],
+     [
+      55680,
+      0
+     ],
+     [
+      59520,
+      0
+     ]
+    ],
+    "groove_straight": [
+     [
+      32640,
+      0
+     ],
+     [
+      36480,
+      0
+     ],
+     [
+      40320,
+      0
+     ],
+     [
+      44160,
+      0
+     ],
+     [
+      48000,
+      0
+     ],
+     [
+      51840,
+      0
+     ],
+     [
+      55680,
+      0
+     ],
+     [
+      59520,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 2,
+   "family": "kick",
+   "pad": 1,
+   "voice": "kick_sound#1",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 61440,
+   "end_tick": 92160,
+   "options": {
+    "groove_push": [
+     [
+      61440,
+      0
+     ],
+     [
+      64320,
+      0
+     ],
+     [
+      65280,
+      0
+     ],
+     [
+      69120,
+      0
+     ],
+     [
+      72000,
+      0
+     ],
+     [
+      72960,
+      0
+     ],
+     [
+      76800,
+      0
+     ],
+     [
+      79680,
+      0
+     ],
+     [
+      80640,
+      0
+     ],
+     [
+      84480,
+      0
+     ],
+     [
+      87360,
+      0
+     ],
+     [
+      88320,
+      0
+     ]
+    ],
+    "groove_straight": [
+     [
+      61440,
+      0
+     ],
+     [
+      65280,
+      0
+     ],
+     [
+      69120,
+      0
+     ],
+     [
+      72960,
+      0
+     ],
+     [
+      76800,
+      0
+     ],
+     [
+      80640,
+      0
+     ],
+     [
+      84480,
+      0
+     ],
+     [
+      88320,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 2,
+   "family": "snare",
+   "pad": 4,
+   "voice": "snare_sound#1",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 61440,
+   "end_tick": 92160,
+   "options": {
+    "groove_push": [
+     [
+      63360,
+      0
+     ],
+     [
+      67200,
+      0
+     ],
+     [
+      71040,
+      0
+     ],
+     [
+      74880,
+      0
+     ],
+     [
+      78720,
+      0
+     ],
+     [
+      82560,
+      0
+     ],
+     [
+      86400,
+      0
+     ],
+     [
+      90240,
+      0
+     ]
+    ],
+    "groove_straight": [
+     [
+      63360,
+      0
+     ],
+     [
+      67200,
+      0
+     ],
+     [
+      71040,
+      0
+     ],
+     [
+      74880,
+      0
+     ],
+     [
+      78720,
+      0
+     ],
+     [
+      82560,
+      0
+     ],
+     [
+      86400,
+      0
+     ],
+     [
+      90240,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 3,
+   "family": "kick",
+   "pad": 1,
+   "voice": "kick_sound#1",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 92160,
+   "end_tick": 122880,
+   "options": {
+    "groove_push": [
+     [
+      92160,
+      0
+     ],
+     [
+      95040,
+      0
+     ],
+     [
+      96000,
+      0
+     ],
+     [
+      99840,
+      0
+     ],
+     [
+      102720,
+      0
+     ],
+     [
+      103680,
+      0
+     ],
+     [
+      107520,
+      0
+     ],
+     [
+      110400,
+      0
+     ],
+     [
+      111360,
+      0
+     ],
+     [
+      115200,
+      0
+     ],
+     [
+      118080,
+      0
+     ],
+     [
+      119040,
+      0
+     ]
+    ],
+    "groove_straight": [
+     [
+      92160,
+      0
+     ],
+     [
+      96000,
+      0
+     ],
+     [
+      99840,
+      0
+     ],
+     [
+      103680,
+      0
+     ],
+     [
+      107520,
+      0
+     ],
+     [
+      111360,
+      0
+     ],
+     [
+      115200,
+      0
+     ],
+     [
+      119040,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 3,
+   "family": "snare",
+   "pad": 4,
+   "voice": "snare_sound#1",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 92160,
+   "end_tick": 122880,
+   "options": {
+    "groove_push": [
+     [
+      94080,
+      0
+     ],
+     [
+      97920,
+      0
+     ],
+     [
+      101760,
+      0
+     ],
+     [
+      105600,
+      0
+     ],
+     [
+      109440,
+      0
+     ],
+     [
+      113280,
+      0
+     ],
+     [
+      117120,
+      0
+     ],
+     [
+      120960,
+      0
+     ]
+    ],
+    "groove_straight": [
+     [
+      94080,
+      0
+     ],
+     [
+      97920,
+      0
+     ],
+     [
+      101760,
+      0
+     ],
+     [
+      105600,
+      0
+     ],
+     [
+      109440,
+      0
+     ],
+     [
+      113280,
+      0
+     ],
+     [
+      117120,
+      0
+     ],
+     [
+      120960,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 4,
+   "family": "kick",
+   "pad": 1,
+   "voice": "kick_sound#1",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 122880,
+   "end_tick": 153600,
+   "options": {
+    "groove_push": [
+     [
+      122880,
+      0
+     ],
+     [
+      125760,
+      0
+     ],
+     [
+      126720,
+      0
+     ],
+     [
+      130560,
+      0
+     ],
+     [
+      133440,
+      0
+     ],
+     [
+      134400,
+      0
+     ],
+     [
+      138240,
+      0
+     ],
+     [
+      141120,
+      0
+     ],
+     [
+      142080,
+      0
+     ],
+     [
+      145920,
+      0
+     ],
+     [
+      148800,
+      0
+     ],
+     [
+      149760,
+      0
+     ]
+    ],
+    "groove_straight": [
+     [
+      122880,
+      0
+     ],
+     [
+      126720,
+      0
+     ],
+     [
+      130560,
+      0
+     ],
+     [
+      134400,
+      0
+     ],
+     [
+      138240,
+      0
+     ],
+     [
+      142080,
+      0
+     ],
+     [
+      145920,
+      0
+     ],
+     [
+      149760,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 4,
+   "family": "snare",
+   "pad": 4,
+   "voice": "snare_sound#1",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 122880,
+   "end_tick": 153600,
+   "options": {
+    "groove_push": [
+     [
+      124800,
+      0
+     ],
+     [
+      128640,
+      0
+     ],
+     [
+      132480,
+      0
+     ],
+     [
+      136320,
+      0
+     ],
+     [
+      140160,
+      0
+     ],
+     [
+      144000,
+      0
+     ],
+     [
+      147840,
+      0
+     ],
+     [
+      151680,
+      0
+     ]
+    ],
+    "groove_straight": [
+     [
+      124800,
+      0
+     ],
+     [
+      128640,
+      0
+     ],
+     [
+      132480,
+      0
+     ],
+     [
+      136320,
+      0
+     ],
+     [
+      140160,
+      0
+     ],
+     [
+      144000,
+      0
+     ],
+     [
+      147840,
+      0
+     ],
+     [
+      151680,
+      0
+     ]
+    ]
+   }
+  }
+ ],
+ "sequences": [
+  {
+   "index": 0,
+   "phase": 0,
+   "mode": "drums",
+   "start_tick": 0,
+   "end_tick": 15360,
+   "reward": "pillbox"
+  },
+  {
+   "index": 1,
+   "phase": 0,
+   "mode": "drums",
+   "start_tick": 15360,
+   "end_tick": 30720,
+   "reward": "pillbox"
+  },
+  {
+   "index": 2,
+   "phase": 1,
+   "mode": "drums",
+   "start_tick": 30720,
+   "end_tick": 46080,
+   "reward": "pillbox"
+  },
+  {
+   "index": 3,
+   "phase": 1,
+   "mode": "drums",
+   "start_tick": 46080,
+   "end_tick": 61440,
+   "reward": "e3"
+  },
+  {
+   "index": 4,
+   "phase": 2,
+   "mode": "drums",
+   "start_tick": 61440,
+   "end_tick": 76800,
+   "reward": "turret"
+  },
+  {
+   "index": 5,
+   "phase": 2,
+   "mode": "drums",
+   "start_tick": 76800,
+   "end_tick": 92160,
+   "reward": "pillbox"
+  },
+  {
+   "index": 6,
+   "phase": 3,
+   "mode": "drums",
+   "start_tick": 92160,
+   "end_tick": 107520,
+   "reward": "e3"
+  },
+  {
+   "index": 7,
+   "phase": 3,
+   "mode": "drums",
+   "start_tick": 107520,
+   "end_tick": 122880,
+   "reward": "pillbox"
+  },
+  {
+   "index": 8,
+   "phase": 4,
+   "mode": "drums",
+   "start_tick": 122880,
+   "end_tick": 138240,
+   "reward": "turret"
+  },
+  {
+   "index": 9,
+   "phase": 4,
+   "mode": "drums",
+   "start_tick": 138240,
+   "end_tick": 153600,
+   "reward": "pillbox"
+  }
+ ],
+ "previews": {
+  "groove": {
+   "groove_push": "preview/groove__groove_push.ogg",
+   "groove_straight": "preview/groove__groove_straight.ogg"
+  },
+  "kick_sound": {
+   "kick_march": "preview/kick_sound__kick_march.ogg",
+   "kick_armour": "preview/kick_sound__kick_armour.ogg"
+  },
+  "snare_sound": {
+   "snare_guard": "preview/snare_sound__snare_guard.ogg",
+   "snare_crack": "preview/snare_sound__snare_crack.ogg"
+  }
+ },
+ "content": {
+  "files": 13,
+  "placeholder_files": 13,
+  "owner_files": 0,
+  "default_mix_peak_db": -6.75
+ },
+ "waves": [
+  {
+   "id": "wave_01",
+   "start_tick": 1392,
+   "start_bar": 1,
+   "entry": "left",
+   "via_defense_point": "defense_1",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 8,
+     "spawn_spacing_ticks": 240
+    }
+   ],
+   "authored_start_tick": 15360,
+   "contact_tick": 35179
+  },
+  {
+   "id": "wave_02",
+   "start_tick": 14929,
+   "start_bar": 4,
+   "entry": "right",
+   "via_defense_point": "defense_3",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 10,
+     "spawn_spacing_ticks": 240
+    }
+   ],
+   "authored_start_tick": 30720,
+   "contact_tick": 48716
+  },
+  {
+   "id": "wave_03",
+   "start_tick": 34800,
+   "start_bar": 10,
+   "entry": "top",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 11,
+     "spawn_spacing_ticks": 240
+    }
+   ],
+   "authored_start_tick": 46080,
+   "contact_tick": 62253
+  },
+  {
+   "id": "wave_04",
+   "start_tick": 42002,
+   "start_bar": 11,
+   "entry": "left",
+   "via_defense_point": "defense_1",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 13,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "authored_start_tick": 61440,
+   "contact_tick": 75789
+  },
+  {
+   "id": "wave_05",
+   "start_tick": 55538,
+   "start_bar": 15,
+   "entry": "right",
+   "via_defense_point": "defense_3",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 14,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "authored_start_tick": 76800,
+   "contact_tick": 89326
+  },
+  {
+   "id": "wave_06",
+   "start_tick": 75410,
+   "start_bar": 20,
+   "entry": "top",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 15,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "1tnk",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "authored_start_tick": 92160,
+   "contact_tick": 102862
+  },
+  {
+   "id": "wave_07",
+   "start_tick": 82611,
+   "start_bar": 22,
+   "entry": "left",
+   "via_defense_point": "defense_1",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 17,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "1tnk",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "authored_start_tick": 107520,
+   "contact_tick": 116399
+  },
+  {
+   "id": "wave_08",
+   "start_tick": 96148,
+   "start_bar": 26,
+   "entry": "right",
+   "via_defense_point": "defense_3",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 18,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "1tnk",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "authored_start_tick": 122880,
+   "contact_tick": 129935
+  },
+  {
+   "id": "wave_09",
+   "start_tick": 116020,
+   "start_bar": 31,
+   "entry": "top",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 20,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "1tnk",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "authored_start_tick": 138240,
+   "contact_tick": 143472
+  }
+ ]
+}

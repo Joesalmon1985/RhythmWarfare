@@ -1,0 +1,123 @@
+{
+ "clips": {
+  "acc_first_watch": {
+   "midi": {
+    "other": {
+     "generated_sha256": "5766e2e3e93f3bf974cf96aecdafd375f8498d7705bc747c6c16f780e1d24edb"
+    }
+   },
+   "renders": {},
+   "placeholders": {
+    "other__ensemble": "c4a0547b662d029f0b54943e8c069f86e61d694b91fa1410f01fb6ed26de562c"
+   }
+  },
+  "acc_hold_the_line": {
+   "midi": {
+    "other": {
+     "generated_sha256": "dd00fb35810d99a0fc03c0ae90f2d9163e36a8d71c06ba92bfceea25e98f2e3b"
+    }
+   },
+   "renders": {},
+   "placeholders": {
+    "other__ensemble": "69a328c18b93ebd133c7fb00019f560547f6db19541387bab015afb046aa3ba3"
+   }
+  },
+  "acc_second_pulse": {
+   "midi": {
+    "other": {
+     "generated_sha256": "7d9a6411554ad390d3633dcd215442d7a94011b2da3e1a5b55ca8b17ccc612d7"
+    }
+   },
+   "renders": {},
+   "placeholders": {
+    "other__ensemble": "3d106299e18999a0eec663f6f906e95fd612fc19b3553679300e1279b3412890"
+   }
+  },
+  "bass_hold_a": {
+   "midi": {
+    "bass": {
+     "generated_sha256": "be09495ab77d1578ca663ad469bf55bff442a43b056231d1e20eaef7fd2a0f61"
+    }
+   },
+   "renders": {},
+   "placeholders": {
+    "bass__bass_patrol": "f4a5b25f1a737069240789525ba8c6c64d3197d40e78b2b6c2b376f7e09eeab9",
+    "bass__bass_reese": "3804818de71cfef7d47a070bd1a57ef36601dade96ef42e4c6f2c781ec6087b9"
+   }
+  },
+  "bass_hold_b": {
+   "midi": {
+    "bass": {
+     "generated_sha256": "cee64a4483c8eae4159931a6bbefb415ec754d365346fce7cd76b4502b9de6ef"
+    }
+   },
+   "renders": {},
+   "placeholders": {
+    "bass__bass_patrol": "40ab25a2b8c3c25612360537833e5045b337035351d845445f4c88f6aeb03e57",
+    "bass__bass_reese": "2312995a25cf8324026888e1869357410a50b41c1016ecc65ba09c8027e63c87"
+   }
+  },
+  "bass_hold_end": {
+   "midi": {
+    "bass": {
+     "generated_sha256": "b54e150e79910e682e1c5efbdcd9662dbb14c95e462b0548f20742e0bd5ddd7b"
+    }
+   },
+   "renders": {},
+   "placeholders": {
+    "bass__bass_patrol": "0723e0c57dbbefd2869c06957214f99fdf1ac80a7e67e94fb50ece8b76f844fe",
+    "bass__bass_reese": "68db02931fb91ce244585a602a1625df3ad46629db6aa4fef7b06ca7ccff78d0"
+   }
+  },
+  "groove_push": {
+   "midi": {
+    "kick": {
+     "generated_sha256": "d39bac2f5f0ab6fa08f6f08503483f0da8ad3c01c5dfd5f0c5eb3caaf2f3eea2"
+    },
+    "snare": {
+     "generated_sha256": "849b0f6f3ccdb966c6cee7ae484f0a0de655746b09976f91eb2e784703882ec6"
+    }
+   },
+   "renders": {},
+   "placeholders": {
+    "kick__kick_march": "e4163e0aeec9e8612e9431645d45e1e187a2553da0bd326929822b54216b022e",
+    "kick__kick_armour": "bb59c69d6ed599706119ab4e882a60cbb70cd391ab96bdd90aa745c6d58ce7c9",
+    "snare__snare_guard": "7f337ccbf3c7ab8bd0ff7fa62dde864d620bea22b8fe08f7339331650590b5e0",
+    "snare__snare_crack": "743ac35d4ff184401b4866eb6f4495d1f9199c219bcc1e40d9784f1b7d6e8446"
+   }
+  },
+  "groove_straight": {
+   "midi": {
+    "kick": {
+     "generated_sha256": "6dd25f3d03d45db99fd1a6a518fda3a63a88e596d6b7b0a2c3299faaf8861af0"
+    },
+    "snare": {
+     "generated_sha256": "b1e1b1bc57dc3099300144de85bdb3b80427d28831ee68846f4867e8b70df4ea"
+    }
+   },
+   "renders": {},
+   "placeholders": {
+    "kick__kick_march": "358bb437efafa860d3f302d0d9d7ce80de47eb3a366e39de24de72630ae40c0a",
+    "kick__kick_armour": "ad62cce5b0d97e248572a9a3fcd649b301e1274da58b42f84c97041c21b9d800",
+    "snare__snare_guard": "407541c893c35e1bfc540896e6094ead6a1ab51bfd53065bf04372891faff96a",
+    "snare__snare_crack": "a1bced28b7b844918f3d53cb02ab3d5db840401f68b593e2816025e7f933a32d"
+   }
+  },
+  "groove_watch": {
+   "midi": {
+    "kick": {
+     "generated_sha256": "cfdee59781d4dfcb3131c24dde551ec68ba3385be2b4f75277e5866fd709087c"
+    },
+    "snare": {
+     "generated_sha256": "cb2a22e7d7cd252a1fbb46d00f68b80e02d6e089edfaedc22f202020263343fc"
+    }
+   },
+   "renders": {},
+   "placeholders": {
+    "kick__kick_march": "63947514860d974ba5de128509090ec6bf282e8324ec3fe8b6bfc7e5fcc1c540",
+    "kick__kick_armour": "2b4a87f42a837b9d064e76d43cfe40a4122c7f64d79c40d58135c0bb891b7bef",
+    "snare__snare_guard": "f972ad7a1bb58f88717de2d8f03941b1d4889740017105c7182b52b0676e0a91"
+   }
+  }
+ }
+}

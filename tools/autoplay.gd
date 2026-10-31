@@ -6,6 +6,9 @@ extends SceneTree
 ## Schema 2 (defense) packs: enemy_fraction is ignored, seed also seeds the simulation, and the report adds the
 ## objective health, every wave's spawn / arrival / clear times, the production log summary and the group cycle.
 ##
+## Missions (schema 3) use plan_inputs(): perfect, accuracy:<f>, none, beginner, sloppy (plausible imperfect play with
+## timing scatter, misses, early hold releases and stray presses, seeded) and mash (pressing every lit pad every 60 ms).
+##
 ## policy:  perfect            every note hit at its exact time
 ##          accuracy:<f>       each note hit with probability f (seeded), otherwise ignored
 ##          none               no input at all
@@ -51,6 +54,8 @@ func _init() -> void:
 
 
 static func run(m: Match, level: Level, policy: String, rng: RandomNumberGenerator) -> Dictionary:
+	if level.is_mission():
+		return run_mission(m, level, policy, rng)
 	var hit_prob := 1.0
 	var until := INF
 	var no_bass := false
@@ -130,6 +135,109 @@ static func run(m: Match, level: Level, policy: String, rng: RandomNumberGenerat
 	r["profile_ms"] = {}
 	for k in m.sim.profile:
 		r["profile_ms"][k] = m.sim.profile[k] if k == "ticks" else snappedf(float(m.sim.profile[k]) / 1000.0, 0.1)
+	return r
+
+
+## Input events for a mission: [{t, pad, down}] sorted by time. Deterministic for a seeded rng.
+static func plan_inputs(level: Level, policy: String, rng: RandomNumberGenerator) -> Array:
+	var ev: Array = []
+	var hit_prob := 1.0
+	var sigma_ms := 0.0
+	var early_release := 0.0
+	var stray_rate := 0.0
+	var late_bias_ms := 0.0
+	match policy:
+		"none":
+			return []
+		"beginner":
+			hit_prob = 0.85
+			sigma_ms = 55.0
+			early_release = 0.3
+			stray_rate = 0.12
+			late_bias_ms = 15.0
+		"sloppy":
+			hit_prob = 0.7
+			sigma_ms = 85.0
+			early_release = 0.5
+			stray_rate = 0.25
+			late_bias_ms = 25.0
+		"mash":
+			return _mash_inputs(level)
+		_:
+			if policy.begins_with("accuracy:"):
+				hit_prob = float(policy.substr(9))
+	for n in level.notes:
+		var t0 := float(n["time"])
+		if rng.randf() < stray_rate:
+			var ts := t0 - 0.3 + rng.randf() * 0.1
+			var sp := 1 + rng.randi() % 4
+			ev.append({"t": ts, "pad": sp, "down": true})
+			ev.append({"t": ts + 0.05, "pad": sp, "down": false})
+		if rng.randf() >= hit_prob:
+			continue
+		var err := clampf(_gauss(rng) * sigma_ms + late_bias_ms, -130.0, 130.0) / 1000.0 if sigma_ms > 0.0 else 0.0
+		var t := t0 + err
+		ev.append({"t": t, "pad": int(n["pad"]), "down": true})
+		var up := t + 0.08
+		if n["type"] == "hold":
+			up = float(n["end_time"]) + 0.02
+			if rng.randf() < early_release:
+				up = t0 + (float(n["end_time"]) - t0) * (0.4 + 0.5 * rng.randf())
+		ev.append({"t": up, "pad": int(n["pad"]), "down": false})
+	ev.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["t"] < b["t"] if a["t"] != b["t"] else (not a["down"] and b["down"]))
+	return ev
+
+
+static func _mash_inputs(level: Level) -> Array:
+	var ev: Array = []
+	var t := 0.0
+	while t < level.duration_seconds():
+		var ph := level.phase_at(level.seconds_to_tick(t))
+		for pad in ph.get("pads", {}).keys():
+			ev.append({"t": t, "pad": int(pad), "down": true})
+			ev.append({"t": t + 0.03, "pad": int(pad), "down": false})
+		t += 0.06
+	ev.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["t"] < b["t"])
+	return ev
+
+
+static func _gauss(rng: RandomNumberGenerator) -> float:
+	return sqrt(-2.0 * log(maxf(rng.randf(), 1e-9))) * cos(TAU * rng.randf())
+
+
+static func run_mission(m: Match, level: Level, policy: String, rng: RandomNumberGenerator) -> Dictionary:
+	var plan := plan_inputs(level, policy, rng)
+	var down := {}
+	var k := 0
+	var t := -0.5
+	var peak := [0, 0]
+	var duration := level.duration_seconds()
+	var timeline: Array = []
+	while m.outcome.is_empty() and t < duration + 0.5:
+		t += FRAME_S
+		while k < plan.size() and float(plan[k]["t"]) <= t:
+			var e: Dictionary = plan[k]
+			if e["down"]:
+				if not down.get(e["pad"], false):
+					down[e["pad"]] = true
+					m.press(int(e["pad"]), float(e["t"]), int(e["pad"]))
+			elif down.get(e["pad"], false):
+				down[e["pad"]] = false
+				m.release(int(e["pad"]), float(e["t"]), int(e["pad"]))
+			k += 1
+		m.advance(t)
+		for ev in m.drain_events():
+			if ev["kind"] in ["outcome", "wave", "reward_done"]:
+				timeline.append({"t": snappedf(t, 0.01), "event": ev})
+		if m.battle_enabled:
+			peak[0] = maxi(peak[0], m.sim.count_alive(0, BattleSim.Kind.UNIT))
+			peak[1] = maxi(peak[1], m.sim.count_alive(1, BattleSim.Kind.UNIT))
+	var r := m.result()
+	r["policy"] = policy
+	r["seed"] = level.seed
+	r["peak_live_units"] = peak
+	r["song_duration_s"] = duration
+	r["timeline"] = timeline
 	return r
 
 

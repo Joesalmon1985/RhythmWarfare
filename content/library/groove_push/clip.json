@@ -1,0 +1,38 @@
+{
+ "id": "groove_push",
+ "kind": "groove",
+ "name": "Push",
+ "bars": 2,
+ "note": "Straight plus an extra kick on beat 4 of the first bar (the old kick_2 part). From Second Pulse bars 9-10.",
+ "source": {
+  "type": "derived",
+  "parts": {
+   "kick": [
+    {
+     "file": "campaign/First_Three/level_02/Music/kick_1.mid",
+     "bars": [
+      9,
+      10
+     ]
+    },
+    {
+     "file": "campaign/First_Three/level_02/Music/kick_2.mid",
+     "bars": [
+      9,
+      10
+     ]
+    }
+   ],
+   "snare": [
+    {
+     "file": "campaign/First_Three/level_02/Music/snare_1.mid",
+     "bars": [
+      9,
+      10
+     ]
+    }
+   ]
+  }
+ },
+ "tempo_bpm": 174
+}

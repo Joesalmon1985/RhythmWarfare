@@ -1,0 +1,759 @@
+{
+ "schema_version": 3,
+ "mode": "defense",
+ "level_id": "level_01",
+ "campaign_level": 1,
+ "title": "First Watch",
+ "bpm": 174,
+ "time_signature": [
+  4,
+  4
+ ],
+ "ticks_per_beat": 960,
+ "song_offset_ms": 0,
+ "duration_ticks": 122880,
+ "seed": 1001,
+ "battlefield": "defense_02",
+ "roster": "openra_mvp_01",
+ "rules": {
+  "objective_hp": {
+   "command_core": 60000
+  }
+ },
+ "sequence_threshold": 0.6,
+ "intro": "Tap a pad as its ring closes onto it.",
+ "placeholder": true,
+ "source": {
+  "mission": "content/missions/level_01.json",
+  "waves": "data/campaign/waves/level_01.json",
+  "builder": "tools/content/build.py"
+ },
+ "choices": [
+  {
+   "id": "kick_sound",
+   "label": "Kick sound",
+   "count": 1,
+   "default": [
+    "kick_march"
+   ],
+   "pool": [
+    {
+     "id": "kick_march",
+     "name": "March Kick"
+    },
+    {
+     "id": "kick_armour",
+     "name": "Armour Kick"
+    }
+   ]
+  }
+ ],
+ "names": {
+  "kick_march": "March Kick",
+  "kick_armour": "Armour Kick",
+  "snare_guard": "Guard Snare",
+  "ensemble": "Ensemble",
+  "acc_first_watch": "First Watch accompaniment",
+  "groove_watch": "Watch"
+ },
+ "phases": [
+  {
+   "id": "p01",
+   "start_tick": 0,
+   "end_tick": 30720,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "kick_sound#1"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "snare_guard"
+    }
+   }
+  },
+  {
+   "id": "p02",
+   "start_tick": 30720,
+   "end_tick": 61440,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "kick_sound#1"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "snare_guard"
+    }
+   }
+  },
+  {
+   "id": "p03",
+   "start_tick": 61440,
+   "end_tick": 92160,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "kick_sound#1"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "snare_guard"
+    }
+   }
+  },
+  {
+   "id": "p04",
+   "start_tick": 92160,
+   "end_tick": 122880,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "kick_sound#1"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "snare_guard"
+    }
+   }
+  }
+ ],
+ "stems": [
+  {
+   "key": "s01",
+   "family": "kick",
+   "deps": [
+    "kick_sound#1"
+   ],
+   "files": {
+    "kick_march": {
+     "file": "audio/s01__groove_watch__kick_march.ogg",
+     "placeholder": true,
+     "clip": "groove_watch",
+     "sound": "kick_march",
+     "peak_db": -8.13
+    },
+    "kick_armour": {
+     "file": "audio/s01__groove_watch__kick_armour.ogg",
+     "placeholder": true,
+     "clip": "groove_watch",
+     "sound": "kick_armour",
+     "peak_db": -7.58
+    }
+   }
+  },
+  {
+   "key": "s02",
+   "family": "other",
+   "deps": [],
+   "files": {
+    "": {
+     "file": "audio/s02__acc_first_watch__ensemble.ogg",
+     "placeholder": true,
+     "clip": "acc_first_watch",
+     "sound": "ensemble",
+     "peak_db": -15.77
+    }
+   }
+  },
+  {
+   "key": "s03",
+   "family": "snare",
+   "deps": [],
+   "files": {
+    "": {
+     "file": "audio/s03__groove_watch__snare_guard.ogg",
+     "placeholder": true,
+     "clip": "groove_watch",
+     "sound": "snare_guard",
+     "peak_db": -9.66
+    }
+   }
+  }
+ ],
+ "cue_blocks": [
+  {
+   "phase": 0,
+   "family": "kick",
+   "pad": 1,
+   "voice": "kick_sound#1",
+   "deps": [],
+   "start_tick": 0,
+   "end_tick": 30720,
+   "options": {
+    "groove_watch": [
+     [
+      0,
+      0
+     ],
+     [
+      4800,
+      0
+     ],
+     [
+      7680,
+      0
+     ],
+     [
+      12480,
+      0
+     ],
+     [
+      15360,
+      0
+     ],
+     [
+      20160,
+      0
+     ],
+     [
+      23040,
+      0
+     ],
+     [
+      27840,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 0,
+   "family": "snare",
+   "pad": 4,
+   "voice": "snare_guard",
+   "deps": [],
+   "start_tick": 0,
+   "end_tick": 30720,
+   "options": {
+    "groove_watch": [
+     [
+      1920,
+      0
+     ],
+     [
+      5760,
+      0
+     ],
+     [
+      9600,
+      0
+     ],
+     [
+      13440,
+      0
+     ],
+     [
+      17280,
+      0
+     ],
+     [
+      21120,
+      0
+     ],
+     [
+      24960,
+      0
+     ],
+     [
+      28800,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 1,
+   "family": "kick",
+   "pad": 1,
+   "voice": "kick_sound#1",
+   "deps": [],
+   "start_tick": 30720,
+   "end_tick": 61440,
+   "options": {
+    "groove_watch": [
+     [
+      30720,
+      0
+     ],
+     [
+      35520,
+      0
+     ],
+     [
+      38400,
+      0
+     ],
+     [
+      43200,
+      0
+     ],
+     [
+      46080,
+      0
+     ],
+     [
+      50880,
+      0
+     ],
+     [
+      53760,
+      0
+     ],
+     [
+      58560,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 1,
+   "family": "snare",
+   "pad": 4,
+   "voice": "snare_guard",
+   "deps": [],
+   "start_tick": 30720,
+   "end_tick": 61440,
+   "options": {
+    "groove_watch": [
+     [
+      32640,
+      0
+     ],
+     [
+      36480,
+      0
+     ],
+     [
+      40320,
+      0
+     ],
+     [
+      44160,
+      0
+     ],
+     [
+      48000,
+      0
+     ],
+     [
+      51840,
+      0
+     ],
+     [
+      55680,
+      0
+     ],
+     [
+      59520,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 2,
+   "family": "kick",
+   "pad": 1,
+   "voice": "kick_sound#1",
+   "deps": [],
+   "start_tick": 61440,
+   "end_tick": 92160,
+   "options": {
+    "groove_watch": [
+     [
+      61440,
+      0
+     ],
+     [
+      66240,
+      0
+     ],
+     [
+      69120,
+      0
+     ],
+     [
+      73920,
+      0
+     ],
+     [
+      76800,
+      0
+     ],
+     [
+      81600,
+      0
+     ],
+     [
+      84480,
+      0
+     ],
+     [
+      89280,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 2,
+   "family": "snare",
+   "pad": 4,
+   "voice": "snare_guard",
+   "deps": [],
+   "start_tick": 61440,
+   "end_tick": 92160,
+   "options": {
+    "groove_watch": [
+     [
+      63360,
+      0
+     ],
+     [
+      67200,
+      0
+     ],
+     [
+      71040,
+      0
+     ],
+     [
+      74880,
+      0
+     ],
+     [
+      78720,
+      0
+     ],
+     [
+      82560,
+      0
+     ],
+     [
+      86400,
+      0
+     ],
+     [
+      90240,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 3,
+   "family": "kick",
+   "pad": 1,
+   "voice": "kick_sound#1",
+   "deps": [],
+   "start_tick": 92160,
+   "end_tick": 122880,
+   "options": {
+    "groove_watch": [
+     [
+      92160,
+      0
+     ],
+     [
+      96960,
+      0
+     ],
+     [
+      99840,
+      0
+     ],
+     [
+      104640,
+      0
+     ],
+     [
+      107520,
+      0
+     ],
+     [
+      112320,
+      0
+     ],
+     [
+      115200,
+      0
+     ],
+     [
+      120000,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 3,
+   "family": "snare",
+   "pad": 4,
+   "voice": "snare_guard",
+   "deps": [],
+   "start_tick": 92160,
+   "end_tick": 122880,
+   "options": {
+    "groove_watch": [
+     [
+      94080,
+      0
+     ],
+     [
+      97920,
+      0
+     ],
+     [
+      101760,
+      0
+     ],
+     [
+      105600,
+      0
+     ],
+     [
+      109440,
+      0
+     ],
+     [
+      113280,
+      0
+     ],
+     [
+      117120,
+      0
+     ],
+     [
+      120960,
+      0
+     ]
+    ]
+   }
+  }
+ ],
+ "sequences": [
+  {
+   "index": 0,
+   "phase": 0,
+   "mode": "drums",
+   "start_tick": 0,
+   "end_tick": 15360,
+   "reward": "pillbox"
+  },
+  {
+   "index": 1,
+   "phase": 0,
+   "mode": "drums",
+   "start_tick": 15360,
+   "end_tick": 30720,
+   "reward": "pillbox"
+  },
+  {
+   "index": 2,
+   "phase": 1,
+   "mode": "drums",
+   "start_tick": 30720,
+   "end_tick": 46080,
+   "reward": "pillbox"
+  },
+  {
+   "index": 3,
+   "phase": 1,
+   "mode": "drums",
+   "start_tick": 46080,
+   "end_tick": 61440,
+   "reward": "e3"
+  },
+  {
+   "index": 4,
+   "phase": 2,
+   "mode": "drums",
+   "start_tick": 61440,
+   "end_tick": 76800,
+   "reward": "pillbox"
+  },
+  {
+   "index": 5,
+   "phase": 2,
+   "mode": "drums",
+   "start_tick": 76800,
+   "end_tick": 92160,
+   "reward": "pillbox"
+  },
+  {
+   "index": 6,
+   "phase": 3,
+   "mode": "drums",
+   "start_tick": 92160,
+   "end_tick": 107520,
+   "reward": "e3"
+  },
+  {
+   "index": 7,
+   "phase": 3,
+   "mode": "drums",
+   "start_tick": 107520,
+   "end_tick": 122880,
+   "reward": "pillbox"
+  }
+ ],
+ "previews": {
+  "kick_sound": {
+   "kick_march": "preview/kick_sound__kick_march.ogg",
+   "kick_armour": "preview/kick_sound__kick_armour.ogg"
+  }
+ },
+ "content": {
+  "files": 4,
+  "placeholder_files": 4,
+  "owner_files": 0,
+  "default_mix_peak_db": -6.18
+ },
+ "waves": [
+  {
+   "id": "wave_01",
+   "start_tick": 1392,
+   "start_bar": 1,
+   "entry": "left",
+   "via_defense_point": "defense_1",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 10,
+     "spawn_spacing_ticks": 240
+    }
+   ],
+   "authored_start_tick": 15360,
+   "contact_tick": 35179
+  },
+  {
+   "id": "wave_02",
+   "start_tick": 20616,
+   "start_bar": 6,
+   "entry": "top",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 11,
+     "spawn_spacing_ticks": 240
+    }
+   ],
+   "authored_start_tick": 30720,
+   "contact_tick": 48068
+  },
+  {
+   "id": "wave_03",
+   "start_tick": 27170,
+   "start_bar": 8,
+   "entry": "right",
+   "via_defense_point": "defense_3",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 13,
+     "spawn_spacing_ticks": 240
+    }
+   ],
+   "authored_start_tick": 46080,
+   "contact_tick": 60957
+  },
+  {
+   "id": "wave_04",
+   "start_tick": 40058,
+   "start_bar": 11,
+   "entry": "left",
+   "via_defense_point": "defense_1",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 15,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "authored_start_tick": 61440,
+   "contact_tick": 73846
+  },
+  {
+   "id": "wave_05",
+   "start_tick": 59282,
+   "start_bar": 16,
+   "entry": "top",
+   "via_defense_point": "defense_2",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 17,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "authored_start_tick": 76800,
+   "contact_tick": 86734
+  },
+  {
+   "id": "wave_06",
+   "start_tick": 65836,
+   "start_bar": 18,
+   "entry": "right",
+   "via_defense_point": "defense_3",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 19,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "authored_start_tick": 92160,
+   "contact_tick": 99623
+  },
+  {
+   "id": "wave_07",
+   "start_tick": 78725,
+   "start_bar": 21,
+   "entry": "left",
+   "via_defense_point": "defense_1",
+   "target_objective": "command_core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 21,
+     "spawn_spacing_ticks": 240
+    },
+    {
+     "actor": "jeep",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "authored_start_tick": 107520,
+   "contact_tick": 112512
+  }
+ ]
+}

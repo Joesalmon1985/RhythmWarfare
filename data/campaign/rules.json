@@ -1,0 +1,58 @@
+{
+ "format": "rhythm_warfare.campaign_rules.v3",
+ "note": "The one campaign rule set (PRD section 15). Read by the game (src/core/mission_rules.gd) and by the content build (tools/content). Four pads: 1 and 2 under the left thumb, 3 and 4 under the right. Drum voices: kick sound slot 1 on pad 1, slot 2 on pad 2; snare sound slot 1 on pad 4, slot 2 on pad 3. Bass voices: slot 1 pad 2, slot 2 pad 3, slot 3 pad 1, slot 4 pad 4.",
+ "pads": {
+  "kick": [1, 2],
+  "snare": [4, 3],
+  "bass": [2, 3, 1, 4]
+ },
+ "thumb_of_pad": {"1": 0, "2": 0, "3": 1, "4": 1},
+ "max_touches": 2,
+ "chart": {
+  "same_pad_min_gap_ticks": 480,
+  "same_thumb_min_gap_ticks": 480,
+  "same_thumb_after_hold_ticks": 240,
+  "hold_min_ticks": 480
+ },
+ "windows_ms": {
+  "perfect": 45,
+  "great": 90,
+  "accept": 140
+ },
+ "hold": {
+  "complete_within_s": 0.15,
+  "note": "A hold released within this time of its tail counts as complete (full coverage). An earlier release ends its contribution: coverage = held time / hold length. It never fails the sequence by itself."
+ },
+ "sequence": {
+  "threshold": 0.6,
+  "note": "Credit per cue: a tap 1 when accepted, 0 when missed; a hold its coverage (1 when completed). A sequence succeeds when credit / cues >= threshold. Missions may set their own threshold."
+ },
+ "precision": {
+  "sharp_ms": 35,
+  "steady_ms": 70,
+  "stray_penalty_ms": 25,
+  "delay_s": {"sharp": 0.5, "steady": 1.5, "loose": 3.0},
+  "note": "Precision = mean absolute onset error of the accepted cues plus stray_penalty_ms per stray press in the sequence divided by its cue count. Sharp <= sharp_ms, steady <= steady_ms, loose otherwise. The grade only sets the construction delay."
+ },
+ "capacity": {
+  "note": "Rewarded buildings go to free prepared sockets. When every socket of every approach is taken, the reward repairs the most damaged defense of its approach; when nothing is damaged it reinforces the oldest defense (+50% health, once each). Rewarded units hold a defense point; at units_per_point the reward becomes a repair as well.",
+  "units_per_point": 6,
+  "reinforce_factor": 1.5
+ },
+ "rewards": {
+  "pillbox": {"type": "build", "role": "pillbox", "name": "Pillbox"},
+  "turret": {"type": "build", "role": "turret", "name": "Gun turret"},
+  "flame_tower": {"type": "build", "role": "flame", "name": "Flame tower"},
+  "e1": {"type": "unit", "actor": "e1", "name": "Rifleman"},
+  "e2": {"type": "unit", "actor": "e2", "name": "Grenadier"},
+  "e3": {"type": "unit", "actor": "e3", "name": "Rocket soldier"},
+  "e4": {"type": "unit", "actor": "e4", "name": "Flamethrower"},
+  "jeep": {"type": "unit", "actor": "jeep", "name": "Ranger jeep"},
+  "apc": {"type": "unit", "actor": "apc", "name": "APC (gun only)"},
+  "1tnk": {"type": "unit", "actor": "1tnk", "name": "Light tank"},
+  "2tnk": {"type": "unit", "actor": "2tnk", "name": "Medium tank"},
+  "arty": {"type": "unit", "actor": "arty", "name": "Artillery"},
+  "ftrk": {"type": "unit", "actor": "ftrk", "name": "Flak truck"},
+  "repair": {"type": "repair", "name": "Repair crew"}
+ }
+}

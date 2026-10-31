@@ -1,0 +1,30 @@
+{
+ "id": "acc_second_pulse",
+ "kind": "accompaniment",
+ "name": "Second Pulse accompaniment",
+ "bars": 40,
+ "key": "C# minor",
+ "note": "Pad and hats of the whole song, kept as one long clip (its bars do not repeat as a loop). From Second Pulse.",
+ "source": {
+  "type": "derived",
+  "parts": {
+   "other": [
+    {
+     "file": "campaign/First_Three/level_02/Music/other_pad.mid",
+     "bars": [
+      1,
+      40
+     ]
+    },
+    {
+     "file": "campaign/First_Three/level_02/Music/other_hats.mid",
+     "bars": [
+      1,
+      40
+     ]
+    }
+   ]
+  }
+ },
+ "tempo_bpm": 174
+}

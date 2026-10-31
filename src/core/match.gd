@@ -33,12 +33,20 @@ var _pending_rewards: Array = []  # {lane, button, time}
 var _enemy_index := 0
 var _events: Array = []  # presentation events (sim events plus mix/lane changes)
 var production_log: Array = []  # [{time, side, action, result}]
+## Schema 3 (missions): cue recognition on the pads, sequence results and the rewards they schedule.
+var pad_judge := PadJudge.new()
+var tracker := SequenceTracker.new()
+var reward_log: Array = []  # [{sequence, reward, grade, delay_s, resolve_time, ready_time, result, kind, point, label}]
+var _resolved: Array = []  # sequence results waiting for the tick that contains their resolve time
 
 
 func setup(p_level: Level, p_rules: Rules = null, p_battle := true) -> void:
 	level = p_level
 	battle_enabled = p_battle
 	production_log.clear()
+	if level.is_mission():
+		_setup_mission(p_rules)
+		return
 	if level.is_defense():
 		_setup_defense(p_rules)
 		return
@@ -57,6 +65,8 @@ func setup(p_level: Level, p_rules: Rules = null, p_battle := true) -> void:
 func press(button: int, t: float, touch_id: int = 0) -> Dictionary:
 	if not outcome.is_empty():
 		return {"kind": "ended"}
+	if level.is_mission():
+		return pad_judge.press(button, t, touch_id)
 	var r := judge.press(button, t, touch_id)
 	return r
 
@@ -64,10 +74,16 @@ func press(button: int, t: float, touch_id: int = 0) -> Dictionary:
 func release(button: int, t: float, touch_id: int = 0) -> Dictionary:
 	if not outcome.is_empty():
 		return {"kind": "ended"}
+	if level.is_mission():
+		return pad_judge.release(button, t, touch_id)
 	return judge.release(button, t, touch_id)
 
 
-func pause_interrupt() -> void:
+## Pause: an active hold ends where it stands (coverage so far); `t` is the frozen song time.
+func pause_interrupt(t: float = 0.0) -> void:
+	if level.is_mission():
+		pad_judge.pause_interrupt(t)
+		return
 	judge.void_active_holds()
 
 
@@ -81,6 +97,8 @@ func drain_events() -> Array:
 func advance(t: float) -> Array:
 	if not outcome.is_empty():
 		return []
+	if level.is_mission():
+		return _advance_mission(t)
 	if level.is_defense():
 		return _advance_defense(t)
 	judge.update(t)
@@ -140,6 +158,163 @@ func _setup_defense(p_rules: Rules) -> void:
 					"entry": str(w["entry"]), "via": str(w["via_defense_point"]), "objective": str(w["target_objective"])})
 				wave_stats[wave_id]["total"] += 1
 	_spawn_plan.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["time"] < b["time"])
+
+
+# --- schema 3: missions -------------------------------------------------------------------------------------------
+
+func _setup_mission(p_rules: Rules) -> void:
+	stems_muted = {}
+	for key in level.stems:
+		stems_muted[key] = false
+	pad_judge.setup(level.notes, level.sequences)
+	tracker.setup(level, pad_judge)
+	reward_log = []
+	_resolved = []
+	sim_ticks = 0
+	_events.clear()
+	outcome = ""
+	outcome_reason = ""
+	outcome_time = -1.0
+	wave_stats = {}
+	_spawn_plan = []
+	_spawn_index = 0
+	_wave_of = {}
+	if not battle_enabled:
+		return
+	rules = p_rules if p_rules != null else Rules.load_default(level.roster, level.battlefield)
+	sim.setup(rules, level.rules, level.seed)
+	for w in level.waves:
+		var wave_id := str(w["id"])
+		wave_stats[wave_id] = {"spawned": 0, "killed": 0, "total": 0, "first_spawn_s": -1.0, "reached_s": -1.0, "cleared_s": -1.0}
+		for g in w["groups"]:
+			var spacing := int(g.get("spawn_spacing_ticks", 0))
+			for i in int(g["count"]):
+				_spawn_plan.append({"time": level.tick_to_seconds(int(w["start_tick"]) + i * spacing), "wave": wave_id, "actor": str(g["actor"]),
+					"entry": str(w["entry"]), "via": str(w["via_defense_point"]), "objective": str(w["target_objective"])})
+				wave_stats[wave_id]["total"] += 1
+	_spawn_plan.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["time"] < b["time"])
+
+
+func _advance_mission(t: float) -> Array:
+	pad_judge.update(t)
+	var judge_events := pad_judge.drain_events()
+	for r in tracker.update():
+		_resolved.append(r)
+		_events.append({"kind": "sequence", "result": r})
+	if battle_enabled:
+		var last_tick := int(floor(level.duration_seconds() / BattleSim.TICK_S))
+		var target_ticks := mini(int(floor(maxf(t, 0.0) / BattleSim.TICK_S)), last_tick)
+		while sim_ticks < target_ticks and outcome.is_empty():
+			var tick_end := float(sim_ticks + 1) * BattleSim.TICK_S
+			_apply_sequences_before(tick_end)
+			_apply_waves_before(tick_end)
+			sim.tick()
+			sim_ticks += 1
+			var now := float(sim_ticks) * BattleSim.TICK_S
+			_track_waves(now)
+			_process_defense_events(now)
+		if outcome.is_empty() and t >= level.duration_seconds():
+			sim.end_by_song()
+			_process_defense_events(t)
+		return judge_events
+	while not _resolved.is_empty():
+		var r: Dictionary = _resolved.pop_front()
+		reward_log.append({"sequence": r["index"], "reward": r["reward"], "passed": r["passed"], "grade": r["grade"], "result": "practice"})
+	if t >= level.duration_seconds():
+		outcome = "complete"
+		outcome_reason = "rhythm_only"
+		outcome_time = t
+	return judge_events
+
+
+## A passed sequence schedules its one reward at resolve time + the precision delay, on the tick that contains its
+## resolve time (so placement never depends on the frame rate). A failed one earns nothing.
+func _apply_sequences_before(tick_end: float) -> void:
+	while not _resolved.is_empty() and float(_resolved[0]["resolve_time"]) < tick_end:
+		var r: Dictionary = _resolved.pop_front()
+		var entry := {"sequence": r["index"], "reward": r["reward"], "passed": r["passed"], "grade": r["grade"], "delay_s": r["delay_s"],
+			"resolve_time": r["resolve_time"], "credit": r["credit"]}
+		if r["passed"]:
+			var ready := float(r["resolve_time"]) + float(r["delay_s"])
+			entry["ready_time"] = ready
+			var res := sim.schedule_reward(str(r["reward"]), int(ceil(ready / BattleSim.TICK_S)), _next_wave_point())
+			entry["result"] = res["result"]
+			entry["kind"] = res.get("kind", "")
+			entry["point"] = res.get("point", -1)
+			entry["label"] = res.get("label", "")
+			entry["capacity"] = res.get("capacity", false)
+		else:
+			entry["result"] = "failed"
+		reward_log.append(entry)
+
+
+## Index of the defense point the next wave walks through (the reward placement hint), -1 when none is left.
+func _next_wave_point() -> int:
+	var now := float(sim_ticks) * BattleSim.TICK_S
+	for w in level.waves:
+		if level.tick_to_seconds(int(w["start_tick"])) + 4.0 > now:
+			for i in sim.defense_points.size():
+				if sim.defense_points[i]["id"] == str(w["via_defense_point"]):
+					return i
+	return -1
+
+
+func _mission_result() -> Dictionary:
+	var grades := tracker.grade_counts()
+	var built := 0
+	var units := 0
+	var repairs := 0
+	for e in reward_log:
+		match str(e.get("kind", "")):
+			"build":
+				built += 1
+			"unit":
+				units += 1
+			"repair":
+				repairs += 1
+	var abs_sum := 0.0
+	var n := 0
+	for i in pad_judge.notes.size():
+		if not is_nan(pad_judge.delta_ms[i]):
+			abs_sum += absf(pad_judge.delta_ms[i])
+			n += 1
+	return {
+		"mode": "mission",
+		"outcome": outcome if not outcome.is_empty() else "incomplete",
+		"reason": outcome_reason,
+		"level": level.title,
+		"level_id": level.level_id,
+		"play_mode": level.play_mode,
+		"progression": level.progression,
+		"campaign_level": level.campaign_level,
+		"battle": battle_enabled,
+		"selection": level.selection.duplicate(true),
+		"accuracy": pad_judge.accuracy(),
+		"cues": pad_judge.notes.size(),
+		"perfect": pad_judge.perfect,
+		"great": pad_judge.great,
+		"ok": pad_judge.ok,
+		"misses": pad_judge.misses,
+		"strays": pad_judge.strays,
+		"holds_complete": pad_judge.holds_complete,
+		"holds_partial": pad_judge.holds_partial,
+		"best_combo": pad_judge.best_combo,
+		"mean_abs_ms": abs_sum / float(n) if n > 0 else 0.0,
+		"sequences": level.sequences.size(),
+		"sequences_passed": tracker.passed_count(),
+		"grades": grades,
+		"built": built,
+		"units": units,
+		"repairs": repairs,
+		"defenses_alive": sim.defense_count() if battle_enabled else 0,
+		"reward_log": reward_log.duplicate(true),
+		"outcome_time_s": outcome_time,
+		"objective_hp": _objective_report(),
+		"waves": wave_stats.duplicate(true),
+		"produced": sim.stats["produced"].duplicate(true) if battle_enabled else [],
+		"lost": sim.stats["lost"].duplicate(true) if battle_enabled else [],
+		"battle_time_s": float(sim_ticks) * BattleSim.TICK_S,
+	}
 
 
 ## Equipped profile of a slot (the loadout the level was loaded with).
@@ -351,6 +526,8 @@ func _objective_report() -> Dictionary:
 
 
 func result() -> Dictionary:
+	if level.is_mission():
+		return _mission_result()
 	if level.is_defense():
 		return {
 			"mode": "defense",

@@ -1,0 +1,23 @@
+{
+ "id": "bass_hold_b",
+ "kind": "bass",
+ "name": "Answer Line",
+ "bars": 8,
+ "key": "C# minor",
+ "note": "Shorter moving notes. From Hold the Line bars 9-16.",
+ "source": {
+  "type": "derived",
+  "parts": {
+   "bass": [
+    {
+     "file": "campaign/First_Three/level_03/Music/bass_1.mid",
+     "bars": [
+      9,
+      16
+     ]
+    }
+   ]
+  }
+ },
+ "tempo_bpm": 174
+}
