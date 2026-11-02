@@ -1,7 +1,11 @@
 # Content to render: every file that replaces a placeholder
 
 Written by `python tools/content/render_list.py` from the loop library and the ten missions; rerun it after changing either.
-Everything in the game is placeholder sound today. There are **23 clips** and **84 WAV renders** below. You never render whole songs: each clip is rendered once per sound it is offered with, and the build assembles the missions from those pieces.
+There are **29 clips** and **98 WAV renders** below, of which **18 are your recordings already in place** (marked *in place*; the rest play generated placeholders). You never render whole songs: each clip is rendered once per sound it is offered with, and the build assembles the missions from those pieces.
+
+Batches exported from Ableton at 44.1 kHz (and MIDI longer than the clip) go through `tools/content/import_ableton.py`
+with a manifest like `content/imports/first_watch.json`: it converts, trims, gain-stages and files them (see
+`content/README.md`). Files already at 48 kHz can be dropped straight into the clip folder instead.
 
 ## Export settings (every WAV)
 
@@ -45,23 +49,79 @@ missing on a fresh checkout, run the build once.
 
 ## The files
 
-### `acc_first_watch`: First Watch accompaniment
+### `acc_hats_busy`: Busy Hats
 
-accompaniment (pad and hats on one bus), **32 bars** (44.14 s; with the longest tail 45.52 s), key C# minor, used in mission 1. MIDI from your First_Three MIDI, level_01 bars 1-32.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| other | `content/library/acc_first_watch/other.mid` | `content/library/acc_first_watch/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` |
-
-### `groove_watch`: Watch
-
-groove (kick and snare parts), **2 bars** (2.76 s; with the longest tail 4.14 s), used in mission 1. MIDI from your First_Three MIDI, level_01 bars 1-2.
+accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, used in mission 1. MIDI from no MIDI (audio-only accompaniment, never cued).
 
 | Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
 | --- | --- | --- | --- | --- |
-| kick | `content/library/groove_watch/kick.mid` | `content/library/groove_watch/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` |
-| kick | `content/library/groove_watch/kick.mid` | `content/library/groove_watch/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` |
-| snare | `content/library/groove_watch/snare.mid` | `content/library/groove_watch/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` |
+| other | (none: audio only) | `content/library/acc_hats_busy/other__hats_busy.wav` | Busy Hats | *in place* |
+
+### `acc_hats_driving`: Driving Hats
+
+accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, used in mission 1. MIDI from no MIDI (audio-only accompaniment, never cued).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
+| --- | --- | --- | --- | --- |
+| other | (none: audio only) | `content/library/acc_hats_driving/other__hats_driving.wav` | Driving Hats | *in place* |
+
+### `acc_hats_offbeat`: Offbeat Hats
+
+accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, used in mission 1. MIDI from no MIDI (audio-only accompaniment, never cued).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
+| --- | --- | --- | --- | --- |
+| other | (none: audio only) | `content/library/acc_hats_offbeat/other__hats_offbeat.wav` | Offbeat Hats | *in place* |
+
+### `bass_reese_line`: Reese Line
+
+bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, used in mission 1. MIDI from your Ableton export (imported through `content/imports/first_watch.json`).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
+| --- | --- | --- | --- | --- |
+| bass | `content/library/bass_reese_line/bass.mid` | `content/library/bass_reese_line/bass__bass_reese_dark.wav` | Dark Reese | *in place* |
+| bass | `content/library/bass_reese_line/bass.mid` | `content/library/bass_reese_line/bass__bass_reese_deep.wav` | Deep Reese | *in place* |
+| bass | `content/library/bass_reese_line/bass.mid` | `content/library/bass_reese_line/bass__bass_reese_round.wav` | Round Reese | *in place* |
+| bass | `content/library/bass_reese_line/bass.mid` | `content/library/bass_reese_line/bass__bass_reese_soft.wav` | Soft Reese | *in place* |
+
+### `bass_sub_line`: Sub Line
+
+bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, used in mission 1. MIDI from your Ableton export (imported through `content/imports/first_watch.json`).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
+| --- | --- | --- | --- | --- |
+| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_bright.wav` | Bright Sub | *in place* |
+| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_deep.wav` | Deep Sub | *in place* |
+| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_pure.wav` | Pure Sub | *in place* |
+| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_warm.wav` | Warm Sub | *in place* |
+| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_wide.wav` | Wide Sub | *in place* |
+
+### `groove_double_step`: Double Step
+
+groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 s), used in mission 1. MIDI from your Ableton export (imported through `content/imports/first_watch.json`).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
+| --- | --- | --- | --- | --- |
+| kick | `content/library/groove_double_step/kick.mid` | `content/library/groove_double_step/kick__kick_double_step.wav` | Double-Step Kick | *in place* |
+| snare | `content/library/groove_double_step/snare.mid` | `content/library/groove_double_step/snare__snare_backbeat.wav` | Backbeat Snare | *in place* |
+
+### `groove_half_time`: Half-Time
+
+groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 s), used in mission 1. MIDI from your Ableton export (imported through `content/imports/first_watch.json`).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
+| --- | --- | --- | --- | --- |
+| kick | `content/library/groove_half_time/kick.mid` | `content/library/groove_half_time/kick__kick_half_time.wav` | Half-Time Kick | *in place* |
+| snare | `content/library/groove_half_time/snare.mid` | `content/library/groove_half_time/snare__snare_backbeat.wav` | Backbeat Snare | *in place* |
+
+### `groove_rolling`: Rolling
+
+groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 s), used in mission 1. MIDI from your Ableton export (imported through `content/imports/first_watch.json`).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
+| --- | --- | --- | --- | --- |
+| kick | `content/library/groove_rolling/kick.mid` | `content/library/groove_rolling/kick__kick_rolling.wav` | Rolling Kick | *in place* |
+| snare | `content/library/groove_rolling/snare.mid` | `content/library/groove_rolling/snare__snare_backbeat.wav` | Backbeat Snare | *in place* |
 
 ### `acc_second_pulse`: Second Pulse accompaniment
 
@@ -308,6 +368,22 @@ accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest t
 | `bass_command` | Command Saw | bass |
 | `bass_hollow` | Hollow Sub | bass |
 | `ensemble` | Ensemble | other |
+| `kick_half_time` | Half-Time Kick | kick |
+| `kick_double_step` | Double-Step Kick | kick |
+| `kick_rolling` | Rolling Kick | kick |
+| `snare_backbeat` | Backbeat Snare | snare |
+| `bass_sub_bright` | Bright Sub | bass |
+| `bass_sub_deep` | Deep Sub | bass |
+| `bass_sub_pure` | Pure Sub | bass |
+| `bass_sub_wide` | Wide Sub | bass |
+| `bass_sub_warm` | Warm Sub | bass |
+| `bass_reese_dark` | Dark Reese | bass |
+| `bass_reese_deep` | Deep Reese | bass |
+| `bass_reese_soft` | Soft Reese | bass |
+| `bass_reese_round` | Round Reese | bass |
+| `hats_driving` | Driving Hats | other |
+| `hats_busy` | Busy Hats | other |
+| `hats_offbeat` | Offbeat Hats | other |
 
 Adding a sound or a clip: add the sound to `content/sounds.json` (or copy `content/fixtures/example_groove/` to
 `content/library/<new_id>/` and edit its `clip.json`), offer it in a mission's choices (`content/missions/level_NN.json`)

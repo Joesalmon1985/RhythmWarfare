@@ -351,9 +351,12 @@ func _update_banner(t: float) -> void:
 		elif tick >= start and tick < start + bar:
 			text = str(s["mode"]).to_upper()
 	pad_view.banner_text = text
-	var intro_from := level.tick_to_seconds((level.intro_bar - 1) * bar)
-	var intro_on := not level.intro.is_empty() and t >= intro_from - 0.5 and t < intro_from + level.tick_to_seconds(4 * bar)
-	_intro_label.text = level.intro if intro_on and not Session.practice else ""
+	var intro_text := ""
+	for it in level.intros:  # each teaching line shows from half a second before its bar for four bars
+		var intro_from := level.tick_to_seconds((int(it.get("bar", 1)) - 1) * bar)
+		if t >= intro_from - 0.5 and t < intro_from + level.tick_to_seconds(4 * bar):
+			intro_text = str(it.get("text", ""))
+	_intro_label.text = intro_text if not Session.practice else ""
 
 
 func _on_judge_event(ev: Dictionary, wall: float) -> void:

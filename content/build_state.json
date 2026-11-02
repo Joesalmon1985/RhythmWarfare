@@ -340,6 +340,163 @@
     "kick__kick_heavy": "0a6ce07cd73ef654d8a7aa5ef5016cc418b87ffb5a5a1aee4af44662933af290",
     "snare__snare_rim": "06aed6dfc657b65b1b040fefb0e94719e4e3293209105a65aaba8d4d56805b9e"
    }
+  },
+  "acc_hats_busy": {
+   "midi": {
+    "other": {}
+   },
+   "renders": {
+    "other__hats_busy": {
+     "wav_sha256": "865f6795c0fb94cf32bfab6089bca626fecf71e32b8b1659fa9417984e59682a",
+     "midi_sha256": "",
+     "frames": 529655
+    }
+   },
+   "placeholders": {}
+  },
+  "acc_hats_driving": {
+   "midi": {
+    "other": {}
+   },
+   "renders": {
+    "other__hats_driving": {
+     "wav_sha256": "02c6f4fe9456eb5a6193029da628a2a68180f14abcef064539021ee8e9fcd327",
+     "midi_sha256": "",
+     "frames": 529655
+    }
+   },
+   "placeholders": {}
+  },
+  "acc_hats_offbeat": {
+   "midi": {
+    "other": {}
+   },
+   "renders": {
+    "other__hats_offbeat": {
+     "wav_sha256": "3dc1cbd25f55a4b27792cec0ace19b11498a1c9fede62be8b85f5670a7aa1a11",
+     "midi_sha256": "",
+     "frames": 529655
+    }
+   },
+   "placeholders": {}
+  },
+  "bass_reese_line": {
+   "midi": {
+    "bass": {}
+   },
+   "renders": {
+    "bass__bass_reese_dark": {
+     "wav_sha256": "617e20c91e189295919936840362000a605a0ad9a3ca39c2e5617e9012602b20",
+     "midi_sha256": "52f0a38c67efbfe604b324a0e34ead89cd6144e7e7ac8f634cf9f717ec9a29f8",
+     "frames": 529655
+    },
+    "bass__bass_reese_deep": {
+     "wav_sha256": "accff3d37028b22831e2c67aa53ebbd85b29f0be7fb7027273a533fc941c5036",
+     "midi_sha256": "52f0a38c67efbfe604b324a0e34ead89cd6144e7e7ac8f634cf9f717ec9a29f8",
+     "frames": 529655
+    },
+    "bass__bass_reese_soft": {
+     "wav_sha256": "278c72f550d98a2d33c9cbdc1ddf00823b2681f6a169568c69e56b29cd78a132",
+     "midi_sha256": "52f0a38c67efbfe604b324a0e34ead89cd6144e7e7ac8f634cf9f717ec9a29f8",
+     "frames": 529655
+    },
+    "bass__bass_reese_round": {
+     "wav_sha256": "b226e0b49b1d830c84a1eb5cb7e4614358f7e05fc575c2200b7d241d1407e51d",
+     "midi_sha256": "52f0a38c67efbfe604b324a0e34ead89cd6144e7e7ac8f634cf9f717ec9a29f8",
+     "frames": 529655
+    }
+   },
+   "placeholders": {}
+  },
+  "bass_sub_line": {
+   "midi": {
+    "bass": {}
+   },
+   "renders": {
+    "bass__bass_sub_bright": {
+     "wav_sha256": "02f83eb2317d2d113b5f97677e692ff34b4c0be89d85577c723ea180d89269a1",
+     "midi_sha256": "da47a9b3477a8841d1ebcf941ab8b92c2650340f05160190b16b3434d54d4e0d",
+     "frames": 529655
+    },
+    "bass__bass_sub_deep": {
+     "wav_sha256": "a90b5711ef85c7504bce478baeb0801aa48793cfd1cfa5671e54b38c0b20a5ac",
+     "midi_sha256": "da47a9b3477a8841d1ebcf941ab8b92c2650340f05160190b16b3434d54d4e0d",
+     "frames": 529655
+    },
+    "bass__bass_sub_pure": {
+     "wav_sha256": "38020877929117af3dcd6091ec1cbe115a953cbc156f44e0d1e1967d1155fe76",
+     "midi_sha256": "da47a9b3477a8841d1ebcf941ab8b92c2650340f05160190b16b3434d54d4e0d",
+     "frames": 529655
+    },
+    "bass__bass_sub_wide": {
+     "wav_sha256": "1f868cb3f423054f34362d08d914dbc50dbc3f8d1cdc52a1b48e25a4d347c4dc",
+     "midi_sha256": "da47a9b3477a8841d1ebcf941ab8b92c2650340f05160190b16b3434d54d4e0d",
+     "frames": 529655
+    },
+    "bass__bass_sub_warm": {
+     "wav_sha256": "0c8f7c3976972e8f7eb7330ff4715382780e77fac96f4ff5ca3ad229d2c6aa9f",
+     "midi_sha256": "da47a9b3477a8841d1ebcf941ab8b92c2650340f05160190b16b3434d54d4e0d",
+     "frames": 529655
+    }
+   },
+   "placeholders": {}
+  },
+  "groove_double_step": {
+   "midi": {
+    "kick": {},
+    "snare": {}
+   },
+   "renders": {
+    "kick__kick_double_step": {
+     "wav_sha256": "b147101283afbbad87250e5e88a59cf9ec03e2298408e45d8a6178b4264420a7",
+     "midi_sha256": "3789c89733cdd5cdb47ccbb08799e1597db6ae77170fe39769b5896a3289c086",
+     "frames": 529655
+    },
+    "snare__snare_backbeat": {
+     "wav_sha256": "849783b13c40b07556fe5c0994f374faebe717b342fa1f76aae3b5d6b4f7d88c",
+     "midi_sha256": "56d9d5d75232b1c206e2e00d7d6fbe8ba0340a852a3d6de07760c69ec2bd5352",
+     "frames": 529655
+    }
+   },
+   "placeholders": {}
+  },
+  "groove_half_time": {
+   "midi": {
+    "kick": {},
+    "snare": {}
+   },
+   "renders": {
+    "kick__kick_half_time": {
+     "wav_sha256": "c8627e31aa02e0938c99c055cde1caab93a9a290d7edb292209fafc3cfcb6d81",
+     "midi_sha256": "79d8dc18fbf128474b4da07700c552133698c796de2d32108772481c96c0f092",
+     "frames": 529655
+    },
+    "snare__snare_backbeat": {
+     "wav_sha256": "849783b13c40b07556fe5c0994f374faebe717b342fa1f76aae3b5d6b4f7d88c",
+     "midi_sha256": "e61a0a205ef1ead0b0867eabf4ad6425bac07add87de0f2857f606a8654618a5",
+     "frames": 529655
+    }
+   },
+   "placeholders": {}
+  },
+  "groove_rolling": {
+   "midi": {
+    "kick": {},
+    "snare": {}
+   },
+   "renders": {
+    "kick__kick_rolling": {
+     "wav_sha256": "9cb72a19015f0e940cebc0d72a0e6fd6bde65d532f0d5f14931299256e42fb6a",
+     "midi_sha256": "8706f9fb925cf8bab68c6f4cd70e6a57f0c9522897509a38bd483742b3593a40",
+     "frames": 529655
+    },
+    "snare__snare_backbeat": {
+     "wav_sha256": "849783b13c40b07556fe5c0994f374faebe717b342fa1f76aae3b5d6b4f7d88c",
+     "midi_sha256": "92b69df7822712217381ced6bd884bfba05887a8a97d025aa257809baf1403f3",
+     "frames": 529655
+    }
+   },
+   "placeholders": {}
   }
  }
 }

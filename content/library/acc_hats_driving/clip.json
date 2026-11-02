@@ -1,0 +1,31 @@
+{
+ "id": "acc_hats_driving",
+ "kind": "accompaniment",
+ "name": "Driving Hats",
+ "bars": 8,
+ "tempo_bpm": 174,
+ "key": "F minor",
+ "note": "Other1: a bright top loop (energy above 4 kHz) on the beats with pickups; the export's silent bars 9-14 are dropped.",
+ "audio_only": true,
+ "sounds": {
+  "other": [
+   "hats_driving"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/first_watch.json",
+  "source_dir": "ToAddTry1",
+  "parts": {},
+  "renders": {
+   "other__hats_driving": {
+    "file": "Other1.wav",
+    "sha256": "9b4e2c8418ea83e16b23acda25c377caaeef28d5257241b82e9bdab4fe172f96",
+    "sample_rate_in": 44100,
+    "gain_db": -9.202,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   }
+  }
+ }
+}

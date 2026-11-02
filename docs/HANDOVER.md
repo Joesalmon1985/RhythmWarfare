@@ -1,7 +1,8 @@
 # Rhythm Warfare: handover
 
-State on 31 October 2026, after `docs/BRIEF_PADS_SEQUENCES_TEN_MISSIONS.md` (four pads, sequence rewards, ten missions,
-the loop library and the owner's drop-in content path). Read this first, then `README.md` (layout and commands),
+State on 2 November 2026, after `docs/BRIEF_PADS_SEQUENCES_TEN_MISSIONS.md` (four pads, sequence rewards, ten missions,
+the loop library and the owner's drop-in content path) and the rebuild of Mission 1 on the owner's own Ableton
+recordings (`ToAddTry1/`, imported by `tools/content/import_ableton.py`). Read this first, then `README.md` (layout and commands),
 `docs/PRD.md` section 15 (the mission rule set; sections 1 to 13 describe the legacy duel) and
 `docs/CONTENT_TO_RENDER.md` (the owner's render list). Everything is committed on `main` at
 https://github.com/Joesalmon1985/RhythmWarfare.
@@ -61,7 +62,7 @@ with a few musical choices of your own. Home: Continue, Campaign, Practice, Sett
 
 | # | Mission | Length | Phases (D drums, B bass) | New for the player | Enemies (first appearances) | Objectives |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | First Watch | 32 bars, 44 s | DDDD | kick pad 1 and snare pad 4; pillboxes; kick sound choice | e1, jeep | core |
+| 1 | First Watch | 48 bars, 66 s | DDBDBD | kick pad 1 and snare pad 4, then bass holds on pad 2 (drums keep playing, only one family cued at a time); drum groove, bass line, bass sound and backing track choices, all the owner's recordings; pillboxes and jeeps | e1, jeep | core |
 | 2 | Second Pulse | 40 bars, 55 s | DDDDD | groove choice (Push / Straight), snare sound choice; turrets | e2 | core |
 | 3 | Hold the Line | 48 bars, 66 s | DBDBDB | bass holds, one pad per voice; jeeps as rewards | e3, 1tnk | core |
 | 4 | Backbeat | 48 bars, 66 s | DDDDDD | Two-Step groove, Snare Run fill, Siege Kick, Field Clap; flame towers, sandbags | e4, apc | core |
@@ -78,10 +79,26 @@ The coverage matrix of every ground actor and building is in `docs/BALANCE.md`, 
 ## Content: loop library, missions, the one build command
 
 - `content/library/<clip>/`: mission-independent clips at 174 BPM 4/4 with stable ids (grooves and fills with kick and
-  snare parts, bass lines, accompaniment), one MIDI per part, a `clip.json`. Missions 1 to 3 use clips **cut from the
-  First_Three MIDI** (two-bar grooves, eight-bar bass phrases) and one long accompaniment clip per song; the source MIDI
-  is never edited and its hashes are checked on every build. Missions 4 to 10 use generated clips (14 new ones).
-- `content/sounds.json`: the 14 sounds (kick, snare and bass voices, ensemble) with friendly names.
+  snare parts, bass lines, accompaniment), one MIDI per part, a `clip.json`. **Mission 1 uses eight clips imported from
+  the owner's Ableton exports** (`ToAddTry1/`, manifest `content/imports/first_watch.json`): three eight-bar grooves
+  (Half-Time, Double Step, Rolling: Kick1/2/3 with Snare1), two bass lines (Sub Line from Bass1 with five recordings,
+  Reese Line from Bass2 with four) and three audio-only backing loops (Driving, Busy, Offbeat Hats from Other1/2/3).
+  Each declares the sounds it was recorded with (`sounds`), so it plays only its own recordings and the build never
+  makes placeholders for them. Missions 2 and 3 use clips **cut from the First_Three MIDI** (two-bar grooves, eight-bar
+  bass phrases) and one long accompaniment clip per song; the source MIDI is never edited and its hashes are checked on
+  every build. Missions 4 to 10 use generated clips (14 new ones).
+- `content/sounds.json`: 30 sounds (14 synthesised: kick, snare and bass voices, ensemble; 16 recorded by the owner)
+  with friendly names. The recorded names are provisional (the hats names were inferred from the spectrum; rename in
+  `sounds.json` and the clip files, then rebuild).
+- `tools/content/import_ableton.py <manifest> [--check]`: files an Ableton batch into the library (44.1 to 48 kHz with
+  the SoX resampler, no time-stretch; MIDI cut to the clip's bars at 960 PPQ with 174 BPM written in; WAVs cut to the
+  bars plus a sounding tail of at most one bar; family gain rules, a global trim and a 10 ms end fade where a recording
+  is cut mid-note; originals untouched). `content/README.md` has the manifest format and the steps for adding phrases.
+- Mission features added for the owner's content: `"bound"` sound fields (the pad plays whatever the chosen clip was
+  recorded with and shows that name), a `Backing track` choice (accompaniment placements with `"clip": 1`), `intros`
+  (a teaching line per bar, Mission 1 has one at bar 1 and one at bar 16 when the bass starts), and dependent choices
+  (`depends_on` / `with` in the pack: the Bass sound row shows only the recordings of the chosen bass line and refits
+  when the line changes, in the setup screen and in `MissionLoader.fit_dependents`).
 - `content/missions/level_NN.json`: choices (pools, counts, defaults), phases (which clip and sound plays where, which
   family is cued, sequence length, rewards), accompaniment, battle (battlefield, waves, rules).
 - `python tools/content/build.py [level_NN ...]`: imports and validates everything, renders placeholders for every
@@ -94,7 +111,8 @@ The coverage matrix of every ground actor and building is in `docs/BALANCE.md`, 
 - **Owner replacement**: drop `content/library/<clip>/<part>__<sound>.wav` (48 kHz stereo 16-bit, from the clip's bar 1,
   at most one bar of tail) and rebuild; edit a clip's MIDI and the build regenerates its cues and placeholders and
   refuses WAVs rendered from the old MIDI. A copied example folder (`content/fixtures/example_groove/`) becomes a new
-  option once a mission lists it. Exact file list: `docs/CONTENT_TO_RENDER.md` (23 clips, 84 WAVs), rewritten by
+  option once a mission lists it. Exact file list: `docs/CONTENT_TO_RENDER.md` (29 clips, 98 WAVs, 18 of them the
+  owner's recordings already in place), rewritten by
   `python tools/content/render_list.py`. Proven by `tools/content/test_content.py` with the fixtures in
   `content/fixtures/` (owner WAV replaces and reverts, edited MIDI at 96 PPQ with no tempo gets new cues and makes the
   old WAV stale, bad renders rejected with their reasons).
@@ -118,11 +136,32 @@ Verified (31 October 2026, this PC, headless unless stated):
 - Desktop real-window run of mission 10 with perfect autoplay: see `docs/BALANCE.md` (frame time).
 - Exports: see "Exports" below.
 
+Verified (2 November 2026, the Mission 1 rebuild, this PC):
+- `bash tools/test.sh`: 2,854 GDScript checks and 20 content build tests, 0 failures. New: `tests/test_mission_one_content.gd`
+  (all 81 combinations of groove x bass line x bass sound x backing load with their own stems and cues; a Sub recording
+  asked for with the Reese line is swapped for the first Reese recording with a warning; defaults, 12 sequences, 6
+  phases, 102 notes with every bass note a hold on pad 2, pad names from the bound sounds, both intro lines; perfect
+  play wins with 12 of 12 sequences, 7 pillboxes, 5 jeeps and all 56 enemies destroyed for every groove and line; no
+  input loses) and `tools/content/test_import.py` (11 tests on synthetic 44.1 kHz exports: format and length, attack
+  timing against the MIDI, MIDI cut and tempo, gain, trim and fade, declarations, idempotence, pairing in the pack,
+  refusals, the mode-change warning, `--check` writes nothing).
+- The imported audio, by analysis (not by ear): every render is exactly 8 bars at 174 BPM (529,655 frames at 48 kHz),
+  drum onsets match the MIDI within about 5 ms, the exact worst-case mix over all 81 combinations peaks at -3.03 dBFS
+  and the default mix at -4.26 dBFS, the assembled stems have no clipping and no step at a loop or phase boundary
+  larger than the file's own 99.9th-percentile sample step, the tail after the song end is below -43 dBFS.
+- Seeded balance of the new Mission 1 (`docs/BALANCE.md`): perfect 3 of 3 wins with every wave destroyed, beginner 3
+  of 3, sloppy 3 of 3, no input 0 of 3.
+- Real 1280 x 720 window, `RW_MISSION=1 RW_SCENE=play RW_AUTOPLAY=perfect`: plays to VICTORY (12 of 12, holds 30 of
+  30, 7 defenses, 5 units), 4 streams, 3,964 frames, average 16.7 ms, 2 frames over 33 ms (loading), 53 MB static.
+  Screens looked at by the agent: mission setup with the four rows (Drum groove, Bass line, Bass sound filtered by
+  the line, Backing track) before and after switching to the Reese line, the play screen in a drum phase and in a
+  bass phase, the result screen. Not by a person.
+
 **Not verified:** any phone run (touch feel, the two-thumb layout, frame time and memory with 16 Ogg streams on a
-phone CPU, load time of mission 10), any listening check by ear (the build checks sample positions and headroom only;
-placeholder music is generated and meant only to be readable), any human playtest of the cues, sequences or difficulty
-(the beginner and sloppy policies are models), real owner renders (none exist yet), the screens on a real phone's
-safe areas and DPI.
+phone CPU, load time of mission 10), any listening check by ear (the build and the importer check sample positions,
+lengths and headroom only; nobody has listened to the assembled Mission 1 or to its previews), any human playtest of
+the cues, sequences or difficulty (the beginner and sloppy policies are models), real owner renders for missions 2 to
+10 (none exist yet; Mission 1's are real), the screens on a real phone's safe areas and DPI.
 
 ## How to run the phone check (the owner's)
 
@@ -185,8 +224,14 @@ Rebuilt on 31 October 2026 per `docs/EXPORT.md` (`build/` is git-ignored):
 
 ## Known issues and backlog
 
-1. Real stems, the phone run and a human playtest (above). Retune waves after the owner has played; the numbers are a
-   harness's, and outcomes from mission 5 on are seed-sensitive.
+1. Real stems for missions 2 to 10, the phone run and a human playtest (above). Retune waves after the owner has
+   played; the numbers are a harness's, and outcomes from mission 5 on are seed-sensitive.
+1a. Mission 1 on the owner's recordings: the 16 sound names and 8 clip names are provisional; the Sub Line's last note
+   ends on the bar line where the next drum phase's first kick is cued (bars 25 and 41, same thumb: the build warns,
+   the game credits a release up to 0.15 s early, mission 3 has the same shape); the bass sound row offers nine
+   recordings, shown five or four at a time by bass line; the pads are two thumbs wide apart and the bass phases use
+   pad 2 only, so a phone's feel is unknown; `content/REPORT.md` reports the loudest-options bound (-1.59 dBFS, a
+   10 ms block envelope) while the exact worst case is -3.03 dBFS.
 2. Wave units of one group can stack on one exact point while grinding a target (they separate when moving).
 3. A wave jeep can loiter inside the base targeting the core without doing damage (seen once while tuning mission 7).
 4. The autoplay report's `reached_s` equals the spawn time for left-entry waves (a report bug, not a game bug).
@@ -200,6 +245,7 @@ Rebuilt on 31 October 2026 per `docs/EXPORT.md` (`build/` is git-ignored):
 
 ```
 bash tools/test.sh                                          # all headless tests + content build tests (about 1 min)
+python tools/content/import_ableton.py content/imports/first_watch.json --check   # file an Ableton batch into the library (drop --check to write)
 python tools/content/build.py                               # rebuild all ten packs (about 9 min); or name missions: level_05
 python tools/content/render_list.py                         # rewrite docs/CONTENT_TO_RENDER.md
 python tools/balance_missions.py > out.md                   # seeded trials (about 15 min with --jobs 8)

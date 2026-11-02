@@ -57,6 +57,8 @@ var sequences: Array = []  # [{index, phase, mode, start_tick, end_tick, start_t
 var sequence_threshold := 0.6
 var intro := ""
 var intro_bar := 1  # the in-play intro shows for four bars from this bar
+var intros: Array = []  # [{bar, text}]: every in-play teaching line (the first is intro / intro_bar)
+var bound_sounds: Dictionary = {}  # clip id -> {part: sound id}: the render a clip declares for a part ("bound" sounds)
 
 
 func ticks_per_bar() -> int:
@@ -95,8 +97,16 @@ func phase_at(tick: int) -> Dictionary:
 	return {}
 
 
-## Friendly name of a selected voice reference such as "kick_sound#1" or a fixed sound id.
+## Friendly name of a selected voice reference such as "kick_sound#1", a fixed sound id, or "bound:groove#1:kick"
+## (the sound the chosen clip declares for that part; the clip's own name when it declares none).
 func voice_name(ref: String) -> String:
+	if ref.begins_with("bound:"):
+		var bits := ref.split(":")
+		if bits.size() < 3:
+			return ref
+		var clip_id := selected_id(bits[1])
+		var sound := str(bound_sounds.get(clip_id, {}).get(bits[2], ""))
+		return str(names.get(sound, sound)) if not sound.is_empty() else str(names.get(clip_id, clip_id))
 	if ref.contains("#"):
 		var bits := ref.split("#")
 		var picked: Array = selection.get(bits[0], [])
@@ -105,6 +115,16 @@ func voice_name(ref: String) -> String:
 			return str(names.get(picked[slot], picked[slot]))
 		return ref
 	return str(names.get(ref, ref))
+
+
+## The library id a reference resolves to: the selected option of "choice#slot", else the reference itself.
+func selected_id(ref: String) -> String:
+	if ref.contains("#"):
+		var bits := ref.split("#")
+		var picked: Array = selection.get(bits[0], [])
+		var slot := int(bits[1]) - 1
+		return str(picked[slot]) if slot >= 0 and slot < picked.size() else ""
+	return ref
 
 
 func is_placeholder_audio() -> bool:

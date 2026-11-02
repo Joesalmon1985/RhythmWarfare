@@ -1,0 +1,31 @@
+{
+ "id": "acc_hats_busy",
+ "kind": "accompaniment",
+ "name": "Busy Hats",
+ "bars": 8,
+ "tempo_bpm": 174,
+ "key": "F minor",
+ "note": "Other2: the busiest top loop, sixteenth-note offbeats.",
+ "audio_only": true,
+ "sounds": {
+  "other": [
+   "hats_busy"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/first_watch.json",
+  "source_dir": "ToAddTry1",
+  "parts": {},
+  "renders": {
+   "other__hats_busy": {
+    "file": "Other2.wav",
+    "sha256": "1c30b0df677dbecde28484f81f5bb9a8ee52f0b13c7b94e370dbe07b42556370",
+    "sample_rate_in": 44100,
+    "gain_db": -8.384,
+    "tail_frames": 0,
+    "end_fade_ms": 0
+   }
+  }
+ }
+}

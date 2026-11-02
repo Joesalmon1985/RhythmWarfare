@@ -4,7 +4,7 @@
  "unlock_all_note": "Developer switch. true opens every playable mission and offers every option of each mission's pools. Normal progression is false (the shipped setting); RW_UNLOCK_ALL=1 forces it on for a run, RW_UNLOCK_ALL=0 off.",
  "unlock_policy": "Clearing mission n unlocks mission n+1 and the library options listed in its new_options. A mission's own defaults are always available. No accuracy threshold blocks the ladder.",
  "levels": [
-  {"number": 1, "level_id": "level_01", "title": "First Watch", "pack": "m01_first_watch", "new_options": ["kick_march", "kick_armour", "snare_guard"]},
+  {"number": 1, "level_id": "level_01", "title": "First Watch", "pack": "m01_first_watch", "new_options": ["kick_march", "kick_armour", "snare_guard", "groove_half_time", "groove_double_step", "groove_rolling", "bass_sub_line", "bass_reese_line", "bass_sub_bright", "bass_sub_deep", "bass_sub_pure", "bass_sub_wide", "bass_sub_warm", "bass_reese_dark", "bass_reese_deep", "bass_reese_soft", "bass_reese_round", "acc_hats_driving", "acc_hats_busy", "acc_hats_offbeat"]},
   {"number": 2, "level_id": "level_02", "title": "Second Pulse", "pack": "m02_second_pulse", "new_options": ["groove_push", "groove_straight", "snare_crack"]},
   {"number": 3, "level_id": "level_03", "title": "Hold the Line", "pack": "m03_hold_the_line", "new_options": ["bass_patrol", "bass_reese"]},
   {"number": 4, "level_id": "level_04", "title": "Backbeat", "pack": "m04_backbeat", "new_options": ["groove_twostep", "kick_siege", "snare_clap", "fill_snare_run"]},

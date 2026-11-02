@@ -352,10 +352,18 @@ game (`MissionRules`) and the content build (`tools/content`) both read.
 - Loop library (`content/library/<clip_id>/`): mission-independent clips at 174 BPM 4/4 with stable ids. Kinds: `groove`
   (kick and snare parts), `fill` (kick and snare), `bass`, `accompaniment` (part `other`). One MIDI per part
   (`kick.mid`, ...); one WAV per part and sound (`kick__kick_march.wav`); several sounds share a clip's MIDI. Sounds live
-  in `content/sounds.json`.
+  in `content/sounds.json`. A clip may declare the sounds it was recorded with (`sounds`): then it plays only those
+  recordings, the build makes no placeholder for them and never pairs it with another sound. An accompaniment clip may
+  be `audio_only` (a recording with no MIDI, nothing cued). Imported clips (`source.type` `imported`) come from an
+  Ableton batch through `tools/content/import_ableton.py` and a manifest in `content/imports/`.
 - Missions (`content/missions/level_NN.json`): choices (`groove`, `fill`, `bass`, `kick_sound`, `snare_sound`,
-  `bass_voice`, each with a pool, a count and a default), phases (bars, mode, the clip and sound of each family as a
-  choice slot or a fixed id, `sequence_bars`, rewards), accompaniment placements, battle (battlefield, waves file, rules).
+  `bass_voice`, `accompaniment`, each with a pool, a count and a default), phases (bars, mode, the clip and sound of
+  each family as a choice slot, a fixed id or `"bound"` = the sound the chosen clip declares for that part,
+  `sequence_bars`, rewards), accompaniment placements (a fixed clip id or `"clip": <slot>` of the accompaniment
+  choice), `intros` (a teaching line per bar), battle (battlefield, waves file, rules). A sound choice whose options
+  are declared renders of another choice's clips depends on it: the build writes `depends_on` and per-option `with`,
+  refuses a default pairing that does not fit, an option that plays none of the offered clips, a declared render
+  that is missing; the game shows only fitting options and refits a selection that no longer fits.
 - `python tools/content/build.py` validates everything and writes `songs/<pack>/level.json` (schema 3), full-length
   per-slot stems for every offered clip and sound combination of every usage (`audio/sNN__<clip>__<sound>.ogg`) and
   short auditions (`preview/<choice>__<option>.ogg`). The transport plays the selected stems unchanged; there is no
@@ -366,14 +374,15 @@ game (`MissionRules`) and the content build (`tools/content`) both read.
 ```
 schema_version 3, mode "defense", level_id, campaign_level, title, bpm 174, time_signature [4,4], ticks_per_beat 960,
 song_offset_ms 0, duration_ticks, seed, battlefield, roster, rules, sequence_threshold, intro, placeholder,
-choices    [{id, label, count, default [...], pool [{id, name}]}]
+choices    [{id, label, count, default [...], pool [{id, name, with? [clip ids]}], depends_on?}]
+intros     [{bar, text}]                      bound_sounds {clip id: {part: sound id}}
 names      {library id: friendly name}
-phases     [{id, start_tick, end_tick, mode, pads {"1": {family, ref}}}]
+phases     [{id, start_tick, end_tick, mode, pads {"1": {family, ref}}}]   ref "kick_sound#1" | "bound:groove#1:kick" | sound id
 stems      [{key, family, deps ["groove#1", "kick_sound#1"], files {"<opt>|<opt>": {file, placeholder, clip, sound, peak_db}}}]
 cue_blocks [{phase, family, pad, voice, deps, start_tick, end_tick, options {"<clip id>": [[tick, hold_ticks], ...]}}]
 sequences  [{index, phase, mode, start_tick, end_tick, reward}]
 previews   {choice: {option: file}}
-content    {files, placeholder_files, owner_files, default_mix_peak_db}
+content    {files, placeholder_files, owner_files, default_mix_peak_db, loudest_mix_bound_db}
 waves      [{id, start_tick, entry, via_defense_point, target_objective, groups [{actor, count, spawn_spacing_ticks}]}]
 ```
 

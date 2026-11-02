@@ -1,13 +1,153 @@
 {
- "note": "Mission 1 First Watch (32 bars, 44 s). Riflemen only, two jeeps late. Waves by bar; the build derives start_tick, the defense point from the entry and the objective. Units travel about 9 bars (12 s) from the left or right entry to the defense point and 7 bars from the top.",
- "rules": {"objective_hp": {"command_core": 60000}, "sockets_per_point": 3},
+ "note": "Mission 1 First Watch (48 bars, 66 s). Riflemen only, a jeep with two of the waves. Waves by bar; the build derives start_tick, the defense point from the entry and the objective. Units travel about 9 bars (12 s) from the left or right entry to the defense point and 7 bars from the top. The last wave enters at bar 32 so that perfect play (seven pillboxes, five jeeps) has every wave destroyed a few seconds before the song ends; tuned with tools/autoplay.gd (docs/BALANCE.md).",
+ "rules": {
+  "objective_hp": {
+   "command_core": 60000
+  },
+  "sockets_per_point": 3
+ },
  "waves": [
-  {"id": "wave_01", "start_bar": 1, "entry": "left", "groups": [{"actor": "e1", "count": 4, "spawn_spacing_ticks": 720}]},
-  {"id": "wave_02", "start_bar": 6, "entry": "top", "groups": [{"actor": "e1", "count": 5, "spawn_spacing_ticks": 600}]},
-  {"id": "wave_03", "start_bar": 9, "entry": "right", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 600}]},
-  {"id": "wave_04", "start_bar": 13, "entry": "left", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "jeep", "count": 1, "spawn_spacing_ticks": 480}]},
-  {"id": "wave_05", "start_bar": 16, "entry": "top", "groups": [{"actor": "e1", "count": 7, "spawn_spacing_ticks": 480}]},
-  {"id": "wave_06", "start_bar": 19, "entry": "right", "groups": [{"actor": "e1", "count": 7, "spawn_spacing_ticks": 480}, {"actor": "jeep", "count": 1, "spawn_spacing_ticks": 480}]},
-  {"id": "wave_07", "start_bar": 21, "entry": "left", "groups": [{"actor": "e1", "count": 8, "spawn_spacing_ticks": 480}]}
+  {
+   "id": "wave_01",
+   "start_bar": 1,
+   "entry": "left",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_02",
+   "start_bar": 5,
+   "entry": "top",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_03",
+   "start_bar": 9,
+   "entry": "right",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_04",
+   "start_bar": 13,
+   "entry": "left",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_05",
+   "start_bar": 16,
+   "entry": "top",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_06",
+   "start_bar": 19,
+   "entry": "right",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_07",
+   "start_bar": 22,
+   "entry": "left",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 6,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_08",
+   "start_bar": 25,
+   "entry": "top",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 6,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_09",
+   "start_bar": 28,
+   "entry": "right",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 6,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_10",
+   "start_bar": 30,
+   "entry": "left",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_11",
+   "start_bar": 32,
+   "entry": "top",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  }
  ]
 }

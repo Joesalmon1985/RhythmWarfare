@@ -1,0 +1,70 @@
+{
+ "id": "bass_reese_line",
+ "kind": "bass",
+ "name": "Reese Line",
+ "bars": 8,
+ "tempo_bpm": 174,
+ "key": "F minor",
+ "note": "Bass2: the same harmony with shorter, syncopated notes, 23 notes over eight bars. Every note is a hold (the shortest are three sixteenths).",
+ "sounds": {
+  "bass": [
+   "bass_reese_dark",
+   "bass_reese_deep",
+   "bass_reese_soft",
+   "bass_reese_round"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/first_watch.json",
+  "source_dir": "ToAddTry1",
+  "parts": {
+   "bass": {
+    "midi": "Bass2.mid",
+    "sha256": "db16512ce436b08334e0e3b198cd8d7e55756f109ee78e550413686fb9cbf3b7",
+    "bars": [
+     1,
+     8
+    ],
+    "notes_kept": 23,
+    "notes_in_file": 23,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   }
+  },
+  "renders": {
+   "bass__bass_reese_dark": {
+    "file": "bass2a.wav",
+    "sha256": "2522e6abe03d3c03affba1ebd0fddaf1527011550d9ef27e39b79a48a13b9db3",
+    "sample_rate_in": 44100,
+    "gain_db": -13.628,
+    "tail_frames": 0,
+    "end_fade_ms": 0
+   },
+   "bass__bass_reese_deep": {
+    "file": "bass2b.wav",
+    "sha256": "1375ea487663b2c425fd5640b6916f700fb5c2a75fee3face2fe1b1bd6241fee",
+    "sample_rate_in": 44100,
+    "gain_db": -11.805,
+    "tail_frames": 0,
+    "end_fade_ms": 0
+   },
+   "bass__bass_reese_soft": {
+    "file": "bass2c.wav",
+    "sha256": "55694cd5c61451da3785f5ff5d98b8c65142b824687436dc857026f8cdf9e01c",
+    "sample_rate_in": 44100,
+    "gain_db": -10.54,
+    "tail_frames": 0,
+    "end_fade_ms": 0
+   },
+   "bass__bass_reese_round": {
+    "file": "bass2d.wav",
+    "sha256": "dd68ff339160d6b68e70ec441056165433eddcae0d1e82af9e907229d53a3e57",
+    "sample_rate_in": 44100,
+    "gain_db": -12.628,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   }
+  }
+ }
+}

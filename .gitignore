@@ -4,3 +4,4 @@ build/
 __pycache__/
 songs/*/audio/*.wav
 content/library/*/placeholder/
+*.asd

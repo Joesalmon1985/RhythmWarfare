@@ -36,15 +36,17 @@ func _play(m: Match, level: Level, hit: Callable) -> void:
 func test_mission_one_loads_with_pads_sequences_and_rewards() -> void:
 	var level := _load("m01_first_watch")
 	assert_true(level.is_mission())
-	assert_eq(level.notes.size(), 64, "32 bars x kick + snare")
-	assert_eq(level.sequences.size(), 8)
+	assert_eq(level.notes.size(), 102, "four drum phases of 10 kicks and 8 snares, two bass phases of 15 holds")
+	assert_eq(level.sequences.size(), 12)
 	assert_eq(str(level.sequences[0]["reward"]), "pillbox", "the first drum sequence rewards one pillbox")
 	var pads := {}
 	for n in level.notes:
 		pads[int(n["pad"])] = true
-	assert_eq(pads.keys(), [1, 4], "kick on pad 1, snare on pad 4")
-	assert_eq(level.selection, {"kick_sound": ["kick_march"]})
-	assert_eq(level.stems.size(), 3, "kick, snare and accompaniment stems")
+	var used := pads.keys()
+	used.sort()
+	assert_eq(used, [1, 2, 4], "kick on pad 1, bass on pad 2, snare on pad 4")
+	assert_eq(level.selection, {"groove": ["groove_half_time"], "bass": ["bass_sub_line"], "bass_voice": ["bass_sub_deep"], "accompaniment": ["acc_hats_driving"]})
+	assert_eq(level.stems.size(), 4, "kick, snare, bass and backing stems")
 
 
 func test_selection_changes_stems_and_cues() -> void:
@@ -67,10 +69,10 @@ func test_perfect_play_passes_every_sequence_and_builds() -> void:
 	m.setup(level)
 	_play(m, level, func(_i: int, _n: Dictionary) -> bool: return true)
 	var r := m.result()
-	assert_eq(r["sequences_passed"], 8)
-	assert_eq(r["grades"]["sharp"], 8)
-	assert_eq(r["built"], 6, "six pillboxes")
-	assert_eq(r["units"], 2, "two rocket soldiers")
+	assert_eq(r["sequences_passed"], 12)
+	assert_eq(r["grades"]["sharp"], 12)
+	assert_eq(r["built"], 7, "seven pillboxes")
+	assert_eq(r["units"], 5, "five jeeps")
 	assert_true(m.sim.defense_count() > 0)
 
 

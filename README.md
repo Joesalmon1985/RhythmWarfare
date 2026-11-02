@@ -32,6 +32,7 @@ Desktop keys: D F J K = pads 1 to 4, Esc = pause, F3 = debug line.
 
 ```
 bash tools/test.sh                                   # all headless tests + the content build tests
+python tools/content/import_ableton.py content/imports/first_watch.json   # file your Ableton exports (ToAddTry1/) into content/library
 python tools/content/build.py                        # rebuild every mission pack from content/ (placeholders and your renders)
 python tools/content/render_list.py                  # rewrite docs/CONTENT_TO_RENDER.md
 python tools/balance_missions.py > /tmp/balance.md   # seeded trials, every mission (docs/BALANCE.md)

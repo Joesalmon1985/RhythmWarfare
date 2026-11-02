@@ -1,0 +1,65 @@
+{
+ "id": "groove_double_step",
+ "kind": "groove",
+ "name": "Double Step",
+ "bars": 8,
+ "tempo_bpm": 174,
+ "note": "Kick2 with Snare1: kicks on beats 1 and 2 of the odd bars, beat 2 of the even bars; snare on beat 3.",
+ "sounds": {
+  "kick": [
+   "kick_double_step"
+  ],
+  "snare": [
+   "snare_backbeat"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/first_watch.json",
+  "source_dir": "ToAddTry1",
+  "parts": {
+   "kick": {
+    "midi": "Kick2.mid",
+    "sha256": "5ec0067376dc2228e776f8066c80a96cb6854f7b9e7721b8ba91dfecbfbb6f5e",
+    "bars": [
+     1,
+     8
+    ],
+    "notes_kept": 11,
+    "notes_in_file": 81,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   },
+   "snare": {
+    "midi": "Snare1.mid",
+    "sha256": "fdbe2c972cc058afa21a7a50b28e85ddec4225fde64a760a797d4437dd8d32fa",
+    "bars": [
+     1,
+     8
+    ],
+    "notes_kept": 8,
+    "notes_in_file": 64,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   }
+  },
+  "renders": {
+   "kick__kick_double_step": {
+    "file": "Kick2.wav",
+    "sha256": "1aaecb797e66cb4586c93915fa52bbffb3e71ef67bc8a402a37cf083fc543289",
+    "sample_rate_in": 44100,
+    "gain_db": -11.557,
+    "tail_frames": 0,
+    "end_fade_ms": 0
+   },
+   "snare__snare_backbeat": {
+    "file": "Snare1.wav",
+    "sha256": "0e7fe28db7312ea699b40b8840f3b1761fa4652d9356dd7f8968470a38efc48f",
+    "sample_rate_in": 44100,
+    "gain_db": -12.252,
+    "tail_frames": 0,
+    "end_fade_ms": 0
+   }
+  }
+ }
+}

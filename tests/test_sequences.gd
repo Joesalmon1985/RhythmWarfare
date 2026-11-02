@@ -150,7 +150,7 @@ func test_mashing_never_earns_sharp_or_steady() -> void:
 	var r: Dictionary = load(HARNESS).run_mission(m, level, "mash", rng)
 	assert_eq(r["grades"]["sharp"], 0)
 	assert_eq(r["grades"]["steady"], 0)
-	assert_eq(int(r["grades"]["loose"]) + int(r["grades"]["failed"]), 8)
+	assert_eq(int(r["grades"]["loose"]) + int(r["grades"]["failed"]), level.sequences.size())
 	assert_true(int(r["strays"]) > 100, "mashing is mostly strays")
 
 

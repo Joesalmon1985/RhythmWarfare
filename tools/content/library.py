@@ -1,7 +1,9 @@
 """The loop library: sounds, clips, their MIDI and their renders (owner WAV or generated placeholder).
 
     content/sounds.json                         sound ids, family, friendly name, placeholder synth settings
-    content/library/<clip_id>/clip.json         kind, name, bars, key, source (derived / generated / owner)
+    content/library/<clip_id>/clip.json         kind, name, bars, key, source (derived / generated / owner / imported),
+                                                optional "sounds" (the renders the clip declares, see below) and
+                                                "audio_only" (accompaniment with no MIDI)
     content/library/<clip_id>/<part>.mid        the clip's structure, one file per part (kick, snare, bass, other)
     content/library/<clip_id>/<part>__<sound>.wav            an owner render (drop-in, never written by the build)
     content/library/<clip_id>/placeholder/<part>__<sound>.wav a generated placeholder (rewritten by the build)
@@ -9,6 +11,12 @@
 
 The build never overwrites an owner file: a part MIDI the owner edited (it no longer matches what the build last wrote)
 is kept and becomes the source of truth, and owner WAVs are only read.
+
+Declared renders: a clip whose clip.json lists `"sounds": {"bass": ["bass_sub_deep", ...]}` is played only by those
+sounds, each of which must exist as `<part>__<sound>.wav` in the folder (the build refuses to stand in a placeholder
+for them, and never pairs the clip with another sound). That is how a pattern exported from Ableton stays paired with
+the recordings made from it (tools/content/import_ableton.py writes such clips). A sound with no `synth` in
+sounds.json can only be used this way.
 """
 from __future__ import annotations
 
@@ -72,8 +80,10 @@ class Clip:
     cue_min_velocity: int = 1
     notes: dict = field(default_factory=dict)  # part -> [{tick, duration_ticks, pitch, velocity}]
     midi_sha: dict = field(default_factory=dict)  # part -> sha256 of the part MIDI file
-    midi_origin: dict = field(default_factory=dict)  # part -> generated | owner_edited | owner
+    midi_origin: dict = field(default_factory=dict)  # part -> generated | owner_edited | owner | audio_only
     tempo_source: dict = field(default_factory=dict)
+    sounds: dict = field(default_factory=dict)  # part -> [declared render sound ids] (absent: any sound of the family)
+    audio_only: bool = False  # accompaniment with no MIDI: never cued, only played
 
     @property
     def length_ticks(self) -> int:
@@ -130,6 +140,28 @@ class Library:
                     int(d.get("cue_min_velocity", 1)))
         if kind in ("bass", "accompaniment") and not clip.key:
             raise ContentError(f"{rel(path)}: pitched clips declare their key (\"key\": \"C# minor\")")
+        clip.audio_only = bool(d.get("audio_only", False))
+        if clip.audio_only and kind != "accompaniment":
+            raise ContentError(f"{rel(path)}: only accompaniment clips can be audio_only (every cued part needs its MIDI)")
+        declared = d.get("sounds", {})
+        if not isinstance(declared, dict):
+            raise ContentError(f"{rel(path)}: \"sounds\" maps a part to the list of sound ids it was rendered with")
+        for part, ids in declared.items():
+            if part not in clip.parts:
+                raise ContentError(f"{rel(path)}: \"sounds\" names part '{part}', which a {kind} clip does not have ({list(clip.parts)})")
+            if not isinstance(ids, list) or not ids:
+                raise ContentError(f"{rel(path)}: \"sounds\".{part} must be a non-empty list of sound ids")
+            for sid in ids:
+                snd = self.sounds.get(sid)
+                if snd is None or snd.family != part:
+                    raise ContentError(f"{rel(path)}: \"sounds\".{part} names '{sid}', which is not a {part} sound in content/sounds.json")
+                wav = path.parent / f"{part}__{sid}.wav"
+                if not wav.exists():
+                    raise ContentError(f"{rel(path)}: declares the render {part}__{sid}.wav but the file is missing "
+                                       f"(declared renders are never replaced by placeholders)")
+            clip.sounds[part] = list(ids)
+        if clip.audio_only and set(clip.sounds) != set(clip.parts):
+            raise ContentError(f"{rel(path)}: an audio_only clip declares its renders (\"sounds\": {{\"other\": [...]}})")
         st = self.state["clips"].setdefault(cid, {})
         st.setdefault("midi", {})
         st.setdefault("renders", {})
@@ -138,6 +170,12 @@ class Library:
         for part in clip.parts:
             mid = clip.folder / f"{part}.mid"
             pst = st["midi"].setdefault(part, {})
+            if clip.audio_only:
+                clip.notes[part] = []
+                clip.tempo_source[part] = "none"
+                clip.midi_sha[part] = ""
+                clip.midi_origin[part] = "audio_only"
+                continue
             if part in expected:
                 notes = expected[part]
                 if not mid.exists():
@@ -178,13 +216,13 @@ class Library:
     def _expected_notes(self, clip: Clip) -> dict[str, list[dict]]:
         src = clip.data.get("source", {"type": "owner"})
         kind = src.get("type", "owner")
-        if kind == "owner":
+        if kind in ("owner", "imported"):
             return {}
         if kind == "derived":
             return {part: self._derive(clip, part, spec) for part, spec in src["parts"].items()}
         if kind == "generated":
             return self._generate(clip, src)
-        raise ContentError(f"{rel(clip.folder)}/clip.json: source.type must be owner, derived or generated")
+        raise ContentError(f"{rel(clip.folder)}/clip.json: source.type must be owner, imported, derived or generated")
 
     def _derive(self, clip: Clip, part: str, specs: list[dict]) -> list[dict]:
         """Bars cut from the owner's source MIDI (never edited; its hash is checked against the integrity record)."""
@@ -259,6 +297,27 @@ class Library:
     def placeholder_path(self, clip: Clip, part: str, sound: str) -> Path:
         return clip.folder / "placeholder" / f"{part}__{sound}.wav"
 
+    def compatible(self, clip_id: str, part: str, sound_id: str) -> bool:
+        """Whether `sound_id` may play `part` of the clip: any sound of the family unless the clip declares its renders."""
+        clip = self.clips[clip_id]
+        snd = self.sounds.get(sound_id)
+        if snd is None or snd.family != part:
+            return False
+        declared = clip.sounds.get(part)
+        if declared is not None:
+            return sound_id in declared
+        return bool(snd.synth) or self.owner_render_path(clip, part, sound_id).exists()
+
+    def bound_sound(self, clip_id: str, part: str) -> str:
+        """The one sound a clip declares for a part (a mission says "bound" to mean it). Raises when there is not exactly one."""
+        clip = self.clips[clip_id]
+        declared = clip.sounds.get(part)
+        if not declared:
+            raise ContentError(f"{clip_id} declares no {part} render in its clip.json (\"sounds\"), so its {part} sound cannot be bound")
+        if len(declared) > 1:
+            raise ContentError(f"{clip_id} declares {len(declared)} {part} renders {declared}; offer them as a sound choice instead of binding")
+        return declared[0]
+
     def render(self, clip_id: str, part: str, sound_id: str) -> dict:
         """The audio of one clip part played by one sound: the owner WAV if there is one (validated), otherwise the
         generated placeholder (written or refreshed now). Returns {frames (n x 2 float), placeholder, path}."""
@@ -269,9 +328,16 @@ class Library:
         name = f"{part}__{sound_id}"
         st = self.state["clips"][clip_id]
         owner = self.owner_render_path(clip, part, sound_id)
+        declared = clip.sounds.get(part)
+        if declared is not None and sound_id not in declared:
+            raise ContentError(f"{clip_id} is played only by its declared {part} renders {declared}; {sound_id} is not one of them")
         if owner.exists():
             frames = self._check_owner_render(clip, part, sound_id, owner)
             return {"frames": frames, "placeholder": False, "path": owner}
+        if declared is not None:
+            raise ContentError(f"{rel(owner)} is declared by {clip_id} but missing")
+        if not sound.synth:
+            raise ContentError(f"sound {sound_id} has no placeholder synth in content/sounds.json and {clip_id} has no {name}.wav render")
         st["renders"].pop(name, None)
         ph = self.placeholder_path(clip, part, sound_id)
         key = sha256_bytes(json.dumps([clip.midi_sha[part], sound.synth, SYNTH_SOURCE, clip.bars]).encode())
@@ -307,12 +373,13 @@ class Library:
             end = tail[-min(len(tail), 480):]
             if float(np.max(np.abs(end))) > 0.01:
                 self.warnings.append(f"{where}: still sounding at the end of the tail; let the release finish within one bar")
-        self._check_alignment(clip, part, frames, where)
+        if not clip.audio_only:
+            self._check_alignment(clip, part, frames, where)
         st = self.state["clips"][clip.id]["renders"]
         name = f"{part}__{sound_id}"
         wav_sha = sha256_file(path)
         prev = st.get(name)
-        if prev and prev.get("wav_sha256") == wav_sha and prev.get("midi_sha256") != clip.midi_sha[part]:
+        if not clip.audio_only and prev and prev.get("wav_sha256") == wav_sha and prev.get("midi_sha256") != clip.midi_sha[part]:
             raise ContentError(f"{where} was rendered from an earlier {part}.mid of {clip.id}; the MIDI changed since. "
                                f"Re-export the WAV from the new MIDI (or delete it to fall back to the placeholder)")
         st[name] = {"wav_sha256": wav_sha, "midi_sha256": clip.midi_sha[part], "frames": int(fmt["frames"])}

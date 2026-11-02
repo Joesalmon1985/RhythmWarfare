@@ -1,0 +1,65 @@
+{
+ "id": "groove_rolling",
+ "kind": "groove",
+ "name": "Rolling",
+ "bars": 8,
+ "tempo_bpm": 174,
+ "note": "Kick3 with Snare1: kicks on beats 1, 2 and 4 of the odd bars, beat 2 of the even bars, a turnaround in bars 7-8; snare on beat 3.",
+ "sounds": {
+  "kick": [
+   "kick_rolling"
+  ],
+  "snare": [
+   "snare_backbeat"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/first_watch.json",
+  "source_dir": "ToAddTry1",
+  "parts": {
+   "kick": {
+    "midi": "Kick3.mid",
+    "sha256": "6e084b4e891d4062d5255abdc1adf3b2d20c8906282614d3f6ff7a938876b99c",
+    "bars": [
+     1,
+     8
+    ],
+    "notes_kept": 16,
+    "notes_in_file": 86,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   },
+   "snare": {
+    "midi": "Snare1.mid",
+    "sha256": "fdbe2c972cc058afa21a7a50b28e85ddec4225fde64a760a797d4437dd8d32fa",
+    "bars": [
+     1,
+     8
+    ],
+    "notes_kept": 8,
+    "notes_in_file": 64,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   }
+  },
+  "renders": {
+   "kick__kick_rolling": {
+    "file": "Kick3.wav",
+    "sha256": "dc8d5953fe75342e4922b89780aa3367d93503128ee8acbece83de66c4f3d44f",
+    "sample_rate_in": 44100,
+    "gain_db": -11.562,
+    "tail_frames": 0,
+    "end_fade_ms": 0
+   },
+   "snare__snare_backbeat": {
+    "file": "Snare1.wav",
+    "sha256": "0e7fe28db7312ea699b40b8840f3b1761fa4652d9356dd7f8968470a38efc48f",
+    "sample_rate_in": 44100,
+    "gain_db": -12.252,
+    "tail_frames": 0,
+    "end_fade_ms": 0
+   }
+  }
+ }
+}

@@ -1,0 +1,62 @@
+{
+ "note": "Mission 1 (First Watch) content: the owner's Ableton exports in ToAddTry1/ (three kick patterns with one snare pattern, two bass lines with five and four recordings, three audio-only backing loops). Run: python tools/content/import_ableton.py content/imports/first_watch.json, then python tools/content/build.py level_01. Names are provisional: rename in content/sounds.json and the clip.json files. Levels: drums and bass peak at -4 dBFS, bass recordings RMS-matched to -17 dBFS where that peak allows, backing at -3 dBFS, then a global trim so the loudest combination of options stays below about -3 dBFS.",
+ "source_dir": "ToAddTry1",
+ "bars": 8,
+ "levels": {
+  "kick": {"peak_db": -4.0},
+  "snare": {"peak_db": -4.0},
+  "bass": {"peak_db": -4.0, "rms_db": -17.0},
+  "other": {"peak_db": -3.0}
+ },
+ "trim_db": -7.0,
+ "end_fade_ms": 10,
+ "sounds": [
+  {"id": "kick_half_time", "family": "kick", "name": "Half-Time Kick"},
+  {"id": "kick_double_step", "family": "kick", "name": "Double-Step Kick"},
+  {"id": "kick_rolling", "family": "kick", "name": "Rolling Kick"},
+  {"id": "snare_backbeat", "family": "snare", "name": "Backbeat Snare"},
+  {"id": "bass_sub_bright", "family": "bass", "name": "Bright Sub"},
+  {"id": "bass_sub_deep", "family": "bass", "name": "Deep Sub"},
+  {"id": "bass_sub_pure", "family": "bass", "name": "Pure Sub"},
+  {"id": "bass_sub_wide", "family": "bass", "name": "Wide Sub"},
+  {"id": "bass_sub_warm", "family": "bass", "name": "Warm Sub"},
+  {"id": "bass_reese_dark", "family": "bass", "name": "Dark Reese"},
+  {"id": "bass_reese_deep", "family": "bass", "name": "Deep Reese"},
+  {"id": "bass_reese_soft", "family": "bass", "name": "Soft Reese"},
+  {"id": "bass_reese_round", "family": "bass", "name": "Round Reese"},
+  {"id": "hats_driving", "family": "other", "name": "Driving Hats"},
+  {"id": "hats_busy", "family": "other", "name": "Busy Hats"},
+  {"id": "hats_offbeat", "family": "other", "name": "Offbeat Hats"}
+ ],
+ "clips": [
+  {"id": "groove_half_time", "kind": "groove", "name": "Half-Time",
+   "note": "Kick1 with Snare1: one kick per bar alternating beat 1 and beat 2, a pickup in bar 7; snare on beat 3 of every bar.",
+   "parts": {"kick": {"midi": "Kick1.mid", "renders": {"kick_half_time": "Kick1.wav"}},
+             "snare": {"midi": "Snare1.mid", "renders": {"snare_backbeat": "Snare1.wav"}}}},
+  {"id": "groove_double_step", "kind": "groove", "name": "Double Step",
+   "note": "Kick2 with Snare1: kicks on beats 1 and 2 of the odd bars, beat 2 of the even bars; snare on beat 3.",
+   "parts": {"kick": {"midi": "Kick2.mid", "renders": {"kick_double_step": "Kick2.wav"}},
+             "snare": {"midi": "Snare1.mid", "renders": {"snare_backbeat": "Snare1.wav"}}}},
+  {"id": "groove_rolling", "kind": "groove", "name": "Rolling",
+   "note": "Kick3 with Snare1: kicks on beats 1, 2 and 4 of the odd bars, beat 2 of the even bars, a turnaround in bars 7-8; snare on beat 3.",
+   "parts": {"kick": {"midi": "Kick3.mid", "renders": {"kick_rolling": "Kick3.wav"}},
+             "snare": {"midi": "Snare1.mid", "renders": {"snare_backbeat": "Snare1.wav"}}}},
+  {"id": "bass_sub_line", "kind": "bass", "name": "Sub Line", "key": "F minor",
+   "note": "Bass1: long sustained notes (whole bars, halves and quarters), 15 notes over eight bars. Every note is a hold.",
+   "parts": {"bass": {"midi": "Bass1.mid", "renders": {
+     "bass_sub_bright": "bass1.wav", "bass_sub_deep": "bass1a.wav", "bass_sub_pure": "bass1b.wav", "bass_sub_wide": "bass1c.wav", "bass_sub_warm": "bass1d.wav"}}}},
+  {"id": "bass_reese_line", "kind": "bass", "name": "Reese Line", "key": "F minor",
+   "note": "Bass2: the same harmony with shorter, syncopated notes, 23 notes over eight bars. Every note is a hold (the shortest are three sixteenths).",
+   "parts": {"bass": {"midi": "Bass2.mid", "renders": {
+     "bass_reese_dark": "bass2a.wav", "bass_reese_deep": "bass2b.wav", "bass_reese_soft": "bass2c.wav", "bass_reese_round": "bass2d.wav"}}}},
+  {"id": "acc_hats_driving", "kind": "accompaniment", "name": "Driving Hats", "key": "F minor", "audio_only": true,
+   "note": "Other1: a bright top loop (energy above 4 kHz) on the beats with pickups; the export's silent bars 9-14 are dropped.",
+   "parts": {"other": {"renders": {"hats_driving": "Other1.wav"}}}},
+  {"id": "acc_hats_busy", "kind": "accompaniment", "name": "Busy Hats", "key": "F minor", "audio_only": true,
+   "note": "Other2: the busiest top loop, sixteenth-note offbeats.",
+   "parts": {"other": {"renders": {"hats_busy": "Other2.wav"}}}},
+  {"id": "acc_hats_offbeat", "kind": "accompaniment", "name": "Offbeat Hats", "key": "F minor", "audio_only": true,
+   "note": "Other3: a top loop on the eighth-note offbeats.",
+   "parts": {"other": {"renders": {"hats_offbeat": "Other3.wav"}}}}
+ ]
+}

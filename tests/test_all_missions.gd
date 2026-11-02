@@ -52,6 +52,10 @@ func test_every_offered_option_loads() -> void:
 					continue
 				picks[0] = o["id"]
 				sel[ch["id"]] = picks
+				if o.has("with"):  # a recording of one clip: pick that clip with it
+					var parent: Array = (sel[ch["depends_on"]] as Array).duplicate()
+					parent[0] = o["with"][0]
+					sel[ch["depends_on"]] = parent
 				var lv := _load(pack, sel)
 				if lv != null:
 					assert_eq(lv.selection[ch["id"]], picks, "%s %s" % [pack, ch["id"]])

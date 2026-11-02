@@ -1,12 +1,16 @@
 extends Control
 ## Mission setup: only the musical choices this mission asks for (none for some), each as a row of cards with a short
 ## audition, a clear "choose n" count, good defaults (the last selection, else the mission's) and locked options that
-## say what unlocks them. Practice adds a choice of the whole song or one part of it. Play is always one tap away.
+## say what unlocks them. A choice that depends on another (the bass sounds recorded from one bass line) shows only
+## the options that play the chosen clip and follows it when that changes, keeping the current pick where it still
+## fits. Practice adds a choice of the whole song or one part of it. Play is always one tap away.
 
 var _pack := ""
 var _data: Dictionary = {}
 var _picks: Dictionary = {}  # choice id -> Array of option ids in slot order
+var _choices: Dictionary = {}  # choice id -> the choice entry of the pack
 var _cards: Dictionary = {}  # choice id -> {option id: Button}
+var _card_boxes: Dictionary = {}  # choice id -> {option id: the card's container (hidden when the option does not fit)}
 var _count_labels: Dictionary = {}
 var _play: Button
 var _audition: AudioStreamPlayer
@@ -33,6 +37,7 @@ func _ready() -> void:
 	_picks = MissionLoader.resolve_selection(_data["choices"], saved, warnings)
 	var shown := 0
 	for ch in _data["choices"]:
+		_choices[str(ch["id"])] = ch
 		if (ch["pool"] as Array).size() > int(ch["count"]):
 			_choice_row(content, ch, n)
 			shown += 1
@@ -66,6 +71,7 @@ func _choice_row(content: VBoxContainer, ch: Dictionary, number: int) -> void:
 	row.add_theme_constant_override("v_separation", UiStyle.GAP)
 	content.add_child(row)
 	_cards[cid] = {}
+	_card_boxes[cid] = {}
 	for o in ch["pool"]:
 		var oid := str(o["id"])
 		var lock := Session.campaign.option_lock(number, oid, ch["default"])
@@ -85,6 +91,7 @@ func _choice_row(content: VBoxContainer, ch: Dictionary, number: int) -> void:
 			card.add_child(listen)
 		row.add_child(card)
 		_cards[cid][oid] = b
+		_card_boxes[cid][oid] = card
 
 
 func _practice_row(content: VBoxContainer) -> void:
@@ -121,6 +128,7 @@ func _toggle(cid: String, oid: String, count: int) -> void:
 		picks.erase(oid)
 	elif picks.size() < count:
 		picks.append(oid)
+	MissionLoader.fit_dependents(_data["choices"], _picks, [])  # a bass sound follows the bass line it was recorded from
 	_refresh()
 
 
@@ -132,8 +140,15 @@ func _refresh() -> void:
 			continue
 		var picks: Array = _picks[cid]
 		var count := int(ch["count"])
+		var dependent: bool = ch.has("depends_on")
+		var clip := MissionLoader.parent_pick(ch, _picks, 0) if dependent else ""
+		var fitting := 0
 		for oid in _cards[cid]:
 			var b: Button = _cards[cid][oid]
+			var fits: bool = not dependent or MissionLoader.option_fits(ch, oid, clip)
+			(_card_boxes[cid][oid] as Control).visible = fits
+			if fits:
+				fitting += 1
 			b.set_pressed_no_signal(picks.has(oid))
 			var idx := picks.find(oid)
 			var base := b.text.split("\n")[0].trim_prefix("1 · ").trim_prefix("2 · ").trim_prefix("3 · ").trim_prefix("4 · ")
@@ -141,6 +156,9 @@ func _refresh() -> void:
 			b.text = ("%d · %s" % [idx + 1, base] if count > 1 and idx >= 0 else base) + rest
 		var lab: Label = _count_labels[cid]
 		lab.text = "choose %d   %d selected" % [count, picks.size()] if count > 1 else "choose 1"
+		if dependent and not clip.is_empty():
+			var parent_name := str(_data.get("names", {}).get(clip, clip))
+			lab.text += "   (for %s)" % parent_name if fitting < (ch["pool"] as Array).size() else ""
 		if picks.size() != count:
 			ready = false
 	_play.disabled = not ready

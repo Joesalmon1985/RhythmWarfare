@@ -1,0 +1,65 @@
+{
+ "id": "groove_half_time",
+ "kind": "groove",
+ "name": "Half-Time",
+ "bars": 8,
+ "tempo_bpm": 174,
+ "note": "Kick1 with Snare1: one kick per bar alternating beat 1 and beat 2, a pickup in bar 7; snare on beat 3 of every bar.",
+ "sounds": {
+  "kick": [
+   "kick_half_time"
+  ],
+  "snare": [
+   "snare_backbeat"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/first_watch.json",
+  "source_dir": "ToAddTry1",
+  "parts": {
+   "kick": {
+    "midi": "Kick1.mid",
+    "sha256": "5d170ad8652e3b9a02d6cdd5a2f3e06d446e4f068711371a6e51acf3bccbe3d8",
+    "bars": [
+     1,
+     8
+    ],
+    "notes_kept": 10,
+    "notes_in_file": 80,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   },
+   "snare": {
+    "midi": "Snare1.mid",
+    "sha256": "fdbe2c972cc058afa21a7a50b28e85ddec4225fde64a760a797d4437dd8d32fa",
+    "bars": [
+     1,
+     8
+    ],
+    "notes_kept": 8,
+    "notes_in_file": 64,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   }
+  },
+  "renders": {
+   "kick__kick_half_time": {
+    "file": "Kick1.wav",
+    "sha256": "199422d51beeb547a7e1edc2fa8031316f4df1fe4cacb8de2f161a449499f1c3",
+    "sample_rate_in": 44100,
+    "gain_db": -11.558,
+    "tail_frames": 0,
+    "end_fade_ms": 0
+   },
+   "snare__snare_backbeat": {
+    "file": "Snare1.wav",
+    "sha256": "0e7fe28db7312ea699b40b8840f3b1761fa4652d9356dd7f8968470a38efc48f",
+    "sample_rate_in": 44100,
+    "gain_db": -12.252,
+    "tail_frames": 0,
+    "end_fade_ms": 0
+   }
+  }
+ }
+}

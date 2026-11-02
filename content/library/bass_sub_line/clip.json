@@ -1,0 +1,79 @@
+{
+ "id": "bass_sub_line",
+ "kind": "bass",
+ "name": "Sub Line",
+ "bars": 8,
+ "tempo_bpm": 174,
+ "key": "F minor",
+ "note": "Bass1: long sustained notes (whole bars, halves and quarters), 15 notes over eight bars. Every note is a hold.",
+ "sounds": {
+  "bass": [
+   "bass_sub_bright",
+   "bass_sub_deep",
+   "bass_sub_pure",
+   "bass_sub_wide",
+   "bass_sub_warm"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/first_watch.json",
+  "source_dir": "ToAddTry1",
+  "parts": {
+   "bass": {
+    "midi": "Bass1.mid",
+    "sha256": "0dadfe3c520301b4bacd8baa1bc75753793edb09082708367f815ded0eb87017",
+    "bars": [
+     1,
+     8
+    ],
+    "notes_kept": 15,
+    "notes_in_file": 15,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   }
+  },
+  "renders": {
+   "bass__bass_sub_bright": {
+    "file": "bass1.wav",
+    "sha256": "d1041e5696e9abdf341c18b7799c9b965987d655d7155f16dbd9c6c4f4d9c187",
+    "sample_rate_in": 44100,
+    "gain_db": -11.106,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   },
+   "bass__bass_sub_deep": {
+    "file": "bass1a.wav",
+    "sha256": "2d34eae4809b81bd3fc426f396e6877f4c0a40cb498dd574a154cbb23b8947eb",
+    "sample_rate_in": 44100,
+    "gain_db": -12.645,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   },
+   "bass__bass_sub_pure": {
+    "file": "bass1b.wav",
+    "sha256": "62db5c5dcd73fdd66d103f5f315e2507e2f30ce918f57c5482ee751e76403350",
+    "sample_rate_in": 44100,
+    "gain_db": -16.482,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   },
+   "bass__bass_sub_wide": {
+    "file": "bass1c.wav",
+    "sha256": "197c3299972535481e7b7ba31584c8b8358cc818eb868343f782e03952bccf0c",
+    "sample_rate_in": 44100,
+    "gain_db": -11.733,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   },
+   "bass__bass_sub_warm": {
+    "file": "bass1d.wav",
+    "sha256": "2cad2d1c4e5d3ad6c49072c645dffff1311020099b7bdb141489bf10915d769c",
+    "sample_rate_in": 44100,
+    "gain_db": -11.457,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   }
+  }
+ }
+}

@@ -3,6 +3,12 @@
 content/missions/level_NN.json is the authoring file; `build(...)` turns it into songs/<pack>/level.json (schema 3)
 with full-length per-slot stems assembled offline from the clip renders (sample-accurate placement from absolute
 ticks, tails mixed, never re-timed), cue blocks per clip option, sequences with rewards, previews and waves.
+
+Sounds in a phase are a choice slot (`"kick_sound": 1`), a fixed sound id, or `"bound"`: the one render the chosen clip
+declares for that part (clip.json "sounds"), so a pattern recorded in Ableton always plays with its own recording. A
+sound choice whose options are declared renders of different clips (five sub sounds of one bass line, four of another)
+is written to the pack with `depends_on` and per-option `with` lists; the game keeps the selection compatible. The
+`accompaniment` choice picks an accompaniment clip (audio-only clips allowed) and its placements say `"clip": 1`.
 """
 from __future__ import annotations
 
@@ -21,30 +27,39 @@ CHOICE_KINDS = {  # choice id -> (what it picks, phase field, label)
     "groove": ("clip:groove", "groove", "Groove"),
     "fill": ("clip:fill", "fill", "Fill"),
     "bass": ("clip:bass", "bass", "Bass line"),
+    "accompaniment": ("clip:accompaniment", "accompaniment", "Backing track"),
     "kick_sound": ("sound:kick", "kick_sound", "Kick sound"),
     "snare_sound": ("sound:snare", "snare_sound", "Snare sound"),
     "bass_voice": ("sound:bass", "bass_voice", "Bass voice"),
 }
+SOUND_FIELDS = ("kick_sound", "snare_sound", "bass_voice")
 FADE = 480  # 10 ms fade where a clip repetition is cut short (a fill replacing a groove's end, a voice change)
 STEM_QUALITY = 3.0
 PREVIEW_QUALITY = 2.0
+PREVIEW_BARS = 4
+ENVELOPE_BLOCK = 480  # 10 ms blocks for the worst-case mix estimate
 
 
 @dataclass
 class Ref:
-    """A phase field: a choice slot ('kick_sound', 1) or a fixed library id."""
+    """A phase field: a choice slot ('kick_sound', 1), a fixed library id, or (sounds only) bound to the clip."""
     choice: str = ""
     slot: int = 0
     fixed: str = ""
+    bound: bool = False
 
     @property
     def dep(self) -> str:
         return f"{self.choice}#{self.slot}" if self.choice else ""
 
     def options(self, choices: dict) -> list[str]:
+        if self.bound:
+            return []
         return list(choices[self.choice]["pool"]) if self.choice else [self.fixed]
 
     def label(self) -> str:
+        if self.bound:
+            return "bound"
         return self.dep or self.fixed
 
 
@@ -88,6 +103,7 @@ class Mission:
         self.usages: dict[tuple, Usage] = {}
         self.blocks: list[dict] = []
         self.sequences: list[dict] = []
+        self.intros: list[dict] = []
 
     def err(self, msg: str) -> None:
         self.errors.append(f"{rel(self.path)}: {msg}")
@@ -142,6 +158,14 @@ class Mission:
         for r_id in [r for ph in self.phases for r in ph["rewards"]]:
             if r_id not in RULES["rewards"]:
                 self.err(f"unknown reward '{r_id}' (data/campaign/rules.json rewards)")
+        intros = d.get("intros")
+        if intros is None:
+            intros = [{"bar": int(d.get("intro_bar", 1)), "text": d["intro"]}] if d.get("intro") else []
+        for it in intros:
+            bar = int(it.get("bar", 1))
+            if not 1 <= bar <= self.bars or not str(it.get("text", "")):
+                self.err(f"intros: each entry needs a bar inside the song and a text ({it})")
+            self.intros.append({"bar": bar, "text": str(it.get("text", ""))})
 
     def _ref(self, fld: str, value, phase_index: int) -> Ref:
         if isinstance(value, int):
@@ -151,6 +175,10 @@ class Mission:
                 self.err(f"phase {phase_index + 1}: {fld} slot {value} is outside the choice count {self.choices[fld]['count']}")
             return Ref(choice=fld, slot=value)
         value = str(value)
+        if value == "bound":
+            if fld not in SOUND_FIELDS:
+                self.err(f"phase {phase_index + 1}: only a sound ({', '.join(SOUND_FIELDS)}) can be bound to its clip")
+            return Ref(bound=True)
         what = CHOICE_KINDS[fld][0]
         ok = (self.lib.clips.get(value) is not None and self.lib.clips[value].kind == what[5:]) if what.startswith("clip:") \
             else (self.lib.sounds.get(value) is not None and self.lib.sounds[value].family == what[6:])
@@ -168,6 +196,23 @@ class Mission:
         if len(bars) != 1:
             self.err(f"the options of {ref.label()} have different lengths {sorted(bars)}; offer clips of one length per choice")
         return bars.pop() if bars else 1
+
+    def sound_options(self, u: Usage, clip_id: str) -> list[str]:
+        """The sounds a usage may play one of its clip options with: the bound render, or the pool's compatible sounds."""
+        if u.sound_ref.bound:
+            try:
+                return [self.lib.bound_sound(clip_id, u.family)]
+            except ContentError as exc:
+                self.err(str(exc))
+                return []
+        return [s for s in u.sound_ref.options(self.choices) if self.lib.compatible(clip_id, u.family, s)]
+
+    def render_pairs(self):
+        """Every (clip id, part, sound id) the mission plays, in stem order."""
+        for key, u in sorted(self.usages.items()):
+            for c in u.clip_ref.options(self.choices):
+                for s in self.sound_options(u, c):
+                    yield c, u.family, s
 
     def arrange(self) -> None:
         for ph in self.phases:
@@ -228,30 +273,65 @@ class Mission:
                         self._block(ph, "bass", ph["bass"], vref, a, b, bb)
             elif ph["mode"] == "bass":
                 self.err(f"phase {ph['index'] + 1}: a bass phase needs a bass line")
-        acc = self.data.get("accompaniment", [])
-        for a in acc:
-            clip = self.lib.clips.get(a["clip"])
-            if clip is None or clip.kind != "accompaniment":
-                self.err(f"accompaniment '{a['clip']}' is not an accompaniment clip")
+        for a in self.data.get("accompaniment", []):
+            clip_ref = self._ref("accompaniment", a["clip"], -1) if isinstance(a["clip"], int) else Ref(fixed=str(a["clip"]))
+            options = [o for o in clip_ref.options(self.choices) if o in self.lib.clips]
+            if not options or any(self.lib.clips[o].kind != "accompaniment" for o in options):
+                self.err(f"accompaniment '{a['clip']}' is not an accompaniment clip (or choice)")
                 continue
-            u = self._usage("other", Ref(fixed=a["clip"]), Ref(fixed=a.get("sound", "ensemble")))
+            sound = a.get("sound")
+            if sound is None:
+                declared = [bool(self.lib.clips[o].sounds.get("other")) for o in options]
+                if all(declared):
+                    sound = "bound"
+                elif any(declared):
+                    self.err(f"accompaniment {clip_ref.label()}: some options declare their renders and some do not; say which sound plays")
+                    continue
+                else:
+                    sound = "ensemble"
+            sound_ref = Ref(bound=True) if sound == "bound" else Ref(fixed=str(sound))
+            u = self._usage("other", clip_ref, sound_ref)
+            length = self._clip_bars(clip_ref) * TICKS_PER_BAR
             start = (int(a.get("start_bar", 1)) - 1) * TICKS_PER_BAR
-            end = start + int(a.get("bars", clip.bars)) * TICKS_PER_BAR
+            end = start + int(a.get("bars", length // TICKS_PER_BAR)) * TICKS_PER_BAR
             at = start
             while at < end:
-                u.placements.append(Placement("", "other", at, at, -1 if at + clip.length_ticks <= end else end))
-                at += clip.length_ticks
+                u.placements.append(Placement("", "other", at, at, -1 if at + length <= end else end))
+                at += length
+        self._check_pairs()
+
+    def _check_pairs(self) -> None:
+        """Every clip option of every usage has a sound to play it with, the defaults play together, and every option
+        of a sound choice plays at least one clip it is offered with."""
+        default = {cid: c["default"] for cid, c in self.choices.items()}
+        for u in self.usages.values():
+            clips = [c for c in u.clip_ref.options(self.choices) if c in self.lib.clips]
+            for c in clips:
+                if not self.sound_options(u, c):
+                    self.err(f"{u.family}: {c} has no sound to play it in {u.sound_ref.label() or 'its sounds'} "
+                             f"(declared renders only pair with their own clip)")
+            if u.sound_ref.choice:
+                for s in u.sound_ref.options(self.choices):
+                    if not any(self.lib.compatible(c, u.family, s) for c in clips):
+                        self.err(f"choice {u.sound_ref.choice}: {s} plays none of the {u.family} clips it is offered with ({clips})")
+            dc = u.clip_ref.fixed or (default[u.clip_ref.choice][u.clip_ref.slot - 1] if u.clip_ref.choice in default else "")
+            if dc and not u.sound_ref.bound:
+                ds = u.sound_ref.fixed or (default[u.sound_ref.choice][u.sound_ref.slot - 1] if u.sound_ref.choice in default else "")
+                if ds and dc in self.lib.clips and not self.lib.compatible(dc, u.family, ds):
+                    self.err(f"the default {u.sound_ref.label()} {ds} does not play the default {u.clip_ref.label()} {dc}")
 
     def _block(self, ph: dict, part: str, clip_ref: Ref, sound_ref: Ref, a: int, b: int, loop: int) -> None:
-        """Cues of one part over [a, b): one cue list per option of the clip choice. The pad follows the sound slot."""
+        """Cues of one part over [a, b): one cue list per option of the clip choice. The pad follows the sound slot
+        (a bound sound follows its clip's slot)."""
         family = "bass" if part == "bass" else part
-        slot = sound_ref.slot if sound_ref.choice else 1
+        slot = sound_ref.slot if sound_ref.choice else (clip_ref.slot if sound_ref.bound and clip_ref.choice else 1)
         pads = RULES["pads"][family]
         if slot > len(pads):
             self.err(f"phase {ph['index'] + 1}: {family} voice slot {slot} has no pad")
             return
         pad = pads[slot - 1]
-        ph["pads"][str(pad)] = {"family": family, "ref": sound_ref.label()}
+        voice = f"bound:{clip_ref.label()}:{part}" if sound_ref.bound else sound_ref.label()
+        ph["pads"][str(pad)] = {"family": family, "ref": voice}
         options = {}
         for opt in clip_ref.options(self.choices):
             clip = self.lib.clips.get(opt)
@@ -268,7 +348,7 @@ class Mission:
                         cues.append([t, dur])
                 at += loop
             options[opt] = cues
-        self.blocks.append({"phase": ph["index"], "family": family, "part": part, "pad": pad, "voice": sound_ref.label(),
+        self.blocks.append({"phase": ph["index"], "family": family, "part": part, "pad": pad, "voice": voice,
                             "deps": [clip_ref.dep] if clip_ref.dep else [], "start_tick": a, "end_tick": b, "options": options})
 
     # --- sequences and checks ---------------------------------------------------------------------------------------
@@ -332,6 +412,7 @@ class Mission:
                 for s in self.sequences:
                     if s["phase"] == ph["index"] and not any(s["start_tick"] <= c["tick"] < s["end_tick"] for c in cues):
                         self.err(f"{where}: sequence {s['index'] + 1} (bars {s['start_tick'] // TICKS_PER_BAR + 1}..) has no cues")
+        self._check_mode_changes(thumb, chart)
         # pitched clips: one key per mission
         keys = set()
         for u in self.usages.values():
@@ -341,6 +422,20 @@ class Mission:
                     keys.add(clip.key)
         if len(keys) > 1:
             self.err(f"bass lines and accompaniment declare different keys {sorted(keys)}")
+
+    def _check_mode_changes(self, thumb: dict, chart: dict) -> None:
+        """A hold that ends at a mode change while the next phase's first cue falls on the same thumb's other pad is
+        playable (a release within 0.15 s of the tail is complete) but worth knowing: a warning per boundary."""
+        for prev, ph in zip(self.phases, self.phases[1:]):
+            s = ph["start"]
+            ends = [(b["pad"], t + d) for b in self.blocks if b["phase"] == prev["index"]
+                    for lst in b["options"].values() for t, d in lst if d and t + d >= s - chart["same_thumb_after_hold_ticks"]]
+            starts = [(b["pad"], t) for b in self.blocks if b["phase"] == ph["index"]
+                      for lst in b["options"].values() for t, _ in lst if s <= t < s + chart["same_thumb_after_hold_ticks"]]
+            clash = {(p1, p2) for p1, _ in ends for p2, _ in starts if p1 != p2 and thumb[p1] == thumb[p2]}
+            for p1, p2 in sorted(clash):
+                self.warnings.append(f"{rel(self.path)}: at bar {s // TICKS_PER_BAR + 1} a hold on pad {p1} ends where pad {p2} "
+                                     f"(same thumb) is cued; the thumb lifts up to 0.15 s early without losing the hold")
 
     # --- audio ------------------------------------------------------------------------------------------------------
     def _render_usage(self, u: Usage, clip_id: str, sound_id: str, total: int) -> tuple[np.ndarray, bool]:
@@ -362,17 +457,28 @@ class Mission:
                 out[start:start + n] += seg[:n]
         return out, r["placeholder"]
 
+    def _is_default(self, u: Usage, clip_id: str, sound_id: str) -> bool:
+        default = {cid: c["default"] for cid, c in self.choices.items()}
+        for ref, val in ((u.clip_ref, clip_id), (u.sound_ref, sound_id)):
+            if ref.bound:
+                continue
+            if (ref.fixed or default[ref.choice][ref.slot - 1]) != val:
+                return False
+        return True
+
     def build_audio(self, out_dir: Path, write: bool = True) -> tuple[list[dict], dict]:
         total = bars_to_frames(self.bars + TAIL_BARS)
         stems = []
         default_mix = np.zeros((total, 2), dtype=np.float32)
+        blocks = -(-total // ENVELOPE_BLOCK)
+        loudest = np.zeros(blocks, dtype=np.float32)  # sum over stems of the loudest option's envelope (an upper bound)
         stats = {"files": 0, "placeholder_files": 0, "owner_files": 0, "seconds_of_audio": 0.0, "bytes": 0}
-        default = {cid: c["default"] for cid, c in self.choices.items()}
         for n, (key, u) in enumerate(sorted(self.usages.items())):
             deps = [d for d in (u.clip_ref.dep, u.sound_ref.dep) if d]
             entry = {"key": f"s{n + 1:02d}", "family": u.family, "deps": deps, "files": {}}
+            env = np.zeros(blocks, dtype=np.float32)
             for clip_id in u.clip_ref.options(self.choices):
-                for sound_id in u.sound_ref.options(self.choices):
+                for sound_id in self.sound_options(u, clip_id):
                     frames, ph = self._render_usage(u, clip_id, sound_id, total)
                     combo = [o for o, ref in ((clip_id, u.clip_ref), (sound_id, u.sound_ref)) if ref.dep]
                     fname = f"audio/{entry['key']}__{'__'.join([clip_id, sound_id])}.ogg"
@@ -385,35 +491,69 @@ class Mission:
                     stats["placeholder_files" if ph else "owner_files"] += 1
                     stats["seconds_of_audio"] += sum(((p.keep_to if p.keep_to >= 0 else p.at + self.lib.clips[clip_id].length_ticks) - p.keep_from)
                                                      for p in u.placements) * 60.0 / (174 * 960)
-                    is_default = all((ref.fixed or default[ref.choice][ref.slot - 1]) == val for ref, val in ((u.clip_ref, clip_id), (u.sound_ref, sound_id)))
-                    if is_default:
+                    if self._is_default(u, clip_id, sound_id):
                         default_mix += frames
+                    mono = np.abs(frames).max(axis=1)
+                    mono = np.pad(mono, (0, blocks * ENVELOPE_BLOCK - len(mono))).reshape(blocks, ENVELOPE_BLOCK).max(axis=1)
+                    env = np.maximum(env, mono)
+            loudest += env
             stems.append(entry)
         stats["default_mix_peak_db"] = round(peak_db(default_mix), 2)
+        stats["loudest_mix_bound_db"] = round(peak_db(loudest), 2)
         if stats["default_mix_peak_db"] > -0.1:
             self.err(f"the default mix peaks at {stats['default_mix_peak_db']} dBFS; lower the renders (headroom)")
+        elif stats["loudest_mix_bound_db"] > 0.0:
+            self.warnings.append(f"{rel(self.path)}: the loudest combination of options may peak at up to "
+                                 f"{stats['loudest_mix_bound_db']} dBFS (an upper bound); leave more headroom in the renders")
         return stems, stats
+
+    # --- previews -------------------------------------------------------------------------------------------------
+    def _first_ref(self, fld: str) -> Ref | None:
+        for ph in self.phases:
+            if fld in ph:
+                return ph[fld][0] if isinstance(ph[fld], list) else ph[fld]
+        return None
+
+    def _pick(self, ref: Ref | None, fallback: str = "") -> str:
+        """The default option of a ref ('' for a bound sound or no ref)."""
+        if ref is None or ref.bound:
+            return fallback
+        return ref.fixed or self.choices[ref.choice]["default"][ref.slot - 1]
+
+    def _sound_for(self, clip_id: str, part: str, ref: Ref | None) -> str:
+        """The sound a preview plays `clip_id`'s `part` with: its bound render, else the default (or first compatible) pick."""
+        if ref is None:
+            return ""
+        if ref.bound:
+            return self.lib.bound_sound(clip_id, part)
+        want = self._pick(ref)
+        if self.lib.compatible(clip_id, part, want):
+            return want
+        return next((s for s in ref.options(self.choices) if self.lib.compatible(clip_id, part, s)), "")
+
+    def _clip_for(self, sound_id: str, part: str, ref: Ref | None) -> str:
+        """The clip a sound preview plays: the default clip if the sound fits it, else the first that does."""
+        if ref is None:
+            return ""
+        want = self._pick(ref)
+        if want and self.lib.compatible(want, part, sound_id):
+            return want
+        return next((c for c in ref.options(self.choices) if self.lib.compatible(c, part, sound_id)), "")
 
     def build_previews(self, out_dir: Path, write: bool = True) -> dict:
         """Short auditions of single choices (4 bars at most), never the mission's arrangement."""
         out: dict[str, dict] = {}
-        default = {cid: c["default"] for cid, c in self.choices.items()}
-
-        def first(fld: str) -> str:
-            for ph in self.phases:
-                if fld in ph:
-                    ref = ph[fld][0] if isinstance(ph[fld], list) else ph[fld]
-                    return ref.fixed or default[ref.choice][ref.slot - 1]
-            return ""
-
-        groove, kick, snare = first("groove"), first("kick_sound"), first("snare_sound")
-        bass, voice = first("bass"), first("bass_voice")
-        bars = 4
+        groove_ref, kick_ref, snare_ref = self._first_ref("groove"), self._first_ref("kick_sound"), self._first_ref("snare_sound")
+        bass_ref, voice_ref = self._first_ref("bass"), self._first_ref("bass_voice")
+        acc_usage = next((u for u in self.usages.values() if u.family == "other"), None)
+        bars = PREVIEW_BARS
         total = bars_to_frames(bars)
 
         def loop(clip_id: str, part: str, sound_id: str) -> np.ndarray:
-            r = self.lib.render(clip_id, part, sound_id)["frames"]
             buf = np.zeros((total + bars_to_frames(1), 2), dtype=np.float32)
+            if not clip_id or not sound_id:
+                return buf[:total]
+            r = self.lib.render(clip_id, part, sound_id)["frames"]
             step = self.lib.clips[clip_id].length_ticks
             at = 0
             while at < bars * TICKS_PER_BAR:
@@ -423,23 +563,27 @@ class Mission:
                 at += step
             return buf[:total]
 
+        def drums(clip_id: str, kick: str = "", snare: str = "", kick_gain: float = 1.0, snare_gain: float = 1.0) -> np.ndarray:
+            return (kick_gain * loop(clip_id, "kick", kick or self._sound_for(clip_id, "kick", kick_ref))
+                    + snare_gain * loop(clip_id, "snare", snare or self._sound_for(clip_id, "snare", snare_ref)))
+
         for cid, c in self.choices.items():
             if len(c["pool"]) <= c["count"]:
                 continue
             out[cid] = {}
             for opt in c["pool"]:
-                if cid == "groove":
-                    mix = loop(opt, "kick", kick) + loop(opt, "snare", snare)
-                elif cid == "fill":
-                    mix = loop(opt, "kick", kick) + loop(opt, "snare", snare)
+                if cid in ("groove", "fill"):
+                    mix = drums(opt)
                 elif cid == "kick_sound":
-                    mix = loop(groove, "kick", opt) + 0.6 * loop(groove, "snare", snare)
+                    mix = drums(self._clip_for(opt, "kick", groove_ref), kick=opt, snare_gain=0.6)
                 elif cid == "snare_sound":
-                    mix = 0.6 * loop(groove, "kick", kick) + loop(groove, "snare", opt)
+                    mix = drums(self._clip_for(opt, "snare", groove_ref), snare=opt, kick_gain=0.6)
                 elif cid == "bass":
-                    mix = loop(opt, "bass", voice)
-                else:
-                    mix = loop(bass, "bass", opt)
+                    mix = loop(opt, "bass", self._sound_for(opt, "bass", voice_ref))
+                elif cid == "bass_voice":
+                    mix = loop(self._clip_for(opt, "bass", bass_ref), "bass", opt)
+                else:  # accompaniment
+                    mix = loop(opt, "other", self._sound_for(opt, "other", acc_usage.sound_ref if acc_usage else None))
                 fade = 2400
                 mix[-fade:] *= np.linspace(1.0, 0.0, fade, dtype=np.float32)[:, None]
                 fname = f"preview/{cid}__{opt}.ogg"
@@ -449,6 +593,41 @@ class Mission:
         return out
 
     # --- output ---------------------------------------------------------------------------------------------------
+    def _choice_entries(self, names: dict) -> list[dict]:
+        """The pack's choices, with `depends_on` and per-option `with` where a sound choice pairs with a clip choice."""
+        pairs: dict[str, set] = {}
+        for u in self.usages.values():
+            if u.sound_ref.choice and u.clip_ref.choice:
+                pairs.setdefault(u.sound_ref.choice, set()).add((u.clip_ref.choice, u.family))
+        out = []
+        for cid, c in self.choices.items():
+            entry = {"id": cid, "label": c["label"], "count": c["count"], "default": c["default"],
+                     "pool": [{"id": o, "name": names.get(o, o)} for o in c["pool"]]}
+            if cid in pairs:
+                if len(pairs[cid]) > 1:
+                    self.err(f"choice {cid} pairs with several clip choices {sorted(pairs[cid])}; the game can follow one")
+                parent, family = next(iter(pairs[cid]))
+                clips = self.choices[parent]["pool"]
+                restricted = False
+                for o in entry["pool"]:
+                    with_ = [cl for cl in clips if self.lib.compatible(cl, family, o["id"])]
+                    if len(with_) < len(clips):
+                        o["with"] = with_
+                        restricted = True
+                if restricted:
+                    entry["depends_on"] = parent
+            out.append(entry)
+        return out
+
+    def bound_sounds(self) -> dict:
+        out: dict[str, dict] = {}
+        for u in self.usages.values():
+            if u.sound_ref.bound:
+                for c in u.clip_ref.options(self.choices):
+                    for s in self.sound_options(u, c):
+                        out.setdefault(c, {})[u.family] = s
+        return out
+
     def level_json(self, stems: list[dict], previews: dict, stats: dict) -> dict:
         waves_path = ROOT / self.data["battle"]["waves"]
         waves = read_json(waves_path)
@@ -458,6 +637,8 @@ class Mission:
         rules = dict(waves.get("rules", {}))
         rules.update(battle.get("rules", {}))
         self._check_walls(rules, battle.get("battlefield", waves.get("battlefield", "defense_02")))
+        bound = self.bound_sounds()
+        used = self._fixed_ids() | {s for d in bound.values() for s in d.values()} | {c for c in bound}
         return {
             "schema_version": 3,
             "mode": "defense",
@@ -474,19 +655,20 @@ class Mission:
             "roster": "openra_mvp_01",
             "rules": rules,
             "sequence_threshold": float(self.data.get("sequence_threshold", RULES["sequence"]["threshold"])),
-            "intro": self.data.get("intro", ""),
-            "intro_bar": int(self.data.get("intro_bar", 1)),
+            "intro": self.intros[0]["text"] if self.intros else "",
+            "intro_bar": self.intros[0]["bar"] if self.intros else 1,
+            "intros": self.intros,
             "placeholder": placeholder,
             "source": {"mission": rel(self.path), "waves": rel(waves_path), "builder": "tools/content/build.py"},
-            "choices": [{"id": cid, "label": c["label"], "count": c["count"], "default": c["default"],
-                         "pool": [{"id": o, "name": names.get(o, o)} for o in c["pool"]]} for cid, c in self.choices.items()],
-            "names": {k: v for k, v in names.items() if any(k in c["pool"] for c in self.choices.values()) or k in self._fixed_ids()},
+            "choices": self._choice_entries(names),
+            "names": {k: v for k, v in names.items() if any(k in c["pool"] for c in self.choices.values()) or k in used},
+            "bound_sounds": bound,
             "phases": [{"id": ph["id"], "start_tick": ph["start"], "end_tick": ph["end"], "mode": ph["mode"], "pads": ph["pads"]} for ph in self.phases],
             "stems": stems,
             "cue_blocks": [{k: b[k] for k in ("phase", "family", "pad", "voice", "deps", "start_tick", "end_tick", "options")} for b in self.blocks],
             "sequences": self.sequences,
             "previews": previews,
-            "content": {k: stats[k] for k in ("files", "placeholder_files", "owner_files", "default_mix_peak_db")},
+            "content": {k: stats[k] for k in ("files", "placeholder_files", "owner_files", "default_mix_peak_db", "loudest_mix_bound_db")},
             "waves": [self._wave(w) for w in waves["waves"]],
         }
 
@@ -541,6 +723,8 @@ def build(path: Path, lib: Library, songs: Path = SONGS, write: bool = True) -> 
         return m
     if write:
         level = m.level_json(stems, previews, stats)
+        if m.errors:
+            return m
         write_json(out_dir / "level.json", level)
         keep = {s["files"][k]["file"] for s in stems for k in s["files"]} | {f for c in previews.values() for f in c.values()}
         for sub in ("audio", "preview"):

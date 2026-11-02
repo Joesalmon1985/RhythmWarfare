@@ -27,20 +27,24 @@ def main() -> None:
     needed: dict[tuple[str, str], set[str]] = {}
     used_in: dict[str, set[int]] = {}
     for m in missions:
-        for u in m.usages.values():
-            for c in u.clip_ref.options(m.choices):
-                used_in.setdefault(c, set()).add(m.number)
-                for s in u.sound_ref.options(m.choices):
-                    needed.setdefault((c, u.family), set()).add(s)
+        for c, part, s in m.render_pairs():
+            used_in.setdefault(c, set()).add(m.number)
+            needed.setdefault((c, part), set()).add(s)
     sounds = {s.id: s.name for s in lib.sounds.values()}
+    in_place = {(c, part): {s for s in v if lib.owner_render_path(lib.clips[c], part, s).exists()} for (c, part), v in needed.items()}
     total_wav = sum(len(v) for v in needed.values())
+    total_done = sum(len(v) for v in in_place.values())
     lines = [
         "# Content to render: every file that replaces a placeholder",
         "",
         "Written by `python tools/content/render_list.py` from the loop library and the ten missions; rerun it after changing either.",
-        f"Everything in the game is placeholder sound today. There are **{len([c for c in lib.clips if c in used_in])} clips** and "
-        f"**{total_wav} WAV renders** below. You never render whole songs: each clip is rendered once per sound it is offered with, "
-        "and the build assembles the missions from those pieces.",
+        f"There are **{len([c for c in lib.clips if c in used_in])} clips** and **{total_wav} WAV renders** below, of which "
+        f"**{total_done} are your recordings already in place** (marked *in place*; the rest play generated placeholders). You never "
+        "render whole songs: each clip is rendered once per sound it is offered with, and the build assembles the missions from those pieces.",
+        "",
+        "Batches exported from Ableton at 44.1 kHz (and MIDI longer than the clip) go through `tools/content/import_ableton.py`",
+        "with a manifest like `content/imports/first_watch.json`: it converts, trims, gain-stages and files them (see",
+        "`content/README.md`). Files already at 48 kHz can be dropped straight into the clip folder instead.",
         "",
         "## Export settings (every WAV)",
         "",
@@ -91,7 +95,10 @@ def main() -> None:
         tail = tick_to_seconds((clip.bars + TAIL_BARS) * TICKS_PER_BAR)
         src = clip.data.get("source", {})
         origin = "your First_Three MIDI, " + ", ".join(sorted({f"{Path(x['file']).parts[2]} bars {x['bars'][0]}-{x['bars'][1]}" for p in src.get("parts", {}).values() for x in p})) \
-            if src.get("type") == "derived" else ("generated placeholder MIDI" if src.get("type") == "generated" else "your MIDI")
+            if src.get("type") == "derived" else ("generated placeholder MIDI" if src.get("type") == "generated" else
+                                                  (f"your Ableton export (imported through `{src.get('manifest', '')}`)" if src.get("type") == "imported" else "your MIDI"))
+        if clip.audio_only:
+            origin = "no MIDI (audio-only accompaniment, never cued)"
         lines.append(f"### `{cid}`: {clip.name}")
         lines.append("")
         lines.append(f"{KIND_TEXT[clip.kind]}, **{clip.bars} bars** ({secs:.2f} s; with the longest tail {tail:.2f} s), "
@@ -101,9 +108,11 @@ def main() -> None:
         lines.append("| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |")
         lines.append("| --- | --- | --- | --- | --- |")
         for part in clip.parts:
+            midi = "(none: audio only)" if clip.audio_only else f"`{rel(clip.folder / (part + '.mid'))}`"
             for s in sorted(needed.get((cid, part), [])):
-                lines.append(f"| {part} | `{rel(clip.folder / (part + '.mid'))}` | `{rel(clip.folder / (part + '__' + s + '.wav'))}` | {sounds[s]} | "
-                             f"`placeholder/{part}__{s}.wav` |")
+                done = s in in_place.get((cid, part), set())
+                ref = "*in place*" if done else f"`placeholder/{part}__{s}.wav`"
+                lines.append(f"| {part} | {midi} | `{rel(clip.folder / (part + '__' + s + '.wav'))}` | {sounds[s]} | {ref} |")
         lines.append("")
     lines += ["## Sounds", "", "| Sound id | Name | Family |", "| --- | --- | --- |"]
     for s in lib.sounds.values():
@@ -112,7 +121,7 @@ def main() -> None:
               "`content/library/<new_id>/` and edit its `clip.json`), offer it in a mission's choices (`content/missions/level_NN.json`)",
               "and run the build: it lists the renders it still needs as placeholders.", ""]
     (ROOT / "docs" / "CONTENT_TO_RENDER.md").write_text("\n".join(lines), encoding="utf-8")
-    print(f"docs/CONTENT_TO_RENDER.md: {len(used_in)} clips, {total_wav} WAV files")
+    print(f"docs/CONTENT_TO_RENDER.md: {len(used_in)} clips, {total_wav} WAV files ({total_done} in place)")
 
 
 if __name__ == "__main__":

@@ -31,6 +31,11 @@ static func parse(d: Dictionary, pack_dir: String, options: Dictionary, errors: 
 	level.sequence_threshold = float(d.get("sequence_threshold", 0.6))
 	level.intro = str(d.get("intro", ""))
 	level.intro_bar = int(d.get("intro_bar", 1))
+	var intros: Variant = d.get("intros", [])
+	level.intros = intros if typeof(intros) == TYPE_ARRAY else []
+	if level.intros.is_empty() and not level.intro.is_empty():
+		level.intros = [{"bar": level.intro_bar, "text": level.intro}]
+	level.bound_sounds = d.get("bound_sounds", {})
 	level.choices = d.get("choices", [])
 	level.names = d.get("names", {})
 	level.previews = d.get("previews", {})
@@ -56,7 +61,8 @@ static func parse(d: Dictionary, pack_dir: String, options: Dictionary, errors: 
 	return level
 
 
-## Defaults for anything not chosen; a chosen option must be in the pool, distinct, and the right count.
+## Defaults for anything not chosen; a chosen option must be in the pool, distinct, and the right count. A choice
+## that depends on another (a bass sound recorded from one bass line) is then made to fit that choice's pick.
 static func resolve_selection(choices: Array, wanted: Dictionary, warnings: Array) -> Dictionary:
 	var out := {}
 	for c in choices:
@@ -77,7 +83,54 @@ static func resolve_selection(choices: Array, wanted: Dictionary, warnings: Arra
 			for o in c["default"]:
 				pick.append(str(o))
 		out[cid] = pick
+	fit_dependents(choices, out, warnings)
 	return out
+
+
+## Whether option `oid` of a choice may be picked while `clip` is the pick of the choice it depends on. An option
+## without a "with" list fits every clip.
+static func option_fits(choice: Dictionary, oid: String, clip: String) -> bool:
+	for o in choice["pool"]:
+		if str(o["id"]) == oid:
+			return not o.has("with") or (o["with"] as Array).has(clip)
+	return false
+
+
+## The clip (of the choice `choice` depends on) that slot `slot` of it pairs with: the same slot, else the last one.
+static func parent_pick(choice: Dictionary, picks: Dictionary, slot: int) -> String:
+	var parent: Array = picks.get(str(choice.get("depends_on", "")), [])
+	if parent.is_empty():
+		return ""
+	return str(parent[mini(slot, parent.size() - 1)])
+
+
+## Replace every pick of a dependent choice that does not fit its clip: the slot's default when that fits, else the
+## first fitting option not already picked. Edits `picks` in place; says what changed in `warnings`.
+static func fit_dependents(choices: Array, picks: Dictionary, warnings: Array) -> void:
+	for c in choices:
+		if not c.has("depends_on"):
+			continue
+		var cid := str(c["id"])
+		var mine: Array = picks.get(cid, [])
+		for k in mine.size():
+			var clip := parent_pick(c, picks, k)
+			if clip.is_empty() or option_fits(c, str(mine[k]), clip):
+				continue
+			var repl := ""
+			var defaults: Array = c["default"]
+			var want := str(defaults[mini(k, defaults.size() - 1)])
+			if option_fits(c, want, clip) and not mine.has(want):
+				repl = want
+			else:
+				for o in c["pool"]:
+					if option_fits(c, str(o["id"]), clip) and not mine.has(str(o["id"])):
+						repl = str(o["id"])
+						break
+			if repl.is_empty():
+				warnings.append("choice %s: nothing in its pool plays %s" % [cid, clip])
+				continue
+			warnings.append("choice %s: %s does not play %s, using %s" % [cid, str(mine[k]), clip, repl])
+			mine[k] = repl
 
 
 static func _key(deps: Array, selection: Dictionary) -> String:

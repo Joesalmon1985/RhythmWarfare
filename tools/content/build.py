@@ -49,7 +49,8 @@ def run(only: list[str] | None = None, check: bool = False, library: Path = LIBR
             st = getattr(m, "stats", {})
             status = "FAILED" if m.errors else ("checked" if check else f"-> {rel(songs / m.pack)}")
             print(f"{m.level_id} {m.title}: {len(m.sequences)} sequences, {sum(len(b['options']) for b in m.blocks)} cue lists, "
-                  f"{st.get('files', 0)} stem files ({st.get('placeholder_files', 0)} placeholder), mix peak {st.get('default_mix_peak_db', '-')} dBFS  {status}")
+                  f"{st.get('files', 0)} stem files ({st.get('placeholder_files', 0)} placeholder), default mix peak "
+                  f"{st.get('default_mix_peak_db', '-')} dBFS, loudest options at most {st.get('loudest_mix_bound_db', '-')} dBFS  {status}")
     warnings = lib.warnings + [w for m in built for w in m.warnings]
     if not errors:
         lib.save_state()
@@ -71,18 +72,16 @@ def run(only: list[str] | None = None, check: bool = False, library: Path = LIBR
 
 def write_report(lib: Library, built: list, warnings: list[str], path: Path) -> None:
     lines = ["# Content report", "", "Written by `python tools/content/build.py`. Do not edit; rebuild instead.", ""]
-    lines += ["## Missions", "", "| Mission | Pack | Stem files | Placeholder | Owner | Default mix peak |", "| --- | --- | --- | --- | --- | --- |"]
+    lines += ["## Missions", "", "| Mission | Pack | Stem files | Placeholder | Owner | Default mix peak | Loudest options (bound) |",
+              "| --- | --- | --- | --- | --- | --- | --- |"]
     for m in built:
         st = getattr(m, "stats", {})
         lines.append(f"| {m.number} {m.title} | songs/{m.pack} | {st.get('files', 0)} | {st.get('placeholder_files', 0)} | "
-                     f"{st.get('owner_files', 0)} | {st.get('default_mix_peak_db', '-')} dBFS |")
+                     f"{st.get('owner_files', 0)} | {st.get('default_mix_peak_db', '-')} dBFS | {st.get('loudest_mix_bound_db', '-')} dBFS |")
     lines += ["", "## Library renders in use", "", "| Clip | Part | Sound | Source |", "| --- | --- | --- | --- |"]
     used = set()
     for m in built:
-        for u in m.usages.values():
-            for c in u.clip_ref.options(m.choices):
-                for s in u.sound_ref.options(m.choices):
-                    used.add((c, u.family, s))
+        used |= set(m.render_pairs())
     for c, part, s in sorted(used):
         clip = lib.clips[c]
         owner = lib.owner_render_path(clip, part, s)
@@ -91,7 +90,10 @@ def write_report(lib: Library, built: list, warnings: list[str], path: Path) -> 
     lines += ["", "## MIDI", "", "| Clip | Part | Origin |", "| --- | --- | --- |"]
     for cid, clip in sorted(lib.clips.items()):
         for part in clip.parts:
-            lines.append(f"| {cid} | {part} | {clip.midi_origin.get(part, '?')} |")
+            origin = clip.midi_origin.get(part, "?")
+            if clip.sounds.get(part):
+                origin += f"; declared renders: {', '.join(clip.sounds[part])}"
+            lines.append(f"| {cid} | {part} | {origin} |")
     lines += ["", "## Listening checkpoints", "",
               "Equal lengths do not prove sync. After replacing audio, play the mission (or its practice) and listen at these",
               "song times: the first downbeat, every mode change and the last bar.", ""]

@@ -130,13 +130,22 @@ no rendering) with a scripted input policy at 60 Hz. One row per mission, policy
 Seeds change the battle simulation and the input draws. A simulation pass is evidence about the waves, not about how
 hard a mission feels to a person: nobody has played these missions.
 
+## Mission 1 rebuilt on the owner's recordings (2 November 2026)
+
+Mission 1 is now 48 bars (66.2 s), six eight-bar phases DDBDBD, 12 four-bar sequences rewarding 7 pillboxes and
+5 jeeps, over 11 waves of riflemen (3 to 6 each, two with a jeep; 54 riflemen and 2 jeeps, the last wave at bar 32).
+Tuned with `tools/balance_missions.py --missions m01 --seeds 1 2 3` so that perfect play destroys every wave before the
+song ends (the harness's `waves` block: every wave `cleared_s` >= 0, killed = total = 56) while beginner and sloppy play
+still win and no input loses; four lighter schedules were tried first (the heaviest left 6 of 11 waves standing). The
+rows below and in the raw table replace the 31 October rows for mission 1; the other nine missions are unchanged.
+
 ## Results (seeds 1 to 6 for perfect and beginner, 1 to 3 for sloppy and none; desktop headless, 31 Oct 2026)
 
 Per mission, every run's sequences passed, defenses alive at the end (built and prebuilt) and the command core's health.
 
 | Mission | perfect | beginner | sloppy | none |
 | --- | --- | --- | --- | --- |
-| 1 First Watch | 6/6 wins; seq 8/8 8/8 8/8 8/8 8/8 8/8; defenses 6/6/6/6/6/6; core 100%/100%/100%/100%/100%/100% | 6/6 wins; seq 8/8 8/8 8/8 8/8 8/8 8/8; defenses 5/5/5/5/5/5; core 100%/100%/100%/100%/100%/100% | 3/3 wins; seq 7/8 8/8 6/8; defenses 5/5/4; core 100%/100%/100% | 0/3 wins; lost at 40.8 s, 42.2 s, 37.8 s |
+| 1 First Watch (rebuilt 2 Nov 2026, seeds 1 to 3) | 3/3 wins; seq 12/12 12/12 12/12; defenses 7/7/7; core 100%/100%/100%; every wave destroyed (56/56) | 3/3 wins; seq 11/12 12/12 11/12; defenses 5/6/5; core 100%/100%/100% | 3/3 wins; seq 8/12 10/12 11/12; defenses 4/5/5; core 100%/100%/100% | 0/3 wins; lost at 37.3 s, 44.5 s, 40.6 s |
 | 2 Second Pulse | 6/6 wins; seq 10/10 10/10 10/10 10/10 10/10 10/10; defenses 8/8/8/8/8/8; core 100%/100%/100%/100%/100%/100% | 6/6 wins; seq 10/10 10/10 10/10 10/10 10/10 10/10; defenses 7/7/7/7/7/7; core 100%/100%/100%/100%/100%/100% | 2/3 wins; seq 9/10 10/10 5/10; defenses 6/7/3; core 100%/100%/0%; lost s3 32.6 s | 0/3 wins; lost at 28.4 s, 28.5 s, 28.5 s |
 | 3 Hold the Line | 6/6 wins; seq 12/12 12/12 12/12 12/12 12/12 12/12; defenses 5/4/4/4/5/5; core 100%/100%/100%/100%/100%/100% | 6/6 wins; seq 11/12 11/12 12/12 12/12 10/12 11/12; defenses 5/5/5/4/4/5; core 100%/100%/100%/100%/100%/100% | 3/3 wins; seq 8/12 8/12 12/12; defenses 3/5/5; core 100%/100%/100% | 0/3 wins; lost at 39.0 s, 39.1 s, 39.6 s |
 | 4 Backbeat | 6/6 wins; seq 12/12 12/12 12/12 12/12 12/12 12/12; defenses 7/8/8/7/7/7; core 100%/100%/100%/100%/100%/100% | 6/6 wins; seq 12/12 11/12 12/12 12/12 12/12 12/12; defenses 8/7/8/8/8/8; core 100%/100%/100%/100%/100%/100% | 3/3 wins; seq 11/12 11/12 9/12; defenses 7/5/5; core 100%/100%/100% | 0/3 wins; lost at 30.1 s, 30.1 s, 30.1 s |
@@ -231,7 +240,7 @@ depot) has art but no unit-repair behaviour in the simulation, so it is not offe
 
 | Mission | Bars, seconds | Phases (D drums, B bass) | Sequences | Choices (pick of pool) | Streams at once | Pack (Ogg) |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 First Watch | 32, 44.1 s | DDDD | 8 | kick sound 1 of 2 | 3 | 0.5 MB |
+| 1 First Watch | 48, 66.2 s | DDBDBD | 12 | groove 1/3, bass line 1/2, bass sound 1/9 (5 or 4 fit the line), backing 1/3 | 4 | 10.0 MB |
 | 2 Second Pulse | 40, 55.2 s | DDDDD | 10 | groove 1/2, kick 1/2, snare 1/2 | 5 | 1.2 MB |
 | 3 Hold the Line | 48, 66.2 s | DBDBDB | 12 | kick 1/2, snare 1/2, bass voice 1/2 | 6 | 2.0 MB |
 | 4 Backbeat | 48, 66.2 s | DDDDDD | 12 | groove 1/2, kick 1/3, snare 1/3 | 5 | 3.3 MB |
@@ -254,18 +263,18 @@ sample-exact placement test. The beginner and sloppy policies are models of mist
 
 | Mission | Policy | Seed | Outcome | At | Sequences (sharp/steady/loose) | Built | Units | Repairs | Defenses alive | Core | Enemies killed | Peak units (you / enemy) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 First Watch | perfect | 1 | victory | 44.1 s | 8/8 (8/0/0) | 6 | 2 | 0 | 6 | 100% | 28 | 1 / 32 |
-| 1 First Watch | perfect | 2 | victory | 44.1 s | 8/8 (8/0/0) | 6 | 2 | 0 | 6 | 100% | 29 | 2 / 32 |
-| 1 First Watch | perfect | 3 | victory | 44.1 s | 8/8 (8/0/0) | 6 | 2 | 0 | 6 | 100% | 29 | 2 / 32 |
-| 1 First Watch | beginner | 1 | victory | 44.1 s | 8/8 (0/8/0) | 6 | 2 | 0 | 5 | 100% | 28 | 2 / 33 |
-| 1 First Watch | beginner | 2 | victory | 44.1 s | 8/8 (2/5/1) | 6 | 2 | 0 | 5 | 100% | 29 | 2 / 33 |
-| 1 First Watch | beginner | 3 | victory | 44.1 s | 8/8 (3/5/0) | 6 | 2 | 0 | 5 | 100% | 29 | 1 / 32 |
-| 1 First Watch | sloppy | 1 | victory | 44.1 s | 7/8 (0/5/2) | 6 | 1 | 0 | 5 | 100% | 29 | 1 / 33 |
-| 1 First Watch | sloppy | 2 | victory | 44.1 s | 8/8 (0/3/5) | 6 | 2 | 0 | 5 | 100% | 28 | 1 / 33 |
-| 1 First Watch | sloppy | 3 | victory | 44.1 s | 6/8 (0/3/3) | 4 | 2 | 0 | 4 | 100% | 20 | 2 / 36 |
-| 1 First Watch | none | 1 | defeat | 40.8 s | 0/8 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 45 |
-| 1 First Watch | none | 2 | defeat | 42.2 s | 0/8 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 45 |
-| 1 First Watch | none | 3 | defeat | 37.8 s | 0/8 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 45 |
+| 1 First Watch | perfect | 1 | victory | 66.2 s | 12/12 (12/0/0) | 7 | 5 | 0 | 7 | 100% | 56 | 3 / 29 |
+| 1 First Watch | perfect | 2 | victory | 66.2 s | 12/12 (12/0/0) | 7 | 5 | 0 | 7 | 100% | 56 | 3 / 27 |
+| 1 First Watch | perfect | 3 | victory | 66.2 s | 12/12 (12/0/0) | 7 | 5 | 0 | 7 | 100% | 56 | 3 / 28 |
+| 1 First Watch | beginner | 1 | victory | 66.2 s | 11/12 (1/10/0) | 6 | 5 | 0 | 5 | 100% | 55 | 3 / 28 |
+| 1 First Watch | beginner | 2 | victory | 66.2 s | 12/12 (0/12/0) | 7 | 5 | 0 | 6 | 100% | 56 | 3 / 30 |
+| 1 First Watch | beginner | 3 | victory | 66.2 s | 11/12 (3/8/0) | 6 | 5 | 0 | 5 | 100% | 54 | 3 / 28 |
+| 1 First Watch | sloppy | 1 | victory | 66.2 s | 8/12 (0/4/4) | 5 | 3 | 0 | 4 | 100% | 52 | 2 / 33 |
+| 1 First Watch | sloppy | 2 | victory | 66.2 s | 10/12 (0/2/8) | 6 | 4 | 0 | 5 | 100% | 54 | 2 / 31 |
+| 1 First Watch | sloppy | 3 | victory | 66.2 s | 11/12 (0/5/6) | 6 | 5 | 0 | 5 | 100% | 50 | 3 / 32 |
+| 1 First Watch | none | 1 | defeat | 37.3 s | 0/12 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 41 |
+| 1 First Watch | none | 2 | defeat | 44.5 s | 0/12 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 56 |
+| 1 First Watch | none | 3 | defeat | 40.6 s | 0/12 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 50 |
 | 2 Second Pulse | perfect | 1 | victory | 55.2 s | 10/10 (10/0/0) | 8 | 2 | 0 | 8 | 100% | 31 | 2 / 43 |
 | 2 Second Pulse | perfect | 2 | victory | 55.2 s | 10/10 (10/0/0) | 8 | 2 | 0 | 8 | 100% | 29 | 2 / 43 |
 | 2 Second Pulse | perfect | 3 | victory | 55.2 s | 10/10 (10/0/0) | 8 | 2 | 0 | 8 | 100% | 29 | 2 / 43 |
