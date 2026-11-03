@@ -1,0 +1,2850 @@
+{
+ "version": 1,
+ "level": "night_one",
+ "px_scale_note": "texture px x px_scale = design px",
+ "archetypes": {
+  "groover": {
+   "height": 298,
+   "joints": {
+    "hips": [
+     0,
+     -112
+    ],
+    "torso": [
+     0,
+     -122
+    ],
+    "head": [
+     0,
+     -201
+    ],
+    "shoulder_l": [
+     -30,
+     -186
+    ],
+    "shoulder_r": [
+     30,
+     -186
+    ],
+    "hip_l": [
+     -11,
+     -108
+    ],
+    "hip_r": [
+     11,
+     -108
+    ],
+    "elbow_l": [
+     -35.1,
+     -144.3
+    ],
+    "elbow_r": [
+     35.1,
+     -144.3
+    ]
+   },
+   "variants": {
+    "a": {
+     "parts": [
+      {
+       "name": "hair_back",
+       "joint": "head",
+       "z": -20,
+       "file": "source/chars/groover_a/hair_back.svg",
+       "pivot": [
+        116,
+        202
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_l",
+       "joint": "hip_l",
+       "z": -10,
+       "file": "source/chars/groover_a/leg_l.svg",
+       "pivot": [
+        94,
+        46
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_r",
+       "joint": "hip_r",
+       "z": -10,
+       "file": "source/chars/groover_a/leg_r.svg",
+       "pivot": [
+        72,
+        46
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "pelvis",
+       "joint": "hips",
+       "z": -5,
+       "file": "source/chars/groover_a/pelvis.svg",
+       "pivot": [
+        68,
+        36
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "torso",
+       "joint": "torso",
+       "z": 0,
+       "file": "source/chars/groover_a/torso.svg",
+       "pivot": [
+        78,
+        176
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_up",
+       "joint": "shoulder_l",
+       "z": 5,
+       "file": "source/chars/groover_a/arm_l_up.svg",
+       "pivot": [
+        42,
+        32
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_fore",
+       "joint": "elbow_l",
+       "z": 4,
+       "file": "source/chars/groover_a/arm_l_fore.svg",
+       "pivot": [
+        51.8,
+        35.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_up",
+       "joint": "shoulder_r",
+       "z": 5,
+       "file": "source/chars/groover_a/arm_r_up.svg",
+       "pivot": [
+        32,
+        32
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_fore",
+       "joint": "elbow_r",
+       "z": 4,
+       "file": "source/chars/groover_a/arm_r_fore.svg",
+       "pivot": [
+        36.2,
+        35.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "head",
+       "joint": "head",
+       "z": 10,
+       "file": "source/chars/groover_a/head.svg",
+       "pivot": [
+        76,
+        130
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/groover_a/hair_front.svg",
+       "pivot": [
+        108,
+        210
+       ],
+       "px_scale": 0.5
+      }
+     ],
+     "faces": {
+      "neutral": {
+       "file": "source/chars/groover_a/face_neutral.svg",
+       "pivot": [
+        64,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "happy": {
+       "file": "source/chars/groover_a/face_happy.svg",
+       "pivot": [
+        64,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "cheer": {
+       "file": "source/chars/groover_a/face_cheer.svg",
+       "pivot": [
+        64,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "sad": {
+       "file": "source/chars/groover_a/face_sad.svg",
+       "pivot": [
+        64,
+        126
+       ],
+       "px_scale": 0.5
+      }
+     },
+     "face_z": 12,
+     "glow_hand": {
+      "joint": "elbow_r",
+      "at": [
+       53.0,
+       130.3
+      ],
+      "joint_l": "elbow_l",
+      "at_l": [
+       35.0,
+       130.3
+      ]
+     }
+    },
+    "b": {
+     "parts": [
+      {
+       "name": "hair_back",
+       "joint": "head",
+       "z": -20,
+       "file": "source/chars/groover_b/hair_back.svg",
+       "pivot": [
+        116,
+        202
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_l",
+       "joint": "hip_l",
+       "z": -10,
+       "file": "source/chars/groover_b/leg_l.svg",
+       "pivot": [
+        94,
+        46
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_r",
+       "joint": "hip_r",
+       "z": -10,
+       "file": "source/chars/groover_b/leg_r.svg",
+       "pivot": [
+        72,
+        46
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "pelvis",
+       "joint": "hips",
+       "z": -5,
+       "file": "source/chars/groover_b/pelvis.svg",
+       "pivot": [
+        68,
+        36
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "torso",
+       "joint": "torso",
+       "z": 0,
+       "file": "source/chars/groover_b/torso.svg",
+       "pivot": [
+        78,
+        176
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_up",
+       "joint": "shoulder_l",
+       "z": 5,
+       "file": "source/chars/groover_b/arm_l_up.svg",
+       "pivot": [
+        42,
+        32
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_fore",
+       "joint": "elbow_l",
+       "z": 4,
+       "file": "source/chars/groover_b/arm_l_fore.svg",
+       "pivot": [
+        51.8,
+        35.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_up",
+       "joint": "shoulder_r",
+       "z": 5,
+       "file": "source/chars/groover_b/arm_r_up.svg",
+       "pivot": [
+        32,
+        32
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_fore",
+       "joint": "elbow_r",
+       "z": 4,
+       "file": "source/chars/groover_b/arm_r_fore.svg",
+       "pivot": [
+        36.2,
+        35.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "head",
+       "joint": "head",
+       "z": 10,
+       "file": "source/chars/groover_b/head.svg",
+       "pivot": [
+        76,
+        130
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/groover_b/hair_front.svg",
+       "pivot": [
+        108,
+        210
+       ],
+       "px_scale": 0.5
+      }
+     ],
+     "faces": {
+      "neutral": {
+       "file": "source/chars/groover_b/face_neutral.svg",
+       "pivot": [
+        64,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "happy": {
+       "file": "source/chars/groover_b/face_happy.svg",
+       "pivot": [
+        64,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "cheer": {
+       "file": "source/chars/groover_b/face_cheer.svg",
+       "pivot": [
+        64,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "sad": {
+       "file": "source/chars/groover_b/face_sad.svg",
+       "pivot": [
+        64,
+        126
+       ],
+       "px_scale": 0.5
+      }
+     },
+     "face_z": 12,
+     "glow_hand": {
+      "joint": "elbow_r",
+      "at": [
+       53.0,
+       130.3
+      ],
+      "joint_l": "elbow_l",
+      "at_l": [
+       35.0,
+       130.3
+      ]
+     }
+    }
+   }
+  },
+  "ponytail": {
+   "height": 256,
+   "joints": {
+    "hips": [
+     0,
+     -100
+    ],
+    "torso": [
+     0,
+     -110
+    ],
+    "head": [
+     0,
+     -187
+    ],
+    "shoulder_l": [
+     -24,
+     -172
+    ],
+    "shoulder_r": [
+     24,
+     -172
+    ],
+    "hip_l": [
+     -12,
+     -96
+    ],
+    "hip_r": [
+     12,
+     -96
+    ],
+    "elbow_l": [
+     -28.6,
+     -134.3
+    ],
+    "elbow_r": [
+     28.6,
+     -134.3
+    ]
+   },
+   "variants": {
+    "a": {
+     "parts": [
+      {
+       "name": "hair_back",
+       "joint": "head",
+       "z": -20,
+       "file": "source/chars/ponytail_a/hair_back.svg",
+       "pivot": [
+        -10,
+        122
+       ],
+       "px_scale": 0.5,
+       "swing": true,
+       "swing_pivot": [
+        27.0,
+        29.4
+       ]
+      },
+      {
+       "name": "leg_l",
+       "joint": "hip_l",
+       "z": -10,
+       "file": "source/chars/ponytail_a/leg_l.svg",
+       "pivot": [
+        94,
+        46
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_r",
+       "joint": "hip_r",
+       "z": -10,
+       "file": "source/chars/ponytail_a/leg_r.svg",
+       "pivot": [
+        82,
+        46
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "pelvis",
+       "joint": "hips",
+       "z": -5,
+       "file": "source/chars/ponytail_a/pelvis.svg",
+       "pivot": [
+        64,
+        36
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "torso",
+       "joint": "torso",
+       "z": 0,
+       "file": "source/chars/ponytail_a/torso.svg",
+       "pivot": [
+        66,
+        172
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_up",
+       "joint": "shoulder_l",
+       "z": 5,
+       "file": "source/chars/ponytail_a/arm_l_up.svg",
+       "pivot": [
+        40,
+        30
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_fore",
+       "joint": "elbow_l",
+       "z": 4,
+       "file": "source/chars/ponytail_a/arm_l_fore.svg",
+       "pivot": [
+        48.7,
+        33.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_up",
+       "joint": "shoulder_r",
+       "z": 5,
+       "file": "source/chars/ponytail_a/arm_r_up.svg",
+       "pivot": [
+        30,
+        30
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_fore",
+       "joint": "elbow_r",
+       "z": 4,
+       "file": "source/chars/ponytail_a/arm_r_fore.svg",
+       "pivot": [
+        33.3,
+        33.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "head",
+       "joint": "head",
+       "z": 10,
+       "file": "source/chars/ponytail_a/head.svg",
+       "pivot": [
+        78,
+        130
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/ponytail_a/hair_front.svg",
+       "pivot": [
+        70,
+        138
+       ],
+       "px_scale": 0.5
+      }
+     ],
+     "faces": {
+      "neutral": {
+       "file": "source/chars/ponytail_a/face_neutral.svg",
+       "pivot": [
+        66,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "happy": {
+       "file": "source/chars/ponytail_a/face_happy.svg",
+       "pivot": [
+        66,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "cheer": {
+       "file": "source/chars/ponytail_a/face_cheer.svg",
+       "pivot": [
+        66,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "sad": {
+       "file": "source/chars/ponytail_a/face_sad.svg",
+       "pivot": [
+        66,
+        126
+       ],
+       "px_scale": 0.5
+      }
+     },
+     "face_z": 12,
+     "glow_hand": {
+      "joint": "elbow_r",
+      "at": [
+       48.8,
+       121.4
+      ],
+      "joint_l": "elbow_l",
+      "at_l": [
+       33.2,
+       121.4
+      ]
+     }
+    },
+    "b": {
+     "parts": [
+      {
+       "name": "hair_back",
+       "joint": "head",
+       "z": -20,
+       "file": "source/chars/ponytail_b/hair_back.svg",
+       "pivot": [
+        -10,
+        122
+       ],
+       "px_scale": 0.5,
+       "swing": true,
+       "swing_pivot": [
+        27.0,
+        29.4
+       ]
+      },
+      {
+       "name": "leg_l",
+       "joint": "hip_l",
+       "z": -10,
+       "file": "source/chars/ponytail_b/leg_l.svg",
+       "pivot": [
+        94,
+        46
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_r",
+       "joint": "hip_r",
+       "z": -10,
+       "file": "source/chars/ponytail_b/leg_r.svg",
+       "pivot": [
+        82,
+        46
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "pelvis",
+       "joint": "hips",
+       "z": -5,
+       "file": "source/chars/ponytail_b/pelvis.svg",
+       "pivot": [
+        64,
+        36
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "torso",
+       "joint": "torso",
+       "z": 0,
+       "file": "source/chars/ponytail_b/torso.svg",
+       "pivot": [
+        66,
+        172
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_up",
+       "joint": "shoulder_l",
+       "z": 5,
+       "file": "source/chars/ponytail_b/arm_l_up.svg",
+       "pivot": [
+        40,
+        30
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_fore",
+       "joint": "elbow_l",
+       "z": 4,
+       "file": "source/chars/ponytail_b/arm_l_fore.svg",
+       "pivot": [
+        48.7,
+        33.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_up",
+       "joint": "shoulder_r",
+       "z": 5,
+       "file": "source/chars/ponytail_b/arm_r_up.svg",
+       "pivot": [
+        30,
+        30
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_fore",
+       "joint": "elbow_r",
+       "z": 4,
+       "file": "source/chars/ponytail_b/arm_r_fore.svg",
+       "pivot": [
+        33.3,
+        33.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "head",
+       "joint": "head",
+       "z": 10,
+       "file": "source/chars/ponytail_b/head.svg",
+       "pivot": [
+        78,
+        130
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/ponytail_b/hair_front.svg",
+       "pivot": [
+        70,
+        138
+       ],
+       "px_scale": 0.5
+      }
+     ],
+     "faces": {
+      "neutral": {
+       "file": "source/chars/ponytail_b/face_neutral.svg",
+       "pivot": [
+        66,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "happy": {
+       "file": "source/chars/ponytail_b/face_happy.svg",
+       "pivot": [
+        66,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "cheer": {
+       "file": "source/chars/ponytail_b/face_cheer.svg",
+       "pivot": [
+        66,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "sad": {
+       "file": "source/chars/ponytail_b/face_sad.svg",
+       "pivot": [
+        66,
+        126
+       ],
+       "px_scale": 0.5
+      }
+     },
+     "face_z": 12,
+     "glow_hand": {
+      "joint": "elbow_r",
+      "at": [
+       48.8,
+       121.4
+      ],
+      "joint_l": "elbow_l",
+      "at_l": [
+       33.2,
+       121.4
+      ]
+     }
+    }
+   }
+  },
+  "hoodie": {
+   "height": 249,
+   "joints": {
+    "hips": [
+     0,
+     -94
+    ],
+    "torso": [
+     0,
+     -104
+    ],
+    "head": [
+     0,
+     -180
+    ],
+    "shoulder_l": [
+     -40,
+     -166
+    ],
+    "shoulder_r": [
+     40,
+     -166
+    ],
+    "hip_l": [
+     -17,
+     -90
+    ],
+    "hip_r": [
+     17,
+     -90
+    ],
+    "elbow_l": [
+     -44.9,
+     -126.3
+    ],
+    "elbow_r": [
+     44.9,
+     -126.3
+    ]
+   },
+   "variants": {
+    "a": {
+     "parts": [
+      {
+       "name": "hair_back",
+       "joint": "head",
+       "z": -20,
+       "file": "source/chars/hoodie_a/hair_back.svg",
+       "pivot": [
+        76,
+        76
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_l",
+       "joint": "hip_l",
+       "z": -10,
+       "file": "source/chars/hoodie_a/leg_l.svg",
+       "pivot": [
+        102,
+        50
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_r",
+       "joint": "hip_r",
+       "z": -10,
+       "file": "source/chars/hoodie_a/leg_r.svg",
+       "pivot": [
+        74,
+        50
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "pelvis",
+       "joint": "hips",
+       "z": -5,
+       "file": "source/chars/hoodie_a/pelvis.svg",
+       "pivot": [
+        90,
+        36
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "torso",
+       "joint": "torso",
+       "z": 0,
+       "file": "source/chars/hoodie_a/torso.svg",
+       "pivot": [
+        100,
+        172
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hood",
+       "joint": "torso",
+       "z": -2,
+       "file": "source/chars/hoodie_a/hood.svg",
+       "pivot": [
+        68,
+        216
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_up",
+       "joint": "shoulder_l",
+       "z": 5,
+       "file": "source/chars/hoodie_a/arm_l_up.svg",
+       "pivot": [
+        48,
+        38
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_fore",
+       "joint": "elbow_l",
+       "z": 4,
+       "file": "source/chars/hoodie_a/arm_l_fore.svg",
+       "pivot": [
+        58.3,
+        41.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_up",
+       "joint": "shoulder_r",
+       "z": 5,
+       "file": "source/chars/hoodie_a/arm_r_up.svg",
+       "pivot": [
+        38,
+        38
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_fore",
+       "joint": "elbow_r",
+       "z": 4,
+       "file": "source/chars/hoodie_a/arm_r_fore.svg",
+       "pivot": [
+        41.7,
+        41.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "head",
+       "joint": "head",
+       "z": 10,
+       "file": "source/chars/hoodie_a/head.svg",
+       "pivot": [
+        84,
+        130
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/hoodie_a/hair_front.svg",
+       "pivot": [
+        84,
+        142
+       ],
+       "px_scale": 0.5
+      }
+     ],
+     "faces": {
+      "neutral": {
+       "file": "source/chars/hoodie_a/face_neutral.svg",
+       "pivot": [
+        72,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "happy": {
+       "file": "source/chars/hoodie_a/face_happy.svg",
+       "pivot": [
+        72,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "cheer": {
+       "file": "source/chars/hoodie_a/face_cheer.svg",
+       "pivot": [
+        72,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "sad": {
+       "file": "source/chars/hoodie_a/face_sad.svg",
+       "pivot": [
+        72,
+        126
+       ],
+       "px_scale": 0.5
+      }
+     },
+     "face_z": 12,
+     "glow_hand": {
+      "joint": "elbow_r",
+      "at": [
+       57.7,
+       131.8
+      ],
+      "joint_l": "elbow_l",
+      "at_l": [
+       42.3,
+       131.8
+      ]
+     }
+    },
+    "b": {
+     "parts": [
+      {
+       "name": "hair_back",
+       "joint": "head",
+       "z": -20,
+       "file": "source/chars/hoodie_b/hair_back.svg",
+       "pivot": [
+        76,
+        76
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_l",
+       "joint": "hip_l",
+       "z": -10,
+       "file": "source/chars/hoodie_b/leg_l.svg",
+       "pivot": [
+        102,
+        50
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_r",
+       "joint": "hip_r",
+       "z": -10,
+       "file": "source/chars/hoodie_b/leg_r.svg",
+       "pivot": [
+        74,
+        50
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "pelvis",
+       "joint": "hips",
+       "z": -5,
+       "file": "source/chars/hoodie_b/pelvis.svg",
+       "pivot": [
+        90,
+        36
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "torso",
+       "joint": "torso",
+       "z": 0,
+       "file": "source/chars/hoodie_b/torso.svg",
+       "pivot": [
+        100,
+        172
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hood",
+       "joint": "torso",
+       "z": -2,
+       "file": "source/chars/hoodie_b/hood.svg",
+       "pivot": [
+        68,
+        216
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_up",
+       "joint": "shoulder_l",
+       "z": 5,
+       "file": "source/chars/hoodie_b/arm_l_up.svg",
+       "pivot": [
+        48,
+        38
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_fore",
+       "joint": "elbow_l",
+       "z": 4,
+       "file": "source/chars/hoodie_b/arm_l_fore.svg",
+       "pivot": [
+        58.3,
+        41.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_up",
+       "joint": "shoulder_r",
+       "z": 5,
+       "file": "source/chars/hoodie_b/arm_r_up.svg",
+       "pivot": [
+        38,
+        38
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_fore",
+       "joint": "elbow_r",
+       "z": 4,
+       "file": "source/chars/hoodie_b/arm_r_fore.svg",
+       "pivot": [
+        41.7,
+        41.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "head",
+       "joint": "head",
+       "z": 10,
+       "file": "source/chars/hoodie_b/head.svg",
+       "pivot": [
+        84,
+        130
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/hoodie_b/hair_front.svg",
+       "pivot": [
+        84,
+        142
+       ],
+       "px_scale": 0.5
+      }
+     ],
+     "faces": {
+      "neutral": {
+       "file": "source/chars/hoodie_b/face_neutral.svg",
+       "pivot": [
+        72,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "happy": {
+       "file": "source/chars/hoodie_b/face_happy.svg",
+       "pivot": [
+        72,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "cheer": {
+       "file": "source/chars/hoodie_b/face_cheer.svg",
+       "pivot": [
+        72,
+        126
+       ],
+       "px_scale": 0.5
+      },
+      "sad": {
+       "file": "source/chars/hoodie_b/face_sad.svg",
+       "pivot": [
+        72,
+        126
+       ],
+       "px_scale": 0.5
+      }
+     },
+     "face_z": 12,
+     "glow_hand": {
+      "joint": "elbow_r",
+      "at": [
+       57.7,
+       131.8
+      ],
+      "joint_l": "elbow_l",
+      "at_l": [
+       42.3,
+       131.8
+      ]
+     }
+    }
+   }
+  },
+  "curly": {
+   "height": 285,
+   "joints": {
+    "hips": [
+     0,
+     -106
+    ],
+    "torso": [
+     0,
+     -116
+    ],
+    "head": [
+     0,
+     -193
+    ],
+    "shoulder_l": [
+     -30,
+     -178
+    ],
+    "shoulder_r": [
+     30,
+     -178
+    ],
+    "hip_l": [
+     -12,
+     -102
+    ],
+    "hip_r": [
+     12,
+     -102
+    ],
+    "elbow_l": [
+     -34.9,
+     -138.3
+    ],
+    "elbow_r": [
+     34.9,
+     -138.3
+    ]
+   },
+   "variants": {
+    "a": {
+     "parts": [
+      {
+       "name": "hair_back",
+       "joint": "head",
+       "z": -20,
+       "file": "source/chars/curly_a/hair_back.svg",
+       "pivot": [
+        134,
+        188
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_l",
+       "joint": "hip_l",
+       "z": -10,
+       "file": "source/chars/curly_a/leg_l.svg",
+       "pivot": [
+        92,
+        44
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_r",
+       "joint": "hip_r",
+       "z": -10,
+       "file": "source/chars/curly_a/leg_r.svg",
+       "pivot": [
+        70,
+        44
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "pelvis",
+       "joint": "hips",
+       "z": -5,
+       "file": "source/chars/curly_a/pelvis.svg",
+       "pivot": [
+        70,
+        36
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "torso",
+       "joint": "torso",
+       "z": 0,
+       "file": "source/chars/curly_a/torso.svg",
+       "pivot": [
+        76,
+        172
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_up",
+       "joint": "shoulder_l",
+       "z": 5,
+       "file": "source/chars/curly_a/arm_l_up.svg",
+       "pivot": [
+        42,
+        32
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_fore",
+       "joint": "elbow_l",
+       "z": 4,
+       "file": "source/chars/curly_a/arm_l_fore.svg",
+       "pivot": [
+        52.3,
+        35.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_up",
+       "joint": "shoulder_r",
+       "z": 5,
+       "file": "source/chars/curly_a/arm_r_up.svg",
+       "pivot": [
+        32,
+        32
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_fore",
+       "joint": "elbow_r",
+       "z": 4,
+       "file": "source/chars/curly_a/arm_r_fore.svg",
+       "pivot": [
+        35.7,
+        35.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "head",
+       "joint": "head",
+       "z": 10,
+       "file": "source/chars/curly_a/head.svg",
+       "pivot": [
+        78,
+        132
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/curly_a/hair_front.svg",
+       "pivot": [
+        78,
+        148
+       ],
+       "px_scale": 0.5
+      }
+     ],
+     "faces": {
+      "neutral": {
+       "file": "source/chars/curly_a/face_neutral.svg",
+       "pivot": [
+        66,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      "happy": {
+       "file": "source/chars/curly_a/face_happy.svg",
+       "pivot": [
+        66,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      "cheer": {
+       "file": "source/chars/curly_a/face_cheer.svg",
+       "pivot": [
+        66,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      "sad": {
+       "file": "source/chars/curly_a/face_sad.svg",
+       "pivot": [
+        66,
+        128
+       ],
+       "px_scale": 0.5
+      }
+     },
+     "face_z": 12,
+     "glow_hand": {
+      "joint": "elbow_r",
+      "at": [
+       52.1,
+       128.4
+      ],
+      "joint_l": "elbow_l",
+      "at_l": [
+       35.9,
+       128.4
+      ]
+     }
+    },
+    "b": {
+     "parts": [
+      {
+       "name": "hair_back",
+       "joint": "head",
+       "z": -20,
+       "file": "source/chars/curly_b/hair_back.svg",
+       "pivot": [
+        134,
+        188
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_l",
+       "joint": "hip_l",
+       "z": -10,
+       "file": "source/chars/curly_b/leg_l.svg",
+       "pivot": [
+        92,
+        44
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_r",
+       "joint": "hip_r",
+       "z": -10,
+       "file": "source/chars/curly_b/leg_r.svg",
+       "pivot": [
+        70,
+        44
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "pelvis",
+       "joint": "hips",
+       "z": -5,
+       "file": "source/chars/curly_b/pelvis.svg",
+       "pivot": [
+        70,
+        36
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "torso",
+       "joint": "torso",
+       "z": 0,
+       "file": "source/chars/curly_b/torso.svg",
+       "pivot": [
+        76,
+        172
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_up",
+       "joint": "shoulder_l",
+       "z": 5,
+       "file": "source/chars/curly_b/arm_l_up.svg",
+       "pivot": [
+        42,
+        32
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_fore",
+       "joint": "elbow_l",
+       "z": 4,
+       "file": "source/chars/curly_b/arm_l_fore.svg",
+       "pivot": [
+        52.3,
+        35.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_up",
+       "joint": "shoulder_r",
+       "z": 5,
+       "file": "source/chars/curly_b/arm_r_up.svg",
+       "pivot": [
+        32,
+        32
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_fore",
+       "joint": "elbow_r",
+       "z": 4,
+       "file": "source/chars/curly_b/arm_r_fore.svg",
+       "pivot": [
+        35.7,
+        35.4
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "head",
+       "joint": "head",
+       "z": 10,
+       "file": "source/chars/curly_b/head.svg",
+       "pivot": [
+        78,
+        132
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/curly_b/hair_front.svg",
+       "pivot": [
+        78,
+        148
+       ],
+       "px_scale": 0.5
+      }
+     ],
+     "faces": {
+      "neutral": {
+       "file": "source/chars/curly_b/face_neutral.svg",
+       "pivot": [
+        66,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      "happy": {
+       "file": "source/chars/curly_b/face_happy.svg",
+       "pivot": [
+        66,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      "cheer": {
+       "file": "source/chars/curly_b/face_cheer.svg",
+       "pivot": [
+        66,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      "sad": {
+       "file": "source/chars/curly_b/face_sad.svg",
+       "pivot": [
+        66,
+        128
+       ],
+       "px_scale": 0.5
+      }
+     },
+     "face_z": 12,
+     "glow_hand": {
+      "joint": "elbow_r",
+      "at": [
+       52.1,
+       128.4
+      ],
+      "joint_l": "elbow_l",
+      "at_l": [
+       35.9,
+       128.4
+      ]
+     }
+    }
+   }
+  },
+  "bob": {
+   "height": 244,
+   "joints": {
+    "hips": [
+     0,
+     -90
+    ],
+    "torso": [
+     0,
+     -100
+    ],
+    "head": [
+     0,
+     -174
+    ],
+    "shoulder_l": [
+     -24,
+     -160
+    ],
+    "shoulder_r": [
+     24,
+     -160
+    ],
+    "hip_l": [
+     -9,
+     -86
+    ],
+    "hip_r": [
+     9,
+     -86
+    ],
+    "elbow_l": [
+     -28.3,
+     -125.3
+    ],
+    "elbow_r": [
+     28.3,
+     -125.3
+    ]
+   },
+   "variants": {
+    "a": {
+     "parts": [
+      {
+       "name": "hair_back",
+       "joint": "head",
+       "z": -20,
+       "file": "source/chars/bob_a/hair_back.svg",
+       "pivot": [
+        96,
+        152
+       ],
+       "px_scale": 0.5,
+       "swing": true,
+       "swing_pivot": [
+        96,
+        48.0
+       ]
+      },
+      {
+       "name": "leg_l",
+       "joint": "hip_l",
+       "z": -10,
+       "file": "source/chars/bob_a/leg_l.svg",
+       "pivot": [
+        82,
+        38
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_r",
+       "joint": "hip_r",
+       "z": -10,
+       "file": "source/chars/bob_a/leg_r.svg",
+       "pivot": [
+        60,
+        38
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "torso",
+       "joint": "torso",
+       "z": 0,
+       "file": "source/chars/bob_a/torso.svg",
+       "pivot": [
+        64,
+        168
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "skirt",
+       "joint": "hips",
+       "z": 2,
+       "file": "source/chars/bob_a/skirt.svg",
+       "pivot": [
+        88,
+        40
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_up",
+       "joint": "shoulder_l",
+       "z": 5,
+       "file": "source/chars/bob_a/arm_l_up.svg",
+       "pivot": [
+        38,
+        28
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_fore",
+       "joint": "elbow_l",
+       "z": 4,
+       "file": "source/chars/bob_a/arm_l_fore.svg",
+       "pivot": [
+        47.5,
+        33.5
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_up",
+       "joint": "shoulder_r",
+       "z": 5,
+       "file": "source/chars/bob_a/arm_r_up.svg",
+       "pivot": [
+        28,
+        28
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_fore",
+       "joint": "elbow_r",
+       "z": 4,
+       "file": "source/chars/bob_a/arm_r_fore.svg",
+       "pivot": [
+        32.5,
+        33.5
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "head",
+       "joint": "head",
+       "z": 10,
+       "file": "source/chars/bob_a/head.svg",
+       "pivot": [
+        80,
+        132
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/bob_a/hair_front.svg",
+       "pivot": [
+        84,
+        144
+       ],
+       "px_scale": 0.5
+      }
+     ],
+     "faces": {
+      "neutral": {
+       "file": "source/chars/bob_a/face_neutral.svg",
+       "pivot": [
+        68,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      "happy": {
+       "file": "source/chars/bob_a/face_happy.svg",
+       "pivot": [
+        68,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      "cheer": {
+       "file": "source/chars/bob_a/face_cheer.svg",
+       "pivot": [
+        68,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      "sad": {
+       "file": "source/chars/bob_a/face_sad.svg",
+       "pivot": [
+        68,
+        128
+       ],
+       "px_scale": 0.5
+      }
+     },
+     "face_z": 12,
+     "glow_hand": {
+      "joint": "elbow_r",
+      "at": [
+       46.5,
+       113.0
+      ],
+      "joint_l": "elbow_l",
+      "at_l": [
+       33.5,
+       113.0
+      ]
+     }
+    },
+    "b": {
+     "parts": [
+      {
+       "name": "hair_back",
+       "joint": "head",
+       "z": -20,
+       "file": "source/chars/bob_b/hair_back.svg",
+       "pivot": [
+        96,
+        152
+       ],
+       "px_scale": 0.5,
+       "swing": true,
+       "swing_pivot": [
+        96,
+        48.0
+       ]
+      },
+      {
+       "name": "leg_l",
+       "joint": "hip_l",
+       "z": -10,
+       "file": "source/chars/bob_b/leg_l.svg",
+       "pivot": [
+        82,
+        38
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_r",
+       "joint": "hip_r",
+       "z": -10,
+       "file": "source/chars/bob_b/leg_r.svg",
+       "pivot": [
+        60,
+        38
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "torso",
+       "joint": "torso",
+       "z": 0,
+       "file": "source/chars/bob_b/torso.svg",
+       "pivot": [
+        64,
+        168
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "skirt",
+       "joint": "hips",
+       "z": 2,
+       "file": "source/chars/bob_b/skirt.svg",
+       "pivot": [
+        88,
+        40
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_up",
+       "joint": "shoulder_l",
+       "z": 5,
+       "file": "source/chars/bob_b/arm_l_up.svg",
+       "pivot": [
+        38,
+        28
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_fore",
+       "joint": "elbow_l",
+       "z": 4,
+       "file": "source/chars/bob_b/arm_l_fore.svg",
+       "pivot": [
+        47.5,
+        33.5
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_up",
+       "joint": "shoulder_r",
+       "z": 5,
+       "file": "source/chars/bob_b/arm_r_up.svg",
+       "pivot": [
+        28,
+        28
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_fore",
+       "joint": "elbow_r",
+       "z": 4,
+       "file": "source/chars/bob_b/arm_r_fore.svg",
+       "pivot": [
+        32.5,
+        33.5
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "head",
+       "joint": "head",
+       "z": 10,
+       "file": "source/chars/bob_b/head.svg",
+       "pivot": [
+        80,
+        132
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/bob_b/hair_front.svg",
+       "pivot": [
+        84,
+        144
+       ],
+       "px_scale": 0.5
+      }
+     ],
+     "faces": {
+      "neutral": {
+       "file": "source/chars/bob_b/face_neutral.svg",
+       "pivot": [
+        68,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      "happy": {
+       "file": "source/chars/bob_b/face_happy.svg",
+       "pivot": [
+        68,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      "cheer": {
+       "file": "source/chars/bob_b/face_cheer.svg",
+       "pivot": [
+        68,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      "sad": {
+       "file": "source/chars/bob_b/face_sad.svg",
+       "pivot": [
+        68,
+        128
+       ],
+       "px_scale": 0.5
+      }
+     },
+     "face_z": 12,
+     "glow_hand": {
+      "joint": "elbow_r",
+      "at": [
+       46.5,
+       113.0
+      ],
+      "joint_l": "elbow_l",
+      "at_l": [
+       33.5,
+       113.0
+      ]
+     }
+    }
+   }
+  },
+  "punk": {
+   "height": 302,
+   "joints": {
+    "hips": [
+     0,
+     -116
+    ],
+    "torso": [
+     0,
+     -126
+    ],
+    "head": [
+     0,
+     -206
+    ],
+    "shoulder_l": [
+     -32,
+     -190
+    ],
+    "shoulder_r": [
+     32,
+     -190
+    ],
+    "hip_l": [
+     -11,
+     -112
+    ],
+    "hip_r": [
+     11,
+     -112
+    ],
+    "elbow_l": [
+     -37.4,
+     -146.3
+    ],
+    "elbow_r": [
+     37.4,
+     -146.3
+    ]
+   },
+   "variants": {
+    "a": {
+     "parts": [
+      {
+       "name": "hair_back",
+       "joint": "head",
+       "z": -20,
+       "file": "source/chars/punk_a/hair_back.svg",
+       "pivot": [
+        104,
+        224
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_l",
+       "joint": "hip_l",
+       "z": -10,
+       "file": "source/chars/punk_a/leg_l.svg",
+       "pivot": [
+        86,
+        42
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_r",
+       "joint": "hip_r",
+       "z": -10,
+       "file": "source/chars/punk_a/leg_r.svg",
+       "pivot": [
+        42,
+        42
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "pelvis",
+       "joint": "hips",
+       "z": -5,
+       "file": "source/chars/punk_a/pelvis.svg",
+       "pivot": [
+        66,
+        36
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "torso",
+       "joint": "torso",
+       "z": 0,
+       "file": "source/chars/punk_a/torso.svg",
+       "pivot": [
+        80,
+        176
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_up",
+       "joint": "shoulder_l",
+       "z": 5,
+       "file": "source/chars/punk_a/arm_l_up.svg",
+       "pivot": [
+        42,
+        32
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_fore",
+       "joint": "elbow_l",
+       "z": 4,
+       "file": "source/chars/punk_a/arm_l_fore.svg",
+       "pivot": [
+        53.3,
+        35.3
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_up",
+       "joint": "shoulder_r",
+       "z": 5,
+       "file": "source/chars/punk_a/arm_r_up.svg",
+       "pivot": [
+        32,
+        32
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_fore",
+       "joint": "elbow_r",
+       "z": 4,
+       "file": "source/chars/punk_a/arm_r_fore.svg",
+       "pivot": [
+        36.7,
+        35.3
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "head",
+       "joint": "head",
+       "z": 10,
+       "file": "source/chars/punk_a/head.svg",
+       "pivot": [
+        72,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/punk_a/hair_front.svg",
+       "pivot": [
+        100,
+        236
+       ],
+       "px_scale": 0.5
+      }
+     ],
+     "faces": {
+      "neutral": {
+       "file": "source/chars/punk_a/face_neutral.svg",
+       "pivot": [
+        60,
+        124
+       ],
+       "px_scale": 0.5
+      },
+      "happy": {
+       "file": "source/chars/punk_a/face_happy.svg",
+       "pivot": [
+        60,
+        124
+       ],
+       "px_scale": 0.5
+      },
+      "cheer": {
+       "file": "source/chars/punk_a/face_cheer.svg",
+       "pivot": [
+        60,
+        124
+       ],
+       "px_scale": 0.5
+      },
+      "sad": {
+       "file": "source/chars/punk_a/face_sad.svg",
+       "pivot": [
+        60,
+        124
+       ],
+       "px_scale": 0.5
+      }
+     },
+     "face_z": 12,
+     "glow_hand": {
+      "joint": "elbow_r",
+      "at": [
+       54.2,
+       134.2
+      ],
+      "joint_l": "elbow_l",
+      "at_l": [
+       35.8,
+       134.2
+      ]
+     }
+    },
+    "b": {
+     "parts": [
+      {
+       "name": "hair_back",
+       "joint": "head",
+       "z": -20,
+       "file": "source/chars/punk_b/hair_back.svg",
+       "pivot": [
+        104,
+        224
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_l",
+       "joint": "hip_l",
+       "z": -10,
+       "file": "source/chars/punk_b/leg_l.svg",
+       "pivot": [
+        86,
+        42
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "leg_r",
+       "joint": "hip_r",
+       "z": -10,
+       "file": "source/chars/punk_b/leg_r.svg",
+       "pivot": [
+        42,
+        42
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "pelvis",
+       "joint": "hips",
+       "z": -5,
+       "file": "source/chars/punk_b/pelvis.svg",
+       "pivot": [
+        66,
+        36
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "torso",
+       "joint": "torso",
+       "z": 0,
+       "file": "source/chars/punk_b/torso.svg",
+       "pivot": [
+        80,
+        176
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_up",
+       "joint": "shoulder_l",
+       "z": 5,
+       "file": "source/chars/punk_b/arm_l_up.svg",
+       "pivot": [
+        42,
+        32
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_l_fore",
+       "joint": "elbow_l",
+       "z": 4,
+       "file": "source/chars/punk_b/arm_l_fore.svg",
+       "pivot": [
+        53.3,
+        35.3
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_up",
+       "joint": "shoulder_r",
+       "z": 5,
+       "file": "source/chars/punk_b/arm_r_up.svg",
+       "pivot": [
+        32,
+        32
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "arm_r_fore",
+       "joint": "elbow_r",
+       "z": 4,
+       "file": "source/chars/punk_b/arm_r_fore.svg",
+       "pivot": [
+        36.7,
+        35.3
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "head",
+       "joint": "head",
+       "z": 10,
+       "file": "source/chars/punk_b/head.svg",
+       "pivot": [
+        72,
+        128
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/punk_b/hair_front.svg",
+       "pivot": [
+        100,
+        236
+       ],
+       "px_scale": 0.5
+      }
+     ],
+     "faces": {
+      "neutral": {
+       "file": "source/chars/punk_b/face_neutral.svg",
+       "pivot": [
+        60,
+        124
+       ],
+       "px_scale": 0.5
+      },
+      "happy": {
+       "file": "source/chars/punk_b/face_happy.svg",
+       "pivot": [
+        60,
+        124
+       ],
+       "px_scale": 0.5
+      },
+      "cheer": {
+       "file": "source/chars/punk_b/face_cheer.svg",
+       "pivot": [
+        60,
+        124
+       ],
+       "px_scale": 0.5
+      },
+      "sad": {
+       "file": "source/chars/punk_b/face_sad.svg",
+       "pivot": [
+        60,
+        124
+       ],
+       "px_scale": 0.5
+      }
+     },
+     "face_z": 12,
+     "glow_hand": {
+      "joint": "elbow_r",
+      "at": [
+       54.2,
+       134.2
+      ],
+      "joint_l": "elbow_l",
+      "at_l": [
+       35.8,
+       134.2
+      ]
+     }
+    }
+   }
+  }
+ },
+ "silhouettes": {
+  "sil_a": {
+   "idle": {
+    "file": "source/silhouettes/sil_a_idle.svg",
+    "pivot": [
+     128,
+     224
+    ],
+    "px_scale": 0.5
+   },
+   "up": {
+    "file": "source/silhouettes/sil_a_up.svg",
+    "pivot": [
+     128,
+     280
+    ],
+    "px_scale": 0.5
+   },
+   "height": 100
+  },
+  "sil_b": {
+   "idle": {
+    "file": "source/silhouettes/sil_b_idle.svg",
+    "pivot": [
+     128,
+     224
+    ],
+    "px_scale": 0.5
+   },
+   "up": {
+    "file": "source/silhouettes/sil_b_up.svg",
+    "pivot": [
+     128,
+     280
+    ],
+    "px_scale": 0.5
+   },
+   "height": 100
+  },
+  "sil_c": {
+   "idle": {
+    "file": "source/silhouettes/sil_c_idle.svg",
+    "pivot": [
+     128,
+     224
+    ],
+    "px_scale": 0.5
+   },
+   "up": {
+    "file": "source/silhouettes/sil_c_up.svg",
+    "pivot": [
+     128,
+     280
+    ],
+    "px_scale": 0.5
+   },
+   "height": 100
+  }
+ },
+ "stage": {
+  "design_size": [
+   1280,
+   720
+  ],
+  "layers": [
+   {
+    "id": "backdrop",
+    "file": "source/backdrop.svg",
+    "pos": [
+     0,
+     0
+    ],
+    "size": [
+     1280,
+     720
+    ],
+    "px_scale": 0.5
+   },
+   {
+    "id": "riser",
+    "file": "source/riser.svg",
+    "pos": [
+     520,
+     252
+    ],
+    "size": [
+     240,
+     34
+    ],
+    "px_scale": 0.5
+   },
+   {
+    "id": "speaker_l",
+    "file": "source/speaker_l.svg",
+    "pos": [
+     146,
+     108
+    ],
+    "size": [
+     112,
+     170
+    ],
+    "px_scale": 0.5
+   },
+   {
+    "id": "speaker_r",
+    "file": "source/speaker_r.svg",
+    "pos": [
+     1022,
+     108
+    ],
+    "size": [
+     112,
+     170
+    ],
+    "px_scale": 0.5
+   },
+   {
+    "id": "desk_top",
+    "file": "source/desk_top.svg",
+    "pos": [
+     0,
+     460
+    ],
+    "size": [
+     1280,
+     260
+    ],
+    "px_scale": 0.5,
+    "note": "authored 1280 x 260; stretch to the pad-strip rectangle"
+   }
+  ],
+  "anchors": {
+   "led_screen": [
+    450,
+    104,
+    380,
+    104
+   ],
+   "doorway": [
+    284,
+    138,
+    70,
+    124
+   ],
+   "floor_rows": [
+    {
+     "y": 286,
+     "scale": 0.506
+    },
+    {
+     "y": 316,
+     "scale": 0.604
+    },
+    {
+     "y": 350,
+     "scale": 0.714
+    },
+    {
+     "y": 390,
+     "scale": 0.844
+    },
+    {
+     "y": 438,
+     "scale": 1.0
+    }
+   ],
+   "floor_polygon": [
+    [
+     400,
+     266
+    ],
+    [
+     880,
+     266
+    ],
+    [
+     1349,
+     520
+    ],
+    [
+     -69,
+     520
+    ]
+   ],
+   "floor_grid": {
+    "vanishing_point": [
+     640.0,
+     130.0
+    ],
+    "far_y": 262.0,
+    "far_x": [
+     400,
+     460,
+     520,
+     580,
+     640,
+     700,
+     760,
+     820,
+     880
+    ],
+    "note": "x on the far wall base line; a floor line through far_x at screen row y is at x = vp_x + (far_x - vp_x) * (y - vp_y) / (far_y - vp_y)"
+   },
+   "light_points": [
+    [
+     150,
+     30
+    ],
+    [
+     330,
+     30
+    ],
+    [
+     510,
+     30
+    ],
+    [
+     770,
+     30
+    ],
+    [
+     950,
+     30
+    ],
+    [
+     1130,
+     30
+    ],
+    [
+     450,
+     58
+    ],
+    [
+     830,
+     58
+    ]
+   ],
+   "woofers": [
+    [
+     202,
+     158,
+     23
+    ],
+    [
+     202,
+     228,
+     34
+    ],
+    [
+     1078,
+     158,
+     23
+    ],
+    [
+     1078,
+     228,
+     34
+    ]
+   ],
+   "disco_ball": [
+    640,
+    0
+   ],
+   "riser": [
+    640,
+    286,
+    240
+   ],
+   "circle_centre": [
+    640,
+    372
+   ],
+   "circle_radii": [
+    250,
+    46
+   ],
+   "wall_left_x": 270.0,
+   "wall_right_x": 1010.0,
+   "horizon_y": 130.0
+  },
+  "sprites": {
+   "woofer": {
+    "file": "source/props/woofer.svg",
+    "pivot": [
+     106,
+     106
+    ],
+    "px_scale": 0.5,
+    "radius": 50
+   },
+   "fixture": {
+    "file": "source/props/fixture.svg",
+    "pivot": [
+     40,
+     4
+    ],
+    "px_scale": 0.5,
+    "lens": [
+     0,
+     51
+    ]
+   },
+   "disco_ball": {
+    "file": "source/props/disco_ball.svg",
+    "pivot": [
+     64,
+     4
+    ],
+    "px_scale": 0.5,
+    "radius": 28,
+    "ball_centre": [
+     0,
+     66
+    ]
+   },
+   "glowstick": {
+    "file": "source/props/glowstick.svg",
+    "pivot": [
+     16,
+     80
+    ],
+    "px_scale": 0.5,
+    "length": 36
+   },
+   "door_open": {
+    "file": "source/props/door_open.svg",
+    "pivot": [
+     0,
+     0
+    ],
+    "px_scale": 0.5,
+    "pos": [
+     244,
+     130
+    ]
+   },
+   "pad_bezel": {
+    "file": "source/props/pad_bezel.svg",
+    "pivot": [
+     240.0,
+     240.0
+    ],
+    "px_scale": 0.5,
+    "inner_ratio": 0.8333333333333334
+   },
+   "platter": {
+    "file": "source/props/platter.svg",
+    "pivot": [
+     246,
+     246
+    ],
+    "px_scale": 0.5,
+    "diameter": 240
+   },
+   "knob": {
+    "file": "source/props/knob.svg",
+    "pivot": [
+     52,
+     52
+    ],
+    "px_scale": 0.5
+   },
+   "fader_slot": {
+    "file": "source/props/fader_slot.svg",
+    "pivot": [
+     32,
+     132
+    ],
+    "px_scale": 0.5,
+    "travel": 110
+   },
+   "fader_cap": {
+    "file": "source/props/fader_cap.svg",
+    "pivot": [
+     32,
+     42
+    ],
+    "px_scale": 0.5
+   },
+   "crossfader": {
+    "file": "source/props/crossfader.svg",
+    "pivot": [
+     60,
+     38
+    ],
+    "px_scale": 0.5
+   },
+   "vu_segment": {
+    "file": "source/props/vu_segment.svg",
+    "pivot": [
+     44,
+     14
+    ],
+    "px_scale": 0.5
+   },
+   "deck_screw": {
+    "file": "source/props/deck_screw.svg",
+    "pivot": [
+     16,
+     16
+    ],
+    "px_scale": 0.5
+   },
+   "desk_lip_glow": {
+    "file": "source/props/desk_lip_glow.svg",
+    "pivot": [
+     1280,
+     16
+    ],
+    "px_scale": 0.5
+   },
+   "glow": {
+    "file": "processed/glow.png",
+    "pivot": [
+     128.0,
+     128.0
+    ],
+    "px_scale": 1.0
+   },
+   "beam": {
+    "file": "processed/beam.png",
+    "pivot": [
+     128.0,
+     0
+    ],
+    "px_scale": 1.0,
+    "length": 640,
+    "half_width_at_end": 130
+   },
+   "spot_pool": {
+    "file": "processed/spot_pool.png",
+    "pivot": [
+     200.0,
+     70.0
+    ],
+    "px_scale": 1.0
+   },
+   "haze_a": {
+    "file": "processed/haze_a.png",
+    "pivot": [
+     320.0,
+     50.0
+    ],
+    "px_scale": 2.0,
+    "tileable_x": true
+   },
+   "haze_b": {
+    "file": "processed/haze_b.png",
+    "pivot": [
+     320.0,
+     50.0
+    ],
+    "px_scale": 2.0,
+    "tileable_x": true
+   },
+   "vignette": {
+    "file": "processed/vignette.png",
+    "pivot": [
+     320.0,
+     180.0
+    ],
+    "px_scale": 2.0
+   },
+   "confetti": {
+    "file": "processed/confetti.png",
+    "pivot": [
+     16,
+     16
+    ],
+    "px_scale": 1.0,
+    "frames": 4,
+    "frame_size": [
+     32,
+     32
+    ]
+   }
+  }
+ }
+}
