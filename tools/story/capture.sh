@@ -78,6 +78,10 @@ shot cam_underworld_walk_33    perfect 33.9 RW_STORY_CHAPTER=underworld
 shot cam_underworld_pit        perfect 43   RW_STORY_CHAPTER=underworld
 shot cam_underworld_turn_49    perfect 49.9 RW_STORY_CHAPTER=underworld
 shot cam_underworld_furnace    perfect 54   RW_STORY_CHAPTER=underworld
+# a move frame by frame: step through the hatch (bar 17), the turn (33), the walk (49); u = progress through the 2-bar move
+for b in 17.3 17.6 18.2 18.6; do shot "camseq_step_$b" perfect "$b" RW_STORY_CHAPTER=mothership; done
+for b in 33.5 34.5; do shot "camseq_turn_$b" perfect "$b" RW_STORY_CHAPTER=mothership; done
+for b in 49.5 50.5; do shot "camseq_walk_$b" perfect "$b" RW_STORY_CHAPTER=mothership; done
 
 # the story menu and the result screens (the result plays a scripted set headless first, then shows its summary)
 screen() {  # name scene frames [env assignments...]

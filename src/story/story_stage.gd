@@ -261,84 +261,137 @@ func _apply_camera(t: float) -> void:
 		var v: StoryView = views[id]
 		if not v.visible:
 			continue
+		var cam := _view_cam(str(id), t, u, beats)
 		var pivot := v.vanish
-		var s := 1.0
-		var off := Vector2.ZERO
-		var rot := 0.0
-		var a := 1.0
-		if moving_camera and u >= 0.0:
-			var e := u * u * (3.0 - 2.0 * u)
-			var style := str(_cam["style"])
-			var bump := sin(u * PI)
-			var bob := Vector2(0.0, sin(u * TAU * 3.0) * 6.0 * bump)
-			var roll := 0.012 * sin(u * TAU * 3.0) * bump
-			if reduced:
-				bob = Vector2.ZERO
-				roll = 0.0
-			if style == "turn_left" or style == "turn_right" or style == "turn":
-				var dir := -1.0 if style == "turn_left" else 1.0
-				if id == _cam["from"]:
-					off = Vector2(-dir * DESIGN.x * 0.92 * e, 0.0) + bob
-					s = 1.0 - 0.05 * e
-					rot = roll
-				else:
-					off = Vector2(dir * DESIGN.x * 0.92 * (1.0 - e), 0.0) + bob
-					s = 0.95 + 0.05 * e
-					rot = roll
-			else:  # walk / step: a dolly forward
-				if id == _cam["from"]:
-					s = lerpf(1.0, 2.4, e * e)
-					a = 1.0 - clampf((u - 0.4) / 0.6, 0.0, 1.0)
-				else:
-					s = lerpf(0.55, 1.0, e)
-					a = clampf(u * 2.2, 0.0, 1.0)
-				off = bob
-				rot = roll
-		elif moving_camera and id == current_view:
-			if not reduced:  # first-person breathing: a slow sway and a small bob on the beat
-				off = Vector2(sin(beats * 0.25 * PI) * 3.0, absf(sin(beats * 0.5 * PI)) * -2.0)
-				rot = 0.004 * sin(beats * 0.125 * PI)
-		if moving_camera and id == current_view or id == str(_cam.get("to", "")):
-			for f in _cam_fx:
-				if t >= float(f["t0"]) and t < float(f["t1"]):
-					var fu: float = (t - float(f["t0"])) / maxf(float(f["t1"]) - float(f["t0"]), 0.001)
-					var env := sin(fu * PI)
-					if f["kind"] == "look":
-						off.x += float(f["amount"]) * env
-					else:
-						s *= 1.0 + float(f["amount"]) * env
-		var rp := (pivot * s).rotated(rot)
-		v.scale = Vector2(s, s)
-		v.rotation = rot
-		v.position = pivot - rp + off
-		v.modulate = Color(1, 1, 1, a)
-	if moving_camera and u >= 0.0 and str(_cam["style"]) not in ["turn_left", "turn_right", "turn"]:
+		var mk := func(f: float) -> Transform2D: return _cam_xf(pivot, cam, f)
+		var xf: Transform2D = mk.call(1.0)
+		v.transform = xf
+		v.modulate = Color(1, 1, 1, float(cam["a"]))
+		v.set_parallax(xf, mk)
+	if moving_camera and u >= 0.0 and not _is_turn():
 		var to_v: StoryView = views[_cam["to"]]
 		var from_v: StoryView = views[_cam["from"]]
 		if to_v.get_index() > from_v.get_index():
 			_root.move_child(to_v, from_v.get_index())  # the room we are walking out of stays in front while it fades
 
 
-## The passage frame the camera walks through and speed lines, drawn over the rooms during a forward move.
+func _is_turn() -> bool:
+	return str(_cam.get("style", "")) in ["turn_left", "turn_right", "turn"]
+
+
+## One room's camera at song time t: {s (dolly scale about the room's vanishing point), slide (a pan, scaled by parallax), bob
+## (the walker's head, not parallaxed), rot (roll), a (opacity)}. Steps land on the beat: the head bob and roll follow the song.
+func _view_cam(id: String, t: float, u: float, beats: float) -> Dictionary:
+	var s := 1.0
+	var slide := Vector2.ZERO
+	var bob := Vector2.ZERO
+	var rot := 0.0
+	var a := 1.0
+	if moving_camera and u >= 0.0:
+		var e := u * u * (3.0 - 2.0 * u)
+		var bump := sin(u * PI)  # the walk starts and ends at rest
+		var step := sin(PI * beats)  # one footfall per beat
+		if not reduced:
+			bob = Vector2(2.5 * step * bump, -7.0 * absf(step) * bump)
+			rot = 0.008 * step * bump
+		var style := str(_cam["style"])
+		if _is_turn():
+			var dir := -1.0 if style == "turn_left" else 1.0
+			if id == _cam["from"]:
+				slide = Vector2(-dir * DESIGN.x * 0.92 * e, 0.0)
+				s = 1.0 - 0.05 * bump
+			else:
+				slide = Vector2(dir * DESIGN.x * 0.92 * (1.0 - e), 0.0)
+				s = 1.0 - 0.05 * bump
+			rot += dir * 0.015 * bump  # lean into the turn
+		elif style == "step":  # walk up to a doorway and through it (StoryCameraOverlay draws the frame)
+			if id == _cam["from"]:
+				var ua := clampf(u / 0.45, 0.0, 1.0)
+				s = lerpf(1.0, 1.7, ua * ua)
+				a = 1.0 - clampf((u - 0.22) / 0.2, 0.0, 1.0)
+			else:
+				var ub := clampf((u - 0.3) / 0.7, 0.0, 1.0)
+				s = lerpf(0.72, 1.0, ub * ub * (3.0 - 2.0 * ub))
+				a = clampf((u - 0.1) / 0.2, 0.0, 1.0)
+		else:  # walk: a dolly forward, the next room resolving out of the vanishing point
+			if id == _cam["from"]:
+				s = lerpf(1.0, 2.0, e * e)
+				a = 1.0 - clampf((u - 0.35) / 0.4, 0.0, 1.0)
+			else:
+				s = lerpf(0.6, 1.0, e)
+				a = clampf((u - 0.15) / 0.4, 0.0, 1.0)
+	elif moving_camera and id == current_view and not reduced:  # first-person breathing: a slow sway and a small bob on the beat
+		bob = Vector2(sin(beats * 0.25 * PI) * 3.0, absf(sin(beats * 0.5 * PI)) * -2.0)
+		rot = 0.004 * sin(beats * 0.125 * PI)
+	if moving_camera and id == current_view or id == str(_cam.get("to", "")):
+		for f in _cam_fx:
+			if t >= float(f["t0"]) and t < float(f["t1"]):
+				var fu: float = (t - float(f["t0"])) / maxf(float(f["t1"]) - float(f["t0"]), 0.001)
+				var env := sin(fu * PI)
+				env = env * env * (3.0 - 2.0 * env)  # eased in and out, no corner at the ends
+				if f["kind"] == "look":
+					slide.x += float(f["amount"]) * env
+				else:
+					s *= 1.0 + float(f["amount"]) * env
+	return {"s": s, "slide": slide, "bob": bob, "rot": rot, "a": a}
+
+
+## The transform of a layer at parallax factor f (1 = the dancers' depth): dolly and pan scaled by f, bob and roll shared.
+func _cam_xf(pivot: Vector2, cam: Dictionary, f: float) -> Transform2D:
+	var s := 1.0 + (float(cam["s"]) - 1.0) * f
+	var rot := float(cam["rot"])
+	var rp := (pivot * s).rotated(rot)
+	return Transform2D(rot, Vector2(s, s), 0.0, pivot - rp + (cam["slide"] as Vector2) * f + (cam["bob"] as Vector2))
+
+
+## Over the rooms during a move: a step's doorway frame growing past the camera, a turn's corner pillar hiding the seam between
+## the two rooms, and faint speed lines (none with reduced effects).
 func draw_camera_overlay(ci: CanvasItem) -> void:
 	var u := camera_progress(t_now)
 	if u < 0.0 or not moving_camera:
 		return
 	var style := str(_cam["style"])
-	if style in ["turn_left", "turn_right", "turn"]:
+	var bump := sin(u * PI)
+	if _is_turn():
+		var dir := -1.0 if style == "turn_left" else 1.0
+		var e := u * u * (3.0 - 2.0 * u)
+		var from_edge := DESIGN.x * 0.5 + dir * DESIGN.x * 0.5 - dir * DESIGN.x * 0.92 * e  # the old room's trailing edge
+		var to_edge := DESIGN.x * 0.5 - dir * DESIGN.x * 0.5 + dir * DESIGN.x * 0.92 * (1.0 - e)  # the new room's leading edge
+		var x := (from_edge + to_edge) * 0.5
+		var half := 150.0
+		for k in 12:  # a soft dark pillar: the corner we turn round
+			var w := half * (1.0 - float(k) / 12.0)
+			ci.draw_rect(Rect2(x - w, -40.0, w * 2.0, DESIGN.y + 80.0), Color(0.01, 0.0, 0.04, 0.11))
+		ci.draw_line(Vector2(x - half * 0.35, -40.0), Vector2(x - half * 0.35, DESIGN.y), Color(1.0, 0.3, 0.75, 0.25), 2.0)
+		ci.draw_line(Vector2(x + half * 0.35, -40.0), Vector2(x + half * 0.35, DESIGN.y), Color(0.3, 0.9, 1.0, 0.25), 2.0)
+		if not reduced:
+			for i in 14:
+				var y := 30.0 + float(i) * 31.0
+				var len := (80.0 + 60.0 * fposmod(float(i) * 0.37, 1.0)) * bump
+				var x0 := fposmod(float(i) * 173.0 - dir * u * 900.0, DESIGN.x)
+				ci.draw_line(Vector2(x0, y), Vector2(x0 - dir * len, y), Color(1, 1, 1, 0.06 * bump), 2.0)
 		return
 	var vp: Vector2 = (views[_cam["from"]] as StoryView).vanish
-	var env := sin(u * PI)
 	if not reduced:
 		for i in 28:
 			var ang := TAU * float(i) / 28.0 + 0.1
 			var r0 := 120.0 + 140.0 * u
-			ci.draw_line(vp + Vector2.from_angle(ang) * r0, vp + Vector2.from_angle(ang) * (r0 + 380.0 * env), Color(1, 1, 1, 0.12 * env), 2.0)
+			ci.draw_line(vp + Vector2.from_angle(ang) * r0, vp + Vector2.from_angle(ang) * (r0 + 380.0 * bump), Color(1, 1, 1, 0.1 * bump), 2.0)
 	var pf := assets.sprite("passage_frame")
 	if style == "step" and not pf.is_empty() and pf["tex"] != null:
-		var k := lerpf(0.4, 3.6, pow(u, 1.6)) * float(pf["scale"])
-		ci.draw_set_transform(vp, 0.0, Vector2(k, k))
-		ci.draw_texture(pf["tex"], -pf["pivot"], Color(1, 1, 1, clampf(sin(clampf((u - 0.05) / 0.85, 0.0, 1.0) * PI) * 1.5, 0.0, 1.0)))
+		# the doorway: first a frame ahead around the vanishing point, covering the screen edges by the time the old room has gone,
+		# then it sweeps past the camera as we step through into the new room
+		var k: float
+		if u < 0.4:
+			var ua := u / 0.4
+			k = lerpf(1.35, 2.05, ua * ua * (3.0 - 2.0 * ua))
+		else:
+			var ub := (u - 0.4) / 0.6
+			k = lerpf(2.05, 5.5, ub * ub)
+		var centre := vp.lerp(DESIGN * 0.5, clampf(u / 0.4, 0.0, 1.0))
+		var al := clampf(u / 0.12, 0.0, 1.0) * (1.0 - clampf((u - 0.78) / 0.22, 0.0, 1.0))
+		ci.draw_set_transform(centre, 0.0, Vector2(k, k) * float(pf["scale"]))
+		ci.draw_texture(pf["tex"], -pf["pivot"], Color(1, 1, 1, al))
 		ci.draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
