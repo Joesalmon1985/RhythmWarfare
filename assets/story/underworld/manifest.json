@@ -423,7 +423,7 @@
    }
   },
   "brute": {
-   "height": 276,
+   "height": 280,
    "joints": {
     "hips": [
      0,
@@ -471,8 +471,8 @@
        "z": -20,
        "file": "source/chars/brute_a/hair_back.svg",
        "pivot": [
-        216,
-        204
+        222,
+        212
        ],
        "px_scale": 0.5
       },
@@ -526,8 +526,8 @@
        "z": 5,
        "file": "source/chars/brute_a/arm_l_up.svg",
        "pivot": [
-        96,
-        84
+        60,
+        48
        ],
        "px_scale": 0.5
       },
@@ -548,8 +548,8 @@
        "z": 5,
        "file": "source/chars/brute_a/arm_r_up.svg",
        "pivot": [
-        84,
-        84
+        48,
+        48
        ],
        "px_scale": 0.5
       },
@@ -565,13 +565,35 @@
        "px_scale": 0.5
       },
       {
+       "name": "pauldron_l",
+       "joint": "torso",
+       "z": 6,
+       "file": "source/chars/brute_a/pauldron_l.svg",
+       "pivot": [
+        234,
+        272
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "pauldron_r",
+       "joint": "torso",
+       "z": 6,
+       "file": "source/chars/brute_a/pauldron_r.svg",
+       "pivot": [
+        -30,
+        272
+       ],
+       "px_scale": 0.5
+      },
+      {
        "name": "head",
        "joint": "head",
        "z": 10,
        "file": "source/chars/brute_a/head.svg",
        "pivot": [
-        124,
-        120
+        130,
+        128
        ],
        "px_scale": 0.5
       },
@@ -581,8 +603,8 @@
        "z": 20,
        "file": "source/chars/brute_a/hair_front.svg",
        "pivot": [
-        56,
-        126
+        62,
+        136
        ],
        "px_scale": 0.5
       }
@@ -591,32 +613,32 @@
       "neutral": {
        "file": "source/chars/brute_a/face_neutral.svg",
        "pivot": [
-        72,
-        116
+        78,
+        124
        ],
        "px_scale": 0.5
       },
       "happy": {
        "file": "source/chars/brute_a/face_happy.svg",
        "pivot": [
-        72,
-        116
+        78,
+        124
        ],
        "px_scale": 0.5
       },
       "cheer": {
        "file": "source/chars/brute_a/face_cheer.svg",
        "pivot": [
-        72,
-        116
+        78,
+        124
        ],
        "px_scale": 0.5
       },
       "sad": {
        "file": "source/chars/brute_a/face_sad.svg",
        "pivot": [
-        72,
-        116
+        78,
+        124
        ],
        "px_scale": 0.5
       }
@@ -643,8 +665,8 @@
        "z": -20,
        "file": "source/chars/brute_b/hair_back.svg",
        "pivot": [
-        216,
-        204
+        222,
+        212
        ],
        "px_scale": 0.5
       },
@@ -698,8 +720,8 @@
        "z": 5,
        "file": "source/chars/brute_b/arm_l_up.svg",
        "pivot": [
-        96,
-        84
+        60,
+        48
        ],
        "px_scale": 0.5
       },
@@ -720,8 +742,8 @@
        "z": 5,
        "file": "source/chars/brute_b/arm_r_up.svg",
        "pivot": [
-        84,
-        84
+        48,
+        48
        ],
        "px_scale": 0.5
       },
@@ -737,13 +759,35 @@
        "px_scale": 0.5
       },
       {
+       "name": "pauldron_l",
+       "joint": "torso",
+       "z": 6,
+       "file": "source/chars/brute_b/pauldron_l.svg",
+       "pivot": [
+        234,
+        272
+       ],
+       "px_scale": 0.5
+      },
+      {
+       "name": "pauldron_r",
+       "joint": "torso",
+       "z": 6,
+       "file": "source/chars/brute_b/pauldron_r.svg",
+       "pivot": [
+        -30,
+        272
+       ],
+       "px_scale": 0.5
+      },
+      {
        "name": "head",
        "joint": "head",
        "z": 10,
        "file": "source/chars/brute_b/head.svg",
        "pivot": [
-        124,
-        120
+        130,
+        128
        ],
        "px_scale": 0.5
       },
@@ -753,8 +797,8 @@
        "z": 20,
        "file": "source/chars/brute_b/hair_front.svg",
        "pivot": [
-        56,
-        126
+        62,
+        136
        ],
        "px_scale": 0.5
       }
@@ -763,32 +807,32 @@
       "neutral": {
        "file": "source/chars/brute_b/face_neutral.svg",
        "pivot": [
-        72,
-        116
+        78,
+        124
        ],
        "px_scale": 0.5
       },
       "happy": {
        "file": "source/chars/brute_b/face_happy.svg",
        "pivot": [
-        72,
-        116
+        78,
+        124
        ],
        "px_scale": 0.5
       },
       "cheer": {
        "file": "source/chars/brute_b/face_cheer.svg",
        "pivot": [
-        72,
-        116
+        78,
+        124
        ],
        "px_scale": 0.5
       },
       "sad": {
        "file": "source/chars/brute_b/face_sad.svg",
        "pivot": [
-        72,
-        116
+        78,
+        124
        ],
        "px_scale": 0.5
       }
@@ -2447,16 +2491,16 @@
    "idle": {
     "file": "source/silhouettes/sil_a_idle.svg",
     "pivot": [
-     152,
-     232
+     168,
+     256
     ],
     "px_scale": 0.5
    },
    "up": {
     "file": "source/silhouettes/sil_a_up.svg",
     "pivot": [
-     152,
-     280
+     168,
+     292
     ],
     "px_scale": 0.5
    },
@@ -2466,16 +2510,16 @@
    "idle": {
     "file": "source/silhouettes/sil_b_idle.svg",
     "pivot": [
-     152,
-     232
+     168,
+     256
     ],
     "px_scale": 0.5
    },
    "up": {
     "file": "source/silhouettes/sil_b_up.svg",
     "pivot": [
-     152,
-     280
+     168,
+     292
     ],
     "px_scale": 0.5
    },
@@ -2485,16 +2529,16 @@
    "idle": {
     "file": "source/silhouettes/sil_c_idle.svg",
     "pivot": [
-     152,
-     232
+     168,
+     256
     ],
     "px_scale": 0.5
    },
    "up": {
     "file": "source/silhouettes/sil_c_up.svg",
     "pivot": [
-     152,
-     280
+     168,
+     292
     ],
     "px_scale": 0.5
    },
@@ -3387,6 +3431,12 @@
       400,
       34
      ],
+     "doorway": [
+      72,
+      196,
+      44,
+      62
+     ],
      "floor_rows": [
       {
        "y": 286,
@@ -3588,8 +3638,8 @@
       "id": "pit_plumes_l",
       "file": "source/views/pit_plumes_l.svg",
       "pos": [
-       -40.0,
-       66
+       -56.0,
+       16
       ],
       "size": [
        200,
@@ -3608,8 +3658,8 @@
       "id": "pit_plumes_r",
       "file": "source/views/pit_plumes_r.svg",
       "pos": [
-       1120.0,
-       66
+       1136.0,
+       16
       ],
       "size": [
        200,
@@ -3963,10 +4013,10 @@
     "note": "a straight fissure slice: stretch it vertically or chain it end to end"
    },
    "flame_jet": {
-    "file": "source/interlude/flame_jet.svg",
+    "file": "processed/flame_jet.png",
     "pivot": [
-     130.0,
-     628
+     80.0,
+     358
     ],
     "px_scale": 0.5,
     "blend": "add",

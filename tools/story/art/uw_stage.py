@@ -544,28 +544,51 @@ def spr_glowstick(sprites):
 
 def _sil_shape(kind, up):
     s = ""
-    if kind == "a":  # broad shoulders and big curling ram horns
-        s += path("M-40 0 L-38 -26 Q-36 -44 -14 -48 Q-8 -50 -8 -57 L8 -57 Q8 -50 14 -48 Q36 -44 38 -26 L40 0 Z", "#fff")
-        s += ellipse(0, -74, 17, 19, "#fff")
+
+    def horn_shape(pts, w0, w1):
+        poly_pts, _l, _r = UC.taper(pts, w0, w1)
+        return poly(poly_pts, "#fff")
+
+    if kind == "a":  # a brute: broad shoulders with spiked pauldrons and big curling ram horns
+        s += path("M-46 0 L-44 -24 Q-42 -42 -18 -47 Q-10 -49 -9 -55 L9 -55 Q10 -49 18 -47 Q42 -42 44 -24 L46 0 Z", "#fff")
+        s += ellipse(0, -72, 18, 19, "#fff")
         for sg in (-1, 1):
-            s += path(f"M{sg * 12} -88 C{sg * 38} -96 {sg * 40} -66 {sg * 26} -62 C{sg * 34} -72 {sg * 30} -84 {sg * 14} -80 Z", "#fff")
-    elif kind == "b":  # bat wings spread behind the shoulders, small horns
+            spiral = [(sg * 8, -86)]
+            for k in range(26):
+                a = math.radians(-120 + k * 13)
+                r = 19 - k * 0.5
+                spiral.append((sg * (30 + r * math.cos(a)), -78 + r * math.sin(a)))
+            s += horn_shape(spiral, 13, 4)
+            for k in range(3):  # pauldron spikes
+                a = math.radians(-150 + k * 40)
+                bx, by = sg * (34 + math.cos(a) * 12), -44 + math.sin(a) * 10
+                tx, ty = sg * (34 + math.cos(a) * 30), -44 + math.sin(a) * 26
+                s += poly([(bx - 5, by + 2), (tx, ty), (bx + 5, by + 2)], "#fff")
+            s += ellipse(sg * 34, -42, 16, 11, "#fff")
+    elif kind == "b":  # a fiend: long swept horns and wide bat wings behind the shoulders
+        for sg in (-1, 1):
+            s += path(f"M{sg * 18} -40 L{sg * 50} -96 Q{sg * 60} -98 {sg * 70} -84 L{sg * 78} -54 Q{sg * 66} -56 {sg * 62} -40 "
+                      f"Q{sg * 58} -26 {sg * 50} -18 Q{sg * 44} -30 {sg * 34} -26 Z", "#fff")
+            s += line((sg * 50, -96), (sg * 53, -108), "#fff", 5)
         s += path("M-30 0 L-28 -26 Q-26 -44 -11 -48 Q-7 -50 -7 -57 L7 -57 Q7 -50 11 -48 Q26 -44 28 -26 L30 0 Z", "#fff")
         s += ellipse(0, -72, 14, 17, "#fff")
         for sg in (-1, 1):
-            s += poly([(sg * 10, -86), (sg * 17, -104), (sg * 5, -88)], "#fff")
-            s += path(f"M{sg * 22} -44 L{sg * 60} -92 L{sg * 56} -62 L{sg * 66} -46 L{sg * 50} -30 L{sg * 54} -10 L{sg * 28} -22 Z", "#fff")
-    else:  # an imp: huge pointed ears, little horns and a spiky tail
-        s += path("M-34 0 L-32 -24 Q-30 -42 -12 -46 Q-8 -48 -8 -54 L8 -54 Q8 -48 12 -46 Q30 -42 32 -24 L34 0 Z", "#fff")
-        s += ellipse(0, -72, 19, 18, "#fff")
+            s += horn_shape(UC.bez((sg * 7, -84), (sg * 20, -100), (sg * 30, -122), 12), 8, 1.5)
+        s += path("M-10 -86 Q0 -96 12 -88 Q18 -92 16 -80 Z", "#fff")  # slick quiff
+    else:  # an imp: huge pointed ears, little horns and a spade-tipped tail
+        s += path("M-32 0 L-30 -22 Q-28 -40 -12 -44 Q-8 -46 -8 -52 L8 -52 Q8 -46 12 -44 Q28 -40 30 -22 L32 0 Z", "#fff")
+        s += ellipse(0, -72, 21, 19, "#fff")
         for sg in (-1, 1):
-            s += poly([(sg * 16, -80), (sg * 44, -92), (sg * 18, -64)], "#fff")
-            s += poly([(sg * 8, -86), (sg * 14, -104), (sg * 1, -88)], "#fff")
-        s += path("M30 -4 Q58 -8 52 -36 L66 -42 L56 -26 Q64 0 34 6 Z", "#fff")
+            s += poly([(sg * 17, -80), (sg * 48, -90), (sg * 19, -64)], "#fff")
+            s += horn_shape(UC.bez((sg * 8, -86), (sg * 16, -98), (sg * 13, -110), 10), 8, 1.5)
+        s += path("M28 -6 Q60 -4 56 -34 Q54 -44 60 -50", None, "#fff", 6)
+        s += poly([(60, -62), (71, -47), (61, -42), (51, -48)], "#fff")
     if up:
         for sx in (-1, 1):
-            s += line((sx * 26, -40), (sx * 50, -118), "#fff", 13)
-            s += circle(sx * 51, -122, 8, "#fff")
+            s += line((sx * 26, -40), (sx * 46, -118), "#fff", 13)
+            s += circle(sx * 47, -122, 8, "#fff")
+            for k in (-1, 1):  # devil-horns hands
+                s += line((sx * 47 + k * 4, -126), (sx * 47 + k * 7, -138), "#fff", 4)
     return s
 
 
@@ -581,7 +604,7 @@ def build_silhouettes():
             for dx, dy, col in ((-2.2, -1.2, EMBER), (2.2, -1.2, MAG)):
                 body += S._recolor(shape, col, dx, dy)
             body += S._recolor(shape, fills[kind], 0, 0)
-            info = write_svg(f"silhouettes/sil_{kind}_{state}.svg", (-76, -140 if up else -116, 76, 4), body)
+            info = write_svg(f"silhouettes/sil_{kind}_{state}.svg", (-84, -146 if up else -128, 84, 4), body)
             entry[state] = {"file": f"source/silhouettes/sil_{kind}_{state}.svg", "pivot": pivot_in(info, (0, 0)), "px_scale": 0.5}
         entry["height"] = 100
         out[f"sil_{kind}"] = entry
@@ -677,16 +700,24 @@ def ember_rain_png(name, w, h, count, seed):
     return f"processed/{name}"
 
 
-def crack_png(name, w, h, seed, branches=5, width0=2.6, width1=30.0, jitter=34.0):
+def crack_png(name, w, h, seed, branches=5, width0=2.6, width1=30.0, jitter=34.0, pad=56):
     """A glowing fissure fanning down from the top centre, in perspective (thin far away, wide near), with side branches.
-    Drawn at 2x with round joints, then downsampled; the glow is a blurred copy."""
+    Drawn at 2x with round joints: a blurred red glow, a charred dark lip, molten orange and a white-hot core; then
+    downsampled. Everything stays `pad` texture px inside the edges and the alpha fades out towards them, so the glow is
+    never cut by the texture border however the sprite is stretched."""
     rng = random.Random(seed)
     k = 2
-    layers = [Image.new("RGBA", (w * k, h * k), (0, 0, 0, 0)) for _ in range(3)]
+    layers = [Image.new("RGBA", (w * k, h * k), (0, 0, 0, 0)) for _ in range(4)]
     draws = [ImageDraw.Draw(im) for im in layers]
+    x_lo, x_hi, y_hi = pad, w - pad, h - pad
+
+    def clampp(p):
+        return (min(max(p[0], x_lo), x_hi), min(p[1], y_hi))
 
     def seg(p, q, wd):
-        for dr, mul, add, col in ((draws[0], 4.4, 4, (255, 60, 20, 200)), (draws[1], 1.9, 2, (255, 150, 40, 255)), (draws[2], 0.8, 1, (255, 244, 180, 255))):
+        p, q = clampp(p), clampp(q)
+        for dr, mul, add, col in ((draws[0], 4.4, 4, (255, 60, 20, 200)), (draws[1], 2.6, 3, (70, 12, 8, 190)),
+                                  (draws[2], 2.0, 1.8, (255, 120, 30, 255)), (draws[3], 0.5, 0.6, (255, 236, 150, 255))):
             wd_ = (wd * mul + add) * k
             dr.line([(p[0] * k, p[1] * k), (q[0] * k, q[1] * k)], fill=col, width=int(wd_))
             r_ = wd_ / 2
@@ -706,18 +737,24 @@ def crack_png(name, w, h, seed, branches=5, width0=2.6, width1=30.0, jitter=34.0
             seg(p, q, wd0 + (wd1 - wd0) * t ** 1.2)
             if depth == 0 and rng.random() < branch_p and i > 1:
                 sgn = rng.choice((-1, 1))
-                zig(q[0], q[1], q[0] + sgn * rng.uniform(160, 420) * (0.4 + t), q[1] + rng.uniform(40, 160) * (0.5 + 0.6 * t), 7, 40, wd1 * 0.35 * (0.4 + t), wd1 * 0.5 * (0.4 + t), 0.0, 1)
+                zig(q[0], q[1], q[0] + sgn * rng.uniform(160, 420) * (0.4 + t), q[1] + rng.uniform(40, 160) * (0.5 + 0.6 * t), 7, 40,
+                    wd1 * 0.35 * (0.4 + t), wd1 * 0.5 * (0.4 + t), 0.0, 1)
 
-    zig(w / 2, 2, w / 2 + rng.uniform(-60, 60), h - 4, 12, jitter * 2.4, width0, width1, 0.34)
+    zig(w / 2, 2, w / 2 + rng.uniform(-60, 60), y_hi, 12, jitter * 2.4, width0, width1, 0.34)
     for _ in range(branches - 1):
         t = rng.uniform(0.08, 0.35)
-        zig(w / 2 + rng.uniform(-14, 14), h * t, w / 2 + rng.choice((-1, 1)) * rng.uniform(300, 700), h * rng.uniform(0.55, 0.95), 9, 44, 1.5, width1 * 0.4, 0.0, 1)
+        zig(w / 2 + rng.uniform(-14, 14), h * t, w / 2 + rng.choice((-1, 1)) * rng.uniform(300, 700), h * rng.uniform(0.55, 0.95), 9, 44, 1.5,
+            width1 * 0.4, 0.0, 1)
     glow = layers[0].filter(ImageFilter.GaussianBlur(9 * k))
-    mid = layers[1].filter(ImageFilter.GaussianBlur(2.0 * k))
-    img = Image.alpha_composite(Image.alpha_composite(glow, layers[0].filter(ImageFilter.GaussianBlur(4 * k))), Image.alpha_composite(mid, layers[2])).resize((w, h), Image.LANCZOS)
-    os.makedirs(lib.PNG_DIR, exist_ok=True)
-    img.save(os.path.join(lib.PNG_DIR, name), compress_level=9)
-    return f"processed/{name}"
+    glow = Image.alpha_composite(glow, layers[0].filter(ImageFilter.GaussianBlur(4 * k)))
+    lip = layers[1].filter(ImageFilter.GaussianBlur(0.8 * k))
+    mid = layers[2].filter(ImageFilter.GaussianBlur(1.5 * k))
+    img = Image.alpha_composite(Image.alpha_composite(Image.alpha_composite(glow, lip), mid), layers[3]).resize((w, h), Image.LANCZOS)
+    arr = np.asarray(img).astype(np.float64)
+    yy, xx = np.mgrid[0:h, 0:w]
+    edge = _smooth(np.minimum(np.minimum(xx, w - 1 - xx), h - 1 - yy) / (pad * 0.6))  # the top edge is the origin, keep it
+    arr[..., 3] *= edge
+    return _save_rgba(name, arr)
 
 
 def build_png_sprites():
@@ -884,17 +921,51 @@ def build_ember_rain():
 
 # ---- interlude sprites ---------------------------------------------------------------------------------------------------------
 
+def _flame_field(w, h, seed, width=0.34, sway=0.07):
+    """One soft flame tongue as (rgb, alpha, heat) arrays: noise-licked edges, a white-hot core, a red halo. Base at the bottom."""
+    yy, xx = np.mgrid[0:h, 0:w].astype(float)
+    t = 1.0 - (yy + 0.5) / h  # 0 at the base, 1 at the tip
+    n1 = png_sprites.periodic_noise(w, h, w / 9.0, h / 10.0, seed)
+    n2 = png_sprites.periodic_noise(w, h, w / 5.0, h / 6.0, seed + 7)
+    cx = w / 2 + np.sin(t * 6.0 + 0.7 + seed) * w * sway * t + (n1 - 0.5) * w * 0.12 * t
+    wp = w * width * np.power(np.clip(1 - t, 0, 1), 0.6) * (0.8 + 0.2 * np.sin(t * 11.0 + seed)) * _smooth(t / 0.05 + 0.35) + 1.0
+    dd = np.abs(xx - cx) / wp + (n2 - 0.5) * 0.9 * t
+    heat = np.clip(1.0 - dd, 0, 1) * (1.0 - 0.55 * t) + 0.25 * np.exp(-(dd / 0.35) ** 2) * (1 - t)
+    tongues = _smooth((heat - n1 * 0.55 * t ** 1.3) / 0.18)
+    core = np.exp(-(dd / 0.32) ** 2) * np.clip(1 - t * 1.3, 0, 1)
+    v = np.clip(heat * 1.15 + core * 0.5, 0, 1)
+    col = _ramp(v, [(0.0, (150, 10, 8)), (0.3, (235, 50, 14)), (0.55, (255, 120, 30)), (0.8, (255, 205, 90)), (1.0, (255, 250, 220))])
+    a = np.maximum(np.clip(tongues * 1.4, 0, 1), np.exp(-((dd - 0.4) / 0.9) ** 2) * (1 - t) * 0.35) * _smooth(t / 0.09)
+    return col, a, v
+
+
+def flame_png(name, w, h, seed):
+    """A flame jet: a tall central tongue with two shorter side tongues, composited hottest-wins."""
+    col, a, v = _flame_field(w, h, seed)
+    for k, (dx, hs) in enumerate(((-0.2, 0.62), (0.2, 0.55))):
+        sh = int(h * hs)
+        c2, a2, v2 = _flame_field(w, sh, seed + 3 + k, width=0.28, sway=0.1)
+        shift = int(w * dx)
+        c2, a2, v2 = np.roll(c2, shift, axis=1), np.roll(a2, shift, axis=1), np.roll(v2, shift, axis=1)
+        if shift > 0:
+            a2[:, :shift] = 0
+        else:
+            a2[:, shift:] = 0
+        sl = slice(h - sh, h)
+        hot = (v2 * a2) > (v[sl] * a[sl])
+        col[sl] = np.where(hot[..., None], c2, col[sl])
+        v[sl] = np.where(hot, v2, v[sl])
+        a[sl] = np.maximum(a[sl], a2)
+    out = np.zeros((h, w, 4))
+    out[..., :3] = col
+    out[..., 3] = a * 255
+    return _save_rgba(name, out)
+
+
 def build_flame_jet():
-    rng = random.Random(14)
-    w, h = 130, 320
-    d = ""
-    d += ellipse(w / 2, h - 90, 52, 130, "#ff5a1a", None, op=0.1) + ellipse(w / 2, h - 80, 36, 100, "#ff8a2a", None, op=0.12)
-    d += _flame_cluster(w / 2, h - 6, 300, rng, n=5, spread=20, w=20, soft=False)
-    d += UC.flame_layer(w / 2, h - 6, w / 2 + 3, 14, 15, 5, ("#ff3a1a", "#ff9a1a", "#fff29a"), 0)
-    for k in range(7):
-        d += circle(rng.uniform(w * 0.15, w * 0.85), rng.uniform(10, h * 0.5), rng.uniform(1.2, 2.6), "#ffe08a", None, op=0.9)
-    info = write_svg("interlude/flame_jet.svg", (0, 0, w, h), d)
-    return {"file": "source/interlude/flame_jet.svg", "pivot": pivot_in(info, (w / 2, h - 6)), "px_scale": 0.5, "blend": "add",
+    """Interlude flame jet (PNG, a soft licking flame): pivot at the base centre; the cutscene scales it up out of the crack."""
+    w, h = 160, 360
+    return {"file": flame_png("flame_jet.png", w, h, 14), "pivot": [w / 2, h - 2], "px_scale": 0.5, "blend": "add",
             "note": "pivot at the base centre; animate by flip/scale"}
 
 
@@ -904,7 +975,7 @@ def build_interlude():
     cw, ch = 1520, 440
     sp["crack_glow"] = {"file": crack_png("crack_glow.png", cw, ch, 21), "pivot": [cw / 2, 0], "px_scale": 0.5, "blend": "add"}
     seg_w, seg_h = 192, 128
-    seg_png = crack_png("crack_segment.png", seg_w, seg_h, 5, branches=2, width0=9.0, width1=12.0, jitter=14)
+    seg_png = crack_png("crack_segment.png", seg_w, seg_h, 5, branches=2, width0=9.0, width1=12.0, jitter=14, pad=18)
     sp["crack_segment"] = {"file": seg_png, "pivot": [seg_w / 2, 0], "px_scale": 0.5, "blend": "add",
                            "note": "a straight fissure slice: stretch it vertically or chain it end to end"}
     sp["flame_jet"] = build_flame_jet()

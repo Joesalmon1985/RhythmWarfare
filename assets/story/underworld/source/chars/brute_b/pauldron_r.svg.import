@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d36jqqqq2vug7"
-path="res://.godot/imported/flame_jet.svg-f54bdef9f6b6634d17ce15e47c22b7ea.ctex"
+uid="uid://35hsc38wnijl"
+path="res://.godot/imported/pauldron_r.svg-6b0b0fed3971e314f33e360e632dbe7c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/underworld/source/interlude/flame_jet.svg"
-dest_files=["res://.godot/imported/flame_jet.svg-f54bdef9f6b6634d17ce15e47c22b7ea.ctex"]
+source_file="res://assets/story/underworld/source/chars/brute_b/pauldron_r.svg"
+dest_files=["res://.godot/imported/pauldron_r.svg-6b0b0fed3971e314f33e360e632dbe7c.ctex"]
 
 [params]
 

@@ -18,7 +18,7 @@ INK = "#2a0a1e"
 ARCH = {
     "imp": dict(hip_y=68, sh_y=-124, sh_dx=17, neck_y=-130, cy=-158, rx=31, ry=29, up=25, fore=26, aw=11, sw=19, ww=16, hw=18,
                 lw=13, leg_dx=9, shoe_h=9),
-    "brute": dict(hip_y=96, sh_y=-176, sh_dx=45, neck_y=-184, cy=-210, rx=28, ry=26, up=44, fore=42, aw=24, sw=47, ww=37, hw=35,
+    "brute": dict(hip_y=96, sh_y=-176, sh_dx=45, neck_y=-184, cy=-212, rx=31, ry=28, up=44, fore=42, aw=24, sw=47, ww=37, hw=35,
                   lw=26, leg_dx=18, shoe_h=15),
     "fiend": dict(hip_y=118, sh_y=-196, sh_dx=26, neck_y=-205, cy=-231, rx=22, ry=27, up=45, fore=47, aw=12, sw=26, ww=17, hw=20,
                   lw=14, leg_dx=10, shoe_h=11),
@@ -36,14 +36,16 @@ VARIANTS = {
         "b": dict(skin="#9a5cff", skin2="#e0c4ff", horn="#ff9ad0", cloth="#19c8e8", cloth2="#ffffff", accent="#ff2f9d", iris="#7dff6a", detail="stripes"),
     },
     "brute": {
-        "a": dict(skin="#c42a3c", skin2="#e8566a", horn="#efe2c0", cloth="#3a2a30", cloth2="#6a5058", accent="#ffb02e", iris="#ffd23f", detail="harness"),
-        "b": dict(skin="#4f74c4", skin2="#86a6ea", horn="#ffd23f", cloth="#2a2440", cloth2="#5a4a80", accent="#ff6a2e", iris="#ff5a4a", detail="plate"),
+        "a": dict(skin="#c42a3c", skin2="#e8566a", horn="#efe2c0", cloth="#3a2a30", cloth2="#6a5058", accent="#ffb02e", iris="#ffd23f", detail="harness",
+                  pd="#6e5a72", pd_trim="#ffb02e", pd_spike="#efe2c0"),
+        "b": dict(skin="#4f74c4", skin2="#86a6ea", horn="#ffd23f", cloth="#2a2440", cloth2="#5a4a80", accent="#ff6a2e", iris="#ff5a4a", detail="plate",
+                  pd="#ff7a2e", pd_trim="#ffd23f", pd_spike="#fff0c8"),
     },
     "fiend": {
-        "a": dict(skin="#8d3fd0", skin2="#b97af0", horn="#2a1030", cloth="#1d1240", cloth2="#f4e6ff", accent="#ff2f9d", iris="#ffe14a", hair="#150a2a",
-                  wing="#6a1f7a", detail="bowtie"),
+        "a": dict(skin="#8d3fd0", skin2="#b97af0", horn="#f2dcff", cloth="#1d1240", cloth2="#f4e6ff", accent="#ff2f9d", iris="#ffe14a", hair="#150a2a",
+                  wing="#6a1f7a", sleeve="#5b2fa0", detail="bowtie"),
         "b": dict(skin="#cdb4ff", skin2="#efe4ff", horn="#ff6a2e", cloth="#c4163c", cloth2="#fff0d8", accent="#ffc23f", iris="#ff4a4a", hair="#ff2f9d",
-                  wing="#3a1a70", detail="tie"),
+                  wing="#3a1a70", sleeve="#c4163c", detail="tie"),
     },
     "skeleton": {
         "a": dict(skin="#f4ecd0", skin2="#d8caa0", cloth="#ff2f9d", cloth2="#ffe14a", accent="#ffc23f", iris="#ff7a2e", detail="hat"),
@@ -310,7 +312,7 @@ def skirt_part(P, V):
 
 def sleeve(arch, V, part):
     if arch == "fiend":
-        return V["cloth2"]
+        return V["sleeve"]
     if arch == "horned_queen" and part == "fore" and V["detail"] == "gloves":
         return V["cloth"]
     return None
@@ -350,24 +352,19 @@ def arm_parts(arch, P, V, J, side):
         body += line(s, e, skin, aw, cap="round") + circle(s[0], s[1], aw * 0.75, skin)
         body += line((s[0] + nx * o2, s[1] + ny * o2), (e[0] + nx * o2, e[1] + ny * o2), lighten(skin, 0.4), 1.8, 0.8)
         body += line((s[0] + nx * o, s[1] + ny * o), (e[0] + nx * o, e[1] + ny * o), V["skin2"], 2.4, 0.8)
-    elif arch == "brute":  # spiked pauldron on the shoulder
-        r = aw * 0.62 + 6
-        sp = ""
-        for k in range(5):
-            a = math.radians(-150 + k * 38)
-            ca, sa = math.cos(a), math.sin(a)
-            b0 = (s[0] + ca * r - sa * 5, s[1] + sa * r + ca * 5)
-            b1 = (s[0] + ca * r + sa * 5, s[1] + sa * r - ca * 5)
-            sp += poly([b0, (s[0] + ca * (r + 15), s[1] + sa * (r + 15)), b1], V["horn"] if V["detail"] == "harness" else V["accent"], OUT, 2.4)
-        body += sp
-        body += circle(s[0], s[1], r, V["cloth"], OUT, 3) + circle(s[0], s[1], r - 4.5, V["cloth2"], None, op=0.8)
-        body += circle(s[0] - 3, s[1] - 3, 3, lighten(V["cloth2"], 0.5), None, op=0.7) + circle(s[0], s[1], 2.8, V["accent"], OUT, 1.2)
-        box_up = bb([s, e], aw / 2 + 30)
+    elif arch == "brute":  # a bulging deltoid; the armoured pauldron itself is a separate part fixed to the torso
+        r = aw * 0.62 + 3
+        body += circle(s[0], s[1], r + 3, OUT) + circle(s[0], s[1], r, skin)
+        body += circle(s[0] - side * r * 0.3, s[1] - r * 0.25, r * 0.45, lighten(skin, 0.3), None, op=0.55)
+        body += line(s, e, skin, aw, cap="round")
+        body += line((s[0] + nx * o, s[1] + ny * o), (e[0] + nx * o, e[1] + ny * o), darken(skin, 0.25), aw * 0.4, 0.7)
+        box_up = bb([s, e], aw / 2 + 12)
     elif arch == "imp" and V["detail"] == "stripes":
         pass
     elif arch == "fiend":
         m = (s[0] + dx * 0.5, s[1] + dy * 0.5)
-        body += line((m[0] - nx * (aw / 2 + 1), m[1] - ny * (aw / 2 + 1)), (m[0] + nx * (aw / 2 + 1), m[1] + ny * (aw / 2 + 1)), V["cloth"], 3, cap="butt")  # sleeve garter
+        body += circle(s[0], s[1], aw / 2 + 1.5, lighten(V["sleeve"], 0.12), OUT, 2.0)  # padded jacket shoulder
+        body += line((s[0] - nx * side * aw * 0.32, s[1] - ny * side * aw * 0.32), (m[0] - nx * side * aw * 0.32, m[1] - ny * side * aw * 0.32), V["accent"], 1.4, 0.6)  # pinstripe
     elif arch == "flame":  # a little flame licking off the shoulder
         body += flame_layer(s[0] + side * 3, s[1] - 2, s[0] + side * 12, s[1] - 24, 6, side * 5, (V["fl1"], V["fl2"], V["fl3"]), 2.0)
         box_up = bb([s, e, (s[0] + side * 14, s[1] - 28)], aw / 2 + 8)
@@ -404,7 +401,8 @@ def arm_parts(arch, P, V, J, side):
             hr = aw * 0.58
         if arch == "fiend":
             cuff = (w[0] - ux * 3, w[1] - uy * 3)
-            body += line((cuff[0] - nx * (aw / 2 + 2), cuff[1] - ny * (aw / 2 + 2)), (cuff[0] + nx * (aw / 2 + 2), cuff[1] + ny * (aw / 2 + 2)), V["cloth"], 4.5, cap="butt")
+            body += line((cuff[0] - nx * (aw / 2 + 2), cuff[1] - ny * (aw / 2 + 2)), (cuff[0] + nx * (aw / 2 + 2), cuff[1] + ny * (aw / 2 + 2)), OUT, 7.5, cap="butt")
+            body += line((cuff[0] - nx * (aw / 2 + 1), cuff[1] - ny * (aw / 2 + 1)), (cuff[0] + nx * (aw / 2 + 1), cuff[1] + ny * (aw / 2 + 1)), V["cloth2"], 4.5, cap="butt")
             body += circle(cuff[0] + nx * 3, cuff[1] + ny * 3, 1.6, V["accent"])
         if arch == "horned_queen":
             if V["detail"] == "gloves":
@@ -421,6 +419,63 @@ def arm_parts(arch, P, V, J, side):
         body += circle(hand_c[0], hand_c[1], hr, hand_col if arch == "horned_queen" else (skin if arch != "fiend" else skin))
         body += circle(hand_c[0] - nx * side * hr * 0.25, hand_c[1] - ny * side * hr * 0.25, hr * 0.4, lighten(skin, 0.3), None, op=0.6)
     out["fore"] = (body, bb([e, w, hand_c], aw / 2 + 24), (hand_c[0], hand_c[1]))
+    return out
+
+
+def pauldron_part(P, V, J, side):
+    """The brute's armoured pauldron: a riveted dome with two lames, a gold trim and three curved horn spikes. It is a part on
+    the `torso` joint drawn over the upper arm (z 6), so a raised arm slides out from under it instead of rotating the armour."""
+    s = J["shoulder_" + ("l" if side < 0 else "r")]
+    metal, trim, spike = V["pd"], V["pd_trim"], V["pd_spike"]
+    mx = lambda u: s[0] + side * u  # noqa: E731  outward = +u, down = +v (local to the shoulder joint)
+    my = lambda v: s[1] + v  # noqa: E731
+
+    def P_(pts):
+        return [(mx(u), my(v)) for u, v in pts]
+
+    def D(cmds):
+        out = ""
+        for c in cmds:
+            if isinstance(c, str):
+                out += c + " "
+            else:
+                out += f"{f(mx(c[0]))} {f(my(c[1]))} "
+        return out.strip()
+
+    d = ""
+    # the lames: two curved plates fanning down the outside of the arm, under the dome
+    for k, (dv, du, col) in enumerate(((22, 10, darken(metal, 0.18)), (12, 5, darken(metal, 0.08)))):
+        lame = D(["M", (-4 + du, 0 + dv * 0.4), "Q", (16 + du, -4 + dv), (36 + du * 0.4, 4 + dv * 0.8), "L", (34 + du * 0.3, 14 + dv * 0.8),
+                  "Q", (16 + du, 8 + dv), (-2 + du, 10 + dv * 0.4), "Z"])
+        d += path(lame, col, OUT, 2.6)
+        d += path(D(["M", (0 + du, 9 + dv * 0.4), "Q", (16 + du, 7 + dv), (33 + du * 0.3, 13 + dv * 0.8)]), None, trim, 2.0, sop=0.9)
+        d += circle(mx(30 + du * 0.35), my(6 + dv * 0.8), 2.0, lighten(trim, 0.4), OUT, 1.0)
+    # the spikes, behind the dome's top edge
+    for (b, c, t, w0) in (((-2, -16), (-8, -38), (-4, -56), 12), ((14, -20), (18, -46), (30, -60), 13), ((28, -8), (46, -22), (60, -22), 11)):
+        d += horn([(mx(u), my(v)) for u, v in bez(b, c, t, 10)], w0, 1.6, spike, rings=2, sw=2.4)
+    dome = D(["M", (-20, -6), "Q", (-14, -26), (6, -27), "Q", (30, -26), (36, -2), "Q", (38, 12), (30, 16),
+              "Q", (12, 8), (-4, 8), "Q", (-16, 6), (-20, -6), "Z"])
+    gid = f"pd{'l' if side < 0 else 'r'}"
+    defs = lin_grad(gid, [(0, lighten(metal, 0.35)), (0.45, metal), (1, darken(metal, 0.35))], 0, 0, 0, 1)
+    d += path(dome, f"url(#{gid})", OUT, 3.2)
+    d += path(D(["M", (-14, -14), "Q", (-6, -23), (8, -23)]), None, "#ffffff", 2.6, sop=0.55)  # specular sweep
+    d += path(D(["M", (30, -14), "Q", (35, -4), (33, 8)]), None, RIM_L if side < 0 else RIM_R, 3.0, sop=0.7)  # rim light from the room
+    d += path(D(["M", (-17, 2), "Q", (-6, 9), (6, 9), "Q", (20, 10), (31, 15)]), None, trim, 3.2)  # gold lower trim
+    for u, v in ((-12, 3), (2, 6), (16, 8), (28, 12)):
+        d += circle(mx(u), my(v), 2.2, lighten(trim, 0.45), OUT, 1.0)
+    if V["detail"] == "harness":  # a little skull boss on the dome
+        d += U_skull(mx(10), my(-11), 6.0)
+    else:  # an embossed flame sigil
+        d += path(flame_path(mx(10), my(-4), mx(10 + side * 1.5), my(-20), 5.5, side * 2), trim, OUT, 1.6)
+    pts = P_([(-24, -66), (66, -66), (66, 30), (-24, 30)])
+    return defs, d, bb(pts, 6)
+
+
+def U_skull(cx, cy, r):
+    """A small bone skull emblem (eyes dark)."""
+    out = ellipse(cx, cy, r, r * 0.92, "#efe2c0", OUT, 1.4)
+    out += rect(cx - r * 0.5, cy + r * 0.5, r, r * 0.55, "#efe2c0", OUT, 1.1, rx=r * 0.15)
+    out += ellipse(cx - r * 0.36, cy - r * 0.02, r * 0.26, r * 0.3, "#2a0a1e") + ellipse(cx + r * 0.36, cy - r * 0.02, r * 0.26, r * 0.3, "#2a0a1e")
     return out
 
 
@@ -515,8 +570,12 @@ def head_part(arch, P, V):
         body += group(inner, 'clip-path="url(#hc)"')
         body += path(skull, None, OUT, 3)
         return defs, body, (-rx - 14, cy - ry - 8, rx + 14, ny + 18)
-    body += rect(-8, cy + ry * 0.55, 16, ny - (cy + ry * 0.55) + 14, darken(skin, 0.12), OUT, 2.6, rx=3)
-    body += rect(-8, cy + ry * 0.78, 16, 9, "#150a33", None, op=0.18)
+    nt, nb = cy + ry * 0.55, ny + 14  # a tapered neck with a soft shadow under the jaw
+    nw = {"brute": 11.0, "imp": 6.5}.get(arch, 7.0)
+    neck = f"M{f(-nw)} {f(nt)} L{f(nw)} {f(nt)} L{f(nw + 3)} {f(nb)} L{f(-nw - 3)} {f(nb)} Z"
+    body += path(neck, darken(skin, 0.1), OUT, 2.6)
+    body += ellipse(0, cy + ry * 0.92, nw + 2, 5, darken(skin, 0.45), None, op=0.45)
+    body += line((-nw * 0.45, nt + 6), (-nw * 0.6, nb - 4), lighten(skin, 0.25), 1.6, 0.5)
     if arch in ("imp", "brute", "fiend", "horned_queen"):  # pointed ears
         big = {"imp": 20, "brute": 12, "fiend": 17, "horned_queen": 15}[arch]
         for side in (-1, 1):
@@ -556,7 +615,7 @@ def face_overlay(arch, P, V, expr):
     skin, iris = V["skin"], V["iris"]
     ex = rx * 0.42
     ey = cy + {"imp": 3.0, "brute": 3.0, "skeleton": 1.0}.get(arch, 2.0)
-    erx = {"imp": 6.6, "brute": 5.2, "skeleton": 6.4}.get(arch, 5.4)
+    erx = {"imp": 6.6, "brute": 6.0, "skeleton": 6.4}.get(arch, 5.6)
     ery = erx * 1.2
     brow = {"skeleton": OUT}.get(arch, INK)
     mouth_y = cy + ry * 0.58
@@ -853,6 +912,11 @@ def build_variant(arch, variant):
         arms[n] = a
         emit(f"arm_{n}_up", f"shoulder_{n}", 5, a["up"][0], a["up"][1])
         emit(f"arm_{n}_fore", f"elbow_{n}", 4, a["fore"][0], a["fore"][1])
+    if arch == "brute":
+        for side in (-1, 1):
+            n = "l" if side < 0 else "r"
+            defs, body, box = pauldron_part(P, V, J, side)
+            emit(f"pauldron_{n}", "torso", 6, body, box, defs)
     defs, body, box = head_part(arch, P, V)
     emit("head", "head", 10, body, box, defs)
     faces = {}
