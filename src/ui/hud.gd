@@ -111,10 +111,27 @@ func _draw_defense() -> void:
 	if villagers_total > 0:
 		draw_string(_font, Vector2(cx + 50, 38), "villagers %d of %d" % [sim.civilians_alive(), villagers_total], HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0.95, 0.86, 0.6))
 	draw_string(_font, Vector2(cx + 180, 50), "enemies %d" % sim.count_alive(1, BattleSim.Kind.UNIT), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 1, 1, 0.8))
+	var rally := match_ref.rally_point()
+	if mission and rally >= 0 and rally < sim.defense_points.size():
+		draw_string(_font, Vector2(cx + 50, 50), "RALLY: %s%s" % [_rally_word(rally), " (auto)" if sim.active_point < 0 else ""], HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(0.8, 0.9, 1.0))
 	var w := match_ref.upcoming_wave()
 	if not w.is_empty() and float(w["in_s"]) <= 8.0 and sim.entries.has(w["entry"]):
 		var pulse := 0.75 + 0.25 * sin(float(Time.get_ticks_msec()) / 120.0)
 		draw_string(_font, Vector2(cx - 250, 124), "WAVE %d INCOMING FROM THE %s  %.0f s" % [int(w["number"]), _entry_word(str(w["entry"])), float(w["in_s"])], HORIZONTAL_ALIGNMENT_CENTER, 500, 18, Color(1.0, 0.7, 0.55, pulse))
+
+
+## LEFT, TOP or RIGHT: the section's place in the x order of the defense points (the middle one of three is the top one).
+func _rally_word(index: int) -> String:
+	var xs: Array = []
+	for dp in match_ref.sim.defense_points:
+		xs.append(float(dp["pos"].x))
+	var rank := 0
+	for x in xs:
+		if x < xs[index]:
+			rank += 1
+	if xs.size() == 3:
+		return ["LEFT", "TOP", "RIGHT"][rank]
+	return "LEFT" if rank == 0 else ("RIGHT" if rank == xs.size() - 1 else "TOP")
 
 
 ## LEFT, RIGHT or TOP: where an entry lies, from its position on the map (the entry ids are left, top and right).

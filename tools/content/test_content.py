@@ -339,9 +339,16 @@ class MissionOneTests(unittest.TestCase):
         self.assertEqual(bf["id"], "village_01")
         self.assertEqual(bf["objectives"], [{"id": "barracks", "role": "barracks", "required": True}])
         self.assertEqual(len(bf["defense_points"]), 3)
-        for key in ("defense_points", "entries", "sockets", "view", "map", "leash_cells"):
-            self.assertEqual(bf[key], d2[key], key)
+        self.assertEqual(bf["leash_cells"], d2["leash_cells"])
+        self.assertEqual(bf["map"], "field_96x48")
+        self.assertEqual((bf["width"], bf["height"]), (96, 48))
+        self.assertEqual(bf["view"], {"center": [47.5, 23.5], "max_cells": [72.0, 27.0], "zoom": 0.75})
+        self.assertEqual([(p["id"], p["x"], p["y"]) for p in bf["defense_points"]], [("defense_1", 29, 25), ("defense_2", 47, 15), ("defense_3", 65, 25)])
+        self.assertEqual([(e["id"], e["x"], e["y"]) for e in bf["entries"]], [("left", 6, 25), ("top", 47, 0), ("right", 88, 25)])
         self.assertEqual(len(bf["sockets"]), 15)
+        self.assertEqual([s["id"] for s in bf["sockets"]], [s["id"] for s in d2["sockets"]])
+        self.assertEqual([(s["point"], s["order"]) for s in bf["sockets"]], [(s["point"], s["order"]) for s in d2["sockets"]])
+        self.assertNotEqual([(s["x"], s["y"]) for s in bf["sockets"]], [(s["x"], s["y"]) for s in d2["sockets"]])
         village = [b for b in bf["buildings"] if b["role"] == "village"]
         self.assertGreaterEqual(len(village), 8)
         self.assertTrue(all(b["actor"].startswith("v0") for b in village))
@@ -354,6 +361,85 @@ class MissionOneTests(unittest.TestCase):
             self.assertNotIn((c["x"], c["y"]), blocked)
         self.assertNotIn(tuple(bf["exits"]["barracks"]), blocked)
         self.assertEqual(set(bf["wander"]), {"rect", "radius", "flee_radius"})
+
+
+class BassChartTests(unittest.TestCase):
+    """Mission 1's bass chart (bass_chart: pads by pitch, a minimum gap, no holds), read from the built pack."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.level = read_json(ROOT / "songs" / "m01_first_watch" / "level.json")
+        cls.bass_phases = [i for i, p in enumerate(cls.level["phases"]) if p["mode"] == "bass"]
+
+    def blocks(self, phase: int) -> list:
+        return [b for b in self.level["cue_blocks"] if b["phase"] == phase and b["family"] == "bass"]
+
+    def option_cues(self, phase: int, option: str) -> list:
+        """(tick, duration, pad) of one bass line option in one phase, in time order."""
+        return sorted((t, d, b["pad"]) for b in self.blocks(phase) for t, d in b["options"][option])
+
+    def test_pitch_pads_buckets_low_to_high_over_four_pads(self):
+        self.assertEqual(mission_mod.pitch_pads([57]), {57: 2})
+        self.assertEqual(mission_mod.pitch_pads([60, 60, 60]), {60: 2})
+        self.assertEqual(mission_mod.pitch_pads([60, 50, 55]), {50: 1, 55: 2, 60: 3})
+        seven = mission_mod.pitch_pads([51, 53, 56, 57, 58, 59, 60, 53, 51])
+        self.assertEqual([seven[p] for p in (51, 53, 56, 57, 58, 59, 60)], [1, 1, 2, 2, 3, 3, 4])
+        self.assertEqual(mission_mod.pitch_pads(range(40, 48)), {40 + i: i // 2 + 1 for i in range(8)})
+
+    def test_bass_chart_defaults_and_validation(self):
+        lib = Library(LIBRARY, CONTENT / "sounds.json", CONTENT / "build_state.json")
+        m = mission_mod.Mission(MISSIONS / "level_01.json", lib)
+        base = mission_mod.BASS_CHART_DEFAULT
+        self.assertEqual(m._bass_chart(None, base, "x"), {"pads": "slot", "min_gap_ticks": 0, "holds": True})
+        self.assertEqual(m._bass_chart({"pads": "pitch"}, base, "x"), {"pads": "pitch", "min_gap_ticks": 0, "holds": True})
+        self.assertEqual(m.errors, [])
+        for bad in ({"pads": "random"}, {"min_gap_ticks": -1}, {"min_gap_ticks": 1.5}, {"min_gap_ticks": True}, {"holds": "no"}, {"speed": 2}):
+            m.errors.clear()
+            self.assertEqual(m._bass_chart(bad, base, "x"), base, bad)
+            self.assertEqual(len(m.errors), 1, bad)
+
+    def test_mission_one_bass_cues_spread_over_at_least_three_pads(self):
+        self.assertEqual(self.bass_phases, [2, 4, 7, 9, 11, 14])
+        for ph in self.bass_phases:
+            pads = {b["pad"] for b in self.blocks(ph)}
+            self.assertGreaterEqual(len(pads), 3, f"phase {ph + 1}")
+            self.assertTrue(pads <= {1, 2, 3, 4})
+            for opt in self.blocks(ph)[0]["options"]:
+                self.assertGreaterEqual(len({c[2] for c in self.option_cues(ph, opt)}), 3, f"phase {ph + 1} {opt}")
+
+    def test_every_bass_cue_is_a_tap(self):
+        for ph in self.bass_phases:
+            for b in self.blocks(ph):
+                for lst in b["options"].values():
+                    self.assertTrue(all(d == 0 for _, d in lst), f"phase {ph + 1} pad {b['pad']}")
+
+    def test_bass_cues_are_a_beat_and_a_half_apart_and_sparse(self):
+        for ph in self.bass_phases:
+            for opt in self.blocks(ph)[0]["options"]:
+                cues = self.option_cues(ph, opt)
+                self.assertTrue(8 <= len(cues) <= 16, f"phase {ph + 1} {opt}: {len(cues)} cues")
+                for x, y in zip(cues, cues[1:]):
+                    self.assertGreaterEqual(y[0] - x[0], 960, f"phase {ph + 1} {opt}")
+
+    def test_each_pad_in_use_is_labelled_with_the_voice(self):
+        for ph in self.bass_phases:
+            labels = self.level["phases"][ph]["pads"]
+            for b in self.blocks(ph):
+                self.assertEqual(labels[str(b["pad"])], {"family": "bass", "ref": b["voice"]}, f"phase {ph + 1}")
+            self.assertGreaterEqual(len(labels), 3)
+
+    def test_blocks_of_one_line_share_voice_window_and_option_keys(self):
+        for ph in self.bass_phases:
+            blocks = self.blocks(ph)
+            for key in ("voice", "deps", "start_tick", "end_tick"):
+                self.assertEqual(len({json.dumps(b[key]) for b in blocks}), 1, key)
+            self.assertEqual(len({tuple(b["options"]) for b in blocks}), 1)
+            self.assertEqual(len({b["pad"] for b in blocks}), len(blocks), "one block per pad")
+
+    def test_drum_cues_are_unchanged_by_the_bass_chart(self):
+        drum = [b for b in self.level["cue_blocks"] if b["family"] in ("kick", "snare")]
+        self.assertEqual({b["pad"] for b in drum if b["family"] == "kick"}, {1})
+        self.assertEqual({b["pad"] for b in drum if b["family"] == "snare"}, {4})
 
 
 if __name__ == "__main__":

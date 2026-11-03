@@ -40,15 +40,26 @@ func _play(m: Match, level: Level, hit: Callable) -> void:
 func test_mission_one_loads_with_pads_sequences_and_rewards() -> void:
 	var level := _load("m01_first_watch")
 	assert_true(level.is_mission())
-	assert_eq(level.notes.size(), 10 * 18 + 6 * 15, "ten drum phases of 10 kicks and 8 snares, six bass phases of 15 holds")
+	assert_eq(level.notes.size(), 10 * 18 + 6 * 12, "ten drum phases of 10 kicks and 8 snares, six bass phases of 12 taps")
 	assert_eq(level.sequences.size(), 32, "128 bars in four-bar sequences")
 	assert_eq(str(level.sequences[0]["reward"]), "pillbox", "the first drum sequence rewards one pillbox")
 	var pads := {}
+	var bass_pads := {}
+	var bass_ticks := []
 	for n in level.notes:
 		pads[int(n["pad"])] = true
+		if n["family"] == "bass":
+			assert_eq(str(n["type"]), "tap", "every bass cue is a tap")
+			bass_pads[int(n["pad"])] = true
+			bass_ticks.append(int(n["tick"]))
 	var used := pads.keys()
 	used.sort()
-	assert_eq(used, [1, 2, 4], "kick on pad 1, bass on pad 2, snare on pad 4")
+	assert_eq(used, [1, 2, 3, 4], "kick on pad 1, snare on pad 4, bass spread over the pads by pitch")
+	assert_true(bass_pads.size() >= 3, "the bass uses at least three pads (%d)" % bass_pads.size())
+	assert_eq(bass_ticks.size(), 72, "six bass phases of 12 taps")
+	bass_ticks.sort()
+	for i in range(1, bass_ticks.size()):
+		assert_true(bass_ticks[i] - bass_ticks[i - 1] >= 1440, "bass cues are at least 1440 ticks apart")
 	assert_eq(level.selection, {"groove": ["groove_half_time"], "bass": ["bass_sub_line"], "bass_voice": ["bass_sub_deep"], "accompaniment": ["acc_hats_driving"]})
 	assert_eq(level.stems.size(), 4, "kick, snare, bass and backing stems")
 

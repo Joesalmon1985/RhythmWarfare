@@ -17,7 +17,7 @@
  "roster": "openra_mvp_01",
  "rules": {
   "objective_hp": {
-   "command_core": 90000
+   "command_core": 130000
   },
   "sockets_per_point": 4,
   "walls": [
@@ -50,6 +50,12 @@
  "sequence_threshold": 0.6,
  "intro": "Two bass voices now: they take turns, one pad each.",
  "intro_bar": 8,
+ "intros": [
+  {
+   "bar": 8,
+   "text": "Two bass voices now: they take turns, one pad each."
+  }
+ ],
  "placeholder": true,
  "source": {
   "mission": "content/missions/level_05.json",
@@ -179,6 +185,7 @@
   "groove_push": "Push",
   "groove_twostep": "Two-Step"
  },
+ "bound_sounds": {},
  "phases": [
   {
    "id": "p01",
@@ -2314,7 +2321,8 @@
   "files": 31,
   "placeholder_files": 31,
   "owner_files": 0,
-  "default_mix_peak_db": -1.73
+  "default_mix_peak_db": -1.73,
+  "loudest_mix_bound_db": 1.74
  },
  "waves": [
   {
@@ -2330,7 +2338,8 @@
    ],
    "start_tick": 0,
    "via_defense_point": "defense_1",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_02",
@@ -2345,7 +2354,8 @@
    ],
    "start_tick": 19200,
    "via_defense_point": "defense_1",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_03",
@@ -2365,7 +2375,8 @@
    ],
    "start_tick": 34560,
    "via_defense_point": "defense_2",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_04",
@@ -2390,7 +2401,8 @@
    ],
    "start_tick": 49920,
    "via_defense_point": "defense_3",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_05",
@@ -2410,7 +2422,8 @@
    ],
    "start_tick": 65280,
    "via_defense_point": "defense_1",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_06",
@@ -2435,7 +2448,8 @@
    ],
    "start_tick": 80640,
    "via_defense_point": "defense_2",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_07",
@@ -2460,7 +2474,8 @@
    ],
    "start_tick": 96000,
    "via_defense_point": "defense_3",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_08",
@@ -2485,7 +2500,8 @@
    ],
    "start_tick": 111360,
    "via_defense_point": "defense_1",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_09",
@@ -2510,7 +2526,8 @@
    ],
    "start_tick": 126720,
    "via_defense_point": "defense_2",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_10",
@@ -2535,7 +2552,8 @@
    ],
    "start_tick": 142080,
    "via_defense_point": "defense_3",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_11",
@@ -2560,7 +2578,8 @@
    ],
    "start_tick": 157440,
    "via_defense_point": "defense_1",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   }
  ]
 }

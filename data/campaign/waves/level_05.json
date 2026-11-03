@@ -1,6 +1,6 @@
 {
  "note": "Mission 5 Counterpoint (56 bars, 77 s). Adds rocket soldiers and light tanks to the enemy mix; the first APC pair arrives in the last third.",
- "rules": {"objective_hp": {"command_core": 90000}, "sockets_per_point": 4, "walls": [[26, 18], [26, 24], [36, 14], [42, 14], [52, 18], [52, 24]]},
+ "rules": {"objective_hp": {"command_core": 130000}, "sockets_per_point": 4, "walls": [[26, 18], [26, 24], [36, 14], [42, 14], [52, 18], [52, 24]]},
  "waves": [
   {"id": "wave_01", "start_bar": 1, "entry": "left", "groups": [{"actor": "e1", "count": 3, "spawn_spacing_ticks": 720}]},
   {"id": "wave_02", "start_bar": 6, "entry": "left", "groups": [{"actor": "e1", "count": 4, "spawn_spacing_ticks": 600}]},

@@ -130,6 +130,89 @@ no rendering) with a scripted input policy at 60 Hz. One row per mission, policy
 Seeds change the battle simulation and the input draws. A simulation pass is evidence about the waves, not about how
 hard a mission feels to a person: nobody has played these missions.
 
+## Mission 1 after the owner's first play (3 November 2026, later the same day)
+
+The owner's six tweaks changed the sim for every mission (player units fight on the move, a defender beyond its
+leash fires at what is in range but never chases) and mission 1's map and chart (96 x 48 village at zoom 0.75 with
+the rally points 7 cells out, the bass charted by pitch over four pads as taps at most one per 1.5 beats, so the bass
+phases have 12 or 16 cues per 8 bars instead of 15 or 23 holds). Same waves and barracks hp as the village level.
+Seeds 1 to 3: perfect 3/3 with every wave destroyed, beginner 3/3, sloppy 3/3 (it was 2/3: the taps-only chart
+passes more sequences), no input loses at about 1:41 (was 1:36; the longer walks delay the waves).
+
+| Mission | Policy | Seed | Outcome | At | Sequences (sharp/steady/loose) | Built | Units | Repairs | Defenses alive | Barracks | Enemies killed | Peak units (you / enemy) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 First Watch | perfect | 1 | victory | 176.6 s | 32/32 (32/0/0) | 9 | 18 | 5 | 9 | 100% | 139 | 29 / 27 |
+| 1 First Watch | perfect | 2 | victory | 176.6 s | 32/32 (32/0/0) | 9 | 18 | 5 | 9 | 100% | 139 | 25 / 28 |
+| 1 First Watch | perfect | 3 | victory | 176.6 s | 32/32 (32/0/0) | 9 | 18 | 5 | 9 | 100% | 139 | 26 / 28 |
+| 1 First Watch | beginner | 1 | victory | 176.6 s | 30/32 (4/24/2) | 9 | 17 | 4 | 9 | 100% | 139 | 27 / 27 |
+| 1 First Watch | beginner | 2 | victory | 176.6 s | 28/32 (6/20/2) | 9 | 15 | 4 | 9 | 100% | 139 | 22 / 27 |
+| 1 First Watch | beginner | 3 | victory | 176.6 s | 29/32 (6/21/2) | 9 | 15 | 5 | 9 | 100% | 139 | 26 / 28 |
+| 1 First Watch | sloppy | 1 | victory | 176.6 s | 31/32 (1/12/18) | 9 | 18 | 4 | 9 | 100% | 139 | 26 / 28 |
+| 1 First Watch | sloppy | 2 | victory | 176.6 s | 28/32 (0/11/17) | 9 | 16 | 3 | 9 | 100% | 139 | 26 / 28 |
+| 1 First Watch | sloppy | 3 | victory | 176.6 s | 27/32 (0/12/15) | 9 | 15 | 3 | 9 | 100% | 139 | 18 / 28 |
+| 1 First Watch | none | 1 | defeat | 101.0 s | 0/32 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 10 | 15 / 67 |
+| 1 First Watch | none | 2 | defeat | 103.1 s | 0/32 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 11 | 15 / 73 |
+| 1 First Watch | none | 3 | defeat | 101.1 s | 0/32 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 10 | 15 / 67 |
+
+Missions 2 to 10 with the new defender behaviour (seeds 1 to 3): three late losses appeared that the 2 November
+table did not have (mission 5 beginner seed 1 at 75.6 s, mission 8 perfect seed 3 at 88.1 s where the radar dome
+fell 0.2 s before the end, mission 10 beginner seed 3 at 105.4 s), so their objective hp went up one notch
+(mission 8 radar dome 60,000 to 70,000 and mission 5 core 90,000 to 130,000, which fixed them; mission 10 core
+125,000 to 185,000 over three rounds, which only pushed its beginner seed 3 loss from 105.4 s to 108.0 s of 110.3:
+that seed is overwhelmed, not worn down, so the hp stays at 185,000 and the loss is recorded as known). The rows
+marked (retuned) below are the final runs; the other six missions are unchanged in outcome.
+
+| Mission | Policy | Seed | Outcome | At | Sequences (sharp/steady/loose) | Built | Units | Repairs | Defenses alive | Core | Enemies killed | Peak units (you / enemy) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 5 Counterpoint (retuned) | perfect | 1 | victory | 77.2 s | 14/14 (14/0/0) | 8 | 6 | 0 | 5 | 100% | 44 | 2 / 26 |
+| 5 Counterpoint (retuned) | perfect | 2 | victory | 77.2 s | 14/14 (14/0/0) | 8 | 6 | 0 | 5 | 100% | 45 | 3 / 25 |
+| 5 Counterpoint (retuned) | perfect | 3 | victory | 77.2 s | 14/14 (14/0/0) | 8 | 6 | 0 | 5 | 100% | 45 | 3 / 25 |
+| 5 Counterpoint (retuned) | beginner | 1 | victory | 77.2 s | 14/14 (1/13/0) | 8 | 6 | 0 | 5 | 11% | 35 | 2 / 28 |
+| 5 Counterpoint (retuned) | beginner | 2 | victory | 77.2 s | 13/14 (1/11/1) | 7 | 6 | 0 | 3 | 100% | 41 | 2 / 28 |
+| 5 Counterpoint (retuned) | beginner | 3 | victory | 77.2 s | 14/14 (1/13/0) | 8 | 6 | 0 | 5 | 100% | 40 | 2 / 29 |
+| 5 Counterpoint (retuned) | sloppy | 1 | victory | 77.2 s | 12/14 (0/4/8) | 7 | 5 | 0 | 4 | 40% | 40 | 2 / 33 |
+| 5 Counterpoint (retuned) | sloppy | 2 | victory | 77.2 s | 12/14 (0/5/7) | 7 | 5 | 0 | 5 | 100% | 40 | 2 / 29 |
+| 5 Counterpoint (retuned) | sloppy | 3 | victory | 77.2 s | 11/14 (0/6/5) | 7 | 4 | 0 | 5 | 100% | 32 | 2 / 35 |
+| 5 Counterpoint (retuned) | none | 1 | defeat | 37.6 s | 0/14 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 32 |
+| 5 Counterpoint (retuned) | none | 2 | defeat | 37.6 s | 0/14 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 32 |
+| 5 Counterpoint (retuned) | none | 3 | defeat | 37.6 s | 0/14 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 32 |
+| 10 Last Light (retuned) | perfect | 1 | victory | 110.3 s | 20/20 (20/0/0) | 8 | 8 | 4 | 6 | 100% | 71 | 4 / 20 |
+| 10 Last Light (retuned) | perfect | 2 | victory | 110.3 s | 20/20 (20/0/0) | 8 | 8 | 4 | 5 | 100% | 71 | 4 / 22 |
+| 10 Last Light (retuned) | perfect | 3 | victory | 110.3 s | 20/20 (20/0/0) | 8 | 8 | 4 | 4 | 98% | 64 | 4 / 27 |
+| 10 Last Light (retuned) | beginner | 1 | victory | 110.3 s | 20/20 (0/19/1) | 8 | 8 | 4 | 6 | 100% | 71 | 4 / 23 |
+| 10 Last Light (retuned) | beginner | 2 | victory | 110.3 s | 19/20 (2/16/1) | 8 | 7 | 4 | 7 | 100% | 71 | 3 / 22 |
+| 10 Last Light (retuned) | beginner | 3 | defeat | 108.0 s | 18/20 (3/15/0) | 8 | 7 | 3 | 1 | 0% | 56 | 3 / 28 |
+| 10 Last Light (retuned) | sloppy | 1 | victory | 110.3 s | 16/20 (0/8/8) | 8 | 4 | 4 | 4 | 100% | 69 | 2 / 25 |
+| 10 Last Light (retuned) | sloppy | 2 | victory | 110.3 s | 16/20 (0/7/9) | 8 | 4 | 4 | 1 | 49% | 56 | 2 / 25 |
+| 10 Last Light (retuned) | sloppy | 3 | victory | 110.3 s | 14/20 (0/8/6) | 6 | 4 | 4 | 1 | 97% | 58 | 2 / 26 |
+| 10 Last Light (retuned) | none | 1 | defeat | 70.2 s | 0/20 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 29 | 0 / 33 |
+| 10 Last Light (retuned) | none | 2 | defeat | 70.4 s | 0/20 (0/0/0) | 0 | 0 | 0 | 1 | 0% | 28 | 0 / 33 |
+| 10 Last Light (retuned) | none | 3 | defeat | 70.2 s | 0/20 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 29 | 0 / 33 |
+| 8 Crossfire (retuned) | perfect | 1 | victory | 88.3 s | 16/16 (16/0/0) | 8 | 5 | 3 | 3 | 100% | 58 | 3 / 31 |
+| 8 Crossfire (retuned) | perfect | 2 | victory | 88.3 s | 16/16 (16/0/0) | 8 | 5 | 3 | 2 | 100% | 66 | 4 / 32 |
+| 8 Crossfire (retuned) | perfect | 3 | victory | 88.3 s | 16/16 (16/0/0) | 8 | 5 | 3 | 3 | 100% | 58 | 3 / 27 |
+| 8 Crossfire (retuned) | beginner | 1 | victory | 88.3 s | 16/16 (0/16/0) | 8 | 5 | 3 | 6 | 100% | 64 | 3 / 28 |
+| 8 Crossfire (retuned) | beginner | 2 | victory | 88.3 s | 15/16 (1/14/0) | 8 | 4 | 3 | 4 | 100% | 64 | 3 / 24 |
+| 8 Crossfire (retuned) | beginner | 3 | victory | 88.3 s | 16/16 (2/14/0) | 8 | 5 | 2 | 4 | 100% | 64 | 4 / 25 |
+| 8 Crossfire (retuned) | sloppy | 1 | victory | 88.3 s | 15/16 (0/5/10) | 7 | 5 | 2 | 5 | 100% | 61 | 4 / 25 |
+| 8 Crossfire (retuned) | sloppy | 2 | victory | 88.3 s | 15/16 (0/5/10) | 7 | 5 | 3 | 4 | 100% | 59 | 4 / 26 |
+| 8 Crossfire (retuned) | sloppy | 3 | victory | 88.3 s | 14/16 (0/5/9) | 6 | 5 | 3 | 4 | 100% | 63 | 4 / 22 |
+| 8 Crossfire (retuned) | none | 1 | defeat | 36.0 s | 0/16 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 5 | 0 / 30 |
+| 8 Crossfire (retuned) | none | 2 | defeat | 36.0 s | 0/16 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 5 | 0 / 30 |
+| 8 Crossfire (retuned) | none | 3 | defeat | 36.0 s | 0/16 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 5 | 0 / 30 |
+| 10 Last Light (retuned) | perfect | 1 | victory | 110.3 s | 20/20 (20/0/0) | 8 | 8 | 4 | 6 | 100% | 71 | 4 / 20 |
+| 10 Last Light (retuned) | perfect | 2 | victory | 110.3 s | 20/20 (20/0/0) | 8 | 8 | 4 | 5 | 100% | 71 | 4 / 22 |
+| 10 Last Light (retuned) | perfect | 3 | victory | 110.3 s | 20/20 (20/0/0) | 8 | 8 | 4 | 4 | 98% | 64 | 4 / 27 |
+| 10 Last Light (retuned) | beginner | 1 | victory | 110.3 s | 20/20 (0/19/1) | 8 | 8 | 4 | 6 | 100% | 71 | 4 / 23 |
+| 10 Last Light (retuned) | beginner | 2 | victory | 110.3 s | 19/20 (2/16/1) | 8 | 7 | 4 | 7 | 100% | 71 | 3 / 22 |
+| 10 Last Light (retuned) | beginner | 3 | defeat | 106.8 s | 18/20 (3/15/0) | 8 | 7 | 3 | 1 | 0% | 56 | 3 / 28 |
+| 10 Last Light (retuned) | sloppy | 1 | victory | 110.3 s | 16/20 (0/8/8) | 8 | 4 | 4 | 4 | 100% | 69 | 2 / 25 |
+| 10 Last Light (retuned) | sloppy | 2 | victory | 110.3 s | 16/20 (0/7/9) | 8 | 4 | 4 | 1 | 33% | 56 | 2 / 25 |
+| 10 Last Light (retuned) | sloppy | 3 | victory | 110.3 s | 14/20 (0/8/6) | 6 | 4 | 4 | 1 | 96% | 58 | 2 / 26 |
+| 10 Last Light (retuned) | none | 1 | defeat | 68.0 s | 0/20 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 29 | 0 / 33 |
+| 10 Last Light (retuned) | none | 2 | defeat | 68.2 s | 0/20 (0/0/0) | 0 | 0 | 0 | 1 | 0% | 28 | 0 / 33 |
+| 10 Last Light (retuned) | none | 3 | defeat | 68.0 s | 0/20 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 28 | 0 / 33 |
+
 ## Mission 1, the village level (3 November 2026)
 
 Mission 1 is now 128 bars (176.6 s), sixteen eight-bar phases DDBD BDDB DBDB DDBD, 32 four-bar sequences, on the

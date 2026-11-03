@@ -38,6 +38,17 @@ STEM_QUALITY = 3.0
 PREVIEW_QUALITY = 2.0
 PREVIEW_BARS = 4
 ENVELOPE_BLOCK = 480  # 10 ms blocks for the worst-case mix estimate
+BASS_CHART_DEFAULT = {"pads": "slot", "min_gap_ticks": 0, "holds": True}  # = the pad follows the voice slot, every note, holds kept
+
+
+def pitch_pads(pitches) -> dict:
+    """Pitch -> pad for a bass chart that follows pitch: the k distinct pitches, ascending, are spread over pads 1..4
+    (the i-th, counting from 0, goes to pad floor(i * 4 / k) + 1); a single pitch uses pad 2."""
+    ordered = sorted(set(pitches))
+    k = len(ordered)
+    if k == 1:
+        return {ordered[0]: 2}
+    return {p: i * 4 // k + 1 for i, p in enumerate(ordered)}
 
 
 @dataclass
@@ -135,6 +146,7 @@ class Mission:
             if len(default) != count or len(set(default)) != count or not set(default) <= set(pool):
                 self.err(f"choice {cid}: default must be {count} different pool items")
             self.choices[cid] = {"id": cid, "count": count, "pool": pool, "default": default, "label": c.get("label", CHOICE_KINDS[cid][2])}
+        base_chart = self._bass_chart(d.get("bass_chart"), BASS_CHART_DEFAULT, "mission")
         tick = 0
         for i, p in enumerate(d["phases"]):
             bars = int(p["bars"])
@@ -143,7 +155,7 @@ class Mission:
                 self.err(f"phase {i + 1}: mode must be drums or bass")
             ph = {"index": i, "id": p.get("id", f"p{i + 1:02d}"), "start": tick, "end": tick + bars * TICKS_PER_BAR, "bars": bars,
                   "mode": mode, "raw": p, "sequence_bars": int(p.get("sequence_bars", 4)), "rewards": list(p.get("rewards", [])),
-                  "pads": {}}
+                  "pads": {}, "bass_chart": self._bass_chart(p.get("bass_chart"), base_chart, f"phase {i + 1}")}
             for fld in ("groove", "fill", "bass", "kick_sound", "snare_sound"):
                 if fld in p:
                     ph[fld] = self._ref(fld, p[fld], i)
@@ -166,6 +178,35 @@ class Mission:
             if not 1 <= bar <= self.bars or not str(it.get("text", "")):
                 self.err(f"intros: each entry needs a bar inside the song and a text ({it})")
             self.intros.append({"bar": bar, "text": str(it.get("text", ""))})
+
+    def _bass_chart(self, raw, base: dict, where: str) -> dict:
+        """`bass_chart` (mission level, a phase may override single keys): how a bass line becomes cues. pads 'slot' (the
+        pad follows the voice slot) or 'pitch' (low to high over pads 1..4); min_gap_ticks drops a cue closer than that
+        to the last one kept; holds false makes every bass cue a tap."""
+        out = dict(base)
+        if raw is None:
+            return out
+        if not isinstance(raw, dict):
+            self.err(f"{where}: bass_chart must be an object")
+            return out
+        for key, value in raw.items():
+            if key == "pads":
+                if value not in ("slot", "pitch"):
+                    self.err(f"{where}: bass_chart pads must be 'slot' or 'pitch', not {value!r}")
+                    continue
+            elif key == "min_gap_ticks":
+                if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                    self.err(f"{where}: bass_chart min_gap_ticks must be an integer of 0 or more, not {value!r}")
+                    continue
+            elif key == "holds":
+                if not isinstance(value, bool):
+                    self.err(f"{where}: bass_chart holds must be true or false, not {value!r}")
+                    continue
+            else:
+                self.err(f"{where}: unknown bass_chart key '{key}' (use pads, min_gap_ticks, holds)")
+                continue
+            out[key] = value
+        return out
 
     def _ref(self, fld: str, value, phase_index: int) -> Ref:
         if isinstance(value, int):
@@ -322,34 +363,48 @@ class Mission:
 
     def _block(self, ph: dict, part: str, clip_ref: Ref, sound_ref: Ref, a: int, b: int, loop: int) -> None:
         """Cues of one part over [a, b): one cue list per option of the clip choice. The pad follows the sound slot
-        (a bound sound follows its clip's slot)."""
+        (a bound sound follows its clip's slot), or for a bass line with bass_chart pads 'pitch' the note's pitch."""
         family = "bass" if part == "bass" else part
+        chart = ph["bass_chart"] if family == "bass" else BASS_CHART_DEFAULT
+        by_pitch = chart["pads"] == "pitch"
         slot = sound_ref.slot if sound_ref.choice else (clip_ref.slot if sound_ref.bound and clip_ref.choice else 1)
         pads = RULES["pads"][family]
-        if slot > len(pads):
+        if slot > len(pads) and not by_pitch:
             self.err(f"phase {ph['index'] + 1}: {family} voice slot {slot} has no pad")
             return
-        pad = pads[slot - 1]
         voice = f"bound:{clip_ref.label()}:{part}" if sound_ref.bound else sound_ref.label()
-        ph["pads"][str(pad)] = {"family": family, "ref": voice}
-        options = {}
+        per_option = {}  # option -> [(pad, tick, dur)]
         for opt in clip_ref.options(self.choices):
             clip = self.lib.clips.get(opt)
             if clip is None:
                 continue
+            notes = clip.cue_notes(part)
+            pad_of = pitch_pads(n["pitch"] for n in notes) if by_pitch and notes else {}
             cues = []
             first = ph["start"] + ((a - ph["start"]) // loop) * loop
             at = first
             while at < b:
-                for n in clip.cue_notes(part):
+                for n in notes:
                     t = at + n["tick"]
                     if a <= t < b:
-                        dur = n["duration_ticks"] if family == "bass" and n["duration_ticks"] >= RULES["chart"]["hold_min_ticks"] else 0
-                        cues.append([t, dur])
+                        hold = family != "bass" or chart["holds"]
+                        dur = n["duration_ticks"] if family == "bass" and hold and n["duration_ticks"] >= RULES["chart"]["hold_min_ticks"] else 0
+                        cues.append((pad_of.get(n["pitch"], pads[slot - 1] if slot <= len(pads) else 2), t, dur))
                 at += loop
-            options[opt] = cues
-        self.blocks.append({"phase": ph["index"], "family": family, "part": part, "pad": pad, "voice": voice,
-                            "deps": [clip_ref.dep] if clip_ref.dep else [], "start_tick": a, "end_tick": b, "options": options})
+            if chart["min_gap_ticks"] > 0:
+                kept = []
+                for c in sorted(cues, key=lambda c: (c[1], c[0])):
+                    if not kept or c[1] - kept[-1][1] >= chart["min_gap_ticks"]:
+                        kept.append(c)
+                cues = kept
+            per_option[opt] = cues
+        used = sorted({c[0] for cues in per_option.values() for c in cues}) or [pads[slot - 1] if slot <= len(pads) else 2]
+        group = len(self.blocks)
+        for pad in used:
+            ph["pads"][str(pad)] = {"family": family, "ref": voice}
+            self.blocks.append({"phase": ph["index"], "family": family, "part": part, "pad": pad, "voice": voice, "group": group,
+                                "deps": [clip_ref.dep] if clip_ref.dep else [], "start_tick": a, "end_tick": b,
+                                "options": {opt: [[t, d] for p, t, d in cues if p == pad] for opt, cues in per_option.items()}})
 
     # --- sequences and checks ---------------------------------------------------------------------------------------
     def make_sequences(self) -> None:
@@ -376,12 +431,17 @@ class Mission:
         bounds = sorted({s["start_tick"] for s in self.sequences} | {self.duration_ticks})
         for ph in self.phases:
             blocks = [b for b in self.blocks if b["phase"] == ph["index"]]
-            combos = itertools.product(*[list(b["options"].items()) for b in blocks]) if blocks else [()]
+            groups = {}  # blocks that share a group are the pads of one cue list: they take the same option together
+            for b in blocks:
+                groups.setdefault(b["group"], []).append(b)
+            groups = list(groups.values())
+            combos = itertools.product(*[list(g[0]["options"]) for g in groups]) if groups else [()]
             for combo in combos:
                 cues = []
-                label = ", ".join(o for o, _ in combo)
-                for b, (opt, lst) in zip(blocks, combo):
-                    cues += [{"tick": t, "dur": d, "pad": b["pad"], "end": t + d} for t, d in lst]
+                label = ", ".join(combo)
+                for g, opt in zip(groups, combo):
+                    for b in g:
+                        cues += [{"tick": t, "dur": d, "pad": b["pad"], "end": t + d} for t, d in b["options"][opt]]
                 cues.sort(key=lambda c: (c["tick"], c["pad"]))
                 where = f"phase {ph['index'] + 1} with {label or 'its fixed clips'}"
                 for c in cues:
@@ -604,17 +664,27 @@ class Mission:
             entry = {"id": cid, "label": c["label"], "count": c["count"], "default": c["default"],
                      "pool": [{"id": o, "name": names.get(o, o)} for o in c["pool"]]}
             if cid in pairs:
-                if len(pairs[cid]) > 1:
-                    self.err(f"choice {cid} pairs with several clip choices {sorted(pairs[cid])}; the game can follow one")
-                parent, family = next(iter(pairs[cid]))
-                clips = self.choices[parent]["pool"]
-                restricted = False
-                for o in entry["pool"]:
-                    with_ = [cl for cl in clips if self.lib.compatible(cl, family, o["id"])]
-                    if len(with_) < len(clips):
-                        o["with"] = with_
-                        restricted = True
-                if restricted:
+                # a sound choice that pairs with several clip choices (a kick sound used by the groove and the fill) is
+                # fine while every option plays every clip; only a restricted pairing (declared renders) can be followed,
+                # and the game can follow one parent only
+                restricted_parents = []
+                for parent, family in sorted(pairs[cid]):
+                    clips = self.choices[parent]["pool"]
+                    with_by_option = {}
+                    for o in entry["pool"]:
+                        with_ = [cl for cl in clips if self.lib.compatible(cl, family, o["id"])]
+                        if len(with_) < len(clips):
+                            with_by_option[o["id"]] = with_
+                    if with_by_option:
+                        restricted_parents.append((parent, with_by_option))
+                if len(restricted_parents) > 1:
+                    self.err(f"choice {cid} depends on several clip choices {[p for p, _ in restricted_parents]}; "
+                             "the game can follow one")
+                if restricted_parents:
+                    parent, with_by_option = restricted_parents[0]
+                    for o in entry["pool"]:
+                        if o["id"] in with_by_option:
+                            o["with"] = with_by_option[o["id"]]
                     entry["depends_on"] = parent
             out.append(entry)
         return out

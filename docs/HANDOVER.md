@@ -3,7 +3,9 @@
 State on 3 November 2026, after `docs/BRIEF_PADS_SEQUENCES_TEN_MISSIONS.md` (four pads, sequence rewards, ten missions,
 the loop library and the owner's drop-in content path), the rebuild of Mission 1 on the owner's own Ableton
 recordings (`ToAddTry1/`, imported by `tools/content/import_ableton.py`) and the village version of Mission 1
-(128 bars, civilians, tap-to-deploy sections, Red Alert sound effects; plan in the 3 Nov commit message). Read this first, then `README.md` (layout and commands),
+(128 bars, civilians, tap-to-deploy sections, Red Alert sound effects) and the owner's first-play tweaks of the same
+day (units fight on the move, a bigger zoomed-out village, the rally flag always shown, the bass chart by pitch,
+a quieter battle mix, misses that silence the instrument). Read this first, then `README.md` (layout and commands),
 `docs/PRD.md` section 15 (the mission rule set; sections 1 to 13 describe the legacy duel) and
 `docs/CONTENT_TO_RENDER.md` (the owner's render list). Everything is committed on `main` at
 https://github.com/Joesalmon1985/RhythmWarfare.
@@ -47,13 +49,28 @@ with a few musical choices of your own. Home: Continue, Campaign, Practice, Sett
   medium tank, artillery, flak truck; squads `rifle_squad` and `grenadier_squad` are three at once) come out of the
   barracks or war factory and hold the point with the fewest defenders (at most `units_per_point`, 6 by default, 14 in
   mission 1); they may sortie up to 16 cells to hit an enemy shelling their point from beyond their 6-cell leash.
-  At capacity a reward becomes a repair crew for the most damaged approach or, with nothing damaged, +50% health
-  once for the oldest defense; the HUD says which.
+  Reward units leave the barracks on attack-move and fight whatever they meet on the way; a defender beyond its
+  leash keeps firing at a target in range but never chases it, and walks home fighting (`_leash_holds` in
+  `battle_sim.gd`, `_defender` in `defense_ai.gd`). At capacity a reward becomes a repair crew for the most damaged
+  approach or, with nothing damaged, +50% health once for the oldest defense; the HUD says which.
 - **Sections (tap to deploy).** A tap on the battlefield (or keys 1 2 3) makes the nearest approach by x the active
-  section: a Red Alert rally flag stands at its defense point, a move flash plays, and every reward goes there while
-  it has room (else the normal choice). Nothing else is drawn on the map any more: no circles, numbers, brackets,
-  countdown rings or wave arrows; the top bar keeps the objective health, time, combo, defenses, enemies, villagers
-  and the "WAVE n INCOMING FROM THE LEFT" line as text.
+  section: every reward goes there while it has room (else the normal choice) and a move flash plays. The Red Alert
+  rally flag always stands at the current rally point (`Match.rally_point()`: the tapped section, else the point
+  rewards would go to), drawn at full sprite size whatever the zoom, and the top bar reads "RALLY: LEFT (auto)" until
+  the first tap. Nothing else is drawn on the map: no circles, numbers, brackets, countdown rings or wave arrows; the
+  top bar keeps the objective health, time, combo, defenses, enemies, villagers and the "WAVE n INCOMING FROM THE
+  LEFT" line as text.
+- **Zoom.** A battlefield's `view.zoom` (village_01: 0.75; absent = 1.0) scales the cell size (18 px instead of 24)
+  and every sprite; missions 2 to 10 keep 24 px. The village is 96 x 48 cells (`data/maps/field_96x48.json`), the
+  view 72 x 27 cells, the rally points 7 cells outside the side walls and 6 above the top wall, the entries 5 cells
+  beyond the window; `python tools/campaign/build_battlefield.py village_01` regenerates only the village files.
+- **Bass chart.** A mission's `bass_chart` (`content/missions/level_01.json`: `pads: pitch`, `min_gap_ticks: 1440`,
+  `holds: false`) maps the recording's pitches to pads 1 to 4 from low to high, cues at most one note per 1.5 beats
+  and makes every bass cue a tap; the recording still plays every note. Without the block a mission charts as before
+  (voice slot pad, every note, holds). Mission 1: Sub line 12 taps per 8 bars on four pads, Reese line 16 on three.
+- **Misses.** A missed cue (or a hold released with nothing held) silences that instrument's stems until the next hit
+  on it (`Match._judge_to_stems`); the backing track never mutes; at a phase change every family the new phase does
+  not cue comes back; a muted family's pad label draws at half alpha.
 - **Civilians (mission 1).** The village map has ten houses (OpenRA `v01`..`v08`) and ten civilians (technicians
   drawn as `c1`, villagers `c2`) that wander between the houses, flee from enemies within 6 cells and die when shot;
   they never fight or repair, player units ignore them, and the result screen reports "Villagers lost x of y".
@@ -62,7 +79,11 @@ with a few musical choices of your own. Home: Continue, Campaign, Practice, Sett
   weapon reports (M1 carbine, M60, Vulcan, grenade), kaboom and crumble on destruction, dedman screams, civilian
   cries, placbldg/build5 on pillboxes, EVA "unit ready", "enemy units approaching" (8 s before a wave), "base under
   attack", "unit lost", "mission accomplished/failed", an allied "acknowledged" on a section tap; 12 players, 8
-  voices, cooldowns, EVA lines queued one deep. Effects volume in Settings; music now plays on its own "Music" bus.
+  voices, cooldowns, EVA lines queued one deep. Mix (3 Nov, after the owner's first play): shots at −18 dB with a
+  0.25 s cooldown per weapon and at most 3 weapon voices at once (`group_voices`), deaths −14/−12, explosions −10,
+  build sounds −8, EVA −6, outcome −3, a limiter at −1 dB on the SFX bus, Effects slider default 50% (a saved
+  settings file without `mix_version` 2 is reset to it once). Music plays on its own "Music" bus. Nobody has
+  listened to the mix: the owner judges it.
 - **Waves** are authored by bar per mission (`data/campaign/waves/level_NN.json`), never depend on accuracy, walk on
   from off screen at the left, top and right, attack-move via their approach's defense point to their objective and
   fight units **and defensive structures** on the way (not other buildings). A wave (or a group) may carry a
@@ -155,6 +176,27 @@ Verified (31 October 2026, this PC, headless unless stated):
 - Desktop real-window run of mission 10 with perfect autoplay: see `docs/BALANCE.md` (frame time).
 - Exports: see "Exports" below.
 
+Verified (3 November 2026, later: the first-play tweaks, this PC; see `docs/BALANCE.md` "after the owner's first play"):
+- `bash tools/test.sh` green: 10,472 GDScript checks and 36 content tests. New or rewritten: `test_village_sim.gd`
+  (a reward unit fights an enemy on its way to its point and still arrives; a defender beyond its leash walks home
+  without chasing), `test_miss_mute.gd` (miss mutes, hit restores, bass miss leaves kick alone, backing never mutes,
+  phase change restores, restart unmuted), `test_battle_sfx.gd` (shots −18 dB, every rule at most −3 dB, weapon
+  group cap 3, limiter on the SFX bus), the mission 1 tests (252 default cues, 72 bass taps on pads 1 to 4 at
+  least 1440 ticks apart, no holds, perfect play still destroys all 25 waves, villagers lost at most 4),
+  `test_mission_layout.gd` and `test_rewards.gd` through `BattleView.cell_px`, the content tests (`BassChartTests`,
+  the village battlefield values).
+- Seeded balance, seeds 1 to 3: mission 1 perfect, beginner and sloppy 3/3 each with all 139 enemies destroyed, no
+  input loses at about 1:41; missions 2 to 10 re-run with the new defender behaviour: three late losses appeared,
+  two fixed by raising objective hp (mission 5 core 130,000, mission 8 radar dome 70,000); mission 10's core went
+  to 185,000 and its beginner seed 3 still falls at 108.0 s of 110.3 (known, see `docs/BALANCE.md`).
+- Real 1280 x 720 window with perfect autoplay to VICTORY: screenshots of the zoomed village (wall ring, all three
+  points and the rally flag on screen, "RALLY: LEFT (auto)" moving with the suggestion), a bass phase with "Deep
+  Sub" on all four pads, act 2 fighting at the left point, the result screen. Not by a person; nobody has heard the
+  mix, the miss muting or the bass chart; nobody has tapped by hand.
+- Latent build bug fixed in passing: since 2 November `python tools/content/build.py` failed on missions 8 and 10
+  ("choice kick_sound pairs with several clip choices") because their kick and snare sound choices are shared by the
+  groove and the fill; `_choice_entries` now follows only a restricted parent. Both packs rebuild again.
+
 Verified (3 November 2026, the village level, this PC; see `docs/BALANCE.md` "The village level"):
 - `bash tools/test.sh` green: new suites `test_village_sim.gd` (civilians, start units, target classes, squads, the
   active section), `test_civilian_art.gd`, `test_section_input.gd`, `test_battle_sfx.gd`, the rewritten mission 1
@@ -234,6 +276,10 @@ DuelMasterBattle is an asset source only; OpenRA pixel art and behaviour; work o
    wandering so combat outcomes of other missions are unchanged; the autoplay harness taps sections only on levels
    with civilians (`RW_SECTION=auto|none|fixed:<i>`), because tapping the next wave's point every frame makes mission
    5 lose.
+10. First-play tweaks (3 Nov 2026, owner's calls): bass pads by pitch low to high, taps only, one cue per 1.5 beats
+    (the owner asked for one per beat; at one per beat the Reese line kept all 23 of its notes, so the gap is 1440
+    ticks); a miss silences the instrument until the next hit on it; zoom three quarters with the rally points
+    further out; units fight on the move but a defender never chases beyond its leash.
 
 ## How the code is organised
 
@@ -291,10 +337,13 @@ Rebuilt on 31 October 2026 per `docs/EXPORT.md` (`build/` is git-ignored):
 7. Mission setup on very wide screens leaves the right half of the cards area empty (functional, not pretty).
 8. Duel backlog items (idle fidgets, ruins, title art) still apply; the duel has no sound effects (the sound layer is
    wired in the mission play scene only).
-9. Village level: the top choke point's flag sits under the translucent HUD bar; a unit behind a house can draw over
-   it (civilians and houses are one layer under both armies); the "defenses" waves that hold a choke point count as
-   uncleared when the player never retakes it (sloppy runs); the pack is 27 MB of Ogg (18 stems x 129 bars); the
-   sounds `reinfor1`, `bleep11`, `cashturn` are extracted but unused; no positional panning.
+9. Village level: a unit behind a house can draw over it (civilians and houses are one layer under both armies); the
+   "defenses" waves that hold a choke point count as uncleared when the player never retakes it (sloppy runs); the
+   pack is 27 MB of Ogg (18 stems x 129 bars); the sounds `reinfor1`, `bleep11`, `cashturn` are extracted but
+   unused; no positional panning; at zoom 0.75 sprites are decimated with nearest filtering (linear would break the
+   faction remap shader); the rally flag is small on a phone; the Reese line leaves pad 4 unused.
+10. Mission 10 beginner seed 3 loses at 108.0 s of 110.3 with the new defender behaviour (core 185,000); raising the
+    core further only delays it, so the waves of act 4 or the defenders' leash would be the next thing to look at.
 
 ## Everyday commands
 

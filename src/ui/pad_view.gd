@@ -21,6 +21,7 @@ var high_contrast := false
 var reduced_effects := false
 var show_keys := true
 var holding_fn: Callable  # (pad: int, now: float) -> float: hold progress 0..1, or -1 when the pad holds nothing
+var muted_fn: Callable  # (family: String) -> bool: the family's stem is silenced by a miss (missions); its label draws at half alpha
 var progress_fn: Callable  # (now: float) -> Dictionary: the current sequence's progress (missions), {} otherwise
 var button_down: Dictionary = {1: false, 2: false, 3: false, 4: false}
 var status_text := ""  # the centre line under the sequence meter (reward results, preparing defenses)
@@ -203,8 +204,11 @@ func _draw_pad(pad: int, r: Rect2, now: float, tick: int, wall: float) -> void:
 	var label := _label_at(pad, tick)
 	var fs := int(clampf(r.size.x * 0.11, 12.0, 22.0))
 	if not label.is_empty():
+		var label_alpha := 0.92 if active else 0.4
+		if active and muted_fn.is_valid() and bool(muted_fn.call(fam)):
+			label_alpha *= 0.5
 		draw_string(_font, Vector2(r.position.x, r.position.y + fs + 6.0), label, HORIZONTAL_ALIGNMENT_CENTER, r.size.x, fs,
-			Color(1, 1, 1, 0.92 if active else 0.4))
+			Color(1, 1, 1, label_alpha))
 	if show_keys and not OS.has_feature("mobile"):
 		draw_string(_font, Vector2(r.end.x - fs * 1.4, r.end.y - 8.0), key_name(pad), HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(1, 1, 1, 0.45))
 	var fb: Dictionary = _feedback.get(pad, {})

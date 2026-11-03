@@ -203,6 +203,7 @@ func _build_layout() -> void:
 	if level.is_mission():
 		pad_view.holding_fn = match_ref.pad_judge.hold_progress
 		pad_view.progress_fn = match_ref.tracker.progress_at
+		pad_view.muted_fn = match_ref.family_muted
 	else:
 		pad_view.holding_fn = func(pad: int, _now: float) -> float: return match_ref.judge.active_hold_progress(pad)
 	add_child(pad_view)
@@ -328,6 +329,8 @@ func _process(_delta: float) -> void:
 	for ev in events:
 		_on_match_event(ev, wall)
 	_push_events(events)
+	if battle_view != null:
+		battle_view.rally_point = match_ref.rally_point()
 	for b in range(1, PadView.BUTTONS + 1):
 		pad_view.button_down[b] = lane_input.is_button_down(b)
 	_update_banner(t)

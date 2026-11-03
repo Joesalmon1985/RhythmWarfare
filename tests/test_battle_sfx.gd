@@ -42,18 +42,67 @@ func test_every_named_sound_exists() -> void:
 
 func test_shots_by_weapon_with_a_cooldown() -> void:
 	var s := _sfx()
-	s.push_events([_shot("M1Carbine"), _shot("M60mg"), _shot("Vulcan"), _shot("Grenade"), _shot("25mm")])
-	assert_eq(_names(s), ["gun11", "pillbox1", "gun13", "grenade1"], "unknown weapons are silent")
-	assert_eq(s.played[0]["volume_db"], -8.0)
+	s.push_events([_shot("M1Carbine"), _shot("25mm"), _shot("M60mg")])
+	assert_eq(_names(s), ["gun11", "pillbox1"], "unknown weapons are silent")
+	assert_eq(s.played[0]["volume_db"], -18.0)
 	s.push_events([_shot("M1Carbine")])
-	assert_eq(s.played.size(), 4, "same weapon inside 0.08 s is dropped")
-	s.advance_time(0.05)
+	assert_eq(s.played.size(), 2, "same weapon inside 0.25 s is dropped")
+	s.advance_time(0.2)
 	s.push_events([_shot("M1Carbine")])
-	assert_eq(s.played.size(), 4)
-	s.advance_time(0.04)
+	assert_eq(s.played.size(), 2)
+	s.advance_time(0.06)
 	s.push_events([_shot("M1Carbine")])
-	assert_eq(s.played.size(), 5, "after 0.09 s it plays again")
+	assert_eq(s.played.size(), 3, "after 0.26 s it plays again")
 	s.free()
+
+
+func test_every_rule_is_at_most_minus_three_db() -> void:
+	var rules: Array = []
+	_collect_rules(BattleSfx.load_map(), rules)
+	assert_true(rules.size() >= 18, "the map has its rules (%d)" % rules.size())
+	for r in rules:
+		assert_true(float(r["volume_db"]) <= -3.0, "volume %s is at most -3 dB" % str(r["volume_db"]))
+	for w in ["M1Carbine", "M60mg", "Vulcan", "Grenade"]:
+		var shot: Dictionary = BattleSfx.load_map()["shot"][w]
+		assert_eq(float(shot["volume_db"]), -18.0, w)
+		assert_eq(float(shot["cooldown"]), 0.25, w)
+		assert_eq(str(shot["group"]), "weapons", w)
+
+
+func _collect_rules(node: Variant, out: Array) -> void:
+	if typeof(node) != TYPE_DICTIONARY:
+		return
+	if node.has("volume_db"):
+		out.append(node)
+		return
+	for k in node:
+		_collect_rules(node[k], out)
+
+
+func test_weapons_share_three_voices_and_extra_shots_are_dropped() -> void:
+	var s := _sfx()
+	s.push_events([_shot("M1Carbine"), _shot("M60mg"), _shot("Vulcan"), _shot("Grenade")])
+	assert_eq(_names(s), ["gun11", "pillbox1", "gun13"], "the fourth weapon sound is dropped, nothing is stolen")
+	assert_eq(s.active_voices(), 3)
+	assert_eq(s.stolen.size(), 0)
+	s.push_events([_destroyed(20, 1, "light_tank")])
+	assert_eq(s.active_voices(), 4, "other sounds are not held back by the weapons cap")
+	s.advance_time(0.62)  # gun11 is over: a weapon slot is free
+	s.push_events([_shot("Grenade")])
+	assert_eq(_names(s).back(), "grenade1")
+	s.free()
+
+
+func test_sfx_bus_has_a_limiter_once() -> void:
+	var i := BattleSfx.ensure_bus()
+	BattleSfx.ensure_bus()
+	var limiters := 0
+	for e in AudioServer.get_bus_effect_count(i):
+		var fx := AudioServer.get_bus_effect(i, e)
+		if fx is AudioEffectLimiter:
+			limiters += 1
+			assert_eq((fx as AudioEffectLimiter).ceiling_db, -1.0)
+	assert_eq(limiters, 1, "one limiter, however often the bus is ensured")
 
 
 func test_destroyed_sounds() -> void:

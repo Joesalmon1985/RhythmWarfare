@@ -76,6 +76,16 @@ whose family does not match the part.
   same for a saved selection. The build refuses a mission whose default pairing does not fit, whose option plays none
   of the offered clips, or whose declared render is missing.
 
+## Charting a bass line (`bass_chart`)
+
+- A mission (or a single phase, which overrides single keys) may carry `"bass_chart": {"pads": "pitch", "min_gap_ticks":
+  1440, "holds": false}`. `pads` is `"slot"` (the default: the whole line sits on the pad of its voice slot) or
+  `"pitch"` (the clip's distinct cued pitches, lowest to highest, are spread over pads 1 to 4, low notes left, high
+  notes right; one pitch alone uses pad 2). `min_gap_ticks` (default 0, 960 ticks = one beat) drops a cue that falls
+  closer than that to the last one kept. `holds` (default true) set to false makes every bass cue a tap. The recording
+  always plays in full; only the cues change. With none of the keys the chart is exactly the old one. Mission 1 uses
+  pitch, 1440 and no holds: 12 to 16 taps per eight bars, never more than one per beat.
+
 ## Adding further phrases (the owner's path)
 
 1. Export from Ableton at 174 BPM, project start = bar 1: for a cued part (kick, snare, bass) the MIDI clip and one WAV

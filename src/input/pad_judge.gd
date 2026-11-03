@@ -168,13 +168,13 @@ func press(pad: int, now: float, touch_id: int = 0) -> Dictionary:
 	if n["type"] == "hold":
 		_state[best] = State.HOLDING
 		_active[pad] = {"index": best, "touch": touch_id}
-		var hs := {"kind": "hold_start", "grade": grade, "pad": pad, "index": best, "seq": int(n["seq"]), "time": now, "delta_ms": dms}
+		var hs := {"kind": "hold_start", "grade": grade, "pad": pad, "index": best, "seq": int(n["seq"]), "family": _family(n), "time": now, "delta_ms": dms}
 		_events.append(hs)
 		return hs
 	_state[best] = State.DONE
 	credit[best] = 1.0
 	resolved_at[best] = now
-	var ev := {"kind": grade, "pad": pad, "index": best, "seq": int(n["seq"]), "time": now, "delta_ms": dms}
+	var ev := {"kind": grade, "pad": pad, "index": best, "seq": int(n["seq"]), "family": _family(n), "time": now, "delta_ms": dms}
 	_events.append(ev)
 	return ev
 
@@ -225,7 +225,7 @@ func _finish_hold(pad: int, i: int, at: float, complete: bool) -> Dictionary:
 	else:
 		holds_partial += 1
 	var ev := {"kind": "hold_complete" if complete else "hold_partial", "pad": pad, "index": i, "seq": int(n["seq"]),
-		"time": resolved_at[i], "coverage": cov}
+		"family": _family(n), "time": resolved_at[i], "coverage": cov}
 	_events.append(ev)
 	return ev
 
@@ -237,7 +237,12 @@ func _miss(i: int) -> void:
 	resolved_at[i] = float(n["time"]) + accept_s
 	misses += 1
 	combo = 0
-	_events.append({"kind": "miss", "pad": int(n["pad"]), "index": i, "seq": int(n["seq"]), "time": resolved_at[i]})
+	_events.append({"kind": "miss", "pad": int(n["pad"]), "index": i, "seq": int(n["seq"]), "family": _family(n), "time": resolved_at[i]})
+
+
+## The instrument family of a cue (kick, snare, bass or other), carried by every event about it.
+func _family(n: Dictionary) -> String:
+	return str(n.get("family", n.get("lane", "")))
 
 
 func _seq_at(t: float) -> int:

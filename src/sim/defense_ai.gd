@@ -79,7 +79,7 @@ func _defender(e: BattleSim.Ent) -> void:
 	var t: BattleSim.Ent = sim.get_entity(e.target)
 	if t != null and t.alive and d <= SORTIE_CELLS and _shelling(t, e):
 		return  # a sortie: keep after it
-	if e.target < 0 and (e.order == "idle" or e.order == "move"):
+	if e.target < 0 and (e.order == "idle" or e.order == "move" or e.order == "attack_move"):
 		var s := _shelling_enemy(e)
 		if s != null:
 			e.order = "attack"
@@ -88,14 +88,16 @@ func _defender(e: BattleSim.Ent) -> void:
 			e.resume_attack_move = false
 			return
 	if d > e.leash:
-		# pursuit limit: forget the target and go back (a unit on a move order does not auto-target)
-		e.target = -1
-		e.order = "move"
+		# pursuit limit: keep a target that is within weapon range (the unit fires without moving towards it),
+		# otherwise forget it; either way the unit attack-moves home and fights what it meets on the way
+		if t == null or not t.alive or sim.range_to(e, t) > sim.max_range_vs(e, t):
+			e.target = -1
+		e.order = "attack_move"
 		e.order_pos = e.home
 		e.resume_attack_move = false
 		return
 	if e.order == "idle" and e.target < 0 and d > HOME_TOLERANCE:
-		e.order = "move"
+		e.order = "attack_move"
 		e.order_pos = e.home
 
 

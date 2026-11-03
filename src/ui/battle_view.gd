@@ -1,6 +1,8 @@
 class_name BattleView
 extends Control
-## Fixed-camera view of a window of the battlefield at native Red Alert pixel scale, drawn the way OpenRA draws it.
+## Fixed-camera view of a window of the battlefield, drawn the way OpenRA draws it: native Red Alert pixels (24 px cells)
+## unless the battlefield asks for a zoom ("view": {"zoom": 0.75} makes the cell 18 px and scales every sprite with it;
+## the rally flag stays at full size so it stays readable).
 ## The map is larger than the window (data/battlefields/defense_01.json "view": centre and maximum size in cells), so
 ## wave units enter from outside the picture; anything outside the window is masked. The duel's map fits entirely.
 ## Drawn:
@@ -8,7 +10,7 @@ extends Control
 ## adjacency, units with facing frames and animations, aircraft with rotor and shadow, projectiles, muzzle flashes,
 ## impact explosions, death animations, craters and smoke. Reads the simulation every frame; never advances it.
 
-const PIXEL_SCALE := 1  # integer multiple of the native 24 px cell, so sprites keep every pixel
+const PIXEL_SCALE := 1  # integer multiple of the native 24 px cell, so sprites keep every pixel (a battlefield zoom multiplies it)
 const FACTION_BASE := [Color(0.35, 0.62, 1.0), Color(1.0, 0.36, 0.30)]
 const NEUTRAL_LAYER := 2  # village civilians and houses: a third layer with a khaki ramp, drawn under both sides
 const NEUTRAL_BASE := Color(0.80, 0.70, 0.46)
@@ -51,6 +53,9 @@ var sim: BattleSim
 var bank := SpriteBank.new()
 var map: Dictionary = {}
 var cell := 24.0
+var zoom := 1.0          # the battlefield's view.zoom (1.0 = native 24 px cells)
+var sprite_scale := 1.0  # PIXEL_SCALE * zoom: how much every sprite and hard-coded pixel size is scaled
+var rally_point := -1    # the defense point whose rally flag is shown (-1: none); set by the play scene every frame
 var origin := Vector2.ZERO
 var window := Rect2()  # the visible part of the map, in cells
 var _mask: Node2D
@@ -102,12 +107,19 @@ func setup(p_sim: BattleSim) -> void:
 func _layout() -> void:
 	if sim == null:
 		return
-	cell = SpriteBank.RA_CELL_PX * PIXEL_SCALE
 	var cfg: Dictionary = sim.rules.battlefield.get("view", {}) if sim.rules != null else {}
+	zoom = float(cfg.get("zoom", 1.0))
+	cell = cell_px(cfg)
+	sprite_scale = PIXEL_SCALE * zoom
 	window = window_rect(size / cell, Vector2(sim.width, sim.height), cfg)
 	var top_left := ((size - window.size * cell) * 0.5).floor()
 	origin = (top_left - window.position * cell).floor()
 	_ground_dirty = true
+
+
+## The cell size in px for a battlefield's `view` dictionary: 24 px times PIXEL_SCALE times its optional "zoom".
+static func cell_px(cfg: Dictionary) -> float:
+	return SpriteBank.RA_CELL_PX * PIXEL_SCALE * float(cfg.get("zoom", 1.0))
 
 
 ## The visible window in cells for an area of `area_cells` on a map of `map_cells`: the battlefield's view centre (default
@@ -286,22 +298,23 @@ func anim_index(image: String, seq: String, phase_key: int = -1) -> int:
 
 
 ## Draw one frame centred on `centre_px` (OpenRA draws frames centred on the actor), honouring the sequence offset.
-func blit(canvas: CanvasItem, image: String, seq: String, heading: float, anim: int, centre_px: Vector2, tint: Color = Color.WHITE) -> void:
+func blit(canvas: CanvasItem, image: String, seq: String, heading: float, anim: int, centre_px: Vector2, tint: Color = Color.WHITE, scale: float = -1.0) -> void:
 	var tex := bank.texture_for(image, seq, heading, anim)
 	if tex == null:
 		return
-	_blit_tex(canvas, tex, centre_px + bank.offset(image, seq) * PIXEL_SCALE, tint)
+	var k := sprite_scale if scale < 0.0 else scale
+	_blit_tex(canvas, tex, centre_px + bank.offset(image, seq) * k, tint, k)
 
 
 func blit_frame(canvas: CanvasItem, image: String, seq: String, n: int, centre_px: Vector2, tint: Color = Color.WHITE) -> void:
 	var tex := bank.texture_frame(image, seq, n)
 	if tex == null:
 		return
-	_blit_tex(canvas, tex, centre_px + bank.offset(image, seq) * PIXEL_SCALE, tint)
+	_blit_tex(canvas, tex, centre_px + bank.offset(image, seq) * sprite_scale, tint, sprite_scale)
 
 
-func _blit_tex(canvas: CanvasItem, tex: Texture2D, centre_px: Vector2, tint: Color) -> void:
-	var sz := Vector2(tex.get_width(), tex.get_height()) * PIXEL_SCALE
+func _blit_tex(canvas: CanvasItem, tex: Texture2D, centre_px: Vector2, tint: Color, k: float) -> void:
+	var sz := (Vector2(tex.get_width(), tex.get_height()) * k).round()
 	canvas.draw_texture_rect(tex, Rect2((centre_px - sz * 0.5).floor(), sz), false, tint)
 
 
@@ -311,9 +324,9 @@ func blit_building(canvas: CanvasItem, image: String, seq: String, anim: int, e:
 	var tex := bank.texture_for(image, seq, 0.0, anim)
 	if tex == null:
 		return
-	var sz := Vector2(tex.get_width(), tex.get_height()) * PIXEL_SCALE
+	var sz := (Vector2(tex.get_width(), tex.get_height()) * sprite_scale).round()
 	var top_centre := to_px(Vector2(e.cx + e.w * 0.5, e.cy))
-	var top_left := (top_centre - Vector2(sz.x * 0.5, 0) + bank.offset(image, seq) * PIXEL_SCALE).floor()
+	var top_left := (top_centre - Vector2(sz.x * 0.5, 0) + bank.offset(image, seq) * sprite_scale).floor()
 	canvas.draw_texture_rect(tex, Rect2(top_left, sz), false, tint)
 
 
@@ -326,7 +339,7 @@ func health_bar(canvas: CanvasItem, top_left: Vector2, width: float, frac: float
 	var c := Color(0.3, 0.9, 0.3) if frac > 0.5 else (Color(0.95, 0.8, 0.2) if frac > 0.25 else Color(0.95, 0.3, 0.2))
 	canvas.draw_rect(Rect2(top_left, Vector2(width * frac, 3)), c)
 	if repairing and bank.has_sequence("allyrepair", "repair"):
-		blit(canvas, "allyrepair", "repair", 0.0, anim_index("allyrepair", "repair"), top_left + Vector2(width * 0.5, 10))
+		blit(canvas, "allyrepair", "repair", 0.0, anim_index("allyrepair", "repair"), top_left + Vector2(width * 0.5, 10.0 * zoom))
 
 
 class _GroundLayer:
@@ -405,16 +418,22 @@ class _SideLayer:
 				var n := view.bank.length(fx["image"], fx["seq"])
 				var idx := int(age * 1000.0 / view.bank.tick_ms(fx["image"], fx["seq"]))
 				if idx < n:
-					view.blit(self, fx["image"], fx["seq"], float(fx["heading"]), idx, view.to_px(fx["pos"]) + Vector2(0, -float(fx.get("lift", 0.0))))
+					view.blit(self, fx["image"], fx["seq"], float(fx["heading"]), idx, view.to_px(fx["pos"]) + Vector2(0, -float(fx.get("lift", 0.0)) * view.zoom))
 		if side == 0:
 			_draw_rally_flag()
 
-	## The rally flag at the active section, drawn in the player's layer so it takes the player colour.
+	## The rally flag at the current rally point (the tapped section, else the suggested one), always shown, drawn in the
+	## player's layer so it takes the player colour. It keeps the full sprite scale when the view is zoomed out.
 	func _draw_rally_flag() -> void:
 		var sim: BattleSim = view.sim
-		if sim.active_point < 0 or sim.active_point >= sim.defense_points.size() or not view.bank.has_sequence("flagfly", "flag"):
+		var i: int = view.rally_point
+		if i < 0 or i >= sim.defense_points.size() or not view.bank.has_sequence("flagfly", "flag"):
 			return
-		view.blit(self, "flagfly", "flag", 0.0, view.anim_index("flagfly", "flag"), view.to_px(sim.defense_points[sim.active_point]["pos"]))
+		var at: Vector2 = view.to_px(sim.defense_points[i]["pos"])
+		var n: int = view.anim_index("flagfly", "flag")
+		var full := float(BattleView.PIXEL_SCALE)
+		view.blit(self, "flagfly", "flag", 0.0, n, at + Vector2(3, 4) * full, Color(0, 0, 0, 0.45), full)  # its shadow
+		view.blit(self, "flagfly", "flag", 0.0, n, at, Color.WHITE, full)
 
 	static func _painter_order(a: BattleSim.Ent, b: BattleSim.Ent) -> bool:
 		var a_air := a.kind == BattleSim.Kind.AIRCRAFT
@@ -461,7 +480,7 @@ class _SideLayer:
 			if damaged and bank.has_sequence("smoke_m", "idle"):
 				view.blit(self, "smoke_m", "idle", 0.0, view.anim_index("smoke_m", "idle", e.id), view.to_px(Vector2(e.cx + e.w * 0.5, e.cy + 0.3)))
 		if e.alive and e.hp < e.max_hp and not e.civilian:
-			view.health_bar(self, view.to_px(Vector2(e.cx, e.cy)) + Vector2(0, -5), e.w * view.cell, float(e.hp) / e.max_hp, e.repairing)
+			view.health_bar(self, view.to_px(Vector2(e.cx, e.cy)) + Vector2(0, -5.0 * view.zoom), e.w * view.cell, float(e.hp) / e.max_hp, e.repairing)
 
 	func _is_busy(e: BattleSim.Ent) -> bool:
 		var sim: BattleSim = view.sim
@@ -515,7 +534,7 @@ class _SideLayer:
 			if bank.has_sequence(e.actor, "turret"):
 				view.blit(self, e.actor, "turret", e.turret_heading, 0, c)
 		if e.hp < e.max_hp and not e.civilian:
-			view.health_bar(self, c + Vector2(-10, -14), 20, float(e.hp) / e.max_hp, false)
+			view.health_bar(self, c + Vector2(-10, -14) * view.zoom, 20.0 * view.zoom, float(e.hp) / e.max_hp, false)
 
 	func _draw_aircraft(e: BattleSim.Ent) -> void:
 		var bank: SpriteBank = view.bank
@@ -523,16 +542,16 @@ class _SideLayer:
 		var ground := view.to_px(e.center())
 		var body := ground
 		if airborne:
-			view.blit(self, e.actor, "idle", e.heading, 0, ground + Vector2(4, 6), Color(0, 0, 0, 0.45))
-			body = ground + Vector2(0, -view.AIR_ALTITUDE_PX + sin(view._wall * 3.0 + e.id))
+			view.blit(self, e.actor, "idle", e.heading, 0, ground + Vector2(4, 6) * view.zoom, Color(0, 0, 0, 0.45))
+			body = ground + Vector2(0, (-view.AIR_ALTITUDE_PX + sin(view._wall * 3.0 + e.id)) * view.zoom)
 		view.blit(self, e.actor, "idle", e.heading, 0, body)
 		var rotor := "rotor" if airborne else bank.pick(e.actor, ["slow-rotor", "rotor"])
 		if bank.has_sequence(e.actor, rotor) and (airborne or e.air != BattleSim.Air.READY):
 			view.blit(self, e.actor, rotor, e.heading, view.anim_index(e.actor, rotor, e.id), body)
 		if e.hp < e.max_hp:
-			view.health_bar(self, body + Vector2(-10, -16), 20, float(e.hp) / e.max_hp, false)
+			view.health_bar(self, body + Vector2(-10, -16) * view.zoom, 20.0 * view.zoom, float(e.hp) / e.max_hp, false)
 		for i in e.ammo_max:
-			draw_rect(Rect2(body + Vector2(-10 + i * 3, 10), Vector2(2, 2)), Color(1, 0.85, 0.3, 0.9) if i < e.ammo else Color(0, 0, 0, 0.5))
+			draw_rect(Rect2(body + Vector2(-10 + i * 3, 10) * view.zoom, Vector2(2, 2) * view.zoom), Color(1, 0.85, 0.3, 0.9) if i < e.ammo else Color(0, 0, 0, 0.5))
 
 
 class _FxLayer:
@@ -547,7 +566,7 @@ class _FxLayer:
 			var pos := view.to_px(Vector2(float(p["x"]), float(p["y"])))
 			var shooter: BattleSim.Ent = view.sim.get_entity(int(p["from"]))
 			if shooter != null and shooter.kind == BattleSim.Kind.AIRCRAFT:
-				pos.y -= view.AIR_ALTITUDE_PX * 0.5
+				pos.y -= view.AIR_ALTITUDE_PX * 0.5 * view.zoom
 			if not img.is_empty() and bank.has_sequence(img, "idle"):
 				view.blit(self, img, "idle", float(p["heading"]), 0, pos)
 		for fx in view._effects:
@@ -560,7 +579,7 @@ class _FxLayer:
 				idx = idx % maxi(n, 1)
 			elif idx >= n:
 				continue
-			var pos := view.to_px(fx["pos"]) + Vector2(0, -float(fx.get("lift", 0.0)))
+			var pos := view.to_px(fx["pos"]) + Vector2(0, -float(fx.get("lift", 0.0)) * view.zoom)
 			view.blit(self, fx["image"], fx["seq"], float(fx["heading"]), idx, pos)
 
 

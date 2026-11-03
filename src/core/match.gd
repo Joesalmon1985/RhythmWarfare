@@ -35,6 +35,8 @@ var pad_judge := PadJudge.new()
 var tracker := SequenceTracker.new()
 var reward_log: Array = []  # [{sequence, reward, grade, delay_s, resolve_time, ready_time, result, kind, point, label}]
 var _resolved: Array = []  # sequence results waiting for the tick that contains their resolve time
+var _mission_phase := -1  # the phase (section index) the last advance was in
+var _phase_families: Array = []  # per phase: {family: true} for every family with a cue in it
 
 const WAVE_WARNING_S := 8.0  # the "wave_warning" event comes this long before a wave's first unit appears
 
@@ -122,6 +124,14 @@ func _setup_mission(p_rules: Rules) -> void:
 		stems_muted[key] = false
 	pad_judge.setup(level.notes, level.sequences)
 	tracker.setup(level, pad_judge)
+	_mission_phase = -1
+	_phase_families = []
+	for _i in level.sections.size():
+		_phase_families.append({})
+	for n in level.notes:
+		var ph := _phase_index(int(n["tick"]))
+		if ph >= 0:
+			_phase_families[ph][str(n.get("family", n.get("lane", "")))] = true
 	reward_log = []
 	_resolved = []
 	sim_ticks = 0
@@ -157,6 +167,7 @@ func _setup_mission(p_rules: Rules) -> void:
 func _advance_mission(t: float) -> Array:
 	pad_judge.update(t)
 	var judge_events := pad_judge.drain_events()
+	_judge_to_stems(judge_events, t)
 	for r in tracker.update():
 		_resolved.append(r)
 		_events.append({"kind": "sequence", "result": r})
@@ -251,6 +262,16 @@ func set_active_point(i: int) -> bool:
 	sim.active_point = i
 	_events.append({"kind": "section", "point": i, "id": str(sim.defense_points[i]["id"]) if i >= 0 else ""})
 	return true
+
+
+## The section new rewards deploy to now: the tapped one, else the suggested one (0 if there is no suggestion).
+## -1 when the level has no sections.
+func rally_point() -> int:
+	if sim.defense_points.is_empty():
+		return -1
+	if sim.active_point >= 0:
+		return sim.active_point
+	return maxi(suggest_point(), 0)
 
 
 ## The name shown for the primary objective on the result screen.
@@ -425,6 +446,63 @@ func _process_sim_events(now: float) -> void:
 				outcome = ev["outcome"]
 				outcome_reason = ev["reason"]
 				outcome_time = now
+
+
+## Index of the phase (section) at a song tick, -1 outside the song.
+func _phase_index(tick: int) -> int:
+	for i in level.sections.size():
+		if tick >= int(level.sections[i]["start_tick"]) and tick < int(level.sections[i]["end_tick"]):
+			return i
+	return -1
+
+
+## Missions: a missed cue (or a hold let go with no coverage) silences its instrument's stem until the next hit on it
+## (a tap of any grade, a completed or partly held hold). The backing track ("other") never mutes. When the phase
+## changes, every family the new phase does not cue is back. A miss resolving after the phase moved on, for a family
+## the new phase does not cue, mutes nothing. Runs inside the frame's advance, so the "stem" events reach the player in
+## the same frame as the judge events.
+func _judge_to_stems(judge_events: Array, t: float) -> void:
+	var phase := _phase_index(level.seconds_to_tick(maxf(t, 0.0)))
+	if phase != _mission_phase:
+		_mission_phase = phase
+		var cued: Dictionary = _phase_families[phase] if phase >= 0 else {}
+		for fam in ["kick", "snare", "bass"]:
+			if not cued.has(fam):
+				_set_family(fam, false, t)
+	var cued_now: Dictionary = _phase_families[phase] if phase >= 0 else {}
+	for ev in judge_events:
+		var fam := str(ev.get("family", ""))
+		if fam.is_empty() or fam == "other":
+			continue
+		var when := float(ev.get("time", t))
+		match str(ev.get("kind", "")):
+			"miss", "hold_fail":
+				if cued_now.has(fam):
+					_set_family(fam, true, when)
+			"hold_partial":
+				if float(ev.get("coverage", 0.0)) > 0.0:
+					_set_family(fam, false, when)
+				elif cued_now.has(fam):
+					_set_family(fam, true, when)
+			"perfect", "great", "ok", "good", "hold_complete":
+				_set_family(fam, false, when)
+
+
+## Mutes or restores every stem of an instrument family (a pack may carry several per family; "other" never mutes).
+func _set_family(family: String, muted: bool, now: float) -> void:
+	if family == "other":
+		return
+	for key in stems_muted:
+		if str(level.stem_family.get(key, key)) == family:
+			_set_stem(key, muted, now)
+
+
+## True while any stem of the family is silenced by a miss (for the pad labels).
+func family_muted(family: String) -> bool:
+	for key in stems_muted:
+		if str(level.stem_family.get(key, key)) == family and bool(stems_muted[key]):
+			return true
+	return false
 
 
 func _set_stem(key: String, muted: bool, now: float) -> void:

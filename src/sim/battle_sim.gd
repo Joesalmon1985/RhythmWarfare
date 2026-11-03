@@ -1239,7 +1239,7 @@ func _process_spawn_queues() -> void:
 			u.leash = leash_cells
 			if groups.has(u.group):
 				groups[u.group]["units"].append(u.id)
-			u.order = "move"
+			u.order = "attack_move"  # fights what it meets on the way to its point
 			u.order_pos = u.home
 			continue
 		# leave the factory for the rally point (OpenRA RallyPoint), with a little spread
@@ -1463,6 +1463,8 @@ func _unit_step(e: Ent) -> void:
 		if found >= 0:
 			t = by_id[found]
 			e.target = found
+	if t != null and _leash_holds(e, t):
+		t = null  # beyond the leash and out of reach: walk the order (home), do not chase
 	if t != null:
 		var ts := Time.get_ticks_usec()
 		_engage(e, t)
@@ -1485,6 +1487,17 @@ func _unit_step(e: Ent) -> void:
 			e.moving = false
 			if e.turret_heading != e.heading and e.kind == Kind.UNIT and e.has_turret:
 				e.turret_heading = _turn(e.turret_heading, e.heading, e.turret_turn)  # realign (RealignDelay ignored)
+
+
+## A player defender (group unit with a home) beyond its leash does not step towards a target: it fires at what is in
+## range and otherwise follows its order home. A sortie ("attack" order) and enemy wave units are not held.
+func _leash_holds(e: Ent, t: Ent) -> bool:
+	if e.side != 0 or e.civilian or e.group < 0 or e.order == "attack":
+		return false
+	if e.center().distance_to(e.home) <= e.leash:
+		return false
+	var d := range_to(e, t)
+	return d > max_range_vs(e, t) or d < min_range_vs(e, t)
 
 
 ## Attack or chase a target: stop and fire when inside range, otherwise close in (no leash).

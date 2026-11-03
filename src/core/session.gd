@@ -3,13 +3,14 @@ extends Node
 
 const SETTINGS_PATH := "user://settings.cfg"
 const SETTINGS_VERSION := 2
+const MIX_VERSION := 2  # settings saved before the quieter battle effects (mix 2) get the default effects volume once
 
 const LEAD_IN_MIN_S := 0.4
 const LEAD_IN_MAX_S := 1.2
 const LEAD_IN_DEFAULT_S := 0.7
 const PAD_SIZES := [0.30, 0.36, 0.42]  # share of the screen height the pad strip takes: compact, standard, large
 const DEFAULTS := {"calibration_ms": 0.0, "cue_lead_in_s": LEAD_IN_DEFAULT_S, "pad_size": 1, "high_contrast": false,
-	"reduced_effects": false, "vibration": true, "music_volume": 1.0, "sfx_volume": 0.8, "show_keys": true}
+	"reduced_effects": false, "vibration": true, "music_volume": 1.0, "sfx_volume": 0.5, "show_keys": true}
 
 var campaign: Campaign  # saved progress (user://campaign.json) and the campaign data
 var campaign_level_id := ""  # the mission being played ("" for free play and playtests)
@@ -32,7 +33,7 @@ var high_contrast := false
 var reduced_effects := false
 var vibration := true
 var music_volume := 1.0
-var sfx_volume := 0.8  # effects (gunfire, explosions, EVA voices) on the "SFX" bus
+var sfx_volume := 0.5  # effects (gunfire, explosions, EVA voices) on the "SFX" bus
 var show_keys := true  # desktop: the D F J K labels on the pads
 
 
@@ -75,6 +76,9 @@ func load_settings() -> void:
 	music_volume = clampf(float(cfg.get_value("audio", "music_volume", 1.0)), 0.0, 1.0)
 	show_keys = bool(cfg.get_value("display", "show_keys", true))
 	sfx_volume = clampf(float(cfg.get_value("audio", "sfx_volume", DEFAULTS["sfx_volume"])), 0.0, 1.0)
+	if int(cfg.get_value("audio", "mix_version", 1)) < MIX_VERSION:
+		sfx_volume = DEFAULTS["sfx_volume"]
+		save_settings()
 
 
 func save_settings() -> void:
@@ -90,6 +94,7 @@ func save_settings() -> void:
 	cfg.set_value("display", "show_keys", show_keys)
 	cfg.set_value("audio", "music_volume", music_volume)
 	cfg.set_value("audio", "sfx_volume", sfx_volume)
+	cfg.set_value("audio", "mix_version", MIX_VERSION)
 	cfg.save(SETTINGS_PATH)
 
 

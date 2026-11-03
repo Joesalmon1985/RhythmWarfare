@@ -670,3 +670,71 @@ func test_match_result_reports_villagers_and_the_primary_objective() -> void:
 	r = m.result()
 	assert_eq([r["villagers_lost"], r["houses_lost"]], [1, 1])
 	assert_eq(m.wave_stats["w1"]["killed"], 0, "village losses are not wave kills")
+
+
+# ---------------------------------------------------------------- units fight what they meet on the way home
+
+## Ticks until a reward unit exists and returns it (null when none shows up within `max_ticks`).
+func _first_reward_unit(sim: BattleSim, max_ticks: int) -> BattleSim.Ent:
+	for i in max_ticks:
+		_tick(sim, 1)
+		var mine := _defenders(sim)
+		if not mine.is_empty():
+			return mine[0]
+	return null
+
+
+func test_reward_unit_fights_an_enemy_it_meets_on_the_way_to_its_point() -> void:
+	var sim := _sim()
+	var r := sim.schedule_reward("e1", 1, 0)
+	assert_eq(r["point"], 0)
+	var u := _first_reward_unit(sim, 200)
+	assert_true(u != null, "the reward unit leaves the barracks")
+	if u == null:
+		return
+	assert_eq(u.order, "attack_move", "reward units fight on the way")
+	assert_true(u.center().distance_to(u.home) > u.leash, "it starts beyond its leash")
+	# a stationary, harmless-to-order enemy rifleman about 3 cells off the straight path to the point
+	var dir := (u.home - u.center()).normalized()
+	var mid := u.center() + dir * (u.center().distance_to(u.home) * 0.5)
+	var foe := _raider(sim, "core", mid + Vector2(-dir.y, dir.x) * 3.0)
+	foe.order = "hold"  # neither DefenseAi nor the move code takes it away
+	u.hp = u.max_hp * 20  # the fight is about the walk, not about who wins it
+	var start_hp := foe.hp
+	var shot := false
+	var closest := INF
+	for i in 25 * 60:
+		_tick(sim, 1)
+		if foe.alive and foe.hp < start_hp:
+			shot = true
+		closest = minf(closest, u.center().distance_to(u.home))
+		if shot and u.center().distance_to(u.home) <= DefenseAi.HOME_TOLERANCE:
+			break
+	assert_true(shot or not foe.alive, "the unit fired at the enemy it passed")
+	assert_true(u.alive)
+	assert_true(u.center().distance_to(u.home) <= DefenseAi.HOME_TOLERANCE, "and still arrived at its point (%f)" % u.center().distance_to(u.home))
+
+
+func test_defender_beyond_the_leash_walks_home_without_chasing_a_target_out_of_range() -> void:
+	var sim := _sim({"start_units": START_ALL})
+	var u: BattleSim.Ent = _defenders(sim)[0]
+	# 10 cells from home (beyond the 6-cell leash) with an enemy 9 cells further out, beyond a rifle's reach
+	var away := Vector2(0, 1)
+	u.x = u.home.x + away.x * 10.0
+	u.y = u.home.y + away.y * 10.0
+	var foe := _raider(sim, "core", u.center() + away * 9.0)
+	foe.order = "hold"
+	foe.speed = 0.0
+	u.target = foe.id
+	u.order = "attack_move"
+	u.order_pos = u.home
+	assert_true(sim.range_to(u, foe) > sim.max_range_vs(u, foe), "the target is out of weapon range")
+	var worst := u.center().distance_to(u.home)
+	for i in 25 * 20:
+		_tick(sim, 1)
+		var d := u.center().distance_to(u.home)
+		assert_true(d <= worst + 0.02, "the distance to home never grows (%f > %f at tick %d)" % [d, worst, i])
+		worst = minf(worst, d)
+		if d <= DefenseAi.HOME_TOLERANCE:
+			break
+	assert_true(u.center().distance_to(u.home) <= 6.0, "it came back inside the leash")

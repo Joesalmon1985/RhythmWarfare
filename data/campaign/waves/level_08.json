@@ -1,6 +1,6 @@
 {
  "note": "Mission 8 Crossfire (64 bars, 88 s). The radar dome must survive; right waves marked radar_dome go for it. First heavy tanks; artillery and V2 launchers shell from beyond the defenses. A prebuilt pillbox and gun turret hold the top road.",
- "rules": {"objective_hp": {"command_core": 80000, "radar_dome": 60000}, "required_objectives": ["command_core", "radar_dome"], "sockets_per_point": 5, "prebuilt": [{"reward": "pillbox", "socket": "s2_1"}, {"reward": "turret", "socket": "s2_2"}], "walls": [[26, 18], [26, 24], [36, 14], [42, 14], [52, 18], [52, 24]]},
+ "rules": {"objective_hp": {"command_core": 80000, "radar_dome": 70000}, "required_objectives": ["command_core", "radar_dome"], "sockets_per_point": 5, "prebuilt": [{"reward": "pillbox", "socket": "s2_1"}, {"reward": "turret", "socket": "s2_2"}], "walls": [[26, 18], [26, 24], [36, 14], [42, 14], [52, 18], [52, 24]]},
  "waves": [
   {"id": "wave_01", "start_bar": 1, "entry": "right", "groups": [{"actor": "e1", "count": 4, "spawn_spacing_ticks": 600}]},
   {"id": "wave_02", "start_bar": 5, "entry": "right", "groups": [{"actor": "e1", "count": 3}, {"actor": "e2", "count": 1}]},

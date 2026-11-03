@@ -23,7 +23,7 @@ func _sim(level_rules: Dictionary = {}, bf: String = "defense_02") -> BattleSim:
 
 
 func _window(area_px: Vector2, bf: Dictionary) -> Rect2:
-	return BattleView.window_rect(area_px / float(SpriteBank.RA_CELL_PX), Vector2(float(bf["width"]), float(bf["height"])), bf.get("view", {}))
+	return BattleView.window_rect(area_px / BattleView.cell_px(bf.get("view", {})), Vector2(float(bf["width"]), float(bf["height"])), bf.get("view", {}))
 
 
 func _distance_outside(r: Rect2, p: Vector2) -> float:

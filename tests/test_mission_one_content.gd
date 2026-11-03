@@ -71,27 +71,35 @@ func test_defaults_cues_pads_and_names() -> void:
 	for s in level.sections:
 		modes.append(str(s["mode"])[0].to_upper())
 	assert_eq("".join(PackedStringArray(modes)), MODES, "four acts of 32 bars: drums and bass alternating")
-	assert_eq(level.notes.size(), 10 * 18 + 6 * 15, "10 kicks and 8 snares per drum phase x 10, 15 bass notes x 6")
+	assert_eq(level.notes.size(), 10 * 18 + 6 * 12, "10 kicks and 8 snares per drum phase x 10, 12 Sub Line taps x 6")
 	var pads := {}
-	var holds := 0
+	var bass_pads := {}
+	var bass_ticks := []
+	var taps := 0
 	for n in level.notes:
 		pads[int(n["pad"])] = true
 		var ph := level.phase_at(int(n["tick"]))
 		assert_eq(str(ph["mode"]), "bass" if n["family"] == "bass" else "drums", "only one family is cued per phase")
 		if n["family"] == "bass":
-			assert_eq(int(n["pad"]), 2)
-			assert_eq(str(n["type"]), "hold", "every Sub Line note is a hold")
-			holds += 1
+			assert_eq(str(n["type"]), "tap", "every Sub Line note is a tap")
+			assert_eq(int(n.get("duration_ticks", 0)), 0, "a tap has no tail")
+			bass_pads[int(n["pad"])] = true
+			bass_ticks.append(int(n["tick"]))
+			taps += 1
 	var used := pads.keys()
 	used.sort()
-	assert_eq(used, [1, 2, 4])
-	assert_eq(holds, 90, "six bass phases of 15 holds")
+	assert_eq(used, [1, 2, 3, 4], "kick on pad 1, snare on pad 4, the bass spreads over the pads by pitch")
+	assert_true(bass_pads.size() >= 3, "the bass line uses at least three pads (%d)" % bass_pads.size())
+	assert_eq(taps, 72, "six bass phases of 12 taps")
+	bass_ticks.sort()
+	for i in range(1, bass_ticks.size()):
+		assert_true(bass_ticks[i] - bass_ticks[i - 1] >= 1440, "consecutive bass cues are at least 1440 ticks apart (%d)" % (bass_ticks[i] - bass_ticks[i - 1]))
 	assert_eq(level.voice_name("bound:groove#1:kick"), "Half-Time Kick", "the pad label is the bound sound's name")
 	assert_eq(level.voice_name("bound:groove#1:snare"), "Backbeat Snare")
 	assert_eq(level.voice_name("bass_voice#1"), "Deep Sub")
 	var rolling := _load({"groove": ["groove_rolling"]})
 	assert_eq(rolling.voice_name("bound:groove#1:kick"), "Rolling Kick")
-	assert_eq(rolling.notes.size(), 10 * 24 + 6 * 15, "16 kicks and 8 snares per drum phase in the Rolling groove")
+	assert_eq(rolling.notes.size(), 10 * 24 + 6 * 12, "16 kicks and 8 snares per drum phase in the Rolling groove")
 	assert_eq(level.intros.size(), 2, "the drum intro and the bass intro")
 	assert_eq(int(level.intros[1]["bar"]), 16)
 	assert_eq(level.intro, "Tap a pad as its ring closes onto it.")

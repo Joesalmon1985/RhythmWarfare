@@ -124,7 +124,7 @@ func test_placements_are_on_sockets_off_the_routes_and_inside_the_window() -> vo
 		assert_false(cells.has(c) or ids.has(e.id), "one building per socket")
 		cells[c] = true
 		ids[e.id] = true
-		var w := BattleView.window_rect(AREA_16_9 / float(SpriteBank.RA_CELL_PX), Vector2(float(bf["width"]), float(bf["height"])), bf.get("view", {}))
+		var w := BattleView.window_rect(AREA_16_9 / BattleView.cell_px(bf.get("view", {})), Vector2(float(bf["width"]), float(bf["height"])), bf.get("view", {}))
 		assert_true(w.has_point(e.center()), "%s inside the 16:9 window" % sk["id"])
 	for pt in 3:
 		assert_eq(sim.defenses_at(pt), 5)

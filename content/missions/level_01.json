@@ -11,6 +11,7 @@
   {"bar": 16, "text": "Bass next: press as the ring closes and keep holding while the pad stays lit."}
  ],
  "battle": {"battlefield": "village_01", "waves": "data/campaign/waves/level_01.json"},
+ "bass_chart": {"pads": "pitch", "min_gap_ticks": 1440, "holds": false},
  "choices": {
   "groove": {"label": "Drum groove", "count": 1, "pool": ["groove_half_time", "groove_double_step", "groove_rolling"], "default": ["groove_half_time"]},
   "bass": {"label": "Bass line", "count": 1, "pool": ["bass_sub_line", "bass_reese_line"], "default": ["bass_sub_line"]},

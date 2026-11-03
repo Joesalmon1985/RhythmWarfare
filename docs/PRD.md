@@ -295,7 +295,7 @@ game (`MissionRules`) and the content build (`tools/content`) both read.
   enemy base. Waves are authored by song time and never depend on the player's accuracy. Required objectives
   (`command_core`, plus `power_plant` or `radar_dome` where a mission says so; the `barracks` on the village map of
   mission 1) must survive to `duration_ticks`; losing one is an immediate defeat, reaching the deadline is a victory.
-  A miss never damages anything directly.
+  A miss never damages anything directly; a missed cue (or a failed hold) silences that instrument's stem until the next hit on it, the backing track never mutes, and families not cued in a phase come back at the phase change.
 - The battlefield shows OpenRA sprites only (terrain, trees, buildings, walls, units, projectiles, explosions, the
   rally flag and move flash of the active section) plus health bars; every other marker is text in the top bar.
 - Sections: a tap on the battlefield (keys 1 2 3 on desktop) makes the nearest approach the active section (rally
@@ -315,8 +315,9 @@ game (`MissionRules`) and the content build (`tools/content`) both read.
 - Four pads, stable positions: 1 and 2 under the left thumb, 3 and 4 under the right. At most two touches at a time,
   and two simultaneous requirements are always on different thumbs.
 - Each phase follows one family. Drum phases: kick sound slot 1 is pad 1, slot 2 pad 2; snare slot 1 pad 4, slot 2 pad
-  3. Bass phases: bass voice slot 1 pad 2, slot 2 pad 3, slot 3 pad 1, slot 4 pad 4. One pad per voice; pitches are
-  never mapped to pads. A pad with no cue in the current phase is dim; its label is the friendly sound name.
+  3. Bass phases: bass voice slot 1 pad 2, slot 2 pad 3, slot 3 pad 1, slot 4 pad 4. The default maps the pad to the voice
+  slot; a mission's `bass_chart` may map pitch to pads (low to high, left to right), thin cues to a minimum gap and turn
+  holds off. A pad with no cue in the current phase is dim; its label is the friendly sound name.
 - A cue's ring closes onto its pad over the cue lead-in (a setting, 0.4 to 1.2 s, default 0.7 s; it replaces the old
   note-approach setting) and the pad pulses at the onset. A hold stays lit and fills until its tail, then flashes. All of
   it is drawn from the one song clock (countdown, pause and calibration included). A short in-play banner announces the

@@ -3,7 +3,9 @@ extends Node
 ## Red Alert sound effects for the battle: a pool of AudioStreamPlayers on the "SFX" bus fed the same event list as the
 ## BattleView (push_events). data/sfx_map.json says which event plays which assets/sfx/<name>.ogg. At most `max_voices`
 ## sounds play at once (a new one steals the oldest non-EVA voice), EVA lines never overlap each other (one waits in a
-## queue; the mission outcome lines cut in), and shots, deaths and EVA lines have cooldowns.
+## queue; the mission outcome lines cut in), and shots, deaths and EVA lines have cooldowns. Rules of one "group"
+## (the weapons) share a smaller cap: a new sound beyond it is dropped rather than stealing a voice. The SFX bus carries
+## a limiter so a burst of effects can never clip over the music.
 ## Tests set `record_only`: plays are appended to `played` and no audio is touched.
 
 const MAP_PATH := "res://data/sfx_map.json"
@@ -11,6 +13,7 @@ const SFX_DIR := "res://assets/sfx/"
 const META_PATH := "res://assets/sfx/sfx.json"
 const BUS := "SFX"
 const DEFAULT_SECONDS := 0.5
+const LIMITER_CEILING_DB := -1.0
 
 var primary_role := ""  # roster role of the objective whose damage triggers "base under attack"
 var record_only := false
@@ -20,7 +23,7 @@ var map: Dictionary = {}
 
 var _time := 0.0
 var _last: Dictionary = {}  # cooldown key -> time of the last play
-var _voices: Array = []  # {name, eva, priority, start, end, player}
+var _voices: Array = []  # {name, eva, priority, group, start, end, player}
 var _eva_queue: Dictionary = {}  # {name, volume_db, priority} or {}
 var _pool: Array[AudioStreamPlayer] = []
 var _streams: Dictionary = {}
@@ -65,6 +68,14 @@ static func ensure_bus() -> int:
 		i = AudioServer.bus_count - 1
 		AudioServer.set_bus_name(i, BUS)
 		AudioServer.set_bus_send(i, "Master")
+	var has_limiter := false
+	for e in AudioServer.get_bus_effect_count(i):
+		if AudioServer.get_bus_effect(i, e) is AudioEffectLimiter:
+			has_limiter = true
+	if not has_limiter:
+		var limiter := AudioEffectLimiter.new()
+		limiter.ceiling_db = LIMITER_CEILING_DB
+		AudioServer.add_bus_effect(i, limiter)
 	return i
 
 
@@ -170,7 +181,7 @@ func _play_rule(rule: Dictionary, key: String, id: int) -> void:
 		if eva:
 			_request_eva(str(n), volume, int(rule.get("priority", 0)))
 		else:
-			_start(str(n), volume, false, 0)
+			_start(str(n), volume, false, 0, str(rule.get("group", "")))
 
 
 ## EVA lines are voices of their own: one at a time. A new request waits (the newest replaces an older waiting one of
@@ -195,8 +206,17 @@ func _eva_active() -> bool:
 	return false
 
 
-func _start(sound: String, volume: float, eva: bool, priority: int) -> void:
+func _start(sound: String, volume: float, eva: bool, priority: int, group: String = "") -> void:
 	_prune()
+	if not group.is_empty():
+		var cap := int(map.get("group_voices", {}).get(group, 0))
+		if cap > 0:
+			var playing := 0
+			for v in _voices:
+				if str(v.get("group", "")) == group:
+					playing += 1
+			if playing >= cap:
+				return  # the group is full: drop the new sound, never steal
 	var max_voices := int(map.get("max_voices", 8))
 	while _voices.size() >= max_voices:
 		var oldest: Dictionary = {}
@@ -206,7 +226,7 @@ func _start(sound: String, volume: float, eva: bool, priority: int) -> void:
 		if oldest.is_empty():
 			return
 		_stop_voice(oldest)
-	var voice := {"name": sound, "eva": eva, "priority": priority, "start": _time, "end": _time + float(_seconds.get(sound, DEFAULT_SECONDS)), "player": null}
+	var voice := {"name": sound, "eva": eva, "priority": priority, "group": group, "start": _time, "end": _time + float(_seconds.get(sound, DEFAULT_SECONDS)), "player": null}
 	if record_only:
 		played.append({"name": sound, "volume_db": volume, "eva": eva, "time": _time})
 	else:
