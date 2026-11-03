@@ -444,7 +444,7 @@ def passage_frame() -> dict:
     fw, fh = 640, 360
     cx, cy = 320, 180
     hole = _octa(cx, cy, 180, 100, 36)
-    defs = lin_grad("pl", [(0, "#3a5cb8"), (0.5, "#1c3478"), (1, "#0a1442")], 0, 0, 1, 1)
+    defs = rad_grad("pl", [(0, "#3a5cb8"), (0.45, "#22408c"), (0.8, "#0f1e58"), (1, "#060c2c")], 0.5, 0.5, 0.62)  # hull lit around the hatch, falling off to the corners
     defs += lin_grad("pl2", [(0, "#14226a"), (1, "#050b24")], 0, 0, 0, 1)
     defs += lin_grad("bevel", [(0, "#7a96e8"), (1, "#1c3478")], 0, 0, 1, 1)
     # base plating with panel seams and rivets
@@ -456,6 +456,9 @@ def passage_frame() -> dict:
         d += line((x, 0), (x, fh), OUT, 1.6, 0.45) + line((x + 1.6, 0), (x + 1.6, fh), CYAN, 0.8, 0.12)
     for y in (30, 330):
         d += line((0, y), (fw, y), OUT, 1.6, 0.45)
+    for y in (90, 150, 210, 270):  # horizontal hull plating courses either side of the hatch
+        d += line((0, y), (cx - 236, y), OUT, 1.4, 0.4) + line((cx + 236, y), (fw, y), OUT, 1.4, 0.4)
+        d += line((0, y + 1.6), (cx - 236, y + 1.6), "#7a96e8", 0.8, 0.18) + line((cx + 236, y + 1.6), (fw, y + 1.6), "#7a96e8", 0.8, 0.18)
     # radial perspective seams from the opening to the corners
     for (hx, hy), (ex, ey) in zip((hole[0], hole[1], hole[4], hole[5]), ((0, 0), (fw, 0), (fw, fh), (0, fh))):
         d += line((hx, hy), (ex, ey), OUT, 2.4, 0.55) + line((hx, hy), (ex, ey), CYAN, 0.8, 0.18)
@@ -492,8 +495,9 @@ def passage_frame() -> dict:
         d += poly([(cx - 78 + k * 18, 318), (cx - 66 + k * 18, 318), (cx - 60 + k * 18, 334), (cx - 72 + k * 18, 334)], CYAN if k % 2 else GREEN, None, op=0.8)
     for (bx, by) in ((20, 20), (620, 20), (20, 340), (620, 340)):
         d += hex_bolt(bx, by, 8)
-    # glowing lining on the opening's edge
+    # glowing lining on the opening's edge, with the next room's light spilling onto the inner bevel
     dd = "M" + " L".join(f"{f(x)} {f(y)}" for x, y in hole) + " Z"
+    d += _ring(_octa(cx, cy, 192, 111, 39), hole, GREEN, None, 0, op=0.14)
     d += neon_path(dd, GREEN, 2.0, 1.0)
     info = write_svg("views/passage_frame.svg", (0, 0, fw, fh), d, defs)
     return {"file": "source/views/passage_frame.svg", "pivot": pivot_in(info, (cx, cy)), "px_scale": 0.5, "opening": [cx - 180, cy - 100, 360, 200],
