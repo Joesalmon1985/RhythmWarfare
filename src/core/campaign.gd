@@ -197,7 +197,9 @@ func record_result(result: Dictionary) -> Dictionary:
 	var seq_share := float(result.get("sequences_passed", 0)) / maxf(float(result.get("sequences", 1)), 1.0)
 	rec["best_sequences"] = maxf(float(rec.get("best_sequences", 0.0)), seq_share)
 	rec["best_combo"] = maxi(int(rec.get("best_combo", 0)), int(result.get("best_combo", 0)))
-	var core: Dictionary = result.get("objective_hp", {}).get("command_core", {"hp": 0, "max": 1})
+	var objectives: Dictionary = result.get("objective_hp", {})
+	var primary := str(result.get("primary_objective", ""))
+	var core: Dictionary = objectives.get(primary, objectives.get("command_core", {"hp": 0, "max": 1}))
 	rec["best_core_hp"] = maxf(float(rec.get("best_core_hp", 0.0)), float(core["hp"]) / maxf(float(core["max"]), 1.0))
 	progress["cleared"][level_id] = rec
 	var saved := save()

@@ -293,8 +293,19 @@ game (`MissionRules`) and the content build (`tools/content`) both read.
 
 - One-sided defense, centred base, three approaches (left, top, right), enemy entries outside the visible window, no
   enemy base. Waves are authored by song time and never depend on the player's accuracy. Required objectives
-  (`command_core`, plus `power_plant` or `radar_dome` where a mission says so) must survive to `duration_ticks`; losing
-  one is an immediate defeat, reaching the deadline is a victory. A miss never damages anything directly.
+  (`command_core`, plus `power_plant` or `radar_dome` where a mission says so; the `barracks` on the village map of
+  mission 1) must survive to `duration_ticks`; losing one is an immediate defeat, reaching the deadline is a victory.
+  A miss never damages anything directly.
+- The battlefield shows OpenRA sprites only (terrain, trees, buildings, walls, units, projectiles, explosions, the
+  rally flag and move flash of the active section) plus health bars; every other marker is text in the top bar.
+- Sections: a tap on the battlefield (keys 1 2 3 on desktop) makes the nearest approach the active section (rally
+  flag at its defense point); rewards go there while it has room. Before any tap, placement is automatic.
+- Civilians (village maps): houses with role `village` and civilian infantry are side-0 entities flagged `civilian`:
+  they never fight or repair, player units ignore them, enemies shoot them when their wave's target class is
+  `civilians` or when they are in the way; the result reports villagers lost. They are never a required objective.
+- Sound: simulation events drive Red Alert effects and EVA lines (`data/sfx_map.json`, `assets/sfx/`), with
+  per-sound cooldowns, an 8-voice cap and EVA lines that never overlap. Music and effects have their own buses and
+  volume settings.
 - The player selects a mission by name, makes the few musical choices it asks for (or none), and plays four illuminated
   pads while the battle runs. Missions author the song: phase order, length, which choices play where, fills, which
   family is followed, rewards and waves. Nothing on the menus reveals that structure.
@@ -333,19 +344,24 @@ game (`MissionRules`) and the content build (`tools/content`) both read.
 ### Rewards and capacity
 
 - A reward is one of: a building (`pillbox`, `turret`, `flame_tower`), one unit (`e1`, `e2`, `e3`, `e4`, `jeep`, `apc`,
-  `1tnk`, `2tnk`, `arty`, `ftrk`) or a `repair`. The first drum-sequence reward of mission 1 is one pillbox.
+  `1tnk`, `2tnk`, `arty`, `ftrk`), a squad (`rifle_squad`, `grenadier_squad`: `count` 3 of one actor, produced
+  together, one group) or a `repair`. The first drum-sequence reward of mission 1 is one pillbox.
 - Buildings go to prepared sockets (`data/battlefields/defense_02.json`, five per approach flanking the route outside
-  the wall; a mission opens `sockets_per_point` of them). The approach with the fewest defenses wins, ties go to the
-  approach of the next wave. Units are produced by the barracks or war factory and hold the defense point with the
-  fewest defenders (at most `units_per_point`, 6).
+  the wall; a mission opens `sockets_per_point` of them). The active section wins while it has room; otherwise the
+  approach with the fewest defenses, ties to the approach of the next wave. Units are produced by the barracks or war
+  factory and hold the defense point with the fewest defenders (at most `units_per_point`, 6 by default, a level rule
+  may raise it). A level rule `start_units` places defenders at the points before the song starts.
 - At capacity the reward becomes a repair crew for its approach (every damaged defense to full); when nothing is
   damaged it reinforces the oldest defense once (+50 % health). The HUD names what happened; nothing is discarded
   silently.
 - The placement is chosen when the sequence resolves and shown on the battlefield (socket outline, countdown ring)
   during the construction delay; the building or unit appears when it ends. Construction, delays, waves and grading all
   run on song / simulation time and pause together.
-- Wave units attack-move via their approach's defense point to their objective and fight units and defensive structures
-  on the way (not other buildings); defenses block or are destroyed, so no stalemate is possible.
+- Wave units attack-move via their approach's defense point and then pursue their wave's target class: `defenses`
+  (the choke point: fight what holds it and stay), `civilians` (the nearest living house or villager), `core` (the
+  objective, the default). A class falls through to the next inward one when nothing of it remains. On the way they
+  fight units and defensive structures (never other buildings outside their class); defenses block or are destroyed,
+  so no stalemate is possible.
 
 ### Content: library, missions, build
 
@@ -356,6 +372,12 @@ game (`MissionRules`) and the content build (`tools/content`) both read.
   recordings, the build makes no placeholder for them and never pairs it with another sound. An accompaniment clip may
   be `audio_only` (a recording with no MIDI, nothing cued). Imported clips (`source.type` `imported`) come from an
   Ableton batch through `tools/content/import_ableton.py` and a manifest in `content/imports/`.
+- Battlefields (`data/battlefields/<id>.json`, generated by `tools/campaign/build_battlefield.py`): buildings by role
+  (an `actor` may override the role lookup, e.g. `village` houses `v01`..`v08`), `civilians` (actor and cell),
+  `wander` (rect, radius, flee radius), `objectives`, `defense_points`, `sockets`, `entries`, `exits`, `view`.
+- Waves (`data/campaign/waves/level_NN.json`): `rules` (`objective_hp`, `sockets_per_point`, `units_per_point`,
+  `start_units`, `prebuilt`, `walls`) and `waves` (`start_bar`, `entry`, optional `target` class, `groups` with an
+  optional per-group `target`); `target_objective` defaults to the battlefield's first required objective.
 - Missions (`content/missions/level_NN.json`): choices (`groove`, `fill`, `bass`, `kick_sound`, `snare_sound`,
   `bass_voice`, `accompaniment`, each with a pool, a count and a default), phases (bars, mode, the clip and sound of
   each family as a choice slot, a fixed id or `"bound"` = the sound the chosen clip declares for that part,

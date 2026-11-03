@@ -8,11 +8,16 @@ extends Node
 
 signal button_pressed(button: int, touch_id: int)
 signal button_released(button: int, touch_id: int)
+## A touch pressed inside the battle area and outside every pad (it picks a section); the event is not marked handled.
+signal area_tapped(pos: Vector2)
+## Desktop testing: keys 1, 2 and 3 pick section 0, 1 or 2.
+signal section_key(index: int)
 
 const KEY_TOUCH_ID := {1: -1, 2: -2, 3: -3, 4: -4}
 
 var enabled := true
 var rect_provider: Callable  # returns Dictionary button (int) -> Rect2 in viewport coordinates, queried on each touch
+var area_provider: Callable  # returns the battle area's Rect2 in viewport coordinates; a touch outside the pads and inside it is an area tap
 var _touch_button: Dictionary = {}  # touch index -> button
 var _key_down: Dictionary = {1: false, 2: false, 3: false, 4: false}
 
@@ -33,6 +38,8 @@ func _input(event: InputEvent) -> void:
 				return
 			var button := _button_at(t.position)
 			if button <= 0:
+				if area_provider.is_valid() and (area_provider.call() as Rect2).has_point(t.position):
+					area_tapped.emit(t.position)
 				return
 			_touch_button[t.index] = button
 			button_pressed.emit(button, t.index)
@@ -47,6 +54,8 @@ func _input(event: InputEvent) -> void:
 		var k := event as InputEventKey
 		if k.echo:
 			return
+		if k.pressed and k.keycode >= KEY_1 and k.keycode <= KEY_3 and not k.ctrl_pressed and not k.alt_pressed and not k.meta_pressed:
+			section_key.emit(k.keycode - KEY_1)
 		for button in KEY_TOUCH_ID:
 			var action := action_name(button)
 			if k.is_action_pressed(action, false, true):

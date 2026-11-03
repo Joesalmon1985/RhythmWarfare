@@ -2747,6 +2747,596 @@
     },
     "ProvidesPrerequisite@buildingname": {}
    }
+  },
+  "tecn": {
+   "name": "TECN",
+   "hp": 2500,
+   "armor": "None",
+   "speed": 54,
+   "cost": 10,
+   "queue": "",
+   "prerequisites": "",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "RevealsShroud": {
+     "Range": "3c0"
+    },
+    "ScaredyCat": {},
+    "Wanders": {
+     "MinMoveDelay": "150",
+     "MaxMoveDelay": "750"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ProximityCaptor": {
+     "Types": "CivilianInfantry"
+    }
+   },
+   "note": "Civilian from mods/ra/rules/civilian.yaml + ^CivInfantry/^Infantry in defaults.yaml; the Pistol armament is dropped on purpose (civilians never shoot in Rhythm Warfare). TECN draws with image c1."
+  },
+  "c1": {
+   "name": "C1",
+   "hp": 2500,
+   "armor": "None",
+   "speed": 54,
+   "cost": 10,
+   "queue": "",
+   "prerequisites": "",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "RevealsShroud": {
+     "Range": "3c0"
+    },
+    "ScaredyCat": {},
+    "Wanders": {
+     "MinMoveDelay": "150",
+     "MaxMoveDelay": "750"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ProximityCaptor": {
+     "Types": "CivilianInfantry"
+    }
+   },
+   "note": "Civilian from mods/ra/rules/civilian.yaml + ^CivInfantry/^Infantry in defaults.yaml; the Pistol armament is dropped on purpose (civilians never shoot in Rhythm Warfare). "
+  },
+  "c2": {
+   "name": "C2",
+   "hp": 2500,
+   "armor": "None",
+   "speed": 54,
+   "cost": 10,
+   "queue": "",
+   "prerequisites": "",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Infantry",
+    "Disguise"
+   ],
+   "mobile": true,
+   "is_building": false,
+   "locomotor": "foot",
+   "build_at": "",
+   "detect": {
+    "range": 1.5,
+    "types": [
+     "Cloak"
+    ]
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Infantry",
+      "Disguise"
+     ],
+     "requires": "!parachute"
+    },
+    "Targetable@HEAL": {
+     "types": [
+      "Heal"
+     ],
+     "requires": "!parachute && damaged"
+    }
+   },
+   "abilities": {
+    "RevealsShroud": {
+     "Range": "3c0"
+    },
+    "ScaredyCat": {},
+    "Wanders": {
+     "MinMoveDelay": "150",
+     "MaxMoveDelay": "750"
+    },
+    "Crushable": {
+     "CrushSound": "squishy2.aud"
+    },
+    "ProximityCaptor": {
+     "Types": "CivilianInfantry"
+    }
+   },
+   "note": "Civilian from mods/ra/rules/civilian.yaml + ^CivInfantry/^Infantry in defaults.yaml; the Pistol armament is dropped on purpose (civilians never shoot in Rhythm Warfare). Draws with image c2 (palette civilian2 in OpenRA)."
+  },
+  "v01": {
+   "name": "V01",
+   "hp": 40000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 0,
+   "queue": "",
+   "prerequisites": "",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx",
+    "dimensions": "2,2",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    }
+   },
+   "note": "Civilian house from mods/ra/rules/civilian.yaml + ^CivBuilding/^TechBuilding/^BasicBuilding in defaults.yaml (HP 40000, Wood)"
+  },
+  "v02": {
+   "name": "V02",
+   "hp": 40000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 0,
+   "queue": "",
+   "prerequisites": "",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx",
+    "dimensions": "2,2",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    }
+   },
+   "note": "Civilian house from mods/ra/rules/civilian.yaml + ^CivBuilding/^TechBuilding/^BasicBuilding in defaults.yaml (HP 40000, Wood)"
+  },
+  "v03": {
+   "name": "V03",
+   "hp": 40000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 0,
+   "queue": "",
+   "prerequisites": "",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx",
+    "dimensions": "2,2",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    }
+   },
+   "note": "Civilian house from mods/ra/rules/civilian.yaml + ^CivBuilding/^TechBuilding/^BasicBuilding in defaults.yaml (HP 40000, Wood)"
+  },
+  "v04": {
+   "name": "V04",
+   "hp": 40000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 0,
+   "queue": "",
+   "prerequisites": "",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx xx",
+    "dimensions": "2,2",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    }
+   },
+   "note": "Civilian house from mods/ra/rules/civilian.yaml + ^CivBuilding/^TechBuilding/^BasicBuilding in defaults.yaml (HP 40000, Wood)"
+  },
+  "v05": {
+   "name": "V05",
+   "hp": 40000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 0,
+   "queue": "",
+   "prerequisites": "",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx",
+    "dimensions": "2,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    }
+   },
+   "note": "Civilian house from mods/ra/rules/civilian.yaml + ^CivBuilding/^TechBuilding/^BasicBuilding in defaults.yaml (HP 40000, Wood)"
+  },
+  "v06": {
+   "name": "V06",
+   "hp": 40000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 0,
+   "queue": "",
+   "prerequisites": "",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx",
+    "dimensions": "2,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    }
+   },
+   "note": "Civilian house from mods/ra/rules/civilian.yaml + ^CivBuilding/^TechBuilding/^BasicBuilding in defaults.yaml (HP 40000, Wood)"
+  },
+  "v07": {
+   "name": "V07",
+   "hp": 40000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 0,
+   "queue": "",
+   "prerequisites": "",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "xx",
+    "dimensions": "2,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    }
+   },
+   "note": "Civilian house from mods/ra/rules/civilian.yaml + ^CivBuilding/^TechBuilding/^BasicBuilding in defaults.yaml (HP 40000, Wood)"
+  },
+  "v08": {
+   "name": "V08",
+   "hp": 40000,
+   "armor": "Wood",
+   "speed": 0,
+   "cost": 0,
+   "queue": "",
+   "prerequisites": "",
+   "armaments": [],
+   "target_types": [
+    "GroundActor",
+    "Structure",
+    "C4",
+    "DetonateAttack"
+   ],
+   "mobile": false,
+   "is_building": true,
+   "locomotor": "",
+   "building": {
+    "footprint": "x",
+    "dimensions": "1,1",
+    "terrain_types": [
+     "Clear",
+     "Road"
+    ],
+    "requires_buildable_adjacent": 0
+   },
+   "targetable": {
+    "Targetable": {
+     "types": [
+      "GroundActor",
+      "Structure",
+      "C4",
+      "DetonateAttack"
+     ],
+     "requires": ""
+    }
+   },
+   "abilities": {
+    "WithSpriteBody": {},
+    "ProximityCaptor": {
+     "Types": "Building"
+    },
+    "Demolishable": {
+     "Condition": "being-demolished"
+    },
+    "RevealsShroud": {
+     "Range": "4c0"
+    }
+   },
+   "note": "Civilian house from mods/ra/rules/civilian.yaml + ^CivBuilding/^TechBuilding/^BasicBuilding in defaults.yaml (HP 40000, Wood) ; footprint and dimensions are the ^BasicBuilding 1,1 default"
   }
  },
  "weapons": {

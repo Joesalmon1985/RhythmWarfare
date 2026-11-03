@@ -1,6 +1,8 @@
 """Writes data/maps/field_80x40.json, data/battlefields/defense_01.json (the centred-base defense map of the schema 2
-build, kept for its layout tests) and data/battlefields/defense_02.json (the mission map: the same compound with no
-pre-placed pillboxes, prepared sockets for rewarded buildings and a second and third optional objective).
+build, kept for its layout tests), data/battlefields/defense_02.json (the mission map: the same compound with no
+pre-placed pillboxes, prepared sockets for rewarded buildings and a second and third optional objective) and
+data/battlefields/village_01.json (defense_02's walls, openings, points, entries and sockets with the compound turned
+into a village: the barracks in the centre, a ring of civilian houses, ten civilians and a wander area).
 
     python tools/campaign/build_battlefield.py
 
@@ -137,3 +139,101 @@ bf2["note"] = ("The mission map (schema 3): defense_01's compound and routes wit
                "required (rules.required_objectives); the command core always is.")
 (ROOT / "data/battlefields/defense_02.json").write_text(json.dumps(bf2, indent=1) + "\n")
 print(f"defense_02: {len(sockets)} sockets")
+
+# --- village_01: the level 1 map (a village around the infantry barracks) ----------------------------------------------
+# Footprints are the OpenRA ones (mods/ra/rules/civilian.yaml, Building.Dimensions; V08 has none and is 1x1).
+VILLAGE_FOOTPRINT = {"v01": (2, 2), "v02": (2, 2), "v03": (2, 2), "v04": (2, 2), "v05": (2, 1), "v06": (2, 1), "v07": (2, 1), "v08": (1, 1)}
+# (actor, x, y): rows 21 and 22 stay clear from wall to wall, and columns 36..41 stay clear above the barracks, so every
+# opening has a lane of at least two cells to the barracks exit.
+HOUSES = [
+    ("v01", 31, 17), ("v02", 46, 17), ("v03", 31, 23), ("v04", 46, 23),
+    ("v05", 34, 19), ("v06", 43, 19), ("v07", 34, 23), ("v08", 43, 23),
+    ("v05", 34, 17), ("v06", 44, 17),
+]
+BARRACKS = (38, 19)
+BARRACKS_EXIT = (39, 21)
+CIVILIANS = [("tecn", 33, 21), ("tecn", 35, 22), ("tecn", 37, 18), ("tecn", 41, 18), ("tecn", 43, 21), ("tecn", 45, 22),
+             ("tecn", 30, 22), ("tecn", 48, 21), ("c1", 38, 23), ("c2", 40, 23)]
+WANDER = {"rect": [29, 17, 49, 24], "radius": 5.0, "flee_radius": 6.0}
+
+village_rules = ROOT / "data/openra_rules.json"
+if village_rules.exists():  # cross-check the footprints against the extracted rules once the actors are in
+    actors = json.loads(village_rules.read_text()).get("actors", {})
+    for actor, (fw, fh) in VILLAGE_FOOTPRINT.items():
+        if actor in actors:
+            dim = actors[actor].get("building", {}).get("dimensions", f"{fw},{fh}")
+            assert tuple(int(v) for v in dim.split(",")) == (fw, fh), ("footprint differs from data/openra_rules.json", actor, dim)
+
+walls = [b for b in b2 if b["role"] in ("brick", "wall")]
+village = [{"role": "barracks", "x": BARRACKS[0], "y": BARRACKS[1], "w": 2, "h": 2}]
+village += [{"role": "village", "actor": a, "x": x, "y": y, "w": VILLAGE_FOOTPRINT[a][0], "h": VILLAGE_FOOTPRINT[a][1]} for a, x, y in HOUSES]
+b3 = walls + village
+
+tree_cells = {tuple(c) for c in blocked}
+occupied = {}
+for b in b3:
+    for i in range(b["w"]):
+        for j in range(b["h"]):
+            cell = (b["x"] + i, b["y"] + j)
+            assert cell not in occupied, ("buildings overlap", cell, b, occupied[cell])
+            assert cell not in tree_cells, ("building on a tree", cell, b)
+            assert 0 <= cell[0] < W and 0 <= cell[1] < H, ("building off the map", cell)
+            occupied[cell] = b
+for b in village:
+    assert all(X0 < b["x"] + i < X1 and Y0 < b["y"] + j < Y1 for i in range(b["w"]) for j in range(b["h"])), ("building outside the compound", b)
+for s_ in sockets:
+    assert (s_["x"], s_["y"]) not in occupied and (s_["x"], s_["y"]) not in tree_cells, ("socket on a blocked cell", s_)
+
+
+def free(c):
+    return c not in occupied and c not in tree_cells and 0 <= c[0] < W and 0 <= c[1] < H
+
+
+for a, x, y in CIVILIANS:
+    assert free((x, y)) and X0 < x < X1 and Y0 < y < Y1, ("civilian on a blocked cell", a, x, y)
+assert len({(x, y) for _, x, y in CIVILIANS}) == len(CIVILIANS), "two civilians on one cell"
+assert free(BARRACKS_EXIT) and BARRACKS_EXIT[1] == BARRACKS[1] + 2 and BARRACKS[0] <= BARRACKS_EXIT[0] <= BARRACKS[0] + 1, ("barracks exit", BARRACKS_EXIT)
+wx0, wy0, wx1, wy1 = WANDER["rect"]
+assert X0 < wx0 < wx1 < X1 and Y0 < wy0 < wy1 < Y1, ("wander rect outside the compound", WANDER)
+
+
+def reaches(starts, goals, ok):
+    """4-connected flood fill from any start to any goal over the cells `ok` accepts."""
+    seen = {c for c in starts if ok(c)}
+    queue = list(seen)
+    for cur in queue:
+        if cur in goals:
+            return True
+        for nxt in ((cur[0] + 1, cur[1]), (cur[0] - 1, cur[1]), (cur[0], cur[1] + 1), (cur[0], cur[1] - 1)):
+            if nxt not in seen and ok(nxt):
+                seen.add(nxt)
+                queue.append(nxt)
+    return False
+
+
+def block_free(c, width=2):
+    return all(free((c[0] + i, c[1] + j)) for i in range(width) for j in range(width))
+
+
+for point in bf["defense_points"]:
+    start = (point["x"], point["y"])
+    assert free(start) and reaches([start], {BARRACKS_EXIT}, free), ("no foot path from the defense point to the barracks exit", point["id"])
+    # a lane of two cells: a free 2x2 block can slide from the point's surroundings to the exit's
+    near = lambda c: [(c[0] + dx, c[1] + dy) for dx in (-1, 0) for dy in (-1, 0)]
+    assert reaches(near(start), set(near(BARRACKS_EXIT)), block_free), ("the lane from the defense point to the barracks exit is narrower than two cells", point["id"])
+
+bf3 = dict(bf2)
+bf3["id"] = "village_01"
+bf3["buildings"] = b3
+bf3["objectives"] = [{"id": "barracks", "role": "barracks", "required": True}]
+bf3["exits"] = {"barracks": list(BARRACKS_EXIT)}
+bf3["civilians"] = [{"actor": a, "x": x, "y": y} for a, x, y in CIVILIANS]
+bf3["wander"] = WANDER
+bf3["note"] = ("The level 1 map (schema 3): defense_02's wall ring, openings, three defense points, entries, sockets and view, with the "
+               "compound turned into a village. The infantry barracks (the one required objective) stands in the centre, ten civilian "
+               "houses (v01..v08 at their OpenRA footprints) form a ring around it, and ten civilians (eight technicians, a man and a "
+               "woman) wander inside the wander rectangle. Rows 21 and 22 stay clear from the left opening to the right one and columns "
+               "36..41 stay clear above the barracks, so every opening has a lane of at least two cells to the barracks exit (checked "
+               "by the generator with a flood fill). No command core, factory, power plant or radar dome.")
+(ROOT / "data/battlefields/village_01.json").write_text(json.dumps(bf3, indent=1) + "\n")
+print(f"village_01: {len(village)} village buildings, {len(CIVILIANS)} civilians, exit {BARRACKS_EXIT}")

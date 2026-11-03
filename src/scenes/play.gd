@@ -15,6 +15,7 @@ var lane_input: LaneInput
 var pad_view: PadView
 var battle_view: BattleView
 var hud: Hud
+var battle_sfx: BattleSfx
 var battle_on := true
 
 var _battle_area: Control
@@ -25,6 +26,7 @@ var _intro_label: Label
 var _countdown_label: Label
 var _banner: Label
 var _pause_panel: PanelContainer
+var _pause_btn: Button
 var _dim: ColorRect
 var _settings_panel: Control
 var _resume_at_wall := -1.0
@@ -66,6 +68,10 @@ func _ready() -> void:
 	lane_input = LaneInput.new()
 	add_child(lane_input)
 	lane_input.rect_provider = pad_view.button_rects
+	if battle_on:
+		lane_input.area_provider = func() -> Rect2: return _battle_area.get_global_rect()
+		lane_input.area_tapped.connect(_on_area_tapped)
+		lane_input.section_key.connect(_on_section_key)
 	lane_input.button_pressed.connect(_on_button_pressed)
 	lane_input.button_released.connect(_on_button_released)
 	transport.song_finished.connect(_on_song_finished)
@@ -165,8 +171,12 @@ func _build_layout() -> void:
 		hud.anchor_right = 1.0
 		hud.anchor_bottom = 1.0
 		hud.match_ref = match_ref
-		hud.view = battle_view
 		_battle_area.add_child(hud)
+
+		battle_sfx = BattleSfx.new()
+		battle_sfx.name = "BattleSfx"
+		battle_sfx.primary_role = match_ref.sim.objective_role(match_ref.sim.primary_objective_id())
+		add_child(battle_sfx)
 	else:
 		_info_label = Label.new()
 		_info_label.anchor_right = 1.0
@@ -219,18 +229,18 @@ func _build_layout() -> void:
 	_debug_label.add_theme_font_size_override("font_size", 13)
 	_debug_panel.add_child(_debug_label)
 
-	var pause_btn := Button.new()
-	pause_btn.text = "II"
-	pause_btn.focus_mode = Control.FOCUS_NONE
-	pause_btn.add_theme_font_size_override("font_size", 24)
-	pause_btn.anchor_left = 1.0  # top right: the top defense point sits under the centre of the battle area
-	pause_btn.anchor_right = 1.0
-	pause_btn.offset_left = -92
-	pause_btn.offset_top = 8
-	pause_btn.offset_right = -20
-	pause_btn.offset_bottom = 64
-	pause_btn.pressed.connect(_pause)
-	add_child(pause_btn)
+	_pause_btn = Button.new()
+	_pause_btn.text = "II"
+	_pause_btn.focus_mode = Control.FOCUS_NONE
+	_pause_btn.add_theme_font_size_override("font_size", 24)
+	_pause_btn.anchor_left = 1.0  # top right: the top defense point sits under the centre of the battle area
+	_pause_btn.anchor_right = 1.0
+	_pause_btn.offset_left = -92
+	_pause_btn.offset_top = 8
+	_pause_btn.offset_right = -20
+	_pause_btn.offset_bottom = 64
+	_pause_btn.pressed.connect(_pause)
+	add_child(_pause_btn)
 
 	_countdown_label = _centre_label(110, 0.32)
 	_banner = _centre_label(64, 0.4)
@@ -317,8 +327,7 @@ func _process(_delta: float) -> void:
 	var events := match_ref.drain_events()
 	for ev in events:
 		_on_match_event(ev, wall)
-	if battle_view != null:
-		battle_view.push_events(events)
+	_push_events(events)
 	for b in range(1, PadView.BUTTONS + 1):
 		pad_view.button_down[b] = lane_input.is_button_down(b)
 	_update_banner(t)
@@ -421,6 +430,36 @@ func _on_match_event(ev: Dictionary, wall: float) -> void:
 			pad_view.show_status(msg, Color(0.75, 0.95, 1.0), wall)
 
 
+func _push_events(events: Array) -> void:
+	if battle_view != null:
+		battle_view.push_events(events)
+	if battle_sfx != null:
+		battle_sfx.push_events(events)
+
+
+## Taps on the map only pick a section while the song plays: not after the end, while paused or counting down to resume,
+## nor on the pause button.
+func _taps_allowed() -> bool:
+	return battle_view != null and not _ended and clock != null and clock.state != SongClock.State.PAUSED and _resume_at_wall < 0.0
+
+
+func _on_area_tapped(pos: Vector2) -> void:
+	if not _taps_allowed() or (_pause_btn != null and _pause_btn.get_global_rect().has_point(pos)):
+		return
+	var xs: Array = []
+	var shift_x := battle_view.global_position.x
+	for dp in match_ref.sim.defense_points:
+		xs.append(battle_view.to_px(dp["pos"]).x + shift_x)
+	var i := SectionPicker.index_for(pos.x, xs)
+	if i >= 0:
+		match_ref.set_active_point(i)
+
+
+func _on_section_key(index: int) -> void:
+	if _taps_allowed():
+		match_ref.set_active_point(index)
+
+
 func _on_button_pressed(button: int, touch_id: int) -> void:
 	if _ended or clock.state == SongClock.State.PAUSED:
 		return
@@ -516,6 +555,7 @@ func _on_song_finished() -> void:
 		if not level.is_defense():
 			match_ref.sim.end_by_song()
 		match_ref.advance(level.duration_seconds())
+		_push_events(match_ref.drain_events())
 		_finish()
 
 

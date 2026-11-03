@@ -636,7 +636,9 @@ class Mission:
         battle = self.data["battle"]
         rules = dict(waves.get("rules", {}))
         rules.update(battle.get("rules", {}))
-        self._check_walls(rules, battle.get("battlefield", waves.get("battlefield", "defense_02")))
+        field = battle.get("battlefield", waves.get("battlefield", "defense_02"))
+        self._check_walls(rules, field)
+        objective = self.primary_objective(field)
         bound = self.bound_sounds()
         used = self._fixed_ids() | {s for d in bound.values() for s in d.values()} | {c for c in bound}
         return {
@@ -651,7 +653,7 @@ class Mission:
             "song_offset_ms": 0,
             "duration_ticks": self.duration_ticks,
             "seed": int(self.data.get("seed", 1000 + self.number)),
-            "battlefield": battle.get("battlefield", waves.get("battlefield", "defense_02")),
+            "battlefield": field,
             "roster": "openra_mvp_01",
             "rules": rules,
             "sequence_threshold": float(self.data.get("sequence_threshold", RULES["sequence"]["threshold"])),
@@ -669,7 +671,7 @@ class Mission:
             "sequences": self.sequences,
             "previews": previews,
             "content": {k: stats[k] for k in ("files", "placeholder_files", "owner_files", "default_mix_peak_db", "loudest_mix_bound_db")},
-            "waves": [self._wave(w) for w in waves["waves"]],
+            "waves": [self._wave(w, objective) for w in waves["waves"]],
         }
 
     VIA = {"left": "defense_1", "top": "defense_2", "right": "defense_3"}
@@ -684,14 +686,31 @@ class Mission:
             if on_route or (x, y) in taken or not (0 < x < bf["width"] - 1 and 0 < y < bf["height"] - 1):
                 self.err(f"wall cell ({x}, {y}) is on a route, a socket or a building")
 
-    def _wave(self, w: dict) -> dict:
+    TARGETS = ("defenses", "civilians", "core")
+
+    @staticmethod
+    def primary_objective(battlefield: str) -> str:
+        """The id of the battlefield's first required objective (the one waves attack by default); the command core when
+        the battlefield cannot be read."""
+        try:
+            bf = read_json(ROOT / "data" / "battlefields" / f"{battlefield}.json")
+            return next(o["id"] for o in bf["objectives"] if o.get("required"))
+        except (OSError, ValueError, KeyError, StopIteration):
+            return "command_core"
+
+    def _wave(self, w: dict, objective: str = "command_core") -> dict:
         """Waves are authored by bar (start_bar, 1-based, fractions allowed) or tick; the defense point follows the
-        entry and the objective defaults to the command core."""
+        entry, the objective defaults to the battlefield's first required objective and `target` (what the wave goes
+        for: defenses, civilians or core, default core) may be overridden per group."""
         out = dict(w)
         if "start_bar" in w and "start_tick" not in w:
             out["start_tick"] = int(round((float(w["start_bar"]) - 1.0) * TICKS_PER_BAR))
         out.setdefault("via_defense_point", self.VIA.get(w["entry"], "defense_1"))
-        out.setdefault("target_objective", "command_core")
+        out.setdefault("target_objective", objective)
+        out.setdefault("target", "core")
+        for where, t in [(f"wave {w['id']}", out["target"])] + [(f"wave {w['id']} group {g.get('actor', '?')}", g["target"]) for g in w["groups"] if "target" in g]:
+            if t not in self.TARGETS:
+                self.err(f"{where}: target '{t}' is not one of {', '.join(self.TARGETS)}")
         out["groups"] = [{**g, "spawn_spacing_ticks": int(g.get("spawn_spacing_ticks", 480))} for g in w["groups"]]
         if not 0 <= out["start_tick"] < self.duration_ticks:
             self.err(f"wave {w['id']} starts outside the song")

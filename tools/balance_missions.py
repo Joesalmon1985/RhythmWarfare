@@ -47,7 +47,8 @@ def main() -> None:
         if "error" in d:
             print(f"| {pack} | {pol} | {seed} | ERROR | | | | | | | | | |")
             continue
-        core = d["objective_hp"].get("command_core", {"hp": 0, "max": 1})
+        hp = d["objective_hp"]
+        core = hp.get(d.get("primary_objective") or "command_core", hp.get("command_core", {"hp": 0, "max": 1}))
         g = d["grades"]
         print(f"| {pack} | {pol} | {seed} | {d['outcome']} | {d['outcome_time_s']:.1f} s | {d['sequences_passed']}/{d['sequences']} "
               f"({g['sharp']}/{g['steady']}/{g['loose']}) | {d['built']} | {d['units']} | {d['repairs']} | {d['defenses_alive']} | "

@@ -1,8 +1,9 @@
 # Rhythm Warfare: handover
 
-State on 2 November 2026, after `docs/BRIEF_PADS_SEQUENCES_TEN_MISSIONS.md` (four pads, sequence rewards, ten missions,
-the loop library and the owner's drop-in content path) and the rebuild of Mission 1 on the owner's own Ableton
-recordings (`ToAddTry1/`, imported by `tools/content/import_ableton.py`). Read this first, then `README.md` (layout and commands),
+State on 3 November 2026, after `docs/BRIEF_PADS_SEQUENCES_TEN_MISSIONS.md` (four pads, sequence rewards, ten missions,
+the loop library and the owner's drop-in content path), the rebuild of Mission 1 on the owner's own Ableton
+recordings (`ToAddTry1/`, imported by `tools/content/import_ableton.py`) and the village version of Mission 1
+(128 bars, civilians, tap-to-deploy sections, Red Alert sound effects; plan in the 3 Nov commit message). Read this first, then `README.md` (layout and commands),
 `docs/PRD.md` section 15 (the mission rule set; sections 1 to 13 describe the legacy duel) and
 `docs/CONTENT_TO_RENDER.md` (the owner's render list). Everything is committed on `main` at
 https://github.com/Joesalmon1985/RhythmWarfare.
@@ -40,18 +41,36 @@ with a few musical choices of your own. Home: Continue, Campaign, Practice, Sett
   shows the current sequence's progress against its threshold and what it will earn; the line under it says what was
   earned and how fast; the battlefield shows the socket being prepared with a countdown ring.
 - **Rewards.** Mission 1's first drum sequence builds one pillbox. Buildings (pillbox, gun turret, flame tower) go to
-  prepared sockets (`data/battlefields/defense_02.json`, five per approach flanking each route outside the wall,
-  `sockets_per_point` open per mission), approach with the fewest defenses first (ties: the approach most enemies are
-  walking towards, else the next wave's). Units (e1 to e4, jeep, APC with its gun only, light and medium tank,
-  artillery, flak truck) come out of the barracks or war factory and hold the point with the fewest defenders (at
-  most 6 each); they may sortie up to 16 cells to hit an enemy shelling their point from beyond their 6-cell leash.
+  prepared sockets (`data/battlefields/defense_02.json` and `village_01.json`, five per approach flanking each route
+  outside the wall, `sockets_per_point` open per mission), approach with the fewest defenses first (ties: the approach
+  most enemies are walking towards, else the next wave's). Units (e1 to e4, jeep, APC with its gun only, light and
+  medium tank, artillery, flak truck; squads `rifle_squad` and `grenadier_squad` are three at once) come out of the
+  barracks or war factory and hold the point with the fewest defenders (at most `units_per_point`, 6 by default, 14 in
+  mission 1); they may sortie up to 16 cells to hit an enemy shelling their point from beyond their 6-cell leash.
   At capacity a reward becomes a repair crew for the most damaged approach or, with nothing damaged, +50% health
   once for the oldest defense; the HUD says which.
+- **Sections (tap to deploy).** A tap on the battlefield (or keys 1 2 3) makes the nearest approach by x the active
+  section: a Red Alert rally flag stands at its defense point, a move flash plays, and every reward goes there while
+  it has room (else the normal choice). Nothing else is drawn on the map any more: no circles, numbers, brackets,
+  countdown rings or wave arrows; the top bar keeps the objective health, time, combo, defenses, enemies, villagers
+  and the "WAVE n INCOMING FROM THE LEFT" line as text.
+- **Civilians (mission 1).** The village map has ten houses (OpenRA `v01`..`v08`) and ten civilians (technicians
+  drawn as `c1`, villagers `c2`) that wander between the houses, flee from enemies within 6 cells and die when shot;
+  they never fight or repair, player units ignore them, and the result screen reports "Villagers lost x of y".
+- **Sound.** `src/audio/battle_sfx.gd` plays the Red Alert effects in `assets/sfx/` (33 Ogg files extracted from the
+  owner's install by `tools/extract_openra_sounds.py`) from the simulation events through `data/sfx_map.json`:
+  weapon reports (M1 carbine, M60, Vulcan, grenade), kaboom and crumble on destruction, dedman screams, civilian
+  cries, placbldg/build5 on pillboxes, EVA "unit ready", "enemy units approaching" (8 s before a wave), "base under
+  attack", "unit lost", "mission accomplished/failed", an allied "acknowledged" on a section tap; 12 players, 8
+  voices, cooldowns, EVA lines queued one deep. Effects volume in Settings; music now plays on its own "Music" bus.
 - **Waves** are authored by bar per mission (`data/campaign/waves/level_NN.json`), never depend on accuracy, walk on
   from off screen at the left, top and right, attack-move via their approach's defense point to their objective and
-  fight units **and defensive structures** on the way (not other buildings). Required objectives: the command core,
-  plus the power plant (6, 10) or radar dome (8, 10). Survive to the end of the song to win; lose a required objective
-  and the run ends.
+  fight units **and defensive structures** on the way (not other buildings). A wave (or a group) may carry a
+  `target` class: `defenses` (fight at the choke point and hold there), `civilians` (then the nearest house or
+  villager), `core` (the objective, the default); a class falls through to the next inward one when nothing of it is
+  left. A mission's level rules may add `start_units` (mission 1: five riflemen at each point) and `units_per_point`.
+  Required objectives: the command core (missions 2 to 10), the barracks (mission 1), plus the power plant (6, 10) or
+  radar dome (8, 10). Survive to the end of the song to win; lose a required objective and the run ends.
 - **Progression.** Clearing mission n unlocks mission n+1 and the options listed in its `new_options`
   (`data/campaign/campaign.json`); a mission's own defaults are always available; no accuracy threshold blocks the
   ladder. The old save (`user://campaign.json` v1) migrates to v2 on load (clears and bests kept); settings v1 keep
@@ -62,7 +81,7 @@ with a few musical choices of your own. Home: Continue, Campaign, Practice, Sett
 
 | # | Mission | Length | Phases (D drums, B bass) | New for the player | Enemies (first appearances) | Objectives |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | First Watch | 48 bars, 66 s | DDBDBD | kick pad 1 and snare pad 4, then bass holds on pad 2 (drums keep playing, only one family cued at a time); drum groove, bass line, bass sound and backing track choices, all the owner's recordings; pillboxes and jeeps | e1, jeep | core |
+| 1 | First Watch | 128 bars, 177 s | DDBD BDDB DBDB DDBD | kick pad 1 and snare pad 4, then bass holds on pad 2 (drums keep playing, only one family cued at a time); drum groove, bass line, bass sound and backing track choices, all the owner's recordings; the village map (three choke points with five riflemen each, ten houses and ten civilians, the barracks in the middle), tap-to-deploy sections, pillboxes, rifle and grenadier squads; four acts: waves at the choke points, then the village, then raiders with jeeps, then the barracks | e1, e2, jeep | barracks |
 | 2 | Second Pulse | 40 bars, 55 s | DDDDD | groove choice (Push / Straight), snare sound choice; turrets | e2 | core |
 | 3 | Hold the Line | 48 bars, 66 s | DBDBDB | bass holds, one pad per voice; jeeps as rewards | e3, 1tnk | core |
 | 4 | Backbeat | 48 bars, 66 s | DDDDDD | Two-Step groove, Snare Run fill, Siege Kick, Field Clap; flame towers, sandbags | e4, apc | core |
@@ -136,6 +155,16 @@ Verified (31 October 2026, this PC, headless unless stated):
 - Desktop real-window run of mission 10 with perfect autoplay: see `docs/BALANCE.md` (frame time).
 - Exports: see "Exports" below.
 
+Verified (3 November 2026, the village level, this PC; see `docs/BALANCE.md` "The village level"):
+- `bash tools/test.sh` green: new suites `test_village_sim.gd` (civilians, start units, target classes, squads, the
+  active section), `test_civilian_art.gd`, `test_section_input.gd`, `test_battle_sfx.gd`, the rewritten mission 1
+  tests (128 bars, 32 sequences, every wave destroyed by perfect play for every groove and bass line, villagers lost
+  at most 4, no input loses), `tools/test_extract_openra_sounds.py` and the content tests for the village map.
+- Seeded balance, seeds 1 to 3: perfect 3/3 with all 139 enemies destroyed, beginner 3/3, sloppy 2/3, no input 0/3
+  (the barracks falls at about 97 s). Missions 2 to 10 produce byte-identical harness reports to before.
+- Real 1280 x 720 window with perfect autoplay to VICTORY; screenshots of the village, the flag after a tap on each
+  section, the move flash, the acts and the result screen with villagers. Not by a person; no sound heard by anyone.
+
 Verified (2 November 2026, the Mission 1 rebuild, this PC):
 - `bash tools/test.sh`: 2,854 GDScript checks and 20 content build tests, 0 failures. New: `tests/test_mission_one_content.gd`
   (all 81 combinations of groove x bass line x bass sound x backing load with their own stems and cues; a Sub recording
@@ -159,9 +188,11 @@ Verified (2 November 2026, the Mission 1 rebuild, this PC):
 
 **Not verified:** any phone run (touch feel, the two-thumb layout, frame time and memory with 16 Ogg streams on a
 phone CPU, load time of mission 10), any listening check by ear (the build and the importer check sample positions,
-lengths and headroom only; nobody has listened to the assembled Mission 1 or to its previews), any human playtest of
-the cues, sequences or difficulty (the beginner and sloppy policies are models), real owner renders for missions 2 to
-10 (none exist yet; Mission 1's are real), the screens on a real phone's safe areas and DPI.
+lengths and headroom only; nobody has listened to the assembled Mission 1, its previews or the Red Alert effects in
+the game), any human playtest of the cues, sequences, difficulty or the tap-to-deploy feel (the beginner and sloppy
+policies are models; the harness taps the suggested section every frame), real owner renders for missions 2 to 10
+(none exist yet; Mission 1's are real), the screens on a real phone's safe areas and DPI, the `make` animation on a
+rewarded pillbox (only plays if the actor has that sequence).
 
 ## How to run the phone check (the owner's)
 
@@ -195,6 +226,14 @@ DuelMasterBattle is an asset source only; OpenRA pixel art and behaviour; work o
    defenders sortie against outranging artillery and V2s. Both are mission-only, so the duel's results are unchanged.
 7. Practice is the same mission with the battlefield hidden and nothing saved; the setup screen can practise one phase.
 8. Mission 10's pools were trimmed to keep it at 16 streams and about 14 MB of Ogg.
+9. Village level (3 Nov 2026, owner's calls): infantry only for the player, a few enemy jeeps in act 3; civilians are
+   atmosphere (wander, flee, die, counted; never repair; never required); a tap sets the active section until the next
+   tap (rewards before any tap are placed as before); rewards are pillboxes and rifle squads, grenadier squads from act
+   3; 128 bars; the barracks is the one required objective with 60,000 hp; civilians are side-0 entities with a
+   `civilian` flag (never a third side: every sim array is indexed by side); the sim uses a separate `civ_rng` for
+   wandering so combat outcomes of other missions are unchanged; the autoplay harness taps sections only on levels
+   with civilians (`RW_SECTION=auto|none|fixed:<i>`), because tapping the next wave's point every frame makes mission
+   5 lose.
 
 ## How the code is organised
 
@@ -203,9 +242,17 @@ DuelMasterBattle is an asset source only; OpenRA pixel art and behaviour; work o
   `campaign.gd` (ladder, unlocks, save v2 and the v1 migration), `session.gd` (settings v2, `start_mission`, env
   overrides), `level.gd`, `level_loader.gd` (schema 1 duel and dispatch; schema 2 is refused as retired), `song_clock.gd`.
 - `src/input/pad_judge.gd` (missions), `judge.gd` (duel), `lane_input.gd` (touches and keys D F J K).
-- `src/sim/battle_sim.gd` (deterministic 25 Hz OpenRA simulation; mission sockets, rewards, capacity, walls, prebuilt
-  defenses), `defense_ai.gd` (defenders hold and sortie, waves walk via their point), `bot_ai.gd` (duel only).
-- `src/ui/`: `pad_view.gd`, `battle_view.gd`, `hud.gd`, `ui_style.gd`, `settings_panel.gd`, `sprite_bank.gd`.
+- `src/sim/battle_sim.gd` (deterministic 25 Hz OpenRA simulation; mission sockets, rewards with `count`, capacity,
+  walls, prebuilt defenses, `start_units`, civilians and village buildings, wave target classes, the active section),
+  `defense_ai.gd` (defenders hold and sortie, waves walk via their point then chase their class's goal, civilians
+  wander and flee), `bot_ai.gd` (duel only).
+- `src/ui/`: `pad_view.gd`, `battle_view.gd` (sprites only, three layers: neutral civilians, blue, red; the rally flag
+  and move flash), `hud.gd` (text only), `section_picker.gd`, `ui_style.gd`, `settings_panel.gd`, `sprite_bank.gd`.
+- `src/audio/`: `stem_transport.gd` (the song, on the "Music" bus), `battle_sfx.gd` (effects on the "SFX" bus from
+  `data/sfx_map.json` and `assets/sfx/`).
+- `tools/extract_openra.py` (sprites from the owner's OpenRA content, allow-list `NEEDED`, aliases `flagfly`),
+  `tools/extract_openra_sounds.py` (AUD decoder and the sound list), `tools/campaign/build_battlefield.py`
+  (`defense_01`, `defense_02`, `village_01`).
 - `src/scenes/`: `main_menu`, `missions`, `mission_setup`, `play`, `result`, `settings`, `calibration`, `developer`.
 - `tools/content/`: `build.py`, `library.py`, `mission.py`, `synth.py`, `common.py`, `render_list.py`,
   `make_fixtures.py`, `test_content.py`. `tools/autoplay.gd` (harness), `tools/balance_missions.py`, `tools/shoot.gd`.
@@ -217,8 +264,11 @@ DuelMasterBattle is an asset source only; OpenRA pixel art and behaviour; work o
 Rebuilt on 31 October 2026 per `docs/EXPORT.md` (`build/` is git-ignored):
 - `build/android/RhythmWarfare-debug.apk`: 95.8 MB (was 42.8 MB with three missions), debug-signed, arm64-v8a, all ten
   mission packs inside. Not installed on a phone by the agent.
-- `build/windows/RhythmWarfare.exe`: 202 MB with the pack embedded. Smoke test: `RW_MISSION=10 RW_SCENE=play
-  RW_AUTOPLAY=perfect RhythmWarfare.console.exe --headless` plays mission 10 to the end with 16 streams, no errors.
+- `build/windows/RhythmWarfare.exe`: re-exported 3 November 2026 with the village level, 232 MB (the 27 MB mission 1
+  pack and the sounds); `[ DONE ] savepack`. Not smoke-tested that day: Windows Application Control blocked the fresh
+  exe from the agent's shell, so the owner runs it. The 31 October smoke test was `RW_MISSION=10 RW_SCENE=play
+  RW_AUTOPLAY=perfect RhythmWarfare.console.exe --headless` (mission 10 to the end with 16 streams, no errors).
+- The Android APK was not rebuilt on 3 November (the owner declined on 2 November); it still holds the 48-bar mission 1.
 - The APK grew because every offered combination of every mission is pre-assembled (67 MB of Ogg). If that is too
   large, trim the option pools of missions 7, 9 and 10 or lower the Ogg quality in `tools/content/common.py`.
 
@@ -239,13 +289,22 @@ Rebuilt on 31 October 2026 per `docs/EXPORT.md` (`build/` is git-ignored):
    Command Saw in missions 7 and 9) may clip slightly. Owner renders change this anyway.
 6. The full build re-assembles every stem (about 9 minutes); a stem cache would make owner iterations faster.
 7. Mission setup on very wide screens leaves the right half of the cards area empty (functional, not pretty).
-8. Duel backlog items (idle fidgets, ruins, sound effects, title art) still apply.
+8. Duel backlog items (idle fidgets, ruins, title art) still apply; the duel has no sound effects (the sound layer is
+   wired in the mission play scene only).
+9. Village level: the top choke point's flag sits under the translucent HUD bar; a unit behind a house can draw over
+   it (civilians and houses are one layer under both armies); the "defenses" waves that hold a choke point count as
+   uncleared when the player never retakes it (sloppy runs); the pack is 27 MB of Ogg (18 stems x 129 bars); the
+   sounds `reinfor1`, `bleep11`, `cashturn` are extracted but unused; no positional panning.
 
 ## Everyday commands
 
 ```
 bash tools/test.sh                                          # all headless tests + content build tests (about 1 min)
 python tools/content/import_ableton.py content/imports/first_watch.json --check   # file an Ableton batch into the library (drop --check to write)
+python tools/extract_openra.py --no-map                     # sprites from the owner's OpenRA content (allow-list NEEDED in the script)
+python tools/extract_openra_sounds.py --check               # Red Alert sounds to assets/sfx (drop --check to write)
+python tools/campaign/build_battlefield.py                  # regenerate the maps and battlefields (defense_02 and village_01)
+RW_SECTION=none <godot> --headless --path . -s tools/autoplay.gd -- res://songs/m01_first_watch perfect 1.0 1   # harness without section taps
 python tools/content/build.py                               # rebuild all ten packs (about 9 min); or name missions: level_05
 python tools/content/render_list.py                         # rewrite docs/CONTENT_TO_RENDER.md
 python tools/balance_missions.py > out.md                   # seeded trials (about 15 min with --jobs 8)

@@ -1,16 +1,35 @@
 {
- "note": "Mission 1 First Watch (48 bars, 66 s). Riflemen only, a jeep with two of the waves. Waves by bar; the build derives start_tick, the defense point from the entry and the objective. Units travel about 9 bars (12 s) from the left or right entry to the defense point and 7 bars from the top. The last wave enters at bar 32 so that perfect play (seven pillboxes, five jeeps) has every wave destroyed a few seconds before the song ends; tuned with tools/autoplay.gd (docs/BALANCE.md).",
+ "note": "Mission 1 First Watch, the village level (128 bars, 2 min 56 s, battlefield village_01). Four acts of 32 bars. Act 1 (bars 1-32): single-entry rifle waves of 3-5 that attack the defenses. Act 2 (33-64): 5-7 riflemen, two entries at once at bar 38, defenses first, then the civilians from bar 50. Act 3 (65-96): civilian raids of 6-8 with grenadiers mixed in and one Ranger jeep per entry (bars 75, 80, 85). Act 4 (97-128): core waves (the barracks) from every side, the last big push at bar 110 with ten from each entry. Units need about 9 bars (12 s) from the left or right entry to the defense point and 7 bars from the top, so the last wave (bar 110) reaches the barracks by bar 118 and perfect play has every wave destroyed before the song ends. The 15 start riflemen (five per point) are the opening defense; objective_hp.barracks is the first balance guess, tuned with tools/balance_missions.py (docs/BALANCE.md).",
  "rules": {
   "objective_hp": {
-   "command_core": 60000
+   "barracks": 60000
   },
-  "sockets_per_point": 3
+  "sockets_per_point": 3,
+  "units_per_point": 14,
+  "start_units": [
+   {
+    "actor": "e1",
+    "count": 5,
+    "point": "defense_1"
+   },
+   {
+    "actor": "e1",
+    "count": 5,
+    "point": "defense_2"
+   },
+   {
+    "actor": "e1",
+    "count": 5,
+    "point": "defense_3"
+   }
+  ]
  },
  "waves": [
   {
    "id": "wave_01",
    "start_bar": 1,
    "entry": "left",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
@@ -21,20 +40,22 @@
   },
   {
    "id": "wave_02",
-   "start_bar": 5,
+   "start_bar": 6,
    "entry": "top",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
-     "count": 4,
+     "count": 3,
      "spawn_spacing_ticks": 480
     }
    ]
   },
   {
    "id": "wave_03",
-   "start_bar": 9,
+   "start_bar": 11,
    "entry": "right",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
@@ -45,20 +66,22 @@
   },
   {
    "id": "wave_04",
-   "start_bar": 13,
+   "start_bar": 16,
    "entry": "left",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 4,
      "spawn_spacing_ticks": 480
     }
    ]
   },
   {
    "id": "wave_05",
-   "start_bar": 16,
+   "start_bar": 21,
    "entry": "top",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
@@ -69,37 +92,61 @@
   },
   {
    "id": "wave_06",
-   "start_bar": 19,
+   "start_bar": 27,
    "entry": "right",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
      "count": 5,
-     "spawn_spacing_ticks": 480
-    },
-    {
-     "actor": "jeep",
-     "count": 1,
      "spawn_spacing_ticks": 480
     }
    ]
   },
   {
    "id": "wave_07",
-   "start_bar": 22,
+   "start_bar": 33,
    "entry": "left",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
-     "count": 6,
+     "count": 5,
      "spawn_spacing_ticks": 480
     }
    ]
   },
   {
    "id": "wave_08",
-   "start_bar": 25,
+   "start_bar": 38,
    "entry": "top",
+   "target": "defenses",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_09",
+   "start_bar": 38,
+   "entry": "right",
+   "target": "defenses",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_10",
+   "start_bar": 44,
+   "entry": "left",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
@@ -109,13 +156,94 @@
    ]
   },
   {
-   "id": "wave_09",
-   "start_bar": 28,
+   "id": "wave_11",
+   "start_bar": 50,
    "entry": "right",
+   "target": "civilians",
    "groups": [
     {
      "actor": "e1",
      "count": 6,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_12",
+   "start_bar": 56,
+   "entry": "top",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 7,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_13",
+   "start_bar": 62,
+   "entry": "left",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 7,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_14",
+   "start_bar": 65,
+   "entry": "left",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_15",
+   "start_bar": 70,
+   "entry": "top",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_16",
+   "start_bar": 75,
+   "entry": "right",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 3,
      "spawn_spacing_ticks": 480
     },
     {
@@ -126,25 +254,158 @@
    ]
   },
   {
-   "id": "wave_10",
-   "start_bar": 30,
+   "id": "wave_17",
+   "start_bar": 80,
    "entry": "left",
+   "target": "civilians",
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
      "spawn_spacing_ticks": 480
     }
    ]
   },
   {
-   "id": "wave_11",
-   "start_bar": 32,
+   "id": "wave_18",
+   "start_bar": 85,
    "entry": "top",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_19",
+   "start_bar": 90,
+   "entry": "right",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_20",
+   "start_bar": 97,
+   "entry": "top",
+   "target": "core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_21",
+   "start_bar": 101,
+   "entry": "left",
+   "target": "core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_22",
+   "start_bar": 101,
+   "entry": "right",
+   "target": "core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_23",
+   "start_bar": 110,
+   "entry": "left",
+   "target": "core",
    "groups": [
     {
      "actor": "e1",
      "count": 5,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_24",
+   "start_bar": 110,
+   "entry": "top",
+   "target": "core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    }
+   ]
+  },
+  {
+   "id": "wave_25",
+   "start_bar": 110,
+   "entry": "right",
+   "target": "core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ]

@@ -32,7 +32,7 @@ Nothing here was drawn or edited by hand; pixels are byte-identical to the sourc
 - Palette: `temperat.pal` converted like `ImmutablePalette` ((v << 2) | (v >> 4)); index 0 fully transparent, index 4 (RA `ShadowIndex`) black with alpha 140, indices 80..95 (the player-colour ramp) with alpha 253 so the faction shader can recolour them.
 - Commands (run with `ENGINE_DIR` and `MOD_SEARCH_PATHS` pointing at the checkout, cwd = scratch dir):
   `OpenRA.Utility.exe ra --extract <file>` then `OpenRA.Utility.exe ra --png <file> temperat.pal`; the indexed PNGs are then converted to RGBA by the script.
-- Output: 4483 RGBA PNG frames (2638 KiB) in `assets/openra`, named `<file stem>-<frame index>.png`, plus `sequences.json` resolved from `mods/ra/sequences/*.yaml`.
+- Output: 4920 RGBA PNG frames (2791 KiB) in `assets/openra`, named `<file stem>-<frame index>.png`, plus `sequences.json` resolved from `mods/ra/sequences/*.yaml`.
 
 ### Files extracted
 
@@ -61,6 +61,8 @@ Nothing here was drawn or edited by hand; pixels are byte-identical to the sourc
 - `burn-l.shp` -> `burn-l-0000..0066.png` (67 frames)
 - `burn-m.shp` -> `burn-m-0000..0066.png` (67 frames)
 - `burn-s.shp` -> `burn-s-0000..0064.png` (65 frames)
+- `c1.shp` -> `c1-0000..0197.png` (198 frames)
+- `c2.shp` -> `c2-0000..0197.png` (198 frames)
 - `clear1.tem` -> `clear1-0000..0015.png` (16 frames)
 - `corpse1.tem` -> `corpse1-0000..0005.png` (6 frames)
 - `cr1.tem` -> `cr1-0000..0004.png` (5 frames)
@@ -91,6 +93,7 @@ Nothing here was drawn or edited by hand; pixels are byte-identical to the sourc
 - `fire4.shp` -> `fire4-0000..0014.png` (15 frames)
 - `fix.shp` -> `fix-0000..0013.png` (14 frames)
 - `fixmake.shp` -> `fixmake-0000..0013.png` (14 frames)
+- `flagfly.shp` -> `flagfly-0000..0013.png` (14 frames)
 - `flak.shp` -> `flak-0000..0006.png` (7 frames)
 - `frag1.shp` -> `frag1-0000..0013.png` (14 frames)
 - `ftrk.shp` -> `ftrk-0000..0063.png` (64 frames)
@@ -112,6 +115,7 @@ Nothing here was drawn or edited by hand; pixels are byte-identical to the sourc
 - `mbSAM.tem` -> `mbSAM-0000..0001.png` (2 frames)
 - `minigun.shp` -> `minigun-0000..0047.png` (48 frames)
 - `missile.shp` -> `missile-0000..0031.png` (32 frames)
+- `moveflsh.tem` -> `moveflsh-0000..0004.png` (5 frames)
 - `napalm1.shp` -> `napalm1-0000..0013.png` (14 frames)
 - `napalm2.shp` -> `napalm2-0000..0013.png` (14 frames)
 - `napalm3.shp` -> `napalm3-0000..0013.png` (14 frames)
@@ -149,6 +153,14 @@ Nothing here was drawn or edited by hand; pixels are byte-identical to the sourc
 - `tc03.tem` -> `tc03-0000..0009.png` (10 frames)
 - `tc04.tem` -> `tc04-0000..0009.png` (10 frames)
 - `tc05.tem` -> `tc05-0000..0009.png` (10 frames)
+- `v01.tem` -> `v01-0000..0001.png` (2 frames)
+- `v02.tem` -> `v02-0000..0001.png` (2 frames)
+- `v03.tem` -> `v03-0000..0001.png` (2 frames)
+- `v04.tem` -> `v04-0000..0003.png` (4 frames)
+- `v05.tem` -> `v05-0000..0003.png` (4 frames)
+- `v06.tem` -> `v06-0000..0001.png` (2 frames)
+- `v07.tem` -> `v07-0000..0003.png` (4 frames)
+- `v08.tem` -> `v08-0000..0001.png` (2 frames)
 - `v2.shp` -> `v2-0000..0031.png` (32 frames)
 - `v2rl.shp` -> `v2rl-0000..0079.png` (80 frames)
 - `veh-hit1.shp` -> `veh-hit1-0000..0016.png` (17 frames)

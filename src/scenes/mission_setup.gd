@@ -26,6 +26,7 @@ func _ready() -> void:
 		func() -> void: get_tree().change_scene_to_file("res://src/scenes/missions.tscn"))
 	var content: VBoxContainer = parts["content"]
 	_audition = AudioStreamPlayer.new()
+	_audition.bus = AudioServer.get_bus_name(StemTransport.ensure_music_bus())
 	add_child(_audition)
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(_pack.path_join("level.json")))
 	if typeof(parsed) != TYPE_DICTIONARY:

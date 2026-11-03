@@ -1,5 +1,5 @@
 extends TestCase
-## The mission map (defense_02, PRD section 15): centred base, entries outside the visible window, sockets inside it,
+## The mission maps (defense_02 for missions 2 and 3, village_01 for mission 1; PRD section 15): centred base, entries outside the visible window, sockets inside it,
 ## wave units walking in unseen, rewarded units leaving the compound; and combat on a sockets battlefield (waves fight
 ## rewarded defenses, ignore other buildings, and every fight between them resolves).
 
@@ -9,15 +9,16 @@ extends TestCase
 const AREAS := [Vector2(1280, 461), Vector2(1280, 418), Vector2(1600, 461), Vector2(1280, 614)]
 const MIN_OUTSIDE_CELLS := 3.0
 const PACKS := ["m01_first_watch", "m02_second_pulse", "m03_hold_the_line"]
+const MAPS := {"defense_02": "main", "village_01": "barracks"}  # battlefield -> the role of its first objective
 
 
 func _rules(bf: String = "defense_02") -> Rules:
 	return Rules.load_default("openra_mvp_01", bf)
 
 
-func _sim(level_rules: Dictionary = {}) -> BattleSim:
+func _sim(level_rules: Dictionary = {}, bf: String = "defense_02") -> BattleSim:
 	var sim := BattleSim.new()
-	sim.setup(_rules(), level_rules, 1)
+	sim.setup(_rules(bf), level_rules, 1)
 	return sim
 
 
@@ -45,63 +46,69 @@ func _defense(sim: BattleSim, reward: String, point: int) -> BattleSim.Ent:
 
 
 func test_map_is_larger_than_the_window_and_the_base_is_centred() -> void:
-	var bf := _rules().battlefield
-	var sim := _sim()
-	var core: BattleSim.Ent = sim.get_entity(int(sim.objectives[0]["ent"]))
-	for area in AREAS:
-		var w := _window(area, bf)
-		assert_true(float(bf["width"]) > w.size.x + 2.0 * MIN_OUTSIDE_CELLS and float(bf["height"]) > w.size.y + 2.0 * MIN_OUTSIDE_CELLS, "map larger than the window %s" % str(area))
-		assert_true(core.center().distance_to(w.get_center()) <= 1.0, "the core is at the centre of the window %s" % str(area))
-		for dp in sim.defense_points:
-			assert_true(w.grow(-1.0).has_point(dp["pos"]), "%s is at least a cell inside the window %s" % [dp["id"], str(area)])
-		assert_true(w.position.x >= 0.0 and w.position.y >= 0.0 and w.end.x <= float(bf["width"]) and w.end.y <= float(bf["height"]))
+	for map in MAPS:
+		var bf := _rules(map).battlefield
+		var sim := _sim({}, map)
+		var core: BattleSim.Ent = sim.get_entity(int(sim.objectives[0]["ent"]))
+		assert_eq(core.role, MAPS[map], "%s: the first objective" % map)
+		for area in AREAS:
+			var w := _window(area, bf)
+			assert_true(float(bf["width"]) > w.size.x + 2.0 * MIN_OUTSIDE_CELLS and float(bf["height"]) > w.size.y + 2.0 * MIN_OUTSIDE_CELLS, "%s: map larger than the window %s" % [map, str(area)])
+			assert_true(core.center().distance_to(w.get_center()) <= 1.0, "%s: the objective is at the centre of the window %s" % [map, str(area)])
+			for dp in sim.defense_points:
+				assert_true(w.grow(-1.0).has_point(dp["pos"]), "%s: %s is at least a cell inside the window %s" % [map, dp["id"], str(area)])
+			assert_true(w.position.x >= 0.0 and w.position.y >= 0.0 and w.end.x <= float(bf["width"]) and w.end.y <= float(bf["height"]))
 
 
 func test_every_entry_is_outside_the_window_and_none_is_below() -> void:
-	var bf := _rules().battlefield
-	var ids := []
-	for en in bf["entries"]:
-		ids.append(str(en["id"]))
-		var p := Vector2(float(en["x"]) + 0.5, float(en["y"]) + 0.5)
-		for area in AREAS:
-			var w := _window(area, bf)
-			assert_true(_distance_outside(w, p) >= MIN_OUTSIDE_CELLS, "entry %s is %.1f cells outside the window %s" % [en["id"], _distance_outside(w, p), str(area)])
-		assert_true(p.y <= float(bf["view"]["center"][1]) + 2.0, "no entry below the base")
-	ids.sort()
-	assert_eq(ids, ["left", "right", "top"])
+	for map in MAPS:
+		var bf := _rules(map).battlefield
+		var ids := []
+		for en in bf["entries"]:
+			ids.append(str(en["id"]))
+			var p := Vector2(float(en["x"]) + 0.5, float(en["y"]) + 0.5)
+			for area in AREAS:
+				var w := _window(area, bf)
+				assert_true(_distance_outside(w, p) >= MIN_OUTSIDE_CELLS, "%s: entry %s is %.1f cells outside the window %s" % [map, en["id"], _distance_outside(w, p), str(area)])
+			assert_true(p.y <= float(bf["view"]["center"][1]) + 2.0, "%s: no entry below the base" % map)
+		ids.sort()
+		assert_eq(ids, ["left", "right", "top"])
 
 
 func test_every_socket_is_inside_the_window_on_every_screen_and_pad_size() -> void:
-	var bf := _rules().battlefield
-	assert_eq(bf["sockets"].size(), 15, "five per approach")
-	for area in AREAS:
-		var w := _window(area, bf)
-		for sk in bf["sockets"]:
-			var c := Vector2(float(sk["x"]) + 0.5, float(sk["y"]) + 0.5)
-			assert_true(w.has_point(c), "socket %s at %s is inside the window %s (%s)" % [sk["id"], str(c), str(area), str(w)])
+	for map in MAPS:
+		var bf := _rules(map).battlefield
+		assert_eq(bf["sockets"].size(), 15, "%s: five per approach" % map)
+		for area in AREAS:
+			var w := _window(area, bf)
+			for sk in bf["sockets"]:
+				var c := Vector2(float(sk["x"]) + 0.5, float(sk["y"]) + 0.5)
+				assert_true(w.has_point(c), "%s: socket %s at %s is inside the window %s (%s)" % [map, sk["id"], str(c), str(area), str(w)])
 
 
 func test_wave_units_spawn_unseen_and_walk_into_the_window_and_on_to_their_point() -> void:
-	var w := _window(AREAS[0], _rules().battlefield)
-	for pair in [["left", "defense_1"], ["top", "defense_2"], ["right", "defense_3"]]:
-		for actor in ["e1", "jeep"]:
-			var sim := _sim()
-			var u := sim.spawn_wave_unit(actor, pair[0], pair[1], "command_core")
-			assert_true(u != null)
-			assert_false(w.has_point(u.center()), "%s spawns outside the window at %s" % [actor, pair[0]])
-			var point := _point(sim, pair[1])
-			var seen := -1
-			var at_point := -1
-			for t in 25 * 40:
-				sim.tick()
-				if seen < 0 and w.has_point(u.center()):
-					seen = t
-				if at_point < 0 and u.center().distance_to(point) <= sim.leash_cells:
-					at_point = t
-				if seen >= 0 and at_point >= 0:
-					break
-			assert_true(seen > 25, "%s from %s walks for over a second before it can be seen (tick %d)" % [actor, pair[0], seen])
-			assert_true(at_point > 0, "%s from %s reaches its defense point" % [actor, pair[0]])
+	for map in MAPS:
+		var w := _window(AREAS[0], _rules(map).battlefield)
+		var objective := "command_core" if map == "defense_02" else "barracks"
+		for pair in [["left", "defense_1"], ["top", "defense_2"], ["right", "defense_3"]]:
+			for actor in ["e1", "jeep"]:
+				var sim := _sim({}, map)
+				var u := sim.spawn_wave_unit(actor, pair[0], pair[1], objective)
+				assert_true(u != null)
+				assert_false(w.has_point(u.center()), "%s: %s spawns outside the window at %s" % [map, actor, pair[0]])
+				var point := _point(sim, pair[1])
+				var seen := -1
+				var at_point := -1
+				for t in 25 * 40:
+					sim.tick()
+					if seen < 0 and w.has_point(u.center()):
+						seen = t
+					if at_point < 0 and u.center().distance_to(point) <= sim.leash_cells:
+						at_point = t
+					if seen >= 0 and at_point >= 0:
+						break
+				assert_true(seen > 25, "%s: %s from %s walks for over a second before it can be seen (tick %d)" % [map, actor, pair[0], seen])
+				assert_true(at_point > 0, "%s: %s from %s reaches its defense point" % [map, actor, pair[0]])
 
 
 func test_rewarded_units_leave_the_compound_to_their_defense_point() -> void:
@@ -121,26 +128,91 @@ func test_rewarded_units_leave_the_compound_to_their_defense_point() -> void:
 	assert_eq(per, [2, 2, 2])
 
 
-func test_mission_packs_use_defense_02_and_all_three_approaches() -> void:
-	var bf := _rules().battlefield
-	var entries := {}
-	for en in bf["entries"]:
-		entries[str(en["id"])] = true
-	var points := {}
-	for dp in bf["defense_points"]:
-		points[str(dp["id"])] = true
-	var objectives := {}
-	for o in bf["objectives"]:
-		objectives[str(o["id"])] = true
+## Each pack names its battlefield (level.json "battlefield"); its waves reference that map's entries, points and objectives.
+func test_mission_packs_use_their_own_battlefield_and_all_three_approaches() -> void:
 	for pack in PACKS:
 		var loaded := LevelLoader.load_pack(TestCase.project_path("songs/" + pack))
 		var level: Level = loaded["level"]
-		assert_eq(level.battlefield, "defense_02", pack)
+		var expected := "village_01" if pack == "m01_first_watch" else "defense_02"
+		assert_eq(level.battlefield, expected, pack)
+		var raw: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(TestCase.project_path("songs/" + pack + "/level.json")))
+		assert_eq(str(raw["battlefield"]), level.battlefield, "%s: level.json names the map the loader resolved" % pack)
+		var bf := _rules(level.battlefield).battlefield
+		var entries := {}
+		for en in bf["entries"]:
+			entries[str(en["id"])] = true
+		var points := {}
+		for dp in bf["defense_points"]:
+			points[str(dp["id"])] = true
+		var objectives := {}
+		for o in bf["objectives"]:
+			objectives[str(o["id"])] = true
 		var used := {}
+		var used_points := {}
 		for w in level.waves:
 			used[str(w["entry"])] = true
+			used_points[str(w["via_defense_point"])] = true
 			assert_true(entries.has(str(w["entry"])) and points.has(str(w["via_defense_point"])) and objectives.has(str(w["target_objective"])), "%s %s references the map" % [pack, w["id"]])
 		assert_eq(used.size(), 3, "%s uses every approach" % pack)
+		assert_eq(used_points.size(), points.size(), "%s uses every defense point" % pack)
+
+
+# --- village_01 (mission 1) -----------------------------------------------------------------------------------------
+
+func test_village_barracks_is_the_only_required_objective_and_sits_inside_the_window() -> void:
+	var bf := _rules("village_01").battlefield
+	assert_eq(bf["objectives"].size(), 1, "one objective")
+	assert_eq([bf["objectives"][0]["id"], bf["objectives"][0]["role"], bf["objectives"][0]["required"]], ["barracks", "barracks", true])
+	var sim := _sim({}, "village_01")
+	assert_eq(sim.objectives.size(), 1)
+	assert_eq(sim.primary_objective_id(), "barracks")
+	var barracks: BattleSim.Ent = sim.get_entity(int(sim.objectives[0]["ent"]))
+	assert_eq([barracks.role, barracks.alive], ["barracks", true])
+	for area in AREAS:
+		var w := _window(area, bf)
+		assert_true(w.grow(-3.0).has_point(barracks.center()), "the barracks is well inside the window %s" % str(area))
+	for e in sim.entities:
+		assert_true(e.role != "core" and e.role != "power" and e.role != "dome" and e.role != "factory", "no command core, power plant, radar or factory (%s)" % e.role)
+
+
+func test_village_houses_and_civilians_are_inside_the_compound() -> void:
+	var bf := _rules("village_01").battlefield
+	var x0 := 1000.0
+	var y0 := 1000.0
+	var x1 := -1.0
+	var y1 := -1.0
+	for b in bf["buildings"]:
+		if str(b["role"]) == "brick":
+			x0 = minf(x0, float(b["x"]))
+			y0 = minf(y0, float(b["y"]))
+			x1 = maxf(x1, float(b["x"]))
+			y1 = maxf(y1, float(b["y"]))
+	var compound := Rect2(x0 + 1.0, y0 + 1.0, x1 - x0 - 1.0, y1 - y0 - 1.0)  # the cells strictly inside the wall rectangle
+	var houses := 0
+	var actors := {}
+	for b in bf["buildings"]:
+		if str(b["role"]) != "village":
+			continue
+		houses += 1
+		actors[str(b["actor"])] = true
+		var cell := Vector2(float(b["x"]), float(b["y"]))
+		assert_true(compound.has_point(cell) and compound.has_point(cell + Vector2(1.0, 1.0)), "house %s at %s is inside the walls %s" % [b["actor"], str(cell), str(compound)])
+	assert_eq(houses, 10)
+	for a in ["v01", "v02", "v03", "v04", "v05", "v06", "v07", "v08"]:
+		assert_true(actors.has(a), "%s is used" % a)
+	assert_eq(bf["civilians"].size(), 10)
+	var r: Array = bf["wander"]["rect"]
+	for c in bf["civilians"]:
+		assert_true(compound.has_point(Vector2(float(c["x"]), float(c["y"]))), "civilian %s starts inside the walls" % c["actor"])
+	assert_true(compound.has_point(Vector2(float(r[0]), float(r[1]))) and compound.has_point(Vector2(float(r[2]), float(r[3]))), "the wander rectangle is inside the walls")
+	var sim := _sim({}, "village_01")
+	assert_eq(sim.civilians_alive(), 10, "ten civilians stand in the sim")
+	var sim_houses := 0
+	for e in sim.entities:
+		if e.civilian and e.kind == BattleSim.Kind.BUILDING:
+			sim_houses += 1
+			assert_true(compound.has_point(e.center()), "house %d centre is inside the walls" % e.id)
+	assert_eq(sim_houses, 10)
 
 
 # --- combat on a sockets battlefield ------------------------------------------------------------------------------

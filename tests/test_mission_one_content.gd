@@ -7,6 +7,7 @@ const PACK := "m01_first_watch"
 const GROOVES := ["groove_half_time", "groove_double_step", "groove_rolling"]
 const BASS := {"bass_sub_line": ["bass_sub_bright", "bass_sub_deep", "bass_sub_pure", "bass_sub_wide", "bass_sub_warm"],
 	"bass_reese_line": ["bass_reese_dark", "bass_reese_deep", "bass_reese_soft", "bass_reese_round"]}
+const MODES := "DDBDBDDBDBDBDDBD"  # D = drums, B = bass
 const BACKING := ["acc_hats_driving", "acc_hats_busy", "acc_hats_offbeat"]
 
 
@@ -62,11 +63,15 @@ func test_a_bass_sound_follows_its_bass_line() -> void:
 func test_defaults_cues_pads_and_names() -> void:
 	var level := _load()
 	assert_eq(level.selection, {"groove": ["groove_half_time"], "bass": ["bass_sub_line"], "bass_voice": ["bass_sub_deep"], "accompaniment": ["acc_hats_driving"]})
-	assert_eq(level.duration_ticks, 48 * 3840, "48 bars")
-	assert_eq(level.sequences.size(), 12)
-	assert_eq(level.sections.size(), 6)
-	assert_eq([str(level.sections[0]["mode"]), str(level.sections[2]["mode"]), str(level.sections[4]["mode"])], ["drums", "bass", "bass"])
-	assert_eq(level.notes.size(), 40 + 32 + 30, "10 kicks and 8 snares per drum phase x 4, 15 bass notes x 2")
+	assert_eq(level.duration_ticks, 128 * 3840, "128 bars")
+	assert_eq(level.sequences.size(), 32, "four-bar sequences")
+	assert_eq(str(level.sequences[0]["reward"]), "pillbox")
+	assert_eq(level.sections.size(), 16, "sixteen eight-bar phases")
+	var modes := []
+	for s in level.sections:
+		modes.append(str(s["mode"])[0].to_upper())
+	assert_eq("".join(PackedStringArray(modes)), MODES, "four acts of 32 bars: drums and bass alternating")
+	assert_eq(level.notes.size(), 10 * 18 + 6 * 15, "10 kicks and 8 snares per drum phase x 10, 15 bass notes x 6")
 	var pads := {}
 	var holds := 0
 	for n in level.notes:
@@ -80,13 +85,13 @@ func test_defaults_cues_pads_and_names() -> void:
 	var used := pads.keys()
 	used.sort()
 	assert_eq(used, [1, 2, 4])
-	assert_eq(holds, 30)
+	assert_eq(holds, 90, "six bass phases of 15 holds")
 	assert_eq(level.voice_name("bound:groove#1:kick"), "Half-Time Kick", "the pad label is the bound sound's name")
 	assert_eq(level.voice_name("bound:groove#1:snare"), "Backbeat Snare")
 	assert_eq(level.voice_name("bass_voice#1"), "Deep Sub")
 	var rolling := _load({"groove": ["groove_rolling"]})
 	assert_eq(rolling.voice_name("bound:groove#1:kick"), "Rolling Kick")
-	assert_eq(rolling.notes.size(), 64 + 32 + 30, "16 kicks per phase in the Rolling groove")
+	assert_eq(rolling.notes.size(), 10 * 24 + 6 * 15, "16 kicks and 8 snares per drum phase in the Rolling groove")
 	assert_eq(level.intros.size(), 2, "the drum intro and the bass intro")
 	assert_eq(int(level.intros[1]["bar"]), 16)
 	assert_eq(level.intro, "Tap a pad as its ring closes onto it.")
@@ -106,9 +111,11 @@ func test_perfect_play_wins_with_every_sequence_and_every_wave_destroyed_for_eve
 			var r: Dictionary = harness.run_mission(m, level, "perfect", rng)
 			var label := "%s + %s" % [g, b]
 			assert_eq(r["outcome"], "victory", label)
-			assert_eq(r["sequences_passed"], 12, label + " every sequence passes")
-			assert_eq(r["built"], 7, label + " seven pillboxes")
-			assert_eq(r["units"], 5, label + " five jeeps")
+			assert_eq(r["sequences_passed"], 32, label + " every sequence passes")
+			assert_eq(r["built"], 9, label + " three sockets per point: nine pillboxes")
+			assert_true(int(r["units"]) >= 15, label + " squads arrive (%d)" % int(r["units"]))
+			assert_eq(int(r["villagers_total"]), 10)
+			assert_true(int(r["villagers_lost"]) <= 4, label + " most villagers live (%d of %d)" % [int(r["villagers_lost"]), int(r["villagers_total"])])
 			var total := 0
 			var killed := 0
 			for w in r["waves"].values():
@@ -116,7 +123,13 @@ func test_perfect_play_wins_with_every_sequence_and_every_wave_destroyed_for_eve
 				killed += int(w["killed"])
 				assert_true(float(w["cleared_s"]) >= 0.0, label + " wave cleared")
 			assert_eq(killed, total, label + " every enemy destroyed")
-			assert_eq(total, 56)
+			var planned := 0
+			for w in level.waves:
+				for grp in w["groups"]:
+					planned += int(grp["count"])
+			assert_eq(level.waves.size(), 25, "25 waves")
+			assert_eq(total, planned, label + " the harness saw every planned enemy")
+			assert_true(total >= 100, label + " a long fight (%d enemies)" % total)
 
 
 func test_no_input_loses() -> void:
@@ -129,3 +142,5 @@ func test_no_input_loses() -> void:
 	var r: Dictionary = harness.run_mission(m, level, "none", rng)
 	assert_eq(r["outcome"], "defeat")
 	assert_eq(r["built"], 0)
+	assert_eq(r["units"], 0)
+	assert_true(float(r["outcome_time_s"]) < level.duration_seconds(), "the barracks falls before the song ends")

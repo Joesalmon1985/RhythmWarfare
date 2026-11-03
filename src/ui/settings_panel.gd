@@ -1,6 +1,6 @@
 class_name SettingsPanel
 extends Control
-## Player settings, saved to user://settings.cfg as they change: music volume, timing calibration, cue lead-in, pad
+## Player settings, saved to user://settings.cfg as they change: music and effects volume, timing calibration, cue lead-in, pad
 ## size, high contrast, reduced effects, vibration, desktop key labels, and a reset. Used as the Settings screen and
 ## as an overlay from the pause menu (in_game: calibration opens only from the menus, which need the audio to itself).
 
@@ -23,6 +23,10 @@ func _build() -> void:
 	_slider("Music volume", 0.0, 1.0, 0.05, Session.music_volume, func(v: float) -> String: return "%d%%" % int(round(v * 100.0)),
 		func(v: float) -> void:
 			Session.music_volume = v
+			Session.apply_volume())
+	_slider("Effects volume", 0.0, 1.0, 0.05, Session.sfx_volume, func(v: float) -> String: return "%d%%" % int(round(v * 100.0)),
+		func(v: float) -> void:
+			Session.sfx_volume = v
 			Session.apply_volume())
 	_slider("Cue lead-in (how early a ring appears)", Session.LEAD_IN_MIN_S, Session.LEAD_IN_MAX_S, 0.05, Session.cue_lead_in_s,
 		func(v: float) -> String: return "%.2f s" % v, func(v: float) -> void: Session.cue_lead_in_s = v)

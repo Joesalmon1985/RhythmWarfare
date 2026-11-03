@@ -12,16 +12,21 @@ section 15 and `data/campaign/rules.json`.
 - `src/` game code: `core/` (song clock, pack loading: `mission_loader.gd` for missions, `level_loader.gd` for the duel;
   `match.gd` drives a run; `sequence_tracker.gd`, `mission_rules.gd`, `campaign.gd` saves and unlocks, `session.gd`
   settings), `audio/` (one synchronized transport for all stems), `input/` (`pad_judge.gd` for missions, `judge.gd` for the
-  duel, `lane_input.gd` touches and keys), `sim/` (deterministic 25 Hz OpenRA battle simulation, no scene nodes), `ui/`
-  (`pad_view.gd` the pads, `battle_view.gd`, `hud.gd`, `ui_style.gd`, `settings_panel.gd`), `scenes/` (home, missions,
-  mission setup, play, result, settings, calibration, developer).
+  duel, `lane_input.gd` touches, section taps and keys), `sim/` (deterministic 25 Hz OpenRA battle simulation, no
+  scene nodes; civilians, wave target classes, start units, the active section), `ui/` (`pad_view.gd` the pads,
+  `battle_view.gd` sprites only, `hud.gd` text only, `section_picker.gd`, `ui_style.gd`, `settings_panel.gd`),
+  `audio/` (`stem_transport.gd` the song, `battle_sfx.gd` the Red Alert effects), `scenes/` (home, missions, mission
+  setup, play, result, settings, calibration, developer).
 - `content/` the loop library (`library/<clip>/`: MIDI per part, owner WAV renders, generated placeholders), sounds,
   the ten mission files, fixtures; Godot ignores it. `tools/content/build.py` turns it into `songs/m01_*` to `m10_*`.
 - `songs/` the built mission packs (schema 3: `level.json`, `audio/` stems, `preview/` auditions) and the two legacy duel
   packs (`level_01`, `test_16`, schema 1).
-- `data/` OpenRA rules, roster, maps, battlefields (`defense_02.json` is the mission map with building sockets),
-  `campaign/` (`campaign.json` the mission ladder and unlocks, `rules.json` the rule set, `waves/` per mission).
-- `assets/openra/` Red Alert sprite frames at native pixel size, sequences and provenance.
+- `data/` OpenRA rules, roster, maps, battlefields (`defense_02.json` the mission map with building sockets,
+  `village_01.json` mission 1's village with the barracks, houses and civilians), `sfx_map.json` (simulation event
+  to sound), `campaign/` (`campaign.json` the mission ladder and unlocks, `rules.json` the rule set, `waves/` per
+  mission).
+- `assets/openra/` Red Alert sprite frames at native pixel size, sequences and provenance; `assets/sfx/` the Red Alert
+  sound effects and EVA lines as Ogg (`tools/extract_openra_sounds.py`).
 - `campaign/` the owner's original starter pack (First_Three MIDI is the default content of missions 1 to 3; never edit it).
 - `tools/` authoring scripts; `tests/` headless GDScript tests; `tools/content/test_content.py` the content build tests.
 
@@ -33,6 +38,9 @@ Desktop keys: D F J K = pads 1 to 4, Esc = pause, F3 = debug line.
 ```
 bash tools/test.sh                                   # all headless tests + the content build tests
 python tools/content/import_ableton.py content/imports/first_watch.json   # file your Ableton exports (ToAddTry1/) into content/library
+python tools/extract_openra.py --no-map              # sprites from your OpenRA content (allow-list in the script)
+python tools/extract_openra_sounds.py                # Red Alert sounds into assets/sfx
+python tools/campaign/build_battlefield.py           # regenerate the maps and battlefields
 python tools/content/build.py                        # rebuild every mission pack from content/ (placeholders and your renders)
 python tools/content/render_list.py                  # rewrite docs/CONTENT_TO_RENDER.md
 python tools/balance_missions.py > /tmp/balance.md   # seeded trials, every mission (docs/BALANCE.md)
@@ -41,7 +49,8 @@ RW_MISSION=3 RW_SCENE=play RW_AUTOPLAY=perfect godot --path .    # scripted run 
 RW_UNLOCK_ALL=1 godot --path .                       # every mission and option open for one run (developer switch)
 ```
 
-Screenshots: `godot --path . -s tools/shoot.gd -- res://src/scenes/mission_setup.tscn <out_dir> 20:shot:name`.
+Screenshots: `godot --path . -s tools/shoot.gd -- res://src/scenes/mission_setup.tscn <out_dir> 20:shot:name`; the play
+screen of a mission: `RW_MISSION=1 RW_SCENE=play RW_AUTOPLAY=perfect godot --path . -s tools/shoot.gd -- res://src/scenes/main_menu.tscn <out_dir> 400:touch:200,250 405:release:200,250 500:shot:left_flag`.
 
 ## Documents
 

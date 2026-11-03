@@ -11,15 +11,33 @@
  ],
  "ticks_per_beat": 960,
  "song_offset_ms": 0,
- "duration_ticks": 184320,
+ "duration_ticks": 491520,
  "seed": 1001,
- "battlefield": "defense_02",
+ "battlefield": "village_01",
  "roster": "openra_mvp_01",
  "rules": {
   "objective_hp": {
-   "command_core": 60000
+   "barracks": 60000
   },
-  "sockets_per_point": 3
+  "sockets_per_point": 3,
+  "units_per_point": 14,
+  "start_units": [
+   {
+    "actor": "e1",
+    "count": 5,
+    "point": "defense_1"
+   },
+   {
+    "actor": "e1",
+    "count": 5,
+    "point": "defense_2"
+   },
+   {
+    "actor": "e1",
+    "count": 5,
+    "point": "defense_3"
+   }
+  ]
  },
  "sequence_threshold": 0.6,
  "intro": "Tap a pad as its ring closes onto it.",
@@ -304,6 +322,150 @@
    "id": "p06",
    "start_tick": 153600,
    "end_tick": 184320,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "bound:groove#1:kick"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "bound:groove#1:snare"
+    }
+   }
+  },
+  {
+   "id": "p07",
+   "start_tick": 184320,
+   "end_tick": 215040,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "bound:groove#1:kick"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "bound:groove#1:snare"
+    }
+   }
+  },
+  {
+   "id": "p08",
+   "start_tick": 215040,
+   "end_tick": 245760,
+   "mode": "bass",
+   "pads": {
+    "2": {
+     "family": "bass",
+     "ref": "bass_voice#1"
+    }
+   }
+  },
+  {
+   "id": "p09",
+   "start_tick": 245760,
+   "end_tick": 276480,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "bound:groove#1:kick"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "bound:groove#1:snare"
+    }
+   }
+  },
+  {
+   "id": "p10",
+   "start_tick": 276480,
+   "end_tick": 307200,
+   "mode": "bass",
+   "pads": {
+    "2": {
+     "family": "bass",
+     "ref": "bass_voice#1"
+    }
+   }
+  },
+  {
+   "id": "p11",
+   "start_tick": 307200,
+   "end_tick": 337920,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "bound:groove#1:kick"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "bound:groove#1:snare"
+    }
+   }
+  },
+  {
+   "id": "p12",
+   "start_tick": 337920,
+   "end_tick": 368640,
+   "mode": "bass",
+   "pads": {
+    "2": {
+     "family": "bass",
+     "ref": "bass_voice#1"
+    }
+   }
+  },
+  {
+   "id": "p13",
+   "start_tick": 368640,
+   "end_tick": 399360,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "bound:groove#1:kick"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "bound:groove#1:snare"
+    }
+   }
+  },
+  {
+   "id": "p14",
+   "start_tick": 399360,
+   "end_tick": 430080,
+   "mode": "drums",
+   "pads": {
+    "1": {
+     "family": "kick",
+     "ref": "bound:groove#1:kick"
+    },
+    "4": {
+     "family": "snare",
+     "ref": "bound:groove#1:snare"
+    }
+   }
+  },
+  {
+   "id": "p15",
+   "start_tick": 430080,
+   "end_tick": 460800,
+   "mode": "bass",
+   "pads": {
+    "2": {
+     "family": "bass",
+     "ref": "bass_voice#1"
+    }
+   }
+  },
+  {
+   "id": "p16",
+   "start_tick": 460800,
+   "end_tick": 491520,
    "mode": "drums",
    "pads": {
     "1": {
@@ -1948,6 +2110,2374 @@
      ]
     ]
    }
+  },
+  {
+   "phase": 6,
+   "family": "kick",
+   "pad": 1,
+   "voice": "bound:groove#1:kick",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 184320,
+   "end_tick": 215040,
+   "options": {
+    "groove_half_time": [
+     [
+      184320,
+      0
+     ],
+     [
+      189120,
+      0
+     ],
+     [
+      192000,
+      0
+     ],
+     [
+      196800,
+      0
+     ],
+     [
+      199680,
+      0
+     ],
+     [
+      204480,
+      0
+     ],
+     [
+      207360,
+      0
+     ],
+     [
+      208320,
+      0
+     ],
+     [
+      210240,
+      0
+     ],
+     [
+      212160,
+      0
+     ]
+    ],
+    "groove_double_step": [
+     [
+      184320,
+      0
+     ],
+     [
+      185280,
+      0
+     ],
+     [
+      189120,
+      0
+     ],
+     [
+      192000,
+      0
+     ],
+     [
+      192960,
+      0
+     ],
+     [
+      196800,
+      0
+     ],
+     [
+      199680,
+      0
+     ],
+     [
+      200640,
+      0
+     ],
+     [
+      204480,
+      0
+     ],
+     [
+      207360,
+      0
+     ],
+     [
+      212160,
+      0
+     ]
+    ],
+    "groove_rolling": [
+     [
+      184320,
+      0
+     ],
+     [
+      185280,
+      0
+     ],
+     [
+      187200,
+      0
+     ],
+     [
+      189120,
+      0
+     ],
+     [
+      192000,
+      0
+     ],
+     [
+      192960,
+      0
+     ],
+     [
+      194880,
+      0
+     ],
+     [
+      196800,
+      0
+     ],
+     [
+      199680,
+      0
+     ],
+     [
+      200640,
+      0
+     ],
+     [
+      202560,
+      0
+     ],
+     [
+      204480,
+      0
+     ],
+     [
+      207360,
+      0
+     ],
+     [
+      210240,
+      0
+     ],
+     [
+      211200,
+      0
+     ],
+     [
+      212160,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 6,
+   "family": "snare",
+   "pad": 4,
+   "voice": "bound:groove#1:snare",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 184320,
+   "end_tick": 215040,
+   "options": {
+    "groove_half_time": [
+     [
+      186240,
+      0
+     ],
+     [
+      190080,
+      0
+     ],
+     [
+      193920,
+      0
+     ],
+     [
+      197760,
+      0
+     ],
+     [
+      201600,
+      0
+     ],
+     [
+      205440,
+      0
+     ],
+     [
+      209280,
+      0
+     ],
+     [
+      213120,
+      0
+     ]
+    ],
+    "groove_double_step": [
+     [
+      186240,
+      0
+     ],
+     [
+      190080,
+      0
+     ],
+     [
+      193920,
+      0
+     ],
+     [
+      197760,
+      0
+     ],
+     [
+      201600,
+      0
+     ],
+     [
+      205440,
+      0
+     ],
+     [
+      209280,
+      0
+     ],
+     [
+      213120,
+      0
+     ]
+    ],
+    "groove_rolling": [
+     [
+      186240,
+      0
+     ],
+     [
+      190080,
+      0
+     ],
+     [
+      193920,
+      0
+     ],
+     [
+      197760,
+      0
+     ],
+     [
+      201600,
+      0
+     ],
+     [
+      205440,
+      0
+     ],
+     [
+      209280,
+      0
+     ],
+     [
+      213120,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 7,
+   "family": "bass",
+   "pad": 2,
+   "voice": "bass_voice#1",
+   "deps": [
+    "bass#1"
+   ],
+   "start_tick": 215040,
+   "end_tick": 245760,
+   "options": {
+    "bass_sub_line": [
+     [
+      215040,
+      3840
+     ],
+     [
+      218880,
+      1920
+     ],
+     [
+      220800,
+      960
+     ],
+     [
+      221760,
+      960
+     ],
+     [
+      222720,
+      3840
+     ],
+     [
+      226560,
+      1920
+     ],
+     [
+      228480,
+      960
+     ],
+     [
+      229440,
+      960
+     ],
+     [
+      230400,
+      3840
+     ],
+     [
+      234240,
+      3840
+     ],
+     [
+      238080,
+      2880
+     ],
+     [
+      240960,
+      960
+     ],
+     [
+      241920,
+      960
+     ],
+     [
+      242880,
+      1920
+     ],
+     [
+      244800,
+      960
+     ]
+    ],
+    "bass_reese_line": [
+     [
+      215040,
+      1200
+     ],
+     [
+      216720,
+      720
+     ],
+     [
+      217920,
+      720
+     ],
+     [
+      218880,
+      1440
+     ],
+     [
+      220800,
+      720
+     ],
+     [
+      221760,
+      720
+     ],
+     [
+      222720,
+      960
+     ],
+     [
+      224160,
+      960
+     ],
+     [
+      225600,
+      720
+     ],
+     [
+      226560,
+      1440
+     ],
+     [
+      228480,
+      720
+     ],
+     [
+      229440,
+      720
+     ],
+     [
+      230400,
+      1680
+     ],
+     [
+      232800,
+      960
+     ],
+     [
+      234240,
+      960
+     ],
+     [
+      235680,
+      960
+     ],
+     [
+      237120,
+      720
+     ],
+     [
+      238080,
+      1440
+     ],
+     [
+      240000,
+      720
+     ],
+     [
+      240960,
+      720
+     ],
+     [
+      241920,
+      720
+     ],
+     [
+      242880,
+      1680
+     ],
+     [
+      244800,
+      720
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 8,
+   "family": "kick",
+   "pad": 1,
+   "voice": "bound:groove#1:kick",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 245760,
+   "end_tick": 276480,
+   "options": {
+    "groove_half_time": [
+     [
+      245760,
+      0
+     ],
+     [
+      250560,
+      0
+     ],
+     [
+      253440,
+      0
+     ],
+     [
+      258240,
+      0
+     ],
+     [
+      261120,
+      0
+     ],
+     [
+      265920,
+      0
+     ],
+     [
+      268800,
+      0
+     ],
+     [
+      269760,
+      0
+     ],
+     [
+      271680,
+      0
+     ],
+     [
+      273600,
+      0
+     ]
+    ],
+    "groove_double_step": [
+     [
+      245760,
+      0
+     ],
+     [
+      246720,
+      0
+     ],
+     [
+      250560,
+      0
+     ],
+     [
+      253440,
+      0
+     ],
+     [
+      254400,
+      0
+     ],
+     [
+      258240,
+      0
+     ],
+     [
+      261120,
+      0
+     ],
+     [
+      262080,
+      0
+     ],
+     [
+      265920,
+      0
+     ],
+     [
+      268800,
+      0
+     ],
+     [
+      273600,
+      0
+     ]
+    ],
+    "groove_rolling": [
+     [
+      245760,
+      0
+     ],
+     [
+      246720,
+      0
+     ],
+     [
+      248640,
+      0
+     ],
+     [
+      250560,
+      0
+     ],
+     [
+      253440,
+      0
+     ],
+     [
+      254400,
+      0
+     ],
+     [
+      256320,
+      0
+     ],
+     [
+      258240,
+      0
+     ],
+     [
+      261120,
+      0
+     ],
+     [
+      262080,
+      0
+     ],
+     [
+      264000,
+      0
+     ],
+     [
+      265920,
+      0
+     ],
+     [
+      268800,
+      0
+     ],
+     [
+      271680,
+      0
+     ],
+     [
+      272640,
+      0
+     ],
+     [
+      273600,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 8,
+   "family": "snare",
+   "pad": 4,
+   "voice": "bound:groove#1:snare",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 245760,
+   "end_tick": 276480,
+   "options": {
+    "groove_half_time": [
+     [
+      247680,
+      0
+     ],
+     [
+      251520,
+      0
+     ],
+     [
+      255360,
+      0
+     ],
+     [
+      259200,
+      0
+     ],
+     [
+      263040,
+      0
+     ],
+     [
+      266880,
+      0
+     ],
+     [
+      270720,
+      0
+     ],
+     [
+      274560,
+      0
+     ]
+    ],
+    "groove_double_step": [
+     [
+      247680,
+      0
+     ],
+     [
+      251520,
+      0
+     ],
+     [
+      255360,
+      0
+     ],
+     [
+      259200,
+      0
+     ],
+     [
+      263040,
+      0
+     ],
+     [
+      266880,
+      0
+     ],
+     [
+      270720,
+      0
+     ],
+     [
+      274560,
+      0
+     ]
+    ],
+    "groove_rolling": [
+     [
+      247680,
+      0
+     ],
+     [
+      251520,
+      0
+     ],
+     [
+      255360,
+      0
+     ],
+     [
+      259200,
+      0
+     ],
+     [
+      263040,
+      0
+     ],
+     [
+      266880,
+      0
+     ],
+     [
+      270720,
+      0
+     ],
+     [
+      274560,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 9,
+   "family": "bass",
+   "pad": 2,
+   "voice": "bass_voice#1",
+   "deps": [
+    "bass#1"
+   ],
+   "start_tick": 276480,
+   "end_tick": 307200,
+   "options": {
+    "bass_sub_line": [
+     [
+      276480,
+      3840
+     ],
+     [
+      280320,
+      1920
+     ],
+     [
+      282240,
+      960
+     ],
+     [
+      283200,
+      960
+     ],
+     [
+      284160,
+      3840
+     ],
+     [
+      288000,
+      1920
+     ],
+     [
+      289920,
+      960
+     ],
+     [
+      290880,
+      960
+     ],
+     [
+      291840,
+      3840
+     ],
+     [
+      295680,
+      3840
+     ],
+     [
+      299520,
+      2880
+     ],
+     [
+      302400,
+      960
+     ],
+     [
+      303360,
+      960
+     ],
+     [
+      304320,
+      1920
+     ],
+     [
+      306240,
+      960
+     ]
+    ],
+    "bass_reese_line": [
+     [
+      276480,
+      1200
+     ],
+     [
+      278160,
+      720
+     ],
+     [
+      279360,
+      720
+     ],
+     [
+      280320,
+      1440
+     ],
+     [
+      282240,
+      720
+     ],
+     [
+      283200,
+      720
+     ],
+     [
+      284160,
+      960
+     ],
+     [
+      285600,
+      960
+     ],
+     [
+      287040,
+      720
+     ],
+     [
+      288000,
+      1440
+     ],
+     [
+      289920,
+      720
+     ],
+     [
+      290880,
+      720
+     ],
+     [
+      291840,
+      1680
+     ],
+     [
+      294240,
+      960
+     ],
+     [
+      295680,
+      960
+     ],
+     [
+      297120,
+      960
+     ],
+     [
+      298560,
+      720
+     ],
+     [
+      299520,
+      1440
+     ],
+     [
+      301440,
+      720
+     ],
+     [
+      302400,
+      720
+     ],
+     [
+      303360,
+      720
+     ],
+     [
+      304320,
+      1680
+     ],
+     [
+      306240,
+      720
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 10,
+   "family": "kick",
+   "pad": 1,
+   "voice": "bound:groove#1:kick",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 307200,
+   "end_tick": 337920,
+   "options": {
+    "groove_half_time": [
+     [
+      307200,
+      0
+     ],
+     [
+      312000,
+      0
+     ],
+     [
+      314880,
+      0
+     ],
+     [
+      319680,
+      0
+     ],
+     [
+      322560,
+      0
+     ],
+     [
+      327360,
+      0
+     ],
+     [
+      330240,
+      0
+     ],
+     [
+      331200,
+      0
+     ],
+     [
+      333120,
+      0
+     ],
+     [
+      335040,
+      0
+     ]
+    ],
+    "groove_double_step": [
+     [
+      307200,
+      0
+     ],
+     [
+      308160,
+      0
+     ],
+     [
+      312000,
+      0
+     ],
+     [
+      314880,
+      0
+     ],
+     [
+      315840,
+      0
+     ],
+     [
+      319680,
+      0
+     ],
+     [
+      322560,
+      0
+     ],
+     [
+      323520,
+      0
+     ],
+     [
+      327360,
+      0
+     ],
+     [
+      330240,
+      0
+     ],
+     [
+      335040,
+      0
+     ]
+    ],
+    "groove_rolling": [
+     [
+      307200,
+      0
+     ],
+     [
+      308160,
+      0
+     ],
+     [
+      310080,
+      0
+     ],
+     [
+      312000,
+      0
+     ],
+     [
+      314880,
+      0
+     ],
+     [
+      315840,
+      0
+     ],
+     [
+      317760,
+      0
+     ],
+     [
+      319680,
+      0
+     ],
+     [
+      322560,
+      0
+     ],
+     [
+      323520,
+      0
+     ],
+     [
+      325440,
+      0
+     ],
+     [
+      327360,
+      0
+     ],
+     [
+      330240,
+      0
+     ],
+     [
+      333120,
+      0
+     ],
+     [
+      334080,
+      0
+     ],
+     [
+      335040,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 10,
+   "family": "snare",
+   "pad": 4,
+   "voice": "bound:groove#1:snare",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 307200,
+   "end_tick": 337920,
+   "options": {
+    "groove_half_time": [
+     [
+      309120,
+      0
+     ],
+     [
+      312960,
+      0
+     ],
+     [
+      316800,
+      0
+     ],
+     [
+      320640,
+      0
+     ],
+     [
+      324480,
+      0
+     ],
+     [
+      328320,
+      0
+     ],
+     [
+      332160,
+      0
+     ],
+     [
+      336000,
+      0
+     ]
+    ],
+    "groove_double_step": [
+     [
+      309120,
+      0
+     ],
+     [
+      312960,
+      0
+     ],
+     [
+      316800,
+      0
+     ],
+     [
+      320640,
+      0
+     ],
+     [
+      324480,
+      0
+     ],
+     [
+      328320,
+      0
+     ],
+     [
+      332160,
+      0
+     ],
+     [
+      336000,
+      0
+     ]
+    ],
+    "groove_rolling": [
+     [
+      309120,
+      0
+     ],
+     [
+      312960,
+      0
+     ],
+     [
+      316800,
+      0
+     ],
+     [
+      320640,
+      0
+     ],
+     [
+      324480,
+      0
+     ],
+     [
+      328320,
+      0
+     ],
+     [
+      332160,
+      0
+     ],
+     [
+      336000,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 11,
+   "family": "bass",
+   "pad": 2,
+   "voice": "bass_voice#1",
+   "deps": [
+    "bass#1"
+   ],
+   "start_tick": 337920,
+   "end_tick": 368640,
+   "options": {
+    "bass_sub_line": [
+     [
+      337920,
+      3840
+     ],
+     [
+      341760,
+      1920
+     ],
+     [
+      343680,
+      960
+     ],
+     [
+      344640,
+      960
+     ],
+     [
+      345600,
+      3840
+     ],
+     [
+      349440,
+      1920
+     ],
+     [
+      351360,
+      960
+     ],
+     [
+      352320,
+      960
+     ],
+     [
+      353280,
+      3840
+     ],
+     [
+      357120,
+      3840
+     ],
+     [
+      360960,
+      2880
+     ],
+     [
+      363840,
+      960
+     ],
+     [
+      364800,
+      960
+     ],
+     [
+      365760,
+      1920
+     ],
+     [
+      367680,
+      960
+     ]
+    ],
+    "bass_reese_line": [
+     [
+      337920,
+      1200
+     ],
+     [
+      339600,
+      720
+     ],
+     [
+      340800,
+      720
+     ],
+     [
+      341760,
+      1440
+     ],
+     [
+      343680,
+      720
+     ],
+     [
+      344640,
+      720
+     ],
+     [
+      345600,
+      960
+     ],
+     [
+      347040,
+      960
+     ],
+     [
+      348480,
+      720
+     ],
+     [
+      349440,
+      1440
+     ],
+     [
+      351360,
+      720
+     ],
+     [
+      352320,
+      720
+     ],
+     [
+      353280,
+      1680
+     ],
+     [
+      355680,
+      960
+     ],
+     [
+      357120,
+      960
+     ],
+     [
+      358560,
+      960
+     ],
+     [
+      360000,
+      720
+     ],
+     [
+      360960,
+      1440
+     ],
+     [
+      362880,
+      720
+     ],
+     [
+      363840,
+      720
+     ],
+     [
+      364800,
+      720
+     ],
+     [
+      365760,
+      1680
+     ],
+     [
+      367680,
+      720
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 12,
+   "family": "kick",
+   "pad": 1,
+   "voice": "bound:groove#1:kick",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 368640,
+   "end_tick": 399360,
+   "options": {
+    "groove_half_time": [
+     [
+      368640,
+      0
+     ],
+     [
+      373440,
+      0
+     ],
+     [
+      376320,
+      0
+     ],
+     [
+      381120,
+      0
+     ],
+     [
+      384000,
+      0
+     ],
+     [
+      388800,
+      0
+     ],
+     [
+      391680,
+      0
+     ],
+     [
+      392640,
+      0
+     ],
+     [
+      394560,
+      0
+     ],
+     [
+      396480,
+      0
+     ]
+    ],
+    "groove_double_step": [
+     [
+      368640,
+      0
+     ],
+     [
+      369600,
+      0
+     ],
+     [
+      373440,
+      0
+     ],
+     [
+      376320,
+      0
+     ],
+     [
+      377280,
+      0
+     ],
+     [
+      381120,
+      0
+     ],
+     [
+      384000,
+      0
+     ],
+     [
+      384960,
+      0
+     ],
+     [
+      388800,
+      0
+     ],
+     [
+      391680,
+      0
+     ],
+     [
+      396480,
+      0
+     ]
+    ],
+    "groove_rolling": [
+     [
+      368640,
+      0
+     ],
+     [
+      369600,
+      0
+     ],
+     [
+      371520,
+      0
+     ],
+     [
+      373440,
+      0
+     ],
+     [
+      376320,
+      0
+     ],
+     [
+      377280,
+      0
+     ],
+     [
+      379200,
+      0
+     ],
+     [
+      381120,
+      0
+     ],
+     [
+      384000,
+      0
+     ],
+     [
+      384960,
+      0
+     ],
+     [
+      386880,
+      0
+     ],
+     [
+      388800,
+      0
+     ],
+     [
+      391680,
+      0
+     ],
+     [
+      394560,
+      0
+     ],
+     [
+      395520,
+      0
+     ],
+     [
+      396480,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 12,
+   "family": "snare",
+   "pad": 4,
+   "voice": "bound:groove#1:snare",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 368640,
+   "end_tick": 399360,
+   "options": {
+    "groove_half_time": [
+     [
+      370560,
+      0
+     ],
+     [
+      374400,
+      0
+     ],
+     [
+      378240,
+      0
+     ],
+     [
+      382080,
+      0
+     ],
+     [
+      385920,
+      0
+     ],
+     [
+      389760,
+      0
+     ],
+     [
+      393600,
+      0
+     ],
+     [
+      397440,
+      0
+     ]
+    ],
+    "groove_double_step": [
+     [
+      370560,
+      0
+     ],
+     [
+      374400,
+      0
+     ],
+     [
+      378240,
+      0
+     ],
+     [
+      382080,
+      0
+     ],
+     [
+      385920,
+      0
+     ],
+     [
+      389760,
+      0
+     ],
+     [
+      393600,
+      0
+     ],
+     [
+      397440,
+      0
+     ]
+    ],
+    "groove_rolling": [
+     [
+      370560,
+      0
+     ],
+     [
+      374400,
+      0
+     ],
+     [
+      378240,
+      0
+     ],
+     [
+      382080,
+      0
+     ],
+     [
+      385920,
+      0
+     ],
+     [
+      389760,
+      0
+     ],
+     [
+      393600,
+      0
+     ],
+     [
+      397440,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 13,
+   "family": "kick",
+   "pad": 1,
+   "voice": "bound:groove#1:kick",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 399360,
+   "end_tick": 430080,
+   "options": {
+    "groove_half_time": [
+     [
+      399360,
+      0
+     ],
+     [
+      404160,
+      0
+     ],
+     [
+      407040,
+      0
+     ],
+     [
+      411840,
+      0
+     ],
+     [
+      414720,
+      0
+     ],
+     [
+      419520,
+      0
+     ],
+     [
+      422400,
+      0
+     ],
+     [
+      423360,
+      0
+     ],
+     [
+      425280,
+      0
+     ],
+     [
+      427200,
+      0
+     ]
+    ],
+    "groove_double_step": [
+     [
+      399360,
+      0
+     ],
+     [
+      400320,
+      0
+     ],
+     [
+      404160,
+      0
+     ],
+     [
+      407040,
+      0
+     ],
+     [
+      408000,
+      0
+     ],
+     [
+      411840,
+      0
+     ],
+     [
+      414720,
+      0
+     ],
+     [
+      415680,
+      0
+     ],
+     [
+      419520,
+      0
+     ],
+     [
+      422400,
+      0
+     ],
+     [
+      427200,
+      0
+     ]
+    ],
+    "groove_rolling": [
+     [
+      399360,
+      0
+     ],
+     [
+      400320,
+      0
+     ],
+     [
+      402240,
+      0
+     ],
+     [
+      404160,
+      0
+     ],
+     [
+      407040,
+      0
+     ],
+     [
+      408000,
+      0
+     ],
+     [
+      409920,
+      0
+     ],
+     [
+      411840,
+      0
+     ],
+     [
+      414720,
+      0
+     ],
+     [
+      415680,
+      0
+     ],
+     [
+      417600,
+      0
+     ],
+     [
+      419520,
+      0
+     ],
+     [
+      422400,
+      0
+     ],
+     [
+      425280,
+      0
+     ],
+     [
+      426240,
+      0
+     ],
+     [
+      427200,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 13,
+   "family": "snare",
+   "pad": 4,
+   "voice": "bound:groove#1:snare",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 399360,
+   "end_tick": 430080,
+   "options": {
+    "groove_half_time": [
+     [
+      401280,
+      0
+     ],
+     [
+      405120,
+      0
+     ],
+     [
+      408960,
+      0
+     ],
+     [
+      412800,
+      0
+     ],
+     [
+      416640,
+      0
+     ],
+     [
+      420480,
+      0
+     ],
+     [
+      424320,
+      0
+     ],
+     [
+      428160,
+      0
+     ]
+    ],
+    "groove_double_step": [
+     [
+      401280,
+      0
+     ],
+     [
+      405120,
+      0
+     ],
+     [
+      408960,
+      0
+     ],
+     [
+      412800,
+      0
+     ],
+     [
+      416640,
+      0
+     ],
+     [
+      420480,
+      0
+     ],
+     [
+      424320,
+      0
+     ],
+     [
+      428160,
+      0
+     ]
+    ],
+    "groove_rolling": [
+     [
+      401280,
+      0
+     ],
+     [
+      405120,
+      0
+     ],
+     [
+      408960,
+      0
+     ],
+     [
+      412800,
+      0
+     ],
+     [
+      416640,
+      0
+     ],
+     [
+      420480,
+      0
+     ],
+     [
+      424320,
+      0
+     ],
+     [
+      428160,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 14,
+   "family": "bass",
+   "pad": 2,
+   "voice": "bass_voice#1",
+   "deps": [
+    "bass#1"
+   ],
+   "start_tick": 430080,
+   "end_tick": 460800,
+   "options": {
+    "bass_sub_line": [
+     [
+      430080,
+      3840
+     ],
+     [
+      433920,
+      1920
+     ],
+     [
+      435840,
+      960
+     ],
+     [
+      436800,
+      960
+     ],
+     [
+      437760,
+      3840
+     ],
+     [
+      441600,
+      1920
+     ],
+     [
+      443520,
+      960
+     ],
+     [
+      444480,
+      960
+     ],
+     [
+      445440,
+      3840
+     ],
+     [
+      449280,
+      3840
+     ],
+     [
+      453120,
+      2880
+     ],
+     [
+      456000,
+      960
+     ],
+     [
+      456960,
+      960
+     ],
+     [
+      457920,
+      1920
+     ],
+     [
+      459840,
+      960
+     ]
+    ],
+    "bass_reese_line": [
+     [
+      430080,
+      1200
+     ],
+     [
+      431760,
+      720
+     ],
+     [
+      432960,
+      720
+     ],
+     [
+      433920,
+      1440
+     ],
+     [
+      435840,
+      720
+     ],
+     [
+      436800,
+      720
+     ],
+     [
+      437760,
+      960
+     ],
+     [
+      439200,
+      960
+     ],
+     [
+      440640,
+      720
+     ],
+     [
+      441600,
+      1440
+     ],
+     [
+      443520,
+      720
+     ],
+     [
+      444480,
+      720
+     ],
+     [
+      445440,
+      1680
+     ],
+     [
+      447840,
+      960
+     ],
+     [
+      449280,
+      960
+     ],
+     [
+      450720,
+      960
+     ],
+     [
+      452160,
+      720
+     ],
+     [
+      453120,
+      1440
+     ],
+     [
+      455040,
+      720
+     ],
+     [
+      456000,
+      720
+     ],
+     [
+      456960,
+      720
+     ],
+     [
+      457920,
+      1680
+     ],
+     [
+      459840,
+      720
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 15,
+   "family": "kick",
+   "pad": 1,
+   "voice": "bound:groove#1:kick",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 460800,
+   "end_tick": 491520,
+   "options": {
+    "groove_half_time": [
+     [
+      460800,
+      0
+     ],
+     [
+      465600,
+      0
+     ],
+     [
+      468480,
+      0
+     ],
+     [
+      473280,
+      0
+     ],
+     [
+      476160,
+      0
+     ],
+     [
+      480960,
+      0
+     ],
+     [
+      483840,
+      0
+     ],
+     [
+      484800,
+      0
+     ],
+     [
+      486720,
+      0
+     ],
+     [
+      488640,
+      0
+     ]
+    ],
+    "groove_double_step": [
+     [
+      460800,
+      0
+     ],
+     [
+      461760,
+      0
+     ],
+     [
+      465600,
+      0
+     ],
+     [
+      468480,
+      0
+     ],
+     [
+      469440,
+      0
+     ],
+     [
+      473280,
+      0
+     ],
+     [
+      476160,
+      0
+     ],
+     [
+      477120,
+      0
+     ],
+     [
+      480960,
+      0
+     ],
+     [
+      483840,
+      0
+     ],
+     [
+      488640,
+      0
+     ]
+    ],
+    "groove_rolling": [
+     [
+      460800,
+      0
+     ],
+     [
+      461760,
+      0
+     ],
+     [
+      463680,
+      0
+     ],
+     [
+      465600,
+      0
+     ],
+     [
+      468480,
+      0
+     ],
+     [
+      469440,
+      0
+     ],
+     [
+      471360,
+      0
+     ],
+     [
+      473280,
+      0
+     ],
+     [
+      476160,
+      0
+     ],
+     [
+      477120,
+      0
+     ],
+     [
+      479040,
+      0
+     ],
+     [
+      480960,
+      0
+     ],
+     [
+      483840,
+      0
+     ],
+     [
+      486720,
+      0
+     ],
+     [
+      487680,
+      0
+     ],
+     [
+      488640,
+      0
+     ]
+    ]
+   }
+  },
+  {
+   "phase": 15,
+   "family": "snare",
+   "pad": 4,
+   "voice": "bound:groove#1:snare",
+   "deps": [
+    "groove#1"
+   ],
+   "start_tick": 460800,
+   "end_tick": 491520,
+   "options": {
+    "groove_half_time": [
+     [
+      462720,
+      0
+     ],
+     [
+      466560,
+      0
+     ],
+     [
+      470400,
+      0
+     ],
+     [
+      474240,
+      0
+     ],
+     [
+      478080,
+      0
+     ],
+     [
+      481920,
+      0
+     ],
+     [
+      485760,
+      0
+     ],
+     [
+      489600,
+      0
+     ]
+    ],
+    "groove_double_step": [
+     [
+      462720,
+      0
+     ],
+     [
+      466560,
+      0
+     ],
+     [
+      470400,
+      0
+     ],
+     [
+      474240,
+      0
+     ],
+     [
+      478080,
+      0
+     ],
+     [
+      481920,
+      0
+     ],
+     [
+      485760,
+      0
+     ],
+     [
+      489600,
+      0
+     ]
+    ],
+    "groove_rolling": [
+     [
+      462720,
+      0
+     ],
+     [
+      466560,
+      0
+     ],
+     [
+      470400,
+      0
+     ],
+     [
+      474240,
+      0
+     ],
+     [
+      478080,
+      0
+     ],
+     [
+      481920,
+      0
+     ],
+     [
+      485760,
+      0
+     ],
+     [
+      489600,
+      0
+     ]
+    ]
+   }
   }
  ],
  "sequences": [
@@ -1965,7 +4495,7 @@
    "mode": "drums",
    "start_tick": 15360,
    "end_tick": 30720,
-   "reward": "pillbox"
+   "reward": "rifle_squad"
   },
   {
    "index": 2,
@@ -1981,7 +4511,7 @@
    "mode": "drums",
    "start_tick": 46080,
    "end_tick": 61440,
-   "reward": "jeep"
+   "reward": "rifle_squad"
   },
   {
    "index": 4,
@@ -1997,7 +4527,7 @@
    "mode": "bass",
    "start_tick": 76800,
    "end_tick": 92160,
-   "reward": "jeep"
+   "reward": "rifle_squad"
   },
   {
    "index": 6,
@@ -2013,7 +4543,7 @@
    "mode": "drums",
    "start_tick": 107520,
    "end_tick": 122880,
-   "reward": "jeep"
+   "reward": "rifle_squad"
   },
   {
    "index": 8,
@@ -2029,7 +4559,7 @@
    "mode": "bass",
    "start_tick": 138240,
    "end_tick": 153600,
-   "reward": "jeep"
+   "reward": "rifle_squad"
   },
   {
    "index": 10,
@@ -2037,7 +4567,7 @@
    "mode": "drums",
    "start_tick": 153600,
    "end_tick": 168960,
-   "reward": "jeep"
+   "reward": "pillbox"
   },
   {
    "index": 11,
@@ -2045,6 +4575,166 @@
    "mode": "drums",
    "start_tick": 168960,
    "end_tick": 184320,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 12,
+   "phase": 6,
+   "mode": "drums",
+   "start_tick": 184320,
+   "end_tick": 199680,
+   "reward": "pillbox"
+  },
+  {
+   "index": 13,
+   "phase": 6,
+   "mode": "drums",
+   "start_tick": 199680,
+   "end_tick": 215040,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 14,
+   "phase": 7,
+   "mode": "bass",
+   "start_tick": 215040,
+   "end_tick": 230400,
+   "reward": "pillbox"
+  },
+  {
+   "index": 15,
+   "phase": 7,
+   "mode": "bass",
+   "start_tick": 230400,
+   "end_tick": 245760,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 16,
+   "phase": 8,
+   "mode": "drums",
+   "start_tick": 245760,
+   "end_tick": 261120,
+   "reward": "pillbox"
+  },
+  {
+   "index": 17,
+   "phase": 8,
+   "mode": "drums",
+   "start_tick": 261120,
+   "end_tick": 276480,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 18,
+   "phase": 9,
+   "mode": "bass",
+   "start_tick": 276480,
+   "end_tick": 291840,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 19,
+   "phase": 9,
+   "mode": "bass",
+   "start_tick": 291840,
+   "end_tick": 307200,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 20,
+   "phase": 10,
+   "mode": "drums",
+   "start_tick": 307200,
+   "end_tick": 322560,
+   "reward": "pillbox"
+  },
+  {
+   "index": 21,
+   "phase": 10,
+   "mode": "drums",
+   "start_tick": 322560,
+   "end_tick": 337920,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 22,
+   "phase": 11,
+   "mode": "bass",
+   "start_tick": 337920,
+   "end_tick": 353280,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 23,
+   "phase": 11,
+   "mode": "bass",
+   "start_tick": 353280,
+   "end_tick": 368640,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 24,
+   "phase": 12,
+   "mode": "drums",
+   "start_tick": 368640,
+   "end_tick": 384000,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 25,
+   "phase": 12,
+   "mode": "drums",
+   "start_tick": 384000,
+   "end_tick": 399360,
+   "reward": "pillbox"
+  },
+  {
+   "index": 26,
+   "phase": 13,
+   "mode": "drums",
+   "start_tick": 399360,
+   "end_tick": 414720,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 27,
+   "phase": 13,
+   "mode": "drums",
+   "start_tick": 414720,
+   "end_tick": 430080,
+   "reward": "pillbox"
+  },
+  {
+   "index": 28,
+   "phase": 14,
+   "mode": "bass",
+   "start_tick": 430080,
+   "end_tick": 445440,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 29,
+   "phase": 14,
+   "mode": "bass",
+   "start_tick": 445440,
+   "end_tick": 460800,
+   "reward": "pillbox"
+  },
+  {
+   "index": 30,
+   "phase": 15,
+   "mode": "drums",
+   "start_tick": 460800,
+   "end_tick": 476160,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 31,
+   "phase": 15,
+   "mode": "drums",
+   "start_tick": 476160,
+   "end_tick": 491520,
    "reward": "pillbox"
   }
  ],
@@ -2087,6 +4777,7 @@
    "id": "wave_01",
    "start_bar": 1,
    "entry": "left",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
@@ -2096,27 +4787,29 @@
    ],
    "start_tick": 0,
    "via_defense_point": "defense_1",
-   "target_objective": "command_core"
+   "target_objective": "barracks"
   },
   {
    "id": "wave_02",
-   "start_bar": 5,
+   "start_bar": 6,
    "entry": "top",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
-     "count": 4,
+     "count": 3,
      "spawn_spacing_ticks": 480
     }
    ],
-   "start_tick": 15360,
+   "start_tick": 19200,
    "via_defense_point": "defense_2",
-   "target_objective": "command_core"
+   "target_objective": "barracks"
   },
   {
    "id": "wave_03",
-   "start_bar": 9,
+   "start_bar": 11,
    "entry": "right",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
@@ -2124,79 +4817,111 @@
      "spawn_spacing_ticks": 480
     }
    ],
-   "start_tick": 30720,
+   "start_tick": 38400,
    "via_defense_point": "defense_3",
-   "target_objective": "command_core"
+   "target_objective": "barracks"
   },
   {
    "id": "wave_04",
-   "start_bar": 13,
-   "entry": "left",
-   "groups": [
-    {
-     "actor": "e1",
-     "count": 5,
-     "spawn_spacing_ticks": 480
-    }
-   ],
-   "start_tick": 46080,
-   "via_defense_point": "defense_1",
-   "target_objective": "command_core"
-  },
-  {
-   "id": "wave_05",
    "start_bar": 16,
-   "entry": "top",
+   "entry": "left",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 4,
      "spawn_spacing_ticks": 480
     }
    ],
    "start_tick": 57600,
+   "via_defense_point": "defense_1",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_05",
+   "start_bar": 21,
+   "entry": "top",
+   "target": "defenses",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 76800,
    "via_defense_point": "defense_2",
-   "target_objective": "command_core"
+   "target_objective": "barracks"
   },
   {
    "id": "wave_06",
-   "start_bar": 19,
+   "start_bar": 27,
    "entry": "right",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
      "count": 5,
      "spawn_spacing_ticks": 480
-    },
-    {
-     "actor": "jeep",
-     "count": 1,
-     "spawn_spacing_ticks": 480
     }
    ],
-   "start_tick": 69120,
+   "start_tick": 99840,
    "via_defense_point": "defense_3",
-   "target_objective": "command_core"
+   "target_objective": "barracks"
   },
   {
    "id": "wave_07",
-   "start_bar": 22,
+   "start_bar": 33,
    "entry": "left",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
-     "count": 6,
+     "count": 5,
      "spawn_spacing_ticks": 480
     }
    ],
-   "start_tick": 80640,
+   "start_tick": 122880,
    "via_defense_point": "defense_1",
-   "target_objective": "command_core"
+   "target_objective": "barracks"
   },
   {
    "id": "wave_08",
-   "start_bar": 25,
+   "start_bar": 38,
    "entry": "top",
+   "target": "defenses",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 142080,
+   "via_defense_point": "defense_2",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_09",
+   "start_bar": 38,
+   "entry": "right",
+   "target": "defenses",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 142080,
+   "via_defense_point": "defense_3",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_10",
+   "start_bar": 44,
+   "entry": "left",
+   "target": "defenses",
    "groups": [
     {
      "actor": "e1",
@@ -2204,18 +4929,114 @@
      "spawn_spacing_ticks": 480
     }
    ],
-   "start_tick": 92160,
-   "via_defense_point": "defense_2",
-   "target_objective": "command_core"
+   "start_tick": 165120,
+   "via_defense_point": "defense_1",
+   "target_objective": "barracks"
   },
   {
-   "id": "wave_09",
-   "start_bar": 28,
+   "id": "wave_11",
+   "start_bar": 50,
    "entry": "right",
+   "target": "civilians",
    "groups": [
     {
      "actor": "e1",
      "count": 6,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 188160,
+   "via_defense_point": "defense_3",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_12",
+   "start_bar": 56,
+   "entry": "top",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 7,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 211200,
+   "via_defense_point": "defense_2",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_13",
+   "start_bar": 62,
+   "entry": "left",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 7,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 234240,
+   "via_defense_point": "defense_1",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_14",
+   "start_bar": 65,
+   "entry": "left",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 245760,
+   "via_defense_point": "defense_1",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_15",
+   "start_bar": 70,
+   "entry": "top",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 264960,
+   "via_defense_point": "defense_2",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_16",
+   "start_bar": 75,
+   "entry": "right",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 3,
      "spawn_spacing_ticks": 480
     },
     {
@@ -2224,39 +5045,193 @@
      "spawn_spacing_ticks": 480
     }
    ],
-   "start_tick": 103680,
+   "start_tick": 284160,
    "via_defense_point": "defense_3",
-   "target_objective": "command_core"
+   "target_objective": "barracks"
   },
   {
-   "id": "wave_10",
-   "start_bar": 30,
+   "id": "wave_17",
+   "start_bar": 80,
    "entry": "left",
+   "target": "civilians",
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
      "spawn_spacing_ticks": 480
     }
    ],
-   "start_tick": 111360,
+   "start_tick": 303360,
    "via_defense_point": "defense_1",
-   "target_objective": "command_core"
+   "target_objective": "barracks"
   },
   {
-   "id": "wave_11",
-   "start_bar": 32,
+   "id": "wave_18",
+   "start_bar": 85,
    "entry": "top",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 3,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "jeep",
+     "count": 1,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 322560,
+   "via_defense_point": "defense_2",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_19",
+   "start_bar": 90,
+   "entry": "right",
+   "target": "civilians",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 341760,
+   "via_defense_point": "defense_3",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_20",
+   "start_bar": 97,
+   "entry": "top",
+   "target": "core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 368640,
+   "via_defense_point": "defense_2",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_21",
+   "start_bar": 101,
+   "entry": "left",
+   "target": "core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 384000,
+   "via_defense_point": "defense_1",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_22",
+   "start_bar": 101,
+   "entry": "right",
+   "target": "core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 4,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 384000,
+   "via_defense_point": "defense_3",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_23",
+   "start_bar": 110,
+   "entry": "left",
+   "target": "core",
    "groups": [
     {
      "actor": "e1",
      "count": 5,
      "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 2,
+     "spawn_spacing_ticks": 480
     }
    ],
-   "start_tick": 119040,
+   "start_tick": 418560,
+   "via_defense_point": "defense_1",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_24",
+   "start_bar": 110,
+   "entry": "top",
+   "target": "core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 418560,
    "via_defense_point": "defense_2",
-   "target_objective": "command_core"
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_25",
+   "start_bar": 110,
+   "entry": "right",
+   "target": "core",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 5,
+     "spawn_spacing_ticks": 480
+    },
+    {
+     "actor": "e2",
+     "count": 2,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 418560,
+   "via_defense_point": "defense_3",
+   "target_objective": "barracks"
   }
  ]
 }

@@ -5,7 +5,6 @@ extends Control
 ## accuracy. Labels and shapes, not colour alone.
 
 var match_ref: Match
-var view: BattleView  # the battlefield behind this overlay (defense mode draws points and routes on it)
 var _font: Font
 
 
@@ -74,8 +73,8 @@ func _draw() -> void:
 	draw_string(_font, Vector2(cx + 186, y), "army %d v %d" % [sim.count_alive(0, BattleSim.Kind.UNIT), sim.count_alive(1, BattleSim.Kind.UNIT)], HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 1, 1, 0.7))
 
 
-## Defense mode: objective health, time left, producers, the three defense points with their defenders and the
-## telegraphed route of the next wave (entry marker and a line to its defense point).
+## Defense mode: the top bar only (objective health, time, combo, accuracy, defenses, villagers, enemies, a lost
+## producer) and, as text, the next wave and the side it comes in from. Nothing is drawn on the map itself.
 func _draw_defense() -> void:
 	var sim := match_ref.sim
 	var level := match_ref.level
@@ -102,84 +101,33 @@ func _draw_defense() -> void:
 	draw_string(_font, Vector2(cx - 40, 20), "%d:%02d  combo %d  %.0f%%" % [int(left) / 60, int(left) % 60, combo, acc * 100.0], HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(1, 1, 1, 0.95))
 	var x := cx - 40
 	for item in [["factory", "FACTORY"], ["barracks", "BARRACKS"]]:
-		if not sim.producer_alive(0, item[0]):  # only a loss is news; units need their producer
+		# only a loss is news, and only for a producer this battlefield has; units need their producer
+		if sim.producer_ids[0].has(item[0]) and not sim.producer_alive(0, item[0]):
 			draw_string(_font, Vector2(x, 50), item[1] + " LOST", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1.0, 0.5, 0.45))
 			x += 110
 	if mission:
 		draw_string(_font, Vector2(cx - 40, 38), "defenses %d" % sim.defense_count(), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0.75, 1.0, 0.75))
+	var villagers_total := int(sim.stats.get("civilians_total", 0))
+	if villagers_total > 0:
+		draw_string(_font, Vector2(cx + 50, 38), "villagers %d of %d" % [sim.civilians_alive(), villagers_total], HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0.95, 0.86, 0.6))
 	draw_string(_font, Vector2(cx + 180, 50), "enemies %d" % sim.count_alive(1, BattleSim.Kind.UNIT), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 1, 1, 0.8))
-	if view == null:
-		return
-	var counts := match_ref.defenders_per_point()
-	var shift0 := view.global_position - global_position
-	for i in sim.defense_points.size():
-		var p: Vector2 = view.to_px(sim.defense_points[i]["pos"]) + shift0
-		draw_arc(p, 20.0, 0.0, TAU, 28, Color(0.7, 0.9, 1.0, 0.55), 2.0)
-		draw_string(_font, p + Vector2(-5, 5), str(i + 1), HORIZONTAL_ALIGNMENT_CENTER, 12, 16, Color(0.8, 0.95, 1.0, 0.9))
-		var info := "%d defenders" % counts[i] if not mission else "%d units" % counts[i]
-		draw_string(_font, p + Vector2(-40, 36), info, HORIZONTAL_ALIGNMENT_CENTER, 80, 10, Color(0.8, 0.95, 1.0, 0.8))
-	if mission:
-		_draw_sockets(sim, shift0)
 	var w := match_ref.upcoming_wave()
 	if not w.is_empty() and float(w["in_s"]) <= 8.0 and sim.entries.has(w["entry"]):
-		var pulse := 0.55 + 0.45 * sin(float(Time.get_ticks_msec()) / 120.0)
-		var shift := view.global_position - global_position
-		var win := view.window_px()
-		win.position += shift
-		var entry_px: Vector2 = view.to_px(sim.entries[w["entry"]]) + shift
-		var via := entry_px
-		for dp in sim.defense_points:
-			if dp["id"] == w["via"]:
-				via = view.to_px(dp["pos"]) + shift
-		# the entry lies outside the picture: mark the edge it will come in at and draw the route from there
-		var inner := Rect2(win.position + Vector2(26.0, 40.0), win.size - Vector2(52.0, 66.0))  # clear of the top bar
-		var edge := Vector2(clampf(entry_px.x, inner.position.x, inner.end.x), clampf(entry_px.y, inner.position.y, inner.end.y))
-		var dir := (entry_px - win.get_center()).normalized()
-		var side := _direction_word(entry_px, win)
-		draw_line(edge, via, Color(1.0, 0.4, 0.3, 0.6 * pulse), 3.0)
-		var tip := edge + dir * 16.0
-		var across := Vector2(-dir.y, dir.x) * 16.0
-		draw_colored_polygon(PackedVector2Array([tip, edge - dir * 10.0 + across, edge - dir * 10.0 - across]), Color(1.0, 0.35, 0.3, 0.55 + 0.4 * pulse))
-		draw_string(_font, Vector2(cx - 250, 124), "WAVE %d INCOMING FROM THE %s  %.0f s" % [int(w["number"]), side, float(w["in_s"])], HORIZONTAL_ALIGNMENT_CENTER, 500, 18, Color(1.0, 0.7, 0.55, pulse))
+		var pulse := 0.75 + 0.25 * sin(float(Time.get_ticks_msec()) / 120.0)
+		draw_string(_font, Vector2(cx - 250, 124), "WAVE %d INCOMING FROM THE %s  %.0f s" % [int(w["number"]), _entry_word(str(w["entry"])), float(w["in_s"])], HORIZONTAL_ALIGNMENT_CENTER, 500, 18, Color(1.0, 0.7, 0.55, pulse))
 
 
-## Missions: free sockets as faint corner marks, rewards being prepared as an outline with a countdown ring and name.
-func _draw_sockets(sim: BattleSim, shift: Vector2) -> void:
-	var cell := view.cell
-	for i in sim.sockets.size():
-		var sk: Dictionary = sim.sockets[i]
-		if not sim._socket_free(i):
-			continue
-		var tl: Vector2 = view.to_px(Vector2(float(sk["x"]), float(sk["y"]))) + shift
-		var c := Color(1, 1, 1, 0.22)
-		for corner in [Vector2.ZERO, Vector2(cell, 0), Vector2(0, cell), Vector2(cell, cell)]:
-			var d := Vector2(signf(cell * 0.5 - corner.x), signf(cell * 0.5 - corner.y)) * cell * 0.25
-			draw_line(tl + corner, tl + corner + Vector2(d.x, 0), c, 1.0)
-			draw_line(tl + corner, tl + corner + Vector2(0, d.y), c, 1.0)
-	for pr in sim.pending_rewards:
-		var total := maxf(float(int(pr["ready_tick"]) - int(pr["start_tick"])), 1.0)
-		var frac := clampf(float(sim.tick_count - int(pr["start_tick"])) / total, 0.0, 1.0)
-		var centre: Vector2
-		if int(pr["socket"]) >= 0:
-			var sk: Dictionary = sim.sockets[int(pr["socket"])]
-			centre = view.to_px(Vector2(float(sk["x"]) + 0.5, float(sk["y"]) + 0.5)) + shift
-			draw_rect(Rect2(centre - Vector2(cell, cell) * 0.5, Vector2(cell, cell)), Color(0.6, 1.0, 0.6, 0.8), false, 2.0)
-		elif int(pr["point"]) >= 0:
-			centre = view.to_px(sim.defense_points[int(pr["point"])]["pos"]) + shift + Vector2(0, -26)
-		else:
-			continue
-		draw_arc(centre, cell * 0.75, -PI * 0.5, -PI * 0.5 + TAU * frac, 24, Color(0.6, 1.0, 0.6, 0.9), 3.0)
-		draw_string(_font, centre + Vector2(-60, -cell), str(pr["label"]), HORIZONTAL_ALIGNMENT_CENTER, 120, 11, Color(0.75, 1.0, 0.75))
-
-
-## LEFT, RIGHT or TOP (BOTTOM for completeness): the side of the window an entry lies beyond.
-func _direction_word(entry_px: Vector2, win: Rect2) -> String:
-	var d := entry_px - win.get_center()
-	var nx := d.x / maxf(win.size.x, 1.0)
-	var ny := d.y / maxf(win.size.y, 1.0)
-	if absf(nx) >= absf(ny):
-		return "RIGHT" if nx > 0.0 else "LEFT"
-	return "BOTTOM" if ny > 0.0 else "TOP"
+## LEFT, RIGHT or TOP: where an entry lies, from its position on the map (the entry ids are left, top and right).
+func _entry_word(entry_id: String) -> String:
+	if entry_id in ["left", "top", "right", "bottom"]:
+		return entry_id.to_upper()
+	var sim := match_ref.sim
+	if not sim.entries.has(entry_id):
+		return entry_id.to_upper()
+	var d: Vector2 = sim.entries[entry_id] - Vector2(sim.width, sim.height) * 0.5
+	if absf(d.x) / maxf(sim.width, 1) >= absf(d.y) / maxf(sim.height, 1):
+		return "RIGHT" if d.x > 0.0 else "LEFT"
+	return "BOTTOM" if d.y > 0.0 else "TOP"
 
 
 func _base_bar(pos: Vector2, width: float, base: BattleSim.Ent, label: String, col: Color, right: bool) -> void:

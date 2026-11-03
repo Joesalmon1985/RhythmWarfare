@@ -225,7 +225,7 @@ func _summary(m: Match) -> Array:
 	for e in m.reward_log:
 		rows.append([e["sequence"], e["grade"], e["resolve_time"], e.get("ready_time", -1.0), e.get("point", -1), e["result"]])
 	return [rows, m.sim.tick_count, m.sim.count_alive(0, BattleSim.Kind.UNIT), m.sim.count_alive(1, BattleSim.Kind.UNIT),
-		m.sim.defense_count(), m.sim.objective_hp("command_core"), m.outcome, m.pad_judge.credit, m.pad_judge.resolved_at]
+		m.sim.defense_count(), m.sim.objective_hp(m.sim.primary_objective_id()), m.outcome, m.pad_judge.credit, m.pad_judge.resolved_at]
 
 
 func _plan(level: Level, seed_value: int) -> Array:

@@ -126,6 +126,13 @@ NEEDED: dict[str, tuple[str, list[str] | None]] = {
     "scorches": ("misc.yaml", None),
     # repair decoration (WithBuildingRepairDecoration: Image allyrepair, Sequence repair)
     "allyrepair": ("misc.yaml", None),
+    # civilians (c1 also draws the TECN technician) and the village houses (temperat.mix .tem files)
+    "c1": ("infantry.yaml", None),
+    "c2": ("infantry.yaml", None),
+    **{f"v0{i}": ("decorations.yaml", None) for i in range(1, 9)},
+    # map markers: the rally flag lives in the "rallypoint" image (sequence "flag", flagfly.shp); circles are left out
+    "rallypoint": ("misc.yaml", ["flag"]),
+    "moveflsh": ("misc.yaml", None),
     # trees (temperate) and their husks
     **{t: ("decorations.yaml", None) for t in
        ["t01", "t02", "t03", "t04", "t05", "t06", "t07", "t08",
@@ -135,6 +142,12 @@ NEEDED: dict[str, tuple[str, list[str] | None]] = {
         "tc01", "tc02", "tc03", "tc04", "tc05"]},
 }
 EXCLUDED_SEQUENCES = {"icon", "fake-icon"}
+
+# Extra image ids that point at a sequence of another image: alias -> (source image, {alias sequence: source sequence}).
+# "flagfly" is the file name of the rally flag; OpenRA defines it as rallypoint.flag.
+IMAGE_ALIASES: dict[str, tuple[str, dict[str, str]]] = {
+    "flagfly": ("rallypoint", {"flag": "flag"}),
+}
 
 # Files that no sequence references but that the renderer needs anyway
 # (terrain templates and the unused 4-wide bib for completeness).
@@ -906,6 +919,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     for image, seqs in pending.items():
         for name, rs in seqs:
             resolved[image]["sequences"][name] = finalise_sequence(rs, frame_counts)
+
+    for alias, (source, mapping) in IMAGE_ALIASES.items():
+        if source in resolved:
+            resolved[alias] = {"yaml": resolved[source]["yaml"], "alias_of": source,
+                               "sequences": {a: resolved[source]["sequences"][b] for a, b in mapping.items()
+                                             if b in resolved[source]["sequences"]}}
 
     sequences = {
         "openra_commit": git_commit(engine),

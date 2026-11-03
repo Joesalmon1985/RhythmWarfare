@@ -3,14 +3,14 @@
  "number": 1,
  "title": "First Watch",
  "pack": "m01_first_watch",
- "bars": 48,
+ "bars": 128,
  "seed": 1001,
- "note": "Built from the owner's Ableton exports (content/imports/first_watch.json): three eight-bar kick patterns with one snare pattern, two eight-bar bass lines with five and four recordings, three audio-only backing loops. Six eight-bar phases: drums, drums with the bass line audible, bass (holds on pad 2, drums still playing), drums, bass, drums. Only one family is cued at a time. The groove's kick and snare sounds are bound to the chosen groove; the bass sound choice follows the bass line (the pack carries depends_on / with).",
+ "note": "Built from the owner's Ableton exports (content/imports/first_watch.json): three eight-bar kick patterns with one snare pattern, two eight-bar bass lines with five and four recordings, three audio-only backing loops. 128 bars (2 min 56 s) in sixteen eight-bar phases, four acts of 32 bars: drums, drums, bass, drums | bass, drums, drums, bass | drums, bass, drums, bass | drums, drums, bass, drums. Only one family is cued at a time; the bass line is audible from phase 2 on. The groove's kick and snare sounds are bound to the chosen groove; the bass sound choice follows the bass line (the pack carries depends_on / with). Rewards per four-bar sequence: pillboxes and rifle squads in acts 1 and 2, grenadier squads from act 3.",
  "intros": [
   {"bar": 1, "text": "Tap a pad as its ring closes onto it."},
   {"bar": 16, "text": "Bass next: press as the ring closes and keep holding while the pad stays lit."}
  ],
- "battle": {"battlefield": "defense_02", "waves": "data/campaign/waves/level_01.json"},
+ "battle": {"battlefield": "village_01", "waves": "data/campaign/waves/level_01.json"},
  "choices": {
   "groove": {"label": "Drum groove", "count": 1, "pool": ["groove_half_time", "groove_double_step", "groove_rolling"], "default": ["groove_half_time"]},
   "bass": {"label": "Bass line", "count": 1, "pool": ["bass_sub_line", "bass_reese_line"], "default": ["bass_sub_line"]},
@@ -19,13 +19,23 @@
    "default": ["bass_sub_deep"]},
   "accompaniment": {"label": "Backing track", "count": 1, "pool": ["acc_hats_driving", "acc_hats_busy", "acc_hats_offbeat"], "default": ["acc_hats_driving"]}
  },
- "accompaniment": [{"clip": 1, "start_bar": 1, "bars": 48}],
+ "accompaniment": [{"clip": 1, "start_bar": 1, "bars": 128}],
  "phases": [
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "sequence_bars": 4, "rewards": ["pillbox", "pillbox"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "jeep"]},
-  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "jeep"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "jeep"]},
-  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "jeep"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["jeep", "pillbox"]}
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "sequence_bars": 4, "rewards": ["pillbox", "rifle_squad"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "rifle_squad"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "rifle_squad"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "rifle_squad"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "rifle_squad"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "rifle_squad"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "rifle_squad"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "rifle_squad"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "grenadier_squad"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["rifle_squad", "grenadier_squad"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "rifle_squad"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["grenadier_squad", "rifle_squad"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["grenadier_squad", "pillbox"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["grenadier_squad", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["grenadier_squad", "pillbox"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["grenadier_squad", "pillbox"]}
  ]
 }

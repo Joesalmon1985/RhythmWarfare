@@ -24,10 +24,21 @@ var _fade_speed := 0.0
 var _loaded := false
 
 
+## The "Music" bus (created on first use, sends to Master) so the music volume never scales the battle effects.
+static func ensure_music_bus() -> int:
+	var i := AudioServer.get_bus_index("Music")
+	if i < 0:
+		AudioServer.add_bus()
+		i = AudioServer.bus_count - 1
+		AudioServer.set_bus_name(i, "Music")
+		AudioServer.set_bus_send(i, "Master")
+	return i
+
+
 func _ready() -> void:
 	player = AudioStreamPlayer.new()
 	player.name = "StemPlayer"
-	player.bus = "Master"
+	player.bus = AudioServer.get_bus_name(ensure_music_bus())
 	add_child(player)
 	player.finished.connect(func() -> void: song_finished.emit())
 

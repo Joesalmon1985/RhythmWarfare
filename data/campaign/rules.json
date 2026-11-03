@@ -43,6 +43,8 @@
   "pillbox": {"type": "build", "role": "pillbox", "name": "Pillbox"},
   "turret": {"type": "build", "role": "turret", "name": "Gun turret"},
   "flame_tower": {"type": "build", "role": "flame", "name": "Flame tower"},
+  "rifle_squad": {"type": "unit", "actor": "e1", "count": 3, "name": "Rifle squad"},
+  "grenadier_squad": {"type": "unit", "actor": "e2", "count": 3, "name": "Grenadier squad"},
   "e1": {"type": "unit", "actor": "e1", "name": "Rifleman"},
   "e2": {"type": "unit", "actor": "e2", "name": "Grenadier"},
   "e3": {"type": "unit", "actor": "e3", "name": "Rocket soldier"},

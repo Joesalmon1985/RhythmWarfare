@@ -14,7 +14,12 @@ python tools/content/build.py            # all missions (about a minute); --chec
   - `library/<clip_id>/placeholder/<part>__<sound_id>.wav`: the generated placeholder (open it in Ableton to hear what the
     file should contain; the build rewrites it, never your files).
 - `missions/level_NN.json`: one mission: its choices, phases (which clip and sound plays where, which family is cued),
-  sequences and rewards, accompaniment and battle data.
+  sequences and rewards, accompaniment and battle data (`battlefield`, the waves file).
+- The battle side of a mission lives outside this folder: `data/campaign/waves/level_NN.json` (the `rules` block:
+  `objective_hp`, `sockets_per_point`, `units_per_point`, `start_units` such as five riflemen per choke point, and
+  the `waves` by bar, each with an `entry` and a `target` class `defenses`, `civilians` or `core`) and
+  `data/battlefields/<id>.json` (mission 1 plays on `village_01`: houses, civilians, the barracks). The build bakes
+  both into `level.json`, so rebuild the pack after editing them.
 - `build_state.json`: written by the build (which MIDI each of your WAVs was rendered from). Commit it with your WAVs.
 - `REPORT.md`: written by the build: what is still placeholder, warnings, listening checkpoints.
 

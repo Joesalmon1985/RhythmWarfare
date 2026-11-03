@@ -83,9 +83,13 @@ Written by `python tools/content/build.py`. Do not edit; rebuild instead.
 Equal lengths do not prove sync. After replacing audio, play the mission (or its practice) and listen at these
 song times: the first downbeat, every mode change and the last bar.
 
-- 1 First Watch: bar 1 (0.0 s), bar 9 (11.0 s), bar 17 (22.1 s), bar 25 (33.1 s), bar 33 (44.1 s), bar 41 (55.2 s), bar 48 (64.8 s)
+- 1 First Watch: bar 1 (0.0 s), bar 9 (11.0 s), bar 17 (22.1 s), bar 25 (33.1 s), bar 33 (44.1 s), bar 41 (55.2 s), bar 49 (66.2 s), bar 57 (77.2 s), bar 65 (88.3 s), bar 73 (99.3 s), bar 81 (110.3 s), bar 89 (121.4 s), bar 97 (132.4 s), bar 105 (143.4 s), bar 113 (154.5 s), bar 121 (165.5 s), bar 128 (175.2 s)
 
 ## Warnings
 
 - content/missions/level_01.json: at bar 25 a hold on pad 2 ends where pad 1 (same thumb) is cued; the thumb lifts up to 0.15 s early without losing the hold
 - content/missions/level_01.json: at bar 41 a hold on pad 2 ends where pad 1 (same thumb) is cued; the thumb lifts up to 0.15 s early without losing the hold
+- content/missions/level_01.json: at bar 65 a hold on pad 2 ends where pad 1 (same thumb) is cued; the thumb lifts up to 0.15 s early without losing the hold
+- content/missions/level_01.json: at bar 81 a hold on pad 2 ends where pad 1 (same thumb) is cued; the thumb lifts up to 0.15 s early without losing the hold
+- content/missions/level_01.json: at bar 97 a hold on pad 2 ends where pad 1 (same thumb) is cued; the thumb lifts up to 0.15 s early without losing the hold
+- content/missions/level_01.json: at bar 121 a hold on pad 2 ends where pad 1 (same thumb) is cued; the thumb lifts up to 0.15 s early without losing the hold

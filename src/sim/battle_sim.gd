@@ -83,6 +83,18 @@ class Ent:
 	var socket := -1           # mission defenses: index into BattleSim.sockets
 	var reinforced := false    # a capacity reward raised this defense's health once
 	var stage := 0           # wave route stage: 0 walking to the via point, 1 walking to the objective
+	# civilians: side-0 entities that are never defenders (atmosphere that wanders, flees and dies; never a third side)
+	var civilian := false      # a village technician / villager (unit) or a village house (building)
+	var civ_state := "wander"  # wander | flee
+	var civ_rest := 0          # ticks left standing before the next walk
+	var civ_calm := 0          # order checks since the last threat
+	var civ_home := Vector2.ZERO
+	var civ_speed := 0.0       # the actor's full speed (cells per tick); wandering uses 60 % of it
+	# wave target classes (DefenseAi): the authored class and the one in force (it only falls through, never back)
+	var target_class := "core"   # defenses | civilians | core
+	var class_now := "core"
+	var goal := -1               # entity id this wave unit is heading for at stage 1
+	var via_point := -1          # index into BattleSim.defense_points of its via point (-1 unknown)
 	# buildings
 	var cx := 0
 	var cy := 0
@@ -150,6 +162,15 @@ var sockets_per_point := 5
 var pending_rewards: Array = []  # [{id, ready_tick, start_tick, kind, reward, point, socket, label}] in ready order
 var units_per_point := 6
 var reinforce_factor := 1.5
+## Missions: the section (defense point index) rewards are deployed to while it has room, -1 = none. Set through
+## Match.set_active_point.
+var active_point := -1
+## Village (missions with civilians): where civilians wander (cell centres), their radii and their own rng, so the
+## combat rng stream never depends on them.
+var village_spots: Array[Vector2] = []
+var wander_radius := 5.0
+var flee_radius := 6.0
+var civ_rng := RandomNumberGenerator.new()
 var _reward_seq := 0
 var _group_seq := 0
 ## Missions: wave units attack defensive structures on their way (schema 2 waves ignored every building but their goal).
@@ -215,7 +236,13 @@ func setup(p_rules: Rules, level_rules: Dictionary, p_seed: int) -> void:
 			_astar_foot.set_point_solid(c, true)
 			_astar_track.set_point_solid(c, true)
 	stats = {"produced": [{"tank": 0, "infantry": 0, "aircraft": 0, "pad": 0}, {"tank": 0, "infantry": 0, "aircraft": 0, "pad": 0}],
-		"units": [{}, {}], "lost": [{}, {}], "air_busy": [0, 0], "blocked": [{}, {}], "squads": [0, 0], "rushes": [0, 0], "flees": [0, 0]}
+		"units": [{}, {}], "lost": [{}, {}], "air_busy": [0, 0], "blocked": [{}, {}], "squads": [0, 0], "rushes": [0, 0], "flees": [0, 0],
+		"civilians_total": 0, "civilians_lost": 0, "houses_total": 0, "houses_lost": 0}
+	civ_rng.seed = p_seed * 13 + 5
+	active_point = -1
+	village_spots = []
+	wander_radius = 5.0
+	flee_radius = 6.0
 	slots = [[], []]
 	spawn_queue = [[], []]
 	producer_ids = [{}, {}]
@@ -233,8 +260,13 @@ func setup(p_rules: Rules, level_rules: Dictionary, p_seed: int) -> void:
 	for side in (1 if defense else SIDES):
 		for b in bf.get("buildings", []):
 			var role := str(b["role"])
+			var actor_override := str(b.get("actor", ""))
 			var bw := int(b.get("w", 1))
 			var bh := int(b.get("h", 1))
+			if not actor_override.is_empty() and not b.has("w"):  # footprint from the actor's rules ("2,2")
+				var dims := str(rules.actors.get(actor_override, {}).get("building", {}).get("dimensions", "1,1")).split(",")
+				bw = int(dims[0])
+				bh = int(dims[1]) if dims.size() > 1 else bw
 			var bx := int(b["x"])
 			var by := int(b["y"])
 			if side == 1:
@@ -247,7 +279,7 @@ func setup(p_rules: Rules, level_rules: Dictionary, p_seed: int) -> void:
 				if slot < initial_pads:
 					_build_pad(side, slot)
 				continue
-			var e := _spawn_building(side, role, bx, by, bw, bh)
+			var e := _spawn_building(side, role, bx, by, bw, bh, actor_override)
 			if role in ["main", "factory", "barracks"]:
 				producer_ids[side][role] = e.id
 	bots = []
@@ -292,8 +324,12 @@ func setup(p_rules: Rules, level_rules: Dictionary, p_seed: int) -> void:
 			for i in sockets.size():
 				if sockets[i]["id"] == str(pb["socket"]):
 					_build_at_socket(i, str(MissionRules.reward(str(pb["reward"])).get("role", "pillbox")))
+		_spawn_civilians(bf)
+		_spawn_start_units(level_rules.get("start_units", []))
+		_build_village_spots(bf)
 		defense_ai = DefenseAi.new()
 		defense_ai.setup(self)
+		events.clear()  # the view builds the opening scene from the entities, not from spawn events
 	else:
 		for side in SIDES:
 			var bot := BotAi.new()
@@ -346,12 +382,47 @@ func main_base(side: int) -> Ent:
 	return by_id.get(producer_ids[side].get("main", -1))
 
 
+## Live entities of a kind on a side; civilians are scenery and never counted.
 func count_alive(side: int, kind: int) -> int:
 	var n := 0
 	for e in entities:
-		if e.alive and e.side == side and e.kind == kind:
+		if e.alive and e.side == side and e.kind == kind and not e.civilian:
 			n += 1
 	return n
+
+
+## Living village technicians / villagers (units, not houses).
+func civilians_alive() -> int:
+	var n := 0
+	for e in entities:
+		if e.alive and e.civilian and e.kind == Kind.UNIT:
+			n += 1
+	return n
+
+
+## Standing village houses.
+func houses_alive() -> int:
+	var n := 0
+	for e in entities:
+		if e.alive and e.civilian and e.kind == Kind.BUILDING:
+			n += 1
+	return n
+
+
+## The objective the level is about: the first required one (else the first); "" without objectives.
+func primary_objective_id() -> String:
+	for o in objectives:
+		if o["required"]:
+			return str(o["id"])
+	return str(objectives[0]["id"]) if not objectives.is_empty() else ""
+
+
+## The roster role of the objective with this id ("" when unknown).
+func objective_role(id: String) -> String:
+	for o in objectives:
+		if o["id"] == id:
+			return str(o["role"])
+	return ""
 
 
 func mirrored(p: Vector2, side: int) -> Vector2:
@@ -429,9 +500,7 @@ func produce_group(side: int, units: Array, group_id: int, point: int) -> Dictio
 	groups[group_id] = {"point": idx, "size": expanded.size(), "units": [], "side": side}
 	var k := 0
 	for actor in expanded:
-		var ang := float(k) / float(maxi(expanded.size(), 1)) * TAU + 0.6
-		var ring := 0.7 + 0.5 * float(k % 2)
-		var home: Vector2 = pt["pos"] + Vector2(cos(ang), sin(ang)) * ring
+		var home := _ring_home(pt["pos"], k, expanded.size())
 		var role := "infantry" if producer_role_for(actor) == "barracks" else "tank"
 		spawn_queue[side].append({"role": role, "actor": actor, "group": group_id, "home": home})
 		k += 1
@@ -439,9 +508,18 @@ func produce_group(side: int, units: Array, group_id: int, point: int) -> Dictio
 	return {"result": "queued", "group_id": group_id, "point": idx, "point_id": pt["id"], "actors": expanded}
 
 
+## Where unit k of n stands around a defense point: a ring of radius 0.7 / 1.2 starting at angle `offset`.
+static func _ring_home(center: Vector2, k: int, n: int, offset: float = 0.6) -> Vector2:
+	var ang := float(k) / float(maxi(n, 1)) * TAU + offset
+	var ring := 0.7 + 0.5 * float(k % 2)
+	return center + Vector2(cos(ang), sin(ang)) * ring
+
+
 ## Defense mode: one enemy wave unit appears at an entry (no producer, no queue) and sets off for its objective via
-## a defense point. Returns the entity, or null when the entry cell is occupied (the caller retries next tick).
-func spawn_wave_unit(actor: String, entry: String, via_point: String, objective_id: String) -> Ent:
+## a defense point. `target_class` (defenses | civilians | core) says what it goes for first: DefenseAi sends it to
+## the defences of its via point, then the village, then the objective (it only falls through, never back).
+## Returns the entity, or null when the entry cell is occupied (the caller retries next tick).
+func spawn_wave_unit(actor: String, entry: String, via_point: String, objective_id: String, target_class: String = "core") -> Ent:
 	if not entries.has(entry) or not rules.actors.has(actor):
 		return null
 	var at := _free_spawn_cell(entries[entry], 3)
@@ -452,9 +530,12 @@ func spawn_wave_unit(actor: String, entry: String, via_point: String, objective_
 	u.defenses_only = true
 	u.order = "idle"
 	u.stage = 0
-	for dp in defense_points:
-		if dp["id"] == via_point:
-			u.via = dp["pos"]
+	u.target_class = target_class if target_class in ["defenses", "civilians", "core"] else "core"
+	u.class_now = u.target_class
+	for i in defense_points.size():
+		if defense_points[i]["id"] == via_point:
+			u.via = defense_points[i]["pos"]
+			u.via_point = i
 	for o in objectives:
 		if o["id"] == objective_id:
 			u.objective = int(o["ent"])
@@ -462,20 +543,106 @@ func spawn_wave_unit(actor: String, entry: String, via_point: String, objective_
 	return u
 
 
+# ---------------------------------------------------------------- start units and the village
+
+## Level rule start_units: [{"actor": "e1", "count": 5, "point": "defense_1"}]. Each entry is its own group standing
+## on its point from the first tick (no producer needed), idle, with the usual leash.
+func _spawn_start_units(list: Array) -> void:
+	var per_point := {}
+	for su in list:
+		var idx := -1
+		for i in defense_points.size():
+			if defense_points[i]["id"] == str(su.get("point", "")):
+				idx = i
+		var actor := str(su.get("actor", "e1"))
+		if idx < 0 or not rules.actors.has(actor):
+			push_warning("start_units entry skipped: %s" % str(su))
+			continue
+		var n := int(su.get("count", 1))
+		_group_seq += 1
+		var gid := _group_seq
+		groups[gid] = {"point": idx, "size": n, "units": [], "side": 0}
+		var nth := int(per_point.get(idx, 0))
+		per_point[idx] = nth + 1
+		var role := "infantry" if producer_role_for(actor) == "barracks" else "tank"
+		for k in n:
+			var home := _ring_home(defense_points[idx]["pos"], k, n, 0.6 + 1.1 * float(nth))
+			var u := _spawn_unit(0, role, home, actor)
+			u.group = gid
+			u.home = home
+			u.leash = leash_cells
+			u.order = "idle"
+			groups[gid]["units"].append(u.id)
+
+
+## bf["civilians"]: [{"actor": "tecn", "x": 40, "y": 20}]; integer cells stand at the cell centre.
+func _spawn_civilians(bf: Dictionary) -> void:
+	for c in bf.get("civilians", []):
+		var cx := float(c["x"])
+		var cy := float(c["y"])
+		var at := Vector2(cx + 0.5 if cx == floorf(cx) else cx, cy + 0.5 if cy == floorf(cy) else cy)
+		var u := _spawn_unit(0, "infantry", at, str(c.get("actor", "c1")), true)
+		u.civ_home = at
+
+
+## village_spots: the free cells of bf["wander"]["rect"] ([x0, y0, x1, y1], inclusive) that a civilian can walk to and
+## that are further than two cells from the barracks exit. Also reads the wander and flee radii.
+func _build_village_spots(bf: Dictionary) -> void:
+	village_spots = []
+	var wd: Dictionary = bf.get("wander", {})
+	if wd.is_empty():
+		return
+	wander_radius = float(wd.get("radius", 5.0))
+	flee_radius = float(wd.get("flee_radius", 6.0))
+	var rect: Array = wd.get("rect", [])
+	if rect.size() < 4:
+		return
+	var reach := {}  # cells reachable on foot from a civilian (4-neighbour fill over unblocked cells)
+	var open: Array[Vector2i] = []
+	for e in entities:
+		if e.civilian and e.kind == Kind.UNIT:
+			var c := e.cell()
+			if not reach.has(c):
+				reach[c] = true
+				open.append(c)
+	while not open.is_empty():
+		var c: Vector2i = open.pop_back()
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n: Vector2i = c + d
+			if n.x < 0 or n.y < 0 or n.x >= width or n.y >= height or reach.has(n) or _blocked.has(n):
+				continue
+			reach[n] = true
+			open.append(n)
+	var ex: Array = bf.get("exits", {}).get("barracks", [])
+	var exit_pos := Vector2(float(ex[0]) + 0.5, float(ex[1]) + 0.5) if ex.size() >= 2 else Vector2(-100, -100)
+	for y in range(int(rect[1]), int(rect[3]) + 1):
+		for x in range(int(rect[0]), int(rect[2]) + 1):
+			var c := Vector2i(x, y)
+			if not reach.has(c) or _blocked.has(c):
+				continue
+			var p := Vector2(x + 0.5, y + 0.5)
+			if p.distance_to(exit_pos) <= 2.0:
+				continue
+			village_spots.append(p)
+
+
 # ---------------------------------------------------------------- mission rewards (schema 3)
 
 ## Queue one sequence reward (data/campaign/rules.json "rewards") for `ready_tick`. The placement is chosen now, so the
 ## view can show what is being prepared and where: a building takes the first free socket of the approach with the
 ## fewest defenses (ties: `hint_point`, the approach of the next wave, then the lowest index); a unit holds the point
-## with the fewest defenders. At capacity (no free socket, or every point at units_per_point) the reward becomes a
+## with the fewest defenders. The active point (the player's tap) comes first whenever it has room. A unit reward may
+## carry a `count` (a squad): all of it holds one point, which needs room for every unit. At capacity (no free socket,
+## or no point with room for the units) the reward becomes a
 ## repair of that approach, or a reinforcement when nothing is damaged. Returns what was scheduled.
 func schedule_reward(reward_id: String, ready_tick: int, hint_point: int = -1) -> Dictionary:
 	if not outcome.is_empty():
 		return {"result": "ended"}
 	var def := MissionRules.reward(reward_id)
 	var kind := str(def.get("type", ""))
+	var count := maxi(int(def.get("count", 1)), 1)
 	var entry := {"id": _reward_seq, "ready_tick": maxi(ready_tick, tick_count + 1), "start_tick": tick_count, "reward": reward_id,
-		"kind": kind, "point": -1, "socket": -1, "label": str(def.get("name", reward_id)), "capacity": false}
+		"kind": kind, "point": -1, "socket": -1, "label": str(def.get("name", reward_id)), "capacity": false, "count": count}
 	_reward_seq += 1
 	if kind == "build":
 		var pt := _pick_point(hint_point, true)
@@ -490,7 +657,7 @@ func schedule_reward(reward_id: String, ready_tick: int, hint_point: int = -1) -
 		if entry["socket"] < 0:
 			_as_capacity(entry, hint_point)
 	elif kind == "unit":
-		var pt := _pick_point(hint_point, false)
+		var pt := _pick_point(hint_point, false, count)
 		if pt >= 0:
 			entry["point"] = pt
 			entry["actor"] = str(def.get("actor", "e1"))
@@ -541,7 +708,7 @@ func defenses_at(point: int) -> int:
 	return n
 
 
-## Defenders holding a point, counting those queued and those still being prepared.
+## Defenders holding a point, counting those queued and those still being prepared (a pending squad counts every unit).
 func units_at(point: int) -> int:
 	var n := 0
 	for e in entities:
@@ -552,7 +719,7 @@ func units_at(point: int) -> int:
 			n += 1
 	for p in pending_rewards:
 		if p["kind"] == "unit" and int(p["point"]) == point:
-			n += 1
+			n += int(p.get("count", 1))
 	return n
 
 
@@ -564,20 +731,26 @@ func _socket_free(i: int) -> bool:
 	return e == null or not e.alive
 
 
-func _pick_point(hint_point: int, building: bool) -> int:
+## Whether a point can take a reward: a free socket for a building, `count` more defenders for units.
+func _point_has_room(point: int, building: bool, count: int = 1) -> bool:
+	if point < 0 or point >= defense_points.size():
+		return false
+	if building:
+		for i in sockets.size():
+			if int(sockets[i]["point"]) == point and _socket_free(i):
+				return true
+		return false
+	return units_at(point) + count <= units_per_point
+
+
+func _pick_point(hint_point: int, building: bool, count: int = 1) -> int:
+	if active_point >= 0 and _point_has_room(active_point, building, count):
+		return active_point
 	var best := -1
 	var best_n := 1 << 30
 	for pt in defense_points.size():
 		var n := defenses_at(pt) if building else units_at(pt)
-		var room := false
-		if building:
-			for i in sockets.size():
-				if int(sockets[i]["point"]) == pt and _socket_free(i):
-					room = true
-					break
-		else:
-			room = n < units_per_point
-		if not room:
+		if not _point_has_room(pt, building, count):
 			continue
 		if n < best_n or (n == best_n and pt == hint_point and best != hint_point):
 			best = pt
@@ -624,7 +797,9 @@ func _process_rewards() -> void:
 				done["entity"] = e.id
 			"unit":
 				_group_seq += 1
-				var res := produce_group(0, [{"actor": p["actor"], "count": 1}], _group_seq, int(p["point"]))
+				done["actor"] = p["actor"]
+				done["count"] = int(p.get("count", 1))
+				var res := produce_group(0, [{"actor": p["actor"], "count": int(p.get("count", 1))}], _group_seq, int(p["point"]))
 				done["result"] = "unit" if res["result"] == "queued" else str(res["result"])
 				if res["result"] != "queued":
 					done.merge(_repair_point(int(p["point"])), true)
@@ -819,13 +994,20 @@ func _launch(a: Ent) -> void:
 	events.append({"kind": "sortie", "side": a.side, "slot": a.slot, "id": a.id})
 
 
-func _spawn_building(side: int, role: String, bx: int, by: int, bw: int, bh: int) -> Ent:
+## `actor_override` names the actor directly (village houses: role "village", actor v01..v08) instead of the roster role.
+func _spawn_building(side: int, role: String, bx: int, by: int, bw: int, bh: int, actor_override: String = "") -> Ent:
 	var def := rules.actor_for_role(role)
+	var actor_id := rules.actor_id_for_role(role)
+	if not actor_override.is_empty():
+		actor_id = actor_override
+		def = rules.actors.get(actor_override, {})
+		if def.is_empty():
+			push_warning("unknown building actor %s: using default health" % actor_override)
 	var e := Ent.new()
 	e.id = _next_id
 	_next_id += 1
 	e.kind = Kind.BUILDING
-	e.actor = rules.actor_id_for_role(role)
+	e.actor = actor_id
 	e.role = role
 	e.side = side
 	e.cx = bx
@@ -839,6 +1021,9 @@ func _spawn_building(side: int, role: String, bx: int, by: int, bw: int, bh: int
 	e.armor = str(def.get("armor", "Wood"))
 	e.value = int(def.get("cost", 0))
 	e.is_defence = role in ["turret", "aa", "sam", "pillbox", "flame"]
+	e.civilian = role == "village"
+	if e.civilian:
+		stats["houses_total"] = int(stats["houses_total"]) + 1
 	e.radius = maxf(bw, bh) * 0.5
 	e.weapons = _make_weapons(def)
 	_weapon_flags(e)
@@ -864,10 +1049,15 @@ func _spawn_building(side: int, role: String, bx: int, by: int, bw: int, bh: int
 ## A ground unit of a specific actor. Its class (infantry or vehicle), what it crushes and whether it aims with a
 ## turret come from the actor's OpenRA locomotor and traits, so a jeep, an artillery piece and a mammoth tank all
 ## behave as their rules say.
-func _spawn_unit(side: int, role: String, at: Vector2, actor: String = "") -> Ent:
+## A civilian (side 0, never armed, never a defender) takes its stats from the actor; an unknown civilian actor falls
+## back to e1's with a warning.
+func _spawn_unit(side: int, role: String, at: Vector2, actor: String = "", civilian: bool = false) -> Ent:
 	if actor.is_empty():
 		actor = rules.actor_id_for_role(role)
 	var def: Dictionary = rules.actors.get(actor, {})
+	if civilian and def.is_empty():
+		push_warning("unknown civilian actor %s: using e1's stats" % actor)
+		def = rules.actors.get("e1", {})
 	var e := Ent.new()
 	e.id = _next_id
 	_next_id += 1
@@ -899,14 +1089,24 @@ func _spawn_unit(side: int, role: String, at: Vector2, actor: String = "") -> En
 		e.target_types = ["GroundActor", "Vehicle"]
 	e.heading = 0.0 if side == 0 else PI
 	e.turret_heading = e.heading
-	e.weapons = _make_weapons(def)
+	e.weapons = [] if civilian else _make_weapons(def)
 	_weapon_flags(e)
-	e.scan_timer = rng.randi_range(SCAN_MIN, SCAN_MAX - 1)
+	if civilian:
+		e.civilian = true
+		e.group = -1
+		e.civ_speed = e.speed
+		e.speed = e.civ_speed * 0.6
+		e.scan_timer = civ_rng.randi_range(SCAN_MIN, SCAN_MAX - 1)
+		e.civ_rest = civ_rng.randi_range(40, 150)
+		stats["civilians_total"] = int(stats["civilians_total"]) + 1
+	else:
+		e.scan_timer = rng.randi_range(SCAN_MIN, SCAN_MAX - 1)
 	entities.append(e)
 	by_id[e.id] = e
-	var units: Dictionary = stats["units"][side]
-	units[actor] = int(units.get(actor, 0)) + 1
-	events.append({"kind": "spawned", "side": side, "role": role, "actor": actor, "id": e.id})
+	if not civilian:
+		var units: Dictionary = stats["units"][side]
+		units[actor] = int(units.get(actor, 0)) + 1
+	events.append({"kind": "spawned", "side": side, "role": role, "actor": actor, "id": e.id, "civilian": civilian})
 	return e
 
 
@@ -1152,10 +1352,17 @@ func target_valid(e: Ent, t: Ent) -> bool:
 ## (NoAutoTarget); stance AttackAnything (both sides are bots) includes structures.
 ## Deviation: a target already aimed at by many friends counts as a little farther away, so a hundred units do
 ## not all shoot the same rifleman while the rest of the enemy stands untouched (overkill).
+##
+## Defense waves carry a target class (`class_now`): wave units never shoot village houses unless the class is
+## civilians, never shoot the objective unless it is core, and weigh civilian units by class (a raider after the
+## village prefers them, anyone else shoots them only when nothing else is near). Walls are never targets.
 func scan_for_target(e: Ent, radius: float) -> int:
+	if e.weapons.is_empty():
+		return -1
 	var best := -1
 	var best_score := INF
 	var side := e.side
+	var cls := e.class_now if e.defenses_only else ""
 	var ex := e.x
 	var ey := e.y
 	var r2 := radius * radius
@@ -1175,14 +1382,24 @@ func scan_for_target(e: Ent, radius: float) -> int:
 					if d2 > r2:
 						continue
 					var score := sqrt(d2) + 0.4 * minf(float(_aim_count.get(o.id, 0)), 8.0)
+					if o.civilian:
+						score += -1.0 if cls == "civilians" else 2.0
 					if score < best_score:
 						best = o.id
 						best_score = score
 	for o in _static_targets:
 		if o.side == side or not o.alive or o.is_wall:
 			continue
-		if e.defenses_only and o.kind == Kind.BUILDING and o.id != e.objective and not (o.is_defence and waves_fight_defenses):
-			continue
+		if e.defenses_only and o.kind == Kind.BUILDING:
+			var valid := false
+			if o.civilian:
+				valid = cls == "civilians"
+			elif o.is_defence and waves_fight_defenses:
+				valid = true
+			elif o.id == e.objective:
+				valid = cls == "core"
+			if not valid:
+				continue
 		if not (e.hits_air if o.airborne() else e.hits_ground):
 			continue
 		var d := range_to(e, o)
@@ -1390,7 +1607,8 @@ func _shot(e: Ent, w: Dictionary, t: Ent) -> void:
 	if not e.has_turret and e.kind == Kind.UNIT:
 		e.heading = e.turret_heading
 	e.firing = 6
-	events.append({"kind": "shot", "from": e.id, "to": t.id, "weapon": w["name"], "x": e.x, "y": e.y, "tx": aim.x, "ty": aim.y, "heading": e.turret_heading})
+	events.append({"kind": "shot", "from": e.id, "to": t.id, "weapon": w["name"], "x": e.x, "y": e.y, "tx": aim.x, "ty": aim.y, "heading": e.turret_heading,
+		"actor": e.actor, "side": e.side})
 	var speed := float(def.get("projectile_speed", 0)) / WORLD
 	var kind := str(def.get("projectile", "InstantHit"))
 	if kind == "InstantHit" or speed <= 0.0:
@@ -1515,8 +1733,8 @@ func _damage(t: Ent, amount: int, by: Ent) -> void:
 			amount = amount / 2
 		t.prone_ticks = PRONE_TICKS
 	t.hp -= amount
-	events.append({"kind": "hit", "id": t.id, "amount": amount, "x": t.x, "y": t.y})
-	if t.kind == Kind.BUILDING and not t.is_wall and t.hp < t.max_hp and not t.repairing:
+	events.append({"kind": "hit", "id": t.id, "amount": amount, "x": t.x, "y": t.y, "side": t.side, "role": t.role, "civilian": t.civilian})
+	if t.kind == Kind.BUILDING and not t.is_wall and not t.civilian and t.hp < t.max_hp and not t.repairing:
 		_start_repair(t)
 	if by != null and by.alive and by.side != t.side:
 		# return fire: an idle unit shot from anywhere turns on its attacker (AllowMove: it will walk there)
@@ -1539,9 +1757,14 @@ func _start_repair(b: Ent) -> void:
 func _kill(t: Ent, by: Ent, crushed: bool = false) -> void:
 	t.alive = false
 	t.repairing = false
-	var lost: Dictionary = stats["lost"][t.side]
-	lost[t.role] = int(lost.get(t.role, 0)) + 1
-	events.append({"kind": "destroyed", "id": t.id, "side": t.side, "role": t.role, "x": t.x, "y": t.y, "by": by.id if by != null else -1, "crushed": crushed})
+	if t.civilian:  # village losses are counted apart and never as the player's army losses
+		var key := "civilians_lost" if t.kind == Kind.UNIT else "houses_lost"
+		stats[key] = int(stats[key]) + 1
+	else:
+		var lost: Dictionary = stats["lost"][t.side]
+		lost[t.role] = int(lost.get(t.role, 0)) + 1
+	events.append({"kind": "destroyed", "id": t.id, "side": t.side, "role": t.role, "x": t.x, "y": t.y, "by": by.id if by != null else -1, "crushed": crushed,
+		"civilian": t.civilian, "actor": t.actor, "ekind": ["unit", "building", "aircraft"][t.kind]})
 	if t.kind == Kind.BUILDING:
 		for i in t.w:
 			for j in t.h:

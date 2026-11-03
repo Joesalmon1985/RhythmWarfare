@@ -8,6 +8,10 @@ extends SceneTree
 ##
 ## Missions (schema 3) use plan_inputs(): perfect, accuracy:<f>, none, beginner, sloppy (plausible imperfect play with
 ## timing scatter, misses, early hold releases and stray presses, seeded) and mash (pressing every lit pad every 60 ms).
+## Missions also take a section policy (a sixth argument or the RW_SECTION environment variable): where the player taps
+## to deploy rewards. auto taps the section the next wave comes through (Match.suggest_point) every time it changes,
+## none never taps (rewards use the old placement), fixed:<i> taps section i once at the start. Left out, a level with
+## civilians (the village) plays auto and every other level plays none, so the older missions balance as they always did.
 ##
 ## policy:  perfect            every note hit at its exact time
 ##          accuracy:<f>       each note hit with probability f (seeded), otherwise ignored
@@ -30,6 +34,7 @@ func _init() -> void:
 	var enemy_fraction := float(args[2]) if args.size() > 2 else 1.0
 	var seed_value := int(args[3]) if args.size() > 3 else 1
 	var chart_id: String = args[4] if args.size() > 4 else ""
+	var section_policy: String = args[5] if args.size() > 5 else (OS.get_environment("RW_SECTION") if OS.has_environment("RW_SECTION") else "")
 	var loaded := LevelLoader.load_pack(pack, {"chart_id": chart_id})
 	if loaded["level"] == null:
 		push_error("pack rejected: " + str(loaded["errors"]))
@@ -48,14 +53,14 @@ func _init() -> void:
 		level.enemy_events = kept
 	var m := Match.new()
 	m.setup(level)
-	var result := run(m, level, policy, rng)
+	var result := run(m, level, policy, rng, section_policy)
 	print(JSON.stringify(result, "  "))
 	quit(0)
 
 
-static func run(m: Match, level: Level, policy: String, rng: RandomNumberGenerator) -> Dictionary:
+static func run(m: Match, level: Level, policy: String, rng: RandomNumberGenerator, section_policy: String = "") -> Dictionary:
 	if level.is_mission():
-		return run_mission(m, level, policy, rng)
+		return run_mission(m, level, policy, rng, section_policy)
 	var hit_prob := 1.0
 	var until := INF
 	var no_bass := false
@@ -206,8 +211,12 @@ static func _gauss(rng: RandomNumberGenerator) -> float:
 	return sqrt(-2.0 * log(maxf(rng.randf(), 1e-9))) * cos(TAU * rng.randf())
 
 
-static func run_mission(m: Match, level: Level, policy: String, rng: RandomNumberGenerator) -> Dictionary:
+static func run_mission(m: Match, level: Level, policy: String, rng: RandomNumberGenerator, section_policy: String = "") -> Dictionary:
 	var plan := plan_inputs(level, policy, rng)
+	if section_policy.is_empty():
+		section_policy = "auto" if m.battle_enabled and int(m.sim.stats["civilians_total"]) > 0 else "none"
+	var fixed_point := int(section_policy.substr(6)) if section_policy.begins_with("fixed:") else -1
+	var taps := 0
 	var down := {}
 	var k := 0
 	var t := -0.5
@@ -227,15 +236,26 @@ static func run_mission(m: Match, level: Level, policy: String, rng: RandomNumbe
 				down.erase(e["pad"])
 				m.release(int(e["pad"]), float(e["t"]), int(e["pad"]))
 			k += 1
+		if m.battle_enabled:
+			var want := -1
+			if section_policy == "auto":
+				want = m.suggest_point()
+			elif fixed_point >= 0:
+				want = fixed_point
+			if want >= 0 and want != m.sim.active_point and m.set_active_point(want):
+				taps += 1
 		m.advance(t)
 		for ev in m.drain_events():
 			if ev["kind"] in ["outcome", "wave", "reward_done"]:
 				timeline.append({"t": snappedf(t, 0.01), "event": ev})
 		if m.battle_enabled:
-			peak[0] = maxi(peak[0], m.sim.count_alive(0, BattleSim.Kind.UNIT))
+			peak[0] = maxi(peak[0], m.sim.count_alive(0, BattleSim.Kind.UNIT))  # count_alive leaves civilians out
 			peak[1] = maxi(peak[1], m.sim.count_alive(1, BattleSim.Kind.UNIT))
 	var r := m.result()
 	r["policy"] = policy
+	r["section_policy"] = section_policy
+	r["section_taps"] = taps
+	r["villagers_alive"] = m.sim.civilians_alive() if m.battle_enabled else 0
 	r["seed"] = level.seed
 	r["peak_live_units"] = peak
 	r["song_duration_s"] = duration

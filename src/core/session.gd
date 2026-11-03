@@ -9,7 +9,7 @@ const LEAD_IN_MAX_S := 1.2
 const LEAD_IN_DEFAULT_S := 0.7
 const PAD_SIZES := [0.30, 0.36, 0.42]  # share of the screen height the pad strip takes: compact, standard, large
 const DEFAULTS := {"calibration_ms": 0.0, "cue_lead_in_s": LEAD_IN_DEFAULT_S, "pad_size": 1, "high_contrast": false,
-	"reduced_effects": false, "vibration": true, "music_volume": 1.0, "show_keys": true}
+	"reduced_effects": false, "vibration": true, "music_volume": 1.0, "sfx_volume": 0.8, "show_keys": true}
 
 var campaign: Campaign  # saved progress (user://campaign.json) and the campaign data
 var campaign_level_id := ""  # the mission being played ("" for free play and playtests)
@@ -32,6 +32,7 @@ var high_contrast := false
 var reduced_effects := false
 var vibration := true
 var music_volume := 1.0
+var sfx_volume := 0.8  # effects (gunfire, explosions, EVA voices) on the "SFX" bus
 var show_keys := true  # desktop: the D F J K labels on the pads
 
 
@@ -73,6 +74,7 @@ func load_settings() -> void:
 	vibration = bool(cfg.get_value("play", "vibration", true))
 	music_volume = clampf(float(cfg.get_value("audio", "music_volume", 1.0)), 0.0, 1.0)
 	show_keys = bool(cfg.get_value("display", "show_keys", true))
+	sfx_volume = clampf(float(cfg.get_value("audio", "sfx_volume", DEFAULTS["sfx_volume"])), 0.0, 1.0)
 
 
 func save_settings() -> void:
@@ -87,6 +89,7 @@ func save_settings() -> void:
 	cfg.set_value("display", "reduced_effects", reduced_effects)
 	cfg.set_value("display", "show_keys", show_keys)
 	cfg.set_value("audio", "music_volume", music_volume)
+	cfg.set_value("audio", "sfx_volume", sfx_volume)
 	cfg.save(SETTINGS_PATH)
 
 
@@ -100,13 +103,17 @@ func reset_settings(include_calibration: bool = false) -> void:
 	reduced_effects = DEFAULTS["reduced_effects"]
 	vibration = DEFAULTS["vibration"]
 	music_volume = DEFAULTS["music_volume"]
+	sfx_volume = DEFAULTS["sfx_volume"]
 	show_keys = DEFAULTS["show_keys"]
 	apply_volume()
 	save_settings()
 
 
 func apply_volume() -> void:
-	AudioServer.set_bus_volume_db(0, -80.0 if music_volume <= 0.001 else linear_to_db(music_volume))
+	var music_bus := StemTransport.ensure_music_bus()
+	AudioServer.set_bus_volume_db(music_bus, -80.0 if music_volume <= 0.001 else linear_to_db(music_volume))
+	var sfx_bus := BattleSfx.ensure_bus()
+	AudioServer.set_bus_volume_db(sfx_bus, -80.0 if sfx_volume <= 0.001 else linear_to_db(sfx_volume))
 
 
 ## Set up a campaign (or practice) run of mission `number` and remember the selection for next time.

@@ -1,0 +1,233 @@
+{
+ "gun5": {
+  "file": "gun5.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.92
+ },
+ "gun11": {
+  "file": "gun11.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.61
+ },
+ "gun13": {
+  "file": "gun13.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.74
+ },
+ "pillbox1": {
+  "file": "pillbox1.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.76
+ },
+ "grenade1": {
+  "file": "grenade1.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.16
+ },
+ "kaboom1": {
+  "file": "kaboom1.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 1.13
+ },
+ "kaboom12": {
+  "file": "kaboom12.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.73
+ },
+ "kaboom25": {
+  "file": "kaboom25.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.81
+ },
+ "kaboom30": {
+  "file": "kaboom30.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.79
+ },
+ "crmble2": {
+  "file": "crmble2.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 1.03
+ },
+ "dedman1": {
+  "file": "dedman1.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.47
+ },
+ "dedman2": {
+  "file": "dedman2.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.42
+ },
+ "dedman3": {
+  "file": "dedman3.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.78
+ },
+ "dedman4": {
+  "file": "dedman4.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.63
+ },
+ "dedman5": {
+  "file": "dedman5.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.97
+ },
+ "dedman6": {
+  "file": "dedman6.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.92
+ },
+ "dedman7": {
+  "file": "dedman7.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.37
+ },
+ "dedman8": {
+  "file": "dedman8.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.56
+ },
+ "girlokay": {
+  "file": "girlokay.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.57
+ },
+ "guyokay1": {
+  "file": "guyokay1.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.45
+ },
+ "placbldg": {
+  "file": "placbldg.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.69
+ },
+ "build5": {
+  "file": "build5.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 1.75
+ },
+ "bleep11": {
+  "file": "bleep11.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.39
+ },
+ "cashturn": {
+  "file": "cashturn.ogg",
+  "source": "sounds.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.8
+ },
+ "unitrdy1": {
+  "file": "unitrdy1.ogg",
+  "source": "speech.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 1.23
+ },
+ "enmyapp1": {
+  "file": "enmyapp1.ogg",
+  "source": "speech.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 1.32
+ },
+ "baseatk1": {
+  "file": "baseatk1.ogg",
+  "source": "speech.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 1.51
+ },
+ "unitlst1": {
+  "file": "unitlst1.ogg",
+  "source": "speech.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 1.39
+ },
+ "misnwon1": {
+  "file": "misnwon1.ogg",
+  "source": "speech.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 1.53
+ },
+ "misnlst1": {
+  "file": "misnlst1.ogg",
+  "source": "speech.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 1.34
+ },
+ "reinfor1": {
+  "file": "reinfor1.ogg",
+  "source": "speech.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 1.53
+ },
+ "ackno": {
+  "file": "ackno.ogg",
+  "source": "allies.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.8
+ },
+ "affirm1": {
+  "file": "affirm1.ogg",
+  "source": "allies.mix",
+  "format": "ima_adpcm",
+  "rate": 22050,
+  "seconds": 0.86
+ }
+}

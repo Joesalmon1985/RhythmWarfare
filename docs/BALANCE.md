@@ -130,6 +130,45 @@ no rendering) with a scripted input policy at 60 Hz. One row per mission, policy
 Seeds change the battle simulation and the input draws. A simulation pass is evidence about the waves, not about how
 hard a mission feels to a person: nobody has played these missions.
 
+## Mission 1, the village level (3 November 2026)
+
+Mission 1 is now 128 bars (176.6 s), sixteen eight-bar phases DDBD BDDB DBDB DDBD, 32 four-bar sequences, on the
+`village_01` battlefield: three choke points with five riflemen each from the start (`start_units`), ten houses and
+ten civilians inside the wall, the barracks (60,000 hp, the only required objective) in the middle. Rewards: 9
+pillboxes (three sockets open per point), 18 rifle squads and 5 grenadier squads of three (the harness counts units
+and repairs where the sockets or points were full). 25 waves, 139 enemies, in four acts: bars 1 to 27 single riflemen
+waves at the choke points (`target: defenses`), bars 33 to 62 two entries at once, defenses then the village
+(`civilians`), bars 65 to 90 grenadiers and three jeeps for the village, bars 97 to 110 three waves of 5 riflemen and
+2 grenadiers from every side for the barracks (`core`). The autoplay harness taps the suggested section every frame
+(`RW_SECTION=auto`, the default on levels with civilians).
+
+Tuning rounds, seeds 1 to 3: round 1 (barracks 20,000 hp, 150 enemies) lost both sloppy seeds and let no input live
+past 1:10; round 2 (40,000 hp) still lost sloppy 2/2; round 3 (60,000 hp, waves 17 and 18 cut to 3 riflemen, the act
+4 waves at 5 + 2) is kept: perfect wins 3/3 with every wave destroyed (139 killed, 0 villagers lost, at most 1 house),
+beginner 3/3, sloppy 2/3 (seed 1 loses at 2:10 with 16 of 32 sequences), no input loses 3/3 at about 1:36 (the
+barracks falls to act 2 alone). Missions 2 to 10 produce byte-identical harness reports to the 2 November run (the
+civilian code paths are not entered, the combat rng is untouched).
+
+| Mission | Policy | Seed | Outcome | At | Sequences (sharp/steady/loose) | Built | Units | Repairs | Defenses alive | Barracks | Enemies killed | Peak units (you / enemy) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 First Watch | perfect | 1 | victory | 176.6 s | 32/32 (32/0/0) | 9 | 18 | 5 | 9 | 100% | 139 | 23 / 23 |
+| 1 First Watch | perfect | 2 | victory | 176.6 s | 32/32 (32/0/0) | 9 | 18 | 5 | 9 | 100% | 139 | 24 / 23 |
+| 1 First Watch | perfect | 3 | victory | 176.6 s | 32/32 (32/0/0) | 9 | 18 | 5 | 9 | 100% | 139 | 21 / 21 |
+| 1 First Watch | beginner | 1 | victory | 176.6 s | 31/32 (4/25/2) | 9 | 18 | 4 | 9 | 100% | 139 | 26 / 27 |
+| 1 First Watch | beginner | 2 | victory | 176.6 s | 30/32 (4/24/2) | 9 | 17 | 4 | 9 | 100% | 139 | 28 / 21 |
+| 1 First Watch | beginner | 3 | victory | 176.6 s | 29/32 (8/20/1) | 10 | 17 | 2 | 9 | 100% | 139 | 20 / 22 |
+| 1 First Watch | sloppy | 1 | defeat | 130.3 s | 16/32 (0/8/8) | 7 | 9 | 0 | 7 | 0% | 65 | 18 / 47 |
+| 1 First Watch | sloppy | 2 | victory | 176.6 s | 24/32 (0/9/15) | 10 | 14 | 0 | 8 | 100% | 139 | 16 / 33 |
+| 1 First Watch | sloppy | 3 | victory | 176.6 s | 28/32 (1/13/14) | 9 | 15 | 4 | 9 | 100% | 139 | 17 / 21 |
+| 1 First Watch | none | 1 | defeat | 97.1 s | 0/32 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 11 | 15 / 66 |
+| 1 First Watch | none | 2 | defeat | 95.2 s | 0/32 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 10 | 15 / 63 |
+| 1 First Watch | none | 3 | defeat | 95.6 s | 0/32 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 10 | 15 / 67 |
+
+These rows replace the 2 November mission 1 rows below and in the raw table. "Units" counts squads as three; the
+"Defenses alive" column counts pillboxes; the barracks is the "Core" column of the older tables. Known: the harness's
+"Peak units (you)" includes the 15 start riflemen; the sloppy loss is a run that never retakes a choke point held by an
+act 2 `defenses` wave.
+
 ## Mission 1 rebuilt on the owner's recordings (2 November 2026)
 
 Mission 1 is now 48 bars (66.2 s), six eight-bar phases DDBDBD, 12 four-bar sequences rewarding 7 pillboxes and
@@ -240,7 +279,7 @@ depot) has art but no unit-repair behaviour in the simulation, so it is not offe
 
 | Mission | Bars, seconds | Phases (D drums, B bass) | Sequences | Choices (pick of pool) | Streams at once | Pack (Ogg) |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 First Watch | 48, 66.2 s | DDBDBD | 12 | groove 1/3, bass line 1/2, bass sound 1/9 (5 or 4 fit the line), backing 1/3 | 4 | 10.0 MB |
+| 1 First Watch | 128, 176.6 s | DDBD BDDB DBDB DDBD | 32 | groove 1/3, bass line 1/2, bass sound 1/9 (5 or 4 fit the line), backing 1/3 | 4 | 27 MB |
 | 2 Second Pulse | 40, 55.2 s | DDDDD | 10 | groove 1/2, kick 1/2, snare 1/2 | 5 | 1.2 MB |
 | 3 Hold the Line | 48, 66.2 s | DBDBDB | 12 | kick 1/2, snare 1/2, bass voice 1/2 | 6 | 2.0 MB |
 | 4 Backbeat | 48, 66.2 s | DDDDDD | 12 | groove 1/2, kick 1/3, snare 1/3 | 5 | 3.3 MB |
@@ -251,13 +290,16 @@ depot) has art but no unit-repair behaviour in the simulation, so it is not offe
 | 9 Iron Rhythm | 64, 88.3 s | DDBDDBDD | 16 | grooves 2/3, fills 2/3, kicks 2/4, snare 1/4, bass 1/3, voices 2/4 | 12 | 11.6 MB |
 | 10 Last Light | 80, 110.3 s | DDBDBDBDBD | 20 | grooves 3/3, fills 2/3, kicks 2/3, snares 2/3, basses 2/3, voices 4/5 | 16 | 13.9 MB |
 
-The Ogg files of all ten packs come to 67 MB (every offered combination is pre-assembled; only the selected ones load).
+The Ogg files of all ten packs come to 84 MB (every offered combination is pre-assembled; only the selected ones load);
+mission 1 alone is 27 MB since its 18 stems run the full 129 bars.
 
 ## Not verified
 
-No phone run (frame time, memory, touch feel, the 16-stream mission 10 on a phone CPU), no real stems, no human
-playtest of any mission or of the difficulty curve, no listening check of the assembled stems beyond the build's
-sample-exact placement test. The beginner and sloppy policies are models of mistakes, not people.
+No phone run (frame time, memory, touch feel, the 16-stream mission 10 on a phone CPU, the 27 MB mission 1 pack), no
+real stems for missions 2 to 10, no human playtest of any mission, of the difficulty curve or of tapping sections
+by hand (the harness taps the suggested section every frame, a person taps rarely), no listening check of the
+assembled stems or of the battle sound effects beyond the build's sample-exact placement test. The beginner and
+sloppy policies are models of mistakes, not people.
 
 ## Raw rows (seeds 1 to 3, all policies)
 

@@ -50,11 +50,16 @@ func _mission(content: VBoxContainer, r: Dictionary) -> void:
 		lines.append("Holds kept to the end: %d of %d" % [int(r.get("holds_complete", 0)), holds])
 	if bool(r.get("battle", true)):
 		lines.append("Earned: %d defenses, %d units, %d repairs" % [int(r.get("built", 0)), int(r.get("units", 0)), int(r.get("repairs", 0))])
-		var hp: Dictionary = r.get("objective_hp", {}).get("command_core", {"hp": 0, "max": 1})
+		if int(r.get("villagers_total", 0)) > 0:
+			lines.append("Villagers lost: %d of %d" % [int(r.get("villagers_lost", 0)), int(r.get("villagers_total", 0))])
+		var primary := str(r.get("primary_objective", "")) if not str(r.get("primary_objective", "")).is_empty() else "command_core"
+		var what := str(r.get("primary_objective_name", "")).to_lower() if not str(r.get("primary_objective_name", "")).is_empty() else "command core"
+		var hp: Dictionary = r.get("objective_hp", {}).get(primary, {"hp": 0, "max": 1})
 		if outcome == "victory":
-			lines.append("The command core held at %d%%." % int(round(100.0 * float(hp["hp"]) / maxf(float(hp["max"]), 1.0))))
+			lines.append("The %s held at %d%%." % [what, int(round(100.0 * float(hp["hp"]) / maxf(float(hp["max"]), 1.0)))])
 		elif outcome == "defeat":
-			lines.append("Lost the %s." % str(r.get("reason", "")).replace("objective_destroyed:", "").replace("_", " "))
+			var reason := str(r.get("reason", ""))
+			lines.append("Lost the %s." % (what if reason == "objective_destroyed:" + primary else reason.replace("objective_destroyed:", "").replace("_", " ")))
 	for line in lines:
 		content.add_child(UiStyle.note(line, UiStyle.TEXT, 22))
 	var camp: Dictionary = r.get("campaign", {})

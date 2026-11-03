@@ -90,7 +90,9 @@ func test_failed_sequence_schedules_nothing() -> void:
 	for ev in m.drain_events():
 		assert_true(ev["kind"] != "reward_scheduled" and ev["kind"] != "reward_done", "no reward event at all")
 	assert_eq(m.sim.defense_count(), 0)
-	assert_eq(m.sim.count_alive(0, BattleSim.Kind.UNIT), 0)
+	var alive := m.sim.count_alive(0, BattleSim.Kind.UNIT)
+	assert_true(alive > 0 and alive <= 15, "only the 15 start riflemen (five per section) stand, no reward unit joined them (%d)" % alive)
+	assert_eq(m.sim.groups.size(), 3, "one group per start section, none from a reward")
 
 
 func test_placements_are_on_sockets_off_the_routes_and_inside_the_window() -> void:

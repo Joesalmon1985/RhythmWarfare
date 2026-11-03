@@ -10,6 +10,10 @@ extends Control
 
 const PIXEL_SCALE := 1  # integer multiple of the native 24 px cell, so sprites keep every pixel
 const FACTION_BASE := [Color(0.35, 0.62, 1.0), Color(1.0, 0.36, 0.30)]
+const NEUTRAL_LAYER := 2  # village civilians and houses: a third layer with a khaki ramp, drawn under both sides
+const NEUTRAL_BASE := Color(0.80, 0.70, 0.46)
+## Actors that draw with another actor's art (OpenRA TECN uses image c1).
+const ART_OF := {"tecn": "c1"}
 const AIR_ALTITUDE_PX := 30.0
 const DEAD_TINT := Color(0.45, 0.45, 0.45, 1.0)
 const WORLD_PER_CELL := 1024.0
@@ -67,17 +71,18 @@ func _ready() -> void:
 	_ground = _GroundLayer.new()
 	_ground.view = self
 	add_child(_ground)
-	for side in 2:
+	_layers.resize(3)
+	for id in [NEUTRAL_LAYER, 0, 1]:  # children draw in this order: the village under both armies
 		var layer := _SideLayer.new()
 		layer.view = self
-		layer.side = side
+		layer.side = id
 		var mat := ShaderMaterial.new()
 		mat.shader = shader
 		mat.set_shader_parameter("src_ramp", _ramp_from(bank.remap_ramp))
-		mat.set_shader_parameter("dst_ramp", _faction_ramp(FACTION_BASE[side]))
+		mat.set_shader_parameter("dst_ramp", _faction_ramp(NEUTRAL_BASE if id == NEUTRAL_LAYER else FACTION_BASE[id]))
 		layer.material = mat
 		add_child(layer)
-		_layers.append(layer)
+		_layers[id] = layer
 	_fx = _FxLayer.new()
 	_fx.view = self
 	add_child(_fx)
@@ -153,6 +158,16 @@ func _faction_ramp(base: Color) -> PackedVector3Array:
 	return out
 
 
+## The layer an entity is drawn in: its side, or the neutral layer for village civilians and houses.
+static func layer_of(e: BattleSim.Ent) -> int:
+	return NEUTRAL_LAYER if e.civilian else e.side
+
+
+## The sprite image an actor draws with.
+static func art_of(actor: String) -> String:
+	return ART_OF.get(actor, actor)
+
+
 func push_events(events: Array) -> void:
 	_pending.append_array(events)
 
@@ -222,13 +237,16 @@ func _add_effect(ev: Dictionary) -> void:
 			if e == null:
 				return
 			if role == "infantry":
+				var art := art_of(e.actor)
 				var deaths: Array = []
 				for i in range(1, 7):
-					if bank.has_sequence(e.actor, "die%d" % i):
+					if bank.has_sequence(art, "die%d" % i):
 						deaths.append("die%d" % i)
+				if bool(ev.get("crushed", false)) and bank.has_sequence(art, "die-crushed"):
+					deaths = ["die-crushed"]
 				if not deaths.is_empty():
 					var seq: String = deaths[e.id % deaths.size()]
-					_anim(e.actor, seq, pos, e.heading, 1, {"side": e.side, "life": seq_life(e.actor, seq) + 2.0, "hold": true})
+					_anim(art, seq, pos, e.heading, 1, {"side": layer_of(e), "life": seq_life(art, seq) + 2.0, "hold": true})
 				return
 			if e.kind == BattleSim.Kind.AIRCRAFT:
 				_anim("explosion", "med_explosion_air", pos, 0.0, 2, {"lift": AIR_ALTITUDE_PX})
@@ -249,6 +267,13 @@ func _add_effect(ev: Dictionary) -> void:
 			_anim_phase[int(ev["id"])] = _wall
 			if str(ev["kind"]) == "pad_built":
 				_ground_dirty = true
+		"reward_done":
+			if str(ev.get("result", "")) == "built" and ev.has("entity"):
+				_anim_phase[int(ev["entity"])] = _wall  # the new building plays its make animation
+		"section":
+			var pi := int(ev.get("point", -1))
+			if pi >= 0 and pi < sim.defense_points.size():
+				_anim("moveflsh", "idle", sim.defense_points[pi]["pos"], 0.0)
 
 
 ## Current animation frame index for a looping sequence.
@@ -356,7 +381,7 @@ class _SideLayer:
 			return
 		var ordered: Array = []
 		for e in view.sim.entities:
-			if e.side == side and (e.kind == BattleSim.Kind.BUILDING or e.alive):
+			if BattleView.layer_of(e) == side and (e.kind == BattleSim.Kind.BUILDING or e.alive):
 				ordered.append(e)
 		ordered.sort_custom(_painter_order)
 		for e in ordered:
@@ -381,6 +406,15 @@ class _SideLayer:
 				var idx := int(age * 1000.0 / view.bank.tick_ms(fx["image"], fx["seq"]))
 				if idx < n:
 					view.blit(self, fx["image"], fx["seq"], float(fx["heading"]), idx, view.to_px(fx["pos"]) + Vector2(0, -float(fx.get("lift", 0.0))))
+		if side == 0:
+			_draw_rally_flag()
+
+	## The rally flag at the active section, drawn in the player's layer so it takes the player colour.
+	func _draw_rally_flag() -> void:
+		var sim: BattleSim = view.sim
+		if sim.active_point < 0 or sim.active_point >= sim.defense_points.size() or not view.bank.has_sequence("flagfly", "flag"):
+			return
+		view.blit(self, "flagfly", "flag", 0.0, view.anim_index("flagfly", "flag"), view.to_px(sim.defense_points[sim.active_point]["pos"]))
 
 	static func _painter_order(a: BattleSim.Ent, b: BattleSim.Ent) -> bool:
 		var a_air := a.kind == BattleSim.Kind.AIRCRAFT
@@ -426,7 +460,7 @@ class _SideLayer:
 				view.blit(self, e.actor, turret, e.turret_heading, 0, view.building_centre_px(e))
 			if damaged and bank.has_sequence("smoke_m", "idle"):
 				view.blit(self, "smoke_m", "idle", 0.0, view.anim_index("smoke_m", "idle", e.id), view.to_px(Vector2(e.cx + e.w * 0.5, e.cy + 0.3)))
-		if e.alive and e.hp < e.max_hp:
+		if e.alive and e.hp < e.max_hp and not e.civilian:
 			view.health_bar(self, view.to_px(Vector2(e.cx, e.cy)) + Vector2(0, -5), e.w * view.cell, float(e.hp) / e.max_hp, e.repairing)
 
 	func _is_busy(e: BattleSim.Ent) -> bool:
@@ -458,22 +492,29 @@ class _SideLayer:
 		var bank: SpriteBank = view.bank
 		var c := view.to_px(e.center())
 		if e.role == "infantry":
+			var art := BattleView.art_of(e.actor)
 			var seq := "stand"
 			var anim := 0
-			if e.moving and bank.has_sequence(e.actor, "run"):
+			if e.civilian:
+				var fleeing := e.civ_state == "flee"
+				seq = bank.pick(art, ["panic-run", "run"] if fleeing else ["run"]) if e.moving else bank.pick(art, ["panic-stand", "stand"] if fleeing else ["stand"])
+				if seq.is_empty():
+					seq = "stand"
+				anim = view.anim_index(art, seq, e.id) if bank.length(art, seq) > 1 else 0
+			elif e.moving and bank.has_sequence(art, "run"):
 				seq = "run"
-				anim = view.anim_index(e.actor, "run", e.id)
+				anim = view.anim_index(art, "run", e.id)
 			elif e.target >= 0:
-				var attack := bank.pick(e.actor, ["shoot", "throw"])
+				var attack := bank.pick(art, ["shoot", "throw"])
 				if not attack.is_empty():
 					seq = attack
-					anim = view.anim_index(e.actor, seq, e.id)
-			view.blit(self, e.actor, seq, e.heading, anim, c)
+					anim = view.anim_index(art, seq, e.id)
+			view.blit(self, art, seq, e.heading, anim, c)
 		else:
 			view.blit(self, e.actor, "idle", e.heading, 0, c)
 			if bank.has_sequence(e.actor, "turret"):
 				view.blit(self, e.actor, "turret", e.turret_heading, 0, c)
-		if e.hp < e.max_hp:
+		if e.hp < e.max_hp and not e.civilian:
 			view.health_bar(self, c + Vector2(-10, -14), 20, float(e.hp) / e.max_hp, false)
 
 	func _draw_aircraft(e: BattleSim.Ent) -> void:

@@ -2,6 +2,10 @@ extends TestCase
 ## Schema 3 missions: loading a selection, cues on pads, sequences, rewards scheduled through the simulation.
 
 
+const BUILT := 9
+const UNITS := 18  # squads delivered: 11 rifle + 7 grenadier rewards, all within the 14-per-point capacity under perfect play
+
+
 func _load(pack: String, options: Dictionary = {}) -> Level:
 	var loaded := LevelLoader.load_pack(TestCase.project_path("songs/" + pack), options)
 	assert_eq(loaded["errors"], [], pack)
@@ -36,8 +40,8 @@ func _play(m: Match, level: Level, hit: Callable) -> void:
 func test_mission_one_loads_with_pads_sequences_and_rewards() -> void:
 	var level := _load("m01_first_watch")
 	assert_true(level.is_mission())
-	assert_eq(level.notes.size(), 102, "four drum phases of 10 kicks and 8 snares, two bass phases of 15 holds")
-	assert_eq(level.sequences.size(), 12)
+	assert_eq(level.notes.size(), 10 * 18 + 6 * 15, "ten drum phases of 10 kicks and 8 snares, six bass phases of 15 holds")
+	assert_eq(level.sequences.size(), 32, "128 bars in four-bar sequences")
 	assert_eq(str(level.sequences[0]["reward"]), "pillbox", "the first drum sequence rewards one pillbox")
 	var pads := {}
 	for n in level.notes:
@@ -69,10 +73,11 @@ func test_perfect_play_passes_every_sequence_and_builds() -> void:
 	m.setup(level)
 	_play(m, level, func(_i: int, _n: Dictionary) -> bool: return true)
 	var r := m.result()
-	assert_eq(r["sequences_passed"], 12)
-	assert_eq(r["grades"]["sharp"], 12)
-	assert_eq(r["built"], 7, "seven pillboxes")
-	assert_eq(r["units"], 5, "five jeeps")
+	assert_eq(r["sequences_passed"], 32)
+	assert_eq(r["grades"]["sharp"], 32)
+	assert_eq(r["outcome"], "victory")
+	assert_eq(r["built"], BUILT, "three sockets per point: only nine pillboxes fit, later pillbox rewards repair")
+	assert_eq(r["units"], UNITS, "rifle and grenadier squads of three")
 	assert_true(m.sim.defense_count() > 0)
 
 

@@ -1,0 +1,33 @@
+{
+  "_doc": "Battle events -> Red Alert sounds (assets/sfx/<name>.ogg). A rule has sounds (names), pick (first | id: sounds[id % n] | parity | alternate | all), volume_db, cooldown (seconds between plays of the rule) and eva (a voice line: never overlaps another EVA line, one waits in the queue; priority 1 cuts a playing line off).",
+  "pool": 12,
+  "max_voices": 8,
+  "shot": {
+    "M1Carbine": {"sounds": ["gun11"], "pick": "first", "volume_db": -8, "cooldown": 0.08},
+    "M60mg": {"sounds": ["pillbox1"], "pick": "first", "volume_db": -8, "cooldown": 0.08},
+    "Vulcan": {"sounds": ["gun13"], "pick": "first", "volume_db": -8, "cooldown": 0.08},
+    "Grenade": {"sounds": ["grenade1"], "pick": "first", "volume_db": -8, "cooldown": 0.08}
+  },
+  "destroyed": {
+    "building": {"sounds": ["crmble2", "kaboom25"], "pick": "all", "volume_db": -3},
+    "civilian": {"sounds": ["girlokay", "guyokay1"], "pick": "parity", "volume_db": -4},
+    "infantry": {"sounds": ["dedman1", "dedman2", "dedman3", "dedman4", "dedman5", "dedman6", "dedman7", "dedman8"], "pick": "id", "volume_db": -6, "cooldown": 0.05},
+    "vehicle": {"sounds": ["kaboom12"], "pick": "first", "volume_db": -3},
+    "aircraft": {"sounds": ["kaboom30"], "pick": "first", "volume_db": -3},
+    "unit_lost": {"sounds": ["unitlst1"], "pick": "first", "volume_db": -2, "cooldown": 6, "eva": true}
+  },
+  "hit_objective": {"sounds": ["baseatk1"], "pick": "first", "volume_db": -2, "cooldown": 15, "eva": true},
+  "reward_scheduled": {
+    "build": {"sounds": ["build5"], "pick": "first", "volume_db": -4}
+  },
+  "reward_done": {
+    "built": {"sounds": ["placbldg"], "pick": "first", "volume_db": -3},
+    "unit": {"sounds": ["unitrdy1"], "pick": "first", "volume_db": -2, "cooldown": 2, "eva": true}
+  },
+  "wave_warning": {"sounds": ["enmyapp1"], "pick": "first", "volume_db": -2, "eva": true},
+  "section": {"sounds": ["ackno", "affirm1"], "pick": "alternate", "volume_db": -3},
+  "outcome": {
+    "victory": {"sounds": ["misnwon1"], "pick": "first", "volume_db": 0, "eva": true, "priority": 1},
+    "defeat": {"sounds": ["misnlst1"], "pick": "first", "volume_db": 0, "eva": true, "priority": 1}
+  }
+}

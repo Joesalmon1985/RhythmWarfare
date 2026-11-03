@@ -21,7 +21,9 @@ var stems_muted := {"kick": false, "snare": false, "bass": false, "other": false
 ## the sequences resolved, and the run ends at duration_ticks with outcome "complete".
 var battle_enabled := true
 var wave_stats: Dictionary = {}  # wave id -> {spawned, killed, first_spawn_s, reached_s, cleared_s}
-var _spawn_plan: Array = []  # [{time, wave, actor, entry, via, objective}] sorted by time
+var _spawn_plan: Array = []  # [{time, wave, actor, entry, via, objective, target}] sorted by time
+var _warn_plan: Array = []   # [{time, wave, entry}] sorted by time: one "wave_warning" per wave, WAVE_WARNING_S ahead
+var _warn_index := 0
 var _spawn_index := 0
 var _wave_of: Dictionary = {}  # entity id -> wave id
 var _pending_rewards: Array = []  # {lane, button, time}
@@ -33,6 +35,8 @@ var pad_judge := PadJudge.new()
 var tracker := SequenceTracker.new()
 var reward_log: Array = []  # [{sequence, reward, grade, delay_s, resolve_time, ready_time, result, kind, point, label}]
 var _resolved: Array = []  # sequence results waiting for the tick that contains their resolve time
+
+const WAVE_WARNING_S := 8.0  # the "wave_warning" event comes this long before a wave's first unit appears
 
 
 func setup(p_level: Level, p_rules: Rules = null, p_battle := true) -> void:
@@ -128,6 +132,8 @@ func _setup_mission(p_rules: Rules) -> void:
 	wave_stats = {}
 	_spawn_plan = []
 	_spawn_index = 0
+	_warn_plan = []
+	_warn_index = 0
 	_wave_of = {}
 	if not battle_enabled:
 		return
@@ -136,13 +142,16 @@ func _setup_mission(p_rules: Rules) -> void:
 	for w in level.waves:
 		var wave_id := str(w["id"])
 		wave_stats[wave_id] = {"spawned": 0, "killed": 0, "total": 0, "first_spawn_s": -1.0, "reached_s": -1.0, "cleared_s": -1.0}
+		_warn_plan.append({"time": level.tick_to_seconds(int(w["start_tick"])), "wave": wave_id, "entry": str(w["entry"])})
 		for g in w["groups"]:
 			var spacing := int(g.get("spawn_spacing_ticks", 0))
+			var target := str(g.get("target", w.get("target", "core")))  # a group may override its wave's target class
 			for i in int(g["count"]):
 				_spawn_plan.append({"time": level.tick_to_seconds(int(w["start_tick"]) + i * spacing), "wave": wave_id, "actor": str(g["actor"]),
-					"entry": str(w["entry"]), "via": str(w["via_defense_point"]), "objective": str(w["target_objective"])})
+					"entry": str(w["entry"]), "via": str(w["via_defense_point"]), "objective": str(w["target_objective"]), "target": target})
 				wave_stats[wave_id]["total"] += 1
 	_spawn_plan.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["time"] < b["time"])
+	_warn_plan.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["time"] < b["time"])
 
 
 func _advance_mission(t: float) -> Array:
@@ -157,6 +166,7 @@ func _advance_mission(t: float) -> Array:
 		while sim_ticks < target_ticks and outcome.is_empty():
 			var tick_end := float(sim_ticks + 1) * BattleSim.TICK_S
 			_apply_sequences_before(tick_end)
+			_apply_wave_warnings_before(tick_end)
 			_apply_waves_before(tick_end)
 			sim.tick()
 			sim_ticks += 1
@@ -213,6 +223,52 @@ func _next_wave_point() -> int:
 	return -1
 
 
+## The section a tap would most usefully pick now: where the next wave comes through, else the section already
+## active, else the one holding the fewest defenders. -1 when the level has no sections.
+func suggest_point() -> int:
+	if not battle_enabled or sim.defense_points.is_empty():
+		return -1
+	var hint := _next_wave_point()
+	if hint >= 0:
+		return hint
+	if sim.active_point >= 0:
+		return sim.active_point
+	var best := 0
+	var best_n := 1 << 30
+	for i in sim.defense_points.size():
+		var n := sim.units_at(i)
+		if n < best_n:
+			best = i
+			best_n = n
+	return best
+
+
+## The player taps a section: new rewards deploy to it while it has room (-1 clears the choice). Emits a "section"
+## event {point, id} for the view. Returns false for an index that is not a section.
+func set_active_point(i: int) -> bool:
+	if not battle_enabled or not outcome.is_empty() or i < -1 or i >= sim.defense_points.size():
+		return false
+	sim.active_point = i
+	_events.append({"kind": "section", "point": i, "id": str(sim.defense_points[i]["id"]) if i >= 0 else ""})
+	return true
+
+
+## The name shown for the primary objective on the result screen.
+func _objective_name(id: String) -> String:
+	match sim.objective_role(id):
+		"main":
+			return "Command core"
+		"barracks":
+			return "Barracks"
+		"power":
+			return "Power plant"
+		"dome":
+			return "Radar dome"
+		"factory":
+			return "War factory"
+	return id.replace("_", " ").capitalize()
+
+
 func _mission_result() -> Dictionary:
 	var grades := tracker.grade_counts()
 	var built := 0
@@ -267,6 +323,12 @@ func _mission_result() -> Dictionary:
 		"reward_log": reward_log.duplicate(true),
 		"outcome_time_s": outcome_time,
 		"objective_hp": _objective_report(),
+		"primary_objective": sim.primary_objective_id() if battle_enabled else "",
+		"primary_objective_name": _objective_name(sim.primary_objective_id()) if battle_enabled and not sim.primary_objective_id().is_empty() else "",
+		"villagers_total": int(sim.stats["civilians_total"]) if battle_enabled else 0,
+		"villagers_lost": int(sim.stats["civilians_lost"]) if battle_enabled else 0,
+		"houses_total": int(sim.stats["houses_total"]) if battle_enabled else 0,
+		"houses_lost": int(sim.stats["houses_lost"]) if battle_enabled else 0,
 		"waves": wave_stats.duplicate(true),
 		"produced": sim.stats["produced"].duplicate(true) if battle_enabled else [],
 		"lost": sim.stats["lost"].duplicate(true) if battle_enabled else [],
@@ -274,11 +336,19 @@ func _mission_result() -> Dictionary:
 	}
 
 
+## Once per wave, WAVE_WARNING_S before its first unit appears (at once for a wave that starts sooner than that).
+func _apply_wave_warnings_before(tick_end: float) -> void:
+	while _warn_index < _warn_plan.size() and float(_warn_plan[_warn_index]["time"]) - WAVE_WARNING_S < tick_end:
+		var w: Dictionary = _warn_plan[_warn_index]
+		_warn_index += 1
+		_events.append({"kind": "wave_warning", "wave": w["wave"], "entry": w["entry"], "in_s": maxf(float(w["time"]) - tick_end, 0.0)})
+
+
 ## Enemy waves are scheduled by song time and spawn with no producer, whatever the player did.
 func _apply_waves_before(tick_end: float) -> void:
 	while _spawn_index < _spawn_plan.size() and _spawn_plan[_spawn_index]["time"] < tick_end:
 		var sp: Dictionary = _spawn_plan[_spawn_index]
-		var u := sim.spawn_wave_unit(sp["actor"], sp["entry"], sp["via"], sp["objective"])
+		var u := sim.spawn_wave_unit(sp["actor"], sp["entry"], sp["via"], sp["objective"], sp["target"])
 		if u == null:
 			return  # entry cell occupied: retry next tick, keep the authored order
 		_spawn_index += 1
@@ -364,7 +434,7 @@ func _set_stem(key: String, muted: bool, now: float) -> void:
 	_events.append({"kind": "stem", "stem": key, "muted": muted, "time": now})
 
 
-## The next wave that has not started yet: {id, number, in_s, entry, via, objective}, or {} when none is left.
+## The next wave that has not started yet: {id, number, in_s, entry, via, objective, target}, or {} when none is left.
 func upcoming_wave() -> Dictionary:
 	var now := float(sim_ticks) * BattleSim.TICK_S
 	if not battle_enabled:
@@ -373,7 +443,8 @@ func upcoming_wave() -> Dictionary:
 		var w: Dictionary = level.waves[i]
 		var start := level.tick_to_seconds(int(w["start_tick"]))
 		if start > now:
-			return {"id": w["id"], "number": i + 1, "in_s": start - now, "entry": w["entry"], "via": w["via_defense_point"], "objective": w["target_objective"]}
+			return {"id": w["id"], "number": i + 1, "in_s": start - now, "entry": w["entry"], "via": w["via_defense_point"],
+				"objective": w["target_objective"], "target": str(w.get("target", "core"))}
 	return {}
 
 

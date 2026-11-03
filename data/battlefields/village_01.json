@@ -1,0 +1,665 @@
+{
+ "id": "village_01",
+ "mode": "defense",
+ "map": "field_80x40",
+ "width": 80,
+ "height": 40,
+ "view": {
+  "center": [
+   39.5,
+   20.5
+  ],
+  "max_cells": [
+   53.4,
+   20.0
+  ]
+ },
+ "note": "The level 1 map (schema 3): defense_02's wall ring, openings, three defense points, entries, sockets and view, with the compound turned into a village. The infantry barracks (the one required objective) stands in the centre, ten civilian houses (v01..v08 at their OpenRA footprints) form a ring around it, and ten civilians (eight technicians, a man and a woman) wander inside the wander rectangle. Rows 21 and 22 stay clear from the left opening to the right one and columns 36..41 stay clear above the barracks, so every opening has a lane of at least two cells to the barracks exit (checked by the generator with a flood fill). No command core, factory, power plant or radar dome.",
+ "objectives": [
+  {
+   "id": "barracks",
+   "role": "barracks",
+   "required": true
+  }
+ ],
+ "defense_points": [
+  {
+   "id": "defense_1",
+   "x": 24,
+   "y": 21
+  },
+  {
+   "id": "defense_2",
+   "x": 39,
+   "y": 13
+  },
+  {
+   "id": "defense_3",
+   "x": 54,
+   "y": 21
+  }
+ ],
+ "entries": [
+  {
+   "id": "left",
+   "x": 8,
+   "y": 21
+  },
+  {
+   "id": "top",
+   "x": 39,
+   "y": 0
+  },
+  {
+   "id": "right",
+   "x": 70,
+   "y": 21
+  }
+ ],
+ "leash_cells": 6.0,
+ "buildings": [
+  {
+   "role": "brick",
+   "x": 28,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 29,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 30,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 31,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 32,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 33,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 34,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 35,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 36,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 42,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 43,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 44,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 45,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 46,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 47,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 48,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 49,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 50,
+   "y": 16,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 28,
+   "y": 17,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 50,
+   "y": 17,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 28,
+   "y": 18,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 50,
+   "y": 18,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 28,
+   "y": 24,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 50,
+   "y": 24,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 28,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 29,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 30,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 31,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 32,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 33,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 34,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 35,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 36,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 37,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 38,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 39,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 40,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 41,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 42,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 43,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 44,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 45,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 46,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 47,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 48,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 49,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "brick",
+   "x": 50,
+   "y": 25,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "barracks",
+   "x": 38,
+   "y": 19,
+   "w": 2,
+   "h": 2
+  },
+  {
+   "role": "village",
+   "actor": "v01",
+   "x": 31,
+   "y": 17,
+   "w": 2,
+   "h": 2
+  },
+  {
+   "role": "village",
+   "actor": "v02",
+   "x": 46,
+   "y": 17,
+   "w": 2,
+   "h": 2
+  },
+  {
+   "role": "village",
+   "actor": "v03",
+   "x": 31,
+   "y": 23,
+   "w": 2,
+   "h": 2
+  },
+  {
+   "role": "village",
+   "actor": "v04",
+   "x": 46,
+   "y": 23,
+   "w": 2,
+   "h": 2
+  },
+  {
+   "role": "village",
+   "actor": "v05",
+   "x": 34,
+   "y": 19,
+   "w": 2,
+   "h": 1
+  },
+  {
+   "role": "village",
+   "actor": "v06",
+   "x": 43,
+   "y": 19,
+   "w": 2,
+   "h": 1
+  },
+  {
+   "role": "village",
+   "actor": "v07",
+   "x": 34,
+   "y": 23,
+   "w": 2,
+   "h": 1
+  },
+  {
+   "role": "village",
+   "actor": "v08",
+   "x": 43,
+   "y": 23,
+   "w": 1,
+   "h": 1
+  },
+  {
+   "role": "village",
+   "actor": "v05",
+   "x": 34,
+   "y": 17,
+   "w": 2,
+   "h": 1
+  },
+  {
+   "role": "village",
+   "actor": "v06",
+   "x": 44,
+   "y": 17,
+   "w": 2,
+   "h": 1
+  }
+ ],
+ "exits": {
+  "barracks": [
+   39,
+   21
+  ]
+ },
+ "rally": [
+  39,
+  23
+ ],
+ "air_hold": [
+  39,
+  23
+ ],
+ "air_wait": [
+  39,
+  23
+ ],
+ "sockets": [
+  {
+   "id": "s1_1",
+   "point": 0,
+   "order": 0,
+   "x": 25,
+   "y": 18
+  },
+  {
+   "id": "s1_2",
+   "point": 0,
+   "order": 1,
+   "x": 25,
+   "y": 24
+  },
+  {
+   "id": "s1_3",
+   "point": 0,
+   "order": 2,
+   "x": 21,
+   "y": 17
+  },
+  {
+   "id": "s1_4",
+   "point": 0,
+   "order": 3,
+   "x": 21,
+   "y": 25
+  },
+  {
+   "id": "s1_5",
+   "point": 0,
+   "order": 4,
+   "x": 17,
+   "y": 18
+  },
+  {
+   "id": "s2_1",
+   "point": 1,
+   "order": 0,
+   "x": 35,
+   "y": 14
+  },
+  {
+   "id": "s2_2",
+   "point": 1,
+   "order": 1,
+   "x": 43,
+   "y": 14
+  },
+  {
+   "id": "s2_3",
+   "point": 1,
+   "order": 2,
+   "x": 34,
+   "y": 12
+  },
+  {
+   "id": "s2_4",
+   "point": 1,
+   "order": 3,
+   "x": 44,
+   "y": 12
+  },
+  {
+   "id": "s2_5",
+   "point": 1,
+   "order": 4,
+   "x": 31,
+   "y": 13
+  },
+  {
+   "id": "s3_1",
+   "point": 2,
+   "order": 0,
+   "x": 53,
+   "y": 18
+  },
+  {
+   "id": "s3_2",
+   "point": 2,
+   "order": 1,
+   "x": 53,
+   "y": 24
+  },
+  {
+   "id": "s3_3",
+   "point": 2,
+   "order": 2,
+   "x": 57,
+   "y": 17
+  },
+  {
+   "id": "s3_4",
+   "point": 2,
+   "order": 3,
+   "x": 57,
+   "y": 25
+  },
+  {
+   "id": "s3_5",
+   "point": 2,
+   "order": 4,
+   "x": 61,
+   "y": 18
+  }
+ ],
+ "civilians": [
+  {
+   "actor": "tecn",
+   "x": 33,
+   "y": 21
+  },
+  {
+   "actor": "tecn",
+   "x": 35,
+   "y": 22
+  },
+  {
+   "actor": "tecn",
+   "x": 37,
+   "y": 18
+  },
+  {
+   "actor": "tecn",
+   "x": 41,
+   "y": 18
+  },
+  {
+   "actor": "tecn",
+   "x": 43,
+   "y": 21
+  },
+  {
+   "actor": "tecn",
+   "x": 45,
+   "y": 22
+  },
+  {
+   "actor": "tecn",
+   "x": 30,
+   "y": 22
+  },
+  {
+   "actor": "tecn",
+   "x": 48,
+   "y": 21
+  },
+  {
+   "actor": "c1",
+   "x": 38,
+   "y": 23
+  },
+  {
+   "actor": "c2",
+   "x": 40,
+   "y": 23
+  }
+ ],
+ "wander": {
+  "rect": [
+   29,
+   17,
+   49,
+   24
+  ],
+  "radius": 5.0,
+  "flee_radius": 6.0
+ }
+}

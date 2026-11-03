@@ -212,6 +212,22 @@
     11
    ]
   },
+  "c1": {
+   "source": "c1.shp",
+   "frames": 198,
+   "size": [
+    50,
+    39
+   ]
+  },
+  "c2": {
+   "source": "c2.shp",
+   "frames": 198,
+   "size": [
+    50,
+    39
+   ]
+  },
   "clear1": {
    "source": "clear1.tem",
    "frames": 16,
@@ -452,6 +468,14 @@
     72
    ]
   },
+  "flagfly": {
+   "source": "flagfly.shp",
+   "frames": 14,
+   "size": [
+    23,
+    23
+   ]
+  },
   "flak": {
    "source": "flak.shp",
    "frames": 7,
@@ -618,6 +642,14 @@
    "size": [
     15,
     15
+   ]
+  },
+  "moveflsh": {
+   "source": "moveflsh.tem",
+   "frames": 5,
+   "size": [
+    23,
+    23
    ]
   },
   "napalm1": {
@@ -914,6 +946,70 @@
    "size": [
     96,
     72
+   ]
+  },
+  "v01": {
+   "source": "v01.tem",
+   "frames": 2,
+   "size": [
+    48,
+    48
+   ]
+  },
+  "v02": {
+   "source": "v02.tem",
+   "frames": 2,
+   "size": [
+    48,
+    48
+   ]
+  },
+  "v03": {
+   "source": "v03.tem",
+   "frames": 2,
+   "size": [
+    48,
+    48
+   ]
+  },
+  "v04": {
+   "source": "v04.tem",
+   "frames": 4,
+   "size": [
+    48,
+    48
+   ]
+  },
+  "v05": {
+   "source": "v05.tem",
+   "frames": 4,
+   "size": [
+    48,
+    24
+   ]
+  },
+  "v06": {
+   "source": "v06.tem",
+   "frames": 2,
+   "size": [
+    48,
+    24
+   ]
+  },
+  "v07": {
+   "source": "v07.tem",
+   "frames": 4,
+   "size": [
+    48,
+    24
+   ]
+  },
+  "v08": {
+   "source": "v08.tem",
+   "frames": 2,
+   "size": [
+    24,
+    24
    ]
   },
   "v2": {
@@ -36864,6 +36960,2555 @@
     }
    }
   },
+  "c1": {
+   "yaml": "infantry.yaml",
+   "sequences": {
+    "stand": {
+     "start": 0,
+     "length": 1,
+     "stride": 1,
+     "facings": 8,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c1",
+     "combine": null,
+     "frame_table": [
+      [
+       0
+      ],
+      [
+       1
+      ],
+      [
+       2
+      ],
+      [
+       3
+      ],
+      [
+       4
+      ],
+      [
+       5
+      ],
+      [
+       6
+      ],
+      [
+       7
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c1.shp"
+    },
+    "panic-stand": {
+     "start": 0,
+     "length": 1,
+     "stride": 1,
+     "facings": 8,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c1",
+     "combine": null,
+     "frame_table": [
+      [
+       0
+      ],
+      [
+       1
+      ],
+      [
+       2
+      ],
+      [
+       3
+      ],
+      [
+       4
+      ],
+      [
+       5
+      ],
+      [
+       6
+      ],
+      [
+       7
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c1.shp"
+    },
+    "panic-run": {
+     "start": 8,
+     "length": 6,
+     "stride": 6,
+     "facings": 8,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c1",
+     "combine": null,
+     "frame_table": [
+      [
+       8,
+       9,
+       10,
+       11,
+       12,
+       13
+      ],
+      [
+       14,
+       15,
+       16,
+       17,
+       18,
+       19
+      ],
+      [
+       20,
+       21,
+       22,
+       23,
+       24,
+       25
+      ],
+      [
+       26,
+       27,
+       28,
+       29,
+       30,
+       31
+      ],
+      [
+       32,
+       33,
+       34,
+       35,
+       36,
+       37
+      ],
+      [
+       38,
+       39,
+       40,
+       41,
+       42,
+       43
+      ],
+      [
+       44,
+       45,
+       46,
+       47,
+       48,
+       49
+      ],
+      [
+       50,
+       51,
+       52,
+       53,
+       54,
+       55
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c1.shp"
+    },
+    "shoot": {
+     "start": 120,
+     "length": 4,
+     "stride": 4,
+     "facings": 8,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c1",
+     "combine": null,
+     "frame_table": [
+      [
+       120,
+       121,
+       122,
+       123
+      ],
+      [
+       124,
+       125,
+       126,
+       127
+      ],
+      [
+       128,
+       129,
+       130,
+       131
+      ],
+      [
+       132,
+       133,
+       134,
+       135
+      ],
+      [
+       136,
+       137,
+       138,
+       139
+      ],
+      [
+       140,
+       141,
+       142,
+       143
+      ],
+      [
+       144,
+       145,
+       146,
+       147
+      ],
+      [
+       148,
+       149,
+       150,
+       151
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c1.shp"
+    },
+    "idle1": {
+     "start": 104,
+     "length": 9,
+     "stride": 9,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c1",
+     "combine": null,
+     "frame_table": [
+      [
+       104,
+       105,
+       106,
+       107,
+       108,
+       109,
+       110,
+       111,
+       112
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c1.shp"
+    },
+    "idle2": {
+     "start": 114,
+     "length": 6,
+     "stride": 6,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c1",
+     "combine": null,
+     "frame_table": [
+      [
+       114,
+       115,
+       116,
+       117,
+       118,
+       119
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c1.shp"
+    },
+    "die1": {
+     "start": 152,
+     "length": 8,
+     "stride": 8,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c1",
+     "combine": null,
+     "frame_table": [
+      [
+       152,
+       153,
+       154,
+       155,
+       156,
+       157,
+       158,
+       159
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c1.shp"
+    },
+    "die2": {
+     "start": 160,
+     "length": 8,
+     "stride": 8,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c1",
+     "combine": null,
+     "frame_table": [
+      [
+       160,
+       161,
+       162,
+       163,
+       164,
+       165,
+       166,
+       167
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c1.shp"
+    },
+    "die3": {
+     "start": 168,
+     "length": 12,
+     "stride": 12,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c1",
+     "combine": null,
+     "frame_table": [
+      [
+       168,
+       169,
+       170,
+       171,
+       172,
+       173,
+       174,
+       175,
+       176,
+       177,
+       178,
+       179
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c1.shp"
+    },
+    "die4": {
+     "start": 168,
+     "length": 12,
+     "stride": 12,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c1",
+     "combine": null,
+     "frame_table": [
+      [
+       168,
+       169,
+       170,
+       171,
+       172,
+       173,
+       174,
+       175,
+       176,
+       177,
+       178,
+       179
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c1.shp"
+    },
+    "die5": {
+     "start": 180,
+     "length": 18,
+     "stride": 18,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c1",
+     "combine": null,
+     "frame_table": [
+      [
+       180,
+       181,
+       182,
+       183,
+       184,
+       185,
+       186,
+       187,
+       188,
+       189,
+       190,
+       191,
+       192,
+       193,
+       194,
+       195,
+       196,
+       197
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c1.shp"
+    },
+    "die6": {
+     "start": 0,
+     "length": 22,
+     "stride": 22,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": [
+      0,
+      1,
+      2,
+      3,
+      0,
+      1,
+      2,
+      3,
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "electro",
+     "combine": null,
+     "frame_table": [
+      [
+       0,
+       1,
+       2,
+       3,
+       0,
+       1,
+       2,
+       3,
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9,
+       10,
+       11,
+       12,
+       13
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "electro.tem"
+    },
+    "die-crushed": {
+     "start": 0,
+     "length": 6,
+     "stride": 6,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 1600,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": -511,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "corpse1",
+     "combine": null,
+     "frame_table": [
+      [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "corpse1.tem"
+    },
+    "run": {
+     "start": 56,
+     "length": 6,
+     "stride": 6,
+     "facings": 8,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c1",
+     "combine": null,
+     "frame_table": [
+      [
+       56,
+       57,
+       58,
+       59,
+       60,
+       61
+      ],
+      [
+       62,
+       63,
+       64,
+       65,
+       66,
+       67
+      ],
+      [
+       68,
+       69,
+       70,
+       71,
+       72,
+       73
+      ],
+      [
+       74,
+       75,
+       76,
+       77,
+       78,
+       79
+      ],
+      [
+       80,
+       81,
+       82,
+       83,
+       84,
+       85
+      ],
+      [
+       86,
+       87,
+       88,
+       89,
+       90,
+       91
+      ],
+      [
+       92,
+       93,
+       94,
+       95,
+       96,
+       97
+      ],
+      [
+       98,
+       99,
+       100,
+       101,
+       102,
+       103
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c1.shp"
+    }
+   }
+  },
+  "c2": {
+   "yaml": "infantry.yaml",
+   "sequences": {
+    "stand": {
+     "start": 0,
+     "length": 1,
+     "stride": 1,
+     "facings": 8,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c2",
+     "combine": null,
+     "frame_table": [
+      [
+       0
+      ],
+      [
+       1
+      ],
+      [
+       2
+      ],
+      [
+       3
+      ],
+      [
+       4
+      ],
+      [
+       5
+      ],
+      [
+       6
+      ],
+      [
+       7
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c2.shp"
+    },
+    "panic-stand": {
+     "start": 0,
+     "length": 1,
+     "stride": 1,
+     "facings": 8,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c2",
+     "combine": null,
+     "frame_table": [
+      [
+       0
+      ],
+      [
+       1
+      ],
+      [
+       2
+      ],
+      [
+       3
+      ],
+      [
+       4
+      ],
+      [
+       5
+      ],
+      [
+       6
+      ],
+      [
+       7
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c2.shp"
+    },
+    "panic-run": {
+     "start": 8,
+     "length": 6,
+     "stride": 6,
+     "facings": 8,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c2",
+     "combine": null,
+     "frame_table": [
+      [
+       8,
+       9,
+       10,
+       11,
+       12,
+       13
+      ],
+      [
+       14,
+       15,
+       16,
+       17,
+       18,
+       19
+      ],
+      [
+       20,
+       21,
+       22,
+       23,
+       24,
+       25
+      ],
+      [
+       26,
+       27,
+       28,
+       29,
+       30,
+       31
+      ],
+      [
+       32,
+       33,
+       34,
+       35,
+       36,
+       37
+      ],
+      [
+       38,
+       39,
+       40,
+       41,
+       42,
+       43
+      ],
+      [
+       44,
+       45,
+       46,
+       47,
+       48,
+       49
+      ],
+      [
+       50,
+       51,
+       52,
+       53,
+       54,
+       55
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c2.shp"
+    },
+    "shoot": {
+     "start": 120,
+     "length": 4,
+     "stride": 4,
+     "facings": 8,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c2",
+     "combine": null,
+     "frame_table": [
+      [
+       120,
+       121,
+       122,
+       123
+      ],
+      [
+       124,
+       125,
+       126,
+       127
+      ],
+      [
+       128,
+       129,
+       130,
+       131
+      ],
+      [
+       132,
+       133,
+       134,
+       135
+      ],
+      [
+       136,
+       137,
+       138,
+       139
+      ],
+      [
+       140,
+       141,
+       142,
+       143
+      ],
+      [
+       144,
+       145,
+       146,
+       147
+      ],
+      [
+       148,
+       149,
+       150,
+       151
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c2.shp"
+    },
+    "idle1": {
+     "start": 104,
+     "length": 9,
+     "stride": 9,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c2",
+     "combine": null,
+     "frame_table": [
+      [
+       104,
+       105,
+       106,
+       107,
+       108,
+       109,
+       110,
+       111,
+       112
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c2.shp"
+    },
+    "idle2": {
+     "start": 114,
+     "length": 6,
+     "stride": 6,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c2",
+     "combine": null,
+     "frame_table": [
+      [
+       114,
+       115,
+       116,
+       117,
+       118,
+       119
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c2.shp"
+    },
+    "die1": {
+     "start": 152,
+     "length": 8,
+     "stride": 8,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c2",
+     "combine": null,
+     "frame_table": [
+      [
+       152,
+       153,
+       154,
+       155,
+       156,
+       157,
+       158,
+       159
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c2.shp"
+    },
+    "die2": {
+     "start": 160,
+     "length": 8,
+     "stride": 8,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c2",
+     "combine": null,
+     "frame_table": [
+      [
+       160,
+       161,
+       162,
+       163,
+       164,
+       165,
+       166,
+       167
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c2.shp"
+    },
+    "die3": {
+     "start": 168,
+     "length": 12,
+     "stride": 12,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c2",
+     "combine": null,
+     "frame_table": [
+      [
+       168,
+       169,
+       170,
+       171,
+       172,
+       173,
+       174,
+       175,
+       176,
+       177,
+       178,
+       179
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c2.shp"
+    },
+    "die4": {
+     "start": 168,
+     "length": 12,
+     "stride": 12,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c2",
+     "combine": null,
+     "frame_table": [
+      [
+       168,
+       169,
+       170,
+       171,
+       172,
+       173,
+       174,
+       175,
+       176,
+       177,
+       178,
+       179
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c2.shp"
+    },
+    "die5": {
+     "start": 180,
+     "length": 18,
+     "stride": 18,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c2",
+     "combine": null,
+     "frame_table": [
+      [
+       180,
+       181,
+       182,
+       183,
+       184,
+       185,
+       186,
+       187,
+       188,
+       189,
+       190,
+       191,
+       192,
+       193,
+       194,
+       195,
+       196,
+       197
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c2.shp"
+    },
+    "die6": {
+     "start": 0,
+     "length": 22,
+     "stride": 22,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": [
+      0,
+      1,
+      2,
+      3,
+      0,
+      1,
+      2,
+      3,
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "electro",
+     "combine": null,
+     "frame_table": [
+      [
+       0,
+       1,
+       2,
+       3,
+       0,
+       1,
+       2,
+       3,
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9,
+       10,
+       11,
+       12,
+       13
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "electro.tem"
+    },
+    "die-crushed": {
+     "start": 0,
+     "length": 6,
+     "stride": 6,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 1600,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": -511,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "corpse1",
+     "combine": null,
+     "frame_table": [
+      [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "corpse1.tem"
+    },
+    "run": {
+     "start": 56,
+     "length": 6,
+     "stride": 6,
+     "facings": 8,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "c2",
+     "combine": null,
+     "frame_table": [
+      [
+       56,
+       57,
+       58,
+       59,
+       60,
+       61
+      ],
+      [
+       62,
+       63,
+       64,
+       65,
+       66,
+       67
+      ],
+      [
+       68,
+       69,
+       70,
+       71,
+       72,
+       73
+      ],
+      [
+       74,
+       75,
+       76,
+       77,
+       78,
+       79
+      ],
+      [
+       80,
+       81,
+       82,
+       83,
+       84,
+       85
+      ],
+      [
+       86,
+       87,
+       88,
+       89,
+       90,
+       91
+      ],
+      [
+       92,
+       93,
+       94,
+       95,
+       96,
+       97
+      ],
+      [
+       98,
+       99,
+       100,
+       101,
+       102,
+       103
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "c2.shp"
+    }
+   }
+  },
+  "v01": {
+   "yaml": "decorations.yaml",
+   "sequences": {
+    "idle": {
+     "start": 0,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v01",
+     "combine": null,
+     "frame_table": [
+      [
+       0
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v01.tem"
+    },
+    "damaged-idle": {
+     "start": 1,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v01",
+     "combine": null,
+     "frame_table": [
+      [
+       1
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v01.tem"
+    }
+   }
+  },
+  "v02": {
+   "yaml": "decorations.yaml",
+   "sequences": {
+    "idle": {
+     "start": 0,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v02",
+     "combine": null,
+     "frame_table": [
+      [
+       0
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v02.tem"
+    },
+    "damaged-idle": {
+     "start": 1,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v02",
+     "combine": null,
+     "frame_table": [
+      [
+       1
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v02.tem"
+    }
+   }
+  },
+  "v03": {
+   "yaml": "decorations.yaml",
+   "sequences": {
+    "idle": {
+     "start": 0,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v03",
+     "combine": null,
+     "frame_table": [
+      [
+       0
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v03.tem"
+    },
+    "damaged-idle": {
+     "start": 1,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v03",
+     "combine": null,
+     "frame_table": [
+      [
+       1
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v03.tem"
+    }
+   }
+  },
+  "v04": {
+   "yaml": "decorations.yaml",
+   "sequences": {
+    "idle": {
+     "start": 0,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v04",
+     "combine": null,
+     "frame_table": [
+      [
+       0
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v04.tem"
+    },
+    "damaged-idle": {
+     "start": 2,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v04",
+     "combine": null,
+     "frame_table": [
+      [
+       2
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v04.tem"
+    },
+    "active": {
+     "start": 1,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v04",
+     "combine": null,
+     "frame_table": [
+      [
+       1
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v04.tem"
+    },
+    "damaged-active": {
+     "start": 3,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v04",
+     "combine": null,
+     "frame_table": [
+      [
+       3
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v04.tem"
+    }
+   }
+  },
+  "v05": {
+   "yaml": "decorations.yaml",
+   "sequences": {
+    "idle": {
+     "start": 0,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v05",
+     "combine": null,
+     "frame_table": [
+      [
+       0
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v05.tem"
+    },
+    "damaged-idle": {
+     "start": 2,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v05",
+     "combine": null,
+     "frame_table": [
+      [
+       2
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v05.tem"
+    }
+   }
+  },
+  "v06": {
+   "yaml": "decorations.yaml",
+   "sequences": {
+    "idle": {
+     "start": 0,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v06",
+     "combine": null,
+     "frame_table": [
+      [
+       0
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v06.tem"
+    },
+    "damaged-idle": {
+     "start": 1,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v06",
+     "combine": null,
+     "frame_table": [
+      [
+       1
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v06.tem"
+    }
+   }
+  },
+  "v07": {
+   "yaml": "decorations.yaml",
+   "sequences": {
+    "idle": {
+     "start": 0,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v07",
+     "combine": null,
+     "frame_table": [
+      [
+       0
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v07.tem"
+    },
+    "damaged-idle": {
+     "start": 2,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v07",
+     "combine": null,
+     "frame_table": [
+      [
+       2
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v07.tem"
+    }
+   }
+  },
+  "v08": {
+   "yaml": "decorations.yaml",
+   "sequences": {
+    "idle": {
+     "start": 0,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v08",
+     "combine": null,
+     "frame_table": [
+      [
+       0
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v08.tem"
+    },
+    "damaged-idle": {
+     "start": 1,
+     "length": 1,
+     "stride": 1,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 0,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "v08",
+     "combine": null,
+     "frame_table": [
+      [
+       1
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "v08.tem"
+    }
+   }
+  },
+  "rallypoint": {
+   "yaml": "misc.yaml",
+   "sequences": {
+    "flag": {
+     "start": 0,
+     "length": 14,
+     "stride": 14,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      11.0,
+      -5.0,
+      0.0
+     ],
+     "z_offset": 2535,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "flagfly",
+     "combine": null,
+     "frame_table": [
+      [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9,
+       10,
+       11,
+       12,
+       13
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "flagfly.shp"
+    }
+   }
+  },
+  "moveflsh": {
+   "yaml": "misc.yaml",
+   "sequences": {
+    "idle": {
+     "start": 0,
+     "length": 5,
+     "stride": 5,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 80,
+     "offset": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "z_offset": 2047,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "moveflsh",
+     "combine": null,
+     "frame_table": [
+      [
+       0,
+       1,
+       2,
+       3,
+       4
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "moveflsh.tem"
+    }
+   }
+  },
   "t01": {
    "yaml": "decorations.yaml",
    "sequences": {
@@ -38564,6 +41209,63 @@
      ],
      "shadow_table": null,
      "source_filename": "tc05.tem"
+    }
+   }
+  },
+  "flagfly": {
+   "yaml": "misc.yaml",
+   "alias_of": "rallypoint",
+   "sequences": {
+    "flag": {
+     "start": 0,
+     "length": 14,
+     "stride": 14,
+     "facings": 1,
+     "reverse_facings": false,
+     "interpolated_facings": null,
+     "tick": 40,
+     "offset": [
+      11.0,
+      -5.0,
+      0.0
+     ],
+     "z_offset": 2535,
+     "z_ramp": 0,
+     "shadow_start": -1,
+     "shadow_z_offset": -5,
+     "flip_x": false,
+     "flip_y": false,
+     "transpose": false,
+     "reverses": false,
+     "classic_facings": false,
+     "frames": null,
+     "scale": 1.0,
+     "alpha": null,
+     "alpha_fade": false,
+     "blend_mode": "Alpha",
+     "ignore_world_tint": false,
+     "file": "flagfly",
+     "combine": null,
+     "frame_table": [
+      [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9,
+       10,
+       11,
+       12,
+       13
+      ]
+     ],
+     "shadow_table": null,
+     "source_filename": "flagfly.shp"
     }
    }
   }
