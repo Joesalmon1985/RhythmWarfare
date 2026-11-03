@@ -51,3 +51,17 @@ interlude() {  # name cutscene_seconds
     "$GODOT" --path "$ROOT" -s tools/shoot.gd -- res://src/scenes/story_interlude.tscn "$OUT" "50:shot:interlude_${name}_$(printf %02d "$at")" 2>&1 | grep -E "^shot|ERROR|SCRIPT" || true
 }
 for t in 5 9 12 15; do interlude abduction $t; interlude descent $t; done
+
+# the moving camera mid-move (dolly, step, turn)
+shot cam_mothership_step_17    perfect 17.9 RW_STORY_CHAPTER=mothership
+shot cam_mothership_gallery    perfect 22   RW_STORY_CHAPTER=mothership
+shot cam_mothership_turn_33    perfect 33.9 RW_STORY_CHAPTER=mothership
+shot cam_mothership_reactor    perfect 45   RW_STORY_CHAPTER=mothership
+shot cam_mothership_walk_49    perfect 49.9 RW_STORY_CHAPTER=mothership
+shot cam_mothership_bridge     perfect 61   RW_STORY_CHAPTER=mothership
+shot cam_underworld_step_17    perfect 17.9 RW_STORY_CHAPTER=underworld
+shot cam_underworld_court      perfect 27   RW_STORY_CHAPTER=underworld
+shot cam_underworld_walk_33    perfect 33.9 RW_STORY_CHAPTER=underworld
+shot cam_underworld_pit        perfect 43   RW_STORY_CHAPTER=underworld
+shot cam_underworld_turn_49    perfect 49.9 RW_STORY_CHAPTER=underworld
+shot cam_underworld_furnace    perfect 54   RW_STORY_CHAPTER=underworld

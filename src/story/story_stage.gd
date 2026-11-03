@@ -25,6 +25,7 @@ var high_contrast := false
 var palette := "low"
 var palettes: Dictionary = {}  # name -> Array[Color] (the chapter's own, else PALETTES)
 var _pieces: Dictionary = {}  # id -> {on_t, off_t, pulse_t, bars}
+var _ambient: Dictionary = {}  # ids of the extra rooms' own pieces
 var energy := 45.0
 var t_now := 0.0
 
@@ -67,6 +68,9 @@ func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
 		if not cols.is_empty():
 			palettes[k] = cols
 	for vid in assets.view_ids():
+		if vid != "main":
+			for pc in assets.pieces(str(vid)):
+				_ambient[str(pc["id"])] = true
 		var v := StoryView.new()
 		_root.add_child(v)
 		v.build(self, assets, data, str(vid))
@@ -127,9 +131,10 @@ func palette_colors() -> Array:
 ## Set-piece state at song time t: {visible, alpha, pulse} (a chapter piece switched by piece_on / piece_off / piece_pulse).
 func piece_state(id: String, t: float) -> Dictionary:
 	var st: Dictionary = _pieces.get(id, {})
+	var ambient: bool = _ambient.has(id)  # a room's own pieces are on whenever that room is shown, unless the script says otherwise
 	if st.is_empty():
-		return {"visible": false, "alpha": 0.0, "pulse": 0.0}
-	var on_t: float = st.get("on_t", INF)
+		return {"visible": ambient, "alpha": 1.0 if ambient else 0.0, "pulse": 0.0}
+	var on_t: float = st.get("on_t", -INF if ambient else INF)
 	var off_t: float = st.get("off_t", INF)
 	var vis := t >= on_t and t < off_t
 	var a := 0.0

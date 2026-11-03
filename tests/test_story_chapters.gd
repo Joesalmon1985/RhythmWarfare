@@ -96,3 +96,72 @@ func test_chapter_frame_steps_are_deterministic() -> void:
 			return "|".join(PackedStringArray(parts)) + str(r["ending"]) + str(r["energy_curve"])
 		assert_eq(sig.call(b), sig.call(a), id + " 30 vs 60")
 		assert_eq(sig.call(c), sig.call(a), id + " variable vs 60")
+
+
+func test_chapter_art_matches_the_chapter_data() -> void:
+	for id in CHAPTERS:
+		var d: StoryData = StoryData.load_file(_path(id))["data"]
+		var a := StoryAssets.load_art(d.art)
+		assert_true(a.ok(), id)
+		var errs: Array = []
+		d.validate_art(a, errs)
+		assert_eq(errs, [], id + " art")
+	var m := StoryAssets.load_art("mothership")
+	assert_eq(m.view_ids(), ["main", "gallery", "reactor", "bridge"])
+	var u := StoryAssets.load_art("underworld")
+	assert_eq(u.view_ids(), ["main", "court", "pit", "furnace"])
+	assert_eq(StoryAssets.load_art("night_one").view_ids(), ["main"], "Night One keeps its one fixed room")
+
+
+func _camera_route(id: String, policy: String) -> Dictionary:
+	var run := StoryRun.create({}, _path(id))
+	var assets := StoryAssets.load_art(run.data.art)
+	var stage := StoryStage.new()
+	stage.size = Vector2(1280, 460)
+	tree.root.add_child(stage)
+	stage.setup(assets, run.data, run)
+	var harness: Script = load("res://tools/autoplay.gd")
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1
+	var plan: Array = harness.plan_inputs(run.level, policy, rng)
+	var k := 0
+	var t := -1.0
+	var shown: Array = []
+	var min_present := 999
+	var down := {}
+	while t < run.level.duration_seconds() + 6.0:
+		t += 1.0 / 30.0
+		while k < plan.size() and float(plan[k]["t"]) <= t:
+			var e: Dictionary = plan[k]
+			if e["down"]:
+				down[e["pad"]] = e["id"]
+				run.match_ref.press(int(e["pad"]), float(e["t"]), int(e["pad"]))
+			elif down.get(e["pad"], null) == e["id"]:
+				down.erase(e["pad"])
+				run.match_ref.release(int(e["pad"]), float(e["t"]), int(e["pad"]))
+			k += 1
+		var r := run.step(t)
+		for ev in r["events"]:
+			if ev["kind"] == "sequence":
+				stage.on_sequence(ev["result"], float(ev["result"]["resolve_time"]))
+		for a in r["actions"]:
+			stage.apply(a)
+		stage.update(t, run.crowd.energy)
+		var vv := stage.view_at(t)
+		if shown.is_empty() or shown[shown.size() - 1] != vv:
+			shown.append(vv)
+		if t > 1.0:
+			min_present = mini(min_present, (stage.views[stage.current_view] as StoryView).crowd.present_count())
+	var out := {"route": shown, "min_present": min_present, "ending": stage.ending(), "stage": stage}
+	return out
+
+
+func test_the_camera_walks_the_authored_route_and_every_room_is_populated() -> void:
+	var expect := {"mothership": ["main", "gallery", "reactor", "bridge", "main"], "underworld": ["main", "court", "pit", "furnace", "main"]}
+	for id in expect:
+		for policy in ["perfect", "none"]:
+			var r := _camera_route(id, policy)
+			assert_eq(r["route"], expect[id], "%s (%s): the camera visits the rooms in order whatever the skill" % [id, policy])
+			assert_true(r["min_present"] >= 8, "%s (%s): the room the camera is in is never empty (%d)" % [id, policy, r["min_present"]])
+			assert_true(str(r["ending"]) != "", "%s (%s): the closing tableau happens" % [id, policy])
+			(r["stage"] as StoryStage).queue_free()

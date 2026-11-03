@@ -121,6 +121,34 @@ def validate(chapter: str = "night_one") -> list:
     return errors
 
 
+VIEW_ANCHORS = {"floor_rows", "floor_polygon", "light_points", "circle_centre", "circle_radii", "vanish"}
+VIEWS = {"mothership": ["gallery", "reactor", "bridge"], "underworld": ["court", "pit", "furnace"]}
+
+
+def view_checks(errors, chapter, st) -> None:
+    """The moving-camera rooms (ART_CONTRACT_VIEWS.md): ids, layer files, required anchors, 8 light points, 5 floor rows, passage frame."""
+    want = VIEWS.get(chapter)
+    if not want:
+        return
+    views = {v["id"]: v for v in st.get("views", [])}
+    if list(views) != want:
+        errors.append(f"views {list(views)} != {want}")
+    for vid, v in views.items():
+        for l in v.get("layers", []):
+            if not os.path.exists(os.path.join(STORY, chapter, l["file"])):
+                errors.append(f"view {vid}: missing layer file {l['file']}")
+        missing = VIEW_ANCHORS - set(v.get("anchors", {}))
+        if missing:
+            errors.append(f"view {vid}: missing anchors {sorted(missing)}")
+        a = v.get("anchors", {})
+        if len(a.get("light_points", [])) != 8 or len(a.get("floor_rows", [])) != 5:
+            errors.append(f"view {vid}: needs 8 light points and 5 floor rows")
+        if not 2 <= len(v.get("pieces", [])) <= 4:
+            errors.append(f"view {vid}: expected 2 to 4 pieces")
+    if "passage_frame" not in st.get("sprites", {}):
+        errors.append("missing sprite passage_frame")
+
+
 def chapter_checks(errors, chapter, m, st) -> None:
     """Extra checks of the chapter addendum: archetype ids, 5 floor rows, 4 woofers, extra anchors, pieces, interlude."""
     ids = ARCH_IDS.get(chapter)
@@ -137,6 +165,7 @@ def chapter_checks(errors, chapter, m, st) -> None:
         errors.append("floor_rows must have 5 rows")
     if len(st["anchors"]["woofers"]) != 4:
         errors.append("woofers must have 4 entries")
+    view_checks(errors, chapter, st)
     pieces = st.get("pieces", [])
     if not 6 <= len(pieces) <= 8:
         errors.append(f"expected 6 to 8 pieces, got {len(pieces)}")
