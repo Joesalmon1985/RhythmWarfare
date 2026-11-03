@@ -896,12 +896,20 @@ def build_interlude() -> dict:
     yy, xx = np.mgrid[0:h, 0:w]
     t = yy / h
     half = (30 + 88 * t ** 1.15) * 1.0
-    u = np.abs(xx - w / 2 + 0.5) / half
+    xs = (xx - w / 2 + 0.5) / half
+    u = np.abs(xs)
+    inside = u < 1.0
     body = np.clip(1 - u ** 2.2, 0, 1)
     core = np.clip(1 - u, 0, 1) ** 1.6
-    edge = np.exp(-((u - 0.92) / 0.08) ** 2) * (u < 1.05)
-    a = (0.45 * body + 0.4 * core + 0.18 * edge) * (0.55 + 0.45 * np.sin(t * math.pi * 0.5 + 0.2))
-    a *= np.clip(t * 12, 0, 1) * np.clip((1 - t) * 10 + 0.55, 0, 1)
+    edge = np.exp(-((u - 0.94) / 0.06) ** 2) * (u < 1.05)
+    rings = np.zeros_like(t)
+    for tk in (0.22, 0.38, 0.54, 0.7, 0.86):  # scan rings seen from the side: shallow ellipses around the column
+        yk = tk * h + (2 + 7 * tk) * np.sqrt(np.clip(1 - u ** 2, 0, 1))
+        rings += np.exp(-((yy - yk) / 1.4) ** 2) * inside
+    a = (0.34 * body + 0.4 * core + 0.55 * edge + 0.35 * rings) * (0.6 + 0.4 * np.sin(t * math.pi * 0.5 + 0.2))
+    pool = np.exp(-(((xx - w / 2 + 0.5) / 62.0) ** 2 + ((yy - h * 0.9) / 6.0) ** 2))  # where it meets the floor
+    a = np.maximum(a, 0.75 * pool)
+    a *= np.clip(t * 12, 0, 1) * np.clip((1 - t) * 9, 0, 1) * np.clip((1.06 - u) * 8, 0, 1)
     arr = np.zeros((h, w, 4))
     arr[..., :3] = (225, 255, 240)
     arr[..., 3] = np.clip(a, 0, 1) * 255
