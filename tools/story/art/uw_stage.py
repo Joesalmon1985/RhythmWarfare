@@ -1023,6 +1023,43 @@ def build_interlude():
     return {"sprites": sp, "anchors": anchors}
 
 
+def spr_door_open():
+    """The gate thrown open (overlay for the `doorway` at 284, 138, 70 x 124): hellfire beyond, iron leaves swung in, a horned arrival
+    on a stair of embers and an orange spill across the floor. Same placement as Night One's door_open (origin 244, 130)."""
+    ox, oy = 244, 138
+    dx, dy, dw, dh = 284 - ox, 138 - oy, 70, 124
+    defs = lin_grad("spill", [(0, "#ffb05a", 0.65), (0.55, "#ff5a1a", 0.22), (1, "#ff3a1a", 0.0)], 0, 0, 0, 1)
+    defs += lin_grad("fire", [(0, "#fff2b0"), (0.35, "#ffb040"), (0.75, "#ff5a1a"), (1, "#a0180e")], 0, 0, 0, 1)
+    d = poly([(dx - 4, dy + dh), (dx + dw + 4, dy + dh), (dx + dw + 58, dy + dh + 88), (dx - 58, dy + dh + 88)], "url(#spill)")
+    arch = (f"M{dx - 3} {dy + dh} L{dx - 3} {dy + 10} Q{dx - 3} {dy - 6} {dx + dw / 2} {dy - 7} Q{dx + dw + 3} {dy - 6} {dx + dw + 3} {dy + 10} "
+            f"L{dx + dw + 3} {dy + dh} Z")
+    d += path(arch, "url(#fire)", OUT, 2.4)
+    for k in range(5):  # a stair of glowing steps going down into the fire
+        y = dy + dh - 8 - k * 9
+        inset = 10 + k * 4
+        d += rect(dx + inset, y, dw - inset * 2, 6, "#5a1410", None, op=0.55) + line((dx + inset, y), (dx + dw - inset, y), "#ffe8a0", 1.2, 0.8)
+    rng = random.Random(23)
+    for k in range(4):  # flames licking up the jambs
+        x = dx + 6 + k * 19
+        d += UC.flame_layer(x, dy + dh - 2, x + rng.uniform(-3, 3), dy + dh - rng.uniform(22, 40), 5.5, rng.uniform(-3, 3), ("#ff3a1a", "#ff9a1a", "#fff29a"), 1.2)
+    # a horned demon arriving, back-lit
+    cx = dx + dw / 2
+    d += path(f"M{cx - 13} {dy + dh - 30} Q{cx - 13} {dy + 72} {cx} {dy + 70} Q{cx + 13} {dy + 72} {cx + 13} {dy + dh - 30} Z", "#2a0812", OUT, 1.6)
+    d += circle(cx, dy + 60, 8, "#2a0812", OUT, 1.6)
+    for sg in (-1, 1):
+        d += poly([(cx + sg * 4, dy + 54), (cx + sg * 12, dy + 42), (cx + sg * 8, dy + 56)], "#2a0812", OUT, 1.2)
+    d += circle(cx - 3, dy + 60, 1.4, "#ffd040") + circle(cx + 3, dy + 60, 1.4, "#ffd040")
+    # the iron leaves swung inwards
+    for sg, x0 in ((-1, dx), (1, dx + dw)):
+        leaf = [(x0, dy + 2), (x0 - sg * 14, dy + 9), (x0 - sg * 14, dy + dh - 4), (x0, dy + dh)]
+        d += poly(leaf, "#2a1218", OUT, 2.2) + line((x0 - sg * 7, dy + 12), (x0 - sg * 7, dy + dh - 6), "#ff7a2a", 1.2, 0.55)
+        for yy in (dy + 30, dy + 86):
+            d += line((x0, yy), (x0 - sg * 14, yy + 2), "#6a4a52", 3.0)
+    d += neon((dx - 3, dy + dh - 2), (dx + dw + 3, dy + dh - 2), LAVA, 1.6, 1.0)
+    info = write_svg("props/door_open.svg", (0, -8, 150, 214), d, defs)
+    return {"file": "source/props/door_open.svg", "pivot": pivot_in(info, (0, -8)), "px_scale": 0.5, "pos": [ox, oy - 8]}
+
+
 # ---- the stage manifest -----------------------------------------------------------------------------------------------------
 
 def build_stage():
@@ -1032,10 +1069,9 @@ def build_stage():
         S.build_desk_top()
         sp: dict = {}
         S.spr_deck(sp)
-        door = S.spr_door_open(sp)
     finally:
         S.write_svg = old_w
-    sp["door_open"] = door
+    sp["door_open"] = spr_door_open()
     spr_woofer(sp)
     spr_fixture(sp)
     spr_disco_ball(sp)

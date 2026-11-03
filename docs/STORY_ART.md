@@ -216,7 +216,7 @@ the closed iron `doorway` gate, a bone bar, cracked obsidian floor with glowing 
 gutters along the foot of both side walls fed by the lava falls, fire-pit bowls), `riser` (bone-and-iron platform), `speaker_l/r` (infernal amp stacks with horns and skulls; their `pos`/`size` include a small
 overhang), `desk_top`. Extra anchors: `floor_grid`, `wall_left_x`, `wall_right_x`, `horizon_y`, `hellmouth` [x, y, r], `fire_pits`.
 Sprites: `woofer` (toothed iron ring), `fixture` (a demonic eye-lamp), `disco_ball` (an infernal brazier orb in a cage), `glowstick`
-(torch), `door_open`, the deck pieces, and the white lighting sprites (`glow beam spot_pool haze_a haze_b vignette`, `confetti` = ash-embers).
+(torch), `door_open` (the gate thrown open on hellfire, iron leaves swung in, a horned arrival, an orange spill on the floor), the deck pieces, and the white lighting sprites (`glow beam spot_pool haze_a haze_b vignette`, `confetti` = ash-embers).
 `spot_pool` is the chapter's own: a dimmer centre and a fainter far half than Night One's, because the runtime draws it over the crowd and the
 dancer standing in a spotlight must stay lit rather than washed out.
 
