@@ -14,7 +14,7 @@ section 15 and `data/campaign/rules.json`.
   settings), `audio/` (one synchronized transport for all stems), `input/` (`pad_judge.gd` for missions, `judge.gd` for the
   duel, `lane_input.gd` touches, section taps and keys), `sim/` (deterministic 25 Hz OpenRA battle simulation, no
   scene nodes; civilians, wave target classes, start units, the active section), `ui/` (`pad_view.gd` the pads,
-  `battle_view.gd` sprites only, `hud.gd` text only, `section_picker.gd`, `ui_style.gd`, `settings_panel.gd`),
+  `battle_view.gd` sprites only, `hud.gd` the legacy duel's bar only, `section_picker.gd`, `ui_style.gd`, `settings_panel.gd`),
   `audio/` (`stem_transport.gd` the song, `battle_sfx.gd` the Red Alert effects), `scenes/` (home, missions, mission
   setup, play, result, settings, calibration, developer).
 - `content/` the loop library (`library/<clip>/`: MIDI per part, owner WAV renders, generated placeholders), sounds,

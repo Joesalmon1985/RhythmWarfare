@@ -3,10 +3,10 @@ extends Control
 ## The four illuminated pads (PRD section 15): the only play interface. Pads 1 and 2 sit under the left thumb, 3 and 4
 ## under the right, at fixed positions; the centre between them shows the current sequence and what it will earn.
 ##
-## Everything is drawn from the song clock: a cue's ring closes onto its pad over `lead_in_s` and the pad pulses at the
-## onset; a hold keeps the pad lit and fills it to its tail, then flashes. A pad with no cue in the current phase is
-## dim. Shapes as well as colours tell the families apart (kick: disc, snare: diamond, bass: bars). Feedback text sits
-## above a pad so it never hides the next ring. Works for missions (cue "pad") and the legacy duel (note "button").
+## Everything is drawn from the song clock: the pad pulses at a cue's onset; a hold keeps the pad lit and fills it to its
+## tail, then flashes. A pad with no cue in the current phase is dim. Shapes as well as colours tell the families apart
+## (kick: disc, snare: diamond, bass: bars). The cues themselves fall onto the pads as NoteLane's notes, drawn over this
+## view. Feedback text sits above a pad. Works for missions (cue "pad") and the legacy duel (note "button").
 
 const BUTTONS := 4
 const FAMILY_COLOR := {"kick": Color(0.98, 0.62, 0.25), "snare": Color(0.35, 0.85, 0.98), "bass": Color(0.72, 0.55, 1.0)}
@@ -16,7 +16,6 @@ const PULSE_S := 0.12
 
 var level: Level
 var clock: SongClock
-var lead_in_s := 0.7
 var high_contrast := false
 var reduced_effects := false
 var show_keys := true
@@ -63,12 +62,21 @@ static func _pad_of(n: Dictionary) -> int:
 
 ## Pad rectangles in viewport coordinates (for touch hit tests); slightly larger than drawn so a thumb need not be exact.
 func button_rects() -> Dictionary:
+	var out := pad_rects_global()
+	for pad in out:
+		var r: Rect2 = out[pad]
+		out[pad] = r.grow(r.size.x * 0.08)
+	return out
+
+
+## The pad rectangles as drawn (not grown), in viewport coordinates: where NoteLane lands its notes.
+func pad_rects_global() -> Dictionary:
 	var out := {}
 	var rects := _pad_rects()
 	var xf := get_global_transform_with_canvas()
 	for pad in rects:
 		var r: Rect2 = rects[pad]
-		out[pad] = Rect2(xf * r.position, r.size * xf.get_scale()).grow(r.size.x * 0.08)
+		out[pad] = Rect2(xf * r.position, r.size * xf.get_scale())
 	return out
 
 
@@ -152,30 +160,23 @@ func _draw_pad(pad: int, r: Rect2, now: float, tick: int, wall: float) -> void:
 	var palette: Dictionary = HC_COLOR if high_contrast else FAMILY_COLOR
 	var base: Color = palette.get(fam, Color(0.45, 0.47, 0.5))
 	var active := not fam.is_empty()
-	# the nearest coming cue on this pad: preparatory brightening and the approach ring
+	# the pad's cues: the pulse at an onset
 	var list: Array = _pad_notes[pad]
 	var c: int = _cursor[pad]
 	while c < list.size() and float(level.notes[list[c]]["end_time" if level.notes[list[c]]["type"] == "hold" else "time"]) < now - 0.2:
 		c += 1
 	_cursor[pad] = c
-	var glow := 0.0
-	var rings: Array = []
 	var pulse := 0.0
 	for k in range(c, mini(c + 6, list.size())):
 		var n: Dictionary = level.notes[list[k]]
 		var dt: float = float(n["time"]) - now
-		if dt > lead_in_s:
+		if dt > 0.0:
 			break
-		if dt >= 0.0:
-			rings.append({"f": dt / lead_in_s, "hold": n["type"] == "hold"})
-			glow = maxf(glow, 1.0 - dt / lead_in_s)
-		elif dt > -PULSE_S:
+		if dt > -PULSE_S:
 			pulse = maxf(pulse, 1.0 + dt / PULSE_S)
 	var hold := float(holding_fn.call(pad, now)) if holding_fn.is_valid() else -1.0
 	var down: bool = button_down.get(pad, false)
 	var fill := base.darkened(0.78) if active else Color(0.12, 0.13, 0.15)
-	if active:
-		fill = fill.lerp(base.darkened(0.35), glow * 0.55)
 	if hold >= 0.0:
 		fill = base.darkened(0.25)
 	if down:
@@ -193,14 +194,7 @@ func _draw_pad(pad: int, r: Rect2, now: float, tick: int, wall: float) -> void:
 		_round_rect(r.grow(r.size.x * 0.04 * (1.0 - a)), Color(base.lightened(0.5), 0.6 * a), radius)
 	var border := base if active else Color(0.3, 0.32, 0.35)
 	_round_outline(r, border.lightened(0.2 if down else 0.0), radius, 4.0 if active else 2.0)
-	for ring in rings:  # rings close onto the pad edge exactly at the onset; a hold's ring is doubled
-		var f: float = ring["f"]
-		var grow := r.size.x * 0.32 * f
-		var col := Color(base.lightened(0.3), 0.25 + 0.75 * (1.0 - f))
-		_round_outline(r.grow(grow), col, radius + grow * 0.5, 3.0 if not ring["hold"] else 5.0)
-		if ring["hold"]:
-			_round_outline(r.grow(grow + 7.0), Color(col, col.a * 0.6), radius + grow * 0.5 + 6.0, 2.0)
-	_draw_icon(fam, r, base if active else Color(0.35, 0.37, 0.4), glow, hold >= 0.0)
+	_draw_icon(fam, r, base if active else Color(0.35, 0.37, 0.4), hold >= 0.0)
 	var label := _label_at(pad, tick)
 	var fs := int(clampf(r.size.x * 0.11, 12.0, 22.0))
 	if not label.is_empty():
@@ -219,10 +213,10 @@ func _draw_pad(pad: int, r: Rect2, now: float, tick: int, wall: float) -> void:
 			int(fs * 1.15), Color(fb["color"], a))
 
 
-func _draw_icon(fam: String, r: Rect2, col: Color, glow: float, holding: bool) -> void:
+func _draw_icon(fam: String, r: Rect2, col: Color, holding: bool) -> void:
 	var c := r.get_center() + Vector2(0, r.size.y * 0.06)
-	var s := r.size.x * 0.17 * (1.0 + 0.12 * glow)
-	var ic := col.lightened(0.25 + 0.4 * glow) if not holding else Color.WHITE
+	var s := r.size.x * 0.17
+	var ic := col.lightened(0.25) if not holding else Color.WHITE
 	match fam:
 		"kick":
 			draw_circle(c, s, ic)

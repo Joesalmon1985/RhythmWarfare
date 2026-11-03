@@ -18,15 +18,15 @@
  },
  "accompaniment": [{"clip": "acc_last_light", "start_bar": 1, "bars": 80}],
  "phases": [
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["pillbox", "turret"]},
-  {"bars": 8, "mode": "drums", "groove": 2, "fill": 2, "kick_sound": 2, "snare_sound": 2, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["flame_tower", "pillbox"]},
-  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["2tnk", "e3"]},
-  {"bars": 8, "mode": "drums", "groove": 3, "fill": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["turret", "repair"]},
-  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 2, "bass_voice": [3, 4], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["arty", "ftrk"]},
-  {"bars": 8, "mode": "drums", "groove": 2, "fill": 2, "kick_sound": 2, "snare_sound": 2, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["turret", "pillbox"]},
-  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["1tnk", "e2"]},
-  {"bars": 8, "mode": "drums", "groove": 3, "fill": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["repair", "turret"]},
-  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 2, "bass_voice": [3, 4], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["apc", "e4"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "fill": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 4, "rewards": ["repair", "repair"]}
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 2, "rewards": ["pillbox", "turret"]},
+  {"bars": 8, "mode": "drums", "groove": 2, "fill": 2, "kick_sound": 2, "snare_sound": 2, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 2, "rewards": ["flame_tower", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 2, "rewards": ["2tnk", "e3"]},
+  {"bars": 8, "mode": "drums", "groove": 3, "fill": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 2, "rewards": ["turret", "repair"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 2, "bass_voice": [3, 4], "voice_every_bars": 2, "sequence_bars": 2, "rewards": ["arty", "ftrk"]},
+  {"bars": 8, "mode": "drums", "groove": 2, "fill": 2, "kick_sound": 2, "snare_sound": 2, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 2, "rewards": ["turret", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 2, "rewards": ["1tnk", "e2"]},
+  {"bars": 8, "mode": "drums", "groove": 3, "fill": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 2, "rewards": ["repair", "turret"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 2, "bass_voice": [3, 4], "voice_every_bars": 2, "sequence_bars": 2, "rewards": ["apc", "e4"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": 1, "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": "bass_patrol", "sequence_bars": 2, "rewards": ["repair", "repair"]}
  ]
 }

@@ -1,0 +1,52 @@
+{
+ "note": "Mission 7 (Crossroads) content: the MIDI exported to midi_export/level_07_crossroads/ (the mission's default groove, bass line and backing as 8-bar loops, with rule-based alternatives B and C of every kick, snare and bass part), to be rendered in Ableton as WAVs named after the MIDI files. Run: python tools/content/import_ableton.py content/imports/level_07.json --check, then without --check, then python tools/content/build.py level_07. The mission is rewired to these clips in a follow-up, as mission 1 was. Names are provisional. Levels as in first_watch.json: drums and bass peak at -4 dBFS, bass RMS-matched to -17 dBFS where that peak allows, backing at -3 dBFS, then a global trim of -7 dB.",
+ "source_dir": "midi_export/level_07_crossroads",
+ "bars": 8,
+ "levels": {
+  "kick": {"peak_db": -4.0},
+  "snare": {"peak_db": -4.0},
+  "bass": {"peak_db": -4.0, "rms_db": -17.0},
+  "other": {"peak_db": -3.0}
+ },
+ "trim_db": -7.0,
+ "end_fade_ms": 10,
+ "sounds": [
+  {"id": "m07_kick_a", "family": "kick", "name": "Crossroads Kick A"},
+  {"id": "m07_kick_b", "family": "kick", "name": "Crossroads Kick B"},
+  {"id": "m07_kick_c", "family": "kick", "name": "Crossroads Kick C"},
+  {"id": "m07_snare_a", "family": "snare", "name": "Crossroads Snare A"},
+  {"id": "m07_snare_b", "family": "snare", "name": "Crossroads Snare B"},
+  {"id": "m07_snare_c", "family": "snare", "name": "Crossroads Snare C"},
+  {"id": "m07_bass_a", "family": "bass", "name": "Crossroads Bass A"},
+  {"id": "m07_bass_b", "family": "bass", "name": "Crossroads Bass B"},
+  {"id": "m07_bass_c", "family": "bass", "name": "Crossroads Bass C"},
+  {"id": "m07_pad", "family": "other", "name": "Crossroads Pad"},
+  {"id": "m07_hats", "family": "other", "name": "Crossroads Hats"}
+ ],
+ "clips": [
+  {"id": "m07_groove_a", "kind": "groove", "name": "Crossroads Groove A",
+   "note": "Kick_A with Snare_A: the default groove groove_roller tiled to 8 bars with fill_snare_run replacing bar 8.",
+   "parts": {"kick": {"midi": "Kick_A.mid", "renders": {"m07_kick_a": "Kick_A.wav"}},
+             "snare": {"midi": "Snare_A.mid", "renders": {"m07_snare_a": "Snare_A.wav"}}}},
+  {"id": "m07_groove_b", "kind": "groove", "name": "Crossroads Groove B",
+   "note": "Kick_B with Snare_B: rule-based variation of Kick_A and Snare_A (kick: a hit added, moved or dropped every two bars; snare: a ghost, a moved backbeat or a beat 4 hit).",
+   "parts": {"kick": {"midi": "Kick_B.mid", "renders": {"m07_kick_b": "Kick_B.wav"}},
+             "snare": {"midi": "Snare_B.mid", "renders": {"m07_snare_b": "Snare_B.wav"}}}},
+  {"id": "m07_groove_c", "kind": "groove", "name": "Crossroads Groove C",
+   "note": "Kick_C with Snare_C: rule-based variation of Kick_A and Snare_A (kick: a hit added, moved or dropped every two bars; snare: a ghost, a moved backbeat or a beat 4 hit).",
+   "parts": {"kick": {"midi": "Kick_C.mid", "renders": {"m07_kick_c": "Kick_C.wav"}},
+             "snare": {"midi": "Snare_C.mid", "renders": {"m07_snare_c": "Snare_C.wav"}}}},
+  {"id": "m07_bass_a", "kind": "bass", "name": "Crossroads Bass A", "key": "C# minor",
+   "note": "Bass_A: the default bass line bass_steps, 8 bars.",
+   "parts": {"bass": {"midi": "Bass_A.mid", "renders": {"m07_bass_a": "Bass_A.wav"}}}},
+  {"id": "m07_bass_b", "kind": "bass", "name": "Crossroads Bass B", "key": "C# minor",
+   "note": "Bass_B: a rule-based variation of Bass_A (a note moved to the fifth or octave, a long note split or two tied), C# natural minor.",
+   "parts": {"bass": {"midi": "Bass_B.mid", "renders": {"m07_bass_b": "Bass_B.wav"}}}},
+  {"id": "m07_bass_c", "kind": "bass", "name": "Crossroads Bass C", "key": "C# minor",
+   "note": "Bass_C: a rule-based variation of Bass_A (a note moved to the fifth or octave, a long note split or two tied), C# natural minor.",
+   "parts": {"bass": {"midi": "Bass_C.mid", "renders": {"m07_bass_c": "Bass_C.wav"}}}},
+  {"id": "m07_backing", "kind": "accompaniment", "name": "Crossroads Backing", "key": "C# minor", "audio_only": true,
+   "note": "Other_Pad and Other_Hats: the backing acc_crossroads, the chords and the hi-hats rendered separately.",
+   "parts": {"other": {"renders": {"m07_pad": "Other_Pad.wav", "m07_hats": "Other_Hats.wav"}}}}
+ ]
+}

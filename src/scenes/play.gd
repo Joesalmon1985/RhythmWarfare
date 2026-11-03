@@ -13,6 +13,7 @@ var clock: SongClock
 var match_ref: Match
 var lane_input: LaneInput
 var pad_view: PadView
+var note_lane: NoteLane
 var battle_view: BattleView
 var hud: Hud
 var battle_sfx: BattleSfx
@@ -194,7 +195,6 @@ func _build_layout() -> void:
 	pad_view.anchor_right = 1.0
 	pad_view.anchor_bottom = 1.0
 	pad_view.setup(level, clock)
-	pad_view.lead_in_s = Session.cue_lead_in_s
 	pad_view.high_contrast = Session.high_contrast
 	pad_view.reduced_effects = Session.reduced_effects
 	pad_view.show_keys = Session.show_keys
@@ -207,6 +207,19 @@ func _build_layout() -> void:
 	else:
 		pad_view.holding_fn = func(pad: int, _now: float) -> float: return match_ref.judge.active_hold_progress(pad)
 	add_child(pad_view)
+
+	note_lane = NoteLane.new()  # after the pads: the notes fall over the battlefield and land on the pad strip
+	note_lane.name = "Notes"
+	note_lane.anchor_right = 1.0
+	note_lane.anchor_bottom = 1.0
+	note_lane.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	note_lane.setup(level, clock, pad_view)
+	note_lane.travel_s = Session.cue_lead_in_s
+	note_lane.high_contrast = Session.high_contrast
+	note_lane.reduced_effects = Session.reduced_effects
+	if level.is_mission():
+		note_lane.state_fn = match_ref.pad_judge.cue_state
+	add_child(note_lane)
 
 	_intro_label = Label.new()
 	_intro_label.anchor_left = 0.2
@@ -333,6 +346,7 @@ func _process(_delta: float) -> void:
 		battle_view.rally_point = match_ref.rally_point()
 	for b in range(1, PadView.BUTTONS + 1):
 		pad_view.button_down[b] = lane_input.is_button_down(b)
+	note_lane.queue_redraw()
 	_update_banner(t)
 	if _info_label != null:
 		_info_label.text = "%s\n%s" % [level.title, "PRACTICE (no battle, nothing saved)" if Session.practice else "RHYTHM PLAYTEST (battlefield hidden)"]
@@ -529,10 +543,12 @@ func _close_settings() -> void:
 	if _settings_panel != null:
 		_settings_panel.queue_free()
 		_settings_panel = null
-	pad_view.lead_in_s = Session.cue_lead_in_s
 	pad_view.high_contrast = Session.high_contrast
 	pad_view.reduced_effects = Session.reduced_effects
 	pad_view.show_keys = Session.show_keys
+	note_lane.travel_s = Session.cue_lead_in_s
+	note_lane.high_contrast = Session.high_contrast
+	note_lane.reduced_effects = Session.reduced_effects
 	clock.calibration_ms = Session.calibration_ms
 	_pause_panel.visible = true
 

@@ -4618,254 +4618,510 @@
    "phase": 0,
    "mode": "drums",
    "start_tick": 0,
-   "end_tick": 15360,
+   "end_tick": 7680,
    "reward": "pillbox"
   },
   {
    "index": 1,
    "phase": 0,
    "mode": "drums",
-   "start_tick": 15360,
-   "end_tick": 30720,
+   "start_tick": 7680,
+   "end_tick": 15360,
    "reward": "rifle_squad"
   },
   {
    "index": 2,
-   "phase": 1,
+   "phase": 0,
    "mode": "drums",
-   "start_tick": 30720,
-   "end_tick": 46080,
+   "start_tick": 15360,
+   "end_tick": 23040,
    "reward": "pillbox"
   },
   {
    "index": 3,
-   "phase": 1,
+   "phase": 0,
    "mode": "drums",
-   "start_tick": 46080,
-   "end_tick": 61440,
+   "start_tick": 23040,
+   "end_tick": 30720,
    "reward": "rifle_squad"
   },
   {
    "index": 4,
-   "phase": 2,
-   "mode": "bass",
-   "start_tick": 61440,
-   "end_tick": 76800,
+   "phase": 1,
+   "mode": "drums",
+   "start_tick": 30720,
+   "end_tick": 38400,
    "reward": "pillbox"
   },
   {
    "index": 5,
-   "phase": 2,
-   "mode": "bass",
-   "start_tick": 76800,
-   "end_tick": 92160,
+   "phase": 1,
+   "mode": "drums",
+   "start_tick": 38400,
+   "end_tick": 46080,
    "reward": "rifle_squad"
   },
   {
    "index": 6,
-   "phase": 3,
+   "phase": 1,
    "mode": "drums",
-   "start_tick": 92160,
-   "end_tick": 107520,
+   "start_tick": 46080,
+   "end_tick": 53760,
    "reward": "pillbox"
   },
   {
    "index": 7,
-   "phase": 3,
+   "phase": 1,
    "mode": "drums",
-   "start_tick": 107520,
-   "end_tick": 122880,
+   "start_tick": 53760,
+   "end_tick": 61440,
    "reward": "rifle_squad"
   },
   {
    "index": 8,
-   "phase": 4,
+   "phase": 2,
    "mode": "bass",
-   "start_tick": 122880,
-   "end_tick": 138240,
+   "start_tick": 61440,
+   "end_tick": 69120,
    "reward": "pillbox"
   },
   {
    "index": 9,
-   "phase": 4,
+   "phase": 2,
    "mode": "bass",
-   "start_tick": 138240,
-   "end_tick": 153600,
+   "start_tick": 69120,
+   "end_tick": 76800,
    "reward": "rifle_squad"
   },
   {
    "index": 10,
-   "phase": 5,
-   "mode": "drums",
-   "start_tick": 153600,
-   "end_tick": 168960,
+   "phase": 2,
+   "mode": "bass",
+   "start_tick": 76800,
+   "end_tick": 84480,
    "reward": "pillbox"
   },
   {
    "index": 11,
-   "phase": 5,
-   "mode": "drums",
-   "start_tick": 168960,
-   "end_tick": 184320,
+   "phase": 2,
+   "mode": "bass",
+   "start_tick": 84480,
+   "end_tick": 92160,
    "reward": "rifle_squad"
   },
   {
    "index": 12,
-   "phase": 6,
+   "phase": 3,
    "mode": "drums",
-   "start_tick": 184320,
-   "end_tick": 199680,
+   "start_tick": 92160,
+   "end_tick": 99840,
    "reward": "pillbox"
   },
   {
    "index": 13,
-   "phase": 6,
+   "phase": 3,
    "mode": "drums",
-   "start_tick": 199680,
-   "end_tick": 215040,
+   "start_tick": 99840,
+   "end_tick": 107520,
    "reward": "rifle_squad"
   },
   {
    "index": 14,
-   "phase": 7,
-   "mode": "bass",
-   "start_tick": 215040,
-   "end_tick": 230400,
+   "phase": 3,
+   "mode": "drums",
+   "start_tick": 107520,
+   "end_tick": 115200,
    "reward": "pillbox"
   },
   {
    "index": 15,
-   "phase": 7,
-   "mode": "bass",
-   "start_tick": 230400,
-   "end_tick": 245760,
+   "phase": 3,
+   "mode": "drums",
+   "start_tick": 115200,
+   "end_tick": 122880,
    "reward": "rifle_squad"
   },
   {
    "index": 16,
-   "phase": 8,
-   "mode": "drums",
-   "start_tick": 245760,
-   "end_tick": 261120,
+   "phase": 4,
+   "mode": "bass",
+   "start_tick": 122880,
+   "end_tick": 130560,
    "reward": "pillbox"
   },
   {
    "index": 17,
-   "phase": 8,
-   "mode": "drums",
-   "start_tick": 261120,
-   "end_tick": 276480,
-   "reward": "grenadier_squad"
-  },
-  {
-   "index": 18,
-   "phase": 9,
+   "phase": 4,
    "mode": "bass",
-   "start_tick": 276480,
-   "end_tick": 291840,
+   "start_tick": 130560,
+   "end_tick": 138240,
    "reward": "rifle_squad"
   },
   {
-   "index": 19,
-   "phase": 9,
+   "index": 18,
+   "phase": 4,
    "mode": "bass",
-   "start_tick": 291840,
-   "end_tick": 307200,
-   "reward": "grenadier_squad"
+   "start_tick": 138240,
+   "end_tick": 145920,
+   "reward": "pillbox"
+  },
+  {
+   "index": 19,
+   "phase": 4,
+   "mode": "bass",
+   "start_tick": 145920,
+   "end_tick": 153600,
+   "reward": "rifle_squad"
   },
   {
    "index": 20,
-   "phase": 10,
+   "phase": 5,
    "mode": "drums",
-   "start_tick": 307200,
-   "end_tick": 322560,
+   "start_tick": 153600,
+   "end_tick": 161280,
    "reward": "pillbox"
   },
   {
    "index": 21,
-   "phase": 10,
+   "phase": 5,
    "mode": "drums",
-   "start_tick": 322560,
-   "end_tick": 337920,
+   "start_tick": 161280,
+   "end_tick": 168960,
    "reward": "rifle_squad"
   },
   {
    "index": 22,
-   "phase": 11,
-   "mode": "bass",
-   "start_tick": 337920,
-   "end_tick": 353280,
-   "reward": "grenadier_squad"
+   "phase": 5,
+   "mode": "drums",
+   "start_tick": 168960,
+   "end_tick": 176640,
+   "reward": "pillbox"
   },
   {
    "index": 23,
-   "phase": 11,
-   "mode": "bass",
-   "start_tick": 353280,
-   "end_tick": 368640,
+   "phase": 5,
+   "mode": "drums",
+   "start_tick": 176640,
+   "end_tick": 184320,
    "reward": "rifle_squad"
   },
   {
    "index": 24,
-   "phase": 12,
+   "phase": 6,
    "mode": "drums",
-   "start_tick": 368640,
-   "end_tick": 384000,
-   "reward": "grenadier_squad"
+   "start_tick": 184320,
+   "end_tick": 192000,
+   "reward": "pillbox"
   },
   {
    "index": 25,
+   "phase": 6,
+   "mode": "drums",
+   "start_tick": 192000,
+   "end_tick": 199680,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 26,
+   "phase": 6,
+   "mode": "drums",
+   "start_tick": 199680,
+   "end_tick": 207360,
+   "reward": "pillbox"
+  },
+  {
+   "index": 27,
+   "phase": 6,
+   "mode": "drums",
+   "start_tick": 207360,
+   "end_tick": 215040,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 28,
+   "phase": 7,
+   "mode": "bass",
+   "start_tick": 215040,
+   "end_tick": 222720,
+   "reward": "pillbox"
+  },
+  {
+   "index": 29,
+   "phase": 7,
+   "mode": "bass",
+   "start_tick": 222720,
+   "end_tick": 230400,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 30,
+   "phase": 7,
+   "mode": "bass",
+   "start_tick": 230400,
+   "end_tick": 238080,
+   "reward": "pillbox"
+  },
+  {
+   "index": 31,
+   "phase": 7,
+   "mode": "bass",
+   "start_tick": 238080,
+   "end_tick": 245760,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 32,
+   "phase": 8,
+   "mode": "drums",
+   "start_tick": 245760,
+   "end_tick": 253440,
+   "reward": "pillbox"
+  },
+  {
+   "index": 33,
+   "phase": 8,
+   "mode": "drums",
+   "start_tick": 253440,
+   "end_tick": 261120,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 34,
+   "phase": 8,
+   "mode": "drums",
+   "start_tick": 261120,
+   "end_tick": 268800,
+   "reward": "pillbox"
+  },
+  {
+   "index": 35,
+   "phase": 8,
+   "mode": "drums",
+   "start_tick": 268800,
+   "end_tick": 276480,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 36,
+   "phase": 9,
+   "mode": "bass",
+   "start_tick": 276480,
+   "end_tick": 284160,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 37,
+   "phase": 9,
+   "mode": "bass",
+   "start_tick": 284160,
+   "end_tick": 291840,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 38,
+   "phase": 9,
+   "mode": "bass",
+   "start_tick": 291840,
+   "end_tick": 299520,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 39,
+   "phase": 9,
+   "mode": "bass",
+   "start_tick": 299520,
+   "end_tick": 307200,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 40,
+   "phase": 10,
+   "mode": "drums",
+   "start_tick": 307200,
+   "end_tick": 314880,
+   "reward": "pillbox"
+  },
+  {
+   "index": 41,
+   "phase": 10,
+   "mode": "drums",
+   "start_tick": 314880,
+   "end_tick": 322560,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 42,
+   "phase": 10,
+   "mode": "drums",
+   "start_tick": 322560,
+   "end_tick": 330240,
+   "reward": "pillbox"
+  },
+  {
+   "index": 43,
+   "phase": 10,
+   "mode": "drums",
+   "start_tick": 330240,
+   "end_tick": 337920,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 44,
+   "phase": 11,
+   "mode": "bass",
+   "start_tick": 337920,
+   "end_tick": 345600,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 45,
+   "phase": 11,
+   "mode": "bass",
+   "start_tick": 345600,
+   "end_tick": 353280,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 46,
+   "phase": 11,
+   "mode": "bass",
+   "start_tick": 353280,
+   "end_tick": 360960,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 47,
+   "phase": 11,
+   "mode": "bass",
+   "start_tick": 360960,
+   "end_tick": 368640,
+   "reward": "rifle_squad"
+  },
+  {
+   "index": 48,
+   "phase": 12,
+   "mode": "drums",
+   "start_tick": 368640,
+   "end_tick": 376320,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 49,
+   "phase": 12,
+   "mode": "drums",
+   "start_tick": 376320,
+   "end_tick": 384000,
+   "reward": "pillbox"
+  },
+  {
+   "index": 50,
    "phase": 12,
    "mode": "drums",
    "start_tick": 384000,
+   "end_tick": 391680,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 51,
+   "phase": 12,
+   "mode": "drums",
+   "start_tick": 391680,
    "end_tick": 399360,
    "reward": "pillbox"
   },
   {
-   "index": 26,
+   "index": 52,
    "phase": 13,
    "mode": "drums",
    "start_tick": 399360,
-   "end_tick": 414720,
+   "end_tick": 407040,
    "reward": "grenadier_squad"
   },
   {
-   "index": 27,
+   "index": 53,
+   "phase": 13,
+   "mode": "drums",
+   "start_tick": 407040,
+   "end_tick": 414720,
+   "reward": "pillbox"
+  },
+  {
+   "index": 54,
    "phase": 13,
    "mode": "drums",
    "start_tick": 414720,
+   "end_tick": 422400,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 55,
+   "phase": 13,
+   "mode": "drums",
+   "start_tick": 422400,
    "end_tick": 430080,
    "reward": "pillbox"
   },
   {
-   "index": 28,
+   "index": 56,
    "phase": 14,
    "mode": "bass",
    "start_tick": 430080,
-   "end_tick": 445440,
+   "end_tick": 437760,
    "reward": "grenadier_squad"
   },
   {
-   "index": 29,
+   "index": 57,
+   "phase": 14,
+   "mode": "bass",
+   "start_tick": 437760,
+   "end_tick": 445440,
+   "reward": "pillbox"
+  },
+  {
+   "index": 58,
    "phase": 14,
    "mode": "bass",
    "start_tick": 445440,
+   "end_tick": 453120,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 59,
+   "phase": 14,
+   "mode": "bass",
+   "start_tick": 453120,
    "end_tick": 460800,
    "reward": "pillbox"
   },
   {
-   "index": 30,
+   "index": 60,
    "phase": 15,
    "mode": "drums",
    "start_tick": 460800,
-   "end_tick": 476160,
+   "end_tick": 468480,
    "reward": "grenadier_squad"
   },
   {
-   "index": 31,
+   "index": 61,
+   "phase": 15,
+   "mode": "drums",
+   "start_tick": 468480,
+   "end_tick": 476160,
+   "reward": "pillbox"
+  },
+  {
+   "index": 62,
    "phase": 15,
    "mode": "drums",
    "start_tick": 476160,
+   "end_tick": 483840,
+   "reward": "grenadier_squad"
+  },
+  {
+   "index": 63,
+   "phase": 15,
+   "mode": "drums",
+   "start_tick": 483840,
    "end_tick": 491520,
    "reward": "pillbox"
   }
@@ -4913,7 +5169,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -4929,7 +5185,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -4945,7 +5201,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 4,
+     "count": 8,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -4961,7 +5217,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 4,
+     "count": 8,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -4977,7 +5233,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 10,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -4993,7 +5249,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 10,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5009,7 +5265,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 10,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5025,7 +5281,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 10,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5041,7 +5297,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 10,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5057,7 +5313,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 6,
+     "count": 12,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5073,7 +5329,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 6,
+     "count": 12,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5089,7 +5345,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 7,
+     "count": 14,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5105,7 +5361,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 7,
+     "count": 14,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5121,12 +5377,12 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5142,12 +5398,12 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5163,17 +5419,17 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "jeep",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5189,17 +5445,17 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "jeep",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5215,17 +5471,17 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "jeep",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5241,12 +5497,12 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 4,
+     "count": 8,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 4,
+     "count": 8,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5262,7 +5518,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 4,
+     "count": 8,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5278,7 +5534,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 4,
+     "count": 8,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5294,7 +5550,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 4,
+     "count": 8,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5310,12 +5566,12 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 10,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 2,
+     "count": 4,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5331,12 +5587,12 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 10,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 2,
+     "count": 4,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -5352,12 +5608,12 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 10,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 2,
+     "count": 4,
      "spawn_spacing_ticks": 480
     }
    ],

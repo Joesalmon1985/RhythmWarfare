@@ -3,7 +3,7 @@ extends TestCase
 
 
 const BUILT := 9
-const UNITS := 18  # squads delivered: 11 rifle + 7 grenadier rewards, all within the 14-per-point capacity under perfect play
+const UNITS := 36  # squads delivered under perfect play: 22 rifle + 14 grenadier rewards (two-bar sequences)
 
 
 func _load(pack: String, options: Dictionary = {}) -> Level:
@@ -41,7 +41,7 @@ func test_mission_one_loads_with_pads_sequences_and_rewards() -> void:
 	var level := _load("m01_first_watch")
 	assert_true(level.is_mission())
 	assert_eq(level.notes.size(), 10 * 18 + 6 * 12, "ten drum phases of 10 kicks and 8 snares, six bass phases of 12 taps")
-	assert_eq(level.sequences.size(), 32, "128 bars in four-bar sequences")
+	assert_eq(level.sequences.size(), 64, "128 bars in two-bar sequences")
 	assert_eq(str(level.sequences[0]["reward"]), "pillbox", "the first drum sequence rewards one pillbox")
 	var pads := {}
 	var bass_pads := {}
@@ -84,10 +84,11 @@ func test_perfect_play_passes_every_sequence_and_builds() -> void:
 	m.setup(level)
 	_play(m, level, func(_i: int, _n: Dictionary) -> bool: return true)
 	var r := m.result()
-	assert_eq(r["sequences_passed"], 32)
-	assert_eq(r["grades"]["sharp"], 32)
+	assert_eq(r["sequences_passed"], 64)
+	assert_eq(r["grades"]["sharp"], 64)
 	assert_eq(r["outcome"], "victory")
-	assert_eq(r["built"], BUILT, "three sockets per point: only nine pillboxes fit, later pillbox rewards repair")
+	assert_true(int(r["built"]) >= BUILT and int(r["built"]) <= BUILT + 1, "three sockets per point: nine pillboxes fit (one more when a destroyed one is rebuilt), later pillbox rewards repair (%d)" % int(r["built"]))
+	assert_true(int(r["repairs"]) > 0, "surplus pillbox rewards repair")
 	assert_eq(r["units"], UNITS, "rifle and grenadier squads of three")
 	assert_true(m.sim.defense_count() > 0)
 

@@ -60,6 +60,12 @@
  "sequence_threshold": 0.6,
  "intro": "Grooves, kicks and fills now change from phase to phase.",
  "intro_bar": 1,
+ "intros": [
+  {
+   "bar": 1,
+   "text": "Grooves, kicks and fills now change from phase to phase."
+  }
+ ],
  "placeholder": true,
  "source": {
   "mission": "content/missions/level_09.json",
@@ -242,6 +248,7 @@
   "groove_roller": "Roller",
   "groove_twostep": "Two-Step"
  },
+ "bound_sounds": {},
  "phases": [
   {
    "id": "p01",
@@ -4666,126 +4673,254 @@
    "phase": 0,
    "mode": "drums",
    "start_tick": 0,
-   "end_tick": 15360,
+   "end_tick": 7680,
    "reward": "pillbox"
   },
   {
    "index": 1,
    "phase": 0,
    "mode": "drums",
-   "start_tick": 15360,
-   "end_tick": 30720,
+   "start_tick": 7680,
+   "end_tick": 15360,
    "reward": "turret"
   },
   {
    "index": 2,
-   "phase": 1,
+   "phase": 0,
    "mode": "drums",
-   "start_tick": 30720,
-   "end_tick": 46080,
+   "start_tick": 15360,
+   "end_tick": 23040,
    "reward": "pillbox"
   },
   {
    "index": 3,
+   "phase": 0,
+   "mode": "drums",
+   "start_tick": 23040,
+   "end_tick": 30720,
+   "reward": "turret"
+  },
+  {
+   "index": 4,
+   "phase": 1,
+   "mode": "drums",
+   "start_tick": 30720,
+   "end_tick": 38400,
+   "reward": "pillbox"
+  },
+  {
+   "index": 5,
+   "phase": 1,
+   "mode": "drums",
+   "start_tick": 38400,
+   "end_tick": 46080,
+   "reward": "flame_tower"
+  },
+  {
+   "index": 6,
    "phase": 1,
    "mode": "drums",
    "start_tick": 46080,
+   "end_tick": 53760,
+   "reward": "pillbox"
+  },
+  {
+   "index": 7,
+   "phase": 1,
+   "mode": "drums",
+   "start_tick": 53760,
    "end_tick": 61440,
    "reward": "flame_tower"
   },
   {
-   "index": 4,
+   "index": 8,
    "phase": 2,
    "mode": "bass",
    "start_tick": 61440,
-   "end_tick": 76800,
+   "end_tick": 69120,
    "reward": "2tnk"
   },
   {
-   "index": 5,
+   "index": 9,
+   "phase": 2,
+   "mode": "bass",
+   "start_tick": 69120,
+   "end_tick": 76800,
+   "reward": "e3"
+  },
+  {
+   "index": 10,
    "phase": 2,
    "mode": "bass",
    "start_tick": 76800,
+   "end_tick": 84480,
+   "reward": "2tnk"
+  },
+  {
+   "index": 11,
+   "phase": 2,
+   "mode": "bass",
+   "start_tick": 84480,
    "end_tick": 92160,
    "reward": "e3"
   },
   {
-   "index": 6,
+   "index": 12,
    "phase": 3,
    "mode": "drums",
    "start_tick": 92160,
-   "end_tick": 107520,
-   "reward": "turret"
-  },
-  {
-   "index": 7,
-   "phase": 3,
-   "mode": "drums",
-   "start_tick": 107520,
-   "end_tick": 122880,
-   "reward": "repair"
-  },
-  {
-   "index": 8,
-   "phase": 4,
-   "mode": "drums",
-   "start_tick": 122880,
-   "end_tick": 138240,
-   "reward": "turret"
-  },
-  {
-   "index": 9,
-   "phase": 4,
-   "mode": "drums",
-   "start_tick": 138240,
-   "end_tick": 153600,
-   "reward": "pillbox"
-  },
-  {
-   "index": 10,
-   "phase": 5,
-   "mode": "bass",
-   "start_tick": 153600,
-   "end_tick": 168960,
-   "reward": "arty"
-  },
-  {
-   "index": 11,
-   "phase": 5,
-   "mode": "bass",
-   "start_tick": 168960,
-   "end_tick": 184320,
-   "reward": "1tnk"
-  },
-  {
-   "index": 12,
-   "phase": 6,
-   "mode": "drums",
-   "start_tick": 184320,
-   "end_tick": 199680,
+   "end_tick": 99840,
    "reward": "turret"
   },
   {
    "index": 13,
-   "phase": 6,
+   "phase": 3,
    "mode": "drums",
-   "start_tick": 199680,
-   "end_tick": 215040,
+   "start_tick": 99840,
+   "end_tick": 107520,
    "reward": "repair"
   },
   {
    "index": 14,
-   "phase": 7,
+   "phase": 3,
    "mode": "drums",
-   "start_tick": 215040,
-   "end_tick": 230400,
-   "reward": "repair"
+   "start_tick": 107520,
+   "end_tick": 115200,
+   "reward": "turret"
   },
   {
    "index": 15,
+   "phase": 3,
+   "mode": "drums",
+   "start_tick": 115200,
+   "end_tick": 122880,
+   "reward": "repair"
+  },
+  {
+   "index": 16,
+   "phase": 4,
+   "mode": "drums",
+   "start_tick": 122880,
+   "end_tick": 130560,
+   "reward": "turret"
+  },
+  {
+   "index": 17,
+   "phase": 4,
+   "mode": "drums",
+   "start_tick": 130560,
+   "end_tick": 138240,
+   "reward": "pillbox"
+  },
+  {
+   "index": 18,
+   "phase": 4,
+   "mode": "drums",
+   "start_tick": 138240,
+   "end_tick": 145920,
+   "reward": "turret"
+  },
+  {
+   "index": 19,
+   "phase": 4,
+   "mode": "drums",
+   "start_tick": 145920,
+   "end_tick": 153600,
+   "reward": "pillbox"
+  },
+  {
+   "index": 20,
+   "phase": 5,
+   "mode": "bass",
+   "start_tick": 153600,
+   "end_tick": 161280,
+   "reward": "arty"
+  },
+  {
+   "index": 21,
+   "phase": 5,
+   "mode": "bass",
+   "start_tick": 161280,
+   "end_tick": 168960,
+   "reward": "1tnk"
+  },
+  {
+   "index": 22,
+   "phase": 5,
+   "mode": "bass",
+   "start_tick": 168960,
+   "end_tick": 176640,
+   "reward": "arty"
+  },
+  {
+   "index": 23,
+   "phase": 5,
+   "mode": "bass",
+   "start_tick": 176640,
+   "end_tick": 184320,
+   "reward": "1tnk"
+  },
+  {
+   "index": 24,
+   "phase": 6,
+   "mode": "drums",
+   "start_tick": 184320,
+   "end_tick": 192000,
+   "reward": "turret"
+  },
+  {
+   "index": 25,
+   "phase": 6,
+   "mode": "drums",
+   "start_tick": 192000,
+   "end_tick": 199680,
+   "reward": "repair"
+  },
+  {
+   "index": 26,
+   "phase": 6,
+   "mode": "drums",
+   "start_tick": 199680,
+   "end_tick": 207360,
+   "reward": "turret"
+  },
+  {
+   "index": 27,
+   "phase": 6,
+   "mode": "drums",
+   "start_tick": 207360,
+   "end_tick": 215040,
+   "reward": "repair"
+  },
+  {
+   "index": 28,
+   "phase": 7,
+   "mode": "drums",
+   "start_tick": 215040,
+   "end_tick": 222720,
+   "reward": "repair"
+  },
+  {
+   "index": 29,
+   "phase": 7,
+   "mode": "drums",
+   "start_tick": 222720,
+   "end_tick": 230400,
+   "reward": "jeep"
+  },
+  {
+   "index": 30,
    "phase": 7,
    "mode": "drums",
    "start_tick": 230400,
+   "end_tick": 238080,
+   "reward": "repair"
+  },
+  {
+   "index": 31,
+   "phase": 7,
+   "mode": "drums",
+   "start_tick": 238080,
    "end_tick": 245760,
    "reward": "jeep"
   }
@@ -4829,7 +4964,8 @@
   "files": 122,
   "placeholder_files": 122,
   "owner_files": 0,
-  "default_mix_peak_db": -0.57
+  "default_mix_peak_db": -0.57,
+  "loudest_mix_bound_db": 2.18
  },
  "waves": [
   {
@@ -4839,13 +4975,14 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 4,
+     "count": 8,
      "spawn_spacing_ticks": 600
     }
    ],
    "start_tick": 0,
    "via_defense_point": "defense_1",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_02",
@@ -4854,18 +4991,19 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
    "start_tick": 15360,
    "via_defense_point": "defense_1",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_03",
@@ -4874,18 +5012,19 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 4,
+     "count": 8,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e4",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
    "start_tick": 30720,
    "via_defense_point": "defense_2",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_04",
@@ -4894,23 +5033,24 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 2,
+     "count": 4,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "jeep",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
    "start_tick": 46080,
    "via_defense_point": "defense_3",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_05",
@@ -4919,23 +5059,24 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e4",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "1tnk",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
    "start_tick": 61440,
    "via_defense_point": "defense_1",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_06",
@@ -4944,23 +5085,24 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e3",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "apc",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
    "start_tick": 76800,
    "via_defense_point": "defense_2",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_07",
@@ -4969,23 +5111,24 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 2,
+     "count": 4,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "v2rl",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
    "start_tick": 92160,
    "via_defense_point": "defense_3",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_08",
@@ -4994,23 +5137,24 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e4",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "2tnk",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
    "start_tick": 107520,
    "via_defense_point": "defense_1",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_09",
@@ -5019,23 +5163,24 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 2,
+     "count": 4,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "3tnk",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
    "start_tick": 122880,
    "via_defense_point": "defense_2",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_10",
@@ -5044,23 +5189,24 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e3",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "4tnk",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
    "start_tick": 138240,
    "via_defense_point": "defense_3",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_11",
@@ -5069,23 +5215,24 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e4",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "jeep",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
    "start_tick": 153600,
    "via_defense_point": "defense_1",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_12",
@@ -5094,23 +5241,24 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e4",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "v2rl",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
    "start_tick": 168960,
    "via_defense_point": "defense_2",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   },
   {
    "id": "wave_13",
@@ -5119,23 +5267,24 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 2,
+     "count": 4,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "3tnk",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
    "start_tick": 180480,
    "via_defense_point": "defense_3",
-   "target_objective": "command_core"
+   "target_objective": "command_core",
+   "target": "core"
   }
  ]
 }

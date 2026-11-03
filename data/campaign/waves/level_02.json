@@ -1,14 +1,14 @@
 {
- "note": "Mission 2 Second Pulse (40 bars, 55 s). Riflemen, grenadiers and jeeps; the gun turret rewards answer the jeeps.",
+ "note": "Mission 2 Second Pulse (40 bars, 55 s). Riflemen, grenadiers and jeeps; the gun turret rewards answer the jeeps. Counts doubled on 3 November 2026 (owner's call: bigger waves, rewards every 2 bars).",
  "rules": {"objective_hp": {"command_core": 60000}, "sockets_per_point": 4},
  "waves": [
-  {"id": "wave_01", "start_bar": 1, "entry": "left", "groups": [{"actor": "e1", "count": 5, "spawn_spacing_ticks": 600}]},
-  {"id": "wave_02", "start_bar": 6, "entry": "right", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 600}]},
-  {"id": "wave_03", "start_bar": 10, "entry": "top", "groups": [{"actor": "e1", "count": 5}, {"actor": "e2", "count": 2}]},
-  {"id": "wave_04", "start_bar": 14, "entry": "left", "groups": [{"actor": "e1", "count": 6}, {"actor": "jeep", "count": 2}]},
-  {"id": "wave_05", "start_bar": 18, "entry": "right", "groups": [{"actor": "e1", "count": 7}, {"actor": "e2", "count": 2}]},
-  {"id": "wave_06", "start_bar": 22, "entry": "top", "groups": [{"actor": "e1", "count": 6}, {"actor": "jeep", "count": 2}]},
-  {"id": "wave_07", "start_bar": 25, "entry": "left", "groups": [{"actor": "e1", "count": 7}, {"actor": "e2", "count": 2}, {"actor": "jeep", "count": 1}]},
-  {"id": "wave_08", "start_bar": 28, "entry": "right", "groups": [{"actor": "e1", "count": 8}, {"actor": "jeep", "count": 2}]}
+  {"id": "wave_01", "start_bar": 1, "entry": "left", "groups": [{"actor": "e1", "count": 10, "spawn_spacing_ticks": 600}]},
+  {"id": "wave_02", "start_bar": 6, "entry": "right", "groups": [{"actor": "e1", "count": 12, "spawn_spacing_ticks": 600}]},
+  {"id": "wave_03", "start_bar": 10, "entry": "top", "groups": [{"actor": "e1", "count": 10}, {"actor": "e2", "count": 4}]},
+  {"id": "wave_04", "start_bar": 14, "entry": "left", "groups": [{"actor": "e1", "count": 12}, {"actor": "jeep", "count": 4}]},
+  {"id": "wave_05", "start_bar": 18, "entry": "right", "groups": [{"actor": "e1", "count": 14}, {"actor": "e2", "count": 4}]},
+  {"id": "wave_06", "start_bar": 22, "entry": "top", "groups": [{"actor": "e1", "count": 12}, {"actor": "jeep", "count": 4}]},
+  {"id": "wave_07", "start_bar": 25, "entry": "left", "groups": [{"actor": "e1", "count": 14}, {"actor": "e2", "count": 4}, {"actor": "jeep", "count": 2}]},
+  {"id": "wave_08", "start_bar": 28, "entry": "right", "groups": [{"actor": "e1", "count": 16}, {"actor": "jeep", "count": 4}]}
  ]
 }

@@ -81,6 +81,14 @@ func is_resolved(i: int) -> bool:
 	return _state[i] == State.DONE
 
 
+## What the note display shows for cue `i`: "hit" (resolved with credit), "miss" (resolved with none), else "pending"
+## (waiting or being held).
+func cue_state(i: int) -> String:
+	if _state[i] != State.DONE:
+		return "pending"
+	return "hit" if credit[i] > 0.0 else "miss"
+
+
 func drain_events() -> Array:
 	var out := _events
 	_events = []

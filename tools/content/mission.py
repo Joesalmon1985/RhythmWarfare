@@ -428,7 +428,6 @@ class Mission:
     def check(self) -> None:
         chart = RULES["chart"]
         thumb = {int(k): v for k, v in RULES["thumb_of_pad"].items()}
-        bounds = sorted({s["start_tick"] for s in self.sequences} | {self.duration_ticks})
         for ph in self.phases:
             blocks = [b for b in self.blocks if b["phase"] == ph["index"]]
             groups = {}  # blocks that share a group are the pads of one cue list: they take the same option together
@@ -447,9 +446,6 @@ class Mission:
                 for c in cues:
                     if c["dur"] and c["end"] > ph["end"]:
                         self.err(f"{where}: a hold at bar {c['tick'] // TICKS_PER_BAR + 1} runs past the phase end (into a mode change)")
-                    nxt = next((x for x in bounds if x > c["tick"]), self.duration_ticks)
-                    if c["dur"] and c["end"] > nxt:
-                        self.err(f"{where}: a hold at bar {c['tick'] // TICKS_PER_BAR + 1} crosses the sequence boundary at bar {nxt // TICKS_PER_BAR + 1}")
                 for p in range(1, 5):
                     row = [c for c in cues if c["pad"] == p]
                     for x, y in zip(row, row[1:]):

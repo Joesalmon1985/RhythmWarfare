@@ -6,14 +6,16 @@ Written by `python tools/content/build.py`. Do not edit; rebuild instead.
 
 | Mission | Pack | Stem files | Placeholder | Owner | Default mix peak | Loudest options (bound) |
 | --- | --- | --- | --- | --- | --- | --- |
-| 5 Counterpoint | songs/m05_counterpoint | 31 | 31 | 0 | -1.73 dBFS | 1.74 dBFS |
+| 6 Fortress | songs/m06_fortress | 54 | 54 | 0 | -1.87 dBFS | -0.59 dBFS |
+| 8 Crossfire | songs/m08_crossfire | 53 | 53 | 0 | -6.53 dBFS | -0.26 dBFS |
 | 10 Last Light | songs/m10_last_light | 152 | 152 | 0 | -2.3 dBFS | 1.97 dBFS |
 
 ## Library renders in use
 
 | Clip | Part | Sound | Source |
 | --- | --- | --- | --- |
-| acc_counterpoint | other | ensemble | placeholder `content/library/acc_counterpoint/placeholder/other__ensemble.wav` |
+| acc_crossfire | other | ensemble | placeholder `content/library/acc_crossfire/placeholder/other__ensemble.wav` |
+| acc_fortress | other | ensemble | placeholder `content/library/acc_fortress/placeholder/other__ensemble.wav` |
 | acc_last_light | other | ensemble | placeholder `content/library/acc_last_light/placeholder/other__ensemble.wav` |
 | bass_hold_a | bass | bass_patrol | placeholder `content/library/bass_hold_a/placeholder/bass__bass_patrol.wav` |
 | bass_hold_b | bass | bass_command | placeholder `content/library/bass_hold_b/placeholder/bass__bass_command.wav` |
@@ -31,11 +33,13 @@ Written by `python tools/content/build.py`. Do not edit; rebuild instead.
 | bass_steps | bass | bass_hollow | placeholder `content/library/bass_steps/placeholder/bass__bass_hollow.wav` |
 | bass_steps | bass | bass_patrol | placeholder `content/library/bass_steps/placeholder/bass__bass_patrol.wav` |
 | bass_steps | bass | bass_reese | placeholder `content/library/bass_steps/placeholder/bass__bass_reese.wav` |
+| fill_break | kick | kick_armour | placeholder `content/library/fill_break/placeholder/kick__kick_armour.wav` |
 | fill_break | kick | kick_heavy | placeholder `content/library/fill_break/placeholder/kick__kick_heavy.wav` |
 | fill_break | kick | kick_march | placeholder `content/library/fill_break/placeholder/kick__kick_march.wav` |
 | fill_break | kick | kick_siege | placeholder `content/library/fill_break/placeholder/kick__kick_siege.wav` |
 | fill_break | snare | snare_clap | placeholder `content/library/fill_break/placeholder/snare__snare_clap.wav` |
 | fill_break | snare | snare_crack | placeholder `content/library/fill_break/placeholder/snare__snare_crack.wav` |
+| fill_break | snare | snare_guard | placeholder `content/library/fill_break/placeholder/snare__snare_guard.wav` |
 | fill_break | snare | snare_rim | placeholder `content/library/fill_break/placeholder/snare__snare_rim.wav` |
 | fill_kick_drop | kick | kick_heavy | placeholder `content/library/fill_kick_drop/placeholder/kick__kick_heavy.wav` |
 | fill_kick_drop | kick | kick_march | placeholder `content/library/fill_kick_drop/placeholder/kick__kick_march.wav` |
@@ -59,11 +63,13 @@ Written by `python tools/content/build.py`. Do not edit; rebuild instead.
 | groove_push | snare | snare_crack | placeholder `content/library/groove_push/placeholder/snare__snare_crack.wav` |
 | groove_push | snare | snare_guard | placeholder `content/library/groove_push/placeholder/snare__snare_guard.wav` |
 | groove_push | snare | snare_rim | placeholder `content/library/groove_push/placeholder/snare__snare_rim.wav` |
+| groove_roller | kick | kick_armour | placeholder `content/library/groove_roller/placeholder/kick__kick_armour.wav` |
 | groove_roller | kick | kick_heavy | placeholder `content/library/groove_roller/placeholder/kick__kick_heavy.wav` |
 | groove_roller | kick | kick_march | placeholder `content/library/groove_roller/placeholder/kick__kick_march.wav` |
 | groove_roller | kick | kick_siege | placeholder `content/library/groove_roller/placeholder/kick__kick_siege.wav` |
 | groove_roller | snare | snare_clap | placeholder `content/library/groove_roller/placeholder/snare__snare_clap.wav` |
 | groove_roller | snare | snare_crack | placeholder `content/library/groove_roller/placeholder/snare__snare_crack.wav` |
+| groove_roller | snare | snare_guard | placeholder `content/library/groove_roller/placeholder/snare__snare_guard.wav` |
 | groove_roller | snare | snare_rim | placeholder `content/library/groove_roller/placeholder/snare__snare_rim.wav` |
 | groove_twostep | kick | kick_armour | placeholder `content/library/groove_twostep/placeholder/kick__kick_armour.wav` |
 | groove_twostep | kick | kick_heavy | placeholder `content/library/groove_twostep/placeholder/kick__kick_heavy.wav` |
@@ -126,10 +132,10 @@ Written by `python tools/content/build.py`. Do not edit; rebuild instead.
 Equal lengths do not prove sync. After replacing audio, play the mission (or its practice) and listen at these
 song times: the first downbeat, every mode change and the last bar.
 
-- 5 Counterpoint: bar 1 (0.0 s), bar 9 (11.0 s), bar 17 (22.1 s), bar 25 (33.1 s), bar 33 (44.1 s), bar 41 (55.2 s), bar 49 (66.2 s), bar 56 (75.9 s)
+- 6 Fortress: bar 1 (0.0 s), bar 9 (11.0 s), bar 17 (22.1 s), bar 25 (33.1 s), bar 33 (44.1 s), bar 41 (55.2 s), bar 49 (66.2 s), bar 56 (75.9 s)
+- 8 Crossfire: bar 1 (0.0 s), bar 9 (11.0 s), bar 17 (22.1 s), bar 25 (33.1 s), bar 33 (44.1 s), bar 41 (55.2 s), bar 49 (66.2 s), bar 57 (77.2 s), bar 64 (86.9 s)
 - 10 Last Light: bar 1 (0.0 s), bar 9 (11.0 s), bar 17 (22.1 s), bar 25 (33.1 s), bar 33 (44.1 s), bar 41 (55.2 s), bar 49 (66.2 s), bar 57 (77.2 s), bar 65 (88.3 s), bar 73 (99.3 s), bar 80 (109.0 s)
 
 ## Warnings
 
-- content/missions/level_05.json: the loudest combination of options may peak at up to 1.74 dBFS (an upper bound); leave more headroom in the renders
 - content/missions/level_10.json: the loudest combination of options may peak at up to 1.97 dBFS (an upper bound); leave more headroom in the renders

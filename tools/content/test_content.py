@@ -269,20 +269,20 @@ class MissionOneTests(unittest.TestCase):
     def tearDownClass(cls) -> None:
         shutil.rmtree(cls.tmp, ignore_errors=True)
 
-    def test_mission_one_is_128_bars_in_sixteen_phases_and_32_sequences(self):
+    def test_mission_one_is_128_bars_in_sixteen_phases_and_64_sequences(self):
         m = self.m
         self.assertEqual(m.errors, [])
         self.assertEqual(m.bars, 128)
         self.assertEqual(len(m.phases), 16)
-        self.assertEqual(len(m.sequences), 32)
+        self.assertEqual(len(m.sequences), 64)
         self.assertEqual("".join("D" if p["mode"] == "drums" else "B" for p in m.phases), "DDBDBDDBDBDBDDBD")
         self.assertEqual([i["bar"] for i in m.intros], [1, 16])
 
     def test_rewards_follow_the_four_acts(self):
         rewards = [s["reward"] for s in self.m.sequences]
-        acts = [rewards[i * 8:(i + 1) * 8] for i in range(4)]
-        self.assertEqual(acts[0], ["pillbox", "rifle_squad"] * 4)
-        self.assertEqual(acts[1], ["pillbox", "rifle_squad"] * 4)
+        acts = [rewards[i * 16:(i + 1) * 16] for i in range(4)]
+        self.assertEqual(acts[0], ["pillbox", "rifle_squad"] * 8)
+        self.assertEqual(acts[1], ["pillbox", "rifle_squad"] * 8)
         self.assertIn("grenadier_squad", acts[2])
         self.assertTrue({"pillbox", "rifle_squad"} <= set(acts[2]))
         self.assertEqual(set(acts[3]), {"grenadier_squad", "pillbox"})
@@ -298,8 +298,8 @@ class MissionOneTests(unittest.TestCase):
             self.assertEqual(w["target_objective"], "barracks")
             self.assertLess(w["start_tick"], 116 * TICKS_PER_BAR + 1, "units need about 12 s to arrive")
         self.assertEqual({w["target"] for w in waves}, {"defenses", "civilians", "core"})
-        self.assertGreaterEqual(sum(g["count"] for w in waves for g in w["groups"]), 130)
-        self.assertEqual(sum(g["count"] for w in waves for g in w["groups"] if g["actor"] == "jeep"), 3)
+        self.assertGreaterEqual(sum(g["count"] for w in waves for g in w["groups"]), 260)
+        self.assertEqual(sum(g["count"] for w in waves for g in w["groups"] if g["actor"] == "jeep"), 6)
         self.assertEqual({w["entry"] for w in waves if any(g["actor"] == "jeep" for g in w["groups"])}, {"left", "top", "right"})
 
     def test_a_bad_target_class_is_refused_and_a_group_may_override(self):

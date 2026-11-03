@@ -14,10 +14,10 @@
  },
  "accompaniment": [{"clip": "acc_second_pulse", "start_bar": 1, "bars": 40}],
  "phases": [
-  {"bars": 8, "mode": "drums", "groove": "groove_straight", "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["pillbox", "pillbox"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["pillbox", "e3"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["turret", "pillbox"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["e3", "pillbox"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["turret", "pillbox"]}
+  {"bars": 8, "mode": "drums", "groove": "groove_straight", "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["pillbox", "pillbox"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["pillbox", "e3"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["turret", "pillbox"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["e3", "pillbox"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["turret", "pillbox"]}
  ]
 }

@@ -1,5 +1,5 @@
 {
- "note": "Mission 3 Hold the Line (48 bars, 66 s). Adds rocket soldiers and the first light tanks; bass sequences reward rocket soldiers and jeeps.",
+ "note": "Mission 3 Hold the Line (48 bars, 66 s). Adds rocket soldiers and the first light tanks; bass sequences reward rocket soldiers and jeeps. Counts doubled on 3 November 2026 (owner's call: bigger waves, rewards every 2 bars).",
  "rules": {
   "objective_hp": {
    "command_core": 60000
@@ -14,7 +14,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5,
+     "count": 10,
      "spawn_spacing_ticks": 600
     }
    ]
@@ -26,7 +26,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 6
+     "count": 12
     }
    ]
   },
@@ -37,7 +37,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5
+     "count": 10
     }
    ]
   },
@@ -48,11 +48,11 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5
+     "count": 10
     },
     {
      "actor": "jeep",
-     "count": 1
+     "count": 2
     }
    ]
   },
@@ -63,11 +63,11 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5
+     "count": 10
     },
     {
      "actor": "e3",
-     "count": 1
+     "count": 2
     }
    ]
   },
@@ -78,11 +78,11 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 5
+     "count": 10
     },
     {
      "actor": "1tnk",
-     "count": 1
+     "count": 2
     }
    ]
   },
@@ -93,11 +93,11 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 6
+     "count": 12
     },
     {
      "actor": "jeep",
-     "count": 1
+     "count": 2
     }
    ]
   },
@@ -108,11 +108,11 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 6
+     "count": 12
     },
     {
      "actor": "1tnk",
-     "count": 1
+     "count": 2
     }
    ]
   },
@@ -123,11 +123,11 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 7
+     "count": 14
     },
     {
      "actor": "e3",
-     "count": 2
+     "count": 4
     }
    ]
   }

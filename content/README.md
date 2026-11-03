@@ -107,3 +107,21 @@ whose family does not match the part.
 
 Re-running the importer is idempotent: identical inputs write identical files. Replacing an export and re-running
 rewrites that clip's render; the build then notices the changed WAV through `build_state.json`.
+
+## MIDI for missions 2 to 10 (the owner's render path)
+
+Missions 2 to 10 arrange library clips and have no full-song MIDI, so `python tools/content/export_midi.py` (all of them, or
+`level_04 level_06`) writes `midi_export/level_NN_<title>/`: a README, the default groove, bass line and backing as 8-bar
+loops (`Kick_A`, `Snare_A`, `Bass_A`, `Other_Pad`, `Other_Hats`), rule-based alternatives `Kick_B/C`, `Snare_B/C`, `Bass_B/C`
+(seeded from the mission, the same every run) and `Arrangement_A.mid`, a four-track reference of the whole mission. It also writes
+the manifest `content/imports/level_NN.json` naming the WAVs to render from them (named after the MIDI: `Kick_A.wav`; the WAVs are
+git-ignored). Render them in Ableton, then, per mission:
+
+```
+python tools/content/import_ableton.py content/imports/level_NN.json --check
+python tools/content/import_ableton.py content/imports/level_NN.json
+python tools/content/build.py level_NN
+```
+
+The mission is then rewired to the imported clips in a follow-up, as mission 1 was. `midi_export/README.md` has the workflow;
+`tools/content/test_export.py` tests the export and runs a synthetic round trip through the importer.

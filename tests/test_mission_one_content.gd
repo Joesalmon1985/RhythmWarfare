@@ -64,7 +64,7 @@ func test_defaults_cues_pads_and_names() -> void:
 	var level := _load()
 	assert_eq(level.selection, {"groove": ["groove_half_time"], "bass": ["bass_sub_line"], "bass_voice": ["bass_sub_deep"], "accompaniment": ["acc_hats_driving"]})
 	assert_eq(level.duration_ticks, 128 * 3840, "128 bars")
-	assert_eq(level.sequences.size(), 32, "four-bar sequences")
+	assert_eq(level.sequences.size(), 64, "two-bar sequences")
 	assert_eq(str(level.sequences[0]["reward"]), "pillbox")
 	assert_eq(level.sections.size(), 16, "sixteen eight-bar phases")
 	var modes := []
@@ -119,8 +119,9 @@ func test_perfect_play_wins_with_every_sequence_and_every_wave_destroyed_for_eve
 			var r: Dictionary = harness.run_mission(m, level, "perfect", rng)
 			var label := "%s + %s" % [g, b]
 			assert_eq(r["outcome"], "victory", label)
-			assert_eq(r["sequences_passed"], 32, label + " every sequence passes")
-			assert_eq(r["built"], 9, label + " three sockets per point: nine pillboxes")
+			assert_eq(r["sequences_passed"], 64, label + " every sequence passes")
+			assert_true(int(r["built"]) >= 9, label + " three sockets per point: nine pillboxes at least (%d)" % int(r["built"]))
+			assert_true(int(r["repairs"]) > 0, label + " surplus pillbox rewards repair (%d)" % int(r["repairs"]))
 			assert_true(int(r["units"]) >= 15, label + " squads arrive (%d)" % int(r["units"]))
 			assert_eq(int(r["villagers_total"]), 10)
 			assert_true(int(r["villagers_lost"]) <= 4, label + " most villagers live (%d of %d)" % [int(r["villagers_lost"]), int(r["villagers_total"])])

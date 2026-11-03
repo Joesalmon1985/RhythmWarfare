@@ -16,11 +16,11 @@
  },
  "accompaniment": [{"clip": "acc_hold_the_line", "start_bar": 1, "bars": 48}],
  "phases": [
-  {"bars": 8, "mode": "drums", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "pillbox"]},
-  {"bars": 8, "mode": "bass", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_b", "bass_voice": 1, "sequence_bars": 4, "rewards": ["e3", "jeep"]},
-  {"bars": 8, "mode": "drums", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": 1, "sequence_bars": 4, "rewards": ["turret", "pillbox"]},
-  {"bars": 8, "mode": "bass", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_b", "bass_voice": 1, "sequence_bars": 4, "rewards": ["e3", "e3"]},
-  {"bars": 8, "mode": "drums", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "turret"]},
-  {"bars": 8, "mode": "bass", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_end", "bass_voice": 1, "sequence_bars": 4, "rewards": ["jeep", "e3"]}
+  {"bars": 8, "mode": "drums", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": 1, "sequence_bars": 2, "rewards": ["pillbox", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_b", "bass_voice": 1, "sequence_bars": 2, "rewards": ["e3", "jeep"]},
+  {"bars": 8, "mode": "drums", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": 1, "sequence_bars": 2, "rewards": ["turret", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_b", "bass_voice": 1, "sequence_bars": 2, "rewards": ["e3", "e3"]},
+  {"bars": 8, "mode": "drums", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_a", "bass_voice": 1, "sequence_bars": 2, "rewards": ["pillbox", "turret"]},
+  {"bars": 8, "mode": "bass", "groove": "groove_push", "kick_sound": 1, "snare_sound": 1, "bass": "bass_hold_end", "bass_voice": 1, "sequence_bars": 2, "rewards": ["jeep", "e3"]}
  ]
 }

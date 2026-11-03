@@ -26,16 +26,19 @@ with a few musical choices of your own. Home: Continue, Campaign, Practice, Sett
   pads 2, 3, 1, 4, so two alternating voices sit under different thumbs. Pitches are never mapped to pads. A pad with
   nothing to play in the current phase is dim; each lit pad carries the friendly name of its sound and a shape (kick
   disc, snare diamond, bass bars) as well as its colour. At most two touches count at once.
-- **Cues.** A ring closes onto the pad over the cue lead-in (setting, 0.4 to 1.2 s, default 0.7 s; it replaced the
-  note approach) and the pad pulses on the beat; a hold's ring is doubled, the pad fills while you hold and flashes
-  when the tail is reached. One bar before a mode change a banner names the incoming family (BASS NEXT); there is no
-  roadmap. Everything is drawn from the one song clock. The lane view is gone.
+- **Cues (falling notes).** Every cue is a translucent pad-sized shape that falls straight down the screen, over the
+  battlefield, and sits exactly on its pad at the hit time; a hold is a tall bar whose bottom square lands at press
+  time and passes through until the tail. The note speed setting (0.6 to 2.0 s, default 1.2 s; `RW_LEAD_IN`) is how
+  long a note takes from the top of the screen to its pad. A hit note vanishes, a missed one keeps falling for a
+  quarter second tinted red; the pad still pulses on the beat, fills while you hold and flashes at the tail. One bar
+  before a mode change a banner names the incoming family (BASS NEXT); there is no roadmap. Everything is drawn from
+  the one song clock (`src/ui/note_lane.gd`; the closing rings of the earlier builds are gone).
 - **Recognition (generous).** Perfect within 45 ms, great 90 ms, accepted 140 ms either side. One press takes the
   nearest cue of its pad; a second finger on a held pad does nothing; a press with nothing in reach is a stray.
 - **Holds (forgiving).** Released within 0.15 s of the tail (or still held there) = complete; earlier = the held
   fraction counts, nothing fails. Pause ends a hold where it stands.
-- **Sequences.** Missions cut each phase into sequences (four bars, two in the half-time feel; never through a hold,
-  never across a mode change). A sequence passes at credit / cues >= 0.6 (taps 1 or 0, holds their coverage). A pass
+- **Sequences.** Missions cut each phase into sequences of two bars (a hold may run across a sequence boundary but
+  never across a mode change; the sequence resolves when the hold does). A sequence passes at credit / cues >= 0.6 (taps 1 or 0, holds their coverage). A pass
   earns its **one** reward, a fail earns nothing and costs nothing already built. It resolves when its last cue is
   final, so it never rewards early and resolves the same at any frame rate.
 - **Precision only sets speed.** Mean onset error of the accepted cues + 25 ms per stray per cue: sharp (<= 35 ms)
@@ -52,14 +55,14 @@ with a few musical choices of your own. Home: Continue, Campaign, Practice, Sett
   Reward units leave the barracks on attack-move and fight whatever they meet on the way; a defender beyond its
   leash keeps firing at a target in range but never chases it, and walks home fighting (`_leash_holds` in
   `battle_sim.gd`, `_defender` in `defense_ai.gd`). At capacity a reward becomes a repair crew for the most damaged
-  approach or, with nothing damaged, +50% health once for the oldest defense; the HUD says which.
+  approach or, with nothing damaged, +50% health once for the oldest defense; the status line above the pads says which.
 - **Sections (tap to deploy).** A tap on the battlefield (or keys 1 2 3) makes the nearest approach by x the active
   section: every reward goes there while it has room (else the normal choice) and a move flash plays. The Red Alert
   rally flag always stands at the current rally point (`Match.rally_point()`: the tapped section, else the point
-  rewards would go to), drawn at full sprite size whatever the zoom, and the top bar reads "RALLY: LEFT (auto)" until
-  the first tap. Nothing else is drawn on the map: no circles, numbers, brackets, countdown rings or wave arrows; the
-  top bar keeps the objective health, time, combo, defenses, enemies, villagers and the "WAVE n INCOMING FROM THE
-  LEFT" line as text.
+  rewards would go to), drawn at full sprite size whatever the zoom. Nothing else is drawn on the map: no circles,
+  numbers, brackets, countdown rings or wave arrows. The mission screen has no text overlay: the flag marks the rally
+  point, EVA announces waves, buildings carry their own health bars, and the result screen reports sequences, units,
+  villagers and objective health.
 - **Zoom.** A battlefield's `view.zoom` (village_01: 0.75; absent = 1.0) scales the cell size (18 px instead of 24)
   and every sprite; missions 2 to 10 keep 24 px. The village is 96 x 48 cells (`data/maps/field_96x48.json`), the
   view 72 x 27 cells, the rally points 7 cells outside the side walls and 6 above the top wall, the entries 5 cells
@@ -156,6 +159,14 @@ The coverage matrix of every ground actor and building is in `docs/BALANCE.md`, 
   `python tools/content/render_list.py`. Proven by `tools/content/test_content.py` with the fixtures in
   `content/fixtures/` (owner WAV replaces and reverts, edited MIDI at 96 PPQ with no tempo gets new cues and makes the
   old WAV stale, bad renders rejected with their reasons).
+- **MIDI for the owner's renders (missions 2 to 10)**: `python tools/content/export_midi.py` writes
+  `midi_export/level_NN_<slug>/` (3 November 2026): 8-bar loops `Kick_A/B/C`, `Snare_A/B/C`, `Bass_A/B/C`,
+  `Other_Pad`, `Other_Hats` and a reference `Arrangement_A.mid` per mission (A = the mission's default clips tiled,
+  B and C = seeded one-edit-per-two-bars variations in C# natural minor that keep the 480-tick pad gap), a README per
+  folder with the render rules, and a manifest template `content/imports/level_NN.json` for the importer. The owner
+  renders the WAVs next to the MIDIs, runs the importer, then the mission is rewired to the imported clips as mission
+  1 was. `tools/content/test_export.py` proves determinism, the bounds and a synth round trip through
+  `import_ableton.py --check`.
 - **Placeholder WAVs** for reference are in `content/library/<clip>/placeholder/` (133 MB, git-ignored, regenerated
   identically by the build on a fresh checkout); the game plays the Ogg stems in `songs/`.
 
@@ -176,6 +187,22 @@ Verified (31 October 2026, this PC, headless unless stated):
 - Desktop real-window run of mission 10 with perfect autoplay: see `docs/BALANCE.md` (frame time).
 - Exports: see "Exports" below.
 
+Verified (3 November 2026, evening: falling notes, no top bar, rewards every 2 bars with doubled waves, the MIDI
+export; this PC; see `docs/BALANCE.md` "Rewards every 2 bars, every wave doubled"):
+- `bash tools/test.sh` green: 10,730 GDScript checks and 48 content tests (12 of them `tools/content/test_export.py`).
+  New: `test_note_lane.gd` (the shape equals the pad at the hit time, leaves the screen top at the note speed, holds
+  grow upward, visibility window and states, the duel path); the mission tests now expect 64 sequences, 9 or 10
+  built, 36 units, repairs, every wave destroyed under perfect play; the content tests 64 sequences, at least 260
+  enemies, 6 jeeps; the export tests determinism, bar counts, A equals the library, B/C within bounds, manifests,
+  and a synth round trip through `import_ableton.py --check` on mission 4.
+- Seeded balance recorded (seeds 1 to 3, no retune): missions 1 to 5, 7, 9 win under perfect and beginner play;
+  mission 6 drops one beginner seed; missions 8 and 10 lose under perfect play with the doubled waves (known,
+  retune after the loadout round). Mission 1: 64 of 64 sequences, all 278 enemies destroyed, villagers 0 of 10 lost.
+- Real 1280 x 720 window with perfect autoplay to VICTORY (mission 1) and into act 2 (mission 3): the notes fall
+  over the village and sit on their pads at the hit time, no band at the top, the flag on the map, the centre meter
+  and "Pillbox ready" line still there, the result screen with 64 of 64. Not by a person: nobody has felt the note
+  speed (default 1.2 s), the reward pace or the doubled waves by hand; the MIDI has not been opened in Ableton.
+
 Verified (3 November 2026, later: the first-play tweaks, this PC; see `docs/BALANCE.md` "after the owner's first play"):
 - `bash tools/test.sh` green: 10,472 GDScript checks and 36 content tests. New or rewritten: `test_village_sim.gd`
   (a reward unit fights an enemy on its way to its point and still arrives; a defender beyond its leash walks home
@@ -190,7 +217,7 @@ Verified (3 November 2026, later: the first-play tweaks, this PC; see `docs/BALA
   two fixed by raising objective hp (mission 5 core 130,000, mission 8 radar dome 70,000); mission 10's core went
   to 185,000 and its beginner seed 3 still falls at 108.0 s of 110.3 (known, see `docs/BALANCE.md`).
 - Real 1280 x 720 window with perfect autoplay to VICTORY: screenshots of the zoomed village (wall ring, all three
-  points and the rally flag on screen, "RALLY: LEFT (auto)" moving with the suggestion), a bass phase with "Deep
+  points and the rally flag on screen, the flag moving with the suggestion; the "RALLY: LEFT (auto)" top-bar text of that build is gone), a bass phase with "Deep
   Sub" on all four pads, act 2 fighting at the left point, the result screen. Not by a person; nobody has heard the
   mix, the miss muting or the bass chart; nobody has tapped by hand.
 - Latent build bug fixed in passing: since 2 November `python tools/content/build.py` failed on missions 8 and 10
@@ -280,6 +307,19 @@ DuelMasterBattle is an asset source only; OpenRA pixel art and behaviour; work o
     (the owner asked for one per beat; at one per beat the Reese line kept all 23 of its notes, so the gap is 1440
     ticks); a miss silences the instrument until the next hit on it; zoom three quarters with the rally points
     further out; units fight on the move but a defender never chases beyond its leash.
+11. No top bar in missions (3 Nov 2026): the owner found it noise; nothing is drawn over the map but the flag and the
+    units' own bars. The wave warning line went with it (the EVA voice still warns).
+12. Falling notes (3 Nov 2026, owner's call): the closing rings did not work for the owner; notes fall over the
+    battlefield from the top of the screen so the map and pads keep their size (a lane band between them would have
+    shrunk the map the owner had just zoomed out). The shape equals the pad at the hit time.
+13. Rewards every 2 bars with every wave doubled (3 Nov 2026, owner's calls); the threshold stays 0.6, so a drum
+    sequence needs 3 of 4 or 5 taps and a bass sequence 2 of 3. Capacity is the first balance lever (mission 1 keeps
+    14 units per point; missions 6, 8 and 10 got 12), objective hp the second; wave counts and sequence length are
+    not touched by balance.
+14. MIDI export choices: the exported loops mirror what the missions play (the default groove tiled with the default
+    fill in bar 8), alternatives are rule-based and seeded by the mission seed (at least one edit per two bars, at
+    most a quarter of the notes), ghosts go an eighth before a backbeat because a sixteenth would break the pad gap,
+    missions without a bass phase get a root-note `Bass_A` so the owner can add bass later.
 
 ## How the code is organised
 
@@ -293,7 +333,7 @@ DuelMasterBattle is an asset source only; OpenRA pixel art and behaviour; work o
   `defense_ai.gd` (defenders hold and sortie, waves walk via their point then chase their class's goal, civilians
   wander and flee), `bot_ai.gd` (duel only).
 - `src/ui/`: `pad_view.gd`, `battle_view.gd` (sprites only, three layers: neutral civilians, blue, red; the rally flag
-  and move flash), `hud.gd` (text only), `section_picker.gd`, `ui_style.gd`, `settings_panel.gd`, `sprite_bank.gd`.
+  and move flash), `hud.gd` (the legacy duel's bar only; missions have no text overlay), `section_picker.gd`, `ui_style.gd`, `settings_panel.gd`, `sprite_bank.gd`.
 - `src/audio/`: `stem_transport.gd` (the song, on the "Music" bus), `battle_sfx.gd` (effects on the "SFX" bus from
   `data/sfx_map.json` and `assets/sfx/`).
 - `tools/extract_openra.py` (sprites from the owner's OpenRA content, allow-list `NEEDED`, aliases `flagfly`),
@@ -344,12 +384,19 @@ Rebuilt on 31 October 2026 per `docs/EXPORT.md` (`build/` is git-ignored):
    faction remap shader); the rally flag is small on a phone; the Reese line leaves pad 4 unused.
 10. Mission 10 beginner seed 3 loses at 108.0 s of 110.3 with the new defender behaviour (core 185,000); raising the
     core further only delays it, so the waves of act 4 or the defenders' leash would be the next thing to look at.
+11. With every wave doubled (3 Nov 2026, evening) missions 8 and 10 lose under perfect play and mission 6 drops a
+    beginner seed; `units_per_point` 12 changed nothing there. Left as recorded in `docs/BALANCE.md` because the
+    loadout round replaces the reward lists; retune once after it (objective hp, prebuilt defenses, act 4 waves).
+12. The falling notes are pad-sized and at alpha 0.4 read as solid blocks over the dark field; if the owner finds
+    them heavy, `NoteLane.FILL_ALPHA` and the outline are the knobs. The hold bar of a two-bar hold is taller than
+    the screen (by design: it keeps passing through the pad).
 
 ## Everyday commands
 
 ```
 bash tools/test.sh                                          # all headless tests + content build tests (about 1 min)
 python tools/content/import_ableton.py content/imports/first_watch.json --check   # file an Ableton batch into the library (drop --check to write)
+python tools/content/export_midi.py                         # MIDI loops + alternatives for missions 2 to 10 into midi_export/ (deterministic)
 python tools/extract_openra.py --no-map                     # sprites from the owner's OpenRA content (allow-list NEEDED in the script)
 python tools/extract_openra_sounds.py --check               # Red Alert sounds to assets/sfx (drop --check to write)
 python tools/campaign/build_battlefield.py                  # regenerate the maps and battlefields (defense_02 and village_01)
@@ -360,7 +407,7 @@ python tools/balance_missions.py > out.md                   # seeded trials (abo
 RW_MISSION=10 RW_SCENE=play RW_AUTOPLAY=perfect <godot> --path .    # scripted run in the real play screen, prints PERF
 RW_MISSION=3 RW_SCENE=play RW_PRACTICE=1 <godot> --path .           # practice run (battlefield hidden)
 RW_UNLOCK_ALL=1 <godot> --path .                            # every mission and option open for one run
-RW_LEAD_IN=0.9 <godot> --path .                             # cue lead-in override
+RW_LEAD_IN=1.5 <godot> --path .                             # note speed override (0.6 to 2.0 s: time from screen top to pad)
 <godot> --headless --path . --export-debug "Android" build/android/RhythmWarfare-debug.apk     # docs/EXPORT.md
 ```
 

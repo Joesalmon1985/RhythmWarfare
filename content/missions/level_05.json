@@ -18,12 +18,12 @@
  },
  "accompaniment": [{"clip": "acc_counterpoint", "start_bar": 1, "bars": 56}],
  "phases": [
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["pillbox", "pillbox"]},
-  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["jeep", "e3"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["turret", "pillbox"]},
-  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["1tnk", "jeep"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["turret", "pillbox"]},
-  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 4, "rewards": ["e3", "1tnk"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["flame_tower", "turret"]}
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": 1, "sequence_bars": 2, "rewards": ["pillbox", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 2, "rewards": ["jeep", "e3"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": 1, "sequence_bars": 2, "rewards": ["turret", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 2, "rewards": ["1tnk", "jeep"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": 1, "sequence_bars": 2, "rewards": ["turret", "pillbox"]},
+  {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": [1, 2], "voice_every_bars": 2, "sequence_bars": 2, "rewards": ["e3", "1tnk"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "bass": 1, "bass_voice": 1, "sequence_bars": 2, "rewards": ["flame_tower", "turret"]}
  ]
 }

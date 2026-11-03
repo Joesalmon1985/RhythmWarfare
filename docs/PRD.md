@@ -297,7 +297,7 @@ game (`MissionRules`) and the content build (`tools/content`) both read.
   mission 1) must survive to `duration_ticks`; losing one is an immediate defeat, reaching the deadline is a victory.
   A miss never damages anything directly; a missed cue (or a failed hold) silences that instrument's stem until the next hit on it, the backing track never mutes, and families not cued in a phase come back at the phase change.
 - The battlefield shows OpenRA sprites only (terrain, trees, buildings, walls, units, projectiles, explosions, the
-  rally flag and move flash of the active section) plus health bars; every other marker is text in the top bar.
+  rally flag and move flash of the active section) plus health bars; a mission screen has no text overlay and no top bar.
 - Sections: a tap on the battlefield (keys 1 2 3 on desktop) makes the nearest approach the active section (rally
   flag at its defense point); rewards go there while it has room. Before any tap, placement is automatic.
 - Civilians (village maps): houses with role `village` and civilian infantry are side-0 entities flagged `civilian`:
@@ -318,8 +318,9 @@ game (`MissionRules`) and the content build (`tools/content`) both read.
   3. Bass phases: bass voice slot 1 pad 2, slot 2 pad 3, slot 3 pad 1, slot 4 pad 4. The default maps the pad to the voice
   slot; a mission's `bass_chart` may map pitch to pads (low to high, left to right), thin cues to a minimum gap and turn
   holds off. A pad with no cue in the current phase is dim; its label is the friendly sound name.
-- A cue's ring closes onto its pad over the cue lead-in (a setting, 0.4 to 1.2 s, default 0.7 s; it replaces the old
-  note-approach setting) and the pad pulses at the onset. A hold stays lit and fills until its tail, then flashes. All of
+- A cue is a translucent pad-sized shape that falls straight down the screen, over the battlefield, and sits on its pad
+  at the hit time; a hold is a tall bar whose bottom lands at press time. The note speed setting (0.6 to 2.0 s, default
+  1.2 s) is the time from the top of the screen to the pad. The pad pulses at the onset. A hold stays lit and fills until its tail, then flashes. All of
   it is drawn from the one song clock (countdown, pause and calibration included). A short in-play banner announces the
   incoming family one bar before a mode change; there is no roadmap.
 - Desktop keys D F J K are pads 1 to 4.
@@ -332,8 +333,8 @@ game (`MissionRules`) and the content build (`tools/content`) both read.
 - Holds: a hold starts like a tap. Released within 0.15 s of its tail (or still held there) it is complete (credit 1);
   released earlier its credit is the held fraction. An early release never fails anything. Pause ends an active hold
   where it stands.
-- Sequences are authored per phase (`sequence_bars`, normally 4 bars at 174 BPM, i.e. 2 bars of the half-time feel).
-  Boundaries never cut a hold (the build rejects it) and never span a mode change. A sequence resolves once, when its
+- Sequences are authored per phase (`sequence_bars`, 2 bars at 174 BPM since 3 November 2026). A hold may run across a
+  sequence boundary (the sequence resolves when the hold does) but never across a mode change (the build rejects it). A sequence resolves once, when its
   last cue is final, at the latest resolution time of its cues (never earlier, and independent of the frame rate).
 - Success: the sum of cue credits / cue count >= the mission threshold (0.6 by default). Success earns the sequence's one
   reward; failure earns nothing and nothing already earned is lost.
@@ -353,7 +354,7 @@ game (`MissionRules`) and the content build (`tools/content`) both read.
   factory and hold the defense point with the fewest defenders (at most `units_per_point`, 6 by default, a level rule
   may raise it). A level rule `start_units` places defenders at the points before the song starts.
 - At capacity the reward becomes a repair crew for its approach (every damaged defense to full); when nothing is
-  damaged it reinforces the oldest defense once (+50 % health). The HUD names what happened; nothing is discarded
+  damaged it reinforces the oldest defense once (+50 % health). The status line above the pads names what happened; nothing is discarded
   silently.
 - The placement is chosen when the sequence resolves and shown on the battlefield (socket outline, countdown ring)
   during the construction delay; the building or unit appears when it ends. Construction, delays, waves and grading all

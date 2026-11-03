@@ -5,9 +5,11 @@ const SETTINGS_PATH := "user://settings.cfg"
 const SETTINGS_VERSION := 2
 const MIX_VERSION := 2  # settings saved before the quieter battle effects (mix 2) get the default effects volume once
 
-const LEAD_IN_MIN_S := 0.4
-const LEAD_IN_MAX_S := 1.2
-const LEAD_IN_DEFAULT_S := 0.7
+const PLAY_VERSION := 2  # settings saved before the falling notes (play 2) get the default note speed once
+
+const LEAD_IN_MIN_S := 0.6  # the note speed: seconds a note takes to fall from the screen top onto its pad
+const LEAD_IN_MAX_S := 2.0
+const LEAD_IN_DEFAULT_S := 1.2
 const PAD_SIZES := [0.30, 0.36, 0.42]  # share of the screen height the pad strip takes: compact, standard, large
 const DEFAULTS := {"calibration_ms": 0.0, "cue_lead_in_s": LEAD_IN_DEFAULT_S, "pad_size": 1, "high_contrast": false,
 	"reduced_effects": false, "vibration": true, "music_volume": 1.0, "sfx_volume": 0.5, "show_keys": true}
@@ -27,7 +29,7 @@ var settings_migrated := false
 
 # settings (user://settings.cfg)
 var calibration_ms := 0.0
-var cue_lead_in_s := LEAD_IN_DEFAULT_S  # how long a cue's ring takes to close onto its pad (replaced the note approach)
+var cue_lead_in_s := LEAD_IN_DEFAULT_S  # how long a note takes to fall onto its pad (the note speed)
 var pad_size := 1
 var high_contrast := false
 var reduced_effects := false
@@ -79,6 +81,9 @@ func load_settings() -> void:
 	if int(cfg.get_value("audio", "mix_version", 1)) < MIX_VERSION:
 		sfx_volume = DEFAULTS["sfx_volume"]
 		save_settings()
+	if int(cfg.get_value("play", "play_version", 1)) < PLAY_VERSION:
+		cue_lead_in_s = LEAD_IN_DEFAULT_S
+		save_settings()
 
 
 func save_settings() -> void:
@@ -87,6 +92,7 @@ func save_settings() -> void:
 	cfg.set_value("timing", "calibration_ms", calibration_ms)
 	cfg.set_value("play", "pack_dir", pack_dir)
 	cfg.set_value("play", "cue_lead_in_s", cue_lead_in_s)
+	cfg.set_value("play", "play_version", PLAY_VERSION)
 	cfg.set_value("play", "pad_size", pad_size)
 	cfg.set_value("play", "vibration", vibration)
 	cfg.set_value("display", "high_contrast", high_contrast)

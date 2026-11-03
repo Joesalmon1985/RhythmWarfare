@@ -2184,110 +2184,222 @@
    "phase": 0,
    "mode": "drums",
    "start_tick": 0,
-   "end_tick": 15360,
+   "end_tick": 7680,
    "reward": "pillbox"
   },
   {
    "index": 1,
    "phase": 0,
    "mode": "drums",
-   "start_tick": 15360,
-   "end_tick": 30720,
+   "start_tick": 7680,
+   "end_tick": 15360,
    "reward": "pillbox"
   },
   {
    "index": 2,
-   "phase": 1,
-   "mode": "bass",
-   "start_tick": 30720,
-   "end_tick": 46080,
-   "reward": "jeep"
+   "phase": 0,
+   "mode": "drums",
+   "start_tick": 15360,
+   "end_tick": 23040,
+   "reward": "pillbox"
   },
   {
    "index": 3,
+   "phase": 0,
+   "mode": "drums",
+   "start_tick": 23040,
+   "end_tick": 30720,
+   "reward": "pillbox"
+  },
+  {
+   "index": 4,
+   "phase": 1,
+   "mode": "bass",
+   "start_tick": 30720,
+   "end_tick": 38400,
+   "reward": "jeep"
+  },
+  {
+   "index": 5,
+   "phase": 1,
+   "mode": "bass",
+   "start_tick": 38400,
+   "end_tick": 46080,
+   "reward": "e3"
+  },
+  {
+   "index": 6,
    "phase": 1,
    "mode": "bass",
    "start_tick": 46080,
+   "end_tick": 53760,
+   "reward": "jeep"
+  },
+  {
+   "index": 7,
+   "phase": 1,
+   "mode": "bass",
+   "start_tick": 53760,
    "end_tick": 61440,
    "reward": "e3"
   },
   {
-   "index": 4,
+   "index": 8,
    "phase": 2,
    "mode": "drums",
    "start_tick": 61440,
-   "end_tick": 76800,
-   "reward": "turret"
-  },
-  {
-   "index": 5,
-   "phase": 2,
-   "mode": "drums",
-   "start_tick": 76800,
-   "end_tick": 92160,
-   "reward": "pillbox"
-  },
-  {
-   "index": 6,
-   "phase": 3,
-   "mode": "bass",
-   "start_tick": 92160,
-   "end_tick": 107520,
-   "reward": "1tnk"
-  },
-  {
-   "index": 7,
-   "phase": 3,
-   "mode": "bass",
-   "start_tick": 107520,
-   "end_tick": 122880,
-   "reward": "jeep"
-  },
-  {
-   "index": 8,
-   "phase": 4,
-   "mode": "drums",
-   "start_tick": 122880,
-   "end_tick": 138240,
+   "end_tick": 69120,
    "reward": "turret"
   },
   {
    "index": 9,
-   "phase": 4,
+   "phase": 2,
    "mode": "drums",
-   "start_tick": 138240,
-   "end_tick": 153600,
+   "start_tick": 69120,
+   "end_tick": 76800,
    "reward": "pillbox"
   },
   {
    "index": 10,
-   "phase": 5,
-   "mode": "bass",
-   "start_tick": 153600,
-   "end_tick": 168960,
-   "reward": "e3"
+   "phase": 2,
+   "mode": "drums",
+   "start_tick": 76800,
+   "end_tick": 84480,
+   "reward": "turret"
   },
   {
    "index": 11,
+   "phase": 2,
+   "mode": "drums",
+   "start_tick": 84480,
+   "end_tick": 92160,
+   "reward": "pillbox"
+  },
+  {
+   "index": 12,
+   "phase": 3,
+   "mode": "bass",
+   "start_tick": 92160,
+   "end_tick": 99840,
+   "reward": "1tnk"
+  },
+  {
+   "index": 13,
+   "phase": 3,
+   "mode": "bass",
+   "start_tick": 99840,
+   "end_tick": 107520,
+   "reward": "jeep"
+  },
+  {
+   "index": 14,
+   "phase": 3,
+   "mode": "bass",
+   "start_tick": 107520,
+   "end_tick": 115200,
+   "reward": "1tnk"
+  },
+  {
+   "index": 15,
+   "phase": 3,
+   "mode": "bass",
+   "start_tick": 115200,
+   "end_tick": 122880,
+   "reward": "jeep"
+  },
+  {
+   "index": 16,
+   "phase": 4,
+   "mode": "drums",
+   "start_tick": 122880,
+   "end_tick": 130560,
+   "reward": "turret"
+  },
+  {
+   "index": 17,
+   "phase": 4,
+   "mode": "drums",
+   "start_tick": 130560,
+   "end_tick": 138240,
+   "reward": "pillbox"
+  },
+  {
+   "index": 18,
+   "phase": 4,
+   "mode": "drums",
+   "start_tick": 138240,
+   "end_tick": 145920,
+   "reward": "turret"
+  },
+  {
+   "index": 19,
+   "phase": 4,
+   "mode": "drums",
+   "start_tick": 145920,
+   "end_tick": 153600,
+   "reward": "pillbox"
+  },
+  {
+   "index": 20,
+   "phase": 5,
+   "mode": "bass",
+   "start_tick": 153600,
+   "end_tick": 161280,
+   "reward": "e3"
+  },
+  {
+   "index": 21,
+   "phase": 5,
+   "mode": "bass",
+   "start_tick": 161280,
+   "end_tick": 168960,
+   "reward": "1tnk"
+  },
+  {
+   "index": 22,
    "phase": 5,
    "mode": "bass",
    "start_tick": 168960,
+   "end_tick": 176640,
+   "reward": "e3"
+  },
+  {
+   "index": 23,
+   "phase": 5,
+   "mode": "bass",
+   "start_tick": 176640,
    "end_tick": 184320,
    "reward": "1tnk"
   },
   {
-   "index": 12,
+   "index": 24,
    "phase": 6,
    "mode": "drums",
    "start_tick": 184320,
-   "end_tick": 199680,
+   "end_tick": 192000,
    "reward": "flame_tower"
   },
   {
-   "index": 13,
+   "index": 25,
+   "phase": 6,
+   "mode": "drums",
+   "start_tick": 192000,
+   "end_tick": 199680,
+   "reward": "turret"
+  },
+  {
+   "index": 26,
    "phase": 6,
    "mode": "drums",
    "start_tick": 199680,
+   "end_tick": 207360,
+   "reward": "flame_tower"
+  },
+  {
+   "index": 27,
+   "phase": 6,
+   "mode": "drums",
+   "start_tick": 207360,
    "end_tick": 215040,
    "reward": "turret"
   }
@@ -2332,7 +2444,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 720
     }
    ],
@@ -2348,7 +2460,7 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 4,
+     "count": 8,
      "spawn_spacing_ticks": 600
     }
    ],
@@ -2364,12 +2476,12 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 2,
+     "count": 4,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -2385,17 +2497,17 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e3",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "jeep",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -2411,12 +2523,12 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e4",
-     "count": 2,
+     "count": 4,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -2432,17 +2544,17 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "jeep",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -2458,17 +2570,17 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e4",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "jeep",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -2484,17 +2596,17 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e3",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "jeep",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -2510,17 +2622,17 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 2,
+     "count": 4,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "1tnk",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -2536,17 +2648,17 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 3,
+     "count": 6,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e4",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "apc",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],
@@ -2562,17 +2674,17 @@
    "groups": [
     {
      "actor": "e1",
-     "count": 4,
+     "count": 8,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "e2",
-     "count": 2,
+     "count": 4,
      "spawn_spacing_ticks": 480
     },
     {
      "actor": "1tnk",
-     "count": 1,
+     "count": 2,
      "spawn_spacing_ticks": 480
     }
    ],

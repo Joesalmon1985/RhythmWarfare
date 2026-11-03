@@ -1,8 +1,8 @@
 class_name Hud
 extends Control
-## Always-visible battle status, kept in the midfield band at the top so it never covers either base: both main
-## bases' health, the player's producer availability, aircraft readiness and ammunition, repair credits, combo and
-## accuracy. Labels and shapes, not colour alone.
+## Legacy duel only: the always-visible battle status in the midfield band at the top so it never covers either base:
+## both main bases' health, the player's producer availability, aircraft readiness and ammunition, combo and accuracy.
+## Labels and shapes, not colour alone. Missions and the village (defense mode) have no text overlay at all.
 
 var match_ref: Match
 var _font: Font
@@ -23,8 +23,7 @@ func _draw() -> void:
 	var sim := match_ref.sim
 	var judge := match_ref.judge
 	if sim.defense:
-		_draw_defense()
-		return
+		return  # missions and the village draw no text over the map
 	var cx := size.x * 0.5
 	var band := Rect2(cx - 300, 0, 600, 58)
 	draw_rect(band, Color(0, 0, 0, 0.45))
@@ -71,80 +70,6 @@ func _draw() -> void:
 					txt = "NOPAD"
 			draw_string(_font, Vector2(box.position.x + 2, box.position.y + 10), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color(1, 1, 1))
 	draw_string(_font, Vector2(cx + 186, y), "army %d v %d" % [sim.count_alive(0, BattleSim.Kind.UNIT), sim.count_alive(1, BattleSim.Kind.UNIT)], HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 1, 1, 0.7))
-
-
-## Defense mode: the top bar only (objective health, time, combo, accuracy, defenses, villagers, enemies, a lost
-## producer) and, as text, the next wave and the side it comes in from. Nothing is drawn on the map itself.
-func _draw_defense() -> void:
-	var sim := match_ref.sim
-	var level := match_ref.level
-	var mission := level.is_mission()
-	var combo := match_ref.pad_judge.combo if mission else match_ref.judge.combo
-	var acc := match_ref.pad_judge.accuracy() if mission else match_ref.judge.accuracy()
-	var cx := size.x * 0.5
-	var now := float(match_ref.sim_ticks) * BattleSim.TICK_S
-	draw_rect(Rect2(cx - 300, 0, 600, 58), Color(0, 0, 0, 0.45))
-	var row := 0
-	for i in sim.objectives.size():
-		var o: Dictionary = sim.objectives[i]
-		if not o["required"]:
-			continue
-		var hp := sim.objective_hp(o["id"])
-		var frac := float(hp) / float(maxi(sim.objective_max_hp(o["id"]), 1))
-		var pos := Vector2(cx - 292, 6 + 18 * row)
-		row += 1
-		draw_rect(Rect2(pos, Vector2(230, 14)), Color(0, 0, 0, 0.55))
-		draw_rect(Rect2(pos, Vector2(230 * frac, 14)), Color(0.35, 0.62, 1.0) if frac > 0.34 else Color(1.0, 0.45, 0.35))
-		draw_rect(Rect2(pos, Vector2(230, 14)), Color(1, 1, 1, 0.5), false, 1.0)
-		draw_string(_font, pos + Vector2(5, 11), "%s %d%%" % [str(o["id"]).replace("_", " ").to_upper(), int(round(frac * 100.0))], HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(1, 1, 1))
-	var left := maxf(level.duration_seconds() - now, 0.0)
-	draw_string(_font, Vector2(cx - 40, 20), "%d:%02d  combo %d  %.0f%%" % [int(left) / 60, int(left) % 60, combo, acc * 100.0], HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(1, 1, 1, 0.95))
-	var x := cx - 40
-	for item in [["factory", "FACTORY"], ["barracks", "BARRACKS"]]:
-		# only a loss is news, and only for a producer this battlefield has; units need their producer
-		if sim.producer_ids[0].has(item[0]) and not sim.producer_alive(0, item[0]):
-			draw_string(_font, Vector2(x, 50), item[1] + " LOST", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1.0, 0.5, 0.45))
-			x += 110
-	if mission:
-		draw_string(_font, Vector2(cx - 40, 38), "defenses %d" % sim.defense_count(), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0.75, 1.0, 0.75))
-	var villagers_total := int(sim.stats.get("civilians_total", 0))
-	if villagers_total > 0:
-		draw_string(_font, Vector2(cx + 50, 38), "villagers %d of %d" % [sim.civilians_alive(), villagers_total], HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0.95, 0.86, 0.6))
-	draw_string(_font, Vector2(cx + 180, 50), "enemies %d" % sim.count_alive(1, BattleSim.Kind.UNIT), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 1, 1, 0.8))
-	var rally := match_ref.rally_point()
-	if mission and rally >= 0 and rally < sim.defense_points.size():
-		draw_string(_font, Vector2(cx + 50, 50), "RALLY: %s%s" % [_rally_word(rally), " (auto)" if sim.active_point < 0 else ""], HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(0.8, 0.9, 1.0))
-	var w := match_ref.upcoming_wave()
-	if not w.is_empty() and float(w["in_s"]) <= 8.0 and sim.entries.has(w["entry"]):
-		var pulse := 0.75 + 0.25 * sin(float(Time.get_ticks_msec()) / 120.0)
-		draw_string(_font, Vector2(cx - 250, 124), "WAVE %d INCOMING FROM THE %s  %.0f s" % [int(w["number"]), _entry_word(str(w["entry"])), float(w["in_s"])], HORIZONTAL_ALIGNMENT_CENTER, 500, 18, Color(1.0, 0.7, 0.55, pulse))
-
-
-## LEFT, TOP or RIGHT: the section's place in the x order of the defense points (the middle one of three is the top one).
-func _rally_word(index: int) -> String:
-	var xs: Array = []
-	for dp in match_ref.sim.defense_points:
-		xs.append(float(dp["pos"].x))
-	var rank := 0
-	for x in xs:
-		if x < xs[index]:
-			rank += 1
-	if xs.size() == 3:
-		return ["LEFT", "TOP", "RIGHT"][rank]
-	return "LEFT" if rank == 0 else ("RIGHT" if rank == xs.size() - 1 else "TOP")
-
-
-## LEFT, RIGHT or TOP: where an entry lies, from its position on the map (the entry ids are left, top and right).
-func _entry_word(entry_id: String) -> String:
-	if entry_id in ["left", "top", "right", "bottom"]:
-		return entry_id.to_upper()
-	var sim := match_ref.sim
-	if not sim.entries.has(entry_id):
-		return entry_id.to_upper()
-	var d: Vector2 = sim.entries[entry_id] - Vector2(sim.width, sim.height) * 0.5
-	if absf(d.x) / maxf(sim.width, 1) >= absf(d.y) / maxf(sim.height, 1):
-		return "RIGHT" if d.x > 0.0 else "LEFT"
-	return "BOTTOM" if d.y > 0.0 else "TOP"
 
 
 func _base_bar(pos: Vector2, width: float, base: BattleSim.Ent, label: String, col: Color, right: bool) -> void:

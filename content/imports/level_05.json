@@ -1,0 +1,52 @@
+{
+ "note": "Mission 5 (Counterpoint) content: the MIDI exported to midi_export/level_05_counterpoint/ (the mission's default groove, bass line and backing as 8-bar loops, with rule-based alternatives B and C of every kick, snare and bass part), to be rendered in Ableton as WAVs named after the MIDI files. Run: python tools/content/import_ableton.py content/imports/level_05.json --check, then without --check, then python tools/content/build.py level_05. The mission is rewired to these clips in a follow-up, as mission 1 was. Names are provisional. Levels as in first_watch.json: drums and bass peak at -4 dBFS, bass RMS-matched to -17 dBFS where that peak allows, backing at -3 dBFS, then a global trim of -7 dB.",
+ "source_dir": "midi_export/level_05_counterpoint",
+ "bars": 8,
+ "levels": {
+  "kick": {"peak_db": -4.0},
+  "snare": {"peak_db": -4.0},
+  "bass": {"peak_db": -4.0, "rms_db": -17.0},
+  "other": {"peak_db": -3.0}
+ },
+ "trim_db": -7.0,
+ "end_fade_ms": 10,
+ "sounds": [
+  {"id": "m05_kick_a", "family": "kick", "name": "Counterpoint Kick A"},
+  {"id": "m05_kick_b", "family": "kick", "name": "Counterpoint Kick B"},
+  {"id": "m05_kick_c", "family": "kick", "name": "Counterpoint Kick C"},
+  {"id": "m05_snare_a", "family": "snare", "name": "Counterpoint Snare A"},
+  {"id": "m05_snare_b", "family": "snare", "name": "Counterpoint Snare B"},
+  {"id": "m05_snare_c", "family": "snare", "name": "Counterpoint Snare C"},
+  {"id": "m05_bass_a", "family": "bass", "name": "Counterpoint Bass A"},
+  {"id": "m05_bass_b", "family": "bass", "name": "Counterpoint Bass B"},
+  {"id": "m05_bass_c", "family": "bass", "name": "Counterpoint Bass C"},
+  {"id": "m05_pad", "family": "other", "name": "Counterpoint Pad"},
+  {"id": "m05_hats", "family": "other", "name": "Counterpoint Hats"}
+ ],
+ "clips": [
+  {"id": "m05_groove_a", "kind": "groove", "name": "Counterpoint Groove A",
+   "note": "Kick_A with Snare_A: the default groove groove_twostep tiled to 8 bars with fill_snare_run replacing bar 8.",
+   "parts": {"kick": {"midi": "Kick_A.mid", "renders": {"m05_kick_a": "Kick_A.wav"}},
+             "snare": {"midi": "Snare_A.mid", "renders": {"m05_snare_a": "Snare_A.wav"}}}},
+  {"id": "m05_groove_b", "kind": "groove", "name": "Counterpoint Groove B",
+   "note": "Kick_B with Snare_B: rule-based variation of Kick_A and Snare_A (kick: a hit added, moved or dropped every two bars; snare: a ghost, a moved backbeat or a beat 4 hit).",
+   "parts": {"kick": {"midi": "Kick_B.mid", "renders": {"m05_kick_b": "Kick_B.wav"}},
+             "snare": {"midi": "Snare_B.mid", "renders": {"m05_snare_b": "Snare_B.wav"}}}},
+  {"id": "m05_groove_c", "kind": "groove", "name": "Counterpoint Groove C",
+   "note": "Kick_C with Snare_C: rule-based variation of Kick_A and Snare_A (kick: a hit added, moved or dropped every two bars; snare: a ghost, a moved backbeat or a beat 4 hit).",
+   "parts": {"kick": {"midi": "Kick_C.mid", "renders": {"m05_kick_c": "Kick_C.wav"}},
+             "snare": {"midi": "Snare_C.mid", "renders": {"m05_snare_c": "Snare_C.wav"}}}},
+  {"id": "m05_bass_a", "kind": "bass", "name": "Counterpoint Bass A", "key": "C# minor",
+   "note": "Bass_A: the default bass line bass_steps, 8 bars.",
+   "parts": {"bass": {"midi": "Bass_A.mid", "renders": {"m05_bass_a": "Bass_A.wav"}}}},
+  {"id": "m05_bass_b", "kind": "bass", "name": "Counterpoint Bass B", "key": "C# minor",
+   "note": "Bass_B: a rule-based variation of Bass_A (a note moved to the fifth or octave, a long note split or two tied), C# natural minor.",
+   "parts": {"bass": {"midi": "Bass_B.mid", "renders": {"m05_bass_b": "Bass_B.wav"}}}},
+  {"id": "m05_bass_c", "kind": "bass", "name": "Counterpoint Bass C", "key": "C# minor",
+   "note": "Bass_C: a rule-based variation of Bass_A (a note moved to the fifth or octave, a long note split or two tied), C# natural minor.",
+   "parts": {"bass": {"midi": "Bass_C.mid", "renders": {"m05_bass_c": "Bass_C.wav"}}}},
+  {"id": "m05_backing", "kind": "accompaniment", "name": "Counterpoint Backing", "key": "C# minor", "audio_only": true,
+   "note": "Other_Pad and Other_Hats: the backing acc_counterpoint, the chords and the hi-hats rendered separately.",
+   "parts": {"other": {"renders": {"m05_pad": "Other_Pad.wav", "m05_hats": "Other_Hats.wav"}}}}
+ ]
+}

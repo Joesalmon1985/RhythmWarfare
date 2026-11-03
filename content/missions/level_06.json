@@ -15,12 +15,12 @@
  },
  "accompaniment": [{"clip": "acc_fortress", "start_bar": 1, "bars": 56}],
  "phases": [
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["pillbox", "pillbox"]},
-  {"bars": 8, "mode": "drums", "groove": 2, "kick_sound": 2, "snare_sound": 1, "sequence_bars": 4, "rewards": ["turret", "2tnk"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["flame_tower", "apc"]},
-  {"bars": 8, "mode": "drums", "groove": 2, "kick_sound": 2, "snare_sound": 1, "sequence_bars": 4, "rewards": ["turret", "repair"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["pillbox", "2tnk"]},
-  {"bars": 8, "mode": "drums", "groove": 2, "fill": "fill_snare_run", "kick_sound": 2, "snare_sound": 1, "sequence_bars": 4, "rewards": ["turret", "apc"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "sequence_bars": 4, "rewards": ["repair", "turret"]}
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["pillbox", "pillbox"]},
+  {"bars": 8, "mode": "drums", "groove": 2, "kick_sound": 2, "snare_sound": 1, "sequence_bars": 2, "rewards": ["turret", "2tnk"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["flame_tower", "apc"]},
+  {"bars": 8, "mode": "drums", "groove": 2, "kick_sound": 2, "snare_sound": 1, "sequence_bars": 2, "rewards": ["turret", "repair"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["pillbox", "2tnk"]},
+  {"bars": 8, "mode": "drums", "groove": 2, "fill": "fill_snare_run", "kick_sound": 2, "snare_sound": 1, "sequence_bars": 2, "rewards": ["turret", "apc"]},
+  {"bars": 8, "mode": "drums", "groove": 1, "fill": "fill_snare_run", "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["repair", "turret"]}
  ]
 }
