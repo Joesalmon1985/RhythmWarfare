@@ -18,10 +18,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 STORY = os.path.join(ROOT, "assets", "story")
 ART = os.path.join(STORY, "night_one")  # the folder being checked (set per chapter by validate)
-CHAPTERS = ("night_one", "mothership")
+CHAPTERS = ("night_one", "mothership", "underworld")
 CHAPTER_ANCHORS = {"floor_grid", "wall_left_x", "wall_right_x", "horizon_y"}
-INTERLUDE = {"mothership": ({"ufo", "tractor_beam", "ufo_glow", "sparkle", "light_flood"}, {"ufo_hover", "beam_floor"})}
-ARCH_IDS = {"mothership": {"grey", "antenna", "blob", "insect", "cyclops", "tentacle"}}
+INTERLUDE = {"mothership": ({"ufo", "tractor_beam", "ufo_glow", "sparkle", "light_flood"}, {"ufo_hover", "beam_floor"}),
+             "underworld": ({"crack_glow", "flame_jet", "portal_vortex", "embers", "dark_wash"}, {"crack_origin", "portal_centre"})}
+ARCH_IDS = {"mothership": {"grey", "antenna", "blob", "insect", "cyclops", "tentacle"},
+            "underworld": {"imp", "brute", "fiend", "skeleton", "flame", "horned_queen"}}
 PIECE_ANIMS = {"none", "pulse", "flicker", "rotate", "bob", "sway"}
 
 JOINTS = {"hips", "torso", "head", "shoulder_l", "elbow_l", "shoulder_r", "elbow_r", "hip_l", "hip_r"}

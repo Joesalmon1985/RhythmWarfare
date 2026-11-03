@@ -15,8 +15,18 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from art import lib  # noqa: E402
 
+# chapter build targets, one art folder each under assets/story/ (`build_assets.py underworld [chars|stage]`); a bare run builds all
 
-CHAPTERS = ("mothership",)  # `underworld` joins later; Night One is the default target
+
+# Chapter art builds: None = built in this file (build_chapter), a module path = that module's build(argv). Night One is the default.
+CHAPTERS = {"mothership": None, "underworld": "art.chapter_underworld"}
+
+
+def build_any(name: str, only: list) -> int:
+    if CHAPTERS[name] is None:
+        return build_chapter(name, set(only))
+    import importlib
+    return importlib.import_module(CHAPTERS[name]).build(list(only))
 
 
 def build_chapter(name: str, only: set) -> int:
@@ -64,7 +74,7 @@ def build_chapter(name: str, only: set) -> int:
 
 def main(argv) -> int:
     if len(argv) > 1 and argv[1] in CHAPTERS:
-        return build_chapter(argv[1], set(argv[2:]))
+        return build_any(argv[1], argv[2:])
     only = set(argv[1:])
     if not only:  # a full rebuild starts clean so removed assets do not linger (Godot's .import files are kept for now)
         for d in (lib.SVG_DIR, lib.PNG_DIR):
@@ -101,7 +111,7 @@ def main(argv) -> int:
     print(f"Night One art: {n_svg} SVG, {n_png} PNG, manifest {os.path.relpath(path, lib.ROOT)}")
     if not only:  # a full rebuild also regenerates the chapter art (Night One first: it uses the default lib paths)
         for ch in CHAPTERS:
-            build_chapter(ch, set())
+            build_any(ch, [])
     return 0
 
 
