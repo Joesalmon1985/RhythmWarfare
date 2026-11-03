@@ -17,7 +17,6 @@ const DEFAULTS := {"calibration_ms": 0.0, "cue_lead_in_s": LEAD_IN_DEFAULT_S, "p
 var campaign: Campaign  # saved progress (user://campaign.json) and the campaign data
 var campaign_level_id := ""  # the mission being played ("" for free play and playtests)
 var mission_number := 1  # the mission the setup screen shows
-var selection: Dictionary = {}  # schema 3: choice id -> [options] for the next run ({} = the mission defaults)
 var practice := false  # a practice run: same cues and recognition, battlefield hidden, nothing saved
 var practice_phase := -1  # practice one phase (index) instead of the whole song
 var pack_dir := ""
@@ -127,19 +126,28 @@ func apply_volume() -> void:
 	AudioServer.set_bus_volume_db(sfx_bus, -80.0 if sfx_volume <= 0.001 else linear_to_db(sfx_volume))
 
 
-## Set up a campaign (or practice) run of mission `number` and remember the selection for next time.
-func start_mission(number: int, p_selection: Dictionary, p_practice: bool, phase: int = -1) -> void:
+## Set up a campaign (or practice) run of mission `number`. The loadout is global (Campaign.loadout()).
+func start_mission(number: int, p_practice: bool, phase: int = -1) -> void:
 	var data := campaign.level_data(number)
 	mission_number = number
 	pack_dir = campaign.pack_dir(number)
 	chart_id = ""
-	selection = p_selection.duplicate(true)
 	practice = p_practice
 	practice_phase = phase if p_practice else -1
 	battle_on = not p_practice
 	campaign_level_id = str(data.get("level_id", ""))
-	if not p_selection.is_empty():
-		campaign.store_selection(campaign_level_id, p_selection)
+	if not campaign_level_id.is_empty():
+		campaign.progress["last_played"] = campaign_level_id
+		campaign.save()
+
+
+## The player's loadout, resolved against the library and what is unlocked.
+func loadout() -> Dictionary:
+	return campaign.loadout()
+
+
+func library() -> LibraryIndex:
+	return LibraryIndex.load_default()
 
 
 ## Song packs shipped inside the project plus any the player dropped into user://songs.
@@ -159,13 +167,10 @@ func available_packs() -> Array[Dictionary]:
 					var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(json))
 					var title := name
 					var schema := 1
-					var content := {}
 					if typeof(parsed) == TYPE_DICTIONARY:
 						title = str(parsed.get("title", name))
 						schema = int(parsed.get("schema_version", 1))
-						content = parsed.get("content", {})
-					out.append({"dir": _globalize(pack), "title": title, "name": name, "schema": schema, "content": content,
-						"placeholder": bool(parsed.get("placeholder", false)) if typeof(parsed) == TYPE_DICTIONARY else false})
+					out.append({"dir": _globalize(pack), "title": title, "name": name, "schema": schema})
 			name = dir.get_next()
 	out.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["name"] < b["name"])
 	return out

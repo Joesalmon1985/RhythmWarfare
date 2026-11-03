@@ -1,17 +1,16 @@
 class_name Campaign
 extends RefCounted
 ## Campaign data (data/campaign/campaign.json) and the player's saved progress (user://campaign.json): cleared missions
-## with their bests, and the musical choices made per mission. Clearing a mission (a survival win on its campaign run)
-## unlocks the next one and the library options that enter with it. Replays only improve bests; practice and
-## rhythm-only runs write nothing. The save is written atomically (temp file, read back, rename); a corrupt file is
-## kept as ".bad" and replaced; a version 1 save (the schema 2 build) is migrated in place and kept as ".v1".
+## with their bests, and the one loadout (groove, fill, kick sound, snare sound, bass line, bass sound, backing) applied
+## to every mission. Clearing a mission (a survival win on its campaign run) unlocks the next one and the library
+## items that enter with it. Replays only improve bests; practice and rhythm-only runs write nothing. The save is
+## written atomically (temp file, read back, rename); a corrupt file is kept as ".bad" and replaced; older saves are
+## migrated in place (version 1 -> 2 -> 3), the original kept as ".v1" / ".v2".
 
 const DATA_PATH := "res://data/campaign/campaign.json"
 const DEFAULT_SAVE_PATH := "user://campaign.json"
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
 const UNLOCK_ENV := "RW_UNLOCK_ALL"  # "1" / "0" overrides "unlock_all" in the data file (scripted runs)
-## Version 1 loadout slots -> version 2 choices (instrument profiles kept their ids as sound ids).
-const V1_SLOT_CHOICE := {"kick_1": "kick_sound", "snare_1": "snare_sound", "bass_1": "bass_voice"}
 
 var levels: Array = []  # data/campaign/campaign.json "levels"
 var save_path := DEFAULT_SAVE_PATH
@@ -40,7 +39,7 @@ static func load_data(path: String = DEFAULT_SAVE_PATH, unlock_override: int = -
 
 
 static func _fresh() -> Dictionary:
-	return {"version": SAVE_VERSION, "cleared": {}, "selections": {}, "last_played": ""}
+	return {"version": SAVE_VERSION, "cleared": {}, "loadout": {}, "last_played": ""}
 
 
 func load_progress() -> void:
@@ -54,12 +53,19 @@ func load_progress() -> void:
 		_set_aside(".bad")
 		return
 	var version := int(parsed.get("version", -1))
-	if version == SAVE_VERSION and typeof(parsed.get("selections")) == TYPE_DICTIONARY:
+	if version == SAVE_VERSION and typeof(parsed.get("loadout")) == TYPE_DICTIONARY:
 		progress = parsed
 		progress["last_played"] = str(progress.get("last_played", ""))
 		return
+	if version == 2 and typeof(parsed.get("selections", {})) == TYPE_DICTIONARY:
+		progress = migrate_v2(parsed)
+		migrated_from = 2
+		DirAccess.copy_absolute(save_path, save_path + ".v2")
+		save()
+		return
 	if version == 1 and typeof(parsed.get("loadouts", {})) == TYPE_DICTIONARY:
-		progress = migrate_v1(parsed)
+		progress = migrate_v2(migrate_v1(parsed))
+		progress["migrated_from"] = 1
 		migrated_from = 1
 		DirAccess.copy_absolute(save_path, save_path + ".v1")
 		save()
@@ -72,23 +78,25 @@ func _set_aside(suffix: String) -> void:
 	DirAccess.rename_absolute(save_path, save_path + suffix)
 
 
-## Version 1 (instrument loadouts, 30 Oct 2026) -> version 2. Clears and bests carry over under the same level ids;
-## loadouts become choices where the profile is now a sound; unlocked_profiles are derived from clears now.
+## Version 1 (instrument loadouts, 30 Oct 2026) -> a version 2 shaped dictionary (what migrate_v2 takes). Clears and
+## bests carry over under the same level ids; the old loadouts are dropped (the loadout is global now).
 static func migrate_v1(old: Dictionary) -> Dictionary:
-	var out := _fresh()
+	var out := {"version": 2, "cleared": {}, "selections": {}, "last_played": ""}
 	for level_id in old.get("cleared", {}):
 		var rec: Dictionary = old["cleared"][level_id]
 		out["cleared"][level_id] = {"clears": int(rec.get("clears", 1)), "best_accuracy": float(rec.get("best_accuracy", 0.0)),
 			"best_sequences": 0.0, "best_core_hp": float(rec.get("best_core_hp", 0.0)), "best_combo": int(rec.get("best_combo", 0))}
-	for level_id in old.get("loadouts", {}):
-		var sel := {}
-		var lo: Dictionary = old["loadouts"][level_id]
-		for slot in lo:
-			if V1_SLOT_CHOICE.has(slot):
-				sel[V1_SLOT_CHOICE[slot]] = [str(lo[slot])]
-		if not sel.is_empty():
-			out["selections"][level_id] = sel
-	out["migrated_from"] = 1
+	return out
+
+
+## Version 2 (per-mission selections) -> version 3 (one global loadout). Clears and bests stay; the selections are
+## dropped and the loadout is the library's defaults (an empty one resolves to them on read).
+static func migrate_v2(old: Dictionary) -> Dictionary:
+	var out := _fresh()
+	out["cleared"] = (old.get("cleared", {}) as Dictionary).duplicate(true)
+	out["last_played"] = str(old.get("last_played", ""))
+	out["loadout"] = LibraryIndex.load_default().defaults.duplicate()
+	out["migrated_from"] = int(old.get("version", 2))
 	return out
 
 
@@ -163,18 +171,50 @@ func continue_number() -> int:
 	return int(last.get("number", 1))
 
 
-## Whether a library option may be picked in mission `number`: it entered with a mission that is open, or it is one of
-## the mission's defaults; unlock_all offers everything. Returns "" when available, else what unlocks it.
-func option_lock(number: int, option: String, defaults: Array) -> String:
-	if unlock_all or defaults.has(option):
+# --- loadout ------------------------------------------------------------------------------------------------------
+
+## The saved loadout resolved against the library and the unlocked items (a stale or locked pick falls back to its default).
+func loadout(warnings: Array = []) -> Dictionary:
+	var index := LibraryIndex.load_default()
+	var wanted: Dictionary = progress.get("loadout", {})
+	if index.is_empty():
+		return wanted.duplicate()
+	return Loadout.resolve(index, unlocked_items(), wanted, warnings)
+
+
+func store_loadout(d: Dictionary) -> void:
+	progress["loadout"] = d.duplicate()
+	save()
+
+
+## Library ids the player may pick: the `new_options` of mission 1 and of every mission whose predecessor is cleared
+## (the defaults are always available through Loadout). Everything with unlock_all.
+func unlocked_items() -> Array:
+	var out: Array = []
+	if unlock_all:
+		var index := LibraryIndex.load_default()
+		out.append_array(index.clips.keys())
+		out.append_array(index.sounds.keys())
+		return out
+	for l in levels:
+		if _ladder_unlocked(int(l["number"])):
+			for id in l.get("new_options", []):
+				if not out.has(str(id)):
+					out.append(str(id))
+	return out
+
+
+## "" when the item may be picked, else what unlocks it ("Clear <mission> to unlock") or "Not in the campaign".
+func item_lock(id: String) -> String:
+	if unlock_all or LibraryIndex.load_default().defaults.values().has(id):
 		return ""
 	for l in levels:
-		if (l.get("new_options", []) as Array).has(option):
+		if (l.get("new_options", []) as Array).has(id):
 			if _ladder_unlocked(int(l["number"])):
 				return ""
 			var prev := level_data(int(l["number"]) - 1)
 			return "Clear %s to unlock" % str(prev.get("title", "the previous mission"))
-	return ""
+	return "Not in the campaign"
 
 
 # --- results ------------------------------------------------------------------------------------------------------
@@ -207,15 +247,3 @@ func record_result(result: Dictionary) -> Dictionary:
 	var new_options: Array = next.get("new_options", []) if first and not next.is_empty() else []
 	return {"saved": saved, "first_clear": first, "unlocked_level": int(next.get("number", 0)) if first and not next.is_empty() else 0,
 		"unlocked_title": str(next.get("title", "")), "new_options": new_options}
-
-
-# --- selections ---------------------------------------------------------------------------------------------------
-
-func selection_for(level_id: String) -> Dictionary:
-	return (progress["selections"].get(level_id, {}) as Dictionary).duplicate(true)
-
-
-func store_selection(level_id: String, selection: Dictionary) -> void:
-	progress["selections"][level_id] = selection.duplicate(true)
-	progress["last_played"] = level_id
-	save()

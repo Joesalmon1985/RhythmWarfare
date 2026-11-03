@@ -1,0 +1,132 @@
+{
+ "schema_version": 4,
+ "level_id": "fixture_v4",
+ "number": 1,
+ "title": "Fixture Mission",
+ "bpm": 174,
+ "ticks_per_beat": 960,
+ "time_signature": [
+  4,
+  4
+ ],
+ "duration_ticks": 122880,
+ "seed": 7,
+ "battlefield": "village_01",
+ "roster": "openra_mvp_01",
+ "rules": {
+  "objective_hp": {
+   "barracks": 60000
+  },
+  "sockets_per_point": 3,
+  "units_per_point": 14,
+  "start_units": [
+   {
+    "actor": "e1",
+    "count": 5,
+    "point": "defense_1"
+   },
+   {
+    "actor": "e1",
+    "count": 5,
+    "point": "defense_2"
+   },
+   {
+    "actor": "e1",
+    "count": 5,
+    "point": "defense_3"
+   }
+  ]
+ },
+ "sequence_threshold": 0.6,
+ "sequence_bars": 2,
+ "phases": [
+  {
+   "id": "p01",
+   "start_tick": 0,
+   "end_tick": 30720,
+   "mode": "drums"
+  },
+  {
+   "id": "p02",
+   "start_tick": 30720,
+   "end_tick": 61440,
+   "mode": "drums"
+  },
+  {
+   "id": "p03",
+   "start_tick": 61440,
+   "end_tick": 92160,
+   "mode": "bass"
+  },
+  {
+   "id": "p04",
+   "start_tick": 92160,
+   "end_tick": 122880,
+   "mode": "drums"
+  }
+ ],
+ "waves": [
+  {
+   "id": "wave_01",
+   "start_bar": 1,
+   "entry": "left",
+   "target": "defenses",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 6,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 0,
+   "via_defense_point": "defense_1",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_02",
+   "start_bar": 6,
+   "entry": "top",
+   "target": "defenses",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 6,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 19200,
+   "via_defense_point": "defense_2",
+   "target_objective": "barracks"
+  },
+  {
+   "id": "wave_03",
+   "start_bar": 11,
+   "entry": "right",
+   "target": "defenses",
+   "groups": [
+    {
+     "actor": "e1",
+     "count": 8,
+     "spawn_spacing_ticks": 480
+    }
+   ],
+   "start_tick": 38400,
+   "via_defense_point": "defense_3",
+   "target_objective": "barracks"
+  }
+ ],
+ "intros": [
+  {
+   "bar": 1,
+   "text": "Fixture intro."
+  }
+ ],
+ "base": {
+  "production": [
+   "barracks"
+  ],
+  "entries": [],
+  "points": [],
+  "civilians": 0
+ }
+}

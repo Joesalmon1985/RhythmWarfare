@@ -1,6 +1,6 @@
 extends Control
 ## Developer and testing area, kept out of the player's way: the legacy two-sided duel (free play, schema 1 packs, for
-## a later multiplayer mode), a rhythm-only playtest of any mission, the installed content and what is still
+## a later multiplayer mode), a rhythm-only playtest of any mission, the installed library and what is still
 ## placeholder (read-only; the build runs on the PC), and the unlock-all switch status.
 
 
@@ -17,29 +17,32 @@ func _ready() -> void:
 			content.add_child(UiStyle.button("Duel: %s" % p["title"], func() -> void:
 				Session.pack_dir = p["dir"]
 				Session.chart_id = ""
-				Session.selection = {}
 				Session.battle_on = true
 				Session.practice = false
 				Session.campaign_level_id = ""
 				get_tree().change_scene_to_file("res://src/scenes/play.tscn"), 0, 56))
-	content.add_child(UiStyle.note("RHYTHM PLAYTEST: a mission's default choices, battlefield hidden", UiStyle.ACCENT, 22))
+	content.add_child(UiStyle.note("RHYTHM PLAYTEST: a mission with your loadout, battlefield hidden", UiStyle.ACCENT, 22))
 	for p in packs:
-		if int(p["schema"]) == 3:
+		if int(p["schema"]) == 4:
 			content.add_child(UiStyle.button("Playtest: %s" % p["title"], func() -> void:
 				Session.pack_dir = p["dir"]
 				Session.chart_id = ""
-				Session.selection = {}
 				Session.battle_on = false
 				Session.practice = true
 				Session.practice_phase = -1
 				Session.campaign_level_id = ""
 				get_tree().change_scene_to_file("res://src/scenes/play.tscn"), 0, 56))
-	content.add_child(UiStyle.note("INSTALLED CONTENT (rebuild with python tools/content/build.py on the PC)", UiStyle.ACCENT, 22))
-	for p in packs:
-		if int(p["schema"]) == 3:
-			var ct: Dictionary = p["content"]
-			content.add_child(UiStyle.note("%s: %d stem files, %d placeholder, %d owner renders" % [p["title"], int(ct.get("files", 0)),
-				int(ct.get("placeholder_files", 0)), int(ct.get("owner_files", 0))], UiStyle.TEXT, 18))
+	content.add_child(UiStyle.note("INSTALLED LIBRARY (rebuild with python tools/content/build.py on the PC)", UiStyle.ACCENT, 22))
+	var index := Session.library()
+	if index.is_empty():
+		content.add_child(UiStyle.note(index.error, UiStyle.WARN, 18))
+	else:
+		var placeholders := 0
+		for id in index.sounds:
+			if bool(index.sounds[id].get("placeholder", false)):
+				placeholders += 1
+		content.add_child(UiStyle.note("%d clips, %d sounds (%d placeholder), %d mission packs" % [index.clips.size(), index.sounds.size(),
+			placeholders, packs.filter(func(p: Dictionary) -> bool: return int(p["schema"]) == 4).size()], UiStyle.TEXT, 18))
 
 
 func _unhandled_input(event: InputEvent) -> void:

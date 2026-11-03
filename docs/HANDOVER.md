@@ -5,25 +5,31 @@ the loop library and the owner's drop-in content path), the rebuild of Mission 1
 recordings (`ToAddTry1/`, imported by `tools/content/import_ableton.py`) and the village version of Mission 1
 (128 bars, civilians, tap-to-deploy sections, Red Alert sound effects) and the owner's first-play tweaks of the same
 day (units fight on the move, a bigger zoomed-out village, the rally flag always shown, the bass chart by pitch,
-a quieter battle mix, misses that silence the instrument). Read this first, then `README.md` (layout and commands),
-`docs/PRD.md` section 15 (the mission rule set; sections 1 to 13 describe the legacy duel) and
+a quieter battle mix, misses that silence the instrument) and then the loadout redesign of that night (one global
+loadout, a loop library, missions as bases plus waves plus a form). Read this first, then `README.md` (layout and
+commands), `docs/PRD.md` sections 15 and 16 (the mission rules; section 16 is the current content model; sections 1 to
+13 describe the legacy duel) and
 `docs/CONTENT_TO_RENDER.md` (the owner's render list). Everything is committed on `main` at
 https://github.com/Joesalmon1985/RhythmWarfare.
 
 ## What the game is now
 
 A landscape phone rhythm defense game. Four illuminated pads play along with a 174 BPM drum and bass track; every
-sequence of two to four bars you pass builds one defense or sends one unit; your Red Alert base in the middle of the
-screen must keep its required buildings alive until the song ends. Ten missions, each an arrangement of a loop library
-with a few musical choices of your own. Home: Continue, Campaign, Practice, Settings, and a small Developer area
-(legacy duel free play, rhythm playtest, content status, unlock-all status). Normal progression is on.
+sequence of two bars you pass builds one defense or sends one unit; your Red Alert base in the middle of the screen
+must keep its required buildings alive until the song ends. The player has one **loadout** (drum pattern, fill, kick
+sound, snare sound, bass line, bass sound, backing track) that plays in every one of the ten missions and decides
+what a passed sequence builds: kick sounds make infantry, snare sounds defenses, bass sounds vehicles. A mission is a
+battlefield, a set of waves and a form (which 8-bar phases are drums and which bass); it authors no music. Home:
+Continue, Campaign, Practice, Loadout, Settings, and a small Developer area (legacy duel free play, rhythm playtest,
+content status, unlock-all status). Normal progression is on.
 
 ## How the game plays now
 
 - **Pads.** Four large pads at fixed positions: 1 and 2 under the left thumb, 3 and 4 under the right (keys D F J K).
-  Each phase of a mission follows one family. Drum phases: the kick sound in kick slot 1 is pad 1 (slot 2: pad 2),
-  the snare sound in snare slot 1 is pad 4 (slot 2: pad 3). Bass phases: one pad per bass voice, voice slots 1 to 4 on
-  pads 2, 3, 1, 4, so two alternating voices sit under different thumbs. Pitches are never mapped to pads. A pad with
+  Each phase of a mission follows one family. Drum phases: the loadout's kick sound is pad 1 and its snare
+  sound pad 4 (pads 2 and 3 are dim). Bass phases: the bass line's notes spread over all four pads by pitch, lowest
+  on pad 1 (a line with one pitch sits on pad 2), taps only, at least 1440 ticks apart (`data/campaign/rules.json`
+  `chart.bass`, `tools/content/chart.py`). A pad with
   nothing to play in the current phase is dim; each lit pad carries the friendly name of its sound and a shape (kick
   disc, snare diamond, bass bars) as well as its colour. At most two touches count at once.
 - **Cues (falling notes).** Every cue is a translucent pad-sized shape that falls straight down the screen, over the
@@ -45,7 +51,11 @@ with a few musical choices of your own. Home: Continue, Campaign, Practice, Sett
   builds in 0.5 s, steady (<= 70 ms) 1.5 s, loose 3 s. Mashing passes at best as loose. The centre of the pad strip
   shows the current sequence's progress against its threshold and what it will earn; the line under it says what was
   earned and how fast; the battlefield shows the socket being prepared with a countdown ring.
-- **Rewards.** Mission 1's first drum sequence builds one pillbox. Buildings (pillbox, gun turret, flame tower) go to
+- **Rewards.** The loadout decides them, not the mission. Drum sequence k (counted over the whole mission) calls on
+  the kick sound's instrument when k is even and on the snare sound's when odd, a bass sequence on the bass sound's
+  (`data/campaign/instruments.json`; shares expand in order, so 2:1 is A A B and the cycle repeats). With the default
+  loadout the first drum sequence sends a rifle squad and the second builds a pillbox. A reward the base cannot make
+  (vehicles in the village, which has a barracks and no war factory) becomes a repair crew. Buildings (pillbox, gun turret, flame tower) go to
   prepared sockets (`data/battlefields/defense_02.json` and `village_01.json`, five per approach flanking each route
   outside the wall, `sockets_per_point` open per mission), approach with the fewest defenses first (ties: the approach
   most enemies are walking towards, else the next wave's). Units (e1 to e4, jeep, APC with its gun only, light and
@@ -56,6 +66,12 @@ with a few musical choices of your own. Home: Continue, Campaign, Practice, Sett
   leash keeps firing at a target in range but never chases it, and walks home fighting (`_leash_holds` in
   `battle_sim.gd`, `_defender` in `defense_ai.gd`). At capacity a reward becomes a repair crew for the most damaged
   approach or, with nothing damaged, +50% health once for the oldest defense; the status line above the pads says which.
+- **Loadout screen and briefing.** Home > Loadout: one row per slot of cards (unlocked first, a locked card says what
+  unlocks it), a strip of unit icons on every sound card, Listen on every card; choosing a card re-resolves the whole
+  loadout (a slot that no longer fits falls back) and saves it. The mission briefing (`mission_setup.gd`) shows the base
+  (a warning where there is no war factory), approaches, villagers, wave count and length, the loadout with what its
+  three instruments build (vehicles struck out without a factory), "Change loadout", and for practice the part to play.
+  The result screen names what a clear added to the loadout. No per-mission choices exist any more.
 - **Sections (tap to deploy).** A tap on the battlefield (or keys 1 2 3) makes the nearest approach by x the active
   section: every reward goes there while it has room (else the normal choice) and a move flash plays. The Red Alert
   rally flag always stands at the current rally point (`Match.rally_point()`: the tapped section, else the point
@@ -67,10 +83,10 @@ with a few musical choices of your own. Home: Continue, Campaign, Practice, Sett
   and every sprite; missions 2 to 10 keep 24 px. The village is 96 x 48 cells (`data/maps/field_96x48.json`), the
   view 72 x 27 cells, the rally points 7 cells outside the side walls and 6 above the top wall, the entries 5 cells
   beyond the window; `python tools/campaign/build_battlefield.py village_01` regenerates only the village files.
-- **Bass chart.** A mission's `bass_chart` (`content/missions/level_01.json`: `pads: pitch`, `min_gap_ticks: 1440`,
-  `holds: false`) maps the recording's pitches to pads 1 to 4 from low to high, cues at most one note per 1.5 beats
-  and makes every bass cue a tap; the recording still plays every note. Without the block a mission charts as before
-  (voice slot pad, every note, holds). Mission 1: Sub line 12 taps per 8 bars on four pads, Reese line 16 on three.
+- **Bass chart.** The charting rule is global (`rules.json` `chart.bass`: `pads: pitch`, `min_gap_ticks: 1440`,
+  `holds: false`; `tools/content/chart.py`): the bass line's pitches map to pads 1 to 4 from low to high and at most
+  one note per 1.5 beats is cued, every cue a tap; the recording still plays every note. The cues are baked into the
+  library index per clip (`songs/library/index.json`), so a new bass line is charted by the build.
 - **Misses.** A missed cue (or a hold released with nothing held) silences that instrument's stems until the next hit
   on it (`Match._judge_to_stems`); the backing track never mutes; at a phase change every family the new phase does
   not cue comes back; a muted family's pad label draws at half alpha.
@@ -95,80 +111,79 @@ with a few musical choices of your own. Home: Continue, Campaign, Practice, Sett
   left. A mission's level rules may add `start_units` (mission 1: five riflemen at each point) and `units_per_point`.
   Required objectives: the command core (missions 2 to 10), the barracks (mission 1), plus the power plant (6, 10) or
   radar dome (8, 10). Survive to the end of the song to win; lose a required objective and the run ends.
-- **Progression.** Clearing mission n unlocks mission n+1 and the options listed in its `new_options`
-  (`data/campaign/campaign.json`); a mission's own defaults are always available; no accuracy threshold blocks the
-  ladder. The old save (`user://campaign.json` v1) migrates to v2 on load (clears and bests kept); settings v1 keep
+- **Progression.** Clearing mission n unlocks mission n+1 and the library items (clips and sounds) listed in its
+  `new_options` (`data/campaign/campaign.json`); the default loadout is always available; no accuracy threshold blocks
+  the ladder. The save (`user://campaign.json`) is version 3 `{cleared, loadout, last_played}`; versions 1 and 2 migrate
+  on load (clears and bests kept, per-mission selections dropped, the loadout becomes the defaults; the old file is
+  kept as `.v1` or `.v2`); settings v1 keep
   calibration and the last pack, and the cue lead-in starts at its default (the old note-approach time measured
   something else).
 
 ## The ten missions (owner's view; the menus show names and locks only)
 
-| # | Mission | Length | Phases (D drums, B bass) | New for the player | Enemies (first appearances) | Objectives |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | First Watch | 128 bars, 177 s | DDBD BDDB DBDB DDBD | kick pad 1 and snare pad 4, then bass holds on pad 2 (drums keep playing, only one family cued at a time); drum groove, bass line, bass sound and backing track choices, all the owner's recordings; the village map (three choke points with five riflemen each, ten houses and ten civilians, the barracks in the middle), tap-to-deploy sections, pillboxes, rifle and grenadier squads; four acts: waves at the choke points, then the village, then raiders with jeeps, then the barracks | e1, e2, jeep | barracks |
-| 2 | Second Pulse | 40 bars, 55 s | DDDDD | groove choice (Push / Straight), snare sound choice; turrets | e2 | core |
-| 3 | Hold the Line | 48 bars, 66 s | DBDBDB | bass holds, one pad per voice; jeeps as rewards | e3, 1tnk | core |
-| 4 | Backbeat | 48 bars, 66 s | DDDDDD | Two-Step groove, Snare Run fill, Siege Kick, Field Clap; flame towers, sandbags | e4, apc | core |
-| 5 | Counterpoint | 56 bars, 77 s | DBDBDBD | two bass voices trading between thumbs; bass line choice | | core |
-| 6 | Fortress | 56 bars, 77 s | DDDDDDD | two grooves, two kicks (pads 1 and 2); repair rewards | 2tnk, arty | core + power plant |
-| 7 | Crossroads | 64 bars, 88 s | DBDBDBDB | two bass lines, three voices crossing thumbs | ftrk, v2rl | core |
-| 8 | Crossfire | 64 bars, 88 s | DDDDDDDD | two snares (pads 4 and 3), fill choice | 3tnk | core + radar dome |
-| 9 | Iron Rhythm | 64 bars, 88 s | DDBDDBDD | everything paired: grooves, kicks and fills in two slots | 4tnk | core |
-| 10 | Last Light | 80 bars, 110 s | DDBDBDBDBD | three grooves to order, two of everything, four bass voices | all 13 ground actors | core + plant + dome |
+The missions are bases and waves now; the music is the player's loadout. Form = the 8-bar phases (D drums, B bass).
+The last column is what clearing the mission adds to the loadout library (`new_options`; every mission also adds its
+own backing track, named "<Mission> accompaniment").
 
-Each mission's design notes are in its `note` field (`content/missions/level_NN.json`, `data/campaign/waves/level_NN.json`).
+| # | Mission | Length | Form | New for the player | Enemies (first appearances) | Objectives | Unlocks on clear |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | First Watch | 128 bars, 177 s | DDBDBDDBDBDBDDBD | the village map (three choke points with five riflemen each, ten houses and ten civilians, the barracks in the middle), tap-to-deploy sections; four acts: waves at the choke points, then the village, then raiders with jeeps, then the barracks | e1, e2, jeep | barracks | the starter kit and every first-set sound, groove and bass line (Half-Time, Double Step, Rolling, Sub Line, Reese Line, the nine bass sounds, three hats) |
+| 2 | Second Pulse | 40 bars, 55 s | DDDDD | | e2 | core | Push, Straight, Crack Snare |
+| 3 | Hold the Line | 48 bars, 66 s | DBDBDB | bass phases | e3, 1tnk | core | Patrol Sub, Reese, Long Line, Answer Line (ending) |
+| 4 | Backbeat | 48 bars, 66 s | DDDDDD | | e4, apc | core | Two-Step, Siege Kick, Field Clap, Snare Run |
+| 5 | Counterpoint | 56 bars, 77 s | DBDBDBD | | | core | Steps, Growl, Answer Line |
+| 6 | Fortress | 56 bars, 77 s | DDDDDDD | | 2tnk, arty | core + power plant | Roller, Heavy Kick |
+| 7 | Crossroads | 64 bars, 88 s | DBDBDBDB | | ftrk, v2rl | core | Command Saw, Octaves |
+| 8 | Crossfire | 64 bars, 88 s | DDDDDDDD | | 3tnk | core + radar dome | Break, Rimshot |
+| 9 | Iron Rhythm | 64 bars, 88 s | DDBDDBDD | | 4tnk | core | Kick Drop |
+| 10 | Last Light | 80 bars, 110 s | DDBDBDBDBD | | all 13 ground actors | core + plant + dome | Hollow Sub |
+
+Each mission's design notes are in its `note` fields (`content/missions/level_NN.json`, `data/campaign/waves/level_NN.json`).
+Missions 5 to 10 carry start units, prebuilt defenses and bigger objective hp from the loadout retune (3 November, night).
 The coverage matrix of every ground actor and building is in `docs/BALANCE.md`, with the per-seed results.
 
 ## Content: loop library, missions, the one build command
 
-- `content/library/<clip>/`: mission-independent clips at 174 BPM 4/4 with stable ids (grooves and fills with kick and
-  snare parts, bass lines, accompaniment), one MIDI per part, a `clip.json`. **Mission 1 uses eight clips imported from
-  the owner's Ableton exports** (`ToAddTry1/`, manifest `content/imports/first_watch.json`): three eight-bar grooves
-  (Half-Time, Double Step, Rolling: Kick1/2/3 with Snare1), two bass lines (Sub Line from Bass1 with five recordings,
-  Reese Line from Bass2 with four) and three audio-only backing loops (Driving, Busy, Offbeat Hats from Other1/2/3).
-  Each declares the sounds it was recorded with (`sounds`), so it plays only its own recordings and the build never
-  makes placeholders for them. Missions 2 and 3 use clips **cut from the First_Three MIDI** (two-bar grooves, eight-bar
-  bass phrases) and one long accompaniment clip per song; the source MIDI is never edited and its hashes are checked on
-  every build. Missions 4 to 10 use generated clips (14 new ones).
-- `content/sounds.json`: 30 sounds (14 synthesised: kick, snare and bass voices, ensemble; 16 recorded by the owner)
-  with friendly names. The recorded names are provisional (the hats names were inferred from the spectrum; rename in
-  `sounds.json` and the clip files, then rebuild).
-- `tools/content/import_ableton.py <manifest> [--check]`: files an Ableton batch into the library (44.1 to 48 kHz with
-  the SoX resampler, no time-stretch; MIDI cut to the clip's bars at 960 PPQ with 174 BPM written in; WAVs cut to the
-  bars plus a sounding tail of at most one bar; family gain rules, a global trim and a 10 ms end fade where a recording
-  is cut mid-note; originals untouched). `content/README.md` has the manifest format and the steps for adding phrases.
-- Mission features added for the owner's content: `"bound"` sound fields (the pad plays whatever the chosen clip was
-  recorded with and shows that name), a `Backing track` choice (accompaniment placements with `"clip": 1`), `intros`
-  (a teaching line per bar, Mission 1 has one at bar 1 and one at bar 16 when the bass starts), and dependent choices
-  (`depends_on` / `with` in the pack: the Bass sound row shows only the recordings of the chosen bass line and refits
-  when the line changes, in the setup screen and in `MissionLoader.fit_dependents`).
-- `content/missions/level_NN.json`: choices (pools, counts, defaults), phases (which clip and sound plays where, which
-  family is cued, sequence length, rewards), accompaniment, battle (battlefield, waves, rules).
-- `python tools/content/build.py [level_NN ...]`: imports and validates everything, renders placeholders for every
-  clip x sound a mission offers and has no owner render, assembles full-length per-slot stems offline for every offered
-  combination of every usage (sample positions from absolute ticks, tails mixed, cut repetitions faded over 10 ms),
-  writes `songs/mNN_*/level.json` (schema 3), `audio/` and `preview/`, `content/REPORT.md`,
-  `data/campaign/library_names.json`. A full build takes about 9 minutes on this PC (stems are re-assembled every time;
-  placeholders are cached). The game picks the stems that match the selection and plays them through the existing
-  synchronized transport; at most 16 at once (mission 10).
-- **Owner replacement**: drop `content/library/<clip>/<part>__<sound>.wav` (48 kHz stereo 16-bit, from the clip's bar 1,
-  at most one bar of tail) and rebuild; edit a clip's MIDI and the build regenerates its cues and placeholders and
-  refuses WAVs rendered from the old MIDI. A copied example folder (`content/fixtures/example_groove/`) becomes a new
-  option once a mission lists it. Exact file list: `docs/CONTENT_TO_RENDER.md` (29 clips, 98 WAVs, 18 of them the
-  owner's recordings already in place), rewritten by
-  `python tools/content/render_list.py`. Proven by `tools/content/test_content.py` with the fixtures in
-  `content/fixtures/` (owner WAV replaces and reverts, edited MIDI at 96 PPQ with no tempo gets new cues and makes the
-  old WAV stale, bad renders rejected with their reasons).
-- **MIDI for the owner's renders (missions 2 to 10)**: `python tools/content/export_midi.py` writes
-  `midi_export/level_NN_<slug>/` (3 November 2026): 8-bar loops `Kick_A/B/C`, `Snare_A/B/C`, `Bass_A/B/C`,
-  `Other_Pad`, `Other_Hats` and a reference `Arrangement_A.mid` per mission (A = the mission's default clips tiled,
-  B and C = seeded one-edit-per-two-bars variations in C# natural minor that keep the 480-tick pad gap), a README per
-  folder with the render rules, and a manifest template `content/imports/level_NN.json` for the importer. The owner
-  renders the WAVs next to the MIDIs, runs the importer, then the mission is rewired to the imported clips as mission
-  1 was. `tools/content/test_export.py` proves determinism, the bounds and a synth round trip through
-  `import_ableton.py --check`.
-- **Placeholder WAVs** for reference are in `content/library/<clip>/placeholder/` (133 MB, git-ignored, regenerated
-  identically by the build on a fresh checkout); the game plays the Ogg stems in `songs/`.
+- `content/library/<clip>/`: mission-independent clips at 174 BPM 4/4 with stable ids (31 clips: grooves and fills
+  with kick and snare parts, bass lines, backing tracks), one MIDI per part, a `clip.json`. **Eight clips are the
+  owner's Ableton exports** (`ToAddTry1/`, manifest `content/imports/first_watch.json`): three eight-bar grooves
+  (Half-Time, Double Step, Rolling), two bass lines (Sub Line with five recordings, Reese Line with four) and three
+  audio-only backings (Driving, Busy, Offbeat Hats). Each declares the sounds it was recorded with (`sounds`), so it
+  plays only its own recordings. The rest are cut from the First_Three MIDI (hashes checked on every build) or
+  generated; they play placeholders until the owner renders them.
+- `content/sounds.json`: 30 sounds (14 synthesised, 16 recorded). `data/campaign/instruments.json` says what each
+  sound produces in battle (reward ids with shares) and its blurb; the build refuses a sound without an entry.
+- `content/missions/level_NN.json`: one mission, nothing else: `level_id`, `number`, `title`, `pack`, `bars`, `seed`,
+  `form`, `battle` (battlefield, waves, rules), `intros`, `note`. `content/missions_legacy/` keeps the old authoring
+  (choices, phases, stems); only `tools/content/export_midi.py` still reads it.
+- **The build, one command**: `python tools/content/build.py [level_NN ...]` (`--check` validates only). It builds
+  the library first: `songs/library/index.json` (sounds with their rewards, clips with cues per part and the loop file
+  per part and sound, defaults) and `songs/library/loops/` (**117 loops, 5.9 MB**, one Ogg per clip part and sound,
+  exactly 8 bars, backings 16; unchanged loops are not re-encoded), then every mission's `songs/mNN_*/level.json`
+  (schema 4: phases, waves, rules, base, intros; no audio), `content/REPORT.md`, `docs/CONTENT_TO_RENDER.md` and
+  `data/campaign/library_names.json`. **About 23 s from scratch**, under a second when nothing changed; the index and
+  packs are byte-identical when nothing changed. After editing a waves file rebuild that mission (`level_NN`, about a
+  second) and run `--import` once. Schema 3 packs and the 9-minute stem assembly are gone.
+- **Charts and checks**: kick cues are pad 1, snare cues pad 4, bass cues by pitch (above). The build checks every clip
+  against the pad gap rules (same pad 480 ticks, same thumb 480 between pads) and every groove together with every
+  fill (the groove's bars 1 to 7 and the fill's bar 8); an error names the clip or the pair. It does not test the loop
+  seams (a tail that rings past bar 8 is folded onto bar 1 by construction; nobody has listened).
+- **Owner renders** still go to `content/library/<clip>/<part>__<sound>.wav` (48 kHz stereo 16-bit, from the clip's
+  bar 1, at most one bar of tail), then rebuild; a MIDI edited in Ableton regenerates the clip's cues and the build
+  refuses WAVs rendered from the old MIDI. The exact list is `docs/CONTENT_TO_RENDER.md` (31 clips, 117 renders, 18
+  of them the owner's recordings already in place), rewritten by `python tools/content/render_list.py`.
+- **The importer path** for an Ableton batch is unchanged: `python tools/content/import_ableton.py <manifest>
+  [--check]` files 44.1 to 48 kHz exports into the library (SoX resampler, no time-stretch; MIDI cut to the clip's bars
+  at 960 PPQ with 174 BPM written in; WAVs cut to the bars plus a sounding tail of at most one bar; gain rules, a global
+  trim and a 10 ms end fade; originals untouched). `content/README.md` has the manifest format and the steps for new
+  phrases; a new clip also needs `produces` entries only if it brings a new sound.
+- **MIDI for the owner's renders (missions 2 to 10)**: `python tools/content/export_midi.py` reads `content/missions_legacy/`
+  and writes `midi_export/level_NN_<slug>/` (3 November 2026): 8-bar loops `Kick_A/B/C`, `Snare_A/B/C`, `Bass_A/B/C`,
+  `Other_Pad`, `Other_Hats` and a reference `Arrangement_A.mid` per mission, a README per folder and a manifest template
+  `content/imports/level_NN.json`. Under the loadout model the exported loops are simply more library clips once the owner
+  renders and imports them; `tools/content/test_export.py` proves determinism, the bounds and a synth round trip.
+- **Placeholder WAVs** for reference are in `content/library/<clip>/placeholder/` (git-ignored, regenerated
+  identically by the build on a fresh checkout); the game plays the Ogg loops in `songs/library/loops/`.
 
 ## Verified and not verified
 
@@ -255,6 +270,21 @@ Verified (2 November 2026, the Mission 1 rebuild, this PC):
   the line, Backing track) before and after switching to the Reese line, the play screen in a drum phase and in a
   bass phase, the result screen. Not by a person.
 
+Verified (3 November 2026, night: loadouts; this PC; see `docs/BALANCE.md` "Loadouts"):
+- `bash tools/test.sh` green: 11,663 GDScript checks and 62 content tests. New or
+  rewritten: `test_library_index.gd`, `test_loadout.gd`, `test_loadout_screen.gd`, `test_transport.gd` (loops, longest
+  first, unwrapped position), `test_campaign.gd` (save v3 and the v2 migration), `test_mission_one_content.gd`,
+  `test_all_missions.gd` (782 checks: every mission loads and perfect play wins it).
+- Seeded balance, default loadout, seeds 1 to 3: perfect 30 of 30, beginner 29 of 30 (mission 9 seed 3 loses at 87.2 s of
+  88.3), no input 0 of 30, sloppy 14 of 30; seeds 4 to 6: perfect 30 of 30, beginner 28 of 30 (mission 8 seeds 4 and 5).
+  Mission 1 perfect destroys 266 to 271 of 278 enemies (96 to 97%) and loses 0 of 10 villagers. Heavy loadout, untuned:
+  perfect 30 of 30, beginner 30 of 30, no input 0 of 30; mission 1 destroys 213 to 237 of 278.
+- The finding behind the loop engine: Godot's player position wraps at the loop length over looping
+  `AudioStreamSynchronized` substreams (test output `FINDING: ... WRAPS`), so the transport unwraps it.
+- **Not verified, loadouts:** nobody has heard the loops switching at phase boundaries, the fill bar or the loop seams
+  (the build checks lengths and cues, not the sound); nobody has used the Loadout screen or the briefing by hand
+  (the agent ran the scene tests only); nothing has run on a phone; the 117 loops include 99 placeholders.
+
 **Not verified:** any phone run (touch feel, the two-thumb layout, frame time and memory with 16 Ogg streams on a
 phone CPU, load time of mission 10), any listening check by ear (the build and the importer check sample positions,
 lengths and headroom only; nobody has listened to the assembled Mission 1, its previews or the Red Alert effects in
@@ -282,6 +312,12 @@ replace per-note recipes, loadout caps and round robin, the legacy duel stays, h
 static defenses first, wave units fight defenses, no slow practice, generated music for all ten missions, normal
 progression on by default with `unlock_all` as a developer switch, the save migrates. Earlier: standalone Godot 4.5.1;
 DuelMasterBattle is an asset source only; OpenRA pixel art and behaviour; work on `main`.
+
+From the loadout redesign (3 Nov 2026, night; the owner's four answers): all music comes from the player's loadout (a
+mission authors none); the arrangement is the pattern (the clip's own cues, tiled over the phases, are what is
+played); instruments decide the units by family (kick sounds infantry, snare sounds defenses, bass sounds vehicles);
+recordings are tied to their patterns (a clip plays only the sounds it was recorded with). Earlier loadout choices of
+the 31 October brief (per-mission pools and counts) are retired with them.
 
 ## Decisions made in this build (routine design details)
 
@@ -320,12 +356,35 @@ DuelMasterBattle is an asset source only; OpenRA pixel art and behaviour; work o
     fill in bar 8), alternatives are rule-based and seeded by the mission seed (at least one edit per two bars, at
     most a quarter of the notes), ghosts go an eighth before a backbeat because a sixteenth would break the pad gap,
     missions without a bass phase get a root-note `Bass_A` so the owner can add bass later.
+15. Loop engine (3 Nov 2026, night): the game plays 8-bar Ogg loops (one per clip part and sound) as substreams of the
+    one `AudioStreamSynchronized`, `loop = true`, longest first, gain switched per bar by the pack's gain program;
+    no assembled per-mission stems. The finding: the player's playback position wraps at the loop length, so the
+    transport counts wraps (`song_base + wraps x loop_seconds + raw`) and everything else keeps one unwrapped clock.
+    A fill plays in bar 8 of every eight (its stems on, the groove's off).
+16. Even/odd rule: a drum sequence k takes the kick instrument's next reward when k is even and the snare's when odd
+    (counted over the whole mission), a bass sequence the bass instrument's; each cycle advances once per use. Chosen
+    because it needs no mission data and keeps both drum sounds in play.
+17. Defaults: the default loadout is mission 1's kit (Half-Time, no fill, Half-time kick, Backbeat snare, Sub line,
+    Deep sub, Driving hats); the player's saved loadout starts there; `loadouts.json` also has `village` (the same) and
+    `heavy` for the tools.
+18. The village has no war factory, so bass sounds (vehicles) give repair crews there; the briefing says so and strikes
+    the vehicles out of the unit strip. Missions 2 to 10 have a factory.
+19. Acc backings cut to 16 bars: the generated backing clips were 32 to 48 bars, the loop library keeps their first 16
+    (10 ms fade); a backing loops under the whole song.
+20. The campaign ladder lists every pickable library item (clips and sounds, 57 ids): mission 1 lists 26 (the starter
+    kit and its first set), missions 2 to 10 a few each plus their own backing track.
+21. Loadout retune (3 Nov 2026, night): missions 5 to 10 got start units (five riflemen per point, rocket soldiers and
+    medium tanks in 9 and 10), prebuilt pillboxes and turrets, bigger objective hp and `units_per_point` 12 (mission
+    10: 20); start units count against `units_per_point`, so the default 6 turned reward squads into repairs. Wave
+    counts, timing, the sequence length, the threshold and the instruments were not touched.
 
 ## How the code is organised
 
-- `src/core/`: `mission_loader.gd` (schema 3: selection, stems, cues, sequences), `mission_rules.gd` (rules.json),
+- `src/core/`: `library_index.gd` (reads `songs/library/index.json`: clips, sounds, cues, loops, compatibility),
+  `loadout.gd` (the slots, `resolve`, reward cycles), `mission_loader.gd` (schema 4: loadout -> stems, cues, sequences,
+  gain program; schema 2 and 3 packs are refused), `mission_rules.gd` (rules.json),
   `sequence_tracker.gd`, `match.gd` (mission flow: judge -> sequences -> rewards in the tick loop; and the duel flow),
-  `campaign.gd` (ladder, unlocks, save v2 and the v1 migration), `session.gd` (settings v2, `start_mission`, env
+  `campaign.gd` (ladder, unlocks, save v3 with the v1 and v2 migrations, the loadout), `session.gd` (settings v2, `start_mission`, env
   overrides), `level.gd`, `level_loader.gd` (schema 1 duel and dispatch; schema 2 is refused as retired), `song_clock.gd`.
 - `src/input/pad_judge.gd` (missions), `judge.gd` (duel), `lane_input.gd` (touches and keys D F J K).
 - `src/sim/battle_sim.gd` (deterministic 25 Hz OpenRA simulation; mission sockets, rewards with `count`, capacity,
@@ -334,15 +393,18 @@ DuelMasterBattle is an asset source only; OpenRA pixel art and behaviour; work o
   wander and flee), `bot_ai.gd` (duel only).
 - `src/ui/`: `pad_view.gd`, `battle_view.gd` (sprites only, three layers: neutral civilians, blue, red; the rally flag
   and move flash), `hud.gd` (the legacy duel's bar only; missions have no text overlay), `section_picker.gd`, `ui_style.gd`, `settings_panel.gd`, `sprite_bank.gd`.
-- `src/audio/`: `stem_transport.gd` (the song, on the "Music" bus), `battle_sfx.gd` (effects on the "SFX" bus from
+- `src/audio/`: `stem_transport.gd` (the song: looping substreams, the unwrapped position, the gain program, on the "Music" bus), `battle_sfx.gd` (effects on the "SFX" bus from
   `data/sfx_map.json` and `assets/sfx/`).
 - `tools/extract_openra.py` (sprites from the owner's OpenRA content, allow-list `NEEDED`, aliases `flagfly`),
   `tools/extract_openra_sounds.py` (AUD decoder and the sound list), `tools/campaign/build_battlefield.py`
   (`defense_01`, `defense_02`, `village_01`).
-- `src/scenes/`: `main_menu`, `missions`, `mission_setup`, `play`, `result`, `settings`, `calibration`, `developer`.
-- `tools/content/`: `build.py`, `library.py`, `mission.py`, `synth.py`, `common.py`, `render_list.py`,
-  `make_fixtures.py`, `test_content.py`. `tools/autoplay.gd` (harness), `tools/balance_missions.py`, `tools/shoot.gd`.
-- Retired and removed: schema 2 packs, the loadout screen, `lane_view.gd`, the instrument catalogue, the campaign wave
+- `src/scenes/`: `main_menu`, `missions`, `mission_setup` (the briefing), `loadout` (`loadout.gd`/`.tscn`, the Loadout
+  screen), `play`, `result`, `settings`, `calibration`, `developer`.
+- `tools/content/`: `build.py`, `library.py`, `mission.py`, `chart.py` (the pitch-to-pad bass chart), `synth.py`,
+  `common.py`, `render_list.py`, `export_midi.py` (reads `content/missions_legacy/`), `make_fixtures.py`,
+  `test_content.py`. `tools/autoplay.gd` (harness), `tools/balance_missions.py`, `tools/shoot.gd`.
+- Retired and removed: schema 2 and 3 packs and their assembled stems and previews (the schema 3 paths in `songs/mNN_*/audio`
+  and `preview`), per-mission choices, schema 2 packs, the 30 October loadout screen (the current Loadout screen is new), `lane_view.gd`, the instrument catalogue, the campaign wave
   generators and `audio_preflight.py`. `docs/CAMPAIGN_PLAN.md` is kept with a superseded banner.
 
 ## Exports
@@ -373,7 +435,7 @@ Rebuilt on 31 October 2026 per `docs/EXPORT.md` (`build/` is git-ignored):
 4. The autoplay report's `reached_s` equals the spawn time for left-entry waves (a report bug, not a game bug).
 5. Headroom is checked for each mission's default selection only; louder combinations (for example Heavy Kick with
    Command Saw in missions 7 and 9) may clip slightly. Owner renders change this anyway.
-6. The full build re-assembles every stem (about 9 minutes); a stem cache would make owner iterations faster.
+6. (Gone: the library build takes 23 s and re-encodes only changed loops.)
 7. Mission setup on very wide screens leaves the right half of the cards area empty (functional, not pretty).
 8. Duel backlog items (idle fidgets, ruins, title art) still apply; the duel has no sound effects (the sound layer is
    wired in the mission play scene only).
@@ -382,14 +444,23 @@ Rebuilt on 31 October 2026 per `docs/EXPORT.md` (`build/` is git-ignored):
    pack is 27 MB of Ogg (18 stems x 129 bars); the sounds `reinfor1`, `bleep11`, `cashturn` are extracted but
    unused; no positional panning; at zoom 0.75 sprites are decimated with nearest filtering (linear would break the
    faction remap shader); the rally flag is small on a phone; the Reese line leaves pad 4 unused.
-10. Mission 10 beginner seed 3 loses at 108.0 s of 110.3 with the new defender behaviour (core 185,000); raising the
-    core further only delays it, so the waves of act 4 or the defenders' leash would be the next thing to look at.
-11. With every wave doubled (3 Nov 2026, evening) missions 8 and 10 lose under perfect play and mission 6 drops a
-    beginner seed; `units_per_point` 12 changed nothing there. Left as recorded in `docs/BALANCE.md` because the
-    loadout round replaces the reward lists; retune once after it (objective hp, prebuilt defenses, act 4 waves).
+10. (Superseded by the loadout retune: mission 10 now holds under perfect and beginner play with core 400,000 and a bigger
+    start army, `docs/BALANCE.md`.) Mission 10 beginner seed 3 lost at 108.0 s of 110.3 with the old reward lists.
+11. (Done in the loadout retune, 3 Nov 2026, night: missions 6, 8 and 10 hold under perfect play with the default
+    loadout; see items 14 and 15 for what is left.) With every wave doubled the evening run had lost them.
 12. The falling notes are pad-sized and at alpha 0.4 read as solid blocks over the dark field; if the owner finds
     them heavy, `NoteLane.FILL_ALPHA` and the outline are the knobs. The hold bar of a two-bar hold is taller than
     the screen (by design: it keeps passing through the pad).
+13. Loop seams: the build checks loop lengths and cues, not how a seam sounds; a ringing tail is folded onto bar 1 and
+    nobody has listened to it, to the gain switches at phase boundaries or to the fill bar.
+14. Heavy loadout (untuned, `docs/BALANCE.md` "Loadouts"): wins every mission under perfect and beginner play, but
+    in mission 1 perfect play destroys only 213 to 237 of 278 enemies (77 to 85%) because its infantry is grenadiers and
+    rocket soldiers; a retune for it would need start units or waves, not done.
+15. Default loadout, known losses after four tuning rounds: mission 9 beginner seed 3 (87.2 s of 88.3, overwhelmed late),
+    mission 8 beginner seeds 4 and 5 (the radar dome falls at 81 to 82 s); sloppy play loses most of missions 2, 4, 6, 8.
+16. The bass sounds make vehicles, which the village (mission 1) cannot build: its bass sequences are repair crews.
+17. The Windows and Android exports predate the loadout redesign (the packs shrank: no stems, 5.9 MB of loops); re-export
+    before the next owner run.
 
 ## Everyday commands
 
@@ -401,9 +472,10 @@ python tools/extract_openra.py --no-map                     # sprites from the o
 python tools/extract_openra_sounds.py --check               # Red Alert sounds to assets/sfx (drop --check to write)
 python tools/campaign/build_battlefield.py                  # regenerate the maps and battlefields (defense_02 and village_01)
 RW_SECTION=none <godot> --headless --path . -s tools/autoplay.gd -- res://songs/m01_first_watch perfect 1.0 1   # harness without section taps
-python tools/content/build.py                               # rebuild all ten packs (about 9 min); or name missions: level_05
+python tools/content/build.py                               # library (117 loops) + all ten packs, about 23 s; or name missions: level_05
+python tools/balance_missions.py --loadout heavy --seeds 1 2 3 --jobs 4 > out.md   # trials with a preset of data/campaign/loadouts.json (default: "default"; about 80 s)
+<godot> --headless --path . -s tools/autoplay.gd -- res://songs/m06_fortress perfect 1.0 1 loadout:heavy   # harness with a preset (or a JSON loadout); RW_LOADOUT=heavy does the same
 python tools/content/render_list.py                         # rewrite docs/CONTENT_TO_RENDER.md
-python tools/balance_missions.py > out.md                   # seeded trials (about 15 min with --jobs 8)
 RW_MISSION=10 RW_SCENE=play RW_AUTOPLAY=perfect <godot> --path .    # scripted run in the real play screen, prints PERF
 RW_MISSION=3 RW_SCENE=play RW_PRACTICE=1 <godot> --path .           # practice run (battlefield hidden)
 RW_UNLOCK_ALL=1 <godot> --path .                            # every mission and option open for one run

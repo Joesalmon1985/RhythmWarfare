@@ -4,7 +4,8 @@
     python tools/content/export_midi.py level_04 6      # only these missions
     python tools/content/export_midi.py --out DIR --imports DIR2   # somewhere else (the tests do this)
 
-Missions 2 to 10 arrange library clips (content/missions/level_NN.json); none of them has a full-song MIDI. For every
+Missions 2 to 10 arrange library clips (the old per-mission authoring, content/missions_legacy/level_NN.json: choices and
+phases; the current content/missions/ files only carry the form, the battlefield and the waves); none of them has a full-song MIDI. For every
 mission this writes midi_export/level_NN_<slug>/ with a README, the default groove, bass line and backing as 8-bar
 loops (Kick_A, Snare_A, Bass_A, Other_Pad, Other_Hats), two rule-based alternatives of every kick, snare and bass part
 (B and C, deterministic from the mission's seed), and Arrangement_A.mid, a four-track reference of the whole mission
@@ -33,7 +34,7 @@ import mido
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from common import (BPM, CONTENT, LIBRARY, MISSIONS, PPQ, ROOT, TICKS_PER_BAR, ContentError, read_json, read_midi,  # noqa: E402
+from common import (BPM, CONTENT, LIBRARY, MISSIONS_LEGACY, PPQ, ROOT, TICKS_PER_BAR, ContentError, read_json, read_midi,  # noqa: E402
                     rel)
 
 EXPORT_DIR = ROOT / "midi_export"
@@ -435,7 +436,7 @@ def midi_bytes(tracks: list[tuple[str, list[dict]]], bars: int, title: str) -> b
 # --- one mission ------------------------------------------------------------------------------------------------
 
 def load_mission(number: int) -> dict:
-    return read_json(MISSIONS / f"level_{number:02d}.json")
+    return read_json(MISSIONS_LEGACY / f"level_{number:02d}.json")
 
 
 def build_mission(number: int, out_dir: Path, imports_dir: Path | None) -> dict:

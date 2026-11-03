@@ -1,0 +1,7 @@
+{
+ "format": "rhythm_warfare.loadouts.v1",
+ "note": "Named loadouts for the autoplay and balance tools (tools/autoplay.gd loadout:<name>, tools/balance_missions.py --loadout <name>). Every id must be in songs/library/index.json and compatible (tests/test_loadout.gd checks).",
+ "default": {"groove": "groove_half_time", "fill": "", "kick_sound": "kick_half_time", "snare_sound": "snare_backbeat", "bass": "bass_sub_line", "bass_sound": "bass_sub_deep", "backing": "acc_hats_driving"},
+ "village": {"groove": "groove_half_time", "fill": "", "kick_sound": "kick_half_time", "snare_sound": "snare_backbeat", "bass": "bass_sub_line", "bass_sound": "bass_sub_deep", "backing": "acc_hats_driving"},
+ "heavy": {"groove": "groove_twostep", "fill": "fill_snare_run", "kick_sound": "kick_siege", "snare_sound": "snare_clap", "bass": "bass_octaves", "bass_sound": "bass_command", "backing": "acc_iron"}
+}

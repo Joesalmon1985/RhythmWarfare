@@ -130,6 +130,214 @@ no rendering) with a scripted input policy at 60 Hz. One row per mission, policy
 Seeds change the battle simulation and the input draws. A simulation pass is evidence about the waves, not about how
 hard a mission feels to a person: nobody has played these missions.
 
+## Loadouts (3 November 2026, night): default and heavy loadouts, retuned
+
+The player now has one global loadout that plays in every mission, and its instruments decide what a passed sequence
+builds (kick sounds make infantry, snare sounds defenses, bass sounds vehicles; `data/campaign/instruments.json`,
+`docs/PRD.md` section 16). The missions are bases plus waves plus a form, so this is the retune the evening section
+below asked for. Nothing in the music or the rules changed here; only `rules` in `data/campaign/waves/level_NN.json`.
+
+Method: `python tools/balance_missions.py --loadout default --seeds 1 2 3 --jobs 4 > out.md` (the whole table takes
+80 s now: no audio, no stems), policies perfect, beginner, sloppy, none; then `--loadout heavy` once. The `default`
+loadout is mission 1's kit (half-time groove, no fill, Half-time kick, Backbeat snare, Sub line with Deep sub,
+Driving hats: infantry squads, pillboxes, APCs and jeeps); `heavy` is the other end of the ladder (Two-step groove,
+Snare run fill, Siege kick, Field clap, Octaves with the Command saw, Iron backing: grenadiers and rocket soldiers,
+gun turrets, artillery and medium tanks). Targets for `default`: perfect and beginner win every seed on every mission,
+no input loses every mission (sloppy may lose), and mission 1 perfect play destroys at least 90% of its 278 enemies
+and loses at most 4 of 10 villagers. Levers, in order: objective hp, prebuilt defenses, `start_units`,
+`sockets_per_point`, `units_per_point`. Wave counts, timing, entries, targets, the sequence length (2 bars), the
+threshold (0.6), `instruments.json` and the loadout presets were not touched. Budget: four tuning rounds.
+
+Baseline (the tree as built, no retune; W = victory, L = defeat, seeds 1 to 3):
+
+| Mission | Default Perfect | Default Beginner | Default Sloppy | Default None |
+| --- | --- | --- | --- | --- |
+| 1 First Watch | WWW | WWW | WWL | LLL |
+| 2 Second Pulse | WWW | WWW | LLW | LLL |
+| 3 Hold the Line | WWW | WWW | WLL | LLL |
+| 4 Backbeat | WWW | WWW | LLL | LLL |
+| 5 Counterpoint | WWW | WLW | WLW | LLL |
+| 6 Fortress | LLL | LLL | LLL | LLL |
+| 7 Crossroads | WWW | LWL | LLL | LLL |
+| 8 Crossfire | WWW | LWL | LLL | LLL |
+| 9 Iron Rhythm | LLL | LLL | LLL | LLL |
+| 10 Last Light | LLL | LLL | LLL | LLL |
+
+Missions 1 to 4 were already inside the targets and are untouched (mission 1: perfect 64 of 64 sequences, 9 pillboxes,
+44 units, 11 repairs, 266 to 271 of 278 enemies destroyed = 96 to 97%, 0 of 10 villagers lost, 1 to 3 houses lost;
+beginner 256 to 268). Missions 5 to 10 lost with the default loadout because it builds fewer and weaker things than
+the per-mission reward lists of the evening run did (its bass sounds make APCs and jeeps, its snare only pillboxes).
+
+What was tuned (every edit is also in the mission's `note`):
+
+| Round | Change | Result (default, seeds 1 to 3) |
+| --- | --- | --- |
+| 1 | 5 to 10: five riflemen per point from the start (`start_units`; 9 and 10 also two rocket soldiers per point); 6 to 10: more prebuilt pillboxes and turrets (one of each per point from 9 on); 6: five sockets open; core hp 6: 80,000 to 140,000 and plant 50,000 to 80,000, 7: 80,000 to 120,000, 8: 80,000 to 120,000 and dome 70,000 to 100,000, 9: 90,000 to 150,000, 10: 185,000 to 250,000 and plant and dome 70,000 to 110,000; 5: 130,000 to 160,000 | 6 to 9 perfect and beginner all win; 10 still loses (perfect at 96 to 98 s of 110.3); 5 beginner seed 2 loses |
+| 2 | 10: core 400,000, plant and dome 150,000, start units six riflemen, four rocket soldiers and two medium tanks per point; 5: core 200,000 and a prebuilt pillbox per point | 10 wins everywhere under perfect and beginner; 5 beginner seed 1 loses at the end of the song |
+| 3 | `units_per_point` 12 for 5, 7 and 9, 20 for 10 | 5, 6, 8, 10 hold; 7 perfect seed 2 loses at 84.9 s; 9 beginner seed 3 loses at 83.9 s |
+| 4 | core hp 5: 260,000, 6: 200,000 with plant 110,000, 7: 200,000, 9: 240,000; 7: prebuilt pillboxes at s1_1 and s3_1 and turrets at s1_2 and s3_2 | everything wins except 9 beginner seed 3 (87.2 s of 88.3) |
+
+The finding of round 3: `start_units` count against `units_per_point` (default 6), so five start riflemen on a
+point left no room and every rifle squad the player earned there became a repair crew (`capacity` in the reward log).
+Raising `units_per_point` to 12 (mission 10: 20, its start units alone fill 12) turned them into defenders. Hp alone does
+not fix a mission that is overrun (mission 10 went from losing at 96 s to winning only when the start army grew).
+
+Final summary, seeds 1 to 3 (W = victory, L = defeat; the first four columns are the default loadout, the last four
+the heavy loadout, which was run once and not tuned):
+
+| Mission | Default Perfect | Default Beginner | Default Sloppy | Default None | Heavy Perfect | Heavy Beginner | Heavy Sloppy | Heavy None |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 First Watch | WWW | WWW | WWL | LLL | WWW | WWW | WWW | LLL |
+| 2 Second Pulse | WWW | WWW | LLW | LLL | WWW | WWW | LWW | LLL |
+| 3 Hold the Line | WWW | WWW | WLL | LLL | WWW | WWW | WWW | LLL |
+| 4 Backbeat | WWW | WWW | LLL | LLL | WWW | WWW | LWL | LLL |
+| 5 Counterpoint | WWW | WWW | WWW | LLL | WWW | WWW | WWW | LLL |
+| 6 Fortress | WWW | WWW | LLL | LLL | WWW | WWW | WWW | LLL |
+| 7 Crossroads | WWW | WWW | WWW | LLL | WWW | WWW | WWW | LLL |
+| 8 Crossfire | WWW | WWW | LLL | LLL | WWW | WWW | WLL | LLL |
+| 9 Iron Rhythm | WWW | WWL | LWW | LLL | WWW | WWW | WWW | LLL |
+| 10 Last Light | WWW | WWW | WLW | LLL | WWW | WWW | WWW | LLL |
+
+Default loadout: perfect 30 of 30, beginner 29 of 30 (mission 9 seed 3 loses at 87.2 s of 88.3 with the core at 0%:
+overwhelmed at the very end, hp 240,000 does not matter; the four rounds were used, so it is recorded as known), no
+input 0 of 30, sloppy 14 of 30 wins. Extra seeds 4 to 6 for perfect and beginner (not tuned against): perfect 30 of
+30; beginner 28 of 30, mission 8 seeds 4 and 5 lose at 81.2 s and 82.4 s (the radar dome falls; the core is at 90% and
+100%). Mission 8 is the thinnest margin of the ladder.
+
+Heavy loadout (not tuned): perfect 30 of 30 and beginner 30 of 30, no input 0 of 30, sloppy 25 of 30 (missions 2, 4,
+8 lose some seeds). In mission 1 perfect play destroys only 213 to 237 of the 278 enemies (77 to 85%) and loses 0 to 1
+villager: some of the waves that hold a choke point are still alive when the song ends (the heavy kit builds grenadiers and
+rocket soldiers, so a rifle squad's share of the fighting shrinks). The 90% target was for the default loadout only.
+
+A simulation pass is evidence about the waves, not about how hard a mission feels to a person; nobody has played the
+loadout missions.
+
+Raw rows of the final default run (seeds 1 to 3, all four policies; "Units" counts squads as three, "Repairs" are
+rewards that found no room or no producer, "Core" is the first required objective):
+
+| Mission | Loadout | Policy | Seed | Outcome | At | Sequences (sharp/steady/loose) | Built | Units | Repairs | Defenses alive | Core | Enemies killed | Peak units (you / enemy) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| m01_first_watch | default | perfect | 1 | victory | 176.6 s | 64/64 (64/0/0) | 9 | 44 | 11 | 9 | 100% | 271 | 24 / 62 |
+| m01_first_watch | default | perfect | 2 | victory | 176.6 s | 64/64 (64/0/0) | 9 | 44 | 11 | 9 | 100% | 266 | 24 / 65 |
+| m01_first_watch | default | perfect | 3 | victory | 176.6 s | 64/64 (64/0/0) | 9 | 44 | 11 | 9 | 100% | 267 | 24 / 60 |
+| m01_first_watch | default | beginner | 1 | victory | 176.6 s | 60/64 (11/39/10) | 9 | 40 | 11 | 9 | 100% | 267 | 22 / 63 |
+| m01_first_watch | default | beginner | 2 | victory | 176.6 s | 52/64 (9/40/3) | 11 | 35 | 6 | 9 | 100% | 256 | 20 / 80 |
+| m01_first_watch | default | beginner | 3 | victory | 176.6 s | 59/64 (17/34/8) | 9 | 41 | 9 | 9 | 100% | 268 | 22 / 70 |
+| m01_first_watch | default | sloppy | 1 | victory | 176.6 s | 49/64 (4/14/31) | 11 | 33 | 5 | 9 | 100% | 262 | 18 / 91 |
+| m01_first_watch | default | sloppy | 2 | victory | 176.6 s | 45/64 (0/22/23) | 12 | 31 | 2 | 9 | 100% | 268 | 18 / 73 |
+| m01_first_watch | default | sloppy | 3 | defeat | 132.6 s | 32/64 (4/11/17) | 9 | 23 | 0 | 6 | 0% | 137 | 21 / 83 |
+| m01_first_watch | default | none | 1 | defeat | 73.3 s | 0/64 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 2 | 15 / 100 |
+| m01_first_watch | default | none | 2 | defeat | 72.4 s | 0/64 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 2 | 15 / 100 |
+| m01_first_watch | default | none | 3 | defeat | 72.5 s | 0/64 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 2 | 15 / 100 |
+| m02_second_pulse | default | perfect | 1 | victory | 55.2 s | 20/20 (20/0/0) | 10 | 10 | 0 | 9 | 100% | 67 | 15 / 84 |
+| m02_second_pulse | default | perfect | 2 | victory | 55.2 s | 20/20 (20/0/0) | 10 | 10 | 0 | 9 | 100% | 69 | 14 / 80 |
+| m02_second_pulse | default | perfect | 3 | victory | 55.2 s | 20/20 (20/0/0) | 10 | 10 | 0 | 9 | 100% | 66 | 13 / 82 |
+| m02_second_pulse | default | beginner | 1 | victory | 55.2 s | 19/20 (3/12/4) | 10 | 9 | 0 | 8 | 100% | 62 | 12 / 85 |
+| m02_second_pulse | default | beginner | 2 | victory | 55.2 s | 18/20 (2/13/3) | 10 | 8 | 0 | 8 | 100% | 64 | 11 / 83 |
+| m02_second_pulse | default | beginner | 3 | victory | 55.2 s | 19/20 (8/11/0) | 10 | 9 | 0 | 8 | 100% | 65 | 12 / 87 |
+| m02_second_pulse | default | sloppy | 1 | defeat | 28.0 s | 6/20 (0/2/4) | 3 | 3 | 0 | 3 | 0% | 19 | 9 / 59 |
+| m02_second_pulse | default | sloppy | 2 | defeat | 26.0 s | 6/20 (0/3/3) | 2 | 4 | 0 | 2 | 0% | 11 | 8 / 62 |
+| m02_second_pulse | default | sloppy | 3 | victory | 55.2 s | 14/20 (1/6/7) | 8 | 6 | 0 | 5 | 82% | 42 | 6 / 94 |
+| m02_second_pulse | default | none | 1 | defeat | 25.6 s | 0/20 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 69 |
+| m02_second_pulse | default | none | 2 | defeat | 25.6 s | 0/20 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 69 |
+| m02_second_pulse | default | none | 3 | defeat | 25.6 s | 0/20 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 69 |
+| m03_hold_the_line | default | perfect | 1 | victory | 66.2 s | 24/24 (24/0/0) | 6 | 18 | 0 | 5 | 100% | 56 | 12 / 72 |
+| m03_hold_the_line | default | perfect | 2 | victory | 66.2 s | 24/24 (24/0/0) | 6 | 18 | 0 | 6 | 100% | 59 | 12 / 70 |
+| m03_hold_the_line | default | perfect | 3 | victory | 66.2 s | 24/24 (24/0/0) | 6 | 18 | 0 | 5 | 100% | 73 | 13 / 70 |
+| m03_hold_the_line | default | beginner | 1 | victory | 66.2 s | 22/24 (4/12/6) | 4 | 18 | 0 | 1 | 94% | 50 | 12 / 71 |
+| m03_hold_the_line | default | beginner | 2 | victory | 66.2 s | 23/24 (7/12/4) | 6 | 17 | 0 | 4 | 100% | 56 | 14 / 69 |
+| m03_hold_the_line | default | beginner | 3 | victory | 66.2 s | 22/24 (6/15/1) | 5 | 17 | 0 | 3 | 100% | 55 | 13 / 75 |
+| m03_hold_the_line | default | sloppy | 1 | victory | 66.2 s | 17/24 (0/7/10) | 5 | 12 | 0 | 2 | 78% | 48 | 10 / 75 |
+| m03_hold_the_line | default | sloppy | 2 | defeat | 44.3 s | 10/24 (0/4/6) | 2 | 8 | 0 | 2 | 0% | 28 | 7 / 68 |
+| m03_hold_the_line | default | sloppy | 3 | defeat | 45.7 s | 12/24 (0/5/7) | 3 | 9 | 0 | 3 | 0% | 31 | 7 / 67 |
+| m03_hold_the_line | default | none | 1 | defeat | 27.2 s | 0/24 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 56 |
+| m03_hold_the_line | default | none | 2 | defeat | 28.7 s | 0/24 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 56 |
+| m03_hold_the_line | default | none | 3 | defeat | 27.6 s | 0/24 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 56 |
+| m04_backbeat | default | perfect | 1 | victory | 66.2 s | 24/24 (24/0/0) | 12 | 12 | 0 | 10 | 100% | 94 | 13 / 56 |
+| m04_backbeat | default | perfect | 2 | victory | 66.2 s | 24/24 (24/0/0) | 12 | 12 | 0 | 9 | 100% | 95 | 14 / 63 |
+| m04_backbeat | default | perfect | 3 | victory | 66.2 s | 24/24 (24/0/0) | 12 | 12 | 0 | 9 | 100% | 100 | 15 / 56 |
+| m04_backbeat | default | beginner | 1 | victory | 66.2 s | 22/24 (4/13/5) | 12 | 10 | 0 | 9 | 100% | 95 | 12 / 55 |
+| m04_backbeat | default | beginner | 2 | victory | 66.2 s | 22/24 (3/15/4) | 12 | 10 | 0 | 9 | 100% | 98 | 12 / 60 |
+| m04_backbeat | default | beginner | 3 | victory | 66.2 s | 23/24 (9/14/0) | 12 | 11 | 0 | 9 | 100% | 92 | 12 / 58 |
+| m04_backbeat | default | sloppy | 1 | defeat | 28.0 s | 6/24 (0/2/4) | 3 | 3 | 0 | 3 | 0% | 15 | 9 / 45 |
+| m04_backbeat | default | sloppy | 2 | defeat | 26.4 s | 6/24 (0/3/3) | 2 | 4 | 0 | 2 | 0% | 11 | 9 / 50 |
+| m04_backbeat | default | sloppy | 3 | defeat | 60.3 s | 15/24 (1/6/8) | 9 | 6 | 0 | 0 | 0% | 38 | 6 / 94 |
+| m04_backbeat | default | none | 1 | defeat | 26.0 s | 0/24 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 56 |
+| m04_backbeat | default | none | 2 | defeat | 26.0 s | 0/24 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 56 |
+| m04_backbeat | default | none | 3 | defeat | 26.0 s | 0/24 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 0 | 0 / 56 |
+| m05_counterpoint | default | perfect | 1 | victory | 77.2 s | 28/28 (28/0/0) | 8 | 20 | 0 | 7 | 98% | 79 | 21 / 55 |
+| m05_counterpoint | default | perfect | 2 | victory | 77.2 s | 28/28 (28/0/0) | 8 | 20 | 0 | 9 | 100% | 84 | 21 / 44 |
+| m05_counterpoint | default | perfect | 3 | victory | 77.2 s | 28/28 (28/0/0) | 8 | 20 | 0 | 9 | 100% | 86 | 21 / 46 |
+| m05_counterpoint | default | beginner | 1 | victory | 77.2 s | 25/28 (5/13/7) | 6 | 19 | 0 | 5 | 48% | 70 | 20 / 49 |
+| m05_counterpoint | default | beginner | 2 | victory | 77.2 s | 27/28 (8/14/5) | 8 | 19 | 0 | 6 | 100% | 82 | 18 / 54 |
+| m05_counterpoint | default | beginner | 3 | victory | 77.2 s | 26/28 (7/18/1) | 7 | 19 | 0 | 6 | 41% | 72 | 21 / 53 |
+| m05_counterpoint | default | sloppy | 1 | victory | 77.2 s | 19/28 (1/7/11) | 6 | 13 | 0 | 5 | 49% | 81 | 16 / 54 |
+| m05_counterpoint | default | sloppy | 2 | victory | 77.2 s | 19/28 (0/8/11) | 4 | 15 | 0 | 5 | 27% | 73 | 18 / 54 |
+| m05_counterpoint | default | sloppy | 3 | victory | 77.2 s | 20/28 (1/9/10) | 6 | 14 | 0 | 4 | 54% | 63 | 20 / 58 |
+| m05_counterpoint | default | none | 1 | defeat | 60.0 s | 0/28 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 24 | 15 / 86 |
+| m05_counterpoint | default | none | 2 | defeat | 60.0 s | 0/28 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 23 | 15 / 87 |
+| m05_counterpoint | default | none | 3 | defeat | 60.0 s | 0/28 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 24 | 15 / 86 |
+| m06_fortress | default | perfect | 1 | victory | 77.2 s | 28/28 (28/0/0) | 14 | 14 | 0 | 3 | 99% | 80 | 22 / 71 |
+| m06_fortress | default | perfect | 2 | victory | 77.2 s | 28/28 (28/0/0) | 14 | 14 | 0 | 4 | 100% | 93 | 22 / 67 |
+| m06_fortress | default | perfect | 3 | victory | 77.2 s | 28/28 (28/0/0) | 14 | 14 | 0 | 2 | 97% | 92 | 22 / 68 |
+| m06_fortress | default | beginner | 1 | victory | 77.2 s | 26/28 (4/16/6) | 14 | 12 | 0 | 1 | 65% | 80 | 22 / 72 |
+| m06_fortress | default | beginner | 2 | victory | 77.2 s | 26/28 (4/17/5) | 14 | 12 | 0 | 4 | 100% | 91 | 18 / 71 |
+| m06_fortress | default | beginner | 3 | victory | 77.2 s | 27/28 (9/16/2) | 14 | 13 | 0 | 0 | 65% | 80 | 21 / 73 |
+| m06_fortress | default | sloppy | 1 | defeat | 75.0 s | 18/28 (1/4/13) | 9 | 9 | 0 | 1 | 0% | 69 | 18 / 74 |
+| m06_fortress | default | sloppy | 2 | defeat | 71.6 s | 17/28 (0/7/10) | 9 | 8 | 0 | 1 | 100% | 70 | 18 / 76 |
+| m06_fortress | default | sloppy | 3 | defeat | 76.7 s | 18/28 (2/6/10) | 10 | 8 | 0 | 1 | 18% | 84 | 21 / 64 |
+| m06_fortress | default | none | 1 | defeat | 54.7 s | 0/28 (0/0/0) | 0 | 0 | 0 | 0 | 82% | 35 | 15 / 76 |
+| m06_fortress | default | none | 2 | defeat | 55.6 s | 0/28 (0/0/0) | 0 | 0 | 0 | 1 | 93% | 42 | 15 / 76 |
+| m06_fortress | default | none | 3 | defeat | 57.8 s | 0/28 (0/0/0) | 0 | 0 | 0 | 0 | 18% | 35 | 15 / 89 |
+| m07_crossroads | default | perfect | 1 | victory | 88.3 s | 32/32 (32/0/0) | 8 | 24 | 0 | 6 | 100% | 93 | 21 / 58 |
+| m07_crossroads | default | perfect | 2 | victory | 88.3 s | 32/32 (32/0/0) | 8 | 24 | 0 | 4 | 100% | 101 | 21 / 58 |
+| m07_crossroads | default | perfect | 3 | victory | 88.3 s | 32/32 (32/0/0) | 8 | 24 | 0 | 5 | 100% | 90 | 21 / 54 |
+| m07_crossroads | default | beginner | 1 | victory | 88.3 s | 29/32 (5/16/8) | 6 | 23 | 0 | 6 | 100% | 107 | 20 / 55 |
+| m07_crossroads | default | beginner | 2 | victory | 88.3 s | 31/32 (8/16/7) | 8 | 23 | 0 | 6 | 100% | 101 | 18 / 53 |
+| m07_crossroads | default | beginner | 3 | victory | 88.3 s | 30/32 (7/21/2) | 7 | 23 | 0 | 3 | 100% | 85 | 21 / 61 |
+| m07_crossroads | default | sloppy | 1 | victory | 88.3 s | 23/32 (1/8/14) | 6 | 17 | 0 | 7 | 51% | 88 | 16 / 61 |
+| m07_crossroads | default | sloppy | 2 | victory | 88.3 s | 21/32 (0/8/13) | 4 | 17 | 0 | 2 | 44% | 93 | 18 / 63 |
+| m07_crossroads | default | sloppy | 3 | victory | 88.3 s | 23/32 (1/10/12) | 6 | 17 | 0 | 4 | 100% | 88 | 18 / 54 |
+| m07_crossroads | default | none | 1 | defeat | 55.0 s | 0/32 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 38 | 15 / 61 |
+| m07_crossroads | default | none | 2 | defeat | 55.1 s | 0/32 (0/0/0) | 0 | 0 | 0 | 3 | 0% | 40 | 15 / 61 |
+| m07_crossroads | default | none | 3 | defeat | 55.4 s | 0/32 (0/0/0) | 0 | 0 | 0 | 4 | 0% | 42 | 15 / 62 |
+| m08_crossfire | default | perfect | 1 | victory | 88.3 s | 32/32 (32/0/0) | 16 | 16 | 0 | 3 | 100% | 86 | 21 / 71 |
+| m08_crossfire | default | perfect | 2 | victory | 88.3 s | 32/32 (32/0/0) | 16 | 16 | 0 | 7 | 100% | 104 | 21 / 56 |
+| m08_crossfire | default | perfect | 3 | victory | 88.3 s | 32/32 (32/0/0) | 16 | 16 | 0 | 3 | 100% | 98 | 21 / 70 |
+| m08_crossfire | default | beginner | 1 | victory | 88.3 s | 29/32 (4/18/7) | 16 | 13 | 0 | 3 | 100% | 91 | 18 / 80 |
+| m08_crossfire | default | beginner | 2 | victory | 88.3 s | 30/32 (5/20/5) | 16 | 14 | 0 | 4 | 100% | 88 | 18 / 77 |
+| m08_crossfire | default | beginner | 3 | victory | 88.3 s | 31/32 (11/17/3) | 16 | 15 | 0 | 6 | 100% | 92 | 21 / 70 |
+| m08_crossfire | default | sloppy | 1 | defeat | 87.4 s | 22/32 (2/4/16) | 11 | 11 | 0 | 3 | 23% | 81 | 16 / 69 |
+| m08_crossfire | default | sloppy | 2 | defeat | 81.0 s | 19/32 (0/7/12) | 10 | 9 | 0 | 3 | 100% | 70 | 18 / 79 |
+| m08_crossfire | default | sloppy | 3 | defeat | 84.8 s | 20/32 (2/8/10) | 12 | 8 | 0 | 5 | 100% | 83 | 18 / 79 |
+| m08_crossfire | default | none | 1 | defeat | 55.3 s | 0/32 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 31 | 15 / 74 |
+| m08_crossfire | default | none | 2 | defeat | 56.4 s | 0/32 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 31 | 15 / 81 |
+| m08_crossfire | default | none | 3 | defeat | 54.7 s | 0/32 (0/0/0) | 0 | 0 | 0 | 1 | 0% | 32 | 15 / 72 |
+| m09_iron_rhythm | default | perfect | 1 | victory | 88.3 s | 32/32 (32/0/0) | 12 | 20 | 0 | 4 | 100% | 105 | 28 / 61 |
+| m09_iron_rhythm | default | perfect | 2 | victory | 88.3 s | 32/32 (32/0/0) | 12 | 20 | 0 | 9 | 100% | 117 | 27 / 46 |
+| m09_iron_rhythm | default | perfect | 3 | victory | 88.3 s | 32/32 (32/0/0) | 12 | 20 | 0 | 3 | 100% | 90 | 27 / 57 |
+| m09_iron_rhythm | default | beginner | 1 | victory | 88.3 s | 29/32 (4/20/5) | 11 | 18 | 0 | 2 | 100% | 92 | 27 / 54 |
+| m09_iron_rhythm | default | beginner | 2 | victory | 88.3 s | 29/32 (3/23/3) | 11 | 18 | 0 | 3 | 90% | 89 | 24 / 65 |
+| m09_iron_rhythm | default | beginner | 3 | defeat | 87.2 s | 30/32 (10/15/5) | 10 | 20 | 0 | 0 | 0% | 80 | 27 / 63 |
+| m09_iron_rhythm | default | sloppy | 1 | defeat | 77.7 s | 18/32 (1/5/12) | 8 | 10 | 0 | 3 | 0% | 76 | 24 / 62 |
+| m09_iron_rhythm | default | sloppy | 2 | victory | 88.3 s | 21/32 (1/11/9) | 6 | 15 | 0 | 3 | 59% | 100 | 24 / 56 |
+| m09_iron_rhythm | default | sloppy | 3 | victory | 88.3 s | 22/32 (1/9/12) | 8 | 14 | 0 | 0 | 68% | 87 | 27 / 56 |
+| m09_iron_rhythm | default | none | 1 | defeat | 60.4 s | 0/32 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 42 | 21 / 72 |
+| m09_iron_rhythm | default | none | 2 | defeat | 61.0 s | 0/32 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 41 | 21 / 78 |
+| m09_iron_rhythm | default | none | 3 | defeat | 61.0 s | 0/32 (0/0/0) | 0 | 0 | 0 | 2 | 0% | 42 | 21 / 76 |
+| m10_last_light | default | perfect | 1 | victory | 110.3 s | 40/40 (40/0/0) | 12 | 28 | 0 | 5 | 100% | 124 | 42 / 39 |
+| m10_last_light | default | perfect | 2 | victory | 110.3 s | 40/40 (40/0/0) | 12 | 28 | 0 | 6 | 100% | 118 | 43 / 42 |
+| m10_last_light | default | perfect | 3 | victory | 110.3 s | 40/40 (40/0/0) | 12 | 28 | 0 | 3 | 100% | 127 | 41 / 53 |
+| m10_last_light | default | beginner | 1 | victory | 110.3 s | 37/40 (6/25/6) | 12 | 25 | 0 | 12 | 100% | 138 | 41 / 35 |
+| m10_last_light | default | beginner | 2 | victory | 110.3 s | 38/40 (6/29/3) | 12 | 26 | 0 | 1 | 99% | 115 | 39 / 51 |
+| m10_last_light | default | beginner | 3 | victory | 110.3 s | 37/40 (13/17/7) | 11 | 26 | 0 | 6 | 100% | 122 | 41 / 42 |
+| m10_last_light | default | sloppy | 1 | victory | 110.3 s | 29/40 (2/9/18) | 10 | 19 | 0 | 1 | 44% | 114 | 37 / 49 |
+| m10_last_light | default | sloppy | 2 | defeat | 98.3 s | 23/40 (0/13/10) | 8 | 15 | 0 | 1 | 0% | 86 | 39 / 66 |
+| m10_last_light | default | sloppy | 3 | victory | 110.3 s | 28/40 (4/9/15) | 7 | 21 | 0 | 2 | 53% | 118 | 40 / 45 |
+| m10_last_light | default | none | 1 | defeat | 66.2 s | 0/40 (0/0/0) | 0 | 0 | 0 | 1 | 0% | 36 | 36 / 81 |
+| m10_last_light | default | none | 2 | defeat | 73.4 s | 0/40 (0/0/0) | 0 | 0 | 0 | 0 | 0% | 49 | 36 / 81 |
+| m10_last_light | default | none | 3 | defeat | 65.8 s | 0/40 (0/0/0) | 0 | 0 | 0 | 1 | 0% | 39 | 36 / 76 |
+
 ## Rewards every 2 bars, every wave doubled (3 November 2026, evening): recorded, not yet retuned
 
 The owner's calls of 3 November (evening): a reward every 2 bars (threshold still 0.6, so a drum sequence needs 3 of

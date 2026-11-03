@@ -166,12 +166,12 @@ func test_a_phase_that_does_not_cue_a_family_restores_it() -> void:
 
 
 func test_a_failed_hold_mutes_and_a_partial_hold_with_credit_restores() -> void:
-	var level := _level("m03_hold_the_line")
+	var level := TestCase.fixture_level()  # no shipped bass line holds yet: the fixture line has two holds
 	var holds: Array = []
 	for n in level.notes:
 		if n["type"] == "hold" and n["family"] == "bass":
 			holds.append(n)
-	assert_true(holds.size() >= 2, "mission 3 holds bass")
+	assert_true(holds.size() >= 2, "the bass line holds twice")
 	if holds.size() < 2:
 		return
 	var keys := _stem_keys(level, "bass")

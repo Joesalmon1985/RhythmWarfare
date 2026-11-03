@@ -72,7 +72,10 @@
    "renders": {},
    "placeholders": {
     "bass__bass_patrol": "0723e0c57dbbefd2869c06957214f99fdf1ac80a7e67e94fb50ece8b76f844fe",
-    "bass__bass_reese": "68db02931fb91ce244585a602a1625df3ad46629db6aa4fef7b06ca7ccff78d0"
+    "bass__bass_reese": "68db02931fb91ce244585a602a1625df3ad46629db6aa4fef7b06ca7ccff78d0",
+    "bass__bass_growl": "4befcc87ec69fec22a891d2738d8d093ca5be39a76ff0d88f5634a6d091b8247",
+    "bass__bass_command": "53068ae001a57251d573bb3a1dcd42700b19f0cba9e283d51a06a58303ff64d8",
+    "bass__bass_hollow": "2bc55cd36c7a2348b7bb3037e917509689793980f22cc2340ca83b5a2103e03e"
    }
   },
   "groove_push": {
@@ -110,7 +113,11 @@
     "kick__kick_march": "358bb437efafa860d3f302d0d9d7ce80de47eb3a366e39de24de72630ae40c0a",
     "kick__kick_armour": "ad62cce5b0d97e248572a9a3fcd649b301e1274da58b42f84c97041c21b9d800",
     "snare__snare_guard": "407541c893c35e1bfc540896e6094ead6a1ab51bfd53065bf04372891faff96a",
-    "snare__snare_crack": "a1bced28b7b844918f3d53cb02ab3d5db840401f68b593e2816025e7f933a32d"
+    "snare__snare_crack": "a1bced28b7b844918f3d53cb02ab3d5db840401f68b593e2816025e7f933a32d",
+    "kick__kick_siege": "1e47abdf4c574bc812f0d1287ec3f62e90c55ff3898113366d0b9b44342ed949",
+    "kick__kick_heavy": "e227c12014211cc8fbcafe78cf3a2c38e8ad6b646f464f470aefaa122836d2e3",
+    "snare__snare_clap": "a85fb09137c0d750a6cfc8a3b11186f72636d8c566d2a7bb1ac21f78870c4659",
+    "snare__snare_rim": "3097e87bb8c84bb3472ce3097787d934c3e3e3462246dd2f662aa9d78b27532f"
    }
   },
   "groove_watch": {
@@ -126,7 +133,12 @@
    "placeholders": {
     "kick__kick_march": "63947514860d974ba5de128509090ec6bf282e8324ec3fe8b6bfc7e5fcc1c540",
     "kick__kick_armour": "2b4a87f42a837b9d064e76d43cfe40a4122c7f64d79c40d58135c0bb891b7bef",
-    "snare__snare_guard": "f972ad7a1bb58f88717de2d8f03941b1d4889740017105c7182b52b0676e0a91"
+    "snare__snare_guard": "f972ad7a1bb58f88717de2d8f03941b1d4889740017105c7182b52b0676e0a91",
+    "kick__kick_siege": "eafa592e5573fd1924189cfdcb11f390625fe67f8c99f5b59d5e4b1be63cf210",
+    "kick__kick_heavy": "0be0f7d9e52e9e0e7ef7e1a8b69fbdebc5d4d3f5256f571842c29eba8a5dce9f",
+    "snare__snare_crack": "1d884183239f7c8d588ed8a42bafb73460b0e7f4a93c0aa456e352df03c28dd0",
+    "snare__snare_clap": "6cb69752a5c39bdb2e24ca60eca802989a760be112aa9b7e91931e9d36cb5d02",
+    "snare__snare_rim": "d3fb9a43e480f3e44ef96fdf7255d4f9b78abc74787943d3dc53209b3b2b3638"
    }
   },
   "acc_backbeat": {
@@ -497,6 +509,476 @@
     }
    },
    "placeholders": {}
+  }
+ },
+ "loops": {
+  "loops/acc_backbeat__other__ensemble.ogg": {
+   "key": "bbf0a6622063fbf81ece9bdc53b2eaa0caf6a9b0dc19594cd27ecc9a2b08d37d",
+   "peak_db": -14.1
+  },
+  "loops/acc_counterpoint__other__ensemble.ogg": {
+   "key": "e765c4245a11eef66dc5d4b72adbeca79de23042032feddc9531b034ca4b7ce1",
+   "peak_db": -13.72
+  },
+  "loops/acc_crossfire__other__ensemble.ogg": {
+   "key": "165472005f64a39008e33ab63cbd7c0de2767aa2f6bfb7cb8ac1c28e95acfd77",
+   "peak_db": -13.89
+  },
+  "loops/acc_crossroads__other__ensemble.ogg": {
+   "key": "8b91311361542e1e028b2c91c89134c95411a5f5f4973c412508234bfb9d8dd4",
+   "peak_db": -13.38
+  },
+  "loops/acc_first_watch__other__ensemble.ogg": {
+   "key": "4fe6bd11f4091f392f13962e7f5920be01e0c49f992dc868c8a8614ae63f423a",
+   "peak_db": -15.77
+  },
+  "loops/acc_fortress__other__ensemble.ogg": {
+   "key": "428641dd9a1eeac377f1cfd30118fdfdefca6d2a1d7b9ba723a351ab52093ffd",
+   "peak_db": -13.28
+  },
+  "loops/acc_hats_busy__other__hats_busy.ogg": {
+   "key": "3076d9d6a05f042612b5da6db9dee30442118e8e46f6af053338d155e2192b54",
+   "peak_db": -10.0
+  },
+  "loops/acc_hats_driving__other__hats_driving.ogg": {
+   "key": "91c5dc87fb464b0adc7b4476bade42625d18d8d93ec5675e5403250424b2e20b",
+   "peak_db": -10.0
+  },
+  "loops/acc_hats_offbeat__other__hats_offbeat.ogg": {
+   "key": "bf696c310a464c5b51174ba46af87b08363a292675019bb0cb04b0095ab3425d",
+   "peak_db": -10.0
+  },
+  "loops/acc_hold_the_line__other__ensemble.ogg": {
+   "key": "7cebc5abc14a228da644191d5298f1822ec30b60be47968f0a6d1abf9e699601",
+   "peak_db": -14.09
+  },
+  "loops/acc_iron__other__ensemble.ogg": {
+   "key": "0aa961ec4939f8655e3991d19877f35372ec81b0d75a305d324ec18b133a8d2f",
+   "peak_db": -14.08
+  },
+  "loops/acc_last_light__other__ensemble.ogg": {
+   "key": "43d07ab0456e8b92e44bd008afec40f6e7220ba00b7b575b656a482f871d23a0",
+   "peak_db": -14.53
+  },
+  "loops/acc_second_pulse__other__ensemble.ogg": {
+   "key": "d24238821ab1f44882dfd9ad20405ec7ebbd82088d9bd4366dd57bc8f8c2e941",
+   "peak_db": -13.91
+  },
+  "loops/bass_hold_a__bass__bass_patrol.ogg": {
+   "key": "114d01ccceed6de141a46f8aa2950dab258731c18d73d871afd706707e94490d",
+   "peak_db": -8.47
+  },
+  "loops/bass_hold_a__bass__bass_reese.ogg": {
+   "key": "cc90dcacfc148897378a63a8f0fba3d6de187850560fa2ea4dd854a17a0c84c4",
+   "peak_db": -8.12
+  },
+  "loops/bass_hold_a__bass__bass_growl.ogg": {
+   "key": "63860bcfb64ca6435eeb9504fd8d0cb301f1bbe2ac74932c8fa6ae93a76dee71",
+   "peak_db": -9.22
+  },
+  "loops/bass_hold_a__bass__bass_command.ogg": {
+   "key": "2310ca6b3fd9f9f9657a17cbb39a264f15bd312924653cfa4ffd9ba7734482b6",
+   "peak_db": -7.44
+  },
+  "loops/bass_hold_a__bass__bass_hollow.ogg": {
+   "key": "0f35d00830e732f962d3a4eaaa3308b1f9951b41c807fb07a51c972323ce0248",
+   "peak_db": -8.42
+  },
+  "loops/bass_hold_b__bass__bass_patrol.ogg": {
+   "key": "39a6a7d39e7fb2448d7af8902be3aa8a3633fad1dede4b1cecfeda81428e4643",
+   "peak_db": -6.34
+  },
+  "loops/bass_hold_b__bass__bass_reese.ogg": {
+   "key": "25abc46164b511c8a9cff40ef59b22a0ae50b753cad336e9504ac2874f5112c0",
+   "peak_db": -8.38
+  },
+  "loops/bass_hold_b__bass__bass_growl.ogg": {
+   "key": "4d9842746e8ebd9d6100cc80ef5ad439bdef0fec96f4f66cf66c87bc7d41394f",
+   "peak_db": -7.84
+  },
+  "loops/bass_hold_b__bass__bass_command.ogg": {
+   "key": "8975ca900c14e6357c5885a87de12a9184d249555ee6dd1c410489ab7c17e990",
+   "peak_db": -6.0
+  },
+  "loops/bass_hold_b__bass__bass_hollow.ogg": {
+   "key": "15585bee8121863f1b6bdeb49519052735ccfd6c98e38eef8e101c9a38834fdb",
+   "peak_db": -5.93
+  },
+  "loops/bass_hold_end__bass__bass_patrol.ogg": {
+   "key": "05a4c26e985da45480575669ff1979acb20f4f4f8e368fca1176ee5d8f880ae9",
+   "peak_db": -8.11
+  },
+  "loops/bass_hold_end__bass__bass_reese.ogg": {
+   "key": "264b45d11bf97473af841f0fdd95b6fa9c6291d8c95ed97937d2c796c84a22d1",
+   "peak_db": -8.38
+  },
+  "loops/bass_hold_end__bass__bass_growl.ogg": {
+   "key": "e2bc091af02cc4889cb1208155ec16e057d434da3724e2b0b1854559e981e744",
+   "peak_db": -8.89
+  },
+  "loops/bass_hold_end__bass__bass_command.ogg": {
+   "key": "c04d980e9ab07f0db99b5f3e976dde13e39220281df35588639c4f2d71722b86",
+   "peak_db": -7.76
+  },
+  "loops/bass_hold_end__bass__bass_hollow.ogg": {
+   "key": "8af3c43bcd25f4233ca33fcba2c16d15f5b3338c8347afd551efea4d4ba53380",
+   "peak_db": -8.04
+  },
+  "loops/bass_octaves__bass__bass_patrol.ogg": {
+   "key": "08498aec4e0370259c59bc865d6e7c23dd54b87729a0afbf85d4e9d5e9cfda51",
+   "peak_db": -8.11
+  },
+  "loops/bass_octaves__bass__bass_reese.ogg": {
+   "key": "69abb20a07428c3542673f5ce63e7edfb90bc5ec96b8cdc55bb887f72fd8fe55",
+   "peak_db": -8.31
+  },
+  "loops/bass_octaves__bass__bass_growl.ogg": {
+   "key": "88b8461ff67d6069af9ec0cd358ea122c3f042db17346e344724e5f1c8b9674f",
+   "peak_db": -8.68
+  },
+  "loops/bass_octaves__bass__bass_command.ogg": {
+   "key": "281947ecf0e42cb3f1335e50f6bdd92f03e97e7b8f6c85ec82e874aeb8de4e8b",
+   "peak_db": -8.37
+  },
+  "loops/bass_octaves__bass__bass_hollow.ogg": {
+   "key": "04a7fd45aab37c2d22c5beb770d83eb05a11f5e00ba0ab47ca700a7f79194f3a",
+   "peak_db": -8.0
+  },
+  "loops/bass_reese_line__bass__bass_reese_dark.ogg": {
+   "key": "d1e41651e316a4b8fbdd0120efe2848565556f9630eab1333a12ce789f44c54f",
+   "peak_db": -13.62
+  },
+  "loops/bass_reese_line__bass__bass_reese_deep.ogg": {
+   "key": "50a90dc3e11c15309e108ccbeb58143fda19463fecd3a1a7ef1103bcf028f476",
+   "peak_db": -12.25
+  },
+  "loops/bass_reese_line__bass__bass_reese_soft.ogg": {
+   "key": "35ef496cf927a56994e54c090c0add27f862dd73e0e1588c94decba3766b8c0e",
+   "peak_db": -17.1
+  },
+  "loops/bass_reese_line__bass__bass_reese_round.ogg": {
+   "key": "4602393e0a3394719d7dda3b1b30d2e2c13e84b32218a2cb5c70975a3a9d9dd9",
+   "peak_db": -12.58
+  },
+  "loops/bass_steps__bass__bass_patrol.ogg": {
+   "key": "a5c15a600c442d135fea0b3514d493410665ab03de7975e6fe64020265fd2484",
+   "peak_db": -8.37
+  },
+  "loops/bass_steps__bass__bass_reese.ogg": {
+   "key": "20e80f271a0e46e536cb84d3918e760edfa95adfa11c0044ce5c1007fb6337c6",
+   "peak_db": -8.52
+  },
+  "loops/bass_steps__bass__bass_growl.ogg": {
+   "key": "4b2c5a0a53bb20c03fb57ea47f7ccdb044d83e20898b46324d108f4b282a4267",
+   "peak_db": -8.18
+  },
+  "loops/bass_steps__bass__bass_command.ogg": {
+   "key": "4b67479e46d2dea435ed025e50ef064212d16cb58a095937ada23b35c94c66e9",
+   "peak_db": -7.53
+  },
+  "loops/bass_steps__bass__bass_hollow.ogg": {
+   "key": "65ac621ff1cb097a5bace68cf0b0c8ca1725a911c8bd978fe1e0508ba658d1f8",
+   "peak_db": -8.0
+  },
+  "loops/bass_sub_line__bass__bass_sub_bright.ogg": {
+   "key": "7c5771bfb31a0a1d093bc65e9d68e140889dcd2c8705bb853c238578c671adfe",
+   "peak_db": -11.0
+  },
+  "loops/bass_sub_line__bass__bass_sub_deep.ogg": {
+   "key": "88570f64c8c1ccf6f383da0d86725920294150c4a65f84ab2940ca321c42568d",
+   "peak_db": -11.0
+  },
+  "loops/bass_sub_line__bass__bass_sub_pure.ogg": {
+   "key": "5776775bf39f5ac563117475a066e0402fbd63d549d2d6bbae805b8bc9e08f13",
+   "peak_db": -22.75
+  },
+  "loops/bass_sub_line__bass__bass_sub_wide.ogg": {
+   "key": "e8704586ad753196711f178f86f5c0ec24e53c4352c5652b47da948d4964e7b7",
+   "peak_db": -11.66
+  },
+  "loops/bass_sub_line__bass__bass_sub_warm.ogg": {
+   "key": "705c6d1a618807d1a37a7fa412ae1a639896cfe018615317213c2def7de5a3f1",
+   "peak_db": -11.28
+  },
+  "loops/fill_break__kick__kick_march.ogg": {
+   "key": "f9a81869f50d112e8c889b7872f733aef46b0a5dbe95e8d57f05aec8ed19d27c",
+   "peak_db": -7.91
+  },
+  "loops/fill_break__kick__kick_armour.ogg": {
+   "key": "c4c56301cf802c109c7bbaa3ac8e23aa566eb3b2fcf33a5bcf5f84f632d74c14",
+   "peak_db": -8.19
+  },
+  "loops/fill_break__kick__kick_siege.ogg": {
+   "key": "c0d92bc042b1ff15a17f8593afc46422bfb53e5543cf37c63a33fff519f2bdfe",
+   "peak_db": -7.17
+  },
+  "loops/fill_break__kick__kick_heavy.ogg": {
+   "key": "605f351623ab1c8a7c91b360ae4709e5824d8c97ffacd9dba80d013a01fdf1d6",
+   "peak_db": -7.38
+  },
+  "loops/fill_break__snare__snare_guard.ogg": {
+   "key": "2718152e518610f278ff01d84b2328be2874a9c1146b2244503477115560de84",
+   "peak_db": -8.93
+  },
+  "loops/fill_break__snare__snare_crack.ogg": {
+   "key": "d3393e43ed4b52bbe5a33a1e2dc91b474164b46df9b197716507338379fa8f7b",
+   "peak_db": -9.42
+  },
+  "loops/fill_break__snare__snare_clap.ogg": {
+   "key": "1ca36beea28c36950918875b9b1ada4932f51f69544f93ab55176de125fa398e",
+   "peak_db": -9.23
+  },
+  "loops/fill_break__snare__snare_rim.ogg": {
+   "key": "42dfc60132426c276da194159686f4d2e8fcf020e5363c62090d8e360f57cc4e",
+   "peak_db": -12.44
+  },
+  "loops/fill_kick_drop__kick__kick_march.ogg": {
+   "key": "3ac98bbe1438c6711a45d59ac22abe5ae7d1b17fb2f34631c65d3c2dd99c4273",
+   "peak_db": -7.95
+  },
+  "loops/fill_kick_drop__kick__kick_armour.ogg": {
+   "key": "869d44834b8d58604b3dbab84478243ecd2082bdcc183d4155b696409c5565f8",
+   "peak_db": -7.78
+  },
+  "loops/fill_kick_drop__kick__kick_siege.ogg": {
+   "key": "fe73358dbf4c0f87b4e6714c15a460ce0426314c54f0466d271682c6d8210b74",
+   "peak_db": -6.85
+  },
+  "loops/fill_kick_drop__kick__kick_heavy.ogg": {
+   "key": "9f53df6e480e50d00ca269c6107f0103266ddde9313029eec2c427e17066e891",
+   "peak_db": -6.53
+  },
+  "loops/fill_kick_drop__snare__snare_guard.ogg": {
+   "key": "3f78cf904db083b2129d214141a23673b30232fdc7004c5c2851e290d5930020",
+   "peak_db": -9.57
+  },
+  "loops/fill_kick_drop__snare__snare_crack.ogg": {
+   "key": "50c31d3ddd49ecb0c7354fcc330fefab1badf061b819ea491b947f0310f03331",
+   "peak_db": -9.12
+  },
+  "loops/fill_kick_drop__snare__snare_clap.ogg": {
+   "key": "6ed7e655133aa6b7075690d5fef410d8565d34070c38d3c069c1a542d22f3c3e",
+   "peak_db": -10.03
+  },
+  "loops/fill_kick_drop__snare__snare_rim.ogg": {
+   "key": "07a17184ee4dacadab2b484cf6863bd45c757e26b1d30e949584caa36055e664",
+   "peak_db": -14.95
+  },
+  "loops/fill_snare_run__kick__kick_march.ogg": {
+   "key": "7b3d691643d5992b96c97c5fc3e1729feaa14589bdb662e58cab2fbc8af96230",
+   "peak_db": -8.28
+  },
+  "loops/fill_snare_run__kick__kick_armour.ogg": {
+   "key": "d9ec92ec1b2847a48328d63c0e82f6d0c64ffd998be032a76d861817f8e4b638",
+   "peak_db": -8.54
+  },
+  "loops/fill_snare_run__kick__kick_siege.ogg": {
+   "key": "5c056a7f5699aed5b00fdbb7bd985644904ea2ce9753e7df405f28a2c50f7c03",
+   "peak_db": -7.16
+  },
+  "loops/fill_snare_run__kick__kick_heavy.ogg": {
+   "key": "65c0bf063312481aa2abea1eecdbe8112b3c1c210c08ed843a1b6cbad49b1b63",
+   "peak_db": -8.14
+  },
+  "loops/fill_snare_run__snare__snare_guard.ogg": {
+   "key": "5251415186113540a6e1119034c81f5c9e13e5b29c9181ab5f15ace497f24e28",
+   "peak_db": -9.02
+  },
+  "loops/fill_snare_run__snare__snare_crack.ogg": {
+   "key": "ae5ed1633240b0aa3065935133598f1d95fa5bf0c8e054b483b9a187fee54383",
+   "peak_db": -9.56
+  },
+  "loops/fill_snare_run__snare__snare_clap.ogg": {
+   "key": "1777b1c2b71323ad70f94c742dd9f27ba28bfd8163e423dd20f51067b282fd8d",
+   "peak_db": -9.4
+  },
+  "loops/fill_snare_run__snare__snare_rim.ogg": {
+   "key": "835776e2dcec19e663aea784fd28020e3dd70607347cca52c3104c852e823010",
+   "peak_db": -13.42
+  },
+  "loops/groove_double_step__kick__kick_double_step.ogg": {
+   "key": "988c46908bd0f9b28fe2bf9a9d7d8a4007ab26d68b16941998b68af9b7732bfc",
+   "peak_db": -11.0
+  },
+  "loops/groove_double_step__snare__snare_backbeat.ogg": {
+   "key": "a9341411f0d2daa205dfea521f6c8610398f4eac4810e250d6bb18f83b433d02",
+   "peak_db": -11.0
+  },
+  "loops/groove_half_time__kick__kick_half_time.ogg": {
+   "key": "b4dbb467ed813a18210515204847e5ff7dde0b5ce762a6ae4dd0761d96dbd91b",
+   "peak_db": -11.0
+  },
+  "loops/groove_half_time__snare__snare_backbeat.ogg": {
+   "key": "a9341411f0d2daa205dfea521f6c8610398f4eac4810e250d6bb18f83b433d02",
+   "peak_db": -11.0
+  },
+  "loops/groove_push__kick__kick_march.ogg": {
+   "key": "58f01458fa86812802f1e85333fb434a8c5495b1eb9ca48ebdaf596087e5e753",
+   "peak_db": -8.05
+  },
+  "loops/groove_push__kick__kick_armour.ogg": {
+   "key": "856073cb8ca57e8f56beea020c2736d7d5c9aaa14ed422e5d911d7f3701e0ea5",
+   "peak_db": -8.52
+  },
+  "loops/groove_push__kick__kick_siege.ogg": {
+   "key": "0c3bbd9d3daa8fd308d4c9554fca637a0ea93d60f0fab8a372a7d21ab92b26fa",
+   "peak_db": -6.77
+  },
+  "loops/groove_push__kick__kick_heavy.ogg": {
+   "key": "687bf5db96006e7f5e75e94bbc8a6554e8da49d633a57151b814626de6a2e3a8",
+   "peak_db": -7.31
+  },
+  "loops/groove_push__snare__snare_guard.ogg": {
+   "key": "780a839ccda4127e3598e30099781e4a0c7bb5f48af83a67d766f047b8d4941d",
+   "peak_db": -9.55
+  },
+  "loops/groove_push__snare__snare_crack.ogg": {
+   "key": "3b140e61a5844614028c5a7f22bf7882e86610240d65687f3da64b50cdfc5bd3",
+   "peak_db": -9.42
+  },
+  "loops/groove_push__snare__snare_clap.ogg": {
+   "key": "5e44ae66d27f17067fce086d836905523cb22487efaafb9654cf7dbd644cca1e",
+   "peak_db": -9.66
+  },
+  "loops/groove_push__snare__snare_rim.ogg": {
+   "key": "6fdd6475d0eadf298294df285e587e28ba9839087ee15af07fed104d89b114cc",
+   "peak_db": -13.46
+  },
+  "loops/groove_roller__kick__kick_march.ogg": {
+   "key": "de2c6fe1bbc7abea2fd496c0f5ccd0f91f706c1b4f048fb69cd569ef049cd1cc",
+   "peak_db": -7.98
+  },
+  "loops/groove_roller__kick__kick_armour.ogg": {
+   "key": "c3737da7ef331bff2e53a8ba6968f9f95703c99843c90e6495cf047192a48925",
+   "peak_db": -7.92
+  },
+  "loops/groove_roller__kick__kick_siege.ogg": {
+   "key": "ef48d8c93dd38fd3ce0793d6fa8217de7144f563c82634456d5e984158ebcd80",
+   "peak_db": -6.78
+  },
+  "loops/groove_roller__kick__kick_heavy.ogg": {
+   "key": "a350bf31ac2e92511dae473037d367df5694e9eea1d8407b04b6c54997767266",
+   "peak_db": -6.65
+  },
+  "loops/groove_roller__snare__snare_guard.ogg": {
+   "key": "dd3eb32338c054e77ec206c90108c6b14ee85e38b3e26f4b2952cc2a2f69a890",
+   "peak_db": -9.21
+  },
+  "loops/groove_roller__snare__snare_crack.ogg": {
+   "key": "51d37e5dd6c410e8ccf8261cf1abbdde690d9622f2b9baec9d1167b88cefd923",
+   "peak_db": -9.3
+  },
+  "loops/groove_roller__snare__snare_clap.ogg": {
+   "key": "f46c0fa22170f568d446d2f720b2db404d8168e6b9c53878358d8549d7667ec8",
+   "peak_db": -9.71
+  },
+  "loops/groove_roller__snare__snare_rim.ogg": {
+   "key": "16b9fbb0d94b84cfe88827d83d7cb86b219df99ae742509dcd94f44e01adf2fd",
+   "peak_db": -12.1
+  },
+  "loops/groove_rolling__kick__kick_rolling.ogg": {
+   "key": "fc3ee4b8d7b2c4a029988e871972fb3673e48ddd97fc1b900e431c789f9abfe8",
+   "peak_db": -11.0
+  },
+  "loops/groove_rolling__snare__snare_backbeat.ogg": {
+   "key": "a9341411f0d2daa205dfea521f6c8610398f4eac4810e250d6bb18f83b433d02",
+   "peak_db": -11.0
+  },
+  "loops/groove_straight__kick__kick_march.ogg": {
+   "key": "25a5619007fc28204075ca100ff6190a6e3a5d556e30c44ac797af7644595bef",
+   "peak_db": -8.34
+  },
+  "loops/groove_straight__kick__kick_armour.ogg": {
+   "key": "e7d41d6984e4829c798ec330e9965f84961d404da5d67011d113f310259c45f0",
+   "peak_db": -8.88
+  },
+  "loops/groove_straight__kick__kick_siege.ogg": {
+   "key": "8724ae557913fcbd777c4eccdaa9a3f8ca57e4d1b26999ddf1a3b0f9242d1175",
+   "peak_db": -7.2
+  },
+  "loops/groove_straight__kick__kick_heavy.ogg": {
+   "key": "6005f74462036543cb05574cb679d43879da5a3787da10169e88429c6a982130",
+   "peak_db": -7.72
+  },
+  "loops/groove_straight__snare__snare_guard.ogg": {
+   "key": "75073a52df1ccae224993f23a9f5b15cdae91583370af48bf1fabdd9de713e0c",
+   "peak_db": -9.56
+  },
+  "loops/groove_straight__snare__snare_crack.ogg": {
+   "key": "b0a13122ea23d64097594a3eb14bd6209279b448f362ccfc5621074e1b347738",
+   "peak_db": -10.62
+  },
+  "loops/groove_straight__snare__snare_clap.ogg": {
+   "key": "90e26c1b1fd8899edccb77fee13a1688a5c1ba7a4bc18796e489e50a628332fd",
+   "peak_db": -9.83
+  },
+  "loops/groove_straight__snare__snare_rim.ogg": {
+   "key": "3d5571208f3310798cda637aaa06cb579753e90467f92f2fd8cfe1d2d725d201",
+   "peak_db": -14.32
+  },
+  "loops/groove_twostep__kick__kick_march.ogg": {
+   "key": "38407f93374fde55c99c60236c7776b567c5ce56b972e0f2bb4e1542bc5768cb",
+   "peak_db": -8.35
+  },
+  "loops/groove_twostep__kick__kick_armour.ogg": {
+   "key": "ba8531e664d8b9655e77e6503a75916af6f91d844493f48c877a35bd11f55f92",
+   "peak_db": -8.32
+  },
+  "loops/groove_twostep__kick__kick_siege.ogg": {
+   "key": "e0ad96b2b8f4d1e44a5ceda990b9e92713935e9070fc908379fbac368b08eb78",
+   "peak_db": -7.02
+  },
+  "loops/groove_twostep__kick__kick_heavy.ogg": {
+   "key": "2df400992e1466787efad1af6898f9dbffb05a83e98584dbe085432a7ef0ec60",
+   "peak_db": -7.2
+  },
+  "loops/groove_twostep__snare__snare_guard.ogg": {
+   "key": "105295f85b147db15a19a3d217cb11c2c3de35edecea65d386d77863496d61ba",
+   "peak_db": -8.86
+  },
+  "loops/groove_twostep__snare__snare_crack.ogg": {
+   "key": "85187a582b06f1dcaeea046675764007842f2ab3e6eea5d435fc6b8ca61be21b",
+   "peak_db": -9.05
+  },
+  "loops/groove_twostep__snare__snare_clap.ogg": {
+   "key": "a3beaf92653cf71541816f17f82da41a267627f4b578bda4bae8644690e7191a",
+   "peak_db": -9.32
+  },
+  "loops/groove_twostep__snare__snare_rim.ogg": {
+   "key": "c8a9f8698e633011674fcafd40fc23a48807c725a3c15e6640423b58d9ca75bc",
+   "peak_db": -13.12
+  },
+  "loops/groove_watch__kick__kick_march.ogg": {
+   "key": "756d410b8a5f59d13838340de2c87863bdf23c2ba618640db4593fcf6f781ae5",
+   "peak_db": -8.13
+  },
+  "loops/groove_watch__kick__kick_armour.ogg": {
+   "key": "ffc97e7987f414a3be3afb2ec2f003ae048a3acde8f4f44832c3b4d797926ffa",
+   "peak_db": -7.58
+  },
+  "loops/groove_watch__kick__kick_siege.ogg": {
+   "key": "9bfbd344a0bbce3009600d0e968a8170c3379b456e7a22e8ccb0a91f1dfccc56",
+   "peak_db": -7.06
+  },
+  "loops/groove_watch__kick__kick_heavy.ogg": {
+   "key": "170ed2f3865cb5a23b8fe1a4edbe037ffb9d9b0f3a8dd05e47f492a0f24d6b36",
+   "peak_db": -7.4
+  },
+  "loops/groove_watch__snare__snare_guard.ogg": {
+   "key": "e1a8a547bd4992e7aab941b9d4fcb88db02b4abf6613d3a7e4054de9910a94af",
+   "peak_db": -9.66
+  },
+  "loops/groove_watch__snare__snare_crack.ogg": {
+   "key": "9621d405cb65968129e071543babf1a17510e5c38cdca1f9d5260b4071ec1d85",
+   "peak_db": -8.87
+  },
+  "loops/groove_watch__snare__snare_clap.ogg": {
+   "key": "d9c5a4eba6a1f3e9a1af6e3ea0d6a5eec8742128557fa87f77e5452bdb90a989",
+   "peak_db": -9.26
+  },
+  "loops/groove_watch__snare__snare_rim.ogg": {
+   "key": "5c511592d4af77a6dadf4ab8e9c9319295f49b5b13ae3c857e06289f7fe3136f",
+   "peak_db": -14.48
   }
  }
 }

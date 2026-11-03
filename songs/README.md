@@ -1,32 +1,39 @@
 # Song packs
 
-Two kinds of pack live here.
+Three kinds of content live here: the loop library, the mission packs and the legacy duel packs.
 
-## Missions (schema 3): `m01_first_watch/` to `m10_last_light/`
+## The loop library: `library/`
 
-| Pack | Mission | Stem files | Ogg size | Streams at once |
-| --- | --- | --- | --- | --- |
-| `m01_first_watch` | 1 First Watch | 4 | 0.5 MB | 3 |
-| `m02_second_pulse` | 2 Second Pulse | 13 | 1.2 MB | 5 |
-| `m03_hold_the_line` | 3 Hold the Line | 11 | 2.0 MB | 6 |
-| `m04_backbeat` | 4 Backbeat | 19 | 3.3 MB | 5 |
-| `m05_counterpoint` | 5 Counterpoint | 31 | 6.8 MB | 7 |
-| `m06_fortress` | 6 Fortress | 54 | 6.8 MB | 8 |
-| `m07_crossroads` | 7 Crossroads | 102 | 11.9 MB | 12 |
-| `m08_crossfire` | 8 Crossfire | 53 | 8.6 MB | 6 |
-| `m09_iron_rhythm` | 9 Iron Rhythm | 122 | 11.6 MB | 12 |
-| `m10_last_light` | 10 Last Light | 152 | 13.9 MB | 16 |
+`library/index.json` (format `rhythm_warfare.library.v1`) lists every sound and clip the player's loadout can pick from:
+for each clip its kind (groove, fill, bass, backing), the sounds it is offered with, its input cues (ticks inside one
+8-bar loop: kick pad 1, snare pad 4, bass pads by pitch) and, for every part and sound, one 8-bar Ogg in
+`library/loops/<clip>__<part>__<sound>.ogg` (exactly 529,655 frames at 48 kHz; a backing is 16 bars). The game plays
+these loops, looped, with gain switches at phase boundaries, in every mission: music is the loadout, not the mission.
+Written by `python tools/content/build.py` from `content/`; never edit by hand.
 
-Sizes include the auditions in `preview/`; all placeholder sound as of 31 October 2026.
+## Missions (schema 4): `m01_first_watch/` to `m10_last_light/`
 
-Written by `python tools/content/build.py` from `content/` (the loop library and the mission files); never edit them by
-hand. Each holds `level.json` (schema 3, `docs/PRD.md` section 15), `audio/sNN__<clip>__<sound>.ogg` (one full-length
-stem per offered clip and sound combination of each usage, 48 kHz stereo Ogg Vorbis, one bar of release tail after the
-song) and `preview/<choice>__<option>.ogg` (four-bar auditions for the mission setup screen). The game loads the stems
-that match the player's selection and plays them through the one synchronized transport.
+| Pack | Mission | Bars | Form (D drums, B bass, 8 bars each) |
+| --- | --- | --- | --- |
+| `m01_first_watch` | 1 First Watch | 128 | `DDBDBDDBDBDBDDBD` |
+| `m02_second_pulse` | 2 Second Pulse | 40 | `DDDDD` |
+| `m03_hold_the_line` | 3 Hold the Line | 48 | `DBDBDB` |
+| `m04_backbeat` | 4 Backbeat | 48 | `DDDDDD` |
+| `m05_counterpoint` | 5 Counterpoint | 56 | `DBDBDBD` |
+| `m06_fortress` | 6 Fortress | 56 | `DDDDDDD` |
+| `m07_crossroads` | 7 Crossroads | 64 | `DBDBDBDB` |
+| `m08_crossfire` | 8 Crossfire | 64 | `DDDDDDDD` |
+| `m09_iron_rhythm` | 9 Iron Rhythm | 64 | `DDBDDBDD` |
+| `m10_last_light` | 10 Last Light | 80 | `DDBDBDBDBD` |
 
-Whether a pack still uses placeholder audio is in its `level.json` (`placeholder`, `content`) and in
-`content/REPORT.md`. To replace the placeholders with renders from Ableton, follow `docs/CONTENT_TO_RENDER.md`.
+Each pack is one `level.json` (schema 4): title, length, the phases from the form, the baked waves and intros, the
+battlefield rules and the `base` the battlefield gives the player (production buildings, entries, defense points,
+civilians). There is no audio in a pack: the loops live in `library/` and the mission only says which phases cue drums or
+bass. Written by `python tools/content/build.py` from `content/missions/level_NN.json` (the old authoring, with per-mission
+choices and full-length stems, is kept in `content/missions_legacy/`).
+
+Whether a sound still plays a placeholder is in `library/index.json` (`sounds.<id>.placeholder`) and in `content/REPORT.md`.
+To replace the placeholders with renders from Ableton, follow `docs/CONTENT_TO_RENDER.md`.
 
 ## Legacy duel packs (schema 1): `level_01/`, `test_16/`
 

@@ -1,31 +1,58 @@
 # Content: the loop library and the missions
 
-Everything the ten missions play is built from this folder by one command:
+The player has one loadout (groove, fill, kick sound, snare sound, bass line, bass sound, backing) that plays in every
+mission. The game plays 8-bar loops, one per clip part and sound, looped, with gain switches at phase boundaries. A mission
+no longer authors music: it defines a title, a length, the form (which 8-bar phases are drums or bass), the battlefield and
+the waves. Everything is built from this folder by one command:
 
 ```
-python tools/content/build.py            # all missions (about a minute); --check validates without writing audio
+python tools/content/build.py              # library, then every mission (about 25 s from scratch, under a second when nothing changed)
+python tools/content/build.py level_03     # the library, then one mission
+python tools/content/build.py --check      # validate everything, write nothing
 ```
 
-- `sounds.json`: every sound a mission can offer (id, family kick / snare / bass / other, friendly name).
+- `sounds.json`: every sound (id, family kick / snare / bass / other, friendly name, the placeholder synth recipe).
+  What a sound produces in battle (kicks make infantry, snares build defenses, bass sounds make vehicles) and its one-line
+  blurb are in `data/campaign/instruments.json`; the build refuses a sound without an entry.
 - `library/<clip_id>/`: one musical clip at 174 BPM in 4/4. `clip.json` says its kind (`groove`, `fill`, `bass`,
-  `accompaniment`), friendly name, length in bars, key (pitched clips) and where its MIDI came from. One MIDI file per
-  part (`kick.mid`, `snare.mid`, `bass.mid`, `other.mid`) and one WAV per part and sound:
+  `accompaniment`, which the index calls `backing`), friendly name, length in bars, key (pitched clips), optional
+  `cue_min_velocity` (ghost notes below it are heard but not cued) and where its MIDI came from. One MIDI file per part
+  (`kick.mid`, `snare.mid`, `bass.mid`, `other.mid`) and one WAV per part and sound:
   - `library/<clip_id>/<part>__<sound_id>.wav`: **your render** (drop-in; the build only reads it),
   - `library/<clip_id>/placeholder/<part>__<sound_id>.wav`: the generated placeholder (open it in Ableton to hear what the
     file should contain; the build rewrites it, never your files).
-- `missions/level_NN.json`: one mission: its choices, phases (which clip and sound plays where, which family is cued),
-  sequences and rewards, accompaniment and battle data (`battlefield`, the waves file).
+- `missions/level_NN.json`: one mission, nothing else: `level_id`, `number`, `title`, `pack`, `bars`, `seed`, `form`
+  (one letter per 8-bar phase: `D` drums, `B` bass; `bars` is 8 times its length), `battle` (`battlefield`, the waves
+  file, optional `rules`), `intros` (hint lines by bar) and a `note`. `missions_legacy/` keeps the old authoring (choices,
+  phases, stems), which `tools/content/export_midi.py` still reads.
 - The battle side of a mission lives outside this folder: `data/campaign/waves/level_NN.json` (the `rules` block:
   `objective_hp`, `sockets_per_point`, `units_per_point`, `start_units` such as five riflemen per choke point, and
   the `waves` by bar, each with an `entry` and a `target` class `defenses`, `civilians` or `core`) and
   `data/battlefields/<id>.json` (mission 1 plays on `village_01`: houses, civilians, the barracks). The build bakes
-  both into `level.json`, so rebuild the pack after editing them.
-- `build_state.json`: written by the build (which MIDI each of your WAVs was rendered from). Commit it with your WAVs.
-- `REPORT.md`: written by the build: what is still placeholder, warnings, listening checkpoints.
+  both into `level.json` and derives its `base` block (production buildings, entries, defense points, civilians) from the
+  battlefield, so rebuild after editing them.
+- `build_state.json`: written by the build (which MIDI each of your WAVs was rendered from, the generated placeholders,
+  the source of every loop so an unchanged one is not re-encoded). Commit it with your WAVs.
+- `REPORT.md`: written by the build: the loops table (owner or placeholder, peak), the missions table, warnings.
 
-The exact list of files to render, with bar ranges and export settings, is `docs/CONTENT_TO_RENDER.md`. The rules the
-build enforces are `docs/PRD.md` section 15. Godot ignores this folder (`.gdignore`); the game plays the Ogg stems the
-build writes into `songs/`.
+What the build writes: `songs/library/index.json` (sounds, clips, cues, loop files, peaks) and
+`songs/library/loops/<clip>__<part>__<sound>.ogg`, `songs/mNN_*/level.json` (schema 4, no audio), `content/REPORT.md`,
+`docs/CONTENT_TO_RENDER.md` and `data/campaign/library_names.json`. The index and the packs are byte-identical when
+nothing changed. Godot ignores this folder (`.gdignore`); the game plays the loops in `songs/library/`.
+
+**How a render becomes a loop.** Exactly 8 bars (529,655 frames at 48 kHz; a backing is 16 bars): a 2-bar groove is placed
+at bars 1, 3, 5 and 7 and summed, a 1-bar fill sits in bar 8, an 8-bar bass line or backing is used as it is, a backing
+longer than 16 bars (the generated ones, 32 to 48) is cut to its first 16 with a 10 ms fade; whatever rings past the end is
+added onto the start so a tail wraps around.
+
+**Cues and the chart.** Kick cues are pad 1, snare cues pad 4, bass cues are spread over pads 1 to 4 by pitch (lowest
+left; one pitch alone uses pad 2), taps only, at least 1440 ticks apart (`data/campaign/rules.json` `chart.bass`). The build
+checks every clip (same pad at least 480 ticks apart, the same thumb at least 480 between pads) and every groove together
+with every fill (the groove's bars 1 to 7 and the fill's bar 8); an error names the clip or the pair. Prefer a clip's
+`cue_min_velocity` or a note edit in Ableton to a looser rule.
+
+The exact list of files to render, with export settings, is `docs/CONTENT_TO_RENDER.md`. The rules the build enforces are
+`docs/PRD.md` section 15.
 
 ## Your own recordings: importing an Ableton batch
 
@@ -36,7 +63,7 @@ export is which clip, part and sound; the importer files them into the library:
 ```
 python tools/content/import_ableton.py content/imports/first_watch.json --check   # report what would be written
 python tools/content/import_ableton.py content/imports/first_watch.json           # write the clips and sounds
-python tools/content/build.py level_01                                            # build the mission from them
+python tools/content/build.py                                                      # build the loops from them
 ```
 
 What the importer does with each file (the originals are never modified):
@@ -56,35 +83,15 @@ The importer prints a report (sample rate, peak before and after, attack of the 
 bars, fade) and refuses an export that does not cover the clip, a MIDI with no notes in the clip's bars, or a sound
 whose family does not match the part.
 
-## Declared renders, audio-only clips, bound sounds, dependent choices
+## Declared renders and audio-only clips
 
 - **Declared renders** (`"sounds": {"bass": ["bass_sub_deep", ...]}` in `clip.json`): the clip plays only its own
-  recordings. The build never makes a placeholder for a declared render (a missing file is an error, not a
-  placeholder) and never pairs the clip with a sound it does not declare. A sound without a `synth` recipe in
-  `sounds.json` can only be used this way.
-- **Audio-only clips** (`"audio_only": true`, accompaniment only): no MIDI, nothing cued, just the recording. The
-  build checks its length and headroom and plays it as a stem.
-- **Bound sounds**: a phase can say `"kick_sound": "bound"` (any sound field) instead of a choice slot or a fixed id:
-  the sound is whatever the chosen clip declares for that part. The pad label shows that sound's name (Mission 1's
-  pads read "Half-Time Kick" and "Backbeat Snare" for the Half-Time groove).
-- **Backing track choice**: a choice of kind `accompaniment` plus placements with `"clip": 1` (a slot of that choice)
-  instead of a fixed clip id.
-- **Dependent choices**: when the options of a sound choice (for example `bass_voice`) are declared renders of the
-  clips of another choice (`bass`), the build writes `depends_on` and, per option, `with` (the clips the option plays)
-  into the pack. The setup screen shows only the options that fit the chosen clip and swaps an option that no longer
-  fits for that clip's default (or its first fitting recording), saying so; `MissionLoader.fit_dependents` does the
-  same for a saved selection. The build refuses a mission whose default pairing does not fit, whose option plays none
-  of the offered clips, or whose declared render is missing.
-
-## Charting a bass line (`bass_chart`)
-
-- A mission (or a single phase, which overrides single keys) may carry `"bass_chart": {"pads": "pitch", "min_gap_ticks":
-  1440, "holds": false}`. `pads` is `"slot"` (the default: the whole line sits on the pad of its voice slot) or
-  `"pitch"` (the clip's distinct cued pitches, lowest to highest, are spread over pads 1 to 4, low notes left, high
-  notes right; one pitch alone uses pad 2). `min_gap_ticks` (default 0, 960 ticks = one beat) drops a cue that falls
-  closer than that to the last one kept. `holds` (default true) set to false makes every bass cue a tap. The recording
-  always plays in full; only the cues change. With none of the keys the chart is exactly the old one. Mission 1 uses
-  pitch, 1440 and no holds: 12 to 16 taps per eight bars, never more than one per beat.
+  recordings (the index marks it `bound`). The build never makes a placeholder for a declared render (a missing file is
+  an error, not a placeholder) and never pairs the clip with a sound it does not declare. A sound without a `synth`
+  recipe in `sounds.json` can only be used this way. A clip with no declaration is offered with every sound of its family
+  that no clip declares (the generated kicks, snares and bass sounds), each with a placeholder until you render it.
+- **Audio-only clips** (`"audio_only": true`, accompaniment only): no MIDI, nothing cued, just the recording; the index
+  lists it as a backing with its one sound (`hats_driving`; the generated backings use `ensemble`).
 
 ## Adding further phrases (the owner's path)
 
@@ -98,12 +105,10 @@ whose family does not match the part.
    `name` fields are what the player reads.
 3. `python tools/content/import_ableton.py content/imports/<batch>.json --check`, read the report, then run it
    without `--check`.
-4. Offer the clips in a mission: add the clip ids to the pools in `content/missions/level_NN.json` (and the sound ids
-   to the sound choice's pool; the build works out which recording fits which clip), set the defaults, add the ids to
-   that mission's `new_options` in `data/campaign/campaign.json` so the unlock screen names them, then
-   `python tools/content/build.py level_NN`. The build refuses invalid pairings and reports the loudest combination.
-5. `bash tools/test.sh` (the mission tests load every combination), `python tools/balance_missions.py --missions mNN`
-   if the arrangement changed, and `python tools/content/render_list.py` to refresh `docs/CONTENT_TO_RENDER.md`.
+4. Say what each new sound produces in `data/campaign/instruments.json`, then `python tools/content/build.py`: the clips and
+   sounds join `songs/library/index.json` with their loops, and the player's loadout can pick them (no mission file
+   changes; the build refuses an unplayable chart or a missing instruments entry).
+5. `bash tools/test.sh`; `docs/CONTENT_TO_RENDER.md` is refreshed by the build.
 
 Re-running the importer is idempotent: identical inputs write identical files. Replacing an export and re-running
 rewrites that clip's render; the build then notices the changed WAV through `build_state.json`.
@@ -120,8 +125,10 @@ git-ignored). Render them in Ableton, then, per mission:
 ```
 python tools/content/import_ableton.py content/imports/level_NN.json --check
 python tools/content/import_ableton.py content/imports/level_NN.json
-python tools/content/build.py level_NN
+python tools/content/build.py
 ```
 
-The mission is then rewired to the imported clips in a follow-up, as mission 1 was. `midi_export/README.md` has the workflow;
+The imported clips join the library and the loadout can pick them. The exporter reads the old authoring in
+`content/missions_legacy/` (`MISSIONS_LEGACY` in `tools/content/common.py`), not `content/missions/`, whose files no longer
+carry choices or phases. `midi_export/README.md` has the workflow;
 `tools/content/test_export.py` tests the export and runs a synthetic round trip through the importer.

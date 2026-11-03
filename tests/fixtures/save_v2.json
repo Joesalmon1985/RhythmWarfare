@@ -1,0 +1,12 @@
+{
+ "version": 2,
+ "cleared": {
+  "level_01": {"clears": 4, "best_accuracy": 0.95, "best_sequences": 1.0, "best_core_hp": 0.9, "best_combo": 55},
+  "level_02": {"clears": 1, "best_accuracy": 0.74, "best_sequences": 0.8, "best_core_hp": 0.4, "best_combo": 12}
+ },
+ "selections": {
+  "level_01": {"groove": ["groove_rolling"], "bass": ["bass_reese_line"], "bass_voice": ["bass_reese_dark"], "accompaniment": ["acc_hats_busy"]},
+  "level_02": {"groove": ["groove_straight"], "snare_sound": ["snare_crack"]}
+ },
+ "last_played": "level_02"
+}

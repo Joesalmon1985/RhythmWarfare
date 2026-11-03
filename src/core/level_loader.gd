@@ -10,11 +10,13 @@ extends RefCounted
 
 const SCHEMA_VERSION := 1
 const STEM_ALIGNMENT_TOLERANCE_S := 0.005
+const LOOP_LENGTH_TOLERANCE_S := 0.03  # a mission loop may differ from its bars by this much (encoder padding)
 const SAME_LANE_MIN_GAP_TICKS := 0  # same-tick notes on one button are a conflict; closer spacing is warned below
 const SAME_LANE_WARN_GAP_MS := 200.0  # two notes on one button closer than twice the Good window cannot both be judged cleanly
 
 
-## options (schema 3): {"selection": {choice id: [option ids]}, "practice": bool}; empty uses the mission's defaults.
+## options (schema 4 missions): {"loadout": {slot: id}, "library": LibraryIndex, "unlocked": [ids], "practice": bool}; an empty
+## loadout plays the library's defaults (see MissionLoader).
 static func load_pack(pack_dir: String, options: Dictionary = {}) -> Dictionary:
 	var result := {"level": null, "errors": [], "warnings": []}
 	var errors: Array = result["errors"]
@@ -32,13 +34,16 @@ static func load_pack(pack_dir: String, options: Dictionary = {}) -> Dictionary:
 	var level: Level
 	if int(parsed.get("schema_version", -1)) == MissionLoader.SCHEMA_VERSION:
 		level = MissionLoader.parse(parsed, dir, options, errors, warnings)
-	elif int(parsed.get("schema_version", -1)) == 2:
-		errors.append("schema 2 packs were retired on 31 Oct 2026; missions are schema 3 (tools/content/build.py)")
+	elif int(parsed.get("schema_version", -1)) in [2, 3]:
+		errors.append("schema %d packs were retired; missions are schema 4: rebuild the packs (python tools/content/build.py)" % int(parsed.get("schema_version", -1)))
 		return result
 	else:
 		level = parse(parsed, dir, errors, warnings)
 	if errors.is_empty():
-		_check_stems(level, errors, warnings)
+		if level.is_mission():
+			_check_loops(level, errors)
+		else:
+			_check_stems(level, errors, warnings)
 	if errors.is_empty():
 		result["level"] = level
 	return result
@@ -293,6 +298,27 @@ static func _check_stems(level: Level, errors: Array, warnings: Array) -> void:
 		errors.append("stem lengths differ by %.1f ms (tolerance %.0f ms); export every stem from the same timeline start" % [(hi - lo) * 1000.0, STEM_ALIGNMENT_TOLERANCE_S * 1000.0])
 	if lo + 0.001 < level.duration_seconds():
 		errors.append("stems are %.2f s long but the chart runs to %.2f s" % [lo, level.duration_seconds()])
+
+
+## A mission's loop files: each exists, decodes and is as long as its clip's bars (loops of different lengths are fine:
+## the transport loops each one). Loops that are not exactly bars long drift against the cues.
+static func _check_loops(level: Level, errors: Array) -> void:
+	var bar_s := float(level.beats_per_bar) * 60.0 / level.bpm
+	var lengths: Dictionary = {}
+	for key in level.stems:
+		var path: String = level.stems[key]
+		if not stream_exists(path):
+			errors.append("loop '%s' file not found: %s" % [key, path])
+			continue
+		var stream := load_stream(path)
+		if stream == null:
+			errors.append("loop '%s' could not be decoded: %s" % [key, path])
+			continue
+		lengths[key] = stream.get_length()
+		var want := float(level.stem_loop_bars.get(key, 0)) * bar_s
+		if want > 0.0 and absf(float(lengths[key]) - want) > LOOP_LENGTH_TOLERANCE_S:
+			errors.append("loop '%s' is %.3f s long but %d bars are %.3f s (%s)" % [key, lengths[key], level.stem_loop_bars[key], want, path])
+	level.stem_lengths = lengths
 
 
 ## In an exported build only the imported form of a res:// audio file is packed, so the original path fails a

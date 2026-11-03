@@ -1,5 +1,5 @@
 extends Control
-## Results: the outcome, what the sequences earned, timing feedback, unlocks, and Next mission / Retry / Change choices
+## Results: the outcome, what the sequences earned, timing feedback, unlocks, and Next mission / Retry / Loadout
 ## / Menu. Chart ids and diagnostics stay out of it (F3 debug in play shows them). The legacy duel keeps its summary.
 
 
@@ -30,7 +30,7 @@ func _ready() -> void:
 	var retry := UiStyle.button("Retry", func() -> void: get_tree().change_scene_to_file("res://src/scenes/play.tscn"), 200, 64)
 	buttons.add_child(retry)
 	if str(r.get("mode", "")) == "mission":
-		buttons.add_child(UiStyle.button("Change choices", func() -> void: get_tree().change_scene_to_file("res://src/scenes/mission_setup.tscn"), 240, 64))
+		buttons.add_child(UiStyle.button("Loadout", func() -> void: get_tree().change_scene_to_file("res://src/scenes/loadout.tscn"), 200, 64))
 	buttons.add_child(UiStyle.button("Menu", func() -> void: get_tree().change_scene_to_file("res://src/scenes/main_menu.tscn"), 160, 64))
 	(first if first != null else retry).grab_focus()
 
@@ -74,17 +74,16 @@ func _mission(content: VBoxContainer, r: Dictionary) -> void:
 			for id in camp.get("new_options", []):
 				names.append(_name(str(id)))
 			if not names.is_empty():
-				content.add_child(UiStyle.note("New choices: " + ", ".join(PackedStringArray(names)), UiStyle.GOOD, 20))
+				content.add_child(UiStyle.note("New in your loadout: " + ", ".join(PackedStringArray(names)), UiStyle.GOOD, 20))
 		if not camp.get("saved", true):
 			content.add_child(UiStyle.note("Progress could not be saved.", UiStyle.WARN))
 	elif outcome == "defeat":
 		content.add_child(UiStyle.note("Missed sequences cost nothing but their reward. Defenses built early pay off.", UiStyle.MUTED))
 
 
-## Friendly name of a library option (data/campaign/library_names.json, written by the content build).
+## Friendly name of a library item (the id itself when the library does not know it).
 func _name(id: String) -> String:
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/campaign/library_names.json"))
-	return str(parsed.get(id, id)) if typeof(parsed) == TYPE_DICTIONARY else id
+	return Session.library().name(id)
 
 
 func _duel(content: VBoxContainer, r: Dictionary) -> void:

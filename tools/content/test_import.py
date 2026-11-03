@@ -95,6 +95,12 @@ class ImportWorkspace:
         self.missions.mkdir()
         self.songs = self.tmp / "songs"
         self.state = self.tmp / "build_state.json"
+        self.instruments = self.tmp / "instruments.json"
+        mix = {"t_kick_a": "rifle_squad", "t_kick_b": "grenadier_squad", "t_snare": "pillbox", "t_bass_a": "jeep", "t_bass_b": "apc", "t_bass_c": "1tnk"}
+        write_json(self.instruments, {**{k: {"produces": [{"reward": v, "share": 1}], "blurb": k} for k, v in mix.items()},
+                                      "t_other_1": {"produces": [], "blurb": "backing"}, "t_other_2": {"produces": [], "blurb": "backing"}})
+        self.defaults = {"groove": "t_groove_a", "fill": "", "kick_sound": "t_kick_a", "snare_sound": "t_snare", "bass": "t_bass_one",
+                         "bass_sound": "t_bass_b", "backing": "t_acc_one"}
         bar96 = 96 * 4
         # drums: 16 bars of MIDI (the clip is 8), 8-bar recordings; kick on beat 1 (and beat 3 in bar 2 of every pair)
         midi96(self.src / "KickA.mid", [(b * bar96, 96, 36) for b in range(16)] + [(b * bar96 + 2 * 96, 96, 36) for b in range(1, 16, 2)])
@@ -144,29 +150,20 @@ class ImportWorkspace:
         shutil.copy(Path(__file__).resolve().parents[2] / "content" / "fixtures" / "waves_fixture.json", self.tmp / "waves.json")
 
     def mission(self, **over) -> Path:
-        m = {
-            "level_id": "level_import", "number": 98, "title": "Import", "pack": "import_mission", "bars": 16, "seed": 98,
-            "battle": {"battlefield": "defense_02", "waves": str(self.tmp / "waves.json")},
-            "choices": {
-                "groove": {"count": 1, "pool": ["t_groove_a", "t_groove_b"], "default": ["t_groove_a"]},
-                "bass": {"count": 1, "pool": ["t_bass_one", "t_bass_two"], "default": ["t_bass_one"]},
-                "bass_voice": {"count": 1, "pool": ["t_bass_a", "t_bass_b", "t_bass_c"], "default": ["t_bass_b"]},
-                "accompaniment": {"count": 1, "pool": ["t_acc_one", "t_acc_two"], "default": ["t_acc_one"]},
-            },
-            "accompaniment": [{"clip": 1, "start_bar": 1, "bars": 16}],
-            "phases": [
-                {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "sequence_bars": 4, "rewards": ["pillbox"]},
-                {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["e3"]},
-            ],
-        }
+        m = {"level_id": "level_import", "number": 98, "title": "Import", "pack": "import_mission", "bars": 16, "seed": 98, "form": "DB",
+             "battle": {"battlefield": "defense_02", "waves": str(self.tmp / "waves.json")}}
         m.update(over)
         path = self.missions / "level_import.json"
         write_json(path, m)
         return path
 
     def build(self) -> dict:
+        self.mission()
         return build.run(library=self.lib, missions=self.missions, songs=self.songs, sounds=self.sounds, state=self.state,
-                         report=self.tmp / "REPORT.md", quiet=True)
+                         report=self.tmp / "REPORT.md", instruments=self.instruments, defaults=self.defaults, quiet=True)
+
+    def index(self) -> dict:
+        return read_json(self.songs / "library" / "index.json")
 
     def level(self) -> dict:
         return read_json(self.songs / "import_mission" / "level.json")
@@ -250,73 +247,44 @@ class ImportTests(unittest.TestCase):
         after = {p.name: p.read_bytes() for p in (self.ws.lib / "t_bass_one").iterdir()}
         self.assertEqual(before, after)
 
-    def test_mission_pairs_patterns_with_their_own_recordings(self):
-        self.ws.mission()
+    def test_library_pairs_patterns_with_their_own_recordings(self):
         res = self.ws.build()
         self.assertTrue(res["ok"], res["errors"])
-        lv = self.ws.level()
-        self.assertFalse(lv["placeholder"])
-        self.assertEqual(lv["content"]["owner_files"], lv["content"]["files"])
-        kick = next(s for s in lv["stems"] if s["family"] == "kick")
-        self.assertEqual(kick["deps"], ["groove#1"], "a bound sound adds no dependency of its own")
-        self.assertEqual({k: f["sound"] for k, f in kick["files"].items()}, {"t_groove_a": "t_kick_a", "t_groove_b": "t_kick_b"})
-        bass = next(s for s in lv["stems"] if s["family"] == "bass")
-        self.assertEqual(sorted(bass["files"]), ["t_bass_one|t_bass_a", "t_bass_one|t_bass_b", "t_bass_two|t_bass_c"],
-                         "no stem for a recording with another clip's pattern")
-        other = next(s for s in lv["stems"] if s["family"] == "other")
-        self.assertEqual(other["deps"], ["accompaniment#1"])
-        self.assertEqual(sorted(other["files"]), ["t_acc_one", "t_acc_two"])
-        voice = next(c for c in lv["choices"] if c["id"] == "bass_voice")
-        self.assertEqual(voice["depends_on"], "bass")
-        self.assertEqual({o["id"]: o.get("with") for o in voice["pool"]}, {"t_bass_a": ["t_bass_one"], "t_bass_b": ["t_bass_one"], "t_bass_c": ["t_bass_two"]})
-        self.assertNotIn("depends_on", next(c for c in lv["choices"] if c["id"] == "groove"))
-        self.assertEqual(lv["bound_sounds"]["t_groove_b"], {"kick": "t_kick_b", "snare": "t_snare"})
-        self.assertEqual(lv["phases"][0]["pads"]["1"], {"family": "kick", "ref": "bound:groove#1:kick"})
-        self.assertEqual(lv["phases"][1]["pads"], {"2": {"family": "bass", "ref": "bass_voice#1"}}, "the bass phase cues only the bass")
-        self.assertEqual(sorted(lv["previews"]), ["accompaniment", "bass", "bass_voice", "groove"])
-        for cid, opts in lv["previews"].items():
-            for f in opts.values():
-                self.assertTrue((self.ws.songs / "import_mission" / f).exists(), f)
-        self.assertEqual(lv["names"]["t_kick_b"], "Kick B")
-        kicks = next(b for b in lv["cue_blocks"] if b["family"] == "kick")
-        self.assertEqual(len(kicks["options"]["t_groove_a"]), 12)
-        self.assertEqual(len(kicks["options"]["t_groove_b"]), 8)
-        holds = next(b for b in lv["cue_blocks"] if b["family"] == "bass")["options"]["t_bass_one"]
-        self.assertEqual(holds[0], [8 * TICKS_PER_BAR, 2 * TICKS_PER_BAR], "bass note lengths become holds")
+        idx = self.ws.index()
+        self.assertEqual(set(idx["clips"]), {"t_groove_a", "t_groove_b", "t_bass_one", "t_bass_two", "t_acc_one", "t_acc_two"})
+        self.assertTrue(all(c["bound"] for c in idx["clips"].values()), "every imported clip declares its renders")
+        self.assertEqual(idx["clips"]["t_groove_a"]["sounds"], {"kick": ["t_kick_a"], "snare": ["t_snare"]})
+        self.assertEqual(idx["clips"]["t_groove_b"]["sounds"], {"kick": ["t_kick_b"], "snare": ["t_snare"]})
+        self.assertEqual(idx["clips"]["t_bass_one"]["sounds"], {"bass": ["t_bass_a", "t_bass_b"]}, "no loop for a recording with another clip's pattern")
+        self.assertEqual(idx["clips"]["t_bass_two"]["sounds"], {"bass": ["t_bass_c"]})
+        self.assertEqual(idx["clips"]["t_acc_one"]["sounds"], {"other": ["t_other_1"]})
+        self.assertEqual((idx["clips"]["t_acc_one"]["kind"], idx["clips"]["t_acc_one"]["cues"], idx["clips"]["t_acc_one"]["parts"]), ("backing", {}, ["other"]))
+        self.assertEqual(idx["clips"]["t_acc_one"]["key"], "F minor")
+        self.assertFalse(any(s["placeholder"] for s in idx["sounds"].values()), "every sound is a recording")
+        self.assertEqual(idx["sounds"]["t_kick_b"]["name"], "Kick B")
+        self.assertEqual(idx["sounds"]["t_kick_b"]["produces"], [{"reward": "grenadier_squad", "share": 1}])
+        for cid, c in idx["clips"].items():
+            for part in c["parts"]:
+                for sid, f in c["loops"][part].items():
+                    self.assertTrue((self.ws.songs / "library" / f).exists(), f)
+        self.assertEqual(len(idx["clips"]["t_groove_a"]["cues"]["kick"]), 12)
+        self.assertEqual(len(idx["clips"]["t_groove_b"]["cues"]["kick"]), 8)
+        self.assertEqual({q[2] for q in idx["clips"]["t_groove_a"]["cues"]["snare"]}, {4})
+        bass = idx["clips"]["t_bass_one"]["cues"]["bass"]
+        self.assertEqual(bass[:2], [[0, 0, 2], [2 * TICKS_PER_BAR, 0, 2]], "one pitch: pad 2; the two-bar note is a tap like the rest")
+        self.assertTrue(all(q[1] == 0 for q in bass))
+        self.assertEqual(self.ws.level()["base"]["production"], ["barracks", "factory"])
 
     def test_an_incompatible_default_or_a_missing_declared_render_is_refused(self):
-        self.ws.mission(choices={
-            "groove": {"count": 1, "pool": ["t_groove_a", "t_groove_b"], "default": ["t_groove_a"]},
-            "bass": {"count": 1, "pool": ["t_bass_one", "t_bass_two"], "default": ["t_bass_two"]},
-            "bass_voice": {"count": 1, "pool": ["t_bass_a", "t_bass_c"], "default": ["t_bass_a"]},
-            "accompaniment": {"count": 1, "pool": ["t_acc_one", "t_acc_two"], "default": ["t_acc_one"]}})
+        self.ws.defaults["bass"] = "t_bass_two"  # t_bass_b is a recording of the other bass line
         res = self.ws.build()
         self.assertFalse(res["ok"])
         self.assertTrue(any("does not play the default" in e for e in res["errors"]), res["errors"])
-        self.ws.mission()
+        self.ws.defaults["bass"] = "t_bass_one"
         (self.ws.lib / "t_bass_two" / "bass__t_bass_c.wav").unlink()
         res = self.ws.build()
         self.assertFalse(res["ok"])
         self.assertTrue(any("declares the render bass__t_bass_c.wav but the file is missing" in e for e in res["errors"]), res["errors"])
-
-    def test_a_sound_choice_with_a_useless_option_is_refused(self):
-        self.ws.mission(choices={
-            "groove": {"count": 1, "pool": ["t_groove_a", "t_groove_b"], "default": ["t_groove_a"]},
-            "bass": {"count": 1, "pool": ["t_bass_one"], "default": ["t_bass_one"]},
-            "bass_voice": {"count": 1, "pool": ["t_bass_a", "t_bass_c"], "default": ["t_bass_a"]},
-            "accompaniment": {"count": 1, "pool": ["t_acc_one", "t_acc_two"], "default": ["t_acc_one"]}})
-        res = self.ws.build()
-        self.assertFalse(res["ok"])
-        self.assertTrue(any("plays none of the bass clips" in e for e in res["errors"]), res["errors"])
-
-    def test_a_mode_change_from_a_hold_onto_the_same_thumb_is_a_warning(self):
-        self.ws.mission(bars=24, phases=[
-            {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "sequence_bars": 4, "rewards": ["pillbox"]},
-            {"bars": 8, "mode": "bass", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "bass": 1, "bass_voice": 1, "sequence_bars": 4, "rewards": ["e3"]},
-            {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": "bound", "snare_sound": "bound", "sequence_bars": 4, "rewards": ["pillbox"]}])
-        res = self.ws.build()
-        self.assertTrue(res["ok"], res["errors"])
-        self.assertTrue(any("a hold on pad 2 ends where pad 1" in w for w in res["warnings"]), res["warnings"])
 
     def test_check_mode_writes_nothing(self):
         ws = ImportWorkspace()

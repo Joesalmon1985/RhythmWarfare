@@ -9,7 +9,7 @@ const SEQ_S := 2.5
 ## n sequences of 8 taps each: sequence s covers [s * 2.5, (s + 1) * 2.5), taps every 0.25 s alternating pads 1 and 4.
 func _level(n: int) -> Level:
 	var level := Level.new()
-	level.schema_version = 3
+	level.schema_version = 4
 	level.sequence_threshold = 0.6
 	for s in n:
 		var t0 := float(s) * SEQ_S
@@ -155,7 +155,7 @@ func test_mashing_never_earns_sharp_or_steady() -> void:
 
 
 func test_long_hold_sequences_earn_exactly_one_reward_like_tap_sequences() -> void:
-	var level: Level = LevelLoader.load_pack(TestCase.project_path("songs/m03_hold_the_line"))["level"]
+	var level := TestCase.fixture_level()  # no shipped bass line holds yet: the fixture line has two holds
 	var holds_in := {}
 	for n in level.notes:
 		if n["type"] == "hold":
@@ -169,14 +169,17 @@ func test_long_hold_sequences_earn_exactly_one_reward_like_tap_sequences() -> vo
 	for e in m.reward_log:
 		per_seq[int(e["sequence"])] = int(per_seq.get(int(e["sequence"]), 0)) + 1
 	var bass := 0
+	var held := 0
 	for s in level.sequences:
 		var idx := int(s["index"])
 		if not m.tracker.results[idx].is_empty() and float(m.tracker.results[idx]["resolve_time"]) < m.outcome_time:
 			assert_eq(per_seq.get(idx, 0), 1, "sequence %d (%s) logs one reward" % [idx, s["mode"]])
 		if s["mode"] == "bass" and per_seq.get(idx, 0) == 1:
 			bass += 1
-			assert_true(int(holds_in.get(idx, 0)) > 0, "bass sequence %d is made of holds" % idx)
-	assert_true(bass >= 2, "bass (hold) sequences were rewarded")
+			if int(holds_in.get(idx, 0)) > 0:
+				held += 1
+	assert_true(bass >= 2, "bass sequences were rewarded")
+	assert_true(held >= 2, "and the two that hold a note earned exactly one reward each")
 	for e in m.reward_log:
 		if e["passed"]:
 			assert_eq(e["result"], "scheduled")
@@ -235,10 +238,10 @@ func _plan(level: Level, seed_value: int) -> Array:
 
 
 func test_same_inputs_give_the_same_rewards_at_60_30_fps_and_uneven_frames() -> void:
-	for pack in ["m01_first_watch", "m03_hold_the_line"]:
-		var level: Level = LevelLoader.load_pack(TestCase.project_path("songs/" + pack))["level"]
+	for pack in ["m01_first_watch", "fixture (bass holds)"]:
+		var level: Level = LevelLoader.load_pack(TestCase.project_path("songs/" + pack))["level"] if pack.begins_with("m0") else TestCase.fixture_level()
 		var plan := _plan(level, 11)
-		var until := minf(level.duration_seconds(), 36.0)
+		var until := minf(level.duration_seconds(), 36.0 if pack.begins_with("m0") else 31.0)  # 31 s: no fixture cue near the cut
 		var base := _summary(_drive(level, plan, [1.0 / 60.0], until))
 		assert_true(base[0].size() >= 4, "%s: enough sequences resolved to compare" % pack)
 		var passed := 0
@@ -251,7 +254,7 @@ func test_same_inputs_give_the_same_rewards_at_60_30_fps_and_uneven_frames() -> 
 
 
 func test_pause_mid_hold_is_deterministic() -> void:
-	var level: Level = LevelLoader.load_pack(TestCase.project_path("songs/m03_hold_the_line"))["level"]
+	var level := TestCase.fixture_level()  # no shipped bass line holds yet: the fixture line has two holds
 	var plan := _plan(level, 5)
 	var pause_at := -1.0
 	for n in level.notes:

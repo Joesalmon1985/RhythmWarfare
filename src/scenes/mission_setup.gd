@@ -1,19 +1,13 @@
 extends Control
-## Mission setup: only the musical choices this mission asks for (none for some), each as a row of cards with a short
-## audition, a clear "choose n" count, good defaults (the last selection, else the mission's) and locked options that
-## say what unlocks them. A choice that depends on another (the bass sounds recorded from one bass line) shows only
-## the options that play the chosen clip and follows it when that changes, keeping the current pick where it still
-## fits. Practice adds a choice of the whole song or one part of it. Play is always one tap away.
+## The mission briefing: what the mission is (its base, approaches, villagers and waves), your loadout (the same in
+## every mission, with what its three instruments build) and, for practice, which part to play. Play is one tap away;
+## "Change loadout" opens the Loadout screen and comes back here.
 
-var _pack := ""
+const SLOT_TITLES := {"groove": "Drum pattern", "fill": "Fill", "kick_sound": "Kick", "snare_sound": "Snare",
+	"bass": "Bass line", "bass_sound": "Bass sound", "backing": "Backing"}
+const INSTRUMENTS := ["kick_sound", "snare_sound", "bass_sound"]
+
 var _data: Dictionary = {}
-var _picks: Dictionary = {}  # choice id -> Array of option ids in slot order
-var _choices: Dictionary = {}  # choice id -> the choice entry of the pack
-var _cards: Dictionary = {}  # choice id -> {option id: Button}
-var _card_boxes: Dictionary = {}  # choice id -> {option id: the card's container (hidden when the option does not fit)}
-var _count_labels: Dictionary = {}
-var _play: Button
-var _audition: AudioStreamPlayer
 var _part := -1
 
 
@@ -21,78 +15,102 @@ func _ready() -> void:
 	var c := Session.campaign
 	var n := Session.mission_number
 	var info := c.level_data(n)
-	_pack = c.pack_dir(n)
-	var parts := UiStyle.screen(self, str(info.get("title", "Mission")),
+	var parts := UiStyle.screen(self, "Mission %d: %s" % [n, str(info.get("title", "Mission"))],
 		func() -> void: get_tree().change_scene_to_file("res://src/scenes/missions.tscn"))
 	var content: VBoxContainer = parts["content"]
-	_audition = AudioStreamPlayer.new()
-	_audition.bus = AudioServer.get_bus_name(StemTransport.ensure_music_bus())
-	add_child(_audition)
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(_pack.path_join("level.json")))
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(c.pack_dir(n).path_join("level.json")))
 	if typeof(parsed) != TYPE_DICTIONARY:
 		content.add_child(UiStyle.note("This mission's files are missing. Rebuild with tools/content/build.py.", UiStyle.WARN))
 		return
 	_data = parsed
-	var saved := c.selection_for(str(info["level_id"]))
-	var warnings: Array = []
-	_picks = MissionLoader.resolve_selection(_data["choices"], saved, warnings)
-	var shown := 0
-	for ch in _data["choices"]:
-		_choices[str(ch["id"])] = ch
-		if (ch["pool"] as Array).size() > int(ch["count"]):
-			_choice_row(content, ch, n)
-			shown += 1
-	if shown == 0:
-		content.add_child(UiStyle.note("No choices in this mission: the music is set. Press Play.", UiStyle.MUTED))
+	var base: Dictionary = _data.get("base", {})
+	var has_factory: bool = (base.get("production", []) as Array).has("factory")
+	_base_panel(content, base, has_factory)
+	_loadout_panel(content, has_factory)
 	if Session.practice:
 		_practice_row(content)
-	if bool(_data.get("placeholder", false)):
-		content.add_child(UiStyle.note("Placeholder music (generated stand-in sounds).", UiStyle.MUTED, 15))
-	_play = UiStyle.button("Practice" if Session.practice else "Play", _start, 260, 72)
-	_play.add_theme_font_size_override("font_size", 30)
-	(parts["header"] as HBoxContainer).add_child(_play)
-	_refresh()
-	_play.grab_focus()
+	var play := UiStyle.button("Practice" if Session.practice else "Play", _start, 260, 72)
+	play.add_theme_font_size_override("font_size", 30)
+	(parts["header"] as HBoxContainer).add_child(play)
+	play.grab_focus()
 
 
-func _choice_row(content: VBoxContainer, ch: Dictionary, number: int) -> void:
-	var cid := str(ch["id"])
-	var head := HBoxContainer.new()
-	var title := UiStyle.note(str(ch["label"]), UiStyle.ACCENT, 22)
-	title.autowrap_mode = TextServer.AUTOWRAP_OFF
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	head.add_child(title)
-	var count := UiStyle.note("", UiStyle.MUTED, 18)
-	count.autowrap_mode = TextServer.AUTOWRAP_OFF
-	head.add_child(count)
-	_count_labels[cid] = count
-	content.add_child(head)
-	var row := HFlowContainer.new()
-	row.add_theme_constant_override("h_separation", UiStyle.GAP)
-	row.add_theme_constant_override("v_separation", UiStyle.GAP)
-	content.add_child(row)
-	_cards[cid] = {}
-	_card_boxes[cid] = {}
-	for o in ch["pool"]:
-		var oid := str(o["id"])
-		var lock := Session.campaign.option_lock(number, oid, ch["default"])
-		var card := VBoxContainer.new()
-		card.add_theme_constant_override("separation", 4)
-		var b := Button.new()
-		b.toggle_mode = true
-		b.custom_minimum_size = Vector2(230, 64)
-		b.text = str(o["name"]) if lock.is_empty() else "%s\n%s" % [str(o["name"]), lock]
-		b.disabled = not lock.is_empty()
-		b.pressed.connect(func() -> void: _toggle(cid, oid, int(ch["count"])))
-		card.add_child(b)
-		var prev := str(_data.get("previews", {}).get(cid, {}).get(oid, ""))
-		if not prev.is_empty() and lock.is_empty():
-			var listen := UiStyle.button("Listen", func() -> void: _listen(prev), 230, 44)
-			listen.add_theme_font_size_override("font_size", 17)
-			card.add_child(listen)
-		row.add_child(card)
-		_cards[cid][oid] = b
-		_card_boxes[cid][oid] = card
+func _panel(content: VBoxContainer, heading: String, extra: Control = null) -> VBoxContainer:
+	var panel := PanelContainer.new()
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content.add_child(panel)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 6)
+	panel.add_child(col)
+	var head_row := HBoxContainer.new()
+	col.add_child(head_row)
+	var head := UiStyle.note(heading, UiStyle.ACCENT, 22)
+	head.autowrap_mode = TextServer.AUTOWRAP_OFF
+	head.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	head_row.add_child(head)
+	if extra != null:
+		head_row.add_child(extra)
+	return col
+
+
+func _base_panel(content: VBoxContainer, base: Dictionary, has_factory: bool) -> void:
+	var col := _panel(content, "The base")
+	col.add_child(UiStyle.note("Barracks and war factory" if has_factory else "Barracks", UiStyle.TEXT, 22))
+	if not has_factory:
+		col.add_child(UiStyle.note("No war factory here: vehicle rewards from the bass become repairs", UiStyle.WARN, 19))
+	var facts := HFlowContainer.new()
+	facts.add_theme_constant_override("h_separation", 36)
+	col.add_child(facts)
+	var entries := int(base.get("entries", 0))
+	var points := int(base.get("points", 0))
+	if entries > 0:
+		facts.add_child(_fact("%d approach%s, %d rally point%s" % [entries, "" if entries == 1 else "es", points, "" if points == 1 else "s"]))
+	var civilians := int(base.get("civilians", 0))
+	if civilians > 0:
+		facts.add_child(_fact("%d villagers to protect" % civilians))
+	facts.add_child(_fact(waves_line(_data)))
+
+
+func _fact(text: String) -> Label:
+	var l := UiStyle.note(text, UiStyle.TEXT, 22)
+	l.autowrap_mode = TextServer.AUTOWRAP_OFF
+	return l
+
+
+## "25 waves over 2:56" from the pack's wave list and its length in ticks.
+static func waves_line(data: Dictionary) -> String:
+	var waves := (data.get("waves", []) as Array).size()
+	var beats := float(data.get("duration_ticks", 0)) / maxf(float(data.get("ticks_per_beat", 960)), 1.0)
+	var seconds := int(beats * 60.0 / maxf(float(data.get("bpm", 174)), 1.0))
+	return "%d wave%s over %d:%02d" % [waves, "" if waves == 1 else "s", seconds / 60, seconds % 60]
+
+
+func _loadout_panel(content: VBoxContainer, has_factory: bool) -> void:
+	var change := UiStyle.button("Change loadout", func() -> void:
+		get_tree().set_meta("loadout_return", "mission_setup")
+		get_tree().change_scene_to_file("res://src/scenes/loadout.tscn"), 240, 48)
+	var col := _panel(content, "Your loadout", change)
+	var index := Session.library()
+	var lo := Session.loadout()
+	for slot: String in Loadout.SLOTS:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", UiStyle.GAP)
+		col.add_child(row)
+		var title := UiStyle.note(str(SLOT_TITLES[slot]), UiStyle.MUTED, 20)
+		title.autowrap_mode = TextServer.AUTOWRAP_OFF
+		title.custom_minimum_size = Vector2(150, 0)
+		row.add_child(title)
+		var id := str(lo.get(slot, ""))
+		var label := UiStyle.note("None" if id.is_empty() else index.name(id), UiStyle.TEXT, 22)
+		label.autowrap_mode = TextServer.AUTOWRAP_OFF
+		label.custom_minimum_size = Vector2(250, 0)
+		row.add_child(label)
+		if INSTRUMENTS.has(slot) and not id.is_empty():
+			var icons := UiStyle.reward_icons(index, id)
+			if slot == "bass_sound" and not has_factory:
+				icons = UiStyle.without_vehicles(icons)
+			row.add_child(UiStyle.icon_strip(icons))
 
 
 func _practice_row(content: VBoxContainer) -> void:
@@ -112,70 +130,16 @@ func _practice_row(content: VBoxContainer) -> void:
 	var phases: Array = _data.get("phases", [])
 	for i in phases.size():
 		var b := Button.new()
-		b.text = "Part %d (%s)" % [i + 1, str(phases[i]["mode"])]
+		b.text = "Part %d (%s)" % [i + 1, str(phases[i].get("mode", "")).substr(0, 1).to_upper()]
 		b.toggle_mode = true
 		b.button_group = group
-		b.custom_minimum_size = Vector2(170, 56)
+		b.custom_minimum_size = Vector2(150, 56)
 		b.pressed.connect(func() -> void: _part = i)
 		row.add_child(b)
 
 
-func _toggle(cid: String, oid: String, count: int) -> void:
-	var picks: Array = _picks[cid]
-	if count == 1:
-		picks.clear()
-		picks.append(oid)
-	elif picks.has(oid):
-		picks.erase(oid)
-	elif picks.size() < count:
-		picks.append(oid)
-	MissionLoader.fit_dependents(_data["choices"], _picks, [])  # a bass sound follows the bass line it was recorded from
-	_refresh()
-
-
-func _refresh() -> void:
-	var ready := true
-	for ch in _data.get("choices", []):
-		var cid := str(ch["id"])
-		if not _cards.has(cid):
-			continue
-		var picks: Array = _picks[cid]
-		var count := int(ch["count"])
-		var dependent: bool = ch.has("depends_on")
-		var clip := MissionLoader.parent_pick(ch, _picks, 0) if dependent else ""
-		var fitting := 0
-		for oid in _cards[cid]:
-			var b: Button = _cards[cid][oid]
-			var fits: bool = not dependent or MissionLoader.option_fits(ch, oid, clip)
-			(_card_boxes[cid][oid] as Control).visible = fits
-			if fits:
-				fitting += 1
-			b.set_pressed_no_signal(picks.has(oid))
-			var idx := picks.find(oid)
-			var base := b.text.split("\n")[0].trim_prefix("1 · ").trim_prefix("2 · ").trim_prefix("3 · ").trim_prefix("4 · ")
-			var rest := b.text.substr(b.text.split("\n")[0].length())
-			b.text = ("%d · %s" % [idx + 1, base] if count > 1 and idx >= 0 else base) + rest
-		var lab: Label = _count_labels[cid]
-		lab.text = "choose %d   %d selected" % [count, picks.size()] if count > 1 else "choose 1"
-		if dependent and not clip.is_empty():
-			var parent_name := str(_data.get("names", {}).get(clip, clip))
-			lab.text += "   (for %s)" % parent_name if fitting < (ch["pool"] as Array).size() else ""
-		if picks.size() != count:
-			ready = false
-	_play.disabled = not ready
-	_play.text = ("Practice" if Session.practice else "Play") if ready else "Choose all"
-
-
-func _listen(rel_path: String) -> void:
-	var stream := LevelLoader.load_stream(_pack.path_join(rel_path))
-	if stream != null:
-		_audition.stream = stream
-		_audition.play()
-
-
 func _start() -> void:
-	_audition.stop()
-	Session.start_mission(Session.mission_number, _picks, Session.practice, _part)
+	Session.start_mission(Session.mission_number, Session.practice, _part)
 	get_tree().change_scene_to_file("res://src/scenes/play.tscn")
 
 

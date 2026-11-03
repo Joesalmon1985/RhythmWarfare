@@ -285,6 +285,9 @@ packs and their loader were removed; their source MIDI under `campaign/First_Thr
 
 ## 15. Missions (schema 3): four pads, sequences, rewards
 
+Superseded in part by section 16 (3 November 2026, night): the per-mission choices, the schema 3 pack and the content
+build below describe the retired model; pads, recognition, sequences, rewards and capacity still stand.
+
 Written 31 October 2026 from `docs/BRIEF_PADS_SEQUENCES_TEN_MISSIONS.md` (Part A wins over Part B). Schema 1 packs keep the
 duel rules of sections 1 to 13 as the legacy free-play mode. The numbers live in `data/campaign/rules.json`, which the
 game (`MissionRules`) and the content build (`tools/content`) both read.
@@ -419,3 +422,92 @@ Cue and hold recognition; generous acceptance with precision setting only the de
 reward per pass; spam, duplicate and held-pad prevention; pause and retry determinism; continuity of stems across
 phases; valid sockets and capacity behaviour; all ten missions load and complete; progression and unlocks; save
 migration; content replacement through the build. Seeded trials (perfect, beginner, sloppy, none) in `docs/BALANCE.md`.
+
+## 16. Loadouts and the loop library (schema 4)
+
+Written 3 November 2026 (night) from the owner's redesign. It supersedes the choice, pack and content parts of section 15
+(its pads, recognition, sequences, rewards and capacity rules stand). Numbers: `data/campaign/rules.json`,
+`data/campaign/instruments.json`, `data/campaign/loadouts.json`.
+
+### The design
+
+- A mission no longer authors music. It is a base (the battlefield), the waves and a form: one letter per 8-bar phase,
+  `D` drums or `B` bass (mission 1: `DDBDBDDBDBDBDDBD`, 128 bars). The player has ONE global loadout applied to every
+  mission: drum pattern (groove), fill (optional), kick sound, snare sound, bass line, bass sound and backing track.
+  All music in the game is the loadout; the arrangement is the pattern (the cues are the clip's own, tiled over the
+  phases); a recording belongs to the pattern it was made for (a clip lists the sounds it was recorded with, and only
+  those can be picked with it).
+- Instruments decide the units. A sound has a family and an entry in `instruments.json` (`produces`: reward ids with a
+  `share`; the build refuses a sound without one). Kick sounds produce infantry (`rifle_squad`, `grenadier_squad`, `e3`,
+  `e4`), snare sounds defenses (`pillbox`, `turret`, `flame_tower`), bass sounds vehicles (`jeep`, `apc`, `1tnk`, `2tnk`,
+  `arty`, `ftrk`). Shares expand in order, so 2:1 is A A B, and the cycle repeats. The mission has no reward list.
+- The even/odd rule: the drum sequences of a mission are counted 0, 1, 2 ... across all drum phases; sequence k takes
+  the next reward of the kick instrument's cycle when k is even and of the snare instrument's when odd. A bass sequence
+  takes the next of the bass instrument's. Each cycle advances once per use over the whole mission. A reward the base
+  cannot produce (vehicles where the battlefield has a barracks and no war factory: the village) falls back to the
+  existing repair crew (capacity rules of section 15); the briefing says so.
+- Unlock ladder: `data/campaign/campaign.json` lists the library items (clips and sounds) each mission adds
+  (`new_options`) when it opens, i.e. when the previous mission is cleared; mission 1 lists the default loadout and its
+  siblings. Every item a loadout can pick is on the ladder (the four backing sounds are not picked); `unlock_all` opens
+  everything. The result screen names what a clear added.
+- Presets for tools: `loadouts.json` `default` (mission 1's kit: Half-Time groove, no fill, Half-time kick, Backbeat
+  snare, Sub line, Deep sub, Driving hats) and `heavy` (Two-step, Snare run, Siege kick, Field clap, Octaves, Command
+  saw, Iron backing); the player's own loadout starts as `default`.
+
+### The loop engine
+
+- Each clip part and sound is one 8-bar Ogg loop (a backing is 16 bars) in `songs/library/loops/`: 529,655 frames at
+  48 kHz per 8 bars. A mission plays one `AudioStreamSynchronized` whose substreams are the loadout's loops (kick, snare,
+  fill kick and fill snare when a fill is equipped, bass, backing: at most six), every substream `loop = true`, ordered
+  longest loop first so the long backing leads. Loops start at song start and run for the whole song; cue and sound stay
+  locked at any phase boundary because every loop is bar-aligned.
+- The song position is unwrapped: Godot's player position wraps at the loop length (finding in
+  `tests/test_transport.gd`), so the transport counts wraps and returns `song_base + wraps x loop_seconds + raw`;
+  `song_base` offsets a practice of a later phase.
+- Gain program: the pack's per-bar flags decide which substreams sound: drum phases kick and snare, bass phases bass,
+  the backing always; with a fill, bar 8 of every eight plays the fill stems instead of the groove's (and the fill's cues
+  replace the groove's there). A switch ramps a substream's gain over 30 ms at a bar line; nothing is stopped.
+- Miss mutes (section 15) combine with the program: a stem sounds when programmed on AND not muted by a miss; the
+  backing never mutes.
+
+### The library index contract
+
+`songs/library/index.json` (`rhythm_warfare.library.v1`, written by the build, read by `LibraryIndex`): `bpm`,
+`ticks_per_beat`, `loop_bars`, `defaults` (the default loadout), `sounds` {id: family, name, placeholder, produces
+[{reward, share}], blurb}, `clips` {id: kind (`groove`, `fill`, `bass`, `backing`), name, key, bars, parts, bound,
+sounds {part: [sound ids]}, cues {part: [[tick, hold_ticks, pad]]} inside one loop, loops {part: {sound: file}},
+peak_db}. Compatibility: any groove or bass line; a groove's own kick and snare sounds; a fill only with the picked kick
+and snare sounds; a bass line's own sounds; a backing in the bass line's key. `Loadout.resolve` keeps a wanted pick only
+when it exists, is unlocked and fits the picks before it, else the default, else the first fitting id.
+
+### Pack, schema 4 (`songs/mNN_*/level.json`, no audio, written by the build)
+
+```
+schema_version 4, level_id, number, title, bpm 174, ticks_per_beat 960, time_signature [4,4], duration_ticks, seed,
+battlefield, roster, rules, sequence_threshold 0.6, sequence_bars 2,
+phases  [{id, start_tick, end_tick, mode}]        waves [{id, start_bar, entry, target?, groups, start_tick, via_defense_point}]
+intros  [{bar, text}]                              base {production [...], entries, points, civilians}
+```
+
+The game builds stems, cues, sequences (with their rewards) and the gain program from this plus the resolved loadout
+(`MissionLoader`); packs of schema 2 and 3 are refused. Content: `content/missions/level_NN.json` (the authoring above),
+`content/library/` (clips and renders); `python tools/content/build.py` writes the index, 117 loops (5.9 MB) and the
+packs in about 23 s. The build checks every clip and every groove-with-fill pair against the pad gap rules of section 15.
+
+### Save v3 and the screens
+
+- `user://campaign.json` `{version 3, cleared {level_id: best}, loadout {slot: id}, last_played}`. Version 2 (per-mission
+  selections) migrates: clears and bests stay, the selections are dropped, the loadout becomes the defaults; the old file
+  is kept as `.v2`. An empty or stale loadout resolves to the defaults and unlocked items on read.
+- Loadout screen (home, "Loadout"; also from the briefing): one row per slot (drum pattern, fill, kick, snare, bass
+  line, bass sound, backing) of cards, unlocked first; the equipped card is lit, a locked one says what unlocks it. A
+  sound card shows a strip of the units its instrument builds; every card can be auditioned (Listen). Choosing a card
+  re-resolves the whole loadout (a slot that no longer fits falls back) and saves it.
+- Mission briefing (before Play or Practice): the base (barracks and war factory, or barracks only with a warning that
+  vehicle rewards become repairs), approaches and rally points, villagers to protect, the wave count and length; the
+  loadout (the same in every mission) with the unit strips of its three instruments, vehicles struck out where there is
+  no factory; "Change loadout"; for practice, the whole song or one part.
+- Acceptance: loadouts resolve and refit; every pickable item is on the ladder; all ten missions load with the default
+  and heavy loadouts and perfect play wins them; save v2 migrates; the transport loops, unwraps and mutes; the library
+  build is deterministic. Seeded trials with both preset loadouts are in `docs/BALANCE.md` ("Loadouts"). Not verified by
+  ear: the loop switching at phase boundaries and the fill bar.

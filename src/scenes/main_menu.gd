@@ -1,5 +1,5 @@
 extends Control
-## Home: Continue (the next mission to play), Campaign, Practice and Settings; the developer and testing tools sit
+## Home: Continue (the next mission to play), Campaign, Practice, Loadout and Settings; the developer and testing tools sit
 ## behind one small button in the corner.
 
 
@@ -7,7 +7,7 @@ func _ready() -> void:
 	if OS.has_environment("RW_SCENE") and OS.get_environment("RW_SCENE") == "play":
 		# scripted runs on exported builds (which take no scene argument) jump straight into the level
 		if OS.has_environment("RW_MISSION"):
-			Session.start_mission(int(OS.get_environment("RW_MISSION")), {}, OS.get_environment("RW_PRACTICE") == "1")
+			Session.start_mission(int(OS.get_environment("RW_MISSION")), OS.get_environment("RW_PRACTICE") == "1")
 		get_tree().change_scene_to_file.call_deferred("res://src/scenes/play.tscn")
 		return
 	theme = UiStyle.theme()
@@ -36,6 +36,7 @@ func _ready() -> void:
 	box.add_child(cont)
 	box.add_child(UiStyle.button("Campaign", func() -> void: _missions(false)))
 	box.add_child(UiStyle.button("Practice", func() -> void: _missions(true)))
+	box.add_child(UiStyle.button("Loadout", func() -> void: get_tree().change_scene_to_file("res://src/scenes/loadout.tscn")))
 	box.add_child(UiStyle.button("Settings", func() -> void: get_tree().change_scene_to_file("res://src/scenes/settings.tscn")))
 	if c.migrated_from > 0:
 		box.add_child(UiStyle.note("Your progress from the previous version was carried over.", UiStyle.GOOD, 16))

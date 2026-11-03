@@ -5,19 +5,8 @@
  "pack": "m02_second_pulse",
  "bars": 40,
  "seed": 1002,
- "note": "First groove choice and a snare choice; first gun turret. Default content: the Second Pulse MIDI (straight groove for 8 bars, then the push groove with its extra kick).",
+ "form": "DDDDD",
  "battle": {"battlefield": "defense_02", "waves": "data/campaign/waves/level_02.json"},
- "choices": {
-  "groove": {"count": 1, "pool": ["groove_push", "groove_straight"], "default": ["groove_push"]},
-  "kick_sound": {"count": 1, "pool": ["kick_march", "kick_armour"], "default": ["kick_march"]},
-  "snare_sound": {"count": 1, "pool": ["snare_guard", "snare_crack"], "default": ["snare_guard"]}
- },
- "accompaniment": [{"clip": "acc_second_pulse", "start_bar": 1, "bars": 40}],
- "phases": [
-  {"bars": 8, "mode": "drums", "groove": "groove_straight", "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["pillbox", "pillbox"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["pillbox", "e3"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["turret", "pillbox"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["e3", "pillbox"]},
-  {"bars": 8, "mode": "drums", "groove": 1, "kick_sound": 1, "snare_sound": 1, "sequence_bars": 2, "rewards": ["turret", "pillbox"]}
- ]
+ "intros": [],
+ "note": "40 bars in 5 eight-bar phases (DDDDD): drum phases cue the kick and snare, no bass phase. The music is the player's loadout (songs/library); the mission sets only the form, the battlefield and the waves."
 }

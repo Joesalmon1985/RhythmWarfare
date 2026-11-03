@@ -2,11 +2,15 @@ extends SceneTree
 ## Headless balance harness (acceptance A08, A12): plays a level with a scripted input policy against its authored
 ## enemy schedule, with no audio and no rendering, and prints the trace.
 ##
-##   godot --headless --path . -s tools/autoplay.gd -- <pack dir> [policy] [enemy_fraction] [seed] [chart id]
+##   godot --headless --path . -s tools/autoplay.gd -- <pack dir> [policy] [enemy_fraction] [seed] [chart id] [section policy] [loadout:<name or JSON>]
 ## Schema 2 (defense) packs: enemy_fraction is ignored, seed also seeds the simulation, and the report adds the
 ## objective health, every wave's spawn / arrival / clear times, the production log summary and the group cycle.
 ##
-## Missions (schema 3) use plan_inputs(): perfect, accuracy:<f>, none, beginner, sloppy (plausible imperfect play with
+## Missions (schema 4) play the loadout named by a `loadout:<preset name or JSON>` argument (anywhere after the pack) or the
+## RW_LOADOUT environment variable; presets are in data/campaign/loadouts.json and the default is "default". Everything in the
+## library is unlocked. The loadout the mission resolved is printed in the report ("loadout").
+##
+## Missions use plan_inputs(): perfect, accuracy:<f>, none, beginner, sloppy (plausible imperfect play with
 ## timing scatter, misses, early hold releases and stray presses, seeded) and mash (pressing every lit pad every 60 ms).
 ## Missions also take a section policy (a sixth argument or the RW_SECTION environment variable): where the player taps
 ## to deploy rewards. auto taps the section the next wave comes through (Match.suggest_point) every time it changes,
@@ -21,10 +25,29 @@ extends SceneTree
 ## enemy_fraction: keep this seeded fraction of the authored enemy events (default 1.0 = the pack as authored)
 
 const FRAME_S := 1.0 / 60.0
+const LOADOUTS_PATH := "res://data/campaign/loadouts.json"
+
+
+## A loadout from a preset name in data/campaign/loadouts.json or from a JSON object; {} (the library defaults) when unknown.
+static func load_loadout(spec: String) -> Dictionary:
+	if spec.begins_with("{"):
+		var inline: Variant = JSON.parse_string(spec)
+		return inline if typeof(inline) == TYPE_DICTIONARY else {}
+	var presets: Variant = JSON.parse_string(FileAccess.get_file_as_string(LOADOUTS_PATH))
+	if typeof(presets) == TYPE_DICTIONARY and typeof(presets.get(spec)) == TYPE_DICTIONARY:
+		return presets[spec]
+	push_error("unknown loadout preset '%s'" % spec)
+	return {}
 
 
 func _init() -> void:
-	var args := OS.get_cmdline_user_args()
+	var args: Array = []
+	var loadout_arg := OS.get_environment("RW_LOADOUT") if OS.has_environment("RW_LOADOUT") else "default"
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("loadout:"):
+			loadout_arg = a.substr(8)
+		else:
+			args.append(a)
 	if args.is_empty():
 		push_error("usage: <pack dir> [policy] [enemy_fraction] [seed]")
 		quit(2)
@@ -35,7 +58,8 @@ func _init() -> void:
 	var seed_value := int(args[3]) if args.size() > 3 else 1
 	var chart_id: String = args[4] if args.size() > 4 else ""
 	var section_policy: String = args[5] if args.size() > 5 else (OS.get_environment("RW_SECTION") if OS.has_environment("RW_SECTION") else "")
-	var loaded := LevelLoader.load_pack(pack, {"chart_id": chart_id})
+	var wanted := load_loadout(loadout_arg)
+	var loaded := LevelLoader.load_pack(pack, {"chart_id": chart_id, "loadout": wanted})
 	if loaded["level"] == null:
 		push_error("pack rejected: " + str(loaded["errors"]))
 		quit(2)
@@ -51,9 +75,13 @@ func _init() -> void:
 			if rng.randf() < enemy_fraction:
 				kept.append(e)
 		level.enemy_events = kept
+	for w in loaded["warnings"]:
+		printerr("warning: ", w)
 	var m := Match.new()
 	m.setup(level)
 	var result := run(m, level, policy, rng, section_policy)
+	if level.is_mission():
+		result["loadout_name"] = loadout_arg if not loadout_arg.begins_with("{") else "custom"
 	print(JSON.stringify(result, "  "))
 	quit(0)
 

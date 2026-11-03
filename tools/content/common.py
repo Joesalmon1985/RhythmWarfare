@@ -22,7 +22,11 @@ ROOT = Path(__file__).resolve().parents[2]
 CONTENT = ROOT / "content"
 LIBRARY = CONTENT / "library"
 MISSIONS = CONTENT / "missions"
+MISSIONS_LEGACY = CONTENT / "missions_legacy"  # the old per-mission authoring (choices, phases); read only by export_midi.py
 SONGS = ROOT / "songs"
+SONGS_LIBRARY = SONGS / "library"  # index.json and the 8-bar loops the game plays
+INSTRUMENTS = ROOT / "data" / "campaign" / "instruments.json"
+RULES_PATH = ROOT / "data" / "campaign" / "rules.json"
 
 BPM = 174
 PPQ = 960
@@ -64,12 +68,30 @@ def read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def write_json(path: Path, data: dict, indent: int | None = 1) -> None:
+def _inline(value, indent: int, level: int, depth: int) -> str:
+    """JSON text: objects spread over lines down to `depth` levels, everything below on one line."""
+    if level >= depth or not isinstance(value, dict) or not value:
+        return json.dumps(value)
+    pad = " " * (indent * (level + 1))
+    rows = [f"{pad}{json.dumps(k)}: {_inline(v, indent, level + 1, depth)}" for k, v in value.items()]
+    return "{\n" + ",\n".join(rows) + "\n" + " " * (indent * level) + "}"
+
+
+def write_text_lf(path: Path, text: str) -> bool:
+    """Write text with LF line endings (never CRLF, even on Windows); untouched when the bytes are the same."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    text = json.dumps(data, indent=indent) + "\n"
-    if path.exists() and path.read_text(encoding="utf-8") == text:
-        return
-    path.write_text(text, encoding="utf-8")
+    data = text.encode("utf-8")
+    if path.exists() and path.read_bytes() == data:
+        return False
+    path.write_bytes(data)
+    return True
+
+
+def write_json(path: Path, data: dict, indent: int | None = 1, depth: int | None = None) -> None:
+    """Write JSON with LF endings. `depth` (with indent) spreads that many object levels over lines and puts everything
+    below on one line, which keeps long cue lists compact."""
+    text = (_inline(data, indent or 1, 0, depth) if depth is not None else json.dumps(data, indent=indent)) + "\n"
+    write_text_lf(path, text)
 
 
 def rel(path: Path) -> str:

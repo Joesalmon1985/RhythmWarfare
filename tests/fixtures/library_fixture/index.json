@@ -1,0 +1,688 @@
+{
+ "format": "rhythm_warfare.library.v1",
+ "bpm": 174,
+ "ticks_per_beat": 960,
+ "loop_bars": 8,
+ "defaults": {
+  "groove": "groove_a",
+  "fill": "",
+  "kick_sound": "kick_a",
+  "snare_sound": "snare_a",
+  "bass": "bass_line_1",
+  "bass_sound": "bass_a",
+  "backing": "acc_a"
+ },
+ "sounds": {
+  "kick_a": {
+   "family": "kick",
+   "name": "Fixture Kick A",
+   "placeholder": false,
+   "produces": [
+    {
+     "reward": "rifle_squad",
+     "share": 2
+    },
+    {
+     "reward": "grenadier_squad",
+     "share": 1
+    }
+   ],
+   "blurb": "rifles twice, then a grenadier"
+  },
+  "kick_b": {
+   "family": "kick",
+   "name": "Fixture Kick B",
+   "placeholder": false,
+   "produces": [
+    {
+     "reward": "pillbox",
+     "share": 1
+    }
+   ],
+   "blurb": "pillboxes"
+  },
+  "snare_a": {
+   "family": "snare",
+   "name": "Fixture Snare A",
+   "placeholder": false,
+   "produces": [
+    {
+     "reward": "grenadier_squad",
+     "share": 1
+    }
+   ],
+   "blurb": "grenadiers"
+  },
+  "snare_b": {
+   "family": "snare",
+   "name": "Fixture Snare B",
+   "placeholder": false,
+   "produces": [],
+   "blurb": "repairs"
+  },
+  "bass_a": {
+   "family": "bass",
+   "name": "Fixture Bass A",
+   "placeholder": false,
+   "produces": [
+    {
+     "reward": "rifle_squad",
+     "share": 1
+    }
+   ],
+   "blurb": "rifles"
+  },
+  "bass_b": {
+   "family": "bass",
+   "name": "Fixture Bass B",
+   "placeholder": false,
+   "produces": [
+    {
+     "reward": "turret",
+     "share": 1
+    }
+   ],
+   "blurb": "turrets"
+  },
+  "bass_c": {
+   "family": "bass",
+   "name": "Fixture Bass C",
+   "placeholder": false,
+   "produces": [
+    {
+     "reward": "flame_tower",
+     "share": 1
+    }
+   ],
+   "blurb": "flame towers"
+  }
+ },
+ "clips": {
+  "groove_a": {
+   "kind": "groove",
+   "name": "Fixture Groove A",
+   "key": "",
+   "bars": 8,
+   "parts": [
+    "kick",
+    "snare"
+   ],
+   "bound": true,
+   "sounds": {
+    "kick": [
+     "kick_a",
+     "kick_b"
+    ],
+    "snare": [
+     "snare_a",
+     "snare_b"
+    ]
+   },
+   "cues": {
+    "kick": [
+     [
+      0,
+      0,
+      1
+     ],
+     [
+      1920,
+      0,
+      1
+     ],
+     [
+      3840,
+      0,
+      1
+     ],
+     [
+      5760,
+      0,
+      1
+     ],
+     [
+      7680,
+      0,
+      1
+     ],
+     [
+      9600,
+      0,
+      1
+     ],
+     [
+      11520,
+      0,
+      1
+     ],
+     [
+      13440,
+      0,
+      1
+     ],
+     [
+      15360,
+      0,
+      1
+     ],
+     [
+      17280,
+      0,
+      1
+     ],
+     [
+      19200,
+      0,
+      1
+     ],
+     [
+      21120,
+      0,
+      1
+     ],
+     [
+      23040,
+      0,
+      1
+     ],
+     [
+      24960,
+      0,
+      1
+     ],
+     [
+      26880,
+      0,
+      1
+     ],
+     [
+      28800,
+      0,
+      1
+     ]
+    ],
+    "snare": [
+     [
+      960,
+      0,
+      4
+     ],
+     [
+      2880,
+      0,
+      4
+     ],
+     [
+      4800,
+      0,
+      4
+     ],
+     [
+      6720,
+      0,
+      4
+     ],
+     [
+      8640,
+      0,
+      4
+     ],
+     [
+      10560,
+      0,
+      4
+     ],
+     [
+      12480,
+      0,
+      4
+     ],
+     [
+      14400,
+      0,
+      4
+     ],
+     [
+      16320,
+      0,
+      4
+     ],
+     [
+      18240,
+      0,
+      4
+     ],
+     [
+      20160,
+      0,
+      4
+     ],
+     [
+      22080,
+      0,
+      4
+     ],
+     [
+      24000,
+      0,
+      4
+     ],
+     [
+      25920,
+      0,
+      4
+     ],
+     [
+      27840,
+      0,
+      4
+     ],
+     [
+      29760,
+      0,
+      4
+     ]
+    ]
+   },
+   "loops": {
+    "kick": {
+     "kick_a": "loops/groove_a__kick__kick_a.wav",
+     "kick_b": "loops/groove_a__kick__kick_b.wav"
+    },
+    "snare": {
+     "snare_a": "loops/groove_a__snare__snare_a.wav",
+     "snare_b": "loops/groove_a__snare__snare_b.wav"
+    }
+   },
+   "peak_db": -6.0
+  },
+  "groove_b": {
+   "kind": "groove",
+   "name": "Fixture Groove B",
+   "key": "",
+   "bars": 8,
+   "parts": [
+    "kick",
+    "snare"
+   ],
+   "bound": true,
+   "sounds": {
+    "kick": [
+     "kick_a"
+    ],
+    "snare": [
+     "snare_a"
+    ]
+   },
+   "cues": {
+    "kick": [
+     [
+      0,
+      0,
+      1
+     ],
+     [
+      3840,
+      0,
+      1
+     ],
+     [
+      7680,
+      0,
+      1
+     ],
+     [
+      11520,
+      0,
+      1
+     ],
+     [
+      15360,
+      0,
+      1
+     ],
+     [
+      19200,
+      0,
+      1
+     ],
+     [
+      23040,
+      0,
+      1
+     ],
+     [
+      26880,
+      0,
+      1
+     ]
+    ],
+    "snare": [
+     [
+      1920,
+      0,
+      4
+     ],
+     [
+      5760,
+      0,
+      4
+     ],
+     [
+      9600,
+      0,
+      4
+     ],
+     [
+      13440,
+      0,
+      4
+     ],
+     [
+      17280,
+      0,
+      4
+     ],
+     [
+      21120,
+      0,
+      4
+     ],
+     [
+      24960,
+      0,
+      4
+     ],
+     [
+      28800,
+      0,
+      4
+     ]
+    ]
+   },
+   "loops": {
+    "kick": {
+     "kick_a": "loops/groove_b__kick__kick_a.wav"
+    },
+    "snare": {
+     "snare_a": "loops/groove_b__snare__snare_a.wav"
+    }
+   },
+   "peak_db": -6.0
+  },
+  "fill_a": {
+   "kind": "fill",
+   "name": "Fixture Fill A",
+   "key": "",
+   "bars": 8,
+   "parts": [
+    "kick",
+    "snare"
+   ],
+   "bound": true,
+   "sounds": {
+    "kick": [
+     "kick_a"
+    ],
+    "snare": [
+     "snare_a",
+     "snare_b"
+    ]
+   },
+   "cues": {
+    "kick": [
+     [
+      26880,
+      0,
+      1
+     ],
+     [
+      27840,
+      0,
+      1
+     ],
+     [
+      28800,
+      0,
+      1
+     ]
+    ],
+    "snare": [
+     [
+      29760,
+      0,
+      4
+     ]
+    ]
+   },
+   "loops": {
+    "kick": {
+     "kick_a": "loops/fill_a__kick__kick_a.wav"
+    },
+    "snare": {
+     "snare_a": "loops/fill_a__snare__snare_a.wav",
+     "snare_b": "loops/fill_a__snare__snare_b.wav"
+    }
+   },
+   "peak_db": -6.0
+  },
+  "bass_line_1": {
+   "kind": "bass",
+   "name": "Fixture Line 1",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": [
+    "bass"
+   ],
+   "bound": false,
+   "sounds": {
+    "bass": [
+     "bass_a",
+     "bass_b"
+    ]
+   },
+   "cues": {
+    "bass": [
+     [
+      0,
+      0,
+      2
+     ],
+     [
+      3840,
+      0,
+      3
+     ],
+     [
+      7680,
+      0,
+      1
+     ],
+     [
+      9600,
+      1920,
+      2
+     ],
+     [
+      11520,
+      0,
+      4
+     ],
+     [
+      15360,
+      0,
+      2
+     ],
+     [
+      19200,
+      0,
+      3
+     ],
+     [
+      21120,
+      1920,
+      1
+     ],
+     [
+      23040,
+      0,
+      1
+     ],
+     [
+      26880,
+      0,
+      4
+     ]
+    ]
+   },
+   "loops": {
+    "bass": {
+     "bass_a": "loops/bass_line_1__bass__bass_a.wav",
+     "bass_b": "loops/bass_line_1__bass__bass_b.wav"
+    }
+   },
+   "peak_db": -6.0
+  },
+  "bass_line_2": {
+   "kind": "bass",
+   "name": "Fixture Line 2",
+   "key": "F minor",
+   "bars": 8,
+   "parts": [
+    "bass"
+   ],
+   "bound": false,
+   "sounds": {
+    "bass": [
+     "bass_c"
+    ]
+   },
+   "cues": {
+    "bass": [
+     [
+      0,
+      0,
+      1
+     ],
+     [
+      1920,
+      0,
+      1
+     ],
+     [
+      3840,
+      0,
+      1
+     ],
+     [
+      5760,
+      0,
+      1
+     ],
+     [
+      7680,
+      0,
+      1
+     ],
+     [
+      9600,
+      0,
+      1
+     ],
+     [
+      11520,
+      0,
+      1
+     ],
+     [
+      13440,
+      0,
+      1
+     ],
+     [
+      15360,
+      0,
+      1
+     ],
+     [
+      17280,
+      0,
+      1
+     ],
+     [
+      19200,
+      0,
+      1
+     ],
+     [
+      21120,
+      0,
+      1
+     ],
+     [
+      23040,
+      0,
+      1
+     ],
+     [
+      24960,
+      0,
+      1
+     ],
+     [
+      26880,
+      0,
+      1
+     ],
+     [
+      28800,
+      0,
+      1
+     ]
+    ]
+   },
+   "loops": {
+    "bass": {
+     "bass_c": "loops/bass_line_2__bass__bass_c.wav"
+    }
+   },
+   "peak_db": -6.0
+  },
+  "acc_a": {
+   "kind": "backing",
+   "name": "Fixture Backing A",
+   "key": "",
+   "bars": 8,
+   "parts": [
+    "other"
+   ],
+   "bound": false,
+   "sounds": {},
+   "cues": {},
+   "loops": {
+    "other": {
+     "": "loops/acc_a__other__backing.wav"
+    }
+   },
+   "peak_db": -6.0
+  },
+  "acc_b": {
+   "kind": "backing",
+   "name": "Fixture Backing B",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": [
+    "other"
+   ],
+   "bound": false,
+   "sounds": {},
+   "cues": {},
+   "loops": {
+    "other": {
+     "acc_b": "loops/acc_b__other__backing.wav"
+    }
+   },
+   "peak_db": -6.0
+  }
+ }
+}

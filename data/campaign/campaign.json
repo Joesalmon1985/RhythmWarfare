@@ -1,18 +1,18 @@
 {
  "format": "rhythm_warfare.campaign.v3",
  "unlock_all": false,
- "unlock_all_note": "Developer switch. true opens every playable mission and offers every option of each mission's pools. Normal progression is false (the shipped setting); RW_UNLOCK_ALL=1 forces it on for a run, RW_UNLOCK_ALL=0 off.",
- "unlock_policy": "Clearing mission n unlocks mission n+1 and the library options listed in its new_options. A mission's own defaults are always available. No accuracy threshold blocks the ladder.",
+ "unlock_all_note": "Developer switch. true opens every playable mission and offers every library item. Normal progression is false (the shipped setting); RW_UNLOCK_ALL=1 forces it on for a run, RW_UNLOCK_ALL=0 off.",
+ "unlock_policy": "Clearing mission n unlocks mission n+1 and the library items (clips and sounds) listed in its new_options. The default loadout is always available (mission 1 lists it). No accuracy threshold blocks the ladder.",
  "levels": [
-  {"number": 1, "level_id": "level_01", "title": "First Watch", "pack": "m01_first_watch", "new_options": ["kick_march", "kick_armour", "snare_guard", "groove_half_time", "groove_double_step", "groove_rolling", "bass_sub_line", "bass_reese_line", "bass_sub_bright", "bass_sub_deep", "bass_sub_pure", "bass_sub_wide", "bass_sub_warm", "bass_reese_dark", "bass_reese_deep", "bass_reese_soft", "bass_reese_round", "acc_hats_driving", "acc_hats_busy", "acc_hats_offbeat"]},
-  {"number": 2, "level_id": "level_02", "title": "Second Pulse", "pack": "m02_second_pulse", "new_options": ["groove_push", "groove_straight", "snare_crack"]},
-  {"number": 3, "level_id": "level_03", "title": "Hold the Line", "pack": "m03_hold_the_line", "new_options": ["bass_patrol", "bass_reese"]},
-  {"number": 4, "level_id": "level_04", "title": "Backbeat", "pack": "m04_backbeat", "new_options": ["groove_twostep", "kick_siege", "snare_clap", "fill_snare_run"]},
-  {"number": 5, "level_id": "level_05", "title": "Counterpoint", "pack": "m05_counterpoint", "new_options": ["bass_steps", "bass_growl", "bass_hold_b"]},
-  {"number": 6, "level_id": "level_06", "title": "Fortress", "pack": "m06_fortress", "new_options": ["groove_roller", "kick_heavy"]},
-  {"number": 7, "level_id": "level_07", "title": "Crossroads", "pack": "m07_crossroads", "new_options": ["bass_command", "bass_octaves"]},
-  {"number": 8, "level_id": "level_08", "title": "Crossfire", "pack": "m08_crossfire", "new_options": ["fill_break", "snare_rim"]},
-  {"number": 9, "level_id": "level_09", "title": "Iron Rhythm", "pack": "m09_iron_rhythm", "new_options": ["fill_kick_drop"]},
-  {"number": 10, "level_id": "level_10", "title": "Last Light", "pack": "m10_last_light", "new_options": ["bass_hollow"]}
+  {"number": 1, "level_id": "level_01", "title": "First Watch", "pack": "m01_first_watch", "new_options": ["kick_half_time", "snare_backbeat", "kick_march", "kick_armour", "snare_guard", "groove_half_time", "groove_double_step", "groove_rolling", "bass_sub_line", "bass_reese_line", "bass_sub_bright", "bass_sub_deep", "bass_sub_pure", "bass_sub_wide", "bass_sub_warm", "bass_reese_dark", "bass_reese_deep", "bass_reese_soft", "bass_reese_round", "acc_hats_driving", "acc_hats_busy", "acc_hats_offbeat", "kick_double_step", "kick_rolling", "groove_watch", "acc_first_watch"]},
+  {"number": 2, "level_id": "level_02", "title": "Second Pulse", "pack": "m02_second_pulse", "new_options": ["groove_push", "groove_straight", "snare_crack", "acc_second_pulse"]},
+  {"number": 3, "level_id": "level_03", "title": "Hold the Line", "pack": "m03_hold_the_line", "new_options": ["bass_patrol", "bass_reese", "bass_hold_a", "bass_hold_end", "acc_hold_the_line"]},
+  {"number": 4, "level_id": "level_04", "title": "Backbeat", "pack": "m04_backbeat", "new_options": ["groove_twostep", "kick_siege", "snare_clap", "fill_snare_run", "acc_backbeat"]},
+  {"number": 5, "level_id": "level_05", "title": "Counterpoint", "pack": "m05_counterpoint", "new_options": ["bass_steps", "bass_growl", "bass_hold_b", "acc_counterpoint"]},
+  {"number": 6, "level_id": "level_06", "title": "Fortress", "pack": "m06_fortress", "new_options": ["groove_roller", "kick_heavy", "acc_fortress"]},
+  {"number": 7, "level_id": "level_07", "title": "Crossroads", "pack": "m07_crossroads", "new_options": ["bass_command", "bass_octaves", "acc_crossroads"]},
+  {"number": 8, "level_id": "level_08", "title": "Crossfire", "pack": "m08_crossfire", "new_options": ["fill_break", "snare_rim", "acc_crossfire"]},
+  {"number": 9, "level_id": "level_09", "title": "Iron Rhythm", "pack": "m09_iron_rhythm", "new_options": ["fill_kick_drop", "acc_iron"]},
+  {"number": 10, "level_id": "level_10", "title": "Last Light", "pack": "m10_last_light", "new_options": ["bass_hollow", "acc_last_light"]}
  ]
 }

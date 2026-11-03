@@ -1,0 +1,867 @@
+{
+ "format": "rhythm_warfare.library.v1",
+ "bpm": 174,
+ "ticks_per_beat": 960,
+ "loop_bars": 8,
+ "defaults": {
+  "groove": "groove_half_time",
+  "fill": "",
+  "kick_sound": "kick_half_time",
+  "snare_sound": "snare_backbeat",
+  "bass": "bass_sub_line",
+  "bass_sound": "bass_sub_deep",
+  "backing": "acc_hats_driving"
+ },
+ "sounds": {
+  "kick_march": {
+   "family": "kick",
+   "name": "March Kick",
+   "placeholder": true,
+   "produces": [{"reward": "rifle_squad", "share": 3}],
+   "blurb": "March kick: nothing but rifle squads, dependable and plentiful."
+  },
+  "kick_armour": {
+   "family": "kick",
+   "name": "Armour Kick",
+   "placeholder": true,
+   "produces": [{"reward": "rifle_squad", "share": 1}, {"reward": "grenadier_squad", "share": 1}],
+   "blurb": "Armour kick: rifle and grenadier squads side by side."
+  },
+  "kick_siege": {
+   "family": "kick",
+   "name": "Siege Kick",
+   "placeholder": true,
+   "produces": [{"reward": "grenadier_squad", "share": 2}, {"reward": "e3", "share": 1}],
+   "blurb": "Siege kick: grenadiers with a rocket soldier to crack armour."
+  },
+  "kick_heavy": {
+   "family": "kick",
+   "name": "Heavy Kick",
+   "placeholder": true,
+   "produces": [{"reward": "e3", "share": 2}, {"reward": "e4", "share": 1}],
+   "blurb": "Heavy kick: rocket soldiers and the odd flamethrower."
+  },
+  "snare_guard": {
+   "family": "snare",
+   "name": "Guard Snare",
+   "placeholder": true,
+   "produces": [{"reward": "pillbox", "share": 1}],
+   "blurb": "Guard snare: builds pillboxes."
+  },
+  "snare_crack": {
+   "family": "snare",
+   "name": "Crack Snare",
+   "placeholder": true,
+   "produces": [{"reward": "pillbox", "share": 2}, {"reward": "turret", "share": 1}],
+   "blurb": "Crack snare: pillboxes, with a gun turret every third strike."
+  },
+  "snare_clap": {
+   "family": "snare",
+   "name": "Field Clap",
+   "placeholder": true,
+   "produces": [{"reward": "turret", "share": 1}],
+   "blurb": "Field clap: builds gun turrets."
+  },
+  "snare_rim": {
+   "family": "snare",
+   "name": "Rimshot",
+   "placeholder": true,
+   "produces": [{"reward": "flame_tower", "share": 1}, {"reward": "pillbox", "share": 1}],
+   "blurb": "Rimshot: flame towers and pillboxes in turn."
+  },
+  "bass_patrol": {
+   "family": "bass",
+   "name": "Patrol Sub",
+   "placeholder": true,
+   "produces": [{"reward": "jeep", "share": 1}],
+   "blurb": "Patrol sub: builds Ranger jeeps."
+  },
+  "bass_reese": {
+   "family": "bass",
+   "name": "Reese",
+   "placeholder": true,
+   "produces": [{"reward": "1tnk", "share": 1}],
+   "blurb": "Reese: builds light tanks."
+  },
+  "bass_growl": {
+   "family": "bass",
+   "name": "Growl",
+   "placeholder": true,
+   "produces": [{"reward": "2tnk", "share": 1}, {"reward": "1tnk", "share": 1}],
+   "blurb": "Growl: medium and light tanks in turn."
+  },
+  "bass_command": {
+   "family": "bass",
+   "name": "Command Saw",
+   "placeholder": true,
+   "produces": [{"reward": "arty", "share": 1}, {"reward": "2tnk", "share": 1}],
+   "blurb": "Command saw: artillery and medium tanks in turn."
+  },
+  "bass_hollow": {
+   "family": "bass",
+   "name": "Hollow Sub",
+   "placeholder": true,
+   "produces": [{"reward": "ftrk", "share": 1}, {"reward": "apc", "share": 1}],
+   "blurb": "Hollow sub: flak trucks and APCs in turn."
+  },
+  "ensemble": {
+   "family": "other",
+   "name": "Ensemble",
+   "placeholder": true,
+   "produces": [],
+   "blurb": "Backing sound: plays under the music, builds nothing."
+  },
+  "kick_half_time": {
+   "family": "kick",
+   "name": "Half-Time Kick",
+   "placeholder": false,
+   "produces": [{"reward": "rifle_squad", "share": 2}, {"reward": "grenadier_squad", "share": 1}],
+   "blurb": "Steady half-time kick: mostly rifle squads, a grenadier squad now and then."
+  },
+  "kick_double_step": {
+   "family": "kick",
+   "name": "Double-Step Kick",
+   "placeholder": false,
+   "produces": [{"reward": "rifle_squad", "share": 1}, {"reward": "grenadier_squad", "share": 1}],
+   "blurb": "Double-step kick: rifle and grenadier squads in equal measure."
+  },
+  "kick_rolling": {
+   "family": "kick",
+   "name": "Rolling Kick",
+   "placeholder": false,
+   "produces": [{"reward": "grenadier_squad", "share": 2}, {"reward": "e3", "share": 2}],
+   "blurb": "Rolling kick: grenadiers and rocket soldiers for a heavier infantry line."
+  },
+  "snare_backbeat": {
+   "family": "snare",
+   "name": "Backbeat Snare",
+   "placeholder": false,
+   "produces": [{"reward": "pillbox", "share": 1}],
+   "blurb": "Backbeat snare: builds pillboxes."
+  },
+  "bass_sub_bright": {
+   "family": "bass",
+   "name": "Bright Sub",
+   "placeholder": false,
+   "produces": [{"reward": "jeep", "share": 1}],
+   "blurb": "Bright sub: fast Ranger jeeps."
+  },
+  "bass_sub_deep": {
+   "family": "bass",
+   "name": "Deep Sub",
+   "placeholder": false,
+   "produces": [{"reward": "apc", "share": 1}, {"reward": "jeep", "share": 1}],
+   "blurb": "Deep sub: APCs and jeeps in turn."
+  },
+  "bass_sub_pure": {
+   "family": "bass",
+   "name": "Pure Sub",
+   "placeholder": false,
+   "produces": [{"reward": "jeep", "share": 2}, {"reward": "apc", "share": 1}],
+   "blurb": "Pure sub: jeeps, with an APC now and then."
+  },
+  "bass_sub_wide": {
+   "family": "bass",
+   "name": "Wide Sub",
+   "placeholder": false,
+   "produces": [{"reward": "apc", "share": 1}],
+   "blurb": "Wide sub: builds APCs."
+  },
+  "bass_sub_warm": {
+   "family": "bass",
+   "name": "Warm Sub",
+   "placeholder": false,
+   "produces": [{"reward": "jeep", "share": 1}, {"reward": "1tnk", "share": 1}],
+   "blurb": "Warm sub: jeeps and light tanks in turn."
+  },
+  "bass_reese_dark": {
+   "family": "bass",
+   "name": "Dark Reese",
+   "placeholder": false,
+   "produces": [{"reward": "1tnk", "share": 1}],
+   "blurb": "Dark reese: builds light tanks."
+  },
+  "bass_reese_deep": {
+   "family": "bass",
+   "name": "Deep Reese",
+   "placeholder": false,
+   "produces": [{"reward": "1tnk", "share": 2}, {"reward": "apc", "share": 1}],
+   "blurb": "Deep reese: light tanks, with an APC now and then."
+  },
+  "bass_reese_soft": {
+   "family": "bass",
+   "name": "Soft Reese",
+   "placeholder": false,
+   "produces": [{"reward": "jeep", "share": 1}, {"reward": "1tnk", "share": 1}],
+   "blurb": "Soft reese: jeeps and light tanks in turn."
+  },
+  "bass_reese_round": {
+   "family": "bass",
+   "name": "Round Reese",
+   "placeholder": false,
+   "produces": [{"reward": "1tnk", "share": 1}, {"reward": "apc", "share": 1}],
+   "blurb": "Round reese: light tanks and APCs in turn."
+  },
+  "hats_driving": {
+   "family": "other",
+   "name": "Driving Hats",
+   "placeholder": false,
+   "produces": [],
+   "blurb": "Backing sound: plays under the music, builds nothing."
+  },
+  "hats_busy": {
+   "family": "other",
+   "name": "Busy Hats",
+   "placeholder": false,
+   "produces": [],
+   "blurb": "Backing sound: plays under the music, builds nothing."
+  },
+  "hats_offbeat": {
+   "family": "other",
+   "name": "Offbeat Hats",
+   "placeholder": false,
+   "produces": [],
+   "blurb": "Backing sound: plays under the music, builds nothing."
+  }
+ },
+ "clips": {
+  "acc_backbeat": {
+   "kind": "backing",
+   "name": "Backbeat accompaniment",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": ["other"],
+   "bound": false,
+   "sounds": {
+    "other": ["ensemble"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"ensemble": "loops/acc_backbeat__other__ensemble.ogg"}
+   },
+   "peak_db": {
+    "other": {"ensemble": -14.1}
+   }
+  },
+  "acc_counterpoint": {
+   "kind": "backing",
+   "name": "Counterpoint accompaniment",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": ["other"],
+   "bound": false,
+   "sounds": {
+    "other": ["ensemble"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"ensemble": "loops/acc_counterpoint__other__ensemble.ogg"}
+   },
+   "peak_db": {
+    "other": {"ensemble": -13.72}
+   }
+  },
+  "acc_crossfire": {
+   "kind": "backing",
+   "name": "Crossfire accompaniment",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": ["other"],
+   "bound": false,
+   "sounds": {
+    "other": ["ensemble"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"ensemble": "loops/acc_crossfire__other__ensemble.ogg"}
+   },
+   "peak_db": {
+    "other": {"ensemble": -13.89}
+   }
+  },
+  "acc_crossroads": {
+   "kind": "backing",
+   "name": "Crossroads accompaniment",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": ["other"],
+   "bound": false,
+   "sounds": {
+    "other": ["ensemble"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"ensemble": "loops/acc_crossroads__other__ensemble.ogg"}
+   },
+   "peak_db": {
+    "other": {"ensemble": -13.38}
+   }
+  },
+  "acc_first_watch": {
+   "kind": "backing",
+   "name": "First Watch accompaniment",
+   "key": "C# minor",
+   "bars": 16,
+   "parts": ["other"],
+   "bound": false,
+   "sounds": {
+    "other": ["ensemble"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"ensemble": "loops/acc_first_watch__other__ensemble.ogg"}
+   },
+   "peak_db": {
+    "other": {"ensemble": -15.77}
+   }
+  },
+  "acc_fortress": {
+   "kind": "backing",
+   "name": "Fortress accompaniment",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": ["other"],
+   "bound": false,
+   "sounds": {
+    "other": ["ensemble"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"ensemble": "loops/acc_fortress__other__ensemble.ogg"}
+   },
+   "peak_db": {
+    "other": {"ensemble": -13.28}
+   }
+  },
+  "acc_hats_busy": {
+   "kind": "backing",
+   "name": "Busy Hats",
+   "key": "F minor",
+   "bars": 8,
+   "parts": ["other"],
+   "bound": true,
+   "sounds": {
+    "other": ["hats_busy"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"hats_busy": "loops/acc_hats_busy__other__hats_busy.ogg"}
+   },
+   "peak_db": {
+    "other": {"hats_busy": -10.0}
+   }
+  },
+  "acc_hats_driving": {
+   "kind": "backing",
+   "name": "Driving Hats",
+   "key": "F minor",
+   "bars": 8,
+   "parts": ["other"],
+   "bound": true,
+   "sounds": {
+    "other": ["hats_driving"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"hats_driving": "loops/acc_hats_driving__other__hats_driving.ogg"}
+   },
+   "peak_db": {
+    "other": {"hats_driving": -10.0}
+   }
+  },
+  "acc_hats_offbeat": {
+   "kind": "backing",
+   "name": "Offbeat Hats",
+   "key": "F minor",
+   "bars": 8,
+   "parts": ["other"],
+   "bound": true,
+   "sounds": {
+    "other": ["hats_offbeat"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"hats_offbeat": "loops/acc_hats_offbeat__other__hats_offbeat.ogg"}
+   },
+   "peak_db": {
+    "other": {"hats_offbeat": -10.0}
+   }
+  },
+  "acc_hold_the_line": {
+   "kind": "backing",
+   "name": "Hold the Line accompaniment",
+   "key": "C# minor",
+   "bars": 16,
+   "parts": ["other"],
+   "bound": false,
+   "sounds": {
+    "other": ["ensemble"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"ensemble": "loops/acc_hold_the_line__other__ensemble.ogg"}
+   },
+   "peak_db": {
+    "other": {"ensemble": -14.09}
+   }
+  },
+  "acc_iron": {
+   "kind": "backing",
+   "name": "Iron Rhythm accompaniment",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": ["other"],
+   "bound": false,
+   "sounds": {
+    "other": ["ensemble"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"ensemble": "loops/acc_iron__other__ensemble.ogg"}
+   },
+   "peak_db": {
+    "other": {"ensemble": -14.08}
+   }
+  },
+  "acc_last_light": {
+   "kind": "backing",
+   "name": "Last Light accompaniment",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": ["other"],
+   "bound": false,
+   "sounds": {
+    "other": ["ensemble"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"ensemble": "loops/acc_last_light__other__ensemble.ogg"}
+   },
+   "peak_db": {
+    "other": {"ensemble": -14.53}
+   }
+  },
+  "acc_second_pulse": {
+   "kind": "backing",
+   "name": "Second Pulse accompaniment",
+   "key": "C# minor",
+   "bars": 16,
+   "parts": ["other"],
+   "bound": false,
+   "sounds": {
+    "other": ["ensemble"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"ensemble": "loops/acc_second_pulse__other__ensemble.ogg"}
+   },
+   "peak_db": {
+    "other": {"ensemble": -13.91}
+   }
+  },
+  "bass_hold_a": {
+   "kind": "bass",
+   "name": "Long Line",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": ["bass"],
+   "bound": false,
+   "sounds": {
+    "bass": ["bass_patrol", "bass_reese", "bass_growl", "bass_command", "bass_hollow"]
+   },
+   "cues": {
+    "bass": [[0, 0, 3], [7680, 0, 1], [15360, 0, 4], [23040, 0, 2]]
+   },
+   "loops": {
+    "bass": {"bass_patrol": "loops/bass_hold_a__bass__bass_patrol.ogg", "bass_reese": "loops/bass_hold_a__bass__bass_reese.ogg", "bass_growl": "loops/bass_hold_a__bass__bass_growl.ogg", "bass_command": "loops/bass_hold_a__bass__bass_command.ogg", "bass_hollow": "loops/bass_hold_a__bass__bass_hollow.ogg"}
+   },
+   "peak_db": {
+    "bass": {"bass_patrol": -8.47, "bass_reese": -8.12, "bass_growl": -9.22, "bass_command": -7.44, "bass_hollow": -8.42}
+   }
+  },
+  "bass_hold_b": {
+   "kind": "bass",
+   "name": "Answer Line",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": ["bass"],
+   "bound": false,
+   "sounds": {
+    "bass": ["bass_patrol", "bass_reese", "bass_growl", "bass_command", "bass_hollow"]
+   },
+   "cues": {
+    "bass": [[0, 0, 2], [3840, 0, 3], [5760, 0, 2], [7680, 0, 1], [15360, 0, 3], [19200, 0, 1], [21120, 0, 3], [23040, 0, 2], [26880, 0, 3], [28800, 0, 4]]
+   },
+   "loops": {
+    "bass": {"bass_patrol": "loops/bass_hold_b__bass__bass_patrol.ogg", "bass_reese": "loops/bass_hold_b__bass__bass_reese.ogg", "bass_growl": "loops/bass_hold_b__bass__bass_growl.ogg", "bass_command": "loops/bass_hold_b__bass__bass_command.ogg", "bass_hollow": "loops/bass_hold_b__bass__bass_hollow.ogg"}
+   },
+   "peak_db": {
+    "bass": {"bass_patrol": -6.34, "bass_reese": -8.38, "bass_growl": -7.84, "bass_command": -6.0, "bass_hollow": -5.93}
+   }
+  },
+  "bass_hold_end": {
+   "kind": "bass",
+   "name": "Answer Line (ending)",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": ["bass"],
+   "bound": false,
+   "sounds": {
+    "bass": ["bass_patrol", "bass_reese", "bass_growl", "bass_command", "bass_hollow"]
+   },
+   "cues": {
+    "bass": [[0, 0, 3], [3840, 0, 4], [5760, 0, 3], [7680, 0, 1], [15360, 0, 4], [19200, 0, 1], [21120, 0, 4], [23040, 0, 2], [26880, 0, 3]]
+   },
+   "loops": {
+    "bass": {"bass_patrol": "loops/bass_hold_end__bass__bass_patrol.ogg", "bass_reese": "loops/bass_hold_end__bass__bass_reese.ogg", "bass_growl": "loops/bass_hold_end__bass__bass_growl.ogg", "bass_command": "loops/bass_hold_end__bass__bass_command.ogg", "bass_hollow": "loops/bass_hold_end__bass__bass_hollow.ogg"}
+   },
+   "peak_db": {
+    "bass": {"bass_patrol": -8.11, "bass_reese": -8.38, "bass_growl": -8.89, "bass_command": -7.76, "bass_hollow": -8.04}
+   }
+  },
+  "bass_octaves": {
+   "kind": "bass",
+   "name": "Octaves",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": ["bass"],
+   "bound": false,
+   "sounds": {
+    "bass": ["bass_patrol", "bass_reese", "bass_growl", "bass_command", "bass_hollow"]
+   },
+   "cues": {
+    "bass": [[0, 0, 2], [1440, 0, 4], [3360, 0, 4], [7200, 0, 4], [9120, 0, 3], [11040, 0, 3], [14880, 0, 3], [16800, 0, 4], [18720, 0, 4], [22560, 0, 4], [24480, 0, 3], [26400, 0, 3], [30240, 0, 3]]
+   },
+   "loops": {
+    "bass": {"bass_patrol": "loops/bass_octaves__bass__bass_patrol.ogg", "bass_reese": "loops/bass_octaves__bass__bass_reese.ogg", "bass_growl": "loops/bass_octaves__bass__bass_growl.ogg", "bass_command": "loops/bass_octaves__bass__bass_command.ogg", "bass_hollow": "loops/bass_octaves__bass__bass_hollow.ogg"}
+   },
+   "peak_db": {
+    "bass": {"bass_patrol": -8.11, "bass_reese": -8.31, "bass_growl": -8.68, "bass_command": -8.37, "bass_hollow": -8.0}
+   }
+  },
+  "bass_reese_line": {
+   "kind": "bass",
+   "name": "Reese Line",
+   "key": "F minor",
+   "bars": 8,
+   "parts": ["bass"],
+   "bound": true,
+   "sounds": {
+    "bass": ["bass_reese_dark", "bass_reese_deep", "bass_reese_soft", "bass_reese_round"]
+   },
+   "cues": {
+    "bass": [[0, 0, 1], [1680, 0, 1], [3840, 0, 2], [5760, 0, 2], [7680, 0, 1], [9120, 0, 1], [10560, 0, 1], [13440, 0, 2], [15360, 0, 3], [17760, 0, 1], [19200, 0, 3], [20640, 0, 3], [22080, 0, 2], [24960, 0, 2], [26880, 0, 2], [29760, 0, 3]]
+   },
+   "loops": {
+    "bass": {"bass_reese_dark": "loops/bass_reese_line__bass__bass_reese_dark.ogg", "bass_reese_deep": "loops/bass_reese_line__bass__bass_reese_deep.ogg", "bass_reese_soft": "loops/bass_reese_line__bass__bass_reese_soft.ogg", "bass_reese_round": "loops/bass_reese_line__bass__bass_reese_round.ogg"}
+   },
+   "peak_db": {
+    "bass": {"bass_reese_dark": -13.62, "bass_reese_deep": -12.25, "bass_reese_soft": -17.1, "bass_reese_round": -12.58}
+   }
+  },
+  "bass_steps": {
+   "kind": "bass",
+   "name": "Steps",
+   "key": "C# minor",
+   "bars": 8,
+   "parts": ["bass"],
+   "bound": false,
+   "sounds": {
+    "bass": ["bass_patrol", "bass_reese", "bass_growl", "bass_command", "bass_hollow"]
+   },
+   "cues": {
+    "bass": [[0, 0, 3], [1920, 0, 4], [3840, 0, 3], [5760, 0, 2], [7680, 0, 2], [9600, 0, 3], [11520, 0, 2], [13440, 0, 1], [15360, 0, 4], [17280, 0, 2], [19200, 0, 4], [21120, 0, 3], [23040, 0, 2], [24960, 0, 3], [26880, 0, 2], [28800, 0, 3]]
+   },
+   "loops": {
+    "bass": {"bass_patrol": "loops/bass_steps__bass__bass_patrol.ogg", "bass_reese": "loops/bass_steps__bass__bass_reese.ogg", "bass_growl": "loops/bass_steps__bass__bass_growl.ogg", "bass_command": "loops/bass_steps__bass__bass_command.ogg", "bass_hollow": "loops/bass_steps__bass__bass_hollow.ogg"}
+   },
+   "peak_db": {
+    "bass": {"bass_patrol": -8.37, "bass_reese": -8.52, "bass_growl": -8.18, "bass_command": -7.53, "bass_hollow": -8.0}
+   }
+  },
+  "bass_sub_line": {
+   "kind": "bass",
+   "name": "Sub Line",
+   "key": "F minor",
+   "bars": 8,
+   "parts": ["bass"],
+   "bound": true,
+   "sounds": {
+    "bass": ["bass_sub_bright", "bass_sub_deep", "bass_sub_pure", "bass_sub_wide", "bass_sub_warm"]
+   },
+   "cues": {
+    "bass": [[0, 0, 1], [3840, 0, 2], [5760, 0, 2], [7680, 0, 1], [11520, 0, 2], [13440, 0, 2], [15360, 0, 3], [19200, 0, 3], [23040, 0, 2], [25920, 0, 2], [27840, 0, 4], [29760, 0, 3]]
+   },
+   "loops": {
+    "bass": {"bass_sub_bright": "loops/bass_sub_line__bass__bass_sub_bright.ogg", "bass_sub_deep": "loops/bass_sub_line__bass__bass_sub_deep.ogg", "bass_sub_pure": "loops/bass_sub_line__bass__bass_sub_pure.ogg", "bass_sub_wide": "loops/bass_sub_line__bass__bass_sub_wide.ogg", "bass_sub_warm": "loops/bass_sub_line__bass__bass_sub_warm.ogg"}
+   },
+   "peak_db": {
+    "bass": {"bass_sub_bright": -11.0, "bass_sub_deep": -11.0, "bass_sub_pure": -22.75, "bass_sub_wide": -11.66, "bass_sub_warm": -11.28}
+   }
+  },
+  "fill_break": {
+   "kind": "fill",
+   "name": "Break",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": false,
+   "sounds": {
+    "kick": ["kick_march", "kick_armour", "kick_siege", "kick_heavy"],
+    "snare": ["snare_guard", "snare_crack", "snare_clap", "snare_rim"]
+   },
+   "cues": {
+    "kick": [[26880, 0, 1], [28320, 0, 1], [29280, 0, 1]],
+    "snare": [[27840, 0, 4], [29280, 0, 4], [29760, 0, 4], [30240, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_march": "loops/fill_break__kick__kick_march.ogg", "kick_armour": "loops/fill_break__kick__kick_armour.ogg", "kick_siege": "loops/fill_break__kick__kick_siege.ogg", "kick_heavy": "loops/fill_break__kick__kick_heavy.ogg"},
+    "snare": {"snare_guard": "loops/fill_break__snare__snare_guard.ogg", "snare_crack": "loops/fill_break__snare__snare_crack.ogg", "snare_clap": "loops/fill_break__snare__snare_clap.ogg", "snare_rim": "loops/fill_break__snare__snare_rim.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_march": -7.91, "kick_armour": -8.19, "kick_siege": -7.17, "kick_heavy": -7.38},
+    "snare": {"snare_guard": -8.93, "snare_crack": -9.42, "snare_clap": -9.23, "snare_rim": -12.44}
+   }
+  },
+  "fill_kick_drop": {
+   "kind": "fill",
+   "name": "Kick Drop",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": false,
+   "sounds": {
+    "kick": ["kick_march", "kick_armour", "kick_siege", "kick_heavy"],
+    "snare": ["snare_guard", "snare_crack", "snare_clap", "snare_rim"]
+   },
+   "cues": {
+    "kick": [[26880, 0, 1], [28800, 0, 1], [29280, 0, 1], [29760, 0, 1], [30240, 0, 1]],
+    "snare": [[27840, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_march": "loops/fill_kick_drop__kick__kick_march.ogg", "kick_armour": "loops/fill_kick_drop__kick__kick_armour.ogg", "kick_siege": "loops/fill_kick_drop__kick__kick_siege.ogg", "kick_heavy": "loops/fill_kick_drop__kick__kick_heavy.ogg"},
+    "snare": {"snare_guard": "loops/fill_kick_drop__snare__snare_guard.ogg", "snare_crack": "loops/fill_kick_drop__snare__snare_crack.ogg", "snare_clap": "loops/fill_kick_drop__snare__snare_clap.ogg", "snare_rim": "loops/fill_kick_drop__snare__snare_rim.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_march": -7.95, "kick_armour": -7.78, "kick_siege": -6.85, "kick_heavy": -6.53},
+    "snare": {"snare_guard": -9.57, "snare_crack": -9.12, "snare_clap": -10.03, "snare_rim": -14.95}
+   }
+  },
+  "fill_snare_run": {
+   "kind": "fill",
+   "name": "Snare Run",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": false,
+   "sounds": {
+    "kick": ["kick_march", "kick_armour", "kick_siege", "kick_heavy"],
+    "snare": ["snare_guard", "snare_crack", "snare_clap", "snare_rim"]
+   },
+   "cues": {
+    "kick": [[26880, 0, 1], [29280, 0, 1]],
+    "snare": [[27840, 0, 4], [28800, 0, 4], [29280, 0, 4], [29760, 0, 4], [30240, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_march": "loops/fill_snare_run__kick__kick_march.ogg", "kick_armour": "loops/fill_snare_run__kick__kick_armour.ogg", "kick_siege": "loops/fill_snare_run__kick__kick_siege.ogg", "kick_heavy": "loops/fill_snare_run__kick__kick_heavy.ogg"},
+    "snare": {"snare_guard": "loops/fill_snare_run__snare__snare_guard.ogg", "snare_crack": "loops/fill_snare_run__snare__snare_crack.ogg", "snare_clap": "loops/fill_snare_run__snare__snare_clap.ogg", "snare_rim": "loops/fill_snare_run__snare__snare_rim.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_march": -8.28, "kick_armour": -8.54, "kick_siege": -7.16, "kick_heavy": -8.14},
+    "snare": {"snare_guard": -9.02, "snare_crack": -9.56, "snare_clap": -9.4, "snare_rim": -13.42}
+   }
+  },
+  "groove_double_step": {
+   "kind": "groove",
+   "name": "Double Step",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": true,
+   "sounds": {
+    "kick": ["kick_double_step"],
+    "snare": ["snare_backbeat"]
+   },
+   "cues": {
+    "kick": [[0, 0, 1], [960, 0, 1], [4800, 0, 1], [7680, 0, 1], [8640, 0, 1], [12480, 0, 1], [15360, 0, 1], [16320, 0, 1], [20160, 0, 1], [23040, 0, 1], [27840, 0, 1]],
+    "snare": [[1920, 0, 4], [5760, 0, 4], [9600, 0, 4], [13440, 0, 4], [17280, 0, 4], [21120, 0, 4], [24960, 0, 4], [28800, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_double_step": "loops/groove_double_step__kick__kick_double_step.ogg"},
+    "snare": {"snare_backbeat": "loops/groove_double_step__snare__snare_backbeat.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_double_step": -11.0},
+    "snare": {"snare_backbeat": -11.0}
+   }
+  },
+  "groove_half_time": {
+   "kind": "groove",
+   "name": "Half-Time",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": true,
+   "sounds": {
+    "kick": ["kick_half_time"],
+    "snare": ["snare_backbeat"]
+   },
+   "cues": {
+    "kick": [[0, 0, 1], [4800, 0, 1], [7680, 0, 1], [12480, 0, 1], [15360, 0, 1], [20160, 0, 1], [23040, 0, 1], [24000, 0, 1], [25920, 0, 1], [27840, 0, 1]],
+    "snare": [[1920, 0, 4], [5760, 0, 4], [9600, 0, 4], [13440, 0, 4], [17280, 0, 4], [21120, 0, 4], [24960, 0, 4], [28800, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_half_time": "loops/groove_half_time__kick__kick_half_time.ogg"},
+    "snare": {"snare_backbeat": "loops/groove_half_time__snare__snare_backbeat.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_half_time": -11.0},
+    "snare": {"snare_backbeat": -11.0}
+   }
+  },
+  "groove_push": {
+   "kind": "groove",
+   "name": "Push",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": false,
+   "sounds": {
+    "kick": ["kick_march", "kick_armour", "kick_siege", "kick_heavy"],
+    "snare": ["snare_guard", "snare_crack", "snare_clap", "snare_rim"]
+   },
+   "cues": {
+    "kick": [[0, 0, 1], [2880, 0, 1], [3840, 0, 1], [7680, 0, 1], [10560, 0, 1], [11520, 0, 1], [15360, 0, 1], [18240, 0, 1], [19200, 0, 1], [23040, 0, 1], [25920, 0, 1], [26880, 0, 1]],
+    "snare": [[1920, 0, 4], [5760, 0, 4], [9600, 0, 4], [13440, 0, 4], [17280, 0, 4], [21120, 0, 4], [24960, 0, 4], [28800, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_march": "loops/groove_push__kick__kick_march.ogg", "kick_armour": "loops/groove_push__kick__kick_armour.ogg", "kick_siege": "loops/groove_push__kick__kick_siege.ogg", "kick_heavy": "loops/groove_push__kick__kick_heavy.ogg"},
+    "snare": {"snare_guard": "loops/groove_push__snare__snare_guard.ogg", "snare_crack": "loops/groove_push__snare__snare_crack.ogg", "snare_clap": "loops/groove_push__snare__snare_clap.ogg", "snare_rim": "loops/groove_push__snare__snare_rim.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_march": -8.05, "kick_armour": -8.52, "kick_siege": -6.77, "kick_heavy": -7.31},
+    "snare": {"snare_guard": -9.55, "snare_crack": -9.42, "snare_clap": -9.66, "snare_rim": -13.46}
+   }
+  },
+  "groove_roller": {
+   "kind": "groove",
+   "name": "Roller",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": false,
+   "sounds": {
+    "kick": ["kick_march", "kick_armour", "kick_siege", "kick_heavy"],
+    "snare": ["snare_guard", "snare_crack", "snare_clap", "snare_rim"]
+   },
+   "cues": {
+    "kick": [[0, 0, 1], [480, 0, 1], [2400, 0, 1], [3840, 0, 1], [6240, 0, 1], [6720, 0, 1], [7680, 0, 1], [8160, 0, 1], [10080, 0, 1], [11520, 0, 1], [13920, 0, 1], [14400, 0, 1], [15360, 0, 1], [15840, 0, 1], [17760, 0, 1], [19200, 0, 1], [21600, 0, 1], [22080, 0, 1], [23040, 0, 1], [23520, 0, 1], [25440, 0, 1], [26880, 0, 1], [29280, 0, 1], [29760, 0, 1]],
+    "snare": [[960, 0, 4], [2880, 0, 4], [4800, 0, 4], [6720, 0, 4], [8640, 0, 4], [10560, 0, 4], [12480, 0, 4], [14400, 0, 4], [16320, 0, 4], [18240, 0, 4], [20160, 0, 4], [22080, 0, 4], [24000, 0, 4], [25920, 0, 4], [27840, 0, 4], [29760, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_march": "loops/groove_roller__kick__kick_march.ogg", "kick_armour": "loops/groove_roller__kick__kick_armour.ogg", "kick_siege": "loops/groove_roller__kick__kick_siege.ogg", "kick_heavy": "loops/groove_roller__kick__kick_heavy.ogg"},
+    "snare": {"snare_guard": "loops/groove_roller__snare__snare_guard.ogg", "snare_crack": "loops/groove_roller__snare__snare_crack.ogg", "snare_clap": "loops/groove_roller__snare__snare_clap.ogg", "snare_rim": "loops/groove_roller__snare__snare_rim.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_march": -7.98, "kick_armour": -7.92, "kick_siege": -6.78, "kick_heavy": -6.65},
+    "snare": {"snare_guard": -9.21, "snare_crack": -9.3, "snare_clap": -9.71, "snare_rim": -12.1}
+   }
+  },
+  "groove_rolling": {
+   "kind": "groove",
+   "name": "Rolling",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": true,
+   "sounds": {
+    "kick": ["kick_rolling"],
+    "snare": ["snare_backbeat"]
+   },
+   "cues": {
+    "kick": [[0, 0, 1], [960, 0, 1], [2880, 0, 1], [4800, 0, 1], [7680, 0, 1], [8640, 0, 1], [10560, 0, 1], [12480, 0, 1], [15360, 0, 1], [16320, 0, 1], [18240, 0, 1], [20160, 0, 1], [23040, 0, 1], [25920, 0, 1], [26880, 0, 1], [27840, 0, 1]],
+    "snare": [[1920, 0, 4], [5760, 0, 4], [9600, 0, 4], [13440, 0, 4], [17280, 0, 4], [21120, 0, 4], [24960, 0, 4], [28800, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_rolling": "loops/groove_rolling__kick__kick_rolling.ogg"},
+    "snare": {"snare_backbeat": "loops/groove_rolling__snare__snare_backbeat.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_rolling": -11.0},
+    "snare": {"snare_backbeat": -11.0}
+   }
+  },
+  "groove_straight": {
+   "kind": "groove",
+   "name": "Straight",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": false,
+   "sounds": {
+    "kick": ["kick_march", "kick_armour", "kick_siege", "kick_heavy"],
+    "snare": ["snare_guard", "snare_crack", "snare_clap", "snare_rim"]
+   },
+   "cues": {
+    "kick": [[0, 0, 1], [3840, 0, 1], [7680, 0, 1], [11520, 0, 1], [15360, 0, 1], [19200, 0, 1], [23040, 0, 1], [26880, 0, 1]],
+    "snare": [[1920, 0, 4], [5760, 0, 4], [9600, 0, 4], [13440, 0, 4], [17280, 0, 4], [21120, 0, 4], [24960, 0, 4], [28800, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_march": "loops/groove_straight__kick__kick_march.ogg", "kick_armour": "loops/groove_straight__kick__kick_armour.ogg", "kick_siege": "loops/groove_straight__kick__kick_siege.ogg", "kick_heavy": "loops/groove_straight__kick__kick_heavy.ogg"},
+    "snare": {"snare_guard": "loops/groove_straight__snare__snare_guard.ogg", "snare_crack": "loops/groove_straight__snare__snare_crack.ogg", "snare_clap": "loops/groove_straight__snare__snare_clap.ogg", "snare_rim": "loops/groove_straight__snare__snare_rim.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_march": -8.34, "kick_armour": -8.88, "kick_siege": -7.2, "kick_heavy": -7.72},
+    "snare": {"snare_guard": -9.56, "snare_crack": -10.62, "snare_clap": -9.83, "snare_rim": -14.32}
+   }
+  },
+  "groove_twostep": {
+   "kind": "groove",
+   "name": "Two-Step",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": false,
+   "sounds": {
+    "kick": ["kick_march", "kick_armour", "kick_siege", "kick_heavy"],
+    "snare": ["snare_guard", "snare_crack", "snare_clap", "snare_rim"]
+   },
+   "cues": {
+    "kick": [[0, 0, 1], [2400, 0, 1], [3840, 0, 1], [6240, 0, 1], [7680, 0, 1], [10080, 0, 1], [11520, 0, 1], [13920, 0, 1], [15360, 0, 1], [17760, 0, 1], [19200, 0, 1], [21600, 0, 1], [23040, 0, 1], [25440, 0, 1], [26880, 0, 1], [29280, 0, 1]],
+    "snare": [[960, 0, 4], [2880, 0, 4], [4800, 0, 4], [6720, 0, 4], [8640, 0, 4], [10560, 0, 4], [12480, 0, 4], [14400, 0, 4], [16320, 0, 4], [18240, 0, 4], [20160, 0, 4], [22080, 0, 4], [24000, 0, 4], [25920, 0, 4], [27840, 0, 4], [29760, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_march": "loops/groove_twostep__kick__kick_march.ogg", "kick_armour": "loops/groove_twostep__kick__kick_armour.ogg", "kick_siege": "loops/groove_twostep__kick__kick_siege.ogg", "kick_heavy": "loops/groove_twostep__kick__kick_heavy.ogg"},
+    "snare": {"snare_guard": "loops/groove_twostep__snare__snare_guard.ogg", "snare_crack": "loops/groove_twostep__snare__snare_crack.ogg", "snare_clap": "loops/groove_twostep__snare__snare_clap.ogg", "snare_rim": "loops/groove_twostep__snare__snare_rim.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_march": -8.35, "kick_armour": -8.32, "kick_siege": -7.02, "kick_heavy": -7.2},
+    "snare": {"snare_guard": -8.86, "snare_crack": -9.05, "snare_clap": -9.32, "snare_rim": -13.12}
+   }
+  },
+  "groove_watch": {
+   "kind": "groove",
+   "name": "Watch",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": false,
+   "sounds": {
+    "kick": ["kick_march", "kick_armour", "kick_siege", "kick_heavy"],
+    "snare": ["snare_guard", "snare_crack", "snare_clap", "snare_rim"]
+   },
+   "cues": {
+    "kick": [[0, 0, 1], [4800, 0, 1], [7680, 0, 1], [12480, 0, 1], [15360, 0, 1], [20160, 0, 1], [23040, 0, 1], [27840, 0, 1]],
+    "snare": [[1920, 0, 4], [5760, 0, 4], [9600, 0, 4], [13440, 0, 4], [17280, 0, 4], [21120, 0, 4], [24960, 0, 4], [28800, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_march": "loops/groove_watch__kick__kick_march.ogg", "kick_armour": "loops/groove_watch__kick__kick_armour.ogg", "kick_siege": "loops/groove_watch__kick__kick_siege.ogg", "kick_heavy": "loops/groove_watch__kick__kick_heavy.ogg"},
+    "snare": {"snare_guard": "loops/groove_watch__snare__snare_guard.ogg", "snare_crack": "loops/groove_watch__snare__snare_crack.ogg", "snare_clap": "loops/groove_watch__snare__snare_clap.ogg", "snare_rim": "loops/groove_watch__snare__snare_rim.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_march": -8.13, "kick_armour": -7.58, "kick_siege": -7.06, "kick_heavy": -7.4},
+    "snare": {"snare_guard": -9.66, "snare_crack": -8.87, "snare_clap": -9.26, "snare_rim": -14.48}
+   }
+  }
+ }
+}

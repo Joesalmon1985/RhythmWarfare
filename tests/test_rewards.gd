@@ -27,9 +27,10 @@ func _socket_ent(sim: BattleSim, i: int) -> BattleSim.Ent:
 	return sim.get_entity(int(sim.sockets[i]["ent"]))
 
 
-## m01 with the cues of sequence 0 pressed at `offset` (s) and nothing else, frame by frame at 60 fps up to `until`.
+## The fixture mission (village_01, kick sound B: every kick sequence builds a pillbox) with the cues of sequence 0 pressed
+## at `offset` (s) and nothing else, frame by frame at 60 fps up to the first reward.
 func _m01_seq0(offset: float) -> Match:
-	var level: Level = LevelLoader.load_pack(TestCase.project_path("songs/m01_first_watch"))["level"]
+	var level := TestCase.fixture_level({"kick_sound": "kick_b"})
 	var m := Match.new()
 	m.setup(level)
 	var cues: Array = []

@@ -1,13 +1,18 @@
 class_name MissionLoader
 extends RefCounted
-## Schema 3 mission packs (songs/<pack>/level.json, written by tools/content/build.py; PRD section 15). Builds a Level
-## for one selection of the mission's choices: the cues of the chosen clips (pad, tap or hold, sequence), the stems of
-## the chosen clip and sound combinations, the sequences with their rewards, the phases and the waves.
+## Schema 4 mission packs (songs/<pack>/level.json, written by tools/content/build.py): a mission authors no music. It
+## gives the length, the form (which eight-bar phases are drums and which bass), the battlefield and the waves. The
+## player's loadout (a clip and sound per slot, from the loop library) decides everything musical: the cues of each
+## phase (the loops' cue patterns tiled over the phase), the loop stems the transport plays, the sequences' rewards
+## (what each instrument's sound produces) and the per-bar gain program that switches drums and bass.
 ##
-## A selection is {choice id: [option ids, in slot order]}; anything missing or invalid falls back to the defaults
-## with a warning, so a stale save can never break a mission.
+## options: {"loadout": Dictionary, "library": LibraryIndex, "unlocked": Array of library ids, "practice": bool}. A
+## wanted loadout that is unknown, locked or incompatible falls back (Loadout.resolve) with a warning, so a stale
+## save can never break a mission. Without "unlocked" every library item counts as unlocked.
 
-const SCHEMA_VERSION := 3
+const SCHEMA_VERSION := 4
+const FILL_BAR := 7  # the fill replaces bar 8 of every eight bars (0-based within the loop)
+const LOOP_BARS := 8
 
 
 static func parse(d: Dictionary, pack_dir: String, options: Dictionary, errors: Array, warnings: Array) -> Level:
@@ -17,7 +22,7 @@ static func parse(d: Dictionary, pack_dir: String, options: Dictionary, errors: 
 	level.mode = "defense"
 	level.level_id = str(d.get("level_id", ""))
 	level.title = str(d.get("title", level.level_id))
-	level.campaign_level = int(d.get("campaign_level", 0))
+	level.campaign_level = int(d.get("number", d.get("campaign_level", 0)))
 	level.bpm = float(d.get("bpm", 174))
 	level.ticks_per_beat = int(d.get("ticks_per_beat", 960))
 	var ts: Array = d.get("time_signature", [4, 4])
@@ -28,156 +33,138 @@ static func parse(d: Dictionary, pack_dir: String, options: Dictionary, errors: 
 	level.battlefield = str(d.get("battlefield", "defense_02"))
 	level.roster = str(d.get("roster", "openra_mvp_01"))
 	level.rules = d.get("rules", {})
+	level.base = d.get("base", {}) if typeof(d.get("base", {})) == TYPE_DICTIONARY else {}
 	level.sequence_threshold = float(d.get("sequence_threshold", 0.6))
+	level.sequence_bars = maxi(int(d.get("sequence_bars", 2)), 1)
 	level.intro = str(d.get("intro", ""))
 	level.intro_bar = int(d.get("intro_bar", 1))
 	var intros: Variant = d.get("intros", [])
 	level.intros = intros if typeof(intros) == TYPE_ARRAY else []
 	if level.intros.is_empty() and not level.intro.is_empty():
 		level.intros = [{"bar": level.intro_bar, "text": level.intro}]
-	level.bound_sounds = d.get("bound_sounds", {})
-	level.choices = d.get("choices", [])
-	level.names = d.get("names", {})
-	level.previews = d.get("previews", {})
-	level.content = d.get("content", {})
-	level.placeholder = bool(d.get("placeholder", false))
+	elif level.intro.is_empty() and not level.intros.is_empty():
+		level.intro = str(level.intros[0].get("text", ""))
+		level.intro_bar = int(level.intros[0].get("bar", 1))
 	level.play_mode = "practice" if bool(options.get("practice", false)) else "campaign"
 	level.progression = level.play_mode == "campaign"
 	if level.level_id.is_empty() or level.duration_ticks <= 0 or level.bpm <= 0.0:
 		errors.append("level_id, bpm and duration_ticks are required")
 		return level
-	level.selection = resolve_selection(level.choices, options.get("selection", {}), warnings)
+	var index: LibraryIndex = options.get("library", null)
+	if index == null:
+		index = LibraryIndex.load_default()
+	if index.is_empty():
+		errors.append("the loop library is missing (%s); build it with tools/content/build.py" % (index.error if not index.error.is_empty() else "empty index"))
+		return level
+	var unlocked: Array = options.get("unlocked", []) if options.has("unlocked") else everything(index)
+	var wanted: Variant = options.get("loadout", {})
+	level.loadout = Loadout.resolve(index, unlocked, wanted if typeof(wanted) == TYPE_DICTIONARY else {}, warnings)
+	for id in index.clips:
+		level.names[id] = index.name(id)
+	for id in index.sounds:
+		level.names[id] = index.name(id)
 	for p in d.get("phases", []):
-		level.sections.append({"id": str(p["id"]), "start_tick": int(p["start_tick"]), "end_tick": int(p["end_tick"]),
-			"length_bars": (int(p["end_tick"]) - int(p["start_tick"])) / level.ticks_per_bar(), "mode": str(p["mode"]), "pads": p.get("pads", {})})
-	_stems(d, level, errors)
-	_cues(d, level, errors)
-	_sequences(d, level, errors)
+		var mode := str(p["mode"])
+		var phase := {"id": str(p["id"]), "start_tick": int(p["start_tick"]), "end_tick": int(p["end_tick"]),
+			"length_bars": (int(p["end_tick"]) - int(p["start_tick"])) / level.ticks_per_bar(), "mode": mode, "pads": _pads(mode, level.loadout)}
+		level.sections.append(phase)
+	if level.sections.is_empty():
+		errors.append("a mission needs phases")
+		return level
+	_stems(index, level, errors)
+	_cues(index, level, errors)
+	_sequences(index, level, errors, warnings)
+	_gain_program(level)
 	var waves: Variant = d.get("waves", [])
 	level.waves = waves if typeof(waves) == TYPE_ARRAY else []
 	level.waves.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a["start_tick"]) < int(b["start_tick"]))
-	if level.placeholder:
-		warnings.append("placeholder (generated) audio in use; owner renders replace it through tools/content/build.py")
 	return level
 
 
-## Defaults for anything not chosen; a chosen option must be in the pool, distinct, and the right count. A choice
-## that depends on another (a bass sound recorded from one bass line) is then made to fit that choice's pick.
-static func resolve_selection(choices: Array, wanted: Dictionary, warnings: Array) -> Dictionary:
-	var out := {}
-	for c in choices:
-		var cid := str(c["id"])
-		var pool: Array = []
-		for o in c["pool"]:
-			pool.append(str(o["id"]))
-		var pick: Array = []
-		var w: Variant = wanted.get(cid, [])
-		if typeof(w) == TYPE_ARRAY:
-			for o in w:
-				if pool.has(str(o)) and not pick.has(str(o)):
-					pick.append(str(o))
-		if pick.size() != int(c["count"]):
-			if not wanted.is_empty() and wanted.has(cid):
-				warnings.append("choice %s: %s is not a valid pick, using the default" % [cid, str(w)])
-			pick = []
-			for o in c["default"]:
-				pick.append(str(o))
-		out[cid] = pick
-	fit_dependents(choices, out, warnings)
+## Every clip and sound id of the library (what "nothing is locked" means).
+static func everything(index: LibraryIndex) -> Array:
+	var out: Array = []
+	out.append_array(index.clips.keys())
+	out.append_array(index.sounds.keys())
 	return out
 
 
-## Whether option `oid` of a choice may be picked while `clip` is the pick of the choice it depends on. An option
-## without a "with" list fits every clip.
-static func option_fits(choice: Dictionary, oid: String, clip: String) -> bool:
-	for o in choice["pool"]:
-		if str(o["id"]) == oid:
-			return not o.has("with") or (o["with"] as Array).has(clip)
-	return false
+## The pads of a phase: drums put the kick sound on pad 1 and the snare sound on pad 4; bass uses all four for the bass sound.
+static func _pads(mode: String, loadout: Dictionary) -> Dictionary:
+	if mode == "drums":
+		return {"1": {"family": "kick", "ref": str(loadout["kick_sound"])}, "4": {"family": "snare", "ref": str(loadout["snare_sound"])}}
+	var pads := {}
+	for b in range(1, 5):
+		pads[str(b)] = {"family": "bass", "ref": str(loadout["bass_sound"])}
+	return pads
 
 
-## The clip (of the choice `choice` depends on) that slot `slot` of it pairs with: the same slot, else the last one.
-static func parent_pick(choice: Dictionary, picks: Dictionary, slot: int) -> String:
-	var parent: Array = picks.get(str(choice.get("depends_on", "")), [])
-	if parent.is_empty():
-		return ""
-	return str(parent[mini(slot, parent.size() - 1)])
+## stem key -> [clip, part, sound] for the loadout; the fill stems only with a fill.
+static func stem_sources(lo: Dictionary) -> Dictionary:
+	var out := {"kick": [lo["groove"], "kick", lo["kick_sound"]], "snare": [lo["groove"], "snare", lo["snare_sound"]]}
+	if not str(lo.get("fill", "")).is_empty():
+		out["fill_kick"] = [lo["fill"], "kick", lo["kick_sound"]]
+		out["fill_snare"] = [lo["fill"], "snare", lo["snare_sound"]]
+	out["bass"] = [lo["bass"], "bass", lo["bass_sound"]]
+	out["other"] = [lo["backing"], "other", ""]
+	return out
 
 
-## Replace every pick of a dependent choice that does not fit its clip: the slot's default when that fits, else the
-## first fitting option not already picked. Edits `picks` in place; says what changed in `warnings`.
-static func fit_dependents(choices: Array, picks: Dictionary, warnings: Array) -> void:
-	for c in choices:
-		if not c.has("depends_on"):
+static func _stems(index: LibraryIndex, level: Level, errors: Array) -> void:
+	var sources := stem_sources(level.loadout)
+	for key in sources:
+		var src: Array = sources[key]
+		var path := index.loop_path(str(src[0]), str(src[1]), str(src[2]))
+		if path.is_empty():
+			errors.append("no loop for %s (%s, %s, %s): rebuild the library with tools/content/build.py" % [key, src[0], src[1], src[2]])
 			continue
-		var cid := str(c["id"])
-		var mine: Array = picks.get(cid, [])
-		for k in mine.size():
-			var clip := parent_pick(c, picks, k)
-			if clip.is_empty() or option_fits(c, str(mine[k]), clip):
-				continue
-			var repl := ""
-			var defaults: Array = c["default"]
-			var want := str(defaults[mini(k, defaults.size() - 1)])
-			if option_fits(c, want, clip) and not mine.has(want):
-				repl = want
-			else:
-				for o in c["pool"]:
-					if option_fits(c, str(o["id"]), clip) and not mine.has(str(o["id"])):
-						repl = str(o["id"])
-						break
-			if repl.is_empty():
-				warnings.append("choice %s: nothing in its pool plays %s" % [cid, clip])
-				continue
-			warnings.append("choice %s: %s does not play %s, using %s" % [cid, str(mine[k]), clip, repl])
-			mine[k] = repl
+		level.stems[key] = path
+		level.stem_family[key] = key.trim_prefix("fill_") if key.begins_with("fill_") else key
+		level.stem_loop_bars[key] = index.clip_bars(str(src[0]))
 
 
-static func _key(deps: Array, selection: Dictionary) -> String:
-	var parts: PackedStringArray = []
-	for dep in deps:
-		var bits := str(dep).split("#")
-		var picked: Array = selection.get(bits[0], [])
-		var slot := int(bits[1]) - 1
-		parts.append(str(picked[slot]) if slot >= 0 and slot < picked.size() else "")
-	return "|".join(parts)
-
-
-static func _stems(d: Dictionary, level: Level, errors: Array) -> void:
-	for s in d.get("stems", []):
-		var key := _key(s["deps"], level.selection)
-		var files: Dictionary = s["files"]
-		if not files.has(key):
-			errors.append("stem %s has no render for %s (rebuild with tools/content/build.py)" % [s["key"], key])
-			continue
-		var f: Dictionary = files[key]
-		if not LevelLoader._safe_relative(str(f["file"])):
-			errors.append("stem %s path escapes the pack" % s["key"])
-			continue
-		level.stems[str(s["key"])] = level.pack_dir.path_join(str(f["file"]))
-		level.stem_family[str(s["key"])] = str(s["family"])
-		if f.get("placeholder", false):
-			level.placeholder_stems += 1
-
-
-static func _cues(d: Dictionary, level: Level, errors: Array) -> void:
+## The cues of the loadout tiled over every phase. A loop is one clip-length of song time starting at tick 0 (the
+## stems loop from the song start, so cue and sound stay locked whatever the phase boundaries); a drums phase plays
+## the groove's kick and snare cues, with the fill's cues in place of the groove's in bar 8 of every eight when a fill
+## is equipped; a bass phase plays the bass line's cues.
+static func _cues(index: LibraryIndex, level: Level, errors: Array) -> void:
+	var lo := level.loadout
+	var tpb := level.ticks_per_bar()
 	var raw: Array = []
-	for b in d.get("cue_blocks", []):
-		var key := _key(b["deps"], level.selection) if not b["deps"].is_empty() else ""
-		var opts: Dictionary = b["options"]
-		var list: Array = []
-		if key.is_empty():
-			list = opts.values()[0] if opts.size() == 1 else []
-		elif opts.has(key):
-			list = opts[key]
+	for pi in level.sections.size():
+		var ph: Dictionary = level.sections[pi]
+		var a := int(ph["start_tick"])
+		var b := int(ph["end_tick"])
+		var plans: Array = []  # [clip, part, sound, family, replace_fill_bar]
+		if str(ph["mode"]) == "drums":
+			plans.append([lo["groove"], "kick", lo["kick_sound"], "kick", false])
+			plans.append([lo["groove"], "snare", lo["snare_sound"], "snare", false])
+			if not str(lo.get("fill", "")).is_empty():
+				plans.append([lo["fill"], "kick", lo["kick_sound"], "kick", true])
+				plans.append([lo["fill"], "snare", lo["snare_sound"], "snare", true])
 		else:
-			errors.append("cue block of phase %d has no cues for %s" % [int(b["phase"]), key])
-			continue
-		for c in list:
-			raw.append({"tick": int(c[0]), "duration_ticks": int(c[1]), "pad": int(b["pad"]), "family": str(b["family"]),
-				"voice": str(b["voice"]), "phase": int(b["phase"])})
-	raw.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-		return a["tick"] < b["tick"] if a["tick"] != b["tick"] else a["pad"] < b["pad"])
+			plans.append([lo["bass"], "bass", lo["bass_sound"], "bass", false])
+		var has_fill := not str(lo.get("fill", "")).is_empty() and str(ph["mode"]) == "drums"
+		for plan in plans:
+			var clip := str(plan[0])
+			var loop_ticks := index.clip_bars(clip) * tpb
+			if loop_ticks <= 0:
+				continue
+			var is_fill: bool = plan[4]
+			var cues := index.cues(clip, str(plan[1]))
+			var loops := int(ceil(float(b) / float(loop_ticks)))
+			for k in range(a / loop_ticks, loops):
+				for c in cues:
+					var tick := k * loop_ticks + int(c[0])
+					if tick < a or tick >= b:
+						continue
+					var in_fill_bar := has_fill and (tick / tpb) % LOOP_BARS == FILL_BAR
+					if in_fill_bar != is_fill:
+						continue  # the groove's bar 8 is replaced by the fill's; the fill sounds only there
+					raw.append({"tick": tick, "duration_ticks": int(c[1]), "pad": int(c[2]), "family": str(plan[3]),
+						"voice": str(plan[2]), "phase": pi})
+	raw.sort_custom(func(x: Dictionary, y: Dictionary) -> bool:
+		return x["tick"] < y["tick"] if x["tick"] != y["tick"] else x["pad"] < y["pad"])
 	var i := 0
 	for n in raw:
 		n["id"] = "c%04d" % i
@@ -191,17 +178,42 @@ static func _cues(d: Dictionary, level: Level, errors: Array) -> void:
 		n["seq"] = -1
 		level.notes.append(n)
 		i += 1
+	if level.notes.is_empty():
+		errors.append("the loadout has no cues in this mission")
 
 
-static func _sequences(d: Dictionary, level: Level, errors: Array) -> void:
-	for s in d.get("sequences", []):
-		var seq := {"index": int(s["index"]), "phase": int(s["phase"]), "mode": str(s["mode"]), "start_tick": int(s["start_tick"]),
-			"end_tick": int(s["end_tick"]), "reward": str(s["reward"])}
-		seq["start_time"] = level.tick_to_seconds(seq["start_tick"])
-		seq["end_time"] = level.tick_to_seconds(seq["end_tick"])
-		if MissionRules.reward(seq["reward"]).is_empty():
-			errors.append("sequence %d: unknown reward %s" % [seq["index"], seq["reward"]])
-		level.sequences.append(seq)
+## Sequences of sequence_bars bars inside each phase (never across a phase). A drums sequence with 0-based drum counter
+## k pays the kick instrument's next reward when k is even and the snare instrument's when odd; a bass sequence pays
+## the bass instrument's. Each instrument's cycle advances once per use across the whole mission.
+static func _sequences(index: LibraryIndex, level: Level, errors: Array, warnings: Array) -> void:
+	var lo := level.loadout
+	var cycles := {"kick": Loadout.reward_cycle(index, str(lo["kick_sound"])), "snare": Loadout.reward_cycle(index, str(lo["snare_sound"])),
+		"bass": Loadout.reward_cycle(index, str(lo["bass_sound"]))}
+	var used := {"kick": 0, "snare": 0, "bass": 0}
+	var span := level.sequence_bars * level.ticks_per_bar()
+	var drum_count := 0
+	for pi in level.sections.size():
+		var ph: Dictionary = level.sections[pi]
+		var a := int(ph["start_tick"])
+		var b := int(ph["end_tick"])
+		var count := (b - a) / span
+		if (b - a) % span != 0:
+			warnings.append("phase %s is not a whole number of %d-bar sequences; the last bars hold no sequence" % [ph["id"], level.sequence_bars])
+		for k in count:
+			var who := "bass"
+			if str(ph["mode"]) == "drums":
+				who = "kick" if drum_count % 2 == 0 else "snare"
+				drum_count += 1
+			var cycle: Array = cycles[who]
+			var reward := str(cycle[int(used[who]) % cycle.size()])
+			used[who] = int(used[who]) + 1
+			var seq := {"index": level.sequences.size(), "phase": pi, "mode": str(ph["mode"]), "start_tick": a + k * span,
+				"end_tick": a + (k + 1) * span, "reward": reward, "instrument": who}
+			seq["start_time"] = level.tick_to_seconds(seq["start_tick"])
+			seq["end_time"] = level.tick_to_seconds(seq["end_tick"])
+			if MissionRules.reward(reward).is_empty():
+				errors.append("sequence %d: unknown reward %s" % [seq["index"], reward])
+			level.sequences.append(seq)
 	for n in level.notes:
 		for s in level.sequences:
 			if n["tick"] >= s["start_tick"] and n["tick"] < s["end_tick"]:
@@ -219,3 +231,27 @@ static func _sequences(d: Dictionary, level: Level, errors: Array) -> void:
 		s["cues"] = count
 		if count == 0:
 			errors.append("sequence %d has no cues" % int(s["index"]))
+
+
+## The per-bar gain program: which stems sound in each bar. Drums phases play kick and snare (the fill loops instead in
+## bar 8 of every eight when a fill is equipped), bass phases play bass; the backing always plays.
+static func _gain_program(level: Level) -> void:
+	var fill := level.stems.has("fill_kick")
+	var tpb := level.ticks_per_bar()
+	for bar in level.bar_count():
+		var mode := str(level.phase_at(bar * tpb).get("mode", ""))
+		var in_fill := fill and mode == "drums" and bar % LOOP_BARS == FILL_BAR
+		var prog := {}
+		for key in level.stems:
+			var on := false
+			match key:
+				"kick", "snare":
+					on = mode == "drums" and not in_fill
+				"fill_kick", "fill_snare":
+					on = in_fill
+				"bass":
+					on = mode == "bass"
+				"other":
+					on = true
+			prog[key] = on
+		level.gain_program.append(prog)

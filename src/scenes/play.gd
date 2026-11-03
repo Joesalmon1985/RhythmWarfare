@@ -41,7 +41,8 @@ func _ready() -> void:
 	if pack.is_empty():
 		_fatal("No mission selected")
 		return
-	var opts := {"chart_id": Session.chart_id, "selection": Session.selection, "practice": Session.practice}
+	var opts := {"chart_id": Session.chart_id, "practice": Session.practice, "loadout": Session.loadout(), "library": Session.library(),
+		"unlocked": Session.campaign.unlocked_items()}
 	var loaded := LevelLoader.load_pack(pack, opts)
 	if loaded["level"] == null:
 		_fatal("Song pack rejected:\n" + "\n".join(PackedStringArray(loaded["errors"])))
@@ -342,6 +343,8 @@ func _process(_delta: float) -> void:
 	for ev in events:
 		_on_match_event(ev, wall)
 	_push_events(events)
+	if level.is_mission() and not _ended and t >= level.duration_seconds():  # loops never finish: the mission ends with its last bar
+		_on_song_finished()
 	if battle_view != null:
 		battle_view.rally_point = match_ref.rally_point()
 	for b in range(1, PadView.BUTTONS + 1):
@@ -423,6 +426,8 @@ func _on_match_event(ev: Dictionary, wall: float) -> void:
 	match ev["kind"]:
 		"stem":
 			transport.set_stem_muted(ev["stem"], ev["muted"])
+		"program":
+			transport.apply_program(ev["on"])
 		"sequence":
 			var r: Dictionary = ev["result"]
 			if r["passed"]:

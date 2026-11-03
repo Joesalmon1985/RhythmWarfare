@@ -37,6 +37,7 @@ var reward_log: Array = []  # [{sequence, reward, grade, delay_s, resolve_time, 
 var _resolved: Array = []  # sequence results waiting for the tick that contains their resolve time
 var _mission_phase := -1  # the phase (section index) the last advance was in
 var _phase_families: Array = []  # per phase: {family: true} for every family with a cue in it
+var _program_bar := -1  # the bar whose gain program was last emitted (missions)
 
 const WAVE_WARNING_S := 8.0  # the "wave_warning" event comes this long before a wave's first unit appears
 
@@ -125,6 +126,7 @@ func _setup_mission(p_rules: Rules) -> void:
 	pad_judge.setup(level.notes, level.sequences)
 	tracker.setup(level, pad_judge)
 	_mission_phase = -1
+	_program_bar = -1
 	_phase_families = []
 	for _i in level.sections.size():
 		_phase_families.append({})
@@ -165,6 +167,7 @@ func _setup_mission(p_rules: Rules) -> void:
 
 
 func _advance_mission(t: float) -> Array:
+	_emit_program(t)
 	pad_judge.update(t)
 	var judge_events := pad_judge.drain_events()
 	_judge_to_stems(judge_events, t)
@@ -196,6 +199,18 @@ func _advance_mission(t: float) -> Array:
 		outcome_reason = "rhythm_only"
 		outcome_time = t
 	return judge_events
+
+
+## The mission's gain program: when the song enters a new bar (and once at the first frame) one {"kind": "program", "on":
+## {stem key: bool}} event says which stems sound. The transport combines it with the miss mutes.
+func _emit_program(t: float) -> void:
+	if level.gain_program.is_empty():
+		return
+	var bar := clampi(level.seconds_to_tick(maxf(t, 0.0)) / level.ticks_per_bar(), 0, level.gain_program.size() - 1)
+	if bar == _program_bar:
+		return
+	_program_bar = bar
+	_events.append({"kind": "program", "on": (level.gain_program[bar] as Dictionary).duplicate(), "bar": bar})
 
 
 ## A passed sequence schedules its one reward at resolve time + the precision delay, on the tick that contains its
@@ -321,7 +336,7 @@ func _mission_result() -> Dictionary:
 		"progression": level.progression,
 		"campaign_level": level.campaign_level,
 		"battle": battle_enabled,
-		"selection": level.selection.duplicate(true),
+		"loadout": level.loadout.duplicate(true),
 		"accuracy": pad_judge.accuracy(),
 		"cues": pad_judge.notes.size(),
 		"perfect": pad_judge.perfect,

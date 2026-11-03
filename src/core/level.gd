@@ -1,6 +1,6 @@
 class_name Level
 extends RefCounted
-## One loaded song pack: the level definition plus resolved stem paths.
+## One loaded song pack: the level definition plus resolved stem paths (loop files for missions).
 ## Timing authority: integer ticks (ticks_per_beat per quarter note), bar 1 at tick 0.
 ## event_seconds = song_offset_ms / 1000 + tick * 60 / (bpm * ticks_per_beat)
 ##
@@ -12,6 +12,8 @@ const LANES := ["kick", "snare", "bass"]
 const ACTIONS := ["kick", "snare", "bass"]
 const NOTE_TYPES := ["tap", "hold"]
 const STEM_KEYS := ["kick", "snare", "bass", "other"]
+## The loop stems of a mission (schema 4): the drum loops, the fill loops (when a fill is equipped), bass and backing.
+const MISSION_STEM_KEYS := ["kick", "snare", "fill_kick", "fill_snare", "bass", "other"]
 const BUTTONS := 4
 const FAMILIES := ["kick", "snare", "bass"]
 ## Left thumb plays buttons 1 and 2, right thumb 3 and 4 (schema 2 charts are validated per thumb).
@@ -22,7 +24,7 @@ const DEFAULT_BASS_BUTTONS := [2, 3]
 
 var pack_dir: String = ""
 var schema_version := 1
-var mode := "duel"  # "duel" (schema 1) or "defense" (schema 3 missions)
+var mode := "duel"  # "duel" (schema 1) or "defense" (schema 4 missions)
 var campaign_level := 0
 var chart_id := ""
 var play_mode := "campaign"  # "campaign" or "practice" (missions)
@@ -44,21 +46,19 @@ var sections: Array = []  # [{id, start_tick, length_bars}]
 var notes: Array = []  # schema 1: [{id, tick, lane, button, type, duration_ticks, time, end_time}] sorted by tick then button
 var enemy_events: Array = []  # [{id, tick, action, time}] sorted by tick
 var stem_lengths: Dictionary = {}  # stem key -> seconds, when the loader could decode them
-# schema 3 (missions, MissionLoader): the player's choices, the chosen selection, sequences with rewards
-var choices: Array = []  # [{id, label, count, default, pool: [{id, name}]}]
-var selection: Dictionary = {}  # choice id -> [option ids in slot order]
-var names: Dictionary = {}  # library id -> friendly name
-var previews: Dictionary = {}  # choice id -> option id -> preview file (relative to the pack)
-var content: Dictionary = {}  # build report: files, placeholder_files, owner_files, default_mix_peak_db
-var placeholder := false
-var placeholder_stems := 0
+# schema 4 (missions, MissionLoader): the loadout the level was built for, loop stems, the per-bar gain program
+var loadout: Dictionary = {}  # the resolved loadout (Loadout.SLOTS)
+var names: Dictionary = {}  # library id (clip or sound) -> friendly name
+var base: Dictionary = {}  # {production: [...], entries, points, civilians} as the pack gives it
+var stem_loop_bars: Dictionary = {}  # stem key -> bars of its loop (0 or absent: not a loop, the duel's stems)
+var gain_program: Array = []  # per bar (0-based): {stem key: bool}, which stems sound in that bar
 var stem_family: Dictionary = {}  # stem key -> kick, snare, bass, other
 var sequences: Array = []  # [{index, phase, mode, start_tick, end_tick, start_time, end_time, reward, cues}]
+var sequence_bars := 2
 var sequence_threshold := 0.6
 var intro := ""
 var intro_bar := 1  # the in-play intro shows for four bars from this bar
 var intros: Array = []  # [{bar, text}]: every in-play teaching line (the first is intro / intro_bar)
-var bound_sounds: Dictionary = {}  # clip id -> {part: sound id}: the render a clip declares for a part ("bound" sounds)
 
 
 func ticks_per_bar() -> int:
@@ -86,7 +86,7 @@ func is_defense() -> bool:
 
 
 func is_mission() -> bool:
-	return schema_version == 3
+	return schema_version == 4
 
 
 ## The phase (section) at a song tick, or {} outside the song.
@@ -97,38 +97,26 @@ func phase_at(tick: int) -> Dictionary:
 	return {}
 
 
-## Friendly name of a selected voice reference such as "kick_sound#1", a fixed sound id, or "bound:groove#1:kick"
-## (the sound the chosen clip declares for that part; the clip's own name when it declares none).
+## Friendly name of a library id (a sound or a clip); the id itself when unknown.
 func voice_name(ref: String) -> String:
-	if ref.begins_with("bound:"):
-		var bits := ref.split(":")
-		if bits.size() < 3:
-			return ref
-		var clip_id := selected_id(bits[1])
-		var sound := str(bound_sounds.get(clip_id, {}).get(bits[2], ""))
-		return str(names.get(sound, sound)) if not sound.is_empty() else str(names.get(clip_id, clip_id))
-	if ref.contains("#"):
-		var bits := ref.split("#")
-		var picked: Array = selection.get(bits[0], [])
-		var slot := int(bits[1]) - 1
-		if slot >= 0 and slot < picked.size():
-			return str(names.get(picked[slot], picked[slot]))
-		return ref
 	return str(names.get(ref, ref))
 
 
-## The library id a reference resolves to: the selected option of "choice#slot", else the reference itself.
-func selected_id(ref: String) -> String:
-	if ref.contains("#"):
-		var bits := ref.split("#")
-		var picked: Array = selection.get(bits[0], [])
-		var slot := int(bits[1]) - 1
-		return str(picked[slot]) if slot >= 0 and slot < picked.size() else ""
-	return ref
+## The stem keys that sound in a bar (0-based; the last program holds past the end, the first before the start).
+func audible_stems(bar: int) -> Array:
+	var out: Array = []
+	if gain_program.is_empty():
+		return out
+	var program: Dictionary = gain_program[clampi(bar, 0, gain_program.size() - 1)]
+	for key in program:
+		if bool(program[key]):
+			out.append(key)
+	return out
 
 
-func is_placeholder_audio() -> bool:
-	return placeholder_stems > 0
+## Bars in the song (the last may be partial).
+func bar_count() -> int:
+	return int(ceil(float(duration_ticks) / float(ticks_per_bar())))
 
 
 func notes_in_lane(lane: String) -> Array:

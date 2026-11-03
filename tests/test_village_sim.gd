@@ -574,7 +574,7 @@ func test_count_alive_ignores_civilian_deaths() -> void:
 
 func _match(extra_waves: Array = []) -> Match:
 	var level := Level.new()
-	level.schema_version = 3
+	level.schema_version = 4
 	level.mode = "defense"
 	level.level_id = "village_test"
 	level.title = "Village test"

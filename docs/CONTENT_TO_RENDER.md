@@ -1,7 +1,7 @@
 # Content to render: every file that replaces a placeholder
 
-Written by `python tools/content/render_list.py` from the loop library and the ten missions; rerun it after changing either.
-There are **29 clips** and **98 WAV renders** below, of which **18 are your recordings already in place** (marked *in place*; the rest play generated placeholders). You never render whole songs: each clip is rendered once per sound it is offered with, and the build assembles the missions from those pieces.
+Written by `python tools/content/build.py` (or `python tools/content/render_list.py`) from the loop library; it follows the library.
+There are **31 clips** and **117 WAV renders** below, of which **18 are your recordings already in place** (marked *in place*; the rest play generated placeholders). You never render whole songs or missions: the game plays one 8-bar loop per clip part and sound, so each clip is rendered once per sound it is offered with, and the build turns every render into its loop (`songs/library/loops/`).
 
 Batches exported from Ableton at 44.1 kHz (and MIDI longer than the clip) go through `tools/content/import_ableton.py`
 with a manifest like `content/imports/first_watch.json`: it converts, trims, gain-stages and files them (see
@@ -10,23 +10,35 @@ with a manifest like `content/imports/first_watch.json`: it converts, trims, gai
 ## Export settings (every WAV)
 
 - 48,000 Hz, stereo (2 channels), 16-bit PCM WAV. No normalising, no dither needed, leave headroom (peaks below about -3 dBFS:
-  up to five stems play together).
+  a kick, a snare, a bass and a backing play together).
 - Tempo 174 BPM, 4/4, project start = bar 1. Render the clip's bars **from its bar 1**, starting exactly on the downbeat with
   no pre-roll, and let the release ring: the file is the clip's musical length plus the release tail, **at most one extra bar**
-  (the build rejects longer files and warns when the tail is still sounding at its end).
+  (the build rejects longer files and warns when the tail is still sounding at its end). The loop folds the tail onto its
+  first bar, so a ringing tail is what makes the loop seam smooth.
 - One WAV per part and sound: render the kick part with the kick sound named in the file name, the snare part with the
-  snare sound, and so on. The accompaniment is one bus (pad and hats together).
+  snare sound, and so on. The backing is one bus (pad and hats together).
 - Ableton: Export Audio/Video, Rendered Track = the part's track (solo, or use the track's own export), Render Start = the clip's
   first bar, Render Length = the clip's bars (+ up to one bar for the tail), Sample Rate 48000, Bit Depth 16, File Type WAV,
   Normalize off, Create Analysis File off, Convert to Mono off.
+
+## How a render becomes a loop
+
+Every loop is exactly 8 bars (529,655 frames at 48 kHz) so the game can switch them on and off at any phase boundary:
+a 2-bar groove is placed at bars 1, 3, 5 and 7 and summed (its tail overlaps the next repetition); a 1-bar fill is placed
+in bar 8 of an otherwise silent loop; an 8-bar bass line or backing is the loop as it is; a backing longer than 16 bars
+(the generated ones are 32 to 48) is cut to its first 16 bars with a 10 ms fade. Whatever rings past the loop's end is
+added onto its start. The cues (what the player taps) come from the clip's MIDI: every kick note is pad 1, every snare
+note pad 4, bass notes spread over pads 1 to 4 by pitch (taps, at least 1440 ticks apart); ghost notes below the clip's
+`cue_min_velocity` are heard but not cued.
 
 ## MIDI (only if you change the notes)
 
 The clip MIDI files below are the structure the cues are made from. Every one exists already (cut from your First_Three MIDI,
 or generated); you only export a new one when you want different notes. Export the clip as MIDI from Ableton (type 0 or 1,
 any PPQ; with no tempo in the file 174 BPM is assumed), save it over the file named in the table, then re-render every WAV of
-that part: the build refuses a WAV rendered from the earlier MIDI. Note lengths count (bass notes of an eighth or longer are
-holds) and a hold must end inside its four-bar sequence.
+that part: the build refuses a WAV rendered from the earlier MIDI. The build checks the chart too: the same pad at least
+480 ticks apart, the same thumb (pads 1 and 2 left, 3 and 4 right) at least 480 ticks between pads, and every groove
+together with every fill (the groove's bars 1 to 7 and the fill's bar 8).
 
 ## Where the files go and the one command
 
@@ -38,10 +50,10 @@ python tools/content/build.py
 ```
 
 It checks every file (rate, channels, bit depth, length, tail, silence, alignment of the attacks to the MIDI, the MIDI's
-tempo, meter and grid, cues, holds and headroom), uses your files instead of the placeholders, rebuilds the game's stems and
-previews in `songs/`, and lists what is still placeholder in `content/REPORT.md` with the times to listen at. Your files are
-never written; delete one to go back to its placeholder. Commit your WAVs together with `content/build_state.json`. Then
-rebuild the exports (`docs/EXPORT.md`).
+tempo, meter and grid, the chart and headroom), uses your files instead of the placeholders, rebuilds the loops and the
+index in `songs/library/` (only the loops whose source changed are re-encoded), and lists what is still placeholder in
+`content/REPORT.md`. Your files are never written; delete one to go back to its placeholder. Commit your WAVs together
+with `content/build_state.json`.
 
 The placeholder of every file is already in place as a reference you can drag into Ableton:
 `content/library/<clip>/placeholder/<part>__<sound>.wav` (same length and timing your render should have). If that folder is
@@ -49,306 +61,339 @@ missing on a fresh checkout, run the build once.
 
 ## The files
 
-### `acc_hats_busy`: Busy Hats
-
-accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, used in mission 1. MIDI from no MIDI (audio-only accompaniment, never cued).
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| other | (none: audio only) | `content/library/acc_hats_busy/other__hats_busy.wav` | Busy Hats | *in place* |
-
-### `acc_hats_driving`: Driving Hats
-
-accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, used in mission 1. MIDI from no MIDI (audio-only accompaniment, never cued).
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| other | (none: audio only) | `content/library/acc_hats_driving/other__hats_driving.wav` | Driving Hats | *in place* |
-
-### `acc_hats_offbeat`: Offbeat Hats
-
-accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, used in mission 1. MIDI from no MIDI (audio-only accompaniment, never cued).
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| other | (none: audio only) | `content/library/acc_hats_offbeat/other__hats_offbeat.wav` | Offbeat Hats | *in place* |
-
-### `bass_reese_line`: Reese Line
-
-bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, used in mission 1. MIDI from your Ableton export (imported through `content/imports/first_watch.json`).
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| bass | `content/library/bass_reese_line/bass.mid` | `content/library/bass_reese_line/bass__bass_reese_dark.wav` | Dark Reese | *in place* |
-| bass | `content/library/bass_reese_line/bass.mid` | `content/library/bass_reese_line/bass__bass_reese_deep.wav` | Deep Reese | *in place* |
-| bass | `content/library/bass_reese_line/bass.mid` | `content/library/bass_reese_line/bass__bass_reese_round.wav` | Round Reese | *in place* |
-| bass | `content/library/bass_reese_line/bass.mid` | `content/library/bass_reese_line/bass__bass_reese_soft.wav` | Soft Reese | *in place* |
-
-### `bass_sub_line`: Sub Line
-
-bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, used in mission 1. MIDI from your Ableton export (imported through `content/imports/first_watch.json`).
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_bright.wav` | Bright Sub | *in place* |
-| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_deep.wav` | Deep Sub | *in place* |
-| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_pure.wav` | Pure Sub | *in place* |
-| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_warm.wav` | Warm Sub | *in place* |
-| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_wide.wav` | Wide Sub | *in place* |
-
 ### `groove_double_step`: Double Step
 
-groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 s), used in mission 1. MIDI from your Ableton export (imported through `content/imports/first_watch.json`).
+groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 s), played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/first_watch.json`). Loop: tiled to fill the 8-bar loop (a 8-bar groove repeats 1 times).
 
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| kick | `content/library/groove_double_step/kick.mid` | `content/library/groove_double_step/kick__kick_double_step.wav` | Double-Step Kick | *in place* |
-| snare | `content/library/groove_double_step/snare.mid` | `content/library/groove_double_step/snare__snare_backbeat.wav` | Backbeat Snare | *in place* |
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/groove_double_step/kick.mid` | `content/library/groove_double_step/kick__kick_double_step.wav` | Double-Step Kick | *in place* | `loops/groove_double_step__kick__kick_double_step.ogg` |
+| snare | `content/library/groove_double_step/snare.mid` | `content/library/groove_double_step/snare__snare_backbeat.wav` | Backbeat Snare | *in place* | `loops/groove_double_step__snare__snare_backbeat.ogg` |
 
 ### `groove_half_time`: Half-Time
 
-groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 s), used in mission 1. MIDI from your Ableton export (imported through `content/imports/first_watch.json`).
+groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 s), played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/first_watch.json`). Loop: tiled to fill the 8-bar loop (a 8-bar groove repeats 1 times).
 
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| kick | `content/library/groove_half_time/kick.mid` | `content/library/groove_half_time/kick__kick_half_time.wav` | Half-Time Kick | *in place* |
-| snare | `content/library/groove_half_time/snare.mid` | `content/library/groove_half_time/snare__snare_backbeat.wav` | Backbeat Snare | *in place* |
-
-### `groove_rolling`: Rolling
-
-groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 s), used in mission 1. MIDI from your Ableton export (imported through `content/imports/first_watch.json`).
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| kick | `content/library/groove_rolling/kick.mid` | `content/library/groove_rolling/kick__kick_rolling.wav` | Rolling Kick | *in place* |
-| snare | `content/library/groove_rolling/snare.mid` | `content/library/groove_rolling/snare__snare_backbeat.wav` | Backbeat Snare | *in place* |
-
-### `acc_second_pulse`: Second Pulse accompaniment
-
-accompaniment (pad and hats on one bus), **40 bars** (55.17 s; with the longest tail 56.55 s), key C# minor, used in mission 2. MIDI from your First_Three MIDI, level_02 bars 1-40.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| other | `content/library/acc_second_pulse/other.mid` | `content/library/acc_second_pulse/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` |
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/groove_half_time/kick.mid` | `content/library/groove_half_time/kick__kick_half_time.wav` | Half-Time Kick | *in place* | `loops/groove_half_time__kick__kick_half_time.ogg` |
+| snare | `content/library/groove_half_time/snare.mid` | `content/library/groove_half_time/snare__snare_backbeat.wav` | Backbeat Snare | *in place* | `loops/groove_half_time__snare__snare_backbeat.ogg` |
 
 ### `groove_push`: Push
 
-groove (kick and snare parts), **2 bars** (2.76 s; with the longest tail 4.14 s), used in missions 2, 3, 4, 5, 6, 7, 8, 9, 10. MIDI from your First_Three MIDI, level_02 bars 9-10.
+groove (kick and snare parts), **2 bars** (2.76 s; with the longest tail 4.14 s), MIDI from your First_Three MIDI, level_02 bars 9-10. Loop: tiled to fill the 8-bar loop (a 2-bar groove repeats 4 times).
 
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| kick | `content/library/groove_push/kick.mid` | `content/library/groove_push/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` |
-| kick | `content/library/groove_push/kick.mid` | `content/library/groove_push/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` |
-| kick | `content/library/groove_push/kick.mid` | `content/library/groove_push/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` |
-| kick | `content/library/groove_push/kick.mid` | `content/library/groove_push/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` |
-| snare | `content/library/groove_push/snare.mid` | `content/library/groove_push/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` |
-| snare | `content/library/groove_push/snare.mid` | `content/library/groove_push/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` |
-| snare | `content/library/groove_push/snare.mid` | `content/library/groove_push/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` |
-| snare | `content/library/groove_push/snare.mid` | `content/library/groove_push/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` |
-
-### `groove_straight`: Straight
-
-groove (kick and snare parts), **2 bars** (2.76 s; with the longest tail 4.14 s), used in mission 2. MIDI from your First_Three MIDI, level_02 bars 1-2.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| kick | `content/library/groove_straight/kick.mid` | `content/library/groove_straight/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` |
-| kick | `content/library/groove_straight/kick.mid` | `content/library/groove_straight/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` |
-| snare | `content/library/groove_straight/snare.mid` | `content/library/groove_straight/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` |
-| snare | `content/library/groove_straight/snare.mid` | `content/library/groove_straight/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` |
-
-### `acc_hold_the_line`: Hold the Line accompaniment
-
-accompaniment (pad and hats on one bus), **48 bars** (66.21 s; with the longest tail 67.59 s), key C# minor, used in mission 3. MIDI from your First_Three MIDI, level_03 bars 1-48.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| other | `content/library/acc_hold_the_line/other.mid` | `content/library/acc_hold_the_line/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` |
-
-### `bass_hold_a`: Long Line
-
-bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, used in missions 3, 7, 9, 10. MIDI from your First_Three MIDI, level_03 bars 1-8.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| bass | `content/library/bass_hold_a/bass.mid` | `content/library/bass_hold_a/bass__bass_patrol.wav` | Patrol Sub | `placeholder/bass__bass_patrol.wav` |
-| bass | `content/library/bass_hold_a/bass.mid` | `content/library/bass_hold_a/bass__bass_reese.wav` | Reese | `placeholder/bass__bass_reese.wav` |
-
-### `bass_hold_b`: Answer Line
-
-bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, used in missions 3, 5, 7, 9, 10. MIDI from your First_Three MIDI, level_03 bars 9-16.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| bass | `content/library/bass_hold_b/bass.mid` | `content/library/bass_hold_b/bass__bass_command.wav` | Command Saw | `placeholder/bass__bass_command.wav` |
-| bass | `content/library/bass_hold_b/bass.mid` | `content/library/bass_hold_b/bass__bass_growl.wav` | Growl | `placeholder/bass__bass_growl.wav` |
-| bass | `content/library/bass_hold_b/bass.mid` | `content/library/bass_hold_b/bass__bass_hollow.wav` | Hollow Sub | `placeholder/bass__bass_hollow.wav` |
-| bass | `content/library/bass_hold_b/bass.mid` | `content/library/bass_hold_b/bass__bass_patrol.wav` | Patrol Sub | `placeholder/bass__bass_patrol.wav` |
-| bass | `content/library/bass_hold_b/bass.mid` | `content/library/bass_hold_b/bass__bass_reese.wav` | Reese | `placeholder/bass__bass_reese.wav` |
-
-### `bass_hold_end`: Answer Line (ending)
-
-bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, used in mission 3. MIDI from your First_Three MIDI, level_03 bars 41-48.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| bass | `content/library/bass_hold_end/bass.mid` | `content/library/bass_hold_end/bass__bass_patrol.wav` | Patrol Sub | `placeholder/bass__bass_patrol.wav` |
-| bass | `content/library/bass_hold_end/bass.mid` | `content/library/bass_hold_end/bass__bass_reese.wav` | Reese | `placeholder/bass__bass_reese.wav` |
-
-### `acc_backbeat`: Backbeat accompaniment
-
-accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, used in mission 4. MIDI from generated placeholder MIDI.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| other | `content/library/acc_backbeat/other.mid` | `content/library/acc_backbeat/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` |
-
-### `fill_snare_run`: Snare Run
-
-fill (kick and snare parts), **1 bars** (1.38 s; with the longest tail 2.76 s), used in missions 4, 5, 6, 7, 8, 9, 10. MIDI from generated placeholder MIDI.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| kick | `content/library/fill_snare_run/kick.mid` | `content/library/fill_snare_run/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` |
-| kick | `content/library/fill_snare_run/kick.mid` | `content/library/fill_snare_run/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` |
-| kick | `content/library/fill_snare_run/kick.mid` | `content/library/fill_snare_run/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` |
-| kick | `content/library/fill_snare_run/kick.mid` | `content/library/fill_snare_run/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` |
-| snare | `content/library/fill_snare_run/snare.mid` | `content/library/fill_snare_run/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` |
-| snare | `content/library/fill_snare_run/snare.mid` | `content/library/fill_snare_run/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` |
-| snare | `content/library/fill_snare_run/snare.mid` | `content/library/fill_snare_run/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` |
-| snare | `content/library/fill_snare_run/snare.mid` | `content/library/fill_snare_run/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` |
-
-### `groove_twostep`: Two-Step
-
-groove (kick and snare parts), **2 bars** (2.76 s; with the longest tail 4.14 s), used in missions 4, 5, 6, 7, 8, 9, 10. MIDI from generated placeholder MIDI.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| kick | `content/library/groove_twostep/kick.mid` | `content/library/groove_twostep/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` |
-| kick | `content/library/groove_twostep/kick.mid` | `content/library/groove_twostep/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` |
-| kick | `content/library/groove_twostep/kick.mid` | `content/library/groove_twostep/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` |
-| kick | `content/library/groove_twostep/kick.mid` | `content/library/groove_twostep/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` |
-| snare | `content/library/groove_twostep/snare.mid` | `content/library/groove_twostep/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` |
-| snare | `content/library/groove_twostep/snare.mid` | `content/library/groove_twostep/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` |
-| snare | `content/library/groove_twostep/snare.mid` | `content/library/groove_twostep/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` |
-| snare | `content/library/groove_twostep/snare.mid` | `content/library/groove_twostep/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` |
-
-### `acc_counterpoint`: Counterpoint accompaniment
-
-accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, used in mission 5. MIDI from generated placeholder MIDI.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| other | `content/library/acc_counterpoint/other.mid` | `content/library/acc_counterpoint/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` |
-
-### `bass_steps`: Steps
-
-bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, used in missions 5, 7, 9, 10. MIDI from generated placeholder MIDI.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| bass | `content/library/bass_steps/bass.mid` | `content/library/bass_steps/bass__bass_command.wav` | Command Saw | `placeholder/bass__bass_command.wav` |
-| bass | `content/library/bass_steps/bass.mid` | `content/library/bass_steps/bass__bass_growl.wav` | Growl | `placeholder/bass__bass_growl.wav` |
-| bass | `content/library/bass_steps/bass.mid` | `content/library/bass_steps/bass__bass_hollow.wav` | Hollow Sub | `placeholder/bass__bass_hollow.wav` |
-| bass | `content/library/bass_steps/bass.mid` | `content/library/bass_steps/bass__bass_patrol.wav` | Patrol Sub | `placeholder/bass__bass_patrol.wav` |
-| bass | `content/library/bass_steps/bass.mid` | `content/library/bass_steps/bass__bass_reese.wav` | Reese | `placeholder/bass__bass_reese.wav` |
-
-### `acc_fortress`: Fortress accompaniment
-
-accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, used in mission 6. MIDI from generated placeholder MIDI.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| other | `content/library/acc_fortress/other.mid` | `content/library/acc_fortress/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` |
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/groove_push/kick.mid` | `content/library/groove_push/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` | `loops/groove_push__kick__kick_armour.ogg` |
+| kick | `content/library/groove_push/kick.mid` | `content/library/groove_push/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` | `loops/groove_push__kick__kick_heavy.ogg` |
+| kick | `content/library/groove_push/kick.mid` | `content/library/groove_push/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` | `loops/groove_push__kick__kick_march.ogg` |
+| kick | `content/library/groove_push/kick.mid` | `content/library/groove_push/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` | `loops/groove_push__kick__kick_siege.ogg` |
+| snare | `content/library/groove_push/snare.mid` | `content/library/groove_push/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` | `loops/groove_push__snare__snare_clap.ogg` |
+| snare | `content/library/groove_push/snare.mid` | `content/library/groove_push/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` | `loops/groove_push__snare__snare_crack.ogg` |
+| snare | `content/library/groove_push/snare.mid` | `content/library/groove_push/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` | `loops/groove_push__snare__snare_guard.ogg` |
+| snare | `content/library/groove_push/snare.mid` | `content/library/groove_push/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` | `loops/groove_push__snare__snare_rim.ogg` |
 
 ### `groove_roller`: Roller
 
-groove (kick and snare parts), **2 bars** (2.76 s; with the longest tail 4.14 s), used in missions 6, 7, 8, 9, 10. MIDI from generated placeholder MIDI.
+groove (kick and snare parts), **2 bars** (2.76 s; with the longest tail 4.14 s), MIDI from generated placeholder MIDI. Loop: tiled to fill the 8-bar loop (a 2-bar groove repeats 4 times).
 
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| kick | `content/library/groove_roller/kick.mid` | `content/library/groove_roller/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` |
-| kick | `content/library/groove_roller/kick.mid` | `content/library/groove_roller/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` |
-| kick | `content/library/groove_roller/kick.mid` | `content/library/groove_roller/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` |
-| kick | `content/library/groove_roller/kick.mid` | `content/library/groove_roller/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` |
-| snare | `content/library/groove_roller/snare.mid` | `content/library/groove_roller/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` |
-| snare | `content/library/groove_roller/snare.mid` | `content/library/groove_roller/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` |
-| snare | `content/library/groove_roller/snare.mid` | `content/library/groove_roller/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` |
-| snare | `content/library/groove_roller/snare.mid` | `content/library/groove_roller/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` |
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/groove_roller/kick.mid` | `content/library/groove_roller/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` | `loops/groove_roller__kick__kick_armour.ogg` |
+| kick | `content/library/groove_roller/kick.mid` | `content/library/groove_roller/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` | `loops/groove_roller__kick__kick_heavy.ogg` |
+| kick | `content/library/groove_roller/kick.mid` | `content/library/groove_roller/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` | `loops/groove_roller__kick__kick_march.ogg` |
+| kick | `content/library/groove_roller/kick.mid` | `content/library/groove_roller/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` | `loops/groove_roller__kick__kick_siege.ogg` |
+| snare | `content/library/groove_roller/snare.mid` | `content/library/groove_roller/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` | `loops/groove_roller__snare__snare_clap.ogg` |
+| snare | `content/library/groove_roller/snare.mid` | `content/library/groove_roller/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` | `loops/groove_roller__snare__snare_crack.ogg` |
+| snare | `content/library/groove_roller/snare.mid` | `content/library/groove_roller/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` | `loops/groove_roller__snare__snare_guard.ogg` |
+| snare | `content/library/groove_roller/snare.mid` | `content/library/groove_roller/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` | `loops/groove_roller__snare__snare_rim.ogg` |
 
-### `acc_crossroads`: Crossroads accompaniment
+### `groove_rolling`: Rolling
 
-accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, used in mission 7. MIDI from generated placeholder MIDI.
+groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 s), played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/first_watch.json`). Loop: tiled to fill the 8-bar loop (a 8-bar groove repeats 1 times).
 
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| other | `content/library/acc_crossroads/other.mid` | `content/library/acc_crossroads/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` |
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/groove_rolling/kick.mid` | `content/library/groove_rolling/kick__kick_rolling.wav` | Rolling Kick | *in place* | `loops/groove_rolling__kick__kick_rolling.ogg` |
+| snare | `content/library/groove_rolling/snare.mid` | `content/library/groove_rolling/snare__snare_backbeat.wav` | Backbeat Snare | *in place* | `loops/groove_rolling__snare__snare_backbeat.ogg` |
 
-### `bass_octaves`: Octaves
+### `groove_straight`: Straight
 
-bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, used in missions 7, 9, 10. MIDI from generated placeholder MIDI.
+groove (kick and snare parts), **2 bars** (2.76 s; with the longest tail 4.14 s), MIDI from your First_Three MIDI, level_02 bars 1-2. Loop: tiled to fill the 8-bar loop (a 2-bar groove repeats 4 times).
 
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| bass | `content/library/bass_octaves/bass.mid` | `content/library/bass_octaves/bass__bass_command.wav` | Command Saw | `placeholder/bass__bass_command.wav` |
-| bass | `content/library/bass_octaves/bass.mid` | `content/library/bass_octaves/bass__bass_growl.wav` | Growl | `placeholder/bass__bass_growl.wav` |
-| bass | `content/library/bass_octaves/bass.mid` | `content/library/bass_octaves/bass__bass_hollow.wav` | Hollow Sub | `placeholder/bass__bass_hollow.wav` |
-| bass | `content/library/bass_octaves/bass.mid` | `content/library/bass_octaves/bass__bass_patrol.wav` | Patrol Sub | `placeholder/bass__bass_patrol.wav` |
-| bass | `content/library/bass_octaves/bass.mid` | `content/library/bass_octaves/bass__bass_reese.wav` | Reese | `placeholder/bass__bass_reese.wav` |
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/groove_straight/kick.mid` | `content/library/groove_straight/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` | `loops/groove_straight__kick__kick_armour.ogg` |
+| kick | `content/library/groove_straight/kick.mid` | `content/library/groove_straight/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` | `loops/groove_straight__kick__kick_heavy.ogg` |
+| kick | `content/library/groove_straight/kick.mid` | `content/library/groove_straight/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` | `loops/groove_straight__kick__kick_march.ogg` |
+| kick | `content/library/groove_straight/kick.mid` | `content/library/groove_straight/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` | `loops/groove_straight__kick__kick_siege.ogg` |
+| snare | `content/library/groove_straight/snare.mid` | `content/library/groove_straight/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` | `loops/groove_straight__snare__snare_clap.ogg` |
+| snare | `content/library/groove_straight/snare.mid` | `content/library/groove_straight/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` | `loops/groove_straight__snare__snare_crack.ogg` |
+| snare | `content/library/groove_straight/snare.mid` | `content/library/groove_straight/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` | `loops/groove_straight__snare__snare_guard.ogg` |
+| snare | `content/library/groove_straight/snare.mid` | `content/library/groove_straight/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` | `loops/groove_straight__snare__snare_rim.ogg` |
 
-### `acc_crossfire`: Crossfire accompaniment
+### `groove_twostep`: Two-Step
 
-accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, used in mission 8. MIDI from generated placeholder MIDI.
+groove (kick and snare parts), **2 bars** (2.76 s; with the longest tail 4.14 s), MIDI from generated placeholder MIDI. Loop: tiled to fill the 8-bar loop (a 2-bar groove repeats 4 times).
 
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| other | `content/library/acc_crossfire/other.mid` | `content/library/acc_crossfire/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` |
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/groove_twostep/kick.mid` | `content/library/groove_twostep/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` | `loops/groove_twostep__kick__kick_armour.ogg` |
+| kick | `content/library/groove_twostep/kick.mid` | `content/library/groove_twostep/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` | `loops/groove_twostep__kick__kick_heavy.ogg` |
+| kick | `content/library/groove_twostep/kick.mid` | `content/library/groove_twostep/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` | `loops/groove_twostep__kick__kick_march.ogg` |
+| kick | `content/library/groove_twostep/kick.mid` | `content/library/groove_twostep/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` | `loops/groove_twostep__kick__kick_siege.ogg` |
+| snare | `content/library/groove_twostep/snare.mid` | `content/library/groove_twostep/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` | `loops/groove_twostep__snare__snare_clap.ogg` |
+| snare | `content/library/groove_twostep/snare.mid` | `content/library/groove_twostep/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` | `loops/groove_twostep__snare__snare_crack.ogg` |
+| snare | `content/library/groove_twostep/snare.mid` | `content/library/groove_twostep/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` | `loops/groove_twostep__snare__snare_guard.ogg` |
+| snare | `content/library/groove_twostep/snare.mid` | `content/library/groove_twostep/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` | `loops/groove_twostep__snare__snare_rim.ogg` |
+
+### `groove_watch`: Watch
+
+groove (kick and snare parts), **2 bars** (2.76 s; with the longest tail 4.14 s), MIDI from your First_Three MIDI, level_01 bars 1-2. Loop: tiled to fill the 8-bar loop (a 2-bar groove repeats 4 times).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/groove_watch/kick.mid` | `content/library/groove_watch/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` | `loops/groove_watch__kick__kick_armour.ogg` |
+| kick | `content/library/groove_watch/kick.mid` | `content/library/groove_watch/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` | `loops/groove_watch__kick__kick_heavy.ogg` |
+| kick | `content/library/groove_watch/kick.mid` | `content/library/groove_watch/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` | `loops/groove_watch__kick__kick_march.ogg` |
+| kick | `content/library/groove_watch/kick.mid` | `content/library/groove_watch/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` | `loops/groove_watch__kick__kick_siege.ogg` |
+| snare | `content/library/groove_watch/snare.mid` | `content/library/groove_watch/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` | `loops/groove_watch__snare__snare_clap.ogg` |
+| snare | `content/library/groove_watch/snare.mid` | `content/library/groove_watch/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` | `loops/groove_watch__snare__snare_crack.ogg` |
+| snare | `content/library/groove_watch/snare.mid` | `content/library/groove_watch/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` | `loops/groove_watch__snare__snare_guard.ogg` |
+| snare | `content/library/groove_watch/snare.mid` | `content/library/groove_watch/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` | `loops/groove_watch__snare__snare_rim.ogg` |
 
 ### `fill_break`: Break
 
-fill (kick and snare parts), **1 bars** (1.38 s; with the longest tail 2.76 s), used in missions 8, 9, 10. MIDI from generated placeholder MIDI.
+fill (kick and snare parts), **1 bars** (1.38 s; with the longest tail 2.76 s), MIDI from generated placeholder MIDI. Loop: placed in bar 8 of an otherwise silent 8-bar loop.
 
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| kick | `content/library/fill_break/kick.mid` | `content/library/fill_break/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` |
-| kick | `content/library/fill_break/kick.mid` | `content/library/fill_break/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` |
-| kick | `content/library/fill_break/kick.mid` | `content/library/fill_break/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` |
-| kick | `content/library/fill_break/kick.mid` | `content/library/fill_break/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` |
-| snare | `content/library/fill_break/snare.mid` | `content/library/fill_break/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` |
-| snare | `content/library/fill_break/snare.mid` | `content/library/fill_break/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` |
-| snare | `content/library/fill_break/snare.mid` | `content/library/fill_break/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` |
-| snare | `content/library/fill_break/snare.mid` | `content/library/fill_break/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` |
-
-### `acc_iron`: Iron Rhythm accompaniment
-
-accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, used in mission 9. MIDI from generated placeholder MIDI.
-
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| other | `content/library/acc_iron/other.mid` | `content/library/acc_iron/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` |
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/fill_break/kick.mid` | `content/library/fill_break/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` | `loops/fill_break__kick__kick_armour.ogg` |
+| kick | `content/library/fill_break/kick.mid` | `content/library/fill_break/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` | `loops/fill_break__kick__kick_heavy.ogg` |
+| kick | `content/library/fill_break/kick.mid` | `content/library/fill_break/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` | `loops/fill_break__kick__kick_march.ogg` |
+| kick | `content/library/fill_break/kick.mid` | `content/library/fill_break/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` | `loops/fill_break__kick__kick_siege.ogg` |
+| snare | `content/library/fill_break/snare.mid` | `content/library/fill_break/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` | `loops/fill_break__snare__snare_clap.ogg` |
+| snare | `content/library/fill_break/snare.mid` | `content/library/fill_break/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` | `loops/fill_break__snare__snare_crack.ogg` |
+| snare | `content/library/fill_break/snare.mid` | `content/library/fill_break/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` | `loops/fill_break__snare__snare_guard.ogg` |
+| snare | `content/library/fill_break/snare.mid` | `content/library/fill_break/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` | `loops/fill_break__snare__snare_rim.ogg` |
 
 ### `fill_kick_drop`: Kick Drop
 
-fill (kick and snare parts), **1 bars** (1.38 s; with the longest tail 2.76 s), used in missions 9, 10. MIDI from generated placeholder MIDI.
+fill (kick and snare parts), **1 bars** (1.38 s; with the longest tail 2.76 s), MIDI from generated placeholder MIDI. Loop: placed in bar 8 of an otherwise silent 8-bar loop.
 
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| kick | `content/library/fill_kick_drop/kick.mid` | `content/library/fill_kick_drop/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` |
-| kick | `content/library/fill_kick_drop/kick.mid` | `content/library/fill_kick_drop/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` |
-| kick | `content/library/fill_kick_drop/kick.mid` | `content/library/fill_kick_drop/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` |
-| kick | `content/library/fill_kick_drop/kick.mid` | `content/library/fill_kick_drop/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` |
-| snare | `content/library/fill_kick_drop/snare.mid` | `content/library/fill_kick_drop/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` |
-| snare | `content/library/fill_kick_drop/snare.mid` | `content/library/fill_kick_drop/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` |
-| snare | `content/library/fill_kick_drop/snare.mid` | `content/library/fill_kick_drop/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` |
-| snare | `content/library/fill_kick_drop/snare.mid` | `content/library/fill_kick_drop/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` |
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/fill_kick_drop/kick.mid` | `content/library/fill_kick_drop/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` | `loops/fill_kick_drop__kick__kick_armour.ogg` |
+| kick | `content/library/fill_kick_drop/kick.mid` | `content/library/fill_kick_drop/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` | `loops/fill_kick_drop__kick__kick_heavy.ogg` |
+| kick | `content/library/fill_kick_drop/kick.mid` | `content/library/fill_kick_drop/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` | `loops/fill_kick_drop__kick__kick_march.ogg` |
+| kick | `content/library/fill_kick_drop/kick.mid` | `content/library/fill_kick_drop/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` | `loops/fill_kick_drop__kick__kick_siege.ogg` |
+| snare | `content/library/fill_kick_drop/snare.mid` | `content/library/fill_kick_drop/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` | `loops/fill_kick_drop__snare__snare_clap.ogg` |
+| snare | `content/library/fill_kick_drop/snare.mid` | `content/library/fill_kick_drop/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` | `loops/fill_kick_drop__snare__snare_crack.ogg` |
+| snare | `content/library/fill_kick_drop/snare.mid` | `content/library/fill_kick_drop/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` | `loops/fill_kick_drop__snare__snare_guard.ogg` |
+| snare | `content/library/fill_kick_drop/snare.mid` | `content/library/fill_kick_drop/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` | `loops/fill_kick_drop__snare__snare_rim.ogg` |
+
+### `fill_snare_run`: Snare Run
+
+fill (kick and snare parts), **1 bars** (1.38 s; with the longest tail 2.76 s), MIDI from generated placeholder MIDI. Loop: placed in bar 8 of an otherwise silent 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/fill_snare_run/kick.mid` | `content/library/fill_snare_run/kick__kick_armour.wav` | Armour Kick | `placeholder/kick__kick_armour.wav` | `loops/fill_snare_run__kick__kick_armour.ogg` |
+| kick | `content/library/fill_snare_run/kick.mid` | `content/library/fill_snare_run/kick__kick_heavy.wav` | Heavy Kick | `placeholder/kick__kick_heavy.wav` | `loops/fill_snare_run__kick__kick_heavy.ogg` |
+| kick | `content/library/fill_snare_run/kick.mid` | `content/library/fill_snare_run/kick__kick_march.wav` | March Kick | `placeholder/kick__kick_march.wav` | `loops/fill_snare_run__kick__kick_march.ogg` |
+| kick | `content/library/fill_snare_run/kick.mid` | `content/library/fill_snare_run/kick__kick_siege.wav` | Siege Kick | `placeholder/kick__kick_siege.wav` | `loops/fill_snare_run__kick__kick_siege.ogg` |
+| snare | `content/library/fill_snare_run/snare.mid` | `content/library/fill_snare_run/snare__snare_clap.wav` | Field Clap | `placeholder/snare__snare_clap.wav` | `loops/fill_snare_run__snare__snare_clap.ogg` |
+| snare | `content/library/fill_snare_run/snare.mid` | `content/library/fill_snare_run/snare__snare_crack.wav` | Crack Snare | `placeholder/snare__snare_crack.wav` | `loops/fill_snare_run__snare__snare_crack.ogg` |
+| snare | `content/library/fill_snare_run/snare.mid` | `content/library/fill_snare_run/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` | `loops/fill_snare_run__snare__snare_guard.ogg` |
+| snare | `content/library/fill_snare_run/snare.mid` | `content/library/fill_snare_run/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` | `loops/fill_snare_run__snare__snare_rim.ogg` |
+
+### `bass_hold_a`: Long Line
+
+bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MIDI from your First_Three MIDI, level_03 bars 1-8. Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| bass | `content/library/bass_hold_a/bass.mid` | `content/library/bass_hold_a/bass__bass_command.wav` | Command Saw | `placeholder/bass__bass_command.wav` | `loops/bass_hold_a__bass__bass_command.ogg` |
+| bass | `content/library/bass_hold_a/bass.mid` | `content/library/bass_hold_a/bass__bass_growl.wav` | Growl | `placeholder/bass__bass_growl.wav` | `loops/bass_hold_a__bass__bass_growl.ogg` |
+| bass | `content/library/bass_hold_a/bass.mid` | `content/library/bass_hold_a/bass__bass_hollow.wav` | Hollow Sub | `placeholder/bass__bass_hollow.wav` | `loops/bass_hold_a__bass__bass_hollow.ogg` |
+| bass | `content/library/bass_hold_a/bass.mid` | `content/library/bass_hold_a/bass__bass_patrol.wav` | Patrol Sub | `placeholder/bass__bass_patrol.wav` | `loops/bass_hold_a__bass__bass_patrol.ogg` |
+| bass | `content/library/bass_hold_a/bass.mid` | `content/library/bass_hold_a/bass__bass_reese.wav` | Reese | `placeholder/bass__bass_reese.wav` | `loops/bass_hold_a__bass__bass_reese.ogg` |
+
+### `bass_hold_b`: Answer Line
+
+bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MIDI from your First_Three MIDI, level_03 bars 9-16. Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| bass | `content/library/bass_hold_b/bass.mid` | `content/library/bass_hold_b/bass__bass_command.wav` | Command Saw | `placeholder/bass__bass_command.wav` | `loops/bass_hold_b__bass__bass_command.ogg` |
+| bass | `content/library/bass_hold_b/bass.mid` | `content/library/bass_hold_b/bass__bass_growl.wav` | Growl | `placeholder/bass__bass_growl.wav` | `loops/bass_hold_b__bass__bass_growl.ogg` |
+| bass | `content/library/bass_hold_b/bass.mid` | `content/library/bass_hold_b/bass__bass_hollow.wav` | Hollow Sub | `placeholder/bass__bass_hollow.wav` | `loops/bass_hold_b__bass__bass_hollow.ogg` |
+| bass | `content/library/bass_hold_b/bass.mid` | `content/library/bass_hold_b/bass__bass_patrol.wav` | Patrol Sub | `placeholder/bass__bass_patrol.wav` | `loops/bass_hold_b__bass__bass_patrol.ogg` |
+| bass | `content/library/bass_hold_b/bass.mid` | `content/library/bass_hold_b/bass__bass_reese.wav` | Reese | `placeholder/bass__bass_reese.wav` | `loops/bass_hold_b__bass__bass_reese.ogg` |
+
+### `bass_hold_end`: Answer Line (ending)
+
+bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MIDI from your First_Three MIDI, level_03 bars 41-48. Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| bass | `content/library/bass_hold_end/bass.mid` | `content/library/bass_hold_end/bass__bass_command.wav` | Command Saw | `placeholder/bass__bass_command.wav` | `loops/bass_hold_end__bass__bass_command.ogg` |
+| bass | `content/library/bass_hold_end/bass.mid` | `content/library/bass_hold_end/bass__bass_growl.wav` | Growl | `placeholder/bass__bass_growl.wav` | `loops/bass_hold_end__bass__bass_growl.ogg` |
+| bass | `content/library/bass_hold_end/bass.mid` | `content/library/bass_hold_end/bass__bass_hollow.wav` | Hollow Sub | `placeholder/bass__bass_hollow.wav` | `loops/bass_hold_end__bass__bass_hollow.ogg` |
+| bass | `content/library/bass_hold_end/bass.mid` | `content/library/bass_hold_end/bass__bass_patrol.wav` | Patrol Sub | `placeholder/bass__bass_patrol.wav` | `loops/bass_hold_end__bass__bass_patrol.ogg` |
+| bass | `content/library/bass_hold_end/bass.mid` | `content/library/bass_hold_end/bass__bass_reese.wav` | Reese | `placeholder/bass__bass_reese.wav` | `loops/bass_hold_end__bass__bass_reese.ogg` |
+
+### `bass_octaves`: Octaves
+
+bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MIDI from generated placeholder MIDI. Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| bass | `content/library/bass_octaves/bass.mid` | `content/library/bass_octaves/bass__bass_command.wav` | Command Saw | `placeholder/bass__bass_command.wav` | `loops/bass_octaves__bass__bass_command.ogg` |
+| bass | `content/library/bass_octaves/bass.mid` | `content/library/bass_octaves/bass__bass_growl.wav` | Growl | `placeholder/bass__bass_growl.wav` | `loops/bass_octaves__bass__bass_growl.ogg` |
+| bass | `content/library/bass_octaves/bass.mid` | `content/library/bass_octaves/bass__bass_hollow.wav` | Hollow Sub | `placeholder/bass__bass_hollow.wav` | `loops/bass_octaves__bass__bass_hollow.ogg` |
+| bass | `content/library/bass_octaves/bass.mid` | `content/library/bass_octaves/bass__bass_patrol.wav` | Patrol Sub | `placeholder/bass__bass_patrol.wav` | `loops/bass_octaves__bass__bass_patrol.ogg` |
+| bass | `content/library/bass_octaves/bass.mid` | `content/library/bass_octaves/bass__bass_reese.wav` | Reese | `placeholder/bass__bass_reese.wav` | `loops/bass_octaves__bass__bass_reese.ogg` |
+
+### `bass_reese_line`: Reese Line
+
+bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/first_watch.json`). Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| bass | `content/library/bass_reese_line/bass.mid` | `content/library/bass_reese_line/bass__bass_reese_dark.wav` | Dark Reese | *in place* | `loops/bass_reese_line__bass__bass_reese_dark.ogg` |
+| bass | `content/library/bass_reese_line/bass.mid` | `content/library/bass_reese_line/bass__bass_reese_deep.wav` | Deep Reese | *in place* | `loops/bass_reese_line__bass__bass_reese_deep.ogg` |
+| bass | `content/library/bass_reese_line/bass.mid` | `content/library/bass_reese_line/bass__bass_reese_round.wav` | Round Reese | *in place* | `loops/bass_reese_line__bass__bass_reese_round.ogg` |
+| bass | `content/library/bass_reese_line/bass.mid` | `content/library/bass_reese_line/bass__bass_reese_soft.wav` | Soft Reese | *in place* | `loops/bass_reese_line__bass__bass_reese_soft.ogg` |
+
+### `bass_steps`: Steps
+
+bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MIDI from generated placeholder MIDI. Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| bass | `content/library/bass_steps/bass.mid` | `content/library/bass_steps/bass__bass_command.wav` | Command Saw | `placeholder/bass__bass_command.wav` | `loops/bass_steps__bass__bass_command.ogg` |
+| bass | `content/library/bass_steps/bass.mid` | `content/library/bass_steps/bass__bass_growl.wav` | Growl | `placeholder/bass__bass_growl.wav` | `loops/bass_steps__bass__bass_growl.ogg` |
+| bass | `content/library/bass_steps/bass.mid` | `content/library/bass_steps/bass__bass_hollow.wav` | Hollow Sub | `placeholder/bass__bass_hollow.wav` | `loops/bass_steps__bass__bass_hollow.ogg` |
+| bass | `content/library/bass_steps/bass.mid` | `content/library/bass_steps/bass__bass_patrol.wav` | Patrol Sub | `placeholder/bass__bass_patrol.wav` | `loops/bass_steps__bass__bass_patrol.ogg` |
+| bass | `content/library/bass_steps/bass.mid` | `content/library/bass_steps/bass__bass_reese.wav` | Reese | `placeholder/bass__bass_reese.wav` | `loops/bass_steps__bass__bass_reese.ogg` |
+
+### `bass_sub_line`: Sub Line
+
+bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/first_watch.json`). Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_bright.wav` | Bright Sub | *in place* | `loops/bass_sub_line__bass__bass_sub_bright.ogg` |
+| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_deep.wav` | Deep Sub | *in place* | `loops/bass_sub_line__bass__bass_sub_deep.ogg` |
+| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_pure.wav` | Pure Sub | *in place* | `loops/bass_sub_line__bass__bass_sub_pure.ogg` |
+| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_warm.wav` | Warm Sub | *in place* | `loops/bass_sub_line__bass__bass_sub_warm.ogg` |
+| bass | `content/library/bass_sub_line/bass.mid` | `content/library/bass_sub_line/bass__bass_sub_wide.wav` | Wide Sub | *in place* | `loops/bass_sub_line__bass__bass_sub_wide.ogg` |
+
+### `acc_backbeat`: Backbeat accompaniment
+
+backing (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MIDI from generated placeholder MIDI. Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | `content/library/acc_backbeat/other.mid` | `content/library/acc_backbeat/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` | `loops/acc_backbeat__other__ensemble.ogg` |
+
+### `acc_counterpoint`: Counterpoint accompaniment
+
+backing (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MIDI from generated placeholder MIDI. Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | `content/library/acc_counterpoint/other.mid` | `content/library/acc_counterpoint/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` | `loops/acc_counterpoint__other__ensemble.ogg` |
+
+### `acc_crossfire`: Crossfire accompaniment
+
+backing (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MIDI from generated placeholder MIDI. Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | `content/library/acc_crossfire/other.mid` | `content/library/acc_crossfire/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` | `loops/acc_crossfire__other__ensemble.ogg` |
+
+### `acc_crossroads`: Crossroads accompaniment
+
+backing (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MIDI from generated placeholder MIDI. Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | `content/library/acc_crossroads/other.mid` | `content/library/acc_crossroads/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` | `loops/acc_crossroads__other__ensemble.ogg` |
+
+### `acc_first_watch`: First Watch accompaniment
+
+backing (pad and hats on one bus), **32 bars** (44.14 s; with the longest tail 45.52 s), key C# minor, MIDI from your First_Three MIDI, level_01 bars 1-32. Loop: used as the 16-bar loop (the clip's first 16 of 32 bars).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | `content/library/acc_first_watch/other.mid` | `content/library/acc_first_watch/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` | `loops/acc_first_watch__other__ensemble.ogg` |
+
+### `acc_fortress`: Fortress accompaniment
+
+backing (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MIDI from generated placeholder MIDI. Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | `content/library/acc_fortress/other.mid` | `content/library/acc_fortress/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` | `loops/acc_fortress__other__ensemble.ogg` |
+
+### `acc_hats_busy`: Busy Hats
+
+backing (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, played only by its own recordings, MIDI from no MIDI (audio-only backing, never cued). Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | (none: audio only) | `content/library/acc_hats_busy/other__hats_busy.wav` | Busy Hats | *in place* | `loops/acc_hats_busy__other__hats_busy.ogg` |
+
+### `acc_hats_driving`: Driving Hats
+
+backing (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, played only by its own recordings, MIDI from no MIDI (audio-only backing, never cued). Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | (none: audio only) | `content/library/acc_hats_driving/other__hats_driving.wav` | Driving Hats | *in place* | `loops/acc_hats_driving__other__hats_driving.ogg` |
+
+### `acc_hats_offbeat`: Offbeat Hats
+
+backing (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key F minor, played only by its own recordings, MIDI from no MIDI (audio-only backing, never cued). Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | (none: audio only) | `content/library/acc_hats_offbeat/other__hats_offbeat.wav` | Offbeat Hats | *in place* | `loops/acc_hats_offbeat__other__hats_offbeat.ogg` |
+
+### `acc_hold_the_line`: Hold the Line accompaniment
+
+backing (pad and hats on one bus), **48 bars** (66.21 s; with the longest tail 67.59 s), key C# minor, MIDI from your First_Three MIDI, level_03 bars 1-48. Loop: used as the 16-bar loop (the clip's first 16 of 48 bars).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | `content/library/acc_hold_the_line/other.mid` | `content/library/acc_hold_the_line/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` | `loops/acc_hold_the_line__other__ensemble.ogg` |
+
+### `acc_iron`: Iron Rhythm accompaniment
+
+backing (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MIDI from generated placeholder MIDI. Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | `content/library/acc_iron/other.mid` | `content/library/acc_iron/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` | `loops/acc_iron__other__ensemble.ogg` |
 
 ### `acc_last_light`: Last Light accompaniment
 
-accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, used in mission 10. MIDI from generated placeholder MIDI.
+backing (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MIDI from generated placeholder MIDI. Loop: used as the 8-bar loop.
 
-| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder |
-| --- | --- | --- | --- | --- |
-| other | `content/library/acc_last_light/other.mid` | `content/library/acc_last_light/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` |
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | `content/library/acc_last_light/other.mid` | `content/library/acc_last_light/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` | `loops/acc_last_light__other__ensemble.ogg` |
+
+### `acc_second_pulse`: Second Pulse accompaniment
+
+backing (pad and hats on one bus), **40 bars** (55.17 s; with the longest tail 56.55 s), key C# minor, MIDI from your First_Three MIDI, level_02 bars 1-40. Loop: used as the 16-bar loop (the clip's first 16 of 40 bars).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | `content/library/acc_second_pulse/other.mid` | `content/library/acc_second_pulse/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` | `loops/acc_second_pulse__other__ensemble.ogg` |
 
 ## Sounds
 
@@ -385,6 +430,7 @@ accompaniment (pad and hats on one bus), **8 bars** (11.03 s; with the longest t
 | `hats_busy` | Busy Hats | other |
 | `hats_offbeat` | Offbeat Hats | other |
 
-Adding a sound or a clip: add the sound to `content/sounds.json` (or copy `content/fixtures/example_groove/` to
-`content/library/<new_id>/` and edit its `clip.json`), offer it in a mission's choices (`content/missions/level_NN.json`)
-and run the build: it lists the renders it still needs as placeholders.
+Adding a sound or a clip: add the sound to `content/sounds.json` and say what it produces in
+`data/campaign/instruments.json` (or copy `content/fixtures/example_groove/` to `content/library/<new_id>/` and edit
+its `clip.json`) and run the build: it adds the loops (placeholders until you drop your own WAVs in) to the index the
+player's loadout picks from.

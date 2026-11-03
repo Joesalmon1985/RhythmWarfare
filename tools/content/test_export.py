@@ -93,7 +93,7 @@ class ExportTests(unittest.TestCase):
                 if p.stem.startswith("Other"):
                     bars = LONG_BACKING.get(n, 8)
                 elif p.stem == "Arrangement_A":
-                    bars = read_json(ROOT / "content" / "missions" / f"level_{n:02d}.json")["bars"]
+                    bars = read_json(ROOT / "content" / "missions_legacy" / f"level_{n:02d}.json")["bars"]
                 else:
                     bars = 8
                 for ticks in track_ticks(p):
@@ -129,7 +129,7 @@ class ExportTests(unittest.TestCase):
     def test_a_loops_equal_the_library_clips(self) -> None:
         for n in LEVELS:
             info = self.info[f"level_{n:02d}"]
-            m = read_json(ROOT / "content" / "missions" / f"level_{n:02d}.json")
+            m = read_json(ROOT / "content" / "missions_legacy" / f"level_{n:02d}.json")
             self.assertEqual(info["fill"] is not None, any("fill" in ph for ph in m["phases"]), f"level {n}")
             for part, name in (("kick", "Kick_A"), ("snare", "Snare_A")):
                 self.assertEqual(keys(self.notes(n, name)), self.expected_drums(part, info["groove"], info["fill"]), f"level {n} {name}")
@@ -155,7 +155,7 @@ class ExportTests(unittest.TestCase):
 
     def test_arrangement_follows_the_phases(self) -> None:
         for n in LEVELS:
-            m = read_json(ROOT / "content" / "missions" / f"level_{n:02d}.json")
+            m = read_json(ROOT / "content" / "missions_legacy" / f"level_{n:02d}.json")
             mid = mido.MidiFile(str(self.folder(n) / "Arrangement_A.mid"))
             per_track = {}
             for tr in mid.tracks[1:]:
