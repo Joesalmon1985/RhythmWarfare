@@ -15,6 +15,11 @@ COL_FRONT = 2.7
 BRAZIERS = ((452, 280), (828, 280))  # pedestal bases (x, floor y)
 
 
+def run_poly(ya, yb, a, b):
+    """A floor strip between far-wall x a..b, from screen row ya to yb."""
+    return [(R.floor_x(a, ya), ya), (R.floor_x(b, ya), ya), (R.floor_x(b, yb), yb), (R.floor_x(a, yb), yb)]
+
+
 def wall_quad(side, sa, sb, ua, ub):
     return [R.wall(side, sa, ua), R.wall(side, sb, ua), R.wall(side, sb, ub), R.wall(side, sa, ub)]
 
@@ -188,7 +193,35 @@ def build_backdrop():
         slabs += path(pline(pts), None, "#08020c", 1.8 * sc, sop=0.7)
         if k % 4 == 0:
             slabs += path(pline(pts), None, LAVA, 0.9 * sc, sop=0.6)
-    d += group(slabs, 'clip-path="url(#fclip)"')
+    # polished obsidian: mirror streaks of the columns, the stained-glass windows and the braziers
+    refl = ""
+    defs += lin_grad("rfl_col", [(0, "#c08ae0", 0.22), (1, "#c08ae0", 0.0)], 0, 0, 0, 1)
+    defs += lin_grad("rfl_fire", [(0, "#ffb05a", 0.5), (0.5, "#ff6a2a", 0.18), (1, "#ff6a2a", 0.0)], 0, 0, 0, 1)
+    defs += lin_grad("rfl_glass", [(0, "#ff5ac0", 0.2), (1, "#ff5ac0", 0.0)], 0, 0, 0, 1)
+    for s in COLS + (COL_FRONT,):
+        for side in (-1, 1):
+            cx_ = R.vx + side * R.half * s * 0.86
+            yb_ = R.floor_y(s)
+            refl += rect(cx_ - 10 * s, yb_ + 2, 20 * s, 70 * s, "url(#rfl_col)")
+    for (bx, by) in BRAZIERS + ((516, 262), (764, 262)):
+        sc = R.scale(by)
+        refl += rect(bx - 20 * sc, by + 2, 40 * sc, 120 * sc, "url(#rfl_fire)")
+        refl += ellipse(bx, by + 4 * sc, 34 * sc, 6 * sc, "#ffb05a", None, op=0.18)
+    for side in (-1, 1):  # coloured light falling from each window bay onto the floor near the wall
+        for sa, sb in zip((1.0,) + COLS[1:], COLS[1:] + (COL_FRONT,)):
+            pa, pb = sa + 0.2 * (sb - sa), sb - 0.2 * (sb - sa)
+            q = [R.wall(side, pa, 0), R.wall(side, pb, 0), (R.vx + side * R.half * pb * 0.66, R.floor_y(pb) + 30 * pb), (R.vx + side * R.half * pa * 0.66, R.floor_y(pa) + 30 * pa)]
+            refl += poly(q, MAG, None, op=0.07) + poly(q[:2] + [((q[1][0] + q[2][0]) / 2, (q[1][1] + q[2][1]) / 2), ((q[0][0] + q[3][0]) / 2, (q[0][1] + q[3][1]) / 2)], "#ffb02e", None, op=0.05)
+    refl += poly(run_poly(R.fy1, H + 40, 560, 720), "url(#rfl_glass)")
+    # gold inlay: a border band running along each wall, and cross-bands at the column bases
+    for xf_ in (R.fx0 + 24, R.fx1 - 24):
+        refl += line((R.floor_x(xf_, R.fy1), R.fy1), (R.floor_x(xf_, H + 40), H + 40), GOLD, 2.0, 0.55)
+        refl += line((R.floor_x(xf_ + (8 if xf_ < 640 else -8), R.fy1), R.fy1), (R.floor_x(xf_ + (8 if xf_ < 640 else -8), H + 40), H + 40), GOLD, 1.0, 0.35)
+    for s in COLS[1:] + (COL_FRONT,):
+        y_ = R.floor_y(s)
+        refl += line((R.floor_x(R.fx0 - 200, y_), y_), (R.floor_x(R.fx0 + 24, y_), y_), GOLD, 1.4 * s ** 0.5, 0.45)
+        refl += line((R.floor_x(R.fx1 - 24, y_), y_), (R.floor_x(R.fx1 + 200, y_), y_), GOLD, 1.4 * s ** 0.5, 0.45)
+    d += group(slabs + refl, 'clip-path="url(#fclip)"')
     # runner
     rx0, rx1 = 592, 688
     run = lambda ya, yb, a=rx0, b=rx1: [(R.floor_x(a, ya), ya), (R.floor_x(b, ya), ya), (R.floor_x(b, yb), yb), (R.floor_x(a, yb), yb)]
