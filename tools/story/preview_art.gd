@@ -1,10 +1,11 @@
 extends Node2D
 ## Review contact sheet for the Night One art; independent of src/story/. Builds rigs from
 ## assets/story/night_one/manifest.json exactly the way the contract describes (also a reference for the runtime).
-##   RW_PREVIEW = chars (default) | chars_b | heads | stage | stage_low | sil | deck
+##   RW_PREVIEW = chars (default) | chars_b | heads | joints | stage | stage_low | sil | deck | pieces | interlude
+##   RW_CHAPTER = night_one (default) | mothership | underworld
 ##   godot --path . -s tools/shoot.gd -- res://tools/story/preview_art.tscn /tmp/shots 30:shot:name
 
-const ROOT := "res://assets/story/night_one/"
+var ROOT := "res://assets/story/night_one/"
 const FLOOR_Z := 0
 
 var M: Dictionary = {}
@@ -18,6 +19,8 @@ func tex(p: String) -> Texture2D:
 
 
 func _ready() -> void:
+	if OS.has_environment("RW_CHAPTER"):
+		ROOT = "res://assets/story/%s/" % OS.get_environment("RW_CHAPTER")
 	var txt := FileAccess.get_file_as_string(ROOT + "manifest.json")
 	M = JSON.parse_string(txt)
 	var bg := ColorRect.new()
@@ -31,14 +34,18 @@ func _ready() -> void:
 			_chars("b" if mode == "chars_b" else "a")
 		"heads":
 			_heads()
-		"stage", "stage_low":
-			_stage(mode == "stage_low")
+		"stage", "stage_low", "set":
+			_stage(mode == "stage_low", false, mode == "set")
 		"sil":
 			_sil()
 		"joints":
 			_joints()
 		"deck":
 			_deck()
+		"pieces":
+			_pieces_sheet()
+		"interlude", "interlude_flood":
+			_interlude(mode == "interlude_flood")
 
 
 # ---- the rig --------------------------------------------------------------------------------------------------------------
@@ -240,7 +247,7 @@ func _sprite(id: String, pos: Vector2, add := false, tint := Color.WHITE, scale_
 	return s
 
 
-func _stage(low: bool, deck_only := false) -> void:
+func _stage(low: bool, deck_only := false, empty := false) -> void:
 	if not M.has("stage"):
 		_label("no stage in the manifest yet", Vector2(20, 20), 24)
 		return
@@ -261,6 +268,7 @@ func _stage(low: bool, deck_only := false) -> void:
 			s.position.y = 460
 			s.scale = Vector2(1280.0 / s.texture.get_width(), 260.0 / s.texture.get_height())
 		add_child(s)
+	_pieces("behind")
 	# LED screen: a simple equaliser painted into the panel
 	var led: Array = A["led_screen"]
 	var panel := ColorRect.new()
@@ -293,7 +301,7 @@ func _stage(low: bool, deck_only := false) -> void:
 		var ang := -26.0 + 52.0 * ((i * 5) % 8) / 7.0
 		var fx := _sprite("fixture", p, false, Color.WHITE, 1.0, -2600)
 		fx.rotation_degrees = 0.0
-		if not low:
+		if not low and not empty:
 			var b := _sprite("beam", p + Vector2(0, 10), true, tints[i % 4] * Color(1, 1, 1, 0.55), 1.0, -2500)
 			b.rotation_degrees = ang * 0.9
 			b.position = p + Vector2(0, 10) - Vector2(M["stage"]["sprites"]["beam"]["pivot"][0], M["stage"]["sprites"]["beam"]["pivot"][1]).rotated(deg_to_rad(ang * 0.9)) * 0.5
@@ -306,6 +314,10 @@ func _stage(low: bool, deck_only := false) -> void:
 	if not low and st["sprites"].has("door_open") and st["sprites"]["door_open"].has("pos"):
 		var dop: Array = st["sprites"]["door_open"]["pos"]
 		_sprite("door_open", Vector2(dop[0], dop[1]), false, Color.WHITE, 1.0, -2850)
+	if empty:  # the bare set: no crowd, no haze, no beams
+		_pieces("front")
+		_deck_pieces()
+		return
 	# crowd: silhouettes behind, dancers in rows
 	var sils: Array = M["silhouettes"].keys()
 	var rows: Array = A["floor_rows"]
@@ -355,6 +367,7 @@ func _stage(low: bool, deck_only := false) -> void:
 	vs.z_as_relative = false
 	vs.z_index = 3500
 	add_child(vs)
+	_pieces("front")
 	_deck_pieces()
 
 
@@ -438,3 +451,109 @@ func _deck_pieces() -> void:
 		_sprite("knob", Vector2(cxm - 110 + i * 44, 460 + 60), false, Color.WHITE, 1.0, 2040)
 	if st["sprites"].has("desk_lip_glow"):
 		_sprite("desk_lip_glow", Vector2(640, 460), true, Color.WHITE, 1.0, 2050)
+
+
+# ---- chapter set pieces and interlude --------------------------------------------------------------------------------------
+
+func _piece_sprite(p: Dictionary, add: bool) -> Sprite2D:
+	var s := Sprite2D.new()
+	s.texture = tex(p["file"])
+	s.centered = false
+	var k := float(p.get("px_scale", 0.5))
+	s.scale = Vector2(k, k)
+	s.position = Vector2(p["pos"][0], p["pos"][1])
+	s.z_as_relative = false
+	if add:
+		var mat := CanvasItemMaterial.new()
+		mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+		s.material = mat
+	return s
+
+
+func _pieces(where: String) -> void:
+	var st: Dictionary = M.get("stage", {})
+	for p in st.get("pieces", []):
+		if p["z"] != where:
+			continue
+		if p["id"] == "warp_streaks" and OS.get_environment("RW_WARP") != "1":
+			continue  # off by default: only shown when asked for
+		var s := _piece_sprite(p, p["id"] != "alien_banner" and p["id"] != "saucer_flyby")
+		s.z_index = -2450 if where == "behind" else 1700
+		if p["id"] == "alien_banner" or p["id"] == "saucer_flyby":
+			s.z_index = -2440
+		add_child(s)
+
+
+func _pieces_sheet() -> void:
+	var st: Dictionary = M["stage"]
+	var i := 0
+	for p in st["pieces"]:
+		var cell := Control.new()
+		cell.position = Vector2(8 + (i % 4) * 318, 8 + (i / 4) * 350)
+		cell.size = Vector2(310, 340)
+		cell.clip_contents = true
+		add_child(cell)
+		var bgc := ColorRect.new()
+		bgc.color = Color(0.02, 0.03, 0.1)
+		bgc.size = cell.size
+		cell.add_child(bgc)
+		var s := _piece_sprite(p, true)
+		var sz: Array = p["size"]
+		var k := minf(300.0 / sz[0], 300.0 / sz[1])
+		s.scale *= k
+		s.position = Vector2(5, 30)
+		s.z_index = 0
+		s.material = null
+		cell.add_child(s)
+		var l := Label.new()
+		l.text = "%s  %s  z=%s" % [p["id"], p["anim"], p["z"]]
+		l.position = Vector2(5, 4)
+		l.add_theme_font_size_override("font_size", 13)
+		cell.add_child(l)
+		i += 1
+
+
+func _interlude(flood: bool) -> void:
+	var chap_root := ROOT
+	var chap: Dictionary = M
+	ROOT = "res://assets/story/night_one/"
+	M = JSON.parse_string(FileAccess.get_file_as_string(ROOT + "manifest.json"))
+	_tcache.clear()
+	_stage(false)
+	ROOT = chap_root
+	M = chap
+	_tcache.clear()
+	var il: Dictionary = M["interlude"]
+	var sp: Dictionary = il["sprites"]
+	var an: Dictionary = il["anchors"]
+	var hv := Vector2(an["ufo_hover"][0], an["ufo_hover"][1])
+	var bf := Vector2(an["beam_floor"][0], an["beam_floor"][1])
+	var mk := func(id: String, pos: Vector2, add: bool, tint: Color, sc: Vector2, z: int) -> Sprite2D:
+		var d: Dictionary = sp[id]
+		var s := Sprite2D.new()
+		s.texture = tex(d["file"])
+		s.centered = false
+		var k := float(d["px_scale"])
+		s.scale = Vector2(k, k) * sc
+		s.position = pos - Vector2(d["pivot"][0], d["pivot"][1]) * s.scale
+		s.modulate = tint
+		s.z_as_relative = false
+		s.z_index = z
+		if add:
+			var mat := CanvasItemMaterial.new()
+			mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+			s.material = mat
+		add_child(s)
+		return s
+	mk.call("ufo_glow", hv + Vector2(0, 30), true, Color(0.5, 1.0, 0.8, 0.8), Vector2.ONE, 2400)
+	var beam_top := hv + Vector2(0, 30)
+	var beam_h: float = float(sp["tractor_beam"]["size"][1])
+	mk.call("tractor_beam", beam_top, true, Color(0.55, 1.0, 0.85, 0.9), Vector2(1.0, (bf.y - beam_top.y + 20.0) / beam_h), 2401)
+	mk.call("ufo", hv, false, Color.WHITE, Vector2.ONE, 2402)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 3
+	for i in 16:
+		var p := Vector2(bf.x + rng.randf_range(-170, 170), rng.randf_range(bf.y - 180, bf.y + 30))
+		mk.call("sparkle", p, true, Color(0.8, 1.0, 0.9, rng.randf_range(0.5, 1.0)), Vector2.ONE * rng.randf_range(0.5, 1.2), 2403)
+	if flood:
+		mk.call("light_flood", Vector2(640, 360), true, Color(1, 1, 1, 0.7), Vector2.ONE, 2600)

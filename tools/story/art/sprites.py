@@ -9,12 +9,12 @@ import os
 import numpy as np
 from PIL import Image, ImageDraw
 
-from .lib import PNG_DIR
+from . import lib
 
 
 def _save(name: str, rgba: np.ndarray) -> str:
-    os.makedirs(PNG_DIR, exist_ok=True)
-    Image.fromarray(np.clip(rgba, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(PNG_DIR, name), compress_level=9)
+    os.makedirs(lib.PNG_DIR, exist_ok=True)
+    Image.fromarray(np.clip(rgba, 0, 255).astype(np.uint8), "RGBA").save(os.path.join(lib.PNG_DIR, name), compress_level=9)
     return f"processed/{name}"
 
 
@@ -107,7 +107,7 @@ def build_png_sprites() -> dict:
             pts.append((cx + sx * math.cos(ang) - sy * math.sin(ang), cy + sx * math.sin(ang) + sy * math.cos(ang)))
         dr.polygon(pts, fill=c + (255,), outline=(27, 16, 64, 255))
     small = big.resize((128, 32), Image.LANCZOS)
-    os.makedirs(PNG_DIR, exist_ok=True)
-    small.save(os.path.join(PNG_DIR, "confetti.png"), compress_level=9)
+    os.makedirs(lib.PNG_DIR, exist_ok=True)
+    small.save(os.path.join(lib.PNG_DIR, "confetti.png"), compress_level=9)
     sprites["confetti"] = {"file": "processed/confetti.png", "pivot": [16, 16], "px_scale": 1.0, "frames": 4, "frame_size": [32, 32]}
     return sprites

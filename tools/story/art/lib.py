@@ -18,6 +18,14 @@ SVG_DIR = os.path.join(ASSET_DIR, "source")
 PNG_DIR = os.path.join(ASSET_DIR, "processed")
 
 
+def set_chapter(name: str) -> None:
+    """Point the writers at assets/story/<name>/ (Night One is the default)."""
+    global ASSET_DIR, SVG_DIR, PNG_DIR
+    ASSET_DIR = os.path.join(ROOT, "assets", "story", name)
+    SVG_DIR = os.path.join(ASSET_DIR, "source")
+    PNG_DIR = os.path.join(ASSET_DIR, "processed")
+
+
 def f(v: float) -> str:
     """Compact number formatting."""
     s = f"{v:.2f}".rstrip("0").rstrip(".")

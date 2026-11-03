@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Sanity checks for the generated Night One art: `python3 tools/story/check_assets.py [--determinism]`.
+"""Sanity checks for the generated Story Campaign art: `python3 tools/story/check_assets.py [--determinism]`.
 
-Validates the manifest against the art contract (every referenced file exists, six archetypes x two variants, every part has a
+Checks Night One and every chapter whose folder exists (`mothership`). Validates the manifest against the art contract (every referenced file exists, six archetypes x two variants, every part has a
 pivot inside its texture, four faces, the required layers/anchors/sprites). With --determinism it rebuilds twice and compares
 hashes of every generated file. Exit code 0 when everything holds.
 """
@@ -16,7 +16,13 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
-ART = os.path.join(ROOT, "assets", "story", "night_one")
+STORY = os.path.join(ROOT, "assets", "story")
+ART = os.path.join(STORY, "night_one")  # the folder being checked (set per chapter by validate)
+CHAPTERS = ("night_one", "mothership")
+CHAPTER_ANCHORS = {"floor_grid", "wall_left_x", "wall_right_x", "horizon_y"}
+INTERLUDE = {"mothership": ({"ufo", "tractor_beam", "ufo_glow", "sparkle", "light_flood"}, {"ufo_hover", "beam_floor"})}
+ARCH_IDS = {"mothership": {"grey", "antenna", "blob", "insect", "cyclops", "tentacle"}}
+PIECE_ANIMS = {"none", "pulse", "flicker", "rotate", "bob", "sway"}
 
 JOINTS = {"hips", "torso", "head", "shoulder_l", "elbow_l", "shoulder_r", "elbow_r", "hip_l", "hip_r"}
 LAYERS = {"backdrop", "speaker_l", "speaker_r", "riser", "desk_top"}
@@ -55,7 +61,9 @@ def check_entry(errors, where, e, need_pivot=True, margin=1.0):
             errors.append(f"{where}: pivot {e['pivot']} outside texture {w}x{h}")
 
 
-def validate() -> list:
+def validate(chapter: str = "night_one") -> list:
+    global ART
+    ART = os.path.join(STORY, chapter)
     errors: list = []
     with open(os.path.join(ART, "manifest.json"), encoding="utf-8") as fh:
         m = json.load(fh)
@@ -106,7 +114,50 @@ def validate() -> list:
         errors.append(f"missing sprites {sorted(SPRITES - set(st['sprites']))}")
     for sid, e in st["sprites"].items():
         check_entry(errors, f"sprite {sid}", e)
+    if chapter != "night_one":
+        chapter_checks(errors, chapter, m, st)
     return errors
+
+
+def chapter_checks(errors, chapter, m, st) -> None:
+    """Extra checks of the chapter addendum: archetype ids, 5 floor rows, 4 woofers, extra anchors, pieces, interlude."""
+    ids = ARCH_IDS.get(chapter)
+    if ids and set(m["archetypes"]) != ids:
+        errors.append(f"archetype ids {sorted(m['archetypes'])} != {sorted(ids)}")
+    for name, a in m["archetypes"].items():
+        for v in a["variants"].values():
+            gh = v.get("glow_hand", {})
+            if gh.get("joint") != "elbow_r" or len(gh.get("at", [])) != 2:
+                errors.append(f"{name}: glow_hand {gh}")
+    if not CHAPTER_ANCHORS <= set(st["anchors"]):
+        errors.append(f"missing anchors {sorted(CHAPTER_ANCHORS - set(st['anchors']))}")
+    if len(st["anchors"]["floor_rows"]) != 5:
+        errors.append("floor_rows must have 5 rows")
+    if len(st["anchors"]["woofers"]) != 4:
+        errors.append("woofers must have 4 entries")
+    pieces = st.get("pieces", [])
+    if not 6 <= len(pieces) <= 8:
+        errors.append(f"expected 6 to 8 pieces, got {len(pieces)}")
+    seen = set()
+    for p in pieces:
+        if p["id"] in seen:
+            errors.append(f"duplicate piece {p['id']}")
+        seen.add(p["id"])
+        if p["anim"] not in PIECE_ANIMS or p["z"] not in ("behind", "front"):
+            errors.append(f"piece {p['id']}: anim {p['anim']} z {p['z']}")
+        check_entry(errors, f"piece {p['id']}", p, need_pivot="pivot" in p)
+    if chapter in INTERLUDE:
+        il = m.get("interlude")
+        sprites, anchors = INTERLUDE[chapter]
+        if not il:
+            errors.append("missing interlude")
+            return
+        if not sprites <= set(il["sprites"]):
+            errors.append(f"interlude sprites missing {sorted(sprites - set(il['sprites']))}")
+        if not anchors <= set(il["anchors"]):
+            errors.append(f"interlude anchors missing {sorted(anchors - set(il['anchors']))}")
+        for sid, e in il["sprites"].items():
+            check_entry(errors, f"interlude {sid}", e)
 
 
 def tree_hash() -> str:
@@ -120,16 +171,31 @@ def tree_hash() -> str:
     return h.hexdigest()
 
 
+def all_hash() -> str:
+    global ART
+    h = hashlib.sha256()
+    for ch in CHAPTERS:
+        ART = os.path.join(STORY, ch)
+        if os.path.isdir(ART):
+            h.update(tree_hash().encode())
+    return h.hexdigest()
+
+
 def main(argv) -> int:
-    errors = validate()
+    errors: list = []
+    for ch in CHAPTERS:
+        if os.path.isdir(os.path.join(STORY, ch)):
+            errs = validate(ch)
+            errors += [f"[{ch}] {e}" for e in errs]
+            print(f"{ch}:", "OK" if not errs else f"{len(errs)} problems")
     for e in errors:
         print("FAIL", e)
     if "--determinism" in argv:
         build = os.path.join(HERE, "build_assets.py")
         subprocess.run([sys.executable, build], check=True, stdout=subprocess.DEVNULL)
-        a = tree_hash()
+        a = all_hash()
         subprocess.run([sys.executable, build], check=True, stdout=subprocess.DEVNULL)
-        b = tree_hash()
+        b = all_hash()
         print("determinism:", "OK" if a == b else "FAIL (outputs differ between runs)")
         if a != b:
             errors.append("not deterministic")
