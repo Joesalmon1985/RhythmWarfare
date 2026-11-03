@@ -1,0 +1,13 @@
+Implement the attached PRD, `docs/STORY_CAMPAIGN_PRD.md`, in the CURRENT RhythmWarfare Godot repository.
+
+This is a full one-session implementation task, NOT a request to plan the project. Read the PRD and the actual code first, resolve differences in favour of the current checked-out code, then implement all delivery phases without waiting for routine approvals. Before starting however please check any key open design decisions you come across and suggest improvements that might improve the game or suggested workflow.
+
+Create a dedicated feature branch, preserve any existing uncommitted work and the original Campaign, and use the existing 128-bar First Watch music, global loadout, falling-note cues, four DJ-deck pads, input judgement, SongClock and StemTransport.
+
+Deliver a complete playable first Story Campaign level, Night One: a FIXED DJ-point-of-view nightclub backdrop, original sprite artwork, a substantial independently animated crowd, mood changes from two-bar sequence results, sixteen authored eight-bar visual blocks, at least three good/bad intermediate story moments, three endings, independent story saves and result screen.
+
+Do not reuse OpenRA artwork in Story Campaign, create a video, substitute new music, shorten the level to a prototype, or leave visual placeholders as the finished result. Implement the artwork and code in the repository. Prioritise a visually convincing scene and a functioning whole-level playthrough.
+
+Run tests, use deterministic perfect/none/mixed autoplayer checks, capture real screenshots, fix integration problems, commit completed work, and finish with branch name, commit SHA, launch commands, verified tests and documented limitations. If a nonessential tool is unavailable, adapt locally and keep going. Do not auto-push to main or buy external services.
+
+Work through the entire PRD rather than stopping after a design plan.
