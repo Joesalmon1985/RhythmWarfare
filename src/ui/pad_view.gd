@@ -27,6 +27,7 @@ var status_text := ""  # the centre line under the sequence meter (reward result
 var status_color := Color.WHITE
 var status_until := 0.0
 var banner_text := ""
+var show_reward := true  # the "-> Rifle squad" line under the sequence meter; the Story Campaign has no rewards
 var deck_under: Callable  # (ci: CanvasItem, size: Vector2, pad_rects: Dictionary, now: float): the Story Campaign's DJ desk behind the pads
 var deck_over: Callable   # the same, drawn after the pads
 
@@ -263,7 +264,8 @@ func _draw_centre(rects: Dictionary, now: float, wall: float) -> void:
 				draw_rect(Rect2(rr.position, Vector2(rr.size.x * clampf(filled, 0.0, 1.0), rr.size.y)), Color(0.55, 0.9, 0.55))
 		var mark := sx + need * seg_w
 		draw_line(Vector2(mark, sy - 4.0), Vector2(mark, sy + fs * 0.6 + 4.0), Color(1, 1, 1, 0.6), 2.0)
-		draw_string(_font, Vector2(x0, sy + fs * 0.6 + fs + 6.0), "→ " + MissionRules.reward_name(str(p["reward"])), HORIZONTAL_ALIGNMENT_CENTER, w, fs, Color(0.85, 0.88, 0.92))
+		if show_reward:
+			draw_string(_font, Vector2(x0, sy + fs * 0.6 + fs + 6.0), "→ " + MissionRules.reward_name(str(p["reward"])), HORIZONTAL_ALIGNMENT_CENTER, w, fs, Color(0.85, 0.88, 0.92))
 	if not status_text.is_empty() and wall < status_until:
 		draw_string(_font, Vector2(x0, size.y * 0.9), status_text, HORIZONTAL_ALIGNMENT_CENTER, w, int(fs * 0.85), Color(status_color, clampf(status_until - wall, 0.0, 1.0)))
 

@@ -53,8 +53,12 @@ func setup(p_assets: StoryAssets, rig_entry: Dictionary, id: String, p_seed: int
 		e["joint"] = str(p["joint"])
 		e["z"] = int(p.get("z", 0))
 		e["swing"] = bool(p.get("swing", false))
+		if e["swing"]:
+			var sp: Array = p.get("swing_pivot", p.get("pivot", [0, 0]))
+			e["swing_pivot"] = Vector2(float(sp[0]), float(sp[1]))
 		e["name"] = str(p.get("name", ""))
 		_parts.append(e)
+	_parts.append({"face": true, "z": int(rig.get("face_z", 12)), "joint": "head"})
 	_parts.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["z"] < b["z"])
 	_face_entries = {}
 	for k in rig.get("faces", {}):
@@ -195,34 +199,37 @@ func _draw() -> void:
 	if rig.is_empty() or _parts.is_empty():
 		return
 	var P: Dictionary = cur
-	var hips: Vector2 = _joints.get("hips", Vector2(0, -95))
+	var j_hips: Vector2 = _joints.get("hips", Vector2(0, -110))
+	var j_torso: Vector2 = _joints.get("torso", j_hips)
+	var j_head: Vector2 = _joints.get("head", Vector2(0, -200))
 	var root := Transform2D(0.0, Vector2(float(P["sway_x"]), -float(P["jump"])))
-	var hip_xf := root * Transform2D(0.0, hips + Vector2(0, -float(P["bob"]) * 0.5))
-	var torso_xf := hip_xf * Transform2D(float(P["lean"]), Vector2.ZERO)
-	var neck: Vector2 = (_joints.get("neck", Vector2(0, -190)) as Vector2) - hips
-	var head_xf := torso_xf * Transform2D(float(P["head_tilt"]), neck + Vector2(0, float(P["head_drop"])))
+	var hip_xf := root * Transform2D(0.0, j_hips + Vector2(0, -float(P["bob"]) * 0.5))
+	var torso_xf := hip_xf * Transform2D(float(P["lean"]), j_torso - j_hips)
+	var head_xf := torso_xf * Transform2D(float(P["head_tilt"]), j_head - j_torso + Vector2(0, float(P["head_drop"])))
 	var xfs := {"hips": hip_xf, "torso": torso_xf, "head": head_xf}
 	for side in ["l", "r"]:
 		var sg := 1.0 if side == "l" else -1.0
-		var sh_pos: Vector2 = _joints.get("shoulder_" + side, Vector2(sg * 30, -170)) - hips
-		var sh_xf: Transform2D = torso_xf * Transform2D(sg * float(P["arm_" + side]), sh_pos + Vector2(0, float(P["head_drop"]) * 0.5))
+		var j_sh: Vector2 = _joints.get("shoulder_" + side, Vector2(sg * 30, -186))
+		var j_el: Vector2 = _joints.get("elbow_" + side, Vector2(sg * 35, -144))
+		var sh_xf: Transform2D = torso_xf * Transform2D(sg * float(P["arm_" + side]), j_sh - j_torso + Vector2(0, float(P["head_drop"]) * 0.5))
 		xfs["shoulder_" + side] = sh_xf
-		var el_off: Vector2 = _joints.get("elbow_" + side, Vector2(sg * 36, -130)) - _joints.get("shoulder_" + side, Vector2(sg * 30, -170))
-		xfs["elbow_" + side] = sh_xf * Transform2D(-sg * float(P["elb_" + side]), el_off)
-		var hp_pos: Vector2 = _joints.get("hip_" + side, Vector2(sg * 14, -92)) - hips
-		xfs["hip_" + side] = hip_xf * Transform2D(sg * float(P["leg_" + side]), hp_pos)
+		xfs["elbow_" + side] = sh_xf * Transform2D(-sg * float(P["elb_" + side]), j_el - j_sh)
+		var j_hp: Vector2 = _joints.get("hip_" + side, Vector2(sg * 11, -108))
+		xfs["hip_" + side] = hip_xf * Transform2D(sg * float(P["leg_" + side]), j_hp - j_hips)
 	for part in _parts:
-		var j: String = part["joint"]
-		var xf: Transform2D = xfs.get(j, hip_xf)
-		if part["swing"]:
-			xf = xf * Transform2D(_swing, Vector2.ZERO)
+		if part.get("face", false):
+			_draw_face(head_xf)
+			continue
+		var xf: Transform2D = xfs.get(part["joint"], hip_xf)
 		var sc: float = part["scale"]
 		var tex: Texture2D = part["tex"]
 		if tex == null:
 			continue
+		if part["swing"]:
+			var off: Vector2 = ((part["swing_pivot"] as Vector2) - (part["pivot"] as Vector2)) * sc
+			xf = xf * Transform2D(0.0, off) * Transform2D(_swing, Vector2.ZERO) * Transform2D(0.0, -off)
 		draw_set_transform_matrix(xf * Transform2D().scaled(Vector2(sc, sc)))
 		draw_texture(tex, -part["pivot"], Color.WHITE)
-	_draw_face(head_xf)
 	if glow:
 		_draw_glow(xfs)
 	draw_set_transform_matrix(Transform2D.IDENTITY)
@@ -248,11 +255,10 @@ func _draw_glow(xfs: Dictionary) -> void:
 		return
 	var j := str(gh.get("joint", "elbow_r"))
 	var at: Array = gh.get("at", [0, 0])
-	var fore_scale := 1.0
 	for part in _parts:
-		if part["joint"] == j:
-			fore_scale = part["scale"]
-			var xf: Transform2D = (xfs[j] as Transform2D) * Transform2D(0.0, Vector2(float(at[0]) - part["pivot"].x, float(at[1]) - part["pivot"].y) * fore_scale)
-			draw_set_transform_matrix(xf * Transform2D(0.25 + 0.3 * sin(float(cur["sway_x"]) * 0.2), Vector2.ZERO) * Transform2D().scaled(Vector2(gs["scale"], gs["scale"])))
+		if part.get("joint", "") == j and not part.get("face", false) and part["name"].ends_with("fore"):
+			var hand := Vector2(float(at[0]), float(at[1])) - (part["pivot"] as Vector2)
+			var xf: Transform2D = (xfs[j] as Transform2D) * Transform2D(0.0, hand * float(part["scale"]))
+			draw_set_transform_matrix(xf * Transform2D(0.3, Vector2.ZERO) * Transform2D().scaled(Vector2(gs["scale"], gs["scale"])))
 			draw_texture(gs["tex"], -gs["pivot"], glow_color)
 			return

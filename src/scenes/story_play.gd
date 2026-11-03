@@ -125,6 +125,7 @@ func _build_layout() -> void:
 	pad_view.show_keys = Session.show_keys
 	pad_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pad_view.clip_contents = true
+	pad_view.show_reward = false
 	pad_view.holding_fn = run.match_ref.pad_judge.hold_progress
 	pad_view.progress_fn = run.match_ref.tracker.progress_at
 	pad_view.muted_fn = run.match_ref.family_muted

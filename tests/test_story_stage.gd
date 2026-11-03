@@ -23,8 +23,8 @@ func test_manifest_and_textures_exist() -> void:
 			for f in FACES:
 				assert_true(rig["faces"].has(f), "%s/%s has face %s" % [arch, v, f])
 				assert_true(a.texture(str(rig["faces"][f]["file"])) != null, "%s/%s face %s imports" % [arch, v, f])
-			for j in ["hips", "neck", "shoulder_l", "shoulder_r", "elbow_l", "elbow_r", "hip_l", "hip_r"]:
-				assert_true(rig["joints"].has(j), "%s/%s joint %s" % [arch, v, j])
+			for j in ["hips", "torso", "head", "shoulder_l", "shoulder_r", "elbow_l", "elbow_r", "hip_l", "hip_r"]:
+				assert_true(ad["joints"].has(j), "%s joint %s" % [arch, j])
 	for id in ["backdrop", "speaker_l", "speaker_r", "riser", "desk_top"]:
 		assert_false(a.layer(id).is_empty(), "layer %s" % id)
 		assert_true(a.texture(str(a.layer(id)["file"])) != null, "layer %s imports" % id)
@@ -36,14 +36,15 @@ func test_manifest_and_textures_exist() -> void:
 			assert_true(s["tex"] != null, "sprite %s imports" % id)
 	assert_true((a.anchor("floor_rows", []) as Array).size() >= 4, "floor rows")
 	assert_eq((a.anchor("light_points", []) as Array).size(), 8)
-	assert_eq(a.silhouette_ids().size(), 3, "three rear silhouette shapes") if a.has_method("silhouette_ids") else null
+	assert_eq(a.manifest["silhouettes"].size(), 3, "three rear silhouette shapes")
 	assert_true(a.errors.is_empty(), "no missing textures: %s" % str(a.errors))
 
 
 func test_every_archetype_acts_all_four_states_with_moving_limbs() -> void:
 	var a := StoryAssets.load_default()
 	for arch in ARCHETYPES:
-		var rig: Dictionary = a.manifest["archetypes"][arch]["variants"]["a"]
+		var rig: Dictionary = (a.manifest["archetypes"][arch]["variants"]["a"] as Dictionary).duplicate()
+		rig["joints"] = a.manifest["archetypes"][arch]["joints"]
 		var c := StoryCharacter.new()
 		c.setup(a, rig, arch, 7)
 		var idle := c.sample("idle", 3.3, 0.5)

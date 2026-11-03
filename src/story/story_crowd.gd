@@ -9,6 +9,7 @@ extends Node2D
 
 const SIL_UP_E := 66.0
 const NO_END := 1.0e9
+const CHAR_SCALE := 0.8  # the art's front row is a 260 to 300 px dancer: 0.8 keeps the room visible behind a crowd of 30
 
 var assets: StoryAssets
 var data: StoryData
@@ -42,9 +43,11 @@ func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
 	var n := 0
 	for a in data.actors:
 		var ad: Dictionary = arch.get(str(a["archetype"]), {})
-		var rig: Dictionary = ad.get("variants", {}).get(str(a["variant"]), {})
+		var rig: Dictionary = (ad.get("variants", {}).get(str(a["variant"]), {}) as Dictionary).duplicate()
 		if rig.is_empty():
 			continue
+		rig["joints"] = ad.get("joints", {})
+		rig["height"] = ad.get("height", 260)
 		var c := StoryCharacter.new()
 		c.name = str(a["id"])
 		c.setup(assets, rig, str(a["id"]), 1000 + n)
@@ -147,8 +150,7 @@ func update(t: float, p_energy: float) -> void:
 		c.visible = float(a["alpha"]) > 0.01
 		if not c.visible:
 			continue
-		var f := assets.floor_at(0.0)
-		var depth_scale := _scale_at((a["pos"] as Vector2).y)
+		var depth_scale := _scale_at((a["pos"] as Vector2).y) * CHAR_SCALE
 		c.position = a["pos"]
 		c.scale = Vector2(depth_scale, depth_scale)
 		c.modulate = Color(1, 1, 1, float(a["alpha"]))
@@ -328,7 +330,7 @@ func gatherers_enter(t0: float, all := true) -> void:
 			walk_to(id, a["home"], t0 + float(k) * 0.35, 4.0)
 			a["dir"] = {}
 		else:
-			var side := Vector2(float(a["data"].get("side_x", 60.0)), _home_of({"depth": float(a["data"].get("side_depth", 0.4))}).y)
+			var side := Vector2(float(a["data"].get("side_x", 60.0)), float(assets.floor_at(float(a["data"].get("side_depth", 0.4)))["y"]))
 			walk_to(id, side, t0 + float(k) * 0.35, 3.0, {"state": "look", "from": 0.0, "until": NO_END})
 		k += 1
 	if all:

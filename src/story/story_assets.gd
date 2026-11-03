@@ -45,7 +45,7 @@ func texture(file: String) -> Texture2D:
 
 ## A sprite entry ({file, pivot, px_scale}) as {tex, pivot: Vector2, scale: float}.
 func sprite(id: String) -> Dictionary:
-	var s: Dictionary = manifest.get("sprites", {}).get(id, {})
+	var s: Dictionary = manifest.get("stage", {}).get("sprites", {}).get(id, manifest.get("sprites", {}).get(id, {}))
 	return _entry(s)
 
 

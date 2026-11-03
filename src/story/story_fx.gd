@@ -185,8 +185,10 @@ func _draw_door(ci: CanvasItem) -> void:
 	if s.is_empty() or s["tex"] == null:
 		return
 	var u := clampf((stage.t_now - _door_t0) / 1.2, 0.0, 1.0)
-	var tex: Texture2D = s["tex"]
-	ci.draw_texture_rect(tex, Rect2(float(dw[0]), float(dw[1]), float(dw[2]), float(dw[3])), false, Color(1, 1, 1, u))
+	var pos: Array = assets.manifest.get("stage", {}).get("sprites", {}).get("door_open", {}).get("pos", [dw[0], dw[1]])
+	ci.draw_set_transform(Vector2(float(pos[0]), float(pos[1])), 0.0, Vector2(s["scale"], s["scale"]))
+	ci.draw_texture(s["tex"], Vector2.ZERO, Color(1, 1, 1, u))
+	ci.draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
 # --- additive light over the crowd ------------------------------------------------------------------------------------------
