@@ -7,6 +7,7 @@ extends RefCounted
 var stage: StoryStage
 var assets: StoryAssets
 var crowd: StoryCrowd
+var view := "main"  # the room this effects pass draws
 var _bursts: Array = []  # haze_burst start times
 var _pulses: Array = []  # {t0, passed}
 var _door_t0 := -1.0
@@ -19,7 +20,7 @@ func setup(p_assets: StoryAssets) -> void:
 	for id in ["woofer", "fixture", "disco_ball", "door_open", "spot_pool", "haze_a", "haze_b", "glow", "beam", "vignette", "glowstick"]:
 		_spr[id] = assets.sprite(id)
 	_points = []
-	for p in assets.anchor("light_points", []):
+	for p in assets.anchor("light_points", [], view):
 		_points.append(Vector2(float(p[0]), float(p[1])))
 	if _points.is_empty():
 		for i in 8:
@@ -79,7 +80,9 @@ func _draw_sprite(ci: CanvasItem, id: String, pos: Vector2, scale: Vector2, rot:
 
 
 func _led_rect() -> Rect2:
-	var r: Array = assets.anchor("led_screen", [440, 70, 400, 120])
+	var r: Array = assets.anchor("led_screen", [], view)
+	if r.size() < 4:
+		return Rect2()  # this room has no LED screen
 	return Rect2(float(r[0]), float(r[1]), float(r[2]), float(r[3]))
 
 
@@ -100,6 +103,8 @@ func draw_base(ci: CanvasItem) -> void:
 
 func _draw_led(ci: CanvasItem) -> void:
 	var r := _led_rect()
+	if r.size == Vector2.ZERO:
+		return
 	var e := _e01()
 	var t := stage.t_now
 	var dim := 0.35 if stage.tableau() == "lost" else lerpf(0.4, 1.0, e)
@@ -141,7 +146,7 @@ func _draw_led(ci: CanvasItem) -> void:
 
 
 func _draw_woofers(ci: CanvasItem) -> void:
-	var ws: Array = assets.anchor("woofers", [])
+	var ws: Array = assets.anchor("woofers", [], view)
 	var s: Dictionary = _spr.get("woofer", {})
 	if ws.is_empty() or s.is_empty() or s["tex"] == null:
 		return
@@ -178,14 +183,18 @@ func _draw_fixtures(ci: CanvasItem) -> void:
 func _draw_ball(ci: CanvasItem) -> void:
 	if not stage.ball_on():
 		return
-	var p: Array = assets.anchor("disco_ball", [640, 90])
+	var p: Array = assets.anchor("disco_ball", [], view)
+	if p.size() < 2:
+		return
 	_draw_sprite(ci, "disco_ball", Vector2(float(p[0]), float(p[1])), Vector2.ONE, 0.04 * sin(_beats() * 0.5), Color(1, 1, 1, 1))
 
 
 func _draw_door(ci: CanvasItem) -> void:
 	if not stage.is_active("doors_open", stage.t_now):
 		return
-	var dw: Array = assets.anchor("doorway", [120, 250, 70, 110])
+	var dw: Array = assets.anchor("doorway", [], view)
+	if dw.size() < 4:
+		return
 	var s: Dictionary = _spr.get("door_open", {})
 	if s.is_empty() or s["tex"] == null:
 		return
@@ -200,7 +209,7 @@ func _draw_door(ci: CanvasItem) -> void:
 ## front of the crowd; `blend` "add" pieces draw on the additive layers, the rest normally. pos/size are the design-space
 ## rectangle; `pivot` is the animation origin (design px relative to pos when a piece has a `blend`, else texture px).
 func _draw_pieces(ci: CanvasItem, z: String, blend: String) -> void:
-	for p in assets.pieces():
+	for p in assets.pieces(view):
 		if str(p.get("z", "behind")) != z or str(p.get("blend", "mix")) != blend:
 			continue
 		var st := stage.piece_state(str(p["id"]), stage.t_now)
@@ -277,7 +286,7 @@ func draw_add(ci: CanvasItem) -> void:
 
 func _floor_poly() -> PackedVector2Array:
 	var out := PackedVector2Array()
-	for p in assets.anchor("floor_polygon", [[200, 330], [1080, 330], [1280, 460], [0, 460]]):
+	for p in assets.anchor("floor_polygon", [[200, 330], [1080, 330], [1280, 460], [0, 460]], view):
 		out.append(Vector2(float(p[0]), float(p[1])))
 	return out
 

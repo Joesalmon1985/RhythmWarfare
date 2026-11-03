@@ -18,7 +18,6 @@ const PALETTES := {
 
 var assets: StoryAssets
 var data: StoryData
-var crowd: StoryCrowd
 var run: StoryRun
 var bpm := 174.0
 var reduced := false
@@ -30,8 +29,12 @@ var energy := 45.0
 var t_now := 0.0
 
 var _root: Node2D
-var _fx: StoryFx
-var _layers: Dictionary = {}
+var views: Dictionary = {}  # room id -> StoryView
+var current_view := "main"
+var moving_camera := false  # the chapter has extra rooms: the camera walks and turns between them (Night One stays fixed)
+var _cam: Dictionary = {}  # the move in progress or last made: {from, to, style, t0, t1, dir}
+var _cam_fx: Array = []  # camera_look / camera_push windows: {kind, t0, t1, amount}
+var _cam_overlay: Node2D
 var _act := {}  # active timed effects: name -> {t0, t1, args}
 var _beam_mode := "sweep"
 var _beam_since := 0.0
@@ -56,30 +59,6 @@ func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
 	_root = Node2D.new()
 	_root.name = "Design"
 	add_child(_root)
-	for l in assets.manifest.get("stage", {}).get("layers", []):
-		var tex := assets.texture(str(l.get("file", "")))
-		if tex == null:
-			continue
-		var sp := Sprite2D.new()
-		sp.name = str(l["id"])
-		sp.centered = false
-		sp.texture = tex
-		var size: Array = l.get("size", [tex.get_width(), tex.get_height()])
-		sp.position = Vector2(float(l["pos"][0]), float(l["pos"][1]))
-		sp.scale = Vector2(float(size[0]) / tex.get_width(), float(size[1]) / tex.get_height())
-		_root.add_child(sp)
-		_layers[str(l["id"])] = sp
-		if str(l["id"]) == "desk_top":
-			sp.visible = false  # the pad strip draws the desk
-	_fx = StoryFx.new()
-	_fx.stage = self
-	_fx.setup(assets)
-	_add_layer("base")
-	_add_layer("base_add")
-	crowd = StoryCrowd.new()
-	crowd.name = "Crowd"
-	crowd.bpm = bpm
-	_root.add_child(crowd)
 	palettes = PALETTES.duplicate()
 	for k in data.palettes:
 		var cols: Array = []
@@ -87,28 +66,35 @@ func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
 			cols.append(Color.html(str(hex)))
 		if not cols.is_empty():
 			palettes[k] = cols
-	if palettes.has("rave"):
-		var rv: Array = palettes["rave"]
-		crowd.glow_colors = [rv[0], rv[mini(1, rv.size() - 1)], rv[mini(3, rv.size() - 1)]]
-	crowd.setup(assets, data)
-	_fx.crowd = crowd
-	_add_layer("add")
-	_add_layer("norm")
+	for vid in assets.view_ids():
+		var v := StoryView.new()
+		_root.add_child(v)
+		v.build(self, assets, data, str(vid))
+		views[str(vid)] = v
+	current_view = "main"
+	moving_camera = views.size() > 1
+	_cam_overlay = StoryCameraOverlay.new()
+	_cam_overlay.stage = self
+	_root.add_child(_cam_overlay)
 	resized.connect(_fit)
 	_fit()
 	reset()
 
 
-func _add_layer(mode: String) -> void:
-	var l := StoryFxLayer.new()
-	l.name = "Fx_" + mode
-	l.fx = _fx
-	l.mode = mode
-	_root.add_child(l)
-	_fx_layers.append(l)
+## The crowd of the room the camera is in (the one the authored actions direct).
+var crowd: StoryCrowd:
+	get:
+		return (views[current_view] as StoryView).crowd
 
 
-var _fx_layers: Array = []
+func _all_fx(method: String, args: Array) -> void:
+	for id in views:
+		((views[id] as StoryView).fx as Object).callv(method, args)
+
+
+func glow_colors() -> Array:
+	var rv: Array = palettes.get("rave", PALETTES["rave"])
+	return [rv[0], rv[mini(1, rv.size() - 1)], rv[mini(3, rv.size() - 1)]]
 
 
 func _fit() -> void:
@@ -165,10 +151,12 @@ func reset() -> void:
 	_flicker_until = -1.0
 	palette = "low"
 	action_log = []
-	crowd.reset()
-	_fx.reset()
-	if _layers.has("riser"):
-		(_layers["riser"] as Sprite2D).visible = false
+	_cam = {}
+	_cam_fx = []
+	current_view = "main"
+	for id in views:
+		(views[id] as StoryView).reset()
+		(views[id] as StoryView).visible = id == "main"
 
 
 func is_active(name: String, t: float) -> bool:
@@ -199,17 +187,140 @@ func bar_s() -> float:
 func update(t: float, p_energy: float) -> void:
 	t_now = t
 	energy = p_energy
-	crowd.reduced = reduced
-	crowd.set_time(t)
-	crowd.update(t, p_energy)
-	for l in _fx_layers:
-		l.queue_redraw()
-	if _layers.has("riser"):
-		var sp: Sprite2D = _layers["riser"]
-		var up := _riser_level(t)
-		sp.visible = up > 0.01
-		sp.modulate = Color(1, 1, 1, up)
+	var shown := _visible_views(t)
+	for id in views:
+		var v: StoryView = views[id]
+		v.visible = id in shown
+		if not v.visible:
+			continue
+		v.crowd.reduced = reduced
+		v.crowd.set_time(t)
+		v.crowd.update(t, p_energy)
+		v.redraw_fx()
+		if v.layers.has("riser"):
+			var sp: Sprite2D = v.layers["riser"]
+			var up := _riser_level(t)
+			sp.visible = up > 0.01
+			sp.modulate = Color(1, 1, 1, up)
+	_apply_camera(t)
+	_cam_overlay.queue_redraw()
 	queue_redraw()
+
+
+# --- the moving camera (chapters with extra rooms) ------------------------------------------------------------------------------------
+## The rooms on screen at song time t: the room being left until its move begins, both during it, the new one after.
+
+func _visible_views(t: float) -> Array:
+	if _cam.is_empty():
+		return [current_view]
+	if t < float(_cam["t0"]):
+		return [_cam["from"]]
+	if t < float(_cam["t1"]):
+		return [_cam["from"], _cam["to"]]
+	return [_cam["to"]]
+
+
+## 0..1 progress of the camera move at t, or -1 when none is under way.
+func camera_progress(t: float) -> float:
+	if _cam.is_empty() or t < float(_cam["t0"]) or t >= float(_cam["t1"]):
+		return -1.0
+	return (t - float(_cam["t0"])) / maxf(float(_cam["t1"]) - float(_cam["t0"]), 0.001)
+
+
+## The room the camera shows at song time t (the target once a move has finished or is past half way).
+func view_at(t: float) -> String:
+	var u := camera_progress(t)
+	if _cam.is_empty() or t < float(_cam["t0"]):
+		return str(_cam.get("from", current_view))
+	return str(_cam["to"]) if u < 0.0 or u >= 0.5 else str(_cam["from"])
+
+
+func _apply_camera(t: float) -> void:
+	var u := camera_progress(t)
+	var beats := t * bpm / 60.0
+	for id in views:
+		var v: StoryView = views[id]
+		if not v.visible:
+			continue
+		var pivot := v.vanish
+		var s := 1.0
+		var off := Vector2.ZERO
+		var rot := 0.0
+		var a := 1.0
+		if moving_camera and u >= 0.0:
+			var e := u * u * (3.0 - 2.0 * u)
+			var style := str(_cam["style"])
+			var bump := sin(u * PI)
+			var bob := Vector2(0.0, sin(u * TAU * 3.0) * 6.0 * bump)
+			var roll := 0.012 * sin(u * TAU * 3.0) * bump
+			if reduced:
+				bob = Vector2.ZERO
+				roll = 0.0
+			if style == "turn_left" or style == "turn_right" or style == "turn":
+				var dir := -1.0 if style == "turn_left" else 1.0
+				if id == _cam["from"]:
+					off = Vector2(-dir * DESIGN.x * 0.92 * e, 0.0) + bob
+					s = 1.0 - 0.05 * e
+					rot = roll
+				else:
+					off = Vector2(dir * DESIGN.x * 0.92 * (1.0 - e), 0.0) + bob
+					s = 0.95 + 0.05 * e
+					rot = roll
+			else:  # walk / step: a dolly forward
+				if id == _cam["from"]:
+					s = lerpf(1.0, 2.4, e * e)
+					a = 1.0 - clampf((u - 0.4) / 0.6, 0.0, 1.0)
+				else:
+					s = lerpf(0.55, 1.0, e)
+					a = clampf(u * 2.2, 0.0, 1.0)
+				off = bob
+				rot = roll
+		elif moving_camera and id == current_view:
+			if not reduced:  # first-person breathing: a slow sway and a small bob on the beat
+				off = Vector2(sin(beats * 0.25 * PI) * 3.0, absf(sin(beats * 0.5 * PI)) * -2.0)
+				rot = 0.004 * sin(beats * 0.125 * PI)
+		if moving_camera and id == current_view or id == str(_cam.get("to", "")):
+			for f in _cam_fx:
+				if t >= float(f["t0"]) and t < float(f["t1"]):
+					var fu: float = (t - float(f["t0"])) / maxf(float(f["t1"]) - float(f["t0"]), 0.001)
+					var env := sin(fu * PI)
+					if f["kind"] == "look":
+						off.x += float(f["amount"]) * env
+					else:
+						s *= 1.0 + float(f["amount"]) * env
+		var rp := (pivot * s).rotated(rot)
+		v.scale = Vector2(s, s)
+		v.rotation = rot
+		v.position = pivot - rp + off
+		v.modulate = Color(1, 1, 1, a)
+	if moving_camera and u >= 0.0 and str(_cam["style"]) not in ["turn_left", "turn_right", "turn"]:
+		var to_v: StoryView = views[_cam["to"]]
+		var from_v: StoryView = views[_cam["from"]]
+		if to_v.get_index() > from_v.get_index():
+			_root.move_child(to_v, from_v.get_index())  # the room we are walking out of stays in front while it fades
+
+
+## The passage frame the camera walks through and speed lines, drawn over the rooms during a forward move.
+func draw_camera_overlay(ci: CanvasItem) -> void:
+	var u := camera_progress(t_now)
+	if u < 0.0 or not moving_camera:
+		return
+	var style := str(_cam["style"])
+	if style in ["turn_left", "turn_right", "turn"]:
+		return
+	var vp: Vector2 = (views[_cam["from"]] as StoryView).vanish
+	var env := sin(u * PI)
+	if not reduced:
+		for i in 28:
+			var ang := TAU * float(i) / 28.0 + 0.1
+			var r0 := 120.0 + 140.0 * u
+			ci.draw_line(vp + Vector2.from_angle(ang) * r0, vp + Vector2.from_angle(ang) * (r0 + 380.0 * env), Color(1, 1, 1, 0.12 * env), 2.0)
+	var pf := assets.sprite("passage_frame")
+	if style == "step" and not pf.is_empty() and pf["tex"] != null:
+		var k := lerpf(0.4, 3.6, pow(u, 1.6)) * float(pf["scale"])
+		ci.draw_set_transform(vp, 0.0, Vector2(k, k))
+		ci.draw_texture(pf["tex"], -pf["pivot"], Color(1, 1, 1, clampf(sin(clampf((u - 0.05) / 0.85, 0.0, 1.0) * PI) * 1.5, 0.0, 1.0)))
+		ci.draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
 func _riser_level(t: float) -> float:
@@ -276,7 +387,7 @@ func apply(a: Dictionary) -> void:
 	match act:
 		"doors_open":
 			_act["doors_open"] = {"t0": t0, "t1": t0 + 6.0 * bar_s()}
-			_fx.door_spill(t0)
+			_all_fx("door_spill", [t0])
 		"lights_low_pulse":
 			palette = "low"
 		"lights_warm":
@@ -292,10 +403,10 @@ func apply(a: Dictionary) -> void:
 			_act["bass_reveal"] = {"t0": t0, "t1": t0 + 4.0 * bar_s()}
 			if palette == "low":
 				palette = "cool"
-			_fx.haze_burst(t0)
+			_all_fx("haze_burst", [t0])
 			crowd.direct(crowd.present_ids(), "dance", t0, 3.0 * bar_s())
 		"haze_burst":
-			_fx.haze_burst(t0)
+			_all_fx("haze_burst", [t0])
 		"led_eq", "led_rings", "led_bars", "led_wave":
 			_led_mode = act.trim_prefix("led_")
 		"disco_ball_on":
@@ -398,7 +509,7 @@ func apply(a: Dictionary) -> void:
 			_woofer_pump = true
 			_beam_mode = "fan"
 			_beam_since = t0
-			_fx.haze_burst(t0)
+			_all_fx("haze_burst", [t0])
 			crowd.direct(crowd.present_ids(), "cheer", t0, 4.0 * bar_s(), true)
 		"drop_stumble":
 			_flicker_until = t0 + 2.0 * bar_s()
@@ -421,6 +532,15 @@ func apply(a: Dictionary) -> void:
 			_act["burst"] = {"t0": t0, "t1": t0 + 3.0 * bar_s()}
 			crowd.direct(crowd.present_ids(), "cheer", t0, 3.0 * bar_s())
 			_act["spot_sweep"] = {"t0": t0, "t1": t0 + 4.0 * bar_s()}
+		"move_to":
+			var to := str(args.get("view", "main"))
+			if views.has(to) and moving_camera and to != current_view:
+				_cam = {"from": current_view, "to": to, "style": str(args.get("style", "walk")), "t0": t0, "t1": t0 + float(args.get("bars", 2.0)) * bar_s()}
+				current_view = to
+		"camera_look":
+			_cam_fx.append({"kind": "look", "t0": t0, "t1": t0 + dur, "amount": float(args.get("dx", 90.0))})
+		"camera_push":
+			_cam_fx.append({"kind": "push", "t0": t0, "t1": t0 + dur, "amount": float(args.get("zoom", 0.12))})
 		"piece_on":
 			var st: Dictionary = _pieces.get(str(args["piece"]), {})
 			st["on_t"] = t0
@@ -474,4 +594,4 @@ func _front_ids() -> Array:
 ## The two-bar result: a local reaction now; the persistent mood is the energy.
 func on_sequence(result: Dictionary, t0: float) -> void:
 	crowd.react(bool(result["passed"]), str(result["grade"]), t0)
-	_fx.pulse(bool(result["passed"]), t0)
+	_all_fx("pulse", [bool(result["passed"]), t0])

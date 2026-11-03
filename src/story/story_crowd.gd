@@ -12,6 +12,7 @@ const NO_END := 1.0e9
 const CHAR_SCALE := 0.8  # the art's front row is a 260 to 300 px dancer: 0.8 keeps the room visible behind a crowd of 30
 
 var assets: StoryAssets
+var view := "main"  # the room this crowd lives in (actors and silhouettes with that `view`)
 var data: StoryData
 var bpm := 174.0
 var reduced := false
@@ -34,14 +35,18 @@ func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
 	assets = p_assets
 	data = p_data
 	_rng.seed = 4242
-	var dw: Array = assets.anchor("doorway", [120, 250, 70, 110])
+	var dw: Array = assets.anchor("doorway", [120, 250, 70, 110], view)
+	if dw.size() < 4:  # a room without a doorway: arrivals walk in from the left edge
+		dw = [-40, 280, 40, 0]
 	door_pos = Vector2(float(dw[0]) + float(dw[2]) * 0.5, float(dw[1]) + float(dw[3]))
-	var cc: Array = assets.anchor("circle_centre", [640, 380])
+	var cc: Array = assets.anchor("circle_centre", [640, 380], view)
 	circle_c = Vector2(float(cc[0]), float(cc[1]))
-	var cr: Array = assets.anchor("circle_radii", [200, 60])
+	var cr: Array = assets.anchor("circle_radii", [200, 60], view)
 	circle_r = Vector2(float(cr[0]), float(cr[1]))
 	var n := 0
 	for a in data.actors:
+		if str(a.get("view", "main")) != view:
+			continue
 		var rig := assets.rig(str(a["archetype"]), str(a["variant"]), str(a.get("art", "")))
 		if rig.is_empty():
 			continue
@@ -57,10 +62,12 @@ func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
 		n += 1
 	_order = actors.keys()
 	for s in data.silhouettes:
+		if str(s.get("view", "main")) != view:
+			continue
 		var shape: Dictionary = assets.manifest.get("silhouettes", {}).get(str(s["shape"]), {})
 		if shape.is_empty():
 			continue
-		var f := assets.floor_at(float(s["depth"]))
+		var f := assets.floor_at(float(s["depth"]), view)
 		_sils.append({"idle": assets._entry(shape.get("idle", {})), "up": assets._entry(shape.get("up", {})), "x": float(s["x"]),
 			"y": float(f["y"]), "scale": float(f["scale"]) * 0.95, "group": str(s["group"]), "thresh": float(s["thresh"]),
 			"present": str(s["group"]) == "core", "alpha": 1.0 if str(s["group"]) == "core" else 0.0, "ph": _rng.randf()})
@@ -68,7 +75,7 @@ func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
 
 
 func _home_of(a: Dictionary) -> Vector2:
-	var f := assets.floor_at(float(a["depth"]))
+	var f := assets.floor_at(float(a["depth"]), view)
 	return Vector2(float(a["x"]), float(f["y"]))
 
 
@@ -179,7 +186,7 @@ func update(t: float, p_energy: float) -> void:
 
 
 func _scale_at(y: float) -> float:
-	var rows: Array = assets.anchor("floor_rows", [])
+	var rows: Array = assets.anchor("floor_rows", [], view)
 	if rows.is_empty():
 		return 0.55 + clampf((y - 300.0) / 140.0, 0.0, 1.0) * 0.45
 	if y <= float(rows[0]["y"]):
@@ -332,7 +339,7 @@ func gatherers_enter(t0: float, all := true) -> void:
 			walk_to(id, a["home"], t0 + float(k) * 0.35, 4.0)
 			a["dir"] = {}
 		else:
-			var side := Vector2(float(a["data"].get("side_x", 60.0)), float(assets.floor_at(float(a["data"].get("side_depth", 0.4)))["y"]))
+			var side := Vector2(float(a["data"].get("side_x", 60.0)), float(assets.floor_at(float(a["data"].get("side_depth", 0.4)), view)["y"]))
 			walk_to(id, side, t0 + float(k) * 0.35, 3.0, {"state": "look", "from": 0.0, "until": NO_END})
 		k += 1
 	if all:

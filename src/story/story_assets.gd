@@ -91,14 +91,23 @@ func archetype_ids() -> Array:
 
 
 func piece(id: String) -> Dictionary:
-	for p in manifest.get("stage", {}).get("pieces", []):
+	for p in all_pieces():
 		if str(p.get("id", "")) == id:
 			return p
 	return {}
 
 
-func pieces() -> Array:
-	return manifest.get("stage", {}).get("pieces", [])
+func pieces(view_id := "main") -> Array:
+	if view_id == "main":
+		return manifest.get("stage", {}).get("pieces", [])
+	return view(view_id).get("pieces", [])
+
+
+func all_pieces() -> Array:
+	var out: Array = []
+	for v in view_ids():
+		out.append_array(pieces(str(v)))
+	return out
 
 
 ## An interlude sprite (assets/story/<chapter>/manifest.json "interlude").
@@ -117,13 +126,38 @@ func layer(id: String) -> Dictionary:
 	return {}
 
 
-func anchor(key: String, default: Variant = null) -> Variant:
-	return manifest.get("stage", {}).get("anchors", {}).get(key, default)
+## The extra rooms of a chapter with a moving camera (manifest stage.views); "main" is the stage itself.
+func view_ids() -> Array:
+	var out: Array = ["main"]
+	for v in manifest.get("stage", {}).get("views", []):
+		out.append(str(v["id"]))
+	return out
+
+
+func view(id: String) -> Dictionary:
+	for v in manifest.get("stage", {}).get("views", []):
+		if str(v["id"]) == id:
+			return v
+	return {}
+
+
+func view_layers(view_id: String) -> Array:
+	if view_id == "main":
+		return manifest.get("stage", {}).get("layers", [])
+	return view(view_id).get("layers", [])
+
+
+## An anchor of a room. The main room reads stage.anchors; another room only its own (a missing optional anchor means that
+## room has no such feature, e.g. no LED screen), never the main room's.
+func anchor(key: String, default: Variant = null, view_id := "main") -> Variant:
+	if view_id == "main":
+		return manifest.get("stage", {}).get("anchors", {}).get(key, default)
+	return view(view_id).get("anchors", {}).get(key, default)
 
 
 ## Floor row interpolation: depth 0 (back) to 1 (front) -> {y, scale}.
-func floor_at(depth: float) -> Dictionary:
-	var rows: Array = anchor("floor_rows", [])
+func floor_at(depth: float, view_id := "main") -> Dictionary:
+	var rows: Array = anchor("floor_rows", [], view_id)
 	if rows.is_empty():
 		return {"y": 300.0 + depth * 140.0, "scale": 0.55 + depth * 0.45}
 	var f := clampf(depth, 0.0, 1.0) * float(rows.size() - 1)
