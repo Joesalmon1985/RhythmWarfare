@@ -8,7 +8,7 @@ var mode := "base"
 
 
 func _ready() -> void:
-	if mode == "add":
+	if mode == "add" or mode == "base_add":
 		var m := CanvasItemMaterial.new()
 		m.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 		material = m
@@ -20,6 +20,8 @@ func _draw() -> void:
 	match mode:
 		"base":
 			fx.draw_base(self)
+		"base_add":
+			fx.draw_base_add(self)
 		"add":
 			fx.draw_add(self)
 		"norm":

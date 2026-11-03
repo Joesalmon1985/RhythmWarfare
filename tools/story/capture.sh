@@ -30,3 +30,24 @@ shot 08_layout_compact     perfect         107 RW_PAD_SIZE=0
 shot 09_layout_large       perfect         107 RW_PAD_SIZE=2
 shot 10_reduced_effects    perfect         107 RW_REDUCED=1
 shot 11_high_contrast      perfect         107 RW_HIGH_CONTRAST=1
+
+# chapters 2 and 3 (their own art, music packs and endings) and the cutscenes between chapters
+shot ch2_01_opening         perfect       3  RW_STORY_CHAPTER=mothership
+shot ch2_02_groove          accuracy:0.8  27 RW_STORY_CHAPTER=mothership
+shot ch2_03_peak            perfect       69 RW_STORY_CHAPTER=mothership
+shot ch2_04_low_energy      none          40 RW_STORY_CHAPTER=mothership
+shot ch2_05_end_headliner   perfect       83 RW_STORY_CHAPTER=mothership
+shot ch2_06_end_beamed_home none          83 RW_STORY_CHAPTER=mothership
+shot ch3_01_opening         perfect       3  RW_STORY_CHAPTER=underworld
+shot ch3_02_groove          accuracy:0.8  21 RW_STORY_CHAPTER=underworld
+shot ch3_03_peak            perfect       55 RW_STORY_CHAPTER=underworld
+shot ch3_04_low_energy      none          30 RW_STORY_CHAPTER=underworld
+shot ch3_05_end_resident_dj perfect       67 RW_STORY_CHAPTER=underworld
+shot ch3_06_end_devoured    none          67 RW_STORY_CHAPTER=underworld
+
+interlude() {  # name cutscene_seconds
+  local name="$1" at="$2"
+  env RW_STORY_INTERLUDE="$name" RW_STORY_INTERLUDE_T="$at" RW_STORY_INTERLUDE_HOLD=1 \
+    "$GODOT" --path "$ROOT" -s tools/shoot.gd -- res://src/scenes/story_interlude.tscn "$OUT" "50:shot:interlude_${name}_$(printf %02d "$at")" 2>&1 | grep -E "^shot|ERROR|SCRIPT" || true
+}
+for t in 5 9 12 15; do interlude abduction $t; interlude descent $t; done

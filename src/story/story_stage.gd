@@ -5,6 +5,7 @@ extends Control
 ## floor effects, the LED screen, woofers, the riser, the crowd, and the authored actions the director sends. Every effect is a
 ## function of song time (the audio clock) and of action start times; nothing here advances on frame counts.
 
+var desk_y := 460.0  # design y of the desk-top line; a full-screen cutscene stage uses 720
 const DESK_Y := 460.0
 const DESIGN := Vector2(1280, 720)
 const NO_END := 1.0e9
@@ -74,6 +75,7 @@ func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
 	_fx.stage = self
 	_fx.setup(assets)
 	_add_layer("base")
+	_add_layer("base_add")
 	crowd = StoryCrowd.new()
 	crowd.name = "Crowd"
 	crowd.bpm = bpm
@@ -113,9 +115,9 @@ func _fit() -> void:
 	if _root == null:
 		return
 	area_h = maxf(size.y, 1.0)
-	_scale = maxf(size.x / DESIGN.x, area_h / DESK_Y)
+	_scale = maxf(size.x / DESIGN.x, area_h / desk_y)
 	_root.scale = Vector2(_scale, _scale)
-	_root.position = Vector2((size.x - DESIGN.x * _scale) * 0.5, area_h - DESK_Y * _scale)
+	_root.position = Vector2((size.x - DESIGN.x * _scale) * 0.5, area_h - desk_y * _scale)
 
 
 func design_to_global(p: Vector2) -> Vector2:

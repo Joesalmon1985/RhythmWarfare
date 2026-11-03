@@ -18,6 +18,11 @@ var _skip_hint: Label
 func _ready() -> void:
 	theme = UiStyle.theme()
 	var info := Session.story_interlude
+	if info.is_empty() and OS.has_environment("RW_STORY_INTERLUDE"):  # screenshots: open a cutscene directly
+		var nm := OS.get_environment("RW_STORY_INTERLUDE")
+		info = {"name": nm, "from": "night_one", "to": "mothership" if nm == "abduction" else "underworld",
+			"ending": "good_night" if nm == "abduction" else "lost_the_floor"}
+		Session.story_interlude = info
 	_def = StoryChapters.interlude(str(info.get("name", "")))
 	var chapters := StoryChapters.load_default()
 	var from_entry := chapters.chapter(str(info.get("from", "night_one")))
@@ -33,6 +38,7 @@ func _ready() -> void:
 	add_child(bg)
 	stage = StoryStage.new()
 	stage.set_anchors_preset(Control.PRESET_FULL_RECT)
+	stage.desk_y = 720.0  # the whole 1280 x 720 club, no desk
 	add_child(stage)
 	stage.setup(from_assets, _run.data, _run)
 	stage.reduced = Session.reduced_effects

@@ -85,8 +85,12 @@ func _led_rect() -> Rect2:
 
 # --- base layer: under the crowd ------------------------------------------------------------------------------------------
 
+func draw_base_add(ci: CanvasItem) -> void:
+	_draw_pieces(ci, "behind", "add")
+
+
 func draw_base(ci: CanvasItem) -> void:
-	_draw_pieces(ci, "behind")
+	_draw_pieces(ci, "behind", "mix")
 	_draw_led(ci)
 	_draw_woofers(ci)
 	_draw_fixtures(ci)
@@ -192,10 +196,12 @@ func _draw_door(ci: CanvasItem) -> void:
 	ci.draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
-## The chapter's authored set pieces (assets/story/<chapter>/manifest.json stage.pieces), animated by song time.
-func _draw_pieces(ci: CanvasItem, z: String) -> void:
+## The chapter's authored set pieces (assets/story/<chapter>/manifest.json stage.pieces), animated by song time. `z` is behind or
+## front of the crowd; `blend` "add" pieces draw on the additive layers, the rest normally. pos/size are the design-space
+## rectangle; `pivot` is the animation origin (design px relative to pos when a piece has a `blend`, else texture px).
+func _draw_pieces(ci: CanvasItem, z: String, blend: String) -> void:
 	for p in assets.pieces():
-		if str(p.get("z", "behind")) != z:
+		if str(p.get("z", "behind")) != z or str(p.get("blend", "mix")) != blend:
 			continue
 		var st := stage.piece_state(str(p["id"]), stage.t_now)
 		if not st["visible"]:
@@ -203,19 +209,22 @@ func _draw_pieces(ci: CanvasItem, z: String) -> void:
 		var tex := assets.texture(str(p["file"]))
 		if tex == null:
 			continue
-		var sc: float = float(p.get("px_scale", 0.5))
 		var pos := Vector2(float(p["pos"][0]), float(p["pos"][1]))
-		var size: Array = p.get("size", [tex.get_width() * sc, tex.get_height() * sc])
-		var piv: Array = p.get("pivot", [0, 0])
+		var size: Array = p.get("size", [tex.get_width() * 0.5, tex.get_height() * 0.5])
+		var k0 := Vector2(float(size[0]) / tex.get_width(), float(size[1]) / tex.get_height())
+		var piv_tex := Vector2.ZERO
+		if p.has("pivot"):
+			piv_tex = Vector2(float(p["pivot"][0]), float(p["pivot"][1]))
+			if p.has("blend"):  # design px relative to pos
+				piv_tex = Vector2(piv_tex.x / maxf(k0.x, 0.0001), piv_tex.y / maxf(k0.y, 0.0001))
 		var b := _beats()
 		var a: float = float(st["alpha"])
 		var rot := 0.0
-		var k := Vector2(float(size[0]) / tex.get_width(), float(size[1]) / tex.get_height())
+		var k := k0
 		match str(p.get("anim", "none")):
 			"pulse":
-				var q := 1.0 + 0.04 * _kick_pulse() + 0.08 * float(st["pulse"])
-				k *= q
-				a *= 0.75 + 0.25 * _kick_pulse() + 0.25 * float(st["pulse"])
+				k *= 1.0 + 0.03 * _kick_pulse() + 0.06 * float(st["pulse"])
+				a *= 0.78 + 0.22 * _kick_pulse() + 0.25 * float(st["pulse"])
 			"flicker":
 				a *= (0.7 + 0.3 * sin(b * 3.1 + pos.x) * sin(b * 1.7)) if not stage.reduced else 0.85
 			"rotate":
@@ -224,8 +233,8 @@ func _draw_pieces(ci: CanvasItem, z: String) -> void:
 				pos.y += sin(b * 0.9) * 5.0
 			"sway":
 				rot = 0.05 * sin(b * 0.5 + pos.x)
-		ci.draw_set_transform(pos + Vector2(float(piv[0]), float(piv[1])) * sc * 0.0, rot, k)
-		ci.draw_texture(tex, -Vector2(float(piv[0]), float(piv[1])), Color(1, 1, 1, clampf(a, 0.0, 1.0)))
+		ci.draw_set_transform(pos + Vector2(piv_tex.x * k0.x, piv_tex.y * k0.y), rot, k)
+		ci.draw_texture(tex, -piv_tex, Color(1, 1, 1, clampf(a, 0.0, 1.0)))
 		ci.draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
@@ -263,6 +272,7 @@ func draw_add(ci: CanvasItem) -> void:
 	_draw_circle_ring(ci, t)
 	_draw_pulses(ci, t)
 	_draw_ball_dots(ci, t)
+	_draw_pieces(ci, "front", "add")
 
 
 func _floor_poly() -> PackedVector2Array:
@@ -351,7 +361,7 @@ func _draw_ball_dots(ci: CanvasItem, t: float) -> void:
 # --- normal-blend overlay: haze, confetti, mood dimming, vignette -----------------------------------------------------------
 
 func draw_norm(ci: CanvasItem) -> void:
-	_draw_pieces(ci, "front")
+	_draw_pieces(ci, "front", "mix")
 	var t := stage.t_now
 	var e := _e01()
 	var burst := 0.0

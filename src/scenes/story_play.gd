@@ -554,5 +554,8 @@ func _finish() -> void:
 func _go_to_result() -> void:
 	if transport != null:
 		transport.stop()
+	if OS.get_environment("RW_STORY_QUIT") == "1":  # scripted real-time runs end here
+		get_tree().quit()
+		return
 	set_process(false)
 	get_tree().change_scene_to_file("res://src/scenes/story_result.tscn")
