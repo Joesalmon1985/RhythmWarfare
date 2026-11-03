@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 import os
 
-from . import lib, sprites
+from . import lib
 
 CHAPTER = "underworld"
 
@@ -17,11 +17,10 @@ def _redirect():
     lib.ASSET_DIR = os.path.join(lib.ROOT, "assets", "story", CHAPTER)
     lib.SVG_DIR = os.path.join(lib.ASSET_DIR, "source")
     lib.PNG_DIR = os.path.join(lib.ASSET_DIR, "processed")
-    sprites.PNG_DIR = lib.PNG_DIR
 
 
 def build(only=()) -> int:
-    saved = (lib.ASSET_DIR, lib.SVG_DIR, lib.PNG_DIR, sprites.PNG_DIR)
+    saved = (lib.ASSET_DIR, lib.SVG_DIR, lib.PNG_DIR)
     _redirect()
     try:
         only = set(only)
@@ -61,4 +60,4 @@ def build(only=()) -> int:
         print(f"Underworld art: {n_svg} SVG, {n_png} PNG, manifest {os.path.relpath(path, lib.ROOT)}")
         return 0
     finally:
-        lib.ASSET_DIR, lib.SVG_DIR, lib.PNG_DIR, sprites.PNG_DIR = saved
+        lib.ASSET_DIR, lib.SVG_DIR, lib.PNG_DIR = saved

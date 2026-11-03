@@ -229,6 +229,33 @@ means draw additively):
 | `bone_arches` | giant rib bones framing the view | `none` | front |
 | `ember_rain` | falling embers (PNG) | `flicker` | front |
 
+### Extra views (`stage.views`) and `stage.sprites.passage_frame`
+
+For the moving (Doom-style) camera the chapter has three more rooms besides `main`, each a full 1280 x 720 room drawn from the DJ's eye
+line with its own one-point perspective (see `tools/story/ART_CONTRACT_VIEWS.md`). Code: `uw_views.py` (the `Room` perspective helper,
+shared bits, the passage frame, `build_views()`), `uw_view_court.py`, `uw_view_pit.py`, `uw_view_furnace.py`; `uw_stage.build_stage()`
+calls `build_views()` last, so the `main` room and every older file are untouched. Output: `assets/story/underworld/source/views/*.svg`
+(2x, `px_scale` 0.5). Each view entry has `layers` (`backdrop`; `front_frame` with `z: front` drawn over the crowd, 1280 x 470),
+`anchors`, 4 `pieces` and a `palette_hint`.
+
+| view | place | floor / crowd | pieces (anim, z, blend) | optional anchors |
+| --- | --- | --- | --- | --- |
+| `court` | obsidian court: columns with gold bands, gothic windows, banners, a red runner to a stepped dais with the skull throne and braziers (violet, gold, magenta) | horizon 140, floor from y 258, rows 286..438 | `court_throne_aura` (pulse, behind, add), `court_flames` (flicker, behind, add), `court_banners` (sway, behind, mix, pivot at the top), `court_seal` (pulse, behind, add) | `led_screen` (judgement tablet over the throne), `riser`, `disco_ball`, `throne`, `braziers`; no woofers |
+| `pit` | lava lake, far-shore fortress and volcano, a bone causeway and two bridges, the stage platform out on the lake (ember red, orange, bone) | horizon 190, chamfered platform polygon from y 266 (row 0 stays between x 330 and 950, the lake shows at the sides) | `pit_lava_glare` (pulse, behind, add), `pit_plumes_l/_r` (flicker, behind, add), `pit_fortress_glow` (pulse, behind, add) | `led_screen`, 4 `woofers` (two amp stacks on the platform), `riser`, `causeway`, `bridges` |
+| `furnace` | the great forge: riveted steel hall, pipes, hazard stripes, anvils, molten channels, a huge grinning demon face whose furnace mouth is the screen (steel blue, white-hot orange) | horizon 125, floor from y 264, rows 286..438 | `furnace_eyes` (pulse, behind, add), `furnace_ladle` (sway, behind, mix, pivot at the crane chain), `furnace_sparks` (flicker, behind, add), `furnace_channels` (pulse, behind, add) | `led_screen` (the mouth), 4 `woofers` (boiler hatches), `riser`, `face`, `anvils`, `channels` |
+
+`vanish` is where the dolly pushes when walking out of that view: the throne niche, the fortress gate, the furnace mouth. Every view
+also has `light_points` (8, hung from the roof or girders), `circle_centre`/`circle_radii` (a seal on the floor under the crowd),
+`floor_grid`, `wall_left_x`/`wall_right_x` and `disco_ball` [640, 0]. The shared `stage.sprites` (fixture, beam, glow, woofer ...) are reused.
+
+`stage.sprites.passage_frame`: a hell-gate arch (rock slab, bone moulding, fangs, keystone skull) authored 640 x 360 design px
+(`px_scale` 0.5, centre pivot [640, 360] in texture px): scale it 2x to span 1280 x 720; the arched opening is transparent, so the camera
+can scale it up past 2x and fly through.
+
+Preview: `RW_VIEW=court|pit|furnace tools/story/shoot_chapter.sh underworld stage|set|pieces <out>` renders that room with the crowd rig
+(the view's anchors override the main ones; missing optional keys switch the feature off), and `shoot_chapter.sh underworld passage`
+shows the frame.
+
 ## Interlude (`interlude`)
 
 Sprites to composite over Night One's club view (fixed camera): `crack_glow` (a fissure fanning out in perspective, pivot at its far end),

@@ -7,20 +7,20 @@ extends "res://tools/story/preview_art.gd"
 ##                pieces      the stage with every authored `stage.pieces` entry switched on, plus the pieces alone
 ##                interlude   the `interlude` sprites composited over Night One's club backdrop
 ##   godot --path . -s tools/shoot.gd -- res://tools/story/preview_chapter.tscn /tmp/shots 30:shot:name
+##   RW_VIEW = court | pit | furnace (any id in stage.views): render that room with the crowd rig in `stage`, `stage_low`, `set`, `pieces` modes
+##                passage     the stage.sprites.passage_frame arch at 2x over a lava-orange backdrop
 
 var chapter := "underworld"
-
-
-func tex(p: String) -> Texture2D:
-	if not _tcache.has(p):
-		_tcache[p] = load("res://assets/story/%s/%s" % [chapter, p])
-	return _tcache[p]
+var _front_layers: Array = []
 
 
 func _ready() -> void:
 	if OS.has_environment("RW_CHAPTER"):
 		chapter = OS.get_environment("RW_CHAPTER")
-	M = JSON.parse_string(FileAccess.get_file_as_string("res://assets/story/%s/manifest.json" % chapter))
+	ROOT = "res://assets/story/%s/" % chapter
+	M = JSON.parse_string(FileAccess.get_file_as_string(ROOT + "manifest.json"))
+	if OS.has_environment("RW_VIEW"):
+		_select_view(OS.get_environment("RW_VIEW"))
 	var bg := ColorRect.new()
 	bg.color = Color(0.13, 0.12, 0.2)
 	bg.size = Vector2(1280, 720)
@@ -41,16 +41,54 @@ func _ready() -> void:
 		"deck":
 			_deck()
 		"set":
-			_stage(true)
-			for c in get_children():
-				if c is Rig or (c is Sprite2D and c.z_index == 50):
-					c.queue_free()
+			_stage(true, false, true)
 		"close":
 			_close()
 		"pieces":
 			_pieces_sheet()
-		"interlude":
-			_interlude()
+		"interlude", "interlude_flood":
+			_interlude(mode == "interlude_flood")
+		"passage":
+			_passage()
+
+
+## RW_VIEW=<id>: render one of `stage.views` (court, pit, furnace ...) instead of the main room. The view's backdrop replaces the
+## main one, its anchors override the main anchors (missing optional features are switched off, as the runtime does), its pieces
+## replace stage.pieces, and its `z: front` layers are drawn over the crowd.
+func _select_view(id: String) -> void:
+	var st: Dictionary = M["stage"]
+	var view := {}
+	for v in st.get("views", []):
+		if v["id"] == id:
+			view = v
+	if view.is_empty():
+		push_error("no view " + id)
+		return
+	var A: Dictionary = st["anchors"].duplicate(true)
+	for k in view["anchors"]:
+		A[k] = view["anchors"][k]
+	if not view["anchors"].has("woofers"):
+		A["woofers"] = []
+	if not view["anchors"].has("led_screen"):
+		A["led_screen"] = [-900, -900, 10, 10]
+	if not view["anchors"].has("doorway"):
+		A["doorway"] = [-900, -900, 10, 10]
+	if not view["anchors"].has("disco_ball"):
+		A["disco_ball"] = [640, -400]
+	st["anchors"] = A
+	st["sprites"].erase("door_open")
+	var layers: Array = []
+	_front_layers = []
+	for L in view["layers"]:
+		if L.get("z", "") == "front":
+			_front_layers.append(L)
+		else:
+			layers.append(L)
+	for L in st["layers"]:
+		if L["id"] == "desk_top":
+			layers.append(L)
+	st["layers"] = layers
+	st["pieces"] = view.get("pieces", [])
 
 
 func _add(id_tex: String, pos: Vector2, size: Vector2, z: int, add := false, mod := Color.WHITE) -> Sprite2D:
@@ -70,11 +108,36 @@ func _add(id_tex: String, pos: Vector2, size: Vector2, z: int, add := false, mod
 	return s
 
 
-func _stage(low: bool, deck_only := false) -> void:
-	super._stage(low, deck_only)
-	for p in M["stage"].get("pieces", []):
-		var z := 1400 if p["z"] == "front" else (-2880 if p["id"] == "skull_throne" else -2950)
+func _stage(low: bool, deck_only := false, empty := false) -> void:
+	super._stage(low, deck_only, empty)
+	for L in _front_layers:
+		_add(L["file"], Vector2(L["pos"][0], L["pos"][1]), Vector2(L["size"][0], L["size"][1]), 1400)
+
+
+## stage.pieces with their `blend` (parent's _pieces guesses it from the id, which is only right for the mothership)
+func _pieces(where: String) -> void:
+	for p in M.get("stage", {}).get("pieces", []):
+		if p["z"] != where:
+			continue
+		var z := 1400 if where == "front" else (-2880 if p["id"] == "skull_throne" else -2950)
 		_add(p["file"], Vector2(p["pos"][0], p["pos"][1]), Vector2(p["size"][0], p["size"][1]), z, p.get("blend", "mix") == "add")
+
+
+## the passage_frame sprite at 1x and 2x over the main room
+func _passage() -> void:
+	var sp: Dictionary = M["stage"]["sprites"]["passage_frame"]
+	var k := float(sp["px_scale"])
+	var back := ColorRect.new()
+	back.color = Color(0.9, 0.3, 0.1)
+	back.size = Vector2(1280, 720)
+	back.z_index = -3000
+	add_child(back)
+	var s := Sprite2D.new()
+	s.texture = tex(sp["file"])
+	s.centered = false
+	s.scale = Vector2(k, k) * 2.0
+	s.position = Vector2(640, 360) - Vector2(sp["pivot"][0], sp["pivot"][1]) * s.scale
+	add_child(s)
 
 
 func _pieces_sheet() -> void:
@@ -102,7 +165,7 @@ func _pieces_sheet() -> void:
 		rowh = maxf(rowh, sz.y * k)
 
 
-func _interlude() -> void:
+func _interlude(_flood := false) -> void:
 	var IL: Dictionary = M["interlude"]
 	var S: Dictionary = IL["sprites"]
 	var A: Dictionary = IL["anchors"]
