@@ -27,6 +27,8 @@ var status_text := ""  # the centre line under the sequence meter (reward result
 var status_color := Color.WHITE
 var status_until := 0.0
 var banner_text := ""
+var deck_under: Callable  # (ci: CanvasItem, size: Vector2, pad_rects: Dictionary, now: float): the Story Campaign's DJ desk behind the pads
+var deck_over: Callable   # the same, drawn after the pads
 
 var _pad_notes: Dictionary = {}  # pad -> Array[int] note indexes in time order
 var _cursor: Dictionary = {}
@@ -147,11 +149,16 @@ func _draw() -> void:
 	var now := clock.judge_time()
 	var wall := float(Time.get_ticks_msec()) / 1000.0
 	var tick := level.seconds_to_tick(maxf(now, 0.0))
-	draw_rect(Rect2(Vector2.ZERO, size), Color(0.05, 0.06, 0.08, 0.92))
-	draw_line(Vector2(0, 0), Vector2(size.x, 0), Color(0.3, 0.32, 0.36), 2.0)
 	var rects := _pad_rects()
+	if deck_under.is_valid():
+		deck_under.call(self, size, rects, now)
+	else:
+		draw_rect(Rect2(Vector2.ZERO, size), Color(0.05, 0.06, 0.08, 0.92))
+		draw_line(Vector2(0, 0), Vector2(size.x, 0), Color(0.3, 0.32, 0.36), 2.0)
 	for pad in range(1, BUTTONS + 1):
 		_draw_pad(pad, rects[pad], now, tick, wall)
+	if deck_over.is_valid():
+		deck_over.call(self, size, rects, now)
 	_draw_centre(rects, now, wall)
 
 

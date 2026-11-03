@@ -23,6 +23,8 @@ var pack_dir := ""
 var chart_id := ""  # schema 1 duel packs only
 var battle_on := true  # false: rhythm only (practice and the developer playtest)
 var last_result: Dictionary = {}
+var story_progress: StoryProgress  # Story Campaign saves (user://story_campaign.json), separate from the military campaign
+var story_result: Dictionary = {}  # the last finished story set (StoryRun.summary plus the saved record)
 var debug := false
 var settings_migrated := false
 
@@ -40,6 +42,7 @@ var show_keys := true  # desktop: the D F J K labels on the pads
 
 func _ready() -> void:
 	campaign = Campaign.load_data()
+	story_progress = StoryProgress.load_data()
 	load_settings()
 	if OS.has_environment("RW_PACK"):  # scripted runs and tests pick a pack without touching saved settings
 		pack_dir = OS.get_environment("RW_PACK")

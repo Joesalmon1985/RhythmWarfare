@@ -35,6 +35,7 @@ func _ready() -> void:
 	cont.disabled = not c.is_playable(n)
 	box.add_child(cont)
 	box.add_child(UiStyle.button("Campaign", func() -> void: _missions(false)))
+	box.add_child(UiStyle.button("Story Campaign", func() -> void: get_tree().change_scene_to_file("res://src/scenes/story_campaign.tscn")))
 	box.add_child(UiStyle.button("Practice", func() -> void: _missions(true)))
 	box.add_child(UiStyle.button("Loadout", func() -> void: get_tree().change_scene_to_file("res://src/scenes/loadout.tscn")))
 	box.add_child(UiStyle.button("Settings", func() -> void: get_tree().change_scene_to_file("res://src/scenes/settings.tscn")))
