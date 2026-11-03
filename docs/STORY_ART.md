@@ -132,6 +132,36 @@ spot_pool, haze, vignette, confetti shared in kind with Night One; plus the inte
   (sheet of every piece), `sil`, `deck`, `interlude`, `interlude_flood` (composited over the Night One stage). `RW_WARP=1` shows
   `warp_streaks` in `stage`.
 
+### Mothership extra views (`stage.views`, `stage.sprites.passage_frame`)
+
+The camera tours the ship (spec: `tools/story/ART_CONTRACT_VIEWS.md`); the existing deck is the view `main`, three more rooms follow in route
+order: `gallery`, `reactor`, `bridge`. Code: `tools/story/art/mothership_views.py` (the shared `Room` perspective toolkit, the gallery,
+the passage frame and `build_views()`, called from `mothership_stage.build_stage()`), `views_reactor.py`, `views_bridge.py`. Output goes to
+`assets/story/mothership/source/views/`; the existing files are unchanged, the manifest only gains `stage.views` and the sprite.
+
+Each view is `{id, title, layers, anchors, pieces, palette_hint}`. `layers`: `backdrop` (full 1280 x 720 room, behind the crowd) and
+`front_frame` (1280 x 480, `z: "front"`: arches, pipes or console wedges at the screen edges, over the crowd). Anchors use the main deck's
+conventions (`floor_rows` with the scale derived from that room's horizon, `floor_polygon`, `floor_grid`, 8 `light_points`, `led_screen`,
+`circle_centre`/`circle_radii`, `vanish`, `horizon_y`, `disco_ball`, `wall_left_x`/`wall_right_x`); optional keys are only present where the room has
+the feature: `woofers` (bridge only, speaker pods at the ends of the far console bank), `riser` (bridge, the captain's dais). No view has a
+`doorway` (the shared `door_open` sprite is positioned for the dance deck's airlock). Extra descriptive anchors: `window`, `planet`, `bar`,
+`core`, `chair`. Pieces use the main schema plus `blend: "add"` for the light-on-transparent ones (`pos` top-left, `pivot` in texture px).
+
+| view | place | vanish | pieces (anim, z, blend) |
+| --- | --- | --- | --- |
+| `gallery` | long lounge gallery, curved window wall with the planet on the right, booths and sofas on the left, bar and amber arched door at the end | (640, 150), the door | `gallery_planet_shine` (pulse, behind, add), `gallery_cruiser` (bob, behind), `gallery_holo_menu` (flicker, behind, add) |
+| `reactor` | ring chamber: containment housing with the glowing core, energy pylons, catwalk grating floor over the reactor pit, hazard ring | (640, 140), the core | `reactor_core_glow` (pulse, add), `reactor_core_ring` (rotate, add), `reactor_pylon_arcs` (flicker, add); all behind |
+| `bridge` | command bridge: viewscreen with a star field and planet, banked consoles, captain's chair on a dais, star-chart ring | (640, 125), the viewscreen | `bridge_warp_streaks` (pulse, add), `bridge_holo_globe` (bob, add), `bridge_alert_beacons` (flicker, add); all behind |
+
+`passage_frame`: an octagonal bulkhead hatch frame (door slots, hazard stripes, sign plate, neon lining) authored 640 x 360 design px
+(a 1280 x 720 texture, `px_scale` 0.5, centre pivot), so a 2x scale covers the 1280 x 720 frame; the octagonal opening (`opening` = x, y, w, h in
+design px of the 640 x 360 frame) is transparent, the plating reaches all four corners.
+
+Perspective: `Room(vp, kf, t0, b0)` maps near-frame points (u, v at depth factor k) to the screen, with ribs at equal depth steps, boxes (sofas,
+consoles, pylons, dais) and floor planes, so floors converge on the room's own `vanish` and the `floor_rows` scale matches. Preview:
+`tools/story/shoot_views.sh <main|gallery|reactor|bridge> <stage|set|stage_low|pieces|passage> [out_dir]` (`preview_views.gd` extends
+`preview_art.gd`; `stage` shows the crowd rig, beams and the view's pieces, `passage` overlays the frame at 2x).
+
 ## Provenance and licence
 
 Every pixel comes from the code in `tools/story/` in this repository; there is no third-party content and no generated-image
