@@ -54,6 +54,12 @@ func _ready() -> void:
 		cue_lead_in_s = clampf(float(OS.get_environment("RW_LEAD_IN")), LEAD_IN_MIN_S, LEAD_IN_MAX_S)
 	if OS.has_environment("RW_MISSION"):  # screenshots and scripted runs open a mission's setup or play screen
 		mission_number = int(OS.get_environment("RW_MISSION"))
+	if OS.has_environment("RW_PAD_SIZE"):  # 0 compact, 1 standard, 2 large: screenshots of the layouts
+		pad_size = clampi(int(OS.get_environment("RW_PAD_SIZE")), 0, PAD_SIZES.size() - 1)
+	if OS.get_environment("RW_REDUCED") == "1":
+		reduced_effects = true
+	if OS.get_environment("RW_HIGH_CONTRAST") == "1":
+		high_contrast = true
 	if OS.has_environment("RW_CALIBRATION_MS"):
 		calibration_ms = float(OS.get_environment("RW_CALIBRATION_MS"))
 	apply_volume()

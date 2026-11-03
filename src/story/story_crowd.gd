@@ -402,7 +402,7 @@ func set_ending(key: String) -> void:
 ## The two-bar result's local reaction (the persistent mood is the energy): a share of the room cheers or looks uncertain.
 func react(passed: bool, grade: String, t0: float) -> void:
 	var ids := present_ids()
-	var share := {"sharp": 0.6, "steady": 0.45, "loose": 0.3}.get(grade, 0.0) if passed else 0.45
+	var share: float = float({"sharp": 0.6, "steady": 0.45, "loose": 0.3}.get(grade, 0.0)) if passed else 0.45
 	for k in ids.size():
 		if _rng.randf() > share:
 			continue

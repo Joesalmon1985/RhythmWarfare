@@ -285,30 +285,27 @@ func _process(delta: float) -> void:
 
 
 func _process_virtual(_delta: float) -> void:
-	if _ended and _tail_until < 0.0:
+	if _ended and _tail_until < 0.0 and _until_bar <= 0.0:
 		return
-	if _until_bar > 0.0 and _vt >= run.director.bar_time(_until_bar):
-		_step_virtual(_vt)
+	var until_t := run.director.bar_time(_until_bar) if _until_bar > 0.0 else INF
+	if _vt >= until_t:
 		return
-	var chunk := float(OS.get_environment("RW_STORY_RATE")) if OS.has_environment("RW_STORY_RATE") else 1.0 / 30.0
-	var target := _vt + chunk
-	while _vt < target:
-		_vt += 1.0 / 60.0
+	var rate := float(OS.get_environment("RW_STORY_RATE")) if OS.has_environment("RW_STORY_RATE") else 1.0 / 30.0
+	var chunk := rate if _vt < until_t - 1.0 else 1.0 / 30.0  # the last second runs at a normal pace so poses settle
+	var target := minf(_vt + chunk, until_t)
+	while _vt < target - 1e-9:
+		_vt = minf(_vt + 1.0 / 60.0, target)
 		_autoplay_step(_vt)
-		_step_virtual(_vt)
-		if _until_bar > 0.0 and _vt >= run.director.bar_time(_until_bar):
-			break
-	if _vt > run.level.duration_seconds() + 6.0:
-		_vt = run.level.duration_seconds() + 6.0
+		_advance(_vt, _vt, _vt >= target - 1e-9)
+	_ui(_vt)
 
 
 func _step_virtual(t: float) -> void:
 	_advance(t, t)
 	_ui(t)
-	stage.update(t, run.crowd.energy)
 
 
-func _advance(t: float, audio_t: float) -> void:
+func _advance(t: float, audio_t: float, render := true) -> void:
 	var wall := float(Time.get_ticks_msec()) / 1000.0
 	var r := run.step(t)
 	for ev in r["judge"]:
@@ -325,7 +322,8 @@ func _advance(t: float, audio_t: float) -> void:
 				_on_sequence(ev["result"], wall)
 	for a in r["actions"]:
 		_on_action(a)
-	stage.update(audio_t, run.crowd.energy)
+	if render:
+		stage.update(audio_t, run.crowd.energy)
 	for b in range(1, PadView.BUTTONS + 1):
 		pad_view.button_down[b] = lane_input.is_button_down(b) or (_auto_plan.size() > 0 and _auto_down.has(b))
 	note_lane.queue_redraw()

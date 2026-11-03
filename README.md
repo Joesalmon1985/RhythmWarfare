@@ -9,6 +9,21 @@ instruments decide what a passed sequence builds (kicks make infantry, snares de
 two-sided duel stays in the developer area for a later multiplayer mode. Standalone Godot 4.5.1 project; the rule set is
 `docs/PRD.md` sections 15 and 16 and `data/campaign/rules.json`.
 
+## Story Campaign (Night One)
+
+A separate mode on the main menu: `Story Campaign` > `Night One` is the first drum and bass set played from the DJ's position at a
+fixed, illustrated nightclub with an animated crowd. It plays the same 128-bar First Watch music (the global Loadout), the same four
+pads, falling notes and judgement; the two-bar sequence results drive the crowd's energy, three authored good/bad moments and one of
+three endings. Saves are separate (`user://story_campaign.json`); the military campaign is untouched. See
+`docs/STORY_CAMPAIGN_HANDOVER.md` (architecture, tuning, art pipeline, tests) and `docs/STORY_CAMPAIGN_PRD.md` (the brief).
+
+```
+godot --path . res://src/scenes/story_play.tscn                       # straight into Night One
+bash tools/story/capture.sh                                            # real screenshots of the running scene (docs/shots/story)
+python3 tools/story/build_assets.py                                    # regenerate only the original story art
+godot --headless --path . -s tools/story/tune.gd -- perfect none       # endings under scripted skill levels
+```
+
 ## Layout
 
 - `src/` game code: `core/` (song clock, pack loading: `mission_loader.gd` for missions, `level_loader.gd` for the duel;

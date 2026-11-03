@@ -195,11 +195,11 @@ func _draw() -> void:
 	if rig.is_empty() or _parts.is_empty():
 		return
 	var P: Dictionary = cur
-	var hips := _joints.get("hips", Vector2(0, -95))
+	var hips: Vector2 = _joints.get("hips", Vector2(0, -95))
 	var root := Transform2D(0.0, Vector2(float(P["sway_x"]), -float(P["jump"])))
 	var hip_xf := root * Transform2D(0.0, hips + Vector2(0, -float(P["bob"]) * 0.5))
 	var torso_xf := hip_xf * Transform2D(float(P["lean"]), Vector2.ZERO)
-	var neck := _joints.get("neck", Vector2(0, -190)) - hips
+	var neck: Vector2 = (_joints.get("neck", Vector2(0, -190)) as Vector2) - hips
 	var head_xf := torso_xf * Transform2D(float(P["head_tilt"]), neck + Vector2(0, float(P["head_drop"])))
 	var xfs := {"hips": hip_xf, "torso": torso_xf, "head": head_xf}
 	for side in ["l", "r"]:

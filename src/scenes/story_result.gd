@@ -56,7 +56,7 @@ class EnergyCurve:
 		if values.size() < 2:
 			return
 		for mark in [30.0, 65.0, 85.0]:
-			var y := size.y - size.y * mark / 100.0
+			var y: float = size.y - size.y * float(mark) / 100.0
 			draw_line(Vector2(0, y), Vector2(size.x, y), Color(1, 1, 1, 0.12), 1.0)
 		var pts := PackedVector2Array()
 		for i in values.size():
