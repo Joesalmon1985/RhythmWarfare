@@ -978,5 +978,10 @@ def build_stage():
         "wall_left_x": FX0, "wall_right_x": FX1, "horizon_y": VPY,
         "hellmouth": [640, 178, 76], "fire_pits": [[118, 334], [1162, 334]],
     }
-    return {"design_size": [W, H], "layers": layers, "anchors": anchors, "sprites": sp, "pieces": pieces,
-            "pieces_note": "pos/size = top-left rectangle in design px; pivot (rotate/sway/flicker) is in design px relative to pos; blend add = draw additively"}
+    stage = {"design_size": [W, H], "layers": layers, "anchors": anchors, "sprites": sp, "pieces": pieces,
+             "pieces_note": "pos/size = top-left rectangle in design px; pivot (rotate/sway/flicker) is in design px relative to pos; blend add = draw additively"}
+    from . import uw_views  # extra rooms for the moving camera: stage.views and stage.sprites.passage_frame (new files only)
+    views, passage = uw_views.build_views()
+    sp["passage_frame"] = passage
+    stage["views"] = views
+    return stage

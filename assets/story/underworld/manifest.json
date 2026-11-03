@@ -2934,6 +2934,15 @@
      32
     ],
     "note": "ash-embers"
+   },
+   "passage_frame": {
+    "file": "source/views/passage_frame.svg",
+    "pivot": [
+     640,
+     360
+    ],
+    "px_scale": 0.5,
+    "note": "hell-gate arch, centre pivot, 640 x 360 design px: scale 2x to span the 1280 x 720 frame; the arched opening (300 wide, apex y 36) is transparent"
    }
   },
   "pieces": [
@@ -3082,7 +3091,855 @@
     "blend": "add"
    }
   ],
-  "pieces_note": "pos/size = top-left rectangle in design px; pivot (rotate/sway/flicker) is in design px relative to pos; blend add = draw additively"
+  "pieces_note": "pos/size = top-left rectangle in design px; pivot (rotate/sway/flicker) is in design px relative to pos; blend add = draw additively",
+  "views": [
+   {
+    "id": "court",
+    "title": "Obsidian court",
+    "layers": [
+     {
+      "id": "backdrop",
+      "file": "source/views/court_backdrop.svg",
+      "pos": [
+       0,
+       0
+      ],
+      "size": [
+       1280,
+       720
+      ],
+      "px_scale": 0.5
+     },
+     {
+      "id": "front_frame",
+      "file": "source/views/court_front.svg",
+      "pos": [
+       0,
+       0
+      ],
+      "size": [
+       1280,
+       470
+      ],
+      "px_scale": 0.5,
+      "z": "front"
+     }
+    ],
+    "anchors": {
+     "led_screen": [
+      540,
+      76,
+      200,
+      30
+     ],
+     "floor_rows": [
+      {
+       "y": 286,
+       "scale": 0.49
+      },
+      {
+       "y": 316,
+       "scale": 0.591
+      },
+      {
+       "y": 350,
+       "scale": 0.705
+      },
+      {
+       "y": 390,
+       "scale": 0.839
+      },
+      {
+       "y": 438,
+       "scale": 1.0
+      }
+     ],
+     "floor_polygon": [
+      [
+       390,
+       258
+      ],
+      [
+       890,
+       258
+      ],
+      [
+       1459,
+       520
+      ],
+      [
+       -179,
+       520
+      ]
+     ],
+     "floor_grid": {
+      "vanishing_point": [
+       640,
+       140
+      ],
+      "far_y": 256,
+      "far_x": [
+       390.0,
+       452.5,
+       515.0,
+       577.5,
+       640.0,
+       702.5,
+       765.0,
+       827.5,
+       890.0
+      ],
+      "note": "x on the far wall base line; a floor line through far_x at screen row y is at x = vp_x + (far_x - vp_x) * (y - vp_y) / (far_y - vp_y)"
+     },
+     "light_points": [
+      [
+       130,
+       36
+      ],
+      [
+       300,
+       30
+      ],
+      [
+       470,
+       36
+      ],
+      [
+       810,
+       36
+      ],
+      [
+       980,
+       30
+      ],
+      [
+       1150,
+       36
+      ],
+      [
+       540,
+       58
+      ],
+      [
+       740,
+       58
+      ]
+     ],
+     "disco_ball": [
+      640,
+      0
+     ],
+     "riser": [
+      640,
+      262,
+      330
+     ],
+     "circle_centre": [
+      640,
+      372
+     ],
+     "circle_radii": [
+      250,
+      46
+     ],
+     "vanish": [
+      640,
+      200
+     ],
+     "horizon_y": 140,
+     "wall_left_x": 390,
+     "wall_right_x": 890,
+     "throne": [
+      640,
+      252
+     ],
+     "braziers": [
+      [
+       452,
+       280
+      ],
+      [
+       828,
+       280
+      ]
+     ]
+    },
+    "pieces": [
+     {
+      "id": "court_throne_aura",
+      "file": "source/views/court_aura.svg",
+      "pos": [
+       420.0,
+       -12.0
+      ],
+      "size": [
+       440,
+       300
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       220.0,
+       198.0
+      ],
+      "anim": "pulse",
+      "z": "behind",
+      "blend": "add"
+     },
+     {
+      "id": "court_flames",
+      "file": "source/views/court_flames.svg",
+      "pos": [
+       400,
+       70
+      ],
+      "size": [
+       480,
+       202
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       240.0,
+       202
+      ],
+      "anim": "flicker",
+      "z": "behind",
+      "blend": "add"
+     },
+     {
+      "id": "court_banners",
+      "file": "source/views/court_banners.svg",
+      "pos": [
+       350,
+       -2
+      ],
+      "size": [
+       580,
+       190
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       290.0,
+       6
+      ],
+      "anim": "sway",
+      "z": "behind",
+      "blend": "mix"
+     },
+     {
+      "id": "court_seal",
+      "file": "source/views/court_seal.svg",
+      "pos": [
+       370.0,
+       316.0
+      ],
+      "size": [
+       540,
+       112
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       270.0,
+       56.0
+      ],
+      "anim": "pulse",
+      "z": "behind",
+      "blend": "add"
+     }
+    ],
+    "palette_hint": "violet"
+   },
+   {
+    "id": "pit",
+    "title": "The lava pit",
+    "layers": [
+     {
+      "id": "backdrop",
+      "file": "source/views/pit_backdrop.svg",
+      "pos": [
+       0,
+       0
+      ],
+      "size": [
+       1280,
+       720
+      ],
+      "px_scale": 0.5
+     },
+     {
+      "id": "front_frame",
+      "file": "source/views/pit_front.svg",
+      "pos": [
+       0,
+       0
+      ],
+      "size": [
+       1280,
+       470
+      ],
+      "px_scale": 0.5,
+      "z": "front"
+     }
+    ],
+    "anchors": {
+     "led_screen": [
+      440,
+      54,
+      400,
+      34
+     ],
+     "floor_rows": [
+      {
+       "y": 286,
+       "scale": 0.433
+      },
+      {
+       "y": 316,
+       "scale": 0.545
+      },
+      {
+       "y": 350,
+       "scale": 0.672
+      },
+      {
+       "y": 390,
+       "scale": 0.821
+      },
+      {
+       "y": 438,
+       "scale": 1.0
+      }
+     ],
+     "floor_polygon": [
+      [
+       330,
+       266
+      ],
+      [
+       950,
+       266
+      ],
+      [
+       1110,
+       320
+      ],
+      [
+       1250,
+       440
+      ],
+      [
+       1330,
+       520
+      ],
+      [
+       -50,
+       520
+      ],
+      [
+       30,
+       440
+      ],
+      [
+       170,
+       320
+      ]
+     ],
+     "floor_grid": {
+      "vanishing_point": [
+       640,
+       170
+      ],
+      "far_y": 262,
+      "far_x": [
+       330.0,
+       407.5,
+       485.0,
+       562.5,
+       640.0,
+       717.5,
+       795.0,
+       872.5,
+       950.0
+      ],
+      "note": "x on the far wall base line; a floor line through far_x at screen row y is at x = vp_x + (far_x - vp_x) * (y - vp_y) / (far_y - vp_y)"
+     },
+     "light_points": [
+      [
+       150,
+       70
+      ],
+      [
+       330,
+       50
+      ],
+      [
+       500,
+       44
+      ],
+      [
+       780,
+       44
+      ],
+      [
+       950,
+       50
+      ],
+      [
+       1130,
+       70
+      ],
+      [
+       430,
+       66
+      ],
+      [
+       850,
+       66
+      ]
+     ],
+     "woofers": [
+      [
+       346.0,
+       171.0,
+       21.6
+      ],
+      [
+       346.0,
+       231.0,
+       32.4
+      ],
+      [
+       934.0,
+       171.0,
+       21.6
+      ],
+      [
+       934.0,
+       231.0,
+       32.4
+      ]
+     ],
+     "disco_ball": [
+      640,
+      0
+     ],
+     "riser": [
+      640,
+      266,
+      620
+     ],
+     "circle_centre": [
+      640,
+      372
+     ],
+     "circle_radii": [
+      250,
+      46
+     ],
+     "vanish": [
+      640,
+      192
+     ],
+     "horizon_y": 190,
+     "wall_left_x": 170,
+     "wall_right_x": 1110,
+     "causeway": [
+      640,
+      267,
+      640,
+      192
+     ],
+     "bridges": [
+      [
+       196,
+       316,
+       110,
+       240
+      ],
+      [
+       1084,
+       316,
+       1170,
+       240
+      ]
+     ]
+    },
+    "pieces": [
+     {
+      "id": "pit_lava_glare",
+      "file": "source/views/pit_glare.svg",
+      "pos": [
+       0,
+       190
+      ],
+      "size": [
+       1280,
+       84
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       640.0,
+       42.0
+      ],
+      "anim": "pulse",
+      "z": "behind",
+      "blend": "add"
+     },
+     {
+      "id": "pit_plumes_l",
+      "file": "source/views/pit_plumes_l.svg",
+      "pos": [
+       -40.0,
+       66
+      ],
+      "size": [
+       200,
+       300
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       100.0,
+       290
+      ],
+      "anim": "flicker",
+      "z": "behind",
+      "blend": "add"
+     },
+     {
+      "id": "pit_plumes_r",
+      "file": "source/views/pit_plumes_r.svg",
+      "pos": [
+       1120.0,
+       66
+      ],
+      "size": [
+       200,
+       300
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       100.0,
+       290
+      ],
+      "anim": "flicker",
+      "z": "behind",
+      "blend": "add"
+     },
+     {
+      "id": "pit_fortress_glow",
+      "file": "source/views/pit_fortress.svg",
+      "pos": [
+       440.0,
+       64
+      ],
+      "size": [
+       400,
+       200
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       200.0,
+       140.0
+      ],
+      "anim": "pulse",
+      "z": "behind",
+      "blend": "add"
+     }
+    ],
+    "palette_hint": "hot"
+   },
+   {
+    "id": "furnace",
+    "title": "The great forge",
+    "layers": [
+     {
+      "id": "backdrop",
+      "file": "source/views/furnace_backdrop.svg",
+      "pos": [
+       0,
+       0
+      ],
+      "size": [
+       1280,
+       720
+      ],
+      "px_scale": 0.5
+     },
+     {
+      "id": "front_frame",
+      "file": "source/views/furnace_front.svg",
+      "pos": [
+       0,
+       0
+      ],
+      "size": [
+       1280,
+       470
+      ],
+      "px_scale": 0.5,
+      "z": "front"
+     }
+    ],
+    "anchors": {
+     "led_screen": [
+      470,
+      208,
+      340,
+      34
+     ],
+     "floor_rows": [
+      {
+       "y": 286,
+       "scale": 0.514
+      },
+      {
+       "y": 316,
+       "scale": 0.61
+      },
+      {
+       "y": 350,
+       "scale": 0.719
+      },
+      {
+       "y": 390,
+       "scale": 0.847
+      },
+      {
+       "y": 438,
+       "scale": 1.0
+      }
+     ],
+     "floor_polygon": [
+      [
+       330,
+       264
+      ],
+      [
+       950,
+       264
+      ],
+      [
+       1534,
+       520
+      ],
+      [
+       -254,
+       520
+      ]
+     ],
+     "floor_grid": {
+      "vanishing_point": [
+       640,
+       125
+      ],
+      "far_y": 262,
+      "far_x": [
+       330.0,
+       407.5,
+       485.0,
+       562.5,
+       640.0,
+       717.5,
+       795.0,
+       872.5,
+       950.0
+      ],
+      "note": "x on the far wall base line; a floor line through far_x at screen row y is at x = vp_x + (far_x - vp_x) * (y - vp_y) / (far_y - vp_y)"
+     },
+     "light_points": [
+      [
+       140,
+       40
+      ],
+      [
+       300,
+       34
+      ],
+      [
+       470,
+       36
+      ],
+      [
+       810,
+       36
+      ],
+      [
+       980,
+       34
+      ],
+      [
+       1140,
+       40
+      ],
+      [
+       420,
+       62
+      ],
+      [
+       860,
+       62
+      ]
+     ],
+     "woofers": [
+      [
+       120,
+       172,
+       24
+      ],
+      [
+       120,
+       242,
+       34
+      ],
+      [
+       1160,
+       172,
+       24
+      ],
+      [
+       1160,
+       242,
+       34
+      ]
+     ],
+     "disco_ball": [
+      640,
+      0
+     ],
+     "riser": [
+      640,
+      262,
+      340
+     ],
+     "circle_centre": [
+      640,
+      372
+     ],
+     "circle_radii": [
+      250,
+      46
+     ],
+     "vanish": [
+      640,
+      232
+     ],
+     "horizon_y": 125,
+     "wall_left_x": 330,
+     "wall_right_x": 950,
+     "face": [
+      640,
+      150,
+      540
+     ],
+     "anvils": [
+      [
+       412,
+       284
+      ],
+      [
+       868,
+       284
+      ]
+     ],
+     "channels": [
+      [
+       600.0,
+       680.0
+      ],
+      [
+       456.0,
+       492.0
+      ],
+      [
+       788.0,
+       824.0
+      ]
+     ]
+    },
+    "pieces": [
+     {
+      "id": "furnace_eyes",
+      "file": "source/views/furnace_eyes.svg",
+      "pos": [
+       320,
+       52
+      ],
+      "size": [
+       640,
+       230
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       320.0,
+       115.0
+      ],
+      "anim": "pulse",
+      "z": "behind",
+      "blend": "add"
+     },
+     {
+      "id": "furnace_ladle",
+      "file": "source/views/furnace_ladle.svg",
+      "pos": [
+       190,
+       -2
+      ],
+      "size": [
+       190,
+       300
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       78,
+       4
+      ],
+      "anim": "sway",
+      "z": "behind",
+      "blend": "mix"
+     },
+     {
+      "id": "furnace_sparks",
+      "file": "source/views/furnace_sparks.svg",
+      "pos": [
+       238,
+       107.4
+      ],
+      "size": [
+       700,
+       140
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       350.0,
+       140
+      ],
+      "anim": "flicker",
+      "z": "behind",
+      "blend": "add"
+     },
+     {
+      "id": "furnace_channels",
+      "file": "source/views/furnace_channels.svg",
+      "pos": [
+       0,
+       262
+      ],
+      "size": [
+       1280,
+       460
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       640.0,
+       0
+      ],
+      "anim": "pulse",
+      "z": "behind",
+      "blend": "add"
+     }
+    ],
+    "palette_hint": "steel"
+   }
+  ]
  },
  "interlude": {
   "sprites": {
