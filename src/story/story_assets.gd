@@ -103,6 +103,12 @@ func pieces(view_id := "main") -> Array:
 	return view(view_id).get("pieces", [])
 
 
+## True when this art set gives piece pivots in design px relative to the piece's pos (the Underworld's convention, stated in its
+## manifest's pieces_note); otherwise they are texture px (the Mothership and Night One).
+func pivot_in_design_px() -> bool:
+	return str(manifest.get("stage", {}).get("pieces_note", "")).contains("design px")
+
+
 func all_pieces() -> Array:
 	var out: Array = []
 	for v in view_ids():

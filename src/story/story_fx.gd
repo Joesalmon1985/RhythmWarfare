@@ -224,7 +224,7 @@ func _draw_pieces(ci: CanvasItem, z: String, blend: String) -> void:
 		var piv_tex := Vector2.ZERO
 		if p.has("pivot"):
 			piv_tex = Vector2(float(p["pivot"][0]), float(p["pivot"][1]))
-			if p.has("blend"):  # design px relative to pos
+			if assets.pivot_in_design_px():  # design px relative to pos
 				piv_tex = Vector2(piv_tex.x / maxf(k0.x, 0.0001), piv_tex.y / maxf(k0.y, 0.0001))
 		var b := _beats()
 		var a: float = float(st["alpha"])
