@@ -173,6 +173,13 @@
    "events": [
     {
      "at_bar": 17,
+     "action": "move_to",
+     "view": "gallery",
+     "style": "step",
+     "bars": 2
+    },
+    {
+     "at_bar": 17,
      "action": "bass_reveal"
     },
     {
@@ -200,6 +207,12 @@
     {
      "at_bar": 23,
      "action": "spotlight_sweep"
+    },
+    {
+     "at_bar": 21,
+     "action": "camera_look",
+     "dx": -140,
+     "bars": 3
     }
    ]
   },
@@ -241,6 +254,13 @@
    "start_bar": 33,
    "bars": 8,
    "events": [
+    {
+     "at_bar": 33,
+     "action": "move_to",
+     "view": "reactor",
+     "style": "turn_right",
+     "bars": 2
+    },
     {
      "at_bar": 35,
      "action": "circle_form",
@@ -287,6 +307,12 @@
     {
      "at_bar": 47,
      "action": "led_wave"
+    },
+    {
+     "at_bar": 41,
+     "action": "camera_look",
+     "dx": 120,
+     "bars": 3
     }
    ]
   },
@@ -297,6 +323,13 @@
    "start_bar": 49,
    "bars": 8,
    "events": [
+    {
+     "at_bar": 49,
+     "action": "move_to",
+     "view": "bridge",
+     "style": "walk",
+     "bars": 2
+    },
     {
      "at_bar": 51,
      "action": "group_footwork",
@@ -323,6 +356,12 @@
       "energy_min": 45
      },
      "else": "look_around"
+    },
+    {
+     "at_bar": 53,
+     "action": "camera_look",
+     "dx": -110,
+     "bars": 3
     }
    ]
   },
@@ -349,6 +388,12 @@
     {
      "at_bar": 63,
      "action": "haze_burst"
+    },
+    {
+     "at_bar": 57,
+     "action": "camera_push",
+     "zoom": 0.14,
+     "bars": 2
     }
    ]
   },
@@ -359,6 +404,13 @@
    "start_bar": 65,
    "bars": 8,
    "events": [
+    {
+     "at_bar": 65,
+     "action": "move_to",
+     "view": "main",
+     "style": "turn_left",
+     "bars": 2
+    },
     {
      "at_bar": 65,
      "action": "riser_up"
@@ -423,6 +475,12 @@
     {
      "at_bar": 79,
      "action": "beams_cross"
+    },
+    {
+     "at_bar": 73,
+     "action": "camera_push",
+     "zoom": 0.12,
+     "bars": 2
     }
    ]
   }
@@ -581,7 +639,31 @@
    "e01",
    "e02",
    "e03",
-   "e04"
+   "e04",
+   "gallery_c02",
+   "gallery_c03",
+   "gallery_c04",
+   "gallery_c05",
+   "gallery_c06",
+   "gallery_c07",
+   "gallery_c08",
+   "gallery_c09",
+   "reactor_c02",
+   "reactor_c03",
+   "reactor_c04",
+   "reactor_c05",
+   "reactor_c06",
+   "reactor_c07",
+   "reactor_c08",
+   "reactor_c09",
+   "bridge_c02",
+   "bridge_c03",
+   "bridge_c04",
+   "bridge_c05",
+   "bridge_c06",
+   "bridge_c07",
+   "bridge_c08",
+   "bridge_c09"
   ],
   "all": [
    "c01",
@@ -615,7 +697,79 @@
    "p01",
    "p02",
    "p03",
-   "p04"
+   "p04",
+   "gallery_c01",
+   "gallery_c02",
+   "gallery_c03",
+   "gallery_c04",
+   "gallery_c05",
+   "gallery_c06",
+   "gallery_c07",
+   "gallery_c08",
+   "gallery_c09",
+   "gallery_c10",
+   "gallery_g01",
+   "gallery_g02",
+   "gallery_g03",
+   "gallery_g04",
+   "gallery_g05",
+   "gallery_g06",
+   "gallery_l01",
+   "gallery_l02",
+   "gallery_l03",
+   "gallery_l04",
+   "gallery_p01",
+   "gallery_p02",
+   "gallery_p03",
+   "gallery_p04",
+   "reactor_c01",
+   "reactor_c02",
+   "reactor_c03",
+   "reactor_c04",
+   "reactor_c05",
+   "reactor_c06",
+   "reactor_c07",
+   "reactor_c08",
+   "reactor_c09",
+   "reactor_c10",
+   "reactor_g01",
+   "reactor_g02",
+   "reactor_g03",
+   "reactor_g04",
+   "reactor_g05",
+   "reactor_g06",
+   "reactor_l01",
+   "reactor_l02",
+   "reactor_l03",
+   "reactor_l04",
+   "reactor_p01",
+   "reactor_p02",
+   "reactor_p03",
+   "reactor_p04",
+   "bridge_c01",
+   "bridge_c02",
+   "bridge_c03",
+   "bridge_c04",
+   "bridge_c05",
+   "bridge_c06",
+   "bridge_c07",
+   "bridge_c08",
+   "bridge_c09",
+   "bridge_c10",
+   "bridge_g01",
+   "bridge_g02",
+   "bridge_g03",
+   "bridge_g04",
+   "bridge_g05",
+   "bridge_g06",
+   "bridge_l01",
+   "bridge_l02",
+   "bridge_l03",
+   "bridge_l04",
+   "bridge_p01",
+   "bridge_p02",
+   "bridge_p03",
+   "bridge_p04"
   ]
  },
  "actors": [
@@ -952,6 +1106,828 @@
    "depth": 0.6,
    "group": "peak",
    "enter_from": "side"
+  },
+  {
+   "id": "gallery_c01",
+   "archetype": "tentacle",
+   "variant": "a",
+   "x": 640,
+   "depth": 0.78,
+   "group": "core",
+   "view": "gallery",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "gallery_c02",
+   "archetype": "grey",
+   "variant": "b",
+   "x": 460,
+   "depth": 0.9,
+   "group": "core",
+   "view": "gallery",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "gallery_c03",
+   "archetype": "blob",
+   "variant": "a",
+   "x": 830,
+   "depth": 0.92,
+   "group": "core",
+   "view": "gallery",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "gallery_c04",
+   "archetype": "antenna",
+   "variant": "b",
+   "x": 340,
+   "depth": 0.62,
+   "group": "core",
+   "view": "gallery",
+   "thresh": 4
+  },
+  {
+   "id": "gallery_c05",
+   "archetype": "insect",
+   "variant": "a",
+   "x": 940,
+   "depth": 0.6,
+   "group": "core",
+   "view": "gallery",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "gallery_c06",
+   "archetype": "cyclops",
+   "variant": "a",
+   "x": 560,
+   "depth": 0.52,
+   "group": "core",
+   "view": "gallery",
+   "thresh": 6
+  },
+  {
+   "id": "gallery_c07",
+   "archetype": "grey",
+   "variant": "a",
+   "x": 740,
+   "depth": 0.48,
+   "group": "core",
+   "view": "gallery",
+   "thresh": 0
+  },
+  {
+   "id": "gallery_c08",
+   "archetype": "groover",
+   "variant": "a",
+   "x": 240,
+   "depth": 0.85,
+   "group": "core",
+   "view": "gallery",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "gallery_c09",
+   "archetype": "curly",
+   "variant": "b",
+   "x": 1030,
+   "depth": 0.82,
+   "group": "core",
+   "view": "gallery",
+   "role": "front",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "gallery_c10",
+   "archetype": "ponytail",
+   "variant": "b",
+   "x": 650,
+   "depth": 0.3,
+   "group": "core",
+   "view": "gallery",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "gallery_g01",
+   "archetype": "grey",
+   "variant": "a",
+   "x": 153,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "gallery",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "side_x": 60,
+   "side_depth": 0.35,
+   "stays_on_bad": true
+  },
+  {
+   "id": "gallery_g02",
+   "archetype": "antenna",
+   "variant": "b",
+   "x": 350,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "gallery",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "side_x": 1220,
+   "side_depth": 0.39999999999999997,
+   "stays_on_bad": true
+  },
+  {
+   "id": "gallery_g03",
+   "archetype": "blob",
+   "variant": "a",
+   "x": 523,
+   "depth": 0.6000000000000001,
+   "group": "gatherers",
+   "view": "gallery",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "side_x": 60,
+   "side_depth": 0.44999999999999996,
+   "stays_on_bad": false
+  },
+  {
+   "id": "gallery_g04",
+   "archetype": "insect",
+   "variant": "b",
+   "x": 694,
+   "depth": 0.7000000000000001,
+   "group": "gatherers",
+   "view": "gallery",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "side_x": 1220,
+   "side_depth": 0.5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "gallery_g05",
+   "archetype": "cyclops",
+   "variant": "a",
+   "x": 812,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "gallery",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "side_x": 60,
+   "side_depth": 0.55,
+   "stays_on_bad": false
+  },
+  {
+   "id": "gallery_g06",
+   "archetype": "tentacle",
+   "variant": "b",
+   "x": 1023,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "gallery",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "side_x": 1220,
+   "side_depth": 0.6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "gallery_l01",
+   "archetype": "blob",
+   "variant": "b",
+   "x": 207,
+   "depth": 0.6,
+   "group": "late",
+   "view": "gallery",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "gallery_l02",
+   "archetype": "insect",
+   "variant": "a",
+   "x": 512,
+   "depth": 0.7,
+   "group": "late",
+   "view": "gallery",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "gallery_l03",
+   "archetype": "cyclops",
+   "variant": "b",
+   "x": 774,
+   "depth": 0.8,
+   "group": "late",
+   "view": "gallery",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "gallery_l04",
+   "archetype": "tentacle",
+   "variant": "a",
+   "x": 1002,
+   "depth": 0.6,
+   "group": "late",
+   "view": "gallery",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "gallery_p01",
+   "archetype": "cyclops",
+   "variant": "a",
+   "x": 292,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "gallery",
+   "enter_from": "side"
+  },
+  {
+   "id": "gallery_p02",
+   "archetype": "tentacle",
+   "variant": "b",
+   "x": 532,
+   "depth": 0.53,
+   "group": "peak",
+   "view": "gallery",
+   "enter_from": "side"
+  },
+  {
+   "id": "gallery_p03",
+   "archetype": "grey",
+   "variant": "a",
+   "x": 748,
+   "depth": 0.61,
+   "group": "peak",
+   "view": "gallery",
+   "enter_from": "side"
+  },
+  {
+   "id": "gallery_p04",
+   "archetype": "antenna",
+   "variant": "b",
+   "x": 966,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "gallery",
+   "enter_from": "side"
+  },
+  {
+   "id": "reactor_c01",
+   "archetype": "grey",
+   "variant": "a",
+   "x": 640,
+   "depth": 0.78,
+   "group": "core",
+   "view": "reactor",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "reactor_c02",
+   "archetype": "antenna",
+   "variant": "b",
+   "x": 460,
+   "depth": 0.9,
+   "group": "core",
+   "view": "reactor",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "reactor_c03",
+   "archetype": "insect",
+   "variant": "a",
+   "x": 830,
+   "depth": 0.92,
+   "group": "core",
+   "view": "reactor",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "reactor_c04",
+   "archetype": "blob",
+   "variant": "b",
+   "x": 340,
+   "depth": 0.62,
+   "group": "core",
+   "view": "reactor",
+   "thresh": 4
+  },
+  {
+   "id": "reactor_c05",
+   "archetype": "cyclops",
+   "variant": "a",
+   "x": 940,
+   "depth": 0.6,
+   "group": "core",
+   "view": "reactor",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "reactor_c06",
+   "archetype": "tentacle",
+   "variant": "a",
+   "x": 560,
+   "depth": 0.52,
+   "group": "core",
+   "view": "reactor",
+   "thresh": 6
+  },
+  {
+   "id": "reactor_c07",
+   "archetype": "antenna",
+   "variant": "a",
+   "x": 740,
+   "depth": 0.48,
+   "group": "core",
+   "view": "reactor",
+   "thresh": 0
+  },
+  {
+   "id": "reactor_c08",
+   "archetype": "hoodie",
+   "variant": "a",
+   "x": 240,
+   "depth": 0.85,
+   "group": "core",
+   "view": "reactor",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "reactor_c09",
+   "archetype": "punk",
+   "variant": "b",
+   "x": 1030,
+   "depth": 0.82,
+   "group": "core",
+   "view": "reactor",
+   "role": "front",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "reactor_c10",
+   "archetype": "curly",
+   "variant": "b",
+   "x": 650,
+   "depth": 0.3,
+   "group": "core",
+   "view": "reactor",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "reactor_g01",
+   "archetype": "antenna",
+   "variant": "a",
+   "x": 181,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "reactor",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "side_x": 60,
+   "side_depth": 0.35,
+   "stays_on_bad": true
+  },
+  {
+   "id": "reactor_g02",
+   "archetype": "blob",
+   "variant": "b",
+   "x": 319,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "reactor",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "side_x": 1220,
+   "side_depth": 0.39999999999999997,
+   "stays_on_bad": true
+  },
+  {
+   "id": "reactor_g03",
+   "archetype": "insect",
+   "variant": "a",
+   "x": 507,
+   "depth": 0.6000000000000001,
+   "group": "gatherers",
+   "view": "reactor",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "side_x": 60,
+   "side_depth": 0.44999999999999996,
+   "stays_on_bad": false
+  },
+  {
+   "id": "reactor_g04",
+   "archetype": "cyclops",
+   "variant": "b",
+   "x": 651,
+   "depth": 0.7000000000000001,
+   "group": "gatherers",
+   "view": "reactor",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "side_x": 1220,
+   "side_depth": 0.5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "reactor_g05",
+   "archetype": "tentacle",
+   "variant": "a",
+   "x": 856,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "reactor",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "side_x": 60,
+   "side_depth": 0.55,
+   "stays_on_bad": false
+  },
+  {
+   "id": "reactor_g06",
+   "archetype": "grey",
+   "variant": "b",
+   "x": 996,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "reactor",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "side_x": 1220,
+   "side_depth": 0.6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "reactor_l01",
+   "archetype": "insect",
+   "variant": "b",
+   "x": 241,
+   "depth": 0.6,
+   "group": "late",
+   "view": "reactor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "reactor_l02",
+   "archetype": "cyclops",
+   "variant": "a",
+   "x": 491,
+   "depth": 0.7,
+   "group": "late",
+   "view": "reactor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "reactor_l03",
+   "archetype": "tentacle",
+   "variant": "b",
+   "x": 740,
+   "depth": 0.8,
+   "group": "late",
+   "view": "reactor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "reactor_l04",
+   "archetype": "grey",
+   "variant": "a",
+   "x": 1000,
+   "depth": 0.6,
+   "group": "late",
+   "view": "reactor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "reactor_p01",
+   "archetype": "tentacle",
+   "variant": "a",
+   "x": 291,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "reactor",
+   "enter_from": "side"
+  },
+  {
+   "id": "reactor_p02",
+   "archetype": "grey",
+   "variant": "b",
+   "x": 536,
+   "depth": 0.53,
+   "group": "peak",
+   "view": "reactor",
+   "enter_from": "side"
+  },
+  {
+   "id": "reactor_p03",
+   "archetype": "antenna",
+   "variant": "a",
+   "x": 766,
+   "depth": 0.61,
+   "group": "peak",
+   "view": "reactor",
+   "enter_from": "side"
+  },
+  {
+   "id": "reactor_p04",
+   "archetype": "blob",
+   "variant": "b",
+   "x": 936,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "reactor",
+   "enter_from": "side"
+  },
+  {
+   "id": "bridge_c01",
+   "archetype": "antenna",
+   "variant": "a",
+   "x": 640,
+   "depth": 0.78,
+   "group": "core",
+   "view": "bridge",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "bridge_c02",
+   "archetype": "blob",
+   "variant": "b",
+   "x": 460,
+   "depth": 0.9,
+   "group": "core",
+   "view": "bridge",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "bridge_c03",
+   "archetype": "cyclops",
+   "variant": "a",
+   "x": 830,
+   "depth": 0.92,
+   "group": "core",
+   "view": "bridge",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "bridge_c04",
+   "archetype": "insect",
+   "variant": "b",
+   "x": 340,
+   "depth": 0.62,
+   "group": "core",
+   "view": "bridge",
+   "thresh": 4
+  },
+  {
+   "id": "bridge_c05",
+   "archetype": "tentacle",
+   "variant": "a",
+   "x": 940,
+   "depth": 0.6,
+   "group": "core",
+   "view": "bridge",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "bridge_c06",
+   "archetype": "grey",
+   "variant": "a",
+   "x": 560,
+   "depth": 0.52,
+   "group": "core",
+   "view": "bridge",
+   "thresh": 6
+  },
+  {
+   "id": "bridge_c07",
+   "archetype": "blob",
+   "variant": "a",
+   "x": 740,
+   "depth": 0.48,
+   "group": "core",
+   "view": "bridge",
+   "thresh": 0
+  },
+  {
+   "id": "bridge_c08",
+   "archetype": "bob",
+   "variant": "a",
+   "x": 240,
+   "depth": 0.85,
+   "group": "core",
+   "view": "bridge",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "bridge_c09",
+   "archetype": "ponytail",
+   "variant": "b",
+   "x": 1030,
+   "depth": 0.82,
+   "group": "core",
+   "view": "bridge",
+   "role": "front",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "bridge_c10",
+   "archetype": "punk",
+   "variant": "b",
+   "x": 650,
+   "depth": 0.3,
+   "group": "core",
+   "view": "bridge",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "bridge_g01",
+   "archetype": "blob",
+   "variant": "a",
+   "x": 174,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "bridge",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "side_x": 60,
+   "side_depth": 0.35,
+   "stays_on_bad": true
+  },
+  {
+   "id": "bridge_g02",
+   "archetype": "insect",
+   "variant": "b",
+   "x": 330,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "bridge",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "side_x": 1220,
+   "side_depth": 0.39999999999999997,
+   "stays_on_bad": true
+  },
+  {
+   "id": "bridge_g03",
+   "archetype": "cyclops",
+   "variant": "a",
+   "x": 481,
+   "depth": 0.6000000000000001,
+   "group": "gatherers",
+   "view": "bridge",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "side_x": 60,
+   "side_depth": 0.44999999999999996,
+   "stays_on_bad": false
+  },
+  {
+   "id": "bridge_g04",
+   "archetype": "tentacle",
+   "variant": "b",
+   "x": 650,
+   "depth": 0.7000000000000001,
+   "group": "gatherers",
+   "view": "bridge",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "side_x": 1220,
+   "side_depth": 0.5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "bridge_g05",
+   "archetype": "grey",
+   "variant": "a",
+   "x": 813,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "bridge",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "side_x": 60,
+   "side_depth": 0.55,
+   "stays_on_bad": false
+  },
+  {
+   "id": "bridge_g06",
+   "archetype": "antenna",
+   "variant": "b",
+   "x": 985,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "bridge",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "side_x": 1220,
+   "side_depth": 0.6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "bridge_l01",
+   "archetype": "cyclops",
+   "variant": "b",
+   "x": 240,
+   "depth": 0.6,
+   "group": "late",
+   "view": "bridge",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "bridge_l02",
+   "archetype": "tentacle",
+   "variant": "a",
+   "x": 491,
+   "depth": 0.7,
+   "group": "late",
+   "view": "bridge",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "bridge_l03",
+   "archetype": "grey",
+   "variant": "b",
+   "x": 742,
+   "depth": 0.8,
+   "group": "late",
+   "view": "bridge",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "bridge_l04",
+   "archetype": "antenna",
+   "variant": "a",
+   "x": 1012,
+   "depth": 0.6,
+   "group": "late",
+   "view": "bridge",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "bridge_p01",
+   "archetype": "grey",
+   "variant": "a",
+   "x": 296,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "bridge",
+   "enter_from": "side"
+  },
+  {
+   "id": "bridge_p02",
+   "archetype": "antenna",
+   "variant": "b",
+   "x": 509,
+   "depth": 0.53,
+   "group": "peak",
+   "view": "bridge",
+   "enter_from": "side"
+  },
+  {
+   "id": "bridge_p03",
+   "archetype": "blob",
+   "variant": "a",
+   "x": 748,
+   "depth": 0.61,
+   "group": "peak",
+   "view": "bridge",
+   "enter_from": "side"
+  },
+  {
+   "id": "bridge_p04",
+   "archetype": "insect",
+   "variant": "b",
+   "x": 932,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "bridge",
+   "enter_from": "side"
   }
  ],
  "silhouettes": [
@@ -1066,6 +2042,285 @@
    "depth": 0.0,
    "group": "gatherers",
    "thresh": -2
+  },
+  {
+   "id": "gallery_s01",
+   "shape": "sil_a",
+   "x": 68,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -2,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s02",
+   "shape": "sil_b",
+   "x": 193,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -1,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s03",
+   "shape": "sil_c",
+   "x": 306,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 8,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s04",
+   "shape": "sil_a",
+   "x": 437,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 1,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s05",
+   "shape": "sil_b",
+   "x": 549,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 6,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s06",
+   "shape": "sil_c",
+   "x": 697,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 1,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s07",
+   "shape": "sil_a",
+   "x": 800,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -8,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s08",
+   "shape": "sil_b",
+   "x": 932,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -5,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s09",
+   "shape": "sil_c",
+   "x": 1068,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 8,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s10",
+   "shape": "sil_a",
+   "x": 1188,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 2,
+   "view": "gallery"
+  },
+  {
+   "id": "reactor_s01",
+   "shape": "sil_a",
+   "x": 49,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -5,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s02",
+   "shape": "sil_b",
+   "x": 196,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -5,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s03",
+   "shape": "sil_c",
+   "x": 298,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -4,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s04",
+   "shape": "sil_a",
+   "x": 429,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 3,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s05",
+   "shape": "sil_b",
+   "x": 561,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -5,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s06",
+   "shape": "sil_c",
+   "x": 672,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -2,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s07",
+   "shape": "sil_a",
+   "x": 824,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -7,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s08",
+   "shape": "sil_b",
+   "x": 929,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 8,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s09",
+   "shape": "sil_c",
+   "x": 1070,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 3,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s10",
+   "shape": "sil_a",
+   "x": 1194,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 8,
+   "view": "reactor"
+  },
+  {
+   "id": "bridge_s01",
+   "shape": "sil_a",
+   "x": 49,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -5,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s02",
+   "shape": "sil_b",
+   "x": 174,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 4,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s03",
+   "shape": "sil_c",
+   "x": 308,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 4,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s04",
+   "shape": "sil_a",
+   "x": 424,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 8,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s05",
+   "shape": "sil_b",
+   "x": 568,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 8,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s06",
+   "shape": "sil_c",
+   "x": 682,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -5,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s07",
+   "shape": "sil_a",
+   "x": 814,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -1,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s08",
+   "shape": "sil_b",
+   "x": 935,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 3,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s09",
+   "shape": "sil_c",
+   "x": 1067,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 5,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s10",
+   "shape": "sil_a",
+   "x": 1174,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -7,
+   "view": "bridge"
   }
- ]
+ ],
+ "camera": {
+  "views": [
+   "main",
+   "gallery",
+   "reactor",
+   "bridge"
+  ],
+  "note": "The camera moves between rooms (move_to). Night One keeps a fixed camera."
+ }
 }

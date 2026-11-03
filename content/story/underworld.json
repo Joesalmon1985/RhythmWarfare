@@ -179,6 +179,13 @@
    "events": [
     {
      "at_bar": 17,
+     "action": "move_to",
+     "view": "court",
+     "style": "step",
+     "bars": 2
+    },
+    {
+     "at_bar": 17,
      "action": "bass_reveal"
     },
     {
@@ -206,6 +213,12 @@
     {
      "at_bar": 23,
      "action": "spotlight_sweep"
+    },
+    {
+     "at_bar": 21,
+     "action": "camera_look",
+     "dx": 120,
+     "bars": 3
     }
    ]
   },
@@ -248,6 +261,13 @@
    "bars": 8,
    "events": [
     {
+     "at_bar": 33,
+     "action": "move_to",
+     "view": "pit",
+     "style": "walk",
+     "bars": 2
+    },
+    {
      "at_bar": 35,
      "action": "circle_form",
      "group": "circle"
@@ -263,6 +283,12 @@
     {
      "at_bar": 39,
      "action": "beams_fan"
+    },
+    {
+     "at_bar": 37,
+     "action": "camera_look",
+     "dx": -120,
+     "bars": 3
     }
    ]
   },
@@ -316,6 +342,13 @@
    "events": [
     {
      "at_bar": 49,
+     "action": "move_to",
+     "view": "furnace",
+     "style": "turn_right",
+     "bars": 2
+    },
+    {
+     "at_bar": 49,
      "action": "riser_up"
     },
     {
@@ -344,6 +377,12 @@
       "energy_min": 45
      },
      "else": "front_row_sway"
+    },
+    {
+     "at_bar": 49,
+     "action": "camera_push",
+     "zoom": 0.14,
+     "bars": 2
     }
    ]
   },
@@ -354,6 +393,13 @@
    "start_bar": 57,
    "bars": 8,
    "events": [
+    {
+     "at_bar": 57,
+     "action": "move_to",
+     "view": "main",
+     "style": "walk",
+     "bars": 2
+    },
     {
      "at_bar": 59,
      "action": "rave_peak",
@@ -382,6 +428,12 @@
     {
      "at_bar": 63,
      "action": "beams_cross"
+    },
+    {
+     "at_bar": 61,
+     "action": "camera_push",
+     "zoom": 0.12,
+     "bars": 2
     }
    ]
   }
@@ -531,7 +583,31 @@
    "e01",
    "e02",
    "e03",
-   "e04"
+   "e04",
+   "court_c02",
+   "court_c03",
+   "court_c04",
+   "court_c05",
+   "court_c06",
+   "court_c07",
+   "court_c08",
+   "court_c09",
+   "pit_c02",
+   "pit_c03",
+   "pit_c04",
+   "pit_c05",
+   "pit_c06",
+   "pit_c07",
+   "pit_c08",
+   "pit_c09",
+   "furnace_c02",
+   "furnace_c03",
+   "furnace_c04",
+   "furnace_c05",
+   "furnace_c06",
+   "furnace_c07",
+   "furnace_c08",
+   "furnace_c09"
   ],
   "all": [
    "c01",
@@ -565,7 +641,79 @@
    "p01",
    "p02",
    "p03",
-   "p04"
+   "p04",
+   "court_c01",
+   "court_c02",
+   "court_c03",
+   "court_c04",
+   "court_c05",
+   "court_c06",
+   "court_c07",
+   "court_c08",
+   "court_c09",
+   "court_c10",
+   "court_g01",
+   "court_g02",
+   "court_g03",
+   "court_g04",
+   "court_g05",
+   "court_g06",
+   "court_l01",
+   "court_l02",
+   "court_l03",
+   "court_l04",
+   "court_p01",
+   "court_p02",
+   "court_p03",
+   "court_p04",
+   "pit_c01",
+   "pit_c02",
+   "pit_c03",
+   "pit_c04",
+   "pit_c05",
+   "pit_c06",
+   "pit_c07",
+   "pit_c08",
+   "pit_c09",
+   "pit_c10",
+   "pit_g01",
+   "pit_g02",
+   "pit_g03",
+   "pit_g04",
+   "pit_g05",
+   "pit_g06",
+   "pit_l01",
+   "pit_l02",
+   "pit_l03",
+   "pit_l04",
+   "pit_p01",
+   "pit_p02",
+   "pit_p03",
+   "pit_p04",
+   "furnace_c01",
+   "furnace_c02",
+   "furnace_c03",
+   "furnace_c04",
+   "furnace_c05",
+   "furnace_c06",
+   "furnace_c07",
+   "furnace_c08",
+   "furnace_c09",
+   "furnace_c10",
+   "furnace_g01",
+   "furnace_g02",
+   "furnace_g03",
+   "furnace_g04",
+   "furnace_g05",
+   "furnace_g06",
+   "furnace_l01",
+   "furnace_l02",
+   "furnace_l03",
+   "furnace_l04",
+   "furnace_p01",
+   "furnace_p02",
+   "furnace_p03",
+   "furnace_p04"
   ]
  },
  "actors": [
@@ -902,6 +1050,828 @@
    "depth": 0.6,
    "group": "peak",
    "enter_from": "side"
+  },
+  {
+   "id": "court_c01",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "x": 640,
+   "depth": 0.78,
+   "group": "core",
+   "view": "court",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "court_c02",
+   "archetype": "imp",
+   "variant": "b",
+   "x": 460,
+   "depth": 0.9,
+   "group": "core",
+   "view": "court",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "court_c03",
+   "archetype": "fiend",
+   "variant": "a",
+   "x": 830,
+   "depth": 0.92,
+   "group": "core",
+   "view": "court",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "court_c04",
+   "archetype": "brute",
+   "variant": "b",
+   "x": 340,
+   "depth": 0.62,
+   "group": "core",
+   "view": "court",
+   "thresh": 4
+  },
+  {
+   "id": "court_c05",
+   "archetype": "skeleton",
+   "variant": "a",
+   "x": 940,
+   "depth": 0.6,
+   "group": "core",
+   "view": "court",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "court_c06",
+   "archetype": "flame",
+   "variant": "a",
+   "x": 560,
+   "depth": 0.52,
+   "group": "core",
+   "view": "court",
+   "thresh": 6
+  },
+  {
+   "id": "court_c07",
+   "archetype": "imp",
+   "variant": "a",
+   "x": 740,
+   "depth": 0.48,
+   "group": "core",
+   "view": "court",
+   "thresh": 0
+  },
+  {
+   "id": "court_c08",
+   "archetype": "groover",
+   "variant": "a",
+   "x": 240,
+   "depth": 0.85,
+   "group": "core",
+   "view": "court",
+   "role": "front",
+   "thresh": -18,
+   "art": "night_one"
+  },
+  {
+   "id": "court_c09",
+   "archetype": "curly",
+   "variant": "b",
+   "x": 1030,
+   "depth": 0.82,
+   "group": "core",
+   "view": "court",
+   "role": "front",
+   "thresh": -22,
+   "art": "night_one"
+  },
+  {
+   "id": "court_c10",
+   "archetype": "ponytail",
+   "variant": "b",
+   "x": 650,
+   "depth": 0.3,
+   "group": "core",
+   "view": "court",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "court_g01",
+   "archetype": "imp",
+   "variant": "a",
+   "x": 164,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "court",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "side_x": 60,
+   "side_depth": 0.35,
+   "stays_on_bad": true
+  },
+  {
+   "id": "court_g02",
+   "archetype": "brute",
+   "variant": "b",
+   "x": 354,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "court",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "side_x": 1220,
+   "side_depth": 0.39999999999999997,
+   "stays_on_bad": true
+  },
+  {
+   "id": "court_g03",
+   "archetype": "fiend",
+   "variant": "a",
+   "x": 511,
+   "depth": 0.6000000000000001,
+   "group": "gatherers",
+   "view": "court",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "side_x": 60,
+   "side_depth": 0.44999999999999996,
+   "stays_on_bad": false
+  },
+  {
+   "id": "court_g04",
+   "archetype": "skeleton",
+   "variant": "b",
+   "x": 674,
+   "depth": 0.7000000000000001,
+   "group": "gatherers",
+   "view": "court",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "side_x": 1220,
+   "side_depth": 0.5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "court_g05",
+   "archetype": "flame",
+   "variant": "a",
+   "x": 833,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "court",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "side_x": 60,
+   "side_depth": 0.55,
+   "stays_on_bad": false
+  },
+  {
+   "id": "court_g06",
+   "archetype": "horned_queen",
+   "variant": "b",
+   "x": 1022,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "court",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "side_x": 1220,
+   "side_depth": 0.6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "court_l01",
+   "archetype": "fiend",
+   "variant": "b",
+   "x": 220,
+   "depth": 0.6,
+   "group": "late",
+   "view": "court",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "court_l02",
+   "archetype": "skeleton",
+   "variant": "a",
+   "x": 463,
+   "depth": 0.7,
+   "group": "late",
+   "view": "court",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "court_l03",
+   "archetype": "flame",
+   "variant": "b",
+   "x": 788,
+   "depth": 0.8,
+   "group": "late",
+   "view": "court",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "court_l04",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "x": 1031,
+   "depth": 0.6,
+   "group": "late",
+   "view": "court",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "court_p01",
+   "archetype": "flame",
+   "variant": "a",
+   "x": 290,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "court",
+   "enter_from": "side"
+  },
+  {
+   "id": "court_p02",
+   "archetype": "horned_queen",
+   "variant": "b",
+   "x": 522,
+   "depth": 0.53,
+   "group": "peak",
+   "view": "court",
+   "enter_from": "side"
+  },
+  {
+   "id": "court_p03",
+   "archetype": "imp",
+   "variant": "a",
+   "x": 735,
+   "depth": 0.61,
+   "group": "peak",
+   "view": "court",
+   "enter_from": "side"
+  },
+  {
+   "id": "court_p04",
+   "archetype": "brute",
+   "variant": "b",
+   "x": 931,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "court",
+   "enter_from": "side"
+  },
+  {
+   "id": "pit_c01",
+   "archetype": "imp",
+   "variant": "a",
+   "x": 640,
+   "depth": 0.78,
+   "group": "core",
+   "view": "pit",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "pit_c02",
+   "archetype": "brute",
+   "variant": "b",
+   "x": 460,
+   "depth": 0.9,
+   "group": "core",
+   "view": "pit",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "pit_c03",
+   "archetype": "skeleton",
+   "variant": "a",
+   "x": 830,
+   "depth": 0.92,
+   "group": "core",
+   "view": "pit",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "pit_c04",
+   "archetype": "fiend",
+   "variant": "b",
+   "x": 340,
+   "depth": 0.62,
+   "group": "core",
+   "view": "pit",
+   "thresh": 4
+  },
+  {
+   "id": "pit_c05",
+   "archetype": "flame",
+   "variant": "a",
+   "x": 940,
+   "depth": 0.6,
+   "group": "core",
+   "view": "pit",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "pit_c06",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "x": 560,
+   "depth": 0.52,
+   "group": "core",
+   "view": "pit",
+   "thresh": 6
+  },
+  {
+   "id": "pit_c07",
+   "archetype": "brute",
+   "variant": "a",
+   "x": 740,
+   "depth": 0.48,
+   "group": "core",
+   "view": "pit",
+   "thresh": 0
+  },
+  {
+   "id": "pit_c08",
+   "archetype": "hoodie",
+   "variant": "a",
+   "x": 240,
+   "depth": 0.85,
+   "group": "core",
+   "view": "pit",
+   "role": "front",
+   "thresh": -18,
+   "art": "night_one"
+  },
+  {
+   "id": "pit_c09",
+   "archetype": "punk",
+   "variant": "b",
+   "x": 1030,
+   "depth": 0.82,
+   "group": "core",
+   "view": "pit",
+   "role": "front",
+   "thresh": -22,
+   "art": "night_one"
+  },
+  {
+   "id": "pit_c10",
+   "archetype": "curly",
+   "variant": "b",
+   "x": 650,
+   "depth": 0.3,
+   "group": "core",
+   "view": "pit",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "pit_g01",
+   "archetype": "brute",
+   "variant": "a",
+   "x": 171,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "pit",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "side_x": 60,
+   "side_depth": 0.35,
+   "stays_on_bad": true
+  },
+  {
+   "id": "pit_g02",
+   "archetype": "fiend",
+   "variant": "b",
+   "x": 301,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "pit",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "side_x": 1220,
+   "side_depth": 0.39999999999999997,
+   "stays_on_bad": true
+  },
+  {
+   "id": "pit_g03",
+   "archetype": "skeleton",
+   "variant": "a",
+   "x": 513,
+   "depth": 0.6000000000000001,
+   "group": "gatherers",
+   "view": "pit",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "side_x": 60,
+   "side_depth": 0.44999999999999996,
+   "stays_on_bad": false
+  },
+  {
+   "id": "pit_g04",
+   "archetype": "flame",
+   "variant": "b",
+   "x": 644,
+   "depth": 0.7000000000000001,
+   "group": "gatherers",
+   "view": "pit",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "side_x": 1220,
+   "side_depth": 0.5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "pit_g05",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "x": 861,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "pit",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "side_x": 60,
+   "side_depth": 0.55,
+   "stays_on_bad": false
+  },
+  {
+   "id": "pit_g06",
+   "archetype": "imp",
+   "variant": "b",
+   "x": 1033,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "pit",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "side_x": 1220,
+   "side_depth": 0.6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "pit_l01",
+   "archetype": "skeleton",
+   "variant": "b",
+   "x": 194,
+   "depth": 0.6,
+   "group": "late",
+   "view": "pit",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "pit_l02",
+   "archetype": "flame",
+   "variant": "a",
+   "x": 503,
+   "depth": 0.7,
+   "group": "late",
+   "view": "pit",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "pit_l03",
+   "archetype": "horned_queen",
+   "variant": "b",
+   "x": 749,
+   "depth": 0.8,
+   "group": "late",
+   "view": "pit",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "pit_l04",
+   "archetype": "imp",
+   "variant": "a",
+   "x": 1002,
+   "depth": 0.6,
+   "group": "late",
+   "view": "pit",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "pit_p01",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "x": 281,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "pit",
+   "enter_from": "side"
+  },
+  {
+   "id": "pit_p02",
+   "archetype": "imp",
+   "variant": "b",
+   "x": 543,
+   "depth": 0.53,
+   "group": "peak",
+   "view": "pit",
+   "enter_from": "side"
+  },
+  {
+   "id": "pit_p03",
+   "archetype": "brute",
+   "variant": "a",
+   "x": 715,
+   "depth": 0.61,
+   "group": "peak",
+   "view": "pit",
+   "enter_from": "side"
+  },
+  {
+   "id": "pit_p04",
+   "archetype": "fiend",
+   "variant": "b",
+   "x": 935,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "pit",
+   "enter_from": "side"
+  },
+  {
+   "id": "furnace_c01",
+   "archetype": "brute",
+   "variant": "a",
+   "x": 640,
+   "depth": 0.78,
+   "group": "core",
+   "view": "furnace",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "furnace_c02",
+   "archetype": "fiend",
+   "variant": "b",
+   "x": 460,
+   "depth": 0.9,
+   "group": "core",
+   "view": "furnace",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "furnace_c03",
+   "archetype": "flame",
+   "variant": "a",
+   "x": 830,
+   "depth": 0.92,
+   "group": "core",
+   "view": "furnace",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "furnace_c04",
+   "archetype": "skeleton",
+   "variant": "b",
+   "x": 340,
+   "depth": 0.62,
+   "group": "core",
+   "view": "furnace",
+   "thresh": 4
+  },
+  {
+   "id": "furnace_c05",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "x": 940,
+   "depth": 0.6,
+   "group": "core",
+   "view": "furnace",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "furnace_c06",
+   "archetype": "imp",
+   "variant": "a",
+   "x": 560,
+   "depth": 0.52,
+   "group": "core",
+   "view": "furnace",
+   "thresh": 6
+  },
+  {
+   "id": "furnace_c07",
+   "archetype": "fiend",
+   "variant": "a",
+   "x": 740,
+   "depth": 0.48,
+   "group": "core",
+   "view": "furnace",
+   "thresh": 0
+  },
+  {
+   "id": "furnace_c08",
+   "archetype": "bob",
+   "variant": "a",
+   "x": 240,
+   "depth": 0.85,
+   "group": "core",
+   "view": "furnace",
+   "role": "front",
+   "thresh": -18,
+   "art": "night_one"
+  },
+  {
+   "id": "furnace_c09",
+   "archetype": "ponytail",
+   "variant": "b",
+   "x": 1030,
+   "depth": 0.82,
+   "group": "core",
+   "view": "furnace",
+   "role": "front",
+   "thresh": -22,
+   "art": "night_one"
+  },
+  {
+   "id": "furnace_c10",
+   "archetype": "punk",
+   "variant": "b",
+   "x": 650,
+   "depth": 0.3,
+   "group": "core",
+   "view": "furnace",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "furnace_g01",
+   "archetype": "fiend",
+   "variant": "a",
+   "x": 161,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "furnace",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "side_x": 60,
+   "side_depth": 0.35,
+   "stays_on_bad": true
+  },
+  {
+   "id": "furnace_g02",
+   "archetype": "skeleton",
+   "variant": "b",
+   "x": 309,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "furnace",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "side_x": 1220,
+   "side_depth": 0.39999999999999997,
+   "stays_on_bad": true
+  },
+  {
+   "id": "furnace_g03",
+   "archetype": "flame",
+   "variant": "a",
+   "x": 510,
+   "depth": 0.6000000000000001,
+   "group": "gatherers",
+   "view": "furnace",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "side_x": 60,
+   "side_depth": 0.44999999999999996,
+   "stays_on_bad": false
+  },
+  {
+   "id": "furnace_g04",
+   "archetype": "horned_queen",
+   "variant": "b",
+   "x": 642,
+   "depth": 0.7000000000000001,
+   "group": "gatherers",
+   "view": "furnace",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "side_x": 1220,
+   "side_depth": 0.5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "furnace_g05",
+   "archetype": "imp",
+   "variant": "a",
+   "x": 819,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "furnace",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "side_x": 60,
+   "side_depth": 0.55,
+   "stays_on_bad": false
+  },
+  {
+   "id": "furnace_g06",
+   "archetype": "brute",
+   "variant": "b",
+   "x": 990,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "furnace",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "side_x": 1220,
+   "side_depth": 0.6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "furnace_l01",
+   "archetype": "flame",
+   "variant": "b",
+   "x": 246,
+   "depth": 0.6,
+   "group": "late",
+   "view": "furnace",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "furnace_l02",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "x": 481,
+   "depth": 0.7,
+   "group": "late",
+   "view": "furnace",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "furnace_l03",
+   "archetype": "imp",
+   "variant": "b",
+   "x": 748,
+   "depth": 0.8,
+   "group": "late",
+   "view": "furnace",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "furnace_l04",
+   "archetype": "brute",
+   "variant": "a",
+   "x": 1044,
+   "depth": 0.6,
+   "group": "late",
+   "view": "furnace",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "furnace_p01",
+   "archetype": "imp",
+   "variant": "a",
+   "x": 300,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "furnace",
+   "enter_from": "side"
+  },
+  {
+   "id": "furnace_p02",
+   "archetype": "brute",
+   "variant": "b",
+   "x": 510,
+   "depth": 0.53,
+   "group": "peak",
+   "view": "furnace",
+   "enter_from": "side"
+  },
+  {
+   "id": "furnace_p03",
+   "archetype": "fiend",
+   "variant": "a",
+   "x": 765,
+   "depth": 0.61,
+   "group": "peak",
+   "view": "furnace",
+   "enter_from": "side"
+  },
+  {
+   "id": "furnace_p04",
+   "archetype": "skeleton",
+   "variant": "b",
+   "x": 952,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "furnace",
+   "enter_from": "side"
   }
  ],
  "silhouettes": [
@@ -1016,6 +1986,285 @@
    "depth": 0.0,
    "group": "gatherers",
    "thresh": 5
+  },
+  {
+   "id": "court_s01",
+   "shape": "sil_a",
+   "x": 70,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 2,
+   "view": "court"
+  },
+  {
+   "id": "court_s02",
+   "shape": "sil_b",
+   "x": 186,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 1,
+   "view": "court"
+  },
+  {
+   "id": "court_s03",
+   "shape": "sil_c",
+   "x": 319,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 8,
+   "view": "court"
+  },
+  {
+   "id": "court_s04",
+   "shape": "sil_a",
+   "x": 441,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 7,
+   "view": "court"
+  },
+  {
+   "id": "court_s05",
+   "shape": "sil_b",
+   "x": 557,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -3,
+   "view": "court"
+  },
+  {
+   "id": "court_s06",
+   "shape": "sil_c",
+   "x": 696,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 0,
+   "view": "court"
+  },
+  {
+   "id": "court_s07",
+   "shape": "sil_a",
+   "x": 806,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -5,
+   "view": "court"
+  },
+  {
+   "id": "court_s08",
+   "shape": "sil_b",
+   "x": 945,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 2,
+   "view": "court"
+  },
+  {
+   "id": "court_s09",
+   "shape": "sil_c",
+   "x": 1051,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -3,
+   "view": "court"
+  },
+  {
+   "id": "court_s10",
+   "shape": "sil_a",
+   "x": 1194,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -3,
+   "view": "court"
+  },
+  {
+   "id": "pit_s01",
+   "shape": "sil_a",
+   "x": 46,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 8,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s02",
+   "shape": "sil_b",
+   "x": 184,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 6,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s03",
+   "shape": "sil_c",
+   "x": 311,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -1,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s04",
+   "shape": "sil_a",
+   "x": 446,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 4,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s05",
+   "shape": "sil_b",
+   "x": 569,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 2,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s06",
+   "shape": "sil_c",
+   "x": 680,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 6,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s07",
+   "shape": "sil_a",
+   "x": 815,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 6,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s08",
+   "shape": "sil_b",
+   "x": 932,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -3,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s09",
+   "shape": "sil_c",
+   "x": 1058,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 8,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s10",
+   "shape": "sil_a",
+   "x": 1171,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 5,
+   "view": "pit"
+  },
+  {
+   "id": "furnace_s01",
+   "shape": "sil_a",
+   "x": 71,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 1,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s02",
+   "shape": "sil_b",
+   "x": 192,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 1,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s03",
+   "shape": "sil_c",
+   "x": 317,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 2,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s04",
+   "shape": "sil_a",
+   "x": 449,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 0,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s05",
+   "shape": "sil_b",
+   "x": 563,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -7,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s06",
+   "shape": "sil_c",
+   "x": 676,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -3,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s07",
+   "shape": "sil_a",
+   "x": 811,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -6,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s08",
+   "shape": "sil_b",
+   "x": 939,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 0,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s09",
+   "shape": "sil_c",
+   "x": 1069,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -8,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s10",
+   "shape": "sil_a",
+   "x": 1187,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -5,
+   "view": "furnace"
   }
- ]
+ ],
+ "camera": {
+  "views": [
+   "main",
+   "court",
+   "pit",
+   "furnace"
+  ],
+  "note": "The camera moves between rooms (move_to). Night One keeps a fixed camera."
+ }
 }

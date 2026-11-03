@@ -92,6 +92,11 @@ func _all_fx(method: String, args: Array) -> void:
 		((views[id] as StoryView).fx as Object).callv(method, args)
 
 
+func _set_glow(on: bool) -> void:
+	for id in views:
+		(views[id] as StoryView).crowd.glow_on = on
+
+
 func glow_colors() -> Array:
 	var rv: Array = palettes.get("rave", PALETTES["rave"])
 	return [rv[0], rv[mini(1, rv.size() - 1)], rv[mini(3, rv.size() - 1)]]
@@ -432,9 +437,9 @@ func apply(a: Dictionary) -> void:
 		"confetti":
 			_act["confetti"] = {"t0": t0, "t1": t0 + 5.0}
 		"glowsticks_on":
-			crowd.glow_on = true
+			_set_glow(true)
 		"glowsticks_off":
-			crowd.glow_on = false
+			_set_glow(false)
 		"light_wave":
 			_act["light_wave"] = {"t0": t0, "t1": t0 + dur}
 			crowd.wave(t0, dur * 0.8, 1.2, "cheer")
@@ -473,7 +478,7 @@ func apply(a: Dictionary) -> void:
 		"hero_solo":
 			var h := crowd.hero_id()
 			if h != "":
-				var rl: Array = assets.anchor("riser", [640, 330, 260])
+				var rl: Array = assets.anchor("riser", [crowd.circle_c.x, crowd.circle_c.y - 20.0, 260], current_view)
 				crowd.walk_to(h, Vector2(float(rl[0]), float(rl[1]) - 6.0), t0, 2.0, {"state": "dance", "from": 0.0, "until": t0 + dur, "sync": false})
 		"bring_in":
 			crowd.bring_in(str(args["group"]), t0)
@@ -519,7 +524,7 @@ func apply(a: Dictionary) -> void:
 			crowd.direct(crowd.present_ids(), "look", t0, 2.0 * bar_s())
 			crowd.direct(crowd.present_ids(), "dance", t0 + 2.0 * bar_s(), 2.0 * bar_s())
 		"final_chant":
-			crowd.glow_on = true
+			_set_glow(true)
 			palette = "rave"
 			_act["burst"] = {"t0": t0, "t1": t0 + 4.0 * bar_s()}
 			crowd.direct(crowd.present_ids(), "hands_up", t0, 6.0 * bar_s())
@@ -559,12 +564,13 @@ func apply(a: Dictionary) -> void:
 			_pieces[str(args["piece"])] = st3
 		"ending":
 			_ending = str(args["ending"])
-			crowd.set_ending(_ending)
+			for vid in views:
+				(views[vid] as StoryView).crowd.set_ending(_ending)
 			_act["ending"] = {"t0": t0, "t1": NO_END}
 			match data.tableau_of(_ending):
 				"legendary":
 					palette = "rave"
-					crowd.glow_on = true
+					_set_glow(true)
 					_beam_mode = "fan"
 					_woofer_pump = true
 					_act["confetti"] = {"t0": t0, "t1": t0 + 8.0}
@@ -572,11 +578,11 @@ func apply(a: Dictionary) -> void:
 					_act["spot_hero"] = {"t0": t0, "t1": NO_END}
 				"good":
 					palette = "warm"
-					crowd.glow_on = true
+					_set_glow(true)
 					_beam_mode = "sweep"
 				_:
 					palette = "low"
-					crowd.glow_on = false
+					_set_glow(false)
 					_beam_mode = "off"
 					_act.erase("spot_hero")
 					_act.erase("spot_circle")
