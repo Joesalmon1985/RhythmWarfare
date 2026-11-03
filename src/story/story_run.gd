@@ -104,7 +104,7 @@ func summary() -> Dictionary:
 	var energy_curve: Array = []
 	for h in crowd.history:
 		energy_curve.append(snappedf(float(h["energy"]), 0.1))
-	return {"ending": ending(), "energy": snappedf(crowd.energy, 0.1), "sequences_passed": crowd.passed_count(), "sequences_total": total_sequences(),
+	return {"ending": ending(), "ending_rank": data.ending_rank(ending()), "energy": snappedf(crowd.energy, 0.1), "sequences_passed": crowd.passed_count(), "sequences_total": total_sequences(),
 		"accuracy": pj.accuracy(), "best_combo": pj.best_combo, "perfect": pj.perfect, "great": pj.great, "ok": pj.ok, "misses": pj.misses,
 		"strays": pj.strays, "branches": branches, "energy_curve": energy_curve, "peak_energy": snappedf(_peak(), 0.1)}
 
@@ -118,8 +118,8 @@ func _peak() -> float:
 
 ## Headless driver for tests and tuning: plays the whole song with a seeded input policy (tools/autoplay.gd) at a given frame
 ## step (0 = a variable step pattern) and returns the summary plus the director log.
-static func autoplay(policy: String, frame_s: float = 1.0 / 60.0, seed_value: int = 1, options: Dictionary = {}) -> Dictionary:
-	var run := StoryRun.create(options)
+static func autoplay(policy: String, frame_s: float = 1.0 / 60.0, seed_value: int = 1, options: Dictionary = {}, data_path: String = StoryData.PATH) -> Dictionary:
+	var run := StoryRun.create(options, data_path)
 	if not run.errors.is_empty():
 		return {"errors": run.errors}
 	var rng := RandomNumberGenerator.new()

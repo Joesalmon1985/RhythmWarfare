@@ -1145,5 +1145,7 @@
    "group": "gatherers",
    "thresh": -4
   }
- ]
+ ],
+ "art": "night_one",
+ "intro": "Open the room."
 }

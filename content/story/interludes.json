@@ -1,0 +1,31 @@
+{
+ "abduction": {
+  "art": "mothership", "duration": 17.0, "title": "Contact",
+  "events": [
+   {"t": 0.0, "do": "caption", "text": "The music dips. Something is hanging over the club...", "dur": 3.0},
+   {"t": 0.2, "do": "dim", "dur": 2.0},
+   {"t": 1.5, "do": "look_up", "dur": 12.0},
+   {"t": 2.5, "do": "ufo_descend", "dur": 4.5},
+   {"t": 7.5, "do": "beam_on", "dur": 1.5},
+   {"t": 7.8, "do": "caption", "text": "A beam of light finds the dance floor.", "dur": 2.5},
+   {"t": 9.0, "do": "lift_crowd", "dur": 4.5},
+   {"t": 12.5, "do": "caption", "text": "Everyone is taken aboard.", "dur": 2.5},
+   {"t": 13.2, "do": "flood", "dur": 3.6}
+  ]
+ },
+ "descent": {
+  "art": "underworld", "duration": 17.0, "title": "The Floor Gives Way",
+  "events": [
+   {"t": 0.0, "do": "caption", "text": "The room has gone quiet. The floor starts to glow...", "dur": 3.0},
+   {"t": 0.2, "do": "dim", "dur": 2.0},
+   {"t": 2.0, "do": "crack_spread", "dur": 4.0},
+   {"t": 4.0, "do": "panic", "dur": 11.0},
+   {"t": 4.5, "do": "fire_jets", "dur": 4.0},
+   {"t": 6.5, "do": "caption", "text": "Something is waiting below.", "dur": 2.5},
+   {"t": 7.5, "do": "portal_open", "dur": 3.0},
+   {"t": 9.5, "do": "sink_crowd", "dur": 4.5},
+   {"t": 12.5, "do": "caption", "text": "Everyone is dragged down.", "dur": 2.5},
+   {"t": 13.2, "do": "wash", "dur": 3.6}
+  ]
+ }
+}

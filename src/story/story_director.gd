@@ -84,7 +84,14 @@ func update(t: float) -> Array:
 		res["text"] = str(d.get("good_text" if res["outcome"] == "good" else "bad_text", ""))
 		crowd.decisions_log.append(res)
 		for a in d.get(res["outcome"], []):
-			_emit(out, t0, float(d["at_bar"]), str(a), {"decision": str(d["id"]), "outcome": res["outcome"]}, str(item["block"]), "decision")
+			var args := {"decision": str(d["id"]), "outcome": res["outcome"]}
+			var name := str(a)
+			if typeof(a) == TYPE_DICTIONARY:
+				name = str(a["action"])
+				for k in a:
+					if k != "action":
+						args[k] = a[k]
+			_emit(out, t0, float(d["at_bar"]), name, args, str(item["block"]), "decision")
 	_pending = still
 	if not _ending_fired and _total_sequences > 0 and crowd.history.size() >= _total_sequences:
 		_ending_fired = true

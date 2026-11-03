@@ -23,6 +23,8 @@ var bpm := 174.0
 var reduced := false
 var high_contrast := false
 var palette := "low"
+var palettes: Dictionary = {}  # name -> Array[Color] (the chapter's own, else PALETTES)
+var _pieces: Dictionary = {}  # id -> {on_t, off_t, pulse_t, bars}
 var energy := 45.0
 var t_now := 0.0
 
@@ -76,6 +78,16 @@ func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
 	crowd.name = "Crowd"
 	crowd.bpm = bpm
 	_root.add_child(crowd)
+	palettes = PALETTES.duplicate()
+	for k in data.palettes:
+		var cols: Array = []
+		for hex in data.palettes[k]:
+			cols.append(Color.html(str(hex)))
+		if not cols.is_empty():
+			palettes[k] = cols
+	if palettes.has("rave"):
+		var rv: Array = palettes["rave"]
+		crowd.glow_colors = [rv[0], rv[mini(1, rv.size() - 1)], rv[mini(3, rv.size() - 1)]]
 	crowd.setup(assets, data)
 	_fx.crowd = crowd
 	_add_layer("add")
@@ -110,7 +122,36 @@ func design_to_global(p: Vector2) -> Vector2:
 	return global_position + _root.position + p * _scale
 
 
+## A cutscene overlay in design space (above the crowd and the lights).
+func add_overlay(node: Node2D) -> void:
+	_root.add_child(node)
+
+
+func palette_colors() -> Array:
+	return palettes.get(palette, PALETTES["low"])
+
+
+## Set-piece state at song time t: {visible, alpha, pulse} (a chapter piece switched by piece_on / piece_off / piece_pulse).
+func piece_state(id: String, t: float) -> Dictionary:
+	var st: Dictionary = _pieces.get(id, {})
+	if st.is_empty():
+		return {"visible": false, "alpha": 0.0, "pulse": 0.0}
+	var on_t: float = st.get("on_t", INF)
+	var off_t: float = st.get("off_t", INF)
+	var vis := t >= on_t and t < off_t
+	var a := 0.0
+	if vis:
+		a = clampf((t - on_t) / 0.8, 0.0, 1.0)
+	elif t >= off_t and t < off_t + 0.8 and t >= on_t:
+		a = 1.0 - (t - off_t) / 0.8
+	var pulse := 0.0
+	if st.has("pulse_t") and t >= float(st["pulse_t"]) and t < float(st["pulse_t"]) + float(st.get("pulse_len", 2.0)):
+		pulse = 1.0 - (t - float(st["pulse_t"])) / float(st.get("pulse_len", 2.0))
+	return {"visible": vis or a > 0.0, "alpha": a, "pulse": pulse}
+
+
 func reset() -> void:
+	_pieces = {}
 	_act = {}
 	_beam_mode = "sweep"
 	_beam_since = 0.0
@@ -203,6 +244,15 @@ func led_mode() -> String:
 
 func ending() -> String:
 	return _ending
+
+
+## The staged tableau of the ending reached ("legendary" / "good" / "lost" or "").
+func tableau() -> String:
+	return data.tableau_of(_ending) if _ending != "" else ""
+
+
+func lean_tableau() -> String:
+	return data.tableau_of(_lean) if _lean != "" else ""
 
 
 func lean() -> String:
@@ -369,12 +419,28 @@ func apply(a: Dictionary) -> void:
 			_act["burst"] = {"t0": t0, "t1": t0 + 3.0 * bar_s()}
 			crowd.direct(crowd.present_ids(), "cheer", t0, 3.0 * bar_s())
 			_act["spot_sweep"] = {"t0": t0, "t1": t0 + 4.0 * bar_s()}
+		"piece_on":
+			var st: Dictionary = _pieces.get(str(args["piece"]), {})
+			st["on_t"] = t0
+			st.erase("off_t")
+			_pieces[str(args["piece"])] = st
+		"piece_off":
+			var st2: Dictionary = _pieces.get(str(args["piece"]), {})
+			st2["off_t"] = t0
+			_pieces[str(args["piece"])] = st2
+		"piece_pulse":
+			var st3: Dictionary = _pieces.get(str(args["piece"]), {})
+			if not st3.has("on_t"):
+				st3["on_t"] = t0
+			st3["pulse_t"] = t0
+			st3["pulse_len"] = maxf(float(args.get("bars", 2.0)) * bar_s(), 0.5)
+			_pieces[str(args["piece"])] = st3
 		"ending":
 			_ending = str(args["ending"])
 			crowd.set_ending(_ending)
 			_act["ending"] = {"t0": t0, "t1": NO_END}
-			match _ending:
-				"legendary_set":
+			match data.tableau_of(_ending):
+				"legendary":
 					palette = "rave"
 					crowd.glow_on = true
 					_beam_mode = "fan"
@@ -382,7 +448,7 @@ func apply(a: Dictionary) -> void:
 					_act["confetti"] = {"t0": t0, "t1": t0 + 8.0}
 					_act["burst"] = {"t0": t0, "t1": NO_END}
 					_act["spot_hero"] = {"t0": t0, "t1": NO_END}
-				"good_night":
+				"good":
 					palette = "warm"
 					crowd.glow_on = true
 					_beam_mode = "sweep"

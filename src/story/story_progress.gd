@@ -5,7 +5,6 @@ extends RefCounted
 
 const SAVE_PATH := "user://story_campaign.json"
 const VERSION := 1
-const ENDING_RANK := {"lost_the_floor": 0, "good_night": 1, "legendary_set": 2}
 
 var path := SAVE_PATH
 var data: Dictionary = {}
@@ -47,8 +46,10 @@ func record(level_id: String, s: Dictionary) -> Dictionary:
 	var ending := str(s["ending"])
 	rec["last_ending"] = ending
 	rec["endings"][ending] = int(rec["endings"].get(ending, 0)) + 1
-	if rec["best_ending"] == "" or int(ENDING_RANK.get(ending, 0)) > int(ENDING_RANK.get(str(rec["best_ending"]), 0)):
+	var rank := int(s.get("ending_rank", 0))
+	if rec["best_ending"] == "" or rank > int(rec.get("best_rank", -1)):
 		rec["best_ending"] = ending
+		rec["best_rank"] = rank
 	for b in s.get("branches", []):
 		var key := "%s:%s" % [b["id"], b["outcome"]]
 		rec["branches_seen"][key] = int(rec["branches_seen"].get(key, 0)) + 1

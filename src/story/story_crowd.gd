@@ -27,6 +27,7 @@ var circle_c := Vector2(640, 380)
 var circle_r := Vector2(200, 60)
 var _ending := ""
 var _flinch_until := -1.0
+var glow_colors: Array = [Color(0.4, 1.0, 0.95), Color(1.0, 0.4, 0.85), Color(1.0, 0.8, 0.3)]
 
 
 func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
@@ -39,24 +40,20 @@ func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
 	circle_c = Vector2(float(cc[0]), float(cc[1]))
 	var cr: Array = assets.anchor("circle_radii", [200, 60])
 	circle_r = Vector2(float(cr[0]), float(cr[1]))
-	var arch: Dictionary = assets.manifest.get("archetypes", {})
 	var n := 0
 	for a in data.actors:
-		var ad: Dictionary = arch.get(str(a["archetype"]), {})
-		var rig: Dictionary = (ad.get("variants", {}).get(str(a["variant"]), {}) as Dictionary).duplicate()
+		var rig := assets.rig(str(a["archetype"]), str(a["variant"]), str(a.get("art", "")))
 		if rig.is_empty():
 			continue
-		rig["joints"] = ad.get("joints", {})
-		rig["height"] = ad.get("height", 260)
 		var c := StoryCharacter.new()
 		c.name = str(a["id"])
 		c.setup(assets, rig, str(a["id"]), 1000 + n)
 		c.glow = bool(a.get("glow", false)) or (n % 4 == 0)
-		c.glow_color = [Color(0.4, 1.0, 0.95), Color(1.0, 0.4, 0.85), Color(1.0, 0.8, 0.3)][n % 3]
+		c.glow_color = glow_colors[n % glow_colors.size()]
 		add_child(c)
 		var present := str(a["group"]) == "core"
 		actors[str(a["id"])] = {"node": c, "data": a, "home": _home_of(a), "pos": _home_of(a), "present": present, "move": {}, "dir": {},
-			"thresh": float(a.get("thresh", 0.0)), "alpha": 1.0 if present else 0.0, "stay": false}
+			"thresh": float(a.get("thresh", 0.0)), "alpha": 1.0 if present else 0.0, "stay": false, "vanish": {}}
 		n += 1
 	_order = actors.keys()
 	for s in data.silhouettes:
@@ -84,6 +81,7 @@ func reset() -> void:
 		a["move"] = {}
 		a["dir"] = {}
 		a["stay"] = false
+		a["vanish"] = {}
 		(a["node"] as StoryCharacter).sync = false
 	for s in _sils:
 		s["present"] = s["group"] == "core"
@@ -151,9 +149,13 @@ func update(t: float, p_energy: float) -> void:
 		if not c.visible:
 			continue
 		var depth_scale := _scale_at((a["pos"] as Vector2).y) * CHAR_SCALE
-		c.position = a["pos"]
-		c.scale = Vector2(depth_scale, depth_scale)
-		c.modulate = Color(1, 1, 1, float(a["alpha"]))
+		var vn: Dictionary = a["vanish"]
+		var vu := 0.0
+		if not vn.is_empty() and t >= float(vn["t0"]):
+			vu = clampf((t - float(vn["t0"])) / maxf(float(vn["t1"]) - float(vn["t0"]), 0.001), 0.0, 1.0)
+		c.position = (a["pos"] as Vector2) + Vector2(sin(vu * 9.0 + float(a["thresh"])) * 6.0 * vu, float(vn.get("dy", 0.0)) * vu * vu)
+		c.scale = Vector2(depth_scale, depth_scale) * (1.0 - 0.5 * vu)
+		c.modulate = Color(1, 1, 1, float(a["alpha"]) * (1.0 - clampf((vu - 0.55) / 0.45, 0.0, 1.0)))
 		c.reduced = reduced
 		c.glow_on = glow_on and c.glow
 		var dir: Dictionary = a["dir"]
@@ -206,9 +208,9 @@ func _mood_state(a: Dictionary, e01: float) -> String:
 
 func _ending_state(a: Dictionary, ee: float) -> String:
 	match _ending:
-		"legendary_set":
+		"legendary":
 			return "cheer" if int(a["data"]["x"]) % 3 != 0 else "hands_up"
-		"good_night":
+		"good":
 			return "clap" if int(a["data"]["x"]) % 2 == 0 else "dance"
 		_:
 			return "sad" if int(a["data"]["x"]) % 3 != 0 else ("clap" if int(a["data"]["x"]) % 6 == 0 else "look")
@@ -219,7 +221,7 @@ func _draw() -> void:
 	for s in _sils:
 		if float(s["alpha"]) < 0.02:
 			continue
-		var up: bool = e + float(s["thresh"]) > SIL_UP_E or _ending in ["legendary_set"]
+		var up: bool = e + float(s["thresh"]) > SIL_UP_E or _ending == "legendary"
 		var ent: Dictionary = s["up"] if up else s["idle"]
 		if ent.is_empty() or ent["tex"] == null:
 			continue
@@ -381,6 +383,17 @@ func hero_to(pos: Vector2, t0: float, seconds := 2.5) -> void:
 			return
 
 
+## The room is carried away (an abduction lifts, hellfire sinks): everyone present rises or falls by `dy` px over `seconds`, shrinking and fading.
+func vanish_all(t0: float, seconds: float, dy: float, stagger := 0.12) -> void:
+	var k := 0
+	for id in _order:
+		var a: Dictionary = actors[id]
+		if not a["present"]:
+			continue
+		a["vanish"] = {"t0": t0 + float(k) * stagger, "t1": t0 + float(k) * stagger + seconds, "dy": dy}
+		k += 1
+
+
 func hero_node() -> StoryCharacter:
 	for id in actors:
 		if str(actors[id]["data"].get("role", "")) == "hero":
@@ -396,7 +409,7 @@ func hero_id() -> String:
 
 
 func set_ending(key: String) -> void:
-	_ending = key
+	_ending = data.tableau_of(key) if key != "" else ""
 	for id in actors:
 		actors[id]["dir"] = {}
 

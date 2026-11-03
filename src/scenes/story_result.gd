@@ -2,16 +2,16 @@ extends Control
 ## The end-of-set summary: the ending reached, what the room did, the moments that went your way (or did not) and the energy over
 ## the set. Retry, back to the story menu, or home.
 
-const NAMES := {"legendary_set": "LEGENDARY SET", "good_night": "GOOD NIGHT", "lost_the_floor": "LOST THE FLOOR"}
-
-
 func _ready() -> void:
 	var r := Session.story_result
 	var ending := str(r.get("ending", "lost_the_floor"))
-	var parts := UiStyle.screen(self, "Night One   %s" % str(NAMES.get(ending, "")))
+	var chapters := StoryChapters.load_default()
+	var chapter_id := str(r.get("level_id", Session.story_chapter))
+	var entry := chapters.chapter(chapter_id)
+	var data: StoryData = StoryData.load_file(str(entry.get("data", StoryData.PATH)))["data"]
+	var ending_title := str(data.endings[ending]["title"]).to_upper() if data != null and data.endings.has(ending) else ""
+	var parts := UiStyle.screen(self, "%s   %s" % [str(r.get("title", "")), ending_title])
 	var content: VBoxContainer = parts["content"]
-	var loaded := StoryData.load_file()
-	var data: StoryData = loaded["data"]
 	if data != null and data.endings.has(ending):
 		content.add_child(UiStyle.note(str(data.endings[ending]["text"]), Color(0.9, 0.92, 1.0), 24))
 	var lines := [
@@ -34,11 +34,25 @@ func _ready() -> void:
 	var buttons := HFlowContainer.new()
 	buttons.add_theme_constant_override("h_separation", UiStyle.GAP)
 	content.add_child(buttons)
-	var retry := UiStyle.button("Play again", func() -> void: get_tree().change_scene_to_file("res://src/scenes/story_play.tscn"), 220, 64)
+	var route := chapters.route(chapter_id, ending)
+	var first: Button = null
+	if not route.is_empty():
+		var to_id := str(route["to"])
+		first = UiStyle.button("Continue: %s" % str(chapters.chapter(to_id)["title"]), func() -> void:
+			Session.story_chapter = to_id
+			Session.story_interlude = {"name": str(route.get("interlude", "")), "from": chapter_id, "to": to_id, "ending": ending}
+			get_tree().change_scene_to_file("res://src/scenes/story_interlude.tscn" if str(route.get("interlude", "")) != "" else "res://src/scenes/story_play.tscn"), 360, 64)
+		buttons.add_child(first)
+		content.add_child(UiStyle.note(str(route.get("label", "")), Color(1.0, 0.85, 0.5), 20))
+	else:
+		content.add_child(UiStyle.note("To be continued...", UiStyle.MUTED, 20))
+	var retry := UiStyle.button("Play again", func() -> void:
+		Session.story_chapter = chapter_id
+		get_tree().change_scene_to_file("res://src/scenes/story_play.tscn"), 220, 64)
 	buttons.add_child(retry)
 	buttons.add_child(UiStyle.button("Story Campaign", func() -> void: get_tree().change_scene_to_file("res://src/scenes/story_campaign.tscn"), 240, 64))
 	buttons.add_child(UiStyle.button("Menu", func() -> void: get_tree().change_scene_to_file("res://src/scenes/main_menu.tscn"), 160, 64))
-	retry.grab_focus()
+	(first if first != null else retry).grab_focus()
 
 
 func _unhandled_input(event: InputEvent) -> void:

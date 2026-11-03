@@ -59,7 +59,7 @@ func _e01() -> float:
 
 
 func _pal(i: int) -> Color:
-	var p: Array = StoryStage.PALETTES[stage.palette]
+	var p: Array = stage.palette_colors()
 	return p[i % p.size()]
 
 
@@ -86,6 +86,7 @@ func _led_rect() -> Rect2:
 # --- base layer: under the crowd ------------------------------------------------------------------------------------------
 
 func draw_base(ci: CanvasItem) -> void:
+	_draw_pieces(ci, "behind")
 	_draw_led(ci)
 	_draw_woofers(ci)
 	_draw_fixtures(ci)
@@ -97,7 +98,7 @@ func _draw_led(ci: CanvasItem) -> void:
 	var r := _led_rect()
 	var e := _e01()
 	var t := stage.t_now
-	var dim := 0.35 if stage.ending() == "lost_the_floor" else lerpf(0.4, 1.0, e)
+	var dim := 0.35 if stage.tableau() == "lost" else lerpf(0.4, 1.0, e)
 	ci.draw_rect(r, Color(0.02, 0.02, 0.07, 0.95))
 	var b := _beats()
 	var kp := _kick_pulse()
@@ -191,6 +192,43 @@ func _draw_door(ci: CanvasItem) -> void:
 	ci.draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
+## The chapter's authored set pieces (assets/story/<chapter>/manifest.json stage.pieces), animated by song time.
+func _draw_pieces(ci: CanvasItem, z: String) -> void:
+	for p in assets.pieces():
+		if str(p.get("z", "behind")) != z:
+			continue
+		var st := stage.piece_state(str(p["id"]), stage.t_now)
+		if not st["visible"]:
+			continue
+		var tex := assets.texture(str(p["file"]))
+		if tex == null:
+			continue
+		var sc: float = float(p.get("px_scale", 0.5))
+		var pos := Vector2(float(p["pos"][0]), float(p["pos"][1]))
+		var size: Array = p.get("size", [tex.get_width() * sc, tex.get_height() * sc])
+		var piv: Array = p.get("pivot", [0, 0])
+		var b := _beats()
+		var a: float = float(st["alpha"])
+		var rot := 0.0
+		var k := Vector2(float(size[0]) / tex.get_width(), float(size[1]) / tex.get_height())
+		match str(p.get("anim", "none")):
+			"pulse":
+				var q := 1.0 + 0.04 * _kick_pulse() + 0.08 * float(st["pulse"])
+				k *= q
+				a *= 0.75 + 0.25 * _kick_pulse() + 0.25 * float(st["pulse"])
+			"flicker":
+				a *= (0.7 + 0.3 * sin(b * 3.1 + pos.x) * sin(b * 1.7)) if not stage.reduced else 0.85
+			"rotate":
+				rot = b * (0.05 if stage.reduced else 0.12)
+			"bob":
+				pos.y += sin(b * 0.9) * 5.0
+			"sway":
+				rot = 0.05 * sin(b * 0.5 + pos.x)
+		ci.draw_set_transform(pos + Vector2(float(piv[0]), float(piv[1])) * sc * 0.0, rot, k)
+		ci.draw_texture(tex, -Vector2(float(piv[0]), float(piv[1])), Color(1, 1, 1, clampf(a, 0.0, 1.0)))
+		ci.draw_set_transform_matrix(Transform2D.IDENTITY)
+
+
 # --- additive light over the crowd ------------------------------------------------------------------------------------------
 
 func draw_add(ci: CanvasItem) -> void:
@@ -200,9 +238,9 @@ func draw_add(ci: CanvasItem) -> void:
 	var inten := (0.18 + 0.6 * e) * (0.6 if stage.reduced else 1.0)
 	if stage.is_active("bass_reveal", t) or stage.is_active("burst", t):
 		inten += 0.3
-	if stage.lean() == "legendary_set" or stage.ending() == "legendary_set":
+	if stage.lean_tableau() == "legendary" or stage.tableau() == "legendary":
 		inten += 0.2
-	if stage.ending() == "lost_the_floor":
+	if stage.tableau() == "lost":
 		inten *= 0.25
 	if stage.flickering(t):
 		inten *= 0.35 + 0.3 * (0.5 + 0.5 * sin(t * 9.0)) if not stage.reduced else 0.4
@@ -236,7 +274,7 @@ func _floor_poly() -> PackedVector2Array:
 
 func _draw_floor_glow(ci: CanvasItem, t: float, e: float, kp: float) -> void:
 	var a := (0.04 + 0.13 * e) * (0.5 + 0.5 * kp) * (0.4 if stage.reduced else 1.0)
-	if stage.ending() == "lost_the_floor":
+	if stage.tableau() == "lost":
 		a *= 0.2
 	var poly := _floor_poly()
 	if poly.size() >= 3 and a > 0.003:
@@ -313,6 +351,7 @@ func _draw_ball_dots(ci: CanvasItem, t: float) -> void:
 # --- normal-blend overlay: haze, confetti, mood dimming, vignette -----------------------------------------------------------
 
 func draw_norm(ci: CanvasItem) -> void:
+	_draw_pieces(ci, "front")
 	var t := stage.t_now
 	var e := _e01()
 	var burst := 0.0
@@ -335,7 +374,7 @@ func draw_norm(ci: CanvasItem) -> void:
 	if stage.is_active("confetti", t):
 		_draw_confetti(ci, t)
 	var dim := 0.0
-	if stage.ending() == "lost_the_floor":
+	if stage.tableau() == "lost":
 		dim = 0.4
 	else:
 		dim = clampf(0.32 - e * 0.45, 0.0, 0.32)

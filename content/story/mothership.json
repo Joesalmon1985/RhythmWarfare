@@ -1,0 +1,1071 @@
+{
+ "id": "mothership",
+ "title": "The Mothership",
+ "chapter": 2,
+ "art": "mothership",
+ "music_pack": "res://songs/m10_last_light",
+ "description": "An alien ship has taken the whole rave. Out the window the stars slide by: play your best set for a deck full of new friends.",
+ "intro": "Welcome aboard.",
+ "duration_bars": 80,
+ "sequence_bars": 2,
+ "initial_energy": 45,
+ "palettes": {
+  "low": [
+   "#2a3a8a",
+   "#1f7f8f"
+  ],
+  "cool": [
+   "#33ffd1",
+   "#6a7bff"
+  ],
+  "warm": [
+   "#9dff6a",
+   "#ff7ad9"
+  ],
+  "rave": [
+   "#33ffd1",
+   "#ff5de0",
+   "#8a6bff",
+   "#ffe85a"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Unimpressed",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Dancing",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Hype",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Euphoric",
+    "max": 100
+   }
+  ]
+ },
+ "acts": [
+  {
+   "id": "I",
+   "title": "Welcome aboard",
+   "start_bar": 1
+  },
+  {
+   "id": "II",
+   "title": "Zero-G groove",
+   "start_bar": 17
+  },
+  {
+   "id": "III",
+   "title": "Interstellar peak",
+   "start_bar": 41
+  },
+  {
+   "id": "IV",
+   "title": "Departure",
+   "start_bar": 65
+  }
+ ],
+ "blocks": [
+  {
+   "id": "airlock_opens",
+   "title": "Airlock opens",
+   "act": "Act I",
+   "start_bar": 1,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 1,
+     "action": "lights_low_pulse"
+    },
+    {
+     "at_bar": 1,
+     "action": "doors_open"
+    },
+    {
+     "at_bar": 1,
+     "action": "piece_on",
+     "piece": "planet_window_glow"
+    },
+    {
+     "at_bar": 3,
+     "action": "front_row_sway"
+    },
+    {
+     "at_bar": 5,
+     "action": "bring_in",
+     "group": "early"
+    },
+    {
+     "at_bar": 7,
+     "action": "led_eq"
+    }
+   ]
+  },
+  {
+   "id": "first_contact_groove",
+   "title": "First contact groove",
+   "act": "Act I",
+   "start_bar": 9,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 9,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 9,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 40
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 11,
+     "action": "piece_on",
+     "piece": "ring_lights"
+    },
+    {
+     "at_bar": 11,
+     "action": "beams_sweep"
+    },
+    {
+     "at_bar": 13,
+     "action": "group_footwork",
+     "group": "core",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 15,
+     "action": "led_bars"
+    }
+   ]
+  },
+  {
+   "id": "first_bass_reveal",
+   "title": "First bass reveal",
+   "act": "Act II",
+   "start_bar": 17,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 17,
+     "action": "bass_reveal"
+    },
+    {
+     "at_bar": 17,
+     "action": "woofer_pump_on"
+    },
+    {
+     "at_bar": 17,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 17,
+     "action": "piece_on",
+     "piece": "pylon_beams"
+    },
+    {
+     "at_bar": 19,
+     "action": "wave_across",
+     "bars": 3
+    },
+    {
+     "at_bar": 21,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 23,
+     "action": "spotlight_sweep"
+    }
+   ]
+  },
+  {
+   "id": "guests_gather",
+   "title": "Guests gather at the airlock",
+   "act": "Act II",
+   "start_bar": 25,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 25,
+     "action": "lights_warm"
+    },
+    {
+     "at_bar": 25,
+     "action": "gather_at_door",
+     "group": "gatherers"
+    },
+    {
+     "at_bar": 27,
+     "action": "piece_on",
+     "piece": "hologram_dome"
+    },
+    {
+     "at_bar": 29,
+     "action": "beams_cross"
+    },
+    {
+     "at_bar": 31,
+     "action": "led_rings"
+    }
+   ]
+  },
+  {
+   "id": "dance_circle",
+   "title": "The dance circle forms",
+   "act": "Act II",
+   "start_bar": 33,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 35,
+     "action": "circle_form",
+     "group": "circle"
+    },
+    {
+     "at_bar": 37,
+     "action": "disco_ball_on"
+    },
+    {
+     "at_bar": 37,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 39,
+     "action": "beams_fan"
+    }
+   ]
+  },
+  {
+   "id": "spotlight_pass",
+   "title": "Spotlight pass",
+   "act": "Act III",
+   "start_bar": 41,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 41,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
+     "at_bar": 41,
+     "action": "spotlight_sweep"
+    },
+    {
+     "at_bar": 43,
+     "action": "glowsticks_on"
+    },
+    {
+     "at_bar": 45,
+     "action": "hero_center"
+    },
+    {
+     "at_bar": 47,
+     "action": "led_wave"
+    }
+   ]
+  },
+  {
+   "id": "group_footwork",
+   "title": "Group footwork",
+   "act": "Act III",
+   "start_bar": 49,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 51,
+     "action": "group_footwork",
+     "group": "all",
+     "bars": 4,
+     "when": {
+      "energy_min": 40
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 53,
+     "action": "lights_warm"
+    },
+    {
+     "at_bar": 53,
+     "action": "beams_cross"
+    },
+    {
+     "at_bar": 55,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "look_around"
+    }
+   ]
+  },
+  {
+   "id": "warp_drop",
+   "title": "Warp drop",
+   "act": "Act III",
+   "start_bar": 57,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 59,
+     "action": "piece_on",
+     "piece": "saucer_flyby"
+    },
+    {
+     "at_bar": 61,
+     "action": "led_rings"
+    },
+    {
+     "at_bar": 61,
+     "action": "regroup"
+    },
+    {
+     "at_bar": 63,
+     "action": "haze_burst"
+    }
+   ]
+  },
+  {
+   "id": "headliner_riser",
+   "title": "Headliner on the riser",
+   "act": "Act IV",
+   "start_bar": 65,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 65,
+     "action": "riser_up"
+    },
+    {
+     "at_bar": 65,
+     "action": "bring_in",
+     "group": "peak"
+    },
+    {
+     "at_bar": 65,
+     "action": "hero_solo",
+     "bars": 6
+    },
+    {
+     "at_bar": 67,
+     "action": "spotlight_hero"
+    },
+    {
+     "at_bar": 69,
+     "action": "lights_rave"
+    },
+    {
+     "at_bar": 71,
+     "action": "light_wave",
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "departure",
+   "title": "Departure",
+   "act": "Act IV",
+   "start_bar": 73,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 75,
+     "action": "rave_peak",
+     "bars": 4,
+     "when": {
+      "energy_min": 50
+     },
+     "else": "lights_cool"
+    },
+    {
+     "at_bar": 77,
+     "action": "confetti",
+     "when": {
+      "energy_min": 85
+     }
+    },
+    {
+     "at_bar": 77,
+     "action": "hands_up_all",
+     "bars": 2,
+     "when": {
+      "energy_min": 55
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 79,
+     "action": "beams_cross"
+    }
+   ]
+  }
+ ],
+ "decisions": [
+  {
+   "id": "translation",
+   "title": "The universal translator",
+   "at_bar": 33,
+   "block": "dance_circle",
+   "rule": {
+    "energy_min": 55,
+    "recent_sequences": 16,
+    "recent_pass_min": 0.5,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "new_dancers_enter",
+    "applause"
+   ],
+   "bad": [
+    "dancers_step_back",
+    "look_around"
+   ],
+   "good_text": "The guests streamed onto the floor, all of them dancing.",
+   "bad_text": "A few guests hung back, puzzled by the beat."
+  },
+  {
+   "id": "zero_g",
+   "title": "Gravity off",
+   "at_bar": 49,
+   "block": "group_footwork",
+   "rule": {
+    "energy_min": 58,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "circle_spotlight_cheer",
+    {
+     "action": "piece_pulse",
+     "piece": "hologram_dome",
+     "bars": 4
+    }
+   ],
+   "bad": [
+    "circle_breaks_awkward"
+   ],
+   "good_text": "Gravity let go and the whole circle floated into the spotlight cheering.",
+   "bad_text": "The gravity glitched and the circle drifted apart."
+  },
+  {
+   "id": "warp_jump",
+   "title": "The warp jump",
+   "at_bar": 57,
+   "block": "warp_drop",
+   "rule": {
+    "energy_min": 62,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "drop_synchronised_jump",
+    {
+     "action": "piece_on",
+     "piece": "warp_streaks"
+    }
+   ],
+   "bad": [
+    "drop_stumble"
+   ],
+   "good_text": "The ship jumped to warp and the floor jumped with it.",
+   "bad_text": "The warp jump stuttered, but the set stayed alive."
+  },
+  {
+   "id": "win_back",
+   "title": "Winning the floor back",
+   "at_bar": 65,
+   "block": "headliner_riser",
+   "rule": {
+    "requires_bad_before": true,
+    "recent_sequences": 6,
+    "recent_pass_min": 0.83,
+    "energy_min": 40
+   },
+   "good": [
+    "winback_cheer"
+   ],
+   "bad": [],
+   "good_text": "You won the floor back after a rough patch.",
+   "bad_text": "",
+   "kind": "winback"
+  },
+  {
+   "id": "final_transmission",
+   "title": "Final transmission",
+   "at_bar": 73,
+   "block": "departure",
+   "rule": {
+    "energy_min": 65,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.65,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "final_chant"
+   ],
+   "bad": [
+    "final_flicker"
+   ],
+   "good_text": "The whole ship chanted for one more.",
+   "bad_text": "The signal flickered and the deck thinned out."
+  }
+ ],
+ "endings": {
+  "galactic_headliner": {
+   "title": "Galactic Headliner",
+   "energy_min": 85,
+   "pass_min": 0.94,
+   "text": "Every deck of the ship is dancing. The aliens carry you out as the headliner of the galaxy."
+  },
+  "honoured_guest": {
+   "title": "Honoured Guest",
+   "energy_min": 40,
+   "pass_min": 0.5,
+   "text": "A warm welcome and a happy crowd. The aliens treat you as an honoured guest."
+  },
+  "beamed_home": {
+   "title": "Beamed Home",
+   "energy_min": -1,
+   "pass_min": 0.0,
+   "text": "The deck emptied politely. The aliens thank you and beam you off the ship."
+  }
+ },
+ "ending_order": [
+  "galactic_headliner",
+  "honoured_guest",
+  "beamed_home"
+ ],
+ "groups": {
+  "circle": [
+   "c02",
+   "c03",
+   "c04",
+   "c05",
+   "c06",
+   "c07",
+   "c08",
+   "c09",
+   "e01",
+   "e02",
+   "e03",
+   "e04"
+  ],
+  "all": [
+   "c01",
+   "c02",
+   "c03",
+   "c04",
+   "c05",
+   "c06",
+   "c07",
+   "c08",
+   "c09",
+   "c10",
+   "c11",
+   "c12",
+   "e01",
+   "e02",
+   "e03",
+   "e04",
+   "g01",
+   "g02",
+   "g03",
+   "g04",
+   "g05",
+   "g06",
+   "g07",
+   "g08",
+   "l01",
+   "l02",
+   "l03",
+   "l04",
+   "p01",
+   "p02",
+   "p03",
+   "p04"
+  ]
+ },
+ "actors": [
+  {
+   "id": "c01",
+   "archetype": "tentacle",
+   "variant": "a",
+   "x": 640,
+   "depth": 0.78,
+   "group": "core",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "c02",
+   "archetype": "grey",
+   "variant": "a",
+   "x": 470,
+   "depth": 0.9,
+   "group": "core",
+   "role": "front",
+   "thresh": -4
+  },
+  {
+   "id": "c03",
+   "archetype": "blob",
+   "variant": "b",
+   "x": 820,
+   "depth": 0.92,
+   "group": "core",
+   "role": "front",
+   "thresh": 2
+  },
+  {
+   "id": "c04",
+   "archetype": "antenna",
+   "variant": "a",
+   "x": 350,
+   "depth": 0.62,
+   "group": "core",
+   "thresh": 4
+  },
+  {
+   "id": "c05",
+   "archetype": "insect",
+   "variant": "a",
+   "x": 930,
+   "depth": 0.6,
+   "group": "core",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "c06",
+   "archetype": "cyclops",
+   "variant": "b",
+   "x": 560,
+   "depth": 0.55,
+   "group": "core",
+   "thresh": 6
+  },
+  {
+   "id": "c07",
+   "archetype": "grey",
+   "variant": "b",
+   "x": 740,
+   "depth": 0.5,
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "c08",
+   "archetype": "curly",
+   "variant": "a",
+   "x": 250,
+   "depth": 0.85,
+   "group": "core",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "c09",
+   "archetype": "bob",
+   "variant": "b",
+   "x": 1030,
+   "depth": 0.82,
+   "group": "core",
+   "role": "front",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "c10",
+   "archetype": "hoodie",
+   "variant": "b",
+   "x": 660,
+   "depth": 0.3,
+   "group": "core",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "c11",
+   "archetype": "punk",
+   "variant": "a",
+   "x": 300,
+   "depth": 0.5,
+   "group": "core",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "c12",
+   "archetype": "ponytail",
+   "variant": "b",
+   "x": 1000,
+   "depth": 0.45,
+   "group": "core",
+   "thresh": -8,
+   "art": "night_one"
+  },
+  {
+   "id": "e01",
+   "archetype": "blob",
+   "variant": "a",
+   "x": 430,
+   "depth": 0.35,
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e02",
+   "archetype": "cyclops",
+   "variant": "b",
+   "x": 880,
+   "depth": 0.38,
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e03",
+   "archetype": "antenna",
+   "variant": "b",
+   "x": 190,
+   "depth": 0.55,
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e04",
+   "archetype": "insect",
+   "variant": "b",
+   "x": 1090,
+   "depth": 0.52,
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "g01",
+   "archetype": "grey",
+   "variant": "a",
+   "x": 300,
+   "depth": 0.4,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "side_x": 60,
+   "side_depth": 0.3,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g02",
+   "archetype": "antenna",
+   "variant": "b",
+   "x": 510,
+   "depth": 0.42,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "side_x": 1220,
+   "side_depth": 0.33999999999999997,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g03",
+   "archetype": "blob",
+   "variant": "a",
+   "x": 760,
+   "depth": 0.33,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "side_x": 60,
+   "side_depth": 0.38,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g04",
+   "archetype": "insect",
+   "variant": "a",
+   "x": 960,
+   "depth": 0.45,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "side_x": 1220,
+   "side_depth": 0.42,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g05",
+   "archetype": "cyclops",
+   "variant": "b",
+   "x": 400,
+   "depth": 0.72,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "side_x": 60,
+   "side_depth": 0.45999999999999996,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g06",
+   "archetype": "tentacle",
+   "variant": "b",
+   "x": 880,
+   "depth": 0.72,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "side_x": 1220,
+   "side_depth": 0.5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g07",
+   "archetype": "antenna",
+   "variant": "a",
+   "x": 140,
+   "depth": 0.75,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 6,
+   "side_x": 60,
+   "side_depth": 0.54,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g08",
+   "archetype": "grey",
+   "variant": "b",
+   "x": 1140,
+   "depth": 0.74,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 7,
+   "side_x": 1220,
+   "side_depth": 0.5800000000000001,
+   "stays_on_bad": false
+  },
+  {
+   "id": "l01",
+   "archetype": "insect",
+   "variant": "b",
+   "x": 580,
+   "depth": 0.88,
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l02",
+   "archetype": "groover",
+   "variant": "a",
+   "x": 700,
+   "depth": 0.68,
+   "group": "late",
+   "enter_from": "doorway",
+   "art": "night_one"
+  },
+  {
+   "id": "l03",
+   "archetype": "tentacle",
+   "variant": "a",
+   "x": 1000,
+   "depth": 0.95,
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l04",
+   "archetype": "bob",
+   "variant": "a",
+   "x": 170,
+   "depth": 0.95,
+   "group": "late",
+   "enter_from": "doorway",
+   "art": "night_one"
+  },
+  {
+   "id": "p01",
+   "archetype": "grey",
+   "variant": "a",
+   "x": 360,
+   "depth": 0.45,
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p02",
+   "archetype": "blob",
+   "variant": "b",
+   "x": 920,
+   "depth": 0.43,
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p03",
+   "archetype": "cyclops",
+   "variant": "a",
+   "x": 840,
+   "depth": 0.62,
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p04",
+   "archetype": "antenna",
+   "variant": "a",
+   "x": 430,
+   "depth": 0.6,
+   "group": "peak",
+   "enter_from": "side"
+  }
+ ],
+ "silhouettes": [
+  {
+   "id": "s01",
+   "shape": "sil_a",
+   "x": 60,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 6
+  },
+  {
+   "id": "s02",
+   "shape": "sil_b",
+   "x": 148,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 8
+  },
+  {
+   "id": "s03",
+   "shape": "sil_c",
+   "x": 249,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -2
+  },
+  {
+   "id": "s04",
+   "shape": "sil_a",
+   "x": 315,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 8
+  },
+  {
+   "id": "s05",
+   "shape": "sil_b",
+   "x": 413,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -3
+  },
+  {
+   "id": "s06",
+   "shape": "sil_c",
+   "x": 489,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 6
+  },
+  {
+   "id": "s07",
+   "shape": "sil_a",
+   "x": 583,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -4
+  },
+  {
+   "id": "s08",
+   "shape": "sil_b",
+   "x": 664,
+   "depth": 0.0,
+   "group": "early",
+   "thresh": -7
+  },
+  {
+   "id": "s09",
+   "shape": "sil_c",
+   "x": 769,
+   "depth": 0.0,
+   "group": "early",
+   "thresh": 4
+  },
+  {
+   "id": "s10",
+   "shape": "sil_a",
+   "x": 852,
+   "depth": 0.0,
+   "group": "early",
+   "thresh": -3
+  },
+  {
+   "id": "s11",
+   "shape": "sil_b",
+   "x": 945,
+   "depth": 0.0,
+   "group": "early",
+   "thresh": -8
+  },
+  {
+   "id": "s12",
+   "shape": "sil_c",
+   "x": 1040,
+   "depth": 0.0,
+   "group": "gatherers",
+   "thresh": 8
+  },
+  {
+   "id": "s13",
+   "shape": "sil_a",
+   "x": 1104,
+   "depth": 0.0,
+   "group": "gatherers",
+   "thresh": -7
+  },
+  {
+   "id": "s14",
+   "shape": "sil_b",
+   "x": 1191,
+   "depth": 0.0,
+   "group": "gatherers",
+   "thresh": -2
+  }
+ ]
+}

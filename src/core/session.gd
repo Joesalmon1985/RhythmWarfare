@@ -24,6 +24,8 @@ var chart_id := ""  # schema 1 duel packs only
 var battle_on := true  # false: rhythm only (practice and the developer playtest)
 var last_result: Dictionary = {}
 var story_progress: StoryProgress  # Story Campaign saves (user://story_campaign.json), separate from the military campaign
+var story_chapter := "night_one"  # the chapter story_play loads
+var story_interlude: Dictionary = {}  # {name, from, to, ending}: the cutscene story_interlude plays before the next chapter
 var story_result: Dictionary = {}  # the last finished story set (StoryRun.summary plus the saved record)
 var debug := false
 var settings_migrated := false
@@ -54,6 +56,8 @@ func _ready() -> void:
 		cue_lead_in_s = clampf(float(OS.get_environment("RW_LEAD_IN")), LEAD_IN_MIN_S, LEAD_IN_MAX_S)
 	if OS.has_environment("RW_MISSION"):  # screenshots and scripted runs open a mission's setup or play screen
 		mission_number = int(OS.get_environment("RW_MISSION"))
+	if OS.has_environment("RW_STORY_CHAPTER"):  # scripted runs and screenshots open a chapter directly
+		story_chapter = OS.get_environment("RW_STORY_CHAPTER")
 	if OS.has_environment("RW_PAD_SIZE"):  # 0 compact, 1 standard, 2 large: screenshots of the layouts
 		pad_size = clampi(int(OS.get_environment("RW_PAD_SIZE")), 0, PAD_SIZES.size() - 1)
 	if OS.get_environment("RW_REDUCED") == "1":

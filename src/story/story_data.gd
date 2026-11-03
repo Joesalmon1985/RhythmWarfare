@@ -19,6 +19,8 @@ const ACTIONS := [
 	# decision outcomes
 	"new_dancers_enter", "dancers_step_back", "circle_spotlight_cheer", "circle_breaks_awkward", "drop_synchronised_jump",
 	"drop_stumble", "final_chant", "final_flicker", "winback_cheer",
+	# chapter set pieces (art manifest stage.pieces): args {piece, bars?}
+	"piece_on", "piece_off", "piece_pulse",
 ]
 
 var raw: Dictionary = {}
@@ -36,6 +38,8 @@ var silhouettes: Array = []
 var groups: Dictionary = {}
 var acts: Array = []
 var energy_cfg: Dictionary = {}
+var art := "night_one"  # the art folder under assets/story/
+var palettes: Dictionary = {}  # optional per-chapter light palettes {low, cool, warm, rave: [hex colours]}
 
 
 static func load_file(path: String = PATH) -> Dictionary:
@@ -61,6 +65,8 @@ static func load_file(path: String = PATH) -> Dictionary:
 	d.groups = parsed.get("groups", {})
 	d.acts = parsed.get("acts", [])
 	d.energy_cfg = parsed.get("energy", {})
+	d.art = str(parsed.get("art", "night_one"))
+	d.palettes = parsed.get("palettes", {})
 	d.validate(out["errors"])
 	out["data"] = d
 	return out
@@ -84,8 +90,9 @@ func validate(errors: Array) -> void:
 	for d in decisions:
 		for key in ["good", "bad"]:
 			for a in d.get(key, []):
-				if not (a in ACTIONS):
-					errors.append("decision %s names unknown action %s" % [d["id"], a])
+				var an := str(a["action"]) if typeof(a) == TYPE_DICTIONARY else str(a)
+				if not (an in ACTIONS):
+					errors.append("decision %s names unknown action %s" % [d["id"], an])
 		if float(d["at_bar"]) < 1.0 or float(d["at_bar"]) > float(duration_bars):
 			errors.append("decision %s outside the song" % d["id"])
 	for key in ending_order:
@@ -98,8 +105,31 @@ func validate(errors: Array) -> void:
 			if not seen_actors.has(str(a)):
 				errors.append("group %s names unknown actor %s" % [g, a])
 	for a in actors:
-		if not (a.get("archetype", "") in ["groover", "ponytail", "hoodie", "curly", "bob", "punk"]):
-			errors.append("actor %s has unknown archetype" % a["id"])
+		if str(a.get("archetype", "")).is_empty() or str(a.get("variant", "")).is_empty():
+			errors.append("actor %s needs an archetype and a variant" % a["id"])
+
+
+## Checks the chapter against its art set: every archetype/variant, silhouette shape and set piece it names must exist.
+func validate_art(assets: StoryAssets, errors: Array) -> void:
+	for a in actors:
+		if assets.rig(str(a["archetype"]), str(a["variant"]), str(a.get("art", ""))).is_empty():
+			errors.append("actor %s: no art for %s/%s" % [a["id"], a["archetype"], a["variant"]])
+	for s in silhouettes:
+		if not assets.manifest.get("silhouettes", {}).has(str(s["shape"])):
+			errors.append("silhouette %s: unknown shape %s" % [s["id"], s["shape"]])
+	var check := func(action: String, args: Dictionary, where: String) -> void:
+		if action.begins_with("piece_") and assets.piece(str(args.get("piece", ""))).is_empty():
+			errors.append("%s: unknown set piece %s" % [where, args.get("piece", "")])
+	for b in blocks:
+		for e in b["events"]:
+			check.call(str(e["action"]), e, str(b["id"]))
+			if e.has("else"):
+				check.call(str(e["else"]), e, str(b["id"]))
+	for d in decisions:
+		for key in ["good", "bad"]:
+			for entry in d.get(key, []):
+				if typeof(entry) == TYPE_DICTIONARY:
+					check.call(str(entry["action"]), entry, str(d["id"]))
 
 
 func _block_has_decision(block_id: String) -> bool:
@@ -127,6 +157,17 @@ func _group_in_actors(group: String) -> bool:
 		if str(a.get("group", "")) == group:
 			return true
 	return false
+
+
+## "legendary" / "good" / "lost": the staged tableau of an ending (its position in ending_order, best first), so every chapter's own
+## endings share the three crowd tableaux.
+func tableau_of(ending: String) -> String:
+	var i := ending_order.find(ending)
+	return ["legendary", "good", "lost"][clampi(i, 0, 2)] if i >= 0 else "lost"
+
+
+func ending_rank(ending: String) -> int:
+	return 2 - clampi(maxi(ending_order.find(ending), 0), 0, 2)
 
 
 func block_of_bar(bar: float) -> int:

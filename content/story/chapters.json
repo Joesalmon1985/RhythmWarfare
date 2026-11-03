@@ -1,0 +1,13 @@
+{
+ "chapters": [
+  {"id": "night_one", "title": "Night One", "data": "res://content/story/night_one.json", "blurb": "Your first set. Open the room, find the groove, peak it, close it.",
+   "routes": [
+    {"on": ["legendary_set", "good_night"], "to": "mothership", "interlude": "abduction", "label": "The lights go strange..."},
+    {"on": ["lost_the_floor"], "to": "underworld", "interlude": "descent", "label": "The floor cracks open..."}
+   ]},
+  {"id": "mothership", "title": "The Mothership", "data": "res://content/story/mothership.json", "blurb": "Aliens have carried the whole rave up to their ship. Keep the party going among the stars.",
+   "unlock_from": "night_one", "routes": []},
+  {"id": "underworld", "title": "The Underworld", "data": "res://content/story/underworld.json", "blurb": "The floor dropped you into hell. The demons want a show.",
+   "unlock_from": "night_one", "routes": []}
+ ]
+}

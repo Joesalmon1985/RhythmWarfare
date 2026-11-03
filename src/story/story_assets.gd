@@ -3,25 +3,55 @@ extends RefCounted
 ## The art manifest (assets/story/night_one/manifest.json, written by tools/story/build_assets.py) and a texture cache. The
 ## runtime reads only what the manifest names (tools/story/ART_CONTRACT.md). Missing files degrade to "not drawn", never a crash.
 
-const ROOT := "res://assets/story/night_one/"
-const MANIFEST := ROOT + "manifest.json"
+const BASE := "res://assets/story/"
+const DEFAULT_ART := "night_one"
 
+var root := BASE + DEFAULT_ART + "/"
+var art := DEFAULT_ART
 var manifest: Dictionary = {}
 var errors: Array = []
+var extra: StoryAssets = null  # another art set whose archetypes this chapter may borrow (the human ravers of Night One)
 var _tex: Dictionary = {}
 
 
 static func load_default() -> StoryAssets:
+	return load_art(DEFAULT_ART)
+
+
+## One chapter's art folder (assets/story/<art>/manifest.json). Chapters other than Night One also see Night One's human dancers.
+static func load_art(art_dir: String, with_shared := true) -> StoryAssets:
 	var a := StoryAssets.new()
-	if not FileAccess.file_exists(MANIFEST):
-		a.errors.append("art manifest missing: " + MANIFEST)
+	a.art = art_dir
+	a.root = BASE + art_dir + "/"
+	var path := a.root + "manifest.json"
+	if not FileAccess.file_exists(path):
+		a.errors.append("art manifest missing: " + path)
 		return a
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(MANIFEST))
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if typeof(parsed) != TYPE_DICTIONARY:
 		a.errors.append("art manifest is not a JSON object")
 		return a
 	a.manifest = parsed
+	if with_shared and art_dir != DEFAULT_ART:
+		a.extra = load_art(DEFAULT_ART, false)
 	return a
+
+
+## The rig of an archetype variant (joints and height merged in), from this set or the shared one. {} when unknown.
+func rig(archetype: String, variant: String, source := "") -> Dictionary:
+	var owner: StoryAssets = self
+	if source == DEFAULT_ART and art != DEFAULT_ART and extra != null:
+		owner = extra
+	elif not manifest.get("archetypes", {}).has(archetype) and extra != null:
+		owner = extra
+	var ad: Dictionary = owner.manifest.get("archetypes", {}).get(archetype, {})
+	var r: Dictionary = (ad.get("variants", {}).get(variant, {}) as Dictionary).duplicate()
+	if r.is_empty():
+		return {}
+	r["joints"] = ad.get("joints", {})
+	r["height"] = ad.get("height", 260)
+	r["_assets"] = owner
+	return r
 
 
 func ok() -> bool:
@@ -33,7 +63,7 @@ func texture(file: String) -> Texture2D:
 		return null
 	if _tex.has(file):
 		return _tex[file]
-	var path := ROOT + file
+	var path := root + file
 	var t: Texture2D = null
 	if ResourceLoader.exists(path):
 		t = load(path) as Texture2D
@@ -58,6 +88,26 @@ func _entry(s: Dictionary) -> Dictionary:
 
 func archetype_ids() -> Array:
 	return manifest.get("archetypes", {}).keys()
+
+
+func piece(id: String) -> Dictionary:
+	for p in manifest.get("stage", {}).get("pieces", []):
+		if str(p.get("id", "")) == id:
+			return p
+	return {}
+
+
+func pieces() -> Array:
+	return manifest.get("stage", {}).get("pieces", [])
+
+
+## An interlude sprite (assets/story/<chapter>/manifest.json "interlude").
+func interlude_sprite(id: String) -> Dictionary:
+	return _entry(manifest.get("interlude", {}).get("sprites", {}).get(id, {}))
+
+
+func interlude_anchor(key: String, default: Variant = null) -> Variant:
+	return manifest.get("interlude", {}).get("anchors", {}).get(key, default)
 
 
 func layer(id: String) -> Dictionary:

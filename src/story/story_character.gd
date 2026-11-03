@@ -31,7 +31,7 @@ var _parts: Array = []
 
 
 func setup(p_assets: StoryAssets, rig_entry: Dictionary, id: String, p_seed: int) -> void:
-	assets = p_assets
+	assets = rig_entry.get("_assets", p_assets)  # a borrowed archetype keeps its own set's textures
 	rig = rig_entry
 	actor_id = id
 	var rng := RandomNumberGenerator.new()

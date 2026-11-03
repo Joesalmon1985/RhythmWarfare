@@ -46,13 +46,22 @@ var _perf: PackedFloat32Array = PackedFloat32Array()
 func _ready() -> void:
 	theme = UiStyle.theme()
 	var opts := {"loadout": Session.loadout(), "library": Session.library(), "unlocked": Session.campaign.unlocked_items()}
-	run = StoryRun.create(opts)
+	var chapters := StoryChapters.load_default()
+	var entry := chapters.chapter(Session.story_chapter)
+	if entry.is_empty():
+		entry = chapters.chapter("night_one")
+	run = StoryRun.create(opts, str(entry["data"]))
 	if not run.errors.is_empty():
 		_fatal("Story level rejected:\n" + "\n".join(PackedStringArray(run.errors)))
 		return
 	for w in run.warnings:
 		print("warning: ", w)
-	assets = StoryAssets.load_default()
+	assets = StoryAssets.load_art(run.data.art)
+	var art_errors: Array = []
+	run.data.validate_art(assets, art_errors)
+	if not art_errors.is_empty():
+		_fatal("Story art does not match the chapter:\n" + "\n".join(PackedStringArray(art_errors)))
+		return
 	if not assets.ok():
 		_fatal("Story art missing:\n" + "\n".join(PackedStringArray(assets.errors)))
 		return
@@ -155,7 +164,7 @@ func _build_layout() -> void:
 	note_lane.state_fn = run.match_ref.pad_judge.cue_state
 	add_child(note_lane)
 
-	_title_card = _centre_label("NIGHT ONE", 84, 0.2)
+	_title_card = _centre_label(run.data.title.to_upper(), 84, 0.2)
 	_act_label = _centre_label("", 30, 0.08)
 	_toast = _centre_label("", 28, 0.15)
 	_countdown_label = _centre_label("", 110, 0.34)
