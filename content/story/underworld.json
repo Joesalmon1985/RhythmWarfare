@@ -4,8 +4,8 @@
  "chapter": 3,
  "art": "underworld",
  "music_pack": "res://songs/m09_iron_rhythm",
- "description": "The floor dropped you into hell's own nightclub. Entertain the demons, and maybe the humans dragged down with you will live to see the morning.",
- "intro": "Entertain them.",
+ "description": "The floor gave way and dropped you into hell's own nightclub. Win over the demons, and the humans dragged down with you might just see the morning.",
+ "intro": "Hell is listening. Entertain them.",
  "duration_bars": 64,
  "sequence_bars": 2,
  "initial_energy": 45,
@@ -102,12 +102,12 @@
     {
      "at_bar": 1,
      "action": "piece_on",
-     "piece": "lava_flow"
+     "piece": "bone_arches"
     },
     {
-     "at_bar": 1,
+     "at_bar": 3,
      "action": "piece_on",
-     "piece": "bone_arches"
+     "piece": "lava_flow"
     },
     {
      "at_bar": 3,
@@ -119,8 +119,17 @@
      "group": "early"
     },
     {
+     "at_bar": 5,
+     "action": "haze_burst"
+    },
+    {
      "at_bar": 7,
      "action": "led_eq"
+    },
+    {
+     "at_bar": 7,
+     "action": "piece_on",
+     "piece": "chains_swing"
     }
    ]
   },
@@ -167,12 +176,23 @@
     {
      "at_bar": 15,
      "action": "led_bars"
+    },
+    {
+     "at_bar": 15,
+     "action": "piece_on",
+     "piece": "hellmouth_portal"
+    },
+    {
+     "at_bar": 15,
+     "action": "camera_push",
+     "zoom": 0.06,
+     "bars": 2
     }
    ]
   },
   {
    "id": "first_bass_reveal",
-   "title": "First bass reveal",
+   "title": "Through the hellmouth",
    "act": "Act II",
    "start_bar": 17,
    "bars": 8,
@@ -199,7 +219,12 @@
     {
      "at_bar": 17,
      "action": "piece_on",
-     "piece": "hellmouth_portal"
+     "piece": "court_throne_aura"
+    },
+    {
+     "at_bar": 17,
+     "action": "piece_on",
+     "piece": "court_seal"
     },
     {
      "at_bar": 19,
@@ -207,24 +232,39 @@
      "bars": 3
     },
     {
+     "at_bar": 19,
+     "action": "bring_in",
+     "group": "gatherers",
+     "when": {
+      "energy_min": 55
+     },
+     "else": "gather_at_door"
+    },
+    {
      "at_bar": 21,
      "action": "beams_fan"
     },
     {
-     "at_bar": 23,
-     "action": "spotlight_sweep"
+     "at_bar": 21,
+     "action": "piece_pulse",
+     "piece": "court_throne_aura",
+     "bars": 2
     },
     {
      "at_bar": 21,
      "action": "camera_look",
      "dx": 120,
      "bars": 3
+    },
+    {
+     "at_bar": 23,
+     "action": "spotlight_sweep"
     }
    ]
   },
   {
    "id": "gather_at_the_gate",
-   "title": "Demons gather at the gate",
+   "title": "The court assembles",
    "act": "Act II",
    "start_bar": 25,
    "bars": 8,
@@ -235,21 +275,33 @@
     },
     {
      "at_bar": 25,
-     "action": "gather_at_door",
-     "group": "gatherers"
+     "action": "bring_in",
+     "group": "late"
     },
     {
-     "at_bar": 25,
-     "action": "piece_on",
-     "piece": "chains_swing"
+     "at_bar": 27,
+     "action": "front_row_sway",
+     "bars": 2
     },
     {
      "at_bar": 29,
      "action": "beams_cross"
     },
     {
+     "at_bar": 29,
+     "action": "piece_pulse",
+     "piece": "court_seal",
+     "bars": 2
+    },
+    {
      "at_bar": 31,
      "action": "led_rings"
+    },
+    {
+     "at_bar": 31,
+     "action": "camera_push",
+     "zoom": 0.08,
+     "bars": 2
     }
    ]
   },
@@ -268,6 +320,16 @@
      "bars": 2
     },
     {
+     "at_bar": 33,
+     "action": "piece_on",
+     "piece": "pit_lava_glare"
+    },
+    {
+     "at_bar": 33,
+     "action": "piece_on",
+     "piece": "pit_fortress_glow"
+    },
+    {
      "at_bar": 35,
      "action": "circle_form",
      "group": "circle"
@@ -281,33 +343,48 @@
      "action": "lights_cool"
     },
     {
-     "at_bar": 39,
-     "action": "beams_fan"
+     "at_bar": 37,
+     "action": "piece_pulse",
+     "piece": "pit_lava_glare",
+     "bars": 2
     },
     {
      "at_bar": 37,
      "action": "camera_look",
      "dx": -120,
      "bars": 3
+    },
+    {
+     "at_bar": 39,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 39,
+     "action": "bring_in",
+     "group": "gatherers",
+     "when": {
+      "energy_min": 50
+     }
     }
    ]
   },
   {
    "id": "throne_bass",
-   "title": "The throne and the bass",
+   "title": "The lake and the bass",
    "act": "Act III",
    "start_bar": 41,
    "bars": 8,
    "events": [
     {
      "at_bar": 41,
-     "action": "piece_on",
-     "piece": "skull_throne"
+     "action": "bring_in",
+     "group": "late"
     },
     {
      "at_bar": 41,
-     "action": "bring_in",
-     "group": "late"
+     "action": "piece_pulse",
+     "piece": "pit_fortress_glow",
+     "bars": 2
     },
     {
      "at_bar": 43,
@@ -324,18 +401,23 @@
     },
     {
      "at_bar": 45,
-     "action": "piece_pulse",
-     "piece": "ember_rain"
+     "action": "haze_burst"
     },
     {
      "at_bar": 47,
      "action": "led_wave"
+    },
+    {
+     "at_bar": 47,
+     "action": "piece_pulse",
+     "piece": "pit_lava_glare",
+     "bars": 2
     }
    ]
   },
   {
    "id": "last_dance_riser",
-   "title": "Last dance on the riser",
+   "title": "Into the forge",
    "act": "Act IV",
    "start_bar": 49,
    "bars": 8,
@@ -357,6 +439,22 @@
      "group": "peak"
     },
     {
+     "at_bar": 49,
+     "action": "piece_on",
+     "piece": "furnace_eyes"
+    },
+    {
+     "at_bar": 49,
+     "action": "piece_on",
+     "piece": "furnace_channels"
+    },
+    {
+     "at_bar": 49,
+     "action": "camera_push",
+     "zoom": 0.14,
+     "bars": 2
+    },
+    {
      "at_bar": 51,
      "action": "hero_solo",
      "bars": 4
@@ -370,6 +468,20 @@
      "action": "lights_rave"
     },
     {
+     "at_bar": 53,
+     "action": "piece_pulse",
+     "piece": "furnace_eyes",
+     "bars": 2
+    },
+    {
+     "at_bar": 53,
+     "action": "bring_in",
+     "group": "late",
+     "when": {
+      "energy_min": 55
+     }
+    },
+    {
      "at_bar": 55,
      "action": "clap_sync",
      "bars": 2,
@@ -379,9 +491,9 @@
      "else": "front_row_sway"
     },
     {
-     "at_bar": 49,
-     "action": "camera_push",
-     "zoom": 0.14,
+     "at_bar": 55,
+     "action": "piece_pulse",
+     "piece": "furnace_channels",
      "bars": 2
     }
    ]
@@ -401,6 +513,17 @@
      "bars": 2
     },
     {
+     "at_bar": 57,
+     "action": "piece_on",
+     "piece": "skull_throne"
+    },
+    {
+     "at_bar": 57,
+     "action": "piece_pulse",
+     "piece": "lava_flow",
+     "bars": 2
+    },
+    {
      "at_bar": 59,
      "action": "rave_peak",
      "bars": 4,
@@ -408,6 +531,11 @@
       "energy_min": 50
      },
      "else": "lights_cool"
+    },
+    {
+     "at_bar": 59,
+     "action": "piece_on",
+     "piece": "ember_rain"
     },
     {
      "at_bar": 61,
@@ -426,14 +554,14 @@
      }
     },
     {
-     "at_bar": 63,
-     "action": "beams_cross"
-    },
-    {
      "at_bar": 61,
      "action": "camera_push",
      "zoom": 0.12,
      "bars": 2
+    },
+    {
+     "at_bar": 63,
+     "action": "beams_cross"
     }
    ]
   }
@@ -441,7 +569,7 @@
  "decisions": [
   {
    "id": "demon_judges",
-   "title": "The demons decide",
+   "title": "The court decides",
    "at_bar": 17,
    "block": "first_bass_reveal",
    "rule": {
@@ -459,12 +587,12 @@
     "dancers_step_back",
     "look_around"
    ],
-   "good_text": "The demons stomped their approval and poured onto the floor.",
-   "bad_text": "The demons glared from the edges, arms folded."
+   "good_text": "The court stomped its approval and poured onto the floor.",
+   "bad_text": "The court glared from the shadows, arms folded."
   },
   {
    "id": "throne_spotlight",
-   "title": "The throne spotlight",
+   "title": "The circle on the lake",
    "at_bar": 41,
    "block": "throne_bass",
    "rule": {
@@ -480,8 +608,8 @@
    "bad": [
     "circle_breaks_awkward"
    ],
-   "good_text": "The throne roared and the whole circle erupted.",
-   "bad_text": "The throne fell silent and the circle broke up."
+   "good_text": "The lake roared and the whole circle erupted.",
+   "bad_text": "The lava hissed and the circle broke apart."
   },
   {
    "id": "hellfire_drop",
@@ -501,8 +629,8 @@
    "bad": [
     "drop_stumble"
    ],
-   "good_text": "The drop landed: hell itself jumped as one.",
-   "bad_text": "The drop stumbled, but the fires kept burning."
+   "good_text": "The drop landed: the whole forge jumped as one.",
+   "bad_text": "The drop stumbled, but the furnaces kept burning."
   },
   {
    "id": "win_back",
@@ -519,7 +647,7 @@
     "winback_cheer"
    ],
    "bad": [],
-   "good_text": "You won the floor back from the demons.",
+   "good_text": "The forge roars again: you won the floor back.",
    "bad_text": "",
    "kind": "winback"
   },
@@ -542,7 +670,7 @@
     "final_flicker"
    ],
    "good_text": "Hell chanted your name.",
-   "bad_text": "The flames guttered and the demons wandered off."
+   "bad_text": "The flames guttered and the demons drifted away."
   }
  ],
  "endings": {
@@ -562,7 +690,7 @@
    "title": "Devoured by the Crowd",
    "energy_min": -1,
    "pass_min": 0.0,
-   "text": "The demons lose interest, and then they get hungry."
+   "text": "The demons lose interest. Then they get peckish."
   }
  },
  "ending_order": [
