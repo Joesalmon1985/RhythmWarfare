@@ -621,5 +621,21 @@ def build_stage() -> dict:
         "circle_centre": [640, 372],
         "circle_radii": [250, 46],
         "wall_left_x": FX0, "wall_right_x": FX1, "horizon_y": VPY,
+        "led_tiles": led_tiles(),
     }
     return {"design_size": [W, H], "layers": layers, "anchors": anchors, "sprites": sprites}
+
+
+def led_tiles() -> dict:
+    """The lit dance floor's tile grid as drawn in build_backdrop: the runtime lights single tiles in chases and ripples on the beat.
+    A tile (i, j) is the quad between far_x[i]..far_x[i+1] and rows[j]..rows[j+1], each x projected with floor_grid's rule."""
+    rows = []
+    z = 1.0
+    while True:
+        y = VPY + (FY1 - VPY) / z
+        if y > H + 40:
+            break
+        if 264 <= y <= 530:
+            rows.append(round(y, 2))
+        z -= 0.065
+    return {"far_x": [400 + 60 * i for i in range(9)], "rows": rows, "vanishing_point": [VPX, VPY], "far_y": FY1}

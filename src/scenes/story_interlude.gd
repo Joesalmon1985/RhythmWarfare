@@ -10,6 +10,7 @@ var _t0 := 0.0
 var _done_events := {}
 var _caption: Label
 var _caption_until := 0.0
+var _caption_from := 0.0
 var _go := false
 var _run: StoryRun
 var _skip_hint: Label
@@ -55,14 +56,20 @@ func _ready() -> void:
 	stage.add_overlay(fx)
 	_caption = Label.new()
 	_caption.add_theme_font_size_override("font_size", 30)
+	_caption.add_theme_color_override("font_color", Color(1.0, 0.95, 1.0))
 	_caption.add_theme_color_override("font_outline_color", Color(0.02, 0.0, 0.12))
 	_caption.add_theme_constant_override("outline_size", 10)
+	var cap_box := StoryStyle.panel_box(StoryStyle.MAGENTA if str(info.get("name", "")) == "abduction" else StoryStyle.AMBER)
+	cap_box.content_margin_top = 10
+	cap_box.content_margin_bottom = 12
+	cap_box.bg_color = Color(0.03, 0.01, 0.1, 0.7)
+	_caption.add_theme_stylebox_override("normal", cap_box)
 	_caption.set_anchors_preset(Control.PRESET_CENTER_TOP)
 	_caption.offset_top = 40
 	_caption.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	add_child(_caption)
-	_skip_hint = UiStyle.note("Esc to skip", Color(1, 1, 1, 0.4), 14)
+	_skip_hint = StoryStyle.note("Esc to skip", Color(1, 1, 1, 0.45), 14)
 	_skip_hint.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	_skip_hint.offset_left = -140
 	_skip_hint.offset_top = -34
@@ -83,7 +90,8 @@ func _process(_delta: float) -> void:
 			_run_event(e, t)
 	stage.update(t, 12.0 if stage.tableau() == "lost" else 55.0)
 	fx.queue_redraw()
-	_caption.modulate.a = clampf(_caption_until - t, 0.0, 1.0)
+	_caption.modulate.a = clampf(_caption_until - t, 0.0, 1.0) * clampf((t - _caption_from) / 0.4, 0.0, 1.0)
+	_caption.visible = _caption.modulate.a > 0.01 and _caption.text != ""
 	if t >= float(_def["duration"]) and OS.get_environment("RW_STORY_INTERLUDE_HOLD") != "1":
 		_next()
 
@@ -92,6 +100,7 @@ func _run_event(e: Dictionary, t: float) -> void:
 	match str(e["do"]):
 		"caption":
 			_caption.text = str(e["text"])
+			_caption_from = t
 			_caption_until = t + float(e.get("dur", 2.5))
 		"dim":
 			stage.apply({"t0": t, "bar": 1.0, "action": "beams_off", "args": {}, "block": "", "source": "block"})

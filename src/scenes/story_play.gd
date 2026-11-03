@@ -19,10 +19,7 @@ var note_lane: NoteLane
 var lane_input: LaneInput
 var deck: StoryDeck
 
-var _countdown_label: Label
-var _title_card: Label
-var _act_label: Label
-var _toast: Label
+var _hud: StoryHud
 var _debug_label: Label
 var _pause_btn: Button
 var _dim: ColorRect
@@ -34,8 +31,6 @@ var _virtual := false
 var _vt := -COUNTDOWN_S
 var _until_bar := -1.0
 var _tail_until := -1.0
-var _toast_until := 0.0
-var _act_until := 0.0
 var _act_index := -1
 var _auto_plan: Array = []
 var _auto_next := 0
@@ -123,7 +118,8 @@ func _build_layout() -> void:
 	stage.setup(assets, run.data, run)
 	stage.reduced = Session.reduced_effects
 
-	pad_view = PadView.new()
+	var skin := StoryPadView.new()
+	pad_view = skin
 	pad_view.name = "Pads"
 	pad_view.anchor_top = split
 	pad_view.anchor_right = 1.0
@@ -143,6 +139,8 @@ func _build_layout() -> void:
 	deck.reduced = Session.reduced_effects
 	pad_view.deck_under = deck.draw_under
 	pad_view.deck_over = deck.draw_over
+	skin.setup_skin(deck)
+	skin.energy_fn = func() -> float: return run.crowd.energy
 	add_child(pad_view)
 
 	var shade := StoryLaneShade.new()
@@ -152,7 +150,10 @@ func _build_layout() -> void:
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(shade)
 
-	note_lane = NoteLane.new()
+	var lane := StoryNoteLane.new()
+	var glow := assets.sprite("glow")
+	lane.glow_tex = glow.get("tex", null)
+	note_lane = lane
 	note_lane.name = "Notes"
 	note_lane.anchor_right = 1.0
 	note_lane.anchor_bottom = 1.0
@@ -164,10 +165,13 @@ func _build_layout() -> void:
 	note_lane.state_fn = run.match_ref.pad_judge.cue_state
 	add_child(note_lane)
 
-	_title_card = _centre_label(run.data.title.to_upper(), 84, 0.2)
-	_act_label = _centre_label("", 30, 0.08)
-	_toast = _centre_label("", 28, 0.15)
-	_countdown_label = _centre_label("", 110, 0.34)
+	_hud = StoryHud.new()
+	_hud.name = "Hud"
+	_hud.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_hud.title = run.data.title.to_upper()
+	_hud.subtitle = str(run.data.raw.get("description", "")).get_slice(".", 0)
+	_hud.reduced = Session.reduced_effects
+	add_child(_hud)
 	_debug_label = Label.new()
 	_debug_label.position = Vector2(12, 8)
 	_debug_label.add_theme_font_size_override("font_size", 13)
@@ -176,6 +180,7 @@ func _build_layout() -> void:
 
 	_pause_btn = Button.new()
 	_pause_btn.text = "II"
+	_pause_btn.theme = StoryStyle.theme()
 	_pause_btn.focus_mode = Control.FOCUS_NONE
 	_pause_btn.add_theme_font_size_override("font_size", 24)
 	_pause_btn.anchor_left = 1.0
@@ -193,7 +198,8 @@ func _build_layout() -> void:
 	_dim.visible = false
 	add_child(_dim)
 	_pause_panel = PanelContainer.new()
-	_pause_panel.add_theme_stylebox_override("panel", UiStyle.panel_box())
+	_pause_panel.theme = StoryStyle.theme()
+	_pause_panel.add_theme_stylebox_override("panel", StoryStyle.panel_box())
 	_pause_panel.set_anchors_preset(Control.PRESET_CENTER)
 	_pause_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	_pause_panel.grow_vertical = Control.GROW_DIRECTION_BOTH
@@ -202,27 +208,9 @@ func _build_layout() -> void:
 	var pv := VBoxContainer.new()
 	pv.add_theme_constant_override("separation", 12)
 	_pause_panel.add_child(pv)
-	pv.add_child(UiStyle.title("Paused", 36))
+	pv.add_child(StoryStyle.title("PAUSED", 36))
 	for item in [["Resume", _resume], ["Restart", _retry], ["Settings", _open_settings], ["Quit to Story Campaign", _quit]]:
 		pv.add_child(UiStyle.button(item[0], item[1], 360))
-
-
-func _centre_label(text: String, font_size: int, anchor_y: float) -> Label:
-	var l := Label.new()
-	l.text = text
-	l.add_theme_font_size_override("font_size", font_size)
-	l.add_theme_color_override("font_outline_color", Color(0.02, 0.0, 0.12))
-	l.add_theme_constant_override("outline_size", 12)
-	l.anchor_left = 0.5
-	l.anchor_right = 0.5
-	l.anchor_top = anchor_y
-	l.anchor_bottom = anchor_y
-	l.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	l.grow_vertical = Control.GROW_DIRECTION_BOTH
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(l)
-	return l
 
 
 # --- scripted input ---------------------------------------------------------------------------------------------------------
@@ -267,11 +255,13 @@ func _process(delta: float) -> void:
 		var remaining := _resume_at_wall - float(Time.get_ticks_msec()) / 1000.0
 		if remaining <= 0.0:
 			_resume_at_wall = -1.0
-			_countdown_label.text = ""
+			_hud.countdown = ""
 			clock.resume()
 			lane_input.enabled = true
 		else:
-			_countdown_label.text = str(ceili(remaining))
+			_hud.countdown = str(ceili(remaining))
+			_hud.countdown_frac = float(ceili(remaining)) - remaining
+		_hud.queue_redraw()
 		return
 	if clock.state == SongClock.State.PAUSED:
 		return
@@ -279,9 +269,11 @@ func _process(delta: float) -> void:
 	var t := clock.judge_time()
 	var audio_t := clock.audio_time()
 	if clock.state == SongClock.State.COUNTDOWN:
-		_countdown_label.text = str(ceili(clock.countdown_remaining()))
-	elif not _countdown_label.text.is_empty():
-		_countdown_label.text = ""
+		var rem := clock.countdown_remaining()
+		_hud.countdown = str(ceili(rem))
+		_hud.countdown_frac = float(ceili(rem)) - rem
+	elif not _hud.countdown.is_empty():
+		_hud.countdown = ""
 	if clock.state == SongClock.State.PLAYING:
 		_perf.append(delta * 1000.0)
 	if not _ended:
@@ -303,7 +295,9 @@ func _process_virtual(_delta: float) -> void:
 	var rate := float(OS.get_environment("RW_STORY_RATE")) if OS.has_environment("RW_STORY_RATE") else 1.0 / 30.0
 	var chunk := rate if _vt < until_t - 1.0 else 1.0 / 30.0  # the last second runs at a normal pace so poses settle
 	var target := minf(_vt + chunk, until_t)
-	while _vt < target - 1e-9:
+	var guard := 0
+	while _vt < target - 1e-9 and guard < 2000:  # at most ~33 s of song per frame, whatever the rate says
+		guard += 1
 		_vt = minf(_vt + 1.0 / 60.0, target)
 		_autoplay_step(_vt)
 		_advance(_vt, _vt, _vt >= target - 1e-9)
@@ -343,16 +337,13 @@ func _advance(t: float, audio_t: float, render := true) -> void:
 
 func _ui(t: float) -> void:
 	var bar := run.level.bar_of_tick(run.level.seconds_to_tick(maxf(t, 0.0)))
-	var wall := float(Time.get_ticks_msec()) / 1000.0
-	_title_card.modulate.a = clampf(1.0 - (t - 0.8) / 1.2, 0.0, 1.0) if t > 0.8 else 1.0
-	_title_card.visible = _title_card.modulate.a > 0.01
 	var act_i := run.data.act_of_bar(float(bar))
 	if t >= 0.0 and act_i != _act_index:
 		_act_index = act_i
-		_act_label.text = "ACT %s   %s" % [run.data.acts[act_i]["id"], str(run.data.acts[act_i]["title"]).to_upper()]
-		_act_until = wall + 3.5
-	_act_label.modulate.a = clampf(_act_until - wall, 0.0, 1.0) if t > 0.8 else 0.0
-	_toast.modulate.a = clampf(_toast_until - wall, 0.0, 1.0)
+		var act: Dictionary = run.data.acts[act_i]
+		var t0 := maxf(run.director.bar_time(float(act["start_bar"])), _hud.title_until if act_i == 0 else 0.0)
+		_hud.show_act("ACT %s" % str(act["id"]), str(act["title"]).to_upper(), t0)
+	_hud.set_time(t)
 	pad_view.banner_text = _banner(t)
 	if _debug_label.visible:
 		_debug_label.text = "t=%6.2f bar %d  energy %.0f (%s)  seq %d/%d  crowd %d  fps %d" % [t, bar, run.crowd.energy, run.crowd.band(),
@@ -422,13 +413,11 @@ func _on_action(a: Dictionary) -> void:
 	if a["source"] == "decision" and a["args"].has("outcome"):
 		for d in run.crowd.decisions_log:
 			if d["id"] == a["args"]["decision"] and str(d["text"]) != "":
-				_toast.text = str(d["text"])
-				_toast_until = float(Time.get_ticks_msec()) / 1000.0 + 4.5
+				_hud.show_toast(str(d["text"]), "good" if str(a["args"]["outcome"]) == "good" else "bad", float(a["t0"]))
 				break
 	elif a["action"] == "ending":
 		var e: Dictionary = run.data.endings[a["args"]["ending"]]
-		_toast.text = str(e["title"]).to_upper()
-		_toast_until = float(Time.get_ticks_msec()) / 1000.0 + TAIL_S
+		_hud.show_toast(str(e["title"]).to_upper(), "end", float(a["t0"]), 1.0e6)
 
 
 # --- input ------------------------------------------------------------------------------------------------------------------
@@ -476,7 +465,7 @@ func _pause() -> void:
 	lane_input.enabled = false
 	_pause_panel.visible = true
 	_dim.visible = true
-	_countdown_label.text = ""
+	_hud.countdown = ""
 
 
 func _resume() -> void:
@@ -508,6 +497,7 @@ func _close_settings() -> void:
 	stage.reduced = Session.reduced_effects
 	stage.high_contrast = Session.high_contrast
 	deck.reduced = Session.reduced_effects
+	_hud.reduced = Session.reduced_effects
 	clock.calibration_ms = Session.calibration_ms
 	_pause_panel.visible = true
 

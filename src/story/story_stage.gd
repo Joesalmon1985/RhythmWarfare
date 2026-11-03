@@ -204,14 +204,23 @@ func update(t: float, p_energy: float) -> void:
 		if not v.visible:
 			continue
 		v.crowd.reduced = reduced
+		v.crowd.lit_id = v.crowd.hero_id() if is_active("spot_hero", t) or is_active("spot_circle", t) else ""
 		v.crowd.set_time(t)
 		v.crowd.update(t, p_energy)
 		v.redraw_fx()
 		if v.layers.has("riser"):
 			var sp: Sprite2D = v.layers["riser"]
 			var up := _riser_level(t)
+			var lift := riser_lift(t)
 			sp.visible = up > 0.01
 			sp.modulate = Color(1, 1, 1, up)
+			if not sp.has_meta("base_y"):
+				sp.set_meta("base_y", sp.position.y)
+			sp.position.y = float(sp.get_meta("base_y")) - lift
+			var rl: Array = assets.anchor("riser", [], id)
+			v.crowd.riser_lift = lift
+			if rl.size() >= 2:
+				v.crowd.riser_pos = Vector2(float(rl[0]), float(rl[1]) - 6.0)
 	_apply_camera(t)
 	_cam_overlay.queue_redraw()
 	queue_redraw()
@@ -337,12 +346,31 @@ func _riser_level(t: float) -> float:
 	if _act.has("riser_up") and t >= float(_act["riser_up"]["t0"]) and (not _act.has("riser_down") or float(_act["riser_down"]["t0"]) < float(_act["riser_up"]["t0"])):
 		return clampf((t - float(_act["riser_up"]["t0"])) / bar_s(), 0.0, 1.0)
 	if _act.has("riser_down") and t >= float(_act["riser_down"]["t0"]):
-		return 1.0 - clampf((t - float(_act["riser_down"]["t0"])) / bar_s(), 0.0, 1.0)
+		return 1.0 - clampf((t - float(_act["riser_down"]["t0"]) - bar_s()) / (0.5 * bar_s()), 0.0, 1.0)
 	return 0.0
 
 
 func riser_level(t: float) -> float:
 	return _riser_level(t)
+
+
+const RISER_LIFT := 72.0  # design px the riser raises its performer above the crowd's heads
+
+
+## How high the riser stands at t: it waits for the performer to step on (RISER_BOARD_S), rises over a bar, and sinks over the
+## bar after riser_down before it fades.
+func riser_lift(t: float) -> float:
+	var up := 0.0
+	if _act.has("riser_up") and t >= float(_act["riser_up"]["t0"]) + RISER_BOARD_S:
+		var u := clampf((t - float(_act["riser_up"]["t0"]) - RISER_BOARD_S) / bar_s(), 0.0, 1.0)
+		up = u * u * (3.0 - 2.0 * u)
+	if _act.has("riser_down") and t >= float(_act["riser_down"]["t0"]) and (not _act.has("riser_up") or float(_act["riser_down"]["t0"]) >= float(_act["riser_up"]["t0"])):
+		var d := clampf((t - float(_act["riser_down"]["t0"])) / bar_s(), 0.0, 1.0)
+		up = 1.0 - d * d * (3.0 - 2.0 * d)
+	return up * RISER_LIFT
+
+
+const RISER_BOARD_S := 2.2
 
 
 func woofer_pump() -> bool:
@@ -438,7 +466,7 @@ func apply(a: Dictionary) -> void:
 			_act.erase("riser_down")
 		"riser_down":
 			_act["riser_down"] = {"t0": t0, "t1": NO_END}
-			crowd.hero_to(crowd.actors[crowd.hero_id()]["home"] if crowd.hero_id() != "" else Vector2(640, 380), t0, 2.0)
+			crowd.hero_to(crowd.actors[crowd.hero_id()]["home"] if crowd.hero_id() != "" else Vector2(640, 380), t0 + bar_s(), 2.0)
 		"confetti":
 			_act["confetti"] = {"t0": t0, "t1": t0 + 5.0}
 		"glowsticks_on":
@@ -478,13 +506,14 @@ func apply(a: Dictionary) -> void:
 			crowd.circle_form(t0)
 			_act["circle"] = {"t0": t0, "t1": NO_END}
 		"hero_center":
-			crowd.hero_to(Vector2(crowd.circle_c.x, crowd.circle_c.y + 18.0), t0, 2.5)
+			crowd.hero_to(Vector2(crowd.circle_c.x, crowd.circle_c.y + 18.0), t0, 2.5,
+				{"state": "solo" if energy >= 40.0 else "dance", "from": 0.0, "until": t0 + 6.0 * bar_s(), "sync": false})
 			_act["spot_circle"] = {"t0": t0, "t1": t0 + 6.0 * bar_s()}
 		"hero_solo":
 			var h := crowd.hero_id()
 			if h != "":
 				var rl: Array = assets.anchor("riser", [crowd.circle_c.x, crowd.circle_c.y - 20.0, 260], current_view)
-				crowd.walk_to(h, Vector2(float(rl[0]), float(rl[1]) - 6.0), t0, 2.0, {"state": "dance", "from": 0.0, "until": t0 + dur, "sync": false})
+				crowd.walk_to(h, Vector2(float(rl[0]), float(rl[1]) - 6.0), t0, 2.0, {"state": "solo", "from": 0.0, "until": t0 + dur, "sync": false})
 		"bring_in":
 			crowd.bring_in(str(args["group"]), t0)
 		"gather_at_door":
@@ -503,8 +532,8 @@ func apply(a: Dictionary) -> void:
 		"circle_spotlight_cheer":
 			_act["spot_circle"] = {"t0": t0, "t1": t0 + 6.0 * bar_s()}
 			_act["burst"] = {"t0": t0, "t1": t0 + 4.0 * bar_s()}
-			crowd.hero_to(Vector2(crowd.circle_c.x, crowd.circle_c.y + 18.0), t0, 1.5)
 			crowd.direct(crowd.ids_of("circle"), "cheer", t0 + 1.5, 4.0 * bar_s(), true)
+			crowd.hero_to(Vector2(crowd.circle_c.x, crowd.circle_c.y + 18.0), t0, 1.5, {"state": "solo", "from": 0.0, "until": t0 + 6.0 * bar_s(), "sync": false})
 			_act["confetti"] = {"t0": t0, "t1": t0 + 4.0}
 		"circle_breaks_awkward":
 			_act["spot_circle"] = {"t0": t0, "t1": t0 + 2.0 * bar_s()}
@@ -547,6 +576,9 @@ func apply(a: Dictionary) -> void:
 			if views.has(to) and moving_camera and to != current_view:
 				_cam = {"from": current_view, "to": to, "style": str(args.get("style", "walk")), "t0": t0, "t1": t0 + float(args.get("bars", 2.0)) * bar_s()}
 				current_view = to
+				var hint := (views[to] as StoryView).palette_hint
+				if hint != "" and palettes.has(hint) and not args.has("keep_palette"):  # the room's own light, unless the script says otherwise
+					palette = hint
 		"camera_look":
 			_cam_fx.append({"kind": "look", "t0": t0, "t1": t0 + dur, "amount": float(args.get("dx", 90.0))})
 		"camera_push":
@@ -562,7 +594,7 @@ func apply(a: Dictionary) -> void:
 			_pieces[str(args["piece"])] = st2
 		"piece_pulse":
 			var st3: Dictionary = _pieces.get(str(args["piece"]), {})
-			if not st3.has("on_t"):
+			if not st3.has("on_t") and not _ambient.has(str(args["piece"])):  # a room's own pieces are already on: a pulse keeps them on
 				st3["on_t"] = t0
 			st3["pulse_t"] = t0
 			st3["pulse_len"] = maxf(float(args.get("bars", 2.0)) * bar_s(), 0.5)

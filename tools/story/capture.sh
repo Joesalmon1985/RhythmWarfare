@@ -10,13 +10,19 @@ OUT="${1:-$ROOT/docs/shots/story}"
 mkdir -p "$OUT"
 RATE=2.0
 
+ONLY="${RW_SHOTS:-}"  # optional regex: only the shots whose name matches (RW_SHOTS='^0' Night One, RW_SHOTS=cam_ the camera)
+want() { [ -z "$ONLY" ] || [[ "$1" =~ $ONLY ]]; }
+
 shot() {  # name policy until_bar [extra env assignments...]
   local name="$1" policy="$2" bar="$3"; shift 3
+  want "$name" || return 0
   local secs frames
   secs=$(python3 -c "print(($bar-1)*4*60/174)")
   frames=$(python3 -c "print(int(max(($secs-1.0),0)/$RATE)+40)")
+  local res=()  # RW_WINDOW=WxH opens the window at that size (other aspect ratios)
+  for kv in "$@"; do case "$kv" in RW_WINDOW=*) res=(--resolution "${kv#RW_WINDOW=}");; esac; done
   env RW_STORY_VIRTUAL=1 RW_STORY_RATE=$RATE RW_STORY_UNTIL_BAR="$bar" RW_AUTOPLAY="$policy" "$@" \
-    "$GODOT" --path "$ROOT" -s tools/shoot.gd -- res://src/scenes/story_play.tscn "$OUT" "$frames:shot:$name" 2>&1 | grep -E "^shot|ERROR|SCRIPT" || true
+    "$GODOT" --path "$ROOT" "${res[@]}" -s tools/shoot.gd -- res://src/scenes/story_play.tscn "$OUT" "$frames:shot:$name" 2>&1 | grep -E "^shot|ERROR|SCRIPT" || true
 }
 
 shot 01_opening            perfect         3
@@ -30,6 +36,12 @@ shot 08_layout_compact     perfect         107 RW_PAD_SIZE=0
 shot 09_layout_large       perfect         107 RW_PAD_SIZE=2
 shot 10_reduced_effects    perfect         107 RW_REDUCED=1
 shot 11_high_contrast      perfect         107 RW_HIGH_CONTRAST=1
+shot 12_bass_reveal        perfect         17.3
+shot 13_hero_circle        perfect         47.5
+shot 14_hero_riser         perfect         68.5
+shot 15_floor_ripple       accuracy:0.8    89.6
+shot 16_narrow_4x3         perfect         107 RW_WINDOW=1024x768
+shot 17_wide_20x9          perfect         107 RW_WINDOW=1600x720
 
 # chapters 2 and 3 (their own art, music packs and endings) and the cutscenes between chapters
 shot ch2_01_opening         perfect       3  RW_STORY_CHAPTER=mothership
@@ -47,6 +59,7 @@ shot ch3_06_end_devoured    none          67 RW_STORY_CHAPTER=underworld
 
 interlude() {  # name cutscene_seconds
   local name="$1" at="$2"
+  want "interlude_${name}_$(printf %02d "$at")" || return 0
   env RW_STORY_INTERLUDE="$name" RW_STORY_INTERLUDE_T="$at" RW_STORY_INTERLUDE_HOLD=1 \
     "$GODOT" --path "$ROOT" -s tools/shoot.gd -- res://src/scenes/story_interlude.tscn "$OUT" "50:shot:interlude_${name}_$(printf %02d "$at")" 2>&1 | grep -E "^shot|ERROR|SCRIPT" || true
 }
@@ -65,3 +78,13 @@ shot cam_underworld_walk_33    perfect 33.9 RW_STORY_CHAPTER=underworld
 shot cam_underworld_pit        perfect 43   RW_STORY_CHAPTER=underworld
 shot cam_underworld_turn_49    perfect 49.9 RW_STORY_CHAPTER=underworld
 shot cam_underworld_furnace    perfect 54   RW_STORY_CHAPTER=underworld
+
+# the story menu and the result screens (the result plays a scripted set headless first, then shows its summary)
+screen() {  # name scene frames [env assignments...]
+  local name="$1" scene="$2" frames="$3"; shift 3
+  want "$name" || return 0
+  env "$@" "$GODOT" --path "$ROOT" -s tools/shoot.gd -- "$scene" "$OUT" "$frames:shot:$name" 2>&1 | grep -E "^shot|ERROR|SCRIPT" || true
+}
+screen ui_story_menu       res://src/scenes/story_campaign.tscn 30 RW_STORY_UI=1
+screen ui_result_legendary res://src/scenes/story_result.tscn  30 RW_STORY_RESULT=perfect
+screen ui_result_lost      res://src/scenes/story_result.tscn  30 RW_STORY_RESULT=none

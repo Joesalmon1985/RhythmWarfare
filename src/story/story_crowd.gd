@@ -18,6 +18,9 @@ var bpm := 174.0
 var reduced := false
 var energy := 45.0
 var glow_on := false
+var lit_id := ""  # the dancer a followspot is on (drawn a touch brighter)
+var riser_pos := Vector2(-9999, -9999)  # where a performer stands on the riser, and how high it has lifted them
+var riser_lift := 0.0
 var actors: Dictionary = {}  # id -> {node, data, home: Vector2, pos: Vector2, present, depth, move: {}, dir: {}, thresh, scale}
 var _order: Array = []
 var _sils: Array = []
@@ -35,7 +38,7 @@ func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
 	assets = p_assets
 	data = p_data
 	_rng.seed = 4242
-	var dw: Array = assets.anchor("doorway", [120, 250, 70, 110], view)
+	var dw: Array = assets.anchor("doorway", [], view)
 	if dw.size() < 4:  # a room without a doorway: arrivals walk in from the left edge
 		dw = [-40, 280, 40, 0]
 	door_pos = Vector2(float(dw[0]) + float(dw[2]) * 0.5, float(dw[1]) + float(dw[3]))
@@ -94,6 +97,7 @@ func reset() -> void:
 		s["present"] = s["group"] == "core"
 		s["alpha"] = 1.0 if s["present"] else 0.0
 	glow_on = false
+	_last_t = -INF
 	_ending = ""
 	_flinch_until = -1.0
 	_resort()
@@ -121,9 +125,20 @@ func state_counts() -> Dictionary:
 
 
 func _resort() -> void:
-	_order.sort_custom(func(x: String, y: String) -> bool: return (actors[x]["pos"] as Vector2).y < (actors[y]["pos"] as Vector2).y)
+	_order.sort_custom(_nearer)
 	for i in _order.size():
 		move_child(actors[_order[i]]["node"], i)
+
+
+## Depth order: further back (smaller feet y) first; ties broken by x then id, so equal rows never swap places between frames.
+func _nearer(x: String, y: String) -> bool:
+	var px: Vector2 = actors[x]["pos"]
+	var py: Vector2 = actors[y]["pos"]
+	if not is_equal_approx(px.y, py.y):
+		return px.y < py.y
+	if not is_equal_approx(px.x, py.x):
+		return px.x < py.x
+	return x < y
 
 
 # --- per frame -------------------------------------------------------------------------------------------------------
@@ -132,11 +147,17 @@ func update(t: float, p_energy: float) -> void:
 	energy = p_energy
 	var e01 := clampf(energy / 100.0, 0.0, 1.0)
 	var need_sort := false
+	if t < _last_t:  # a restart: fades start over
+		_last_t = t
+	var dt := clampf(t - _last_t, 0.0, 0.25) if _last_t > -INF else 0.0
+	_last_t = t
+	var fade := dt * (FADE_PER_S * (0.8 if reduced else 1.0))
 	for id in _order:
 		var a: Dictionary = actors[id]
 		var c: StoryCharacter = a["node"]
 		var mv: Dictionary = a["move"]
 		var walking := false
+		c.walk_dir = 0.0
 		if not mv.is_empty():
 			var u := clampf((t - float(mv["t0"])) / maxf(float(mv["t1"]) - float(mv["t0"]), 0.001), 0.0, 1.0)
 			if t >= float(mv["t0"]):
@@ -144,6 +165,8 @@ func update(t: float, p_energy: float) -> void:
 				a["pos"] = (mv["from"] as Vector2).lerp(mv["to"], ue)
 				walking = u < 1.0
 				need_sort = true
+				var dx: float = (mv["to"] as Vector2).x - (mv["from"] as Vector2).x
+				c.walk_dir = clampf(dx / 60.0, -1.0, 1.0) * sin(PI * clampf(u * 1.4, 0.0, 1.0)) if walking else 0.0
 				if u >= 1.0:
 					a["move"] = {}
 					if mv.get("hide_after", false):
@@ -151,7 +174,7 @@ func update(t: float, p_energy: float) -> void:
 					if mv.has("then"):
 						a["dir"] = mv["then"]
 		var vis_target := 1.0 if a["present"] else 0.0
-		a["alpha"] = move_toward(float(a["alpha"]), vis_target, 0.08 if reduced else 0.1)
+		a["alpha"] = move_toward(float(a["alpha"]), vis_target, fade)  # song-time fade: the same at any frame rate
 		c.visible = float(a["alpha"]) > 0.01
 		if not c.visible:
 			continue
@@ -160,9 +183,13 @@ func update(t: float, p_energy: float) -> void:
 		var vu := 0.0
 		if not vn.is_empty() and t >= float(vn["t0"]):
 			vu = clampf((t - float(vn["t0"])) / maxf(float(vn["t1"]) - float(vn["t0"]), 0.001), 0.0, 1.0)
-		c.position = (a["pos"] as Vector2) + Vector2(sin(vu * 9.0 + float(a["thresh"])) * 6.0 * vu, float(vn.get("dy", 0.0)) * vu * vu)
-		c.scale = Vector2(depth_scale, depth_scale) * (1.0 - 0.5 * vu)
-		c.modulate = Color(1, 1, 1, float(a["alpha"]) * (1.0 - clampf((vu - 0.55) / 0.45, 0.0, 1.0)))
+		var lift := 0.0
+		if riser_lift > 0.0 and (a["pos"] as Vector2).distance_to(riser_pos) < 30.0:
+			lift = riser_lift
+		c.position = (a["pos"] as Vector2) + Vector2(sin(vu * 9.0 + float(a["thresh"])) * 6.0 * vu, float(vn.get("dy", 0.0)) * vu * vu - lift)
+		c.scale = Vector2(depth_scale, depth_scale) * (1.0 - 0.5 * vu) * (1.0 + 0.35 * lift / 72.0)  # a raised performer reads bigger
+		var lit := 1.13 if id == lit_id else 1.0  # the followspot's dancer stands out from the crowd
+		c.modulate = Color(lit, lit, lit * 0.97, float(a["alpha"]) * (1.0 - clampf((vu - 0.55) / 0.45, 0.0, 1.0)))
 		c.reduced = reduced
 		c.glow_on = glow_on and c.glow
 		var dir: Dictionary = a["dir"]
@@ -179,7 +206,9 @@ func update(t: float, p_energy: float) -> void:
 			c.state = st
 		c.update_pose(t, bpm, e01)
 	for s in _sils:
-		s["alpha"] = move_toward(float(s["alpha"]), 1.0 if s["present"] else 0.0, 0.1)
+		s["alpha"] = move_toward(float(s["alpha"]), 1.0 if s["present"] else 0.0, fade)
+		var up_target := 1.0 if energy + float(s["thresh"]) > SIL_UP_E or _ending == "legendary" else 0.0
+		s["upw"] = move_toward(float(s.get("upw", up_target)), up_target, dt * 3.0)
 	if need_sort:
 		_resort()
 	queue_redraw()
@@ -225,23 +254,54 @@ func _ending_state(a: Dictionary, ee: float) -> String:
 
 func _draw() -> void:
 	var e := energy
+	var beats := _t_now * bpm / 60.0
+	var rise := sin(PI * fposmod(beats, 1.0))  # the rear rows bounce on the beat like the dancers in front
+	var tint := Color(0.55, 0.6, 0.85).lerp(Color(0.78, 0.76, 1.0), clampf((e - 20.0) / 30.0, 0.0, 1.0))
 	for s in _sils:
-		if float(s["alpha"]) < 0.02:
+		var al := float(s["alpha"])
+		if al < 0.02:
 			continue
-		var up: bool = e + float(s["thresh"]) > SIL_UP_E or _ending == "legendary"
-		var ent: Dictionary = s["up"] if up else s["idle"]
-		if ent.is_empty() or ent["tex"] == null:
-			continue
-		var t := float(Time.get_ticks_msec()) * 0.0  # placeholder, replaced by song time below
-		var sway := sin((_t_now * bpm / 60.0 * 0.5 + float(s["ph"])) * TAU) * (2.0 + e * 0.05)
-		var bob := absf(sin((_t_now * bpm / 60.0 + float(s["ph"])) * PI)) * (1.0 + e * 0.07) if e > 30.0 else 0.0
-		var sc := float(s["scale"]) * float(ent["scale"])
-		draw_set_transform(Vector2(float(s["x"]) + sway, float(s["y"]) - bob), 0.0, Vector2(sc, sc))
-		draw_texture(ent["tex"], -ent["pivot"], Color(0.55, 0.6, 0.85, float(s["alpha"])) if e < 30.0 else Color(0.75, 0.75, 1.0, float(s["alpha"])))
+		var sway := sin((beats * 0.25 + float(s["ph"])) * TAU) * (2.0 + e * 0.05)
+		var bob := rise * (1.0 + e * 0.07) * clampf((e - 25.0) / 15.0, 0.0, 1.0)
+		var upw := float(s.get("upw", 0.0))
+		for k in 2:  # idle and hands-up cross-fade instead of popping
+			var ent: Dictionary = s["up"] if k == 1 else s["idle"]
+			var w := upw if k == 1 else 1.0 - upw
+			if w < 0.01 or ent.is_empty() or ent["tex"] == null:
+				continue
+			var sc := float(s["scale"]) * float(ent["scale"])
+			draw_set_transform(Vector2(float(s["x"]) + sway, float(s["y"]) - bob), 0.0, Vector2(sc, sc))
+			draw_texture(ent["tex"], -ent["pivot"], Color(tint, al * w))
 	draw_set_transform_matrix(Transform2D.IDENTITY)
+	_draw_shadows()
+
+
+## A soft contact shadow under every dancer (drawn before the dancers, which are this node's children), smaller and lighter while
+## they are in the air, so feet sit on the floor instead of floating over it.
+func _draw_shadows() -> void:
+	if _shadow.is_empty():
+		_shadow = assets.sprite("glow")
+	if _shadow.is_empty() or _shadow["tex"] == null:
+		return
+	var tex: Texture2D = _shadow["tex"]
+	for id in _order:
+		var a: Dictionary = actors[id]
+		var c: StoryCharacter = a["node"]
+		if not c.visible or c.modulate.a < 0.05:
+			continue
+		var air := clampf(float(c.cur.get("jump", 0.0)) / 30.0, 0.0, 1.0)
+		var w := 92.0 * c.scale.x * (1.0 - 0.35 * air)
+		var feet := c.position + Vector2(float(c.cur.get("sway_x", 0.0)) * c.scale.x, 0.0)
+		draw_texture_rect(tex, Rect2(feet - Vector2(w * 0.5, w * 0.13), Vector2(w, w * 0.26)), false,
+			Color(0.0, 0.0, 0.04, 0.55 * c.modulate.a * (1.0 - 0.5 * air)))
+
+
+var _shadow: Dictionary = {}
 
 
 var _t_now := 0.0
+var _last_t := -INF
+const FADE_PER_S := 3.0  # arrivals and exits fade over a third of a second of song time
 
 
 func set_time(t: float) -> void:
@@ -367,8 +427,9 @@ func regroup(t0: float) -> void:
 func circle_form(t0: float, seconds := 3.5) -> void:
 	var ids := ids_of("circle").filter(func(i: Variant) -> bool: return actors[str(i)]["present"])
 	var n := maxi(ids.size(), 1)
+	var gap := 0.42  # radians kept clear either side of the front: the circle opens towards the DJ so its centre stays in view
 	for k in ids.size():
-		var ang := TAU * float(k) / float(n) + PI * 0.5
+		var ang := PI * 0.5 + gap + (TAU - 2.0 * gap) * float(k) / float(maxi(n - 1, 1))
 		var pos := circle_c + Vector2(cos(ang) * circle_r.x, sin(ang) * circle_r.y)
 		walk_to(str(ids[k]), pos, t0 + float(k) * 0.12, seconds, {"state": "dance", "from": 0.0, "until": NO_END})
 	_resort()
@@ -383,10 +444,10 @@ func circle_scatter(t0: float, awkward := true) -> void:
 		walk_to(id, out, t0, 3.0, {"state": "look" if awkward else "dance", "from": 0.0, "until": t0 + 8.0})
 
 
-func hero_to(pos: Vector2, t0: float, seconds := 2.5) -> void:
+func hero_to(pos: Vector2, t0: float, seconds := 2.5, then: Dictionary = {}) -> void:
 	for id in actors:
 		if str(actors[id]["data"].get("role", "")) == "hero":
-			walk_to(id, pos, t0, seconds)
+			walk_to(id, pos, t0, seconds, then)
 			return
 
 
