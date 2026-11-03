@@ -801,7 +801,9 @@ def build_stage() -> dict:
         "window": list(WIN), "planet": list(PLANET), "bar": [944, 140, 60, 122],
     }
     pieces = [piece_planet_glow(), piece_warp(), piece_saucer(), piece_ring_lights(), piece_pylon_beams(), piece_banner(), piece_bar_glow(), piece_dome()]
-    return {"design_size": [W, H], "layers": layers, "anchors": anchors, "sprites": sprites, "pieces": pieces,
+    from . import mothership_views as views  # the three extra rooms (gallery, reactor, bridge) and the passage frame
+    sprites["passage_frame"] = views.passage_frame()
+    return {"design_size": [W, H], "layers": layers, "anchors": anchors, "sprites": sprites, "pieces": pieces, "views": views.build_views(),
             "pieces_note": "pos = top-left in design space, size in design px, pivot = anim origin in texture px; z behind = under the crowd, front = over it; "
                            "glowing pieces use light colours on transparent and are meant to be drawn additively"}
 

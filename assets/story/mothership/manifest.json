@@ -2661,6 +2661,21 @@
      32,
      32
     ]
+   },
+   "passage_frame": {
+    "file": "source/views/passage_frame.svg",
+    "pivot": [
+     640,
+     360
+    ],
+    "px_scale": 0.5,
+    "opening": [
+     140,
+     80,
+     360,
+     200
+    ],
+    "note": "authored 640 x 360 design px (1280 x 720 texture); the runtime scales it 2x to cover the frame, the octagonal opening in the middle is transparent"
    }
   },
   "pieces": [
@@ -2815,6 +2830,704 @@
     ],
     "anim": "pulse",
     "z": "front"
+   }
+  ],
+  "views": [
+   {
+    "id": "gallery",
+    "title": "Observation gallery",
+    "layers": [
+     {
+      "id": "backdrop",
+      "file": "source/views/gallery_backdrop.svg",
+      "pos": [
+       0,
+       0
+      ],
+      "size": [
+       1280,
+       720
+      ],
+      "px_scale": 0.5
+     },
+     {
+      "id": "front_frame",
+      "file": "source/views/gallery_front.svg",
+      "pos": [
+       0,
+       0
+      ],
+      "size": [
+       1280,
+       480
+      ],
+      "px_scale": 0.5,
+      "z": "front"
+     }
+    ],
+    "anchors": {
+     "floor_rows": [
+      {
+       "y": 286,
+       "scale": 0.472
+      },
+      {
+       "y": 316,
+       "scale": 0.576
+      },
+      {
+       "y": 350,
+       "scale": 0.694
+      },
+      {
+       "y": 390,
+       "scale": 0.833
+      },
+      {
+       "y": 438,
+       "scale": 1.0
+      }
+     ],
+     "floor_polygon": [
+      [
+       505,
+       266
+      ],
+      [
+       775,
+       266
+      ],
+      [
+       1140,
+       520
+      ],
+      [
+       140,
+       520
+      ]
+     ],
+     "floor_grid": {
+      "vanishing_point": [
+       640,
+       150
+      ],
+      "far_y": 250,
+      "far_x": [
+       460,
+       505,
+       550,
+       595,
+       640,
+       685,
+       730,
+       775,
+       820
+      ],
+      "note": "x on the far wall base line; a floor line through far_x at screen row y is at x = vp_x + (far_x - vp_x) * (y - vp_y) / (far_y - vp_y)"
+     },
+     "light_points": [
+      [
+       150,
+       28
+      ],
+      [
+       320,
+       28
+      ],
+      [
+       490,
+       28
+      ],
+      [
+       790,
+       28
+      ],
+      [
+       960,
+       28
+      ],
+      [
+       1130,
+       28
+      ],
+      [
+       430,
+       52
+      ],
+      [
+       850,
+       52
+      ]
+     ],
+     "led_screen": [
+      480,
+      80,
+      320,
+      38
+     ],
+     "circle_centre": [
+      640,
+      372
+     ],
+     "circle_radii": [
+      250,
+      46
+     ],
+     "horizon_y": 150,
+     "vanish": [
+      640,
+      150
+     ],
+     "disco_ball": [
+      640,
+      0
+     ],
+     "wall_left_x": 440,
+     "wall_right_x": 840,
+     "window": [
+      840,
+      -40,
+      440,
+      370
+     ],
+     "planet": [
+      1130,
+      440,
+      345
+     ],
+     "bar": [
+      446,
+      132,
+      130,
+      118
+     ]
+    },
+    "pieces": [
+     {
+      "id": "gallery_planet_shine",
+      "file": "source/views/gallery_planet_shine.svg",
+      "pos": [
+       840,
+       0
+      ],
+      "size": [
+       440,
+       335
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       580,
+       880
+      ],
+      "anim": "pulse",
+      "z": "behind",
+      "blend": "add"
+     },
+     {
+      "id": "gallery_cruiser",
+      "file": "source/views/gallery_cruiser.svg",
+      "pos": [
+       892,
+       100
+      ],
+      "size": [
+       128,
+       50
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       136,
+       50
+      ],
+      "anim": "bob",
+      "z": "behind"
+     },
+     {
+      "id": "gallery_holo_menu",
+      "file": "source/views/gallery_holo_menu.svg",
+      "pos": [
+       454,
+       92
+      ],
+      "size": [
+       124,
+       62
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       124.0,
+       62.0
+      ],
+      "anim": "flicker",
+      "z": "behind",
+      "blend": "add"
+     }
+    ],
+    "palette_hint": "violet"
+   },
+   {
+    "id": "reactor",
+    "title": "Reactor ring chamber",
+    "layers": [
+     {
+      "id": "backdrop",
+      "file": "source/views/reactor_backdrop.svg",
+      "pos": [
+       0,
+       0
+      ],
+      "size": [
+       1280,
+       720
+      ],
+      "px_scale": 0.5
+     },
+     {
+      "id": "front_frame",
+      "file": "source/views/reactor_front.svg",
+      "pos": [
+       0,
+       0
+      ],
+      "size": [
+       1280,
+       480
+      ],
+      "px_scale": 0.5,
+      "z": "front"
+     }
+    ],
+    "anchors": {
+     "floor_rows": [
+      {
+       "y": 286,
+       "scale": 0.49
+      },
+      {
+       "y": 316,
+       "scale": 0.591
+      },
+      {
+       "y": 350,
+       "scale": 0.705
+      },
+      {
+       "y": 390,
+       "scale": 0.839
+      },
+      {
+       "y": 438,
+       "scale": 1.0
+      }
+     ],
+     "floor_polygon": [
+      [
+       460,
+       266
+      ],
+      [
+       820,
+       266
+      ],
+      [
+       1201,
+       520
+      ],
+      [
+       79,
+       520
+      ]
+     ],
+     "floor_grid": {
+      "vanishing_point": [
+       640,
+       140
+      ],
+      "far_y": 262,
+      "far_x": [
+       400,
+       460,
+       520,
+       580,
+       640,
+       700,
+       760,
+       820,
+       880
+      ],
+      "note": "x on the far wall base line; a floor line through far_x at screen row y is at x = vp_x + (far_x - vp_x) * (y - vp_y) / (far_y - vp_y)"
+     },
+     "light_points": [
+      [
+       130,
+       34
+      ],
+      [
+       290,
+       34
+      ],
+      [
+       450,
+       34
+      ],
+      [
+       830,
+       34
+      ],
+      [
+       990,
+       34
+      ],
+      [
+       1150,
+       34
+      ],
+      [
+       540,
+       56
+      ],
+      [
+       740,
+       56
+      ]
+     ],
+     "led_screen": [
+      492,
+      214,
+      296,
+      38
+     ],
+     "circle_centre": [
+      640,
+      372
+     ],
+     "circle_radii": [
+      250,
+      46
+     ],
+     "horizon_y": 140,
+     "vanish": [
+      640,
+      140
+     ],
+     "disco_ball": [
+      640,
+      0
+     ],
+     "wall_left_x": 371,
+     "wall_right_x": 909,
+     "core": [
+      640,
+      126,
+      74
+     ]
+    },
+    "pieces": [
+     {
+      "id": "reactor_core_glow",
+      "file": "source/views/reactor_core_glow.svg",
+      "pos": [
+       470,
+       -4
+      ],
+      "size": [
+       340,
+       260
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       340,
+       260
+      ],
+      "anim": "pulse",
+      "z": "behind",
+      "blend": "add"
+     },
+     {
+      "id": "reactor_core_ring",
+      "file": "source/views/reactor_core_ring.svg",
+      "pos": [
+       500,
+       -14
+      ],
+      "size": [
+       280,
+       280
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       280,
+       280
+      ],
+      "anim": "rotate",
+      "z": "behind",
+      "blend": "add"
+     },
+     {
+      "id": "reactor_pylon_arcs",
+      "file": "source/views/reactor_pylon_arcs.svg",
+      "pos": [
+       310,
+       30
+      ],
+      "size": [
+       660,
+       90
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       660,
+       90
+      ],
+      "anim": "flicker",
+      "z": "behind",
+      "blend": "add"
+     }
+    ],
+    "palette_hint": "green"
+   },
+   {
+    "id": "bridge",
+    "title": "Command bridge",
+    "layers": [
+     {
+      "id": "backdrop",
+      "file": "source/views/bridge_backdrop.svg",
+      "pos": [
+       0,
+       0
+      ],
+      "size": [
+       1280,
+       720
+      ],
+      "px_scale": 0.5
+     },
+     {
+      "id": "front_frame",
+      "file": "source/views/bridge_front.svg",
+      "pos": [
+       0,
+       0
+      ],
+      "size": [
+       1280,
+       480
+      ],
+      "px_scale": 0.5,
+      "z": "front"
+     }
+    ],
+    "anchors": {
+     "floor_rows": [
+      {
+       "y": 286,
+       "scale": 0.514
+      },
+      {
+       "y": 316,
+       "scale": 0.61
+      },
+      {
+       "y": 350,
+       "scale": 0.719
+      },
+      {
+       "y": 390,
+       "scale": 0.847
+      },
+      {
+       "y": 438,
+       "scale": 1.0
+      }
+     ],
+     "floor_polygon": [
+      [
+       408,
+       266
+      ],
+      [
+       872,
+       266
+      ],
+      [
+       1309,
+       520
+      ],
+      [
+       -29,
+       520
+      ]
+     ],
+     "floor_grid": {
+      "vanishing_point": [
+       640,
+       125
+      ],
+      "far_y": 262,
+      "far_x": [
+       330,
+       408,
+       485,
+       562,
+       640,
+       718,
+       795,
+       872,
+       950
+      ],
+      "note": "x on the far wall base line; a floor line through far_x at screen row y is at x = vp_x + (far_x - vp_x) * (y - vp_y) / (far_y - vp_y)"
+     },
+     "light_points": [
+      [
+       150,
+       30
+      ],
+      [
+       300,
+       30
+      ],
+      [
+       430,
+       30
+      ],
+      [
+       850,
+       30
+      ],
+      [
+       980,
+       30
+      ],
+      [
+       1130,
+       30
+      ],
+      [
+       220,
+       56
+      ],
+      [
+       1060,
+       56
+      ]
+     ],
+     "led_screen": [
+      470,
+      46,
+      340,
+      40
+     ],
+     "woofers": [
+      [
+       346,
+       236,
+       17
+      ],
+      [
+       934,
+       236,
+       17
+      ]
+     ],
+     "circle_centre": [
+      640,
+      372
+     ],
+     "circle_radii": [
+      250,
+      46
+     ],
+     "horizon_y": 125,
+     "vanish": [
+      640,
+      125
+     ],
+     "disco_ball": [
+      640,
+      0
+     ],
+     "riser": [
+      640,
+      262,
+      240
+     ],
+     "wall_left_x": 288,
+     "wall_right_x": 992,
+     "window": [
+      322,
+      34,
+      636,
+      172
+     ],
+     "chair": [
+      640,
+      236
+     ]
+    },
+    "pieces": [
+     {
+      "id": "bridge_warp_streaks",
+      "file": "source/views/bridge_warp_streaks.svg",
+      "pos": [
+       322,
+       34
+      ],
+      "size": [
+       636,
+       172
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       636.0,
+       172.0
+      ],
+      "anim": "pulse",
+      "z": "behind",
+      "blend": "add"
+     },
+     {
+      "id": "bridge_holo_globe",
+      "file": "source/views/bridge_holo_globe.svg",
+      "pos": [
+       376,
+       146
+      ],
+      "size": [
+       88,
+       94
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       88,
+       100
+      ],
+      "anim": "bob",
+      "z": "behind",
+      "blend": "add"
+     },
+     {
+      "id": "bridge_alert_beacons",
+      "file": "source/views/bridge_alert_beacons.svg",
+      "pos": [
+       240,
+       0
+      ],
+      "size": [
+       800,
+       130
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       800,
+       108
+      ],
+      "anim": "flicker",
+      "z": "behind",
+      "blend": "add"
+     }
+    ],
+    "palette_hint": "cool"
    }
   ],
   "pieces_note": "pos = top-left in design space, size in design px, pivot = anim origin in texture px; z behind = under the crowd, front = over it; glowing pieces use light colours on transparent and are meant to be drawn additively"
