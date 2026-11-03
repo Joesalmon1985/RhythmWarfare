@@ -1,16 +1,18 @@
-# Story Campaign art: Night One
+# Story Campaign art: Night One and the chapters
 
 All artwork of the Story Campaign's first level is **original**, drawn by code in this repository. No OpenRA sprites, no stock
 or downloaded assets, no external services. Regenerate everything with one command; it only touches
 `assets/story/night_one/` and never the music, Ableton sources or other game art.
 
 ```
-python3 tools/story/build_assets.py             # full rebuild (SVG, PNG, manifest)
+python3 tools/story/build_assets.py             # full rebuild: Night One, then every chapter (mothership)
+python3 tools/story/build_assets.py mothership  # only the mothership chapter (also: mothership chars|stage|interlude)
 python3 tools/story/build_assets.py chars       # only the six dancers (keeps the manifest's stage section)
 python3 tools/story/build_assets.py stage       # only the room, props, silhouettes and PNG effects
 python3 tools/story/check_assets.py             # validate the manifest against the art contract
 python3 tools/story/check_assets.py --determinism   # also rebuild twice and compare hashes
 tools/story/shoot_preview.sh stage /tmp/story_art   # real Godot screenshot of the composed set (needs a display)
+tools/story/shoot_preview.sh set /tmp/story_art mothership   # third argument = chapter folder under assets/story/
 ```
 
 Requirements: Python 3, Pillow and NumPy (only for the few PNG effects). Godot 4.5.1 imports the SVGs natively; run
@@ -96,6 +98,39 @@ dance floor; the mixing desk across the bottom (`desk_top`, authored 1280 x 260,
 - Light effects: `sprites.py`.
 - After a change run `build_assets.py`, then `shoot_preview.sh chars`, `heads`, `joints`, `stage`, `stage_low`, `sil` to look
   at it.
+
+## Chapter `mothership` (assets/story/mothership/)
+
+An alien ship's ring-shaped rave deck, drawn by `tools/story/art/alien_chars.py` (dancers) and `tools/story/art/mothership_stage.py`
+(set, sprites, pieces, interlude). It reuses Night One's helpers (`lib.py`, `chars.skeleton`, the PNG light sprites in `sprites.py`),
+the same camera and perspective, and the same manifest schema, so the runtime needs no code change for the stage. Night One's files
+are untouched (`check_assets.py --determinism` hashes both folders). Run `build_assets.py mothership`; the PNGs are small (glow, beam,
+spot_pool, haze, vignette, confetti shared in kind with Night One; plus the interlude PNGs).
+
+- `archetypes` (rig contract as above, same four faces, same part names): `grey` (big head, silver jumpsuit), `antenna` (tall, two
+  swinging antennae with glowing tips, `hair_front` swing), `blob` (round translucent jelly body, short limbs), `insect` (mantis, long
+  thin limbs, forearm blades, mandibles; its wing-cases are the `hair_back` part with `swing: true` on joint **`torso`**, pivot at the
+  neck), `cyclops` (one big eye, stocky, overalls), `tentacle` (head crest with five swinging tentacles `hair_back` plus two front locks
+  `hair_front`). Two variants each (`a`/`b`: skin, outfit palette and one detail, such as the grey's chest emblem or the blob's spots
+  versus stripes). Eyes carry the emotion (`cheer` is a squint with an open mouth, `sad` has drooping lids, brows and a sweat drop).
+  `glow_hand` is the hand position in the forearm texture for the shared `glowstick` sprite (an orb wand here).
+- `stage.layers`: `backdrop` (hex-plated floor, far wall with the viewing window onto space, a ringed planet and a moon, console ledge,
+  airlock, alien bar, hull ribs and portholes, ceiling and hanging pylons), `riser` (hover platform), `speaker_l`/`speaker_r` (resonator
+  columns, sockets for the woofers), `desk_top` (bio-tech console). `led_screen` is the dark frame hanging in front of the window
+  (460, 150, 360, 58), `doorway` the airlock. Extra anchors: `window`, `planet`, `bar`.
+- `stage.sprites`: the same ids as Night One, re-themed (`fixture` = light-probe orb, `disco_ball` = energy orb, `glowstick` = orb wand,
+  `confetti` = star sparks, `platter` = hologram disc); light sprites stay white so the runtime tints them.
+- `stage.pieces`: `planet_window_glow` (pulse, behind), `warp_streaks` (none, behind; drawn off the LED screen), `saucer_flyby` (bob,
+  behind), `ring_lights` (pulse, behind), `pylon_beams` (pulse, behind), `alien_banner` (sway, behind; pivot at its top edge), `bar_glow`
+  (flicker, behind), `hologram_dome` (pulse, front). Entry fields: `file`, `pos` (top-left, design px), `size`, `px_scale`, `pivot`
+  (animation origin, texture px), `anim`, `z` (`behind` = over the backdrop and under the crowd, `front` = over the crowd). The glowing
+  ones are light-on-transparent: draw them additively.
+- `interlude` (for the scripted UFO scene over the **Night One** club): `sprites` `ufo` (900 x 260 design px, seen from below, pivot at
+  the centre of its underside), `tractor_beam` (PNG, pivot top centre, 480 x 340 design px, stretch it to `beam_floor`), `ufo_glow`,
+  `sparkle`, `light_flood` (full screen); `anchors` `ufo_hover` [640, 92], `beam_floor` [640, 372].
+- Preview: `shoot_preview.sh <mode> <out> mothership` with `set` (bare room), `stage`, `chars`, `chars_b`, `heads`, `joints`, `pieces`
+  (sheet of every piece), `sil`, `deck`, `interlude`, `interlude_flood` (composited over the Night One stage). `RW_WARP=1` shows
+  `warp_streaks` in `stage`.
 
 ## Provenance and licence
 

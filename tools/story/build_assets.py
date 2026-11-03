@@ -16,7 +16,55 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from art import lib  # noqa: E402
 
 
+CHAPTERS = ("mothership",)  # `underworld` joins later; Night One is the default target
+
+
+def build_chapter(name: str, only: set) -> int:
+    """Chapter art (assets/story/<name>/): `python3 tools/story/build_assets.py mothership [chars|stage|interlude]`."""
+    lib.set_chapter(name)
+    if name == "mothership":
+        from art import alien_chars as ch, mothership_stage as st
+    else:
+        raise SystemExit(f"unknown chapter {name}")
+    path = os.path.join(lib.ASSET_DIR, "manifest.json")
+    if not only:
+        for d in (lib.SVG_DIR, lib.PNG_DIR):
+            for dirpath, _dirs, files in os.walk(d):
+                for fn in files:
+                    if not fn.endswith(".import"):
+                        os.remove(os.path.join(dirpath, fn))
+    os.makedirs(lib.SVG_DIR, exist_ok=True)
+    os.makedirs(lib.PNG_DIR, exist_ok=True)
+    manifest: dict = {"version": 1, "level": name, "px_scale_note": "texture px x px_scale = design px"}
+    if not only or "chars" in only:
+        manifest["archetypes"] = ch.build_all()
+    if not only or "stage" in only:
+        manifest["silhouettes"] = st.build_silhouettes()
+        manifest["stage"] = st.build_stage()
+    if not only or "interlude" in only:
+        manifest["interlude"] = st.build_interlude()
+    if only and os.path.exists(path):
+        with open(path, encoding="utf-8") as fh:
+            old = json.load(fh)
+        old.update(manifest)
+        manifest = old
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        json.dump(manifest, fh, indent=1, sort_keys=False)
+        fh.write("\n")
+    for d in (lib.SVG_DIR, lib.PNG_DIR):
+        for dirpath, _dirs, files in os.walk(d):
+            for fn in files:
+                if fn.endswith(".import") and not os.path.exists(os.path.join(dirpath, fn[:-7])):
+                    os.remove(os.path.join(dirpath, fn))
+    n_svg = sum(1 for _, _, fs in os.walk(lib.SVG_DIR) for x in fs if x.endswith(".svg"))
+    n_png = sum(1 for _, _, fs in os.walk(lib.PNG_DIR) for x in fs if x.endswith(".png"))
+    print(f"{name} art: {n_svg} SVG, {n_png} PNG, manifest {os.path.relpath(path, lib.ROOT)}")
+    return 0
+
+
 def main(argv) -> int:
+    if len(argv) > 1 and argv[1] in CHAPTERS:
+        return build_chapter(argv[1], set(argv[2:]))
     only = set(argv[1:])
     if not only:  # a full rebuild starts clean so removed assets do not linger (Godot's .import files are kept for now)
         for d in (lib.SVG_DIR, lib.PNG_DIR):
@@ -51,6 +99,9 @@ def main(argv) -> int:
     n_svg = sum(1 for _, _, fs in os.walk(lib.SVG_DIR) for x in fs if x.endswith(".svg"))
     n_png = sum(1 for _, _, fs in os.walk(lib.PNG_DIR) for x in fs if x.endswith(".png"))
     print(f"Night One art: {n_svg} SVG, {n_png} PNG, manifest {os.path.relpath(path, lib.ROOT)}")
+    if not only:  # a full rebuild also regenerates the chapter art (Night One first: it uses the default lib paths)
+        for ch in CHAPTERS:
+            build_chapter(ch, set())
     return 0
 
 
