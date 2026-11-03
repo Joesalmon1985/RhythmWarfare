@@ -3295,6 +3295,26 @@
       "anim": "flicker",
       "z": "behind",
       "blend": "add"
+     },
+     {
+      "id": "reactor_steam",
+      "file": "source/views/reactor_steam.svg",
+      "pos": [
+       150,
+       150
+      ],
+      "size": [
+       980,
+       260
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       980,
+       300
+      ],
+      "anim": "flicker",
+      "z": "behind",
+      "blend": "add"
      }
     ],
     "palette_hint": "green"

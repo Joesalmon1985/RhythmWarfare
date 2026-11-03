@@ -133,12 +133,13 @@ def build_reactor_backdrop() -> dict:
         for u in range(-480, 1760, 72):
             qq = R.plane(R.b0, kb - (kb - ka) * 0.0, ka, u + 9, u + 63)
             qq = [R.p(kb + (ka - kb) * 0.08, u + 9, R.b0), R.p(kb + (ka - kb) * 0.08, u + 63, R.b0), R.p(ka - (ka - kb) * 0.08, u + 63, R.b0), R.p(ka - (ka - kb) * 0.08, u + 9, R.b0)]
-            # nearer to the core centre = brighter, near the edges = dark teal
+            # the pit glows through the grating: bright under the middle of the deck, dark teal toward the walls; a few amber
+            # service lamps
             cxm = qq[0][0] * .5 + qq[1][0] * .5
-            near = max(0.0, 1.0 - abs(cxm - 640) / 560.0)
-            h_ = (u * 7 + j * 13) % 11
-            col = mix("#0a5a64", GREEN, near) if h_ > 1 else AMB
-            fl += poly(qq, col, None, op=round(0.32 + 0.55 * near * (1.0 - j / 22.0), 2) if h_ > 1 else 0.55)
+            near = max(0.0, 1.0 - abs(cxm - 640) / 600.0) ** 1.6
+            lamp_ = False
+            col = AMB if lamp_ else mix("#0b4450", "#5affb4", near)
+            fl += poly(qq, col, None, op=0.7 if lamp_ else round(0.22 + 0.5 * near * (1.0 - j / 26.0), 2))
     # bars of the grating (dark) and the main beams
     for u in range(-480, 1760, 72):
         pa, pb = R.p(2.4, u, R.b0), R.p(kf, u, R.b0)
@@ -147,6 +148,25 @@ def build_reactor_backdrop() -> dict:
         fl += line(R.p(2.4, u, R.b0), R.p(kf, u, R.b0), "#5aa8c8", 2.2, 0.55) + line(R.p(2.4, u, R.b0), R.p(kf, u, R.b0), "#02101a", 4, 0.35)
     for dd in ds[::3]:
         fl += line(R.p(1.0 / dd, -1280, R.b0), R.p(1.0 / dd, 2560, R.b0), "#5aa8c8", max(0.8, 2.2 / dd), 0.5)
+    # a solid walkway of riveted plate from the camera to the core, with edge lights and chevrons pointing at the core
+    defs += lin_grad("walk", [(0, "#1c5a6e"), (0.4, "#0d3242"), (1, "#061c28")], 0, 0, 0, 1)
+    fl += poly(R.plane(R.b0, 2.4, kf, 548, 732), "url(#walk)", None, op=0.92)
+    for dd in ds[1:14]:
+        k = 1.0 / dd
+        fl += line(R.p(k, 548, R.b0), R.p(k, 732, R.b0), "#02101a", max(1.0, 2.4 * k), 0.6)
+        for u in (566, 714):
+            p_ = R.p(k, u, R.b0)
+            fl += circle(p_[0], p_[1], max(0.8, 2.2 * k), "#8ad8f0", None, op=0.6)
+    for j in range(2, 13, 2):  # chevrons: depth d grows away from the camera, the tip points at the core
+        d0 = ds[j]
+        pq = lambda dd_, u: R.p(1.0 / dd_, u, R.b0)
+        fl += poly([pq(d0, 592), pq(d0 + 0.2, 640), pq(d0, 688), pq(d0 + 0.08, 688), pq(d0 + 0.28, 640), pq(d0 + 0.08, 592)],
+                   "#7affc0", None, op=round(0.55 - 0.03 * j, 2))
+    for u, col in ((548, GREEN), (732, GREEN)):
+        fl += line(R.p(2.4, u, R.b0), R.p(kf, u, R.b0), col, 5, 0.18) + line(R.p(2.4, u, R.b0), R.p(kf, u, R.b0), "#d8ffe8", 1.6, 0.85)
+    # the core's reflection on the polished walkway
+    defs += lin_grad("refl", [(0, "#e8fff0", 0.42), (0.35, GREEN, 0.16), (1, GREEN, 0.0)], 0, 0, 0, 1)
+    fl += poly([R.p(kf, 600, R.b0), R.p(kf, 680, R.b0), R.p(1.5, 760, R.b0), R.p(1.5, 520, R.b0)], "url(#refl)")
     d += group(fl, 'clip-path="url(#floorclip)"')
     # the dance circle: an inlaid hazard ring with a bright inner ring
     cx_c, cy_c, rx_c, ry_c = 640, 372, 250, 46
@@ -163,23 +183,61 @@ def build_reactor_backdrop() -> dict:
         w_ = 24 * k
         d += path(dd_, None, OUT, w_ + 6) + path(dd_, None, "#1c6a8c", w_) + path(dd_, None, "#8ad8f0", w_ * .22, sop=0.55)
     # energy pylons (boxes with a glowing core slit, rings and a coil on top)
+    defs += lin_grad("pyf", [(0, "#1d6f90"), (0.18, "#12506e"), (0.7, "#0b3a54"), (1, "#05202f")], 0, 0, 1, 0)
+    defs += lin_grad("pys", [(0, "#0c4260"), (1, "#03141e")], 0, 0, 1, 0)
+    defs += lin_grad("pyt", [(0, "#0a6a54"), (0.3, "#5affb4"), (0.5, "#eafff4"), (0.7, "#5affb4"), (1, "#0a6a54")], 0, 0, 1, 0)
+    defs += lin_grad("pyg", [(0, GREEN, 0.0), (0.5, GREEN, 0.26), (1, GREEN, 0.0)], 0, 0, 1, 0)
     for (k0, k1, u0, u1) in PYLONS[::-1]:
         for side in (-1, 1):
             a, b = (u0, u1) if side < 0 else (1280 - u1, 1280 - u0)
             o, fc = R.box(a, b, k0, k1, R.t0 + 20, R.b0, "#2a86a8", "#0e4462", "#06283a", 2.4)
             d += o
+            if "side" in fc:  # the inner side: shaded plating and a green spill from the tube
+                d += poly(fc["side"], "url(#pys)", OUT, 2.4) + poly(fc["side"], GREEN, None, op=0.1)
+                us = b if side < 0 else a
+                v0_, v1_ = R.t0 + 20, R.b0
+                for t in (0.2, 0.42, 0.64, 0.84):  # the clamp bands wrap round the side
+                    vv = v0_ + (v1_ - v0_) * t
+                    d += poly(R.wall(us, k0, k1, vv, vv + 9), "#0c3a52", OUT, 1.4) + line(R.p(k0, us, vv + 2), R.p(k1, us, vv + 2), "#8ad8f0", 0.9, 0.45)
+                for t in (0.3, 0.55, 0.78):  # recessed side panels with a vent grille
+                    vv = v0_ + (v1_ - v0_) * t
+                    km = k0 + (k1 - k0) * 0.25
+                    kn = k0 + (k1 - k0) * 0.75
+                    d += poly(R.wall(us, km, kn, vv - 30, vv - 6), "#04161f", None, op=0.75)
+                    for g in range(4):
+                        d += line(R.p(km + (kn - km) * 0.1, us, vv - 26 + g * 5.5), R.p(kn - (kn - km) * 0.1, us, vv - 26 + g * 5.5), GREEN, 1.0, 0.4)
+                d += poly(R.wall(us, k0, k1, v1_ - 30, v1_ - 18), AMB, None, op=0.35)
             fq = fc["front"]
+            d += poly(fq, "url(#pyf)", OUT, 2.4)
             x0_, x1_ = fq[0][0], fq[1][0]
             w_ = x1_ - x0_
-            ytop, ybot = fq[0][1], fq[3][1]
-            d += rect(x0_ + w_ * 0.36, max(ytop, -10) + 14, w_ * 0.28, ybot - max(ytop, -10) - 40, GREEN, OUT, 1.6, rx=w_ * 0.14, op=0.95)
-            d += rect(x0_ + w_ * 0.44, max(ytop, -10) + 16, w_ * 0.12, ybot - max(ytop, -10) - 44, "#e8fff0", None, rx=w_ * 0.06, op=0.9)
-            for t in (0.2, 0.42, 0.64, 0.84):
+            ytop, ybot = max(fq[0][1], -10), fq[3][1]
+            # vertical panel seams and rivets
+            for s_ in (0.16, 0.84):
+                d += line((x0_ + w_ * s_, ytop), (x0_ + w_ * s_, ybot - 12 * k0), "#03141e", 1.4, 0.7)
+            for t in (0.1, 0.5, 0.9):
+                for s_ in (0.08, 0.92):
+                    d += circle(x0_ + w_ * s_, ytop + (ybot - ytop) * t, max(1.0, 1.6 * k0), "#8ad8f0", None, op=0.7)
+            # the glass coolant tube: a dark slot, a glowing core with bubbles and a highlight, and a soft halo
+            tx0, tw = x0_ + w_ * 0.3, w_ * 0.4
+            ty0, ty1 = ytop + 14, ybot - 44 * k0
+            d += rect(tx0 - w_ * 0.18, ty0, tw + w_ * 0.36, ty1 - ty0, "url(#pyg)", None, rx=w_ * 0.2)
+            d += rect(tx0 - 2, ty0 - 2, tw + 4, ty1 - ty0 + 4, "#02101a", OUT, 1.8, rx=tw * 0.5)
+            d += rect(tx0 + 1, ty0 + 2, tw - 2, ty1 - ty0 - 4, "url(#pyt)", None, rx=tw * 0.45, op=0.95)
+            for _ in range(int(8 * k0) + 3):
+                d += circle(tx0 + tw * rng.uniform(0.25, 0.75), rng.uniform(ty0 + 10, ty1 - 10), tw * rng.uniform(0.06, 0.12), "#ffffff", None, op=0.65)
+            d += line((tx0 + tw * 0.22, ty0 + 8), (tx0 + tw * 0.22, ty1 - 8), "#ffffff", max(1.0, tw * 0.08), 0.55)
+            for t in (0.2, 0.42, 0.64, 0.84):  # clamp bands
                 yy = ytop + (ybot - ytop) * t
-                d += rect(x0_ - 1, yy, w_ + 2, 8 * k0 + 3, "#10506e", OUT, 1.8) + line((x0_, yy + 2), (x1_, yy + 2), "#8ad8f0", 1.0, 0.6)
-            d += rect(x0_ - w_ * 0.08, ybot - 10 * k0 - 4, w_ * 1.16, 10 * k0 + 4, "#06283a", OUT, 2) + rect(x0_ - w_ * 0.04, ybot - 7 * k0, w_ * 1.08, 2.4, AMB, None, op=0.9)
-            if "side" in fc:  # glow on the inner side
-                d += poly(fc["side"], GREEN, None, op=0.18)
+                bh = 8 * k0 + 3
+                d += rect(x0_ - 1, yy, w_ + 2, bh, "#10506e", OUT, 1.8) + line((x0_, yy + 2), (x1_, yy + 2), "#8ad8f0", 1.0, 0.6)
+                d += rect(x0_ + w_ * 0.42, yy + bh * 0.3, w_ * 0.16, bh * 0.4, GREEN if t < 0.5 else AMB, None, op=0.9, rx=1)
+            # base: a heavy plinth with hazard stripes and vent slits
+            bh = 22 * k0 + 6
+            d += rect(x0_ - w_ * 0.08, ybot - bh, w_ * 1.16, bh, "#06283a", OUT, 2)
+            d += hazard(((x0_ - w_ * 0.08, ybot - bh), (x0_ + w_ * 1.08, ybot - bh)), ((x0_ - w_ * 0.08, ybot - bh * 0.55), (x0_ + w_ * 1.08, ybot - bh * 0.55)), 10, AMB, "#0a1020", 0.85)
+            for s_ in range(4):
+                d += rect(x0_ + w_ * (0.14 + s_ * 0.2), ybot - bh * 0.4, w_ * 0.12, bh * 0.18, "#02101a", None, op=0.9, rx=1)
     # light rig: a ring gantry with hazard stripes
     d += rect(60, 0, 1160, 10, "#10506e", OUT, 2) + hazard(((60, 0), (1220, 0)), ((72, 10), (1232, 10)), 54, AMB, "#0a1020", 0.85)
     for xx in (140, 640, 1140):
@@ -244,6 +302,18 @@ def reactor_pieces() -> list:
         dd_ = "M" + " L".join(f"{f(x)} {f(y)}" for x, y in pts)
         d += path(dd_, None, GREEN, 7, sop=0.12) + path(dd_, None, "#d8ffe8", 1.8, sop=0.9)
     out.append(piece("reactor_pylon_arcs", "views/reactor_pylon_arcs.svg", (310, 30, 970, 120), "flicker", "behind", (640, 75), "add", d))
+    # coolant vents venting glowing steam beside the near pylon plinths (additive, flickers)
+    rng = random.Random(915)
+    defs = rad_grad("st", [(0, "#e8fff4", 0.34), (0.6, GREEN, 0.12), (1, GREEN, 0.0)])
+    d = ""
+    for (vx, vy) in ((236, 392), (1044, 392), (330, 300), (950, 300)):
+        sc = 1.0 if vy > 350 else 0.62
+        for i in range(7):
+            t = i / 6
+            d += ellipse(vx + rng.uniform(-8, 8) * sc + (t * 18 * sc if vx < 640 else -t * 18 * sc), vy - t * 170 * sc,
+                         (22 + 46 * t) * sc, (16 + 26 * t) * sc, "url(#st)")
+        d += ellipse(vx, vy + 2, 24 * sc, 5 * sc, "#bfffe0", None, op=0.5)
+    out.append(piece("reactor_steam", "views/reactor_steam.svg", (150, 150, 1130, 410), "flicker", "behind", (640, 300), "add", d, defs))
     return out
 
 
@@ -255,6 +325,7 @@ def reactor_view() -> dict:
         "floor_rows": floor_rows(140), "floor_polygon": poly_, "floor_grid": grid, "light_points": R_LIGHTS,
         "led_screen": list(R_LED), "circle_centre": [640, 372], "circle_radii": [250, 46], "horizon_y": 140, "vanish": [640, 140],
         "disco_ball": [640, 0], "wall_left_x": 371, "wall_right_x": 909, "core": list(R_CORE),
+        "doorway": [388, 150, 62, 112],  # the left blast door: late arrivals walk in from here
     }
     return {"id": "reactor", "title": "Reactor ring chamber",
             "layers": [{"id": "backdrop", "file": "source/views/reactor_backdrop.svg", "pos": [0, 0], "size": [W, H], "px_scale": 0.5},
