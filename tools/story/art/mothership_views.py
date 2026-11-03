@@ -193,12 +193,15 @@ def build_gallery_backdrop() -> dict:
     for k in range(-5, 6):
         yy = pcy - pr * 0.8 + k * pr * 0.12 + 40
         bands += path(f"M{pcx - pr} {f(yy)} Q{pcx - pr * .2} {f(yy - 18)} {pcx + pr} {f(yy + 28)}", None, ["#ffffff", "#c8a0ff", "#ffb0d8", "#7ad8ff"][k % 4], 9, sop=0.14)
-    for _ in range(9):  # storm swirls and city lights on the night side
+    for _ in range(9):  # storm swirls
         bands += ellipse(rng.uniform(pcx - pr * .8, pcx + pr * .6), rng.uniform(pcy - pr * .8, pcy - pr * .2), rng.uniform(20, 46), rng.uniform(5, 10), "#ffffff", None, op=0.12)
-    for _ in range(40):
-        bands += circle(rng.uniform(pcx - pr * .2, pcx + pr * .8), rng.uniform(pcy - pr * .7, pcy - pr * .1), 1.2, "#ffd890", None, op=0.8)
+    defs += rad_grad("night", [(0, "#0a0626", 0.8), (0.86, "#0a0626", 0.74), (1, "#0a0626", 0.0)])
+    bands += circle(pcx + pr * 0.17, pcy + pr * 0.06, pr * 1.02, "url(#night)")  # the night side: a lit crescent on the sun's side
+    for _ in range(70):  # city lights on the night side
+        x, y = rng.uniform(pcx - pr * .55, pcx + pr * .5), rng.uniform(pcy - pr * .75, pcy - pr * .25)
+        if math.hypot(x - pcx - pr * 0.17, y - pcy - pr * 0.06) < pr * 0.86:
+            bands += circle(x, y, rng.choice((0.9, 1.2, 1.6)), rng.choice(("#ffd890", "#ffb0e0", "#a8f0ff")), None, op=0.85)
     pl += group(bands, 'clip-path="url(#pclip)"')
-    pl += group(circle(pcx + pr * 0.5, pcy + pr * 0.5, pr * 1.1, "#05041c", None, op=0.5), 'clip-path="url(#pclip)"')
     sky += pl + circle(pcx, pcy, pr, None, "#aef4ff", 2.0, sop=0.5)
     sky += circle(900, 118, 15, "#e8efff", None, op=0.95) + circle(905, 114, 14, "#4a5ab0", None, op=0.35)  # a small moon
     # the sun's glare at the planet's limb
@@ -280,6 +283,12 @@ def build_gallery_backdrop() -> dict:
     fl += poly([(840, 250), (1280, 470), (1280, 720), (520, 720), (700, 250)], "url(#spill)")
     defs += lin_grad("spillL", [(0, AMB, 0.22), (1, AMB, 0.0)], 0, 0, 1, 0)
     fl += poly([(440, 250), (0, 470), (0, 720), (400, 720), (600, 250)], "url(#spillL)")
+    # the amber arch reflected in the polished floor, and the window's mullions as dark bars in the pink spill
+    defs += lin_grad("archrefl", [(0, "#ffd9a0", 0.45), (0.4, AMB, 0.16), (1, AMB, 0.0)], 0, 0, 0, 1)
+    fl += poly([(596, 251), (684, 251), (740, 470), (540, 470)], "url(#archrefl)")
+    for i, k in enumerate(ribs[1:], 1):
+        pa, pb = R.p(k, 1280, R.b0), R.p(k * 0.93, 1280 - 300 * k, R.b0)
+        fl += line(pa, (pa[0] - 260 * k, pa[1] + 2), "#1a0a40", 14 * k + 2, 0.25)
     d += group(fl, 'clip-path="url(#floorclip)"')
     # the dance circle: a lounge carpet ring
     cx_c, cy_c, rx_c, ry_c = 640, 372, 250, 46
@@ -314,6 +323,19 @@ def build_gallery_backdrop() -> dict:
         o, fc = R.box(24, 52, k0, k1, 330, 470, mix(back, "#ffffff", .15), back, darken(back, .4))
         o2, fc2 = R.box(52, 176, k0, k1, 408, 470, lighten(cush, .25), cush, darken(cush, .35))
         d += o + o2
+        for t in (1 / 3, 2 / 3):  # three seat cushions, tufted backrest buttons and two pillows per sofa
+            kk = k0 + (k1 - k0) * t
+            d += line(R.p(kk, 52, 408), R.p(kk, 176, 408), darken(cush, 0.45), max(1.0, 2.2 * kk), 0.8)
+            d += line(R.p(kk, 52, 340), R.p(kk, 52, 404), darken(back, 0.4), max(1.0, 1.8 * kk), 0.7)
+        for t in (0.17, 0.5, 0.83):
+            kk = k0 + (k1 - k0) * t
+            for vv in (356, 384):
+                bp = R.p(kk, 52, vv)
+                d += circle(bp[0], bp[1], max(0.8, 1.8 * kk), lighten(back, 0.35), None, op=0.8)
+        for t, pc in ((0.2, AMB), (0.62, "#ff6fd0")):
+            ka, kb = k0 + (k1 - k0) * t, k0 + (k1 - k0) * (t + 0.22)
+            q = [R.p(ka, 54, 372), R.p(kb, 54, 376), R.p(kb, 58, 408), R.p(ka, 58, 408)]
+            d += poly(q, pc, OUT, max(1.2, 2.0 * ka), op=0.95) + line(q[0], q[1], "#ffffff", max(0.8, 1.6 * ka), 0.5)
         d += line(fc2["front"][0], fc2["front"][1], "#ffd0f0", 1.4, 0.6)
         q = fc2["front"]
         d += line((q[3][0], q[3][1] + 3 * k0), (q[2][0], q[2][1] + 3 * k0), AMB, 2.0, 0.9)  # under-glow
@@ -327,6 +349,10 @@ def build_gallery_backdrop() -> dict:
         k0, k1 = ribs[i] - (ribs[i] - ribs[i + 1]) * 0.06, ribs[i + 1] + (ribs[i] - ribs[i + 1]) * 0.18
         o, fc = R.box(1110, 1280, k0, k1, 418, 470, lighten("#7a3ad8", .2), "#5a2cb8", "#2a1470")
         d += o + line(fc["front"][3], fc["front"][2], CYAN, 1.8 * k0 + 0.5, 0.9)
+        for t in (0.5,):
+            kk = k0 + (k1 - k0) * t
+            d += line(R.p(kk, 1110, 418), R.p(kk, 1280, 418), "#2a1470", max(1.0, 2.2 * kk), 0.8)
+        d += line(R.p(k0, 1112, 419), R.p(k1, 1112, 419), "#d8c0ff", max(0.8, 1.6 * k0), 0.6)  # piping catching the window light
     # light rig and mount plates
     d += poly([(60, 0), (1220, 0), (1220, 8), (60, 8)], "#2a1c78", OUT, 2)
     for xx in (140, 640, 1140):
