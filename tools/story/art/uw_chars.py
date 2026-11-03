@@ -365,7 +365,8 @@ def arm_parts(arch, P, V, J, side):
         m = (s[0] + dx * 0.5, s[1] + dy * 0.5)
         body += circle(s[0], s[1], aw / 2 + 1.5, lighten(V["sleeve"], 0.12), OUT, 2.0)  # padded jacket shoulder
         body += line((s[0] - nx * side * aw * 0.32, s[1] - ny * side * aw * 0.32), (m[0] - nx * side * aw * 0.32, m[1] - ny * side * aw * 0.32), V["accent"], 1.4, 0.6)  # pinstripe
-    elif arch == "flame":  # a little flame licking off the shoulder
+    elif arch == "flame":  # a hot core down the limb and a little flame licking off the shoulder
+        body += line(s, e, V["skin2"], aw * 0.34, 0.6) + line(s, e, "#ffffff", aw * 0.12, 0.35)
         body += flame_layer(s[0] + side * 3, s[1] - 2, s[0] + side * 12, s[1] - 24, 6, side * 5, (V["fl1"], V["fl2"], V["fl3"]), 2.0)
         box_up = bb([s, e, (s[0] + side * 14, s[1] - 28)], aw / 2 + 8)
     elif arch == "horned_queen":
@@ -399,6 +400,12 @@ def arm_parts(arch, P, V, J, side):
             body += line((m[0] - nx * (aw / 2 + 2), m[1] - ny * (aw / 2 + 2)), (m[0] + nx * (aw / 2 + 2), m[1] + ny * (aw / 2 + 2)), V["cloth"], 8, cap="butt")
             body += circle(m[0], m[1], 2.0, V["accent"])
             hr = aw * 0.58
+        if arch == "flame":  # glowing core, and flames curling off the back of the forearm
+            body += line(e, w, V["skin2"], aw * 0.34, 0.6) + line(e, w, "#ffffff", aw * 0.12, 0.35)
+            for t_, ln_ in ((0.28, 24), (0.6, 17)):
+                bx_, by_ = e[0] + dx * t_ + nx * side * aw * 0.45, e[1] + dy * t_ + ny * side * aw * 0.45
+                body += flame_layer(bx_, by_, bx_ + nx * side * ln_ - ux * ln_ * 0.5, by_ + ny * side * ln_ - uy * ln_ * 0.5, 6.5, 0,
+                                    (V["fl1"], V["fl2"], V["fl3"]), 1.6)
         if arch == "fiend":
             cuff = (w[0] - ux * 3, w[1] - uy * 3)
             body += line((cuff[0] - nx * (aw / 2 + 2), cuff[1] - ny * (aw / 2 + 2)), (cuff[0] + nx * (aw / 2 + 2), cuff[1] + ny * (aw / 2 + 2)), OUT, 7.5, cap="butt")
@@ -528,6 +535,7 @@ def leg_part(arch, P, V, J, side):
         gid = "lg"
         defs_note = ""
         body += capsule(h, (ax, ay), lw, skin, darken(skin, 0.22), lighten(V["skin2"], 0.1))
+        body += line((h[0], h[1] + 6), (ax, ay - 6), V["skin2"], lw * 0.3, 0.55)
         body += line((ax, ay - 4), (ax, ay + 4), V["skin2"], lw * 0.5, 0.8)
         # feet are small flames
         body += flame_layer(ax, -2, ax + side * 2, -22, 9.5, side * 3, (V["fl1"], V["fl2"], V["fl3"]), 2.4)

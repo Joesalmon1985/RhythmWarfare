@@ -341,6 +341,23 @@ def build_backdrop():
         d += line((ccx + math.cos(a) * crx * 1.0, ccy + math.sin(a) * cry * 1.0), (ccx + math.cos(a) * crx * 1.06, ccy + math.sin(a) * cry * 1.06), EMBER, 1.6, 0.6)
     defs += lin_grad("sheen", [(0, "#ff4a1c", 0.28), (1, "#ff4a1c", 0.0)], 0, 0, 0, 1)
     d += poly([(FX0, FY1), (FX1, FY1), (FX1 + 40, FY1 + 36), (FX0 - 40, FY1 + 36)], "url(#sheen)")
+    # ---- lava gutters along the foot of both side walls, fed by the lava falls; their light rakes across the floor
+    defs += lin_grad("gut", [(0, "#ffe08a"), (0.15, "#ff8a2a"), (0.6, "#e0361a"), (1, "#8a1010")], 0, 0, 0, 1)
+    defs += lin_grad("gutglowL", [(0, "#ff6a1a", 0.34), (1, "#ff6a1a", 0.0)], 0, 0, 1, 0)
+    defs += lin_grad("gutglowR", [(0, "#ff6a1a", 0.0), (1, "#ff6a1a", 0.34)], 0, 0, 1, 0)
+    for side in (-1, 1):
+        xa, xb = (FX0, FX0 + 22) if side < 0 else (FX1 - 22, FX1)
+        xg = FX0 + 90 if side < 0 else FX1 - 90
+        strip = lambda a, b, y0=FY1, y1=H + 40: [(floor_x(a, y0), y0), (floor_x(b, y0), y0), (floor_x(b, y1), y1), (floor_x(a, y1), y1)]  # noqa: E731
+        d += poly(strip(xb, xg) if side < 0 else strip(xg, xa), "url(#gutglow%s)" % ("L" if side < 0 else "R"))
+        d += poly(strip(xa, xb), OUT, OUT, 4) + poly(strip(xa, xb), "url(#gut)")
+        for i, y in enumerate(ys):
+            if FY1 + 4 < y < H:
+                sc = (y - VPY) / (FY1 - VPY)
+                d += line((floor_x(xa, y), y), (floor_x(xb, y), y), "#2a0a0a", 2.2 * sc ** 0.8, 0.35)  # crust ripples
+        lip = xb if side < 0 else xa
+        d += line((floor_x(lip, FY1), FY1), (floor_x(lip, H + 40), H + 40), "#5a2a32", 3.0, 0.9)
+        d += line((floor_x(lip, FY1), FY1), (floor_x(lip, H + 40), H + 40), "#ffb070", 1.2, 0.7)
     # ---- fire pit bowls (the flames are a stage piece)
     for px_ in (118, 1162):
         py_ = 334
@@ -766,6 +783,15 @@ def build_png_sprites():
     sp["vignette"] = {"file": _save_rgba("vignette.png", np.dstack([np.full((h, w), 24.0), np.full((h, w), 2.0), np.full((h, w), 10.0), a * 255])), "pivot": [w / 2, h / 2], "px_scale": 2.0}
     sp["confetti"] = {"file": embers_png("confetti.png", [(255, 120, 40), (255, 190, 70), (255, 70, 50), (190, 170, 170)]), "pivot": [16, 16], "px_scale": 1.0,
                       "frames": 4, "frame_size": [32, 32], "note": "ash-embers"}
+    # the floor spot pool, gentler than Night One's: it is drawn over the crowd, so a dimmer centre and a fainter far half keep
+    # the dancer standing in it lit instead of washed out, while the rim still reads as a pool of light on the floor
+    w, h = 400, 140
+    yy, xx = np.mgrid[0:h, 0:w]
+    r = np.hypot((xx - w / 2 + 0.5) / (w / 2), (yy - h / 2 + 0.5) / (h / 2))
+    a = np.clip(1 - r ** 2, 0, 1) ** 1.4 * 0.42 + np.exp(-((r - 0.86) / 0.08) ** 2) * 0.3 * (r < 1.0)
+    a = a * (0.45 + 0.55 * _smooth((yy + 0.5) / h * 1.4 - 0.2))
+    sp["spot_pool"] = {"file": _save_rgba("spot_pool.png", np.dstack([np.full((h, w), 255.0)] * 3 + [np.clip(a, 0, 1) * 255])),
+                       "pivot": [w / 2, h / 2], "px_scale": 1.0}
     return sp
 
 
