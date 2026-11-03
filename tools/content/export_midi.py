@@ -615,7 +615,7 @@ def manifest_text(i: dict) -> str:
     note_text = (f"Mission {n} ({title}) content: the MIDI exported to midi_export/{i['folder_name']}/ (the mission's default groove, bass line and backing "
                  f"as 8-bar loops, with rule-based alternatives B and C of every kick, snare and bass part), to be rendered in Ableton as WAVs named after the MIDI "
                  f"files. Run: python tools/content/import_ableton.py content/imports/{i['level_id']}.json --check, then without --check, then "
-                 f"python tools/content/build.py {i['level_id']}. The mission is rewired to these clips in a follow-up, as mission 1 was. Names are provisional. "
+                 f"python tools/content/build.py {i['level_id']}. The clips and sounds then join the library as loadout items: give each new sound a produces entry in data/campaign/instruments.json and list the new ids in data/campaign/campaign.json new_options of the mission that should unlock them. Names are provisional. "
                  f"Levels as in first_watch.json: drums and bass peak at -4 dBFS, bass RMS-matched to -17 dBFS where that peak allows, backing at -3 dBFS, then a global trim of -7 dB.")
     sounds = []
     for fam, label in (("kick", "Kick"), ("snare", "Snare"), ("bass", "Bass")):

@@ -105,7 +105,8 @@ whose family does not match the part.
    `name` fields are what the player reads.
 3. `python tools/content/import_ableton.py content/imports/<batch>.json --check`, read the report, then run it
    without `--check`.
-4. Say what each new sound produces in `data/campaign/instruments.json`, then `python tools/content/build.py`: the clips and
+4. Say what each new sound produces in `data/campaign/instruments.json`, list the new ids in `data/campaign/campaign.json`
+   `new_options` of the mission that should unlock them (an unlisted item stays locked), then `python tools/content/build.py`: the clips and
    sounds join `songs/library/index.json` with their loops, and the player's loadout can pick them (no mission file
    changes; the build refuses an unplayable chart or a missing instruments entry).
 5. `bash tools/test.sh`; `docs/CONTENT_TO_RENDER.md` is refreshed by the build.
