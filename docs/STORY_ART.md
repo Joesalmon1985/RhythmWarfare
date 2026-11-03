@@ -107,10 +107,10 @@ the same camera and perspective, and the same manifest schema, so the runtime ne
 are untouched (`check_assets.py --determinism` hashes both folders). Run `build_assets.py mothership`; the PNGs are small (glow, beam,
 spot_pool, haze, vignette, confetti shared in kind with Night One; plus the interlude PNGs).
 
-- `archetypes` (rig contract as above, same four faces, same part names): `grey` (big head, silver jumpsuit), `antenna` (tall, two
-  swinging antennae with glowing tips, `hair_front` swing), `blob` (round translucent jelly body, short limbs), `insect` (mantis, long
-  thin limbs, forearm blades, mandibles; its wing-cases are the `hair_back` part with `swing: true` on joint **`torso`**, pivot at the
-  neck), `cyclops` (one big eye, stocky, overalls), `tentacle` (head crest with five swinging tentacles `hair_back` plus two front locks
+- `archetypes` (rig contract as above, same four faces, same part names): `grey` (big cranium, huge slanted almond eyes, silver
+  jumpsuit with shoulder pads), `antenna` (tall, two swinging antennae with glowing tips, `hair_front` swing), `blob` (round translucent
+  jelly body, short limbs), `insect` (mantis, long thin limbs, forearm blades, mandibles, swinging feelers as `hair_front`; its wing-cases
+  are the `hair_back` part with `swing: true` on joint **`torso`**, pivot at the neck), `cyclops` (one big eye, stocky, overalls), `tentacle` (head crest with five swinging tentacles `hair_back` plus two front locks
   `hair_front`). Two variants each (`a`/`b`: skin, outfit palette and one detail, such as the grey's chest emblem or the blob's spots
   versus stripes). Eyes carry the emotion (`cheer` is a squint with an open mouth, `sad` has drooping lids, brows and a sweat drop).
   `glow_hand` is the hand position in the forearm texture for the shared `glowstick` sprite (an orb wand here).
@@ -121,8 +121,9 @@ spot_pool, haze, vignette, confetti shared in kind with Night One; plus the inte
 - `stage.sprites`: the same ids as Night One, re-themed (`fixture` = light-probe orb, `disco_ball` = energy orb, `glowstick` = orb wand,
   `confetti` = star sparks, `platter` = hologram disc); light sprites stay white so the runtime tints them.
 - `stage.pieces`: `planet_window_glow` (pulse, behind), `warp_streaks` (none, behind; drawn off the LED screen), `saucer_flyby` (bob,
-  behind), `ring_lights` (pulse, behind), `pylon_beams` (pulse, behind), `alien_banner` (sway, behind; pivot at its top edge), `bar_glow`
-  (flicker, behind), `hologram_dome` (pulse, front). Entry fields: `file`, `pos` (top-left, design px), `size`, `px_scale`, `pivot`
+  behind), `ring_lights` (pulse, behind), `pylon_beams` (pulse, behind), `alien_banner` (sway, behind; pivot at its top edge), `beam_home`
+  (pulse, front, `blend: add`: the goodbye tractor beam onto the dance circle, cued at bar 79 when the deck has gone quiet),
+  `hologram_dome` (pulse, front; a faint fill so it never washes out the dancers under it). Entry fields: `file`, `pos` (top-left, design px), `size`, `px_scale`, `pivot`
   (animation origin, texture px), `anim`, `z` (`behind` = over the backdrop and under the crowd, `front` = over the crowd). The glowing
   ones are light-on-transparent: draw them additively.
 - `interlude` (for the scripted UFO scene over the **Night One** club): `sprites` `ufo` (900 x 260 design px, seen from below, pivot at
@@ -143,15 +144,23 @@ Each view is `{id, title, layers, anchors, pieces, palette_hint}`. `layers`: `ba
 `front_frame` (1280 x 480, `z: "front"`: arches, pipes or console wedges at the screen edges, over the crowd). Anchors use the main deck's
 conventions (`floor_rows` with the scale derived from that room's horizon, `floor_polygon`, `floor_grid`, 8 `light_points`, `led_screen`,
 `circle_centre`/`circle_radii`, `vanish`, `horizon_y`, `disco_ball`, `wall_left_x`/`wall_right_x`); optional keys are only present where the room has
-the feature: `woofers` (bridge only, speaker pods at the ends of the far console bank), `riser` (bridge, the captain's dais). No view has a
-`doorway` (the shared `door_open` sprite is positioned for the dance deck's airlock). Extra descriptive anchors: `window`, `planet`, `bar`,
+the feature: `woofers` (bridge only, speaker pods at the ends of the far console bank), `riser` (bridge, the captain's dais), `doorway`
+(gallery: the amber arch, where the gatherers wait; reactor: the left blast door the late arrivals use; arrivals walk out of it). The shared
+`door_open` overlay is positioned for the dance deck's airlock, so `doors_open` is only cued while the camera is on the main deck. Extra descriptive anchors: `window`, `planet`, `bar`,
 `core`, `chair`. Pieces use the main schema plus `blend: "add"` for the light-on-transparent ones (`pos` top-left, `pivot` in texture px).
 
 | view | place | vanish | pieces (anim, z, blend) |
 | --- | --- | --- | --- |
-| `gallery` | long lounge gallery, curved window wall with the planet on the right, booths and sofas on the left, bar and amber arched door at the end | (640, 150), the door | `gallery_planet_shine` (pulse, behind, add), `gallery_cruiser` (bob, behind), `gallery_holo_menu` (flicker, behind, add) |
-| `reactor` | ring chamber: containment housing with the glowing core, energy pylons, catwalk grating floor over the reactor pit, hazard ring | (640, 140), the core | `reactor_core_glow` (pulse, add), `reactor_core_ring` (rotate, add), `reactor_pylon_arcs` (flicker, add); all behind |
-| `bridge` | command bridge: viewscreen with a star field and planet, banked consoles, captain's chair on a dais, star-chart ring | (640, 125), the viewscreen | `bridge_warp_streaks` (pulse, add), `bridge_holo_globe` (bob, add), `bridge_alert_beacons` (flicker, add); all behind |
+| `gallery` | long lounge gallery, curved window wall with the planet's night side (lit crescent, city lights) on the right, booths and tufted sofas with pillows on the left, bar and amber arched door at the end, reflected in the polished floor | (640, 150), the door | `gallery_planet_shine` (pulse, behind, add), `gallery_cruiser` (bob, behind), `gallery_holo_menu` (flicker, behind, add) |
+| `reactor` | ring chamber: containment housing with the glowing core, energy pylons (shaded plating, glass coolant tubes with bubbles, hazard plinths), catwalk grating over the glowing pit, a riveted walkway with chevrons and the core's reflection, hazard ring | (640, 140), the core | `reactor_core_glow` (pulse, add), `reactor_core_ring` (rotate, add), `reactor_pylon_arcs` (flicker, add), `reactor_steam` (flicker, add: venting coolant beside the plinths); all behind |
+| `bridge` | command bridge: viewscreen with a star field and planet, banked consoles, captain's chair on a dais, star-chart ring, a runway with chevrons and the viewscreen's reflection on the deck | (640, 125), the viewscreen | `bridge_warp_streaks` (pulse, add), `bridge_holo_globe` (bob, add), `bridge_alert_beacons` (flicker, add); all behind |
+
+Staging (`content/story/mothership.json`): the camera moves on the four bass entries of the music (bars 17 step into the gallery, 33 turn
+into the reactor, 49 walk onto the bridge, 65 turn back to the main deck), each room is lit with its own palette on arrival (gallery `warm` =
+amber/magenta, reactor and bridge `cool` = mint/blue-violet, main finale `rave`), and every `piece_on` / `piece_pulse` cue names a piece of
+the room the camera is in at that bar (a view's pieces are on while that room is shown; a `piece_on` on arrival fades one in with the
+room). Decisions play where their crowd is: the translator at bar 29 in the gallery (the gatherers waiting at the arch walk in or hang
+back), gravity-off and the warp jump on the bridge, the final transmission on the main deck.
 
 `passage_frame`: an octagonal bulkhead hatch frame (door slots, hazard stripes, sign plate, neon lining) authored 640 x 360 design px
 (a 1280 x 720 texture, `px_scale` 0.5, centre pivot), so a 2x scale covers the 1280 x 720 frame; the octagonal opening (`opening` = x, y, w, h in
