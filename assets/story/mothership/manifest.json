@@ -4,7 +4,7 @@
  "px_scale_note": "texture px x px_scale = design px",
  "archetypes": {
   "grey": {
-   "height": 250,
+   "height": 261,
    "joints": {
     "hips": [
      0,
@@ -140,8 +140,8 @@
        "z": 10,
        "file": "source/chars/grey_a/head.svg",
        "pivot": [
-        102,
-        146
+        110,
+        164
        ],
        "px_scale": 0.5
       }
@@ -150,32 +150,32 @@
       "neutral": {
        "file": "source/chars/grey_a/face_neutral.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       },
       "happy": {
        "file": "source/chars/grey_a/face_happy.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       },
       "cheer": {
        "file": "source/chars/grey_a/face_cheer.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       },
       "sad": {
        "file": "source/chars/grey_a/face_sad.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       }
@@ -290,8 +290,8 @@
        "z": 10,
        "file": "source/chars/grey_b/head.svg",
        "pivot": [
-        102,
-        146
+        110,
+        164
        ],
        "px_scale": 0.5
       }
@@ -300,32 +300,32 @@
       "neutral": {
        "file": "source/chars/grey_b/face_neutral.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       },
       "happy": {
        "file": "source/chars/grey_b/face_happy.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       },
       "cheer": {
        "file": "source/chars/grey_b/face_cheer.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       },
       "sad": {
        "file": "source/chars/grey_b/face_sad.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       }
@@ -1199,6 +1199,22 @@
         118
        ],
        "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/insect_a/hair_front.svg",
+       "pivot": [
+        100,
+        210
+       ],
+       "px_scale": 0.5,
+       "swing": true,
+       "swing_pivot": [
+        100,
+        125.0
+       ]
       }
      ],
      "faces": {
@@ -1365,6 +1381,22 @@
         118
        ],
        "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/insect_b/hair_front.svg",
+       "pivot": [
+        100,
+        210
+       ],
+       "px_scale": 0.5,
+       "swing": true,
+       "swing_pivot": [
+        100,
+        125.0
+       ]
       }
      ],
      "faces": {

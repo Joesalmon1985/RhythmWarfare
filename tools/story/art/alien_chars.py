@@ -14,7 +14,7 @@ from .lib import (OUT, bbox, capsule, circle, clip, darken, ellipse, f, group, l
 
 BASE = "chars/"
 ARCH = {
-    "grey": dict(hip_y=100, sh_y=-170, sh_dx=22, neck_y=-178, cy=-208, rx=29, ry=33, up=37, fore=38, aw=11, sw=23, ww=15, hw=19, lw=13,
+    "grey": dict(hip_y=100, sh_y=-170, sh_dx=22, neck_y=-178, cy=-213, rx=33, ry=37, up=37, fore=38, aw=11, sw=23, ww=15, hw=19, lw=13,
                  leg_dx=9, shoe_h=9, chin=0.34),
     "antenna": dict(hip_y=114, sh_y=-190, sh_dx=22, neck_y=-199, cy=-224, rx=22, ry=25, up=43, fore=46, aw=10, sw=22, ww=14, hw=17, lw=12,
                     leg_dx=9, shoe_h=10, chin=0.5),
@@ -220,21 +220,26 @@ def face_overlay(arch, P, V, expr):
     b = ""
     brow = "#1b1330"
     if arch == "grey":
-        ex, ey = rx * 0.43, cy + 4
-        w, h = 8.2, 5.2
-        tilt = {"neutral": 10, "happy": -4, "cheer": 0, "sad": 26}[expr]
+        ex, ey = rx * 0.42, cy + 5
+        w, h = 10.6, 6.8  # the classic huge black almond eyes, slanting outward
+        tilt = {"neutral": 14, "happy": 6, "cheer": 0, "sad": 28}[expr]
         for s in (-1, 1):
             if expr == "cheer":
-                b += path(f"M{f(s * ex - 7)} {f(ey + 2.2)} Q{f(s * ex)} {f(ey - 9)} {f(s * ex + 7)} {f(ey + 2.2)}", None, "#150a33", 3.4)
+                b += path(f"M{f(s * ex - 9)} {f(ey + 2.6)} Q{f(s * ex)} {f(ey - 11)} {f(s * ex + 9)} {f(ey + 2.6)}", None, "#150a33", 4.2)
+                b += path(f"M{f(s * ex - 6)} {f(ey - 1.5)} Q{f(s * ex)} {f(ey - 7.5)} {f(s * ex + 6)} {f(ey - 1.5)}", None, V["trim"], 1.4, sop=0.8)
             else:
                 b += almond(s * ex, ey + (1.5 if expr == "sad" else 0), w, h, s * tilt, "#0b0822")
-        if expr == "happy":
-            b += blush(-ex - 2, ey + 9, 4, V["trim"], 0.5) + blush(ex + 2, ey + 9, 4, V["trim"], 0.5)
+                b += ellipse(s * ex + s * 1.5, ey + 1.2, w * 0.55, h * 0.42, V["iris"], None, op=0.22)  # a faint coloured sheen
+            if expr == "happy":  # cheeks push the lower lids up into a smile
+                b += path(f"M{f(s * ex - w - 1)} {f(ey + h + 3)} Q{f(s * ex)} {f(ey + 0.5)} {f(s * ex + w + 1)} {f(ey + h + 3)} Z", skin, None)
+                b += path(f"M{f(s * ex - w + 1)} {f(ey + h * 0.6)} Q{f(s * ex)} {f(ey + 0.8)} {f(s * ex + w - 1)} {f(ey + h * 0.6)}", None, OUT, 1.6)
+        if expr in ("happy", "cheer"):
+            b += blush(-ex - 3, ey + 11, 4.6, V["trim"], 0.45) + blush(ex + 3, ey + 11, 4.6, V["trim"], 0.45)
         if expr == "sad":
             b += line((-ex - 6, ey - 8), (-ex + 5, ey - 11), brow, 1.8, 0.8) + line((ex - 5, ey - 11), (ex + 6, ey - 8), brow, 1.8, 0.8)
             b += sweat(P)
         b += circle(-2, cy + ry * 0.36, 0.9, darken(skin, 0.4)) + circle(2, cy + ry * 0.36, 0.9, darken(skin, 0.4))  # nose slits
-        b += mouth(expr, cy + ry * 0.66, 4.2 if expr != "cheer" else 4.6, skin)
+        b += mouth(expr, cy + ry * 0.66, 5.0 if expr != "cheer" else 5.6, skin)
     elif arch == "antenna":
         ex, ey, er = rx * 0.43, cy + 2, 5.4
         ery = er * 1.25
@@ -267,35 +272,47 @@ def face_overlay(arch, P, V, expr):
         b += blush(-ex - 5, ey + 8.5, 4.6, "#ff4f9a", 0.4) + blush(ex + 5, ey + 8.5, 4.6, "#ff4f9a", 0.4)
     elif arch == "insect":
         ex, ey = 9.5, cy - 1
+        tilt = {"neutral": 22, "happy": 16, "cheer": 10, "sad": 38}[expr]
         for s in (-1, 1):
-            tilt = {"neutral": 22, "happy": 12, "cheer": 8, "sad": 38}[expr]
             ang = s * tilt  # big compound eyes slanting outward-down
             c = (s * ex, ey)
-            pts_ = [rot(p, ang) for p in ((0, -11), (6.8, 0), (0, 11.5), (-6.8, 0))]
-            d = "M" + " ".join(f"{f(c[0] + p[0])},{f(c[1] + p[1])}" for p in pts_) + "Z"
-            # smooth the diamond into an oval with a path of quadratic curves
             q = [(c[0] + p[0], c[1] + p[1]) for p in [rot(p, ang) for p in ((0, -11), (8.5, -5), (7.6, 6), (0, 11.5), (-7.6, 6), (-8.5, -5))]]
             d = f"M{f(q[0][0])} {f(q[0][1])} Q{f(q[1][0])} {f(q[1][1])} {f(q[2][0])} {f(q[2][1])} Q{f(q[3][0])} {f(q[3][1])} {f(q[4][0])} {f(q[4][1])} Q{f(q[5][0])} {f(q[5][1])} {f(q[0][0])} {f(q[0][1])} Z"
+            if expr == "cheer":  # squeezed shut with joy: thick happy arcs, a bright facet line
+                b += path(f"M{f(s * ex - 7.5)} {f(ey + 3)} Q{f(s * ex)} {f(ey - 9)} {f(s * ex + 7.5)} {f(ey + 3)}", None, "#1b1342", 4.4)
+                b += path(f"M{f(s * ex - 5)} {f(ey - 1.5)} Q{f(s * ex)} {f(ey - 6.5)} {f(s * ex + 5)} {f(ey - 1.5)}", None, V["trim"], 1.5, sop=0.9)
+                continue
             b += path(d, "#1b1342", OUT, 2)
-            b += path(d, "#19d2ff", None, op=0.0)
             g1, g2, g3 = [(c[0] + p[0], c[1] + p[1]) for p in (rot((-2.2, -4.5), ang), rot((2.4, 1.5), ang), rot((-1.4, 5.0), ang))]
             b += ellipse(g1[0], g1[1], 2.2, 3.4, "#ffffff", None, op=0.9) + circle(g2[0], g2[1], 1.2, V["trim"], None, op=0.95) + circle(g3[0], g3[1], 0.9, "#ffffff", None, op=0.7)
-            if expr == "cheer":
-                b += path(d, V["skin"], OUT, 2, op=0.0)
-        if expr == "cheer":  # squinting: bright eyes + sparkle lids
-            for s in (-1, 1):
-                b += path(f"M{f(s * ex - 6)} {f(ey - 4)} Q{f(s * ex)} {f(ey - 10)} {f(s * ex + 6)} {f(ey - 4)}", None, V["trim"], 2.2, sop=0.9)
+            for k in (-3, 0, 3):  # compound facets
+                fa = rot((k, -2), ang)
+                b += circle(c[0] + fa[0], c[1] + fa[1] + 4, 0.8, V["trim"], None, op=0.5)
+            if expr == "happy":  # cheek plates push up under the eyes
+                b += path(f"M{f(s * ex - 10)} {f(ey + 12)} Q{f(s * ex)} {f(ey + 2)} {f(s * ex + 10)} {f(ey + 12)} Z", V["skin"], None)
+                b += path(f"M{f(s * ex - 7.5)} {f(ey + 7.5)} Q{f(s * ex)} {f(ey + 2.4)} {f(s * ex + 7.5)} {f(ey + 7.5)}", None, OUT, 1.6)
+            if expr == "sad":  # heavy lids drooping toward the outside
+                xi, xo = s * ex - s * 9.5, s * ex + s * 9.5
+                b += path(f"M{f(xi)} {f(ey - 14)} L{f(xo)} {f(ey - 14)} L{f(xo)} {f(ey + 1.5)} Q{f(s * ex)} {f(ey - 1.5)} {f(xi)} {f(ey - 5)} Z", V["skin"], None)
+                b += path(f"M{f(xo)} {f(ey + 1.5)} Q{f(s * ex)} {f(ey - 1.5)} {f(xi)} {f(ey - 5)}", None, OUT, 1.6)
         if expr == "sad":
-            b += line((-ex - 7, ey - 13), (-ex + 6, ey - 16), "#2a1b4e", 2) + line((ex - 6, ey - 16), (ex + 7, ey - 13), "#2a1b4e", 2)
+            b += line((-ex - 7, ey - 13), (-ex + 6, ey - 17), "#2a1b4e", 2.2) + line((ex - 6, ey - 17), (ex + 7, ey - 13), "#2a1b4e", 2.2)
             b += sweat(P)
+        if expr in ("happy", "cheer"):
+            b += blush(-ex - 7, ey + 9, 3.6, V["trim"], 0.5) + blush(ex + 7, ey + 9, 3.6, V["trim"], 0.5)
         # mandibles and mouth
         my = cy + ry * 0.7
-        mc = {"neutral": 0.0, "happy": 2.2, "cheer": 4.0, "sad": -1.5}[expr]
+        mc = {"neutral": 0.0, "happy": 2.6, "cheer": 5.0, "sad": -1.5}[expr]
         for s in (-1, 1):
-            dd = f"M{f(s * 3.4)} {f(my - 1)} Q{f(s * 7)} {f(my + 1 + mc * 0.5)} {f(s * 7.6)} {f(my + 6 + mc)}"
+            dd = f"M{f(s * 3.4)} {f(my - 1)} Q{f(s * (7 + mc * 0.4))} {f(my + 1 + mc * 0.5)} {f(s * (7.6 + mc * 0.5))} {f(my + 6 + mc)}"
             b += path(dd, None, OUT, 3.8) + path(dd, None, V["trim"], 1.5)
-        if expr in ("happy", "cheer"):
-            b += path(f"M-2.6 {f(my + 1)} Q0 {f(my + 4 + mc)} 2.6 {f(my + 1)}", "#7a1f45", OUT, 1.2)
+        if expr == "happy":
+            b += path(f"M-4 {f(my + 0.5)} Q0 {f(my + 6)} 4 {f(my + 0.5)} Z", "#7a1f45", OUT, 1.3)
+        elif expr == "cheer":
+            b += path(f"M-5 {f(my)} L5 {f(my)} Q4.6 {f(my + 8)} 0 {f(my + 8)} Q-4.6 {f(my + 8)} -5 {f(my)} Z", "#6e1540", OUT, 1.5)
+            b += ellipse(0, my + 5.5, 2.6, 1.6, "#ff6f9c", None)
+        elif expr == "sad":
+            b += path(f"M-3.4 {f(my + 4)} Q0 {f(my + 1)} 3.4 {f(my + 4)}", None, "#4a1636", 1.8)
     else:  # cyclops: one big eye
         ey = cy + 1
         er_x, er_y = 14.5, 12.5
@@ -417,6 +434,22 @@ def tentacle_front(P, V):
             b += circle(pts_[k][0], pts_[k][1], 1.4, lighten(tc, 0.5), None, op=0.85)
         b += circle(pts_[-1][0], pts_[-1][1], 2.4, V["trim"], OUT, 1.4)
     return b, (-rx - 30, cy - ry * 0.5, rx + 30, cy + 90)
+
+
+def feelers(P, V):
+    """The insect's two thin feelers: they leave the brow, arch outward and end in small glowing knobs (a swinging part)."""
+    rx, ry, cy = P["rx"], P["ry"], P["cy"]
+    base = cy - ry * 0.82
+    b = ""
+    for s in (-1, 1):
+        p0 = (s * 5, base + 2)
+        c1 = (s * 4, base - 30)
+        p2 = (s * 30, base - 40)
+        d = f"M{f(p0[0])} {f(p0[1])} Q{f(c1[0])} {f(c1[1])} {f(p2[0])} {f(p2[1])}"
+        b += path(d, None, OUT, 5.2) + path(d, None, V["suit"], 2.4)
+        b += circle(p2[0], p2[1], 7, V["trim"], None, op=0.18) + circle(p2[0], p2[1], 3.6, V["trim"], OUT, 1.8) + circle(p2[0] - 1, p2[1] - 1, 1.2, "#ffffff")
+    box = bbox([(-40, base - 50), (40, base - 50), (0, base + 6)], 10)
+    return b, box, (0, base + 2)
 
 
 def wing_cases(P, V):
@@ -642,6 +675,11 @@ def arm_parts(arch, P, V, J, side):
         body += line((s[0] - nx * aw * 0.2 * side, s[1] - ny * aw * 0.2 * side), (e[0] - nx * aw * 0.2 * side, e[1] - ny * aw * 0.2 * side), "#ffffff", 2.4, 0.35)
     if arch == "cyclops":  # puffy shoulder strap tip
         body += circle(s[0], s[1], aw / 2 + 0.5, V["suit"])
+    if arch == "grey":  # a rounded shoulder pad with a glowing trim stripe
+        pr_ = aw * 0.92
+        body += circle(s[0], s[1] + 1, pr_, lighten(V["suit"], 0.25), OUT, 2.6)
+        body += path(f"M{f(s[0] - pr_ * 0.75)} {f(s[1] + pr_ * 0.45)} Q{f(s[0])} {f(s[1] + pr_ * 1.05)} {f(s[0] + pr_ * 0.75)} {f(s[1] + pr_ * 0.45)}", None, V["trim"], 2.2)
+        body += circle(s[0] - pr_ * 0.3, s[1] - pr_ * 0.3, pr_ * 0.28, "#ffffff", None, op=0.6)
     out["up"] = (body, bbox([s, e], aw / 2 + 8))
     fc = spec["fore"] or skin
     body = circle(e[0], e[1], aw / 2 + 3, OUT)
@@ -782,6 +820,9 @@ def build_variant(arch, variant):
     if arch == "tentacle":
         body, box = tentacle_front(P, V)
         emit("hair_front", "head", 20, body, box, swing=True, pivot_xy=(0, P["cy"] - P["ry"] * 0.3))
+    if arch == "insect":
+        body, box, pv = feelers(P, V)
+        emit("hair_front", "head", 20, body, box, swing=True, pivot_xy=pv)
 
     def hand_px(side):
         n = "l" if side < 0 else "r"
