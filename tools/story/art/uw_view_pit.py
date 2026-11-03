@@ -348,7 +348,7 @@ def build():
         "led_screen": [440, 54, 400, 34],
         "doorway": [72, 196, 44, 62],  # the bone gate in the left cliff: arrivals cross the left bridge onto the platform
         "floor_rows": R.rows(),
-        "floor_polygon": [list(p) for p in PLATFORM],
+        "floor_polygon": [[400, 266], [880, 266], [round(R.floor_x(880, 520)), 520], [round(R.floor_x(400, 520)), 520]],  # the lit dance zone
         "floor_grid": R.grid(9),
         "light_points": LIGHTS,
         "woofers": woofers,
