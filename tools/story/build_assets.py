@@ -15,8 +15,14 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from art import lib  # noqa: E402
 
+# chapter build targets, one art folder each under assets/story/ (`build_assets.py underworld [chars|stage]`); a bare run builds all
+CHAPTERS = {"underworld": "art.chapter_underworld"}
+
 
 def main(argv) -> int:
+    if len(argv) > 1 and argv[1] in CHAPTERS:
+        import importlib
+        return importlib.import_module(CHAPTERS[argv[1]]).build(argv[2:])
     only = set(argv[1:])
     if not only:  # a full rebuild starts clean so removed assets do not linger (Godot's .import files are kept for now)
         for d in (lib.SVG_DIR, lib.PNG_DIR):
@@ -51,6 +57,10 @@ def main(argv) -> int:
     n_svg = sum(1 for _, _, fs in os.walk(lib.SVG_DIR) for x in fs if x.endswith(".svg"))
     n_png = sum(1 for _, _, fs in os.walk(lib.PNG_DIR) for x in fs if x.endswith(".png"))
     print(f"Night One art: {n_svg} SVG, {n_png} PNG, manifest {os.path.relpath(path, lib.ROOT)}")
+    if not only:
+        import importlib
+        for mod in CHAPTERS.values():
+            importlib.import_module(mod).build()
     return 0
 
 

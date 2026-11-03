@@ -109,27 +109,79 @@ def validate() -> list:
     return errors
 
 
-def tree_hash() -> str:
+CHAPTERS = {"underworld": dict(archetypes={"imp", "brute", "fiend", "skeleton", "flame", "horned_queen"},
+                               pieces={"lava_flow", "fire_pits_left", "fire_pits_right", "hellmouth_portal", "chains_swing", "skull_throne", "bone_arches", "ember_rain"},
+                               interlude={"crack_glow", "flame_jet", "portal_vortex", "embers", "dark_wash"},
+                               anchors={"crack_origin", "portal_centre"})}
+CHAPTER_ANCHORS = {"floor_grid", "wall_left_x", "wall_right_x", "horizon_y"}
+ANIMS = {"none", "pulse", "flicker", "rotate", "bob", "sway"}
+
+
+def validate_chapter(name: str) -> list:
+    """The base contract (validate) on assets/story/<name>/, plus the chapters addendum: archetype ids, stage.pieces, interlude."""
+    global ART
+    spec = CHAPTERS[name]
+    saved = ART
+    ART = os.path.join(ROOT, "assets", "story", name)
+    try:
+        errors = [f"{name}: {e}" for e in validate()]
+        with open(os.path.join(ART, "manifest.json"), encoding="utf-8") as fh:
+            m = json.load(fh)
+        if set(m["archetypes"]) != spec["archetypes"]:
+            errors.append(f"{name}: archetype ids {sorted(m['archetypes'])}")
+        st = m["stage"]
+        if not CHAPTER_ANCHORS <= set(st["anchors"]):
+            errors.append(f"{name}: missing anchors {sorted(CHAPTER_ANCHORS - set(st['anchors']))}")
+        if len(st["anchors"]["woofers"]) != 4:
+            errors.append(f"{name}: woofers must have 4 entries")
+        pieces = st.get("pieces", [])
+        if not 6 <= len(pieces) <= 8:
+            errors.append(f"{name}: expected 6 to 8 pieces, got {len(pieces)}")
+        if not spec["pieces"] <= {p["id"] for p in pieces}:
+            errors.append(f"{name}: missing pieces {sorted(spec['pieces'] - {p['id'] for p in pieces})}")
+        for p in pieces:
+            if p["anim"] not in ANIMS or p["z"] not in ("behind", "front"):
+                errors.append(f"{name}: piece {p['id']} bad anim/z {p['anim']}/{p['z']}")
+            check_entry(errors, f"{name} piece {p['id']}", p, need_pivot=False)
+        il = m.get("interlude", {})
+        for sid in spec["interlude"]:
+            if sid not in il.get("sprites", {}):
+                errors.append(f"{name}: interlude sprite {sid} missing")
+        for sid, e in il.get("sprites", {}).items():
+            check_entry(errors, f"{name} interlude {sid}", e)
+        if not spec["anchors"] <= set(il.get("anchors", {})):
+            errors.append(f"{name}: interlude anchors missing {sorted(spec['anchors'] - set(il.get('anchors', {})))}")
+        return errors
+    finally:
+        ART = saved
+
+
+def tree_hash(art=None) -> str:
+    art = art or ART
     h = hashlib.sha256()
-    for base, _d, files in sorted(os.walk(ART)):
+    for base, _d, files in sorted(os.walk(art)):
         for fn in sorted(files):
             if fn.endswith(".import"):
                 continue
             with open(os.path.join(base, fn), "rb") as fh:
-                h.update(os.path.relpath(os.path.join(base, fn), ART).encode() + fh.read())
+                h.update(os.path.relpath(os.path.join(base, fn), art).encode() + fh.read())
     return h.hexdigest()
 
 
 def main(argv) -> int:
     errors = validate()
+    for ch in CHAPTERS:
+        if os.path.exists(os.path.join(ROOT, "assets", "story", ch, "manifest.json")):
+            errors += validate_chapter(ch)
     for e in errors:
         print("FAIL", e)
     if "--determinism" in argv:
         build = os.path.join(HERE, "build_assets.py")
         subprocess.run([sys.executable, build], check=True, stdout=subprocess.DEVNULL)
-        a = tree_hash()
+        dirs = [ART] + [os.path.join(ROOT, "assets", "story", ch) for ch in CHAPTERS]
+        a = [tree_hash(d) for d in dirs]
         subprocess.run([sys.executable, build], check=True, stdout=subprocess.DEVNULL)
-        b = tree_hash()
+        b = [tree_hash(d) for d in dirs]
         print("determinism:", "OK" if a == b else "FAIL (outputs differ between runs)")
         if a != b:
             errors.append("not deterministic")

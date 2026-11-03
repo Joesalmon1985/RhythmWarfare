@@ -101,3 +101,73 @@ dance floor; the mixing desk across the bottom (`desk_top`, authored 1280 x 260,
 
 Every pixel comes from the code in `tools/story/` in this repository; there is no third-party content and no generated-image
 service. The art is covered by the repository's own licence.
+
+# Story Campaign art: the Underworld chapter (`underworld`)
+
+Hell's nightclub: a friendly stylised cartoon rave of demons (no gore) in a cavern of cracked obsidian and lava. Same
+conventions, helpers and rig contract as Night One (see above and `tools/story/ART_CONTRACT_CHAPTERS.md`); everything is original
+and drawn by code, with the output in its own folder `assets/story/underworld/{source,processed,manifest.json}`.
+
+```
+python3 tools/story/build_assets.py underworld          # rebuild the chapter (also part of a bare `build_assets.py`)
+python3 tools/story/build_assets.py underworld chars    # only the six demons (keeps the stage section of the manifest)
+python3 tools/story/build_assets.py underworld stage    # only the room, pieces, silhouettes, PNG effects and interlude sprites
+python3 tools/story/check_assets.py [--determinism]     # validates Night One and every chapter manifest
+tools/story/shoot_chapter.sh underworld <mode> /tmp/uw  # real Godot screenshot; mode = chars chars_b heads joints close sil stage set deck pieces interlude
+```
+
+Code: `tools/story/art/chapter_underworld.py` (build target, redirects the output folder), `uw_chars.py` (demons), `uw_stage.py` (room,
+pieces, Pillow textures, interlude). The deck pieces (pad bezel, platter, knobs, faders, desk top) reuse Night One's drawing code and
+re-theme it by remapping the colours (indigo to wine, cyan to gold, magenta to lava) plus a few extra bone ornaments.
+Preview: `tools/story/preview_chapter.gd` extends Night One's `preview_art.gd`; `RW_CHAPTER` picks the chapter, `RW_PREVIEW` the mode
+(`set` shows the room without the crowd, `pieces` every `stage.pieces` entry on its own, `interlude` the cutscene sprites over
+Night One's club, `close` with `RW_ARCHS=a,b,c RW_VARIANT=a|b` big rigs for joint checks).
+
+## Demons (`archetypes`)
+
+Same joints, part names, z ranges, four faces (`neutral happy cheer sad`) and `glow_hand` as Night One. The arms are two rotating
+segments (round caps at shoulder and elbow, no seam in any pose) and the legs rotate at the hip. Variants `a`/`b` change the palette
+and one detail. Extra parts are ordinary parts: swinging ones carry `swing: true` + `swing_pivot`, exactly like the Night One ponytail.
+
+| id | read | parts beyond the base set | variant detail |
+| --- | --- | --- | --- |
+| `imp` | small, big head, pointed ears, cute fangs | `tail` (joint `hips`, swing, spade tip), horns in `hair_back` | a vest, b striped shirt |
+| `brute` | broad, ram horns, tusks and nose ring, spiked pauldrons on the upper arms | ram horns in `hair_back` | a leather harness with skull buckle, b gold chest plate |
+| `fiend` | tall, slick quiff, small horns, goatee, waistcoat | `wings` (joint `torso`, swing, bat wings) | a bow tie, b long tie |
+| `skeleton` | bone body with ribs and spine, hollow grin, party hat | party hat in `hair_front` | a red hat, b green hat and bow tie |
+| `flame` | fire spirit, orange (a) or violet-blue (b) body, flame feet | flame hair in `hair_back` + `hair_front` (both swing) | a shorts, b scarf |
+| `horned_queen` | elegant, long sweeping horns, long hair, pointed boots | `cape` (joint `torso`, swing) and a fixed `collar`, `skirt` on `hips` | a bare arms, b opera gloves |
+
+The `glow_hand` position and the `glowstick` sprite (white, tintable) form a small flame torch. Rear silhouettes `sil_a` (ram horns),
+`sil_b` (bat wings), `sil_c` (big ears, little horns, tail) have `idle` and `up`, with orange (left) and magenta (right) rim lights.
+
+## The room (`stage`)
+
+Same perspective, anchors, `floor_rows` and sprite ids as Night One. `layers`: `backdrop` (cavern ceiling with stalactites, far wall with
+lava veins, lava falls on the side walls, bone columns, the fanged hellmouth at the back centre, the marquee `led_screen` hung on chains,
+the closed iron `doorway` gate, a bone bar, cracked obsidian floor with glowing tiles and a summoning circle matching `circle_*`, fire-pit
+bowls), `riser` (bone-and-iron platform), `speaker_l/r` (infernal amp stacks with horns and skulls; their `pos`/`size` include a small
+overhang), `desk_top`. Extra anchors: `floor_grid`, `wall_left_x`, `wall_right_x`, `horizon_y`, `hellmouth` [x, y, r], `fire_pits`.
+Sprites: `woofer` (toothed iron ring), `fixture` (a demonic eye-lamp), `disco_ball` (an infernal brazier orb in a cage), `glowstick`
+(torch), `door_open`, the deck pieces, and the white lighting sprites (`glow beam spot_pool haze_a haze_b vignette`, `confetti` = ash-embers).
+
+`stage.pieces` (switch on/off/animate by id; `pos`/`size` are the top-left rectangle in design px, `pivot` is relative to `pos`, `blend: add`
+means draw additively):
+
+| id | file | anim | z |
+| --- | --- | --- | --- |
+| `lava_flow` | glowing cracks across the dance floor | `pulse` | behind |
+| `fire_pits_left`, `fire_pits_right` | flame jets above the two pits | `flicker` | behind |
+| `hellmouth_portal` | swirl PNG inside the hellmouth, rotates about its centre | `rotate` | behind |
+| `chains_swing` | three hanging chains with hooks and a skull lantern, pivot at the top | `sway` | behind |
+| `skull_throne` | the throne on the riser | `none` | behind |
+| `bone_arches` | giant rib bones framing the view | `none` | front |
+| `ember_rain` | falling embers (PNG) | `flicker` | front |
+
+## Interlude (`interlude`)
+
+Sprites to composite over Night One's club view (fixed camera): `crack_glow` (a fissure fanning out in perspective, pivot at its far end),
+`crack_segment` (a straight slice to stretch or chain), `flame_jet` (tall flame, pivot at the base, animate by flip/scale), `portal_vortex`
+(512 px red-black swirl, centre pivot), `embers` (4 frames of 32 px), `dark_wash` (red-black full-screen wash, 320 x 180 shown at 4x).
+Anchors: `crack_origin`, `crack_end`, `portal_centre`, `flame_jets` (two floor points), and the contract's `ufo_hover`/`beam_floor`
+(unused by this chapter, kept for the generic cutscene code). Draw the `blend: add` ones additively.
