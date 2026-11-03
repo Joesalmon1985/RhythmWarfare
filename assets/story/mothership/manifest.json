@@ -2794,23 +2794,24 @@
     "z": "behind"
    },
    {
-    "id": "bar_glow",
-    "file": "source/pieces/bar_glow.svg",
+    "id": "beam_home",
+    "file": "source/pieces/beam_home.svg",
     "pos": [
-     934,
-     130
+     360.0,
+     -12
     ],
     "size": [
-     80,
-     140
+     560,
+     420
     ],
     "px_scale": 0.5,
     "pivot": [
-     80.0,
-     140.0
+     560.0,
+     768
     ],
-    "anim": "flicker",
-    "z": "behind"
+    "anim": "pulse",
+    "z": "front",
+    "blend": "add"
    },
    {
     "id": "hologram_dome",
@@ -2984,6 +2985,12 @@
      ],
      "wall_left_x": 440,
      "wall_right_x": 840,
+     "doorway": [
+      588,
+      142,
+      104,
+      108
+     ],
      "window": [
       840,
       -40,
@@ -3220,6 +3227,12 @@
       640,
       126,
       74
+     ],
+     "doorway": [
+      388,
+      150,
+      62,
+      112
      ]
     },
     "pieces": [

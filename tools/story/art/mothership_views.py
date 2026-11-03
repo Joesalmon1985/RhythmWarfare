@@ -392,6 +392,7 @@ def gallery_view() -> dict:
         "floor_rows": floor_rows(150), "floor_polygon": plygon, "floor_grid": grid, "light_points": G_LIGHTS,
         "led_screen": list(G_LED), "circle_centre": [640, 372], "circle_radii": [250, 46], "horizon_y": 150, "vanish": [640, 150],
         "disco_ball": [640, 0], "wall_left_x": 440, "wall_right_x": 840,
+        "doorway": [588, 142, 104, 108],  # the amber arch: guests arrive and gather here
         "window": [840, -40, 440, 370], "planet": list(G_PLANET), "bar": [446, 132, 130, 118],
     }
     return {"id": "gallery", "title": "Observation gallery",
