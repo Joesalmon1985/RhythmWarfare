@@ -39,7 +39,7 @@ func _ready() -> void:
 	add_child(bg)
 	stage = StoryStage.new()
 	stage.set_anchors_preset(Control.PRESET_FULL_RECT)
-	stage.desk_y = 720.0  # the whole 1280 x 720 club, no desk
+	stage.desk_y = 570.0  # the club down to just below the front row (no desk): the dark floor edge stays off screen
 	add_child(stage)
 	stage.setup(from_assets, _run.data, _run)
 	stage.reduced = Session.reduced_effects
@@ -87,7 +87,7 @@ func _process(_delta: float) -> void:
 	for e in _def["events"]:
 		if t >= float(e["t"]) and not _done_events.has(e):
 			_done_events[e] = true
-			_run_event(e, t)
+			_run_event(e, float(e["t"]))  # at its authored time, even when the cutscene clock jumped past it
 	stage.update(t, 12.0 if stage.tableau() == "lost" else 55.0)
 	fx.queue_redraw()
 	_caption.modulate.a = clampf(_caption_until - t, 0.0, 1.0) * clampf((t - _caption_from) / 0.4, 0.0, 1.0)
@@ -111,9 +111,9 @@ func _run_event(e: Dictionary, t: float) -> void:
 		"lift_crowd":
 			stage.crowd.set_ending("")
 			stage.crowd.direct(stage.crowd.present_ids(), "hands_up", t, float(e["dur"]) + 1.0, false, 0.05)
-			stage.crowd.vanish_all(t, float(e["dur"]) - 1.0, -300.0)
+			stage.crowd.vanish_all(t, float(e["dur"]) - 1.0, -300.0, 0.04)
 		"sink_crowd":
-			stage.crowd.vanish_all(t, float(e["dur"]) - 1.0, 70.0)
+			stage.crowd.vanish_all(t, float(e["dur"]) - 1.0, 190.0, 0.04)
 
 
 func _next() -> void:

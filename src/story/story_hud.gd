@@ -40,6 +40,12 @@ func show_toast(text: String, tone: String, t0: float, hold := TOAST_HOLD) -> vo
 	_toast = {"text": text, "tone": tone, "t0": t0, "hold": hold}
 
 
+## The caption belongs to the room it was shown in: a camera move to another room ends it at t (song time).
+func cut_toast(t: float) -> void:
+	if not _toast.is_empty() and t >= float(_toast["t0"]):
+		_toast["hold"] = minf(float(_toast["hold"]), maxf(t - float(_toast["t0"]), 0.0))
+
+
 func set_time(t: float) -> void:
 	t_now = t
 	queue_redraw()
@@ -82,7 +88,7 @@ func _draw() -> void:
 		var a := clampf(1.0 - (t_now - title_until) / OUT_S, 0.0, 1.0) if t_now > title_until else 1.0
 		var grow := 0.0 if reduced else clampf((t_now + 2.0) / 4.0, 0.0, 1.0) * 0.06
 		var fs := int(84 * k * (1.0 + grow))
-		var y := size.y * 0.24
+		var y := size.y * 0.16
 		draw_rect(Rect2(0, y - fs * 1.05, w, fs * 1.75), Color(0.02, 0.0, 0.08, 0.45 * a))
 		draw_line(Vector2(w * 0.2, y - fs * 1.05), Vector2(w * 0.8, y - fs * 1.05), Color(MAGENTA, 0.7 * a), 2.0)
 		draw_line(Vector2(w * 0.2, y + fs * 0.7), Vector2(w * 0.8, y + fs * 0.7), Color(CYAN, 0.7 * a), 2.0)
@@ -117,8 +123,8 @@ func _draw() -> void:
 			_text(Vector2(r.position.x + 20.0 * k, r.position.y + fs * 1.18), str(_toast["text"]), fs, Color(col.lightened(0.55), a), 7)
 	# the count-in
 	if countdown != "":
-		var c := Vector2(w * 0.5, size.y * 0.3)
-		var rr := 70.0 * k
+		var c := Vector2(w * 0.5, size.y * 0.42)
+		var rr := 60.0 * k
 		draw_circle(c, rr, Color(0.02, 0.0, 0.1, 0.55))
 		draw_arc(c, rr, -PI * 0.5, -PI * 0.5 + TAU * (1.0 - countdown_frac), 64, Color(CYAN, 0.9), 5.0 * k, true)
 		var pop := 1.0 if reduced else 1.0 + 0.25 * maxf(0.0, 1.0 - countdown_frac / 0.15)

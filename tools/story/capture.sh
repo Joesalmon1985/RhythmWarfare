@@ -42,6 +42,16 @@ shot 14_hero_riser         perfect         68.5
 shot 15_floor_ripple       accuracy:0.8    89.6
 shot 16_narrow_4x3         perfect         107 RW_WINDOW=1024x768
 shot 17_wide_20x9          perfect         107 RW_WINDOW=1600x720
+shot 18_hold_notes         perfect         21.3
+shot 19_gather_at_door     perfect         28
+shot 20_door_crowd_enters  perfect         33.8
+shot 21_countdown          perfect         0.7
+shot 22_title_card         perfect         1.3
+shot 23_compact_narrow     perfect         107 RW_PAD_SIZE=0 RW_WINDOW=1024x768
+shot 24_large_wide         perfect         107 RW_PAD_SIZE=2 RW_WINDOW=1600x720
+shot 25_drop_stumble       none            73.6
+shot 26_drop_jump          perfect         73.6
+shot 27_circle_awkward     none            57.8
 
 # chapters 2 and 3 (their own art, music packs and endings) and the cutscenes between chapters
 shot ch2_01_opening         perfect       3  RW_STORY_CHAPTER=mothership

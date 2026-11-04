@@ -204,6 +204,37 @@ func test_overlay_cards_run_on_song_time() -> void:
 	hud.free()
 
 
+func test_new_dancers_enter_visibly_even_without_gathering_first() -> void:
+	var ctx := _crowd_stage()
+	var stage: StoryStage = ctx["stage"]
+	stage.update(0.0, 60.0)
+	var ids := stage.crowd.ids_of("gatherers")
+	assert_false(ids.is_empty())
+	for id in ids:
+		assert_false(stage.crowd.actors[id]["present"], "%s starts off the floor" % id)
+	stage.apply({"t0": 1.0, "bar": 33.0, "action": "new_dancers_enter", "args": {}, "block": "", "source": "decision"})
+	var t := 1.0
+	while t < 10.0:
+		t += 1.0 / 30.0
+		stage.update(t, 60.0)
+	for id in ids:
+		var a: Dictionary = stage.crowd.actors[id]
+		assert_true(a["present"] and float(a["alpha"]) > 0.99, "%s came onto the floor" % id)
+		assert_true((a["pos"] as Vector2).distance_to(a["home"]) < 1.0, "%s reached their place" % id)
+	stage.free()
+
+
+func test_a_caption_ends_when_the_camera_leaves_the_room() -> void:
+	var hud := StoryHud.new()
+	hud.show_toast("The guests streamed in.", "good", 20.0)
+	hud.cut_toast(22.0)
+	hud.set_time(21.0)
+	assert_eq(hud._vis(20.0, float(hud._toast["hold"])), 1.0)
+	hud.set_time(22.0 + StoryHud.OUT_S + 0.01)
+	assert_eq(hud._vis(20.0, float(hud._toast["hold"])), 0.0, "gone once the move has begun")
+	hud.free()
+
+
 func test_room_pieces_stay_lit_through_a_pulse_and_doorless_rooms_enter_from_the_edge() -> void:
 	var run := StoryRun.create({}, "res://content/story/mothership.json")
 	if not run.errors.is_empty():

@@ -136,7 +136,7 @@ func _draw_led_floor(ci: CanvasItem) -> void:
 	var beat := floorf(b)
 	var kp := _kick_pulse()
 	var lost := stage.tableau() == "lost"
-	var level := (0.1 + 0.55 * e) * (0.25 if lost else 1.0) * (0.55 if stage.reduced else 1.0)
+	var level := (0.1 + 0.55 * e) * (0.25 if lost else 1.0) * (0.55 if stage.reduced else 1.0) * (0.5 if stage.high_contrast else 1.0)
 	var ripple_t := -1.0
 	for name in ["bass_reveal", "burst"]:
 		if stage.is_active(name, t):
@@ -193,6 +193,8 @@ func draw_base(ci: CanvasItem) -> void:
 	_draw_ball(ci)
 	_draw_door(ci)
 	_draw_riser_column(ci)
+	if stage.high_contrast:  # high contrast: the room steps back so the dancers and the notes stand out against it
+		ci.draw_rect(Rect2(-400, -400, 2080, 1520), Color(0.0, 0.0, 0.03, 0.42))
 
 
 ## The scissor column under a raised riser (the platform sprite itself moves up with the lift).
@@ -227,8 +229,8 @@ func _draw_led(ci: CanvasItem) -> void:
 	var e := _e01()
 	var dim := 0.35 if stage.tableau() == "lost" else lerpf(0.45, 1.0, e)
 	ci.draw_rect(r, Color(0.015, 0.012, 0.05, 0.97))
-	var b := _beats()
-	var kp := _kick_pulse()
+	var b := _beats() * (0.5 if stage.reduced else 1.0)  # reduced effects: the screen moves at half speed, no kick flashes
+	var kp := 0.0 if stage.reduced else _kick_pulse()
 	var c0 := _pal(0)
 	var c1 := _pal(1)
 	var cols := maxi(int(r.size.x / LED_CELL), 4)
@@ -237,16 +239,22 @@ func _draw_led(ci: CanvasItem) -> void:
 	var chh := r.size.y / float(rows)
 	var mode := stage.led_mode()
 	var word := _led_word()
-	for j in rows:
-		var v := (float(j) + 0.5) / float(rows)  # 0 top .. 1 bottom
-		for i in cols:
-			var u := (float(i) + 0.5) / float(cols)
-			var val := 0.0 if word != "" else _led_value(mode, u, v, i, b, e, kp)
-			var cell := Rect2(r.position.x + float(i) * cw + 1.0, r.position.y + float(j) * chh + 1.0, cw - 2.0, chh - 2.0)
-			if val < 0.05:
-				ci.draw_rect(cell, Color(0.1, 0.08, 0.22, 0.3))  # an unlit dot
-				continue
-			ci.draw_rect(cell, Color(c0.lerp(c1, v).lightened(0.08 * val), dim * (0.3 + 0.7 * val)))
+	ci.draw_rect(r.grow(-1.0), Color(0.1, 0.08, 0.22, 0.3))  # the unlit dots (the grid lines below separate them)
+	if word == "":
+		for j in rows:
+			var v := (float(j) + 0.5) / float(rows)  # 0 top .. 1 bottom
+			for i in cols:
+				var val := _led_value(mode, (float(i) + 0.5) / float(cols), v, i, b, e, kp)
+				if val >= 0.05:  # only lit dots cost a draw call
+					ci.draw_rect(Rect2(r.position.x + float(i) * cw + 1.0, r.position.y + float(j) * chh + 1.0, cw - 2.0, chh - 2.0),
+						Color(c0.lerp(c1, v).lightened(0.08 * val), dim * (0.3 + 0.7 * val)))
+	var grid := Color(0.015, 0.012, 0.05, 1.0)
+	for i in range(1, cols):
+		var x := r.position.x + float(i) * cw
+		ci.draw_line(Vector2(x, r.position.y), Vector2(x, r.end.y), grid, 2.0)
+	for j in range(1, rows):
+		var y := r.position.y + float(j) * chh
+		ci.draw_line(Vector2(r.position.x, y), Vector2(r.end.x, y), grid, 2.0)
 	if word != "":
 		var fs := int(r.size.y * 0.42)
 		var a := dim * (0.85 + 0.15 * kp)
@@ -312,6 +320,8 @@ func _draw_woofers(ci: CanvasItem) -> void:
 func _fixture_angle(i: int, t: float) -> float:
 	var b := _beats()
 	var since := t - stage.beam_since()
+	if stage.reduced:  # reduced effects: the rig holds a calm fan that breathes over four bars, whatever the cue
+		return (float(i) - 3.5) * 0.12 + 0.06 * sin(TAU * b / 16.0 + float(i) * 0.7)
 	match stage.beam_mode():
 		"sweep":
 			return 0.55 * sin(TAU * b / 32.0 + float(i) * 0.8) * (0.5 if stage.reduced else 1.0)
@@ -402,7 +412,7 @@ func draw_add(ci: CanvasItem) -> void:
 	var t := stage.t_now
 	var e := _e01()
 	var kp := _kick_pulse()
-	var inten := (0.18 + 0.6 * e) * (0.6 if stage.reduced else 1.0)
+	var inten := (0.18 + 0.6 * e) * (0.6 if stage.reduced else 1.0) * (0.55 if stage.high_contrast else 1.0)
 	if stage.is_active("bass_reveal", t) or stage.is_active("burst", t):
 		inten += 0.3
 	if stage.lean_tableau() == "legendary" or stage.tableau() == "legendary":
@@ -445,7 +455,17 @@ func _draw_bloom(ci: CanvasItem, t: float) -> void:
 	_draw_sprite(ci, "glow", cc + Vector2(0, -120.0), Vector2(5.0, 4.0), 0.0, Color(1, 1, 1, a * 0.35))
 
 
+var _floor_poly_cache := PackedVector2Array()
+
+
 func _floor_poly() -> PackedVector2Array:
+	if not _floor_poly_cache.is_empty():
+		return _floor_poly_cache
+	_floor_poly_cache = _build_floor_poly()
+	return _floor_poly_cache
+
+
+func _build_floor_poly() -> PackedVector2Array:
 	var out := PackedVector2Array()
 	for p in assets.anchor("floor_polygon", [[200, 330], [1080, 330], [1280, 460], [0, 460]], view):
 		out.append(Vector2(float(p[0]), float(p[1])))
@@ -539,7 +559,7 @@ func _draw_pulses(ci: CanvasItem, t: float) -> void:
 
 
 func _draw_ball_dots(ci: CanvasItem, t: float) -> void:
-	if not stage.ball_on() or stage.reduced:
+	if not stage.ball_on() or stage.reduced or stage.high_contrast:
 		return
 	var b := _beats()
 	for i in 22:
@@ -558,7 +578,7 @@ func draw_norm(ci: CanvasItem) -> void:
 	for b0 in _bursts:
 		if t >= float(b0):
 			burst = maxf(burst, exp(-(t - float(b0)) / 3.2))
-	var haze_a := (0.06 + 0.1 * e + 0.35 * burst) * (0.5 if stage.reduced else 1.0)
+	var haze_a := (0.06 + 0.1 * e + 0.35 * burst) * (0.5 if stage.reduced else 1.0) * (0.35 if stage.high_contrast else 1.0)
 	for k in 2:
 		var s: Dictionary = _spr.get("haze_a" if k == 0 else "haze_b", {})
 		if s.is_empty() or s["tex"] == null:

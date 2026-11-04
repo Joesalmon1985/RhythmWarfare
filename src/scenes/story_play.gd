@@ -146,6 +146,7 @@ func _build_layout() -> void:
 	var shade := StoryLaneShade.new()
 	shade.name = "LaneShade"
 	shade.pad_view = pad_view
+	shade.strength = 0.5 if Session.high_contrast else 0.3
 	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(shade)
@@ -290,11 +291,25 @@ func _process_virtual(_delta: float) -> void:
 	if _ended and _tail_until < 0.0 and _until_bar <= 0.0:
 		return
 	var until_t := run.director.bar_time(_until_bar) if _until_bar > 0.0 else INF
+	var profile_from := run.director.bar_time(float(OS.get_environment("RW_STORY_PROFILE_FROM"))) if OS.has_environment("RW_STORY_PROFILE_FROM") else INF
 	if _vt >= until_t:
+		if profile_from < INF and not _perf.is_empty():  # profiling: render frames from one bar to another at one frame per 1/60 s of song
+			var sorted := _perf.duplicate()
+			sorted.sort()
+			print("PROFILE frames=%d mean=%.2f p95=%.2f max=%.2f" % [sorted.size(), Array(sorted).reduce(func(a: float, b: float) -> float: return a + b, 0.0) / sorted.size(),
+				sorted[int(sorted.size() * 0.95)], sorted[sorted.size() - 1]])
+			_perf = PackedFloat32Array()
+			get_tree().quit()
 		return
 	var rate := float(OS.get_environment("RW_STORY_RATE")) if OS.has_environment("RW_STORY_RATE") else 1.0 / 30.0
 	var chunk := rate if _vt < until_t - 1.0 else 1.0 / 30.0  # the last second runs at a normal pace so poses settle
+	if profile_from < INF:
+		chunk = 30.0 if _vt < profile_from else 1.0 / 60.0
+		if _vt >= profile_from:
+			_perf.append(_delta * 1000.0)
 	var target := minf(_vt + chunk, until_t)
+	if _vt < profile_from:
+		target = minf(target, profile_from)
 	var guard := 0
 	while _vt < target - 1e-9 and guard < 2000:  # at most ~33 s of song per frame, whatever the rate says
 		guard += 1
@@ -337,6 +352,9 @@ func _advance(t: float, audio_t: float, render := true) -> void:
 
 func _ui(t: float) -> void:
 	var bar := run.level.bar_of_tick(run.level.seconds_to_tick(maxf(t, 0.0)))
+	if _virtual:  # the virtual clock has no SongClock count-in: show the same digits from song time
+		_hud.countdown = str(ceili(-t)) if t < 0.0 else ""
+		_hud.countdown_frac = float(ceili(-t)) + t if t < 0.0 else 0.0
 	var act_i := run.data.act_of_bar(float(bar))
 	if t >= 0.0 and act_i != _act_index:
 		_act_index = act_i
@@ -415,6 +433,8 @@ func _on_action(a: Dictionary) -> void:
 			if d["id"] == a["args"]["decision"] and str(d["text"]) != "":
 				_hud.show_toast(str(d["text"]), "good" if str(a["args"]["outcome"]) == "good" else "bad", float(a["t0"]))
 				break
+	elif a["action"] == "move_to" and stage.moving_camera:
+		_hud.cut_toast(float(a["t0"]))
 	elif a["action"] == "ending":
 		var e: Dictionary = run.data.endings[a["args"]["ending"]]
 		_hud.show_toast(str(e["title"]).to_upper(), "end", float(a["t0"]), 1.0e6)

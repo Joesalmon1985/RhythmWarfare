@@ -566,7 +566,7 @@ func apply(a: Dictionary) -> void:
 			var h := crowd.hero_id()
 			if h != "":
 				var rl: Array = assets.anchor("riser", [crowd.circle_c.x, crowd.circle_c.y - 20.0, 260], current_view)
-				crowd.walk_to(h, Vector2(float(rl[0]), float(rl[1]) - 6.0), t0, 2.0, {"state": "solo", "from": 0.0, "until": t0 + dur, "sync": false})
+				crowd.walk_to(h, Vector2(float(rl[0]), float(rl[1]) - 6.0), t0, 2.0, {"state": "solo" if energy >= 40.0 else "dance", "from": 0.0, "until": t0 + dur, "sync": false})
 		"bring_in":
 			crowd.bring_in(str(args["group"]), t0)
 		"gather_at_door":

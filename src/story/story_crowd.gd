@@ -214,8 +214,13 @@ func update(t: float, p_energy: float) -> void:
 	queue_redraw()
 
 
+var _rows_cache: Variant = null
+
+
 func _scale_at(y: float) -> float:
-	var rows: Array = assets.anchor("floor_rows", [], view)
+	if _rows_cache == null:
+		_rows_cache = assets.anchor("floor_rows", [], view)
+	var rows: Array = _rows_cache
 	if rows.is_empty():
 		return 0.55 + clampf((y - 300.0) / 140.0, 0.0, 1.0) * 0.45
 	if y <= float(rows[0]["y"]):
@@ -396,8 +401,17 @@ func gatherers_enter(t0: float, all := true) -> void:
 	for id in ids_of("gatherers"):
 		var a: Dictionary = actors[id]
 		if all or bool(a["data"].get("stays_on_bad", false)):
+			if not a["present"]:  # never gathered at the door (or a room without one): they walk in now, visibly
+				a["present"] = true
+				a["alpha"] = 0.0
+				a["pos"] = door_pos + Vector2(float(k % 3) * 10.0, 0.0)
+				if str(a["data"].get("enter_from", "doorway")) == "side" or door_pos.x < 0.0:
+					a["pos"] = Vector2(-60.0 if (a["home"] as Vector2).x < 640.0 else 1340.0, (a["home"] as Vector2).y)
 			walk_to(id, a["home"], t0 + float(k) * 0.35, 4.0)
 			a["dir"] = {}
+		elif not a["present"]:
+			k += 1
+			continue  # a dancer who never showed up does not appear just to leave
 		else:
 			var side := Vector2(float(a["data"].get("side_x", 60.0)), float(assets.floor_at(float(a["data"].get("side_depth", 0.4)), view)["y"]))
 			walk_to(id, side, t0 + float(k) * 0.35, 3.0, {"state": "look", "from": 0.0, "until": NO_END})
