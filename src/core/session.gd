@@ -27,6 +27,9 @@ var story_progress: StoryProgress  # Story Campaign saves (user://story_campaign
 var story_chapter := "night_one"  # the chapter story_play loads
 var story_interlude: Dictionary = {}  # {name, from, to, ending}: the cutscene story_interlude plays before the next chapter
 var story_result: Dictionary = {}  # the last finished story set (StoryRun.summary plus the saved record)
+var run_progress: RunProgress  # the continuous run: levels reached (user://story_run.json)
+var run_start_node := ""  # the level the next run starts on ("" = the first)
+var run_result: Dictionary = {}  # the last run: {node, phases, energy, reason}
 var debug := false
 var settings_migrated := false
 
@@ -47,6 +50,7 @@ var show_keys := true  # desktop: the D F J K labels on the pads
 func _ready() -> void:
 	campaign = Campaign.load_data()
 	story_progress = StoryProgress.load_data()
+	run_progress = RunProgress.load_data()
 	load_settings()
 	if OS.has_environment("RW_PACK"):  # scripted runs and tests pick a pack without touching saved settings
 		pack_dir = OS.get_environment("RW_PACK")

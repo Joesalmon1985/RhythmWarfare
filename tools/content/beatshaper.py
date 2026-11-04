@@ -6,6 +6,9 @@
     python tools/content/beatshaper.py import <zip|folder> --set "Lv1 Warehouse" [--variant 1] --id warehouse
                                                                               # write songs/packs/<id>/ (loops, pack.json, report)
     python tools/content/beatshaper.py validate                               # every pack in songs/packs and content/story/music.json
+    python tools/content/beatshaper.py apply  <zip|folder> --node ward --set "Lv3 Ward" --id lv3_ward [--audio-only]
+                                                                              # import one set and give it to a level (music.json), no code changes
+    python tools/content/beatshaper.py assign --node ward --audio lv3_ward    # re-point a level at packs that are already imported
 
 A *set* is the three files an export writes for one project: `Beat Shaper - <project>-Drums|Bass|Synth` as .wav and .mid. A numbered
 copy `... (1)` is another variant of the same project; the three files of a variant share the suffix. Files are grouped by
@@ -47,6 +50,7 @@ from import_recorded import db, envelope, fold_loop, onset_near, read_float_wav_
 
 PACKS = ROOT / "songs" / "packs"
 MUSIC_JSON = ROOT / "content" / "story" / "music.json"
+RUN_JSON = ROOT / "content" / "run" / "run.json"
 BPM = 174
 PARTS = ("Drums", "Bass", "Synth")
 NAME_RE = re.compile(r"^(?:Beat Shaper - )?(?P<project>.+)-(?P<part>Drums|Bass|Synth)(?: \((?P<variant>\d+)\))?\.(?P<ext>wav|mid)$")
@@ -411,6 +415,24 @@ def validate(packs_dir: Path = PACKS, music_path: Path = MUSIC_JSON) -> tuple[li
                     errors.append(f"music.json: node {n['id']} {key} pack '{n[key]}' does not exist (packs: {', '.join(sorted(packs))})")
             if n["audio"] in packs and n["chart"] in packs and packs[n["audio"]]["phrase_beats"] != packs[n["chart"]]["phrase_beats"]:
                 errors.append(f"music.json: node {n['id']} audio '{n['audio']}' and chart '{n['chart']}' have different phrase lengths")
+        run = read_json(RUN_JSON) if RUN_JSON.exists() else {"nodes": []}
+        depth_of = {n["id"]: min(int(n["depth"]), 4) for n in run["nodes"]}
+        chart_at: dict = {}
+        for n in m["nodes"]:
+            dp = depth_of.get(n["id"])
+            if dp is None:
+                errors.append(f"music.json: node {n['id']} is not in run.json")
+                continue
+            if dp in chart_at and chart_at[dp][1] != n["chart"]:
+                errors.append(f"depth {dp}: {n['id']} charts '{n['chart']}' but {chart_at[dp][0]} charts '{chart_at[dp][1]}'; siblings must share one chart")
+            chart_at.setdefault(dp, (n["id"], n["chart"]))
+            if n["audio"] != n["chart"] and n["audio"] in packs and n["chart"] in packs:
+                if packs[n["audio"]]["tiers"] != packs[n["chart"]]["tiers"]:
+                    errors.append(f"music.json: node {n['id']} plays the recordings of '{n['audio']}' under the chart of '{n['chart']}', but their MIDI differs; "
+                                  "an alternate render must be exported from the same MIDI (or give the whole depth the new chart)")
+        for n in run["nodes"]:
+            if n["id"] not in ids:
+                errors.append(f"run.json node {n['id']} has no music.json entry")
         notes.append(f"music.json: {len(ids)} nodes assigned")
     else:
         errors.append("content/story/music.json is missing")
@@ -461,6 +483,47 @@ def cmd_import(args) -> int:
     return 0
 
 
+def assign(node: str, audio: str | None, chart: str | None, treatment: str | None, temporary: bool | None, music_path: Path = MUSIC_JSON) -> None:
+    """Point a node at other packs without touching code. Node ids never change."""
+    m = read_json(music_path)
+    for n in m["nodes"]:
+        if n["id"] == node:
+            if audio:
+                n["audio"] = audio
+            if chart:
+                n["chart"] = chart
+            if treatment:
+                n["treatment"] = treatment
+            if temporary is not None:
+                n["temporary"] = temporary
+            write_json(music_path, m, indent=1)
+            return
+    raise ContentError(f"no node '{node}' in music.json (nodes: {', '.join(x['id'] for x in m['nodes'])})")
+
+
+def cmd_assign(args) -> int:
+    assign(args.node, args.audio, args.chart, args.treatment, False if args.final else None)
+    errors, _ = validate()
+    for e in errors:
+        print("ERROR", e)
+    print("assigned" if not errors else "assigned, but the data now has problems (above)")
+    return 1 if errors else 0
+
+
+def cmd_apply(args) -> int:
+    """import + assign in one go: the usual way to give a level its recordings."""
+    code = cmd_import(args)
+    if code:
+        return code
+    chart = None if args.audio_only else args.id
+    assign(args.node, args.id, chart, args.treatment, False)
+    errors, _ = validate()
+    for e in errors:
+        print("ERROR", e)
+    print(f"node {args.node} now plays {args.id}" + ("" if args.audio_only else " and charts it") if not errors else "assigned, but validation failed (above)")
+    return 1 if errors else 0
+
+
 def cmd_validate(args) -> int:
     errors, notes = validate()
     for n in notes:
@@ -490,10 +553,31 @@ def main() -> int:
             c.add_argument("--drums-db", type=float, default=0.0)
             c.add_argument("--bass-db", type=float, default=3.0)
             c.add_argument("--synth-db", type=float, default=10.0)
+    a = sub.add_parser("assign", help="point a node at already imported packs (edits content/story/music.json)")
+    a.add_argument("--node", required=True)
+    a.add_argument("--audio", help="pack whose recordings play")
+    a.add_argument("--chart", help="pack whose cues are charted (shared by every node at the same depth)")
+    a.add_argument("--treatment", help="a name from run.json treatments")
+    a.add_argument("--final", action="store_true", help="mark the node's music as final (not temporary)")
+    ap2 = sub.add_parser("apply", help="import one set and assign it to a node")
+    ap2.add_argument("source")
+    ap2.add_argument("--node", required=True)
+    ap2.add_argument("--set", required=True)
+    ap2.add_argument("--variant", type=int, default=0)
+    ap2.add_argument("--id", required=True)
+    ap2.add_argument("--audio-only", action="store_true", help="use the recordings only; the chart stays the depth's shared one (alternate render of the same MIDI)")
+    ap2.add_argument("--treatment")
+    ap2.add_argument("--label")
+    ap2.add_argument("--kick")
+    ap2.add_argument("--snare")
+    ap2.add_argument("--profile", choices=sorted(PROFILES))
+    ap2.add_argument("--drums-db", type=float, default=0.0)
+    ap2.add_argument("--bass-db", type=float, default=3.0)
+    ap2.add_argument("--synth-db", type=float, default=10.0)
     sub.add_parser("validate")
     args = ap.parse_args()
     try:
-        return {"scan": cmd_scan, "check": cmd_check, "import": cmd_import, "validate": cmd_validate}[args.cmd](args)
+        return {"scan": cmd_scan, "check": cmd_check, "import": cmd_import, "validate": cmd_validate, "assign": cmd_assign, "apply": cmd_apply}[args.cmd](args)
     except ContentError as exc:
         print(f"ERROR {exc}")
         return 1

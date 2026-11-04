@@ -42,6 +42,7 @@ var _depleted_t := -1.0
 var _over_t := -1.0
 var _blocks_total := 0  # blocks charted in this run (for sequence ids)
 var _note_id := 0
+var part_offset := {"drums": 0.0, "bass": 0.0}  # seconds the audible part sits from the grid in the current phase (RunAudio measures it)
 
 
 func _init(p_data: RunData = null) -> void:
@@ -73,6 +74,11 @@ func begin(start_id: String) -> void:
 	level.title = "Continuous run"
 	level.sequence_threshold = float(cfg["judgement"]["pass_credit"])
 	judge = PadJudge.new()
+	var w: Dictionary = cfg["judgement"]["windows_ms"]  # the run's own windows: nothing is read from the old campaign rules
+	judge.perfect_s = float(w["perfect"]) / 1000.0
+	judge.great_s = float(w["great"]) / 1000.0
+	judge.accept_s = float(w["accept"]) / 1000.0
+	judge.complete_s = float(cfg["judgement"]["hold_complete_s"])
 	judge.setup(level.notes, [])
 	energy = float(cfg["energy"]["start"])
 	over = false
@@ -101,6 +107,7 @@ func _enter(id: String, t0: float, chart_now: bool) -> void:
 	stage_of_block = [0]
 	block_credit = []
 	_next_block_notes = {}
+	part_offset = {"drums": 0.0, "bass": 0.0}
 	if chart_now or not _next_phase_charted:
 		_chart_block(0, 0, depth)
 	_next_phase_charted = false
@@ -304,7 +311,7 @@ func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = 
 				dur = 0
 		var gbeat := phase_beat0 + start_beat + off / float(tpb)
 		var tick := int(round(gbeat * tpb))
-		var tm := float(tick) * 60.0 / (level.bpm * float(tpb))
+		var tm := float(tick) * 60.0 / (level.bpm * float(tpb)) + (float(part_offset["drums"]) if fam == "drums" else float(part_offset["bass"])) * (0.0 if next_phase else 1.0)
 		var fam_c := str(c[3]) if c.size() > 3 else fam
 		added.append({"id": "r%05d" % _note_id, "tick": tick, "duration_ticks": dur, "end_tick": tick + dur, "time": tm, "end_time": tm + float(dur) * 60.0 / (level.bpm * float(tpb)),
 			"pad": int(c[2]), "button": int(c[2]), "family": fam_c, "lane": fam_c, "slot_id": fam_c, "type": "hold" if dur > 0 else "tap", "seq": _blocks_total,
@@ -341,3 +348,41 @@ func progress_in_block(t: float) -> float:
 ## Clock-to-beat helper: the phase beat (0..64) a song time falls in.
 func phase_beat_at(t: float) -> float:
 	return (t - phase_t0) / beat_s
+
+
+## The pad strip's meter: the current block's cues and the credit earned so far (an empty dictionary outside a cue span).
+func progress_at(_t: float) -> Dictionary:
+	if level == null or block > 3:
+		return {}
+	var n := 0
+	var got := 0.0
+	var done := 0
+	for i in range(level.notes.size() - 1, -1, -1):
+		var note: Dictionary = level.notes[i]
+		if int(note["phase"]) < phase_n:
+			break
+		if int(note["phase"]) == phase_n and int(note["block"]) == block:
+			n += 1
+			if judge.is_resolved(i):
+				done += 1
+				got += judge.credit[i]
+	if n == 0:
+		return {}
+	return {"index": block, "cues": n, "resolved": done, "credit": got}
+
+
+## RunAudio measured that a part (drums, or bass with the synth) actually started `offset` seconds after its nominal grid time: its cues in this phase
+## move by the change, so they sit on what the player hears. Cues already resolved keep their result.
+func apply_part_offset(part: String, phase: int, offset: float) -> void:
+	if phase != phase_n or not part_offset.has(part):
+		return
+	var delta := offset - float(part_offset[part])
+	part_offset[part] = offset
+	var fam_ok := (func(f: String) -> bool: return f == "kick" or f == "snare") if part == "drums" else (func(f: String) -> bool: return f == "bass")
+	for i in range(level.notes.size() - 1, -1, -1):
+		var n: Dictionary = level.notes[i]
+		if int(n["phase"]) < phase_n:
+			break
+		if fam_ok.call(str(n["family"])) and not judge.is_resolved(i):
+			n["time"] = float(n["time"]) + delta
+			n["end_time"] = float(n["end_time"]) + delta

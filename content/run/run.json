@@ -10,15 +10,14 @@
  },
  "judgement": {
   "pass_credit": 0.6,
-  "credit": {
-   "perfect": 1.0,
-   "great": 0.9,
-   "good": 0.8,
-   "ok": 0.55,
-   "miss": 0.0
-  },
   "min_cues_for_pass": 1,
-  "note": "A block passes when the credit of its cues (holds count their coverage) is at least pass_credit. Tunable."
+  "note": "A block passes when the mean credit of its cues (a tap that is hit counts 1, a hold counts the share of its length held) is at least pass_credit. windows_ms are the hit windows around a cue time, hold_complete_s how close to its tail a hold may be released and still count whole. All tunable.",
+  "windows_ms": {
+   "perfect": 45,
+   "great": 90,
+   "accept": 140
+  },
+  "hold_complete_s": 0.15
  },
  "energy": {
   "start": 60.0,
