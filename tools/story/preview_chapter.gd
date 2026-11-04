@@ -165,7 +165,47 @@ func _pieces_sheet() -> void:
 		rowh = maxf(rowh, sz.y * k)
 
 
+## hospital waking interlude: Underworld's room under half-open eyelids, a soft white wash and the heartbeat trace
+func _interlude_hospital() -> void:
+	var chap_root := ROOT
+	var chap: Dictionary = M
+	ROOT = "res://assets/story/underworld/"
+	M = JSON.parse_string(FileAccess.get_file_as_string(ROOT + "manifest.json"))
+	_tcache.clear()
+	_stage(true)
+	ROOT = chap_root
+	M = chap
+	_tcache.clear()
+	var S: Dictionary = M["interlude"]["sprites"]
+	var gap := 90.0 if OS.get_environment("RW_OPEN") == "" else float(OS.get_environment("RW_OPEN"))
+	var put := func(id: String, pos: Vector2, add: bool, mod: Color, z: int, mul := 1.0) -> Sprite2D:
+		var d: Dictionary = S[id]
+		var s := Sprite2D.new()
+		s.texture = tex(d["file"])
+		s.centered = false
+		var k := float(d["px_scale"]) * mul
+		s.scale = Vector2(k, k)
+		s.position = pos - Vector2(d["pivot"][0], d["pivot"][1]) * k
+		s.modulate = mod
+		s.z_as_relative = false
+		s.z_index = z
+		if add:
+			var mat := CanvasItemMaterial.new()
+			mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+			s.material = mat
+		add_child(s)
+		return s
+	put.call("white_wash", Vector2(640, 360), false, Color(1, 1, 1, 0.25), 2500)
+	put.call("eyelid_top", Vector2(640, 360 - gap), false, Color.WHITE, 2600)
+	put.call("eyelid_bottom", Vector2(640, 360 + gap), false, Color.WHITE, 2600)
+	put.call("monitor_line", Vector2(128, 600), true, Color(0.6, 1.0, 0.8, 0.9), 2700)
+	_label("hospital interlude: eyelids open %d px, white wash, heartbeat trace" % int(gap), Vector2(10, 4), 14)
+
+
 func _interlude(_flood := false) -> void:
+	if chapter == "hospital":
+		_interlude_hospital()
+		return
 	var IL: Dictionary = M["interlude"]
 	var S: Dictionary = IL["sprites"]
 	var A: Dictionary = IL["anchors"]
