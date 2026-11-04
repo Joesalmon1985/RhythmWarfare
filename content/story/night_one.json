@@ -78,6 +78,11 @@
      "action": "doors_open"
     },
     {
+     "at_bar": 1,
+     "action": "player_role",
+     "role": "dancer"
+    },
+    {
      "at_bar": 3,
      "action": "front_row_sway"
     },
@@ -556,11 +561,44 @@
    },
    "good": [
     "new_dancers_enter",
-    "applause"
+    "applause",
+    {
+     "action": "player_move",
+     "to": "steps",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "player_move",
+     "to": "stage",
+     "style": "climb",
+     "bars": 2,
+     "after_bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "on_stage",
+     "after_bars": 6
+    }
    ],
    "bad": [
     "dancers_step_back",
-    "look_around"
+    "look_around",
+    {
+     "action": "fx_queasy",
+     "amount": 0.3,
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "queasy"
+    },
+    {
+     "action": "player_move",
+     "to": "floor_edge",
+     "style": "walk",
+     "bars": 2
+    }
    ],
    "good_text": "The door crowd poured onto the floor.",
    "bad_text": "A few dancers hung back at the edges."
@@ -578,10 +616,42 @@
     "dead_band": 4
    },
    "good": [
-    "circle_spotlight_cheer"
+    "circle_spotlight_cheer",
+    {
+     "action": "player_move",
+     "to": "booth",
+     "style": "walk",
+     "bars": 2
+    },
+    {
+     "action": "player_look",
+     "at": "floor_centre",
+     "bars": 2,
+     "after_bars": 2
+    },
+    {
+     "action": "player_role",
+     "role": "dj",
+     "after_bars": 2
+    }
    ],
    "bad": [
-    "circle_breaks_awkward"
+    "circle_breaks_awkward",
+    {
+     "action": "fx_queasy",
+     "amount": 0.6,
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "queasy"
+    },
+    {
+     "action": "player_move",
+     "to": "corridor",
+     "style": "stagger",
+     "bars": 4
+    }
    ],
    "good_text": "The hero took the spotlight and the circle erupted.",
    "bad_text": "The circle fizzled out into an awkward silence."
@@ -602,7 +672,46 @@
     "drop_synchronised_jump"
    ],
    "bad": [
-    "drop_stumble"
+    "drop_stumble",
+    {
+     "action": "fx_queasy",
+     "amount": 0.5,
+     "bars": 2
+    },
+    {
+     "action": "player_move",
+     "to": "cubicle",
+     "style": "run",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "sick",
+     "after_bars": 4
+    },
+    {
+     "action": "sick_beat",
+     "bars": 4,
+     "after_bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "recovered",
+     "after_bars": 8
+    },
+    {
+     "action": "fx_queasy",
+     "amount": 0.0,
+     "bars": 2,
+     "after_bars": 8
+    },
+    {
+     "action": "player_move",
+     "to": "floor_edge",
+     "style": "walk",
+     "bars": 4,
+     "after_bars": 8
+    }
    ],
    "good_text": "The drop landed: the whole floor jumped as one.",
    "bad_text": "The drop stumbled, but the set stayed alive."
@@ -641,7 +750,18 @@
     "energy_min": 40
    },
    "good": [
-    "winback_cheer"
+    "winback_cheer",
+    {
+     "action": "player_move",
+     "to": "steps",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "on_stage",
+     "after_bars": 4
+    }
    ],
    "bad": [],
    "good_text": "You won the floor back after a rough patch.",
@@ -653,19 +773,53 @@
    "title": "Legendary Set",
    "energy_min": 85,
    "pass_min": 0.94,
-   "text": "The room roared. Hands in the air, lights at full power: a night nobody will forget."
+   "text": "The room roared. Hands in the air, lights at full power: a night nobody will forget.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "booth",
+     "style": "walk",
+     "bars": 2
+    },
+    {
+     "action": "player_role",
+     "role": "dj",
+     "after_bars": 2
+    }
+   ]
   },
   "good_night": {
    "title": "Good Night",
    "energy_min": 40,
    "pass_min": 0.5,
-   "text": "Happy dancing and warm applause. A solid set and a good night out."
+   "text": "Happy dancing and warm applause. A solid set and a good night out.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "steps",
+     "style": "walk",
+     "bars": 2
+    }
+   ]
   },
   "lost_the_floor": {
    "title": "Lost the Floor",
    "energy_min": -1,
    "pass_min": 0.0,
-   "text": "The floor drifted away, with sparse applause. Tomorrow's another night."
+   "text": "The floor drifted away, with sparse applause. Tomorrow's another night.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "door",
+     "style": "walk",
+     "bars": 2
+    },
+    {
+     "action": "player_role",
+     "role": "out",
+     "after_bars": 2
+    }
+   ]
   }
  },
  "ending_order": [

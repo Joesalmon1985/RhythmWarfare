@@ -87,10 +87,12 @@ func _check_moves() -> void:
 			for outcome in ["good", "bad"]:
 				for a in d.get(outcome, []):
 					if typeof(a) == TYPE_DICTIONARY and str(a.get("action", "")) == "player_move":
-						actions.append(a)
+						var b2: Dictionary = a.duplicate()
+						b2["_start"] = float(item["bar"]) + float(a.get("after_bars", 0.0))
+						actions.append(b2)
 		for a in actions:
 			var bars := float(a.get("bars", 2.0))
-			var start := float(item["bar"])
+			var start := float(a.get("_start", item["bar"]))
 			if bars < MOVE_BARS_MIN or bars > MOVE_BARS_MAX:
 				warnings.append("%s: player_move to %s lasts %.1f bars; moves last %d to %d bars" % [where, a.get("to", "?"), bars, int(MOVE_BARS_MIN), int(MOVE_BARS_MAX)])
 			var dense := 0
@@ -144,12 +146,15 @@ func update(t: float) -> Array:
 		for a in d.get(res["outcome"], []):
 			var args := {"decision": str(d["id"]), "outcome": res["outcome"]}
 			var name := str(a)
+			var after := 0.0  # a journey action may start some bars after the decision (a climb after the walk to the steps)
 			if typeof(a) == TYPE_DICTIONARY:
 				name = str(a["action"])
 				for k in a:
-					if k != "action":
+					if k == "after_bars":
+						after = float(a[k])
+					elif k != "action":
 						args[k] = a[k]
-			_emit(out, t0, float(d["at_bar"]), name, args, str(item["block"]), "decision")
+			_emit(out, t0 + after * 4.0 * 60.0 / level.bpm, float(d["at_bar"]) + after, name, args, str(item["block"]), "decision")
 	_pending = still
 	if not _ending_fired and _total_sequences > 0 and crowd.history.size() >= _total_sequences:
 		_ending_fired = true

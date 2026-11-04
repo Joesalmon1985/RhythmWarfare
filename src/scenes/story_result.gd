@@ -27,6 +27,9 @@ func _ready() -> void:
 	content.add_child(head)
 	if data != null and data.endings.has(ending):
 		content.add_child(StoryStyle.note(str(data.endings[ending]["text"]), Color(0.92, 0.92, 1.0), 22))
+	var journey: Dictionary = r.get("journey", {})
+	if not journey.is_empty():
+		content.add_child(StoryStyle.note("YOUR NIGHT: %s" % str(journey["name"]).to_upper(), StoryStyle.AMBER, 22))
 	var tiles := HFlowContainer.new()
 	tiles.add_theme_constant_override("h_separation", StoryStyle.GAP)
 	tiles.add_theme_constant_override("v_separation", StoryStyle.GAP)

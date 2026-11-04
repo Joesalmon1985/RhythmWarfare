@@ -21,6 +21,8 @@ var data: StoryData
 var run: StoryRun
 var bpm := 174.0
 var reduced := false
+var motion := 0  # camera motion: 0 full, 1 reduced, 2 none (Session.effective_story_motion); reduced effects imply at least 1
+var lines := 0  # internal resolution lines for the low-res world (0: the default, or RW_STORY_LINES)
 var high_contrast := false
 var palette := "low"
 var palettes: Dictionary = {}  # name -> Array[Color] (the chapter's own, else PALETTES)
@@ -58,6 +60,7 @@ var lowres: StoryLowRes
 var world: StoryWorld
 var free_look := StoryFreeLook.new()
 var world_active := false
+var fx3d: StoryWorldFx  # the light show in the 3D world (beams, pools, haze, LED, tiles, ...)
 var _overlay: CanvasLayer
 var _vis: Dictionary = {}
 var _vis_sec := ""
@@ -128,6 +131,8 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	if not with_nodes or world_active:
 		return
 	lowres = StoryLowRes.new()
+	if lines > 0 and not OS.has_environment("RW_STORY_LINES"):
+		lowres.lines = lines
 	lowres.name = "World3D"
 	lowres.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(lowres)
@@ -140,6 +145,9 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	crowd.position = Vector2.ZERO
 	crowd.scale = Vector2.ONE
 	_root.visible = false  # the painted room has nothing left to show
+	fx3d = StoryWorldFx.new()
+	world.add_child(fx3d)
+	fx3d.build(self, map, assets, world)
 	crowd.tint_fn = func(sec: String) -> Color: return world.light_of(map.sector(sec), t_now, _world_ctx)
 	world_active = true
 	mouse_filter = Control.MOUSE_FILTER_STOP  # the stage area takes the head-turn drag; the pad strip below is another control
@@ -182,6 +190,24 @@ func journey() -> Array:
 func _all_fx(method: String, args: Array) -> void:
 	for id in views:
 		((views[id] as StoryView).fx as Object).callv(method, args)
+
+
+## The drop's haze burst start times and the two-bar results (passed or not), kept here so the 3D light (StoryLight) reads them too.
+var _bursts: Array = []
+var _pulses: Array = []
+
+
+func fx_bursts() -> Array:
+	return _bursts
+
+
+func fx_pulses() -> Array:
+	return _pulses
+
+
+func _haze_burst(t0: float) -> void:
+	_bursts.append(t0)
+	_all_fx("haze_burst", [t0])
 
 
 func _set_glow(on: bool) -> void:
@@ -237,6 +263,8 @@ func piece_state(id: String, t: float) -> Dictionary:
 
 
 func reset() -> void:
+	_bursts = []
+	_pulses = []
 	_pieces = {}
 	_act = {}
 	_beam_mode = "sweep"
@@ -292,7 +320,8 @@ func update(t: float, p_energy: float) -> void:
 	var shown := _visible_views(t)
 	var pose: Dictionary = {}
 	if player != null:
-		player.reduced = reduced
+		player.reduced = reduced or motion >= 1
+		player.cut = motion >= 2
 		pose = player.pose_at(t)
 		var size := Vector2(lowres.sub.size) if lowres != null else Vector2(480, 170)
 		var ppose := {"cam": pose["cam"], "yaw": float(pose["yaw"]) + free_look.offset}
@@ -339,8 +368,10 @@ func update(t: float, p_energy: float) -> void:
 
 func _update_world(t: float, p_energy: float, pose: Dictionary) -> void:
 	lowres.apply_pose(pose, free_look.offset)
-	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": 0.0, "woofer_pump": _woofer_pump}
+	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": StoryLight.strobe_at(self, t), "woofer_pump": _woofer_pump}
 	world.update(t, _world_ctx)
+	fx3d.update(t)
+	lowres.apply_post(StoryLight.post_state(self, t), StoryLight.pal(self, 0).lightened(0.3))
 
 
 # --- the moving camera (chapters with extra rooms) ------------------------------------------------------------------------------------
@@ -612,10 +643,10 @@ func apply(a: Dictionary) -> void:
 			_act["bass_reveal"] = {"t0": t0, "t1": t0 + 4.0 * bar_s()}
 			if palette == "low":
 				palette = "cool"
-			_all_fx("haze_burst", [t0])
+			_haze_burst(t0)
 			crowd.direct(crowd.present_ids(), "dance", t0, 3.0 * bar_s())
 		"haze_burst":
-			_all_fx("haze_burst", [t0])
+			_haze_burst(t0)
 		"led_eq", "led_rings", "led_bars", "led_wave":
 			_led_mode = act.trim_prefix("led_")
 		"disco_ball_on":
@@ -718,7 +749,7 @@ func apply(a: Dictionary) -> void:
 			_woofer_pump = true
 			_beam_mode = "fan"
 			_beam_since = t0
-			_all_fx("haze_burst", [t0])
+			_haze_burst(t0)
 			crowd.direct(crowd.present_ids(), "cheer", t0, 4.0 * bar_s(), true)
 		"drop_stumble":
 			_flicker_until = t0 + 2.0 * bar_s()
@@ -778,6 +809,8 @@ func apply(a: Dictionary) -> void:
 			_pieces[str(args["piece"])] = st3
 		"ending":
 			_ending = str(args["ending"])
+			for ja in data.ending_journey(_ending, t0, bar_s()):  # where the player ends up in this ending's tableau
+				apply(ja)
 			for vid in views:
 				(views[vid] as StoryView).crowd.set_ending(_ending)
 			_act["ending"] = {"t0": t0, "t1": NO_END}
@@ -814,4 +847,7 @@ func _front_ids() -> Array:
 ## The two-bar result: a local reaction now; the persistent mood is the energy.
 func on_sequence(result: Dictionary, t0: float) -> void:
 	crowd.react(bool(result["passed"]), str(result["grade"]), t0)
+	if _pulses.size() > 6:
+		_pulses.pop_front()
+	_pulses.append({"t0": t0, "passed": bool(result["passed"])})
 	_all_fx("pulse", [bool(result["passed"]), t0])

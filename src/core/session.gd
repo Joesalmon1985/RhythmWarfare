@@ -12,7 +12,7 @@ const LEAD_IN_MAX_S := 2.0
 const LEAD_IN_DEFAULT_S := 1.2
 const PAD_SIZES := [0.30, 0.36, 0.42]  # share of the screen height the pad strip takes: compact, standard, large
 const DEFAULTS := {"calibration_ms": 0.0, "cue_lead_in_s": LEAD_IN_DEFAULT_S, "pad_size": 1, "high_contrast": false,
-	"reduced_effects": false, "vibration": true, "music_volume": 1.0, "sfx_volume": 0.5, "show_keys": true}
+	"reduced_effects": false, "story_motion": 0, "story_lines": 1, "vibration": true, "music_volume": 1.0, "sfx_volume": 0.5, "show_keys": true}
 
 var campaign: Campaign  # saved progress (user://campaign.json) and the campaign data
 var campaign_level_id := ""  # the mission being played ("" for free play and playtests)
@@ -36,6 +36,8 @@ var cue_lead_in_s := LEAD_IN_DEFAULT_S  # how long a note takes to fall onto its
 var pad_size := 1
 var high_contrast := false
 var reduced_effects := false
+var story_motion := 0  # Story Campaign camera motion: 0 full, 1 reduced (no bob, roll or sway), 2 none (the camera cuts between places)
+var story_lines := 1  # Story Campaign internal resolution: index into StoryLowRes.LINE_CHOICES (360p, 270p, 180p)
 var vibration := true
 var music_volume := 1.0
 var sfx_volume := 0.5  # effects (gunfire, explosions, EVA voices) on the "SFX" bus
@@ -60,6 +62,8 @@ func _ready() -> void:
 		story_chapter = OS.get_environment("RW_STORY_CHAPTER")
 	if OS.has_environment("RW_PAD_SIZE"):  # 0 compact, 1 standard, 2 large: screenshots of the layouts
 		pad_size = clampi(int(OS.get_environment("RW_PAD_SIZE")), 0, PAD_SIZES.size() - 1)
+	if OS.has_environment("RW_STORY_MOTION"):  # 0 full, 1 reduced, 2 none: screenshots of the camera setting
+		story_motion = clampi(int(OS.get_environment("RW_STORY_MOTION")), 0, 2)
 	if OS.get_environment("RW_REDUCED") == "1":
 		reduced_effects = true
 	if OS.get_environment("RW_HIGH_CONTRAST") == "1":
@@ -86,6 +90,8 @@ func load_settings() -> void:
 	pad_size = clampi(int(cfg.get_value("play", "pad_size", 1)), 0, PAD_SIZES.size() - 1)
 	high_contrast = bool(cfg.get_value("display", "high_contrast", false))
 	reduced_effects = bool(cfg.get_value("display", "reduced_effects", false))
+	story_motion = clampi(int(cfg.get_value("display", "story_motion", 0)), 0, 2)
+	story_lines = clampi(int(cfg.get_value("display", "story_lines", 1)), 0, 2)
 	vibration = bool(cfg.get_value("play", "vibration", true))
 	music_volume = clampf(float(cfg.get_value("audio", "music_volume", 1.0)), 0.0, 1.0)
 	show_keys = bool(cfg.get_value("display", "show_keys", true))
@@ -109,6 +115,8 @@ func save_settings() -> void:
 	cfg.set_value("play", "vibration", vibration)
 	cfg.set_value("display", "high_contrast", high_contrast)
 	cfg.set_value("display", "reduced_effects", reduced_effects)
+	cfg.set_value("display", "story_motion", story_motion)
+	cfg.set_value("display", "story_lines", story_lines)
 	cfg.set_value("display", "show_keys", show_keys)
 	cfg.set_value("audio", "music_volume", music_volume)
 	cfg.set_value("audio", "sfx_volume", sfx_volume)
@@ -124,12 +132,19 @@ func reset_settings(include_calibration: bool = false) -> void:
 	pad_size = DEFAULTS["pad_size"]
 	high_contrast = DEFAULTS["high_contrast"]
 	reduced_effects = DEFAULTS["reduced_effects"]
+	story_motion = DEFAULTS["story_motion"]
+	story_lines = DEFAULTS["story_lines"]
 	vibration = DEFAULTS["vibration"]
 	music_volume = DEFAULTS["music_volume"]
 	sfx_volume = DEFAULTS["sfx_volume"]
 	show_keys = DEFAULTS["show_keys"]
 	apply_volume()
 	save_settings()
+
+
+## The Story Campaign's effective camera motion: the setting, but never less calm than reduced effects (which imply reduced motion).
+func effective_story_motion() -> int:
+	return maxi(story_motion, 1 if reduced_effects else 0)
 
 
 func apply_volume() -> void:

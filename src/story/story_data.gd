@@ -105,6 +105,13 @@ func validate(errors: Array) -> void:
 	for key in ending_order:
 		if not endings.has(key):
 			errors.append("ending %s is not defined" % key)
+		else:  # an ending may stage where the player ends up: journey actions with the same arguments as a decision's
+			for a in endings[key].get("journey", []):
+				var an2 := str(a.get("action", ""))
+				if not (an2 in ACTIONS) or not an2.begins_with("player_"):
+					errors.append("ending %s journey names %s: only player_* actions" % [key, an2])
+				else:
+					_check_journey_args(an2, a, errors, "ending " + str(key))
 	if ending_order.size() != 3:
 		errors.append("three endings are required")
 	for g in groups:
@@ -194,6 +201,19 @@ func _group_in_actors(group: String) -> bool:
 func tableau_of(ending: String) -> String:
 	var i := ending_order.find(ending)
 	return ["legendary", "good", "lost"][clampi(i, 0, 2)] if i >= 0 else "lost"
+
+
+## The journey actions an ending stages (where the player ends up in its tableau), as director-style actions starting at t0: [{t0, bar, action, args, block, source}].
+func ending_journey(ending: String, t0: float, bar_s: float) -> Array:
+	var out: Array = []
+	for ja in endings.get(ending, {}).get("journey", []):
+		var args: Dictionary = (ja as Dictionary).duplicate()
+		var an := str(args["action"])
+		var after := float(args.get("after_bars", 0.0))
+		args.erase("action")
+		args.erase("after_bars")
+		out.append({"t0": t0 + after * bar_s, "bar": 0.0, "action": an, "args": args, "block": "closing_tableau", "source": "ending"})
+	return out
 
 
 func ending_rank(ending: String) -> int:

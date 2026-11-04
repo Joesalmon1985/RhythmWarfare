@@ -709,6 +709,12 @@ static func journey_actions(chapter_raw: Dictionary) -> Array:
 			for a in d.get(outcome, []):
 				if typeof(a) == TYPE_DICTIONARY and str(a.get("action", "")).begins_with("player_"):
 					out.append({"action": str(a["action"]), "args": a, "where": "decision %s %s" % [d.get("id", "?"), outcome]})
+	var ends: Variant = chapter_raw.get("endings", {})
+	if typeof(ends) == TYPE_DICTIONARY:
+		for key in ends:
+			for a in (ends[key] as Dictionary).get("journey", []):
+				if typeof(a) == TYPE_DICTIONARY and str(a.get("action", "")).begins_with("player_"):
+					out.append({"action": str(a["action"]), "args": a, "where": "ending %s" % key})
 	return out
 
 

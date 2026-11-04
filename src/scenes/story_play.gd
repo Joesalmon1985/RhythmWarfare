@@ -114,16 +114,13 @@ func _build_layout() -> void:
 	stage.anchor_bottom = split
 	stage.reduced = Session.reduced_effects
 	stage.high_contrast = Session.high_contrast
+	stage.motion = Session.effective_story_motion()
+	stage.lines = StoryLowRes.LINE_CHOICES[clampi(Session.story_lines, 0, 2)]
 	add_child(stage)
 	stage.setup(assets, run.data, run)
 	stage.reduced = Session.reduced_effects
-	if FileAccess.file_exists(StoryMap.PATH % run.data.id) and OS.get_environment("RW_STORY_2D") != "1":  # RW_STORY_2D=1 keeps the old painted room
-		var smap := StoryMap.load_chapter(run.data.id)
-		smap.validate_chapter(run.data.raw)
-		if smap.errors.is_empty():
-			stage.attach_world(smap)
-		else:
-			push_warning("story map rejected, playing the 2D room: " + "; ".join(PackedStringArray(smap.errors)))
+	if stage.map != null:  # a chapter with a valid map plays in the 3D world (the stage loaded the map itself); its nodes need a renderer, so they are made here
+		stage.attach_world(stage.map, true)
 
 	var skin := StoryPadView.new()
 	pad_view = skin
@@ -372,6 +369,10 @@ func _ui(t: float) -> void:
 		var t0 := maxf(run.director.bar_time(float(act["start_bar"])), _hud.title_until if act_i == 0 else 0.0)
 		_hud.show_act("ACT %s" % str(act["id"]), str(act["title"]).to_upper(), t0)
 	_hud.set_time(t)
+	if stage.player != null:
+		_hud.set_role(stage.player.role_at(t), t)
+	if transport != null and stage.player != null:  # the sick beat: the music goes quiet and muffled through the stem gains
+		transport.set_duck(stage.player.sick_at(t))
 	pad_view.banner_text = _banner(t)
 	if _debug_label.visible:
 		_debug_label.text = "t=%6.2f bar %d  energy %.0f (%s)  seq %d/%d  crowd %d  fps %d" % [t, bar, run.crowd.energy, run.crowd.band(),

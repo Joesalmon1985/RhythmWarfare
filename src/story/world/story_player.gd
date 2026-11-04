@@ -21,6 +21,7 @@ const CROUCH_M := 0.55  # eye drop with the head down (sick_beat)
 var map: StoryMap
 var bpm := 174.0
 var reduced := false
+var cut := false  # camera motion "none": a move or a turn cuts to its end half way through instead of travelling
 var errors: Array = []
 
 var _events: Array = []  # sorted by t0: {kind: move|look, t0, t1, seq, ...}
@@ -167,6 +168,8 @@ func _state_in(ev: Dictionary, t: float) -> Dictionary:
 	var st: Dictionary = ev["start"]
 	var u := clampf((t - float(ev["t0"])) / (float(ev["t1"]) - float(ev["t0"])), 0.0, 1.0)
 	var e := _smooth(u)
+	if cut:
+		e = 0.0 if u < 0.5 else 1.0
 	if ev["kind"] == "look":
 		return {"pos": st["pos"], "sector": st["sector"], "yaw": _lerp_yaw(float(st["yaw"]), float(ev["end_yaw"]), e), "ground": st["ground"]}
 	var pts: PackedVector2Array = ev["route"]
@@ -239,6 +242,27 @@ func queasy_at(t: float) -> float:
 	return level
 
 
+## How much of the pad strip is the DJ deck (1) and how much the dancer's floor-tile rail (0) at song time t: a cross-fade of DECK_FADE_S after each role change.
+const DECK_FADE_S := 1.5
+
+
+static func role_is_deck(role: String) -> bool:
+	return role == "on_stage" or role == "dj"
+
+
+func deck_mix_at(t: float) -> float:
+	var prev := 0.0  # the dancer rail is the start
+	var cur := 0.0
+	var t0 := -INF
+	for x in _roles:
+		if float(x["t0"]) > t:
+			break
+		prev = cur
+		cur = 1.0 if role_is_deck(str(x["role"])) else 0.0
+		t0 = float(x["t0"])
+	return lerpf(prev, cur, _smooth((t - t0) / DECK_FADE_S))
+
+
 ## 0..1 head-down envelope inside a sick_beat (eased in and out).
 func sick_at(t: float) -> float:
 	for x in _sick:
@@ -301,6 +325,14 @@ func pose_at(t: float) -> Dictionary:
 	var side := StoryProjector.right(yaw) * bob.x
 	return {"cam": Vector3(pos.x + side.x, eye, pos.y + side.y), "yaw": yaw, "roll": bob.z, "pos": pos, "sector": str(st["sector"]), "ground": ground,
 		"moving": moving, "style": style, "u": u, "role": role, "queasy": q, "sick": sick}
+
+
+## The roles held in order of their start (the starting role, dancer, is not included).
+func role_list() -> Array:
+	var out: Array = []
+	for x in _roles:
+		out.append(str(x["role"]))
+	return out
 
 
 ## Every journey event scheduled so far (for the tests and the journey log): [{kind, t0, t1, to?, style?}].

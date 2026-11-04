@@ -313,3 +313,46 @@ regenerated in this chunk (the 2D crowd over a 3D room is interim), do that afte
 Tests at the end of this chunk: Godot suite 15,308 checks, 0 failures (13,274 before the build; new files `test_story_map`, `test_story_player`, `test_story_world`, `test_story_journey`);
 the story subset passes (`--filter story`). The Python content tests still fail on the missing `mido` module (known, unrelated). `src/scenes/story_interlude.gd` had a pre-existing
 "inferred from Variant" parse error that `test_scenes` printed (it did not fail a check); fixed with a type annotation. Asset check: `python3 tools/story/check_assets.py --determinism` is OK.
+
+### 13.2 WP4 to WP6 (Sonnet build session, chunk 2), branch `feature/story-25d`
+
+Commits: "tiles from the chapter art", "WP4 crowd bridge", "WP5 FX port", "WP6 Night One journey" (see `git log`).
+
+Tiles (correction): `tools/story/bake_tiles.gd` rasterises the chapter's SVGs in headless Godot (`Image.load_svg_from_string`), crops regions (back-wall panelling, plinth, LED screen, bottle shelf, entrance doors, woofer
+SVG, four cells of the LED floor, `riser.svg`) and resamples to 64 or 128 px. `tiles.py` now only holds the metres per tile and runs the bake (needs `$GODOT` or `~/godot/Godot_v4.5.1-stable_linux.x86_64`);
+`build_assets.py tiles` rebuilds only them; `check_assets.py --determinism` passes. The toilet tiles have no art and are palette fills; the cubicle door is the entrance door turned teal. Documented in `docs/STORY_ART.md`.
+
+WP4 crowd bridge (`StoryCrowd` world mode, `StoryCrowdProp`, `StoryMap.visible_sectors`, `StoryStage`):
+- A chapter with a map file now gets its map in `StoryStage.setup` (headless too): `stage.map`, `stage.player` and the crowd's world mode exist without a renderer; `attach_world(map, true)` (story_play does it) adds the
+  `lowres` viewport, the `StoryWorld`, the `StoryWorldFx` and moves the crowd into a `CanvasLayer` inside `lowres.sub` (the painted room `_root` is hidden). `RW_STORY_2D` is gone (Night One has no design-space numbers).
+- In world mode `actors[id]["pos"]` and `["home"]` are ground coordinates (x, z metres); `a["sec"]` is the sector (re-resolved while walking, ground height = sector floor). Walks follow `StoryMap.route` (through the doors, never through a
+  wall). Each frame the stage hands the crowd the pose (`set_camera`), the crowd projects every dancer (`_place_world`, inlined pinhole), culls by sector visibility (`visible_sectors`, up to two portals deep, cached while the camera is still),
+  fades dancers closer than 1.3 m to the eye, sorts dancers, silhouettes and occluders together by distance (`_sort_world`, integer keys) and draws flat shadow blobs. Culled dancers keep their mood state but skip the pose and the draw.
+  Dancers pose at up to 45 Hz of song time (`POSE_RATE`), position and scale every frame.
+- Map additions (all validated): `spots` (door with `slots`, circle with `radii` and `open`, riser, side_l, side_r), `silhouettes` (rear row), homes may carry `side`, occluders are `{sprite (a map texture), at, width, height}` drawn over the
+  crowd (Night One: two speaker stacks on the floor). The design-space numbers (x, depth, side_x, side_depth) are removed from `content/story/night_one.json`; chapters 2 to 5 keep theirs and the untouched 2D path.
+  Gatherer and peak homes moved from the entrance and the bar onto the floor (the old design-space mapping), enter via the door and side spots.
+- Crowd frame cost (this laptop, same profile as 13.1, bars 105 to 113, 270 lines, perfect autoplay, 663 frames): before 13.7 to 14.2 ms mean (p95 14.5 to 15.3); after 12.0 ms mean, p95 12.5 ms. What was cut: the per-dancer
+  `_draw` no longer allocates a dictionary and string keys per frame (joint index array), dancers skip pose and redraw when the song-time step is under 1/45 s, culled dancers are not drawn, one integer sort instead of a lambda sort,
+  inlined projection and cached portal visibility, scanlines in one call, the painted 2D layers and `redraw_fx` are skipped in world mode. Remaining cost split (measured by hiding parts): pads + notes + HUD about 6 ms
+  (pad style boxes with AA 0.75 ms, deck 1.1 ms, notes 2 ms), crowd about 3.3 ms, world 2.4 ms. The next 2 ms would come from caching the static deck layer and the pad boxes.
+
+WP5 FX port (`StoryLight` pure functions, `StoryWorldFx` nodes, `story_post.gdshader`, `StoryLowRes.apply_post`):
+- `StoryLight` holds the song-time maths (beam strength and angle, strobe, bloom, mood dim, ending fade, haze, floor tiles, spots, LED value, confetti, post-process state); `StoryWorldFx` draws them in 3D as unshaded additive quads: crossed-plane
+  beams from the six map fixtures, spot pools and cones, two haze bands, the LED floor as one nearest-filtered 14 x 12 texture over the floor (refreshes at 20 Hz of song time), ripples and the circle ring, disco-ball dots, woofer glow
+  and a MultiMesh of confetti; the LED wall is a 32 x 32 texture swapped into the `wall_led` material (12 Hz of song time, ending words in a 3 x 5 pixel font). The strobe is a 0.3 s white flash on `bass_reveal`/`burst` only, never in reduced effects.
+- Post-process on the low-res output (`story_post.gdshader`): sine warp, chroma split, desaturation and a breathing vignette from `player.queasy_at`, plus mood dim, ending fade (lost night sinks to 0.55, good 0.12, legendary none), strobe and
+  bloom. Reduced effects zeroes the queasy part (no warp, split, desaturation or breathing) and the strobe.
+- Sick beat audio: `StemTransport.set_duck(amount)` (default 0, so the military campaign is untouched) quietens the mix and drops the non-low stems (kick, bass, drums stay at 0.45) through the existing per-stem gains; story_play feeds it `player.sick_at`.
+- Deleted from `StoryFx`: the LED floor tile code (`led_tiles` anchor, Night One only). Still needed by chapters 2 to 5 until WP7 and therefore kept: everything else in `StoryFx` (beams, spots, haze, LED screen, woofers, ball, door, pieces,
+  confetti, riser column) and the whole 2D `StoryCrowd` design-space path, `StoryView` layers, the camera moves (`move_to`) and `StoryCameraOverlay`.
+
+WP6 Night One journey:
+- `content/story/night_one.json`: decision outcomes carry journey actions (dicts with an optional `after_bars` offset the director adds to the decision time), `endings[x].journey` stages the tableau (legendary: booth and DJ; good night: the steps;
+  lost: the door and OUT COLD), bar 1 sets the dancer role. Places: perfect `steps, stage, booth, booth`; none and sloppy seed 2 `floor_edge, corridor, cubicle, floor_edge` then `door` (lost) or `steps` (good night).
+  Deviations: the run to the cubicle lasts 4 bars (the plan said 2; from the booth it is 28 m), `final_push` good has no move (the ending stages the booth), `player_look at floor_centre` stands for "look at the floor".
+- `StoryJourney` (pure) turns the director log into places, roles and the result line ("Dancer > On stage > DJ", in `StoryRun.summary()["journey"]`, shown on the result screen). Role badge chip in `StoryHud` (DANCER, ON STAGE, DJ, FEELING ROUGH, OUT COLD).
+  Pad strip: `StoryDeck` draws the dancer's floor-tile rail (LED floor cells under each pad) and the DJ deck, cross-faded over 1.5 s of song time by `StoryPlayer.deck_mix_at`.
+- Settings: Story camera motion (full / reduced / none: none cuts to the end of a move half way through) and Story internal resolution (360p / 270p / 180p, `Session.story_lines`; `RW_STORY_LINES` still overrides); reduced effects imply at least reduced motion
+  (`Session.effective_story_motion`). `RW_STORY_MOTION=0..2` for screenshots.
+- Tests: `test_story_crowd_world`, `test_story_fx_world`, `test_story_night_one_journey` (journey under perfect, none, sloppy seed 2 at 30, 60 and variable steps; camera inside a room at every bar; no dense-run warning on load).

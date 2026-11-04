@@ -53,6 +53,27 @@ shot 25_drop_stumble       none            73.6
 shot 26_drop_jump          perfect         73.6
 shot 27_circle_awkward     none            57.8
 
+# Night One's journey, one shot per node (WP6): the dancer on the floor, the walk to the steps, the climb, the booth, the queasy floor edge, the corridor, the cubicle run and
+# sick beat, the recovered walk back, the endings' tableaux, reduced effects (steady picture), high contrast and the odd window shapes
+shot j01_dancer_view        perfect         10
+shot j02_walk_to_steps      perfect         35
+shot j03_on_stage           perfect         41
+shot j04_booth_dj           perfect         62
+shot j05_queasy_floor_edge  none            36
+shot j06_corridor_stagger   none            60
+shot j07_cubicle_run        none            75
+shot j08_sick_beat          none            79
+shot j09_recovered_walk     none            85
+shot j10_end_legendary_booth perfect        131
+shot j11_end_good_steps     sloppy          131 RW_SEED=2
+shot j12_end_lost_door      none            131
+shot j13_reduced_motion     perfect         35  RW_REDUCED=1
+shot j14_high_contrast      perfect         10  RW_HIGH_CONTRAST=1
+shot j15_4x3_stage          perfect         41  RW_WINDOW=1024x768
+shot j16_20x9_booth         perfect         62  RW_WINDOW=1600x720
+shot j17_lowres_180         perfect         62  RW_STORY_LINES=180
+shot j18_motion_none        perfect         35  RW_STORY_MOTION=2
+
 # chapters 2 and 3 (their own art, music packs and endings) and the cutscenes between chapters
 shot ch2_01_opening         perfect       3  RW_STORY_CHAPTER=mothership
 shot ch2_02_groove          accuracy:0.8  27 RW_STORY_CHAPTER=mothership

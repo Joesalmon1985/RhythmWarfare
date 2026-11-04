@@ -32,7 +32,42 @@ func _beats(now: float) -> float:
 	return maxf(now, 0.0) * run.level.bpm / 60.0
 
 
+## 0 (dancer's floor-tile rail) .. 1 (DJ deck) at song time `now`; a chapter without a journey always shows the deck.
+func deck_mix(now: float) -> float:
+	return stage.player.deck_mix_at(now) if stage != null and stage.player != null else 1.0
+
+
 func draw_under(ci: CanvasItem, size: Vector2, rects: Dictionary, now: float) -> void:
+	var m := deck_mix(now)
+	if m > 0.01:
+		_draw_deck(ci, size, rects, now)
+	if m < 0.99:
+		_draw_dancer_rail(ci, size, rects, now, 1.0 if m <= 0.01 else 1.0 - m)
+
+
+## The dancer's strip: a dark floor with a rail of four lit LED floor tiles, one under each pad, in the colours of the club's dance floor.
+func _draw_dancer_rail(ci: CanvasItem, size: Vector2, rects: Dictionary, now: float, alpha: float) -> void:
+	ci.draw_rect(Rect2(Vector2.ZERO, size), Color(0.025, 0.018, 0.07, alpha))
+	var tex := assets.texture("textures/floor_led.png")
+	var b := _beats(now)
+	var kp := exp(-6.0 * (b - floor(b)))
+	for pad in rects:
+		var r: Rect2 = rects[pad]
+		var tile := r.grow(r.size.x * 0.1)
+		if tex != null:  # a different cell of the floor texture under each pad
+			var q := int(pad) % 4
+			var src := Rect2(float(q % 2) * 64.0, float(q / 2) * 64.0, 64.0, 64.0)
+			ci.draw_texture_rect_region(tex, tile, src, Color(1, 1, 1, alpha))
+		else:
+			ci.draw_rect(tile, Color(0.2, 0.15, 0.5, alpha))
+		var edge := Color(0.5, 0.6, 1.0, (0.35 + 0.35 * kp * (0.3 if reduced else 1.0)) * alpha)
+		ci.draw_rect(tile, edge, false, 3.0)
+	var ry := size.y * 0.06  # the rail: a neon line along the top of the strip and along its foot
+	ci.draw_rect(Rect2(0, ry, size.x, 3.0), Color(1.0, 0.35, 0.78, 0.6 * alpha))
+	ci.draw_rect(Rect2(0, size.y - 6.0, size.x, 3.0), Color(0.35, 0.92, 1.0, 0.5 * alpha))
+
+
+func _draw_deck(ci: CanvasItem, size: Vector2, rects: Dictionary, now: float) -> void:
 	var layer := assets.layer("desk_top")
 	var tex := assets.texture(str(layer.get("file", "")))
 	if tex != null:

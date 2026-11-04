@@ -107,7 +107,8 @@ func summary() -> Dictionary:
 		energy_curve.append(snappedf(float(h["energy"]), 0.1))
 	return {"ending": ending(), "ending_rank": data.ending_rank(ending()), "energy": snappedf(crowd.energy, 0.1), "sequences_passed": crowd.passed_count(), "sequences_total": total_sequences(),
 		"accuracy": pj.accuracy(), "best_combo": pj.best_combo, "perfect": pj.perfect, "great": pj.great, "ok": pj.ok, "misses": pj.misses,
-		"strays": pj.strays, "branches": branches, "energy_curve": energy_curve, "peak_energy": snappedf(_peak(), 0.1)}
+		"strays": pj.strays, "branches": branches, "energy_curve": energy_curve, "peak_energy": snappedf(_peak(), 0.1),
+		"journey": StoryJourney.summarize(director.fired, data, level.bpm)}
 
 
 func _peak() -> float:

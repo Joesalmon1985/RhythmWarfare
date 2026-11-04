@@ -285,12 +285,14 @@ func update(t: float, p_energy: float) -> void:
 			vu = clampf((t - float(vn["t0"])) / maxf(float(vn["t1"]) - float(vn["t0"]), 0.001), 0.0, 1.0)
 		var lit := 1.13 if id == lit_id else 1.0  # the followspot's dancer stands out from the crowd
 		var alpha := float(a["alpha"]) * (1.0 - clampf((vu - 0.55) / 0.45, 0.0, 1.0))
+		var shown := true
 		if world_mode:
-			if not _place_world(a, c, vu):
-				c.visible = false  # behind a wall, out of view or too close: not drawn, not posed
-				continue
-			alpha *= float(a["near"])
-			drawn += 1
+			shown = _place_world(a, c, vu)  # false: behind a wall, out of view or too close: not drawn and not posed, but it keeps its state
+			if shown:
+				alpha *= float(a["near"])
+				drawn += 1
+		if world_mode:
+			c.visible = shown
 		else:
 			var depth_scale := _scale_at((a["pos"] as Vector2).y) * CHAR_SCALE
 			var lift := 0.0
@@ -313,7 +315,10 @@ func update(t: float, p_energy: float) -> void:
 			a["dir"] = {}
 		if st != c.state:
 			c.state = st
-		if world_mode:  # the dancers animate at up to POSE_RATE a second of song time (the redraw is the cost); position and scale still follow the camera every frame
+		if world_mode:
+			if not shown:
+				continue
+			# the dancers animate at up to POSE_RATE a second of song time (the redraw is the cost); position and scale still follow the camera every frame
 			var pt := float(a.get("pose_t", -1.0e9))
 			if t >= pt and t - pt < 1.0 / POSE_RATE:
 				continue

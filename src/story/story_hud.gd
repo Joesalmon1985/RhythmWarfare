@@ -20,6 +20,9 @@ var reduced := false
 var t_now := -2.0
 var countdown := ""  # the count-in digit ("" when none)
 var countdown_frac := 0.0  # 0..1 through the current digit
+var role_text := ""  # the player's journey role badge ("" in a chapter without a map): DANCER, ON STAGE, DJ, FEELING ROUGH, OUT COLD
+var _role_shown := ""
+var _role_t0 := -10.0
 var _act := {}  # {kicker, text, t0}
 var _toast := {}  # {text, tone, t0, hold}
 var _font: Font
@@ -44,6 +47,28 @@ func show_toast(text: String, tone: String, t0: float, hold := TOAST_HOLD) -> vo
 func cut_toast(t: float) -> void:
 	if not _toast.is_empty() and t >= float(_toast["t0"]):
 		_toast["hold"] = minf(float(_toast["hold"]), maxf(t - float(_toast["t0"]), 0.0))
+
+
+## The role badge text for a StoryMap role (the journey name the result screen uses too).
+static func role_badge(role: String) -> String:
+	match role:
+		"on_stage":
+			return "ON STAGE"
+		"dj":
+			return "DJ"
+		"queasy", "sick":
+			return "FEELING ROUGH"
+		"out":
+			return "OUT COLD"
+	return "DANCER"
+
+
+func set_role(role: String, t: float) -> void:
+	var txt := role_badge(role)
+	if txt != _role_shown:
+		_role_shown = txt
+		_role_t0 = t
+	role_text = txt
 
 
 func set_time(t: float) -> void:
@@ -109,6 +134,20 @@ func _draw() -> void:
 			_text(Vector2(r.position.x + 18.0 * k, y0 + fs * 0.8), str(_act["kicker"]), int(17 * k), Color(MAGENTA.lightened(0.3), a), 4)
 			_text(Vector2(r.position.x + 18.0 * k, y0 + fs * 1.85), str(_act["text"]), fs, Color(1, 1, 1, a), 7)
 			y0 = r.end.y + 10.0 * k
+	# the role badge: a chip beside the act card (or in its place), fading in when the role changes
+	if role_text != "":
+		var fs := int(20 * k)
+		var tw := _font.get_string_size(role_text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+		var ra := 1.0 if reduced else clampf((t_now - _role_t0) / 0.5, 0.0, 1.0)
+		var act_w := 0.0
+		if not _act.is_empty() and _vis(float(_act["t0"]), ACT_HOLD) > 0.0:
+			act_w = maxf(_font.get_string_size(str(_act["text"]), HORIZONTAL_ALIGNMENT_LEFT, -1, int(30 * k)).x, 160.0 * k) + 56.0 * k
+		var accent := AMBER if role_text in ["FEELING ROUGH", "OUT COLD"] else CYAN
+		var chip := Rect2(x - 10.0 * k + act_w, 18.0 * k + (0.0 if act_w > 0.0 else 0.0), tw + 32.0 * k, fs * 1.7)
+		if act_w == 0.0:
+			y0 = chip.end.y + 10.0 * k
+		_panel(chip, accent, ra)
+		_text(Vector2(chip.position.x + 18.0 * k, chip.position.y + fs * 1.2), role_text, fs, Color(accent.lightened(0.5), ra), 5)
 	# the decision caption under it
 	if not _toast.is_empty():
 		var a := _vis(float(_toast["t0"]), float(_toast["hold"]))
