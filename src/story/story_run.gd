@@ -36,6 +36,7 @@ static func create(options: Dictionary = {}, data_path: String = StoryData.PATH)
 	if run.level.bar_count() != run.data.duration_bars:
 		run.errors.append("level has %d bars, the chapter expects %d" % [run.level.bar_count(), run.data.duration_bars])
 	run.reset()
+	run.warnings.append_array(run.director.warnings)
 	return run
 
 

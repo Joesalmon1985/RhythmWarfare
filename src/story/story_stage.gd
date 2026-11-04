@@ -50,6 +50,15 @@ var _scale := 1.0
 var area_h := 460.0
 var action_log: Array = []
 
+## The 2.5D world (docs/STORY_25D_PLAN.md): a chapter with a map file gets a StoryWorld seen through a low-res viewport by the player's rail camera.
+## Until the crowd bridge (WP4) the 2D crowd is still drawn over it in design space and the old 2D room art and light effects are hidden.
+var map: StoryMap
+var player: StoryPlayer  # the rail camera and the journey (roles, queasy, sick); also exists without nodes (tests)
+var lowres: StoryLowRes
+var world: StoryWorld
+var free_look := StoryFreeLook.new()
+var world_active := false
+
 
 func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
 	assets = p_assets
@@ -90,6 +99,61 @@ func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
 var crowd: StoryCrowd:
 	get:
 		return (views[current_view] as StoryView).crowd
+
+
+## Give the stage a map: the player's rail always; with `with_nodes` also the 3D world behind the crowd (needs no renderer to build).
+func attach_world(p_map: StoryMap, with_nodes := true) -> void:
+	map = p_map
+	player = StoryPlayer.new()
+	player.setup(map, bpm)
+	player.reduced = reduced
+	if not with_nodes:
+		return
+	lowres = StoryLowRes.new()
+	lowres.name = "World3D"
+	lowres.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(lowres)
+	move_child(lowres, 0)  # behind the 2D crowd
+	world = StoryWorld.new()
+	world.name = "World"
+	world.build(map, assets)
+	lowres.attach(world)
+	world_active = true
+	mouse_filter = Control.MOUSE_FILTER_STOP  # the stage area takes the head-turn drag; the pad strip below is another control
+
+
+func _process(delta: float) -> void:
+	if not world_active:
+		return
+	var axis := 0.0
+	if Input.is_key_pressed(KEY_Q):
+		axis += 1.0
+	if Input.is_key_pressed(KEY_E):
+		axis -= 1.0
+	free_look.set_key_axis(axis)
+	free_look.update(delta, player.look_active(t_now))
+
+
+func _gui_input(event: InputEvent) -> void:
+	if not world_active:
+		return
+	if event is InputEventMouseMotion and (event.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0:
+		free_look.drag(event.relative.x)
+	elif event is InputEventScreenDrag:
+		free_look.drag(event.relative.x)
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		free_look.release()
+	elif event is InputEventScreenTouch and not event.pressed:
+		free_look.release()
+
+
+## The waypoints the journey has been sent to, in order (what a playtest compares with the authored expectation).
+func journey() -> Array:
+	var out: Array = []
+	for a in action_log:
+		if str(a["action"]) == "player_move":
+			out.append(str(a["args"].get("to", "")))
+	return out
 
 
 func _all_fx(method: String, args: Array) -> void:
@@ -162,6 +226,9 @@ func reset() -> void:
 	_flicker_until = -1.0
 	palette = "low"
 	action_log = []
+	if player != null:
+		player.reset()
+	free_look.reset()
 	_cam = {}
 	_cam_fx = []
 	_main_palette = ""
@@ -225,7 +292,24 @@ func update(t: float, p_energy: float) -> void:
 				v.crowd.riser_pos = Vector2(float(rl[0]), float(rl[1]) - 6.0)
 	_apply_camera(t)
 	_cam_overlay.queue_redraw()
+	if player != null:
+		player.reduced = reduced
+		if world_active:
+			_update_world(t, p_energy, shown)
 	queue_redraw()
+
+
+func _update_world(t: float, p_energy: float, shown: Array) -> void:
+	var pose := player.pose_at(t)
+	lowres.apply_pose(pose, free_look.offset)
+	world.update(t, {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": 0.0, "woofer_pump": _woofer_pump})
+	for id in shown:  # the old room art and light drawing give way to the 3D world; the crowd stays (until WP4)
+		var v: StoryView = views[id]
+		v.far.visible = false
+		v.near.visible = false
+		v.top.visible = false
+		for l in v.fx_layers:
+			l.visible = false
 
 
 # --- the moving camera (chapters with extra rooms) ------------------------------------------------------------------------------------
@@ -639,6 +723,9 @@ func apply(a: Dictionary) -> void:
 					palette = _main_palette
 				elif hint != "" and palettes.has(hint) and not args.has("keep_palette"):  # the room's own light, unless the script says otherwise
 					palette = hint
+		"player_move", "player_look", "player_role", "fx_queasy", "sick_beat":
+			if player != null:  # the journey needs a map; a chapter without one keeps its 2D camera and ignores these
+				player.apply_action(a)
 		"camera_look":
 			_cam_fx.append({"kind": "look", "t0": t0, "t1": t0 + dur, "amount": float(args.get("dx", 90.0))})
 		"camera_push":

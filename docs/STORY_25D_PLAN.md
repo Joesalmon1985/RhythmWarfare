@@ -247,3 +247,69 @@ docs/shots/story before changing anything. Work 9.1 to 9.5 in order (9.6 only if
 screenshots via tools/story/capture.sh. Do not change logic, maps or tests except to add checks; keep the frame budget in 8.4; run
 the full test suite before each commit.
 ```
+
+## 13. Progress log
+
+### 13.1 WP0 to WP3 (Sonnet build session, chunk 1), branch `feature/story-25d`
+
+Built and committed (one commit per WP, WP0 and WP2 share one because the spike became the real renderer):
+- WP1 `src/story/world/story_map.gd` (`StoryMap`, pure logic), `content/story/maps/night_one.json`, `tests/test_story_map.gd`; `tools/story/art/tiles.py` (16 deterministic
+  64/128 px tiles per chapter, manifest section `textures` {id: {file, size, metres}}), `build_assets.py` (`... build_assets.py tiles` rebuilds only them), `check_assets.py`.
+- WP0 + WP2 `src/story/world/story_lowres.gd` (SubViewport + nearest TextureRect + Camera3D), `story_world.gd` (`StoryWorld`), `tools/story/preview_map.tscn/.gd`, `tests/test_story_world.gd`.
+- WP3 `story_player.gd` (`StoryPlayer`), `story_free_look.gd` (`StoryFreeLook`), `story_projector.gd` (`StoryProjector`), the five director actions in `StoryData.ACTIONS` and
+  `StoryStage.apply`, the director's dense-run warning (`StoryDirector.warnings`, surfaced in `StoryRun.warnings`), `story_play.gd` wiring, `tests/test_story_player.gd`, `tests/test_story_journey.gd`.
+
+Where things are and how they behave (read before WP4):
+- A chapter uses the 3D world when `content/story/maps/<run.data.id>.json` exists and validates; `RW_STORY_2D=1` forces the old painted room. Chapters 2 to 5 have no map yet and
+  still run the 2D `StoryStage` untouched (WP7 adds their maps). Night One is 3D now; the journey actions are accepted by every stage and ignored without a map.
+- `StoryStage.attach_world(map, with_nodes := true)` creates `player` (`StoryPlayer`, always) and, with nodes, `lowres` + `world` as the first child (behind the 2D crowd), sets
+  `world_active`, makes the stage Control take the head-turn drag (mouse drag or touch drag on the stage area; Q/E keys) and hides every 2D room layer and `StoryFx` layer of the
+  views (far, near, top, fx layers). INTERIM until WP4: the 2D `StoryCrowd` is still drawn over the 3D world at its old design-space positions, NOT through `StoryProjector`, so the
+  dancers do not stand in the room geometry and do not follow the camera. `stage.journey()` lists the `player_move` targets in order (for the WP8 matrix).
+- Map conventions: x right, z toward the back of the club, y up (metres); yaw 0 looks toward -z, positive yaw turns left, forward = (-sin yaw, -cos yaw); waypoint yaw is in degrees.
+  Sectors must be convex (rail pathing relies on it; split a hall into sectors) and may not overlap; a portal is declared once on either sector and mirrored for the other side;
+  edges no wall covers get a default wall with the sector's `wall_tex`; a thing's `y` is its centre above the sector floor, `size` its height in metres; `start` names the first waypoint.
+  Homes and waypoints keep 0.25 m / 0.3 m from the walls (validated). Map `textures` name files under `assets/story/<art>/`; their metres per repeat come from the art manifest.
+- Night One map: entrance (z 9..13) > floor (x -7..7, z -3..9, ceiling 3.6) > steps (0.3) > riser (0.9) > booth (1.1); bar on the right (x 7..12); corridor on the left (x -13..-7)
+  > toilets > cubicle_a, cubicle_b. Waypoints: floor_centre (start), floor_edge, steps, stage, booth, corridor, cubicle, cubicle_a, door. Homes: core, early and late actors on the floor
+  (the old design-space x, depth mapped to metres), gatherers (g01..g08) in the entrance, peak (p01..p04) in the bar. WP4 may move them; keep them valid.
+- `StoryPlayer.pose_at(t)` returns {cam: Vector3, yaw, roll, pos, sector, ground, moving, style, u, role, queasy, sick}; `role_at`, `queasy_at`, `sick_at` are the values for the HUD badge,
+  the post-process (WP5) and the head-down crouch. Events may arrive out of order (decisions fire late); the chain is rebuilt on each one. `player_look` with `at` takes a waypoint or an actor
+  id (a home). `reduced` drops bob, roll and sway only. The role badge, the queasy shader and sick music are still stubs (the values exist, nothing draws them): WP5/WP6.
+- The director warns at load (never errors) when a `player_move` lasts outside 2 to 4 bars, starts on a dense bar (more notes than beats in that bar), or runs mostly over dense bars.
+  Night One at the default loadout has at most 4 notes a bar, so nothing is dense there; no player_move is authored in `night_one.json` yet (WP6).
+- `StoryWorld.light_of(sector, t, ctx)` is the one light function (ctx: bpm, palette, energy, flicker, strobe). Dance floor and stage take the palette; others keep their own tint.
+
+Measured (this laptop, Intel HD 520, Mesa, windowed 1280x720, `--disable-vsync`, `RW_STORY_VIRTUAL=1 RW_STORY_PROFILE_FROM=105 RW_STORY_UNTIL_BAR=113`, perfect autoplay, 663 frames, bars 105 to 113 of Night One):
+
+| Path | mean ms | p95 ms | max ms |
+| --- | --- | --- | --- |
+| old 2D room (`RW_STORY_2D=1`) | 16.40 | 17.76 | 74.51 (first frame) |
+| 3D world, 270 lines | 14.23 | 15.28 | 72.22 |
+| 3D world, 360 lines | 14.17 | 14.81 | 75.00 |
+| 3D world, 180 lines | 14.07 | 14.76 | 70.83 |
+| 3D world alone (preview scene, 270 lines) | 2.42 | 2.78 | 3.17 |
+
+The frame time does not depend on the internal resolution: the cost is the CPU (2D crowd, deck, notes). The world itself is about 2.4 ms, so the 3D path is cheaper than the old 2D room
+but the whole scene is still above the plan's 12 ms average (8.4); the crowd drawing is what is left to trim (WP4 or WP5, e.g. fewer redraws, no per-actor shadows). 95th percentile is within 20 ms.
+Fog works on `gl_compatibility` (Environment fog on unshaded StandardMaterial3D; verified by screenshot difference with `RW_STORY_FOG=0`), so no depth-darken shader is needed.
+
+Deviations from the plan:
+- Texture tiles are drawn with Pillow in the chapter's palette and motifs (`tiles.py`), not cropped from the SVGs: the toolchain has no SVG rasteriser (ImageMagick `convert` can render them
+  but is not a build dependency and would make the output machine-dependent). The tile art can still be improved by hand-editing `tiles.py`.
+- Sector light is applied as the `albedo_color` of each sector's own materials (one material per sector and texture, written every frame) with a baked flat shade in the vertex colour, instead of rewriting
+  vertex colours: the same visual result, no mesh updates. Things are billboard quads (fixed-Y, alpha-scissor, linear filtered because the SVG sprites are 2x design size); wall and floor tiles are nearest.
+- Internal resolution: one internal pixel is `window height / lines` screen pixels (270 lines gives 480 wide on a 16:9 window, a 480 x about 170 viewport for the stage strip), so the look is
+  the same at every window shape. `RW_STORY_LINES=360|270|180` sets it; the Settings screen option is WP6.
+- Surfaces are double sided (no culling) so wall winding can never hide a face; cost is negligible at 162 triangles for the whole Night One.
+- `StoryProjector.FOV_V` is 52 degrees vertical (with the strip being about 2.8:1 this is about 110 degrees horizontal); the test compares it to a real Camera3D.
+- A stage-level journey test lives in `tests/test_story_journey.gd`, the pure world tests in `tests/test_story_world.gd`.
+
+For the next agent (WP4 to WP6): the crowd bridge should draw `StoryCrowd` inside `lowres.sub` (a CanvasLayer in the SubViewport) using `StoryProjector.project_ground(home, pose.ground ...)`
+with `lowres.projector_pose(pose, free_look.offset)` and a size of `lowres.sub.size`; remember actor homes are in `map.homes` (sector + x,z) and that a home's ground height is its sector floor
+(the booth is 1.1 above the floor). The stage `_fit` still scales the 2D design space to the strip; that goes away with the bridge. `tools/story/capture.sh` shots and `docs/shots/story` were NOT
+regenerated in this chunk (the 2D crowd over a 3D room is interim), do that after WP4. The Python `mido` test failure is the known unrelated one.
+
+Tests at the end of this chunk: Godot suite 15,308 checks, 0 failures (13,274 before the build; new files `test_story_map`, `test_story_player`, `test_story_world`, `test_story_journey`);
+the story subset passes (`--filter story`). The Python content tests still fail on the missing `mido` module (known, unrelated). `src/scenes/story_interlude.gd` had a pre-existing
+"inferred from Variant" parse error that `test_scenes` printed (it did not fail a check); fixed with a type annotation. Asset check: `python3 tools/story/check_assets.py --determinism` is OK.

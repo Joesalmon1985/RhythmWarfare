@@ -21,7 +21,7 @@ func _ready() -> void:
 	var info := Session.story_interlude
 	if info.is_empty() and OS.has_environment("RW_STORY_INTERLUDE"):  # screenshots: open a cutscene directly
 		var nm := OS.get_environment("RW_STORY_INTERLUDE")
-		var spec := {"abduction": ["night_one", "mothership", "good_night"], "descent": ["night_one", "underworld", "lost_the_floor"],
+		var spec: Array = {"abduction": ["night_one", "mothership", "good_night"], "descent": ["night_one", "underworld", "lost_the_floor"],
 			"awakening": ["mothership", "hospital", "honoured_guest"], "sectioned": ["underworld", "mental_hospital", "devoured"]}.get(nm, ["night_one", "mothership", "good_night"])
 		info = {"name": nm, "from": spec[0], "to": spec[1], "ending": spec[2]}
 		Session.story_interlude = info

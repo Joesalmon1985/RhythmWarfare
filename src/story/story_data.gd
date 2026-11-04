@@ -23,6 +23,9 @@ const ACTIONS := [
 	"piece_on", "piece_off", "piece_pulse",
 	# the moving camera (chapters with extra rooms): move_to {view, style: walk|step|turn_left|turn_right, bars}, camera_look {dx, bars}, camera_push {zoom, bars}
 	"move_to", "camera_look", "camera_push",
+	# the player's journey in the 2.5D world (docs/STORY_25D_PLAN.md section 4.1): player_move {to: waypoint, style, bars}, player_look {yaw | at, bars},
+	# player_role {role}, fx_queasy {amount 0..1, bars}, sick_beat {bars}
+	"player_move", "player_look", "player_role", "fx_queasy", "sick_beat",
 ]
 
 var raw: Dictionary = {}
@@ -95,6 +98,8 @@ func validate(errors: Array) -> void:
 				var an := str(a["action"]) if typeof(a) == TYPE_DICTIONARY else str(a)
 				if not (an in ACTIONS):
 					errors.append("decision %s names unknown action %s" % [d["id"], an])
+				elif typeof(a) == TYPE_DICTIONARY:
+					_check_journey_args(an, a, errors, str(d["id"]))
 		if float(d["at_bar"]) < 1.0 or float(d["at_bar"]) > float(duration_bars):
 			errors.append("decision %s outside the song" % d["id"])
 	for key in ending_order:
@@ -152,8 +157,29 @@ func _check_event(e: Dictionary, errors: Array, where: String) -> void:
 		errors.append("%s: action %s at bar %s runs outside the song" % [where, e.get("action", ""), bar])
 	if e.has("else") and not (str(e["else"]) in ACTIONS):
 		errors.append("%s: unknown else-action %s" % [where, e["else"]])
+	_check_journey_args(str(e.get("action", "")), e, errors, where)
+	if e.has("else"):
+		_check_journey_args(str(e["else"]), e, errors, where)
 	if e.has("group") and not groups.has(str(e["group"])) and not _group_in_actors(str(e["group"])):
 		errors.append("%s: unknown group %s" % [where, e["group"]])
+
+
+## Argument checks of the journey actions (the map checks that their targets exist: StoryMap.validate_chapter).
+func _check_journey_args(action: String, args: Dictionary, errors: Array, where: String) -> void:
+	match action:
+		"player_move":
+			if str(args.get("to", "")) == "":
+				errors.append("%s: player_move needs a target waypoint (to)" % where)
+			if str(args.get("style", "walk")) not in StoryMap.MOVE_STYLES:
+				errors.append("%s: unknown move style %s" % [where, args.get("style")])
+			if float(args.get("bars", 2.0)) <= 0.0:
+				errors.append("%s: player_move needs a positive bars" % where)
+		"player_role":
+			if str(args.get("role", "")) not in StoryMap.ROLES:
+				errors.append("%s: unknown role %s" % [where, args.get("role", "")])
+		"fx_queasy":
+			if float(args.get("amount", 0.5)) < 0.0 or float(args.get("amount", 0.5)) > 1.0:
+				errors.append("%s: fx_queasy amount is 0..1" % where)
 
 
 func _group_in_actors(group: String) -> bool:

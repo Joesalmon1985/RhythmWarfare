@@ -117,6 +117,13 @@ func _build_layout() -> void:
 	add_child(stage)
 	stage.setup(assets, run.data, run)
 	stage.reduced = Session.reduced_effects
+	if FileAccess.file_exists(StoryMap.PATH % run.data.id) and OS.get_environment("RW_STORY_2D") != "1":  # RW_STORY_2D=1 keeps the old painted room
+		var smap := StoryMap.load_chapter(run.data.id)
+		smap.validate_chapter(run.data.raw)
+		if smap.errors.is_empty():
+			stage.attach_world(smap)
+		else:
+			push_warning("story map rejected, playing the 2D room: " + "; ".join(PackedStringArray(smap.errors)))
 
 	var skin := StoryPadView.new()
 	pad_view = skin

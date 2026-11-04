@@ -12,6 +12,7 @@ var data: StoryData
 var level: Level
 var crowd: CrowdController
 var fired: Array = []  # every emitted action: {t0, bar, action, args, block, source}
+var warnings: Array = []  # authoring warnings found at setup (a camera move over a dense note run)
 
 var _timeline: Array = []  # {t, bar, kind: "event"|"decision"|"lean", e/d}
 var _cursor := 0
@@ -32,6 +33,7 @@ func setup(p_data: StoryData, p_level: Level, p_crowd: CrowdController) -> void:
 	_ending = ""
 	_ending_fired = false
 	_total_sequences = level.sequences.size()
+	warnings = []
 	var order := 0
 	for b in data.blocks:
 		for e in b["events"]:
@@ -41,6 +43,62 @@ func setup(p_data: StoryData, p_level: Level, p_crowd: CrowdController) -> void:
 		_timeline.append({"t": bar_time(float(d["at_bar"])), "order": order, "kind": "decision", "d": d, "bar": float(d["at_bar"]), "block": str(d.get("block", ""))})
 		order += 1
 	_timeline.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["order"] < b["order"] if is_equal_approx(a["t"], b["t"]) else a["t"] < b["t"])
+	_check_moves()
+
+
+const MOVE_BARS_MIN := 2.0
+const MOVE_BARS_MAX := 4.0
+
+
+## Notes in each 0-based bar of the level.
+func notes_per_bar() -> PackedInt32Array:
+	var counts := PackedInt32Array()
+	counts.resize(maxi(level.bar_count(), 1))
+	var tpb := maxi(level.ticks_per_bar(), 1)
+	for n in level.notes:
+		var b := int(n["tick"]) / tpb
+		if b >= 0 and b < counts.size():
+			counts[b] += 1
+	return counts
+
+
+## A bar is dense when the chart puts more than one note per beat in it.
+func bar_is_dense(bar: float, counts: PackedInt32Array) -> bool:
+	var i := int(floor(bar)) - 1
+	return i >= 0 and i < counts.size() and counts[i] > level.beats_per_bar
+
+
+## A player_move must start on a bar with at most one note per beat, last 2 to 4 bars, and not run mostly over dense bars (the camera never
+## moves under a dense run of notes). Authoring problems become warnings, never a stopped game. Decisions are checked at their own bar.
+func _check_moves() -> void:
+	var counts := notes_per_bar()
+	for item in _timeline:
+		var actions: Array = []
+		var where := ""
+		if item["kind"] == "event":
+			var e: Dictionary = item["e"]
+			where = "%s bar %s" % [item["block"], item["bar"]]
+			for key in ["action", "else"]:
+				if str(e.get(key, "")) == "player_move":
+					actions.append(e)
+		elif item["kind"] == "decision":
+			var d: Dictionary = item["d"]
+			where = "decision %s" % d["id"]
+			for outcome in ["good", "bad"]:
+				for a in d.get(outcome, []):
+					if typeof(a) == TYPE_DICTIONARY and str(a.get("action", "")) == "player_move":
+						actions.append(a)
+		for a in actions:
+			var bars := float(a.get("bars", 2.0))
+			var start := float(item["bar"])
+			if bars < MOVE_BARS_MIN or bars > MOVE_BARS_MAX:
+				warnings.append("%s: player_move to %s lasts %.1f bars; moves last %d to %d bars" % [where, a.get("to", "?"), bars, int(MOVE_BARS_MIN), int(MOVE_BARS_MAX)])
+			var dense := 0
+			for k in int(ceil(bars)):
+				if bar_is_dense(start + float(k), counts):
+					dense += 1
+			if bar_is_dense(start, counts) or float(dense) > bars * 0.5:
+				warnings.append("%s: player_move to %s overlaps a dense note run (%d of %d bars have more than one note per beat); move it to a break" % [where, a.get("to", "?"), dense, int(ceil(bars))])
 
 
 func bar_time(bar: float) -> float:
