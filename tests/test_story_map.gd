@@ -261,3 +261,22 @@ func test_night_one_balcony_is_reached_by_the_stair_not_the_rail() -> void:
 	assert_true((r["points"] as PackedVector2Array).size() >= 2, "a route to the balcony exists")
 	assert_true("bstair_2" in r["sectors"], "it goes up the steel stair beside the stage: %s" % str(r["sectors"]))
 	assert_true("balcony" in m.visible_sectors(Vector2(0, 4), 90.0, "floor", 2.8), "the balcony is seen from the floor")
+func test_mothership_layout_has_the_variety_the_art_brief_asks_for() -> void:
+	var m := StoryMap.load_chapter("mothership")
+	assert_eq(m.errors, [], "the Mothership map is clean")
+	var main_secs := m.sectors.filter(func(s: Dictionary) -> bool: return s["room"] == "main")
+	assert_true(main_secs.size() >= 6, "the curved deck is a fan of several sectors")
+	assert_eq(main_secs.filter(func(s: Dictionary) -> bool: return "dance_floor" in (s["flags"] as Array)).size(), 1, "one dance floor in the main room")
+	var floors := {}
+	for s in main_secs:
+		floors[float(s["floor"])] = true
+	assert_true(floors.size() >= 4, "the dais is reached by a ramp of several slices")
+	var med_ceilings := {}
+	var lo := 99.0
+	for s in m.sectors:
+		if s["room"] == "medbay":
+			med_ceilings[float(s["ceiling"])] = true
+			lo = minf(lo, float(s["ceiling"]))
+	assert_true(med_ceilings.size() >= 4 and lo < 2.0, "the medical bay has several ceiling heights, the alcove is low")
+	assert_true(float(m.sector("reactor")["ceiling"]) - float(m.sector("reactor")["floor"]) >= 10.0, "the reactor well is tall")
+	assert_true(float(m.sector("exam_table")["floor"]) > float(m.sector("exam")["floor"]), "the exam table stands on a raised platform")
