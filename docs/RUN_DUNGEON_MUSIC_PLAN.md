@@ -43,12 +43,31 @@ military campaign from the home screen (they stay in the repo).
 ## 2a. The owner's calls (2026-11-04)
 
 1. Front door: the run is the main game; the chapters stay reachable under Play.
-2. Dungeon look: **flat for now**, with the integration done first; a later pass with subagents moves it into the 2.5D engine (WP-B2 to B4 deferred).
+2. Dungeon look: **2.5D after all** (changed later on 2026-11-04, after the flat rename and curation landed): the Bassment's 16 zones become Doom-style maps on the story engine (WP-B2 to B4 now in scope, section 2b), and choosing "Enter the Trial" in the Warehouse is a **seamless transition**: no scene cut, no audio gap, no clock reset; the camera walks to the hatch and down into the first zone through the passage frame on a downbeat, the way the run swaps worlds.
 3. Dungeon music: the owner supplies more music in `ToAddTry2/`; placeholders where more is needed.
 4. Rights: **rename** the dungeon into an original death trap dungeon (zones, creatures, names, the lock) now.
 5. Scope: **curated**, about 60 to 80 passages, agent's judgement on which.
 6. Importer: **loosen** it (trust the MIDI when the audio detector disagrees; auto-detect kick and snare notes).
 7. Delegation: Sonnet 5.5 subagents do the work where practical; Fable plans; Opus polishes later.
+
+## 2b. The Bassment in 2.5D (WP-B2 to B4, revived)
+
+- B2 Zone maps: one `content/story/maps/bassment_<zone>.json` per zone (Service Hatch, Cable Run, Lost Property, Flooded Boiler Room, Crystal Stacks, Barrel Cellar,
+  Fungus Farm, Mirror Mezzanine, Reverb Pit, Vault of Records, Rat King's Warren, Furnace Kitchens, Hall of Hands, Resonance Door, Echo Chamber, Dawn Stair), each a
+  small map of 2 to 4 sectors with the passage's choice points as visible exits (doors, ladders, gaps, water), distinct in footprint, height and light per the art brief,
+  lit by placed light things (torches, crystal, furnace, water caustics as an animated surface), textured from generated tiles in a cellar palette (brick, pipe, barrel,
+  crystal, fungus, mirror, iron). Zones are reused by every passage in them; a passage names its zone map and the waypoint it stands at.
+- B3 The scene: `trial_play` hosts StoryStage worlds like the run does (prebuilt per zone, swapped on a downbeat through the passage frame), the camera on rails between
+  passage waypoints; the four-bar window lights the exits for the choices and keeps the floating labels (phones); a pass walks through the chosen exit; a fail holds at the
+  spot with a stumble; fights put the creature in the room as a figure with win and loss poses; deaths and the victory are tableaux (lights out, the dawn car park); the
+  return to the Warehouse walks back up the hatch.
+- B4 Figures: the ten creatures and the wizard drawn through the wardrobe and sheet bake (a creature set in the pipeline), the player's hands not shown.
+- Seamless entry: the wizard's "Enter the Trial" during the Warehouse phase schedules a `player_move` to the hatch on the next cue-free guard, the hatch zone is prebuilt and
+  its audio loaded on a thread while the window is open, and on the downbeat the camera walks through the passage frame into the Service Hatch with `RunAudio` continuing on
+  the same clock (the dungeon's pack enters on that downbeat as a world's music does). No `change_scene`: the trial engine takes over the pads inside the run scene, or the
+  trial scene adopts the live audio and clock; either way nothing restarts. Leaving by death or victory is the same walk in reverse, back to the Warehouse node.
+- Tests: zone maps validate; every passage's waypoint and exits resolve; the entry and exit transitions keep the beat grid (recorded with record_music.gd: no restart, same
+  delay); the dungeon walk by defaults on the real 2.5D scene; screenshots per zone and a contact sheet; frame numbers.
 
 ## 3. The target, in one paragraph
 
