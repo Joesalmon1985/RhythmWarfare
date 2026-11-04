@@ -164,9 +164,9 @@ func test_tiers_run_from_one_to_four_and_fights_are_harder_than_the_phrases_arou
 func test_the_music_block_names_a_pack_for_fights_too() -> void:
 	var d := _data()
 	var m: Dictionary = d.raw["music"]
-	assert_eq(m["fight_audio"], m["audio"], "the fight pack defaults to the dungeon's pack")
-	assert_eq(m["fight_chart"], m["chart"])
-	var bad := FileAccess.get_file_as_string(PATH).replace("\"fight_chart\": \"lv1_warehouse_v1\"", "\"fight_chart\": \"nowhere\"")
+	assert_true(str(m["fight_audio"]) != "" and str(m["fight_chart"]) != "", "the music block names a fight pack (dd_part2, read and checked; the scene still plays one pack)")
+	assert_true(d.errors.is_empty(), "the named fight packs exist")
+	var bad := FileAccess.get_file_as_string(PATH).replace("\"fight_chart\": \"%s\"" % str(m["fight_chart"]), "\"fight_chart\": \"nowhere\"")
 	var f := FileAccess.open("user://test_trial_badpack.json", FileAccess.WRITE)
 	f.store_string(bad)
 	f.close()
