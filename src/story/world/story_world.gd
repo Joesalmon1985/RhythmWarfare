@@ -247,6 +247,20 @@ func _vertex_light(p: Vector3, shade: float, s: Dictionary, lit: Array) -> Color
 	return Color(minf(col.r, 1.0), minf(col.g, 1.0), minf(col.b, 1.0))
 
 
+## The static light a figure standing at ground point `pos` in sector `sid` gets from the lamps around it (the same falloff the surfaces are baked with, at chest
+## height), relative to the flat light of a sector without lamps (1.0). The song-time light of the sector multiplies it.
+func figure_light(pos: Vector2, sid: String) -> Color:
+	var s := map.sector(sid)
+	if s.is_empty():
+		return Color.WHITE
+	var lit := _lights_of(s)
+	if lit.is_empty():
+		var v := _flat_shade(s, 1.0).r
+		return Color(v, v, v)
+	var c := _vertex_light(Vector3(pos.x, float(s.get("floor", 0.0)) + 1.2, pos.y), 1.0, s, lit)
+	return Color(minf(c.r * 1.25, 1.4), minf(c.g * 1.25, 1.4), minf(c.b * 1.25, 1.4))
+
+
 func _material(tex: Texture2D) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED

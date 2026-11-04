@@ -9,6 +9,14 @@ uniform float strobe = 0.0;
 uniform float flash = 0.0;
 uniform vec3 flash_color = vec3(0.6, 0.7, 1.0);
 uniform float vignette = 0.15;
+// The pixel look (a setting, off with reduced effects): ordered 4x4 dithering in the low-res pixel grid onto a reduced set of levels per channel, and the
+// chapter's palette clamp (nothing darker than its shadow colour, nothing brighter than its highlight).
+uniform float dither_on = 0.0;
+uniform vec2 low_size = vec2(640.0, 360.0);
+uniform float levels = 20.0;
+uniform vec3 clamp_lo = vec3(0.0);
+uniform vec3 clamp_hi = vec3(1.0);
+const float BAYER[16] = float[](0.0, 8.0, 2.0, 10.0, 12.0, 4.0, 14.0, 6.0, 3.0, 11.0, 1.0, 9.0, 15.0, 7.0, 13.0, 5.0);
 
 void fragment() {
 	vec2 uv = UV;
@@ -28,5 +36,11 @@ void fragment() {
 	col = mix(col, dim_color, dim);
 	col += flash_color * flash;
 	col = mix(col, vec3(1.0), strobe);
+	if (dither_on > 0.5) {
+		ivec2 p = ivec2(floor(UV * low_size));
+		float b = (BAYER[(p.y % 4) * 4 + (p.x % 4)] + 0.5) / 16.0 - 0.5;
+		col = floor(col * levels + 0.5 + b) / levels;
+		col = clamp(col, clamp_lo, clamp_hi);
+	}
 	COLOR = vec4(col, 1.0);
 }

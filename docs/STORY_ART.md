@@ -559,3 +559,60 @@ source of everything the world shows:
 - Things may use any map texture or manifest sprite as their `sprite`; lights (`"kind": "light"`) need no art and are baked into vertex colours (docs/STORY_CAMPAIGN_HANDOVER.md, "WP9 additions").
 - Held props and the phone's light, the seat under a sitter, the sleeper's Zs and the drip stand are drawn with plain shapes in `StoryCharacter._draw_held`: placeholders for the polish pass.
 - Dancer parts are packed into a runtime atlas (`StoryAssets.build_rig_atlas`); the SVG parts are unchanged on disk.
+
+## The people: wardrobe and baked sprite sheets (polish, art direction 2.E)
+
+Every actor of every chapter is drawn as an individual and baked to their own pixel sprite sheet; the SVG rigs above remain on disk as the live rig
+(`RW_STORY_RIG=1` draws everyone with it, and anything without a sheet falls back to it) and their poses are the bake source.
+
+- **Wardrobe** (`tools/story/art/wardrobe.py`): `cast_chapter(chapter, actors)` dresses each actor from a seed of chapter and id. A spec has a build (height 0.9 to 1.1,
+  kids about 0.65; width slim to broad; a curve from straight to curvy), skin (eleven tones), hair (short, curly, afro, locs, braids, long, wavy, bob, bun, ponytail,
+  pigtails, buzz, shaved, mohawk, spiky, quiff, perm; natural or dyed colours; a parting), face (eyes open or closed and lost in the music, stubble, beard,
+  moustache, glasses or shades, freckles, blush), a top (tee, tank, crop, long sleeve, jumper, hoodie, shirt, polo, scrubs, jumpsuit, dress, gown, chef's whites,
+  leotard...) with a pattern (plain, a chest print from eight motifs, stripes, vertical stripes, a band, check, dots, tie-dye, an emblem, a skeleton's ribs), an outer
+  layer (open jacket or check overshirt, gilet, cardigan, coat, a long white coat, a robe with fur trim, a cape), bottoms (jeans, baggy, flares, trousers, shorts,
+  skirt, dungarees, leggings, pyjamas, a tutu, a gown's bare legs), shoes, a hat (cap, cap backwards, bucket, beanie, crown, chef's hat, bandana, tricorn, scrub cap,
+  headscarf, party hat) and accessories (bag strap, bracelet, watch, necklace, headphones round the neck, lanyard, stethoscope, belt, sash, scarf, bow tie, eyepatch,
+  mask, harness, shoulder plates). Chapter wardrobes: the ravers (a 90s rave palette; the archetype only biases hair and hoodie); the Mothership's species keep their
+  archetype (grey, antenna, blob, insect, cyclops, tentacle: head shape, eyes, antennae, wing cases, tentacles) in space suits; the Underworld's demons (horns small,
+  big, ram or long, bat wings, tails, pointed ears, bare chests with harness or plates, skeletons with ribs, flame hair, queens with capes and crowns); the
+  Hospital's mums, dads, grannies and kids in visitors' clothes, nurses in scrubs, doctors in white coats, and a patient in a gown (anyone with the drip or lying);
+  the Ward's residents in homemade fancy dress (pirate, king, chef, superhero, ballerina) and staff in institutional green. Ravers who came along (`art: night_one`)
+  keep the raver wardrobe. **Rule**: no two actors in one room share build, hair and top (`look_key`); a clash re-rolls deterministically; `check_assets.py` checks it.
+- **Pixel rig** (`tools/story/art/people.py`): a skeleton with the head about a seventh of the height, real shoulders, hips, hands and feet, posed by the live rig's
+  limb angles, rasterised straight into pixels at the sheet size (numpy; no vector scaling). Each part is shaded as a rounded form in three steps (dark, mid, lit,
+  light from the upper left) with an ordered dither between them, a one-pixel darker edge of the local colour on the silhouette (never black), a one-pixel shadow
+  where a part overlaps another, folds on cloth, strands in the hair, curls in curly hair. Three facings: front, a three-quarter turn (the runtime mirrors it for the
+  other side) and back (the back of the head, the back print). Props are drawn in the hand: a plastic pint (amber with a head), a water bottle, a mug, a tray of
+  glasses, a phone (its screen emissive), a clipboard, tickets, a brush, a sketchbook, a drip stand with its bag and line, headphones over the ears for a DJ and,
+  for the Mothership's DJ, worn the wrong way (one cup on the forehead, one under the chin, the band across the face). Sitters get a seat, the lying a bed sheet.
+- **Poses**: `tools/story/dump_poses.gd` (headless Godot) samples `StoryCharacter.sample` over one cycle of every state (`StoryCharacter.SHEET_CYCLES`: beats and frames
+  per state, 4 to 16 frames; the dance once per personal style) into `assets/story/people_poses.json`. So the sheets and the live rig share one set of poses.
+- **Sheets** (`tools/story/art/people_sheets.py`, `python3 tools/story/build_assets.py <chapter> people`): for each actor the states the runtime can show them in
+  (computed as `StoryCrowd.pick_activity` picks, plus the dance set on dancing sectors, the walk, the look, the hero's five dance styles), each in the facings it
+  needs (the walk in all three, the paired activities from the side, the targeted ones from the side and the back) and three levels of detail drawn at their own
+  sizes (full: a build-1.0 adult stands 112 pixels; half; quarter). Identical frames are stored once. Output in `assets/story/<chapter>/people/`: `page_<n>.png`
+  (2048 square, 8-bit: a pixel is material << 2 | shade step, +128 on the rim, 0 transparent), `palette.png` (one row of 32 materials x 4 steps per actor) and
+  `people.json` (the frame table and per actor `{row, style, height, look, states: {state: [beats, frames, front, side, back]}}`). Sizes: Night One 43 actors in
+  3.4 MB on disk; the other chapters 116 to 118 actors in 9 to 10 MB (16 to 19 pages, about 60 to 70 MB of 8-bit texture in memory while the chapter plays).
+  Building a chapter takes one to three minutes on four cores.
+- **Runtime**: `StoryPeople` (src/story/story_people.gd) loads a chapter's sheets once (pages as R8 textures: the compatibility renderer does not hand an imported
+  L8 texture's value to a shader as is). `StoryCharacter` draws one frame of its sheet (`sheet_pick`, `sheet_frame`: the state's cycle shifted by the person's own
+  phase, whole beats for the kick-locked states) with the live sample's bounce, jump, sway and squash applied, nearest-filtered; the glow stick, the sleeper's Zs and
+  the phone's glow are a child node. `StoryCrowd` sets the facing from where the person walks or looks (a partner, a target, the crowd for a DJ: seen from the booth
+  the DJ shows their back) and feeds `src/story/story_people.gdshader`: the palette colour lit by the light the person stands in (the sector's song-time light times
+  the lamps around them, `StoryWorld.figure_light`), faded towards the chapter's fog with distance (from 5.5 m, full at 17 m) with a rim of the room's light, so the
+  back rows read as darker, bluer silhouettes.
+- **Review**: `python3 tools/story/figure_sheets.py [chapter]` writes `docs/shots/story/figures_<chapter>.jpg` (every actor at front-row size, unlit, beside a crop of
+  pixelexample/Rave.png at the same pixel scale). `check_assets.py` checks every actor has a sheet with its states, frames inside pages, a palette row, a sensible
+  height and the room rule.
+- **Changing a look**: edit the chapter's function in `wardrobe.py` (or `people.py` for drawing), then `python3 tools/story/build_assets.py <chapter> people` and
+  `godot --headless --path . --import`. Changing a pose in `StoryCharacter.sample` or a cycle in `SHEET_CYCLES`: rerun `dump_poses.gd` first.
+
+## The pixel look of the rooms (polish, art direction 2.D)
+
+- `tools/story/art/pixeltex.py`: tileable procedural textures drawn in numpy at tile size and quantised to a chapter palette ramp with 8x8 ordered dithering (bricks
+  and mortar, glazed tiles and grout, grime and drips, rust, riveted panels, trusses, pipes, cables, blinds, planks, checker, lava). Each chapter's
+  `tools/story/art/tex_<chapter>.py` composes them; `tiles.build` writes its tiles after the Godot bake (an id the bake also makes is replaced; a new id is added).
+- The post-process has an optional ordered dither and a palette clamp from the chapter's fog colour (the "Story pixel dithering" setting, on by default, off with
+  reduced effects).

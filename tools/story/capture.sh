@@ -155,9 +155,9 @@ ac act02_n1_chill_pair_and_sleeper    night_one       60  @9:10:0
 ac act03_n1_balcony_watchers          night_one       60  balcony_rail
 ac act04_ms_alien_dj_headphones_wrong mothership      60  @0:-0.4:0
 ac act05_ms_grey_examines_dancer      mothership      60  exam
-ac act06_uw_bouncer_checks_tickets    underworld      50  @1.4:2.0:0
+ac act06_uw_bouncer_checks_tickets    underworld      17  arena_edge
 ac act07_hos_patient_dances_with_drip hospital        40  @-3.7:3.0:0
-ac act08_ward_chef_serves_talent_show mental_hospital 50  @53:9.6:-90
+ac act08_ward_chef_serves_talent_show mental_hospital 50  stage
 ac act09_ward_painters_at_easels      mental_hospital 50  @35.1:7:0
 ac act10_ward_resident_stares_at_bars mental_hospital 50  @5:3:0
 ac look01_up_at_the_rig               night_one       60  floor_centre,0,25

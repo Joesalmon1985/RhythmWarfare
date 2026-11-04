@@ -38,6 +38,7 @@ func _build() -> void:
 		func(v: float) -> String: return ["Full", "Reduced", "None"][int(v)], func(v: float) -> void: Session.story_motion = int(v))
 	_slider("Story internal resolution", 0, 2, 1, Session.story_lines,
 		func(v: float) -> String: return ["360p", "270p", "180p"][int(v)], func(v: float) -> void: Session.story_lines = int(v))
+	_toggle("Story pixel dithering", Session.story_dither, func(on: bool) -> void: Session.story_dither = on)
 	_toggle("Vibrate on hits (phones)", Session.vibration, func(on: bool) -> void: Session.vibration = on)
 	_toggle("Show keyboard keys on pads (D F J K)", Session.show_keys, func(on: bool) -> void: Session.show_keys = on)
 	var cal := HBoxContainer.new()
