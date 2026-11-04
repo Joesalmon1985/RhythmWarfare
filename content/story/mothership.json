@@ -112,7 +112,7 @@
     {
      "at_bar": 2,
      "action": "player_look",
-     "by": 24,
+     "pitch": 14,
      "bars": 3
     },
     {
@@ -130,10 +130,13 @@
      "piece": "alien_banner"
     },
     {
-     "at_bar": 6,
-     "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "at_bar": 5,
+     "action": "player_walk",
+     "fwd": 1.6,
+     "bars": 3,
+     "in": [
+      "main"
+     ]
     },
     {
      "at_bar": 7,
@@ -181,6 +184,15 @@
      "action": "beams_sweep"
     },
     {
+     "at_bar": 12,
+     "action": "player_look",
+     "at": "c06",
+     "bars": 2,
+     "in": [
+      "main"
+     ]
+    },
+    {
      "at_bar": 13,
      "action": "group_footwork",
      "group": "core",
@@ -197,9 +209,12 @@
     },
     {
      "at_bar": 14,
-     "action": "player_look",
-     "by": 28,
-     "bars": 3
+     "action": "player_walk",
+     "right": 1.4,
+     "bars": 3,
+     "in": [
+      "main"
+     ]
     },
     {
      "at_bar": 15,
@@ -245,7 +260,7 @@
     {
      "at_bar": 18,
      "action": "player_look",
-     "by": 24,
+     "pitch": 12,
      "bars": 3
     },
     {
@@ -264,14 +279,24 @@
      "bars": 3
     },
     {
-     "at_bar": 22,
-     "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "at_bar": 21,
+     "action": "player_walk",
+     "to": "gallery_c06",
+     "stop": 2.0,
+     "bars": 3,
+     "in": [
+      "gallery"
+     ]
     },
     {
      "at_bar": 23,
      "action": "spotlight_sweep"
+    },
+    {
+     "at_bar": 23,
+     "action": "player_look",
+     "by": -26,
+     "bars": 2
     }
    ]
   },
@@ -294,8 +319,11 @@
     {
      "at_bar": 26,
      "action": "player_look",
-     "by": -24,
-     "bars": 3
+     "at": "gallery_c10",
+     "bars": 2,
+     "in": [
+      "gallery"
+     ]
     },
     {
      "at_bar": 27,
@@ -305,6 +333,15 @@
      "at_bar": 27,
      "action": "piece_on",
      "piece": "gallery_holo_menu"
+    },
+    {
+     "at_bar": 28,
+     "action": "player_walk",
+     "fwd": -1.2,
+     "bars": 2,
+     "in": [
+      "gallery"
+     ]
     },
     {
      "at_bar": 30,
@@ -341,13 +378,31 @@
     {
      "at_bar": 34,
      "action": "player_look",
-     "by": 24,
+     "pitch": 22,
      "bars": 3
     },
     {
      "at_bar": 35,
      "action": "circle_form",
      "group": "circle"
+    },
+    {
+     "at_bar": 36,
+     "action": "player_look",
+     "at": "reactor_in",
+     "bars": 2,
+     "in": [
+      "gallery"
+     ]
+    },
+    {
+     "at_bar": 36,
+     "action": "player_walk",
+     "right": 2.2,
+     "bars": 3,
+     "in": [
+      "gallery"
+     ]
     },
     {
      "at_bar": 37,
@@ -360,10 +415,13 @@
      "bars": 2
     },
     {
-     "at_bar": 38,
-     "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "at_bar": 37,
+     "action": "player_walk",
+     "fwd": 1.0,
+     "bars": 3,
+     "in": [
+      "reactor"
+     ]
     },
     {
      "at_bar": 39,
@@ -372,6 +430,12 @@
     {
      "at_bar": 39,
      "action": "led_eq"
+    },
+    {
+     "at_bar": 39,
+     "action": "player_look",
+     "pitch": -22,
+     "bars": 2
     }
    ]
   },
@@ -402,6 +466,24 @@
      "action": "glowsticks_on"
     },
     {
+     "at_bar": 43,
+     "action": "player_walk",
+     "right": -2.0,
+     "bars": 3,
+     "in": [
+      "reactor"
+     ]
+    },
+    {
+     "at_bar": 44,
+     "action": "player_look",
+     "at": "gallery_c04",
+     "bars": 2,
+     "in": [
+      "gallery"
+     ]
+    },
+    {
      "at_bar": 45,
      "action": "hero_center"
     },
@@ -410,6 +492,15 @@
      "action": "piece_pulse",
      "piece": "reactor_core_glow",
      "bars": 4
+    },
+    {
+     "at_bar": 45,
+     "action": "player_walk",
+     "fwd": 1.5,
+     "bars": 3,
+     "in": [
+      "gallery"
+     ]
     },
     {
      "at_bar": 46,
@@ -446,7 +537,7 @@
     {
      "at_bar": 50,
      "action": "player_look",
-     "by": 24,
+     "pitch": 18,
      "bars": 3
     },
     {
@@ -475,7 +566,7 @@
     {
      "at_bar": 54,
      "action": "player_look",
-     "by": -28,
+     "pitch": -14,
      "bars": 3
     },
     {
@@ -490,6 +581,24 @@
     {
      "at_bar": 55,
      "action": "led_bars"
+    },
+    {
+     "at_bar": 55,
+     "action": "player_walk",
+     "fwd": 2.0,
+     "bars": 3,
+     "in": [
+      "bridge"
+     ]
+    },
+    {
+     "at_bar": 55,
+     "action": "player_walk",
+     "right": 1.4,
+     "bars": 3,
+     "in": [
+      "medbay"
+     ]
     }
    ]
   },
@@ -516,6 +625,12 @@
      "action": "led_rings"
     },
     {
+     "at_bar": 60,
+     "action": "player_look",
+     "pitch": 20,
+     "bars": 3
+    },
+    {
      "at_bar": 61,
      "action": "regroup"
     },
@@ -528,6 +643,15 @@
      "action": "player_look",
      "by": 28,
      "bars": 3
+    },
+    {
+     "at_bar": 62,
+     "action": "player_walk",
+     "fwd": -1.0,
+     "bars": 2,
+     "in": [
+      "medbay"
+     ]
     },
     {
      "at_bar": 63,
@@ -595,15 +719,43 @@
      "piece": "hologram_dome"
     },
     {
-     "at_bar": 70,
+     "at_bar": 69,
      "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "at": "helm",
+     "bars": 2,
+     "in": [
+      "bridge"
+     ]
+    },
+    {
+     "at_bar": 69,
+     "action": "player_walk",
+     "fwd": 1.2,
+     "bars": 3,
+     "in": [
+      "medbay"
+     ]
+    },
+    {
+     "at_bar": 70,
+     "action": "player_walk",
+     "to": "helm",
+     "style": "climb",
+     "bars": 3,
+     "in": [
+      "bridge"
+     ]
     },
     {
      "at_bar": 71,
      "action": "light_wave",
      "bars": 2
+    },
+    {
+     "at_bar": 71,
+     "action": "player_look",
+     "pitch": -18,
+     "bars": 3
     }
    ]
   },
@@ -617,8 +769,11 @@
     {
      "at_bar": 74,
      "action": "player_look",
-     "by": -24,
-     "bars": 3
+     "at": "helm_edge",
+     "bars": 2,
+     "in": [
+      "bridge"
+     ]
     },
     {
      "at_bar": 75,
@@ -628,6 +783,12 @@
       "energy_min": 50
      },
      "else": "lights_cool"
+    },
+    {
+     "at_bar": 76,
+     "action": "player_look",
+     "pitch": -12,
+     "bars": 3
     },
     {
      "at_bar": 77,
@@ -644,6 +805,24 @@
       "energy_min": 55
      },
      "else": "front_row_sway"
+    },
+    {
+     "at_bar": 77,
+     "action": "player_walk",
+     "right": 2.0,
+     "bars": 3,
+     "in": [
+      "bridge"
+     ]
+    },
+    {
+     "at_bar": 77,
+     "action": "player_walk",
+     "fwd": -1.0,
+     "bars": 2,
+     "in": [
+      "medbay"
+     ]
     },
     {
      "at_bar": 78,
