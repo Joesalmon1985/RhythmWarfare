@@ -7,6 +7,8 @@ extends RefCounted
 const RUN_PATH := "res://content/run/run.json"
 const MUSIC_PATH := "res://content/story/music.json"
 const PACKS_DIR := "res://songs/packs"
+const ARRANGEMENTS_DIR := "res://content/music/arrangements"
+const RECIPES_PATH := "res://content/music/mix_recipes.json"
 const TIERS := 4  # difficulty tiers (pack.tiers "1".."4"); a node's tier is min(depth, TIERS)
 
 var cfg: Dictionary = {}
@@ -17,16 +19,33 @@ var node_order: Array = []
 var worlds: Dictionary = {}  # world id -> {id, title, map, depth, blurb}
 var world_order: Array = []
 var packs: Dictionary = {}  # id -> pack.json (+ "dir")
+var arrangements: Dictionary = {}  # id -> content/music/arrangements/<id>.json (docs/CONTINUOUS_RUN.md, "Arrangements")
+var recipes: Dictionary = {}  # mix recipe name -> {drums, bass, other}
+var seed_value := 0  # the per-run seed that picks between a scene's alternate arrangements (RW_RUN_SEED, else the save's)
 var errors: Array = []
 var warnings: Array = []
 
 
 static func load_default() -> RunData:
-	return load_files(RUN_PATH, MUSIC_PATH, PACKS_DIR)
+	return load_files(RUN_PATH, OS.get_environment("RW_RUN_MUSIC") if OS.get_environment("RW_RUN_MUSIC") != "" else MUSIC_PATH, PACKS_DIR)
 
 
-static func load_files(run_path: String, music_path: String, packs_dir: String) -> RunData:
+## The run's per-run seed: RW_RUN_SEED when set, else the one RunProgress stores (a new one is drawn each run), else 0 (tests and tools without the autoload).
+static func run_seed() -> int:
+	if OS.get_environment("RW_RUN_SEED") != "":
+		return int(OS.get_environment("RW_RUN_SEED"))
+	var loop := Engine.get_main_loop()
+	if loop is SceneTree:
+		var s: Node = (loop as SceneTree).root.get_node_or_null("Session")
+		if s != null and s.get("run_progress") != null:
+			return (s.get("run_progress") as RunProgress).run_seed()
+	return 0
+
+
+## `p_seed` < 0 takes run_seed(); RW_RUN_MUSIC (an absolute path) replaces music_path in load_default (tools and recordings).
+static func load_files(run_path: String, music_path: String, packs_dir: String, p_seed: int = -1, arrangements_dir: String = ARRANGEMENTS_DIR) -> RunData:
 	var d := RunData.new()
+	d.seed_value = run_seed() if p_seed < 0 else p_seed
 	var run: Variant = _json(run_path, d.errors)
 	var music: Variant = _json(music_path, d.errors)
 	if typeof(run) != TYPE_DICTIONARY or typeof(music) != TYPE_DICTIONARY:
@@ -46,6 +65,7 @@ static func load_files(run_path: String, music_path: String, packs_dir: String) 
 	var assign: Dictionary = {}
 	for m in music.get("nodes", []):
 		assign[str(m["id"])] = m
+	d._load_arrangements(arrangements_dir, assign)
 	for w in run.get("worlds", []):
 		d.worlds[str(w["id"])] = w
 		d.world_order.append(str(w["id"]))
@@ -69,15 +89,126 @@ static func load_files(run_path: String, music_path: String, packs_dir: String) 
 			d.errors.append("music.json has no entry for node %s" % id)
 		node["audio"] = str(m.get("audio", ""))
 		node["chart"] = str(m.get("chart", ""))
+		node["arrangement"] = ""
+		node["sections"] = []
 		node["treatment"] = str(m.get("treatment", "none"))
 		node["temporary"] = bool(m.get("temporary", false))
 		d.nodes[id] = node
 		d.node_order.append(id)
+		if m.has("arrangement"):
+			d._resolve_arrangement(id, m)
 	for id in assign:
 		if not d.nodes.has(id):
 			d.errors.append("music.json lists node %s that run.json does not have" % id)
 	d._validate()
 	return d
+
+
+## Reads the arrangements and the mix recipes (only when some scene names an arrangement).
+func _load_arrangements(dir_path: String, assign: Dictionary) -> void:
+	var wanted := false
+	for id in assign:
+		if (assign[id] as Dictionary).has("arrangement"):
+			wanted = true
+	if not wanted:
+		return
+	var rc: Variant = _json(RECIPES_PATH, errors)
+	if typeof(rc) == TYPE_DICTIONARY:
+		recipes = rc.get("recipes", {})
+	var dir := DirAccess.open(dir_path)
+	if dir == null:
+		errors.append("%s: arrangements folder missing" % dir_path)
+		return
+	for f in dir.get_files():
+		if f.get_extension() == "json":
+			var a: Variant = _json(dir_path.path_join(f), errors)
+			if typeof(a) == TYPE_DICTIONARY:
+				arrangements[str(a.get("id", f.get_basename()))] = a
+
+
+## A scene that names an arrangement plays a 16-bar window of it: `slot` k (default 0) is bars 16k+1 to 16k+16 (wrapping), one 16-bar section or two 8-bar ones.
+## `alternates` lists other arrangements of the same family; the per-run seed picks between the scene's arrangement and its alternates (the same seed, the same pick).
+## node.sections is [{bars, role, pack, mix, gains, start_beat, beats, fills}] over the 64-beat phase; node.audio and node.chart become the first section's pack, so the route
+## lock compares the chart pack of block 0 exactly as for a plain scene.
+func _resolve_arrangement(id: String, m: Dictionary) -> void:
+	var node: Dictionary = nodes[id]
+	var ids: Array = [str(m["arrangement"])]
+	ids.append_array(m.get("alternates", []))
+	var fams := {}
+	for a in ids:
+		if not arrangements.has(str(a)):
+			errors.append("node %s: arrangement '%s' does not exist" % [id, a])
+			return
+		fams[str(arrangements[str(a)].get("family", ""))] = true
+	if fams.size() > 1:
+		errors.append("node %s: its arrangement and alternates are of several families (%s)" % [id, ", ".join(PackedStringArray(fams.keys()))])
+		return
+	var pick := 0 if ids.size() == 1 else absi(("%d:%s" % [seed_value, id]).hash()) % ids.size()
+	var arr: Dictionary = arrangements[str(ids[pick])]
+	var total := int(arr.get("bars", 0))
+	var phase_bars := int(cfg.get("timing", {}).get("phase_beats", 64)) / 4
+	if total <= 0 or total % phase_bars != 0:
+		errors.append("node %s: arrangement %s has %d bars, a multiple of %d is needed (use \"run\")" % [id, arr.get("id", "?"), total, phase_bars])
+		return
+	var first_bar := (int(m.get("slot", 0)) * phase_bars) % total
+	var sections: Array = []
+	var bar := 0
+	for s in arr.get("sections", []):
+		var b := int(s.get("bars", 0))
+		if bar >= first_bar and bar < first_bar + phase_bars:
+			if bar + b > first_bar + phase_bars:
+				errors.append("node %s: a %d-bar section of %s straddles the phase (slot %d)" % [id, b, arr["id"], int(m.get("slot", 0))])
+				return
+			if not s.has("pack"):
+				errors.append("node %s: section of %s plays library stems, which the run cannot play yet (packs only)" % [id, arr["id"]])
+				return
+			var mix: Variant = s.get("mix", "full")
+			var gains: Dictionary = {}
+			if typeof(mix) == TYPE_STRING:
+				if not recipes.has(str(mix)):
+					errors.append("node %s: mix recipe '%s' is not in %s" % [id, mix, RECIPES_PATH])
+					return
+				gains = (recipes[str(mix)] as Dictionary).duplicate()
+			elif typeof(mix) == TYPE_DICTIONARY:
+				gains = (mix as Dictionary).duplicate()
+			sections.append({"bars": b, "role": str(s.get("role", "")), "pack": str(s["pack"]), "mix": str(mix), "gains": {"drums": float(gains.get("drums", 1.0)),
+				"bass": float(gains.get("bass", 1.0)), "other": float(gains.get("other", 1.0))}, "start_beat": (bar - first_bar) * 4, "beats": b * 4, "fills": s.get("fills", [])})
+		bar += b
+	if sections.is_empty():
+		errors.append("node %s: arrangement %s has no section in bars %d to %d" % [id, arr["id"], first_bar + 1, first_bar + phase_bars])
+		return
+	for s in sections:
+		if not packs.has(str(s["pack"])):
+			errors.append("node %s: section pack '%s' of arrangement %s does not exist" % [id, s["pack"], arr["id"]])
+			return
+		var ph := int(packs[str(s["pack"])]["phrase_beats"])
+		if int(s["beats"]) % ph != 0:
+			errors.append("node %s: the %d-beat phrase of pack %s does not tile its %d-bar section" % [id, ph, s["pack"], int(s["bars"])])
+	node["arrangement"] = str(arr["id"])
+	node["sections"] = sections
+	node["audio"] = str(sections[0]["pack"])
+	node["chart"] = str(sections[0]["pack"])
+
+
+## The section of scene `id` playing at phase beat `beat` ({} for a scene without an arrangement).
+func section_at(id: String, beat: float) -> Dictionary:
+	var secs: Array = nodes[id].get("sections", [])
+	for i in range(secs.size() - 1, -1, -1):
+		if beat >= float(secs[i]["start_beat"]) - 1e-6:
+			return secs[i]
+	return {}
+
+
+## The pack whose chart is played at phase beat `beat` of scene `id`: the section playing then, else the scene's chart pack.
+func chart_pack_at(id: String, beat: float) -> String:
+	var s := section_at(id, beat)
+	return str(s["pack"]) if not s.is_empty() else str(nodes[id]["chart"])
+
+
+## The phase beat the section playing at `beat` began on (0 for a scene without an arrangement).
+func section_start_at(id: String, beat: float) -> int:
+	var s := section_at(id, beat)
+	return int(s["start_beat"]) if not s.is_empty() else 0
 
 
 static func _json(path: String, errors: Array) -> Variant:

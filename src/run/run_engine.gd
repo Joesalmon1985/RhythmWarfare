@@ -330,13 +330,14 @@ func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = 
 	var nid := node_for_chart if node_for_chart != "" else node_id
 	var st_idx := int(stage_of_block[stage_i]) if stage_i < stage_of_block.size() and not next_phase else 0
 	var fam := str(cfg["stages"][st_idx]["cue"])
-	var pack: Dictionary = data.packs[str(data.nodes[nid]["chart"])]
+	var block_beats := int(timing("block_beats"))
+	var start_beat := b * block_beats
+	var pack: Dictionary = data.packs[data.chart_pack_at(nid, start_beat)]  # the pack of the section playing at this block (the scene's chart pack when it has no arrangement)
 	var tier := str(data.tier_of(at_depth))
 	var cues: Array = pack["tiers"][tier]["drums" if fam == "drums" else "bass"]
 	var phrase_beats := int(pack["phrase_beats"])
-	var block_beats := int(timing("block_beats"))
 	var origin := 0 if fam == "drums" or next_phase else maxi(bass_origin, 0)
-	var start_beat := b * block_beats
+	origin = maxi(origin, data.section_start_at(nid, start_beat))  # a new section's loops start with the section, so its phrase does too
 	var pos := ((start_beat - origin) % phrase_beats + phrase_beats) % phrase_beats  # phrase beat the block starts at
 	var span := timing("cue_span_beats")
 	var tpb := level.ticks_per_beat

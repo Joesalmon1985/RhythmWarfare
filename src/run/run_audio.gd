@@ -6,6 +6,11 @@ extends StemTransport
 ## sits on the grid to within a mix chunk and never drifts (every loop is a whole number of frames long). Bass and Synth are started
 ## together at the reveal and then keep running whatever the foreground is; the drums run from the phase downbeat.
 ##
+## A scene may play an ARRANGEMENT (content/music/arrangements, resolved by RunData into node.sections): two 8-bar sections or one 16-bar over its 64-beat phase.
+## A section switch is another scheduled item on the same grid: at the section's first beat the previous section's voices stop and the new pack's voices start with the same
+## lateness compensation as a phase start (drums from the section downbeat; bass and synth too once the bass has been revealed), so a voice group per section, no restart of
+## the clock, no gap. The section's mix recipe scales the phase mix (stage gain x recipe gain); the phase mix stays the gameplay.
+##
 ## Gains ramp smoothly towards targets the mix stages set; a treatment (filter, distortion, reverb) is a set of effects on that phase's own
 ## drum and bass buses (two sets of buses alternate, so the previous phase rings out untouched). Streams are loaded ahead on a thread.
 
@@ -120,6 +125,11 @@ func on_event(ev: Dictionary) -> void:
 	match str(ev["kind"]):
 		"phase_start":
 			_schedule_add({"t": float(ev["t"]), "kind": "phase", "ev": ev})
+			var secs: Array = data.nodes[str(ev["node"])].get("sections", [])
+			for i in range(1, secs.size()):
+				_schedule_add({"t": float(ev["t"]) + float(secs[i]["start_beat"]) * beat_s, "kind": "section", "phase": int(ev["phase"]), "index": i, "section": secs[i]})
+			for sec in secs:
+				preload_pack(str(sec["pack"]))
 		"mix":
 			_schedule_add({"t": float(ev["t"]), "kind": "mix", "gains": ev["gains"]})
 		"reveal":
@@ -210,6 +220,8 @@ func _run(item: Dictionary, now: float, ttnm: float) -> void:
 	match str(item["kind"]):
 		"phase":
 			_begin_phase(item["ev"], float(item["t"]), now, ttnm)
+		"section":
+			_switch_section(item, now, ttnm)
 		"mix":
 			var g := _live_group()
 			if g.is_empty():
@@ -217,7 +229,7 @@ func _run(item: Dictionary, now: float, ttnm: float) -> void:
 			var gains: Dictionary = item["gains"]
 			for name in gains:
 				if g["voices"].has(name):
-					g["voices"][name]["target"] = float(gains[name])
+					g["voices"][name]["target"] = _target_gain(g, name, gains)
 			g["mix"] = gains
 		"reveal":
 			var g2 := _live_group()
@@ -227,7 +239,8 @@ func _run(item: Dictionary, now: float, ttnm: float) -> void:
 			_start_voice(g2, "other", float(item["t"]), now, ttnm)
 			var gains2: Dictionary = g2.get("mix", {})
 			for name in ["bass", "other"]:
-				g2["voices"][name]["target"] = float(gains2.get(name, 0.0))
+				if g2["voices"].has(name):
+					g2["voices"][name]["target"] = _target_gain(g2, name, gains2)
 		"effect":
 			var path := str(cfg["effects"][str(item["name"])])
 			var s := _load(path)
@@ -260,12 +273,44 @@ func _begin_phase(ev: Dictionary, t: float, now: float, ttnm: float) -> void:
 			v["target"] = 0.0
 	var pair: Array = BUS_PAIRS[int(ev["phase"]) % 2]
 	_apply_treatment(pair, str(ev["treatment"]))
-	var group := {"phase": int(ev["phase"]), "node": str(ev["node"]), "voices": {}, "fading": false, "pack": str(ev["audio"]), "buses": pair, "duck": 1.0 - _fade_master}
+	var secs: Array = data.nodes[str(ev["node"])].get("sections", [])
+	var group := {"phase": int(ev["phase"]), "node": str(ev["node"]), "voices": {}, "fading": false, "pack": str(ev["audio"]), "buses": pair, "duck": 1.0 - _fade_master,
+		"section": 0, "recipe": secs[0]["gains"] if not secs.is_empty() else {}}
 	_groups.append(group)
 	_start_voice(group, "drums", t, now, ttnm)
 	group["voices"]["drums"]["gain"] = 0.0
-	group["voices"]["drums"]["target"] = 1.0
 	group["mix"] = cfg["stages"][0]["gains"]
+	group["voices"]["drums"]["target"] = _target_gain(group, "drums", group["mix"])
+
+
+## The gain a voice aims at: the phase mix's gain for it times the section's recipe gain (1 when the scene has no arrangement).
+func _target_gain(group: Dictionary, name: String, gains: Dictionary) -> float:
+	return float(gains.get(name, 0.0)) * float((group.get("recipe", {}) as Dictionary).get(name, 1.0))
+
+
+## The scheduled start of section `index` of the live phase: the old section's voices stop and the new pack's start in the same mix chunk, at the gains the phase mix and the new
+## recipe give (no ramp: a switch on the grid is a cut, the loops are whole bars). The bass and synth follow only when the bass has been revealed in the phase.
+func _switch_section(item: Dictionary, now: float, ttnm: float) -> void:
+	var old := _live_group()
+	if old.is_empty() or int(old["phase"]) != int(item["phase"]):
+		return  # the phase is already over (a pause that skipped it, a run that ended)
+	var sec: Dictionary = item["section"]
+	var group := {"phase": old["phase"], "node": old["node"], "voices": {}, "fading": false, "pack": str(sec["pack"]), "buses": old["buses"], "duck": old.get("duck", 0.0),
+		"section": int(item["index"]), "recipe": sec["gains"], "mix": old.get("mix", {})}
+	var had_bass: bool = old["voices"].has("bass")
+	for v in old["voices"].values():
+		(v["player"] as AudioStreamPlayer).stop()
+		(v["player"] as AudioStreamPlayer).queue_free()
+	_groups.erase(old)
+	_groups.append(group)
+	var t := float(item["t"])
+	var names: Array = ["drums", "bass", "other"] if had_bass else ["drums"]
+	for name in names:
+		_start_voice(group, name, t, now, ttnm)
+		if group["voices"].has(name):
+			var tg := _target_gain(group, name, group["mix"])
+			group["voices"][name]["gain"] = tg
+			group["voices"][name]["target"] = tg
 
 
 func _start_voice(group: Dictionary, name: String, t: float, now: float, ttnm: float) -> void:
@@ -286,7 +331,7 @@ func _start_voice(group: Dictionary, name: String, t: float, now: float, ttnm: f
 	var from := maxf(now + ttnm - t, 0.0)  # started a little late: begin that far into the loop so it sits on the grid
 	p.play(from)
 	group["voices"][name] = {"player": p, "gain": 0.0, "target": 0.0, "origin_t": t}
-	voice_log.append({"voice": name, "node": str(group["node"]), "target": t, "lateness_ms": from * 1000.0, "from": from})
+	voice_log.append({"voice": name, "node": str(group["node"]), "target": t, "lateness_ms": from * 1000.0, "from": from, "section": int(group.get("section", 0)), "pack": str(group["pack"])})
 
 
 ## A treatment is a few effects per bus: lowpass / highpass (Hz), distort (drive 0..1), reverb (wet 0..1).

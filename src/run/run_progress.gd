@@ -30,11 +30,20 @@ static func load_data(p_path: String = SAVE_PATH, p_old: String = OLD_PATH) -> R
 			DirAccess.rename_absolute(p_path, p_path + ".corrupt")
 	elif FileAccess.file_exists(p_old):
 		p._migrate_old()
+	if not p.data.has("seed"):  # saves from before the arrangements: the field is added on load, the file is rewritten at the next save (the version stays 2)
+		var rng := RandomNumberGenerator.new()
+		rng.randomize()
+		p.data["seed"] = rng.randi() & 0x7fffffff
 	return p
 
 
+## The per-run seed arrangements are picked with (RunData.run_seed reads it; RW_RUN_SEED overrides it). A new one is drawn each time a run starts, after the run's data loaded.
+func run_seed() -> int:
+	return int(data.get("seed", 0))
+
+
 static func _fresh() -> Dictionary:
-	return {"version": VERSION, "reached": {}, "runs": 0, "best_phases": 0, "migrated_from": ""}
+	return {"version": VERSION, "reached": {}, "runs": 0, "best_phases": 0, "migrated_from": ""}  # "seed" is added by load_data
 
 
 ## Reads the old chapter save (never writes it) and marks the matching levels reached. Night One is always reached.
@@ -72,6 +81,7 @@ func enter(node_id: String) -> bool:
 
 func run_started() -> void:
 	data["runs"] = int(data["runs"]) + 1
+	data["seed"] = (int(data.get("seed", 0)) * 1103515245 + 12345 + int(data["runs"])) & 0x7fffffff  # the next run's seed: this run already loaded its data
 	save()
 
 
