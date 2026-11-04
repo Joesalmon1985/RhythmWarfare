@@ -326,6 +326,9 @@ func _step_virtual(t: float) -> void:
 
 func _advance(t: float, audio_t: float, render := true) -> void:
 	var wall := float(Time.get_ticks_msec()) / 1000.0
+	if _virtual:  # the pads and the falling notes read the song clock: hold it at the virtual song time
+		clock.state = SongClock.State.PAUSED
+		clock._frozen = t
 	var r := run.step(t)
 	for ev in r["judge"]:
 		_on_judge_event(ev, wall)

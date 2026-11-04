@@ -20,6 +20,8 @@ three endings. Saves are separate (`user://story_campaign.json`); the military c
 ```
 godot --path . res://src/scenes/story_play.tscn                       # straight into Night One
 bash tools/story/capture.sh                                            # real screenshots of the running scene (docs/shots/story)
+RW_SHOTS='^(0|1)' bash tools/story/capture.sh /tmp/shots                # only the shots whose name matches (cam_, camseq_, ui_, interlude_...)
+RW_STORY_VIRTUAL=1 RW_AUTOPLAY=perfect RW_STORY_PROFILE_FROM=100 RW_STORY_UNTIL_BAR=108 godot --path . res://src/scenes/story_play.tscn   # frame times
 python3 tools/story/build_assets.py                                    # regenerate only the original story art
 godot --headless --path . -s tools/story/tune.gd -- perfect none       # endings under scripted skill levels
 ```

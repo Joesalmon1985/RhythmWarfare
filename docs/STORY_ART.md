@@ -81,7 +81,11 @@ dance floor; the mixing desk across the bottom (`desk_top`, authored 1280 x 260,
   perspective `scale`), `floor_polygon`, `floor_grid` (the perspective rule to paint tile ripples), `light_points` (8 moving-head
   mounts), `woofers` (4 cone positions, sprite `woofer` has `radius` 50), `disco_ball`, `riser`, `circle_centre`/`circle_radii`
   for the dance-circle ellipse. A front-row character at `scale` 1.0 is 260 px tall; about 0.8 of the row scale keeps the room
-  visible behind a crowd of 30.
+  visible behind a crowd of 30. `led_tiles` (optional, Night One only) is the lit floor's tile grid (`far_x`, `rows`, `vanishing_point`,
+  `far_y`): the runtime lights single tiles in chases, ripples and sweeps on the beat; rooms without it keep a plain floor glow.
+- Runtime presentation (no art needed): the pads are drawn by `src/story/story_pad_view.gd` (a PadView skin on the `pad_bezel`
+  and desk art), the falling notes by `story_note_lane.gd`, the overlay cards by `story_hud.gd`, the menus by `story_style.gd`.
+  Each room is split into far / mid / near / top depth groups so the moving camera has parallax (`StoryView.PARALLAX`).
 - `sprites`: `woofer`, `fixture` (moving head, pivot at the mount, `lens` at the lamp), `disco_ball`, `glowstick`, `door_open`
   (overlay with its own `pos`), `spot_pool`, `haze_a`, `haze_b`, `glow`, `beam` (draw additively and tint), `vignette`,
   `confetti` (4 frames of 32 px), `desk_lip_glow`, and the deck pieces `pad_bezel` (opening is `inner_ratio` of its size, so
