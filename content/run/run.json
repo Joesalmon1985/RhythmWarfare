@@ -136,15 +136,538 @@
   }
  },
  "start_node": "warehouse",
- "nodes": [
+ "worlds": [
   {
    "id": "warehouse",
    "title": "Warehouse",
-   "world": "night_one",
-   "waypoint": "floor_centre",
-   "role": "dancer",
+   "map": "night_one",
    "depth": 1,
-   "blurb": "Doors open. Find the groove.",
+   "blurb": "Doors open. Find the groove. The floor, the bar or the balcony, the chill-out or the booth, and out."
+  },
+  {
+   "id": "mothership",
+   "title": "The Mothership",
+   "map": "mothership",
+   "depth": 2,
+   "blurb": "The lights go strange. The deck, the gallery or the reactor, the bridge, and the airlock."
+  },
+  {
+   "id": "underworld",
+   "title": "The Underworld",
+   "map": "underworld",
+   "depth": 2,
+   "blurb": "The floor cracks open. The arena, the court or the furnace, the pit, and the throne."
+  },
+  {
+   "id": "hospital",
+   "title": "The Hospital",
+   "map": "hospital",
+   "depth": 3,
+   "blurb": "Visiting hours never end. The ward, the corridor, the day room or the cafeteria, the garden, the bandstand."
+  },
+  {
+   "id": "ward",
+   "title": "The Ward",
+   "map": "mental_hospital",
+   "depth": 3,
+   "blurb": "Group therapy at 174 BPM. The day room, the art room or the dormitory, the corridor, the courtyard, the stage."
+  },
+  {
+   "id": "hospital_late",
+   "title": "The Hospital, late",
+   "map": "hospital",
+   "depth": 4,
+   "blurb": "The garden after dark: the cafeteria or the quiet room, then the bandstand, round again."
+  },
+  {
+   "id": "ward_late",
+   "title": "The Ward, late",
+   "map": "mental_hospital",
+   "depth": 4,
+   "blurb": "The courtyard stage after hours: the treatment room or the dormitory, then the day room, round again."
+  }
+ ],
+ "nodes": [
+  {
+   "id": "warehouse",
+   "world": "warehouse",
+   "scene": "floor",
+   "title": "The Floor",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "Doors open. Find the groove. The floor, the bar or the balcony, the chill-out or the booth, and out.",
+   "next": [
+    {
+     "to": "warehouse.bar",
+     "dir": "right",
+     "label": "Past the speaker stacks, the bar"
+    },
+    {
+     "to": "warehouse.balcony",
+     "dir": "left",
+     "label": "Up the side stairs to the balcony"
+    }
+   ],
+   "place": {
+    "waypoint": "floor_centre",
+    "rail": {
+     "good": [
+      {
+       "to": "steps",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "stage",
+       "role": "on_stage",
+       "style": "climb",
+       "bars": 2
+      },
+      {
+       "to": "balcony",
+       "role": "on_stage",
+       "style": "climb",
+       "bars": 4
+      },
+      {
+       "to": "booth",
+       "role": "dj",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "floor_edge",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "corridor",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 4
+      },
+      {
+       "to": "cubicle",
+       "role": "sick",
+       "style": "run",
+       "bars": 4
+      }
+     ],
+     "arrive": "door",
+     "glances": [
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      },
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "right": "to_bar",
+      "left": "to_balcony"
+     }
+    }
+   },
+   "trial_gate": "deathtrap_opening"
+  },
+  {
+   "id": "warehouse.bar",
+   "world": "warehouse",
+   "scene": "bar",
+   "title": "The Bar",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Bar",
+   "next": [
+    {
+     "to": "warehouse.chill",
+     "dir": "right",
+     "label": "Through the curtain to the chill-out"
+    },
+    {
+     "to": "warehouse.booth",
+     "dir": "left",
+     "label": "Back across the floor, up to the booth"
+    }
+   ],
+   "place": {
+    "waypoint": "bar",
+    "rail": {
+     "good": [
+      {
+       "to": "bar_taps",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "bar_end",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "bar_door",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "floor_bar",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "bar_door",
+     "glances": [
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      },
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      },
+      {
+       "fwd": 1.6,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "right": "bar_to_chill",
+      "left": "bar_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "warehouse.balcony",
+   "world": "warehouse",
+   "scene": "balcony",
+   "title": "The Balcony",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Balcony",
+   "next": [
+    {
+     "to": "warehouse.chill",
+     "dir": "right",
+     "label": "Down to the floor and round to the chill-out"
+    },
+    {
+     "to": "warehouse.booth",
+     "dir": "left",
+     "label": "Along the stairs to the booth"
+    }
+   ],
+   "place": {
+    "waypoint": "balcony",
+    "rail": {
+     "good": [
+      {
+       "to": "balcony_rail",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "balcony_far",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "balcony_door",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "floor_edge",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "balcony_door",
+     "glances": [
+      {
+       "by": 24,
+       "bars": 2
+      },
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      }
+     ],
+     "strolls": [
+      {
+       "right": 1.4,
+       "bars": 2
+      },
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "right": "balcony_door",
+      "left": "balcony_stairs"
+     }
+    }
+   }
+  },
+  {
+   "id": "warehouse.chill",
+   "world": "warehouse",
+   "scene": "chill",
+   "title": "The Chill-out",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Chill-out",
+   "next": [
+    {
+     "to": "warehouse.exit",
+     "dir": "up",
+     "label": "Out through the floor to the door"
+    }
+   ],
+   "place": {
+    "waypoint": "chill",
+    "rail": {
+     "good": [
+      {
+       "to": "sofa_nook",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "sofa_front",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "chill_door",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "bar_taps",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "chill_door",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "chill_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "warehouse.booth",
+   "world": "warehouse",
+   "scene": "booth",
+   "title": "The Booth",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Booth",
+   "next": [
+    {
+     "to": "warehouse.exit",
+     "dir": "up",
+     "label": "Down the stage, out through the floor"
+    }
+   ],
+   "place": {
+    "waypoint": "booth",
+    "rail": {
+     "good": [
+      {
+       "to": "booth_decks",
+       "role": "dj",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "stage",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "steps",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "stage_edge",
+     "glances": [
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      },
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      },
+      {
+       "fwd": 1.6,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "booth_down"
+     }
+    }
+   }
+  },
+  {
+   "id": "warehouse.exit",
+   "world": "warehouse",
+   "scene": "exit",
+   "title": "The Door",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "The Door",
    "next": [
     {
      "to": "mothership",
@@ -157,643 +680,2749 @@
      "label": "The floor cracks open"
     }
    ],
-   "trial_gate": "deathtrap_opening",
-   "rail": {
-    "good": [
-     {
-      "to": "steps",
-      "role": "dancer",
-      "style": "walk",
-      "bars": 3
-     },
-     {
-      "to": "stage",
-      "role": "on_stage",
-      "style": "climb",
-      "bars": 2
-     },
-     {
-      "to": "balcony",
-      "role": "on_stage",
-      "style": "climb",
-      "bars": 4
-     },
-     {
-      "to": "booth",
-      "role": "dj",
-      "style": "walk",
-      "bars": 3
+   "place": {
+    "waypoint": "door",
+    "rail": {
+     "good": [
+      {
+       "to": "tunnel",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "floor_centre",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "floor_edge",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "floor_centre",
+     "glances": [
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      },
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "right": 1.4,
+       "bars": 2
+      },
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "tunnel",
+      "right": "door_r"
      }
-    ],
-    "bad": [
-     {
-      "to": "floor_edge",
-      "role": "queasy",
-      "style": "walk",
-      "bars": 2
-     },
-     {
-      "to": "corridor",
-      "role": "queasy",
-      "style": "stagger",
-      "bars": 4
-     },
-     {
-      "to": "cubicle",
-      "role": "sick",
-      "style": "run",
-      "bars": 4
-     }
-    ],
-    "arrive": "door",
-    "glances": [
-     {
-      "by": -28,
-      "bars": 2
-     },
-     {
-      "pitch": 14,
-      "bars": 3
-     },
-     {
-      "by": 24,
-      "bars": 2
-     },
-     {
-      "by": -12,
-      "pitch": 8,
-      "bars": 2
-     }
-    ],
-    "strolls": [
-     {
-      "fwd": 1.6,
-      "bars": 3
-     },
-     {
-      "turn": 35,
-      "fwd": 1.0,
-      "bars": 3
-     },
-     {
-      "right": 1.4,
-      "bars": 2
-     }
-    ],
-    "exits": {
-     "up": "door",
-     "right": "tunnel"
     }
    }
   },
   {
    "id": "mothership",
-   "title": "The Mothership",
    "world": "mothership",
-   "waypoint": "deck_centre",
+   "scene": "deck",
+   "title": "The Deck",
+   "entry": true,
+   "exit_scene": false,
    "role": "dancer",
-   "depth": 2,
-   "blurb": "Aliens carried the rave up to their ship.",
+   "blurb": "The lights go strange. The deck, the gallery or the reactor, the bridge, and the airlock.",
+   "next": [
+    {
+     "to": "mothership.gallery",
+     "dir": "right",
+     "label": "Along the gallery of windows"
+    },
+    {
+     "to": "mothership.reactor",
+     "dir": "up",
+     "label": "Past the gallery to the reactor catwalk"
+    }
+   ],
+   "place": {
+    "waypoint": "deck_centre",
+    "rail": {
+     "good": [
+      {
+       "to": "deck_ramp",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "deck_dais",
+       "role": "on_stage",
+       "style": "climb",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "deck_edge",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "deck_sw_corner",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "deck_centre",
+     "glances": [
+      {
+       "pitch": 18,
+       "bars": 3
+      },
+      {
+       "by": 30,
+       "bars": 2
+      },
+      {
+       "by": -22,
+       "bars": 2
+      },
+      {
+       "pitch": 10,
+       "by": 14,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.5,
+       "bars": 3
+      },
+      {
+       "turn": -40,
+       "fwd": 0.9,
+       "bars": 3
+      },
+      {
+       "right": -1.3,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "right": "deck_gallery_door",
+      "up": "deck_reactor_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "mothership.gallery",
+   "world": "mothership",
+   "scene": "gallery",
+   "title": "The Gallery",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Gallery",
+   "next": [
+    {
+     "to": "mothership.bridge",
+     "dir": "up",
+     "label": "On to the bridge"
+    }
+   ],
+   "place": {
+    "waypoint": "gallery_in",
+    "rail": {
+     "good": [
+      {
+       "to": "gallery_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "planet_window",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "gallery_west",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "deck_edge",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "gallery_door",
+     "glances": [
+      {
+       "by": 30,
+       "bars": 2
+      },
+      {
+       "by": -22,
+       "bars": 2
+      },
+      {
+       "pitch": 10,
+       "by": 14,
+       "bars": 2
+      },
+      {
+       "pitch": 18,
+       "bars": 3
+      }
+     ],
+     "strolls": [
+      {
+       "turn": -40,
+       "fwd": 0.9,
+       "bars": 3
+      },
+      {
+       "right": -1.3,
+       "bars": 2
+      },
+      {
+       "fwd": 1.5,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "gallery_east"
+     }
+    }
+   }
+  },
+  {
+   "id": "mothership.reactor",
+   "world": "mothership",
+   "scene": "reactor",
+   "title": "The Reactor",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Reactor",
+   "next": [
+    {
+     "to": "mothership.bridge",
+     "dir": "up",
+     "label": "Across the catwalk to the bridge"
+    }
+   ],
+   "place": {
+    "waypoint": "reactor_in",
+    "rail": {
+     "good": [
+      {
+       "to": "catwalk_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "reactor_core",
+       "role": "on_stage",
+       "style": "climb",
+       "bars": 4
+      }
+     ],
+     "bad": [
+      {
+       "to": "catwalk_door",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "medbay",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "catwalk_door",
+     "glances": [
+      {
+       "by": -22,
+       "bars": 2
+      },
+      {
+       "pitch": 10,
+       "by": 14,
+       "bars": 2
+      },
+      {
+       "pitch": 18,
+       "bars": 3
+      },
+      {
+       "by": 30,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "right": -1.3,
+       "bars": 2
+      },
+      {
+       "fwd": 1.5,
+       "bars": 3
+      },
+      {
+       "turn": -40,
+       "fwd": 0.9,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "catwalk_bridge"
+     }
+    }
+   }
+  },
+  {
+   "id": "mothership.bridge",
+   "world": "mothership",
+   "scene": "bridge",
+   "title": "The Bridge",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Bridge",
+   "next": [
+    {
+     "to": "mothership.exit",
+     "dir": "up",
+     "label": "Back along the catwalk to the medbay"
+    }
+   ],
+   "place": {
+    "waypoint": "bridge_in",
+    "rail": {
+     "good": [
+      {
+       "to": "helm_edge",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "helm",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "bridge_door",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "catwalk_bridge",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "bridge_door",
+     "glances": [
+      {
+       "pitch": 10,
+       "by": 14,
+       "bars": 2
+      },
+      {
+       "pitch": 18,
+       "bars": 3
+      },
+      {
+       "by": 30,
+       "bars": 2
+      },
+      {
+       "by": -22,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.5,
+       "bars": 3
+      },
+      {
+       "turn": -40,
+       "fwd": 0.9,
+       "bars": 3
+      },
+      {
+       "right": -1.3,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "bridge_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "mothership.exit",
+   "world": "mothership",
+   "scene": "exit",
+   "title": "The Airlock",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "The Airlock",
    "next": [
     {
      "to": "hospital",
      "dir": "left",
-     "label": "Wake up in a ward"
+     "label": "Out of the airlock, into white light"
     },
     {
      "to": "ward",
      "dir": "right",
-     "label": "Sectioned"
+     "label": "Through the exam room door"
     }
    ],
-   "rail": {
-    "good": [
-     {
-      "to": "gallery_in",
-      "role": "dancer",
-      "style": "walk",
-      "bars": 3
-     },
-     {
-      "to": "reactor_in",
-      "role": "dancer",
-      "style": "walk",
-      "bars": 4
-     },
-     {
-      "to": "bridge_in",
-      "role": "on_stage",
-      "style": "walk",
-      "bars": 4
-     },
-     {
-      "to": "helm",
-      "role": "dj",
-      "style": "walk",
-      "bars": 3
+   "place": {
+    "waypoint": "medbay",
+    "rail": {
+     "good": [
+      {
+       "to": "airlock_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "airlock",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "exam",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "med_alcove_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "med_door",
+     "glances": [
+      {
+       "pitch": 18,
+       "bars": 3
+      },
+      {
+       "by": 30,
+       "bars": 2
+      },
+      {
+       "by": -22,
+       "bars": 2
+      },
+      {
+       "pitch": 10,
+       "by": 14,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "turn": -40,
+       "fwd": 0.9,
+       "bars": 3
+      },
+      {
+       "right": -1.3,
+       "bars": 2
+      },
+      {
+       "fwd": 1.5,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "left": "airlock_door",
+      "right": "exam_door"
      }
-    ],
-    "bad": [
-     {
-      "to": "gallery_in",
-      "role": "queasy",
-      "style": "walk",
-      "bars": 3
-     },
-     {
-      "to": "medbay",
-      "role": "queasy",
-      "style": "stagger",
-      "bars": 4
-     },
-     {
-      "to": "exam",
-      "role": "sick",
-      "style": "carried",
-      "bars": 3
-     }
-    ],
-    "arrive": "airlock",
-    "glances": [
-     {
-      "pitch": 18,
-      "bars": 3
-     },
-     {
-      "by": 30,
-      "bars": 2
-     },
-     {
-      "by": -22,
-      "bars": 2
-     },
-     {
-      "pitch": 10,
-      "by": 14,
-      "bars": 2
-     }
-    ],
-    "strolls": [
-     {
-      "fwd": 1.5,
-      "bars": 3
-     },
-     {
-      "turn": -40,
-      "fwd": 0.9,
-      "bars": 3
-     },
-     {
-      "right": -1.3,
-      "bars": 2
-     }
-    ],
-    "exits": {
-     "left": "airlock",
-     "right": "planet_window"
     }
    }
   },
   {
    "id": "underworld",
-   "title": "The Underworld",
    "world": "underworld",
-   "waypoint": "arena_floor",
+   "scene": "arena",
+   "title": "The Arena",
+   "entry": true,
+   "exit_scene": false,
    "role": "dancer",
-   "depth": 2,
-   "blurb": "A sunken arena under the club.",
+   "blurb": "The floor cracks open. The arena, the court or the furnace, the pit, and the throne.",
+   "next": [
+    {
+     "to": "underworld.court",
+     "dir": "right",
+     "label": "The east tier, up to the court"
+    },
+    {
+     "to": "underworld.furnace",
+     "dir": "left",
+     "label": "The west tier, down to the furnace"
+    }
+   ],
+   "place": {
+    "waypoint": "arena_floor",
+    "rail": {
+     "good": [
+      {
+       "to": "arena_gate",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "gate_dais",
+       "role": "on_stage",
+       "style": "climb",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "arena_edge",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "tier_l_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "arena_floor",
+     "glances": [
+      {
+       "by": 26,
+       "bars": 2
+      },
+      {
+       "pitch": 12,
+       "bars": 3
+      },
+      {
+       "by": -30,
+       "bars": 2
+      },
+      {
+       "pitch": -8,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.7,
+       "bars": 3
+      },
+      {
+       "turn": 30,
+       "fwd": 1.1,
+       "bars": 3
+      },
+      {
+       "right": 1.5,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "right": "arena_tier_r",
+      "left": "arena_tier_l"
+     }
+    }
+   }
+  },
+  {
+   "id": "underworld.court",
+   "world": "underworld",
+   "scene": "court",
+   "title": "The Court",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Court",
+   "next": [
+    {
+     "to": "underworld.pit",
+     "dir": "up",
+     "label": "The causeway to the pit"
+    }
+   ],
+   "place": {
+    "waypoint": "court_in",
+    "rail": {
+     "good": [
+      {
+       "to": "court_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "throne_steps",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "tier_r_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "arena_edge",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "court_door",
+     "glances": [
+      {
+       "pitch": 12,
+       "bars": 3
+      },
+      {
+       "by": -30,
+       "bars": 2
+      },
+      {
+       "pitch": -8,
+       "bars": 2
+      },
+      {
+       "by": 26,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "turn": 30,
+       "fwd": 1.1,
+       "bars": 3
+      },
+      {
+       "right": 1.5,
+       "bars": 2
+      },
+      {
+       "fwd": 1.7,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "court_causeway"
+     }
+    }
+   }
+  },
+  {
+   "id": "underworld.furnace",
+   "world": "underworld",
+   "scene": "furnace",
+   "title": "The Furnace",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Furnace",
+   "next": [
+    {
+     "to": "underworld.pit",
+     "dir": "up",
+     "label": "Back through the arena, over the causeway"
+    }
+   ],
+   "place": {
+    "waypoint": "furnace_in",
+    "rail": {
+     "good": [
+      {
+       "to": "furnace_chains",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "furnace_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "tier_l_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "arena_edge",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "furnace_door",
+     "glances": [
+      {
+       "by": -30,
+       "bars": 2
+      },
+      {
+       "pitch": -8,
+       "bars": 2
+      },
+      {
+       "by": 26,
+       "bars": 2
+      },
+      {
+       "pitch": 12,
+       "bars": 3
+      }
+     ],
+     "strolls": [
+      {
+       "right": 1.5,
+       "bars": 2
+      },
+      {
+       "fwd": 1.7,
+       "bars": 3
+      },
+      {
+       "turn": 30,
+       "fwd": 1.1,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "furnace_out"
+     }
+    }
+   }
+  },
+  {
+   "id": "underworld.pit",
+   "world": "underworld",
+   "scene": "pit",
+   "title": "The Pit",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Pit",
+   "next": [
+    {
+     "to": "underworld.exit",
+     "dir": "up",
+     "label": "Up the causeway to the throne"
+    }
+   ],
+   "place": {
+    "waypoint": "pit_in",
+    "rail": {
+     "good": [
+      {
+       "to": "pit_edge",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "pit_stage",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "pit_rim_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "court_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "causeway_in",
+     "glances": [
+      {
+       "pitch": -8,
+       "bars": 2
+      },
+      {
+       "by": 26,
+       "bars": 2
+      },
+      {
+       "pitch": 12,
+       "bars": 3
+      },
+      {
+       "by": -30,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.7,
+       "bars": 3
+      },
+      {
+       "turn": 30,
+       "fwd": 1.1,
+       "bars": 3
+      },
+      {
+       "right": 1.5,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "pit_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "underworld.exit",
+   "world": "underworld",
+   "scene": "exit",
+   "title": "The Throne",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "The Throne",
    "next": [
     {
      "to": "hospital",
      "dir": "left",
-     "label": "Wake up in a ward"
+     "label": "The north door, into white light"
     },
     {
      "to": "ward",
      "dir": "right",
-     "label": "Sectioned"
+     "label": "The south door, into the quiet"
     }
    ],
-   "rail": {
-    "good": [
-     {
-      "to": "court_in",
-      "role": "dancer",
-      "style": "walk",
-      "bars": 4
-     },
-     {
-      "to": "throne",
-      "role": "on_stage",
-      "style": "walk",
-      "bars": 4
-     },
-     {
-      "to": "pit_stage",
-      "role": "dj",
-      "style": "climb",
-      "bars": 3
+   "place": {
+    "waypoint": "throne_steps",
+    "rail": {
+     "good": [
+      {
+       "to": "throne",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "court_mid",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "court_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "court_causeway",
+     "glances": [
+      {
+       "by": 26,
+       "bars": 2
+      },
+      {
+       "pitch": 12,
+       "bars": 3
+      },
+      {
+       "by": -30,
+       "bars": 2
+      },
+      {
+       "pitch": -8,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "turn": 30,
+       "fwd": 1.1,
+       "bars": 3
+      },
+      {
+       "right": 1.5,
+       "bars": 2
+      },
+      {
+       "fwd": 1.7,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "left": "throne_door_l",
+      "right": "throne_door_r"
      }
-    ],
-    "bad": [
-     {
-      "to": "furnace_chains",
-      "role": "queasy",
-      "style": "stagger",
-      "bars": 4
-     },
-     {
-      "to": "cage",
-      "role": "sick",
-      "style": "run",
-      "bars": 4
-     }
-    ],
-    "arrive": "furnace_in",
-    "glances": [
-     {
-      "by": 26,
-      "bars": 2
-     },
-     {
-      "pitch": 12,
-      "bars": 3
-     },
-     {
-      "by": -30,
-      "bars": 2
-     },
-     {
-      "pitch": -8,
-      "bars": 2
-     }
-    ],
-    "strolls": [
-     {
-      "fwd": 1.7,
-      "bars": 3
-     },
-     {
-      "turn": 30,
-      "fwd": 1.1,
-      "bars": 3
-     },
-     {
-      "right": 1.5,
-      "bars": 2
-     }
-    ],
-    "exits": {
-     "left": "furnace_in",
-     "right": "pit_in"
     }
    }
   },
   {
    "id": "hospital",
-   "title": "The Hospital",
    "world": "hospital",
-   "waypoint": "bed",
+   "scene": "ward",
+   "title": "The Ward",
+   "entry": true,
+   "exit_scene": false,
    "role": "dancer",
-   "depth": 3,
-   "blurb": "A night ward that will not sleep.",
+   "blurb": "Visiting hours never end. The ward, the corridor, the day room or the cafeteria, the garden, the bandstand.",
+   "next": [
+    {
+     "to": "hospital.corridor",
+     "dir": "up",
+     "label": "Out of the ward into the corridor"
+    }
+   ],
+   "place": {
+    "waypoint": "bed",
+    "rail": {
+     "good": [
+      {
+       "to": "ward_chair",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "ward_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "bed_corner",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "bed_far",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "bed",
+     "glances": [
+      {
+       "by": -20,
+       "bars": 2
+      },
+      {
+       "pitch": 10,
+       "bars": 3
+      },
+      {
+       "by": 28,
+       "bars": 2
+      },
+      {
+       "pitch": -6,
+       "by": 10,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.4,
+       "bars": 3
+      },
+      {
+       "turn": -30,
+       "fwd": 0.9,
+       "bars": 3
+      },
+      {
+       "right": 1.2,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "ward_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "hospital.corridor",
+   "world": "hospital",
+   "scene": "corridor",
+   "title": "The Corridor",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Corridor",
+   "next": [
+    {
+     "to": "hospital.dayroom",
+     "dir": "left",
+     "label": "The day room, the television on"
+    },
+    {
+     "to": "hospital.cafeteria",
+     "dir": "right",
+     "label": "On to the cafeteria"
+    }
+   ],
+   "place": {
+    "waypoint": "corridor_in",
+    "rail": {
+     "good": [
+      {
+       "to": "corridor_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "corridor_fork",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "corridor_quiet_door",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "quiet",
+       "role": "sick",
+       "style": "run",
+       "bars": 3
+      }
+     ],
+     "arrive": "corridor_in",
+     "glances": [
+      {
+       "pitch": 10,
+       "bars": 3
+      },
+      {
+       "by": 28,
+       "bars": 2
+      },
+      {
+       "pitch": -6,
+       "by": 10,
+       "bars": 2
+      },
+      {
+       "by": -20,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "turn": -30,
+       "fwd": 0.9,
+       "bars": 3
+      },
+      {
+       "right": 1.2,
+       "bars": 2
+      },
+      {
+       "fwd": 1.4,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "left": "corridor_day_door",
+      "right": "corridor_cafe"
+     }
+    }
+   }
+  },
+  {
+   "id": "hospital.dayroom",
+   "world": "hospital",
+   "scene": "dayroom",
+   "title": "The Day Room",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Day Room",
+   "next": [
+    {
+     "to": "hospital.garden",
+     "dir": "up",
+     "label": "Down the corridor to the garden"
+    }
+   ],
+   "place": {
+    "waypoint": "dayroom",
+    "rail": {
+     "good": [
+      {
+       "to": "dayroom_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "day_tv_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "dayroom_door",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "corridor_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "dayroom_door",
+     "glances": [
+      {
+       "by": 28,
+       "bars": 2
+      },
+      {
+       "pitch": -6,
+       "by": 10,
+       "bars": 2
+      },
+      {
+       "by": -20,
+       "bars": 2
+      },
+      {
+       "pitch": 10,
+       "bars": 3
+      }
+     ],
+     "strolls": [
+      {
+       "right": 1.2,
+       "bars": 2
+      },
+      {
+       "fwd": 1.4,
+       "bars": 3
+      },
+      {
+       "turn": -30,
+       "fwd": 0.9,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "dayroom_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "hospital.cafeteria",
+   "world": "hospital",
+   "scene": "cafeteria",
+   "title": "The Cafeteria",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Cafeteria",
+   "next": [
+    {
+     "to": "hospital.garden",
+     "dir": "up",
+     "label": "Through the glass doors to the garden"
+    }
+   ],
+   "place": {
+    "waypoint": "cafe_in",
+    "rail": {
+     "good": [
+      {
+       "to": "cafe_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "cafe_serving",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "cafe_door_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "corridor_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "cafe_door_w",
+     "glances": [
+      {
+       "pitch": -6,
+       "by": 10,
+       "bars": 2
+      },
+      {
+       "by": -20,
+       "bars": 2
+      },
+      {
+       "pitch": 10,
+       "bars": 3
+      },
+      {
+       "by": 28,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.4,
+       "bars": 3
+      },
+      {
+       "turn": -30,
+       "fwd": 0.9,
+       "bars": 3
+      },
+      {
+       "right": 1.2,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "cafe_garden_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "hospital.garden",
+   "world": "hospital",
+   "scene": "garden",
+   "title": "The Garden",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Garden",
+   "next": [
+    {
+     "to": "hospital.exit",
+     "dir": "up",
+     "label": "On to the bandstand"
+    }
+   ],
+   "place": {
+    "waypoint": "garden_in",
+    "rail": {
+     "good": [
+      {
+       "to": "garden_edge",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "bandstand",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "garden_south",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "garden_sw",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "garden_door_w",
+     "glances": [
+      {
+       "by": -20,
+       "bars": 2
+      },
+      {
+       "pitch": 10,
+       "bars": 3
+      },
+      {
+       "by": 28,
+       "bars": 2
+      },
+      {
+       "pitch": -6,
+       "by": 10,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "turn": -30,
+       "fwd": 0.9,
+       "bars": 3
+      },
+      {
+       "right": 1.2,
+       "bars": 2
+      },
+      {
+       "fwd": 1.4,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "garden_door_e"
+     }
+    }
+   }
+  },
+  {
+   "id": "hospital.exit",
+   "world": "hospital",
+   "scene": "exit",
+   "title": "The Bandstand",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "The Bandstand",
    "next": [
     {
      "to": "hospital_late",
      "dir": "left",
-     "label": "Another night shift"
+     "label": "The garden after dark"
     },
     {
      "to": "ward_late",
      "dir": "right",
-     "label": "Down the long corridor"
+     "label": "Across the lawn, to the stage"
     }
    ],
-   "rail": {
-    "good": [
-     {
-      "to": "corridor_in",
-      "role": "dancer",
-      "style": "carried",
-      "bars": 4
-     },
-     {
-      "to": "cafe_in",
-      "role": "dancer",
-      "style": "walk",
-      "bars": 4
-     },
-     {
-      "to": "bandstand",
-      "role": "on_stage",
-      "style": "walk",
-      "bars": 4
+   "place": {
+    "waypoint": "bandstand",
+    "rail": {
+     "good": [
+      {
+       "to": "bandstand_front",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "garden_edge",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "garden_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "garden_door_e",
+     "glances": [
+      {
+       "pitch": 10,
+       "bars": 3
+      },
+      {
+       "by": 28,
+       "bars": 2
+      },
+      {
+       "pitch": -6,
+       "by": 10,
+       "bars": 2
+      },
+      {
+       "by": -20,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "right": 1.2,
+       "bars": 2
+      },
+      {
+       "fwd": 1.4,
+       "bars": 3
+      },
+      {
+       "turn": -30,
+       "fwd": 0.9,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "left": "bandstand_door_l",
+      "right": "bandstand_door_r"
      }
-    ],
-    "bad": [
-     {
-      "to": "ward_chair",
-      "role": "queasy",
-      "style": "walk",
-      "bars": 2
-     },
-     {
-      "to": "quiet",
-      "role": "queasy",
-      "style": "stagger",
-      "bars": 4
-     },
-     {
-      "to": "bed",
-      "role": "sick",
-      "style": "carried",
-      "bars": 4
-     }
-    ],
-    "arrive": "corridor_in",
-    "glances": [
-     {
-      "by": -20,
-      "bars": 2
-     },
-     {
-      "pitch": 10,
-      "bars": 3
-     },
-     {
-      "by": 28,
-      "bars": 2
-     },
-     {
-      "pitch": -6,
-      "by": 10,
-      "bars": 2
-     }
-    ],
-    "strolls": [
-     {
-      "fwd": 1.4,
-      "bars": 3
-     },
-     {
-      "turn": -30,
-      "fwd": 0.9,
-      "bars": 3
-     },
-     {
-      "right": 1.2,
-      "bars": 2
-     }
-    ],
-    "exits": {
-     "left": "dayroom",
-     "right": "garden_in"
     }
    }
   },
   {
    "id": "ward",
-   "title": "The Ward",
-   "world": "mental_hospital",
-   "waypoint": "day_centre",
+   "world": "ward",
+   "scene": "dayroom",
+   "title": "The Day Room",
+   "entry": true,
+   "exit_scene": false,
    "role": "dancer",
-   "depth": 3,
-   "blurb": "Locked doors and a day room that dances.",
+   "blurb": "Group therapy at 174 BPM. The day room, the art room or the dormitory, the corridor, the courtyard, the stage.",
+   "next": [
+    {
+     "to": "ward.art",
+     "dir": "right",
+     "label": "Down the corridor to the art room"
+    },
+    {
+     "to": "ward.dorm",
+     "dir": "up",
+     "label": "To the dormitory"
+    }
+   ],
+   "place": {
+    "waypoint": "day_centre",
+    "rail": {
+     "good": [
+      {
+       "to": "bars_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "day_stage_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "day_edge",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "day_corner",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "day_centre",
+     "glances": [
+      {
+       "by": 22,
+       "bars": 2
+      },
+      {
+       "pitch": 12,
+       "bars": 3
+      },
+      {
+       "by": -26,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "pitch": 6,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.5,
+       "bars": 3
+      },
+      {
+       "turn": 32,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": -1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "right": "day_door_a",
+      "up": "day_door_b"
+     }
+    }
+   }
+  },
+  {
+   "id": "ward.art",
+   "world": "ward",
+   "scene": "art",
+   "title": "The Art Room",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Art Room",
+   "next": [
+    {
+     "to": "ward.corridor",
+     "dir": "up",
+     "label": "Back to the corridor"
+    }
+   ],
+   "place": {
+    "waypoint": "art_in",
+    "rail": {
+     "good": [
+      {
+       "to": "art_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "art_easels",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "art_door",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "corridor_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "art_door",
+     "glances": [
+      {
+       "pitch": 12,
+       "bars": 3
+      },
+      {
+       "by": -26,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "pitch": 6,
+       "bars": 2
+      },
+      {
+       "by": 22,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "turn": 32,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": -1.4,
+       "bars": 2
+      },
+      {
+       "fwd": 1.5,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "art_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "ward.dorm",
+   "world": "ward",
+   "scene": "dorm",
+   "title": "The Dormitory",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Dormitory",
+   "next": [
+    {
+     "to": "ward.corridor",
+     "dir": "up",
+     "label": "Out to the corridor"
+    }
+   ],
+   "place": {
+    "waypoint": "dorm",
+    "rail": {
+     "good": [
+      {
+       "to": "dorm_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "dorm_bed",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "dorm_door",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "corridor_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "dorm_door",
+     "glances": [
+      {
+       "by": -26,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "pitch": 6,
+       "bars": 2
+      },
+      {
+       "by": 22,
+       "bars": 2
+      },
+      {
+       "pitch": 12,
+       "bars": 3
+      }
+     ],
+     "strolls": [
+      {
+       "right": -1.4,
+       "bars": 2
+      },
+      {
+       "fwd": 1.5,
+       "bars": 3
+      },
+      {
+       "turn": 32,
+       "fwd": 1.0,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "dorm_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "ward.corridor",
+   "world": "ward",
+   "scene": "corridor",
+   "title": "The Corridor",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Corridor",
+   "next": [
+    {
+     "to": "ward.courtyard",
+     "dir": "up",
+     "label": "Through the art room to the courtyard"
+    }
+   ],
+   "place": {
+    "waypoint": "corridor_in",
+    "rail": {
+     "good": [
+      {
+       "to": "corr_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "corr_east",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "treat",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "quiet",
+       "role": "sick",
+       "style": "run",
+       "bars": 3
+      }
+     ],
+     "arrive": "corr_west",
+     "glances": [
+      {
+       "by": 12,
+       "pitch": 6,
+       "bars": 2
+      },
+      {
+       "by": 22,
+       "bars": 2
+      },
+      {
+       "pitch": 12,
+       "bars": 3
+      },
+      {
+       "by": -26,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.5,
+       "bars": 3
+      },
+      {
+       "turn": 32,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": -1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "corr_art_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "ward.courtyard",
+   "world": "ward",
+   "scene": "courtyard",
+   "title": "The Courtyard",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Courtyard",
+   "next": [
+    {
+     "to": "ward.exit",
+     "dir": "up",
+     "label": "Over to the stage"
+    }
+   ],
+   "place": {
+    "waypoint": "court_in",
+    "rail": {
+     "good": [
+      {
+       "to": "court_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "stage_edge",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "court_door_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "art_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "art_east_door",
+     "glances": [
+      {
+       "by": 22,
+       "bars": 2
+      },
+      {
+       "pitch": 12,
+       "bars": 3
+      },
+      {
+       "by": -26,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "pitch": 6,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "turn": 32,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": -1.4,
+       "bars": 2
+      },
+      {
+       "fwd": 1.5,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "court_stage_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "ward.exit",
+   "world": "ward",
+   "scene": "exit",
+   "title": "The Stage",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "The Stage",
    "next": [
     {
      "to": "hospital_late",
      "dir": "left",
-     "label": "Let out into the garden"
+     "label": "Stage left, back to the hospital"
     },
     {
      "to": "ward_late",
      "dir": "right",
-     "label": "Back to the day room"
+     "label": "Stage right, round again"
     }
    ],
-   "rail": {
-    "good": [
-     {
-      "to": "corridor_in",
-      "role": "dancer",
-      "style": "walk",
-      "bars": 4
-     },
-     {
-      "to": "art_in",
-      "role": "dancer",
-      "style": "walk",
-      "bars": 4
-     },
-     {
-      "to": "stage",
-      "role": "on_stage",
-      "style": "walk",
-      "bars": 4
+   "place": {
+    "waypoint": "stage_edge",
+    "rail": {
+     "good": [
+      {
+       "to": "stage",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "court_mid",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "court_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "court_stage_door",
+     "glances": [
+      {
+       "pitch": 12,
+       "bars": 3
+      },
+      {
+       "by": -26,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "pitch": 6,
+       "bars": 2
+      },
+      {
+       "by": 22,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "right": -1.4,
+       "bars": 2
+      },
+      {
+       "fwd": 1.5,
+       "bars": 3
+      },
+      {
+       "turn": 32,
+       "fwd": 1.0,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "left": "stage_door_l",
+      "right": "stage_door_r"
      }
-    ],
-    "bad": [
-     {
-      "to": "treat",
-      "role": "queasy",
-      "style": "stagger",
-      "bars": 4
-     },
-     {
-      "to": "quiet",
-      "role": "sick",
-      "style": "carried",
-      "bars": 3
-     }
-    ],
-    "arrive": "corridor_in",
-    "glances": [
-     {
-      "by": 22,
-      "bars": 2
-     },
-     {
-      "pitch": 12,
-      "bars": 3
-     },
-     {
-      "by": -26,
-      "bars": 2
-     },
-     {
-      "by": 12,
-      "pitch": 6,
-      "bars": 2
-     }
-    ],
-    "strolls": [
-     {
-      "fwd": 1.5,
-      "bars": 3
-     },
-     {
-      "turn": 32,
-      "fwd": 1.0,
-      "bars": 3
-     },
-     {
-      "right": -1.4,
-      "bars": 2
-     }
-    ],
-    "exits": {
-     "left": "court_in",
-     "right": "dorm"
     }
    }
   },
   {
    "id": "hospital_late",
-   "title": "The Hospital, late",
-   "world": "hospital",
-   "waypoint": "garden_edge",
+   "world": "hospital_late",
+   "scene": "garden",
+   "title": "The Garden",
+   "entry": true,
+   "exit_scene": false,
    "role": "dancer",
-   "depth": 4,
-   "blurb": "The garden bandstand, long after lights-out.",
+   "blurb": "The garden after dark: the cafeteria or the quiet room, then the bandstand, round again.",
+   "next": [
+    {
+     "to": "hospital_late.cafe",
+     "dir": "left",
+     "label": "Back in to the cafeteria"
+    },
+    {
+     "to": "hospital_late.quiet",
+     "dir": "right",
+     "label": "Down the corridor to the quiet room"
+    }
+   ],
+   "place": {
+    "waypoint": "garden_edge",
+    "rail": {
+     "good": [
+      {
+       "to": "garden_north",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "garden_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "garden_south",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "garden_sw",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "garden_edge",
+     "glances": [
+      {
+       "by": -20,
+       "bars": 2
+      },
+      {
+       "pitch": 10,
+       "bars": 3
+      },
+      {
+       "by": 28,
+       "bars": 2
+      },
+      {
+       "pitch": -6,
+       "by": 10,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.4,
+       "bars": 3
+      },
+      {
+       "turn": -30,
+       "fwd": 0.9,
+       "bars": 3
+      },
+      {
+       "right": 1.2,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "left": "garden_door_w",
+      "right": "garden_door_w2"
+     }
+    }
+   }
+  },
+  {
+   "id": "hospital_late.cafe",
+   "world": "hospital_late",
+   "scene": "cafe",
+   "title": "The Cafeteria",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Cafeteria",
+   "next": [
+    {
+     "to": "hospital_late.exit",
+     "dir": "up",
+     "label": "Out to the bandstand"
+    }
+   ],
+   "place": {
+    "waypoint": "cafe_mid",
+    "rail": {
+     "good": [
+      {
+       "to": "cafe_serving",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "cafe_garden_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "cafe_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "cafe_door_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "cafe_door_w",
+     "glances": [
+      {
+       "pitch": 10,
+       "bars": 3
+      },
+      {
+       "by": 28,
+       "bars": 2
+      },
+      {
+       "pitch": -6,
+       "by": 10,
+       "bars": 2
+      },
+      {
+       "by": -20,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "turn": -30,
+       "fwd": 0.9,
+       "bars": 3
+      },
+      {
+       "right": 1.2,
+       "bars": 2
+      },
+      {
+       "fwd": 1.4,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "cafe_garden_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "hospital_late.quiet",
+   "world": "hospital_late",
+   "scene": "quiet",
+   "title": "The Quiet Room",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Quiet Room",
+   "next": [
+    {
+     "to": "hospital_late.exit",
+     "dir": "up",
+     "label": "Out and across to the bandstand"
+    }
+   ],
+   "place": {
+    "waypoint": "quiet",
+    "rail": {
+     "good": [
+      {
+       "to": "quiet_far",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "quiet_door",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "corridor_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "quiet_door",
+     "glances": [
+      {
+       "by": 28,
+       "bars": 2
+      },
+      {
+       "pitch": -6,
+       "by": 10,
+       "bars": 2
+      },
+      {
+       "by": -20,
+       "bars": 2
+      },
+      {
+       "pitch": 10,
+       "bars": 3
+      }
+     ],
+     "strolls": [
+      {
+       "right": 1.2,
+       "bars": 2
+      },
+      {
+       "fwd": 1.4,
+       "bars": 3
+      },
+      {
+       "turn": -30,
+       "fwd": 0.9,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "quiet_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "hospital_late.exit",
+   "world": "hospital_late",
+   "scene": "exit",
+   "title": "The Bandstand",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "The Bandstand",
    "next": [
     {
      "to": "hospital_late",
      "dir": "left",
-     "label": "Round again"
+     "label": "Round the garden again",
+     "loop": true
     },
     {
      "to": "ward_late",
      "dir": "right",
-     "label": "Through the gate"
+     "label": "Across the lawn, to the stage"
     }
    ],
-   "rail": {
-    "good": [
-     {
-      "to": "bandstand",
-      "role": "on_stage",
-      "style": "walk",
-      "bars": 3
+   "place": {
+    "waypoint": "bandstand",
+    "rail": {
+     "good": [
+      {
+       "to": "bandstand_front",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "garden_edge",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "garden_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "garden_door_e",
+     "glances": [
+      {
+       "pitch": -6,
+       "by": 10,
+       "bars": 2
+      },
+      {
+       "by": -20,
+       "bars": 2
+      },
+      {
+       "pitch": 10,
+       "bars": 3
+      },
+      {
+       "by": 28,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.4,
+       "bars": 3
+      },
+      {
+       "turn": -30,
+       "fwd": 0.9,
+       "bars": 3
+      },
+      {
+       "right": 1.2,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "left": "bandstand_door_l",
+      "right": "bandstand_door_r"
      }
-    ],
-    "bad": [
-     {
-      "to": "garden_in",
-      "role": "queasy",
-      "style": "walk",
-      "bars": 3
-     },
-     {
-      "to": "quiet",
-      "role": "sick",
-      "style": "carried",
-      "bars": 4
-     }
-    ],
-    "arrive": "garden_in",
-    "glances": [
-     {
-      "pitch": 14,
-      "bars": 3
-     },
-     {
-      "by": -24,
-      "bars": 2
-     },
-     {
-      "by": 26,
-      "bars": 2
-     }
-    ],
-    "strolls": [
-     {
-      "fwd": 1.2,
-      "bars": 3
-     },
-     {
-      "turn": 28,
-      "fwd": 0.8,
-      "bars": 3
-     }
-    ],
-    "exits": {
-     "left": "garden_in",
-     "right": "bandstand"
     }
    }
   },
   {
    "id": "ward_late",
-   "title": "The Ward, late",
-   "world": "mental_hospital",
-   "waypoint": "stage_edge",
+   "world": "ward_late",
+   "scene": "courtyard",
+   "title": "The Courtyard",
+   "entry": true,
+   "exit_scene": false,
    "role": "dancer",
-   "depth": 4,
-   "blurb": "The talent stage is open to everyone.",
+   "blurb": "The courtyard stage after hours: the treatment room or the dormitory, then the day room, round again.",
+   "next": [
+    {
+     "to": "ward_late.treat",
+     "dir": "left",
+     "label": "Back through the art room to treatment"
+    },
+    {
+     "to": "ward_late.dorm",
+     "dir": "right",
+     "label": "Back to the dormitory"
+    }
+   ],
+   "place": {
+    "waypoint": "stage_edge",
+    "rail": {
+     "good": [
+      {
+       "to": "stage",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "court_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "court_north",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "court_south",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "stage_edge",
+     "glances": [
+      {
+       "by": 22,
+       "bars": 2
+      },
+      {
+       "pitch": 12,
+       "bars": 3
+      },
+      {
+       "by": -26,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "pitch": 6,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.5,
+       "bars": 3
+      },
+      {
+       "turn": 32,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": -1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "left": "court_door_w",
+      "right": "court_south"
+     }
+    }
+   }
+  },
+  {
+   "id": "ward_late.treat",
+   "world": "ward_late",
+   "scene": "treat",
+   "title": "The Treatment Room",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Treatment Room",
+   "next": [
+    {
+     "to": "ward_late.exit",
+     "dir": "up",
+     "label": "Out to the day room"
+    }
+   ],
+   "place": {
+    "waypoint": "treat",
+    "rail": {
+     "good": [
+      {
+       "to": "quiet",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "treat_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "corr_mid",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "corr_west",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "treat_door",
+     "glances": [
+      {
+       "pitch": 12,
+       "bars": 3
+      },
+      {
+       "by": -26,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "pitch": 6,
+       "bars": 2
+      },
+      {
+       "by": 22,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "turn": 32,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": -1.4,
+       "bars": 2
+      },
+      {
+       "fwd": 1.5,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "treat_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "ward_late.dorm",
+   "world": "ward_late",
+   "scene": "dorm",
+   "title": "The Dormitory",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Dormitory",
+   "next": [
+    {
+     "to": "ward_late.exit",
+     "dir": "up",
+     "label": "Out to the day room"
+    }
+   ],
+   "place": {
+    "waypoint": "dorm",
+    "rail": {
+     "good": [
+      {
+       "to": "dorm_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "dorm_bed",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "dorm_door",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "corr_mid",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "dorm_door",
+     "glances": [
+      {
+       "by": -26,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "pitch": 6,
+       "bars": 2
+      },
+      {
+       "by": 22,
+       "bars": 2
+      },
+      {
+       "pitch": 12,
+       "bars": 3
+      }
+     ],
+     "strolls": [
+      {
+       "right": -1.4,
+       "bars": 2
+      },
+      {
+       "fwd": 1.5,
+       "bars": 3
+      },
+      {
+       "turn": 32,
+       "fwd": 1.0,
+       "bars": 3
+      }
+     ],
+     "exits": {
+      "up": "dorm_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "ward_late.exit",
+   "world": "ward_late",
+   "scene": "exit",
+   "title": "The Day Room",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "The Day Room",
    "next": [
     {
      "to": "ward_late",
      "dir": "right",
-     "label": "Round again"
+     "label": "Round again, out to the courtyard",
+     "loop": true
     },
     {
      "to": "hospital_late",
      "dir": "left",
-     "label": "Out to the garden"
+     "label": "Across to the hospital"
     }
    ],
-   "rail": {
-    "good": [
-     {
-      "to": "stage",
-      "role": "on_stage",
-      "style": "walk",
-      "bars": 3
+   "place": {
+    "waypoint": "day_edge",
+    "rail": {
+     "good": [
+      {
+       "to": "day_centre",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "day_stage_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "day_corner",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "bars_in",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "day_door_a",
+     "glances": [
+      {
+       "by": 12,
+       "pitch": 6,
+       "bars": 2
+      },
+      {
+       "by": 22,
+       "bars": 2
+      },
+      {
+       "pitch": 12,
+       "bars": 3
+      },
+      {
+       "by": -26,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.5,
+       "bars": 3
+      },
+      {
+       "turn": 32,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": -1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "right": "day_door_a",
+      "left": "day_door_b"
      }
-    ],
-    "bad": [
-     {
-      "to": "court_in",
-      "role": "queasy",
-      "style": "walk",
-      "bars": 3
-     },
-     {
-      "to": "treat",
-      "role": "sick",
-      "style": "stagger",
-      "bars": 4
-     }
-    ],
-    "arrive": "court_in",
-    "glances": [
-     {
-      "by": 20,
-      "bars": 2
-     },
-     {
-      "pitch": 12,
-      "bars": 3
-     },
-     {
-      "by": -24,
-      "bars": 2
-     }
-    ],
-    "strolls": [
-     {
-      "fwd": 1.3,
-      "bars": 3
-     },
-     {
-      "turn": -28,
-      "fwd": 0.9,
-      "bars": 3
-     }
-    ],
-    "exits": {
-     "right": "court_in",
-     "left": "stage_edge"
     }
    }
   }
