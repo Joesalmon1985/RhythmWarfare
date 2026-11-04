@@ -12,6 +12,7 @@ from __future__ import annotations
 import math
 import random
 
+from . import mh_stage as M
 from .lib import OUT, circle, darken, ellipse, f, group, lighten, line, lin_grad, mix, path, poly, rad_grad, rect, write_svg
 from .mh_stage import (BUTTER, CORAL, CREAM, INK, LEAF, LILAC, LILAC_D, MINT, MINT_D, WOOD, WOOD_D, WOOD_L, H, W, Room, layer, paper_star,
                        piece)
@@ -36,14 +37,14 @@ def planks(R, tones, ncols, dz=0.07, seam="#8a6a4a", seam_op=0.35, seed=1, stagg
     while z > zmin:
         rows.append(1.0 / z)
         z -= dz
-    cols_x = [R.fx0 + step * i for i in range(-3 * ncols, 4 * ncols + 1)]
+    cols_x = [R.fx0 + step * i for i in range(-5 * ncols, 6 * ncols + 1)]
     for ri in range(len(rows) - 1):
         s0, s1 = rows[ri], rows[ri + 1]
         y0, y1 = R.floor_y(s0), R.floor_y(s1)
         for ci in range(len(cols_x) - 1):
             xa, xb = cols_x[ci], cols_x[ci + 1]
             q = [(R.vx + (xa - R.vx) * s0, y0), (R.vx + (xb - R.vx) * s0, y0), (R.vx + (xb - R.vx) * s1, y1), (R.vx + (xa - R.vx) * s1, y1)]
-            if max(p[0] for p in q) < -20 or min(p[0] for p in q) > W + 20:
+            if max(p[0] for p in q) < M.X0 - 20 or min(p[0] for p in q) > M.X1 + 20:
                 continue
             c = rng.choice(tones)
             d += poly(q, c, None)

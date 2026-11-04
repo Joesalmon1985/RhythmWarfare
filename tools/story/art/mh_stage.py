@@ -70,6 +70,23 @@ class Room:
 R = Room(640, 132, 310, 970, 50, 262)
 
 
+# Every room is authored wider and taller than the 1280 x 720 frame: the moving camera pans (camera_look), sways, rolls and turns,
+# and the far layers move less than the frame (parallax 0.82), so a backdrop that stopped at the frame edge would show a black gap.
+XM, YM = 128, 32
+X0, X1, Y0 = -XM, W + XM, -YM
+BACK_BOX = (X0, Y0, X1, H)
+FRONT_H = 470
+FRONT_BOX = (X0, Y0, X1, FRONT_H)
+
+
+def back_layer(file, lid="backdrop"):
+    return layer(lid, file, (X0, Y0), (X1 - X0, H - Y0))
+
+
+def front_layer(file):
+    return layer("front_frame", file, (X0, Y0), (X1 - X0, FRONT_H - Y0), "front")
+
+
 def piece(pid, file, pos, size, anim, z="behind", blend="mix", pivot=None, px=0.5):
     d = {"id": pid, "file": file, "pos": [round(pos[0], 1), round(pos[1], 1)], "size": [size[0], size[1]], "px_scale": px}
     if pivot is not None:
@@ -200,6 +217,53 @@ def bunting_flag(x, y, w, h, col):
     return poly([(x - w / 2, y), (x + w / 2, y), (x, y + h)], col, OUT, 1.6)
 
 
+# a little hand-lettered stroke font for the ward's signs (glyph box 1 wide, 1.4 tall; y down)
+GLYPHS = {
+    "A": [[(0, 1.4), (.5, 0), (1, 1.4)], [(.22, .9), (.78, .9)]],
+    "B": [[(0, 0), (0, 1.4), (.72, 1.4), (1, 1.12), (.72, .7), (0, .7)], [(0, 0), (.7, 0), (.95, .32), (.7, .7)]],
+    "C": [[(1, .22), (.7, 0), (.3, 0), (0, .3), (0, 1.1), (.3, 1.4), (.7, 1.4), (1, 1.18)]],
+    "D": [[(0, 0), (0, 1.4), (.55, 1.4), (1, 1.0), (1, .4), (.55, 0), (0, 0)]],
+    "E": [[(1, 0), (0, 0), (0, 1.4), (1, 1.4)], [(0, .7), (.72, .7)]],
+    "G": [[(1, .22), (.7, 0), (.3, 0), (0, .3), (0, 1.1), (.3, 1.4), (.7, 1.4), (1, 1.15), (1, .78), (.55, .78)]],
+    "H": [[(0, 0), (0, 1.4)], [(1, 0), (1, 1.4)], [(0, .7), (1, .7)]],
+    "I": [[(.5, 0), (.5, 1.4)]],
+    "K": [[(0, 0), (0, 1.4)], [(1, 0), (0, .82)], [(.32, .6), (1, 1.4)]],
+    "L": [[(0, 0), (0, 1.4), (.9, 1.4)]],
+    "M": [[(0, 1.4), (0, 0), (.5, .78), (1, 0), (1, 1.4)]],
+    "N": [[(0, 1.4), (0, 0), (1, 1.4), (1, 0)]],
+    "O": [[(.32, 0), (.68, 0), (1, .32), (1, 1.08), (.68, 1.4), (.32, 1.4), (0, 1.08), (0, .32), (.32, 0)]],
+    "P": [[(0, 1.4), (0, 0), (.75, 0), (1, .25), (1, .48), (.75, .72), (0, .72)]],
+    "R": [[(0, 1.4), (0, 0), (.75, 0), (1, .25), (1, .48), (.75, .72), (0, .72)], [(.5, .72), (1, 1.4)]],
+    "S": [[(1, .22), (.7, 0), (.3, 0), (0, .25), (.12, .6), (.88, .8), (1, 1.15), (.7, 1.4), (.3, 1.4), (0, 1.18)]],
+    "T": [[(0, 0), (1, 0)], [(.5, 0), (.5, 1.4)]],
+    "U": [[(0, 0), (0, 1.08), (.3, 1.4), (.7, 1.4), (1, 1.08), (1, 0)]],
+    "W": [[(0, 0), (.22, 1.4), (.5, .55), (.78, 1.4), (1, 0)]],
+    "Y": [[(0, 0), (.5, .72), (1, 0)], [(.5, .72), (.5, 1.4)]],
+    "7": [[(0, 0), (1, 0), (.42, 1.4)]],
+    "!": [[(.5, 0), (.5, .92)], [(.5, 1.3), (.5, 1.4)]],
+}
+
+
+def sign_text(txt, x, y, h, color, sw, outline=OUT, gap=0.42, centre=True):
+    """Hand-lettered block capitals with round-capped strokes, (x, y) = the centre (or left end) of the line. Returns svg."""
+    u = h / 1.4
+    widths = [(u * 0.62 if ch == " " else u * (0.4 if ch in "I!" else 0.82)) for ch in txt]
+    total = sum(widths) + u * gap * (len(txt) - 1)
+    cx = x - total / 2 if centre else x
+    segs = []
+    for ch, wd in zip(txt, widths):
+        for stroke in GLYPHS.get(ch, []):
+            segs.append([(cx + px * wd, y - h / 2 + py * u) for px, py in stroke])
+        cx += wd + u * gap
+    out = ""
+    for pass_col, pass_w in ((outline, sw + 3.0), (color, sw)):
+        if pass_col is None:
+            continue
+        for pts_ in segs:
+            out += path("M" + " L".join(f"{f(a)} {f(b)}" for a, b in pts_), None, pass_col, pass_w)
+    return out
+
+
 def clock(cx, cy, r, face="#fffdf4", rim="#7fcfc0"):
     d = circle(cx, cy, r + 3, rim, OUT, 2.4) + circle(cx, cy, r, face, OUT, 1.6)
     for k in range(12):
@@ -211,19 +275,46 @@ def clock(cx, cy, r, face="#fffdf4", rim="#7fcfc0"):
 
 # ---- backdrop: room shell, floor ---------------------------------------------------------------------------------------------
 
-def room_shell(R, wall=MINT, dado=LILAC, uidp="", ceil_tile=True, floor=(FLOOR_A, FLOOR_B), floor_seam=SEAM, extend=40, floor_fn=None, sky=None):
-    """Ceiling, side walls with dado and skirting, far wall and the checkered vinyl floor for room R. Returns (defs, svg)."""
+def edge_s(R, side):
+    """Depth scale at which a side wall reaches the authored canvas edge (X0 or X1, beyond the frame)."""
+    return abs((X0 if side < 0 else X1) - R.vx) / R.half
+
+
+def floor_edge_y(R):
+    """Screen y where the floor meets the side walls at the canvas edge."""
+    return R.vy + (R.fy1 - R.vy) * ((R.vx - X0) / R.half)
+
+
+def floor_clip_poly(R):
+    ye = floor_edge_y(R)
+    return [(X0, ye), (R.fx0, R.fy1), (R.fx1, R.fy1), (X1, ye), (X1, H), (X0, H)]
+
+
+def wall_band(R, side, u0, u1, s0=1.0, s1=None):
+    s1 = edge_s(R, side) if s1 is None else s1
+    return [R.wall(side, s0, u0), R.wall(side, s1, u0), R.wall(side, s1, u1), R.wall(side, s0, u1)]
+
+
+def room_shell(R, wall=MINT, dado=LILAC, uidp="", ceil_tile=True, floor=(FLOOR_A, FLOOR_B), floor_seam=SEAM, extend=40, floor_fn=None,
+               sky=None, ceil=("#b9c6da", "#e8f0f4"), dado_h=74, side_wall=None, ao=0.13, front_dark=0.2, skirting=None):
+    """Ceiling, side walls with dado and skirting, far wall and the floor for room R, drawn over the whole authored canvas (BACK_BOX,
+    wider than the frame). Shading: the side walls darken towards the camera, soft ambient occlusion in the corners, along the
+    ceiling line and where the walls meet the floor, and the floor darkens towards the front edge so the crowd's feet sit on it.
+    Returns (defs, svg)."""
     defs = ""
     d = ""
     vx, vy = R.vx, R.vy
-    defs += lin_grad(uidp + "ceil", [(0, "#c9d6e4"), (1, "#f4f9fb")], 0, 0, 0, 1)
-    defs += lin_grad(uidp + "fw", [(0, lighten(wall, 0.2)), (1, darken(wall, 0.04))], 0, 0, 0, 1)
-    defs += lin_grad(uidp + "lw", [(0, darken(wall, 0.2)), (1, darken(wall, 0.02))], 0, 0, 1, 0)
-    defs += lin_grad(uidp + "rw", [(0, darken(wall, 0.02)), (1, darken(wall, 0.2))], 0, 0, 1, 0)
-    defs += lin_grad(uidp + "fl", [(0, darken(floor[0], 0.1)), (1, lighten(floor[0], 0.2))], 0, 0, 0, 1)
-    yt = -extend
-    d += rect(0, 0, W, H, mix(wall, "#ffffff", 0.2))
-    # ceiling
+    sw_ = side_wall or wall
+    skirt = skirting or darken(dado, 0.22)
+    defs += lin_grad(uidp + "ceil", [(0, ceil[0]), (1, ceil[1])], 0, 0, 0, 1)
+    defs += lin_grad(uidp + "fw", [(0, lighten(wall, 0.16)), (0.7, wall), (1, darken(wall, 0.05))], 0, 0, 0, 1)
+    defs += lin_grad(uidp + "lw", [(0, darken(sw_, 0.24)), (0.55, darken(sw_, 0.1)), (1, darken(sw_, 0.03))], 0, 0, 1, 0)
+    defs += lin_grad(uidp + "rw", [(0, darken(sw_, 0.03)), (0.45, darken(sw_, 0.1)), (1, darken(sw_, 0.24))], 0, 0, 1, 0)
+    defs += lin_grad(uidp + "fl", [(0, darken(floor[0], 0.12)), (1, floor[0])], 0, 0, 0, 1)
+    defs += lin_grad(uidp + "fd", [(0, INK, 0.0), (1, INK, front_dark)], 0, 0, 0, 1)
+    yt = Y0 - 6
+    d += rect(X0, Y0, X1 - X0, H - Y0, mix(wall, "#ffffff", 0.1))
+    # ceiling (one quad from the far wall's top edge to beyond the canvas top)
     xl = vx - (vx - R.fx0) * (vy - yt) / (vy - R.fy0)
     xr = vx + (R.fx1 - vx) * (vy - yt) / (vy - R.fy0)
     d += poly([(xl, yt), (xr, yt), (R.fx1, R.fy0), (R.fx0, R.fy0)], f"url(#{uidp}ceil)")
@@ -232,136 +323,239 @@ def room_shell(R, wall=MINT, dado=LILAC, uidp="", ceil_tile=True, floor=(FLOOR_A
             xf = vx + k * 55.0
             if R.fx0 <= xf <= R.fx1:
                 xt = vx + (xf - vx) * (yt - vy) / (R.fy0 - vy)
-                d += line((xf, R.fy0), (xt, yt), "#8e9cb8", 1.4, 0.5)
+                d += line((xf, R.fy0), (xt, yt), darken(ceil[1], 0.3), 1.3, 0.55)
         s = 1.0
-        while s < 3:
+        while s < 4:
             yy = vy + (R.fy0 - vy) * s
             if yy < yt:
                 break
-            d += line((vx - R.half * s, yy), (vx + R.half * s, yy), "#8e9cb8", 1.4, 0.5)
-            s += 0.17
+            d += line((vx - R.half * s, yy), (vx + R.half * s, yy), darken(ceil[1], 0.3), 1.3, 0.55)
+            s *= 1.16
     # far wall
     d += rect(R.fx0, R.fy0, R.fx1 - R.fx0, R.fy1 - R.fy0, f"url(#{uidp}fw)")
-    dh = 74  # dado height
-    d += rect(R.fx0, R.fy1 - dh, R.fx1 - R.fx0, dh, dado, None)
-    d += rect(R.fx0, R.fy1 - dh - 5, R.fx1 - R.fx0, 6, lighten(dado, 0.4), OUT, 2)  # dado rail
-    for x in range(int(R.fx0) + 14, int(R.fx1), 28):
-        d += line((x, R.fy1 - dh + 4), (x, R.fy1), darken(dado, 0.1), 1.2, 0.5)
-    d += rect(R.fx0, R.fy1 - 9, R.fx1 - R.fx0, 9, darken(dado, 0.2), OUT, 2)  # skirting
+    if dado_h:
+        d += rect(R.fx0, R.fy1 - dado_h, R.fx1 - R.fx0, dado_h, dado, None)
+        for x in range(int(R.fx0) + 14, int(R.fx1), 28):
+            d += line((x, R.fy1 - dado_h + 4), (x, R.fy1), darken(dado, 0.12), 1.2, 0.55)
+        d += rect(R.fx0, R.fy1 - dado_h, R.fx1 - R.fx0, 10, INK, None, op=0.06)
+        d += rect(R.fx0, R.fy1 - dado_h - 5, R.fx1 - R.fx0, 6, lighten(dado, 0.45), OUT, 2)  # dado rail
+    d += rect(R.fx0, R.fy1 - 9, R.fx1 - R.fx0, 9, skirt, OUT, 2)  # skirting
+    d += poly([(R.fx0, R.fy0), (R.fx1, R.fy0), (R.fx1, R.fy0 + 10), (R.fx0, R.fy0 + 10)], INK, None, op=ao * 0.55)
     # side walls
     for side, gid in ((-1, "lw"), (1, "rw")):
-        x_edge = 0 if side < 0 else W
-        s_e = abs(x_edge - vx) / R.half
+        x_edge = X0 if side < 0 else X1
+        s_e = edge_s(R, side)
         top_e = R.wall(side, s_e, R.height)
         bot_e = R.wall(side, s_e, 0)
         far_top, far_bot = R.wall(side, 1, R.height), R.wall(side, 1, 0)
         d += poly([(x_edge, top_e[1] - extend), far_top, far_bot, (x_edge, bot_e[1])], f"url(#{uidp}{gid})")
-        # dado band, rail and skirting as quads on the wall plane
-        for (u0, u1, col, ol) in ((0, 8, darken(dado, 0.2), 2), (8, dh, dado, 0), (dh, dh + 5, lighten(dado, 0.4), 2)):
-            q = [R.wall(side, 1, u0), R.wall(side, s_e, u0), R.wall(side, s_e, u1), R.wall(side, 1, u1)]
-            d += poly(q, col, OUT if ol else None, ol or 0)
-        for k in range(1, 8):  # vertical seams of the dado boards
-            s = 1 + (s_e - 1) * k / 8.0
-            d += line(R.wall(side, s, 8), R.wall(side, s, dh), darken(dado, 0.12), 1.2, 0.4)
-    # floor
-    d += poly([(0, R.vy + (R.fy1 - R.vy) * (vx / R.half)), (W, R.vy + (R.fy1 - R.vy) * (vx / R.half)), (W, H), (0, H)], f"url(#{uidp}fl)")
-    if floor_fn is None:
-        d += floor_checker(R, floor, floor_seam)
-    else:  # a custom floor, clipped to the floor polygon so it never paints over the walls
-        ye = R.vy + (R.fy1 - R.vy) * (vx / R.half)
-        fp = f'<polygon points="0,{f(ye)} {f(R.fx0)},{f(R.fy1)} {f(R.fx1)},{f(R.fy1)} {W},{f(ye)} {W},{H} 0,{H}"/>'
-        defs += clip(uidp + "flc", fp)
-        d += group(floor_fn(R), f'clip-path="url(#{uidp}flc)"')
-    # wall/floor shadow line
+        if dado_h:
+            d += poly(wall_band(R, side, 8, dado_h), darken(dado, 0.04), None)
+            d += poly(wall_band(R, side, dado_h - 10, dado_h), INK, None, op=0.06)
+            for k in range(1, 12):  # vertical seams of the dado boards
+                s = 1 + (s_e - 1) * (k / 12.0) ** 1.3
+                d += line(R.wall(side, s, 8), R.wall(side, s, dado_h), darken(dado, 0.14), 1.2, 0.5)
+            d += poly(wall_band(R, side, dado_h, dado_h + 5), lighten(dado, 0.45), OUT, 2)
+        d += poly(wall_band(R, side, 0, 8), skirt, OUT, 2)
+        # ambient occlusion: the inside corner with the far wall, and the line under the ceiling
+        for (s1, op) in ((1.12, ao * 0.35), (1.05, ao * 0.45), (1.018, ao * 0.6)):
+            d += poly([R.wall(side, 1, 0), R.wall(side, s1, 0), R.wall(side, s1, R.height), R.wall(side, 1, R.height)], INK, None, op=op)
+        d += poly(wall_band(R, side, R.height - 14, R.height), INK, None, op=ao * 0.5)
+        fx = R.fx0 if side < 0 else R.fx1 - 8
+        d += rect(fx, R.fy0, 8, R.height, INK, None, op=ao * 0.4)
+    # floor, clipped to the floor polygon so it never paints over the walls
+    fp = floor_clip_poly(R)
+    defs += clip(uidp + "flc", f'<polygon points="{" ".join(f"{f(x)},{f(y)}" for x, y in fp)}"/>')
+    fl = poly(fp, f"url(#{uidp}fl)")
+    fl += floor_checker(R, floor, floor_seam) if floor_fn is None else floor_fn(R)
+    # floor shading: occlusion along the wall bases and the far wall, and a darker front edge under the desk lip
     for side in (-1, 1):
-        x_edge = 0 if side < 0 else W
-        s_e = abs(x_edge - vx) / R.half
-        a, b = R.wall(side, 1, 0), R.wall(side, s_e, 0)
+        x_in = R.fx0 if side < 0 else R.fx1
+        for (wd, op) in ((60, ao * 0.4), (26, ao * 0.6), (9, ao * 0.8)):
+            xb = x_in - side * wd
+            fl += poly([R.floor_pt(x_in, 1.0), R.floor_pt(xb, 1.0), R.floor_pt(xb, 8.0), R.floor_pt(x_in, 8.0)], INK, None, op=op)
+    for (ds, op) in ((0.12, ao * 0.4), (0.05, ao * 0.6), (0.018, ao * 0.8)):
+        fl += poly([R.floor_pt(R.fx0, 1.0), R.floor_pt(R.fx1, 1.0), R.floor_pt(R.fx1, 1.0 + ds), R.floor_pt(R.fx0, 1.0 + ds)], INK, None, op=op)
+    fl += rect(X0, 330, X1 - X0, H - 330, f"url(#{uidp}fd)")
+    d += group(fl, f'clip-path="url(#{uidp}flc)"')
+    # the wall/floor seam line
+    for side in (-1, 1):
+        a, b = R.wall(side, 1, 0), R.wall(side, edge_s(R, side), 0)
         d += line(a, b, OUT, 2.6, 0.9)
-        d += poly([a, b, (b[0], b[1] + 14 * s_e), (a[0], a[1] + 6)], INK, None, op=0.1)
+    d += line((R.fx0, R.fy1), (R.fx1, R.fy1), OUT, 2.2, 0.8)
     return defs, d
 
 
 def floor_checker(R, cols, seam, ncols=10, dz=0.06):
-    """Checkered vinyl in perspective: `ncols` columns across the far wall, rows equally spaced in depth (z = 1/scale)."""
+    """Checkered vinyl in perspective: `ncols` columns across the far wall, rows equally spaced in depth (z = 1/scale). Each light
+    tile carries a faint polish highlight; drawn over the floor gradient and clipped by room_shell."""
     d = ""
     step = (R.fx1 - R.fx0) / ncols
     rows = []
     z = 1.0
-    while z > 0.18:
+    while z > 0.15:
         s = 1.0 / z
         rows.append((s, R.floor_y(s)))
         z -= dz
-    cols_x = [R.fx0 + step * i for i in range(-2 * ncols, 3 * ncols + 1)]
+    cols_x = [R.fx0 + step * i for i in range(-4 * ncols, 5 * ncols + 1)]
     for ri in range(len(rows) - 1):
         s0, y0 = rows[ri]
         s1, y1 = rows[ri + 1]
         for ci in range(len(cols_x) - 1):
-            if (ri + ci) % 2:
-                continue
             xa, xb = cols_x[ci], cols_x[ci + 1]
             q = [(R.vx + (xa - R.vx) * s0, y0), (R.vx + (xb - R.vx) * s0, y0), (R.vx + (xb - R.vx) * s1, y1), (R.vx + (xa - R.vx) * s1, y1)]
-            if max(p[0] for p in q) < -20 or min(p[0] for p in q) > W + 20:
+            if max(p[0] for p in q) < X0 - 20 or min(p[0] for p in q) > X1 + 20:
                 continue
-            d += poly(q, cols[1], None, op=0.9)
+            if (ri + ci) % 2 == 0:
+                d += poly(q, cols[1], None)
+            else:
+                d += poly([q[0], (q[0][0] * 0.7 + q[1][0] * 0.3, q[0][1]), (q[3][0] * 0.85 + q[2][0] * 0.15, q[3][1] - (q[3][1] - q[0][1]) * 0.35)],
+                          "#ffffff", None, op=0.12)
     for s0, y0 in rows:
-        d += line((-20, y0), (W + 20, y0), seam, 1.2, 0.4)
+        d += line((X0 - 20, y0), (X1 + 20, y0), seam, 1.3, 0.6)
     for xa in cols_x:
-        d += line((R.vx + (xa - R.vx) * 1.0, R.floor_y(1.0)), (R.vx + (xa - R.vx) * 5.5, R.floor_y(5.5)), seam, 1.2, 0.4)
+        d += line((R.vx + (xa - R.vx) * 1.0, R.floor_y(1.0)), (R.vx + (xa - R.vx) * 7.0, R.floor_y(7.0)), seam, 1.3, 0.6)
     return d
 
 
+def floor_reflection(R, xa, xb, s1=2.2, col="#ffffff", op=0.22, uid="rf"):
+    """A soft vertical streak on a polished floor: the reflection of a bright window or door at the far wall between xa and xb.
+    Returns (defs, svg)."""
+    defs = lin_grad(uid, [(0, col, op), (1, col, 0.0)], 0, 0, 0, 1)
+    q = [R.floor_pt(xa, 1.0), R.floor_pt(xb, 1.0), R.floor_pt(xb, s1), R.floor_pt(xa, s1)]
+    return defs, poly(q, f"url(#{uid})", None)
+
+
+MAIN_WALL, MAIN_DADO = "#a9dccd", "#b6a4e6"
+MAIN_FLOOR, MAIN_SEAM = ("#b2d6c5", "#c4b9e4"), "#8fb4a5"
+
+
+def troffer(R, xa, xb, s0, s1, glow=True):
+    """A fluorescent ceiling panel (light fitting set in the ceiling tiles) between far-wall x xa..xb at depth scales s0..s1."""
+    q = [R.ceil(xa, s0), R.ceil(xb, s0), R.ceil(xb, s1), R.ceil(xa, s1)]
+    d = poly(q, "#dfe6ee", OUT, 1.8)
+    inset = [R.ceil(xa + (xb - xa) * 0.06, s0 + (s1 - s0) * 0.12), R.ceil(xb - (xb - xa) * 0.06, s0 + (s1 - s0) * 0.12),
+             R.ceil(xb - (xb - xa) * 0.06, s1 - (s1 - s0) * 0.12), R.ceil(xa + (xb - xa) * 0.06, s1 - (s1 - s0) * 0.12)]
+    d += poly(inset, "#f4fffb" if glow else "#e8eef4", None)
+    for k in (1, 2):  # the diffuser's grid
+        xm = xa + (xb - xa) * k / 3
+        d += line(R.ceil(xm, s0 + (s1 - s0) * 0.12), R.ceil(xm, s1 - (s1 - s0) * 0.12), "#c8d8e0", 1.2, 0.8)
+    if glow:
+        d += poly([inset[0], inset[1], (inset[1][0], inset[1][1] + 2), (inset[0][0], inset[0][1] + 2)], "#ffffff", None, op=0.8)
+    return d
+
+
+def curtain(x0, y0, x1, y1, col, side=1, folds=4, tie=True):
+    """A gathered curtain panel hanging from (x0, y0) to (x1, y1), tied back towards `side`."""
+    w = x1 - x0
+    d = ""
+    if tie:
+        ty = y0 + (y1 - y0) * 0.58
+        tx = x0 + w * (0.25 if side < 0 else 0.75)
+        pts = [(x0, y0), (x1, y0), (tx + w * 0.16, ty), (x1 if side > 0 else tx + w * 0.4, y1), (x0 if side < 0 else tx - w * 0.4, y1), (tx - w * 0.16, ty)]
+        d += poly(pts, col, OUT, 2.2)
+        for k in range(1, folds):
+            xa = x0 + w * k / folds
+            d += path(f"M{f(xa)} {f(y0 + 2)} Q{f((xa + tx) / 2)} {f((y0 + ty) / 2)} {f(tx + (k - folds / 2) * 2.5)} {f(ty)}", None, darken(col, 0.14), 1.6, sop=0.9)
+        d += rect(tx - w * 0.2, ty - 3, w * 0.4, 6, lighten(col, 0.3), OUT, 1.4, rx=3)
+    else:
+        d += rect(x0, y0, w, y1 - y0, col, OUT, 2.2)
+    for k in range(5):  # a little printed pattern of dots
+        d += circle(x0 + w * (0.2 + 0.15 * k), y0 + 10 + (k % 2) * 14, 1.6, "#ffffff", None, op=0.7)
+    d += rect(x0 - 4, y0 - 4, w + 8, 5, "#e6dcfa", OUT, 1.6, rx=2)  # the rail
+    return d
+
+
+def radiator(x, yb, w, h=30):
+    d = rect(x, yb - h, w, h, "#f4f2fb", OUT, 2.2, rx=3)
+    n = max(int(w / 9), 3)
+    for k in range(1, n):
+        xx = x + w * k / n
+        d += line((xx, yb - h + 4), (xx, yb - 4), "#c9c4dc", 2.4)
+    d += rect(x + 2, yb - h + 2, w - 4, 4, "#ffffff", None, op=0.6, rx=2)
+    d += ellipse(x + w / 2, yb + 1, w * 0.55, 3, INK, None, op=0.12)
+    return d
+
+
+def wall_poly_frame(side, s0, s1, u0, u1, fill, ol=2.6):
+    return poly([R.wall(side, s0, u1), R.wall(side, s1, u1), R.wall(side, s1, u0), R.wall(side, s0, u0)], fill, OUT, ol)
+
+
 def build_backdrop():
-    defs, d = room_shell(R)
-    # ---- far wall: door, windows, TV bracket, shelf ----
+    defs, d = room_shell(R, wall=MAIN_WALL, dado=MAIN_DADO, floor=MAIN_FLOOR, floor_seam=MAIN_SEAM, ceil=("#9fb0c8", "#dfe9f0"))
+    # ---- ceiling: fluorescent troffer panels between the spotlights' tracks ----
+    for (s0, s1) in ((1.07, 1.2), (1.4, 1.6), (1.95, 2.3)):
+        for (xa, xb) in ((372, 452), (600, 680), (828, 908)):
+            d += troffer(R, xa, xb, s0, s1)
+    # light falling from the panels onto the top of the far wall
+    defs += lin_grad("wash", [(0, "#f2fffa", 0.55), (1, "#f2fffa", 0.0)], 0, 0, 0, 1)
+    d += rect(R.fx0, R.fy0, R.fx1 - R.fx0, 60, "url(#wash)")
+    # ---- far wall: door, windows with curtains and radiators, the TV, a shelf ----
     ddefs, dd = door(336, 146, 62, 116)
     defs += ddefs
     d += dd
+    d += rect(404, 196, 6, 9, "#f4f2fb", OUT, 1.2, rx=1)  # light switch
     for k, (wx, uid) in enumerate(((414, "w1"), (790, "w2"))):
         wd, wdd = window(wx, 84, 76, 114, uid, mullions=(1, 1))
         defs += wd
         d += wdd
+        cc = "#ffb8c8" if k == 0 else "#ffd98a"
+        d += curtain(wx - 14, 74, wx + 8, 204, cc, -1) + curtain(wx + 68, 74, wx + 90, 204, cc, 1)
+        d += radiator(wx + 4, 250, 68, 34)
     # the TV: a dark panel in a pale frame on a bracket (the runtime paints into led_screen)
     tx, ty, tw, th = 500, 76, 280, 70
+    d += rect(tx - 12, ty - 9, tw + 24, th + 22, INK, None, op=0.12, rx=8)  # its shadow on the wall
     d += rect(tx - 9, ty - 9, tw + 18, th + 18, "#f3f1fb", OUT, 3.4, rx=7)
     d += rect(tx - 4, ty - 4, tw + 8, th + 8, "#2a2c44", OUT, 2, rx=4)
     d += rect(tx, ty, tw, th, "#10111e", None)
-    d += rect(tx - 10, ty + th + 9, tw + 20, 9, LILAC_D, OUT, 2.4, rx=3)  # shelf/bracket under the TV
+    d += rect(tx - 10, ty + th + 9, tw + 20, 9, MAIN_DADO, OUT, 2.4, rx=3)  # shelf/bracket under the TV
     d += circle(tx + tw - 12, ty + th + 4, 2.4, "#7affc0", OUT, 0.8)
-    # shelf with a plant and a teapot on the far wall, below the TV
-    d += rect(560, 168, 160, 7, WOOD, OUT, 2.4, rx=2) + line((572, 175), (572, 188), OUT, 3) + line((708, 175), (708, 188), OUT, 3)
+    # shelf with a plant, a teapot, a jigsaw box and a stack of board games
+    d += rect(556, 172, 168, 12, INK, None, op=0.1) + rect(556, 168, 168, 7, WOOD, OUT, 2.4, rx=2) + line((568, 175), (568, 188), OUT, 3) + line((712, 175), (712, 188), OUT, 3)
     d += plant(584, 168, 40, "#ff9a7a")
     d += poly([(646, 168), (650, 150), (676, 150), (680, 168)], "#fff4dc", OUT, 2) + path("M680 154 Q692 156 686 166", None, OUT, 3) + path("M680 154 Q692 156 686 166", None, "#fff4dc", 1.4) + circle(663, 147, 3, CORAL, OUT, 1.2)
     d += rect(694, 154, 14, 14, "#bfe6ff", OUT, 2, rx=2)
-    # radiator under the right window
-    # ---- left wall (side -1): two big windows, a bookcase, a coat rack ----
+    for k, c in enumerate(("#ff8f8a", "#7fb6ff", "#ffd966")):
+        d += rect(606 + k * 2, 160 - k * 6, 30 - k * 4, 6, c, OUT, 1.4, rx=1)
+    # ---- left wall: two tall windows with curtains and radiators ----
     for (s0, s1, uid) in ((1.2, 1.5, "lw1"), (1.62, 1.9, "lw2")):
         q = [R.wall(-1, s0, 150), R.wall(-1, s1, 150), R.wall(-1, s1, 52), R.wall(-1, s0, 52)]
         frame = [R.wall(-1, s0 - 0.02, 156), R.wall(-1, s1 + 0.02, 156), R.wall(-1, s1 + 0.02, 46), R.wall(-1, s0 - 0.02, 46)]
         defs += lin_grad(uid, [(0, "#a8dcff"), (0.6, "#e2f5ff"), (1, "#f6ffee")], 0, 0, 0, 1)
         d += poly(frame, "#fbfbff", OUT, 3)
         d += poly(q, f"url(#{uid})", None)
-        mid = [R.wall(-1, s0, 100), R.wall(-1, s1, 100)]
         gq = [R.wall(-1, s0, 82), R.wall(-1, s1, 82), R.wall(-1, s1, 52), R.wall(-1, s0, 52)]
         d += poly(gq, "#8fd98a", None, op=0.95)
-        d += poly([R.wall(-1, s0, 130), R.wall(-1, s1, 130), R.wall(-1, s1, 118), R.wall(-1, s0, 118)], "#ffffff", None, op=0.18)
         sm = (s0 + s1) / 2
+        tr = R.wall(-1, sm, 92)
+        d += circle(tr[0] + 2, tr[1], 16 * sm * 0.5, "#5dbb7a", None, op=0.9) + circle(tr[0] + 14 * sm * 0.5, tr[1] + 4, 11 * sm * 0.5, "#6cc98a", None, op=0.9)
+        d += poly([R.wall(-1, s0, 140), R.wall(-1, s1, 140), R.wall(-1, s1, 126), R.wall(-1, s0, 126)], "#ffffff", None, op=0.3)
         d += line(R.wall(-1, sm, 150), R.wall(-1, sm, 52), "#fbfbff", 4) + line(R.wall(-1, s0, 101), R.wall(-1, s1, 101), "#fbfbff", 4)
         d += line(R.wall(-1, sm, 150), R.wall(-1, sm, 52), OUT, 1.0)
-        tr = R.wall(-1, sm, 100)
-        d += circle(tr[0] + 2, tr[1] + 8, 18 * sm * 0.5, "#5dbb7a", None, op=0.9)
         sill = [R.wall(-1, s0 - 0.03, 52), R.wall(-1, s1 + 0.03, 52), R.wall(-1, s1 + 0.03, 46), R.wall(-1, s0 - 0.03, 46)]
         d += poly(sill, "#f0eefb", OUT, 2)
-    # blinds half drawn on the nearer window
-    q = [R.wall(-1, 1.62, 150), R.wall(-1, 1.9, 150), R.wall(-1, 1.9, 128), R.wall(-1, 1.62, 128)]
-    d += poly(q, "#f4f1dd", OUT, 1.6)
-    for k in range(1, 5):
-        d += line(R.wall(-1, 1.62, 150 - k * 5), R.wall(-1, 1.9, 150 - k * 5), darken("#f4f1dd", 0.2), 1.0, 0.8)
-    # ---- right wall (side +1): framed patient art, a pinboard and a tea hatch ----
-    arts = [((1.18, 1.32), (150, 112), "#ffd0e0", "heart"), ((1.38, 1.55), (146, 100), "#cfe9ff", "sun"), ((1.62, 1.82), (150, 108), "#fff0b0", "house")]
+        # curtains gathered at both sides of the window (thin slivers on the wall plane)
+        for (a0, a1) in ((s0 - 0.06, s0 + 0.02), (s1 - 0.02, s1 + 0.06)):
+            cq = [R.wall(-1, a0, 160), R.wall(-1, a1, 160), R.wall(-1, a1 + 0.01, 40), R.wall(-1, a0, 40)]
+            d += poly(cq, "#ffb8c8", OUT, 2.2)
+            for j in (0.33, 0.66):
+                d += line(R.wall(-1, a0 + (a1 - a0) * j, 158), R.wall(-1, a0 + (a1 - a0) * j, 42), darken("#ffb8c8", 0.16), 1.6)
+        d += poly(wall_band(R, -1, 160, 166, s0 - 0.08, s1 + 0.08), "#e6dcfa", OUT, 1.6)
+        d += poly([R.wall(-1, s0 + 0.01, 38), R.wall(-1, s1 - 0.01, 38), R.wall(-1, s1 - 0.01, 12), R.wall(-1, s0 + 0.01, 12)], "#f4f2fb", OUT, 2.0)  # radiator
+        for j in range(1, 9):
+            ss = s0 + 0.01 + (s1 - s0 - 0.02) * j / 9
+            d += line(R.wall(-1, ss, 34), R.wall(-1, ss, 16), "#c9c4dc", 2.0)
+    # light from the left windows across the floor (a soft warm parallelogram; the additive `window_light` piece adds to it)
+    defs += lin_grad("lwl", [(0, "#fff8e0", 0.32), (1, "#fff8e0", 0.0)], 0, 0, 1, 0)
+    for (s0, s1) in ((1.2, 1.5), (1.62, 1.9)):
+        a, b = R.wall(-1, s0, 0), R.wall(-1, s1, 0)
+        d += poly([a, b, (b[0] + 260 * s1 * 0.5, b[1] + 6), (a[0] + 240 * s0 * 0.5, a[1] + 4)], "url(#lwl)", None)
+    # ---- right wall: framed patient art and a pinboard ----
+    arts = [((1.18, 1.32), (150, 112), "#ffd0e0", "heart"), ((1.38, 1.55), (146, 100), "#cfe9ff", "sun"), ((1.62, 1.82), (150, 108), "#fff0b0", "house"),
+            ((1.98, 2.2), (156, 96), "#d8f4e4", "flower")]
     for (s0, s1), (u1, u0), col, kind in arts:
-        fr = [R.wall(1, s0, u1), R.wall(1, s1, u1), R.wall(1, s1, u0), R.wall(1, s0, u0)]
-        d += poly(fr, "#fbfbff", OUT, 2.6)
+        d += poly([R.wall(1, s0 + 0.01, u1 - 4), R.wall(1, s1 + 0.01, u1 - 4), R.wall(1, s1 + 0.01, u0 - 4), R.wall(1, s0 + 0.01, u0 - 4)], INK, None, op=0.12)
+        d += wall_poly_frame(1, s0, s1, u0, u1, "#fbfbff")
         pad = 0.012
         inner = [R.wall(1, s0 + pad, u1 - 3), R.wall(1, s1 - pad, u1 - 3), R.wall(1, s1 - pad, u0 + 3), R.wall(1, s0 + pad, u0 + 3)]
         d += poly(inner, col, None)
@@ -375,30 +569,49 @@ def build_backdrop():
             for k in range(8):
                 a = k * math.pi / 4
                 d += line((cx + math.cos(a) * 9 * sc, cy + math.sin(a) * 9 * sc), (cx + math.cos(a) * 13 * sc, cy + math.sin(a) * 13 * sc), "#ff9a2e", 1.8)
-        else:
+        elif kind == "house":
             d += poly([(cx - 8 * sc, cy + 6 * sc), (cx - 8 * sc, cy - 3 * sc), (cx, cy - 10 * sc), (cx + 8 * sc, cy - 3 * sc), (cx + 8 * sc, cy + 6 * sc)], "#ff8f8a", OUT, 1.4)
-    hatch = [R.wall(1, 1.22, 96), R.wall(1, 1.5, 96), R.wall(1, 1.5, 48), R.wall(1, 1.22, 48)]
-    # a pinboard on the right wall, nearer the camera
-    pb = [R.wall(1, 1.62, 142), R.wall(1, 1.9, 142), R.wall(1, 1.9, 84), R.wall(1, 1.62, 84)]
-    return defs, d, pb, hatch
+        else:
+            for k in range(6):
+                a = k * math.tau / 6
+                d += circle(cx + math.cos(a) * 6 * sc, cy + math.sin(a) * 6 * sc - 4 * sc, 4 * sc, "#ff9ac0", OUT, 1.0)
+            d += circle(cx, cy - 4 * sc, 3.6 * sc, BUTTER, OUT, 1.0) + line((cx, cy + 2 * sc), (cx, cy + 14 * sc), "#5dbb7a", 2.4)
+    # ---- floor: the windows and the door mirrored softly in the polished vinyl ----
+    for (xa, xb, uid, op) in ((414, 490, "rf1", 0.3), (790, 866, "rf2", 0.3), (336, 398, "rf3", 0.16), (500, 780, "rf4", 0.08)):
+        rd, rr = floor_reflection(R, xa, xb, 1.9, "#ffffff", op, uid)
+        defs += rd
+        d += rr
+    return defs, d
 
 
 # ---- furniture baked into the backdrop (the crowd stands in front of it) ---------------------------------------------------
+
+def side_table(x, yb, top="#f0c88e", w=44):
+    d = ellipse(x, yb + 2, w * 0.6, 4, INK, None, op=0.2)
+    d += rect(x - 3, yb - 34, 6, 34, WOOD_D, OUT, 1.8)
+    d += ellipse(x, yb - 36, w / 2, 6, top, OUT, 2.2) + rect(x - w / 2, yb - 36, w, 4, WOOD, OUT, 1.6)
+    return d
+
 
 def main_furniture():
     d = ""
     d += armchair(104, 372, 112, "#ffd966", "#e8b23a", blanket="#ff8f8a")
     d += plant(40, 350, 96, "#7fb6ff", "rubber")
-    d += armchair(1176, 366, 108, "#5fc9bb", "#3a9a8c", blanket=None)
+    d += armchair(1176, 366, 108, "#5fc9bb", "#3a9a8c", blanket="#c9b8f0")
     d += plant(1244, 346, 90, "#ffb07a", "fern")
-    # a floor lamp beside the teal armchair
+    # a side table with a jigsaw and a mug by the yellow chair
+    d += side_table(-6, 352)
+    d += rect(-24, 314, 30, 4, "#7fb6ff", OUT, 1.2) + rect(-2, 304, 9, 10, "#fff4dc", OUT, 1.4, rx=2)
+    # a floor lamp beside the teal armchair, lit
     d += ellipse(1114, 351, 12, 3, INK, None, op=0.2) + line((1114, 350), (1114, 244), OUT, 6) + line((1114, 350), (1114, 244), "#a8a2c8", 3)
+    d += ellipse(1114, 246, 34, 12, "#fff0b8", None, op=0.28)
     d += poly([(1094, 244), (1134, 244), (1126, 216), (1102, 216)], "#fff2c0", OUT, 2.4) + ellipse(1114, 246, 20, 3.4, "#ffe8a0", None, op=0.6)
+    d += line((1100, 238), (1106, 220), "#ffffff", 1.6, 0.6)
     return d
 
 
 def build_main_backdrop():
-    defs, d, pb, hatch = build_backdrop()
+    defs, d = build_backdrop()
     d += build_rug()  # the rug under the dance circle matches circle_centre / circle_radii
     d += main_furniture()
     return defs, d
@@ -406,15 +619,16 @@ def build_main_backdrop():
 
 def build_rug():
     cx, cy, rx, ry = 640, 372, 262, 52
-    cols = ["#f3b8c8", "#fff4dc", "#b8e4d8", "#fff4dc", "#c9b8f0", "#fff4dc", "#ffd9a0", "#fff4dc", "#b8e4d8"]
-    d = ellipse(cx, cy + 4, rx + 6, ry + 4, INK, None, op=0.16)
+    cols = ["#eea6bc", "#fbeed4", "#9fd8c8", "#fbeed4", "#b9a6ec", "#fbeed4", "#ffcf8a", "#fbeed4", "#9fd8c8"]
+    d = ellipse(cx, cy + 5, rx + 8, ry + 6, INK, None, op=0.18)
     d += rug_ellipse(cx, cy, rx, ry, cols)
-    for k in range(40):  # fringe ticks
-        a = k * math.tau / 40
-        d += line((cx + math.cos(a) * rx, cy + math.sin(a) * ry), (cx + math.cos(a) * (rx + 7), cy + math.sin(a) * (ry + 2.4)), "#fff4dc", 2.0)
+    for k in range(48):  # fringe ticks
+        a = k * math.tau / 48
+        d += line((cx + math.cos(a) * rx, cy + math.sin(a) * ry), (cx + math.cos(a) * (rx + 7), cy + math.sin(a) * (ry + 2.4)), "#fbeed4", 2.0)
     for k in range(18):  # woven stars
         a = k * math.tau / 18 + 0.1
         d += paper_star(cx + math.cos(a) * rx * 0.72, cy + math.sin(a) * ry * 0.72, 4.2, "#ffffff", 0.0)
+    d += ellipse(cx, cy - ry * 0.3, rx * 0.6, ry * 0.3, "#ffffff", None, op=0.1)  # a little sheen where the light lands
     return d
 
 
@@ -506,8 +720,8 @@ def build_stage():
     layers = []
     defs, d = build_main_backdrop()[:2]
     d += ""
-    write_svg("backdrop.svg", (0, 0, W, H), d, defs)
-    layers.append({"id": "backdrop", "file": "source/backdrop.svg", "pos": [0, 0], "size": [W, H], "px_scale": 0.5})
+    write_svg("backdrop.svg", BACK_BOX, d, defs)
+    layers.append(back_layer("source/backdrop.svg"))
     build_riser()
     layers.append({"id": "riser", "file": "source/riser.svg", "pos": [520, 252], "size": [240, 34], "px_scale": 0.5})
     for side in (-1, 1):

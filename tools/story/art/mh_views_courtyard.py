@@ -11,8 +11,8 @@ from .lib import OUT, circle, clip, darken, ellipse, f, group, lighten, line, li
 from .mh_stage import BUTTER, CORAL, INK, LEAF, LILAC, MINT, W, H, WOOD, WOOD_D, WOOD_L, paper_star
 
 R = M.Room(640, 128, 340, 940, 120, 262)
-BRICK, BRICK_D = "#d49080", "#b87a76"
-STONES = ["#b9b2cc", "#aea7c2", "#c4bdd6", "#a6a0ba", "#bcb5d0"]
+BRICK, BRICK_D = "#b07478", "#8a5666"  # dusk brick
+STONES = ["#8f88aa", "#857e9f", "#9a93b4", "#7f7898", "#948dae"]  # paving in the dusk light
 PETAL = ["#ffd966", "#ff8f8a", "#ff9ac0", "#b9a6f0", "#ffb070"]
 CAB_Y = lambda x: 30 + 34 * (1 - ((x - 640) / 600.0) ** 2)  # the festoon cable's height at screen x
 
@@ -79,38 +79,42 @@ def bed(xf0, xf1, s0, s1, side, h, kinds, seed):
 
 def brick_wall_far(defs):
     d = rect(R.fx0, R.fy0, R.fx1 - R.fx0, R.fy1 - R.fy0, BRICK, None)
-    defs_ = lin_grad("fwb", [(0, "#ffffff"), (1, "#2a1b4e")], 0, 0, 0, 1)
+    defs_ = lin_grad("fwb", [(0, "#ffd8b0", 0.0), (0.6, "#ffd8b0", 0.0), (1, "#ffd8b0", 0.18)], 0, 0, 0, 1)
     rng = random.Random(4)
+    for k in range(70):  # tone variation
+        d += rect(rng.uniform(R.fx0, R.fx1 - 14), R.fy0 + rng.randrange(0, 15) * 9 + 1, 13, 7, rng.choice(("#ffd0b8", "#3a2440")), None, op=0.08)
     for k in range(0, 16):
         y = R.fy0 + k * 9
-        d += line((R.fx0, y), (R.fx1, y), BRICK_D, 1.2, 0.7)
+        d += line((R.fx0, y), (R.fx1, y), BRICK_D, 1.2, 0.8)
         off = 14 if k % 2 else 0
         for x in range(int(R.fx0) + off, int(R.fx1), 28):
-            d += line((x, y), (x, y + 9), BRICK_D, 1.1, 0.7)
-    for k in range(70):  # tone variation
-        d += rect(rng.uniform(R.fx0, R.fx1 - 14), R.fy0 + rng.randrange(0, 15) * 9 + 1, 13, 7, rng.choice(("#ffffff", "#2a1b4e")), None, op=0.06)
-    d += rect(R.fx0, R.fy0 - 8, R.fx1 - R.fx0, 10, "#e6c0b0", OUT, 2.4, rx=2)  # coping stones
-    d += rect(R.fx0, R.fy1 - 6, R.fx1 - R.fx0, 6, darken(BRICK, 0.2), None, op=0.5)
+            d += line((x, y), (x, y + 9), BRICK_D, 1.1, 0.8)
+    d += rect(R.fx0, R.fy0, R.fx1 - R.fx0, R.fy1 - R.fy0, "url(#fwb)")
+    d += rect(R.fx0, R.fy0 - 8, R.fx1 - R.fx0, 10, "#c9a0a0", OUT, 2.4, rx=2)  # coping stones
+    d += rect(R.fx0, R.fy0 + 2, R.fx1 - R.fx0, 6, "#2a1b4e", None, op=0.18)
+    d += rect(R.fx0, R.fy1 - 6, R.fx1 - R.fx0, 6, darken(BRICK, 0.25), None, op=0.6)
     return defs_, d
 
 
 def side_wall_bricks(side):
     d = ""
-    s_e = abs((0 if side < 0 else W) - R.vx) / R.half
+    s_e = M.edge_s(R, side)
     n_courses = 15
     for k in range(1, n_courses):
         u = k * (R.height / n_courses)
-        d += line(R.wall(side, 1, u), R.wall(side, s_e, u), BRICK_D, 1.2, 0.7)
+        d += line(R.wall(side, 1, u), R.wall(side, s_e, u), BRICK_D, 1.2, 0.75)
     for k in range(n_courses):
         u0, u1 = k * (R.height / n_courses), (k + 1) * (R.height / n_courses)
         off = 0.06 if k % 2 else 0.0
         s = 1.0 + off
         while s < s_e:
-            d += line(R.wall(side, s, u0), R.wall(side, s, u1), BRICK_D, 1.0, 0.6)
+            d += line(R.wall(side, s, u0), R.wall(side, s, u1), BRICK_D, 1.0, 0.65)
             s += 0.12
     # coping along the wall top
     q = [R.wall(side, 1, R.height + 8), R.wall(side, s_e, R.height + 8), R.wall(side, s_e, R.height - 2), R.wall(side, 1, R.height - 2)]
-    d += poly(q, "#e6c0b0", OUT, 2.4)
+    d += poly(q, "#c9a0a0", OUT, 2.4)
+    for (s1, op) in ((1.14, 0.12), (1.05, 0.14), (1.02, 0.16)):  # the corner with the far wall
+        d += poly([R.wall(side, 1, 0), R.wall(side, s1, 0), R.wall(side, s1, R.height), R.wall(side, 1, R.height)], INK, None, op=op)
     return d
 
 
@@ -118,120 +122,176 @@ def ivy_clusters(seed):
     rng = random.Random(seed)
     d = ""
     for side in (-1, 1):
-        for k in range(26):
-            s = rng.uniform(1.05, 2.1)
+        for k in range(34):
+            s = rng.uniform(1.05, 2.3)
             u = rng.choice((rng.uniform(R.height - 30, R.height), rng.uniform(20, 120)))
             x, y = R.wall(side, s, u)
             r_ = rng.uniform(4, 9) * s * 0.7
-            d += circle(x, y, r_, rng.choice(("#4fae6a", "#5dbb7a", "#3f9a5a")), None, op=0.95)
-        for k in range(8):  # hanging vines from the top
-            s = rng.uniform(1.1, 2.0)
+            d += circle(x, y, r_, rng.choice(("#3f8a5e", "#4b9a66", "#357a52")), None, op=0.95)
+            d += circle(x - r_ * 0.3, y - r_ * 0.3, r_ * 0.45, "#6cbf80", None, op=0.5)
+        for k in range(9):  # hanging vines from the top
+            s = rng.uniform(1.1, 2.2)
             x, y = R.wall(side, s, R.height)
             ln = rng.uniform(24, 70) * s * 0.7
-            d += line((x, y), (x + rng.uniform(-3, 3), y + ln), "#3f9a5a", 2.2 * s * 0.6)
+            d += line((x, y), (x + rng.uniform(-3, 3), y + ln), "#357a52", 2.2 * s * 0.6)
             for j in range(4):
-                d += circle(x + rng.uniform(-3, 3), y + ln * (j + 1) / 4, 3.6 * s * 0.6, "#5dbb7a", None)
+                d += circle(x + rng.uniform(-3, 3), y + ln * (j + 1) / 4, 3.6 * s * 0.6, "#4b9a66", None)
     return d
+
+
+def light_pool(cx, cy, rx, ry, uid, col="#ffd8a0", op=0.3):
+    defs = rad_grad(uid, [(0, col, op), (0.6, col, op * 0.4), (1, col, 0.0)])
+    return defs, ellipse(cx, cy, rx, ry, f"url(#{uid})", None)
 
 
 def build_backdrop():
     defs = ""
     d = ""
-    # the sky: peach at the horizon, lilac, then deep dusk blue with the first stars and a crescent moon
-    defs += lin_grad("sky", [(0, "#2d2a62"), (0.35, "#6a5aa8"), (0.72, "#e0a0b8"), (1, "#ffd0a8")], 0, 0, 0, 1)
-    d += rect(0, 0, W, 150, "url(#sky)")
+    # the sky: deep dusk blue at the top, lilac, then a peach glow low behind the buildings, with the first stars and a crescent moon
+    defs += lin_grad("sky", [(0, "#1f1d4e"), (0.4, "#4a3f8a"), (0.75, "#b07aa8"), (1, "#f2b09a")], 0, 0, 0, 1)
+    d += rect(M.X0, M.Y0, M.X1 - M.X0, 190 - M.Y0, "url(#sky)")
     rng = random.Random(8)
-    for k in range(60):
-        y = rng.uniform(2, 70)
-        d += circle(rng.uniform(0, W), y, rng.uniform(0.6, 1.6), "#ffffff", None, op=rng.uniform(0.5, 1.0) * (1 - y / 120))
-    d += circle(1030, 52, 17, "#fff6d0", None) + circle(1038, 47, 15, "#6a5aa8", None) + circle(1030, 52, 26, "#fff6d0", None, op=0.12)
-    for (cx, cy, w_) in ((200, 78, 130), (920, 96, 160), (560, 52, 110)):  # long dusk clouds
-        d += ellipse(cx, cy, w_, 7, "#f2c8d8", None, op=0.6) + ellipse(cx + 24, cy - 6, w_ * 0.6, 5, "#ffe0e8", None, op=0.55)
-    # the ward building rising behind the far wall, with warm lit windows and a chimney
-    d += rect(R.fx0 + 30, 58, R.fx1 - R.fx0 - 60, 70, "#6a5a8a", OUT, 2.4) + rect(R.fx0 + 20, 54, R.fx1 - R.fx0 - 40, 8, "#4a3a6a", OUT, 2)
-    d += rect(840, 28, 16, 30, "#5a4a7a", OUT, 2) + ellipse(848, 22, 9, 4, "#c8b8e0", None, op=0.5)
+    for k in range(90):
+        y = rng.uniform(M.Y0, 72)
+        d += circle(rng.uniform(M.X0, M.X1), y, rng.uniform(0.6, 1.7), "#ffffff", None, op=rng.uniform(0.5, 1.0) * min(1.0, (110 - y) / 110))
+    for (sx, sy) in ((180, 18), (760, 8), (1180, 30)):
+        d += paper_star(sx, sy, 3.2, "#fff6d0", 0)
+    d += circle(1030, 52, 30, "#fff6d0", None, op=0.1) + circle(1030, 52, 17, "#fff6d0", None) + circle(1039, 46, 15, "#4a3f8a", None)
+    for (cx, cy, w_) in ((200, 80, 140), (920, 98, 170), (560, 54, 120), (-60, 60, 90), (1340, 88, 100)):  # long dusk clouds
+        d += ellipse(cx, cy, w_, 7, "#d898b8", None, op=0.55) + ellipse(cx + 24, cy - 6, w_ * 0.6, 5, "#f2c0c8", None, op=0.5)
+    # the ward building rising behind the far wall, with warm lit windows, a chimney and a roof line
+    d += poly([(R.fx0 + 6, 62), (R.fx1 - 6, 62), (R.fx1 - 30, 40), (R.fx0 + 30, 40)], "#3e3566", OUT, 2.4)
+    d += rect(R.fx0 + 30, 58, R.fx1 - R.fx0 - 60, 70, "#5a4c80", OUT, 2.4) + rect(R.fx0 + 20, 54, R.fx1 - R.fx0 - 40, 8, "#3e3566", OUT, 2)
+    d += rect(840, 22, 16, 30, "#4a3e70", OUT, 2) + ellipse(848, 16, 9, 4, "#c8b8e0", None, op=0.5)
     for k in range(9):
         for j in range(2):
             lit = (k * 3 + j * 5) % 4 != 0
-            d += rect(R.fx0 + 48 + k * 58, 68 + j * 28, 26, 18, "#ffd98a" if lit else "#4a3f78", OUT, 1.6) + (line((R.fx0 + 61 + k * 58, 68 + j * 28), (R.fx0 + 61 + k * 58, 86 + j * 28), OUT, 1.2) if lit else "")
-    # tree crowns behind the side walls
-    for (cx, cy, r_, c) in ((60, 112, 62, "#2f5a58"), (210, 98, 56, "#37686a"), (1080, 100, 60, "#2f5a58"), (1230, 108, 64, "#37686a"), (420, 110, 0, "#000")):
-        if r_:
-            d += circle(cx, cy + 20, r_, c, None) + circle(cx + 24, cy + 28, r_ * 0.7, lighten(c, 0.08), None)
+            wx, wy = R.fx0 + 48 + k * 58, 68 + j * 28
+            if lit:
+                d += rect(wx - 6, wy - 5, 38, 28, "#ffd98a", None, op=0.14, rx=6)
+            d += rect(wx, wy, 26, 18, "#ffd98a" if lit else "#3a3266", OUT, 1.6) + (line((wx + 13, wy), (wx + 13, wy + 18), OUT, 1.2) if lit else "")
+            if lit and k % 3 == 1:  # a paper star stuck in the window
+                d += paper_star(wx + 6, wy + 6, 3.4, CORAL, 0.8)
+    # tree crowns behind the side walls, darker against the sky
+    for (cx, cy, r_, c) in ((-80, 104, 70, "#22404a"), (60, 112, 62, "#28484e"), (210, 98, 56, "#2e5254"), (1080, 100, 60, "#28484e"), (1230, 108, 64, "#2e5254"),
+                            (1380, 96, 70, "#22404a")):
+        d += circle(cx, cy + 20, r_, c, None) + circle(cx + 24, cy + 28, r_ * 0.7, lighten(c, 0.08), None) + circle(cx - 18, cy + 8, r_ * 0.5, lighten(c, 0.05), None)
     # far wall, side walls
     fdefs, fw = brick_wall_far(defs)
     defs += fdefs
     d += fw
     for side in (-1, 1):
-        x_edge = 0 if side < 0 else W
-        s_e = abs(x_edge - R.vx) / R.half
+        x_edge = M.X0 if side < 0 else M.X1
+        s_e = M.edge_s(R, side)
         top_e, bot_e = R.wall(side, s_e, R.height), R.wall(side, s_e, 0)
         far_top, far_bot = R.wall(side, 1, R.height), R.wall(side, 1, 0)
         gid = "sw" + ("l" if side < 0 else "r")
-        defs += lin_grad(gid, [(0, darken(BRICK, 0.28)), (1, darken(BRICK, 0.05))] if side < 0 else [(0, darken(BRICK, 0.05)), (1, darken(BRICK, 0.28))], 0, 0, 1, 0)
+        defs += lin_grad(gid, [(0, darken(BRICK, 0.36)), (1, darken(BRICK, 0.08))] if side < 0 else [(0, darken(BRICK, 0.08)), (1, darken(BRICK, 0.36))], 0, 0, 1, 0)
         d += poly([(x_edge, top_e[1]), far_top, far_bot, (x_edge, bot_e[1])], f"url(#{gid})")
         d += side_wall_bricks(side)
     d += ivy_clusters(5)
-    # ground: paving slabs, grass edges and a worn path
-    defs += lin_grad("gd", [(0, "#b9b2cc"), (1, "#d8d2e6")], 0, 0, 0, 1)
-    ye = R.vy + (R.fy1 - R.vy) * (R.vx / R.half)
-    d += poly([(0, ye), (W, ye), (W, H), (0, H)], "url(#gd)")
-    fl = V.planks(R, STONES, 6, 0.1, seam="#7a7690", seam_op=0.55, seed=3)
-    defs += clip("gc", f'<polygon points="0,{f(ye)} {f(R.fx0)},{f(R.fy1)} {f(R.fx1)},{f(R.fy1)} {W},{f(ye)} {W},{H} 0,{H}"/>')
-    d += group(fl, 'clip-path="url(#gc)"')
+    # ground: dusky paving slabs, grass edges and a worn path, clipped to the ground polygon
+    defs += lin_grad("gd", [(0, "#77708f"), (1, "#958daa")], 0, 0, 0, 1)
+    defs += lin_grad("gfd", [(0, INK, 0.0), (1, INK, 0.26)], 0, 0, 0, 1)
+    fp = M.floor_clip_poly(R)
+    defs += clip("gc", f'<polygon points="{" ".join(f"{f(x)},{f(y)}" for x, y in fp)}"/>')
+    g = poly(fp, "url(#gd)")
+    g += V.planks(R, STONES, 6, 0.1, seam="#4e4866", seam_op=0.7, seed=3)
     for side in (-1, 1):  # grass verges along the wall bases
-        xa, xb = (R.fx0, R.fx0 + 14) if side < 0 else (R.fx1 - 14, R.fx1)
-        d += poly([P(xa, 1.0), P(xb, 1.0), P(xb, 4.0), P(xa, 4.0)], "#7fcf8f", None, op=0.85)
-    for k in range(26):  # tufts and daisies between the slabs
+        xa, xb = (R.fx0, R.fx0 + 16) if side < 0 else (R.fx1 - 16, R.fx1)
+        g += poly([P(xa, 1.0), P(xb, 1.0), P(xb, 6.0), P(xa, 6.0)], "#4f9a66", None, op=0.9)
+    for k in range(30):  # tufts and daisies between the slabs
         rr = random.Random(k)
         xf, s = rr.uniform(R.fx0, R.fx1), rr.uniform(1.1, 3.0)
         x, y = P(xf, s)
-        d += path(f"M{f(x - 3 * s * 0.6)} {f(y)} Q{f(x)} {f(y - 8 * s * 0.6)} {f(x + 3 * s * 0.6)} {f(y)}", None, "#5dbb7a", 1.8, sop=0.9)
-    # a worn path of lighter slabs towards the gate
-    for k in range(10):
+        g += path(f"M{f(x - 3 * s * 0.6)} {f(y)} Q{f(x)} {f(y - 8 * s * 0.6)} {f(x + 3 * s * 0.6)} {f(y)}", None, "#4f9a66", 1.8, sop=0.9)
+        if k % 4 == 0:
+            g += circle(x + 2, y - 3 * s * 0.6, 1.6 * s * 0.6, "#fff6e0", None)
+    for k in range(10):  # a worn path of lighter slabs towards the gate
         s0 = 1.0 + k * 0.22
-        d += poly([P(600, s0), P(680, s0), P(680, s0 + 0.14), P(600, s0 + 0.14)], "#ece6f6", None, op=0.55)
-    # the gate back into the building (doorway), with a lantern
+        g += poly([P(600, s0), P(680, s0), P(680, s0 + 0.14), P(600, s0 + 0.14)], "#c4bcd8", None, op=0.35)
+    # warm light pools under the festoon lamps and the gate lantern, a cool moon sheen in the middle
+    for (cx, cy, rx, ry, uid, col, op) in ((640, 330, 520, 70, "lp0", "#ffcf96", 0.22), (260, 300, 220, 40, "lp1", "#ffcf96", 0.2),
+                                          (1020, 300, 220, 40, "lp2", "#ffcf96", 0.2), (452, 272, 120, 20, "lp3", "#ffe0a0", 0.3)):
+        pd, pp = light_pool(cx, cy, rx, ry, uid, col, op)
+        defs += pd
+        g += pp
+    g += rect(M.X0, 320, M.X1 - M.X0, H - 320, "url(#gfd)")
+    for side in (-1, 1):  # occlusion along the wall bases
+        x_in = R.fx0 if side < 0 else R.fx1
+        for (wd, op) in ((40, 0.08), (14, 0.12)):
+            xb = x_in - side * wd
+            g += poly([P(x_in, 1.0), P(xb, 1.0), P(xb, 8.0), P(x_in, 8.0)], INK, None, op=op)
+    d += group(g, 'clip-path="url(#gc)"')
+    for side in (-1, 1):
+        d += line(R.wall(side, 1, 0), R.wall(side, M.edge_s(R, side), 0), OUT, 2.4, 0.8)
+    # the gate back into the building (doorway), with a lit lantern
     gx, gy, gw, gh = 380, 160, 64, 102
-    d += path(f"M{gx - 8} {gy + gh} L{gx - 8} {gy + 20} Q{gx + gw / 2} {gy - 24} {gx + gw + 8} {gy + 20} L{gx + gw + 8} {gy + gh} Z", "#e6c0b0", OUT, 3)
-    d += path(f"M{gx} {gy + gh} L{gx} {gy + 22} Q{gx + gw / 2} {gy - 12} {gx + gw} {gy + 22} L{gx + gw} {gy + gh} Z", "#8a5a6a", OUT, 2.6)
+    d += path(f"M{gx - 8} {gy + gh} L{gx - 8} {gy + 20} Q{gx + gw / 2} {gy - 24} {gx + gw + 8} {gy + 20} L{gx + gw + 8} {gy + gh} Z", "#c9a0a0", OUT, 3)
+    d += path(f"M{gx} {gy + gh} L{gx} {gy + 22} Q{gx + gw / 2} {gy - 12} {gx + gw} {gy + 22} L{gx + gw} {gy + gh} Z", "#7a4e66", OUT, 2.6)
     for k in range(1, 5):
-        d += line((gx + k * gw / 5, gy + 6 - abs(k - 2.5) * 2), (gx + k * gw / 5, gy + gh), darken("#8a5a6a", 0.2), 1.4, 0.7)
+        d += line((gx + k * gw / 5, gy + 6 - abs(k - 2.5) * 2), (gx + k * gw / 5, gy + gh), darken("#7a4e66", 0.2), 1.4, 0.7)
     for yy in (gy + 40, gy + 82):
         d += line((gx, yy), (gx + gw, yy), "#3a2a3a", 3.6) + circle(gx + 6, yy, 2.2, "#d8b24a", OUT, 1)
     d += circle(gx + gw - 10, gy + 62, 3.4, "#d8b24a", OUT, 1.4)
-    d += line((gx + gw + 18, gy + 14), (gx + gw + 18, gy + 28), OUT, 2) + rect(gx + gw + 10, gy + 28, 16, 22, "#ffe6a0", OUT, 2.4, rx=3) + ellipse(gx + gw + 18, gy + 39, 14, 16, "#ffe6a0", None, op=0.28)
+    lx, ly = gx + gw + 18, gy + 28
+    d += circle(lx, ly + 11, 30, "#ffd98a", None, op=0.14) + circle(lx, ly + 11, 18, "#ffe6a0", None, op=0.22)
+    d += line((lx, gy + 14), (lx, ly), OUT, 2) + rect(lx - 8, ly, 16, 22, "#ffe6a0", OUT, 2.4, rx=3) + rect(lx - 4, ly + 4, 8, 14, "#fff8d8", None, rx=2)
     # trellis with climbing roses on the far wall
     tx = 800
     for k in range(6):
-        d += line((tx + k * 16, 150), (tx + k * 16, 258), "#c8a070", 3) + line((tx, 150 + k * 20), (tx + 80, 150 + k * 20), "#c8a070", 3)
-    for k in range(18):
+        d += line((tx + k * 16, 150), (tx + k * 16, 258), "#b08860", 3) + line((tx, 150 + k * 20), (tx + 80, 150 + k * 20), "#b08860", 3)
+    for k in range(20):
         rr = random.Random(100 + k)
-        d += circle(tx + rr.uniform(0, 80), rr.uniform(150, 256), rr.uniform(3, 6), rr.choice(("#4fae6a", "#5dbb7a")), None) + (circle(tx + rr.uniform(0, 80), rr.uniform(150, 250), 3, rr.choice(("#ff8f8a", "#ff9ac0")), OUT, 1) if k % 3 == 0 else "")
+        d += circle(tx + rr.uniform(0, 80), rr.uniform(150, 256), rr.uniform(3, 6), rr.choice(("#3f8a5e", "#4b9a66")), None) + (circle(tx + rr.uniform(0, 80), rr.uniform(150, 250), 3, rr.choice(("#ff8f8a", "#ff9ac0")), OUT, 1) if k % 3 == 0 else "")
+    # the talent-show stage: two pallets with a painted banner on the wall behind, a microphone and a string of bulbs on its lip
+    bx0, bx1, by = 520, 760, 216
+    d += rect(bx0 + 4, by - 16, bx1 - bx0, 34, INK, None, op=0.18, rx=4)
+    d += path(f"M{bx0} {by - 18} L{bx1} {by - 18} L{bx1 - 10} {by} L{bx1} {by + 18} L{bx0} {by + 18} L{bx0 + 10} {by} Z", "#fff0d8", OUT, 2.6)
+    d += M.sign_text("TALENT SHOW", 640, by, 20, "#ff6f8a", 3.0)
+    for x in (bx0 + 6, bx1 - 6):
+        d += circle(x, by - 14, 2.4, "#d8b24a", OUT, 1)
+    stage_top = [P(548, 1.1, 14), P(732, 1.1, 14), P(732, 1.27, 14), P(548, 1.27, 14)]
+    stage_front = [P(548, 1.27, 14), P(732, 1.27, 14), P(732, 1.27, 0), P(548, 1.27, 0)]
+    d += ellipse(640, stage_front[2][1] + 3, 130, 6, INK, None, op=0.3)
+    d += poly(stage_top, "#c9a070", OUT, 2.4)
+    for k in range(1, 7):
+        a = k / 7
+        d += line(lerp_quad(stage_top, a, 0), lerp_quad(stage_top, a, 1), darken("#c9a070", 0.25), 1.2, 0.8)
+    d += poly(stage_front, "#a87c50", OUT, 2.4)
+    for k in range(9):
+        a = (k + 0.5) / 9
+        d += poly([lerp_quad(stage_front, a - 0.03, 0.2), lerp_quad(stage_front, a + 0.03, 0.2), lerp_quad(stage_front, a + 0.03, 0.85), lerp_quad(stage_front, a - 0.03, 0.85)], "#5a3e3a", None, op=0.55)
+    for k in range(12):  # bulbs along the lip
+        x, y = lerp_quad(stage_front, (k + 0.5) / 12, 0.08)
+        d += circle(x, y, 5, ["#ffd98a", "#ffb0d0", "#a8f0e0"][k % 3], None, op=0.3) + circle(x, y, 2.2, "#fff8e0", OUT, 0.8)
+    mx, my = lerp_quad(stage_top, 0.5, 0.6)
+    d += line((mx, my), (mx, my - 34), OUT, 3.2) + line((mx - 7, my), (mx + 7, my), OUT, 2.6) + ellipse(mx, my - 37, 3.4, 4.6, "#9a9ab0", OUT, 1.4)
     # raised beds against both walls, a bench and a water butt
     d += bed(340, 410, 1.08, 1.7, -1, 34, [(0.3, 0.2, "cabbage"), (0.7, 0.2, "cabbage"), (0.3, 0.55, "tomato"), (0.7, 0.55, "tomato"), (0.3, 0.85, "cabbage"), (0.7, 0.85, "marigold")], 1)
     d += bed(340, 410, 1.9, 2.5, -1, 34, [(0.3, 0.3, "sunflower"), (0.7, 0.3, "lavender"), (0.3, 0.75, "lavender"), (0.7, 0.75, "sunflower")], 2)
     d += bed(870, 940, 1.08, 1.7, 1, 34, [(0.3, 0.2, "lavender"), (0.7, 0.2, "marigold"), (0.3, 0.6, "sunflower"), (0.7, 0.6, "cabbage"), (0.5, 0.9, "lavender")], 3)
     # bench frontal against the right wall
     bx, by = 1136, 392
-    d += ellipse(bx, by + 2, 74, 6, INK, None, op=0.22)
+    d += ellipse(bx, by + 2, 74, 6, INK, None, op=0.3)
     for sx in (-1, 1):
         d += rect(bx + sx * 56 - 4, by - 26, 8, 26, WOOD_D, OUT, 2)
     d += rect(bx - 66, by - 40, 132, 7, WOOD_L, OUT, 2.4, rx=2) + rect(bx - 66, by - 62, 132, 7, WOOD_L, OUT, 2.4, rx=2) + rect(bx - 66, by - 52, 132, 7, WOOD_L, OUT, 2.4, rx=2)
     for sx in (-1, 1):
         d += rect(bx + sx * 60 - 3, by - 66, 6, 28, WOOD_D, OUT, 2)
     d += rect(bx - 30, by - 44, 34, 6, "#ff8f8a", OUT, 1.6, rx=2) + paper_star(bx + 20, by - 47, 4, BUTTER, 1)  # a cushion and a star
+    d += rect(bx - 60, by - 44, 22, 5, "#c9b8f0", OUT, 1.4, rx=2)  # a folded blanket
     # water butt and watering can on the left
     wx, wy = 104, 396
-    d += ellipse(wx, wy + 2, 40, 6, INK, None, op=0.22) + path(f"M{wx - 28} {wy - 70} L{wx - 32} {wy} L{wx + 32} {wy} L{wx + 28} {wy - 70} Z", "#5a9ac0", OUT, 3)
+    d += ellipse(wx, wy + 2, 40, 6, INK, None, op=0.3) + path(f"M{wx - 28} {wy - 70} L{wx - 32} {wy} L{wx + 32} {wy} L{wx + 28} {wy - 70} Z", "#4a86ae", OUT, 3)
     for yy in (wy - 54, wy - 24):
         d += path(f"M{wx - 30 + (yy - wy + 54) * 0.05} {yy} L{wx + 30} {yy}", None, "#2f6a90", 4)
     d += ellipse(wx, wy - 70, 28, 8, "#3a7aa0", OUT, 2.4) + rect(wx + 28, wy - 18, 10, 5, "#c8c8d8", OUT, 1.6) + circle(wx + 42, wy - 14, 2.4, "#6ad0ff", None, op=0.9)
     d += path(f"M{wx + 54} {wy} L{wx + 52} {wy - 18} L{wx + 78} {wy - 18} L{wx + 76} {wy} Z", "#ffb070", OUT, 2) + path(f"M{wx + 78} {wy - 14} L{wx + 98} {wy - 28}", None, OUT, 4) + path(f"M{wx + 78} {wy - 14} L{wx + 98} {wy - 28}", None, "#ffb070", 2)
-    # cables: the festoon cable and its posts' brackets (the posts are in the front frame)
-    cab = [(x, CAB_Y(x)) for x in range(0, W + 20, 20)]
-    d += path("M" + " L".join(f"{x} {f(y)}" for x, y in cab), None, "#3a3a52", 2.4)
-    for x in (150, 330, 510, 770, 950, 1130):  # ceiling-less lamp mounts: little hanging clamps
+    # cables: the festoon cable and its lamp clamps (the posts are in the front frame)
+    cab = [(x, CAB_Y(x)) for x in range(int(M.X0), int(M.X1) + 20, 20)]
+    d += path("M" + " L".join(f"{x} {f(y)}" for x, y in cab), None, "#2a2a40", 2.4)
+    for x in (150, 330, 510, 770, 950, 1130):  # little hanging clamps for the spotlights
         d += rect(x - 6, CAB_Y(x) - 3, 12, 6, "#6a6a82", OUT, 1.4, rx=2)
     return defs, d
 
@@ -239,20 +299,22 @@ def build_backdrop():
 def build_front():
     d = ""
     defs = lin_grad("ft", [(0, "#2f6a52"), (1, "#4fae6a")], 0, 0, 1, 1)
-    # the two posts that carry the cables, with a cross-brace
+    # the two posts that carry the cables, with their brackets
     for x in (58, 1222):
-        d += rect(x - 8, 20, 16, 450, WOOD, OUT, 3.2, rx=2) + rect(x - 5, 20, 4, 450, WOOD_L, None, op=0.7)
-        d += rect(x - 14, 16, 28, 9, WOOD_D, OUT, 2.4, rx=2)
+        d += rect(x - 8, M.Y0, 16, 470 - M.Y0, WOOD_D, OUT, 3.2, rx=2) + rect(x - 5, M.Y0, 4, 470 - M.Y0, WOOD, None, op=0.8)
+        d += rect(x + 2, M.Y0, 5, 470 - M.Y0, INK, None, op=0.2)
+        d += rect(x - 14, 16, 28, 9, darken(WOOD_D, 0.15), OUT, 2.4, rx=2)
         d += circle(x, 40, 3.6, "#6a6a82", OUT, 1.6)
     # foreground foliage in the top corners: broad leaves, dark against the dusk, with soft highlights
     rng = random.Random(77)
     for cx0, sg in ((0, 1), (W, -1)):
-        for k in range(14):
-            x = cx0 + sg * rng.uniform(-10, 130)
-            y = rng.uniform(-10, 100)
+        for k in range(22):
+            x = cx0 + sg * rng.uniform(-140, 130)
+            y = rng.uniform(M.Y0 - 10, 100)
             r_ = rng.uniform(14, 34)
             a = math.degrees(math.atan2(y - 20, x - cx0 - sg * 40)) if k % 2 else rng.uniform(-60, 60)
-            d += f'<g transform="rotate({f(a)} {f(x)} {f(y)})">' + ellipse(x, y, r_ * 1.5, r_ * 0.6, rng.choice(("#2f6a52", "#3a7a58", "#276248")), OUT, 2.0) + line((x - r_ * 1.3, y), (x + r_ * 1.3, y), "#5dbb7a", 1.4, 0.7) + "</g>"
+            d += f'<g transform="rotate({f(a)} {f(x)} {f(y)})">' + ellipse(x, y, r_ * 1.5, r_ * 0.6, rng.choice(("#1f4a3e", "#28563f", "#1c4236")), OUT, 2.0) + line((x - r_ * 1.3, y), (x + r_ * 1.3, y), "#4f9a66", 1.4, 0.7) + "</g>"
+    # a hanging basket of flowers from the left post
     d += poly([(24, 150), (92, 150), (84, 176), (32, 176)], "#a8743c", OUT, 2.4)
     for k in range(7):
         d += circle(30 + k * 10, 148 + (k % 2) * 3, 6, PETAL_C[k % 5], OUT, 1.2)
@@ -336,13 +398,14 @@ def build_pieces():
 
 def build():
     defs, d = build_backdrop()
-    write_svg("views/courtyard_backdrop.svg", (0, 0, W, H), d, defs)
+    write_svg("views/courtyard_backdrop.svg", M.BACK_BOX, d, defs)
     defs, d = build_front()
-    write_svg("views/courtyard_front.svg", (0, 0, W, 470), d, defs)
+    write_svg("views/courtyard_front.svg", M.FRONT_BOX, d, defs)
     pieces = build_pieces()
     pts_ = [[x, round(CAB_Y(x) + 6)] for x in (150, 330, 510, 770, 950, 1130, 430, 850)]
     anchors = {
         "doorway": [380, 160, 64, 102],
+        "riser": [640, 306, 184],
         "floor_rows": R.rows(),
         "floor_polygon": [[R.fx0 + 10, 264], [R.fx1 - 10, 264], [round(R.floor_x(R.fx1, 520)), 520], [round(R.floor_x(R.fx0, 520)), 520]],
         "floor_grid": R.grid(9),
@@ -354,6 +417,6 @@ def build():
         "wall_left_x": R.fx0, "wall_right_x": R.fx1,
     }
     return {"id": "courtyard", "title": "Courtyard garden",
-            "layers": [M.layer("backdrop", "source/views/courtyard_backdrop.svg", (0, 0), (W, H)),
-                       M.layer("front_frame", "source/views/courtyard_front.svg", (0, 0), (W, 470), "front")],
+            "layers": [M.back_layer("source/views/courtyard_backdrop.svg"),
+                       M.front_layer("source/views/courtyard_front.svg")],
             "anchors": anchors, "pieces": pieces, "palette_hint": "dusk"}

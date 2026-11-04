@@ -10,7 +10,7 @@ from .lib import OUT, circle, clip, darken, ellipse, f, group, lighten, line, li
 from .mh_stage import BUTTER, CORAL, INK, LEAF, LILAC, MINT, W, H, WOOD, WOOD_D, WOOD_L, paper_star, plant
 
 R = M.Room(640, 140, 300, 980, 62, 258)
-ASH = ["#efe2cc", "#e8d8be", "#f3e8d4", "#e2d2b6"]
+ASH = ["#dcc6a2", "#d4bd96", "#e2ceac", "#ccb48c"]
 PAINTS = ["#ff8f8a", "#ffd966", "#7fb6ff", "#8fd9c8", "#b9a6f0", "#ff9ac0", "#ffb070"]
 
 
@@ -90,7 +90,7 @@ def kiln(x, yb, w=80):
 
 
 def build_backdrop():
-    defs, d = M.room_shell(R, wall="#fff1de", dado="#ffc9a0", uidp="a", ceil_tile=False,
+    defs, d = M.room_shell(R, wall="#f4dcc2", dado="#efb38c", uidp="a", ceil_tile=False, ceil=("#c9b49c", "#f0e2d0"),
                            floor_fn=lambda Rm: V.planks(Rm, ASH, 12, 0.08, seam="#b39a78", seed=11))
     # ceiling: wooden beams and a skylight
     sk = V.ceiling_quad(R, 480, 800, 1.12, 1.9)
@@ -131,7 +131,20 @@ def build_backdrop():
     d += plant(396, 224, 30, "#ff9a7a")
     d += kiln(886, 258, 80)
     # left wall: a gallery of paintings (nearest are cut by the frame)
-    left = [(1.08, 1.3, 90, 140, "sun"), (1.36, 1.6, 82, 132, "stripes"), (1.68, 2.02, 90, 150, "smiley"), (2.1, 2.5, 80, 140, "blobs"), (2.6, 3.1, 96, 160, "house")]
+    # the door in from the corridor, near the far corner of the left wall (the anchors' doorway: late arrivals come through it)
+    d += poly(V.wall_quad(R, -1, 1.02, 1.3, 0, 128), "#fbfbff", OUT, 2.8)
+    d += poly(V.wall_quad(R, -1, 1.05, 1.27, 0, 120), "#9fd8ff", OUT, 2.2)
+    d += poly(wp(-1, 1.05, 1.27, 0, 120, [(0.14, 0.54), (0.86, 0.54), (0.86, 0.92), (0.14, 0.92)]), darken("#9fd8ff", 0.08), None, op=0.6)
+    pts_ = [(0.5 + math.cos(k * math.tau / 18) * 0.24, 0.74 + math.sin(k * math.tau / 18) * 0.11) for k in range(18)]
+    d += poly(wp(-1, 1.05, 1.27, 0, 120, pts_), "#eaf8ff", OUT, 1.8)
+    sp = [(0.5 + math.cos(math.radians(-90 + k * 36)) * (0.2 if k % 2 == 0 else 0.09), 0.33 + math.sin(math.radians(-90 + k * 36)) * (0.1 if k % 2 == 0 else 0.045)) for k in range(10)]
+    d += poly(wp(-1, 1.05, 1.27, 0, 120, sp), BUTTER, OUT, 1.4)
+    hx = V.wall_lerp(R, -1, 1.05, 1.27, 0, 120, 0.84, 0.44)
+    d += circle(hx[0], hx[1], 3.0, "#d8b24a", OUT, 1.2)
+    d += poly(V.wall_quad(R, -1, 1.08, 1.24, 134, 148), "#fff4dc", OUT, 1.6)  # a sign plate: a palette and a brush
+    pc = V.wall_lerp(R, -1, 1.08, 1.24, 134, 148, 0.5, 0.5)
+    d += ellipse(pc[0], pc[1], 6, 4, "#e9c48a", OUT, 1.0) + circle(pc[0] - 2, pc[1] - 1, 1.2, CORAL) + circle(pc[0] + 2, pc[1] - 1.4, 1.2, "#7fb6ff") + circle(pc[0], pc[1] + 1.5, 1.2, BUTTER)
+    left = [(1.36, 1.6, 82, 132, "stripes"), (1.68, 2.02, 90, 150, "smiley"), (2.1, 2.5, 80, 140, "blobs"), (2.6, 3.1, 96, 160, "house")]
     for k, (s0, s1, u0, u1, kind) in enumerate(left):
         d += scribble_painting(-1, s0, s1, u0, u1, kind, k + 3)
     # right wall: cubby shelves with paint tubs and paper rolls
@@ -146,14 +159,19 @@ def build_backdrop():
                 d += poly(wp(1, s0, s1, 40, 150, [(a0 + 0.06, b0 + 0.04), (a1 - 0.06, b0 + 0.04), (a1 - 0.06, b0 + 0.2), (a0 + 0.06, b0 + 0.2)]), c, OUT, 0.8)
     d += poly(V.wall_quad(R, 1, 2.2, 2.9, 20, 118), "#ffffff", None, op=0.0)
     # paint-splashed drop cloth and loose splats on the floor
-    cloth = [R.floor_pt(430, 1.55), R.floor_pt(850, 1.55), R.floor_pt(850, 2.55), R.floor_pt(430, 2.55)]
-    d += poly(cloth, "#f5ead4", OUT, 2.0, op=0.9)
+    edge = [(470, 1.18), (560, 1.16), (650, 1.19), (740, 1.13), (820, 1.15), (828, 1.3), (846, 1.45), (838, 1.62), (720, 1.66), (610, 1.62), (520, 1.69),
+            (452, 1.66), (462, 1.45), (448, 1.3)]
+    cloth = [R.floor_pt(xf, s_) for xf, s_ in edge]
+    d += poly([(x, y + 4) for x, y in cloth], INK, None, op=0.12)
+    d += poly(cloth, "#d9c7a6", "#9a8460", 1.6)
+    for k in range(1, 4):  # creases
+        d += line(R.floor_pt(470 + k * 90, 1.17), R.floor_pt(460 + k * 96, 1.66), darken("#d9c7a6", 0.12), 1.4, 0.7)
     rng = random.Random(31)
-    for k in range(34):
-        a = rng.uniform(0, 1)
-        b = rng.uniform(0, 1)
-        s = 1.55 + b * 1.0
-        x = R.vx + (430 + (850 - 430) * a - R.vx) * s
+    for k in range(30):
+        a = rng.uniform(0.04, 0.96)
+        b = rng.uniform(0.05, 0.95)
+        s = 1.17 + b * 0.48
+        x = R.vx + (470 + (820 - 470) * a - R.vx) * s
         y = R.floor_y(s)
         r_ = rng.uniform(3, 10) * s * 0.7
         d += ellipse(x, y, r_ * 1.5, r_ * 0.55, PAINTS[rng.randrange(7)], None, op=0.9)
@@ -170,8 +188,8 @@ def build_backdrop():
 
 def build_front():
     defs = lin_grad("beam", [(0, WOOD_L), (1, WOOD)], 0, 0, 0, 1)
-    d = rect(-4, -4, W + 8, 22, "url(#beam)", OUT, 3.2)
-    d += rect(-4, 14, W + 8, 5, WOOD_D, OUT, 2)
+    d = rect(M.X0, M.Y0, M.X1 - M.X0, 22 - M.Y0, "url(#beam)", OUT, 3.2)
+    d += rect(M.X0, 14, M.X1 - M.X0, 5, WOOD_D, OUT, 2)
     # a hanging string of paint-pot pendants at either end, and tall shelving posts at the sides
     for x in (60, 1220):
         d += line((x, 18), (x, 70), "#6a5a7a", 1.8)
@@ -244,9 +262,9 @@ def build_pieces():
 
 def build():
     defs, d = build_backdrop()
-    write_svg("views/art_backdrop.svg", (0, 0, W, H), d, defs)
+    write_svg("views/art_backdrop.svg", M.BACK_BOX, d, defs)
     defs, d = build_front()
-    write_svg("views/art_front.svg", (0, 0, W, 470), d, defs)
+    write_svg("views/art_front.svg", M.FRONT_BOX, d, defs)
     pieces = build_pieces()
     pts_ = []
     for (s, xs) in ((1.25, (430, 850)), (1.7, (330, 950)), (2.2, (240, 1040)), (2.7, (150, 1130))):
@@ -265,8 +283,10 @@ def build():
         "horizon_y": R.vy,
         "wall_left_x": R.fx0, "wall_right_x": R.fx1,
         "kiln": [926, 258],
+        "doorway": [round(R.wall(-1, 1.27, 0)[0]), round(R.wall(-1, 1.16, 120)[1]), round(R.wall(-1, 1.05, 0)[0] - R.wall(-1, 1.27, 0)[0]), round(R.wall(-1, 1.16, 0)[1] - R.wall(-1, 1.16, 120)[1])],
+        "disco_ball": [640, 8],
     }
     return {"id": "art_room", "title": "Art room",
-            "layers": [M.layer("backdrop", "source/views/art_backdrop.svg", (0, 0), (W, H)),
-                       M.layer("front_frame", "source/views/art_front.svg", (0, 0), (W, 470), "front")],
+            "layers": [M.back_layer("source/views/art_backdrop.svg"),
+                       M.front_layer("source/views/art_front.svg")],
             "anchors": anchors, "pieces": pieces, "palette_hint": "warm"}
