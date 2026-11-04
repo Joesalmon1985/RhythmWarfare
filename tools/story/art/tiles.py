@@ -50,6 +50,9 @@ UNDERWORLD = {
     "ceil_spikes": 2.5, "trim": 2.0, "wall_court": 3.0, "wall_column": 2.0, "wall_throne": 4.0, "floor_obsidian": 2.5, "floor_carpet": 3.0,
     "ceil_court": 2.5, "floor_causeway": 2.5, "lava": 3.0, "wall_cave": 3.0, "wall_fortress": 4.0, "wall_plate": 2.5, "wall_face": 4.0,
     "floor_orange": 3.0, "floor_steel": 2.5, "ceil_pipes": 2.5, "wall_bars": 1.5, "sky_hell": 1.0, "thing_column": 1.0, "thing_anvil": 1.0,
+    # props drawn by tex_underworld.py (RGBA, written next to the baked tiles)
+    "thing_brazier": 1.0, "thing_chain": 1.0, "thing_skull": 1.0, "thing_tongs": 1.0, "thing_throne": 1.0, "thing_booth": 1.0, "thing_rope": 1.0,
+    "thing_furnace": 1.0, "thing_crowd": 1.0,
 }
 
 HOSPITAL = {
