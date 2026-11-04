@@ -160,32 +160,148 @@ func _draw_awakening() -> void:
 		_full(Color(1.0, 0.97, 0.9, 0.5 * (1.0 - closed) * op))
 
 
-## Coming to on a ward: plain cold light, a slow-breathing tunnel, then a ward door swings open onto the new room.
+## Coming to on a ward: the room goes soft and a gentle tunnel closes in (drifting off); cold, plain fluorescent light floods back as
+## the tunnel opens again and the tubes overhead blink on one by one (never a strobe); a friendly ward door fades in, swings open onto
+## the warm day room, and the camera walks through it into the new chapter. Events (interludes.json `sectioned`): tunnel, fluoro,
+## tubes, door, door_open, walk_in, white (each {t, dur}); the scene itself handles caption, dim and fade_crowd.
 func _draw_sectioned() -> void:
-	var fu := progress("fluoro")
-	if fu >= 0.0:
-		var ws := assets.interlude_sprite("fluoro_wash")
-		var a := clampf(fu * 1.3, 0.0, 0.85)
-		if not ws.is_empty() and ws["tex"] != null:
-			draw_texture_rect(ws["tex"], Rect2(-10, -10, 1300, 740), false, Color(1, 1, 1, a))
-		else:
-			_full(Color(0.8, 1.0, 0.95, a * 0.6))
-		for i in 4:  # slow, soft tube flicker (never a strobe)
-			var flick := 0.75 + 0.25 * sin(t * (1.3 + 0.4 * float(i)) + float(i) * 2.0)
-			_spr("flicker_tube", Vector2(200.0 + float(i) * 280.0, 40.0), Vector2.ONE, 0.0, Color(1, 1, 1, flick * clampf(fu * 2.0, 0.0, 1.0)))
+	var inv := get_global_transform_with_canvas().affine_inverse()
+	var vr := get_viewport_rect()
+	var p0: Vector2 = inv * vr.position
+	var p1: Vector2 = inv * vr.end
+	var view := Rect2(p0, p1 - p0).abs()  # the visible design-space rectangle (the cutscene stage is zoomed past the club's desk)
+	var vc := view.get_center()
+	var smooth := func(x: float) -> float: return x * x * (3.0 - 2.0 * x)
+	# 1. drifting off: a soft dark tunnel closes in and breathes slowly; when the light comes it opens again
 	var tu := progress("tunnel")
+	var fu := progress("fluoro")
+	var close := 0.0
 	if tu >= 0.0:
-		var tv := assets.interlude_sprite("tunnel_vignette")
-		var breathe := 1.0 + 0.04 * sin(t * 1.6)
-		if not tv.is_empty() and tv["tex"] != null:
-			draw_texture_rect(tv["tex"], Rect2(640.0 - 760.0 * breathe, 360.0 - 430.0 * breathe, 1520.0 * breathe, 860.0 * breathe), false, Color(1, 1, 1, clampf(tu * 1.5, 0.0, 0.9)))
+		close = smooth.call(tu)
+	if fu >= 0.0:
+		close *= 1.0 - smooth.call(clampf(fu * 1.6, 0.0, 1.0))
+	var wash_a := 0.0
+	if fu >= 0.0:
+		wash_a = 0.95 * smooth.call(clampf(fu * 2.0, 0.0, 1.0))
+	var ws := assets.interlude_sprite("fluoro_wash")
+	if wash_a > 0.002:
+		if not ws.is_empty() and ws["tex"] != null:
+			draw_texture_rect(ws["tex"], view.grow(12.0), false, Color(1, 1, 1, wash_a))
 		else:
-			_full(Color(0.0, 0.05, 0.05, 0.4 * tu))
+			draw_rect(view.grow(12.0), Color(0.86, 1.0, 0.95, wash_a))
+		draw_rect(view.grow(12.0), Color(0.88, 1.0, 0.96, 0.5 * wash_a))  # plain, cold and bright: the room behind all but gone
+		var adapt := clampf(1.0 - (t - float(ev("fluoro").get("t", 0.0))) / 2.5, 0.0, 1.0)  # eyes adjusting: the first moment is the brightest
+		draw_rect(view.grow(12.0), Color(1.0, 1.0, 1.0, 0.35 * adapt * wash_a))
+	# 2. the tubes overhead blink on, one after another, each with two soft dips (a gentle tink-tink, never a strobe)
+	var tb := progress("tubes")
+	if tb >= 0.0 and wash_a > 0.01:
+		var row: Array = assets.interlude_anchor("tube_row", [[250, 40], [640, 40], [1030, 40]])
+		var t_on := float(ev("tubes")["t"])
+		for i in row.size():  # spread across what is on screen, at the top, like ceiling lights seen from a bed
+			var tx := vc.x + (float(i) - float(row.size() - 1) * 0.5) * view.size.x * 0.32
+			var lt := t - t_on - float(i) * 0.45
+			if lt < 0.0:
+				continue
+			var b := clampf(lt / 0.25, 0.0, 1.0)
+			b *= 1.0 - 0.5 * exp(-pow((lt - 0.32) / 0.07, 2.0)) - 0.4 * exp(-pow((lt - 0.62) / 0.08, 2.0))
+			b *= 0.94 + 0.06 * sin(t * 2.3 + float(i))
+			_spr("flicker_tube", Vector2(tx, view.position.y + 22.0 + absf(float(i) - 1.0) * 5.0), Vector2.ONE * 0.62, 0.0, Color(1, 1, 1, b * wash_a))
+	if close > 0.002:
+		var tv := assets.interlude_sprite("tunnel_vignette")
+		var breathe := 1.0 + 0.03 * sin(t * 1.4)
+		var k := lerpf(2.1, 0.85, close) * breathe  # 2.1x: the clear centre fills the screen; 0.85x: a narrow soft tunnel
+		var sz := view.size * k
+		if not tv.is_empty() and tv["tex"] != null:
+			draw_texture_rect(tv["tex"], Rect2(vc - sz * 0.5, sz), false, Color(1, 1, 1, clampf(close * 1.4, 0.0, 1.0)))
+			var cover := Rect2(vc - sz * 0.5, sz)
+			for r in [Rect2(view.position.x - 20.0, view.position.y - 20.0, view.size.x + 40.0, cover.position.y - view.position.y + 20.0),
+					Rect2(view.position.x - 20.0, cover.end.y, view.size.x + 40.0, view.end.y - cover.end.y + 20.0),
+					Rect2(view.position.x - 20.0, cover.position.y, cover.position.x - view.position.x + 20.0, cover.size.y),
+					Rect2(cover.end.x, cover.position.y, view.end.x - cover.end.x + 20.0, cover.size.y)]:
+				if r.size.x > 0.0 and r.size.y > 0.0:  # beyond a shrunken tunnel texture: the same deep teal
+					draw_rect(r, Color(0.04, 0.08, 0.13, clampf(close * 1.4, 0.0, 1.0) * 0.97))
+		else:
+			_full(Color(0.02, 0.06, 0.08, 0.6 * close))
+	# 3. the friendly ward door: fades in, swings open onto the warm day room, and we walk through it
 	var du := progress("door")
-	if du >= 0.0:
-		var e := du * du * (3.0 - 2.0 * du)
-		_full(Color(0.95, 1.0, 0.97, clampf(du * 1.6, 0.0, 0.9)))
-		_spr("cell_door", Vector2(640, 360), Vector2.ONE * lerpf(0.5, 3.0, e), 0.0, Color(1, 1, 1, clampf(1.0 - (du - 0.7) / 0.3, 0.0, 1.0)))
-	var wu := progress("white")
-	if wu >= 0.0:
-		_full(Color(0.96, 1.0, 0.98, clampf(wu * 1.3, 0.0, 1.0)))
+	if du < 0.0:
+		return
+	var ou := maxf(progress("door_open"), 0.0)
+	var wu := maxf(progress("walk_in"), 0.0)
+	var we: float = smooth.call(wu)
+	var door := assets.interlude_sprite("cell_door_frame")
+	if door.is_empty() or door["tex"] == null:
+		door = assets.interlude_sprite("cell_door")
+	if door.is_empty() or door["tex"] == null:
+		return
+	var px: float = door["scale"]  # design px per texture px
+	var op: Array = assets.interlude_anchor("door_opening", [546, 62, 188, 378])
+	var dc: Array = assets.interlude_anchor("door_centre", [640, 440])
+	var o_pos := Vector2(float(op[0]) - float(dc[0]) + 160.0, float(op[1]) - float(dc[1]) + 440.0)  # the opening, in the door's own design px
+	var o_size := Vector2(float(op[2]), float(op[3]))
+	var piv := Vector2(160.0, 440.0)  # the door's foot in its own design px (pivot bottom centre)
+	var k0 := clampf(view.size.y * 0.78 / 440.0, 0.5, 2.0)  # the door at rest: about three quarters of the screen tall
+	var k: float = k0 * lerpf(1.0, 6.4, we * we)
+	var c0 := Vector2(vc.x, view.position.y + view.size.y * 0.5 + 18.0)
+	var oc: Vector2 = c0.lerp(vc, we)  # the opening's centre: where we are walking to
+	var foot := oc - (o_pos + o_size * 0.5 - piv) * k
+	var o_rect := Rect2(foot + (o_pos - piv) * k, o_size * k)
+	var fade_in: float = smooth.call(clampf(du, 0.0, 1.0))
+	# the day room beyond the door (the new chapter's own backdrop), seen through the opening, growing to fill the screen
+	var bl := assets.layer("backdrop")
+	var btex: Texture2D = assets.texture(str(bl.get("file", ""))) if not bl.is_empty() else null
+	if btex != null and ou > 0.0:
+		var lpos := Vector2(float(bl["pos"][0]), float(bl["pos"][1]))
+		var lsize := Vector2(float(bl["size"][0]), float(bl["size"][1]))
+		var full := Rect2(view.position, view.size)  # the 1280 x 720 frame of the day room maps onto the visible screen at the end
+		var start := Rect2(oc - view.size * 0.31, view.size * 0.62)
+		var room := Rect2(start.position.lerp(full.position, we), start.size.lerp(full.size, we))
+		var sc := Vector2(1280.0, 720.0) / room.size  # design px of the room per screen px
+		var lit: float = smooth.call(clampf(ou * 1.6, 0.0, 1.0))
+		var shown := o_rect.intersection(view.grow(4.0))
+		if shown.size.x > 1.0 and shown.size.y > 1.0:
+			var d0 := (shown.position - room.position) * sc - lpos
+			var src := Rect2(d0 * Vector2(btex.get_width(), btex.get_height()) / lsize, shown.size * sc * Vector2(btex.get_width(), btex.get_height()) / lsize)
+			draw_texture_rect_region(btex, shown, src, Color(1, 1, 1, lit * fade_in))
+			draw_rect(shown, Color(1.0, 0.86, 0.62, 0.22 * lit * (1.0 - we)))  # warm light spilling out of the room
+	# the ward wall the door is set in (mint, with a lilac dado and skirting) and the floor it stands on, around the frame's footprint
+	var fr := Rect2(foot + (Vector2(40.0, 36.0) - piv) * k, Vector2(240.0, 404.0) * k)  # the painted frame inside the 320 x 440 sprite
+	var big := view.grow(16.0)
+	var wall := Color(0.78, 0.92, 0.87, fade_in)
+	var dado_top := foot.y - 96.0 * k
+	for r in [Rect2(big.position.x, big.position.y, big.size.x, fr.position.y - big.position.y),
+			Rect2(big.position.x, fr.position.y, fr.position.x - big.position.x, foot.y - fr.position.y),
+			Rect2(fr.end.x, fr.position.y, big.end.x - fr.end.x, foot.y - fr.position.y)]:
+		if r.size.x <= 0.0 or r.size.y <= 0.0:
+			continue
+		draw_rect(r, wall)
+		var dr: Rect2 = (r as Rect2).intersection(Rect2(big.position.x, dado_top, big.size.x, foot.y - dado_top))
+		if dr.size.y > 0.0 and dr.size.x > 0.0:
+			draw_rect(dr, Color(0.76, 0.71, 0.92, fade_in))
+			draw_rect(Rect2(dr.position.x, dr.position.y - 3.0 * k, dr.size.x, 5.0 * k), Color(0.9, 0.87, 0.98, fade_in))
+			draw_rect(Rect2(dr.position.x, foot.y - 9.0 * k, dr.size.x, 9.0 * k), Color(0.55, 0.49, 0.74, fade_in))
+	if foot.y < big.end.y:
+		draw_rect(Rect2(big.position.x, foot.y, big.size.x, big.end.y - foot.y), Color(0.74, 0.84, 0.82, fade_in))
+		draw_rect(Rect2(big.position.x, foot.y, big.size.x, 4.0 * k), Color(0.3, 0.25, 0.45, 0.35 * fade_in))
+		draw_rect(Rect2(fr.position.x - 20.0 * k, foot.y, fr.size.x + 40.0 * k, 14.0 * k), Color(1.0, 0.86, 0.62, 0.25 * fade_in * smooth.call(clampf(ou * 1.6, 0.0, 1.0))))
+	# the frame and the leaf
+	draw_set_transform(foot, 0.0, Vector2(k, k) * px)
+	draw_texture(door["tex"], -piv / px, Color(1, 1, 1, fade_in))
+	draw_set_transform_matrix(Transform2D.IDENTITY)
+	var leaf := assets.interlude_sprite("cell_door_leaf")
+	var leaf_open := assets.interlude_sprite("cell_door_open")
+	var hinge := foot + (Vector2(o_pos.x, o_pos.y + o_size.y) - piv) * k
+	var swing: float = smooth.call(clampf(ou, 0.0, 1.0))
+	if not leaf.is_empty() and leaf["tex"] != null and swing < 0.82:
+		var sx := lerpf(1.0, 0.18, swing / 0.82)
+		var shade := 1.0 - 0.3 * swing
+		draw_set_transform(hinge, 0.0, Vector2(k * sx, k) * float(leaf["scale"]))
+		draw_texture(leaf["tex"], -leaf["pivot"], Color(shade, shade, shade * 1.02, fade_in * clampf((0.82 - swing) / 0.12, 0.0, 1.0)))
+		draw_set_transform_matrix(Transform2D.IDENTITY)
+	if not leaf_open.is_empty() and leaf_open["tex"] != null and swing > 0.6:
+		draw_set_transform(hinge, 0.0, Vector2(k, k) * float(leaf_open["scale"]))
+		draw_texture(leaf_open["tex"], -leaf_open["pivot"], Color(0.9, 0.9, 0.92, fade_in * clampf((swing - 0.6) / 0.25, 0.0, 1.0)))
+		draw_set_transform_matrix(Transform2D.IDENTITY)
+	var wh := progress("white")
+	if wh >= 0.0:
+		draw_rect(view.grow(12.0), Color(0.97, 1.0, 0.98, smooth.call(wh)))

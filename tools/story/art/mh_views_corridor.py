@@ -128,6 +128,13 @@ def build_backdrop():
     for k, c in enumerate(("#fff4dc", "#ffd0e0", "#cfeee6", "#fff0a8")):
         d += rect(496 + (k % 2) * 20, 158 + (k // 2) * 26, 16, 22, c, OUT, 1)
     d += plant(764, 256, 62, "#ff9a7a")
+    # way-finding: a GARDEN plaque on the glazed doors and an ART ROOM sign hanging from the ceiling, pointing right
+    d += rect(604, 130, 72, 15, "#fff4dc", OUT, 2.0, rx=3) + M.sign_text("GARDEN", 640, 137.5, 8.5, "#3f9a5e", 1.8, outline=None)
+    for xx in (586, 694):
+        d += line((xx, 50), (xx, 70), "#8a8aa0", 1.6)
+    d += rect(566, 68, 148, 24, "#fbfbff", OUT, 2.6, rx=4) + rect(570, 72, 140, 16, "#e6dcfa", None, rx=3)
+    d += M.sign_text("ART ROOM", 628, 80, 11, "#7a5ad0", 2.2, outline=None)
+    d += poly([(684, 74), (700, 80), (684, 86), (687, 80)], CORAL, OUT, 1.2)
     # side walls: painted doors with paper stars, rail, boards, fire extinguisher
     lefts = [(1.1, 1.38, 0), (1.56, 1.96, 1), (2.2, 2.78, 2), (3.0, 3.8, 3)]
     rights = [(1.22, 1.5, 3), (1.7, 2.12, 4), (2.36, 2.96, 5), (3.2, 4.0, 0)]

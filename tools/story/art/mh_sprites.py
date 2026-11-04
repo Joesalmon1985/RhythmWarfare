@@ -229,7 +229,7 @@ def build_png_sprites():
     edge = np.clip(1 - t ** 1.5, 0, 1)
     core = np.clip(1 - t * 1.6, 0, 1) ** 2.0
     fade = np.clip(1 - yy / h, 0, 1) ** 1.35
-    a = (0.16 * edge + 0.36 * core) * fade
+    a = (0.2 * edge + 0.5 * core) * fade
     a[:10] *= np.linspace(0.25, 1, 10)[:, None]
     sp["beam"] = {"file": _white_png("beam.png", a), "pivot": [w / 2, 0], "px_scale": 1.0, "length": h, "half_width_at_end": 118,
                   "note": "dimmer than Night One's: additive over pale walls"}

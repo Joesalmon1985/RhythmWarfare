@@ -404,7 +404,12 @@ crowd fades (0-4 s), a soft tunnel closes in and breathes (drifting off, 1.6-5.2
 after another with two gentle dips each (6-8.6 s), the ward door fades in (9.2 s), swings open onto the day room, which is the chapter's own backdrop seen through
 the opening with warm light spilling out (10.6-12.2 s), and the camera walks through it until the room fills the screen (12.6-15.2 s), then a short soft
 mint-white fade hands over to the chapter. Captions stay kind: "The music stops." / "Everything goes soft, and very quiet." / "Then a light. A very bright, very plain
-light." / "'There you are, love. Welcome back to the ward.'" / "None of it happened. Or did it? Come and meet everyone."
+light." / "'There you are, love. Welcome back to the ward.'" / "None of it happened. Or did it? Come and meet everyone." The ward door stands in a mint wall
+with a lilac dado on a pale floor while it is small, so it never floats in the light.
+
+Review frames at a frozen cutscene time (the live scene's clock is wall time, so slow first frames run it ahead):
+`RW_T=11.4 RW_FROM=underworld|mothership|night_one godot --path . -s tools/shoot.gd -- res://tools/story/preview_sectioned.tscn <out> 12:shot:name`
+(`tools/story/preview_sectioned.gd` replays the scene-side events, dim, fade_crowd and captions, up to `RW_T`, then draws the fx at that time).
 
 ### Reviewing
 
