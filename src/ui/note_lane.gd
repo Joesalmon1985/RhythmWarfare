@@ -44,6 +44,18 @@ func setup(p_level: Level, p_clock: SongClock, p_pad_view: PadView) -> void:
 	_last_now = -INF
 
 
+## Re-reads level.notes after cues were appended (the continuous run adds a block at a time).
+func refresh() -> void:
+	var from := _order.size()
+	for i in range(from, level.notes.size()):
+		_order.append(i)
+	_order.sort_custom(func(a: int, b: int) -> bool:
+		var ta: float = float(level.notes[a]["time"])
+		var tb: float = float(level.notes[b]["time"])
+		return ta < tb if ta != tb else a < b)
+	_cursor = 0
+
+
 ## The shape of a note `dt` seconds before its hit time (negative: after it), `hold_s` long (0 for a tap), on `pad`.
 ## `travel_px` is the distance a note covers in `travel_s`: at dt = travel_s the shape has just left the top of the screen.
 static func shape_rect(pad: Rect2, dt: float, hold_s: float, travel_s: float, travel_px: float) -> Rect2:

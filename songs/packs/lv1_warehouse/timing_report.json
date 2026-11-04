@@ -1,0 +1,100 @@
+{
+ "timing": {
+  "header_bpm": 120.0,
+  "profile": "beat_shaper_87x2",
+  "drum_fit": {
+   "hits": 31,
+   "matched": 31,
+   "fitted_bpm": 86.998,
+   "fitted_offset_ms": 5.74,
+   "max_abs_ms": 8.24,
+   "mean_ms": 5.88
+  },
+  "bass": [
+   {
+    "beat": 0.0,
+    "pitch": 40,
+    "error_ms": 0.0,
+    "how": "first sound in the file"
+   },
+   {
+    "beat": 4.25,
+    "pitch": 38,
+    "error_ms": -2.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.0,
+    "pitch": 40,
+    "error_ms": -8.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 13.0,
+    "pitch": 48,
+    "error_ms": 2.0,
+    "how": "largest spectral change near the note start"
+   }
+  ]
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 558390,
+   "loop_frames": 529655,
+   "tail_frames": 28735,
+   "padded_frames": 0,
+   "tail_audible_s": 0.476,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -7.56,
+   "rms_db": -23.66,
+   "source_seconds": 11.6331,
+   "source_file": "Beat Shaper - Lv1 Warehouse-Drums.wav"
+  },
+  "bass": {
+   "frames_in": 596734,
+   "loop_frames": 529655,
+   "tail_frames": 67079,
+   "padded_frames": 0,
+   "tail_audible_s": 1.352,
+   "laps_folded": 1,
+   "gain_db": 3.0,
+   "peak_db": -11.2,
+   "rms_db": -21.15,
+   "source_seconds": 12.432,
+   "source_file": "Beat Shaper - Lv1 Warehouse-Bass.wav"
+  },
+  "other": {
+   "frames_in": 622626,
+   "loop_frames": 529655,
+   "tail_frames": 92971,
+   "padded_frames": 0,
+   "tail_audible_s": 1.937,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -17.02,
+   "rms_db": -28.59,
+   "source_seconds": 12.9714,
+   "source_file": "Beat Shaper - Lv1 Warehouse-Synth.wav"
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 24,
+   "bass": 4
+  },
+  "2": {
+   "drums": 24,
+   "bass": 4
+  },
+  "3": {
+   "drums": 32,
+   "bass": 4
+  },
+  "4": {
+   "drums": 32,
+   "bass": 4
+  }
+ },
+ "chart_problems": []
+}

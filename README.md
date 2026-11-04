@@ -1,32 +1,28 @@
 # Rhythm Warfare
 
-A rhythm defense game in landscape for phones: play four illuminated instrument pads in time with a 174 BPM drum and bass
-track; every completed sequence builds one defense (a pillbox, a turret, a flame tower) or sends one unit to hold an
-approach, and your Red Alert base in the middle of the screen must survive the enemy waves until the song ends. Ten
-missions, each a battlefield, a set of waves and a form of drum and bass phases; the music is your one loadout (drum
-pattern, fill, kick, snare, bass line, bass sound, backing track), played from a loop library in every mission, and its
-instruments decide what a passed sequence builds (kicks make infantry, snares defenses, bass sounds vehicles). The older
-two-sided duel stays in the developer area for a later multiplayer mode. Standalone Godot 4.5.1 project; the rule set is
-`docs/PRD.md` sections 15 and 16 and `data/campaign/rules.json`.
+A rhythm game in landscape for phones: play four illuminated pads in time with a 174 BPM drum and bass track while your camera is carried through five small
+2.5D, Doom-style worlds (a warehouse club, an alien mothership, an underworld arena, a night hospital, a ward). The story is one continuous run: every level is a
+64-beat phase that starts with drums alone, brings the bass in as you play well, brings the drums back, then lets the bass take over while you choose which way to go
+next. Good play keeps the mix building, a missed block holds it for another go, and the crowd's energy is the meter that ends the run if it runs out. Standalone Godot 4.5.1
+project. Home has three buttons: Play, Start from a reached level, Settings.
 
-## Story Campaign
-
-A separate mode on the main menu, in five chapters (Night One, The Mothership, The Underworld, The Hospital, The Ward), each a full drum and bass set played on the same four pads, falling
-notes and judgement as the campaign. Each chapter is a small 2.5D, Doom-style world rendered at a low internal resolution (360 lines by default, 270 and 180 in the settings): you start as a dancer on the floor and, as you play well,
-your camera is carried on rails up onto the stage and behind the decks; play badly and you feel ill and are led away (the toilets, the medical bay, the furnace, back to bed, the treatment
-room). The two-bar sequence results drive the crowd's energy, authored good/bad moments, your journey and one of three endings per chapter; endings route to the next chapter. Saves are
-separate (`user://story_campaign.json`); the military campaign is untouched. See `docs/STORY_CAMPAIGN_HANDOVER.md` (architecture, tuning, art pipeline, tests, numbers),
-`docs/STORY_25D_PLAN.md` (the plan and progress log) and `docs/STORY_CAMPAIGN_PRD.md` (the original brief).
+* Design, route map, tunables and verification: `docs/CONTINUOUS_RUN.md`.
+* Adding music (Beat Shaper exports, one command per level): `docs/MUSIC_IMPORT.md`; what each level plays and what to export: `docs/MUSIC_HANDOFF.md`.
+* The 2.5D world, art and authoring pipeline: `docs/STORY_CAMPAIGN_HANDOVER.md`, `docs/STORY_25D_PLAN.md`, `docs/STORY_ART.md`.
 
 ```
-godot --path . res://src/scenes/story_play.tscn                       # straight into Night One (RW_STORY_CHAPTER=mothership|underworld|hospital|mental_hospital)
-bash tools/story/rooms.sh                                              # one screenshot per place of every chapter and a contact sheet per chapter
-bash tools/story/capture.sh                                            # real screenshots of the running scene (docs/shots/story); RW_SHOTS=regex picks shots
-bash tools/story/walk_campaign.sh                                      # the real scene chain from Night One to the end, five scripted paths, isolated save
-RW_STORY_VIRTUAL=1 RW_AUTOPLAY=perfect RW_STORY_PROFILE_FROM=100 RW_STORY_UNTIL_BAR=108 godot --path . res://src/scenes/story_play.tscn   # frame times
-python3 tools/story/build_assets.py                                    # regenerate the story art and its texture tiles
-godot --headless --path . -s tools/story/tune.gd -- chapter:mothership perfect none   # endings and the journey under scripted skill levels
+godot --path .                                                         # home screen
+godot --path . res://src/run/run_play.tscn                             # straight into the run (RW_RUN_START=<level id> picks the level)
+RW_RUN_BOT=perfect RW_RUN_ROUTES=up,left godot --path . res://src/run/run_play.tscn   # scripted play: perfect | none | accuracy:<f> | blocks:<1011...>
+RW_RUN_VIRTUAL=1 RW_RUN_BOT=perfect RW_RUN_UNTIL_PHASE=3 RW_STORY_QUIT=1 godot --headless --path . res://src/run/run_play.tscn   # no audio, stepped clock
+godot --headless --path . -s tests/run_tests.gd -- --filter run_      # the run's tests
+python tools/content/beatshaper.py validate                             # music data
+godot --headless --path . -s tools/story/record_music.gd -- <out> 70 res://src/run/run_play.tscn   # record the Music bus of a real run
+python tools/story/check_run_audio.py <out>                             # fit the recording to the mix the engine reported
 ```
+
+The older chapter-by-chapter Story Campaign scenes, the military campaign and the legacy duel are no longer reachable from the home screen. Their code is still in the
+repository (the art pipeline, the tests and the editor-only Developer button use it); the run does not depend on it. `docs/STORY_CAMPAIGN_HANDOVER.md` still describes it.
 
 ## Layout
 

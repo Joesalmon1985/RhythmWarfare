@@ -1,0 +1,55 @@
+{
+ "schema": 1,
+ "note": "Which recordings and chart each node plays. audio = the pack whose stems are heard, chart = the pack whose cues are played (nodes at the same depth must share one chart; the validator checks). treatment = a name from run.json treatments. temporary = true for stand-ins awaiting the owner's own recordings. Replace a node's music by editing audio/chart here after importing a pack (docs/MUSIC_IMPORT.md); node ids never change.",
+ "nodes": [
+  {
+   "id": "warehouse",
+   "audio": "lv1_warehouse",
+   "chart": "lv1_warehouse",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "mothership",
+   "audio": "lv2_alien_spaceship",
+   "chart": "lv2_alien_spaceship",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "underworld",
+   "audio": "lv2_alien_spaceship",
+   "chart": "lv2_alien_spaceship",
+   "treatment": "underworld",
+   "temporary": true
+  },
+  {
+   "id": "hospital",
+   "audio": "lv1_warehouse_v1",
+   "chart": "lv1_warehouse_v1",
+   "treatment": "hospital",
+   "temporary": true
+  },
+  {
+   "id": "ward",
+   "audio": "lv1_warehouse_v1",
+   "chart": "lv1_warehouse_v1",
+   "treatment": "ward",
+   "temporary": true
+  },
+  {
+   "id": "hospital_late",
+   "audio": "lv2_alien_spaceship_v2",
+   "chart": "lv2_alien_spaceship_v2",
+   "treatment": "hospital_late",
+   "temporary": true
+  },
+  {
+   "id": "ward_late",
+   "audio": "lv2_alien_spaceship_v2",
+   "chart": "lv2_alien_spaceship_v2",
+   "treatment": "ward_late",
+   "temporary": true
+  }
+ ]
+}

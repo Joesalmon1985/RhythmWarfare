@@ -1,0 +1,100 @@
+{
+ "timing": {
+  "header_bpm": 120.0,
+  "profile": "beat_shaper_174x1",
+  "drum_fit": {
+   "hits": 24,
+   "matched": 24,
+   "fitted_bpm": 173.885,
+   "fitted_offset_ms": 3.26,
+   "max_abs_ms": 11.28,
+   "mean_ms": 4.98
+  },
+  "bass": [
+   {
+    "beat": 0.0,
+    "pitch": 29,
+    "error_ms": 0.0,
+    "how": "first sound in the file"
+   },
+   {
+    "beat": 4.0,
+    "pitch": 41,
+    "error_ms": 6.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.0,
+    "pitch": 29,
+    "error_ms": -10.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 12.0,
+    "pitch": 41,
+    "error_ms": 8.0,
+    "how": "largest spectral change near the note start"
+   }
+  ]
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 293558,
+   "loop_frames": 264828,
+   "tail_frames": 28730,
+   "padded_frames": 0,
+   "tail_audible_s": 0.471,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -7.12,
+   "rms_db": -23.0,
+   "source_seconds": 6.1158,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Drums.wav"
+  },
+  "bass": {
+   "frames_in": 338752,
+   "loop_frames": 264828,
+   "tail_frames": 73924,
+   "padded_frames": 0,
+   "tail_audible_s": 1.494,
+   "laps_folded": 1,
+   "gain_db": 3.0,
+   "peak_db": -9.63,
+   "rms_db": -21.57,
+   "source_seconds": 7.0573,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Bass.wav"
+  },
+  "other": {
+   "frames_in": 305810,
+   "loop_frames": 264828,
+   "tail_frames": 40982,
+   "padded_frames": 0,
+   "tail_audible_s": 0.854,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -14.7,
+   "rms_db": -29.23,
+   "source_seconds": 6.371,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Synth.wav"
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 13,
+   "bass": 4
+  },
+  "2": {
+   "drums": 19,
+   "bass": 4
+  },
+  "3": {
+   "drums": 27,
+   "bass": 4
+  },
+  "4": {
+   "drums": 27,
+   "bass": 4
+  }
+ },
+ "chart_problems": []
+}

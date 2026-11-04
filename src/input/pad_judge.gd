@@ -77,6 +77,27 @@ func setup(cues: Array, p_sequences: Array = []) -> void:
 	_now = -INF
 
 
+## Takes the cues appended to `notes` since the last call (the continuous run adds a block of cues at a time, always later than the
+## cues already there, in time order). Nothing already judged changes.
+func sync_notes() -> void:
+	var n := notes.size()
+	var old := _state.size()
+	_state.resize(n)
+	credit.resize(n)
+	delta_ms.resize(n)
+	resolved_at.resize(n)
+	for i in range(old, n):
+		_state[i] = State.PENDING
+		credit[i] = 0.0
+		delta_ms[i] = NAN
+		resolved_at[i] = -1.0
+		var pad := int(notes[i]["pad"])
+		if not _pad_notes.has(pad):
+			_pad_notes[pad] = []
+			_cursor[pad] = 0
+		_pad_notes[pad].append(i)
+
+
 func is_resolved(i: int) -> bool:
 	return _state[i] == State.DONE
 

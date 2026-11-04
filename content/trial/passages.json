@@ -1,0 +1,278 @@
+{
+ "schema": 1,
+ "id": "deathtrap_opening",
+ "title": "The Trial of Champions",
+ "start": 1,
+ "_how_to_add_a_passage": "The whole book (1 to 400) is already playable from content/trial/book_graph.json and book_text.json. To replace a passage by hand, add an entry here under \"passages\" keyed by its number: it wins over the book files. Shape: \"scene\", \"title\", \"text\", \"status\", optional \"tier\", \"choices\": [{\"label\", \"to\", \"book\", \"phrase\", \"consequence\", \"default\": true on exactly ONE choice}]; a choice may carry \"encounter\" + \"lives\" (a fight), \"test\": {\"pass\", \"fail\"} (a luck test) or \"exit\": \"warehouse\" (death or victory). Then run: godot --headless --path . -s tools/trial/validate.gd. See docs/TRIAL_OPENING.md.",
+ "provenance": {
+  "links": "DuelMasterBattle DD/Deathtrap_Dungeon_Verified_Backbone.json (status verified_macrograph_not_full_400_node_adjacency), passages 1, 270, 66, 119 with their edges exactly as verified; 56 and 293 are prototype endpoints. Cross-checked with docs/TRIAL_CANON_STATUS.md (rows Crystal Entrance, Footprint Fork, Footprint Galleries; 'the east loop reconnects 119, 56': implemented legacy).",
+  "text": "Scene text adapted from DuelMasterBattle WizardRTSHybrid/wizard_rts/data/trial/legacy_zones.json (dd_entrance, dd_fork) where marked source=legacy; otherwise written for this opening from the verified 'beat' of the passage.",
+  "encounter": "Giant Fly: WizardRTSHybrid/wizard_rts/data/trial/legacy_bestiary.json (giant_fly) and its intro line from legacy_zones.json dd_fork entity fly_east. Placement on passage 119 is ADAPTED: the legacy places the fly on the east loop of the fork zone (dd_fork), which is the area holding passages 66 and 119; the book passage 119 itself is not verified to contain a fly.",
+  "art": "assets/trial/art/ copied from DuelMasterBattle godot_project/assets/pixel (wizard portrait, giant fly portraits, box); assets/trial/scenes/ are drawn for this repo by tools/trial/make_scenes.py (placeholders). Full record: assets/trial/PROVENANCE.md.",
+  "source_commit": "DuelMasterBattle 1b9513dd973087281bfcedeb8a786788331697b0",
+  "book": "The other 396 passages: content/trial/book_graph.json and book_text.json, built by tools/trial/build_book.py from the verified backbone (28), the owner's OCR pack deathtrap_ff (read-only) and a hand-made spine of bridges; see docs/TRIAL_FULL_BOOK.md."
+ },
+ "music": {
+  "audio": "lv1_warehouse_v1",
+  "chart": "lv1_warehouse_v1",
+  "treatment": "hospital",
+  "temporary": true,
+  "note": "Stand-in dungeon sound: the Hospital's recordings and filter. Give the dungeon its own with python tools/content/beatshaper.py import ... then edit this block."
+ },
+ "pass_credit": 0.6,
+ "phrases": {
+  "easy": {
+   "family": "drums",
+   "tier": 1,
+   "label": "Steady drums"
+  },
+  "junction": {
+   "family": "drums",
+   "tier": 2,
+   "label": "Quick drums"
+  },
+  "bass_walk": {
+   "family": "bass",
+   "tier": 1,
+   "label": "Low bass"
+  },
+  "fight": {
+   "family": "drums",
+   "tier": 3,
+   "label": "Fight rhythm"
+  },
+  "p_d1": {
+   "family": "drums",
+   "tier": 1,
+   "label": "Steady drums"
+  },
+  "p_d2": {
+   "family": "drums",
+   "tier": 2,
+   "label": "Quick drums"
+  },
+  "p_d3": {
+   "family": "drums",
+   "tier": 3,
+   "label": "Busy drums"
+  },
+  "p_d4": {
+   "family": "drums",
+   "tier": 4,
+   "label": "Racing drums"
+  },
+  "p_b1": {
+   "family": "bass",
+   "tier": 1,
+   "label": "Low bass"
+  },
+  "p_b2": {
+   "family": "bass",
+   "tier": 2,
+   "label": "Walking bass"
+  },
+  "p_b3": {
+   "family": "bass",
+   "tier": 3,
+   "label": "Heavy bass"
+  },
+  "luck": {
+   "family": "drums",
+   "tier": 2,
+   "label": "Luck"
+  },
+  "fight_t2": {
+   "family": "drums",
+   "tier": 2,
+   "label": "Fight rhythm"
+  },
+  "fight_t3": {
+   "family": "drums",
+   "tier": 3,
+   "label": "Fight rhythm"
+  },
+  "fight_t4": {
+   "family": "drums",
+   "tier": 4,
+   "label": "Fight rhythm"
+  }
+ },
+ "scenes": {
+  "entrance": {
+   "file": "res://assets/trial/scenes/entrance.png"
+  },
+  "box": {
+   "file": "res://assets/trial/scenes/box.png"
+  },
+  "fork": {
+   "file": "res://assets/trial/scenes/fork.png"
+  },
+  "east": {
+   "file": "res://assets/trial/scenes/east.png"
+  },
+  "gallery": {
+   "file": "res://assets/trial/scenes/gallery.png"
+  },
+  "opening": {
+   "file": "res://assets/trial/scenes/opening.png"
+  },
+  "death": {
+   "file": "res://assets/trial/scenes/death.png"
+  },
+  "victory": {
+   "file": "res://assets/trial/scenes/victory.png"
+  },
+  "dd_pit": {
+   "file": "res://assets/trial/scenes/dd_pit.png"
+  },
+  "dd_lower": {
+   "file": "res://assets/trial/scenes/dd_lower.png"
+  },
+  "dd_trialmaster": {
+   "file": "res://assets/trial/scenes/dd_trialmaster.png"
+  },
+  "dd_idol": {
+   "file": "res://assets/trial/scenes/dd_idol.png"
+  },
+  "dd_grotto": {
+   "file": "res://assets/trial/scenes/dd_grotto.png"
+  },
+  "dd_vaults": {
+   "file": "res://assets/trial/scenes/dd_vaults.png"
+  },
+  "dd_vault_inner": {
+   "file": "res://assets/trial/scenes/dd_vault_inner.png"
+  },
+  "dd_service": {
+   "file": "res://assets/trial/scenes/dd_service.png"
+  },
+  "dd_mirror": {
+   "file": "res://assets/trial/scenes/dd_mirror.png"
+  },
+  "dd_blood": {
+   "file": "res://assets/trial/scenes/dd_blood.png"
+  },
+  "dd_grub": {
+   "file": "res://assets/trial/scenes/dd_grub.png"
+  },
+  "dd_troglodytes": {
+   "file": "res://assets/trial/scenes/dd_troglodytes.png"
+  },
+  "dd_manticore": {
+   "file": "res://assets/trial/scenes/dd_manticore.png"
+  },
+  "dd_igbut": {
+   "file": "res://assets/trial/scenes/dd_igbut.png"
+  }
+ },
+ "encounters": {
+  "giant_fly": {
+   "name": "Giant Fly",
+   "portrait": "res://assets/trial/art/giant_fly_portrait_0.png",
+   "portrait_hit": "res://assets/trial/art/giant_fly_portrait_1.png",
+   "intro": "Something huge buzzes in the eastern dark. It smells of Water.",
+   "on_win": "The Giant Fly spins out of the air and drops, buzzing, into the dark. The way east is open.",
+   "on_fail": "The Giant Fly lunges and stings. You stagger back, ready to try again.",
+   "bestiary": "legacy_bestiary.json giant_fly: 'A horsefly the size of a hound. It lunges first and thinks second, but it does think.' A loser may escape wounded.",
+   "source": "legacy",
+   "placement": "ADAPTED"
+  }
+ },
+ "passages": {
+  "1": {
+   "title": "The Crystal Entrance",
+   "scene": "entrance",
+   "status": "BOOK_VERIFIED",
+   "text": "Crystal veins hum faintly in the walls; the light has no source. At a stone table stand six boxes. Five are already open: the other contestants have helped themselves. The sixth bears your name.",
+   "text_source": "legacy (dd_crystal, dd_table) and the verified beat",
+   "choices": [
+    {
+     "label": "Open the box with your name",
+     "to": 270,
+     "book": "open named box",
+     "phrase": "easy",
+     "consequence": "The seal breaks cleanly under your fingers.",
+     "default": true
+    },
+    {
+     "label": "Continue north",
+     "to": 66,
+     "book": "continue north",
+     "phrase": "easy",
+     "consequence": "You leave the boxes behind and follow the crystal light north."
+    }
+   ],
+   "tier": 1
+  },
+  "270": {
+   "title": "The Named Box",
+   "scene": "box",
+   "status": "BOOK_VERIFIED",
+   "text": "Inside: two gold pieces and a note in a sharp hand. SUKUMVIT: 'The Trial wants useful things, not just strong arms. Carry what matters.' Several items will be needed before this is done.",
+   "text_source": "legacy (aid_box) and the verified beat",
+   "choices": [
+    {
+     "label": "Pocket the gold and go on",
+     "to": 56,
+     "book": "continue",
+     "phrase": "easy",
+     "consequence": "Two gold pieces heavier, and warned, you press on.",
+     "default": true
+    }
+   ],
+   "tier": 1
+  },
+  "66": {
+   "title": "The Footprint Fork",
+   "scene": "fork",
+   "status": "BOOK_VERIFIED",
+   "text": "A white arrow, painted fresh, points WEST. Below it, in charcoal: 'don't'. Wet footprints, several sets, head west; one smaller set goes east.",
+   "text_source": "legacy (dd_arrow, dd_prints_west, dd_prints_east) and the verified beat",
+   "choices": [
+    {
+     "label": "Follow the arrow west",
+     "to": 293,
+     "book": "west",
+     "phrase": "bass_walk",
+     "consequence": "You trust the paint, and the footprints, and walk west.",
+     "default": true
+    },
+    {
+     "label": "Follow the single set east",
+     "to": 119,
+     "book": "east",
+     "phrase": "junction",
+     "consequence": "The small prints are the odd ones out. You follow them east."
+    }
+   ],
+   "tier": 2
+  },
+  "119": {
+   "title": "The Eastern Branch",
+   "scene": "east",
+   "status": "BOOK_VERIFIED",
+   "text": "A cold draught comes from the east, and a single small footprint is pressed into the wet. An open box with a broken seal: someone got here first. Ahead, a soft grey curtain blocks the way, and something behind it hums.",
+   "text_source": "legacy (dd_east_draught, dd_empty_box) and the verified beat",
+   "choices": [
+    {
+     "label": "Push through the curtain, east",
+     "to": 56,
+     "book": "continue east",
+     "phrase": "fight",
+     "encounter": "giant_fly",
+     "consequence": "The curtain tears away, and the way east is open.",
+     "lives": 3
+    },
+    {
+     "label": "Go back and take the arrow west",
+     "to": 293,
+     "book": "return and go west",
+     "phrase": "easy",
+     "consequence": "You turn back to the fork and take the painted way after all.",
+     "default": true
+    }
+   ],
+   "tier": 2
+  }
+ }
+}
