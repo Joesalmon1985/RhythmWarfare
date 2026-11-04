@@ -37,8 +37,60 @@ func deck_mix(now: float) -> float:
 	return stage.player.deck_mix_at(now) if stage != null and stage.player != null else 1.0
 
 
+## A node that draws once through a callable (CanvasItem draw commands are kept until it is asked to redraw): the deck's static layers cost nothing per frame.
+class _Painter extends Node2D:
+	var fn := Callable()
+
+	func _draw() -> void:
+		if fn.is_valid():
+			fn.call(self)
+
+
+var _layer: Node2D  # behind the pad view: desk top, the platters (rotated, not redrawn), the bank plates, bezels and lip glow
+var _layer_key := ""
+var _platters: Array = []  # {node, centre}
+
+
+func _sync_layer(ci: CanvasItem, size: Vector2, rects: Dictionary, mix: float, now: float) -> void:
+	var key := "%s|%s" % [size, str(rects)]
+	if _layer == null or not is_instance_valid(_layer) or key != _layer_key:
+		if _layer != null and is_instance_valid(_layer):
+			_layer.queue_free()
+		_layer_key = key
+		_layer = Node2D.new()
+		_layer.name = "DeckLayer"
+		_layer.show_behind_parent = true
+		ci.add_child(_layer)
+		_platters = []
+		var bottom := _Painter.new()
+		bottom.fn = func(c: CanvasItem) -> void: _draw_desk_top(c, size)
+		_layer.add_child(bottom)
+		var r1: Rect2 = rects[1]
+		var r2: Rect2 = rects[2]
+		var r3: Rect2 = rects[3]
+		var r4: Rect2 = rects[4]
+		for pair in [[r1, r2], [r3, r4]]:
+			var a: Rect2 = pair[0]
+			var c2: Rect2 = pair[1]
+			var rad := a.size.x * 1.13
+			var pn := _Painter.new()
+			pn.position = Vector2((a.position.x + c2.end.x) * 0.5, (a.position.y + a.end.y) * 0.5)
+			pn.fn = func(c: CanvasItem) -> void: _spr(c, "platter", Vector2.ZERO, Vector2(rad * 2.0, rad * 2.0), Color(1, 1, 1, 0.9), 0.0)
+			_layer.add_child(pn)
+			_platters.append(pn)
+		var top := _Painter.new()
+		top.fn = func(c: CanvasItem) -> void: _draw_desk_plates(c, size, rects)
+		_layer.add_child(top)
+	_layer.visible = mix > 0.01
+	_layer.modulate.a = mix
+	var rot := _beats(now) * 0.35
+	for pn in _platters:
+		(pn as Node2D).rotation = rot
+
+
 func draw_under(ci: CanvasItem, size: Vector2, rects: Dictionary, now: float) -> void:
 	var m := deck_mix(now)
+	_sync_layer(ci, size, rects, m, now)
 	if m > 0.01:
 		_draw_deck(ci, size, rects, now)
 	if m < 0.99:
@@ -67,32 +119,31 @@ func _draw_dancer_rail(ci: CanvasItem, size: Vector2, rects: Dictionary, now: fl
 	ci.draw_rect(Rect2(0, size.y - 6.0, size.x, 3.0), Color(0.35, 0.92, 1.0, 0.5 * alpha))
 
 
-func _draw_deck(ci: CanvasItem, size: Vector2, rects: Dictionary, now: float) -> void:
+func _draw_desk_top(ci: CanvasItem, size: Vector2) -> void:
 	var layer := assets.layer("desk_top")
 	var tex := assets.texture(str(layer.get("file", "")))
 	if tex != null:
 		ci.draw_texture_rect(tex, Rect2(Vector2.ZERO, size), false)
 	else:
 		ci.draw_rect(Rect2(Vector2.ZERO, size), Color(0.05, 0.06, 0.1, 1.0))
-	var b := _beats(now)
-	var r1: Rect2 = rects[1]
-	var r2: Rect2 = rects[2]
-	var r3: Rect2 = rects[3]
-	var r4: Rect2 = rects[4]
-	for pair in [[r1, r2], [r3, r4]]:
-		var a: Rect2 = pair[0]
-		var c: Rect2 = pair[1]
-		var centre := Vector2((a.position.x + c.end.x) * 0.5, (a.position.y + a.end.y) * 0.5)
-		var rad := a.size.x * 1.13
-		_spr(ci, "platter", centre, Vector2(rad * 2.0, rad * 2.0), Color(1, 1, 1, 0.9), b * 0.35)
-	for pair in [[r1, r2], [r3, r4]]:  # each pad pair sits on one bank plate over the platter's centre
+
+
+func _draw_desk_plates(ci: CanvasItem, size: Vector2, rects: Dictionary) -> void:
+	for pair in [[rects[1], rects[2]], [rects[3], rects[4]]]:  # each pad pair sits on one bank plate over the platter's centre
 		var bank := (pair[0] as Rect2).merge(pair[1]).grow((pair[0] as Rect2).size.x * 0.11)
 		_plate(ci, bank)
 	for pad in rects:
 		var rb: Rect2 = rects[pad]
 		var gb := rb.size.x * 0.1
 		_spr(ci, "pad_bezel", rb.position - Vector2(gb, gb), rb.size + Vector2(gb, gb) * 2.0)
-	# knob row along the top of the centre column
+	_spr(ci, "desk_lip_glow", Vector2(0, 0), Vector2(size.x, size.y * 0.06), Color(1, 1, 1, 0.9))
+
+
+## The moving parts of the desk, drawn every frame: knobs, crossfader, VU meters (everything else is the static layer behind the pads).
+func _draw_deck(ci: CanvasItem, size: Vector2, rects: Dictionary, now: float) -> void:
+	var b := _beats(now)
+	var r2: Rect2 = rects[2]
+	var r3: Rect2 = rects[3]
 	var x0 := r2.end.x + 22.0
 	var x1 := r3.position.x - 22.0
 	var w := x1 - x0
@@ -102,7 +153,6 @@ func _draw_deck(ci: CanvasItem, size: Vector2, rects: Dictionary, now: float) ->
 			var kx := x0 + w * (float(i) + 0.5) / float(n)
 			var ks := minf(w / float(n) * 0.55, size.y * 0.1)
 			_spr(ci, "knob", Vector2(kx, size.y * 0.075), Vector2(ks, ks), Color.WHITE, -1.2 + 2.4 * (0.5 + 0.5 * sin(b * 0.07 * float(i + 1) + float(i))))
-		# crossfader slot and cap at the foot of the centre column
 		var slot_w := minf(w * 0.7, 240.0)
 		var cy := size.y * 0.965
 		_spr(ci, "fader_slot", Vector2(x0 + w * 0.5, cy), Vector2(slot_w, size.y * 0.05))
@@ -110,7 +160,6 @@ func _draw_deck(ci: CanvasItem, size: Vector2, rects: Dictionary, now: float) ->
 		_spr(ci, "fader_cap", Vector2(cap_x, cy), Vector2(size.y * 0.075, size.y * 0.075))
 		_draw_vu(ci, Vector2(r2.end.x + r2.size.x * 0.11 + 6.0, r2.position.y + r2.size.y * 0.1), size.y * 0.5, now)
 		_draw_vu(ci, Vector2(r3.position.x - r3.size.x * 0.11 - 16.0, r3.position.y + r3.size.y * 0.1), size.y * 0.5, now)
-	_spr(ci, "desk_lip_glow", Vector2(0, 0), Vector2(size.x, size.y * 0.06), Color(1, 1, 1, 0.9))
 
 
 var _plate_box := StyleBoxFlat.new()

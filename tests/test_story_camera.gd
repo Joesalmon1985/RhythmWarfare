@@ -90,3 +90,22 @@ func test_the_camera_is_a_function_of_song_time() -> void:
 	assert_eq(a.player.pose_at(5.0 * b)["cam"], c.player.pose_at(5.0 * b)["cam"], "stepping or jumping gives the same pose")
 	a.free()
 	c.free()
+
+
+func test_all_visible_figures_of_all_rooms_are_ordered_together_by_distance() -> void:
+	var stage := _stage()
+	var main: StoryCrowd = stage.crowds["main"]
+	var gal: StoryCrowd = stage.crowds["gallery"]
+	var near_in_gallery: Node = gal.actors[gal.actors.keys()[0]]["node"]
+	var far_in_main: Node = main.actors[main.actors.keys()[0]]["node"]
+	var mid_in_main: Node = main.actors[main.actors.keys()[1]]["node"]
+	# keys are inverted millimetres: a bigger key is nearer. The gallery's dancer is nearest, then main's second, main's first is furthest.
+	main.sort_items = [[3000000, far_in_main], [3600000, mid_in_main]]
+	gal.sort_items = [[3800000, near_in_gallery]]
+	stage._order_crowds()
+	assert_true((far_in_main as CanvasItem).z_index < (mid_in_main as CanvasItem).z_index, "far before mid")
+	assert_true((mid_in_main as CanvasItem).z_index < (near_in_gallery as CanvasItem).z_index, "a dancer of another room that is nearer draws over this room's")
+	gal.sort_items = [[3300000, near_in_gallery]]
+	stage._order_crowds()
+	assert_true((far_in_main as CanvasItem).z_index < (near_in_gallery as CanvasItem).z_index and (near_in_gallery as CanvasItem).z_index < (mid_in_main as CanvasItem).z_index, "and interleaves by true distance through a doorway")
+	stage.free()

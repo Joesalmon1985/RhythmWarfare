@@ -25,6 +25,9 @@ var _thing_nodes: Array = []  # {node: MeshInstance3D, mat, thing: Dictionary, b
 var _sky: MeshInstance3D
 var _sky_follow := true
 var triangle_count := 0
+var _anim_sectors: Dictionary = {}  # sectors that show an animated surface (their colour is rewritten every frame, the animation builds on it)
+var _last_col: Dictionary = {}  # sector id -> the colour last written to its materials
+var _vis: Dictionary = {}  # sector id -> portal depth: only these are drawn and updated (empty: all)
 var _mats_by_tex: Dictionary = {}  # texture name -> Array of the StandardMaterial3D showing it (animated surfaces swap their texture)
 
 
@@ -272,6 +275,9 @@ func _make_sector_mesh(s: Dictionary, groups: Dictionary) -> void:
 		var mat := _material(_tex[tex])
 		mesh.surface_set_material(mesh.get_surface_count() - 1, mat)
 		mats.append(mat)
+		for an in map.animated:
+			if str(an.get("tex", "")) == str(tex):
+				_anim_sectors[str(s["id"])] = true
 		if not _mats_by_tex.has(tex):
 			_mats_by_tex[tex] = []
 		_mats_by_tex[tex].append(mat)
@@ -384,14 +390,28 @@ static func light_of(s: Dictionary, t: float, ctx: Dictionary) -> Color:
 	return col
 
 
+## The sectors that can be seen (StoryMap.visible_sectors, deeper than the crowd's): the others are hidden and not lit this frame (their materials keep the last colour,
+## which is what they show the moment they come back into view and are refreshed before the next draw).
+func set_visible_sectors(vis: Dictionary) -> void:
+	_vis = vis
+	for id in _sector_nodes:
+		(_sector_nodes[id]["node"] as MeshInstance3D).visible = vis.is_empty() or vis.has(id)
+
+
 func update(t: float, ctx: Dictionary) -> void:
 	var bpm := float(ctx.get("bpm", 174.0))
 	var beats := t * bpm / 60.0
 	var pulse := pow(1.0 - fposmod(beats, 1.0), 3.0)
 	var sector_cols := {}  # each sector's light once a frame: the things standing in it reuse it
 	for id in _sector_nodes:
+		if not _vis.is_empty() and not _vis.has(id):
+			continue
 		var col := light_of(map.sector(str(id)), t, ctx)
 		sector_cols[id] = col
+		var last: Color = _last_col.get(id, Color(-1, -1, -1))
+		if absf(col.r - last.r) + absf(col.g - last.g) + absf(col.b - last.b) < 0.004 and not _anim_sectors.has(id):
+			continue  # a sector whose light has not changed leaves its materials alone (most of them, most of the time)
+		_last_col[id] = col
 		for m in _sector_nodes[id]["mats"]:
 			(m as StandardMaterial3D).albedo_color = col
 	for an in map.animated:  # lava, reactor glass, window daylight, courtyard bulbs: a scroll, a pulse, a flicker or a texture swap on every surface showing the tile
@@ -408,6 +428,15 @@ func update(t: float, ctx: Dictionary) -> void:
 	for th in _thing_nodes:
 		var t_def: Dictionary = th["thing"]
 		var node: MeshInstance3D = th["node"]
+		if not _vis.is_empty() and not _vis.has(str(t_def["sector"])):
+			if node.visible:
+				node.visible = false
+				th["culled"] = true
+			continue
+		if th.get("culled", false):
+			th["culled"] = false
+			if not t_def.has("piece"):
+				node.visible = true  # only hidden for being out of sight: back (pieces decide below; the show's own switches, like the disco ball, are applied after this)
 		var col: Color = sector_cols.get(str(t_def["sector"]), Color.WHITE)
 		var sc := 1.0
 		var dy := 0.0
@@ -432,6 +461,10 @@ func update(t: float, ctx: Dictionary) -> void:
 				sc = 1.0 + 0.03 * sin(beats * PI * 0.5)
 			"flicker":
 				alpha *= 0.6 + 0.4 * absf(sin(t * 29.0))
+		var key := Vector4(col.r + col.g * 3.0 + col.b * 7.0, sc, dy, alpha)  # unchanged since the last frame (a lamp in a steady room): leave the node alone
+		if key == th.get("key", Vector4.INF):
+			continue
+		th["key"] = key
 		node.scale = Vector3(sc, sc, sc)
 		node.position.y = float(th["base_y"]) + dy
 		(th["mat"] as StandardMaterial3D).albedo_color = Color(col.r, col.g, col.b, alpha)

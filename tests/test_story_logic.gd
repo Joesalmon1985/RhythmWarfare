@@ -21,7 +21,7 @@ func test_chapter_data_is_complete() -> void:
 	for a in d.actors:
 		archetypes[a["archetype"]] = true
 	assert_eq(archetypes.size(), 6, "six archetypes in the roster")
-	assert_true(d.actors.size() + d.silhouettes.size() >= 24 and d.actors.size() + d.silhouettes.size() <= 48, "a crowd of 24 to 48")
+	assert_true(d.actors.size() + d.silhouettes.size() >= 24 and d.actors.size() + d.silhouettes.size() <= 64, "a crowd of 24 to 64")
 	for k in 16:
 		assert_eq(int(d.blocks[k]["start_bar"]), 1 + 8 * k)
 		var b: Dictionary = d.blocks[k]

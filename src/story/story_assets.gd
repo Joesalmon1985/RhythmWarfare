@@ -54,6 +54,73 @@ func rig(archetype: String, variant: String, source := "") -> Dictionary:
 	return r
 
 
+## Pack every dancer part and face of the chapter's rigs into one texture atlas (rig parts are many small SVG textures: drawn separately each one is its own draw call, 40 dancers
+## are some 500 of them a frame; from one atlas the canvas batches them). Call it once before any StoryCharacter is built (the playing scene does; headless tests do not need it).
+## `texture(file)` then hands out AtlasTextures of the shared sheet, so nothing else changes. Deterministic: files are packed in sorted order, shelf by shelf.
+const ATLAS_W := 4096
+const ATLAS_PAD := 2
+
+
+func build_rig_atlas() -> void:
+	if not _atlas_done and not manifest.is_empty() and not OS.has_environment("RW_STORY_NOATLAS"):
+		_atlas_done = true
+		var files: Array = []
+		for aid in manifest.get("archetypes", {}):
+			for vid in manifest["archetypes"][aid].get("variants", {}):
+				var v: Dictionary = manifest["archetypes"][aid]["variants"][vid]
+				for p in v.get("parts", []):
+					if str(p.get("file", "")) not in files:
+						files.append(str(p["file"]))
+				for k in v.get("faces", {}):
+					if str(v["faces"][k].get("file", "")) not in files:
+						files.append(str(v["faces"][k]["file"]))
+		files.sort()
+		var imgs: Dictionary = {}
+		var x := 0
+		var y := 0
+		var row_h := 0
+		var rects: Dictionary = {}
+		for f in files:
+			var t: Texture2D = texture(f)
+			if t == null:
+				continue
+			var im := t.get_image()
+			if im == null:
+				continue
+			if im.is_compressed():
+				im.decompress()
+			im.convert(Image.FORMAT_RGBA8)
+			if x + im.get_width() + ATLAS_PAD > ATLAS_W:
+				x = 0
+				y += row_h + ATLAS_PAD
+				row_h = 0
+			imgs[f] = im
+			rects[f] = Rect2i(x, y, im.get_width(), im.get_height())
+			x += im.get_width() + ATLAS_PAD
+			row_h = maxi(row_h, im.get_height())
+		var h := 1
+		while h < y + row_h:
+			h *= 2
+		if h > 8192 or imgs.is_empty():
+			return
+		var atlas := Image.create(ATLAS_W, h, false, Image.FORMAT_RGBA8)
+		for f in imgs:
+			atlas.blit_rect(imgs[f], Rect2i(Vector2i.ZERO, imgs[f].get_size()), (rects[f] as Rect2i).position)
+		var tex := ImageTexture.create_from_image(atlas)
+		for f in rects:
+			var at := AtlasTexture.new()
+			at.atlas = tex
+			at.region = Rect2(rects[f])
+			_tex[f] = at
+		atlas_size = Vector2i(ATLAS_W, h)
+	if extra != null:
+		extra.build_rig_atlas()
+
+
+var _atlas_done := false
+var atlas_size := Vector2i.ZERO
+
+
 func ok() -> bool:
 	return not manifest.is_empty()
 

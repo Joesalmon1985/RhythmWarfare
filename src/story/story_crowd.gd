@@ -34,8 +34,8 @@ var glow_colors: Array = [Color(0.4, 1.0, 0.95), Color(1.0, 0.4, 0.85), Color(1.
 const HERO_M := 1.7  # a dancer is this tall in the world
 const NEAR_FADE := Vector2(1.0, 1.8)  # dancers closer than this (m) to the eye fade out so a passer-by never fills the screen
 const OPEN_GAP := 0.42
-const POSE_RATE := 45.0
-const POSE_RATE_FAR := 24.0  # dancers further than FAR_M animate at this rate: they are a few pixels tall
+const POSE_RATE := 30.0
+const POSE_RATE_FAR := 15.0  # dancers further than FAR_M animate at this rate: they are a few pixels tall
 const FAR_M := 9.0
 var map: StoryMap
 var world_mode := false
@@ -294,6 +294,9 @@ func update(t: float, p_energy: float) -> void:
 	if _room_visible:
 		_update_props()
 		_sort_world()
+	else:
+		sort_items = []
+		_drawn_ids = []
 	queue_redraw()
 
 
@@ -456,32 +459,38 @@ func _update_props() -> void:
 		p2.queue_redraw()
 
 
-## Painter's order, far to near: dancers, silhouettes and occluders together by distance along the view axis (ties by name so equal depths never swap).
+## Painter's order, far to near: the visible dancers, silhouettes and occluders of this crowd with their depth keys (millimetres from the eye, inverted so far sorts first).
+## The stage merges every crowd's items and gives each node a z_index by that one order, so a dancer in the next room stands behind or in front of this room's by true
+## distance, whichever crowd it belongs to (a doorway no longer mis-orders them).
+var sort_items: Array = []  # [[key: int, node: CanvasItem], ...] sorted far to near, visible nodes only
+var _drawn_ids: Array = []
+
+
 func _sort_world() -> void:
+	sort_items = []
+	var keyed: Array = []
 	var nodes: Array = []
-	var keys: Array = []  # (4000 m - depth) in millimetres shifted left 10 bits, plus the item's index: a plain integer sort, far first, ties in the fixed index order
 	for id in _order:
-		var a: Dictionary = actors[id]
-		var c: StoryCharacter = a["node"]
-		nodes.append(c)
-		keys.append(((4000000 - int(clampf(float(a.get("depth", 0.0)), 0.0, 3999.0) * 1000.0)) << 10 if c.visible else 0) | (nodes.size() - 1))
+		var c: StoryCharacter = actors[id]["node"]
+		if c.visible:
+			nodes.append(c)
+			keyed.append((4000000 - int(clampf(float(actors[id].get("depth", 0.0)), 0.0, 3999.0) * 1000.0)) << 10 | (nodes.size() - 1))
 	for pn in props:
-		nodes.append(pn)
-		keys.append(((4000000 - int(clampf((pn as StoryCrowdProp).depth, 0.0, 3999.0) * 1000.0)) << 10 if pn.visible else 0) | (nodes.size() - 1))
-	keys.sort()
-	for i in keys.size():
-		var n: Node = nodes[int(keys[i]) & 1023]
-		if get_child(i) != n:
-			move_child(n, i)
+		if pn.visible:
+			nodes.append(pn)
+			keyed.append((4000000 - int(clampf((pn as StoryCrowdProp).depth, 0.0, 3999.0) * 1000.0)) << 10 | (nodes.size() - 1))
+	keyed.sort()
+	_drawn_ids = []
+	for k in keyed:
+		var n: Node = nodes[int(k) & 1023]
+		sort_items.append([int(k) >> 10, n])
+		if n is StoryCharacter:
+			_drawn_ids.append((n as StoryCharacter).actor_id)
 
 
 ## The ids of the dancers drawn this frame, far to near (what the tests check).
 func drawn_order() -> Array:
-	var out: Array = []
-	for ch in get_children():
-		if ch is StoryCharacter and (ch as StoryCharacter).visible:
-			out.append((ch as StoryCharacter).actor_id)
-	return out
+	return _drawn_ids
 
 
 ## Dancing happens on dance floors, stages, steps and booths; everywhere else people do what the sector's `activities` say for the band.
