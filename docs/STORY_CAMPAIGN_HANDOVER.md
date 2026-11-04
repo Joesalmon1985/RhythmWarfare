@@ -103,6 +103,9 @@ Chapter files hold thresholds, actors, groups, palettes, blocks, decisions and e
 
 ## Art pipeline
 
+The people (wardrobe, pixel rig, sprite sheets: `tools/story/art/wardrobe.py`, `people.py`, `people_sheets.py`, `tools/story/dump_poses.gd`, `build_assets.py <chapter> people`) and
+the procedural room textures (`tools/story/art/pixeltex.py`, `tex_<chapter>.py`) are described in docs/STORY_ART.md ("The people" and "The pixel look of the rooms").
+
 `tools/story/art/*.py` write the SVG art; `tools/story/bake_tiles.gd` bakes each chapter's world tiles from those SVGs (recipes `_<chapter>()`; metres per repeat in `tools/story/art/tiles.py`); `build_assets.py` runs both and strips the
 manifest fields only the old 2D rooms read. After new tiles: `godot --headless --path . --import`. Provenance and how to edit: `docs/STORY_ART.md`. No downloaded art, no new audio.
 
@@ -131,9 +134,25 @@ about a dense run (default and hard loadouts). The Python `mido` content-test fa
   was bought back by: dancer parts packed into one atlas so the canvas batches them (about 1.3 ms), hidden sectors not drawn or lit, unchanged light left alone, a 30 Hz pose rate, the cached static deck layers
   (together about 1.5 to 2 ms; the deck cache itself measured under 0.3 ms: the pad boxes dominate, anti-aliasing them off would save 0.4 more). What is left is the pad strip and notes (5.9 ms of UI that has never
   been optimised), the crowd's draw calls (the sprite-sheet bake planned for the polish session removes most of them) and the engine floor. Resolution barely matters (360 vs 270: 0 to 0.6 ms).
+- Polish (360 lines, same method and machine). "Rig" is the WP9 state with `RW_STORY_RIG=1` (the old figures), measured the same day; "sheets" the baked people before the
+  rooms were dressed; "final" everything (dressed rooms, sheets, dither on). Mean ms (p95):
+
+| Chapter | rig | sheets | final |
+| --- | --- | --- | --- |
+| Night One | 15.5 (16.7) | 15.3 (16.7) | 14.9 (16.5) |
+| The Mothership | 15.3 (19.3) | 15.3 (17.6) | 14.8 (17.5) |
+| The Underworld | 18.1 (20.8) | 18.3 (21.5) | 18.1 (21.3) |
+| The Hospital | 17.8 (23.8) | 17.5 (21.7) | 17.0 (21.7) |
+| The Ward | 17.4 (22.2) | 17.5 (23.0) | 16.9 (22.8) |
+
+  The target (no chapter above 16 ms mean and 22 ms p95) is met by Night One and the Mothership, not by the Underworld, the Hospital and the Ward. The sheets cut the
+  crowd's drawing to about 1.5 to 2 ms (hiding the crowd saves 2.0 ms in the Hospital, 1.5 in the Underworld), but the crowd's per-person scripts (mood, activity,
+  placement, sorting: about 4 ms in the Hospital, measured with a headless benchmark at about 1.5 ms per 43 actors) were not touched by the bake and are now the larger
+  share; the dressed world costs about 1.9 ms in the Underworld, the dither nothing measurable. The levers left: the crowd's per-person update (skip the mood and
+  activity for people whose state cannot change between frames), and the pad strip and notes (about 6 ms, never optimised).
 - Tests: the Godot suite (`tools/test.sh`) is 39,660 checks, 0 failures (29,001 at the end of WP8; the matrix alone is about 7,600, `test_story_activities` adds 6,700); the three remaining Python errors are the known `mido` content tests.
 - Maps: see `content/story/maps/<chapter>.json`; every chapter now has 22 to 29 sectors, 12 to 15 lights and 13 to 15 characters with a part to play (homes: about 115 per chapter).
-- Walk-through (`tools/story/walk_campaign.sh`, every path OK; each line is one result scene):
+- Walk-through (`tools/story/walk_campaign.sh`, every path OK, rerun after the polish with identical results; each line is one result scene):
 
 ```
 # path perfect
@@ -188,14 +207,46 @@ result chapter=hospital policy=perfect ending=family_celebration route=end inter
 menu unlocked=night_one,underworld,hospital
 ```
 
+## Polish (Opus session, after WP9): the look
+
+Commits "Story Campaign 2.5D polish: figures", "... pixel look infrastructure", "... rooms, Night One / the Ward / the Hospital / the Underworld / the Mothership", "... verification".
+
+- **Figures** (art direction 2.E): every actor (43 to 118 per chapter, 511 in all) is an individual dressed by a seeded wardrobe in a chapter set, drawn by a pixel rig at
+  the sheet size (proportions near 1:7, three shading steps with dither, a one-pixel darker edge of the local colour, prints, stripes, checks, hair in strands, props in the
+  hand) and baked to an indexed sprite sheet: every state the actor can show, from the live rig's poses (`StoryCharacter.SHEET_CYCLES`), in three facings and three levels
+  of detail. `StoryPeople` loads them, `StoryCharacter` draws one frame with the live bounce, `StoryCrowd` turns people to what they look at (a DJ seen from the booth shows
+  their back), and `story_people.gdshader` lights each person with the light where they stand and fades the back rows into the fog with a rim. `RW_STORY_RIG=1` shows the
+  old rig. Contact sheets `docs/shots/story/figures_<chapter>.jpg`; before/after `figures_front_<room>_before|after.jpg`.
+- **Rooms** (2.D), one subagent per chapter in a worktree, cherry-picked: procedural dithered textures per chapter (`tools/story/art/tex_<chapter>.py`), lights placed for
+  mood, 40 to 100 new props per chapter as billboards (RGBA `thing_*` tiles), skies with moons and trees, a planet drawn as a lit sphere. Night One: brick, trusses,
+  speaker stacks, the decks with a water bottle, pint and ashtray, a back bar of bottles under pendant lamps, a tie-dye chill-out room with sofas and festoon bulbs, a
+  grimy tiled corridor and toilets, graffitied cubicles with cisterns. The Ward: institutional green tile, rust, red wet floor tiles, tubes (some flickering, one dead), a
+  single warm office, lined-up chairs, rotary phone, radiator, fan, clocks, jars, a surgical lamp over a steel table, a padded quiet room, barred moonlit windows; the
+  pastel garlands removed (`palette_weight` 0). The Hospital: night blue, ceiling tiles and vents, blinds and a moon with trees, a heart monitor with a green trace by
+  the bed, beds with rails, a warm nurses' station and corridor spill, night lights, lit vending machines, a legible quiet corridor with a lit exit. The Underworld:
+  skull walls, braziers, scorched brick, obsidian court with skulls on the columns and a carpet up the throne stair, a bone bridge over lava that reads as lava (dark crust,
+  bright seams, scrolling), the furnace with fire and tool racks, a cold-lit cage. The Mothership: hull plates, conduits, hex deck, consoles and the captain's chair, the
+  planet as a lit banded sphere with a ring, specimen tubes and a probe arm in the medical bay, a hazard-framed airlock door with pressure suits and a red beacon.
+  Before/after contact sheets `docs/shots/story/rooms_<chapter>_before|after.jpg`; the regenerated per-place sheets are `contact_<chapter>.jpg`.
+- **Fun beats made visible** (homes moved inside their own sectors only): the Underworld's bouncer and queue now stand along the arena's left wall by a ticket booth (seen
+  from `arena_edge`, bars 13 to 25); the Ward's chef serves in full view of the courtyard stage; the Hospital's nurse checks the monitor by the bed (she was inside the near
+  fade); the Mothership's alien DJ, headphones across its face, is lit by its own spot and seen above the crowd on the opening glance up. `capture.sh` act06 and act08 now
+  frame them.
+- **Pixel look**: an optional ordered dither and palette clamp in the post shader ("Story pixel dithering" setting, on by default, off with reduced effects); the LED floor
+  is fainter outside the club (`palette_weight` 0 now gives 0.12, was 0.35).
+- **Rough edges left**: the bar counter in Night One (an occluder only draws for a room with its own crowd, and the bar's people belong to the floor's crowd); light
+  shapes through blinds are coarser than the reference (lights bake per 1.2 m cell); the exam table cannot carry the dancer; some props sit behind people in the standard
+  shots; the heart monitor's trace pulses with a glow rather than animating (`animated` acts on walls only); the Mothership's DJ is still covered by the crowd from the
+  default deck view at bar 60.
+
 ## Known limitations
 
 - The Python content tests need the `mido` module, so `tools/test.sh` exits non-zero here (unrelated; `tools/content` is untouched).
 - Not run on Android or a phone; no export smoke test; the touch drag for free look is untested on a device. Frame rate was measured only on this laptop (above).
 - The cutscenes are silent and still 2D over the 3D tableau (the owner may want them restaged: plan 9.6). No crowd or cheer audio exists.
-- Dancers are still the 2D rig projected into the world (no sprite sheets): near dancers are large, and a dancer passing the eye fades out.
-- Art-direction sections 2.A (layouts), 2.B (movement) and 2.C (activities) and the data hook of 2.D (lights) are built (WP9). Sections 2.D's look (textures, haze, windows with skies, far crowd silhouettes) and
-  2.E (the figures: wardrobe, sprite sheets, depth) are the polish session's. The activity props are plain shapes; the cubicles and the Mothership airlock are still bare boxes; the Ward day room and corridor stay
-  pastel-lit by the beams and the room palette (the LED floor is dimmed outside the club, nothing else is).
+- Figures are baked pixel sprite sheets now (polish, below), but a sheet is drawn at one of three sizes and scaled to the distance, so a front-row figure at 2 to 3 m is
+  shown at about twice its sheet size (chunky pixels, as in the reference); a dancer passing the eye still fades out. The sit, lie and rock poses are baked as
+  their own shapes (seat, bed sheet, knees up); a figure "on" a raised exam table stands behind it (figures are drawn over the 3D world).
+- The art direction is built through the polish (2.D textures, light, props, windows and skies; 2.E figures). Remaining rough edges are listed under "Polish" below.
 - Light bleeds through walls (a light reaches its own sector and its portal neighbours, there is no occlusion); `sectors` limits it.
 - A bad-branch player has no walk back from the Underworld cage or the Ward quiet room (the win-back beat comes four bars after the sick beat there).

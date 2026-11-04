@@ -188,7 +188,7 @@ func _build_tiles() -> void:
 	_tile_tex = ImageTexture.create_from_image(_tile_img)
 	_tile_mat = _add_mat(_tile_tex)
 	_tile_mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	_tile_mat.albedo_color = Color(1, 1, 1, lerpf(0.35, 1.0, stage.map.palette_weight if stage.map != null else 1.0))  # a ward's or a lab's floor is not a club's: the LED tiles are dimmer where the palette is
+	_tile_mat.albedo_color = Color(1, 1, 1, lerpf(0.12, 1.0, stage.map.palette_weight if stage.map != null else 1.0))  # a ward's or a lab's floor is not a club's: the LED tiles are dimmer where the palette is
 	_tiles = _quad(Vector2(_tile_w, _tile_h), _tile_mat)
 	_tiles.rotation_degrees.x = -90.0
 	_tiles.position = Vector3(_tile_origin.x + _tile_w * 0.5, _floor_y + 0.015, _tile_origin.y + _tile_h * 0.5)

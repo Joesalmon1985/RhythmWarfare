@@ -448,3 +448,24 @@ For the Opus polish agent (docs/STORY_25D_ART_DIRECTION.md section 4):
   `godot --headless --path . --import`; `thing_chair`, `thing_bench`, `thing_column`, `thing_anvil` were added in WP9 as examples. Review with `bash tools/story/rooms.sh` (one shot per place, contact sheets
   `docs/shots/story/contact_<chapter>.jpg`) and the `act*` and `look*` shots of `capture.sh`.
 - Keep the frame budget in mind: `tools/story/profile_all.sh` and the `RW_STORY_HIDE` split in the handover show where the time goes; the crowd's draw calls and the pad strip are the big ones.
+
+### 13.5 Polish (Opus session: art direction section 4, figures then rooms), branch `feature/story-25d`
+
+Commits (in order): "polish: figures", "polish: pixel look infrastructure", "polish: rooms, Night One", "... the Ward", "... the Hospital", "... the Underworld",
+"... the Mothership" (each built by a subagent in a worktree and cherry-picked), "polish: verification". Details: the handover's "Polish" section, docs/STORY_ART.md
+"The people" and "The pixel look of the rooms".
+
+- Figures: `tools/story/art/wardrobe.py` (who wears what, by seed and chapter, the room rule), `people.py` (the pixel rig), `people_sheets.py` (the bake),
+  `tools/story/dump_poses.gd` (the poses from `StoryCharacter.sample`; `StoryCharacter.SHEET_CYCLES` is the contract), `src/story/story_people.gd` and
+  `story_people.gdshader` (runtime), `StoryCharacter.attach_sheet` / `sheet_pick` / `sheet_frame` / `_draw_sheet`, `StoryCrowd._sheet_look` (facing, shader inputs,
+  light), `StoryWorld.figure_light`. The live rig stays (fallback, `RW_STORY_RIG=1`, and the bake's pose source). `check_assets.py` checks the sheets.
+  Decisions: sheets are indexed (8-bit, a palette row per actor) because 511 individuals in RGBA would need about 1 GB; the pages are converted to R8 at load (an
+  imported L8 texture does not reach a compatibility-renderer shader as is); the actor's row, fog and brightness travel in `self_modulate` and are read in `vertex()`
+  (the fragment's COLOR already carries the texture); figures set nearest filtering themselves (the low-res viewport's default is linear, which blended indices into
+  coloured fringes); the dance styles of sheet-drawn people come from the sheet (`style` = seed % 5) so the bake knows them.
+- Rooms: per chapter `tools/story/art/tex_<chapter>.py` on `pixeltex.py`; RGBA props are written by those modules directly into `assets/story/<chapter>/textures/`
+  and listed in `tiles.SPECS`; maps gained lights, props, tints and a few homes moved within their sectors so the fun beats are seen from the rail. Sector graphs,
+  waypoints, journeys, activities and tests are unchanged.
+- Worktree note for whoever repeats this: `isolation: worktree` agents started from `main`, not the current branch; each reset to the story commit first. Keep
+  subagents' helper scripts out of the shared scratchpad (one agent ran another's map script by accident; no damage).
+- Numbers: the handover's "Numbers" (polish table). Tests: the Godot suite 39,660 checks, 0 failures.
