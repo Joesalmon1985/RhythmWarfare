@@ -1,0 +1,7996 @@
+{
+"schema": 1,
+"source": "owner's OCR pack deathtrap_ff (read-only), the verified backbone (content/trial/quest_map.json) and the spine in tools/trial/build_book.py",
+"passages": {
+"1": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_entrance",
+"kind": "normal",
+"tier": 1,
+"depth": 0,
+"default": 0,
+"links": [
+{
+"to": 270,
+"src": "verified",
+"book": "open named box"
+},
+{
+"to": 66,
+"src": "verified",
+"book": "continue north"
+}
+]
+},
+"2": {
+"status": "OCR_GRAPH",
+"zone": "dd_galleries",
+"kind": "death",
+"tier": 1,
+"depth": 3,
+"default": 0,
+"links": []
+},
+"3": {
+"status": "OCR_GRAPH",
+"zone": "dd_igbut",
+"kind": "death",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": []
+},
+"4": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "death",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": []
+},
+"5": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 1,
+"links": [
+{
+"to": 185,
+"src": "pack"
+},
+{
+"to": 395,
+"src": "pack"
+},
+{
+"to": 146,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+],
+"luck": {
+"pass": 185,
+"fail": 395
+}
+},
+"6": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 364,
+"src": "pack"
+}
+],
+"enemy": {
+"id": "manticore",
+"name": "Manticore",
+"skill": 11
+},
+"win_to": 364
+},
+"7": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "death",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": []
+},
+"8": {
+"status": "OCR_GRAPH",
+"zone": "dd_galleries",
+"kind": "death",
+"tier": 1,
+"depth": 4,
+"default": 0,
+"links": []
+},
+"9": {
+"status": "OCR_GRAPH",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 0,
+"links": [
+{
+"to": 375,
+"src": "pack"
+},
+{
+"to": 286,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"10": {
+"status": "OCR_GRAPH",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 4,
+"links": [
+{
+"to": 86,
+"src": "pack"
+},
+{
+"to": 276,
+"src": "pack"
+},
+{
+"to": 140,
+"src": "pack"
+},
+{
+"to": 46,
+"src": "pack"
+},
+{
+"to": 195,
+"src": "pack"
+},
+{
+"to": 250,
+"src": "pack"
+},
+{
+"to": 157,
+"src": "pack"
+},
+{
+"to": 310,
+"src": "pack"
+},
+{
+"to": 74,
+"src": "pack"
+}
+]
+},
+"11": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 162,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"12": {
+"status": "BRIDGED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 7,
+"default": 0,
+"links": [
+{
+"to": 293,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"13": {
+"status": "BRIDGED",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"14": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"15": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 364,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 103,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"16": {
+"status": "OCR_GRAPH",
+"zone": "dd_igbut",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 4,
+"links": [
+{
+"to": 392,
+"src": "pack"
+},
+{
+"to": 287,
+"src": "pack"
+},
+{
+"to": 249,
+"src": "pack"
+},
+{
+"to": 202,
+"src": "pack"
+},
+{
+"to": 241,
+"src": "bridge",
+"why": "the right order (ADAPTED)"
+}
+]
+},
+"17": {
+"status": "OCR_GRAPH",
+"zone": "dd_grub",
+"kind": "death",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": []
+},
+"18": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"19": {
+"status": "BRIDGED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 170,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"20": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 1,
+"links": [
+{
+"to": 279,
+"src": "pack"
+},
+{
+"to": 97,
+"src": "pack"
+},
+{
+"to": 116,
+"src": "pack"
+},
+{
+"to": 63,
+"src": "pack"
+},
+{
+"to": 184,
+"src": "pack"
+},
+{
+"to": 311,
+"src": "pack"
+}
+]
+},
+"21": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 33,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"22": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_pit",
+"kind": "normal",
+"tier": 1,
+"depth": 5,
+"default": 0,
+"links": [
+{
+"to": 63,
+"src": "verified",
+"book": "accept Barbarian lowering player"
+},
+{
+"to": 184,
+"src": "verified",
+"book": "offer to lower Barbarian"
+},
+{
+"to": 311,
+"src": "verified",
+"book": "jump pit together"
+}
+]
+},
+"23": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 154,
+"src": "pack"
+},
+{
+"to": 147,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"24": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 188,
+"src": "pack"
+},
+{
+"to": 197,
+"src": "pack"
+}
+]
+},
+"25": {
+"status": "BRIDGED",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 0,
+"links": [
+{
+"to": 169,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"26": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 1,
+"links": [
+{
+"to": 78,
+"src": "pack"
+},
+{
+"to": 213,
+"src": "pack"
+},
+{
+"to": 265,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"27": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 57,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"28": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"29": {
+"status": "OCR_GRAPH",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 6,
+"default": 0,
+"links": [
+{
+"to": 90,
+"src": "pack"
+}
+]
+},
+"30": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 160,
+"src": "pack"
+},
+{
+"to": 319,
+"src": "pack"
+},
+{
+"to": 376,
+"src": "pack"
+},
+{
+"to": 17,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+],
+"luck": {
+"pass": null,
+"fail": 319
+}
+},
+"31": {
+"status": "BRIDGED",
+"zone": "dd_igbut",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 62,
+"src": "bridge",
+"why": "the gem check passes: the lock (verified 62)"
+}
+]
+},
+"32": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 37,
+"src": "pack"
+},
+{
+"to": 292,
+"src": "pack"
+},
+{
+"to": 82,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"33": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 104,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"34": {
+"status": "OCR_GRAPH",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 1,
+"links": [
+{
+"to": 333,
+"src": "pack"
+},
+{
+"to": 281,
+"src": "bridge",
+"why": "to the grotto (legacy dd_idol to dd_grotto)"
+}
+]
+},
+"35": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 340,
+"src": "pack"
+},
+{
+"to": 7,
+"src": "pack"
+},
+{
+"to": 193,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"36": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 79,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"37": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": [
+{
+"to": 351,
+"src": "verified",
+"book": "climb idol"
+},
+{
+"to": 239,
+"src": "verified",
+"book": "continue through cavern"
+}
+]
+},
+"38": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"39": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 1,
+"links": [
+{
+"to": 111,
+"src": "pack"
+},
+{
+"to": 252,
+"src": "pack"
+},
+{
+"to": 58,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+],
+"enemy": {
+"id": "giant_fly",
+"name": "Giant Fly",
+"skill": 7
+},
+"win_to": 111
+},
+"40": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 1,
+"links": [
+{
+"to": 163,
+"src": "pack"
+},
+{
+"to": 98,
+"src": "pack"
+},
+{
+"to": 125,
+"src": "pack"
+}
+],
+"enemy": {
+"id": "creature",
+"name": "Creature",
+"skill": 8
+},
+"win_to": 163
+},
+"41": {
+"status": "BRIDGED",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 81,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"42": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 55,
+"src": "pack"
+},
+{
+"to": 264,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"43": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 200,
+"src": "pack"
+},
+{
+"to": 316,
+"src": "pack"
+},
+{
+"to": 358,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"44": {
+"status": "OCR_GRAPH",
+"zone": "dd_galleries",
+"kind": "normal",
+"tier": 1,
+"depth": 4,
+"default": 0,
+"links": [
+{
+"to": 312,
+"src": "pack"
+},
+{
+"to": 59,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"45": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"46": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 239,
+"src": "pack"
+},
+{
+"to": 312,
+"src": "pack"
+},
+{
+"to": 117,
+"src": "pack"
+}
+]
+},
+"47": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 10,
+"src": "pack"
+},
+{
+"to": 335,
+"src": "pack"
+},
+{
+"to": 260,
+"src": "pack"
+},
+{
+"to": 356,
+"src": "pack"
+},
+{
+"to": 160,
+"src": "pack"
+},
+{
+"to": 155,
+"src": "pack"
+},
+{
+"to": 224,
+"src": "pack"
+},
+{
+"to": 257,
+"src": "pack"
+}
+],
+"enemy": {
+"id": "orc",
+"name": "Orc",
+"skill": 8
+},
+"win_to": 257,
+"luck": {
+"pass": 260,
+"fail": 356
+}
+},
+"48": {
+"status": "BRIDGED",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"49": {
+"status": "OCR_GRAPH",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 1,
+"links": [
+{
+"to": 205,
+"src": "pack"
+},
+{
+"to": 241,
+"src": "pack"
+},
+{
+"to": 221,
+"src": "pack"
+},
+{
+"to": 9,
+"src": "pack"
+},
+{
+"to": 138,
+"src": "pack"
+},
+{
+"to": 369,
+"src": "pack"
+},
+{
+"to": 370,
+"src": "pack"
+},
+{
+"to": 348,
+"src": "pack"
+}
+],
+"enemy": {
+"id": "bloodbeast",
+"name": "Bloodbeast",
+"skill": 8
+},
+"win_to": 9
+},
+"50": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"51": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 173,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"52": {
+"status": "BRIDGED",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": [
+{
+"to": 169,
+"src": "bridge",
+"why": "the lower route ends at the Cave Trolls (verified 169)"
+}
+]
+},
+"53": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 364,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 148,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"54": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 2,
+"links": [
+{
+"to": 239,
+"src": "pack"
+},
+{
+"to": 143,
+"src": "pack"
+},
+{
+"to": 40,
+"src": "pack"
+},
+{
+"to": 347,
+"src": "pack"
+},
+{
+"to": 69,
+"src": "pack"
+},
+{
+"to": 139,
+"src": "pack"
+},
+{
+"to": 35,
+"src": "pack"
+},
+{
+"to": 226,
+"src": "pack"
+},
+{
+"to": 349,
+"src": "pack"
+},
+{
+"to": 351,
+"src": "pack"
+},
+{
+"to": 167,
+"src": "pack"
+}
+]
+},
+"55": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 364,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 243,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"56": {
+"status": "OCR_GRAPH",
+"zone": "dd_fork",
+"kind": "normal",
+"tier": 1,
+"depth": 2,
+"default": 2,
+"links": [
+{
+"to": 171,
+"src": "pack"
+},
+{
+"to": 215,
+"src": "pack"
+},
+{
+"to": 198,
+"src": "pack"
+},
+{
+"to": 2,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"57": {
+"status": "BRIDGED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 7,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"58": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 80,
+"src": "pack"
+}
+]
+},
+"59": {
+"status": "OCR_GRAPH",
+"zone": "dd_pit",
+"kind": "normal",
+"tier": 1,
+"depth": 5,
+"default": 0,
+"links": [
+{
+"to": 283,
+"src": "pack"
+},
+{
+"to": 129,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"60": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 1,
+"links": [
+{
+"to": 179,
+"src": "verified",
+"book": "attack Dwarf with Throm"
+},
+{
+"to": 365,
+"src": "verified",
+"book": "persuade Throm to accept test"
+}
+]
+},
+"61": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"62": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_igbut",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 16,
+"src": "verified",
+"book": "six possible gem permutations"
+},
+{
+"to": 392,
+"src": "verified",
+"book": "six possible gem permutations"
+},
+{
+"to": 177,
+"src": "verified",
+"book": "six possible gem permutations"
+},
+{
+"to": 287,
+"src": "verified",
+"book": "six possible gem permutations"
+},
+{
+"to": 132,
+"src": "verified",
+"book": "six possible gem permutations"
+},
+{
+"to": 249,
+"src": "verified",
+"book": "six possible gem permutations"
+}
+]
+},
+"63": {
+"status": "OCR_GRAPH",
+"zone": "dd_pit",
+"kind": "normal",
+"tier": 2,
+"depth": 6,
+"default": 0,
+"links": [
+{
+"to": 191,
+"src": "pack"
+},
+{
+"to": 194,
+"src": "bridge",
+"why": "every way through the pit reaches the lower route"
+}
+]
+},
+"64": {
+"status": "OCR_GRAPH",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 1,
+"links": [
+{
+"to": 115,
+"src": "pack"
+},
+{
+"to": 60,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"65": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 4,
+"links": [
+{
+"to": 345,
+"src": "pack"
+},
+{
+"to": 372,
+"src": "pack"
+},
+{
+"to": 178,
+"src": "pack"
+},
+{
+"to": 242,
+"src": "pack"
+},
+{
+"to": 220,
+"src": "pack"
+},
+{
+"to": 210,
+"src": "pack"
+},
+{
+"to": 20,
+"src": "pack"
+},
+{
+"to": 96,
+"src": "pack"
+},
+{
+"to": 269,
+"src": "bridge",
+"why": "the false diamond fails: on to the true one (verified 269)"
+}
+],
+"enemy": {
+"id": "poison_ivy",
+"name": "Poison Ivy",
+"skill": 8
+},
+"win_to": 20
+},
+"66": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_fork",
+"kind": "normal",
+"tier": 1,
+"depth": 1,
+"default": 1,
+"links": [
+{
+"to": 293,
+"src": "verified",
+"book": "west"
+},
+{
+"to": 119,
+"src": "verified",
+"book": "east"
+}
+]
+},
+"67": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 46,
+"src": "pack"
+},
+{
+"to": 219,
+"src": "pack"
+},
+{
+"to": 107,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"68": {
+"status": "OCR_GRAPH",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 1,
+"links": [
+{
+"to": 212,
+"src": "pack"
+},
+{
+"to": 221,
+"src": "pack"
+},
+{
+"to": 359,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"69": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 305,
+"src": "pack"
+},
+{
+"to": 128,
+"src": "pack"
+},
+{
+"to": 126,
+"src": "pack"
+},
+{
+"to": 18,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"70": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 63,
+"src": "pack"
+}
+]
+},
+"71": {
+"status": "BRIDGED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 7,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 267,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"72": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 85,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"73": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 150,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"74": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 1,
+"links": [
+{
+"to": 255,
+"src": "pack"
+},
+{
+"to": 300,
+"src": "pack"
+},
+{
+"to": 327,
+"src": "pack"
+},
+{
+"to": 52,
+"src": "pack"
+}
+]
+},
+"75": {
+"status": "OCR_GRAPH",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 159,
+"src": "pack"
+},
+{
+"to": 174,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"76": {
+"status": "BRIDGED",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"77": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 400,
+"src": "pack"
+},
+{
+"to": 30,
+"src": "pack"
+},
+{
+"to": 142,
+"src": "pack"
+},
+{
+"to": 175,
+"src": "pack"
+},
+{
+"to": 315,
+"src": "pack"
+},
+{
+"to": 70,
+"src": "pack"
+},
+{
+"to": 1,
+"src": "pack"
+},
+{
+"to": 55,
+"src": "pack"
+},
+{
+"to": 202,
+"src": "pack"
+},
+{
+"to": 390,
+"src": "pack"
+},
+{
+"to": 74,
+"src": "pack"
+}
+],
+"enemy": {
+"id": "creature",
+"name": "Creature",
+"skill": 8
+},
+"win_to": 175,
+"luck": {
+"pass": null,
+"fail": 1
+}
+},
+"78": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 22,
+"src": "pack"
+},
+{
+"to": 130,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"79": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 106,
+"src": "pack"
+},
+{
+"to": 383,
+"src": "pack"
+},
+{
+"to": 313,
+"src": "pack"
+},
+{
+"to": 108,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+],
+"luck": {
+"pass": 106,
+"fail": null
+}
+},
+"80": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 244,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"81": {
+"status": "OCR_GRAPH",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 19,
+"default": 1,
+"links": [
+{
+"to": 307,
+"src": "pack"
+},
+{
+"to": 263,
+"src": "pack"
+},
+{
+"to": 136,
+"src": "pack"
+}
+]
+},
+"82": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 109,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"83": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 32,
+"src": "pack"
+}
+]
+},
+"84": {
+"status": "OCR_GRAPH",
+"zone": "dd_trialmaster",
+"kind": "death",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": []
+},
+"85": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 67,
+"src": "pack"
+}
+]
+},
+"86": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"87": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 381,
+"src": "pack"
+},
+{
+"to": 151,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"88": {
+"status": "OCR_GRAPH",
+"zone": "dd_pit",
+"kind": "normal",
+"tier": 1,
+"depth": 5,
+"default": 1,
+"links": [
+{
+"to": 343,
+"src": "pack"
+},
+{
+"to": 258,
+"src": "pack"
+}
+]
+},
+"89": {
+"status": "OCR_GRAPH",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 54,
+"src": "pack"
+},
+{
+"to": 26,
+"src": "pack"
+},
+{
+"to": 257,
+"src": "pack"
+},
+{
+"to": 281,
+"src": "bridge",
+"why": "same"
+}
+],
+"enemy": {
+"id": "orc",
+"name": "Orc",
+"skill": 8
+},
+"win_to": 257
+},
+"90": {
+"status": "OCR_GRAPH",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 7,
+"default": 0,
+"links": [
+{
+"to": 172,
+"src": "pack"
+},
+{
+"to": 357,
+"src": "pack"
+},
+{
+"to": 19,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"91": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 360,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"92": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 2,
+"links": [
+{
+"to": 2,
+"src": "pack"
+},
+{
+"to": 268,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+},
+{
+"to": 269,
+"src": "bridge",
+"why": "no way on from here"
+}
+]
+},
+"93": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 284,
+"src": "pack"
+},
+{
+"to": 245,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"94": {
+"status": "OCR_GRAPH",
+"zone": "dd_galleries",
+"kind": "normal",
+"tier": 1,
+"depth": 4,
+"default": 0,
+"links": [
+{
+"to": 124,
+"src": "pack"
+}
+]
+},
+"95": {
+"status": "OCR_GRAPH",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 7,
+"default": 1,
+"links": [
+{
+"to": 248,
+"src": "pack"
+},
+{
+"to": 37,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"96": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 269,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 36,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"97": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 269,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 314,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"98": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 105,
+"src": "pack"
+},
+{
+"to": 235,
+"src": "pack"
+}
+],
+"luck": {
+"pass": 105,
+"fail": null
+}
+},
+"99": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 266,
+"src": "pack"
+},
+{
+"to": 305,
+"src": "pack"
+},
+{
+"to": 87,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"100": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 1,
+"links": [
+{
+"to": 87,
+"src": "pack"
+},
+{
+"to": 217,
+"src": "pack"
+}
+]
+},
+"101": {
+"status": "BRIDGED",
+"zone": "dd_galleries",
+"kind": "normal",
+"tier": 1,
+"depth": 4,
+"default": 0,
+"links": [
+{
+"to": 293,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"102": {
+"status": "BRIDGED",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"103": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"104": {
+"status": "OCR_GRAPH",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 134,
+"src": "pack"
+},
+{
+"to": 246,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"105": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 4,
+"links": [
+{
+"to": 126,
+"src": "pack"
+},
+{
+"to": 188,
+"src": "pack"
+},
+{
+"to": 133,
+"src": "pack"
+},
+{
+"to": 251,
+"src": "pack"
+},
+{
+"to": 77,
+"src": "pack"
+},
+{
+"to": 253,
+"src": "pack"
+}
+]
+},
+"106": {
+"status": "BRIDGED",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"107": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 263,
+"src": "pack"
+},
+{
+"to": 315,
+"src": "pack"
+}
+]
+},
+"108": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 3,
+"links": [
+{
+"to": 394,
+"src": "pack"
+},
+{
+"to": 59,
+"src": "pack"
+},
+{
+"to": 14,
+"src": "pack"
+},
+{
+"to": 43,
+"src": "pack"
+},
+{
+"to": 24,
+"src": "pack"
+},
+{
+"to": 223,
+"src": "pack"
+}
+]
+},
+"109": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 153,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"110": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 364,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"111": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 262,
+"src": "pack"
+},
+{
+"to": 356,
+"src": "pack"
+},
+{
+"to": 371,
+"src": "pack"
+},
+{
+"to": 336,
+"src": "pack"
+}
+]
+},
+"112": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 298,
+"src": "pack"
+},
+{
+"to": 295,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"113": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"114": {
+"status": "BRIDGED",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 19,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 201,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"115": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 221,
+"src": "pack"
+},
+{
+"to": 135,
+"src": "pack"
+},
+{
+"to": 4,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"116": {
+"status": "BRIDGED",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 269,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"117": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 112,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"118": {
+"status": "OCR_GRAPH",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 3,
+"links": [
+{
+"to": 56,
+"src": "pack"
+},
+{
+"to": 293,
+"src": "pack"
+},
+{
+"to": 26,
+"src": "pack"
+},
+{
+"to": 354,
+"src": "pack"
+},
+{
+"to": 176,
+"src": "pack"
+},
+{
+"to": 384,
+"src": "pack"
+}
+]
+},
+"119": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_fork",
+"kind": "normal",
+"tier": 1,
+"depth": 2,
+"default": 0,
+"links": [
+{
+"to": 56,
+"src": "verified",
+"book": "continue east"
+},
+{
+"to": 293,
+"src": "verified",
+"book": "return and go west"
+}
+]
+},
+"120": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 162,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"121": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 37,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 113,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"122": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 247,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"123": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"124": {
+"status": "OCR_GRAPH",
+"zone": "dd_pit",
+"kind": "normal",
+"tier": 1,
+"depth": 5,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"125": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 338,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"126": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 21,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"127": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 6,
+"src": "bridge",
+"why": "to the Manticore's gate (legacy dd_troglodytes to dd_manticore)"
+}
+]
+},
+"128": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 125,
+"src": "pack"
+},
+{
+"to": 99,
+"src": "pack"
+}
+]
+},
+"129": {
+"status": "OCR_GRAPH",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 6,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 296,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"130": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"131": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 1,
+"links": [
+{
+"to": 74,
+"src": "pack"
+},
+{
+"to": 392,
+"src": "pack"
+},
+{
+"to": 177,
+"src": "pack"
+},
+{
+"to": 287,
+"src": "pack"
+},
+{
+"to": 132,
+"src": "pack"
+},
+{
+"to": 249,
+"src": "pack"
+},
+{
+"to": 9,
+"src": "pack"
+}
+],
+"enemy": {
+"id": "hobgoblin",
+"name": "Hobgoblin",
+"skill": 8
+},
+"win_to": 9
+},
+"132": {
+"status": "OCR_GRAPH",
+"zone": "dd_igbut",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 1,
+"links": [
+{
+"to": 53,
+"src": "pack"
+},
+{
+"to": 62,
+"src": "bridge",
+"why": "same"
+}
+],
+"luck": {
+"pass": 53,
+"fail": null
+}
+},
+"133": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 38,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"134": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"135": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 60,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"136": {
+"status": "BRIDGED",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 20,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 114,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"137": {
+"status": "BRIDGED",
+"zone": "dd_galleries",
+"kind": "normal",
+"tier": 1,
+"depth": 3,
+"default": 0,
+"links": [
+{
+"to": 154,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 227,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"138": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": [
+{
+"to": 397,
+"src": "verified",
+"book": "drink"
+},
+{
+"to": 25,
+"src": "verified",
+"book": "rub on wounds"
+},
+{
+"to": 52,
+"src": "verified",
+"book": "red book"
+},
+{
+"to": 369,
+"src": "verified",
+"book": "continue"
+}
+]
+},
+"139": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 1,
+"links": [
+{
+"to": 303,
+"src": "pack"
+},
+{
+"to": 367,
+"src": "pack"
+},
+{
+"to": 169,
+"src": "pack"
+}
+]
+},
+"140": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 385,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"141": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 203,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"142": {
+"status": "OCR_GRAPH",
+"zone": "dd_galleries",
+"kind": "normal",
+"tier": 1,
+"depth": 4,
+"default": 0,
+"links": [
+{
+"to": 88,
+"src": "pack"
+},
+{
+"to": 66,
+"src": "pack"
+}
+]
+},
+"143": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 317,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"144": {
+"status": "BRIDGED",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 156,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"145": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 297,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"146": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 180,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"147": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "death",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": []
+},
+"148": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 225,
+"src": "pack"
+},
+{
+"to": 339,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"149": {
+"status": "OCR_GRAPH",
+"zone": "dd_pit",
+"kind": "normal",
+"tier": 2,
+"depth": 7,
+"default": 1,
+"links": [
+{
+"to": 159,
+"src": "pack"
+},
+{
+"to": 194,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"150": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 292,
+"src": "pack"
+}
+]
+},
+"151": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 228,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"152": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 37,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 39,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"153": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"154": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_pit",
+"kind": "normal",
+"tier": 1,
+"depth": 4,
+"default": 0,
+"links": [
+{
+"to": 22,
+"src": "verified",
+"book": "continue together"
+}
+]
+},
+"155": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 1,
+"links": [
+{
+"to": 378,
+"src": "pack"
+},
+{
+"to": 322,
+"src": "pack"
+},
+{
+"to": 208,
+"src": "pack"
+},
+{
+"to": 326,
+"src": "pack"
+},
+{
+"to": 310,
+"src": "pack"
+}
+]
+},
+"156": {
+"status": "BRIDGED",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 361,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"157": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"158": {
+"status": "OCR_GRAPH",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 1,
+"links": [
+{
+"to": 294,
+"src": "pack"
+},
+{
+"to": 334,
+"src": "pack"
+},
+{
+"to": 237,
+"src": "pack"
+},
+{
+"to": 29,
+"src": "pack"
+}
+]
+},
+"159": {
+"status": "OCR_GRAPH",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": [
+{
+"to": 194,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"160": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 181,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"161": {
+"status": "BRIDGED",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 271,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"162": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 218,
+"src": "bridge",
+"why": "the sapphire box leads on to the vaults' temptation (the backbone's edge 162 to 442 names a passage the 400-passage book does not have: needs a page check)"
+}
+]
+},
+"163": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"164": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 83,
+"src": "pack"
+},
+{
+"to": 11,
+"src": "pack"
+},
+{
+"to": 23,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+],
+"enemy": {
+"id": "flying_guardian",
+"name": "Flying Guardian",
+"skill": 8
+},
+"win_to": 11
+},
+"165": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 290,
+"src": "pack"
+},
+{
+"to": 84,
+"src": "pack"
+},
+{
+"to": 318,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"166": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 91,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"167": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 229,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"168": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"169": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 0,
+"links": [
+{
+"to": 288,
+"src": "verified",
+"book": "win player's Cave Troll fight"
+}
+],
+"enemy": {
+"id": "cave_troll",
+"name": "Cave Troll",
+"skill": 9
+},
+"win_to": null
+},
+"170": {
+"status": "OCR_GRAPH",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 1,
+"links": [
+{
+"to": 104,
+"src": "pack"
+},
+{
+"to": 342,
+"src": "pack"
+}
+]
+},
+"171": {
+"status": "BRIDGED",
+"zone": "dd_galleries",
+"kind": "normal",
+"tier": 1,
+"depth": 3,
+"default": 0,
+"links": [
+{
+"to": 293,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"172": {
+"status": "BRIDGED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": [
+{
+"to": 37,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 158,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"173": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 182,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"174": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"175": {
+"status": "BRIDGED",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 41,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"176": {
+"status": "BRIDGED",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 19,
+"default": 0,
+"links": [
+{
+"to": 162,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 362,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"177": {
+"status": "BRIDGED",
+"zone": "dd_igbut",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 62,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"178": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 269,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 272,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"179": {
+"status": "BRIDGED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 302,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"180": {
+"status": "BRIDGED",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"181": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 45,
+"src": "pack"
+},
+{
+"to": 206,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+],
+"luck": {
+"pass": null,
+"fail": null
+}
+},
+"182": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 25,
+"src": "pack"
+},
+{
+"to": 299,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"183": {
+"status": "OCR_GRAPH",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 19,
+"default": 0,
+"links": [
+{
+"to": 323,
+"src": "pack"
+},
+{
+"to": 149,
+"src": "pack"
+}
+]
+},
+"184": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_pit",
+"kind": "normal",
+"tier": 2,
+"depth": 6,
+"default": 0,
+"links": [
+{
+"to": 323,
+"src": "verified",
+"book": "join Throm below"
+},
+{
+"to": 149,
+"src": "verified",
+"book": "abandon him and cross"
+}
+]
+},
+"185": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 316,
+"src": "pack"
+},
+{
+"to": 24,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"186": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 218,
+"src": "pack"
+}
+]
+},
+"187": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 341,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"188": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"189": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 152,
+"src": "pack"
+},
+{
+"to": 387,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"190": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 50,
+"src": "pack"
+},
+{
+"to": 273,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"191": {
+"status": "OCR_GRAPH",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 7,
+"default": 1,
+"links": [
+{
+"to": 382,
+"src": "pack"
+},
+{
+"to": 302,
+"src": "bridge",
+"why": "the tests end with Throm's forced duel (verified 302)"
+}
+]
+},
+"192": {
+"status": "OCR_GRAPH",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 5,
+"links": [
+{
+"to": 120,
+"src": "pack"
+},
+{
+"to": 292,
+"src": "pack"
+},
+{
+"to": 52,
+"src": "pack"
+},
+{
+"to": 138,
+"src": "pack"
+},
+{
+"to": 369,
+"src": "pack"
+},
+{
+"to": 162,
+"src": "bridge",
+"why": "to the vaults (legacy dd_grotto to dd_vaults)"
+}
+]
+},
+"193": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 274,
+"src": "pack"
+},
+{
+"to": 207,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"194": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 7,
+"default": 0,
+"links": [
+{
+"to": 52,
+"src": "verified",
+"book": "red book"
+},
+{
+"to": 138,
+"src": "verified",
+"book": "black book"
+},
+{
+"to": 369,
+"src": "verified",
+"book": "continue"
+}
+]
+},
+"195": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 9,
+"src": "pack"
+},
+{
+"to": 92,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"196": {
+"status": "BRIDGED",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 269,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 67,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"197": {
+"status": "OCR_GRAPH",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 183,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"198": {
+"status": "OCR_GRAPH",
+"zone": "dd_galleries",
+"kind": "normal",
+"tier": 1,
+"depth": 3,
+"default": 1,
+"links": [
+{
+"to": 101,
+"src": "pack"
+},
+{
+"to": 142,
+"src": "pack"
+},
+{
+"to": 8,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"199": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 164,
+"src": "pack"
+},
+{
+"to": 231,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+],
+"enemy": {
+"id": "manticore",
+"name": "Manticore",
+"skill": 11
+},
+"win_to": 164
+},
+"200": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 321,
+"src": "pack"
+},
+{
+"to": 36,
+"src": "pack"
+}
+]
+},
+"201": {
+"status": "BRIDGED",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 19,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"202": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 42,
+"src": "pack"
+},
+{
+"to": 68,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+],
+"luck": {
+"pass": null,
+"fail": 42
+}
+},
+"203": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 363,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"204": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 1,
+"links": [
+{
+"to": 305,
+"src": "pack"
+},
+{
+"to": 131,
+"src": "pack"
+},
+{
+"to": 199,
+"src": "pack"
+}
+],
+"luck": {
+"pass": 131,
+"fail": null
+}
+},
+"205": {
+"status": "OCR_GRAPH",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 0,
+"links": [
+{
+"to": 306,
+"src": "pack"
+},
+{
+"to": 161,
+"src": "pack"
+}
+]
+},
+"206": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 60,
+"src": "pack"
+}
+]
+},
+"207": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 1,
+"links": [
+{
+"to": 386,
+"src": "pack"
+},
+{
+"to": 218,
+"src": "pack"
+},
+{
+"to": 258,
+"src": "pack"
+}
+],
+"enemy": {
+"id": "creature",
+"name": "Creature",
+"skill": 8
+},
+"win_to": 258
+},
+"208": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 326,
+"src": "pack"
+},
+{
+"to": 232,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"209": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 2,
+"links": [
+{
+"to": 356,
+"src": "pack"
+},
+{
+"to": 27,
+"src": "pack"
+},
+{
+"to": 78,
+"src": "pack"
+},
+{
+"to": 93,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"210": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 269,
+"src": "bridge",
+"why": "dead end carried on"
+}
+],
+"enemy": {
+"id": "poison_ivy",
+"name": "Poison Ivy",
+"skill": 9
+},
+"win_to": null
+},
+"211": {
+"status": "BRIDGED",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"212": {
+"status": "BRIDGED",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"213": {
+"status": "BRIDGED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 37,
+"src": "bridge",
+"why": "the Trialmaster's way leads to the idol cavern (legacy dd_trialmaster to dd_idol)"
+}
+]
+},
+"214": {
+"status": "OCR_GRAPH",
+"zone": "dd_trialmaster",
+"kind": "death",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": []
+},
+"215": {
+"status": "BRIDGED",
+"zone": "dd_galleries",
+"kind": "normal",
+"tier": 1,
+"depth": 3,
+"default": 0,
+"links": [
+{
+"to": 293,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 94,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"216": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 1,
+"links": [
+{
+"to": 12,
+"src": "pack"
+},
+{
+"to": 100,
+"src": "pack"
+},
+{
+"to": 291,
+"src": "pack"
+}
+]
+},
+"217": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 269,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"218": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 65,
+"src": "verified",
+"book": "enter for apparent jewel"
+},
+{
+"to": 252,
+"src": "verified",
+"book": "continue"
+}
+]
+},
+"219": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"220": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 1,
+"links": [
+{
+"to": 196,
+"src": "pack"
+},
+{
+"to": 6,
+"src": "pack"
+},
+{
+"to": 254,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"221": {
+"status": "OCR_GRAPH",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 1,
+"links": [
+{
+"to": 311,
+"src": "pack"
+},
+{
+"to": 60,
+"src": "bridge",
+"why": "the lower route ends at the Trialmaster (legacy dd_lower to dd_trialmaster)"
+}
+]
+},
+"222": {
+"status": "BRIDGED",
+"zone": "dd_galleries",
+"kind": "normal",
+"tier": 1,
+"depth": 4,
+"default": 0,
+"links": [
+{
+"to": 154,
+"src": "bridge",
+"why": "the galleries end at Throm (legacy dd_galleries to dd_pit)"
+}
+]
+},
+"223": {
+"status": "BRIDGED",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 233,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"224": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 43,
+"src": "pack"
+},
+{
+"to": 61,
+"src": "pack"
+}
+]
+},
+"225": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 83,
+"src": "pack"
+},
+{
+"to": 85,
+"src": "pack"
+},
+{
+"to": 275,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"226": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 43,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"227": {
+"status": "BRIDGED",
+"zone": "dd_galleries",
+"kind": "normal",
+"tier": 1,
+"depth": 4,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"228": {
+"status": "OCR_GRAPH",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": [
+{
+"to": 150,
+"src": "pack"
+},
+{
+"to": 33,
+"src": "pack"
+},
+{
+"to": 389,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+],
+"luck": {
+"pass": null,
+"fail": 33
+}
+},
+"229": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 97,
+"src": "pack"
+},
+{
+"to": 21,
+"src": "pack"
+}
+],
+"luck": {
+"pass": null,
+"fail": 21
+}
+},
+"230": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 5,
+"src": "pack"
+}
+]
+},
+"231": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"232": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 234,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"233": {
+"status": "BRIDGED",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 19,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 344,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"234": {
+"status": "BRIDGED",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"235": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 73,
+"src": "pack"
+}
+]
+},
+"236": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 211,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"237": {
+"status": "BRIDGED",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 301,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"238": {
+"status": "BRIDGED",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"239": {
+"status": "OCR_GRAPH",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 1,
+"links": [
+{
+"to": 102,
+"src": "pack"
+},
+{
+"to": 240,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"240": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 1,
+"links": [
+{
+"to": 34,
+"src": "verified",
+"book": "try other eye"
+},
+{
+"to": 89,
+"src": "verified",
+"book": "climb down"
+}
+]
+},
+"241": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_igbut",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": [
+{
+"to": 400,
+"src": "verified",
+"book": "exit"
+}
+]
+},
+"242": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 285,
+"src": "pack"
+}
+]
+},
+"243": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 108,
+"src": "pack"
+},
+{
+"to": 14,
+"src": "pack"
+},
+{
+"to": 36,
+"src": "pack"
+}
+]
+},
+"244": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 1,
+"links": [
+{
+"to": 48,
+"src": "pack"
+},
+{
+"to": 365,
+"src": "pack"
+},
+{
+"to": 109,
+"src": "pack"
+},
+{
+"to": 256,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"245": {
+"status": "OCR_GRAPH",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 2,
+"links": [
+{
+"to": 13,
+"src": "pack"
+},
+{
+"to": 201,
+"src": "pack"
+},
+{
+"to": 258,
+"src": "pack"
+},
+{
+"to": 366,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+],
+"enemy": {
+"id": "pit_fiend",
+"name": "Pit Fiend",
+"skill": 12
+},
+"win_to": 201
+},
+"246": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 313,
+"src": "pack"
+}
+]
+},
+"247": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"248": {
+"status": "OCR_GRAPH",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 7,
+"default": 2,
+"links": [
+{
+"to": 214,
+"src": "pack"
+},
+{
+"to": 90,
+"src": "pack"
+},
+{
+"to": 315,
+"src": "pack"
+}
+]
+},
+"249": {
+"status": "OCR_GRAPH",
+"zone": "dd_igbut",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 7,
+"links": [
+{
+"to": 15,
+"src": "pack"
+},
+{
+"to": 392,
+"src": "pack"
+},
+{
+"to": 177,
+"src": "pack"
+},
+{
+"to": 287,
+"src": "pack"
+},
+{
+"to": 44,
+"src": "pack"
+},
+{
+"to": 195,
+"src": "pack"
+},
+{
+"to": 382,
+"src": "pack"
+},
+{
+"to": 62,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"250": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 364,
+"src": "pack"
+}
+],
+"enemy": {
+"id": "creature",
+"name": "Creature",
+"skill": 8
+},
+"win_to": 364
+},
+"251": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 48,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"252": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 269,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"253": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"254": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 1,
+"links": [
+{
+"to": 117,
+"src": "pack"
+},
+{
+"to": 88,
+"src": "pack"
+},
+{
+"to": 324,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"255": {
+"status": "OCR_GRAPH",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 0,
+"links": [
+{
+"to": 37,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 10,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"256": {
+"status": "BRIDGED",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"257": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 27,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"258": {
+"status": "OCR_GRAPH",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 6,
+"default": 0,
+"links": [
+{
+"to": 95,
+"src": "pack"
+},
+{
+"to": 248,
+"src": "pack"
+},
+{
+"to": 71,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"259": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 118,
+"src": "pack"
+},
+{
+"to": 45,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"260": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 166,
+"src": "pack"
+},
+{
+"to": 140,
+"src": "pack"
+},
+{
+"to": 186,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"261": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 219,
+"src": "pack"
+}
+]
+},
+"262": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 337,
+"src": "pack"
+},
+{
+"to": 123,
+"src": "pack"
+},
+{
+"to": 368,
+"src": "pack"
+},
+{
+"to": 50,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"263": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 74,
+"src": "pack"
+},
+{
+"to": 278,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"264": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 2,
+"links": [
+{
+"to": 130,
+"src": "pack"
+},
+{
+"to": 51,
+"src": "pack"
+},
+{
+"to": 355,
+"src": "pack"
+}
+]
+},
+"265": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 305,
+"src": "pack"
+},
+{
+"to": 346,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"266": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"267": {
+"status": "OCR_GRAPH",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": [
+{
+"to": 68,
+"src": "pack"
+}
+]
+},
+"268": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 1,
+"links": [
+{
+"to": 127,
+"src": "pack"
+},
+{
+"to": 16,
+"src": "pack"
+},
+{
+"to": 177,
+"src": "pack"
+},
+{
+"to": 287,
+"src": "pack"
+},
+{
+"to": 132,
+"src": "pack"
+},
+{
+"to": 249,
+"src": "pack"
+}
+]
+},
+"269": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 127,
+"src": "verified",
+"book": "leave with diamond"
+}
+]
+},
+"270": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_entrance",
+"kind": "normal",
+"tier": 1,
+"depth": 1,
+"default": 0,
+"links": [
+{
+"to": 56,
+"src": "verified",
+"book": "continue"
+}
+]
+},
+"271": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"272": {
+"status": "BRIDGED",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 325,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"273": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"274": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 236,
+"src": "pack"
+},
+{
+"to": 159,
+"src": "pack"
+}
+]
+},
+"275": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 21,
+"src": "pack"
+}
+]
+},
+"276": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 304,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"277": {
+"status": "OCR_GRAPH",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 20,
+"default": 0,
+"links": [
+{
+"to": 15,
+"src": "pack"
+},
+{
+"to": 204,
+"src": "pack"
+},
+{
+"to": 49,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"278": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"279": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 32,
+"src": "pack"
+},
+{
+"to": 28,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"280": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 218,
+"src": "pack"
+},
+{
+"to": 192,
+"src": "pack"
+}
+]
+},
+"281": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 1,
+"links": [
+{
+"to": 399,
+"src": "verified",
+"book": "eat bread"
+},
+{
+"to": 192,
+"src": "verified",
+"book": "take mirror/charm and continue"
+}
+]
+},
+"282": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 1,
+"links": [
+{
+"to": 22,
+"src": "pack"
+},
+{
+"to": 388,
+"src": "pack"
+}
+]
+},
+"283": {
+"status": "OCR_GRAPH",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 6,
+"default": 0,
+"links": [
+{
+"to": 398,
+"src": "pack"
+},
+{
+"to": 57,
+"src": "pack"
+}
+]
+},
+"284": {
+"status": "BRIDGED",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"285": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 217,
+"src": "pack"
+},
+{
+"to": 141,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"286": {
+"status": "OCR_GRAPH",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 320,
+"src": "pack"
+}
+]
+},
+"287": {
+"status": "OCR_GRAPH",
+"zone": "dd_igbut",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 62,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"288": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 64,
+"src": "verified",
+"book": "wear ring"
+},
+{
+"to": 221,
+"src": "verified",
+"book": "continue with Throm"
+}
+]
+},
+"289": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 216,
+"src": "pack"
+},
+{
+"to": 19,
+"src": "pack"
+},
+{
+"to": 393,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"290": {
+"status": "OCR_GRAPH",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 152,
+"src": "pack"
+},
+{
+"to": 121,
+"src": "pack"
+},
+{
+"to": 302,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"291": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"292": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 230,
+"src": "pack"
+},
+{
+"to": 137,
+"src": "pack"
+},
+{
+"to": 382,
+"src": "pack"
+},
+{
+"to": 280,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"293": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_galleries",
+"kind": "normal",
+"tier": 1,
+"depth": 2,
+"default": 0,
+"links": [
+{
+"to": 137,
+"src": "verified",
+"book": "follow two sets west"
+},
+{
+"to": 382,
+"src": "verified",
+"book": "follow one set north"
+}
+]
+},
+"294": {
+"status": "OCR_GRAPH",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 90,
+"src": "pack"
+},
+{
+"to": 187,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"295": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"296": {
+"status": "OCR_GRAPH",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 7,
+"default": 1,
+"links": [
+{
+"to": 49,
+"src": "pack"
+},
+{
+"to": 241,
+"src": "pack"
+}
+]
+},
+"297": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 305,
+"src": "pack"
+}
+]
+},
+"298": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 1,
+"links": [
+{
+"to": 279,
+"src": "pack"
+},
+{
+"to": 97,
+"src": "pack"
+},
+{
+"to": 21,
+"src": "pack"
+}
+],
+"enemy": {
+"id": "bloodbeast",
+"name": "Bloodbeast",
+"skill": 12
+},
+"win_to": null
+},
+"299": {
+"status": "OCR_GRAPH",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 2,
+"links": [
+{
+"to": 126,
+"src": "pack"
+},
+{
+"to": 41,
+"src": "pack"
+},
+{
+"to": 83,
+"src": "pack"
+},
+{
+"to": 4,
+"src": "pack"
+}
+]
+},
+"300": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 127,
+"src": "pack"
+},
+{
+"to": 72,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"301": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"302": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": [
+{
+"to": 379,
+"src": "verified",
+"book": "defeat Throm"
+}
+],
+"enemy": {
+"id": "throm",
+"name": "Throm",
+"skill": 9
+},
+"win_to": null
+},
+"303": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 262,
+"src": "pack"
+}
+]
+},
+"304": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 162,
+"src": "pack"
+},
+{
+"to": 379,
+"src": "pack"
+}
+],
+"enemy": {
+"id": "creature",
+"name": "Creature",
+"skill": 8
+},
+"win_to": 379
+},
+"305": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 51,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"306": {
+"status": "OCR_GRAPH",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 29,
+"src": "pack"
+}
+]
+},
+"307": {
+"status": "BRIDGED",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 20,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 165,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"308": {
+"status": "BRIDGED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 7,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"309": {
+"status": "OCR_GRAPH",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 2,
+"links": [
+{
+"to": 231,
+"src": "pack"
+},
+{
+"to": 193,
+"src": "pack"
+},
+{
+"to": 262,
+"src": "pack"
+}
+]
+},
+"310": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 328,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"311": {
+"status": "BRIDGED",
+"zone": "dd_pit",
+"kind": "normal",
+"tier": 2,
+"depth": 6,
+"default": 0,
+"links": [
+{
+"to": 194,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"312": {
+"status": "BRIDGED",
+"zone": "dd_pit",
+"kind": "normal",
+"tier": 1,
+"depth": 5,
+"default": 0,
+"links": [
+{
+"to": 154,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 29,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"313": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"314": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"315": {
+"status": "BRIDGED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": [
+{
+"to": 37,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 13,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"316": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 162,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"317": {
+"status": "OCR_GRAPH",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 1,
+"links": [
+{
+"to": 368,
+"src": "pack"
+},
+{
+"to": 282,
+"src": "pack"
+},
+{
+"to": 352,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"318": {
+"status": "BRIDGED",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 350,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"319": {
+"status": "BRIDGED",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"320": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 1,
+"links": [
+{
+"to": 330,
+"src": "pack"
+},
+{
+"to": 269,
+"src": "pack"
+},
+{
+"to": 122,
+"src": "pack"
+}
+]
+},
+"321": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 116,
+"src": "pack"
+},
+{
+"to": 329,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"322": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 43,
+"src": "pack"
+}
+]
+},
+"323": {
+"status": "OCR_GRAPH",
+"zone": "dd_pit",
+"kind": "normal",
+"tier": 2,
+"depth": 7,
+"default": 0,
+"links": [
+{
+"to": 194,
+"src": "pack"
+}
+]
+},
+"324": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 256,
+"src": "pack"
+},
+{
+"to": 79,
+"src": "pack"
+}
+]
+},
+"325": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 3,
+"links": [
+{
+"to": 189,
+"src": "pack"
+},
+{
+"to": 380,
+"src": "pack"
+},
+{
+"to": 8,
+"src": "pack"
+},
+{
+"to": 92,
+"src": "pack"
+}
+]
+},
+"326": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"327": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 47,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"328": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"329": {
+"status": "BRIDGED",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"330": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 269,
+"src": "pack"
+},
+{
+"to": 353,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"331": {
+"status": "OCR_GRAPH",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": [
+{
+"to": 71,
+"src": "pack"
+}
+],
+"enemy": {
+"id": "skeleton",
+"name": "Skeleton",
+"skill": 8
+},
+"win_to": 71
+},
+"332": {
+"status": "BRIDGED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"333": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "death",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": []
+},
+"334": {
+"status": "OCR_GRAPH",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 67,
+"src": "pack"
+},
+{
+"to": 101,
+"src": "pack"
+},
+{
+"to": 298,
+"src": "pack"
+}
+],
+"luck": {
+"pass": null,
+"fail": 101
+}
+},
+"335": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 122,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"336": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 238,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"337": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 189,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"338": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"339": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"340": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"341": {
+"status": "BRIDGED",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"342": {
+"status": "BRIDGED",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 282,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"343": {
+"status": "OCR_GRAPH",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 6,
+"default": 0,
+"links": [
+{
+"to": 12,
+"src": "pack"
+},
+{
+"to": 308,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"344": {
+"status": "OCR_GRAPH",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 20,
+"default": 0,
+"links": [
+{
+"to": 229,
+"src": "pack"
+},
+{
+"to": 107,
+"src": "pack"
+},
+{
+"to": 373,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"345": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "death",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": []
+},
+"346": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"347": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 14,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"348": {
+"status": "BRIDGED",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"349": {
+"status": "OCR_GRAPH",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 285,
+"src": "pack"
+}
+]
+},
+"350": {
+"status": "OCR_GRAPH",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": [
+{
+"to": 39,
+"src": "pack"
+},
+{
+"to": 396,
+"src": "pack"
+}
+]
+},
+"351": {
+"status": "BRIDGED",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 0,
+"links": [
+{
+"to": 240,
+"src": "bridge",
+"why": "the idol cavern: the guardians fall, the emerald comes free (verified 240)"
+}
+]
+},
+"352": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 1,
+"links": [
+{
+"to": 254,
+"src": "pack"
+},
+{
+"to": 325,
+"src": "pack"
+}
+]
+},
+"353": {
+"status": "BRIDGED",
+"zone": "dd_vault_inner",
+"kind": "normal",
+"tier": 2,
+"depth": 13,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"354": {
+"status": "OCR_GRAPH",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 19,
+"default": 0,
+"links": [
+{
+"to": 55,
+"src": "pack"
+},
+{
+"to": 110,
+"src": "pack"
+},
+{
+"to": 100,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"355": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 1,
+"links": [
+{
+"to": 170,
+"src": "pack"
+},
+{
+"to": 192,
+"src": "pack"
+}
+]
+},
+"356": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"357": {
+"status": "OCR_GRAPH",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": [
+{
+"to": 255,
+"src": "pack"
+},
+{
+"to": 144,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"358": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 29,
+"src": "pack"
+},
+{
+"to": 165,
+"src": "pack"
+}
+]
+},
+"359": {
+"status": "OCR_GRAPH",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 1,
+"links": [
+{
+"to": 214,
+"src": "pack"
+},
+{
+"to": 162,
+"src": "bridge",
+"why": "no way on from here"
+}
+]
+},
+"360": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 3,
+"links": [
+{
+"to": 328,
+"src": "pack"
+},
+{
+"to": 211,
+"src": "pack"
+},
+{
+"to": 82,
+"src": "pack"
+},
+{
+"to": 32,
+"src": "pack"
+},
+{
+"to": 264,
+"src": "pack"
+}
+]
+},
+"361": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 302,
+"src": "pack"
+}
+]
+},
+"362": {
+"status": "BRIDGED",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 20,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"363": {
+"status": "BRIDGED",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 377,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"364": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_igbut",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 31,
+"src": "verified",
+"book": "has emerald"
+},
+{
+"to": 3,
+"src": "verified",
+"book": "missing emerald"
+}
+]
+},
+"365": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 11,
+"default": 0,
+"links": [
+{
+"to": 290,
+"src": "verified",
+"book": "predict same as 8"
+},
+{
+"to": 191,
+"src": "verified",
+"book": "predict less than 8"
+},
+{
+"to": 84,
+"src": "verified",
+"book": "predict more than 8"
+}
+]
+},
+"366": {
+"status": "OCR_GRAPH",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 19,
+"default": 0,
+"links": [
+{
+"to": 109,
+"src": "pack"
+}
+]
+},
+"367": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 190,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"368": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"369": {
+"status": "BRIDGED",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 8,
+"default": 0,
+"links": [
+{
+"to": 169,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"370": {
+"status": "BRIDGED",
+"zone": "dd_idol",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 75,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"371": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 261,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"372": {
+"status": "BRIDGED",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 269,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"373": {
+"status": "OCR_GRAPH",
+"zone": "dd_manticore",
+"kind": "normal",
+"tier": 3,
+"depth": 21,
+"default": 1,
+"links": [
+{
+"to": 374,
+"src": "pack"
+},
+{
+"to": 118,
+"src": "pack"
+},
+{
+"to": 295,
+"src": "pack"
+}
+],
+"luck": {
+"pass": null,
+"fail": 295
+}
+},
+"374": {
+"status": "OCR_GRAPH",
+"zone": "dd_igbut",
+"kind": "normal",
+"tier": 3,
+"depth": 22,
+"default": 0,
+"links": [
+{
+"to": 223,
+"src": "pack"
+}
+]
+},
+"375": {
+"status": "OCR_GRAPH",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 10,
+"default": 1,
+"links": [
+{
+"to": 110,
+"src": "pack"
+},
+{
+"to": 62,
+"src": "pack"
+},
+{
+"to": 3,
+"src": "pack"
+},
+{
+"to": 168,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"376": {
+"status": "BRIDGED",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 216,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"377": {
+"status": "OCR_GRAPH",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": [
+{
+"to": 203,
+"src": "pack"
+}
+]
+},
+"378": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 15,
+"default": 1,
+"links": [
+{
+"to": 12,
+"src": "pack"
+},
+{
+"to": 209,
+"src": "pack"
+},
+{
+"to": 145,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+],
+"luck": {
+"pass": null,
+"fail": 209
+}
+},
+"379": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 0,
+"links": [
+{
+"to": 213,
+"src": "verified",
+"book": "enter new tunnel"
+},
+{
+"to": 95,
+"src": "verified",
+"book": "punch Dwarf"
+}
+]
+},
+"380": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 252,
+"src": "pack"
+}
+]
+},
+"381": {
+"status": "OCR_GRAPH",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 1,
+"links": [
+{
+"to": 331,
+"src": "pack"
+},
+{
+"to": 128,
+"src": "pack"
+},
+{
+"to": 44,
+"src": "pack"
+},
+{
+"to": 222,
+"src": "pack"
+}
+]
+},
+"382": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_galleries",
+"kind": "normal",
+"tier": 1,
+"depth": 3,
+"default": 1,
+"links": [
+{
+"to": 44,
+"src": "verified",
+"book": "answer 100"
+},
+{
+"to": 222,
+"src": "verified",
+"book": "answer 150"
+},
+{
+"to": 391,
+"src": "verified",
+"book": "answer 200"
+}
+]
+},
+"383": {
+"status": "BRIDGED",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 309,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"384": {
+"status": "OCR_GRAPH",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 19,
+"default": 0,
+"links": [
+{
+"to": 277,
+"src": "pack"
+}
+]
+},
+"385": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 38,
+"src": "pack"
+}
+]
+},
+"386": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"387": {
+"status": "OCR_GRAPH",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": [
+{
+"to": 114,
+"src": "pack"
+}
+],
+"enemy": {
+"id": "caveman",
+"name": "Caveman",
+"skill": 7
+},
+"win_to": 114
+},
+"388": {
+"status": "OCR_GRAPH",
+"zone": "dd_vaults",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 2,
+"links": [
+{
+"to": 23,
+"src": "pack"
+},
+{
+"to": 181,
+"src": "pack"
+},
+{
+"to": 204,
+"src": "pack"
+},
+{
+"to": 289,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"389": {
+"status": "BRIDGED",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 19,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"390": {
+"status": "BRIDGED",
+"zone": "dd_blood",
+"kind": "normal",
+"tier": 3,
+"depth": 17,
+"default": 0,
+"links": [
+{
+"to": 281,
+"src": "bridge",
+"why": "dead end carried on"
+},
+{
+"to": 76,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"391": {
+"status": "BRIDGED",
+"zone": "dd_galleries",
+"kind": "normal",
+"tier": 1,
+"depth": 4,
+"default": 0,
+"links": [
+{
+"to": 154,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"392": {
+"status": "OCR_GRAPH",
+"zone": "dd_igbut",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 62,
+"src": "bridge",
+"why": "a wrong order: try the lock again"
+}
+]
+},
+"393": {
+"status": "BRIDGED",
+"zone": "dd_service",
+"kind": "normal",
+"tier": 3,
+"depth": 14,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"394": {
+"status": "BRIDGED",
+"zone": "dd_grub",
+"kind": "normal",
+"tier": 3,
+"depth": 18,
+"default": 0,
+"links": [
+{
+"to": 66,
+"src": "bridge",
+"why": "dead end carried on"
+}
+]
+},
+"395": {
+"status": "OCR_GRAPH",
+"zone": "dd_mirror",
+"kind": "normal",
+"tier": 3,
+"depth": 16,
+"default": 0,
+"links": [
+{
+"to": 259,
+"src": "pack"
+}
+]
+},
+"396": {
+"status": "OCR_GRAPH",
+"zone": "dd_troglodytes",
+"kind": "normal",
+"tier": 3,
+"depth": 19,
+"default": 1,
+"links": [
+{
+"to": 151,
+"src": "pack"
+},
+{
+"to": 210,
+"src": "pack"
+}
+]
+},
+"397": {
+"status": "OCR_GRAPH",
+"zone": "dd_lower",
+"kind": "normal",
+"tier": 2,
+"depth": 9,
+"default": 1,
+"links": [
+{
+"to": 52,
+"src": "pack"
+},
+{
+"to": 169,
+"src": "bridge",
+"why": "same"
+}
+]
+},
+"398": {
+"status": "OCR_GRAPH",
+"zone": "dd_trialmaster",
+"kind": "normal",
+"tier": 2,
+"depth": 7,
+"default": 0,
+"links": [
+{
+"to": 369,
+"src": "pack"
+},
+{
+"to": 332,
+"src": "bridge",
+"why": "side passage hung on to keep every passage reachable",
+"side": true
+}
+]
+},
+"399": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_grotto",
+"kind": "normal",
+"tier": 2,
+"depth": 12,
+"default": 0,
+"links": [
+{
+"to": 192,
+"src": "verified",
+"book": "continue"
+}
+]
+},
+"400": {
+"status": "BOOK_VERIFIED",
+"zone": "dd_igbut",
+"kind": "victory",
+"tier": 2,
+"depth": 9,
+"default": 0,
+"links": []
+}
+}
+}

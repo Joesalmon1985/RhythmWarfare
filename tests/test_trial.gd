@@ -36,9 +36,10 @@ func test_the_links_are_the_verified_ones() -> void:
 		assert_eq(got, VERIFIED[n], "passage %d keeps its verified edges" % n)
 		assert_eq(d.passage(n)["status"], "BOOK_VERIFIED")
 	for n in [56, 293]:
-		assert_true(bool(d.passage(n)["endpoint"]), "%d is a prototype endpoint" % n)
-		assert_eq(d.passage(n)["status"], "PROTOTYPE_ENDPOINT")
-	assert_eq(d.reachable(), [1, 56, 66, 119, 270, 293])
+		assert_false(d.passage(n).get("endpoint", false), "%d is no longer an endpoint: the dungeon goes on" % n)
+	var reach := d.reachable()
+	assert_eq(reach.size(), 400, "all 400 passages can be reached from passage 1")
+	assert_true(d.passages.size() == 401 and d.passages.has(0), "400 passages and the one a lost fight leads to")
 	assert_eq(str(d.encounters["giant_fly"]["placement"]), "ADAPTED", "the adapted placement is labelled")
 
 
@@ -57,8 +58,8 @@ func test_the_first_entrance_choice_opens_the_named_box() -> void:
 	assert_eq((f.choices() as Array).size(), 1)
 	f.select(0)
 	f.phrase_done(true, 1.0)
-	assert_eq(f.passage, 56)
-	assert_true(f.is_endpoint())
+	assert_eq(f.passage, 56, "and on through 56 into the rest of the dungeon")
+	assert_true((f.choices() as Array).size() >= 2)
 
 
 func test_the_second_entrance_choice_goes_north_to_the_fork() -> void:
@@ -97,14 +98,84 @@ func test_a_failed_phrase_can_be_retried_and_a_fight_has_an_outcome() -> void:
 	assert_eq(kinds.count("fail"), 1)
 
 
-func test_an_endpoint_only_offers_the_way_back() -> void:
-	var f := _walk([0, 0])
-	assert_eq((f.choices() as Array).size(), 1)
-	var r := f.select(0)
-	assert_eq(r["kind"], "exit")
+func test_only_death_and_victory_lead_back_to_the_warehouse() -> void:
+	var d := _data()
+	var exits := []
+	for n in d.passages:
+		var kind := str(d.passage(n).get("kind", "normal"))
+		for c in d.choices(n):
+			if c.has("exit"):
+				exits.append(n)
+				assert_true(kind in ["death", "victory"], "passage %d offers an exit but is %s" % [n, kind])
+				assert_eq((c as Dictionary).get("default", false), true)
+		if kind == "death" or kind == "victory":
+			assert_eq((d.choices(n) as Array).size(), 1)
+	assert_true(exits.size() >= 12, "the deaths (%d), the victory and the defeat passage all have the way back" % exits.size())
+	for n in [56, 293, 1, 66, 119, 270]:
+		assert_false(n in exits, "%d is part of the dungeon, not an exit" % n)
+
+
+func test_the_defaults_alone_walk_from_the_entrance_to_the_victory() -> void:
+	var f := TrialFlow.new(_data())
+	var steps := 0
+	while f.state != TrialFlow.State.ENDED and steps < 200:
+		var c: Dictionary = f.choices()[0]
+		for i in f.choices().size():
+			if bool(f.choices()[i].get("default", false)):
+				c = f.choices()[i]
+				f.select(i)
+				break
+		if f.state == TrialFlow.State.PHRASE:
+			f.phrase_done(true, 1.0)
+		steps += 1
 	assert_eq(f.exit, "warehouse")
-	assert_eq(f.state, TrialFlow.State.ENDED)
-	assert_eq(f.select(0)["kind"], "ignored", "nothing else can be done once out")
+	assert_eq(f.passage, 400, "the default way through the dungeon ends in the victory")
+	assert_true(f.visited.size() >= 15, "a real walk: %d passages" % f.visited.size())
+	assert_true(1 in f.visited and 270 in f.visited and 56 in f.visited)
+
+
+func test_death_and_a_lost_fight_end_in_the_warehouse_and_nothing_else_does() -> void:
+	var d := _data()
+	var dead := TrialFlow.new(d, 2)
+	assert_eq(str(dead.current()["kind"]), "death")
+	assert_eq(dead.select(0)["kind"], "exit")
+	assert_eq(dead.exit, "warehouse")
+	# the Giant Fly: beaten three times is a lost fight
+	var f := TrialFlow.new(d, 119)
+	for k in 3:
+		assert_eq(f.select(0)["kind"], "phrase")
+		var r := f.phrase_done(false, 0.1)
+		assert_eq(r["kind"], "fail")
+		if k < 2:
+			assert_eq(f.passage, 119, "the first two defeats are retries")
+	assert_eq(f.passage, 0, "the third is the end")
+	assert_eq(f.select(0)["kind"], "exit")
+	# an ordinary phrase never ends the adventure however often it is failed
+	var g := TrialFlow.new(d, 1)
+	for k in 12:
+		g.select(0)
+		g.phrase_done(false, 0.0)
+	assert_eq(g.passage, 1)
+	assert_eq(g.state, TrialFlow.State.SCENE)
+
+
+func test_a_luck_test_goes_one_way_or_the_other_with_no_retry() -> void:
+	var d := _data()
+	var luck: Array = []
+	for n in d.passages:
+		for c in d.choices(n):
+			if c.has("test"):
+				luck.append([n, c])
+	assert_true(luck.size() >= 10, "the book's luck tests are in (%d)" % luck.size())
+	var n: int = luck[0][0]
+	var c: Dictionary = luck[0][1]
+	for passed in [true, false]:
+		var f := TrialFlow.new(d, n)
+		var i := (f.choices() as Array).find(c)
+		f.select(i)
+		f.phrase_done(passed, 1.0 if passed else 0.0)
+		assert_eq(f.passage, int(c["test"]["pass" if passed else "fail"]))
+		assert_eq(f.retry_index, -1, "no second go at luck")
 
 
 ## Plays the engine by hand: `bot` is "perfect" (every cue), "none" or "no_fights" (every cue but a fight's); `picks` is [[song time, choice index], ...].
@@ -181,9 +252,21 @@ func test_a_choice_window_is_four_bars_and_the_default_is_taken_when_nobody_choo
 	var seen: Array = []
 	for p in _kinds(log, "passage"):
 		seen.append(int(p["passage"]))
-	assert_eq(seen.slice(0, 3), [1, 270, 56], "the defaults: open the named box, carry on, then the endpoint")
-	assert_true(e.exited)
-	assert_eq(e.exit_to, "warehouse", "the endpoint's default is the way out")
+	assert_eq(seen.slice(0, 3), [1, 270, 56], "the defaults: open the named box, carry on, then through the obstruction")
+	assert_false(e.exited, "and the dungeon goes on: nothing here sends the player back")
+
+
+func test_a_perfect_player_who_never_chooses_walks_to_the_victory_and_only_then_leaves() -> void:
+	var e := _engine()
+	var log := _drive(e, "perfect", 900.0 * e.beat_s)
+	assert_true(e.exited, "the walk ended")
+	assert_eq(e.exit_reason, "victory")
+	var passages: Array = _kinds(log, "passage").map(func(p: Dictionary) -> int: return int(p["passage"]))
+	assert_eq(passages[passages.size() - 1], 400)
+	assert_true(passages.size() >= 15, "a long walk: %d passages" % passages.size())
+	assert_eq(_kinds(log, "exit").size(), 1, "one exit, at the end")
+	var results: Array = _kinds(log, "result")
+	assert_true(results.all(func(r: Dictionary) -> bool: return r["result"] == "pass"))
 
 
 func test_the_commit_lands_on_the_decision_beat_of_the_window_that_closes() -> void:
@@ -321,18 +404,69 @@ func test_the_scene_floats_choices_over_pads_that_keep_playing() -> void:
 	_free_scene(d)
 
 
-func test_nothing_chosen_means_the_default_and_the_endpoint_leaves() -> void:
+func test_nothing_chosen_means_the_default_and_the_dungeon_goes_on() -> void:
 	var d := _trial_scene("perfect")
 	var scene: Node = d["scene"]
-	assert_true(_until(scene, func() -> bool: return not (d["exits"] as Array).is_empty(), 120.0), "doing nothing walks the default route out")
-	assert_eq(d["exits"], ["warehouse"])
+	assert_true(_until(scene, func() -> bool: return scene.engine.flow.passage != 1 and scene.engine.flow.passage != 270 and scene.engine.flow.passage != 56, 120.0))
+	assert_eq(d["exits"], [], "nothing sent the player back to the Warehouse")
 	var passages: Array = []
 	for e in scene.trace:
 		if e["kind"] == "passage":
 			passages.append(int(e["passage"]))
-	assert_eq(passages.slice(0, 3), [1, 270, 56], "1 > 270 > 56 by defaults alone")
+	assert_eq(passages.slice(0, 4), [1, 270, 56, 198], "1 > 270 > 56 > 198 by defaults alone")
 	var defaulted: Array = scene.trace.filter(func(e: Dictionary) -> bool: return e["kind"] == "commit" and bool(e["defaulted"]))
 	assert_true(defaulted.size() >= 3)
+	_free_scene(d)
+
+
+func _scene_at(passage: int, bot: String) -> Dictionary:
+	OS.set_environment("RW_TRIAL_START", str(passage))
+	var d := _trial_scene(bot)
+	OS.set_environment("RW_TRIAL_START", "")
+	return d
+
+
+func test_a_death_returns_to_the_warehouse_after_its_window() -> void:
+	var d := _scene_at(2, "perfect")
+	var scene: Node = d["scene"]
+	assert_true(scene._msg.text.contains("DIED"), "the death is shown: " + scene._msg.text)
+	assert_eq(scene._buttons.size(), 1)
+	assert_eq(scene._buttons[0].text.begins_with("Wake in the Warehouse"), true)
+	assert_true(_until(scene, func() -> bool: return not (d["exits"] as Array).is_empty(), 60.0))
+	assert_eq(d["exits"], ["warehouse"])
+	var ex: Array = scene.trace.filter(func(e: Dictionary) -> bool: return e["kind"] == "exit")
+	assert_eq(ex[0]["reason"], "death")
+	_free_scene(d)
+
+
+func test_the_victory_returns_to_the_warehouse_too() -> void:
+	var d := _scene_at(400, "perfect")
+	var scene: Node = d["scene"]
+	assert_true(scene._msg.text.contains("VICTORY"))
+	assert_true(_until(scene, func() -> bool: return not (d["exits"] as Array).is_empty(), 60.0))
+	var ex: Array = scene.trace.filter(func(e: Dictionary) -> bool: return e["kind"] == "exit")
+	assert_eq(ex[0]["reason"], "victory")
+	_free_scene(d)
+
+
+func test_three_lost_phrases_in_a_fight_end_the_adventure_in_the_scene() -> void:
+	var d := _scene_at(119, "no_fights")
+	var scene: Node = d["scene"]
+	var step := func() -> void:
+		scene.pick(0)
+	var losses := 0
+	var guard := 0
+	while (d["exits"] as Array).is_empty() and guard < 8:
+		guard += 1
+		assert_true(_until(scene, func() -> bool: return scene.engine.window_open and scene._buttons.size() > 0 and scene._outcome.is_empty(), 60.0))
+		if scene.engine.flow.passage == 0:
+			break
+		step.call()
+		losses += 1
+	assert_true(_until(scene, func() -> bool: return not (d["exits"] as Array).is_empty(), 90.0), "after the third defeat the way back to the Warehouse")
+	var lost: Array = scene.trace.filter(func(e: Dictionary) -> bool: return e["kind"] == "result" and bool(e.get("defeated", false)))
+	assert_eq(lost.size(), 1, "the third defeat is the end")
+	assert_eq(scene.trace.filter(func(e: Dictionary) -> bool: return e["kind"] == "exit")[0]["reason"], "death")
 	_free_scene(d)
 
 
@@ -458,6 +592,10 @@ func test_the_whole_quest_is_mapped() -> void:
 	for g in ["emerald", "sapphire", "diamond", "final_use"]:
 		assert_true(ids.has(str(m["gems"][g]["zone"])), g)
 	var d := _data()
+	var from_map := 0
 	for n in d.passages:
-		assert_true(passages.has(str(n)), "the playable passage %d is on the map" % n)
+		if str(d.passage(n).get("status", "")) == "BOOK_VERIFIED":
+			from_map += 1
+			assert_true(passages.has(str(n)), "the book-verified passage %d is on the map" % n)
+	assert_eq(from_map, 28)
 	assert_true((m["encounters"] as Array).size() >= 12, "the major encounters are listed")

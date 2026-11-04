@@ -25,6 +25,15 @@ reconnecting (119 to 56) is implemented legacy, and the Giant Fly is implemented
 | `assets/trial/art/box.png` | `godot_project/assets/pixel/props/box.png` | currently unused; kept for the named-box scene |
 | `assets/trial/scenes/*.png` | **drawn for this repo** by `tools/trial/make_scenes.py` (procedural pixel art) | placeholders for proper illustrations: replace a file with a 1280x720 PNG of the same name |
 
+## The other 396 passages
+
+| Here | From | Notes |
+| --- | --- | --- |
+| `content/trial/book_graph.json` | the owner's OCR passage pack: GlenGame (https://github.com/Joesalmon1985/Glen-s-game) branch `feature/deathtrap-full-book`, `puca_dungeon/content/deathtrap_ff/passages/*.json` (400 files, read-only), merged with the verified backbone and a hand-made spine of bridges | links, luck tests, fights and deaths only: structural facts, not text; **unverified**; see `docs/TRIAL_FULL_BOOK.md` |
+| `content/trial/book_text.json` | **original** one- or two-sentence summaries written for this game from the OCR text (not copied: a script rejects any run of five words shared with the source) and zone placeholders | the pack's passage text is not reproduced anywhere in this repository |
+| `assets/trial/art/{manticore,bloodbeast,poison_ivy,flying_guardian,cave_troll,throm_duel}_portrait_{0,1}.png` | DuelMasterBattle `godot_project/assets/pixel/creatures/` (same commit as above) | the other creatures use the generic monster |
+| `assets/trial/art/monster_{0,1}.png`, `assets/trial/scenes/dd_*.png`, `death.png`, `victory.png` | drawn for this repo by `tools/trial/make_zone_scenes.py` | placeholders |
+
 ## Not brought across
 
 The legacy Godot world map, the Ward duel system, the other 20 zones, Throm, the riddle and every later passage. Passage 293's onward links (137 and 382) are in the data as

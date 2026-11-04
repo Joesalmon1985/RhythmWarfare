@@ -33,6 +33,7 @@ var window_t1 := 0.0
 var selected := -1  # the player's pick in the open window (-1: none, so the default applies)
 var exited := false
 var exit_to := ""
+var exit_reason := ""  # why the dungeon was left: "death", "victory" or "normal"
 var fight_open := ""  # encounter id of the phrase block being played ("" when none)
 var phrase_choice := -1
 var blocks_log: Array = []  # [{block, kind, passage, credit}]
@@ -73,8 +74,8 @@ func count_in_s() -> float:
 	return t_of(float(BLOCK_BEATS) - DECISION_BEAT)
 
 
-func begin() -> void:
-	flow = TrialFlow.new(data)
+func begin(start_passage: int = -1) -> void:
+	flow = TrialFlow.new(data, start_passage)
 	level = Level.new()
 	level.mode = "defense"
 	level.bpm = float(rdata.cfg["timing"]["bpm"])
@@ -100,7 +101,7 @@ func begin() -> void:
 	phrase_choice = -1
 	blocks_log = []
 	_chart_block(0, "ambient", {})
-	_emit({"kind": "passage", "passage": flow.passage, "t": -count_in_s(), "consequence": "", "failure": ""})
+	_emit({"kind": "passage", "passage": flow.passage, "t": -count_in_s(), "consequence": "", "failure": "", "passage_kind": str(flow.current().get("kind", "normal"))})
 	_open_window(-count_in_s())
 
 
@@ -196,8 +197,9 @@ func _judge_phrase(j: int, td: float) -> void:
 	var res := flow.phrase_done(credit >= pass_credit, credit)
 	_phrase_j = -1
 	fight_open = ""
-	_emit({"kind": "result", "t": td, "result": res["kind"], "fight": res["fight"], "outcome": res["outcome"], "credit": credit, "text": res["text"], "passage": flow.passage})
-	_emit({"kind": "passage", "passage": flow.passage, "t": td, "consequence": flow.consequence, "failure": flow.failure})
+	_emit({"kind": "result", "t": td, "result": res["kind"], "fight": res["fight"], "outcome": res["outcome"], "credit": credit, "text": res["text"], "passage": flow.passage,
+		"defeated": res.get("defeated", false)})
+	_emit({"kind": "passage", "passage": flow.passage, "t": td, "consequence": flow.consequence, "failure": flow.failure, "passage_kind": str(flow.current().get("kind", "normal"))})
 	kind = "ambient"
 	_chart_block(j + 1, "ambient", {})
 	_emit({"kind": "mix", "t": t_of(float((j + 1) * BLOCK_BEATS)), "gains": {"drums": 1.0, "bass": 0.45, "other": 0.45}})
@@ -223,13 +225,14 @@ func _commit_window(j: int, td: float) -> void:
 			_emit({"kind": "phrase", "t": td, "block": j + 1, "choice": i, "encounter": fight_open, "label": str(r["phrase"].get("label", ""))})
 		"move":
 			kind = "ambient"
-			_emit({"kind": "passage", "passage": flow.passage, "t": td, "consequence": flow.consequence, "failure": ""})
+			_emit({"kind": "passage", "passage": flow.passage, "t": td, "consequence": flow.consequence, "failure": "", "passage_kind": str(flow.current().get("kind", "normal"))})
 			_chart_block(j + 1, "ambient", {})
 			_open_window(td)
 		"exit":
 			exited = true
 			exit_to = str(r["exit"])
-			_emit({"kind": "exit", "t": td, "to": exit_to})
+			exit_reason = str(flow.current().get("kind", "normal"))  # "death", "victory", or "normal" (the back key)
+			_emit({"kind": "exit", "t": td, "to": exit_to, "reason": exit_reason})
 		_:
 			kind = "ambient"
 			_chart_block(j + 1, "ambient", {})

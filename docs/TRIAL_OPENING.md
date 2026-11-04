@@ -1,6 +1,7 @@
-# The Deathtrap Dungeon opening
+# The Deathtrap Dungeon
 
-A small gamebook-style dungeon reached from the Warehouse. Branch `feature/deathtrap-opening`, built on `feature/continuous-story-run`.
+A gamebook-style dungeon reached from the Warehouse: now all 400 passages (`docs/TRIAL_FULL_BOOK.md` says how far each can be trusted), started from the opening below. Branch
+`feature/deathtrap-opening`, built on `feature/continuous-story-run`. **Only death, three lost fight phrases, or the victory at 400 lead back to the Warehouse.**
 
 ## Launch
 
@@ -8,6 +9,7 @@ A small gamebook-style dungeon reached from the Warehouse. Branch `feature/death
 godot --path .                      # Play; in the Warehouse level a wizard stands at the left edge with a floating "Enter the Trial"
 godot --path . res://src/trial/trial_play.tscn          # straight into the dungeon
 RW_TRIAL_BOT=no_fights RW_TRIAL_CHOICES=1,1,0 godot --path . res://src/trial/trial_play.tscn   # scripted: north, east, the fly (the bot skips fights)
+RW_TRIAL_START=169 godot --path . res://src/trial/trial_play.tscn      # start at any passage 1 to 400 (169 a fight, 2 a death, 400 the victory)
 RW_TRIAL_VIRTUAL=1 RW_TRIAL_BOT=perfect RW_TRIAL_CHOICES=1,1,0 RW_TRIAL_UNTIL=56 RW_STORY_QUIT=1 godot --headless --path . res://src/trial/trial_play.tscn
 godot --headless --path . -s tools/trial/validate.gd                    # check the data and print the link map
 godot --headless --path . -s tests/run_tests.gd -- --filter trial       # the tests
@@ -31,7 +33,8 @@ Bots: `perfect` plays every phrase, `none` plays nothing, `no_fights` plays ever
   the passage with the same choices; the one you failed reads "Try again: ..." and is now the default, so doing nothing retries it. Retry as often as you like.
 * **A fight** (the Giant Fly) shows the creature, plays the harder phrase, then an outcome animation in the empty beats before the next block: a win spins the fly out of the air; a loss is
   a lunge, a sting, a flash and a shake.
-* **Endpoints** (56 and 293) offer a single choice, **Return to the Warehouse**, which is also the default: leave it and after four bars a new run starts in the Warehouse.
+* **Death and victory** are the only ways back: a death passage shows YOU DIED with one choice, "Wake in the Warehouse" (also the default, so after four bars the player is there); the victory at
+  400 does the same. A creature that has beaten you in three phrases ends the adventure the same way. Passages 56 and 293, the old prototype endpoints, now lead on.
 
 ### The timeline
 

@@ -1,0 +1,2620 @@
+{
+"schema": 1,
+"note": "Short original descriptions. 'how' says where each came from; an empty text means the loader writes a placeholder for the zone.",
+"passages": {
+"1": {
+"text": "Crystal-lit entrance tunnel; six boxes including one bearing the contestant's name.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"2": {
+"text": "A giant scorpion clamps you with its claws in the arena and whips its poisoned tail over to sting. The venom is fatal, and your trial ends in the sand.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"3": {
+"text": "The Gnome declares that you failed his test. The dungeon will not let you leave: you are made his servant for life, building and altering its traps for future contestants.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"4": {
+"text": "In pitch darkness the slimy pipe suddenly bends downward. You lose your grip, slither off the lip and plunge fifty metres to your doom, failing the trial.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"5": {
+"text": "You crawl into a troglodyte tribe's den and creep past them, until your scabbard knocks against a rock. Whether the noise gives you away depends on your fortune.",
+"labels": {
+"185": "Slip past unnoticed",
+"395": "Be spotted by the tribe"
+},
+"how": "original summary of the OCR pack passage"
+},
+"6": {
+"text": "You dash for a pillar as the Manticore fires spikes from its tail, but one still pierces your arm. Wounded, you charge and fight the beast with your sword.",
+"labels": {
+"364": "Defeat the Manticore"
+},
+"how": "original summary of the OCR pack passage"
+},
+"7": {
+"text": "You cannot reach a doorway in time. The rolling boulder crushes you against the floor, and your adventure ends in agony.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"8": {
+"text": "The Mirror Demon seizes you and drags you through its mirror, leaving you stranded in a reflected world with no way back.",
+"labels": {
+"203": "Climb out after the fall",
+"94": "Reach into the worms for the dagger",
+"272": "Press on",
+"290": "Guess the dice will match",
+"191": "Guess the total will be under eight",
+"84": "Guess the total will be over eight",
+"53": "Trust your luck"
+},
+"how": "original summary of the OCR pack passage"
+},
+"9": {
+"text": "The dead Hobgoblins carry nothing useful, but a sack lying nearby holds a stoppered jug of sharp, acrid-smelling liquid. You wonder what to do with it.",
+"labels": {
+"375": "Dip a scrap of cloth in it"
+},
+"how": "original summary of the OCR pack passage"
+},
+"10": {
+"text": "Fleeing the Troglodytes, you hide beneath the river, breathing through a hollow tube, then climb out on the northern bank and follow a tunnel to a locked wooden door.",
+"labels": {
+"86": "Unlock the door with your iron key",
+"276": "Try the door without a key",
+"140": "Pry out the idol's other eye",
+"46": "Climb down the idol",
+"195": "Attack the old man with your sword",
+"250": "Bolt for the exit",
+"157": "Try to open the casket",
+"310": "Keep heading north",
+"74": "Set off west again"
+},
+"how": "original summary of the OCR pack passage"
+},
+"11": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"12": {
+"text": "Cold stone chambers lead on, each with a door that looks too neat to be natural.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"13": {
+"text": "Gems glint high above, and the floor is littered with the bones of the careless.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"14": {
+"text": "Pipes and ropes run along a narrow service tunnel built for those who run the Trial.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"15": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"16": {
+"text": "You pick the wrong gems and a ball of energy bursts out of the lock and hits your chest, leaving you senseless. The Gnome sends you back to try a different combination.",
+"labels": {
+"16": "Try the first gem combination",
+"392": "Try the second gem combination",
+"287": "Try the third gem combination",
+"249": "Try the fourth gem combination",
+"202": "Fail to catch the cobra"
+},
+"how": "original summary of the OCR pack passage"
+},
+"17": {
+"text": "You cannot resist Medusa's hypnotic stare. Your limbs stiffen as you are turned to stone, and your quest is over.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"18": {
+"text": "Pipes and ropes run along a narrow service tunnel built for those who run the Trial.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"19": {
+"text": "The walls here are dressed and measured: this part was built, and is watched.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"20": {
+"text": "Pocketing a Gold Piece from a dropped backpack costs you a poisonous spider bite that leaves your hand trembling and you weakened. Cursing its owner, you head north again.",
+"labels": {
+"279": "Continue north",
+"97": "Strike the Bloodbeast while your luck holds",
+"116": "Be unlucky in the Bloodbeast fight",
+"63": "Accept the Barbarian's rope and torch",
+"184": "Propose lowering the Barbarian instead",
+"311": "Suggest you both jump the pit"
+},
+"how": "original summary of the OCR pack passage"
+},
+"21": {
+"text": "Dust lies thick on the vault floors, except where a few footprints cross it.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"22": {
+"text": "Uneasy temporary alliance with the Barbarian; both know only one contestant may win; they reach a deep pit.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"23": {
+"text": "The note, scrawled in dried blood, warns you to beware the Trialmasters. You pin it back up and hurry along the tunnel to your Barbarian companion.",
+"labels": {
+"154": "Rejoin the Barbarian"
+},
+"how": "original summary of the OCR pack passage"
+},
+"24": {
+"text": "In an alcove stands a wooden chair carved into the shape of a demonic bird of prey. The tunnel beyond is fiercely hot, though a bamboo pipe's liquid sustains you.",
+"labels": {
+"188": "Keep going north",
+"197": "Push on through the heat"
+},
+"how": "original summary of the OCR pack passage"
+},
+"25": {
+"text": "The roof presses down; somewhere ahead something heavy shuffles.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"26": {
+"text": "A pill leaves you sluggish and weakened. The Dwarf then sets the next test: a rearing cobra that you must seize bare-handed behind its head, dodging its fangs.",
+"labels": {
+"78": "Head north up the tunnel",
+"213": "Investigate the new tunnel"
+},
+"how": "original summary of the OCR pack passage"
+},
+"27": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"28": {
+"text": "A hush falls in the inner vault, and a thin light plays on the walls.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"29": {
+"text": "The tunnel runs north into a blind end, where a chute in the wall is your sole exit. You climb in and slide gently down into a room.",
+"labels": {
+"90": "Slide down the chute"
+},
+"how": "original summary of the OCR pack passage"
+},
+"30": {
+"text": "You spring toward the far side of a pit, trusting your fortune to carry you across. Elsewhere, the Gnome asks whether you carry a sapphire.",
+"labels": {
+"160": "Land safely on the far edge",
+"319": "Fall short of the edge",
+"376": "Show the Gnome your sapphire"
+},
+"how": "original summary of the OCR pack passage"
+},
+"31": {
+"text": "The final door looms, and the air smells of old iron and patience.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"32": {
+"text": "A new junction offers an eastern branch, yet the damp footprints you have tracked keep heading north, so you trail them.",
+"labels": {
+"37": "Follow the wet footprints north",
+"292": "Take the little brass bell and go north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"33": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"34": {
+"text": "You pry at the idol's emerald eye with your sword. It bursts and sprays poison gas into your face, knocking you out and sending you crashing to the floor.",
+"labels": {
+"333": "Knock on the trapdoor"
+},
+"how": "original summary of the OCR pack passage"
+},
+"35": {
+"text": "A huge boulder thunders after you along the tunnel and gains with every stride. Only a desperate sprint could keep you ahead of it.",
+"labels": {
+"340": "Outrun the boulder",
+"7": "Be caught by the boulder"
+},
+"how": "original summary of the OCR pack passage"
+},
+"36": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"37": {
+"text": "Large idol cavern with fist-sized jewelled eyes and two stuffed bird-like guardians.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"38": {
+"text": "A hush falls in the inner vault, and a thin light plays on the walls.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"39": {
+"text": "You dodge the dive of a giant fly, then draw your sword as the hideous insect wheels round to attack again.",
+"labels": {
+"111": "Defeat the giant fly",
+"252": "Flee back into the tunnel"
+},
+"how": "original summary of the OCR pack passage"
+},
+"40": {
+"text": "At your call the arena door rises and a snorting Minotaur charges out, steaming with rage. Nearby, a goblet in an alcove holds glittering red liquid.",
+"labels": {
+"163": "Defeat the Minotaur",
+"98": "Drink the red liquid",
+"125": "Abandon the goblet and loot the Barbarian"
+},
+"how": "original summary of the OCR pack passage"
+},
+"41": {
+"text": "Loose rock, a heavy boulder and a chest that looks too easily reached.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"42": {
+"text": "The cobra sinks its fangs deep in your wrist and its venom begins to spread. The Dwarf shows no pity and orders another attempt.",
+"labels": {
+"55": "Seize the cobra this time"
+},
+"how": "original summary of the OCR pack passage"
+},
+"43": {
+"text": "The tunnel turns right and runs on north. A door stands ajar, and someone behind it seems to be calling for help.",
+"labels": {
+"200": "Open the door",
+"316": "Keep going north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"44": {
+"text": "A razor-sharp disc slams into your back. As you struggle to wrench it free, your attacker hurls another.",
+"labels": {
+"312": "Face the next disc"
+},
+"how": "original summary of the OCR pack passage"
+},
+"45": {
+"text": "Wicker, rope and rusted iron: the working side of the dungeon.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"46": {
+"text": "You descend the idol and hurry out of the cavern. Elsewhere, a dead Rock Grub's slimy borehole slopes away into the dark.",
+"labels": {
+"239": "Run for the northern tunnel",
+"312": "Explore the borehole",
+"117": "Follow the tunnel west"
+},
+"how": "original summary of the OCR pack passage"
+},
+"47": {
+"text": "Pursued by Troglodytes at the river, you need a breathing tube made from hollow wood to hide underwater.",
+"labels": {
+"10": "Hide underwater, breathing through the tube",
+"335": "Face the river without a tube",
+"260": "Climb the idol safely",
+"356": "Slip while climbing the idol",
+"160": "Pay the old man to haul you up",
+"155": "Recite the spirit's poem at the pool",
+"224": "Face the pool without the poem",
+"257": "Defeat the two Orcs"
+},
+"how": "original summary of the OCR pack passage"
+},
+"48": {
+"text": "A red-stained cavern, wet underfoot, with a smell of copper.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"49": {
+"text": "Peering round a corner, you spot two mischievous leprechauns in loose clothes and floppy pointed hats, scurrying away from you.",
+"labels": {
+"205": "Follow the leprechauns",
+"241": "Return to the junction and go north",
+"221": "Follow Throm east",
+"9": "Defeat the last Hobgoblin",
+"138": "Read the black book",
+"369": "Go north alongside Throm",
+"370": "Run round the pool to the tunnel",
+"348": "Attack the Bloodbeast with your sword"
+},
+"how": "original summary of the OCR pack passage"
+},
+"50": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"51": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"52": {
+"text": "A low tunnel below the pit, close and full of old bones.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"53": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"54": {
+"text": "You shake the lasso loose from the idol's neck, coil your rope and rush on toward the northern tunnel. Elsewhere, the Dwarf offers you a choice of foes.",
+"labels": {
+"239": "Run to the northern tunnel",
+"143": "Choose to fight the scorpion",
+"40": "Choose to fight the Minotaur",
+"347": "Admit you cannot solve either riddle",
+"69": "Slip past Ivy and hope for luck",
+"139": "Be caught by Ivy",
+"35": "Step through the archway",
+"226": "Face the towering green beast",
+"349": "Press on",
+"351": "Take the other way",
+"167": "Press on"
+},
+"how": "original summary of the OCR pack passage"
+},
+"55": {
+"text": "The Hobgoblins halt their quarrel, but they cannot understand you. Snarling, they draw short swords and charge.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"56": {
+"text": "A soft, brown, boulder-like mass fills the tunnel. It gives under your hand, and you could climb over it or cut your way through.",
+"labels": {
+"171": "Climb over it",
+"215": "Slice it open",
+"198": "Press on if you are still standing"
+},
+"how": "written for this game"
+},
+"57": {
+"text": "The walls here are dressed and measured: this part was built, and is watched.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"58": {
+"text": "You step carefully between a thicket of poles, trying not to brush against a single one.",
+"labels": {
+"80": "Pass between the poles untouched"
+},
+"how": "original summary of the OCR pack passage"
+},
+"59": {
+"text": "Slow footsteps approach from far down the tunnel. A shadowed crack in the wall offers somewhere to conceal yourself, if you would rather not face whatever comes.",
+"labels": {
+"283": "Hide in the shadows"
+},
+"how": "original summary of the OCR pack passage"
+},
+"60": {
+"text": "Dwarf Trialmaster locks John and Throm in a chamber and says only one may continue. Throm proposes attacking him.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"61": {
+"text": "Your screams draw a Hobgoblin tunnel guard, who pins you down with his sword at your neck. You cannot defend yourself, and your adventure ends.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"62": {
+"text": "Final lock has three gem positions. Wrong arrangements cause injury; Igbut gives aggregate positional feedback and allows retries.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"63": {
+"text": "Throm lowers you on a rope into the dark pit, torch in hand, then climbs down to join you. At the bottom, a fresh tunnel leads north.",
+"labels": {
+"191": "Follow the tunnel north with Throm"
+},
+"how": "original summary of the OCR pack passage"
+},
+"64": {
+"text": "As you slide the ring on, your whole body begins to shake. You must fight to master its power.",
+"labels": {
+"115": "Master the ring's power"
+},
+"how": "original summary of the OCR pack passage"
+},
+"65": {
+"text": "A potion from a dark book may already have changed you. What you did with it will decide which way events turn.",
+"labels": {
+"345": "Rely on the potion you drank",
+"372": "Go on without having drunk it",
+"178": "Ram the door open with your shoulder",
+"242": "Meet the winged beast without knowing the poem",
+"220": "Ring the iron bell",
+"210": "Open the door with the withered hand",
+"20": "Defeat Ivy",
+"96": "Pass the test and press on"
+},
+"how": "original summary of the OCR pack passage"
+},
+"66": {
+"text": "First major junction: white arrow points west; several footprints went west and one east.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"67": {
+"text": "Underwater, you cling to a bridge pillar while the Troglodytes assume the river swept you away. Your lungs burn and your breath is nearly gone.",
+"labels": {
+"46": "Hold out until they leave",
+"219": "Gasp and give yourself away"
+},
+"how": "original summary of the OCR pack passage"
+},
+"68": {
+"text": "A deep, dark pit blocks the passage, with a rope hanging above its centre. You weigh how to get across.",
+"labels": {
+"212": "Throw your shield across and jump",
+"221": "Jump carrying all your belongings"
+},
+"how": "original summary of the OCR pack passage"
+},
+"69": {
+"text": "Ivy doesn't notice as you ease away from her chamber, shut the door and find yourself at the end of another tunnel.",
+"labels": {
+"305": "Walk on along the tunnel",
+"128": "Go to the alcove",
+"126": "Go back and search the Barbarian"
+},
+"how": "original summary of the OCR pack passage"
+},
+"70": {
+"text": "You leave the chamber and carry on west.",
+"labels": {
+"63": "Continue west"
+},
+"how": "original summary of the OCR pack passage"
+},
+"71": {
+"text": "The walls here are dressed and measured: this part was built, and is watched.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"72": {
+"text": "A hush falls in the inner vault, and a thin light plays on the walls.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"73": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"74": {
+"text": "In a gallery of mirrors, a four-armed, four-faced Mirror Demon steps out of the glass to bar your path and claim your spirit.",
+"labels": {
+"255": "Make a wish with your Ring of Wishes",
+"300": "Smash the mirrors",
+"327": "Draw your sword on the demon",
+"52": "Read the red book"
+},
+"how": "original summary of the OCR pack passage"
+},
+"75": {
+"text": "You press on north in Throm's company.",
+"labels": {
+"159": "Go north alongside Throm"
+},
+"how": "original summary of the OCR pack passage"
+},
+"76": {
+"text": "A tight tunnel, hot and dry, scraped smooth by something that digs.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"77": {
+"text": "You stagger toward daylight and find the Gnome lying dead in the tunnel, felled by a crossbow bolt from the Baron's last trap. You step over him into the sunshine.",
+"labels": {
+"400": "Step out into the sunshine",
+"30": "Crawl into the pipe",
+"142": "Keep going north",
+"175": "Defeat the Guard Dogs",
+"315": "Flee eastward",
+"70": "Dive clear of the boulder",
+"1": "Be too slow for the boulder",
+"55": "Catch the cobra",
+"202": "Miss the cobra",
+"390": "Pick up the jewelled skull",
+"74": "Shut the door and head west"
+},
+"how": "original summary of the OCR pack passage"
+},
+"78": {
+"text": "You hurry back to the Barbarian and report that the eastern passage leads nowhere. He nods and strides west beside you.",
+"labels": {
+"22": "Head west with the Barbarian"
+},
+"how": "original summary of the OCR pack passage"
+},
+"79": {
+"text": "You clutch the chair's arms tightly, braced for a surge of power or pain to rip through you.",
+"labels": {
+"106": "Escape harm",
+"383": "Be struck by the chair",
+"313": "Hurry east after the footprints"
+},
+"how": "original summary of the OCR pack passage"
+},
+"80": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"81": {
+"text": "The goblin's room holds little: a table, a pair of chairs, a cupboard on one wall, and doors in the west and north walls.",
+"labels": {
+"307": "Search the cupboard",
+"263": "Try the west door",
+"136": "Try the north door"
+},
+"how": "original summary of the OCR pack passage"
+},
+"82": {
+"text": "As the Pit Fiend crashes into the wall, you release the rope, land safely and escape through the swinging double doors.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"83": {
+"text": "The passage reaches a junction where extra footprints, perhaps three pairs, head north from the southern passage. You resolve to track them.",
+"labels": {
+"32": "Follow the footprints"
+},
+"how": "original summary of the OCR pack passage"
+},
+"84": {
+"text": "The old man mutters strange words and your body stiffens and goes taut. You panic but cannot stop yourself turning to stone, and your adventure ends.",
+"labels": {
+"152": "Take the other way"
+},
+"how": "original summary of the OCR pack passage"
+},
+"85": {
+"text": "The key opens the door onto a crossroads of crystal-lit tunnels, where a voice calls you onward. Curious, you walk toward it.",
+"labels": {
+"67": "Follow the beckoning voice"
+},
+"how": "original summary of the OCR pack passage"
+},
+"86": {
+"text": "Iron-bound doors line the passage, some ajar, some sealed, all promising something.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"87": {
+"text": "The door opens onto a large room.",
+"labels": {
+"381": "Enter the room"
+},
+"how": "original summary of the OCR pack passage"
+},
+"88": {
+"text": "Troglodyte archers close in around you and declare you their prisoner, to be judged by an ancient ordeal of their own.",
+"labels": {
+"343": "Accept their arrow ordeal",
+"258": "Fight your way out"
+},
+"how": "original summary of the OCR pack passage"
+},
+"89": {
+"text": "Back on the cavern floor, you struggle to free the rope from the idol's neck. Elsewhere, two Orcs disarm you in a narrow tunnel.",
+"labels": {
+"54": "Free the rope with good fortune",
+"26": "Fail to free the rope",
+"257": "Defeat both Orcs"
+},
+"how": "original summary of the OCR pack passage"
+},
+"90": {
+"text": "A green, spike-covered Bloodbeast looms before you, its face a mass of blisters. What you know of its nature may decide your fate.",
+"labels": {
+"172": "Use what you read about its weakness",
+"357": "Face it knowing nothing"
+},
+"how": "original summary of the OCR pack passage"
+},
+"91": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"92": {
+"text": "Your last sword strike cracks the Mirror Demon across its many faces. It screams from every mouth, then bursts into glittering shards. Relieved, you step over the pieces.",
+"labels": {
+"2": "Hurry past the wreckage"
+},
+"how": "original summary of the OCR pack passage"
+},
+"93": {
+"text": "A dusty little room holds a sturdy chest on a shelf. Fresh prints lead to it and back, so a rival may have been here, or the Trialmasters set it out.",
+"labels": {
+"284": "Enter the room and open the chest"
+},
+"how": "original summary of the OCR pack passage"
+},
+"94": {
+"text": "A long gallery of branching tracks, with old marks on the walls.",
+"labels": {
+"124": "Leave the cavern"
+},
+"how": "placeholder (zone template)"
+},
+"95": {
+"text": "Beneath the ring a hidden hatch opens, revealing a splendid iron shield. You strap it on, feeling stronger, and approach a pair of double doors.",
+"labels": {
+"248": "Push open the double doors"
+},
+"how": "original summary of the OCR pack passage"
+},
+"96": {
+"text": "Your second swing misses the mirror again. The Mirror Demon drags you through the glass into another dimension, and you are trapped there forever. The adventure is lost.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"97": {
+"text": "By luck your blade finds the Bloodbeast's only weak spot, its true eyes. The creature collapses and sinks into its pool, and you flee up the tunnel.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"98": {
+"text": "You lift a goblet from a table and a hidden catch fires a dart from the furniture. Everything depends on whether you can get out of its path.",
+"labels": {
+"105": "Leap clear of the dart",
+"235": "Take the dart"
+},
+"how": "original summary of the OCR pack passage"
+},
+"99": {
+"text": "You flatter Ivy the troll, then crack a stool over her skull while she gazes at the painting. She drops senseless. Her room is yours to loot, or you can leave.",
+"labels": {
+"266": "Search her room",
+"305": "Leave by the east door"
+},
+"how": "original summary of the OCR pack passage"
+},
+"100": {
+"text": "Further along the passage, another door stands shut in the left wall, scratched with an X. You hear nothing from the other side.",
+"labels": {
+"87": "Open the marked door",
+"217": "Keep walking north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"101": {
+"text": "Side rooms open off the gallery; someone has scratched arrows and crossed them out.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"102": {
+"text": "Black water laps at a stone shore, and the air tastes of salt and rot.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"103": {
+"text": "Wicker, rope and rusted iron: the working side of the dungeon.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"104": {
+"text": "Black water laps at a stone shore, and the air tastes of salt and rot.",
+"labels": {
+"134": "Run into the tunnel"
+},
+"how": "placeholder (zone template)"
+},
+"105": {
+"text": "The dart whistles past and sticks in the wall. You pocket the goblet. You can go back to search the fallen Barbarian, or leave the chamber heading west.",
+"labels": {
+"126": "Go back and search the Barbarian",
+"188": "Continue north",
+"133": "Take the other way",
+"251": "Press on",
+"77": "Stagger on",
+"253": "Give the dogs the bone"
+},
+"how": "original summary of the OCR pack passage"
+},
+"106": {
+"text": "A tight tunnel, hot and dry, scraped smooth by something that digs.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"107": {
+"text": "A cupboard yields a mallet and iron spikes. Two doors tempt you, west and north. Elsewhere a blinded swing fells a Medusa and you prise a garnet from her brooch.",
+"labels": {
+"263": "Open the west door",
+"315": "Head north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"108": {
+"text": "Through a glass panel you spot a torchlit room swarming with enormous insects, and a gem-studded crown on a table. Grab it and risk the stings, or move on.",
+"labels": {
+"394": "Smash the glass and snatch the crown",
+"59": "Continue west",
+"14": "Return to the junction and go north",
+"43": "Keep heading west",
+"24": "Go north at the junction",
+"223": "Walk across the tops of the poles"
+},
+"how": "original summary of the OCR pack passage"
+},
+"109": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"110": {
+"text": "Iron-bound doors line the passage, some ajar, some sealed, all promising something.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"111": {
+"text": "You clean slime from your blade and move on north. Elsewhere, a thrown wooden ball misses a skull, and a dead Caveman wears a wristband hung with tiny rat skulls.",
+"labels": {
+"262": "Head north",
+"356": "Set off north again",
+"371": "Throw the other ball",
+"336": "Put on the wristband"
+},
+"how": "original summary of the OCR pack passage"
+},
+"112": {
+"text": "A hush falls in the inner vault, and a thin light plays on the walls.",
+"labels": {
+"298": "Set off north again"
+},
+"how": "placeholder (zone template)"
+},
+"113": {
+"text": "Wicker, rope and rusted iron: the working side of the dungeon.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"114": {
+"text": "Smoke and drumming drift from a cavern where a tribe makes its camp.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"115": {
+"text": "The ring's power steadies you after a violent shaking, and you reassure the anxious Throm. He marches east and you follow. Behind you, a Bloodbeast crushes a hesitating victim.",
+"labels": {
+"221": "Follow Throm east",
+"135": "Head east"
+},
+"how": "original summary of the OCR pack passage"
+},
+"116": {
+"text": "A red-stained cavern, wet underfoot, with a smell of copper.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"117": {
+"text": "Dust lies thick on the vault floors, except where a few footprints cross it.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"118": {
+"text": "Ahead in the gloom something large blocks the tunnel, and wet footprints lead straight to it. You can follow them east or backtrack to the junction and go west.",
+"labels": {
+"56": "Continue east",
+"293": "Go back and head west",
+"26": "Swallow the pill marked S",
+"354": "Swallow the other pill",
+"176": "Climb the left-hand steps",
+"384": "Climb the right-hand steps"
+},
+"how": "original summary of the OCR pack passage"
+},
+"119": {
+"text": "Eastern branch loops toward the soft obstruction / opening route.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"120": {
+"text": "A hush falls in the inner vault, and a thin light plays on the walls.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"121": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"122": {
+"text": "Iron-bound doors line the passage, some ajar, some sealed, all promising something.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"123": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"124": {
+"text": "You burst up the steps into a bright room where two goblins are sharpening blades. Caught off guard, they recover quickly and both charge you.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"125": {
+"text": "Wicker, rope and rusted iron: the working side of the dungeon.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"126": {
+"text": "Pipes and ropes run along a narrow service tunnel built for those who run the Trial.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"127": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"128": {
+"text": "Ivy's mood softens when you ask about a troll in a portrait, her brother who serves in Port Blacksand. She loosens her grip while she boasts of him.",
+"labels": {
+"125": "Slip out by the east door",
+"99": "Keep her talking"
+},
+"how": "original summary of the OCR pack passage"
+},
+"129": {
+"text": "You grin at your swollen reflection, but an evil force pins your gaze to the glass. Your skull swells with agony and you black out, never to wake. The adventure ends.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"130": {
+"text": "Pipes and ropes run along a narrow service tunnel built for those who run the Trial.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"131": {
+"text": "Crossbow bolts sail over your crouching form and strike the far wall. The trap is spent, so you leave and head west. Elsewhere, a Gnome tests you on a gem lock, and two hobgoblins attack.",
+"labels": {
+"74": "Leave and head west",
+"392": "Try the first gem order",
+"177": "Try the second gem order",
+"287": "Try the third gem order",
+"132": "Try the fourth gem order",
+"249": "Try the fifth gem order",
+"9": "Defeat the hobgoblins"
+},
+"how": "original summary of the OCR pack passage"
+},
+"132": {
+"text": "Your gem plops into the pool and toxic fumes rise. You grow faint and sink unconscious, and whether you wake depends on fortune.",
+"labels": {
+"53": "Hope the fumes spare you"
+},
+"how": "original summary of the OCR pack passage"
+},
+"133": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"134": {
+"text": "Iron-bound doors line the passage, some ajar, some sealed, all promising something.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"135": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"136": {
+"text": "Smoke and drumming drift from a cavern where a tribe makes its camp.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"137": {
+"text": "Side rooms open off the gallery; someone has scratched arrows and crossed them out.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"138": {
+"text": "Black book contains an unknown potion; Throm refuses it and distrusts the unknown.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"139": {
+"text": "A door handle turns soft and glues your hand fast, then a fist punches out of the panel. Elsewhere a shackled prisoner shuffles past carrying bread and water.",
+"labels": {
+"303": "Dissolve the glue with acid",
+"367": "Try another approach",
+"169": "Share your provisions"
+},
+"how": "original summary of the OCR pack passage"
+},
+"140": {
+"text": "Iron-bound doors line the passage, some ajar, some sealed, all promising something.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"141": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"142": {
+"text": "A long gallery of branching tracks, with old marks on the walls.",
+"labels": {
+"88": "Continue along the dusty corridor",
+"66": "Return west to the junction"
+},
+"how": "placeholder (zone template)"
+},
+"143": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"144": {
+"text": "A cavern of carved stone, with something large and jewelled watching from the dark.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"145": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"146": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"147": {
+"text": "Something goes badly wrong in the dark, and your adventure ends here.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"148": {
+"text": "You charge at the Bloodbeast, dodging its grasping tongue. Success depends on whether you are nimble enough.",
+"labels": {
+"225": "Dodge its tongue and strike"
+},
+"how": "original summary of the OCR pack passage"
+},
+"149": {
+"text": "Rope marks scar the lip of the pit; a voice echoes up from below.",
+"labels": {
+"159": "Fall to its grasp"
+},
+"how": "placeholder (zone template)"
+},
+"150": {
+"text": "You wisely kept your sword arm out of the hole, so the tentacled thing only stings a little. You pull out a grappling iron and a pouch holding a small brass bell.",
+"labels": {
+"292": "Continue north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"151": {
+"text": "Touching the idol's emerald eye makes two stuffed birds spring to life and swoop. You must fight both flying guardians while cramped, one after another.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"152": {
+"text": "A hush falls in the inner vault, and a thin light plays on the walls.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"153": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"154": {
+"text": "Player catches up with the Barbarian and travels west with him.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"155": {
+"text": "Her riddle-poem makes sense now: she wants you to plunge into the water. Elsewhere you spot a pit room with a coil of rope, and a casket holding a pearl.",
+"labels": {
+"378": "Dive into the water",
+"322": "Walk back down the tunnel",
+"208": "Cross the pit for the rope",
+"326": "Continue north",
+"310": "Press on through the cobwebs"
+},
+"how": "original summary of the OCR pack passage"
+},
+"156": {
+"text": "Black water laps at a stone shore, and the air tastes of salt and rot.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"157": {
+"text": "Dust lies thick on the vault floors, except where a few footprints cross it.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"158": {
+"text": "You gulp from a jug and realise too late it holds acid. It scorches your throat. Weakened and in pain, you struggle on.",
+"labels": {
+"294": "Use your dagger against the tongue",
+"334": "Fight the tongue without a dagger",
+"237": "Head east",
+"29": "Set off north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"159": {
+"text": "You slip off the rope and plummet into the chasm, striking a rocky ledge on the way. You are dead before you land.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"160": {
+"text": "Pipes and ropes run along a narrow service tunnel built for those who run the Trial.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"161": {
+"text": "The grotto's pools mirror the roof; one of them moves when you do not.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"162": {
+"text": "A box contains an iron key and a large sapphire.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"163": {
+"text": "Wicker, rope and rusted iron: the working side of the dungeon.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"164": {
+"text": "Drips fall from the ceiling as damp boot prints lead to an iron door in the wall. Elsewhere, two stuffed birds take wing to attack you from above.",
+"labels": {
+"83": "Keep going west",
+"11": "Survive the flying guardians"
+},
+"how": "original summary of the OCR pack passage"
+},
+"165": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {
+"290": "Guess the dice will match",
+"84": "Guess the dice will total more"
+},
+"how": "placeholder (zone template)"
+},
+"166": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"167": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"168": {
+"text": "Iron-bound doors line the passage, some ajar, some sealed, all promising something.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"169": {
+"text": "Throm hears approaching footsteps first; two Cave Trolls arrive and each adventurer takes one.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"170": {
+"text": "You race around the pool's edge as the Bloodbeast lashes out its long tongue again. Your agility decides whether you escape its grip.",
+"labels": {
+"104": "Leap over the tongue",
+"342": "Get caught by the tongue"
+},
+"how": "original summary of the OCR pack passage"
+},
+"171": {
+"text": "Side rooms open off the gallery; someone has scratched arrows and crossed them out.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"172": {
+"text": "Cold stone chambers lead on, each with a door that looks too neat to be natural.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"173": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"174": {
+"text": "Iron-bound doors line the passage, some ajar, some sealed, all promising something.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"175": {
+"text": "The air is warm and heavy here, and the pool in the floor is not water.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"176": {
+"text": "Smoke and drumming drift from a cavern where a tribe makes its camp.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"177": {
+"text": "The final door looms, and the air smells of old iron and patience.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"178": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"179": {
+"text": "The walls here are dressed and measured: this part was built, and is watched.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"180": {
+"text": "A red-stained cavern, wet underfoot, with a smell of copper.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"181": {
+"text": "In a marble hall full of tall pillars, you feel unseen eyes. The Ninja, a deadly rival assassin, steps out and hurls a spiked disc at your back.",
+"labels": {
+"45": "Duck the flying disc"
+},
+"how": "original summary of the OCR pack passage"
+},
+"182": {
+"text": "The heat keeps climbing until you are drenched and starting to faint. Whether you stopped for a drink earlier decides how you fare.",
+"labels": {
+"25": "Press on through the heat"
+},
+"how": "original summary of the OCR pack passage"
+},
+"183": {
+"text": "On stilts you cross a floor of burning slime and reach firm ground, discarding the ruined stilts. Elsewhere, Throm lowers himself into a pit and urges you to follow.",
+"labels": {
+"323": "Stay with Throm and head north",
+"149": "Abandon him and jump west"
+},
+"how": "original summary of the OCR pack passage"
+},
+"184": {
+"text": "The Barbarian identifies himself as Throm. His distrust is visible while the player lowers him by rope.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"185": {
+"text": "You creep past dancing Troglodytes, but they spot you and give chase. Ahead, a wooden bridge crosses an underground river that you could dive into instead.",
+"labels": {
+"316": "Run over the bridge"
+},
+"how": "original summary of the OCR pack passage"
+},
+"186": {
+"text": "Heading west, you slam into an invisible crackling barrier that throws you backward. You have no choice but to go back and turn north.",
+"labels": {
+"218": "Walk back and head north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"187": {
+"text": "Dust lies thick on the vault floors, except where a few footprints cross it.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"188": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"189": {
+"text": "An Orc's spiked club bites into your thigh. You stagger, but in the cramped tunnel only one Orc can reach you at a time.",
+"labels": {
+"152": "Fight the Orcs one at a time"
+},
+"how": "original summary of the OCR pack passage"
+},
+"190": {
+"text": "Your body shakes uncontrollably and you black out, losing some strength. If you survive, you wake and continue.",
+"labels": {
+"50": "Recover and go on"
+},
+"how": "original summary of the OCR pack passage"
+},
+"191": {
+"text": "You charge the old man but rebound off an unseen barrier, then a ghostly fist strikes your jaw. His riddle is the only way forward.",
+"labels": {
+"382": "Answer the old man's riddle"
+},
+"how": "original summary of the OCR pack passage"
+},
+"192": {
+"text": "You swallow what turns out to be acid. It eats through your insides and you collapse, never to wake. The adventure ends here.",
+"labels": {
+"120": "Lift the iron grille",
+"292": "Keep walking",
+"52": "Open the red book",
+"138": "Open the black book",
+"369": "Continue north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"193": {
+"text": "A cold room is split by a chasm with a taut rope across it. A winged helmet waits on a pole on the far side.",
+"labels": {
+"274": "Walk the tightrope to the helmet"
+},
+"how": "original summary of the OCR pack passage"
+},
+"194": {
+"text": "Two leather-bound books; Throm is contemptuous of reading and urges haste.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"195": {
+"text": "You break the glass and the swarming insects pour out. Armed with a torch, you grab the crown and retreat, stung, only to find it is worthless paint and glass.",
+"labels": {
+"9": "Return to the junction and go north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"196": {
+"text": "A red-stained cavern, wet underfoot, with a smell of copper.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"197": {
+"text": "The tunnel cools at last. A door stands on the left with a small sliding iron plate, and the passage continues north.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"198": {
+"text": "At the junction you crouch over the dusty floor and read the tracks. Three sets lead west, and one lone set leads east.",
+"labels": {
+"101": "Follow the tracks west",
+"142": "Follow the single trail east"
+},
+"how": "original summary of the OCR pack passage"
+},
+"199": {
+"text": "A Manticore bears down on you, its venomous tail ready. You must defeat the beast before you can go on.",
+"labels": {
+"164": "Defeat the Manticore"
+},
+"how": "original summary of the OCR pack passage"
+},
+"200": {
+"text": "A strawy little room holds a tall cage under a draped cloth, with a cord running through a ceiling ring. Do you reveal what is inside?",
+"labels": {
+"321": "Pull the cord to lift the drape",
+"36": "Leave and head north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"201": {
+"text": "Firelight and watchful shapes: this cave is somebody's home.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"202": {
+"text": "A cobra darts faster than you can react, its hooded head striking for your flesh. Your fortune decides if its fangs find you.",
+"labels": {
+"42": "Take the bite"
+},
+"how": "original summary of the OCR pack passage"
+},
+"203": {
+"text": "You scramble up and draw your blade just as a Pit Fiend closes in. This will be a punishing fight.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"204": {
+"text": "Ivy's cupboards give up only a bone. Elsewhere, replacing a skull triggers a plate, and crossbows loose a volley across the room.",
+"labels": {
+"305": "Leave by the east door",
+"131": "Duck the crossbow bolts",
+"199": "Get caught by the bolts"
+},
+"how": "original summary of the OCR pack passage"
+},
+"205": {
+"text": "Chasing the Leprechauns, you find more laughing behind you from a hidden door, and another drops onto your back. They only laugh harder when you draw steel.",
+"labels": {
+"306": "Attack the Leprechauns",
+"161": "Try to walk past them"
+},
+"how": "original summary of the OCR pack passage"
+},
+"206": {
+"text": "Battered by the rockfall, you are hauled to safety by Throm, who tends your wounds and shares your food. Reconciled, the two of you press on eastward.",
+"labels": {
+"60": "Head east with Throm"
+},
+"how": "original summary of the OCR pack passage"
+},
+"207": {
+"text": "Strips of torn shirt shield your feet as you leap across caustic slime, though it still burns your ankle. Beyond it, the tunnel forks toward west and north.",
+"labels": {
+"386": "Take the west branch",
+"218": "Carry on north",
+"258": "Press on"
+},
+"how": "original summary of the OCR pack passage"
+},
+"208": {
+"text": "The door swings inward. You hop back over the pit, stow the rope in your pack, and leave the room northward.",
+"labels": {
+"326": "Head north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"209": {
+"text": "Your remaining food has rotted and a treasure has vanished from your pack. Nearby, a one-handed prisoner chained to the wall cowers and begs you for mercy.",
+"labels": {
+"356": "Repack and head north",
+"27": "Cut the prisoner free",
+"78": "Leave the room northward"
+},
+"how": "original summary of the OCR pack passage"
+},
+"210": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there. A poison ivy bars the way.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"211": {
+"text": "The air is warm and heavy here, and the pool in the floor is not water.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"212": {
+"text": "Black water laps at a stone shore, and the air tastes of salt and rot.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"213": {
+"text": "The walls here are dressed and measured: this part was built, and is watched.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"214": {
+"text": "A red line is painted across the tunnel floor, and a sign on the wall forbids carrying weapons beyond it. You must choose whether to obey or ignore it.",
+"labels": {
+"181": "Ignore the sign and go north",
+"110": "Recover and walk on north",
+"286": "Continue without weapons",
+"207": "Try crossing the slime"
+},
+"how": "original summary of the OCR pack passage"
+},
+"215": {
+"text": "Side rooms open off the gallery; someone has scratched arrows and crossed them out.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"216": {
+"text": "A fist-shaped door handle lashes out at you; it is really an Imitator, a shapeshifting creature, and you must fight it. Beyond, a tunnel runs north past a wooden door.",
+"labels": {
+"12": "Open the wooden door",
+"100": "Keep going north",
+"291": "Head up the northern tunnel"
+},
+"how": "original summary of the OCR pack passage"
+},
+"217": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"218": {
+"text": "A room appears to contain a diamond beside a fallen warrior, but entering can be a lethal trap.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"219": {
+"text": "Dust lies thick on the vault floors, except where a few footprints cross it.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"220": {
+"text": "A Manticore blocks your way, its tail bristling with iron-hard spikes just as the old rhyme warned. Whether you carry a shield will decide how badly it hurts you.",
+"labels": {
+"196": "Block the spikes with your shield",
+"6": "Face the tail unprotected"
+},
+"how": "original summary of the OCR pack passage"
+},
+"221": {
+"text": "You stride across a row of poles, but the third erupts in a spray of sharp splinters that pierce you. If you survive, you rest, pick them out, and go east.",
+"labels": {
+"311": "Continue east"
+},
+"how": "original summary of the OCR pack passage"
+},
+"222": {
+"text": "A long gallery of branching tracks, with old marks on the walls.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"223": {
+"text": "Loose rock, a heavy boulder and a chest that looks too easily reached.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"224": {
+"text": "The tunnel offers no way further north, so you retrace your steps to the junction and turn west. Somewhere else, a shuddering bell demands you find a way to silence it.",
+"labels": {
+"43": "Walk back and head west",
+"61": "Try to silence the bell"
+},
+"how": "original summary of the OCR pack passage"
+},
+"225": {
+"text": "Your blade slices the Bloodbeast's lashing tongue. Screaming, the creature hurls itself at you with gaping jaws, and this will be a fight to the death.",
+"labels": {
+"83": "Leave the chamber westward",
+"85": "Hear the old man's verdict"
+},
+"how": "original summary of the OCR pack passage"
+},
+"226": {
+"text": "A hush falls in the inner vault, and a thin light plays on the walls.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"227": {
+"text": "Side rooms open off the gallery; someone has scratched arrows and crossed them out.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"228": {
+"text": "You reach into a hole and a slimy tentacle with powerful suckers seizes your arm. You hack free in agony, and your fortune now hangs in the balance.",
+"labels": {
+"150": "If luck is with you",
+"33": "If luck deserts you"
+},
+"how": "original summary of the OCR pack passage"
+},
+"229": {
+"text": "Under a blue light, mournful faces murmur and a girl's spirit whispers a rhyme urging you to hold your breath and dive deep when water floods the corridor.",
+"labels": {
+"97": "If luck is with you",
+"21": "If luck deserts you"
+},
+"how": "original summary of the OCR pack passage"
+},
+"230": {
+"text": "The tunnel opens onto a cavern where about twenty tiny, long-nosed folk circle a large golden idol, shrieking in high voices. You wonder whether to approach or sneak.",
+"labels": {
+"5": "Approach the dancing folk"
+},
+"how": "original summary of the OCR pack passage"
+},
+"231": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"232": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"233": {
+"text": "Firelight and watchful shapes: this cave is somebody's home.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"234": {
+"text": "A red-stained cavern, wet underfoot, with a smell of copper.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"235": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {
+"73": "Press on if you survive"
+},
+"how": "placeholder (zone template)"
+},
+"236": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"237": {
+"text": "The grotto's pools mirror the roof; one of them moves when you do not.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"238": {
+"text": "A red-stained cavern, wet underfoot, with a smell of copper.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"239": {
+"text": "Further along, a closed door stands in the left wall. You press your ear to it and hear nothing from within.",
+"labels": {
+"102": "Open the door"
+},
+"how": "original summary of the OCR pack passage"
+},
+"240": {
+"text": "After the Flying Guardians are defeated, the emerald eye can be removed.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"241": {
+"text": "After the final lock route, Igbut is killed by a final Sukumvit crossbow trap and John reaches daylight.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"242": {
+"text": "You grab the rope and swing out over the pit, but someone has sawn it nearly through. It snaps and you plunge screaming into the depths.",
+"labels": {
+"285": "Fall into the dark"
+},
+"how": "original summary of the OCR pack passage"
+},
+"243": {
+"text": "The tunnel forks, with a buzzing sound drifting from the western branch. Further on, a tripwire sets a huge boulder thundering toward you.",
+"labels": {
+"108": "Investigate the buzzing westward",
+"14": "Continue north",
+"36": "Shed your shield and flee the boulder"
+},
+"how": "original summary of the OCR pack passage"
+},
+"244": {
+"text": "A brown velvet curtain hangs across an archway in the east wall. Elsewhere, the fierce heat threatens to knock you senseless.",
+"labels": {
+"48": "Stay conscious through the heat",
+"365": "Collapse in the heat",
+"109": "Continue your journey"
+},
+"how": "original summary of the OCR pack passage"
+},
+"245": {
+"text": "You stab a giant spore ball and a cloud of itchy spores engulfs you. Beyond a door, a ten-metre Pit Fiend with snapping jaws guards a sandy pit.",
+"labels": {
+"13": "Scratch and head east",
+"201": "Press on",
+"258": "Survive the Pit Fiend and move on"
+},
+"how": "original summary of the OCR pack passage"
+},
+"246": {
+"text": "Despite your care, your leg grazes a pole and it fires needle-sharp splinters into you from every side. If you survive, you pick them out and head east.",
+"labels": {
+"313": "Head east"
+},
+"how": "original summary of the OCR pack passage"
+},
+"247": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"248": {
+"text": "Cold stone chambers lead on, each with a door that looks too neat to be natural.",
+"labels": {
+"214": "Walk the northern tunnel",
+"90": "Slide down the chute",
+"315": "Throw the bone and slip past the dogs"
+},
+"how": "placeholder (zone template)"
+},
+"249": {
+"text": "Surfacing for air, you are spotted by Troglodyte bowmen and shot dead. Elsewhere, a Gnome's gem lock zaps you whenever your arrangement of three jewels is wrong.",
+"labels": {
+"15": "Try gem arrangement one",
+"392": "Try gem arrangement two",
+"177": "Try gem arrangement three",
+"287": "Try gem arrangement four",
+"249": "Try gem arrangement five",
+"44": "Try gem arrangement six",
+"195": "Try gem arrangement seven",
+"382": "Try gem arrangement eight"
+},
+"how": "original summary of the OCR pack passage"
+},
+"250": {
+"text": "Iron-bound doors line the passage, some ajar, some sealed, all promising something. A creature bars the way.",
+"labels": {
+"364": "Win the fight and go on"
+},
+"how": "placeholder (zone template)"
+},
+"251": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"252": {
+"text": "Iron-bound doors line the passage, some ajar, some sealed, all promising something.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"253": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"254": {
+"text": "You advance on a huge, slimy Rock Grub with sword drawn, though you may flee west after a couple of rounds. Elsewhere, a hidden panel in a chair yields a Doppelganger Potion.",
+"labels": {
+"117": "Flee west down the tunnel",
+"88": "Take the potion and continue north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"255": {
+"text": "Dizzied by the pool's gas, you stumble, and the Bloodbeast's tongue snares your leg and drags you into the slime. Your adventure ends as its meal.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"256": {
+"text": "A tight tunnel, hot and dry, scraped smooth by something that digs.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"257": {
+"text": "Searching the fallen Orcs, you find a gold piece and a hollow wooden tube. You pocket them and set off west.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"258": {
+"text": "Spent after the fight, you rest on the fallen beast and notice an iron ring sticking out of the sand.",
+"labels": {
+"95": "Pull the iron ring",
+"248": "Leave through the double doors"
+},
+"how": "original summary of the OCR pack passage"
+},
+"259": {
+"text": "The air is warm and heavy here, and the pool in the floor is not water.",
+"labels": {
+"118": "Run across the bridge"
+},
+"how": "placeholder (zone template)"
+},
+"260": {
+"text": "Pipes and ropes run along a narrow service tunnel built for those who run the Trial.",
+"labels": {
+"166": "Pry out the left eye",
+"140": "Pry out the right eye"
+},
+"how": "placeholder (zone template)"
+},
+"261": {
+"text": "The air is warm and heavy here, and the pool in the floor is not water.",
+"labels": {
+"219": "Enter the tunnel"
+},
+"how": "placeholder (zone template)"
+},
+"262": {
+"text": "Through the door, a tunnel runs north between two stone fountains carved as cherubs, each pouring water into a small basin at its feet.",
+"labels": {
+"337": "Drink at the left fountain",
+"123": "Drink at the right fountain",
+"368": "Walk on north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"263": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {
+"74": "Continue west"
+},
+"how": "placeholder (zone template)"
+},
+"264": {
+"text": "Two Hobgoblins brawl in the dim light, punching and kicking over a leather bag lying on the floor.",
+"labels": {
+"130": "Try to talk to them",
+"51": "Attack them with your sword",
+"355": "Slip past unnoticed"
+},
+"how": "original summary of the OCR pack passage"
+},
+"265": {
+"text": "You wish the advancing demon away with your ring and it fades out of existence. In Ivy's room you search the cupboards, finding only an old bone, then leave east.",
+"labels": {
+"305": "Leave by the east door"
+},
+"how": "original summary of the OCR pack passage"
+},
+"266": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"267": {
+"text": "The tunnel ends at a junction where narrow passages vanish into the gloom to the left and right.",
+"labels": {
+"68": "Go east"
+},
+"how": "original summary of the OCR pack passage"
+},
+"268": {
+"text": "You lunge at the Troglodyte leader, and six bowmen loose arrows that all strike home, ending your journey. Elsewhere, a healing jar and a Gnome's gem lock await.",
+"labels": {
+"127": "Take the diamond and leave the hall",
+"16": "Try gem arrangement one",
+"177": "Try gem arrangement two",
+"287": "Try gem arrangement three",
+"132": "Try gem arrangement four",
+"249": "Try gem arrangement five"
+},
+"how": "original summary of the OCR pack passage"
+},
+"269": {
+"text": "A later hall route allows the player to leave carrying the real diamond.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"270": {
+"text": "Named box provides two gold pieces and Sukumvit's warning that several items will be needed.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"271": {
+"text": "Dust lies thick on the vault floors, except where a few footprints cross it.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"272": {
+"text": "A red-stained cavern, wet underfoot, with a smell of copper.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"273": {
+"text": "A wooden ball knocks the skull off its plinth and the crossbows stay silent. You pry out its topaz eyes, wondering whether a trap still waits.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"274": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {
+"236": "If your nerve holds",
+"159": "If you lose your balance"
+},
+"how": "placeholder (zone template)"
+},
+"275": {
+"text": "Smoke billows where a broken jug spilled acid. You crawl desperately along the dripping tunnel, hunting for water you can drink in the shallow pools.",
+"labels": {
+"21": "Trust your luck"
+},
+"how": "original summary of the OCR pack passage"
+},
+"276": {
+"text": "You throw your shoulder against the locked door, but the Troglodytes close in with drawn bows. A volley of arrows kills you in the depths of the dungeon.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"277": {
+"text": "Firelight and watchful shapes: this cave is somebody's home.",
+"labels": {
+"15": "Press on",
+"204": "Take the other way"
+},
+"how": "placeholder (zone template)"
+},
+"278": {
+"text": "Your blade bursts one of the Bloodbeast's real eyes, and it collapses back into its pool, thrashing wildly. You dash around the pool to the tunnel exit.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"279": {
+"text": "Dust lies thick on the vault floors, except where a few footprints cross it.",
+"labels": {
+"32": "Follow the footprints north"
+},
+"how": "placeholder (zone template)"
+},
+"280": {
+"text": "At a slime-coated junction you choose north. Elsewhere, you free a dying Elf from a Boa Constrictor; she tells you the final door needs gems, including a diamond.",
+"labels": {
+"218": "Head north",
+"192": "Take the mirror and charm, go north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"281": {
+"text": "After rescuing the Elf from a Boa Constrictor, she is dying; she reveals that gems unlock the final door and identifies diamond as one required gem.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"282": {
+"text": "At a junction you meet a rival adventurer, a Barbarian gripping his axe and glaring coldly. He is heading west and offers to let you join him.",
+"labels": {
+"22": "Go west with the Barbarian",
+"388": "Decline and go east alone"
+},
+"how": "original summary of the OCR pack passage"
+},
+"283": {
+"text": "You wedge yourself into a crack as shuffling feet pass, then slip out and head west. Elsewhere, your fate depends on whether you drank a potion from a black leather book.",
+"labels": {
+"398": "You drank the potion",
+"57": "You never drank it"
+},
+"how": "original summary of the OCR pack passage"
+},
+"284": {
+"text": "A tight tunnel, hot and dry, scraped smooth by something that digs.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"285": {
+"text": "You crash into a lightless pit, hurt but cushioned by your pack. Groping about, you find a smooth orb of ruby, cut handholds in the wall, and climb out east.",
+"labels": {
+"217": "Head east"
+},
+"how": "original summary of the OCR pack passage"
+},
+"286": {
+"text": "Regretting that you left your own weapons behind, you claim the dead Ninja's long knife and curved sword, admiring their fine steel.",
+"labels": {
+"320": "Continue onward"
+},
+"how": "original summary of the OCR pack passage"
+},
+"287": {
+"text": "A Gnome mutters a verdict on your chosen gems, and a bolt of white energy leaps from the lock toward you.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"288": {
+"text": "Throm has killed his troll but is wounded. A druidic bone ring is found; he refuses to touch it and advises against it.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"289": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {
+"216": "If luck favours you",
+"19": "If luck fails you"
+},
+"how": "placeholder (zone template)"
+},
+"290": {
+"text": "Cold stone chambers lead on, each with a door that looks too neat to be natural.",
+"labels": {
+"152": "Take the rare route",
+"121": "Take the common route"
+},
+"how": "placeholder (zone template)"
+},
+"291": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"292": {
+"text": "A door waits in the tunnel wall, silent when you listen. Elsewhere, three sets of wet footprints lead to a fork where two sets go west and one goes north.",
+"labels": {
+"230": "Keep walking along the tunnel",
+"137": "Follow two sets of prints west",
+"382": "Follow the lone prints north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"293": {
+"text": "Three sets of footprints divide: two west, one north.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"294": {
+"text": "A dead-end tunnel leaves you only a wooden chute. You slither down, land flat on your back, and a Bloodbeast lunges at you, so you slash at its tongue with a dagger.",
+"labels": {
+"90": "Fight the Bloodbeast from the floor"
+},
+"how": "original summary of the OCR pack passage"
+},
+"295": {
+"text": "Wicker, rope and rusted iron: the working side of the dungeon.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"296": {
+"text": "The tunnel bends ahead, and from beyond the corner come shrill whispers and sniggering that stop you in your tracks.",
+"labels": {
+"49": "Draw your sword and peer round the corner",
+"241": "Retreat to the junction and go north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"297": {
+"text": "Another of your possessions is gone, and your luck suffers for it. Ivy hustles you out through an east door into the end of a new tunnel.",
+"labels": {
+"305": "Follow the new tunnel"
+},
+"how": "original summary of the OCR pack passage"
+},
+"298": {
+"text": "A backpack lies against the tunnel wall, perhaps a rival's, and the passage runs on north. A Bloodbeast's attack hinges on whether your first blow lands lucky.",
+"labels": {
+"279": "Leave the pack and head north",
+"97": "Land the blow with luck on your side",
+"21": "Suffer a bad break in the fight"
+},
+"how": "original summary of the OCR pack passage"
+},
+"299": {
+"text": "Through the door lies a chamber where a Barbarian rival hangs dead, skewered on a spiked frame set off by a hidden trip wire. A silver goblet gleams in an alcove.",
+"labels": {
+"126": "Search the dead Barbarian",
+"41": "Walk towards the alcove",
+"83": "Close the door and continue west",
+"4": "Swing at the mirror again"
+},
+"how": "original summary of the OCR pack passage"
+},
+"300": {
+"text": "A Mirror Demon bears down on you, and beyond it lie a dead Barbarian and an alcove. You could stand and fight it instead of looting or leaving.",
+"labels": {
+"127": "Attack the Mirror Demon"
+},
+"how": "original summary of the OCR pack passage"
+},
+"301": {
+"text": "Dust lies thick on the vault floors, except where a few footprints cross it.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"302": {
+"text": "The Dwarf later sends in a wounded, delirious Throm. The cobra has bitten him. John protests but must defend himself.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"303": {
+"text": "You pour acid from your jug over the door, which turns out to be a living Imitator, and it melts away hissing. The second door is your only remaining way.",
+"labels": {
+"262": "Try the other door"
+},
+"how": "original summary of the OCR pack passage"
+},
+"304": {
+"text": "You crawl into a wet, slimy pipe in the dark and your hand finds a rattling wooden box. Elsewhere in the trial, a delirious Throm staggers at you.",
+"labels": {
+"162": "Crawl back out and examine the box",
+"379": "Defeat poor Throm"
+},
+"how": "original summary of the OCR pack passage"
+},
+"305": {
+"text": "Wicker, rope and rusted iron: the working side of the dungeon.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"306": {
+"text": "Leprechauns freeze you in place with sparkling dust and loot your entire pack. Hours later you thaw out, furious, and stalk off north vowing revenge.",
+"labels": {
+"29": "Stomp north after the thieves"
+},
+"how": "original summary of the OCR pack passage"
+},
+"307": {
+"text": "Firelight and watchful shapes: this cave is somebody's home.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"308": {
+"text": "Cold stone chambers lead on, each with a door that looks too neat to be natural.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"309": {
+"text": "Acid scorches your throat and you scramble about the floor hunting for water. Beyond the chamber you also reach a wall with two doors.",
+"labels": {
+"231": "Trust your luck and recover",
+"193": "Suffer from bad luck",
+"262": "Open the right-hand door"
+},
+"how": "original summary of the OCR pack passage"
+},
+"310": {
+"text": "You and a Barbarian companion leap a pit, but he trips a stone and a boulder crushes him. Alone now, you must go on with your quest.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"311": {
+"text": "Rope marks scar the lip of the pit; a voice echoes up from below.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"312": {
+"text": "The floor drops away into a deep pit and the rock is slick with damp.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"313": {
+"text": "Dust lies thick on the vault floors, except where a few footprints cross it.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"314": {
+"text": "A hush falls in the inner vault, and a thin light plays on the walls.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"315": {
+"text": "The walls here are dressed and measured: this part was built, and is watched.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"316": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"317": {
+"text": "The cool fountain water refreshes you, though a Hag has cursed its source. Nearby, two dead Orc guards lie, one wearing a necklace of teeth.",
+"labels": {
+"368": "Carry on north",
+"282": "Skip the necklace and head north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"318": {
+"text": "A red-stained cavern, wet underfoot, with a smell of copper.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"319": {
+"text": "Loose rock, a heavy boulder and a chest that looks too easily reached.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"320": {
+"text": "Iron-bound doors line the passage, some ajar, some sealed, all promising something.",
+"labels": {
+"330": "Eat the rice and drink the water",
+"269": "Rub ointment into your wounds",
+"122": "Take only the diamond and leave"
+},
+"how": "placeholder (zone template)"
+},
+"321": {
+"text": "You tug the cord and a woman in a cage rises. She cries that the floor will give way within a minute under your extra weight.",
+"labels": {
+"116": "Leave the room and head north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"322": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {
+"43": "Head west at the junction"
+},
+"how": "placeholder (zone template)"
+},
+"323": {
+"text": "You tie your rope to a rock and lower yourself into the pit. Throm flicks the rope free, and together you enter the new tunnel below.",
+"labels": {
+"194": "Follow the new tunnel with Throm"
+},
+"how": "original summary of the OCR pack passage"
+},
+"324": {
+"text": "A red-stained cavern, wet underfoot, with a smell of copper.",
+"labels": {
+"256": "Use what the servant told you",
+"79": "Go on without his help"
+},
+"how": "placeholder (zone template)"
+},
+"325": {
+"text": "Daylight shows at the tunnel's end, but it is an illusion. You stand among armoured corpses of past adventurers, sealed in by an invisible barrier.",
+"labels": {
+"189": "Face the swinging morning star",
+"380": "Fight the Orcs one at a time",
+"8": "Take a hit from the Mirror Demon",
+"92": "Defeat the Mirror Demon unharmed"
+},
+"how": "original summary of the OCR pack passage"
+},
+"326": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"327": {
+"text": "Dust lies thick on the vault floors, except where a few footprints cross it.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"328": {
+"text": "Iron-bound doors line the passage, some ajar, some sealed, all promising something.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"329": {
+"text": "The air is warm and heavy here, and the pool in the floor is not water.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"330": {
+"text": "The Ninja's plain rations are welcome and restore some strength. The ointment and the diamond are still yours to take.",
+"labels": {
+"269": "Rub ointment into your wounds"
+},
+"how": "original summary of the OCR pack passage"
+},
+"331": {
+"text": "You touch the parchment and the seated skeleton jerks to life, rising with its sword raised. You must defend yourself against the Skeleton Warrior.",
+"labels": {
+"71": "Defeat the Skeleton Warrior"
+},
+"how": "original summary of the OCR pack passage"
+},
+"332": {
+"text": "Cold stone chambers lead on, each with a door that looks too neat to be natural.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"333": {
+"text": "The trapdoor above flies open and blinding light dazzles you. A Goblin's spear plunges into your neck and your adventure ends on the stone steps.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"334": {
+"text": "A Bloodbeast's tongue hauls you toward its slime pool to be digested. Elsewhere you race for a river and dive in, hoping luck holds.",
+"labels": {
+"67": "Dive into the river and hope for luck",
+"101": "Suffer bad luck in the river",
+"298": "Kick the wall and stomp north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"335": {
+"text": "Wicker, rope and rusted iron: the working side of the dungeon.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"336": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"337": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"338": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"339": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"340": {
+"text": "Pipes and ropes run along a narrow service tunnel built for those who run the Trial.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"341": {
+"text": "Dust lies thick on the vault floors, except where a few footprints cross it.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"342": {
+"text": "Black water laps at a stone shore, and the air tastes of salt and rot.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"343": {
+"text": "The roof presses down; somewhere ahead something heavy shuffles.",
+"labels": {
+"12": "Follow the footprints north"
+},
+"how": "placeholder (zone template)"
+},
+"344": {
+"text": "The winding tunnel leads north to a shimmering shaft of blue light, in which you glimpse laughing faces.",
+"labels": {
+"229": "Walk through the light",
+"107": "Walk around the light"
+},
+"how": "original summary of the OCR pack passage"
+},
+"345": {
+"text": "The tunnel veers left to a high wall with a door, and a terrifying roar comes from behind it. Elsewhere, a second Rock Grub kills you in a slimy borehole.",
+"labels": {
+"129": "Use your rope and grappling iron",
+"245": "Go on without such gear",
+"295": "Head west along the new tunnel",
+"86": "Unlock the door with the iron key",
+"276": "Try the locked door without a key"
+},
+"how": "original summary of the OCR pack passage"
+},
+"346": {
+"text": "Pipes and ropes run along a narrow service tunnel built for those who run the Trial.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"347": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"348": {
+"text": "A cavern of carved stone, with something large and jewelled watching from the dark.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"349": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {
+"285": "Land at the bottom of the pit"
+},
+"how": "placeholder (zone template)"
+},
+"350": {
+"text": "A Giant Fly seizes you in its legs and carries you up toward the roof, then swoops again. A smooth idol nearby tempts you to climb it.",
+"labels": {
+"39": "Draw your sword against the Giant Fly",
+"396": "Climb the idol with a rope"
+},
+"how": "original summary of the OCR pack passage"
+},
+"351": {
+"text": "Gems glint high above, and the floor is littered with the bones of the careless.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"352": {
+"text": "The wall on your right crumbles as a huge blind worm with crushing jaws bursts through, sensing your body heat. Elsewhere, a boulder crashes into your shoulder.",
+"labels": {
+"254": "Fight the Rock Grub",
+"325": "Endure the boulder and stagger on"
+},
+"how": "original summary of the OCR pack passage"
+},
+"353": {
+"text": "Cold glitter fills the chamber; nothing here is as safe as it looks.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"354": {
+"text": "After the cursed pill, the Dwarf tips a cobra from a basket and tests your reflexes. You must catch it bare-handed just below its head.",
+"labels": {
+"55": "Seize the cobra behind its head",
+"110": "Sneak past the brawling Hobgoblins"
+},
+"how": "original summary of the OCR pack passage"
+},
+"355": {
+"text": "An opening in the tunnel wall reveals a large cavern, where a girl's voice calls for help and a figure writhes on the far floor.",
+"labels": {
+"170": "Enter the cavern and investigate",
+"192": "Ignore the cries and continue north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"356": {
+"text": "Pipes and ropes run along a narrow service tunnel built for those who run the Trial.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"357": {
+"text": "The Bloodbeast thrashes clumsily in its pool, and poisonous gas bubbling up makes you retch. You could dash around the edge, throw it a gem, or strike.",
+"labels": {
+"255": "Run round the pool towards the tunnel"
+},
+"how": "original summary of the OCR pack passage"
+},
+"358": {
+"text": "You lose your grip, fall hard from the idol and give up climbing it. A tunnel in the north wall waits, and a seller offers stilts.",
+"labels": {
+"29": "Give up and take the north tunnel",
+"165": "Buy the stilts"
+},
+"how": "original summary of the OCR pack passage"
+},
+"359": {
+"text": "There is little reason to linger here, so you press on along the tunnel heading north.",
+"labels": {
+"214": "Keep walking north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"360": {
+"text": "An old man pulls you up in a basket to a chamber where a warty Troll named Ivy grabs your throat and demands payment. Elsewhere a charm jams a Pit Fiend's jaws.",
+"labels": {
+"328": "Talk your way out of paying",
+"211": "Attack her with your sword",
+"82": "Trust luck against the Pit Fiend",
+"32": "Suffer bad luck against the Pit Fiend",
+"264": "Follow the distant commotion with sword drawn"
+},
+"how": "original summary of the OCR pack passage"
+},
+"361": {
+"text": "The food and drink are excellent and leave you much stronger. You settle down, fully satisfied, to wait for the Dwarf to return.",
+"labels": {
+"302": "Wait for the Dwarf"
+},
+"how": "original summary of the OCR pack passage"
+},
+"362": {
+"text": "Smoke and drumming drift from a cavern where a tribe makes its camp.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"363": {
+"text": "The air is warm and heavy here, and the pool in the floor is not water.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"364": {
+"text": "After the Manticore, Igbut the Gnome appears as final Trialmaster and checks for the three required gems.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"365": {
+"text": "John persuades Throm to accept the Trialmaster's procedure; the Dwarf takes John through a secret door and begins a dice-probability test.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"366": {
+"text": "You meet a wary old man, servant to one of the Trialmasters, who admits he longs to escape the dungeon. You can pay for his advice or leave him be.",
+"labels": {
+"109": "Wish him well and head west"
+},
+"how": "original summary of the OCR pack passage"
+},
+"367": {
+"text": "Wicker, rope and rusted iron: the working side of the dungeon.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"368": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"369": {
+"text": "The roof presses down; somewhere ahead something heavy shuffles.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"370": {
+"text": "A cavern of carved stone, with something large and jewelled watching from the dark.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"371": {
+"text": "Your reflection is a half-beat late; the gallery waits for you to make a mistake.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"372": {
+"text": "Tall mirrors line the walls and show you a crowd that is not there.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"373": {
+"text": "You clamber over a soft boulder that swallows your limbs and reach firm ground. Elsewhere, Throm's booming laughter shakes stalactites loose from the cavern roof.",
+"labels": {
+"374": "Head east",
+"118": "Dash through the archway and escape the rockfall",
+"295": "Get caught under the falling rock"
+},
+"how": "original summary of the OCR pack passage"
+},
+"374": {
+"text": "You hurl a wooden ball at a skull. In another trapped chamber, a greedy grab at a jewel brings the ceiling down to crush you.",
+"labels": {
+"223": "Throw the ball at the skull"
+},
+"how": "original summary of the OCR pack passage"
+},
+"375": {
+"text": "Smoke curls from the jug as you test the liquid, and it is plainly acid. You cork it and press north, while a smiling Gnome asks whether you carry a diamond.",
+"labels": {
+"110": "Press on north",
+"62": "Hand over a diamond",
+"3": "Admit you have no diamond"
+},
+"how": "original summary of the OCR pack passage"
+},
+"376": {
+"text": "A tight tunnel, hot and dry, scraped smooth by something that digs.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"377": {
+"text": "Loose rock, a heavy boulder and a chest that looks too easily reached.",
+"labels": {
+"203": "Pick yourself up in the pit"
+},
+"how": "placeholder (zone template)"
+},
+"378": {
+"text": "You plunge into a dark pool and swim under the northern wall, gasping, then surface on the far side where the tunnel climbs out of the water.",
+"labels": {
+"12": "Hope your pack stayed dry",
+"209": "Find your pack ruined"
+},
+"how": "original summary of the OCR pack passage"
+},
+"379": {
+"text": "After Throm dies, John hates the Dwarf. The Dwarf keeps John at crossbow point and reveals the concealed way onward.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"380": {
+"text": "An Orc's spiked club glances harmlessly off your shield. The narrow tunnel lets only one Orc attack at a time, so you fight them in turn.",
+"labels": {
+"252": "Cut down the Orcs one by one"
+},
+"how": "original summary of the OCR pack passage"
+},
+"381": {
+"text": "The air is warm and heavy here, and the pool in the floor is not water.",
+"labels": {
+"331": "Take the parchment from the skeleton",
+"128": "Walk over to the alcove",
+"44": "Offer one weight as your answer",
+"222": "Offer a different weight as your answer"
+},
+"how": "placeholder (zone template)"
+},
+"382": {
+"text": "Old man's statue riddle; the player recognizes the petrified Knight who entered the Trial first.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"383": {
+"text": "Loose rock, a heavy boulder and a chest that looks too easily reached.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"384": {
+"text": "The fourth step collapses and starving rats bite your foot. You smash them off against the banister, bind the wound and climb on.",
+"labels": {
+"277": "Climb the steps and go north"
+},
+"how": "original summary of the OCR pack passage"
+},
+"385": {
+"text": "You drink the potion to pass as a Troglodyte and stroll past their dancing, until it wears off and one screams. A wooden bridge crosses a river ahead.",
+"labels": {
+"38": "Run over the bridge"
+},
+"how": "original summary of the OCR pack passage"
+},
+"386": {
+"text": "A river rushes before you, and diving into it is one way forward.",
+"labels": {},
+"how": "original summary of the OCR pack passage"
+},
+"387": {
+"text": "A large, club-wielding Caveman in animal hide stomps out of the gloom, grunts and charges at you. You draw your sword to meet him.",
+"labels": {
+"114": "Defeat the Caveman"
+},
+"how": "original summary of the OCR pack passage"
+},
+"388": {
+"text": "The tunnel dead-ends at an old, curled scrap of paper pinned to the wall. Another room holds a skull on a plinth beneath crossbows.",
+"labels": {
+"23": "Pull the paper off the wall",
+"181": "Follow the tunnel north",
+"204": "Put the skull back and crawl out"
+},
+"how": "original summary of the OCR pack passage"
+},
+"389": {
+"text": "Firelight and watchful shapes: this cave is somebody's home.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"390": {
+"text": "A red-stained cavern, wet underfoot, with a smell of copper.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"391": {
+"text": "Side rooms open off the gallery; someone has scratched arrows and crossed them out.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"392": {
+"text": "A cold hall before a great door with three sockets, and a small figure waiting beside it.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"393": {
+"text": "Wicker, rope and rusted iron: the working side of the dungeon.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"394": {
+"text": "A tight tunnel, hot and dry, scraped smooth by something that digs.",
+"labels": {},
+"how": "placeholder (zone template)"
+},
+"395": {
+"text": "The sound of your scabbard alerts the Troglodytes. You sprint across the cavern as an archer's arrow pierces your shoulder.",
+"labels": {
+"259": "Keep running"
+},
+"how": "original summary of the OCR pack passage"
+},
+"396": {
+"text": "You lasso the idol's head and climb to its nose, eyeing the two gem eyes. Elsewhere, a trapped chest turns out to hold only an empty pendant chain.",
+"labels": {
+"151": "Prise out the left eye",
+"210": "Storm out and go up the tunnel"
+},
+"how": "original summary of the OCR pack passage"
+},
+"397": {
+"text": "The liquid is a potion that lets you sense hidden traps, and your luck improves. A red book remains to be opened.",
+"labels": {
+"52": "Open the red book"
+},
+"how": "original summary of the OCR pack passage"
+},
+"398": {
+"text": "With nothing else to hold you, you carry on north, side by side with Throm.",
+"labels": {
+"369": "Continue north with Throm"
+},
+"how": "original summary of the OCR pack passage"
+},
+"399": {
+"text": "The Elf's bread contains healing herbs; the player packs away the mirror and charm and continues north.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+},
+"400": {
+"text": "Victory: the surviving contestant emerges to Fang and is acclaimed as Champion.",
+"labels": {},
+"how": "verified beat (the owner's backbone)"
+}
+}
+}

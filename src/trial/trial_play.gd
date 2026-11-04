@@ -40,6 +40,7 @@ var _panel: PanelContainer
 var _desc: Label
 var _news: Label
 var _msg: Label
+var _tag: Label
 var _timer_bar: ColorRect
 var _timer_label: Label
 var _choice_layer: Control
@@ -72,16 +73,16 @@ func _ready() -> void:
 	virtual_mode = OS.get_environment("RW_TRIAL_VIRTUAL") == "1"
 	if bot == "":
 		bot = OS.get_environment("RW_TRIAL_BOT")
-	if OS.has_environment("RW_TRIAL_CHOICES"):
+	if OS.get_environment("RW_TRIAL_CHOICES") != "":
 		_script_choices = OS.get_environment("RW_TRIAL_CHOICES").split(",")
-	if OS.has_environment("RW_TRIAL_UNTIL"):
+	if OS.get_environment("RW_TRIAL_UNTIL") != "":
 		_until = int(OS.get_environment("RW_TRIAL_UNTIL"))
 	exit_launcher = func(where: String) -> void:
 		Session.run_start_node = "warehouse" if where == "warehouse" else ""
 		get_tree().change_scene_to_file("res://src/run/run_play.tscn")
 	_beat_s = 60.0 / float(rdata.cfg["timing"]["bpm"])
 	engine = TrialEngine.new(tdata, rdata)
-	engine.begin()
+	engine.begin(int(OS.get_environment("RW_TRIAL_START")) if OS.get_environment("RW_TRIAL_START") != "" else -1)
 	proxy = StoryRun.new()
 	proxy.level = engine.level
 	proxy.crowd = CrowdController.new()
@@ -182,6 +183,12 @@ func _build_layout() -> void:
 	_choice_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_choice_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_stage_host.add_child(_choice_layer)
+	_tag = Label.new()
+	_tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_tag.add_theme_color_override("font_color", Color(0.75, 0.8, 1.0, 0.8))
+	_tag.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	_tag.add_theme_constant_override("outline_size", 4)
+	_stage_host.add_child(_tag)
 	_timer_bar = ColorRect.new()
 	_timer_bar.color = Color(1.0, 0.82, 0.5, 0.9)
 	_timer_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -274,6 +281,8 @@ func _layout() -> void:
 	_desc.add_theme_font_size_override("font_size", fs)
 	_news.add_theme_font_size_override("font_size", fs)
 	_timer_label.add_theme_font_size_override("font_size", fs)
+	_tag.add_theme_font_size_override("font_size", int(fs * 0.8))
+	_tag.position = Vector2(w * 0.025, h - fs * 1.7)
 	_msg.add_theme_font_size_override("font_size", int(fs * 1.9))
 	_panel.position = Vector2(w * 0.025, h * 0.03 + fs * 2.2)
 	var es := minf(h * 0.55, w * 0.3)
@@ -371,6 +380,17 @@ func _show_passage(ev: Dictionary) -> void:
 	_enemy_id = ""
 	_msg.text = ""
 	_shade.color = Color(0, 0, 0, 0.0)
+	var status := str(p.get("status", ""))
+	_tag.text = "passage %d  ·  %s" % [engine.flow.passage, {"BOOK_VERIFIED": "book-verified links", "OCR_GRAPH": "links from the OCR pack (unverified)", "BRIDGED": "bridged (invented links)",
+		"SYNTHETIC": "synthetic", "ADAPTED": "adapted", "LEGACY": "legacy adaptation"}.get(status, status)]
+	var pk := str(ev.get("passage_kind", p.get("kind", "normal")))
+	if pk == "death":
+		_msg.text = "YOU DIED"
+		_msg.add_theme_color_override("font_color", Color(1.0, 0.45, 0.4))
+		_shade.color = Color(0.2, 0, 0, 0.35)
+	elif pk == "victory":
+		_msg.text = "VICTORY"
+		_msg.add_theme_color_override("font_color", Color(1.0, 0.95, 0.6))
 	if _until > 0 and engine.flow.passage == _until:
 		print("TRIAL reached passage %d" % engine.flow.passage)
 		if OS.get_environment("RW_STORY_QUIT") == "1":
@@ -395,7 +415,6 @@ func _open_window(ev: Dictionary) -> void:
 	_choice_layer.visible = true
 	_place_choices()
 	_sync_buttons()
-	_msg.text = ""
 	_script_pick = -1
 	_script_pick_at = -1.0
 	if _script_i < _script_choices.size():
@@ -449,6 +468,7 @@ func _on_phrase(ev: Dictionary) -> void:
 	if enc != "":
 		var e: Dictionary = tdata.encounters[enc]
 		_enemy.texture = _texture(str(e["portrait"]))
+		_enemy.modulate = Color.html(str(e["tint"])) if e.has("tint") else Color.WHITE
 		_enemy.visible = true
 		_enemy_id = enc
 		_news.text = str(e["intro"])
@@ -462,7 +482,7 @@ func _on_result(ev: Dictionary) -> void:
 	_msg.text = ""
 	if bool(ev["fight"]):
 		_outcome = {"t0": float(ev["t"]), "kind": str(ev["outcome"])}
-		_msg.text = "FLY DOWN!" if str(ev["outcome"]) == "win" else "STUNG!"
+		_msg.text = "DEFEATED!" if str(ev["outcome"]) == "win" else ("BEATEN" if bool(ev.get("defeated", false)) else "HURT!")
 		_msg.add_theme_color_override("font_color", Color(0.6, 1.0, 0.8) if str(ev["outcome"]) == "win" else Color(1.0, 0.55, 0.45))
 	else:
 		_msg.text = "WELL PLAYED" if str(ev["result"]) == "pass" else "MISSED: TRY AGAIN"

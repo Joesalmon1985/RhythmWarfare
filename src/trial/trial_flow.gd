@@ -26,15 +26,15 @@ var exit := ""  # set when the player leaves ("warehouse")
 var rejoined: Array = []  # passages entered more than once (routes that rejoin)
 
 
-func _init(p_data: TrialData = null) -> void:
+func _init(p_data: TrialData = null, start_passage: int = -1) -> void:
 	if p_data != null:
-		begin(p_data)
+		begin(p_data, start_passage)
 
 
-func begin(p_data: TrialData) -> void:
+func begin(p_data: TrialData, start_passage: int = -1) -> void:
 	data = p_data
 	state = State.SCENE
-	passage = data.start
+	passage = start_passage if start_passage >= 0 and data.passages.has(start_passage) else data.start
 	consequence = ""
 	failure = ""
 	retry_index = -1
@@ -85,6 +85,17 @@ func phrase_done(passed: bool, credit: float) -> Dictionary:
 	var fight := str(c.get("encounter", "")) != ""
 	var enc: Dictionary = data.encounters.get(str(c.get("encounter", "")), {})
 	state = State.SCENE
+	if c.has("test"):  # a luck test: the rhythm decides which way it goes, and there is no second go
+		var dest := int(c["test"]["pass" if passed else "fail"])
+		history.append({"passage": passage, "choice": selected, "result": "pass" if passed else "fail", "credit": credit, "to": dest})
+		attempts = 0
+		retry_index = -1
+		failure = ""
+		var moved := c.duplicate()
+		moved["to"] = dest
+		_move(moved)
+		consequence = "Luck is with you." if passed else "Luck turns against you."
+		return {"kind": "pass" if passed else "fail", "fight": false, "outcome": "", "text": consequence, "defeated": false}
 	if passed:
 		history.append({"passage": passage, "choice": selected, "result": "pass", "credit": credit})
 		attempts = 0
@@ -93,13 +104,20 @@ func phrase_done(passed: bool, credit: float) -> Dictionary:
 		_move(c)
 		if fight:
 			consequence = "%s %s" % [str(enc.get("on_win", "")), str(c.get("consequence", ""))]
-		return {"kind": "pass", "fight": fight, "outcome": "win" if fight else "", "text": consequence}
+		return {"kind": "pass", "fight": fight, "outcome": "win" if fight else "", "text": consequence, "defeated": false}
 	history.append({"passage": passage, "choice": selected, "result": "fail", "credit": credit})
 	attempts += 1
+	if fight and int(c.get("lives", 0)) > 0 and attempts >= int(c["lives"]):  # beaten three times: the fight is lost for good, and the adventure with it
+		var lost := {"to": 0, "consequence": "The %s is too much for you. Your adventure ends here." % str(enc.get("name", "creature")).to_lower()}
+		attempts = 0
+		retry_index = -1
+		failure = ""
+		_move(lost)
+		return {"kind": "fail", "fight": true, "outcome": "lose", "text": consequence, "defeated": true}
 	retry_index = selected
 	failure = str(enc.get("on_fail", "")) if fight else "The moment slips. Try again."
 	consequence = ""
-	return {"kind": "fail", "fight": fight, "outcome": "lose" if fight else "", "text": failure}
+	return {"kind": "fail", "fight": fight, "outcome": "lose" if fight else "", "text": failure, "defeated": false}
 
 
 func _move(c: Dictionary) -> void:
