@@ -95,7 +95,22 @@
   {"id": "bulbs_a", "kind": "billboard", "sprite": "glow", "at": [8.5, 8], "y": 2.2, "size": 0.8, "anim": "flicker", "blend": "add"},
   {"id": "bulbs_b", "kind": "billboard", "sprite": "glow", "at": [10.5, 8], "y": 2.2, "size": 0.8, "anim": "flicker", "blend": "add"},
   {"id": "bulbs_c", "kind": "billboard", "sprite": "glow", "at": [12, 6.8], "y": 2.2, "size": 0.8, "anim": "flicker", "blend": "add"},
-  {"id": "bar_glow", "kind": "billboard", "sprite": "glow", "at": [10, 3], "y": 1.8, "size": 2.0, "anim": "pulse", "blend": "add"}
+  {"id": "bar_glow", "kind": "billboard", "sprite": "glow", "at": [10, 3], "y": 1.8, "size": 2.0, "anim": "pulse", "blend": "add"},
+  {"id": "lt_floor_a", "kind": "light", "at": [-3, 5.5], "y": 4.4, "radius": 5.5, "color": "#ff2f9d", "strength": 0.8},
+  {"id": "lt_floor_b", "kind": "light", "at": [3.5, 4.5], "y": 4.4, "radius": 5.5, "color": "#19d2ff", "strength": 0.8},
+  {"id": "lt_floor_c", "kind": "light", "at": [0, 0.5], "y": 4.4, "radius": 5.0, "color": "#8060ff", "strength": 0.7},
+  {"id": "lt_stage", "kind": "light", "at": [0, -6], "y": 3.6, "radius": 6.0, "color": "#ffc23f", "strength": 0.8},
+  {"id": "lt_booth", "kind": "light", "at": [0, -9], "y": 2.8, "radius": 4.5, "color": "#ffd890", "strength": 1.1},
+  {"id": "lt_bar", "kind": "light", "at": [10, 3], "y": 1.9, "radius": 5.0, "color": "#ff9a3a", "strength": 1.2},
+  {"id": "lt_bar_b", "kind": "light", "at": [8.5, 1], "y": 1.9, "radius": 3.0, "color": "#ffd890", "strength": 0.8},
+  {"id": "lt_chill_a", "kind": "light", "at": [9, 8], "y": 2.0, "radius": 3.8, "color": "#ff5fb8", "strength": 1.0},
+  {"id": "lt_chill_b", "kind": "light", "at": [11.8, 7.6], "y": 2.0, "radius": 3.0, "color": "#ff9ad0", "strength": 0.8},
+  {"id": "lt_balcony", "kind": "light", "at": [-9, 1], "y": 4.8, "radius": 5.5, "color": "#ff2f9d", "strength": 0.9},
+  {"id": "lt_wc_sign", "kind": "light", "at": [-18.2, 6.5], "y": 1.9, "radius": 5.0, "color": "#48ff9a", "strength": 1.0},
+  {"id": "lt_wc_door", "kind": "light", "at": [-7.6, 6.5], "y": 2.0, "radius": 6.0, "color": "#8060ff", "strength": 0.9, "cone": {"yaw": 90, "angle": 35}},
+  {"id": "lt_toilets", "kind": "light", "at": [-16.5, 9.5], "y": 2.2, "radius": 5.0, "color": "#c8f0ff", "strength": 1.0},
+  {"id": "lt_street", "kind": "light", "at": [0, 18.4], "y": 1.8, "radius": 7.0, "color": "#ffb040", "strength": 1.2, "cone": {"yaw": 0, "angle": 50}},
+  {"id": "lt_entrance", "kind": "light", "at": [0, 11], "y": 2.6, "radius": 4.0, "color": "#ffc23f", "strength": 0.7}
  ],
  "homes": [
   {"actor": "c01", "sector": "floor", "at": [0.0, 3.49]},
