@@ -507,3 +507,75 @@ func _cage_bars() -> Image:
 	_rect(im, Rect2i(0, 8, 64, 3), Color("#6a4a40"))
 	_rect(im, Rect2i(0, 52, 64, 3), Color("#6a4a40"))
 	return im
+
+
+# ---- The Hospital (a night ward: every wall and floor tile is cooled to moonlight; the backdrops are 1580 wide, design x = image x - 150) ----
+
+func _night(im: Image, mul: Color = Color(0.55, 0.66, 1.0)) -> Image:
+	return _tint(im, mul)
+
+
+func _hospital() -> Dictionary:
+	return {
+		# the private room (backdrop.svg): wallpaper and nightstand, the window, the wooden floor, skirting
+		"wall_ward": func(s, c): return _night(_fit(_crop(_bd(s, c), Rect2i(970, 170, 180, 90)))),
+		"wall_window": func(s, c): return _night(_fit(_crop(_bd(s, c), Rect2i(1280, 30, 140, 220))), Color(0.45, 0.6, 1.0)),
+		"floor_wood": func(s, c): return _night(_fit(_crop(_bd(s, c), Rect2i(250, 300, 500, 140)))),
+		"trim": func(s, c): return _night(_rows(_crop(_bd(s, c), Rect2i(250, 440, 500, 24)))),
+		"wall_curtain": func(s, c): return _curtain(),
+		# the corridor: ward doors, the checked floor, ceiling tiles, the nurses' station (kept warm)
+		"wall_door": func(s, c): return _night(_fit(_crop(_view(s, c, "corridor_backdrop"), Rect2i(260, 80, 190, 290))), Color(0.6, 0.7, 1.0)),
+		"floor_check": func(s, c): return _night(_fit(_crop(_view(s, c, "corridor_backdrop"), Rect2i(450, 460, 600, 200)))),
+		"ceil_tile": func(s, c): return _night(_rows(_crop(_view(s, c, "corridor_backdrop"), Rect2i(270, 20, 800, 40)))),
+		"wall_station": func(s, c): return _tint(_fit(_crop(_view(s, c, "corridor_backdrop"), Rect2i(600, 90, 160, 190))), Color(0.95, 0.85, 0.75)),
+		# the cafeteria: counter, vending machine, the red and cream floor
+		"wall_counter": func(s, c): return _night(_fit(_crop(_view(s, c, "cafeteria_backdrop"), Rect2i(580, 220, 420, 80))), Color(0.8, 0.85, 1.0)),
+		"wall_vending": func(s, c): return _tint(_fit(_crop(_view(s, c, "cafeteria_backdrop"), Rect2i(490, 130, 100, 140))), Color(0.85, 0.9, 1.0)),
+		"floor_cafe": func(s, c): return _night(_fit(_crop(_view(s, c, "cafeteria_backdrop"), Rect2i(450, 360, 600, 160)))),
+		# the garden: the brick building, a hedge, flagstones
+		"wall_brick": func(s, c): return _night(_fit(_crop(_view(s, c, "garden_backdrop"), Rect2i(500, 40, 540, 120)))),
+		"wall_hedge": func(s, c): return _night(_fit(_crop(_view(s, c, "garden_backdrop"), Rect2i(470, 210, 200, 50))), Color(0.5, 0.75, 0.9)),
+		"floor_stone": func(s, c): return _night(_fit(_crop(_view(s, c, "garden_backdrop"), Rect2i(290, 360, 800, 120)))),
+		# no art of their own: the quiet corridor's dim panels and lino, the television
+		"wall_quiet": func(s, c): return _quiet_wall(),
+		"floor_lino": func(s, c): return _lino(),
+		"wall_tv": func(s, c): return _tv(),
+		"sky_night": func(s, c): return _sky(Color(0.01, 0.02, 0.08), Color(0.07, 0.11, 0.27), 90, 5, [[200, 18, 4, Color(0.98, 0.95, 0.78)]]),
+	}
+
+
+func _curtain() -> Image:
+	var im := _filled(64, Color("#5a78a8"))
+	for i in 8:
+		_rect(im, Rect2i(i * 8, 0, 3, 64), Color("#6a88b8"))
+		_rect(im, Rect2i(i * 8 + 5, 0, 1, 64), Color("#3a5480"))
+	_rect(im, Rect2i(0, 0, 64, 2), Color("#8fa8c8"))
+	return im
+
+
+func _quiet_wall() -> Image:
+	var im := _filled(64, Color("#3c4e60"))
+	for k in 4:
+		_rect(im, Rect2i(k * 16, 0, 1, 64), Color("#2a3848"))
+	_rect(im, Rect2i(0, 40, 64, 24), Color("#324454"))
+	_rect(im, Rect2i(0, 40, 64, 1), Color("#52687c"))
+	return im
+
+
+func _lino() -> Image:
+	var im := _filled(64, Color("#30445a"))
+	for j in 4:
+		for i in 4:
+			if (i + j) % 2 == 0:
+				_rect(im, Rect2i(i * 16, j * 16, 16, 16), Color("#385068"))
+	_frame(im, Rect2i(0, 0, 64, 64), Color("#22344a"))
+	return im
+
+
+func _tv() -> Image:
+	var im := _filled(64, Color("#2a3448"))
+	_rect(im, Rect2i(6, 10, 52, 36), Color("#0c1020"))
+	_rect(im, Rect2i(8, 12, 48, 32), Color("#3a6ab0"))
+	_rect(im, Rect2i(8, 12, 48, 6), Color("#6a9ae0"))
+	_rect(im, Rect2i(26, 48, 12, 6), Color("#1a2234"))
+	return im

@@ -3760,5 +3760,159 @@
    ],
    "monitor_line_width": 1024
   }
+ },
+ "textures": {
+  "ceil_tile": {
+   "file": "textures/ceil_tile.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_cafe": {
+   "file": "textures/floor_cafe.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_check": {
+   "file": "textures/floor_check.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_lino": {
+   "file": "textures/floor_lino.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_stone": {
+   "file": "textures/floor_stone.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_wood": {
+   "file": "textures/floor_wood.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "sky_night": {
+   "file": "textures/sky_night.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "trim": {
+   "file": "textures/trim.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_brick": {
+   "file": "textures/wall_brick.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 4.0
+  },
+  "wall_counter": {
+   "file": "textures/wall_counter.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_curtain": {
+   "file": "textures/wall_curtain.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "wall_door": {
+   "file": "textures/wall_door.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_hedge": {
+   "file": "textures/wall_hedge.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_quiet": {
+   "file": "textures/wall_quiet.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_station": {
+   "file": "textures/wall_station.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_tv": {
+   "file": "textures/wall_tv.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_vending": {
+   "file": "textures/wall_vending.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "wall_ward": {
+   "file": "textures/wall_ward.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "wall_window": {
+   "file": "textures/wall_window.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 4.0
+  }
  }
 }
