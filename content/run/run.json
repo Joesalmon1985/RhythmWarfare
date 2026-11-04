@@ -205,7 +205,7 @@
     },
     {
      "to": "warehouse.balcony",
-     "dir": "left",
+     "dir": "up",
      "label": "Up the side stairs to the balcony"
     }
    ],
@@ -295,7 +295,7 @@
      ],
      "exits": {
       "right": "to_bar",
-      "left": "to_balcony"
+      "up": "to_balcony"
      }
     }
    },

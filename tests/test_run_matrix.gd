@@ -2,11 +2,12 @@ extends TestCase
 ## The run's playtest matrix, headless: scripted players of every skill (perfect, accuracy 0.9 / 0.8 / 0.7 / 0.5, sloppy, none) times seeds 1 to 3 play RunEngine with
 ## RunJourney on top; for each run the test records survival or depletion, the depth reached and the rail places visited, replays the journey on every world's real
 ## StoryPlayer and checks the camera is always in a valid sector, and checks no move starts outside the cue-free guard or lasts outside 2 to 4 bars or sits on dense cues.
+## A phase is a scene (a room of a world); the run records the worlds and scenes visited, the phases survived and the rails.
 ## The numbers are written to user://run_matrix.txt for the docs (docs/CONTINUOUS_RUN.md).
 
 const BPM := 174.0
 const BEAT := 60.0 / 174.0
-const MAX_PHASES := 8
+const MAX_PHASES := 20  # scenes: a path through the first three worlds is 13 to 14 phases
 const POLICIES := ["perfect", "accuracy:0.9", "accuracy:0.8", "accuracy:0.7", "accuracy:0.5", "sloppy", "none"]
 
 var _maps: Dictionary = {}
@@ -43,6 +44,7 @@ func _simulate(policy: String, seed: int, data: RunData) -> Dictionary:
 	var depth := 1
 	var nodes: Array = []
 	var routes_done := {}
+	var door_done := -1
 	var t := -0.5
 	var end_t := float(MAX_PHASES) * e.phase_s()
 	var kinds := {}
@@ -83,9 +85,15 @@ func _simulate(policy: String, seed: int, data: RunData) -> Dictionary:
 			routes_done[e.phase_n] = true
 			var opts := e.options()
 			if seed == 2:
-				e.choose(str((opts[1] as Dictionary)["to"]))
+				e.choose(str((opts[mini(1, opts.size() - 1)] as Dictionary)["to"]))
 			elif seed == 3:
 				e.choose(str((opts[rng.randi() % opts.size()] as Dictionary)["to"]))
+		# a path inside the world: the door walk starts three beats before the phase ends (the run scene latches it once per phase)
+		if e.window_open and door_done != e.phase_n and e.phase_beat_at(t) >= 61.0:
+			door_done = e.phase_n
+			var to := e.selected_route()
+			if str(data.nodes[to]["world"]) == str(data.nodes[e.node_id]["world"]) and to != e.node_id:
+				actions.append_array(j.leave_walk(e.t_of(61.0), to, e))
 		t += 1.0 / 30.0
 	for entry in j.log:
 		kinds[entry["kind"]] = int(kinds.get(entry["kind"], 0)) + 1
@@ -127,7 +135,12 @@ func _simulate(policy: String, seed: int, data: RunData) -> Dictionary:
 			if m.sector(str(pose["sector"])).is_empty() or m.sector_at(Vector2(pose["pos"])) == "" or (p2.errors as Array).size() > 0:
 				camera_bad += 1
 			s += 0.25
-	return {"over": e.over, "phases": max_phase, "depth": depth, "energy": e.energy, "nodes": nodes, "places": places, "kinds": kinds, "moves": moves, "camera_bad": camera_bad,
+	var worlds_seen: Array = []
+	for nid in nodes:
+		var wid := str(data.nodes[nid]["world"])
+		if worlds_seen.is_empty() or worlds_seen[worlds_seen.size() - 1] != wid:
+			worlds_seen.append(wid)
+	return {"worlds": worlds_seen, "over": e.over, "phases": max_phase, "depth": depth, "energy": e.energy, "nodes": nodes, "places": places, "kinds": kinds, "moves": moves, "camera_bad": camera_bad,
 		"samples": samples, "dense": dense, "bad_starts": bad_starts, "bad_bars": bad_bars, "glances": glances, "log": j.log}
 
 
@@ -140,8 +153,14 @@ func test_policy_matrix_survival_depth_rails_and_camera() -> void:
 		for seed in [1, 2, 3]:
 			var r := _simulate(policy, seed, data)
 			by["%s/%d" % [policy, seed]] = r
-			rows.append("%-13s seed %d: %s after %d phases, depth %d, energy %3.0f, %2d moves, rail %s, route %s" % [policy, seed, "ENDED   " if r["over"] else "survived", r["phases"], r["depth"], r["energy"], r["moves"],
-				JSON.stringify(r["kinds"]), "/".join(PackedStringArray(r["nodes"]))])
+			rows.append("%-13s seed %d: %s after %d phases, depth %d, energy %3.0f, %2d moves, rail %s, worlds %s, scenes %s" % [policy, seed, "ENDED   " if r["over"] else "survived", r["phases"], r["depth"], r["energy"], r["moves"],
+				JSON.stringify(r["kinds"]), ">".join(PackedStringArray(r["worlds"])), ">".join(PackedStringArray(r["nodes"]))])
+			var seq: Array = r["nodes"]
+			for k in range(1, seq.size()):  # every step is a route of the scene before it
+				var ok := false
+				for e2 in data.nodes[str(seq[k - 1])]["next"]:
+					ok = ok or str(e2["to"]) == str(seq[k])
+				assert_true(ok, "%s seed %d: %s leads to %s" % [policy, seed, seq[k - 1], seq[k]])
 			assert_eq(r["camera_bad"], 0, "%s seed %d: the camera is always in a valid sector (%d of %d samples)" % [policy, seed, r["camera_bad"], r["samples"]])
 			assert_eq(r["bad_starts"], 0, "%s seed %d: every move starts in a cue-free guard" % [policy, seed])
 			assert_eq(r["bad_bars"], 0, "%s seed %d: every move lasts 2 to 4 bars" % [policy, seed])
@@ -155,12 +174,21 @@ func test_policy_matrix_survival_depth_rails_and_camera() -> void:
 		var p: Dictionary = by["perfect/%d" % seed]
 		assert_false(p["over"], "perfect play survives all %d phases" % MAX_PHASES)
 		assert_eq(p["depth"], 4, "and reaches the last depth")
+		assert_true((p["nodes"] as Array).size() == MAX_PHASES, "and every phase is a scene (%d)" % (p["nodes"] as Array).size())
+		assert_true((p["worlds"] as Array).size() >= 4, "through at least four worlds: %s" % str(p["worlds"]))
+		assert_eq((p["worlds"] as Array)[0], "warehouse")
+		assert_true((p["worlds"] as Array).has("hospital") or (p["worlds"] as Array).has("ward"), "the third world is reached")
+		var scene_count := {}
+		for nid in p["nodes"]:
+			scene_count[nid] = true
+		assert_true(scene_count.size() >= 8, "at least eight distinct scenes: %d" % scene_count.size())
 		assert_eq(int((p["kinds"] as Dictionary).get("down", 0)) + int((p["kinds"] as Dictionary).get("bottom", 0)), 0, "perfect play never visits the bad rail")
 		assert_true(int((p["kinds"] as Dictionary).get("up", 0)) >= 3, "perfect play climbs")
 		var n: Dictionary = by["none/%d" % seed]
 		assert_true(n["over"], "no play depletes the crowd (seed %d)" % seed)
 		assert_true(int((n["kinds"] as Dictionary).get("bottom", 0)) >= 1, "no play reaches the bottom of the bad rail (the sick beat)")
 		assert_true(int(n["phases"]) <= 4, "and the run ends within four phases (it ended in %d)" % int(n["phases"]))
+		assert_eq((n["worlds"] as Array), ["warehouse"], "without leaving the Warehouse")
 		assert_false(by["accuracy:0.9/%d" % seed]["over"], "accuracy 0.9 survives")
 	var d9 := 0.0
 	var d5 := 0.0

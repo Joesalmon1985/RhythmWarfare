@@ -69,40 +69,95 @@ func test_the_clock_loop_is_exactly_64_beats() -> void:
 	assert_near(s.get_length(), 64.0 * 60.0 / 174.0, 1e-9, "no rounding in the grid the song clock reads")
 
 
+func _write_json(path: String, v: Variant) -> void:
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	f.store_string(JSON.stringify(v))
+	f.close()
+
+
+func _bad_run(mutate: Callable) -> RunData:
+	var run: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RunData.RUN_PATH))
+	mutate.call(run)
+	var rp := "user://test_run_bad_run.json"
+	_write_json(rp, run)
+	var d := RunData.load_files(rp, RunData.MUSIC_PATH, RunData.PACKS_DIR)
+	DirAccess.remove_absolute(rp)
+	return d
+
+
+func _scene(run: Dictionary, id: String) -> Dictionary:
+	for n in run["nodes"]:
+		if n["id"] == id:
+			return n
+	return {}
+
+
+func _has(list: Array, needle: String) -> bool:
+	return list.any(func(e: String) -> bool: return e.contains(needle))
+
+
 func test_run_data_rejects_broken_routes_and_sibling_charts() -> void:
 	var good := RunData.load_default()
 	assert_eq(good.errors, [])
-	assert_eq(good.warnings.filter(func(w: String) -> bool: return w.contains("cannot be reached")), [], "every level is reachable")
-	var bad_run: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RunData.RUN_PATH))
-	(bad_run["nodes"][1]["next"] as Array).remove_at(1)  # mothership keeps one route
-	var rp := "user://test_run_bad_run.json"
-	var f := FileAccess.open(rp, FileAccess.WRITE)
-	f.store_string(JSON.stringify(bad_run))
-	f.close()
-	var d := RunData.load_files(rp, RunData.MUSIC_PATH, RunData.PACKS_DIR)
-	assert_true(d.errors.any(func(e: String) -> bool: return e.contains("at least two routes")), str(d.errors))
+	assert_eq(good.warnings.filter(func(w: String) -> bool: return w.contains("cannot be reached")), [], "every scene is reachable")
+	var d := _bad_run(func(run: Dictionary) -> void: (_scene(run, "mothership.exit")["next"] as Array).remove_at(1))  # a world exit keeps one route
+	assert_true(_has(d.errors, "at least 2 routes"), str(d.errors))
 	var bad_music: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RunData.MUSIC_PATH))
 	for n in bad_music["nodes"]:
-		if n["id"] == "underworld":
-			n["chart"] = "lv2_alien_spaceship_v2"  # a sibling with its own chart
+		if n["id"] == "warehouse.balcony":
+			n["audio"] = "lv1_warehouse_v1"
+			n["chart"] = "lv1_warehouse_v1"  # the bar's sibling charts the bar's pack: no route lock between them
 	var mp := "user://test_run_bad_music.json"
-	f = FileAccess.open(mp, FileAccess.WRITE)
-	f.store_string(JSON.stringify(bad_music))
-	f.close()
+	_write_json(mp, bad_music)
 	var d2 := RunData.load_files(RunData.RUN_PATH, mp, RunData.PACKS_DIR)
-	assert_true(d2.warnings.any(func(e: String) -> bool: return e.contains("siblings no longer share one chart")), str(d2.warnings))  # siblings may differ: a warning
-	DirAccess.remove_absolute(rp)
+	assert_eq(d2.errors, [])
+	assert_false(d2.warnings.any(func(e: String) -> bool: return e.begins_with("scene warehouse:")), "same chart: no lock between the bar and the balcony")
+	assert_true(good.warnings.any(func(e: String) -> bool: return e.begins_with("scene warehouse:") and e.contains("route lock")), "different charts are flagged: the route lock applies")
 	DirAccess.remove_absolute(mp)
 
 
-func test_the_route_map_reaches_all_five_worlds() -> void:
+func test_run_data_validates_the_world_graphs() -> void:
+	var d := _bad_run(func(run: Dictionary) -> void: _scene(run, "warehouse.booth")["entry"] = true)
+	assert_true(_has(d.errors, "exactly one entry scene"), str(d.errors))
+	d = _bad_run(func(run: Dictionary) -> void: _scene(run, "warehouse.exit")["exit_scene"] = false)
+	assert_true(_has(d.errors, "exactly one exit scene"), str(d.errors))
+	d = _bad_run(func(run: Dictionary) -> void: (_scene(run, "hospital.garden")["next"] as Array)[0]["to"] = "hospital.corridor")  # a cycle without a loop mark
+	assert_true(_has(d.errors, "a cycle"), str(d.errors))
+	d = _bad_run(func(run: Dictionary) -> void: (_scene(run, "hospital.garden")["next"] as Array)[0]["to"] = "hospital")  # back to the entry without the mark
+	assert_true(_has(d.errors, "must be marked"), str(d.errors))
+	d = _bad_run(func(run: Dictionary) -> void:
+		var n := _scene(run, "hospital_late.exit")
+		(n["next"] as Array)[0].erase("loop"))  # the late exit loops to its own world: only with the mark
+	assert_true(_has(d.errors, "loop"), str(d.errors))
+	d = _bad_run(func(run: Dictionary) -> void: (_scene(run, "warehouse.chill")["next"] as Array)[0]["to"] = "mothership")  # a middle scene leaving the world
+	assert_true(_has(d.errors, "only the exit scene may"), str(d.errors))
+	d = _bad_run(func(run: Dictionary) -> void: (_scene(run, "warehouse.exit")["next"] as Array)[0]["to"] = "hospital")  # a world exit skipping a depth
+	assert_true(_has(d.errors, "one level deeper"), str(d.errors))
+	d = _bad_run(func(run: Dictionary) -> void: (_scene(run, "warehouse.bar")["place"]["rail"]["good"] as Array)[0]["to"] = "nowhere_at_all")
+	assert_true(_has(d.errors, "nowhere_at_all"), str(d.errors))
+	d = _bad_run(func(run: Dictionary) -> void: (_scene(run, "warehouse.bar")["place"]["rail"]["exits"] as Dictionary).erase("right"))  # a route without a doorway
+	assert_true(_has(d.errors, "no exit doorway"), str(d.errors))
+	d = _bad_run(func(run: Dictionary) -> void: _scene(run, "warehouse.bar")["world"] = "nonexistent")
+	assert_true(_has(d.errors, "not in run.json worlds"), str(d.errors))
+
+
+func test_the_route_map_covers_seven_worlds_on_five_maps() -> void:
 	var d := RunData.load_default()
-	var worlds := {}
+	assert_eq(d.world_order.size(), 7)
+	var maps := {}
 	for id in d.nodes:
-		worlds[d.nodes[id]["world"]] = true
-	assert_eq(worlds.keys().size(), 5)
-	for w in ["night_one", "mothership", "underworld", "hospital", "mental_hospital"]:
-		assert_true(worlds.has(w), w)
+		maps[d.nodes[id]["map"]] = true
+	assert_eq(maps.keys().size(), 5)
+	for m in ["night_one", "mothership", "underworld", "hospital", "mental_hospital"]:
+		assert_true(maps.has(m), m)
+	for w in d.world_order:
+		var scenes := d.scenes_of(str(w))
+		assert_true(scenes.size() >= 3, "%s has %d scenes" % [w, scenes.size()])
+		assert_eq(d.entry_of(str(w)), str(w), "the entry scene's id is the world's id: the save's reached ids")
 	for id in d.nodes:
-		assert_true((d.nodes[id]["next"] as Array).size() >= 2, "%s offers at least two arrows" % id)
-	assert_eq(d.nodes["hospital_late"]["next"][0]["to"], "hospital_late", "the last depth loops onward")
+		var n: Dictionary = d.nodes[id]
+		assert_true((n["next"] as Array).size() >= (2 if bool(n["exit_scene"]) else 1), "%s offers arrows" % id)
+		assert_eq(int(n["depth"]), int(d.worlds[str(n["world"])]["depth"]), "depth stays per world")
+	assert_eq(d.nodes["hospital_late.exit"]["next"][0]["to"], "hospital_late", "the last depth loops onward")
+	assert_true(bool(d.nodes["hospital_late.exit"]["next"][0]["loop"]))
+	assert_true(bool(d.nodes["ward_late.exit"]["next"][0]["loop"]))

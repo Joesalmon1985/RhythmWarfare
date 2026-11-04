@@ -118,8 +118,8 @@ def scene(sid, world, name, title, home, good, bad, arrive, exits, nxt, entry=Fa
 # --- the Warehouse --------------------------------------------------------------------------------------------------------------------------
 scene("warehouse", "warehouse", "floor", "The Floor", "floor_centre",
       [P("steps"), up("stage", 2), up("balcony", 4), P("booth", "dj")], [down("floor_edge"), down("corridor", "queasy", "stagger", 4), down("cubicle", "sick", "run", 4)],
-      "door", {"right": "to_bar", "left": "to_balcony"},
-      [("warehouse.bar", "right", "Past the speaker stacks, the bar"), ("warehouse.balcony", "left", "Up the side stairs to the balcony")], entry=True)
+      "door", {"right": "to_bar", "up": "to_balcony"},
+      [("warehouse.bar", "right", "Past the speaker stacks, the bar"), ("warehouse.balcony", "up", "Up the side stairs to the balcony")], entry=True)
 scene("warehouse.bar", "warehouse", "bar", "The Bar", "bar", [P("bar_taps"), P("bar_end")], [down("bar_door"), down("floor_bar")],
       "bar_door", {"right": "bar_to_chill", "left": "bar_door"},
       [("warehouse.chill", "right", "Through the curtain to the chill-out"), ("warehouse.booth", "left", "Back across the floor, up to the booth")])
@@ -136,7 +136,7 @@ scene("warehouse.exit", "warehouse", "exit", "The Door", "door", [P("tunnel")], 
 
 # --- the Mothership ---------------------------------------------------------------------------------------------------------------------------
 scene("mothership", "mothership", "deck", "The Deck", "deck_centre", [P("deck_ramp"), up("deck_dais", 3)], [down("deck_edge"), down("deck_sw_corner")],
-      "deck_centre", {"right": "deck_gallery_door", "up": "deck_reactor_door"},
+      "deck_gallery_door", {"right": "deck_gallery_door", "up": "deck_reactor_door"},
       [("mothership.gallery", "right", "Along the gallery of windows"), ("mothership.reactor", "up", "Past the gallery to the reactor catwalk")], entry=True)
 scene("mothership.gallery", "mothership", "gallery", "The Gallery", "gallery_in", [P("gallery_mid"), P("planet_window")], [down("gallery_west"), down("deck_edge")],
       "gallery_door", {"up": "gallery_east"}, [("mothership.bridge", "up", "On to the bridge")])
@@ -150,7 +150,7 @@ scene("mothership.exit", "mothership", "exit", "The Airlock", "medbay", [P("airl
 
 # --- the Underworld ------------------------------------------------------------------------------------------------------------------------
 scene("underworld", "underworld", "arena", "The Arena", "arena_floor", [P("arena_gate"), up("gate_dais", 3)], [down("arena_edge"), down("tier_l_in")],
-      "arena_floor", {"right": "arena_tier_r", "left": "arena_tier_l"},
+      "arena_tier_l", {"right": "arena_tier_r", "left": "arena_tier_l"},
       [("underworld.court", "right", "The east tier, up to the court"), ("underworld.furnace", "left", "The west tier, down to the furnace")], entry=True)
 scene("underworld.court", "underworld", "court", "The Court", "court_in", [P("court_mid"), P("throne_steps")], [down("tier_r_in"), down("arena_edge")],
       "court_door", {"up": "court_causeway"}, [("underworld.pit", "up", "The causeway to the pit")])
@@ -164,7 +164,7 @@ scene("underworld.exit", "underworld", "exit", "The Throne", "throne_steps", [P(
 
 # --- the Hospital ----------------------------------------------------------------------------------------------------------------------------
 scene("hospital", "hospital", "ward", "The Ward", "bed", [P("ward_chair"), P("ward_door")], [down("bed_corner"), down("bed_far")],
-      "bed", {"up": "ward_door"}, [("hospital.corridor", "up", "Out of the ward into the corridor")], entry=True)
+      "ward_door", {"up": "ward_door"}, [("hospital.corridor", "up", "Out of the ward into the corridor")], entry=True)
 scene("hospital.corridor", "hospital", "corridor", "The Corridor", "corridor_in", [P("corridor_mid"), P("corridor_fork")], [down("corridor_quiet_door"), down("quiet", "sick", "run", 3)],
       "corridor_in", {"left": "corridor_day_door", "right": "corridor_cafe"},
       [("hospital.dayroom", "left", "The day room, the television on"), ("hospital.cafeteria", "right", "On to the cafeteria")])
@@ -180,7 +180,7 @@ scene("hospital.exit", "hospital", "exit", "The Bandstand", "bandstand", [P("ban
 
 # --- the Ward -----------------------------------------------------------------------------------------------------------------------------------
 scene("ward", "ward", "dayroom", "The Day Room", "day_centre", [P("bars_in"), P("day_stage_in")], [down("day_edge"), down("day_corner")],
-      "day_centre", {"right": "day_door_a", "up": "day_door_b"},
+      "day_door_a", {"right": "day_door_a", "up": "day_door_b"},
       [("ward.art", "right", "Down the corridor to the art room"), ("ward.dorm", "up", "To the dormitory")], entry=True)
 scene("ward.art", "ward", "art", "The Art Room", "art_in", [P("art_mid"), P("art_easels")], [down("art_door"), down("corridor_in")],
       "art_door", {"up": "art_door"}, [("ward.corridor", "up", "Back to the corridor")])
@@ -196,7 +196,7 @@ scene("ward.exit", "ward", "exit", "The Stage", "stage_edge", [P("stage", "on_st
 
 # --- the Hospital, late -----------------------------------------------------------------------------------------------------------------
 scene("hospital_late", "hospital_late", "garden", "The Garden", "garden_edge", [P("garden_north"), P("garden_in")], [down("garden_south"), down("garden_sw")],
-      "garden_edge", {"left": "garden_door_w", "right": "garden_door_w2"},
+      "garden_door_w", {"left": "garden_door_w", "right": "garden_door_w2"},
       [("hospital_late.cafe", "left", "Back in to the cafeteria"), ("hospital_late.quiet", "right", "Down the corridor to the quiet room")], entry=True)
 scene("hospital_late.cafe", "hospital_late", "cafe", "The Cafeteria", "cafe_mid", [P("cafe_serving"), P("cafe_garden_door")], [down("cafe_in"), down("cafe_door_w")],
       "cafe_door_w", {"up": "cafe_garden_door"}, [("hospital_late.exit", "up", "Out to the bandstand")])
@@ -208,7 +208,7 @@ scene("hospital_late.exit", "hospital_late", "exit", "The Bandstand", "bandstand
 
 # --- the Ward, late ------------------------------------------------------------------------------------------------------------------------
 scene("ward_late", "ward_late", "courtyard", "The Courtyard", "stage_edge", [P("stage", "on_stage"), P("court_mid")], [down("court_north"), down("court_south")],
-      "stage_edge", {"left": "court_door_w", "right": "court_south"},
+      "court_door_w", {"left": "court_door_w", "right": "court_south"},
       [("ward_late.treat", "left", "Back through the art room to treatment"), ("ward_late.dorm", "right", "Back to the dormitory")], entry=True)
 scene("ward_late.treat", "ward_late", "treat", "The Treatment Room", "treat", [P("quiet"), P("treat_door")], [down("corr_mid"), down("corr_west")],
       "treat_door", {"up": "treat_door"}, [("ward_late.exit", "up", "Out to the day room")])
@@ -249,7 +249,7 @@ def build_nodes() -> list[dict]:
              "blurb": w["blurb"] if s["entry"] else s["title"],
              "next": [{"to": t[0], "dir": t[1], "label": t[2], **({"loop": True} if len(t) > 3 and t[3] else {})} for t in s["next"]],
              "place": {"waypoint": s["home"], "rail": {"good": s["good"], "bad": s["bad"], "arrive": s["arrive"], "glances": rot(gl), "strolls": rot(st), "exits": s["exits"]}}}
-        if s["id"] == "warehouse":
+        if s["id"] in ("warehouse", "warehouse.chill"):  # the wizard waits on the floor and in the chill-out; the Bassment returns to the entry scene
             n["trial_gate"] = "deathtrap_opening"
         nodes.append(n)
     return nodes

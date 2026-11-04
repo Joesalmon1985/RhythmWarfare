@@ -812,6 +812,7 @@ func _open_routes(ev: Dictionary) -> void:
 		var b := Button.new()
 		b.theme = StoryStyle.theme()
 		b.focus_mode = Control.FOCUS_NONE
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART  # a long room name or label wraps inside the button
 		b.add_theme_font_size_override("font_size", int(clampf(h * 0.09, 16.0, 30.0)))
 		b.custom_minimum_size = Vector2(minf(w * 0.3, 360.0), clampf(h * 0.22, 64.0, 120.0))
 		b.size = b.custom_minimum_size

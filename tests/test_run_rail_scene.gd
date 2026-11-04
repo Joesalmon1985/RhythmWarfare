@@ -6,7 +6,7 @@ const BEAT := 60.0 / 174.0
 const TMP_SAVE := "user://test_run_rail_save.json"
 
 
-func _scene(size: Vector2, bot: String, routes := "") -> Dictionary:
+func _scene(size: Vector2, bot: String, routes := "", start := "") -> Dictionary:
 	var saved := Session.run_progress
 	if FileAccess.file_exists(TMP_SAVE):
 		DirAccess.remove_absolute(TMP_SAVE)
@@ -14,6 +14,8 @@ func _scene(size: Vector2, bot: String, routes := "") -> Dictionary:
 	OS.set_environment("RW_RUN_VIRTUAL", "1")
 	OS.set_environment("RW_RUN_BOT", bot)
 	OS.set_environment("RW_RUN_ROUTES", routes)
+	if start != "":
+		OS.set_environment("RW_RUN_START", start)
 	Session.run_start_node = ""
 	var host := Control.new()
 	host.size = size
@@ -32,6 +34,7 @@ func _free(d: Dictionary) -> void:
 	OS.set_environment("RW_RUN_VIRTUAL", "")
 	OS.set_environment("RW_RUN_BOT", "")
 	OS.set_environment("RW_RUN_ROUTES", "")
+	OS.unset_environment("RW_RUN_START")
 
 
 func _run_to(scene: Node, t_end: float) -> void:
@@ -43,7 +46,7 @@ func _run_to(scene: Node, t_end: float) -> void:
 
 
 func test_a_perfect_phase_climbs_the_warehouse_rail_on_the_stage() -> void:
-	var d := _scene(Vector2(1152, 648), "perfect", "up")
+	var d := _scene(Vector2(1152, 648), "perfect", "right")
 	var scene: Node = d["scene"]
 	_run_to(scene, 62.0 * BEAT)
 	var places: Array = (scene.journey.log as Array).map(func(e: Dictionary) -> String: return e["place"])
@@ -57,7 +60,7 @@ func test_a_perfect_phase_climbs_the_warehouse_rail_on_the_stage() -> void:
 
 
 func test_a_missed_phase_goes_down_the_bad_rail_with_the_sick_beat() -> void:
-	var d := _scene(Vector2(1152, 648), "none", "up")
+	var d := _scene(Vector2(1152, 648), "none", "right")
 	var scene: Node = d["scene"]
 	_run_to(scene, 50.0 * BEAT)
 	var places: Array = (scene.journey.log as Array).map(func(e: Dictionary) -> String: return e["place"])
@@ -68,32 +71,65 @@ func test_a_missed_phase_goes_down_the_bad_rail_with_the_sick_beat() -> void:
 	_free(d)
 
 
-func test_the_route_window_lights_the_exits_and_the_swap_walks_through_the_frame() -> void:
-	var d := _scene(Vector2(1152, 648), "perfect", "up")
+func test_a_path_inside_a_world_is_a_door_walk_with_no_passage_frame() -> void:
+	var d := _scene(Vector2(1152, 648), "perfect", "right")  # the floor: right is the bar
 	var scene: Node = d["scene"]
 	_run_to(scene, 50.0 * BEAT)
-	assert_true(scene._exits.visible, "the exits are lit while the window is open")
-	assert_eq(scene._exits.items.size(), 2, "one doorway per candidate world")
+	assert_true(scene._exits.visible, "the doorways are lit while the window is open")
+	assert_eq(scene._exits.items.size(), 2, "one lit door per path: the bar and the balcony")
 	assert_eq(scene._route_buttons.size(), 2, "and the touch arrows stay")
+	assert_eq((scene._route_buttons["right"] as Button).text.begins_with(">  The Bar"), true, "the button names the room")
+	assert_true((scene._route_buttons["right"] as Button).text.contains("[CHOSEN]") or (scene._route_buttons["right"] as Button).text.contains("[DEFAULT]"))
+	_run_to(scene, 60.0 * BEAT)
+	var walked_before: int = (scene.journey_log as Array).filter(func(a: Dictionary) -> bool: return a["action"] == "player_move" and float(a["t0"]) > 60.5 * BEAT).size()
+	assert_eq(walked_before, 0, "no door walk before beat 61")
+	_run_to(scene, 63.9 * BEAT)
+	assert_eq(scene._passage.aperture, 1.0, "no frame: the picture stays open")
+	assert_eq(scene.active_world, "night_one")
+	var door_moves: Array = (scene.journey_log as Array).filter(func(a: Dictionary) -> bool: return a["action"] == "player_move" and absf(float(a["t0"]) - 61.0 * BEAT) < 0.05)
+	assert_eq(door_moves.size(), 1, "one door walk, started at beat 61")
+	assert_eq((door_moves[0]["args"] as Dictionary)["to"], "bar_door", "toward the bar's door")
+	assert_false(bool((door_moves[0]["args"] as Dictionary).get("cut", false)), "a walk, not a cut")
+	_run_to(scene, 64.4 * BEAT)
+	assert_eq(scene.engine.node_id, "warehouse.bar", "the next scene began on the downbeat")
+	assert_eq(scene.active_world, "night_one", "the same world stage stays")
+	assert_eq(scene.stages.size(), 1, "no second stage was built")
+	assert_eq(scene.journey.rail.node_id, "warehouse.bar", "the new scene's rail starts")
+	assert_false(scene._exits.visible, "the lights go out with the window")
+	var st: StoryStage = scene.stages["night_one"]["stage"]
+	assert_true(str(st.player.pose_at(64.4 * BEAT)["sector"]) != "bar", "still walking through the door a little after the downbeat")
+	_run_to(scene, 76.0 * BEAT)
+	assert_eq(st.player.pose_at(76.0 * BEAT)["sector"], "bar", "arrived in the bar")
+	assert_eq(Session.run_progress.reached_ids(), ["warehouse"], "reached stays per world: the bar is not a level of its own")
+	_free(d)
+
+
+func test_the_world_swap_keeps_the_passage_frame() -> void:
+	var d := _scene(Vector2(1152, 648), "perfect", "left", "mothership.exit")  # the airlock: left is the hospital
+	var scene: Node = d["scene"]
+	_run_to(scene, 50.0 * BEAT)
+	assert_true(scene._exits.visible)
+	assert_eq(scene._exits.items.size(), 2, "one doorway per candidate world")
 	assert_eq(scene._passage.aperture, 1.0, "the frame is open mid-window")
 	_run_to(scene, 63.9 * BEAT)
 	assert_true(scene._passage.aperture < 0.3, "shut to the doorway on the last beat before the swap (%f)" % scene._passage.aperture)
-	assert_eq(scene.active_world, "night_one")
+	assert_eq(scene.active_world, "mothership")
 	_run_to(scene, 64.4 * BEAT)
-	assert_eq(scene.active_world, "mothership", "the world swapped on the downbeat")
+	assert_eq(scene.engine.node_id, "hospital")
+	assert_eq(scene.active_world, "hospital", "the world swapped on the downbeat")
 	assert_true(scene._passage.aperture < 0.5, "and opens from the doorway")
 	assert_false(scene._exits.visible, "the lights go out with the window")
-	var st: StoryStage = scene.stages["mothership"]["stage"]
-	assert_eq(st.player.pose_at(62.0 * BEAT)["sector"], "airlock", "in from the airlock")
-	assert_true(str(st.player.pose_at(64.0 * BEAT)["sector"]) != "deck", "still walking in on the downbeat")
+	var st: StoryStage = scene.stages["hospital"]["stage"]
+	assert_eq(st.player.pose_at(62.0 * BEAT)["sector"], "ward", "in at the ward door")
+	assert_eq(Session.run_progress.reached_ids().has("hospital"), true)
 	_run_to(scene, 80.0 * BEAT)
 	assert_eq(scene._passage.aperture, 1.0, "fully open")
-	assert_eq(st.player.pose_at(80.0 * BEAT)["sector"], "deck", "arrived at the new world's start waypoint")
+	assert_eq(st.player.pose_at(80.0 * BEAT)["sector"], "bed", "arrived at the new world's start waypoint")
 	_free(d)
 
 
 func test_the_activities_follow_the_crowd_energy() -> void:
-	var d := _scene(Vector2(1152, 648), "none", "up")
+	var d := _scene(Vector2(1152, 648), "none", "right")
 	var scene: Node = d["scene"]
 	_run_to(scene, 20.0 * BEAT)
 	var st: StoryStage = scene.stages["night_one"]["stage"]
