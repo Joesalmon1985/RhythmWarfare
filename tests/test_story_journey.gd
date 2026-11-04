@@ -39,6 +39,7 @@ func test_stage_schedules_the_journey_actions() -> void:
 
 func test_stage_without_a_map_ignores_the_journey_actions() -> void:
 	var run := StoryRun.create({})
+	run.data.id = "chapter_without_a_map"  # the map is looked up by chapter id
 	var stage := StoryStage.new()
 	stage.size = Vector2(1280, 460)
 	tree.root.add_child(stage)
@@ -77,9 +78,9 @@ func test_stage_hides_the_2d_room_art_when_the_world_is_active() -> void:
 	var stage := _stage_with_world(true)
 	stage.update(1.0, 50.0)
 	var v: StoryView = stage.views["main"]
-	assert_false(v.far.visible)
-	assert_false(v.near.visible)
-	assert_true(v.mid.visible, "the crowd stays until the 3D bridge")
+	assert_false(stage._root.visible, "the painted room is gone")
+	assert_true(v.crowd.world_mode, "the crowd lives in the world")
+	assert_true(v.crowd.get_parent() is CanvasLayer and v.crowd.get_parent().get_parent() == stage.lowres.sub, "and is drawn inside the low-res viewport")
 	stage.queue_free()
 
 

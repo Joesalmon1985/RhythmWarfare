@@ -58,6 +58,13 @@ var lowres: StoryLowRes
 var world: StoryWorld
 var free_look := StoryFreeLook.new()
 var world_active := false
+var _overlay: CanvasLayer
+var _vis: Dictionary = {}
+var _vis_sec := ""
+var _vis_pos := Vector2(1e9, 1e9)
+var _vis_yaw := 1e9
+var _vis_size := Vector2.ZERO
+var _world_ctx: Dictionary = {}
 
 
 func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
@@ -92,6 +99,13 @@ func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
 	_root.add_child(_cam_overlay)
 	resized.connect(_fit)
 	_fit()
+	if FileAccess.file_exists(StoryMap.PATH % data.id):  # a chapter with a map plays in the 2.5D world: the crowd and the rail camera exist even without a renderer
+		var m := StoryMap.load_chapter(data.id)
+		m.validate_chapter(data.raw)
+		if m.errors.is_empty():
+			attach_world(m, false)
+		else:
+			push_warning("story map rejected, playing the 2D room: " + "; ".join(PackedStringArray(m.errors)))
 	reset()
 
 
@@ -103,11 +117,15 @@ var crowd: StoryCrowd:
 
 ## Give the stage a map: the player's rail always; with `with_nodes` also the 3D world behind the crowd (needs no renderer to build).
 func attach_world(p_map: StoryMap, with_nodes := true) -> void:
-	map = p_map
-	player = StoryPlayer.new()
-	player.setup(map, bpm)
-	player.reduced = reduced
-	if not with_nodes:
+	if map != p_map:
+		map = p_map
+		player = StoryPlayer.new()
+		player.setup(map, bpm)
+		player.reduced = reduced
+		for id in views:
+			if id == "main":
+				(views[id] as StoryView).crowd.attach_map(map)
+	if not with_nodes or world_active:
 		return
 	lowres = StoryLowRes.new()
 	lowres.name = "World3D"
@@ -118,6 +136,11 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	world.name = "World"
 	world.build(map, assets)
 	lowres.attach(world)
+	_overlay = lowres.add_overlay(crowd, "Crowd")  # the 2D crowd is drawn inside the low-res viewport
+	crowd.position = Vector2.ZERO
+	crowd.scale = Vector2.ONE
+	_root.visible = false  # the painted room has nothing left to show
+	crowd.tint_fn = func(sec: String) -> Color: return world.light_of(map.sector(sec), t_now, _world_ctx)
 	world_active = true
 	mouse_filter = Control.MOUSE_FILTER_STOP  # the stage area takes the head-turn drag; the pad strip below is another control
 
@@ -267,6 +290,20 @@ func update(t: float, p_energy: float) -> void:
 	t_now = t
 	energy = p_energy
 	var shown := _visible_views(t)
+	var pose: Dictionary = {}
+	if player != null:
+		player.reduced = reduced
+		pose = player.pose_at(t)
+		var size := Vector2(lowres.sub.size) if lowres != null else Vector2(480, 170)
+		var ppose := {"cam": pose["cam"], "yaw": float(pose["yaw"]) + free_look.offset}
+		var cpos := Vector2(pose["pos"])
+		if _vis_sec != str(pose["sector"]) or _vis_pos.distance_to(cpos) > 0.01 or absf(_vis_yaw - float(ppose["yaw"])) > 0.25 or not _vis_size.is_equal_approx(size):
+			_vis_sec = str(pose["sector"])  # the portal walk only reruns when the camera has really moved or turned
+			_vis_pos = cpos
+			_vis_yaw = float(ppose["yaw"])
+			_vis_size = size
+			_vis = map.visible_sectors(cpos, _vis_yaw, _vis_sec, size.x / maxf(size.y, 1.0))
+		crowd.set_camera(ppose, size, _vis)
 	for id in views:
 		var v: StoryView = views[id]
 		v.visible = id in shown
@@ -276,6 +313,8 @@ func update(t: float, p_energy: float) -> void:
 		v.crowd.lit_id = v.crowd.hero_id() if is_active("spot_hero", t) or is_active("spot_circle", t) else ""
 		v.crowd.set_time(t)
 		v.crowd.update(t, p_energy)
+		if world_active and v.crowd.world_mode:
+			continue  # the 3D world draws the light and the riser; the painted room is hidden
 		v.redraw_fx()
 		if v.layers.has("riser"):
 			var sp: Sprite2D = v.layers["riser"]
@@ -290,26 +329,18 @@ func update(t: float, p_energy: float) -> void:
 			v.crowd.riser_lift = lift
 			if rl.size() >= 2:
 				v.crowd.riser_pos = Vector2(float(rl[0]), float(rl[1]) - 6.0)
-	_apply_camera(t)
-	_cam_overlay.queue_redraw()
-	if player != null:
-		player.reduced = reduced
-		if world_active:
-			_update_world(t, p_energy, shown)
+	if world_active:
+		_update_world(t, p_energy, pose)
+	else:
+		_apply_camera(t)
+		_cam_overlay.queue_redraw()
 	queue_redraw()
 
 
-func _update_world(t: float, p_energy: float, shown: Array) -> void:
-	var pose := player.pose_at(t)
+func _update_world(t: float, p_energy: float, pose: Dictionary) -> void:
 	lowres.apply_pose(pose, free_look.offset)
-	world.update(t, {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": 0.0, "woofer_pump": _woofer_pump})
-	for id in shown:  # the old room art and light drawing give way to the 3D world; the crowd stays (until WP4)
-		var v: StoryView = views[id]
-		v.far.visible = false
-		v.near.visible = false
-		v.top.visible = false
-		for l in v.fx_layers:
-			l.visible = false
+	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": 0.0, "woofer_pump": _woofer_pump}
+	world.update(t, _world_ctx)
 
 
 # --- the moving camera (chapters with extra rooms) ------------------------------------------------------------------------------------
@@ -646,14 +677,13 @@ func apply(a: Dictionary) -> void:
 			crowd.circle_form(t0)
 			_act["circle"] = {"t0": t0, "t1": NO_END}
 		"hero_center":
-			crowd.hero_to(Vector2(crowd.circle_c.x, crowd.circle_c.y + 18.0), t0, 2.5,
+			crowd.hero_to(crowd.centre_spot(), t0, 2.5,
 				{"state": "solo" if energy >= 40.0 else "dance", "from": 0.0, "until": t0 + 6.0 * bar_s(), "sync": false})
 			_act["spot_circle"] = {"t0": t0, "t1": t0 + 6.0 * bar_s()}
 		"hero_solo":
 			var h := crowd.hero_id()
 			if h != "":
-				var rl: Array = assets.anchor("riser", [crowd.circle_c.x, crowd.circle_c.y - 20.0, 260], current_view)
-				crowd.walk_to(h, Vector2(float(rl[0]), float(rl[1]) - 6.0), t0, 2.0, {"state": "solo" if energy >= 40.0 else "dance", "from": 0.0, "until": t0 + dur, "sync": false})
+				crowd.walk_to(h, crowd.solo_spot(), t0, 2.0, {"state": "solo" if energy >= 40.0 else "dance", "from": 0.0, "until": t0 + dur, "sync": false})
 		"bring_in":
 			crowd.bring_in(str(args["group"]), t0)
 		"gather_at_door":
@@ -673,7 +703,7 @@ func apply(a: Dictionary) -> void:
 			_act["spot_circle"] = {"t0": t0, "t1": t0 + 6.0 * bar_s()}
 			_act["burst"] = {"t0": t0, "t1": t0 + 4.0 * bar_s()}
 			crowd.direct(crowd.ids_of("circle"), "cheer", t0 + 1.5, 4.0 * bar_s(), true)
-			crowd.hero_to(Vector2(crowd.circle_c.x, crowd.circle_c.y + 18.0), t0, 1.5, {"state": "solo", "from": 0.0, "until": t0 + 6.0 * bar_s(), "sync": false})
+			crowd.hero_to(crowd.centre_spot(), t0, 1.5, {"state": "solo", "from": 0.0, "until": t0 + 6.0 * bar_s(), "sync": false})
 			_act["confetti"] = {"t0": t0, "t1": t0 + 4.0}
 		"circle_breaks_awkward":
 			_act["spot_circle"] = {"t0": t0, "t1": t0 + 2.0 * bar_s()}

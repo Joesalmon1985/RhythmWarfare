@@ -62,22 +62,22 @@
   {"actor": "e02", "sector": "floor", "at": [3.69, -1.25]},
   {"actor": "e03", "sector": "floor", "at": [-6.4, 0.76]},
   {"actor": "e04", "sector": "floor", "at": [6.4, 0.41]},
-  {"actor": "g01", "sector": "entrance", "at": [-2.1, 10.2]},
-  {"actor": "g02", "sector": "entrance", "at": [-0.7, 10.2]},
-  {"actor": "g03", "sector": "entrance", "at": [0.7, 10.2]},
-  {"actor": "g04", "sector": "entrance", "at": [2.1, 10.2]},
-  {"actor": "g05", "sector": "entrance", "at": [-2.1, 11.6]},
-  {"actor": "g06", "sector": "entrance", "at": [-0.7, 11.6]},
-  {"actor": "g07", "sector": "entrance", "at": [0.7, 11.6]},
-  {"actor": "g08", "sector": "entrance", "at": [2.1, 11.6]},
+  {"actor": "g01", "sector": "floor", "at": [-5.24, -0.99], "side": [-6.4, -2.17]},
+  {"actor": "g02", "sector": "floor", "at": [-2.0, -0.76], "side": [6.4, -1.7]},
+  {"actor": "g03", "sector": "floor", "at": [1.85, -1.82], "side": [-6.4, -1.23]},
+  {"actor": "g04", "sector": "floor", "at": [4.93, -0.4], "side": [6.4, -0.76]},
+  {"actor": "g05", "sector": "floor", "at": [-3.77, 3.49], "side": [-6.4, -0.29]},
+  {"actor": "g06", "sector": "floor", "at": [3.77, 3.73], "side": [6.4, 0.19]},
+  {"actor": "g07", "sector": "floor", "at": [-6.4, 3.14], "side": [-6.4, 0.66]},
+  {"actor": "g08", "sector": "floor", "at": [6.4, 3.02], "side": [6.4, 1.13]},
   {"actor": "l01", "sector": "floor", "at": [-1.46, 4.67]},
   {"actor": "l02", "sector": "floor", "at": [1.15, 3.01]},
   {"actor": "l03", "sector": "floor", "at": [5.54, 5.5]},
   {"actor": "l04", "sector": "floor", "at": [-6.4, 5.5]},
-  {"actor": "p01", "sector": "bar", "at": [9, 0.5]},
-  {"actor": "p02", "sector": "bar", "at": [9, 3]},
-  {"actor": "p03", "sector": "bar", "at": [10.5, 1.5]},
-  {"actor": "p04", "sector": "bar", "at": [10.5, 4.5]}
+  {"actor": "p01", "sector": "floor", "at": [-4.31, -0.4]},
+  {"actor": "p02", "sector": "floor", "at": [5.7, -1.47]},
+  {"actor": "p03", "sector": "floor", "at": [3.08, 1.6]},
+  {"actor": "p04", "sector": "floor", "at": [-3.23, 1.37]}
  ],
  "waypoints": [
   {"id": "floor_centre", "at": [0, 6.5], "yaw": 0, "sector": "floor"},
@@ -90,6 +90,32 @@
   {"id": "cubicle_a", "at": [-12, 7.5], "yaw": 180, "sector": "cubicle_a"},
   {"id": "door", "at": [0, 11.5], "yaw": 180, "sector": "entrance"}
  ],
- "occluders": [],
+ "spots": {
+  "door": {"sector": "entrance", "at": [0, 12.6], "slots": [[-2.1, 10.2], [-0.7, 10.2], [0.7, 10.2], [2.1, 10.2], [-2.1, 11.6], [-0.7, 11.6], [0.7, 11.6], [2.1, 11.6]]},
+  "circle": {"sector": "floor", "at": [0, 1.2], "radii": [3.4, 2.0], "open": [0, -1]},
+  "riser": {"sector": "riser", "at": [0, -6.4]},
+  "side_l": {"sector": "corridor", "at": [-7.4, 1.5]},
+  "side_r": {"sector": "bar", "at": [7.4, 2.5]}
+ },
+ "silhouettes": [
+  {"id": "s01", "at": [-6.4, -2.6]},
+  {"id": "s02", "at": [-5.46, -2.75]},
+  {"id": "s03", "at": [-4.6, -2.6]},
+  {"id": "s04", "at": [-3.53, -2.75]},
+  {"id": "s05", "at": [-2.5, -2.6]},
+  {"id": "s06", "at": [-1.69, -2.75]},
+  {"id": "s07", "at": [-0.59, -2.6]},
+  {"id": "s08", "at": [0.27, -2.75]},
+  {"id": "s09", "at": [1.24, -2.6]},
+  {"id": "s10", "at": [2.2, -2.75]},
+  {"id": "s11", "at": [3.24, -2.6]},
+  {"id": "s12", "at": [4.33, -2.75]},
+  {"id": "s13", "at": [5.12, -2.6]},
+  {"id": "s14", "at": [6.09, -2.75]}
+ ],
+ "occluders": [
+  {"id": "stack_l", "sprite": "wall_speaker", "at": [-5.3, 0.2], "width": 0.9, "height": 2.3},
+  {"id": "stack_r", "sprite": "wall_speaker", "at": [5.3, 0.2], "width": 0.9, "height": 2.3}
+ ],
  "sky": null
 }

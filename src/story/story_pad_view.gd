@@ -221,8 +221,11 @@ func _draw_centre(rects: Dictionary, now: float, wall: float) -> void:
 	var lcd := Rect2(x0, top, w, size.y * 0.5)
 	_box(lcd.grow(3.0), Color(0.0, 0.0, 0.02, 0.9), 10.0)
 	_box(lcd, LCD_BG, 8.0, 2.0, Color(LCD_EDGE, 0.55))
-	for k in int(lcd.size.y / 4.0):  # scanlines
-		draw_line(Vector2(lcd.position.x + 4.0, lcd.position.y + 2.0 + k * 4.0), Vector2(lcd.end.x - 4.0, lcd.position.y + 2.0 + k * 4.0), Color(0.4, 0.8, 1.0, 0.035), 1.0)
+	var scan := PackedVector2Array()  # scanlines: one call
+	for k in int(lcd.size.y / 4.0):
+		scan.append(Vector2(lcd.position.x + 4.0, lcd.position.y + 2.0 + k * 4.0))
+		scan.append(Vector2(lcd.end.x - 4.0, lcd.position.y + 2.0 + k * 4.0))
+	draw_multiline(scan, Color(0.4, 0.8, 1.0, 0.035), 1.0)
 	var inner := lcd.grow(-10.0)
 	if not banner_text.is_empty():
 		var blink := 1.0 if reduced_effects else 0.75 + 0.25 * sin(wall * 8.0)

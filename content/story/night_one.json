@@ -726,8 +726,6 @@
    "id": "c01",
    "archetype": "curly",
    "variant": "a",
-   "x": 640,
-   "depth": 0.78,
    "group": "core",
    "role": "hero",
    "thresh": -6,
@@ -737,8 +735,6 @@
    "id": "c02",
    "archetype": "groover",
    "variant": "a",
-   "x": 470,
-   "depth": 0.9,
    "group": "core",
    "role": "front",
    "thresh": -4
@@ -747,8 +743,6 @@
    "id": "c03",
    "archetype": "bob",
    "variant": "b",
-   "x": 820,
-   "depth": 0.92,
    "group": "core",
    "role": "front",
    "thresh": 2
@@ -757,8 +751,6 @@
    "id": "c04",
    "archetype": "hoodie",
    "variant": "a",
-   "x": 350,
-   "depth": 0.62,
    "group": "core",
    "thresh": 4
   },
@@ -766,8 +758,6 @@
    "id": "c05",
    "archetype": "ponytail",
    "variant": "a",
-   "x": 930,
-   "depth": 0.6,
    "group": "core",
    "thresh": -2,
    "glow": true
@@ -776,8 +766,6 @@
    "id": "c06",
    "archetype": "punk",
    "variant": "b",
-   "x": 580,
-   "depth": 0.56,
    "group": "core",
    "thresh": 6
   },
@@ -785,8 +773,6 @@
    "id": "c07",
    "archetype": "bob",
    "variant": "a",
-   "x": 740,
-   "depth": 0.5,
    "group": "core",
    "thresh": 0
   },
@@ -794,8 +780,6 @@
    "id": "c08",
    "archetype": "groover",
    "variant": "b",
-   "x": 250,
-   "depth": 0.85,
    "group": "core",
    "role": "front",
    "thresh": 8
@@ -804,8 +788,6 @@
    "id": "c09",
    "archetype": "ponytail",
    "variant": "b",
-   "x": 1030,
-   "depth": 0.82,
    "group": "core",
    "role": "front",
    "thresh": -8
@@ -814,8 +796,6 @@
    "id": "c10",
    "archetype": "hoodie",
    "variant": "b",
-   "x": 660,
-   "depth": 0.3,
    "group": "core",
    "thresh": 2
   },
@@ -823,8 +803,6 @@
    "id": "e01",
    "archetype": "punk",
    "variant": "a",
-   "x": 430,
-   "depth": 0.35,
    "group": "early",
    "enter_from": "doorway"
   },
@@ -832,8 +810,6 @@
    "id": "e02",
    "archetype": "curly",
    "variant": "b",
-   "x": 880,
-   "depth": 0.38,
    "group": "early",
    "enter_from": "doorway"
   },
@@ -841,8 +817,6 @@
    "id": "e03",
    "archetype": "bob",
    "variant": "a",
-   "x": 190,
-   "depth": 0.55,
    "group": "early",
    "enter_from": "doorway"
   },
@@ -850,8 +824,6 @@
    "id": "e04",
    "archetype": "ponytail",
    "variant": "b",
-   "x": 1090,
-   "depth": 0.52,
    "group": "early",
    "enter_from": "doorway"
   },
@@ -859,112 +831,78 @@
    "id": "g01",
    "archetype": "groover",
    "variant": "a",
-   "x": 300,
-   "depth": 0.4,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 0,
-   "side_x": 60,
-   "side_depth": 0.3,
    "stays_on_bad": true
   },
   {
    "id": "g02",
    "archetype": "hoodie",
    "variant": "b",
-   "x": 510,
-   "depth": 0.42,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 1,
-   "side_x": 1220,
-   "side_depth": 0.33999999999999997,
    "stays_on_bad": true
   },
   {
    "id": "g03",
    "archetype": "punk",
    "variant": "a",
-   "x": 760,
-   "depth": 0.33,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 2,
-   "side_x": 60,
-   "side_depth": 0.38,
    "stays_on_bad": true
   },
   {
    "id": "g04",
    "archetype": "curly",
    "variant": "a",
-   "x": 960,
-   "depth": 0.45,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 3,
-   "side_x": 1220,
-   "side_depth": 0.42,
    "stays_on_bad": false
   },
   {
    "id": "g05",
    "archetype": "bob",
    "variant": "b",
-   "x": 395,
-   "depth": 0.78,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 4,
-   "side_x": 60,
-   "side_depth": 0.45999999999999996,
    "stays_on_bad": false
   },
   {
    "id": "g06",
    "archetype": "ponytail",
    "variant": "a",
-   "x": 885,
-   "depth": 0.8,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 5,
-   "side_x": 1220,
-   "side_depth": 0.5,
    "stays_on_bad": false
   },
   {
    "id": "g07",
    "archetype": "hoodie",
    "variant": "a",
-   "x": 140,
-   "depth": 0.75,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 6,
-   "side_x": 60,
-   "side_depth": 0.54,
    "stays_on_bad": false
   },
   {
    "id": "g08",
    "archetype": "groover",
    "variant": "b",
-   "x": 1140,
-   "depth": 0.74,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 7,
-   "side_x": 1220,
-   "side_depth": 0.5800000000000001,
    "stays_on_bad": false
   },
   {
    "id": "l01",
    "archetype": "curly",
    "variant": "b",
-   "x": 545,
-   "depth": 0.88,
    "group": "late",
    "enter_from": "doorway"
   },
@@ -972,8 +910,6 @@
    "id": "l02",
    "archetype": "punk",
    "variant": "a",
-   "x": 715,
-   "depth": 0.74,
    "group": "late",
    "enter_from": "doorway"
   },
@@ -981,8 +917,6 @@
    "id": "l03",
    "archetype": "bob",
    "variant": "a",
-   "x": 1000,
-   "depth": 0.95,
    "group": "late",
    "enter_from": "doorway"
   },
@@ -990,8 +924,6 @@
    "id": "l04",
    "archetype": "hoodie",
    "variant": "a",
-   "x": 170,
-   "depth": 0.95,
    "group": "late",
    "enter_from": "doorway"
   },
@@ -999,8 +931,6 @@
    "id": "p01",
    "archetype": "groover",
    "variant": "a",
-   "x": 360,
-   "depth": 0.45,
    "group": "peak",
    "enter_from": "side"
   },
@@ -1008,8 +938,6 @@
    "id": "p02",
    "archetype": "ponytail",
    "variant": "b",
-   "x": 1010,
-   "depth": 0.36,
    "group": "peak",
    "enter_from": "side"
   },
@@ -1017,8 +945,6 @@
    "id": "p03",
    "archetype": "punk",
    "variant": "b",
-   "x": 840,
-   "depth": 0.62,
    "group": "peak",
    "enter_from": "side"
   },
@@ -1026,8 +952,6 @@
    "id": "p04",
    "archetype": "curly",
    "variant": "a",
-   "x": 430,
-   "depth": 0.6,
    "group": "peak",
    "enter_from": "side"
   }
@@ -1036,112 +960,84 @@
   {
    "id": "s01",
    "shape": "sil_a",
-   "x": 56,
-   "depth": 0.0,
    "group": "core",
    "thresh": -4
   },
   {
    "id": "s02",
    "shape": "sil_b",
-   "x": 146,
-   "depth": 0.0,
    "group": "core",
    "thresh": -7
   },
   {
    "id": "s03",
    "shape": "sil_c",
-   "x": 224,
-   "depth": 0.0,
    "group": "core",
    "thresh": -5
   },
   {
    "id": "s04",
    "shape": "sil_a",
-   "x": 321,
-   "depth": 0.0,
    "group": "core",
    "thresh": -7
   },
   {
    "id": "s05",
    "shape": "sil_b",
-   "x": 414,
-   "depth": 0.0,
    "group": "core",
    "thresh": -2
   },
   {
    "id": "s06",
    "shape": "sil_c",
-   "x": 487,
-   "depth": 0.0,
    "group": "core",
    "thresh": -6
   },
   {
    "id": "s07",
    "shape": "sil_a",
-   "x": 587,
-   "depth": 0.0,
    "group": "core",
    "thresh": 5
   },
   {
    "id": "s08",
    "shape": "sil_b",
-   "x": 664,
-   "depth": 0.0,
    "group": "early",
    "thresh": -1
   },
   {
    "id": "s09",
    "shape": "sil_c",
-   "x": 752,
-   "depth": 0.0,
    "group": "early",
    "thresh": 5
   },
   {
    "id": "s10",
    "shape": "sil_a",
-   "x": 839,
-   "depth": 0.0,
    "group": "early",
    "thresh": -5
   },
   {
    "id": "s11",
    "shape": "sil_b",
-   "x": 933,
-   "depth": 0.0,
    "group": "early",
    "thresh": -7
   },
   {
    "id": "s12",
    "shape": "sil_c",
-   "x": 1032,
-   "depth": 0.0,
    "group": "gatherers",
    "thresh": 4
   },
   {
    "id": "s13",
    "shape": "sil_a",
-   "x": 1103,
-   "depth": 0.0,
    "group": "gatherers",
    "thresh": -1
   },
   {
    "id": "s14",
    "shape": "sil_b",
-   "x": 1191,
-   "depth": 0.0,
    "group": "gatherers",
    "thresh": -4
   }

@@ -291,9 +291,27 @@ func face_name() -> String:
 	return str(FACE_OF.get(state, "neutral"))
 
 
+const JOINT_ORDER := ["hips", "torso", "head", "shoulder_l", "elbow_l", "hip_l", "shoulder_r", "elbow_r", "hip_r"]
+const J_HIPS := 0
+const J_TORSO := 1
+const J_HEAD := 2
+const J_SH_L := 3
+const J_EL_L := 4
+const J_HP_L := 5
+const J_SH_R := 6
+const J_EL_R := 7
+const J_HP_R := 8
+var _xfs: Array = []  # reused every frame: the transform of each joint, by JOINT_ORDER index
+var _joint_idx: Dictionary = {}  # part -> index into _xfs (resolved once)
+
+
 func _draw() -> void:
 	if rig.is_empty() or _parts.is_empty():
 		return
+	if _xfs.is_empty():
+		_xfs.resize(JOINT_ORDER.size())
+		for part in _parts:
+			part["ji"] = maxi(JOINT_ORDER.find(str(part["joint"])), 0)  # an unknown joint rides on the hips, as before
 	var P: Dictionary = cur
 	var j_hips: Vector2 = _joints.get("hips", Vector2(0, -110))
 	var j_torso: Vector2 = _joints.get("torso", j_hips)
@@ -305,22 +323,26 @@ func _draw() -> void:
 	var root := Transform2D(0.0, Vector2(float(P["sway_x"]), -float(P["jump"]))) * Transform2D(0.0, Vector2((1.0 + sq * 0.6) * turn, 1.0 - sq), 0.0, Vector2.ZERO)
 	var hip_xf := root * Transform2D(0.0, j_hips + Vector2(0, -float(P["bob"]) * 0.5))
 	var torso_xf := hip_xf * Transform2D(float(P["lean"]), j_torso - j_hips)
-	var head_xf := torso_xf * Transform2D(float(P["head_tilt"]), j_head - j_torso + Vector2(0, float(P["head_drop"])))
-	var xfs := {"hips": hip_xf, "torso": torso_xf, "head": head_xf}
-	for side in ["l", "r"]:
-		var sg := 1.0 if side == "l" else -1.0
-		var j_sh: Vector2 = _joints.get("shoulder_" + side, Vector2(sg * 30, -186))
-		var j_el: Vector2 = _joints.get("elbow_" + side, Vector2(sg * 35, -144))
-		var sh_xf: Transform2D = torso_xf * Transform2D(sg * float(P["arm_" + side]), j_sh - j_torso + Vector2(0, float(P["head_drop"]) * 0.5))
-		xfs["shoulder_" + side] = sh_xf
-		xfs["elbow_" + side] = sh_xf * Transform2D(-sg * float(P["elb_" + side]), j_el - j_sh)
-		var j_hp: Vector2 = _joints.get("hip_" + side, Vector2(sg * 11, -108))
-		xfs["hip_" + side] = hip_xf * Transform2D(sg * float(P["leg_" + side]), j_hp - j_hips)
+	var head_drop := float(P["head_drop"])
+	var head_xf := torso_xf * Transform2D(float(P["head_tilt"]), j_head - j_torso + Vector2(0, head_drop))
+	_xfs[J_HIPS] = hip_xf
+	_xfs[J_TORSO] = torso_xf
+	_xfs[J_HEAD] = head_xf
+	for side in 2:
+		var sg := 1.0 if side == 0 else -1.0
+		var sfx := "_l" if side == 0 else "_r"
+		var j_sh: Vector2 = _joints.get("shoulder" + sfx, Vector2(sg * 30, -186))
+		var j_el: Vector2 = _joints.get("elbow" + sfx, Vector2(sg * 35, -144))
+		var sh_xf: Transform2D = torso_xf * Transform2D(sg * float(P["arm" + sfx]), j_sh - j_torso + Vector2(0, head_drop * 0.5))
+		_xfs[J_SH_L + side * 3] = sh_xf
+		_xfs[J_EL_L + side * 3] = sh_xf * Transform2D(-sg * float(P["elb" + sfx]), j_el - j_sh)
+		var j_hp: Vector2 = _joints.get("hip" + sfx, Vector2(sg * 11, -108))
+		_xfs[J_HP_L + side * 3] = hip_xf * Transform2D(sg * float(P["leg" + sfx]), j_hp - j_hips)
 	for part in _parts:
 		if part.get("face", false):
 			_draw_face(head_xf)
 			continue
-		var xf: Transform2D = xfs.get(part["joint"], hip_xf)
+		var xf: Transform2D = _xfs[int(part["ji"])]
 		var sc: float = part["scale"]
 		var tex: Texture2D = part["tex"]
 		if tex == null:
@@ -331,8 +353,15 @@ func _draw() -> void:
 		draw_set_transform_matrix(xf * Transform2D().scaled(Vector2(sc, sc)))
 		draw_texture(tex, -part["pivot"], Color.WHITE)
 	if glow:
-		_draw_glow(xfs)
+		_draw_glow(_xfs_dict())
 	draw_set_transform_matrix(Transform2D.IDENTITY)
+
+
+func _xfs_dict() -> Dictionary:  # the glow stick looks a joint up by name
+	var d := {}
+	for i in JOINT_ORDER.size():
+		d[JOINT_ORDER[i]] = _xfs[i]
+	return d
 
 
 func _draw_face(head_xf: Transform2D) -> void:

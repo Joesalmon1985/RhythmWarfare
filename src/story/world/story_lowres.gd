@@ -51,6 +51,18 @@ func _init() -> void:
 	resized.connect(_fit)
 
 
+## A CanvasLayer inside the low-res viewport for the 2D crowd: it is drawn into the same small image, so dancers pixelate like the world.
+func add_overlay(node: Node, layer_name := "Overlay") -> CanvasLayer:
+	var layer := CanvasLayer.new()
+	layer.name = layer_name
+	layer.layer = 1
+	sub.add_child(layer)
+	if node.get_parent() != null:
+		node.get_parent().remove_child(node)
+	layer.add_child(node)
+	return layer
+
+
 func attach(p_world: StoryWorld) -> void:
 	world = p_world
 	sub.add_child(world)

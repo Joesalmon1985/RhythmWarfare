@@ -145,17 +145,18 @@ func test_arrival_fades_are_frame_rate_independent() -> void:
 	assert_true(alphas[0] > 0.3 and alphas[0] < 1.0, "a fade, not a pop: %.2f" % alphas[0])
 
 
-func test_depth_order_is_stable_for_equal_rows() -> void:
+func test_depth_order_is_stable_for_equal_distances() -> void:
 	var ctx := _crowd_stage()
 	var stage: StoryStage = ctx["stage"]
 	var crowd := stage.crowd
-	for id in crowd.actors:
-		crowd.actors[id]["pos"] = Vector2(float(crowd.actors[id]["data"]["x"]), 350.0)
-	crowd._resort()
-	var first := crowd._order.duplicate()
+	for id in crowd.actors:  # everybody on one row, one metre apart in x: the same distance order whichever way the frame ran
+		crowd.actors[id]["pos"] = Vector2(-2.0 + float(str(id).hash() % 5) * 1.0, 3.0)
+		crowd.actors[id]["sec"] = "floor"
+	stage.update(2.0, 50.0)
+	var first := crowd.drawn_order()
 	for i in 5:
-		crowd._resort()
-		assert_eq(crowd._order, first, "a re-sort never swaps dancers standing on the same row")
+		stage.update(2.0, 50.0)
+		assert_eq(crowd.drawn_order(), first, "a re-sort never swaps dancers standing on the same row")
 	stage.free()
 
 
@@ -172,7 +173,7 @@ func test_the_circle_opens_towards_the_dj_and_the_riser_lifts_the_hero() -> void
 			continue
 		var d: Vector2 = (crowd.actors[id]["pos"] as Vector2) - crowd.circle_c
 		var ang := atan2(d.y / crowd.circle_r.y, d.x / crowd.circle_r.x)
-		assert_true(absf(angle_difference(ang, PI * 0.5)) > 0.35, "%s keeps the front of the circle clear" % id)
+		assert_true(absf(angle_difference(ang, crowd.circle_open.angle())) > 0.35, "%s keeps the front of the circle clear" % id)
 	var bar_s := stage.bar_s()
 	stage.apply({"t0": 4.0, "bar": 1.0, "action": "riser_up", "args": {}, "block": "", "source": "block"})
 	stage.apply({"t0": 4.0, "bar": 1.0, "action": "hero_solo", "args": {"bars": 6}, "block": "", "source": "block"})
@@ -183,7 +184,8 @@ func test_the_circle_opens_towards_the_dj_and_the_riser_lifts_the_hero() -> void
 	var hero: StoryCharacter = crowd.hero_node()
 	var hid := crowd.hero_id()
 	assert_near(stage.riser_lift(t), StoryStage.RISER_LIFT, 0.01, "the riser is up")
-	assert_true(hero.position.y < (crowd.actors[hid]["pos"] as Vector2).y - StoryStage.RISER_LIFT + 1.0, "the hero stands raised above the floor row")
+	assert_eq(crowd.actors[hid]["sec"], "riser", "the hero has walked up onto the riser")
+	assert_true((crowd.actors[hid]["pos"] as Vector2).distance_to(crowd.riser_spot) < 0.05, "and stands on its spot")
 	assert_eq(hero.state, "solo", "and dances the solo")
 	stage.apply({"t0": t, "bar": 1.0, "action": "riser_down", "args": {}, "block": "", "source": "block"})
 	stage.update(t + bar_s * 0.5, 80.0)

@@ -30,7 +30,9 @@ var sectors: Array = []  # {id, poly: PackedVector2Array (counter-clockwise), fl
 var things: Array = []
 var homes: Dictionary = {}  # actor id -> {sector, at: Vector2}
 var waypoints: Dictionary = {}  # id -> {at: Vector2, yaw: float (degrees), sector}
-var occluders: Array = []
+var occluders: Array = []  # {id, sprite (a texture name of `textures`), sector, at: Vector2, width, height (m)} drawn over the crowd when nearer than a dancer
+var spots: Dictionary = {}  # named places the crowd directives use: {sector, at: Vector2, ...} (door with `slots`, circle with `radii` and `open`, riser, side_l, side_r)
+var silhouettes: Dictionary = {}  # rear-row silhouette id -> {sector, at: Vector2}
 var sky: Dictionary = {}
 var errors: Array = []
 
@@ -87,6 +89,8 @@ func build(d: Dictionary, check_files: bool) -> void:
 	if not waypoints.has(start_id):
 		errors.append("start waypoint %s is not a waypoint" % start_id)
 	_build_homes(d.get("homes", []))
+	_build_spots(d.get("spots", {}))
+	_build_silhouettes(d.get("silhouettes", []))
 	_build_occluders(d.get("occluders", []))
 	_check_reachability()
 	if errors.is_empty():
@@ -339,19 +343,105 @@ func _build_homes(list: Array) -> void:
 			continue
 		if not _inside(at, sid, HOME_MARGIN):
 			errors.append("home %s: %s is not inside sector %s (with a %.2f m margin from the walls)" % [aid, at, sid, HOME_MARGIN])
-		homes[aid] = {"sector": sid, "at": at}
+		var entry := {"sector": sid, "at": at}
+		if h.has("side"):  # where a dancer who stays on a bad night waits at the edge of the floor
+			var side := _pt(h["side"], "home %s side" % aid)
+			if not _inside(side, sid, HOME_MARGIN):
+				errors.append("home %s: side spot %s is not inside sector %s" % [aid, side, sid])
+			entry["side"] = side
+		homes[aid] = entry
+
+
+func _build_spots(d: Variant) -> void:
+	if typeof(d) != TYPE_DICTIONARY:
+		return
+	for name in d:
+		var sp: Dictionary = d[name]
+		var sid := str(sp.get("sector", ""))
+		var at := _pt(sp.get("at"), "spot " + str(name))
+		if not _sector_index.has(sid):
+			errors.append("spot %s: unknown sector %s" % [name, sid])
+			continue
+		if not _inside(at, sid, HOME_MARGIN):
+			errors.append("spot %s: %s is not inside sector %s" % [name, at, sid])
+		var e := {"sector": sid, "at": at}
+		if sp.has("slots"):  # door: where the people waiting outside stand (indexed by an actor's door_slot)
+			var slots: Array = []
+			for k in (sp["slots"] as Array):
+				var q := _pt(k, "spot %s slot" % name)
+				if not _inside(q, sid, HOME_MARGIN):
+					errors.append("spot %s: slot %s is not inside sector %s" % [name, q, sid])
+				slots.append(q)
+			e["slots"] = slots
+		if sp.has("radii"):  # circle: x and z radii (m), the circle stays inside its sector
+			var r: Array = sp["radii"]
+			if r.size() != 2 or float(r[0]) <= 0.0 or float(r[1]) <= 0.0:
+				errors.append("spot %s: radii are [rx, rz] in metres" % name)
+			else:
+				e["radii"] = Vector2(float(r[0]), float(r[1]))
+				for k in 16:
+					var ang := TAU * float(k) / 16.0
+					var pt := at + Vector2(cos(ang) * float(r[0]), sin(ang) * float(r[1]))
+					if not _inside(pt, sid, HOME_MARGIN):
+						errors.append("spot %s: the circle leaves sector %s at %s" % [name, sid, pt])
+						break
+		if sp.has("open"):
+			var o: Array = sp["open"]
+			e["open"] = Vector2(float(o[0]), float(o[1])).normalized() if o.size() == 2 else Vector2(0, -1)
+		spots[str(name)] = e
+
+
+func _build_silhouettes(list: Variant) -> void:
+	if typeof(list) != TYPE_ARRAY:
+		return
+	for s in list:
+		var sid_ := str(s.get("id", ""))
+		var at := _pt(s.get("at"), "silhouette " + sid_)
+		var sec := sector_at(at)
+		if sid_ == "" or silhouettes.has(sid_) or sec == "":
+			errors.append("silhouette %s: missing, duplicated or outside every sector" % sid_)
+			continue
+		silhouettes[sid_] = {"sector": sec, "at": at}
+
+
+func spot(name: String) -> Dictionary:
+	return spots.get(name, {})
 
 
 func _build_occluders(list: Array) -> void:
 	for o in list:
 		var oid := str(o.get("id", ""))
-		var between: Array = o.get("between", [])
-		if oid == "" or between.size() != 2 or not _sector_index.has(str(between[0])) or not _sector_index.has(str(between[1])):
-			errors.append("occluder %s: needs two existing sectors in between" % oid)
+		if oid == "" or str(o.get("sprite", "")) == "":
+			errors.append("occluder %s: needs an id and a sprite" % oid)
 			continue
-		if str(o.get("sprite", "")) == "":
-			errors.append("occluder %s: no sprite" % oid)
-		occluders.append(o)
+		var oc: Dictionary = o.duplicate()
+		if o.has("between"):  # a frame the camera passes through between two sectors (placed on their shared portal when no `at` is given)
+			var between: Array = o["between"]
+			if between.size() != 2 or not _sector_index.has(str(between[0])) or not _sector_index.has(str(between[1])):
+				errors.append("occluder %s: between needs two existing sectors" % oid)
+				continue
+			if not o.has("at"):
+				for p in portals():
+					if (p["a"] == between[0] and p["b"] == between[1]) or (p["a"] == between[1] and p["b"] == between[0]):
+						oc["at"] = p["mid"]
+						oc["sector"] = str(between[0])
+						break
+		if not oc.has("at"):
+			errors.append("occluder %s: needs `at` (or a portal `between` two sectors)" % oid)
+			continue
+		var at: Variant = oc["at"]
+		at = at if typeof(at) == TYPE_VECTOR2 else _pt(at, "occluder " + oid)
+		oc["at"] = at
+		var sec := str(oc.get("sector", sector_at(at)))
+		if sec == "" or not _sector_index.has(sec):
+			errors.append("occluder %s: lies in no sector" % oid)
+			continue
+		oc["sector"] = sec
+		if not textures.has(str(o["sprite"])):
+			errors.append("occluder %s: sprite %s is not one of the map's textures" % [oid, o["sprite"]])
+		oc["width"] = float(o.get("width", 1.0))
+		oc["height"] = float(o.get("height", 2.0))
+		occluders.append(oc)
 
 
 # --- portals, reachability, resolved walls ---------------------------------------------------------------------------------------------
@@ -557,6 +647,51 @@ func route(from: Vector2, from_sec: String, to: Vector2, to_sec: String) -> Dict
 	return {"points": pts, "sectors": legs, "length": float(g[1])}
 
 
+## The sectors that can be seen from `cam` (a ground point in sector `sec`) looking along `yaw` (degrees) through a window of `aspect` (width / height) at the
+## projector's vertical field of view: the camera's own sector (depth 0) and the sectors beyond portals whose opening lies in view, up to `max_depth` portals deep.
+## Returns {sector id: portal depth}. A generous margin keeps a dancer in the doorway from popping.
+func visible_sectors(cam: Vector2, yaw: float, sec: String, aspect: float, max_depth := 2) -> Dictionary:
+	var out := {}
+	if not _sector_index.has(sec):
+		return out
+	out[sec] = 0
+	var half := atan(tan(deg_to_rad(StoryProjector.FOV_V) * 0.5) * aspect) + deg_to_rad(8.0)
+	var fwd := StoryProjector.forward(yaw)
+	var rgt := StoryProjector.right(yaw)
+	var frontier := [sec]
+	for depth in range(1, max_depth + 1):
+		var next: Array = []
+		for cur in frontier:
+			for p in portals():
+				var other := ""
+				if p["a"] == cur:
+					other = str(p["b"])
+				elif p["b"] == cur:
+					other = str(p["a"])
+				if other == "" or out.has(other):
+					continue
+				if _portal_in_view(cam, fwd, rgt, p["p0"], p["p1"], half):
+					out[other] = depth
+					next.append(other)
+		frontier = next
+	return out
+
+
+func _portal_in_view(cam: Vector2, fwd: Vector2, rgt: Vector2, p0: Vector2, p1: Vector2, half: float) -> bool:
+	var a := Vector2((p0 - cam).dot(rgt), (p0 - cam).dot(fwd))  # (right, depth)
+	var b := Vector2((p1 - cam).dot(rgt), (p1 - cam).dot(fwd))
+	var near := 0.05
+	if a.y < near and b.y < near:
+		return false
+	if a.y < near:
+		a = a.lerp(b, (near - a.y) / (b.y - a.y))
+	elif b.y < near:
+		b = b.lerp(a, (near - b.y) / (a.y - b.y))
+	var ang_a := atan2(a.x, a.y)
+	var ang_b := atan2(b.x, b.y)
+	return minf(ang_a, ang_b) <= half and maxf(ang_a, ang_b) >= -half
+
+
 # --- the chapter's own references ------------------------------------------------------------------------------------------------------
 
 ## Every authored player_move / player_look in a chapter file (events, `else` alternatives and decision outcomes):
@@ -585,6 +720,14 @@ func validate_chapter(chapter_raw: Dictionary) -> void:
 		actor_ids[str(a["id"])] = true
 		if not homes.has(str(a["id"])):
 			errors.append("actor %s has no home in the map" % a["id"])
+	for sil in chapter_raw.get("silhouettes", []):
+		if not silhouettes.has(str(sil["id"])):
+			errors.append("silhouette %s has no place in the map" % sil["id"])
+	for a in chapter_raw.get("actors", []):
+		if str(a.get("group", "")) == "gatherers" and str(a.get("enter_from", "doorway")) == "doorway":
+			var slots: Array = spot("door").get("slots", [])
+			if not slots.is_empty() and int(a.get("door_slot", 0)) >= slots.size():
+				errors.append("actor %s: door_slot %s but the door has %d slots" % [a["id"], a.get("door_slot"), slots.size()])
 	for h in homes:
 		if not actor_ids.has(h):
 			errors.append("home %s is not an actor of the chapter" % h)
