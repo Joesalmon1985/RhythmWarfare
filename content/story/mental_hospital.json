@@ -121,7 +121,7 @@
     {
      "at_bar": 2,
      "action": "player_look",
-     "by": 24,
+     "pitch": 14,
      "bars": 3
     },
     {
@@ -149,9 +149,12 @@
      "piece": "craft_table"
     },
     {
-     "at_bar": 6,
-     "action": "player_look",
-     "by": -28,
+     "at_bar": 5,
+     "action": "player_walk",
+     "fwd": 1.5,
+     "in": [
+      "main"
+     ],
      "bars": 3
     },
     {
@@ -192,8 +195,11 @@
     {
      "at_bar": 10,
      "action": "player_look",
-     "by": -24,
-     "bars": 3
+     "at": "c06",
+     "in": [
+      "main"
+     ],
+     "bars": 2
     },
     {
      "at_bar": 11,
@@ -220,9 +226,12 @@
      "piece": "paper_chains"
     },
     {
-     "at_bar": 14,
-     "action": "player_look",
-     "by": 28,
+     "at_bar": 13,
+     "action": "player_walk",
+     "to": "day_edge",
+     "in": [
+      "main"
+     ],
      "bars": 3
     },
     {
@@ -259,8 +268,11 @@
     {
      "at_bar": 18,
      "action": "player_look",
-     "by": 24,
-     "bars": 3
+     "at": "day_centre",
+     "in": [
+      "main"
+     ],
+     "bars": 2
     },
     {
      "at_bar": 19,
@@ -274,6 +286,12 @@
      "bars": 2
     },
     {
+     "at_bar": 19,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
+    },
+    {
      "at_bar": 21,
      "action": "beams_fan"
     },
@@ -285,8 +303,21 @@
     },
     {
      "at_bar": 22,
-     "action": "player_look",
-     "by": -28,
+     "action": "player_walk",
+     "to": "corridor_c02",
+     "stop": 2,
+     "in": [
+      "corridor"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 22,
+     "action": "player_walk",
+     "fwd": -1.2,
+     "in": [
+      "main"
+     ],
      "bars": 3
     },
     {
@@ -316,8 +347,8 @@
     {
      "at_bar": 26,
      "action": "player_look",
-     "by": -24,
-     "bars": 3
+     "pitch": -14,
+     "bars": 2
     },
     {
      "at_bar": 27,
@@ -344,9 +375,13 @@
      "else": "gather_at_door"
     },
     {
-     "at_bar": 30,
-     "action": "player_look",
-     "by": 28,
+     "at_bar": 29,
+     "action": "player_walk",
+     "right": 1.4,
+     "in": [
+      "corridor",
+      "main"
+     ],
      "bars": 3
     },
     {
@@ -371,7 +406,7 @@
     {
      "at_bar": 34,
      "action": "player_look",
-     "by": 24,
+     "pitch": 16,
      "bars": 3
     },
     {
@@ -389,8 +424,20 @@
     },
     {
      "at_bar": 38,
-     "action": "player_look",
-     "by": -28,
+     "action": "player_walk",
+     "fwd": 1.6,
+     "in": [
+      "art_room"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 38,
+     "action": "player_walk",
+     "fwd": -1.0,
+     "in": [
+      "treatment"
+     ],
      "bars": 3
     },
     {
@@ -449,9 +496,21 @@
      "bars": 2
     },
     {
-     "at_bar": 46,
-     "action": "player_look",
-     "by": 28,
+     "at_bar": 45,
+     "action": "player_walk",
+     "to": "art_in",
+     "in": [
+      "art_room"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 45,
+     "action": "player_walk",
+     "right": -1.2,
+     "in": [
+      "treatment"
+     ],
      "bars": 3
     },
     {
@@ -485,7 +544,7 @@
     {
      "at_bar": 50,
      "action": "player_look",
-     "by": 24,
+     "pitch": 18,
      "bars": 3
     },
     {
@@ -509,9 +568,12 @@
     },
     {
      "at_bar": 54,
-     "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "action": "player_walk",
+     "fwd": 1.0,
+     "in": [
+      "treatment"
+     ],
+     "bars": 2
     },
     {
      "at_bar": 55,
@@ -560,8 +622,11 @@
     {
      "at_bar": 58,
      "action": "player_look",
-     "by": -24,
-     "bars": 3
+     "at": "art_room_c01",
+     "in": [
+      "art_room"
+     ],
+     "bars": 2
     },
     {
      "at_bar": 59,
@@ -575,6 +640,24 @@
     {
      "at_bar": 59,
      "action": "spotlight_hero"
+    },
+    {
+     "at_bar": 59,
+     "action": "player_walk",
+     "fwd": 0.8,
+     "in": [
+      "treatment"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 60,
+     "action": "player_walk",
+     "fwd": -1.2,
+     "in": [
+      "art_room"
+     ],
+     "bars": 3
     },
     {
      "at_bar": 61,
@@ -601,10 +684,10 @@
      }
     },
     {
-     "at_bar": 62,
+     "at_bar": 61,
      "action": "player_look",
-     "by": 28,
-     "bars": 3
+     "pitch": -12,
+     "bars": 2
     },
     {
      "at_bar": 63,
