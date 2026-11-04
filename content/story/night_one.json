@@ -2,7 +2,7 @@
  "id": "night_one",
  "title": "Night One",
  "chapter": 1,
- "music_pack": "res://songs/m01_first_watch",
+ "music_pack": "res://songs/story_n1_warehouse",
  "description": "Your first set. A quiet club, a full night ahead: open the room, find the groove, peak it, then close it.",
  "duration_bars": 128,
  "sequence_bars": 2,

@@ -71,10 +71,18 @@ static func parse(d: Dictionary, pack_dir: String, options: Dictionary, errors: 
 	if level.sections.is_empty():
 		errors.append("a mission needs phases")
 		return level
-	_stems(index, level, errors)
-	_cues(index, level, errors)
+	var recorded: Variant = d.get("recorded_music", null)
+	if typeof(recorded) == TYPE_DICTIONARY:  # a chapter with its own recorded stems (Night One): they replace the loadout's loops and cues
+		_recorded_stems(recorded, level, errors)
+		_recorded_cues(recorded, level, errors)
+	else:
+		_stems(index, level, errors)
+		_cues(index, level, errors)
 	_sequences(index, level, errors, warnings)
-	_gain_program(level)
+	if level.recorded:
+		_recorded_gain_program(recorded, level)
+	else:
+		_gain_program(level)
 	var waves: Variant = d.get("waves", [])
 	level.waves = waves if typeof(waves) == TYPE_ARRAY else []
 	level.waves.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a["start_tick"]) < int(b["start_tick"]))
@@ -163,6 +171,11 @@ static func _cues(index: LibraryIndex, level: Level, errors: Array) -> void:
 						continue  # the groove's bar 8 is replaced by the fill's; the fill sounds only there
 					raw.append({"tick": tick, "duration_ticks": int(c[1]), "pad": int(c[2]), "family": str(plan[3]),
 						"voice": str(plan[2]), "phase": pi})
+	_finish_cues(raw, level, errors)
+
+
+## Sorts the raw cues, numbers them and fills the fields the judge and the lane read.
+static func _finish_cues(raw: Array, level: Level, errors: Array) -> void:
 	raw.sort_custom(func(x: Dictionary, y: Dictionary) -> bool:
 		return x["tick"] < y["tick"] if x["tick"] != y["tick"] else x["pad"] < y["pad"])
 	var i := 0
@@ -180,6 +193,60 @@ static func _cues(index: LibraryIndex, level: Level, errors: Array) -> void:
 		i += 1
 	if level.notes.is_empty():
 		errors.append("the loadout has no cues in this mission")
+
+
+## Recorded music (a chapter's "recorded_music" block, written by tools/content/import_recorded.py): the stems are WAV loops
+## of exactly loop_bars bars in the pack folder, each sounding in the phases of its mode ("drums", "bass" or "always"), and
+## the cues are given per family as [tick, duration, pad] over one loop. A stem can carry several families (a drum mix is
+## kick and snare), so a miss in any of them silences it.
+static func _recorded_stems(rec: Dictionary, level: Level, errors: Array) -> void:
+	level.recorded = true
+	var loop_bars := int(rec.get("loop_bars", LOOP_BARS))
+	var stems: Dictionary = rec.get("stems", {})
+	if stems.is_empty():
+		errors.append("recorded_music lists no stems")
+	for key in stems:
+		var spec: Dictionary = stems[key]
+		level.stems[key] = level.pack_dir.path_join(str(spec.get("file", "")))
+		level.stem_loop_bars[key] = loop_bars
+		var mode := str(spec.get("mode", "always"))
+		level.stem_family[key] = {"drums": "drums", "bass": "bass"}.get(mode, "other")
+		var fams: Array = spec.get("families", [])
+		if not fams.is_empty():
+			level.stem_families[key] = fams.duplicate()
+
+
+static func _recorded_cues(rec: Dictionary, level: Level, errors: Array) -> void:
+	var tpb := level.ticks_per_bar()
+	var loop_ticks := int(rec.get("loop_bars", LOOP_BARS)) * tpb
+	var cues: Dictionary = rec.get("cues", {})
+	var raw: Array = []
+	for pi in level.sections.size():
+		var ph: Dictionary = level.sections[pi]
+		var a := int(ph["start_tick"])
+		var b := int(ph["end_tick"])
+		var families: Array = ["kick", "snare"] if str(ph["mode"]) == "drums" else ["bass"]
+		for fam in families:
+			for k in range(a / loop_ticks, int(ceil(float(b) / float(loop_ticks)))):
+				for c in cues.get(fam, []):
+					var tick: int = k * loop_ticks + int(c[0])
+					if tick < a or tick >= b:
+						continue
+					raw.append({"tick": tick, "duration_ticks": int(c[1]), "pad": int(c[2]), "family": fam, "voice": fam, "phase": pi})
+	_finish_cues(raw, level, errors)
+
+
+## Which recorded stems sound in each bar: a stem plays in the phases of its mode, "always" stems throughout.
+static func _recorded_gain_program(rec: Dictionary, level: Level) -> void:
+	var stems: Dictionary = rec.get("stems", {})
+	var tpb := level.ticks_per_bar()
+	for bar in level.bar_count():
+		var mode := str(level.phase_at(bar * tpb).get("mode", ""))
+		var prog := {}
+		for key in stems:
+			var m := str(stems[key].get("mode", "always"))
+			prog[key] = m == "always" or m == mode
+		level.gain_program.append(prog)
 
 
 ## Sequences of sequence_bars bars inside each phase (never across a phase). A drums sequence with 0-based drum counter

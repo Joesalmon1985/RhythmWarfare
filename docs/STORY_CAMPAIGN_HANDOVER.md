@@ -14,11 +14,24 @@ the interludes between chapters follow. Free look: drag or Q/E.
 
 | # | Chapter | Music pack (existing) | Rooms (crowd rooms in bold) | Good journey > bad journey | Unlocked by |
 | --- | --- | --- | --- | --- | --- |
-| 1 | **Night One** | `m01_first_watch`, 128 bars | **floor** (+steps, riser, booth), entrance, bar, corridor, toilets, cubicles | steps, stage, booth > floor edge, corridor, cubicle | always |
+| 1 | **Night One** | `story_n1_warehouse` (recorded Warehouse stems, see below), 128 bars | **floor** (+steps, riser, booth), entrance, bar, corridor, toilets, cubicles | steps, stage, booth > floor edge, corridor, cubicle | always |
 | 2 | **The Mothership** | `m10_last_light`, 80 bars | **deck**, **gallery** (glass roof, planet), **reactor** (catwalk over a 2.5 m drop to the core), **bridge** (+ helm dais), medical bay (+ exam, airlock) | gallery, reactor, bridge, helm > medbay, exam, airlock | Night One: Legendary Set or Good Night |
 | 3 | **The Underworld** | `m09_iron_rhythm`, 64 bars | sunken **arena** with tiers, **court** (+ throne stair), **pit** (causeway, deck, platform over lava), **furnace**, cage | court, throne, pit stage > furnace chains, cage | Night One: Lost the Floor |
 | 4 | **The Hospital** (a night ward) | `m05_counterpoint`, 56 bars | **ward** (bed below the floor), long **corridor** to the nurses' station, day room, quiet corridor, tall **cafeteria**, moonlit **garden** (+ bandstand) | corridor, cafeteria, bandstand (carried) > quiet corridor, bed | chapter 2 or 3, top or middle ending |
 | 5 | **The Ward** (grim green) | `m07_crossroads`, 64 bars | day room (+ stage), long **corridor** of locked doors (lit office), tall **art room**, walled **courtyard** (+ talent stage), treatment room, quiet room | corridor, art room, stage > treatment room, quiet room | chapter 2 or 3, lowest ending |
+
+### Night One's recorded music (branch `feature/story-warehouse-music-test`)
+
+Night One no longer plays the loadout's loop library: it plays the owner's Beat Shaper export set "Lv1 Warehouse" (`NewMusic/Beat Shaper - Lv1 Warehouse-{Drums,Bass,Synth}.wav/.mid`, the unsuffixed set; the `(1)`, `(2)` and Default Project sets are unused and every source file is only read).
+`python tools/content/import_recorded.py content/imports/story_warehouse.json` (`--check` verifies only) writes `songs/story_n1_warehouse/` (`level.json` = the m01 form, waves and base plus a `recorded_music` block, `loops/{drums,bass,other}.wav`, `timing_report.json`);
+`MissionLoader` builds stems, cues and the per-bar gain program from that block instead of the loadout. The other four chapters still play the loadout.
+
+- **Tempo.** The MIDI headers say 120 BPM; the recordings are 87 BPM (the importer fits the 61 drum hit times to the drum transients: 86.997 BPM, every hit within 8 ms; at 120 BPM only 17 of 61 hit). Bass note changes (found by spectral change, the bass is a wobbling reese) sit within 8 ms of the MIDI at 87 BPM. One source beat = two game beats (87 x 2 = 174), so the 16-beat loop is exactly 8 bars (529655 frames, 11.0345 s). Audio is never stretched; only MIDI ticks are rescaled (x16 from 120 PPQ).
+- **Loops.** The renders are 11.63 s (drums), 12.43 s (bass) and 12.97 s (synth): the part past the loop end is a release tail and is added onto the loop's start, so all three loops are the same length, ring across the seam and cannot drift apart.
+- **Stems.** `drums` (sounds in drums phases), `bass` (bass phases), `other` = Synth (always, the backing). The drum recording is one stem for both kick and snare, so a missed kick or snare silences the drum mix until the next hit on either. Gains are in the manifest (drums 0 dB, bass +3, synth +10: the Synth render is about 15 dB under the drums).
+- **Cues.** Kick (MIDI 36) pad 1, snare (38 and 40) pad 4, hi-hats (42) are not cues; bass pads follow pitch (D, E, C = pads 1, 2, 3), each bass note is a hold, shortened where it would cross its two-bar sequence (the second note, 0.5 beat). They pass the library's chart rules.
+- **Check.** `tests/test_story_recorded_music.gd`; `tools/story/record_music.gd` plays the real scene and records the Music bus, `python tools/story/check_music.py <recording>` fits the recording to the stems lap by lap (delay, mix, per-cue transients).
+- **Scripted-play note.** With the new cues `sloppy` seed 2 takes the good branches (tests use seed 3 for the toilets path); endings under perfect, sloppy and none are unchanged (`tools/story/tune.gd`).
 
 Interludes (`abduction`, `descent`, `awakening`, `sectioned`) are silent 2D cutscenes drawn over the 3D club the player left, in its ending tableau.
 

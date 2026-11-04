@@ -132,3 +132,7 @@ The imported clips join the library and the loadout can pick them. The exporter 
 `content/missions_legacy/` (`MISSIONS_LEGACY` in `tools/content/common.py`), not `content/missions/`, whose files no longer
 carry choices or phases. `midi_export/README.md` has the workflow;
 `tools/content/test_export.py` tests the export and runs a synthetic round trip through the importer.
+
+## Recorded stems for a story chapter
+
+`tools/content/import_recorded.py <manifest>` turns one recorded export set (Drums, Bass and Synth WAV with MIDI) into a chapter's own music pack, outside the loop library (`content/imports/story_warehouse.json` is the Night One example). It verifies the recordings' tempo against the MIDI, maps source beats to the 174 BPM grid, folds release tails into equal eight-bar loops and writes the cues. See `docs/STORY_CAMPAIGN_HANDOVER.md`.

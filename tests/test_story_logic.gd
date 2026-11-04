@@ -195,7 +195,7 @@ func test_actions_are_exact_ticks_and_follow_their_sequences() -> void:
 
 
 func test_sequence_results_match_the_original_mission_run() -> void:
-	var lr := LevelLoader.load_pack("res://songs/m01_first_watch", {})
+	var lr := LevelLoader.load_pack("res://songs/story_n1_warehouse", {})  # Night One plays the recorded Warehouse stems
 	var level: Level = lr["level"]
 	var harness: Script = load("res://tools/autoplay.gd")
 	var rng := RandomNumberGenerator.new()
@@ -265,10 +265,10 @@ func test_corrupt_story_save_is_set_aside() -> void:
 
 func test_story_uses_the_global_loadout() -> void:
 	var heavy: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/campaign/loadouts.json"))["heavy"]
-	var a := StoryRun.create({"loadout": {}})
-	var b := StoryRun.create({"loadout": heavy})
+	var a := StoryRun.create({"loadout": {}}, "res://content/story/mothership.json")  # Night One has its own recorded music (test_story_recorded_music.gd); the other chapters play the loadout
+	var b := StoryRun.create({"loadout": heavy}, "res://content/story/mothership.json")
 	assert_eq(a.errors, [])
 	assert_eq(b.errors, [])
 	assert_eq(a.level.loadout, Loadout.resolve(LibraryIndex.load_default(), MissionLoader.everything(LibraryIndex.load_default()), {}, []), "default loadout")
 	assert_true(a.level.stems != b.level.stems or a.level.notes.size() != b.level.notes.size(), "a different loadout plays different stems or cues")
-	assert_eq(a.level.sequences.size(), 64)
+	assert_eq(a.level.sequences.size(), 40)

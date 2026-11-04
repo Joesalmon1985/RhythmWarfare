@@ -44,11 +44,11 @@ func test_none_play_goes_dancer_to_the_toilets_and_out() -> void:
 	stage.free()
 
 
-func test_sloppy_seed_two_takes_the_bad_branches_and_ends_on_the_steps() -> void:
-	var r := _played("sloppy", 2, 1.0 / 60.0)
+func test_sloppy_seed_three_takes_the_bad_branches_and_ends_on_the_steps() -> void:  # seed 3 since Night One plays the recorded Warehouse cues (seed 2 now takes the good branches)
+	var r := _played("sloppy", 3, 1.0 / 60.0)
 	var stage: StoryStage = r["stage"]
 	assert_eq(r["ending"], "good_night")
-	assert_eq(stage.journey(), ["floor_edge", "corridor", "cubicle", "floor_edge", "stage_edge"], "a good night after the toilets ends at the stage edge, facing the floor")
+	assert_eq(stage.journey(), ["steps", "stage", "corridor", "cubicle", "floor_edge", "steps", "stage_edge"], "a good night after the toilets ends at the stage edge, facing the floor")
 	stage.free()
 
 
