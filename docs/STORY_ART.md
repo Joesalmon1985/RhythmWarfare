@@ -551,3 +551,11 @@ source of everything the world shows:
 - The manifest no longer carries what only the 2D rooms read (`stage.anchors`, each view's layers, anchors and palette hint); `build_assets.py` strips them and `check_assets.py` rejects them.
   The art files themselves (backdrops, front frames) are kept: they are the tile sources and the Story Campaign menu's thumbnails.
 - Rooms, doors, heights, props and light live in `content/story/maps/<chapter>.json` (see the handover). Review the tiles of a chapter at a glance with a contact sheet of the PNGs.
+
+### WP9 additions (layouts, lights, activities)
+
+- New tiles (recipes in `tools/story/bake_tiles.gd`, metres in `tools/story/art/tiles.py`): `thing_chair` (hospital, ward), `thing_bench` (hospital), `thing_column` and `thing_anvil` (underworld), all RGBA billboards
+  cropped or redrawn from the chapter's own art. Night One, the Mothership's medical bay and the Ward's quiet room reuse existing tiles.
+- Things may use any map texture or manifest sprite as their `sprite`; lights (`"kind": "light"`) need no art and are baked into vertex colours (docs/STORY_CAMPAIGN_HANDOVER.md, "WP9 additions").
+- Held props and the phone's light, the seat under a sitter, the sleeper's Zs and the drip stand are drawn with plain shapes in `StoryCharacter._draw_held`: placeholders for the polish pass.
+- Dancer parts are packed into a runtime atlas (`StoryAssets.build_rig_atlas`); the SVG parts are unchanged on disk.

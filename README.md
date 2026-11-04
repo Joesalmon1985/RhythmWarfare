@@ -12,7 +12,7 @@ two-sided duel stays in the developer area for a later multiplayer mode. Standal
 ## Story Campaign
 
 A separate mode on the main menu, in five chapters (Night One, The Mothership, The Underworld, The Hospital, The Ward), each a full drum and bass set played on the same four pads, falling
-notes and judgement as the campaign. Each chapter is a small 2.5D, Doom-style world rendered at a low internal resolution: you start as a dancer on the floor and, as you play well,
+notes and judgement as the campaign. Each chapter is a small 2.5D, Doom-style world rendered at a low internal resolution (360 lines by default, 270 and 180 in the settings): you start as a dancer on the floor and, as you play well,
 your camera is carried on rails up onto the stage and behind the decks; play badly and you feel ill and are led away (the toilets, the medical bay, the furnace, back to bed, the treatment
 room). The two-bar sequence results drive the crowd's energy, authored good/bad moments, your journey and one of three endings per chapter; endings route to the next chapter. Saves are
 separate (`user://story_campaign.json`); the military campaign is untouched. See `docs/STORY_CAMPAIGN_HANDOVER.md` (architecture, tuning, art pipeline, tests, numbers),
@@ -20,6 +20,7 @@ separate (`user://story_campaign.json`); the military campaign is untouched. See
 
 ```
 godot --path . res://src/scenes/story_play.tscn                       # straight into Night One (RW_STORY_CHAPTER=mothership|underworld|hospital|mental_hospital)
+bash tools/story/rooms.sh                                              # one screenshot per place of every chapter and a contact sheet per chapter
 bash tools/story/capture.sh                                            # real screenshots of the running scene (docs/shots/story); RW_SHOTS=regex picks shots
 bash tools/story/walk_campaign.sh                                      # the real scene chain from Night One to the end, five scripted paths, isolated save
 RW_STORY_VIRTUAL=1 RW_AUTOPLAY=perfect RW_STORY_PROFILE_FROM=100 RW_STORY_UNTIL_BAR=108 godot --path . res://src/scenes/story_play.tscn   # frame times
