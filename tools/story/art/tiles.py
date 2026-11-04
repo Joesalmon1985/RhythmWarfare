@@ -22,6 +22,16 @@ NIGHT_ONE = {
 }
 
 
+MOTHERSHIP = {
+    "wall_hull": 2.0, "wall_planet": 10.0, "wall_led": 3.0, "wall_speaker": 2.0, "wall_door": 3.0, "wall_shelf": 2.0, "floor_hex": 2.5, "floor_dais": 2.0,
+    "ceil_hull": 2.5, "trim": 2.0, "wall_gold": 3.0, "floor_lounge": 3.0, "wall_arch": 3.0, "wall_sofa": 3.0, "wall_tube": 2.0, "floor_grate": 3.0,
+    "ceil_hazard": 2.0, "thing_core": 1.0, "wall_console": 3.0, "floor_bridge": 3.0, "wall_window": 12.0, "med_tile": 1.5, "med_floor": 1.5, "wall_hatch": 3.0,
+    "sky_space": 1.0,
+}
+
+SPECS = {"night_one": NIGHT_ONE, "mothership": MOTHERSHIP}
+
+
 def godot_binary() -> str:
     for cand in (os.environ.get("GODOT"), os.path.expanduser("~/godot/Godot_v4.5.1-stable_linux.x86_64"), shutil.which("godot")):
         if cand and os.path.exists(cand):
@@ -37,7 +47,7 @@ def _png_size(path: str):
 
 def build(chapter: str, spec: dict | None = None) -> dict:
     """Bake the chapter's tiles with Godot and return the manifest `textures` section."""
-    spec = spec or NIGHT_ONE
+    spec = spec or SPECS[chapter]
     r = subprocess.run([godot_binary(), "--headless", "--path", lib.ROOT, "-s", "tools/story/bake_tiles.gd", "--", chapter],
                        capture_output=True, text=True)
     if r.returncode != 0 or "ERROR" in r.stdout + r.stderr:

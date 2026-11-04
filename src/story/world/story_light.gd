@@ -284,3 +284,29 @@ static func post_state(stage: StoryStage, t: float) -> Dictionary:
 		"flash": bloom_at(stage, t) * 0.25,
 		"vignette": 0.0 if stage.reduced else 0.5 * q,  # the steady vignette is a sprite over the image (StoryLowRes); the shader only breathes it in with the queasy look
 	}
+
+
+## An animated surface of the map (`animated` entries: {tex, mode: scroll|pulse|flicker|swap, speed [u, v] repeats a second, rate (beats a cycle for pulse, Hz for swap),
+## amount 0..1, bright 0..1 (how far the surface ignores its sector's light: lava and reactor glass glow in the dark), frames [texture names]}) at song time t:
+## {offset: Vector2 (uv scroll), gain: brightness multiplier, bright, frame: index into frames}. A pure function of t, so a pause freezes it and a restart replays it.
+static func surface_anim(spec: Dictionary, t: float, bpm: float) -> Dictionary:
+	var offset := Vector2.ZERO
+	var gain := 1.0
+	var frame := 0
+	var amount := float(spec.get("amount", 0.3))
+	match str(spec.get("mode", "")):
+		"scroll":
+			var sp: Array = spec.get("speed", [0.02, 0.0])
+			offset = Vector2(fposmod(t * float(sp[0]), 1.0), fposmod(t * float(sp[1]), 1.0))
+			if amount > 0.0:
+				gain = 1.0 + amount * 0.5 * (sin(t * 1.3) + sin(t * 2.9 + 1.0)) * 0.5
+		"pulse":
+			var beats := t * bpm / 60.0
+			var cyc := maxf(float(spec.get("rate", 1.0)), 0.05)
+			gain = 1.0 - amount + amount * (0.5 + 0.5 * cos(TAU * beats / cyc))
+		"flicker":
+			gain = 1.0 - amount * (0.5 + 0.5 * sin(t * 31.0) * sin(t * 17.0 + 0.7))
+		"swap":
+			var n := maxi((spec.get("frames", []) as Array).size(), 1)
+			frame = int(floor(t * float(spec.get("rate", 4.0)))) % n
+	return {"offset": offset, "gain": gain, "bright": float(spec.get("bright", 0.0)), "frame": frame}

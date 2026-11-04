@@ -16,6 +16,7 @@ const EPS := 1.0e-3
 const HOME_MARGIN := 0.25
 const WAYPOINT_MARGIN := 0.3
 const ANIMS := ["none", "pulse", "flicker", "rotate", "bob", "sway", "pump"]
+const ANIM_MODES := ["scroll", "pulse", "flicker", "swap"]
 const MOVE_STYLES := ["walk", "stagger", "run", "climb", "carried"]
 const ROLES := ["dancer", "on_stage", "dj", "queasy", "sick", "recovered", "out"]
 
@@ -34,6 +35,9 @@ var occluders: Array = []  # {id, sprite (a texture name of `textures`), sector,
 var spots: Dictionary = {}  # named places the crowd directives use: {sector, at: Vector2, ...} (door with `slots`, circle with `radii` and `open`, riser, side_l, side_r)
 var silhouettes: Dictionary = {}  # rear-row silhouette id -> {sector, at: Vector2}
 var sky: Dictionary = {}
+var rooms: Dictionary = {}  # room id -> {palette: the chapter palette the room's light switches to when the player walks in}
+var fog: Dictionary = {}  # optional {color: hex, density}: the chapter's haze (a hospital is light, the pit is red)
+var animated: Array = []  # animated surfaces: {tex, mode: scroll|pulse|flicker|glow, speed?, rate?, amount?, bright?}
 var errors: Array = []
 
 var _sector_index: Dictionary = {}
@@ -79,6 +83,12 @@ func build(d: Dictionary, check_files: bool) -> void:
 		if check_files and not FileAccess.file_exists("res://assets/story/%s/%s" % [art, str(textures[k])]) and not ResourceLoader.exists("res://assets/story/%s/%s" % [art, str(textures[k])]):
 			errors.append("texture %s: file %s is missing" % [k, textures[k]])
 	sky = d.get("sky", {}) if typeof(d.get("sky", {})) == TYPE_DICTIONARY else {}
+	rooms = d.get("rooms", {}) if typeof(d.get("rooms", {})) == TYPE_DICTIONARY else {}
+	fog = d.get("fog", {}) if typeof(d.get("fog", {})) == TYPE_DICTIONARY else {}
+	animated = d.get("animated", []) if typeof(d.get("animated", [])) == TYPE_ARRAY else []
+	for an in animated:
+		if typeof(an) != TYPE_DICTIONARY or not textures.has(str(an.get("tex", ""))) or str(an.get("mode", "")) not in ANIM_MODES:
+			errors.append("animated surface %s: needs a map texture and a mode of %s" % [an, ANIM_MODES])
 	_build_sectors(d.get("sectors", []))
 	_build_walls(d.get("walls", []))
 	_build_things(d.get("things", []))
@@ -559,6 +569,29 @@ func sector_at(p: Vector2) -> String:
 	return ""
 
 
+## The room (a view of the chapter: "main", "gallery"...) a sector belongs to.
+func room_of(sid: String) -> String:
+	return str(sector(sid).get("room", "main"))
+
+
+## The rooms that hold actors or silhouettes of the chapter: the crowd views. "main" always.
+static func crowd_rooms(chapter_raw: Dictionary) -> Array:
+	var out: Array = ["main"]
+	for key in ["actors", "silhouettes"]:
+		for a in chapter_raw.get(key, []):
+			var v := str(a.get("view", "main"))
+			if v not in out:
+				out.append(v)
+	return out
+
+
+## A named place of a room: "<room>.<name>" first (the gallery's own door), then the plain name (the main room's).
+func room_spot(room: String, name: String) -> Dictionary:
+	if room != "main" and spots.has("%s.%s" % [room, name]):
+		return spots["%s.%s" % [room, name]]
+	return spots.get(name, {})
+
+
 func waypoint(wid: String) -> Dictionary:
 	return waypoints.get(wid, {})
 
@@ -749,8 +782,8 @@ func validate_chapter(chapter_raw: Dictionary) -> void:
 				var at := str(args.get("at", ""))
 				if at != "" and not waypoints.has(at) and not actor_ids.has(at):
 					errors.append("%s: player_look at %s is neither a waypoint nor an actor" % [ja["where"], at])
-				if at == "" and not args.has("yaw"):
-					errors.append("%s: player_look needs yaw or at" % ja["where"])
+				if at == "" and not args.has("yaw") and not args.has("by"):
+					errors.append("%s: player_look needs yaw, at or by" % ja["where"])
 			"player_role":
 				if str(args.get("role", "")) not in ROLES:
 					errors.append("%s: unknown role %s" % [ja["where"], args.get("role", "")])

@@ -23,11 +23,33 @@ CHAPTERS = {"mothership": None, "underworld": "art.chapter_underworld", "hospita
             "mental_hospital": "art.chapter_mental_hospital"}
 
 
+def add_tiles(name: str) -> None:
+    """The 2.5D world's texture tiles of a chapter (baked by Godot from its SVG art) go into its manifest's `textures` section."""
+    from art import tiles
+    if name not in tiles.SPECS:
+        return
+    path = os.path.join(lib.ROOT, "assets", "story", name, "manifest.json")
+    with open(path, encoding="utf-8") as fh:
+        man = json.load(fh)
+    man["textures"] = tiles.build(name)
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        json.dump(man, fh, indent=1, sort_keys=False)
+        fh.write("\n")
+    print(f"{name} tiles: {len(man['textures'])}")
+
+
 def build_any(name: str, only: list) -> int:
+    if list(only) == ["tiles"]:  # `build_assets.py mothership tiles`: only the world's texture tiles
+        add_tiles(name)
+        return 0
     if CHAPTERS[name] is None:
-        return build_chapter(name, set(only))
-    import importlib
-    return importlib.import_module(CHAPTERS[name]).build(list(only))
+        rc = build_chapter(name, set(only))
+    else:
+        import importlib
+        rc = importlib.import_module(CHAPTERS[name]).build(list(only))
+    if not only:
+        add_tiles(name)
+    return rc
 
 
 def build_chapter(name: str, only: set) -> int:

@@ -28,6 +28,7 @@ var _events: Array = []  # sorted by t0: {kind: move|look, t0, t1, seq, ...}
 var _roles: Array = []  # {t0, role}
 var _queasy: Array = []  # {t0, t1, amount}
 var _sick: Array = []  # {t0, t1}
+var _glances: Array = []  # {t0, t1, by}: authored head turns on top of the rail's facing
 var _seq := 0
 
 
@@ -42,6 +43,7 @@ func reset() -> void:
 	_roles = []
 	_queasy = []
 	_sick = []
+	_glances = []
 	_seq = 0
 	errors = []
 
@@ -65,6 +67,9 @@ func apply_action(a: Dictionary) -> bool:
 		"player_move":
 			_add({"kind": "move", "t0": t0, "t1": t0 + maxf(dur, 0.001), "to": str(args.get("to", "")), "style": str(args.get("style", "walk"))})
 		"player_look":
+			if args.has("by"):  # a glance: the head turns `by` degrees from wherever the rail faces and comes back; it never touches the route
+				_glances.append({"t0": t0, "t1": t0 + maxf(dur, 0.001), "by": float(args["by"])})
+				return true
 			_add({"kind": "look", "t0": t0, "t1": t0 + maxf(dur, 0.001), "at": str(args.get("at", "")), "yaw": args.get("yaw", null)})
 		"player_role":
 			_roles.append({"t0": t0, "role": str(args.get("role", "dancer")), "seq": _seq})
@@ -272,6 +277,17 @@ func sick_at(t: float) -> float:
 	return 0.0
 
 
+## The head turn in degrees at t from the authored glances (player_look with `by`): each rises and falls smoothly over its bars.
+func glance_at(t: float) -> float:
+	var sum := 0.0
+	for g in _glances:
+		if t >= float(g["t0"]) and t < float(g["t1"]):
+			var u := (t - float(g["t0"])) / (float(g["t1"]) - float(g["t0"]))
+			var e := sin(PI * u)
+			sum += float(g["by"]) * e * e
+	return sum
+
+
 ## True while an authored player_look is turning the head.
 func look_active(t: float) -> bool:
 	var ev := _event_at(t)
@@ -318,7 +334,7 @@ func pose_at(t: float) -> Dictionary:
 					bob = Vector3(0.008 * sin(PI * 0.25 * beats), -0.012 * absf(sin(PI * 0.5 * beats)), 0.1 * sin(PI * 0.125 * beats))
 		bob.x += 0.05 * q * sin(PI * 0.25 * beats)
 		bob.z += 2.5 * q * sin(PI * 0.25 * beats + 1.0)
-	var yaw := float(st["yaw"])
+	var yaw := float(st["yaw"]) + glance_at(t)
 	var pos: Vector2 = st["pos"]
 	var ground := float(st["ground"])
 	var eye := ground + map.eye_height + bob.y - CROUCH_M * sick

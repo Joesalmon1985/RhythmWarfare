@@ -10,6 +10,7 @@ const FOG_COLOR := Color(0.03, 0.02, 0.08)
 const FOG_DENSITY := 0.035
 const WALL_SHADE_X := 0.82  # walls facing along x are a little darker than those facing along z: the old engines' cheap fake of a light direction
 const CEIL_SHADE := 0.8
+const MIN_GAIN := 0.5  # no sector reads as black: the light multiplier never falls below this (the fog and the ending fades are separate)
 
 var map: StoryMap
 var assets: StoryAssets
@@ -71,8 +72,10 @@ func _make_environment() -> Environment:
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_DISABLED
 	e.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	e.fog_enabled = true
-	e.fog_light_color = FOG_COLOR
-	e.fog_density = float(OS.get_environment("RW_STORY_FOG")) if OS.has_environment("RW_STORY_FOG") else FOG_DENSITY  # RW_STORY_FOG=0 turns the fog off
+	var fc: Color = Color.html(str(map.fog["color"])) if map.fog.has("color") else FOG_COLOR
+	e.background_color = fc
+	e.fog_light_color = fc
+	e.fog_density = float(OS.get_environment("RW_STORY_FOG")) if OS.has_environment("RW_STORY_FOG") else float(map.fog.get("density", FOG_DENSITY))  # RW_STORY_FOG=0 turns the fog off
 	return e
 
 
@@ -181,6 +184,13 @@ func _make_sector_mesh(s: Dictionary, groups: Dictionary) -> void:
 func _make_thing(t: Dictionary) -> void:
 	var spr: Dictionary = assets.sprite(str(t["sprite"])) if assets != null else {}
 	var tex: Texture2D = spr.get("tex", null)
+	var blend := str(t.get("blend", ""))
+	if t.has("piece") and assets != null:  # a set piece of the chapter's art, shown while the show has switched it on (StoryStage.piece_state)
+		var pd := assets.piece(str(t["piece"]))
+		if not pd.is_empty():
+			tex = assets.texture(str(pd["file"]))
+			if blend == "":
+				blend = str(pd.get("blend", "mix"))
 	if tex == null and _tex.has(str(t["sprite"])):
 		tex = _tex[str(t["sprite"])]
 	if tex == null:
@@ -196,6 +206,11 @@ func _make_thing(t: Dictionary) -> void:
 	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	mat.alpha_scissor_threshold = 0.5
+	if blend == "add" or blend == "mix":  # soft art (glows, banners, sunbeams): alpha blended, never written to the depth buffer
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+		if blend == "add":
+			mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
 	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	var mi := MeshInstance3D.new()
@@ -207,7 +222,9 @@ func _make_thing(t: Dictionary) -> void:
 	var y := float(sec["floor"]) + float(t.get("y", h * 0.5))
 	mi.position = Vector3(at.x, y, at.y)
 	add_child(mi)
-	_thing_nodes.append({"node": mi, "mat": mat, "thing": t, "base_y": y})
+	if t.has("piece"):
+		mi.visible = false
+	_thing_nodes.append({"node": mi, "mat": mat, "thing": t, "base_y": y, "add": blend == "add"})
 
 
 func _make_sky() -> void:
@@ -254,7 +271,7 @@ static func light_of(s: Dictionary, t: float, ctx: Dictionary) -> Color:
 		base += 0.12 * pulse * (0.4 + energy)
 	elif "booth" in flags or "stage_steps" in flags:
 		base += 0.06 * pulse * (0.4 + energy)
-	var col := Color(1, 1, 1).lerp(tint, 0.55) * clampf(base * 1.5, 0.05, 1.6)
+	var col := Color(1, 1, 1).lerp(tint, 0.55) * clampf(base * 1.5, MIN_GAIN, 1.6)
 	if bool(ctx.get("flicker", false)):
 		col *= 0.55 + 0.45 * absf(sin(t * 37.0))
 	var strobe := float(ctx.get("strobe", 0.0))
@@ -272,6 +289,17 @@ func update(t: float, ctx: Dictionary) -> void:
 		var col := light_of(map.sector(str(id)), t, ctx)
 		for m in _sector_nodes[id]["mats"]:
 			(m as StandardMaterial3D).albedo_color = col
+	for an in map.animated:  # lava, reactor glass, window daylight, courtyard bulbs: a scroll, a pulse, a flicker or a texture swap on every surface showing the tile
+		var st := StoryLight.surface_anim(an, t, bpm)
+		var mats: Array = _mats_by_tex.get(str(an["tex"]), [])
+		var frames: Array = an.get("frames", [])
+		for m in mats:
+			var sm: StandardMaterial3D = m
+			sm.uv1_offset = Vector3(st["offset"].x, st["offset"].y, 0.0)
+			sm.albedo_color = (sm.albedo_color.lerp(Color(1, 1, 1, 1), float(st["bright"])) * float(st["gain"])).clamp()
+			if not frames.is_empty() and _tex.has(str(frames[int(st["frame"])])):
+				sm.albedo_texture = _tex[str(frames[int(st["frame"])])]
+	var pieces: Dictionary = ctx.get("pieces", {})
 	for th in _thing_nodes:
 		var t_def: Dictionary = th["thing"]
 		var node: MeshInstance3D = th["node"]
@@ -280,6 +308,13 @@ func update(t: float, ctx: Dictionary) -> void:
 		var sc := 1.0
 		var dy := 0.0
 		var alpha := 1.0
+		if t_def.has("piece"):
+			var ps: Dictionary = pieces.get(str(t_def["piece"]), {})
+			node.visible = bool(ps.get("visible", false))
+			alpha = float(ps.get("alpha", 0.0))
+			sc = 1.0 + 0.06 * float(ps.get("pulse", 0.0))
+			if th["add"]:
+				col = Color(1, 1, 1, 1)
 		match str(t_def.get("anim", "none")):
 			"pump":
 				sc = 1.0 + (0.1 * pulse if bool(ctx.get("woofer_pump", false)) else 0.02 * pulse)
@@ -292,7 +327,7 @@ func update(t: float, ctx: Dictionary) -> void:
 			"rotate":
 				sc = 1.0 + 0.03 * sin(beats * PI * 0.5)
 			"flicker":
-				alpha = 0.6 + 0.4 * absf(sin(t * 29.0))
+				alpha *= 0.6 + 0.4 * absf(sin(t * 29.0))
 		node.scale = Vector3(sc, sc, sc)
 		node.position.y = float(th["base_y"]) + dy
 		(th["mat"] as StandardMaterial3D).albedo_color = Color(col.r, col.g, col.b, alpha)
@@ -313,7 +348,7 @@ func set_texture_override(name: String, tex: Texture2D) -> void:
 ## Show or hide a billboard thing by its map id (the disco ball is only there once it is switched on).
 func set_thing_visible(id: String, on: bool) -> void:
 	for th in _thing_nodes:
-		if str(th["thing"]["id"]) == id:
+		if str(th["thing"]["id"]) == id or str(th["thing"]["id"]).begins_with(id + "_"):
 			(th["node"] as Node3D).visible = on
 
 

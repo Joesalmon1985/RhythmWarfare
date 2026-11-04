@@ -213,3 +213,28 @@ func test_forward_of_yaw() -> void:
 	assert_near(m.forward_of_yaw(0).y, -1.0, 1e-6)
 	assert_near(m.forward_of_yaw(180).y, 1.0, 1e-6)
 	assert_near(m.forward_of_yaw(90).x, -1.0, 1e-6)
+
+
+const WORLD_CHAPTERS := ["night_one", "mothership", "underworld", "hospital", "mental_hospital"]
+
+
+func test_every_chapter_map_is_clean_and_complete() -> void:
+	for id in WORLD_CHAPTERS:
+		if not FileAccess.file_exists(StoryMap.PATH % id):
+			continue
+		var m := StoryMap.load_chapter(id)
+		var data: StoryData = StoryData.load_file("res://content/story/%s.json" % id)["data"]
+		m.validate_chapter(data.raw)
+		assert_eq(m.errors, [], id)
+		for room in StoryMap.crowd_rooms(data.raw):  # each room that holds a crowd has the places the directions use
+			for spot in ["door", "circle", "riser", "side_l", "side_r"]:
+				assert_false(m.room_spot(str(room), spot).is_empty(), "%s: room %s has a %s spot" % [id, room, spot])
+			var door: Dictionary = m.room_spot(str(room), "door")
+			assert_true((door.get("slots", []) as Array).size() >= 8, "%s: the door of %s has slots for the gatherers" % [id, room])
+		for h in m.homes:  # homes keep clear of every waypoint, so the camera never stands in a dancer
+			for w in m.waypoints:
+				assert_true((m.homes[h]["at"] as Vector2).distance_to(m.waypoints[w]["at"]) >= 1.0, "%s: home %s is within a metre of waypoint %s" % [id, h, w])
+		var ctx := {"bpm": 174.0, "energy": 0.0, "palette": []}
+		for s in m.sectors:  # no room reads as black, whatever the energy
+			var c := StoryWorld.light_of(s, 1.0, ctx)
+			assert_true(c.r + c.g + c.b >= StoryWorld.MIN_GAIN * 1.5, "%s: sector %s is lit" % [id, s["id"]])

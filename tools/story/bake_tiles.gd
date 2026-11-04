@@ -5,7 +5,9 @@ extends SceneTree
 ## Image.load_svg_from_string, a region is cropped out, and it is resampled to 64 or 128 px. Nothing is random:
 ## the same SVGs give the same bytes. Where the art has no counterpart (the toilets) the tile is derived from the
 ## chapter palette with plain fills, or a hue-shifted crop of an existing door.
-## Output: assets/story/<chapter>/textures/<id>.png  (RGB, square).
+## Output: assets/story/<chapter>/textures/<id>.png  (RGB, square; `thing_*` billboards RGBA; `sky_*` 256 x 64 wraps once around the world).
+## A chapter's recipes are the method `_<chapter>()` below; crops are in the art's design space (backdrop 1280 x 720; the hospital and the ward backdrops are
+## wider, see their notes).
 
 const OUT_SIZE := 64
 
@@ -13,7 +15,9 @@ const OUT_SIZE := 64
 func _init() -> void:
 	var args := OS.get_cmdline_user_args()
 	var chapter := "night_one" if args.is_empty() else String(args[0])
-	var recipes: Dictionary = _night_one() if chapter == "night_one" else {}
+	var recipes: Dictionary = {}
+	if has_method("_" + chapter):
+		recipes = call("_" + chapter)
 	if recipes.is_empty():
 		push_error("bake_tiles: no recipes for chapter " + chapter)
 		quit(1)
@@ -29,7 +33,8 @@ func _init() -> void:
 	ids.sort()
 	for id in ids:
 		var im: Image = recipes[id].call(src, cache)
-		im.convert(Image.FORMAT_RGB8)
+		if not String(id).begins_with("thing_"):  # billboard sprites keep their alpha; every other tile is opaque RGB
+			im.convert(Image.FORMAT_RGB8)
 		var err := im.save_png(ProjectSettings.globalize_path("%s/%s.png" % [dir, id]))
 		if err != OK:
 			push_error("bake_tiles: cannot write " + id)
@@ -185,4 +190,122 @@ func _toilet_floor() -> Image:
 			if (i + j) % 2 == 1:
 				_rect(im, Rect2i(i * 16, j * 16, 16, 16), Color("#46647a"))
 	_frame(im, Rect2i(0, 0, 64, 64), Color("#344e60"))
+	return im
+
+
+# ---- more helpers: view backdrops, round billboards, sky strips ---------------------------------------------------
+
+func _view(src: String, cache: Dictionary, name: String) -> Image:
+	return _svg(src, cache, "views/%s.svg" % name, 0.5)
+
+
+## a crop made round (transparent outside the circle), for a billboard such as the reactor core
+func _round(im: Image, size: int = 128) -> Image:
+	var out := _fit(im, size)
+	out.convert(Image.FORMAT_RGBA8)
+	var c := (size - 1) * 0.5
+	for y in size:
+		for x in size:
+			var d := Vector2(x - c, y - c).length() / (size * 0.5)
+			var col := out.get_pixel(x, y)
+			col.a = clampf((1.0 - d) * 12.0, 0.0, 1.0)
+			out.set_pixel(x, y, col)
+	return out
+
+
+## a crop whose near-black pixels become transparent (a prop cut out of its backdrop)
+func _keyed(im: Image, size: int = 128, lo: float = 0.12) -> Image:
+	var out := _fit(im, size)
+	out.convert(Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			var col := out.get_pixel(x, y)
+			col.a = clampf((maxf(col.r, maxf(col.g, col.b)) - lo) * 6.0, 0.0, 1.0)
+			out.set_pixel(x, y, col)
+	return out
+
+
+## a 256 x 64 sky strip that wraps once around the world: a vertical gradient, deterministic stars and discs [[x, y, radius, Color]]
+func _sky(top: Color, bottom: Color, stars: int, seed_v: int, discs: Array = [], star_col: Color = Color(1, 1, 1)) -> Image:
+	var im := Image.create(256, 64, false, Image.FORMAT_RGBA8)
+	for y in 64:
+		var c := top.lerp(bottom, float(y) / 63.0)
+		im.fill_rect(Rect2i(0, y, 256, 1), c)
+	var r := seed_v
+	for i in stars:
+		r = (r * 1103515245 + 12345) & 0x7fffffff
+		var x := r % 256
+		r = (r * 1103515245 + 12345) & 0x7fffffff
+		var y := (r % 56)
+		im.set_pixel(x, y, star_col.lerp(Color(1, 1, 1), 0.5) if i % 3 == 0 else star_col * 0.75)
+	for d in discs:
+		var cx: int = d[0]
+		var cy: int = d[1]
+		var rad: int = d[2]
+		var col: Color = d[3]
+		for y in range(maxi(cy - rad, 0), mini(cy + rad + 1, 64)):
+			for x in range(cx - rad, cx + rad + 1):
+				var dd := Vector2(x - cx, y - cy).length()
+				if dd <= rad:
+					var shade := 1.0 - 0.45 * clampf((float(x - cx) + float(y - cy) * 0.5) / float(rad) * 0.5 + 0.5, 0.0, 1.0)
+					im.set_pixel(posmod(x, 256), y, col * shade)
+	return im
+
+
+# ---- The Mothership -----------------------------------------------------------------------------------------------
+
+func _mothership() -> Dictionary:
+	return {
+		# the deck (backdrop.svg): hull panelling, the planet window, the LED screen box, the door, the bottle shelf, hex floor, truss and neon trim
+		"wall_hull": func(s, c): return _fit(_crop(_bd(s, c), Rect2i(8, 34, 120, 90))),
+		"wall_planet": func(s, c): return _fit(_crop(_bd(s, c), Rect2i(816, 56, 124, 150))),
+		"wall_led": func(s, c): return _fit(_crop(_bd(s, c), Rect2i(450, 134, 380, 90))),
+		"wall_speaker": func(s, c): return _fit(_svg(s, c, "speaker_l.svg", 1.0)),
+		"wall_door": func(s, c): return _fit(_crop(_bd(s, c), Rect2i(278, 134, 84, 130))),
+		"wall_shelf": func(s, c): return _fit(_crop(_bd(s, c), Rect2i(936, 136, 76, 130))),
+		"floor_hex": func(s, c): return _fit(_crop(_bd(s, c), Rect2i(200, 310, 400, 130))),
+		"floor_dais": func(s, c): return _rows(_svg(s, c, "riser.svg", 1.0)),
+		"ceil_hull": func(s, c): return _rows(_crop(_bd(s, c), Rect2i(120, 2, 880, 22))),
+		"trim": func(s, c): return _rows(_crop(_bd(s, c), Rect2i(360, 226, 580, 30))),
+		# the gallery: gold panelling, the purple lounge floor, the arch, a sofa
+		"wall_gold": func(s, c): return _fit(_crop(_view(s, c, "gallery_backdrop"), Rect2i(60, 30, 200, 220))),
+		"floor_lounge": func(s, c): return _fit(_crop(_view(s, c, "gallery_backdrop"), Rect2i(380, 480, 360, 230))),
+		"wall_arch": func(s, c): return _fit(_crop(_view(s, c, "gallery_backdrop"), Rect2i(580, 136, 110, 114))),
+		"wall_sofa": func(s, c): return _fit(_crop(_view(s, c, "gallery_backdrop"), Rect2i(60, 230, 260, 230))),
+		# the reactor: coolant tubes, the grating, the hazard stripe, the core as a round billboard
+		"wall_tube": func(s, c): return _fit(_crop(_view(s, c, "reactor_backdrop"), Rect2i(60, 20, 100, 360))),
+		"floor_grate": func(s, c): return _fit(_crop(_view(s, c, "reactor_backdrop"), Rect2i(240, 560, 560, 130))),
+		"ceil_hazard": func(s, c): return _rows(_crop(_view(s, c, "reactor_backdrop"), Rect2i(0, 0, 1280, 26))),
+		"thing_core": func(s, c): return _round(_crop(_view(s, c, "reactor_backdrop"), Rect2i(540, 30, 180, 180))),
+		# the bridge: console banks, the blue floor, the window on the stars
+		"wall_console": func(s, c): return _fit(_crop(_view(s, c, "bridge_backdrop"), Rect2i(20, 20, 180, 170))),
+		"floor_bridge": func(s, c): return _fit(_crop(_view(s, c, "bridge_backdrop"), Rect2i(120, 520, 1000, 150))),
+		"wall_window": func(s, c): return _fit(_crop(_view(s, c, "bridge_backdrop"), Rect2i(330, 30, 600, 150))),
+		# the medical bay has no art of its own: palette fills; the hatch is the deck door turned grey
+		"med_tile": func(s, c): return _med_tile(),
+		"med_floor": func(s, c): return _med_floor(),
+		"wall_hatch": func(s, c): return _tint(_fit(_crop(_bd(s, c), Rect2i(278, 134, 84, 130))), Color(0.75, 0.9, 1.0)),
+		"sky_space": func(s, c): return _sky(Color(0.02, 0.02, 0.09), Color(0.13, 0.07, 0.3), 110, 11, [[70, 30, 18, Color(0.95, 0.55, 0.6)], [180, 18, 5, Color(0.85, 0.9, 1.0)]]),
+	}
+
+
+func _med_tile() -> Image:
+	var im := _filled(64, Color("#9ac8c0"))
+	for j in 4:
+		for i in 4:
+			_rect(im, Rect2i(i * 16 + 1, j * 16 + 1, 14, 14), Color("#a8d2ca") if (i + j) % 2 == 0 else Color("#90bdb6"))
+			_rect(im, Rect2i(i * 16 + 1, j * 16 + 1, 14, 1), Color("#d8f0ea"))
+	for k in 4:
+		_rect(im, Rect2i(0, k * 16, 64, 1), Color("#4a6e72"))
+		_rect(im, Rect2i(k * 16, 0, 1, 64), Color("#4a6e72"))
+	return im
+
+
+func _med_floor() -> Image:
+	var im := _filled(64, Color("#52707a"))
+	for j in 4:
+		for i in 4:
+			if (i + j) % 2 == 1:
+				_rect(im, Rect2i(i * 16, j * 16, 16, 16), Color("#425e68"))
+	_frame(im, Rect2i(0, 0, 64, 64), Color("#33505a"))
 	return im

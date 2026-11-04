@@ -171,7 +171,7 @@ func _camera_route(id: String, policy: String) -> Dictionary:
 		for a in r["actions"]:
 			stage.apply(a)
 		stage.update(t, run.crowd.energy)
-		var vv := stage.view_at(t)
+		var vv := stage.current_view if stage.map != null else stage.view_at(t)  # in the world the crowd directions follow the room the player walked into
 		if shown.is_empty() or shown[shown.size() - 1] != vv:
 			shown.append(vv)
 		if t > 1.0:
@@ -183,12 +183,14 @@ func _camera_route(id: String, policy: String) -> Dictionary:
 func test_the_camera_walks_the_authored_route_and_every_room_is_populated() -> void:
 	var expect := {"mothership": ["main", "gallery", "reactor", "bridge", "main"], "underworld": ["main", "court", "pit", "furnace", "main"],
 		"hospital": ["main", "corridor", "cafeteria", "garden", "main"], "mental_hospital": ["main", "corridor", "art_room", "courtyard", "main"]}
+	# a chapter in the 2.5D world: the rooms with a crowd the player walks into, by skill (the medical bay and the toilets have no crowd of their own)
+	var world := {"mothership": {"perfect": ["main", "gallery", "reactor", "bridge"], "none": ["main", "gallery"]}}
 	for id in expect:
 		if not _has_art(id):
 			continue
 		for policy in ["perfect", "none"]:
 			var r := _camera_route(id, policy)
-			assert_eq(r["route"], expect[id], "%s (%s): the camera visits the rooms in order whatever the skill" % [id, policy])
+			assert_eq(r["route"], world[id][policy] if world.has(id) else expect[id], "%s (%s): the crowd directions follow the player through the rooms in order" % [id, policy])
 			assert_true(r["min_present"] >= 8, "%s (%s): the room the camera is in is never empty (%d)" % [id, policy, r["min_present"]])
 			assert_true(str(r["ending"]) != "", "%s (%s): the closing tableau happens" % [id, policy])
 			(r["stage"] as StoryStage).queue_free()

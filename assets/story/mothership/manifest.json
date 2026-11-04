@@ -3667,5 +3667,207 @@
    ]
   },
   "note": "ufo_hover = centre of the saucer's underside ellipse; the tractor_beam pivot (top centre) sits under it and reaches beam_floor"
+ },
+ "textures": {
+  "ceil_hazard": {
+   "file": "textures/ceil_hazard.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "ceil_hull": {
+   "file": "textures/ceil_hull.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_bridge": {
+   "file": "textures/floor_bridge.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_dais": {
+   "file": "textures/floor_dais.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_grate": {
+   "file": "textures/floor_grate.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_hex": {
+   "file": "textures/floor_hex.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_lounge": {
+   "file": "textures/floor_lounge.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "med_floor": {
+   "file": "textures/med_floor.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "med_tile": {
+   "file": "textures/med_tile.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "sky_space": {
+   "file": "textures/sky_space.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_core": {
+   "file": "textures/thing_core.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "trim": {
+   "file": "textures/trim.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_arch": {
+   "file": "textures/wall_arch.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_console": {
+   "file": "textures/wall_console.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_door": {
+   "file": "textures/wall_door.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_gold": {
+   "file": "textures/wall_gold.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_hatch": {
+   "file": "textures/wall_hatch.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_hull": {
+   "file": "textures/wall_hull.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_led": {
+   "file": "textures/wall_led.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_planet": {
+   "file": "textures/wall_planet.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 10.0
+  },
+  "wall_shelf": {
+   "file": "textures/wall_shelf.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_sofa": {
+   "file": "textures/wall_sofa.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_speaker": {
+   "file": "textures/wall_speaker.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_tube": {
+   "file": "textures/wall_tube.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_window": {
+   "file": "textures/wall_window.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 12.0
+  }
  }
 }

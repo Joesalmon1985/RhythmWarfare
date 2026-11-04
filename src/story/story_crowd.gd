@@ -113,18 +113,18 @@ func _home_of(a: Dictionary) -> Vector2:
 func attach_map(p_map: StoryMap) -> void:
 	map = p_map
 	world_mode = true
-	var door := map.spot("door")
+	var door := map.room_spot(view, "door")
 	door_pos = door.get("at", Vector2.ZERO)
 	door_slots = door.get("slots", [])
-	var circ := map.spot("circle")
+	var circ := map.room_spot(view, "circle")
 	circle_c = circ.get("at", Vector2.ZERO)
 	circle_r = circ.get("radii", Vector2(3.0, 1.8))
 	circle_open = circ.get("open", Vector2(0, -1))
-	riser_spot = map.spot("riser").get("at", Vector2.ZERO)
+	riser_spot = map.room_spot(view, "riser").get("at", Vector2.ZERO)
 	var lo := INF
 	var hi := -INF
 	for sec in map.sectors:
-		if "dance_floor" in (sec["flags"] as Array):
+		if "dance_floor" in (sec["flags"] as Array) and str(sec["room"]) == view:
 			for q in (sec["poly"] as PackedVector2Array):
 				lo = minf(lo, q.x)
 				hi = maxf(hi, q.x)
@@ -145,6 +145,8 @@ func attach_map(p_map: StoryMap) -> void:
 	props = []
 	_sils = _sils.filter(func(x: Dictionary) -> bool: return not x.has("node"))
 	for s in data.silhouettes:
+		if str(s.get("view", "main")) != view:
+			continue
 		var sp: Dictionary = map.silhouettes.get(str(s["id"]), {})
 		var shape: Dictionary = assets.manifest.get("silhouettes", {}).get(str(s["shape"]), {})
 		if sp.is_empty() or shape.is_empty():
@@ -157,6 +159,8 @@ func attach_map(p_map: StoryMap) -> void:
 		_sils.append({"idle": assets._entry(shape.get("idle", {})), "up": assets._entry(shape.get("up", {})), "at": sp["at"], "sector": str(sp["sector"]), "group": str(s["group"]),
 			"thresh": float(s["thresh"]), "present": str(s["group"]) == "core", "alpha": 1.0 if str(s["group"]) == "core" else 0.0, "ph": _rng.randf(), "node": pn})
 	for o in map.occluders:
+		if map.room_of(str(o["sector"])) != view:
+			continue
 		var tex: Texture2D = assets.texture("textures/%s.png" % str(o["sprite"])) if assets != null else null
 		if tex == null and assets != null:
 			var file := str(map.textures.get(str(o["sprite"]), ""))
@@ -714,7 +718,7 @@ func bring_in(group: String, t0: float, seconds := 4.0, from_door := true) -> vo
 ## Where someone coming in from the side starts: the left or right door of the room, by which side their place is on.
 func _side_start(a: Dictionary) -> Vector2:
 	if world_mode:
-		return map.spot("side_l" if (a["home"] as Vector2).x < 0.0 else "side_r").get("at", door_pos)
+		return map.room_spot(view, "side_l" if (a["home"] as Vector2).x < (map.room_spot(view, "circle").get("at", Vector2.ZERO) as Vector2).x else "side_r").get("at", door_pos)
 	return Vector2(-60.0 if (a["home"] as Vector2).x < 640.0 else 1340.0, (a["home"] as Vector2).y)
 
 
@@ -774,7 +778,7 @@ func step_back_some(t0: float) -> void:
 		if float(a["thresh"]) >= 4.0:
 			var out: Vector2 = a["home"]
 			if world_mode:
-				out.x = clampf(out.x + (-1.4 if out.x < 0.0 else 1.4), floor_x.x + 0.5, floor_x.y - 0.5)
+				out.x = clampf(out.x + (-1.4 if out.x < circle_c.x else 1.4), floor_x.x + 0.5, floor_x.y - 0.5)
 			else:
 				out.x += (-90.0 if out.x < 640.0 else 90.0)
 			walk_to(id, out, t0, 2.5, {"state": "look", "from": 0.0, "until": t0 + 9.0})

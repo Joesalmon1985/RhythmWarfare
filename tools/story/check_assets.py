@@ -146,8 +146,9 @@ def texture_checks(errors, chapter, m) -> None:
             errors.append(f"texture {tid}: missing {e.get('file')}")
             continue
         w, h = png_size(p)
-        if [w, h] != list(e.get("size", [])) or w != h or w not in (32, 64, 128):
-            errors.append(f"texture {tid}: size {w}x{h} (manifest {e.get('size')}); tiles are square 32, 64 or 128 px")
+        sky = tid.startswith("sky_")  # a sky strip wraps once around the world: 256 x 64
+        if [w, h] != list(e.get("size", [])) or (sky and (w, h) != (256, 64)) or (not sky and (w != h or w not in (32, 64, 128))):
+            errors.append(f"texture {tid}: size {w}x{h} (manifest {e.get('size')}); tiles are square 32, 64 or 128 px, a sky is 256 x 64")
         if float(e.get("metres", 0)) <= 0:
             errors.append(f"texture {tid}: metres must be positive")
     on_disk = {fn for fn in os.listdir(os.path.join(ART, "textures")) if fn.endswith(".png")} if os.path.isdir(os.path.join(ART, "textures")) else set()

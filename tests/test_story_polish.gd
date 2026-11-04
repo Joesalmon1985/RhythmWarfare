@@ -259,6 +259,8 @@ func test_room_pieces_stay_lit_through_a_pulse_and_doorless_rooms_enter_from_the
 	assert_true(float(st["pulse"]) > 0.9, "but it does pulse")
 	for vid in stage.views:
 		var v: StoryView = stage.views[vid]
+		if stage.map != null:
+			continue  # a chapter in the world places its door in the map (spot "door"), checked by test_story_map
 		if (assets.anchor("doorway", [], str(vid)) as Array).size() < 4:
 			assert_true(v.crowd.door_pos.x < 0.0, "%s has no doorway: arrivals walk in from the left edge" % vid)
 	stage.free()

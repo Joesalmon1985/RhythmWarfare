@@ -68,6 +68,7 @@ var _vis_pos := Vector2(1e9, 1e9)
 var _vis_yaw := 1e9
 var _vis_size := Vector2.ZERO
 var _world_ctx: Dictionary = {}
+var _piece_ids: Array = []  # the set pieces the map shows as things
 
 
 func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
@@ -125,9 +126,8 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 		player = StoryPlayer.new()
 		player.setup(map, bpm)
 		player.reduced = reduced
-		for id in views:
-			if id == "main":
-				(views[id] as StoryView).crowd.attach_map(map)
+		for id in views:  # every room of the chapter has its own crowd in the same world (a room holds the actors whose `view` it is)
+			(views[id] as StoryView).crowd.attach_map(map)
 	if not with_nodes or world_active:
 		return
 	lowres = StoryLowRes.new()
@@ -137,19 +137,28 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	lowres.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(lowres)
 	move_child(lowres, 0)  # behind the 2D crowd
+	for t in map.things:
+		if t.has("piece") and str(t["piece"]) not in _piece_ids:
+			_piece_ids.append(str(t["piece"]))
 	world = StoryWorld.new()
 	world.name = "World"
 	world.build(map, assets)
 	lowres.attach(world)
 	lowres.set_vignette(assets.sprite("vignette").get("tex", null))
-	_overlay = lowres.add_overlay(crowd, "Crowd")  # the 2D crowd is drawn inside the low-res viewport
-	crowd.position = Vector2.ZERO
-	crowd.scale = Vector2.ONE
+	_overlay = lowres.add_overlay((views["main"] as StoryView).crowd, "Crowd")  # the 2D crowds are drawn inside the low-res viewport
+	for id in views:
+		var c: StoryCrowd = (views[id] as StoryView).crowd
+		if c.get_parent() != _overlay:
+			c.get_parent().remove_child(c)
+			_overlay.add_child(c)
+		c.position = Vector2.ZERO
+		c.scale = Vector2.ONE
 	_root.visible = false  # the painted room has nothing left to show
 	fx3d = StoryWorldFx.new()
 	world.add_child(fx3d)
 	fx3d.build(self, map, assets, world)
-	crowd.tint_fn = func(sec: String) -> Color: return world.light_of(map.sector(sec), t_now, _world_ctx)
+	for id in views:
+		(views[id] as StoryView).crowd.tint_fn = func(sec: String) -> Color: return world.light_of(map.sector(sec), t_now, _world_ctx)
 	world_active = true
 	mouse_filter = Control.MOUSE_FILTER_STOP  # the stage area takes the head-turn drag; the pad strip below is another control
 
@@ -318,7 +327,7 @@ func bar_s() -> float:
 func update(t: float, p_energy: float) -> void:
 	t_now = t
 	energy = p_energy
-	var shown := _visible_views(t)
+	var shown := views.keys() if map != null else _visible_views(t)  # in the world every room's crowd lives on; only the camera decides what is seen
 	var pose: Dictionary = {}
 	if player != null:
 		player.reduced = reduced or motion >= 1
@@ -333,7 +342,8 @@ func update(t: float, p_energy: float) -> void:
 			_vis_yaw = float(ppose["yaw"])
 			_vis_size = size
 			_vis = map.visible_sectors(cpos, _vis_yaw, _vis_sec, size.x / maxf(size.y, 1.0))
-		crowd.set_camera(ppose, size, _vis)
+		for id in views:
+			(views[id] as StoryView).crowd.set_camera(ppose, size, _vis)
 	for id in views:
 		var v: StoryView = views[id]
 		v.visible = id in shown
@@ -369,7 +379,10 @@ func update(t: float, p_energy: float) -> void:
 
 func _update_world(t: float, p_energy: float, pose: Dictionary) -> void:
 	lowres.apply_pose(pose, free_look.offset)
-	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": StoryLight.strobe_at(self, t), "woofer_pump": _woofer_pump}
+	var pcs := {}
+	for pid in _piece_ids:
+		pcs[pid] = piece_state(str(pid), t)
+	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": StoryLight.strobe_at(self, t), "woofer_pump": _woofer_pump, "pieces": pcs}
 	world.update(t, _world_ctx)
 	fx3d.update(t)
 	lowres.apply_post(StoryLight.post_state(self, t), StoryLight.pal(self, 0).lightened(0.3))
@@ -788,6 +801,8 @@ func apply(a: Dictionary) -> void:
 		"player_move", "player_look", "player_role", "fx_queasy", "sick_beat":
 			if player != null:  # the journey needs a map; a chapter without one keeps its 2D camera and ignores these
 				player.apply_action(a)
+				if act == "player_move":
+					_enter_room(str(args.get("to", "")), args)
 		"camera_look":
 			_cam_fx.append({"kind": "look", "t0": t0, "t1": t0 + dur, "amount": float(args.get("dx", 90.0))})
 		"camera_push":
@@ -835,6 +850,25 @@ func apply(a: Dictionary) -> void:
 					_act.erase("spot_hero")
 					_act.erase("spot_circle")
 			_beam_since = t0
+
+
+## The authored crowd actions (bring_in, circle_form, hero_center ...) direct the crowd of the room the player is heading for; a room without a crowd
+## of its own (the medical bay) leaves them with the last room that has one. The room's own light comes with the player, unless the move says keep_palette.
+func _enter_room(waypoint: String, args: Dictionary) -> void:
+	var w := map.waypoint(waypoint)
+	if w.is_empty():
+		return
+	var room := map.room_of(str(w["sector"]))
+	if room == current_view or not views.has(room):
+		return
+	if current_view == "main":
+		_main_palette = palette
+	current_view = room
+	var hint := str(map.rooms.get(room, {}).get("palette", ""))
+	if room == "main" and _main_palette != "" and not args.has("keep_palette"):
+		palette = _main_palette
+	elif hint != "" and palettes.has(hint) and not args.has("keep_palette"):
+		palette = hint
 
 
 func _front_ids() -> Array:

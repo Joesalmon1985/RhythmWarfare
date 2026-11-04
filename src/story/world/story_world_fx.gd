@@ -46,6 +46,8 @@ var _ceil_y := 3.4
 var _fixtures: Array = []
 var _ring_tex: ImageTexture
 var _ball_shown := true
+var _floors: Dictionary = {}  # room -> {box: Rect2, y, ceil}
+var _room := ""
 
 
 func build(p_stage: StoryStage, p_map: StoryMap, p_assets: StoryAssets, p_world: StoryWorld) -> void:
@@ -54,17 +56,20 @@ func build(p_stage: StoryStage, p_map: StoryMap, p_assets: StoryAssets, p_world:
 	assets = p_assets
 	world = p_world
 	name = "LightShow"
-	var lo := Vector2(INF, INF)
-	var hi := Vector2(-INF, -INF)
-	for sec in map.sectors:
+	for sec in map.sectors:  # each room's dance floor: the sector flagged dance_floor (the light show follows the room the crowd directions are in)
 		if "dance_floor" in (sec["flags"] as Array):
-			_floor_y = float(sec["floor"])
-			_ceil_y = float(sec["ceiling"])
+			var lo := Vector2(INF, INF)
+			var hi := Vector2(-INF, -INF)
 			for q in (sec["poly"] as PackedVector2Array):
 				lo = Vector2(minf(lo.x, q.x), minf(lo.y, q.y))
 				hi = Vector2(maxf(hi.x, q.x), maxf(hi.y, q.y))
-	if lo.x < hi.x:
-		_floor_box = Rect2(lo, hi - lo)
+			_floors[str(sec["room"])] = {"box": Rect2(lo, hi - lo), "y": float(sec["floor"]), "ceil": float(sec["ceiling"])}
+	var first: Dictionary = _floors.get("main", _floors.values()[0] if not _floors.is_empty() else {})
+	if not first.is_empty():
+		_floor_box = first["box"]
+		_floor_y = float(first["y"])
+		_ceil_y = float(first["ceil"])
+		_room = "main" if _floors.has("main") else str(_floors.keys()[0])
 	for t in map.things:
 		if str(t.get("sprite", "")) == "fixture":
 			var sec: Dictionary = map.sector(str(t["sector"]))
@@ -166,12 +171,16 @@ func _build_haze() -> void:
 		mi.position = Vector3(_floor_box.get_center().x, _floor_y + 1.5 + 0.7 * k, _floor_box.get_center().y)
 		mat.uv1_scale = Vector3(2.5, 2.0, 1.0)
 		add_child(mi)
-		_haze.append({"mat": mat, "k": k})
+		_haze.append({"mat": mat, "k": k, "node": mi})
 
 
 func _build_tiles() -> void:
 	if _floor_box.size.x <= 0.0:
 		return
+	if _tiles != null:
+		_tiles.queue_free()
+		_tiles = null
+	_tile_key = -1
 	_tile_w = int(ceil(_floor_box.size.x))
 	_tile_h = int(ceil(_floor_box.size.y))
 	_tile_origin = _floor_box.position
@@ -270,7 +279,25 @@ func _build_confetti() -> void:
 
 # --- per frame ---------------------------------------------------------------------------------------------------------------
 
+## The light show's floor follows the crowd room: the tiles, haze, ripples and confetti sit on that room's dance floor.
+func _follow_room() -> void:
+	var room: String = stage.current_view
+	if room == _room or not _floors.has(room):
+		return
+	_room = room
+	var f: Dictionary = _floors[room]
+	_floor_box = f["box"]
+	_floor_y = float(f["y"])
+	_ceil_y = float(f["ceil"])
+	_build_tiles()
+	for h in _haze:
+		var mi: MeshInstance3D = h["node"]
+		(mi.mesh as QuadMesh).size = _floor_box.size + Vector2(2, 2)
+		mi.position = Vector3(_floor_box.get_center().x, _floor_y + 1.5 + 0.7 * float(h["k"]), _floor_box.get_center().y)
+
+
 func update(t: float) -> void:
+	_follow_room()
 	_update_beams(t)
 	_update_spots(t)
 	_update_haze(t)
