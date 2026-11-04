@@ -9,6 +9,7 @@ project. Home has three buttons: Play, Start from a reached level, Settings.
 * Design, route map, tunables and verification: `docs/CONTINUOUS_RUN.md`.
 * Adding music (Beat Shaper exports, one command per level): `docs/MUSIC_IMPORT.md`; what each level plays and what to export: `docs/MUSIC_HANDOFF.md`.
 * The Bassment, the wizard's dungeon under the club (a wizard in the Warehouse offers it; 63 passages in 16 zones, played on the same pads and clock): `docs/TRIAL_OPENING.md`.
+* Wizard Duel, local wifi multiplayer: two wizards play the same notes and cast spells at each other when they pass a phrase (home > Wizard Duel, or practise alone against a scripted rival): `docs/DUEL.md`.
 * The 2.5D world, art and authoring pipeline: `docs/STORY_CAMPAIGN_HANDOVER.md`, `docs/STORY_25D_PLAN.md`, `docs/STORY_ART.md`.
 
 ```
@@ -18,6 +19,7 @@ RW_RUN_BOT=perfect RW_RUN_ROUTES=up,left godot --path . res://src/run/run_play.t
 RW_RUN_VIRTUAL=1 RW_RUN_BOT=perfect RW_RUN_UNTIL_PHASE=3 RW_STORY_QUIT=1 godot --headless --path . res://src/run/run_play.tscn   # no audio, stepped clock
 godot --headless --path . -s tests/run_tests.gd -- --filter run_      # the run's tests
 godot --path . res://src/trial/trial_play.tscn                         # straight into the Bassment dungeon (RW_TRIAL_START=<passage>)
+godot --path . res://src/duel/duel_lobby.tscn                          # the Wizard Duel lobby (host, join or practise); bash tools/duel/two_players.sh checks two processes agree
 godot --headless --path . -s tools/trial/validate.gd                   # check the dungeon's data
 python tools/content/beatshaper.py validate                             # music data
 godot --headless --path . -s tools/story/record_music.gd -- <out> 70 res://src/run/run_play.tscn   # record the Music bus of a real run

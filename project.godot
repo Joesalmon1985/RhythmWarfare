@@ -23,6 +23,7 @@ driver/mix_rate=48000
 [autoload]
 
 Session="*res://src/core/session.gd"
+DuelNetwork="*res://src/duel/duel_network.gd"
 
 [display]
 

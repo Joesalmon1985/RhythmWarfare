@@ -26,6 +26,7 @@ func _ready() -> void:
 	var reached := UiStyle.button("Start from a reached level", func() -> void: get_tree().change_scene_to_file("res://src/run/run_levels.tscn"))
 	reached.disabled = prog.reached_ids().is_empty()
 	box.add_child(reached)
+	box.add_child(UiStyle.button("Wizard Duel (wifi)", func() -> void: get_tree().change_scene_to_file("res://src/duel/duel_lobby.tscn")))
 	box.add_child(UiStyle.button("Settings", func() -> void: get_tree().change_scene_to_file("res://src/scenes/settings.tscn")))
 	var note := prog.migration_note()
 	if note != "":

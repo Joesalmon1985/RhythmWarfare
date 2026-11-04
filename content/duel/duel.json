@@ -1,0 +1,38 @@
+{
+ "schema": 1,
+ "title": "Wizard Duel",
+ "music": {"audio": "dd_part2", "chart": "dd_part2", "treatment": "none"},
+ "timing": {
+  "phrase_beats": 8,
+  "decision_beat": 7.5,
+  "count_in_beats": 8,
+  "flight_s": 0.95
+ },
+ "pattern": "DDBDDDBD",
+ "note_pattern": "D is a drums phrase (kick on pad 1, snare on pad 4), B a bass phrase (held notes). One letter per two-bar phrase, repeating.",
+ "tiers": [[0, 1], [6, 2], [14, 3], [24, 4]],
+ "tier_note": "[first phrase, tier]: the cues get busier the longer the duel runs. Both wizards always play the same notes at the same time.",
+ "pass_credit": 0.6,
+ "hp": 300,
+ "max_phrases": 40,
+ "sudden_death_extra": 16,
+ "power": {
+  "min": 5.0,
+  "max": 11.0,
+  "streak_bonus": 0.12,
+  "streak_cap": 5,
+  "bass_mult": 1.35,
+  "tier_step": 0.05,
+  "grade_weights": {"perfect": 1.0, "great": 0.8, "ok": 0.55},
+  "stray_cost": 0.05,
+  "note": "A phrase passes at pass_credit (the share of cues hit) and casts one spell. quality = clamp((precision - 0.4) / 0.6) where precision is the weighted share of cues (perfect 1, great 0.8, ok 0.55) minus stray_cost per stray press. power = lerp(min, max, quality) x (1 + streak_bonus x consecutive earlier casts, at most streak_cap) x bass_mult for bass phrases x (1 + tier_step x (tier - 1)). Power and health are kept in tenths."
+ },
+ "bot_skills": {
+  "apprentice": {"hit": 0.78, "sigma_ms": 70.0, "strays": 0.02},
+  "adept": {"hit": 0.9, "sigma_ms": 45.0, "strays": 0.01},
+  "archmage": {"hit": 0.985, "sigma_ms": 22.0, "strays": 0.0}
+ },
+ "port": 24710,
+ "discovery_port": 24711,
+ "protocol": 1
+}
