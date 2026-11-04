@@ -59,7 +59,7 @@ VARIANTS = {
         "a": dict(skin=SKIN["pale"], hair="#6a3a22", cloth="#3b86ff", cloth2="#ffd23f", trousers="#3a6ad0", boots="#e0364a", accent="#e0364a",
                   cape="#ff9a2e", cape2="#fff2c8", mask="#e0364a", glove="#ffd23f", detail="star"),
         "b": dict(skin=SKIN["deep"], hair="#1f1730", cloth="#e0364a", cloth2="#ffd23f", trousers="#a8203a", boots="#ffd23f", accent="#3b86ff",
-                  cape="#3b86ff", cape2="#d6ecff", mask="#2a2450", glove="#ff8ac0", detail="bolt"),
+                  cape="#3b86ff", cape2="#d6ecff", mask="#ffd23f", glove="#ff8ac0", detail="bolt"),
     },
     "ballerina": {
         "a": dict(skin=SKIN["pale"], hair="#f2c24a", cloth="#ff9ac8", cloth2="#ffd6ea", trousers="#ffc4d6", shoes="#ffb0cf", accent="#ffffff",

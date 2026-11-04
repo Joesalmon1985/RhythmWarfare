@@ -672,6 +672,10 @@ def build_riser():
         x = 14 + k * (w - 28) / 7
         d += poly([(x - 7, 17), (x + 7, 17), (x, 28)], cols[k % 4], OUT, 1.4)
     d += line((24, 6), (w - 24, 6), "#ffffff", 1.4, 0.5)
+    for k in range(13):  # a string of warm bulbs along the lip, for the talent show
+        x = 10 + k * (w - 20) / 12
+        d += circle(x, 16, 4.6, ["#ffd98a", "#ffb0d0", "#a8f0e0"][k % 3], None, op=0.35) + circle(x, 16, 2.0, "#fff8e0", OUT, 0.8)
+    d += paper_star(w / 2, 9, 5.5, BUTTER, 1.2)
     return write_svg("riser.svg", (0, 0, w, h), d, defs)
 
 

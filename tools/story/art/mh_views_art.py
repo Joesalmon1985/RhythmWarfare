@@ -10,7 +10,7 @@ from .lib import OUT, circle, clip, darken, ellipse, f, group, lighten, line, li
 from .mh_stage import BUTTER, CORAL, INK, LEAF, LILAC, MINT, W, H, WOOD, WOOD_D, WOOD_L, paper_star, plant
 
 R = M.Room(640, 140, 300, 980, 62, 258)
-ASH = ["#dcc6a2", "#d4bd96", "#e2ceac", "#ccb48c"]
+ASH = ["#c4a47a", "#bb9a70", "#cbad84", "#b39066"]  # warm ash boards, mid value so the party light reads on them
 PAINTS = ["#ff8f8a", "#ffd966", "#7fb6ff", "#8fd9c8", "#b9a6f0", "#ff9ac0", "#ffb070"]
 
 
@@ -90,7 +90,7 @@ def kiln(x, yb, w=80):
 
 
 def build_backdrop():
-    defs, d = M.room_shell(R, wall="#f4dcc2", dado="#efb38c", uidp="a", ceil_tile=False, ceil=("#c9b49c", "#f0e2d0"),
+    defs, d = M.room_shell(R, wall="#e9c6a4", dado="#dc9c78", uidp="a", ceil_tile=False, ceil=("#b9a08a", "#e4d0bc"), front_dark=0.26,
                            floor_fn=lambda Rm: V.planks(Rm, ASH, 12, 0.08, seam="#b39a78", seed=11))
     # ceiling: wooden beams and a skylight
     sk = V.ceiling_quad(R, 480, 800, 1.12, 1.9)
@@ -163,7 +163,7 @@ def build_backdrop():
             (452, 1.66), (462, 1.45), (448, 1.3)]
     cloth = [R.floor_pt(xf, s_) for xf, s_ in edge]
     d += poly([(x, y + 4) for x, y in cloth], INK, None, op=0.12)
-    d += poly(cloth, "#d9c7a6", "#9a8460", 1.6)
+    d += poly(cloth, "#d2bf9c", "#8a7450", 1.6)
     for k in range(1, 4):  # creases
         d += line(R.floor_pt(470 + k * 90, 1.17), R.floor_pt(460 + k * 96, 1.66), darken("#d9c7a6", 0.12), 1.4, 0.7)
     rng = random.Random(31)

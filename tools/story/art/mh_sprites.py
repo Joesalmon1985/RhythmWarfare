@@ -248,7 +248,7 @@ def build_png_sprites():
         n2 = png_sprites.periodic_noise(w, h, sx * 0.45, sy * 0.45, seed + 1)
         m = _smooth((0.65 * n1 + 0.35 * n2 - 0.4) / 0.42)
         env = np.sin(np.linspace(0, np.pi, h)) ** 1.6
-        sp[name] = {"file": _white_png(name + ".png", m * env[:, None] * 0.42, (196, 186, 236)), "pivot": [w / 2, h / 2], "px_scale": 2.0,
+        sp[name] = {"file": _white_png(name + ".png", m * env[:, None] * 0.3, (190, 180, 232)), "pivot": [w / 2, h / 2], "px_scale": 2.0,
                     "tileable_x": True}
     w, h = 640, 360
     yy, xx = np.mgrid[0:h, 0:w]
