@@ -88,7 +88,7 @@ def build_backdrop():
     for sgn in (-1, 1):
         d += poly(R.side(sgn * 310, 210, 216, 1.0, SE + 0.3), "#fff6ea", OUT, 1.6) + poly(R.side(sgn * 310, 258, 266, 1.0, SE + 0.3), "#fff6ea", OUT, 1.6)
     # floor: coral and cream chequered lino with a painted mint ring for the dance circle
-    fdefs, fbody = P.tile_floor(R, "fl", c1="#f6dcb8", c2="#e8a888", cell=58, line_c="#d9a97a", gloss=0.18)
+    fdefs, fbody = P.tile_floor(R, "fl", c1="#e6c49a", c2="#d48a6c", cell=58, line_c="#b07a56", gloss=0.12)
     defs += fdefs
     d += fbody
     d += ellipse(640, 372, 262, 56, None, "#7fd1c4", 7, sop=0.9) + ellipse(640, 372, 262, 56, None, "#ffffff", 1.6, sop=0.8)
@@ -174,6 +174,9 @@ def build_backdrop():
     defs += lin_grad("patch", [(0, "#fff2b8", 0.0), (0.5, "#fff2b8", 0.26), (1, "#fff2b8", 0.06)], 1, 0, 0, 0)
     for (s0, s1) in ((1.1, 1.55), (1.75, 2.1)):
         d += poly([R.p(310, 266, s0), R.p(310, 266, s1), R.p(60, 266, s1 + 0.55), R.p(90, 266, s0 + 0.5)], "url(#patch)")
+    gdefs, gbody = P.grade(R, "grade")
+    defs += gdefs
+    d += gbody
     return write_svg("views/cafeteria_backdrop.svg", (0, 0, W, H), d, defs)
 
 
@@ -272,6 +275,6 @@ def build():
         light_points=[[240, 28], [420, 24], [1040, 28], [860, 24], [330, 54], [950, 54], [540, 50], [740, 50]],
         disco_ball=[640, 0])
     return {"id": "cafeteria", "title": "Family lounge",
-            "layers": [P.layer("backdrop", "source/views/cafeteria_backdrop.svg", (0, 0), (W, H)),
-                       P.layer("front_frame", "source/views/cafeteria_front.svg", (0, 0), (W, 470), "front")],
-            "anchors": anchors, "pieces": pieces, "palette_hint": "warm"}
+            "layers": [P.room_layer("backdrop", "views/cafeteria_backdrop.svg"),
+                       P.room_layer("front_frame", "views/cafeteria_front.svg", 470, "front")],
+            "anchors": anchors, "pieces": pieces, "palette_hint": "tea"}

@@ -2414,11 +2414,11 @@
     "id": "backdrop",
     "file": "source/backdrop.svg",
     "pos": [
-     0,
+     -150,
      0
     ],
     "size": [
-     1280,
+     1580,
      720
     ],
     "px_scale": 0.5
@@ -2788,7 +2788,7 @@
     ],
     "px_scale": 1.0,
     "length": 640,
-    "half_width_at_end": 130
+    "half_width_at_end": 121
    },
    "spot_pool": {
     "file": "processed/spot_pool.png",
@@ -2996,11 +2996,11 @@
       "id": "backdrop",
       "file": "source/views/corridor_backdrop.svg",
       "pos": [
-       0,
+       -150,
        0
       ],
       "size": [
-       1280,
+       1580,
        720
       ],
       "px_scale": 0.5
@@ -3009,11 +3009,11 @@
       "id": "front_frame",
       "file": "source/views/corridor_front.svg",
       "pos": [
-       0,
+       -150,
        0
       ],
       "size": [
-       1280,
+       1580,
        470
       ],
       "px_scale": 0.5,
@@ -3204,7 +3204,7 @@
       "blend": "add"
      }
     ],
-    "palette_hint": "warm"
+    "palette_hint": "ward"
    },
    {
     "id": "cafeteria",
@@ -3214,11 +3214,11 @@
       "id": "backdrop",
       "file": "source/views/cafeteria_backdrop.svg",
       "pos": [
-       0,
+       -150,
        0
       ],
       "size": [
-       1280,
+       1580,
        720
       ],
       "px_scale": 0.5
@@ -3227,11 +3227,11 @@
       "id": "front_frame",
       "file": "source/views/cafeteria_front.svg",
       "pos": [
-       0,
+       -150,
        0
       ],
       "size": [
-       1280,
+       1580,
        470
       ],
       "px_scale": 0.5,
@@ -3446,7 +3446,7 @@
       "blend": "add"
      }
     ],
-    "palette_hint": "warm"
+    "palette_hint": "tea"
    },
    {
     "id": "garden",
@@ -3456,11 +3456,11 @@
       "id": "backdrop",
       "file": "source/views/garden_backdrop.svg",
       "pos": [
-       0,
+       -150,
        0
       ],
       "size": [
-       1280,
+       1580,
        720
       ],
       "px_scale": 0.5
@@ -3469,11 +3469,11 @@
       "id": "front_frame",
       "file": "source/views/garden_front.svg",
       "pos": [
-       0,
+       -150,
        0
       ],
       "size": [
-       1280,
+       1580,
        470
       ],
       "px_scale": 0.5,
@@ -3694,6 +3694,24 @@
  },
  "interlude": {
   "sprites": {
+   "waking_view": {
+    "file": "processed/waking_view.png",
+    "pivot": [
+     320,
+     180
+    ],
+    "px_scale": 2.0,
+    "note": "what the opening eyes see: the family leaning in over the bed, warm and almost in focus (full screen, centre pivot)"
+   },
+   "waking_blur": {
+    "file": "processed/waking_blur.png",
+    "pivot": [
+     320,
+     180
+    ],
+    "px_scale": 2.0,
+    "note": "the same, completely out of focus (the first moment)"
+   },
    "eyelid_top": {
     "file": "processed/eyelid_top.png",
     "pivot": [

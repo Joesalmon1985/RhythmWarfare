@@ -94,6 +94,48 @@ def layer(lid, file, pos, size, z=None):
     return d
 
 
+OV = 150  # design px every room layer reaches beyond each side of the 1280 frame (a camera look or the walker's sway never shows the void)
+
+
+def overscan(rel_path, ov=OV):
+    """Widen a room layer that was written with the viewBox (0, y0, 1280, h) by `ov` design px on both sides. The strips beyond the frame
+    are filled with mirror images of the frame's edges (the room's own drawing goes on top, so anything drawn wider than the frame wins).
+    The body is defined once and placed three times with <use>, so the file barely grows. Returns the layer's new (pos_x, width)."""
+    import os
+    import re
+    from . import lib
+    full = os.path.join(lib.SVG_DIR, rel_path)
+    with open(full, encoding="utf-8") as fh:
+        svg = fh.read()
+    m = re.match(r'<svg xmlns="http://www.w3.org/2000/svg" width="(\d+)" height="(\d+)" viewBox="(-?\d+) (-?\d+) (\d+) (\d+)">(.*)</svg>\n$', svg, re.S)
+    if not m:
+        raise ValueError("unexpected svg header in " + rel_path)
+    x0, y0, w, h = (int(m.group(k)) for k in (3, 4, 5, 6))
+    inner = m.group(7)
+    defs, body = "", inner
+    if inner.startswith("<defs>"):
+        end = inner.index("</defs>")
+        defs, body = inner[6:end], inner[end + 7:]
+    nw = w + 2 * ov
+    defs += f'<clipPath id="ovL"><rect x="{x0 - ov}" y="{y0 - 10}" width="{ov}" height="{h + 20}"/></clipPath>'
+    defs += f'<clipPath id="ovR"><rect x="{x0 + w}" y="{y0 - 10}" width="{ov}" height="{h + 20}"/></clipPath>'
+    defs += f'<g id="ovroom">{body}</g>'
+    out = (f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{nw * lib.SCALE}" height="{h * lib.SCALE}" '
+           f'viewBox="{x0 - ov} {y0} {nw} {h}"><defs>{defs}</defs>'
+           f'<g clip-path="url(#ovL)"><use xlink:href="#ovroom" transform="matrix(-1 0 0 1 {2 * x0} 0)"/></g>'
+           f'<g clip-path="url(#ovR)"><use xlink:href="#ovroom" transform="matrix(-1 0 0 1 {2 * (x0 + w)} 0)"/></g>'
+           f'<use xlink:href="#ovroom"/></svg>\n')
+    with open(full, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(out)
+    return x0 - ov, nw
+
+
+def room_layer(lid, rel_svg, h=720, z=None):
+    """The manifest entry of a full-width room layer already written to source/<rel_svg>, widened by overscan()."""
+    x, w = overscan(rel_svg)
+    return layer(lid, "source/" + rel_svg, (x, 0), (w, h), z)
+
+
 # ---- light and glow ----------------------------------------------------------------------------------------------------------
 
 def soft_glow(cx, cy, rx, ry, color, strength=0.5, steps=7):
@@ -111,6 +153,21 @@ def glow_defs(gid, color, a0=0.55):
 
 def light_ray(poly_pts, gid):
     return poly(poly_pts, f"url(#{gid})")
+
+
+def grade(room: Room, uid: str, floor=0.34, ceil=0.26, sides=0.3, shadow=WARM_SHADOW, ceil_y=None):
+    """Light a room like a painter, drawn last over its backdrop: the near floor and the ceiling fall into a warm shadow and the side
+    edges darken, so the middle distance where the family dances carries the brightest values, the dancers' bright clothes read against a
+    mid-tone floor, and the runtime's additive party lights glow on the set instead of bleaching it. Returns (defs, body)."""
+    ceil_y = room.fy0 if ceil_y is None else ceil_y
+    defs = lin_grad(uid + "f", [(0, shadow, 0.0), (0.3, shadow, floor * 0.2), (0.7, shadow, floor * 0.7), (1, shadow, floor)], 0, 0, 0, 1)
+    defs += lin_grad(uid + "c", [(0, shadow, ceil), (1, shadow, 0.0)], 0, 0, 0, 1)
+    defs += lin_grad(uid + "l", [(0, shadow, sides), (1, shadow, 0.0)], 0, 0, 1, 0)
+    defs += lin_grad(uid + "r", [(0, shadow, 0.0), (1, shadow, sides)], 0, 0, 1, 0)
+    body = rect(-10, room.fy1, W + 20, 480 - room.fy1, f"url(#{uid}f)") + rect(-10, 480, W + 20, H - 470, shadow, None, op=floor)
+    body += rect(-10, -10, W + 20, ceil_y + 10, f"url(#{uid}c)")
+    body += rect(-10, -10, 230, H + 20, f"url(#{uid}l)") + rect(W - 220, -10, 230, H + 20, f"url(#{uid}r)")
+    return defs, body
 
 
 # ---- floors ----------------------------------------------------------------------------------------------------------------------

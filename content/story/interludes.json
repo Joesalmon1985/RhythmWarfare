@@ -122,51 +122,57 @@
    {
     "t": 0.0,
     "do": "caption",
-    "text": "A steady beeping is getting louder...",
-    "dur": 3.0
+    "text": "The music fades. Something is beeping, steady and close...",
+    "dur": 3.4
    },
    {
     "t": 0.3,
     "do": "fade_crowd",
+    "dur": 3.2
+   },
+   {
+    "t": 1.8,
+    "do": "eyelids_close",
     "dur": 3.0
    },
    {
-    "t": 2.0,
-    "do": "eyelids_close",
-    "dur": 2.5
-   },
-   {
-    "t": 4.8,
+    "t": 4.4,
     "do": "monitor",
-    "dur": 8.0
+    "dur": 8.6
    },
    {
-    "t": 5.0,
+    "t": 5.2,
     "do": "caption",
     "text": "Beep... beep... beep...",
-    "dur": 2.5
+    "dur": 2.6
    },
    {
-    "t": 8.0,
+    "t": 8.2,
     "do": "caption",
     "text": "A warm hand squeezes yours.",
-    "dur": 3.0
+    "dur": 2.6
    },
    {
-    "t": 11.0,
+    "t": 10.8,
     "do": "eyelids_open",
-    "dur": 3.0
+    "dur": 3.4
    },
    {
-    "t": 12.0,
+    "t": 11.3,
     "do": "caption",
-    "text": "You wake up.",
-    "dur": 3.0
+    "text": "\"Look! Their eyes are opening!\"",
+    "dur": 2.1
    },
    {
-    "t": 13.5,
+    "t": 13.6,
+    "do": "caption",
+    "text": "You're awake.",
+    "dur": 2.2
+   },
+   {
+    "t": 14.3,
     "do": "white",
-    "dur": 2.5
+    "dur": 1.7
    }
   ]
  },

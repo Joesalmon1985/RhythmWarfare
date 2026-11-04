@@ -51,7 +51,7 @@ def build_backdrop():
         d += poly(R.side(sgn * 170, 205, 209, 1.0, SE + 0.3), WOOD_L, OUT, 1.6)  # the wooden hand rail
         d += poly(R.side(sgn * 170, 250, 256, 1.0, SE + 0.3), "#fff6ea", OUT, 1.6)
     # floor: polished tiles with painted guide lines and soft reflections of the ceiling lights
-    fdefs, fbody = P.tile_floor(R, "fl", c1="#f3dfc0", c2="#e6c8a0", cell=52, line_c="#c9a272", gloss=0.2)
+    fdefs, fbody = P.tile_floor(R, "fl", c1="#e2c39a", c2="#cda27a", cell=52, line_c="#a98058", gloss=0.12)
     defs += fdefs
     d += fbody
     for lat, col in ((-122, CORAL), (122, TEAL)):  # colour-coded way-finding lines
@@ -135,8 +135,11 @@ def build_backdrop():
     d += rect(led[0] - 7, led[1] - 6, led[2] + 14, led[3] + 12, WOOD_L, OUT, 3, rx=6) + rect(led[0] - 3, led[1] - 3, led[2] + 6, led[3] + 6, "#fff6ea", OUT, 1.8, rx=4)
     d += rect(led[0], led[1], led[2], led[3], "#22303a", None)
     # warm shading at the far corners to seat the walls
-    defs += rad_grad("fg", [(0, "#fff7d8", 0.7), (1, "#fff7d8", 0.0)], 0.5, 0.5, 0.5)
+    defs += rad_grad("fg", [(0, "#fff7d8", 0.32), (1, "#fff7d8", 0.0)], 0.5, 0.5, 0.5)
     d += ellipse(640, 200, 150, 120, "url(#fg)")
+    gdefs, gbody = P.grade(R, "grade")
+    defs += gdefs
+    d += gbody
     return write_svg("views/corridor_backdrop.svg", (0, 0, W, H), d, defs)
 
 
@@ -183,7 +186,7 @@ def piece_lights():
     """The ceiling troffers' warm glow and their reflections down the tiled floor."""
     w, h = 1280, 470
     d = ""
-    defs = P.glow_defs("tg", "#fff2b0", 0.3)
+    defs = P.glow_defs("tg", "#fff2b0", 0.17)
     for (l0, l1) in ((-100, -40), (40, 100)):
         for (s0, s1) in ((1.12, 1.38), (1.58, 1.95), (2.25, 2.8), (3.2, 3.8)):
             q = R.horiz(96, l0, l1, s0, s1)
@@ -194,7 +197,7 @@ def piece_lights():
     for (l0, l1) in ((-100, -40), (40, 100)):
         for (s0, s1) in ((1.12, 1.38), (1.58, 1.95), (2.25, 2.8)):
             q = R.horiz(256, l0 * 0.8, l1 * 0.8, s0, s1 * 1.08)
-            d += poly(q, "#fff4c8", None, op=0.09)
+            d += poly(q, "#fff4c8", None, op=0.05)
     write_svg("views/corridor_lights.svg", (0, 0, w, h), d, defs)
     return P.piece("corridor_lights", "source/views/corridor_lights.svg", (0, 0), (w, h), "pulse", "behind", "add", pivot=(640, 150))
 
@@ -202,10 +205,10 @@ def piece_lights():
 def piece_doorglow():
     """Garden daylight pouring in through the far glass doors."""
     w, h = 520, 330
-    defs = lin_grad("ray", [(0, "#fff6c0", 0.26), (0.6, "#ffeaa0", 0.09), (1, "#ffeaa0", 0.0)], 0, 0, 0, 1)
+    defs = lin_grad("ray", [(0, "#fff6c0", 0.15), (0.6, "#ffeaa0", 0.05), (1, "#ffeaa0", 0.0)], 0, 0, 0, 1)
     d = poly([(190, 0), (330, 0), (470, 330), (50, 330)], "url(#ray)")
     d += poly([(230, 0), (290, 0), (360, 330), (160, 330)], "url(#ray)")
-    defs += P.glow_defs("dg", "#fff6c0", 0.4)
+    defs += P.glow_defs("dg", "#fff6c0", 0.22)
     d += ellipse(260, 20, 120, 60, "url(#dg)")
     rng = random.Random(31)
     for k in range(22):
@@ -225,6 +228,6 @@ def build():
         disco_ball=None)
     anchors.pop("disco_ball")
     return {"id": "corridor", "title": "Ward corridor",
-            "layers": [P.layer("backdrop", "source/views/corridor_backdrop.svg", (0, 0), (W, H)),
-                       P.layer("front_frame", "source/views/corridor_front.svg", (0, 0), (W, 470), "front")],
-            "anchors": anchors, "pieces": pieces, "palette_hint": "warm"}
+            "layers": [P.room_layer("backdrop", "views/corridor_backdrop.svg"),
+                       P.room_layer("front_frame", "views/corridor_front.svg", 470, "front")],
+            "anchors": anchors, "pieces": pieces, "palette_hint": "ward"}

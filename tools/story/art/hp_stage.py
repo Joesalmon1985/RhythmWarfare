@@ -208,9 +208,9 @@ def build_backdrop() -> dict:
     # window glow washing the right half
     defs += lin_grad("wg", [(0, "#fff2b8", 0.0), (1, "#fff2b8", 0.12)], 0, 0, 1, 0)
     d += rect(900, 0, 380, 420, "url(#wg)")
-    # edge shading to seat the room
-    defs += lin_grad("shl", [(0, "#5a2f3a", 0.3), (1, "#5a2f3a", 0.0)], 0, 0, 1, 0)
-    d += rect(0, 0, 120, H, "url(#shl)")
+    gdefs, gbody = P.grade(ROOM, "grade")
+    defs += gdefs
+    d += gbody
     return write_svg("backdrop.svg", (0, 0, W, H), d, defs)
 
 
@@ -476,14 +476,70 @@ def _smooth(x):
     return x * x * (3 - 2 * x)
 
 
+def _white_rgba(a, tint=(255, 255, 255)):
+    h, w = a.shape
+    arr = np.zeros((h, w, 4))
+    arr[..., 0], arr[..., 1], arr[..., 2] = tint
+    arr[..., 3] = np.clip(a, 0, 1) * 255
+    return arr
+
+
+def build_light_sprites(sp):
+    """The chapter's own daylight versions of the runtime's lighting sprites. The room is bright and the runtime draws beams, pools and
+    blooms additively, so these carry far less light than Night One's club sprites: a beam is a soft shaft of sunlight with drifting dust
+    (not a laser cone), a spot pool a gentle warm puddle, and the haze sunlit dust instead of club smoke. Still white / neutral: the
+    runtime tints them with the chapter's palettes."""
+    rng = np.random.default_rng(41)
+    # beam: 256 x 640, soft-edged shaft widening down, brightest just below the lamp, gone before the floor
+    w, h = 256, 640
+    yy, xx = np.mgrid[0:h, 0:w]
+    half = 9 + yy * (112.0 / h)
+    t = np.abs(xx - w / 2 + 0.5) / half
+    edge = np.clip(1 - t, 0, 1) ** 1.5
+    core = np.exp(-(t / 0.32) ** 2)
+    fade = np.clip(1 - yy / h, 0, 1) ** 1.35
+    a = (0.62 * edge + 0.38 * core) * fade * 0.4
+    a[:10] *= np.linspace(0.2, 1, 10)[:, None]
+    motes = np.zeros((h, w))
+    for _ in range(70):  # dust specks caught in the light
+        my, mx = rng.uniform(30, h * 0.8), rng.uniform(-0.8, 0.8)
+        cx = w / 2 + mx * (9 + my * 112.0 / h)
+        r = rng.uniform(1.0, 2.2)
+        motes += np.exp(-((xx - cx) ** 2 + (yy - my) ** 2) / (r * r)) * rng.uniform(0.25, 0.6)
+    a = a + motes * edge * fade * 0.55
+    sp["beam"] = {"file": _save_rgba("beam.png", _white_rgba(a)), "pivot": [w / 2, 0], "px_scale": 1.0, "length": h, "half_width_at_end": 121}
+    # spot pool: a soft warm puddle of light, a faint rim, a dim centre (the dancer standing in it must stay readable)
+    w, h = 400, 140
+    yy, xx = np.mgrid[0:h, 0:w]
+    r = np.hypot((xx - w / 2 + 0.5) / (w / 2), (yy - h / 2 + 0.5) / (h / 2))
+    a = np.clip(1 - r ** 2, 0, 1) ** 1.6 * 0.42 + np.exp(-((r - 0.84) / 0.08) ** 2) * 0.16 * (r < 1.0)
+    sp["spot_pool"] = {"file": _save_rgba("spot_pool.png", _white_rgba(a)), "pivot": [w / 2, h / 2], "px_scale": 1.0}
+    # haze: sunlit dust, two tileable 640 x 100 bands shown at 2x; thin and warm so the room never turns milky
+    for name, seed, sx, sy in (("haze_a", 21, 70.0, 16.0), ("haze_b", 77, 54.0, 12.0)):
+        w, h = 640, 100
+        n1 = png_sprites.periodic_noise(w, h, sx, sy, seed)
+        n2 = png_sprites.periodic_noise(w, h, sx * 0.45, sy * 0.45, seed + 1)
+        m = _smooth((0.65 * n1 + 0.35 * n2 - 0.42) / 0.4)
+        env = np.sin(np.linspace(0, np.pi, h)) ** 1.8
+        a = m * env[:, None] * 0.32
+        yy, xx = np.mgrid[0:h, 0:w]
+        r2 = np.random.default_rng(seed)
+        for _ in range(60):
+            cx, cy, rr = r2.uniform(0, w), r2.uniform(15, h - 15), r2.uniform(0.8, 1.6)
+            for ox in (-w, 0, w):  # wrap so the band still tiles
+                a += np.exp(-((xx - cx - ox) ** 2 + (yy - cy) ** 2) / (rr * rr)) * 0.5 * env[:, None]
+        sp[name] = {"file": _save_rgba(name + ".png", _white_rgba(a, (255, 236, 200))), "pivot": [w / 2, h / 2], "px_scale": 2.0, "tileable_x": True}
+
+
 def build_png_sprites():
     sp = png_sprites.build_png_sprites()  # glow, beam, spot_pool, haze_a/b, vignette, confetti (all white / neutral)
+    build_light_sprites(sp)
     w, h = 640, 360
     yy, xx = np.mgrid[0:h, 0:w]
     r = np.hypot((xx - w / 2 + 0.5) / (w / 2), (yy - h / 2 + 0.5) / (h / 2))
-    a = _smooth((r - 0.7) / 0.62) * 0.42
+    a = _smooth((r - 0.62) / 0.6) * 0.5
     arr = np.zeros((h, w, 4))
-    arr[..., 0], arr[..., 1], arr[..., 2], arr[..., 3] = 70, 36, 30, a * 255
+    arr[..., 0], arr[..., 1], arr[..., 2], arr[..., 3] = 62, 30, 34, a * 255
     sp["vignette"] = {"file": _save_rgba("vignette.png", arr), "pivot": [w / 2, h / 2], "px_scale": 2.0}
     # confetti: four 32 x 32 frames of paper confetti, a petal, a tiny heart and a star (supersampled 4x), warm palette
     big = Image.new("RGBA", (128 * 4, 32 * 4), (0, 0, 0, 0))
@@ -671,52 +727,174 @@ def _feather(a, n):
 
 def eyelid_png(name, top):
     """A closed eyelid half: a warm, soft shape that fills a screen half; the edge curves like a lid and carries lashes.
-    Texture 640 x 260 shown at 2x (1280 x 520). Top lid: pivot at the bottom centre (the closing edge); bottom lid: pivot at the top centre."""
+    Texture 640 x 260 shown at 2x (1280 x 520). Top lid: pivot at the bottom centre (the closing edge); bottom lid: pivot at the top centre.
+    Deep plum at the outer edge warming to a rosy red near the edge (daylight shining through skin), a soft crease, a dark lash line;
+    the upper lid carries long tapered lashes that curl out from the middle, the lower one short sparse ones."""
     w, h = 640, 260
     yy, xx = np.mgrid[0:h, 0:w]
     u = (xx - w / 2 + 0.5) / (w / 2)
     edge = 28 * (1 - u ** 2)  # how far the lid edge bulges towards the seam at the centre
     ysrc = yy if top else (h - 1 - yy)
     limit = (h - 40) + edge  # the lid body ends at this row (from its outer edge); beyond it is transparent
-    body = np.clip((limit - ysrc) / 3.0, 0, 1)
-    body = _feather(body, 1.4)
-    # colours: warm rose-brown, lighter and pinker near the seam (light shining through the lid)
+    body = _feather(np.clip((limit - ysrc) / 2.0, 0, 1), 1.0)
     t = np.clip(ysrc / limit, 0, 1)
-    r = 120 + 95 * t ** 1.6
-    g = 52 + 52 * t ** 1.6
-    b = 56 + 50 * t ** 1.6
-    # a soft veil of translucency on the outermost rows keeps the shape from reading as a hard slab
-    veil = np.clip(1.0 - (np.clip(ysrc, 0, 25) / 25.0) * 0.0, 0, 1)
-    arr = np.dstack([r, g, b, body * 255 * veil])
+    d = limit - ysrc  # rows above the edge
+    r = 58 + 128 * t ** 1.8
+    g = 20 + 50 * t ** 1.8
+    b = 30 + 42 * t ** 1.8
+    crease = np.exp(-((d - (34 if top else 22)) / 7.0) ** 2) * (1 - 0.6 * np.abs(u))  # the lid's fold: a soft shadow line
+    lit = np.exp(-((d - 14) / 8.0) ** 2) * (1 - 0.5 * np.abs(u))  # the rim catching the light just above the edge
+    rim = np.exp(-(np.maximum(d, 0) / 2.2) ** 2)  # the dark lash line on the edge itself
+    r = r * (1 - 0.32 * crease) + 40 * lit
+    g = g * (1 - 0.32 * crease) + 22 * lit
+    b = b * (1 - 0.32 * crease) + 18 * lit
+    r, g, b = (r * (1 - rim) + 52 * rim, g * (1 - rim) + 20 * rim, b * (1 - rim) + 30 * rim)
+    arr = np.dstack([r, g, b, body * 255])
     img = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), "RGBA")
-    dr = ImageDraw.Draw(img)
-    # lashes along the seam edge, supersampled by drawing on a 2x canvas
-    big = Image.new("RGBA", (w * 2, h * 2), (0, 0, 0, 0))
+    # lashes along the edge, tapered and curling away from the middle, supersampled on a 4x canvas
+    S = 4
+    big = Image.new("RGBA", (w * S, h * S), (0, 0, 0, 0))
     bd = ImageDraw.Draw(big)
     rng = random.Random(77 if top else 78)
-    for k in range(60):
-        ux = -0.94 + k * 1.88 / 59
-        px = (ux * (w / 2) + w / 2) * 2
-        yedge = ((h - 40) + 28 * (1 - ux ** 2)) * 2
-        ln = rng.uniform(14, 26) * (1 - abs(ux) * 0.45) * 2
-        out = (1 if ux >= 0 else -1) * abs(ux) * 16 * 2  # lashes fan out and curl away from the middle
-        y0 = yedge - 6 if top else (h * 2 - yedge + 6)
+    n = 70 if top else 34
+    for k in range(n):
+        ux = math.sin((k + 0.5) / n * math.pi - math.pi / 2) * 0.97  # denser in the middle, sparser at the corners
+        ux += rng.uniform(-0.006, 0.006)
+        px = (ux * (w / 2) + w / 2) * S
+        yedge = ((h - 40) + 28 * (1 - ux ** 2)) * S
+        ln = (rng.uniform(15, 25) if top else rng.uniform(6, 10)) * (1 - abs(ux) * 0.5) * S
+        side = 1 if ux >= 0 else -1
+        curl = side * (0.25 + 0.9 * abs(ux)) * ln * 0.55
+        y0 = yedge - 2 * S if top else (h * S - yedge + 2 * S)
         sgn = 1 if top else -1
-        pts_l = [(px, y0), (px + out * 0.3, y0 + sgn * ln * 0.55), (px + out * 0.9, y0 + sgn * ln * 0.92), (px + out * 1.5 + 4 * (1 if ux >= 0 else -1), y0 + sgn * ln)]
-        bd.line(pts_l, fill=(70, 38, 52, 255), width=4, joint="curve")
+        root_w = (1.9 if top else 1.3) * S
+        m = 14
+        left, right = [], []
+        for j in range(m + 1):
+            q = j / m
+            x = px + curl * q * q
+            y = y0 + sgn * ln * (q - 0.15 * q * q)
+            dx, dy = 2 * curl * q, sgn * ln * (1 - 0.3 * q)
+            nl = math.hypot(dx, dy) or 1.0
+            wq = root_w * (1 - q) ** 0.8 + 0.25 * S
+            left.append((x - dy / nl * wq, y + dx / nl * wq))
+            right.append((x + dy / nl * wq, y - dx / nl * wq))
+        bd.polygon(left + right[::-1], fill=(46, 18, 28, 255))
     big = big.resize((w, h), Image.LANCZOS)
     img = Image.alpha_composite(img, big)
-    # a thin warm glow line right on the seam edge
-    arr2 = np.asarray(img).astype(np.float64)
-    glow = np.exp(-((ysrc - limit) / 3.0) ** 2) * 0.0
-    img = Image.fromarray(arr2.astype(np.uint8), "RGBA")
     os.makedirs(lib.PNG_DIR, exist_ok=True)
     img.save(os.path.join(lib.PNG_DIR, name), compress_level=9)
     return f"processed/{name}", (w, h)
 
 
+def _face(dr, cx, cy, r, skin, hair, kind, k=1.0):
+    """One friendly face leaning in over the bed (Pillow, 2x canvas), in the chapter's outlined cartoon style: hair by `kind`, closed happy
+    eyes, brows, a button nose, an open smile and rosy cheeks."""
+    ink = (74, 34, 46, 255)
+    ow = max(4, int(r * 0.045))
+
+    def ell(x0, y0, x1, y1, fill):
+        dr.ellipse((x0, y0, x1, y1), fill=fill, outline=ink, width=ow)
+
+    if kind == "mum":  # long hair: a crown behind the head and two lengths falling past the shoulders
+        for sx in (-1, 1):
+            ell(cx + sx * r * 0.98 - r * 0.42, cy - r * 0.2, cx + sx * r * 0.98 + r * 0.42, cy + r * 1.75, hair)
+        ell(cx - r * 1.2, cy - r * 1.22, cx + r * 1.2, cy + r * 0.85, hair)
+    if kind == "granny":  # white curls round the head
+        for a in range(0, 360, 30):
+            ax, ay = cx + math.cos(math.radians(a)) * r * 0.98, cy - r * 0.15 + math.sin(math.radians(a)) * r * 0.92
+            ell(ax - r * 0.36, ay - r * 0.36, ax + r * 0.36, ay + r * 0.36, hair)
+    if kind == "kid":  # pigtails with ribbons
+        for sx in (-1, 1):
+            px = cx + sx * r * 1.08
+            ell(px - r * 0.44, cy - r * 0.55, px + r * 0.44, cy + r * 0.35, hair)
+            ell(px - sx * r * 0.32 - r * 0.14, cy - r * 0.52, px - sx * r * 0.32 + r * 0.14, cy - r * 0.24, (255, 210, 63, 255))
+    if kind in ("dad", "kid"):  # ears
+        for sx in (-1, 1):
+            ell(cx + sx * r * 0.98 - r * 0.18, cy - r * 0.12, cx + sx * r * 0.98 + r * 0.18, cy + r * 0.3, skin)
+    ell(cx - r, cy - r * 1.05, cx + r, cy + r, skin)
+    if kind == "mum":  # side-swept fringe
+        dr.chord((cx - r * 1.04, cy - r * 1.12, cx + r * 1.04, cy + r * 0.5), 180, 352, fill=hair, outline=ink, width=ow)
+        dr.ellipse((cx - r * 0.9, cy - r * 0.52, cx - r * 0.05, cy - r * 0.02), fill=skin)
+        ell(cx + r * 0.42, cy - r * 0.86, cx + r * 0.72, cy - r * 0.56, (255, 143, 154, 255))  # a flower clip
+    elif kind == "dad":
+        dr.chord((cx - r * 1.0, cy - r * 1.12, cx + r * 1.0, cy + r * 0.2), 182, 358, fill=hair, outline=ink, width=ow)
+        dr.chord((cx - r * 0.97, cy - r * 0.25, cx + r * 0.97, cy + r * 1.03), 8, 172, fill=hair, outline=ink, width=ow)  # the beard
+        dr.ellipse((cx - r * 0.5, cy + r * 0.12, cx + r * 0.5, cy + r * 0.6), fill=skin)
+    elif kind == "kid":
+        dr.chord((cx - r * 1.0, cy - r * 1.12, cx + r * 1.0, cy + r * 0.4), 180, 360, fill=hair, outline=ink, width=ow)
+        dr.ellipse((cx - r * 0.72, cy - r * 0.6, cx + r * 0.72, cy - r * 0.08), fill=skin)
+    ew = r * 0.21
+    lw = max(4, int(r * 0.075))
+    for sx in (-1, 1):  # closed, smiling eyes, raised brows, rosy cheeks
+        ex, ey = cx + sx * r * 0.38, cy - r * 0.08
+        dr.arc((ex - ew, ey - ew * 0.8, ex + ew, ey + ew * 0.9), 200, 340, fill=ink, width=lw)
+        dr.arc((ex - ew * 1.1, ey - ew * 2.3, ex + ew * 1.1, ey - ew * 0.9), 210, 330, fill=ink if kind != "granny" else (190, 180, 170, 255), width=max(3, lw - 2))
+        dr.ellipse((ex - ew * 1.0, ey + ew * 1.1, ex + ew * 1.0, ey + ew * 1.75), fill=(255, 120, 125, 120))
+    if kind == "granny":
+        for sx in (-1, 1):  # round glasses
+            dr.ellipse((cx + sx * r * 0.38 - r * 0.3, cy - r * 0.36, cx + sx * r * 0.38 + r * 0.3, cy + r * 0.2), outline=(214, 168, 74, 255), width=max(3, int(r * 0.07)))
+        dr.line((cx - r * 0.1, cy - r * 0.12, cx + r * 0.1, cy - r * 0.12), fill=(214, 168, 74, 255), width=max(3, int(r * 0.06)))
+    dr.arc((cx - r * 0.12, cy + r * 0.02, cx + r * 0.12, cy + r * 0.2), 20, 160, fill=ink, width=max(3, lw - 2))  # nose
+    dr.chord((cx - r * 0.34, cy + r * 0.22, cx + r * 0.34, cy + r * 0.68), 0, 180, fill=(120, 40, 56, 255), outline=ink, width=max(3, lw - 3))
+    dr.chord((cx - r * 0.2, cy + r * 0.44, cx + r * 0.2, cy + r * 0.66), 0, 180, fill=(255, 128, 140, 255))
+
+
+def waking_view_png():
+    """What you see when your eyes first open: your family leaning in over the bed against the sunny window, warm and out of focus.
+    Two 640 x 360 PNGs shown at 2x: `waking_view` (nearly in focus) and `waking_blur` (the first blurry moment); the cutscene
+    cross-fades them to pull focus. Drawn on a 2x canvas and filtered down."""
+    from PIL import ImageFilter
+    W2, H2 = 1280, 720
+    yy, xx = np.mgrid[0:H2, 0:W2]
+    t = yy / H2
+    bg = np.dstack([255 - 10 * t, 236 - 40 * t, 206 - 60 * t, np.full((H2, W2), 255.0)])
+    win = np.exp(-(((xx - 1010) / 260.0) ** 2 + ((yy - 250) / 230.0) ** 2))  # the sunny window glowing on the right
+    for c, v in enumerate((255, 250, 226)):
+        bg[..., c] = bg[..., c] * (1 - win * 0.85) + v * win * 0.85
+    img = Image.fromarray(np.clip(bg, 0, 255).astype(np.uint8), "RGBA")
+    dr = ImageDraw.Draw(img, "RGBA")
+    for x in (900, 1120):  # window bars, soft
+        dr.rectangle((x - 7, 40, x + 7, 470), fill=(255, 238, 205, 150))
+    dr.rectangle((760, 250, 1280, 262), fill=(255, 238, 205, 150))
+    rng = random.Random(9)
+    cols = [(255, 214, 120), (255, 150, 140), (150, 230, 210), (255, 190, 200), (255, 236, 150)]
+    for k in range(26):  # fairy-light bokeh across the top
+        x = 40 + k * 48 + rng.uniform(-12, 12)
+        y = 70 + 46 * math.sin(k * 0.45) + rng.uniform(-8, 8)
+        r = rng.uniform(14, 24)
+        c = cols[k % len(cols)]
+        dr.ellipse((x - r, y - r, x + r, y + r), fill=c + (150,))
+    # a red balloon floating over the kid, a teal one by granny
+    dr.ellipse((300, 120, 420, 270), fill=(233, 69, 63, 255))
+    dr.ellipse((322, 140, 350, 190), fill=(255, 190, 180, 200))
+    dr.line((360, 270, 430, 520), fill=(255, 243, 224, 255), width=4)
+    dr.ellipse((690, 70, 790, 195), fill=(79, 179, 169, 255))
+    dr.line((740, 195, 760, 330), fill=(255, 243, 224, 255), width=4)
+    # the family: granny further back on the right, dad on the right, mum on the left, the kid peeking up from the bottom
+    _face(dr, 860, 300, 120, (251, 217, 192, 255), (246, 242, 236, 255), "granny")
+    dr.ellipse((700, 400, 1030, 760), fill=(183, 155, 224, 255))  # granny's lilac cardigan
+    dr.ellipse((960, 470, 1440, 900), fill=(200, 71, 63, 255))  # dad's red plaid shoulders
+    for k in range(6):
+        dr.line((1000 + k * 70, 470, 980 + k * 70, 900), fill=(47, 58, 99, 120), width=10)
+    _face(dr, 1150, 390, 175, (230, 170, 122, 255), (90, 54, 34, 255), "dad")
+    dr.ellipse((-160, 470, 420, 920), fill=(79, 179, 169, 255))  # mum's teal cardigan
+    _face(dr, 170, 360, 185, (244, 195, 160, 255), (107, 58, 36, 255), "mum")
+    dr.ellipse((380, 620, 760, 880), fill=(77, 120, 184, 255))  # the kid's dungarees
+    _face(dr, 570, 610, 130, (182, 122, 82, 255), (42, 26, 30, 255), "kid")
+    sharp = img.filter(ImageFilter.GaussianBlur(3)).resize((640, 360), Image.LANCZOS)
+    blur = img.filter(ImageFilter.GaussianBlur(26)).resize((640, 360), Image.LANCZOS)
+    sharp.save(os.path.join(lib.PNG_DIR, "waking_view.png"), compress_level=9)
+    blur.save(os.path.join(lib.PNG_DIR, "waking_blur.png"), compress_level=9)
+    return "processed/waking_view.png", "processed/waking_blur.png"
+
+
 def build_interlude():
     sp = {}
+    f_view, f_blur = waking_view_png()
+    sp["waking_view"] = {"file": f_view, "pivot": [320, 180], "px_scale": 2.0,
+                         "note": "what the opening eyes see: the family leaning in over the bed, warm and almost in focus (full screen, centre pivot)"}
+    sp["waking_blur"] = {"file": f_blur, "pivot": [320, 180], "px_scale": 2.0, "note": "the same, completely out of focus (the first moment)"}
     f_top, (w, h) = eyelid_png("eyelid_top.png", True)
     sp["eyelid_top"] = {"file": f_top, "pivot": [w / 2, h], "px_scale": 2.0,
                         "note": "the upper lid, 1280 x 520 design px; pivot = bottom centre = the closing edge (put it at the eye line y 360 when shut, slide it up to open)"}
@@ -772,7 +950,7 @@ def build_stage():
     sp.update(build_png_sprites())
     layers = []
     build_backdrop()
-    layers.append({"id": "backdrop", "file": "source/backdrop.svg", "pos": [0, 0], "size": [W, H], "px_scale": 0.5})
+    layers.append(P.room_layer("backdrop", "backdrop.svg"))
     build_riser()
     layers.append({"id": "riser", "file": "source/riser.svg", "pos": [520, 252], "size": [240, 34], "px_scale": 0.5})
     for side in (-1, 1):

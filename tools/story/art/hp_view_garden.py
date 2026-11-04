@@ -138,7 +138,7 @@ def build_backdrop():
     # big trees behind the garden walls on both sides
     d += tree(120, 250, 130, 120, 2) + tree(1170, 250, 130, 120, 7, "#a8d48e", "#78c070", "#4a9a5a")
     # the plaza: sandstone paving, grass verges, flower beds, a mosaic ring
-    fdefs, fbody = P.paving(R, "fl", stone="#e6c79c", stone2="#d6b085", grout="#a9835a", cell=46, seed=5)
+    fdefs, fbody = P.paving(R, "fl", stone="#d8b588", stone2="#c9a273", grout="#94704a", cell=46, seed=5)
     defs += fdefs
     d += fbody
     for sgn in (-1, 1):  # grass verges along the side walls
@@ -195,6 +195,9 @@ def build_backdrop():
     # warm golden-hour cast over the whole garden
     defs += lin_grad("gh", [(0, "#ffb870", 0.0), (1, "#ffb870", 0.2)], 1, 0, 0, 0.6)
     d += rect(0, 0, W, 470, "url(#gh)")
+    gdefs, gbody = P.grade(R, "grade", floor=0.3, ceil=0.0, sides=0.22)
+    defs += gdefs
+    d += gbody
     return write_svg("views/garden_backdrop.svg", (0, 0, W, H), d, defs)
 
 
@@ -301,6 +304,6 @@ def build():
         light_points=[[150, 40], [330, 40], [510, 40], [770, 40], [950, 40], [1130, 40], [450, 62], [830, 62]],
         disco_ball=[640, -62])
     return {"id": "garden", "title": "Courtyard garden",
-            "layers": [P.layer("backdrop", "source/views/garden_backdrop.svg", (0, 0), (W, H)),
-                       P.layer("front_frame", "source/views/garden_front.svg", (0, 0), (W, 470), "front")],
+            "layers": [P.room_layer("backdrop", "views/garden_backdrop.svg"),
+                       P.room_layer("front_frame", "views/garden_front.svg", 470, "front")],
             "anchors": anchors, "pieces": pieces, "palette_hint": "golden"}

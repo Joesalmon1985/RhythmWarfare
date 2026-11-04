@@ -120,44 +120,155 @@ func _full(col: Color) -> void:
 	draw_rect(Rect2(-10, -10, 1300, 740), col)
 
 
-## Waking in a hospital bed: the room goes dark behind closed eyelids, a heartbeat trace and a beep, then the lids open onto warm light.
+## Waking in a hospital bed. The dream room warms and dissolves while a heartbeat starts to beep; the lids grow heavy and close in two
+## drowsy blinks; in the dark a monitor trace sweeps across, its spikes landing on a heart rate that climbs as you come round, and the light
+## through the lids swells on every beat; then the eyes flutter open onto your family leaning in over the bed, blurry at first and pulling
+## into focus, before the morning light floods everything. Reduced effects: one smooth close and open, no flashes, a steady glow.
 func _draw_awakening() -> void:
-	var cl := progress("eyelids_close")
-	var op := progress("eyelids_open")
-	var closed := 0.0
-	if cl >= 0.0:
-		closed = cl * cl * (3.0 - 2.0 * cl)
-	if op >= 0.0:
-		closed = 1.0 - op * op * (3.0 - 2.0 * op)
-	if closed > 0.001:
-		var edge := closed * 372.0  # each lid covers this much from its side; they meet in the middle when closed
+	var calm: bool = Session.reduced_effects
+	# everything below is laid out on the screen (1280 x 720), whatever the cutscene stage's design-space fit
+	var inv := get_global_transform().affine_inverse()
+	var v0: Vector2 = inv * Vector2.ZERO
+	var v1: Vector2 = inv * get_viewport_rect().size
+	var base := Transform2D(0.0, (v1 - v0) / Vector2(1280.0, 720.0), 0.0, v0)
+	draw_set_transform_matrix(base)
+	var ce := ev("eyelids_close")
+	var oe := ev("eyelids_open")
+	var t_close := float(ce.get("t", 2.0))
+	var d_close := maxf(float(ce.get("dur", 2.5)), 0.1)
+	var t_open := float(oe.get("t", 11.0))
+	var d_open := maxf(float(oe.get("dur", 3.0)), 0.1)
+	# the heart: 56 bpm while dreaming, climbing to 92 as you wake; the beat phase is the closed-form integral of that rate
+	var r0 := 56.0
+	var r1 := 92.0
+	var span := maxf(t_open + d_open - t_close, 0.1)
+	var beat_at := func(tt: float) -> float:
+		var u := clampf((tt - t_close) / span, 0.0, 1.0)
+		var ramp := span * (u * u * u - 0.5 * u * u * u * u) + maxf(tt - t_close - span, 0.0)
+		return (r0 * tt + (r1 - r0) * ramp) / 60.0
+	var lub := exp(-fposmod(float(beat_at.call(t)), 1.0) * 9.0)  # the beep: a sharp swell on the beat, gone by the next
+	var dream := clampf(t / (t_close + d_close), 0.0, 1.0)
+	# 1. the dream dissolving: a warm veil thickens over the old room, the beeps faintly lighting it
+	_full(Color(1.0, 0.8, 0.68, 0.5 * dream * dream))
+	if not calm and t < t_close + d_close:
+		_full(Color(0.7, 1.0, 0.85, 0.07 * lub * dream))
+	# 2. behind the lids once they start to open: the family leaning in, out of focus, pulling sharp as the eyes adjust
+	var ou := clampf((t - t_open) / d_open, 0.0, 1.0)
+	if t >= t_open:
+		var focus := clampf((ou - 0.2) / 0.8, 0.0, 1.0)
+		focus = focus * focus * (3.0 - 2.0 * focus)
+		var zoom := lerpf(1.08, 1.0, focus) + 0.012 * sin(t * 0.7)
+		var rect := Rect2(640.0 - 650.0 * zoom, 360.0 - 370.0 * zoom, 1300.0 * zoom, 740.0 * zoom)
+		var blur := assets.interlude_sprite("waking_blur")
+		var sharp := assets.interlude_sprite("waking_view")
+		if not blur.is_empty() and blur["tex"] != null:
+			draw_texture_rect(blur["tex"], rect, false, Color(1, 1, 1, clampf(ou * 8.0, 0.0, 1.0)))
+		if not sharp.is_empty() and sharp["tex"] != null:
+			draw_texture_rect(sharp["tex"], rect, false, Color(1, 1, 1, focus))
+		_full(Color(1.0, 0.97, 0.88, lerpf(0.72, 0.08, focus)))  # overexposed at first, the eyes adjusting
+	# 3. the eyelids: two heavy, drowsy blinks going under; waking, a flutter (a crack of light, shut again, then open)
+	var lid_keys: Array = []
+	var lu := 0.0
+	var c := 0.0
+	if t >= t_close and t < t_close + d_close:
+		lu = (t - t_close) / d_close
+		lid_keys = [[0.0, 0.0], [1.0, 1.0]] if calm else [[0.0, 0.0], [0.24, 0.62], [0.4, 0.34], [0.68, 0.9], [0.8, 0.76], [1.0, 1.0]]
+	elif t >= t_close + d_close and t < t_open:
+		c = 1.0
+	elif t >= t_open and t < t_open + d_open:
+		lu = ou
+		lid_keys = [[0.0, 1.0], [1.0, 0.0]] if calm else [[0.0, 1.0], [0.14, 0.7], [0.26, 0.97], [0.48, 0.42], [0.6, 0.56], [1.0, 0.0]]
+	for i in range(1, lid_keys.size()):
+		if lu <= float(lid_keys[i][0]):
+			var ka: Array = lid_keys[i - 1]
+			var kb: Array = lid_keys[i]
+			var ks := (lu - float(ka[0])) / maxf(float(kb[0]) - float(ka[0]), 0.001)
+			c = lerpf(float(ka[1]), float(kb[1]), ks * ks * (3.0 - 2.0 * ks))
+			break
+	var shut := clampf((c - 0.82) / 0.18, 0.0, 1.0)
+	if c > 0.001:
 		var top := assets.interlude_sprite("eyelid_top")
 		var bot := assets.interlude_sprite("eyelid_bottom")
-		draw_rect(Rect2(-10, -10, 1300, edge + 10), Color(0.12, 0.05, 0.07))
-		draw_rect(Rect2(-10, 720 - edge, 1300, edge + 10), Color(0.12, 0.05, 0.07))
-		if not top.is_empty() and top["tex"] != null:
-			var h := float(top["tex"].get_height()) * float(top["scale"])
-			draw_texture_rect(top["tex"], Rect2(-10, edge - h, 1300, h), false, Color(1, 1, 1, 1))
 		if not bot.is_empty() and bot["tex"] != null:
-			var h2 := float(bot["tex"].get_height()) * float(bot["scale"])
-			draw_texture_rect(bot["tex"], Rect2(-10, 720 - edge, 1300, h2), false, Color(1, 1, 1, 1))
-	var mu := progress("monitor")
-	if mu >= 0.0 and t < float(ev("monitor")["t"]) + float(ev("monitor")["dur"]):
-		var ml := assets.interlude_sprite("monitor_line")
-		var beat := fposmod(t * 1.1, 1.0)
-		var glow := exp(-beat * 6.0)
-		if not ml.is_empty() and ml["tex"] != null:
-			var w := float(ml["tex"].get_width()) * float(ml["scale"])
-			var x := fposmod(t * 160.0, maxf(w, 1.0))
-			var fade := clampf(mu * 4.0, 0.0, 1.0) * (1.0 - clampf((closed - 0.9) * 10.0, 0.0, 1.0) * 0.0)
-			for k in range(-1, int(1300.0 / maxf(w, 1.0)) + 2):
-				_spr("monitor_line", Vector2(float(k) * w - x, 340.0), Vector2.ONE, 0.0, Color(0.5, 1.0, 0.7, 0.55 * fade + 0.4 * glow * fade))
-		draw_circle(Vector2(640, 340), 4.0 + 14.0 * glow, Color(0.5, 1.0, 0.7, 0.25 * glow))
+			var hb := float(bot["tex"].get_height()) * float(bot["scale"])
+			draw_texture_rect(bot["tex"], Rect2(-10, lerpf(790.0, 300.0, c), 1300, hb), false, Color(1, 1, 1, 1))
+		if not top.is_empty() and top["tex"] != null:
+			var ht := float(top["tex"].get_height()) * float(top["scale"])
+			draw_texture_rect(top["tex"], Rect2(-10, lerpf(-90.0, 420.0, c) - ht, 1300, ht), false, Color(1, 1, 1, 1))
+		if shut > 0.0:  # daylight through closed lids: a warm red glow that swells with every heartbeat
+			var g := assets.sprite("glow")
+			if not g.is_empty() and g["tex"] != null:
+				var swell := 0.3 if calm else 0.14 + 0.3 * lub
+				for k in 2:
+					var sc := Vector2(11.0, 6.5) * (1.0 + 0.6 * float(k)) * float(g["scale"])
+					draw_set_transform_matrix(base * Transform2D(0.0, sc, 0.0, Vector2(640, 380)))
+					draw_texture(g["tex"], -g["pivot"], Color(1.0, 0.42 + 0.14 * float(k), 0.3, swell * shut * (0.55 - 0.2 * float(k))))
+				draw_set_transform_matrix(base)
+	# 4. the monitor in the dark: a phosphor trace swept left to right, one spike per heartbeat, fading behind the write head
+	var me := ev("monitor")
+	if not me.is_empty() and t >= float(me["t"]):
+		var m0 := float(me["t"])
+		var vis := clampf((t - m0) / 0.8, 0.0, 1.0) * (1.0 - clampf((t - (m0 + float(me.get("dur", 8.0)) - 0.8)) / 0.8, 0.0, 1.0))
+		if t >= t_open:
+			vis *= 1.0 - clampf((ou - 0.05) / 0.3, 0.0, 1.0)
+		if vis > 0.01:
+			var ecg := func(p: float) -> float:  # the trace height (px, up) at beat phase p: P wave, QRS on the whole beat, T wave
+				var x := fposmod(p + 0.5, 1.0) - 0.5
+				return 8.0 * exp(-pow((x + 0.13) / 0.035, 2.0)) - 12.0 * exp(-pow((x + 0.028) / 0.012, 2.0)) + 74.0 * exp(-pow(x / 0.014, 2.0)) \
+					- 24.0 * exp(-pow((x - 0.028) / 0.012, 2.0)) + 14.0 * exp(-pow((x - 0.24) / 0.055, 2.0))
+			var speed := 330.0  # px per second
+			var tail := 1.9  # seconds of trace left glowing behind the write head
+			var head := fposmod((t - m0) * speed, 1280.0)
+			var runs: Array = []  # [points, fades] per unbroken stretch of the sweep
+			var pts := PackedVector2Array()
+			var fades := PackedFloat32Array()
+			var n := int(tail * speed / 1.5)
+			var last_x := -1.0
+			for i in n + 1:
+				var age := tail * (1.0 - float(i) / float(n))
+				if t - age < m0:
+					continue
+				var x := head - age * speed
+				if x < 0.0:
+					x += 1280.0
+				if x < last_x:  # the sweep wrapped round: close this stretch, start again at the left edge
+					runs.append([pts, fades])
+					pts = PackedVector2Array()
+					fades = PackedFloat32Array()
+				last_x = x
+				pts.append(Vector2(x, 384.0 - float(ecg.call(beat_at.call(t - age))) * (0.75 if calm else 1.0)))
+				fades.append(pow(1.0 - age / tail, 1.6))
+			runs.append([pts, fades])
+			var tc := Color(0.5, 1.0, 0.76)
+			for pass_i in 3:
+				var lw: float = [16.0, 7.0, 2.6][pass_i]
+				var la: float = [0.1, 0.25, 0.95][pass_i]
+				var lc := tc.lightened(0.55) if pass_i == 2 else tc
+				for run in runs:
+					var rp: PackedVector2Array = run[0]
+					if rp.size() < 2:
+						continue
+					var cols := PackedColorArray()
+					for fa in (run[1] as PackedFloat32Array):
+						cols.append(Color(lc, la * fa * vis))
+					draw_polyline_colors(rp, cols, lw)
+			if pts.size() > 0:
+				draw_circle(pts[pts.size() - 1], 10.0, Color(tc, 0.3 * vis))
+				draw_circle(pts[pts.size() - 1], 3.6, Color(0.9, 1.0, 0.95, vis))
+			var bpm := r0 + (r1 - r0) * clampf((t - t_close) / span, 0.0, 1.0)
+			var hc := Color(0.55, 1.0, 0.78, vis * (0.6 + (0.0 if calm else 0.4 * lub)))
+			var hp := Vector2(1072, 262)
+			var hs := 10.0 * (1.0 + (0.0 if calm else 0.25 * lub))
+			draw_colored_polygon(PackedVector2Array([hp + Vector2(0, hs * 0.9), hp + Vector2(-hs * 1.1, -hs * 0.1), hp + Vector2(-hs * 0.6, -hs * 0.8),
+				hp + Vector2(0, -hs * 0.35), hp + Vector2(hs * 0.6, -hs * 0.8), hp + Vector2(hs * 1.1, -hs * 0.1)]), hc)
+			var font := ThemeDB.fallback_font
+			draw_string(font, Vector2(1092, 275), str(int(round(bpm))), HORIZONTAL_ALIGNMENT_LEFT, -1, 34, hc)
+			draw_string(font, Vector2(1095, 296), "BPM", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(hc, hc.a * 0.7))
+	# 5. the morning floods in
 	var wu := progress("white")
 	if wu >= 0.0:
-		_full(Color(1.0, 0.97, 0.9, clampf(wu * 1.3, 0.0, 1.0)))
-	elif op >= 0.0:
-		_full(Color(1.0, 0.97, 0.9, 0.5 * (1.0 - closed) * op))
+		_full(Color(1.0, 0.97, 0.9, clampf(wu * 1.25, 0.0, 1.0)))
+	draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
 ## Coming to on a ward: plain cold light, a slow-breathing tunnel, then a ward door swings open onto the new room.

@@ -5,28 +5,40 @@
  "art": "hospital",
  "music_pack": "res://songs/m05_counterpoint",
  "description": "You wake in a hospital bed with your family around you. Was it all a dream? One more set, for the people who love you.",
- "intro": "You're awake.",
+ "intro": "You're awake. And everyone came.",
  "duration_bars": 56,
  "sequence_bars": 2,
  "initial_energy": 45,
  "palettes": {
   "low": [
-   "#7a8fb8",
-   "#c9a27a"
+   "#5c6fae",
+   "#a86a8e"
   ],
   "cool": [
-   "#6fd3e8",
-   "#9fb8ff"
+   "#22c7bd",
+   "#6d8dff"
   ],
   "warm": [
-   "#ffc46b",
-   "#ff8fa3"
+   "#ff9b3d",
+   "#ff5f7e"
   ],
   "rave": [
-   "#ffd36b",
-   "#7fe0d0",
-   "#ff9fb8",
-   "#fff1a8"
+   "#ffad2e",
+   "#1fd1c1",
+   "#ff5c8c",
+   "#ffd84a"
+  ],
+  "ward": [
+   "#ffb052",
+   "#2fc9b9"
+  ],
+  "tea": [
+   "#ff8f4a",
+   "#ffc24a"
+  ],
+  "golden": [
+   "#ffa53a",
+   "#ff6a5e"
   ]
  },
  "energy": {
@@ -97,17 +109,17 @@
     },
     {
      "at_bar": 1,
-     "action": "doors_open"
-    },
-    {
-     "at_bar": 1,
      "action": "piece_on",
      "piece": "window_sunbeams"
     },
     {
-     "at_bar": 3,
+     "at_bar": 1,
      "action": "piece_on",
      "piece": "heart_monitor"
+    },
+    {
+     "at_bar": 3,
+     "action": "doors_open"
     },
     {
      "at_bar": 3,
@@ -126,6 +138,17 @@
     {
      "at_bar": 7,
      "action": "led_eq"
+    },
+    {
+     "at_bar": 7,
+     "action": "piece_on",
+     "piece": "flower_vase"
+    },
+    {
+     "at_bar": 7,
+     "action": "piece_pulse",
+     "piece": "heart_monitor",
+     "bars": 2
     }
    ]
   },
@@ -142,6 +165,11 @@
     },
     {
      "at_bar": 9,
+     "action": "piece_on",
+     "piece": "fairy_lights"
+    },
+    {
+     "at_bar": 9,
      "action": "clap_sync",
      "bars": 2,
      "when": {
@@ -151,12 +179,16 @@
     },
     {
      "at_bar": 11,
-     "action": "piece_on",
-     "piece": "fairy_lights"
+     "action": "beams_sweep"
     },
     {
      "at_bar": 11,
-     "action": "beams_sweep"
+     "action": "piece_on",
+     "piece": "cards_garland"
+    },
+    {
+     "at_bar": 11,
+     "action": "haze_burst"
     },
     {
      "at_bar": 13,
@@ -171,11 +203,23 @@
     {
      "at_bar": 13,
      "action": "piece_on",
-     "piece": "cards_garland"
+     "piece": "paper_stars"
     },
     {
      "at_bar": 15,
      "action": "led_bars"
+    },
+    {
+     "at_bar": 15,
+     "action": "piece_pulse",
+     "piece": "window_sunbeams",
+     "bars": 2
+    },
+    {
+     "at_bar": 15,
+     "action": "camera_push",
+     "zoom": 0.06,
+     "bars": 2
     }
    ]
   },
@@ -215,14 +259,31 @@
      "action": "beams_fan"
     },
     {
-     "at_bar": 23,
-     "action": "spotlight_sweep"
+     "at_bar": 21,
+     "action": "piece_pulse",
+     "piece": "corridor_doorglow",
+     "bars": 2
     },
     {
      "at_bar": 21,
      "action": "camera_look",
-     "dx": -130,
+     "dx": -110,
      "bars": 3
+    },
+    {
+     "at_bar": 23,
+     "action": "spotlight_sweep"
+    },
+    {
+     "at_bar": 23,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
+     "at_bar": 23,
+     "action": "piece_pulse",
+     "piece": "corridor_lights",
+     "bars": 2
     }
    ]
   },
@@ -242,20 +303,56 @@
     },
     {
      "at_bar": 25,
-     "action": "lights_warm"
+     "action": "front_row_sway",
+     "bars": 2
     },
     {
-     "at_bar": 25,
-     "action": "gather_at_door",
-     "group": "gatherers"
+     "at_bar": 27,
+     "action": "bring_in",
+     "group": "gatherers",
+     "when": {
+      "energy_min": 50
+     },
+     "else": "gather_at_door"
+    },
+    {
+     "at_bar": 27,
+     "action": "piece_pulse",
+     "piece": "cafeteria_sun",
+     "bars": 2
     },
     {
      "at_bar": 29,
      "action": "beams_cross"
     },
     {
+     "at_bar": 29,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 29,
+     "action": "piece_pulse",
+     "piece": "cafeteria_vending",
+     "bars": 2
+    },
+    {
      "at_bar": 31,
      "action": "led_rings"
+    },
+    {
+     "at_bar": 31,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 31,
+     "action": "camera_push",
+     "zoom": 0.08,
+     "bars": 2
     }
    ]
   },
@@ -279,6 +376,12 @@
      "group": "circle"
     },
     {
+     "at_bar": 35,
+     "action": "piece_pulse",
+     "piece": "garden_sunrays",
+     "bars": 2
+    },
+    {
      "at_bar": 37,
      "action": "disco_ball_on"
     },
@@ -287,14 +390,25 @@
      "action": "lights_cool"
     },
     {
-     "at_bar": 39,
-     "action": "beams_fan"
+     "at_bar": 37,
+     "action": "piece_pulse",
+     "piece": "garden_spray",
+     "bars": 2
     },
     {
      "at_bar": 37,
      "action": "camera_look",
-     "dx": 120,
+     "dx": 110,
      "bars": 3
+    },
+    {
+     "at_bar": 39,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 39,
+     "action": "bring_in",
+     "group": "late"
     }
    ]
   },
@@ -307,8 +421,15 @@
    "events": [
     {
      "at_bar": 41,
-     "action": "bring_in",
-     "group": "late"
+     "action": "piece_pulse",
+     "piece": "garden_sunrays",
+     "bars": 2
+    },
+    {
+     "at_bar": 41,
+     "action": "camera_push",
+     "zoom": 0.1,
+     "bars": 2
     },
     {
      "at_bar": 43,
@@ -324,14 +445,27 @@
      "bars": 2
     },
     {
+     "at_bar": 45,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 45,
+     "action": "piece_pulse",
+     "piece": "garden_spray",
+     "bars": 2
+    },
+    {
      "at_bar": 47,
      "action": "led_wave"
     },
     {
-     "at_bar": 41,
-     "action": "camera_push",
-     "zoom": 0.12,
-     "bars": 2
+     "at_bar": 47,
+     "action": "bring_in",
+     "group": "peak"
+    },
+    {
+     "at_bar": 47,
+     "action": "lights_warm"
     }
    ]
   },
@@ -359,6 +493,12 @@
      "group": "peak"
     },
     {
+     "at_bar": 49,
+     "action": "piece_pulse",
+     "piece": "window_sunbeams",
+     "bars": 2
+    },
+    {
      "at_bar": 51,
      "action": "hero_solo",
      "bars": 4
@@ -368,8 +508,10 @@
      "action": "spotlight_hero"
     },
     {
-     "at_bar": 53,
-     "action": "lights_rave"
+     "at_bar": 51,
+     "action": "piece_pulse",
+     "piece": "heart_monitor",
+     "bars": 2
     },
     {
      "at_bar": 53,
@@ -379,6 +521,12 @@
       "energy_min": 50
      },
      "else": "lights_cool"
+    },
+    {
+     "at_bar": 53,
+     "action": "camera_push",
+     "zoom": 0.12,
+     "bars": 2
     },
     {
      "at_bar": 55,
@@ -397,9 +545,9 @@
      "else": "front_row_sway"
     },
     {
-     "at_bar": 53,
-     "action": "camera_push",
-     "zoom": 0.12,
+     "at_bar": 55,
+     "action": "piece_pulse",
+     "piece": "window_sunbeams",
      "bars": 2
     }
    ]
@@ -426,13 +574,13 @@
     "dancers_step_back",
     "look_around"
    ],
-   "good_text": "The whole family came through the door at once, smiling.",
-   "bad_text": "A few relatives hovered at the door, not sure what to say."
+   "good_text": "The whole family came down the corridor at once, beaming.",
+   "bad_text": "A few relatives hovered by the doors, not sure what to say."
   },
   {
    "id": "cheer_up",
    "title": "Cheering everyone up",
-   "at_bar": 33,
+   "at_bar": 37,
    "block": "into_the_garden",
    "rule": {
     "energy_min": 58,
@@ -448,7 +596,7 @@
     "circle_breaks_awkward"
    ],
    "good_text": "Granny took your hand and the whole circle joined in.",
-   "bad_text": "The circle dithered and drifted apart."
+   "bad_text": "The circle wobbled, then drifted apart."
   },
   {
    "id": "the_big_song",
@@ -468,7 +616,7 @@
    "bad": [
     "drop_stumble"
    ],
-   "good_text": "The drop landed and the whole garden jumped together.",
+   "good_text": "Everyone's favourite song: the whole garden jumped together.",
    "bad_text": "The drop stumbled, but everyone kept smiling."
   },
   {
@@ -486,7 +634,7 @@
     "winback_cheer"
    ],
    "bad": [],
-   "good_text": "You won the garden back after a wobble.",
+   "good_text": "You won the garden back. Granny is doing the twist.",
    "bad_text": "",
    "kind": "winback"
   },
@@ -508,8 +656,8 @@
    "bad": [
     "final_flicker"
    ],
-   "good_text": "The family sang you all the way out of the ward.",
-   "bad_text": "The lights dipped and the visitors began to drift away."
+   "good_text": "The family sang you all the way back to your room.",
+   "bad_text": "The lights dipped and the visitors began to drift home."
   }
  ],
  "endings": {
@@ -517,7 +665,7 @@
    "title": "Home for Good",
    "energy_min": 85,
    "pass_min": 0.94,
-   "text": "Everyone you love is dancing in the garden. It wasn't a dream, and you're going home."
+   "text": "Everyone you love is dancing round your bed. It wasn't a dream: you're awake, and you're going home."
   },
   "on_the_mend": {
    "title": "On the Mend",
@@ -529,7 +677,7 @@
    "title": "A Quiet Afternoon",
    "energy_min": -1,
    "pass_min": 0.0,
-   "text": "The visitors tiptoe out and leave you to rest. There's always tomorrow."
+   "text": "The visitors tiptoe out with a wave and leave you to rest. There's always tomorrow."
   }
  },
  "ending_order": [
@@ -680,7 +828,7 @@
  "actors": [
   {
    "id": "c01",
-   "archetype": "doctor",
+   "archetype": "kid",
    "variant": "a",
    "x": 640,
    "depth": 0.78,
@@ -720,7 +868,7 @@
   },
   {
    "id": "c05",
-   "archetype": "kid",
+   "archetype": "nurse",
    "variant": "a",
    "x": 940,
    "depth": 0.6,
@@ -730,7 +878,7 @@
   },
   {
    "id": "c06",
-   "archetype": "nurse",
+   "archetype": "doctor",
    "variant": "a",
    "x": 560,
    "depth": 0.52,
@@ -748,35 +896,32 @@
   },
   {
    "id": "c08",
-   "archetype": "groover",
+   "archetype": "dad",
    "variant": "a",
    "x": 240,
    "depth": 0.85,
    "group": "core",
    "role": "front",
-   "thresh": -8,
-   "art": "night_one"
+   "thresh": -8
   },
   {
    "id": "c09",
-   "archetype": "curly",
+   "archetype": "granny",
    "variant": "b",
    "x": 1030,
    "depth": 0.82,
    "group": "core",
    "role": "front",
-   "thresh": -10,
-   "art": "night_one"
+   "thresh": -10
   },
   {
    "id": "c10",
-   "archetype": "ponytail",
+   "archetype": "nurse",
    "variant": "b",
    "x": 650,
    "depth": 0.3,
    "group": "core",
-   "thresh": -6,
-   "art": "night_one"
+   "thresh": -6
   },
   {
    "id": "e01",
@@ -1067,38 +1212,35 @@
   },
   {
    "id": "corridor_c08",
-   "archetype": "hoodie",
-   "variant": "a",
+   "archetype": "nurse",
+   "variant": "b",
    "x": 240,
    "depth": 0.85,
    "group": "core",
    "view": "corridor",
    "role": "front",
-   "thresh": -8,
-   "art": "night_one"
+   "thresh": -8
   },
   {
    "id": "corridor_c09",
-   "archetype": "punk",
+   "archetype": "doctor",
    "variant": "b",
    "x": 1030,
    "depth": 0.82,
    "group": "core",
    "view": "corridor",
    "role": "front",
-   "thresh": -10,
-   "art": "night_one"
+   "thresh": -10
   },
   {
    "id": "corridor_c10",
-   "archetype": "curly",
+   "archetype": "kid",
    "variant": "b",
    "x": 650,
    "depth": 0.3,
    "group": "core",
    "view": "corridor",
-   "thresh": -6,
-   "art": "night_one"
+   "thresh": -6
   },
   {
    "id": "corridor_g01",
@@ -1341,38 +1483,35 @@
   },
   {
    "id": "cafeteria_c08",
-   "archetype": "bob",
-   "variant": "a",
+   "archetype": "mum",
+   "variant": "b",
    "x": 240,
    "depth": 0.85,
    "group": "core",
    "view": "cafeteria",
    "role": "front",
-   "thresh": -8,
-   "art": "night_one"
+   "thresh": -8
   },
   {
    "id": "cafeteria_c09",
-   "archetype": "ponytail",
+   "archetype": "nurse",
    "variant": "b",
    "x": 1030,
    "depth": 0.82,
    "group": "core",
    "view": "cafeteria",
    "role": "front",
-   "thresh": -10,
-   "art": "night_one"
+   "thresh": -10
   },
   {
    "id": "cafeteria_c10",
-   "archetype": "punk",
+   "archetype": "doctor",
    "variant": "b",
    "x": 650,
    "depth": 0.3,
    "group": "core",
    "view": "cafeteria",
-   "thresh": -6,
-   "art": "night_one"
+   "thresh": -6
   },
   {
    "id": "cafeteria_g01",
@@ -1615,38 +1754,35 @@
   },
   {
    "id": "garden_c08",
-   "archetype": "groover",
-   "variant": "a",
+   "archetype": "dad",
+   "variant": "b",
    "x": 240,
    "depth": 0.85,
    "group": "core",
    "view": "garden",
    "role": "front",
-   "thresh": -8,
-   "art": "night_one"
+   "thresh": -8
   },
   {
    "id": "garden_c09",
-   "archetype": "curly",
+   "archetype": "mum",
    "variant": "b",
    "x": 1030,
    "depth": 0.82,
    "group": "core",
    "view": "garden",
    "role": "front",
-   "thresh": -10,
-   "art": "night_one"
+   "thresh": -10
   },
   {
    "id": "garden_c10",
-   "archetype": "ponytail",
-   "variant": "b",
+   "archetype": "nurse",
+   "variant": "a",
    "x": 650,
    "depth": 0.3,
    "group": "core",
    "view": "garden",
-   "thresh": -6,
-   "art": "night_one"
+   "thresh": -6
   },
   {
    "id": "garden_g01",
@@ -1817,47 +1953,47 @@
   {
    "id": "s01",
    "shape": "sil_a",
-   "x": 70,
+   "x": 64,
    "depth": 0.0,
    "group": "core",
    "thresh": -8
   },
   {
    "id": "s02",
-   "shape": "sil_b",
-   "x": 152,
+   "shape": "sil_c",
+   "x": 150,
    "depth": 0.0,
    "group": "core",
    "thresh": -1
   },
   {
    "id": "s03",
-   "shape": "sil_c",
-   "x": 231,
+   "shape": "sil_b",
+   "x": 236,
    "depth": 0.0,
    "group": "core",
-   "thresh": -8
+   "thresh": -6
   },
   {
    "id": "s04",
    "shape": "sil_a",
-   "x": 306,
-   "depth": 0.0,
-   "group": "core",
-   "thresh": -4
-  },
-  {
-   "id": "s05",
-   "shape": "sil_b",
-   "x": 378,
+   "x": 330,
    "depth": 0.0,
    "group": "core",
    "thresh": 2
   },
   {
+   "id": "s05",
+   "shape": "sil_b",
+   "x": 950,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -4
+  },
+  {
    "id": "s06",
    "shape": "sil_c",
-   "x": 461,
+   "x": 1044,
    "depth": 0.0,
    "group": "core",
    "thresh": 0
@@ -1865,7 +2001,7 @@
   {
    "id": "s07",
    "shape": "sil_a",
-   "x": 558,
+   "x": 1130,
    "depth": 0.0,
    "group": "core",
    "thresh": -7
@@ -1873,58 +2009,10 @@
   {
    "id": "s08",
    "shape": "sil_b",
-   "x": 623,
-   "depth": 0.0,
-   "group": "core",
-   "thresh": -7
-  },
-  {
-   "id": "s09",
-   "shape": "sil_c",
-   "x": 715,
-   "depth": 0.0,
-   "group": "core",
-   "thresh": 1
-  },
-  {
-   "id": "s10",
-   "shape": "sil_a",
-   "x": 810,
-   "depth": 0.0,
-   "group": "core",
-   "thresh": -2
-  },
-  {
-   "id": "s11",
-   "shape": "sil_b",
-   "x": 868,
+   "x": 1216,
    "depth": 0.0,
    "group": "core",
    "thresh": 3
-  },
-  {
-   "id": "s12",
-   "shape": "sil_c",
-   "x": 971,
-   "depth": 0.0,
-   "group": "core",
-   "thresh": 7
-  },
-  {
-   "id": "s13",
-   "shape": "sil_a",
-   "x": 1034,
-   "depth": 0.0,
-   "group": "core",
-   "thresh": -8
-  },
-  {
-   "id": "s14",
-   "shape": "sil_b",
-   "x": 1115,
-   "depth": 0.0,
-   "group": "core",
-   "thresh": -5
   },
   {
    "id": "corridor_s01",
