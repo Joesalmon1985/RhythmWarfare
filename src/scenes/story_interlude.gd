@@ -112,6 +112,9 @@ func _run_event(e: Dictionary, t: float) -> void:
 			stage.crowd.set_ending("")
 			stage.crowd.direct(stage.crowd.present_ids(), "hands_up", t, float(e["dur"]) + 1.0, false, 0.05)
 			stage.crowd.vanish_all(t, float(e["dur"]) - 1.0, -300.0, 0.04)
+		"fade_crowd":
+			stage.crowd.set_ending("")
+			stage.crowd.vanish_all(t, float(e.get("dur", 3.0)), 0.0, 0.05)
 		"sink_crowd":
 			stage.crowd.vanish_all(t, float(e["dur"]) - 1.0, 190.0, 0.04)
 

@@ -6,6 +6,8 @@ const CHAPTERS := {
 	"night_one": {"bars": 128, "top": "legendary_set", "mid": "good_night", "low": "lost_the_floor", "seqs": 64},
 	"mothership": {"bars": 80, "top": "galactic_headliner", "mid": "honoured_guest", "low": "beamed_home", "seqs": 40},
 	"underworld": {"bars": 64, "top": "resident_dj", "mid": "survived_the_show", "low": "devoured", "seqs": 32},
+	"hospital": {"bars": 56, "top": "family_celebration", "mid": "on_the_mend", "low": "quiet_ward", "seqs": 28},
+	"mental_hospital": {"bars": 64, "top": "star_of_the_ward", "mid": "group_activity", "low": "lights_out", "seqs": 32},
 }
 
 
@@ -15,7 +17,7 @@ func _path(id: String) -> String:
 
 func test_registry_routes_success_to_the_mothership_and_failure_to_the_underworld() -> void:
 	var c := StoryChapters.load_default()
-	assert_eq(c.chapters.size(), 3)
+	assert_eq(c.chapters.size(), 5)
 	assert_eq(c.route("night_one", "legendary_set")["to"], "mothership")
 	assert_eq(c.route("night_one", "good_night")["to"], "mothership")
 	assert_eq(c.route("night_one", "lost_the_floor")["to"], "underworld")
@@ -23,7 +25,12 @@ func test_registry_routes_success_to_the_mothership_and_failure_to_the_underworl
 	assert_eq(c.route("night_one", "lost_the_floor")["interlude"], "descent")
 	for id in ["mothership", "underworld"]:
 		assert_true(c.available(id), id + " ships")
-	for name in ["abduction", "descent"]:
+		assert_eq(c.route(id, "galactic_headliner" if id == "mothership" else "resident_dj")["to"], "hospital", id + ": success wakes you in the hospital")
+		assert_eq(c.route(id, "honoured_guest" if id == "mothership" else "survived_the_show")["to"], "hospital")
+		assert_eq(c.route(id, "beamed_home" if id == "mothership" else "devoured")["to"], "mental_hospital", id + ": failure comes to on the ward")
+		assert_eq(c.route(id, "beamed_home" if id == "mothership" else "devoured")["interlude"], "sectioned")
+	assert_eq(c.route("hospital", "family_celebration"), {}, "the story ends here for now")
+	for name in ["abduction", "descent", "awakening", "sectioned"]:
 		var it := StoryChapters.interlude(name)
 		assert_false(it.is_empty(), name)
 		assert_true((it["events"] as Array).size() >= 5, name + " is a staged sequence")
@@ -47,6 +54,12 @@ func test_unlocks_follow_the_endings_in_the_saves() -> void:
 	assert_eq(p.level_record("night_one")["best_ending"], "legendary_set", "the best ending is kept by rank")
 	p.record("night_one", {"energy": 10.0, "accuracy": 0.4, "best_combo": 1, "sequences_passed": 3, "ending": "lost_the_floor", "ending_rank": 0, "branches": []})
 	assert_eq(p.level_record("night_one")["best_ending"], "legendary_set", "a worse run does not lower the best")
+	assert_false(c.unlocked("hospital", p) or c.unlocked("mental_hospital", p), "the waking chapters need a second chapter first")
+	p.record("mothership", {"energy": 70.0, "accuracy": 0.8, "best_combo": 5, "sequences_passed": 30, "ending": "honoured_guest", "ending_rank": 1, "branches": []})
+	assert_true(c.unlocked("hospital", p))
+	assert_false(c.unlocked("mental_hospital", p))
+	p.record("underworld", {"energy": 0.0, "accuracy": 0.2, "best_combo": 1, "sequences_passed": 2, "ending": "devoured", "ending_rank": 0, "branches": []})
+	assert_true(c.unlocked("mental_hospital", p))
 	DirAccess.remove_absolute(path)
 
 
@@ -98,8 +111,15 @@ func test_chapter_frame_steps_are_deterministic() -> void:
 		assert_eq(sig.call(c), sig.call(a), id + " variable vs 60")
 
 
+func _has_art(id: String) -> bool:
+	var d: StoryData = StoryData.load_file(_path(id))["data"]
+	return FileAccess.file_exists(StoryAssets.BASE + d.art + "/manifest.json")
+
+
 func test_chapter_art_matches_the_chapter_data() -> void:
 	for id in CHAPTERS:
+		if not _has_art(id):
+			continue
 		var d: StoryData = StoryData.load_file(_path(id))["data"]
 		var a := StoryAssets.load_art(d.art)
 		assert_true(a.ok(), id)
@@ -111,6 +131,10 @@ func test_chapter_art_matches_the_chapter_data() -> void:
 	var u := StoryAssets.load_art("underworld")
 	assert_eq(u.view_ids(), ["main", "court", "pit", "furnace"])
 	assert_eq(StoryAssets.load_art("night_one").view_ids(), ["main"], "Night One keeps its one fixed room")
+	if _has_art("hospital"):
+		assert_eq(StoryAssets.load_art("hospital").view_ids(), ["main", "corridor", "cafeteria", "garden"])
+	if _has_art("mental_hospital"):
+		assert_eq(StoryAssets.load_art("mental_hospital").view_ids(), ["main", "corridor", "art_room", "courtyard"])
 
 
 func _camera_route(id: String, policy: String) -> Dictionary:
@@ -157,8 +181,11 @@ func _camera_route(id: String, policy: String) -> Dictionary:
 
 
 func test_the_camera_walks_the_authored_route_and_every_room_is_populated() -> void:
-	var expect := {"mothership": ["main", "gallery", "reactor", "bridge", "main"], "underworld": ["main", "court", "pit", "furnace", "main"]}
+	var expect := {"mothership": ["main", "gallery", "reactor", "bridge", "main"], "underworld": ["main", "court", "pit", "furnace", "main"],
+		"hospital": ["main", "corridor", "cafeteria", "garden", "main"], "mental_hospital": ["main", "corridor", "art_room", "courtyard", "main"]}
 	for id in expect:
+		if not _has_art(id):
+			continue
 		for policy in ["perfect", "none"]:
 			var r := _camera_route(id, policy)
 			assert_eq(r["route"], expect[id], "%s (%s): the camera visits the rooms in order whatever the skill" % [id, policy])

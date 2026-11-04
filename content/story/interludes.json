@@ -1,31 +1,229 @@
 {
  "abduction": {
-  "art": "mothership", "duration": 17.0, "title": "Contact",
+  "art": "mothership",
+  "duration": 17.0,
+  "title": "Contact",
   "events": [
-   {"t": 0.0, "do": "caption", "text": "The music dips. Something is hanging over the club...", "dur": 3.0},
-   {"t": 0.2, "do": "dim", "dur": 2.0},
-   {"t": 1.5, "do": "look_up", "dur": 12.0},
-   {"t": 2.5, "do": "ufo_descend", "dur": 4.5},
-   {"t": 7.5, "do": "beam_on", "dur": 1.5},
-   {"t": 7.8, "do": "caption", "text": "A beam of light finds the dance floor.", "dur": 2.5},
-   {"t": 9.0, "do": "lift_crowd", "dur": 4.5},
-   {"t": 12.5, "do": "caption", "text": "Everyone is taken aboard.", "dur": 2.5},
-   {"t": 13.2, "do": "flood", "dur": 3.6}
+   {
+    "t": 0.0,
+    "do": "caption",
+    "text": "The music dips. Something is hanging over the club...",
+    "dur": 3.0
+   },
+   {
+    "t": 0.2,
+    "do": "dim",
+    "dur": 2.0
+   },
+   {
+    "t": 1.5,
+    "do": "look_up",
+    "dur": 12.0
+   },
+   {
+    "t": 2.5,
+    "do": "ufo_descend",
+    "dur": 4.5
+   },
+   {
+    "t": 7.5,
+    "do": "beam_on",
+    "dur": 1.5
+   },
+   {
+    "t": 7.8,
+    "do": "caption",
+    "text": "A beam of light finds the dance floor.",
+    "dur": 2.5
+   },
+   {
+    "t": 9.0,
+    "do": "lift_crowd",
+    "dur": 4.5
+   },
+   {
+    "t": 12.5,
+    "do": "caption",
+    "text": "Everyone is taken aboard.",
+    "dur": 2.5
+   },
+   {
+    "t": 13.2,
+    "do": "flood",
+    "dur": 3.6
+   }
   ]
  },
  "descent": {
-  "art": "underworld", "duration": 17.0, "title": "The Floor Gives Way",
+  "art": "underworld",
+  "duration": 17.0,
+  "title": "The Floor Gives Way",
   "events": [
-   {"t": 0.0, "do": "caption", "text": "The room has gone quiet. The floor starts to glow...", "dur": 3.0},
-   {"t": 0.2, "do": "dim", "dur": 2.0},
-   {"t": 2.0, "do": "crack_spread", "dur": 4.0},
-   {"t": 4.0, "do": "panic", "dur": 11.0},
-   {"t": 4.5, "do": "fire_jets", "dur": 4.0},
-   {"t": 6.5, "do": "caption", "text": "Something is waiting below.", "dur": 2.5},
-   {"t": 7.5, "do": "portal_open", "dur": 3.0},
-   {"t": 9.5, "do": "sink_crowd", "dur": 4.5},
-   {"t": 12.5, "do": "caption", "text": "Everyone is dragged down.", "dur": 2.5},
-   {"t": 13.2, "do": "wash", "dur": 3.6}
+   {
+    "t": 0.0,
+    "do": "caption",
+    "text": "The room has gone quiet. The floor starts to glow...",
+    "dur": 3.0
+   },
+   {
+    "t": 0.2,
+    "do": "dim",
+    "dur": 2.0
+   },
+   {
+    "t": 2.0,
+    "do": "crack_spread",
+    "dur": 4.0
+   },
+   {
+    "t": 4.0,
+    "do": "panic",
+    "dur": 11.0
+   },
+   {
+    "t": 4.5,
+    "do": "fire_jets",
+    "dur": 4.0
+   },
+   {
+    "t": 6.5,
+    "do": "caption",
+    "text": "Something is waiting below.",
+    "dur": 2.5
+   },
+   {
+    "t": 7.5,
+    "do": "portal_open",
+    "dur": 3.0
+   },
+   {
+    "t": 9.5,
+    "do": "sink_crowd",
+    "dur": 4.5
+   },
+   {
+    "t": 12.5,
+    "do": "caption",
+    "text": "Everyone is dragged down.",
+    "dur": 2.5
+   },
+   {
+    "t": 13.2,
+    "do": "wash",
+    "dur": 3.6
+   }
+  ]
+ },
+ "awakening": {
+  "art": "hospital",
+  "duration": 16.0,
+  "title": "Waking Up",
+  "events": [
+   {
+    "t": 0.0,
+    "do": "caption",
+    "text": "A steady beeping is getting louder...",
+    "dur": 3.0
+   },
+   {
+    "t": 0.3,
+    "do": "fade_crowd",
+    "dur": 3.0
+   },
+   {
+    "t": 2.0,
+    "do": "eyelids_close",
+    "dur": 2.5
+   },
+   {
+    "t": 4.8,
+    "do": "monitor",
+    "dur": 8.0
+   },
+   {
+    "t": 5.0,
+    "do": "caption",
+    "text": "Beep... beep... beep...",
+    "dur": 2.5
+   },
+   {
+    "t": 8.0,
+    "do": "caption",
+    "text": "A warm hand squeezes yours.",
+    "dur": 3.0
+   },
+   {
+    "t": 11.0,
+    "do": "eyelids_open",
+    "dur": 3.0
+   },
+   {
+    "t": 12.0,
+    "do": "caption",
+    "text": "You wake up.",
+    "dur": 3.0
+   },
+   {
+    "t": 13.5,
+    "do": "white",
+    "dur": 2.5
+   }
+  ]
+ },
+ "sectioned": {
+  "art": "mental_hospital",
+  "duration": 16.0,
+  "title": "Coming To",
+  "events": [
+   {
+    "t": 0.0,
+    "do": "caption",
+    "text": "The music stops.",
+    "dur": 2.5
+   },
+   {
+    "t": 0.3,
+    "do": "fade_crowd",
+    "dur": 3.0
+   },
+   {
+    "t": 1.5,
+    "do": "fluoro",
+    "dur": 4.0
+   },
+   {
+    "t": 4.5,
+    "do": "caption",
+    "text": "The lights are very bright and very plain.",
+    "dur": 3.0
+   },
+   {
+    "t": 7.0,
+    "do": "tunnel",
+    "dur": 4.0
+   },
+   {
+    "t": 8.0,
+    "do": "caption",
+    "text": "'Welcome back, love. You're on the ward.'",
+    "dur": 3.5
+   },
+   {
+    "t": 11.5,
+    "do": "caption",
+    "text": "None of it happened. Meet your new friends.",
+    "dur": 3.0
+   },
+   {
+    "t": 12.0,
+    "do": "door",
+    "dur": 3.5
+   },
+   {
+    "t": 14.0,
+    "do": "white",
+    "dur": 2.0
+   }
   ]
  }
 }

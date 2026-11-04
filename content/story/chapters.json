@@ -1,13 +1,97 @@
 {
  "chapters": [
-  {"id": "night_one", "title": "Night One", "data": "res://content/story/night_one.json", "blurb": "Your first set. Open the room, find the groove, peak it, close it.",
+  {
+   "id": "night_one",
+   "title": "Night One",
+   "data": "res://content/story/night_one.json",
+   "blurb": "Your first set. Open the room, find the groove, peak it, close it.",
    "routes": [
-    {"on": ["legendary_set", "good_night"], "to": "mothership", "interlude": "abduction", "label": "The lights go strange..."},
-    {"on": ["lost_the_floor"], "to": "underworld", "interlude": "descent", "label": "The floor cracks open..."}
-   ]},
-  {"id": "mothership", "title": "The Mothership", "data": "res://content/story/mothership.json", "blurb": "Aliens have carried the whole rave up to their ship. Keep the party going among the stars.",
-   "unlock_from": "night_one", "routes": []},
-  {"id": "underworld", "title": "The Underworld", "data": "res://content/story/underworld.json", "blurb": "The floor dropped you into hell. The demons want a show.",
-   "unlock_from": "night_one", "routes": []}
+    {
+     "on": [
+      "legendary_set",
+      "good_night"
+     ],
+     "to": "mothership",
+     "interlude": "abduction",
+     "label": "The lights go strange..."
+    },
+    {
+     "on": [
+      "lost_the_floor"
+     ],
+     "to": "underworld",
+     "interlude": "descent",
+     "label": "The floor cracks open..."
+    }
+   ]
+  },
+  {
+   "id": "mothership",
+   "title": "The Mothership",
+   "data": "res://content/story/mothership.json",
+   "blurb": "Aliens have carried the whole rave up to their ship. Keep the party going among the stars.",
+   "unlock_from": "night_one",
+   "routes": [
+    {
+     "on": [
+      "galactic_headliner",
+      "honoured_guest"
+     ],
+     "to": "hospital",
+     "interlude": "awakening",
+     "label": "A steady beeping is getting louder..."
+    },
+    {
+     "on": [
+      "beamed_home"
+     ],
+     "to": "mental_hospital",
+     "interlude": "sectioned",
+     "label": "The lights are very bright..."
+    }
+   ]
+  },
+  {
+   "id": "underworld",
+   "title": "The Underworld",
+   "data": "res://content/story/underworld.json",
+   "blurb": "The floor dropped you into hell. The demons want a show.",
+   "unlock_from": "night_one",
+   "routes": [
+    {
+     "on": [
+      "resident_dj",
+      "survived_the_show"
+     ],
+     "to": "hospital",
+     "interlude": "awakening",
+     "label": "A steady beeping is getting louder..."
+    },
+    {
+     "on": [
+      "devoured"
+     ],
+     "to": "mental_hospital",
+     "interlude": "sectioned",
+     "label": "The lights are very bright..."
+    }
+   ]
+  },
+  {
+   "id": "hospital",
+   "title": "The Hospital",
+   "data": "res://content/story/hospital.json",
+   "blurb": "You wake in a hospital bed with your family around you. Was it all a dream? Play them one more set.",
+   "unlock_from": "mothership",
+   "routes": []
+  },
+  {
+   "id": "mental_hospital",
+   "title": "The Ward",
+   "data": "res://content/story/mental_hospital.json",
+   "blurb": "You wake on a hospital ward, surrounded by a very eccentric company. None of it happened. Or did it? Time for a set.",
+   "unlock_from": "mothership",
+   "routes": []
+  }
  ]
 }

@@ -1,0 +1,2231 @@
+{
+ "id": "mental_hospital",
+ "title": "The Ward",
+ "chapter": 5,
+ "art": "mental_hospital",
+ "music_pack": "res://songs/m07_crossroads",
+ "description": "You come to on a hospital ward, surrounded by a very eccentric company. None of it happened. Or did it? Time for one more set.",
+ "intro": "Welcome to the ward.",
+ "duration_bars": 64,
+ "sequence_bars": 2,
+ "initial_energy": 45,
+ "palettes": {
+  "low": [
+   "#6f8f8a",
+   "#8a7fb8"
+  ],
+  "cool": [
+   "#7fe8d0",
+   "#9a8cff"
+  ],
+  "warm": [
+   "#ffd08a",
+   "#ff9ac4"
+  ],
+  "rave": [
+   "#7fe8d0",
+   "#ff9ac4",
+   "#ffe27a",
+   "#9a8cff"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Unimpressed",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Dancing",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Hype",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Euphoric",
+    "max": 100
+   }
+  ]
+ },
+ "acts": [
+  {
+   "id": "I",
+   "title": "Settling in",
+   "start_bar": 1
+  },
+  {
+   "id": "II",
+   "title": "Group activity",
+   "start_bar": 17
+  },
+  {
+   "id": "III",
+   "title": "Talent show",
+   "start_bar": 33
+  },
+  {
+   "id": "IV",
+   "title": "Lights out",
+   "start_bar": 49
+  }
+ ],
+ "blocks": [
+  {
+   "id": "the_day_room",
+   "title": "The day room",
+   "act": "Act I",
+   "start_bar": 1,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 1,
+     "action": "lights_low_pulse"
+    },
+    {
+     "at_bar": 1,
+     "action": "doors_open"
+    },
+    {
+     "at_bar": 1,
+     "action": "piece_on",
+     "piece": "wall_clock"
+    },
+    {
+     "at_bar": 3,
+     "action": "piece_on",
+     "piece": "notice_board"
+    },
+    {
+     "at_bar": 3,
+     "action": "front_row_sway"
+    },
+    {
+     "at_bar": 5,
+     "action": "bring_in",
+     "group": "early"
+    },
+    {
+     "at_bar": 5,
+     "action": "piece_on",
+     "piece": "mood_lamp"
+    },
+    {
+     "at_bar": 7,
+     "action": "led_eq"
+    }
+   ]
+  },
+  {
+   "id": "morning_meeting",
+   "title": "Morning meeting",
+   "act": "Act I",
+   "start_bar": 9,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 9,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 9,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 40
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 11,
+     "action": "piece_on",
+     "piece": "bunting"
+    },
+    {
+     "at_bar": 11,
+     "action": "beams_sweep"
+    },
+    {
+     "at_bar": 13,
+     "action": "group_footwork",
+     "group": "core",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 13,
+     "action": "piece_on",
+     "piece": "paper_chains"
+    },
+    {
+     "at_bar": 15,
+     "action": "led_bars"
+    }
+   ]
+  },
+  {
+   "id": "down_the_corridor",
+   "title": "Down the corridor",
+   "act": "Act II",
+   "start_bar": 17,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 17,
+     "action": "move_to",
+     "view": "corridor",
+     "style": "step",
+     "bars": 2
+    },
+    {
+     "at_bar": 17,
+     "action": "bass_reveal"
+    },
+    {
+     "at_bar": 17,
+     "action": "woofer_pump_on"
+    },
+    {
+     "at_bar": 17,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 19,
+     "action": "wave_across",
+     "bars": 3
+    },
+    {
+     "at_bar": 21,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 23,
+     "action": "spotlight_sweep"
+    },
+    {
+     "at_bar": 21,
+     "action": "camera_look",
+     "dx": 120,
+     "bars": 3
+    }
+   ]
+  },
+  {
+   "id": "art_class",
+   "title": "Art class",
+   "act": "Act II",
+   "start_bar": 25,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 25,
+     "action": "move_to",
+     "view": "art_room",
+     "style": "turn_right",
+     "bars": 2
+    },
+    {
+     "at_bar": 25,
+     "action": "lights_warm"
+    },
+    {
+     "at_bar": 25,
+     "action": "gather_at_door",
+     "group": "gatherers"
+    },
+    {
+     "at_bar": 29,
+     "action": "beams_cross"
+    },
+    {
+     "at_bar": 31,
+     "action": "led_rings"
+    }
+   ]
+  },
+  {
+   "id": "easel_circle",
+   "title": "The easel circle",
+   "act": "Act III",
+   "start_bar": 33,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 35,
+     "action": "circle_form",
+     "group": "circle"
+    },
+    {
+     "at_bar": 37,
+     "action": "disco_ball_on"
+    },
+    {
+     "at_bar": 37,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 39,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 37,
+     "action": "camera_look",
+     "dx": -120,
+     "bars": 3
+    }
+   ]
+  },
+  {
+   "id": "into_the_courtyard",
+   "title": "Into the courtyard",
+   "act": "Act III",
+   "start_bar": 41,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 41,
+     "action": "move_to",
+     "view": "courtyard",
+     "style": "walk",
+     "bars": 2
+    },
+    {
+     "at_bar": 41,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
+     "at_bar": 43,
+     "action": "glowsticks_on"
+    },
+    {
+     "at_bar": 43,
+     "action": "hero_center"
+    },
+    {
+     "at_bar": 45,
+     "action": "light_wave",
+     "bars": 2
+    },
+    {
+     "at_bar": 47,
+     "action": "led_wave"
+    }
+   ]
+  },
+  {
+   "id": "talent_show",
+   "title": "The talent show",
+   "act": "Act IV",
+   "start_bar": 49,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 49,
+     "action": "riser_up"
+    },
+    {
+     "at_bar": 49,
+     "action": "bring_in",
+     "group": "peak"
+    },
+    {
+     "at_bar": 51,
+     "action": "hero_solo",
+     "bars": 4
+    },
+    {
+     "at_bar": 51,
+     "action": "spotlight_hero"
+    },
+    {
+     "at_bar": 53,
+     "action": "lights_rave"
+    },
+    {
+     "at_bar": 55,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 49,
+     "action": "camera_push",
+     "zoom": 0.12,
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "lights_out",
+   "title": "Lights out",
+   "act": "Act IV",
+   "start_bar": 57,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 57,
+     "action": "move_to",
+     "view": "main",
+     "style": "turn_left",
+     "bars": 2
+    },
+    {
+     "at_bar": 59,
+     "action": "rave_peak",
+     "bars": 4,
+     "when": {
+      "energy_min": 50
+     },
+     "else": "lights_cool"
+    },
+    {
+     "at_bar": 61,
+     "action": "hands_up_all",
+     "bars": 2,
+     "when": {
+      "energy_min": 55
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 61,
+     "action": "confetti",
+     "when": {
+      "energy_min": 85
+     }
+    },
+    {
+     "at_bar": 63,
+     "action": "beams_cross"
+    },
+    {
+     "at_bar": 61,
+     "action": "camera_push",
+     "zoom": 0.12,
+     "bars": 2
+    }
+   ]
+  }
+ ],
+ "decisions": [
+  {
+   "id": "morning_meeting",
+   "title": "The morning meeting",
+   "at_bar": 17,
+   "block": "down_the_corridor",
+   "rule": {
+    "energy_min": 55,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.5,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "new_dancers_enter",
+    "applause"
+   ],
+   "bad": [
+    "dancers_step_back",
+    "look_around"
+   ],
+   "good_text": "The whole ward turned up in their best costumes, cheering.",
+   "bad_text": "A few of the regulars hung back at the edge of the room."
+  },
+  {
+   "id": "art_class",
+   "title": "Art class",
+   "at_bar": 33,
+   "block": "easel_circle",
+   "rule": {
+    "energy_min": 58,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "circle_spotlight_cheer"
+   ],
+   "bad": [
+    "circle_breaks_awkward"
+   ],
+   "good_text": "The pirate and the king painted a masterpiece and everyone applauded.",
+   "bad_text": "The easels toppled and the circle wandered off."
+  },
+  {
+   "id": "talent_show_drop",
+   "title": "The talent show drop",
+   "at_bar": 49,
+   "block": "talent_show",
+   "rule": {
+    "energy_min": 62,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "drop_synchronised_jump"
+   ],
+   "bad": [
+    "drop_stumble"
+   ],
+   "good_text": "The drop landed and the whole courtyard jumped as one.",
+   "bad_text": "The drop stumbled, but the ward kept clapping."
+  },
+  {
+   "id": "win_back",
+   "title": "Winning the room back",
+   "at_bar": 53,
+   "block": "talent_show",
+   "rule": {
+    "requires_bad_before": true,
+    "recent_sequences": 6,
+    "recent_pass_min": 0.83,
+    "energy_min": 40
+   },
+   "good": [
+    "winback_cheer"
+   ],
+   "bad": [],
+   "good_text": "You won the ward back after a wobble.",
+   "bad_text": "",
+   "kind": "winback"
+  },
+  {
+   "id": "lights_out",
+   "title": "Lights out",
+   "at_bar": 57,
+   "block": "lights_out",
+   "rule": {
+    "energy_min": 65,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.65,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "final_chant"
+   ],
+   "bad": [
+    "final_flicker"
+   ],
+   "good_text": "The ward chanted for an encore.",
+   "bad_text": "The lights flickered and the ward began to shuffle off to bed."
+  }
+ ],
+ "endings": {
+  "star_of_the_ward": {
+   "title": "Star of the Ward",
+   "energy_min": 85,
+   "pass_min": 0.94,
+   "text": "The whole ward is on its feet. You are the star of Ward 7 and everyone's new best friend."
+  },
+  "group_activity": {
+   "title": "Group Activity",
+   "energy_min": 40,
+   "pass_min": 0.5,
+   "text": "A cheerful, slightly chaotic afternoon. The ward is glad you're here."
+  },
+  "lights_out": {
+   "title": "Lights Out",
+   "energy_min": -1,
+   "pass_min": 0.0,
+   "text": "The ward settles down for the night. Tomorrow's another day, and another group activity."
+  }
+ },
+ "ending_order": [
+  "star_of_the_ward",
+  "group_activity",
+  "lights_out"
+ ],
+ "groups": {
+  "circle": [
+   "c02",
+   "c03",
+   "c04",
+   "c05",
+   "c06",
+   "c07",
+   "c08",
+   "c09",
+   "corridor_c02",
+   "corridor_c03",
+   "corridor_c04",
+   "corridor_c05",
+   "corridor_c06",
+   "corridor_c07",
+   "corridor_c08",
+   "corridor_c09",
+   "art_room_c02",
+   "art_room_c03",
+   "art_room_c04",
+   "art_room_c05",
+   "art_room_c06",
+   "art_room_c07",
+   "art_room_c08",
+   "art_room_c09",
+   "courtyard_c02",
+   "courtyard_c03",
+   "courtyard_c04",
+   "courtyard_c05",
+   "courtyard_c06",
+   "courtyard_c07",
+   "courtyard_c08",
+   "courtyard_c09"
+  ],
+  "all": [
+   "c01",
+   "c02",
+   "c03",
+   "c04",
+   "c05",
+   "c06",
+   "c07",
+   "c08",
+   "c09",
+   "c10",
+   "e01",
+   "e02",
+   "e03",
+   "e04",
+   "g01",
+   "g02",
+   "g03",
+   "g04",
+   "g05",
+   "g06",
+   "g07",
+   "g08",
+   "l01",
+   "l02",
+   "l03",
+   "l04",
+   "p01",
+   "p02",
+   "p03",
+   "p04",
+   "corridor_c01",
+   "corridor_c02",
+   "corridor_c03",
+   "corridor_c04",
+   "corridor_c05",
+   "corridor_c06",
+   "corridor_c07",
+   "corridor_c08",
+   "corridor_c09",
+   "corridor_c10",
+   "corridor_g01",
+   "corridor_g02",
+   "corridor_g03",
+   "corridor_g04",
+   "corridor_g05",
+   "corridor_g06",
+   "corridor_l01",
+   "corridor_l02",
+   "corridor_l03",
+   "corridor_l04",
+   "corridor_p01",
+   "corridor_p02",
+   "corridor_p03",
+   "corridor_p04",
+   "art_room_c01",
+   "art_room_c02",
+   "art_room_c03",
+   "art_room_c04",
+   "art_room_c05",
+   "art_room_c06",
+   "art_room_c07",
+   "art_room_c08",
+   "art_room_c09",
+   "art_room_c10",
+   "art_room_g01",
+   "art_room_g02",
+   "art_room_g03",
+   "art_room_g04",
+   "art_room_g05",
+   "art_room_g06",
+   "art_room_l01",
+   "art_room_l02",
+   "art_room_l03",
+   "art_room_l04",
+   "art_room_p01",
+   "art_room_p02",
+   "art_room_p03",
+   "art_room_p04",
+   "courtyard_c01",
+   "courtyard_c02",
+   "courtyard_c03",
+   "courtyard_c04",
+   "courtyard_c05",
+   "courtyard_c06",
+   "courtyard_c07",
+   "courtyard_c08",
+   "courtyard_c09",
+   "courtyard_c10",
+   "courtyard_g01",
+   "courtyard_g02",
+   "courtyard_g03",
+   "courtyard_g04",
+   "courtyard_g05",
+   "courtyard_g06",
+   "courtyard_l01",
+   "courtyard_l02",
+   "courtyard_l03",
+   "courtyard_l04",
+   "courtyard_p01",
+   "courtyard_p02",
+   "courtyard_p03",
+   "courtyard_p04"
+  ]
+ },
+ "actors": [
+  {
+   "id": "c01",
+   "archetype": "orderly",
+   "variant": "a",
+   "x": 640,
+   "depth": 0.78,
+   "group": "core",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "c02",
+   "archetype": "pirate",
+   "variant": "b",
+   "x": 460,
+   "depth": 0.9,
+   "group": "core",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "c03",
+   "archetype": "chef",
+   "variant": "a",
+   "x": 830,
+   "depth": 0.92,
+   "group": "core",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "c04",
+   "archetype": "king",
+   "variant": "b",
+   "x": 340,
+   "depth": 0.62,
+   "group": "core",
+   "thresh": 4
+  },
+  {
+   "id": "c05",
+   "archetype": "superhero",
+   "variant": "a",
+   "x": 940,
+   "depth": 0.6,
+   "group": "core",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "c06",
+   "archetype": "ballerina",
+   "variant": "a",
+   "x": 560,
+   "depth": 0.52,
+   "group": "core",
+   "thresh": 6
+  },
+  {
+   "id": "c07",
+   "archetype": "pirate",
+   "variant": "a",
+   "x": 740,
+   "depth": 0.48,
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "c08",
+   "archetype": "groover",
+   "variant": "a",
+   "x": 240,
+   "depth": 0.85,
+   "group": "core",
+   "role": "front",
+   "thresh": -8,
+   "art": "night_one"
+  },
+  {
+   "id": "c09",
+   "archetype": "curly",
+   "variant": "b",
+   "x": 1030,
+   "depth": 0.82,
+   "group": "core",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "c10",
+   "archetype": "ponytail",
+   "variant": "b",
+   "x": 650,
+   "depth": 0.3,
+   "group": "core",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "e01",
+   "archetype": "chef",
+   "variant": "a",
+   "x": 430,
+   "depth": 0.35,
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e02",
+   "archetype": "superhero",
+   "variant": "b",
+   "x": 880,
+   "depth": 0.38,
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e03",
+   "archetype": "ballerina",
+   "variant": "a",
+   "x": 190,
+   "depth": 0.55,
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e04",
+   "archetype": "orderly",
+   "variant": "b",
+   "x": 1090,
+   "depth": 0.52,
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "g01",
+   "archetype": "pirate",
+   "variant": "a",
+   "x": 169,
+   "depth": 0.4,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "side_x": 60,
+   "side_depth": 0.35,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g02",
+   "archetype": "king",
+   "variant": "b",
+   "x": 309,
+   "depth": 0.5,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "side_x": 1220,
+   "side_depth": 0.39999999999999997,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g03",
+   "archetype": "chef",
+   "variant": "a",
+   "x": 436,
+   "depth": 0.6000000000000001,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "side_x": 60,
+   "side_depth": 0.44999999999999996,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g04",
+   "archetype": "superhero",
+   "variant": "b",
+   "x": 518,
+   "depth": 0.7000000000000001,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "side_x": 1220,
+   "side_depth": 0.5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g05",
+   "archetype": "ballerina",
+   "variant": "a",
+   "x": 659,
+   "depth": 0.4,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "side_x": 60,
+   "side_depth": 0.55,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g06",
+   "archetype": "orderly",
+   "variant": "b",
+   "x": 787,
+   "depth": 0.5,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "side_x": 1220,
+   "side_depth": 0.6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g07",
+   "archetype": "pirate",
+   "variant": "a",
+   "x": 925,
+   "depth": 0.6000000000000001,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 6,
+   "side_x": 60,
+   "side_depth": 0.65,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g08",
+   "archetype": "king",
+   "variant": "b",
+   "x": 1035,
+   "depth": 0.7000000000000001,
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 7,
+   "side_x": 1220,
+   "side_depth": 0.7,
+   "stays_on_bad": false
+  },
+  {
+   "id": "l01",
+   "archetype": "chef",
+   "variant": "b",
+   "x": 249,
+   "depth": 0.6,
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l02",
+   "archetype": "superhero",
+   "variant": "a",
+   "x": 505,
+   "depth": 0.7,
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l03",
+   "archetype": "ballerina",
+   "variant": "b",
+   "x": 763,
+   "depth": 0.8,
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l04",
+   "archetype": "orderly",
+   "variant": "a",
+   "x": 1023,
+   "depth": 0.6,
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "p01",
+   "archetype": "ballerina",
+   "variant": "a",
+   "x": 316,
+   "depth": 0.45,
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p02",
+   "archetype": "orderly",
+   "variant": "b",
+   "x": 519,
+   "depth": 0.53,
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p03",
+   "archetype": "pirate",
+   "variant": "a",
+   "x": 756,
+   "depth": 0.61,
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p04",
+   "archetype": "king",
+   "variant": "b",
+   "x": 931,
+   "depth": 0.45,
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "corridor_c01",
+   "archetype": "pirate",
+   "variant": "a",
+   "x": 640,
+   "depth": 0.78,
+   "group": "core",
+   "view": "corridor",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "corridor_c02",
+   "archetype": "king",
+   "variant": "b",
+   "x": 460,
+   "depth": 0.9,
+   "group": "core",
+   "view": "corridor",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "corridor_c03",
+   "archetype": "superhero",
+   "variant": "a",
+   "x": 830,
+   "depth": 0.92,
+   "group": "core",
+   "view": "corridor",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "corridor_c04",
+   "archetype": "chef",
+   "variant": "b",
+   "x": 340,
+   "depth": 0.62,
+   "group": "core",
+   "view": "corridor",
+   "thresh": 4
+  },
+  {
+   "id": "corridor_c05",
+   "archetype": "ballerina",
+   "variant": "a",
+   "x": 940,
+   "depth": 0.6,
+   "group": "core",
+   "view": "corridor",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "corridor_c06",
+   "archetype": "orderly",
+   "variant": "a",
+   "x": 560,
+   "depth": 0.52,
+   "group": "core",
+   "view": "corridor",
+   "thresh": 6
+  },
+  {
+   "id": "corridor_c07",
+   "archetype": "king",
+   "variant": "a",
+   "x": 740,
+   "depth": 0.48,
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0
+  },
+  {
+   "id": "corridor_c08",
+   "archetype": "hoodie",
+   "variant": "a",
+   "x": 240,
+   "depth": 0.85,
+   "group": "core",
+   "view": "corridor",
+   "role": "front",
+   "thresh": -8,
+   "art": "night_one"
+  },
+  {
+   "id": "corridor_c09",
+   "archetype": "punk",
+   "variant": "b",
+   "x": 1030,
+   "depth": 0.82,
+   "group": "core",
+   "view": "corridor",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "corridor_c10",
+   "archetype": "curly",
+   "variant": "b",
+   "x": 650,
+   "depth": 0.3,
+   "group": "core",
+   "view": "corridor",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "corridor_g01",
+   "archetype": "king",
+   "variant": "a",
+   "x": 154,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "side_x": 60,
+   "side_depth": 0.35,
+   "stays_on_bad": true
+  },
+  {
+   "id": "corridor_g02",
+   "archetype": "chef",
+   "variant": "b",
+   "x": 324,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "side_x": 1220,
+   "side_depth": 0.39999999999999997,
+   "stays_on_bad": true
+  },
+  {
+   "id": "corridor_g03",
+   "archetype": "superhero",
+   "variant": "a",
+   "x": 477,
+   "depth": 0.6000000000000001,
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "side_x": 60,
+   "side_depth": 0.44999999999999996,
+   "stays_on_bad": false
+  },
+  {
+   "id": "corridor_g04",
+   "archetype": "ballerina",
+   "variant": "b",
+   "x": 670,
+   "depth": 0.7000000000000001,
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "side_x": 1220,
+   "side_depth": 0.5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "corridor_g05",
+   "archetype": "orderly",
+   "variant": "a",
+   "x": 843,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "side_x": 60,
+   "side_depth": 0.55,
+   "stays_on_bad": false
+  },
+  {
+   "id": "corridor_g06",
+   "archetype": "pirate",
+   "variant": "b",
+   "x": 969,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "side_x": 1220,
+   "side_depth": 0.6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "corridor_l01",
+   "archetype": "superhero",
+   "variant": "b",
+   "x": 238,
+   "depth": 0.6,
+   "group": "late",
+   "view": "corridor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "corridor_l02",
+   "archetype": "ballerina",
+   "variant": "a",
+   "x": 463,
+   "depth": 0.7,
+   "group": "late",
+   "view": "corridor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "corridor_l03",
+   "archetype": "orderly",
+   "variant": "b",
+   "x": 758,
+   "depth": 0.8,
+   "group": "late",
+   "view": "corridor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "corridor_l04",
+   "archetype": "pirate",
+   "variant": "a",
+   "x": 1041,
+   "depth": 0.6,
+   "group": "late",
+   "view": "corridor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "corridor_p01",
+   "archetype": "orderly",
+   "variant": "a",
+   "x": 322,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "corridor",
+   "enter_from": "side"
+  },
+  {
+   "id": "corridor_p02",
+   "archetype": "pirate",
+   "variant": "b",
+   "x": 520,
+   "depth": 0.53,
+   "group": "peak",
+   "view": "corridor",
+   "enter_from": "side"
+  },
+  {
+   "id": "corridor_p03",
+   "archetype": "king",
+   "variant": "a",
+   "x": 724,
+   "depth": 0.61,
+   "group": "peak",
+   "view": "corridor",
+   "enter_from": "side"
+  },
+  {
+   "id": "corridor_p04",
+   "archetype": "chef",
+   "variant": "b",
+   "x": 988,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "corridor",
+   "enter_from": "side"
+  },
+  {
+   "id": "art_room_c01",
+   "archetype": "king",
+   "variant": "a",
+   "x": 640,
+   "depth": 0.78,
+   "group": "core",
+   "view": "art_room",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "art_room_c02",
+   "archetype": "chef",
+   "variant": "b",
+   "x": 460,
+   "depth": 0.9,
+   "group": "core",
+   "view": "art_room",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "art_room_c03",
+   "archetype": "ballerina",
+   "variant": "a",
+   "x": 830,
+   "depth": 0.92,
+   "group": "core",
+   "view": "art_room",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "art_room_c04",
+   "archetype": "superhero",
+   "variant": "b",
+   "x": 340,
+   "depth": 0.62,
+   "group": "core",
+   "view": "art_room",
+   "thresh": 4
+  },
+  {
+   "id": "art_room_c05",
+   "archetype": "orderly",
+   "variant": "a",
+   "x": 940,
+   "depth": 0.6,
+   "group": "core",
+   "view": "art_room",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "art_room_c06",
+   "archetype": "pirate",
+   "variant": "a",
+   "x": 560,
+   "depth": 0.52,
+   "group": "core",
+   "view": "art_room",
+   "thresh": 6
+  },
+  {
+   "id": "art_room_c07",
+   "archetype": "chef",
+   "variant": "a",
+   "x": 740,
+   "depth": 0.48,
+   "group": "core",
+   "view": "art_room",
+   "thresh": 0
+  },
+  {
+   "id": "art_room_c08",
+   "archetype": "bob",
+   "variant": "a",
+   "x": 240,
+   "depth": 0.85,
+   "group": "core",
+   "view": "art_room",
+   "role": "front",
+   "thresh": -8,
+   "art": "night_one"
+  },
+  {
+   "id": "art_room_c09",
+   "archetype": "ponytail",
+   "variant": "b",
+   "x": 1030,
+   "depth": 0.82,
+   "group": "core",
+   "view": "art_room",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "art_room_c10",
+   "archetype": "punk",
+   "variant": "b",
+   "x": 650,
+   "depth": 0.3,
+   "group": "core",
+   "view": "art_room",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "art_room_g01",
+   "archetype": "chef",
+   "variant": "a",
+   "x": 182,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "art_room",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "side_x": 60,
+   "side_depth": 0.35,
+   "stays_on_bad": true
+  },
+  {
+   "id": "art_room_g02",
+   "archetype": "superhero",
+   "variant": "b",
+   "x": 354,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "art_room",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "side_x": 1220,
+   "side_depth": 0.39999999999999997,
+   "stays_on_bad": true
+  },
+  {
+   "id": "art_room_g03",
+   "archetype": "ballerina",
+   "variant": "a",
+   "x": 473,
+   "depth": 0.6000000000000001,
+   "group": "gatherers",
+   "view": "art_room",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "side_x": 60,
+   "side_depth": 0.44999999999999996,
+   "stays_on_bad": false
+  },
+  {
+   "id": "art_room_g04",
+   "archetype": "orderly",
+   "variant": "b",
+   "x": 640,
+   "depth": 0.7000000000000001,
+   "group": "gatherers",
+   "view": "art_room",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "side_x": 1220,
+   "side_depth": 0.5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "art_room_g05",
+   "archetype": "pirate",
+   "variant": "a",
+   "x": 828,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "art_room",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "side_x": 60,
+   "side_depth": 0.55,
+   "stays_on_bad": false
+  },
+  {
+   "id": "art_room_g06",
+   "archetype": "king",
+   "variant": "b",
+   "x": 981,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "art_room",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "side_x": 1220,
+   "side_depth": 0.6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "art_room_l01",
+   "archetype": "ballerina",
+   "variant": "b",
+   "x": 231,
+   "depth": 0.6,
+   "group": "late",
+   "view": "art_room",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "art_room_l02",
+   "archetype": "orderly",
+   "variant": "a",
+   "x": 483,
+   "depth": 0.7,
+   "group": "late",
+   "view": "art_room",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "art_room_l03",
+   "archetype": "pirate",
+   "variant": "b",
+   "x": 772,
+   "depth": 0.8,
+   "group": "late",
+   "view": "art_room",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "art_room_l04",
+   "archetype": "king",
+   "variant": "a",
+   "x": 1012,
+   "depth": 0.6,
+   "group": "late",
+   "view": "art_room",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "art_room_p01",
+   "archetype": "pirate",
+   "variant": "a",
+   "x": 300,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "art_room",
+   "enter_from": "side"
+  },
+  {
+   "id": "art_room_p02",
+   "archetype": "king",
+   "variant": "b",
+   "x": 504,
+   "depth": 0.53,
+   "group": "peak",
+   "view": "art_room",
+   "enter_from": "side"
+  },
+  {
+   "id": "art_room_p03",
+   "archetype": "chef",
+   "variant": "a",
+   "x": 743,
+   "depth": 0.61,
+   "group": "peak",
+   "view": "art_room",
+   "enter_from": "side"
+  },
+  {
+   "id": "art_room_p04",
+   "archetype": "superhero",
+   "variant": "b",
+   "x": 960,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "art_room",
+   "enter_from": "side"
+  },
+  {
+   "id": "courtyard_c01",
+   "archetype": "chef",
+   "variant": "a",
+   "x": 640,
+   "depth": 0.78,
+   "group": "core",
+   "view": "courtyard",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "courtyard_c02",
+   "archetype": "superhero",
+   "variant": "b",
+   "x": 460,
+   "depth": 0.9,
+   "group": "core",
+   "view": "courtyard",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "courtyard_c03",
+   "archetype": "orderly",
+   "variant": "a",
+   "x": 830,
+   "depth": 0.92,
+   "group": "core",
+   "view": "courtyard",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "courtyard_c04",
+   "archetype": "ballerina",
+   "variant": "b",
+   "x": 340,
+   "depth": 0.62,
+   "group": "core",
+   "view": "courtyard",
+   "thresh": 4
+  },
+  {
+   "id": "courtyard_c05",
+   "archetype": "pirate",
+   "variant": "a",
+   "x": 940,
+   "depth": 0.6,
+   "group": "core",
+   "view": "courtyard",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "courtyard_c06",
+   "archetype": "king",
+   "variant": "a",
+   "x": 560,
+   "depth": 0.52,
+   "group": "core",
+   "view": "courtyard",
+   "thresh": 6
+  },
+  {
+   "id": "courtyard_c07",
+   "archetype": "superhero",
+   "variant": "a",
+   "x": 740,
+   "depth": 0.48,
+   "group": "core",
+   "view": "courtyard",
+   "thresh": 0
+  },
+  {
+   "id": "courtyard_c08",
+   "archetype": "groover",
+   "variant": "a",
+   "x": 240,
+   "depth": 0.85,
+   "group": "core",
+   "view": "courtyard",
+   "role": "front",
+   "thresh": -8,
+   "art": "night_one"
+  },
+  {
+   "id": "courtyard_c09",
+   "archetype": "curly",
+   "variant": "b",
+   "x": 1030,
+   "depth": 0.82,
+   "group": "core",
+   "view": "courtyard",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "courtyard_c10",
+   "archetype": "ponytail",
+   "variant": "b",
+   "x": 650,
+   "depth": 0.3,
+   "group": "core",
+   "view": "courtyard",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "courtyard_g01",
+   "archetype": "superhero",
+   "variant": "a",
+   "x": 189,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "courtyard",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "side_x": 60,
+   "side_depth": 0.35,
+   "stays_on_bad": true
+  },
+  {
+   "id": "courtyard_g02",
+   "archetype": "ballerina",
+   "variant": "b",
+   "x": 315,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "courtyard",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "side_x": 1220,
+   "side_depth": 0.39999999999999997,
+   "stays_on_bad": true
+  },
+  {
+   "id": "courtyard_g03",
+   "archetype": "orderly",
+   "variant": "a",
+   "x": 477,
+   "depth": 0.6000000000000001,
+   "group": "gatherers",
+   "view": "courtyard",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "side_x": 60,
+   "side_depth": 0.44999999999999996,
+   "stays_on_bad": false
+  },
+  {
+   "id": "courtyard_g04",
+   "archetype": "pirate",
+   "variant": "b",
+   "x": 640,
+   "depth": 0.7000000000000001,
+   "group": "gatherers",
+   "view": "courtyard",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "side_x": 1220,
+   "side_depth": 0.5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "courtyard_g05",
+   "archetype": "king",
+   "variant": "a",
+   "x": 843,
+   "depth": 0.4,
+   "group": "gatherers",
+   "view": "courtyard",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "side_x": 60,
+   "side_depth": 0.55,
+   "stays_on_bad": false
+  },
+  {
+   "id": "courtyard_g06",
+   "archetype": "chef",
+   "variant": "b",
+   "x": 1018,
+   "depth": 0.5,
+   "group": "gatherers",
+   "view": "courtyard",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "side_x": 1220,
+   "side_depth": 0.6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "courtyard_l01",
+   "archetype": "orderly",
+   "variant": "b",
+   "x": 245,
+   "depth": 0.6,
+   "group": "late",
+   "view": "courtyard",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "courtyard_l02",
+   "archetype": "pirate",
+   "variant": "a",
+   "x": 499,
+   "depth": 0.7,
+   "group": "late",
+   "view": "courtyard",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "courtyard_l03",
+   "archetype": "king",
+   "variant": "b",
+   "x": 760,
+   "depth": 0.8,
+   "group": "late",
+   "view": "courtyard",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "courtyard_l04",
+   "archetype": "chef",
+   "variant": "a",
+   "x": 1031,
+   "depth": 0.6,
+   "group": "late",
+   "view": "courtyard",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "courtyard_p01",
+   "archetype": "king",
+   "variant": "a",
+   "x": 297,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "courtyard",
+   "enter_from": "side"
+  },
+  {
+   "id": "courtyard_p02",
+   "archetype": "chef",
+   "variant": "b",
+   "x": 504,
+   "depth": 0.53,
+   "group": "peak",
+   "view": "courtyard",
+   "enter_from": "side"
+  },
+  {
+   "id": "courtyard_p03",
+   "archetype": "superhero",
+   "variant": "a",
+   "x": 721,
+   "depth": 0.61,
+   "group": "peak",
+   "view": "courtyard",
+   "enter_from": "side"
+  },
+  {
+   "id": "courtyard_p04",
+   "archetype": "ballerina",
+   "variant": "b",
+   "x": 983,
+   "depth": 0.45,
+   "group": "peak",
+   "view": "courtyard",
+   "enter_from": "side"
+  }
+ ],
+ "silhouettes": [
+  {
+   "id": "s01",
+   "shape": "sil_a",
+   "x": 73,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -7
+  },
+  {
+   "id": "s02",
+   "shape": "sil_b",
+   "x": 133,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 3
+  },
+  {
+   "id": "s03",
+   "shape": "sil_c",
+   "x": 233,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -4
+  },
+  {
+   "id": "s04",
+   "shape": "sil_a",
+   "x": 300,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -7
+  },
+  {
+   "id": "s05",
+   "shape": "sil_b",
+   "x": 379,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -7
+  },
+  {
+   "id": "s06",
+   "shape": "sil_c",
+   "x": 467,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -1
+  },
+  {
+   "id": "s07",
+   "shape": "sil_a",
+   "x": 552,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -2
+  },
+  {
+   "id": "s08",
+   "shape": "sil_b",
+   "x": 627,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -4
+  },
+  {
+   "id": "s09",
+   "shape": "sil_c",
+   "x": 706,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 3
+  },
+  {
+   "id": "s10",
+   "shape": "sil_a",
+   "x": 800,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 2
+  },
+  {
+   "id": "s11",
+   "shape": "sil_b",
+   "x": 882,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 4
+  },
+  {
+   "id": "s12",
+   "shape": "sil_c",
+   "x": 949,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 2
+  },
+  {
+   "id": "s13",
+   "shape": "sil_a",
+   "x": 1038,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -4
+  },
+  {
+   "id": "s14",
+   "shape": "sil_b",
+   "x": 1114,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 5
+  },
+  {
+   "id": "corridor_s01",
+   "shape": "sil_a",
+   "x": 57,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -1,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s02",
+   "shape": "sil_b",
+   "x": 190,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -4,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s03",
+   "shape": "sil_c",
+   "x": 280,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -7,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s04",
+   "shape": "sil_a",
+   "x": 418,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -5,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s05",
+   "shape": "sil_b",
+   "x": 536,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -7,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s06",
+   "shape": "sil_c",
+   "x": 650,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 7,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s07",
+   "shape": "sil_a",
+   "x": 754,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 2,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s08",
+   "shape": "sil_b",
+   "x": 866,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -1,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s09",
+   "shape": "sil_c",
+   "x": 975,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 4,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s10",
+   "shape": "sil_a",
+   "x": 1103,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -4,
+   "view": "corridor"
+  },
+  {
+   "id": "art_room_s01",
+   "shape": "sil_a",
+   "x": 57,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -3,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s02",
+   "shape": "sil_b",
+   "x": 177,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -2,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s03",
+   "shape": "sil_c",
+   "x": 297,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 1,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s04",
+   "shape": "sil_a",
+   "x": 397,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 5,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s05",
+   "shape": "sil_b",
+   "x": 512,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 4,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s06",
+   "shape": "sil_c",
+   "x": 638,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -6,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s07",
+   "shape": "sil_a",
+   "x": 751,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -4,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s08",
+   "shape": "sil_b",
+   "x": 878,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 4,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s09",
+   "shape": "sil_c",
+   "x": 981,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 6,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s10",
+   "shape": "sil_a",
+   "x": 1109,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -1,
+   "view": "art_room"
+  },
+  {
+   "id": "courtyard_s01",
+   "shape": "sil_a",
+   "x": 52,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 2,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s02",
+   "shape": "sil_b",
+   "x": 166,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -3,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s03",
+   "shape": "sil_c",
+   "x": 286,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 6,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s04",
+   "shape": "sil_a",
+   "x": 404,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 5,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s05",
+   "shape": "sil_b",
+   "x": 538,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -5,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s06",
+   "shape": "sil_c",
+   "x": 653,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -8,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s07",
+   "shape": "sil_a",
+   "x": 749,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": -6,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s08",
+   "shape": "sil_b",
+   "x": 881,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 4,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s09",
+   "shape": "sil_c",
+   "x": 985,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 0,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s10",
+   "shape": "sil_a",
+   "x": 1096,
+   "depth": 0.0,
+   "group": "core",
+   "thresh": 0,
+   "view": "courtyard"
+  }
+ ],
+ "camera": {
+  "views": [
+   "main",
+   "corridor",
+   "art_room",
+   "courtyard"
+  ],
+  "note": "The camera moves between rooms (move_to)."
+ }
+}
