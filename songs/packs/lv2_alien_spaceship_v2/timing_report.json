@@ -8,7 +8,23 @@
    "fitted_bpm": 173.97,
    "fitted_offset_ms": 5.49,
    "max_abs_ms": 8.24,
-   "mean_ms": 5.94
+   "mean_ms": 5.94,
+   "median_ms": 6.24,
+   "within_limit": 1.0,
+   "worst_hits": [
+    {
+     "beat": 0.0,
+     "error_ms": 1.0
+    },
+    {
+     "beat": 13.0,
+     "error_ms": 8.2
+    },
+    {
+     "beat": 2.5,
+     "error_ms": 7.9
+    }
+   ]
   },
   "bass": [
    {
@@ -395,7 +411,76 @@
     "error_ms": null,
     "how": "same pitch legato: not measurable"
    }
-  ]
+  ],
+  "tempo_verified": "strict",
+  "bass_timing": {
+   "mode": "audio_checked",
+   "why": "the audio bass detector agrees with the bass MIDI (median 3.0 ms)",
+   "median_error_ms": 3.0,
+   "notes_measured": 18,
+   "notes_out_of_line": 0
+  }
+ },
+ "import_report": {
+  "set": "Lv2 Alien Spaceship (2)",
+  "drum_notes": {
+   "counts": {
+    "36": 8,
+    "40": 8,
+    "42": 32,
+    "46": 6
+   },
+   "mode": "standard",
+   "kick": [
+    36
+   ],
+   "snare": [
+    38,
+    40
+   ],
+   "why": "the standard notes: kick 36, snare 38/40"
+  },
+  "decisions": [],
+  "rejected": [],
+  "tempo": {
+   "profile": "beat_shaper_174x1",
+   "verified": "strict",
+   "tried": [
+    {
+     "profile": "beat_shaper_87x2",
+     "fit": null,
+     "verified": null
+    },
+    {
+     "profile": "beat_shaper_174x1",
+     "fit": {
+      "hits": 16,
+      "matched": 16,
+      "fitted_bpm": 173.97,
+      "fitted_offset_ms": 5.49,
+      "max_abs_ms": 8.24,
+      "mean_ms": 5.94,
+      "median_ms": 6.24,
+      "within_limit": 1.0,
+      "worst_hits": [
+       {
+        "beat": 0.0,
+        "error_ms": 1.0
+       },
+       {
+        "beat": 13.0,
+        "error_ms": 8.2
+       },
+       {
+        "beat": 2.5,
+        "error_ms": 7.9
+       }
+      ]
+     },
+     "verified": "strict"
+    }
+   ]
+  }
  },
  "loops": {
   "drums": {
@@ -444,16 +529,16 @@
    "bass": 8
   },
   "2": {
-   "drums": 12,
-   "bass": 9
+   "drums": 13,
+   "bass": 16
   },
   "3": {
-   "drums": 16,
-   "bass": 16
+   "drums": 14,
+   "bass": 24
   },
   "4": {
    "drums": 16,
-   "bass": 17
+   "bass": 32
   }
  },
  "chart_problems": []

@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "note": "Which recordings and chart each node plays. audio = the pack whose stems are heard, chart = the pack whose cues are played (nodes at the same depth must share one chart; the validator checks). treatment = a name from run.json treatments. temporary = true for stand-ins awaiting the owner's own recordings. Replace a node's music by editing audio/chart here after importing a pack (docs/MUSIC_IMPORT.md); node ids never change.",
+ "note": "Which recordings and chart each node plays. audio = the pack whose stems are heard, chart = the pack whose cues are played (nodes at one depth may chart different packs, each world its own song; they play the same difficulty tier, tier = min(depth, 4), of their own chart pack; the validators warn about it). treatment = a name from run.json treatments (none where the level has its own recording). temporary = true for stand-ins awaiting the owner's own recordings. Replace a node's music by editing audio/chart here after importing a pack (docs/MUSIC_IMPORT.md); node ids never change.",
  "nodes": [
   {
    "id": "warehouse",
@@ -18,38 +18,38 @@
   },
   {
    "id": "underworld",
-   "audio": "lv2_alien_spaceship",
-   "chart": "lv2_alien_spaceship",
-   "treatment": "underworld",
+   "audio": "lv2_alien_spaceship_v2",
+   "chart": "lv2_alien_spaceship_v2",
+   "treatment": "none",
    "temporary": true
   },
   {
    "id": "hospital",
-   "audio": "lv1_warehouse_v1",
-   "chart": "lv1_warehouse_v1",
-   "treatment": "hospital",
-   "temporary": true
+   "audio": "lv4_hospital",
+   "chart": "lv4_hospital",
+   "treatment": "none",
+   "temporary": false
   },
   {
    "id": "ward",
-   "audio": "lv1_warehouse_v1",
-   "chart": "lv1_warehouse_v1",
-   "treatment": "ward",
-   "temporary": true
+   "audio": "lv5_asylum",
+   "chart": "lv5_asylum",
+   "treatment": "none",
+   "temporary": false
   },
   {
    "id": "hospital_late",
-   "audio": "lv2_alien_spaceship_v2",
-   "chart": "lv2_alien_spaceship_v2",
-   "treatment": "hospital_late",
-   "temporary": true
+   "audio": "lv4_hospital_v1",
+   "chart": "lv4_hospital_v1",
+   "treatment": "none",
+   "temporary": false
   },
   {
    "id": "ward_late",
-   "audio": "lv2_alien_spaceship_v2",
-   "chart": "lv2_alien_spaceship_v2",
-   "treatment": "ward_late",
-   "temporary": true
+   "audio": "lv5_asylum_v2",
+   "chart": "lv5_asylum_v2",
+   "treatment": "none",
+   "temporary": false
   }
  ]
 }

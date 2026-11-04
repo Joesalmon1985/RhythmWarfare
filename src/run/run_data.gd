@@ -110,13 +110,13 @@ func _validate() -> void:
 			if dirs.has(str(e["dir"])):
 				errors.append("node %s: two routes use the direction %s" % [id, e["dir"]])
 			dirs[str(e["dir"])] = true
-	# the same progression point plays the same chart: all nodes at one depth share one chart pack
+	# siblings at one depth may chart different packs (each world its own song); they always play the same difficulty tier (tier_of(depth) of their own chart pack)
 	var chart_at: Dictionary = {}
 	for id in nodes:
 		var n: Dictionary = nodes[id]
 		var dp := tier_of(int(n["depth"]))
 		if chart_at.has(dp) and chart_at[dp] != n["chart"]:
-			errors.append("depth %d: nodes use different charts (%s and %s); siblings must share one chart" % [dp, chart_at[dp], n["chart"]])
+			warnings.append("depth %d: nodes use different charts (%s and %s); siblings no longer share one chart (both play tier %d of their own pack)" % [dp, chart_at[dp], n["chart"], dp])
 		chart_at[dp] = n["chart"]
 	for id in nodes:
 		var n2: Dictionary = nodes[id]

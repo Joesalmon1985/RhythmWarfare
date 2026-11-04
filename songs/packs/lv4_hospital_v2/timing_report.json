@@ -1,0 +1,188 @@
+{
+ "timing": {
+  "header_bpm": 120.0,
+  "profile": "beat_shaper_174x1",
+  "drum_fit": {
+   "hits": 28,
+   "matched": 28,
+   "fitted_bpm": 173.836,
+   "fitted_offset_ms": -1.03,
+   "max_abs_ms": 23.21,
+   "mean_ms": 1.54,
+   "median_ms": 5.03,
+   "within_limit": 0.857,
+   "worst_hits": [
+    {
+     "beat": 0.25,
+     "error_ms": -23.2
+    },
+    {
+     "beat": 7.0,
+     "error_ms": -12.8
+    },
+    {
+     "beat": 8.25,
+     "error_ms": -11.8
+    }
+   ]
+  },
+  "bass": [
+   {
+    "beat": 0.0,
+    "pitch": 40,
+    "error_ms": 0.7,
+    "how": "first sound in the file"
+   },
+   {
+    "beat": 4.0,
+    "pitch": 43,
+    "error_ms": -6.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.0,
+    "pitch": 43,
+    "error_ms": -24.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 15.0,
+    "pitch": 43,
+    "error_ms": -8.0,
+    "how": "largest spectral change near the note start"
+   }
+  ],
+  "tempo_verified": "loose",
+  "bass_timing": {
+   "mode": "audio_checked",
+   "why": "the audio bass detector agrees with the bass MIDI (median 7.0 ms)",
+   "median_error_ms": 7.0,
+   "notes_measured": 4,
+   "notes_out_of_line": 1
+  }
+ },
+ "import_report": {
+  "set": "lv4 Hospital (2)",
+  "drum_notes": {
+   "counts": {
+    "36": 12,
+    "40": 22,
+    "42": 48,
+    "46": 16
+   },
+   "mode": "standard",
+   "kick": [
+    36
+   ],
+   "snare": [
+    38,
+    40
+   ],
+   "why": "the standard notes: kick 36, snare 38/40"
+  },
+  "decisions": [
+   "tempo verified loosely: 86% of the cue hits are within 12 ms, outliers [{\"beat\": 0.25, \"error_ms\": -23.2}, {\"beat\": 7.0, \"error_ms\": -12.8}, {\"beat\": 8.25, \"error_ms\": -11.8}] (max 23.21 ms)",
+   "WARNING bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 8.0, \"pitch\": 43, \"error_ms\": -24.0, \"how\": \"largest spectral change near the note start\"}]"
+  ],
+  "rejected": [],
+  "tempo": {
+   "profile": "beat_shaper_174x1",
+   "verified": "loose",
+   "tried": [
+    {
+     "profile": "beat_shaper_87x2",
+     "fit": null,
+     "verified": null
+    },
+    {
+     "profile": "beat_shaper_174x1",
+     "fit": {
+      "hits": 28,
+      "matched": 28,
+      "fitted_bpm": 173.836,
+      "fitted_offset_ms": -1.03,
+      "max_abs_ms": 23.21,
+      "mean_ms": 1.54,
+      "median_ms": 5.03,
+      "within_limit": 0.857,
+      "worst_hits": [
+       {
+        "beat": 0.25,
+        "error_ms": -23.2
+       },
+       {
+        "beat": 7.0,
+        "error_ms": -12.8
+       },
+       {
+        "beat": 8.25,
+        "error_ms": -11.8
+       }
+      ]
+     },
+     "verified": "loose"
+    }
+   ]
+  }
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 297654,
+   "loop_frames": 264828,
+   "tail_frames": 32826,
+   "padded_frames": 0,
+   "tail_audible_s": 0.567,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -7.19,
+   "rms_db": -21.81,
+   "source_seconds": 6.2011,
+   "source_file": "Beat Shaper - lv4 Hospital-Drums (2).wav"
+  },
+  "bass": {
+   "frames_in": 288078,
+   "loop_frames": 264828,
+   "tail_frames": 23250,
+   "padded_frames": 0,
+   "tail_audible_s": 0.464,
+   "laps_folded": 1,
+   "gain_db": 3.0,
+   "peak_db": -9.07,
+   "rms_db": -18.79,
+   "source_seconds": 6.0016,
+   "source_file": "Beat Shaper - lv4 Hospital-Bass (2).wav"
+  },
+  "other": {
+   "frames_in": 325972,
+   "loop_frames": 264828,
+   "tail_frames": 61144,
+   "padded_frames": 0,
+   "tail_audible_s": 1.274,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -17.18,
+   "rms_db": -28.62,
+   "source_seconds": 6.7911,
+   "source_file": "Beat Shaper - lv4 Hospital-Synth (2).wav"
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 16,
+   "bass": 4
+  },
+  "2": {
+   "drums": 17,
+   "bass": 4
+  },
+  "3": {
+   "drums": 19,
+   "bass": 4
+  },
+  "4": {
+   "drums": 21,
+   "bass": 4
+  }
+ },
+ "chart_problems": []
+}

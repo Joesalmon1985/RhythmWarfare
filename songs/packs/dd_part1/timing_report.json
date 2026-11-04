@@ -1,0 +1,210 @@
+{
+ "timing": {
+  "header_bpm": 120.0,
+  "profile": "beat_shaper_87x2",
+  "drum_fit": {
+   "hits": 16,
+   "matched": 16,
+   "fitted_bpm": 86.984,
+   "fitted_offset_ms": 4.73,
+   "max_abs_ms": 8.24,
+   "mean_ms": 5.69,
+   "median_ms": 5.95,
+   "within_limit": 1.0,
+   "worst_hits": [
+    {
+     "beat": 0.0,
+     "error_ms": 1.0
+    },
+    {
+     "beat": 6.5,
+     "error_ms": 8.2
+    },
+    {
+     "beat": 3.0,
+     "error_ms": 4.0
+    }
+   ]
+  },
+  "bass": [
+   {
+    "beat": 0.0,
+    "pitch": 40,
+    "error_ms": 0.0,
+    "how": "first sound in the file"
+   },
+   {
+    "beat": 4.5,
+    "pitch": 50,
+    "error_ms": -2.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.0,
+    "pitch": 33,
+    "error_ms": 22.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 12.0,
+    "pitch": 33,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   }
+  ],
+  "tempo_verified": "strict",
+  "bass_timing": {
+   "mode": "audio_checked",
+   "why": "the audio bass detector agrees with the bass MIDI (median 2.0 ms)",
+   "median_error_ms": 2.0,
+   "notes_measured": 3,
+   "notes_out_of_line": 1
+  }
+ },
+ "import_report": {
+  "set": "DD Part1",
+  "drum_notes": {
+   "counts": {
+    "36": 8,
+    "40": 8,
+    "42": 32,
+    "46": 2
+   },
+   "mode": "standard",
+   "kick": [
+    36
+   ],
+   "snare": [
+    38,
+    40
+   ],
+   "why": "the standard notes: kick 36, snare 38/40"
+  },
+  "decisions": [
+   "WARNING bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 8.0, \"pitch\": 33, \"error_ms\": 22.0, \"how\": \"largest spectral change near the note start\"}]"
+  ],
+  "rejected": [],
+  "tempo": {
+   "profile": "beat_shaper_87x2",
+   "verified": "strict",
+   "tried": [
+    {
+     "profile": "beat_shaper_87x2",
+     "fit": {
+      "hits": 16,
+      "matched": 16,
+      "fitted_bpm": 86.984,
+      "fitted_offset_ms": 4.73,
+      "max_abs_ms": 8.24,
+      "mean_ms": 5.69,
+      "median_ms": 5.95,
+      "within_limit": 1.0,
+      "worst_hits": [
+       {
+        "beat": 0.0,
+        "error_ms": 1.0
+       },
+       {
+        "beat": 6.5,
+        "error_ms": 8.2
+       },
+       {
+        "beat": 3.0,
+        "error_ms": 4.0
+       }
+      ]
+     },
+     "verified": "strict"
+    },
+    {
+     "profile": "beat_shaper_174x1",
+     "fit": {
+      "hits": 16,
+      "matched": 16,
+      "fitted_bpm": 173.96,
+      "fitted_offset_ms": 8.21,
+      "max_abs_ms": 33.62,
+      "mean_ms": 8.81,
+      "median_ms": 6.28,
+      "within_limit": 0.75,
+      "worst_hits": [
+       {
+        "beat": 6.5,
+        "error_ms": 33.6
+       },
+       {
+        "beat": 14.5,
+        "error_ms": 33.0
+       },
+       {
+        "beat": 10.5,
+        "error_ms": -18.7
+       }
+      ]
+     },
+     "verified": null
+    }
+   ]
+  }
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 538556,
+   "loop_frames": 529655,
+   "tail_frames": 8901,
+   "padded_frames": 0,
+   "tail_audible_s": 0.168,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -8.46,
+   "rms_db": -25.98,
+   "source_seconds": 11.2199,
+   "source_file": "Beat Shaper - DD Part1-Drums.wav"
+  },
+  "bass": {
+   "frames_in": 613067,
+   "loop_frames": 529655,
+   "tail_frames": 83412,
+   "padded_frames": 0,
+   "tail_audible_s": 1.701,
+   "laps_folded": 1,
+   "gain_db": 3.0,
+   "peak_db": -8.61,
+   "rms_db": -21.27,
+   "source_seconds": 12.7722,
+   "source_file": "Beat Shaper - DD Part1-Bass.wav"
+  },
+  "other": {
+   "frames_in": 554277,
+   "loop_frames": 529655,
+   "tail_frames": 24622,
+   "padded_frames": 0,
+   "tail_audible_s": 0.513,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -18.8,
+   "rms_db": -31.89,
+   "source_seconds": 11.5474,
+   "source_file": "Beat Shaper - DD Part1-Synth.wav"
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 16,
+   "bass": 4
+  },
+  "2": {
+   "drums": 16,
+   "bass": 4
+  },
+  "3": {
+   "drums": 16,
+   "bass": 4
+  },
+  "4": {
+   "drums": 16,
+   "bass": 4
+  }
+ },
+ "chart_problems": []
+}

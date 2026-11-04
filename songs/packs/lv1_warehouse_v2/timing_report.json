@@ -1,0 +1,209 @@
+{
+ "timing": {
+  "header_bpm": 120.0,
+  "profile": "beat_shaper_87x2",
+  "drum_fit": {
+   "hits": 32,
+   "matched": 32,
+   "fitted_bpm": 86.994,
+   "fitted_offset_ms": 5.67,
+   "max_abs_ms": 8.48,
+   "mean_ms": 6.04,
+   "median_ms": 6.09,
+   "within_limit": 1.0,
+   "worst_hits": [
+    {
+     "beat": 0.0,
+     "error_ms": 1.0
+    },
+    {
+     "beat": 13.0,
+     "error_ms": 8.5
+    },
+    {
+     "beat": 11.0,
+     "error_ms": 3.8
+    }
+   ]
+  },
+  "bass": [
+   {
+    "beat": 0.0,
+    "pitch": 40,
+    "error_ms": 0.6,
+    "how": "first sound in the file"
+   },
+   {
+    "beat": 4.25,
+    "pitch": 38,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.0,
+    "pitch": 45,
+    "error_ms": -16.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 13.0,
+    "pitch": 48,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   }
+  ],
+  "tempo_verified": "strict",
+  "bass_timing": {
+   "mode": "midi_fallback",
+   "why": "the bass detector could not place the notes within 12 ms (median 48.0 ms over 4 notes); charted from the MIDI timing instead",
+   "median_error_ms": 48.0,
+   "notes_measured": 4,
+   "notes_out_of_line": 3
+  }
+ },
+ "import_report": {
+  "set": "Lv1 Warehouse (2)",
+  "drum_notes": {
+   "counts": {
+    "36": 15,
+    "40": 18,
+    "42": 47
+   },
+   "mode": "standard",
+   "kick": [
+    36
+   ],
+   "snare": [
+    38,
+    40
+   ],
+   "why": "the standard notes: kick 36, snare 38/40"
+  },
+  "decisions": [
+   "WARNING bass: the bass detector could not place the notes within 12 ms (median 48.0 ms over 4 notes); charted from the MIDI timing instead: [{\"beat\": 4.25, \"pitch\": 38, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 8.0, \"pitch\": 45, \"error_ms\": -16.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 13.0, \"pitch\": 48, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}]"
+  ],
+  "rejected": [],
+  "tempo": {
+   "profile": "beat_shaper_87x2",
+   "verified": "strict",
+   "tried": [
+    {
+     "profile": "beat_shaper_87x2",
+     "fit": {
+      "hits": 32,
+      "matched": 32,
+      "fitted_bpm": 86.994,
+      "fitted_offset_ms": 5.67,
+      "max_abs_ms": 8.48,
+      "mean_ms": 6.04,
+      "median_ms": 6.09,
+      "within_limit": 1.0,
+      "worst_hits": [
+       {
+        "beat": 0.0,
+        "error_ms": 1.0
+       },
+       {
+        "beat": 13.0,
+        "error_ms": 8.5
+       },
+       {
+        "beat": 11.0,
+        "error_ms": 3.8
+       }
+      ]
+     },
+     "verified": "strict"
+    },
+    {
+     "profile": "beat_shaper_174x1",
+     "fit": {
+      "hits": 32,
+      "matched": 29,
+      "fitted_bpm": 173.454,
+      "fitted_offset_ms": -2.74,
+      "max_abs_ms": 35.0,
+      "mean_ms": 6.03,
+      "median_ms": 5.83,
+      "within_limit": 0.793,
+      "worst_hits": [
+       {
+        "beat": 7.25,
+        "error_ms": 35.0
+       },
+       {
+        "beat": 1.25,
+        "error_ms": -22.0
+       },
+       {
+        "beat": 8.75,
+        "error_ms": 24.8
+       }
+      ]
+     },
+     "verified": null
+    }
+   ]
+  }
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 558390,
+   "loop_frames": 529655,
+   "tail_frames": 28735,
+   "padded_frames": 0,
+   "tail_audible_s": 0.485,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -7.61,
+   "rms_db": -23.22,
+   "source_seconds": 11.6331,
+   "source_file": "Beat Shaper - Lv1 Warehouse-Drums (2).wav"
+  },
+  "bass": {
+   "frames_in": 531230,
+   "loop_frames": 529655,
+   "tail_frames": 1575,
+   "padded_frames": 0,
+   "tail_audible_s": 0.033,
+   "laps_folded": 1,
+   "gain_db": 3.0,
+   "peak_db": -9.04,
+   "rms_db": -22.26,
+   "source_seconds": 11.0673,
+   "source_file": "Beat Shaper - Lv1 Warehouse-Bass (2).wav"
+  },
+  "other": {
+   "frames_in": 617586,
+   "loop_frames": 529655,
+   "tail_frames": 87931,
+   "padded_frames": 0,
+   "tail_audible_s": 1.832,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -12.88,
+   "rms_db": -28.43,
+   "source_seconds": 12.8664,
+   "source_file": "Beat Shaper - Lv1 Warehouse-Synth (2).wav"
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 22,
+   "bass": 4
+  },
+  "2": {
+   "drums": 25,
+   "bass": 4
+  },
+  "3": {
+   "drums": 29,
+   "bass": 4
+  },
+  "4": {
+   "drums": 33,
+   "bass": 4
+  }
+ },
+ "chart_problems": []
+}

@@ -15,7 +15,10 @@ from collections import defaultdict
 from fractions import Fraction
 from pathlib import Path
 
-import mido
+try:  # optional: only the MIDI writers and the legacy readers need it (beatshaper.py has its own fallback reader)
+    import mido
+except ImportError:  # pragma: no cover
+    mido = None
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
