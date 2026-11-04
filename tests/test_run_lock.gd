@@ -71,8 +71,11 @@ func test_after_the_lock_only_routes_with_the_same_chart_can_be_chosen() -> void
 	assert_false(e.choose_dir("right"))
 	assert_eq(e.selected_route(), "mothership", "the default stays")
 	assert_true(e.choose("mothership"), "the same pack is still fine")
-	var same := RunEngine.new(RunData.load_default())  # when both routes play one pack nothing is ever refused
-	same.begin("warehouse")
-	_play(same, 61.0 * same.beat_s, {})
-	assert_true(same.route_locked)
-	assert_true(same.choose("underworld"))
+	var live := RunEngine.new(RunData.load_default())  # the shipped data: after the lock a route is choosable exactly when it charts the locked pack
+	live.begin("warehouse")
+	_play(live, 61.0 * live.beat_s, {})
+	assert_true(live.route_locked)
+	var same_pack: bool = str(live.data.nodes["underworld"]["chart"]) == str(live.data.nodes[live.default_route()]["chart"])
+	assert_eq(live.route_allowed("underworld"), same_pack, "allowed only when the underworld charts the locked pack")
+	assert_eq(live.choose("underworld"), same_pack)
+	assert_true(live.choose(live.default_route()), "the default route is always fine")
