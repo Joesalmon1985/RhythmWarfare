@@ -184,7 +184,21 @@
   {"id": "bunk_a", "kind": "billboard", "sprite": "wall_sofa", "at": [29.3, 12.0], "y": 0.45, "size": 0.9, "anim": "none"},
   {"id": "cab_a", "kind": "billboard", "sprite": "wall_shelf", "at": [28.6, 10.9], "y": 0.7, "size": 1.2, "anim": "none"},
   {"id": "cab_t", "kind": "billboard", "sprite": "wall_shelf", "at": [44.9, 10.6], "y": 0.8, "size": 1.4, "anim": "none"},
-  {"id": "cab_t2", "kind": "billboard", "sprite": "wall_shelf", "at": [44.9, 13.4], "y": 0.8, "size": 1.4, "anim": "none"}
+  {"id": "cab_t2", "kind": "billboard", "sprite": "wall_shelf", "at": [44.9, 13.4], "y": 0.8, "size": 1.4, "anim": "none"},
+  {"id": "lt_planet_w", "kind": "light", "at": [-5.5, -3.7], "y": 3.2, "radius": 8.0, "color": "#5fd0ff", "strength": 1.2, "cone": {"yaw": 180, "angle": 38}, "sectors": ["deck_w", "deck", "deck_sw"]},
+  {"id": "lt_planet_e", "kind": "light", "at": [5.5, -3.7], "y": 3.2, "radius": 8.0, "color": "#7fe8ff", "strength": 1.2, "cone": {"yaw": 180, "angle": 38}, "sectors": ["deck_e", "deck", "deck_se"]},
+  {"id": "lt_dais", "kind": "light", "at": [0, -4.6], "y": 3.4, "radius": 5.0, "color": "#9ad8ff", "strength": 1.0},
+  {"id": "lt_lounge_w", "kind": "light", "at": [-9.5, 1.2], "y": 2.0, "radius": 4.0, "color": "#b070ff", "strength": 0.9},
+  {"id": "lt_lounge_e", "kind": "light", "at": [9.8, 1.6], "y": 2.0, "radius": 4.2, "color": "#48ffc8", "strength": 1.0},
+  {"id": "lt_gallery_win_a", "kind": "light", "at": [11.0, 9.4], "y": 2.6, "radius": 8.0, "color": "#4fb8ff", "strength": 1.2, "cone": {"yaw": 0, "angle": 36}},
+  {"id": "lt_gallery_win_b", "kind": "light", "at": [21.0, 9.4], "y": 2.6, "radius": 8.0, "color": "#6fc8ff", "strength": 1.2, "cone": {"yaw": 0, "angle": 36}},
+  {"id": "lt_reactor_core", "kind": "light", "at": [34.0, -1.6], "y": 5.0, "radius": 12.0, "color": "#38ffb8", "strength": 1.9, "sectors": ["reactor", "catwalk"]},
+  {"id": "lt_catwalk", "kind": "light", "at": [34.0, 7.5], "y": 2.4, "radius": 6.0, "color": "#2ee8c4", "strength": 0.7},
+  {"id": "lt_probe", "kind": "light", "at": [43.9, 12.0], "y": 1.9, "radius": 3.4, "color": "#fff2d8", "strength": 1.9},
+  {"id": "lt_medbay_lamp", "kind": "light", "at": [34.0, 13.0], "y": 2.0, "radius": 4.2, "color": "#fff0d0", "strength": 1.0},
+  {"id": "lt_console", "kind": "light", "at": [46.0, -2.2], "y": 1.6, "radius": 6.5, "color": "#4a7bff", "strength": 1.2},
+  {"id": "lt_helm_screen", "kind": "light", "at": [54.0, 3.0], "y": 2.2, "radius": 9.0, "color": "#7ad0ff", "strength": 1.4, "cone": {"yaw": 90, "angle": 70}, "sectors": ["helm", "helm_ramp_a", "helm_ramp_b", "bridge"]},
+  {"id": "lt_airlock", "kind": "light", "at": [34.0, 17.6], "y": 2.2, "radius": 4.0, "color": "#ffb347", "strength": 0.9}
  ],
  "homes": [
   {"actor": "c01", "sector": "deck", "at": [-1.12, 2.34]},
