@@ -492,6 +492,7 @@ func _advance(t: float, audio_t: float) -> void:
 		print("RUN reached phase %d at %s, energy %.0f" % [engine.phase_n, engine.node_id, engine.energy])
 		print("RUN stage builds ", JSON.stringify(build_log))
 		print("RUN ", frame_stats())
+		print("RUN summary ", JSON.stringify(summary()))
 		if OS.get_environment("RW_STORY_QUIT") == "1":
 			get_tree().quit()
 
@@ -531,6 +532,26 @@ func exit_items() -> Array:
 		var w: Dictionary = st.map.waypoint(wid)
 		out.append({"dir": dir, "glyph": ARROW_GLYPH.get(dir, "?"), "at": w["at"], "ground": float(st.map.sector(str(w["sector"])).get("floor", 0.0)), "chosen": str(o["to"]) == picked})
 	return out
+
+
+## What a scripted run did, for tools/run/walk_run.sh: the levels in order, the rail places per level, the journey's moves and glances, the worlds shown.
+func summary() -> Dictionary:
+	var rails: Array = []
+	for e in journey.log:
+		rails.append("%d.%d:%s:%s" % [int(e["phase"]), int(e["block"]), str(e["node"]), str(e["place"])])
+	var moves := 0
+	var looks := 0
+	var walks := 0
+	for a in journey_log:
+		match str(a["action"]):
+			"player_move":
+				moves += 1
+			"player_look":
+				looks += 1
+			"player_walk":
+				walks += 1
+	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "rail": rails, "moves": moves, "glances": looks, "strolls": walks, "worlds": stages.keys(),
+		"energy": snappedf(engine.energy, 0.1), "reached": Session.run_progress.reached_ids()}
 
 
 ## "FRAMES n mean .. p95 .. max .. ms" of the frames played so far, and how many ran over 50 ms (a stage build or a stall). Real-time runs only.
@@ -625,6 +646,7 @@ func _handle(events: Array) -> void:
 				if virtual_mode:
 					Session.run_progress.run_ended(int(ev["phase"]))
 					print("RUN over at phase %d (%s)" % [int(ev["phase"]), str(ev["node"])])
+					print("RUN summary ", JSON.stringify(summary()))
 					if OS.get_environment("RW_STORY_QUIT") == "1":
 						get_tree().quit()
 
@@ -681,6 +703,8 @@ func _on_mix(ev: Dictionary) -> void:
 
 
 func _on_block_result(ev: Dictionary) -> void:
+	if int(ev["block"]) == 3 and not _route_buttons.is_empty():
+		_sync_route_buttons()  # the route lock has fallen: routes with another chart pack grey out
 	var t := float(ev["t"]) + 0.2
 	if bool(ev["passed"]):
 		if int(ev["block"]) < 3:
@@ -753,6 +777,7 @@ func _sync_route_buttons() -> void:
 			tag = "  [DEFAULT]" if engine.choice == "" else "  [CHOSEN]"
 		b.text = "%s  %s%s\n%s" % [ARROW_GLYPH.get(dir, "?"), str(data.nodes[to]["title"]), tag, str(b.get_meta("label"))]
 		b.modulate = Color(1.0, 0.95, 0.6) if chosen else Color(0.85, 0.88, 1.0, 0.9)
+		b.disabled = not engine.route_allowed(to)  # after beat 60.5 only routes that play the chart already charted
 	_exits.items = exit_items()
 	hud.route_hint = "Tap an arrow to choose where to go (arrow keys work too). Changes count until the downbeat."
 

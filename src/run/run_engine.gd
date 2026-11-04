@@ -34,6 +34,8 @@ var stage_of_block: Array = []
 var block_credit: Array = []
 var choice := ""  # the chosen destination node id ("" until the player picks one)
 var window_open := false
+var route_locked := false  # block 0 of the next phase has been charted: routes with another chart pack can no longer be chosen
+var _locked_chart := ""
 
 var _events: Array = []
 var _next_block_notes := {}  # block index -> true once charted
@@ -104,6 +106,8 @@ func _enter(id: String, t0: float, chart_now: bool) -> void:
 	bass_origin = -1
 	choice = ""
 	window_open = false
+	route_locked = false
+	_locked_chart = ""
 	stage_of_block = [0]
 	block_credit = []
 	_next_block_notes = {}
@@ -150,6 +154,8 @@ func default_route() -> String:
 func choose(to: String) -> bool:
 	for e in data.nodes[node_id]["next"]:
 		if str(e["to"]) == to:
+			if not route_allowed(to):
+				return false
 			choice = to
 			return true
 	return false
@@ -158,9 +164,13 @@ func choose(to: String) -> bool:
 func choose_dir(dir: String) -> bool:
 	for e in data.nodes[node_id]["next"]:
 		if str(e["dir"]) == dir:
-			choice = str(e["to"])
-			return true
+			return choose(str(e["to"]))
 	return false
+
+
+## False for a route whose chart pack differs from the one already charted for the next phase's first block (the lock falls at the last block's decision, beat 60.5).
+func route_allowed(to: String) -> bool:
+	return not route_locked or str(data.nodes[to]["chart"]) == _locked_chart
 
 
 func selected_route() -> String:
@@ -263,8 +273,11 @@ func _decide(b: int, t_dec: float) -> void:
 
 
 func _chart_next_phase() -> void:
-	_chart_block(0, 0, int(data.nodes[default_route()]["depth"]), default_route(), true)
+	var to := selected_route()  # the player's pick so far, else the default: the chosen world's own chart, then locked
+	_chart_block(0, 0, int(data.nodes[to]["depth"]), to, true)
 	_next_phase_charted = true
+	route_locked = true
+	_locked_chart = str(data.nodes[to]["chart"])
 
 
 ## Credit of block `b` of the current phase: the mean credit of its cues (1 when it has none).

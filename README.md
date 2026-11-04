@@ -4,9 +4,11 @@ A rhythm game in landscape for phones: play four illuminated pads in time with a
 2.5D, Doom-style worlds (a warehouse club, an alien mothership, an underworld arena, a night hospital, a ward). The story is one continuous run: every level is a
 64-beat phase that starts with drums alone, brings the bass in as you play well, brings the drums back, then lets the bass take over while you choose which way to go
 next. Good play keeps the mix building, a missed block holds it for another go, and the crowd's energy is the meter that ends the run if it runs out. Standalone Godot 4.5.1
-project. Home has three buttons: Play, Start from a reached level, Settings.
+project. Home has four buttons: Play (the run), Story chapters (the finished chapter-by-chapter campaign, with its own saves), Start from a reached level, Settings.
+Inside the run the camera rides a rail through each world: a pass at a block steps you one place up the room (floor, steps, stage, balcony, booth), a miss steps you down
+the bad rail (floor edge, corridor, cubicle), and the route window lights the room's exits beside the touch arrows.
 
-* Design, route map, tunables and verification: `docs/CONTINUOUS_RUN.md`.
+* Design, route map, rails, tunables and verification: `docs/CONTINUOUS_RUN.md`; the plan and its progress log: `docs/RUN_DUNGEON_MUSIC_PLAN.md`.
 * Adding music (Beat Shaper exports, one command per level): `docs/MUSIC_IMPORT.md`; what each level plays and what to export: `docs/MUSIC_HANDOFF.md`.
 * The 2.5D world, art and authoring pipeline: `docs/STORY_CAMPAIGN_HANDOVER.md`, `docs/STORY_25D_PLAN.md`, `docs/STORY_ART.md`.
 
@@ -15,14 +17,19 @@ godot --path .                                                         # home sc
 godot --path . res://src/run/run_play.tscn                             # straight into the run (RW_RUN_START=<level id> picks the level)
 RW_RUN_BOT=perfect RW_RUN_ROUTES=up,left godot --path . res://src/run/run_play.tscn   # scripted play: perfect | none | accuracy:<f> | blocks:<1011...>
 RW_RUN_VIRTUAL=1 RW_RUN_BOT=perfect RW_RUN_UNTIL_PHASE=3 RW_STORY_QUIT=1 godot --headless --path . res://src/run/run_play.tscn   # no audio, stepped clock
-godot --headless --path . -s tests/run_tests.gd -- --filter run_      # the run's tests
+godot --headless --path . -s tests/run_tests.gd -- --filter run_      # the run's tests (engine, saves, home, rails, scene, the policy matrix)
+bash tools/run/walk_run.sh                                              # the run on the real scenes, scripted, all seven levels, isolated save (needs a display)
+bash tools/run/capture.sh                                               # screenshots per level and rail place into docs/shots/run (needs a display)
+bash tools/run/frames.sh                                                # frame times per world (needs a display, an idle machine)
+bash tools/story/walk_campaign.sh                                       # the chapter campaign end to end, scripted
 python tools/content/beatshaper.py validate                             # music data
 godot --headless --path . -s tools/story/record_music.gd -- <out> 70 res://src/run/run_play.tscn   # record the Music bus of a real run
 python tools/story/check_run_audio.py <out>                             # fit the recording to the mix the engine reported
 ```
 
-The older chapter-by-chapter Story Campaign scenes, the military campaign and the legacy duel are no longer reachable from the home screen. Their code is still in the
-repository (the art pipeline, the tests and the editor-only Developer button use it); the run does not depend on it. `docs/STORY_CAMPAIGN_HANDOVER.md` still describes it.
+The chapter campaign is reachable from home as "Story chapters" (`docs/STORY_CAMPAIGN_HANDOVER.md`). The military campaign, the loadout and the legacy duel are not on the home
+screen (nor is the loadout button in the chapter menu); their code is still in the repository (the art pipeline, the tests and the developer button, shown only in the editor
+or with `RW_DEV=1`, use it); the run does not depend on it.
 
 ## Layout
 

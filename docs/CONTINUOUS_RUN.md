@@ -1,11 +1,11 @@
 # The continuous story run
 
-The game is one run through the five 2.5D worlds. There is no chapter list, no per-chapter ending and no military campaign on the home screen:
-**Play**, **Start from a reached level**, **Settings**. Branch `feature/continuous-story-run`, built on the verified merge of `feature/story-25d` and the
+The game is one run through the five 2.5D worlds. The home screen has **Play** (the run), **Story chapters** (the finished chapter campaign, its own menu and saves,
+`story_campaign.tscn`), **Start from a reached level** and **Settings**; the military campaign, loadout and duel are developer-only. Branch `feature/continuous-story-run`, built on the verified merge of `feature/story-25d` and the
 Warehouse music test (see "Baseline" below).
 
 ```
-godot --path .                                    # home: Play / Start from a reached level / Settings
+godot --path .                                    # home: Play / Story chapters / Start from a reached level / Settings
 godot --path . res://src/run/run_play.tscn        # straight into the run (RW_RUN_START=<level id> starts on a level)
 ```
 
@@ -130,3 +130,76 @@ Verified on `feature/run-on-25d` (the run, the Deathtrap Dungeon and the 2.5D po
   machine, so that number needs re-measuring on an idle one.
 * The 360-line default, the settings (pad size, motion, reduced effects, contrast) and the activities all pass through unchanged: `_build_stage` applies `Session.story_lines`, `reduced`,
   `high_contrast` and `effective_story_motion` to every stage, and the crowd's activity picks read the band of `engine.energy` (tests/test_run_rail.gd, test_run_matrix.gd).
+
+## Rails and activities in the run (WP-A3)
+
+The run reuses the chapters' rail camera but not their director: the run owns the stage, `RunJourney` (pure) turns the engine's events into stage actions and `run_play.gd` hands
+them to the active world's `StoryStage`. Each node in `content/run/run.json` has a `rail`:
+
+```
+"rail": {"good": [{"to": "steps", "role": "dancer", "style": "walk", "bars": 3}, ...],   "bad": [{"to": "floor_edge", "role": "queasy", ...}, ...],
+         "arrive": "door", "glances": [{"by": -28, "bars": 2}, ...], "strolls": [{"fwd": 1.6, "bars": 3}, ...], "exits": {"up": "door", "right": "tunnel"}}
+```
+
+| Node | Good rail (up from home) | Bad rail (down) |
+| --- | --- | --- |
+| Warehouse (floor_centre) | steps, stage, balcony, booth | floor_edge, corridor, cubicle |
+| Mothership (deck_centre) | gallery_in, reactor_in, bridge_in, helm | gallery_in, medbay, exam |
+| Underworld (arena_floor) | court_in, throne, pit_stage | furnace_chains, cage |
+| Hospital (bed) | corridor_in, cafe_in, bandstand | ward_chair, quiet, bed |
+| Ward (day_centre) | corridor_in, art_in, stage | treat, quiet |
+| Hospital, late (garden_edge) | bandstand | garden_in, quiet |
+| Ward, late (stage_edge) | stage | court_in, treat |
+
+* **Steps.** At each block decision (beat 12.5, inside the cue-free guard) a pass steps one place up the good rail and stays at the top; a hold steps one place along the bad rail (from
+  the good rail it drops to the first bad place). Two holds in a row start the queasy look (`fx_queasy`, stronger with more holds), reaching the bottom plays `sick_beat` once, and a pass
+  from the bad rail walks back one place toward the floor (role `recovered`, the look clears, `dancer` again at home). `player_role` follows the place (dancer, on_stage, dj, queasy, sick,
+  recovered). A loop ("round again") keeps the rail state; a new level starts it again from home.
+* **Moves** are `player_move` of 2 to 4 bars that start on the decision beat; `RunRail.pick_bars` shortens one (never below 2 bars) when the chart would make more than half its bars dense
+  (more than one note per beat), the rule of the chapter director's dense-run warning, which is therefore silent (asserted over the whole policy matrix).
+* **Every block** has a glance (`player_look by/pitch`, varied through the node's list) and most blocks an in-room walk (`player_walk`, skipped while a journey move is under way).
+* **Route window.** The touch arrows stay (phones need them) and, while the window is open, the room's exits are lit (`RunExitsView`): a pulsing doorway at the waypoint of each candidate route,
+  projected with the stage's own camera, or an arrow at the screen edge on the side it lies when it is out of sight; the chosen one is gold.
+* **World swap** (`RunPassage`, `RunPassageView`): when the selected route at beat 62 leads to another world the frame closes to a lit doorway over the last two beats, the swap happens on the
+  downbeat exactly as before (audio untouched), and the new world's camera starts at its doorway (`arrive`, a cut hidden by the closed frame), walks to the start waypoint from beat 62 (the walk
+  starts in the guard) while the frame opens over 2.5 beats. Same-world routes and loops do not close the frame. Everything is a function of song time.
+* **Activities** need nothing new: the stage already reads `engine.energy` each frame and the crowd picks each person's activity from the sector's list for the energy band.
+* The fourth step of a phase (decided at beat 60.5) is mostly cut by the swap 3.5 beats later, so the top of a four-place rail (the booth) shows for a moment only in a loop; the logical step
+  still counts (the matrix records it).
+
+### Route lock (the chart of the next phase)
+
+Block 0 of the next phase is charted at the last block's decision (beat 60.5), before the player's choice is final, and levels may chart different packs. `RunEngine` therefore charts it from
+the **selected** route at that moment (the default, or the player's pick) and **locks the chart**: until the downbeat `choose()` refuses a route whose chart pack differs from the one already
+charted (a route with the same pack may still be chosen), and the route buttons of such routes grey out. The window opens at beat 48 and the lock falls at beat 60.5, so there are 12.5 beats to change
+one's mind freely. (tests/test_run_engine.gd)
+
+### Playtests
+
+* `tests/test_run_matrix.gd`: perfect, accuracy 0.9 / 0.8 / 0.7 / 0.5, sloppy (0.8 with 110 ms jitter) and none, seeds 1 to 3 (seed 1 default routes, 2 the second arrow, 3 random), up to 8 phases. Asserts
+  survival or depletion, depth, the rail kinds visited, a glance in every block, no move outside a guard or outside 2 to 4 bars or on dense cues, and the camera in a valid sector of the map on
+  every world's real `StoryPlayer` (sampled every 0.25 s). Result: perfect, 0.9, 0.8, 0.7 and sloppy survive all 8 phases and reach depth 4 (perfect never leaves the good rail; 0.8 and 0.7 visit the
+  bad rail 4 to 12 times and win back); 0.5 ends in 4 and 7 phases (seeds 1, 2) or survives with 45 energy (seed 3), always reaching the sick beat; none ends in phase 2 on every seed, at the sick beat.
+  The run is forgiving for skilled players (0.7 survives): tuning belongs to WP-C4.
+* `tools/run/walk_run.sh`: the real scenes on the virtual clock, an isolated save, five scripted paths that together visit all seven levels (perfect_a: warehouse > mothership > hospital > ward_late >
+  hospital_late; perfect_b: warehouse > underworld > ward > hospital_late; sloppy; none; a start on ward_late) and check the level sequence, rail places, glances, the run save and that no chapter save is
+  written. Result: `run walk-through: OK`.
+* `tools/run/capture.sh`: screenshots in `docs/shots/run`: `node_*` and `route_*` per level, `rail_<node>_<place>` per rail place, `journey_*` (the camera really walking), `passage_*`, phone, wide, reduced
+  motion, 180 lines, and the home screen with both entry points pressed by key (`home_*`).
+* `tools/run/frames.sh` and `tools/run/profile_build.tscn`: frame times and stage-build times per world (numbers below).
+
+### Frame numbers per world (`tools/run/frames.sh`, 2026-11-04)
+
+Real-time, 1280x720, vsync off, dummy audio, perfect play, two phases per start level, on the reference laptop (Intel HD 520) **while other jobs shared the machine**, so read them as an upper bound
+(the chapters' idle budget is 12 ms mean, 20 ms p95):
+
+| Start level | Frames | Mean | p95 | Max | Over 50 ms |
+| --- | --- | --- | --- | --- | --- |
+| Warehouse | 2702 | 16.5 ms | 22.0 | 592 | 6 |
+| Mothership | 2609 | 17.2 ms | 21.9 | 550 | 2 |
+| Underworld | 2459 | 18.4 ms | 23.5 | 547 | 3 |
+| Hospital | 2659 | 17.0 ms | 20.8 | 598 | 1 |
+| Ward | 2601 | 17.4 ms | 22.1 | 563 | 1 |
+
+The over-50 ms frames are the stage builds of the candidate worlds (0.48 to 0.66 s each now, was 0.8 to 2.4 s: people/crowd setup 250 to 270 ms, the 3D world 140 to 290 ms), each done once in a
+cue-free guard from beat 12.6; the first stage of a run builds before the countdown (0.66 to 1.5 s). Further splitting a build across guards would remove them; not done.
