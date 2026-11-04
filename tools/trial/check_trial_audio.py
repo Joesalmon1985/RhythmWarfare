@@ -1,5 +1,6 @@
-"""Checks a recording of the Trial scene (tools/story/record_music.gd on res://src/trial/trial_play.tscn): for every phrase attempt the recorded drums must line
-up with the pack's drum loop started at the attempt's start time, with the same delay every time (the clock never restarts and the voices do not drift).
+"""Checks a recording of the Trial scene (tools/story/record_music.gd on res://src/trial/trial_play.tscn): the dungeon plays one unbroken stretch of music from the
+clock's first beat, so the recorded drums must line up with the pack's drum loop at the same delay in every block (no restarts, no drift) while the mix changes with
+the kind of block (ambient or phrase).
 
     python tools/trial/check_trial_audio.py <recording base>
 """
@@ -47,24 +48,28 @@ def main() -> int:
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(ROOT / "songs/packs" / pid / "loops/drums.wav"), "-ar", str(rate), "-ac", "1", str(out)], check=True)
         loop, _ = read_pcm(out)
     s0 = float(info["started_wall"])
-    attempts = [e for e in info.get("events", []) if e["kind"] == "attempt"]
+    events = info.get("events", [])
+    voices = [v for v in info.get("voices", []) if v["voice"] in ("drums", "bass", "other")]
+    print(f"voices started: {[(v['voice'], round(v['target'], 3)) for v in voices]} (one group for the whole visit)")
     delays = []
-    for a in attempts:
-        q = float(a["start"])
-        if a["family"] != "drums":
-            continue
-        i0 = int(round((s0 + q + 0.7) * rate))
+    last = len(rec) / rate - s0 - 1.0
+    exits = [float(e["t"]) for e in events if e["kind"] == "exit"]
+    if exits:
+        last = min(last, min(exits) - 0.5)  # the music fades out after the exit
+    k = 0
+    while (k + 1) * 16 * BEAT < last:
+        a = k * 16 * BEAT + 0.8  # skip the gain ramp at the block start
         ln = int(6 * BEAT * rate)
-        if i0 + ln + int(0.2 * rate) > len(rec):
-            continue
-        idx = np.arange(int(0.7 * rate), int(0.7 * rate) + ln)
-        model = loop[np.mod(idx, len(loop))]
-        d, c = xcorr(rec[i0:i0 + ln + int(0.1 * rate)], model, rate, 0.25)
+        i0 = int(round((s0 + a) * rate))
+        idx = np.arange(int(a * rate), int(a * rate) + ln)
+        d, c = xcorr(rec[i0:i0 + ln + int(0.1 * rate)], loop[np.mod(idx, len(loop))], rate, 0.3)
         delays.append(d * 1000.0)
-        print(f"attempt at song {q:7.3f} s (passage {a['passage']}, choice {a['choice']}): drums delay {d * 1000:+7.2f} ms, correlation {c:.2f}")
+        kinds = [e for e in events if e["kind"] == "phrase" and int(e["block"]) == k]
+        print(f"block {k}: drums delay {d * 1000:+7.2f} ms, correlation {c:.2f}" + ("  (phrase block)" if kinds else ""))
+        k += 1
     if delays:
-        print(f"delay across attempts: spread {max(delays) - min(delays):.2f} ms over {len(delays)} attempts")
-    ok = len(delays) >= 2 and max(delays) - min(delays) < 15.0
+        print(f"delay across blocks: spread {max(delays) - min(delays):.2f} ms over {len(delays)} blocks")
+    ok = len(delays) >= 3 and max(delays) - min(delays) < 10.0 and len(voices) == 3
     print("RESULT", "ok" if ok else "CHECK")
     return 0 if ok else 1
 

@@ -4,6 +4,7 @@ extends RefCounted
 ## the rhythm phrases and the one encounter. validate() checks everything a run of it depends on; errors name the passage.
 
 const PATH := "res://content/trial/passages.json"
+const MAP_PATH := "res://content/trial/quest_map.json"
 
 var raw: Dictionary = {}
 var passages: Dictionary = {}  # int passage -> entry
@@ -61,8 +62,6 @@ func validate(run_data: RunData) -> void:
 			errors.append("phrase %s: family must be drums or bass" % pid)
 		if int(ph.get("tier", 0)) < 1 or int(ph.get("tier", 0)) > RunData.TIERS:
 			errors.append("phrase %s: tier must be 1 to %d" % [pid, RunData.TIERS])
-		if int(ph.get("beats", 0)) < 4 or int(ph.get("beats", 0)) > 14:
-			errors.append("phrase %s: beats must be 4 to 14 (a phrase fits inside one 16-beat block)" % pid)
 	for n in passages:
 		var p: Dictionary = passages[n]
 		if not scenes.has(str(p.get("scene", ""))):
@@ -70,6 +69,14 @@ func validate(run_data: RunData) -> void:
 		elif not FileAccess.file_exists(str(scenes[str(p["scene"])]["file"])) and not ResourceLoader.exists(str(scenes[str(p["scene"])]["file"])):
 			errors.append("passage %d: scene file %s is missing" % [n, scenes[str(p["scene"])]["file"]])
 		var cs: Array = p.get("choices", [])
+		var defaults := 0
+		for c0 in cs:
+			if bool(c0.get("default", false)):
+				defaults += 1
+		if not cs.is_empty() and defaults != 1:
+			errors.append("passage %d: exactly one choice must be the default (the one taken when nobody chooses within four bars), found %d" % [n, defaults])
+		if int(p.get("tier", 1)) < 1 or int(p.get("tier", 1)) > RunData.TIERS:
+			errors.append("passage %d: tier must be 1 to %d" % [n, RunData.TIERS])
 		if cs.is_empty():
 			errors.append("passage %d has no choices (an endpoint still offers a way out)" % n)
 		for c in cs:
@@ -88,6 +95,7 @@ func validate(run_data: RunData) -> void:
 				errors.append("passage %d: every choice needs a label and the book's wording of the link" % n)
 		if str(p.get("status", "")) not in ["BOOK_VERIFIED", "PROTOTYPE_ENDPOINT", "ADAPTED", "LEGACY"]:
 			errors.append("passage %d: status must be BOOK_VERIFIED, PROTOTYPE_ENDPOINT, ADAPTED or LEGACY" % n)
+	_validate_against_map()
 	for eid in encounters:
 		var e: Dictionary = encounters[eid]
 		for key in ["portrait", "portrait_hit"]:
@@ -112,3 +120,43 @@ func reachable() -> Array:
 	var out: Array = seen.keys()
 	out.sort()
 	return out
+
+
+var quest_map: Dictionary = {}
+
+
+## Every passage that is playable must be in the quest map, and a book-verified one must offer exactly the map's verified edges.
+func _validate_against_map() -> void:
+	if not FileAccess.file_exists(MAP_PATH):
+		errors.append("%s is missing (python tools/trial/make_quest_map.py)" % MAP_PATH)
+		return
+	var m: Variant = JSON.parse_string(FileAccess.get_file_as_string(MAP_PATH))
+	if typeof(m) != TYPE_DICTIONARY:
+		errors.append("quest_map.json is not valid")
+		return
+	quest_map = m
+	var mp: Dictionary = m["passages"]
+	for n in passages:
+		var entry: Variant = mp.get(str(n), null)
+		if entry == null:
+			errors.append("passage %d is not in content/trial/quest_map.json (add it to the map first)" % n)
+			continue
+		var p: Dictionary = passages[n]
+		if str(p.get("status", "")) == "BOOK_VERIFIED":
+			if str(entry["status"]) != "BOOK_VERIFIED":
+				errors.append("passage %d is marked BOOK_VERIFIED here but the map says %s" % [n, entry["status"]])
+				continue
+			var want: Array = []
+			for e in entry["edges"]:
+				want.append("%s>%s" % [e["action"], str(int(e["to"]))])
+			var got: Array = []
+			for c in p.get("choices", []):
+				if c.get("to", null) != null:
+					got.append("%s>%s" % [c["book"], str(int(c["to"]))])
+			want.sort()
+			got.sort()
+			if want != got:
+				errors.append("passage %d: the choices %s differ from the verified edges %s" % [n, str(got), str(want)])
+		for c in p.get("choices", []):
+			if c.get("to", null) != null and not mp.has(str(int(c["to"]))):
+				errors.append("passage %d: choice leads to %d, which the quest map does not know" % [n, int(c["to"])])
