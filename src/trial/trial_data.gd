@@ -87,10 +87,7 @@ func validate(run_data: RunData) -> void:
 			errors.append("zone %s: scene '%s' is not defined" % [zid, z.get("scene", "")])
 		if int(z.get("tier", 0)) < 1 or int(z.get("tier", 0)) > RunData.TIERS:
 			errors.append("zone %s: tier must be 1 to %d" % [zid, RunData.TIERS])
-	for sid in scenes:
-		var f := str(scenes[sid].get("file", ""))
-		if not FileAccess.file_exists(f) and not ResourceLoader.exists(f):
-			errors.append("scene %s: file %s is missing" % [sid, f])
+	# (the flat scene pictures were deleted: a scene is now only an id that zones and passages name; each zone is a 2.5D map)
 	var victories := 0
 	for n in passages:
 		var p: Dictionary = passages[n]

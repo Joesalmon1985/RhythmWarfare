@@ -1,6 +1,6 @@
 extends TestCase
-## The home screen: Play (the run), Story chapters (the chapter campaign), Start from a reached level, Settings; the military campaign, loadout and duel stay hidden
-## (a developer button only in the editor or with RW_DEV=1). Every button points at a scene that exists, all four fit a phone held sideways, and the chapter menu
+## The home screen: Play (the run), Story chapters (the chapter campaign), Start from a reached level, Settings; the Wizard Duel (wifi) button; the military campaign and loadout stay hidden
+## (a developer button only in the editor or with RW_DEV=1). Every button points at a scene that exists, all five fit a phone held sideways, and the chapter menu
 ## builds from home with its own saves untouched.
 
 const TMP_RUN := "user://test_home_run.json"
@@ -33,9 +33,9 @@ func test_home_offers_play_chapters_levels_and_settings() -> void:
 	Session.run_progress.enter("warehouse")
 	var d := _home(Vector2(1152, 648))
 	var texts: Array = _buttons(d["scene"]).map(func(b: Button) -> String: return b.text)
-	for want in ["Play", "Story chapters", "Start from a reached level", "Settings"]:
+	for want in ["Play", "Story chapters", "Start from a reached level", "Wizard Duel (wifi)", "Settings"]:
 		assert_true(want in texts, "home has %s: %s" % [want, str(texts)])
-	for hidden in ["Campaign", "Loadout", "Duel", "Practice", "Missions", "Battle"]:
+	for hidden in ["Campaign", "Loadout", "Practice", "Missions", "Battle"]:
 		assert_false(texts.any(func(t: String) -> bool: return t.contains(hidden)), "%s is not on home: %s" % [hidden, str(texts)])
 	for b in _buttons(d["scene"]):
 		var btn := b as Button
@@ -46,6 +46,7 @@ func test_home_offers_play_chapters_levels_and_settings() -> void:
 		by[(b as Button).text] = b
 	assert_eq((by["Play"] as Button).get_meta("scene"), "res://src/run/run_play.tscn")
 	assert_eq((by["Story chapters"] as Button).get_meta("scene"), "res://src/scenes/story_campaign.tscn")
+	assert_eq((by["Wizard Duel (wifi)"] as Button).get_meta("scene"), "res://src/duel/duel_lobby.tscn")
 	assert_false((by["Start from a reached level"] as Button).disabled, "a reached level is startable")
 	(d["host"] as Control).queue_free()
 	Session.run_progress = saved
@@ -53,7 +54,7 @@ func test_home_offers_play_chapters_levels_and_settings() -> void:
 		DirAccess.remove_absolute(TMP_RUN)
 
 
-func test_all_four_buttons_fit_a_phone_held_sideways() -> void:
+func test_all_five_buttons_fit_a_phone_held_sideways() -> void:
 	var saved := Session.run_progress
 	Session.run_progress = RunProgress.load_data(TMP_RUN, "user://none.json")
 	for size in [Vector2(844, 390), Vector2(1152, 648), Vector2(1024, 768)]:
@@ -63,12 +64,12 @@ func test_all_four_buttons_fit_a_phone_held_sideways() -> void:
 		var rects: Array = []
 		for b in _buttons(d["scene"]):
 			var btn := b as Button
-			if btn.text in ["Play", "Story chapters", "Start from a reached level", "Settings"]:
+			if btn.text in ["Play", "Story chapters", "Start from a reached level", "Wizard Duel (wifi)", "Settings"]:
 				var r := Rect2(btn.global_position, btn.size)
 				rects.append(r)
 				assert_true(Rect2(Vector2.ZERO, size).encloses(r), "%s is on screen in %s (%s)" % [btn.text, str(size), str(r)])
 				assert_true(r.size.y >= 44.0, "%s is a big enough target" % btn.text)
-		assert_eq(rects.size(), 4)
+		assert_eq(rects.size(), 5)
 		for i in rects.size():
 			for k in range(i + 1, rects.size()):
 				assert_false((rects[i] as Rect2).intersects(rects[k]), "buttons do not overlap in %s" % str(size))
