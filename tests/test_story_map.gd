@@ -280,3 +280,32 @@ func test_mothership_layout_has_the_variety_the_art_brief_asks_for() -> void:
 	assert_true(med_ceilings.size() >= 4 and lo < 2.0, "the medical bay has several ceiling heights, the alcove is low")
 	assert_true(float(m.sector("reactor")["ceiling"]) - float(m.sector("reactor")["floor"]) >= 10.0, "the reactor well is tall")
 	assert_true(float(m.sector("exam_table")["floor"]) > float(m.sector("exam")["floor"]), "the exam table stands on a raised platform")
+func _ids(m: StoryMap, key: String) -> Array:
+	var out: Array = []
+	for s in m.sectors:
+		out.append(str(s[key]))
+	return out
+
+
+func _count_sprite(m: StoryMap, sprite: String) -> int:
+	var n := 0
+	for t in m.things:
+		if str(t["sprite"]) == sprite:
+			n += 1
+	return n
+
+
+func test_wp9_layouts_have_their_brief_rooms() -> void:
+	var w := StoryMap.load_chapter("mental_hospital")
+	for sid in ["dorm", "dorm_alcove", "quiet", "quiet_bed", "quiet_slit"]:
+		assert_true(w._sector_index.has(sid), "ward has sector " + sid)
+	assert_true(_ids(w, "room").has("dorm"), "the ward's dormitory is a room")
+	assert_true(_count_sprite(w, "thing_bed") >= 12, "ward: a row of iron beds")
+	assert_true(_count_sprite(w, "thing_chair") >= 6, "ward: day room chairs")
+	assert_true((w.route(Vector2(0, 6.5), "dayroom", Vector2(26, 9.4), "dorm")["points"] as PackedVector2Array).size() > 1, "the dormitory is reachable by portals")
+	var h := StoryMap.load_chapter("hospital")
+	assert_true(h._sector_index.has("day_tv"), "hospital: TV alcove")
+	assert_true(_count_sprite(h, "thing_bench") >= 2 and _count_sprite(h, "wall_vending") >= 2 and _count_sprite(h, "wall_tv") >= 1, "hospital: bench, vending machines, TV")
+	var u := StoryMap.load_chapter("underworld")
+	assert_true(_count_sprite(u, "thing_column") >= 6 and _count_sprite(u, "thing_anvil") >= 2, "underworld: columns and anvils")
+	assert_true(u._sector_index.has("stair1") and u._sector_index.has("stair2"), "underworld: a stair up to the throne")

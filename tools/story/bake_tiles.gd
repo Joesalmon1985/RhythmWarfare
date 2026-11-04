@@ -374,6 +374,7 @@ func _mental_hospital() -> Dictionary:
 		"thing_table": func(s, c): return _th_table(),
 		"thing_bed": func(s, c): return _th_bed(),
 		"thing_easel": func(s, c): return _th_easel(),
+		"thing_chair": func(s, c): return _th_chair(Color("#6a7a70"), Color("#3c463f")),
 	}
 
 
@@ -450,6 +451,50 @@ func _th_bed() -> Image:
 	return im
 
 
+func _th_chair(seat: Color, frame: Color) -> Image:
+	var im := _blank()
+	im.fill_rect(Rect2i(34, 30, 60, 50), seat)
+	im.fill_rect(Rect2i(34, 30, 60, 5), frame)
+	im.fill_rect(Rect2i(28, 80, 72, 12), seat)
+	im.fill_rect(Rect2i(28, 90, 72, 3), frame)
+	im.fill_rect(Rect2i(32, 92, 6, 34), frame)
+	im.fill_rect(Rect2i(90, 92, 6, 34), frame)
+	return im
+
+
+func _th_bench() -> Image:
+	var im := _blank()
+	im.fill_rect(Rect2i(4, 56, 120, 8), Color("#7a5a38"))
+	im.fill_rect(Rect2i(4, 74, 120, 10), Color("#8a6a42"))
+	im.fill_rect(Rect2i(4, 82, 120, 3), Color("#4a3620"))
+	im.fill_rect(Rect2i(12, 85, 8, 38), Color("#2c3038"))
+	im.fill_rect(Rect2i(108, 85, 8, 38), Color("#2c3038"))
+	im.fill_rect(Rect2i(12, 56, 6, 30), Color("#2c3038"))
+	im.fill_rect(Rect2i(110, 56, 6, 30), Color("#2c3038"))
+	return im
+
+
+func _th_column() -> Image:
+	var im := _blank()
+	im.fill_rect(Rect2i(40, 0, 48, 128), Color("#3a2630"))
+	im.fill_rect(Rect2i(46, 0, 8, 128), Color("#5a3a48"))
+	im.fill_rect(Rect2i(78, 0, 10, 128), Color("#241418"))
+	im.fill_rect(Rect2i(30, 0, 68, 12), Color("#5a3a48"))
+	im.fill_rect(Rect2i(30, 116, 68, 12), Color("#5a3a48"))
+	return im
+
+
+func _th_anvil() -> Image:
+	var im := _blank()
+	im.fill_rect(Rect2i(14, 50, 100, 20), Color("#3c3c44"))
+	im.fill_rect(Rect2i(4, 56, 18, 8), Color("#3c3c44"))
+	im.fill_rect(Rect2i(14, 50, 100, 4), Color("#6a6a74"))
+	im.fill_rect(Rect2i(48, 70, 32, 26), Color("#2c2c34"))
+	im.fill_rect(Rect2i(32, 96, 64, 24), Color("#34343c"))
+	im.fill_rect(Rect2i(40, 40, 30, 10), Color("#ff6a20"))
+	return im
+
+
 func _th_easel() -> Image:
 	var im := _blank()
 	im.fill_rect(Rect2i(36, 20, 56, 46), Color("#f0e8cc"))
@@ -495,6 +540,8 @@ func _underworld() -> Dictionary:
 		"floor_steel": func(s, c): return _fit(_crop(_view(s, c, "furnace_backdrop"), Rect2i(0, 420, 200, 280))),
 		"ceil_pipes": func(s, c): return _rows(_crop(_view(s, c, "furnace_backdrop"), Rect2i(0, 0, 1280, 60))),
 		"wall_bars": func(s, c): return _cage_bars(),
+		"thing_column": func(s, c): return _th_column(),
+		"thing_anvil": func(s, c): return _th_anvil(),
 		"sky_hell": func(s, c): return _sky(Color(0.12, 0.02, 0.03), Color(0.85, 0.28, 0.06), 40, 23, [[60, 40, 14, Color(0.9, 0.3, 0.1)], [170, 46, 22, Color(0.5, 0.1, 0.05)]], Color(1.0, 0.6, 0.3)),
 	}
 
@@ -540,6 +587,8 @@ func _hospital() -> Dictionary:
 		"wall_quiet": func(s, c): return _quiet_wall(),
 		"floor_lino": func(s, c): return _lino(),
 		"wall_tv": func(s, c): return _tv(),
+		"thing_chair": func(s, c): return _th_chair(Color("#5a78a8"), Color("#2c3c5c")),
+		"thing_bench": func(s, c): return _th_bench(),
 		"sky_night": func(s, c): return _sky(Color(0.01, 0.02, 0.08), Color(0.07, 0.11, 0.27), 90, 5, [[200, 18, 4, Color(0.98, 0.95, 0.78)]]),
 	}
 

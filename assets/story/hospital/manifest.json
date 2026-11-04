@@ -3182,6 +3182,22 @@
    ],
    "metres": 1.0
   },
+  "thing_bench": {
+   "file": "textures/thing_bench.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_chair": {
+   "file": "textures/thing_chair.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
   "trim": {
    "file": "textures/trim.png",
    "size": [

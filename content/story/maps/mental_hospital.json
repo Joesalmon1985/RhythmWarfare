@@ -12,6 +12,7 @@
   "floor_wood": "textures/floor_wood.png",
   "pad_tile": "textures/pad_tile.png",
   "thing_bed": "textures/thing_bed.png",
+  "thing_chair": "textures/thing_chair.png",
   "thing_easel": "textures/thing_easel.png",
   "thing_lamp": "textures/thing_lamp.png",
   "thing_table": "textures/thing_table.png",
@@ -40,7 +41,11 @@
   {"id": "courtyard", "polygon": [[47, -2], [61, -2], [61, 14], [47, 14]], "floor": 0, "ceiling": 3.2, "floor_tex": "floor_paving", "ceil_tex": "sky", "wall_tex": "wall_brick", "light": 0.55, "tint": "#a0c8b8", "room": "courtyard", "flags": ["dance_floor"]},
   {"id": "c_stage", "polygon": [[61, 4], [65, 4], [65, 10], [61, 10]], "floor": 0.6, "ceiling": 3.2, "floor_tex": "floor_dais", "ceil_tex": "sky", "wall_tex": "wall_brick", "light": 0.72, "tint": "#ffe0a0", "room": "courtyard", "flags": ["stage"]},
   {"id": "treatment", "polygon": [[13, 8], [19, 8], [19, 14], [13, 14]], "floor": 0, "ceiling": 2.3, "floor_tex": "tx_floor", "ceil_tex": "tx_tile", "wall_tex": "tx_tile", "light": 0.42, "tint": "#9fe0d0", "room": "treatment", "flags": []},
-  {"id": "quiet", "polygon": [[13, 14], [19, 14], [19, 18], [13, 18]], "floor": 0, "ceiling": 2.3, "floor_tex": "tx_floor", "ceil_tex": "pad_tile", "wall_tex": "pad_tile", "light": 0.4, "tint": "#c8d8cc", "room": "treatment", "flags": []}
+  {"id": "quiet", "polygon": [[13, 14], [19, 14], [19, 17], [13, 17]], "floor": 0, "ceiling": 2.3, "floor_tex": "tx_floor", "ceil_tex": "pad_tile", "wall_tex": "pad_tile", "light": 0.4, "tint": "#c8d8cc", "room": "treatment", "flags": []},
+  {"id": "quiet_bed", "polygon": [[14, 17], [18, 17], [18, 18.8], [17, 19.8], [15, 19.8], [14, 18.8]], "floor": 0.35, "ceiling": 2.0, "floor_tex": "tx_floor", "ceil_tex": "pad_tile", "wall_tex": "pad_tile", "light": 0.4, "tint": "#c8d8cc", "room": "treatment", "flags": []},
+  {"id": "quiet_slit", "polygon": [[15.2, 19.8], [16.8, 19.8], [16.8, 20.6], [15.2, 20.6]], "floor": 1.1, "ceiling": 2.0, "floor_tex": "tx_floor", "ceil_tex": "sky", "wall_tex": "wall_window", "light": 0.5, "tint": "#a0b8c8", "room": "treatment", "flags": []},
+  {"id": "dorm", "polygon": [[21, 8], [31, 8], [31, 14], [21, 14]], "floor": 0, "ceiling": 2.2, "floor_tex": "floor_wood", "ceil_tex": "ceil_pale", "wall_tex": "wall_dado", "light": 0.45, "tint": "#8fc8a0", "room": "dorm", "flags": []},
+  {"id": "dorm_alcove", "polygon": [[24, 14], [28, 14], [28, 16.5], [24, 16.5]], "floor": 0.2, "ceiling": 2.0, "floor_tex": "floor_wood", "ceil_tex": "ceil_pale", "wall_tex": "wall_awindow", "light": 0.5, "tint": "#a8d0a8", "room": "dorm", "flags": []}
  ],
  "walls": [
   {"from": [-7, -3], "to": [-3, -3], "sector": "dayroom", "tex": "wall_speaker", "portal": null},
@@ -53,7 +58,9 @@
   {"from": [15, 8], "to": [17, 8], "sector": "corridor", "portal": "treatment"},
   {"from": [7, 4], "to": [27, 4], "sector": "corridor", "tex": "wall_cdoor", "portal": null},
   {"from": [7, 8], "to": [15, 8], "sector": "corridor", "tex": "wall_cdoor2", "portal": null},
-  {"from": [17, 8], "to": [33, 8], "sector": "corridor", "tex": "wall_cdoor2", "portal": null},
+  {"from": [17, 8], "to": [22, 8], "sector": "corridor", "tex": "wall_cdoor2", "portal": null},
+  {"from": [30, 8], "to": [33, 8], "sector": "corridor", "tex": "wall_cdoor2", "portal": null},
+  {"from": [22, 8], "to": [30, 8], "sector": "corridor", "portal": "dorm"},
   {"from": [33, 5], "to": [33, 7], "sector": "corridor", "portal": "art_room"},
   {"from": [27, 0], "to": [31, 0], "sector": "office", "tex": "wall_end", "portal": null},
   {"from": [47, 0], "to": [47, 6], "sector": "art_room", "tex": "wall_awindow", "portal": null},
@@ -61,7 +68,10 @@
   {"from": [47, 6], "to": [47, 8], "sector": "art_room", "portal": "courtyard"},
   {"from": [61, 4], "to": [61, 10], "sector": "courtyard", "portal": "c_stage", "lower_tex": "floor_dais", "upper_tex": "wall_brick"},
   {"from": [65, 4], "to": [65, 10], "sector": "c_stage", "tex": "wall_archdoor", "portal": null},
-  {"from": [15, 14], "to": [17, 14], "sector": "treatment", "portal": "quiet"}
+  {"from": [14, 14], "to": [18, 14], "sector": "treatment", "portal": "quiet"},
+  {"from": [14, 17], "to": [18, 17], "sector": "quiet", "portal": "quiet_bed"},
+  {"from": [15.5, 19.8], "to": [16.5, 19.8], "sector": "quiet_bed", "portal": "quiet_slit"},
+  {"from": [24, 14], "to": [28, 14], "sector": "dorm", "portal": "dorm_alcove", "lower_tex": "floor_wood"}
  ],
  "things": [
   {"id": "woofer_dl", "kind": "billboard", "sprite": "woofer", "at": [-6.4, -2.3], "y": 0.8, "size": 1.6, "anim": "pump"},
@@ -128,7 +138,36 @@
   {"id": "lamp_t", "kind": "billboard", "sprite": "thing_lamp", "at": [16.0, 11.6], "y": 1.6, "size": 1.4, "anim": "none"},
   {"id": "lamp_glow", "kind": "billboard", "sprite": "glow", "at": [16.0, 11.6], "y": 1.3, "size": 3.2, "anim": "flicker", "blend": "add"},
   {"id": "table_t", "kind": "billboard", "sprite": "thing_table", "at": [16.0, 12.6], "y": 0.5, "size": 1.0, "anim": "none"},
-  {"id": "pad_glow", "kind": "billboard", "sprite": "glow", "at": [16.0, 17.5], "y": 1.2, "size": 2.0, "anim": "pulse", "blend": "add"}
+  {"id": "pad_glow", "kind": "billboard", "sprite": "glow", "at": [16, 18.4], "y": 1.0, "size": 2.0, "anim": "pulse", "blend": "add"},
+  {"id": "bed_q", "kind": "billboard", "sprite": "thing_bed", "at": [16, 18.9], "y": 0.5, "size": 1.1, "anim": "none"},
+  {"id": "table_q", "kind": "billboard", "sprite": "thing_table", "at": [14.8, 18.2], "y": 0.5, "size": 0.9, "anim": "none"},
+  {"id": "lamp_q", "kind": "billboard", "sprite": "thing_lamp", "at": [17.3, 18.2], "y": 0.9, "size": 0.9, "anim": "none"},
+  {"id": "slit_glow", "kind": "billboard", "sprite": "glow", "at": [16, 20.2], "y": 0.6, "size": 1.4, "anim": "flicker", "blend": "add"},
+  {"id": "chair_d0", "kind": "billboard", "sprite": "thing_chair", "at": [-5.2, 8.5], "y": 0.45, "size": 0.9, "anim": "none"},
+  {"id": "chair_d1", "kind": "billboard", "sprite": "thing_chair", "at": [-4.2, 8.5], "y": 0.45, "size": 0.9, "anim": "none"},
+  {"id": "chair_d2", "kind": "billboard", "sprite": "thing_chair", "at": [-3.2, 8.5], "y": 0.45, "size": 0.9, "anim": "none"},
+  {"id": "chair_d3", "kind": "billboard", "sprite": "thing_chair", "at": [3.2, 8.5], "y": 0.45, "size": 0.9, "anim": "none"},
+  {"id": "chair_d4", "kind": "billboard", "sprite": "thing_chair", "at": [4.2, 8.5], "y": 0.45, "size": 0.9, "anim": "none"},
+  {"id": "chair_d5", "kind": "billboard", "sprite": "thing_chair", "at": [5.2, 8.5], "y": 0.45, "size": 0.9, "anim": "none"},
+  {"id": "chair_dw0", "kind": "billboard", "sprite": "thing_chair", "at": [-6.5, 4.2], "y": 0.45, "size": 0.9, "anim": "none"},
+  {"id": "chair_de0", "kind": "billboard", "sprite": "thing_chair", "at": [6.5, 4.2], "y": 0.45, "size": 0.9, "anim": "none"},
+  {"id": "chair_dw1", "kind": "billboard", "sprite": "thing_chair", "at": [-6.5, 5.2], "y": 0.45, "size": 0.9, "anim": "none"},
+  {"id": "chair_de1", "kind": "billboard", "sprite": "thing_chair", "at": [6.5, 5.2], "y": 0.45, "size": 0.9, "anim": "none"},
+  {"id": "chair_dw2", "kind": "billboard", "sprite": "thing_chair", "at": [-6.5, 6.2], "y": 0.45, "size": 0.9, "anim": "none"},
+  {"id": "chair_de2", "kind": "billboard", "sprite": "thing_chair", "at": [6.5, 6.2], "y": 0.45, "size": 0.9, "anim": "none"},
+  {"id": "bed_w0", "kind": "billboard", "sprite": "thing_bed", "at": [21.6, 9.2], "y": 0.5, "size": 1.1, "anim": "none"},
+  {"id": "bed_e0", "kind": "billboard", "sprite": "thing_bed", "at": [30.4, 9.2], "y": 0.5, "size": 1.1, "anim": "none"},
+  {"id": "bed_w1", "kind": "billboard", "sprite": "thing_bed", "at": [21.6, 10.3], "y": 0.5, "size": 1.1, "anim": "none"},
+  {"id": "bed_e1", "kind": "billboard", "sprite": "thing_bed", "at": [30.4, 10.3], "y": 0.5, "size": 1.1, "anim": "none"},
+  {"id": "bed_w2", "kind": "billboard", "sprite": "thing_bed", "at": [21.6, 11.4], "y": 0.5, "size": 1.1, "anim": "none"},
+  {"id": "bed_e2", "kind": "billboard", "sprite": "thing_bed", "at": [30.4, 11.4], "y": 0.5, "size": 1.1, "anim": "none"},
+  {"id": "bed_w3", "kind": "billboard", "sprite": "thing_bed", "at": [21.6, 12.5], "y": 0.5, "size": 1.1, "anim": "none"},
+  {"id": "bed_e3", "kind": "billboard", "sprite": "thing_bed", "at": [30.4, 12.5], "y": 0.5, "size": 1.1, "anim": "none"},
+  {"id": "bed_w4", "kind": "billboard", "sprite": "thing_bed", "at": [21.6, 13.4], "y": 0.5, "size": 1.1, "anim": "none"},
+  {"id": "bed_e4", "kind": "billboard", "sprite": "thing_bed", "at": [30.4, 13.4], "y": 0.5, "size": 1.1, "anim": "none"},
+  {"id": "dorm_lamp", "kind": "billboard", "sprite": "thing_lamp", "at": [26, 12.5], "y": 0.8, "size": 0.8, "anim": "none"},
+  {"id": "dorm_glow", "kind": "billboard", "sprite": "glow", "at": [26, 10.5], "y": 1.2, "size": 3.0, "anim": "flicker", "blend": "add"},
+  {"id": "dorm_win", "kind": "billboard", "sprite": "wall_awindow", "at": [26, 16.2], "y": 0.9, "size": 1.1, "anim": "none"}
  ],
  "homes": [
   {"actor": "c01", "sector": "dayroom", "at": [0.0, 3.27]},
@@ -243,7 +282,8 @@
   {"id": "stage", "at": [63.2, 7.0], "yaw": 90, "sector": "c_stage"},
   {"id": "stage_edge", "at": [59.4, 7.0], "yaw": 90, "sector": "courtyard"},
   {"id": "treat", "at": [16, 9.8], "yaw": 180, "sector": "treatment"},
-  {"id": "quiet", "at": [16, 15.6], "yaw": 180, "sector": "quiet"}
+  {"id": "quiet", "at": [16, 15.6], "yaw": 180, "sector": "quiet"},
+  {"id": "dorm", "at": [26, 9.4], "yaw": 180, "sector": "dorm"}
  ],
  "spots": {
   "door": {"sector": "dayroom", "at": [0.0, -2.1], "slots": [[-2.25, -2.1], [-0.75, -2.1], [0.75, -2.1], [2.25, -2.1], [-2.25, -1.1], [-0.75, -1.1], [0.75, -1.1], [2.25, -1.1]]},
@@ -314,10 +354,7 @@
   {"id": "courtyard_s10", "at": [59.9, 12.61]}
  ],
  "occluders": [],
- "rooms": {
-  "corridor": {"palette": "cool"},
-  "art_room": {"palette": "warm"}
- },
+ "rooms": {"corridor": {"palette": "cool"}, "art_room": {"palette": "warm"}},
  "sky": {"tex": "textures/sky_moon.png", "mode": "cylinder"},
  "fog": {"color": "#050c09", "density": 0.026},
  "animated": [

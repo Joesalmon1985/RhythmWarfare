@@ -33,20 +33,20 @@ MENTAL_HOSPITAL = {
     "wall_mint": 2.0, "wall_dado": 2.0, "wall_led": 3.0, "wall_door": 3.0, "wall_speaker": 2.0, "wall_window": 3.0, "floor_check": 2.5, "ceil_tile": 2.5,
     "floor_dais": 2.0, "wall_cdoor": 3.0, "wall_cdoor2": 3.0, "floor_wood": 3.0, "ceil_pale": 2.5, "wall_end": 3.0, "wall_art": 3.0, "wall_awindow": 4.0,
     "floor_art": 3.0, "wall_brick": 2.5, "wall_archdoor": 3.0, "floor_paving": 3.0, "tx_tile": 1.5, "tx_floor": 1.5, "pad_tile": 1.5, "sky_moon": 1.0,
-    "thing_lamp": 1.0, "thing_table": 1.0, "thing_bed": 1.0, "thing_easel": 1.0,
+    "thing_lamp": 1.0, "thing_table": 1.0, "thing_bed": 1.0, "thing_easel": 1.0, "thing_chair": 1.0,
 }
 
 UNDERWORLD = {
     "wall_arena": 2.5, "wall_speaker": 2.0, "wall_hellmouth": 3.0, "wall_bone": 1.5, "wall_shelf": 2.0, "floor_checker": 2.5, "floor_dais": 2.0,
     "ceil_spikes": 2.5, "trim": 2.0, "wall_court": 3.0, "wall_column": 2.0, "wall_throne": 4.0, "floor_obsidian": 2.5, "floor_carpet": 3.0,
     "ceil_court": 2.5, "floor_causeway": 2.5, "lava": 3.0, "wall_cave": 3.0, "wall_fortress": 4.0, "wall_plate": 2.5, "wall_face": 4.0,
-    "floor_orange": 3.0, "floor_steel": 2.5, "ceil_pipes": 2.5, "wall_bars": 1.5, "sky_hell": 1.0,
+    "floor_orange": 3.0, "floor_steel": 2.5, "ceil_pipes": 2.5, "wall_bars": 1.5, "sky_hell": 1.0, "thing_column": 1.0, "thing_anvil": 1.0,
 }
 
 HOSPITAL = {
     "wall_ward": 2.5, "wall_window": 4.0, "floor_wood": 2.5, "trim": 2.0, "wall_curtain": 1.5, "wall_door": 3.0, "floor_check": 2.5, "ceil_tile": 2.5,
     "wall_station": 3.0, "wall_counter": 2.0, "wall_vending": 2.5, "floor_cafe": 3.0, "wall_brick": 4.0, "wall_hedge": 3.0, "floor_stone": 3.0,
-    "wall_quiet": 2.0, "floor_lino": 2.0, "wall_tv": 3.0, "sky_night": 1.0,
+    "wall_quiet": 2.0, "floor_lino": 2.0, "wall_tv": 3.0, "sky_night": 1.0, "thing_chair": 1.0, "thing_bench": 1.0,
 }
 
 SPECS = {"night_one": NIGHT_ONE, "mothership": MOTHERSHIP, "underworld": UNDERWORLD, "hospital": HOSPITAL, "mental_hospital": MENTAL_HOSPITAL}

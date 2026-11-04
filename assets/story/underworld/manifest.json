@@ -3417,6 +3417,22 @@
    ],
    "metres": 1.0
   },
+  "thing_anvil": {
+   "file": "textures/thing_anvil.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_column": {
+   "file": "textures/thing_column.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
   "trim": {
    "file": "textures/trim.png",
    "size": [
