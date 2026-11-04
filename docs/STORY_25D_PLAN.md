@@ -356,3 +356,23 @@ WP6 Night One journey:
 - Settings: Story camera motion (full / reduced / none: none cuts to the end of a move half way through) and Story internal resolution (360p / 270p / 180p, `Session.story_lines`; `RW_STORY_LINES` still overrides); reduced effects imply at least reduced motion
   (`Session.effective_story_motion`). `RW_STORY_MOTION=0..2` for screenshots.
 - Tests: `test_story_crowd_world`, `test_story_fx_world`, `test_story_night_one_journey` (journey under perfect, none, sloppy seed 2 at 30, 60 and variable steps; camera inside a room at every bar; no dense-run warning on load).
+
+Screenshots (docs/shots/story, regenerated for Night One: 01 to 27 and the new `j01` to `j18` journey shots, JPEG; chapters 2 to 5 untouched): looked at by eye. Fixed on the way: the camera on the stage faced the back wall (waypoint `stage` now yaw 180, facing
+the floor), the DJ in the booth saw no crowd (the visible-sector walk stopped two portals out, the floor is three away: now four), the good night ended facing the LED wall (new waypoint `stage_edge`, facing the floor) and the lost night faced the street door
+(`door` now faces the club), the ending words on the LED wall were cut by the wall segments (the wall texture is 48 x 32 and the words sit in its first 32 columns), dancers passing the eye filled the screen (fade now between 1.0 and 1.8 m). What is still plain
+and is the polish session's to improve: the corridor and the cubicles are dark and bare (no toilet sign, no cistern or bowl sprite, the sick beat is a head-down view of a tiled wall), the stage woofers frame the booth view heavily, the entrance has no door sprite,
+the near dancers' faces are large when they pass, the LED pattern is chunky at 48 x 32.
+
+Frame time, final (same profile as above; this window had another Godot process using about 70 percent of a core, so absolute numbers run about 1 ms high; the WP4 commit measured 12.0 ms in a quiet window and 13.0 in this one): WP4 13.0, WP5 13.1 to 13.9,
+final 14.4 mean, p95 15.0 to 16.7 at 270 lines (180 and 360 lines are the same: the cost is CPU). The final is higher than WP4 mainly because the authored journey puts the camera in the booth at bars 105 to 113, which sees the whole floor crowd (about 25 dancers on screen instead
+of about 13); the FX update costs about 0.7 ms, the post-process 0.2 ms (and it is off while nothing needs it). So the plan's 12 ms average is not met at the busiest booth view on this laptop (about 13.5 in a quiet window); the next 1.5 ms would come from caching the static deck layer
+and the pad boxes (about 1.8 ms together) or baking the dancers to sprite sheets (the plan's stretch). 95th percentile stays under 20 ms.
+
+For the next agent (WP7 to WP8):
+- A new chapter needs `content/story/maps/<chapter>.json` (map conventions in 13.1 and above), its actors without design-space x and depth (the map's homes place them), `spots` (door with `slots`, circle, riser, side_l, side_r), `silhouettes`, waypoints with a
+  yaw that faces what the player should see, and textures baked by `bake_tiles.gd` (add a `_<chapter>()` recipe dictionary and the `textures` ids in `tiles.py`). Chapter JSON journeys use the same dict actions with `after_bars`; endings take `journey`.
+- The 2D `StoryCrowd` design-space path stays for chapters without a map; `StoryStage.attach_world` is what turns on world mode, and `RW_STORY_2D` no longer exists. `StoryLight` and `StoryWorldFx` look for `fixture` and `woofer` things and the `dance_floor` flag on a sector, and an
+  LED wall by the map texture name `wall_led`; name the equivalents the same way or extend `StoryWorldFx.build`.
+- Sectors must be convex, and the crowd walks `StoryMap.route`; keep homes at least a metre from every waypoint (tested) and spots inside their sectors (validated).
+- `tools/test.sh` takes a few minutes; a mid-run edit of a content file can produce failures that do not reproduce (it happened once): rerun before debugging.
+- The capture script is slow (about two minutes a shot to a late bar); four `capture.sh` runs in parallel with different `RW_SHOTS` filters work on four cores. Do not use `pkill -f capture.sh` from a command that contains that string.

@@ -141,6 +141,7 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	world.name = "World"
 	world.build(map, assets)
 	lowres.attach(world)
+	lowres.set_vignette(assets.sprite("vignette").get("tex", null))
 	_overlay = lowres.add_overlay(crowd, "Crowd")  # the 2D crowd is drawn inside the low-res viewport
 	crowd.position = Vector2.ZERO
 	crowd.scale = Vector2.ONE

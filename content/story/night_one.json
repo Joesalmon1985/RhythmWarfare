@@ -796,7 +796,7 @@
    "journey": [
     {
      "action": "player_move",
-     "to": "steps",
+     "to": "stage_edge",
      "style": "walk",
      "bars": 2
     }

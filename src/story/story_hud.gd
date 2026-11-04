@@ -89,14 +89,14 @@ func _vis(t0: float, hold: float) -> float:
 	return 1.0
 
 
-func _panel(r: Rect2, accent: Color, a: float) -> void:
+func _panel(r: Rect2, accent: Color, a: float, shadow := true) -> void:
 	_box.bg_color = Color(0.03, 0.02, 0.1, 0.72 * a)
 	_box.border_color = Color(accent, 0.55 * a)
 	_box.set_border_width_all(0)
 	_box.border_width_left = 4
 	_box.set_corner_radius_all(6)
 	_box.shadow_color = Color(accent, 0.18 * a)
-	_box.shadow_size = 10
+	_box.shadow_size = 10 if shadow else 0  # the always-on role chip skips the soft shadow (a costly draw every frame)
 	draw_style_box(_box, r)
 
 
@@ -146,7 +146,7 @@ func _draw() -> void:
 		var chip := Rect2(x - 10.0 * k + act_w, 18.0 * k + (0.0 if act_w > 0.0 else 0.0), tw + 32.0 * k, fs * 1.7)
 		if act_w == 0.0:
 			y0 = chip.end.y + 10.0 * k
-		_panel(chip, accent, ra)
+		_panel(chip, accent, ra, false)
 		_text(Vector2(chip.position.x + 18.0 * k, chip.position.y + fs * 1.2), role_text, fs, Color(accent.lightened(0.5), ra), 5)
 	# the decision caption under it
 	if not _toast.is_empty():

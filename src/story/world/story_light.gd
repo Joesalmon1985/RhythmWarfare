@@ -141,40 +141,53 @@ static func woofer_glow(stage: StoryStage, t: float) -> float:
 ## The LED floor: brightness 0..0.85 of the tile (i, j) of a w x h grid whose centre is `c` metres from the circle... `p` is the tile centre in metres, `circle` the ring's centre, `h` a fixed
 ## random 0..1 per tile. Chases, ripples out of the circle at a drop or a pass, a sweep with the light wave, a slow breathing when quiet.
 static func tile_alpha(stage: StoryStage, t: float, i: int, j: int, h: float, p: Vector2, circle: Vector2, floor_x: Vector2) -> float:
-	var e := e01(stage)
+	return tile_alpha_ctx(tile_context(stage, t), i, j, h, p, circle, floor_x)
+
+
+## Everything a floor tile's brightness needs that does not depend on the tile, worked out once per refresh.
+static func tile_context(stage: StoryStage, t: float) -> Dictionary:
 	var b := beats(stage, t)
-	var beat := floorf(b)
-	var kp := kick(stage, t)
-	var lost := stage.tableau() == "lost"
-	var level := (0.1 + 0.55 * e) * (0.25 if lost else 1.0) * (0.55 if stage.reduced else 1.0) * (0.5 if stage.high_contrast else 1.0)
-	var a := 0.0
-	if stage.reduced:
-		a = 0.35 * (0.5 + 0.5 * sin(TAU * (b / 8.0) + float(i) * 0.6 + float(j) * 0.4))
-	elif e < 0.3:
-		a = 0.4 * maxf(0.0, sin(TAU * (b / 8.0 + h)))
-	else:
-		var lane := (i + j + int(beat)) % 4
-		a = (0.75 if lane == 0 else 0.0) * (0.45 + 0.55 * kp)
-		if fposmod(h * 7.0 + beat * 0.618, 1.0) < 0.12 + 0.18 * e:
-			a = maxf(a, kp)
-	var d := p.distance_to(circle)
 	var ripple_t := -1.0
 	for name in ["bass_reveal", "burst"]:
 		if stage.is_active(name, t):
 			ripple_t = maxf(ripple_t, stage.since(name, t))
-	if ripple_t >= 0.0:
-		a = maxf(a, 1.2 * exp(-pow((d - ripple_t * 5.0) / 1.2, 2.0)) * exp(-ripple_t * 0.35))
 	var last_pass := -INF
 	for q in stage.fx_pulses():
 		if q["passed"] and float(q["t0"]) <= t:
 			last_pass = maxf(last_pass, float(q["t0"]))
-	if t - last_pass < 1.2:
-		a = maxf(a, 0.8 * exp(-pow((d - (t - last_pass) * 7.0) / 1.0, 2.0)) * (1.0 - (t - last_pass) / 1.2))
-	var wave_u := stage.progress("light_wave", t)
+	return {"e": e01(stage), "b": b, "beat": floorf(b), "kp": kick(stage, t), "reduced": stage.reduced, "t": t, "ripple_t": ripple_t, "last_pass": last_pass,
+		"wave_u": stage.progress("light_wave", t),
+		"level": (0.1 + 0.55 * e01(stage)) * (0.25 if stage.tableau() == "lost" else 1.0) * (0.55 if stage.reduced else 1.0) * (0.5 if stage.high_contrast else 1.0)}
+
+
+static func tile_alpha_ctx(c: Dictionary, i: int, j: int, h: float, p: Vector2, circle: Vector2, floor_x: Vector2) -> float:
+	var e: float = c["e"]
+	var b: float = c["b"]
+	var kp: float = c["kp"]
+	var a := 0.0
+	if c["reduced"]:
+		a = 0.35 * (0.5 + 0.5 * sin(TAU * (b / 8.0) + float(i) * 0.6 + float(j) * 0.4))
+	elif e < 0.3:
+		a = 0.4 * maxf(0.0, sin(TAU * (b / 8.0 + h)))
+	else:
+		var lane := (i + j + int(c["beat"])) % 4
+		a = (0.75 if lane == 0 else 0.0) * (0.45 + 0.55 * kp)
+		if fposmod(h * 7.0 + float(c["beat"]) * 0.618, 1.0) < 0.12 + 0.18 * e:
+			a = maxf(a, kp)
+	var ripple_t: float = c["ripple_t"]
+	var last_pass: float = c["last_pass"]
+	var t: float = c["t"]
+	var wave_u: float = c["wave_u"]
+	if ripple_t >= 0.0 or t - last_pass < 1.2:
+		var d := p.distance_to(circle)
+		if ripple_t >= 0.0:
+			a = maxf(a, 1.2 * exp(-pow((d - ripple_t * 5.0) / 1.2, 2.0)) * exp(-ripple_t * 0.35))
+		if t - last_pass < 1.2:
+			a = maxf(a, 0.8 * exp(-pow((d - (t - last_pass) * 7.0) / 1.0, 2.0)) * (1.0 - (t - last_pass) / 1.2))
 	if wave_u >= 0.0:
 		var wx := lerpf(floor_x.x - 2.0, floor_x.y + 2.0, wave_u)
 		a = maxf(a, exp(-pow((p.x - wx) / 1.4, 2.0)))
-	return clampf(a * level, 0.0, 0.85)
+	return clampf(a * float(c["level"]), 0.0, 0.85)
 
 
 ## The followspots: [{kind, at: Vector2 (ground x, z), color, size m}] for the hero, the sweep and the circle.
@@ -269,5 +282,5 @@ static func post_state(stage: StoryStage, t: float) -> Dictionary:
 		"dim": dim,
 		"strobe": strobe_at(stage, t),
 		"flash": bloom_at(stage, t) * 0.25,
-		"vignette": 0.15 + (0.0 if stage.reduced else 0.5 * q),
+		"vignette": 0.0 if stage.reduced else 0.5 * q,  # the steady vignette is a sprite over the image (StoryLowRes); the shader only breathes it in with the queasy look
 	}

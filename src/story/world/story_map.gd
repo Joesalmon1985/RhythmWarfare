@@ -650,7 +650,7 @@ func route(from: Vector2, from_sec: String, to: Vector2, to_sec: String) -> Dict
 ## The sectors that can be seen from `cam` (a ground point in sector `sec`) looking along `yaw` (degrees) through a window of `aspect` (width / height) at the
 ## projector's vertical field of view: the camera's own sector (depth 0) and the sectors beyond portals whose opening lies in view, up to `max_depth` portals deep.
 ## Returns {sector id: portal depth}. A generous margin keeps a dancer in the doorway from popping.
-func visible_sectors(cam: Vector2, yaw: float, sec: String, aspect: float, max_depth := 2) -> Dictionary:
+func visible_sectors(cam: Vector2, yaw: float, sec: String, aspect: float, max_depth := 4) -> Dictionary:
 	var out := {}
 	if not _sector_index.has(sec):
 		return out

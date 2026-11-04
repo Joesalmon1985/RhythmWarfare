@@ -280,3 +280,12 @@ func test_night_one_chapter_file_has_no_design_space_numbers() -> void:
 			assert_false(a.has(k), "actor %s has no %s: the map places it" % [a["id"], k])
 	for s in raw["silhouettes"]:
 		assert_false(s.has("x") or s.has("depth"), "silhouette %s is placed by the map" % s["id"])
+
+
+func test_the_dj_in_the_booth_sees_the_floor_crowd_three_portals_away() -> void:
+	var stage := _stage()
+	_look_from(stage, "booth", 2.0)
+	assert_true(stage.crowd.drawn >= 5, "the booth looks over the riser and steps onto the floor (%d drawn)" % stage.crowd.drawn)
+	var w: Dictionary = stage.map.waypoint("booth")
+	assert_true(stage.map.visible_sectors(w["at"], float(w["yaw"]), "booth", VIEW.x / VIEW.y).has("floor"))
+	stage.free()

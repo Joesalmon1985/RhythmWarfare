@@ -42,7 +42,7 @@ func _init() -> void:
 	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	post = ShaderMaterial.new()
 	post.shader = load("res://src/story/world/story_post.gdshader")
-	rect.material = post
+	rect.material = null  # the post-process is only on while something needs it (apply_post)
 	rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(rect)
 	camera = Camera3D.new()
@@ -65,6 +65,21 @@ func add_overlay(node: Node, layer_name := "Overlay") -> CanvasLayer:
 		node.get_parent().remove_child(node)
 	layer.add_child(node)
 	return layer
+
+
+## The steady vignette over the image (the chapter's own vignette sprite).
+func set_vignette(tex: Texture2D) -> void:
+	if tex == null:
+		return
+	var v := TextureRect.new()
+	v.name = "Vignette"
+	v.texture = tex
+	v.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	v.stretch_mode = TextureRect.STRETCH_SCALE
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.modulate = Color(1, 1, 1, 0.9)
+	v.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(v)
 
 
 func attach(p_world: StoryWorld) -> void:
@@ -101,6 +116,8 @@ func apply_pose(pose: Dictionary, look_offset_deg := 0.0) -> void:
 
 ## Feed the post-process from StoryLight.post_state (and the palette's colour for the bloom).
 func apply_post(st: Dictionary, flash_color := Color(0.6, 0.7, 1.0)) -> void:
+	var active := float(st["queasy"]) > 0.001 or float(st["dim"]) > 0.004 or float(st["strobe"]) > 0.001 or float(st["flash"]) > 0.002 or float(st["vignette"]) > 0.001
+	rect.material = post if active else null  # a plain nearest-filtered blit is cheaper than the shader
 	post.set_shader_parameter("queasy", float(st["queasy"]))
 	post.set_shader_parameter("time_s", float(st["time"]))
 	post.set_shader_parameter("dim", float(st["dim"]))

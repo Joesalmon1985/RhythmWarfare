@@ -5,7 +5,9 @@ extends Node3D
 ## stage's actions); nothing here advances on frame counts, the animated textures refresh on song-time steps (so a pause freezes them and a restart replays them).
 
 const BEAM_LEN_PAD := 0.1
-const LED_SIZE := 32
+const LED_W := 48  # the wall texture is 3 m wide: the 2 m wall segments show its first 32 columns, where the ending words are centred
+const LED_H := 32
+const LED_WORD_W := 32
 const LED_HZ := 12.0
 const TILE_HZ := 20.0
 const GLYPHS := {  # 3 x 5 pixel letters for the ending word on the LED wall
@@ -43,6 +45,7 @@ var _floor_box := Rect2()
 var _ceil_y := 3.4
 var _fixtures: Array = []
 var _ring_tex: ImageTexture
+var _ball_shown := true
 
 
 func build(p_stage: StoryStage, p_map: StoryMap, p_assets: StoryAssets, p_world: StoryWorld) -> void:
@@ -188,7 +191,7 @@ func _build_tiles() -> void:
 
 
 func _build_led() -> void:
-	_led_img = Image.create(LED_SIZE, LED_SIZE, false, Image.FORMAT_RGBA8)
+	_led_img = Image.create(LED_W, LED_H, false, Image.FORMAT_RGBA8)
 	_led_img.fill(Color(0.015, 0.012, 0.05))
 	_led_tex = ImageTexture.create_from_image(_led_img)
 	world.set_texture_override("wall_led", _led_tex)
@@ -276,7 +279,9 @@ func update(t: float) -> void:
 	_update_dots(t)
 	_update_glows(t)
 	_update_confetti(t)
-	world.set_thing_visible("disco_ball", stage.ball_on())
+	if stage.ball_on() != _ball_shown:
+		_ball_shown = stage.ball_on()
+		world.set_thing_visible("disco_ball", _ball_shown)
 
 
 func _update_beams(t: float) -> void:
@@ -289,9 +294,7 @@ func _update_beams(t: float) -> void:
 		if not pivot.visible:
 			continue
 		pivot.rotation = Vector3(0.12 * sin(float(i) * 1.7 + t * 0.2), 0.0, StoryLight.fixture_angle(stage, i, t))
-		var w := 0.9 + 0.5 * e
-		for q in pivot.get_children():
-			(q as MeshInstance3D).scale = Vector3(w, 1.0, 1.0)
+		pivot.scale = Vector3(0.9 + 0.5 * e, 1.0, 0.9 + 0.5 * e)  # both crossed planes widen together
 		(b["mat"] as StandardMaterial3D).albedo_color = Color(StoryLight.pal(stage, i), a)
 
 
@@ -351,11 +354,12 @@ func _update_floor(t: float) -> void:
 		var glow := StoryLight.floor_glow(stage, tq)
 		var gcol := StoryLight.pal(stage, 0)
 		var fx := stage.crowd.floor_x
+		var ctx := StoryLight.tile_context(stage, tq)
 		for j in _tile_h:
 			for i in _tile_w:
 				var h := _tile_rand[j * _tile_w + i]
 				var p := Vector2(_tile_origin.x + float(i) + 0.5, _tile_origin.y + float(j) + 0.5)
-				var a := StoryLight.tile_alpha(stage, tq, i, j, h, p, circle, fx)
+				var a := StoryLight.tile_alpha_ctx(ctx, i, j, h, p, circle, fx)
 				var col := StoryLight.pal(stage, int(h * 8.0))
 				if a < 0.01:
 					_tile_img.set_pixel(i, j, Color(gcol, clampf(glow, 0.0, 0.5)))
@@ -403,25 +407,26 @@ func _update_led(t: float) -> void:
 	var word: Array = StoryLight.led_word(stage)
 	_led_img.fill(Color(0.015, 0.012, 0.05))
 	if word.is_empty():
-		for j in LED_SIZE:
-			var v := (float(j) + 0.5) / float(LED_SIZE)
-			for i in LED_SIZE:
-				if i % 4 == 3 or j % 4 == 3:  # the dark grid between the LED cells
-					continue
-				var val := StoryLight.led_value(mode, (float(i) + 0.5) / float(LED_SIZE), v, i / 4, b, e, kp)
-				_led_img.set_pixel(i, j, off if val < 0.05 else (c0.lerp(c1, v).lightened(0.08 * val) * (dim * (0.3 + 0.7 * val))).clamp())
+		var cols := LED_W / 4  # one LED cell is 3 x 3 pixels with a dark pixel of grid after it: work per cell, not per pixel
+		var rows := LED_H / 4
+		for cj in rows:
+			var v := (float(cj) + 0.5) / float(rows)
+			for ci in cols:
+				var val := StoryLight.led_value(mode, (float(ci) + 0.5) / float(cols), v, ci, b, e, kp)
+				var col2 := off if val < 0.05 else (c0.lerp(c1, v).lightened(0.08 * val) * (dim * (0.3 + 0.7 * val))).clamp()
+				_led_img.fill_rect(Rect2i(ci * 4, cj * 4, 3, 3), col2)
 	else:
 		var col := (c0.lightened(0.55) * (dim * (0.85 + 0.15 * kp))).clamp()
-		var y0 := (LED_SIZE - word.size() * 6) / 2
+		var y0 := (LED_H - word.size() * 6) / 2
 		for li in word.size():
 			var line: String = word[li]
-			var x0 := (LED_SIZE - line.length() * 4 + 1) / 2
+			var x0 := (LED_WORD_W - line.length() * 4 + 1) / 2
 			for ci in line.length():
 				var g: String = GLYPHS.get(line[ci], GLYPHS[" "])
 				for gy in 5:
 					for gx in 3:
 						if g[gy * 3 + gx] == "1":
-							_led_img.set_pixel(clampi(x0 + ci * 4 + gx, 0, LED_SIZE - 1), clampi(y0 + li * 6 + gy, 0, LED_SIZE - 1), col)
+							_led_img.set_pixel(clampi(x0 + ci * 4 + gx, 0, LED_W - 1), clampi(y0 + li * 6 + gy, 0, LED_H - 1), col)
 	_led_tex.update(_led_img)
 
 

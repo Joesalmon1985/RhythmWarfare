@@ -83,12 +83,13 @@
   {"id": "floor_centre", "at": [0, 6.5], "yaw": 0, "sector": "floor"},
   {"id": "floor_edge", "at": [-5.5, 6.6], "yaw": -12, "sector": "floor"},
   {"id": "steps", "at": [0, -3.8], "yaw": 0, "sector": "steps"},
-  {"id": "stage", "at": [0, -6.2], "yaw": 0, "sector": "riser"},
+  {"id": "stage", "at": [0, -6.2], "yaw": 180, "sector": "riser"},
+  {"id": "stage_edge", "at": [0, -3.7], "yaw": 180, "sector": "steps"},
   {"id": "booth", "at": [0, -9.0], "yaw": 180, "sector": "booth"},
   {"id": "corridor", "at": [-10, 1.5], "yaw": 90, "sector": "corridor"},
   {"id": "cubicle", "at": [-10, 7.5], "yaw": 180, "sector": "cubicle_b"},
   {"id": "cubicle_a", "at": [-12, 7.5], "yaw": 180, "sector": "cubicle_a"},
-  {"id": "door", "at": [0, 11.5], "yaw": 180, "sector": "entrance"}
+  {"id": "door", "at": [0, 11.5], "yaw": 0, "sector": "entrance"}
  ],
  "spots": {
   "door": {"sector": "entrance", "at": [0, 12.6], "slots": [[-2.1, 10.2], [-0.7, 10.2], [0.7, 10.2], [2.1, 10.2], [-2.1, 11.6], [-0.7, 11.6], [0.7, 11.6], [2.1, 11.6]]},

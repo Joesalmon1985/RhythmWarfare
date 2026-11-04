@@ -36,9 +36,11 @@ var glow_colors: Array = [Color(0.4, 1.0, 0.95), Color(1.0, 0.4, 0.85), Color(1.
 ## The 2.5D world (StoryMap, docs/STORY_25D_PLAN.md): with a map attached positions are ground coordinates [x, z] in metres instead of design pixels, every
 ## actor's feet are projected through StoryProjector from the camera pose the stage hands over, dancers are sorted by distance and culled by sector visibility.
 const HERO_M := 1.7  # a dancer is this tall in the world
-const NEAR_FADE := Vector2(0.7, 1.3)  # dancers closer than this (m) to the eye fade out so a passer-by never fills the screen
+const NEAR_FADE := Vector2(1.0, 1.8)  # dancers closer than this (m) to the eye fade out so a passer-by never fills the screen
 const OPEN_GAP := 0.42
 const POSE_RATE := 45.0
+const POSE_RATE_FAR := 24.0  # dancers further than FAR_M animate at this rate: they are a few pixels tall
+const FAR_M := 9.0
 var map: StoryMap
 var world_mode := false
 var cam_pose: Dictionary = {}  # {cam: Vector3, yaw}
@@ -320,7 +322,7 @@ func update(t: float, p_energy: float) -> void:
 				continue
 			# the dancers animate at up to POSE_RATE a second of song time (the redraw is the cost); position and scale still follow the camera every frame
 			var pt := float(a.get("pose_t", -1.0e9))
-			if t >= pt and t - pt < 1.0 / POSE_RATE:
+			if t >= pt and t - pt < 1.0 / (POSE_RATE if float(a["depth"]) < FAR_M else POSE_RATE_FAR):
 				continue
 			a["pose_t"] = t
 		c.update_pose(t, bpm, e01)
