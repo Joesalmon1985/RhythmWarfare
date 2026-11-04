@@ -25,16 +25,16 @@
   "wall_window": "textures/wall_window.png"
  },
  "sectors": [
-  {"id": "ward", "polygon": [[-5, -3], [5, -3], [5, 5], [-5, 5]], "floor": 0, "ceiling": 2.7, "floor_tex": "floor_wood", "ceil_tex": "ceil_tile", "wall_tex": "wall_ward", "light": 0.5, "tint": "#6f8fe0", "room": "main", "flags": ["dance_floor"]},
-  {"id": "bed", "polygon": [[-2, 5], [2, 5], [2, 8], [-2, 8]], "floor": -0.3, "ceiling": 2.7, "floor_tex": "floor_wood", "ceil_tex": "ceil_tile", "wall_tex": "wall_curtain", "light": 0.5, "tint": "#5a7fd0", "room": "main", "flags": ["stage"]},
-  {"id": "corridor", "polygon": [[5, -1], [29, -1], [29, 3], [5, 3]], "floor": 0, "ceiling": 2.6, "floor_tex": "floor_check", "ceil_tex": "ceil_tile", "wall_tex": "wall_door", "light": 0.6, "tint": "#ffd6a0", "room": "corridor", "flags": ["dance_floor"]},
-  {"id": "station", "polygon": [[29, -2], [33, -2], [33, 4], [29, 4]], "floor": 0, "ceiling": 2.6, "floor_tex": "floor_check", "ceil_tex": "ceil_tile", "wall_tex": "wall_station", "light": 0.78, "tint": "#ffb870", "room": "corridor", "flags": ["stage"]},
-  {"id": "dayroom", "polygon": [[12, -12], [28, -12], [28, -1], [12, -1]], "floor": 0, "ceiling": 2.2, "floor_tex": "floor_lino", "ceil_tex": "ceil_tile", "wall_tex": "wall_ward", "light": 0.45, "tint": "#7f98e8", "room": "dayroom", "flags": []},
-  {"id": "quiet", "polygon": [[13, 3], [15.4, 3], [15.4, 16], [13, 16]], "floor": 0, "ceiling": 2.4, "floor_tex": "floor_lino", "ceil_tex": "ceil_tile", "wall_tex": "wall_quiet", "light": 0.4, "tint": "#4a5a9a", "room": "quiet", "flags": []},
-  {"id": "cafeteria", "polygon": [[33, -6], [47, -6], [47, 8], [33, 8]], "floor": 0, "ceiling": 4.8, "floor_tex": "floor_cafe", "ceil_tex": "ceil_tile", "wall_tex": "wall_ward", "light": 0.55, "tint": "#7fa0e8", "room": "cafeteria", "flags": ["dance_floor"]},
-  {"id": "garden", "polygon": [[47, -8], [59, -8], [59, 10], [47, 10]], "floor": 0, "ceiling": 3.0, "floor_tex": "floor_stone", "ceil_tex": "sky", "wall_tex": "wall_brick", "light": 0.5, "tint": "#4f6fc8", "room": "garden", "flags": ["dance_floor"]},
-  {"id": "bandstand", "polygon": [[59, -3], [63, -3], [63, 5], [59, 5]], "floor": 0.5, "ceiling": 3.0, "floor_tex": "floor_stone", "ceil_tex": "sky", "wall_tex": "wall_hedge", "light": 0.65, "tint": "#7f9fff", "room": "garden", "flags": ["stage"]},
-  {"id": "day_tv", "polygon": [[17, -15], [23, -15], [23, -12], [17, -12]], "floor": 0.25, "ceiling": 2.7, "floor_tex": "floor_lino", "ceil_tex": "ceil_tile", "wall_tex": "wall_tv", "light": 0.55, "tint": "#8fa8f0", "room": "dayroom", "flags": []}
+  {"id": "ward", "polygon": [[-5, -3], [5, -3], [5, 5], [-5, 5]], "floor": 0, "ceiling": 2.7, "floor_tex": "floor_wood", "ceil_tex": "ceil_tile", "wall_tex": "wall_ward", "light": 0.5, "tint": "#6f8fe0", "room": "main", "flags": ["dance_floor"], "activities": {"quiet": ["sit", "chat", "stand", "sleep", "check"], "dancing": ["dance", "dance", "dance", "chat", "sit"], "hype": ["dance", "dance", "dance", "wave", "chat"], "euphoric": ["dance", "dance", "wave", "hug", "dance"]}},
+  {"id": "bed", "polygon": [[-2, 5], [2, 5], [2, 8], [-2, 8]], "floor": -0.3, "ceiling": 2.7, "floor_tex": "floor_wood", "ceil_tex": "ceil_tile", "wall_tex": "wall_curtain", "light": 0.5, "tint": "#5a7fd0", "room": "main", "flags": ["stage"], "activities": {"quiet": ["sleep", "check", "sit", "stand"], "dancing": ["dance", "check", "sit", "chat"], "hype": ["dance", "dance", "wave", "check"], "euphoric": ["dance", "wave", "hug", "dance"]}},
+  {"id": "corridor", "polygon": [[5, -1], [29, -1], [29, 3], [5, 3]], "floor": 0, "ceiling": 2.6, "floor_tex": "floor_check", "ceil_tex": "ceil_tile", "wall_tex": "wall_door", "light": 0.6, "tint": "#ffd6a0", "room": "corridor", "flags": ["dance_floor"], "activities": {"quiet": ["stand", "lean_wall", "chat", "pace", "phone", "serve"], "dancing": ["dance", "dance", "chat", "lean_wall", "serve"], "hype": ["dance", "dance", "dance", "wave", "chat"], "euphoric": ["dance", "dance", "wave", "hug"]}},
+  {"id": "station", "polygon": [[29, -2], [33, -2], [33, 4], [29, 4]], "floor": 0, "ceiling": 2.6, "floor_tex": "floor_check", "ceil_tex": "ceil_tile", "wall_tex": "wall_station", "light": 0.78, "tint": "#ffb870", "room": "corridor", "flags": ["stage"], "activities": {"quiet": ["check", "chat", "phone", "stand", "check"], "dancing": ["check", "dance", "chat", "phone"], "hype": ["dance", "dance", "check", "wave"], "euphoric": ["dance", "wave", "hug", "dance"]}},
+  {"id": "dayroom", "polygon": [[12, -12], [28, -12], [28, -1], [12, -1]], "floor": 0, "ceiling": 2.2, "floor_tex": "floor_lino", "ceil_tex": "ceil_tile", "wall_tex": "wall_ward", "light": 0.45, "tint": "#7f98e8", "room": "dayroom", "flags": [], "activities": {"quiet": ["watch", "sit", "chat", "sleep", "watch"], "dancing": ["watch", "sit", "chat", "phone", "watch"], "hype": ["watch", "chat", "wave", "sit", "point"], "euphoric": ["wave", "chat", "hug", "watch"]}},
+  {"id": "quiet", "polygon": [[13, 3], [15.4, 3], [15.4, 16], [13, 16]], "floor": 0, "ceiling": 2.4, "floor_tex": "floor_lino", "ceil_tex": "ceil_tile", "wall_tex": "wall_quiet", "light": 0.4, "tint": "#4a5a9a", "room": "quiet", "flags": [], "activities": {"quiet": ["lean_wall", "stand", "sleep", "phone", "pace"], "dancing": ["lean_wall", "chat", "phone", "sit", "stand"], "hype": ["chat", "lean_wall", "phone", "wave", "stand"], "euphoric": ["chat", "wave", "hug", "phone"]}},
+  {"id": "cafeteria", "polygon": [[33, -6], [47, -6], [47, 8], [33, 8]], "floor": 0, "ceiling": 4.8, "floor_tex": "floor_cafe", "ceil_tex": "ceil_tile", "wall_tex": "wall_ward", "light": 0.55, "tint": "#7fa0e8", "room": "cafeteria", "flags": ["dance_floor"], "activities": {"quiet": ["queue", "drink", "sit", "chat", "phone", "queue"], "dancing": ["dance", "queue", "drink", "dance", "chat"], "hype": ["dance", "dance", "dance", "toast", "queue"], "euphoric": ["dance", "dance", "wave", "toast", "hug"]}},
+  {"id": "garden", "polygon": [[47, -8], [59, -8], [59, 10], [47, 10]], "floor": 0, "ceiling": 3.0, "floor_tex": "floor_stone", "ceil_tex": "sky", "wall_tex": "wall_brick", "light": 0.5, "tint": "#4f6fc8", "room": "garden", "flags": ["dance_floor"], "activities": {"quiet": ["sit", "chat", "phone", "stand", "sit"], "dancing": ["dance", "sit", "chat", "dance", "phone"], "hype": ["dance", "dance", "dance", "wave", "chat"], "euphoric": ["dance", "dance", "wave", "hug", "dance"]}},
+  {"id": "bandstand", "polygon": [[59, -3], [63, -3], [63, 5], [59, 5]], "floor": 0.5, "ceiling": 3.0, "floor_tex": "floor_stone", "ceil_tex": "sky", "wall_tex": "wall_hedge", "light": 0.65, "tint": "#7f9fff", "room": "garden", "flags": ["stage"], "activities": {"quiet": ["sit", "stand", "chat", "lean_wall"], "dancing": ["dance", "sit", "chat", "dance"], "hype": ["dance", "dance", "wave", "dance"], "euphoric": ["dance", "dance", "wave", "hug"]}},
+  {"id": "day_tv", "polygon": [[17, -15], [23, -15], [23, -12], [17, -12]], "floor": 0.25, "ceiling": 2.7, "floor_tex": "floor_lino", "ceil_tex": "ceil_tile", "wall_tex": "wall_tv", "light": 0.55, "tint": "#8fa8f0", "room": "dayroom", "flags": [], "activities": {"quiet": ["watch", "sit", "stand", "sleep"], "dancing": ["watch", "sit", "chat", "stand"], "hype": ["watch", "wave", "sit", "chat"], "euphoric": ["wave", "watch", "hug", "chat"]}}
  ],
  "walls": [
   {"from": [-2, 5], "to": [2, 5], "sector": "bed", "portal": "ward", "lower_tex": "wall_curtain", "upper_tex": "trim"},
@@ -244,7 +244,21 @@
   {"actor": "garden_p01", "sector": "garden", "at": [54.91, -3.25]},
   {"actor": "garden_p02", "sector": "garden", "at": [54.2, -0.72]},
   {"actor": "garden_p03", "sector": "garden", "at": [53.52, 2.34]},
-  {"actor": "garden_p04", "sector": "garden", "at": [54.8, 4.91]}
+  {"actor": "garden_p04", "sector": "garden", "at": [54.8, 4.91]},
+  {"actor": "h01", "sector": "ward", "at": [-3.7, -0.5]},
+  {"actor": "h02", "sector": "bed", "at": [-1.0, 5.7]},
+  {"actor": "h03", "sector": "bed", "at": [1.3, 5.7]},
+  {"actor": "h04", "sector": "ward", "at": [-4.2, 4.5]},
+  {"actor": "h06", "sector": "station", "at": [31.2, -0.3]},
+  {"actor": "h07", "sector": "corridor", "at": [18.0, 0.2]},
+  {"actor": "h08", "sector": "dayroom", "at": [20.0, -6.7]},
+  {"actor": "h10", "sector": "day_tv", "at": [19.2, -13.4]},
+  {"actor": "h12", "sector": "cafeteria", "at": [42.4, -4.3]},
+  {"actor": "h13", "sector": "cafeteria", "at": [43.4, -3.4]},
+  {"actor": "h14", "sector": "cafeteria", "at": [37.5, 3.0]},
+  {"actor": "h15", "sector": "garden", "at": [57.3, -3.0]},
+  {"actor": "h16", "sector": "garden", "at": [54.5, 8.9]},
+  {"actor": "h17", "sector": "garden", "at": [51.5, 7.5]}
  ],
  "waypoints": [
   {"id": "bed", "at": [0, 6.7], "yaw": 0, "sector": "bed"},
