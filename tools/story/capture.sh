@@ -71,7 +71,7 @@ interlude() {  # name cutscene_seconds
   local name="$1" at="$2"
   want "interlude_${name}_$(printf %02d "$at")" || return 0
   env RW_STORY_INTERLUDE="$name" RW_STORY_INTERLUDE_T="$at" RW_STORY_INTERLUDE_HOLD=1 \
-    "$GODOT" --path "$ROOT" -s tools/shoot.gd -- res://src/scenes/story_interlude.tscn "$OUT" "50:shot:interlude_${name}_$(printf %02d "$at")" 2>&1 | grep -E "^shot|ERROR|SCRIPT" || true
+    "$GODOT" --path "$ROOT" -s tools/shoot.gd -- res://src/scenes/story_interlude.tscn "$OUT" "6:shot:interlude_${name}_$(printf %02d "$at")" 2>&1 | grep -E "^shot|ERROR|SCRIPT" || true
 }
 for t in 5 9 12 15; do interlude abduction $t; interlude descent $t; done
 

@@ -210,13 +210,14 @@ func _draw_riser_column(ci: CanvasItem) -> void:
 	var x0 := pos.x + size.x * 0.22
 	var x1 := pos.x + size.x * 0.78
 	var a := stage.riser_level(stage.t_now)
-	ci.draw_rect(Rect2(x0, top, x1 - x0, lift), Color(0.05, 0.03, 0.14, a))
+	var base := _pal(0)
+	ci.draw_rect(Rect2(x0, top, x1 - x0, lift), Color(base.r * 0.12, base.g * 0.12, base.b * 0.16, a))
 	var n := maxi(int(lift / 18.0), 1)
 	for k in n:  # the scissor struts
 		var y0 := top + lift * float(k) / float(n)
 		var y1 := top + lift * float(k + 1) / float(n)
-		ci.draw_line(Vector2(x0 + 6.0, y0), Vector2(x1 - 6.0, y1), Color(0.45, 0.35, 0.9, 0.8 * a), 3.0)
-		ci.draw_line(Vector2(x1 - 6.0, y0), Vector2(x0 + 6.0, y1), Color(0.45, 0.35, 0.9, 0.8 * a), 3.0)
+		ci.draw_line(Vector2(x0 + 6.0, y0), Vector2(x1 - 6.0, y1), Color(_pal(1).darkened(0.25), 0.8 * a), 3.0)
+		ci.draw_line(Vector2(x1 - 6.0, y0), Vector2(x0 + 6.0, y1), Color(_pal(1).darkened(0.25), 0.8 * a), 3.0)
 	var neon := Color(_pal(0), (0.5 + 0.5 * _kick_pulse()) * a)
 	ci.draw_line(Vector2(x0, top), Vector2(x0, bottom), neon, 2.0)
 	ci.draw_line(Vector2(x1, top), Vector2(x1, bottom), neon, 2.0)

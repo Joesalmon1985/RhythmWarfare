@@ -21,8 +21,9 @@ func _ready() -> void:
 	var info := Session.story_interlude
 	if info.is_empty() and OS.has_environment("RW_STORY_INTERLUDE"):  # screenshots: open a cutscene directly
 		var nm := OS.get_environment("RW_STORY_INTERLUDE")
-		info = {"name": nm, "from": "night_one", "to": "mothership" if nm == "abduction" else "underworld",
-			"ending": "good_night" if nm == "abduction" else "lost_the_floor"}
+		var spec := {"abduction": ["night_one", "mothership", "good_night"], "descent": ["night_one", "underworld", "lost_the_floor"],
+			"awakening": ["mothership", "hospital", "honoured_guest"], "sectioned": ["underworld", "mental_hospital", "devoured"]}.get(nm, ["night_one", "mothership", "good_night"])
+		info = {"name": nm, "from": spec[0], "to": spec[1], "ending": spec[2]}
 		Session.story_interlude = info
 	_def = StoryChapters.interlude(str(info.get("name", "")))
 	var chapters := StoryChapters.load_default()
@@ -83,6 +84,8 @@ func _process(_delta: float) -> void:
 	if stage == null or _go:
 		return
 	var t := float(Time.get_ticks_msec()) / 1000.0 - _t0
+	if OS.get_environment("RW_STORY_INTERLUDE_HOLD") == "1" and OS.has_environment("RW_STORY_INTERLUDE_T"):
+		t = float(OS.get_environment("RW_STORY_INTERLUDE_T"))  # screenshots: the cutscene clock stands still at that moment
 	fx.t = t
 	for e in _def["events"]:
 		if t >= float(e["t"]) and not _done_events.has(e):

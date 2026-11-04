@@ -34,6 +34,7 @@ var views: Dictionary = {}  # room id -> StoryView
 var current_view := "main"
 var moving_camera := false  # the chapter has extra rooms: the camera walks and turns between them (Night One stays fixed)
 var _cam: Dictionary = {}  # the move in progress or last made: {from, to, style, t0, t1, dir}
+var _main_palette := ""  # the main room's light when the camera last left it
 var _cam_fx: Array = []  # camera_look / camera_push windows: {kind, t0, t1, amount}
 var _cam_overlay: Node2D
 var _act := {}  # active timed effects: name -> {t0, t1, args}
@@ -163,6 +164,7 @@ func reset() -> void:
 	action_log = []
 	_cam = {}
 	_cam_fx = []
+	_main_palette = ""
 	current_view = "main"
 	for id in views:
 		(views[id] as StoryView).reset()
@@ -331,6 +333,7 @@ func _view_cam(id: String, t: float, u: float, beats: float) -> Dictionary:
 				env = env * env * (3.0 - 2.0 * env)  # eased in and out, no corner at the ends
 				if f["kind"] == "look":
 					slide.x += float(f["amount"]) * env
+					s = maxf(s, 1.0 + absf(slide.x) / 640.0)  # swell enough that the slid room never shows its edge
 				else:
 					s *= 1.0 + float(f["amount"]) * env
 	return {"s": s, "slide": slide, "bob": bob, "rot": rot, "a": a}
@@ -628,9 +631,13 @@ func apply(a: Dictionary) -> void:
 			var to := str(args.get("view", "main"))
 			if views.has(to) and moving_camera and to != current_view:
 				_cam = {"from": current_view, "to": to, "style": str(args.get("style", "walk")), "t0": t0, "t1": t0 + float(args.get("bars", 2.0)) * bar_s()}
+				if current_view == "main":
+					_main_palette = palette  # remembered for the way back
 				current_view = to
 				var hint := (views[to] as StoryView).palette_hint
-				if hint != "" and palettes.has(hint) and not args.has("keep_palette"):  # the room's own light, unless the script says otherwise
+				if to == "main" and _main_palette != "" and not args.has("keep_palette"):
+					palette = _main_palette
+				elif hint != "" and palettes.has(hint) and not args.has("keep_palette"):  # the room's own light, unless the script says otherwise
 					palette = hint
 		"camera_look":
 			_cam_fx.append({"kind": "look", "t0": t0, "t1": t0 + dur, "amount": float(args.get("dx", 90.0))})
