@@ -2698,42 +2698,82 @@
   "bar_front": {
    "file": "textures/bar_front.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 1.0
+   "metres": 2.4
+  },
+  "ceil_low": {
+   "file": "textures/ceil_low.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.0
+  },
+  "ceil_stair": {
+   "file": "textures/ceil_stair.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.0
   },
   "ceil_truss": {
    "file": "textures/ceil_truss.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 4.0
+  },
+  "ceil_wc": {
+   "file": "textures/ceil_wc.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.2
   },
   "cubicle_door": {
    "file": "textures/cubicle_door.png",
    "size": [
-    64,
-    64
+    128,
+    128
+   ],
+   "metres": 2.6
+  },
+  "cubicle_wall": {
+   "file": "textures/cubicle_wall.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.2
+  },
+  "floor_boards": {
+   "file": "textures/floor_boards.png",
+   "size": [
+    128,
+    128
    ],
    "metres": 2.0
   },
   "floor_carpet": {
    "file": "textures/floor_carpet.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 2.0
   },
   "floor_dark": {
    "file": "textures/floor_dark.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 3.0
   },
   "floor_led": {
    "file": "textures/floor_led.png",
@@ -2746,10 +2786,90 @@
   "floor_stage": {
    "file": "textures/floor_stage.png",
    "size": [
+    128,
+    128
+   ],
+   "metres": 2.0
+  },
+  "thing_bin": {
+   "file": "textures/thing_bin.png",
+   "size": [
     64,
     64
    ],
-   "metres": 2.0
+   "metres": 1.0
+  },
+  "thing_bulb": {
+   "file": "textures/thing_bulb.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_bulbs": {
+   "file": "textures/thing_bulbs.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_decks": {
+   "file": "textures/thing_decks.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_dryer": {
+   "file": "textures/thing_dryer.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_exit_sign": {
+   "file": "textures/thing_exit_sign.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_firedoor": {
+   "file": "textures/thing_firedoor.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_lavalamp": {
+   "file": "textures/thing_lavalamp.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_pendant": {
+   "file": "textures/thing_pendant.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_rail": {
+   "file": "textures/thing_rail.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
   },
   "thing_sign_wc": {
    "file": "textures/thing_sign_wc.png",
@@ -2759,51 +2879,107 @@
    ],
    "metres": 1.0
   },
-  "toilet_floor": {
-   "file": "textures/toilet_floor.png",
+  "thing_sink": {
+   "file": "textures/thing_sink.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_sofa": {
+   "file": "textures/thing_sofa.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_toilet": {
+   "file": "textures/thing_toilet.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_truss_tower": {
+   "file": "textures/thing_truss_tower.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_tube": {
+   "file": "textures/thing_tube.png",
    "size": [
     64,
     64
+   ],
+   "metres": 1.0
+  },
+  "toilet_floor": {
+   "file": "textures/toilet_floor.png",
+   "size": [
+    128,
+    128
    ],
    "metres": 1.5
   },
   "toilet_tile": {
    "file": "textures/toilet_tile.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 1.5
   },
   "trim": {
    "file": "textures/trim.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 2.0
   },
   "wall_bar": {
    "file": "textures/wall_bar.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 2.4
   },
   "wall_brick": {
    "file": "textures/wall_brick.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 2.0
+  },
+  "wall_chill": {
+   "file": "textures/wall_chill.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.6
+  },
+  "wall_corridor": {
+   "file": "textures/wall_corridor.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.4
   },
   "wall_door": {
    "file": "textures/wall_door.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 3.0
   },
@@ -2818,16 +2994,16 @@
   "wall_panel": {
    "file": "textures/wall_panel.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 3.2
   },
   "wall_speaker": {
    "file": "textures/wall_speaker.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 2.0
   }
