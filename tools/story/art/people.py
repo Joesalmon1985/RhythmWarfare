@@ -90,12 +90,31 @@ def ramp(base: str) -> list:
     return [_to_hex(edge), _to_hex(dark), _to_hex(c), _to_hex(lit)]
 
 
+UNDERTONE = {"warm": (0.03, 0.06), "neutral": (0.0, 0.02), "olive": (0.1, -0.04), "cool": (0.95, 0.0)}
+
+
+def skin_ramp(base: str, tone: str = "warm") -> list:
+    """The four steps of a human skin: shadows warm and a little more saturated (blood under the skin: towards red, or towards rose for a cool undertone,
+    olive towards a green-gold), never grey or violet; the light step a warm, slightly desaturated sheen. A skin outside the human range (an alien, a demon)
+    keeps the cloth ramp."""
+    c = _hex(base)
+    h, s, v = _rgb_hsv(c)
+    if not (h < 0.13 or h > 0.93) or s < 0.12 or s > 0.8:
+        return ramp(base)
+    th, ds = UNDERTONE.get(tone, UNDERTONE["warm"])
+    dark_h = _shift_hue(h, th if tone != "olive" else 0.085, 0.3)
+    dark = _hsv_rgb(dark_h, min(1.0, s * 1.08 + 0.04 + ds), v * 0.77)
+    edge = _hsv_rgb(_shift_hue(dark_h, 0.99, 0.3), min(1.0, s * 1.18 + 0.08), v * 0.56)
+    lit = _hsv_rgb(_shift_hue(h, 0.09, 0.25), max(0.0, s * 0.78), min(1.0, v * 1.1 + 0.06))
+    return [_to_hex(edge), _to_hex(dark), _to_hex(c), _to_hex(lit)]
+
+
 def palette_row(colours: dict) -> list:
     """128 RGBA tuples (material x step) for one actor; alpha 255, 254 marks an emissive material (the shader does not light it)."""
     row = []
     for name in MATS:
         base = colours.get(name, "#ff00ff")
-        steps = ramp(base)
+        steps = skin_ramp(base, colours.get("skin_tone", "warm")) if name == "skin" and "skin_tone" in colours else ramp(base)
         for st in steps:
             r, g, b = (int(st[i:i + 2], 16) for i in (1, 3, 5))
             row.append((r, g, b, 254 if name in EMISSIVE else 255))
@@ -115,6 +134,7 @@ class Canvas:
         self.z = np.full((h, w), -1e9, np.float32)
         self.pid = np.zeros((h, w), np.int16)
         self.fixed = np.zeros((h, w), np.int8) - 1  # a forced shade step (details: eyes, mouth, print lines); -1 = from the shade
+        self.nodither = np.zeros((h, w), bool)  # the face's skin: shaded in clean steps, no dither noise across the features
         ys, xs = np.mgrid[0:h, 0:w]
         self.X = xs.astype(np.float32) + 0.5 - ox
         self.Y = ys.astype(np.float32) + 0.5 - oy
@@ -296,6 +316,7 @@ def finish(cv: Canvas) -> np.ndarray:
     h, w = cv.mat.shape
     ys, xs = np.mgrid[0:h, 0:w]
     dith = BAYER4[ys % 4, xs % 4] * 0.11
+    dith = np.where(cv.nodither & ((cv.mat == M["skin"]) | (cv.mat == M["horn"])), 0.0, dith)
     s = cv.sh + dith
     step = np.where(s > 0.7, LIT, np.where(s > 0.38, MID, DARK)).astype(np.int16)
     step = np.where(cv.fixed >= 0, cv.fixed, step)
@@ -361,8 +382,10 @@ class Body:
         self.W, self.cu, self.limb = W, cu, limb
         self.k = math.cos(math.radians(SIDE_DEG)) if fc == 1 else 1.0  # lateral foreshortening
         self.mir = -1.0 if fc == 2 else 1.0  # the back view is the front mirrored (the person's right arm is on screen right)
-        self.head_h = 0.135 * hs * float(sp.get("head_h", 1.0)) * S
-        self.head_w = 0.098 * hs * float(sp.get("head_w", 1.0)) * S
+        # a head about 1/6.8 of the height (the art direction asks 1/6.5 to 1/7): 17 x 13 pixels at the full size, room for a face with eyes, a nose and lips
+        wk = float((spec.get("face") or {}).get("wk", 1.0)) if not sp else 1.0
+        self.head_h = 0.146 * hs * float(sp.get("head_h", 1.0)) * S
+        self.head_w = 0.108 * hs * wk * float(sp.get("head_w", 1.0)) * S
         hip_y = -0.5 * legs * S
         top = -S
         chin = top + self.head_h
@@ -374,7 +397,12 @@ class Body:
             self.sit_dy = (-0.27 * S) - hip_y
         elif state in FLOORED:
             self.sit_dy = (-0.06 * S) - hip_y
-        dy = self.sit_dy
+        # a crouch (the flair moves): the hips sink by this share of the height and the knees bend (two-bone legs, the feet stay where the straight leg
+        # would put them, minus a lift). Zero for every other state, so their frames are unchanged.
+        self.crouch = 0.0 if state in SEATED + FLOORED else max(0.0, float(pose.get("crouch", 0.0)))
+        self.cdy = self.crouch * S
+        self.lift = {"l": max(0.0, float(pose.get("lift_l", 0.0))) * S, "r": max(0.0, float(pose.get("lift_r", 0.0))) * S}
+        dy = self.sit_dy + self.cdy
         self.hip = (0.0, hip_y + dy)
         lean = float(pose.get("lean", 0.0))
         self.lean = lean
@@ -427,6 +455,25 @@ class Body:
             elif state in FLOORED:
                 kn = (hx * 0.6, self.hip[1] - 0.2 * S)
                 an = (hx * 0.9 + (-sg * 0.02 * S), -0.04 * S)
+            elif self.cdy > 0.0 or self.lift[side] > 0.0:
+                d = rot((0.0, 1.0), sg * lg)
+                d = (d[0] * self.k * self.mir, d[1])
+                an = add((hp[0], hip_y), d, ln)  # where the straight leg of the standing figure puts the foot
+                an = (an[0], min(an[1] - self.lift[side], -0.045 * S))
+                vx, vy = an[0] - hp[0], an[1] - hp[1]
+                D = math.hypot(vx, vy)
+                half = ln * 0.5
+                if D >= ln * 0.999:  # out of reach: the leg is straight towards the foot
+                    an = (hp[0] + vx / D * ln * 0.999, hp[1] + vy / D * ln * 0.999)
+                    kn = ((hp[0] + an[0]) * 0.5, (hp[1] + an[1]) * 0.5)
+                else:
+                    bend = math.sqrt(max(half * half - (D * 0.5) ** 2, 0.0))
+                    px, py = -vy / max(D, 1e-6), vx / max(D, 1e-6)
+                    want = 1.0 if fc == 1 else (1.0 if hx > 0 else -1.0)  # the knee goes forward in the three-quarter view, outwards seen from the front
+                    if px * want < 0:
+                        px, py = -px, -py
+                    out = 1.0 if fc == 1 else 0.55  # seen from the front the thigh comes towards the eye: its bend is foreshortened
+                    kn = ((hp[0] + an[0]) * 0.5 + px * bend * out, (hp[1] + an[1]) * 0.5 + py * bend * out)
             else:
                 d = rot((0.0, 1.0), sg * lg)
                 d = (d[0] * self.k * self.mir, d[1])
@@ -505,6 +552,7 @@ class Painter:
     # -- the whole person --
     def draw(self):
         b, S = self.b, self.S
+        b.head_c = self.snap(b.head_c)
         st = b.state
         if st in SEATED:
             self.seat()
@@ -674,7 +722,7 @@ class Painter:
             return rows, mf, z
         jobs = []
         y_w = b.t_waist + 0.02 * S
-        y_kn = (knee_y if knee_y is not None else -0.3 * S) - b.hip[1]
+        y_kn = (knee_y if knee_y is not None else min(-0.3 * S + b.cdy, -0.06 * S)) - b.hip[1]  # a crouch keeps the hem's length (above the floor)
         if top in ("dress", "gown"):
             jobs.append(flare(y_w, y_kn, b.waist_hw * 1.05, hipw * 1.45, "top", 1.2, "top3" if top == "dress" else None,
                               pattern="dots" if top == "gown" else None))
@@ -684,7 +732,7 @@ class Painter:
         elif bot == "tutu":
             jobs.append(flare(-0.04 * S, 0.06 * S, hipw * 1.2, hipw * 2.3, "bottom", 1.25, "bottom2", ragged=True))
         if self.outer and self.outer.get("long") and self.outer.get("kind") != "cape":
-            y_hem = (knee_y - b.hip[1] if knee_y is not None else -0.26 * S - b.hip[1])
+            y_hem = (knee_y - b.hip[1] if knee_y is not None else min(-0.26 * S + b.cdy, -0.06 * S) - b.hip[1])
             gap = 0.035 * S
             rows = [(-0.03 * S, hipw * 1.08, hipw * 1.08), (y_hem, hipw * 1.42, hipw * 1.42)]
 
@@ -875,7 +923,7 @@ class Painter:
     def cape(self):
         b, S, cv = self.b, self.S, self.cv
         ts = b.t_shoulder
-        y1 = (-0.18 * S - b.hip[1]) if b.state not in SEATED else (-0.02 * S - b.hip[1])
+        y1 = (min(-0.18 * S + b.cdy, -0.04 * S) - b.hip[1]) if b.state not in SEATED else (-0.02 * S - b.hip[1])
         rows = [(ts - 0.01 * S, b.sw * 0.9, b.sw * 0.9), (ts + 0.1 * S, b.sw * 1.15, b.sw * 1.15), (y1, b.sw * 1.55, b.sw * 1.55)]
         z = 1.4 if b.fc == 2 else -1.8
 
@@ -883,7 +931,7 @@ class Painter:
             m = np.full(u.shape, M["outer"], np.uint8)
             m = np.where(ly > y1 - _step(S, 0.02), M["outer2"], m)
             return m, -0.2 * (np.sin(lx * 0.5 + 0.7) > 0.5) - 0.1
-        profile(cv, b.hip, b.lean * 0.6, rows, z, mat)
+        profile(cv, b.hip, b.lean * 0.6 * max(0.0, 1.0 - b.crouch / 0.15), rows, z, mat)  # a crouched cape hangs level over the floor
 
     def wings(self, kind):
         b, S, cv = self.b, self.S, self.cv
@@ -985,40 +1033,138 @@ class Painter:
                 lambda *x: M["acc"] if glove else skin)
 
     # -- the head --
+    def snap(self, c):
+        """A head centre on a pixel centre, so the face's pixels sit on the grid and a front face is symmetric."""
+        cv = self.cv
+        return (math.floor(c[0] + cv.ox) + 0.5 - cv.ox, math.floor(c[1] + cv.oy) + 0.5 - cv.oy)
+
+    def face_layout(self, rx, ry):
+        """Where the features go, in whole pixels from the head centre (x right, y down): the size class, the face's centre column (moved towards the turn
+        in the three-quarter view), the rows of the brows, eyes, nose and mouth, the eyes' width and the gap between them."""
+        b = self.b
+        f = self.sp.get("face") or {}
+        kid = f.get("age") == "kid"
+        cls = "L" if (ry >= 5.5 and rx >= 4.2) else ("S" if ry >= 3.0 else "XS")
+        sx = int(round(rx * 0.38)) if b.fc == 1 else 0
+        if rx >= 5.9:
+            ew, ein = 3, 2
+        elif rx >= 5.4:
+            ew, ein = 3, 1
+        elif rx >= 4.2:
+            ew, ein = 2, 2 if rx >= 4.8 else 1
+        else:
+            ew, ein = 1, 1
+        ey = 1 if (kid and cls == "L") else 0
+        brow = ey - (2 if cls == "L" else 1)
+        nose = ey + max(1, int(round(ry * 0.33)))
+        mouth = nose + (2 if cls == "L" else 1)
+        if cls == "XS":
+            nose, mouth = 1, 1
+        return {"cls": cls, "sx": sx, "ew": ew, "ein": ein, "ey": ey, "brow": brow, "nose": nose, "mouth": mouth, "rx": rx, "ry": ry}
+
+    def relief(self, L, lx, ly, u, v):
+        """The skin's modelling. The face is painted in clean planes rather than left to the round shading (which would scatter single pixels across the
+        features): mid skin, the light (upper left) on the nose bridge, the cheekbone and the chin, the shadow on the turning cheek, inside the eye socket by
+        the bridge, under the cheekbone and along the jaw; in the three-quarter view the side of the head is its own lit plane with the jawline under it.
+        Returns shade offsets that bring the round shading to that target (the forehead and crown keep the round shading)."""
+        b = self.b
+        f = self.sp.get("face") or {}
+        if b.fc == 2 or L["cls"] == "XS":
+            return np.where(v > 0.55, -0.12, 0.0).astype(np.float32)  # the nape, under the skull
+        if self.species in ("grey", "insect", "skeleton", "cyclops"):  # their own skulls: the round shading, a darker jaw
+            return np.where(v > 0.5, -0.12 - 0.12 * np.abs(u), 0.0).astype(np.float32)
+        nz = np.sqrt(np.clip(1.0 - u * u - v * v, 0.0, 1.0))
+        base = np.clip(0.62 - 0.4 * u - 0.22 * v + 0.28 * (nz - 0.6), 0.0, 1.0)
+        fx = np.round(lx) - L["sx"]
+        fy = np.round(ly)
+        ey, ew, ein, my, ny, br = L["ey"], L["ew"], L["ein"], L["mouth"], L["nose"], L["brow"]
+        LITV, MIDV, DKV = 0.82, 0.55, 0.26
+        tgt = np.full(u.shape, MIDV, np.float32)
+        face = fy >= br - 1
+        if L["cls"] == "S":
+            tgt = np.where((fx == -(ein + 1)) & (fy == ey + 1), LITV, tgt)
+            tgt = np.where((u > 0.55) & (fy >= ey), DKV, tgt)
+            tgt = np.where((fy >= my + 1) & (u > 0.0), DKV, tgt)
+            if b.fc == 1:
+                tgt = np.where(fx < -ein, LITV, tgt)
+                tgt = np.where((fx < -ein) & (fy >= my), DKV, tgt)
+            return np.where(face, tgt - base, 0.0).astype(np.float32)
+        out = ein + ew - 1  # the outer column of the eyes
+        if b.fc == 0:
+            tgt = np.where((fx == 0) & (fy >= ey - 1) & (fy <= ny - 2), LITV, tgt)  # the bridge of the nose
+            tgt = np.where((fx >= -out) & (fx <= -ein) & (fy >= ey + 1) & (fy <= ey + 2), LITV, tgt)  # the lit cheekbone
+            if f.get("cheek"):
+                tgt = np.where((fx >= ein) & (fx <= out - 1) & (fy == ey + 1), LITV, tgt)
+            tgt = np.where((fx == ein - 1) & (fy >= ey - 1) & (fy <= ey) & (ein > 1), DKV, tgt)  # the socket by the bridge, shadow side
+            tgt = np.where((u > 0.6) & (fy >= ey - 1), DKV, tgt)  # the cheek turning away
+            if f.get("cheek") or f.get("age") == "old":
+                tgt = np.where((np.abs(fx) == out) & (fy >= ny) & (fy <= my - 1) & (fx > 0), DKV, tgt)
+            tgt = np.where((fy >= my + 1) & (u > 0.25), DKV, tgt)  # the jaw
+            tgt = np.where((fy >= my + 1) & (u < -0.55), DKV, tgt)
+            tgt = np.where((fx == -1) & (fy == my + 2), LITV, tgt)  # the chin
+        else:
+            sideb = -(ein + ew)  # left of the near eye: the side of the head
+            tgt = np.where((fx == 0) & (fy >= ey - 1) & (fy <= ny - 2), LITV, tgt)
+            tgt = np.where((fx < sideb + 1) & (fy < my) & (fy >= br), LITV, tgt)
+            tgt = np.where((fx >= -out) & (fx <= -ein) & (fy == ey + 1), LITV, tgt)
+            tgt = np.where((fx < sideb + 2) & (fy >= my - 1), DKV, tgt)  # the jawline under the side plane
+            tgt = np.where((fx > ein + 1) & (fy >= ey - 1), DKV, tgt)  # the far cheek
+            tgt = np.where((fy >= my + 1) & (fx > 1), DKV, tgt)
+            tgt = np.where((fx == 0) & (fy == my + 2), LITV, tgt)
+        return np.where(face, tgt - base, 0.0).astype(np.float32)
+
     def head(self):
         b, S, cv, sp = self.b, self.S, self.cv, self.sp
         rx, ry = b.head_w * 0.5, b.head_h * 0.5
         c, ang = b.head_c, b.head_ang
         spk = self.species
         skin = M["horn"] if spk == "skeleton" else M["skin"]
-        jaw = {"grey": 0.6, "insect": 0.45, "skeleton": 0.25, "brute": 0.05, "blob": 0.0}.get(spk, 0.3)
+        f = sp.get("face") or {}
+        jaw = {"grey": 0.6, "insect": 0.45, "skeleton": 0.25, "brute": 0.05, "blob": 0.0}.get(spk, float(f.get("jaw", 0.3)))
+        chin = f.get("chin", "round") if not spk else "round"
         if b.fc == 1:
             c = (c[0] + 0.004 * S, c[1])
+        c = self.snap(c)
+        L = self.face_layout(rx, ry)
+        self.L = L
+        fc = b.fc
 
         def shape(u, v):
-            return np.where(v > 0, 1.0 - jaw * v * v, 1.0)
+            vp = np.clip(v, 0.0, None)
+            lim = 1.0 - jaw * vp * vp
+            if chin == "square":
+                lim = lim + 0.22 * np.abs(u) * vp * vp * jaw * 3.0
+                lim = np.where(v > 0.93, lim - 0.4, lim)
+            elif chin == "pointed":
+                lim = lim - 0.18 * np.abs(u) * vp ** 3
+            if fc == 1:  # the jaw slants from below the ear to the chin, which comes forward
+                lim = lim - 0.3 * vp * vp * np.clip(-u, 0.0, 1.0) + 0.06 * vp * np.clip(u, 0.0, 1.0)
+            return lim
         seed = self.seed
 
         def mat(lx, ly, u, v):
             m = np.full(u.shape, skin, np.uint8)
-            ex = np.zeros(u.shape, np.float32)
+            ex = self.relief(L, lx, ly, u, v) if spk not in ("blob",) else np.zeros(u.shape, np.float32)
             if spk == "flame":
                 m = np.where(_hash01(np.round(lx), np.round(ly), seed) > 0.85, M["skin2"], m)
             if spk == "blob":
                 ex += np.where((u < -0.3) & (v < -0.3) & (u > -0.65) & (v > -0.7), 0.5, 0.0)
             return m, ex
         hz = 2.0
-        ellipse(cv, c, rx, ry, ang, hz, mat, shape=shape)
-        # ears
-        if spk not in ("blob", "grey", "skeleton", "insect", "flame") and b.fc != 2 and self.lod < 4:
-            for sg in ((-1, 1) if b.fc == 0 else (-1,)):
-                ec = add(c, rot((sg * rx * 1.0, ry * 0.08), ang))
+        self.head_pid = ellipse(cv, c, rx, ry, ang, hz, mat, shape=shape)
+        if self.head_pid is not None and b.fc != 2:
+            cv.nodither |= cv.pid == self.head_pid
+        # ears: a lit rim, a shadowed bowl
+        if spk not in ("blob", "grey", "skeleton", "insect", "flame") and self.lod < 4:
+            pointed = spk == "imp" or (sp.get("species") or {}).get("ears") == "pointed"
+            for sg in ((-1, 1) if b.fc != 1 else ((-1,) if pointed else ())):
+                ec = add(c, rot((sg * rx * 1.0, ry * 0.06), ang))
                 er = rx * (0.22 if spk not in ("imp",) else 0.3)
-                if spk == "imp" or (sp.get("species") or {}).get("ears") == "pointed":
+                if pointed:
                     tip = add(c, rot((sg * rx * 1.75, -ry * 0.45), ang))
                     poly_fill(cv, [add(c, rot((sg * rx * 0.8, -ry * 0.15), ang)), tip, add(c, rot((sg * rx * 0.85, ry * 0.3), ang))], 1.95, "skin", 0.45)
                 else:
-                    ellipse(cv, ec, er, er * 1.5, ang, 1.95, lambda *x: (M["skin"], -0.15))
+                    ellipse(cv, ec, er, er * 1.6, ang, 1.95, lambda lx, ly, u, v, sg=sg: (M["skin"], np.where(u * sg < -0.1, -0.42, -0.05)))
         self.species_head(c, rx, ry, ang)
         if b.fc != 2:
             self.face_features(c, rx, ry, ang)
@@ -1029,141 +1175,664 @@ class Painter:
     def F(self, c, ang, x, y):
         return add(c, rot((x, y), ang))
 
-    def face_features(self, c, rx, ry, ang):
-        b, S, cv = self.b, self.S, self.cv
-        if self.lod >= 4:
+    def put_decal(self, c, ang, dec, z=2.2):
+        """Place the face's pixels {(x, y): (material, step)} (whole pixels from the head centre, in the head's own frame) on the head: every canvas pixel
+        of the head looks up the face pixel it falls on (a tilted head carries its face without holes), and only the head's own skin is painted."""
+        cv = self.cv
+        if not dec or getattr(self, "head_pid", None) is None:
             return
-        spk = self.species
-        f = self.sp.get("face", {})
-        face = self.face
-        z = 2.2
-        shift = rx * 0.38 if b.fc == 1 else 0.0
-        small = self.lod >= 2
-        ey = ry * 0.1
-        ex = rx * 0.42
-        closed = f.get("eyes") == "closed" or face in ("sleep",) or (f.get("eyes") == "lost" and face in ("happy", "cheer"))
-        D = lambda x, y, m, st: cv.dot(*self.F(c, ang, x, y), m, st, z)
-        if spk == "skeleton":
-            for sg in (-1, 1):
-                for dx in (0, 1):
-                    for dy in (0, 1):
-                        if not small or (dx == 0 and dy == 0):
-                            D(shift + sg * ex - 0.5 + dx, ey - 1 + dy, "eye_d", EDGE)
-            if not small:
-                D(shift, ey + ry * 0.35, "eye_d", EDGE)
-                for k in range(-2, 3):
-                    D(shift + k, ey + ry * 0.62, "eye_d", DARK if k % 2 else EDGE)
+        R = max(max(abs(k[0]), abs(k[1])) for k in dec) + 2
+        sl = cv.region(c[0] - R, c[1] - R, c[0] + R, c[1] + R)
+        if sl is None:
             return
-        if spk == "grey":
-            for sg in (-1, 1):
-                if b.fc == 1 and sg == 1:
-                    continue
-                cx = shift + sg * rx * 0.42
-                for dx in range(-1, 2) if not small else (0,):
-                    for dy in range(-1, 1) if not small else (0,):
-                        D(cx + dx + (sg * 0.5 if dy < 0 else 0), ey + dy, "eye_d", EDGE)
-                if not small:
-                    D(cx - 0.6, ey - 1, "eye_w", LIT)
-            if not small:
-                D(shift, ey + ry * 0.55, "skin", EDGE)
-            return
-        if spk == "cyclops":
-            for dx in range(-2, 3) if not small else (-1, 0, 1):
-                for dy in range(-1, 2) if not small else (0,):
-                    if abs(dx) + abs(dy) < 3:
-                        D(shift + dx, ey - 0.5 + dy, "eye_w", LIT if dy < 1 else MID)
-            D(shift, ey - 0.5, "eye_d", EDGE)
-            if not small:
-                D(shift + 1, ey - 0.5, "eye_d", EDGE)
-                D(shift - 2, ey - 2.2, "skin", EDGE)
-                D(shift + 2, ey - 2.2, "skin", EDGE)
-                self.mouth(D, shift, ey + ry * 0.48, face, small)
-            return
-        if spk == "insect":
-            for sg in (-1, 1):
-                cx = shift + sg * rx * 0.62
-                for dy in ((-1, 0, 1) if not small else (0,)):
-                    D(cx, ey + dy, "eye_d", EDGE if dy else DARK)
-                if not small:
-                    D(cx + sg * 0.8 - 0.4, ey - 1, "eye_w", LIT)
-                    D(shift + sg * rx * 0.25, ry * 0.8, "horn", DARK)
-                    D(shift + sg * rx * 0.18, ry * 0.95, "horn", EDGE)
-            return
-        # eyes
-        for sg in (-1, 1):
-            if b.fc == 1 and sg == 1:
-                x = shift + ex * 0.75
-            else:
-                x = shift + sg * ex
-            if closed:
-                D(x - 0.5, ey + 0.4, "skin", EDGE)
-                if not small:
-                    D(x + 0.5, ey + 0.4, "skin", EDGE)
-            else:
-                D(x, ey, "eye_d", EDGE)
-                if not small and spk == "":
-                    D(x - sg * 1.0 if b.fc == 0 else x - 1.0, ey, "eye_w", MID)
-            if not small and f.get("brows", True):
-                D(x - 0.5, ey - ry * 0.26, "hair", EDGE)
-                D(x + 0.5, ey - ry * 0.26 - (0.4 if sg * (1 if face != "sad" else -1) > 0 else 0), "hair", EDGE)
-        if f.get("glasses") and not small:
-            g = f["glasses"]
-            for sg in (-1, 1):
-                x = shift + sg * ex if not (b.fc == 1 and sg == 1) else shift + ex * 0.75
-                D(x - 1, ey - 0.5, "acc" if g != "shades" else "eye_d", EDGE)
-                D(x + 1, ey - 0.5, "acc" if g != "shades" else "eye_d", EDGE)
-                D(x, ey - 1.2, "acc" if g != "shades" else "eye_d", EDGE)
-                if g == "shades":
-                    D(x, ey, "eye_d", EDGE)
-                    D(x - 1, ey + 0.4, "eye_d", EDGE)
-            D(shift, ey - 0.8, "acc", EDGE)
-        # nose, cheeks, beard, mouth
-        if not small:
-            D(shift + (rx * 0.35 if b.fc == 1 else 0.4), ey + ry * 0.3, "skin", DARK)
-            if b.fc == 1:
-                D(c[0] * 0 + shift + rx * 1.02, ey + ry * 0.22, "skin", MID)
-            if f.get("blush"):
-                D(shift - ex - 0.6, ey + ry * 0.32, "skin2", MID)
-                D(shift + ex + 0.6, ey + ry * 0.32, "skin2", MID)
-            if f.get("freckles"):
-                D(shift - ex, ey + ry * 0.25, "skin2", DARK)
-                D(shift + ex + 1, ey + ry * 0.22, "skin2", DARK)
-        beard = f.get("beard")
-        if beard and spk == "":
-            for yy in np.arange(ey + ry * 0.35, ry * 1.02, 1.0):
-                for xx in np.arange(-rx * 0.95, rx * 0.95 + 0.1, 1.0):
-                    if (xx / rx) ** 2 + (yy / ry) ** 2 > 1.0 - 0.3 * (yy / ry) ** 2:
-                        continue
-                    if beard == "stubble" and (int(xx * 3 + yy * 7) % 2):
-                        continue
-                    if beard == "moustache" and yy > ey + ry * 0.55:
-                        continue
-                    D(shift * 0.6 + xx, yy, "hair2" if beard != "stubble" else "skin", MID if beard != "stubble" else DARK)
-        self.mouth(D, shift, ey + ry * 0.55, face, small)
+        X, Y = cv.X[sl] - c[0], cv.Y[sl] - c[1]
+        ca, sa = math.cos(ang), math.sin(ang)
+        ix = np.round(X * ca + Y * sa).astype(np.int32)
+        iy = np.round(-X * sa + Y * ca).astype(np.int32)
+        mat = np.zeros(ix.shape, np.uint8)
+        fixed = np.full(ix.shape, -1, np.int8)
+        for (x, y), (m, st) in dec.items():
+            sel = (ix == x) & (iy == y)
+            if sel.any():
+                mat[sel] = M[m]
+                fixed[sel] = st
+        on = (cv.pid[sl] == self.head_pid) & (mat > 0)
+        cv.put(sl, on, mat, 0.5, z, pid=self.head_pid, fixed=fixed)
 
-    def mouth(self, D, x, y, face, small):
-        if small:
-            if face in ("cheer",):
-                D(x, y, "mouth", EDGE)
-            return
-        if face == "cheer":
-            for dx in (-1, 0, 1):
-                D(x + dx, y, "mouth", EDGE)
-                D(x + dx, y + 1, "mouth", DARK)
-            D(x, y - 0.1, "teeth", LIT)
-        elif face == "happy":
-            D(x - 1.2, y - 0.6, "mouth", DARK)
-            D(x, y, "mouth", EDGE)
-            D(x + 1.2, y - 0.6, "mouth", DARK)
-        elif face == "sad":
-            D(x - 1, y + 0.5, "mouth", DARK)
-            D(x, y, "mouth", EDGE)
-            D(x + 1, y + 0.5, "mouth", DARK)
-        elif face == "sleep":
-            D(x, y, "mouth", DARK)
+    # -- the face --
+    def face_features(self, c, rx, ry, ang):
+        L = self.L
+        dec = {}
+        spk = self.species
+        if spk in ("skeleton", "grey", "cyclops", "insect", "blob"):
+            getattr(self, "face_" + spk)(L, dec)
         else:
-            D(x - 0.5, y, "mouth", DARK)
-            D(x + 0.5, y, "mouth", DARK)
+            self.face_human(L, dec)
+        self.put_decal(c, ang, dec)
+
+    def _P(self, dec, x, y, m, st):
+        dec[(int(x), int(y))] = (m, st)
+
+    def face_mood(self):
+        """(mood, eyes): the mood the state shows (neutral, happy, cheer, sad, sleep, sing) and the eyes (open, closed, bliss = closed in a smile)."""
+        f = self.sp.get("face") or {}
+        face = self.face
+        mood = face
+        pose = self.b.pose
+        if face == "happy" and f.get("sing") and float(pose.get("head_tilt", 0.0)) < -0.035 and self.b.state not in ("chat", "hug"):
+            mood = "sing"  # head back to the music: singing along
+        if face == "sleep":
+            return "sleep", "closed"
+        e = f.get("eyes", "open")
+        if e == "closed":
+            return mood, "bliss" if mood in ("happy", "cheer", "sing") else "closed"
+        if e == "lost" and mood in ("happy", "cheer", "sing"):
+            return mood, "bliss" if mood == "cheer" else "closed"
+        return mood, "open"
+
+    def face_human(self, L, dec):
+        """A person's face (and a demon's or a humanoid alien's: the same face with their own eyes and extras)."""
+        b = self.b
+        f = self.sp.get("face") or {}
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        mood, eyes = self.face_mood()
+        cls, sx, ew, ein, ey = L["cls"], L["sx"], L["ew"], L["ein"], L["ey"]
+        spk = self.species
+        demon = spk in ("imp", "brute", "fiend", "queen", "flame")
+        iris = "extra" if not spk else "eye_d"
+        fc = b.fc
+        glasses = f.get("glasses")
+        if cls == "XS":
+            # a far face: two eye shadows and, when they shout, the mouth
+            if eyes == "open":
+                for x in ((-1, 1) if fc == 0 else (0, 1)):
+                    P(x, 0, "skin", EDGE)
+            if mood in ("cheer", "sing"):
+                P(sx if fc == 0 else 1, 1, "mouth", EDGE)
+            return
+        # the eyes, outer column first: (columns, side)
+        if fc == 0:
+            eye_cols = [([-(ein + k) for k in range(ew - 1, -1, -1)], -1), ([ein + k for k in range(ew - 1, -1, -1)], 1)]
+        else:
+            far_w = max(1, ew - 1)
+            eye_cols = [([sx - ein - k for k in range(ew - 1, -1, -1)], -1), ([sx + ein + k for k in range(far_w - 1, -1, -1)], 1)]
+        lash = int(f.get("lash", 1))
+        if demon and spk in ("fiend", "queen"):
+            lash = 2
+        shape = f.get("eye", "almond")
+        for cols, sg in eye_cols:
+            self.eye(P, cols, sg, ey, cls, eyes, mood, lash, shape, iris, glasses, far=(fc == 1 and sg == 1))
+        # brows
+        if f.get("brows", True):
+            for cols, sg in eye_cols:
+                self.brow(P, cols, sg, L, mood, eyes, glasses, f.get("brow", "straight") if spk != "brute" else "thick")
+        if spk == "brute":  # a heavy ridge over the eyes
+            for x in range(-(ein + ew), ein + ew + 1):
+                if (x + sx, L["brow"] + 1) not in dec:
+                    P(x + sx, L["brow"] + 1, "skin", DARK)
+        # glasses over the eyes
+        if glasses:
+            self.glasses(P, dec, eye_cols, L, glasses)
+        # nose, cheeks, lines, freckles
+        self.nose(P, L, f.get("nose", "straight") if not demon else ("wide" if spk == "brute" else "straight"))
+        self.cheeks(P, dec, L, mood, f)
+        beard = f.get("beard") if not spk else None
+        if beard:
+            self.beard(P, dec, L, beard)
+        self.mouth(P, dec, L, mood, f, demon)
+
+    def eye(self, P, cols, sg, ey, cls, eyes, mood, lash, shape, iris, glasses, far):
+        """One eye. cols: outer to inner. Open: the upper lid's lash line, the white, the iris (and its pupil), a lit inner corner; closed: the lash line
+        curving down with the lid lit above it; bliss (closed in a smile): the lid curving up."""
+        n = len(cols)
+        out = cols[0]
+        inn = cols[-1]
+        lash_m, lash_s = ("eye_d", EDGE) if lash >= 1 else ("skin", EDGE)
+        if cls == "S":
+            x = cols[0]
+            if eyes == "open":
+                P(x, ey, "eye_d" if not glasses == "shades" else "eye_d", EDGE)
+                if lash >= 2 and not far:
+                    P(x + sg, ey - 1 if mood != "sad" else ey, "eye_d", DARK)
+            elif eyes == "bliss":
+                P(x, ey - 1 if mood == "cheer" else ey, "skin", EDGE)
+            else:
+                P(x, ey, "skin", EDGE)
+            return
+        if eyes in ("closed", "bliss"):
+            if eyes == "bliss":  # an arc up: the cheeks push the closed lids into a smile
+                for i, x in enumerate(cols):
+                    up = i == 1 if n >= 3 else i == 0
+                    P(x, ey - 1 if up else ey, lash_m, lash_s if i < n - 1 or n < 3 else DARK)
+                    if not up:
+                        P(x, ey - 1, "skin", MID)
+                    P(x, ey + 1, "skin", LIT)  # the cheek pushed up under it
+            else:  # relaxed, lost in the music: the lash line low, the lid above it catching the light
+                for i, x in enumerate(cols):
+                    P(x, ey, lash_m if i < n - 1 else "skin", lash_s if i < n - 1 else EDGE)
+                    P(x, ey - 1, "skin", LIT if i < n - 1 else MID)
+                if lash >= 2 and not far:
+                    P(out + sg, ey + 1, "eye_d", DARK)
+            return
+        # open
+        lid_y = ey - 1
+        sad = mood == "sad"
+        for i, x in enumerate(cols):
+            if i == n - 1 and n >= 3:
+                P(x, lid_y, "skin", EDGE if lash >= 1 else DARK)  # the inner end of the lid, softer
+            else:
+                P(x, lid_y, lash_m, lash_s)
+        if lash >= 2 and not far:  # a lash flick past the outer corner
+            P(out + sg, lid_y if not sad else ey, "eye_d", EDGE)
+        # the eye's row: white, iris, white; the iris sits in the middle (towards the turn in the three-quarter view)
+        if n >= 3:
+            wo, ir, wi = cols[0], cols[1], cols[2]
+            P(wo, ey, "eye_w", DARK)
+            P(ir, ey, iris, DARK if iris == "extra" else EDGE)
+            P(wi, ey, "eye_w", MID)
+            if shape == "hooded" or sad:
+                P(wo, ey, "skin", DARK)  # the lid hangs over the outer corner
+            if mood in ("happy", "sing"):
+                P(wo, ey, "skin", LIT)  # a smile lifts the lower lid
+            if shape == "round" or mood == "cheer":
+                P(ir, ey + 1, "skin", DARK)  # the lower lid under a wide eye
+        elif n == 2:
+            if far:
+                P(cols[0], ey, iris, DARK if iris == "extra" else EDGE)
+                P(cols[1], ey, "eye_w", DARK)
+            else:
+                P(cols[0], ey, "eye_w", DARK)
+                P(cols[1], ey, iris, DARK if iris == "extra" else EDGE)
+                if mood in ("happy", "sing"):
+                    P(cols[0], ey, "skin", LIT)
+        else:
+            P(cols[0], ey, iris, EDGE)
+
+    def brow(self, P, cols, sg, L, mood, eyes, glasses, kind):
+        """A brow over the eye's columns (outer to inner): straight, arched, thick, thin or angled, raised in a cheer, the inner end up when sad, a
+        little up when the eyes close to the music."""
+        by = L["brow"] - (1 if glasses and L["cls"] == "L" else 0)
+        n = len(cols)
+        if L["cls"] == "S":
+            if mood in ("cheer", "sad") or kind == "thick":
+                x = cols[0]
+                P(x, by - (1 if mood == "cheer" else 0), "hair", EDGE if kind != "thin" else DARK)
+            return
+        lift = 1 if mood == "cheer" or (eyes != "open" and mood in ("happy", "sing")) else 0
+        m, st = "hair", EDGE
+        if kind == "thin":
+            st = DARK
+        xs = list(cols)
+        if L["sx"] == 0 or sg < 0:
+            if kind in ("thick", "arched", "angled") and n >= 3:
+                xs = [cols[0] + sg] + xs  # a longer brow, past the outer corner
+        for i, x in enumerate(xs):
+            t = i / max(1, len(xs) - 1)  # 0 outer .. 1 inner
+            y = by - lift
+            if kind == "arched" and 0 < t < 0.8:
+                y -= 1
+            if kind == "angled" and t < 0.3:
+                y -= 1
+            if mood == "sad" and t > 0.6:
+                y -= 1
+            if mood == "sad" and t < 0.3 and kind != "arched":
+                y += 0
+            ss = st if (0.2 < t < 0.95 or kind == "thick") else (DARK if st == EDGE else MID)
+            P(x, y, m, ss)
+            if kind == "thick" and 0.2 < t < 0.9:
+                P(x, y - 1, m, DARK)
+
+    def glasses(self, P, dec, eye_cols, L, kind):
+        """Frames around the eyes, the eyes still showing through, a glint on the lens; shades: dark lenses with a sharp glint."""
+        ey = L["ey"]
+        fm = "acc"
+        if L["cls"] == "S":
+            for cols, sg in eye_cols:
+                x = cols[0]
+                if kind == "shades":
+                    P(x, ey, "eye_d", EDGE)
+                    P(x + sg, ey, "eye_d", DARK)
+                else:
+                    P(x + sg, ey, fm, EDGE)
+            if self.b.fc == 0:
+                P(0, ey, fm, DARK)
+            return
+        fm = "metal" if kind == "round" else "acc"
+        for k, (cols, sg) in enumerate(eye_cols):
+            far = self.b.fc == 1 and sg == 1
+            lo, hi = min(cols), max(cols)
+            x0, x1 = lo - 1, hi + 1
+            if far and hi + 1 > int(L["rx"]) - 1:
+                x1 = hi
+            for x in range(x0, x1 + 1):  # the top bar sits on the lid line
+                P(x, ey - 1, fm, EDGE if (kind != "round" or x not in (x0, x1)) else DARK)
+            P(x0, ey, fm, DARK if kind != "round" else MID)
+            P(x1, ey, fm, DARK)
+            if kind == "square":
+                for x in range(lo, hi + 1):
+                    P(x, ey + 1, fm, DARK)
+            elif kind == "round":
+                P((lo + hi) // 2 if not far else lo, ey + 1, fm, DARK)
+            if kind == "shades":
+                for x in range(lo, hi + 1):
+                    P(x, ey, "eye_d", DARK)
+                    P(x, ey + 1, "eye_d", EDGE) if lo < x < hi or len(cols) < 3 else None
+                if not far:
+                    P(lo + (1 if len(cols) >= 3 else 0), ey, "glass", LIT)  # the glint
+            elif not far and sg < 0:
+                P(x0 + 1, ey - 1, "glass", LIT)  # the glint on the rim, the eye still clear
+        # the bridge, and in the three-quarter view the arm back to the ear
+        if self.b.fc == 0:
+            P(0, ey - 1, fm, DARK)
+        else:
+            near = eye_cols[0][0]
+            P(min(near) - 2, ey - 1, fm, DARK)
+            P(min(near) - 3, ey - 1, fm, DARK)
+            P(L["sx"] + 1, ey - 1, fm, DARK)
+
+    def nose(self, P, L, kind):
+        """The nose: the tip catching the light, the shadow side and the underside with the nostrils (front); in the three-quarter turn the nose points
+        into the turn with its shadow on the far cheek."""
+        ny, ey, sx = L["nose"], L["ey"], L["sx"]
+        if L["cls"] == "S":
+            if kind != "button":
+                P(sx + (1 if self.b.fc == 1 else 0), ny, "skin", DARK)
+            return
+        if self.b.fc == 0:
+            P(0, ny - 1, "skin", LIT)
+            P(1, ny - 1, "skin", DARK)
+            P(0, ny, "skin", DARK)
+            if kind == "button":
+                P(1, ny - 1, "skin", MID)
+                P(1, ny, "skin", DARK)
+            elif kind == "wide":
+                P(-1, ny, "skin", DARK)
+                P(1, ny, "skin", EDGE)
+                P(0, ny, "skin", MID)
+                P(-1, ny - 1, "skin", MID)
+            elif kind == "long":
+                P(1, ny - 2, "skin", DARK)
+                P(0, ny, "skin", EDGE)
+            elif kind == "hooked":
+                P(0, ny - 2, "skin", LIT)
+                P(1, ny - 2, "skin", DARK)
+                P(0, ny, "skin", EDGE)
+                P(1, ny, "skin", DARK)
+            else:  # straight
+                P(1, ny, "skin", DARK)
+        else:
+            tip = sx + 1
+            P(tip, ny - 1, "skin", LIT)
+            P(tip + 1, ny - 1, "skin", DARK)
+            P(tip, ny, "skin", DARK)
+            P(tip - 1, ny, "skin", DARK if kind != "button" else MID)
+            if kind in ("long", "hooked"):
+                P(tip + 1, ny - 2, "skin", DARK)
+                P(tip, ny - 2, "skin", LIT)
+            if kind == "wide":
+                P(tip - 1, ny, "skin", EDGE)
+            if kind == "hooked":
+                P(tip + 1, ny, "skin", DARK)
+
+    def cheeks(self, P, dec, L, mood, f):
+        """Blush (a kid, a flushed dancer, a cheer), freckles, the lines of age: crow's feet, the bags under the eyes, the smile lines."""
+        ey, ein, ew, sx, my = L["ey"], L["ein"], L["ew"], L["sx"], L["mouth"]
+        fc = self.b.fc
+        sides = (-1, 1) if fc == 0 else (-1,)
+        if L["cls"] == "S":
+            if f.get("blush") or f.get("age") == "kid" or mood == "cheer":
+                for sg in sides:
+                    P(sx + sg * (ein + 1), ey + 1, "skin2", MID)
+            return
+        blush = f.get("blush") or f.get("age") == "kid" or mood in ("cheer",)
+        for sg in sides:
+            cx = sx + sg * (ein + ew - 1)
+            if blush:
+                P(cx, ey + 2, "skin2", MID)
+                P(cx - sg, ey + 2, "skin2", MID if (f.get("blush") or mood == "cheer") else DARK)
+            if f.get("freckles"):
+                P(sx + sg * (ein + 1), ey + 2, "skin", DARK)
+                P(sx + sg * (ein - 1), ey + 1, "skin", DARK)
+            if f.get("lines"):
+                P(sx + sg * (ein + ew), ey, "skin", DARK)  # crow's feet
+                P(sx + sg * (ein + 1), ey + 1, "skin", DARK)  # under the eye
+                P(sx + sg * 2, my - 1, "skin", DARK)  # the smile line from the nose
+        if fc == 1 and f.get("freckles"):
+            P(sx + ein + 1, ey + 2, "skin", DARK)
+
+    def beard(self, P, dec, L, kind):
+        """Facial hair in the hair's own colour: a full beard along the jaw (lit at the upper left, darker underneath), a moustache, a goatee, stubble."""
+        ey, my, ny, sx, ein, ew = L["ey"], L["mouth"], L["nose"], L["sx"], L["ein"], L["ew"]
+        rx, ry = L["rx"], L["ry"]
+        fc = self.b.fc
+        S_ = L["cls"] == "S"
+        for y in range(ny, int(ry) + 2):
+            for x in range(-int(rx) - 1, int(rx) + 2):
+                fx = x - sx
+                if (x, y) in dec:
+                    continue
+                yy = y / ry
+                if (x / rx) ** 2 + yy ** 2 > 1.05:
+                    continue
+                if kind == "moustache":
+                    if y == my - 1 and abs(fx) <= (2 if not S_ else 1) or (y == my and abs(fx) == (2 if not S_ else 1)):
+                        P(x, y, "hair", DARK if fx > -1 else MID)
+                    continue
+                if kind == "stubble":  # a shadow along the jaw and the upper lip, a few hairs in it
+                    jaw = (y >= my + 1 and abs(fx) <= ein + ew) or (y == my - 1 and abs(fx) <= 1) or (y >= my and abs(fx) >= ein + ew - 1)
+                    if jaw and y >= ny + (0 if S_ else 1):
+                        P(x, y, "hair" if (x * 2 + y * 3) % 5 == 0 and not S_ else "skin", DARK)
+                    continue
+                # a full beard: the jaw, the chin, the upper lip, up the cheeks to the sideburns
+                cheek = abs(fx) >= ein + ew - 1 and y >= ey + 2
+                if fc == 1 and fx < -(ein + ew):
+                    cheek = y >= ey + 1
+                lower = y >= my - 1
+                if not (cheek or lower):
+                    continue
+                if lower and abs(fx) <= 1 and y in (my, my + 1) and not S_:
+                    continue  # the lips show through
+                st = MID if (fx < 0 and y < my + 1) else DARK
+                if y >= int(ry) or (x / rx) ** 2 + yy ** 2 > 0.8:
+                    st = DARK if st == MID else EDGE
+                if not S_ and (x * 3 + y * 5) % 7 == 0 and st == MID:
+                    st = LIT
+                P(x, y, "hair", st)
+
+    def mouth(self, P, dec, L, mood, f, demon=False):
+        """Lips in the person's own colour: a closed mouth with the lower lip catching the light, a smile curling up at the corners, a laugh with the
+        teeth and a dark mouth, a singer's open O, a sad mouth turned down; a demon's tusks."""
+        my, sx = L["mouth"], L["sx"]
+        fc = self.b.fc
+        lips = f.get("lips", "thin")
+        hw = 2 if lips == "wide" else 1
+        mc = sx
+        if L["cls"] == "S":
+            if mood == "cheer":
+                P(mc, my, "teeth", MID)
+                P(mc - 1, my, "mouth", EDGE)
+                if fc == 0:
+                    P(mc + 1, my, "mouth", EDGE)
+                P(mc, my + 1, "mouth", EDGE)
+            elif mood == "sing":
+                P(mc, my, "mouth", EDGE)
+                P(mc, my + 1, "mouth", DARK)
+            elif mood == "happy":
+                P(mc, my, "mouth", EDGE)
+                P(mc - 1, my, "mouth", DARK)
+                if fc == 0:
+                    P(mc + 1, my, "mouth", DARK)
+            elif mood == "sad":
+                P(mc, my, "mouth", EDGE)
+                P(mc - 1, my + 1, "mouth", DARK)
+                if fc == 0:
+                    P(mc + 1, my + 1, "mouth", DARK)
+            else:
+                P(mc, my, "mouth", DARK)
+            return
+        lo = mc - hw
+        hi = mc + (hw if fc == 0 else max(0, hw - 1) + 1)
+        full = lips in ("full", "wide")
+        if mood == "cheer":
+            P(lo - 1, my - 1 if fc == 0 else my, "mouth", DARK)
+            P(hi + 1, my - 1, "mouth", DARK) if fc == 0 else None
+            for x in range(lo, hi + 1):
+                P(x, my - 1, "mouth", DARK)  # the upper lip
+                P(x, my, "teeth", LIT if x < mc + 1 else MID)
+                P(x, my + 1, "mouth", EDGE)
+            P(lo - 1, my, "mouth", EDGE)
+            P(hi + 1, my, "mouth", EDGE)
+            for x in range(lo, hi + 1):
+                P(x, my + 2, "mouth", MID if x <= mc else DARK)  # the lower lip
+            if demon:
+                P(lo, my, "teeth", LIT)
+                P(hi, my, "teeth", LIT)
+            return
+        if mood == "sing":
+            for x in range(mc - 1, mc + 2):
+                P(x, my - 1 if x == mc else my, "mouth", DARK)
+                P(x, my + 1, "mouth", DARK if x != mc else EDGE)
+            P(mc, my, "mouth", EDGE)
+            P(mc, my + 2, "mouth", MID)
+            return
+        if mood == "sad":
+            for x in range(lo, hi + 1):
+                P(x, my, "mouth", EDGE if abs(x - mc) <= 1 else DARK)
+            P(lo - 1, my + 1, "mouth", DARK)
+            if fc == 0:
+                P(hi + 1, my + 1, "mouth", DARK)
+            P(mc, my + 2, "skin", DARK)  # the chin puckers
+            return
+        if mood == "sleep":
+            P(mc, my, "mouth", DARK)
+            P(mc - 1, my, "mouth", DARK)
+            return
+        # neutral and happy: the line between the lips, the lower lip below it
+        for x in range(lo, hi + 1):
+            P(x, my, "mouth", EDGE if abs(x - mc) < hw or lips == "thin" else DARK)
+        if mood == "happy":
+            P(lo - 1, my - 1, "mouth", DARK)
+            if fc == 0:
+                P(hi + 1, my - 1, "mouth", DARK)
+            else:
+                P(hi + 1, my - 1, "mouth", DARK)
+            if f.get("lines") or f.get("cheek"):
+                P(lo - 2, my - 1, "skin", DARK)
+        if full:
+            for x in range(lo, hi + 1):
+                if abs(x - mc) <= 1:
+                    P(x, my + 1, "mouth", LIT if x == mc - 1 else MID)
+            P(mc, my - 1, "mouth", DARK) if lips == "full" else None
+        else:
+            P(mc, my + 1, "mouth", MID if mood == "happy" else DARK)
+        if demon and self.species == "brute":
+            P(lo, my - 1, "teeth", LIT)
+            P(hi, my - 1, "teeth", LIT)
+
+    # -- the faces of the other species --
+    def face_skeleton(self, L, dec):
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        mood, eyes = self.face_mood()
+        ey, ein, ew, sx, ny, my = L["ey"], L["ein"], L["ew"], L["sx"], L["nose"], L["mouth"]
+        fc = self.b.fc
+        if L["cls"] == "XS":
+            for x in ((-1, 1) if fc == 0 else (0, 1)):
+                P(x, 0, "eye_d", EDGE)
+            return
+        sides = (-1, 1)
+        for sg in sides:
+            if fc == 1 and sg == 1:
+                xs = [sx + ein]
+            else:
+                xs = [sx + sg * (ein + k) for k in range(max(1, ew - 1) if L["cls"] == "L" else 1)]
+            for x in xs:
+                for y in ((ey - 1, ey) if L["cls"] == "L" else (ey,)):
+                    P(x, y, "eye_d", EDGE)
+            if L["cls"] == "L":
+                P(xs[-1], ey - 2, "horn", LIT)  # the brow of the socket
+                P(xs[0] + sg, ey + 1, "horn", DARK)  # the cheekbone's underside
+                if eyes == "open":
+                    P(xs[0], ey, "eye_w", MID)  # a glint deep in the socket
+        if L["cls"] == "L":
+            P(sx, ny - 1, "eye_d", EDGE)
+            P(sx + 1 if fc == 1 else sx, ny, "eye_d", EDGE)
+            if fc == 0:
+                P(sx - 1, ny, "eye_d", DARK)
+            open_ = mood in ("cheer", "sing")
+            for x in range(sx - 2, sx + 3):
+                P(x, my, "teeth", LIT if x % 2 == 0 else MID)
+                P(x, my + 1 + (1 if open_ else 0), "teeth", MID if x % 2 == 0 else DARK)
+                if open_:
+                    P(x, my + 1, "eye_d", EDGE)
+            P(sx - 3, my, "horn", EDGE)
+            P(sx + 3, my, "horn", EDGE)
+        else:
+            P(sx, my, "eye_d", EDGE if mood in ("cheer",) else DARK)
+
+    def face_grey(self, L, dec):
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        mood, eyes = self.face_mood()
+        ey, sx = L["ey"], L["sx"]
+        rx, ry = L["rx"], L["ry"]
+        fc = self.b.fc
+        if L["cls"] == "XS":
+            for x in ((-1, 1) if fc == 0 else (0, 1)):
+                P(x, 0, "eye_d", EDGE)
+            return
+        big = L["cls"] == "L"
+        w = max(2, int(round(rx * 0.42))) if big else 1
+        gap = max(1, int(round(rx * 0.18)))
+        for sg in (-1, 1):
+            far = fc == 1 and sg == 1
+            ww = max(1, w - (2 if far else 0))
+            inner = sx + sg * gap
+            xs = [inner + sg * k for k in range(ww)]
+            for k, x in enumerate(xs):
+                t = k / max(1, ww - 1)  # 0 inner .. 1 outer: the almond lifts towards the outer corner
+                if eyes != "open":
+                    P(x, ey - (1 if t > 0.6 else 0), "eye_d", EDGE)
+                    continue
+                top = ey - 1 - (1 if t > 0.55 and big else 0)
+                bot = ey + (1 if 0.15 < t < 0.85 and big else 0)
+                for y in range(top, bot + 1):
+                    P(x, y, "eye_d", EDGE if y < bot or not big else DARK)
+            if eyes == "open" and big and not far:
+                P(xs[min(len(xs) - 1, 1)], ey - 1, "eye_w", LIT)
+                P(xs[0], ey + 1 if w > 2 else ey, "eye_w", MID) if w > 2 else None
+        if big:
+            ny, my = L["nose"] + 1, L["mouth"] + 1
+            P(sx - 1 if fc == 0 else sx, ny, "skin", EDGE)
+            P(sx + 1, ny, "skin", EDGE)
+            if mood in ("cheer", "sing"):
+                P(sx, my, "mouth", EDGE)
+                P(sx, my + 1, "mouth", DARK)
+            elif mood == "happy":
+                for x in (sx - 1, sx, sx + 1):
+                    P(x, my, "skin", EDGE)
+                P(sx - 2, my - 1, "skin", DARK)
+                P(sx + 2, my - 1, "skin", DARK)
+            elif mood == "sad":
+                for x in (sx - 1, sx, sx + 1):
+                    P(x, my, "skin", EDGE)
+                P(sx - 2, my + 1, "skin", DARK)
+                P(sx + 2, my + 1, "skin", DARK)
+            else:
+                P(sx, my, "skin", EDGE)
+                P(sx + 1, my, "skin", DARK)
+
+    def face_cyclops(self, L, dec):
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        mood, eyes = self.face_mood()
+        ey, sx = L["ey"], L["sx"]
+        fc = self.b.fc
+        if L["cls"] == "XS":
+            P(sx, 0, "eye_w", MID)
+            return
+        if L["cls"] == "S":
+            if eyes == "open":
+                P(sx - 1, ey, "eye_w", MID)
+                P(sx, ey, "eye_d", EDGE)
+                P(sx + 1, ey, "eye_w", DARK)
+            else:
+                for x in (sx - 1, sx, sx + 1):
+                    P(x, ey, "skin", EDGE)
+            P(sx, ey - 1, "skin", EDGE)
+            self.mouth(P, dec, L, mood, {"lips": "wide"})
+            return
+        # one great eye: white almond, a ringed iris with its pupil and catch light, a heavy lid and brow
+        if eyes == "open":
+            for dx in range(-3, 4):
+                for dy in range(-1, 2):
+                    if abs(dx) == 3 and dy != 0:
+                        continue
+                    P(sx + dx, ey + dy, "eye_w", LIT if dy < 0 and dx < 0 else (MID if dy < 1 else DARK))
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    if abs(dx) + abs(dy) <= 1 or True:
+                        P(sx + dx, ey + dy, "eye_d", MID if abs(dx) + abs(dy) == 2 else DARK)
+            P(sx, ey, "eye_d", EDGE)
+            P(sx - 1, ey - 1, "eye_w", LIT)
+            for dx in range(-3, 4):
+                P(sx + dx, ey - 2, "skin", EDGE if abs(dx) < 3 else DARK)
+        else:
+            for dx in range(-3, 4):
+                P(sx + dx, ey + (0 if abs(dx) < 2 else (-1 if eyes == "bliss" else 1)) * (1 if abs(dx) >= 2 else 0), "skin", EDGE)
+                P(sx + dx, ey - 1, "skin", LIT)
+        by = ey - 3 - (1 if mood == "cheer" else 0)
+        for dx in range(-3, 4):
+            y = by + (1 if (mood == "sad" and abs(dx) > 1) else 0) - (1 if (mood == "sad" and abs(dx) <= 1) else 0)
+            P(sx + dx, y, "hair" if (self.hair.get("style") not in ("none", None)) else "skin", EDGE)
+        self.mouth(P, dec, L, mood, {"lips": "wide"})
+
+    def face_insect(self, L, dec):
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        mood, eyes = self.face_mood()
+        ey, sx = L["ey"], L["sx"]
+        rx = L["rx"]
+        fc = self.b.fc
+        if L["cls"] == "XS":
+            for x in ((-1, 1) if fc == 0 else (0, 1)):
+                P(x, 0, "eye_d", DARK)
+            return
+        big = L["cls"] == "L"
+        for sg in (-1, 1):
+            if fc == 1 and sg == 1:
+                cx = sx + int(round(rx * 0.5))
+            else:
+                cx = sx + sg * int(round(rx * 0.55))
+            pts = [(0, 0)] if not big else [(dx, dy) for dx in (-1, 0, 1) for dy in (-2, -1, 0, 1) if not (abs(dx) == 1 and dy in (-2, 1))]
+            for dx, dy in pts:
+                x, y = cx + dx, ey + dy
+                st = DARK if (x + y) % 2 == 0 else MID  # the facets
+                P(x, y, "eye_d", st if big else EDGE)
+            if big:
+                P(cx - 1 if sg < 0 or fc == 1 else cx, ey - 1, "eye_w", LIT)
+                P(cx + (1 if sg > 0 else 0), ey + 1, "eye_d", EDGE)
+        if big:
+            my = L["mouth"] + 1
+            open_ = mood in ("cheer", "sing")
+            for sg in ((-1, 1) if fc == 0 else (1,)):
+                P(sx + sg * 1, my, "horn", DARK)
+                P(sx + sg * (2 if open_ else 1), my + 1, "horn", EDGE)
+            if open_:
+                P(sx, my, "mouth", EDGE)
+
+    def face_blob(self, L, dec):
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        mood, eyes = self.face_mood()
+        ey, sx, ein = L["ey"], L["sx"], L["ein"]
+        fc = self.b.fc
+        if L["cls"] == "XS":
+            for x in ((-1, 1) if fc == 0 else (0, 1)):
+                P(x, 0, "eye_d", EDGE)
+            return
+        big = L["cls"] == "L"
+        for sg in (-1, 1):
+            x0 = sx + sg * (ein + 1) if not (fc == 1 and sg == 1) else sx + ein + 1
+            if eyes != "open":
+                P(x0, ey, "eye_d", EDGE)
+                P(x0 + 1, ey - 1 if eyes == "bliss" else ey, "eye_d", EDGE) if big else None
+                continue
+            if big:
+                for dx in (0, 1):
+                    for dy in (-1, 0):
+                        P(x0 + dx - (1 if sg < 0 else 0), ey + dy, "eye_d", EDGE)
+                P(x0 - (1 if sg < 0 else 0), ey - 1, "eye_w", LIT)
+            else:
+                P(x0, ey, "eye_d", EDGE)
+        my = L["mouth"]
+        if big:
+            w = 3
+            for x in range(sx - w, sx + w + 1):
+                curve = (1 if abs(x - sx) < w else 0) if mood in ("happy", "cheer", "sing", "neutral") else (0 if abs(x - sx) < w else 1)
+                P(x, my + curve - 1, "mouth", EDGE)
+            if mood in ("cheer", "sing"):
+                for x in range(sx - 2, sx + 3):
+                    P(x, my + 1, "mouth", DARK)
+                P(sx - 1, my, "teeth", LIT)
+                P(sx + 1, my, "teeth", MID)
+        else:
+            P(sx, my, "mouth", EDGE)
 
     # -- hair --
     def hair_style(self):
@@ -1241,7 +1910,7 @@ class Painter:
         def mat(lx, ly, u, v):
             uu, vv = lx / rx, ly / ry
             if back:
-                keep = vv < 0.62 if st not in ("long", "wavy", "curly_long", "bob", "locs", "braids") else vv < 2.0
+                keep = vv < 0.62 if st not in ("long", "wavy", "curly_long", "bob", "locs", "braids", "ponytail") else vv < 2.0
             else:
                 # the hairline: a fringe across the forehead, lower at the temples (sideburns), with a parting
                 hl = -0.42 + 0.22 * (uu - part) ** 2 + 0.05 * np.sin(uu * 9 + seed)
@@ -1277,7 +1946,9 @@ class Painter:
             return k
         hc = self.F(c, ang, 0.0, cy)
         if st == "mohawk":
-            ellipse(cv, self.F(c, ang, 0.0, -ry * 0.25), rx * 0.32, ry * 1.12, ang, z, lambda lx, ly, u, v: (M["hair"], np.where(v < -0.5, 0.2, -0.1)),
+            stop = ry * 0.15 if not back else ry * 1.2  # the crest stops at the hairline in front (it ran down the face), at the nape behind
+            ellipse(cv, self.F(c, ang, 0.0, -ry * 0.25), rx * 0.32, ry * 1.12, ang, z,
+                    lambda lx, ly, u, v: (np.where(ly < stop - ry * 0.25 - ry * 0.25, M["hair"], 0).astype(np.uint8), np.where(v < -0.5, 0.2, -0.1)),
                     shape=lambda u, v: np.where(v < 0, (1.0 + 0.25 * np.abs(np.sin(v * 9))) ** 2, 1.0))
             ellipse(cv, c, R, ry * 1.04, ang, z - 0.01, mat)
             return
@@ -1597,6 +2268,8 @@ def render_frame(spec: dict, pose: dict, state: str, facing: int, lod: int, held
     else:
         state_draw = state
     w = int(S * 1.1) + 8
+    if state.startswith("flair"):  # a leg kicked out or an arm flung wide reaches further (an even margin keeps the pixel grid of the other states)
+        w += 2 * int(S * 0.2)
     h = int(S * 1.45) + 8
     ox, oy = w / 2.0, h - 4.0
     cv = Canvas(w, h, ox, oy)

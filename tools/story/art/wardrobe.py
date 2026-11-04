@@ -444,7 +444,76 @@ def dress(chapter: str, actor: dict, salt: int = 0) -> dict:
         cols["furn"], cols["furn2"] = ("#c8d0dc", "#e8ecf2") if chapter in ("hospital",) else ("#8a9a7a", "#c8ccc0")
     spec["colours"] = cols
     spec["seed"] = seed_of(chapter, aid) % 100000
+    _face_detail(spec, chapter, aid, arch)
     return spec
+
+
+# ---- the face: who this person is around the eyes, nose and mouth ------------------------------------------------------------------------------------
+# Drawn from a random stream of its own (the actor's seed with a salt), so adding face traits never changes anyone's clothes, hair or build.
+
+IRIS_DARK = ["#3a2418", "#4a2c1c", "#2e1c14", "#5a3a22"]
+IRIS_LIGHT = ["#3a2418", "#5a3a22", "#6a4a2a", "#7a6a3a", "#4a6a4a", "#5a7a9a", "#4a6aa0", "#7a8a96", "#5a8a7a"]
+OLD_HAIR = ("#d8d4cf", "#ece8e2", "#b8b4b0", "#c9c3bd")
+LIPSTICK = ["#a0283a", "#7a2040", "#c04a5a", "#5a1a2a", "#b0506a", "#2a1a2a"]
+
+
+def _mix(a: str, b: str, k: float) -> str:
+    va = [int(a[i:i + 2], 16) for i in (1, 3, 5)]
+    vb = [int(b[i:i + 2], 16) for i in (1, 3, 5)]
+    return "#" + "".join(f"{int(round(x + (y - x) * k)):02x}" for x, y in zip(va, vb))
+
+
+def _lum(c: str) -> float:
+    v = [int(c[i:i + 2], 16) / 255.0 for i in (1, 3, 5)]
+    return 0.3 * v[0] + 0.59 * v[1] + 0.11 * v[2]
+
+
+def _face_detail(spec: dict, chapter: str, aid: str, arch: str) -> None:
+    """Face shape and features per person (people.Painter.face_features reads them): brows, lashes, nose, lips, jaw and chin, cheekbones, head width,
+    an age read, a singer who opens their mouth to the music; and the colours of the face: the iris (`extra` for people, a spare slot they do not use),
+    lips (`mouth`) and blush (`skin2`) from the skin tone, the skin's undertone (people.skin_ramp)."""
+    r = random.Random(seed_of(chapter, aid) * 31 + 977)
+    f = spec.setdefault("face", {})
+    cols = spec["colours"]
+    species = (spec.get("species") or {}).get("kind", "")
+    hc = cols.get("hair", "#2a1c18")
+    old = hc in OLD_HAIR or arch in ("granny",)
+    kid = arch == "kid" or float(spec.get("head", 1.0)) > 1.2 and float(spec.get("height", 1.0)) < 0.8 and not species
+    curve = float(spec.get("curve", 0.5))
+    fem = curve > 0.55
+    f["age"] = "kid" if kid else ("old" if old else "adult")
+    f["brow"] = r.choice(["straight", "arched", "thick", "thin", "angled", "straight", "arched"] if not fem else ["arched", "thin", "arched", "straight", "thick"])
+    f["lash"] = 2 if (fem and r.random() < 0.75) else (1 if r.random() < 0.6 else 0)
+    f["nose"] = r.choice(["button", "straight", "wide", "long", "hooked", "straight"] if not kid else ["button", "button", "wide"])
+    f["lips"] = r.choice(["thin", "full", "wide", "full", "thin"]) if not kid else "thin"
+    f["jaw"] = round(r.uniform(0.12, 0.42) if not fem else r.uniform(0.3, 0.5), 2)
+    f["chin"] = r.choice(["round", "square", "pointed", "round"] if not fem else ["round", "pointed", "round"])
+    f["cheek"] = r.random() < 0.4
+    f["wk"] = r.choice([0.93, 1.0, 1.0, 1.04])
+    f["eye"] = r.choice(["almond", "round", "hooded", "almond"])
+    f["sing"] = r.random() < 0.45
+    f["lines"] = old
+    if species:
+        if chapter == "underworld" and species != "skeleton":  # demon eyes: a hot sclera around a dark pupil
+            cols["eye_w"] = r.choice(["#f0c040", "#ffa040", "#f06a3a", "#f0d870"])
+        if species in ("antenna", "tentacle", "blob"):
+            cols["eye_w"] = r.choice(["#e8f0f0", "#f0f0d0", "#d8f0ff"])
+        if chapter == "mothership":
+            cols["mouth"] = _darker(cols.get("skin", "#8fe07a"), 0.5)
+        return
+    skin = cols.get("skin", "#c98c62")
+    lum = _lum(skin)
+    cols["extra"] = r.choice(IRIS_DARK) if lum < 0.5 else r.choice(IRIS_LIGHT)
+    lip = _mix(skin, "#a03848" if lum > 0.45 else "#6a2430", 0.42 if lum > 0.45 else 0.35)
+    if lum < 0.36:
+        lip = _mix(_darker(skin, 0.18), "#7a3040", 0.3)
+    if fem and not kid and r.random() < 0.3 and chapter in ("night_one", "mental_hospital", "hospital"):
+        lip = r.choice(LIPSTICK)
+    cols["mouth"] = lip
+    cols["skin2"] = _mix(skin, "#e05060", 0.32 if lum > 0.5 else 0.22)
+    cols["skin_tone"] = r.choice(["warm", "warm", "neutral", "olive", "cool"]) if lum > 0.42 else r.choice(["warm", "neutral", "warm"])
+    cols["eye_w"] = _mix("#e8e0d8", skin, 0.12)
+    cols["teeth"] = _mix("#efe8dc", skin, 0.15)
 
 
 def look_key(spec: dict) -> tuple:

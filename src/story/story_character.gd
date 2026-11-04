@@ -14,22 +14,29 @@ const PAIRED := ["chat", "hug", "toast"]
 const TARGETED := ["watch", "stare", "point"]
 const PROPS := ["", "cup", "bottle", "tray", "phone", "clipboard", "tickets", "brush", "sketchbook", "drip", "headphones", "headphones_wrong", "mug"]
 const STATES := ["idle", "dance", "cheer", "sad", "clap", "hands_up", "walk", "footwork", "look", "solo", "drink", "toast", "chat", "point", "phone", "lean_wall", "sit", "lie", "sleep",
-	"paint", "pace", "carry", "serve", "check", "stare", "rock", "hug", "queue", "wave", "watch", "mix", "stand"]
+	"paint", "pace", "carry", "serve", "check", "stare", "rock", "hug", "queue", "wave", "watch", "mix", "stand", "flair_toprock", "flair_drop", "flair_robot", "flair_spin"]
+## Break-dance flair (docs/DANCE_POLISH.md): a few dancers carry one signature move and perform it now and then for a bar or two, on the bar, then go back to their
+## dance (StoryCrowd picks who and when). Each move is one baked cycle that starts and ends near the ordinary dance stance; FLAIR_BARS is a burst's length.
+const FLAIR_MOVES := ["flair_toprock", "flair_drop", "flair_robot", "flair_spin"]
+const FLAIR_BARS := {"flair_toprock": 2, "flair_drop": 2, "flair_robot": 1, "flair_spin": 1}
 const FACE_OF := {"idle": "neutral", "dance": "happy", "cheer": "cheer", "sad": "sad", "clap": "happy", "hands_up": "cheer", "walk": "neutral",
 	"footwork": "happy", "look": "neutral", "solo": "cheer", "toast": "happy", "chat": "happy", "hug": "happy", "wave": "happy", "mix": "happy", "drink": "neutral",
-	"sleep": "neutral", "rock": "sad", "stare": "neutral"}
+	"sleep": "neutral", "rock": "sad", "stare": "neutral", "flair_toprock": "happy", "flair_drop": "cheer", "flair_robot": "neutral", "flair_spin": "cheer"}
 ## The baked sprite sheets (docs/STORY_25D_ART_DIRECTION.md 2.E): each state is baked over one cycle of SHEET_CYCLES[state] = [beats, frames] from `sample()` with the
 ## canonical personal values (phase 0, rate 0.5, amplitude 1, style 0, the dance in each of its STYLES), by tools/story/dump_poses.gd and tools/story/art/people.py. The translations
 ## (bob, jump, sway_x, squash) stay live: a sheet frame is the limbs, the head and the lean; the beat's bounce is applied to it every frame from the same sample.
 const SHEET_CYCLES := {"idle": [4.0, 4], "dance": [2.0, 8], "cheer": [2.0, 8], "hands_up": [8.0, 8], "sad": [8.0, 4], "clap": [2.0, 8], "walk": [2.0, 8],
 	"footwork": [2.0, 8], "look": [8.0, 8], "drink": [8.0, 8], "toast": [4.0, 4], "chat": [16.0, 12], "point": [1.0, 2], "phone": [4.0, 4],
 	"lean_wall": [8.0, 4], "sit": [8.0, 4], "lie": [8.0, 4], "sleep": [8.0, 4], "paint": [4.0, 12], "pace": [2.0, 8], "serve": [2.0, 8], "carry": [4.0, 4],
-	"check": [6.0, 12], "stare": [16.0, 4], "rock": [4.0, 8], "hug": [4.0, 4], "queue": [16.0, 16], "wave": [1.0, 8], "watch": [4.0, 4], "mix": [2.0, 8]}
+	"check": [6.0, 12], "stare": [16.0, 4], "rock": [4.0, 8], "hug": [4.0, 4], "queue": [16.0, 16], "wave": [1.0, 8], "watch": [4.0, 4], "mix": [2.0, 8],
+	"flair_toprock": [4.0, 16], "flair_drop": [8.0, 32], "flair_robot": [4.0, 16], "flair_spin": [4.0, 16]}
 ## Kick-locked states keep a whole number of beats as the personal offset so the bounce stays on the beat; the slow ones shift by the personal phase.
 const SHEET_KICKED := ["dance", "cheer", "clap", "walk", "footwork", "pace", "serve", "mix", "wave", "point"]
 const BLEND_S := 0.32  # seconds of song time a state change cross-fades
 const STYLES := 5  # personal dance styles: arm pump, fist pump, shimmy, raised V, head-nod groove
-const POSE_KEYS := ["bob", "jump", "lean", "head_tilt", "head_drop", "arm_l", "arm_r", "elb_l", "elb_r", "leg_l", "leg_r", "sway_x", "squash", "spin", "roll"]
+const POSE_KEYS := ["bob", "jump", "lean", "head_tilt", "head_drop", "arm_l", "arm_r", "elb_l", "elb_r", "leg_l", "leg_r", "sway_x", "squash", "spin", "roll", "crouch", "lift_l", "lift_r"]
+## crouch: the hips sink by this share of the height with the knees bent (feet stay on the floor); lift_l / lift_r: a foot raised by this share (the knee bends).
+## Baked into the sheets (people.py); the live rig fallback ignores them.
 
 var rig: Dictionary = {}  # the variant's manifest entry: {joints, parts, faces, glow_hand?, height}
 var assets: StoryAssets
@@ -137,6 +144,7 @@ func sample(st: String, beats: float, energy01: float, out: Dictionary = {}) -> 
 			p["head_tilt"] = 0.1 * sin(w)
 			p["leg_l"] = 0.08 + 0.07 * a * sin(w * 2.0)
 			p["leg_r"] = 0.08 - 0.07 * a * sin(w * 2.0)
+			p["crouch"] = 0.012 + 0.018 * a * kick  # soft knees that give on the kick: the weight goes down into the floor
 			match sty:
 				1:  # fist pump: one arm punches up on every beat, the other hand on the hip
 					p["arm_r"] = 1.25 + 0.55 * a * (1.0 - bf) * (1.0 - bf)
@@ -256,6 +264,7 @@ func sample(st: String, beats: float, energy01: float, out: Dictionary = {}) -> 
 			p["sway_x"] = 8.0 * f
 			p["head_tilt"] = 0.1 * f
 			p["spin"] = 0.25 * f
+			p["crouch"] = 0.035 + 0.02 * a * kick  # footwork is danced low
 		"look":  # arms crossed, glancing around: holds one side, then turns the head to the other
 			var g := sin(TAU * (beats / 8.0) + phase * TAU)
 			var glance := clampf(g * 2.5, -1.0, 1.0)
@@ -487,7 +496,98 @@ func sample(st: String, beats: float, energy01: float, out: Dictionary = {}) -> 
 			if sp >= 12.0 and sp < 13.0:
 				var u := sp - 12.0
 				p["spin"] = TAU * u * u * (3.0 - 2.0 * u)
+		"flair_toprock", "flair_drop", "flair_robot", "flair_spin":  # bar-locked (no personal phase): the move starts on the bar
+			var u := fposmod(beats, float(SHEET_CYCLES[st][0]))
+			_flair_keys(st, u, p)
+			match st:
+				"flair_toprock":  # the body rides over the crossing foot
+					p["bob"] = 2.5 * rise
+					p["squash"] = 0.03 * kick
+					p["head_drop"] += 1.8 * kick
+					p["sway_x"] = -4.0 * cos(PI * u * 0.5)
+				"flair_drop":
+					var up := 1.0 - _smooth01((u - 0.5) / 0.5) * (1.0 - _smooth01((u - 7.0) / 0.8))  # standing at either end of the move
+					p["bob"] = 2.0 * rise * up
+					p["squash"] = 0.03 * kick * up
+				"flair_robot":  # stiff: no bounce but a pop of the chest on every hit
+					p["bob"] = 0.6 * rise
+					p["squash"] = 0.035 * kick
+					p["head_drop"] += 1.5 * kick
+				"flair_spin":
+					if u >= 1.0 and u < 2.0:
+						var s := u - 1.0
+						p["spin"] = TAU * s * s * (3.0 - 2.0 * s)
+						p["jump"] = 3.0 * sin(PI * s)
+					p["bob"] = 2.0 * rise * (1.0 if u < 1.0 or u >= 2.0 else 0.0)
+					p["squash"] = 0.05 * exp(-8.0 * absf(u - 2.0)) + 0.02 * kick
 	return p
+
+
+## The baked part of a flair move at bar position `u` (beats into its cycle): the move's keyframes, each [beat, snap, pose], eased into the next one over the last
+## `snap` share of the gap so a hit lands exactly on its beat (a robot's snap is short, a drop's long). Keys a pose leaves out are 0.
+static func _flair_keys(move: String, u: float, p: Dictionary) -> void:
+	var ks: Array = FLAIR_KEYS[move]
+	var n := ks.size()
+	var i := n - 1
+	for j in n:
+		if float(ks[j][0]) <= u:
+			i = j
+	var k0: Array = ks[i]
+	var k1: Array = ks[(i + 1) % n]
+	var t1 := float(k1[0]) if i + 1 < n else float(SHEET_CYCLES[move][0]) + float(ks[0][0])
+	var x := (u - float(k0[0])) / maxf(t1 - float(k0[0]), 1.0e-6)
+	var snap := float(k1[1])
+	var k := _smooth01((x - (1.0 - snap)) / maxf(snap, 1.0e-6))
+	var a: Dictionary = k0[2]
+	var b: Dictionary = k1[2]
+	for key in FLAIR_LIMBS:
+		p[key] = lerpf(float(a.get(key, 0.0)), float(b.get(key, 0.0)), k)
+
+
+const FLAIR_LIMBS := ["arm_l", "arm_r", "elb_l", "elb_r", "leg_l", "leg_r", "lean", "head_tilt", "head_drop", "crouch", "lift_l", "lift_r"]
+## The moves (angles in radians as in sample(): an arm 0 hangs, PI/2 is out to the side, PI up; the forearm's own angle is arm - elb; a leg > 0 swings out, < 0
+## crosses; lean and head_tilt > 0 tip towards screen right).
+const FLAIR_KEYS := {
+	# top-rock / Indian step: the right foot crosses in front on 1, steps back on 2, the left crosses on 3, a kick out on 4; arms open on the cross, a guard between
+	"flair_toprock": [
+		[0.0, 0.7, {"leg_l": 0.1, "leg_r": -0.27, "crouch": 0.05, "lean": -0.1, "arm_l": 1.35, "elb_l": 0.45, "arm_r": 1.05, "elb_r": 0.7, "head_tilt": 0.08}],
+		[0.5, 1.0, {"leg_l": 0.1, "leg_r": 0.04, "lift_r": 0.07, "crouch": 0.03, "lean": -0.04, "arm_l": 0.8, "elb_l": 1.2, "arm_r": 0.7, "elb_r": 1.4, "head_tilt": 0.03}],
+		[1.0, 0.7, {"leg_l": 0.13, "leg_r": 0.16, "crouch": 0.05, "lean": 0.04, "arm_l": 0.75, "elb_l": 2.65, "arm_r": 0.8, "elb_r": 2.6, "head_drop": 1.5}],
+		[1.5, 1.0, {"leg_l": 0.04, "leg_r": 0.12, "lift_l": 0.07, "crouch": 0.03, "lean": 0.04, "arm_l": 0.7, "elb_l": 1.4, "arm_r": 0.8, "elb_r": 1.2, "head_tilt": -0.03}],
+		[2.0, 0.7, {"leg_l": -0.27, "leg_r": 0.1, "crouch": 0.05, "lean": 0.1, "arm_l": 1.05, "elb_l": 0.7, "arm_r": 1.35, "elb_r": 0.45, "head_tilt": -0.08}],
+		[2.5, 1.0, {"leg_l": 0.04, "leg_r": 0.1, "lift_l": 0.07, "crouch": 0.03, "lean": 0.04, "arm_l": 0.7, "elb_l": 1.4, "arm_r": 0.8, "elb_r": 1.2}],
+		[3.0, 0.6, {"leg_l": 0.12, "leg_r": 0.42, "lift_r": 0.05, "crouch": 0.06, "lean": -0.07, "arm_l": 0.75, "elb_l": 2.6, "arm_r": 1.2, "elb_r": 0.6, "head_tilt": 0.05}],
+		[3.5, 1.0, {"leg_l": 0.1, "leg_r": 0.08, "lift_r": 0.06, "crouch": 0.03, "lean": -0.06, "arm_l": 1.0, "elb_l": 0.9, "arm_r": 0.9, "elb_r": 1.0, "head_tilt": 0.05}],
+	],
+	# drop, six-step and freeze over two bars: a knee drop on 2, a low shuffle (a leg swept out, a hand on the floor) on 3, 4 and 5, the freeze on the snare of 6
+	# (leaning over the planted hand, the other arm and a leg flung out) held to 7, up again for the next bar
+	"flair_drop": [
+		[0.0, 1.0, {"leg_l": 0.1, "leg_r": 0.1, "crouch": 0.03, "arm_l": 0.55, "elb_l": 1.3, "arm_r": 0.55, "elb_r": 1.3}],
+		[1.0, 0.6, {"leg_l": 0.2, "leg_r": 0.24, "crouch": 0.24, "lean": 0.12, "arm_l": 0.35, "elb_l": 0.25, "arm_r": 1.6, "elb_r": 0.5, "head_tilt": -0.1, "head_drop": 3.0}],
+		[2.0, 0.7, {"leg_l": 0.16, "leg_r": 0.8, "crouch": 0.27, "lean": -0.22, "arm_l": 0.3, "elb_l": 0.1, "arm_r": 1.45, "elb_r": 0.6, "head_tilt": 0.12, "head_drop": 2.0}],
+		[3.0, 0.7, {"leg_l": 0.18, "leg_r": 0.18, "crouch": 0.3, "lean": 0.05, "arm_l": 0.4, "elb_l": 0.3, "arm_r": 0.4, "elb_r": 0.3, "head_drop": 3.0}],
+		[4.0, 0.7, {"leg_l": 0.8, "leg_r": 0.16, "crouch": 0.27, "lean": 0.22, "arm_l": 1.45, "elb_l": 0.6, "arm_r": 0.3, "elb_r": 0.1, "head_tilt": -0.12, "head_drop": 2.0}],
+		[5.0, 0.45, {"leg_l": 0.2, "leg_r": 1.1, "lift_r": 0.04, "crouch": 0.3, "lean": -0.55, "arm_l": 0.25, "elb_l": 0.05, "arm_r": 2.5, "elb_r": 0.25, "head_tilt": 0.45}],
+		[6.5, 1.0, {"leg_l": 0.2, "leg_r": 1.12, "lift_r": 0.05, "crouch": 0.3, "lean": -0.53, "arm_l": 0.25, "elb_l": 0.05, "arm_r": 2.55, "elb_r": 0.2, "head_tilt": 0.42}],
+		[7.25, 0.9, {"leg_l": 0.14, "leg_r": 0.2, "crouch": 0.12, "lean": -0.1, "arm_l": 0.6, "elb_l": 0.9, "arm_r": 1.3, "elb_r": 0.7, "head_tilt": 0.1}],
+	],
+	# robot / pop: a new hard pose on every beat, snapped into in the last sixth of the beat before it so it lands on the kick, the head ticking against the arms
+	"flair_robot": [
+		[0.0, 0.16, {"leg_l": 0.14, "leg_r": 0.14, "crouch": 0.04, "arm_l": 1.57, "elb_l": -1.57, "arm_r": 1.57, "elb_r": -1.57}],
+		[1.0, 0.16, {"leg_l": 0.14, "leg_r": 0.14, "crouch": 0.04, "lean": 0.05, "arm_l": 1.57, "elb_l": 1.57, "arm_r": 1.57, "elb_r": -1.57, "head_tilt": 0.2}],
+		[2.0, 0.16, {"leg_l": 0.16, "leg_r": 0.16, "crouch": 0.08, "arm_l": 0.5, "elb_l": 2.05, "arm_r": 0.5, "elb_r": 2.05, "head_tilt": -0.2, "head_drop": 2.0}],
+		[3.0, 0.16, {"leg_l": 0.1, "leg_r": 0.2, "crouch": 0.04, "lean": 0.06, "arm_l": 0.4, "elb_l": 2.15, "arm_r": 1.57, "elb_r": 0.0, "head_tilt": 0.22}],
+	],
+	# a spin on one foot: wind up on 1, the free foot tucked at the knee and the arms pulled in for the turn through 2, land on 3 with the arms flung out, settle on 4
+	"flair_spin": [
+		[0.0, 1.0, {"leg_l": 0.18, "leg_r": 0.2, "crouch": 0.07, "lean": -0.08, "arm_l": 1.3, "elb_l": 0.5, "arm_r": 0.5, "elb_r": 1.7}],
+		[0.75, 1.0, {"leg_l": 0.04, "leg_r": -0.05, "lift_r": 0.15, "crouch": 0.02, "arm_l": 0.45, "elb_l": 2.1, "arm_r": 0.45, "elb_r": 2.1}],
+		[1.9, 1.0, {"leg_l": 0.04, "leg_r": -0.05, "lift_r": 0.15, "crouch": 0.02, "arm_l": 0.45, "elb_l": 2.1, "arm_r": 0.45, "elb_r": 2.1}],
+		[2.0, 1.0, {"leg_l": 0.26, "leg_r": 0.26, "crouch": 0.1, "lean": -0.04, "arm_l": 2.4, "elb_l": 0.2, "arm_r": 2.4, "elb_r": 0.2, "head_tilt": -0.08}],
+		[3.0, 1.0, {"leg_l": 0.16, "leg_r": 0.18, "crouch": 0.05, "lean": -0.02, "arm_l": 2.1, "elb_l": 0.35, "arm_r": 2.1, "elb_r": 0.35, "head_tilt": -0.04}],
+		[3.6, 1.0, {"leg_l": 0.14, "leg_r": 0.16, "crouch": 0.05, "lean": -0.05, "arm_l": 1.0, "elb_l": 0.7, "arm_r": 0.7, "elb_r": 1.3}],
+	],
+}
 
 
 static func _smooth01(x: float) -> float:
@@ -583,17 +683,17 @@ func sheet_pick(beats: float) -> Array:
 		var sp := fposmod(beats, 16.0)
 		if sp >= 12.0 and sp < 13.0:
 			var u := sp - 12.0
-			var ang := fposmod(TAU * u * u * (3.0 - 2.0 * u), TAU)
-			if ang > PI * 0.25 and ang < PI * 0.75:
-				fc = 1
-				flip = false
-			elif ang >= PI * 0.75 and ang < PI * 1.25:
-				fc = 2
-			elif ang >= PI * 1.25 and ang < PI * 1.75:
-				fc = 1
-				flip = true
+			var turn := spin_facing(TAU * u * u * (3.0 - 2.0 * u), fc, flip)
+			fc = turn[0]
+			flip = turn[1]
 		if not states.has(st):
 			st = "dance"
+	elif st == "flair_spin":  # the turn through the side and the back on beat 2 of the bar
+		var u2 := fposmod(beats, 4.0) - 1.0
+		if u2 >= 0.0 and u2 < 1.0:
+			var turn2 := spin_facing(TAU * u2 * u2 * (3.0 - 2.0 * u2), fc, flip)
+			fc = turn2[0]
+			flip = turn2[1]
 	elif st == "dance" and sync and states.has("dance_s0"):
 		st = "dance_s0"
 	if not states.has(st):
@@ -603,11 +703,25 @@ func sheet_pick(beats: float) -> Array:
 	return [st, fc, flip]
 
 
+## The sheet facing [facing, flip] of a figure turned by `ang` (radians, a full turn is TAU): front, three-quarter right, back, three-quarter left.
+static func spin_facing(ang: float, fc: int, flip: bool) -> Array:
+	ang = fposmod(ang, TAU)
+	if ang > PI * 0.25 and ang < PI * 0.75:
+		return [1, false]
+	if ang >= PI * 0.75 and ang < PI * 1.25:
+		return [2, flip]
+	if ang >= PI * 1.25 and ang < PI * 1.75:
+		return [1, true]
+	return [fc, flip]
+
+
 ## Which frame of a state's cycle shows at song position `beats`: the canonical cycle shifted by the person's own phase (whole beats for the kick-locked states).
 func sheet_frame(st: String, cyc_beats: float, n: int, beats: float) -> int:
 	var base := "dance" if st.begins_with("dance") else st
 	var off := 0.0
-	if not sync:
+	if st.begins_with("flair"):
+		off = 0.0  # bar-locked: a burst starts on the bar with the move's first frame
+	elif not sync:
 		if base in SHEET_KICKED:
 			off = floorf(phase * 2.0 + 0.5)
 			if base == "cheer" and style % 2 == 1:

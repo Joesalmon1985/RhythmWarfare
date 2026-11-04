@@ -5,7 +5,7 @@ extends SceneTree
 ## The dance is written once per personal style (dance_s0 .. dance_s4). Deterministic (fixed formatting, sorted keys).
 
 const OUT := "res://assets/story/people_poses.json"
-const LIMB_KEYS := ["arm_l", "arm_r", "elb_l", "elb_r", "leg_l", "leg_r", "lean", "head_tilt", "head_drop", "squash", "roll"]
+const LIMB_KEYS := ["arm_l", "arm_r", "elb_l", "elb_r", "leg_l", "leg_r", "lean", "head_tilt", "head_drop", "squash", "roll", "crouch", "lift_l", "lift_r"]
 
 
 func _init() -> void:

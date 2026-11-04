@@ -154,7 +154,7 @@ def texture_checks(errors, chapter, m) -> None:
 PEOPLE_STATES = {"idle", "walk"}  # every person has at least these
 SHEET_STATES = {"idle", "dance", "cheer", "hands_up", "sad", "clap", "walk", "footwork", "look", "drink", "toast", "chat", "point", "phone", "lean_wall", "sit", "lie",
                 "sleep", "paint", "pace", "serve", "carry", "check", "stare", "rock", "hug", "queue", "wave", "watch", "mix",
-                "dance_s0", "dance_s1", "dance_s2", "dance_s3", "dance_s4"}
+                "dance_s0", "dance_s1", "dance_s2", "dance_s3", "dance_s4", "flair_toprock", "flair_drop", "flair_robot", "flair_spin"}
 
 
 def people_checks(errors, chapter, m) -> None:
