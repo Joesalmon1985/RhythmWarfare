@@ -280,6 +280,16 @@ func _draw_sectioned() -> void:
 			draw_rect(dr, Color(0.76, 0.71, 0.92, fade_in))
 			draw_rect(Rect2(dr.position.x, dr.position.y - 3.0 * k, dr.size.x, 5.0 * k), Color(0.9, 0.87, 0.98, fade_in))
 			draw_rect(Rect2(dr.position.x, foot.y - 9.0 * k, dr.size.x, 9.0 * k), Color(0.55, 0.49, 0.74, fade_in))
+	var star_cols := [Color(1.0, 0.85, 0.4), Color(1.0, 0.56, 0.54), Color(0.56, 0.85, 0.78), Color(0.73, 0.65, 0.94)]
+	for i in 6:  # paper stars stuck on the wall either side of the door
+		var sp := foot + Vector2((-1.0 if i % 2 == 0 else 1.0) * (190.0 + 40.0 * float(i / 2)), -330.0 + 90.0 * float(i / 2) - 20.0 * float(i % 2)) * k
+		var pts := PackedVector2Array()
+		for j in 10:
+			var ang := -PI * 0.5 + float(j) * PI / 5.0 + 0.2 * float(i)
+			pts.append(sp + Vector2.from_angle(ang) * (13.0 if j % 2 == 0 else 5.6) * k)
+		draw_colored_polygon(pts, Color(star_cols[i % 4], fade_in))
+		pts.append(pts[0])
+		draw_polyline(pts, Color(0.11, 0.06, 0.25, fade_in), maxf(1.5 * k, 1.0))
 	if foot.y < big.end.y:
 		draw_rect(Rect2(big.position.x, foot.y, big.size.x, big.end.y - foot.y), Color(0.74, 0.84, 0.82, fade_in))
 		draw_rect(Rect2(big.position.x, foot.y, big.size.x, 4.0 * k), Color(0.3, 0.25, 0.45, 0.35 * fade_in))
