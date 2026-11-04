@@ -262,6 +262,24 @@ func arrival(t0: float, notes: Array) -> Array:
 	return out
 
 
-## Moving to a new node of the same world (the stage stays): the rail starts again from home; the camera stays where it is until the first decision moves it.
+## Moving to a new scene of the same world (the stage stays): a plain walk through the door, no cut and no frame. It is one `player_move` that starts three beats before the
+## phase ends (in the cue-free guard) from wherever the camera is, to the new scene's arrival place (just inside its door; home when it has none); the map's portal route
+## takes it through the doorway, and it ends a few beats into the new phase. The rail then steps from there at the first block decision.
+func leave(t: float, to_wp: String, notes: Array) -> Array:
+	var out: Array = []
+	if to_wp != "":
+		_move_to(out, t, to_wp, "walk", 4.0, notes)
+	return out
+
+
+## The new scene's start on the downbeat `t0` when the door walk was not scheduled (the choice changed after the walk was latched, or the scene was started directly).
+func door_walk(t0: float, notes: Array, walked: bool) -> Array:
+	var out: Array = []
+	if not walked:
+		_move_to(out, t0, arrive if arrive != "" else home, "walk", 2.0, notes)
+	out.append(_action(t0, "player_role", {"role": "dancer"}))
+	return out
+
+
 func restart_here() -> void:
 	reset()

@@ -1,6 +1,7 @@
 # The continuous story run
 
-The game is one run through the five 2.5D worlds. The home screen has **Play** (the run), **Story chapters** (the finished chapter campaign, its own menu and saves,
+The game is one run through the five 2.5D worlds, as seven **worlds** (the five maps, the Hospital and the Ward twice: once on the way in, once "late"), each a small graph of **scenes**.
+A scene is one 64-beat phase at a place in a world (a room: the floor, the bar, the booth ...). The player walks a path of three to five rooms (66 to 110 s) before the world exit sends them on. The home screen has **Play** (the run), **Story chapters** (the finished chapter campaign, its own menu and saves,
 `story_campaign.tscn`), **Start from a reached level** and **Settings**; the military campaign, loadout and duel are developer-only. Branch `feature/continuous-story-run`, built on the verified merge of `feature/story-25d` and the
 Warehouse music test (see "Baseline" below).
 
@@ -37,22 +38,116 @@ godot --path . res://src/run/run_play.tscn        # straight into the run (RW_RU
 
 All numbers are in `content/run/run.json` (`timing`, `judgement`, `energy`, `stages`, `mix`, `effects`): thresholds and gains are tunable without code.
 
-## Route map
+## Worlds, scenes and the route map (WP-A5)
 
-Depth is the progression point; difficulty tier = min(depth, 4). Every level offers at least two arrows. Levels at one depth **share one chart** (identical required cue
-events whichever way you came) and the same difficulty tier; they differ in place, treatment and, where an alternate render exists, in sound.
+`content/run/run.json` has `worlds` (id, title, `map` = the art world the stage is built from, `depth`, blurb) and `nodes`, which are the **scenes**:
+`{id, world, scene, title (the room), entry, exit_scene, next: [{to, dir, label, loop?}], place: {waypoint (home), rail: {good, bad, arrive, glances, strolls, exits}}}`. `place` is the
+run agent's rail format (WP-A3) for the room: `rail.good`/`bad` are places within reach of the room, `rail.arrive` the doorway the camera comes in by from the previous scene, and
+`rail.exits` the doorway of each route (`dir` -> waypoint) that is lit while the route window is open. Rules (`RunData`, tested in `tests/test_run_progress.gd`): one `entry` scene per world
+and its id is the world's id (the save's `reached` ids never change), one `exit_scene`, every scene reaches the exit over routes that stay in the world, the world graph is acyclic
+except through a route marked `loop`, only the exit scene leads to other worlds (to their entry scenes, one depth deeper, or the same depth at the last tier), every route has a lit
+doorway in `rail.exits`, and every home, rail place, arrival and doorway exists in the scene's map. `tools/run/make_scenes.py` authors the data (scenes, the 100 doorway and place
+waypoints it adds to the five maps, and `music.json`); edit its tables and run it again.
 
-| Depth | Level | World | First arrow (default) | Second arrow |
+Depth (the difficulty tier = min(depth, 4)) is per world. A path through a world is 3 to 5 phases of 22.07 s:
+
+| World | Depth | Scenes on a path | Duration |
+| --- | --- | --- | --- |
+| Warehouse | 1 | floor > bar or balcony > chill-out or booth > door | 4 phases, 88 s |
+| The Mothership | 2 | deck > gallery or reactor > bridge > airlock | 4 phases, 88 s |
+| The Underworld | 2 | arena > court or furnace > pit > throne | 4 phases, 88 s |
+| The Hospital | 3 | ward > corridor > day room or cafeteria > garden > bandstand | 5 phases, 110 s |
+| The Ward | 3 | day room > art room or dormitory > corridor > courtyard > stage | 5 phases, 110 s |
+| The Hospital, late | 4 | garden > cafeteria or quiet room > bandstand (round again) | 3 phases, 66 s |
+| The Ward, late | 4 | courtyard > treatment room or dormitory > day room (round again) | 3 phases, 66 s |
+
+The first three worlds on any path are 13 to 14 phases (about 5 minutes) before the late worlds, which then loop for as long as the player survives. A scene's route window offers the scene's `next`:
+two or three arrows with the first marked `[DEFAULT]`; a scene with one way on (chill-out, booth, gallery, reactor, bridge, day room, cafeteria, garden ...) shows its single arrow so the window
+always opens, the lit door in the room is the way. The exit scene offers the other worlds.
+
+**Warehouse** (`warehouse`, depth 1, tier 1, map `night_one`)
+
+| Scene | Room | Role | Arrows (default first) | Music (audio = chart) |
 | --- | --- | --- | --- | --- |
-| 1 | Warehouse | Night One | up: The Mothership | right: The Underworld |
-| 2 | The Mothership | Mothership | left: The Hospital | right: The Ward |
-| 2 | The Underworld | Underworld | left: The Hospital | right: The Ward |
-| 3 | The Hospital | Hospital | left: Hospital, late | right: Ward, late |
-| 3 | The Ward | Ward (Mental hospital) | left: Hospital, late | right: Ward, late |
-| 4 | The Hospital, late | Hospital | left: itself (loops) | right: Ward, late |
-| 4 | The Ward, late | Ward | right: itself (loops) | left: Hospital, late |
+| `warehouse` | The Floor | entry | right warehouse.bar, up warehouse.balcony | `lv1_warehouse` (Lv1 Warehouse) |
+| `warehouse.bar` | The Bar | middle | right warehouse.chill, left warehouse.booth | `lv1_warehouse_v1` (Lv1 Warehouse (1)) |
+| `warehouse.balcony` | The Balcony | middle | right warehouse.chill, left warehouse.booth | `lv1_warehouse_v2` (Lv1 Warehouse (2)) |
+| `warehouse.chill` | The Chill-out | middle | up warehouse.exit | `lv1_warehouse_v2` (Lv1 Warehouse (2)) |
+| `warehouse.booth` | The Booth | middle | up warehouse.exit | `lv1_warehouse_v1` (Lv1 Warehouse (1)) |
+| `warehouse.exit` | The Door | exit | up mothership, right underworld | `lv1_warehouse` (Lv1 Warehouse) |
 
-Depth 4 is the last tier, so strong play can go on forever through the two late worlds. Every level can be reached from the start (`RunData` warns otherwise).
+**The Mothership** (`mothership`, depth 2, tier 2, map `mothership`)
+
+| Scene | Room | Role | Arrows (default first) | Music (audio = chart) |
+| --- | --- | --- | --- | --- |
+| `mothership` | The Deck | entry | right mothership.gallery, up mothership.reactor | `lv2_alien_spaceship` (Lv2 Alien Spaceship) |
+| `mothership.gallery` | The Gallery | middle | up mothership.bridge | `lv2_alien_spaceship_v1` (Lv2 Alien Spaceship (1)) |
+| `mothership.reactor` | The Reactor | middle | up mothership.bridge | `lv2_alien_spaceship_v3` (Lv2 Alien Spaceship (3)) |
+| `mothership.bridge` | The Bridge | middle | up mothership.exit | `lv2_alien_spaceship_v2` (Lv2 Alien Spaceship (2)) |
+| `mothership.exit` | The Airlock | exit | left hospital, right ward | `lv2_alien_spaceship` (Lv2 Alien Spaceship) |
+
+**The Underworld** (`underworld`, depth 2, tier 2, map `underworld`)
+
+| Scene | Room | Role | Arrows (default first) | Music (audio = chart) |
+| --- | --- | --- | --- | --- |
+| `underworld` | The Arena | entry | right underworld.court, left underworld.furnace | `lv2_alien_spaceship_v2` (Lv2 Alien Spaceship (2)) **temporary** |
+| `underworld.court` | The Court | middle | up underworld.pit | `lv2_alien_spaceship_v3` (Lv2 Alien Spaceship (3)) **temporary** |
+| `underworld.furnace` | The Furnace | middle | up underworld.pit | `lv2_alien_spaceship_v2` (Lv2 Alien Spaceship (2)) **temporary** |
+| `underworld.pit` | The Pit | middle | up underworld.exit | `lv2_alien_spaceship_v3` (Lv2 Alien Spaceship (3)) **temporary** |
+| `underworld.exit` | The Throne | exit | left hospital, right ward | `lv2_alien_spaceship_v2` (Lv2 Alien Spaceship (2)) **temporary** |
+
+**The Hospital** (`hospital`, depth 3, tier 3, map `hospital`)
+
+| Scene | Room | Role | Arrows (default first) | Music (audio = chart) |
+| --- | --- | --- | --- | --- |
+| `hospital` | The Ward | entry | up hospital.corridor | `lv4_hospital` (lv4 Hospital) |
+| `hospital.corridor` | The Corridor | middle | left hospital.dayroom, right hospital.cafeteria | `lv4_hospital_v2` (lv4 Hospital (2)) |
+| `hospital.dayroom` | The Day Room | middle | up hospital.garden | `lv4_hospital_v3` (lv4 Hospital (3)) |
+| `hospital.cafeteria` | The Cafeteria | middle | up hospital.garden | `lv4_hospital_v2` (lv4 Hospital (2)) |
+| `hospital.garden` | The Garden | middle | up hospital.exit | `lv4_hospital_v3` (lv4 Hospital (3)) |
+| `hospital.exit` | The Bandstand | exit | left hospital_late, right ward_late | `lv4_hospital` (lv4 Hospital) |
+
+**The Ward** (`ward`, depth 3, tier 3, map `mental_hospital`)
+
+| Scene | Room | Role | Arrows (default first) | Music (audio = chart) |
+| --- | --- | --- | --- | --- |
+| `ward` | The Day Room | entry | right ward.art, up ward.dorm | `lv5_asylum` (Lv5 Asylum) |
+| `ward.art` | The Art Room | middle | up ward.corridor | `lv5_asylum_v1` (Lv5 Asylum (1)) |
+| `ward.dorm` | The Dormitory | middle | up ward.corridor | `lv5_asylum_v3` (Lv5 Asylum (3)) |
+| `ward.corridor` | The Corridor | middle | up ward.courtyard | `lv5_asylum_v1` (Lv5 Asylum (1)) |
+| `ward.courtyard` | The Courtyard | middle | up ward.exit | `lv5_asylum_v3` (Lv5 Asylum (3)) |
+| `ward.exit` | The Stage | exit | left hospital_late, right ward_late | `lv5_asylum` (Lv5 Asylum) |
+
+**The Hospital, late** (`hospital_late`, depth 4, tier 4, map `hospital`)
+
+| Scene | Room | Role | Arrows (default first) | Music (audio = chart) |
+| --- | --- | --- | --- | --- |
+| `hospital_late` | The Garden | entry | left hospital_late.cafe, right hospital_late.quiet | `lv4_hospital_v1` (lv4 Hospital (1)) |
+| `hospital_late.cafe` | The Cafeteria | middle | up hospital_late.exit | `lv4_hospital_v3` (lv4 Hospital (3)) |
+| `hospital_late.quiet` | The Quiet Room | middle | up hospital_late.exit | `lv4_hospital_v2` (lv4 Hospital (2)) |
+| `hospital_late.exit` | The Bandstand | exit | left hospital_late (loop), right ward_late | `lv4_hospital_v1` (lv4 Hospital (1)) |
+
+**The Ward, late** (`ward_late`, depth 4, tier 4, map `mental_hospital`)
+
+| Scene | Room | Role | Arrows (default first) | Music (audio = chart) |
+| --- | --- | --- | --- | --- |
+| `ward_late` | The Courtyard | entry | left ward_late.treat, right ward_late.dorm | `lv5_asylum_v2` (Lv5 Asylum (2)) |
+| `ward_late.treat` | The Treatment Room | middle | up ward_late.exit | `lv5_asylum_v2` (Lv5 Asylum (2)) |
+| `ward_late.dorm` | The Dormitory | middle | up ward_late.exit | `lv5_asylum_v3` (Lv5 Asylum (3)) |
+| `ward_late.exit` | The Day Room | exit | right ward_late (loop), left hospital_late | `lv5_asylum_v2` (Lv5 Asylum (2)) |
+
+
+## The door walk and the world swap
+
+* **A path inside a world** (a `next` to a scene of the same world) is a plain door walk: no frame, the same world stage stays, the scene's rail starts at its arrival place. Three beats before
+  the downbeat (beat 61, in the cue-free guard) `RunPlay` latches the selected route once per phase and `RunJourney.leave_walk` starts one `player_move` of 2 to 4 bars (`RunRail.leave`, shortened
+  where the next block's cues are dense) from wherever the camera is to the new scene's `arrive` waypoint; the map's portal route takes it through the door and it ends a few beats into the new
+  phase. The scene itself starts on the downbeat as any phase does (drums alone, cues charted at beat 60.5, audio on the grid), so the walk is the only visible change. A change of mind after
+  beat 61 keeps the walk toward the first pick and the new scene then walks in from where the camera is (`RunRail.door_walk`, a move on the downbeat).
+* **A world change** (the exit scene to another world's entry scene, including Hospital to Hospital, late, which share a map) keeps the passage frame: it closes to a lit doorway over beats 62 to 64,
+  the camera cuts to the new world's `arrive` waypoint behind it and walks to home while the frame opens (WP-A3, `RunPassage`). A `loop` to the entry scene of the same world is a door walk.
+* The Bassment: the wizard waits on the Warehouse floor (`warehouse`) and, with the same route, in the chill-out (`warehouse.chill`); `trial_leave` resumes at the Warehouse entry scene
+  (`RunEngine.resume("warehouse")`, a fresh rail, no door walk).
 
 ## Difficulty
 
@@ -62,14 +157,23 @@ syncopation; bass holds are always holds. At the same depth every sibling plays 
 
 ## Music assignment
 
-`content/story/music.json`: per level `audio` (the pack whose recordings play), `chart` (the pack whose cues are charted), `treatment` (filter, distortion, reverb on that
-phase's own drum and bass buses, `content/run/run.json` `treatments`) and `temporary`. Today: Warehouse = Lv1 Warehouse; Mothership = Lv2 Alien Spaceship; Underworld = the same
-recordings with the `underworld` treatment (temporary); Hospital and Ward = Lv1 Warehouse (1) with their own treatments (temporary); the late levels = Lv2 Alien Spaceship (2)
-(temporary). Importing and assigning new sets is `docs/MUSIC_IMPORT.md`; the per-level shopping list is `docs/MUSIC_HANDOFF.md`.
+`content/story/music.json`: one entry **per scene**: `audio` (the pack whose recordings play), `chart` (the pack whose cues are charted), `treatment` and `temporary`. The entry scene plays the world's
+base set and the later scenes its variants (tables above): Warehouse `lv1_warehouse` with `_v1`/`_v2`; Mothership `lv2_alien_spaceship` with `_v1`/`_v3`/`_v2`; Hospital `lv4_hospital` with `_v2`/`_v3`;
+Ward `lv5_asylum` with `_v1`/`_v3`; Hospital, late `_v1` with `_v3`/`_v2`; Ward, late `_v2` with `_v3`. **No variant is an alternate render of its base set**: every variant's cues differ from the
+base pack's (compared by tier), so each is its own chart, played at the world's tier. The Underworld plays Lv2 variants (`_v2`, `_v3`) as **temporary** stand-ins until Lv3 Hell has MIDI. Each scene's
+phase starts on drums alone, as ever, whichever pack it plays. Importing and assigning new sets is `docs/MUSIC_IMPORT.md` (`beatshaper.py assign --node <scene id>`); the shopping list is `docs/MUSIC_HANDOFF.md`
+(regenerated per scene by `tools/content/music_handoff.py`).
+
+**Sibling scenes and the route lock.** Block 0 of the next phase is charted at the last block's decision from the *selected* route, then locked: a route whose scene charts another pack greys out and
+`choose()` refuses it. Siblings that chart the same pack are never locked. In the shipped data the lock applies at the Warehouse floor, the bar and balcony (Lv1 variants `_v1`/`_v2`), the deck
+(gallery `_v1`, reactor `_v3`), the Underworld arena, the Hospital corridor, the Ward day room, the late entries and every exit scene (`beatshaper.py validate` lists them as WARNINGs). 12.5 beats of
+free choice remain (the window opens at beat 48, the lock falls at 60.5).
 
 ## Saves and migration
 
-`user://story_run.json` records every level as *reached* the moment a phase starts on it. Home shows **Start from a reached level** (locked cards say how a level opens),
+`user://story_run.json` records every **world** (not scene) as *reached* the moment a phase starts on one of its scenes; the home screen's cards are worlds, and starting from a world (or retrying after a loss, or the pause
+menu's "Restart this level") begins at the world's **entry scene** (its id is the world's id, so every old save and `RW_RUN_START=<world id>` keep working; any scene id also works as a start for tests).
+Every level below means a world. Home shows **Start from a reached level** (locked cards say how a level opens),
 a restart from a level gives its authored opening (drums alone, fresh energy 60), and a loss offers **Retry this level**, **Choose a reached level** and **Home**.
 The old chapter save `user://story_campaign.json` is never modified or deleted: the first time the new save is created it is read once and every chapter that had been
 played becomes a reached level (Night One -> Warehouse, Mothership, Underworld, Hospital, Mental hospital -> Ward), with a one-line note on the home screen.
@@ -85,10 +189,17 @@ played becomes a reached level (Night One -> Warehouse, Mothership, Underworld, 
 | Save | `src/run/run_progress.gd` | reached levels, migration |
 | Import | `tools/content/beatshaper.py` | scan, check, import, assign, apply, validate |
 
-World swap: the stage of each world is built once and kept; candidates for the next level are built during cue-free guards (one per guard) and the swap on the downbeat is a
+The HUD names the world and, under it, the scene (room); a new scene shows a title card (the world above, the room as the title). Stages are keyed by art world (map), so the Hospital and
+Hospital, late share one stage. World swap: the stage of each world is built once and kept; candidates for the next level are built during cue-free guards (one per guard) and the swap on the downbeat is a
 visibility change plus a flash. Audio for the candidates is loaded on a thread when the route window opens. The old chapter scenes (`story_play`, `story_campaign`, `story_result`,
 `story_interlude`) and the military screens still exist in the repository for the art pipeline, tests and the developer button (editor only), but nothing in the run path
 or the home screen reaches them; the run path does not read the loadout, the library, the campaign rules or `Match`.
+
+## Tunables
+
+All numbers are data: `content/run/run.json` (`timing`, `judgement`, `energy`, `stages`, `mix`, `effects`, `treatments`, `worlds` depth, each scene's rail), `content/story/music.json` (a scene's pack),
+`RunPassage.DOOR_BEATS` (3: when the door walk starts), `RunRail.MOVE_BARS_*` (2 to 4), `content/story/maps/*.json` (doorway and place waypoints). Longer or shorter worlds: add or remove a scene in
+`tools/run/make_scenes.py` (`scene(...)` rows and the `PACK` table).
 
 ## Verification
 
@@ -112,6 +223,28 @@ Not done: nothing here was listened to or played by hand on a phone; the dummy a
 the treated levels (Underworld, Hospital, Ward, the late levels) were checked for timing but their treatment settings were not judged by ear; the riser and fall are synthesised and have not
 been auditioned. See `docs/MUSIC_HANDOFF.md` for what is temporary.
 
+## Verification of the scenes (WP-A5, 2026-11-04)
+
+* Suite: `--filter run_` 3555 checks and `--filter trial` 1224 checks, 0 failures; the full suite (57,226 checks) had one failure, an environment leak between my new scene tests and `test_trial`, fixed
+  (`OS.unset_environment`) and re-run green by filter. `python3 tools/content/beatshaper.py validate` OK (16 sibling-chart WARNING lines: the route locks); `test_beatshaper.py` 20 tests OK.
+* **Matrix** (`tests/test_run_matrix.gd`, 7 policies x seeds 1 to 3, 20 phases = scenes, the door walk simulated as the scene does): perfect, accuracy 0.9, 0.8, 0.7 and sloppy survive all 20 phases and reach
+  depth 4 through 4 to 6 worlds and 16+ distinct scenes (perfect: 20 phases, 38 up steps and 42 top, never the bad rail); accuracy 0.5 ends after 6, 8 and 13 phases (depth 2, 2, 3); no play ends in phase 2 in the
+  Warehouse at the sick beat on every seed. Every step is a route of the scene before it; every move starts in a guard, lasts 2 to 4 bars and sits on no dense cues; the camera is always in a valid sector.
+* **Walk** (`tools/run/walk_run.sh`, real scenes, virtual clock, isolated save): perfect_a to perfect_d visit 19, 17, 17 and 17 scenes; together with sloppy, none and start_late all **36 of 36 scenes**; the save has
+  worlds only. Result `run walk-through: OK`. (The Ward world's missing source art, below, prints resource ERRORs; the walk was run with `RW_WALK_IGNORE='assets/story/mental_hospital|\.godot/imported'`.)
+* **Recording** (`record_music.gd` 70 s on `run_play.tscn`, Warehouse, perfect, routes right,right: floor > bar > chill-out; `check_run_audio.py`): three phases `warehouse` (`lv1_warehouse`), `warehouse.bar`
+  (`lv1_warehouse_v1`, entered on a path change inside the world), `warehouse.chill` (`lv1_warehouse_v2`): every block fitted within 0.01 of the stage's gains, 99.8 to 100 % explained, one drums voice per phase
+  entered on the grid, bass and synth 0.0 to 2.9 ms from the drums, no restart; delay per phase -46.8, -41.0, -38.0 ms (spread 8.8 ms, a little over the 5.9 ms mix chunk, the same slow drift the WP-A1 note
+  measured, not tied to the path change: phase 1 to 2 moved 5.9 ms, 2 to 3 3.0 ms), RESULT CHECK because of that spread. A first recording taken while a walk was running showed one riser missing in phase 3
+  (the machine was loaded); the repeat was clean.
+* **Frames** (`tools/run/frames.sh`, 1280x720 windowed, vsync off, perfect, `RW_RUN_UNTIL_PHASE=3` = three scenes including two door walks, an otherwise idle machine, Intel HD 520): Warehouse 5500 frames mean 12.1 ms p95 15.5
+  max 62 (1 over 50 ms); Mothership 4976 mean 13.4 p95 18.1 max 47 (0); Underworld 4908 mean 13.6 p95 17.9 max 47 (0); Hospital 4820 mean 13.8 p95 17.9 max 36 (0). A door walk builds nothing (the stage stays); only a world
+  change builds a stage (Warehouse 333 ms, Mothership 1.3 s in the first guard, once).
+* **Screenshots**: `docs/shots/run/node_<scene>`, `route_<scene>` (the route window with the lit doors, labels wrapped), `doorwalk_before` / `_through` / `_arrived`, `doorwalk_mothership_reactor`,
+  `doorwalk_hospital_corridor`, `passage_*`, `journey_*`, `rail_warehouse_*`. Shot for the Warehouse, Mothership, Underworld, Hospital, Hospital late scenes; **the Ward and Ward, late scenes were not shot** (see below).
+* Not done: nothing was listened to or played by hand; the Ward worlds were exercised headless and in the walk only. The Ward chapter's source SVGs (`assets/story/mental_hospital/source`) and part of the Night
+  One manifest were missing in the branch this work started from (fixed on `feature/run-on-25d`, commit 4d2e8525, not here); the determinism check of `tools/story/check_assets.py` was skipped.
+
 ## The run on the polished 2.5D worlds (WP-A1, 2026-11-04)
 
 Verified on `feature/run-on-25d` (the run, the Deathtrap Dungeon and the 2.5D polish merged):
@@ -131,7 +264,7 @@ Verified on `feature/run-on-25d` (the run, the Deathtrap Dungeon and the 2.5D po
 * The 360-line default, the settings (pad size, motion, reduced effects, contrast) and the activities all pass through unchanged: `_build_stage` applies `Session.story_lines`, `reduced`,
   `high_contrast` and `effective_story_motion` to every stage, and the crowd's activity picks read the band of `engine.energy` (tests/test_run_rail.gd, test_run_matrix.gd).
 
-## Rails and activities in the run (WP-A3)
+## Rails and activities in the run (WP-A3; "node" there is now a world's scene, see the scenes section above)
 
 The run reuses the chapters' rail camera but not their director: the run owns the stage, `RunJourney` (pure) turns the engine's events into stage actions and `run_play.gd` hands
 them to the active world's `StoryStage`. Each node in `content/run/run.json` has a `rail`:

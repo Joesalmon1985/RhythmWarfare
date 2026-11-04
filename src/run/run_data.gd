@@ -10,8 +10,12 @@ const PACKS_DIR := "res://songs/packs"
 const TIERS := 4  # difficulty tiers (pack.tiers "1".."4"); a node's tier is min(depth, TIERS)
 
 var cfg: Dictionary = {}
-var nodes: Dictionary = {}  # id -> {id, title, world, waypoint, role, depth, blurb, next: [{to, dir, label}], audio, chart, treatment, temporary}
+## A node is a SCENE: one 64-beat phase at a place in a world. id -> {id, world (the run world's id: the save and the home cards), map (the art world the stage is built from), scene, title (the room),
+## world_title, entry, exit_scene, depth (the world's), waypoint (home), rail, role, blurb, next: [{to, dir, label, loop?}], audio, chart, treatment, temporary}
+var nodes: Dictionary = {}
 var node_order: Array = []
+var worlds: Dictionary = {}  # world id -> {id, title, map, depth, blurb}
+var world_order: Array = []
 var packs: Dictionary = {}  # id -> pack.json (+ "dir")
 var errors: Array = []
 var warnings: Array = []
@@ -42,9 +46,24 @@ static func load_files(run_path: String, music_path: String, packs_dir: String) 
 	var assign: Dictionary = {}
 	for m in music.get("nodes", []):
 		assign[str(m["id"])] = m
+	for w in run.get("worlds", []):
+		d.worlds[str(w["id"])] = w
+		d.world_order.append(str(w["id"]))
 	for n in run.get("nodes", []):
 		var id := str(n["id"])
 		var node: Dictionary = n.duplicate(true)
+		if node.has("place"):  # the scene's place: its home waypoint and its rail, flattened
+			for k in (node["place"] as Dictionary):
+				node[k] = node["place"][k]
+			node.erase("place")
+		var wd: Dictionary = d.worlds.get(str(node.get("world", "")), {})
+		if wd.is_empty():
+			d.errors.append("scene %s: world '%s' is not in run.json worlds" % [id, node.get("world", "")])
+		node["map"] = str(wd.get("map", ""))
+		node["depth"] = int(wd.get("depth", 1))
+		node["world_title"] = str(wd.get("title", ""))
+		node["entry"] = bool(node.get("entry", false))
+		node["exit_scene"] = bool(node.get("exit_scene", false))
 		var m: Dictionary = assign.get(id, {})
 		if m.is_empty():
 			d.errors.append("music.json has no entry for node %s" % id)
@@ -69,6 +88,12 @@ static func _json(path: String, errors: Array) -> Variant:
 	if v == null:
 		errors.append("%s is not valid JSON" % path)
 	return v
+
+
+## The name a route button shows: the room for a path inside the world, the world's title for a world exit.
+func route_title(from_id: String, to_id: String) -> String:
+	var t: Dictionary = nodes[to_id]
+	return str(t["title"]) if str(t["world"]) == str(nodes[from_id]["world"]) else str(t["world_title"])
 
 
 func tier_of(depth: int) -> int:
@@ -98,27 +123,17 @@ func _validate() -> void:
 		if not (cfg.get("treatments", {}) as Dictionary).has(str(n["treatment"])):
 			errors.append("node %s: treatment '%s' is not in run.json" % [id, n["treatment"]])
 		errors.append_array(RunRail.validate(id, n.get("rail")))
-		if (n["next"] as Array).size() < 2:
-			errors.append("node %s needs at least two routes" % id)
-		var dirs := {}
-		for e in n["next"]:
-			if not nodes.has(str(e["to"])):
-				errors.append("node %s: route to unknown node %s" % [id, e["to"]])
-				continue
-			var nd := int(nodes[str(e["to"])]["depth"])
-			if nd != mini(int(n["depth"]) + 1, 99) and not (tier_of(int(n["depth"])) == TIERS and nd == int(n["depth"])):
-				errors.append("node %s (depth %d): route to %s at depth %d (routes go one level deeper, or stay at the last depth)" % [id, int(n["depth"]), e["to"], nd])
-			if dirs.has(str(e["dir"])):
-				errors.append("node %s: two routes use the direction %s" % [id, e["dir"]])
-			dirs[str(e["dir"])] = true
-	# siblings at one depth may chart different packs (each world its own song); they always play the same difficulty tier (tier_of(depth) of their own chart pack)
-	var chart_at: Dictionary = {}
+		_validate_routes(id, n)
+	_validate_worlds()
+	_validate_places()
+	# sibling scenes (the routes of one scene) may chart different packs: the route lock then applies between them (the engine greys the others out at the last block's decision)
 	for id in nodes:
-		var n: Dictionary = nodes[id]
-		var dp := tier_of(int(n["depth"]))
-		if chart_at.has(dp) and chart_at[dp] != n["chart"]:
-			warnings.append("depth %d: nodes use different charts (%s and %s); siblings no longer share one chart (both play tier %d of their own pack)" % [dp, chart_at[dp], n["chart"], dp])
-		chart_at[dp] = n["chart"]
+		var charts := {}
+		for e in nodes[id]["next"]:
+			if nodes.has(str(e["to"])):
+				charts[str(nodes[str(e["to"])]["chart"])] = true
+		if charts.size() > 1:
+			warnings.append("scene %s: its routes chart different packs (%s); the route lock applies, the chart is fixed 3.5 beats before the phase ends" % [id, ", ".join(PackedStringArray(charts.keys()))])
 	for id in nodes:
 		var n2: Dictionary = nodes[id]
 		if packs.has(str(n2["audio"])) and packs.has(str(n2["chart"])):
@@ -146,3 +161,143 @@ func _validate() -> void:
 	for id in nodes:
 		if not seen.has(id):
 			warnings.append("node %s cannot be reached from the start" % id)
+
+
+func _validate_routes(id: String, n: Dictionary) -> void:
+	var routes: Array = n["next"]
+	if routes.size() < (2 if bool(n["exit_scene"]) else 1):
+		errors.append("scene %s needs at least %d route%s" % [id, 2 if bool(n["exit_scene"]) else 1, "s" if bool(n["exit_scene"]) else ""])
+	var dirs := {}
+	for e in routes:
+		var to := str(e["to"])
+		if not nodes.has(to):
+			errors.append("scene %s: route to unknown scene %s" % [id, to])
+			continue
+		var t: Dictionary = nodes[to]
+		var same_world := str(t["world"]) == str(n["world"])
+		if bool(n["exit_scene"]):
+			if same_world and not bool(e.get("loop", false)):
+				errors.append("exit scene %s: the route to %s stays in the world; mark it \"loop\": true or lead to another world" % [id, to])
+			if not bool(t["entry"]):
+				errors.append("exit scene %s: the route to %s must lead to the entry scene of a world" % [id, to])
+			var nd := int(t["depth"])
+			if not same_world and nd != mini(int(n["depth"]) + 1, 99) and not (tier_of(int(n["depth"])) == TIERS and nd == int(n["depth"])):
+				errors.append("exit scene %s (depth %d): route to %s at depth %d (world exits go one level deeper, or stay at the last depth)" % [id, int(n["depth"]), to, nd])
+		else:
+			if not same_world:
+				errors.append("scene %s: the route to %s leaves the world, only the exit scene may" % [id, to])
+			elif bool(t["entry"]) and not bool(e.get("loop", false)):
+				errors.append("scene %s: the route back to the entry scene %s must be marked \"loop\": true" % [id, to])
+		if dirs.has(str(e["dir"])):
+			errors.append("scene %s: two routes use the direction %s" % [id, e["dir"]])
+		dirs[str(e["dir"])] = true
+		if not (n.get("rail", {}) as Dictionary).get("exits", {}).has(str(e["dir"])):
+			errors.append("scene %s: the route %s has no exit doorway in rail.exits" % [id, e["dir"]])
+
+
+## One entry scene per world (its id is the world's id: the save's "reached" and the home cards), one exit scene, every scene reaches the exit, no cycle inside a world
+## except through a route marked `loop`.
+func _validate_worlds() -> void:
+	for w in worlds:
+		var entries: Array = []
+		var exits: Array = []
+		var scenes: Array = []
+		for id in nodes:
+			if str(nodes[id]["world"]) != w:
+				continue
+			scenes.append(id)
+			if bool(nodes[id]["entry"]):
+				entries.append(id)
+			if bool(nodes[id]["exit_scene"]):
+				exits.append(id)
+		if entries.size() != 1:
+			errors.append("world %s needs exactly one entry scene (has %d)" % [w, entries.size()])
+		elif str(entries[0]) != w:
+			errors.append("world %s: the entry scene's id must be the world's id (found %s)" % [w, entries[0]])
+		if exits.size() != 1:
+			errors.append("world %s needs exactly one exit scene (has %d)" % [w, exits.size()])
+		if scenes.is_empty():
+			errors.append("world %s has no scenes" % w)
+			continue
+		var state := {}  # 1 = on the DFS stack, 2 = done
+		for id in scenes:
+			_dfs_cycle(str(id), state, w)
+		for id in scenes:  # every scene reaches the exit scene over routes that stay in the world
+			if not _reaches_exit(str(id), {}):
+				errors.append("scene %s cannot reach the exit scene of world %s" % [id, w])
+
+
+func _in_world_routes(id: String) -> Array:
+	var out: Array = []
+	for e in nodes[id]["next"]:
+		var to := str(e["to"])
+		if nodes.has(to) and str(nodes[to]["world"]) == str(nodes[id]["world"]) and not bool(e.get("loop", false)):
+			out.append(to)
+	return out
+
+
+func _dfs_cycle(id: String, state: Dictionary, w: String) -> void:
+	if int(state.get(id, 0)) == 2:
+		return
+	state[id] = 1
+	for to in _in_world_routes(id):
+		if int(state.get(to, 0)) == 1:
+			errors.append("world %s: a cycle through %s and %s (a route that goes back must be marked \"loop\": true)" % [w, id, to])
+		else:
+			_dfs_cycle(str(to), state, w)
+	state[id] = 2
+
+
+func _reaches_exit(id: String, seen: Dictionary) -> bool:
+	if bool(nodes[id]["exit_scene"]):
+		return true
+	seen[id] = true
+	for to in _in_world_routes(id):
+		if not seen.has(to) and _reaches_exit(str(to), seen):
+			return true
+	return false
+
+
+## Every home waypoint, rail place, arrival and doorway exists in the scene's map (the maps' own validation covers the geometry).
+func _validate_places() -> void:
+	var known := {}  # map id -> {waypoint id -> true}
+	for id in nodes:
+		var n: Dictionary = nodes[id]
+		var mp := str(n["map"])
+		if not known.has(mp):
+			var ids := {}
+			var path: String = StoryMap.PATH % mp
+			var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path)) if FileAccess.file_exists(path) else null
+			if typeof(parsed) != TYPE_DICTIONARY:
+				errors.append("scene %s: map %s not found (%s)" % [id, mp, path])
+			else:
+				for wp in parsed.get("waypoints", []):
+					ids[str(wp["id"])] = true
+			known[mp] = ids
+		var ids2: Dictionary = known[mp]
+		if ids2.is_empty():
+			continue
+		var want: Array = [str(n.get("waypoint", ""))]
+		var r: Dictionary = n.get("rail", {})
+		for key in ["good", "bad"]:
+			for p in r.get(key, []):
+				want.append(str(p.get("to", "")))
+		if str(r.get("arrive", "")) != "":
+			want.append(str(r["arrive"]))
+		for dir in (r.get("exits", {}) as Dictionary):
+			want.append(str(r["exits"][dir]))
+		for wid in want:
+			if not ids2.has(wid):
+				errors.append("scene %s: waypoint '%s' is not in map %s" % [id, wid, mp])
+
+
+## The scenes of a world in file order.
+func scenes_of(world: String) -> Array:
+	return node_order.filter(func(i: String) -> bool: return str(nodes[i]["world"]) == world)
+
+
+func entry_of(world: String) -> String:
+	for i in node_order:
+		if str(nodes[i]["world"]) == world and bool(nodes[i]["entry"]):
+			return str(i)
+	return ""

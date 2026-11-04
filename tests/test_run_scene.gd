@@ -22,8 +22,10 @@ func _restore_save() -> void:
 		DirAccess.remove_absolute(TMP_SAVE)
 
 
-func _scene(size: Vector2) -> Dictionary:
+func _scene(size: Vector2, start := "") -> Dictionary:
 	_isolate_save()
+	if start != "":
+		OS.set_environment("RW_RUN_START", start)
 	OS.set_environment("RW_RUN_VIRTUAL", "1")
 	OS.set_environment("RW_RUN_BOT", "perfect")
 	OS.set_environment("RW_RUN_ROUTES", "")
@@ -42,6 +44,7 @@ func _free(d: Dictionary) -> void:
 	(d["host"] as Control).queue_free()
 	OS.set_environment("RW_RUN_VIRTUAL", "")
 	OS.set_environment("RW_RUN_BOT", "")
+	OS.unset_environment("RW_RUN_START")
 
 
 func _run_to(scene: Node, t_end: float) -> void:
@@ -80,8 +83,8 @@ func test_route_arrows_are_touch_targets_clear_of_the_pads() -> void:
 	_free(d)
 
 
-func test_the_chosen_level_starts_on_the_downbeat_and_is_saved_as_reached() -> void:
-	var d := _scene(Vector2(1152, 648))
+func test_the_chosen_world_starts_on_the_downbeat_and_is_saved_as_reached() -> void:
+	var d := _scene(Vector2(1152, 648), "warehouse.exit")  # the scene that carries the Warehouse's exits
 	var scene: Node = d["scene"]
 	var beat: float = 60.0 / 174.0
 	_run_to(scene, 54.0 * beat)
@@ -89,9 +92,9 @@ func test_the_chosen_level_starts_on_the_downbeat_and_is_saved_as_reached() -> v
 	var dest: String = scene.engine.selected_route()
 	assert_eq(dest, "underworld")
 	_run_to(scene, 64.0 * beat - 0.05)
-	assert_eq(scene.engine.node_id, "warehouse", "still on the first level just before the downbeat")
+	assert_eq(scene.engine.node_id, "warehouse.exit", "still on the same scene just before the downbeat")
 	_run_to(scene, 64.0 * beat + 0.2)
-	assert_eq(scene.engine.node_id, "underworld")
+	assert_eq(scene.engine.node_id, "underworld", "a world exit enters the next world's entry scene")
 	assert_eq(scene.engine.stage, 0, "drums alone again")
 	assert_true(Session.run_progress.is_reached("underworld"), "saved as reached on entry")
 	assert_eq(scene.active_world, "underworld", "the world swapped with the level")
@@ -99,9 +102,28 @@ func test_the_chosen_level_starts_on_the_downbeat_and_is_saved_as_reached() -> v
 	_free(d)
 
 
+func test_a_scene_inside_a_world_is_not_a_reached_level_and_the_hud_names_it() -> void:
+	var d := _scene(Vector2(1152, 648))
+	var scene: Node = d["scene"]
+	var beat: float = 60.0 / 174.0
+	_run_to(scene, 54.0 * beat)
+	assert_true(scene.engine.choose_dir("up"))
+	assert_eq(scene.engine.selected_route(), "warehouse.balcony")
+	_run_to(scene, 64.0 * beat + 0.2)
+	assert_eq(scene.engine.node_id, "warehouse.balcony")
+	assert_eq(Session.run_progress.reached_ids(), ["warehouse"], "the save has worlds only: the balcony is not a level")
+	assert_false(Session.run_progress.is_reached("warehouse.balcony"))
+	var node: Dictionary = scene.data.nodes[scene.engine.node_id]
+	assert_eq(node["world_title"], "Warehouse")
+	assert_eq(node["title"], "The Balcony", "the HUD's second line is the room")
+	assert_eq(scene.hud.title_card["text"], "THE BALCONY", "the title card names the room")
+	assert_eq(scene.hud.title_card["kicker"], "WAREHOUSE", "under the world")
+	_free(d)
+
+
 func test_the_loss_and_level_screens_build_and_offer_retry_and_reached_levels() -> void:
 	_isolate_save()
-	Session.run_result = {"node": "mothership", "phases": 2, "energy": 0.0, "reason": "the crowd left"}
+	Session.run_result = {"node": "mothership.reactor", "phases": 2, "energy": 0.0, "reason": "the crowd left"}
 	Session.run_progress.enter("mothership")
 	for path in ["res://src/run/run_over.tscn", "res://src/run/run_levels.tscn"]:
 		var host := Control.new()
@@ -117,9 +139,9 @@ func test_the_loss_and_level_screens_build_and_offer_retry_and_reached_levels() 
 				texts.append((n as Button).text)
 			stack.append_array(n.get_children())
 		if path.ends_with("run_over.tscn"):
-			assert_true(texts.any(func(t: String) -> bool: return t.begins_with("Retry")), "retry the level: " + str(texts))
+			assert_true(texts.any(func(t: String) -> bool: return t.begins_with("Retry The Mothership")), "retry from the world's entry scene: " + str(texts))
 			assert_true(texts.any(func(t: String) -> bool: return t.contains("reached level")), str(texts))
 		else:
-			assert_eq(texts.filter(func(t: String) -> bool: return t == "Start here").size() >= 2, true, "reached levels can be started: " + str(texts))
+			assert_eq(texts.filter(func(t: String) -> bool: return t == "Start here").size(), 2, "the cards are worlds: the Warehouse and the Mothership are open: " + str(texts))
 		host.queue_free()
 	_restore_save()

@@ -1,5 +1,5 @@
 extends TestCase
-## The rails inside the run: every node's journey data sits on real waypoints, a pass steps up the good rail and a hold along the bad one, two holds start the queasy
+## The rails inside the run: every scene's journey data sits on real waypoints, a pass steps up the good rail and a hold along the bad one, two holds start the queasy
 ## look, the bottom plays the sick beat, a pass walks back, moves start in the cue-free guard and last 2 to 4 bars, every block has a glance, the passage frame and the
 ## lit exits are functions of song time.
 
@@ -28,7 +28,7 @@ func test_every_rail_sits_on_real_waypoints_and_every_step_has_a_route() -> void
 	var d := _data()
 	for id in d.nodes:
 		var n: Dictionary = d.nodes[id]
-		var map := StoryMap.load_chapter(str(n["world"]))
+		var map := StoryMap.load_chapter(str(n["map"]))
 		assert_eq(map.errors, [], "%s map is clean" % id)
 		var r := _rail(id)
 		var named: Array = [r.home, r.arrive]
@@ -40,7 +40,7 @@ func test_every_rail_sits_on_real_waypoints_and_every_step_has_a_route() -> void
 			named.append(r.exits[dir])
 		for wid in named:
 			if str(wid) != "":
-				assert_true(map.has_waypoint(str(wid)), "%s: waypoint %s exists in %s" % [id, wid, n["world"]])
+				assert_true(map.has_waypoint(str(wid)), "%s: waypoint %s exists in %s" % [id, wid, n["map"]])
 		for chain in [[r.home] + r.good.map(func(p: Dictionary) -> String: return p["to"]), [r.home] + r.bad.map(func(p: Dictionary) -> String: return p["to"])]:
 			for i in range(1, chain.size()):
 				var a: Dictionary = map.waypoint(str(chain[i - 1]))
@@ -53,13 +53,21 @@ func test_every_rail_sits_on_real_waypoints_and_every_step_has_a_route() -> void
 			assert_true(r.exits.has(e["dir"]), "%s: the %s route has a lit doorway" % [id, e["dir"]])
 
 
-func test_the_authored_rails_match_the_chapters() -> void:
-	var want := {
+func test_the_authored_rails() -> void:
+	var want := {  # scene -> [good, bad]: the Warehouse floor keeps the chapter's rail, every other scene's rail stays within reach of its own room
 		"warehouse": [["steps", "stage", "balcony", "booth"], ["floor_edge", "corridor", "cubicle"]],
-		"mothership": [["gallery_in", "reactor_in", "bridge_in", "helm"], ["gallery_in", "medbay", "exam"]],
-		"underworld": [["court_in", "throne", "pit_stage"], ["furnace_chains", "cage"]],
-		"hospital": [["corridor_in", "cafe_in", "bandstand"], ["ward_chair", "quiet", "bed"]],
-		"ward": [["corridor_in", "art_in", "stage"], ["treat", "quiet"]],
+		"warehouse.bar": [["bar_taps", "bar_end"], ["bar_door", "floor_bar"]],
+		"warehouse.booth": [["booth_decks"], ["stage", "steps"]],
+		"mothership": [["deck_ramp", "deck_dais"], ["deck_edge", "deck_sw_corner"]],
+		"mothership.reactor": [["catwalk_mid", "reactor_core"], ["catwalk_door", "medbay"]],
+		"underworld": [["arena_gate", "gate_dais"], ["arena_edge", "tier_l_in"]],
+		"underworld.pit": [["pit_edge", "pit_stage"], ["pit_rim_e", "court_in"]],
+		"hospital": [["ward_chair", "ward_door"], ["bed_corner", "bed_far"]],
+		"hospital.garden": [["garden_edge", "bandstand"], ["garden_south", "garden_sw"]],
+		"ward": [["bars_in", "day_stage_in"], ["day_edge", "day_corner"]],
+		"ward.corridor": [["corr_mid", "corr_east"], ["treat", "quiet"]],
+		"hospital_late.quiet": [["quiet_far"], ["quiet_door", "corridor_in"]],
+		"ward_late.exit": [["day_centre", "day_stage_in"], ["day_corner", "bars_in"]],
 	}
 	for id in want:
 		var r := _rail(id)
@@ -119,9 +127,9 @@ func test_a_hold_on_the_good_rail_drops_to_the_bad_rail() -> void:
 	var r := _rail("mothership")
 	r.step(true, 12.5 * BEAT, [])
 	r.step(true, 28.5 * BEAT, [])
-	assert_eq(r.place(), "reactor_in")
+	assert_eq(r.place(), "deck_dais")
 	r.step(false, 44.5 * BEAT, [])
-	assert_eq(r.place(), "gallery_in")
+	assert_eq(r.place(), "deck_edge")
 	assert_eq(r.pos, -1)
 
 
@@ -175,23 +183,70 @@ func test_every_block_has_a_glance_and_the_glances_vary() -> void:
 
 
 func test_arriving_in_a_new_world_is_a_cut_to_the_doorway_then_a_walk_home() -> void:
-	var r := _rail("mothership")
+	var r := _rail("hospital")
 	var t0 := 64.0 * BEAT
 	var acts := r.arrival(t0, [])
 	var moves := _kinds(acts, "player_move")
 	assert_eq(moves.size(), 2)
-	assert_eq((moves[0]["args"] as Dictionary)["to"], "airlock", "in at the doorway")
+	assert_eq((moves[0]["args"] as Dictionary)["to"], "ward_door", "in at the doorway")
 	assert_true(bool((moves[0]["args"] as Dictionary).get("cut", false)))
-	assert_eq((moves[1]["args"] as Dictionary)["to"], "deck_centre", "then into the start waypoint")
+	assert_eq((moves[1]["args"] as Dictionary)["to"], "bed", "then into the start waypoint")
 	assert_true(float(moves[1]["t0"]) < t0 and fposmod(float(moves[1]["t0"]) / BEAT, 16.0) >= 12.0, "the walk starts in the guard before the downbeat")
 	# on the real stage the walk ends at home
-	var map := StoryMap.load_chapter("mothership")
+	var map := StoryMap.load_chapter("hospital")
 	var pl := StoryPlayer.new()
 	pl.setup(map, BPM)
 	for a in acts:
 		pl.apply_action(a)
-	assert_eq(pl.pose_at(t0 - 1.5 * BEAT)["sector"], "airlock", "hidden behind the closed frame it is at the doorway")
-	assert_eq(pl.pose_at(t0 + 20.0 * BEAT)["sector"], "deck")
+	assert_eq(pl.pose_at(t0 - 1.5 * BEAT)["sector"], "ward", "hidden behind the closed frame it is at the doorway")
+	assert_eq(pl.pose_at(t0 + 20.0 * BEAT)["sector"], "bed")
+
+
+func test_every_path_inside_a_world_is_a_door_walk_without_a_cut() -> void:
+	var d := _data()
+	var walks := 0
+	for id in d.nodes:
+		var n: Dictionary = d.nodes[id]
+		for e in n["next"]:
+			var to := str(e["to"])
+			var tn: Dictionary = d.nodes[to]
+			if str(tn["world"]) != str(n["world"]):
+				continue
+			walks += 1
+			var r := _rail(id)
+			var map := StoryMap.load_chapter(str(n["map"]))
+			var pl := StoryPlayer.new()
+			pl.setup(map, BPM)
+			pl.apply_action({"t0": 0.0, "action": "player_move", "args": {"to": str(n["waypoint"]), "bars": 0.5, "style": "walk", "cut": true}})
+			var t_leave := 61.0 * BEAT
+			var acts := r.leave(t_leave, str(tn["rail"]["arrive"]) if str(tn["rail"].get("arrive", "")) != "" else str(tn["waypoint"]), [])
+			assert_eq(_kinds(acts, "player_move").size(), 1, "%s > %s: one walk" % [id, to])
+			for a in acts:
+				assert_true(fposmod(float(a["t0"]) / BEAT, 16.0) >= 12.0, "%s > %s starts in the cue-free guard" % [id, to])
+				assert_false(bool((a["args"] as Dictionary).get("cut", false)), "a plain door walk, not a cut")
+				pl.apply_action(a)
+			var tr := _rail(to)
+			var arrive := str(tr.arrive) if tr.arrive != "" else tr.home
+			var end: Dictionary = pl.pose_at(t_leave + 4.0 * 4.0 * BEAT + BEAT)
+			assert_eq(pl.errors, [], "%s > %s: the map has a route through the door" % [id, to])
+			assert_eq(str(end["sector"]), str(map.waypoint(arrive)["sector"]), "%s > %s: ends at the arrival place" % [id, to])
+			# the camera is never in a sector of another map room it should not cross: every sampled pose is in a sector of the map
+			var tt := t_leave
+			while tt < t_leave + 16.0 * BEAT:
+				assert_false(map.sector(str(pl.pose_at(tt)["sector"])).is_empty(), "%s > %s: the walk stays inside the map" % [id, to])
+				tt += 0.5
+	assert_true(walks >= 25, "paths inside the worlds: %d" % walks)
+
+
+func test_a_scene_started_without_a_door_walk_walks_in_on_the_downbeat() -> void:
+	var r := _rail("warehouse.bar")
+	var acts := r.door_walk(64.0 * BEAT, [], false)
+	var moves := _kinds(acts, "player_move")
+	assert_eq(moves.size(), 1)
+	assert_eq((moves[0]["args"] as Dictionary)["to"], "bar_door", "to the arrival place")
+	var walked := r.door_walk(64.0 * BEAT, [], true)
+	assert_eq(_kinds(walked, "player_move").size(), 0, "already on the way: only the role")
+	assert_eq(_kinds(walked, "player_role").size(), 1)
 
 
 func test_the_passage_frame_closes_before_the_downbeat_and_opens_after_it() -> void:

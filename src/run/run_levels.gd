@@ -11,8 +11,8 @@ func _ready() -> void:
 		return
 	content.add_child(StoryStyle.note("A level opens the moment you enter it. Starting from one gives you its opening and a full crowd.", StoryStyle.MUTED, 20))
 	var focus: Button = null
-	for id in data.node_order:
-		var n: Dictionary = data.nodes[id]
+	for id in data.world_order:  # the cards are worlds; a world starts at its entry scene (its id)
+		var n: Dictionary = data.nodes[data.entry_of(str(id))]
 		var open := Session.run_progress.is_reached(id, data.start_node())
 		var card := PanelContainer.new()
 		card.add_theme_stylebox_override("panel", StoryStyle.panel_box(StoryStyle.CYAN if open else StoryStyle.EDGE.darkened(0.4)))
@@ -23,8 +23,8 @@ func _ready() -> void:
 		var v := VBoxContainer.new()
 		v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(v)
-		v.add_child(StoryStyle.note("DEPTH %d   %s" % [int(n["depth"]), str(n["world"]).replace("_", " ").to_upper()], Color(StoryStyle.AMBER, 0.9 if open else 0.5), 15))
-		v.add_child(StoryStyle.title(str(n["title"]).to_upper(), 28, StoryStyle.TEXT if open else StoryStyle.MUTED, StoryStyle.MAGENTA))
+		v.add_child(StoryStyle.note("DEPTH %d   %s" % [int(n["depth"]), str(n["map"]).replace("_", " ").to_upper()], Color(StoryStyle.AMBER, 0.9 if open else 0.5), 15))
+		v.add_child(StoryStyle.title(str(n["world_title"]).to_upper(), 28, StoryStyle.TEXT if open else StoryStyle.MUTED, StoryStyle.MAGENTA))
 		v.add_child(StoryStyle.note(str(n["blurb"]) if open else "Locked: reach it by playing a route that leads here.", Color(0.88, 0.88, 1.0, 1.0 if open else 0.6), 18))
 		if open:
 			var b := UiStyle.button("Start here", func() -> void:

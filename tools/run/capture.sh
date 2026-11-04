@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Real Godot screenshots of the continuous run (needs a display; opens a window briefly per shot). Writes JPEGs into docs/shots/run (or the folder you give).
-#   bash tools/run/capture.sh [out_dir]          RW_SHOTS=<regex> only the shots whose name matches (RW_SHOTS=node_ the nodes, rail_ the rail places, home, route, passage)
+#   bash tools/run/capture.sh [out_dir]          RW_SHOTS=<regex> only the shots whose name matches (RW_SHOTS=node_ the scenes, rail_ the rail places, home, route, passage, doorwalk)
+#   A scene is a phase at a place in a world: `node_<scene>` and `route_<scene>` (the route window with the lit doors) exist for all 36 scenes (dots in a scene id become underscores
+#   in the file name); the rail places are shot for the worlds' entry scenes (RW_RAILS=all: every scene).
 # Each shot runs the actual run scene on the virtual song clock (no audio) with a scripted player up to a song time, so the crowd, the camera on its rail, the lights and
 # the route window are what a run of that skill is at that moment. `node_*`: the level a few seconds in (the journey's arrival), `rail_<node>_<place>`: the camera stood at
 # that rail place (RW_STORY_CAM) in the middle of a perfect phase, `journey_*`: the camera really walking the rail under scripted play.
@@ -30,53 +32,68 @@ shot() {  # name node bot routes song_seconds [extra env assignments...]
   fi
 }
 
-# --- every level, a few seconds in (the camera has just walked in) and again with the route window open ----------------------------------------------------------------
-for node in warehouse mothership underworld hospital ward hospital_late ward_late; do
-  shot "node_${node}" "$node" perfect up 9.0
-  shot "route_${node}" "$node" perfect up 19.0
-done
-
-# --- every rail place of every level (the camera stood there; a perfect phase, so the crowd is at its best) ---------------------------------------------------------------
-python3 - "$ROOT" > "$TMP/places.txt" <<'PY'
+# --- every scene, a few seconds in (the camera has just walked in) and again with the route window open (lit doors) -------------------------------------------------------
+python3 - "$ROOT" > "$TMP/scenes.txt" <<'PY'
 import json, sys
 run = json.load(open(sys.argv[1] + "/content/run/run.json"))
 for n in run["nodes"]:
-    seen = set()
-    print(n["id"], "home", n["waypoint"])
-    for i, p in enumerate(n["rail"]["good"], 1):
+    print(n["id"], int(n["entry"]))
+PY
+while read -r node entry; do
+  f="${node//./_}"
+  shot "node_${f}" "$node" perfect "" 9.0
+  shot "route_${f}" "$node" perfect "" 19.0
+done < "$TMP/scenes.txt"
+
+# --- every rail place of a scene (the camera stood there; a perfect phase, so the crowd is at its best): the entry scenes, or all with RW_RAILS=all -------------------------------
+python3 - "$ROOT" "${RW_RAILS:-entry}" > "$TMP/places.txt" <<'PY'
+import json, sys
+run = json.load(open(sys.argv[1] + "/content/run/run.json"))
+for n in run["nodes"]:
+    if sys.argv[2] != "all" and not n["entry"]:
+        continue
+    r = n["place"]["rail"]
+    print(n["id"], "home", n["place"]["waypoint"])
+    for i, p in enumerate(r["good"], 1):
         print(n["id"], "up%d_%s" % (i, p["to"]), p["to"])
-    for i, p in enumerate(n["rail"]["bad"], 1):
+    for i, p in enumerate(r["bad"], 1):
         print(n["id"], "down%d_%s" % (i, p["to"]), p["to"])
 PY
 while read -r node label wp; do
-  shot "rail_${node}_${label}" "$node" perfect up 14.0 "RW_STORY_CAM=$wp"
+  shot "rail_${node//./_}_${label}" "$node" perfect "" 14.0 "RW_STORY_CAM=$wp"
 done < "$TMP/places.txt"
 
 # --- the camera really walking the rails under scripted play ----------------------------------------------------------------------------------------------------------
-shot journey_warehouse_steps      warehouse perfect up 8.0
-shot journey_warehouse_balcony    warehouse perfect up 17.0
-shot journey_warehouse_booth      warehouse perfect up 21.0
-shot journey_warehouse_queasy     warehouse none    up 12.0
-shot journey_warehouse_sick       warehouse none    up 21.0
-shot journey_mothership_helm      mothership perfect left 21.0
-shot journey_underworld_pit       underworld perfect left 19.0
-shot journey_hospital_bandstand   hospital perfect left 21.0
-shot journey_ward_stage           ward perfect left 20.0
-shot journey_hospital_late_stage  hospital_late perfect right 20.0
+shot journey_warehouse_steps      warehouse perfect right 8.0
+shot journey_warehouse_balcony    warehouse perfect right 17.0
+shot journey_warehouse_booth      warehouse perfect right 21.0
+shot journey_warehouse_queasy     warehouse none    right 12.0
+shot journey_warehouse_sick       warehouse none    right 21.0
+shot journey_mothership_bridge    mothership.bridge perfect "" 21.0
+shot journey_underworld_pit       underworld.pit perfect "" 19.0
+shot journey_hospital_garden      hospital.garden perfect "" 21.0
+shot journey_ward_courtyard       ward.courtyard perfect "" 20.0
+shot journey_hospital_late_stage  hospital_late.exit perfect right 20.0
 
-# --- the passage: the frame closing on the doorway, the doorway on the new world, the new world opening -------------------------------------------------------------
-P=$(python3 -c "print(64*60/174)")
-shot passage_closing   warehouse perfect up "$(python3 -c "print(64*60/174-0.55)")"
-shot passage_doorway   warehouse perfect up "$(python3 -c "print(64*60/174+0.05)")"
-shot passage_opening   warehouse perfect up "$(python3 -c "print(64*60/174+0.75)")"
-shot passage_arrived   warehouse perfect up "$(python3 -c "print(64*60/174+6.0)")"
+# --- a path inside a world: the camera walks to the door three beats before the downbeat and on through it (no frame; the same stage) --------------------------------------
+shot doorwalk_before   warehouse perfect right "$(python3 -c "print(61.5*60/174)")"
+shot doorwalk_through  warehouse perfect right "$(python3 -c "print(66*60/174)")"
+shot doorwalk_arrived  warehouse perfect right "$(python3 -c "print(78*60/174)")"
+shot doorwalk_mothership_reactor mothership perfect up "$(python3 -c "print(70*60/174)")"
+shot doorwalk_hospital_corridor  hospital.corridor perfect left "$(python3 -c "print(70*60/174)")"
+
+# --- the passage (a world change keeps the frame): the frame closing on the doorway, the doorway on the new world, the new world opening ------------------------------------
+shot passage_closing   warehouse.exit perfect up "$(python3 -c "print(64*60/174-0.55)")"
+shot passage_doorway   warehouse.exit perfect up "$(python3 -c "print(64*60/174+0.05)")"
+shot passage_opening   warehouse.exit perfect up "$(python3 -c "print(64*60/174+0.75)")"
+shot passage_arrived   warehouse.exit perfect up "$(python3 -c "print(64*60/174+6.0)")"
 
 # --- layouts and settings ---------------------------------------------------------------------------------------------------------------------------------------------------
-shot phone_route_window warehouse perfect up 19.0 RW_WINDOW=844x390
-shot phone_journey      warehouse perfect up 17.0 RW_WINDOW=844x390
-shot wide_20x9_route    mothership perfect up 19.0 RW_WINDOW=1600x720
-shot reduced_motion     warehouse perfect up 17.0 RW_REDUCED=1
-shot lines_180          warehouse perfect up 17.0 RW_STORY_LINES=180
+shot phone_route_window warehouse perfect right 19.0 RW_WINDOW=844x390
+shot phone_journey      warehouse perfect right 17.0 RW_WINDOW=844x390
+shot wide_20x9_route    mothership perfect right 19.0 RW_WINDOW=1600x720
+shot reduced_motion     warehouse perfect right 17.0 RW_REDUCED=1
+shot lines_180          warehouse perfect right 17.0 RW_STORY_LINES=180
 
 # --- home, and both entry points end to end: keys press the buttons (Play is focused; Down goes to Story chapters) ---------------------------------------------------------------
 home() {  # name "steps..."

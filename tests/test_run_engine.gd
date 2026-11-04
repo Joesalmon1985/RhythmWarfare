@@ -90,27 +90,29 @@ func test_the_phase_lasts_64_beats_and_resets_to_drums_alone() -> void:
 	assert_near(float(commits[0]["t"]), 64.0 * e.beat_s, 1e-6)
 	assert_eq(_kinds(log, "phase_start").size(), 2)
 	assert_eq(e.stage, 0, "the next phase starts with drums alone")
-	assert_eq(e.node_id, "mothership", "no choice made: the marked default route")
+	assert_eq(e.node_id, "warehouse.bar", "no choice made: the marked default route (the bar)")
 	assert_eq(commits[0]["chosen"], false)
 
 
 func test_changing_direction_until_the_phase_ends() -> void:
 	var e := RunEngine.new(_data())
 	e.begin("warehouse")
-	_play(e, [true, true, true, true], 50.0 * e.beat_s, {50.0 * e.beat_s - 1.0: "mothership"})
+	_play(e, [true, true, true, true], 50.0 * e.beat_s, {50.0 * e.beat_s - 1.0: "warehouse.balcony"})
 	assert_true(e.window_open)
-	assert_true(e.choose("mothership"))
+	assert_true(e.choose("warehouse.balcony"))
 	assert_true(e.choose_dir("right"), "the player changes their mind")
-	assert_eq(e.selected_route(), "underworld")
+	assert_eq(e.selected_route(), "warehouse.bar")
 	assert_false(e.choose("hospital"), "not a route from here")
+	assert_false(e.choose("mothership"), "a world is not a route from the floor: only the exit scene leads out")
 	var log := _play(e, [true, true, true, true, true, true, true, true], 66.0 * e.beat_s)
 	assert_true(log.size() >= 0)
 
 
 func test_siblings_chart_their_own_required_cues_at_the_same_tier() -> void:
-	for dest in ["mothership", "underworld"]:
+	for pair in [["mothership", "mothership.gallery"], ["mothership", "mothership.reactor"], ["warehouse.exit", "mothership"], ["warehouse.exit", "underworld"]]:  # sibling scenes and sibling worlds
+		var dest: String = pair[1]
 		var e := RunEngine.new(_data())
-		e.begin("warehouse")
+		e.begin(pair[0])
 		_play(e, [true, true, true, true, true, true, true, true], 80.0 * e.beat_s, {55.0 * e.beat_s: dest})
 		assert_eq(e.node_id, dest)
 		var rows: Array = []
@@ -163,3 +165,18 @@ func test_a_rough_block_is_recoverable() -> void:
 	_play(e, pattern, 12.0 * 16.0 * e.beat_s)
 	assert_false(e.over, "two bad blocks then good play keeps the run alive")
 	assert_true(e.energy > 20.0)
+
+
+func test_phase_start_names_the_world_the_scene_and_where_it_came_from() -> void:
+	var e := RunEngine.new(_data())
+	e.begin("warehouse")
+	var log := _play(e, [true, true, true, true, true, true, true, true], 66.0 * e.beat_s, {55.0 * e.beat_s: "warehouse.balcony"})
+	var starts := _kinds(log, "phase_start")
+	assert_eq(starts.size(), 2)
+	assert_eq(starts[0]["world"], "warehouse")
+	assert_eq(starts[0]["from"], "")
+	assert_eq(starts[1]["scene"], "balcony")
+	assert_eq(starts[1]["from"], "warehouse")
+	assert_eq(starts[1]["world"], "warehouse", "a path inside the world stays in it")
+	assert_eq(int(starts[1]["depth"]), 1, "depth stays per world")
+	assert_true(bool(_kinds(log, "route_commit")[0]["same_world"]))

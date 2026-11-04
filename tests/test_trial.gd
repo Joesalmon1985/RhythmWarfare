@@ -872,7 +872,7 @@ func test_ignoring_the_wizard_leaves_the_warehouse_the_ordinary_way() -> void:
 	var scene: Node = d["scene"]
 	_step_to(scene, 64.0 * 60.0 / 174.0 + 0.3)
 	assert_eq(scene.trial_state, "", "nothing took the player into the dungeon")
-	assert_eq(scene.engine.node_id, "mothership", "the run went on by its default route")
+	assert_eq(scene.engine.node_id, "warehouse.bar", "the run went on by its default route: the bar")
 	assert_false(scene._gate.visible, "and the wizard stayed behind in the Warehouse")
 	_end_run(d, saved, "user://test_trial_save2.json")
 
