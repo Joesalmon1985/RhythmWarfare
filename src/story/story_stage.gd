@@ -50,6 +50,7 @@ var world_active := false
 var fx3d: StoryWorldFx  # the light show in the 3D world (beams, pools, haze, LED, tiles, ...)
 var _overlay: CanvasLayer
 var _vis: Dictionary = {}
+var _vis_geo: Dictionary = {}
 var _vis_sec := ""
 var _vis_pos := Vector2(1e9, 1e9)
 var _vis_yaw := 1e9
@@ -142,6 +143,13 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	for id in crowds:
 		(crowds[id] as StoryCrowd).tint_fn = func(sec: String) -> Color: return world.light_of(map.sector(sec), t_now, _world_ctx)
 	world_active = true
+	var hide := OS.get_environment("RW_STORY_HIDE").split(",")  # profiling aid: RW_STORY_HIDE=crowd,world,fx hides those parts to measure what each costs
+	if "crowd" in hide:
+		_overlay.visible = false
+	if "world" in hide:
+		world.visible = false
+	if "fx" in hide:
+		fx3d.visible = false
 	mouse_filter = Control.MOUSE_FILTER_STOP  # the stage area takes the head-turn drag; the pad strip below is another control
 
 
@@ -298,6 +306,9 @@ func update(t: float, p_energy: float) -> void:
 			_vis_yaw = float(ppose["yaw"])
 			_vis_size = size
 			_vis = map.visible_sectors(cpos, _vis_yaw, _vis_sec, size.x / maxf(size.y, 1.0))
+			_vis_geo = map.visible_sectors(cpos, _vis_yaw, _vis_sec, size.x / maxf(size.y, 1.0), 7)  # the geometry is drawn deeper than the crowd is (long sightlines)
+			if world_active:
+				world.set_visible_sectors(_vis_geo)
 		for id in crowds:
 			(crowds[id] as StoryCrowd).set_camera(ppose, size, _vis)
 	for id in crowds:  # every room's crowd lives on; only the camera decides what is seen
@@ -306,33 +317,69 @@ func update(t: float, p_energy: float) -> void:
 		c.lit_id = c.hero_id() if is_active("spot_hero", t) or is_active("spot_circle", t) else ""
 		c.set_time(t)
 		c.update(t, p_energy)
+	_order_crowds()
 	if world_active:
 		_update_world(t, p_energy, pose)
 	queue_redraw()
 
 
-## Screenshot aid: RW_STORY_CAM=<waypoint>[,<extra yaw degrees>[,<pitch degrees>]] stands the camera at a waypoint whatever the journey says (the crowd, light and show are the run's).
+## Screenshot aid: RW_STORY_CAM=<waypoint>[,<extra yaw degrees>[,<pitch degrees>]] stands the camera at a waypoint whatever the journey says, or RW_STORY_CAM=@<x>:<z>:<yaw>[:<pitch>]
+## at an absolute ground point (any sector). The crowd of the camera's room is then the one the authored crowd actions direct, so the room is populated the way a visit would find it.
 var _cam_override: String = OS.get_environment("RW_STORY_CAM")
 
 
 func _override_pose(pose: Dictionary) -> Dictionary:
-	var parts := _cam_override.split(",")
-	var w := map.waypoint(parts[0])
-	if w.is_empty():
+	var at := Vector2.ZERO
+	var yaw := 0.0
+	var pitch := 0.0
+	var sec := ""
+	if _cam_override.begins_with("@"):
+		var q := _cam_override.substr(1).split(":")
+		if q.size() < 3:
+			return pose
+		at = Vector2(float(q[0]), float(q[1]))
+		yaw = float(q[2])
+		pitch = float(q[3]) if q.size() > 3 else 0.0
+		sec = map.sector_at(at)
+	else:
+		var parts := _cam_override.split(",")
+		var w := map.waypoint(parts[0])
+		if w.is_empty():
+			return pose
+		sec = str(w["sector"])
+		at = w["at"]
+		yaw = float(w["yaw"]) + (float(parts[1]) if parts.size() > 1 else 0.0)
+		pitch = float(parts[2]) if parts.size() > 2 else 0.0
+	if sec == "":
 		return pose
 	var out := pose.duplicate()
-	var sec := str(w["sector"])
-	var at: Vector2 = w["at"]
 	var ground := float(map.sector(sec).get("floor", 0.0))
 	out["pos"] = at
 	out["sector"] = sec
 	out["ground"] = ground
-	out["yaw"] = float(w["yaw"]) + (float(parts[1]) if parts.size() > 1 else 0.0)
-	out["pitch"] = float(parts[2]) if parts.size() > 2 else 0.0
+	out["yaw"] = yaw
+	out["pitch"] = pitch
 	out["cam"] = Vector3(at.x, ground + map.eye_height, at.y)
 	out["roll"] = 0.0
 	out["moving"] = false
+	var room := map.room_of(sec)
+	if crowds.has(room):
+		current_view = room
 	return out
+
+
+## One draw order for every visible figure of every room, far to near by distance from the eye (z_index of the 2D nodes in the shared overlay): a dancer seen through a doorway
+## is behind or in front of this room's dancers by true distance. The crowds' own shadow blobs (z 0) stay under everyone.
+func _order_crowds() -> void:
+	var keys: Array = []
+	var nodes: Array = []
+	for id in crowds:
+		for it in (crowds[id] as StoryCrowd).sort_items:
+			nodes.append(it[1])
+			keys.append((int(it[0]) << 12) | (nodes.size() - 1))
+	keys.sort()
+	for i in keys.size():
+		(nodes[int(keys[i]) & 4095] as CanvasItem).z_index = 1 + i
 
 
 func _update_world(t: float, p_energy: float, pose: Dictionary) -> void:

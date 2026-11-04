@@ -414,3 +414,37 @@ For the polish and WP9 agents:
 Manual checklist for the owner (things only a person can judge): play each chapter once well and once badly and watch the journey (the badge: DANCER, ON STAGE, DJ, FEELING ROUGH, OUT COLD); notes stay readable during every move and glance (glances happen on any bar, moves only on light bars);
 the sick beat is discreet; free look (drag, Q/E) never blocks a pad; the interludes still read over the 3D club (UFO over the floor, the crack, the eyelids, the ward door); the chapter tones (night ward, grim green) are what you want before the polish; the Settings screen's camera
 motion and internal resolution options; a phone export if one is available; whether the Underworld and Ward bad branches should have a walk back; whether the frame times (14 to 19 ms on the Intel HD 520) are acceptable.
+
+
+### 13.4 WP9 (Sonnet, structure for art-direction A, B, C, the data hook of D, performance), branch `feature/story-25d`
+
+Commits (in order): "WP9 layouts" (Night One, then the Mothership and the Hospital / Ward / Underworld layouts built by subagents in worktrees and cherry-picked), "WP9 movement" (engine, Night One beats, then the four
+chapters' beats), "WP9 activities" (engine and Night One cast, then the four chapters' sector activities and casts), "WP9 lights" (the baking engine landed with the activities commit; Night One's and the four chapters'
+light sets), "WP9 resolution", "WP9 performance", "WP9 verification". Details are in the handover (map additions, activities, numbers); what to know:
+
+- Layouts. Night One: entrance vestibule, a three-sector tunnel whose ceilings step down towards the street (the underside of a stair), the main floor now 6.4 m tall, a steel stair (two sectors) beside the stage
+  up to a balcony that overlooks the floor through a `blocked` portal, the booth raised to 1.6 m behind speaker stacks, a low warm bar alcove (2.4 m), a chill-out room off the bar with two sofa alcoves, an 18 m tiled corridor
+  to the toilets and cubicles. Its journey gained the balcony: the good circle result sends the player to the balcony (climb), then the booth (`spotlight_circle`). The Mothership got a curved deck (hexagon, angled glass
+  wings, lounge bays, ramps), a 12 m reactor well, ramped helm and exam table, a real medbay; the Hospital a bigger day room with a TV alcove, benches and vending machines; the Ward a dormitory, a quiet room with a bed apse and
+  barred slit, chairs; the Underworld a three-step throne stair, columns, anvils, a wider causeway view. No waypoint ids changed except the new ones (balcony, balcony_rail, bar, chill, tunnel, toilets_in, dorm, bars,
+  planet_window, reactor_core...). Convex fans of sectors are used for curves (the engine is unchanged).
+- Sector tints now win over the stage palette outside the club (`palette_weight`), which fixed the purple Hospital and Ward day rooms.
+- Movement. `player_walk` is resolved from the rail's state when it starts, so branches need no alternatives: a walk written for the dance floor does nothing to a player in the toilets, and never cuts a journey move short.
+  Pitch glances, `player_look at ... in`, idle head drift (off in reduced motion), a camera pitch in the Camera3D and the crowd projection. Matrix: unchanged journey lists except Night One's top (`steps, stage, balcony, booth,
+  booth`), and a new test that every block has at least two camera beats, differing from the previous block's, with a minimum variety per chapter.
+- Activities and lights: see the handover. Deviations: the fun beats are authored as locked actors (the brief said "directives"; a character with a part to play is data on the actor, the crowd directives skip them);
+  the bouncer, DJ, examiner and so on were not all inspected in a frame (the crowd hides some from the waypoints); the Ward day room and corridor are still pastel (beams and room palettes).
+- Performance did not reach the budget (see the handover numbers and the measured floor). Levers kept: one z_index draw order across all rooms (fixes the sorting caveat: a dancer seen through a doorway is
+  ordered by true distance), a dancer-parts atlas built at load (`StoryAssets.build_rig_atlas`, only in the playing scene), hidden sectors skipped, unchanged light skipped, cached deck layers. The billboard-merge
+  lever was not done: culling by sector visibility took most of its benefit (the things in view are a handful of draw calls).
+- Default internal resolution is 360 lines (`Session.story_lines` default 0; saved settings keep their value).
+
+For the Opus polish agent (docs/STORY_25D_ART_DIRECTION.md section 4):
+- Figures: `StoryCharacter` is the rig (parts from the manifest, `_draw`); `StoryAssets.build_rig_atlas` packs every part of a chapter into one sheet at load (the sprite-sheet bake can replace both: keep the
+  `StoryCharacter.state`, `toward`, `held`, `chat_role` and `sample()` pose keys as the contract, add per-actor wardrobe where `StoryCrowd.setup` builds the characters from `data.actors[].archetype/variant`).
+  Held props (`_draw_held`) are plain shapes at the right-hand point of the rig (`glow_hand`); the headphones are drawn at the head joint. The crowd places and sorts figures (`StoryCrowd._place_world`, z_index by the stage).
+- Rooms: add things in `content/story/maps/<chapter>.json` (`things`: billboards named by a map texture or manifest sprite; a thing's `y` is its centre above its sector floor, `size` its height) and lights
+  (`kind: "light"`, see the handover). Tiles: `tools/story/bake_tiles.gd` recipes + `tools/story/art/tiles.py` metres, then `python3 tools/story/build_assets.py <chapter> tiles` and
+  `godot --headless --path . --import`; `thing_chair`, `thing_bench`, `thing_column`, `thing_anvil` were added in WP9 as examples. Review with `bash tools/story/rooms.sh` (one shot per place, contact sheets
+  `docs/shots/story/contact_<chapter>.jpg`) and the `act*` and `look*` shots of `capture.sh`.
+- Keep the frame budget in mind: `tools/story/profile_all.sh` and the `RW_STORY_HIDE` split in the handover show where the time goes; the crowd's draw calls and the pad strip are the big ones.

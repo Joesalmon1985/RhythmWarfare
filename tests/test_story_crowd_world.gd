@@ -228,9 +228,10 @@ func test_an_occluder_draws_over_a_dancer_behind_it_and_under_one_in_front() -> 
 		stage.free()
 		return
 	assert_true(occ.visible, "the stack is in view from the start")
-	var i_occ := occ.get_index()
-	assert_true(i_occ > (c.actors["c01"]["node"] as Node).get_index(), "a dancer behind the stack is drawn before it (covered)")
-	assert_true(i_occ < (c.actors["c10"]["node"] as Node).get_index(), "a dancer in front of it is drawn over it")
+	stage._order_crowds()
+	var i_occ := occ.z_index  # the stage orders every figure by z_index, far to near
+	assert_true(i_occ > (c.actors["c01"]["node"] as CanvasItem).z_index, "a dancer behind the stack is drawn before it (covered)")
+	assert_true(i_occ < (c.actors["c10"]["node"] as CanvasItem).z_index, "a dancer in front of it is drawn over it")
 	stage.free()
 
 

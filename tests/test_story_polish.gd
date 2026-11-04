@@ -150,6 +150,9 @@ func test_depth_order_is_stable_for_equal_distances() -> void:
 	var stage: StoryStage = ctx["stage"]
 	var crowd := stage.crowd
 	for id in crowd.actors:  # everybody on one row, one metre apart in x: the same distance order whichever way the frame ran
+		if str(crowd.actors[id]["lock"]) != "":
+			crowd.actors[id]["present"] = false  # the characters with a part (a bartender pacing at his bar) move on their own
+			continue
 		crowd.actors[id]["pos"] = Vector2(-2.0 + float(str(id).hash() % 5) * 1.0, 3.0)
 		crowd.actors[id]["sec"] = "floor"
 	stage.update(2.0, 50.0)

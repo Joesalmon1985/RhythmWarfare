@@ -52,6 +52,7 @@ func _ready() -> void:
 	for w in run.warnings:
 		print("warning: ", w)
 	assets = StoryAssets.load_art(run.data.art)
+	assets.build_rig_atlas()  # the dancers' parts in one sheet: the canvas batches them (RW_STORY_NOATLAS=1 turns it off)
 	var art_errors: Array = []
 	run.data.validate_art(assets, art_errors)
 	if not art_errors.is_empty():
@@ -76,6 +77,15 @@ func _ready() -> void:
 	else:
 		clock = SongClock.new(null)
 	_build_layout()
+	var hide := OS.get_environment("RW_STORY_HIDE").split(",")  # profiling aid (see StoryStage): pads, notes, hud, stage
+	if "pads" in hide:
+		pad_view.visible = false
+	if "notes" in hide:
+		note_lane.visible = false
+	if "hud" in hide:
+		_hud.visible = false
+	if "stage" in hide:
+		stage.visible = false
 	lane_input = LaneInput.new()
 	add_child(lane_input)
 	lane_input.rect_provider = pad_view.button_rects
@@ -353,7 +363,7 @@ func _advance(t: float, audio_t: float, render := true) -> void:
 				_on_sequence(ev["result"], wall)
 	for a in r["actions"]:
 		_on_action(a)
-	if render:
+	if render and not OS.has_environment("RW_STORY_NOSTAGE"):  # RW_STORY_NOSTAGE=1: profiling aid, the stage's per-frame script cost left out
 		stage.update(audio_t, run.crowd.energy)
 	for b in range(1, PadView.BUTTONS + 1):
 		pad_view.button_down[b] = lane_input.is_button_down(b) or (_auto_plan.size() > 0 and _auto_down.has(b))

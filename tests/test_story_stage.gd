@@ -118,7 +118,7 @@ func test_stage_is_populated_and_driven_through_the_whole_set() -> void:
 			min_after_start = mini(min_after_start, n)
 	var counts := stage.crowd.state_counts()
 	cheering_end = int(counts.get("cheer", 0)) + int(counts.get("hands_up", 0))
-	assert_true(peak >= 24 and peak <= 48, "24 to 48 visible crowd members at the peak: %d" % peak)
+	assert_true(peak >= 24 and peak <= 64, "24 to 64 visible crowd members at the peak: %d" % peak)
 	assert_true(min_after_start >= 12, "the stage is never blank: %d" % min_after_start)
 	assert_eq(stage.ending(), "legendary_set")
 	assert_true(cheering_end >= 20, "a visibly ecstatic crowd at the Legendary tableau (%s)" % str(counts))

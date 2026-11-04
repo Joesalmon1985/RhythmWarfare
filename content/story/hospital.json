@@ -1959,6 +1959,139 @@
    "group": "peak",
    "view": "garden",
    "enter_from": "side"
+  },
+  {
+   "id": "h01",
+   "archetype": "dad",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "dance",
+   "prop": "drip"
+  },
+  {
+   "id": "h02",
+   "archetype": "nurse",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "check",
+   "prop": "clipboard",
+   "target": "bed"
+  },
+  {
+   "id": "h03",
+   "archetype": "mum",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "sit"
+  },
+  {
+   "id": "h04",
+   "archetype": "dad",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "sleep"
+  },
+  {
+   "id": "h06",
+   "archetype": "doctor",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "check",
+   "prop": "clipboard"
+  },
+  {
+   "id": "h07",
+   "archetype": "nurse",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "serve",
+   "prop": "tray",
+   "pace_axis": [
+    1,
+    0
+   ],
+   "pace_m": 3.0
+  },
+  {
+   "id": "h08",
+   "archetype": "granny",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "watch",
+   "target": "h10"
+  },
+  {
+   "id": "h10",
+   "archetype": "kid",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "sit"
+  },
+  {
+   "id": "h12",
+   "archetype": "dad",
+   "variant": "a",
+   "group": "core",
+   "view": "cafeteria",
+   "thresh": 0,
+   "activity": "queue"
+  },
+  {
+   "id": "h13",
+   "archetype": "granny",
+   "variant": "b",
+   "group": "core",
+   "view": "cafeteria",
+   "thresh": 0,
+   "activity": "queue"
+  },
+  {
+   "id": "h14",
+   "archetype": "kid",
+   "variant": "a",
+   "group": "core",
+   "view": "cafeteria",
+   "thresh": 0,
+   "activity": "wave"
+  },
+  {
+   "id": "h15",
+   "archetype": "granny",
+   "variant": "a",
+   "group": "core",
+   "view": "garden",
+   "thresh": 0,
+   "activity": "sit"
+  },
+  {
+   "id": "h16",
+   "archetype": "mum",
+   "variant": "a",
+   "group": "core",
+   "view": "garden",
+   "thresh": 0,
+   "activity": "phone",
+   "prop": "phone"
+  },
+  {
+   "id": "h17",
+   "archetype": "doctor",
+   "variant": "a",
+   "group": "core",
+   "view": "garden",
+   "thresh": 0
   }
  ],
  "silhouettes": [

@@ -146,3 +146,19 @@ chap w_ $W 08_end_group_activity   sloppy  67 RW_SEED=2
 chap w_ $W 09_end_lights_out       none    67
 
 for t in 3 7 11 13; do interlude awakening $t; interlude sectioned $t; done
+
+# WP9: Night One's new places and the activity beats (figures doing things: RW_STORY_CAM=@x:z:yaw[:pitch] stands the camera at a ground point, see StoryStage._override_pose).
+# The per-room contact sheets (one shot per place of every chapter) come from tools/story/rooms.sh.
+ac() { local name="$1" chapter="$2" bar="$3" cam="$4"; shot "$name" perfect "$bar" RW_STORY_CHAPTER="$chapter" RW_STORY_CAM="$cam"; }  # ac name chapter bar cam
+ac act01_n1_bar_queue_and_drinks      night_one       60  @8.3:4.0:-70
+ac act02_n1_chill_pair_and_sleeper    night_one       60  @9:10:0
+ac act03_n1_balcony_watchers          night_one       60  balcony_rail
+ac act04_ms_alien_dj_headphones_wrong mothership      60  @0:-0.4:0
+ac act05_ms_grey_examines_dancer      mothership      60  exam
+ac act06_uw_bouncer_checks_tickets    underworld      50  @1.4:2.0:0
+ac act07_hos_patient_dances_with_drip hospital        40  @-3.7:3.0:0
+ac act08_ward_chef_serves_talent_show mental_hospital 50  @53:9.6:-90
+ac act09_ward_painters_at_easels      mental_hospital 50  @35.1:7:0
+ac act10_ward_resident_stares_at_bars mental_hospital 50  @5:3:0
+ac look01_up_at_the_rig               night_one       60  floor_centre,0,25
+ac look02_down_at_the_floor           night_one       60  floor_centre,0,-22

@@ -2175,6 +2175,147 @@
    "group": "peak",
    "view": "bridge",
    "enter_from": "side"
+  },
+  {
+   "id": "m01",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "mix",
+   "prop": "headphones_wrong"
+  },
+  {
+   "id": "m02",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "serve",
+   "prop": "tray",
+   "pace_axis": [
+    1,
+    0
+   ],
+   "pace_m": 1.0
+  },
+  {
+   "id": "m03",
+   "archetype": "blob",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "chat"
+  },
+  {
+   "id": "m04",
+   "archetype": "insect",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "chat"
+  },
+  {
+   "id": "m05",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "toast"
+  },
+  {
+   "id": "m06",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "toast"
+  },
+  {
+   "id": "gallery_s01",
+   "archetype": "tentacle",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "gallery",
+   "activity": "pace",
+   "pace_axis": [
+    1,
+    0
+   ],
+   "pace_m": 4.0
+  },
+  {
+   "id": "gallery_s02",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "gallery",
+   "activity": "point",
+   "target": "planet_window"
+  },
+  {
+   "id": "reactor_s01",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "reactor",
+   "activity": "check",
+   "prop": "clipboard",
+   "target": "reactor_core"
+  },
+  {
+   "id": "reactor_s02",
+   "archetype": "antenna",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "reactor",
+   "activity": "point",
+   "target": "reactor_core"
+  },
+  {
+   "id": "bridge_s01",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "bridge",
+   "activity": "check",
+   "prop": "clipboard",
+   "target": "helm"
+  },
+  {
+   "id": "bridge_s02",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "bridge",
+   "activity": "stare",
+   "target": "helm"
+  },
+  {
+   "id": "med01",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "reactor",
+   "activity": "check",
+   "prop": "clipboard",
+   "target": "med02"
+  },
+  {
+   "id": "med02",
+   "archetype": "tentacle",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "reactor",
+   "activity": "dance"
   }
  ],
  "silhouettes": [
