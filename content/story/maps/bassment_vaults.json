@@ -23,16 +23,16 @@
   "wall_shelf": "textures/wall_shelf.png"
  },
  "sectors": [
-  {"id": "hall", "polygon": [[-4, 0], [4, 0], [4, 10], [-4, 10]], "floor": 0, "ceiling": 3.0, "floor_tex": "floor_wood", "ceil_tex": "ceil_arch", "wall_tex": "wall_shelf", "light": 0.42, "tint": "#e0a850"},
-  {"id": "aisle", "polygon": [[-7, 0], [-4, 0], [-4, 7], [-7, 7]], "floor": 0, "ceiling": 2.6, "floor_tex": "floor_flag", "ceil_tex": "ceil_arch", "wall_tex": "wall_shelf", "light": 0.36, "tint": "#d09040"},
+  {"id": "hall", "polygon": [[-4, 0], [4, 0], [4, 10], [-4, 10]], "floor": 0, "ceiling": 3.0, "floor_tex": "floor_wood", "ceil_tex": "ceil_arch", "wall_tex": "wall_shelf", "light": 0.5, "tint": "#e0a850"},
+  {"id": "aisle", "polygon": [[-4, 1], [-4, 3.2], [-5, 7], [-7, 7], [-7, 0.4], [-5, 0.4]], "floor": 0, "ceiling": 2.6, "floor_tex": "floor_flag", "ceil_tex": "ceil_arch", "wall_tex": "wall_shelf", "light": 0.36, "tint": "#d09040"},
   {"id": "inner", "polygon": [[-7, 0], [7, 0], [7, -11], [-7, -11]], "floor": 0, "ceiling": 4.0, "floor_tex": "floor_flag", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick", "light": 0.4, "tint": "#d8a050"}
  ],
  "walls": [
   {"from": [-4, 0], "to": [4, 0], "sector": "hall", "portal": "inner", "lower_tex": "floor_flag"},
   {"from": [-4, 1], "to": [-4, 3.2], "sector": "hall", "portal": "aisle"},
   {"from": [-4, 10], "to": [4, 10], "sector": "hall", "portal": null, "tex": "wall_door"},
-  {"from": [-5.9, 0], "to": [-4.6, 0], "sector": "aisle", "portal": null, "tex": "wall_door"},
-  {"from": [-4, 7], "to": [-7, 7], "sector": "aisle", "portal": null, "tex": "wall_brick"},
+  {"from": [-6.5, 0.4], "to": [-5.3, 0.4], "sector": "aisle", "portal": null, "tex": "wall_door"},
+  {"from": [-5, 7], "to": [-7, 7], "sector": "aisle", "portal": null, "tex": "wall_brick"},
   {"from": [-7, -11], "to": [-6, -11], "sector": "inner", "portal": null, "tex": "wall_brick_dark"},
   {"from": [-3, -11], "to": [4, -11], "sector": "inner", "portal": null, "tex": "wall_brick_dark"},
   {"from": [6, -11], "to": [7, -11], "sector": "inner", "portal": null, "tex": "wall_brick_dark"},
@@ -52,7 +52,7 @@
   {"id": "podium", "kind": "billboard", "sprite": "thing_barrel", "at": [2.6, 4.0], "y": 0.55, "size": 1.1, "anim": "none"},
   {"id": "lamp_a1", "kind": "billboard", "sprite": "thing_lamp", "at": [-5.5, 4.0], "y": 2.1, "size": 0.9, "anim": "flicker"},
   {"id": "lamp_a2", "kind": "billboard", "sprite": "thing_lamp", "at": [-5.5, 1.5], "y": 2.1, "size": 0.9, "anim": "flicker"},
-  {"id": "glow_seam", "kind": "billboard", "sprite": "thing_glow", "at": [-5.3, 0.4], "y": 1.1, "size": 2.2, "anim": "pulse", "blend": "add"},
+  {"id": "glow_seam", "kind": "billboard", "sprite": "thing_glow", "at": [-5.9, 0.9], "y": 1.1, "size": 2.2, "anim": "pulse", "blend": "add"},
   {"id": "skull_a", "kind": "billboard", "sprite": "thing_skull", "at": [-6.3, 6.4], "y": 0.3, "size": 0.5, "anim": "none"},
   {"id": "lamp_i1", "kind": "billboard", "sprite": "thing_lamp", "at": [-4, -3], "y": 3.0, "size": 1.0, "anim": "flicker"},
   {"id": "lamp_i2", "kind": "billboard", "sprite": "thing_lamp", "at": [4, -3], "y": 3.0, "size": 1.0, "anim": "flicker"},
@@ -67,7 +67,7 @@
   {"id": "lt_h2", "kind": "light", "at": [0, 1.5], "y": 2.6, "radius": 6, "color": "#ffc070", "strength": 1.0},
   {"id": "lt_gristle", "kind": "light", "at": [2.6, 4.2], "y": 2.0, "radius": 3.5, "color": "#ffd890", "strength": 1.1},
   {"id": "lt_aisle", "kind": "light", "at": [-5.5, 3.5], "y": 2.2, "radius": 6, "color": "#e8a040", "strength": 1.2},
-  {"id": "lt_seam", "kind": "light", "at": [-5.3, 0.6], "y": 1.6, "radius": 3, "color": "#ffe0a0", "strength": 1.4, "cone": {"yaw": 0, "angle": 50}, "sectors": ["aisle"]},
+  {"id": "lt_seam", "kind": "light", "at": [-5.9, 1.0], "y": 1.6, "radius": 3, "color": "#ffe0a0", "strength": 1.4, "cone": {"yaw": 0, "angle": 50}, "sectors": ["aisle"]},
   {"id": "lt_inner", "kind": "light", "at": [0, -4], "y": 3.4, "radius": 9, "color": "#ffb860", "strength": 1.1},
   {"id": "lt_damp", "kind": "light", "at": [-4.5, -10], "y": 1.8, "radius": 5, "color": "#70a0e0", "strength": 1.4, "sectors": ["inner"]},
   {"id": "lt_hot", "kind": "light", "at": [4.9, -10], "y": 1.8, "radius": 5, "color": "#ff5a20", "strength": 1.6, "sectors": ["inner"]}

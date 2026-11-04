@@ -24,6 +24,8 @@ var level: Level
 var judge := PadJudge.new()
 var beat_s := 60.0 / 174.0
 var pass_credit := 0.6
+var origin := 0.0  # song time of block 0's downbeat (0 on its own; the run's clock time when the dungeon is entered from the Warehouse, on a downbeat)
+var leave_requested := false  # the system back key: the dungeon is left at the next decision tick
 
 var block := 0  # the block being played (the one containing song time t)
 var kind := "ambient"  # kind of block `block`: "ambient" | "phrase"
@@ -60,9 +62,14 @@ func setup(p_data: TrialData, p_rdata: RunData) -> void:
 	_pack = rdata.packs[str(data.raw["music"]["chart"])]
 
 
-## Song time of beat `b` (the first downbeat is time 0).
+## Song time of beat `b` of the dungeon (beat 0 is the downbeat `origin`).
 func t_of(b: float) -> float:
-	return b * beat_s
+	return origin + b * beat_s
+
+
+## The song-time position of a dungeon beat in ticks of the shared clock.
+func _tick_of(b: float) -> int:
+	return int(round((origin / beat_s + b) * float(TICKS)))
 
 
 func decision_t(j: int) -> float:
@@ -74,7 +81,9 @@ func count_in_s() -> float:
 	return t_of(float(BLOCK_BEATS) - DECISION_BEAT)
 
 
-func begin(start_passage: int = -1) -> void:
+func begin(start_passage: int = -1, p_origin := 0.0) -> void:
+	origin = p_origin
+	leave_requested = false
 	flow = TrialFlow.new(data, start_passage)
 	level = Level.new()
 	level.mode = "defense"
@@ -101,8 +110,8 @@ func begin(start_passage: int = -1) -> void:
 	phrase_choice = -1
 	blocks_log = []
 	_chart_block(0, "ambient", {})
-	_emit({"kind": "passage", "passage": flow.passage, "t": -count_in_s(), "consequence": "", "failure": "", "passage_kind": str(flow.current().get("kind", "normal"))})
-	_open_window(-count_in_s())
+	_emit({"kind": "passage", "passage": flow.passage, "t": origin - count_in_s(), "consequence": "", "failure": "", "passage_kind": str(flow.current().get("kind", "normal"))})
+	_open_window(origin - count_in_s())
 
 
 func _emit(ev: Dictionary) -> void:
@@ -169,7 +178,7 @@ func update(t: float) -> Array:
 		guard += 1
 		_decide(_next_tick)
 		_next_tick += 1
-	block = int(floor(maxf(t, 0.0) / (float(BLOCK_BEATS) * beat_s)))
+	block = int(floor(maxf(t - origin, 0.0) / (float(BLOCK_BEATS) * beat_s)))
 	var out := _events
 	_events = []
 	return out
@@ -178,6 +187,14 @@ func update(t: float) -> Array:
 func _decide(j: int) -> void:
 	var td := decision_t(j)
 	judge.update(td)
+	if leave_requested:
+		leave_requested = false
+		exited = true
+		exit_to = "warehouse"
+		exit_reason = "normal"
+		window_open = false
+		_emit({"kind": "exit", "t": td, "to": exit_to, "reason": exit_reason})
+		return
 	if kind == "phrase" and j == phrase_block():
 		_judge_phrase(j, td)
 	else:
@@ -277,9 +294,9 @@ func _chart_block(b: int, k: String, spec: Dictionary) -> void:
 			if dur < 480:
 				dur = 0
 		var gbeat := float(b * BLOCK_BEATS) + bib
-		var tm := gbeat * beat_s
+		var tm := t_of(gbeat)
 		var fam_c := str(c[3]) if c.size() > 3 else fam
-		added.append({"id": "d%05d" % _note_id, "tick": int(round(gbeat * TICKS)), "duration_ticks": dur, "end_tick": int(round(gbeat * TICKS)) + dur, "time": tm,
+		added.append({"id": "d%05d" % _note_id, "tick": _tick_of(gbeat), "duration_ticks": dur, "end_tick": _tick_of(gbeat) + dur, "time": tm,
 			"end_time": tm + float(dur) / float(TICKS) * beat_s, "pad": int(c[2]), "button": int(c[2]), "family": fam_c, "lane": fam_c, "slot_id": fam_c,
 			"type": "hold" if dur > 0 else "tap", "seq": b, "phase": 0, "block": b, "voice": fam, "kind": k, "enc": fight_open if k == "phrase" else ""})
 		_note_id += 1
@@ -294,7 +311,7 @@ func _chart_block(b: int, k: String, spec: Dictionary) -> void:
 	else:
 		for p in range(1, 5):
 			pads[str(p)] = {"family": "bass", "ref": ""}
-	var s_tick := b * BLOCK_BEATS * TICKS
+	var s_tick := _tick_of(float(b * BLOCK_BEATS))
 	level.sections.append({"id": "trial_b%d" % b, "start_tick": s_tick, "end_tick": s_tick + BLOCK_BEATS * TICKS, "mode": fam, "length_bars": 4, "pads": pads})
 	level.duration_ticks = maxi(level.duration_ticks, s_tick + BLOCK_BEATS * TICKS)
 	judge.sync_notes()

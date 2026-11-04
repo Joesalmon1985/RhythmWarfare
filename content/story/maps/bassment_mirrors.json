@@ -4,7 +4,7 @@
  "art": "bassment",
  "start": "mez_entry",
  "fog": {"color": "#0c1424", "density": 0.025},
- "textures": {"ceil_arch": "textures/ceil_arch.png", "ceil_pipes": "textures/ceil_pipes.png", "floor_grate": "textures/floor_grate.png", "floor_mirror": "textures/floor_mirror.png", "thing_bones": "textures/thing_bones.png", "thing_cables": "textures/thing_cables.png", "thing_coatrack": "textures/thing_coatrack.png", "thing_door": "textures/thing_door.png", "thing_furnace": "textures/thing_furnace.png", "thing_glow": "textures/thing_glow.png", "thing_hand": "textures/thing_hand.png", "thing_lamp": "textures/thing_lamp.png", "thing_skull": "textures/thing_skull.png", "thing_valve": "textures/thing_valve.png", "wall_brass": "textures/wall_brass.png", "wall_brick_dark": "textures/wall_brick_dark.png", "wall_cable": "textures/wall_cable.png", "wall_door": "textures/wall_door.png", "wall_iron": "textures/wall_iron.png", "wall_mirror": "textures/wall_mirror.png", "wall_pipe": "textures/wall_pipe.png"},
+ "textures": {"ceil_arch": "textures/ceil_arch.png", "ceil_pipes": "textures/ceil_pipes.png", "floor_grate": "textures/floor_grate.png", "floor_mirror": "textures/floor_mirror.png", "thing_bones": "textures/thing_bones.png", "thing_cables": "textures/thing_cables.png", "thing_coatrack": "textures/thing_coatrack.png", "thing_door": "textures/thing_door.png", "thing_furnace": "textures/thing_furnace.png", "thing_glow": "textures/thing_glow.png", "thing_hand": "textures/thing_hand.png", "thing_lamp": "textures/thing_lamp.png", "thing_skull": "textures/thing_skull.png", "thing_valve": "textures/thing_valve.png", "wall_brass": "textures/wall_brass.png", "wall_brick_dark": "textures/wall_brick_dark.png", "wall_door": "textures/wall_door.png", "wall_iron": "textures/wall_iron.png", "wall_mirror": "textures/wall_mirror.png", "wall_pipe": "textures/wall_pipe.png"},
  "animated": [
   {"tex": "wall_mirror", "mode": "flicker", "amount": 0.25, "bright": 0.4},
   {"tex": "floor_mirror", "mode": "pulse", "rate": 1.5, "amount": 0.2, "bright": 0.3},
@@ -25,7 +25,7 @@
   {"from": [-6, -6], "to": [-6, -11], "sector": "rotunda", "portal": null, "tex": "wall_brass"},
   {"from": [6, -6], "to": [6, -11], "sector": "rotunda", "portal": null, "tex": "wall_brass"},
   {"from": [12, 12], "to": [12, -2], "sector": "pit_side", "portal": null, "tex": "wall_pipe"},
-  {"from": [-7, -20], "to": [7, -20], "sector": "pit_end", "portal": null, "tex": "wall_cable"}
+  {"from": [-7, -20], "to": [7, -20], "sector": "pit_end", "portal": null, "tex": "wall_brass"}
  ],
  "things": [
   {"id": "mez_door", "kind": "billboard", "sprite": "thing_door", "at": [0, 11.7], "y": 1.1, "size": 2.4},
@@ -45,8 +45,8 @@
   {"id": "glow_r2", "kind": "billboard", "sprite": "thing_glow", "at": [5.5, -8.5], "y": 2.5, "size": 2.8, "anim": "pulse", "blend": "add"},
   {"id": "pit_furnace", "kind": "billboard", "sprite": "thing_furnace", "at": [8, 4], "y": 1.5, "size": 3.2, "anim": "flicker"},
   {"id": "pit_furnace_g", "kind": "billboard", "sprite": "thing_glow", "at": [8, 4.1], "y": 1.5, "size": 5.0, "anim": "flicker", "blend": "add"},
-  {"id": "pit_furnace2", "kind": "billboard", "sprite": "thing_furnace", "at": [0, -17], "y": 1.6, "size": 3.4, "anim": "flicker"},
-  {"id": "pit_furnace2_g", "kind": "billboard", "sprite": "thing_glow", "at": [0, -16.9], "y": 1.6, "size": 5.5, "anim": "flicker", "blend": "add"},
+  {"id": "pit_furnace2", "kind": "billboard", "sprite": "thing_furnace", "at": [0, -17], "y": 3.5, "size": 7.0, "anim": "flicker"},
+  {"id": "pit_furnace2_g", "kind": "billboard", "sprite": "thing_glow", "at": [0, -19.2], "y": 7.0, "size": 12.0, "anim": "flicker", "blend": "add"},
   {"id": "pit_valve", "kind": "billboard", "sprite": "thing_valve", "at": [10, 9], "y": 1.2, "size": 1.4},
   {"id": "pit_cables", "kind": "billboard", "sprite": "thing_cables", "at": [5, 10], "y": 2.0, "size": 2.5},
   {"id": "pit_hand", "kind": "billboard", "sprite": "thing_hand", "at": [-4, -18.5], "y": 1.0, "size": 2.0, "anim": "sway"},
@@ -62,8 +62,8 @@
   {"id": "lt_cool2", "kind": "light", "at": [0, -6], "y": 4.5, "radius": 9, "color": "#8ec8ff", "strength": 1.7},
   {"id": "lt_r1", "kind": "light", "at": [-5.5, -8.5], "y": 2.4, "radius": 5, "color": "#ffd070", "strength": 1.4},
   {"id": "lt_r2", "kind": "light", "at": [5.5, -8.5], "y": 2.4, "radius": 5, "color": "#ffd070", "strength": 1.4},
-  {"id": "lt_pit", "kind": "light", "at": [8, 3], "y": -2.5, "radius": 9, "color": "#ff8830", "strength": 1.6},
-  {"id": "lt_pit_end", "kind": "light", "at": [0, -16], "y": -2.5, "radius": 9, "color": "#ff9a40", "strength": 1.7}
+  {"id": "lt_pit", "kind": "light", "at": [8, 3], "y": 5, "radius": 12, "color": "#ff8830", "strength": 2.0},
+  {"id": "lt_pit_end", "kind": "light", "at": [0, -18], "y": 5.5, "radius": 16, "color": "#ffb050", "strength": 2.3}
  ],
  "waypoints": [
   {"id": "mez_entry", "at": [0, 9.4], "yaw": 0.0, "sector": "gallery"},

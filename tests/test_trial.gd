@@ -90,7 +90,7 @@ func test_no_trace_of_the_book_it_was_adapted_from_remains() -> void:
 		assert_false(text.contains(word), "'%s' does not appear in the dungeon data" % word)
 	for gone in ["res://content/trial/book_graph.json", "res://content/trial/book_text.json", "res://content/trial/quest_map.json", "res://src/trial/trial_book.gd", "res://tools/trial/build_book.py"]:
 		assert_false(FileAccess.file_exists(gone), "%s is removed" % gone)
-	var play := FileAccess.get_file_as_string("res://src/trial/trial_play.gd").to_lower()
+	var play := FileAccess.get_file_as_string("res://src/trial/trial_scene.gd").to_lower()
 	assert_false(play.contains("verified") or play.contains("ocr "), "the scene shows no provenance footer")
 
 
@@ -540,20 +540,24 @@ func test_the_fight_loses_then_the_retry_wins() -> void:
 	assert_true(_kinds(log2, "result").any(func(r: Dictionary) -> bool: return bool(r["fight"]) and r["outcome"] == "win"))
 
 
-# --- the scene -------------------------------------------------------------------------------------------------------------------
+# --- the scene: the Bassment in 2.5D inside the run scene -----------------------------------------------------------------------------
 
+## A run scene launched straight into the dungeon (RW_TRIAL_DIRECT), virtual clock, on a phone-shaped window.
 func _trial_scene(bot: String) -> Dictionary:
-	OS.set_environment("RW_TRIAL_VIRTUAL", "1")
+	OS.set_environment("RW_RUN_VIRTUAL", "1")
+	OS.set_environment("RW_TRIAL_DIRECT", "1")
+	OS.set_environment("RW_TRIAL_BOT", bot)
+	var saved := Session.run_progress
+	Session.run_progress = RunProgress.load_data("user://test_trial_save3.json", "user://none.json")
 	var host := Control.new()
 	host.size = Vector2(844, 390)
 	tree.root.add_child(host)
-	var scene: Control = (load("res://src/trial/trial_play.tscn") as PackedScene).instantiate()
-	scene.bot = bot
+	var scene: Control = (load("res://src/run/run_play.tscn") as PackedScene).instantiate()
 	host.add_child(scene)
 	scene.size = Vector2(844, 390)
-	var exits: Array = []
-	scene.exit_launcher = func(where: String) -> void: exits.append(where)
-	return {"host": host, "scene": scene, "exits": exits}
+	OS.set_environment("RW_TRIAL_DIRECT", "")
+	OS.set_environment("RW_TRIAL_BOT", "")
+	return {"host": host, "scene": scene, "tr": scene.trial, "saved": saved}
 
 
 ## Steps the scene's virtual clock until `cond` holds (or `limit_s` of song time has passed). Returns whether it held.
@@ -570,7 +574,10 @@ func _until(scene: Node, cond: Callable, limit_s: float = 90.0) -> bool:
 
 func _free_scene(d: Dictionary) -> void:
 	(d["host"] as Control).queue_free()
-	OS.set_environment("RW_TRIAL_VIRTUAL", "")
+	Session.run_progress = d["saved"]
+	DirAccess.remove_absolute("user://test_trial_save3.json")
+	OS.set_environment("RW_RUN_VIRTUAL", "")
+	OS.set_environment("RW_TRIAL_START", "")
 
 
 func _scene_at(title: String, bot: String) -> Dictionary:
@@ -580,41 +587,47 @@ func _scene_at(title: String, bot: String) -> Dictionary:
 	return d
 
 
-func _title_is(scene: Node, title: String) -> bool:
-	return str(scene.engine.flow.current()["title"]) == title
+func _title_is(tr: TrialScene, title: String) -> bool:
+	return str(tr.engine.flow.current()["title"]) == title
 
 
-func test_the_scene_floats_choices_over_pads_that_keep_playing() -> void:
+func _left(scene: Node) -> Array:
+	return scene.trial_log.filter(func(e: Dictionary) -> bool: return e["kind"] == "left")
+
+
+func test_the_scene_is_the_2d5_world_with_lit_exits_and_floating_labels() -> void:
 	var d := _trial_scene("perfect")
+	var tr: TrialScene = d["tr"]
 	var scene: Node = d["scene"]
-	assert_eq(scene._buttons.size(), 2, "two floating choices")
-	for b in scene._buttons:
+	scene._vt += 1.0 / 30.0
+	scene._step_virtual(scene._vt)
+	assert_eq(tr.zone, "hatch", "the first zone is shown at once in a direct launch")
+	assert_true(tr.zone_stages["hatch"]["stage"].visible and tr.zone_stages["hatch"]["stage"].world_active, "a 2.5D stage")
+	assert_eq(tr._buttons.size(), 2, "two floating choices")
+	for b in tr._buttons:
 		assert_true((b as Button).size.x >= 140.0 and (b as Button).size.y >= 40.0, "a big enough target on a phone")
-	assert_true(scene._buttons[0].text.contains("[DEFAULT]"), "one is marked as the default")
-	assert_false(scene._buttons[1].text.contains("[DEFAULT]"))
-	assert_true(scene._pic.texture != null, "a fixed illustrated scene")
-	assert_true(scene._desc.text.length() > 40, "with a short description")
-	assert_eq(scene._title.text, "THE SERVICE HATCH")
-	assert_eq(scene._tag.text, "The Service Hatch", "the footer names the zone and makes no claim about where the text came from")
-	assert_true(scene._choice_layer.visible)
-	scene.pick(1)
-	assert_true(scene._buttons[1].text.contains("[CHOSEN]") and not scene._buttons[0].text.contains("[DEFAULT]"), "a pick replaces the default mark")
-	scene.pick(0)
-	assert_true(scene._buttons[0].text.contains("[CHOSEN]"), "and can be changed")
-	scene.pick(1)
-	var cues_before: int = scene.engine.level.notes.size()
-	assert_true(_until(scene, func() -> bool: return _title_is(scene, "Chalk on the Wall")))
-	assert_true(scene.engine.level.notes.size() > cues_before, "cues were being charted all along")
-	var saw_phrase_hidden := false
-	var t := 0.0
+	assert_true(tr._buttons[0].text.contains("[DEFAULT]"))
+	assert_false(tr._buttons[1].text.contains("[DEFAULT]"))
+	assert_eq(tr._exits.items.size(), 2, "both choices are lit as exits in the room")
+	assert_true(tr._desc.text.length() > 40)
+	assert_eq(tr._title.text, "THE SERVICE HATCH")
+	assert_eq(tr._tag.text, "The Service Hatch")
+	assert_true(tr._choice_layer.visible)
+	tr.pick(1)
+	assert_true(tr._buttons[1].text.contains("[CHOSEN]") and not tr._buttons[0].text.contains("[DEFAULT]"))
+	tr.pick(0)
+	assert_true(tr._buttons[0].text.contains("[CHOSEN]"))
+	tr.pick(1)
+	var cues_before: int = tr.engine.level.notes.size()
+	assert_true(_until(scene, func() -> bool: return _title_is(tr, "Chalk on the Wall")))
+	assert_true(tr.engine.level.notes.size() > cues_before, "cues were being charted all along")
 	var free := 0
-	while t < 40.0 and _title_is(scene, "Chalk on the Wall"):
+	var t := 0.0
+	while t < 40.0 and _title_is(tr, "Chalk on the Wall"):
 		scene._vt += 1.0 / 30.0
 		scene._step_virtual(scene._vt)
 		t += 1.0 / 30.0
-		if scene.engine.kind == "phrase" and not scene.engine.window_open:
-			saw_phrase_hidden = saw_phrase_hidden or not scene._choice_layer.visible
-		if scene.engine.window_open and scene._timer_label.text.begins_with("4 bar"):
+		if tr.engine.window_open and tr._timer_label.text.begins_with("4 bar"):
 			free += 1
 		if free > 3:
 			break
@@ -622,80 +635,130 @@ func test_the_scene_floats_choices_over_pads_that_keep_playing() -> void:
 	_free_scene(d)
 
 
-func test_nothing_chosen_means_the_default_and_the_dungeon_goes_on() -> void:
+func test_the_phone_layout_keeps_choices_clear_of_the_pads() -> void:
 	var d := _trial_scene("perfect")
+	var tr: TrialScene = d["tr"]
 	var scene: Node = d["scene"]
-	assert_true(_until(scene, func() -> bool: return _title_is(scene, "The Crystal Stacks"), 160.0))
-	assert_eq(d["exits"], [], "nothing sent the player back to the Warehouse")
+	var area_h: float = tr._area().size.y
+	for b in tr._buttons:
+		assert_true((b as Button).position.y + (b as Button).size.y <= area_h + 1.0, "the labels stay in the picture above the pads")
+	var rects: Dictionary = scene.pad_view.button_rects()
+	assert_true(rects.size() == 4)
+	_free_scene(d)
+
+
+func test_nothing_chosen_means_the_default_and_the_dungeon_goes_on_through_zones() -> void:
+	var d := _trial_scene("perfect")
+	var tr: TrialScene = d["tr"]
+	var scene: Node = d["scene"]
+	assert_true(_until(scene, func() -> bool: return _title_is(tr, "The Crystal Stacks"), 160.0))
+	assert_eq(_left(scene), [], "nothing sent the player back to the Warehouse")
 	var titles: Array = []
-	for e in scene.trace:
+	for e in tr.trace:
 		if e["kind"] == "passage":
-			titles.append(str(scene.tdata.passage(int(e["passage"]))["title"]))
+			titles.append(str(tr.tdata.passage(int(e["passage"]))["title"]))
 	assert_eq(titles.slice(0, 6), ["The Service Hatch", "The Ladder Foot", "The Cable Run", "The Live Junction", "The Cable Nest", "The Crystal Stacks"], "by defaults alone")
-	var defaulted: Array = scene.trace.filter(func(e: Dictionary) -> bool: return e["kind"] == "commit" and bool(e["defaulted"]))
+	assert_true(tr.zone_stages.has("cables") and tr.zone_stages.has("stacks"), "each zone got its own stage")
+	assert_true(_until(scene, func() -> bool: return tr.zone == "stacks", 10.0), "the shown zone follows the passage, on the downbeat")
+	var defaulted: Array = tr.trace.filter(func(e: Dictionary) -> bool: return e["kind"] == "commit" and bool(e["defaulted"]))
 	assert_true(defaulted.size() >= 4)
 	_free_scene(d)
 
 
-func test_a_death_returns_to_the_warehouse_after_its_window() -> void:
-	var d := _scene_at("Fried", "perfect")
+func test_a_zone_swap_happens_on_a_downbeat_through_the_passage_frame() -> void:
+	var d := _trial_scene("perfect")
+	var tr: TrialScene = d["tr"]
 	var scene: Node = d["scene"]
-	assert_true(scene._msg.text.contains("DIED"), "the death is shown: " + scene._msg.text)
-	assert_eq(scene._buttons.size(), 1)
-	assert_eq(scene._buttons[0].text.begins_with("Wake in the Warehouse"), true)
-	assert_true(_until(scene, func() -> bool: return not (d["exits"] as Array).is_empty(), 60.0))
-	assert_eq(d["exits"], ["warehouse"])
-	var ex: Array = scene.trace.filter(func(e: Dictionary) -> bool: return e["kind"] == "exit")
-	assert_eq(ex[0]["reason"], "death")
+	var beat := 60.0 / 174.0
+	assert_true(_until(scene, func() -> bool: return tr.swap_t >= 0.0, 120.0), "a swap is scheduled when the passage leaves the zone")
+	var st: float = tr.swap_t
+	var k := (st - tr.origin) / (16.0 * beat)
+	assert_true(absf(k - roundf(k)) < 1.0e-6, "on a block's downbeat")
+	var closed := false
+	while scene._vt < st - 0.05:
+		scene._vt += 1.0 / 30.0
+		scene._step_virtual(scene._vt)
+		if scene._passage.aperture < 0.5:
+			closed = true
+	assert_true(closed, "the frame closed before the swap")
+	assert_eq(tr.zone, "hatch", "still the old zone until the downbeat")
+	assert_true(_until(scene, func() -> bool: return tr.zone != "hatch", 5.0))
+	assert_eq(tr.zone, "cables")
 	_free_scene(d)
 
 
-func test_the_victory_returns_to_the_warehouse_too() -> void:
-	var d := _scene_at("Daylight", "perfect")
+func test_a_death_walks_back_to_the_warehouse_after_its_window() -> void:
+	var d := _scene_at("Fried", "perfect")
+	var tr: TrialScene = d["tr"]
 	var scene: Node = d["scene"]
-	assert_true(scene._msg.text.contains("VICTORY"))
-	assert_true(_until(scene, func() -> bool: return not (d["exits"] as Array).is_empty(), 60.0))
-	var ex: Array = scene.trace.filter(func(e: Dictionary) -> bool: return e["kind"] == "exit")
-	assert_eq(ex[0]["reason"], "victory")
+	assert_true(tr._msg.text.contains("DIED"), "the death is shown: " + tr._msg.text)
+	assert_eq(tr._buttons.size(), 1)
+	assert_eq(tr._buttons[0].text.contains("Wake in the Warehouse"), true)
+	assert_true(_until(scene, func() -> bool: return not _left(scene).is_empty(), 60.0))
+	assert_eq(_left(scene)[0]["reason"], "death")
+	assert_eq(scene.trial_state, "")
+	assert_eq(scene.engine.node_id, "warehouse", "the run resumed in the Warehouse")
+	assert_false(tr.active)
+	_free_scene(d)
+
+
+func test_the_victory_walks_back_too() -> void:
+	var d := _scene_at("Daylight", "perfect")
+	var tr: TrialScene = d["tr"]
+	var scene: Node = d["scene"]
+	assert_true(tr._msg.text.contains("VICTORY"))
+	assert_true(_until(scene, func() -> bool: return not _left(scene).is_empty(), 60.0))
+	assert_eq(_left(scene)[0]["reason"], "victory")
 	_free_scene(d)
 
 
 func test_three_lost_phrases_in_a_fight_end_the_adventure_in_the_scene() -> void:
 	var d := _scene_at("The Flooded Boiler Room", "no_fights")
+	var tr: TrialScene = d["tr"]
 	var scene: Node = d["scene"]
 	var guard := 0
-	while (d["exits"] as Array).is_empty() and guard < 8:
+	while _left(scene).is_empty() and guard < 8:
 		guard += 1
-		assert_true(_until(scene, func() -> bool: return scene.engine.window_open and scene._buttons.size() > 0 and scene._outcome.is_empty(), 60.0))
-		if scene.engine.flow.passage == 0:
+		assert_true(_until(scene, func() -> bool: return tr.engine.window_open and tr._buttons.size() > 0 and tr._outcome.is_empty(), 60.0))
+		if tr.engine.flow.passage == 0:
 			break
-		scene.pick(0)
-	assert_true(_until(scene, func() -> bool: return not (d["exits"] as Array).is_empty(), 90.0), "after the third defeat the way back to the Warehouse")
-	var lost: Array = scene.trace.filter(func(e: Dictionary) -> bool: return e["kind"] == "result" and bool(e.get("defeated", false)))
+		tr.pick(0)
+	assert_true(_until(scene, func() -> bool: return not _left(scene).is_empty(), 90.0), "after the third defeat the way back to the Warehouse")
+	var lost: Array = tr.trace.filter(func(e: Dictionary) -> bool: return e["kind"] == "result" and bool(e.get("defeated", false)))
 	assert_eq(lost.size(), 1, "the third defeat is the end")
-	assert_eq(scene.trace.filter(func(e: Dictionary) -> bool: return e["kind"] == "exit")[0]["reason"], "death")
-	assert_true(scene._news.text.contains("eel") or scene._desc.text.contains("Bassment"), "with the creature's defeat text or the defeat passage")
+	assert_eq(tr.trace.filter(func(e: Dictionary) -> bool: return e["kind"] == "exit")[0]["reason"], "death")
 	_free_scene(d)
 
 
-func test_the_fight_fails_then_is_retried_and_won_in_the_scene() -> void:
+func test_the_fight_puts_the_creature_in_the_room_fails_then_is_retried_and_won() -> void:
 	var d := _scene_at("The Flooded Boiler Room", "perfect")
+	var tr: TrialScene = d["tr"]
 	var scene: Node = d["scene"]
-	var win_window := func(title: String) -> bool: return scene.engine.window_open and _title_is(scene, title) and scene._buttons.size() > 0
+	var win_window := func(title: String) -> bool: return tr.engine.window_open and _title_is(tr, title) and tr._buttons.size() > 0
 	assert_true(_until(scene, func() -> bool: return win_window.call("The Flooded Boiler Room")))
-	scene.bot = "no_fights"  # the player sits this one out
-	scene.pick(0)  # the cable eel
-	assert_true(_until(scene, func() -> bool: return scene._enemy.visible), "the eel is on screen for the fight")
-	assert_true(scene._enemy.texture != null)
-	assert_true(_until(scene, func() -> bool: return not scene._outcome.is_empty()), "an outcome animation plays")
-	assert_true(_until(scene, func() -> bool: return win_window.call("The Flooded Boiler Room") and scene._outcome.is_empty()))
-	assert_true(scene._buttons[0].text.begins_with("Try again"), "the retry is offered: " + scene._buttons[0].text)
-	assert_true(scene._news.text.contains("arcs"), scene._news.text)
-	assert_true(scene._buttons[0].text.contains("[DEFAULT]"), "and doing nothing retries it")
-	scene.bot = "perfect"
-	assert_true(_until(scene, func() -> bool: return _title_is(scene, "The Dry Landing")), "the retry is passed")
+	tr.bot = "no_fights"
+	tr.pick(0)  # the cable eel
+	assert_true(_until(scene, func() -> bool: return tr.figure_pose() != ""), "the eel is in the room for the fight")
+	assert_eq(tr.figure_pose(), "idle")
+	var spot: Vector2 = tr._fig["pos"]
+	assert_true(tr._map("boiler").sector_at(spot) != "", "standing on the floor of the zone")
+	var seen := {"attack": false, "struck": false}
+	assert_true(_until(scene, func() -> bool:
+		seen["attack"] = seen["attack"] or tr.figure_pose() == "attack"
+		return not tr._outcome.is_empty()), "an outcome animation plays")
+	assert_true(_until(scene, func() -> bool:
+		seen["attack"] = seen["attack"] or tr.figure_pose() == "attack"
+		return win_window.call("The Flooded Boiler Room") and tr._outcome.is_empty()))
+	assert_true(seen["attack"], "the creature lunges when the phrase is lost")
+	assert_true(tr._buttons[0].text.contains("Try again"), "the retry is offered: " + tr._buttons[0].text)
+	assert_true(tr._news.text.contains("arcs"), tr._news.text)
+	tr.bot = "perfect"
+	assert_true(_until(scene, func() -> bool:
+		seen["struck"] = seen["struck"] or tr.figure_pose() == "struck"
+		return _title_is(tr, "The Dry Landing")), "the retry is passed")
+	assert_true(seen["struck"], "the won fight shows the struck pose")
 	var results: Array = []
-	for e in scene.trace:
+	for e in tr.trace:
 		if e["kind"] == "result":
 			results.append(str(e["result"]))
 	assert_eq(results, ["fail", "pass"], "the lost fight, the won retry")
@@ -704,14 +767,51 @@ func test_the_fight_fails_then_is_retried_and_won_in_the_scene() -> void:
 
 func test_an_item_is_shown_in_the_footer_once_it_is_found() -> void:
 	var d := _scene_at("The Brass Lamp", "perfect")
-	var scene: Node = d["scene"]
-	assert_eq(scene.engine.flow.flags, ["lamp"], "starting on the passage that grants it")
-	assert_true(scene._tag.text.contains("carrying the brass lamp"), scene._tag.text)
-	assert_true(scene._tag.text.begins_with("Lost Property"))
+	var tr: TrialScene = d["tr"]
+	assert_eq(tr.engine.flow.flags, ["lamp"])
+	assert_true(tr._tag.text.contains("carrying the brass lamp"), tr._tag.text)
+	assert_true(tr._tag.text.begins_with("Lost Property"))
 	_free_scene(d)
 
 
-# --- the wizard in the Warehouse -----------------------------------------------------------------------------------------------------
+func test_every_passage_stands_in_a_reachable_place_of_its_zone_map() -> void:
+	var d := _data()
+	assert_true(d.errors.is_empty(), str(d.errors))
+	for n in d.passages:
+		var p: Dictionary = d.passages[n]
+		var m := TrialData.map_of(str(p["map"]))
+		var w: Dictionary = m.waypoint(str(p["waypoint"]))
+		assert_false(w.is_empty(), "passage %d waypoint" % n)
+		var from: Dictionary = m.waypoint(m.start_id)
+		var r := m.route(from["at"], str(from["sector"]), w["at"], str(w["sector"]))
+		assert_true((r["points"] as PackedVector2Array).size() >= 2, "passage %d is reachable from its zone's entrance" % n)
+		for c in p["choices"]:
+			var x: Dictionary = m.waypoint(str(c["exit_wp"]))
+			var r2 := m.route(w["at"], str(w["sector"]), x["at"], str(x["sector"]))
+			assert_true((r2["points"] as PackedVector2Array).size() >= 2, "passage %d: the exit '%s' can be walked to" % [n, c["exit_wp"]])
+			assert_true((x["at"] as Vector2).distance_to(w["at"]) > 0.5, "passage %d: the exit is somewhere else in the room" % n)
+	for zid in d.zones:
+		var m2 := TrialData.map_of(d.zone_map(zid))
+		assert_true(m2.sectors.size() >= 2 and m2.sectors.size() <= 4, "%s has 2 to 4 sectors" % zid)
+		assert_true(str(m2.art) == "bassment")
+		assert_true(m2.lights.size() >= 2, "%s is lit by placed lights" % zid)
+
+
+func test_the_data_refuses_a_missing_waypoint_or_exit() -> void:
+	var raw: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(PATH))
+	raw["passages"]["1"]["waypoint"] = "nowhere"
+	raw["passages"]["3"]["choices"][0]["exit_wp"] = "nowhere"
+	var f := FileAccess.open("user://bad_trial.json", FileAccess.WRITE)
+	f.store_string(JSON.stringify(raw))
+	f.close()
+	var d := TrialData.load_file("user://bad_trial.json")
+	var text := " ".join(PackedStringArray(d.errors))
+	assert_true(text.contains("passage 1: waypoint 'nowhere'"), text)
+	assert_true(text.contains("passage 3") and text.contains("exit_wp 'nowhere'"), text)
+	DirAccess.remove_absolute("user://bad_trial.json")
+
+
+# --- the wizard in the Warehouse and the seamless entry -----------------------------------------------------------------------------
 
 func _run_scene(start: String) -> Dictionary:
 	OS.set_environment("RW_RUN_VIRTUAL", "1")
@@ -727,6 +827,20 @@ func _run_scene(start: String) -> Dictionary:
 	return {"host": host, "scene": scene}
 
 
+func _end_run(d: Dictionary, saved: RunProgress, path: String) -> void:
+	(d["host"] as Control).queue_free()
+	Session.run_progress = saved
+	DirAccess.remove_absolute(path)
+	OS.set_environment("RW_RUN_VIRTUAL", "")
+	OS.set_environment("RW_RUN_BOT", "")
+
+
+func _step_to(scene: Node, t_end: float) -> void:
+	while scene._vt < t_end:
+		scene._vt += 1.0 / 30.0
+		scene._step_virtual(scene._vt)
+
+
 func test_the_wizard_offers_the_trial_in_the_warehouse_only() -> void:
 	var saved := Session.run_progress
 	Session.run_progress = RunProgress.load_data("user://test_trial_save.json", "user://none.json")
@@ -737,17 +851,16 @@ func test_the_wizard_offers_the_trial_in_the_warehouse_only() -> void:
 	var launched: Array = []
 	scene.trial_launcher = func() -> void: launched.append("trial")
 	scene._gate_btn.pressed.emit()
-	assert_eq(launched, ["trial"], "choosing the option leaves for the dungeon")
+	assert_eq(launched, ["trial"], "choosing the option asks for the dungeon")
 	var gate_rect := Rect2(scene._gate_btn.position, scene._gate_btn.size).merge(Rect2(scene._gate_wizard.position, scene._gate_wizard.size))
 	var rects: Dictionary = scene.pad_view.button_rects()
 	for p in rects:
 		assert_false(gate_rect.intersects(rects[p] as Rect2), "the option does not sit on pad %d" % p)
-	(d["host"] as Control).queue_free()
+	_end_run(d, saved, "user://test_trial_save.json")
 	var m := _run_scene("mothership")
 	assert_false((m["scene"] as Node)._gate.visible, "no wizard outside the Warehouse")
 	(m["host"] as Control).queue_free()
 	Session.run_progress = saved
-	DirAccess.remove_absolute("user://test_trial_save.json")
 	OS.set_environment("RW_RUN_VIRTUAL", "")
 	OS.set_environment("RW_RUN_BOT", "")
 
@@ -757,19 +870,79 @@ func test_ignoring_the_wizard_leaves_the_warehouse_the_ordinary_way() -> void:
 	Session.run_progress = RunProgress.load_data("user://test_trial_save2.json", "user://none.json")
 	var d := _run_scene("")
 	var scene: Node = d["scene"]
-	var launched: Array = []
-	scene.trial_launcher = func() -> void: launched.append("trial")
-	var beat := 60.0 / 174.0
-	var t: float = scene._vt
-	while t < 64.0 * beat + 0.3:
-		t += 1.0 / 30.0
-		scene._vt = t
-		scene._step_virtual(t)
-	assert_eq(launched, [], "nothing took the player into the dungeon")
+	_step_to(scene, 64.0 * 60.0 / 174.0 + 0.3)
+	assert_eq(scene.trial_state, "", "nothing took the player into the dungeon")
 	assert_eq(scene.engine.node_id, "mothership", "the run went on by its default route")
 	assert_false(scene._gate.visible, "and the wizard stayed behind in the Warehouse")
-	(d["host"] as Control).queue_free()
-	Session.run_progress = saved
-	DirAccess.remove_absolute("user://test_trial_save2.json")
-	OS.set_environment("RW_RUN_VIRTUAL", "")
-	OS.set_environment("RW_RUN_BOT", "")
+	_end_run(d, saved, "user://test_trial_save2.json")
+
+
+func test_entering_the_trial_is_a_seamless_walk_through_the_hatch() -> void:
+	var saved := Session.run_progress
+	Session.run_progress = RunProgress.load_data("user://test_trial_save4.json", "user://none.json")
+	var d := _run_scene("")
+	var scene: Node = d["scene"]
+	var beat := 60.0 / 174.0
+	_step_to(scene, 3.0 * beat)
+	var notes_before: int = scene.engine.level.notes.size()
+	assert_true(scene.arm_trial(), "chosen early in the phase")
+	assert_eq(scene.trial_state, "armed")
+	var log: Dictionary = (scene.trial_log as Array)[0]
+	assert_true(absf(float(log["g1"]) - (12.75 * beat)) < 1.0e-6, "the walk to the hatch starts on the next cue-free guard")
+	assert_true(absf(float(log["entry"]) - 32.0 * beat) < 1.0e-6, "the dungeon is entered on a downbeat two blocks on")
+	_step_to(scene, float(log["g1"]) + 0.2)
+	var moves: Array = scene.journey_log.filter(func(a: Dictionary) -> bool: return a["action"] == "player_move" and a["args"].get("to", "") == "hatch")
+	assert_eq(moves.size(), 1, "the camera is sent to the hatch")
+	var wh_stage: StoryStage = scene.stages["night_one"]["stage"]
+	assert_true(wh_stage.map.has_waypoint("hatch"))
+	_step_to(scene, float(log["g2"]) + 0.1)
+	assert_eq(scene.trial_state, "in", "the dungeon owns the pads from the guard before the downbeat")
+	assert_true(scene.trial.engine.level != scene.engine.level)
+	assert_eq(scene.trial.zone, "", "the hatch is not shown yet")
+	var audio_ok := true
+	_step_to(scene, float(log["entry"]) - 0.02)
+	assert_true(wh_stage.visible, "the Warehouse is still on screen until the downbeat")
+	assert_true(scene._passage.aperture < 0.5, "the frame is closed on the hatch")
+	_step_to(scene, float(log["entry"]) + 0.05)
+	assert_eq(scene.trial.zone, "hatch", "the Service Hatch opens on the downbeat")
+	assert_false(wh_stage.visible)
+	assert_true(scene.trial.engine.origin == float(log["entry"]), "the dungeon's beat grid starts on that downbeat")
+	var first_cue: float = 1.0e9
+	for n in scene.trial.engine.level.notes:
+		first_cue = minf(first_cue, float(n["time"]))
+	var k := (first_cue - float(log["entry"])) / beat
+	assert_true(k >= -1.0e-6 and absf(k - roundf(k * 4.0) / 4.0) < 1.0e-3, "the first dungeon cue sits on the run's grid")
+	assert_eq(scene.clock.state, SongClock.State.PAUSED, "(virtual clock) never restarted")
+	assert_true(audio_ok)
+	assert_true(scene.engine.level.notes.size() >= notes_before)
+	_end_run(d, saved, "user://test_trial_save4.json")
+
+
+func test_leaving_the_dungeon_resumes_the_run_on_the_same_grid_with_energy_kept() -> void:
+	var saved := Session.run_progress
+	Session.run_progress = RunProgress.load_data("user://test_trial_save5.json", "user://none.json")
+	var d := _run_scene("")
+	var scene: Node = d["scene"]
+	var beat := 60.0 / 174.0
+	_step_to(scene, 3.0 * beat)
+	scene.arm_trial()
+	var entry: float = float(scene.trial_log[0]["entry"])
+	_step_to(scene, entry + 0.2)
+	var energy_before: float = scene.engine.energy
+	var tr: TrialScene = scene.trial
+	tr.request_leave()  # the system back key
+	assert_true(_until(scene, func() -> bool: return not _left(scene).is_empty(), 60.0))
+	var t_left: float = float(_left(scene)[0]["t"])
+	var k := (t_left - entry) / (16.0 * beat)
+	assert_true(absf(k - roundf(k)) < 1.0e-6, "the way back lands on a downbeat of the same grid")
+	assert_eq(_left(scene)[0]["reason"], "normal")
+	assert_eq(scene.trial_state, "")
+	assert_eq(scene.engine.node_id, "warehouse")
+	assert_true(absf(scene.engine.phase_t0 - t_left) < 1.0e-6, "a fresh phase begins on that downbeat")
+	assert_true(absf(scene.engine.energy - energy_before) < 1.0e-6, "the crowd's energy is kept")
+	assert_true(scene.engine.level.notes.size() > 0 and float(scene.engine.level.notes[0]["time"]) >= t_left - 1.0e-6, "its first cues are after the return")
+	var stage: StoryStage = scene.stages["night_one"]["stage"]
+	assert_true(stage.visible, "the Warehouse is back on screen")
+	assert_true(_until(scene, func() -> bool: return scene.engine.phase_beat_at(scene._vt) > 20.0, 20.0))
+	assert_eq(scene.trial_state, "", "and the run goes on")
+	_end_run(d, saved, "user://test_trial_save5.json")

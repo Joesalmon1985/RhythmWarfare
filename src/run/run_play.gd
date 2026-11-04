@@ -62,6 +62,15 @@ var journey_log: Array = []  # every journey action given to a stage: {world, t0
 var _passage_swap := -1.0  # song time of the downbeat a world swap walks through (-1: none under way)
 var _passage: RunPassageView
 var _exits: RunExitsView
+var trial: TrialScene  # the Bassment, hosted here: the same scene, clock, pads and audio (docs/TRIAL_OPENING.md)
+var tdata: TrialData
+var trial_state := ""  # "" | "armed" (the wizard was chosen: the walk to the hatch is scheduled) | "in" (the dungeon owns the pads) | "leaving"
+var trial_entry_t := -1.0  # the downbeat the dungeon is entered on
+var _trial_g1 := -1.0  # the cue-free guard the walk to the hatch starts on
+var _trial_g2 := -1.0  # the guard the dungeon takes the pads on
+var _trial_direct := false
+var _stage_hidden := ""
+var trial_log: Array = []  # [{kind, t, ...}] the entry and exit, for the transition tests and recordings
 
 
 func _ready() -> void:
@@ -76,6 +85,14 @@ func _ready() -> void:
 		start = data.start_node()
 	if OS.has_environment("RW_RUN_UNTIL_PHASE"):
 		_until_phase = int(OS.get_environment("RW_RUN_UNTIL_PHASE"))
+	tdata = TrialData.load_default()
+	if not tdata.errors.is_empty():
+		_fatal("The dungeon data is invalid:\n" + "\n".join(PackedStringArray(tdata.errors)))
+		return
+	_trial_direct = OS.get_environment("RW_TRIAL_START") != "" or OS.get_environment("RW_TRIAL_DIRECT") == "1" or Session.trial_direct
+	Session.trial_direct = false
+	if _trial_direct:
+		start = "warehouse" if data.nodes.has("warehouse") else start
 	engine = RunEngine.new(data)
 	journey = RunJourney.new(data)
 	engine.begin(start)
@@ -93,7 +110,23 @@ func _ready() -> void:
 	_build_layout(start)
 	_setup_bot()
 	Session.run_progress.run_started()
+	if _trial_direct:  # a launch straight into the dungeon: the run's first phase is never heard
+		var sp := int(OS.get_environment("RW_TRIAL_START")) if OS.get_environment("RW_TRIAL_START") != "" else -1
+		trial.bot = OS.get_environment("RW_TRIAL_BOT") if OS.get_environment("RW_TRIAL_BOT") != "" else str(_bot.get("policy", ""))
+		trial_state = "in"
+		trial_begin_now(0.0, sp, true)
+		var ci: float = trial.engine.count_in_s()
+		_vt = -ci
+		hud.visible = false
+		_gate.visible = false
+		if virtual_mode:
+			_step_virtual(_vt)
+		else:
+			clock.begin_countdown(ci)
+		return
 	_handle(engine.update(-5.0))  # the first phase's events (phase_start, mix, charted cues)
+	if _build_hatch_early():
+		pass
 	if virtual_mode:
 		_step_virtual(_vt)
 	else:
@@ -263,6 +296,10 @@ func _build_layout(start: String) -> void:
 	_exits.pose_fn = _exit_pose
 	_exits.now_fn = func() -> float: return hud.now_t
 	add_child(_exits)
+	trial = TrialScene.new()
+	trial.name = "Trial"
+	add_child(trial)
+	trial.setup(self, tdata, data)
 	_route_box = Control.new()
 	_route_box.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_route_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -332,10 +369,7 @@ func _build_gate() -> void:
 	_gate_btn.modulate = Color(1.0, 0.9, 0.6)
 	_gate_btn.pressed.connect(func() -> void: trial_launcher.call())
 	_gate.add_child(_gate_btn)
-	trial_launcher = func() -> void:
-		if audio != null:
-			audio.stop()
-		get_tree().change_scene_to_file("res://src/trial/trial_play.tscn")
+	trial_launcher = func() -> void: arm_trial()
 	resized.connect(_layout_gate)
 	_layout_gate()
 
@@ -470,12 +504,27 @@ func _step_virtual(t: float) -> void:
 
 func _advance(t: float, audio_t: float) -> void:
 	hud.now_t = audio_t
+	if trial_state == "in" or trial_state == "leaving":
+		trial.update(t, audio_t)
+		return
 	_bot_step(t)
+	_trial_step(t)
+	if trial_state == "in":
+		trial.update(t, audio_t)
+		return
 	if _gate.visible:  # the option floats
 		var bob := sin(audio_t * 2.0) * 4.0
 		_gate_btn.position.y = _gate_wizard.position.y - _gate_btn.size.y - 6.0 + bob
-	_handle(engine.update(t))
-	_update_passage(t, audio_t)
+	if trial_state == "armed" and trial_entry_t >= 0.0:
+		_handle(engine.update(minf(t, trial_entry_t - 0.001)))
+	else:
+		_handle(engine.update(t))
+	if trial_state == "":
+		_update_passage(t, audio_t)
+	else:
+		_passage.set_aperture(RunPassage.aperture(audio_t, trial_entry_t, engine.beat_s))
+	if trial_state == "in" or trial_state == "leaving":
+		return
 	var rec: Dictionary = stages[active_world]
 	(rec["stage"] as StoryStage).update(audio_t, engine.energy)
 	proxy.crowd.energy = engine.energy
@@ -484,7 +533,8 @@ func _advance(t: float, audio_t: float) -> void:
 	pad_view.banner_text = _banner(t)
 	note_lane.queue_redraw()
 	hud.queue_redraw()
-	_prebuild_in_guard(t)
+	if trial_state == "":
+		_prebuild_in_guard(t)
 	if _debug_label.visible:
 		_debug_label.text = "t=%6.2f phase %d (%s) block %d stage %d energy %.0f rail %s (%s)  fps %d" % [t, engine.phase_n, engine.node_id, engine.block, engine.stage, engine.energy, journey.rail.place() if journey.rail != null else "-", journey.rail.role if journey.rail != null else "-", Engine.get_frames_per_second()]
 	if _until_phase > 0 and engine.phase_n > _until_phase and not _ended:
@@ -611,7 +661,7 @@ func _scripted_pause(audio_t: float) -> void:
 
 func _handle(events: Array) -> void:
 	for ev in events:
-		if str(ev["kind"]) in ["phase_start", "block_result"]:  # the journey first: the stage already holds its actions when the scene reacts
+		if str(ev["kind"]) in ["phase_start", "block_result"] and trial_state == "":  # the journey first: the stage already holds its actions when the scene reacts
 			for a in journey.on_event(ev, engine):
 				_journey_apply(a)
 		if str(ev["kind"]) != "judge" and str(ev["kind"]) != "cues":
@@ -633,7 +683,8 @@ func _handle(events: Array) -> void:
 			"block_result":
 				_on_block_result(ev)
 			"route_window":
-				_open_routes(ev)
+				if trial_state == "":
+					_open_routes(ev)
 			"route_commit":
 				_close_routes(ev)
 			"depleted":
@@ -663,7 +714,7 @@ func _on_phase_start(ev: Dictionary) -> void:
 		if not first and _passage_swap < 0.0:
 			_passage_swap = t0  # the route changed in the last two beats: the frame opens from shut on the new world
 		_show_world(world)
-	_gate.visible = str(node.get("trial_gate", "")) != ""  # the wizard only waits in the Warehouse
+	_gate.visible = str(node.get("trial_gate", "")) != "" and trial_state == ""  # the wizard only waits in the Warehouse
 	_prewarm_routes(str(ev["node"]))
 	var rec: Dictionary = stages[world]
 	var st: StoryStage = rec["stage"]
@@ -834,17 +885,20 @@ func _on_judge_event(ev: Dictionary, wall: float) -> void:
 func _on_button_pressed(button: int, touch_id: int) -> void:
 	if _ended or clock.state == SongClock.State.PAUSED:
 		return
-	engine.press(button, clock.judge_time(), touch_id)
+	live_engine().press(button, clock.judge_time(), touch_id)
 
 
 func _on_button_released(button: int, touch_id: int) -> void:
 	if _ended:
 		return
-	engine.release(button, clock.judge_time(), touch_id)
+	live_engine().release(button, clock.judge_time(), touch_id)
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
+	if event.is_action_pressed("ui_cancel") and trial_state == "in" and trial.active and clock != null and clock.state == SongClock.State.PLAYING:
+		trial.request_leave()  # the system back key leaves the dungeon by the same walk back up the hatch
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("ui_cancel"):
 		if clock == null or engine == null or _ended and _over_at < 0.0:
 			_quit()
 		elif _settings_panel != null:
@@ -931,3 +985,99 @@ func _go_over() -> void:
 	Session.run_progress.run_ended(int(Session.run_result.get("phases", 0)))
 	set_process(false)
 	get_tree().change_scene_to_file("res://src/run/run_over.tscn")
+
+
+# --- the Bassment: the seamless entry and exit -----------------------------------------------------------------------------------
+
+func live_engine() -> Object:
+	return trial.engine if trial_state == "in" and trial != null and trial.engine != null else engine
+
+
+func on_judge(ev: Dictionary) -> void:
+	_on_judge_event(ev, float(Time.get_ticks_msec()) / 1000.0)
+
+
+func hide_run_stage() -> void:
+	if stages.has(active_world):
+		var st: StoryStage = stages[active_world]["stage"]
+		st.visible = false
+		st.process_mode = Node.PROCESS_MODE_DISABLED
+
+
+func _build_hatch_early() -> bool:
+	if str(data.nodes[engine.node_id].get("trial_gate", "")) == "":
+		return false
+	trial.build_zone(tdata.zone_of_passage(tdata.start))
+	return true
+
+
+## The wizard's "Enter the Trial" was chosen. The walk to the hatch is scheduled on the next cue-free guard (3 beats before a block ends); the dungeon's pack is loaded on a thread while
+## the current block plays; the dungeon takes the pads on the guard after that and the passage frame closes on the hatch and opens in the Service Hatch on the downbeat that follows.
+## Returns false when the phase is too far on (the last two blocks are left to the run's own route choice).
+func arm_trial() -> bool:
+	if trial_state != "" or str(data.nodes[engine.node_id].get("trial_gate", "")) == "":
+		return false
+	var t := hud.now_t
+	var beat := engine.phase_beat_at(t)
+	var k := 0
+	while k < 3 and engine.t_of(float(k * 16) + 12.75) < t + 0.05:
+		k += 1
+	if k > 2:
+		return false
+	trial_state = "armed"
+	_trial_g1 = engine.t_of(float(k * 16) + 12.75)
+	_trial_g2 = _trial_g1 + 16.0 * engine.beat_s
+	trial_entry_t = _trial_g2 + 3.25 * engine.beat_s
+	_gate.visible = false
+	if audio != null:
+		audio.preload_pack(str(tdata.raw["music"]["audio"]))
+	trial.build_zone(tdata.zone_of_passage(tdata.start))
+	trial_log.append({"kind": "armed", "t": t, "g1": _trial_g1, "g2": _trial_g2, "entry": trial_entry_t, "beat": beat})
+	return true
+
+
+func _trial_step(t: float) -> void:
+	if trial_state != "armed":
+		return
+	if _trial_g1 >= 0.0 and t >= _trial_g1:
+		var bars := maxf((trial_entry_t - _trial_g1) / engine.beat_s / 4.0 - 0.4, 1.0)
+		_journey_apply({"world": active_world, "t0": _trial_g1, "action": "player_move", "args": {"to": "hatch", "bars": bars, "style": "walk"}})
+		trial_log.append({"kind": "walk", "t": _trial_g1, "bars": bars})
+		_trial_g1 = -1.0
+	if t >= _trial_g2:
+		_handle(engine.update(_trial_g2 + 0.001))
+		trial_begin_now(trial_entry_t, -1, false)
+
+
+func trial_begin_now(entry_t: float, start_passage: int, direct: bool) -> void:
+	if not direct:
+		_close_routes({})
+		hud.visible = false
+		_gate.visible = false
+	trial_state = "in"
+	if trial.bot == "":
+		trial.bot = str(_bot.get("policy", "")) if str(_bot.get("policy", "")) in ["perfect", "none"] else ""
+	trial.begin(entry_t, start_passage, direct)
+	engine.phase_n += 1
+	trial_log.append({"kind": "entered", "t": hud.now_t, "entry": entry_t})
+
+
+## Left by a death, the victory or the back key: on the downbeat `t_swap` the frame opens on the Warehouse at the hatch, its pack re-enters and the run begins a fresh phase.
+func trial_leave(t_swap: float, reason: String) -> void:
+	trial.deactivate()
+	trial_state = ""
+	var node := "warehouse" if data.nodes.has("warehouse") else engine.node_id
+	var w := _world_of(node)
+	_show_world(w)
+	engine.resume(node, t_swap)
+	pad_view.setup(engine.level, clock)
+	pad_view.holding_fn = engine.judge.hold_progress
+	pad_view.progress_fn = engine.progress_at
+	note_lane.setup(engine.level, clock, pad_view)
+	note_lane.state_fn = engine.judge.cue_state
+	hud.visible = true
+	_passage_swap = t_swap
+	_last_guard_key = -1
+	_handle(engine.update(t_swap))
+	_journey_apply({"world": w, "t0": t_swap, "action": "player_move", "args": {"to": str(stages[w]["waypoint"]), "bars": 2.0, "style": "walk"}})
+	trial_log.append({"kind": "left", "t": t_swap, "reason": reason})

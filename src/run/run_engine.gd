@@ -95,6 +95,35 @@ func begin(start_id: String) -> void:
 	_enter(start_id, 0.0, true)
 
 
+## Starts again after an excursion (the Bassment): the song clock has run on, so the new phase begins at song time `t0` (a downbeat); a fresh level and judge, the
+## crowd's energy kept, the phase count carried on. The cues and ticks are absolute, so nothing but `phase_t0` knows the run was away.
+func resume(start_id: String, t0: float) -> void:
+	var keep := energy
+	var n := phase_n
+	level = Level.new()
+	level.mode = "defense"
+	level.bpm = float(cfg["timing"]["bpm"])
+	level.ticks_per_beat = TICKS
+	level.beats_per_bar = 4
+	level.title = "Continuous run"
+	level.sequence_threshold = float(cfg["judgement"]["pass_credit"])
+	judge = PadJudge.new()
+	var w: Dictionary = cfg["judgement"]["windows_ms"]
+	judge.perfect_s = float(w["perfect"]) / 1000.0
+	judge.great_s = float(w["great"]) / 1000.0
+	judge.accept_s = float(w["accept"]) / 1000.0
+	judge.complete_s = float(cfg["judgement"]["hold_complete_s"])
+	judge.setup(level.notes, [])
+	energy = keep
+	over = false
+	_events = []
+	_depleted_t = -1.0
+	_over_t = -1.0
+	_next_phase_charted = false
+	phase_n = n
+	_enter(start_id, t0, true)
+
+
 func _enter(id: String, t0: float, chart_now: bool) -> void:
 	node_id = id
 	var n: Dictionary = data.nodes[id]
@@ -348,9 +377,9 @@ func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = 
 	_emit({"kind": "cues", "phase": phase_n_for, "block": b, "family": fam, "count": added.size(), "first": level.notes.size() - added.size()})
 
 
-## Global beat index of the first beat of phase number `n` (1-based).
+## Global beat index of the first beat of phase number `n` (1-based): the current phase (`phase_n`) starts at `phase_t0`; the next one 64 beats later.
 func phase_n_for_first_beat(n: int) -> int:
-	return (n - 1) * int(timing("phase_beats"))
+	return int(round(phase_t0 / beat_s)) + (n - phase_n) * int(timing("phase_beats"))
 
 
 ## Block `b` credit summary for tests and the HUD.
