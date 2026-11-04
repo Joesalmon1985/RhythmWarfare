@@ -248,12 +248,9 @@ def z_boiler(rng):
     pipe(d, [(40, 0), (40, 60), (46, 108)], w=5)
     pipe(d, [(270, 0), (270, 70), (262, 108)], w=5)
     r.torch(120, 74, r=85, power=0.8)
-    pts = [(60 + i * 12, 130 + int(10 * math.sin(i * 0.8))) for i in range(18)]  # the eel
-    r.e.line(pts, fill=(70, 120, 90, 255), width=7)
-    r.e.line([(x, y - 2) for x, y in pts], fill=(160, 210, 150, 255), width=2)
-    for i in (2, 5, 9, 13):
-        r.e.line([pts[i], (pts[i][0] + 4, pts[i][1] - 10)], fill=(150, 220, 255, 255), width=1)
-    r.e.ellipse((pts[-1][0] - 2, pts[-1][1] - 4, pts[-1][0] + 3, pts[-1][1]), fill=(255, 230, 90, 255))
+    pts = [(60 + i * 12, 130 + int(10 * math.sin(i * 0.8))) for i in range(18)]  # a ripple trail and blue sparks where the eel is (the creature itself is the portrait)
+    for i in (3, 8, 13):
+        r.e.ellipse((pts[i][0] - 14, pts[i][1] - 3, pts[i][0] + 14, pts[i][1] + 3), outline=(150, 220, 255, 200), width=1)
     r.light(pts[6][0], pts[6][1], 70, (120, 200, 255), 0.55)
     for _ in range(8):
         x, y = rng.randint(30, 290), rng.randint(40, 90)

@@ -302,6 +302,9 @@ func _fit_panel() -> void:
 func _shrink_panel() -> void:
 	if _panel != null:
 		_panel.size = Vector2(_stage_host.size.x * 0.5, 0)
+		await get_tree().process_frame  # the wrapped labels ask for their real height one frame later
+		if _panel != null:
+			_panel.size = Vector2(_stage_host.size.x * 0.5, 0)
 
 
 func _place_choices() -> void:
