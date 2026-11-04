@@ -1,6 +1,26 @@
 extends Control
-## Home: Play (the story run from the first level), Start from a reached level, and Settings. The old campaign, practice, loadout and duel
-## screens are no longer reachable from here; the developer tools stay behind one small button, shown only in the editor or with RW_DEV=1.
+## Home: Play (the continuous run from the first level), Story chapters (the finished chapter campaign, with its own saves), Start from a reached level, and
+## Settings. The military campaign, practice, loadout and duel screens are not reachable from here; the developer tools stay behind one small button, shown only in
+## the editor or with RW_DEV=1.
+
+const RUN_SCENE := "res://src/run/run_play.tscn"
+const CHAPTERS_SCENE := "res://src/scenes/story_campaign.tscn"
+const LEVELS_SCENE := "res://src/run/run_levels.tscn"
+const SETTINGS_SCENE := "res://src/scenes/settings.tscn"
+
+
+var _box: VBoxContainer
+var _title: Label
+var _buttons: Array = []  # [chapters, reached, settings, play]
+
+
+## A short window (a phone held sideways) gets a smaller title, tighter gaps and lower buttons so all four fit.
+func _fit() -> void:
+	var compact := size.y > 0.0 and size.y < 520.0
+	_title.add_theme_font_size_override("font_size", 38 if compact else 56)
+	_box.add_theme_constant_override("separation", 8 if compact else UiStyle.GAP)
+	for b in _buttons:
+		(b as Button).custom_minimum_size.y = (56.0 if b == _buttons[3] else 48.0) if compact else (76.0 if b == _buttons[3] else 60.0)
 
 
 func _ready() -> void:
@@ -16,17 +36,31 @@ func _ready() -> void:
 	box.add_theme_constant_override("separation", UiStyle.GAP)
 	box.custom_minimum_size = Vector2(460, 0)
 	centre.add_child(box)
-	box.add_child(UiStyle.title("RHYTHM WARFARE", 56))
+	_box = box
+	_title = UiStyle.title("RHYTHM WARFARE", 56)
+	box.add_child(_title)
 	var prog := Session.run_progress
 	var play := UiStyle.button("Play", func() -> void:
 		Session.run_start_node = ""
-		get_tree().change_scene_to_file("res://src/run/run_play.tscn"), 0, 76)
+		get_tree().change_scene_to_file(RUN_SCENE), 0, 76)
 	play.add_theme_font_size_override("font_size", 30)
+	play.set_meta("scene", RUN_SCENE)
 	box.add_child(play)
-	var reached := UiStyle.button("Start from a reached level", func() -> void: get_tree().change_scene_to_file("res://src/run/run_levels.tscn"))
+	var chapters := UiStyle.button("Story chapters", func() -> void: get_tree().change_scene_to_file(CHAPTERS_SCENE))
+	chapters.set_meta("scene", CHAPTERS_SCENE)
+	box.add_child(chapters)
+	var reached := UiStyle.button("Start from a reached level", func() -> void: get_tree().change_scene_to_file(LEVELS_SCENE))
+	reached.set_meta("scene", LEVELS_SCENE)
 	reached.disabled = prog.reached_ids().is_empty()
 	box.add_child(reached)
-	box.add_child(UiStyle.button("Settings", func() -> void: get_tree().change_scene_to_file("res://src/scenes/settings.tscn")))
+	var settings := UiStyle.button("Settings", func() -> void: get_tree().change_scene_to_file(SETTINGS_SCENE))
+	settings.set_meta("scene", SETTINGS_SCENE)
+	box.add_child(settings)
+	for b in [chapters, reached, settings]:
+		_buttons.append(b)
+	_buttons.append(play)
+	resized.connect(_fit)
+	_fit()
 	var note := prog.migration_note()
 	if note != "":
 		box.add_child(UiStyle.note(note, UiStyle.GOOD, 16))
