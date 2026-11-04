@@ -157,7 +157,21 @@
   {"id": "anvil_f0", "kind": "billboard", "sprite": "thing_anvil", "at": [-15, 0.8], "y": 0.5, "size": 1.0, "anim": "none"},
   {"id": "anvil_f1", "kind": "billboard", "sprite": "thing_anvil", "at": [-21, 0.8], "y": 0.5, "size": 1.0, "anim": "none"},
   {"id": "anvil_f2", "kind": "billboard", "sprite": "thing_anvil", "at": [-18, 7.2], "y": 0.5, "size": 1.0, "anim": "none"},
-  {"id": "anvil_f3", "kind": "billboard", "sprite": "thing_anvil", "at": [-23, 7.2], "y": 0.5, "size": 1.0, "anim": "none"}
+  {"id": "anvil_f3", "kind": "billboard", "sprite": "thing_anvil", "at": [-23, 7.2], "y": 0.5, "size": 1.0, "anim": "none"},
+  {"id": "lt_lava_w", "kind": "light", "at": [12, 16], "y": 0.3, "radius": 7.5, "color": "#ff5a10", "strength": 1.6},
+  {"id": "lt_lava_e", "kind": "light", "at": [26, 16], "y": 0.3, "radius": 7.5, "color": "#ff5a10", "strength": 1.6},
+  {"id": "lt_lava_s", "kind": "light", "at": [19, 27.5], "y": 0.6, "radius": 8.5, "color": "#ff7a20", "strength": 1.8},
+  {"id": "lt_furnace_mouth", "kind": "light", "at": [-26.2, 4], "y": 1.2, "radius": 7.0, "color": "#ff6a20", "strength": 1.8},
+  {"id": "lt_furnace_ladle", "kind": "light", "at": [-14, 7.2], "y": 1.5, "radius": 5.0, "color": "#ff9a40", "strength": 1.2},
+  {"id": "lt_torch_n0", "kind": "light", "at": [15.5, 0.6], "y": 2.2, "radius": 4.5, "color": "#ff8a30", "strength": 1.0},
+  {"id": "lt_torch_n1", "kind": "light", "at": [21.5, 0.6], "y": 2.2, "radius": 4.5, "color": "#ff8a30", "strength": 1.0},
+  {"id": "lt_torch_s0", "kind": "light", "at": [15.5, 7.4], "y": 2.2, "radius": 4.5, "color": "#ff8a30", "strength": 1.0},
+  {"id": "lt_torch_s1", "kind": "light", "at": [21.5, 7.4], "y": 2.2, "radius": 4.5, "color": "#ff8a30", "strength": 1.0},
+  {"id": "lt_hellmouth", "kind": "light", "at": [0, -5.6], "y": 2.4, "radius": 10.0, "color": "#ff3010", "strength": 1.6, "cone": {"yaw": 180, "angle": 40}},
+  {"id": "lt_throne", "kind": "light", "at": [30.4, 4], "y": 2.4, "radius": 6.0, "color": "#ff2020", "strength": 1.6},
+  {"id": "lt_cage_bars", "kind": "light", "at": [-30.2, 4], "y": 2.0, "radius": 5.0, "color": "#bfe0ff", "strength": 1.3, "cone": {"yaw": -90, "angle": 55}},
+  {"id": "lt_firepit_l", "kind": "light", "at": [-8.6, -1.5], "y": 1.0, "radius": 5.0, "color": "#ff6a20", "strength": 1.2},
+  {"id": "lt_firepit_r", "kind": "light", "at": [8.6, -1.5], "y": 1.0, "radius": 5.0, "color": "#ff6a20", "strength": 1.2}
  ],
  "homes": [
   {"actor": "c01", "sector": "arena", "at": [-1.12, 2.34]},
