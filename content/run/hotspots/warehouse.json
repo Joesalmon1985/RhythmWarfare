@@ -1,0 +1,46 @@
+{
+	"world": "warehouse",
+	"note": "A SAMPLE covering only the Warehouse entry scene (workstream A, the contract's reference). Workstream C replaces this file with the whole world's hotspots.",
+	"hotspots": [
+		{
+			"id": "warehouse.floor.bar_door", "world": "warehouse", "scene": "warehouse", "map": "night_one",
+			"anchor": {"waypoint": "to_bar"}, "kind": "exit", "radius_m": 1.1, "min_px": 72,
+			"available": {"flags_all": [], "flags_none": [], "energy_min": 0, "once": false},
+			"look": {"available": "open", "selected": "ring", "committed": "flash"},
+			"challenge": null,
+			"on_success": {"route": "warehouse.bar"},
+			"on_failure": {"route": "warehouse.balcony", "energy": -3},
+			"default": true, "repeatable": true
+		},
+		{
+			"id": "warehouse.floor.balcony_stair", "world": "warehouse", "scene": "warehouse", "map": "night_one",
+			"anchor": {"waypoint": "to_balcony"}, "kind": "exit", "radius_m": 1.1, "min_px": 72,
+			"available": {"flags_all": [], "flags_none": [], "energy_min": 0, "once": false},
+			"look": {"available": "glow", "selected": "ring", "committed": "flash"},
+			"challenge": null,
+			"on_success": {"route": "warehouse.balcony"},
+			"on_failure": {"route": "warehouse.bar", "energy": -3},
+			"default": false, "repeatable": true
+		},
+		{
+			"id": "warehouse.floor.wizard", "world": "warehouse", "scene": "warehouse", "map": "night_one",
+			"anchor": {"waypoint": "hatch"}, "kind": "character", "radius_m": 1.0, "min_px": 72,
+			"available": {"flags_all": [], "flags_none": [], "energy_min": 0, "once": false},
+			"look": {"available": "beckon", "selected": "ring", "committed": "flash"},
+			"challenge": {"family": "drums", "tier": 1},
+			"on_success": {"route": "trial:1", "flags_set": ["keep:met_wizard"]},
+			"on_failure": {"flags_set": ["wizard_shrugged"], "energy": -2},
+			"default": false, "repeatable": true
+		},
+		{
+			"id": "warehouse.floor.dancer", "world": "warehouse", "scene": "warehouse", "map": "night_one",
+			"anchor": {"actor": "c01"}, "kind": "character", "radius_m": 0.8, "min_px": 72,
+			"available": {"flags_all": [], "flags_none": ["danced_with"], "energy_min": 0, "once": false},
+			"look": {"available": "beckon", "selected": "ring", "committed": "flash"},
+			"challenge": {"family": "drums", "tier": 1},
+			"on_success": {"flags_set": ["danced_with"], "energy": 6, "music": "variation"},
+			"on_failure": {"flags_set": ["stumbled"], "energy": -5},
+			"default": false, "repeatable": false
+		}
+	]
+}

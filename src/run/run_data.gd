@@ -7,6 +7,7 @@ extends RefCounted
 const RUN_PATH := "res://content/run/run.json"
 const MUSIC_PATH := "res://content/story/music.json"
 const PACKS_DIR := "res://songs/packs"
+const HOTSPOTS_DIR := "res://content/run/hotspots"  # <world>.json per run world: the scenes' hotspots (HotspotContract)
 const TIERS := 4  # difficulty tiers (pack.tiers "1".."4"); a node's tier is min(depth, TIERS)
 
 var cfg: Dictionary = {}
@@ -17,6 +18,8 @@ var node_order: Array = []
 var worlds: Dictionary = {}  # world id -> {id, title, map, depth, blurb}
 var world_order: Array = []
 var packs: Dictionary = {}  # id -> pack.json (+ "dir")
+var hotspots: Dictionary = {}  # scene id -> Array of normalised hotspot dictionaries (the authored ones, else one exit per route made from the scene's doorways)
+var hotspots_authored: Dictionary = {}  # scene id -> true when its hotspots come from content/run/hotspots/<world>.json
 var errors: Array = []
 var warnings: Array = []
 
@@ -25,7 +28,7 @@ static func load_default() -> RunData:
 	return load_files(RUN_PATH, MUSIC_PATH, PACKS_DIR)
 
 
-static func load_files(run_path: String, music_path: String, packs_dir: String) -> RunData:
+static func load_files(run_path: String, music_path: String, packs_dir: String, hotspots_dir: String = HOTSPOTS_DIR) -> RunData:
 	var d := RunData.new()
 	var run: Variant = _json(run_path, d.errors)
 	var music: Variant = _json(music_path, d.errors)
@@ -77,6 +80,7 @@ static func load_files(run_path: String, music_path: String, packs_dir: String) 
 		if not d.nodes.has(id):
 			d.errors.append("music.json lists node %s that run.json does not have" % id)
 	d._validate()
+	d._load_hotspots(hotspots_dir)
 	return d
 
 
@@ -301,3 +305,73 @@ func entry_of(world: String) -> String:
 		if str(nodes[i]["world"]) == world and bool(nodes[i]["entry"]):
 			return str(i)
 	return ""
+
+
+# --- hotspots ---------------------------------------------------------------------------------------------------------------
+
+## Loads content/run/hotspots/<world>.json for every world, normalises and validates it (HotspotContract). A scene with no authored hotspot gets one exit hotspot per route, anchored on the
+## doorway the rail already knows (rail.exits), the first route the default: the run is playable and the old route graph reachable before a world's hotspots are authored.
+func _load_hotspots(dir_path: String) -> void:
+	var by_scene: Dictionary = {}
+	for w in world_order:
+		var path := dir_path.path_join("%s.json" % w)
+		if not FileAccess.file_exists(path):
+			continue
+		var v: Variant = _json(path, errors)
+		if typeof(v) != TYPE_DICTIONARY:
+			continue
+		if str(v.get("world", w)) != w:
+			errors.append("%s: world '%s' is not '%s'" % [path, v.get("world", ""), w])
+		for h in v.get("hotspots", []):
+			if typeof(h) != TYPE_DICTIONARY:
+				errors.append("%s: a hotspot is not an object" % path)
+				continue
+			var sid := str(h.get("scene", ""))
+			if not nodes.has(sid) or str(nodes[sid]["world"]) != w:
+				errors.append("%s: hotspot %s: scene '%s' is not a scene of world %s" % [path, h.get("id", ""), sid, w])
+				continue
+			if not by_scene.has(sid):
+				by_scene[sid] = []
+			by_scene[sid].append(HotspotContract.normalize(h, w, str(nodes[sid]["map"])))
+	var start_e := float((cfg.get("energy", {}) as Dictionary).get("start", 60.0))
+	for sid in node_order:
+		var n: Dictionary = nodes[sid]
+		if not by_scene.has(sid):
+			hotspots[sid] = _synth_hotspots(sid, n)
+			continue
+		hotspots[sid] = by_scene[sid]
+		hotspots_authored[sid] = true
+		var routes: Array = []
+		for e in n["next"]:
+			routes.append(str(e["to"]))
+		var required: Array = routes.duplicate()
+		for h in by_scene[sid]:  # the wizard's way into the Bassment ("trial:<passage>") is a route of its own kind
+			var r := str((h.get("on_success", {}) as Dictionary).get("route", ""))
+			if r.begins_with(HotspotContract.TRIAL_PREFIX):
+				if str(n.get("trial_gate", "")) == "":
+					errors.append("scene %s hotspot %s: the route '%s' (the Bassment) is only for a scene with a trial_gate" % [sid, h["id"], r])
+				elif not r.substr(HotspotContract.TRIAL_PREFIX.length()).is_valid_int():
+					errors.append("scene %s hotspot %s: the route '%s' needs a passage number" % [sid, h["id"], r])
+				else:
+					routes.append(r)
+		HotspotContract.validate_scene(by_scene[sid], {"where": "scene %s" % sid, "map": str(n["map"]), "world": str(n["world"]), "routes": routes, "start_energy": start_e,
+			"default_route": str(n["next"][0]["to"]) if not (n["next"] as Array).is_empty() else "", "exit_routes_required": required}, errors)
+
+
+func _synth_hotspots(sid: String, n: Dictionary) -> Array:
+	var out: Array = []
+	var first := true
+	var default_to := str(n["next"][0]["to"]) if not (n["next"] as Array).is_empty() else ""
+	for e in n["next"]:
+		var dir := str(e["dir"])
+		var wp := str((n.get("exits", {}) as Dictionary).get(dir, n.get("waypoint", "")))
+		var h := {"id": "%s.exit_%s" % [sid, dir], "scene": sid, "kind": "exit", "anchor": {"waypoint": wp}, "dir": dir, "default": first,
+			"look": {"available": "open", "selected": "ring", "committed": "flash"}, "on_success": {"route": str(e["to"])}, "on_failure": {"route": default_to}}
+		out.append(HotspotContract.normalize(h, str(n["world"]), str(n["map"])))
+		first = false
+	return out
+
+
+## The scene's hotspots in file order (normalised dictionaries).
+func hotspots_of(scene_id: String) -> Array:
+	return hotspots.get(scene_id, [])
