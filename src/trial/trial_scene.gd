@@ -34,6 +34,7 @@ var build_log: Array = []
 var _assets: StoryAssets
 var _stage_host: Control
 var _title: Label
+const PANEL_W := 0.95  # the text panel is a band across the top, so the room stays visible below it
 var _panel: PanelContainer
 var _desc: Label
 var _news: Label
@@ -113,7 +114,7 @@ func _build_ui() -> void:
 	area.add_child(_title)
 	_panel = PanelContainer.new()
 	var box := StoryStyle.panel_box(StoryStyle.EDGE)
-	box.bg_color.a = 0.78
+	box.bg_color.a = 0.6
 	_panel.add_theme_stylebox_override("panel", box)
 	_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	area.add_child(_panel)
@@ -205,7 +206,7 @@ func _layout() -> void:
 
 
 func _fit_panel() -> void:
-	var w := _area().size.x * 0.46
+	var w := _area().size.x * PANEL_W
 	_panel.custom_minimum_size = Vector2(w, 0)
 	_panel.size = Vector2(w, 0)
 	_shrink_panel.call_deferred()
@@ -213,7 +214,7 @@ func _fit_panel() -> void:
 
 func _shrink_panel() -> void:
 	if _panel != null and is_inside_tree():
-		_panel.size = Vector2(_area().size.x * 0.46, 0)
+		_panel.size = Vector2(_area().size.x * PANEL_W, 0)
 
 
 func _place_choices() -> void:

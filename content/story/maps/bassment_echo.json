@@ -69,7 +69,8 @@
    "floor_tex": "floor_flag",
    "ceil_tex": "ceil_arch",
    "wall_tex": "wall_iron",
-   "light": 0.5,
+   "light": 0.8,
+   "ambient": 0.75,
    "tint": "#c8d8f8"
   },
   {
@@ -97,7 +98,8 @@
    "floor_tex": "floor_flag",
    "ceil_tex": "ceil_rock",
    "wall_tex": "wall_rock",
-   "light": 0.4,
+   "light": 0.8,
+   "ambient": 0.75,
    "tint": "#d8e4ff"
   }
  ],

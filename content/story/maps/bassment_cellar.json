@@ -9,10 +9,10 @@
   {"tex": "wall_barrel", "mode": "flicker", "amount": 0.08, "bright": 0.1}
  ],
  "sectors": [
-  {"id": "stairs", "polygon": [[-2, 12], [2, 12], [2, 7], [-2, 7]], "floor": 1.2, "ceiling": 3.6, "floor_tex": "floor_flag", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick_dark", "light": 0.6, "tint": "#ffb060", "ambient": 0.5},
-  {"id": "hall", "polygon": [[-8, 7], [4, 7], [4, -6], [-8, -6]], "floor": 0, "ceiling": 2.9, "floor_tex": "floor_flag", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick", "light": 0.7, "tint": "#ffa850", "ambient": 0.55},
-  {"id": "bar", "polygon": [[4, 5], [10, 5], [10, -3], [4, -3]], "floor": 0.4, "ceiling": 2.7, "floor_tex": "floor_wood", "ceil_tex": "ceil_beams", "wall_tex": "wall_shelf", "light": 0.6, "tint": "#ff9a40", "ambient": 0.5},
-  {"id": "back", "polygon": [[-8, -6], [4, -6], [4, -11], [-8, -11]], "floor": 0.9, "ceiling": 2.9, "floor_tex": "floor_wood", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick_dark", "light": 0.65, "tint": "#e8a050", "ambient": 0.5}
+  {"id": "stairs", "polygon": [[-2, 12], [2, 12], [2, 7], [-2, 7]], "floor": 1.2, "ceiling": 3.6, "floor_tex": "floor_flag", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick_dark", "light": 0.8, "tint": "#ffb060", "ambient": 0.75},
+  {"id": "hall", "polygon": [[-8, 7], [4, 7], [4, -6], [-8, -6]], "floor": 0, "ceiling": 2.9, "floor_tex": "floor_flag", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick", "light": 0.8, "tint": "#ffa850", "ambient": 0.75},
+  {"id": "bar", "polygon": [[4, 5], [10, 5], [10, -3], [4, -3]], "floor": 0.4, "ceiling": 2.7, "floor_tex": "floor_wood", "ceil_tex": "ceil_beams", "wall_tex": "wall_shelf", "light": 0.8, "tint": "#ff9a40", "ambient": 0.75},
+  {"id": "back", "polygon": [[-8, -6], [4, -6], [4, -11], [-8, -11]], "floor": 0.9, "ceiling": 2.9, "floor_tex": "floor_wood", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick_dark", "light": 0.8, "tint": "#e8a050", "ambient": 0.75}
  ],
  "walls": [
   {"from": [-2, 7], "to": [2, 7], "sector": "stairs", "portal": "hall", "lower_tex": "floor_flag"},
