@@ -17,7 +17,6 @@ import unittest
 import wave
 from pathlib import Path
 
-import mido
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -25,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import export_midi as ex  # noqa: E402
 import synth  # noqa: E402
 from common import BPM, LIBRARY, PPQ, ROOT, SAMPLE_RATE, TICKS_PER_BAR, read_json, read_midi  # noqa: E402
+from midi_reader import parse_midi  # noqa: E402
 
 LEVELS = list(range(2, 11))
 NO_BASS_PHASE = {2, 4, 6, 8}
@@ -42,7 +42,20 @@ def keys(notes: list[dict]) -> list[tuple]:
 
 def track_ticks(path: Path) -> list[int]:
     """The length in ticks of every track of a MIDI file (sum of delta times, end-of-track included)."""
-    return [sum(msg.time for msg in tr) for tr in mido.MidiFile(str(path)).tracks]
+    return [tr["length"] for tr in parse_midi(path.read_bytes())["tracks"]]
+
+
+def track_notes(path: Path, index: int) -> list[dict]:
+    """The notes of one track (960 PPQ file) as {tick, duration_ticks, pitch, velocity}, paired per pitch."""
+    on: dict = {}
+    notes = []
+    for ev in parse_midi(path.read_bytes())["tracks"][index]["events"]:
+        if ev["type"] == "note_on":
+            on.setdefault(ev["note"], []).append((ev["tick"], ev["velocity"]))
+        elif ev["type"] == "note_off" and on.get(ev["note"]):
+            t0, v = on[ev["note"]].pop(0)
+            notes.append({"tick": t0, "duration_ticks": ev["tick"] - t0, "pitch": ev["note"], "velocity": v})
+    return sorted(notes, key=lambda n: (n["tick"], n["pitch"]))
 
 
 class ExportTests(unittest.TestCase):
@@ -88,8 +101,7 @@ class ExportTests(unittest.TestCase):
                 self.assertEqual(info["tempo_bpm"], BPM, p.name)
                 self.assertEqual(info["tempo_source"], "midi", p.name)
                 self.assertEqual(info["meter"], [4, 4])
-                mid = mido.MidiFile(str(p))
-                self.assertEqual(mid.type, 1)
+                self.assertEqual(parse_midi(p.read_bytes())["format"], 1)
                 if p.stem.startswith("Other"):
                     bars = LONG_BACKING.get(n, 8)
                 elif p.stem == "Arrangement_A":
@@ -104,9 +116,9 @@ class ExportTests(unittest.TestCase):
 
     def test_arrangement_has_four_named_tracks(self) -> None:
         for n in LEVELS:
-            mid = mido.MidiFile(str(self.folder(n) / "Arrangement_A.mid"))
-            self.assertEqual([t.name for t in mid.tracks[1:]], ["Kick", "Snare", "Bass", "Other"])
-            self.assertEqual(len(mid.tracks), 5)
+            mid = parse_midi((self.folder(n) / "Arrangement_A.mid").read_bytes())
+            self.assertEqual([t["name"] for t in mid["tracks"][1:]], ["Kick", "Snare", "Bass", "Other"])
+            self.assertEqual(len(mid["tracks"]), 5)
 
     # --- the A loops against the library ----------------------------------------------------------------------------
     @staticmethod
@@ -156,14 +168,9 @@ class ExportTests(unittest.TestCase):
     def test_arrangement_follows_the_phases(self) -> None:
         for n in LEVELS:
             m = read_json(ROOT / "content" / "missions_legacy" / f"level_{n:02d}.json")
-            mid = mido.MidiFile(str(self.folder(n) / "Arrangement_A.mid"))
-            per_track = {}
-            for tr in mid.tracks[1:]:
-                single = mido.MidiFile(type=1, ticks_per_beat=PPQ)
-                single.tracks.append(tr)
-                tmp = self.tmp / "one.mid"
-                single.save(str(tmp))
-                per_track[tr.name] = read_midi(tmp)["notes"]
+            arr = self.folder(n) / "Arrangement_A.mid"
+            names = [t["name"] for t in parse_midi(arr.read_bytes())["tracks"]]
+            per_track = {name: track_notes(arr, i) for i, name in enumerate(names) if i > 0}
             start = 0
             for ph in m["phases"]:
                 end = start + ph["bars"] * TICKS_PER_BAR

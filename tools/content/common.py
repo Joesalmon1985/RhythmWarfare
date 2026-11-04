@@ -9,17 +9,19 @@ import hashlib
 import json
 import math
 import subprocess
+import sys
 import tempfile
 import wave
 from collections import defaultdict
 from fractions import Fraction
 from pathlib import Path
 
-try:  # optional: only the MIDI writers and the legacy readers need it (beatshaper.py has its own fallback reader)
-    import mido
-except ImportError:  # pragma: no cover
-    mido = None
 import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from midi_reader import (MidiError, build_midi, ev_name, ev_tempo, ev_time_sig, note_events,  # noqa: E402
+                         parse_midi)
 
 ROOT = Path(__file__).resolve().parents[2]
 CONTENT = ROOT / "content"
@@ -117,36 +119,35 @@ def read_midi(path: Path, default_bpm: float = BPM) -> dict:
     and the starting silence are kept exactly; a file whose PPQ cannot be rescaled exactly to 960 is rejected. When the
     file carries no tempo the recorded `default_bpm` is used (never a guess from audio)."""
     try:
-        midi = mido.MidiFile(str(path))
-    except Exception as exc:  # noqa: BLE001 - mido raises many types for broken files
+        midi = parse_midi(path.read_bytes())
+    except (MidiError, OSError) as exc:
         raise ContentError(f"{rel(path)}: not a readable MIDI file ({exc})") from exc
-    if midi.type not in (0, 1) or midi.ticks_per_beat <= 0:
-        raise ContentError(f"{rel(path)}: only type 0/1 PPQ MIDI is supported (this is type {midi.type})")
-    scale = Fraction(PPQ, midi.ticks_per_beat)
+    if midi["format"] not in (0, 1):
+        raise ContentError(f"{rel(path)}: only type 0/1 PPQ MIDI is supported (this is type {midi['format']})")
+    division = midi["division"]
+    scale = Fraction(PPQ, division)
     notes, tempos, meters = [], [], []
-    for track in midi.tracks:
-        tick = 0
+    for track in midi["tracks"]:
         active: dict[tuple[int, int], list[tuple[int, int]]] = defaultdict(list)
-        for msg in track:
-            tick += msg.time
-            scaled = Fraction(tick) * scale
+        for msg in track["events"]:
+            scaled = Fraction(msg["tick"]) * scale
             if scaled.denominator != 1:
-                raise ContentError(f"{rel(path)}: a MIDI event at source tick {tick} does not land on the 960 PPQ grid")
+                raise ContentError(f"{rel(path)}: a MIDI event at source tick {msg['tick']} does not land on the 960 PPQ grid")
             when = int(scaled)
-            if msg.type == "note_on" and msg.velocity > 0:
-                active[(msg.channel, msg.note)].append((when, msg.velocity))
-            elif msg.type == "note_off" or (msg.type == "note_on" and msg.velocity == 0):
-                key = (msg.channel, msg.note)
+            if msg["type"] == "note_on":
+                active[(msg["channel"], msg["note"])].append((when, msg["velocity"]))
+            elif msg["type"] == "note_off":
+                key = (msg["channel"], msg["note"])
                 if not active[key]:
-                    raise ContentError(f"{rel(path)}: note-off without a note-on (pitch {msg.note} at tick {when})")
+                    raise ContentError(f"{rel(path)}: note-off without a note-on (pitch {msg['note']} at tick {when})")
                 start, vel = active[key].pop(0)
                 if when <= start:
                     raise ContentError(f"{rel(path)}: a note at tick {start} has no length")
-                notes.append({"tick": start, "duration_ticks": when - start, "pitch": msg.note, "velocity": vel})
-            elif msg.type == "set_tempo":
-                tempos.append((when, mido.tempo2bpm(msg.tempo)))
-            elif msg.type == "time_signature":
-                meters.append((when, msg.numerator, msg.denominator))
+                notes.append({"tick": start, "duration_ticks": when - start, "pitch": msg["note"], "velocity": vel})
+            elif msg["type"] == "set_tempo":
+                tempos.append((when, 60000000.0 / msg["tempo"]))
+            elif msg["type"] == "time_signature":
+                meters.append((when, msg["numerator"], msg["denominator"]))
         if any(active.values()):
             raise ContentError(f"{rel(path)}: a note is never released (missing note-off)")
     notes.sort(key=lambda n: (n["tick"], n["pitch"]))
@@ -163,38 +164,16 @@ def read_midi(path: Path, default_bpm: float = BPM) -> dict:
         "tempo_bpm": distinct[0] if distinct else float(default_bpm),
         "tempo_source": "midi" if distinct else "recorded_default",
         "meter": meter,
-        "ppq": midi.ticks_per_beat,
+        "ppq": division,
     }
 
 
 def write_midi(path: Path, notes: list[dict], name: str) -> None:
     """Write a type 1 MIDI file at 960 PPQ and 174 BPM in 4/4 (generated and derived library clips)."""
-    mid = mido.MidiFile(type=1, ticks_per_beat=PPQ)
-    meta = mido.MidiTrack()
-    meta.append(mido.MetaMessage("track_name", name=name, time=0))
-    meta.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(BPM), time=0))
-    meta.append(mido.MetaMessage("time_signature", numerator=4, denominator=4, time=0))
-    meta.append(mido.MetaMessage("end_of_track", time=0))
-    mid.tracks.append(meta)
-    track = mido.MidiTrack()
-    track.append(mido.MetaMessage("track_name", name=name, time=0))
-    events = []
-    for n in notes:
-        events.append((n["tick"], 1, mido.Message("note_on", note=n["pitch"], velocity=n["velocity"], channel=0)))
-        events.append((n["tick"] + n["duration_ticks"], 0, mido.Message("note_off", note=n["pitch"], velocity=0, channel=0)))
-    events.sort(key=lambda e: (e[0], e[1], e[2].note))
-    now = 0
-    for tick, _, msg in events:
-        msg.time = tick - now
-        now = tick
-        track.append(msg)
-    track.append(mido.MetaMessage("end_of_track", time=0))
-    mid.tracks.append(track)
+    meta = [ev_name(name), ev_tempo(BPM), ev_time_sig(4, 4)]
+    track = [ev_name(name)] + note_events(notes)
+    data = build_midi(PPQ, [meta, track], 1)
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(".mid.tmp")
-    mid.save(str(tmp))
-    data = tmp.read_bytes()
-    tmp.unlink()
     if not path.exists() or path.read_bytes() != data:
         path.write_bytes(data)
 

@@ -17,7 +17,6 @@ import unittest
 import wave
 from pathlib import Path
 
-import mido
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -25,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build  # noqa: E402
 from common import BPM, TICKS_PER_BAR, bars_to_frames, read_json, read_midi, read_wav, write_json  # noqa: E402
 from import_ableton import Importer  # noqa: E402
+from midi_reader import build_midi, ev_note_off, ev_note_on, ev_tempo, ev_time_sig  # noqa: E402
 
 SR_IN = 44100
 BAR_S = 4 * 60.0 / BPM
@@ -40,23 +40,13 @@ def wav44(path: Path, frames: np.ndarray) -> None:
 
 def midi96(path: Path, notes: list[tuple[int, int, int]], tempo: bool = False) -> None:
     """Ableton-style type 0 file at 96 PPQ: (tick, length, pitch) at 96 PPQ, no tempo unless asked."""
-    m = mido.MidiFile(type=0, ticks_per_beat=96)
-    t = mido.MidiTrack()
+    events = [ev_time_sig(4, 4)]
     if tempo:
-        t.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(120), time=0))
-    t.append(mido.MetaMessage("time_signature", numerator=4, denominator=4, time=0))
-    events = []
+        events.append(ev_tempo(120))
     for tick, length, pitch in notes:
-        events.append((tick, 1, mido.Message("note_on", note=pitch, velocity=100)))
-        events.append((tick + length, 0, mido.Message("note_off", note=pitch, velocity=0)))
-    events.sort(key=lambda e: (e[0], e[1]))
-    now = 0
-    for tick, _, msg in events:
-        msg.time = tick - now
-        now = tick
-        t.append(msg)
-    m.tracks.append(t)
-    m.save(str(path))
+        events.append(ev_note_on(tick, pitch, 100))
+        events.append(ev_note_off(tick + length, pitch))
+    path.write_bytes(build_midi(96, [events], 0))
 
 
 def clicks(bars: float, beats: list[float], level: float = 0.9, decay_s: float = 0.03) -> np.ndarray:

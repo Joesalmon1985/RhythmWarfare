@@ -31,7 +31,6 @@ What import does (details in docs/MUSIC_IMPORT.md):
 from __future__ import annotations
 
 import argparse
-import io
 import json
 import math
 import re
@@ -43,12 +42,8 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-try:  # mido is optional: without it a small built-in reader parses the exports' MIDI (type 0/1 files, note on/off, set_tempo)
-    import mido  # noqa: E402
-except ImportError:  # pragma: no cover - depends on the machine
-    mido = None
-
 from chart import check_cues, load_rules, pitch_pads  # noqa: E402
+from midi_reader import MidiError, read_midi_bytes as _read_midi_bytes  # noqa: E402
 from common import PPQ, ROOT, SAMPLE_RATE, ContentError, read_json, write_json, write_wav  # noqa: E402
 from import_recorded import db, envelope, fold_loop, onset_near, read_float_wav_bytes  # noqa: E402
 
@@ -127,81 +122,12 @@ def slug(project: str, variant: int) -> str:
     return s + (f"_v{variant}" if variant else "")
 
 
-def _vlq(data: bytes, i: int) -> tuple[int, int]:
-    v = 0
-    while True:
-        b = data[i]
-        i += 1
-        v = (v << 7) | (b & 0x7F)
-        if not b & 0x80:
-            return v, i
-
-
-def _read_midi_builtin(data: bytes) -> dict:
-    """Minimal Standard MIDI File reader used when mido is not installed. Same result as the mido path."""
-    if data[:4] != b"MThd":
-        raise ContentError("not a MIDI file (no MThd header)")
-    ntrk, division = int.from_bytes(data[10:12], "big"), int.from_bytes(data[12:14], "big")
-    if division & 0x8000:
-        raise ContentError("SMPTE time division is not supported")
-    pos = 8 + int.from_bytes(data[4:8], "big")
-    notes, tempos = [], []
-    for _ in range(ntrk):
-        if data[pos:pos + 4] != b"MTrk":
-            break
-        end = pos + 8 + int.from_bytes(data[pos + 4:pos + 8], "big")
-        i, t, status = pos + 8, 0, 0
-        on: dict = {}
-        while i < end:
-            d, i = _vlq(data, i)
-            t += d
-            if data[i] & 0x80:
-                status = data[i]
-                i += 1
-            if status == 0xFF:
-                typ = data[i]
-                ln, i = _vlq(data, i + 1)
-                if typ == 0x51 and ln == 3:
-                    tempos.append(60000000.0 / int.from_bytes(data[i:i + 3], "big"))
-                i += ln
-            elif status in (0xF0, 0xF7):
-                ln, i = _vlq(data, i)
-                i += ln
-            else:
-                kind, ch = status & 0xF0, status & 0x0F
-                n_args = 1 if kind in (0xC0, 0xD0) else 2
-                a = data[i:i + n_args]
-                i += n_args
-                if kind == 0x90 and a[1] > 0:
-                    on.setdefault((ch, a[0]), []).append((t, a[1]))
-                elif kind in (0x80, 0x90) and on.get((ch, a[0])):
-                    s0, v = on[(ch, a[0])].pop(0)
-                    notes.append({"beat": s0 / division, "dur": (t - s0) / division, "pitch": a[0], "velocity": v})
-        pos = end
-    notes.sort(key=lambda n: (n["beat"], n["pitch"]))
-    return {"notes": notes, "header_bpm": tempos[0] if tempos else None, "end_beat": max((n["beat"] + n["dur"] for n in notes), default=0.0)}
-
-
 def read_midi_bytes(data: bytes) -> dict:
-    if mido is None:
-        return _read_midi_builtin(data)
-    mid = mido.MidiFile(file=io.BytesIO(data))
-    notes, tempos = [], []
-    for tr in mid.tracks:
-        t = 0
-        on: dict = {}
-        for msg in tr:
-            t += msg.time
-            if msg.type == "note_on" and msg.velocity > 0:
-                on.setdefault((msg.channel, msg.note), []).append((t, msg.velocity))
-            elif msg.type in ("note_off", "note_on") and on.get((msg.channel, msg.note)):
-                s, v = on[(msg.channel, msg.note)].pop(0)
-                notes.append({"beat": s / mid.ticks_per_beat, "dur": (t - s) / mid.ticks_per_beat, "pitch": msg.note, "velocity": v})
-            elif msg.type == "set_tempo":
-                tempos.append(mido.tempo2bpm(msg.tempo))
-    notes.sort(key=lambda n: (n["beat"], n["pitch"]))
-    end = max((n["beat"] + n["dur"] for n in notes), default=0.0)
-    return {"notes": notes, "header_bpm": tempos[0] if tempos else None, "end_beat": end}
+    """The notes of a MIDI file in beats (the built-in reader, tools/content/midi_reader.py)."""
+    try:
+        return _read_midi_bytes(data)
+    except MidiError as exc:
+        raise ContentError(f"not a readable MIDI file ({exc})") from exc
 
 
 # --- timing -------------------------------------------------------------------------------------------------------

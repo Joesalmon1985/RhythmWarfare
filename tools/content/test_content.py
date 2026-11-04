@@ -27,6 +27,7 @@ import chart  # noqa: E402
 from common import (CONTENT, INSTRUMENTS, LIBRARY, MISSIONS, MISSIONS_LEGACY, ROOT, SONGS, TICKS_PER_BAR, bars_to_frames, read_json,  # noqa: E402
                     read_wav, sha256_file, tick_to_sample, write_json, write_midi, write_wav)
 from library import Library  # noqa: E402
+from midi_reader import build_midi, ev_note_off, ev_note_on, ev_tempo, ev_time_sig  # noqa: E402
 import mission as mission_mod  # noqa: E402
 
 FIX = CONTENT / "fixtures"
@@ -440,19 +441,15 @@ class LibraryBuildTests(unittest.TestCase):
 
     def test_bad_midi_is_rejected(self):
         mid = self.ws.lib / "groove_watch" / "snare.mid"
-        import mido
-        m = mido.MidiFile(type=1, ticks_per_beat=960)
-        t = mido.MidiTrack()
-        t.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(170), time=0))
-        t.append(mido.Message("note_on", note=38, velocity=100, time=1920))
-        t.append(mido.Message("note_off", note=38, velocity=0, time=120))
-        m.tracks.append(t)
-        m.save(str(mid))
+        def midi(*head):
+            ev = list(head) + [ev_note_on(1920, 38, 100), ev_note_off(2040, 38)]
+            return build_midi(960, [ev], 1)
+
+        mid.write_bytes(midi(ev_tempo(170)))
         res = self.ws.build()
         self.assertFalse(res["ok"])
         self.assertTrue(any("170.00 BPM" in e for e in res["errors"]), res["errors"])
-        t[0] = mido.MetaMessage("time_signature", numerator=3, denominator=4, time=0)
-        m.save(str(mid))
+        mid.write_bytes(midi(ev_time_sig(3, 4)))
         res = self.ws.build()
         self.assertTrue(any("4/4" in e for e in res["errors"]), res["errors"])
 

@@ -30,12 +30,11 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-import mido
-
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from common import (BPM, CONTENT, LIBRARY, MISSIONS_LEGACY, PPQ, ROOT, TICKS_PER_BAR, ContentError, read_json, read_midi,  # noqa: E402
                     rel)
+from midi_reader import build_midi, ev_end, ev_name, ev_tempo, ev_time_sig, note_events  # noqa: E402
 
 EXPORT_DIR = ROOT / "midi_export"
 IMPORTS_DIR = CONTENT / "imports"
@@ -403,34 +402,14 @@ def midi_bytes(tracks: list[tuple[str, list[dict]]], bars: int, title: str) -> b
     """A type 1 file at 960 PPQ: a tempo track (174 BPM, 4/4) and one named track per part. Every track ends at the last
     bar line, so a DAW imports the clip at exactly `bars` bars."""
     total = bars * TICKS_PER_BAR
-    mid = mido.MidiFile(type=1, ticks_per_beat=PPQ)
-    meta = mido.MidiTrack()
-    meta.append(mido.MetaMessage("track_name", name=title, time=0))
-    meta.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(BPM), time=0))
-    meta.append(mido.MetaMessage("time_signature", numerator=4, denominator=4, time=0))
-    meta.append(mido.MetaMessage("end_of_track", time=total))
-    mid.tracks.append(meta)
+    meta = [ev_name(title), ev_tempo(BPM), ev_time_sig(4, 4), ev_end(total)]
+    out = [meta]
     for name, notes in tracks:
-        tr = mido.MidiTrack()
-        tr.append(mido.MetaMessage("track_name", name=name, time=0))
-        events = []
         for n in notes:
             if n["tick"] + n["duration_ticks"] > total:
                 raise ContentError(f"{name}: a note runs past the end of the file")
-            events.append((n["tick"], 1, mido.Message("note_on", note=n["pitch"], velocity=n["velocity"], channel=0)))
-            events.append((n["tick"] + n["duration_ticks"], 0, mido.Message("note_off", note=n["pitch"], velocity=0, channel=0)))
-        events.sort(key=lambda e: (e[0], e[1], e[2].note))
-        now = 0
-        for tick, _, msg in events:
-            msg.time = tick - now
-            now = tick
-            tr.append(msg)
-        tr.append(mido.MetaMessage("end_of_track", time=total - now))
-        mid.tracks.append(tr)
-    import io
-    buf = io.BytesIO()
-    mid.save(file=buf)
-    return buf.getvalue()
+        out.append([ev_name(name)] + note_events(notes) + [ev_end(total)])
+    return build_midi(PPQ, out, 1)
 
 
 # --- one mission ------------------------------------------------------------------------------------------------
