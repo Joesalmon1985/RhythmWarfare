@@ -244,3 +244,19 @@ to switch packs. `beatshaper.py assign` does not cover the trial block, so after
   (a block's pass depends on its cue count more than its tier). So depth 4 is survivable at 0.8 with ease and only collapses near 0.5: it is **not hard yet** under this miss-only player. The
   survival meter (`content/run/run.json` `energy`: start 60, pass +5..11, fail -3..10) is what makes it forgiving; it is not my file, so it is untouched. Tune `fail_loss` or `pass_credit` there after a hand play.
 - Not done: nothing was listened to (the recordings prove timing and mix, not taste); the block-0 caveat above; Lv3 Hell.
+### WP-A (branch worktree-agent-a64188e6721b262ab, cut from feature/run-on-25d at da7ca3a8), 2026-11-04
+
+* **A1 verify the merge.** Suite 41,143 checks, 0 failures; chapter walk-through OK on all five paths; the 26 trial tests pass; the run recording check failed its mix fit on the Warehouse. Cause: a 2.5D stage
+  build decoded sixteen 2048 px people pages on the main thread (0.8 to 2.4 s), swallowing the cue-free guard in which the run builds the next world and delaying `RunAudio`'s gain changes. Fix:
+  `StoryPeople.prewarm()` on a worker thread (builds 0.5 to 0.7 s). Re-recorded fits within 0.01 of the table. The per-phase delay spread (15 to 25 ms) needs re-measuring on an idle machine.
+* **A2 home screen.** Play, Story chapters, Start from a reached level, Settings; the military campaign, loadout and duel (including the Loadout button in the chapter menu) are developer-only; compact
+  layout for short windows; the chapter menu is titled STORY CHAPTERS. `tests/test_run_home.gd`.
+* **A3 rails and activities.** `rail` per node in run.json; `RunRail`, `RunJourney`, `RunPassage` (pure), `RunPassageView`, `RunExitsView`; glances and strolls in every block; lit exits beside the touch
+  arrows; the world swap is a closing and opening doorway frame with a walk in from the new world's doorway. Activities were already energy-driven (confirmed by test). Route lock added for levels that chart
+  different packs (see CONTINUOUS_RUN.md). `tests/test_run_rail.gd`, `test_run_rail_scene.gd`, `test_run_lock.gd`.
+* **A4 playtests.** `tests/test_run_matrix.gd` (7 policies x seeds 1 to 3), `tools/run/walk_run.sh` (all seven levels, isolated saves), `tools/run/capture.sh` (80 screenshots in docs/shots/run),
+  `tools/run/frames.sh` and `profile_build.tscn`. Results in CONTINUOUS_RUN.md.
+* **Deviations.** The fourth rail step of a phase is cut by the world swap 3.5 beats later (the booth shows only in loops); the dense-run rule is enforced by shortening moves to 2 bars rather than moving them;
+  the world swap does not close the frame for same-world routes; frame numbers were taken on a loaded machine; the run is forgiving (accuracy 0.7 survives), tuning left to WP-C4.
+* **Merge notes.** `tests/test_run_engine.gd` and `test_run_progress.gd` were not touched here (the music branch's edits merge cleanly); `content/run/run.json` is only changed here (a `rail` per node);
+  `run_data.gd` gained one validation line (the music branch edits the chart-sibling check nearby).

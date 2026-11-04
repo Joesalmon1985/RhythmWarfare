@@ -5,8 +5,12 @@ extends Control
 const ACCENTS := [StoryStyle.MAGENTA, StoryStyle.CYAN, StoryStyle.AMBER]
 
 
+func _dev() -> bool:
+	return OS.has_feature("editor") or OS.get_environment("RW_DEV") == "1"
+
+
 func _ready() -> void:
-	var parts := StoryStyle.screen(self, "STORY CAMPAIGN", func() -> void: get_tree().change_scene_to_file("res://src/scenes/main_menu.tscn"))
+	var parts := StoryStyle.screen(self, "STORY CHAPTERS", func() -> void: get_tree().change_scene_to_file("res://src/scenes/main_menu.tscn"))
 	var content: VBoxContainer = parts["content"]
 	var chapters := StoryChapters.load_default()
 	var focus: Button = null
@@ -57,9 +61,10 @@ func _ready() -> void:
 			row.add_child(play)
 			if focus == null:
 				focus = play
-			if id == "night_one":
+			if id == "night_one" and _dev():  # the loadout screen belongs to the military campaign: developers only, like the home screen's button
 				row.add_child(UiStyle.button("Loadout", func() -> void: get_tree().change_scene_to_file("res://src/scenes/loadout.tscn"), 200, 64))
-	content.add_child(StoryStyle.note("Each set plays your Loadout: the same four pads, falling notes and music as the campaign.", StoryStyle.MUTED, 16))
+	if _dev():
+		content.add_child(StoryStyle.note("Each set plays your Loadout: the same four pads, falling notes and music as the campaign.", StoryStyle.MUTED, 16))
 	if focus != null:
 		focus.grab_focus()
 	if StoryTrace.auto_advance():  # the walk-through ends on the menu: log what it offers

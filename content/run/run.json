@@ -157,7 +157,94 @@
      "label": "The floor cracks open"
     }
    ],
-   "trial_gate": "deathtrap_opening"
+   "trial_gate": "deathtrap_opening",
+   "rail": {
+    "good": [
+     {
+      "to": "steps",
+      "role": "dancer",
+      "style": "walk",
+      "bars": 3
+     },
+     {
+      "to": "stage",
+      "role": "on_stage",
+      "style": "climb",
+      "bars": 2
+     },
+     {
+      "to": "balcony",
+      "role": "on_stage",
+      "style": "climb",
+      "bars": 4
+     },
+     {
+      "to": "booth",
+      "role": "dj",
+      "style": "walk",
+      "bars": 3
+     }
+    ],
+    "bad": [
+     {
+      "to": "floor_edge",
+      "role": "queasy",
+      "style": "walk",
+      "bars": 2
+     },
+     {
+      "to": "corridor",
+      "role": "queasy",
+      "style": "stagger",
+      "bars": 4
+     },
+     {
+      "to": "cubicle",
+      "role": "sick",
+      "style": "run",
+      "bars": 4
+     }
+    ],
+    "arrive": "door",
+    "glances": [
+     {
+      "by": -28,
+      "bars": 2
+     },
+     {
+      "pitch": 14,
+      "bars": 3
+     },
+     {
+      "by": 24,
+      "bars": 2
+     },
+     {
+      "by": -12,
+      "pitch": 8,
+      "bars": 2
+     }
+    ],
+    "strolls": [
+     {
+      "fwd": 1.6,
+      "bars": 3
+     },
+     {
+      "turn": 35,
+      "fwd": 1.0,
+      "bars": 3
+     },
+     {
+      "right": 1.4,
+      "bars": 2
+     }
+    ],
+    "exits": {
+     "up": "door",
+     "right": "tunnel"
+    }
+   }
   },
   {
    "id": "mothership",
@@ -178,7 +265,94 @@
      "dir": "right",
      "label": "Sectioned"
     }
-   ]
+   ],
+   "rail": {
+    "good": [
+     {
+      "to": "gallery_in",
+      "role": "dancer",
+      "style": "walk",
+      "bars": 3
+     },
+     {
+      "to": "reactor_in",
+      "role": "dancer",
+      "style": "walk",
+      "bars": 4
+     },
+     {
+      "to": "bridge_in",
+      "role": "on_stage",
+      "style": "walk",
+      "bars": 4
+     },
+     {
+      "to": "helm",
+      "role": "dj",
+      "style": "walk",
+      "bars": 3
+     }
+    ],
+    "bad": [
+     {
+      "to": "gallery_in",
+      "role": "queasy",
+      "style": "walk",
+      "bars": 3
+     },
+     {
+      "to": "medbay",
+      "role": "queasy",
+      "style": "stagger",
+      "bars": 4
+     },
+     {
+      "to": "exam",
+      "role": "sick",
+      "style": "carried",
+      "bars": 3
+     }
+    ],
+    "arrive": "airlock",
+    "glances": [
+     {
+      "pitch": 18,
+      "bars": 3
+     },
+     {
+      "by": 30,
+      "bars": 2
+     },
+     {
+      "by": -22,
+      "bars": 2
+     },
+     {
+      "pitch": 10,
+      "by": 14,
+      "bars": 2
+     }
+    ],
+    "strolls": [
+     {
+      "fwd": 1.5,
+      "bars": 3
+     },
+     {
+      "turn": -40,
+      "fwd": 0.9,
+      "bars": 3
+     },
+     {
+      "right": -1.3,
+      "bars": 2
+     }
+    ],
+    "exits": {
+     "left": "airlock",
+     "right": "planet_window"
+    }
+   }
   },
   {
    "id": "underworld",
@@ -199,7 +373,81 @@
      "dir": "right",
      "label": "Sectioned"
     }
-   ]
+   ],
+   "rail": {
+    "good": [
+     {
+      "to": "court_in",
+      "role": "dancer",
+      "style": "walk",
+      "bars": 4
+     },
+     {
+      "to": "throne",
+      "role": "on_stage",
+      "style": "walk",
+      "bars": 4
+     },
+     {
+      "to": "pit_stage",
+      "role": "dj",
+      "style": "climb",
+      "bars": 3
+     }
+    ],
+    "bad": [
+     {
+      "to": "furnace_chains",
+      "role": "queasy",
+      "style": "stagger",
+      "bars": 4
+     },
+     {
+      "to": "cage",
+      "role": "sick",
+      "style": "run",
+      "bars": 4
+     }
+    ],
+    "arrive": "furnace_in",
+    "glances": [
+     {
+      "by": 26,
+      "bars": 2
+     },
+     {
+      "pitch": 12,
+      "bars": 3
+     },
+     {
+      "by": -30,
+      "bars": 2
+     },
+     {
+      "pitch": -8,
+      "bars": 2
+     }
+    ],
+    "strolls": [
+     {
+      "fwd": 1.7,
+      "bars": 3
+     },
+     {
+      "turn": 30,
+      "fwd": 1.1,
+      "bars": 3
+     },
+     {
+      "right": 1.5,
+      "bars": 2
+     }
+    ],
+    "exits": {
+     "left": "furnace_in",
+     "right": "pit_in"
+    }
+   }
   },
   {
    "id": "hospital",
@@ -220,7 +468,88 @@
      "dir": "right",
      "label": "Down the long corridor"
     }
-   ]
+   ],
+   "rail": {
+    "good": [
+     {
+      "to": "corridor_in",
+      "role": "dancer",
+      "style": "carried",
+      "bars": 4
+     },
+     {
+      "to": "cafe_in",
+      "role": "dancer",
+      "style": "walk",
+      "bars": 4
+     },
+     {
+      "to": "bandstand",
+      "role": "on_stage",
+      "style": "walk",
+      "bars": 4
+     }
+    ],
+    "bad": [
+     {
+      "to": "ward_chair",
+      "role": "queasy",
+      "style": "walk",
+      "bars": 2
+     },
+     {
+      "to": "quiet",
+      "role": "queasy",
+      "style": "stagger",
+      "bars": 4
+     },
+     {
+      "to": "bed",
+      "role": "sick",
+      "style": "carried",
+      "bars": 4
+     }
+    ],
+    "arrive": "corridor_in",
+    "glances": [
+     {
+      "by": -20,
+      "bars": 2
+     },
+     {
+      "pitch": 10,
+      "bars": 3
+     },
+     {
+      "by": 28,
+      "bars": 2
+     },
+     {
+      "pitch": -6,
+      "by": 10,
+      "bars": 2
+     }
+    ],
+    "strolls": [
+     {
+      "fwd": 1.4,
+      "bars": 3
+     },
+     {
+      "turn": -30,
+      "fwd": 0.9,
+      "bars": 3
+     },
+     {
+      "right": 1.2,
+      "bars": 2
+     }
+    ],
+    "exits": {
+     "left": "dayroom",
+     "right": "garden_in"
+    }
+   }
   },
   {
    "id": "ward",
@@ -241,7 +570,82 @@
      "dir": "right",
      "label": "Back to the day room"
     }
-   ]
+   ],
+   "rail": {
+    "good": [
+     {
+      "to": "corridor_in",
+      "role": "dancer",
+      "style": "walk",
+      "bars": 4
+     },
+     {
+      "to": "art_in",
+      "role": "dancer",
+      "style": "walk",
+      "bars": 4
+     },
+     {
+      "to": "stage",
+      "role": "on_stage",
+      "style": "walk",
+      "bars": 4
+     }
+    ],
+    "bad": [
+     {
+      "to": "treat",
+      "role": "queasy",
+      "style": "stagger",
+      "bars": 4
+     },
+     {
+      "to": "quiet",
+      "role": "sick",
+      "style": "carried",
+      "bars": 3
+     }
+    ],
+    "arrive": "corridor_in",
+    "glances": [
+     {
+      "by": 22,
+      "bars": 2
+     },
+     {
+      "pitch": 12,
+      "bars": 3
+     },
+     {
+      "by": -26,
+      "bars": 2
+     },
+     {
+      "by": 12,
+      "pitch": 6,
+      "bars": 2
+     }
+    ],
+    "strolls": [
+     {
+      "fwd": 1.5,
+      "bars": 3
+     },
+     {
+      "turn": 32,
+      "fwd": 1.0,
+      "bars": 3
+     },
+     {
+      "right": -1.4,
+      "bars": 2
+     }
+    ],
+    "exits": {
+     "left": "court_in",
+     "right": "dorm"
+    }
+   }
   },
   {
    "id": "hospital_late",
@@ -262,7 +666,61 @@
      "dir": "right",
      "label": "Through the gate"
     }
-   ]
+   ],
+   "rail": {
+    "good": [
+     {
+      "to": "bandstand",
+      "role": "on_stage",
+      "style": "walk",
+      "bars": 3
+     }
+    ],
+    "bad": [
+     {
+      "to": "garden_in",
+      "role": "queasy",
+      "style": "walk",
+      "bars": 3
+     },
+     {
+      "to": "quiet",
+      "role": "sick",
+      "style": "carried",
+      "bars": 4
+     }
+    ],
+    "arrive": "garden_in",
+    "glances": [
+     {
+      "pitch": 14,
+      "bars": 3
+     },
+     {
+      "by": -24,
+      "bars": 2
+     },
+     {
+      "by": 26,
+      "bars": 2
+     }
+    ],
+    "strolls": [
+     {
+      "fwd": 1.2,
+      "bars": 3
+     },
+     {
+      "turn": 28,
+      "fwd": 0.8,
+      "bars": 3
+     }
+    ],
+    "exits": {
+     "left": "garden_in",
+     "right": "bandstand"
+    }
+   }
   },
   {
    "id": "ward_late",
@@ -283,7 +741,61 @@
      "dir": "left",
      "label": "Out to the garden"
     }
-   ]
+   ],
+   "rail": {
+    "good": [
+     {
+      "to": "stage",
+      "role": "on_stage",
+      "style": "walk",
+      "bars": 3
+     }
+    ],
+    "bad": [
+     {
+      "to": "court_in",
+      "role": "queasy",
+      "style": "walk",
+      "bars": 3
+     },
+     {
+      "to": "treat",
+      "role": "sick",
+      "style": "stagger",
+      "bars": 4
+     }
+    ],
+    "arrive": "court_in",
+    "glances": [
+     {
+      "by": 20,
+      "bars": 2
+     },
+     {
+      "pitch": 12,
+      "bars": 3
+     },
+     {
+      "by": -24,
+      "bars": 2
+     }
+    ],
+    "strolls": [
+     {
+      "fwd": 1.3,
+      "bars": 3
+     },
+     {
+      "turn": -28,
+      "fwd": 0.9,
+      "bars": 3
+     }
+    ],
+    "exits": {
+     "right": "court_in",
+     "left": "stage_edge"
+    }
+   }
   }
  ]
 }

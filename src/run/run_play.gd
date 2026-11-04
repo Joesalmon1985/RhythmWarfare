@@ -37,12 +37,12 @@ var _pause_panel: PanelContainer
 var _settings_panel: Control
 var _route_box: Control
 var _route_buttons: Dictionary = {}  # dir -> Button
-var _flash: ColorRect
 var _debug_label: Label
 var _resume_at_wall := -1.0
 var _vt := -COUNTDOWN_S
 var _ended := false
 var _over_at := -1.0
+var _prewarmed: Dictionary = {}  # world id -> true once its sheets were handed to a worker thread
 var _prebuild: Array = []  # world ids still to build (one per cue-free guard)
 var _last_guard_key := -1
 var _bot := {}
@@ -53,9 +53,15 @@ var _bot_routes: PackedStringArray = PackedStringArray()
 var _bot_route_done := -1
 var _until_phase := -1
 var _frame_ms: PackedFloat32Array = PackedFloat32Array()
+var _last_frame_us := 0
 var event_log: Array = []  # every engine event except judge/cues (scripted checks and recordings read it)
 var build_log: Array = []  # [{world, ms}] how long each world stage took to build (the main thread stalls that long)
 var phase_log: Array = []  # [{phase, node, t}] for scripted checks
+var journey: RunJourney  # the player's rails (pure logic; the scene only hands its actions to the stages)
+var journey_log: Array = []  # every journey action given to a stage: {world, t0, action, args}
+var _passage_swap := -1.0  # song time of the downbeat a world swap walks through (-1: none under way)
+var _passage: RunPassageView
+var _exits: RunExitsView
 
 
 func _ready() -> void:
@@ -71,6 +77,7 @@ func _ready() -> void:
 	if OS.has_environment("RW_RUN_UNTIL_PHASE"):
 		_until_phase = int(OS.get_environment("RW_RUN_UNTIL_PHASE"))
 	engine = RunEngine.new(data)
+	journey = RunJourney.new(data)
 	engine.begin(start)
 	proxy = StoryRun.new()
 	proxy.level = engine.level
@@ -117,7 +124,9 @@ func _build_stage(world: String) -> Dictionary:
 	var entry := StoryChapters.load_default().chapter(world)
 	var loaded := StoryData.load_file(str(entry["data"]))
 	var sd: StoryData = loaded["data"]
+	var t_art := Time.get_ticks_usec()
 	var assets := StoryAssets.load_art(sd.art)
+	var t_stage := Time.get_ticks_usec()
 	var st := StoryStage.new()
 	st.name = "Stage_" + world
 	st.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -130,15 +139,33 @@ func _build_stage(world: String) -> Dictionary:
 	proxy.data = sd
 	proxy.crowd.setup(sd)
 	st.setup(assets, sd, proxy)
+	var t_world := Time.get_ticks_usec()
 	if st.map != null:
 		st.attach_world(st.map, true)
+	var t_deck := Time.get_ticks_usec()
 	var deck := StoryDeck.new()
 	deck.setup(assets, proxy, st)
 	deck.reduced = Session.reduced_effects
 	var rec := {"stage": st, "assets": assets, "data": sd, "deck": deck, "waypoint": st.map.start_id if st.map != null else ""}
 	stages[world] = rec
-	build_log.append({"world": world, "ms": snappedf(float(Time.get_ticks_usec() - t_build) / 1000.0, 0.1)})
+	var now := Time.get_ticks_usec()
+	build_log.append({"world": world, "ms": snappedf(float(now - t_build) / 1000.0, 0.1), "parts_ms": {"data": snappedf(float(t_art - t_build) / 1000.0, 1.0), "art": snappedf(float(t_stage - t_art) / 1000.0, 1.0),
+		"stage": snappedf(float(t_world - t_stage) / 1000.0, 1.0), "world": snappedf(float(t_deck - t_world) / 1000.0, 1.0), "deck": snappedf(float(now - t_deck) / 1000.0, 1.0)}})
 	return rec
+
+
+## Decodes the people sheets of the worlds this level can lead to on worker threads (the stage build then only uploads them, see StoryPeople.prewarm).
+func _prewarm_routes(node_id: String) -> void:
+	if virtual_mode:
+		return
+	for e in data.nodes[node_id]["next"]:
+		var w := _world_of(str(e["to"]))
+		if stages.has(w) or _prewarmed.has(w):
+			continue
+		_prewarmed[w] = true
+		var entry := StoryChapters.load_default().chapter(w)
+		var sd: StoryData = StoryData.load_file(str(entry["data"]))["data"]
+		StoryPeople.prewarm(StoryAssets.load_art(sd.art))
 
 
 func _show_world(world: String) -> void:
@@ -220,16 +247,27 @@ func _build_layout(start: String) -> void:
 	add_child(hud)
 	hud.resized.connect(func() -> void: hud.stage_h = hud.size.y * (1.0 - float(Session.PAD_SIZES[clampi(Session.pad_size, 0, 2)])))
 	_build_gate()
+	_passage = RunPassageView.new()
+	_passage.name = "Passage"
+	_passage.anchor_right = 1.0
+	_passage.anchor_bottom = split
+	_passage.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_passage)
+	_exits = RunExitsView.new()
+	_exits.name = "Exits"
+	_exits.anchor_right = 1.0
+	_exits.anchor_bottom = split
+	_exits.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_exits.visible = false
+	_exits.beat_s = engine.beat_s
+	_exits.pose_fn = _exit_pose
+	_exits.now_fn = func() -> float: return hud.now_t
+	add_child(_exits)
 	_route_box = Control.new()
 	_route_box.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_route_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_route_box.visible = false
 	add_child(_route_box)
-	_flash = ColorRect.new()
-	_flash.color = Color(1, 1, 1, 0)
-	_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_flash)
 	_debug_label = Label.new()
 	_debug_label.position = Vector2(12, 8)
 	_debug_label.add_theme_font_size_override("font_size", 13)
@@ -401,7 +439,10 @@ func _process(delta: float) -> void:
 	elif not hud.countdown.is_empty():
 		hud.countdown = ""
 	if clock.state == SongClock.State.PLAYING:
-		_frame_ms.append(delta * 1000.0)
+		var now_us := Time.get_ticks_usec()  # wall time between frames (delta is clamped by the engine, so a stall would hide in it)
+		if _last_frame_us > 0:
+			_frame_ms.append(float(now_us - _last_frame_us) / 1000.0)
+		_last_frame_us = now_us
 	_advance(t, audio_t)
 	_scripted_pause(audio_t)
 	if _over_at >= 0.0 and float(Time.get_ticks_msec()) / 1000.0 >= _over_at:
@@ -434,6 +475,7 @@ func _advance(t: float, audio_t: float) -> void:
 		var bob := sin(audio_t * 2.0) * 4.0
 		_gate_btn.position.y = _gate_wizard.position.y - _gate_btn.size.y - 6.0 + bob
 	_handle(engine.update(t))
+	_update_passage(t, audio_t)
 	var rec: Dictionary = stages[active_world]
 	(rec["stage"] as StoryStage).update(audio_t, engine.energy)
 	proxy.crowd.energy = engine.energy
@@ -444,13 +486,87 @@ func _advance(t: float, audio_t: float) -> void:
 	hud.queue_redraw()
 	_prebuild_in_guard(t)
 	if _debug_label.visible:
-		_debug_label.text = "t=%6.2f phase %d (%s) block %d stage %d energy %.0f  fps %d" % [t, engine.phase_n, engine.node_id, engine.block, engine.stage, engine.energy, Engine.get_frames_per_second()]
+		_debug_label.text = "t=%6.2f phase %d (%s) block %d stage %d energy %.0f rail %s (%s)  fps %d" % [t, engine.phase_n, engine.node_id, engine.block, engine.stage, engine.energy, journey.rail.place() if journey.rail != null else "-", journey.rail.role if journey.rail != null else "-", Engine.get_frames_per_second()]
 	if _until_phase > 0 and engine.phase_n > _until_phase and not _ended:
 		_ended = true
 		print("RUN reached phase %d at %s, energy %.0f" % [engine.phase_n, engine.node_id, engine.energy])
 		print("RUN stage builds ", JSON.stringify(build_log))
+		print("RUN ", frame_stats())
+		print("RUN summary ", JSON.stringify(summary()))
 		if OS.get_environment("RW_STORY_QUIT") == "1":
 			get_tree().quit()
+
+
+## The world swap is a walk through a doorway: from beat 62 of a phase whose chosen route leads to another world the frame closes to a lit door, and it opens on the
+## new world after the downbeat. The latch is decided once per phase at beat 62 (a change of mind in the last two beats cuts instead).
+func _update_passage(t: float, audio_t: float) -> void:
+	if engine.window_open and _passage_swap < 0.0 and engine.phase_beat_at(t) >= 64.0 - RunPassage.CLOSE_BEATS and t >= 0.0:
+		var to := engine.selected_route()
+		if _world_of(to) != active_world:
+			_passage_swap = engine.t_of(64.0)
+	if _passage_swap >= 0.0 and audio_t > _passage_swap + RunPassage.OPEN_BEATS * engine.beat_s + 0.5:
+		_passage_swap = -1.0
+	_passage.set_aperture(RunPassage.aperture(audio_t, _passage_swap, engine.beat_s))
+
+
+func _exit_pose() -> Dictionary:
+	var st: StoryStage = stages[active_world]["stage"]
+	if st.player == null:
+		return {}
+	var pose := st.player.pose_at(hud.now_t)
+	return {"cam": pose["cam"], "yaw": float(pose["yaw"]) + st.free_look.offset, "pitch": float(pose.get("pitch", 0.0))}
+
+
+## The exits to light while the window is open: [{dir, glyph, at, ground, chosen}] for the routes whose doorway the rail knows.
+func exit_items() -> Array:
+	var out: Array = []
+	var st: StoryStage = stages[active_world]["stage"]
+	if st.map == null or journey.rail == null:
+		return out
+	var picked := engine.selected_route()
+	for o in engine.options():
+		var dir := str(o["dir"])
+		var wid := str(journey.rail.exits.get(dir, ""))
+		if wid == "" or not st.map.has_waypoint(wid):
+			continue
+		var w: Dictionary = st.map.waypoint(wid)
+		out.append({"dir": dir, "glyph": ARROW_GLYPH.get(dir, "?"), "at": w["at"], "ground": float(st.map.sector(str(w["sector"])).get("floor", 0.0)), "chosen": str(o["to"]) == picked})
+	return out
+
+
+## What a scripted run did, for tools/run/walk_run.sh: the levels in order, the rail places per level, the journey's moves and glances, the worlds shown.
+func summary() -> Dictionary:
+	var rails: Array = []
+	for e in journey.log:
+		rails.append("%d.%d:%s:%s" % [int(e["phase"]), int(e["block"]), str(e["node"]), str(e["place"])])
+	var moves := 0
+	var looks := 0
+	var walks := 0
+	for a in journey_log:
+		match str(a["action"]):
+			"player_move":
+				moves += 1
+			"player_look":
+				looks += 1
+			"player_walk":
+				walks += 1
+	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "rail": rails, "moves": moves, "glances": looks, "strolls": walks, "worlds": stages.keys(),
+		"energy": snappedf(engine.energy, 0.1), "reached": Session.run_progress.reached_ids()}
+
+
+## "FRAMES n mean .. p95 .. max .. ms" of the frames played so far, and how many ran over 50 ms (a stage build or a stall). Real-time runs only.
+func frame_stats() -> String:
+	if _frame_ms.is_empty():
+		return "FRAMES none (a virtual run has no real frame times)"
+	var sorted := _frame_ms.duplicate()
+	sorted.sort()
+	var sum := 0.0
+	var over := 0
+	for v in sorted:
+		sum += v
+		if v > 50.0:
+			over += 1
+	return "FRAMES %d mean %.1f p95 %.1f max %.0f ms, %d over 50 ms" % [sorted.size(), sum / sorted.size(), sorted[int(sorted.size() * 0.95)], sorted[sorted.size() - 1], over]
 
 
 func _banner(t: float) -> String:
@@ -469,7 +585,7 @@ func _prebuild_in_guard(t: float) -> void:
 	var beat := engine.phase_beat_at(t)
 	var in_block := fmod(maxf(beat, 0.0), 16.0)
 	var key := engine.phase_n * 8 + int(beat / 16.0)
-	if in_block >= 13.2 and in_block < 15.0 and key != _last_guard_key:
+	if in_block >= 12.6 and in_block < 15.0 and key != _last_guard_key:
 		_last_guard_key = key
 		for opt in engine.options():
 			var w := _world_of(str(opt["to"]))
@@ -495,6 +611,9 @@ func _scripted_pause(audio_t: float) -> void:
 
 func _handle(events: Array) -> void:
 	for ev in events:
+		if str(ev["kind"]) in ["phase_start", "block_result"]:  # the journey first: the stage already holds its actions when the scene reacts
+			for a in journey.on_event(ev, engine):
+				_journey_apply(a)
 		if str(ev["kind"]) != "judge" and str(ev["kind"]) != "cues":
 			event_log.append(ev)
 		if audio != null:
@@ -527,6 +646,7 @@ func _handle(events: Array) -> void:
 				if virtual_mode:
 					Session.run_progress.run_ended(int(ev["phase"]))
 					print("RUN over at phase %d (%s)" % [int(ev["phase"]), str(ev["node"])])
+					print("RUN summary ", JSON.stringify(summary()))
 					if OS.get_environment("RW_STORY_QUIT") == "1":
 						get_tree().quit()
 
@@ -538,22 +658,29 @@ func _on_phase_start(ev: Dictionary) -> void:
 	phase_log.append({"phase": ev["phase"], "node": ev["node"], "t": t0})
 	Session.run_progress.enter(str(ev["node"]))
 	hud.show_title("LEVEL %d" % int(ev["phase"]), str(node["title"]).to_upper(), t0)
-	var first := stages.is_empty() or active_world == ""
-	if world != active_world or t0 > 0.0 and not stages.has(world):
-		if not first:
-			_flash_world(t0)
+	var first := int(ev["phase"]) == 1
+	if world != active_world:
+		if not first and _passage_swap < 0.0:
+			_passage_swap = t0  # the route changed in the last two beats: the frame opens from shut on the new world
 		_show_world(world)
 	_gate.visible = str(node.get("trial_gate", "")) != ""  # the wizard only waits in the Warehouse
+	_prewarm_routes(str(ev["node"]))
 	var rec: Dictionary = stages[world]
 	var st: StoryStage = rec["stage"]
 	var wp := str(node["waypoint"])
-	st.apply({"t0": t0, "action": "player_role", "args": {"role": str(node["role"])}, "bar": 0.0, "block": "run", "source": "run"})
-	if wp != "" and wp != str(rec["waypoint"]):
-		st.apply({"t0": t0, "action": "player_move", "args": {"to": wp, "bars": 3.0, "style": "walk"}, "bar": 0.0, "block": "run", "source": "run"})
+	if first and wp != "" and wp != str(rec["waypoint"]):  # starting on a level whose home is not the map's start: walk there during the countdown
+		_journey_apply({"world": world, "t0": t0 - 4.0 * engine.beat_s, "action": "player_move", "args": {"to": wp, "bars": 3.0, "style": "walk"}})
 		rec["waypoint"] = wp
 	_stage_action(st, "lights_low_pulse", t0)
 	if int(ev["phase"]) == 1:
 		_stage_action(st, "doors_open", t0)
+
+
+## Hands one journey action {world, t0, action, args} to its world's stage and keeps it in the log.
+func _journey_apply(a: Dictionary) -> void:
+	journey_log.append(a)
+	var st: StoryStage = _build_stage(str(a["world"]))["stage"]
+	st.apply({"t0": float(a["t0"]), "action": str(a["action"]), "args": a["args"], "bar": 0.0, "block": "run", "source": "run"})
 
 
 func _stage_action(st: StoryStage, name: String, t0: float, args: Dictionary = {}) -> void:
@@ -576,6 +703,8 @@ func _on_mix(ev: Dictionary) -> void:
 
 
 func _on_block_result(ev: Dictionary) -> void:
+	if int(ev["block"]) == 3 and not _route_buttons.is_empty():
+		_sync_route_buttons()  # the route lock has fallen: routes with another chart pack grey out
 	var t := float(ev["t"]) + 0.2
 	if bool(ev["passed"]):
 		if int(ev["block"]) < 3:
@@ -583,14 +712,6 @@ func _on_block_result(ev: Dictionary) -> void:
 	else:
 		hud.caption("HOLDING THE MIX: HAVE ANOTHER GO", "bad", t, 2.2)
 		pad_view.show_status("Missed it: same cues again", Color(1.0, 0.75, 0.55), float(Time.get_ticks_msec()) / 1000.0)
-
-
-func _flash_world(t0: float) -> void:
-	_flash.color = Color(1, 1, 1, 0.0)
-	var tw := create_tween()
-	tw.tween_property(_flash, "color:a", 0.0, 0.0)
-	tw.tween_property(_flash, "color:a", 0.85, 0.12)
-	tw.tween_property(_flash, "color:a", 0.0, 0.5)
 
 
 func _end_fade(_t: float, seconds: float) -> void:
@@ -636,6 +757,8 @@ func _open_routes(ev: Dictionary) -> void:
 		_route_box.add_child(b)
 		_route_buttons[dir] = b
 	_route_box.visible = true
+	_exits.fade_from = float(ev["t"])
+	_exits.visible = true
 	_sync_route_buttons()
 	if audio != null:
 		for o in opts:
@@ -654,11 +777,15 @@ func _sync_route_buttons() -> void:
 			tag = "  [DEFAULT]" if engine.choice == "" else "  [CHOSEN]"
 		b.text = "%s  %s%s\n%s" % [ARROW_GLYPH.get(dir, "?"), str(data.nodes[to]["title"]), tag, str(b.get_meta("label"))]
 		b.modulate = Color(1.0, 0.95, 0.6) if chosen else Color(0.85, 0.88, 1.0, 0.9)
+		b.disabled = not engine.route_allowed(to)  # after beat 60.5 only routes that play the chart already charted
+	_exits.items = exit_items()
 	hud.route_hint = "Tap an arrow to choose where to go (arrow keys work too). Changes count until the downbeat."
 
 
 func _close_routes(_ev: Dictionary) -> void:
 	_route_box.visible = false
+	_exits.visible = false
+	_exits.items = []
 	hud.route_hint = ""
 	for c in _route_box.get_children():
 		c.queue_free()
