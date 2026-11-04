@@ -14,6 +14,7 @@ door walk, a change of world keeps the passage frame.
 * Adding music (Beat Shaper exports, one command per level): `docs/MUSIC_IMPORT.md`; what each level plays and what to export: `docs/MUSIC_HANDOFF.md`.
 * Authoring the worlds' scenes (rooms, paths, doorway waypoints, each scene's music): `tools/run/make_scenes.py`, described in `docs/CONTINUOUS_RUN.md`.
 * The Bassment, the wizard's dungeon under the club (a wizard in the Warehouse offers it; 63 passages in 16 zones, each a 2.5D map; entered and left seamlessly on the same pads, clock and music): `docs/TRIAL_OPENING.md`.
+* Wizard Duel, local wifi multiplayer: two wizards play the same notes and cast spells at each other when they pass a phrase (home > Wizard Duel, or practise alone against a scripted rival): `docs/DUEL.md`.
 * The 2.5D world, art and authoring pipeline: `docs/STORY_CAMPAIGN_HANDOVER.md`, `docs/STORY_25D_PLAN.md`, `docs/STORY_ART.md`.
 
 ```
@@ -24,6 +25,7 @@ RW_RUN_VIRTUAL=1 RW_RUN_BOT=perfect RW_RUN_UNTIL_PHASE=3 RW_STORY_QUIT=1 godot -
 godot --headless --path . -s tests/run_tests.gd -- --filter run_      # the run's tests
 godot --path . res://src/trial/trial_play.tscn                         # straight into the Bassment dungeon (RW_TRIAL_START=<passage>)
 bash tools/trial/walk_trial.sh                                          # scripted walk: Warehouse > hatch > the dungeon to the victory > back up into the Warehouse
+godot --path . res://src/duel/duel_lobby.tscn                          # the Wizard Duel lobby (host, join or practise); bash tools/duel/two_players.sh checks two processes agree
 godot --headless --path . -s tools/trial/validate.gd                   # check the dungeon's data
 godot --headless --path . -s tests/run_tests.gd -- --filter run_      # the run's tests (engine, saves, home, rails, scene, the policy matrix)
 bash tools/run/walk_run.sh                                              # the run on the real scenes, scripted, all 36 scenes of the seven worlds, isolated save (needs a display)

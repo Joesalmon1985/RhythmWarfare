@@ -7,6 +7,7 @@ const RUN_SCENE := "res://src/run/run_play.tscn"
 const CHAPTERS_SCENE := "res://src/scenes/story_campaign.tscn"
 const LEVELS_SCENE := "res://src/run/run_levels.tscn"
 const SETTINGS_SCENE := "res://src/scenes/settings.tscn"
+const DUEL_SCENE := "res://src/duel/duel_lobby.tscn"
 
 
 var _box: VBoxContainer
@@ -55,8 +56,11 @@ func _ready() -> void:
 	box.add_child(reached)
 	var settings := UiStyle.button("Settings", func() -> void: get_tree().change_scene_to_file(SETTINGS_SCENE))
 	settings.set_meta("scene", SETTINGS_SCENE)
+	var duel := UiStyle.button("Wizard Duel (wifi)", func() -> void: get_tree().change_scene_to_file(DUEL_SCENE))
+	duel.set_meta("scene", DUEL_SCENE)
+	box.add_child(duel)
 	box.add_child(settings)
-	for b in [chapters, reached, settings]:
+	for b in [chapters, reached, duel, settings]:
 		_buttons.append(b)
 	_buttons.append(play)
 	resized.connect(_fit)
