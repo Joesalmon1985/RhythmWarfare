@@ -112,7 +112,7 @@
     {
      "at_bar": 2,
      "action": "player_look",
-     "by": 24,
+     "pitch": 16,
      "bars": 3
     },
     {
@@ -134,10 +134,13 @@
      "action": "haze_burst"
     },
     {
-     "at_bar": 6,
-     "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "at_bar": 5,
+     "action": "player_walk",
+     "fwd": 1.6,
+     "bars": 3,
+     "in": [
+      "main"
+     ]
     },
     {
      "at_bar": 7,
@@ -197,10 +200,13 @@
      "else": "look_around"
     },
     {
-     "at_bar": 14,
-     "action": "player_look",
-     "by": 28,
-     "bars": 3
+     "at_bar": 13,
+     "action": "player_walk",
+     "to": "arena_edge",
+     "bars": 3,
+     "in": [
+      "main"
+     ]
     },
     {
      "at_bar": 15,
@@ -245,8 +251,11 @@
     {
      "at_bar": 18,
      "action": "player_look",
-     "by": 24,
-     "bars": 3
+     "at": "c01",
+     "bars": 2,
+     "in": [
+      "main"
+     ]
     },
     {
      "at_bar": 19,
@@ -273,10 +282,19 @@
      "bars": 2
     },
     {
+     "at_bar": 21,
+     "action": "player_walk",
+     "fwd": -1.2,
+     "bars": 3,
+     "in": [
+      "main"
+     ]
+    },
+    {
      "at_bar": 22,
      "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "pitch": -14,
+     "bars": 2
     },
     {
      "at_bar": 23,
@@ -301,15 +319,24 @@
      "group": "late"
     },
     {
-     "at_bar": 26,
+     "at_bar": 25,
      "action": "player_look",
-     "by": -24,
-     "bars": 3
+     "at": "arena_floor",
+     "bars": 2,
+     "in": [
+      "main"
+     ]
     },
     {
      "at_bar": 27,
      "action": "front_row_sway",
      "bars": 2
+    },
+    {
+     "at_bar": 28,
+     "action": "player_look",
+     "pitch": 18,
+     "bars": 3
     },
     {
      "at_bar": 29,
@@ -323,9 +350,12 @@
     },
     {
      "at_bar": 30,
-     "action": "player_look",
-     "by": 28,
-     "bars": 3
+     "action": "player_walk",
+     "fwd": 1.5,
+     "bars": 3,
+     "in": [
+      "court"
+     ]
     },
     {
      "at_bar": 31,
@@ -362,6 +392,24 @@
      "group": "circle"
     },
     {
+     "at_bar": 36,
+     "action": "player_look",
+     "at": "court_c03",
+     "bars": 2,
+     "in": [
+      "court"
+     ]
+    },
+    {
+     "at_bar": 36,
+     "action": "player_look",
+     "at": "p01",
+     "bars": 2,
+     "in": [
+      "main"
+     ]
+    },
+    {
      "at_bar": 37,
      "action": "disco_ball_on"
     },
@@ -377,9 +425,13 @@
     },
     {
      "at_bar": 38,
-     "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "action": "player_walk",
+     "right": 1.4,
+     "bars": 3,
+     "in": [
+      "main",
+      "court"
+     ]
     },
     {
      "at_bar": 39,
@@ -416,8 +468,8 @@
     {
      "at_bar": 42,
      "action": "player_look",
-     "by": -24,
-     "bars": 3
+     "pitch": -16,
+     "bars": 2
     },
     {
      "at_bar": 43,
@@ -437,10 +489,28 @@
      "action": "haze_burst"
     },
     {
+     "at_bar": 45,
+     "action": "player_look",
+     "at": "throne_steps",
+     "bars": 2,
+     "in": [
+      "court"
+     ]
+    },
+    {
      "at_bar": 46,
      "action": "player_look",
      "by": 28,
      "bars": 3
+    },
+    {
+     "at_bar": 46,
+     "action": "player_walk",
+     "fwd": 1.4,
+     "bars": 3,
+     "in": [
+      "furnace"
+     ]
     },
     {
      "at_bar": 47,
@@ -483,7 +553,7 @@
     {
      "at_bar": 50,
      "action": "player_look",
-     "by": 24,
+     "pitch": 20,
      "bars": 3
     },
     {
@@ -494,6 +564,15 @@
     {
      "at_bar": 51,
      "action": "spotlight_hero"
+    },
+    {
+     "at_bar": 52,
+     "action": "player_look",
+     "at": "pit_c01",
+     "bars": 2,
+     "in": [
+      "pit"
+     ]
     },
     {
      "at_bar": 53,
@@ -515,9 +594,12 @@
     },
     {
      "at_bar": 54,
-     "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "action": "player_walk",
+     "fwd": -1.2,
+     "bars": 3,
+     "in": [
+      "pit"
+     ]
     },
     {
      "at_bar": 55,
@@ -555,9 +637,18 @@
      "bars": 2
     },
     {
+     "at_bar": 57,
+     "action": "player_look",
+     "at": "pit_in",
+     "bars": 2,
+     "in": [
+      "pit"
+     ]
+    },
+    {
      "at_bar": 58,
      "action": "player_look",
-     "by": -24,
+     "pitch": -12,
      "bars": 3
     },
     {
@@ -573,6 +664,15 @@
      "at_bar": 59,
      "action": "piece_on",
      "piece": "ember_rain"
+    },
+    {
+     "at_bar": 60,
+     "action": "player_walk",
+     "fwd": 1.4,
+     "bars": 3,
+     "in": [
+      "pit"
+     ]
     },
     {
      "at_bar": 61,
@@ -593,7 +693,7 @@
     {
      "at_bar": 62,
      "action": "player_look",
-     "by": 28,
+     "by": -28,
      "bars": 3
     },
     {
