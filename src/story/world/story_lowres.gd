@@ -13,6 +13,9 @@ var rect: TextureRect
 var camera: Camera3D
 var world: StoryWorld
 var _env_node: WorldEnvironment
+var dither := false  # the ordered dither and palette clamp of the post-process (Session.story_dither, off with reduced effects; RW_STORY_DITHER=0|1 overrides)
+var clamp_lo := Color(0, 0, 0)
+var clamp_hi := Color(1, 1, 1)
 var post: ShaderMaterial  # queasy wobble, dimming and strobe on the finished low-res image (StoryLight.post_state feeds it)
 
 
@@ -116,7 +119,7 @@ func apply_pose(pose: Dictionary, look_offset_deg := 0.0) -> void:
 
 ## Feed the post-process from StoryLight.post_state (and the palette's colour for the bloom).
 func apply_post(st: Dictionary, flash_color := Color(0.6, 0.7, 1.0)) -> void:
-	var active := float(st["queasy"]) > 0.001 or float(st["dim"]) > 0.004 or float(st["strobe"]) > 0.001 or float(st["flash"]) > 0.002 or float(st["vignette"]) > 0.001
+	var active := dither or float(st["queasy"]) > 0.001 or float(st["dim"]) > 0.004 or float(st["strobe"]) > 0.001 or float(st["flash"]) > 0.002 or float(st["vignette"]) > 0.001
 	rect.material = post if active else null  # a plain nearest-filtered blit is cheaper than the shader
 	post.set_shader_parameter("queasy", float(st["queasy"]))
 	post.set_shader_parameter("time_s", float(st["time"]))
@@ -125,6 +128,10 @@ func apply_post(st: Dictionary, flash_color := Color(0.6, 0.7, 1.0)) -> void:
 	post.set_shader_parameter("flash", float(st["flash"]))
 	post.set_shader_parameter("vignette", float(st["vignette"]))
 	post.set_shader_parameter("flash_color", Vector3(flash_color.r, flash_color.g, flash_color.b))
+	post.set_shader_parameter("dither_on", 1.0 if dither else 0.0)
+	post.set_shader_parameter("low_size", Vector2(sub.size))
+	post.set_shader_parameter("clamp_lo", Vector3(clamp_lo.r, clamp_lo.g, clamp_lo.b))
+	post.set_shader_parameter("clamp_hi", Vector3(clamp_hi.r, clamp_hi.g, clamp_hi.b))
 
 
 func projector_pose(pose: Dictionary, look_offset_deg := 0.0) -> Dictionary:

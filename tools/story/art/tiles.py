@@ -65,6 +65,22 @@ def _png_size(path: str):
     return struct.unpack(">II", head[16:24])
 
 
+def procedural(chapter: str, out_dir: str) -> dict:
+    """The chapter's procedural pixel textures (tools/story/art/tex_<chapter>.py, built on pixeltex.py), written after the Godot bake: a tile with a baked id
+    replaces it, a new id is added. Returns {id: metres}."""
+    import importlib
+    try:
+        mod = importlib.import_module(f"art.tex_{chapter}")
+    except ModuleNotFoundError:
+        return {}
+    from . import pixeltex
+    out = {}
+    for tid, (rgb, metres) in sorted(mod.build().items()):
+        pixeltex.save(os.path.join(out_dir, tid + ".png"), rgb)
+        out[tid] = metres
+    return out
+
+
 def build(chapter: str, spec: dict | None = None) -> dict:
     """Bake the chapter's tiles with Godot and return the manifest `textures` section."""
     spec = spec or SPECS[chapter]
@@ -73,6 +89,8 @@ def build(chapter: str, spec: dict | None = None) -> dict:
     if r.returncode != 0 or "ERROR" in r.stdout + r.stderr:
         raise SystemExit("tiles: bake_tiles.gd failed\n" + r.stdout + r.stderr)
     out_dir = os.path.join(lib.ROOT, "assets", "story", chapter, "textures")
+    spec = dict(spec)
+    spec.update(procedural(chapter, out_dir))
     section = {}
     for tid in sorted(spec):
         p = os.path.join(out_dir, tid + ".png")

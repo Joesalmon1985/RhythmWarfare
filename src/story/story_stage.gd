@@ -131,6 +131,12 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	world.build(map, assets)
 	lowres.attach(world)
 	lowres.set_vignette(assets.sprite("vignette").get("tex", null))
+	lowres.dither = Session.story_dither and not reduced
+	if OS.has_environment("RW_STORY_DITHER"):
+		lowres.dither = OS.get_environment("RW_STORY_DITHER") == "1"
+	var fogc := Color.html(str(map.fog.get("color", "#08051a")))
+	lowres.clamp_lo = fogc.darkened(0.55)  # the chapter's shadow: nothing in the picture is darker than its fog in deep shadow
+	lowres.clamp_hi = Color(1, 1, 1).lerp(fogc.lightened(0.6), 0.12)
 	_overlay = lowres.add_overlay(crowds["main"], "Crowd")  # the 2D crowds are drawn inside the low-res viewport, so dancers pixelate like the world
 	for id in crowds:
 		var c: StoryCrowd = crowds[id]
