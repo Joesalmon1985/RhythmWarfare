@@ -90,6 +90,12 @@ static func _json(path: String, errors: Array) -> Variant:
 	return v
 
 
+## The name a route button shows: the room for a path inside the world, the world's title for a world exit.
+func route_title(from_id: String, to_id: String) -> String:
+	var t: Dictionary = nodes[to_id]
+	return str(t["title"]) if str(t["world"]) == str(nodes[from_id]["world"]) else str(t["world_title"])
+
+
 func tier_of(depth: int) -> int:
 	return clampi(depth, 1, TIERS)
 

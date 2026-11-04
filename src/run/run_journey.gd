@@ -7,7 +7,10 @@ extends RefCounted
 var data: RunData
 var rail: RunRail
 var node_id := ""
-var world := ""
+var world := ""  # the art world (the stage) the player is in
+var run_world := ""  # the run world (the save's id)
+var door_target := ""  # the scene a door walk was started toward ("" none)
+var skip_arrival := false  # the next phase start is a resume (the Bassment's return): the scene walks the camera itself
 var log: Array = []  # [{phase, block, node, place, kind, role, pos}] one per block decision
 var actions: Array = []  # every action emitted, with its world
 
@@ -39,22 +42,42 @@ func _tag(list: Array, w: String) -> Array:
 func _phase_start(ev: Dictionary, engine: RunEngine) -> Array:
 	var id := str(ev["node"])
 	var node: Dictionary = data.nodes[id]
-	var w := str(node["world"])
+	var w := str(node["map"])
+	var rw := str(node["world"])
 	var t0 := float(ev["t"])
 	var first := int(ev["phase"]) == 1
-	var changed := w != world
+	var changed := rw != run_world  # another world: the passage frame is shut over the swap and the camera steps in from the doorway
 	var out: Array = []
-	if id != node_id:  # a loop ("round again") keeps the player where the rail has got to
+	var new_scene := id != node_id
+	if new_scene:  # the same scene again keeps the player where the rail has got to
 		rail = RunRail.new()
 		rail.setup(id, node, float(data.cfg["timing"]["bpm"]))
 	if first:
 		out.append({"t0": t0, "action": "player_role", "args": {"role": "dancer"}})
+	elif skip_arrival:
+		skip_arrival = false
 	elif changed:
 		out.append_array(rail.arrival(t0, engine.level.notes))
+	elif new_scene:  # a path inside the world: a plain door walk, the stage stays
+		out.append_array(rail.door_walk(t0, engine.level.notes, door_target == id))
+	door_target = ""
 	out.append_array(rail.ambient(t0, int(ev["phase"]), 0, engine.level.notes))
 	node_id = id
 	world = w
+	run_world = rw
 	return _tag(out, w)
+
+
+## A path inside the world: the walk through the door toward the selected route's scene, started three beats before the phase ends (the scene latches it once per phase).
+func leave_walk(t: float, to: String, engine: RunEngine) -> Array:
+	var target: Dictionary = data.nodes[to]
+	var wp := str((target["rail"] as Dictionary).get("arrive", ""))
+	if wp == "":
+		wp = str(target["waypoint"])
+	door_target = to
+	var tagged := _tag(rail.leave(t, wp, engine.level.notes), world)
+	actions.append_array(tagged)
+	return tagged
 
 
 func _block_result(ev: Dictionary, engine: RunEngine) -> Array:

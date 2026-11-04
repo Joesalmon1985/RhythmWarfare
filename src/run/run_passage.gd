@@ -5,6 +5,7 @@ extends RefCounted
 
 const MIN_OPEN := 0.16  # the doorway's size when the frame is shut, as a share of the stage view
 const CLOSE_BEATS := 2.0
+const DOOR_BEATS := 3.0  # a path inside the world: the camera starts toward the doorway this many beats before the downbeat
 const OPEN_BEATS := 2.5
 
 

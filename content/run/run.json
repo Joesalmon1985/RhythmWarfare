@@ -575,7 +575,8 @@
       "up": "chill_door"
      }
     }
-   }
+   },
+   "trial_gate": "deathtrap_opening"
   },
   {
    "id": "warehouse.booth",
@@ -799,7 +800,7 @@
        "bars": 2
       }
      ],
-     "arrive": "deck_centre",
+     "arrive": "deck_gallery_door",
      "glances": [
       {
        "pitch": 18,
@@ -1251,7 +1252,7 @@
        "bars": 2
       }
      ],
-     "arrive": "arena_floor",
+     "arrive": "arena_tier_l",
      "glances": [
       {
        "by": 26,
@@ -1687,7 +1688,7 @@
        "bars": 2
       }
      ],
-     "arrive": "bed",
+     "arrive": "ward_door",
      "glances": [
       {
        "by": -20,
@@ -2226,7 +2227,7 @@
        "bars": 2
       }
      ],
-     "arrive": "day_centre",
+     "arrive": "day_door_a",
      "glances": [
       {
        "by": 22,
@@ -2760,7 +2761,7 @@
        "bars": 2
       }
      ],
-     "arrive": "garden_edge",
+     "arrive": "garden_door_w",
      "glances": [
       {
        "by": -20,
@@ -3113,7 +3114,7 @@
        "bars": 2
       }
      ],
-     "arrive": "stage_edge",
+     "arrive": "court_door_w",
      "glances": [
       {
        "by": 22,

@@ -60,6 +60,8 @@ var phase_log: Array = []  # [{phase, node, t}] for scripted checks
 var journey: RunJourney  # the player's rails (pure logic; the scene only hands its actions to the stages)
 var journey_log: Array = []  # every journey action given to a stage: {world, t0, action, args}
 var _passage_swap := -1.0  # song time of the downbeat a world swap walks through (-1: none under way)
+var _door_phase := -1  # the phase whose door walk (a path inside the world) was started
+var _run_world := ""  # the run world of the phase before the current one (a change closes the passage frame)
 var _passage: RunPassageView
 var _exits: RunExitsView
 var trial: TrialScene  # the Bassment, hosted here: the same scene, clock, pads and audio (docs/TRIAL_OPENING.md)
@@ -146,7 +148,12 @@ func _fatal(message: String) -> void:
 
 # --- layout ---------------------------------------------------------------------------------------------------------------
 
+## The art world (the stage key) a scene is built on; the run world (the save's id, the passage frame) is node["world"].
 func _world_of(node_id: String) -> String:
+	return str(data.nodes[node_id]["map"])
+
+
+func _run_world_of(node_id: String) -> String:
 	return str(data.nodes[node_id]["world"])
 
 
@@ -549,12 +556,20 @@ func _advance(t: float, audio_t: float) -> void:
 			get_tree().quit()
 
 
-## The world swap is a walk through a doorway: from beat 62 of a phase whose chosen route leads to another world the frame closes to a lit door, and it opens on the
+## A world change is a walk through a doorway: from beat 62 of a phase whose chosen route leads to another world the frame closes to a lit door, and it opens on the
 ## new world after the downbeat. The latch is decided once per phase at beat 62 (a change of mind in the last two beats cuts instead).
+## A path inside the world is a plain door walk (no frame, the stage stays): from beat 61 the camera walks to the doorway of the selected route, and on the downbeat on
+## through it into the next scene (RunJourney.door_walk). Also latched once per phase.
 func _update_passage(t: float, audio_t: float) -> void:
+	if engine.window_open and t >= 0.0 and _door_phase != engine.phase_n and engine.phase_beat_at(t) >= 64.0 - RunPassage.DOOR_BEATS:
+		_door_phase = engine.phase_n
+		var to0 := engine.selected_route()
+		if _run_world_of(to0) == _run_world_of(engine.node_id) and to0 != engine.node_id:
+			for a in journey.leave_walk(engine.t_of(64.0 - RunPassage.DOOR_BEATS), to0, engine):
+				_journey_apply(a)
 	if engine.window_open and _passage_swap < 0.0 and engine.phase_beat_at(t) >= 64.0 - RunPassage.CLOSE_BEATS and t >= 0.0:
 		var to := engine.selected_route()
-		if _world_of(to) != active_world:
+		if _run_world_of(to) != _run_world_of(engine.node_id):
 			_passage_swap = engine.t_of(64.0)
 	if _passage_swap >= 0.0 and audio_t > _passage_swap + RunPassage.OPEN_BEATS * engine.beat_s + 0.5:
 		_passage_swap = -1.0
@@ -602,7 +617,12 @@ func summary() -> Dictionary:
 				looks += 1
 			"player_walk":
 				walks += 1
-	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "rail": rails, "moves": moves, "glances": looks, "strolls": walks, "worlds": stages.keys(),
+	var worlds_seen: Array = []
+	for p in phase_log:
+		var wid := str(data.nodes[str(p["node"])]["world"])
+		if worlds_seen.is_empty() or worlds_seen[worlds_seen.size() - 1] != wid:
+			worlds_seen.append(wid)
+	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "worlds_seen": worlds_seen, "rail": rails, "moves": moves, "glances": looks, "strolls": walks, "worlds": stages.keys(),
 		"energy": snappedf(engine.energy, 0.1), "reached": Session.run_progress.reached_ids()}
 
 
@@ -706,16 +726,21 @@ func _handle(events: Array) -> void:
 
 func _on_phase_start(ev: Dictionary) -> void:
 	var node: Dictionary = data.nodes[str(ev["node"])]
-	var world := str(node["world"])
+	var world := str(node["map"])
 	var t0 := float(ev["t"])
 	phase_log.append({"phase": ev["phase"], "node": ev["node"], "t": t0})
-	Session.run_progress.enter(str(ev["node"]))
-	hud.show_title("LEVEL %d" % int(ev["phase"]), str(node["title"]).to_upper(), t0)
+	Session.run_progress.enter(str(node["world"]))  # "reached" is per world: a restart begins at the world's entry scene
 	var first := int(ev["phase"]) == 1
+	var world_changed := not first and str(node["world"]) != _run_world
+	if world_changed or first:
+		hud.show_title("%s   LEVEL %d" % [str(node["world_title"]).to_upper(), int(ev["phase"])], str(node["title"]).to_upper(), t0)
+	else:
+		hud.show_title(str(node["world_title"]).to_upper(), str(node["title"]).to_upper(), t0)
+	if world_changed and _passage_swap < 0.0:
+		_passage_swap = t0  # the route changed in the last two beats: the frame opens from shut on the new world
 	if world != active_world:
-		if not first and _passage_swap < 0.0:
-			_passage_swap = t0  # the route changed in the last two beats: the frame opens from shut on the new world
 		_show_world(world)
+	_run_world = str(node["world"])
 	_gate.visible = str(node.get("trial_gate", "")) != "" and trial_state == ""  # the wizard only waits in the Warehouse
 	_prewarm_routes(str(ev["node"]))
 	var rec: Dictionary = stages[world]
@@ -828,7 +853,7 @@ func _sync_route_buttons() -> void:
 		var tag := ""
 		if chosen:
 			tag = "  [DEFAULT]" if engine.choice == "" else "  [CHOSEN]"
-		b.text = "%s  %s%s\n%s" % [ARROW_GLYPH.get(dir, "?"), str(data.nodes[to]["title"]), tag, str(b.get_meta("label"))]
+		b.text = "%s  %s%s\n%s" % [ARROW_GLYPH.get(dir, "?"), data.route_title(engine.node_id, to), tag, str(b.get_meta("label"))]
 		b.modulate = Color(1.0, 0.95, 0.6) if chosen else Color(0.85, 0.88, 1.0, 0.9)
 		b.disabled = not engine.route_allowed(to)  # after beat 60.5 only routes that play the chart already charted
 	_exits.items = exit_items()
@@ -971,7 +996,7 @@ func _close_settings() -> void:
 func _retry() -> void:
 	if audio != null:
 		audio.stop()
-	Session.run_start_node = engine.node_id
+	Session.run_start_node = _run_world_of(engine.node_id)  # a restart begins at the world's entry scene (its id is the world's id)
 	get_tree().reload_current_scene()
 
 
@@ -1073,6 +1098,7 @@ func trial_leave(t_swap: float, reason: String) -> void:
 	var node := "warehouse" if data.nodes.has("warehouse") else engine.node_id
 	var w := _world_of(node)
 	_show_world(w)
+	journey.skip_arrival = true  # the walk below puts the camera back on the floor: no door walk for the resumed scene
 	engine.resume(node, t_swap)
 	pad_view.setup(engine.level, clock)
 	pad_view.holding_fn = engine.judge.hold_progress

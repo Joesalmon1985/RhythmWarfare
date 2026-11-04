@@ -67,7 +67,8 @@ func _draw() -> void:
 		draw_rect(r, Color(0.35, 1.0, 0.8, 0.9) if on else (Color(0.3, 0.55, 0.9, 0.7) if done else Color(0.12, 0.14, 0.26, 0.8)))
 	_outlined(Vector2(px, py + fs * 1.35), str(labels[engine.stage]["label"]).to_upper() + "  -  " + ("DRUM CUES" if str(labels[engine.stage]["cue"]) == "drums" else "BASS CUES"), int(fs * 0.7), Color(0.9, 0.93, 1.0, 0.9))
 	var node: Dictionary = data.nodes[engine.node_id]
-	_outlined(Vector2(px, py + fs * 2.3), "%s   LEVEL %d" % [str(node["title"]).to_upper(), engine.phase_n], int(fs * 0.7), Color(1.0, 0.82, 0.5, 0.9))
+	_outlined(Vector2(px, py + fs * 2.3), "%s   LEVEL %d" % [str(node["world_title"]).to_upper(), engine.phase_n], int(fs * 0.7), Color(1.0, 0.82, 0.5, 0.9))
+	_outlined(Vector2(px, py + fs * 3.2), str(node["title"]).to_upper(), int(fs * 0.62), Color(1.0, 0.9, 0.7, 0.78))
 	# captions
 	var y := sz.y * 0.2
 	for c in captions:

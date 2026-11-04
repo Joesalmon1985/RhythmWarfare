@@ -6,8 +6,8 @@ extends RefCounted
 ## bass enters, drums return, bass strongest). At each block's decision beat the block is judged: a pass moves the stage one step on, a
 ## miss holds the stage (and so the cue family) for the next block. The phase length never changes; the last block carries the
 ## direction choice. Cues are appended to `level.notes` one block ahead (the judge, pad view and note lane read the growing list), and
-## the first block of the next phase is charted before the route is committed: siblings share one chart (RunData checks it), so it does
-## not depend on the choice.
+## the first block of the next phase is charted at the last block's decision from the selected route (the default, or the player's pick), and the chart is then locked: a route
+## whose scene charts another pack can no longer be chosen. A scene is one phase at a place in a world; a world is a small graph of scenes (RunData).
 ##
 ## Everything is a function of (song time, the judge's results, the player's choice), so any frame step, a pause or a calibration change
 ## gives the same events at the same song times.
@@ -125,6 +125,7 @@ func resume(start_id: String, t0: float) -> void:
 
 
 func _enter(id: String, t0: float, chart_now: bool) -> void:
+	var prev := node_id if phase_n > 0 else ""
 	node_id = id
 	var n: Dictionary = data.nodes[id]
 	depth = int(n["depth"])
@@ -145,8 +146,8 @@ func _enter(id: String, t0: float, chart_now: bool) -> void:
 		_chart_block(0, 0, depth)
 	_next_phase_charted = false
 	_next_block_notes[0] = true
-	_emit({"kind": "phase_start", "node": id, "depth": depth, "t": t0, "phase": phase_n, "treatment": n["treatment"], "audio": n["audio"],
-		"temporary": n["temporary"], "fresh": phase_n == 1})
+	_emit({"kind": "phase_start", "node": id, "world": n["world"], "scene": n["scene"], "from": prev, "depth": depth, "t": t0, "phase": phase_n, "treatment": n["treatment"],
+		"audio": n["audio"], "temporary": n["temporary"], "fresh": phase_n == 1})
 	_emit({"kind": "mix", "stage": 0, "t": t0, "gains": cfg["stages"][0]["gains"], "cue": cfg["stages"][0]["cue"]})
 
 
@@ -163,13 +164,15 @@ func _decision_beat() -> float:
 	return maxf(timing("decision_beat"), timing("cue_span_beats") + judge.accept_s / beat_s + 0.05)
 
 
-## The routes out of the current node: [{to, dir, label, default}].
+## The routes out of the current scene: [{to, dir, label, default, in_world, title}]: the paths inside the world, or at the exit scene the other worlds.
 func options() -> Array:
 	var out: Array = []
 	var first := true
 	for e in data.nodes[node_id]["next"]:
 		var o: Dictionary = (e as Dictionary).duplicate()
 		o["default"] = first
+		o["in_world"] = str(data.nodes[str(e["to"])]["world"]) == str(data.nodes[node_id]["world"])
+		o["title"] = data.route_title(node_id, str(e["to"]))
 		first = false
 		out.append(o)
 	return out
@@ -252,7 +255,8 @@ func update(t: float) -> Array:
 func _commit() -> void:
 	var to := selected_route()
 	var t0 := t_of(timing("phase_beats"))
-	_emit({"kind": "route_commit", "from": node_id, "to": to, "chosen": choice != "", "t": t0, "treatment": data.nodes[to]["treatment"]})
+	_emit({"kind": "route_commit", "from": node_id, "to": to, "chosen": choice != "", "t": t0, "treatment": data.nodes[to]["treatment"],
+		"same_world": str(data.nodes[to]["world"]) == str(data.nodes[node_id]["world"])})
 	window_open = false
 	_enter(to, t0, false)
 
@@ -297,7 +301,7 @@ func _decide(b: int, t_dec: float) -> void:
 			_emit({"kind": "route_window", "t": t_of(boundary_beat), "effect": "riser" if stage == 3 else "fall", "options": options(),
 				"default": default_route(), "stage": stage})
 	else:
-		# the last block is over: chart the next phase's first block now (siblings share a chart, so the route does not matter)
+		# the last block is over: chart the next phase's first block now from the selected route, and lock it
 		_chart_next_phase()
 
 
