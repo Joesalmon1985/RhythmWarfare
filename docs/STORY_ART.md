@@ -531,3 +531,10 @@ family and staff only, ten per room plus arrivals; the private room's rear crowd
 one sheet (`RW_ARCHS=dad,granny RW_VARIANT=a` for `close`); `tools/story/shoot_hp_run.sh <out> name:policy:bar[:ENV=V,...] ...` takes real screenshots of the running
 chapter (virtual clock, scripted input) and `name:interlude:<seconds>` of the waking cutscene (it shoots on the fourth frame: the cutscene runs on the wall clock).
 `tools/story/shoot_chapter.sh hospital <mode>` with `RW_VIEW=corridor|cafeteria|garden` still works for single sheets.
+
+## 2.5D texture tiles (Night One)
+
+`assets/story/<chapter>/textures/*.png` (64 or 128 px, listed in the manifest section `textures`) are cropped out of the chapter's own SVG art by `tools/story/bake_tiles.gd`
+(headless Godot: `Image.load_svg_from_string`, crop, resample; recipes in the script), run by `build_assets.py` (`build_assets.py tiles` rebuilds only them; set `GODOT=` if the
+binary is not in `~/godot`). Walls come from the backdrop (panelling, LED screen, door, bar shelf), the woofer SVG and the plinth; floors from the LED floor cells and `riser.svg`;
+the toilets, which have no art, are palette fills and a teal-shifted copy of the entrance door. `check_assets.py` checks the tiles and (with `--determinism`) that a rebuild is byte-identical.
