@@ -123,3 +123,16 @@ WP-A and WP-C1/C2 can start as soon as you answer 2.1; the dungeon waits on 2.2,
 - The dungeon's book-derived structure (2.4) is a rights question only you can settle; everything else in this plan is engine work.
 - Frame time: a second scheduler and door lighting add little, but the dungeon zones are more maps with sheets; keep the 16 ms ceiling.
 - Music: everything beyond the Warehouse and Mothership is a stand-in until you export; the game will sound like two songs until then.
+
+## 7. Progress log
+
+- **WP-B (dungeon rename and curation), done on the worktree branch cut from `feature/run-on-25d` (`da7ca3a8`).** The dungeon is now **The Bassment**, an original trial the wizard
+  runs under the club: 63 hand-authored passages in 16 zones, 10 creatures, 7 luck tests, 6 deaths plus the defeat passage, 3 items that open secrets (a shortcut past the Fungus Farm, a
+  way past the bouncer, a hidden seam past the gargoyle), one victory, and a final test of a held bass note then the Echo instead of a lock. The default choices alone walk 30 passages
+  from the hatch to the victory. Removed from the working tree: `content/trial/{book_graph,book_text,quest_map}.json`, `src/trial/trial_book.gd`, the OCR build scripts,
+  `docs/TRIAL_{FULL_BOOK,QUEST_MAP,PASSAGES}.md`, `docs/trial_quest_map.png`, the portraits copied from the owner's other repository and the status footer (git history still holds them).
+  New: `tools/trial/make_scenes.py` and `make_creatures.py`; the validator now walks and checks the graph; the data format gained `items`, `grants` and `requires` (small, tested) and
+  `music.fight_audio` / `fight_chart` (read and validated, equal to the dungeon's pack for now; the scene does not switch packs yet). `docs/TRIAL_OPENING.md` is the single dungeon doc;
+  `tests/test_trial.gd` has 32 tests. Still to do after the merge: the run files still call the dungeon "the Trial" (`src/run/run_play.gd` button text and comments, `content/run/run.json`
+  `trial_gate` value `deathtrap_opening`); assign the owner's `dd_part1` and `dd_part2` packs in `content/trial/passages.json` `music`; the flat screen has not moved into 2.5D (WP-B2 to B4
+  stay deferred).
