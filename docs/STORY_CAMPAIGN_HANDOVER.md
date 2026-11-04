@@ -1,10 +1,10 @@
 # Story Campaign: handover (2.5D version)
 
-> The player-facing game is now the continuous run (`docs/CONTINUOUS_RUN.md`). This document describes the 2.5D worlds, their art and the older chapter-by-chapter mode, which is no longer reachable from the home screen but whose worlds, rooms, crowds and camera the run reuses.
+> The player-facing game is now the continuous run (`docs/CONTINUOUS_RUN.md`). This document describes the 2.5D worlds, their art and the chapter-by-chapter mode, which is kept on the home screen as "Story chapters" (the run is the game under "Play"; chapters keep their own saves) and whose worlds, rooms, crowds and camera the run reuses.
 
 Branch `feature/story-25d` (from `feature/story-campaign-night-one`; the painted 2D version is intact on that branch). Briefs: `docs/STORY_CAMPAIGN_PRD.md` (original), `docs/STORY_25D_PLAN.md`
 (the 2.5D plan; section 13 is the progress log with every convention), `docs/STORY_25D_ART_DIRECTION.md` (the owner's art notes: layout variety, movement frequency, figures doing things, the pixel look).
-The military Campaign, Continue, Practice, Loadout, Settings, Developer and the legacy duel are untouched.
+The military Campaign, Continue, Practice, Loadout, Settings and Developer are untouched; the Wizard Duel (`docs/DUEL.md`) is a separate home button.
 
 ## What a player gets
 

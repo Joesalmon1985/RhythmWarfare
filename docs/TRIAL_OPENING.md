@@ -128,7 +128,7 @@ Everything about the dungeon lives in `content/trial/passages.json`. A passage:
 "37": {
   "title": "The Rope Ledge",
   "zone": "pit",                            // an id from "zones" (name, one-line look, tier, scene)
-  "scene": "pit",                           // an id from "scenes" (a 1280x720 file under assets/trial/scenes/)
+  "scene": "pit",                           // an id from "scenes" (only an id now: the flat pictures were deleted; each zone is a 2.5D map)
   "kind": "normal",                         // normal | death | victory
   "tier": 3,                                // 1 to 4, equal to its zone's tier (the validator checks), rising with depth
   "text": "Two to four sentences of description.",
@@ -177,7 +177,9 @@ owner's `dd_part1` and `dd_part2`), point `audio`/`chart` at the ambient set and
   furnace, doorway, ladder, rope, cables, skull, coat rack, valve, bones, stove, hand, glow, sign) and the figures `fig_<creature>_<idle|attack|struck>` (the ten creatures of
   `tools/trial/make_creatures.py` enlarged, with a lunging attack frame and the flashed struck frame) and the wizard. Deterministic. The creatures are billboards in the room (a deviation from
   the wardrobe and sheet pipeline: they need no skeleton); the player's hands are not shown.
-* **Flat pictures**: `assets/trial/scenes/*.png` (`tools/trial/make_scenes.py`) are no longer shown; the data still names them and the generator is kept for the polish agent to delete or reuse.
+* **Flat pictures**: deleted in the bring-to-main pass. Only `assets/trial/scenes/stacks.png` remains, the Wizard Duel's backdrop (`src/duel/duel_play.gd`); `tools/trial/make_scenes.py` can still redraw it (it would redraw the others too: delete those again). The `scenes` block of `passages.json` keeps its ids and legacy `file` paths, which the data validator no longer checks.
+* **Text panel and light**: the passage text is a band across the top of the view (95 % wide, 60 % opaque), not a block over a third of it; the warren, echo chamber and cellar maps have a minimum `light` of 0.8 and `ambient` of 0.75 per sector. The other zones were not changed (a visual polish of the Bassment is still due).
+* **Fights**: `dd_part2` is named in `music.fight` of `passages.json`, but the scene still plays the one pack (`dd_part1`); the fight pack is not switched to.
 
 ## How it is built
 

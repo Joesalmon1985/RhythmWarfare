@@ -4,7 +4,7 @@ A rhythm game in landscape for phones: play four illuminated pads in time with a
 2.5D, Doom-style worlds (a warehouse club, an alien mothership, an underworld arena, a night hospital, a ward). The story is one continuous run: every world is a
 series of rooms (scenes) and each scene is a 64-beat phase that starts with drums alone, brings the bass in as you play well, brings the drums back, then lets the bass take over while you choose which way to go
 next. Good play keeps the mix building, a missed block holds it for another go, and the crowd's energy is the meter that ends the run if it runs out. Standalone Godot 4.5.1
-project. Home has four buttons: Play (the run), Story chapters (the finished chapter-by-chapter campaign, with its own saves), Start from a reached level, Settings.
+project. Home has five buttons: Play (the run), Story chapters (the finished chapter-by-chapter campaign, with its own saves), Start from a reached level, Wizard Duel (wifi) (two phones or windows on one network, or practise alone), Settings.
 Inside the run the camera rides a rail through each world: a pass at a block steps you one place up the room (floor, steps, stage, balcony, booth), a miss steps you down
 the bad rail (floor edge, corridor, cubicle), and the route window lights the room's exits beside the touch arrows. Each world is a small graph of rooms with paths to choose between
 (the Warehouse floor > bar or balcony > chill-out or booth > the door; 3 to 5 phases, 66 to 110 s, each room with its own variant of the world's music); a path inside a world is a plain
@@ -26,6 +26,8 @@ godot --headless --path . -s tests/run_tests.gd -- --filter run_      # the run'
 godot --path . res://src/trial/trial_play.tscn                         # straight into the Bassment dungeon (RW_TRIAL_START=<passage>)
 bash tools/trial/walk_trial.sh                                          # scripted walk: Warehouse > hatch > the dungeon to the victory > back up into the Warehouse
 godot --path . res://src/duel/duel_lobby.tscn                          # the Wizard Duel lobby (host, join or practise); bash tools/duel/two_players.sh checks two processes agree
+GODOT=<godot> bash tools/duel/two_players.sh                              # the duel: two headless processes over loopback must agree (PASS: both phones agree)
+godot --headless --path . -s tools/duel/simulate.gd -- 5 adept apprentice   # scripted duels, for tuning duel.json
 godot --headless --path . -s tools/trial/validate.gd                   # check the dungeon's data
 godot --headless --path . -s tests/run_tests.gd -- --filter run_      # the run's tests (engine, saves, home, rails, scene, the policy matrix)
 bash tools/run/walk_run.sh                                              # the run on the real scenes, scripted, all 36 scenes of the seven worlds, isolated save (needs a display)
@@ -37,7 +39,7 @@ godot --headless --path . -s tools/story/record_music.gd -- <out> 70 res://src/r
 python tools/story/check_run_audio.py <out>                             # fit the recording to the mix the engine reported
 ```
 
-The chapter campaign is reachable from home as "Story chapters" (`docs/STORY_CAMPAIGN_HANDOVER.md`). The military campaign, the loadout and the legacy duel are not on the home
+The chapter campaign is reachable from home as "Story chapters" (`docs/STORY_CAMPAIGN_HANDOVER.md`) and the Wizard Duel as its own button (`docs/DUEL.md`). The military campaign and the loadout are not on the home
 screen (nor is the loadout button in the chapter menu); their code is still in the repository (the art pipeline, the tests and the developer button, shown only in the editor
 or with `RW_DEV=1`, use it); the run does not depend on it.
 
