@@ -103,12 +103,6 @@ func pieces(view_id := "main") -> Array:
 	return view(view_id).get("pieces", [])
 
 
-## True when this art set gives piece pivots in design px relative to the piece's pos (the Underworld's convention, stated in its
-## manifest's pieces_note); otherwise they are texture px (the Mothership and Night One).
-func pivot_in_design_px() -> bool:
-	return str(manifest.get("stage", {}).get("pieces_note", "")).contains("design px")
-
-
 func all_pieces() -> Array:
 	var out: Array = []
 	for v in view_ids():
@@ -125,14 +119,14 @@ func interlude_anchor(key: String, default: Variant = null) -> Variant:
 	return manifest.get("interlude", {}).get("anchors", {}).get(key, default)
 
 
-func layer(id: String) -> Dictionary:
+func layer(id: String) -> Dictionary:  # the backdrop layer is the Story Campaign menu's thumbnail
 	for l in manifest.get("stage", {}).get("layers", []):
 		if str(l.get("id", "")) == id:
 			return l
 	return {}
 
 
-## The extra rooms of a chapter with a moving camera (manifest stage.views); "main" is the stage itself.
+## The rooms of a chapter that own set pieces (manifest stage.views, each {id, pieces}); "main" is the first room.
 func view_ids() -> Array:
 	var out: Array = ["main"]
 	for v in manifest.get("stage", {}).get("views", []):
@@ -145,30 +139,3 @@ func view(id: String) -> Dictionary:
 		if str(v["id"]) == id:
 			return v
 	return {}
-
-
-func view_layers(view_id: String) -> Array:
-	if view_id == "main":
-		return manifest.get("stage", {}).get("layers", [])
-	return view(view_id).get("layers", [])
-
-
-## An anchor of a room. The main room reads stage.anchors; another room only its own (a missing optional anchor means that
-## room has no such feature, e.g. no LED screen), never the main room's.
-func anchor(key: String, default: Variant = null, view_id := "main") -> Variant:
-	if view_id == "main":
-		return manifest.get("stage", {}).get("anchors", {}).get(key, default)
-	return view(view_id).get("anchors", {}).get(key, default)
-
-
-## Floor row interpolation: depth 0 (back) to 1 (front) -> {y, scale}.
-func floor_at(depth: float, view_id := "main") -> Dictionary:
-	var rows: Array = anchor("floor_rows", [], view_id)
-	if rows.is_empty():
-		return {"y": 300.0 + depth * 140.0, "scale": 0.55 + depth * 0.45}
-	var f := clampf(depth, 0.0, 1.0) * float(rows.size() - 1)
-	var i := mini(int(floor(f)), rows.size() - 2)
-	var u := f - float(i)
-	var a: Dictionary = rows[i]
-	var b: Dictionary = rows[i + 1]
-	return {"y": lerpf(float(a["y"]), float(b["y"]), u), "scale": lerpf(float(a["scale"]), float(b["scale"]), u)}

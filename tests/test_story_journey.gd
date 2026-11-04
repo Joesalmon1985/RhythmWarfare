@@ -74,13 +74,12 @@ func test_camera_node_follows_the_rail_at_any_frame_step_and_freezes_on_pause() 
 	assert_eq(finals[0], finals[2], "and a ragged step agrees")
 
 
-func test_stage_hides_the_2d_room_art_when_the_world_is_active() -> void:
+func test_the_crowd_is_drawn_inside_the_low_res_viewport() -> void:
 	var stage := _stage_with_world(true)
 	stage.update(1.0, 50.0)
-	var v: StoryView = stage.views["main"]
-	assert_false(stage._root.visible, "the painted room is gone")
-	assert_true(v.crowd.world_mode, "the crowd lives in the world")
-	assert_true(v.crowd.get_parent() is CanvasLayer and v.crowd.get_parent().get_parent() == stage.lowres.sub, "and is drawn inside the low-res viewport")
+	var c: StoryCrowd = stage.crowds["main"]
+	assert_true(c.world_mode, "the crowd lives in the world")
+	assert_true(c.get_parent() is CanvasLayer and c.get_parent().get_parent() == stage.lowres.sub, "and is drawn inside the low-res viewport")
 	stage.queue_free()
 
 

@@ -446,8 +446,6 @@ func _on_action(a: Dictionary) -> void:
 			if d["id"] == a["args"]["decision"] and str(d["text"]) != "":
 				_hud.show_toast(str(d["text"]), "good" if str(a["args"]["outcome"]) == "good" else "bad", float(a["t0"]))
 				break
-	elif a["action"] == "move_to" and stage.moving_camera:
-		_hud.cut_toast(float(a["t0"]))
 	elif a["action"] == "ending":
 		var e: Dictionary = run.data.endings[a["args"]["ending"]]
 		_hud.show_toast(str(e["title"]).to_upper(), "end", float(a["t0"]), 1.0e6)

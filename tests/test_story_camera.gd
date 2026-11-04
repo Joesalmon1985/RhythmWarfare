@@ -1,105 +1,91 @@
 extends TestCase
-## The moving camera: rooms (views), forward dolly and turn moves, the active crowd following the camera, determinism at a given song
-## time, restart, and Night One staying fixed. Uses a synthetic second room built from Night One's own art so it needs no new assets.
+## The camera in the world: one crowd per room, the crowd directions following the room the player walks into (and keeping the last crowd room when the player
+## goes somewhere with no crowd), the room's own light, head glances on top of the rail, determinism at a given song time and restart. Uses the Mothership,
+## which has four crowd rooms and a medical bay without one.
 
 
-func _stage_with_room(extra: bool) -> Dictionary:
-	var run := StoryRun.create({})
-	var assets := StoryAssets.load_default()
-	if extra:
-		var st: Dictionary = assets.manifest["stage"]
-		st["views"] = [{"id": "alt", "layers": st["layers"], "anchors": st["anchors"].duplicate(true), "pieces": [], "palette_hint": "cool"}]
-		st["views"][0]["anchors"]["vanish"] = [500, 140]
+func _stage() -> StoryStage:
+	var run := StoryRun.create({}, "res://content/story/mothership.json")
 	var stage := StoryStage.new()
 	stage.size = Vector2(1280, 460)
 	tree.root.add_child(stage)
-	stage.setup(assets, run.data, run)
-	return {"stage": stage, "run": run}
+	stage.setup(StoryAssets.load_art(run.data.art), run.data, run)
+	return stage
 
 
-func _move(stage: StoryStage, view: String, style: String, t0: float, bars := 2.0) -> void:
-	stage.apply({"t0": t0, "bar": 1.0, "action": "move_to", "args": {"view": view, "style": style, "bars": bars}, "block": "", "source": "block"})
+func _move(stage: StoryStage, to: String, t0: float, bars := 2.0) -> void:
+	stage.apply({"t0": t0, "bar": 1.0, "action": "player_move", "args": {"to": to, "style": "walk", "bars": bars}, "block": "", "source": "block"})
 
 
-func test_night_one_stays_fixed() -> void:
-	var ctx := _stage_with_room(false)
-	var stage: StoryStage = ctx["stage"]
-	assert_false(stage.moving_camera)
-	assert_eq(stage.views.size(), 1)
-	_move(stage, "alt", "walk", 1.0)  # an unknown room or a fixed camera ignores the move
+func test_a_chapter_has_a_crowd_in_every_room_that_holds_actors() -> void:
+	var stage := _stage()
+	assert_eq(stage.crowds.keys(), ["main", "gallery", "reactor", "bridge"])
 	assert_eq(stage.current_view, "main")
-	stage.update(3.0, 50.0)
-	assert_eq(stage.views["main"].position, Vector2.ZERO, "no sway on a fixed camera")
-	stage.queue_free()
+	for id in stage.crowds:
+		assert_true((stage.crowds[id] as StoryCrowd).world_mode, "%s: attached to the map" % id)
+		assert_true((stage.crowds[id] as StoryCrowd).actors.size() >= 20, "%s is populated" % id)
+	stage.free()
 
 
-func test_walk_dollies_into_the_next_room_and_the_active_crowd_follows() -> void:
-	var ctx := _stage_with_room(true)
-	var stage: StoryStage = ctx["stage"]
-	assert_true(stage.moving_camera)
-	assert_eq(stage.views.size(), 2)
-	var bar_s := stage.bar_s()
-	stage.update(0.5, 50.0)
-	assert_true(stage.views["main"].visible)
-	assert_false(stage.views["alt"].visible, "the other room is not drawn")
-	_move(stage, "alt", "walk", 1.0, 2.0)
-	assert_eq(stage.current_view, "alt", "actions after the move direct the new room")
-	assert_true(stage.crowd == stage.views["alt"].crowd)
-	stage.update(0.9, 50.0)
-	assert_true(stage.views["main"].visible and not stage.views["alt"].visible, "before t0 the old room is still alone on screen")
-	stage.update(1.0 + bar_s, 50.0)  # half way through the move
-	assert_true(stage.views["main"].visible and stage.views["alt"].visible, "both rooms during the move")
-	var out_scale: float = stage.views["main"].scale.x
-	var in_scale: float = stage.views["alt"].scale.x
-	assert_true(out_scale > 1.2, "the room we leave swells toward its vanishing point (%.2f)" % out_scale)
-	assert_true(in_scale < 1.0 and in_scale > 0.55, "the room we arrive in grows into place (%.2f)" % in_scale)
-	assert_true(stage.views["main"].modulate.a < 1.0 and stage.views["alt"].modulate.a > 0.5, "crossfade")
-	stage.update(1.0 + 2.0 * bar_s + 0.05, 50.0)
-	assert_false(stage.views["main"].visible)
-	assert_true(stage.views["alt"].visible)
-	assert_near(stage.views["alt"].modulate.a, 1.0, 0.001)
-	assert_near(stage.views["alt"].scale.x, 1.0, 0.001, "settled at full size")
-	stage.queue_free()
-
-
-func test_turn_slides_rooms_past_each_other() -> void:
-	var ctx := _stage_with_room(true)
-	var stage: StoryStage = ctx["stage"]
-	_move(stage, "alt", "turn_right", 1.0, 2.0)
-	stage.update(1.0 + stage.bar_s(), 50.0)
-	var a: float = stage.views["main"].position.x
-	var b: float = stage.views["alt"].position.x
-	assert_true(a < -300.0 and b > 300.0, "the old room slides out left (%.0f) as the new one slides in from the right (%.0f)" % [a, b])
-	stage.update(1.0 + 2.0 * stage.bar_s() + 0.01, 50.0)
-	assert_near(stage.views["alt"].position.x, 0.0, 6.0, "arrives centred")
-	stage.queue_free()
-
-
-func test_camera_is_a_function_of_song_time_and_restarts() -> void:
-	var ctx := _stage_with_room(true)
-	var stage: StoryStage = ctx["stage"]
-	_move(stage, "alt", "walk", 1.0, 2.0)
-	var t := 1.0 + 0.7 * stage.bar_s()
-	stage.update(t, 50.0)
-	var first: Array = [stage.views["main"].scale, stage.views["main"].position, stage.views["alt"].scale, stage.views["alt"].modulate.a]
-	stage.update(t + 0.4, 50.0)
-	stage.update(t, 50.0)  # the same song time again (a paused frame): the same camera
-	var again: Array = [stage.views["main"].scale, stage.views["main"].position, stage.views["alt"].scale, stage.views["alt"].modulate.a]
-	assert_eq(again, first, "no hidden state beyond song time")
+func test_the_crowd_directions_follow_the_player_between_rooms() -> void:
+	var stage := _stage()
+	assert_true(stage.crowd == stage.crowds["main"])
+	_move(stage, "gallery_in", 1.0)
+	assert_eq(stage.current_view, "gallery", "actions after the move direct the gallery's crowd")
+	assert_true(stage.crowd == stage.crowds["gallery"])
+	_move(stage, "medbay", 5.0)
+	assert_eq(stage.current_view, "gallery", "the medical bay has no crowd: the directions stay with the last room that has one")
+	_move(stage, "bridge_in", 9.0, 4.0)
+	assert_eq(stage.current_view, "bridge")
 	stage.reset()
-	assert_eq(stage.current_view, "main", "restart returns to the first room")
-	stage.update(0.2, 50.0)
-	assert_true(stage.views["main"].visible and not stage.views["alt"].visible)
-	stage.queue_free()
+	assert_eq(stage.current_view, "main", "a restart returns to the first room")
+	stage.free()
 
 
-func test_camera_look_and_push_return_to_rest() -> void:
-	var ctx := _stage_with_room(true)
-	var stage: StoryStage = ctx["stage"]
-	stage.reduced = true  # no sway: only the authored move shows
-	stage.apply({"t0": 1.0, "bar": 1.0, "action": "camera_push", "args": {"zoom": 0.2, "bars": 2}, "block": "", "source": "block"})
-	stage.update(1.0 + stage.bar_s(), 50.0)
-	assert_near(stage.views["main"].scale.x, 1.2, 0.01, "a punch-in at its peak")
-	stage.update(1.0 + 2.0 * stage.bar_s() + 0.1, 50.0)
-	assert_near(stage.views["main"].scale.x, 1.0, 0.001, "and back to rest")
-	stage.queue_free()
+func test_a_room_brings_its_own_light_with_the_player() -> void:
+	var stage := _stage()
+	stage.apply({"t0": 0.0, "bar": 1.0, "action": "lights_warm", "args": {}, "block": "", "source": "block"})
+	assert_eq(stage.palette, "warm")
+	_move(stage, "gallery_in", 1.0)
+	assert_eq(stage.palette, "cool", "the gallery's palette")
+	_move(stage, "deck_centre", 5.0)
+	assert_eq(stage.palette, "warm", "and the deck's own light comes back")
+	stage.free()
+
+
+func test_every_crowd_updates_whichever_room_is_in_view() -> void:
+	var stage := _stage()
+	stage.update(2.0, 55.0)
+	for id in stage.crowds:
+		assert_near((stage.crowds[id] as StoryCrowd)._t_now, 2.0, 1e-6, "%s ran this frame" % id)
+	stage.free()
+
+
+func test_a_glance_turns_the_head_and_never_touches_the_route() -> void:
+	var stage := _stage()
+	var b := stage.bar_s()
+	var base := stage.player.pose_at(5.0 * b)
+	stage.apply({"t0": 4.0 * b, "bar": 4.0, "action": "player_look", "args": {"by": 30.0, "bars": 3}, "block": "", "source": "block"})
+	assert_near(float(stage.player.pose_at(4.0 * b)["yaw"]), float(base["yaw"]), 1e-4, "no turn at its start")
+	assert_near(float(stage.player.pose_at(5.5 * b)["yaw"]) - float(base["yaw"]), 30.0, 0.5, "the full turn half way")
+	assert_near(float(stage.player.pose_at(7.0 * b)["yaw"]), float(base["yaw"]), 1e-4, "and back at its end")
+	assert_eq(stage.player.pose_at(5.5 * b)["pos"], base["pos"], "the rail position is untouched")
+	_move(stage, "gallery_in", 4.0 * b, 4.0)
+	assert_true(stage.player.pose_at(6.0 * b)["moving"], "a glance during a move does not cancel it")
+	assert_eq(stage.player.pose_at(9.0 * b)["pos"], stage.map.waypoint("gallery_in")["at"])
+	stage.free()
+
+
+func test_the_camera_is_a_function_of_song_time() -> void:
+	var a := _stage()
+	var c := _stage()
+	var b := a.bar_s()
+	for s in [a, c]:
+		_move(s, "gallery_in", 1.0 * b, 3.0)
+		s.apply({"t0": 2.0 * b, "bar": 2.0, "action": "player_look", "args": {"by": -20.0, "bars": 2}, "block": "", "source": "block"})
+	for t in [0.5, 2.0 * b, 3.3 * b, 5.0 * b]:
+		a.update(t, 50.0)
+	c.update(5.0 * b, 50.0)
+	assert_eq(a.player.pose_at(5.0 * b)["cam"], c.player.pose_at(5.0 * b)["cam"], "stepping or jumping gives the same pose")
+	a.free()
+	c.free()

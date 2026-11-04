@@ -19,7 +19,6 @@ ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 STORY = os.path.join(ROOT, "assets", "story")
 ART = os.path.join(STORY, "night_one")  # the folder being checked (set per chapter by validate)
 CHAPTERS = ("night_one", "mothership", "underworld", "hospital", "mental_hospital")
-CHAPTER_ANCHORS = {"floor_grid", "wall_left_x", "wall_right_x", "horizon_y"}
 INTERLUDE = {"mothership": ({"ufo", "tractor_beam", "ufo_glow", "sparkle", "light_flood"}, {"ufo_hover", "beam_floor"}),
              "underworld": ({"crack_glow", "flame_jet", "portal_vortex", "embers", "dark_wash"}, {"crack_origin", "portal_centre"}),
              "hospital": ({"eyelid_top", "eyelid_bottom", "white_wash", "monitor_line"}, set()),
@@ -32,7 +31,6 @@ PIECE_ANIMS = {"none", "pulse", "flicker", "rotate", "bob", "sway"}
 
 JOINTS = {"hips", "torso", "head", "shoulder_l", "elbow_l", "shoulder_r", "elbow_r", "hip_l", "hip_r"}
 LAYERS = {"backdrop", "speaker_l", "speaker_r", "riser", "desk_top"}
-ANCHORS = {"led_screen", "doorway", "floor_rows", "floor_polygon", "light_points", "woofers", "disco_ball", "riser", "circle_centre", "circle_radii"}
 SPRITES = {"woofer", "fixture", "disco_ball", "glowstick", "door_open", "spot_pool", "haze_a", "haze_b", "glow", "beam", "vignette",
            "confetti", "desk_lip_glow", "pad_bezel", "platter", "knob", "fader_slot", "fader_cap", "crossfader", "vu_segment", "deck_screw"}
 
@@ -109,13 +107,8 @@ def validate(chapter: str = "night_one") -> list:
         errors.append(f"missing layers {sorted(LAYERS - ids)}")
     for l in st["layers"]:
         check_entry(errors, f"layer {l['id']}", l, need_pivot=False)
-    if not ANCHORS <= set(st["anchors"]):
-        errors.append(f"missing anchors {sorted(ANCHORS - set(st['anchors']))}")
-    if len(st["anchors"]["light_points"]) != 8:
-        errors.append("light_points must have 8 points")
-    rows = st["anchors"]["floor_rows"]
-    if not (4 <= len(rows) <= 6) or rows[-1]["scale"] != 1.0 or rows[-1]["y"] > 440:
-        errors.append(f"floor_rows: {rows}")
+    if "anchors" in st:
+        errors.append("stage.anchors is a dead field of the 2D rooms: the map places everything (tools/story/build_assets.py strips it)")
     if not SPRITES <= set(st["sprites"]):
         errors.append(f"missing sprites {sorted(SPRITES - set(st['sprites']))}")
     for sid, e in st["sprites"].items():
@@ -157,13 +150,12 @@ def texture_checks(errors, chapter, m) -> None:
         errors.append(f"textures on disk but not in the manifest: {sorted(on_disk - listed)}")
 
 
-VIEW_ANCHORS = {"floor_rows", "floor_polygon", "light_points", "circle_centre", "circle_radii", "vanish"}
 VIEWS = {"mothership": ["gallery", "reactor", "bridge"], "underworld": ["court", "pit", "furnace"],
          "hospital": ["corridor", "cafeteria", "garden"], "mental_hospital": ["corridor", "art_room", "courtyard"]}
 
 
 def view_checks(errors, chapter, st) -> None:
-    """The moving-camera rooms (ART_CONTRACT_VIEWS.md): ids, layer files, required anchors, 8 light points, 5 floor rows, passage frame."""
+    """The rooms (crowd views) that own set pieces: their ids in order, 2 to 4 pieces each."""
     want = VIEWS.get(chapter)
     if not want:
         return
@@ -171,19 +163,11 @@ def view_checks(errors, chapter, st) -> None:
     if list(views) != want:
         errors.append(f"views {list(views)} != {want}")
     for vid, v in views.items():
-        for l in v.get("layers", []):
-            if not os.path.exists(os.path.join(STORY, chapter, l["file"])):
-                errors.append(f"view {vid}: missing layer file {l['file']}")
-        missing = VIEW_ANCHORS - set(v.get("anchors", {}))
-        if missing:
-            errors.append(f"view {vid}: missing anchors {sorted(missing)}")
-        a = v.get("anchors", {})
-        if len(a.get("light_points", [])) != 8 or len(a.get("floor_rows", [])) != 5:
-            errors.append(f"view {vid}: needs 8 light points and 5 floor rows")
         if not 2 <= len(v.get("pieces", [])) <= 4:
             errors.append(f"view {vid}: expected 2 to 4 pieces")
-    if "passage_frame" not in st.get("sprites", {}):
-        errors.append("missing sprite passage_frame")
+        for dead in ("layers", "anchors", "palette_hint"):
+            if dead in v:
+                errors.append(f"view {vid}: dead field {dead}")
 
 
 def chapter_checks(errors, chapter, m, st) -> None:
@@ -196,12 +180,6 @@ def chapter_checks(errors, chapter, m, st) -> None:
             gh = v.get("glow_hand", {})
             if gh.get("joint") != "elbow_r" or len(gh.get("at", [])) != 2:
                 errors.append(f"{name}: glow_hand {gh}")
-    if not CHAPTER_ANCHORS <= set(st["anchors"]):
-        errors.append(f"missing anchors {sorted(CHAPTER_ANCHORS - set(st['anchors']))}")
-    if len(st["anchors"]["floor_rows"]) != 5:
-        errors.append("floor_rows must have 5 rows")
-    if len(st["anchors"]["woofers"]) != 4:
-        errors.append("woofers must have 4 entries")
     view_checks(errors, chapter, st)
     pieces = st.get("pieces", [])
     if not 6 <= len(pieces) <= 8:

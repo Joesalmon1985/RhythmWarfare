@@ -9,10 +9,16 @@ const POLICIES := ["perfect", "accuracy:0.9", "accuracy:0.8", "accuracy:0.7", "a
 const TOP := {
 	"night_one": ["steps", "stage", "booth", "booth"],
 	"mothership": ["gallery_in", "reactor_in", "bridge_in", "helm", "helm"],
+	"underworld": ["court_in", "throne", "pit_stage", "pit_stage"],
+	"hospital": ["corridor_in", "cafe_in", "bandstand", "bandstand"],
+	"mental_hospital": ["corridor_in", "art_in", "stage", "stage"],
 }
 const BOTTOM := {
 	"night_one": ["floor_edge", "corridor", "cubicle", "floor_edge", "door"],
 	"mothership": ["gallery_in", "medbay", "exam", "medbay", "airlock"],
+	"underworld": ["furnace_chains", "cage", "cage"],
+	"hospital": ["ward_chair", "quiet", "bed", "bed"],
+	"mental_hospital": ["treat", "quiet", "quiet"],
 }
 
 

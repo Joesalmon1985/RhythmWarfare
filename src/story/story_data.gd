@@ -21,9 +21,7 @@ const ACTIONS := [
 	"drop_stumble", "final_chant", "final_flicker", "winback_cheer",
 	# chapter set pieces (art manifest stage.pieces): args {piece, bars?}
 	"piece_on", "piece_off", "piece_pulse",
-	# the moving camera (chapters with extra rooms): move_to {view, style: walk|step|turn_left|turn_right, bars}, camera_look {dx, bars}, camera_push {zoom, bars}
-	"move_to", "camera_look", "camera_push",
-	# the player's journey in the 2.5D world (docs/STORY_25D_PLAN.md section 4.1): player_move {to: waypoint, style, bars}, player_look {yaw | at, bars},
+	# the player's journey in the 2.5D world (docs/STORY_25D_PLAN.md section 4.1): player_move {to: waypoint, style, bars}, player_look {yaw | at | by (a glance), bars},
 	# player_role {role}, fx_queasy {amount 0..1, bars}, sick_beat {bars}
 	"player_move", "player_look", "player_role", "fx_queasy", "sick_beat",
 ]
@@ -132,8 +130,6 @@ func validate_art(assets: StoryAssets, errors: Array) -> void:
 		if not assets.manifest.get("silhouettes", {}).has(str(s["shape"])):
 			errors.append("silhouette %s: unknown shape %s" % [s["id"], s["shape"]])
 	var check := func(action: String, args: Dictionary, where: String) -> void:
-		if action == "move_to" and not (str(args.get("view", "")) in assets.view_ids()):
-			errors.append("%s: unknown view %s" % [where, args.get("view", "")])
 		if action.begins_with("piece_") and assets.piece(str(args.get("piece", ""))).is_empty():
 			errors.append("%s: unknown set piece %s" % [where, args.get("piece", "")])
 	for b in blocks:

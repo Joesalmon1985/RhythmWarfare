@@ -160,7 +160,7 @@ func test_depth_order_is_stable_for_equal_distances() -> void:
 	stage.free()
 
 
-func test_the_circle_opens_towards_the_dj_and_the_riser_lifts_the_hero() -> void:
+func test_the_circle_opens_towards_the_dj_and_the_soloist_walks_up_onto_the_riser() -> void:
 	var ctx := _crowd_stage()
 	var stage: StoryStage = ctx["stage"]
 	var crowd := stage.crowd
@@ -178,19 +178,14 @@ func test_the_circle_opens_towards_the_dj_and_the_riser_lifts_the_hero() -> void
 	stage.apply({"t0": 4.0, "bar": 1.0, "action": "riser_up", "args": {}, "block": "", "source": "block"})
 	stage.apply({"t0": 4.0, "bar": 1.0, "action": "hero_solo", "args": {"bars": 6}, "block": "", "source": "block"})
 	var t := 4.0
-	while t < 4.0 + StoryStage.RISER_BOARD_S + bar_s * 1.2:
+	while t < 4.0 + 3.0 + bar_s * 1.2:
 		t += 1.0 / 30.0
 		stage.update(t, 80.0)
 	var hero: StoryCharacter = crowd.hero_node()
 	var hid := crowd.hero_id()
-	assert_near(stage.riser_lift(t), StoryStage.RISER_LIFT, 0.01, "the riser is up")
 	assert_eq(crowd.actors[hid]["sec"], "riser", "the hero has walked up onto the riser")
 	assert_true((crowd.actors[hid]["pos"] as Vector2).distance_to(crowd.riser_spot) < 0.05, "and stands on its spot")
 	assert_eq(hero.state, "solo", "and dances the solo")
-	stage.apply({"t0": t, "bar": 1.0, "action": "riser_down", "args": {}, "block": "", "source": "block"})
-	stage.update(t + bar_s * 0.5, 80.0)
-	assert_true(stage.riser_lift(t + bar_s * 0.5) > 0.0 and stage.riser_lift(t + bar_s * 0.5) < StoryStage.RISER_LIFT, "it sinks over a bar")
-	assert_near(stage.riser_lift(t + bar_s * 1.01), 0.0, 0.01)
 	stage.free()
 
 
@@ -237,7 +232,7 @@ func test_a_caption_ends_when_the_camera_leaves_the_room() -> void:
 	hud.free()
 
 
-func test_room_pieces_stay_lit_through_a_pulse_and_doorless_rooms_enter_from_the_edge() -> void:
+func test_room_pieces_stay_lit_through_a_pulse() -> void:
 	var run := StoryRun.create({}, "res://content/story/mothership.json")
 	if not run.errors.is_empty():
 		fail("mothership chapter: %s" % str(run.errors))
@@ -257,10 +252,4 @@ func test_room_pieces_stay_lit_through_a_pulse_and_doorless_rooms_enter_from_the
 	var st := stage.piece_state(ambient, 5.05)
 	assert_true(st["visible"] and is_equal_approx(float(st["alpha"]), 1.0), "a pulse does not switch a room's own piece off and on: %s" % str(st))
 	assert_true(float(st["pulse"]) > 0.9, "but it does pulse")
-	for vid in stage.views:
-		var v: StoryView = stage.views[vid]
-		if stage.map != null:
-			continue  # a chapter in the world places its door in the map (spot "door"), checked by test_story_map
-		if (assets.anchor("doorway", [], str(vid)) as Array).size() < 4:
-			assert_true(v.crowd.door_pos.x < 0.0, "%s has no doorway: arrivals walk in from the left edge" % vid)
 	stage.free()

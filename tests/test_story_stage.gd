@@ -34,8 +34,8 @@ func test_manifest_and_textures_exist() -> void:
 		assert_false(s.is_empty(), "sprite %s" % id)
 		if not s.is_empty():
 			assert_true(s["tex"] != null, "sprite %s imports" % id)
-	assert_true((a.anchor("floor_rows", []) as Array).size() >= 4, "floor rows")
-	assert_eq((a.anchor("light_points", []) as Array).size(), 8)
+	assert_false(a.manifest["stage"].has("anchors"), "the 2D rooms' anchors are gone from the manifest: the map places everything")
+	assert_true(a.manifest.has("textures") and a.manifest["textures"].size() >= 16, "the world's texture tiles are listed")
 	assert_eq(a.manifest["silhouettes"].size(), 3, "three rear silhouette shapes")
 	assert_true(a.errors.is_empty(), "no missing textures: %s" % str(a.errors))
 

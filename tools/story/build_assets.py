@@ -23,6 +23,21 @@ CHAPTERS = {"mothership": None, "underworld": "art.chapter_underworld", "hospita
             "mental_hospital": "art.chapter_mental_hospital"}
 
 
+def strip_dead(path: str) -> None:
+    """Fields only the removed 2D rooms read (stage anchors, each room's layers, anchors and palette hint, the pieces note) are dropped from a manifest."""
+    with open(path, encoding="utf-8") as fh:
+        man = json.load(fh)
+    st = man.get("stage", {})
+    for k in ("anchors", "design_size", "pieces_note"):
+        st.pop(k, None)
+    for v in st.get("views", []):
+        for k in ("layers", "anchors", "palette_hint", "title"):
+            v.pop(k, None)
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        json.dump(man, fh, indent=1, sort_keys=False)
+        fh.write("\n")
+
+
 def add_tiles(name: str) -> None:
     """The 2.5D world's texture tiles of a chapter (baked by Godot from its SVG art) go into its manifest's `textures` section."""
     from art import tiles
@@ -47,6 +62,7 @@ def build_any(name: str, only: list) -> int:
     else:
         import importlib
         rc = importlib.import_module(CHAPTERS[name]).build(list(only))
+    strip_dead(os.path.join(lib.ROOT, "assets", "story", name, "manifest.json"))
     if not only:
         add_tiles(name)
     return rc
@@ -127,6 +143,7 @@ def main(argv) -> int:
     with open(path, "w", encoding="utf-8", newline="\n") as fh:
         json.dump(manifest, fh, indent=1, sort_keys=False)
         fh.write("\n")
+    strip_dead(path)
     for d in (lib.SVG_DIR, lib.PNG_DIR):  # drop .import files whose asset is gone
         for dirpath, _dirs, files in os.walk(d):
             for fn in files:

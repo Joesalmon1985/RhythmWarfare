@@ -14,6 +14,7 @@ var _caption_from := 0.0
 var _go := false
 var _run: StoryRun
 var _skip_hint: Label
+var _fx_host: Control
 
 
 func _ready() -> void:
@@ -40,21 +41,31 @@ func _ready() -> void:
 	add_child(bg)
 	stage = StoryStage.new()
 	stage.set_anchors_preset(Control.PRESET_FULL_RECT)
-	stage.desk_y = 570.0  # the club down to just below the front row (no desk): the dark floor edge stays off screen
+	stage.lines = StoryLowRes.LINE_CHOICES[clampi(Session.story_lines, 0, 2)]
+	stage.motion = 2  # the cutscene's camera holds the tableau: no walking
 	add_child(stage)
 	stage.setup(from_assets, _run.data, _run)
 	stage.reduced = Session.reduced_effects
+	if stage.map != null:  # the club the player just left, in its ending tableau, in the 3D world (the cutscene's own art is drawn over it in 2D)
+		stage.attach_world(stage.map, true)
 	var ending := str(info.get("ending", "good_night"))
-	stage.apply({"t0": 0.0, "bar": 1.0, "action": "ending", "args": {"ending": ending}, "block": "closing_tableau", "source": "ending"})
-	stage.crowd.set_time(0.0)
-	for id in stage.crowd.actors:  # the whole room is on the floor for the cutscene
-		stage.crowd.actors[id]["present"] = true
-		stage.crowd.actors[id]["alpha"] = 1.0
+	stage.apply({"t0": -10.0, "bar": 1.0, "action": "ending", "args": {"ending": ending}, "block": "closing_tableau", "source": "ending"})  # the tableau is already in place when the cutscene starts
+	for c in stage.crowds.values():  # the whole room is on the floor for the cutscene
+		(c as StoryCrowd).set_time(0.0)
+		for id in c.actors:
+			c.actors[id]["present"] = true
+			c.actors[id]["alpha"] = 1.0
 	fx = StoryInterludeFx.new()
 	fx.assets = to_assets
 	fx.kind = str(info.get("name", "abduction"))
 	fx.events = _def["events"]
-	stage.add_overlay(fx)
+	_fx_host = Control.new()  # the cutscene draws in the 1280 x 720 design space, scaled to the window
+	_fx_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fx_host.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_fx_host.resized.connect(_fit_fx)
+	add_child(_fx_host)
+	_fx_host.add_child(fx)
+	_fit_fx.call_deferred()
 	_caption = Label.new()
 	_caption.add_theme_font_size_override("font_size", 30)
 	_caption.add_theme_color_override("font_color", Color(1.0, 0.95, 1.0))
@@ -79,6 +90,11 @@ func _ready() -> void:
 	_t0 = float(Time.get_ticks_msec()) / 1000.0
 	if OS.has_environment("RW_STORY_INTERLUDE_T"):  # screenshots: jump the cutscene clock
 		_t0 -= float(OS.get_environment("RW_STORY_INTERLUDE_T"))
+
+
+func _fit_fx() -> void:
+	if _fx_host != null and fx != null:
+		fx.scale = Vector2(_fx_host.size.x / 1280.0, _fx_host.size.y / 720.0)
 
 
 func _process(_delta: float) -> void:
