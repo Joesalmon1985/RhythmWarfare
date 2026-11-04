@@ -243,16 +243,16 @@
    "bass": 6
   },
   "2": {
-   "drums": 7,
-   "bass": 7
+   "drums": 6,
+   "bass": 8
   },
   "3": {
-   "drums": 12,
+   "drums": 9,
    "bass": 10
   },
   "4": {
    "drums": 12,
-   "bass": 10
+   "bass": 12
   }
  },
  "chart_problems": []

@@ -279,6 +279,17 @@ class Analysis(unittest.TestCase):
         for c in t1:
             self.assertIn(c, cues)
 
+    def test_tiers_are_nested_and_rise_when_the_midi_has_syncopation(self):
+        cues = [[int(b * 960), 0, 1 if i % 2 else 4, "kick" if i % 2 else "snare"] for i, b in enumerate([x * 0.5 for x in range(24)])]  # a cue on every half beat
+        tiers = [bs.thin(cues, t, "drums") for t in (1, 2, 3, 4)]
+        counts = [len(t) for t in tiers]
+        self.assertEqual(counts, sorted(counts))
+        self.assertEqual(len(set(counts)), 4, "four different densities: %s" % counts)
+        for lo, hi in zip(tiers, tiers[1:]):
+            self.assertTrue({c[0] for c in lo} <= {c[0] for c in hi}, "each tier contains the one below")
+        self.assertEqual(counts[0], 12, "tier 1 is the whole beats")
+        self.assertEqual(counts[3], 24, "tier 4 keeps everything the chart rules allow")
+
     def test_import_assign_validate_round_trip(self):
         packs = self.dir / "packs"
         music = self.dir / "music.json"

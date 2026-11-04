@@ -63,7 +63,12 @@ PROFILES = {
     "beat_shaper_87x2": {"source_bpm": 87.0, "scale": 2, "verified_on": "Lv1 Warehouse"},
     "beat_shaper_174x1": {"source_bpm": 174.0, "scale": 1, "verified_on": "Lv2 Alien Spaceship"},
 }
-TIER_MIN_GAP = {"drums": {1: 1.0, 2: 0.75, 3: 0.5, 4: 0.5}, "bass": {1: 2.0, 2: 1.5, 3: 1.0, 4: 0.75}}  # beats between two cue times of a family group, per difficulty tier
+# Difficulty tiers are nested: tier 1 is the sparse base set (cues at least BASE_GAP beats apart, whole beats first); tier 4 is everything the chart rules
+# allow (FULL_GAP, 0.5 beat); tier 2 and 3 add 1/3 and 2/3 of the cues that tier 4 has over tier 1 (every k-th extra cue in time order). Every tier is a
+# subset of the next, so density rises with depth in every pack whose MIDI has syncopation to give (docs/CONTINUOUS_RUN.md, "Difficulty").
+BASE_GAP = {"drums": 1.0, "bass": 2.0}   # beats between two cue times of a family group at tier 1
+FULL_GAP = 0.5                           # the chart rules' floor between cues (480 ticks): tier 4
+TIER_SHARE = {1: 0.0, 2: 1.0 / 3.0, 3: 2.0 / 3.0, 4: 1.0}  # share of the extra cues (tier 4 over tier 1) a tier keeps
 PHASE_BEATS = 64
 BLOCK_BEATS = 16
 CUE_SPAN_BEATS = 12.0  # cues may sit in beats 0..12 of a block; the last four beats are cue-free
@@ -299,24 +304,34 @@ def detect_profile(drums_mono: np.ndarray, drum_notes: list[dict], tol_ms: float
 
 # --- cues ---------------------------------------------------------------------------------------------------------
 
-def thin(cues: list[list], tier: int, group: str, beat_ticks: int = PPQ) -> list[list]:
-    """Pick the cues of a difficulty tier from the full list [tick, duration, pad, family]. Whole-beat cues are preferred (low syncopation), a chord
-    (several pads on one tick) is kept or dropped as one, and consecutive kept times are at least TIER_MIN_GAP[group][tier] beats apart. Selected cues
-    keep their source ticks; a hold is shortened to end 240 ticks before the next cue (a tap when that leaves less than a hold)."""
-    gap = TIER_MIN_GAP[group].get(tier, 0.5) * beat_ticks
-    slots: dict[int, list] = {}
-    for c in cues:
-        slots.setdefault(c[0], []).append(c)
-
+def _greedy(slots: dict, gap: float, beat_ticks: int) -> list[int]:
     def prio(tick: int) -> tuple:
         frac = (tick % beat_ticks) / beat_ticks
         return (0 if frac == 0 else (1 if abs(frac - 0.5) < 1e-6 else 2), tick)
 
     keep: list[int] = []
-    for tick in sorted(slots, key=prio):
-        if all(abs(tick - k) >= gap for k in keep):
+    g = gap * beat_ticks
+    for tick in sorted(slots, key=prio):  # whole beats first (low syncopation), then half beats, then the rest
+        if all(abs(tick - k) >= g for k in keep):
             keep.append(tick)
-    keep.sort()
+    return sorted(keep)
+
+
+def thin(cues: list[list], tier: int, group: str, beat_ticks: int = PPQ) -> list[list]:
+    """Pick the cues of a difficulty tier from the full list [tick, duration, pad, family]. The base set (tier 1) keeps whole-beat cues first, at least
+    BASE_GAP[group] beats apart; tier 4 keeps everything FULL_GAP apart; tiers 2 and 3 add TIER_SHARE of the extra cues between the two (every k-th, in
+    time order), so each tier contains the one below. A chord (several pads on one tick) is kept or dropped as one. Selected cues keep their source
+    ticks; a hold is shortened to end 240 ticks before the next cue (a tap when that leaves less than a hold)."""
+    slots: dict[int, list] = {}
+    for c in cues:
+        slots.setdefault(c[0], []).append(c)
+    base = _greedy(slots, BASE_GAP[group], beat_ticks)
+    full = _greedy(slots, FULL_GAP, beat_ticks)
+    share = TIER_SHARE.get(tier, 1.0)
+    extras = [t for t in full if t not in set(base)]
+    chosen = [t for i, t in enumerate(extras) if int((i + 1) * share + 1e-9) > int(i * share + 1e-9)]
+    chosen = [t for t in chosen if all(abs(t - b) >= FULL_GAP * beat_ticks for b in base)]  # never closer to a base cue than the chart rules allow
+    keep = sorted(set(base) | set(chosen))
     out = []
     for i, t in enumerate(keep):
         nxt = keep[i + 1] if i + 1 < len(keep) else None

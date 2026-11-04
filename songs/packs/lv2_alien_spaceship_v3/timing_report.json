@@ -495,16 +495,16 @@
    "bass": 8
   },
   "2": {
-   "drums": 12,
-   "bass": 9
+   "drums": 13,
+   "bass": 14
   },
   "3": {
-   "drums": 16,
-   "bass": 13
+   "drums": 14,
+   "bass": 21
   },
   "4": {
    "drums": 16,
-   "bass": 17
+   "bass": 28
   }
  },
  "chart_problems": []

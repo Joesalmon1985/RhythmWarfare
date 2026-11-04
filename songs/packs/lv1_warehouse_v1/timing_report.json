@@ -8,7 +8,23 @@
    "fitted_bpm": 86.993,
    "fitted_offset_ms": 5.6,
    "max_abs_ms": 8.24,
-   "mean_ms": 6.01
+   "mean_ms": 6.01,
+   "median_ms": 6.22,
+   "within_limit": 1.0,
+   "worst_hits": [
+    {
+     "beat": 0.0,
+     "error_ms": 1.0
+    },
+    {
+     "beat": 3.5,
+     "error_ms": 4.2
+    },
+    {
+     "beat": 6.5,
+     "error_ms": 8.2
+    }
+   ]
   },
   "bass": [
    {
@@ -35,7 +51,100 @@
     "error_ms": -14.0,
     "how": "largest spectral change near the note start"
    }
-  ]
+  ],
+  "tempo_verified": "strict",
+  "bass_timing": {
+   "mode": "audio_checked",
+   "why": "the audio bass detector agrees with the bass MIDI (median 8.0 ms)",
+   "median_error_ms": 8.0,
+   "notes_measured": 4,
+   "notes_out_of_line": 2
+  }
+ },
+ "import_report": {
+  "set": "Lv1 Warehouse (1)",
+  "drum_notes": {
+   "counts": {
+    "36": 15,
+    "40": 16,
+    "42": 48
+   },
+   "mode": "standard",
+   "kick": [
+    36
+   ],
+   "snare": [
+    38,
+    40
+   ],
+   "why": "the standard notes: kick 36, snare 38/40"
+  },
+  "decisions": [
+   "WARNING bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 4.25, \"pitch\": 38, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 12.0, \"pitch\": 45, \"error_ms\": -14.0, \"how\": \"largest spectral change near the note start\"}]"
+  ],
+  "rejected": [],
+  "tempo": {
+   "profile": "beat_shaper_87x2",
+   "verified": "strict",
+   "tried": [
+    {
+     "profile": "beat_shaper_87x2",
+     "fit": {
+      "hits": 30,
+      "matched": 30,
+      "fitted_bpm": 86.993,
+      "fitted_offset_ms": 5.6,
+      "max_abs_ms": 8.24,
+      "mean_ms": 6.01,
+      "median_ms": 6.22,
+      "within_limit": 1.0,
+      "worst_hits": [
+       {
+        "beat": 0.0,
+        "error_ms": 1.0
+       },
+       {
+        "beat": 3.5,
+        "error_ms": 4.2
+       },
+       {
+        "beat": 6.5,
+        "error_ms": 8.2
+       }
+      ]
+     },
+     "verified": "strict"
+    },
+    {
+     "profile": "beat_shaper_174x1",
+     "fit": {
+      "hits": 30,
+      "matched": 29,
+      "fitted_bpm": 173.687,
+      "fitted_offset_ms": 1.85,
+      "max_abs_ms": 24.76,
+      "mean_ms": 6.7,
+      "median_ms": 6.0,
+      "within_limit": 0.724,
+      "worst_hits": [
+       {
+        "beat": 1.25,
+        "error_ms": -16.0
+       },
+       {
+        "beat": 8.75,
+        "error_ms": 24.8
+       },
+       {
+        "beat": 15.25,
+        "error_ms": 23.4
+       }
+      ]
+     },
+     "verified": null
+    }
+   ]
+  }
  },
  "loops": {
   "drums": {
@@ -84,11 +193,11 @@
    "bass": 4
   },
   "2": {
-   "drums": 23,
+   "drums": 25,
    "bass": 4
   },
   "3": {
-   "drums": 31,
+   "drums": 28,
    "bass": 4
   },
   "4": {
