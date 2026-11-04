@@ -294,6 +294,9 @@ func _process(delta: float) -> void:
 
 
 func _process_virtual(_delta: float) -> void:
+	if _ended and StoryTrace.auto_advance():  # the walk-through leaves the finished set for the result screen (screenshots keep the last frame instead)
+		_go_to_result()
+		return
 	if _ended and _tail_until < 0.0 and _until_bar <= 0.0:
 		return
 	var until_t := run.director.bar_time(_until_bar) if _until_bar > 0.0 else INF

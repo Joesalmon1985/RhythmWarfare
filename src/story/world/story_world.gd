@@ -285,8 +285,10 @@ func update(t: float, ctx: Dictionary) -> void:
 	var bpm := float(ctx.get("bpm", 174.0))
 	var beats := t * bpm / 60.0
 	var pulse := pow(1.0 - fposmod(beats, 1.0), 3.0)
+	var sector_cols := {}  # each sector's light once a frame: the things standing in it reuse it
 	for id in _sector_nodes:
 		var col := light_of(map.sector(str(id)), t, ctx)
+		sector_cols[id] = col
 		for m in _sector_nodes[id]["mats"]:
 			(m as StandardMaterial3D).albedo_color = col
 	for an in map.animated:  # lava, reactor glass, window daylight, courtyard bulbs: a scroll, a pulse, a flicker or a texture swap on every surface showing the tile
@@ -303,8 +305,7 @@ func update(t: float, ctx: Dictionary) -> void:
 	for th in _thing_nodes:
 		var t_def: Dictionary = th["thing"]
 		var node: MeshInstance3D = th["node"]
-		var sec: Dictionary = map.sector(str(t_def["sector"]))
-		var col := light_of(sec, t, ctx)
+		var col: Color = sector_cols.get(str(t_def["sector"]), Color.WHITE)
 		var sc := 1.0
 		var dy := 0.0
 		var alpha := 1.0

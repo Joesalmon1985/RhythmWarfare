@@ -376,3 +376,41 @@ For the next agent (WP7 to WP8):
 - Sectors must be convex, and the crowd walks `StoryMap.route`; keep homes at least a metre from every waypoint (tested) and spots inside their sectors (validated).
 - `tools/test.sh` takes a few minutes; a mid-run edit of a content file can produce failures that do not reproduce (it happened once): rerun before debugging.
 - The capture script is slow (about two minutes a shot to a late bar); four `capture.sh` runs in parallel with different `RW_SHOTS` filters work on four cores. Do not use `pkill -f capture.sh` from a command that contains that string.
+
+### 13.3 WP7 and WP8 (Sonnet build session, chunk 3), branch `feature/story-25d`
+
+Commits: "WP7 mothership" (the multi-room engine and the first chapter), "WP7 prep" (Night One toilet sign, trace and walk tooling, matrix), the three chapter commits (underworld, hospital, mental_hospital; authored by forks of
+this session in worktrees and cherry-picked), "WP7 cleanup" (2D code deleted), "WP8 playtesting" (this section, screenshots, docs).
+
+Engine changes for chapters with several rooms (all in `src/story/`):
+- One `StoryCrowd` per room (`stage.crowds`, actors' `view` = room id). `stage.current_view` is the room the player last walked into (`player_move` to a waypoint in a room that has a crowd; the medical bay, the quiet corridor and the cage have none and
+  leave it where it was). The old `move_to` / `camera_look` / `camera_push` actions are gone from `StoryData.ACTIONS`; the room's palette comes from the map (`rooms`).
+- `StoryMap`: `rooms`, `fog`, `animated`, `room_of`, `room_spot` (`"<room>.<name>"` then the plain name), `crowd_rooms(chapter_raw)`; `StoryCrowd.attach_map` takes its door, circle, riser and side spots from its own room.
+- `StoryWorld`: things with `piece` (set pieces of the art) and `blend`, animated surfaces (`StoryLight.surface_anim`: scroll, pulse, flicker, swap; `bright` lets lava and reactor glass ignore their sector's light), per-map fog, `MIN_GAIN` 0.5 so no sector reads black, one light colour per
+  sector per frame shared with the things in it. `StoryWorldFx` follows the crowd room (its dance floor sector gets the LED tiles, haze, rings, confetti).
+- `player_look {by}`: a glance (sin squared envelope over its bars) added to the rail's yaw in `StoryPlayer.pose_at`; it never interrupts a move. Every eight-bar block of every chapter has two glances (art direction 2.B, first pass: glances only; walks within rooms are WP9).
+- Scripted chains: `StoryTrace`, `RW_STORY_AUTO_ADVANCE`, `RW_STORY_TRACE`, `RW_STORY_POLICIES`, `RW_STORY_RECORD`; `tools/story/walk_campaign.sh`.
+- Interludes play in the world: the stage builds the club in its ending tableau (the ending applied at t0 = -10 so the camera is already there), the cutscene art draws over it scaled from its 1280 x 720 design space.
+- Deleted: `StoryView`, `StoryFx`, `StoryFxLayer`, `StoryCameraOverlay`, the dolly, the 2D crowd placement and drawing, the riser lift, `StoryAssets` anchors and floor rows, the 2D preview scenes and review scripts. Manifests lost `stage.anchors`, each view's layers, anchors and palette hint.
+  Tests ported: `test_story_camera` rewritten (rooms, crowds, palettes, glances, determinism), chapters (crowd-room route by skill), polish, journey, stage; nothing deleted without a replacement.
+
+Deviations and calls:
+- The journey is driven by decisions only (plus the Mothership's bar-17 walk to the gallery): the old unconditional room tour could not stay, because a bad-branch player must not be dragged back to the show. So a room's crowd is where the player is.
+- Fixed Night One: the toilet corridor has a lit sign (`thing_sign_wc`, baked from an inline SVG, plus a flickering glow), fog 0.024.
+- Underworld and Ward bad branches end in the cage and the quiet room: no walk back (win_back is four bars after the sick beat).
+- Performance is above the plan's budget in every chapter (handover Numbers).
+- Pieces are billboards with scissor or blend; soft glows are plain at the moment.
+
+Screenshots (docs/shots/story, 104 JPEGs): Night One 01 to 27 and j01 to j18 regenerated; `m_*` (Mothership 12), `u_*` (Underworld 10), `h_*` (Hospital 9), `w_*` (Ward 9): one per journey node and ending tableau; interludes and ui. Looked at by eye. Fixed on the way:
+the Underworld `pit_edge` faced a wall (now yaw -45 over the deck), the shot bars of the bad Hospital branch. What is still plain: the Mothership sky planet is a blocky pink silhouette through the glass roof; the Hospital and Ward day rooms are lit purple by the
+dance-floor palette rather than night blue and institutional green; the Ward quiet room (the last view of Lights Out) and the Mothership medical bay are bare tiled boxes; near dancers (a garden edge, the Mothership deck start) fill the screen; the Underworld lava reads as orange brick; the pit skyline is only the sky strip.
+
+For the polish and WP9 agents:
+- Rooms are data: `content/story/maps/<chapter>.json`. WP9 rebuilds them to art-direction 2.A; keep one `dance_floor` sector per crowd room, eight door slots per crowd room, homes 1 m from every waypoint, sectors convex, and run `tests/test_story_map.gd` and `test_story_matrix.gd`.
+- The generator scripts used for WP7 maps lived in the build session's scratch folder and are not in the repo: the JSON is the source.
+- A thing's `y` is relative to its sector's floor; sectors below the floor (the Mothership well at -2.5, the arena at -1.2) work, the crowd stands on its sector's floor.
+- `tools/story/capture.sh` shot names carry the chapter prefix (`m_`, `u_`, `h_`, `w_`) and the bar of the journey node; if a journey changes, move the bars (use `tune.gd` for the places and `StoryDirector.bar_time` maths: decision bar plus `after_bars`).
+
+Manual checklist for the owner (things only a person can judge): play each chapter once well and once badly and watch the journey (the badge: DANCER, ON STAGE, DJ, FEELING ROUGH, OUT COLD); notes stay readable during every move and glance (glances happen on any bar, moves only on light bars);
+the sick beat is discreet; free look (drag, Q/E) never blocks a pad; the interludes still read over the 3D club (UFO over the floor, the crack, the eyelids, the ward door); the chapter tones (night ward, grim green) are what you want before the polish; the Settings screen's camera
+motion and internal resolution options; a phone export if one is available; whether the Underworld and Ward bad branches should have a walk back; whether the frame times (14 to 19 ms on the Intel HD 520) are acceptable.

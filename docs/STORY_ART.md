@@ -4,6 +4,11 @@ All artwork of the Story Campaign's first level is **original**, drawn by code i
 or downloaded assets, no external services. Regenerate everything with one command; it only touches
 `assets/story/night_one/` and never the music, Ableton sources or other game art.
 
+> **2.5D note.** The chapter sections below describe how the art was drawn for the first, painted version. The rooms' anchors, `floor_rows` and layer compositing they mention are
+> no longer read (the map places everything; see the last section), and the 2D review tools they name (`shoot_chapter.sh`, `shoot_views.sh`, `shoot_hp.sh`, `shoot_mh.sh`,
+> `preview_chapter/views/mh/sectioned`) were removed with the 2D rooms. Character, prop, piece and interlude art, the generators and the contracts are unchanged. Use
+> `tools/story/capture.sh` and `tools/story/preview_art.tscn` (character and prop sheets) to look at things.
+
 ```
 python3 tools/story/build_assets.py             # full rebuild: Night One, then every chapter (mothership)
 python3 tools/story/build_assets.py mothership  # only the mothership chapter (also: mothership chars|stage|interlude)
@@ -527,14 +532,22 @@ family and staff only, ten per room plus arrivals; the private room's rear crowd
 
 ## Preview
 
-`tools/story/shoot_hp.sh stage|set|pieces|stage_low <out>` renders all four rooms with the preview crowd, `shoot_hp.sh chars|chars_b|heads|close|sil|deck|interlude|passage`
-one sheet (`RW_ARCHS=dad,granny RW_VARIANT=a` for `close`); `tools/story/shoot_hp_run.sh <out> name:policy:bar[:ENV=V,...] ...` takes real screenshots of the running
-chapter (virtual clock, scripted input) and `name:interlude:<seconds>` of the waking cutscene (it shoots on the fourth frame: the cutscene runs on the wall clock).
-`tools/story/shoot_chapter.sh hospital <mode>` with `RW_VIEW=corridor|cafeteria|garden` still works for single sheets.
+`tools/story/shoot_hp_run.sh <out> name:policy:bar[:ENV=V,...] ...` takes real screenshots of the running chapter (virtual clock, scripted input); `tools/story/capture.sh` is the maintained way.
 
-## 2.5D texture tiles (Night One)
+## 2.5D texture tiles and the world (every chapter)
 
-`assets/story/<chapter>/textures/*.png` (64 or 128 px, listed in the manifest section `textures`) are cropped out of the chapter's own SVG art by `tools/story/bake_tiles.gd`
-(headless Godot: `Image.load_svg_from_string`, crop, resample; recipes in the script), run by `build_assets.py` (`build_assets.py tiles` rebuilds only them; set `GODOT=` if the
-binary is not in `~/godot`). Walls come from the backdrop (panelling, LED screen, door, bar shelf), the woofer SVG and the plinth; floors from the LED floor cells and `riser.svg`;
-the toilets, which have no art, are palette fills and a teal-shifted copy of the entrance door. `check_assets.py` checks the tiles and (with `--determinism`) that a rebuild is byte-identical.
+The Story Campaign plays in a 2.5D world (docs/STORY_25D_PLAN.md); the painted 1280 x 720 rooms of the first version are no longer drawn, but their SVG art is still the
+source of everything the world shows:
+
+- `assets/story/<chapter>/textures/*.png` (square 64 or 128 px; `thing_*` are RGBA billboards; `sky_*` are 256 x 64 strips that wrap once round the world; listed with their size and
+  metres per repeat in the manifest section `textures`) are cropped out of the chapter's own SVGs by `tools/story/bake_tiles.gd` (headless Godot: `Image.load_svg_from_string`, crop, resample).
+  The recipes are the methods `_night_one()`, `_mothership()`, `_underworld()`, `_hospital()` and `_mental_hospital()` (crops are in design space; the hospital and ward backdrops are wider
+  and offset, see the notes in their recipes). Where the art has no counterpart (toilets, medical bay, treatment room, quiet rooms, the skies, the cage) the tile is a palette fill or a
+  tinted copy of a crop. The metres per repeat of each tile live in `tools/story/art/tiles.py` (`SPECS`).
+- `python3 tools/story/build_assets.py <chapter> tiles` rebuilds only a chapter's tiles and its manifest section (set `GODOT=` if the binary is not in `~/godot`); a full chapter build does it too.
+  Run `godot --headless --path . --import` afterwards so the new PNGs get their `.import` files. `check_assets.py --determinism` checks the tiles and that a rebuild is byte-identical.
+- Set pieces (the manifest `stage.pieces` and each room's `pieces` under `stage.views`) are drawn as billboard things in the world: a map thing with `"piece": "<id>"` shows that SVG
+  while the chapter's `piece_on` / `piece_off` / `piece_pulse` actions say so (blend and animation follow the manifest entry).
+- The manifest no longer carries what only the 2D rooms read (`stage.anchors`, each view's layers, anchors and palette hint); `build_assets.py` strips them and `check_assets.py` rejects them.
+  The art files themselves (backdrops, front frames) are kept: they are the tile sources and the Story Campaign menu's thumbnails.
+- Rooms, doors, heights, props and light live in `content/story/maps/<chapter>.json` (see the handover). Review the tiles of a chapter at a glance with a contact sheet of the PNGs.

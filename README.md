@@ -9,21 +9,22 @@ instruments decide what a passed sequence builds (kicks make infantry, snares de
 two-sided duel stays in the developer area for a later multiplayer mode. Standalone Godot 4.5.1 project; the rule set is
 `docs/PRD.md` sections 15 and 16 and `data/campaign/rules.json`.
 
-## Story Campaign (Night One)
+## Story Campaign
 
-A separate mode on the main menu: `Story Campaign` > `Night One` is the first drum and bass set played from the DJ's position at a
-fixed, illustrated nightclub with an animated crowd. It plays the same 128-bar First Watch music (the global Loadout), the same four
-pads, falling notes and judgement; the two-bar sequence results drive the crowd's energy, three authored good/bad moments and one of
-three endings. Saves are separate (`user://story_campaign.json`); the military campaign is untouched. See
-`docs/STORY_CAMPAIGN_HANDOVER.md` (architecture, tuning, art pipeline, tests) and `docs/STORY_CAMPAIGN_PRD.md` (the brief).
+A separate mode on the main menu, in five chapters (Night One, The Mothership, The Underworld, The Hospital, The Ward), each a full drum and bass set played on the same four pads, falling
+notes and judgement as the campaign. Each chapter is a small 2.5D, Doom-style world rendered at a low internal resolution: you start as a dancer on the floor and, as you play well,
+your camera is carried on rails up onto the stage and behind the decks; play badly and you feel ill and are led away (the toilets, the medical bay, the furnace, back to bed, the treatment
+room). The two-bar sequence results drive the crowd's energy, authored good/bad moments, your journey and one of three endings per chapter; endings route to the next chapter. Saves are
+separate (`user://story_campaign.json`); the military campaign is untouched. See `docs/STORY_CAMPAIGN_HANDOVER.md` (architecture, tuning, art pipeline, tests, numbers),
+`docs/STORY_25D_PLAN.md` (the plan and progress log) and `docs/STORY_CAMPAIGN_PRD.md` (the original brief).
 
 ```
-godot --path . res://src/scenes/story_play.tscn                       # straight into Night One
-bash tools/story/capture.sh                                            # real screenshots of the running scene (docs/shots/story)
-RW_SHOTS='^(0|1)' bash tools/story/capture.sh /tmp/shots                # only the shots whose name matches (cam_, camseq_, ui_, interlude_...)
+godot --path . res://src/scenes/story_play.tscn                       # straight into Night One (RW_STORY_CHAPTER=mothership|underworld|hospital|mental_hospital)
+bash tools/story/capture.sh                                            # real screenshots of the running scene (docs/shots/story); RW_SHOTS=regex picks shots
+bash tools/story/walk_campaign.sh                                      # the real scene chain from Night One to the end, five scripted paths, isolated save
 RW_STORY_VIRTUAL=1 RW_AUTOPLAY=perfect RW_STORY_PROFILE_FROM=100 RW_STORY_UNTIL_BAR=108 godot --path . res://src/scenes/story_play.tscn   # frame times
-python3 tools/story/build_assets.py                                    # regenerate only the original story art
-godot --headless --path . -s tools/story/tune.gd -- perfect none       # endings under scripted skill levels
+python3 tools/story/build_assets.py                                    # regenerate the story art and its texture tiles
+godot --headless --path . -s tools/story/tune.gd -- chapter:mothership perfect none   # endings and the journey under scripted skill levels
 ```
 
 ## Layout

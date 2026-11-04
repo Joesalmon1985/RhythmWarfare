@@ -74,20 +74,6 @@ shot j16_20x9_booth         perfect         62  RW_WINDOW=1600x720
 shot j17_lowres_180         perfect         62  RW_STORY_LINES=180
 shot j18_motion_none        perfect         35  RW_STORY_MOTION=2
 
-# chapters 2 and 3 (their own art, music packs and endings) and the cutscenes between chapters
-shot ch2_01_opening         perfect       3  RW_STORY_CHAPTER=mothership
-shot ch2_02_groove          accuracy:0.8  27 RW_STORY_CHAPTER=mothership
-shot ch2_03_peak            perfect       69 RW_STORY_CHAPTER=mothership
-shot ch2_04_low_energy      none          40 RW_STORY_CHAPTER=mothership
-shot ch2_05_end_headliner   perfect       83 RW_STORY_CHAPTER=mothership
-shot ch2_06_end_beamed_home none          83 RW_STORY_CHAPTER=mothership
-shot ch3_01_opening         perfect       3  RW_STORY_CHAPTER=underworld
-shot ch3_02_groove          accuracy:0.8  21 RW_STORY_CHAPTER=underworld
-shot ch3_03_peak            perfect       55 RW_STORY_CHAPTER=underworld
-shot ch3_04_low_energy      none          30 RW_STORY_CHAPTER=underworld
-shot ch3_05_end_resident_dj perfect       67 RW_STORY_CHAPTER=underworld
-shot ch3_06_end_devoured    none          67 RW_STORY_CHAPTER=underworld
-
 interlude() {  # name cutscene_seconds
   local name="$1" at="$2"
   want "interlude_${name}_$(printf %02d "$at")" || return 0
@@ -95,24 +81,6 @@ interlude() {  # name cutscene_seconds
     "$GODOT" --path "$ROOT" -s tools/shoot.gd -- res://src/scenes/story_interlude.tscn "$OUT" "6:shot:interlude_${name}_$(printf %02d "$at")" 2>&1 | grep -E "^shot|ERROR|SCRIPT" || true
 }
 for t in 5 9 12 15; do interlude abduction $t; interlude descent $t; done
-
-# the moving camera mid-move (dolly, step, turn)
-shot cam_mothership_step_17    perfect 17.9 RW_STORY_CHAPTER=mothership
-shot cam_mothership_gallery    perfect 22   RW_STORY_CHAPTER=mothership
-shot cam_mothership_turn_33    perfect 33.9 RW_STORY_CHAPTER=mothership
-shot cam_mothership_reactor    perfect 45   RW_STORY_CHAPTER=mothership
-shot cam_mothership_walk_49    perfect 49.9 RW_STORY_CHAPTER=mothership
-shot cam_mothership_bridge     perfect 61   RW_STORY_CHAPTER=mothership
-shot cam_underworld_step_17    perfect 17.9 RW_STORY_CHAPTER=underworld
-shot cam_underworld_court      perfect 27   RW_STORY_CHAPTER=underworld
-shot cam_underworld_walk_33    perfect 33.9 RW_STORY_CHAPTER=underworld
-shot cam_underworld_pit        perfect 43   RW_STORY_CHAPTER=underworld
-shot cam_underworld_turn_49    perfect 49.9 RW_STORY_CHAPTER=underworld
-shot cam_underworld_furnace    perfect 54   RW_STORY_CHAPTER=underworld
-# a move frame by frame: step through the hatch (bar 17), the turn (33), the walk (49); u = progress through the 2-bar move
-for b in 17.3 17.6 18.2 18.6; do shot "camseq_step_$b" perfect "$b" RW_STORY_CHAPTER=mothership; done
-for b in 33.5 34.5; do shot "camseq_turn_$b" perfect "$b" RW_STORY_CHAPTER=mothership; done
-for b in 49.5 50.5; do shot "camseq_walk_$b" perfect "$b" RW_STORY_CHAPTER=mothership; done
 
 # the story menu and the result screens (the result plays a scripted set headless first, then shows its summary)
 screen() {  # name scene frames [env assignments...]
@@ -124,19 +92,57 @@ screen ui_story_menu       res://src/scenes/story_campaign.tscn 30 RW_STORY_UI=1
 screen ui_result_legendary res://src/scenes/story_result.tscn  30 RW_STORY_RESULT=perfect
 screen ui_result_lost      res://src/scenes/story_result.tscn  30 RW_STORY_RESULT=none
 
-# chapters 4 and 5 (the waking chapters) and their camera moves
-shot ch4_01_opening         perfect       3  RW_STORY_CHAPTER=hospital
-shot ch4_02_corridor        perfect       21 RW_STORY_CHAPTER=hospital
-shot ch4_03_cafeteria       perfect       29 RW_STORY_CHAPTER=hospital
-shot ch4_04_garden          perfect       43 RW_STORY_CHAPTER=hospital
-shot ch4_05_end_home        perfect       59 RW_STORY_CHAPTER=hospital
-shot ch4_06_end_quiet       none          59 RW_STORY_CHAPTER=hospital
-shot ch5_01_opening         perfect       3  RW_STORY_CHAPTER=mental_hospital
-shot ch5_02_corridor        perfect       21 RW_STORY_CHAPTER=mental_hospital
-shot ch5_03_art_room        perfect       31 RW_STORY_CHAPTER=mental_hospital
-shot ch5_04_courtyard       perfect       47 RW_STORY_CHAPTER=mental_hospital
-shot ch5_05_end_star        perfect       67 RW_STORY_CHAPTER=mental_hospital
-shot ch5_06_end_lights_out  none          67 RW_STORY_CHAPTER=mental_hospital
-shot cam_hospital_step_17   perfect       17.9 RW_STORY_CHAPTER=hospital
-shot cam_ward_walk_41       perfect       41.9 RW_STORY_CHAPTER=mental_hospital
+
+# Chapters 2 to 5 in the 2.5D world: one shot per journey node (the room the player is in at that bar, by skill) and each ending's tableau.
+# Names: <chapter prefix>_NN_<node>; bars are where the journey is (see tools/story/tune.gd for the places, docs/STORY_CAMPAIGN_HANDOVER.md for the bars).
+chap() { local prefix="$1" id="$2"; shift 2; shot "$prefix$1" "$2" "$3" RW_STORY_CHAPTER="$id" "${@:4}"; }  # chap prefix id name policy bar [env...]
+
+M=mothership
+chap m_ $M 01_deck_dancer          perfect 10
+chap m_ $M 02_walk_to_gallery      perfect 18.5
+chap m_ $M 03_gallery              perfect 27
+chap m_ $M 04_catwalk_reactor      perfect 40
+chap m_ $M 05_bridge               perfect 52
+chap m_ $M 06_helm_dj              perfect 68
+chap m_ $M 07_medbay_probe         none    53
+chap m_ $M 08_exam_sick            none    62
+chap m_ $M 09_recovered            none    70
+chap m_ $M 10_end_headliner        perfect 83
+chap m_ $M 11_end_honoured         sloppy  83 RW_SEED=2
+chap m_ $M 12_end_beamed_home      none    83
+
+U=underworld
+chap u_ $U 01_arena_dancer         perfect 10
+chap u_ $U 02_walk_to_court        perfect 18.5
+chap u_ $U 03_court                perfect 30
+chap u_ $U 04_throne               perfect 44
+chap u_ $U 05_pit_stage            perfect 54
+chap u_ $U 06_furnace_chains       none    44
+chap u_ $U 07_cage_sick            none    53
+chap u_ $U 08_end_resident_dj      perfect 67
+chap u_ $U 09_end_survived         sloppy  67 RW_SEED=2
+chap u_ $U 10_end_devoured         none    67
+
+H=hospital
+chap h_ $H 01_bed_wakes            perfect 10
+chap h_ $H 02_corridor_carried     perfect 22
+chap h_ $H 03_cafeteria            perfect 38
+chap h_ $H 04_garden_bandstand     perfect 48
+chap h_ $H 05_bad_quiet_corridor   none    40
+chap h_ $H 06_bad_back_to_bed      none    47
+chap h_ $H 07_end_home             perfect 59
+chap h_ $H 08_end_on_the_mend      sloppy  59 RW_SEED=2
+chap h_ $H 09_end_quiet            none    59
+
+W=mental_hospital
+chap w_ $W 01_day_room             perfect 10
+chap w_ $W 02_corridor             perfect 22
+chap w_ $W 03_art_room             perfect 36
+chap w_ $W 04_courtyard_stage      perfect 52
+chap w_ $W 05_treatment_room       none    40
+chap w_ $W 06_quiet_room           none    52
+chap w_ $W 07_end_star             perfect 67
+chap w_ $W 08_end_group_activity   sloppy  67 RW_SEED=2
+chap w_ $W 09_end_lights_out       none    67
+
 for t in 3 7 11 13; do interlude awakening $t; interlude sectioned $t; done

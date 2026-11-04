@@ -252,7 +252,7 @@
   {"id": "throne_steps", "at": [25.4, 4], "yaw": -90, "sector": "court"},
   {"id": "throne", "at": [29.4, 4], "yaw": 90, "sector": "throne"},
   {"id": "pit_in", "at": [19, 11.2], "yaw": 180, "sector": "pit_deck"},
-  {"id": "pit_edge", "at": [14.4, 20.4], "yaw": 90, "sector": "pit_deck"},
+  {"id": "pit_edge", "at": [14.4, 20.4], "yaw": -45, "sector": "pit_deck"},
   {"id": "pit_stage", "at": [19, 23.6], "yaw": 0, "sector": "pit_stage"},
   {"id": "furnace_in", "at": [-11.8, 4], "yaw": 90, "sector": "furnace"},
   {"id": "furnace_chains", "at": [-14.2, 4], "yaw": 90, "sector": "furnace"},

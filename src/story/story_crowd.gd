@@ -48,6 +48,8 @@ var riser_spot := Vector2.ZERO
 var floor_x := Vector2(-6.5, 6.5)  # the dance floor's x range, for waves
 var door_slots: Array = []
 var props: Array = []  # StoryCrowdProp nodes (silhouettes and occluders)
+var _room_sectors: Array = []  # the sector ids of this crowd's room
+var _room_visible := true  # false while no sector of the room can be seen: the crowd then only keeps its walks, fades and arrivals (no projection, mood or pose)
 var drawn := 0  # actors drawn last frame (a probe for the tests and the profiler)
 var _pose_key := ""
 var _order_key := ""
@@ -81,6 +83,10 @@ func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
 func attach_map(p_map: StoryMap) -> void:
 	map = p_map
 	world_mode = true
+	_room_sectors = []
+	for sec in map.sectors:
+		if str(sec["room"]) == view:
+			_room_sectors.append(str(sec["id"]))
 	var door := map.room_spot(view, "door")
 	door_pos = door.get("at", Vector2.ZERO)
 	door_slots = door.get("slots", [])
@@ -228,6 +234,9 @@ func update(t: float, p_energy: float) -> void:
 		c.visible = float(a["alpha"]) > 0.01
 		if not c.visible:
 			continue
+		if not _room_visible:
+			c.visible = false
+			continue
 		var vn: Dictionary = a["vanish"]
 		var vu := 0.0
 		if not vn.is_empty() and t >= float(vn["t0"]):
@@ -266,8 +275,9 @@ func update(t: float, p_energy: float) -> void:
 		s["alpha"] = move_toward(float(s["alpha"]), 1.0 if s["present"] else 0.0, fade)
 		var up_target := 1.0 if energy + float(s["thresh"]) > SIL_UP_E or _ending == "legendary" else 0.0
 		s["upw"] = move_toward(float(s.get("upw", up_target)), up_target, dt * 3.0)
-	_update_props()
-	_sort_world()
+	if _room_visible:
+		_update_props()
+		_sort_world()
 	queue_redraw()
 
 
@@ -300,6 +310,11 @@ func set_camera(pose: Dictionary, size: Vector2, visible_secs: Dictionary) -> vo
 	cam_pose = pose
 	view_size = size
 	vis_sectors = visible_secs
+	_room_visible = visible_secs.is_empty() or _room_sectors.is_empty()
+	for sid in _room_sectors:
+		if visible_secs.has(sid):
+			_room_visible = true
+			break
 	var cam: Vector3 = pose["cam"]
 	_eye = cam
 	_fwd = StoryProjector.forward(float(pose["yaw"]))

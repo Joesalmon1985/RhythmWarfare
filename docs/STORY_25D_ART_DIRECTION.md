@@ -74,11 +74,31 @@ chapter palette clamp in the post shader (a setting, off by default on reduced e
 magenta in a dark warehouse; Mothership cold cyan with the planet's glow; Underworld red and black with ember orange; Hospital
 night blue with warm corridor spill; the Ward institutional green with rust, a single warm office light and flickering tubes.
 
-### E. The figures' look (Opus)
-Keep the rig and its song-time poses; restyle toward the references: proportions nearer 1 : 6.5, thinner or no outlines, dithered
-cloth shading, varied clothes and hair per actor, headphones on the DJ, the far rows as silhouettes. Bake the rigs to low-resolution
-sprite sheets at the internal pixel size so they read as pixel figures (the plan's stretch item, now wanted) with 3 facings; keep the
-live rig for the cutscenes.
+### E. The figures (the owner's priority: "replicate the look of the sprites in the example art, less blocky, more individual")
+The target is `pixelexample/Rave.png`: people, not mascots. What that means, concretely:
+- **Proportions**: heads about 1/6.5 to 1/7 of height, real shoulders, hips and hands; no oversized heads, no stick limbs, no thick
+  dark outlines (a one-pixel darker edge of the local colour at most).
+- **Individuality**: every actor is their own person, generated from their seed by a wardrobe system rather than picked from a few
+  archetype variants. Build (height 0.9 to 1.1, slim to broad), skin tone (a wide range), hair (short, curly, braids, locs, long,
+  bun, shaved, under a hat), face (eyes open or closed lost in the music, smile, grin, beard, stubble, glasses), clothes from a
+  wardrobe library (t-shirt with a print, checked shirt, striped jumper, hoodie, jacket, crop top, dungarees, baggy trousers, jeans,
+  skirt, dress, bucket hat, cap, beanie, headphones, bag strap, bracelet, trainers, boots), each with its own colour set in the
+  chapter's palette. Chapter wardrobes: ravers; aliens with the same system (builds, skins, antennae, suits); demons (horns, hide,
+  armour); hospital staff and family (scrubs, gowns, visitors' coats); the Ward's residents in fancy dress, staff in institutional
+  green. No two actors in a room may share build, hair and top.
+- **Shading**: cloth folds and skin shaded in two or three steps with dithering between them, a rim from the nearest light colour,
+  not flat fills. Prints and stripes on clothes. Hair with strands, not a helmet.
+- **Pixels**: figures are drawn so that at the internal resolution they read as hand-placed pixels, not as scaled vectors: the
+  pipeline bakes each actor's rig to a sprite sheet at the internal pixel size (one pixel of the sheet is one screen pixel at the
+  front row), with 3 facings, 8 to 12 frames per state, nearest-filtered, so a dancer looks like the reference's pixel people. The
+  live rig stays for the cutscenes and as the bake source. The default internal resolution rises to 360 lines (640 x 360; frame
+  cost was measured as independent of resolution) so the people are finer than the walls are chunky; 270 and 180 stay as settings.
+- **Poses**: keep the beat-locked analytic poses but add the reference's naturalness: weight on one leg, a cup raised, a hand on a
+  friend's shoulder, eyes closed with the head back, a finger pointing at the DJ, hands on the mixer with headphones on one ear.
+- **Depth**: the front row large and partly cropped, the mid rows in full, the back rows as darker, bluer silhouettes with rim
+  light, as the reference does.
+Acceptance: a contact sheet `docs/shots/story/figures_<chapter>.jpg` of every actor at front-row size next to a crop of the
+reference; the owner should see people of the same kind, original but in that spirit.
 
 ## 3. WP9 (Sonnet, after WP8): structure for A, B and C
 - Rebuild the five maps to the room lists in A (reuse everything that fits; the maps are data). Validation unchanged.
@@ -88,14 +108,17 @@ live rig for the cutscenes.
   for `chat`, targets for `watch`, props in hand; the fun beats above authored as pieces or directives.
 - Light sources as things with a radius and colour; `StoryWorld` bakes per-sector vertex gradients from them (D's data hook, so Opus
   can dress rooms by placing lamps).
+- The default internal resolution becomes 360 lines (settings keep 270 and 180).
 - Tests: every block has a camera beat; every sector has activities for every band; no dancing off the dance floor in the quiet band;
   the matrix (plan 8.1) and the walk-through (8.2) still pass; screenshots regenerated, one per room per chapter plus the activity beats.
 - Acceptance: a contact sheet per chapter in `docs/shots/story/` where a reviewer can tell every room apart at a glance; in any
   screenshot off a dance floor fewer than half the figures are dancing; between any two consecutive blocks the camera has moved or looked.
 
-## 4. Opus polish (replaces plan section 9): look for D and E
-Work per chapter, in this order: Night One, the Ward, the Hospital, the Underworld, the Mothership. For each: the textures (dense,
-dithered, worn), the light sources placed for mood (pools, spill, moonlight), the props that tell the story (section 1.3 and the
-chapter's own), the window or opening with its sky, the far crowd silhouettes, then the figures (E). Before/after screenshots in
-`docs/shots/story`, one reviewed commit per chapter, the frame budget kept (plan 8.4), no change to logic, maps' sector graphs, journeys
-or tests except to add checks. The references are the mood, not a copy: original art only.
+## 4. Opus polish (replaces plan section 9): look for E then D
+Figures first (section 2.E), for all five chapters, before any room dressing: the wardrobe system and the per-actor generation in the
+Python art pipeline, the restyled rig parts, the sprite-sheet bake, the depth treatment, the contact sheets. Then the rooms, per
+chapter in this order: Night One, the Ward, the Hospital, the Underworld, the Mothership: the textures (dense, dithered, worn), the
+light sources placed for mood (pools, spill, moonlight), the props that tell the story (section 1.3 and the chapter's own), the window
+or opening with its sky, the far crowd silhouettes. Before/after screenshots in `docs/shots/story`, one reviewed commit per unit, the
+frame budget kept (plan 8.4), no change to logic, the maps' sector graphs, journeys or tests except to add checks. The references
+are the spirit, not a copy: original art only, generated by the repo's own tools.
