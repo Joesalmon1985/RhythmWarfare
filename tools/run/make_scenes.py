@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -67,6 +68,23 @@ NEW_WAYPOINTS = {
         ("court_north", (53.0, 1.0), 90, "courtyard"), ("court_south", (53.0, 12.0), 90, "courtyard"),
         ("treat_door", (16.0, 8.6), 0, "treatment"),
     ],
+}
+
+# ---- things added to the maps for the visual adventure (workstream C): anchors for hotspots that no existing thing gave. One billboard per row: id, sprite, (x, z), y, size, anim. -------
+# Sprites are drawn by the chapter's own generator (tools/story/art/tex_<chapter>.py) and registered in tiles.py; lights are {"kind": "light"} things.
+NEW_THINGS = {
+    "night_one": [
+        ("wizard_floor", "thing_wizard", (-5.2, 7.4), 0.85, 1.7, "sway"), ("wizard_chill", "thing_wizard", (8.4, 9.7), 0.85, 1.7, "sway"),
+        ("headphones_booth", "thing_headphones", (0.9, -8.4), 1.15, 0.5, "none"), ("crack_door", "thing_crack", (2.85, 10.7), 1.2, 2.4, "none"),
+    ],
+    "hospital": [("mic_band", "thing_mic", (62.3, 1.4), 0.75, 1.5, "none")],
+    "mental_hospital": [("mural_door", "thing_mural", (24.0, 7.85), 1.0, 2.0, "none")],
+}
+NEW_LIGHTS = {  # id, (x, z), y, radius, color, strength
+    "night_one": [("lt_crack", (2.5, 10.7), 1.2, 3.2, "#ff5a28", 1.3), ("lt_ship_beam", (0.0, 15.5), 1.5, 4.5, "#7ff0ff", 1.2), ("lt_wizard_floor", (-5.0, 7.0), 1.6, 3.0, "#8060ff", 0.9),
+                  ("lt_wizard_chill", (8.6, 9.2), 1.6, 2.6, "#8060ff", 0.8)],
+    "hospital": [("lt_band_mic", (62.0, 1.2), 1.8, 3.5, "#ffd890", 1.0)],
+    "mental_hospital": [("lt_mural", (24.0, 7.2), 1.8, 3.0, "#ffd27a", 1.0)],
 }
 
 # ---- journeys inside a scene ------------------------------------------------------------------------------------------------------------------
@@ -255,14 +273,16 @@ def build_nodes() -> list[dict]:
     return nodes
 
 
-def write_run(nodes: list[dict]) -> None:
+def write_run(nodes: list[dict], cinematics: dict | None = None) -> None:
     run = json.loads(RUN.read_text(encoding="utf-8"))
     out = {}
     for k, v in run.items():
         if k == "nodes":
             out["worlds"] = WORLDS
             out["nodes"] = nodes
-        elif k != "worlds":
+            if cinematics is not None:
+                out["cinematics"] = cinematics
+        elif k not in ("worlds", "cinematics"):
             out[k] = v
     RUN.write_text(json.dumps(out, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
 
@@ -331,12 +351,46 @@ def add_waypoints() -> None:
         print(mp, "+%d waypoints" % len(lines))
 
 
+def add_things() -> None:
+    """New billboards and lights (NEW_THINGS, NEW_LIGHTS) go in as one line each at the end of the map's things; the sprites they name join the map's textures."""
+    for mp in sorted(set(NEW_THINGS) | set(NEW_LIGHTS)):
+        path = MAPS / f"{mp}.json"
+        txt = path.read_text(encoding="utf-8")
+        doc = json.loads(txt)
+        have = {x["id"] for x in doc["things"]}
+        lines = []
+        for tid, sprite, at, y, size, anim in NEW_THINGS.get(mp, []):
+            if tid not in have:
+                lines.append('  {"id": "%s", "kind": "billboard", "sprite": "%s", "at": [%g, %g], "y": %g, "size": %g, "anim": "%s"}' % (tid, sprite, at[0], at[1], y, size, anim))
+        for tid, at, y, radius, color, strength in NEW_LIGHTS.get(mp, []):
+            if tid not in have:
+                lines.append('  {"id": "%s", "kind": "light", "at": [%g, %g], "y": %g, "radius": %g, "color": "%s", "strength": %g}' % (tid, at[0], at[1], y, radius, color, strength))
+        if lines:
+            m = re.search(r'("things": \[\n)(.*?)(\n \],)', txt, re.S)
+            assert m, mp
+            txt = txt[:m.start(2)] + m.group(2) + ",\n" + ",\n".join(lines) + txt[m.end(2):]
+        for tid, sprite, *_ in NEW_THINGS.get(mp, []):
+            if sprite not in doc["textures"]:
+                m = re.search(r'("textures": \{\n)(.*?)(\n \},)', txt, re.S)
+                assert m, mp
+                txt = txt[:m.start(2)] + m.group(2) + ',\n  "%s": "textures/%s.png"' % (sprite, sprite) + txt[m.end(2):]
+                doc["textures"][sprite] = 1
+        path.write_text(txt, encoding="utf-8", newline="\n")
+        print(mp, "+%d things" % len(lines))
+
+
 def main() -> None:
     nodes = build_nodes()
     add_waypoints()
+    add_things()
     write_run(nodes)
     write_music()
-    print("%d scenes in %d worlds" % (len(nodes), len(WORLDS)))
+    # the hotspot tables read the scenes just written (exits and doorways) and own the named cinematics (rail actions to waypoints) that go into run.json
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import make_hotspots
+    write_run(nodes, make_hotspots.CINEMATICS)
+    make_hotspots.write()
+    print("%d scenes in %d worlds, %d cinematics" % (len(nodes), len(WORLDS), len(make_hotspots.CINEMATICS)))
 
 
 if __name__ == "__main__":

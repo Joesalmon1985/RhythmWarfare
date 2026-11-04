@@ -939,12 +939,76 @@ def thing_rail() -> np.ndarray:
     sp.paint(rect(n, 40, 112, 70, 120) & dmask(np.full((n, n), 0.8)), AMBER, np.full((n, n), 0.7))
     return sp.rgba()
 
+def thing_wizard() -> np.ndarray:
+    """The wizard who runs the Bassment (128 px, 1.6 m): the trial's own wizard portrait (assets/trial/art/wizard.png) cut out and lifted into the club's light, a violet rim
+    on the shadow side and a warm amber edge on the lit side, so he stands in the warehouse like one of its dancers."""
+    from PIL import Image
+    im = Image.open(os.path.join(lib.ROOT, "assets", "trial", "art", "wizard.png")).convert("RGBA").resize((N, N), Image.NEAREST)
+    rgba = np.array(im, np.uint8)
+    a = rgba[..., 3] > 127
+    x, y = px.grid(N)
+    lit = a & (np.roll(~a, 2, axis=1) | np.roll(~a, 2, axis=0))
+    rim = a & (np.roll(~a, -2, axis=1))
+    rgba[lit, :3] = (px.hexc("#f4bc4a") * 255 + 0.5).astype(np.uint8)
+    rgba[rim, :3] = (px.hexc("#8e1c66") * 255 + 0.5).astype(np.uint8)
+    rgba[..., 3] = np.where(a, 255, 0).astype(np.uint8)
+    return rgba
+
+
+def thing_headphones() -> np.ndarray:
+    """A pair of DJ headphones hung by their cable (64 px, 0.5 m): a steel band, two fat amber cups with a magenta ring, the coiled lead."""
+    n = 64
+    sp = Sprite(n)
+    x, y = px.grid(n)
+    band = (np.hypot(x + 0.5 - 32, y + 0.5 - 30) < 22) & (np.hypot(x + 0.5 - 32, y + 0.5 - 30) > 18) & (y < 30)
+    sp.paint(band, STEEL, 0.55 + 0.3 * (x < 30))
+    for cx in (10, 54):
+        sp.paint(ell(n, cx, 36, 7, 10), CAB, 0.45 + 0.25 * (x < cx))
+        sp.paint(ell(n, cx, 36, 5, 8), AMBER, 0.5 + 0.35 * (x < cx) - 0.2 * (y > 38))
+        sp.paint(ell(n, cx, 36, 2.5, 4), MAGENTA, 0.8)
+    sp.paint(sag(n, 44, 12, 1.4, 10, 54) | seg(n, 32, 8, 32, 12, 2.0), CAB, np.full((n, n), 0.2))
+    sp.paint(sag(n, 48, 6, 1.0, 8, 24), CAB, np.full((n, n), 0.15))
+    return sp.rgba()
+
+
+def thing_crack() -> np.ndarray:
+    """A crack split open in the wall (128 px, 2.0 m): a jagged fissure running top to bottom, its lips of brick bent out, hell-light the colour of a forge pouring through,
+    a spill of rubble at the foot. The Underworld door at the club entrance."""
+    n = N
+    sp = Sprite(n)
+    x, y = px.grid(n)
+    rng = np.random.RandomState(1701)
+    pts = [(64.0, 2.0)]
+    for k in range(1, 13):
+        pts.append((64 + rng.uniform(-11, 11), 2 + k * 9.4))
+    dist = np.full((n, n), 99.0, np.float32)
+    wid = np.zeros((n, n), np.float32)
+    for (x0, y0), (x1, y1) in zip(pts[:-1], pts[1:]):
+        dx, dy = x1 - x0, y1 - y0
+        t_ = np.clip(((x + 0.5 - x0) * dx + (y + 0.5 - y0) * dy) / (dx * dx + dy * dy), 0, 1)
+        d = np.hypot(x + 0.5 - (x0 + t_ * dx), y + 0.5 - (y0 + t_ * dy))
+        wd = 4.6 + 4.2 * np.sin(np.pi * (y0 + t_ * dy) / 124.0)  # half width: pinched at both ends
+        better = d - wd < dist - wid
+        dist = np.where(better, d, dist)
+        wid = np.where(better, wd, wid)
+    inside = dist - wid
+    core = inside < 0
+    lips = (inside >= 0) & (inside < 8.0)
+    glow = px.ramp("#3a0a08", "#8a200e", "#d8561c", "#ff9a2c", "#fff0a0")
+    sp.paint(lips, BRICK, 0.22 + 0.5 * (1 - inside / 8.0) * (0.6 + 0.4 * (px.noise(n, 5, 1702) > 0.45)) + 0.2 * (x < 64))
+    sp.paint(core, glow, 0.5 + 0.5 * np.clip(-inside / 4.0, 0, 1) - 0.12 * (px.noise(n, 4, 1703)))
+    sp.paint(core & (-inside > 3.0), glow, 0.97)
+    for cx, cy, r in ((46, 119, 6), (56, 122, 4), (74, 120, 6), (86, 123, 3), (64, 117, 4), (38, 124, 3)):
+        sp.paint(ell(n, cx, cy, r, r * 0.7), BRICK, 0.35 + 0.4 * (x < cx))
+    sp.paint(ell(n, 64, 124, 18, 3) & dmask(np.full((n, n), 0.45)), glow, 0.55)
+    return sp.rgba()
+
 
 SPRITES = {
     "thing_decks": thing_decks, "thing_pendant": thing_pendant, "thing_bulb": thing_bulb, "thing_sink": thing_sink,
     "thing_dryer": thing_dryer, "thing_tube": thing_tube, "thing_toilet": thing_toilet, "thing_firedoor": thing_firedoor, "thing_exit_sign": thing_exit_sign,
     "thing_sofa": thing_sofa, "thing_lavalamp": thing_lavalamp, "thing_bulbs": thing_bulbs, "thing_truss_tower": thing_truss_tower, "thing_bin": thing_bin,
-    "thing_rail": thing_rail,
+    "thing_rail": thing_rail, "thing_wizard": thing_wizard, "thing_headphones": thing_headphones, "thing_crack": thing_crack,
 }
 
 
