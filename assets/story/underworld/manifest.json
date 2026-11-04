@@ -4069,5 +4069,215 @@
     ]
    ]
   }
+ },
+ "textures": {
+  "ceil_court": {
+   "file": "textures/ceil_court.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "ceil_pipes": {
+   "file": "textures/ceil_pipes.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "ceil_spikes": {
+   "file": "textures/ceil_spikes.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_carpet": {
+   "file": "textures/floor_carpet.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_causeway": {
+   "file": "textures/floor_causeway.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_checker": {
+   "file": "textures/floor_checker.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_dais": {
+   "file": "textures/floor_dais.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_obsidian": {
+   "file": "textures/floor_obsidian.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_orange": {
+   "file": "textures/floor_orange.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_steel": {
+   "file": "textures/floor_steel.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "lava": {
+   "file": "textures/lava.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "sky_hell": {
+   "file": "textures/sky_hell.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "trim": {
+   "file": "textures/trim.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_arena": {
+   "file": "textures/wall_arena.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "wall_bars": {
+   "file": "textures/wall_bars.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "wall_bone": {
+   "file": "textures/wall_bone.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "wall_cave": {
+   "file": "textures/wall_cave.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_column": {
+   "file": "textures/wall_column.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_court": {
+   "file": "textures/wall_court.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_face": {
+   "file": "textures/wall_face.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 4.0
+  },
+  "wall_fortress": {
+   "file": "textures/wall_fortress.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 4.0
+  },
+  "wall_hellmouth": {
+   "file": "textures/wall_hellmouth.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_plate": {
+   "file": "textures/wall_plate.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "wall_shelf": {
+   "file": "textures/wall_shelf.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_speaker": {
+   "file": "textures/wall_speaker.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_throne": {
+   "file": "textures/wall_throne.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 4.0
+  }
  }
 }

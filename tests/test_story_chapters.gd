@@ -185,7 +185,8 @@ func test_the_camera_walks_the_authored_route_and_every_room_is_populated() -> v
 		"hospital": ["main", "corridor", "cafeteria", "garden", "main"], "mental_hospital": ["main", "corridor", "art_room", "courtyard", "main"]}
 	# a chapter in the 2.5D world: the rooms with a crowd the player walks into, by skill (the medical bay and the toilets have no crowd of their own)
 	var world := {"mothership": {"perfect": ["main", "gallery", "reactor", "bridge"], "none": ["main", "gallery"]},
-		"mental_hospital": {"perfect": ["main", "corridor", "art_room", "courtyard"], "none": ["main"]}}
+		"mental_hospital": {"perfect": ["main", "corridor", "art_room", "courtyard"], "none": ["main"]},
+		"underworld": {"perfect": ["main", "court", "pit"], "none": ["main", "furnace"]}}
 	for id in expect:
 		if not _has_art(id):
 			continue

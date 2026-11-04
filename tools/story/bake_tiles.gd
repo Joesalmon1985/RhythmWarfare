@@ -460,3 +460,50 @@ func _th_easel() -> Image:
 	im.fill_rect(Rect2i(78, 66, 4, 60), Color("#8a5a30"))
 	im.fill_rect(Rect2i(62, 62, 4, 64), Color("#6a4220"))
 	return im
+
+
+# ---- The Underworld -----------------------------------------------------------------------------------------------
+
+func _underworld() -> Dictionary:
+	return {
+		# the arena (backdrop.svg): brick wall, bone pillars, the hellmouth, the bottle shelf, the checker floor, spikes, dais
+		"wall_arena": func(s, c): return _fit(_crop(_bd(s, c), Rect2i(360, 100, 170, 120))),
+		"wall_speaker": func(s, c): return _fit(_svg(s, c, "speaker_l.svg", 1.0)),
+		"wall_hellmouth": func(s, c): return _fit(_crop(_bd(s, c), Rect2i(530, 90, 220, 170))),
+		"wall_bone": func(s, c): return _fit(_crop(_bd(s, c), Rect2i(250, 40, 40, 220))),
+		"wall_shelf": func(s, c): return _fit(_crop(_bd(s, c), Rect2i(850, 120, 170, 140))),
+		"floor_checker": func(s, c): return _fit(_crop(_bd(s, c), Rect2i(260, 320, 400, 120))),
+		"floor_dais": func(s, c): return _rows(_svg(s, c, "riser.svg", 1.0)),
+		"ceil_spikes": func(s, c): return _rows(_crop(_bd(s, c), Rect2i(120, 0, 1000, 50))),
+		"trim": func(s, c): return _rows(_crop(_bd(s, c), Rect2i(300, 250, 700, 30))),
+		# the court: columns, stained windows, the throne, obsidian checks, the red carpet
+		"wall_court": func(s, c): return _fit(_crop(_view(s, c, "court_backdrop"), Rect2i(60, 40, 120, 300))),
+		"wall_column": func(s, c): return _fit(_crop(_view(s, c, "court_backdrop"), Rect2i(170, 30, 70, 330))),
+		"wall_throne": func(s, c): return _fit(_crop(_view(s, c, "court_backdrop"), Rect2i(540, 40, 200, 240))),
+		"floor_obsidian": func(s, c): return _fit(_crop(_view(s, c, "court_backdrop"), Rect2i(40, 480, 320, 220))),
+		"floor_carpet": func(s, c): return _fit(_crop(_view(s, c, "court_backdrop"), Rect2i(500, 540, 280, 160))),
+		"ceil_court": func(s, c): return _tint(_rows(_crop(_view(s, c, "court_backdrop"), Rect2i(100, 0, 1000, 40))), Color(0.8, 0.7, 0.8)),
+		# the pit: lava, the stone causeway, cave rock, the fortress
+		"lava": func(s, c): return _fit(_crop(_view(s, c, "pit_backdrop"), Rect2i(100, 540, 400, 160))),
+		"floor_causeway": func(s, c): return _fit(_crop(_view(s, c, "pit_backdrop"), Rect2i(200, 380, 300, 100))),
+		"wall_cave": func(s, c): return _fit(_crop(_view(s, c, "pit_backdrop"), Rect2i(20, 60, 120, 240))),
+		"wall_fortress": func(s, c): return _fit(_crop(_view(s, c, "pit_backdrop"), Rect2i(540, 100, 220, 160))),
+		# the furnace: steel plates, its iron face, glowing channel floor, dark steel floor, pipes; the cage bars have no art
+		"wall_plate": func(s, c): return _fit(_crop(_view(s, c, "furnace_backdrop"), Rect2i(30, 100, 120, 300))),
+		"wall_face": func(s, c): return _fit(_crop(_view(s, c, "furnace_backdrop"), Rect2i(360, 40, 540, 220))),
+		"floor_orange": func(s, c): return _fit(_crop(_view(s, c, "furnace_backdrop"), Rect2i(300, 340, 360, 300))),
+		"floor_steel": func(s, c): return _fit(_crop(_view(s, c, "furnace_backdrop"), Rect2i(0, 420, 200, 280))),
+		"ceil_pipes": func(s, c): return _rows(_crop(_view(s, c, "furnace_backdrop"), Rect2i(0, 0, 1280, 60))),
+		"wall_bars": func(s, c): return _cage_bars(),
+		"sky_hell": func(s, c): return _sky(Color(0.12, 0.02, 0.03), Color(0.85, 0.28, 0.06), 40, 23, [[60, 40, 14, Color(0.9, 0.3, 0.1)], [170, 46, 22, Color(0.5, 0.1, 0.05)]], Color(1.0, 0.6, 0.3)),
+	}
+
+
+func _cage_bars() -> Image:
+	var im := _filled(64, Color("#2a1410"))
+	for k in 6:
+		_rect(im, Rect2i(k * 11 + 3, 0, 4, 64), Color("#6a4a40"))
+		_rect(im, Rect2i(k * 11 + 3, 0, 1, 64), Color("#a07a68"))
+	_rect(im, Rect2i(0, 8, 64, 3), Color("#6a4a40"))
+	_rect(im, Rect2i(0, 52, 64, 3), Color("#6a4a40"))
+	return im

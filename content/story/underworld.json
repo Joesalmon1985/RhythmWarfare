@@ -105,6 +105,17 @@
      "piece": "bone_arches"
     },
     {
+     "at_bar": 1,
+     "action": "player_role",
+     "role": "dancer"
+    },
+    {
+     "at_bar": 2,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
+    },
+    {
      "at_bar": 3,
      "action": "piece_on",
      "piece": "lava_flow"
@@ -121,6 +132,12 @@
     {
      "at_bar": 5,
      "action": "haze_burst"
+    },
+    {
+     "at_bar": 6,
+     "action": "player_look",
+     "by": -28,
+     "bars": 3
     },
     {
      "at_bar": 7,
@@ -155,6 +172,12 @@
      "else": "look_around"
     },
     {
+     "at_bar": 10,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
      "at_bar": 11,
      "action": "piece_on",
      "piece": "fire_pits_right"
@@ -174,6 +197,12 @@
      "else": "look_around"
     },
     {
+     "at_bar": 14,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
+    },
+    {
      "at_bar": 15,
      "action": "led_bars"
     },
@@ -181,12 +210,6 @@
      "at_bar": 15,
      "action": "piece_on",
      "piece": "hellmouth_portal"
-    },
-    {
-     "at_bar": 15,
-     "action": "camera_push",
-     "zoom": 0.06,
-     "bars": 2
     }
    ]
   },
@@ -197,13 +220,6 @@
    "start_bar": 17,
    "bars": 8,
    "events": [
-    {
-     "at_bar": 17,
-     "action": "move_to",
-     "view": "court",
-     "style": "step",
-     "bars": 2
-    },
     {
      "at_bar": 17,
      "action": "bass_reveal"
@@ -225,6 +241,12 @@
      "at_bar": 17,
      "action": "piece_on",
      "piece": "court_seal"
+    },
+    {
+     "at_bar": 18,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
     },
     {
      "at_bar": 19,
@@ -251,9 +273,9 @@
      "bars": 2
     },
     {
-     "at_bar": 21,
-     "action": "camera_look",
-     "dx": 120,
+     "at_bar": 22,
+     "action": "player_look",
+     "by": -28,
      "bars": 3
     },
     {
@@ -279,6 +301,12 @@
      "group": "late"
     },
     {
+     "at_bar": 26,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
      "at_bar": 27,
      "action": "front_row_sway",
      "bars": 2
@@ -294,14 +322,14 @@
      "bars": 2
     },
     {
-     "at_bar": 31,
-     "action": "led_rings"
+     "at_bar": 30,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
     },
     {
      "at_bar": 31,
-     "action": "camera_push",
-     "zoom": 0.08,
-     "bars": 2
+     "action": "led_rings"
     }
    ]
   },
@@ -314,13 +342,6 @@
    "events": [
     {
      "at_bar": 33,
-     "action": "move_to",
-     "view": "pit",
-     "style": "walk",
-     "bars": 2
-    },
-    {
-     "at_bar": 33,
      "action": "piece_on",
      "piece": "pit_lava_glare"
     },
@@ -328,6 +349,12 @@
      "at_bar": 33,
      "action": "piece_on",
      "piece": "pit_fortress_glow"
+    },
+    {
+     "at_bar": 34,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
     },
     {
      "at_bar": 35,
@@ -349,9 +376,9 @@
      "bars": 2
     },
     {
-     "at_bar": 37,
-     "action": "camera_look",
-     "dx": -120,
+     "at_bar": 38,
+     "action": "player_look",
+     "by": -28,
      "bars": 3
     },
     {
@@ -387,6 +414,12 @@
      "bars": 2
     },
     {
+     "at_bar": 42,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
      "at_bar": 43,
      "action": "hero_center"
     },
@@ -402,6 +435,12 @@
     {
      "at_bar": 45,
      "action": "haze_burst"
+    },
+    {
+     "at_bar": 46,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
     },
     {
      "at_bar": 47,
@@ -424,13 +463,6 @@
    "events": [
     {
      "at_bar": 49,
-     "action": "move_to",
-     "view": "furnace",
-     "style": "turn_right",
-     "bars": 2
-    },
-    {
-     "at_bar": 49,
      "action": "riser_up"
     },
     {
@@ -449,10 +481,10 @@
      "piece": "furnace_channels"
     },
     {
-     "at_bar": 49,
-     "action": "camera_push",
-     "zoom": 0.14,
-     "bars": 2
+     "at_bar": 50,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
     },
     {
      "at_bar": 51,
@@ -482,6 +514,12 @@
      }
     },
     {
+     "at_bar": 54,
+     "action": "player_look",
+     "by": -28,
+     "bars": 3
+    },
+    {
      "at_bar": 55,
      "action": "clap_sync",
      "bars": 2,
@@ -507,13 +545,6 @@
    "events": [
     {
      "at_bar": 57,
-     "action": "move_to",
-     "view": "main",
-     "style": "walk",
-     "bars": 2
-    },
-    {
-     "at_bar": 57,
      "action": "piece_on",
      "piece": "skull_throne"
     },
@@ -522,6 +553,12 @@
      "action": "piece_pulse",
      "piece": "lava_flow",
      "bars": 2
+    },
+    {
+     "at_bar": 58,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
     },
     {
      "at_bar": 59,
@@ -554,10 +591,10 @@
      }
     },
     {
-     "at_bar": 61,
-     "action": "camera_push",
-     "zoom": 0.12,
-     "bars": 2
+     "at_bar": 62,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
     },
     {
      "at_bar": 63,
@@ -581,11 +618,27 @@
    },
    "good": [
     "new_dancers_enter",
-    "applause"
+    "applause",
+    {
+     "action": "player_move",
+     "to": "court_in",
+     "style": "walk",
+     "bars": 4,
+     "after_bars": 2
+    }
    ],
    "bad": [
     "dancers_step_back",
-    "look_around"
+    "look_around",
+    {
+     "action": "fx_queasy",
+     "amount": 0.3,
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "queasy"
+    }
    ],
    "good_text": "The court stomped its approval and poured onto the floor.",
    "bad_text": "The court glared from the shadows, arms folded."
@@ -603,10 +656,36 @@
     "dead_band": 4
    },
    "good": [
-    "circle_spotlight_cheer"
+    "circle_spotlight_cheer",
+    {
+     "action": "player_move",
+     "to": "throne",
+     "style": "climb",
+     "bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "on_stage",
+     "after_bars": 3
+    }
    ],
    "bad": [
-    "circle_breaks_awkward"
+    "circle_breaks_awkward",
+    {
+     "action": "fx_queasy",
+     "amount": 0.6,
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "queasy"
+    },
+    {
+     "action": "player_move",
+     "to": "furnace_chains",
+     "style": "stagger",
+     "bars": 4
+    }
    ],
    "good_text": "The lake roared and the whole circle erupted.",
    "bad_text": "The lava hissed and the circle broke apart."
@@ -624,10 +703,57 @@
     "dead_band": 4
    },
    "good": [
-    "drop_synchronised_jump"
+    "drop_synchronised_jump",
+    {
+     "action": "player_move",
+     "to": "pit_stage",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "bring_in",
+     "group": "peak"
+    },
+    {
+     "action": "player_role",
+     "role": "dj",
+     "after_bars": 4
+    }
    ],
    "bad": [
-    "drop_stumble"
+    "drop_stumble",
+    {
+     "action": "fx_queasy",
+     "amount": 0.5,
+     "bars": 2
+    },
+    {
+     "action": "player_move",
+     "to": "cage",
+     "style": "run",
+     "bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "sick",
+     "after_bars": 3
+    },
+    {
+     "action": "sick_beat",
+     "bars": 2,
+     "after_bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "recovered",
+     "after_bars": 5
+    },
+    {
+     "action": "fx_queasy",
+     "amount": 0.0,
+     "bars": 2,
+     "after_bars": 5
+    }
    ],
    "good_text": "The drop landed: the whole forge jumped as one.",
    "bad_text": "The drop stumbled, but the furnaces kept burning."
@@ -644,7 +770,18 @@
     "energy_min": 40
    },
    "good": [
-    "winback_cheer"
+    "winback_cheer",
+    {
+     "action": "player_move",
+     "to": "throne_steps",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "on_stage",
+     "after_bars": 4
+    }
    ],
    "bad": [],
    "good_text": "The forge roars again: you won the floor back.",
@@ -667,7 +804,12 @@
     "final_chant"
    ],
    "bad": [
-    "final_flicker"
+    "final_flicker",
+    {
+     "action": "fx_queasy",
+     "amount": 0.4,
+     "bars": 2
+    }
    ],
    "good_text": "Hell chanted your name.",
    "bad_text": "The flames guttered and the demons drifted away."
@@ -678,19 +820,53 @@
    "title": "Hell's Resident DJ",
    "energy_min": 85,
    "pass_min": 0.94,
-   "text": "The demons crown you resident DJ of the underworld. The party never stops."
+   "text": "The demons crown you resident DJ of the underworld. The party never stops.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "pit_stage",
+     "style": "walk",
+     "bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "dj",
+     "after_bars": 3
+    }
+   ]
   },
   "survived_the_show": {
    "title": "Survived the Show",
    "energy_min": 40,
    "pass_min": 0.5,
-   "text": "Warm, if smoky, applause. You made it through the show in one piece."
+   "text": "Warm, if smoky, applause. You made it through the show in one piece.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "pit_edge",
+     "style": "walk",
+     "bars": 3
+    }
+   ]
   },
   "devoured": {
    "title": "Devoured by the Crowd",
    "energy_min": -1,
    "pass_min": 0.0,
-   "text": "The demons lose interest. Then they get peckish."
+   "text": "The demons lose interest. Then they get peckish.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "cage",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "out",
+     "after_bars": 4
+    }
+   ]
   }
  },
  "ending_order": [
@@ -849,8 +1025,6 @@
    "id": "c01",
    "archetype": "horned_queen",
    "variant": "a",
-   "x": 640,
-   "depth": 0.78,
    "group": "core",
    "role": "hero",
    "thresh": -6,
@@ -860,8 +1034,6 @@
    "id": "c02",
    "archetype": "imp",
    "variant": "a",
-   "x": 470,
-   "depth": 0.9,
    "group": "core",
    "role": "front",
    "thresh": -4
@@ -870,8 +1042,6 @@
    "id": "c03",
    "archetype": "fiend",
    "variant": "b",
-   "x": 820,
-   "depth": 0.92,
    "group": "core",
    "role": "front",
    "thresh": 2
@@ -880,8 +1050,6 @@
    "id": "c04",
    "archetype": "brute",
    "variant": "a",
-   "x": 350,
-   "depth": 0.62,
    "group": "core",
    "thresh": 4
   },
@@ -889,8 +1057,6 @@
    "id": "c05",
    "archetype": "skeleton",
    "variant": "a",
-   "x": 930,
-   "depth": 0.6,
    "group": "core",
    "thresh": -2,
    "glow": true
@@ -899,8 +1065,6 @@
    "id": "c06",
    "archetype": "flame",
    "variant": "b",
-   "x": 560,
-   "depth": 0.55,
    "group": "core",
    "thresh": 6
   },
@@ -908,8 +1072,6 @@
    "id": "c07",
    "archetype": "imp",
    "variant": "b",
-   "x": 740,
-   "depth": 0.5,
    "group": "core",
    "thresh": 0
   },
@@ -917,8 +1079,6 @@
    "id": "c08",
    "archetype": "curly",
    "variant": "a",
-   "x": 250,
-   "depth": 0.85,
    "group": "core",
    "role": "front",
    "thresh": -18,
@@ -928,8 +1088,6 @@
    "id": "c09",
    "archetype": "bob",
    "variant": "b",
-   "x": 1030,
-   "depth": 0.82,
    "group": "core",
    "role": "front",
    "thresh": -22,
@@ -939,8 +1097,6 @@
    "id": "c10",
    "archetype": "hoodie",
    "variant": "b",
-   "x": 660,
-   "depth": 0.3,
    "group": "core",
    "thresh": -14,
    "art": "night_one"
@@ -949,8 +1105,6 @@
    "id": "c11",
    "archetype": "punk",
    "variant": "a",
-   "x": 300,
-   "depth": 0.5,
    "group": "core",
    "thresh": -18,
    "art": "night_one"
@@ -959,8 +1113,6 @@
    "id": "c12",
    "archetype": "ponytail",
    "variant": "b",
-   "x": 1000,
-   "depth": 0.45,
    "group": "core",
    "thresh": -16,
    "art": "night_one"
@@ -969,8 +1121,6 @@
    "id": "e01",
    "archetype": "fiend",
    "variant": "a",
-   "x": 430,
-   "depth": 0.35,
    "group": "early",
    "enter_from": "doorway"
   },
@@ -978,8 +1128,6 @@
    "id": "e02",
    "archetype": "flame",
    "variant": "b",
-   "x": 880,
-   "depth": 0.38,
    "group": "early",
    "enter_from": "doorway"
   },
@@ -987,8 +1135,6 @@
    "id": "e03",
    "archetype": "brute",
    "variant": "b",
-   "x": 190,
-   "depth": 0.55,
    "group": "early",
    "enter_from": "doorway"
   },
@@ -996,8 +1142,6 @@
    "id": "e04",
    "archetype": "skeleton",
    "variant": "b",
-   "x": 1090,
-   "depth": 0.52,
    "group": "early",
    "enter_from": "doorway"
   },
@@ -1005,112 +1149,78 @@
    "id": "g01",
    "archetype": "imp",
    "variant": "a",
-   "x": 300,
-   "depth": 0.4,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 0,
-   "side_x": 60,
-   "side_depth": 0.3,
    "stays_on_bad": true
   },
   {
    "id": "g02",
    "archetype": "brute",
    "variant": "b",
-   "x": 510,
-   "depth": 0.42,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 1,
-   "side_x": 1220,
-   "side_depth": 0.33999999999999997,
    "stays_on_bad": true
   },
   {
    "id": "g03",
    "archetype": "fiend",
    "variant": "a",
-   "x": 760,
-   "depth": 0.33,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 2,
-   "side_x": 60,
-   "side_depth": 0.38,
    "stays_on_bad": true
   },
   {
    "id": "g04",
    "archetype": "skeleton",
    "variant": "a",
-   "x": 960,
-   "depth": 0.45,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 3,
-   "side_x": 1220,
-   "side_depth": 0.42,
    "stays_on_bad": false
   },
   {
    "id": "g05",
    "archetype": "flame",
    "variant": "b",
-   "x": 400,
-   "depth": 0.72,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 4,
-   "side_x": 60,
-   "side_depth": 0.45999999999999996,
    "stays_on_bad": false
   },
   {
    "id": "g06",
    "archetype": "horned_queen",
    "variant": "b",
-   "x": 880,
-   "depth": 0.72,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 5,
-   "side_x": 1220,
-   "side_depth": 0.5,
    "stays_on_bad": false
   },
   {
    "id": "g07",
    "archetype": "brute",
    "variant": "a",
-   "x": 140,
-   "depth": 0.75,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 6,
-   "side_x": 60,
-   "side_depth": 0.54,
    "stays_on_bad": false
   },
   {
    "id": "g08",
    "archetype": "imp",
    "variant": "b",
-   "x": 1140,
-   "depth": 0.74,
    "group": "gatherers",
    "enter_from": "doorway",
    "door_slot": 7,
-   "side_x": 1220,
-   "side_depth": 0.5800000000000001,
    "stays_on_bad": false
   },
   {
    "id": "l01",
    "archetype": "skeleton",
    "variant": "b",
-   "x": 580,
-   "depth": 0.88,
    "group": "late",
    "enter_from": "doorway"
   },
@@ -1118,8 +1228,6 @@
    "id": "l02",
    "archetype": "groover",
    "variant": "a",
-   "x": 700,
-   "depth": 0.68,
    "group": "late",
    "enter_from": "doorway",
    "art": "night_one"
@@ -1128,8 +1236,6 @@
    "id": "l03",
    "archetype": "horned_queen",
    "variant": "a",
-   "x": 1000,
-   "depth": 0.95,
    "group": "late",
    "enter_from": "doorway"
   },
@@ -1137,8 +1243,6 @@
    "id": "l04",
    "archetype": "bob",
    "variant": "a",
-   "x": 170,
-   "depth": 0.95,
    "group": "late",
    "enter_from": "doorway",
    "art": "night_one"
@@ -1147,8 +1251,6 @@
    "id": "p01",
    "archetype": "imp",
    "variant": "a",
-   "x": 360,
-   "depth": 0.45,
    "group": "peak",
    "enter_from": "side"
   },
@@ -1156,8 +1258,6 @@
    "id": "p02",
    "archetype": "fiend",
    "variant": "b",
-   "x": 920,
-   "depth": 0.43,
    "group": "peak",
    "enter_from": "side"
   },
@@ -1165,8 +1265,6 @@
    "id": "p03",
    "archetype": "flame",
    "variant": "a",
-   "x": 840,
-   "depth": 0.62,
    "group": "peak",
    "enter_from": "side"
   },
@@ -1174,8 +1272,6 @@
    "id": "p04",
    "archetype": "brute",
    "variant": "a",
-   "x": 430,
-   "depth": 0.6,
    "group": "peak",
    "enter_from": "side"
   },
@@ -1183,8 +1279,6 @@
    "id": "court_c01",
    "archetype": "horned_queen",
    "variant": "a",
-   "x": 640,
-   "depth": 0.78,
    "group": "core",
    "view": "court",
    "role": "hero",
@@ -1195,8 +1289,6 @@
    "id": "court_c02",
    "archetype": "imp",
    "variant": "b",
-   "x": 460,
-   "depth": 0.9,
    "group": "core",
    "view": "court",
    "role": "front",
@@ -1206,8 +1298,6 @@
    "id": "court_c03",
    "archetype": "fiend",
    "variant": "a",
-   "x": 830,
-   "depth": 0.92,
    "group": "core",
    "view": "court",
    "role": "front",
@@ -1217,8 +1307,6 @@
    "id": "court_c04",
    "archetype": "brute",
    "variant": "b",
-   "x": 340,
-   "depth": 0.62,
    "group": "core",
    "view": "court",
    "thresh": 4
@@ -1227,8 +1315,6 @@
    "id": "court_c05",
    "archetype": "skeleton",
    "variant": "a",
-   "x": 940,
-   "depth": 0.6,
    "group": "core",
    "view": "court",
    "thresh": -2,
@@ -1238,8 +1324,6 @@
    "id": "court_c06",
    "archetype": "flame",
    "variant": "a",
-   "x": 560,
-   "depth": 0.52,
    "group": "core",
    "view": "court",
    "thresh": 6
@@ -1248,8 +1332,6 @@
    "id": "court_c07",
    "archetype": "imp",
    "variant": "a",
-   "x": 740,
-   "depth": 0.48,
    "group": "core",
    "view": "court",
    "thresh": 0
@@ -1258,8 +1340,6 @@
    "id": "court_c08",
    "archetype": "groover",
    "variant": "a",
-   "x": 240,
-   "depth": 0.85,
    "group": "core",
    "view": "court",
    "role": "front",
@@ -1270,8 +1350,6 @@
    "id": "court_c09",
    "archetype": "curly",
    "variant": "b",
-   "x": 1030,
-   "depth": 0.82,
    "group": "core",
    "view": "court",
    "role": "front",
@@ -1282,8 +1360,6 @@
    "id": "court_c10",
    "archetype": "ponytail",
    "variant": "b",
-   "x": 650,
-   "depth": 0.3,
    "group": "core",
    "view": "court",
    "thresh": -14,
@@ -1293,92 +1369,66 @@
    "id": "court_g01",
    "archetype": "imp",
    "variant": "a",
-   "x": 164,
-   "depth": 0.4,
    "group": "gatherers",
    "view": "court",
    "enter_from": "doorway",
    "door_slot": 0,
-   "side_x": 60,
-   "side_depth": 0.35,
    "stays_on_bad": true
   },
   {
    "id": "court_g02",
    "archetype": "brute",
    "variant": "b",
-   "x": 354,
-   "depth": 0.5,
    "group": "gatherers",
    "view": "court",
    "enter_from": "doorway",
    "door_slot": 1,
-   "side_x": 1220,
-   "side_depth": 0.39999999999999997,
    "stays_on_bad": true
   },
   {
    "id": "court_g03",
    "archetype": "fiend",
    "variant": "a",
-   "x": 511,
-   "depth": 0.6000000000000001,
    "group": "gatherers",
    "view": "court",
    "enter_from": "doorway",
    "door_slot": 2,
-   "side_x": 60,
-   "side_depth": 0.44999999999999996,
    "stays_on_bad": false
   },
   {
    "id": "court_g04",
    "archetype": "skeleton",
    "variant": "b",
-   "x": 674,
-   "depth": 0.7000000000000001,
    "group": "gatherers",
    "view": "court",
    "enter_from": "doorway",
    "door_slot": 3,
-   "side_x": 1220,
-   "side_depth": 0.5,
    "stays_on_bad": false
   },
   {
    "id": "court_g05",
    "archetype": "flame",
    "variant": "a",
-   "x": 833,
-   "depth": 0.4,
    "group": "gatherers",
    "view": "court",
    "enter_from": "doorway",
    "door_slot": 4,
-   "side_x": 60,
-   "side_depth": 0.55,
    "stays_on_bad": false
   },
   {
    "id": "court_g06",
    "archetype": "horned_queen",
    "variant": "b",
-   "x": 1022,
-   "depth": 0.5,
    "group": "gatherers",
    "view": "court",
    "enter_from": "doorway",
    "door_slot": 5,
-   "side_x": 1220,
-   "side_depth": 0.6,
    "stays_on_bad": false
   },
   {
    "id": "court_l01",
    "archetype": "fiend",
    "variant": "b",
-   "x": 220,
-   "depth": 0.6,
    "group": "late",
    "view": "court",
    "enter_from": "doorway"
@@ -1387,8 +1437,6 @@
    "id": "court_l02",
    "archetype": "skeleton",
    "variant": "a",
-   "x": 463,
-   "depth": 0.7,
    "group": "late",
    "view": "court",
    "enter_from": "doorway"
@@ -1397,8 +1445,6 @@
    "id": "court_l03",
    "archetype": "flame",
    "variant": "b",
-   "x": 788,
-   "depth": 0.8,
    "group": "late",
    "view": "court",
    "enter_from": "doorway"
@@ -1407,8 +1453,6 @@
    "id": "court_l04",
    "archetype": "horned_queen",
    "variant": "a",
-   "x": 1031,
-   "depth": 0.6,
    "group": "late",
    "view": "court",
    "enter_from": "doorway"
@@ -1417,8 +1461,6 @@
    "id": "court_p01",
    "archetype": "flame",
    "variant": "a",
-   "x": 290,
-   "depth": 0.45,
    "group": "peak",
    "view": "court",
    "enter_from": "side"
@@ -1427,8 +1469,6 @@
    "id": "court_p02",
    "archetype": "horned_queen",
    "variant": "b",
-   "x": 522,
-   "depth": 0.53,
    "group": "peak",
    "view": "court",
    "enter_from": "side"
@@ -1437,8 +1477,6 @@
    "id": "court_p03",
    "archetype": "imp",
    "variant": "a",
-   "x": 735,
-   "depth": 0.61,
    "group": "peak",
    "view": "court",
    "enter_from": "side"
@@ -1447,8 +1485,6 @@
    "id": "court_p04",
    "archetype": "brute",
    "variant": "b",
-   "x": 931,
-   "depth": 0.45,
    "group": "peak",
    "view": "court",
    "enter_from": "side"
@@ -1457,8 +1493,6 @@
    "id": "pit_c01",
    "archetype": "flame",
    "variant": "a",
-   "x": 640,
-   "depth": 0.78,
    "group": "core",
    "view": "pit",
    "role": "hero",
@@ -1469,8 +1503,6 @@
    "id": "pit_c02",
    "archetype": "brute",
    "variant": "b",
-   "x": 460,
-   "depth": 0.9,
    "group": "core",
    "view": "pit",
    "role": "front",
@@ -1480,8 +1512,6 @@
    "id": "pit_c03",
    "archetype": "skeleton",
    "variant": "a",
-   "x": 830,
-   "depth": 0.92,
    "group": "core",
    "view": "pit",
    "role": "front",
@@ -1491,8 +1521,6 @@
    "id": "pit_c04",
    "archetype": "fiend",
    "variant": "b",
-   "x": 340,
-   "depth": 0.62,
    "group": "core",
    "view": "pit",
    "thresh": 4
@@ -1501,8 +1529,6 @@
    "id": "pit_c05",
    "archetype": "imp",
    "variant": "a",
-   "x": 940,
-   "depth": 0.6,
    "group": "core",
    "view": "pit",
    "thresh": -2,
@@ -1512,8 +1538,6 @@
    "id": "pit_c06",
    "archetype": "horned_queen",
    "variant": "a",
-   "x": 560,
-   "depth": 0.52,
    "group": "core",
    "view": "pit",
    "thresh": 6
@@ -1522,8 +1546,6 @@
    "id": "pit_c07",
    "archetype": "brute",
    "variant": "a",
-   "x": 740,
-   "depth": 0.48,
    "group": "core",
    "view": "pit",
    "thresh": 0
@@ -1532,8 +1554,6 @@
    "id": "pit_c08",
    "archetype": "hoodie",
    "variant": "a",
-   "x": 240,
-   "depth": 0.85,
    "group": "core",
    "view": "pit",
    "role": "front",
@@ -1544,8 +1564,6 @@
    "id": "pit_c09",
    "archetype": "punk",
    "variant": "b",
-   "x": 1030,
-   "depth": 0.82,
    "group": "core",
    "view": "pit",
    "role": "front",
@@ -1556,8 +1574,6 @@
    "id": "pit_c10",
    "archetype": "curly",
    "variant": "b",
-   "x": 650,
-   "depth": 0.3,
    "group": "core",
    "view": "pit",
    "thresh": -14,
@@ -1567,92 +1583,66 @@
    "id": "pit_g01",
    "archetype": "brute",
    "variant": "a",
-   "x": 171,
-   "depth": 0.4,
    "group": "gatherers",
    "view": "pit",
    "enter_from": "doorway",
    "door_slot": 0,
-   "side_x": 60,
-   "side_depth": 0.35,
    "stays_on_bad": true
   },
   {
    "id": "pit_g02",
    "archetype": "fiend",
    "variant": "b",
-   "x": 301,
-   "depth": 0.5,
    "group": "gatherers",
    "view": "pit",
    "enter_from": "doorway",
    "door_slot": 1,
-   "side_x": 1220,
-   "side_depth": 0.39999999999999997,
    "stays_on_bad": true
   },
   {
    "id": "pit_g03",
    "archetype": "skeleton",
    "variant": "a",
-   "x": 513,
-   "depth": 0.6000000000000001,
    "group": "gatherers",
    "view": "pit",
    "enter_from": "doorway",
    "door_slot": 2,
-   "side_x": 60,
-   "side_depth": 0.44999999999999996,
    "stays_on_bad": false
   },
   {
    "id": "pit_g04",
    "archetype": "flame",
    "variant": "b",
-   "x": 644,
-   "depth": 0.7000000000000001,
    "group": "gatherers",
    "view": "pit",
    "enter_from": "doorway",
    "door_slot": 3,
-   "side_x": 1220,
-   "side_depth": 0.5,
    "stays_on_bad": false
   },
   {
    "id": "pit_g05",
    "archetype": "horned_queen",
    "variant": "a",
-   "x": 861,
-   "depth": 0.4,
    "group": "gatherers",
    "view": "pit",
    "enter_from": "doorway",
    "door_slot": 4,
-   "side_x": 60,
-   "side_depth": 0.55,
    "stays_on_bad": false
   },
   {
    "id": "pit_g06",
    "archetype": "imp",
    "variant": "b",
-   "x": 1033,
-   "depth": 0.5,
    "group": "gatherers",
    "view": "pit",
    "enter_from": "doorway",
    "door_slot": 5,
-   "side_x": 1220,
-   "side_depth": 0.6,
    "stays_on_bad": false
   },
   {
    "id": "pit_l01",
    "archetype": "skeleton",
    "variant": "b",
-   "x": 194,
-   "depth": 0.6,
    "group": "late",
    "view": "pit",
    "enter_from": "doorway"
@@ -1661,8 +1651,6 @@
    "id": "pit_l02",
    "archetype": "flame",
    "variant": "a",
-   "x": 503,
-   "depth": 0.7,
    "group": "late",
    "view": "pit",
    "enter_from": "doorway"
@@ -1671,8 +1659,6 @@
    "id": "pit_l03",
    "archetype": "horned_queen",
    "variant": "b",
-   "x": 749,
-   "depth": 0.8,
    "group": "late",
    "view": "pit",
    "enter_from": "doorway"
@@ -1681,8 +1667,6 @@
    "id": "pit_l04",
    "archetype": "imp",
    "variant": "a",
-   "x": 1002,
-   "depth": 0.6,
    "group": "late",
    "view": "pit",
    "enter_from": "doorway"
@@ -1691,8 +1675,6 @@
    "id": "pit_p01",
    "archetype": "horned_queen",
    "variant": "a",
-   "x": 281,
-   "depth": 0.45,
    "group": "peak",
    "view": "pit",
    "enter_from": "side"
@@ -1701,8 +1683,6 @@
    "id": "pit_p02",
    "archetype": "imp",
    "variant": "b",
-   "x": 543,
-   "depth": 0.53,
    "group": "peak",
    "view": "pit",
    "enter_from": "side"
@@ -1711,8 +1691,6 @@
    "id": "pit_p03",
    "archetype": "brute",
    "variant": "a",
-   "x": 715,
-   "depth": 0.61,
    "group": "peak",
    "view": "pit",
    "enter_from": "side"
@@ -1721,8 +1699,6 @@
    "id": "pit_p04",
    "archetype": "fiend",
    "variant": "b",
-   "x": 935,
-   "depth": 0.45,
    "group": "peak",
    "view": "pit",
    "enter_from": "side"
@@ -1731,8 +1707,6 @@
    "id": "furnace_c01",
    "archetype": "brute",
    "variant": "a",
-   "x": 640,
-   "depth": 0.78,
    "group": "core",
    "view": "furnace",
    "role": "hero",
@@ -1743,8 +1717,6 @@
    "id": "furnace_c02",
    "archetype": "fiend",
    "variant": "b",
-   "x": 460,
-   "depth": 0.9,
    "group": "core",
    "view": "furnace",
    "role": "front",
@@ -1754,8 +1726,6 @@
    "id": "furnace_c03",
    "archetype": "flame",
    "variant": "a",
-   "x": 830,
-   "depth": 0.92,
    "group": "core",
    "view": "furnace",
    "role": "front",
@@ -1765,8 +1735,6 @@
    "id": "furnace_c04",
    "archetype": "skeleton",
    "variant": "b",
-   "x": 340,
-   "depth": 0.62,
    "group": "core",
    "view": "furnace",
    "thresh": 4
@@ -1775,8 +1743,6 @@
    "id": "furnace_c05",
    "archetype": "horned_queen",
    "variant": "a",
-   "x": 940,
-   "depth": 0.6,
    "group": "core",
    "view": "furnace",
    "thresh": -2,
@@ -1786,8 +1752,6 @@
    "id": "furnace_c06",
    "archetype": "imp",
    "variant": "a",
-   "x": 560,
-   "depth": 0.52,
    "group": "core",
    "view": "furnace",
    "thresh": 6
@@ -1796,8 +1760,6 @@
    "id": "furnace_c07",
    "archetype": "fiend",
    "variant": "a",
-   "x": 740,
-   "depth": 0.48,
    "group": "core",
    "view": "furnace",
    "thresh": 0
@@ -1806,8 +1768,6 @@
    "id": "furnace_c08",
    "archetype": "bob",
    "variant": "a",
-   "x": 240,
-   "depth": 0.85,
    "group": "core",
    "view": "furnace",
    "role": "front",
@@ -1818,8 +1778,6 @@
    "id": "furnace_c09",
    "archetype": "ponytail",
    "variant": "b",
-   "x": 1030,
-   "depth": 0.82,
    "group": "core",
    "view": "furnace",
    "role": "front",
@@ -1830,8 +1788,6 @@
    "id": "furnace_c10",
    "archetype": "punk",
    "variant": "b",
-   "x": 650,
-   "depth": 0.3,
    "group": "core",
    "view": "furnace",
    "thresh": -14,
@@ -1841,92 +1797,66 @@
    "id": "furnace_g01",
    "archetype": "fiend",
    "variant": "a",
-   "x": 161,
-   "depth": 0.4,
    "group": "gatherers",
    "view": "furnace",
    "enter_from": "doorway",
    "door_slot": 0,
-   "side_x": 60,
-   "side_depth": 0.35,
    "stays_on_bad": true
   },
   {
    "id": "furnace_g02",
    "archetype": "skeleton",
    "variant": "b",
-   "x": 309,
-   "depth": 0.5,
    "group": "gatherers",
    "view": "furnace",
    "enter_from": "doorway",
    "door_slot": 1,
-   "side_x": 1220,
-   "side_depth": 0.39999999999999997,
    "stays_on_bad": true
   },
   {
    "id": "furnace_g03",
    "archetype": "flame",
    "variant": "a",
-   "x": 510,
-   "depth": 0.6000000000000001,
    "group": "gatherers",
    "view": "furnace",
    "enter_from": "doorway",
    "door_slot": 2,
-   "side_x": 60,
-   "side_depth": 0.44999999999999996,
    "stays_on_bad": false
   },
   {
    "id": "furnace_g04",
    "archetype": "horned_queen",
    "variant": "b",
-   "x": 642,
-   "depth": 0.7000000000000001,
    "group": "gatherers",
    "view": "furnace",
    "enter_from": "doorway",
    "door_slot": 3,
-   "side_x": 1220,
-   "side_depth": 0.5,
    "stays_on_bad": false
   },
   {
    "id": "furnace_g05",
    "archetype": "imp",
    "variant": "a",
-   "x": 819,
-   "depth": 0.4,
    "group": "gatherers",
    "view": "furnace",
    "enter_from": "doorway",
    "door_slot": 4,
-   "side_x": 60,
-   "side_depth": 0.55,
    "stays_on_bad": false
   },
   {
    "id": "furnace_g06",
    "archetype": "brute",
    "variant": "b",
-   "x": 990,
-   "depth": 0.5,
    "group": "gatherers",
    "view": "furnace",
    "enter_from": "doorway",
    "door_slot": 5,
-   "side_x": 1220,
-   "side_depth": 0.6,
    "stays_on_bad": false
   },
   {
    "id": "furnace_l01",
    "archetype": "flame",
    "variant": "b",
-   "x": 246,
-   "depth": 0.6,
    "group": "late",
    "view": "furnace",
    "enter_from": "doorway"
@@ -1935,8 +1865,6 @@
    "id": "furnace_l02",
    "archetype": "horned_queen",
    "variant": "a",
-   "x": 481,
-   "depth": 0.7,
    "group": "late",
    "view": "furnace",
    "enter_from": "doorway"
@@ -1945,8 +1873,6 @@
    "id": "furnace_l03",
    "archetype": "imp",
    "variant": "b",
-   "x": 748,
-   "depth": 0.8,
    "group": "late",
    "view": "furnace",
    "enter_from": "doorway"
@@ -1955,8 +1881,6 @@
    "id": "furnace_l04",
    "archetype": "brute",
    "variant": "a",
-   "x": 1044,
-   "depth": 0.6,
    "group": "late",
    "view": "furnace",
    "enter_from": "doorway"
@@ -1965,8 +1889,6 @@
    "id": "furnace_p01",
    "archetype": "imp",
    "variant": "a",
-   "x": 300,
-   "depth": 0.45,
    "group": "peak",
    "view": "furnace",
    "enter_from": "side"
@@ -1975,8 +1897,6 @@
    "id": "furnace_p02",
    "archetype": "brute",
    "variant": "b",
-   "x": 510,
-   "depth": 0.53,
    "group": "peak",
    "view": "furnace",
    "enter_from": "side"
@@ -1985,8 +1905,6 @@
    "id": "furnace_p03",
    "archetype": "fiend",
    "variant": "a",
-   "x": 765,
-   "depth": 0.61,
    "group": "peak",
    "view": "furnace",
    "enter_from": "side"
@@ -1995,8 +1913,6 @@
    "id": "furnace_p04",
    "archetype": "skeleton",
    "variant": "b",
-   "x": 952,
-   "depth": 0.45,
    "group": "peak",
    "view": "furnace",
    "enter_from": "side"
@@ -2006,120 +1922,90 @@
   {
    "id": "s01",
    "shape": "sil_a",
-   "x": 70,
-   "depth": 0.0,
    "group": "core",
    "thresh": 1
   },
   {
    "id": "s02",
    "shape": "sil_b",
-   "x": 162,
-   "depth": 0.0,
    "group": "core",
    "thresh": -6
   },
   {
    "id": "s03",
    "shape": "sil_c",
-   "x": 222,
-   "depth": 0.0,
    "group": "core",
    "thresh": 1
   },
   {
    "id": "s04",
    "shape": "sil_a",
-   "x": 323,
-   "depth": 0.0,
    "group": "core",
    "thresh": 4
   },
   {
    "id": "s05",
    "shape": "sil_b",
-   "x": 414,
-   "depth": 0.0,
    "group": "core",
    "thresh": 3
   },
   {
    "id": "s06",
    "shape": "sil_c",
-   "x": 490,
-   "depth": 0.0,
    "group": "core",
    "thresh": -2
   },
   {
    "id": "s07",
    "shape": "sil_a",
-   "x": 582,
-   "depth": 0.0,
    "group": "core",
    "thresh": 6
   },
   {
    "id": "s08",
    "shape": "sil_b",
-   "x": 662,
-   "depth": 0.0,
    "group": "early",
    "thresh": -1
   },
   {
    "id": "s09",
    "shape": "sil_c",
-   "x": 769,
-   "depth": 0.0,
    "group": "early",
    "thresh": 6
   },
   {
    "id": "s10",
    "shape": "sil_a",
-   "x": 866,
-   "depth": 0.0,
    "group": "early",
    "thresh": -8
   },
   {
    "id": "s11",
    "shape": "sil_b",
-   "x": 929,
-   "depth": 0.0,
    "group": "early",
    "thresh": -6
   },
   {
    "id": "s12",
    "shape": "sil_c",
-   "x": 1036,
-   "depth": 0.0,
    "group": "gatherers",
    "thresh": 7
   },
   {
    "id": "s13",
    "shape": "sil_a",
-   "x": 1115,
-   "depth": 0.0,
    "group": "gatherers",
    "thresh": -8
   },
   {
    "id": "s14",
    "shape": "sil_b",
-   "x": 1206,
-   "depth": 0.0,
    "group": "gatherers",
    "thresh": 5
   },
   {
    "id": "court_s01",
    "shape": "sil_a",
-   "x": 70,
-   "depth": 0.0,
    "group": "core",
    "thresh": 2,
    "view": "court"
@@ -2127,8 +2013,6 @@
   {
    "id": "court_s02",
    "shape": "sil_b",
-   "x": 186,
-   "depth": 0.0,
    "group": "core",
    "thresh": 1,
    "view": "court"
@@ -2136,8 +2020,6 @@
   {
    "id": "court_s03",
    "shape": "sil_c",
-   "x": 319,
-   "depth": 0.0,
    "group": "core",
    "thresh": 8,
    "view": "court"
@@ -2145,8 +2027,6 @@
   {
    "id": "court_s04",
    "shape": "sil_a",
-   "x": 441,
-   "depth": 0.0,
    "group": "core",
    "thresh": 7,
    "view": "court"
@@ -2154,8 +2034,6 @@
   {
    "id": "court_s05",
    "shape": "sil_b",
-   "x": 557,
-   "depth": 0.0,
    "group": "core",
    "thresh": -3,
    "view": "court"
@@ -2163,8 +2041,6 @@
   {
    "id": "court_s06",
    "shape": "sil_c",
-   "x": 696,
-   "depth": 0.0,
    "group": "core",
    "thresh": 0,
    "view": "court"
@@ -2172,8 +2048,6 @@
   {
    "id": "court_s07",
    "shape": "sil_a",
-   "x": 806,
-   "depth": 0.0,
    "group": "core",
    "thresh": -5,
    "view": "court"
@@ -2181,8 +2055,6 @@
   {
    "id": "court_s08",
    "shape": "sil_b",
-   "x": 945,
-   "depth": 0.0,
    "group": "core",
    "thresh": 2,
    "view": "court"
@@ -2190,8 +2062,6 @@
   {
    "id": "court_s09",
    "shape": "sil_c",
-   "x": 1051,
-   "depth": 0.0,
    "group": "core",
    "thresh": -3,
    "view": "court"
@@ -2199,8 +2069,6 @@
   {
    "id": "court_s10",
    "shape": "sil_a",
-   "x": 1194,
-   "depth": 0.0,
    "group": "core",
    "thresh": -3,
    "view": "court"
@@ -2208,8 +2076,6 @@
   {
    "id": "pit_s01",
    "shape": "sil_a",
-   "x": 46,
-   "depth": 0.0,
    "group": "core",
    "thresh": 8,
    "view": "pit"
@@ -2217,8 +2083,6 @@
   {
    "id": "pit_s02",
    "shape": "sil_b",
-   "x": 184,
-   "depth": 0.0,
    "group": "core",
    "thresh": 6,
    "view": "pit"
@@ -2226,8 +2090,6 @@
   {
    "id": "pit_s03",
    "shape": "sil_c",
-   "x": 311,
-   "depth": 0.0,
    "group": "core",
    "thresh": -1,
    "view": "pit"
@@ -2235,8 +2097,6 @@
   {
    "id": "pit_s04",
    "shape": "sil_a",
-   "x": 446,
-   "depth": 0.0,
    "group": "core",
    "thresh": 4,
    "view": "pit"
@@ -2244,8 +2104,6 @@
   {
    "id": "pit_s05",
    "shape": "sil_b",
-   "x": 569,
-   "depth": 0.0,
    "group": "core",
    "thresh": 2,
    "view": "pit"
@@ -2253,8 +2111,6 @@
   {
    "id": "pit_s06",
    "shape": "sil_c",
-   "x": 680,
-   "depth": 0.0,
    "group": "core",
    "thresh": 6,
    "view": "pit"
@@ -2262,8 +2118,6 @@
   {
    "id": "pit_s07",
    "shape": "sil_a",
-   "x": 815,
-   "depth": 0.0,
    "group": "core",
    "thresh": 6,
    "view": "pit"
@@ -2271,8 +2125,6 @@
   {
    "id": "pit_s08",
    "shape": "sil_b",
-   "x": 932,
-   "depth": 0.0,
    "group": "core",
    "thresh": -3,
    "view": "pit"
@@ -2280,8 +2132,6 @@
   {
    "id": "pit_s09",
    "shape": "sil_c",
-   "x": 1058,
-   "depth": 0.0,
    "group": "core",
    "thresh": 8,
    "view": "pit"
@@ -2289,8 +2139,6 @@
   {
    "id": "pit_s10",
    "shape": "sil_a",
-   "x": 1171,
-   "depth": 0.0,
    "group": "core",
    "thresh": 5,
    "view": "pit"
@@ -2298,8 +2146,6 @@
   {
    "id": "furnace_s01",
    "shape": "sil_a",
-   "x": 71,
-   "depth": 0.0,
    "group": "core",
    "thresh": 1,
    "view": "furnace"
@@ -2307,8 +2153,6 @@
   {
    "id": "furnace_s02",
    "shape": "sil_b",
-   "x": 192,
-   "depth": 0.0,
    "group": "core",
    "thresh": 1,
    "view": "furnace"
@@ -2316,8 +2160,6 @@
   {
    "id": "furnace_s03",
    "shape": "sil_c",
-   "x": 317,
-   "depth": 0.0,
    "group": "core",
    "thresh": 2,
    "view": "furnace"
@@ -2325,8 +2167,6 @@
   {
    "id": "furnace_s04",
    "shape": "sil_a",
-   "x": 449,
-   "depth": 0.0,
    "group": "core",
    "thresh": 0,
    "view": "furnace"
@@ -2334,8 +2174,6 @@
   {
    "id": "furnace_s05",
    "shape": "sil_b",
-   "x": 563,
-   "depth": 0.0,
    "group": "core",
    "thresh": -7,
    "view": "furnace"
@@ -2343,8 +2181,6 @@
   {
    "id": "furnace_s06",
    "shape": "sil_c",
-   "x": 676,
-   "depth": 0.0,
    "group": "core",
    "thresh": -3,
    "view": "furnace"
@@ -2352,8 +2188,6 @@
   {
    "id": "furnace_s07",
    "shape": "sil_a",
-   "x": 811,
-   "depth": 0.0,
    "group": "core",
    "thresh": -6,
    "view": "furnace"
@@ -2361,8 +2195,6 @@
   {
    "id": "furnace_s08",
    "shape": "sil_b",
-   "x": 939,
-   "depth": 0.0,
    "group": "core",
    "thresh": 0,
    "view": "furnace"
@@ -2370,8 +2202,6 @@
   {
    "id": "furnace_s09",
    "shape": "sil_c",
-   "x": 1069,
-   "depth": 0.0,
    "group": "core",
    "thresh": -8,
    "view": "furnace"
@@ -2379,20 +2209,9 @@
   {
    "id": "furnace_s10",
    "shape": "sil_a",
-   "x": 1187,
-   "depth": 0.0,
    "group": "core",
    "thresh": -5,
    "view": "furnace"
   }
- ],
- "camera": {
-  "views": [
-   "main",
-   "court",
-   "pit",
-   "furnace"
-  ],
-  "note": "The camera moves between rooms (move_to). Night One keeps a fixed camera."
- }
+ ]
 }

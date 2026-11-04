@@ -36,7 +36,14 @@ MENTAL_HOSPITAL = {
     "thing_lamp": 1.0, "thing_table": 1.0, "thing_bed": 1.0, "thing_easel": 1.0,
 }
 
-SPECS = {"night_one": NIGHT_ONE, "mothership": MOTHERSHIP, "mental_hospital": MENTAL_HOSPITAL}
+UNDERWORLD = {
+    "wall_arena": 2.5, "wall_speaker": 2.0, "wall_hellmouth": 3.0, "wall_bone": 1.5, "wall_shelf": 2.0, "floor_checker": 2.5, "floor_dais": 2.0,
+    "ceil_spikes": 2.5, "trim": 2.0, "wall_court": 3.0, "wall_column": 2.0, "wall_throne": 4.0, "floor_obsidian": 2.5, "floor_carpet": 3.0,
+    "ceil_court": 2.5, "floor_causeway": 2.5, "lava": 3.0, "wall_cave": 3.0, "wall_fortress": 4.0, "wall_plate": 2.5, "wall_face": 4.0,
+    "floor_orange": 3.0, "floor_steel": 2.5, "ceil_pipes": 2.5, "wall_bars": 1.5, "sky_hell": 1.0,
+}
+
+SPECS = {"night_one": NIGHT_ONE, "mothership": MOTHERSHIP, "underworld": UNDERWORLD, "mental_hospital": MENTAL_HOSPITAL}
 
 
 def godot_binary() -> str:
