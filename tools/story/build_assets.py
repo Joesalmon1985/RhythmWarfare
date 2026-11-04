@@ -19,7 +19,8 @@ from art import lib  # noqa: E402
 
 
 # Chapter art builds: None = built in this file (build_chapter), a module path = that module's build(argv). Night One is the default.
-CHAPTERS = {"mothership": None, "underworld": "art.chapter_underworld"}
+CHAPTERS = {"mothership": None, "underworld": "art.chapter_underworld", "hospital": "art.chapter_hospital",
+            "mental_hospital": "art.chapter_mental_hospital"}
 
 
 def build_any(name: str, only: list) -> int:
