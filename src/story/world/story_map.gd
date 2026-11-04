@@ -342,6 +342,11 @@ func _build_waypoints(list: Array) -> void:
 		waypoints[wid] = {"at": at, "yaw": float(w.get("yaw", 0.0)), "sector": sid}
 
 
+## True when ground point p lies inside sector sid with at least `margin` metres to its walls.
+func inside(p: Vector2, sid: String, margin := 0.0) -> bool:
+	return _inside(p, sid, margin)
+
+
 func _build_homes(list: Array) -> void:
 	for h in list:
 		var aid := str(h.get("actor", ""))
@@ -602,6 +607,15 @@ func waypoint(wid: String) -> Dictionary:
 	return waypoints.get(wid, {})
 
 
+## The room ids of the map's sectors.
+func rooms_list() -> Array:
+	var out: Array = []
+	for s in sectors:
+		if str(s["room"]) not in out:
+			out.append(str(s["room"]))
+	return out
+
+
 func has_waypoint(wid: String) -> bool:
 	return waypoints.has(wid)
 
@@ -784,12 +798,29 @@ func validate_chapter(chapter_raw: Dictionary) -> void:
 					errors.append("%s: player_move to %s is not a waypoint" % [ja["where"], args.get("to", "")])
 				if str(args.get("style", "walk")) not in MOVE_STYLES:
 					errors.append("%s: unknown move style %s" % [ja["where"], args.get("style")])
+			"player_walk":
+				for key in ["to", "face"]:
+					var tgt := str(args.get(key, ""))
+					if tgt != "" and not waypoints.has(tgt) and not actor_ids.has(tgt):
+						errors.append("%s: player_walk %s %s is neither a waypoint nor an actor" % [ja["where"], key, tgt])
+				if str(args.get("to", "")) == "" and not args.has("fwd") and not args.has("right"):
+					errors.append("%s: player_walk needs `to` or fwd / right" % ja["where"])
+				if str(args.get("style", "walk")) not in MOVE_STYLES:
+					errors.append("%s: unknown walk style %s" % [ja["where"], args.get("style")])
+				var inr: Variant = args.get("in", [])
+				for room in (inr if typeof(inr) == TYPE_ARRAY else [inr]):
+					if not rooms_list().has(str(room)) and not _sector_index.has(str(room)):
+						errors.append("%s: player_walk in %s is neither a room nor a sector of the map" % [ja["where"], room])
 			"player_look":
 				var at := str(args.get("at", ""))
 				if at != "" and not waypoints.has(at) and not actor_ids.has(at):
 					errors.append("%s: player_look at %s is neither a waypoint nor an actor" % [ja["where"], at])
-				if at == "" and not args.has("yaw") and not args.has("by"):
-					errors.append("%s: player_look needs yaw, at or by" % ja["where"])
+				var look_in: Variant = args.get("in", [])
+				for room2 in (look_in if typeof(look_in) == TYPE_ARRAY else [look_in]):
+					if not rooms_list().has(str(room2)) and not _sector_index.has(str(room2)):
+						errors.append("%s: player_look in %s is neither a room nor a sector of the map" % [ja["where"], room2])
+				if at == "" and not args.has("yaw") and not args.has("by") and not args.has("pitch"):
+					errors.append("%s: player_look needs yaw, at, by or pitch" % ja["where"])
 			"player_role":
 				if str(args.get("role", "")) not in ROLES:
 					errors.append("%s: unknown role %s" % [ja["where"], args.get("role", "")])

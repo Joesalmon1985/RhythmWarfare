@@ -93,9 +93,9 @@ func _check_camera(map: StoryMap, data: StoryData, r: Dictionary, tag: String) -
 	player.setup(map, bpm)
 	var beats: Dictionary = {}
 	for a in r["log"]:
-		if str(a["action"]) in ["player_move", "player_look", "player_role", "fx_queasy", "sick_beat"]:
+		if str(a["action"]) in ["player_move", "player_walk", "player_look", "player_role", "fx_queasy", "sick_beat"]:
 			player.apply_action(a)
-		if str(a["action"]) in ["player_move", "player_look"]:
+		if str(a["action"]) in ["player_move", "player_walk", "player_look"]:
 			beats[data.block_of_bar(float(a["bar"]))] = true
 	assert_eq(player.errors, [], tag + ": every journey target is reachable")
 	var bar_s := 4.0 * 60.0 / bpm
@@ -116,3 +116,38 @@ func test_no_authored_move_warns_in_any_chapter() -> void:
 			var run := StoryRun.create(loadout, _path(id))
 			assert_eq(run.errors, [], id)
 			assert_eq(run.director.warnings, [], "%s %s: no move overlaps a dense run or lasts outside 2 to 4 bars" % [id, str(loadout)])
+
+
+## The authored camera beats of a block: [[action, a signature of its arguments]].
+func _block_beats(raw: Dictionary, k: int) -> Array:
+	var out: Array = []
+	var b: Dictionary = raw["blocks"][k]
+	for e in b["events"]:
+		if str(e["action"]) in ["player_move", "player_walk", "player_look"]:
+			var kind := str(e["action"])
+			if kind == "player_look":
+				kind += ":" + ("pitch_up" if float(e.get("pitch", 0.0)) > 0.0 else "pitch_down" if float(e.get("pitch", 0.0)) < 0.0 else "at" if e.has("at") else "sweep")
+			elif kind == "player_walk":
+				kind += ":" + ("to" if e.has("to") else "back" if float(e.get("fwd", 0.0)) < 0.0 else "fwd" if float(e.get("fwd", 0.0)) > 0.0 else "side")
+			out.append([kind, "%s|%s" % [kind, [e.get("by", ""), e.get("at", ""), e.get("pitch", ""), e.get("to", ""), e.get("fwd", ""), e.get("right", ""), e.get("in", "")]]])
+	return out
+
+
+func test_every_block_has_a_camera_beat_that_differs_from_the_last_block() -> void:
+	for id in CHAPTERS:
+		if not _exists(id):
+			continue
+		var raw: Dictionary = StoryData.load_file(_path(id))["data"].raw
+		var kinds := {}
+		var prev := ""
+		for k in raw["blocks"].size():
+			var beats := _block_beats(raw, k)
+			assert_true(beats.size() >= 2, "%s block %d has at least two camera beats (a look and a walk or another look)" % [id, k + 1])
+			var sig := ";".join(PackedStringArray(beats.map(func(x: Array) -> String: return str(x[1]))))
+			assert_true(sig != prev, "%s block %d: the beats differ from the previous block's" % [id, k + 1])
+			prev = sig
+			for x in beats:
+				kinds[str(x[0])] = true
+		for need in ["player_walk:fwd", "player_look:pitch_up", "player_look:pitch_down", "player_look:sweep", "player_look:at"]:
+			assert_true(kinds.has(need), "%s uses the beat %s somewhere" % [id, need])
+		assert_true(kinds.size() >= 6, "%s mixes at least six kinds of beat: %s" % [id, str(kinds.keys())])

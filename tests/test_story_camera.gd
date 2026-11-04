@@ -63,6 +63,7 @@ func test_every_crowd_updates_whichever_room_is_in_view() -> void:
 
 func test_a_glance_turns_the_head_and_never_touches_the_route() -> void:
 	var stage := _stage()
+	stage.player.drift_on = false  # the idle drift would blur the exact turn
 	var b := stage.bar_s()
 	var base := stage.player.pose_at(5.0 * b)
 	stage.apply({"t0": 4.0 * b, "bar": 4.0, "action": "player_look", "args": {"by": 30.0, "bars": 3}, "block": "", "source": "block"})

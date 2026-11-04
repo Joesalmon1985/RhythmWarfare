@@ -34,7 +34,7 @@ static func of_actions(actions: Array, map: StoryMap, bpm: float) -> Dictionary:
 			p.apply_action(a)
 	var places: Array = []
 	for ev in p.events():
-		if ev["kind"] == "move":
+		if ev["kind"] == "move" and not bool(ev.get("walk", false)):  # strolls inside a room are not places
 			places.append(str(ev["to"]))
 	var roles: Array = ["dancer"]
 	for r in p.role_list():

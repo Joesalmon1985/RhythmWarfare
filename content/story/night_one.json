@@ -85,7 +85,7 @@
     {
      "at_bar": 2,
      "action": "player_look",
-     "by": 24,
+     "pitch": 14,
      "bars": 3
     },
     {
@@ -98,10 +98,13 @@
      "group": "early"
     },
     {
-     "at_bar": 6,
-     "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "at_bar": 5,
+     "action": "player_walk",
+     "fwd": 1.6,
+     "bars": 3,
+     "in": [
+      "floor"
+     ]
     },
     {
      "at_bar": 7,
@@ -132,7 +135,7 @@
     {
      "at_bar": 10,
      "action": "player_look",
-     "by": -24,
+     "by": -26,
      "bars": 3
     },
     {
@@ -150,10 +153,13 @@
      "else": "look_around"
     },
     {
-     "at_bar": 14,
+     "at_bar": 13,
      "action": "player_look",
-     "by": 28,
-     "bars": 3
+     "at": "c06",
+     "bars": 2,
+     "in": [
+      "floor"
+     ]
     },
     {
      "at_bar": 15,
@@ -183,8 +189,11 @@
     {
      "at_bar": 18,
      "action": "player_look",
-     "by": 24,
-     "bars": 3
+     "at": "booth",
+     "bars": 2,
+     "in": [
+      "floor"
+     ]
     },
     {
      "at_bar": 19,
@@ -192,14 +201,23 @@
      "bars": 3
     },
     {
+     "at_bar": 20,
+     "action": "player_look",
+     "pitch": -12,
+     "bars": 2
+    },
+    {
      "at_bar": 21,
      "action": "beams_fan"
     },
     {
      "at_bar": 22,
-     "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "action": "player_walk",
+     "right": 1.4,
+     "bars": 3,
+     "in": [
+      "floor"
+     ]
     },
     {
      "at_bar": 23,
@@ -226,8 +244,17 @@
     {
      "at_bar": 26,
      "action": "player_look",
-     "by": -24,
+     "by": 30,
      "bars": 3
+    },
+    {
+     "at_bar": 28,
+     "action": "player_walk",
+     "fwd": -1.2,
+     "bars": 2,
+     "in": [
+      "floor"
+     ]
     },
     {
      "at_bar": 29,
@@ -236,8 +263,8 @@
     {
      "at_bar": 30,
      "action": "player_look",
-     "by": 28,
-     "bars": 3
+     "pitch": 10,
+     "bars": 2
     },
     {
      "at_bar": 31,
@@ -255,7 +282,7 @@
     {
      "at_bar": 34,
      "action": "player_look",
-     "by": 24,
+     "pitch": 16,
      "bars": 3
     },
     {
@@ -274,8 +301,8 @@
     {
      "at_bar": 38,
      "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "by": -30,
+     "bars": 2
     },
     {
      "at_bar": 39,
@@ -302,22 +329,38 @@
     {
      "at_bar": 42,
      "action": "player_look",
-     "by": -24,
-     "bars": 3
+     "at": "c01",
+     "bars": 2,
+     "in": [
+      "floor"
+     ]
     },
     {
      "at_bar": 43,
      "action": "glowsticks_on"
     },
     {
-     "at_bar": 45,
-     "action": "hero_center"
+     "at_bar": 44,
+     "action": "player_walk",
+     "fwd": 1.5,
+     "bars": 3,
+     "in": [
+      "floor"
+     ]
     },
     {
-     "at_bar": 46,
-     "action": "player_look",
-     "by": 28,
-     "bars": 3
+     "at_bar": 44,
+     "action": "player_walk",
+     "right": -1.0,
+     "bars": 3,
+     "in": [
+      "riser",
+      "steps"
+     ]
+    },
+    {
+     "at_bar": 45,
+     "action": "hero_center"
     },
     {
      "at_bar": 47,
@@ -345,22 +388,35 @@
     {
      "at_bar": 50,
      "action": "player_look",
-     "by": 24,
-     "bars": 3
+     "pitch": -14,
+     "bars": 2
     },
     {
      "at_bar": 51,
      "action": "lights_warm"
     },
     {
-     "at_bar": 53,
-     "action": "beams_cross"
+     "at_bar": 52,
+     "action": "player_walk",
+     "to": "floor_edge",
+     "bars": 3,
+     "in": [
+      "floor"
+     ]
     },
     {
-     "at_bar": 54,
-     "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "at_bar": 52,
+     "action": "player_walk",
+     "fwd": 1.0,
+     "bars": 3,
+     "in": [
+      "riser",
+      "steps"
+     ]
+    },
+    {
+     "at_bar": 53,
+     "action": "beams_cross"
     },
     {
      "at_bar": 55,
@@ -370,6 +426,12 @@
       "energy_min": 45
      },
      "else": "look_around"
+    },
+    {
+     "at_bar": 55,
+     "action": "player_look",
+     "by": -28,
+     "bars": 2
     }
    ]
   },
@@ -383,7 +445,7 @@
     {
      "at_bar": 58,
      "action": "player_look",
-     "by": -24,
+     "pitch": 18,
      "bars": 3
     },
     {
@@ -397,8 +459,8 @@
     {
      "at_bar": 62,
      "action": "player_look",
-     "by": 28,
-     "bars": 3
+     "by": -24,
+     "bars": 2
     },
     {
      "at_bar": 63,
@@ -429,13 +491,34 @@
     },
     {
      "at_bar": 66,
-     "action": "player_look",
-     "by": 24,
-     "bars": 3
+     "action": "player_walk",
+     "fwd": 1.2,
+     "bars": 3,
+     "in": [
+      "floor"
+     ]
+    },
+    {
+     "at_bar": 66,
+     "action": "player_walk",
+     "right": 1.0,
+     "bars": 3,
+     "in": [
+      "booth"
+     ]
     },
     {
      "at_bar": 67,
      "action": "spotlight_hero"
+    },
+    {
+     "at_bar": 68,
+     "action": "player_look",
+     "at": "c01",
+     "bars": 2,
+     "in": [
+      "floor"
+     ]
     },
     {
      "at_bar": 69,
@@ -444,8 +527,8 @@
     {
      "at_bar": 70,
      "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "pitch": -12,
+     "bars": 2
     },
     {
      "at_bar": 71,
@@ -464,11 +547,26 @@
      "at_bar": 74,
      "action": "player_look",
      "by": -24,
-     "bars": 3
+     "bars": 2
     },
     {
      "at_bar": 75,
      "action": "light_wave",
+     "bars": 2
+    },
+    {
+     "at_bar": 75,
+     "action": "player_look",
+     "at": "booth",
+     "bars": 2,
+     "in": [
+      "floor"
+     ]
+    },
+    {
+     "at_bar": 76,
+     "action": "player_look",
+     "pitch": 12,
      "bars": 2
     },
     {
@@ -478,9 +576,12 @@
     },
     {
      "at_bar": 78,
-     "action": "player_look",
-     "by": 28,
-     "bars": 3
+     "action": "player_walk",
+     "fwd": -1.5,
+     "bars": 2,
+     "in": [
+      "floor"
+     ]
     },
     {
      "at_bar": 79,
@@ -511,12 +612,24 @@
     {
      "at_bar": 82,
      "action": "player_look",
-     "by": 24,
-     "bars": 3
+     "at": "booth",
+     "bars": 2,
+     "in": [
+      "floor"
+     ]
     },
     {
      "at_bar": 83,
      "action": "riser_down"
+    },
+    {
+     "at_bar": 84,
+     "action": "player_walk",
+     "right": 1.6,
+     "bars": 3,
+     "in": [
+      "floor"
+     ]
     },
     {
      "at_bar": 85,
@@ -529,14 +642,14 @@
      "group": "all"
     },
     {
-     "at_bar": 86,
-     "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "at_bar": 87,
+     "action": "led_bars"
     },
     {
      "at_bar": 87,
-     "action": "led_bars"
+     "action": "player_look",
+     "pitch": -10,
+     "bars": 2
     }
    ]
   },
@@ -555,7 +668,7 @@
     {
      "at_bar": 90,
      "action": "player_look",
-     "by": -24,
+     "by": 26,
      "bars": 3
     },
     {
@@ -572,14 +685,23 @@
      "action": "led_wave"
     },
     {
-     "at_bar": 94,
-     "action": "player_look",
-     "by": 28,
-     "bars": 3
+     "at_bar": 93,
+     "action": "player_walk",
+     "fwd": 1.4,
+     "bars": 3,
+     "in": [
+      "floor"
+     ]
     },
     {
      "at_bar": 95,
      "action": "beams_fan"
+    },
+    {
+     "at_bar": 95,
+     "action": "player_look",
+     "pitch": -12,
+     "bars": 2
     }
    ]
   },
@@ -602,7 +724,7 @@
     {
      "at_bar": 98,
      "action": "player_look",
-     "by": 24,
+     "pitch": 20,
      "bars": 3
     },
     {
@@ -614,10 +736,19 @@
      "action": "lights_rave"
     },
     {
+     "at_bar": 101,
+     "action": "player_walk",
+     "fwd": -1.4,
+     "bars": 2,
+     "in": [
+      "floor"
+     ]
+    },
+    {
      "at_bar": 102,
      "action": "player_look",
      "by": -28,
-     "bars": 3
+     "bars": 2
     },
     {
      "at_bar": 103,
@@ -636,7 +767,7 @@
      "at_bar": 106,
      "action": "player_look",
      "by": -24,
-     "bars": 3
+     "bars": 2
     },
     {
      "at_bar": 107,
@@ -655,14 +786,23 @@
      }
     },
     {
-     "at_bar": 110,
-     "action": "player_look",
-     "by": 28,
-     "bars": 3
+     "at_bar": 109,
+     "action": "player_walk",
+     "right": -1.6,
+     "bars": 3,
+     "in": [
+      "floor"
+     ]
     },
     {
      "at_bar": 111,
      "action": "beams_cross"
+    },
+    {
+     "at_bar": 111,
+     "action": "player_look",
+     "pitch": -12,
+     "bars": 2
     }
    ]
   },
@@ -680,8 +820,17 @@
     {
      "at_bar": 114,
      "action": "player_look",
-     "by": 24,
+     "pitch": 16,
      "bars": 3
+    },
+    {
+     "at_bar": 116,
+     "action": "player_walk",
+     "fwd": 1.2,
+     "bars": 3,
+     "in": [
+      "floor"
+     ]
     },
     {
      "at_bar": 117,
@@ -696,7 +845,7 @@
      "at_bar": 118,
      "action": "player_look",
      "by": -28,
-     "bars": 3
+     "bars": 2
     },
     {
      "at_bar": 119,
@@ -719,11 +868,17 @@
      "at_bar": 122,
      "action": "player_look",
      "by": -24,
-     "bars": 3
+     "bars": 2
     },
     {
      "at_bar": 123,
      "action": "led_rings"
+    },
+    {
+     "at_bar": 124,
+     "action": "player_look",
+     "pitch": 14,
+     "bars": 3
     },
     {
      "at_bar": 125,
@@ -733,7 +888,7 @@
      "at_bar": 126,
      "action": "player_look",
      "by": 28,
-     "bars": 3
+     "bars": 2
     }
    ]
   }

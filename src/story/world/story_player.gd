@@ -21,6 +21,7 @@ const CROUCH_M := 0.55  # eye drop with the head down (sick_beat)
 var map: StoryMap
 var bpm := 174.0
 var reduced := false
+var drift_on := true  # the idle head drift (also off whenever `reduced`)
 var cut := false  # camera motion "none": a move or a turn cuts to its end half way through instead of travelling
 var errors: Array = []
 
@@ -28,7 +29,7 @@ var _events: Array = []  # sorted by t0: {kind: move|look, t0, t1, seq, ...}
 var _roles: Array = []  # {t0, role}
 var _queasy: Array = []  # {t0, t1, amount}
 var _sick: Array = []  # {t0, t1}
-var _glances: Array = []  # {t0, t1, by}: authored head turns on top of the rail's facing
+var _glances: Array = []  # {t0, t1, by, pitch}: authored head turns (yaw `by` and/or pitch up) on top of the rail's facing
 var _seq := 0
 
 
@@ -66,11 +67,13 @@ func apply_action(a: Dictionary) -> bool:
 	match str(a["action"]):
 		"player_move":
 			_add({"kind": "move", "t0": t0, "t1": t0 + maxf(dur, 0.001), "to": str(args.get("to", "")), "style": str(args.get("style", "walk"))})
+		"player_walk":  # a walk inside a room (relative to where the rail is when it starts): see _plan_walk
+			_add({"kind": "move", "walk": args.duplicate(), "t0": t0, "t1": t0 + maxf(dur, 0.001), "to": str(args.get("to", "")), "style": str(args.get("style", "walk"))})
 		"player_look":
-			if args.has("by"):  # a glance: the head turns `by` degrees from wherever the rail faces and comes back; it never touches the route
-				_glances.append({"t0": t0, "t1": t0 + maxf(dur, 0.001), "by": float(args["by"])})
+			if args.has("by") or args.has("pitch"):  # a glance: the head turns `by` degrees (and tips `pitch` up, negative down) from wherever the rail faces and comes back; it never touches the route
+				_glances.append({"t0": t0, "t1": t0 + maxf(dur, 0.001), "by": float(args.get("by", 0.0)), "pitch": float(args.get("pitch", 0.0))})
 				return true
-			_add({"kind": "look", "t0": t0, "t1": t0 + maxf(dur, 0.001), "at": str(args.get("at", "")), "yaw": args.get("yaw", null)})
+			_add({"kind": "look", "t0": t0, "t1": t0 + maxf(dur, 0.001), "at": str(args.get("at", "")), "yaw": args.get("yaw", null), "in": args.get("in", [])})
 		"player_role":
 			_roles.append({"t0": t0, "role": str(args.get("role", "dancer")), "seq": _seq})
 			_seq += 1
@@ -100,13 +103,20 @@ func _rebuild() -> void:
 	var st := _initial_state()
 	var prev: Dictionary = {}
 	for ev in _events:
+		ev["skip"] = false
 		if not prev.is_empty():
 			st = _state_in(prev, float(ev["t0"]))
 		ev["start"] = st
-		if ev["kind"] == "move":
+		if ev["kind"] == "move" and ev.has("walk"):
+			_plan_walk(ev)
+			if not ev["skip"] and not prev.is_empty() and prev["kind"] == "move" and float(ev["t0"]) < float(prev["t1"]):
+				ev["skip"] = true  # a stroll never interrupts a journey move that is still under way
+		elif ev["kind"] == "move":
 			_plan_move(ev)
 		else:
 			_plan_look(ev)
+		if ev["skip"]:
+			continue  # a skipped event is not part of the chain: the next one starts from the last real one
 		prev = ev
 
 
@@ -136,9 +146,98 @@ func _plan_move(ev: Dictionary) -> void:
 	ev["cum"] = cum
 
 
+## An in-room walk (player_walk): resolved from the rail's own state when it starts, so it follows whatever branch the player is on and never drags them
+## into a room they are not in. Args: `to` (a waypoint or an actor's home) or `fwd` / `right` metres relative to the facing; `stop` metres short of `to`;
+## `face` (a waypoint or actor to turn towards at the end) or `turn` degrees; `in` (a room or sector, or a list of them: the walk only happens while the rail is in
+## one of them, otherwise it does nothing at all; a stroll also never interrupts a journey move still under way). A relative walk is shortened until it ends inside the sector with a margin from the walls; the whole walk stays in the starting
+## sector (a `to` walk may cross doors: it follows the portal route).
+func _plan_walk(ev: Dictionary) -> void:
+	var st: Dictionary = ev["start"]
+	var a: Dictionary = ev["walk"]
+	var pos: Vector2 = st["pos"]
+	var sec := str(st["sector"])
+	var hold := func() -> void:
+		ev["route"] = PackedVector2Array([pos, pos])
+		ev["legs"] = [sec]
+		ev["end_yaw"] = float(st["yaw"])
+		ev["end_sector"] = sec
+		ev["cum"] = [0.0, 0.0]
+	var rooms: Array = []
+	if a.has("in"):
+		rooms = a["in"] if typeof(a["in"]) == TYPE_ARRAY else [str(a["in"])]
+	if not rooms.is_empty() and map.room_of(sec) not in rooms and sec not in rooms:
+		hold.call()
+		ev["skip"] = true  # not in the room it was written for: it does nothing at all
+		return
+	var target := pos
+	var tsec := sec
+	var end_yaw := float(st["yaw"])
+	if str(a.get("to", "")) != "":
+		var tp := _point_of(str(a["to"]))
+		if tp.is_empty():
+			errors.append("player_walk to unknown %s" % a["to"])
+			hold.call()
+			return
+		target = tp["at"]
+		if float(a.get("stop", 0.0)) > 0.0 and target.distance_to(pos) > 0.01:
+			target -= (target - pos).normalized() * minf(float(a["stop"]), target.distance_to(pos))
+		tsec = map.sector_at(target)
+		if tsec == "":
+			tsec = str(tp["sector"])
+		if map.has_waypoint(str(a["to"])) and not a.has("face") and not a.has("turn"):
+			end_yaw = float(map.waypoint(str(a["to"]))["yaw"])
+	else:
+		var off := map.forward_of_yaw(float(st["yaw"])) * float(a.get("fwd", 0.0)) + StoryProjector.right(float(st["yaw"])) * float(a.get("right", 0.0))
+		var k := 1.0
+		while k > 0.0 and not map.inside(pos + off * k, sec, 0.4):
+			k -= 0.1
+		target = pos + off * maxf(k, 0.0)
+	var r := {"points": PackedVector2Array([pos, target]), "sectors": [tsec], "length": pos.distance_to(target)}
+	if tsec != sec:
+		r = map.route(pos, sec, target, tsec)
+		if (r["points"] as PackedVector2Array).size() < 2:
+			errors.append("no route from %s to %s" % [sec, tsec])
+			hold.call()
+			return
+	if a.has("face"):
+		var fp := _point_of(str(a["face"]))
+		if fp.is_empty():
+			errors.append("player_walk face unknown %s" % a["face"])
+		elif (fp["at"] as Vector2).distance_to(target) > 0.01:
+			var d: Vector2 = fp["at"] - target
+			end_yaw = rad_to_deg(atan2(-d.x, -d.y))
+	elif a.has("turn"):
+		end_yaw = float(st["yaw"]) + float(a["turn"])
+	ev["route"] = r["points"]
+	ev["legs"] = r["sectors"]
+	ev["end_yaw"] = end_yaw
+	ev["end_sector"] = tsec
+	var cum: Array = [0.0]
+	var pts: PackedVector2Array = r["points"]
+	for i in range(1, pts.size()):
+		cum.append(float(cum[i - 1]) + pts[i - 1].distance_to(pts[i]))
+	ev["cum"] = cum
+
+
+## {at, sector} of a waypoint or of an actor's home, or {}.
+func _point_of(id: String) -> Dictionary:
+	if map.has_waypoint(id):
+		return map.waypoint(id)
+	var h := map.home(id)
+	return h
+
+
 func _plan_look(ev: Dictionary) -> void:
 	var st: Dictionary = ev["start"]
 	var yaw := float(st["yaw"])
+	var rooms: Variant = ev.get("in", [])
+	if typeof(rooms) != TYPE_ARRAY:
+		rooms = [str(rooms)]
+	if not (rooms as Array).is_empty() and map.room_of(str(st["sector"])) not in rooms and str(st["sector"]) not in rooms:
+		ev["skip"] = true  # written for another room: it does nothing
+		ev["end_yaw"] = yaw
+		ev["end_sector"] = st["sector"]
+		return
 	if ev["yaw"] != null:
 		yaw = float(ev["yaw"])
 	elif str(ev["at"]) != "":
@@ -220,7 +319,8 @@ func _event_at(t: float) -> Dictionary:
 	var found: Dictionary = {}
 	for ev in _events:
 		if float(ev["t0"]) <= t:
-			found = ev
+			if not bool(ev.get("skip", false)):
+				found = ev
 		else:
 			break
 	return found
@@ -288,13 +388,33 @@ func glance_at(t: float) -> float:
 	return sum
 
 
+## The head tipped up (positive) or down (negative) in degrees at t from the authored glances with a `pitch`.
+func pitch_at(t: float) -> float:
+	var sum := 0.0
+	for g in _glances:
+		if t >= float(g["t0"]) and t < float(g["t1"]):
+			var u := (t - float(g["t0"])) / (float(g["t1"]) - float(g["t0"]))
+			var e := sin(PI * u)
+			sum += float(g["pitch"]) * e * e
+	return clampf(sum, -35.0, 35.0)
+
+
+## The idle head drift: a slow wander of the gaze (yaw, pitch in degrees) between the authored moves, a function of song time only. Off in reduced motion.
+const DRIFT_YAW := 1.4
+const DRIFT_PITCH := 0.7
+
+
+static func drift_at(t: float) -> Vector2:
+	return Vector2(DRIFT_YAW * (0.65 * sin(TAU * t / 13.7) + 0.35 * sin(TAU * t / 5.3 + 1.3)), DRIFT_PITCH * (0.6 * sin(TAU * t / 9.1 + 0.7) + 0.4 * sin(TAU * t / 3.9 + 2.1)))
+
+
 ## True while an authored player_look is turning the head.
 func look_active(t: float) -> bool:
 	var ev := _event_at(t)
 	return not ev.is_empty() and ev["kind"] == "look" and t < float(ev["t1"])
 
 
-## The camera at song time t. {cam: Vector3, yaw, roll (degrees), pos: Vector2 (ground, without sway), sector, ground, moving, style, u, role, queasy, sick}.
+## The camera at song time t. {cam: Vector3, yaw, pitch, roll (degrees), pos: Vector2 (ground, without sway), sector, ground, moving, style, u, role, queasy, sick}.
 func pose_at(t: float) -> Dictionary:
 	var ev := _event_at(t)
 	var st: Dictionary
@@ -334,12 +454,14 @@ func pose_at(t: float) -> Dictionary:
 					bob = Vector3(0.008 * sin(PI * 0.25 * beats), -0.012 * absf(sin(PI * 0.5 * beats)), 0.1 * sin(PI * 0.125 * beats))
 		bob.x += 0.05 * q * sin(PI * 0.25 * beats)
 		bob.z += 2.5 * q * sin(PI * 0.25 * beats + 1.0)
-	var yaw := float(st["yaw"]) + glance_at(t)
+	var drift := Vector2.ZERO if reduced or not drift_on else drift_at(t)
+	var yaw := float(st["yaw"]) + glance_at(t) + drift.x
+	var pitch := pitch_at(t) + drift.y
 	var pos: Vector2 = st["pos"]
 	var ground := float(st["ground"])
 	var eye := ground + map.eye_height + bob.y - CROUCH_M * sick
 	var side := StoryProjector.right(yaw) * bob.x
-	return {"cam": Vector3(pos.x + side.x, eye, pos.y + side.y), "yaw": yaw, "roll": bob.z, "pos": pos, "sector": str(st["sector"]), "ground": ground,
+	return {"cam": Vector3(pos.x + side.x, eye, pos.y + side.y), "yaw": yaw, "pitch": pitch, "roll": bob.z, "pos": pos, "sector": str(st["sector"]), "ground": ground,
 		"moving": moving, "style": style, "u": u, "role": role, "queasy": q, "sick": sick}
 
 
@@ -355,5 +477,6 @@ func role_list() -> Array:
 func events() -> Array:
 	var out: Array = []
 	for ev in _events:
-		out.append({"kind": ev["kind"], "t0": ev["t0"], "t1": ev["t1"], "to": ev.get("to", ""), "style": ev.get("style", "")})
+		if not bool(ev.get("skip", false)):
+			out.append({"kind": ev["kind"], "t0": ev["t0"], "t1": ev["t1"], "to": ev.get("to", ""), "style": ev.get("style", ""), "walk": ev.has("walk")})
 	return out

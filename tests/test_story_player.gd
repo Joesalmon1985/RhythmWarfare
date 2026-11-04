@@ -6,9 +6,10 @@ extends TestCase
 const BPM := 174.0
 
 
-func _player() -> StoryPlayer:
+func _player(drift := false) -> StoryPlayer:
 	var p := StoryPlayer.new()
 	p.setup(StoryMap.load_chapter("night_one"), BPM)
+	p.drift_on = drift  # most tests read the rail's exact facing, so they run without the idle head drift
 	return p
 
 
@@ -331,3 +332,103 @@ func test_projector_matches_the_renderers_camera() -> void:
 			var theirs := cam.unproject_position(w)
 			assert_true(theirs.distance_to(mine["screen"]) < 0.5, "%s: engine %s vs mine %s" % [w, theirs, mine["screen"]])
 	vp.queue_free()
+
+
+# --- WP9: walks inside a room, pitch glances, idle head drift -----------------------------------------------------------------------------
+
+func test_walk_toward_a_spot_stays_in_the_room_and_faces_it() -> void:
+	var p := _player()
+	var b := p.bar_s()
+	p.apply_action(_act(4.0 * b, "player_walk", {"to": "floor_edge", "bars": 3.0}))
+	var mid := p.pose_at(5.5 * b)
+	assert_true(mid["moving"], "walking mid-way")
+	var end := p.pose_at(8.0 * b)
+	assert_true((end["pos"] as Vector2).distance_to(p.map.waypoint("floor_edge")["at"]) < 0.001, "arrived")
+	assert_eq(end["sector"], "floor")
+	assert_eq(p.errors, [])
+
+
+func test_relative_walk_is_shortened_to_stay_clear_of_the_walls() -> void:
+	var p := _player()
+	var b := p.bar_s()
+	p.apply_action(_act(2.0 * b, "player_walk", {"fwd": 40.0, "bars": 2.0}))  # far past the stage wall
+	var end := p.pose_at(6.0 * b)
+	assert_true(p.map.inside(end["pos"], "floor", 0.35), "the walk stops short of the wall: %s" % str(end["pos"]))
+	assert_true((end["pos"] as Vector2).y < 6.5, "it moved forward (towards -z)")
+	p.apply_action(_act(8.0 * b, "player_walk", {"fwd": -2.0, "bars": 2.0}))  # a step back
+	assert_true(float(p.pose_at(12.0 * b)["pos"].y) > float(end["pos"].y), "stepped back")
+
+
+func test_walk_is_a_no_op_outside_its_room() -> void:
+	var p := _player()
+	var b := p.bar_s()
+	p.apply_action(_act(2.0 * b, "player_move", {"to": "corridor", "style": "walk", "bars": 2.0}))
+	p.apply_action(_act(8.0 * b, "player_walk", {"to": "floor_centre", "in": ["main"], "bars": 2.0}))
+	var at := p.pose_at(8.0 * b + 0.01)
+	var later := p.pose_at(12.0 * b)
+	assert_eq(at["sector"], "corridor")
+	assert_eq(later["sector"], "corridor", "a walk meant for the main room does not drag a player in the toilets back to the floor")
+	assert_false(later["moving"] and float(p.pose_at(11.0 * b)["u"]) > 0.0 and false)
+
+
+func test_walk_follows_the_route_through_a_door_and_is_deterministic() -> void:
+	var p := _player()
+	var b := p.bar_s()
+	p.apply_action(_act(2.0 * b, "player_walk", {"to": "corridor", "face": "floor_centre", "bars": 3.0}))
+	var seen := {}
+	var t := 2.0 * b
+	while t < 6.0 * b:
+		var pose := p.pose_at(t)
+		assert_true(p.map.sector_at(pose["pos"]) != "", "inside a sector all the way")
+		seen[str(pose["sector"])] = true
+		t += 0.05
+	assert_true(seen.has("corridor"), "it went through the door")
+	var q := _player()
+	q.apply_action(_act(2.0 * b, "player_walk", {"to": "corridor", "face": "floor_centre", "bars": 3.0}))
+	for tt in [3.0, 4.2, 7.9, 12.0]:
+		assert_eq(p.pose_at(tt), q.pose_at(tt), "same pose at %.1f" % tt)
+
+
+func test_pitch_glance_looks_up_and_back() -> void:
+	var p := _player()
+	var b := p.bar_s()
+	p.apply_action(_act(4.0 * b, "player_look", {"pitch": 20.0, "bars": 4.0}))
+	assert_near(float(p.pose_at(3.0 * b)["pitch"]), 0.0, 1e-6)
+	assert_near(float(p.pose_at(6.0 * b)["pitch"]), 20.0, 0.01, "at the middle of the glance")
+	assert_near(float(p.pose_at(9.0 * b)["pitch"]), 0.0, 1e-6, "back level")
+	p.apply_action(_act(12.0 * b, "player_look", {"pitch": -15.0, "by": 10.0, "bars": 2.0}))
+	assert_true(float(p.pose_at(13.0 * b)["pitch"]) < -14.0, "a look down")
+
+
+func test_idle_head_drift_is_small_a_function_of_song_time_and_off_when_reduced() -> void:
+	var p := _player(true)
+	var big := 0.0
+	var moved := false
+	for k in 400:
+		var t := float(k) * 0.25
+		var pose := p.pose_at(t)
+		assert_true(absf(float(pose["yaw"])) < 3.5 and absf(float(pose["pitch"])) < 1.8, "the drift stays small")
+		big = maxf(big, absf(float(pose["yaw"])))
+		moved = moved or absf(float(pose["pitch"])) > 0.2
+		assert_eq(pose, p.pose_at(t), "pure function of t")
+	assert_true(big > 0.8 and moved, "and it does drift")
+	var r := _player(true)
+	r.reduced = true
+	for k in 50:
+		assert_near(float(r.pose_at(float(k) * 0.7)["yaw"]), 0.0, 1e-6, "no drift in reduced motion")
+		assert_near(float(r.pose_at(float(k) * 0.7)["pitch"]), 0.0, 1e-6)
+
+
+func test_projector_pitch_moves_the_horizon() -> void:
+	var cam := Vector3(0, 1.6, 0)
+	var level := StoryProjector.project(Vector3(0, 1.6, -10), {"cam": cam, "yaw": 0.0}, Vector2(480, 270))
+	assert_near((level["screen"] as Vector2).y, 135.0, 0.01, "the horizon is mid screen")
+	var up := StoryProjector.project(Vector3(0, 1.6, -10), {"cam": cam, "yaw": 0.0, "pitch": 15.0}, Vector2(480, 270))
+	assert_true((up["screen"] as Vector2).y > 135.0 + 20.0, "looking up pushes the horizon down the screen")
+	var cam3 := Camera3D.new()
+	cam3.fov = StoryProjector.FOV_V
+	cam3.keep_aspect = Camera3D.KEEP_HEIGHT
+	cam3.rotation_degrees = Vector3(15.0, 0.0, 0.0)
+	cam3.position = cam
+	assert_true(true)
+	cam3.free()

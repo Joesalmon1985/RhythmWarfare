@@ -24,6 +24,8 @@ const ACTIONS := [
 	# the player's journey in the 2.5D world (docs/STORY_25D_PLAN.md section 4.1): player_move {to: waypoint, style, bars}, player_look {yaw | at | by (a glance), bars},
 	# player_role {role}, fx_queasy {amount 0..1, bars}, sick_beat {bars}
 	"player_move", "player_look", "player_role", "fx_queasy", "sick_beat",
+	# player_walk {to | fwd, right, face | turn, stop, in, style, bars}: a walk inside the room the rail is in (docs/STORY_25D_ART_DIRECTION.md 2.B); player_look also takes `pitch` (degrees up)
+	"player_walk",
 ]
 
 var raw: Dictionary = {}
@@ -177,6 +179,13 @@ func _check_journey_args(action: String, args: Dictionary, errors: Array, where:
 				errors.append("%s: unknown move style %s" % [where, args.get("style")])
 			if float(args.get("bars", 2.0)) <= 0.0:
 				errors.append("%s: player_move needs a positive bars" % where)
+		"player_walk":
+			if str(args.get("to", "")) == "" and not args.has("fwd") and not args.has("right"):
+				errors.append("%s: player_walk needs `to` or fwd / right" % where)
+			if str(args.get("style", "walk")) not in StoryMap.MOVE_STYLES:
+				errors.append("%s: unknown walk style %s" % [where, args.get("style")])
+			if float(args.get("bars", 2.0)) <= 0.0:
+				errors.append("%s: player_walk needs a positive bars" % where)
 		"player_role":
 			if str(args.get("role", "")) not in StoryMap.ROLES:
 				errors.append("%s: unknown role %s" % [where, args.get("role", "")])

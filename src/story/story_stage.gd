@@ -543,7 +543,7 @@ func apply(a: Dictionary) -> void:
 			_act["burst"] = {"t0": t0, "t1": t0 + 3.0 * bar_s()}
 			crowd.direct(crowd.present_ids(), "cheer", t0, 3.0 * bar_s())
 			_act["spot_sweep"] = {"t0": t0, "t1": t0 + 4.0 * bar_s()}
-		"player_move", "player_look", "player_role", "fx_queasy", "sick_beat":
+		"player_move", "player_walk", "player_look", "player_role", "fx_queasy", "sick_beat":
 			if player != null:  # the journey needs a map; a chapter without one keeps its 2D camera and ignores these
 				player.apply_action(a)
 				if act == "player_move":
