@@ -96,97 +96,113 @@
    "name": "The Service Hatch",
    "look": "A rusted hatch and a ladder behind the cloakroom, chalk marks on the brick.",
    "tier": 1,
-   "scene": "hatch"
+   "scene": "hatch",
+   "map": "bassment_hatch"
   },
   "cables": {
    "name": "The Cable Run",
    "look": "A low tunnel hung with humming cables and spitting junction boxes.",
    "tier": 1,
-   "scene": "cables"
+   "scene": "cables",
+   "map": "bassment_cables"
   },
   "cloakroom": {
    "name": "Lost Property",
    "look": "A cramped cloakroom heaped with orphaned coats, lit by one brass lamp.",
    "tier": 1,
-   "scene": "cloakroom"
+   "scene": "cloakroom",
+   "map": "bassment_cloakroom"
   },
   "boiler": {
    "name": "The Flooded Boiler Room",
    "look": "Black water under dripping pipes, steam, and a crackling shape below.",
    "tier": 1,
-   "scene": "boiler"
+   "scene": "boiler",
+   "map": "bassment_boiler"
   },
   "stacks": {
    "name": "The Crystal Stacks",
    "look": "A cavern of glowing crystal columns stacked like speaker towers.",
    "tier": 2,
-   "scene": "stacks"
+   "scene": "stacks",
+   "map": "bassment_stacks"
   },
   "cellar": {
    "name": "The Barrel Cellar",
    "look": "Barrels, bones and a ruined bar under low brick arches.",
    "tier": 2,
-   "scene": "cellar"
+   "scene": "cellar",
+   "map": "bassment_cellar"
   },
   "fungus": {
    "name": "The Fungus Farm",
    "look": "Terraces of luminous mushrooms around a green pool.",
    "tier": 2,
-   "scene": "fungus"
+   "scene": "fungus",
+   "map": "bassment_fungus"
   },
   "mirrors": {
    "name": "The Mirror Mezzanine",
    "look": "A long gallery of tall mirrors that show strangers dancing.",
    "tier": 3,
-   "scene": "mirrors"
+   "scene": "mirrors",
+   "map": "bassment_mirrors"
   },
   "pit": {
    "name": "The Reverb Pit",
    "look": "A black shaft where every sound returns late, with a rope and a ledge.",
    "tier": 3,
-   "scene": "pit"
+   "scene": "pit",
+   "map": "bassment_pit"
   },
   "vaults": {
    "name": "The Vault of Records",
    "look": "Stone shelves of ancient records and a bouncer's velvet rope.",
    "tier": 3,
-   "scene": "vaults"
+   "scene": "vaults",
+   "map": "bassment_vaults"
   },
   "warren": {
    "name": "The Rat King's Warren",
    "look": "Gnawed tunnels and a throne of speaker foam.",
    "tier": 3,
-   "scene": "warren"
+   "scene": "warren",
+   "map": "bassment_warren"
   },
   "kitchens": {
    "name": "The Furnace Kitchens",
    "look": "Red-hot ovens, swinging pots and an imp in a chef's hat.",
    "tier": 4,
-   "scene": "kitchens"
+   "scene": "kitchens",
+   "map": "bassment_kitchens"
   },
   "hall": {
    "name": "The Hall of Hands",
    "look": "Rows of stone statues with raised palms, hushing a crowd.",
    "tier": 4,
-   "scene": "hall"
+   "scene": "hall",
+   "map": "bassment_hall"
   },
   "door": {
    "name": "The Resonance Door",
    "look": "A round iron door with a speaker grille, humming one low note.",
    "tier": 4,
-   "scene": "door"
+   "scene": "door",
+   "map": "bassment_door"
   },
   "echo": {
    "name": "The Echo Chamber",
    "look": "A perfectly round, bare room that returns every sound as a person.",
    "tier": 4,
-   "scene": "echo"
+   "scene": "echo",
+   "map": "bassment_echo"
   },
   "dawn": {
    "name": "The Dawn Stair",
    "look": "A spiral stair climbing to grey light, and a door with a push bar.",
    "tier": 4,
-   "scene": "dawn"
+   "scene": "dawn",
+   "map": "bassment_dawn"
   }
  },
  "scenes": {
@@ -351,14 +367,18 @@
      "to": 3,
      "phrase": "p_d1",
      "consequence": "The rungs ring under your boots.",
-     "default": true
+     "default": true,
+     "exit_wp": "ladder_top"
     },
     {
      "label": "Read the chalk marks first",
      "to": 2,
-     "phrase": "p_d1"
+     "phrase": "p_d1",
+     "exit_wp": "chalk_wall"
     }
-   ]
+   ],
+   "map": "bassment_hatch",
+   "waypoint": "hatch_top"
   },
   "2": {
    "title": "Chalk on the Wall",
@@ -374,9 +394,12 @@
      "to": 3,
      "phrase": "p_d1",
      "consequence": "You pocket the advice and start down.",
-     "default": true
+     "default": true,
+     "exit_wp": "ladder_top"
     }
-   ]
+   ],
+   "map": "bassment_hatch",
+   "waypoint": "chalk_close"
   },
   "3": {
    "title": "The Ladder Foot",
@@ -390,14 +413,18 @@
      "label": "Follow the cables",
      "to": 4,
      "phrase": "p_d1",
-     "default": true
+     "default": true,
+     "exit_wp": "to_cables"
     },
     {
      "label": "Take the warm stairs",
      "to": 10,
-     "phrase": "p_d1"
+     "phrase": "p_d1",
+     "exit_wp": "to_stairs"
     }
-   ]
+   ],
+   "map": "bassment_hatch",
+   "waypoint": "ladder_foot"
   },
   "4": {
    "title": "The Cable Run",
@@ -411,14 +438,18 @@
      "label": "Follow the thickest cable",
      "to": 5,
      "phrase": "p_d1",
-     "default": true
+     "default": true,
+     "exit_wp": "thick_cable"
     },
     {
      "label": "Try the LOST PROPERTY door",
      "to": 8,
-     "phrase": "p_d1"
+     "phrase": "p_d1",
+     "exit_wp": "lost_door"
     }
-   ]
+   ],
+   "map": "bassment_cables",
+   "waypoint": "cable_run"
   },
   "5": {
    "title": "The Live Junction",
@@ -433,7 +464,8 @@
      "to": 7,
      "phrase": "p_d1",
      "consequence": "You slip by between two bursts.",
-     "default": true
+     "default": true,
+     "exit_wp": "edge_past"
     },
     {
      "label": "Dash under the sparks",
@@ -443,9 +475,12 @@
      "test": {
       "pass": 15,
       "fail": 6
-     }
+     },
+     "exit_wp": "dash"
     }
-   ]
+   ],
+   "map": "bassment_cables",
+   "waypoint": "junction"
   },
   "6": {
    "title": "Singed",
@@ -461,9 +496,12 @@
      "to": 7,
      "phrase": "p_d1",
      "consequence": "You are a little crispier, but you can walk.",
-     "default": true
+     "default": true,
+     "exit_wp": "past_junction"
     }
-   ]
+   ],
+   "map": "bassment_cables",
+   "waypoint": "singed"
   },
   "7": {
    "title": "The Cable Nest",
@@ -478,9 +516,12 @@
      "to": 15,
      "phrase": "p_b1",
      "consequence": "Stone scrapes your shoulders, then opens out.",
-     "default": true
+     "default": true,
+     "exit_wp": "gap"
     }
-   ]
+   ],
+   "map": "bassment_cables",
+   "waypoint": "nest"
   },
   "8": {
    "title": "Lost Property",
@@ -496,16 +537,20 @@
      "to": 9,
      "phrase": "fight_t2",
      "encounter": "lampmoth",
-     "lives": 3
+     "lives": 3,
+     "exit_wp": "lamp_stand"
     },
     {
      "label": "Close the door and leave it",
      "to": 4,
      "phrase": "p_d1",
      "consequence": "You pull the door shut on the dust.",
-     "default": true
+     "default": true,
+     "exit_wp": "door_out"
     }
-   ]
+   ],
+   "map": "bassment_cloakroom",
+   "waypoint": "coat_aisle"
   },
   "9": {
    "title": "The Brass Lamp",
@@ -524,9 +569,12 @@
      "label": "Back to the cable run",
      "to": 4,
      "phrase": "p_d1",
-     "default": true
+     "default": true,
+     "exit_wp": "door_out"
     }
-   ]
+   ],
+   "map": "bassment_cloakroom",
+   "waypoint": "lamp_close"
   },
   "10": {
    "title": "The Warm Stairs",
@@ -540,14 +588,18 @@
      "label": "Wade in",
      "to": 12,
      "phrase": "p_d1",
-     "default": true
+     "default": true,
+     "exit_wp": "wade_in"
     },
     {
      "label": "Haul on the valve wheel at the side",
      "to": 11,
-     "phrase": "p_d1"
+     "phrase": "p_d1",
+     "exit_wp": "valve_wheel"
     }
-   ]
+   ],
+   "map": "bassment_boiler",
+   "waypoint": "stairs_top"
   },
   "11": {
    "title": "The Valve Wheel",
@@ -563,9 +615,12 @@
      "to": 12,
      "phrase": "p_d1",
      "consequence": "The eel looks a little less certain of itself.",
-     "default": true
+     "default": true,
+     "exit_wp": "wade_in"
     }
-   ]
+   ],
+   "map": "bassment_boiler",
+   "waypoint": "valve_look"
   },
   "12": {
    "title": "The Flooded Boiler Room",
@@ -581,7 +636,8 @@
      "phrase": "fight_t2",
      "default": true,
      "encounter": "cable_eel",
-     "lives": 3
+     "lives": 3,
+     "exit_wp": "edge_in"
     },
     {
      "label": "Climb the pipes over the water",
@@ -591,9 +647,12 @@
      "test": {
       "pass": 14,
       "fail": 13
-     }
+     },
+     "exit_wp": "pipe_climb"
     }
-   ]
+   ],
+   "map": "bassment_boiler",
+   "waypoint": "water_edge"
   },
   "13": {
    "title": "Fried",
@@ -608,9 +667,12 @@
      "to": null,
      "exit": "warehouse",
      "phrase": null,
-     "default": true
+     "default": true,
+     "exit_wp": "stairs_out"
     }
-   ]
+   ],
+   "map": "bassment_boiler",
+   "waypoint": "fried"
   },
   "14": {
    "title": "The Dry Landing",
@@ -625,9 +687,12 @@
      "to": 15,
      "phrase": "p_d1",
      "consequence": "The glow gets brighter with every step.",
-     "default": true
+     "default": true,
+     "exit_wp": "stair_up"
     }
-   ]
+   ],
+   "map": "bassment_boiler",
+   "waypoint": "dry_landing"
   },
   "15": {
    "title": "The Crystal Stacks",
@@ -641,14 +706,18 @@
      "label": "Follow the lit path through the columns",
      "to": 16,
      "phrase": "p_d2",
-     "default": true
+     "default": true,
+     "exit_wp": "column_path"
     },
     {
      "label": "Climb the crystal terraces",
      "to": 18,
-     "phrase": "p_b2"
+     "phrase": "p_b2",
+     "exit_wp": "terrace_foot"
     }
-   ]
+   ],
+   "map": "bassment_stacks",
+   "waypoint": "stacks_entry"
   },
   "16": {
    "title": "The Humming Hall",
@@ -662,14 +731,18 @@
      "label": "Walk on to the cellar stairs",
      "to": 19,
      "phrase": "p_d2",
-     "default": true
+     "default": true,
+     "exit_wp": "cellar_door"
     },
     {
      "label": "Tap the cracked crystal",
      "to": 17,
-     "phrase": "p_d2"
+     "phrase": "p_d2",
+     "exit_wp": "crack_foot"
     }
-   ]
+   ],
+   "map": "bassment_stacks",
+   "waypoint": "hall_mid"
   },
   "17": {
    "title": "The Ringing Niche",
@@ -688,9 +761,12 @@
      "label": "Pocket the token and go on",
      "to": 19,
      "phrase": "p_d2",
-     "default": true
+     "default": true,
+     "exit_wp": "cellar_door"
     }
-   ]
+   ],
+   "map": "bassment_stacks",
+   "waypoint": "niche_look"
   },
   "18": {
    "title": "The Crystal Terraces",
@@ -705,15 +781,19 @@
      "label": "Cross the rope bridge",
      "to": 19,
      "phrase": "p_b2",
-     "consequence": "The bridge sways and holds."
+     "consequence": "The bridge sways and holds.",
+     "exit_wp": "bridge_end"
     },
     {
      "label": "Climb back down",
      "to": 16,
      "phrase": "p_d2",
-     "default": true
+     "default": true,
+     "exit_wp": "ledge_steps"
     }
-   ]
+   ],
+   "map": "bassment_stacks",
+   "waypoint": "ledge_walk"
   },
   "19": {
    "title": "The Cellar Stairs",
@@ -727,9 +807,12 @@
      "label": "Go in",
      "to": 20,
      "phrase": "p_d2",
-     "default": true
+     "default": true,
+     "exit_wp": "stairs_foot"
     }
-   ]
+   ],
+   "map": "bassment_cellar",
+   "waypoint": "stairs_top"
   },
   "20": {
    "title": "The Barrel Cellar",
@@ -745,7 +828,8 @@
      "phrase": "fight_t3",
      "default": true,
      "encounter": "barrel_knight",
-     "lives": 3
+     "lives": 3,
+     "exit_wp": "counter_gap"
     },
     {
      "label": "Creep between the barrels",
@@ -755,14 +839,18 @@
      "test": {
       "pass": 23,
       "fail": 22
-     }
+     },
+     "exit_wp": "barrel_row"
     },
     {
      "label": "Sit at the old bar",
      "to": 21,
-     "phrase": "p_d2"
+     "phrase": "p_d2",
+     "exit_wp": "bar_stool"
     }
-   ]
+   ],
+   "map": "bassment_cellar",
+   "waypoint": "hall_front"
   },
   "21": {
    "title": "The Dead Bar",
@@ -778,9 +866,12 @@
      "to": 20,
      "phrase": "p_d2",
      "consequence": "You push back the stool.",
-     "default": true
+     "default": true,
+     "exit_wp": "bar_turn"
     }
-   ]
+   ],
+   "map": "bassment_cellar",
+   "waypoint": "bar_seat"
   },
   "22": {
    "title": "Last Orders",
@@ -795,9 +886,12 @@
      "to": null,
      "exit": "warehouse",
      "phrase": null,
-     "default": true
+     "default": true,
+     "exit_wp": "stairs_foot"
     }
-   ]
+   ],
+   "map": "bassment_cellar",
+   "waypoint": "hall_floor"
   },
   "23": {
    "title": "Behind the Counter",
@@ -812,16 +906,20 @@
      "to": 26,
      "phrase": "p_d2",
      "consequence": "The ladder below glows faintly green.",
-     "default": true
+     "default": true,
+     "exit_wp": "trapdoor_foot"
     },
     {
      "label": "Light the brass lamp and take the dark archway",
      "to": 24,
      "phrase": "p_b2",
      "consequence": "The lamp throws a gold circle on the floor ahead.",
-     "requires": "lamp"
+     "requires": "lamp",
+     "exit_wp": "arch_far"
     }
-   ]
+   ],
+   "map": "bassment_cellar",
+   "waypoint": "counter_back"
   },
   "24": {
    "title": "The Dark Corridor",
@@ -837,9 +935,12 @@
      "label": "Walk on",
      "to": 25,
      "phrase": "p_d2",
-     "default": true
+     "default": true,
+     "exit_wp": "arch_far"
     }
-   ]
+   ],
+   "map": "bassment_cellar",
+   "waypoint": "arch_in"
   },
   "25": {
    "title": "The Old Green Room",
@@ -856,9 +957,12 @@
      "to": 30,
      "phrase": "p_d2",
      "consequence": "You have skipped the whole fungus farm.",
-     "default": true
+     "default": true,
+     "exit_wp": "back_door"
     }
-   ]
+   ],
+   "map": "bassment_cellar",
+   "waypoint": "green_room"
   },
   "26": {
    "title": "The Fungus Farm",
@@ -872,14 +976,18 @@
      "label": "Follow the stepping stones",
      "to": 28,
      "phrase": "p_d2",
-     "default": true
+     "default": true,
+     "exit_wp": "stones"
     },
     {
      "label": "Pick a glowing cap to eat",
      "to": 27,
-     "phrase": "p_b2"
+     "phrase": "p_b2",
+     "exit_wp": "cap_foot"
     }
-   ]
+   ],
+   "map": "bassment_fungus",
+   "waypoint": "farm_top"
   },
   "27": {
    "title": "The Spore Haze",
@@ -895,9 +1003,12 @@
      "to": 28,
      "phrase": "p_d2",
      "consequence": "Your head still hums.",
-     "default": true
+     "default": true,
+     "exit_wp": "pond_edge"
     }
-   ]
+   ],
+   "map": "bassment_fungus",
+   "waypoint": "haze_view"
   },
   "28": {
    "title": "The Mildew Pond",
@@ -913,14 +1024,18 @@
      "phrase": "fight_t3",
      "default": true,
      "encounter": "mildew_mother",
-     "lives": 3
+     "lives": 3,
+     "exit_wp": "stairs_foot"
     },
     {
      "label": "Back away to the haze",
      "to": 27,
-     "phrase": "p_d2"
+     "phrase": "p_d2",
+     "exit_wp": "haze_bank"
     }
-   ]
+   ],
+   "map": "bassment_fungus",
+   "waypoint": "pond_view"
   },
   "29": {
    "title": "The Spore Stairs",
@@ -935,9 +1050,12 @@
      "to": 30,
      "phrase": "p_d2",
      "consequence": "The green light fades below you.",
-     "default": true
+     "default": true,
+     "exit_wp": "stairs_top"
     }
-   ]
+   ],
+   "map": "bassment_fungus",
+   "waypoint": "stairs_foot"
   },
   "30": {
    "title": "The Mirror Mezzanine",
@@ -951,14 +1069,18 @@
      "label": "Walk the centre aisle",
      "to": 32,
      "phrase": "p_d3",
-     "default": true
+     "default": true,
+     "exit_wp": "aisle_mid"
     },
     {
      "label": "Follow the reflection that waves you aside",
      "to": 31,
-     "phrase": "p_d3"
+     "phrase": "p_d3",
+     "exit_wp": "wave_panel"
     }
-   ]
+   ],
+   "map": "bassment_mirrors",
+   "waypoint": "mez_entry"
   },
   "31": {
    "title": "The Waving Reflection",
@@ -974,9 +1096,12 @@
      "to": 32,
      "phrase": "p_d3",
      "consequence": "The stair brings you out behind the twin, who has not noticed you yet.",
-     "default": true
+     "default": true,
+     "exit_wp": "aisle_mid"
     }
-   ]
+   ],
+   "map": "bassment_mirrors",
+   "waypoint": "aisle_wave_view"
   },
   "32": {
    "title": "The Twin Steps Out",
@@ -992,7 +1117,8 @@
      "phrase": "fight_t4",
      "default": true,
      "encounter": "mirror_twin",
-     "lives": 3
+     "lives": 3,
+     "exit_wp": "twin_stand"
     },
     {
      "label": "Turn your back on the mirror",
@@ -1002,9 +1128,12 @@
      "test": {
       "pass": 34,
       "fail": 33
-     }
+     },
+     "exit_wp": "mirror_right"
     }
-   ]
+   ],
+   "map": "bassment_mirrors",
+   "waypoint": "aisle_front"
   },
   "33": {
    "title": "Shattered",
@@ -1019,9 +1148,12 @@
      "to": null,
      "exit": "warehouse",
      "phrase": null,
-     "default": true
+     "default": true,
+     "exit_wp": "entry_door"
     }
-   ]
+   ],
+   "map": "bassment_mirrors",
+   "waypoint": "death_floor"
   },
   "34": {
    "title": "The Gallery's End",
@@ -1036,9 +1168,12 @@
      "to": 35,
      "phrase": "p_d3",
      "consequence": "The air coming up smells of cold stone.",
-     "default": true
+     "default": true,
+     "exit_wp": "pit_edge"
     }
-   ]
+   ],
+   "map": "bassment_mirrors",
+   "waypoint": "gallery_end"
   },
   "35": {
    "title": "The Reverb Pit",
@@ -1052,14 +1187,18 @@
      "label": "Climb down the rope",
      "to": 37,
      "phrase": "p_b3",
-     "default": true
+     "default": true,
+     "exit_wp": "rope_head"
     },
     {
      "label": "Shout into the pit",
      "to": 36,
-     "phrase": "p_d3"
+     "phrase": "p_d3",
+     "exit_wp": "brink_east"
     }
-   ]
+   ],
+   "map": "bassment_pit",
+   "waypoint": "rim_stand"
   },
   "36": {
    "title": "A Shout into the Dark",
@@ -1075,9 +1214,12 @@
      "to": 35,
      "phrase": "p_d3",
      "consequence": "It might be worth a look down there.",
-     "default": true
+     "default": true,
+     "exit_wp": "rope_head"
     }
-   ]
+   ],
+   "map": "bassment_pit",
+   "waypoint": "brink_east"
   },
   "37": {
    "title": "The Rope Ledge",
@@ -1092,7 +1234,8 @@
      "to": 40,
      "phrase": "p_d3",
      "consequence": "The studded door groans open.",
-     "default": true
+     "default": true,
+     "exit_wp": "ledge_door"
     },
     {
      "label": "Slide down the rope to the pit floor",
@@ -1102,9 +1245,12 @@
      "test": {
       "pass": 38,
       "fail": 39
-     }
+     },
+     "exit_wp": "ledge_rope"
     }
-   ]
+   ],
+   "map": "bassment_pit",
+   "waypoint": "ledge_stand"
   },
   "38": {
    "title": "The Pit Floor",
@@ -1124,9 +1270,12 @@
      "to": 37,
      "phrase": "p_b3",
      "consequence": "The note follows you up the rope.",
-     "default": true
+     "default": true,
+     "exit_wp": "rope_foot"
     }
-   ]
+   ],
+   "map": "bassment_pit",
+   "waypoint": "pit_floor"
   },
   "39": {
    "title": "A Long Way Down",
@@ -1141,9 +1290,12 @@
      "to": null,
      "exit": "warehouse",
      "phrase": null,
-     "default": true
+     "default": true,
+     "exit_wp": "rope_foot"
     }
-   ]
+   ],
+   "map": "bassment_pit",
+   "waypoint": "pit_bottom"
   },
   "40": {
    "title": "The Vault of Records",
@@ -1159,21 +1311,26 @@
      "phrase": "fight_t4",
      "default": true,
      "encounter": "bouncer",
-     "lives": 3
+     "lives": 3,
+     "exit_wp": "bouncer_podium"
     },
     {
      "label": "Show the GUEST LIST token",
      "to": 42,
      "phrase": "p_d3",
      "consequence": "He squints at the token, sniffs, and lifts the rope. 'Go on, then.'",
-     "requires": "token"
+     "requires": "token",
+     "exit_wp": "velvet_gap"
     },
     {
      "label": "Slip along the shelves",
      "to": 41,
-     "phrase": "p_d3"
+     "phrase": "p_d3",
+     "exit_wp": "shelf_mouth"
     }
-   ]
+   ],
+   "map": "bassment_vaults",
+   "waypoint": "vault_gate"
   },
   "41": {
    "title": "The Long Shelves",
@@ -1189,9 +1346,12 @@
      "to": 40,
      "phrase": "p_d3",
      "consequence": "'Name on the list?'",
-     "default": true
+     "default": true,
+     "exit_wp": "shelf_mouth"
     }
-   ]
+   ],
+   "map": "bassment_vaults",
+   "waypoint": "shelf_aisle"
   },
   "42": {
    "title": "The Inner Vault",
@@ -1205,14 +1365,18 @@
      "label": "Take the damp stair",
      "to": 43,
      "phrase": "p_d3",
-     "default": true
+     "default": true,
+     "exit_wp": "damp_door"
     },
     {
      "label": "Take the hot door",
      "to": 48,
-     "phrase": "p_d3"
+     "phrase": "p_d3",
+     "exit_wp": "hot_door"
     }
-   ]
+   ],
+   "map": "bassment_vaults",
+   "waypoint": "inner_vault"
   },
   "43": {
    "title": "The Squeaking Stair",
@@ -1226,14 +1390,18 @@
      "label": "Walk through the squeaking",
      "to": 45,
      "phrase": "p_d3",
-     "default": true
+     "default": true,
+     "exit_wp": "tunnel_bend"
     },
     {
      "label": "Crawl the dry tunnel",
      "to": 44,
-     "phrase": "p_b3"
+     "phrase": "p_b3",
+     "exit_wp": "dry_mouth"
     }
-   ]
+   ],
+   "map": "bassment_warren",
+   "waypoint": "stair_head"
   },
   "44": {
    "title": "The Dry Tunnel",
@@ -1249,9 +1417,12 @@
      "to": 45,
      "phrase": "p_d3",
      "consequence": "Nobody has noticed you yet.",
-     "default": true
+     "default": true,
+     "exit_wp": "dry_mouth"
     }
-   ]
+   ],
+   "map": "bassment_warren",
+   "waypoint": "dry_crawl"
   },
   "45": {
    "title": "The Rat King's Court",
@@ -1267,14 +1438,18 @@
      "phrase": "fight_t4",
      "default": true,
      "encounter": "rat_king",
-     "lives": 3
+     "lives": 3,
+     "exit_wp": "throne_foot"
     },
     {
      "label": "Offer it a sandwich",
      "to": 46,
-     "phrase": "p_d3"
+     "phrase": "p_d3",
+     "exit_wp": "tribute_pile"
     }
-   ]
+   ],
+   "map": "bassment_warren",
+   "waypoint": "court_floor"
   },
   "46": {
    "title": "Chewed",
@@ -1290,9 +1465,12 @@
      "to": 45,
      "phrase": "p_d3",
      "consequence": "The king licks its crown, unbothered.",
-     "default": true
+     "default": true,
+     "exit_wp": "court_floor"
     }
-   ]
+   ],
+   "map": "bassment_warren",
+   "waypoint": "court_chewed"
   },
   "47": {
    "title": "The Gnawed Door",
@@ -1307,9 +1485,12 @@
      "to": 52,
      "phrase": "p_d3",
      "consequence": "The squeaks fade behind you.",
-     "default": true
+     "default": true,
+     "exit_wp": "gnawed_door"
     }
-   ]
+   ],
+   "map": "bassment_warren",
+   "waypoint": "door_stand"
   },
   "48": {
    "title": "The Furnace Kitchens",
@@ -1325,20 +1506,25 @@
      "phrase": "fight_t4",
      "default": true,
      "encounter": "furnace_imp",
-     "lives": 3
+     "lives": 3,
+     "exit_wp": "counter_front"
     },
     {
      "label": "Cool off in the walk-in freezer",
      "to": 49,
-     "phrase": "p_d4"
+     "phrase": "p_d4",
+     "exit_wp": "freezer_hatch"
     },
     {
      "label": "Snatch the glowing recipe book",
      "to": 50,
      "phrase": "p_d4",
-     "consequence": "The imp watches your hand closely, and hopefully."
+     "consequence": "The imp watches your hand closely, and hopefully.",
+     "exit_wp": "recipe_stand"
     }
-   ]
+   ],
+   "map": "bassment_kitchens",
+   "waypoint": "kitchen_door"
   },
   "49": {
    "title": "The Walk-in Freezer",
@@ -1354,9 +1540,12 @@
      "to": 48,
      "phrase": "p_d4",
      "consequence": "The imp is still juggling.",
-     "default": true
+     "default": true,
+     "exit_wp": "freezer_hatch"
     }
-   ]
+   ],
+   "map": "bassment_kitchens",
+   "waypoint": "freezer_in"
   },
   "50": {
    "title": "Flambe",
@@ -1371,9 +1560,12 @@
      "to": null,
      "exit": "warehouse",
      "phrase": null,
-     "default": true
+     "default": true,
+     "exit_wp": "counter_front"
     }
-   ]
+   ],
+   "map": "bassment_kitchens",
+   "waypoint": "book_flames"
   },
   "51": {
    "title": "The Cold Store",
@@ -1388,9 +1580,12 @@
      "to": 52,
      "phrase": "p_d4",
      "consequence": "The heat falls away behind you.",
-     "default": true
+     "default": true,
+     "exit_wp": "cold_back_door"
     }
-   ]
+   ],
+   "map": "bassment_kitchens",
+   "waypoint": "cold_store"
   },
   "52": {
    "title": "The Hall of Hands",
@@ -1404,21 +1599,26 @@
      "label": "Walk the aisle between the hands",
      "to": 55,
      "phrase": "p_d4",
-     "default": true
+     "default": true,
+     "exit_wp": "hall_aisle_walk"
     },
     {
      "label": "Study the statue with no hands",
      "to": 53,
-     "phrase": "p_d4"
+     "phrase": "p_d4",
+     "exit_wp": "hall_statue_foot"
     },
     {
      "label": "Strike the tuning fork on a stone palm",
      "to": 54,
      "phrase": "p_b3",
      "consequence": "The note runs down the row and every statue shivers in tune.",
-     "requires": "fork"
+     "requires": "fork",
+     "exit_wp": "hall_seam_foot"
     }
-   ]
+   ],
+   "map": "bassment_hall",
+   "waypoint": "hall_gate"
   },
   "53": {
    "title": "The Statue Without Hands",
@@ -1434,9 +1634,12 @@
      "to": 52,
      "phrase": "p_d4",
      "consequence": "You have a feeling you will need that.",
-     "default": true
+     "default": true,
+     "exit_wp": "hall_aisle_walk"
     }
-   ]
+   ],
+   "map": "bassment_hall",
+   "waypoint": "hall_statue_view"
   },
   "54": {
    "title": "The Resonant Seam",
@@ -1453,9 +1656,12 @@
      "to": 57,
      "phrase": "p_d4",
      "consequence": "You have walked right past the gargoyle.",
-     "default": true
+     "default": true,
+     "exit_wp": "hall_seam_foot"
     }
-   ]
+   ],
+   "map": "bassment_hall",
+   "waypoint": "hall_seam_view"
   },
   "55": {
    "title": "The Hushing Gargoyle",
@@ -1471,7 +1677,8 @@
      "phrase": "fight_t4",
      "default": true,
      "encounter": "gargoyle",
-     "lives": 3
+     "lives": 3,
+     "exit_wp": "hall_door_foot"
     },
     {
      "label": "Creep along the wall",
@@ -1481,9 +1688,12 @@
      "test": {
       "pass": 57,
       "fail": 56
-     }
+     },
+     "exit_wp": "hall_wall_creep"
     }
-   ]
+   ],
+   "map": "bassment_hall",
+   "waypoint": "hall_gargoyle"
   },
   "56": {
    "title": "Hushed",
@@ -1499,9 +1709,12 @@
      "to": 55,
      "phrase": "p_d4",
      "consequence": "The gargoyle settles back on its haunches.",
-     "default": true
+     "default": true,
+     "exit_wp": "hall_gargoyle_floor"
     }
-   ]
+   ],
+   "map": "bassment_hall",
+   "waypoint": "hall_gargoyle"
   },
   "57": {
    "title": "The Resonance Door",
@@ -1520,9 +1733,12 @@
      "test": {
       "pass": 59,
       "fail": 58
-     }
+     },
+     "exit_wp": "door_foot"
     }
-   ]
+   ],
+   "map": "bassment_door",
+   "waypoint": "door_chamber"
   },
   "58": {
    "title": "The Door Says No",
@@ -1538,9 +1754,12 @@
      "to": 57,
      "phrase": "p_d4",
      "consequence": "You roll your shoulders and listen.",
-     "default": true
+     "default": true,
+     "exit_wp": "door_foot_left"
     }
-   ]
+   ],
+   "map": "bassment_door",
+   "waypoint": "door_flank"
   },
   "59": {
    "title": "The Echo Chamber",
@@ -1556,14 +1775,18 @@
      "phrase": "fight_t4",
      "default": true,
      "encounter": "echo",
-     "lives": 3
+     "lives": 3,
+     "exit_wp": "echo_doorway"
     },
     {
      "label": "Stand perfectly still",
      "to": 60,
-     "phrase": "p_d1"
+     "phrase": "p_d1",
+     "exit_wp": "echo_still"
     }
-   ]
+   ],
+   "map": "bassment_echo",
+   "waypoint": "echo_gate"
   },
   "60": {
    "title": "Swallowed by Silence",
@@ -1578,9 +1801,12 @@
      "to": null,
      "exit": "warehouse",
      "phrase": null,
-     "default": true
+     "default": true,
+     "exit_wp": "echo_doorway"
     }
-   ]
+   ],
+   "map": "bassment_echo",
+   "waypoint": "echo_still"
   },
   "61": {
    "title": "The Dawn Stair",
@@ -1595,9 +1821,12 @@
      "to": 62,
      "phrase": "p_d2",
      "consequence": "Your legs ache pleasantly.",
-     "default": true
+     "default": true,
+     "exit_wp": "dawn_turn"
     }
-   ]
+   ],
+   "map": "bassment_dawn",
+   "waypoint": "dawn_foot"
   },
   "62": {
    "title": "The Last Landing",
@@ -1612,15 +1841,19 @@
      "to": 63,
      "phrase": "p_d2",
      "consequence": "The bar clunks and the door swings out.",
-     "default": true
+     "default": true,
+     "exit_wp": "dawn_door"
     },
     {
      "label": "Ask if the sandwich is spare",
      "to": 63,
      "phrase": "p_d2",
-     "consequence": "'No,' says the wizard, and holds the door."
+     "consequence": "'No,' says the wizard, and holds the door.",
+     "exit_wp": "dawn_landing_bench"
     }
-   ]
+   ],
+   "map": "bassment_dawn",
+   "waypoint": "dawn_landing"
   },
   "63": {
    "title": "Daylight",
@@ -1635,9 +1868,12 @@
      "to": null,
      "exit": "warehouse",
      "phrase": null,
-     "default": true
+     "default": true,
+     "exit_wp": "car_park_out"
     }
-   ]
+   ],
+   "map": "bassment_dawn",
+   "waypoint": "car_park"
   },
   "0": {
    "title": "Defeated",
@@ -1652,9 +1888,12 @@
      "to": null,
      "exit": "warehouse",
      "phrase": null,
-     "default": true
+     "default": true,
+     "exit_wp": "ladder_top"
     }
-   ]
+   ],
+   "map": "bassment_hatch",
+   "waypoint": "wake"
   }
  }
 }

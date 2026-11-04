@@ -1,0 +1,17 @@
+{
+ "map": "bassment_door",
+ "passages": {
+  "57": {
+   "waypoint": "door_chamber",
+   "exits": [
+    "door_foot"
+   ]
+  },
+  "58": {
+   "waypoint": "door_flank",
+   "exits": [
+    "door_foot_left"
+   ]
+  }
+ }
+}

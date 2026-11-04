@@ -1,0 +1,1 @@
+{"map": "bassment_fungus", "passages": {"26": {"waypoint": "farm_top", "exits": ["stones", "cap_foot"]}, "27": {"waypoint": "haze_view", "exits": ["pond_edge"]}, "28": {"waypoint": "pond_view", "exits": ["stairs_foot", "haze_bank"]}, "29": {"waypoint": "stairs_foot", "exits": ["stairs_top"]}}}

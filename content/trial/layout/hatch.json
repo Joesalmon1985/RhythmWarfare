@@ -1,0 +1,31 @@
+{
+ "map": "bassment_hatch",
+ "passages": {
+  "1": {
+   "waypoint": "hatch_top",
+   "exits": [
+    "ladder_top",
+    "chalk_wall"
+   ]
+  },
+  "2": {
+   "waypoint": "chalk_close",
+   "exits": [
+    "ladder_top"
+   ]
+  },
+  "3": {
+   "waypoint": "ladder_foot",
+   "exits": [
+    "to_cables",
+    "to_stairs"
+   ]
+  },
+  "0": {
+   "waypoint": "wake",
+   "exits": [
+    "ladder_top"
+   ]
+  }
+ }
+}

@@ -1,0 +1,24 @@
+{
+ "map": "bassment_dawn",
+ "passages": {
+  "61": {
+   "waypoint": "dawn_foot",
+   "exits": [
+    "dawn_turn"
+   ]
+  },
+  "62": {
+   "waypoint": "dawn_landing",
+   "exits": [
+    "dawn_door",
+    "dawn_landing_bench"
+   ]
+  },
+  "63": {
+   "waypoint": "car_park",
+   "exits": [
+    "car_park_out"
+   ]
+  }
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "map": "bassment_echo",
+ "passages": {
+  "59": {
+   "waypoint": "echo_gate",
+   "exits": [
+    "echo_doorway",
+    "echo_still"
+   ]
+  },
+  "60": {
+   "waypoint": "echo_still",
+   "exits": [
+    "echo_doorway"
+   ]
+  }
+ }
+}

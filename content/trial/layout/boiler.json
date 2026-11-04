@@ -1,0 +1,37 @@
+{
+ "map": "bassment_boiler",
+ "passages": {
+  "10": {
+   "waypoint": "stairs_top",
+   "exits": [
+    "wade_in",
+    "valve_wheel"
+   ]
+  },
+  "11": {
+   "waypoint": "valve_look",
+   "exits": [
+    "wade_in"
+   ]
+  },
+  "12": {
+   "waypoint": "water_edge",
+   "exits": [
+    "edge_in",
+    "pipe_climb"
+   ]
+  },
+  "13": {
+   "waypoint": "fried",
+   "exits": [
+    "stairs_out"
+   ]
+  },
+  "14": {
+   "waypoint": "dry_landing",
+   "exits": [
+    "stair_up"
+   ]
+  }
+ }
+}

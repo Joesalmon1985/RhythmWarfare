@@ -1,0 +1,448 @@
+{
+ "units_per_m": 1,
+ "art": "bassment",
+ "eye_height": 1.6,
+ "start": "stairs_top",
+ "textures": {
+  "ceil_arch": "textures/ceil_arch.png",
+  "ceil_pipes": "textures/ceil_pipes.png",
+  "floor_flag": "textures/floor_flag.png",
+  "floor_grate": "textures/floor_grate.png",
+  "thing_barrel": "textures/thing_barrel.png",
+  "thing_door": "textures/thing_door.png",
+  "thing_glow": "textures/thing_glow.png",
+  "thing_lamp": "textures/thing_lamp.png",
+  "thing_valve": "textures/thing_valve.png",
+  "wall_brick": "textures/wall_brick.png",
+  "wall_brick_dark": "textures/wall_brick_dark.png",
+  "wall_iron": "textures/wall_iron.png",
+  "wall_pipe": "textures/wall_pipe.png",
+  "water": "textures/water.png",
+  "water_1": "textures/water_1.png",
+  "water_2": "textures/water_2.png",
+  "water_3": "textures/water_3.png"
+ },
+ "sectors": [
+  {
+   "id": "walk",
+   "polygon": [
+    [
+     -5,
+     -4
+    ],
+    [
+     -2.5,
+     -4
+    ],
+    [
+     -2.5,
+     7
+    ],
+    [
+     -2.5,
+     9
+    ],
+    [
+     -5,
+     9
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 4.6,
+   "floor_tex": "floor_grate",
+   "ceil_tex": "ceil_pipes",
+   "wall_tex": "wall_pipe",
+   "light": 0.42,
+   "tint": "#a0d8ff"
+  },
+  {
+   "id": "pool",
+   "polygon": [
+    [
+     -2.5,
+     -4
+    ],
+    [
+     4.5,
+     -4
+    ],
+    [
+     4.5,
+     7
+    ],
+    [
+     -2.5,
+     7
+    ]
+   ],
+   "floor": -0.8,
+   "ceiling": 4.6,
+   "floor_tex": "water",
+   "ceil_tex": "ceil_pipes",
+   "wall_tex": "wall_brick_dark",
+   "light": 0.45,
+   "tint": "#70b8ff"
+  },
+  {
+   "id": "landing",
+   "polygon": [
+    [
+     -5,
+     -8
+    ],
+    [
+     4.5,
+     -8
+    ],
+    [
+     4.5,
+     -4
+    ],
+    [
+     -5,
+     -4
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 3.6,
+   "floor_tex": "floor_flag",
+   "ceil_tex": "ceil_arch",
+   "wall_tex": "wall_brick",
+   "light": 0.4,
+   "tint": "#9ac8ff"
+  }
+ ],
+ "walls": [
+  {
+   "from": [
+    -2.5,
+    -4
+   ],
+   "to": [
+    -2.5,
+    7
+   ],
+   "sector": "walk",
+   "portal": "pool",
+   "lower_tex": "wall_pipe",
+   "upper_tex": "wall_pipe"
+  },
+  {
+   "from": [
+    -5,
+    -4
+   ],
+   "to": [
+    -2.5,
+    -4
+   ],
+   "sector": "walk",
+   "portal": "landing"
+  },
+  {
+   "from": [
+    -2.5,
+    -4
+   ],
+   "to": [
+    4.5,
+    -4
+   ],
+   "sector": "pool",
+   "portal": "landing",
+   "lower_tex": "wall_brick_dark"
+  },
+  {
+   "from": [
+    -5,
+    5
+   ],
+   "to": [
+    -5,
+    7.5
+   ],
+   "sector": "walk",
+   "tex": "wall_iron",
+   "portal": null
+  }
+ ],
+ "things": [
+  {
+   "id": "valve",
+   "kind": "billboard",
+   "sprite": "thing_valve",
+   "at": [
+    -4.85,
+    5.3
+   ],
+   "y": 1.3,
+   "size": 1.1,
+   "anim": "none"
+  },
+  {
+   "id": "valve2",
+   "kind": "billboard",
+   "sprite": "thing_valve",
+   "at": [
+    -4.85,
+    -1.6
+   ],
+   "y": 1.2,
+   "size": 0.9,
+   "anim": "none"
+  },
+  {
+   "id": "door_up",
+   "kind": "billboard",
+   "sprite": "thing_door",
+   "at": [
+    0,
+    -7.9
+   ],
+   "y": 1.1,
+   "size": 2.3,
+   "anim": "none"
+  },
+  {
+   "id": "door_glow",
+   "kind": "billboard",
+   "sprite": "thing_glow",
+   "at": [
+    0,
+    -7.8
+   ],
+   "y": 1.2,
+   "size": 3.2,
+   "anim": "pulse",
+   "blend": "add"
+  },
+  {
+   "id": "stairs_door",
+   "kind": "billboard",
+   "sprite": "thing_door",
+   "at": [
+    -3.8,
+    8.9
+   ],
+   "y": 1.1,
+   "size": 2.2,
+   "anim": "none"
+  },
+  {
+   "id": "barrel",
+   "kind": "billboard",
+   "sprite": "thing_barrel",
+   "at": [
+    3.8,
+    -7
+   ],
+   "y": 0.55,
+   "size": 1.1,
+   "anim": "none"
+  },
+  {
+   "id": "lamp_l",
+   "kind": "billboard",
+   "sprite": "thing_lamp",
+   "at": [
+    -4.7,
+    8.0
+   ],
+   "y": 2.0,
+   "size": 0.6,
+   "anim": "flicker"
+  },
+  {
+   "id": "l_caustic",
+   "kind": "light",
+   "at": [
+    1,
+    1.5
+   ],
+   "y": 0.6,
+   "radius": 9,
+   "color": "#40a0ff",
+   "strength": 1.9
+  },
+  {
+   "id": "l_caustic2",
+   "kind": "light",
+   "at": [
+    3,
+    5
+   ],
+   "y": 0.6,
+   "radius": 6,
+   "color": "#30c0ff",
+   "strength": 1.2
+  },
+  {
+   "id": "l_stairs",
+   "kind": "light",
+   "at": [
+    -3.8,
+    8.0
+   ],
+   "y": 1.8,
+   "radius": 5,
+   "color": "#ff9a50",
+   "strength": 1.3
+  },
+  {
+   "id": "l_door",
+   "kind": "light",
+   "at": [
+    0,
+    -6.8
+   ],
+   "y": 1.5,
+   "radius": 5,
+   "color": "#ffd890",
+   "strength": 1.5
+  },
+  {
+   "id": "l_valve",
+   "kind": "light",
+   "at": [
+    -4.2,
+    5.3
+   ],
+   "y": 1.6,
+   "radius": 3.5,
+   "color": "#ff6040",
+   "strength": 0.9
+  },
+  {
+   "id": "l_pipe",
+   "kind": "light",
+   "at": [
+    -3.8,
+    -1
+   ],
+   "y": 2.5,
+   "radius": 4,
+   "color": "#90c0ff",
+   "strength": 1.0
+  }
+ ],
+ "waypoints": [
+  {
+   "id": "stairs_top",
+   "at": [
+    -3.0,
+    7.9
+   ],
+   "yaw": 15,
+   "sector": "walk"
+  },
+  {
+   "id": "wade_in",
+   "at": [
+    -2.9,
+    5.6
+   ],
+   "yaw": 0,
+   "sector": "walk"
+  },
+  {
+   "id": "valve_wheel",
+   "at": [
+    -4.3,
+    5.0
+   ],
+   "yaw": 90,
+   "sector": "walk"
+  },
+  {
+   "id": "valve_look",
+   "at": [
+    -3.4,
+    6.6
+   ],
+   "yaw": 25,
+   "sector": "walk"
+  },
+  {
+   "id": "water_edge",
+   "at": [
+    -3.6,
+    4.8
+   ],
+   "yaw": -30,
+   "sector": "walk"
+  },
+  {
+   "id": "edge_in",
+   "at": [
+    -2.9,
+    3.4
+   ],
+   "yaw": 0,
+   "sector": "walk"
+  },
+  {
+   "id": "pipe_climb",
+   "at": [
+    -2.9,
+    -0.6
+   ],
+   "yaw": 0,
+   "sector": "walk"
+  },
+  {
+   "id": "fried",
+   "at": [
+    -3.6,
+    2.0
+   ],
+   "yaw": 165,
+   "sector": "walk"
+  },
+  {
+   "id": "stairs_out",
+   "at": [
+    -3.8,
+    8.1
+   ],
+   "yaw": 180,
+   "sector": "walk"
+  },
+  {
+   "id": "dry_landing",
+   "at": [
+    -0.5,
+    -5.4
+   ],
+   "yaw": 0,
+   "sector": "landing"
+  },
+  {
+   "id": "stair_up",
+   "at": [
+    0.0,
+    -7.0
+   ],
+   "yaw": 0,
+   "sector": "landing"
+  }
+ ],
+ "fog": {
+  "color": "#08141c",
+  "density": 0.03
+ },
+ "animated": [
+  {
+   "tex": "water",
+   "mode": "swap",
+   "frames": [
+    "water",
+    "water_1",
+    "water_2",
+    "water_3"
+   ],
+   "rate": 3,
+   "bright": 0.5,
+   "amount": 0.2
+  }
+ ]
+}

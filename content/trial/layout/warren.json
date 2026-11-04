@@ -1,0 +1,37 @@
+{
+ "map": "bassment_warren",
+ "passages": {
+  "43": {
+   "waypoint": "stair_head",
+   "exits": [
+    "tunnel_bend",
+    "dry_mouth"
+   ]
+  },
+  "44": {
+   "waypoint": "dry_crawl",
+   "exits": [
+    "dry_mouth"
+   ]
+  },
+  "45": {
+   "waypoint": "court_floor",
+   "exits": [
+    "throne_foot",
+    "tribute_pile"
+   ]
+  },
+  "46": {
+   "waypoint": "court_chewed",
+   "exits": [
+    "court_floor"
+   ]
+  },
+  "47": {
+   "waypoint": "door_stand",
+   "exits": [
+    "gnawed_door"
+   ]
+  }
+ }
+}

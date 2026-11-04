@@ -15,6 +15,7 @@ var zones: Dictionary = {}
 var items: Dictionary = {}
 var start := 1
 var errors: Array = []
+static var _maps: Dictionary = {}  # map id -> StoryMap (the zone maps are read once)
 
 
 static func load_default() -> TrialData:
@@ -168,8 +169,51 @@ func validate(run_data: RunData) -> void:
 		for key in ["name", "intro", "on_win", "on_fail", "on_defeat"]:
 			if str(e.get(key, "")) == "":
 				errors.append("encounter %s needs %s" % [eid, key])
+	_validate_maps()
 	if errors.is_empty():
 		_validate_graph()
+
+
+## The zone map of a passage's zone (null when it has none or fails to load).
+static func map_of(map_id: String) -> StoryMap:
+	if not _maps.has(map_id):
+		_maps[map_id] = StoryMap.load_chapter(map_id)
+	return _maps[map_id]
+
+
+## Every zone names its map (content/story/maps/<id>.json, valid), every passage stands at a waypoint of its zone's map and every choice leads toward a waypoint of it (`exit_wp`).
+func _validate_maps() -> void:
+	for zid in zones:
+		var mid := str(zones[zid].get("map", ""))
+		if mid == "":
+			errors.append("zone %s names no map" % zid)
+			continue
+		var m := map_of(mid)
+		if not m.errors.is_empty():
+			errors.append("zone %s: map %s is invalid: %s" % [zid, mid, "; ".join(PackedStringArray(m.errors))])
+	for n in passages:
+		var p: Dictionary = passages[n]
+		var zmap := str((zones.get(str(p.get("zone", "")), {}) as Dictionary).get("map", ""))
+		if zmap == "":
+			continue
+		if str(p.get("map", "")) != zmap:
+			errors.append("passage %d: map '%s' is not its zone's map '%s'" % [n, p.get("map", ""), zmap])
+			continue
+		var m2 := map_of(zmap)
+		if not m2.errors.is_empty():
+			continue
+		if not m2.has_waypoint(str(p.get("waypoint", ""))):
+			errors.append("passage %d: waypoint '%s' is not in map %s" % [n, p.get("waypoint", ""), zmap])
+		for c in p.get("choices", []):
+			if not m2.has_waypoint(str(c.get("exit_wp", ""))):
+				errors.append("passage %d: choice '%s' exit_wp '%s' is not a waypoint of map %s" % [n, c.get("label", ""), c.get("exit_wp", ""), zmap])
+			elif str(c["exit_wp"]) == str(p.get("waypoint", "")):
+				errors.append("passage %d: choice '%s' exit_wp is the passage's own waypoint (an exit is somewhere else in the room)" % [n, c.get("label", "")])
+
+
+## The zone's start waypoint (where the camera comes in) and the map id.
+func zone_map(zone: String) -> String:
+	return str((zones.get(zone, {}) as Dictionary).get("map", ""))
 
 
 ## Reachability, the walk by defaults and the tier rule, once the links are known to be sound.
@@ -229,3 +273,7 @@ func default_walk() -> Array:
 		walk.append(next)
 		n = next
 	return []
+
+
+func zone_of_passage(n: int) -> String:
+	return str(passage(n).get("zone", ""))

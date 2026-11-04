@@ -1,0 +1,1 @@
+{"map": "bassment_stacks", "passages": {"15": {"waypoint": "stacks_entry", "exits": ["column_path", "terrace_foot"]}, "16": {"waypoint": "hall_mid", "exits": ["cellar_door", "crack_foot"]}, "17": {"waypoint": "niche_look", "exits": ["cellar_door"]}, "18": {"waypoint": "ledge_walk", "exits": ["bridge_end", "ledge_steps"]}}}
