@@ -302,16 +302,26 @@ them without a fade-in pop), and the main room's pieces that only matter on the 
 
 ## Chapter `mental_hospital` (assets/story/mental_hospital/)
 
-Build: `python3 tools/story/build_assets.py mental_hospital [chars|stage]`. Hooked up through `art/chapter_mental_hospital.py`; the art lives in
-`art/mh_chars.py` (crowd), `art/mh_stage.py` (shared palette, `Room` perspective class, prop library, the day room backdrop, speakers, riser, desk, manifest
-assembly), `art/mh_sprites.py` (re-themed deck pieces, props, PNG lighting sprites, silhouettes, interlude), `art/mh_pieces.py` (the `main` pieces) and
-`art/mh_views.py` + `mh_views_corridor.py` / `mh_views_art.py` / `mh_views_courtyard.py` (the three extra rooms and `passage_frame`). Everything is drawn by
-those scripts: no downloads, no outside art. Output is deterministic.
+Build: `python3 tools/story/build_assets.py mental_hospital [chars|stage]` (deterministic; the single regeneration command). Hooked up through
+`art/chapter_mental_hospital.py`; the art lives in `art/mh_chars.py` (crowd), `art/mh_stage.py` (shared palette, `Room` perspective class, the room shell
+with its shading, a prop library, a stroke font for signs, the day room backdrop, speakers, riser, desk, manifest assembly), `art/mh_sprites.py` (re-themed
+deck pieces, props, PNG lighting sprites, silhouettes, interlude), `art/mh_pieces.py` (the `main` pieces) and `art/mh_views.py` + `mh_views_corridor.py` /
+`mh_views_art.py` / `mh_views_courtyard.py` (the three extra rooms and `passage_frame`). Everything is drawn by those scripts: no downloads, no outside art.
 
 **Tone.** A kind, whimsical ward: the crowd are affectionate eccentrics in homemade fancy dress (paper crowns, towel capes, tutus, a toy parrot) and nobody is
 menacing or the butt of a joke. No restraints, cells or bars anywhere: the interlude "door" is a pastel ward door with a round porthole and paper stars.
-Palette: cool mint and lilac "fluorescent" walls and checkered vinyl, warmed with mustard, coral, butter and peach; the lighting sprites stay white so the
-runtime's party palette tints them.
+Palette: mint and lilac "fluorescent" walls at a mid pastel value (not white: the runtime draws its party light additively, so the walls keep headroom for
+coloured light), honey wood, warm accents of mustard, coral, butter and peach; the lighting sprites stay white so the runtime's palettes tint them.
+
+**Runtime lighting, tuned for pale rooms.** `beam` is a slim cone with most of its alpha in the core and a fast falloff (about 40% of Night One's), `spot_pool`
+has a dim centre and a soft rim, `haze_a/_b` are thin lilac-grey drifts (a mid-tone veil adds depth instead of whitening the room) and the `vignette` is a gentle
+plum. `glow` stays Night One's because the runtime also draws the dancers' contact shadows with it. The chapter's palettes are saturated (`cool` mint/violet,
+`warm` amber/rose, `dusk` orange/violet for the courtyard, `rave` mint/rose/gold/violet) so additive light tints the pastel rooms rather than bleaching them.
+
+**Authored past the frame.** Every room's `backdrop` (and `front_frame`) is drawn on a canvas 128 px wider on each side and 32 px taller than the frame
+(`mh_stage.BACK_BOX`, layer `pos` (-128, -32), `size` 1536 x 752 / 1536 x 502): the moving camera pans (`camera_look` up to 120 px, far layers at parallax 0.82),
+sways and turns, and the extra canvas means no black edge ever shows. Shading in `room_shell`: walls darken towards the camera, soft ambient occlusion in the
+inside corners, under the ceiling line and along every wall base, a clipped floor that darkens towards the desk lip so the crowd's feet sit on it.
 
 ### Crowd (`archetypes`)
 
@@ -319,21 +329,24 @@ runtime's party palette tints them.
 | --- | --- | --- | --- | --- |
 | `pirate` | stocky; striped breton shirt, red sash, tall turned-cuff boots, eye patch | tricorn hat, brown beard and moustache, patch on the left | red polka-dot bandana, gold hoop, waistcoat, toy parrot on the shoulder, patch on the right | `hat_feather` (a), bandana tails in `hair_back` (b) |
 | `king` | short and round; gold paper crown, dressing gown with a tied cord, pyjama legs, fluffy slippers | plum gown, towelling collar, white beard | teal gown, paper-ermine collar, grey moustache, blue-gem crown | none (crown and gown flaps stay put) |
-| `chef` | broad; tall pleated toque, double-breasted whites, neckerchief, checked trousers, clogs | classic with blue neckerchief and moustache | red trim, blue apron (`torso` + shared hips), no moustache | none |
+| `chef` | broad with a round tummy; tall pleated toque, double-breasted whites with a wrap panel, mandarin collar, neckerchief, pen in the sleeve pocket, checked trousers, clogs | classic with blue neckerchief and moustache | red trim, blue apron (`torso` + shared hips), no moustache | none |
 | `superhero` | tall; domino mask, pyjama top with an emblem, wellington boots, marigold gloves | blue top, star emblem, orange towel cape | red top, lightning emblem, blue towel cape | `cape` (towel cape, `torso` joint, z -15) |
 | `ballerina` | slim; leotard, layered tutu on the hips, tiara, hair bun, ribbon shoes | pink, blonde | lilac with gold sequins, dark hair | `hair_back` (the bun) |
-| `orderly` | tall and calm; scrubs, chest pocket, lanyard and badge, trainers | teal, glasses, curls | lilac, short neat beard | none |
+| `orderly` | tall and calm; scrubs, chest pocket, lanyard and badge, trainers (the day room's hero dancer) | teal, round coral glasses with clear lenses, curls | lilac, short neat beard | none |
 
 Same rig contract as Night One (joints, part z, four faces, `glow_hand`, the wand `glowstick` sits in the hand). `king` and `ballerina` carry a `skirt` part on `hips`
-(gown flaps / tutu); the `pirate` has a sash tail; faces carry the eye patch, mask, moustache or glasses so every expression keeps the costume. Rim lights are mint
-(left) and peach (right) instead of cyan/magenta.
+(gown flaps / tutu); the `pirate` has a sash tail; faces carry the eye patch, mask, moustache or glasses so every expression keeps the costume, and every face has a
+faint blush. Rim lights are mint (left) and peach (right). Rear silhouettes (`sil_a` king, `sil_b` chef, `sil_c` pirate with a parrot) are soft lilac and slate
+figures with mint and peach rims and a lighter head (the runtime multiplies them by a lilac tint), never black cut-outs.
 
 ### Day room (`main`) and sprites
 
-Layers: `backdrop` (ceiling tiles, mint far wall and lilac dado, door, two windows, wall TV, left wall windows, right wall pictures, checkered floor, round rug under the
-dance circle, two armchairs, plants, floor lamp), `riser` (a low wooden talent-show platform with bunting), `speaker_l/_r` (wooden hi-fi cabinets), `desk_top` (teal
-formica with sticker doodles). Anchors as the other chapters (`led_screen` = the wall TV, `doorway` = the ward door, 5 floor rows, 4 woofers, 8 light points,
-`circle_centre`/`circle_radii` match the rug). Pieces (`pos`/`size` design px, `pivot` design px relative to `pos`):
+Layers: `backdrop` (ceiling tiles with fluorescent troffer panels, the light washing the top of the far wall, mint far wall and lilac dado, the ward door, two
+windows with curtains and radiators, the wall TV and a shelf of board games, left-wall windows with curtains and radiators and their light across the floor, right
+wall pictures, a checkered vinyl floor with the windows mirrored in it, a round rag rug under the dance circle, two mismatched armchairs, plants, a side table and a
+lit floor lamp), `riser` (a low wooden talent-show platform with bunting), `speaker_l/_r` (wooden hi-fi cabinets), `desk_top` (teal formica with sticker doodles).
+Anchors as the other chapters (`led_screen` = the wall TV, `doorway` = the ward door, 5 floor rows, 4 woofers, 8 light points, `circle_centre`/`circle_radii` match
+the rug). Pieces (`pos`/`size` design px, `pivot` design px relative to `pos`):
 
 | id | anim | z | blend | pivot | what |
 | --- | --- | --- | --- | --- | --- |
@@ -347,33 +360,58 @@ formica with sticker doodles). Anchors as the other chapters (`led_screen` = the
 | `window_light` | pulse | behind | add | centre | sunbeams from the left windows onto the floor |
 
 Re-themed sprites: `woofer` = radio cone, `fixture` = lilac clip-on spotlight, `disco_ball` = pastel glitter ball on paper-chain links, `glowstick` = foil star wand,
-`door_open` = the ward door open onto the bright corridor, `confetti` = pastel paper confetti (rectangle, punched circle, star, streamer curl), deck pieces = Night
-One's drawn through a hue remap (indigo to teal, cyan to mint, magenta to coral). Silhouettes: crown, toque and tricorn heads with mint and peach rim light.
+`door_open` = the ward door open onto the bright corridor (an orderly with a tea trolley arriving), `confetti` = pastel paper confetti (rectangle, punched circle,
+star, streamer curl), deck pieces = Night One's drawn through a hue remap (indigo to teal, cyan to mint, magenta to coral).
 
 ### Extra views (`stage.views`) and `passage_frame`
 
-Each view has `backdrop` + `front_frame` (z front) layers, the required anchors, 3 pieces and `palette_hint`.
+Each view has `backdrop` + `front_frame` (z front) layers authored past the frame, the required anchors, 3 pieces and `palette_hint`.
 
 | view | place | pieces (anim, blend) | notes |
 | --- | --- | --- | --- |
-| `corridor` | long corridor of honey parquet, painted doors with paper stars and portholes, hand rails, tea and laundry trolleys, glazed garden doors at the end | `corridor_tubes` (flicker, add), `corridor_end_glow` (pulse, add), `star_garland` (sway) | `palette_hint` cool; front frame = lowered bulkhead with paper stars and two door-frame pillars |
-| `art_room` | ash boards splashed with paint and a drop cloth, beams and skylight, north-light window, shelves with a boombox, kiln, easels, paintings on the wall | `kiln_glow` (flicker, add), `hanging_paintings` (sway), `skylight_beam` (pulse, add) | `woofers` = the boombox's two cones; front frame = beam, pendant lamps, easel and paint trolley at the edges |
-| `courtyard` | walled garden at dusk: brick and ivy, ward building with lit windows, paving, raised beds, bench, water butt, gate (`doorway`) | `string_lights` (flicker, add), `washing_line` (sway: bunting plus a stripy shirt, towel cape, tutu and paper crown), `fireflies` (pulse, add) | `palette_hint` dusk; light points hang from the festoon cable; front frame = the two cable posts and foreground foliage |
+| `corridor` | long corridor of honey parquet and mint walls, painted doors with paper stars and portholes, hand rails, tea and laundry trolleys, glazed garden doors at the end | `corridor_tubes` (flicker, add), `corridor_end_glow` (pulse, add), `star_garland` (sway) | `palette_hint` cool; `doorway` = the garden doors at the far end (the ward pours out of it on a good morning meeting), `disco_ball` under the garland; front frame = lowered bulkhead with paper stars and two door-frame pillars |
+| `art_room` | warm peach studio: ash boards with paint splats and a rumpled drop cloth, beams and skylight, north-light window over a counter of jars, shelves with a boombox, kiln, easels, a painting gallery, a pale blue door with a palette sign | `kiln_glow` (flicker, add), `hanging_paintings` (sway), `skylight_beam` (pulse, add) | `palette_hint` warm; `doorway` = the left-wall door (late arrivals and the gatherers), `disco_ball` under the skylight, `woofers` = the boombox's two cones |
+| `courtyard` | walled garden at dusk: deep blue to peach sky with stars and a moon, dusky brick and ivy, the ward building with warm lit windows, dusk paving with warm light pools, raised beds, bench, water butt, the gate (`doorway`) with a lit lantern, and a pallet stage under a hand-lettered TALENT SHOW banner | `string_lights` (flicker, add), `washing_line` (sway: bunting plus a stripy shirt, towel cape, tutu and paper crown), `fireflies` (pulse, add) | `palette_hint` dusk; `riser` = the pallet stage (the hero's solo spot, no lift); light points hang from the festoon cable; front frame = the two cable posts and foreground foliage |
 
 `passage_frame`: a ward door frame (pastel wall panels with a lilac dado, a white timber arch, paper stars), 640 x 360 design px at px_scale 0.5, centre pivot, scale 2x to span
 the frame, arch opening 300 wide with the apex at y 36 transparent.
 
-### Interlude (`interlude`)
+### Staging (`content/story/mental_hospital.json`)
 
-`fluoro_wash` (320 x 180 PNG at px_scale 4, cold mint-white, faint tube banding), `tunnel_vignette` (640 x 360 PNG at 2: clear centre closing to deep teal), `cell_door`
-(the ward door, frame + leaf, 320 x 440 design px, pivot at the door's foot; companions `cell_door_frame` with a transparent opening, `cell_door_leaf` with a hinge-foot
-pivot to scale in x, `cell_door_open` the leaf swung inward) and `flicker_tube` (a fluorescent tube, additive). Anchors: `door_centre` (the door's foot), `door_opening`,
-`tube_row`.
+The camera moves on the block downbeats 17 (step through the ward door into the corridor on the bass drop), 25 (turn right into the art room), 41 (walk out into the
+garden) and 57 (turn left back to the day room); each room brings its own palette (`palette_hint`). Every eight-bar block has its own beat:
+
+| bars | room | block | beat |
+| --- | --- | --- | --- |
+| 1-8 | main | The day room | the ward door opens on an orderly with the tea trolley, morning sun from the windows, the mood lamp at 3, early arrivals and the craft table at 5, the TV wakes and the fairy lights come on at 7 |
+| 9-16 | main | Morning meeting | cool light and a clap (or a look round), bunting and sweeping beams at 11, footwork and paper chains at 13, a lean towards the door at 15 |
+| 17-24 | corridor | Down the corridor | step through on the drop; the decision: the whole ward pours out of the garden doors (or a few hang back); a wave and the star garland at 19, a look right and the end glow at 21, a follow spot sweeps and the tubes flare at 23 |
+| 25-32 | art_room | Art class | turn into the warm studio with late arrivals at the door, the kiln glows at 27, crossing beams and the gatherers (or they wait at the door) at 29, a push in on the skylight beam at 31 |
+| 33-40 | art_room | The easel circle | the art-class decision (a masterpiece and a spotlit cheer, or a giggling scatter), the circle forms at 35, the glitter ball under the skylight and a look left at 37, the paintings swing at 39 |
+| 41-48 | courtyard | Into the garden | walk out at dusk with late arrivals, glow wands and the hero into the circle at 43, a light wave over the string lights at 45, fireflies and haze at 47 |
+| 49-56 | courtyard | The talent show | the drop decision and the last arrivals with a push in, the hero's solo in front of the pallet stage at 51, rave light and the washing line at 53, a clap at 55 |
+| 57-64 | main | Lights out | turn back to the day room: the hero walks to the talent-show riser, which rises at 58, the rave peak at 59, hands up, confetti and a push at 61, crossing beams and paper chains at 63 |
+
+### Interlude (`interlude`) and the `sectioned` cutscene
+
+Sprites: `fluoro_wash` (320 x 180 PNG at px_scale 4, cold mint-white, faint tube banding), `tunnel_vignette` (640 x 360 PNG at 2: clear centre closing to deep
+teal), `cell_door` (the ward door, frame + leaf, 320 x 440 design px, pivot at the door's foot; companions `cell_door_frame` with a transparent opening,
+`cell_door_leaf` with a hinge-foot pivot to scale in x, `cell_door_open` the leaf swung inward) and `flicker_tube` (a fluorescent tube, additive). Anchors:
+`door_centre` (the door's foot), `door_opening`, `tube_row`.
+
+The cutscene (`content/story/interludes.json` `sectioned`, drawn by `StoryInterludeFx._draw_sectioned`, 16 s over the room just left): the music stops and the
+crowd fades (0-4 s), a soft tunnel closes in and breathes (drifting off, 1.6-5.2 s), plain cold light floods back as the tunnel opens and three tubes blink on one
+after another with two gentle dips each (6-8.6 s), the ward door fades in (9.2 s), swings open onto the day room, which is the chapter's own backdrop seen through
+the opening with warm light spilling out (10.6-12.2 s), and the camera walks through it until the room fills the screen (12.6-15.2 s), then a short soft
+mint-white fade hands over to the chapter. Captions stay kind: "The music stops." / "Everything goes soft, and very quiet." / "Then a light. A very bright, very plain
+light." / "'There you are, love. Welcome back to the ward.'" / "None of it happened. Or did it? Come and meet everyone."
 
 ### Reviewing
 
 `tools/story/shoot_mh.sh <main|corridor|art_room|courtyard> <stage|stage_low|set|pieces|chars|chars_b|close|sil|deck|passage|interlude|interlude_flood> [out_dir]`
-(on `preview_mh.gd`, which extends `preview_chapter.gd` with the chapter's own interlude sheets). `close` takes `RW_ARCHS=pirate,king,chef RW_VARIANT=b`.
+(on `preview_mh.gd`, which extends `preview_chapter.gd` with the chapter's own interlude sheets). `close` takes `RW_ARCHS=pirate,king,chef RW_VARIANT=b`. For the
+real runtime look use the single-shot pattern of `tools/story/capture.sh` with `RW_STORY_CHAPTER=mental_hospital` (bars 3, 12, 17.6, 22, 25.9, 28, 36, 41.9, 44,
+52, 57.9, 60 and the endings at 67 with the `perfect`, `sloppy` and `none` policies, plus `RW_REDUCED=1` / `RW_HIGH_CONTRAST=1`).
 
 # Story Campaign art: the Hospital chapter (`hospital`)
 

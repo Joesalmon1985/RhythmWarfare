@@ -25,7 +25,7 @@ ARCH = {
                    lw=16, leg_dx=12, shoe_h=14),
     "king": dict(hip_y=88, sh_y=-170, sh_dx=34, neck_y=-179, cy=-203, rx=26, ry=29, up=36, fore=37, aw=16, sw=34, ww=33, hw=32,
                  lw=14, leg_dx=12, shoe_h=11),
-    "chef": dict(hip_y=96, sh_y=-176, sh_dx=36, neck_y=-185, cy=-210, rx=27, ry=29, up=38, fore=39, aw=17, sw=36, ww=35, hw=32,
+    "chef": dict(hip_y=96, sh_y=-176, sh_dx=36, neck_y=-185, cy=-210, rx=27, ry=29, up=38, fore=39, aw=17, sw=36, ww=41, hw=33,
                  lw=16, leg_dx=13, shoe_h=11),
     "superhero": dict(hip_y=110, sh_y=-192, sh_dx=32, neck_y=-201, cy=-228, rx=24, ry=28, up=43, fore=45, aw=15, sw=33, ww=22,
                       hw=24, lw=16, leg_dx=12, shoe_h=18),
@@ -154,24 +154,27 @@ def torso_part(arch, P, V):
         inner += circle(8, by - 22, 4, acc, OUT, 1.8)
         inner += path(f"M8 {f(by - 19)} L5 {f(by - 2)} M8 {f(by - 19)} L12 {f(by - 2)}", None, OUT, 4.2) + path(f"M8 {f(by - 19)} L5 {f(by - 2)} M8 {f(by - 19)} L12 {f(by - 2)}", None, acc, 2.4)
         inner += rect(sw - 18, by - 52, 15, 15, darken(gown, 0.14), OUT, 1.8, rx=2)  # pocket
-    elif arch == "chef":  # double breasted whites
-        inner += poly([(-sw - 3, ts - 4), (sw + 3, ts - 4), (sw + 3, by + 4), (-sw - 3, by + 4)], cl, None)
-        inner += path(f"M{f(-sw - 4)} {f(ts + 14)} L{f(sw + 4)} {f(ts + 14)}", None, darken(cl, 0.08), 0)
-        inner += path(f"M-4 {f(ts - 4)} L{f(-14)} {f(by + 4)}", None, darken(cl, 0.18), 2.0, sop=0.8)
-        inner += path(f"M4 {f(ts - 4)} L{f(14)} {f(by + 4)}", None, darken(cl, 0.18), 2.0, sop=0.8)
-        inner += poly([(-14, ts - 4), (6, ts - 4), (22, by + 4), (0, by + 4)], lighten(cl, 0.0), None, op=0.0)
-        inner += path(f"M{f(-6)} {f(ts - 2)} L{f(8)} {f(by + 6)}", None, darken(cl, 0.2), 1.8, sop=0.6)
+    elif arch == "chef":  # double-breasted whites over a round tummy: a wrap panel, two rows of buttons, a mandarin collar
+        flare = 3
+        inner += poly([(-ww - 6, ts - 4), (ww + 6, ts - 4), (ww + 6, by + 4), (-ww - 6, by + 4)], cl, None)
+        inner += ellipse(-ww * 0.42, wy - 6, ww * 0.5, 30, "#ffffff", None, op=0.5)  # the light on the tummy
+        inner += path(f"M{f(ww * 0.15)} {f(ts + 2)} Q{f(ww * 0.32)} {f(wy - 10)} {f(ww * 0.42)} {f(by + 6)}", None, "#cfcbe0", 2.4)  # the wrap edge
+        inner += poly([(ww * 0.15, ts + 2), (ww * 0.42, by + 6), (ww + 6, by + 6), (ww + 6, ts - 4)], "#e8e6f2", None, op=0.55)
+        inner += path(f"M{f(-ww - 4)} {f(wy + 6)} Q0 {f(wy + 14)} {f(ww + 4)} {f(wy + 6)}", None, "#d8d4e8", 1.8, sop=0.9)  # where the jacket folds at the belt line
         for k in range(4):
             for sg in (-1, 1):
-                inner += button(sg * 9, ts + 16 + k * 12.5, 2.6, "#d8d4e8")
+                inner += button(sg * 10 - 2, ts + 16 + k * 12.5, 2.8, "#cfcbe0")
+        inner += rect(-sw + 6, ts + 20, 13, 3, "#cfcbe0", None)  # the sleeve-pocket line and a pen
+        inner += line((-sw + 10, ts + 14), (-sw + 10, ts + 22), "#3a6ad0", 2.2)
         if V["detail"] == "apron":
             ap = V["apron"]
             inner += poly([(-ww + 3, wy + 2), (ww - 3, wy + 2), (hw + 6, by + 4), (-hw - 6, by + 4)], ap, OUT, 2.4)
             inner += rect(-15, by - 28, 30, 4, "#ffffff", None, op=0.9)
             inner += rect(-17, by - 30, 12, 15, lighten(ap, 0.18), OUT, 1.6, rx=2) + rect(5, by - 30, 12, 15, lighten(ap, 0.18), OUT, 1.6, rx=2)
             inner += line((-ww + 3, wy + 2), (-sw + 6, ts + 6), ap, 3) + line((ww - 3, wy + 2), (sw - 6, ts + 6), ap, 3)
-        # neckerchief
-        inner += poly([(-11, ts - 4), (11, ts - 4), (0, ts + 14)], acc, OUT, 2.0)
+        # mandarin collar and neckerchief
+        inner += rect(-14, ts - 6, 28, 8, "#f4f2fa", OUT, 1.8, rx=3)
+        inner += poly([(-11, ts + 1), (11, ts + 1), (0, ts + 16)], acc, OUT, 2.0) + circle(0, ts + 3, 3.4, darken(acc, 0.1), OUT, 1.4)
         if V["detail"] == "classic":
             inner += path(f"M{f(-sw + 2)} {f(by - 14)} L{f(sw - 2)} {f(by - 14)}", None, acc, 0)
             for sg in (-1, 1):
@@ -506,6 +509,7 @@ def eyes_face(P, V, expr, brow_c, lashes=False, big=0.0, blush="#ff4f9a", brow_w
         by_ = ey - ery - 4.5
         body += line((-ex - 5, by_ + 0.5), (-ex + 5, by_ - 0.6), brow_c, brow_w) + line((ex - 5, by_ - 0.6), (ex + 5, by_ + 0.5), brow_c, brow_w)
         body += path(f"M-5 {f(mouth_y)} Q0 {f(mouth_y + 3.4)} 5 {f(mouth_y)}", None, "#5a1f3a", 2.2)
+        body += ellipse(-ex - 3, ey + 8, 4.2, 2.4, blush, None, op=0.2) + ellipse(ex + 3, ey + 8, 4.2, 2.4, blush, None, op=0.2)
     elif expr == "happy":
         body += E(-ex, ey, erx, ery * 0.88, 3.1, lashes, -1) + E(ex, ey, erx, ery * 0.88, 3.1, lashes, 1)
         by_ = ey - ery - 6.2
@@ -577,12 +581,13 @@ def face_overlay(arch, P, V, expr):
     elif arch == "chef":
         for sx in (-1, 1):  # flushed from the kitchen
             extra += ellipse(sx * (ex + 5), ey + 7, 6, 3.6, "#ff6f7a", None, op=0.28)
-    elif arch == "orderly" and V["detail"] == "glasses":
+    elif arch == "orderly" and V["detail"] == "glasses":  # round tortoiseshell-coral frames, clear lenses so the eyes read
+        fc = "#e8734a"
         for sx in (-1, 1):
-            extra += circle(sx * ex, ey + 0.3, 8.4, "#ffffff", None, op=0.12) + circle(sx * ex, ey + 0.3, 8.4, None, "#3a3a58", 2.0)
-            extra += line((sx * ex - 4, ey - 4), (sx * ex - 1, ey - 6.5), "#ffffff", 1.4, 0.6)
-        extra += path(f"M{f(-ex + 8.2)} {f(ey - 0.5)} Q0 {f(ey - 3.2)} {f(ex - 8.2)} {f(ey - 0.5)}", None, "#3a3a58", 2.0)
-        extra += line((-ex - 8.4, ey - 1), (-rx, ey - 2), "#3a3a58", 1.8) + line((ex + 8.4, ey - 1), (rx, ey - 2), "#3a3a58", 1.8)
+            extra += circle(sx * ex, ey + 0.3, 9.0, "#ffffff", None, op=0.1) + circle(sx * ex, ey + 0.3, 9.0, None, OUT, 3.0) + circle(sx * ex, ey + 0.3, 9.0, None, fc, 1.6)
+            extra += line((sx * ex - 5, ey - 4), (sx * ex - 2, ey - 6.5), "#ffffff", 1.4, 0.7)
+        extra += path(f"M{f(-ex + 8.8)} {f(ey - 0.5)} Q0 {f(ey - 3.4)} {f(ex - 8.8)} {f(ey - 0.5)}", None, fc, 2.0)
+        extra += line((-ex - 9, ey - 1), (-rx, ey - 2), fc, 1.8) + line((ex + 9, ey - 1), (rx, ey - 2), fc, 1.8)
     elif arch == "ballerina":
         extra += ellipse(0, mouth_y + 1.6, 3.6, 1.0, "#ff4f7a", None, op=0.0)
     return mask + body + extra, (-rx - 8, cy - ry - 6, rx + 8, cy + ry + 8)
