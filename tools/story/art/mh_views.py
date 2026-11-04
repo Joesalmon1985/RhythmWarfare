@@ -12,8 +12,9 @@ from __future__ import annotations
 import math
 import random
 
+from . import mh_stage as M
 from .lib import OUT, circle, darken, ellipse, f, group, lighten, line, lin_grad, mix, path, poly, rad_grad, rect, write_svg
-from .mh_stage import (BUTTER, CORAL, CREAM, INK, LEAF, LILAC, LILAC_D, MINT, MINT_D, WOOD, WOOD_D, WOOD_L, H, W, Room, layer, paper_star,
+from .mh_stage import (BUTTER, CORAL, CREAM, INK, LEAF, LILAC, LILAC_D, MINT, MINT_D, WOOD, WOOD_D, WOOD_L, H, W, Room, heart, layer, paper_star,
                        piece)
 
 
@@ -36,14 +37,14 @@ def planks(R, tones, ncols, dz=0.07, seam="#8a6a4a", seam_op=0.35, seed=1, stagg
     while z > zmin:
         rows.append(1.0 / z)
         z -= dz
-    cols_x = [R.fx0 + step * i for i in range(-3 * ncols, 4 * ncols + 1)]
+    cols_x = [R.fx0 + step * i for i in range(-5 * ncols, 6 * ncols + 1)]
     for ri in range(len(rows) - 1):
         s0, s1 = rows[ri], rows[ri + 1]
         y0, y1 = R.floor_y(s0), R.floor_y(s1)
         for ci in range(len(cols_x) - 1):
             xa, xb = cols_x[ci], cols_x[ci + 1]
             q = [(R.vx + (xa - R.vx) * s0, y0), (R.vx + (xb - R.vx) * s0, y0), (R.vx + (xb - R.vx) * s1, y1), (R.vx + (xa - R.vx) * s1, y1)]
-            if max(p[0] for p in q) < -20 or min(p[0] for p in q) > W + 20:
+            if max(p[0] for p in q) < M.X0 - 20 or min(p[0] for p in q) > M.X1 + 20:
                 continue
             c = rng.choice(tones)
             d += poly(q, c, None)
@@ -87,13 +88,30 @@ def build_passage_frame():
     for xs in (66, w - 66):
         for k in range(4):
             inner += paper_star(xs + rng.uniform(-14, 14), 120 + k * 52, 7, [BUTTER, CORAL, "#8fd9c8", "#b9a6f0"][(k + 1) % 4], 1.4)
+    # ward life on the two wall panels: a framed drawing and a light switch on the left, a coat hook with a towel cape and a
+    # name board of paper hearts on the right, and a soft shade where the wall turns into the doorway
+    inner += rect(84, 96, 56, 44, INK, None, op=0.12) + rect(80, 92, 56, 44, "#fbfbff", OUT, 2.2) + rect(85, 97, 46, 34, "#fff0b0", None)
+    inner += circle(108, 112, 8, BUTTER, OUT, 1.2) + poly([(85, 131), (100, 118), (112, 126), (124, 116), (131, 131)], "#8fd98a", None)
+    inner += rect(cx - ow - 44, 196, 12, 18, "#fbfbff", OUT, 1.6, rx=2) + rect(cx - ow - 41, 201, 6, 8, "#e6dcfa", None, rx=1)
+    hx = cx + ow + 86  # a hand-made poster for this afternoon's talent show
+    inner += rect(hx - 41, 100, 90, 112, INK, None, op=0.12) + rect(hx - 45, 96, 90, 112, "#fff6e0", OUT, 2.2)
+    inner += rect(hx - 39, 102, 78, 100, "#ffe0ea", None, rx=3)
+    inner += M.sign_text("TALENT", hx, 120, 11, "#e0457a", 2.0, outline=None) + M.sign_text("SHOW", hx, 140, 13, "#7a5ad0", 2.4, outline=None)
+    inner += paper_star(hx, 168, 11, BUTTER, 1.4) + paper_star(hx - 26, 160, 5, "#8fd9c8", 1.0) + paper_star(hx + 27, 176, 5, CORAL, 1.0)
+    inner += M.sign_text("TODAY!", hx, 193, 9, "#3f9a5e", 1.8, outline=None)
+    inner += circle(hx, 99, 3.2, CORAL, OUT, 1.2)
+    inner += rect(w - 128, 236, 96, 34, "#fbfbff", OUT, 2.0, rx=3)
+    for k in range(4):
+        inner += heart(w - 114 + k * 22, 253, 6, [CORAL, "#ff9ac0", BUTTER, "#8fd9c8"][k], 1.1)
+    for xa, sg in ((cx - ow - 11, -1), (cx + ow + 11, 1)):
+        inner += rect(xa + (sg * 26 if sg < 0 else 0), 0, 26, h, INK, None, op=0.06)
     d += inner
     rim = (f"M{cx - ow - 11} {bot} L{cx - ow - 11} {shoulder} C{cx - ow - 11} {top + 4} {cx - 72} {top - 12} {cx} {top - 12} "
            f"C{cx + 72} {top - 12} {cx + ow + 11} {top + 4} {cx + ow + 11} {shoulder} L{cx + ow + 11} {bot}")
     d += path(rim, None, OUT, 14) + path(rim, None, "#fbfbff", 10) + path(rim, None, "#ffffff", 1.6, sop=0.5)
     inner_rim = (f"M{cx - ow} {bot} L{cx - ow} {shoulder} C{cx - ow} {top + 12} {cx - 70} {top} {cx} {top} C{cx + 70} {top} {cx + ow} {top + 12} {cx + ow} {shoulder} L{cx + ow} {bot}")
     d += path(inner_rim, None, OUT, 3)
-    d += rect(cx - 28, top - 26, 56, 18, "#fbfbff", OUT, 2.4, rx=4) + paper_star(cx, top - 17, 6, BUTTER, 1.4)  # keystone sign plate
+    d += rect(cx - 34, top - 27, 68, 20, "#fbfbff", OUT, 2.4, rx=4) + M.sign_text("WARD 7", cx, top - 17, 9, "#7a5ad0", 1.7, outline=None)  # keystone sign plate
     write_svg("views/passage_frame.svg", (0, 0, w, h), d, defs)
     return {"file": "source/views/passage_frame.svg", "pivot": [w, h], "px_scale": 0.5,
             "note": "ward door frame, centre pivot, 640 x 360 design px: scale 2x to span the 1280 x 720 frame; the arched opening (300 wide, apex y 36) is transparent"}

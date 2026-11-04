@@ -946,7 +946,7 @@
        "z": -5,
        "file": "source/chars/chef_a/pelvis.svg",
        "pivot": [
-        90,
+        92,
         36
        ],
        "px_scale": 0.5
@@ -1118,7 +1118,7 @@
        "z": -5,
        "file": "source/chars/chef_b/pelvis.svg",
        "pivot": [
-        90,
+        92,
         36
        ],
        "px_scale": 0.5
@@ -2502,12 +2502,12 @@
     "id": "backdrop",
     "file": "source/backdrop.svg",
     "pos": [
-     0,
-     0
+     -128,
+     -32
     ],
     "size": [
-     1280,
-     720
+     1536,
+     752
     ],
     "px_scale": 0.5
    },
@@ -2861,7 +2861,8 @@
     ],
     "px_scale": 1.0,
     "length": 640,
-    "half_width_at_end": 130
+    "half_width_at_end": 118,
+    "note": "dimmer than Night One's: additive over pale walls"
    },
    "spot_pool": {
     "file": "processed/spot_pool.png",
@@ -3081,12 +3082,12 @@
       "id": "backdrop",
       "file": "source/views/corridor_backdrop.svg",
       "pos": [
-       0,
-       0
+       -128,
+       -32
       ],
       "size": [
-       1280,
-       720
+       1536,
+       752
       ],
       "px_scale": 0.5
      },
@@ -3094,12 +3095,12 @@
       "id": "front_frame",
       "file": "source/views/corridor_front.svg",
       "pos": [
-       0,
-       0
+       -128,
+       -32
       ],
       "size": [
-       1280,
-       470
+       1536,
+       502
       ],
       "px_scale": 0.5,
       "z": "front"
@@ -3211,6 +3212,16 @@
       640,
       190
      ],
+     "doorway": [
+      600,
+      150,
+      80,
+      106
+     ],
+     "disco_ball": [
+      640,
+      2
+     ],
      "horizon_y": 150,
      "wall_left_x": 470,
      "wall_right_x": 810
@@ -3287,12 +3298,12 @@
       "id": "backdrop",
       "file": "source/views/art_backdrop.svg",
       "pos": [
-       0,
-       0
+       -128,
+       -32
       ],
       "size": [
-       1280,
-       720
+       1536,
+       752
       ],
       "px_scale": 0.5
      },
@@ -3300,12 +3311,12 @@
       "id": "front_frame",
       "file": "source/views/art_front.svg",
       "pos": [
-       0,
-       0
+       -128,
+       -32
       ],
       "size": [
-       1280,
-       470
+       1536,
+       502
       ],
       "px_scale": 0.5,
       "z": "front"
@@ -3435,6 +3446,16 @@
      "kiln": [
       926,
       258
+     ],
+     "doorway": [
+      208,
+      138,
+      75,
+      139
+     ],
+     "disco_ball": [
+      640,
+      8
      ]
     },
     "pieces": [
@@ -3509,12 +3530,12 @@
       "id": "backdrop",
       "file": "source/views/courtyard_backdrop.svg",
       "pos": [
-       0,
-       0
+       -128,
+       -32
       ],
       "size": [
-       1280,
-       720
+       1536,
+       752
       ],
       "px_scale": 0.5
      },
@@ -3522,12 +3543,12 @@
       "id": "front_frame",
       "file": "source/views/courtyard_front.svg",
       "pos": [
-       0,
-       0
+       -128,
+       -32
       ],
       "size": [
-       1280,
-       470
+       1536,
+       502
       ],
       "px_scale": 0.5,
       "z": "front"
@@ -3539,6 +3560,11 @@
       160,
       64,
       102
+     ],
+     "riser": [
+      640,
+      306,
+      184
      ],
      "floor_rows": [
       {

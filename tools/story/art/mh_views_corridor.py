@@ -11,7 +11,7 @@ from .mh_stage import BUTTER, CORAL, INK, LEAF, LILAC, MINT, W, H, WOOD, WOOD_D,
 
 R = M.Room(640, 150, 470, 810, 96, 256)
 DOOR_COLS = ["#ff9a8a", "#ffd966", "#c9b8f0", "#9fd8ff", "#8fd9c8", "#ffc9a0"]
-HONEY = ["#e9c48a", "#e2b87a", "#efd09a", "#dcae72", "#e6bf84"]
+HONEY = ["#d9ac70", "#d0a062", "#e0b87e", "#c99a5c", "#d6a96c"]
 
 
 def wp(side, s0, s1, u0, u1, pts_):
@@ -95,8 +95,8 @@ def laundry_trolley(x, yb):
 
 
 def build_backdrop():
-    wall = "#d9f1ea"
-    defs, d = M.room_shell(R, wall=wall, dado="#9bd6c8", uidp="c", ceil_tile=True,
+    wall = "#b9e2d6"
+    defs, d = M.room_shell(R, wall=wall, dado="#8ccbbb", uidp="c", ceil_tile=True, ceil=("#a8bccb", "#e2edf0"),
                            floor_fn=lambda Rm: V.planks(Rm, HONEY, 9, 0.075, seam="#a07a4a", seed=7))
     # ceiling troffer panels (receding) and a pale cove
     for (xa, xb) in ((560, 720), (490, 530), (750, 790)):
@@ -128,6 +128,13 @@ def build_backdrop():
     for k, c in enumerate(("#fff4dc", "#ffd0e0", "#cfeee6", "#fff0a8")):
         d += rect(496 + (k % 2) * 20, 158 + (k // 2) * 26, 16, 22, c, OUT, 1)
     d += plant(764, 256, 62, "#ff9a7a")
+    # way-finding: a GARDEN plaque on the glazed doors and an ART ROOM sign hanging from the ceiling, pointing right
+    d += rect(604, 130, 72, 15, "#fff4dc", OUT, 2.0, rx=3) + M.sign_text("GARDEN", 640, 137.5, 8.5, "#3f9a5e", 1.8, outline=None)
+    for xx in (586, 694):
+        d += line((xx, 50), (xx, 70), "#8a8aa0", 1.6)
+    d += rect(566, 68, 148, 24, "#fbfbff", OUT, 2.6, rx=4) + rect(570, 72, 140, 16, "#e6dcfa", None, rx=3)
+    d += M.sign_text("ART ROOM", 628, 80, 11, "#7a5ad0", 2.2, outline=None)
+    d += poly([(684, 74), (700, 80), (684, 86), (687, 80)], CORAL, OUT, 1.2)
     # side walls: painted doors with paper stars, rail, boards, fire extinguisher
     lefts = [(1.1, 1.38, 0), (1.56, 1.96, 1), (2.2, 2.78, 2), (3.0, 3.8, 3)]
     rights = [(1.22, 1.5, 3), (1.7, 2.12, 4), (2.36, 2.96, 5), (3.2, 4.0, 0)]
@@ -164,12 +171,12 @@ def build_front():
     defs = lin_grad("bk", [(0, "#c9b8f0"), (1, "#a994de")], 0, 0, 0, 1)
     defs += lin_grad("pl", [(0, "#a994de"), (1, "#d6cbf5")], 0, 0, 1, 0)
     # lowered bulkhead with hanging paper sign shapes, and the door-frame pillars either side
-    d += rect(-4, -4, W + 8, 40, "url(#bk)", OUT, 3.4)
-    d += rect(-4, 30, W + 8, 7, "#e6dcfa", OUT, 2.4)
+    d += rect(M.X0, M.Y0, M.X1 - M.X0, 40 - M.Y0, "url(#bk)", OUT, 3.4)
+    d += rect(M.X0, 30, M.X1 - M.X0, 7, "#e6dcfa", OUT, 2.4)
     for k in range(9):
         x = 90 + k * 137
         d += line((x, 36), (x, 54), "#6a5a7a", 1.4) + paper_star(x, 62, 9, [BUTTER, CORAL, "#8fd9c8", "#b9a6f0"][k % 4], 1.8)
-    d += rect(-6, 36, 52, 440, "url(#pl)", OUT, 3.4) + rect(W - 46, 36, 52, 440, "url(#pl)", OUT, 3.4)
+    d += rect(M.X0, 36, 46 - M.X0, 440, "url(#pl)", OUT, 3.4) + rect(W - 46, 36, M.X1 - W + 46, 440, "url(#pl)", OUT, 3.4)
     for x0 in (-6, W - 46):
         d += rect(x0 + 8, 80, 32, 360, "#ffffff", None, op=0.08) + rect(x0, 36, 52, 12, "#e6dcfa", OUT, 2.4)
     d += rect(0, 360, 46, 8, WOOD_L, OUT, 2) + rect(W - 46, 360, 46, 8, WOOD_L, OUT, 2)  # the rail continues
@@ -222,9 +229,9 @@ def build_pieces():
 
 def build():
     defs, d = build_backdrop()
-    write_svg("views/corridor_backdrop.svg", (0, 0, W, H), d, defs)
+    write_svg("views/corridor_backdrop.svg", M.BACK_BOX, d, defs)
     defs, d = build_front()
-    write_svg("views/corridor_front.svg", (0, 0, W, 470), d, defs)
+    write_svg("views/corridor_front.svg", M.FRONT_BOX, d, defs)
     pieces = build_pieces()
     pts_ = []
     for (s, xs) in ((1.3, (450, 830)), (1.7, (370, 910)), (2.1, (290, 990)), (2.5, (220, 1060))):
@@ -239,10 +246,12 @@ def build():
         "circle_centre": [640, 376],
         "circle_radii": [230, 42],
         "vanish": [640, 190],
+        "doorway": [600, 150, 80, 106],
+        "disco_ball": [640, 2],
         "horizon_y": R.vy,
         "wall_left_x": R.fx0, "wall_right_x": R.fx1,
     }
     return {"id": "corridor", "title": "Ward corridor",
-            "layers": [M.layer("backdrop", "source/views/corridor_backdrop.svg", (0, 0), (W, H)),
-                       M.layer("front_frame", "source/views/corridor_front.svg", (0, 0), (W, 470), "front")],
+            "layers": [M.back_layer("source/views/corridor_backdrop.svg"),
+                       M.front_layer("source/views/corridor_front.svg")],
             "anchors": anchors, "pieces": pieces, "palette_hint": "cool"}

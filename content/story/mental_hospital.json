@@ -4,29 +4,33 @@
  "chapter": 5,
  "art": "mental_hospital",
  "music_pack": "res://songs/m07_crossroads",
- "description": "You come to on a hospital ward, surrounded by a very eccentric company. None of it happened. Or did it? Time for one more set.",
- "intro": "Welcome to the ward.",
+ "description": "You come to on a hospital ward among a very eccentric, very kind company in fancy dress. None of it happened. Or did it? Time for one more set.",
+ "intro": "Welcome to the ward. Tea's on, and the talent show is at four.",
  "duration_bars": 64,
  "sequence_bars": 2,
  "initial_energy": 45,
  "palettes": {
   "low": [
-   "#6f8f8a",
-   "#8a7fb8"
+   "#4f8a84",
+   "#7462b0"
   ],
   "cool": [
-   "#7fe8d0",
-   "#9a8cff"
+   "#22d6b0",
+   "#8a62ff"
   ],
   "warm": [
-   "#ffd08a",
-   "#ff9ac4"
+   "#ffaa3a",
+   "#ff5c9e"
+  ],
+  "dusk": [
+   "#ff9a4a",
+   "#b05aff"
   ],
   "rave": [
-   "#7fe8d0",
-   "#ff9ac4",
-   "#ffe27a",
-   "#9a8cff"
+   "#22e0bc",
+   "#ff4fa0",
+   "#ffcf2a",
+   "#8a5aff"
   ]
  },
  "energy": {
@@ -74,13 +78,13 @@
   },
   {
    "id": "III",
-   "title": "Talent show",
-   "start_bar": 33
+   "title": "The talent show",
+   "start_bar": 41
   },
   {
    "id": "IV",
    "title": "Lights out",
-   "start_bar": 49
+   "start_bar": 57
   }
  ],
  "blocks": [
@@ -105,13 +109,23 @@
      "piece": "wall_clock"
     },
     {
-     "at_bar": 3,
+     "at_bar": 1,
      "action": "piece_on",
-     "piece": "notice_board"
+     "piece": "window_light"
     },
     {
      "at_bar": 3,
      "action": "front_row_sway"
+    },
+    {
+     "at_bar": 3,
+     "action": "piece_on",
+     "piece": "mood_lamp"
+    },
+    {
+     "at_bar": 3,
+     "action": "piece_on",
+     "piece": "notice_board"
     },
     {
      "at_bar": 5,
@@ -121,11 +135,20 @@
     {
      "at_bar": 5,
      "action": "piece_on",
-     "piece": "mood_lamp"
+     "piece": "craft_table"
     },
     {
      "at_bar": 7,
      "action": "led_eq"
+    },
+    {
+     "at_bar": 7,
+     "action": "piece_on",
+     "piece": "fairy_lights"
+    },
+    {
+     "at_bar": 7,
+     "action": "haze_burst"
     }
    ]
   },
@@ -176,6 +199,18 @@
     {
      "at_bar": 15,
      "action": "led_bars"
+    },
+    {
+     "at_bar": 15,
+     "action": "piece_pulse",
+     "piece": "window_light",
+     "bars": 2
+    },
+    {
+     "at_bar": 15,
+     "action": "camera_push",
+     "zoom": 0.06,
+     "bars": 2
     }
    ]
   },
@@ -211,18 +246,36 @@
      "bars": 3
     },
     {
-     "at_bar": 21,
-     "action": "beams_fan"
+     "at_bar": 19,
+     "action": "piece_pulse",
+     "piece": "star_garland",
+     "bars": 2
     },
     {
-     "at_bar": 23,
-     "action": "spotlight_sweep"
+     "at_bar": 21,
+     "action": "beams_fan"
     },
     {
      "at_bar": 21,
      "action": "camera_look",
      "dx": 120,
      "bars": 3
+    },
+    {
+     "at_bar": 21,
+     "action": "piece_pulse",
+     "piece": "corridor_end_glow",
+     "bars": 2
+    },
+    {
+     "at_bar": 23,
+     "action": "spotlight_sweep"
+    },
+    {
+     "at_bar": 23,
+     "action": "piece_pulse",
+     "piece": "corridor_tubes",
+     "bars": 2
     }
    ]
   },
@@ -242,30 +295,58 @@
     },
     {
      "at_bar": 25,
-     "action": "lights_warm"
+     "action": "bring_in",
+     "group": "late"
     },
     {
-     "at_bar": 25,
-     "action": "gather_at_door",
-     "group": "gatherers"
+     "at_bar": 27,
+     "action": "front_row_sway",
+     "bars": 2
+    },
+    {
+     "at_bar": 27,
+     "action": "piece_pulse",
+     "piece": "kiln_glow",
+     "bars": 2
     },
     {
      "at_bar": 29,
      "action": "beams_cross"
     },
     {
+     "at_bar": 29,
+     "action": "bring_in",
+     "group": "gatherers",
+     "when": {
+      "energy_min": 50
+     },
+     "else": "gather_at_door"
+    },
+    {
      "at_bar": 31,
-     "action": "led_rings"
+     "action": "camera_push",
+     "zoom": 0.08,
+     "bars": 2
+    },
+    {
+     "at_bar": 31,
+     "action": "piece_pulse",
+     "piece": "skylight_beam",
+     "bars": 2
     }
    ]
   },
   {
    "id": "easel_circle",
    "title": "The easel circle",
-   "act": "Act III",
+   "act": "Act II",
    "start_bar": 33,
    "bars": 8,
    "events": [
+    {
+     "at_bar": 33,
+     "action": "haze_burst"
+    },
     {
      "at_bar": 35,
      "action": "circle_form",
@@ -280,20 +361,32 @@
      "action": "lights_cool"
     },
     {
-     "at_bar": 39,
-     "action": "beams_fan"
-    },
-    {
      "at_bar": 37,
      "action": "camera_look",
      "dx": -120,
      "bars": 3
+    },
+    {
+     "at_bar": 39,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 39,
+     "action": "piece_pulse",
+     "piece": "hanging_paintings",
+     "bars": 2
+    },
+    {
+     "at_bar": 39,
+     "action": "piece_pulse",
+     "piece": "kiln_glow",
+     "bars": 2
     }
    ]
   },
   {
    "id": "into_the_courtyard",
-   "title": "Into the courtyard",
+   "title": "Into the garden",
    "act": "Act III",
    "start_bar": 41,
    "bars": 8,
@@ -324,26 +417,44 @@
      "bars": 2
     },
     {
+     "at_bar": 45,
+     "action": "piece_pulse",
+     "piece": "string_lights",
+     "bars": 2
+    },
+    {
      "at_bar": 47,
-     "action": "led_wave"
+     "action": "piece_pulse",
+     "piece": "fireflies",
+     "bars": 2
+    },
+    {
+     "at_bar": 47,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 47,
+     "action": "beams_sweep"
     }
    ]
   },
   {
    "id": "talent_show",
    "title": "The talent show",
-   "act": "Act IV",
+   "act": "Act III",
    "start_bar": 49,
    "bars": 8,
    "events": [
     {
      "at_bar": 49,
-     "action": "riser_up"
+     "action": "bring_in",
+     "group": "peak"
     },
     {
      "at_bar": 49,
-     "action": "bring_in",
-     "group": "peak"
+     "action": "camera_push",
+     "zoom": 0.12,
+     "bars": 2
     },
     {
      "at_bar": 51,
@@ -359,6 +470,12 @@
      "action": "lights_rave"
     },
     {
+     "at_bar": 53,
+     "action": "piece_pulse",
+     "piece": "washing_line",
+     "bars": 2
+    },
+    {
      "at_bar": 55,
      "action": "clap_sync",
      "bars": 2,
@@ -368,9 +485,9 @@
      "else": "front_row_sway"
     },
     {
-     "at_bar": 49,
-     "action": "camera_push",
-     "zoom": 0.12,
+     "at_bar": 55,
+     "action": "piece_pulse",
+     "piece": "string_lights",
      "bars": 2
     }
    ]
@@ -390,6 +507,26 @@
      "bars": 2
     },
     {
+     "at_bar": 57,
+     "action": "hero_solo",
+     "bars": 8
+    },
+    {
+     "at_bar": 57,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
+     "at_bar": 57,
+     "action": "piece_pulse",
+     "piece": "fairy_lights",
+     "bars": 2
+    },
+    {
+     "at_bar": 58,
+     "action": "riser_up"
+    },
+    {
      "at_bar": 59,
      "action": "rave_peak",
      "bars": 4,
@@ -397,6 +534,10 @@
       "energy_min": 50
      },
      "else": "lights_cool"
+    },
+    {
+     "at_bar": 59,
+     "action": "spotlight_hero"
     },
     {
      "at_bar": 61,
@@ -415,13 +556,27 @@
      }
     },
     {
+     "at_bar": 61,
+     "action": "camera_push",
+     "zoom": 0.1,
+     "bars": 2
+    },
+    {
+     "at_bar": 61,
+     "action": "bring_in",
+     "group": "peak",
+     "when": {
+      "energy_min": 60
+     }
+    },
+    {
      "at_bar": 63,
      "action": "beams_cross"
     },
     {
-     "at_bar": 61,
-     "action": "camera_push",
-     "zoom": 0.12,
+     "at_bar": 63,
+     "action": "piece_pulse",
+     "piece": "paper_chains",
      "bars": 2
     }
    ]
@@ -448,8 +603,8 @@
     "dancers_step_back",
     "look_around"
    ],
-   "good_text": "The whole ward turned up in their best costumes, cheering.",
-   "bad_text": "A few of the regulars hung back at the edge of the room."
+   "good_text": "The whole ward poured out of their rooms in their best fancy dress, cheering.",
+   "bad_text": "A few of the regulars peeped round their doors and stayed put, for now."
   },
   {
    "id": "art_class",
@@ -469,8 +624,8 @@
    "bad": [
     "circle_breaks_awkward"
    ],
-   "good_text": "The pirate and the king painted a masterpiece and everyone applauded.",
-   "bad_text": "The easels toppled and the circle wandered off."
+   "good_text": "The king and the pirate unveiled a masterpiece. Standing ovation!",
+   "bad_text": "An easel wobbled, a paint pot rolled, and the circle drifted off giggling."
   },
   {
    "id": "talent_show_drop",
@@ -490,8 +645,8 @@
    "bad": [
     "drop_stumble"
    ],
-   "good_text": "The drop landed and the whole courtyard jumped as one.",
-   "bad_text": "The drop stumbled, but the ward kept clapping."
+   "good_text": "The drop landed and the whole garden jumped as one.",
+   "bad_text": "The drop slipped, but the ward clapped you right through it."
   },
   {
    "id": "win_back",
@@ -508,7 +663,7 @@
     "winback_cheer"
    ],
    "bad": [],
-   "good_text": "You won the ward back after a wobble.",
+   "good_text": "You won the ward back after a wobble. Everyone's grinning.",
    "bad_text": "",
    "kind": "winback"
   },
@@ -530,8 +685,8 @@
    "bad": [
     "final_flicker"
    ],
-   "good_text": "The ward chanted for an encore.",
-   "bad_text": "The lights flickered and the ward began to shuffle off to bed."
+   "good_text": "The ward chanted for one more song.",
+   "bad_text": "The lights blinked and the ward began to drift off to bed, still humming."
   }
  ],
  "endings": {
@@ -539,19 +694,19 @@
    "title": "Star of the Ward",
    "energy_min": 85,
    "pass_min": 0.94,
-   "text": "The whole ward is on its feet. You are the star of Ward 7 and everyone's new best friend."
+   "text": "The whole ward is on its feet. You're the star of Ward 7, and everyone's new best friend."
   },
   "group_activity": {
    "title": "Group Activity",
    "energy_min": 40,
    "pass_min": 0.5,
-   "text": "A cheerful, slightly chaotic afternoon. The ward is glad you're here."
+   "text": "A cheerful, slightly chaotic afternoon. The ward is very glad you came."
   },
   "lights_out": {
    "title": "Lights Out",
    "energy_min": -1,
    "pass_min": 0.0,
-   "text": "The ward settles down for the night. Tomorrow's another day, and another group activity."
+   "text": "The ward settles down for the night, still humming your tune. Tomorrow there's another group activity."
   }
  },
  "ending_order": [

@@ -210,13 +210,51 @@ def confetti_png():
     return {"file": "processed/confetti.png", "pivot": [16, 16], "px_scale": 1.0, "frames": 4, "frame_size": [32, 32], "note": "paper confetti"}
 
 
+def _white_png(name, a, rgb=(255, 255, 255)):
+    h, w = a.shape
+    return _save_rgba(name, np.dstack([np.full((h, w), float(rgb[0])), np.full((h, w), float(rgb[1])), np.full((h, w), float(rgb[2])),
+                                       np.clip(a, 0, 1) * 255]))
+
+
 def build_png_sprites():
+    """The white lighting sprites, re-weighted for a pale pastel ward: the runtime draws beams, pools and glows additively over
+    light walls, so every light sprite here carries far less alpha than Night One's (which lights a dark club) and keeps its brightness
+    in a narrow core, so a beam reads as coloured light rather than a white smear across the room."""
     sp = png_sprites.build_png_sprites()  # glow, beam, spot_pool, haze_a/b, vignette, confetti (white lighting sprites)
+    # beam: a slim soft cone, bright near the lamp and dying out well before the floor; the edges are only a whisper
+    w, h = 256, 640
+    yy, xx = np.mgrid[0:h, 0:w]
+    half = 6 + yy * (112.0 / h)
+    t = np.abs(xx - w / 2 + 0.5) / half
+    edge = np.clip(1 - t ** 1.5, 0, 1)
+    core = np.clip(1 - t * 1.6, 0, 1) ** 2.0
+    fade = np.clip(1 - yy / h, 0, 1) ** 1.35
+    a = (0.2 * edge + 0.5 * core) * fade
+    a[:10] *= np.linspace(0.25, 1, 10)[:, None]
+    sp["beam"] = {"file": _white_png("beam.png", a), "pivot": [w / 2, 0], "px_scale": 1.0, "length": h, "half_width_at_end": 118,
+                  "note": "dimmer than Night One's: additive over pale walls"}
+    # spot pool: a soft lit oval with a gentle rim; dim centre so the dancer standing in it keeps their colours
+    w, h = 400, 140
+    yy, xx = np.mgrid[0:h, 0:w]
+    r = np.hypot((xx - w / 2 + 0.5) / (w / 2), (yy - h / 2 + 0.5) / (h / 2))
+    a = np.clip(1 - r ** 2, 0, 1) ** 1.5 * 0.3 + np.exp(-((r - 0.86) / 0.08) ** 2) * 0.22 * (r < 1.0)
+    a = a * (0.45 + 0.55 * _smooth((yy + 0.5) / h * 1.4 - 0.2))
+    sp["spot_pool"] = {"file": _white_png("spot_pool.png", a), "pivot": [w / 2, h / 2], "px_scale": 1.0}
+    # (glow stays Night One's: the runtime also draws the dancers' contact shadows with it, and those need its full strength)
+    # haze: thin lilac-grey drifts (normal blend): a mid-tone veil that adds depth to a bright room instead of whitening it
+    for name, seed, sx, sy in (("haze_a", 21, 70.0, 16.0), ("haze_b", 77, 54.0, 12.0)):
+        w, h = 640, 100
+        n1 = png_sprites.periodic_noise(w, h, sx, sy, seed)
+        n2 = png_sprites.periodic_noise(w, h, sx * 0.45, sy * 0.45, seed + 1)
+        m = _smooth((0.65 * n1 + 0.35 * n2 - 0.4) / 0.42)
+        env = np.sin(np.linspace(0, np.pi, h)) ** 1.6
+        sp[name] = {"file": _white_png(name + ".png", m * env[:, None] * 0.3, (190, 180, 232)), "pivot": [w / 2, h / 2], "px_scale": 2.0,
+                    "tileable_x": True}
     w, h = 640, 360
     yy, xx = np.mgrid[0:h, 0:w]
     r = np.hypot((xx - w / 2 + 0.5) / (w / 2), (yy - h / 2 + 0.5) / (h / 2))
-    a = _smooth((r - 0.7) / 0.62) * 0.5  # a gentler, cooler vignette: this is a bright room
-    sp["vignette"] = {"file": _save_rgba("vignette.png", np.dstack([np.full((h, w), 14.0), np.full((h, w), 24.0), np.full((h, w), 44.0), a * 255])),
+    a = _smooth((r - 0.62) / 0.6) * 0.55  # a gentle plum vignette: frames the bright room without dirtying it
+    sp["vignette"] = {"file": _save_rgba("vignette.png", np.dstack([np.full((h, w), 40.0), np.full((h, w), 28.0), np.full((h, w), 70.0), a * 255])),
                       "pivot": [w / 2, h / 2], "px_scale": 2.0}
     sp["confetti"] = confetti_png()
     return sp
@@ -261,17 +299,22 @@ def _sil_shape(kind, up):
 
 def build_silhouettes():
     out = {}
-    fills = {"a": "#2c2f58", "b": "#262a50", "c": "#303560"}
+    # soft mid-tone lilac and slate figures (not black cut-outs: in a bright ward the far crowd is simply in softer light), with a
+    # mint rim from the left, a peach rim from the right and a faint lighter top where the ceiling light lands
+    fills = {"a": "#b4a4da", "b": "#a4aed8", "c": "#bca6d2"}  # the runtime multiplies these by a lilac tint (0.55..0.78)
     for kind in ("a", "b", "c"):
         entry = {}
         for state in ("idle", "up"):
             up = state == "up"
             shape = _sil_shape(kind, up)
             body = ""
-            for dx, dy, col in ((-2.2, -1.2, "#8fe8d2"), (2.2, -1.2, "#ffb89a")):  # mint from the left, warm from the right
+            for dx, dy, col in ((-2.6, -1.4, "#b8fff0"), (2.6, -1.4, "#ffd2b8")):  # mint from the left, warm from the right
                 body += S._recolor(shape, col, dx, dy)
             body += S._recolor(shape, fills[kind], 0, 0)
-            info = write_svg(f"silhouettes/sil_{kind}_{state}.svg", (-84, -146 if up else -140, 84, 4), body)
+            body += S._recolor(shape, lighten(fills[kind], 0.18), 0, 0).replace("<g ", '<g opacity="0.55" clip-path="url(#topband)" ', 1)
+            body += S._recolor(shape, darken(fills[kind], 0.16), 0, 0).replace("<g ", '<g opacity="0.6" clip-path="url(#lowband)" ', 1)
+            sdefs = clip("topband", '<rect x="-90" y="-150" width="180" height="70"/>') + clip("lowband", '<rect x="-90" y="-26" width="180" height="40"/>')
+            info = write_svg(f"silhouettes/sil_{kind}_{state}.svg", (-84, -146 if up else -140, 84, 4), body, sdefs)
             entry[state] = {"file": f"source/silhouettes/sil_{kind}_{state}.svg", "pivot": pivot_in(info, (0, 0)), "px_scale": 0.5}
         entry["height"] = 110
         out[f"sil_{kind}"] = entry
