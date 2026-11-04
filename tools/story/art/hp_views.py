@@ -125,8 +125,11 @@ def build_passage_frame():
     ow, top, bot, shoulder = 150, 36, h + 4, 130
     hole = (f"M{cx - ow} {bot} L{cx - ow} {shoulder} C{cx - ow} {top + 20} {cx - 60} {top} {cx} {top} "
             f"C{cx + 60} {top} {cx + ow} {top + 20} {cx + ow} {shoulder} L{cx + ow} {bot} Z")
-    slab = f"M0 0 H{w} V{h} H0 Z {hole}"
-    defs = lin_grad("slab", [(0, "#fbe9cf"), (1, "#f0cfa4")], 0, 0, 0, 1)
+    # the opening wound the other way round, so the slab has a hole under the plain non-zero rule (ThorVG ignores clip-rule in a clipPath)
+    hole_rev = (f"M{cx + ow} {bot} L{cx + ow} {shoulder} C{cx + ow} {top + 20} {cx + 60} {top} {cx} {top} "
+                f"C{cx - 60} {top} {cx - ow} {top + 20} {cx - ow} {shoulder} L{cx - ow} {bot} Z")
+    slab = f"M0 0 H{w} V{h} H0 Z {hole_rev}"
+    defs = lin_grad("slab", [(0, "#f1d3a8"), (1, "#dcb07e")], 0, 0, 0, 1)
     defs += clip("slabclip", f'<path d="{slab}" clip-rule="evenodd"/>')
     d = f'<path d="{slab}" fill="url(#slab)" fill-rule="evenodd"/>'
     inner = ""
@@ -139,8 +142,10 @@ def build_passage_frame():
     for x in range(0, w, 50):
         inner += rect(x + 5, h - 88, 40, 70, "#8fd2c6", "#5aa89e", 1.4, rx=3)
     inner += rect(0, h - 104, w, 8, "#fff6ea", OUT, 2)
-    for k in range(5):  # little pictures and a wall lamp on the wall
-        pass
+    for wdt, op in ((70, 0.08), (40, 0.1), (18, 0.12)):  # the wall falls into a warm shadow round the doorway and towards its edges
+        inner += path(hole, None, "#5a2f3a", wdt, sop=op)
+    defs += lin_grad("pfv", [(0, "#5a2f3a", 0.3), (0.25, "#5a2f3a", 0.0), (0.75, "#5a2f3a", 0.0), (1, "#5a2f3a", 0.3)], 0, 0, 1, 0)
+    inner += rect(0, 0, w, h, "url(#pfv)")
     d += group(inner, 'clip-path="url(#slabclip)"')
     for xx, tone in ((52, "#ffe9a8"), (w - 52, "#ffe9a8")):  # wall lamps either side
         d += rect(xx - 10, 100, 20, 8, "#c98f55", OUT, 2, rx=2) + path(f"M{xx - 12} 100 L{xx - 7} 78 L{xx + 7} 78 L{xx + 12} 100 Z", tone, OUT, 2)

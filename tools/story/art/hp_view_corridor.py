@@ -20,6 +20,45 @@ def sd(lat, s0, s1, yf0, yf1, fill, sw=2.0, op=None):
     return poly(R.side(lat, yf0, yf1, s0, s1), fill, OUT if sw else None, sw, op=op)
 
 
+def corridor_furniture():
+    """The lived-in bits along the walls: a row of teal waiting chairs with a forgotten balloon under the right windows, a parked
+    wheelchair with a blanket and a hand-gel station on the left wall, a water cooler by the nurses' desk, soft shadows under all of it."""
+    o = ""
+    # waiting chairs against the right wall, between the first and second window
+    for k, s0 in enumerate((1.53, 1.61, 1.69)):
+        s1 = s0 + 0.065
+        o += poly(R.horiz(256, 122, 168, s0 - 0.01, s1 + 0.02), "#5a2f3a", None, op=0.14)
+        o += poly(R.side(167, 196, 232, s0, s1), "#3fa69c", OUT, 1.8)  # back rest against the wall
+        o += R.box(126, 166, 232, s0, s1, "#2f857f", "#4fb3a9", "#7cc4b8", 1.8)
+        for lat in (128, 164):
+            o += line(R.p(lat, 238, s1 - 0.01), R.p(lat, 256, s1 - 0.01), "#8a96a8", 2.2)
+    bx, by = R.p(150, 214, 1.645)
+    o += P.balloon(bx - 4, by - 18, 9, "#ff8f9a", (bx, by), True, 1.8)
+    # a parked wheelchair against the left wall (seen from the side, its wheels squeezed by the perspective)
+    s = 1.56
+    wc = R.p(-150, 238, s)
+    rr = 18 * s
+    o += ellipse(wc[0] + 4, R.p(0, 256, s)[1] + 2, rr * 0.9, 5 * s, "#5a2f3a", None, op=0.16)
+    o += poly(R.side(-152, 206, 224, s - 0.05, s + 0.04), "#3b86d0", OUT, 2)  # back rest
+    o += poly(R.horiz(224, -160, -128, s - 0.05, s + 0.06), "#4f9ae0", OUT, 2)  # seat
+    o += poly([R.p(-150, 222, s + 0.0), R.p(-140, 222, s + 0.06), R.p(-140, 236, s + 0.07), R.p(-150, 236, s + 0.01)], "#ff8f7a", OUT, 1.6)  # a blanket
+    for dd in (-0.04, 0.05):
+        c = R.p(-158 + dd * 60, 238, s + dd)
+        o += ellipse(c[0], c[1], rr * 0.34, rr, None, OUT, 4.2) + ellipse(c[0], c[1], rr * 0.34, rr, None, "#c9d2dc", 2.2)
+        o += ellipse(c[0], c[1], rr * 0.12, rr * 0.36, "#8a96a8", OUT, 1.2)
+    o += line(R.p(-152, 206, s - 0.05), R.p(-146, 198, s - 0.07), OUT, 4) + line(R.p(-152, 206, s - 0.05), R.p(-146, 198, s - 0.07), "#c9d2dc", 2)
+    # a hand-gel station and a little poster on the left wall
+    o += poly(R.side(-170, 168, 196, 2.28, 2.36), "#fff6ea", OUT, 1.6) + poly(R.side(-170, 172, 184, 2.3, 2.34), "#7fd1c4", None)
+    o += poly(R.side(-170, 150, 166, 2.27, 2.38), "#ffe9a8", OUT, 1.4)
+    # a water cooler by the nurses' desk
+    wx, wy = R.p(-56, 256, 1.12)
+    o += ellipse(wx, wy + 1, 16, 4, "#5a2f3a", None, op=0.16)
+    o += rect(wx - 11, wy - 46, 22, 46, "#e8eef4", OUT, 2, rx=3) + rect(wx - 9, wy - 30, 18, 6, "#a8b4c0", None)
+    o += path(f"M{wx - 9} {wy - 46} Q{wx - 11} {wy - 68} {wx} {wy - 70} Q{wx + 11} {wy - 68} {wx + 9} {wy - 46} Z", "#9fdcf0", OUT, 2, op=0.9)
+    o += line((wx - 5, wy - 64), (wx - 5, wy - 50), "#ffffff", 2, 0.7)
+    return o
+
+
 def build_backdrop():
     d, defs = "", ""
     defs += lin_grad("bg", [(0, "#fff6e6"), (1, "#f4dcc0")], 0, 0, 0, 1)
@@ -130,6 +169,7 @@ def build_backdrop():
             px = R.p(150, 222, sm)
             d += P.plant(px[0], px[1], 26 + sm * 10, "bushy", "#d9734a", 20 + k)
     d += poly([R.p(-170, 256, 1.0), R.p(170, 256, 1.0), R.p(170, 256, 1.0), R.p(-170, 256, 1.0)], "#000", None, op=0.0)
+    d += corridor_furniture()
     # the hanging ward information board (the runtime paints into the dark panel)
     led = (540, 100, 200, 26)
     d += rect(led[0] - 7, led[1] - 6, led[2] + 14, led[3] + 12, WOOD_L, OUT, 3, rx=6) + rect(led[0] - 3, led[1] - 3, led[2] + 6, led[3] + 6, "#fff6ea", OUT, 1.8, rx=4)

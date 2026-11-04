@@ -407,7 +407,7 @@ def spr_disco_ball(sprites):
     d = ""
     cy, r = 66, 27
     defs = rad_grad("core", [(0, "#fffbe6"), (0.5, "#ffe08a"), (1, "#ffb85a")], 0.45, 0.4, 0.62)
-    d += line((0, 0), (0, cy - r + 4), OUT, 3.4) + line((0, 0), (0, cy - r + 4), "#fff3e0", 1.4)
+    d += line((0, -180), (0, cy - r + 4), OUT, 3.4) + line((0, -180), (0, cy - r + 4), "#fff3e0", 1.4)  # a long ribbon up to the ceiling
     d += circle(0, cy, r + 17, "#ffd98a", None, op=0.12) + circle(0, cy, r + 11, "#ffe9a8", None, op=0.18)
     n = 14
     for ring, (rl, col_a, col_b) in enumerate(((r + 22, "#ffe9c4", "#fff6ea"), (r + 14, "#ffc8a0", "#ffdcc0"))):
@@ -426,7 +426,7 @@ def spr_disco_ball(sprites):
         d += line((math.cos(a) * 4, cy + math.sin(a) * 4), (math.cos(a) * (r - 2), cy + math.sin(a) * (r - 2)), "#ffb85a", 1.4, 0.55)
     d += circle(-8, cy - 9, 5.4, "#ffffff", None, op=0.85)
     d += poly([(0, cy + r + 20), (-6, cy + r + 36), (6, cy + r + 36)], "#ff8f9a", OUT, 1.6) + circle(0, cy + r + 20, 3.4, "#ffd98a", OUT, 1.4)
-    info = write_svg("props/disco_ball.svg", (-r - 30, -2, r + 30, cy + r + 42), d, defs)
+    info = write_svg("props/disco_ball.svg", (-r - 30, -182, r + 30, cy + r + 42), d, defs)
     sprites["disco_ball"] = {"file": "source/props/disco_ball.svg", "pivot": pivot_in(info, (0, 0)), "px_scale": 0.5, "radius": r, "ball_centre": [0, cy]}
 
 
@@ -972,9 +972,9 @@ def build_stage():
         "floor_rows": FLOOR_ROWS,
         "floor_polygon": [[400, 266], [880, 266], [round(floor_x(880, 520)), 520], [round(floor_x(400, 520)), 520]],
         "floor_grid": ROOM.grid(),
-        "light_points": [[150, 30], [330, 30], [510, 30], [770, 30], [950, 30], [1130, 30], [450, 58], [830, 58]],
+        "light_points": [[150, 30], [330, 30], [510, 30], [770, 30], [950, 30], [1130, 30], [372, 46], [908, 46]],
         "woofers": woofers,
-        "disco_ball": [640, 0],
+        "disco_ball": [640, 118],  # the lantern hangs low in front of the bed head, clear of the information board
         "riser": [640, 286, 240],
         "circle_centre": [640, 372],
         "circle_radii": [250, 46],

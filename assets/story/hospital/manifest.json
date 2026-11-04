@@ -504,7 +504,7 @@
        "z": 4,
        "file": "source/chars/dad_a/arm_l_fore.svg",
        "pivot": [
-        57.8,
+        285.8,
         41.4
        ],
        "px_scale": 0.5
@@ -597,7 +597,7 @@
       ],
       "joint_l": "elbow_l",
       "at_l": [
-       41.2,
+       269.2,
        135.4
       ]
      }
@@ -665,7 +665,7 @@
        "z": 4,
        "file": "source/chars/dad_b/arm_l_fore.svg",
        "pivot": [
-        57.8,
+        113.8,
         41.4
        ],
        "px_scale": 0.5
@@ -758,7 +758,7 @@
       ],
       "joint_l": "elbow_l",
       "at_l": [
-       41.2,
+       97.2,
        135.4
       ]
      }
@@ -880,7 +880,7 @@
        "z": 4,
        "file": "source/chars/granny_a/arm_l_fore.svg",
        "pivot": [
-        52.0,
+        92.0,
         37.5
        ],
        "px_scale": 0.5
@@ -973,7 +973,7 @@
       ],
       "joint_l": "elbow_l",
       "at_l": [
-       38.9,
+       78.9,
        111.6
       ]
      }
@@ -2061,7 +2061,7 @@
        "z": 4,
        "file": "source/chars/doctor_a/arm_l_fore.svg",
        "pivot": [
-        57.5,
+        251.5,
         39.4
        ],
        "px_scale": 0.5
@@ -2154,7 +2154,7 @@
       ],
       "joint_l": "elbow_l",
       "at_l": [
-       40.4,
+       234.4,
        136.3
       ]
      }
@@ -2575,12 +2575,12 @@
      30
     ],
     [
-     450,
-     58
+     372,
+     46
     ],
     [
-     830,
-     58
+     908,
+     46
     ]
    ],
    "woofers": [
@@ -2607,7 +2607,7 @@
    ],
    "disco_ball": [
     640,
-    0
+    118
    ],
    "riser": [
     640,
@@ -2754,7 +2754,7 @@
     "file": "source/props/disco_ball.svg",
     "pivot": [
      114,
-     4
+     364
     ],
     "px_scale": 0.5,
     "radius": 27,

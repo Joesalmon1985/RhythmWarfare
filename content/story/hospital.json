@@ -530,6 +530,10 @@
     },
     {
      "at_bar": 55,
+     "action": "riser_down"
+    },
+    {
+     "at_bar": 55,
      "action": "confetti",
      "when": {
       "energy_min": 85

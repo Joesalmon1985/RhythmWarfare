@@ -424,8 +424,10 @@ def arm_parts(arch, P, V, J, side):
     body += _shade_lines(e, w, aw, side)
     hand_c = (w[0] + ux * aw * 0.28, w[1] + uy * aw * 0.28)
     hr = aw * 0.62
-    if arch == "nurse" and V["under"]:
-        pass
+    prop_pts = []
+    if name == "l":  # something held in the left hand (the right one carries the heart wand): it swings and waves with the arm
+        prop, prop_pts = hand_prop(arch, V, hand_c, (ux, uy), (nx * side, ny * side), hr)
+        body += prop
     body += circle(hand_c[0], hand_c[1], hr + 2.6, OUT) + circle(hand_c[0], hand_c[1], hr, skin)
     body += circle(hand_c[0] - nx * side * hr * 0.25, hand_c[1] - ny * side * hr * 0.25, hr * 0.4, lighten(skin, 0.3), None, op=0.6)
     th = (hand_c[0] + nx * side * hr * 0.78 + ux * 1.2, hand_c[1] + ny * side * hr * 0.78 + uy * 1.2)
@@ -434,8 +436,66 @@ def arm_parts(arch, P, V, J, side):
         body += circle(hand_c[0], hand_c[1], hr * 0.2, "#ffd98a", None)
     if arch == "doctor" and name == "l":  # a clipboard held at the side
         pass
-    out["fore"] = (body, bb([e, w, hand_c], aw / 2 + 12), (hand_c[0], hand_c[1]))
+    out["fore"] = (body, bb([e, w, hand_c] + prop_pts, aw / 2 + 12), (hand_c[0], hand_c[1]))
     return out
+
+
+def hand_prop(arch, V, hc, u, inw, hr):
+    """What a visitor holds in the left hand, drawn under the fist: dad a brings flowers wrapped in paper, dad b a gift with a bow, the
+    doctor (a) a clipboard, granny (a) a walking cane she waves when she cheers. u = down the forearm, inw = towards the body.
+    Returns (svg, extent points)."""
+    ux, uy = u
+    ox, oy = -inw[0], -inw[1]  # outwards, away from the body
+
+    k = 1.3 if arch == "dad" else 1.0  # the gifts read bigger in the crowd
+
+    def at(a, b):  # a along the forearm, b outwards
+        return (hc[0] + (ux * a + ox * b) * k, hc[1] + (uy * a + oy * b) * k)
+
+    o = ""
+    pts = []
+    if arch == "dad" and V["detail"] == "plaid":  # a bouquet in a paper cone, flowers out past the fist
+        cone = [at(-4, -5), at(-4, 5), at(22, 12), at(22, -12)]
+        for k, (a, b) in enumerate(((-2, 0), (2, -6), (2, 6), (6, -2), (6, 3))):
+            stem_end = at(27 + a, b * 1.6)
+            o += line(at(0, b * 0.3), stem_end, "#3f8f52", 2.4)
+        o += poly(cone, "#fff1dc", OUT, 2.2) + line(at(4, -6), at(19, -9), "#f4c8a8", 1.4, 0.8) + line(at(4, 6), at(19, 9), "#f4c8a8", 1.4, 0.8)
+        o += poly([at(7, -8), at(7, 8), at(12, 9), at(12, -9)], "#ff8f9a", OUT, 1.6)  # a ribbon round the cone
+        cols = ["#ff8f7a", "#ffd23f", "#f4a5b4", "#ffffff", "#c9b6ec", "#ff6f8f"]
+        for k, (a, b, r) in enumerate(((29, 0, 7.2), (25, -10, 6.4), (25, 10, 6.4), (33, -6, 5.6), (33, 7, 5.8), (22, 0, 5.4))):
+            cx, cy = at(a, b)
+            r *= k
+            for j in range(5):
+                ang = j * math.tau / 5 + k
+                o += circle(cx + math.cos(ang) * r * 0.62, cy + math.sin(ang) * r * 0.62, r * 0.55, cols[k % 6], OUT, 1.3)
+            o += circle(cx, cy, r * 0.42, "#ffd23f" if k % 2 else "#ff8f7a", OUT, 1.1)
+        pts = [at(40, -16), at(40, 16), at(-6, -14), at(-6, 14)]
+    elif arch == "dad":  # a small gift box with a bow, held by its ribbon
+        c0, c1, c2, c3 = at(4, -12), at(4, 12), at(28, 12), at(28, -12)
+        o += line(at(-2, 0), at(5, 0), "#ff6f8f", 2.4)
+        o += poly([c0, c1, c2, c3], "#59b96a", OUT, 2.4)
+        o += line(at(4, 0), at(28, 0), "#ffd23f", 4) + line(at(16, -12), at(16, 12), "#ffd23f", 4)
+        o += poly([at(4, 0), at(-2, -8), at(2, -9)], "#ffd23f", OUT, 1.4) + poly([at(4, 0), at(-2, 8), at(2, 9)], "#ffd23f", OUT, 1.4)
+        o += line(at(8, -9), at(24, -9), "#ffffff", 1.6, 0.5)
+        pts = [at(32, -16), at(32, 16), at(-6, -12), at(-6, 12)]
+    elif arch == "doctor" and V["style"] == "mirror":  # a clipboard with notes, clip at the top
+        q = [at(2, -2), at(2, 22), at(36, 22), at(36, -2)]
+        o += poly(q, "#c98f55", OUT, 2.4)
+        o += poly([at(6, 2), at(6, 18), at(34, 18), at(34, 2)], "#fffaf0", None)
+        for k in range(4):
+            o += line(at(12 + k * 5.5, 5), at(12 + k * 5.5, 15 - (k % 2) * 3), "#9ab8f0", 1.4, 0.9)
+        o += poly([at(0, 6), at(0, 14), at(6, 14), at(6, 6)], "#a8b4c0", OUT, 1.6)
+        o += heart(*at(28, 10), 2.6, "#ff7a8a", 0.8)
+        pts = [at(40, -6), at(40, 26), at(-4, -6), at(-4, 26)]
+    elif arch == "granny" and not V["pearls"]:  # a walking cane, hooked over the fist, tip near the floor at rest
+        ln = 64.0
+        tip = at(ln, 1)
+        o += line(at(-4, 0), tip, OUT, 7.4) + line(at(-4, 0), tip, "#a8703c", 4.2) + line(at(0, -1), at(ln - 6, 0), "#e2b47c", 1.4, 0.8)
+        o += path(f"M{f(at(-4, 0)[0])} {f(at(-4, 0)[1])} Q{f(at(-14, 2)[0])} {f(at(-14, 2)[1])} {f(at(-12, 12)[0])} {f(at(-12, 12)[1])}", None, OUT, 7.4)
+        o += path(f"M{f(at(-4, 0)[0])} {f(at(-4, 0)[1])} Q{f(at(-14, 2)[0])} {f(at(-14, 2)[1])} {f(at(-12, 12)[0])} {f(at(-12, 12)[1])}", None, "#a8703c", 4.2)
+        o += circle(*tip, 3.6, "#3a2418", OUT, 1.4)
+        pts = [at(ln + 6, -6), at(ln + 6, 8), at(-16, -6), at(-16, 16)]
+    return o, pts
 
 
 def shoe_path(ax, fx, side, rx_, top=13):
