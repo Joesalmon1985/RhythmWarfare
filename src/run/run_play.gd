@@ -505,6 +505,8 @@ func _step_virtual(t: float) -> void:
 func _advance(t: float, audio_t: float) -> void:
 	hud.now_t = audio_t
 	if trial_state == "in" or trial_state == "leaving":
+		if OS.has_environment("RW_TRIAL_LEAVE_AT") and audio_t >= float(OS.get_environment("RW_TRIAL_LEAVE_AT")) and trial.active:
+			trial.request_leave()  # scripted: the back key, for the recordings
 		trial.update(t, audio_t)
 		return
 	_bot_step(t)
@@ -1037,6 +1039,8 @@ func arm_trial() -> bool:
 
 
 func _trial_step(t: float) -> void:
+	if trial_state == "" and OS.get_environment("RW_TRIAL_ENTER") == "1" and t > 2.0 * engine.beat_s and _gate.visible:
+		arm_trial()  # scripted: the wizard is chosen as soon as the level is under way
 	if trial_state != "armed":
 		return
 	if _trial_g1 >= 0.0 and t >= _trial_g1:
@@ -1081,3 +1085,6 @@ func trial_leave(t_swap: float, reason: String) -> void:
 	_handle(engine.update(t_swap))
 	_journey_apply({"world": w, "t0": t_swap, "action": "player_move", "args": {"to": str(stages[w]["waypoint"]), "bars": 2.0, "style": "walk"}})
 	trial_log.append({"kind": "left", "t": t_swap, "reason": reason})
+	print("TRIAL left (%s) on the downbeat t=%.3f; the run resumes at phase %d, energy %.1f" % [reason, t_swap, engine.phase_n, engine.energy])
+	if OS.get_environment("RW_STORY_QUIT") == "1" and OS.get_environment("RW_TRIAL_LEAVE_QUIT") == "1":
+		get_tree().quit()

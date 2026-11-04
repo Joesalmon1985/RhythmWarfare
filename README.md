@@ -10,7 +10,7 @@ the bad rail (floor edge, corridor, cubicle), and the route window lights the ro
 
 * Design, route map, rails, tunables and verification: `docs/CONTINUOUS_RUN.md`; the plan and its progress log: `docs/RUN_DUNGEON_MUSIC_PLAN.md`.
 * Adding music (Beat Shaper exports, one command per level): `docs/MUSIC_IMPORT.md`; what each level plays and what to export: `docs/MUSIC_HANDOFF.md`.
-* The Bassment, the wizard's dungeon under the club (a wizard in the Warehouse offers it; 63 passages in 16 zones, played on the same pads and clock): `docs/TRIAL_OPENING.md`.
+* The Bassment, the wizard's dungeon under the club (a wizard in the Warehouse offers it; 63 passages in 16 zones, each a 2.5D map; entered and left seamlessly on the same pads, clock and music): `docs/TRIAL_OPENING.md`.
 * The 2.5D world, art and authoring pipeline: `docs/STORY_CAMPAIGN_HANDOVER.md`, `docs/STORY_25D_PLAN.md`, `docs/STORY_ART.md`.
 
 ```
@@ -20,6 +20,7 @@ RW_RUN_BOT=perfect RW_RUN_ROUTES=up,left godot --path . res://src/run/run_play.t
 RW_RUN_VIRTUAL=1 RW_RUN_BOT=perfect RW_RUN_UNTIL_PHASE=3 RW_STORY_QUIT=1 godot --headless --path . res://src/run/run_play.tscn   # no audio, stepped clock
 godot --headless --path . -s tests/run_tests.gd -- --filter run_      # the run's tests
 godot --path . res://src/trial/trial_play.tscn                         # straight into the Bassment dungeon (RW_TRIAL_START=<passage>)
+bash tools/trial/walk_trial.sh                                          # scripted walk: Warehouse > hatch > the dungeon to the victory > back up into the Warehouse
 godot --headless --path . -s tools/trial/validate.gd                   # check the dungeon's data
 godot --headless --path . -s tests/run_tests.gd -- --filter run_      # the run's tests (engine, saves, home, rails, scene, the policy matrix)
 bash tools/run/walk_run.sh                                              # the run on the real scenes, scripted, all seven levels, isolated save (needs a display)

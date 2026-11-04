@@ -78,7 +78,7 @@ func decision_t(j: int) -> float:
 
 ## Length of the count-in (the first window opens at the start of it, so it too lasts four bars).
 func count_in_s() -> float:
-	return t_of(float(BLOCK_BEATS) - DECISION_BEAT)
+	return (float(BLOCK_BEATS) - DECISION_BEAT) * beat_s
 
 
 func begin(start_passage: int = -1, p_origin := 0.0) -> void:

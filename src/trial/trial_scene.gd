@@ -8,7 +8,7 @@ extends Control
 const OUTCOME_S := 1.1
 const SCENE_TEXT := Color(0.93, 0.92, 1.0)
 const FIGURES := {  # creature -> {size (m tall), lift (m above the floor), dist (m in front of the passage waypoint)}
-	"lampmoth": {"size": 1.7, "lift": 0.7, "dist": 2.6}, "cable_eel": {"size": 1.5, "lift": 0.0, "dist": 3.0}, "barrel_knight": {"size": 2.0, "lift": 0.0, "dist": 2.8},
+	"lampmoth": {"size": 1.7, "lift": 0.7, "dist": 2.6}, "cable_eel": {"size": 1.9, "lift": 0.9, "dist": 3.4}, "barrel_knight": {"size": 2.0, "lift": 0.0, "dist": 2.8},
 	"mildew_mother": {"size": 2.0, "lift": 0.0, "dist": 2.8}, "mirror_twin": {"size": 1.9, "lift": 0.0, "dist": 2.8}, "bouncer": {"size": 2.5, "lift": 0.0, "dist": 3.0},
 	"rat_king": {"size": 1.7, "lift": 0.0, "dist": 2.6}, "furnace_imp": {"size": 1.4, "lift": 0.0, "dist": 2.4}, "gargoyle": {"size": 3.0, "lift": 0.4, "dist": 3.4},
 	"echo": {"size": 2.0, "lift": 0.0, "dist": 3.0},
@@ -97,6 +97,7 @@ func _build_ui() -> void:
 	area.name = "Area"
 	area.anchor_right = 1.0
 	area.anchor_bottom = split
+	area.clip_contents = true
 	area.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(area)
 	_fade = ColorRect.new()
@@ -572,7 +573,8 @@ func _show_passage(ev: Dictionary) -> void:
 		_dark_t0 = -1.0
 	if _until > 0 and engine.flow.passage == _until:
 		print("TRIAL reached passage %d" % engine.flow.passage)
-		if OS.get_environment("RW_STORY_QUIT") == "1":
+		print("TRIAL ", host.frame_stats())
+		if OS.get_environment("RW_STORY_QUIT") == "1" and OS.get_environment("RW_TRIAL_LEAVE_QUIT") != "1":
 			host.get_tree().quit()
 
 
