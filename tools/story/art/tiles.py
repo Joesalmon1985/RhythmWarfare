@@ -38,6 +38,11 @@ MENTAL_HOSPITAL = {
     "floor_dais": 2.0, "wall_cdoor": 3.0, "wall_cdoor2": 3.0, "floor_wood": 3.0, "ceil_pale": 2.5, "wall_end": 3.0, "wall_art": 3.0, "wall_awindow": 4.0,
     "floor_art": 3.0, "wall_brick": 2.5, "wall_archdoor": 3.0, "floor_paving": 3.0, "tx_tile": 1.5, "tx_floor": 1.5, "pad_tile": 1.5, "sky_moon": 1.0,
     "thing_lamp": 1.0, "thing_table": 1.0, "thing_bed": 1.0, "thing_easel": 1.0, "thing_chair": 1.0,
+    # tex_mental_hospital.py: the procedural tiles it adds, and the RGBA props it writes itself
+    "wall_office": 2.7, "wall_dwindow": 1.8, "wall_slit": 0.9,
+    "thing_chair_b": 1.0, "thing_chair_c": 1.0, "thing_easel_b": 1.0, "thing_jars": 1.0, "thing_phone": 1.0, "thing_radiator": 1.0,
+    "thing_fan": 1.0, "thing_clock": 1.0, "thing_cagelamp": 1.0, "thing_tube": 1.0, "thing_cabinet": 1.0, "thing_trolley": 1.0,
+    "thing_sink": 1.0, "thing_wheelchair": 1.0,
 }
 
 UNDERWORLD = {

@@ -3222,34 +3222,34 @@
   "ceil_pale": {
    "file": "textures/ceil_pale.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 2.5
   },
   "ceil_tile": {
    "file": "textures/ceil_tile.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 2.5
   },
   "floor_art": {
    "file": "textures/floor_art.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 3.0
   },
   "floor_check": {
    "file": "textures/floor_check.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.5
+   "metres": 2.0
   },
   "floor_dais": {
    "file": "textures/floor_dais.png",
@@ -3262,16 +3262,16 @@
   "floor_paving": {
    "file": "textures/floor_paving.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 3.0
   },
   "floor_wood": {
    "file": "textures/floor_wood.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 3.0
   },
@@ -3281,7 +3281,7 @@
     64,
     64
    ],
-   "metres": 1.5
+   "metres": 1.2
   },
   "sky_moon": {
    "file": "textures/sky_moon.png",
@@ -3299,8 +3299,48 @@
    ],
    "metres": 1.0
   },
+  "thing_cabinet": {
+   "file": "textures/thing_cabinet.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_cagelamp": {
+   "file": "textures/thing_cagelamp.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
   "thing_chair": {
    "file": "textures/thing_chair.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_chair_b": {
+   "file": "textures/thing_chair_b.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_chair_c": {
+   "file": "textures/thing_chair_c.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_clock": {
+   "file": "textures/thing_clock.png",
    "size": [
     128,
     128
@@ -3315,8 +3355,56 @@
    ],
    "metres": 1.0
   },
+  "thing_easel_b": {
+   "file": "textures/thing_easel_b.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_fan": {
+   "file": "textures/thing_fan.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_jars": {
+   "file": "textures/thing_jars.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
   "thing_lamp": {
    "file": "textures/thing_lamp.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_phone": {
+   "file": "textures/thing_phone.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_radiator": {
+   "file": "textures/thing_radiator.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_sink": {
+   "file": "textures/thing_sink.png",
    "size": [
     128,
     128
@@ -3331,91 +3419,123 @@
    ],
    "metres": 1.0
   },
+  "thing_trolley": {
+   "file": "textures/thing_trolley.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_tube": {
+   "file": "textures/thing_tube.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_wheelchair": {
+   "file": "textures/thing_wheelchair.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
   "tx_floor": {
    "file": "textures/tx_floor.png",
    "size": [
     64,
     64
    ],
-   "metres": 1.5
+   "metres": 1.2
   },
   "tx_tile": {
    "file": "textures/tx_tile.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 1.5
+   "metres": 2.3
   },
   "wall_archdoor": {
    "file": "textures/wall_archdoor.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 3.0
   },
   "wall_art": {
    "file": "textures/wall_art.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 4.6
   },
   "wall_awindow": {
    "file": "textures/wall_awindow.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 4.0
+   "metres": 4.6
   },
   "wall_brick": {
    "file": "textures/wall_brick.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.5
+   "metres": 3.2
   },
   "wall_cdoor": {
    "file": "textures/wall_cdoor.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 2.7
   },
   "wall_cdoor2": {
    "file": "textures/wall_cdoor2.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 2.7
   },
   "wall_dado": {
    "file": "textures/wall_dado.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 2.2
   },
   "wall_door": {
    "file": "textures/wall_door.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 3.0
+  },
+  "wall_dwindow": {
+   "file": "textures/wall_dwindow.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.8
   },
   "wall_end": {
    "file": "textures/wall_end.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 3.0
   },
@@ -3430,10 +3550,26 @@
   "wall_mint": {
    "file": "textures/wall_mint.png",
    "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_office": {
+   "file": "textures/wall_office.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.7
+  },
+  "wall_slit": {
+   "file": "textures/wall_slit.png",
+   "size": [
     64,
     64
    ],
-   "metres": 2.0
+   "metres": 0.9
   },
   "wall_speaker": {
    "file": "textures/wall_speaker.png",
@@ -3446,8 +3582,8 @@
   "wall_window": {
    "file": "textures/wall_window.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 3.0
   }
