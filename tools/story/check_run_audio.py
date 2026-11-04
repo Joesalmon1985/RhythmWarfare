@@ -66,6 +66,20 @@ def main() -> int:
     stages = run["stages"]
     s0 = float(info["started_wall"])
     events = info.get("events", [])
+    t0u = int(info.get("t0_usec", 0))
+    pauses = []  # (song time paused at, seconds paused)
+    open_p = None
+    for e in events:
+        if e["kind"] == "paused":
+            open_p = e
+        elif e["kind"] == "resumed" and open_p is not None:
+            pauses.append((float(open_p["t"]), (int(e["usec"]) - int(open_p["usec"])) / 1e6))
+            open_p = None
+    if pauses:
+        print("pauses (song time, seconds paused):", [(round(a, 2), round(b, 2)) for a, b in pauses])
+
+    def wall_of(t: float) -> float:
+        return s0 + t + sum(d for at, d in pauses if at < t)
     starts = [e for e in events if e["kind"] == "phase_start"]
     rev = {int(e["t"] / BEAT // 64): e for e in events if e["kind"] == "reveal"}
     mixes = [e for e in events if e["kind"] == "mix"]
@@ -91,10 +105,10 @@ def main() -> int:
         mu = music[ph["node"]]
         treated = mu["treatment"] != "none"
         t0 = float(ph["t"])
-        if s0 + t0 + 64 * BEAT > len(rec) / rate:
+        if wall_of(t0 + 64 * BEAT) > len(rec) / rate:
             break
         loops_ = pack_loops(mu["audio"])
-        a = int(round((s0 + t0) * rate))
+        a = int(round(wall_of(t0) * rate))
         # delay from the drums-alone first block
         seg = rec[a - int(0.3 * rate):a + int(8 * BEAT * rate)]
         mod = tiled(loops_["drums"], a - int(0.3 * rate), len(seg), a)
@@ -115,33 +129,39 @@ def main() -> int:
             if stage is None:
                 continue
             g = stages[stage]["gains"]
+            if any(t0 + b * 16 * BEAT < at < t0 + (b + 1) * 16 * BEAT for at, _ in pauses):
+                print(f"   block {b + 1} stage {stage}: contains the pause, not fitted")
+                continue
             skip = int(0.7 * rate)
-            lo = ad + int(b * 16 * BEAT * rate) + skip
+            blk_off = int(round((wall_of(t0 + b * 16 * BEAT) - wall_of(t0)) * rate))  # wall time into the phase (a pause adds to it)
+            lo = ad + blk_off + skip
             ln = int(16 * BEAT * rate) - skip - int(0.3 * rate)
-            comps: dict = {"drums": (loops_["drums"], ad)}
+            ms = int(b * 16 * BEAT * rate) + skip  # the same instant in song time: where the loops are
+            comps: dict = {"drums": (loops_["drums"], 0)}
             if reveal_beat is not None and b * 16 >= reveal_beat:
-                borigin = ad + int(round(reveal_beat * BEAT * rate))
+                borigin = int(round(reveal_beat * BEAT * rate))
                 comps["bass"] = (loops_["bass"], borigin)
                 comps["other"] = (loops_["other"], borigin)
             if b == 3:
                 eff = "riser" if stage == 3 else "fall"
-                comps[eff] = (fx[eff], ad + int(48 * BEAT * rate))
+                comps[eff] = (fx[eff], int(48 * BEAT * rate))
             shift = {k: 0 for k in comps}  # samples each voice sits from its nominal start (found below)
             y = rec[lo:lo + ln]
             for _ in range(3):
-                cols = [tiled(comps[k][0], lo, ln, comps[k][1] + shift[k]) for k in comps]
+                cols = [tiled(comps[k][0], ms, ln, comps[k][1] + shift[k]) for k in comps]
                 m_ = np.stack(cols, axis=1)
                 coef, *_ = np.linalg.lstsq(m_, y, rcond=None)
                 for ci, k in enumerate(comps):
-                    if k == "drums":
-                        continue
                     resid = y - m_ @ coef + coef[ci] * m_[:, ci]
-                    dly = xcorr_delay(resid, m_[:, ci], rate, 0.03)
+                    dly = xcorr_delay(resid, m_[:, ci], rate, 0.045 if k == "drums" else 0.03)
                     shift[k] += int(round(dly * rate))
+            rel = {k: (shift[k] - shift["drums"]) / rate * 1000.0 for k in comps if k != "drums"}
+            after_pause = any(at < t0 + b * 16 * BEAT for at, _ in pauses)
             names = list(comps)
-            for k in names:
-                if k not in ("drums",):
-                    voice_off.setdefault(k, []).append(shift[k] / rate * 1000.0)
+            for k in rel:
+                voice_off.setdefault(k, []).append(rel[k])
+            if after_pause:
+                print(f"      (after a pause: the whole block sits {shift['drums'] / rate * 1000.0:+.1f} ms from where the wall clock puts it, the voices {', '.join('%s %+.1f ms' % (k, v) for k, v in rel.items()) or 'alone'} from the drums)")
             fit = m_ @ coef
             expl = 1.0 - float(((y - fit) ** 2).sum() / ((y ** 2).sum() + 1e-12))
             exp = {k: g[k] for k in names if k in g}

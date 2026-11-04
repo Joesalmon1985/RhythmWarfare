@@ -74,7 +74,7 @@ func _finish(transport: StemTransport) -> void:
 	if wav != null:
 		wav.save_to_wav(path)
 	var f := FileAccess.open(_out + ".json", FileAccess.WRITE)
-	f.store_string(JSON.stringify({"started_wall": _started_wall, "frames": _frames, "stems": transport.stem_keys, "loop_seconds": transport.loop_seconds, "voices": transport.get("voice_log") if transport.get("voice_log") != null else [], "events": _scene.get("event_log") if _scene.get("event_log") != null else [], "phases": _scene.get("phase_log") if _scene.get("phase_log") != null else [],
+	f.store_string(JSON.stringify({"started_wall": _started_wall, "t0_usec": _t0, "frames": _frames, "stems": transport.stem_keys, "loop_seconds": transport.loop_seconds, "voices": transport.get("voice_log") if transport.get("voice_log") != null else [], "events": _scene.get("event_log") if _scene.get("event_log") != null else [], "phases": _scene.get("phase_log") if _scene.get("phase_log") != null else [],
 		"mix_rate": AudioServer.get_mix_rate(), "output_latency": AudioServer.get_output_latency(), "log": _log}, "\t"))
 	f.close()
 	print("recorded ", path, " ", "no audio" if wav == null else str(wav.get_length()) + " s", ", song start at wall ", _started_wall)

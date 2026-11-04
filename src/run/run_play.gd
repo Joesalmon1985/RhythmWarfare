@@ -50,6 +50,7 @@ var _bot_route_done := -1
 var _until_phase := -1
 var _frame_ms: PackedFloat32Array = PackedFloat32Array()
 var event_log: Array = []  # every engine event except judge/cues (scripted checks and recordings read it)
+var build_log: Array = []  # [{world, ms}] how long each world stage took to build (the main thread stalls that long)
 var phase_log: Array = []  # [{phase, node, t}] for scripted checks
 
 
@@ -108,6 +109,7 @@ func _world_of(node_id: String) -> String:
 func _build_stage(world: String) -> Dictionary:
 	if stages.has(world):
 		return stages[world]
+	var t_build := Time.get_ticks_usec()
 	var entry := StoryChapters.load_default().chapter(world)
 	var loaded := StoryData.load_file(str(entry["data"]))
 	var sd: StoryData = loaded["data"]
@@ -131,6 +133,7 @@ func _build_stage(world: String) -> Dictionary:
 	deck.reduced = Session.reduced_effects
 	var rec := {"stage": st, "assets": assets, "data": sd, "deck": deck, "waypoint": st.map.start_id if st.map != null else ""}
 	stages[world] = rec
+	build_log.append({"world": world, "ms": snappedf(float(Time.get_ticks_usec() - t_build) / 1000.0, 0.1)})
 	return rec
 
 
@@ -209,7 +212,9 @@ func _build_layout(start: String) -> void:
 	hud.name = "Hud"
 	hud.set_anchors_preset(Control.PRESET_FULL_RECT)
 	hud.reduced = Session.reduced_effects
+	hud.stage_h = 0.0
 	add_child(hud)
+	hud.resized.connect(func() -> void: hud.stage_h = hud.size.y * (1.0 - float(Session.PAD_SIZES[clampi(Session.pad_size, 0, 2)])))
 	_route_box = Control.new()
 	_route_box.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_route_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -327,6 +332,7 @@ func _process(delta: float) -> void:
 			_resume_at_wall = -1.0
 			hud.countdown = ""
 			clock.resume()
+			event_log.append({"kind": "resumed", "t": clock.audio_time(), "usec": Time.get_ticks_usec()})
 			lane_input.enabled = true
 		else:
 			hud.countdown = str(ceili(remaining))
@@ -347,6 +353,7 @@ func _process(delta: float) -> void:
 	if clock.state == SongClock.State.PLAYING:
 		_frame_ms.append(delta * 1000.0)
 	_advance(t, audio_t)
+	_scripted_pause(audio_t)
 	if _over_at >= 0.0 and float(Time.get_ticks_msec()) / 1000.0 >= _over_at:
 		_go_over()
 
@@ -388,6 +395,7 @@ func _advance(t: float, audio_t: float) -> void:
 	if _until_phase > 0 and engine.phase_n > _until_phase and not _ended:
 		_ended = true
 		print("RUN reached phase %d at %s, energy %.0f" % [engine.phase_n, engine.node_id, engine.energy])
+		print("RUN stage builds ", JSON.stringify(build_log))
 		if OS.get_environment("RW_STORY_QUIT") == "1":
 			get_tree().quit()
 
@@ -415,6 +423,19 @@ func _prebuild_in_guard(t: float) -> void:
 			if not stages.has(w):
 				_build_stage(w)
 				break
+
+
+## RW_RUN_PAUSE_AT=<song seconds>: pauses there once and resumes a second later (the recording checks nothing drifts across it).
+var _pause_done := false
+
+
+func _scripted_pause(audio_t: float) -> void:
+	if _pause_done or not OS.has_environment("RW_RUN_PAUSE_AT") or clock.state != SongClock.State.PLAYING:
+		return
+	if audio_t >= float(OS.get_environment("RW_RUN_PAUSE_AT")):
+		_pause_done = true
+		_pause()
+		get_tree().create_timer(1.0).timeout.connect(_resume)
 
 
 # --- engine events --------------------------------------------------------------------------------------------------------
@@ -669,6 +690,7 @@ func _pause() -> void:
 	if virtual_mode or _ended or clock.state == SongClock.State.PAUSED or _resume_at_wall >= 0.0:
 		return
 	clock.pause()
+	event_log.append({"kind": "paused", "t": clock.audio_time(), "usec": Time.get_ticks_usec()})
 	engine.judge.pause_interrupt(clock.judge_time())
 	lane_input.clear()
 	lane_input.enabled = false

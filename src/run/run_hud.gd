@@ -13,6 +13,7 @@ var captions: Array = []  # [{text, tone, t0, hold}] in song time
 var title_card := {}  # {kicker, text, t0}
 var now_t := 0.0
 var route_hint := ""
+var stage_h := 0.0  # height of the stage area above the pads (0: the whole control)
 var fade := 0.0  # 0..1 black overlay for the end of a run
 
 var _font: Font
@@ -78,7 +79,7 @@ func _draw() -> void:
 		_outlined(Vector2(0, y), str(c["text"]), int(fs * 1.5), Color(tone, a), sz.x, HORIZONTAL_ALIGNMENT_CENTER)
 		y += fs * 1.8
 	if not route_hint.is_empty():
-		_outlined(Vector2(0, sz.y * 0.88), route_hint, int(fs * 0.9), Color(1, 1, 1, 0.85), sz.x, HORIZONTAL_ALIGNMENT_CENTER)
+		_outlined(Vector2(0, (stage_h if stage_h > 0.0 else sz.y) - fs * 0.6), route_hint, int(fs * 0.8), Color(1, 1, 1, 0.85), sz.x, HORIZONTAL_ALIGNMENT_CENTER)
 	if not title_card.is_empty():
 		var age2 := now_t - float(title_card["t0"])
 		if age2 >= 0.0 and age2 < 3.4:
