@@ -946,3 +946,30 @@ func test_leaving_the_dungeon_resumes_the_run_on_the_same_grid_with_energy_kept(
 	assert_true(_until(scene, func() -> bool: return scene.engine.phase_beat_at(scene._vt) > 20.0, 20.0))
 	assert_eq(scene.trial_state, "", "and the run goes on")
 	_end_run(d, saved, "user://test_trial_save5.json")
+
+
+# --- the hotspots (content/trial/hotspots.json, made from passages.json by tools/trial/make_hotspots.py) -----------------------------------
+
+func test_the_hotspot_file_agrees_with_the_passages_and_the_maps() -> void:
+	var d := _data()
+	var hot := TrialHotspots.load_default()
+	assert_eq(hot.errors, [], "the hotspot file loads")
+	assert_eq(hot.by_passage.size(), d.passages.size(), "every passage, the defeat passage 0 included")
+	var errs := hot.validate(d)
+	assert_eq(errs, [], "one hotspot per choice, anchors in the zone maps, defaults, routes, challenges and failures agree with passages.json")
+	var total := 0
+	for n in d.passages:
+		total += (d.passages[n]["choices"] as Array).size()
+	assert_eq(hot.count(), total, "a hotspot for every choice")
+	var k := hot.kinds()
+	assert_eq(int(k.get("encounter", 0)), 10, "a creature hotspot for each of the ten fights")
+	assert_eq(int(k.get("feature", 0)), 7, "a feature hotspot for each of the seven luck tests")
+	assert_true(int(k.get("object", 0)) >= 4, "the items' objects")
+	assert_true(int(k.get("exit", 0)) > 50)
+	# an item's hotspot is hidden until the item is held
+	var cellar := _id(d, "The Barrel Cellar")
+	assert_eq(hot.visible(cellar, []).size(), (hot.by_passage[cellar] as Array).size() - 0, "nothing gated in the cellar")
+	var gate := _id(d, "The Vault of Records")
+	var without := hot.visible(gate, []).size()
+	var with_item := hot.visible(gate, ["token"]).size()
+	assert_eq(with_item, without + 1, "the token's hotspot appears once the token is held")

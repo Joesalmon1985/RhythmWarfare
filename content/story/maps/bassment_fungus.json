@@ -25,6 +25,7 @@
   {"from": [-10, -9], "to": [6, -8], "sector": "pool", "portal": null, "tex": "wall_fungus"}
  ],
  "things": [
+  {"id": "hs_mildew_mother", "kind": "billboard", "sprite": "thing_glow", "at": [0.87, 3.82], "y": 1.00, "size": 0.05, "anim": "none"},
   {"id": "cap_big", "kind": "billboard", "sprite": "thing_mushroom", "at": [-6.6, 1.8], "y": 3.04, "size": 6.08, "anim": "pulse"},
   {"id": "cap_big_g", "kind": "billboard", "sprite": "thing_glow", "at": [-6.5, 1.9], "y": 2.0, "size": 4.5, "anim": "pulse", "blend": "add"},
   {"id": "cap_a", "kind": "billboard", "sprite": "thing_mushroom", "at": [-3.0, 8.6], "y": 1.52, "size": 3.04, "anim": "pulse"},

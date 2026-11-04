@@ -47,6 +47,7 @@
   {"from": [13.9, 2.4], "to": [13.1, 5.6], "sector": "cold", "portal": null, "tex": "wall_hatch"}
  ],
  "things": [
+  {"id": "hs_furnace_imp", "kind": "billboard", "sprite": "thing_glow", "at": [0.60, 5.90], "y": 0.70, "size": 0.05, "anim": "none"},
   {"id": "furnace_big", "kind": "billboard", "sprite": "thing_furnace", "at": [0, -6.6], "y": 2.2, "size": 4.2, "anim": "pulse"},
   {"id": "glow_furnace", "kind": "billboard", "sprite": "thing_glow", "at": [0, -6.4], "y": 1.8, "size": 6.0, "anim": "pulse", "blend": "add"},
   {"id": "stove_c1", "kind": "billboard", "sprite": "thing_stove", "at": [-5.5, -2.5], "y": 0.9, "size": 1.7, "anim": "none"},

@@ -39,4 +39,16 @@ func _initialize() -> void:
 		for e in errs:
 			print("  ERROR ", e)
 		bad += errs.size()
+	# the hotspots (content/trial/hotspots.json): one per choice, every anchor a waypoint or a thing of its zone's map, the creature markers inside a room with room to stand
+	var hot := TrialHotspots.load_default()
+	var herrs := hot.validate(d)
+	for z in d.zones:
+		var m2 := TrialData.map_of("bassment_" + str(z))
+		for t in m2.things:
+			if str(t["id"]).begins_with("hs_") and not m2.inside(t["at"], str(t["sector"]), 0.4):
+				herrs.append("marker %s of %s is not 0.4 m inside its sector" % [t["id"], z])
+	print("hotspots: %d (%s), %s" % [hot.count(), hot.kinds(), "OK" if herrs.is_empty() else "%d problem(s)" % herrs.size()])
+	for e in herrs:
+		print("  ERROR ", e)
+	bad += herrs.size()
 	quit(0 if bad == 0 else 1)
