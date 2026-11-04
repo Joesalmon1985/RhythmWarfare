@@ -57,6 +57,47 @@ def anvil(cx, yb, sc, hot=True):
     return d
 
 
+def coal_heap(cx, yb, s, rng):
+    """A mound of coal lumps glowing from within, with a shovel stuck in it."""
+    d = ellipse(cx, yb + 2 * s, 62 * s, 10 * s, "#05010a", None, op=0.55)
+    d += ellipse(cx, yb - 8 * s, 58 * s, 22 * s, HOT, None, op=0.12)
+    lumps = []
+    for row in range(4):
+        n = 6 - row
+        for i in range(n):
+            x = cx + (i - (n - 1) / 2) * 17 * s + rng.uniform(-4, 4) * s
+            y = yb - 6 * s - row * 11 * s + rng.uniform(-2, 2) * s
+            lumps.append((x, y, rng.uniform(8, 11) * s))
+    for x, y, r in lumps:
+        pts = [(x + math.cos(a) * r * rng.uniform(0.75, 1.1), y + math.sin(a) * r * 0.72 * rng.uniform(0.8, 1.1)) for a in [k * math.tau / 7 for k in range(7)]]
+        d += poly(pts, rng.choice(("#151b26", "#1c2432", "#10141c")), OUT, 1.8 * s ** 0.5)
+        d += line((x - r * 0.4, y - r * 0.3), (x + r * 0.1, y - r * 0.5), "#6a7a96", 1.2 * s ** 0.5, 0.5)
+        if rng.random() < 0.45:
+            d += path(pline(U.jag((x - r * 0.5, y + r * 0.1), (x + r * 0.4, y + r * 0.25), 3, 2 * s, rng)), None, HOT, 1.6 * s ** 0.5, sop=0.95)
+    d += line((cx + 18 * s, yb - 40 * s), (cx + 40 * s, yb - 86 * s), OUT, 6 * s ** 0.7) + line((cx + 18 * s, yb - 40 * s), (cx + 40 * s, yb - 86 * s), "#8a5a3a", 3.4 * s ** 0.7)
+    d += poly([(cx + 8 * s, yb - 30 * s), (cx + 28 * s, yb - 40 * s), (cx + 22 * s, yb - 22 * s), (cx + 6 * s, yb - 16 * s)], "#6a7a96", OUT, 2.0 * s ** 0.5)
+    return d
+
+
+def ingot_stack(cx, yb, s):
+    """A pallet of cooling ingots: the top layer still glowing."""
+    d = ellipse(cx, yb + 2 * s, 56 * s, 9 * s, "#05010a", None, op=0.55)
+    d += rect(cx - 46 * s, yb - 8 * s, 92 * s, 8 * s, "#5a3a2a", OUT, 2.0 * s ** 0.5)
+    for k in range(3):
+        d += rect(cx - 44 * s + k * 34 * s, yb - 3 * s, 20 * s, 3 * s, "#2a1a14", None)
+    for row in range(3):
+        n = 4 - row
+        for i in range(n):
+            x = cx + (i - (n - 1) / 2) * 22 * s
+            y = yb - 8 * s - (row + 1) * 10 * s
+            hot = row == 2 or (row == 1 and i == 1)
+            col = "#ff7a2a" if hot else "#46587a"
+            d += poly([(x - 10 * s, y + 10 * s), (x - 8 * s, y), (x + 8 * s, y), (x + 10 * s, y + 10 * s)], col, OUT, 1.8 * s ** 0.5)
+            d += line((x - 7 * s, y + 1.5 * s), (x + 7 * s, y + 1.5 * s), WHITE_HOT if hot else "#9ab0d8", 1.2 * s ** 0.5, 0.8)
+    d += ellipse(cx, yb - 40 * s, 40 * s, 16 * s, HOT, None, op=0.14)
+    return d
+
+
 def gear(cx, cy, r, teeth, fill, rim, hub=None, ol=3.0):
     pts = []
     for k in range(teeth * 2):
@@ -232,7 +273,14 @@ def build_backdrop():
             if rng.random() < 0.5:
                 xm = R.floor_x((xfar[i] + xfar[i + 1]) / 2, ym)
                 fl += ellipse(xm, ym, 5 * sc, 1.8 * sc, "#8a9ab8", None, op=0.22)
-    d += group(fl, 'clip-path="url(#fclip)"')
+    # the furnace mouth throws a warm pool of light across the steel, and every channel reflects in it
+    defs += rad_grad("bounce", [(0, "#ff8a3a", 0.42), (0.5, "#ff5a1a", 0.15), (1, "#ff5a1a", 0.0)], 0.5, 0.35, 0.6)
+    fl2 = ellipse(640, 300, 520, 90, "url(#bounce)")
+    for side in (-1, 1):  # cold blue sheen along the walls for contrast
+        q = [(R.floor_x(R.fx0 if side < 0 else R.fx1, R.fy1), R.fy1), (R.floor_x(R.fx0 + 60 if side < 0 else R.fx1 - 60, R.fy1), R.fy1),
+             (R.floor_x(R.fx0 + 60 if side < 0 else R.fx1 - 60, H + 40), H + 40), (R.floor_x(R.fx0 if side < 0 else R.fx1, H + 40), H + 40)]
+        fl2 += poly(q, "#6a8ac8", None, op=0.07)
+    d += group(fl + fl2, 'clip-path="url(#fclip)"')
     defs += lin_grad("chan", [(0, "#ffd070"), (0.12, "#ff8a2a"), (0.55, "#e03a14"), (1, "#8a0e12")], 0, 0, 0, 1)
     for (a, b) in CHANNELS:
         q = [(R.floor_x(a, R.fy1), R.fy1), (R.floor_x(b, R.fy1), R.fy1), (R.floor_x(b, H + 40), H + 40), (R.floor_x(a, H + 40), H + 40)]
@@ -249,9 +297,11 @@ def build_backdrop():
     # the basin under the ladle on the left
     d += ellipse(296, 292, 44, 10, "#0a1018", OUT, 3) + ellipse(296, 291, 36, 7, "#ff5a1a", None, op=0.9) + ellipse(296, 290, 22, 4, WHITE_HOT, None, op=0.9)
     d += ellipse(296, 288, 70, 18, HOT, None, op=0.10)
-    # anvils on the floor, flanking the channel
+    # anvils on the floor, flanking the channel; coal and cooling ingots against the walls
     for (ax, ay) in ANVILS:
         d += anvil(ax, ay, R.scale(ay) * 0.95)
+    d += coal_heap(270, 318, R.scale(318) * 0.75, rng)
+    d += ingot_stack(1008, 318, R.scale(318) * 0.75)
     # chains and a hook hoist hung from the girders on the right
     for xf, ln in ((1000, 90), (1060, 132)):
         d += U.chain((xf, -6), (xf, ln), 9, "#8a9ab8")

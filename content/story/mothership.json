@@ -4,29 +4,29 @@
  "chapter": 2,
  "art": "mothership",
  "music_pack": "res://songs/m10_last_light",
- "description": "An alien ship has taken the whole rave. Out the window the stars slide by: play your best set for a deck full of new friends.",
+ "description": "An alien ship has beamed the whole rave aboard. Stars stream past the windows and four decks of new friends are waiting: play them the set of their lives.",
  "intro": "Welcome aboard.",
  "duration_bars": 80,
  "sequence_bars": 2,
  "initial_energy": 45,
  "palettes": {
   "low": [
-   "#2a3a8a",
-   "#1f7f8f"
+   "#2b3c9a",
+   "#1d8a9a"
   ],
   "cool": [
    "#33ffd1",
    "#6a7bff"
   ],
   "warm": [
-   "#9dff6a",
-   "#ff7ad9"
+   "#ffb347",
+   "#ff4fc8"
   ],
   "rave": [
-   "#33ffd1",
-   "#ff5de0",
-   "#8a6bff",
-   "#ffe85a"
+   "#2ee8c4",
+   "#f04ad6",
+   "#7a5cff",
+   "#ffd23f"
   ]
  },
  "energy": {
@@ -114,8 +114,17 @@
      "group": "early"
     },
     {
+     "at_bar": 5,
+     "action": "piece_on",
+     "piece": "alien_banner"
+    },
+    {
      "at_bar": 7,
      "action": "led_eq"
+    },
+    {
+     "at_bar": 7,
+     "action": "beams_sweep"
     }
    ]
   },
@@ -159,14 +168,23 @@
      "else": "look_around"
     },
     {
+     "at_bar": 13,
+     "action": "piece_on",
+     "piece": "pylon_beams"
+    },
+    {
      "at_bar": 15,
      "action": "led_bars"
+    },
+    {
+     "at_bar": 15,
+     "action": "haze_burst"
     }
    ]
   },
   {
    "id": "first_bass_reveal",
-   "title": "First bass reveal",
+   "title": "Through the hatch",
    "act": "Act II",
    "start_bar": 17,
    "bars": 8,
@@ -184,16 +202,16 @@
     },
     {
      "at_bar": 17,
+     "action": "lights_warm"
+    },
+    {
+     "at_bar": 17,
      "action": "woofer_pump_on"
     },
     {
      "at_bar": 17,
-     "action": "haze_burst"
-    },
-    {
-     "at_bar": 17,
      "action": "piece_on",
-     "piece": "pylon_beams"
+     "piece": "gallery_planet_shine"
     },
     {
      "at_bar": 19,
@@ -205,45 +223,55 @@
      "action": "beams_fan"
     },
     {
-     "at_bar": 23,
-     "action": "spotlight_sweep"
-    },
-    {
      "at_bar": 21,
      "action": "camera_look",
      "dx": -140,
      "bars": 3
+    },
+    {
+     "at_bar": 21,
+     "action": "piece_pulse",
+     "piece": "gallery_planet_shine",
+     "bars": 3
+    },
+    {
+     "at_bar": 23,
+     "action": "spotlight_sweep"
     }
    ]
   },
   {
    "id": "guests_gather",
-   "title": "Guests gather at the airlock",
+   "title": "Guests at the arch",
    "act": "Act II",
    "start_bar": 25,
    "bars": 8,
    "events": [
     {
      "at_bar": 25,
-     "action": "lights_warm"
-    },
-    {
-     "at_bar": 25,
      "action": "gather_at_door",
      "group": "gatherers"
     },
     {
-     "at_bar": 27,
-     "action": "piece_on",
-     "piece": "hologram_dome"
+     "at_bar": 25,
+     "action": "led_rings"
     },
     {
-     "at_bar": 29,
+     "at_bar": 27,
      "action": "beams_cross"
     },
     {
+     "at_bar": 27,
+     "action": "piece_on",
+     "piece": "gallery_holo_menu"
+    },
+    {
      "at_bar": 31,
-     "action": "led_rings"
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 31,
+     "action": "led_wave"
     }
    ]
   },
@@ -262,6 +290,15 @@
      "bars": 2
     },
     {
+     "at_bar": 33,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 33,
+     "action": "piece_on",
+     "piece": "reactor_core_glow"
+    },
+    {
      "at_bar": 35,
      "action": "circle_form",
      "group": "circle"
@@ -272,17 +309,23 @@
     },
     {
      "at_bar": 37,
-     "action": "lights_cool"
+     "action": "piece_pulse",
+     "piece": "reactor_core_glow",
+     "bars": 2
     },
     {
      "at_bar": 39,
      "action": "beams_fan"
+    },
+    {
+     "at_bar": 39,
+     "action": "led_eq"
     }
    ]
   },
   {
    "id": "spotlight_pass",
-   "title": "Spotlight pass",
+   "title": "Spotlight on the core",
    "act": "Act III",
    "start_bar": 41,
    "bars": 8,
@@ -297,6 +340,12 @@
      "action": "spotlight_sweep"
     },
     {
+     "at_bar": 41,
+     "action": "camera_look",
+     "dx": 120,
+     "bars": 3
+    },
+    {
      "at_bar": 43,
      "action": "glowsticks_on"
     },
@@ -305,20 +354,24 @@
      "action": "hero_center"
     },
     {
+     "at_bar": 45,
+     "action": "piece_pulse",
+     "piece": "reactor_core_glow",
+     "bars": 4
+    },
+    {
      "at_bar": 47,
      "action": "led_wave"
     },
     {
-     "at_bar": 41,
-     "action": "camera_look",
-     "dx": 120,
-     "bars": 3
+     "at_bar": 47,
+     "action": "haze_burst"
     }
    ]
   },
   {
    "id": "group_footwork",
-   "title": "Group footwork",
+   "title": "Gravity off",
    "act": "Act III",
    "start_bar": 49,
    "bars": 8,
@@ -329,6 +382,20 @@
      "view": "bridge",
      "style": "walk",
      "bars": 2
+    },
+    {
+     "at_bar": 49,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 49,
+     "action": "piece_on",
+     "piece": "bridge_holo_globe"
+    },
+    {
+     "at_bar": 51,
+     "action": "bring_in",
+     "group": "peak"
     },
     {
      "at_bar": 51,
@@ -349,6 +416,12 @@
      "action": "beams_cross"
     },
     {
+     "at_bar": 53,
+     "action": "camera_look",
+     "dx": -110,
+     "bars": 3
+    },
+    {
      "at_bar": 55,
      "action": "clap_sync",
      "bars": 2,
@@ -358,10 +431,8 @@
      "else": "look_around"
     },
     {
-     "at_bar": 53,
-     "action": "camera_look",
-     "dx": -110,
-     "bars": 3
+     "at_bar": 55,
+     "action": "led_bars"
     }
    ]
   },
@@ -373,12 +444,18 @@
    "bars": 8,
    "events": [
     {
-     "at_bar": 59,
-     "action": "piece_on",
-     "piece": "saucer_flyby"
+     "at_bar": 57,
+     "action": "camera_push",
+     "zoom": 0.14,
+     "bars": 2
     },
     {
-     "at_bar": 61,
+     "at_bar": 57,
+     "action": "piece_on",
+     "piece": "bridge_alert_beacons"
+    },
+    {
+     "at_bar": 59,
      "action": "led_rings"
     },
     {
@@ -386,13 +463,16 @@
      "action": "regroup"
     },
     {
+     "at_bar": 61,
+     "action": "beams_fan"
+    },
+    {
      "at_bar": 63,
      "action": "haze_burst"
     },
     {
-     "at_bar": 57,
-     "action": "camera_push",
-     "zoom": 0.14,
+     "at_bar": 63,
+     "action": "light_wave",
      "bars": 2
     }
    ]
@@ -413,15 +493,20 @@
     },
     {
      "at_bar": 65,
-     "action": "riser_up"
-    },
-    {
-     "at_bar": 65,
      "action": "bring_in",
      "group": "peak"
     },
     {
      "at_bar": 65,
+     "action": "piece_on",
+     "piece": "saucer_flyby"
+    },
+    {
+     "at_bar": 67,
+     "action": "riser_up"
+    },
+    {
+     "at_bar": 67,
      "action": "hero_solo",
      "bars": 6
     },
@@ -430,8 +515,22 @@
      "action": "spotlight_hero"
     },
     {
+     "at_bar": 67,
+     "action": "doors_open"
+    },
+    {
+     "at_bar": 67,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
      "at_bar": 69,
      "action": "lights_rave"
+    },
+    {
+     "at_bar": 69,
+     "action": "piece_on",
+     "piece": "hologram_dome"
     },
     {
      "at_bar": 71,
@@ -447,6 +546,12 @@
    "start_bar": 73,
    "bars": 8,
    "events": [
+    {
+     "at_bar": 73,
+     "action": "camera_push",
+     "zoom": 0.12,
+     "bars": 2
+    },
     {
      "at_bar": 75,
      "action": "rave_peak",
@@ -477,10 +582,12 @@
      "action": "beams_cross"
     },
     {
-     "at_bar": 73,
-     "action": "camera_push",
-     "zoom": 0.12,
-     "bars": 2
+     "at_bar": 79,
+     "action": "piece_on",
+     "piece": "beam_home",
+     "when": {
+      "energy_max": 39
+     }
     }
    ]
   }
@@ -489,11 +596,11 @@
   {
    "id": "translation",
    "title": "The universal translator",
-   "at_bar": 33,
-   "block": "dance_circle",
+   "at_bar": 29,
+   "block": "guests_gather",
    "rule": {
     "energy_min": 55,
-    "recent_sequences": 16,
+    "recent_sequences": 12,
     "recent_pass_min": 0.5,
     "smooth": 4,
     "dead_band": 4
@@ -506,8 +613,8 @@
     "dancers_step_back",
     "look_around"
    ],
-   "good_text": "The guests streamed onto the floor, all of them dancing.",
-   "bad_text": "A few guests hung back, puzzled by the beat."
+   "good_text": "The translator clicked on and the guests poured in through the arch, already dancing.",
+   "bad_text": "The translator crackled. A few guests hung back at the arch, puzzled by the beat."
   },
   {
    "id": "zero_g",
@@ -525,14 +632,14 @@
     "circle_spotlight_cheer",
     {
      "action": "piece_pulse",
-     "piece": "hologram_dome",
+     "piece": "bridge_holo_globe",
      "bars": 4
     }
    ],
    "bad": [
     "circle_breaks_awkward"
    ],
-   "good_text": "Gravity let go and the whole circle floated into the spotlight cheering.",
+   "good_text": "Gravity let go and the whole circle floated up into the spotlight, cheering.",
    "bad_text": "The gravity glitched and the circle drifted apart."
   },
   {
@@ -550,15 +657,16 @@
    "good": [
     "drop_synchronised_jump",
     {
-     "action": "piece_on",
-     "piece": "warp_streaks"
+     "action": "piece_pulse",
+     "piece": "bridge_warp_streaks",
+     "bars": 4
     }
    ],
    "bad": [
     "drop_stumble"
    ],
-   "good_text": "The ship jumped to warp and the floor jumped with it.",
-   "bad_text": "The warp jump stuttered, but the set stayed alive."
+   "good_text": "The ship jumped to warp and the whole bridge jumped with it.",
+   "bad_text": "The warp drive stuttered, but the set kept the bridge moving."
   },
   {
    "id": "win_back",
@@ -575,7 +683,7 @@
     "winback_cheer"
    ],
    "bad": [],
-   "good_text": "You won the floor back after a rough patch.",
+   "good_text": "You won the deck back after a rough patch.",
    "bad_text": "",
    "kind": "winback"
   },
@@ -592,13 +700,17 @@
     "dead_band": 4
    },
    "good": [
-    "final_chant"
+    "final_chant",
+    {
+     "action": "piece_on",
+     "piece": "warp_streaks"
+    }
    ],
    "bad": [
     "final_flicker"
    ],
-   "good_text": "The whole ship chanted for one more.",
-   "bad_text": "The signal flickered and the deck thinned out."
+   "good_text": "The ship went to warp and the whole deck chanted for one more.",
+   "bad_text": "The signal flickered and the deck began to thin out."
   }
  ],
  "endings": {
@@ -606,19 +718,19 @@
    "title": "Galactic Headliner",
    "energy_min": 85,
    "pass_min": 0.94,
-   "text": "Every deck of the ship is dancing. The aliens carry you out as the headliner of the galaxy."
+   "text": "Every deck of the ship is dancing. The aliens carry you shoulder-high under the stars: the headliner of the galaxy."
   },
   "honoured_guest": {
    "title": "Honoured Guest",
    "energy_min": 40,
    "pass_min": 0.5,
-   "text": "A warm welcome and a happy crowd. The aliens treat you as an honoured guest."
+   "text": "A warm welcome and a happy crowd. The aliens name you an honoured guest and promise to come and visit."
   },
   "beamed_home": {
    "title": "Beamed Home",
    "energy_min": -1,
    "pass_min": 0.0,
-   "text": "The deck emptied politely. The aliens thank you and beam you off the ship."
+   "text": "The deck emptied politely. The aliens thank you, wave goodbye and beam you gently home."
   }
  },
  "ending_order": [

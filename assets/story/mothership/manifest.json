@@ -4,7 +4,7 @@
  "px_scale_note": "texture px x px_scale = design px",
  "archetypes": {
   "grey": {
-   "height": 250,
+   "height": 261,
    "joints": {
     "hips": [
      0,
@@ -140,8 +140,8 @@
        "z": 10,
        "file": "source/chars/grey_a/head.svg",
        "pivot": [
-        102,
-        146
+        110,
+        164
        ],
        "px_scale": 0.5
       }
@@ -150,32 +150,32 @@
       "neutral": {
        "file": "source/chars/grey_a/face_neutral.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       },
       "happy": {
        "file": "source/chars/grey_a/face_happy.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       },
       "cheer": {
        "file": "source/chars/grey_a/face_cheer.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       },
       "sad": {
        "file": "source/chars/grey_a/face_sad.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       }
@@ -290,8 +290,8 @@
        "z": 10,
        "file": "source/chars/grey_b/head.svg",
        "pivot": [
-        102,
-        146
+        110,
+        164
        ],
        "px_scale": 0.5
       }
@@ -300,32 +300,32 @@
       "neutral": {
        "file": "source/chars/grey_b/face_neutral.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       },
       "happy": {
        "file": "source/chars/grey_b/face_happy.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       },
       "cheer": {
        "file": "source/chars/grey_b/face_cheer.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       },
       "sad": {
        "file": "source/chars/grey_b/face_sad.svg",
        "pivot": [
-        82,
-        146
+        90,
+        164
        ],
        "px_scale": 0.5
       }
@@ -1199,6 +1199,22 @@
         118
        ],
        "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/insect_a/hair_front.svg",
+       "pivot": [
+        100,
+        210
+       ],
+       "px_scale": 0.5,
+       "swing": true,
+       "swing_pivot": [
+        100,
+        125.0
+       ]
       }
      ],
      "faces": {
@@ -1365,6 +1381,22 @@
         118
        ],
        "px_scale": 0.5
+      },
+      {
+       "name": "hair_front",
+       "joint": "head",
+       "z": 20,
+       "file": "source/chars/insect_b/hair_front.svg",
+       "pivot": [
+        100,
+        210
+       ],
+       "px_scale": 0.5,
+       "swing": true,
+       "swing_pivot": [
+        100,
+        125.0
+       ]
       }
      ],
      "faces": {
@@ -2794,23 +2826,24 @@
     "z": "behind"
    },
    {
-    "id": "bar_glow",
-    "file": "source/pieces/bar_glow.svg",
+    "id": "beam_home",
+    "file": "source/pieces/beam_home.svg",
     "pos": [
-     934,
-     130
+     360.0,
+     -12
     ],
     "size": [
-     80,
-     140
+     560,
+     420
     ],
     "px_scale": 0.5,
     "pivot": [
-     80.0,
-     140.0
+     560.0,
+     768
     ],
-    "anim": "flicker",
-    "z": "behind"
+    "anim": "pulse",
+    "z": "front",
+    "blend": "add"
    },
    {
     "id": "hologram_dome",
@@ -2984,6 +3017,12 @@
      ],
      "wall_left_x": 440,
      "wall_right_x": 840,
+     "doorway": [
+      588,
+      142,
+      104,
+      108
+     ],
      "window": [
       840,
       -40,
@@ -3220,6 +3259,12 @@
       640,
       126,
       74
+     ],
+     "doorway": [
+      388,
+      150,
+      62,
+      112
      ]
     },
     "pieces": [
@@ -3278,6 +3323,26 @@
       "pivot": [
        660,
        90
+      ],
+      "anim": "flicker",
+      "z": "behind",
+      "blend": "add"
+     },
+     {
+      "id": "reactor_steam",
+      "file": "source/views/reactor_steam.svg",
+      "pos": [
+       150,
+       150
+      ],
+      "size": [
+       980,
+       260
+      ],
+      "px_scale": 0.5,
+      "pivot": [
+       980,
+       300
       ],
       "anim": "flicker",
       "z": "behind",

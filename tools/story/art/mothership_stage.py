@@ -557,6 +557,21 @@ def spr_deck(sprites: dict) -> None:
     sprites["desk_lip_glow"] = {"file": "source/props/desk_lip_glow.svg", "pivot": pivot_in(info, (640, 8)), "px_scale": 0.5}
 
 
+def spot_ring_png() -> dict:
+    """The floor spotlight re-themed as a hologram landing ring: a bright rim, two faint inner rings and a soft, low centre. The runtime
+    draws spot pools additively over the crowd, so the centre stays dim enough that dancers standing in it never wash out to white."""
+    w, h = 400, 140
+    yy, xx = np.mgrid[0:h, 0:w]
+    r = np.hypot((xx - w / 2 + 0.5) / (w / 2), (yy - h / 2 + 0.5) / (h / 2))
+    a = np.clip(1 - r ** 2, 0, 1) ** 1.5 * 0.26
+    a += np.exp(-((r - 0.86) / 0.06) ** 2) * 0.62 * (r < 1.0)
+    a += np.exp(-((r - 0.6) / 0.03) ** 2) * 0.22 + np.exp(-((r - 0.34) / 0.03) ** 2) * 0.16
+    rgba = np.zeros((h, w, 4))
+    rgba[..., :3] = 255
+    rgba[..., 3] = np.clip(a, 0, 1) * 255
+    return {"file": _save("spot_pool.png", rgba), "pivot": [w / 2, h / 2], "px_scale": 1.0}
+
+
 def sparks_png() -> dict:
     """Confetti re-themed as star sparks: four 32 px frames of different stars/diamonds (supersampled)."""
     cols = [(255, 255, 255), (79, 240, 168), (25, 230, 255), (255, 194, 63)]
@@ -638,7 +653,7 @@ def piece_dome() -> dict:
     w, h = 460, 250
     cx, by = w / 2, 214
     rx, ry, hh = 222, 36, 196
-    defs = lin_grad("dm", [(0, CYAN, 0.04), (0.7, CYAN, 0.12), (1, GREEN, 0.34)], 0, 0, 0, 1)
+    defs = lin_grad("dm", [(0, CYAN, 0.02), (0.7, CYAN, 0.06), (1, GREEN, 0.2)], 0, 0, 0, 1)
     dome = f"M{cx - rx} {by} C{cx - rx} {by - hh * 1.3} {cx + rx} {by - hh * 1.3} {cx + rx} {by} A{rx} {ry} 0 0 1 {cx - rx} {by} Z"
     d = path(dome, "url(#dm)", None)
     for k in range(1, 5):  # latitude rings
@@ -749,14 +764,34 @@ def piece_banner() -> dict:
             "pivot": pivot_in(info, (w / 2, 0)), "anim": "sway", "z": "behind"}
 
 
-def piece_bar_glow() -> dict:
-    w, h = 80, 140
-    defs = lin_grad("bgl", [(0, MAG, 0.0), (0.5, MAG, 0.4), (1, VIO, 0.0)], 0, 0, 0, 1)
-    d = rect(0, 0, w, h, "url(#bgl)", None, op=0.9, rx=14) + neon((10, 124), (w - 10, 124), MAG, 1.6, 1.0)
-    d += glyph(w / 2, 16, 14, "#ffffff", 3, 0.9) + circle(w / 2, 16, 12, None, "#ffffff", 1.4, sop=0.9)
-    info = write_svg("pieces/bar_glow.svg", (0, 0, w, h), d, defs)
-    return {"id": "bar_glow", "file": "source/pieces/bar_glow.svg", "pos": [934, 130], "size": [w, h], "px_scale": 0.5,
-            "pivot": pivot_in(info, (w / 2, h / 2)), "anim": "flicker", "z": "behind"}
+def piece_beam_home() -> dict:
+    """The goodbye beam: a tractor-beam column from the ceiling onto the dance circle, light on transparent (drawn additively over the
+    crowd). Switched on near the end when the deck has gone quiet, so the `beamed_home` ending reads before the tableau."""
+    w, h = 560, 420
+    cx, top, by = w / 2, 6, 384  # by = floor centre of the circle (design y 372) inside the piece
+    rx_t, rx_b = 34, 238
+    defs = lin_grad("bh", [(0, "#eafff6", 0.55), (0.55, GREEN, 0.2), (1, CYAN, 0.32)], 0, 0, 0, 1)
+    defs += lin_grad("bhc", [(0, "#ffffff", 0.6), (1, "#d8fff0", 0.15)], 0, 0, 0, 1)
+    defs += rad_grad("bhp", [(0, "#ffffff", 0.75), (0.45, GREEN, 0.35), (1, CYAN, 0.0)])
+    d = poly([(cx - rx_t, top), (cx + rx_t, top), (cx + rx_b, by), (cx - rx_b, by)], "url(#bh)")
+    d += poly([(cx - rx_t * 0.4, top), (cx + rx_t * 0.4, top), (cx + rx_b * 0.32, by), (cx - rx_b * 0.32, by)], "url(#bhc)")
+    for s in (-1, 1):  # bright edges
+        d += line((cx + s * rx_t, top), (cx + s * rx_b, by), "#ffffff", 7, 0.12) + line((cx + s * rx_t, top), (cx + s * rx_b, by), "#e6fff4", 2, 0.75)
+    for k in range(1, 7):  # scan rings travelling down the column
+        t = k / 7
+        y = top + (by - top) * t
+        rx = rx_t + (rx_b - rx_t) * t
+        d += ellipse(cx, y, rx, rx * 0.18, None, "#ffffff", 5, sop=0.1) + ellipse(cx, y, rx, rx * 0.18, None, "#d8fff0", 1.6, sop=0.55)
+    d += ellipse(cx, by, rx_b + 40, 58, "url(#bhp)") + ellipse(cx, by, rx_b, 44, None, "#ffffff", 2.4, sop=0.8)
+    rng = random.Random(64)
+    for _ in range(26):  # rising motes
+        t = rng.random()
+        y = top + 30 + (by - top - 40) * t
+        x = cx + (rng.random() - 0.5) * 2 * (rx_t + (rx_b - rx_t) * t) * 0.85
+        d += circle(x, y, rng.choice((1.4, 2.0, 2.6)), "#ffffff", None, op=rng.choice((0.6, 0.8, 0.95)))
+    info = write_svg("pieces/beam_home.svg", (0, 0, w, h), d, defs)
+    return {"id": "beam_home", "file": "source/pieces/beam_home.svg", "pos": [640 - cx, 372 - by], "size": [w, h], "px_scale": 0.5,
+            "pivot": pivot_in(info, (cx, by)), "anim": "pulse", "z": "front", "blend": "add"}
 
 
 # ---- manifest -------------------------------------------------------------------------------------------------------------------------
@@ -784,6 +819,7 @@ def build_stage() -> dict:
     sprites["door_open"] = spr_door_open(sprites)
     spr_deck(sprites)
     sprites.update(png.build_png_sprites())
+    sprites["spot_pool"] = spot_ring_png()
     sprites["confetti"] = sparks_png()
     woofers = []
     for sid in ("speaker_l", "speaker_r"):
@@ -800,7 +836,7 @@ def build_stage() -> dict:
         "wall_left_x": FX0, "wall_right_x": FX1, "horizon_y": VPY,
         "window": list(WIN), "planet": list(PLANET), "bar": [944, 140, 60, 122],
     }
-    pieces = [piece_planet_glow(), piece_warp(), piece_saucer(), piece_ring_lights(), piece_pylon_beams(), piece_banner(), piece_bar_glow(), piece_dome()]
+    pieces = [piece_planet_glow(), piece_warp(), piece_saucer(), piece_ring_lights(), piece_pylon_beams(), piece_banner(), piece_beam_home(), piece_dome()]
     from . import mothership_views as views  # the three extra rooms (gallery, reactor, bridge) and the passage frame
     sprites["passage_frame"] = views.passage_frame()
     return {"design_size": [W, H], "layers": layers, "anchors": anchors, "sprites": sprites, "pieces": pieces, "views": views.build_views(),
@@ -876,12 +912,20 @@ def build_interlude() -> dict:
     yy, xx = np.mgrid[0:h, 0:w]
     t = yy / h
     half = (30 + 88 * t ** 1.15) * 1.0
-    u = np.abs(xx - w / 2 + 0.5) / half
+    xs = (xx - w / 2 + 0.5) / half
+    u = np.abs(xs)
+    inside = u < 1.0
     body = np.clip(1 - u ** 2.2, 0, 1)
     core = np.clip(1 - u, 0, 1) ** 1.6
-    edge = np.exp(-((u - 0.92) / 0.08) ** 2) * (u < 1.05)
-    a = (0.45 * body + 0.4 * core + 0.18 * edge) * (0.55 + 0.45 * np.sin(t * math.pi * 0.5 + 0.2))
-    a *= np.clip(t * 12, 0, 1) * np.clip((1 - t) * 10 + 0.55, 0, 1)
+    edge = np.exp(-((u - 0.94) / 0.06) ** 2) * (u < 1.05)
+    rings = np.zeros_like(t)
+    for tk in (0.22, 0.38, 0.54, 0.7, 0.86):  # scan rings seen from the side: shallow ellipses around the column
+        yk = tk * h + (2 + 7 * tk) * np.sqrt(np.clip(1 - u ** 2, 0, 1))
+        rings += np.exp(-((yy - yk) / 1.4) ** 2) * inside
+    a = (0.34 * body + 0.4 * core + 0.55 * edge + 0.35 * rings) * (0.6 + 0.4 * np.sin(t * math.pi * 0.5 + 0.2))
+    pool = np.exp(-(((xx - w / 2 + 0.5) / 62.0) ** 2 + ((yy - h * 0.9) / 6.0) ** 2))  # where it meets the floor
+    a = np.maximum(a, 0.75 * pool)
+    a *= np.clip(t * 12, 0, 1) * np.clip((1 - t) * 9, 0, 1) * np.clip((1.06 - u) * 8, 0, 1)
     arr = np.zeros((h, w, 4))
     arr[..., :3] = (225, 255, 240)
     arr[..., 3] = np.clip(a, 0, 1) * 255

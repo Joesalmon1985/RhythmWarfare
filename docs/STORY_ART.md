@@ -107,10 +107,10 @@ the same camera and perspective, and the same manifest schema, so the runtime ne
 are untouched (`check_assets.py --determinism` hashes both folders). Run `build_assets.py mothership`; the PNGs are small (glow, beam,
 spot_pool, haze, vignette, confetti shared in kind with Night One; plus the interlude PNGs).
 
-- `archetypes` (rig contract as above, same four faces, same part names): `grey` (big head, silver jumpsuit), `antenna` (tall, two
-  swinging antennae with glowing tips, `hair_front` swing), `blob` (round translucent jelly body, short limbs), `insect` (mantis, long
-  thin limbs, forearm blades, mandibles; its wing-cases are the `hair_back` part with `swing: true` on joint **`torso`**, pivot at the
-  neck), `cyclops` (one big eye, stocky, overalls), `tentacle` (head crest with five swinging tentacles `hair_back` plus two front locks
+- `archetypes` (rig contract as above, same four faces, same part names): `grey` (big cranium, huge slanted almond eyes, silver
+  jumpsuit with shoulder pads), `antenna` (tall, two swinging antennae with glowing tips, `hair_front` swing), `blob` (round translucent
+  jelly body, short limbs), `insect` (mantis, long thin limbs, forearm blades, mandibles, swinging feelers as `hair_front`; its wing-cases
+  are the `hair_back` part with `swing: true` on joint **`torso`**, pivot at the neck), `cyclops` (one big eye, stocky, overalls), `tentacle` (head crest with five swinging tentacles `hair_back` plus two front locks
   `hair_front`). Two variants each (`a`/`b`: skin, outfit palette and one detail, such as the grey's chest emblem or the blob's spots
   versus stripes). Eyes carry the emotion (`cheer` is a squint with an open mouth, `sad` has drooping lids, brows and a sweat drop).
   `glow_hand` is the hand position in the forearm texture for the shared `glowstick` sprite (an orb wand here).
@@ -121,8 +121,9 @@ spot_pool, haze, vignette, confetti shared in kind with Night One; plus the inte
 - `stage.sprites`: the same ids as Night One, re-themed (`fixture` = light-probe orb, `disco_ball` = energy orb, `glowstick` = orb wand,
   `confetti` = star sparks, `platter` = hologram disc); light sprites stay white so the runtime tints them.
 - `stage.pieces`: `planet_window_glow` (pulse, behind), `warp_streaks` (none, behind; drawn off the LED screen), `saucer_flyby` (bob,
-  behind), `ring_lights` (pulse, behind), `pylon_beams` (pulse, behind), `alien_banner` (sway, behind; pivot at its top edge), `bar_glow`
-  (flicker, behind), `hologram_dome` (pulse, front). Entry fields: `file`, `pos` (top-left, design px), `size`, `px_scale`, `pivot`
+  behind), `ring_lights` (pulse, behind), `pylon_beams` (pulse, behind), `alien_banner` (sway, behind; pivot at its top edge), `beam_home`
+  (pulse, front, `blend: add`: the goodbye tractor beam onto the dance circle, cued at bar 79 when the deck has gone quiet),
+  `hologram_dome` (pulse, front; a faint fill so it never washes out the dancers under it). Entry fields: `file`, `pos` (top-left, design px), `size`, `px_scale`, `pivot`
   (animation origin, texture px), `anim`, `z` (`behind` = over the backdrop and under the crowd, `front` = over the crowd). The glowing
   ones are light-on-transparent: draw them additively.
 - `interlude` (for the scripted UFO scene over the **Night One** club): `sprites` `ufo` (900 x 260 design px, seen from below, pivot at
@@ -143,15 +144,23 @@ Each view is `{id, title, layers, anchors, pieces, palette_hint}`. `layers`: `ba
 `front_frame` (1280 x 480, `z: "front"`: arches, pipes or console wedges at the screen edges, over the crowd). Anchors use the main deck's
 conventions (`floor_rows` with the scale derived from that room's horizon, `floor_polygon`, `floor_grid`, 8 `light_points`, `led_screen`,
 `circle_centre`/`circle_radii`, `vanish`, `horizon_y`, `disco_ball`, `wall_left_x`/`wall_right_x`); optional keys are only present where the room has
-the feature: `woofers` (bridge only, speaker pods at the ends of the far console bank), `riser` (bridge, the captain's dais). No view has a
-`doorway` (the shared `door_open` sprite is positioned for the dance deck's airlock). Extra descriptive anchors: `window`, `planet`, `bar`,
+the feature: `woofers` (bridge only, speaker pods at the ends of the far console bank), `riser` (bridge, the captain's dais), `doorway`
+(gallery: the amber arch, where the gatherers wait; reactor: the left blast door the late arrivals use; arrivals walk out of it). The shared
+`door_open` overlay is positioned for the dance deck's airlock, so `doors_open` is only cued while the camera is on the main deck. Extra descriptive anchors: `window`, `planet`, `bar`,
 `core`, `chair`. Pieces use the main schema plus `blend: "add"` for the light-on-transparent ones (`pos` top-left, `pivot` in texture px).
 
 | view | place | vanish | pieces (anim, z, blend) |
 | --- | --- | --- | --- |
-| `gallery` | long lounge gallery, curved window wall with the planet on the right, booths and sofas on the left, bar and amber arched door at the end | (640, 150), the door | `gallery_planet_shine` (pulse, behind, add), `gallery_cruiser` (bob, behind), `gallery_holo_menu` (flicker, behind, add) |
-| `reactor` | ring chamber: containment housing with the glowing core, energy pylons, catwalk grating floor over the reactor pit, hazard ring | (640, 140), the core | `reactor_core_glow` (pulse, add), `reactor_core_ring` (rotate, add), `reactor_pylon_arcs` (flicker, add); all behind |
-| `bridge` | command bridge: viewscreen with a star field and planet, banked consoles, captain's chair on a dais, star-chart ring | (640, 125), the viewscreen | `bridge_warp_streaks` (pulse, add), `bridge_holo_globe` (bob, add), `bridge_alert_beacons` (flicker, add); all behind |
+| `gallery` | long lounge gallery, curved window wall with the planet's night side (lit crescent, city lights) on the right, booths and tufted sofas with pillows on the left, bar and amber arched door at the end, reflected in the polished floor | (640, 150), the door | `gallery_planet_shine` (pulse, behind, add), `gallery_cruiser` (bob, behind), `gallery_holo_menu` (flicker, behind, add) |
+| `reactor` | ring chamber: containment housing with the glowing core, energy pylons (shaded plating, glass coolant tubes with bubbles, hazard plinths), catwalk grating over the glowing pit, a riveted walkway with chevrons and the core's reflection, hazard ring | (640, 140), the core | `reactor_core_glow` (pulse, add), `reactor_core_ring` (rotate, add), `reactor_pylon_arcs` (flicker, add), `reactor_steam` (flicker, add: venting coolant beside the plinths); all behind |
+| `bridge` | command bridge: viewscreen with a star field and planet, banked consoles, captain's chair on a dais, star-chart ring, a runway with chevrons and the viewscreen's reflection on the deck | (640, 125), the viewscreen | `bridge_warp_streaks` (pulse, add), `bridge_holo_globe` (bob, add), `bridge_alert_beacons` (flicker, add); all behind |
+
+Staging (`content/story/mothership.json`): the camera moves on the four bass entries of the music (bars 17 step into the gallery, 33 turn
+into the reactor, 49 walk onto the bridge, 65 turn back to the main deck), each room is lit with its own palette on arrival (gallery `warm` =
+amber/magenta, reactor and bridge `cool` = mint/blue-violet, main finale `rave`), and every `piece_on` / `piece_pulse` cue names a piece of
+the room the camera is in at that bar (a view's pieces are on while that room is shown; a `piece_on` on arrival fades one in with the
+room). Decisions play where their crowd is: the translator at bar 29 in the gallery (the gatherers waiting at the arch walk in or hang
+back), gravity-off and the warp jump on the bridge, the final transmission on the main deck.
 
 `passage_frame`: an octagonal bulkhead hatch frame (door slots, hazard stripes, sign plate, neon lining) authored 640 x 360 design px
 (a 1280 x 720 texture, `px_scale` 0.5, centre pivot), so a 2x scale covers the 1280 x 720 frame; the octagonal opening (`opening` = x, y, w, h in
@@ -197,24 +206,28 @@ and one detail. Extra parts are ordinary parts: swinging ones carry `swing: true
 | id | read | parts beyond the base set | variant detail |
 | --- | --- | --- | --- |
 | `imp` | small, big head, pointed ears, cute fangs | `tail` (joint `hips`, swing, spade tip), horns in `hair_back` | a vest, b striped shirt |
-| `brute` | broad, ram horns, tusks and nose ring, spiked pauldrons on the upper arms | ram horns in `hair_back` | a leather harness with skull buckle, b gold chest plate |
-| `fiend` | tall, slick quiff, small horns, goatee, waistcoat | `wings` (joint `torso`, swing, bat wings) | a bow tie, b long tie |
+| `brute` | broad, ram horns, tusks and nose ring, bulging deltoids under armoured pauldrons | ram horns in `hair_back`; `pauldron_l`/`pauldron_r` (joint **`torso`**, z 6: a riveted dome with two lames, gold trim and three horn spikes, drawn over the upper arm so a raised arm slides out from under it) | a leather harness with skull buckle and iron pauldrons with a skull boss, b gold chest plate and orange pauldrons with a flame sigil |
+| `fiend` | tall, slick quiff, pale horns, goatee, waistcoat, jacket sleeves with shirt cuffs | `wings` (joint `torso`, swing, bat wings) | a purple jacket and bow tie, b red suit and long tie |
 | `skeleton` | bone body with ribs and spine, hollow grin, party hat | party hat in `hair_front` | a red hat, b green hat and bow tie |
-| `flame` | fire spirit, orange (a) or violet-blue (b) body, flame feet | flame hair in `hair_back` + `hair_front` (both swing) | a shorts, b scarf |
+| `flame` | fire spirit, orange (a) or violet-blue (b) body with a hot core down every limb, flames off the shoulders and forearms, flame feet | flame hair in `hair_back` + `hair_front` (both swing) | a shorts, b scarf |
 | `horned_queen` | elegant, long sweeping horns, long hair, pointed boots | `cape` (joint `torso`, swing) and a fixed `collar`, `skirt` on `hips` | a bare arms, b opera gloves |
 
-The `glow_hand` position and the `glowstick` sprite (white, tintable) form a small flame torch. Rear silhouettes `sil_a` (ram horns),
-`sil_b` (bat wings), `sil_c` (big ears, little horns, tail) have `idle` and `up`, with orange (left) and magenta (right) rim lights.
+Every demon has a tapered neck with a shadow under the jaw. The `glow_hand` position and the `glowstick` sprite (white, tintable) form a
+small flame torch. Rear silhouettes `sil_a` (a brute: spiral ram horns, spiked pauldrons), `sil_b` (a fiend: swept horns, quiff, wide bat
+wings), `sil_c` (an imp: big ears, little horns, spade tail) have `idle` and `up` (arms up with devil-horns hands), with orange (left) and
+magenta (right) rim lights.
 
 ## The room (`stage`)
 
 Same perspective, anchors, `floor_rows` and sprite ids as Night One. `layers`: `backdrop` (cavern ceiling with stalactites, far wall with
 lava veins, lava falls on the side walls, bone columns, the fanged hellmouth at the back centre, the marquee `led_screen` hung on chains,
-the closed iron `doorway` gate, a bone bar, cracked obsidian floor with glowing tiles and a summoning circle matching `circle_*`, fire-pit
-bowls), `riser` (bone-and-iron platform), `speaker_l/r` (infernal amp stacks with horns and skulls; their `pos`/`size` include a small
+the closed iron `doorway` gate, a bone bar, cracked obsidian floor with glowing tiles and a summoning circle matching `circle_*`, lava
+gutters along the foot of both side walls fed by the lava falls, fire-pit bowls), `riser` (bone-and-iron platform), `speaker_l/r` (infernal amp stacks with horns and skulls; their `pos`/`size` include a small
 overhang), `desk_top`. Extra anchors: `floor_grid`, `wall_left_x`, `wall_right_x`, `horizon_y`, `hellmouth` [x, y, r], `fire_pits`.
 Sprites: `woofer` (toothed iron ring), `fixture` (a demonic eye-lamp), `disco_ball` (an infernal brazier orb in a cage), `glowstick`
-(torch), `door_open`, the deck pieces, and the white lighting sprites (`glow beam spot_pool haze_a haze_b vignette`, `confetti` = ash-embers).
+(torch), `door_open` (the gate thrown open on hellfire, iron leaves swung in, a horned arrival, an orange spill on the floor), the deck pieces, and the white lighting sprites (`glow beam spot_pool haze_a haze_b vignette`, `confetti` = ash-embers).
+`spot_pool` is the chapter's own: a dimmer centre and a fainter far half than Night One's, because the runtime draws it over the crowd and the
+dancer standing in a spotlight must stay lit rather than washed out.
 
 `stage.pieces` (switch on/off/animate by id; `pos`/`size` are the top-left rectangle in design px, `pivot` is relative to `pos`, `blend: add`
 means draw additively):
@@ -240,9 +253,9 @@ calls `build_views()` last, so the `main` room and every older file are untouche
 
 | view | place | floor / crowd | pieces (anim, z, blend) | optional anchors |
 | --- | --- | --- | --- | --- |
-| `court` | obsidian court: columns with gold bands, gothic windows, banners, a red runner to a stepped dais with the skull throne and braziers (violet, gold, magenta) | horizon 140, floor from y 258, rows 286..438 | `court_throne_aura` (pulse, behind, add), `court_flames` (flicker, behind, add), `court_banners` (sway, behind, mix, pivot at the top), `court_seal` (pulse, behind, add) | `led_screen` (judgement tablet over the throne), `riser`, `disco_ball`, `throne`, `braziers`; no woofers |
-| `pit` | lava lake, far-shore fortress and volcano, a bone causeway and two bridges, the stage platform out on the lake (ember red, orange, bone) | horizon 190, chamfered platform polygon from y 266 (row 0 stays between x 330 and 950, the lake shows at the sides) | `pit_lava_glare` (pulse, behind, add), `pit_plumes_l/_r` (flicker, behind, add), `pit_fortress_glow` (pulse, behind, add) | `led_screen`, 4 `woofers` (two amp stacks on the platform), `riser`, `causeway`, `bridges` |
-| `furnace` | the great forge: riveted steel hall, pipes, hazard stripes, anvils, molten channels, a huge grinning demon face whose furnace mouth is the screen (steel blue, white-hot orange) | horizon 125, floor from y 264, rows 286..438 | `furnace_eyes` (pulse, behind, add), `furnace_ladle` (sway, behind, mix, pivot at the crane chain), `furnace_sparks` (flicker, behind, add), `furnace_channels` (pulse, behind, add) | `led_screen` (the mouth), 4 `woofers` (boiler hatches), `riser`, `face`, `anvils`, `channels` |
+| `court` | obsidian court: columns with gold bands, gothic windows, banners, a red runner to a stepped dais with the skull throne and braziers; the polished floor mirrors the columns, braziers and window light and has gold inlay bands (violet, gold, magenta) | horizon 140, floor from y 258, rows 286..438 | `court_throne_aura` (pulse, behind, add), `court_flames` (flicker, behind, add), `court_banners` (sway, behind, mix, pivot at the top), `court_seal` (pulse, behind, add) | `led_screen` (judgement tablet over the throne), `riser`, `disco_ball`, `throne`, `braziers`; no woofers |
+| `pit` | lava lake, far-shore fortress and volcano, a bone causeway and two bridges, the stage platform out on the lake: basalt running-bond slabs with hot seams, a lava-lit stone curb round the rim (gaps where the causeway and bridges land) with skull lanterns, the lake glowing and bubbling against it (ember red, orange, bone) | horizon 190, chamfered platform polygon from y 266 (row 0 stays between x 330 and 950, the lake shows at the sides) | `pit_lava_glare` (pulse, behind, add), `pit_plumes_l/_r` (flicker, behind, add; rising out of the lake beyond the rim), `pit_fortress_glow` (pulse, behind, add) | `led_screen`, `doorway` (the bone gate in the left cliff: arrivals cross the left bridge), 4 `woofers` (two amp stacks on the platform), `riser`, `causeway`, `bridges` |
+| `furnace` | the great forge: riveted steel hall, pipes, hazard stripes, anvils, molten channels, a glowing coal heap and a pallet of cooling ingots, a huge grinning demon face whose furnace mouth is the screen and throws a warm pool across the steel floor (steel blue, white-hot orange) | horizon 125, floor from y 264, rows 286..438 | `furnace_eyes` (pulse, behind, add), `furnace_ladle` (sway, behind, mix, pivot at the crane chain), `furnace_sparks` (flicker, behind, add), `furnace_channels` (pulse, behind, add) | `led_screen` (the mouth), 4 `woofers` (boiler hatches), `riser`, `face`, `anvils`, `channels` |
 
 `vanish` is where the dolly pushes when walking out of that view: the throne niche, the fortress gate, the furnace mouth. Every view
 also has `light_points` (8, hung from the roof or girders), `circle_centre`/`circle_radii` (a seal on the floor under the crowd),
@@ -259,7 +272,26 @@ shows the frame.
 ## Interlude (`interlude`)
 
 Sprites to composite over Night One's club view (fixed camera): `crack_glow` (a fissure fanning out in perspective, pivot at its far end),
-`crack_segment` (a straight slice to stretch or chain), `flame_jet` (tall flame, pivot at the base, animate by flip/scale), `portal_vortex`
+`crack_segment` (a straight slice to stretch or chain); both have a charred dark lip round the molten core and fade out before the texture
+edges, so their glow is never cut off however they are stretched. `flame_jet` (a soft licking flame PNG with two side tongues, 80 x 180
+design px, pivot at the base, animate by flip/scale), `portal_vortex`
 (512 px red-black swirl, centre pivot), `embers` (4 frames of 32 px), `dark_wash` (red-black full-screen wash, 320 x 180 shown at 4x).
 Anchors: `crack_origin`, `crack_end`, `portal_centre`, `flame_jets` (two floor points), and the contract's `ufo_hover`/`beam_floor`
 (unused by this chapter, kept for the generic cutscene code). Draw the `blend: add` ones additively.
+
+## Staging (`content/story/underworld.json`)
+
+The camera moves on the block downbeats (bars 17, 33, 49, 57) and every eight-bar block has its own beat. Set pieces are switched in the room
+the camera is in (a room's own pieces are ambient; switching them on at the move that enters the room lets later `piece_pulse` events flash
+them without a fade-in pop), and the main room's pieces that only matter on the way back (`skull_throne`, `ember_rain`) wait for bar 57.
+
+| bars | room | block | beat |
+| --- | --- | --- | --- |
+| 1-8 | main | The gate opens | gate doors open, the floor's lava cracks ignite at 3, the first demons arrive at 5, LED and chains at 7 |
+| 9-16 | main | The demons watch | the fire pits roar left (9) and right (11), sweeping beams, footwork; the hellmouth opens at 15 with a camera lean |
+| 17-24 | court | Through the hellmouth | step through the hell-gate on the bass drop; the court gatherers pour in at 19 (or wait at the side on a cold floor); the throne aura flares at 21 |
+| 25-32 | court | The court assembles | warm light, late demons stream in, the seal flares at 29, a push towards the throne before the walk |
+| 33-40 | pit | The inferno circle | walk out onto the lava lake; the circle forms at 35, the brazier orb and cool light at 37, more demons cross the bridge at 39 |
+| 41-48 | pit | The lake and the bass | the fortress flares, hero to the centre, glow torches, a light wave and haze |
+| 49-56 | furnace | Into the forge | turn into the forge on the drop; peak demons, hero solo on the riser, the face's eyes flare at 53 and the channels at 55 |
+| 57-64 | main | The final verdict | walk back to the main room, where the skull throne now stands on the risen stage; ember rain with the peak at 59 |

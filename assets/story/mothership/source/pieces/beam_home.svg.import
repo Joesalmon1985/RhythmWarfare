@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://n7mkjg4gnir4"
-path="res://.godot/imported/bar_glow.svg-b29acc2d5743efd8a54dd681089c3e2f.ctex"
+uid="uid://dm52bfbncgwcw"
+path="res://.godot/imported/beam_home.svg-ace5d73ccf8924c8ae1536a9a6b1593a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/mothership/source/pieces/bar_glow.svg"
-dest_files=["res://.godot/imported/bar_glow.svg-b29acc2d5743efd8a54dd681089c3e2f.ctex"]
+source_file="res://assets/story/mothership/source/pieces/beam_home.svg"
+dest_files=["res://.godot/imported/beam_home.svg-ace5d73ccf8924c8ae1536a9a6b1593a.ctex"]
 
 [params]
 

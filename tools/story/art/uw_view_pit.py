@@ -138,51 +138,97 @@ def build_backdrop():
     d += bone_bridge((640, 267), (640, fy + 2), 54, 13, n_post=6)
     d += bone_bridge((196, 316), (110, 240), 32, 13, n_post=6)
     d += bone_bridge((1084, 316), (1170, 240), 32, 13, n_post=6)
-    # ---- the platform: dark stone slab with a bone rim, a glowing seal and floor lines
-    defs += lin_grad("plat", [(0, "#3a1828"), (0.4, "#220e1a"), (1, "#0e0410")], 0, 0, 0, 1)
-    d += poly(PLATFORM, "#ff6a1a", None, op=0.0)
-    d += ellipse(640, 300, 700, 90, "#ff3a1a", None, op=0.10)
+    # ---- the platform: basalt slabs with hot seams, a raised stone curb round the rim and a glowing seal
+    defs += lin_grad("plat", [(0, "#3a1828"), (0.4, "#240e1c"), (1, "#120610")], 0, 0, 0, 1)
+    defs += lin_grad("edgeglow", [(0, "#ff7a2a", 0.0), (1, "#ff7a2a", 0.55)], 0, 0, 1, 0)
+    # the lake boils and glows right against the rim (drawn before the slab so the slab cuts it)
+    for (a, b) in ((PLATFORM[7], PLATFORM[0]), (PLATFORM[6], PLATFORM[7]), (PLATFORM[5], PLATFORM[6]),
+                   (PLATFORM[1], PLATFORM[2]), (PLATFORM[2], PLATFORM[3]), (PLATFORM[3], PLATFORM[4])):
+        sc = R.scale((a[1] + b[1]) / 2)
+        d += line(a, b, "#ff8a2a", 30 * sc ** 0.8, 0.22) + line(a, b, "#ffd070", 12 * sc ** 0.8, 0.35)
+    for k in range(26):  # splashes and bubbles hugging the rim
+        side = -1 if k % 2 == 0 else 1
+        t = rng.uniform(0.05, 0.95)
+        a, b = (PLATFORM[7], PLATFORM[5]) if side < 0 else (PLATFORM[2], PLATFORM[4])
+        x, y = a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t
+        sc = R.scale(y) * 0.5
+        x += side * rng.uniform(8, 30) * sc
+        d += ellipse(x, y, 7 * sc, 3 * sc, "#fff0b0", "#ff9a2a", 1.0, op=0.7)
     d += poly([(x, y + 7) for x, y in PLATFORM[:5]], "#08020a", None, op=0.55)
     d += poly(PLATFORM, "url(#plat)")
     defs += clip("platclip", poly(PLATFORM))
     gp = ""
-    ys = R.floor_lines(0.07)
-    for i, yy in enumerate(ys):
-        if yy > 262:
-            gp += line((-80, yy), (W + 80, yy), "#a06a7a", 1.0 + i * 0.14, 0.2)
-    for kx in range(-14, 15):
-        xf = 640 + kx * 45
-        gp += line((xf, 266), (R.floor_x(xf, H + 40), H + 40), "#a06a7a", 1.3, 0.18)
-    cols = [(LAVA, 0.30), (EMBER, 0.2), (MAG, 0.16), ("#46202c", 0.6), ("#2a0c1a", 0.7), (LAVA, 0.12), (VIO, 0.14)]
-    yl = [yy for yy in ys if 264 <= yy <= 530]
-    xf0 = [330 + 62 * i for i in range(-8, 18)]
-    for j in range(len(yl) - 1):
-        for i in range(len(xf0) - 1):
-            if rng.random() < 0.55:
-                c, a = cols[rng.randrange(len(cols))]
-                q = [(R.floor_x(xf0[i], yl[j]), yl[j]), (R.floor_x(xf0[i + 1], yl[j]), yl[j]), (R.floor_x(xf0[i + 1], yl[j + 1]), yl[j + 1]), (R.floor_x(xf0[i], yl[j + 1]), yl[j + 1])]
-                gp += poly(q, c, None, op=a) + poly(q, None, lighten(c, 0.35), 1.0, sop=0.4)
-    for k in range(30):  # cracks
+    ys = [yy for yy in R.floor_lines(0.085) if yy > 262]
+    for j in range(len(ys) - 1):  # running-bond slabs: rows offset by half a slab, each slab its own shade of basalt
+        ya, yb = ys[j], ys[j + 1]
+        off = 0.5 if j % 2 else 0.0
+        for i in range(-12, 13):
+            xa, xb = 640 + (i + off - 0.5) * 70, 640 + (i + off + 0.5) * 70
+            q = [(R.floor_x(xa, ya), ya), (R.floor_x(xb, ya), ya), (R.floor_x(xb, yb), yb), (R.floor_x(xa, yb), yb)]
+            tone = rng.choice(("#3a1828", "#46202e", "#2c1220", "#502634", "#341424"))
+            gp += poly(q, tone, "#0a0208", 1.6 * R.scale(ya) ** 0.5, op=0.95)
+            gp += line((q[0][0] + 2, q[0][1] + 1.2), (q[1][0] - 2, q[1][1] + 1.2), "#9a5a6a", 1.1 * R.scale(ya) ** 0.5, 0.5)  # lit top edge of the slab
+            gp += line((q[3][0] + 2, q[3][1] - 1.5), (q[2][0] - 2, q[2][1] - 1.5), "#08020a", 1.4 * R.scale(ya) ** 0.5, 0.45)
+            hot = rng.random()
+            if hot < 0.16:  # an ember-lit inlay in a few slabs
+                cxm, cym = (q[0][0] + q[2][0]) / 2, (ya + yb) / 2
+                sc = R.scale(cym)
+                gp += ellipse(cxm, cym, 14 * sc, 3.2 * sc, LAVA, None, op=0.22) + ellipse(cxm, cym, 7 * sc, 1.6 * sc, "#ffd070", None, op=0.4)
+        gp += U.neon((-80, yb), (W + 80, yb), "#ff5a1a", 0.7 * R.scale(yb) ** 0.5, 0.35) if j % 3 == 1 else line((-80, yb), (W + 80, yb), "#08020a", 1.6 * R.scale(yb) ** 0.5, 0.8)
+    for k in range(24):  # cracks with a lava glint
         xf_ = rng.uniform(-200, 1480)
-        ya = rng.uniform(268, H - 60)
+        ya = rng.uniform(270, H - 60)
         sc = R.scale(ya) * 1.0
         xa = R.floor_x(xf_, ya)
         pts = U.jag((xa, ya), (xa + rng.uniform(-30, 30) * sc, ya + rng.uniform(14, 46) * sc), 4, 7 * sc, rng)
         gp += path(pline(pts), None, "#08020a", 2.0 * sc, sop=0.7)
         if k % 3 == 0:
             gp += path(pline(pts), None, LAVA, 1.0 * sc, sop=0.7)
+    # heat from the lake creeping onto the slabs along both side edges
+    for side in (-1, 1):
+        pts = [PLATFORM[7], PLATFORM[6], PLATFORM[5]] if side < 0 else [PLATFORM[2], PLATFORM[3], PLATFORM[4]]
+        inner = [(x - side * 70 * R.scale(y) ** 0.9, y) for x, y in pts]
+        gid = "heat%d" % (side + 1)
+        defs += lin_grad(gid, [(0, "#ff6a1a", 0.32 if side < 0 else 0.0), (1, "#ff6a1a", 0.0 if side < 0 else 0.32)], 0, 0, 1, 0)
+        gp += poly(pts + inner[::-1], f"url(#{gid})")
     ccx, ccy, crx, cry = 640, 372, 250, 46
-    for rr, op, c in ((1.0, 0.75, EMBER), (0.88, 0.45, LAVA)):
-        gp += ellipse(ccx, ccy, crx * rr, cry * rr, None, c, 1.8 if rr == 1.0 else 1.2, sop=op)
-    star = [(ccx + math.cos(math.radians(-90 + k * 144)) * crx * 0.94, ccy + math.sin(math.radians(-90 + k * 144)) * cry * 0.94) for k in range(5)]
-    gp += path("M" + " L".join(f"{f(x)} {f(y)}" for x, y in star) + " Z", None, LAVA, 1.4, sop=0.55)
+    gp += ellipse(ccx, ccy, crx * 1.04, cry * 1.12, "#120610", None, op=0.55)  # the seal is a dark inlaid disc
+    for rr, op, c, wd in ((1.0, 0.85, EMBER, 2.2), (0.94, 0.5, LAVA, 1.2), (0.62, 0.5, LAVA, 1.2)):
+        gp += ellipse(ccx, ccy, crx * rr, cry * rr, None, c, wd, sop=op)
+    for k in range(30):
+        a = k * math.tau / 30
+        gp += line((ccx + math.cos(a) * crx * 0.95, ccy + math.sin(a) * cry * 0.95), (ccx + math.cos(a) * crx * 0.99, ccy + math.sin(a) * cry * 0.99), "#ffd2a0", 1.4 if k % 3 else 2.4, 0.8)
+    star = [(ccx + math.cos(math.radians(-90 + k * 144)) * crx * 0.92, ccy + math.sin(math.radians(-90 + k * 144)) * cry * 0.92) for k in range(5)]
+    gp += path("M" + " L".join(f"{f(x)} {f(y)}" for x, y in star) + " Z", None, LAVA, 1.4, sop=0.6)
     d += group(gp, 'clip-path="url(#platclip)"')
-    rim = PLATFORM[:5]
-    rimpath = "M" + " L".join(f"{f(x)} {f(y)}" for x, y in [(-50, 520)] + [PLATFORM[7], PLATFORM[0], PLATFORM[1], PLATFORM[2], PLATFORM[3], PLATFORM[4]])
-    d += path(rimpath, None, OUT, 11) + path(rimpath, None, "#d8c8a0", 7) + path(rimpath, None, "#fff2c8", 1.6, sop=0.55)
-    d += path(rimpath, None, LAVA, 1.6, sop=0.0)
-    inner = "M" + " L".join(f"{f(x)} {f(y)}" for x, y in [(2, 520), (PLATFORM[7][0] + 8, PLATFORM[7][1] + 8), (PLATFORM[0][0] + 8, 276), (PLATFORM[1][0] - 8, 276), (PLATFORM[2][0] - 8, PLATFORM[2][1] + 8), (1262, 520)])
-    d += U.neon_path(inner, LAVA, 1.1, 0.8)
+    # the curb: a low stone parapet round the rim (we see its inner face), gaps where the causeway and bridges land
+    def curb(a, b, gaps=(), n=10):
+        out = ""
+        for i in range(n):
+            t0, t1 = i / n, (i + 1) / n
+            tm = (t0 + t1) / 2
+            if any(g0 <= tm <= g1 for g0, g1 in gaps):
+                continue
+            p0 = (a[0] + (b[0] - a[0]) * t0, a[1] + (b[1] - a[1]) * t0)
+            p1 = (a[0] + (b[0] - a[0]) * t1, a[1] + (b[1] - a[1]) * t1)
+            h0, h1 = 13 * R.scale(p0[1]), 13 * R.scale(p1[1])
+            face = [p0, p1, (p1[0], p1[1] - h1), (p0[0], p0[1] - h0)]
+            out += poly(face, "#5a2a36" if i % 2 else "#68323e", OUT, 1.8 * R.scale(p0[1]) ** 0.5)
+            out += poly([p0, p1, (p1[0], p1[1] - h1 * 0.35), (p0[0], p0[1] - h0 * 0.35)], "#1a0610", None, op=0.45)  # shadow at its foot
+            out += line((p0[0], p0[1] - h0), (p1[0], p1[1] - h1), "#ff8a3a", 4.4 * R.scale(p0[1]) ** 0.5, 0.35)  # lava glow over the top
+            out += line((p0[0], p0[1] - h0), (p1[0], p1[1] - h1), "#ffd090", 1.8 * R.scale(p0[1]) ** 0.5, 0.95)  # lava-lit coping
+            out += line((p0[0], p0[1] - h0 * 0.45), (p1[0], p1[1] - h1 * 0.45), "#08020a", 1.0 * R.scale(p0[1]) ** 0.5, 0.35)
+        return out
+    rimsegs = [(PLATFORM[5], PLATFORM[6], ()), (PLATFORM[6], PLATFORM[7], ((0.6, 1.0),)), (PLATFORM[7], PLATFORM[0], ((0.0, 0.18),)),
+               (PLATFORM[0], PLATFORM[1], ((0.4, 0.6),)), (PLATFORM[1], PLATFORM[2], ((0.82, 1.0),)), (PLATFORM[2], PLATFORM[3], ((0.0, 0.4),)), (PLATFORM[3], PLATFORM[4], ())]
+    for a, b, gaps in rimsegs:
+        ln = math.hypot(b[0] - a[0], b[1] - a[1])
+        d += curb(a, b, gaps, max(4, int(ln / 40)))
+    for t, (a, b) in ((0.5, (PLATFORM[6], PLATFORM[7])), (0.55, (PLATFORM[5], PLATFORM[6])), (0.5, (PLATFORM[2], PLATFORM[3])), (0.55, (PLATFORM[3], PLATFORM[4]))):
+        x, y = a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t  # bone posts with skull lanterns along the side curbs
+        sc = R.scale(y) * 0.55
+        d += rect(x - 4 * sc, y - 34 * sc, 8 * sc, 34 * sc, BONE, OUT, 1.8)
+        d += circle(x, y - 36 * sc, 14 * sc, "#ff7a1a", None, op=0.18) + U.skull(x, y - 38 * sc, 7.5 * sc, BONE, "#ff7a1a", 1.6, jaw=False)
     for (px_, py_) in ((330, 266), (950, 266), (170, 320), (1110, 320)):  # corner skull posts
         d += rect(px_ - 5, py_ - 16, 10, 20, BONE, OUT, 2.0) + U.skull(px_, py_ - 22, 9, BONE, "#ff7a1a", 1.7, jaw=False)
     # ---- amp stacks at the platform's rear corners, with woofer sockets
@@ -279,8 +325,8 @@ def build_pieces():
             d += circle(rng.uniform(30, 170), rng.uniform(10, 200), rng.uniform(1.2, 2.6), "#ffe08a", None, op=0.9)
         name = "pit_plumes_%s" % ("l" if side < 0 else "r")
         write_svg(f"views/{name}.svg", (0, 0, w, h), d)
-        cx = 60 if side < 0 else 1220
-        out.append(V.piece(name, f"source/views/{name}.svg", (cx - w / 2, 356 - h + 10), (w, h), "flicker", "behind", "add", pivot=(w / 2, h - 10)))
+        cx = 44 if side < 0 else 1236
+        out.append(V.piece(name, f"source/views/{name}.svg", (cx - w / 2, 306 - h + 10), (w, h), "flicker", "behind", "add", pivot=(w / 2, h - 10)))
     # 3. the far fortress: windows and gate burning, a halo above
     w, h = 400, 200
     defs = rad_grad("fg", [(0, "#ff7a3a", 0.8), (0.5, "#ff3a1a", 0.3), (1, "#ff3a1a", 0.0)], 0.5, 0.6, 0.5)
@@ -300,8 +346,9 @@ def build():
     pieces = build_pieces()
     anchors = {
         "led_screen": [440, 54, 400, 34],
+        "doorway": [72, 196, 44, 62],  # the bone gate in the left cliff: arrivals cross the left bridge onto the platform
         "floor_rows": R.rows(),
-        "floor_polygon": [list(p) for p in PLATFORM],
+        "floor_polygon": [[400, 266], [880, 266], [round(R.floor_x(880, 520)), 520], [round(R.floor_x(400, 520)), 520]],  # the lit dance zone
         "floor_grid": R.grid(9),
         "light_points": LIGHTS,
         "woofers": woofers,

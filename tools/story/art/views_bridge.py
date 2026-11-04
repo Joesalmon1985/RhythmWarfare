@@ -142,10 +142,17 @@ def build_bridge_backdrop() -> dict:
     fl += poly(R.plane(R.b0, 2.4, kf, 520, 760), "#06102e", None, op=0.5)
     for u in (520, 760):
         fl += line(R.p(2.4, u, R.b0), R.p(kf, u, R.b0), RED, 3.0, 0.9) + line(R.p(2.4, u, R.b0), R.p(kf, u, R.b0), "#ffd0d0", 1.0, 0.7)
-    for dd in ds[2:-1:2]:
-        k1_, k0_ = 1.0 / dd, 1.0 / (dd - 0.12)
-        fl += poly([R.p(k1_, 560, R.b0), R.p(k1_, 640, R.b0), R.p(k0_, 640, R.b0), R.p(k0_, 560, R.b0)], RED, None, op=0.0)
-        fl += poly([R.p(k1_, 560, R.b0), R.p(k1_ * 0.97 + k0_ * .03, 640, R.b0), R.p(k0_, 560, R.b0), R.p(k0_, 520 + 40, R.b0)], CYAN, None, op=0.0)
+    pq = lambda dd_, u: R.p(1.0 / dd_, u, R.b0)
+    for j, d0 in enumerate(ds[2:10]):  # chevrons on the runway pointing at the viewscreen
+        if d0 <= 0.3:
+            break
+        fl += poly([pq(d0, 556), pq(d0 + 0.16, 640), pq(d0, 724), pq(d0 + 0.07, 724), pq(d0 + 0.23, 640), pq(d0 + 0.07, 556)],
+                   "#ff8a96" if j % 2 else CYAN, None, op=round(0.5 - 0.03 * j, 2))
+    # the viewscreen's light on the polished deck: a long cool reflection and the planet's pink glow
+    defs += lin_grad("vrefl", [(0, "#dff4ff", 0.34), (0.5, CYAN, 0.1), (1, CYAN, 0.0)], 0, 0, 0, 1)
+    fl += poly([R.p(kf, 330, R.b0), R.p(kf, 950, R.b0), R.p(1.6, 1300, R.b0), R.p(1.6, -20, R.b0)], "url(#vrefl)")
+    for x0_, col in ((560, "#ff9ab0"),):
+        fl += poly([R.p(kf, 820, R.b0), R.p(kf, 950, R.b0), R.p(1.5, 1180, R.b0), R.p(1.5, 900, R.b0)], col, None, op=0.07)
     d += group(fl, 'clip-path="url(#floorclip)"')
     # the star-chart ring under the dancers
     cx_c, cy_c, rx_c, ry_c = 640, 372, 250, 46
