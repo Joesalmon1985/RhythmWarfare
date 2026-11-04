@@ -1,0 +1,695 @@
+{
+ "version": 1,
+ "level": "bassment",
+ "px_scale_note": "the Bassment has no rigs; its world is textures only",
+ "textures": {
+  "ceil_arch": {
+   "file": "textures/ceil_arch.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "ceil_beams": {
+   "file": "textures/ceil_beams.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "ceil_crystal": {
+   "file": "textures/ceil_crystal.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "ceil_pipes": {
+   "file": "textures/ceil_pipes.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "ceil_rock": {
+   "file": "textures/ceil_rock.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "fig_barrel_knight_attack": {
+   "file": "textures/fig_barrel_knight_attack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_barrel_knight_idle": {
+   "file": "textures/fig_barrel_knight_idle.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_barrel_knight_struck": {
+   "file": "textures/fig_barrel_knight_struck.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_bouncer_attack": {
+   "file": "textures/fig_bouncer_attack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_bouncer_idle": {
+   "file": "textures/fig_bouncer_idle.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_bouncer_struck": {
+   "file": "textures/fig_bouncer_struck.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_cable_eel_attack": {
+   "file": "textures/fig_cable_eel_attack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_cable_eel_idle": {
+   "file": "textures/fig_cable_eel_idle.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_cable_eel_struck": {
+   "file": "textures/fig_cable_eel_struck.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_echo_attack": {
+   "file": "textures/fig_echo_attack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_echo_idle": {
+   "file": "textures/fig_echo_idle.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_echo_struck": {
+   "file": "textures/fig_echo_struck.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_furnace_imp_attack": {
+   "file": "textures/fig_furnace_imp_attack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_furnace_imp_idle": {
+   "file": "textures/fig_furnace_imp_idle.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_furnace_imp_struck": {
+   "file": "textures/fig_furnace_imp_struck.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_gargoyle_attack": {
+   "file": "textures/fig_gargoyle_attack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_gargoyle_idle": {
+   "file": "textures/fig_gargoyle_idle.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_gargoyle_struck": {
+   "file": "textures/fig_gargoyle_struck.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_lampmoth_attack": {
+   "file": "textures/fig_lampmoth_attack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_lampmoth_idle": {
+   "file": "textures/fig_lampmoth_idle.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_lampmoth_struck": {
+   "file": "textures/fig_lampmoth_struck.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_mildew_mother_attack": {
+   "file": "textures/fig_mildew_mother_attack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_mildew_mother_idle": {
+   "file": "textures/fig_mildew_mother_idle.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_mildew_mother_struck": {
+   "file": "textures/fig_mildew_mother_struck.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_mirror_twin_attack": {
+   "file": "textures/fig_mirror_twin_attack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_mirror_twin_idle": {
+   "file": "textures/fig_mirror_twin_idle.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_mirror_twin_struck": {
+   "file": "textures/fig_mirror_twin_struck.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_rat_king_attack": {
+   "file": "textures/fig_rat_king_attack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_rat_king_idle": {
+   "file": "textures/fig_rat_king_idle.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_rat_king_struck": {
+   "file": "textures/fig_rat_king_struck.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_wizard_attack": {
+   "file": "textures/fig_wizard_attack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "fig_wizard_idle": {
+   "file": "textures/fig_wizard_idle.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "floor_crystal": {
+   "file": "textures/floor_crystal.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "floor_dirt": {
+   "file": "textures/floor_dirt.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "floor_flag": {
+   "file": "textures/floor_flag.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "floor_grate": {
+   "file": "textures/floor_grate.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_kitchen": {
+   "file": "textures/floor_kitchen.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_mirror": {
+   "file": "textures/floor_mirror.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_moss": {
+   "file": "textures/floor_moss.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "floor_pavement": {
+   "file": "textures/floor_pavement.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "floor_straw": {
+   "file": "textures/floor_straw.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "floor_wood": {
+   "file": "textures/floor_wood.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "sky_dawn": {
+   "file": "textures/sky_dawn.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_barrel": {
+   "file": "textures/thing_barrel.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_bones": {
+   "file": "textures/thing_bones.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_cables": {
+   "file": "textures/thing_cables.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_coatrack": {
+   "file": "textures/thing_coatrack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_crystal": {
+   "file": "textures/thing_crystal.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_door": {
+   "file": "textures/thing_door.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_furnace": {
+   "file": "textures/thing_furnace.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_glow": {
+   "file": "textures/thing_glow.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_hand": {
+   "file": "textures/thing_hand.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_ladder": {
+   "file": "textures/thing_ladder.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_lamp": {
+   "file": "textures/thing_lamp.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_mushroom": {
+   "file": "textures/thing_mushroom.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_rope": {
+   "file": "textures/thing_rope.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_sign": {
+   "file": "textures/thing_sign.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_skull": {
+   "file": "textures/thing_skull.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_stove": {
+   "file": "textures/thing_stove.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_torch": {
+   "file": "textures/thing_torch.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_valve": {
+   "file": "textures/thing_valve.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "wall_barrel": {
+   "file": "textures/wall_barrel.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.0
+  },
+  "wall_brass": {
+   "file": "textures/wall_brass.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_brick": {
+   "file": "textures/wall_brick.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "wall_brick_dark": {
+   "file": "textures/wall_brick_dark.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "wall_cable": {
+   "file": "textures/wall_cable.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "wall_crystal": {
+   "file": "textures/wall_crystal.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "wall_door": {
+   "file": "textures/wall_door.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_fungus": {
+   "file": "textures/wall_fungus.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "wall_hands": {
+   "file": "textures/wall_hands.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_hatch": {
+   "file": "textures/wall_hatch.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_iron": {
+   "file": "textures/wall_iron.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.0
+  },
+  "wall_mirror": {
+   "file": "textures/wall_mirror.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_pipe": {
+   "file": "textures/wall_pipe.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "wall_rock": {
+   "file": "textures/wall_rock.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_shelf": {
+   "file": "textures/wall_shelf.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.0
+  },
+  "wall_tile": {
+   "file": "textures/wall_tile.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "water": {
+   "file": "textures/water.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "water_1": {
+   "file": "textures/water_1.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "water_2": {
+   "file": "textures/water_2.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "water_3": {
+   "file": "textures/water_3.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  }
+ }
+}
