@@ -1462,6 +1462,117 @@
    "variant": "a",
    "group": "peak",
    "enter_from": "side"
+  },
+  {
+   "id": "b01",
+   "archetype": "ponytail",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "serve",
+   "prop": "tray",
+   "pace_axis": [
+    0,
+    1
+   ],
+   "pace_m": 1.6
+  },
+  {
+   "id": "b02",
+   "archetype": "hoodie",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "b03",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "b04",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "s01",
+   "archetype": "curly",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "sleep"
+  },
+  {
+   "id": "s02",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "chat"
+  },
+  {
+   "id": "s03",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "chat"
+  },
+  {
+   "id": "s04",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "phone"
+  },
+  {
+   "id": "v01",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "target": "floor_centre"
+  },
+  {
+   "id": "v02",
+   "archetype": "ponytail",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "point",
+   "target": "c01"
+  },
+  {
+   "id": "v03",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "watch",
+   "target": "floor_centre"
+  },
+  {
+   "id": "w01",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "lean_wall"
+  },
+  {
+   "id": "d01",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "check",
+   "prop": "tickets",
+   "target": "door"
   }
  ],
  "silhouettes": [

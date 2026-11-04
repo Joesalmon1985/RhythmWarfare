@@ -27,7 +27,7 @@ func test_night_one_map_is_clean() -> void:
 	assert_true(m.errors.is_empty(), str(m.errors))
 	for w in ["floor_centre", "floor_edge", "steps", "stage", "booth", "balcony", "chill", "corridor", "cubicle", "door"]:
 		assert_true(m.has_waypoint(w), "waypoint " + w)
-	assert_eq(m.homes.size(), 30, "a home for every actor")
+	assert_eq(m.homes.size(), 43, "a home for every actor")
 	for room in ["entrance", "tunnel_a", "floor", "steps", "riser", "booth", "balcony", "bstair_1", "bar", "chill", "corridor", "toilets", "cubicle_a", "cubicle_b"]:
 		assert_false(m.sector(room).is_empty(), "sector " + room)
 	assert_true(m.sector("riser")["floor"] > m.sector("steps")["floor"] and m.sector("steps")["floor"] > m.sector("floor")["floor"], "stage steps climb")

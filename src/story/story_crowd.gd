@@ -73,7 +73,8 @@ func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
 		c.glow_color = glow_colors[n % glow_colors.size()]
 		add_child(c)
 		var present := str(a["group"]) == "core"
-		actors[str(a["id"])] = {"node": c, "data": a, "home": Vector2.ZERO, "pos": Vector2.ZERO, "present": present, "move": {}, "dir": {},
+		c.held = str(a.get("prop", "")) if str(a.get("prop", "")) in StoryCharacter.PROPS and str(a.get("activity", "")) != "" else ""
+		actors[str(a["id"])] = {"node": c, "data": a, "seed": _id_seed(str(a["id"])), "lock": str(a.get("activity", "")), "partner": "", "act": "", "home": Vector2.ZERO, "pos": Vector2.ZERO, "present": present, "move": {}, "dir": {},
 			"thresh": float(a.get("thresh", 0.0)), "alpha": 1.0 if present else 0.0, "stay": false, "vanish": {}}
 		n += 1
 	_order = actors.keys()
@@ -87,6 +88,10 @@ func attach_map(p_map: StoryMap) -> void:
 	for sec in map.sectors:
 		if str(sec["room"]) == view:
 			_room_sectors.append(str(sec["id"]))
+	for id in actors:  # people of this crowd may stand in other rooms (a bar, a balcony, a sofa alcove): those sectors count as this crowd's too
+		var hh: Dictionary = map.home(str(id))
+		if not hh.is_empty() and str(hh["sector"]) not in _room_sectors:
+			_room_sectors.append(str(hh["sector"]))
 	var door := map.room_spot(view, "door")
 	door_pos = door.get("at", Vector2.ZERO)
 	door_slots = door.get("slots", [])
@@ -149,6 +154,13 @@ func attach_map(p_map: StoryMap) -> void:
 	reset()
 
 
+static func _id_seed(id: String) -> int:  # a stable small number per actor id (not String.hash: that may change between engine versions)
+	var h := 7
+	for i in id.length():
+		h = (h * 31 + id.unicode_at(i)) % 100003
+	return h
+
+
 func _xv(a: Dictionary) -> int:  # a stable per-dancer number for the little variations in the mood
 	return int(640.0 + (a["home"] as Vector2).x * 65.0)
 
@@ -208,6 +220,8 @@ func update(t: float, p_energy: float) -> void:
 	var dt := clampf(t - _last_t, 0.0, 0.25) if _last_t > -INF else 0.0
 	_last_t = t
 	var fade := dt * (FADE_PER_S * (0.8 if reduced else 1.0))
+	if _pairs_dirty:
+		_rebuild_pairs()
 	for id in _order:
 		var a: Dictionary = actors[id]
 		var c: StoryCharacter = a["node"]
@@ -253,10 +267,12 @@ func update(t: float, p_energy: float) -> void:
 		c.glow_on = glow_on and c.glow
 		var dir: Dictionary = a["dir"]
 		var st := _mood_state(a, e01)
+		st = _activity_extras(a, c, st, t)
 		c.sync = false
 		if walking:
 			st = "walk"
-		elif not dir.is_empty() and t < float(dir["until"]) and t >= float(dir.get("from", -1.0)):
+			c.toward = 0.0
+		elif str(a["lock"]) == "" and not dir.is_empty() and t < float(dir["until"]) and t >= float(dir.get("from", -1.0)):
 			st = str(dir["state"])
 			c.sync = bool(dir.get("sync", false))
 		elif not dir.is_empty() and t >= float(dir["until"]):
@@ -468,19 +484,41 @@ func drawn_order() -> Array:
 	return out
 
 
+## Dancing happens on dance floors, stages, steps and booths; everywhere else people do what the sector's `activities` say for the band.
+static func dancing_flags(flags: Array) -> bool:
+	return "dance_floor" in flags or "stage" in flags or "stage_steps" in flags or "booth" in flags
+
+
+func _dancing_here(a: Dictionary) -> bool:
+	return map == null or dancing_flags(map.sector(str(a.get("sec", ""))).get("flags", []))
+
+
+## The activity a person picks in their sector at an energy band: by their own seed from the sector's list (never random per frame), or the fixed `activity` of a character with a
+## part to play (a DJ at the decks, a bouncer at the door).
+func pick_activity(a: Dictionary, band: String) -> String:
+	if str(a["lock"]) != "":
+		return str(a["lock"])
+	var list: Array = map.activities_of(str(a.get("sec", "")), band) if map != null else ["dance"]
+	return str(list[(int(a["seed"]) + 3 * maxi(StoryData.band_rank(band), 0)) % list.size()])
+
+
 func _mood_state(a: Dictionary, e01: float) -> String:
 	var ee := energy + float(a["thresh"])
-	if _ending != "":
+	var here := _dancing_here(a)
+	if _ending != "" and here and str(a["lock"]) == "":
 		return _ending_state(a, ee)
-	if ee < 18.0:
-		return "sad"
-	if ee < 32.0:
-		return "idle"
-	if ee < 70.0:
-		return "dance"
-	if ee < 88.0:
-		return "dance" if (_xv(a) / 40) % 3 != 0 else "cheer"
-	return "cheer"
+	var act := pick_activity(a, data.band_of(ee))
+	if act == "dance":
+		if ee < 32.0:
+			return "idle"
+		if ee < 70.0:
+			return "dance"
+		if ee < 88.0:
+			return "dance" if (_xv(a) / 40) % 3 != 0 else "cheer"
+		return "cheer"
+	if act == "stand":
+		return "sad" if ee < 18.0 else "idle"
+	return act
 
 
 func _ending_state(a: Dictionary, ee: float) -> String:
@@ -521,6 +559,112 @@ func set_time(t: float) -> void:
 	_t_now = t
 
 
+## Pairs, targets, props and pacing for the activity the person is in. Returns the state to show (an activity that needs a partner falls back when it has none).
+const DEFAULT_PROPS := {"drink": "cup", "toast": "cup", "phone": "phone", "paint": "brush", "carry": "tray", "serve": "tray", "check": "clipboard"}
+
+
+func _activity_extras(a: Dictionary, c: StoryCharacter, st: String, t: float) -> String:
+	if st != str(a["act"]):
+		a["act"] = st
+		_pairs_dirty = true
+	var pos: Vector2 = a["pos"]
+	c.toward = 0.0
+	if st in StoryCharacter.PAIRED:
+		var pid := str(a["partner"])
+		if pid == "" or not actors.has(pid):
+			st = "drink" if st == "toast" else "stand"
+		else:
+			c.toward = _toward((actors[pid]["pos"] as Vector2) - pos)
+			c.chat_role = 0 if str(a["node"].actor_id) < pid else 1
+	elif st in StoryCharacter.TARGETED:
+		c.toward = _toward(_target_of(a) - pos)
+	elif st == "lie" or st == "lean_wall":
+		c.toward = 1.0 if int(a["seed"]) % 2 == 0 else -1.0
+	var fixed := str(a["data"].get("prop", ""))
+	c.held = fixed if fixed != "" else str(DEFAULT_PROPS.get(st, ""))
+	if c.held == "cup" and int(a["seed"]) % 3 == 0:
+		c.held = "bottle"
+	if st == "pace" or st == "serve":  # walk to and fro along an axis in the person's sector, never leaving it
+		if a["move"].is_empty():
+			var pc: Dictionary = _pace_of(a)
+			var ph := sin(t * bpm / 60.0 * PI / 16.0 + float(a["seed"]))
+			a["pos"] = (a["home"] as Vector2) + (pc["axis"] as Vector2) * float(pc["amp"]) * ph
+			a["pace_on"] = true
+			c.walk_dir = clampf(cos(t * bpm / 60.0 * PI / 16.0 + float(a["seed"])) * (pc["axis"] as Vector2).dot(_rgt), -1.0, 1.0)
+	elif bool(a.get("pace_on", false)):
+		a["pace_on"] = false
+		if a["move"].is_empty():
+			a["pos"] = a["home"]
+	return st
+
+
+func _toward(d: Vector2) -> float:
+	var dx := d.dot(_rgt)
+	if absf(dx) < 0.15:
+		return 0.3 if dx >= 0.0 else -0.3
+	return clampf(dx * 0.8, -1.0, 1.0)
+
+
+## Where a watcher or starer looks: their `target` (a waypoint or a person's home), else the stage of their room, else the middle of the room.
+func _target_of(a: Dictionary) -> Vector2:
+	var tid := str(a["data"].get("target", ""))
+	if tid != "" and map != null:
+		if map.has_waypoint(tid):
+			return map.waypoint(tid)["at"]
+		var h := map.home(tid)
+		if not h.is_empty():
+			return h["at"]
+	return riser_spot if riser_spot != Vector2.ZERO else circle_c
+
+
+func _pace_of(a: Dictionary) -> Dictionary:
+	if a.has("pace"):
+		return a["pace"]
+	var axis := Vector2.RIGHT
+	var raw_axis: Variant = a["data"].get("pace_axis", null)
+	if typeof(raw_axis) == TYPE_ARRAY and (raw_axis as Array).size() == 2:
+		axis = Vector2(float(raw_axis[0]), float(raw_axis[1])).normalized()
+	var amp := float(a["data"].get("pace_m", 1.4))
+	var sec := str(a.get("sec", ""))
+	while amp > 0.0 and not (map.inside((a["home"] as Vector2) + axis * amp, sec, 0.3) and map.inside((a["home"] as Vector2) - axis * amp, sec, 0.3)):
+		amp -= 0.1
+	a["pace"] = {"axis": axis, "amp": maxf(amp, 0.0)}
+	return a["pace"]
+
+
+var _pairs_dirty := true
+
+
+## Pair the people who are in a paired activity (chat, hug, toast) in the same sector: the nearest free person of the same activity, in actor order.
+func _rebuild_pairs() -> void:
+	_pairs_dirty = false
+	for id in _order:
+		actors[id]["partner"] = ""
+	for act in StoryCharacter.PAIRED:
+		var pool: Array = []
+		for id in _order:
+			var a: Dictionary = actors[id]
+			if str(a["act"]) == act and a["present"]:
+				pool.append(id)
+		for id in pool:
+			var a: Dictionary = actors[id]
+			if str(a["partner"]) != "":
+				continue
+			var best := ""
+			var bd := 5.0
+			for other in pool:
+				var o: Dictionary = actors[other]
+				if other == id or str(o["partner"]) != "" or str(o.get("sec", "")) != str(a.get("sec", "")):
+					continue
+				var dd := (o["home"] as Vector2).distance_to(a["home"])
+				if dd < bd:
+					bd = dd
+					best = other
+			if best != "":
+				a["partner"] = best
+				actors[best]["partner"] = id
+
+
 # --- actions ---------------------------------------------------------------------------------------------------------
 
 func ids_of(group: String) -> Array:
@@ -547,7 +691,7 @@ func direct(ids: Array, state: String, t0: float, seconds: float, sync := false,
 		if not actors.has(id):
 			continue
 		var a: Dictionary = actors[id]
-		if not a["present"]:
+		if not a["present"] or str(a["lock"]) != "" or not _dancing_here(a):  # a directive moves the dancing crowd, not the people at the bar or a bouncer at his door
 			continue
 		a["dir"] = {"state": state, "from": t0 + float(k) * stagger, "until": t0 + seconds + float(k) * stagger, "sync": sync}
 		k += 1
@@ -557,6 +701,8 @@ func direct(ids: Array, state: String, t0: float, seconds: float, sync := false,
 func wave(t0: float, seconds: float, hold: float, state := "cheer") -> void:
 	for id in present_ids():
 		var a: Dictionary = actors[id]
+		if str(a["lock"]) != "" or not _dancing_here(a):
+			continue
 		var u := clampf((float((a["pos"] as Vector2).x) - floor_x.x) / maxf(floor_x.y - floor_x.x, 0.001), 0.0, 1.0)
 		a["dir"] = {"state": state, "from": t0 + u * seconds, "until": t0 + u * seconds + hold, "sync": false}
 
@@ -745,6 +891,8 @@ func react(passed: bool, grade: String, t0: float) -> void:
 		if _rng.randf() > share:
 			continue
 		var a: Dictionary = actors[ids[k]]
+		if str(a["lock"]) != "" or not _dancing_here(a):
+			continue
 		if passed:
 			a["dir"] = {"state": "cheer" if energy > 45.0 else "dance", "from": t0, "until": t0 + 1.4, "sync": false}
 		else:

@@ -10,6 +10,8 @@ const FOG_COLOR := Color(0.03, 0.02, 0.08)
 const FOG_DENSITY := 0.035
 const WALL_SHADE_X := 0.82  # walls facing along x are a little darker than those facing along z: the old engines' cheap fake of a light direction
 const CEIL_SHADE := 0.8
+const LIGHT_CELL := 1.2  # metres: surfaces a light reaches are cut into cells of this size so the pool of light has a shape
+const LIT_AMBIENT := 0.62  # a sector with lights keeps this much of the flat light away from them (its `ambient` overrides)
 const MIN_GAIN := 0.5  # no sector reads as black: the light multiplier never falls below this (the fog and the ending fades are separate)
 
 var map: StoryMap
@@ -92,16 +94,43 @@ func _add_flat(g: Dictionary, s: Dictionary, floor_side: bool) -> void:
 	if tex == "" or tex == "sky":
 		return
 	var poly: PackedVector2Array = s["poly"]
-	var tris := Geometry2D.triangulate_polygon(poly)
 	var y := float(s["floor"] if floor_side else s["ceiling"])
 	var m: float = _metres.get(tex, 2.0)
 	var d := _group(g, tex)
-	var base: int = d["v"].size()
 	var shade := 1.0 if floor_side else CEIL_SHADE
+	var lit := _lights_of(s)
+	if not lit.is_empty():  # cut the surface into cells and light each vertex
+		var lo := Vector2(INF, INF)
+		var hi := Vector2(-INF, -INF)
+		for p in poly:
+			lo = lo.min(p)
+			hi = hi.max(p)
+		var gx := floorf(lo.x / LIGHT_CELL) * LIGHT_CELL
+		while gx < hi.x:
+			var gz := floorf(lo.y / LIGHT_CELL) * LIGHT_CELL
+			while gz < hi.y:
+				var cell := PackedVector2Array([Vector2(gx, gz), Vector2(gx + LIGHT_CELL, gz), Vector2(gx + LIGHT_CELL, gz + LIGHT_CELL), Vector2(gx, gz + LIGHT_CELL)])
+				for piece in Geometry2D.intersect_polygons(poly, cell):
+					if absf(StoryMap._signed_area(piece)) < 0.001:
+						continue
+					var base2: int = d["v"].size()
+					var ptri := Geometry2D.triangulate_polygon(piece)
+					for q in piece:
+						d["v"].append(Vector3(q.x, y, q.y))
+						d["uv"].append(Vector2(q.x / m, q.y / m))
+						d["c"].append(_vertex_light(Vector3(q.x, y, q.y), shade, s, lit))
+					for k in range(0, ptri.size(), 3):
+						d["i"].append_array([base2 + ptri[k], base2 + ptri[k + 1], base2 + ptri[k + 2]] if floor_side else [base2 + ptri[k], base2 + ptri[k + 2], base2 + ptri[k + 1]])
+				gz += LIGHT_CELL
+			gx += LIGHT_CELL
+		return
+	var tris := Geometry2D.triangulate_polygon(poly)
+	var base: int = d["v"].size()
+	var flat := _flat_shade(s, shade)
 	for p in poly:
 		d["v"].append(Vector3(p.x, y, p.y))
 		d["uv"].append(Vector2(p.x / m, p.y / m))
-		d["c"].append(Color(shade, shade, shade))
+		d["c"].append(flat)
 	for k in range(0, tris.size(), 3):
 		d["i"].append_array([base + tris[k], base + tris[k + 1], base + tris[k + 2]] if floor_side else [base + tris[k], base + tris[k + 2], base + tris[k + 1]])
 
@@ -135,11 +164,84 @@ func _add_wall(g: Dictionary, w: Dictionary) -> void:
 		var y1 := float(part[1])
 		var u0 := 0.0
 		var u1 := along / m
+		var lit := _lights_of(s)
+		if not lit.is_empty():  # a lit wall is a grid of cells so a lamp's pool climbs it
+			var nu := maxi(int(ceilf(along / LIGHT_CELL)), 1)
+			var nv := maxi(int(ceilf((y1 - y0) / LIGHT_CELL)), 1)
+			for iv in nv + 1:
+				for iu in nu + 1:
+					var fu := float(iu) / float(nu)
+					var fv := float(iv) / float(nv)
+					var pt := a.lerp(b, fu)
+					var yy := lerpf(y0, y1, fv)
+					d["v"].append(Vector3(pt.x, yy, pt.y))
+					d["uv"].append(Vector2(lerpf(u0, u1, fu), (y1 - yy) / m))
+					d["c"].append(_vertex_light(Vector3(pt.x, yy, pt.y), shade, s, lit))
+			for iv in nv:
+				for iu in nu:
+					var i00 := base + iv * (nu + 1) + iu
+					var i10 := i00 + 1
+					var i01 := i00 + nu + 1
+					var i11 := i01 + 1
+					d["i"].append_array([i00, i10, i11, i00, i11, i01])
+			continue
 		d["v"].append_array([Vector3(a.x, y0, a.y), Vector3(b.x, y0, b.y), Vector3(b.x, y1, b.y), Vector3(a.x, y1, a.y)])
 		d["uv"].append_array([Vector2(u0, (y1 - y0) / m), Vector2(u1, (y1 - y0) / m), Vector2(u1, 0.0), Vector2(u0, 0.0)])
+		var flat := _flat_shade(s, shade)
 		for k in 4:
-			d["c"].append(Color(shade, shade, shade))
+			d["c"].append(flat)
 		d["i"].append_array([base, base + 1, base + 2, base, base + 2, base + 3])
+
+
+# --- authored light sources, baked once into vertex colours ------------------------------------------------------------------------------
+
+var _lights_cache: Dictionary = {}
+
+
+func _lights_of(s: Dictionary) -> Array:
+	var id := str(s["id"])
+	if not _lights_cache.has(id):
+		_lights_cache[id] = map.lights_reaching(id)
+	return _lights_cache[id]
+
+
+## The flat vertex colour of a surface in a sector with no lights: its shade, scaled by an authored `ambient`.
+func _flat_shade(s: Dictionary, shade: float) -> Color:
+	var amb := float(s.get("ambient", -1.0))
+	var v := shade * (amb if amb >= 0.0 else 1.0)
+	return Color(v, v, v)
+
+
+## The vertex colour at world point p in sector s: the flat shade times the sector's ambient (lower where lights are, so they stand out) plus each light's colour with a
+## squared falloff over its radius (and a cone, for a window's shape or a doorway's spill). Static: song-time light multiplies it by the sector's albedo each frame.
+func _vertex_light(p: Vector3, shade: float, s: Dictionary, lit: Array) -> Color:
+	var amb := float(s.get("ambient", -1.0))
+	var base := shade * (amb if amb >= 0.0 else LIT_AMBIENT)
+	var col := Color(base, base, base)
+	for l in lit:
+		var at: Vector2 = l["at"]
+		var ly := float(map.sector(str(l["sector"]))["floor"]) + float(l["y"])
+		var d := Vector3(p.x - at.x, p.y - ly, p.z - at.y)
+		var dist := d.length()
+		var r := float(l["radius"])
+		if dist >= r:
+			continue
+		var f := 1.0 - dist / r
+		f *= f
+		if l.has("cone"):
+			var cone: Dictionary = l["cone"]
+			var dir := map.forward_of_yaw(float(cone["yaw"]))
+			var flat := Vector2(d.x, d.z)
+			if flat.length() > 0.05:
+				var cosang := flat.normalized().dot(dir)
+				var outer := cos(deg_to_rad(float(cone["angle"])))
+				f *= clampf((cosang - outer) / maxf(1.0 - outer, 0.01) * 2.0, 0.0, 1.0)
+		var lc: Color = l["color"]
+		var k := f * float(l["strength"])
+		col.r += lc.r * k
+		col.g += lc.g * k
+		col.b += lc.b * k
+	return Color(minf(col.r, 1.0), minf(col.g, 1.0), minf(col.b, 1.0))
 
 
 func _material(tex: Texture2D) -> StandardMaterial3D:

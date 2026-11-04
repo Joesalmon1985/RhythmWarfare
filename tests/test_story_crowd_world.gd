@@ -51,6 +51,8 @@ func test_homes_project_onto_the_screen_from_the_waypoints_that_face_the_floor()
 			var pr := StoryProjector.project_ground(h["at"].x, h["at"].y, float(map.sector(str(h["sector"]))["floor"]), pose, VIEW)
 			if pr["visible"]:
 				seen[aid] = true
+				if float(map.sector(str(h["sector"]))["floor"]) >= float((pose["cam"] as Vector3).y) - 0.1:
+					continue  # standing on a balcony above the eye: the feet are above the horizon
 				assert_true(float(pr["scale"]) > 0.0 and (pr["screen"] as Vector2).y > VIEW.y * 0.5 - 1.0 or float(pr["depth"]) > 30.0,
 					"%s from %s: feet below the horizon (the ground is below the eye)" % [aid, wid])
 				assert_true((pr["screen"] as Vector2).y < VIEW.y * 1.5, "%s from %s is not absurdly low" % [aid, wid])

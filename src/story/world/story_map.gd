@@ -18,6 +18,8 @@ const WAYPOINT_MARGIN := 0.3
 const ANIMS := ["none", "pulse", "flicker", "rotate", "bob", "sway", "pump"]
 const ANIM_MODES := ["scroll", "pulse", "flicker", "swap"]
 const MOVE_STYLES := ["walk", "stagger", "run", "climb", "carried"]
+const BANDS := ["quiet", "dancing", "hype", "euphoric"]  # the energy bands of the chapter files (StoryData.band_of)
+const DANCE_FLAGS := ["dance_floor", "stage"]  # the only sectors where "dance" may appear in an activity list
 const ROLES := ["dancer", "on_stage", "dj", "queasy", "sick", "recovered", "out"]
 
 var id := ""
@@ -29,6 +31,7 @@ var start_id := ""
 var textures: Dictionary = {}  # name -> file relative to the art folder
 var sectors: Array = []  # {id, poly: PackedVector2Array (counter-clockwise), floor, ceiling, floor_tex, ceil_tex, wall_tex, light, tint: Color, room, flags}
 var things: Array = []
+var lights: Array = []  # static light sources (things of kind "light"): {id, sector, at: Vector2, y (above the sector floor), radius (m), color: Color, strength, cone?: {yaw, angle}, sectors?: Array}; StoryWorld bakes them into vertex colours
 var homes: Dictionary = {}  # actor id -> {sector, at: Vector2}
 var waypoints: Dictionary = {}  # id -> {at: Vector2, yaw: float (degrees), sector}
 var occluders: Array = []  # {id, sprite (a texture name of `textures`), sector, at: Vector2, width, height (m)} drawn over the crowd when nearer than a dancer
@@ -134,8 +137,9 @@ func _build_sectors(list: Array) -> void:
 			pts.append(_pt(p, "sector " + sid))
 		var sec := {"id": sid, "floor": float(s.get("floor", 0.0)), "ceiling": float(s.get("ceiling", 3.0)),
 			"floor_tex": str(s.get("floor_tex", "")), "ceil_tex": str(s.get("ceil_tex", "")), "wall_tex": str(s.get("wall_tex", "")),
-			"light": float(s.get("light", 0.6)), "tint": Color.html(str(s.get("tint", "#ffffff"))), "room": str(s.get("room", "main")),
+			"light": float(s.get("light", 0.6)), "ambient": float(s.get("ambient", -1.0)), "tint": Color.html(str(s.get("tint", "#ffffff"))), "room": str(s.get("room", "main")),
 			"flags": s.get("flags", [])}
+		sec["activities"] = _build_activities(sid, s.get("activities", {}), sec["flags"])
 		if pts.size() < 3:
 			errors.append("sector %s: a polygon needs 3 points or more" % sid)
 		else:
@@ -156,6 +160,58 @@ func _build_sectors(list: Array) -> void:
 	for i in sectors.size():
 		for j in range(i + 1, sectors.size()):
 			_check_overlap(sectors[i], sectors[j])
+
+
+## The sector's activities by mood band (docs/STORY_25D_ART_DIRECTION.md 2.C): {band: [activity names]}. The bands quiet, dancing and hype are required (euphoric falls back to
+## hype); every name is a StoryCharacter activity; "dance" only appears on dance_floor or stage sectors and never in the quiet band. A sector without the key gets defaults by flag,
+## which `activities_authored` reports (the tests require every sector to author its own).
+func _build_activities(sid: String, raw_acts: Variant, flags: Array) -> Dictionary:
+	var out := {}
+	if typeof(raw_acts) != TYPE_DICTIONARY or (raw_acts as Dictionary).is_empty():
+		return default_activities(flags)
+	for band in raw_acts:
+		if band not in BANDS:
+			errors.append("sector %s: activities has unknown band %s" % [sid, band])
+			continue
+		var names: Array = []
+		for n in raw_acts[band]:
+			if str(n) not in StoryCharacter.ACTIVITIES:
+				errors.append("sector %s: unknown activity %s" % [sid, n])
+			elif str(n) == "dance" and (str(band) == "quiet" or not _any_in(flags, DANCE_FLAGS)):
+				errors.append("sector %s: dance is only for dance_floor or stage sectors, and never in the quiet band" % sid)
+			else:
+				names.append(str(n))
+		out[str(band)] = names
+	for band in ["quiet", "dancing", "hype"]:
+		if not out.has(band) or (out[band] as Array).is_empty():
+			errors.append("sector %s: activities needs a non-empty list for the %s band" % [sid, band])
+	if not out.has("euphoric") or (out["euphoric"] as Array).is_empty():
+		out["euphoric"] = out.get("hype", [])
+	out["authored"] = true
+	return out
+
+
+static func _any_in(a: Array, b: Array) -> bool:
+	for x in a:
+		if x in b:
+			return true
+	return false
+
+
+static func default_activities(flags: Array) -> Dictionary:
+	if _any_in(flags, DANCE_FLAGS):
+		return {"quiet": ["stand", "chat", "drink", "phone", "lean_wall"], "dancing": ["dance", "dance", "dance", "drink", "chat"], "hype": ["dance", "dance", "dance", "wave", "point"],
+			"euphoric": ["dance", "dance", "wave", "point"]}
+	return {"quiet": ["stand", "chat", "lean_wall"], "dancing": ["stand", "chat", "watch", "drink"], "hype": ["watch", "wave", "chat"], "euphoric": ["wave", "watch", "chat"]}
+
+
+## The activities a person standing in sector `sid` may pick at an energy band (euphoric falls back to hype).
+func activities_of(sid: String, band: String) -> Array:
+	var acts: Dictionary = sector(sid).get("activities", {})
+	if acts.is_empty():
+		acts = default_activities(sector(sid).get("flags", []))
+	var l: Array = acts.get(band, [])
+	return l if not l.is_empty() else acts.get("hype", ["stand"])
 
 
 static func _signed_area(p: PackedVector2Array) -> float:
@@ -301,6 +357,9 @@ func _build_things(list: Array) -> void:
 			errors.append("thing id %s missing or duplicated" % tid)
 			continue
 		seen[tid] = true
+		if str(t.get("kind", "billboard")) == "light":
+			_build_light(t, tid, sid, at)
+			continue
 		if not _sector_index.has(sid):
 			errors.append("thing %s: lies in no sector" % tid)
 			continue
@@ -317,6 +376,34 @@ func _build_things(list: Array) -> void:
 		th["sector"] = sid
 		th["at"] = at
 		things.append(th)
+
+
+## A light thing: {"id", "kind": "light", "at": [x, z], "y": metres above the floor (default 2.4), "radius": m, "color": "#hex", "strength": 0..2.5 (default 1),
+## "cone": {"yaw": degrees (0 looks toward -z), "angle": half angle degrees} (a window's shape across the floor, a doorway's spill), "sectors": [ids it reaches] (default: its own sector and the
+## ones next to it through a portal)}.
+func _build_light(t: Dictionary, tid: String, sid: String, at: Vector2) -> void:
+	if not _sector_index.has(sid):
+		errors.append("light %s: lies in no sector" % tid)
+		return
+	var poly: PackedVector2Array = sectors[_sector_index[sid]]["poly"]
+	if poly.size() >= 3 and not Geometry2D.is_point_in_polygon(at, poly):
+		errors.append("light %s: %s is not inside sector %s" % [tid, at, sid])
+	var radius := float(t.get("radius", 4.0))
+	var strength := float(t.get("strength", 1.0))
+	if radius <= 0.1 or radius > 30.0:
+		errors.append("light %s: radius is 0.1 to 30 m" % tid)
+	if strength < 0.0 or strength > 2.5:
+		errors.append("light %s: strength is 0 to 2.5" % tid)
+	var l := {"id": tid, "sector": sid, "at": at, "y": float(t.get("y", 2.4)), "radius": radius, "strength": strength, "color": Color.html(str(t.get("color", "#ffffff")))}
+	if t.has("cone"):
+		var c: Dictionary = t["cone"]
+		l["cone"] = {"yaw": float(c.get("yaw", 0.0)), "angle": clampf(float(c.get("angle", 40.0)), 5.0, 89.0)}
+	if t.has("sectors"):
+		for k in t["sectors"]:
+			if not _sector_index.has(str(k)):
+				errors.append("light %s: reaches unknown sector %s" % [tid, k])
+		l["sectors"] = t["sectors"]
+	lights.append(l)
 
 
 func _inside(p: Vector2, sid: String, margin: float) -> bool:
@@ -478,6 +565,24 @@ func portals() -> Array:
 
 ## The sectors a walker can step into from `sid`: through the portals that are not `blocked` (a blocked portal is an opening to look through, a balcony rail or a window,
 ## that nobody walks across: it still shows the other room and the crowd in it).
+## The lights that reach sector `sid`: those in it, those listing it, and those in a sector next to it through a portal (a doorway spills into the corridor behind it).
+func lights_reaching(sid: String) -> Array:
+	var out: Array = []
+	var near: Array = [sid]
+	for p in portals():
+		if p["a"] == sid:
+			near.append(p["b"])
+		elif p["b"] == sid:
+			near.append(p["a"])
+	for l in lights:
+		if l.has("sectors"):
+			if sid in l["sectors"] or sid == l["sector"]:
+				out.append(l)
+		elif str(l["sector"]) in near:
+			out.append(l)
+	return out
+
+
 func neighbors(sid: String) -> Array:
 	var out: Array = []
 	for p in portals():
