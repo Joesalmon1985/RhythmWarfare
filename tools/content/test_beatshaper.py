@@ -9,8 +9,12 @@ import unittest
 import zipfile
 from pathlib import Path
 
-import mido
 import numpy as np
+
+try:  # the tests also run without mido: a tiny writer produces the same kind of file the exports are
+    import mido
+except ImportError:
+    mido = None
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -27,7 +31,28 @@ def float_wav(frames: np.ndarray) -> bytes:
     return b"RIFF" + struct.pack("<I", 36 + len(data)) + b"WAVEfmt " + struct.pack("<I", 16) + fmt + b"data" + struct.pack("<I", len(data)) + data
 
 
+def _vlq(v: int) -> bytes:
+    out = [v & 0x7F]
+    v >>= 7
+    while v:
+        out.append((v & 0x7F) | 0x80)
+        v >>= 7
+    return bytes(reversed(out))
+
+
 def midi_bytes(notes: list[tuple], ppq: int = 120) -> bytes:
+    if mido is None:
+        events = []
+        for beat, pitch, dur in notes:
+            events.append((round(beat * ppq), 1, bytes([0x90, pitch, 100])))
+            events.append((round((beat + dur) * ppq), 0, bytes([0x80, pitch, 0])))
+        trk = b"\x00\xff\x51\x03" + (500000).to_bytes(3, "big")  # the headers lie: 120 BPM
+        t = 0
+        for tick, _o, msg in sorted(events, key=lambda e: (e[0], e[1])):
+            trk += _vlq(tick - t) + msg
+            t = tick
+        trk += b"\x00\xff\x2f\x00"
+        return b"MThd" + struct.pack(">IHHH", 6, 0, 1, ppq) + b"MTrk" + struct.pack(">I", len(trk)) + trk
     mid = mido.MidiFile(ticks_per_beat=ppq)
     tr = mido.MidiTrack()
     tr.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(120)))  # the headers lie: 120 BPM
@@ -46,7 +71,8 @@ def midi_bytes(notes: list[tuple], ppq: int = 120) -> bytes:
     return buf.getvalue()
 
 
-def export_set(bpm: float, project: str = "Lv9 Test", suffix: str = "", beats: int = 16) -> dict[str, bytes]:
+def export_set(bpm: float, project: str = "Lv9 Test", suffix: str = "", beats: int = 16, kick: int = 36, snare: int = 40, bass_shift_s: float = 0.0,
+               ghost_s: float = 0.0) -> dict[str, bytes]:
     """Drums with a click per kick/snare note at `bpm`, a bass changing note every 4 beats, a quiet synth; 120 BPM in every MIDI header."""
     spb = 60.0 / bpm
     n = int((beats * spb + 0.6) * SR)
@@ -55,12 +81,12 @@ def export_set(bpm: float, project: str = "Lv9 Test", suffix: str = "", beats: i
     dn = []
     for b in range(beats):
         if b % 2 == 0:
-            dn.append((float(b), 36, 0.25))
+            dn.append((float(b), kick, 0.25))
         else:
-            dn.append((float(b), 40, 0.25))
+            dn.append((float(b), snare, 0.25))
         dn.append((b + 0.5, 42, 0.25))  # hats are in the MIDI but not cues
         for off, amp in ((0.0, 1.0),) if b % 2 == 0 else ((0.0, 0.8),):
-            i = int((b + off) * spb * SR)
+            i = int((b + off) * spb * SR) + (int(ghost_s * SR) if b == 5 else 0)  # `ghost_s`: one snare sounds late (a soft transient)
             burst = 0.25 * rng.standard_normal(int(0.03 * SR)) * np.exp(-np.arange(int(0.03 * SR)) / (0.006 * SR)) * amp
             drums[i:i + len(burst)] += burst
     t = np.arange(n) / SR
@@ -71,6 +97,8 @@ def export_set(bpm: float, project: str = "Lv9 Test", suffix: str = "", beats: i
         f = 440.0 * 2 ** ((pitch - 69) / 12)
         bass[a:z] = 0.3 * np.sin(2 * np.pi * f * t[a:z]) + 0.1 * np.sin(2 * np.pi * 2 * f * t[a:z])
         bn.append((k * 4.0, pitch, 4.0))
+    if bass_shift_s:  # the bass sounds late against its MIDI: the audio detector cannot confirm the notes
+        bass = np.roll(bass, int(bass_shift_s * SR))
     synth = 0.05 * np.sin(2 * np.pi * 330 * t)
     sn = [(float(b), 60 + (b % 5), 0.5) for b in range(0, beats, 2)]
     stereo = lambda x: np.stack([x, x], axis=1)  # noqa: E731
@@ -110,8 +138,15 @@ class Grouping(unittest.TestCase):
             groups, odd = src.groups()
             self.assertEqual(bs.set_status(groups[("Lv9 Test", 0)]), ["Synth.mid"])
             self.assertEqual(odd, ["notes.txt.wav"])
-            with self.assertRaises(ContentError):
-                bs.load_set(src, "Lv9 Test", 0)
+            self.assertEqual(bs.fatal_missing(groups[("Lv9 Test", 0)]), [], "a missing Synth file never stops an import")
+            parts, audio, midi = bs.load_set(src, "Lv9 Test", 0)
+            self.assertEqual(sorted(midi), ["Bass", "Drums"])
+            s2 = export_set(174.0)
+            del s2["Beat Shaper - Lv9 Test-Bass.mid"]
+            make_zip(Path(tmp) / "b.zip", s2)
+            with self.assertRaises(ContentError) as ctx:
+                bs.load_set(bs.Source(Path(tmp) / "b.zip"), "Lv9 Test", 0)
+            self.assertIn("Bass.mid", str(ctx.exception))
 
     def test_folder_source(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -165,6 +200,77 @@ class Analysis(unittest.TestCase):
             bs.analyse(self._src(174.0), "Lv9 Test", 0, {"kick_notes": [1], "snare_notes": [2]})
         self.assertIn("42", str(ctx.exception))
 
+    def _src_of(self, **kw) -> bs.Source:
+        z = self.dir / "x.zip"
+        make_zip(z, export_set(kw.pop("bpm", 174.0), **kw))
+        return bs.Source(z)
+
+    def test_a_late_bass_is_charted_from_the_midi_with_a_recorded_fallback(self):
+        a = bs.analyse(self._src_of(bass_shift_s=0.07), "Lv9 Test", 0, {})
+        self.assertEqual(a["report"]["bass_timing"]["mode"], "midi_fallback")
+        self.assertTrue(any("charted from the MIDI timing" in w for w in a["warnings"]))
+        self.assertEqual(len(a["cues"]["bass"]), 4)
+        self.assertEqual(a["problems"], [])
+
+    def test_trust_midi_is_an_explicit_flag_and_is_recorded(self):
+        ok = bs.analyse(self._src_of(), "Lv9 Test", 0, {})
+        self.assertEqual(ok["report"]["bass_timing"]["mode"], "audio_checked")
+        a = bs.analyse(self._src_of(bass_shift_s=0.07), "Lv9 Test", 0, {"trust_midi": True})
+        self.assertEqual(a["report"]["bass_timing"]["mode"], "midi_flag")
+        out = bs.write_pack(self._src_of(), "Lv9 Test", 0, "lv9_flag", a, {"drums": 0.0, "bass": 3.0, "other": 10.0}, "x", self.dir / "packs")
+        rep = json.loads((out / "timing_report.json").read_text())
+        self.assertEqual(rep["timing"]["bass_timing"]["mode"], "midi_flag")
+        self.assertIn("drum_notes", rep["import_report"])
+
+    def test_kick_and_snare_are_found_when_36_38_40_are_absent(self):
+        a = bs.analyse(self._src_of(kick=35, snare=45), "Lv9 Test", 0, {})
+        self.assertEqual((a["kick"], a["snare"]), ([35], [45]))
+        self.assertEqual(a["report"]["drum_notes"]["mode"], "auto")
+        self.assertTrue(any("most common low note 35 = kick" in d for d in a["report"]["decisions"]))
+        self.assertEqual({c[3] for c in a["cues"]["drums"]}, {"kick", "snare"})
+        b = bs.analyse(self._src_of(kick=35, snare=45), "Lv9 Test", 0, {"kick_notes": [35], "snare_notes": [45]})
+        self.assertEqual(b["report"]["drum_notes"]["mode"], "explicit")
+
+    def test_choice_skips_hats_and_handles_one_candidate(self):
+        hats = [{"beat": float(i), "pitch": 42, "dur": 0.1, "velocity": 90} for i in range(20)]
+        mid = [{"beat": float(i), "pitch": 43, "dur": 0.1, "velocity": 90} for i in range(6)]
+        low = [{"beat": float(i) + 0.5, "pitch": 39, "dur": 0.1, "velocity": 90} for i in range(3)]
+        k, sn, how = bs.drum_note_choice(hats + mid + low, {})
+        self.assertEqual((k, sn, how["mode"]), ({39}, {43}, "auto"))
+        k, sn, _ = bs.drum_note_choice(hats + mid, {})
+        self.assertEqual((k, sn), (set(), {43}))
+        k, sn, how = bs.drum_note_choice(hats + mid, {"kick_notes": [42]})
+        self.assertEqual((k, how["mode"]), ({42}, "explicit"))
+
+    def test_a_single_soft_transient_is_a_reported_outlier_not_a_refusal(self):
+        a = bs.analyse(self._src_of(ghost_s=0.027), "Lv9 Test", 0, {})
+        self.assertEqual(a["report"]["tempo"]["verified"], "loose")
+        self.assertTrue(any("verified loosely" in d for d in a["report"]["decisions"]))
+
+    def test_a_missing_synth_is_a_silent_backing(self):
+        s = export_set(174.0)
+        for k in [k for k in s if "-Synth" in k]:
+            del s[k]
+        z = self.dir / "n.zip"
+        make_zip(z, s)
+        a = bs.analyse(bs.Source(z), "Lv9 Test", 0, {})
+        self.assertEqual(float(np.abs(a["audio"]["Synth"]).max()), 0.0)
+        self.assertTrue(any("Synth.wav is missing" in d for d in a["report"]["decisions"]))
+        self.assertEqual(a["problems"], [])
+
+    def test_a_set_with_audio_but_no_midi_says_what_to_export(self):
+        s = {k: v for k, v in export_set(174.0).items() if k.endswith(".wav")}
+        z = self.dir / "w.zip"
+        make_zip(z, s)
+        with self.assertRaises(ContentError) as ctx:
+            bs.analyse(bs.Source(z), "Lv9 Test", 0, {})
+        self.assertIn("Drums.mid", str(ctx.exception))
+        self.assertIn("export", str(ctx.exception))
+
+    def test_a_phrase_a_quarter_long_or_short_is_the_16_quarter_phrase(self):
+        a = bs.analyse(self._src_of(), "Lv9 Test", 0, {})
+        self.assertEqual(a["phrase_beats"], 16)
+
     def test_thin_keeps_source_timing_and_prefers_whole_beats(self):
         cues = [[0, 0, 1, "kick"], [480, 0, 4, "snare"], [960, 0, 1, "kick"], [1440, 0, 4, "snare"], [1920, 0, 1, "kick"]]
         t1 = bs.thin(cues, 1, "drums")
@@ -191,10 +297,11 @@ class Analysis(unittest.TestCase):
         # a later level gets other recordings with the same MIDI: audio only
         bs.assign("c", "lv9_alt", None, "none", False, music)
         self.assertEqual(bs.validate(packs, music)[0], [])
-        # but a different chart for one sibling is refused
+        # a different chart for one sibling is allowed (each world its own song) but flagged as a warning
         bs.assign("c", None, "lv9_alt", None, None, music)
-        errors, _ = bs.validate(packs, music)
-        self.assertTrue(any("siblings must share one chart" in e for e in errors), errors)
+        errors, notes = bs.validate(packs, music)
+        self.assertEqual(errors, [])
+        self.assertTrue(any(n_.startswith("WARNING depth 2") and "no longer share one chart" in n_ for n_ in notes), notes)
         # an alternate render whose MIDI differs is refused
         pj = packs / "lv9_alt" / "pack.json"
         p = json.loads(pj.read_text())
