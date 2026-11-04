@@ -47,9 +47,14 @@ SEQUENCE_TICKS = 2 * TICKS_PER_BAR
 
 def read_float_wav(path: Path) -> tuple[np.ndarray, int]:
     """Frames x channels float32 and the sample rate, from a RIFF WAV of PCM 16/24/32 or IEEE float 32."""
-    b = path.read_bytes()
+    return read_float_wav_bytes(path.read_bytes(), rel(path))
+
+
+def read_float_wav_bytes(b: bytes, name: str) -> tuple[np.ndarray, int]:
+    """read_float_wav for bytes already in memory (a file inside a ZIP)."""
+    path = Path(name)
     if b[:4] != b"RIFF" or b[8:12] != b"WAVE":
-        raise ContentError(f"{rel(path)}: not a RIFF WAV file")
+        raise ContentError(f"{name}: not a RIFF WAV file")
     i, fmt = 12, None
     while i + 8 <= len(b):
         cid, n = b[i:i + 4], struct.unpack("<I", b[i + 4:i + 8])[0]
@@ -57,7 +62,7 @@ def read_float_wav(path: Path) -> tuple[np.ndarray, int]:
             fmt = struct.unpack("<HHIIHH", b[i + 8:i + 24])
         elif cid == b"data":
             if fmt is None:
-                raise ContentError(f"{rel(path)}: data chunk before fmt chunk")
+                raise ContentError(f"{name}: data chunk before fmt chunk")
             tag, ch, rate, _, _, bits = fmt
             raw = b[i + 8:i + 8 + n]
             if tag == 3 and bits == 32:
@@ -71,10 +76,10 @@ def read_float_wav(path: Path) -> tuple[np.ndarray, int]:
             elif tag in (1, 0xFFFE) and bits == 32:
                 a = (np.frombuffer(raw[:len(raw) // 4 * 4], "<i4") / 2147483648.0).astype(np.float32)
             else:
-                raise ContentError(f"{rel(path)}: unsupported WAV format tag {tag}, {bits} bit")
+                raise ContentError(f"{name}: unsupported WAV format tag {tag}, {bits} bit")
             return a.reshape(-1, ch), rate
         i += 8 + n + (n & 1)
-    raise ContentError(f"{rel(path)}: no data chunk")
+    raise ContentError(f"{name}: no data chunk")
 
 
 def db(x: float) -> float:

@@ -1,0 +1,718 @@
+{
+ "schema": 1,
+ "id": "lv2_alien_spaceship",
+ "label": "Lv2 Alien Spaceship",
+ "bpm": 174,
+ "phrase_beats": 16,
+ "loop_frames": 264828,
+ "profile": "beat_shaper_174x1",
+ "stems": {
+  "drums": "loops/drums.wav",
+  "bass": "loops/bass.wav",
+  "other": "loops/other.wav"
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 293558,
+   "loop_frames": 264828,
+   "tail_frames": 28730,
+   "padded_frames": 0,
+   "tail_audible_s": 0.471,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -7.12,
+   "rms_db": -23.0,
+   "source_seconds": 6.1158,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Drums.wav"
+  },
+  "bass": {
+   "frames_in": 338752,
+   "loop_frames": 264828,
+   "tail_frames": 73924,
+   "padded_frames": 0,
+   "tail_audible_s": 1.494,
+   "laps_folded": 1,
+   "gain_db": 3.0,
+   "peak_db": -9.63,
+   "rms_db": -21.57,
+   "source_seconds": 7.0573,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Bass.wav"
+  },
+  "other": {
+   "frames_in": 305810,
+   "loop_frames": 264828,
+   "tail_frames": 40982,
+   "padded_frames": 0,
+   "tail_audible_s": 0.854,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -14.7,
+   "rms_db": -29.23,
+   "source_seconds": 6.371,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Synth.wav"
+  }
+ },
+ "kick_notes": [
+  36
+ ],
+ "snare_notes": [
+  38,
+  40
+ ],
+ "tiers": {
+  "1": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     0,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1920,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     3840,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5760,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     7680,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     11520,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14880,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     3840,
+     2880,
+     3,
+     "bass"
+    ],
+    [
+     7680,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     11520,
+     2880,
+     3,
+     "bass"
+    ]
+   ]
+  },
+  "2": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     0,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1920,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     3840,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     4560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5760,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     7680,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     8400,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     11520,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     12240,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14880,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     3840,
+     2880,
+     3,
+     "bass"
+    ],
+    [
+     7680,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     11520,
+     2880,
+     3,
+     "bass"
+    ]
+   ]
+  },
+  "3": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     0,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1920,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2400,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     3360,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     3840,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     4560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5280,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5760,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     7680,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     8400,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9120,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10080,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     11040,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     11520,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     12240,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     12960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13920,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     14880,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     3840,
+     2880,
+     3,
+     "bass"
+    ],
+    [
+     7680,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     11520,
+     2880,
+     3,
+     "bass"
+    ]
+   ]
+  },
+  "4": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     0,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1920,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2400,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     3360,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     3840,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     4560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5280,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5760,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     7680,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     8400,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9120,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10080,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     11040,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     11520,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     12240,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     12960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13920,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     14880,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     3840,
+     2880,
+     3,
+     "bass"
+    ],
+    [
+     7680,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     11520,
+     2880,
+     3,
+     "bass"
+    ]
+   ]
+  }
+ },
+ "source": {
+  "project": "Lv2 Alien Spaceship",
+  "variant": 0,
+  "files": {
+   "Bass": {
+    "mid": "Beat Shaper - Lv2 Alien Spaceship-Bass.mid",
+    "wav": "Beat Shaper - Lv2 Alien Spaceship-Bass.wav"
+   },
+   "Drums": {
+    "mid": "Beat Shaper - Lv2 Alien Spaceship-Drums.mid",
+    "wav": "Beat Shaper - Lv2 Alien Spaceship-Drums.wav"
+   },
+   "Synth": {
+    "mid": "Beat Shaper - Lv2 Alien Spaceship-Synth.mid",
+    "wav": "Beat Shaper - Lv2 Alien Spaceship-Synth.wav"
+   }
+  }
+ }
+}

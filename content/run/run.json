@@ -1,0 +1,289 @@
+{
+ "schema": 1,
+ "timing": {
+  "bpm": 174,
+  "phase_beats": 64,
+  "block_beats": 16,
+  "cue_span_beats": 12.0,
+  "decision_beat": 12.5,
+  "fade_beats": 2.0
+ },
+ "judgement": {
+  "pass_credit": 0.6,
+  "credit": {
+   "perfect": 1.0,
+   "great": 0.9,
+   "good": 0.8,
+   "ok": 0.55,
+   "miss": 0.0
+  },
+  "min_cues_for_pass": 1,
+  "note": "A block passes when the credit of its cues (holds count their coverage) is at least pass_credit. Tunable."
+ },
+ "energy": {
+  "start": 60.0,
+  "max": 100.0,
+  "pass_gain": 5.0,
+  "pass_bonus": 6.0,
+  "fail_loss": 7.0,
+  "floor_loss_per_miss": 0.0,
+  "note": "energy += pass_gain + pass_bonus*(credit-pass_credit)/(1-pass_credit) on a pass, -= fail_loss*(pass_credit-credit)/pass_credit+3 on a fail; it ends the run at 0. Seven blocks in a row at credit 0 are needed to end a run from a fresh start."
+ },
+ "stages": [
+  {
+   "id": "drums_alone",
+   "label": "Drums",
+   "cue": "drums",
+   "gains": {
+    "drums": 1.0,
+    "bass": 0.0,
+    "other": 0.0
+   }
+  },
+  {
+   "id": "bass_enters",
+   "label": "Bass enters",
+   "cue": "bass",
+   "gains": {
+    "drums": 0.5,
+    "bass": 1.0,
+    "other": 0.45
+   }
+  },
+  {
+   "id": "drums_return",
+   "label": "Drums return",
+   "cue": "drums",
+   "gains": {
+    "drums": 1.0,
+    "bass": 0.5,
+    "other": 0.45
+   }
+  },
+  {
+   "id": "bass_strongest",
+   "label": "Bass strongest",
+   "cue": "bass",
+   "gains": {
+    "drums": 0.4,
+    "bass": 1.0,
+    "other": 0.6
+   }
+  }
+ ],
+ "mix": {
+  "ramp_s": 0.35,
+  "phase_fade_s": 0.6
+ },
+ "effects": {
+  "riser": "res://assets/run/riser.wav",
+  "fall": "res://assets/run/fall.wav",
+  "gain_db": -6.0
+ },
+ "treatments": {
+  "none": {},
+  "underworld": {
+   "drums": {
+    "lowpass": 7000,
+    "distort": 0.25
+   },
+   "bass": {
+    "distort": 0.4,
+    "lowpass": 2500
+   },
+   "temporary": true
+  },
+  "hospital": {
+   "drums": {
+    "lowpass": 4500,
+    "reverb": 0.18
+   },
+   "bass": {
+    "lowpass": 1800,
+    "reverb": 0.1
+   },
+   "temporary": true
+  },
+  "ward": {
+   "drums": {
+    "highpass": 160,
+    "distort": 0.2
+   },
+   "bass": {
+    "distort": 0.3
+   },
+   "temporary": true
+  },
+  "hospital_late": {
+   "drums": {
+    "lowpass": 6000,
+    "reverb": 0.3
+   },
+   "bass": {
+    "lowpass": 2200
+   },
+   "temporary": true
+  },
+  "ward_late": {
+   "drums": {
+    "highpass": 120,
+    "distort": 0.35
+   },
+   "bass": {
+    "distort": 0.45,
+    "lowpass": 3000
+   },
+   "temporary": true
+  }
+ },
+ "start_node": "warehouse",
+ "nodes": [
+  {
+   "id": "warehouse",
+   "title": "Warehouse",
+   "world": "night_one",
+   "waypoint": "floor_centre",
+   "role": "dancer",
+   "depth": 1,
+   "blurb": "Doors open. Find the groove.",
+   "next": [
+    {
+     "to": "mothership",
+     "dir": "up",
+     "label": "The lights go strange"
+    },
+    {
+     "to": "underworld",
+     "dir": "right",
+     "label": "The floor cracks open"
+    }
+   ]
+  },
+  {
+   "id": "mothership",
+   "title": "The Mothership",
+   "world": "mothership",
+   "waypoint": "deck_centre",
+   "role": "dancer",
+   "depth": 2,
+   "blurb": "Aliens carried the rave up to their ship.",
+   "next": [
+    {
+     "to": "hospital",
+     "dir": "left",
+     "label": "Wake up in a ward"
+    },
+    {
+     "to": "ward",
+     "dir": "right",
+     "label": "Sectioned"
+    }
+   ]
+  },
+  {
+   "id": "underworld",
+   "title": "The Underworld",
+   "world": "underworld",
+   "waypoint": "arena_floor",
+   "role": "dancer",
+   "depth": 2,
+   "blurb": "A sunken arena under the club.",
+   "next": [
+    {
+     "to": "hospital",
+     "dir": "left",
+     "label": "Wake up in a ward"
+    },
+    {
+     "to": "ward",
+     "dir": "right",
+     "label": "Sectioned"
+    }
+   ]
+  },
+  {
+   "id": "hospital",
+   "title": "The Hospital",
+   "world": "hospital",
+   "waypoint": "bed",
+   "role": "dancer",
+   "depth": 3,
+   "blurb": "A night ward that will not sleep.",
+   "next": [
+    {
+     "to": "hospital_late",
+     "dir": "left",
+     "label": "Another night shift"
+    },
+    {
+     "to": "ward_late",
+     "dir": "right",
+     "label": "Down the long corridor"
+    }
+   ]
+  },
+  {
+   "id": "ward",
+   "title": "The Ward",
+   "world": "mental_hospital",
+   "waypoint": "day_centre",
+   "role": "dancer",
+   "depth": 3,
+   "blurb": "Locked doors and a day room that dances.",
+   "next": [
+    {
+     "to": "hospital_late",
+     "dir": "left",
+     "label": "Let out into the garden"
+    },
+    {
+     "to": "ward_late",
+     "dir": "right",
+     "label": "Back to the day room"
+    }
+   ]
+  },
+  {
+   "id": "hospital_late",
+   "title": "The Hospital, late",
+   "world": "hospital",
+   "waypoint": "garden_edge",
+   "role": "dancer",
+   "depth": 4,
+   "blurb": "The garden bandstand, long after lights-out.",
+   "next": [
+    {
+     "to": "hospital_late",
+     "dir": "left",
+     "label": "Round again"
+    },
+    {
+     "to": "ward_late",
+     "dir": "right",
+     "label": "Through the gate"
+    }
+   ]
+  },
+  {
+   "id": "ward_late",
+   "title": "The Ward, late",
+   "world": "mental_hospital",
+   "waypoint": "stage_edge",
+   "role": "dancer",
+   "depth": 4,
+   "blurb": "The talent stage is open to everyone.",
+   "next": [
+    {
+     "to": "ward_late",
+     "dir": "right",
+     "label": "Round again"
+    },
+    {
+     "to": "hospital_late",
+     "dir": "left",
+     "label": "Out to the garden"
+    }
+   ]
+  }
+ ]
+}

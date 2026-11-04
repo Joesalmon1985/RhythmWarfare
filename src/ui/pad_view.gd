@@ -50,6 +50,17 @@ func setup(p_level: Level, p_clock: SongClock) -> void:
 			_pad_notes[pad].append(i)
 
 
+## Picks up cues appended to level.notes (the continuous run adds a block at a time).
+func refresh() -> void:
+	var seen := 0
+	for pad in _pad_notes:
+		seen += (_pad_notes[pad] as Array).size()
+	for i in range(seen, level.notes.size()):
+		var pad := _pad_of(level.notes[i])
+		if _pad_notes.has(pad):
+			_pad_notes[pad].append(i)
+
+
 ## The key actually bound to a pad (InputMap action button_N), so the label always agrees with the controls.
 static func key_name(pad: int) -> String:
 	for ev in InputMap.action_get_events(LaneInput.action_name(pad)):
