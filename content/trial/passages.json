@@ -5,13 +5,13 @@
  "start": 1,
  "intro": "A trial the wizard runs in the cellars under the club: sixteen places, ten creatures, one way out.",
  "music": {
-  "audio": "lv1_warehouse_v1",
-  "chart": "lv1_warehouse_v1",
-  "fight_audio": "lv1_warehouse_v1",
-  "fight_chart": "lv1_warehouse_v1",
-  "treatment": "hospital",
-  "temporary": true,
-  "note": "Stand-in dungeon sound: the Warehouse recordings under the Hospital's filter. fight_audio and fight_chart are read and checked, but the scene still plays audio and chart for everything; the coordinator assigns the dungeon's own packs (dd_part1, dd_part2) after the merge."
+  "audio": "dd_part1",
+  "chart": "dd_part1",
+  "fight_audio": "dd_part2",
+  "fight_chart": "dd_part2",
+  "treatment": "none",
+  "temporary": false,
+  "note": "The dungeon's own sets: dd_part1 (ambient, 87 BPM profile, 32-beat phrase) for audio and chart; dd_part2 (fight, 174 BPM, 16 beats) named as fight_audio/fight_chart, read and checked but not yet switched to by the scene (one pack plays throughout)."
  },
  "pass_credit": 0.6,
  "phrases": {
