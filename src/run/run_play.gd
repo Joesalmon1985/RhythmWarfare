@@ -25,6 +25,10 @@ var proxy: StoryRun  # what StoryStage and StoryDeck read: level.bpm and crowd.e
 var stages: Dictionary = {}  # world id -> {stage, assets, data, deck, waypoint}
 var active_world := ""
 var virtual_mode := false
+var trial_launcher: Callable  # called when the wizard's "Enter the Trial" is chosen (tests replace it)
+var _gate: Control
+var _gate_btn: Button
+var _gate_wizard: TextureRect
 
 var _stage_host: Control
 var _pause_btn: Button
@@ -215,6 +219,7 @@ func _build_layout(start: String) -> void:
 	hud.stage_h = 0.0
 	add_child(hud)
 	hud.resized.connect(func() -> void: hud.stage_h = hud.size.y * (1.0 - float(Session.PAD_SIZES[clampi(Session.pad_size, 0, 2)])))
+	_build_gate()
 	_route_box = Control.new()
 	_route_box.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_route_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -262,6 +267,51 @@ func _build_layout(start: String) -> void:
 	pv.add_child(StoryStyle.title("PAUSED", 36))
 	for item in [["Resume", _resume], ["Restart this level", _retry], ["Settings", _open_settings], ["Quit to home", _quit]]:
 		pv.add_child(UiStyle.button(item[0], item[1], 360))
+
+
+# --- the wizard and the Trial ----------------------------------------------------------------------------------------------
+
+## A wizard waits at the edge of the Warehouse floor with a floating "Enter the Trial". Choosing it leaves the run for the Deathtrap Dungeon opening
+## (res://src/trial/trial_play.tscn); ignoring it changes nothing: the run, its pads and its routes go on as before.
+func _build_gate() -> void:
+	_gate = Control.new()
+	_gate.name = "TrialGate"
+	_gate.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_gate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_gate.visible = false
+	add_child(_gate)
+	_gate_wizard = TextureRect.new()
+	_gate_wizard.texture = load("res://assets/trial/art/wizard.png") as Texture2D
+	_gate_wizard.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_gate_wizard.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
+	_gate_wizard.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_gate_wizard.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_gate.add_child(_gate_wizard)
+	_gate_btn = Button.new()
+	_gate_btn.text = "Enter the Trial"
+	_gate_btn.theme = StoryStyle.theme()
+	_gate_btn.focus_mode = Control.FOCUS_NONE
+	_gate_btn.modulate = Color(1.0, 0.9, 0.6)
+	_gate_btn.pressed.connect(func() -> void: trial_launcher.call())
+	_gate.add_child(_gate_btn)
+	trial_launcher = func() -> void:
+		if audio != null:
+			audio.stop()
+		get_tree().change_scene_to_file("res://src/trial/trial_play.tscn")
+	resized.connect(_layout_gate)
+	_layout_gate()
+
+
+func _layout_gate() -> void:
+	if _gate == null:
+		return
+	var stage_h := size.y * (1.0 - float(Session.PAD_SIZES[clampi(Session.pad_size, 0, 2)]))
+	var s := clampf(stage_h * 0.42, 64.0, 150.0)
+	_gate_wizard.size = Vector2(s, s)
+	_gate_wizard.position = Vector2(size.x * 0.02, stage_h - s - 4.0)
+	_gate_btn.add_theme_font_size_override("font_size", int(clampf(stage_h * 0.05, 13.0, 22.0)))
+	_gate_btn.size = Vector2(maxf(s * 1.9, 150.0), clampf(stage_h * 0.13, 40.0, 60.0))
+	_gate_btn.position = Vector2(size.x * 0.02, _gate_wizard.position.y - _gate_btn.size.y - 6.0)
 
 
 # --- scripted player ------------------------------------------------------------------------------------------------------
@@ -380,6 +430,9 @@ func _step_virtual(t: float) -> void:
 func _advance(t: float, audio_t: float) -> void:
 	hud.now_t = audio_t
 	_bot_step(t)
+	if _gate.visible:  # the option floats
+		var bob := sin(audio_t * 2.0) * 4.0
+		_gate_btn.position.y = _gate_wizard.position.y - _gate_btn.size.y - 6.0 + bob
 	_handle(engine.update(t))
 	var rec: Dictionary = stages[active_world]
 	(rec["stage"] as StoryStage).update(audio_t, engine.energy)
@@ -490,6 +543,7 @@ func _on_phase_start(ev: Dictionary) -> void:
 		if not first:
 			_flash_world(t0)
 		_show_world(world)
+	_gate.visible = str(node.get("trial_gate", "")) != ""  # the wizard only waits in the Warehouse
 	var rec: Dictionary = stages[world]
 	var st: StoryStage = rec["stage"]
 	var wp := str(node["waypoint"])

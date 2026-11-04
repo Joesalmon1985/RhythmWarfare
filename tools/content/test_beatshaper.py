@@ -179,6 +179,8 @@ class Analysis(unittest.TestCase):
         run = self.dir / "run.json"
         write_json(run, {"nodes": [{"id": "a", "depth": 1}, {"id": "b", "depth": 2}, {"id": "c", "depth": 2}]})
         self.addCleanup(setattr, bs, "RUN_JSON", bs.RUN_JSON)
+        self.addCleanup(setattr, bs, "TRIAL_JSON", bs.TRIAL_JSON)
+        bs.TRIAL_JSON = self.dir / "no_trial.json"
         bs.RUN_JSON = run
         a = bs.analyse(self._src(174.0), "Lv9 Test", 0, {})
         bs.write_pack(self._src(174.0), "Lv9 Test", 0, "lv9_test", a, {"drums": 0.0, "bass": 3.0, "other": 10.0}, "Lv9 Test", packs)

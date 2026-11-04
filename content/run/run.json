@@ -156,7 +156,8 @@
      "dir": "right",
      "label": "The floor cracks open"
     }
-   ]
+   ],
+   "trial_gate": "deathtrap_opening"
   },
   {
    "id": "mothership",

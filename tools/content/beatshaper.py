@@ -51,6 +51,7 @@ from import_recorded import db, envelope, fold_loop, onset_near, read_float_wav_
 PACKS = ROOT / "songs" / "packs"
 MUSIC_JSON = ROOT / "content" / "story" / "music.json"
 RUN_JSON = ROOT / "content" / "run" / "run.json"
+TRIAL_JSON = ROOT / "content" / "trial" / "passages.json"
 BPM = 174
 PARTS = ("Drums", "Bass", "Synth")
 NAME_RE = re.compile(r"^(?:Beat Shaper - )?(?P<project>.+)-(?P<part>Drums|Bass|Synth)(?: \((?P<variant>\d+)\))?\.(?P<ext>wav|mid)$")
@@ -436,6 +437,13 @@ def validate(packs_dir: Path = PACKS, music_path: Path = MUSIC_JSON) -> tuple[li
         notes.append(f"music.json: {len(ids)} nodes assigned")
     else:
         errors.append("content/story/music.json is missing")
+    trial = TRIAL_JSON
+    if trial.exists():  # the dungeon opening's phrases play a pack too
+        tm = read_json(trial).get("music", {})
+        for key in ("audio", "chart"):
+            if tm.get(key) not in packs:
+                errors.append(f"content/trial/passages.json: music.{key} pack '{tm.get(key)}' does not exist")
+        notes.append(f"trial: music {tm.get('audio')} / chart {tm.get('chart')}")
     return errors, notes
 
 
