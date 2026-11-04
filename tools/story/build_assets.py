@@ -53,7 +53,23 @@ def add_tiles(name: str) -> None:
     print(f"{name} tiles: {len(man['textures'])}")
 
 
+def add_people(name: str) -> None:
+    """The chapter's actors baked to indexed sprite sheets (people.py, wardrobe.py), named in the manifest's `people` section."""
+    from art import people_sheets
+    path = os.path.join(lib.ROOT, "assets", "story", name, "manifest.json")
+    section = people_sheets.build(name)
+    with open(path, encoding="utf-8") as fh:
+        man = json.load(fh)
+    man["people"] = section
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        json.dump(man, fh, indent=1, sort_keys=False)
+        fh.write("\n")
+
+
 def build_any(name: str, only: list) -> int:
+    if list(only) == ["people"]:  # `build_assets.py hospital people`: only the actors' sprite sheets
+        add_people(name)
+        return 0
     if list(only) == ["tiles"]:  # `build_assets.py mothership tiles`: only the world's texture tiles
         add_tiles(name)
         return 0
@@ -65,6 +81,7 @@ def build_any(name: str, only: list) -> int:
     strip_dead(os.path.join(lib.ROOT, "assets", "story", name, "manifest.json"))
     if not only:
         add_tiles(name)
+        add_people(name)
     return rc
 
 
@@ -112,6 +129,9 @@ def build_chapter(name: str, only: set) -> int:
 
 
 def main(argv) -> int:
+    if len(argv) > 2 and argv[1] == "night_one" and argv[2:] == ["people"]:
+        add_people("night_one")
+        return 0
     if len(argv) > 1 and argv[1] in CHAPTERS:
         return build_any(argv[1], argv[2:])
     only = set(argv[1:])
@@ -144,6 +164,8 @@ def main(argv) -> int:
         json.dump(manifest, fh, indent=1, sort_keys=False)
         fh.write("\n")
     strip_dead(path)
+    if not only:
+        add_people("night_one")
     for d in (lib.SVG_DIR, lib.PNG_DIR):  # drop .import files whose asset is gone
         for dirpath, _dirs, files in os.walk(d):
             for fn in files:

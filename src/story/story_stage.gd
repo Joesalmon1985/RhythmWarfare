@@ -142,6 +142,10 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	fx3d.build(self, map, assets, world)
 	for id in crowds:
 		(crowds[id] as StoryCrowd).tint_fn = func(sec: String) -> Color: return world.light_of(map.sector(sec), t_now, _world_ctx)
+		(crowds[id] as StoryCrowd).light_fn = _figure_light
+	var ppl: StoryPeople = (crowds["main"] as StoryCrowd).people
+	if ppl != null:
+		ppl.set_fog(Color.html(str(map.fog.get("color", "#08051a"))).darkened(0.35))
 	world_active = true
 	var hide := OS.get_environment("RW_STORY_HIDE").split(",")  # profiling aid: RW_STORY_HIDE=crowd,world,fx hides those parts to measure what each costs
 	if "crowd" in hide:
@@ -311,6 +315,9 @@ func update(t: float, p_energy: float) -> void:
 				world.set_visible_sectors(_vis_geo)
 		for id in crowds:
 			(crowds[id] as StoryCrowd).set_camera(ppose, size, _vis)
+	_sec_light = {}
+	if world_active:  # the world first: the figures are lit by this frame's light
+		_update_world(t, p_energy, pose)
 	for id in crowds:  # every room's crowd lives on; only the camera decides what is seen
 		var c: StoryCrowd = crowds[id]
 		c.reduced = reduced
@@ -318,8 +325,9 @@ func update(t: float, p_energy: float) -> void:
 		c.set_time(t)
 		c.update(t, p_energy)
 	_order_crowds()
-	if world_active:
-		_update_world(t, p_energy, pose)
+	var ppl: StoryPeople = (crowds["main"] as StoryCrowd).people if crowds.has("main") else null
+	if ppl != null:
+		ppl.flush_light()
 	queue_redraw()
 
 
@@ -380,6 +388,20 @@ func _order_crowds() -> void:
 	keys.sort()
 	for i in keys.size():
 		(nodes[int(keys[i]) & 4095] as CanvasItem).z_index = 1 + i
+
+
+var _sec_light: Dictionary = {}
+
+
+## The light a figure stands in: `song` the sector's song-time light (cached per frame), else the static light of the lamps around the ground point.
+func _figure_light(sec: String, pos: Vector2, song: bool) -> Color:
+	if not world_active:
+		return Color.WHITE
+	if not song:
+		return world.figure_light(pos, sec)
+	if not _sec_light.has(sec):
+		_sec_light[sec] = world.light_of(map.sector(sec), t_now, _world_ctx) if not _world_ctx.is_empty() else Color.WHITE
+	return _sec_light[sec]
 
 
 func _update_world(t: float, p_energy: float, pose: Dictionary) -> void:

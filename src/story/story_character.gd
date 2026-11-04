@@ -18,6 +18,15 @@ const STATES := ["idle", "dance", "cheer", "sad", "clap", "hands_up", "walk", "f
 const FACE_OF := {"idle": "neutral", "dance": "happy", "cheer": "cheer", "sad": "sad", "clap": "happy", "hands_up": "cheer", "walk": "neutral",
 	"footwork": "happy", "look": "neutral", "solo": "cheer", "toast": "happy", "chat": "happy", "hug": "happy", "wave": "happy", "mix": "happy", "drink": "neutral",
 	"sleep": "neutral", "rock": "sad", "stare": "neutral"}
+## The baked sprite sheets (docs/STORY_25D_ART_DIRECTION.md 2.E): each state is baked over one cycle of SHEET_CYCLES[state] = [beats, frames] from `sample()` with the
+## canonical personal values (phase 0, rate 0.5, amplitude 1, style 0, the dance in each of its STYLES), by tools/story/dump_poses.gd and tools/story/art/people.py. The translations
+## (bob, jump, sway_x, squash) stay live: a sheet frame is the limbs, the head and the lean; the beat's bounce is applied to it every frame from the same sample.
+const SHEET_CYCLES := {"idle": [4.0, 4], "dance": [2.0, 8], "cheer": [2.0, 8], "hands_up": [8.0, 8], "sad": [8.0, 4], "clap": [2.0, 8], "walk": [2.0, 8],
+	"footwork": [2.0, 8], "look": [8.0, 8], "drink": [8.0, 8], "toast": [4.0, 4], "chat": [16.0, 12], "point": [1.0, 2], "phone": [4.0, 4],
+	"lean_wall": [8.0, 4], "sit": [8.0, 4], "lie": [8.0, 4], "sleep": [8.0, 4], "paint": [4.0, 12], "pace": [2.0, 8], "serve": [2.0, 8], "carry": [4.0, 4],
+	"check": [6.0, 12], "stare": [16.0, 4], "rock": [4.0, 8], "hug": [4.0, 4], "queue": [16.0, 16], "wave": [1.0, 8], "watch": [4.0, 4], "mix": [2.0, 8]}
+## Kick-locked states keep a whole number of beats as the personal offset so the bounce stays on the beat; the slow ones shift by the personal phase.
+const SHEET_KICKED := ["dance", "cheer", "clap", "walk", "footwork", "pace", "serve", "mix", "wave", "point"]
 const BLEND_S := 0.32  # seconds of song time a state change cross-fades
 const STYLES := 5  # personal dance styles: arm pump, fist pump, shimmy, raised V, head-nod groove
 const POSE_KEYS := ["bob", "jump", "lean", "head_tilt", "head_drop", "arm_l", "arm_r", "elb_l", "elb_r", "leg_l", "leg_r", "sway_x", "squash", "spin", "roll"]
@@ -39,6 +48,13 @@ var toward := 0.0  # -1 .. 1: the screen side of the partner or target (the figu
 var chat_role := 0  # in a pair: 0 talks first, 1 listens first
 var reduced := false
 var cur: Dictionary = {}
+## The baked sheet (StoryPeople): when attached, the figure is drawn as one frame of the actor's own sprite sheet (the live rig stays as the fallback and for
+## anything without a sheet). `facing` 0 front, 1 three-quarter (mirrored by `face_flip`), 2 back, set by the crowd from where the person is looking.
+var people: StoryPeople
+var sheet: Dictionary = {}
+var facing := 0
+var face_flip := false
+var _fx: SheetFx
 var _last_t := -1.0
 var _swing := 0.0
 var _swing_v := 0.0
@@ -487,6 +503,7 @@ func update_pose(t: float, bpm: float, energy01: float) -> void:
 	var dt := 0.0 if _last_t < 0.0 or _first else clampf(t - _last_t, 0.0, 0.25)
 	_last_t = t
 	var beats := t * bpm / 60.0
+	_bpm = bpm
 	if state != _shown_state:
 		if not _first:
 			for key in POSE_KEYS:
@@ -533,7 +550,166 @@ var _xfs: Array = []  # reused every frame: the transform of each joint, by JOIN
 var _joint_idx: Dictionary = {}  # part -> index into _xfs (resolved once)
 
 
+func attach_sheet(p: StoryPeople, e: Dictionary) -> void:
+	people = p
+	sheet = e
+	style = int(e.get("style", style))
+	material = p.material
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST  # indices must never be blended (the low-res viewport's own default is linear)
+	if _fx == null:
+		_fx = SheetFx.new()
+		_fx.name = "Fx"
+		_fx.c = self
+		_fx.visible = false
+		add_child(_fx)
+
+
+func uses_sheet() -> bool:
+	return people != null and not sheet.is_empty()
+
+
+const SHEET_FALLBACK := {"stand": "idle", "pace": "walk", "serve": "walk", "carry": "idle"}
+
+
+## The sheet state, the beats it is sampled at and the facing for the current state (the solo cycles through the dance styles and spins on every fourth bar).
+func sheet_pick(beats: float) -> Array:
+	var st := state
+	var fc := facing
+	var flip := face_flip
+	var states: Dictionary = sheet.get("states", {})
+	if st == "solo":
+		var bar := int(floorf(beats / 4.0))
+		st = "cheer" if bar % 4 == 2 else "dance_s%d" % (bar % STYLES)
+		var sp := fposmod(beats, 16.0)
+		if sp >= 12.0 and sp < 13.0:
+			var u := sp - 12.0
+			var ang := fposmod(TAU * u * u * (3.0 - 2.0 * u), TAU)
+			if ang > PI * 0.25 and ang < PI * 0.75:
+				fc = 1
+				flip = false
+			elif ang >= PI * 0.75 and ang < PI * 1.25:
+				fc = 2
+			elif ang >= PI * 1.25 and ang < PI * 1.75:
+				fc = 1
+				flip = true
+		if not states.has(st):
+			st = "dance"
+	elif st == "dance" and sync and states.has("dance_s0"):
+		st = "dance_s0"
+	if not states.has(st):
+		st = str(SHEET_FALLBACK.get(st, "idle"))
+		if not states.has(st):
+			st = "idle"
+	return [st, fc, flip]
+
+
+## Which frame of a state's cycle shows at song position `beats`: the canonical cycle shifted by the person's own phase (whole beats for the kick-locked states).
+func sheet_frame(st: String, cyc_beats: float, n: int, beats: float) -> int:
+	var base := "dance" if st.begins_with("dance") else st
+	var off := 0.0
+	if not sync:
+		if base in SHEET_KICKED:
+			off = floorf(phase * 2.0 + 0.5)
+			if base == "cheer" and style % 2 == 1:
+				off += 1.0
+		else:
+			off = phase * cyc_beats
+	return int(floorf(fposmod(beats + off, cyc_beats) / cyc_beats * float(n))) % maxi(n, 1)
+
+
+var _sheet_hand := Vector2.ZERO  # the right hand of the frame on screen, in the node's units (the glow stick's place)
+var _sheet_shown := false
+
+
+func _draw_sheet() -> void:
+	_sheet_shown = false
+	var beats := maxf(_last_t, 0.0) * _bpm / 60.0
+	var pick := sheet_pick(beats)
+	var st: String = pick[0]
+	var e: Array = sheet["states"].get(st, [])
+	if e.size() < 5:
+		return
+	var fc: int = pick[1]
+	var flip: bool = pick[2]
+	var lst: Variant = e[2 + fc]
+	if lst == null:
+		lst = e[2]
+		fc = 0
+	if lst == null:
+		return
+	var n := int(e[1])
+	var rig_h := float(rig.get("height", 260.0))
+	var s_px := absf(scale.x) * rig_h / people.h0  # screen pixels per full-size sheet pixel
+	var li := 2 if s_px < 0.4 else (1 if s_px < 0.82 else 0)  # never shrink a sheet much: a smaller level of detail is drawn at its own size
+	var i := sheet_frame(st, float(e[0]), n, beats)
+	var fi := int((lst as Array)[li * n + i]) * StoryPeople.FIELDS
+	var fr := people.frames
+	var tex: Texture2D = people.pages[fr[fi]]
+	if tex == null:
+		return
+	var unit := float(people.lods[li]) * rig_h / people.h0
+	var P := cur
+	var sq := float(P["squash"]) if state not in ["sit", "sleep", "rock", "lie"] else 0.0
+	var bob := float(P["bob"]) if state not in ["sit", "sleep", "rock", "lie"] else 0.0
+	var fl := -1.0 if flip or (fc == 0 and toward < -0.01 and state in ["lean_wall", "lie", "hug"]) else 1.0
+	var sx := (1.0 + sq * 0.6) * unit * fl
+	var sy := (1.0 - sq) * (1.0 - 0.6 * bob / rig_h) * unit
+	var off := Vector2(float(P["sway_x"]) * fl, -float(P["jump"]))
+	draw_set_transform(off, 0.0, Vector2(sx, sy))
+	var w := fr[fi + 3]
+	var h := fr[fi + 4]
+	var piv := Vector2(fr[fi + 5], fr[fi + 6])
+	draw_texture_rect_region(tex, Rect2(-piv, Vector2(w, h)), Rect2(fr[fi + 1], fr[fi + 2], w, h))
+	draw_set_transform_matrix(Transform2D.IDENTITY)
+	_sheet_hand = off + (Vector2(fr[fi + 7], fr[fi + 8]) - piv) * Vector2(sx, sy)
+	_sheet_shown = true
+	if _fx != null:
+		var need := (glow and glow_on) or state == "sleep" or state == "phone" or held == "phone"  # the child is only drawn when it has something to show
+		_fx.visible = need
+		if need:
+			_fx.queue_redraw()
+
+
+var _bpm := 174.0
+
+
+## What the sheet cannot carry: the glow stick at the hand, the sleeper's Zs, a phone's light on the face. Drawn by the child SheetFx with the default material.
+func _draw_fx(fx: Node2D) -> void:
+	if not _sheet_shown:
+		return
+	if glow and glow_on:
+		var gs := assets.sprite("glowstick") if assets != null else {}
+		if not gs.is_empty() and gs["tex"] != null:
+			fx.draw_set_transform(_sheet_hand, 0.3, Vector2(gs["scale"], gs["scale"]) * 0.8)
+			fx.draw_texture(gs["tex"], -gs["pivot"], glow_color)
+	if state == "sleep":
+		var head := Vector2(0, -float(rig.get("height", 260.0)) * 0.95)
+		var zt := fposmod(_last_t * 0.6, 1.0)
+		fx.draw_set_transform_matrix(Transform2D.IDENTITY)
+		for k in 2:
+			var zk := fposmod(zt + 0.5 * float(k), 1.0)
+			var zc := Color(0.8, 0.85, 1.0, 1.0 - zk)
+			var o := head + Vector2(30.0 + 18.0 * zk, -20.0 - 50.0 * zk)
+			var sz := 8.0 + 6.0 * zk
+			fx.draw_polyline(PackedVector2Array([o + Vector2(-sz, -sz), o + Vector2(sz, -sz), o + Vector2(-sz, sz), o + Vector2(sz, sz)]), zc, 3.0)
+	if state == "phone" or held == "phone":
+		fx.draw_set_transform_matrix(Transform2D.IDENTITY)
+		fx.draw_circle(_sheet_hand + Vector2(0, -14), 22.0, Color(0.55, 0.9, 1.0, 0.12))
+
+
+class SheetFx:
+	extends Node2D
+	var c: StoryCharacter
+
+	func _draw() -> void:
+		if c != null:
+			c._draw_fx(self)
+
+
 func _draw() -> void:
+	if uses_sheet():
+		_draw_sheet()
+		return
 	if rig.is_empty() or _parts.is_empty():
 		return
 	if _xfs.is_empty():

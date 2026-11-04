@@ -55,10 +55,16 @@ var _pose_key := ""
 var _order_key := ""
 
 
+var people: StoryPeople  # the chapter's baked sheets (null: the live rig draws everyone)
+var light_fn := Callable()  # (sector id, ground position) -> Color: the light a person stands in (the stage sets it when the world is built)
+var fog_m := Vector2(5.5, 17.0)  # depth (m) where the back rows start fading into the fog, and where they are fully faded
+
+
 func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
 	assets = p_assets
 	data = p_data
 	_rng.seed = 4242
+	people = StoryPeople.for_assets(assets)
 	var n := 0
 	for a in data.actors:
 		if str(a.get("view", "main")) != view:
@@ -74,10 +80,52 @@ func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
 		add_child(c)
 		var present := str(a["group"]) == "core"
 		c.held = str(a.get("prop", "")) if str(a.get("prop", "")) in StoryCharacter.PROPS and str(a.get("activity", "")) != "" else ""
+		if people != null and people.ok() and not people.entry(str(a["id"])).is_empty():
+			c.attach_sheet(people, people.entry(str(a["id"])))
 		actors[str(a["id"])] = {"node": c, "data": a, "seed": _id_seed(str(a["id"])), "lock": str(a.get("activity", "")), "partner": "", "act": "", "home": Vector2.ZERO, "pos": Vector2.ZERO, "present": present, "move": {}, "dir": {},
 			"thresh": float(a.get("thresh", 0.0)), "alpha": 1.0 if present else 0.0, "stay": false, "vanish": {}}
 		n += 1
 	_order = actors.keys()
+
+
+## The baked sheet's inputs for one person: the facing (from where they walk or look, relative to the eye), the shader's row, depth fog and brightness, and the light
+## they stand in. Presentation only: a pure function of the person's state and the camera.
+func _sheet_look(a: Dictionary, c: StoryCharacter, st: String, walking: bool, alpha: float, lit: float) -> void:
+	var fdir := Vector2.ZERO
+	var pos: Vector2 = a["pos"]
+	if walking or st == "pace" or st == "serve":
+		fdir = a.get("heading", Vector2.ZERO)
+		if not walking:
+			var pc: Dictionary = _pace_of(a)
+			fdir = (pc["axis"] as Vector2) * signf(cos(_t_now * bpm / 60.0 * PI / 16.0 + float(a["seed"])) + 1.0e-6)
+	elif st in StoryCharacter.PAIRED and str(a["partner"]) != "" and actors.has(str(a["partner"])):
+		fdir = (actors[str(a["partner"])]["pos"] as Vector2) - pos
+	elif st in StoryCharacter.TARGETED or st in ["check", "paint"] and str(a["data"].get("target", "")) != "":
+		fdir = _target_of(a) - pos
+	elif st == "mix":
+		fdir = (circle_c if circle_c != Vector2.ZERO else riser_spot) - pos
+	c.facing = 0
+	c.face_flip = false
+	if fdir.length() > 0.05:
+		var to_eye := (Vector2(_eye.x, _eye.z) - pos).normalized()
+		var d := fdir.normalized()
+		var f := d.dot(to_eye)
+		if f < -0.55:
+			c.facing = 2
+		elif f < 0.45:
+			c.facing = 1
+			c.face_flip = d.dot(_rgt) < 0.0
+	var depth := float(a.get("depth", 0.0))
+	var fog := clampf((depth - fog_m.x) / (fog_m.y - fog_m.x), 0.0, 1.0)
+	var row := int(c.sheet.get("row", 0))
+	c.self_modulate = Color((float(row) + 0.5) / 256.0, fog, 0.5 * lit, 1.0)
+	c.modulate = Color(1, 1, 1, alpha)
+	if light_fn.is_valid():
+		var cell := Vector2i(int(pos.x * 2.0), int(pos.y * 2.0))  # the lamps' light is static: looked up again only when the person moves half a metre
+		if a.get("light_cell", Vector2i(-99999, -99999)) != cell:
+			a["light_cell"] = cell
+			a["lamp"] = light_fn.call(str(a.get("sec", "")), pos, false)
+		people.set_light(row, (light_fn.call(str(a.get("sec", "")), pos, true) as Color) * (a["lamp"] as Color))
 
 
 ## Put the crowd in the 3D world: homes, the door, the circle and the riser come from the map (metres), the rear silhouettes and occluders become props.
@@ -234,6 +282,7 @@ func update(t: float, p_energy: float) -> void:
 				var ue := u * u * (3.0 - 2.0 * u)
 				var along := _along(mv, ue)
 				a["pos"] = along[0]
+				a["heading"] = along[1]
 				var dx := _screen_dx(along[1])
 				walking = u < 1.0
 				c.walk_dir = clampf(dx, -1.0, 1.0) * sin(PI * clampf(u * 1.4, 0.0, 1.0)) if walking else 0.0
@@ -281,6 +330,8 @@ func update(t: float, p_energy: float) -> void:
 			c.state = st
 		if not shown:
 			continue
+		if c.people != null:
+			_sheet_look(a, c, st, walking, alpha, lit)
 		# the dancers animate at up to POSE_RATE a second of song time (the redraw is the cost); position and scale still follow the camera every frame
 		var pt := float(a.get("pose_t", -1.0e9))
 		if t >= pt and t - pt < 1.0 / (POSE_RATE if float(a["depth"]) < FAR_M else POSE_RATE_FAR):
@@ -507,8 +558,15 @@ func _dancing_here(a: Dictionary) -> bool:
 func pick_activity(a: Dictionary, band: String) -> String:
 	if str(a["lock"]) != "":
 		return str(a["lock"])
+	var key := str(a.get("sec", "")) + "|" + band  # a pure function of the person, their sector and the band: looked up once
+	var memo: Dictionary = a.get("pick_memo", {})
+	if memo.has(key):
+		return memo[key]
 	var list: Array = map.activities_of(str(a.get("sec", "")), band) if map != null else ["dance"]
-	return str(list[(int(a["seed"]) + 3 * maxi(StoryData.band_rank(band), 0)) % list.size()])
+	var out := str(list[(int(a["seed"]) + 3 * maxi(StoryData.band_rank(band), 0)) % list.size()])
+	memo[key] = out
+	a["pick_memo"] = memo
+	return out
 
 
 func _mood_state(a: Dictionary, e01: float) -> String:

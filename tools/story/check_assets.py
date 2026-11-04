@@ -116,6 +116,7 @@ def validate(chapter: str = "night_one") -> list:
     if chapter != "night_one":
         chapter_checks(errors, chapter, m, st)
     texture_checks(errors, chapter, m)
+    people_checks(errors, chapter, m)
     return errors
 
 
@@ -148,6 +149,83 @@ def texture_checks(errors, chapter, m) -> None:
     listed = {os.path.basename(e["file"]) for e in tex.values()}
     if on_disk - listed:
         errors.append(f"textures on disk but not in the manifest: {sorted(on_disk - listed)}")
+
+
+PEOPLE_STATES = {"idle", "walk"}  # every person has at least these
+SHEET_STATES = {"idle", "dance", "cheer", "hands_up", "sad", "clap", "walk", "footwork", "look", "drink", "toast", "chat", "point", "phone", "lean_wall", "sit", "lie",
+                "sleep", "paint", "pace", "serve", "carry", "check", "stare", "rock", "hug", "queue", "wave", "watch", "mix",
+                "dance_s0", "dance_s1", "dance_s2", "dance_s3", "dance_s4"}
+
+
+def people_checks(errors, chapter, m) -> None:
+    """The baked people (tools/story/art/people_sheets.py): every actor of the chapter has a sheet entry with the states the runtime needs (their own activity,
+    the dance set on dancing sectors, the walk), every frame lies inside its page, the palette has a row per actor, no two people in a room share build, hair
+    and top, and the frames are a sensible size (a full-size frame stands about as tall as the person's build says, h0 x height, plus hair, horns or a hat)."""
+    sec = m.get("people")
+    if not sec:
+        errors.append("manifest has no people section (build_assets.py <chapter> people)")
+        return
+    path = os.path.join(ART, sec["file"])
+    if not os.path.exists(path):
+        errors.append(f"people: missing {sec['file']}")
+        return
+    doc = json.load(open(path, encoding="utf-8"))
+    pages = []
+    for f in doc["pages"]:
+        p = os.path.join(ART, f)
+        if not os.path.exists(p):
+            errors.append(f"people: missing page {f}")
+            return
+        pages.append(png_size(p))
+    pw, ph = png_size(os.path.join(ART, doc["palette"]))
+    fr = doc["frames"]
+    if len(fr) % 9:
+        errors.append("people: frame table is not a multiple of 9 fields")
+        return
+    nfr = len(fr) // 9
+    for i in range(nfr):
+        pg, x, y, w, h = fr[i * 9:i * 9 + 5]
+        if pg >= len(pages) or x + w > pages[pg][0] or y + h > pages[pg][1] or w <= 0 or h <= 0:
+            errors.append(f"people: frame {i} outside its page")
+            break
+    with open(os.path.join(ROOT, "content", "story", chapter + ".json"), encoding="utf-8") as fh:
+        data = json.load(fh)
+    looks: dict = {}
+    for a in data["actors"]:
+        aid = str(a["id"])
+        e = doc["actors"].get(aid)
+        if e is None:
+            errors.append(f"people: no sheet for actor {aid}")
+            continue
+        if e["row"] >= ph or pw != 128:
+            errors.append(f"people: {aid} palette row {e['row']} outside the palette ({pw}x{ph})")
+        st = e["states"]
+        need = set(PEOPLE_STATES)
+        if a.get("activity"):
+            need.add(str(a["activity"]) if str(a["activity"]) != "dance" else "dance")
+        if not need <= set(st):
+            errors.append(f"people: {aid} lacks states {sorted(need - set(st))}")
+        for k, v in st.items():
+            if k not in SHEET_STATES:
+                errors.append(f"people: {aid} unknown state {k}")
+            n = v[1]
+            if v[2] is None or len(v[2]) != 3 * n:
+                errors.append(f"people: {aid}.{k} has no front frames for three levels of detail")
+            for lst in v[2:]:
+                if lst is not None and (len(lst) != 3 * n or max(lst) >= nfr):
+                    errors.append(f"people: {aid}.{k} frame list malformed")
+        idle = st.get("idle")
+        if idle:
+            h = fr[idle[2][0] * 9 + 4]
+            hb = float(e["height"]) * doc.get("h0", 112)  # the person's own standing height at full size (hair, horns and hats on top)
+            lo, hi = int(hb * 0.85), int(hb * 1.4) + 4
+            if not lo <= h <= hi:
+                errors.append(f"people: {aid} stands {h} px tall at full size (expected {lo} to {hi})")
+        room = str(a.get("view", "main"))
+        key = tuple(e["look"][:5])
+        if key in looks.setdefault(room, {}):
+            errors.append(f"people: {aid} and {looks[room][key]} in {room} share build, hair and top {key}")
+        looks[room][key] = aid
 
 
 VIEWS = {"mothership": ["gallery", "reactor", "bridge"], "underworld": ["court", "pit", "furnace"],

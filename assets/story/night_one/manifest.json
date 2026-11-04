@@ -2831,5 +2831,17 @@
    ],
    "metres": 2.0
   }
+ },
+ "people": {
+  "file": "people/people.json",
+  "pages": [
+   "people/page_0.png",
+   "people/page_1.png",
+   "people/page_2.png",
+   "people/page_3.png",
+   "people/page_4.png",
+   "people/page_5.png"
+  ],
+  "palette": "people/palette.png"
  }
 }

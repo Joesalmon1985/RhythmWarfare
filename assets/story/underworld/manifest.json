@@ -3545,5 +3545,30 @@
    ],
    "metres": 4.0
   }
+ },
+ "people": {
+  "file": "people/people.json",
+  "pages": [
+   "people/page_0.png",
+   "people/page_1.png",
+   "people/page_2.png",
+   "people/page_3.png",
+   "people/page_4.png",
+   "people/page_5.png",
+   "people/page_6.png",
+   "people/page_7.png",
+   "people/page_8.png",
+   "people/page_9.png",
+   "people/page_10.png",
+   "people/page_11.png",
+   "people/page_12.png",
+   "people/page_13.png",
+   "people/page_14.png",
+   "people/page_15.png",
+   "people/page_16.png",
+   "people/page_17.png",
+   "people/page_18.png"
+  ],
+  "palette": "people/palette.png"
  }
 }
