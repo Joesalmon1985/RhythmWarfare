@@ -1,0 +1,36 @@
+{
+ "schema": 1,
+ "note": "The five chapter identities, as filters on the catalogue/pack data (never filenames). An arrangement has exactly one palette: its family must pass `filters`, every section's mix recipe is one of the palette's `recipes`, and `lead` / `tail` set how it opens and closes (roles of the first and last 8-bar sections). Filters: family_glob (fnmatch on the family id), profile (pack profiles), min_density / max_density (cues per bar, drums plus bass, tier 4). tools/content/arrange.py reads this file.",
+ "palettes": {
+  "warehouse": {
+   "label": "Night One warehouse energy",
+   "filters": {"family_glob": ["lv1_*"], "profile": ["beat_shaper_87x2", "beat_shaper_174x1"], "min_density": 3.0},
+   "recipes": {"intro": "intro", "build": "build", "drop": "drop", "breakdown": "breakdown", "variation": "variation", "ending": "ending"},
+   "lead": ["intro", "build"], "tail": ["drop", "ending"], "fills": true, "long_p": 0.45
+  },
+  "mothership": {
+   "label": "Mothership electronic",
+   "filters": {"family_glob": ["lv2_*"], "profile": ["beat_shaper_174x1"], "min_density": 2.0},
+   "recipes": {"intro": "intro", "build": "build", "drop": "full", "breakdown": "breakdown", "variation": "variation", "ending": "ending"},
+   "lead": ["intro", "build"], "tail": ["variation", "ending"], "fills": true, "long_p": 0.4
+  },
+  "underworld": {
+   "label": "Underworld dark neurofunk",
+   "filters": {"family_glob": ["cold_*", "lv3_*", "lv2_*"], "profile": ["beat_shaper_174x1"], "min_density": 2.0},
+   "recipes": {"intro": "dark_breakdown", "build": "build", "drop": "dark_drop", "breakdown": "dark_breakdown", "variation": "dark_drop", "ending": "ending"},
+   "lead": ["intro", "build"], "tail": ["drop", "ending"], "fills": true, "long_p": 0.5
+  },
+  "hospital": {
+   "label": "Hospital, fragile then uplifting",
+   "filters": {"family_glob": ["lv4_*"], "profile": ["beat_shaper_174x1"], "min_density": 2.0},
+   "recipes": {"intro": "fragile", "build": "fragile", "drop": "uplift", "breakdown": "fragile", "variation": "uplift", "ending": "uplift"},
+   "lead": ["intro", "breakdown"], "tail": ["drop", "ending"], "fills": false, "long_p": 0.3
+  },
+  "ward": {
+   "label": "Ward, unsettling industrial",
+   "filters": {"family_glob": ["lv5_*"], "profile": ["beat_shaper_87x2", "beat_shaper_174x1"], "min_density": 2.0},
+   "recipes": {"intro": "dark_breakdown", "build": "harsh", "drop": "harsh", "breakdown": "dark_breakdown", "variation": "harsh", "ending": "dark_breakdown"},
+   "lead": ["intro", "build"], "tail": ["variation", "ending"], "fills": true, "long_p": 0.35
+  }
+ }
+}
