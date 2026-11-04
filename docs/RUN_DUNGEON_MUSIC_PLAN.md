@@ -1,6 +1,6 @@
 # Plan for review: the continuous run, the Deathtrap Dungeon and new music on the 2.5D game
 
-Status: DRAFT for the owner's review, 2026-11-04. Nothing here is built yet. Written against `main` at `1a4745a2` (the 2.5D polish) and the
+Status: APPROVED 2026-11-04 with the owner's calls recorded in section 2a. Work branch: `feature/run-on-25d`. Written against `main` at `1a4745a2` (the 2.5D polish) and the
 branches `feature/continuous-story-run` and `feature/deathtrap-opening` (both cut from `5e1250a2`, the pre-polish `main`).
 
 ## 1. What the branches hold
@@ -39,6 +39,16 @@ military campaign from the home screen (they stay in the repo).
 6. **Music supply.** The hand-off sheet needs 4 chart sets plus 3 optional alternate renders to replace every stand-in, plus one or two for the
    dungeon. Four earlier exports were rejected. Do you want the importer loosened (bass placement by MIDI alone when the audio detector
    disagrees) or will you re-export?
+
+## 2a. The owner's calls (2026-11-04)
+
+1. Front door: the run is the main game; the chapters stay reachable under Play.
+2. Dungeon look: **flat for now**, with the integration done first; a later pass with subagents moves it into the 2.5D engine (WP-B2 to B4 deferred).
+3. Dungeon music: the owner supplies more music in `ToAddTry2/`; placeholders where more is needed.
+4. Rights: **rename** the dungeon into an original death trap dungeon (zones, creatures, names, the lock) now.
+5. Scope: **curated**, about 60 to 80 passages, agent's judgement on which.
+6. Importer: **loosen** it (trust the MIDI when the audio detector disagrees; auto-detect kick and snare notes).
+7. Delegation: Sonnet 5.5 subagents do the work where practical; Fable plans; Opus polishes later.
 
 ## 3. The target, in one paragraph
 
