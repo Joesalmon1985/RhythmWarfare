@@ -111,3 +111,22 @@ Seen (virtual clock, real window, screenshots in `docs/shots/run/`): all seven l
 Not done: nothing here was listened to or played by hand on a phone; the dummy audio driver has no output latency, so real-device latency is covered only by the existing calibration setting;
 the treated levels (Underworld, Hospital, Ward, the late levels) were checked for timing but their treatment settings were not judged by ear; the riser and fall are synthesised and have not
 been auditioned. See `docs/MUSIC_HANDOFF.md` for what is temporary.
+
+## The run on the polished 2.5D worlds (WP-A1, 2026-11-04)
+
+Verified on `feature/run-on-25d` (the run, the Deathtrap Dungeon and the 2.5D polish merged):
+
+* `--import` clean; the full Godot suite 41,143 checks, 0 failures (the Python `mido` failures of the content build tests are the known, unrelated ones); the 26 trial tests pass.
+* Chapter walk-through (`tools/story/walk_campaign.sh`, all five paths: perfect, none, sloppy2, mixed_a, mixed_b): `walk-through: OK`, every chain, ending, menu unlock and save as expected.
+* Run recording (`tools/story/record_music.gd` on `run_play.tscn` with perfect play and the routes up,left,left,right,left, then `tools/story/check_run_audio.py`), 100 s, 5 phases.
+  **Found:** the first recording after the merge failed its mix fit on the Warehouse (the synth fitted 0.09 against 0.45 in blocks 2 to 4, 94 to 97 % explained, delay spread 15 ms).
+  **Cause:** the 2.5D polish made a world's stage expensive to build: every world's people pages (16 pages of 2048 px) were decoded from the imported textures on the main
+  thread, so building one stage took 0.84 to 2.35 s (`tools/run/profile_build.tscn`: people sheets 0.6 to 1.6 s of it). The run builds the next candidate world in a cue-free guard
+  (1.4 s), so the stall swallowed the guard and delayed `RunAudio`'s gain changes at the block boundary.
+  **Fix:** `StoryPeople.prewarm()` decodes a world's pages on a worker thread when a level starts (the candidates are the worlds its routes lead to), and the stage build only uploads them:
+  builds now take 0.53 to 0.77 s (data 5 ms, people/crowd setup 270 to 550 ms, world 205 to 460 ms) and start at beat 12.6 of a block instead of 13.2. Re-recorded: every block of the
+  Warehouse and the Mothership within 0.01 of the table's gains, 99.7 to 100 % explained, bass and synth within 3 ms of the drums, the riser within 6 ms, "RESULT CHECK" as before.
+  The per-phase delay still drifts by 15 to 25 ms over four phases here (the first run measured spread 0.00 ms on an idle machine); both recordings were made while other jobs were loading the
+  machine, so that number needs re-measuring on an idle one.
+* The 360-line default, the settings (pad size, motion, reduced effects, contrast) and the activities all pass through unchanged: `_build_stage` applies `Session.story_lines`, `reduced`,
+  `high_contrast` and `effective_story_motion` to every stage, and the crowd's activity picks read the band of `engine.energy` (tests/test_run_rail.gd, test_run_matrix.gd).
