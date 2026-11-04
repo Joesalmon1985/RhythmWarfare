@@ -62,6 +62,9 @@ func _ready() -> void:
 	content.add_child(StoryStyle.note("Each set plays your Loadout: the same four pads, falling notes and music as the campaign.", StoryStyle.MUTED, 16))
 	if focus != null:
 		focus.grab_focus()
+	if StoryTrace.auto_advance():  # the walk-through ends on the menu: log what it offers
+		StoryTrace.line("menu", {"unlocked": ",".join(PackedStringArray(StoryTrace.unlocked_ids()))})
+		get_tree().create_timer(0.5).timeout.connect(func() -> void: get_tree().quit())
 
 
 ## A small window onto the chapter's room (its backdrop art), darkened when the chapter is locked.

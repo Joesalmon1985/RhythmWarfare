@@ -97,6 +97,15 @@ func _ready() -> void:
 	buttons.add_child(UiStyle.button("Story Campaign", func() -> void: get_tree().change_scene_to_file("res://src/scenes/story_campaign.tscn"), 240, 64))
 	buttons.add_child(UiStyle.button("Menu", func() -> void: get_tree().change_scene_to_file("res://src/scenes/main_menu.tscn"), 160, 64))
 	(first if first != null else retry).grab_focus()
+	if StoryTrace.auto_advance():  # the walk-through: log the scene, then take the story's own route after a second
+		var pol := StoryTrace.policy_for(chapter_id)
+		StoryTrace.line("result", {"chapter": chapter_id, "policy": str(pol["policy"]), "ending": ending, "route": str(route.get("to", "end")),
+			"interlude": str(route.get("interlude", "")), "unlocked": ",".join(PackedStringArray(StoryTrace.unlocked_ids()))})
+		get_tree().create_timer(1.0).timeout.connect(func() -> void:
+			if first != null:
+				first.pressed.emit()
+			else:
+				get_tree().change_scene_to_file("res://src/scenes/story_campaign.tscn"))
 
 
 func _tile(label: String, value: String, accent: Color) -> Control:

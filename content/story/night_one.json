@@ -83,6 +83,12 @@
      "role": "dancer"
     },
     {
+     "at_bar": 2,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
+    },
+    {
      "at_bar": 3,
      "action": "front_row_sway"
     },
@@ -90,6 +96,12 @@
      "at_bar": 5,
      "action": "bring_in",
      "group": "early"
+    },
+    {
+     "at_bar": 6,
+     "action": "player_look",
+     "by": -28,
+     "bars": 3
     },
     {
      "at_bar": 7,
@@ -118,6 +130,12 @@
      "else": "front_row_sway"
     },
     {
+     "at_bar": 10,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
      "at_bar": 11,
      "action": "beams_sweep"
     },
@@ -130,6 +148,12 @@
       "energy_min": 45
      },
      "else": "look_around"
+    },
+    {
+     "at_bar": 14,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
     },
     {
      "at_bar": 15,
@@ -157,6 +181,12 @@
      "action": "haze_burst"
     },
     {
+     "at_bar": 18,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
+    },
+    {
      "at_bar": 19,
      "action": "wave_across",
      "bars": 3
@@ -164,6 +194,12 @@
     {
      "at_bar": 21,
      "action": "beams_fan"
+    },
+    {
+     "at_bar": 22,
+     "action": "player_look",
+     "by": -28,
+     "bars": 3
     },
     {
      "at_bar": 23,
@@ -188,8 +224,20 @@
      "group": "gatherers"
     },
     {
+     "at_bar": 26,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
      "at_bar": 29,
      "action": "beams_cross"
+    },
+    {
+     "at_bar": 30,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
     },
     {
      "at_bar": 31,
@@ -205,6 +253,12 @@
    "bars": 8,
    "events": [
     {
+     "at_bar": 34,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
+    },
+    {
      "at_bar": 35,
      "action": "circle_form",
      "group": "circle"
@@ -216,6 +270,12 @@
     {
      "at_bar": 37,
      "action": "lights_cool"
+    },
+    {
+     "at_bar": 38,
+     "action": "player_look",
+     "by": -28,
+     "bars": 3
     },
     {
      "at_bar": 39,
@@ -240,12 +300,24 @@
      "action": "spotlight_sweep"
     },
     {
+     "at_bar": 42,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
      "at_bar": 43,
      "action": "glowsticks_on"
     },
     {
      "at_bar": 45,
      "action": "hero_center"
+    },
+    {
+     "at_bar": 46,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
     },
     {
      "at_bar": 47,
@@ -271,12 +343,24 @@
      "else": "front_row_sway"
     },
     {
+     "at_bar": 50,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
+    },
+    {
      "at_bar": 51,
      "action": "lights_warm"
     },
     {
      "at_bar": 53,
      "action": "beams_cross"
+    },
+    {
+     "at_bar": 54,
+     "action": "player_look",
+     "by": -28,
+     "bars": 3
     },
     {
      "at_bar": 55,
@@ -297,12 +381,24 @@
    "bars": 8,
    "events": [
     {
+     "at_bar": 58,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
      "at_bar": 59,
      "action": "led_rings"
     },
     {
      "at_bar": 61,
      "action": "regroup"
+    },
+    {
+     "at_bar": 62,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
     },
     {
      "at_bar": 63,
@@ -332,12 +428,24 @@
      "bars": 6
     },
     {
+     "at_bar": 66,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
+    },
+    {
      "at_bar": 67,
      "action": "spotlight_hero"
     },
     {
      "at_bar": 69,
      "action": "lights_rave"
+    },
+    {
+     "at_bar": 70,
+     "action": "player_look",
+     "by": -28,
+     "bars": 3
     },
     {
      "at_bar": 71,
@@ -353,6 +461,12 @@
    "bars": 8,
    "events": [
     {
+     "at_bar": 74,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
      "at_bar": 75,
      "action": "light_wave",
      "bars": 2
@@ -361,6 +475,12 @@
      "at_bar": 77,
      "action": "light_wave",
      "bars": 2
+    },
+    {
+     "at_bar": 78,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
     },
     {
      "at_bar": 79,
@@ -389,6 +509,12 @@
      "else": "front_row_sway"
     },
     {
+     "at_bar": 82,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
+    },
+    {
      "at_bar": 83,
      "action": "riser_down"
     },
@@ -401,6 +527,12 @@
      },
      "else": "group_footwork",
      "group": "all"
+    },
+    {
+     "at_bar": 86,
+     "action": "player_look",
+     "by": -28,
+     "bars": 3
     },
     {
      "at_bar": 87,
@@ -421,6 +553,12 @@
      "bars": 4
     },
     {
+     "at_bar": 90,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
      "at_bar": 91,
      "action": "wave_across",
      "bars": 3,
@@ -432,6 +570,12 @@
     {
      "at_bar": 93,
      "action": "led_wave"
+    },
+    {
+     "at_bar": 94,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
     },
     {
      "at_bar": 95,
@@ -456,12 +600,24 @@
      "else": "front_row_sway"
     },
     {
+     "at_bar": 98,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
+    },
+    {
      "at_bar": 99,
      "action": "glowsticks_on"
     },
     {
      "at_bar": 101,
      "action": "lights_rave"
+    },
+    {
+     "at_bar": 102,
+     "action": "player_look",
+     "by": -28,
+     "bars": 3
     },
     {
      "at_bar": 103,
@@ -477,6 +633,12 @@
    "bars": 8,
    "events": [
     {
+     "at_bar": 106,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
      "at_bar": 107,
      "action": "rave_peak",
      "bars": 6,
@@ -491,6 +653,12 @@
      "when": {
       "energy_min": 85
      }
+    },
+    {
+     "at_bar": 110,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
     },
     {
      "at_bar": 111,
@@ -510,6 +678,12 @@
      "action": "bass_reveal"
     },
     {
+     "at_bar": 114,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
+    },
+    {
      "at_bar": 117,
      "action": "jump_sync",
      "bars": 2,
@@ -517,6 +691,12 @@
       "energy_min": 70
      },
      "else": "clap_sync"
+    },
+    {
+     "at_bar": 118,
+     "action": "player_look",
+     "by": -28,
+     "bars": 3
     },
     {
      "at_bar": 119,
@@ -536,12 +716,24 @@
      "action": "ending_lean"
     },
     {
+     "at_bar": 122,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
      "at_bar": 123,
      "action": "led_rings"
     },
     {
      "at_bar": 125,
      "action": "beams_fan"
+    },
+    {
+     "at_bar": 126,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
     }
    ]
   }

@@ -2934,6 +2934,14 @@
    ],
    "metres": 2.0
   },
+  "thing_sign_wc": {
+   "file": "textures/thing_sign_wc.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
   "toilet_floor": {
    "file": "textures/toilet_floor.png",
    "size": [

@@ -1,6 +1,26 @@
 {
- "units_per_m": 1, "eye_height": 1.6, "start": "floor_centre",
- "textures": {"bar_front": "textures/bar_front.png", "ceil_truss": "textures/ceil_truss.png", "cubicle_door": "textures/cubicle_door.png", "floor_carpet": "textures/floor_carpet.png", "floor_dark": "textures/floor_dark.png", "floor_led": "textures/floor_led.png", "floor_stage": "textures/floor_stage.png", "toilet_floor": "textures/toilet_floor.png", "toilet_tile": "textures/toilet_tile.png", "trim": "textures/trim.png", "wall_bar": "textures/wall_bar.png", "wall_brick": "textures/wall_brick.png", "wall_door": "textures/wall_door.png", "wall_led": "textures/wall_led.png", "wall_panel": "textures/wall_panel.png", "wall_speaker": "textures/wall_speaker.png"},
+ "units_per_m": 1,
+ "eye_height": 1.6,
+ "start": "floor_centre",
+ "textures": {
+  "bar_front": "textures/bar_front.png",
+  "ceil_truss": "textures/ceil_truss.png",
+  "cubicle_door": "textures/cubicle_door.png",
+  "floor_carpet": "textures/floor_carpet.png",
+  "floor_dark": "textures/floor_dark.png",
+  "floor_led": "textures/floor_led.png",
+  "floor_stage": "textures/floor_stage.png",
+  "thing_sign_wc": "textures/thing_sign_wc.png",
+  "toilet_floor": "textures/toilet_floor.png",
+  "toilet_tile": "textures/toilet_tile.png",
+  "trim": "textures/trim.png",
+  "wall_bar": "textures/wall_bar.png",
+  "wall_brick": "textures/wall_brick.png",
+  "wall_door": "textures/wall_door.png",
+  "wall_led": "textures/wall_led.png",
+  "wall_panel": "textures/wall_panel.png",
+  "wall_speaker": "textures/wall_speaker.png"
+ },
  "sectors": [
   {"id": "entrance", "polygon": [[-3, 9], [3, 9], [3, 13], [-3, 13]], "floor": 0, "ceiling": 3.0, "floor_tex": "floor_carpet", "ceil_tex": "ceil_truss", "wall_tex": "wall_brick", "light": 0.45, "tint": "#ffc23f", "room": "entrance", "flags": ["entrance"]},
   {"id": "floor", "polygon": [[-7, -3], [7, -3], [7, 9], [-7, 9]], "floor": 0, "ceiling": 3.6, "floor_tex": "floor_led", "ceil_tex": "ceil_truss", "wall_tex": "wall_panel", "light": 0.6, "tint": "#8060ff", "room": "main", "flags": ["dance_floor"]},
@@ -45,7 +65,10 @@
   {"id": "fixture_bl", "kind": "billboard", "sprite": "fixture", "at": [-3.5, 5.5], "y": 3.3, "size": 0.8, "anim": "none"},
   {"id": "fixture_br", "kind": "billboard", "sprite": "fixture", "at": [3.5, 5.5], "y": 3.3, "size": 0.8, "anim": "none"},
   {"id": "fixture_stage_l", "kind": "billboard", "sprite": "fixture", "at": [-3, -6.5], "y": 3.9, "size": 0.8, "anim": "none"},
-  {"id": "fixture_stage_r", "kind": "billboard", "sprite": "fixture", "at": [3, -6.5], "y": 3.9, "size": 0.8, "anim": "none"}
+  {"id": "fixture_stage_r", "kind": "billboard", "sprite": "fixture", "at": [3, -6.5], "y": 3.9, "size": 0.8, "anim": "none"},
+  {"id": "sign_wc_far", "kind": "billboard", "sprite": "thing_sign_wc", "at": [-12.4, 1.5], "y": 1.9, "size": 0.7, "anim": "none"},
+  {"id": "sign_wc_glow", "kind": "billboard", "sprite": "glow", "at": [-12.3, 1.5], "y": 1.9, "size": 1.8, "anim": "flicker", "blend": "add"},
+  {"id": "sign_wc_door", "kind": "billboard", "sprite": "thing_sign_wc", "at": [-7.6, 1.5], "y": 2.0, "size": 0.7, "anim": "none"}
  ],
  "homes": [
   {"actor": "c01", "sector": "floor", "at": [0.0, 3.49]},
@@ -118,5 +141,6 @@
   {"id": "stack_l", "sprite": "wall_speaker", "at": [-5.3, 0.2], "width": 0.9, "height": 2.3},
   {"id": "stack_r", "sprite": "wall_speaker", "at": [5.3, 0.2], "width": 0.9, "height": 2.3}
  ],
- "sky": null
+ "sky": null,
+ "fog": {"color": "#0a0618", "density": 0.024}
 }

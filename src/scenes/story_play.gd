@@ -221,12 +221,14 @@ func _build_layout() -> void:
 # --- scripted input ---------------------------------------------------------------------------------------------------------
 
 func _setup_autoplay() -> void:
-	if not OS.has_environment("RW_AUTOPLAY"):
+	var pol := StoryTrace.policy_for(run.data.id)
+	StoryTrace.line("play", {"chapter": run.data.id, "policy": str(pol["policy"]) if str(pol["policy"]) != "" else "hand", "seed": pol["seed"]})
+	if str(pol["policy"]) == "":
 		return
 	var harness: Script = load("res://tools/autoplay.gd")
 	var rng := RandomNumberGenerator.new()
-	rng.seed = int(OS.get_environment("RW_SEED")) if OS.has_environment("RW_SEED") else 1
-	_auto_plan = harness.plan_inputs(run.level, OS.get_environment("RW_AUTOPLAY"), rng)
+	rng.seed = int(pol["seed"])
+	_auto_plan = harness.plan_inputs(run.level, str(pol["policy"]), rng)
 
 
 func _autoplay_step(t: float) -> void:
@@ -564,7 +566,7 @@ func _finish() -> void:
 		sorted.sort()
 		s["p95_ms"] = snappedf(sorted[mini(int(floor(sorted.size() * 0.95)), sorted.size() - 1)], 0.01)
 		print("PERF frames=%d p95=%.2f max=%.2f" % [sorted.size(), s["p95_ms"], sorted[sorted.size() - 1]])
-	if _auto_plan.is_empty():  # scripted runs never touch the save
+	if _auto_plan.is_empty() or StoryTrace.record_scripted():  # scripted runs never touch the save (unless RW_STORY_RECORD=1, with a throwaway user directory)
 		s["record"] = Session.story_progress.record(run.data.id, s)
 	Session.story_result = s
 	print("STORY ", JSON.stringify({"ending": s["ending"], "energy": s["energy"], "passed": s["sequences_passed"], "total": s["sequences_total"]}))

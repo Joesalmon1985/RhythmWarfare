@@ -75,6 +75,7 @@ func _ready() -> void:
 	_skip_hint.offset_left = -140
 	_skip_hint.offset_top = -34
 	add_child(_skip_hint)
+	StoryTrace.line("interlude", {"name": str(info.get("name", "")), "from": str(info.get("from", "")), "to": str(info.get("to", "")), "ending": str(info.get("ending", ""))})
 	_t0 = float(Time.get_ticks_msec()) / 1000.0
 	if OS.has_environment("RW_STORY_INTERLUDE_T"):  # screenshots: jump the cutscene clock
 		_t0 -= float(OS.get_environment("RW_STORY_INTERLUDE_T"))
@@ -83,7 +84,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if stage == null or _go:
 		return
-	var t := float(Time.get_ticks_msec()) / 1000.0 - _t0
+	var t := (float(Time.get_ticks_msec()) / 1000.0 - _t0) * (StoryTrace.INTERLUDE_SPEED if StoryTrace.auto_advance() else 1.0)  # the walk-through plays the cutscene fast
 	if OS.get_environment("RW_STORY_INTERLUDE_HOLD") == "1" and OS.has_environment("RW_STORY_INTERLUDE_T"):
 		t = float(OS.get_environment("RW_STORY_INTERLUDE_T"))  # screenshots: the cutscene clock stands still at that moment
 	fx.t = t

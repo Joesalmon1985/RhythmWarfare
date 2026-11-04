@@ -168,6 +168,8 @@ func _night_one() -> Dictionary:
 		"toilet_tile": func(s, c): return _toilet_tile(),
 		"toilet_floor": func(s, c): return _toilet_floor(),
 		"cubicle_door": func(s, c): return _hue_swap(_fit(_crop(_bd(s, c), Rect2i(272, 116, 92, 146)))),
+		# the lit toilet sign over the corridor: a green plate with two pictogram figures (no font needed), rasterised from an inline SVG
+		"thing_sign_wc": func(s, c): return _sign_wc(),
 	}
 
 
@@ -308,4 +310,16 @@ func _med_floor() -> Image:
 			if (i + j) % 2 == 1:
 				_rect(im, Rect2i(i * 16, j * 16, 16, 16), Color("#425e68"))
 	_frame(im, Rect2i(0, 0, 64, 64), Color("#33505a"))
+	return im
+
+
+func _sign_wc() -> Image:
+	var svg := """<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+<rect x="6" y="22" width="116" height="84" rx="10" fill="#0e6b4a" stroke="#baffd8" stroke-width="5"/>
+<circle cx="40" cy="48" r="9" fill="#e8fff2"/><rect x="29" y="60" width="22" height="30" rx="5" fill="#e8fff2"/><rect x="33" y="88" width="6" height="12" fill="#e8fff2"/><rect x="42" y="88" width="6" height="12" fill="#e8fff2"/>
+<circle cx="88" cy="48" r="9" fill="#e8fff2"/><path d="M88 58 L102 92 L74 92 Z" fill="#e8fff2"/><rect x="82" y="90" width="5" height="12" fill="#e8fff2"/><rect x="90" y="90" width="5" height="12" fill="#e8fff2"/>
+<rect x="63" y="38" width="2" height="60" fill="#baffd8"/></svg>"""
+	var im := Image.new()
+	im.load_svg_from_string(svg, 1.0)
+	im.convert(Image.FORMAT_RGBA8)
 	return im

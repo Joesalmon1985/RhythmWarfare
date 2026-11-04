@@ -18,7 +18,7 @@ from . import lib
 NIGHT_ONE = {
     "wall_brick": 2.0, "wall_panel": 2.0, "wall_led": 3.0, "wall_speaker": 2.0, "trim": 2.0, "floor_led": 2.0, "floor_dark": 2.0,
     "floor_stage": 2.0, "ceil_truss": 2.0, "floor_carpet": 2.0, "wall_bar": 2.0, "bar_front": 1.0, "toilet_tile": 1.5,
-    "toilet_floor": 1.5, "cubicle_door": 2.0, "wall_door": 3.0,
+    "toilet_floor": 1.5, "cubicle_door": 2.0, "wall_door": 3.0, "thing_sign_wc": 1.0,
 }
 
 
