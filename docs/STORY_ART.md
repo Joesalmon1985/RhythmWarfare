@@ -299,3 +299,75 @@ them without a fade-in pop), and the main room's pieces that only matter on the 
 | 41-48 | pit | The lake and the bass | the fortress flares, hero to the centre, glow torches, a light wave and haze |
 | 49-56 | furnace | Into the forge | turn into the forge on the drop; peak demons, hero solo on the riser, the face's eyes flare at 53 and the channels at 55 |
 | 57-64 | main | The final verdict | walk back to the main room, where the skull throne now stands on the risen stage; ember rain with the peak at 59 |
+
+# Story Campaign art: the Hospital chapter (`hospital`)
+
+You wake in a hospital bed in a sunny private room with your family around you. Same contract as the other chapters (rig, faces,
+`stage.sprites` ids, 1280 x 720 design space, `stage.pieces`, `stage.views`, `passage_frame`, `interlude`), re-skinned to warm, soft, golden and teal
+daylight: cream wallpaper, a teal dado, honey floorboards, wooden furniture, paper cards and balloons. Original art drawn by the generator, no
+downloads. `python3 tools/story/build_assets.py hospital` writes `assets/story/hospital/` (about 230 SVG, 11 PNG, `manifest.json`), deterministically.
+Code: `tools/story/art/hp_chars.py` (visitors), `hp_stage.py` (the main room, sprites, silhouettes, interlude), `hp_props.py` (perspective `Room`, floors,
+plants, bunting, balloons ...), `hp_views.py` (+ `hp_view_corridor.py`, `hp_view_cafeteria.py`, `hp_view_garden.py`, the stroke-font signs and
+`passage_frame`).
+
+## Visitors (`archetypes`)
+
+`mum` (long wavy hair that swings or a bun with a headband, floral dress + cardigan or polka-dot dress + scarf), `dad` (stubble beard, plaid shirt with rolled
+sleeves, or glasses and a knitted argyle vest), `granny` (white or lilac-rinse curls with a bun, round glasses, cardigan, long skirt, brooch or pearls),
+`kid` (small, big head; a girl with swinging pigtails in dungarees, or a boy in a cap and shorts; a balloon on a string tied at the shoulder is a swinging
+`balloon` part on `torso`), `nurse` (scrubs, a heart ID badge, a folded nurse's cap with a bun, or a printed scrub cap), `doctor` (white coat with coat tails
+part on `hips`, stethoscope, head mirror and glasses, or a curly puff with a red headband). Variants `a`/`b` differ in palette, hair and a clothing detail.
+Heights: kid 203, granny 245, mum 258, dad 269, nurse 270, doctor 280. Rig, parts, `z` and faces exactly as Night One; warm gold / coral rim lights replace
+the neon rims. Swinging parts (`swing: true` with `swing_pivot`): mum's hair (back), pigtails, nurse's bun, the kid's balloon. `glow_hand` is the right
+hand; the shared `glowstick` sprite is a white heart balloon on a stick.
+
+## The main room (`stage`)
+
+One-point perspective, vanishing point (640, 130), far wall 270..1010 x 52..262 (same rows and scales as Night One: feet rows y 286..438). The bed stands
+against the far wall (head board, patchwork quilt, pillows, teddy, heart cushion), bedside cabinets with a lamp, a door at the left of the far wall
+(`doorway`), a tall sunny window on the right wall, a notice board on the left wall, the information board over the bed is the `led_screen`. Floor: honey planks
+with a woven oval rug in the dance circle. Layers: `backdrop`, `riser` (a low wooden step with a striped rug), `speaker_l/r` (wooden hi-fi cabinets,
+woofer cones drawn by the runtime), `desk_top` (the over-bed table: wood grain, cream pad wings, a teal mixer). Sprites: `woofer` (cream paper cone), `fixture` (brass
+spotlight), `disco_ball` (a hanging paper-star lantern), `glowstick` (heart wand), `door_open` (the door thrown open, a visitor with a balloon arriving),
+`pad_bezel`, `platter` (a record with a heart label), `knob`, `fader_slot/cap`, `crossfader`, `vu_segment`, `deck_screw`, `desk_lip_glow` (warm gold),
+`glow`, `beam`, `spot_pool`, `haze_a/b` (dust motes in sunlight), a light `vignette` and paper/petal/heart/star `confetti`. Lighting sprites are neutral so the
+runtime tints them. Silhouettes: a mum with a bun and a bouquet (`sil_a`), a dad (`sil_b`), a kid with a balloon (`sil_c`), warm plum with gold and coral rims.
+
+Pieces (`pos`/`size` top-left in design px, `pivot` relative to `pos`; `behind` = under the crowd):
+
+| id | anim | z | blend | what |
+| --- | --- | --- | --- | --- |
+| `window_sunbeams` | pulse | behind | add | slanting rays from the window across the floor, dust motes |
+| `fairy_lights` | flicker | front | mix | two swags of coloured bulbs across the top (clear of the lantern) |
+| `balloon_bunch` | bob | behind | mix | six balloons on a gift weight, left corner, pivot at the weight |
+| `cards_garland` | sway | behind | mix | thirteen get-well cards pegged on a string above the bed |
+| `heart_monitor` | pulse | behind | mix | a friendly monitor with a green heart trace on the right bedside cabinet |
+| `flower_vase` | sway | behind | mix | a bouquet on the left cabinet, pivot at the vase foot |
+| `paper_stars` | bob | behind | mix | eight folded paper stars hanging from the ceiling either side of the lantern |
+
+## Extra views (`stage.views`) and `stage.sprites.passage_frame`
+
+Route: main -> corridor -> cafeteria -> garden -> main. Each view has a `backdrop` and a `front_frame` (`z: front`, 1280 x 470) layer, the required anchors
+(5 floor rows with front scale 1.0 and feet y <= 440, `floor_polygon`, `floor_grid`, 8 `light_points`, `circle_centre`/`circle_radii`, `vanish`, `horizon_y`,
+`wall_left_x/right_x`) and the optional ones that the room has (`led_screen`, `doorway`, `disco_ball`).
+
+| view | place | floor and footing | pieces |
+| --- | --- | --- | --- |
+| `corridor` (vanish 640,205) | long bright ward corridor: teal doors with paper hearts and notice boards on the left, tall windows on the right, a nurses' desk and glass doors to the garden at the far end, hanging WARD / CAFE signs in the front layer | polished cream tiles, coral and teal way-finding lines | `corridor_banner` (sway, a GET WELL SOON banner), `corridor_lights` (pulse, add, troffer glow), `corridor_doorglow` (pulse, add) |
+| `cafeteria` (vanish 640,190) | family lounge: servery counter with tea urn and cakes, a coral vending machine, tea trolley, tables and chairs, windows onto the garden, a door back to the corridor, an armchair and a table in the front layer | coral and cream chequered lino with a mint ring for the circle | `cafeteria_lamps` (sway, pendant lamps), `cafeteria_steam` (flicker, add), `cafeteria_vending` (flicker, add), `cafeteria_sun` (pulse, add) |
+| `garden` (vanish 640,195) | sunlit courtyard at golden hour: the ward's brick wing with a WELCOME HOME banner, a tiered fountain, benches, lantern posts, hedges, ivy walls; a pergola with vines and sunflowers in the front layer | sandstone paving with a mosaic ring, grass verges | `garden_spray` (pulse, add), `garden_sunrays` (pulse, add), `garden_bunting` (sway, front), `garden_petals` (bob) |
+
+`passage_frame` is a cream papered wall with a teal dado, a wooden architrave with a heart keystone, a bunting swag and balloons, 640 x 360 design px (scale 2x),
+centre pivot, the arched opening (300 wide, apex y 36) transparent. In the garden the `disco_ball` anchor sits above the screen (the lantern peeks from the pergola).
+
+## Interlude (`interlude`)
+
+For the waking cutscene over the previous chapter's room: `eyelid_top` (pivot bottom centre = the closing edge, 1280 x 520 design px at px_scale 2, warm rose
+with lashes, lighter near the seam) and `eyelid_bottom` (pivot top centre); place them at the eye line y 360 (`eyelid_seam`) and slide them apart to open;
+`white_wash` (320 x 180 at 4x, warm white); `monitor_line` (1024 px glowing heartbeat trace, pivot at the baseline's left, `blend: add`, repeats every 330 px, anchor
+`monitor_line` = [128, 360]). Preview: `shoot_chapter.sh hospital interlude <out>` (`RW_OPEN=<px>` sets how far the lids are open) composites them over the Underworld room.
+
+## Preview
+
+`tools/story/shoot_chapter.sh hospital chars|chars_b|heads|close|sil|stage|set|pieces|interlude <out>`, and `RW_VIEW=corridor|cafeteria|garden` with
+`stage|set|pieces|passage` (the preview tints the beams and pools with a daylight palette for this chapter). The crowd rig stands on the same feet rows in every room.

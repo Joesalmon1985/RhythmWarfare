@@ -295,6 +295,8 @@ func _stage(low: bool, deck_only := false, empty := false) -> void:
 	_sprite("disco_ball", Vector2(A["disco_ball"][0], A["disco_ball"][1]), false, Color.WHITE, 1.0, -2700)
 	# moving heads with beams
 	var tints := [Color(1.0, 0.2, 0.65), Color(0.1, 0.85, 1.0), Color(0.62, 0.35, 1.0), Color(1.0, 0.78, 0.25)]
+	if ROOT.contains("hospital"):  # a daylight palette: lamp gold, sun yellow, soft coral and teal
+		tints = [Color(1.0, 0.78, 0.4), Color(0.45, 0.85, 0.78), Color(1.0, 0.6, 0.5), Color(1.0, 0.9, 0.6)]
 	var lp: Array = A["light_points"]
 	for i in lp.size():
 		var p := Vector2(lp[i][0], lp[i][1])
