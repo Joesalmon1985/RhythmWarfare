@@ -30,7 +30,11 @@ MOTHERSHIP = {
     "wall_hull": 2.0, "wall_planet": 10.0, "wall_led": 3.0, "wall_speaker": 2.0, "wall_door": 3.0, "wall_shelf": 2.0, "floor_hex": 2.5, "floor_dais": 2.0,
     "ceil_hull": 2.5, "trim": 2.0, "wall_gold": 3.0, "floor_lounge": 3.0, "wall_arch": 3.0, "wall_sofa": 3.0, "wall_tube": 2.0, "floor_grate": 3.0,
     "ceil_hazard": 2.0, "thing_core": 1.0, "wall_console": 3.0, "floor_bridge": 3.0, "wall_window": 12.0, "med_tile": 1.5, "med_floor": 1.5, "wall_hatch": 3.0,
-    "sky_space": 1.0,
+    "sky_space": 1.0, "med_ceil": 2.0, "wall_airlock": 3.2, "floor_airlock": 2.0,
+    # billboard props drawn by tools/story/art/tex_mothership.py (RGBA, written there)
+    "thing_planet": 1.0, "thing_tube": 1.0, "thing_tube2": 1.0, "thing_probe_arm": 1.0, "thing_exam_table": 1.0, "thing_monitor": 1.0, "thing_cabinet": 1.0,
+    "thing_screen": 1.0, "thing_bunk": 1.0, "thing_surglamp": 1.0, "thing_pipes": 1.0, "thing_cables": 1.0, "thing_console": 1.0, "thing_captain": 1.0,
+    "thing_suit": 1.0, "thing_wheel": 1.0, "thing_warn": 1.0, "thing_plant": 1.0, "thing_bar": 1.0,
 }
 
 MENTAL_HOSPITAL = {

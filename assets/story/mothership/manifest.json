@@ -2987,48 +2987,56 @@
   "ceil_hazard": {
    "file": "textures/ceil_hazard.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 2.5
   },
   "ceil_hull": {
    "file": "textures/ceil_hull.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 2.5
+  },
+  "floor_airlock": {
+   "file": "textures/floor_airlock.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.0
   },
   "floor_bridge": {
    "file": "textures/floor_bridge.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 3.0
   },
   "floor_dais": {
    "file": "textures/floor_dais.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 2.0
   },
   "floor_grate": {
    "file": "textures/floor_grate.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 2.5
   },
   "floor_hex": {
    "file": "textures/floor_hex.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 2.5
   },
@@ -3040,21 +3048,29 @@
    ],
    "metres": 3.0
   },
+  "med_ceil": {
+   "file": "textures/med_ceil.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.0
+  },
   "med_floor": {
    "file": "textures/med_floor.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 1.5
+   "metres": 2.0
   },
   "med_tile": {
    "file": "textures/med_tile.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 1.5
+   "metres": 2.2
   },
   "sky_space": {
    "file": "textures/sky_space.png",
@@ -3064,8 +3080,160 @@
    ],
    "metres": 1.0
   },
+  "thing_bar": {
+   "file": "textures/thing_bar.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_bunk": {
+   "file": "textures/thing_bunk.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_cabinet": {
+   "file": "textures/thing_cabinet.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_cables": {
+   "file": "textures/thing_cables.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_captain": {
+   "file": "textures/thing_captain.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_console": {
+   "file": "textures/thing_console.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
   "thing_core": {
    "file": "textures/thing_core.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_exam_table": {
+   "file": "textures/thing_exam_table.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_monitor": {
+   "file": "textures/thing_monitor.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_pipes": {
+   "file": "textures/thing_pipes.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_planet": {
+   "file": "textures/thing_planet.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_plant": {
+   "file": "textures/thing_plant.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_probe_arm": {
+   "file": "textures/thing_probe_arm.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_screen": {
+   "file": "textures/thing_screen.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_suit": {
+   "file": "textures/thing_suit.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_surglamp": {
+   "file": "textures/thing_surglamp.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_tube": {
+   "file": "textures/thing_tube.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_tube2": {
+   "file": "textures/thing_tube2.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_warn": {
+   "file": "textures/thing_warn.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_wheel": {
+   "file": "textures/thing_wheel.png",
    "size": [
     128,
     128
@@ -3080,6 +3248,14 @@
    ],
    "metres": 2.0
   },
+  "wall_airlock": {
+   "file": "textures/wall_airlock.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.2
+  },
   "wall_arch": {
    "file": "textures/wall_arch.png",
    "size": [
@@ -3091,10 +3267,10 @@
   "wall_console": {
    "file": "textures/wall_console.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 4.2
   },
   "wall_door": {
    "file": "textures/wall_door.png",
@@ -3115,18 +3291,18 @@
   "wall_hatch": {
    "file": "textures/wall_hatch.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 3.2
   },
   "wall_hull": {
    "file": "textures/wall_hull.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 2.5
   },
   "wall_led": {
    "file": "textures/wall_led.png",
@@ -3139,24 +3315,24 @@
   "wall_planet": {
    "file": "textures/wall_planet.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 10.0
+   "metres": 5.0
   },
   "wall_shelf": {
    "file": "textures/wall_shelf.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 2.4
   },
   "wall_sofa": {
    "file": "textures/wall_sofa.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 3.0
   },
@@ -3171,18 +3347,18 @@
   "wall_tube": {
    "file": "textures/wall_tube.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 2.5
   },
   "wall_window": {
    "file": "textures/wall_window.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 12.0
+   "metres": 4.0
   }
  },
  "people": {
