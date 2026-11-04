@@ -508,20 +508,27 @@ func _set_family(family: String, muted: bool, now: float) -> void:
 	if family == "other":
 		return
 	for key in stems_muted:
-		if str(level.stem_family.get(key, key)) == family:
+		if _stem_has_family(key, family):
 			_set_stem(key, muted, now)
 
 
 ## True while any stem of the family is silenced by a miss (for the pad labels).
 func family_muted(family: String) -> bool:
 	for key in stems_muted:
-		if str(level.stem_family.get(key, key)) == family and bool(stems_muted[key]):
+		if _stem_has_family(key, family) and bool(stems_muted[key]):
 			return true
 	return false
 
 
+## Whether a stem carries an instrument family: its own family, or one of the several a recorded mix carries.
+func _stem_has_family(key: String, family: String) -> bool:
+	if level.stem_families.has(key):
+		return family in level.stem_families[key]
+	return str(level.stem_family.get(key, key)) == family
+
+
 func _set_stem(key: String, muted: bool, now: float) -> void:
-	if stems_muted[key] == muted:
+	if not stems_muted.has(key) or stems_muted[key] == muted:
 		return
 	stems_muted[key] = muted
 	_events.append({"kind": "stem", "stem": key, "muted": muted, "time": now})

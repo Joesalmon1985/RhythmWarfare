@@ -1,0 +1,2617 @@
+{
+ "id": "mothership",
+ "title": "The Mothership",
+ "chapter": 2,
+ "art": "mothership",
+ "music_pack": "res://songs/m10_last_light",
+ "description": "An alien ship has beamed the whole rave aboard. Stars stream past the windows and four decks of new friends are waiting: play them the set of their lives.",
+ "intro": "Welcome aboard.",
+ "duration_bars": 80,
+ "sequence_bars": 2,
+ "initial_energy": 45,
+ "palettes": {
+  "low": [
+   "#2b3c9a",
+   "#1d8a9a"
+  ],
+  "cool": [
+   "#33ffd1",
+   "#6a7bff"
+  ],
+  "warm": [
+   "#ffb347",
+   "#ff4fc8"
+  ],
+  "rave": [
+   "#2ee8c4",
+   "#f04ad6",
+   "#7a5cff",
+   "#ffd23f"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Unimpressed",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Dancing",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Hype",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Euphoric",
+    "max": 100
+   }
+  ]
+ },
+ "acts": [
+  {
+   "id": "I",
+   "title": "Welcome aboard",
+   "start_bar": 1
+  },
+  {
+   "id": "II",
+   "title": "Zero-G groove",
+   "start_bar": 17
+  },
+  {
+   "id": "III",
+   "title": "Interstellar peak",
+   "start_bar": 41
+  },
+  {
+   "id": "IV",
+   "title": "Departure",
+   "start_bar": 65
+  }
+ ],
+ "blocks": [
+  {
+   "id": "airlock_opens",
+   "title": "Airlock opens",
+   "act": "Act I",
+   "start_bar": 1,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 1,
+     "action": "lights_low_pulse"
+    },
+    {
+     "at_bar": 1,
+     "action": "doors_open"
+    },
+    {
+     "at_bar": 1,
+     "action": "piece_on",
+     "piece": "planet_window_glow"
+    },
+    {
+     "at_bar": 1,
+     "action": "player_role",
+     "role": "dancer"
+    },
+    {
+     "at_bar": 2,
+     "action": "player_look",
+     "pitch": 14,
+     "bars": 3
+    },
+    {
+     "at_bar": 3,
+     "action": "front_row_sway"
+    },
+    {
+     "at_bar": 5,
+     "action": "bring_in",
+     "group": "early"
+    },
+    {
+     "at_bar": 5,
+     "action": "piece_on",
+     "piece": "alien_banner"
+    },
+    {
+     "at_bar": 5,
+     "action": "player_walk",
+     "fwd": 1.6,
+     "bars": 3,
+     "in": [
+      "main"
+     ]
+    },
+    {
+     "at_bar": 7,
+     "action": "led_eq"
+    },
+    {
+     "at_bar": 7,
+     "action": "beams_sweep"
+    }
+   ]
+  },
+  {
+   "id": "first_contact_groove",
+   "title": "First contact groove",
+   "act": "Act I",
+   "start_bar": 9,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 9,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 9,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 40
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 10,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
+     "at_bar": 11,
+     "action": "piece_on",
+     "piece": "ring_lights"
+    },
+    {
+     "at_bar": 11,
+     "action": "beams_sweep"
+    },
+    {
+     "at_bar": 12,
+     "action": "player_look",
+     "at": "c06",
+     "bars": 2,
+     "in": [
+      "main"
+     ]
+    },
+    {
+     "at_bar": 13,
+     "action": "group_footwork",
+     "group": "core",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 13,
+     "action": "piece_on",
+     "piece": "pylon_beams"
+    },
+    {
+     "at_bar": 14,
+     "action": "player_walk",
+     "right": 1.4,
+     "bars": 3,
+     "in": [
+      "main"
+     ]
+    },
+    {
+     "at_bar": 15,
+     "action": "led_bars"
+    },
+    {
+     "at_bar": 15,
+     "action": "haze_burst"
+    }
+   ]
+  },
+  {
+   "id": "first_bass_reveal",
+   "title": "Through the hatch",
+   "act": "Act II",
+   "start_bar": 17,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 17,
+     "action": "bass_reveal"
+    },
+    {
+     "at_bar": 17,
+     "action": "lights_warm"
+    },
+    {
+     "at_bar": 17,
+     "action": "woofer_pump_on"
+    },
+    {
+     "at_bar": 17,
+     "action": "piece_on",
+     "piece": "gallery_planet_shine"
+    },
+    {
+     "at_bar": 17,
+     "action": "player_move",
+     "to": "gallery_in",
+     "style": "walk",
+     "bars": 3
+    },
+    {
+     "at_bar": 18,
+     "action": "player_look",
+     "pitch": 12,
+     "bars": 3
+    },
+    {
+     "at_bar": 19,
+     "action": "wave_across",
+     "bars": 3
+    },
+    {
+     "at_bar": 21,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 21,
+     "action": "piece_pulse",
+     "piece": "gallery_planet_shine",
+     "bars": 3
+    },
+    {
+     "at_bar": 21,
+     "action": "player_walk",
+     "to": "gallery_c06",
+     "stop": 2.0,
+     "bars": 3,
+     "in": [
+      "gallery"
+     ]
+    },
+    {
+     "at_bar": 23,
+     "action": "spotlight_sweep"
+    },
+    {
+     "at_bar": 23,
+     "action": "player_look",
+     "by": -26,
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "guests_gather",
+   "title": "Guests at the arch",
+   "act": "Act II",
+   "start_bar": 25,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 25,
+     "action": "gather_at_door",
+     "group": "gatherers"
+    },
+    {
+     "at_bar": 25,
+     "action": "led_rings"
+    },
+    {
+     "at_bar": 26,
+     "action": "player_look",
+     "at": "gallery_c10",
+     "bars": 2,
+     "in": [
+      "gallery"
+     ]
+    },
+    {
+     "at_bar": 27,
+     "action": "beams_cross"
+    },
+    {
+     "at_bar": 27,
+     "action": "piece_on",
+     "piece": "gallery_holo_menu"
+    },
+    {
+     "at_bar": 28,
+     "action": "player_walk",
+     "fwd": -1.2,
+     "bars": 2,
+     "in": [
+      "gallery"
+     ]
+    },
+    {
+     "at_bar": 30,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
+    },
+    {
+     "at_bar": 31,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 31,
+     "action": "led_wave"
+    }
+   ]
+  },
+  {
+   "id": "dance_circle",
+   "title": "The dance circle forms",
+   "act": "Act II",
+   "start_bar": 33,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 33,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 33,
+     "action": "piece_on",
+     "piece": "reactor_core_glow"
+    },
+    {
+     "at_bar": 34,
+     "action": "player_look",
+     "pitch": 22,
+     "bars": 3
+    },
+    {
+     "at_bar": 35,
+     "action": "circle_form",
+     "group": "circle"
+    },
+    {
+     "at_bar": 36,
+     "action": "player_look",
+     "at": "reactor_in",
+     "bars": 2,
+     "in": [
+      "gallery"
+     ]
+    },
+    {
+     "at_bar": 36,
+     "action": "player_walk",
+     "right": 2.2,
+     "bars": 3,
+     "in": [
+      "gallery"
+     ]
+    },
+    {
+     "at_bar": 37,
+     "action": "disco_ball_on"
+    },
+    {
+     "at_bar": 37,
+     "action": "piece_pulse",
+     "piece": "reactor_core_glow",
+     "bars": 2
+    },
+    {
+     "at_bar": 37,
+     "action": "player_walk",
+     "fwd": 1.0,
+     "bars": 3,
+     "in": [
+      "reactor"
+     ]
+    },
+    {
+     "at_bar": 39,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 39,
+     "action": "led_eq"
+    },
+    {
+     "at_bar": 39,
+     "action": "player_look",
+     "pitch": -22,
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "spotlight_pass",
+   "title": "Spotlight on the core",
+   "act": "Act III",
+   "start_bar": 41,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 41,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
+     "at_bar": 41,
+     "action": "spotlight_sweep"
+    },
+    {
+     "at_bar": 42,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
+     "at_bar": 43,
+     "action": "glowsticks_on"
+    },
+    {
+     "at_bar": 43,
+     "action": "player_walk",
+     "right": -2.0,
+     "bars": 3,
+     "in": [
+      "reactor"
+     ]
+    },
+    {
+     "at_bar": 44,
+     "action": "player_look",
+     "at": "gallery_c04",
+     "bars": 2,
+     "in": [
+      "gallery"
+     ]
+    },
+    {
+     "at_bar": 45,
+     "action": "hero_center"
+    },
+    {
+     "at_bar": 45,
+     "action": "piece_pulse",
+     "piece": "reactor_core_glow",
+     "bars": 4
+    },
+    {
+     "at_bar": 45,
+     "action": "player_walk",
+     "fwd": 1.5,
+     "bars": 3,
+     "in": [
+      "gallery"
+     ]
+    },
+    {
+     "at_bar": 46,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
+    },
+    {
+     "at_bar": 47,
+     "action": "led_wave"
+    },
+    {
+     "at_bar": 47,
+     "action": "haze_burst"
+    }
+   ]
+  },
+  {
+   "id": "group_footwork",
+   "title": "Gravity off",
+   "act": "Act III",
+   "start_bar": 49,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 49,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 49,
+     "action": "piece_on",
+     "piece": "bridge_holo_globe"
+    },
+    {
+     "at_bar": 50,
+     "action": "player_look",
+     "pitch": 18,
+     "bars": 3
+    },
+    {
+     "at_bar": 51,
+     "action": "bring_in",
+     "group": "peak"
+    },
+    {
+     "at_bar": 51,
+     "action": "group_footwork",
+     "group": "all",
+     "bars": 4,
+     "when": {
+      "energy_min": 40
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 53,
+     "action": "lights_warm"
+    },
+    {
+     "at_bar": 53,
+     "action": "beams_cross"
+    },
+    {
+     "at_bar": 54,
+     "action": "player_look",
+     "pitch": -14,
+     "bars": 3
+    },
+    {
+     "at_bar": 55,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 55,
+     "action": "led_bars"
+    },
+    {
+     "at_bar": 55,
+     "action": "player_walk",
+     "fwd": 2.0,
+     "bars": 3,
+     "in": [
+      "bridge"
+     ]
+    },
+    {
+     "at_bar": 55,
+     "action": "player_walk",
+     "right": 1.4,
+     "bars": 3,
+     "in": [
+      "medbay"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "warp_drop",
+   "title": "Warp drop",
+   "act": "Act III",
+   "start_bar": 57,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 57,
+     "action": "piece_on",
+     "piece": "bridge_alert_beacons"
+    },
+    {
+     "at_bar": 58,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
+     "at_bar": 59,
+     "action": "led_rings"
+    },
+    {
+     "at_bar": 60,
+     "action": "player_look",
+     "pitch": 20,
+     "bars": 3
+    },
+    {
+     "at_bar": 61,
+     "action": "regroup"
+    },
+    {
+     "at_bar": 61,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 62,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
+    },
+    {
+     "at_bar": 62,
+     "action": "player_walk",
+     "fwd": -1.0,
+     "bars": 2,
+     "in": [
+      "medbay"
+     ]
+    },
+    {
+     "at_bar": 63,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 63,
+     "action": "light_wave",
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "headliner_riser",
+   "title": "Headliner on the riser",
+   "act": "Act IV",
+   "start_bar": 65,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 65,
+     "action": "bring_in",
+     "group": "peak"
+    },
+    {
+     "at_bar": 65,
+     "action": "piece_on",
+     "piece": "saucer_flyby"
+    },
+    {
+     "at_bar": 66,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
+    },
+    {
+     "at_bar": 67,
+     "action": "riser_up"
+    },
+    {
+     "at_bar": 67,
+     "action": "hero_solo",
+     "bars": 6
+    },
+    {
+     "at_bar": 67,
+     "action": "spotlight_hero"
+    },
+    {
+     "at_bar": 67,
+     "action": "doors_open"
+    },
+    {
+     "at_bar": 67,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
+     "at_bar": 69,
+     "action": "lights_rave"
+    },
+    {
+     "at_bar": 69,
+     "action": "piece_on",
+     "piece": "hologram_dome"
+    },
+    {
+     "at_bar": 69,
+     "action": "player_look",
+     "at": "helm",
+     "bars": 2,
+     "in": [
+      "bridge"
+     ]
+    },
+    {
+     "at_bar": 69,
+     "action": "player_walk",
+     "fwd": 1.2,
+     "bars": 3,
+     "in": [
+      "medbay"
+     ]
+    },
+    {
+     "at_bar": 70,
+     "action": "player_walk",
+     "to": "helm",
+     "style": "climb",
+     "bars": 3,
+     "in": [
+      "bridge"
+     ]
+    },
+    {
+     "at_bar": 71,
+     "action": "light_wave",
+     "bars": 2
+    },
+    {
+     "at_bar": 71,
+     "action": "player_look",
+     "pitch": -18,
+     "bars": 3
+    }
+   ]
+  },
+  {
+   "id": "departure",
+   "title": "Departure",
+   "act": "Act IV",
+   "start_bar": 73,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 74,
+     "action": "player_look",
+     "at": "helm_edge",
+     "bars": 2,
+     "in": [
+      "bridge"
+     ]
+    },
+    {
+     "at_bar": 75,
+     "action": "rave_peak",
+     "bars": 4,
+     "when": {
+      "energy_min": 50
+     },
+     "else": "lights_cool"
+    },
+    {
+     "at_bar": 76,
+     "action": "player_look",
+     "pitch": -12,
+     "bars": 3
+    },
+    {
+     "at_bar": 77,
+     "action": "confetti",
+     "when": {
+      "energy_min": 85
+     }
+    },
+    {
+     "at_bar": 77,
+     "action": "hands_up_all",
+     "bars": 2,
+     "when": {
+      "energy_min": 55
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 77,
+     "action": "player_walk",
+     "right": 2.0,
+     "bars": 3,
+     "in": [
+      "bridge"
+     ]
+    },
+    {
+     "at_bar": 77,
+     "action": "player_walk",
+     "fwd": -1.0,
+     "bars": 2,
+     "in": [
+      "medbay"
+     ]
+    },
+    {
+     "at_bar": 78,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
+    },
+    {
+     "at_bar": 79,
+     "action": "beams_cross"
+    },
+    {
+     "at_bar": 79,
+     "action": "piece_on",
+     "piece": "beam_home",
+     "when": {
+      "energy_max": 39
+     }
+    }
+   ]
+  }
+ ],
+ "decisions": [
+  {
+   "id": "translation",
+   "title": "The universal translator",
+   "at_bar": 29,
+   "block": "guests_gather",
+   "rule": {
+    "energy_min": 55,
+    "recent_sequences": 12,
+    "recent_pass_min": 0.5,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "new_dancers_enter",
+    "applause",
+    {
+     "action": "player_move",
+     "to": "reactor_in",
+     "style": "walk",
+     "bars": 4,
+     "after_bars": 2
+    }
+   ],
+   "bad": [
+    "dancers_step_back",
+    "look_around",
+    {
+     "action": "fx_queasy",
+     "amount": 0.3,
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "queasy"
+    }
+   ],
+   "good_text": "The translator clicked on and the guests poured in through the arch, already dancing.",
+   "bad_text": "The translator crackled. A few guests hung back at the arch, puzzled by the beat."
+  },
+  {
+   "id": "zero_g",
+   "title": "Gravity off",
+   "at_bar": 49,
+   "block": "group_footwork",
+   "rule": {
+    "energy_min": 58,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "circle_spotlight_cheer",
+    {
+     "action": "piece_pulse",
+     "piece": "bridge_holo_globe",
+     "bars": 4
+    },
+    {
+     "action": "player_move",
+     "to": "bridge_in",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "on_stage",
+     "after_bars": 4
+    }
+   ],
+   "bad": [
+    "circle_breaks_awkward",
+    {
+     "action": "fx_queasy",
+     "amount": 0.6,
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "queasy"
+    },
+    {
+     "action": "player_move",
+     "to": "medbay",
+     "style": "stagger",
+     "bars": 4
+    }
+   ],
+   "good_text": "Gravity let go and the whole circle floated up into the spotlight, cheering.",
+   "bad_text": "The gravity glitched and the circle drifted apart."
+  },
+  {
+   "id": "warp_jump",
+   "title": "The warp jump",
+   "at_bar": 57,
+   "block": "warp_drop",
+   "rule": {
+    "energy_min": 62,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "drop_synchronised_jump",
+    {
+     "action": "piece_pulse",
+     "piece": "bridge_warp_streaks",
+     "bars": 4
+    },
+    {
+     "action": "player_move",
+     "to": "helm",
+     "style": "climb",
+     "bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "dj",
+     "after_bars": 3
+    }
+   ],
+   "bad": [
+    "drop_stumble",
+    {
+     "action": "fx_queasy",
+     "amount": 0.5,
+     "bars": 2
+    },
+    {
+     "action": "player_move",
+     "to": "exam",
+     "style": "run",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "sick",
+     "after_bars": 4
+    },
+    {
+     "action": "sick_beat",
+     "bars": 4,
+     "after_bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "recovered",
+     "after_bars": 8
+    },
+    {
+     "action": "fx_queasy",
+     "amount": 0.0,
+     "bars": 2,
+     "after_bars": 8
+    },
+    {
+     "action": "player_move",
+     "to": "medbay",
+     "style": "walk",
+     "bars": 2,
+     "after_bars": 8
+    }
+   ],
+   "good_text": "The ship jumped to warp and the whole bridge jumped with it.",
+   "bad_text": "The warp drive stuttered, but the set kept the bridge moving."
+  },
+  {
+   "id": "win_back",
+   "title": "Winning the floor back",
+   "at_bar": 65,
+   "block": "headliner_riser",
+   "rule": {
+    "requires_bad_before": true,
+    "recent_sequences": 6,
+    "recent_pass_min": 0.83,
+    "energy_min": 40
+   },
+   "good": [
+    "winback_cheer",
+    {
+     "action": "player_move",
+     "to": "bridge_in",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "on_stage",
+     "after_bars": 4
+    }
+   ],
+   "bad": [],
+   "good_text": "You won the deck back after a rough patch.",
+   "bad_text": "",
+   "kind": "winback"
+  },
+  {
+   "id": "final_transmission",
+   "title": "Final transmission",
+   "at_bar": 73,
+   "block": "departure",
+   "rule": {
+    "energy_min": 65,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.65,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "final_chant",
+    {
+     "action": "piece_on",
+     "piece": "warp_streaks"
+    }
+   ],
+   "bad": [
+    "final_flicker",
+    {
+     "action": "fx_queasy",
+     "amount": 0.4,
+     "bars": 2
+    }
+   ],
+   "good_text": "The ship went to warp and the whole deck chanted for one more.",
+   "bad_text": "The signal flickered and the deck began to thin out."
+  }
+ ],
+ "endings": {
+  "galactic_headliner": {
+   "title": "Galactic Headliner",
+   "energy_min": 85,
+   "pass_min": 0.94,
+   "text": "Every deck of the ship is dancing. The aliens carry you shoulder-high under the stars: the headliner of the galaxy.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "helm",
+     "style": "walk",
+     "bars": 2
+    },
+    {
+     "action": "player_role",
+     "role": "dj",
+     "after_bars": 2
+    }
+   ]
+  },
+  "honoured_guest": {
+   "title": "Honoured Guest",
+   "energy_min": 40,
+   "pass_min": 0.5,
+   "text": "A warm welcome and a happy crowd. The aliens name you an honoured guest and promise to come and visit.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "helm_edge",
+     "style": "walk",
+     "bars": 2
+    }
+   ]
+  },
+  "beamed_home": {
+   "title": "Beamed Home",
+   "energy_min": -1,
+   "pass_min": 0.0,
+   "text": "The deck emptied politely. The aliens thank you, wave goodbye and beam you gently home.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "airlock",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "out",
+     "after_bars": 4
+    }
+   ]
+  }
+ },
+ "ending_order": [
+  "galactic_headliner",
+  "honoured_guest",
+  "beamed_home"
+ ],
+ "groups": {
+  "circle": [
+   "c02",
+   "c03",
+   "c04",
+   "c05",
+   "c06",
+   "c07",
+   "c08",
+   "c09",
+   "e01",
+   "e02",
+   "e03",
+   "e04",
+   "gallery_c02",
+   "gallery_c03",
+   "gallery_c04",
+   "gallery_c05",
+   "gallery_c06",
+   "gallery_c07",
+   "gallery_c08",
+   "gallery_c09",
+   "reactor_c02",
+   "reactor_c03",
+   "reactor_c04",
+   "reactor_c05",
+   "reactor_c06",
+   "reactor_c07",
+   "reactor_c08",
+   "reactor_c09",
+   "bridge_c02",
+   "bridge_c03",
+   "bridge_c04",
+   "bridge_c05",
+   "bridge_c06",
+   "bridge_c07",
+   "bridge_c08",
+   "bridge_c09"
+  ],
+  "all": [
+   "c01",
+   "c02",
+   "c03",
+   "c04",
+   "c05",
+   "c06",
+   "c07",
+   "c08",
+   "c09",
+   "c10",
+   "c11",
+   "c12",
+   "e01",
+   "e02",
+   "e03",
+   "e04",
+   "g01",
+   "g02",
+   "g03",
+   "g04",
+   "g05",
+   "g06",
+   "g07",
+   "g08",
+   "l01",
+   "l02",
+   "l03",
+   "l04",
+   "p01",
+   "p02",
+   "p03",
+   "p04",
+   "gallery_c01",
+   "gallery_c02",
+   "gallery_c03",
+   "gallery_c04",
+   "gallery_c05",
+   "gallery_c06",
+   "gallery_c07",
+   "gallery_c08",
+   "gallery_c09",
+   "gallery_c10",
+   "gallery_g01",
+   "gallery_g02",
+   "gallery_g03",
+   "gallery_g04",
+   "gallery_g05",
+   "gallery_g06",
+   "gallery_l01",
+   "gallery_l02",
+   "gallery_l03",
+   "gallery_l04",
+   "gallery_p01",
+   "gallery_p02",
+   "gallery_p03",
+   "gallery_p04",
+   "reactor_c01",
+   "reactor_c02",
+   "reactor_c03",
+   "reactor_c04",
+   "reactor_c05",
+   "reactor_c06",
+   "reactor_c07",
+   "reactor_c08",
+   "reactor_c09",
+   "reactor_c10",
+   "reactor_g01",
+   "reactor_g02",
+   "reactor_g03",
+   "reactor_g04",
+   "reactor_g05",
+   "reactor_g06",
+   "reactor_l01",
+   "reactor_l02",
+   "reactor_l03",
+   "reactor_l04",
+   "reactor_p01",
+   "reactor_p02",
+   "reactor_p03",
+   "reactor_p04",
+   "bridge_c01",
+   "bridge_c02",
+   "bridge_c03",
+   "bridge_c04",
+   "bridge_c05",
+   "bridge_c06",
+   "bridge_c07",
+   "bridge_c08",
+   "bridge_c09",
+   "bridge_c10",
+   "bridge_g01",
+   "bridge_g02",
+   "bridge_g03",
+   "bridge_g04",
+   "bridge_g05",
+   "bridge_g06",
+   "bridge_l01",
+   "bridge_l02",
+   "bridge_l03",
+   "bridge_l04",
+   "bridge_p01",
+   "bridge_p02",
+   "bridge_p03",
+   "bridge_p04"
+  ]
+ },
+ "actors": [
+  {
+   "id": "c01",
+   "archetype": "tentacle",
+   "variant": "a",
+   "group": "core",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "c02",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": -4
+  },
+  {
+   "id": "c03",
+   "archetype": "blob",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": 2
+  },
+  {
+   "id": "c04",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "core",
+   "thresh": 4
+  },
+  {
+   "id": "c05",
+   "archetype": "insect",
+   "variant": "a",
+   "group": "core",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "c06",
+   "archetype": "cyclops",
+   "variant": "b",
+   "group": "core",
+   "thresh": 6
+  },
+  {
+   "id": "c07",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "c08",
+   "archetype": "curly",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "c09",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "c10",
+   "archetype": "hoodie",
+   "variant": "b",
+   "group": "core",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "c11",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "c12",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "thresh": -8,
+   "art": "night_one"
+  },
+  {
+   "id": "e01",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e02",
+   "archetype": "cyclops",
+   "variant": "b",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e03",
+   "archetype": "antenna",
+   "variant": "b",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e04",
+   "archetype": "insect",
+   "variant": "b",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "g01",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g02",
+   "archetype": "antenna",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g03",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g04",
+   "archetype": "insect",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g05",
+   "archetype": "cyclops",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g06",
+   "archetype": "tentacle",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g07",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g08",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 7,
+   "stays_on_bad": false
+  },
+  {
+   "id": "l01",
+   "archetype": "insect",
+   "variant": "b",
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l02",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "late",
+   "enter_from": "doorway",
+   "art": "night_one"
+  },
+  {
+   "id": "l03",
+   "archetype": "tentacle",
+   "variant": "a",
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l04",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "late",
+   "enter_from": "doorway",
+   "art": "night_one"
+  },
+  {
+   "id": "p01",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p02",
+   "archetype": "blob",
+   "variant": "b",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p03",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p04",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "gallery_c01",
+   "archetype": "tentacle",
+   "variant": "a",
+   "group": "core",
+   "view": "gallery",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "gallery_c02",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "core",
+   "view": "gallery",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "gallery_c03",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "core",
+   "view": "gallery",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "gallery_c04",
+   "archetype": "antenna",
+   "variant": "b",
+   "group": "core",
+   "view": "gallery",
+   "thresh": 4
+  },
+  {
+   "id": "gallery_c05",
+   "archetype": "insect",
+   "variant": "a",
+   "group": "core",
+   "view": "gallery",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "gallery_c06",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "core",
+   "view": "gallery",
+   "thresh": 6
+  },
+  {
+   "id": "gallery_c07",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "core",
+   "view": "gallery",
+   "thresh": 0
+  },
+  {
+   "id": "gallery_c08",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "gallery",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "gallery_c09",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "gallery",
+   "role": "front",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "gallery_c10",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "gallery",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "gallery_g01",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "gallery",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "gallery_g02",
+   "archetype": "antenna",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "gallery",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "gallery_g03",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "gallery",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "gallery_g04",
+   "archetype": "insect",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "gallery",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "gallery_g05",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "gallery",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "gallery_g06",
+   "archetype": "tentacle",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "gallery",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "gallery_l01",
+   "archetype": "blob",
+   "variant": "b",
+   "group": "late",
+   "view": "gallery",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "gallery_l02",
+   "archetype": "insect",
+   "variant": "a",
+   "group": "late",
+   "view": "gallery",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "gallery_l03",
+   "archetype": "cyclops",
+   "variant": "b",
+   "group": "late",
+   "view": "gallery",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "gallery_l04",
+   "archetype": "tentacle",
+   "variant": "a",
+   "group": "late",
+   "view": "gallery",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "gallery_p01",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "peak",
+   "view": "gallery",
+   "enter_from": "side"
+  },
+  {
+   "id": "gallery_p02",
+   "archetype": "tentacle",
+   "variant": "b",
+   "group": "peak",
+   "view": "gallery",
+   "enter_from": "side"
+  },
+  {
+   "id": "gallery_p03",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "peak",
+   "view": "gallery",
+   "enter_from": "side"
+  },
+  {
+   "id": "gallery_p04",
+   "archetype": "antenna",
+   "variant": "b",
+   "group": "peak",
+   "view": "gallery",
+   "enter_from": "side"
+  },
+  {
+   "id": "reactor_c01",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "core",
+   "view": "reactor",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "reactor_c02",
+   "archetype": "antenna",
+   "variant": "b",
+   "group": "core",
+   "view": "reactor",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "reactor_c03",
+   "archetype": "insect",
+   "variant": "a",
+   "group": "core",
+   "view": "reactor",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "reactor_c04",
+   "archetype": "blob",
+   "variant": "b",
+   "group": "core",
+   "view": "reactor",
+   "thresh": 4
+  },
+  {
+   "id": "reactor_c05",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "core",
+   "view": "reactor",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "reactor_c06",
+   "archetype": "tentacle",
+   "variant": "a",
+   "group": "core",
+   "view": "reactor",
+   "thresh": 6
+  },
+  {
+   "id": "reactor_c07",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "core",
+   "view": "reactor",
+   "thresh": 0
+  },
+  {
+   "id": "reactor_c08",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "reactor",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "reactor_c09",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "reactor",
+   "role": "front",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "reactor_c10",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "reactor",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "reactor_g01",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "reactor",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "reactor_g02",
+   "archetype": "blob",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "reactor",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "reactor_g03",
+   "archetype": "insect",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "reactor",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "reactor_g04",
+   "archetype": "cyclops",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "reactor",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "reactor_g05",
+   "archetype": "tentacle",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "reactor",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "reactor_g06",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "reactor",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "reactor_l01",
+   "archetype": "insect",
+   "variant": "b",
+   "group": "late",
+   "view": "reactor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "reactor_l02",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "late",
+   "view": "reactor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "reactor_l03",
+   "archetype": "tentacle",
+   "variant": "b",
+   "group": "late",
+   "view": "reactor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "reactor_l04",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "late",
+   "view": "reactor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "reactor_p01",
+   "archetype": "tentacle",
+   "variant": "a",
+   "group": "peak",
+   "view": "reactor",
+   "enter_from": "side"
+  },
+  {
+   "id": "reactor_p02",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "peak",
+   "view": "reactor",
+   "enter_from": "side"
+  },
+  {
+   "id": "reactor_p03",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "peak",
+   "view": "reactor",
+   "enter_from": "side"
+  },
+  {
+   "id": "reactor_p04",
+   "archetype": "blob",
+   "variant": "b",
+   "group": "peak",
+   "view": "reactor",
+   "enter_from": "side"
+  },
+  {
+   "id": "bridge_c01",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "core",
+   "view": "bridge",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "bridge_c02",
+   "archetype": "blob",
+   "variant": "b",
+   "group": "core",
+   "view": "bridge",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "bridge_c03",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "core",
+   "view": "bridge",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "bridge_c04",
+   "archetype": "insect",
+   "variant": "b",
+   "group": "core",
+   "view": "bridge",
+   "thresh": 4
+  },
+  {
+   "id": "bridge_c05",
+   "archetype": "tentacle",
+   "variant": "a",
+   "group": "core",
+   "view": "bridge",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "bridge_c06",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "core",
+   "view": "bridge",
+   "thresh": 6
+  },
+  {
+   "id": "bridge_c07",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "core",
+   "view": "bridge",
+   "thresh": 0
+  },
+  {
+   "id": "bridge_c08",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "bridge",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "bridge_c09",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "bridge",
+   "role": "front",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "bridge_c10",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "bridge",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "bridge_g01",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "bridge",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "bridge_g02",
+   "archetype": "insect",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "bridge",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "bridge_g03",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "bridge",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "bridge_g04",
+   "archetype": "tentacle",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "bridge",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "bridge_g05",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "bridge",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "bridge_g06",
+   "archetype": "antenna",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "bridge",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "bridge_l01",
+   "archetype": "cyclops",
+   "variant": "b",
+   "group": "late",
+   "view": "bridge",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "bridge_l02",
+   "archetype": "tentacle",
+   "variant": "a",
+   "group": "late",
+   "view": "bridge",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "bridge_l03",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "late",
+   "view": "bridge",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "bridge_l04",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "late",
+   "view": "bridge",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "bridge_p01",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "peak",
+   "view": "bridge",
+   "enter_from": "side"
+  },
+  {
+   "id": "bridge_p02",
+   "archetype": "antenna",
+   "variant": "b",
+   "group": "peak",
+   "view": "bridge",
+   "enter_from": "side"
+  },
+  {
+   "id": "bridge_p03",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "peak",
+   "view": "bridge",
+   "enter_from": "side"
+  },
+  {
+   "id": "bridge_p04",
+   "archetype": "insect",
+   "variant": "b",
+   "group": "peak",
+   "view": "bridge",
+   "enter_from": "side"
+  },
+  {
+   "id": "m01",
+   "archetype": "antenna",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "mix",
+   "prop": "headphones_wrong"
+  },
+  {
+   "id": "m02",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "serve",
+   "prop": "tray",
+   "pace_axis": [
+    1,
+    0
+   ],
+   "pace_m": 1.0
+  },
+  {
+   "id": "m03",
+   "archetype": "blob",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "chat"
+  },
+  {
+   "id": "m04",
+   "archetype": "insect",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "chat"
+  },
+  {
+   "id": "m05",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "toast"
+  },
+  {
+   "id": "m06",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "toast"
+  },
+  {
+   "id": "gallery_s01",
+   "archetype": "tentacle",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "gallery",
+   "activity": "pace",
+   "pace_axis": [
+    1,
+    0
+   ],
+   "pace_m": 4.0
+  },
+  {
+   "id": "gallery_s02",
+   "archetype": "blob",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "gallery",
+   "activity": "point",
+   "target": "planet_window"
+  },
+  {
+   "id": "reactor_s01",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "reactor",
+   "activity": "check",
+   "prop": "clipboard",
+   "target": "reactor_core"
+  },
+  {
+   "id": "reactor_s02",
+   "archetype": "antenna",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "reactor",
+   "activity": "point",
+   "target": "reactor_core"
+  },
+  {
+   "id": "bridge_s01",
+   "archetype": "cyclops",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "bridge",
+   "activity": "check",
+   "prop": "clipboard",
+   "target": "helm"
+  },
+  {
+   "id": "bridge_s02",
+   "archetype": "grey",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "bridge",
+   "activity": "stare",
+   "target": "helm"
+  },
+  {
+   "id": "med01",
+   "archetype": "grey",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "reactor",
+   "activity": "check",
+   "prop": "clipboard",
+   "target": "med02"
+  },
+  {
+   "id": "med02",
+   "archetype": "tentacle",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "reactor",
+   "activity": "dance"
+  }
+ ],
+ "silhouettes": [
+  {
+   "id": "s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 6
+  },
+  {
+   "id": "s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 8
+  },
+  {
+   "id": "s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -2
+  },
+  {
+   "id": "s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 8
+  },
+  {
+   "id": "s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -3
+  },
+  {
+   "id": "s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 6
+  },
+  {
+   "id": "s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -4
+  },
+  {
+   "id": "s08",
+   "shape": "sil_b",
+   "group": "early",
+   "thresh": -7
+  },
+  {
+   "id": "s09",
+   "shape": "sil_c",
+   "group": "early",
+   "thresh": 4
+  },
+  {
+   "id": "s10",
+   "shape": "sil_a",
+   "group": "early",
+   "thresh": -3
+  },
+  {
+   "id": "s11",
+   "shape": "sil_b",
+   "group": "early",
+   "thresh": -8
+  },
+  {
+   "id": "s12",
+   "shape": "sil_c",
+   "group": "gatherers",
+   "thresh": 8
+  },
+  {
+   "id": "s13",
+   "shape": "sil_a",
+   "group": "gatherers",
+   "thresh": -7
+  },
+  {
+   "id": "s14",
+   "shape": "sil_b",
+   "group": "gatherers",
+   "thresh": -2
+  },
+  {
+   "id": "gallery_s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -2,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -1,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 8,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 1,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 6,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 1,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -8,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -5,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s09",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 8,
+   "view": "gallery"
+  },
+  {
+   "id": "gallery_s10",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 2,
+   "view": "gallery"
+  },
+  {
+   "id": "reactor_s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -5,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -5,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -4,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 3,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -5,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -2,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -7,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 8,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s09",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 3,
+   "view": "reactor"
+  },
+  {
+   "id": "reactor_s10",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 8,
+   "view": "reactor"
+  },
+  {
+   "id": "bridge_s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -5,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 4,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 4,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 8,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 8,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -5,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -1,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 3,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s09",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 5,
+   "view": "bridge"
+  },
+  {
+   "id": "bridge_s10",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -7,
+   "view": "bridge"
+  }
+ ]
+}

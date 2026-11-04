@@ -1,0 +1,260 @@
+{
+ "abduction": {
+  "art": "mothership",
+  "duration": 17.0,
+  "title": "Contact",
+  "events": [
+   {
+    "t": 0.0,
+    "do": "caption",
+    "text": "The music dips. Something is hanging over the club...",
+    "dur": 3.0
+   },
+   {
+    "t": 0.2,
+    "do": "dim",
+    "dur": 2.0
+   },
+   {
+    "t": 1.5,
+    "do": "look_up",
+    "dur": 12.0
+   },
+   {
+    "t": 2.5,
+    "do": "ufo_descend",
+    "dur": 4.5
+   },
+   {
+    "t": 7.5,
+    "do": "beam_on",
+    "dur": 1.5
+   },
+   {
+    "t": 7.8,
+    "do": "caption",
+    "text": "A beam of light finds the dance floor.",
+    "dur": 2.5
+   },
+   {
+    "t": 9.0,
+    "do": "lift_crowd",
+    "dur": 4.5
+   },
+   {
+    "t": 12.5,
+    "do": "caption",
+    "text": "Everyone is taken aboard.",
+    "dur": 2.5
+   },
+   {
+    "t": 13.2,
+    "do": "flood",
+    "dur": 3.6
+   }
+  ]
+ },
+ "descent": {
+  "art": "underworld",
+  "duration": 17.0,
+  "title": "The Floor Gives Way",
+  "events": [
+   {
+    "t": 0.0,
+    "do": "caption",
+    "text": "The room has gone quiet. The floor starts to glow...",
+    "dur": 3.0
+   },
+   {
+    "t": 0.2,
+    "do": "dim",
+    "dur": 2.0
+   },
+   {
+    "t": 2.0,
+    "do": "crack_spread",
+    "dur": 4.0
+   },
+   {
+    "t": 4.0,
+    "do": "panic",
+    "dur": 11.0
+   },
+   {
+    "t": 4.5,
+    "do": "fire_jets",
+    "dur": 4.0
+   },
+   {
+    "t": 6.5,
+    "do": "caption",
+    "text": "Something is waiting below.",
+    "dur": 2.5
+   },
+   {
+    "t": 7.5,
+    "do": "portal_open",
+    "dur": 3.0
+   },
+   {
+    "t": 9.5,
+    "do": "sink_crowd",
+    "dur": 4.5
+   },
+   {
+    "t": 12.5,
+    "do": "caption",
+    "text": "Everyone is dragged down.",
+    "dur": 2.5
+   },
+   {
+    "t": 13.2,
+    "do": "wash",
+    "dur": 3.6
+   }
+  ]
+ },
+ "awakening": {
+  "art": "hospital",
+  "duration": 16.0,
+  "title": "Waking Up",
+  "events": [
+   {
+    "t": 0.0,
+    "do": "caption",
+    "text": "The music fades. Something is beeping, steady and close...",
+    "dur": 3.4
+   },
+   {
+    "t": 0.3,
+    "do": "fade_crowd",
+    "dur": 3.2
+   },
+   {
+    "t": 1.8,
+    "do": "eyelids_close",
+    "dur": 3.0
+   },
+   {
+    "t": 4.4,
+    "do": "monitor",
+    "dur": 8.6
+   },
+   {
+    "t": 5.2,
+    "do": "caption",
+    "text": "Beep... beep... beep...",
+    "dur": 2.6
+   },
+   {
+    "t": 8.2,
+    "do": "caption",
+    "text": "A warm hand squeezes yours.",
+    "dur": 2.6
+   },
+   {
+    "t": 10.8,
+    "do": "eyelids_open",
+    "dur": 3.4
+   },
+   {
+    "t": 11.3,
+    "do": "caption",
+    "text": "\"Look! Their eyes are opening!\"",
+    "dur": 2.1
+   },
+   {
+    "t": 13.6,
+    "do": "caption",
+    "text": "You're awake.",
+    "dur": 2.2
+   },
+   {
+    "t": 14.3,
+    "do": "white",
+    "dur": 1.7
+   }
+  ]
+ },
+ "sectioned": {
+  "art": "mental_hospital",
+  "duration": 16.0,
+  "title": "Coming To",
+  "events": [
+   {
+    "t": 0.0,
+    "do": "caption",
+    "text": "The music stops.",
+    "dur": 2.4
+   },
+   {
+    "t": 0.0,
+    "do": "dim"
+   },
+   {
+    "t": 0.4,
+    "do": "fade_crowd",
+    "dur": 3.6
+   },
+   {
+    "t": 1.6,
+    "do": "tunnel",
+    "dur": 3.6
+   },
+   {
+    "t": 3.0,
+    "do": "caption",
+    "text": "Everything goes soft, and very quiet.",
+    "dur": 2.6
+   },
+   {
+    "t": 6.0,
+    "do": "fluoro",
+    "dur": 2.6
+   },
+   {
+    "t": 6.3,
+    "do": "tubes",
+    "dur": 2.0
+   },
+   {
+    "t": 6.6,
+    "do": "caption",
+    "text": "Then a light. A very bright, very plain light.",
+    "dur": 2.8
+   },
+   {
+    "t": 9.2,
+    "do": "door",
+    "dur": 1.0
+   },
+   {
+    "t": 9.8,
+    "do": "caption",
+    "text": "'There you are, love. Welcome back to the ward.'",
+    "dur": 3.0
+   },
+   {
+    "t": 10.6,
+    "do": "door_open",
+    "dur": 1.6
+   },
+   {
+    "t": 12.6,
+    "do": "walk_in",
+    "dur": 2.6
+   },
+   {
+    "t": 13.2,
+    "do": "caption",
+    "text": "None of it happened. Or did it? Come and meet everyone.",
+    "dur": 2.6
+   },
+   {
+    "t": 15.2,
+    "do": "white",
+    "dur": 0.8
+   }
+  ]
+ }
+}

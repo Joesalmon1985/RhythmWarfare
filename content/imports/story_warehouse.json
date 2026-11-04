@@ -1,0 +1,19 @@
+{
+ "note": "Night One (story chapter 1) music: the unsuffixed 'Beat Shaper - Lv1 Warehouse' export set in NewMusic/ ((1) and (2) and the Default Project set are not used). Run: python tools/content/import_recorded.py content/imports/story_warehouse.json (add --check to verify the timing only). The MIDI headers say 120 BPM; the recordings were rendered at 87 BPM, verified against the drum transients and the bass re-attacks by the importer, and two game beats (87 x 2 = 174) are one source beat. Audio is never time-stretched.",
+ "source_dir": "NewMusic",
+ "source_label": "Beat Shaper - Lv1 Warehouse",
+ "prefix": "Beat Shaper - Lv1 Warehouse-",
+ "pack_dir": "songs/story_n1_warehouse",
+ "base_pack": "songs/m01_first_watch",
+ "title": "Night One: Warehouse",
+ "source_bpm": 87,
+ "game_beats_per_source_beat": 2,
+ "max_error_ms": 12,
+ "kick_notes": [36],
+ "snare_notes": [38, 40],
+ "stems": {
+  "drums": {"file": "Drums", "mode": "drums", "families": ["kick", "snare"], "gain_db": 0.0},
+  "bass": {"file": "Bass", "mode": "bass", "families": ["bass"], "gain_db": 3.0},
+  "other": {"file": "Synth", "mode": "always", "families": [], "gain_db": 10.0}
+ }
+}

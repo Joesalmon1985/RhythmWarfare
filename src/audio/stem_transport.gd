@@ -31,6 +31,9 @@ var _wraps := 0
 var _last_raw := 0.0
 var _target: Dictionary = {}  # key -> linear gain target (0 or 1)
 var _current: Dictionary = {}  # key -> linear gain now
+var _duck := 0.0  # 0..1: the story's sick beat. The mix gets quieter and the stems that are not low (kick and bass families) fall away, a muffled "behind a door" music
+var _duck_applied := -1.0
+var _low_keys: Dictionary = {}  # stem keys that stay audible under the duck
 var _fade_master := 1.0
 var _fade_target := 1.0
 var _fade_speed := 0.0
@@ -95,6 +98,10 @@ func load_level(level: Level) -> String:
 		_program[key] = true
 		_muted[key] = false
 	_initial_program = level.gain_program
+	_low_keys = {}
+	for k in stem_keys:
+		if str(level.stem_family.get(k, k)) in ["kick", "bass", "drums"]:
+			_low_keys[k] = true
 	_bar_s = level.ticks_per_bar() * 60.0 / (level.bpm * float(level.ticks_per_beat))
 	player.stream = sync_stream
 	_loaded = true
@@ -189,7 +196,7 @@ func apply_program(on: Dictionary, snap: bool = false) -> void:
 			_retarget(key)
 			if snap:
 				_current[key] = _target[key]
-				sync_stream.set_sync_stream_volume(stem_keys.find(key), _to_db(_current[key]))
+				sync_stream.set_sync_stream_volume(stem_keys.find(key), _to_db(effective_gain(key)))
 
 
 ## Whether the gain program has the stem sounding (a miss mute is separate).
@@ -216,18 +223,37 @@ func fade_out(seconds: float) -> void:
 	_fade_speed = 1.0 / maxf(seconds, 0.001)
 
 
+## The story's sick beat: `amount` 0..1 quietens the mix and lets the non-low stems fall away (existing stem gains only, no new audio). 0 leaves the mix as it was.
+func set_duck(amount: float) -> void:
+	_duck = clampf(amount, 0.0, 1.0)
+
+
+func duck() -> float:
+	return _duck
+
+
+## The gain actually sent to a stem: its ramped gain, scaled by the duck (low stems to 0.45, the others to 0.1 at full duck).
+func effective_gain(key: String) -> float:
+	var g: float = _current.get(key, 1.0)
+	if _duck <= 0.0:
+		return g
+	return g * lerpf(1.0, 0.45 if _low_keys.has(key) else 0.1, _duck)
+
+
 func _process(delta: float) -> void:
 	if not _loaded:
 		return
 	var step := delta / RAMP_S
+	var duck_changed := not is_equal_approx(_duck, _duck_applied)
+	_duck_applied = _duck
 	for i in stem_keys.size():
 		var key: String = stem_keys[i]
 		var cur: float = _current[key]
 		var tgt: float = _target[key]
-		if cur != tgt:
+		if cur != tgt or duck_changed:
 			cur = move_toward(cur, tgt, step)
 			_current[key] = cur
-			sync_stream.set_sync_stream_volume(i, _to_db(cur))
+			sync_stream.set_sync_stream_volume(i, _to_db(effective_gain(key)))
 	if _fade_master != _fade_target:
 		_fade_master = move_toward(_fade_master, _fade_target, _fade_speed * delta)
 		player.volume_db = _to_db(_fade_master)

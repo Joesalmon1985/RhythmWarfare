@@ -1,0 +1,130 @@
+{
+ "source_dir": "NewMusic",
+ "sources_sha256": {
+  "Beat Shaper - Lv1 Warehouse-Drums.wav": "2388aacab8d185c7827e49e87a793155a647b835d85c399e465e528b9d0ef96a",
+  "Beat Shaper - Lv1 Warehouse-Drums.mid": "77e4faeaf3a6462e5414315afad925ebc0bb8db96e35358c9d214c555faa4fa9",
+  "Beat Shaper - Lv1 Warehouse-Bass.wav": "b0f7a0994d6dc26e003a16e937ca0c0f03813e1df0f3263803e9c7e46d7cff3c",
+  "Beat Shaper - Lv1 Warehouse-Bass.mid": "b908df49747a9ac36f52f3ee887563f8eb1f34e2f1e80f9f8550f37004a340c0",
+  "Beat Shaper - Lv1 Warehouse-Synth.wav": "dedf76411ad7ce5a0750ac1988e1daf530bfc8480eaff0256c1c971201ef15e5",
+  "Beat Shaper - Lv1 Warehouse-Synth.mid": "adedc2a6749cf89fd3954f2dd74da177f0c2a092d3c43b893af3ddbbbaee3f76"
+ },
+ "timing": {
+  "declared_source_bpm": 87.0,
+  "midi_header_bpm": {
+   "drums": 120.0,
+   "bass": 120.0,
+   "other": 120.0
+  },
+  "game_bpm": 174,
+  "game_beats_per_source_beat": 2,
+  "drums": {
+   "hits": 61,
+   "matched": 61,
+   "fitted_bpm": 86.997,
+   "fitted_offset_ms": 5.66,
+   "error_ms_at_declared": {
+    "mean": 5.82,
+    "median": 6.17,
+    "max_abs": 8.24,
+    "p95_abs": 7.66
+   },
+   "hits_matched_if_header_tempo": 17
+  },
+  "bass": {
+   "notes": [
+    {
+     "beat": 0.0,
+     "pitch": 40,
+     "midi_s": 0.0,
+     "audio_s": 0.0,
+     "error_ms": 0.0,
+     "how": "first sound in the file"
+    },
+    {
+     "beat": 4.25,
+     "pitch": 38,
+     "midi_s": 2.931,
+     "audio_s": 2.929,
+     "error_ms": -2.0,
+     "how": "largest spectral change within 80 ms"
+    },
+    {
+     "beat": 8.0,
+     "pitch": 40,
+     "midi_s": 5.5172,
+     "audio_s": 5.5092,
+     "error_ms": -8.0,
+     "how": "largest spectral change within 80 ms"
+    },
+    {
+     "beat": 13.0,
+     "pitch": 48,
+     "midi_s": 8.9655,
+     "audio_s": 8.9675,
+     "error_ms": 2.0,
+     "how": "largest spectral change within 80 ms"
+    }
+   ]
+  }
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 558390,
+   "loop_frames": 529655,
+   "tail_frames": 28735,
+   "padded_frames": 0,
+   "tail_audible_s": 0.476,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -7.56,
+   "rms_db": -23.66,
+   "source_seconds": 11.6331,
+   "source_peak_db": -7.56,
+   "file": "loops/drums.wav",
+   "seam_step": 0.00167
+  },
+  "bass": {
+   "frames_in": 596734,
+   "loop_frames": 529655,
+   "tail_frames": 67079,
+   "padded_frames": 0,
+   "tail_audible_s": 1.352,
+   "laps_folded": 1,
+   "gain_db": 3.0,
+   "peak_db": -11.2,
+   "rms_db": -21.15,
+   "source_seconds": 12.432,
+   "source_peak_db": -14.2,
+   "file": "loops/bass.wav",
+   "seam_step": 0.0001
+  },
+  "other": {
+   "frames_in": 622626,
+   "loop_frames": 529655,
+   "tail_frames": 92971,
+   "padded_frames": 0,
+   "tail_audible_s": 1.937,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -17.02,
+   "rms_db": -28.59,
+   "source_seconds": 12.9714,
+   "source_peak_db": -29.14,
+   "file": "loops/other.wav",
+   "seam_step": 0.00023
+  }
+ },
+ "loop": {
+  "bars": 8,
+  "frames": 529655,
+  "seconds": 11.034479,
+  "source_beats": 16.0,
+  "note": "16 source beats at 87 BPM = 32 game beats at 174 BPM = 8 bars; audio is not stretched"
+ },
+ "cues": {
+  "kick": 13,
+  "snare": 19,
+  "bass": 4
+ },
+ "warnings": []
+}

@@ -1,0 +1,2357 @@
+{
+ "id": "hospital",
+ "title": "The Hospital",
+ "chapter": 4,
+ "art": "hospital",
+ "music_pack": "res://songs/m05_counterpoint",
+ "description": "You wake in a hospital bed with your family around you. Was it all a dream? One more set, for the people who love you.",
+ "intro": "You're awake. And everyone came.",
+ "duration_bars": 56,
+ "sequence_bars": 2,
+ "initial_energy": 45,
+ "palettes": {
+  "low": [
+   "#5c6fae",
+   "#a86a8e"
+  ],
+  "cool": [
+   "#22c7bd",
+   "#6d8dff"
+  ],
+  "warm": [
+   "#ff9b3d",
+   "#ff5f7e"
+  ],
+  "rave": [
+   "#ffad2e",
+   "#1fd1c1",
+   "#ff5c8c",
+   "#ffd84a"
+  ],
+  "ward": [
+   "#ffb052",
+   "#2fc9b9"
+  ],
+  "tea": [
+   "#ff8f4a",
+   "#ffc24a"
+  ],
+  "golden": [
+   "#ffa53a",
+   "#ff6a5e"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Unimpressed",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Dancing",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Hype",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Euphoric",
+    "max": 100
+   }
+  ]
+ },
+ "acts": [
+  {
+   "id": "I",
+   "title": "Waking up",
+   "start_bar": 1
+  },
+  {
+   "id": "II",
+   "title": "Visiting hours",
+   "start_bar": 17
+  },
+  {
+   "id": "III",
+   "title": "Garden party",
+   "start_bar": 33
+  },
+  {
+   "id": "IV",
+   "title": "Going home",
+   "start_bar": 49
+  }
+ ],
+ "blocks": [
+  {
+   "id": "waking_up",
+   "title": "Waking up",
+   "act": "Act I",
+   "start_bar": 1,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 1,
+     "action": "lights_low_pulse"
+    },
+    {
+     "at_bar": 1,
+     "action": "piece_on",
+     "piece": "window_sunbeams"
+    },
+    {
+     "at_bar": 1,
+     "action": "piece_on",
+     "piece": "heart_monitor"
+    },
+    {
+     "at_bar": 1,
+     "action": "player_role",
+     "role": "dancer"
+    },
+    {
+     "at_bar": 2,
+     "action": "player_look",
+     "pitch": 15,
+     "bars": 3
+    },
+    {
+     "at_bar": 3,
+     "action": "doors_open"
+    },
+    {
+     "at_bar": 3,
+     "action": "front_row_sway"
+    },
+    {
+     "at_bar": 5,
+     "action": "bring_in",
+     "group": "early"
+    },
+    {
+     "at_bar": 5,
+     "action": "piece_on",
+     "piece": "balloon_bunch"
+    },
+    {
+     "at_bar": 5,
+     "action": "player_walk",
+     "fwd": 1.0,
+     "in": [
+      "main"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 7,
+     "action": "led_eq"
+    },
+    {
+     "at_bar": 7,
+     "action": "piece_on",
+     "piece": "flower_vase"
+    },
+    {
+     "at_bar": 7,
+     "action": "piece_pulse",
+     "piece": "heart_monitor",
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "family_gathers",
+   "title": "The family gathers",
+   "act": "Act I",
+   "start_bar": 9,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 9,
+     "action": "lights_warm"
+    },
+    {
+     "at_bar": 9,
+     "action": "piece_on",
+     "piece": "fairy_lights"
+    },
+    {
+     "at_bar": 9,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 40
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 10,
+     "action": "player_look",
+     "at": "c05",
+     "in": [
+      "main"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 11,
+     "action": "beams_sweep"
+    },
+    {
+     "at_bar": 11,
+     "action": "piece_on",
+     "piece": "cards_garland"
+    },
+    {
+     "at_bar": 11,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 13,
+     "action": "group_footwork",
+     "group": "core",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 13,
+     "action": "piece_on",
+     "piece": "paper_stars"
+    },
+    {
+     "at_bar": 13,
+     "action": "player_walk",
+     "right": 0.8,
+     "in": [
+      "main"
+     ],
+     "bars": 2
+    },
+    {
+     "at_bar": 15,
+     "action": "led_bars"
+    },
+    {
+     "at_bar": 15,
+     "action": "piece_pulse",
+     "piece": "window_sunbeams",
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "down_the_corridor",
+   "title": "Down the corridor",
+   "act": "Act II",
+   "start_bar": 17,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 17,
+     "action": "bass_reveal"
+    },
+    {
+     "at_bar": 17,
+     "action": "woofer_pump_on"
+    },
+    {
+     "at_bar": 17,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 18,
+     "action": "player_look",
+     "pitch": -12,
+     "bars": 2
+    },
+    {
+     "at_bar": 19,
+     "action": "wave_across",
+     "bars": 3
+    },
+    {
+     "at_bar": 20,
+     "action": "player_look",
+     "by": 30,
+     "bars": 2
+    },
+    {
+     "at_bar": 21,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 21,
+     "action": "piece_pulse",
+     "piece": "corridor_doorglow",
+     "bars": 2
+    },
+    {
+     "at_bar": 22,
+     "action": "player_walk",
+     "fwd": 1.5,
+     "in": [
+      "corridor",
+      "main"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 23,
+     "action": "spotlight_sweep"
+    },
+    {
+     "at_bar": 23,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
+     "at_bar": 23,
+     "action": "piece_pulse",
+     "piece": "corridor_lights",
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "tea_and_biscuits",
+   "title": "Tea and biscuits",
+   "act": "Act II",
+   "start_bar": 25,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 25,
+     "action": "front_row_sway",
+     "bars": 2
+    },
+    {
+     "at_bar": 26,
+     "action": "player_look",
+     "at": "corridor_c04",
+     "in": [
+      "corridor"
+     ],
+     "bars": 2
+    },
+    {
+     "at_bar": 26,
+     "action": "player_look",
+     "at": "c06",
+     "in": [
+      "main"
+     ],
+     "bars": 2
+    },
+    {
+     "at_bar": 27,
+     "action": "bring_in",
+     "group": "gatherers",
+     "when": {
+      "energy_min": 50
+     },
+     "else": "gather_at_door"
+    },
+    {
+     "at_bar": 27,
+     "action": "piece_pulse",
+     "piece": "cafeteria_sun",
+     "bars": 2
+    },
+    {
+     "at_bar": 28,
+     "action": "player_walk",
+     "to": "corridor_c01",
+     "stop": 2.5,
+     "in": [
+      "corridor"
+     ],
+     "bars": 4
+    },
+    {
+     "at_bar": 28,
+     "action": "player_walk",
+     "to": "c05",
+     "stop": 1.5,
+     "in": [
+      "main"
+     ],
+     "bars": 4
+    },
+    {
+     "at_bar": 29,
+     "action": "beams_cross"
+    },
+    {
+     "at_bar": 29,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 29,
+     "action": "piece_pulse",
+     "piece": "cafeteria_vending",
+     "bars": 2
+    },
+    {
+     "at_bar": 31,
+     "action": "led_rings"
+    },
+    {
+     "at_bar": 31,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 31,
+     "action": "player_look",
+     "by": -28,
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "into_the_garden",
+   "title": "Out into the garden",
+   "act": "Act III",
+   "start_bar": 33,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 33,
+     "action": "player_look",
+     "at": "dayroom",
+     "in": [
+      "corridor"
+     ],
+     "bars": 1
+    },
+    {
+     "at_bar": 33,
+     "action": "player_look",
+     "at": "bed",
+     "in": [
+      "main"
+     ],
+     "bars": 1
+    },
+    {
+     "at_bar": 34,
+     "action": "player_walk",
+     "fwd": -1.2,
+     "in": [
+      "corridor",
+      "main"
+     ],
+     "bars": 2
+    },
+    {
+     "at_bar": 35,
+     "action": "circle_form",
+     "group": "circle"
+    },
+    {
+     "at_bar": 35,
+     "action": "piece_pulse",
+     "piece": "garden_sunrays",
+     "bars": 2
+    },
+    {
+     "at_bar": 35,
+     "action": "player_look",
+     "pitch": 16,
+     "bars": 2
+    },
+    {
+     "at_bar": 37,
+     "action": "disco_ball_on"
+    },
+    {
+     "at_bar": 37,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 37,
+     "action": "piece_pulse",
+     "piece": "garden_spray",
+     "bars": 2
+    },
+    {
+     "at_bar": 38,
+     "action": "player_look",
+     "pitch": -14,
+     "bars": 2
+    },
+    {
+     "at_bar": 39,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 39,
+     "action": "bring_in",
+     "group": "late"
+    }
+   ]
+  },
+  {
+   "id": "golden_hour",
+   "title": "Golden hour",
+   "act": "Act III",
+   "start_bar": 41,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 41,
+     "action": "piece_pulse",
+     "piece": "garden_sunrays",
+     "bars": 2
+    },
+    {
+     "at_bar": 42,
+     "action": "player_look",
+     "by": -34,
+     "bars": 3
+    },
+    {
+     "at_bar": 43,
+     "action": "glowsticks_on"
+    },
+    {
+     "at_bar": 43,
+     "action": "hero_center"
+    },
+    {
+     "at_bar": 45,
+     "action": "light_wave",
+     "bars": 2
+    },
+    {
+     "at_bar": 45,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 45,
+     "action": "piece_pulse",
+     "piece": "garden_spray",
+     "bars": 2
+    },
+    {
+     "at_bar": 46,
+     "action": "player_walk",
+     "to": "garden_edge",
+     "in": [
+      "garden"
+     ],
+     "bars": 2
+    },
+    {
+     "at_bar": 46,
+     "action": "player_look",
+     "pitch": 12,
+     "bars": 2
+    },
+    {
+     "at_bar": 47,
+     "action": "led_wave"
+    },
+    {
+     "at_bar": 47,
+     "action": "bring_in",
+     "group": "peak"
+    },
+    {
+     "at_bar": 47,
+     "action": "lights_warm"
+    }
+   ]
+  },
+  {
+   "id": "going_home",
+   "title": "Going home",
+   "act": "Act IV",
+   "start_bar": 49,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 49,
+     "action": "riser_up"
+    },
+    {
+     "at_bar": 49,
+     "action": "bring_in",
+     "group": "peak"
+    },
+    {
+     "at_bar": 49,
+     "action": "piece_pulse",
+     "piece": "window_sunbeams",
+     "bars": 2
+    },
+    {
+     "at_bar": 50,
+     "action": "player_look",
+     "by": 26,
+     "bars": 3
+    },
+    {
+     "at_bar": 51,
+     "action": "hero_solo",
+     "bars": 4
+    },
+    {
+     "at_bar": 51,
+     "action": "spotlight_hero"
+    },
+    {
+     "at_bar": 51,
+     "action": "piece_pulse",
+     "piece": "heart_monitor",
+     "bars": 2
+    },
+    {
+     "at_bar": 53,
+     "action": "rave_peak",
+     "bars": 3,
+     "when": {
+      "energy_min": 50
+     },
+     "else": "lights_cool"
+    },
+    {
+     "at_bar": 53,
+     "action": "player_walk",
+     "to": "bandstand",
+     "style": "climb",
+     "in": [
+      "garden"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 54,
+     "action": "player_look",
+     "pitch": 18,
+     "bars": 2
+    },
+    {
+     "at_bar": 55,
+     "action": "riser_down"
+    },
+    {
+     "at_bar": 55,
+     "action": "confetti",
+     "when": {
+      "energy_min": 85
+     }
+    },
+    {
+     "at_bar": 55,
+     "action": "hands_up_all",
+     "bars": 2,
+     "when": {
+      "energy_min": 55
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 55,
+     "action": "piece_pulse",
+     "piece": "window_sunbeams",
+     "bars": 2
+    }
+   ]
+  }
+ ],
+ "decisions": [
+  {
+   "id": "visiting_hours",
+   "title": "Visiting hours",
+   "at_bar": 17,
+   "block": "down_the_corridor",
+   "rule": {
+    "energy_min": 55,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.5,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "new_dancers_enter",
+    "applause",
+    {
+     "action": "player_move",
+     "to": "corridor_in",
+     "style": "carried",
+     "bars": 4
+    }
+   ],
+   "bad": [
+    "dancers_step_back",
+    "look_around",
+    {
+     "action": "fx_queasy",
+     "amount": 0.3,
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "queasy"
+    },
+    {
+     "action": "player_move",
+     "to": "ward_chair",
+     "style": "carried",
+     "bars": 2
+    }
+   ],
+   "good_text": "The whole family came down the corridor at once, beaming.",
+   "bad_text": "A few relatives hovered by the doors, not sure what to say."
+  },
+  {
+   "id": "cheer_up",
+   "title": "Cheering everyone up",
+   "at_bar": 37,
+   "block": "into_the_garden",
+   "rule": {
+    "energy_min": 58,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "circle_spotlight_cheer",
+    {
+     "action": "player_move",
+     "to": "cafe_in",
+     "style": "carried",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "on_stage",
+     "after_bars": 4
+    }
+   ],
+   "bad": [
+    "circle_breaks_awkward",
+    {
+     "action": "fx_queasy",
+     "amount": 0.5,
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "queasy"
+    },
+    {
+     "action": "player_move",
+     "to": "quiet",
+     "style": "stagger",
+     "bars": 4
+    }
+   ],
+   "good_text": "Granny took your hand and the whole circle joined in.",
+   "bad_text": "The circle wobbled, then drifted apart."
+  },
+  {
+   "id": "the_big_song",
+   "title": "Everyone's favourite song",
+   "at_bar": 41,
+   "block": "golden_hour",
+   "rule": {
+    "energy_min": 62,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "drop_synchronised_jump",
+    {
+     "action": "player_move",
+     "to": "bandstand",
+     "style": "carried",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "dj",
+     "after_bars": 4
+    }
+   ],
+   "bad": [
+    "drop_stumble",
+    {
+     "action": "fx_queasy",
+     "amount": 0.5,
+     "bars": 2
+    },
+    {
+     "action": "player_move",
+     "to": "bed",
+     "style": "carried",
+     "bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "sick",
+     "after_bars": 3
+    },
+    {
+     "action": "sick_beat",
+     "bars": 3,
+     "after_bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "recovered",
+     "after_bars": 6
+    },
+    {
+     "action": "fx_queasy",
+     "amount": 0.0,
+     "bars": 2,
+     "after_bars": 6
+    }
+   ],
+   "good_text": "Everyone's favourite song: the whole garden jumped together.",
+   "bad_text": "The drop stumbled, but everyone kept smiling."
+  },
+  {
+   "id": "win_back",
+   "title": "Winning the room back",
+   "at_bar": 45,
+   "block": "golden_hour",
+   "rule": {
+    "requires_bad_before": true,
+    "recent_sequences": 6,
+    "recent_pass_min": 0.83,
+    "energy_min": 40
+   },
+   "good": [
+    "winback_cheer",
+    {
+     "action": "player_move",
+     "to": "garden_in",
+     "style": "carried",
+     "bars": 4,
+     "after_bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "on_stage",
+     "after_bars": 7
+    }
+   ],
+   "bad": [],
+   "good_text": "You won the garden back. Granny is doing the twist.",
+   "bad_text": "",
+   "kind": "winback"
+  },
+  {
+   "id": "going_home",
+   "title": "Going home",
+   "at_bar": 49,
+   "block": "going_home",
+   "rule": {
+    "energy_min": 65,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.65,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "final_chant"
+   ],
+   "bad": [
+    "final_flicker",
+    {
+     "action": "fx_queasy",
+     "amount": 0.4,
+     "bars": 2
+    }
+   ],
+   "good_text": "The family sang you all the way back to your room.",
+   "bad_text": "The lights dipped and the visitors began to drift home."
+  }
+ ],
+ "endings": {
+  "family_celebration": {
+   "title": "Home for Good",
+   "energy_min": 85,
+   "pass_min": 0.94,
+   "text": "Everyone you love is dancing round your bed. It wasn't a dream: you're awake, and you're going home.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "bandstand",
+     "style": "carried",
+     "bars": 2
+    },
+    {
+     "action": "player_role",
+     "role": "dj",
+     "after_bars": 2
+    }
+   ]
+  },
+  "on_the_mend": {
+   "title": "On the Mend",
+   "energy_min": 40,
+   "pass_min": 0.5,
+   "text": "A warm, happy afternoon with your family. You're feeling better already.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "garden_edge",
+     "style": "carried",
+     "bars": 2
+    }
+   ]
+  },
+  "quiet_ward": {
+   "title": "A Quiet Afternoon",
+   "energy_min": -1,
+   "pass_min": 0.0,
+   "text": "The visitors tiptoe out with a wave and leave you to rest. There's always tomorrow.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "bed",
+     "style": "carried",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "out",
+     "after_bars": 4
+    }
+   ]
+  }
+ },
+ "ending_order": [
+  "family_celebration",
+  "on_the_mend",
+  "quiet_ward"
+ ],
+ "groups": {
+  "circle": [
+   "c02",
+   "c03",
+   "c04",
+   "c05",
+   "c06",
+   "c07",
+   "c08",
+   "c09",
+   "corridor_c02",
+   "corridor_c03",
+   "corridor_c04",
+   "corridor_c05",
+   "corridor_c06",
+   "corridor_c07",
+   "corridor_c08",
+   "corridor_c09",
+   "cafeteria_c02",
+   "cafeteria_c03",
+   "cafeteria_c04",
+   "cafeteria_c05",
+   "cafeteria_c06",
+   "cafeteria_c07",
+   "cafeteria_c08",
+   "cafeteria_c09",
+   "garden_c02",
+   "garden_c03",
+   "garden_c04",
+   "garden_c05",
+   "garden_c06",
+   "garden_c07",
+   "garden_c08",
+   "garden_c09"
+  ],
+  "all": [
+   "c01",
+   "c02",
+   "c03",
+   "c04",
+   "c05",
+   "c06",
+   "c07",
+   "c08",
+   "c09",
+   "c10",
+   "e01",
+   "e02",
+   "e03",
+   "e04",
+   "g01",
+   "g02",
+   "g03",
+   "g04",
+   "g05",
+   "g06",
+   "g07",
+   "g08",
+   "l01",
+   "l02",
+   "l03",
+   "l04",
+   "p01",
+   "p02",
+   "p03",
+   "p04",
+   "corridor_c01",
+   "corridor_c02",
+   "corridor_c03",
+   "corridor_c04",
+   "corridor_c05",
+   "corridor_c06",
+   "corridor_c07",
+   "corridor_c08",
+   "corridor_c09",
+   "corridor_c10",
+   "corridor_g01",
+   "corridor_g02",
+   "corridor_g03",
+   "corridor_g04",
+   "corridor_g05",
+   "corridor_g06",
+   "corridor_l01",
+   "corridor_l02",
+   "corridor_l03",
+   "corridor_l04",
+   "corridor_p01",
+   "corridor_p02",
+   "corridor_p03",
+   "corridor_p04",
+   "cafeteria_c01",
+   "cafeteria_c02",
+   "cafeteria_c03",
+   "cafeteria_c04",
+   "cafeteria_c05",
+   "cafeteria_c06",
+   "cafeteria_c07",
+   "cafeteria_c08",
+   "cafeteria_c09",
+   "cafeteria_c10",
+   "cafeteria_g01",
+   "cafeteria_g02",
+   "cafeteria_g03",
+   "cafeteria_g04",
+   "cafeteria_g05",
+   "cafeteria_g06",
+   "cafeteria_l01",
+   "cafeteria_l02",
+   "cafeteria_l03",
+   "cafeteria_l04",
+   "cafeteria_p01",
+   "cafeteria_p02",
+   "cafeteria_p03",
+   "cafeteria_p04",
+   "garden_c01",
+   "garden_c02",
+   "garden_c03",
+   "garden_c04",
+   "garden_c05",
+   "garden_c06",
+   "garden_c07",
+   "garden_c08",
+   "garden_c09",
+   "garden_c10",
+   "garden_g01",
+   "garden_g02",
+   "garden_g03",
+   "garden_g04",
+   "garden_g05",
+   "garden_g06",
+   "garden_l01",
+   "garden_l02",
+   "garden_l03",
+   "garden_l04",
+   "garden_p01",
+   "garden_p02",
+   "garden_p03",
+   "garden_p04"
+  ]
+ },
+ "actors": [
+  {
+   "id": "c01",
+   "archetype": "kid",
+   "variant": "a",
+   "group": "core",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "c02",
+   "archetype": "mum",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "c03",
+   "archetype": "granny",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "c04",
+   "archetype": "dad",
+   "variant": "b",
+   "group": "core",
+   "thresh": 4
+  },
+  {
+   "id": "c05",
+   "archetype": "nurse",
+   "variant": "a",
+   "group": "core",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "c06",
+   "archetype": "doctor",
+   "variant": "a",
+   "group": "core",
+   "thresh": 6
+  },
+  {
+   "id": "c07",
+   "archetype": "mum",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "c08",
+   "archetype": "dad",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": -8
+  },
+  {
+   "id": "c09",
+   "archetype": "granny",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": -10
+  },
+  {
+   "id": "c10",
+   "archetype": "nurse",
+   "variant": "b",
+   "group": "core",
+   "thresh": -6
+  },
+  {
+   "id": "e01",
+   "archetype": "granny",
+   "variant": "a",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e02",
+   "archetype": "kid",
+   "variant": "b",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e03",
+   "archetype": "nurse",
+   "variant": "a",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e04",
+   "archetype": "doctor",
+   "variant": "b",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "g01",
+   "archetype": "mum",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g02",
+   "archetype": "dad",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g03",
+   "archetype": "granny",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g04",
+   "archetype": "kid",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g05",
+   "archetype": "nurse",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g06",
+   "archetype": "doctor",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g07",
+   "archetype": "mum",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g08",
+   "archetype": "dad",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 7,
+   "stays_on_bad": false
+  },
+  {
+   "id": "l01",
+   "archetype": "granny",
+   "variant": "b",
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l02",
+   "archetype": "kid",
+   "variant": "a",
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l03",
+   "archetype": "nurse",
+   "variant": "b",
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l04",
+   "archetype": "doctor",
+   "variant": "a",
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "p01",
+   "archetype": "nurse",
+   "variant": "a",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p02",
+   "archetype": "doctor",
+   "variant": "b",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p03",
+   "archetype": "mum",
+   "variant": "a",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p04",
+   "archetype": "dad",
+   "variant": "b",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "corridor_c01",
+   "archetype": "mum",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "corridor_c02",
+   "archetype": "dad",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "corridor_c03",
+   "archetype": "kid",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "corridor_c04",
+   "archetype": "granny",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 4
+  },
+  {
+   "id": "corridor_c05",
+   "archetype": "nurse",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "corridor_c06",
+   "archetype": "doctor",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 6
+  },
+  {
+   "id": "corridor_c07",
+   "archetype": "dad",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0
+  },
+  {
+   "id": "corridor_c08",
+   "archetype": "nurse",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "role": "front",
+   "thresh": -8
+  },
+  {
+   "id": "corridor_c09",
+   "archetype": "doctor",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "role": "front",
+   "thresh": -10
+  },
+  {
+   "id": "corridor_c10",
+   "archetype": "kid",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": -6
+  },
+  {
+   "id": "corridor_g01",
+   "archetype": "dad",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "corridor_g02",
+   "archetype": "granny",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "corridor_g03",
+   "archetype": "kid",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "corridor_g04",
+   "archetype": "nurse",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "corridor_g05",
+   "archetype": "doctor",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "corridor_g06",
+   "archetype": "mum",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "corridor_l01",
+   "archetype": "kid",
+   "variant": "b",
+   "group": "late",
+   "view": "corridor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "corridor_l02",
+   "archetype": "nurse",
+   "variant": "a",
+   "group": "late",
+   "view": "corridor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "corridor_l03",
+   "archetype": "doctor",
+   "variant": "b",
+   "group": "late",
+   "view": "corridor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "corridor_l04",
+   "archetype": "mum",
+   "variant": "a",
+   "group": "late",
+   "view": "corridor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "corridor_p01",
+   "archetype": "doctor",
+   "variant": "a",
+   "group": "peak",
+   "view": "corridor",
+   "enter_from": "side"
+  },
+  {
+   "id": "corridor_p02",
+   "archetype": "mum",
+   "variant": "b",
+   "group": "peak",
+   "view": "corridor",
+   "enter_from": "side"
+  },
+  {
+   "id": "corridor_p03",
+   "archetype": "dad",
+   "variant": "a",
+   "group": "peak",
+   "view": "corridor",
+   "enter_from": "side"
+  },
+  {
+   "id": "corridor_p04",
+   "archetype": "granny",
+   "variant": "b",
+   "group": "peak",
+   "view": "corridor",
+   "enter_from": "side"
+  },
+  {
+   "id": "cafeteria_c01",
+   "archetype": "dad",
+   "variant": "a",
+   "group": "core",
+   "view": "cafeteria",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "cafeteria_c02",
+   "archetype": "granny",
+   "variant": "b",
+   "group": "core",
+   "view": "cafeteria",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "cafeteria_c03",
+   "archetype": "nurse",
+   "variant": "a",
+   "group": "core",
+   "view": "cafeteria",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "cafeteria_c04",
+   "archetype": "kid",
+   "variant": "b",
+   "group": "core",
+   "view": "cafeteria",
+   "thresh": 4
+  },
+  {
+   "id": "cafeteria_c05",
+   "archetype": "doctor",
+   "variant": "a",
+   "group": "core",
+   "view": "cafeteria",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "cafeteria_c06",
+   "archetype": "mum",
+   "variant": "a",
+   "group": "core",
+   "view": "cafeteria",
+   "thresh": 6
+  },
+  {
+   "id": "cafeteria_c07",
+   "archetype": "granny",
+   "variant": "a",
+   "group": "core",
+   "view": "cafeteria",
+   "thresh": 0
+  },
+  {
+   "id": "cafeteria_c08",
+   "archetype": "mum",
+   "variant": "b",
+   "group": "core",
+   "view": "cafeteria",
+   "role": "front",
+   "thresh": -8
+  },
+  {
+   "id": "cafeteria_c09",
+   "archetype": "nurse",
+   "variant": "b",
+   "group": "core",
+   "view": "cafeteria",
+   "role": "front",
+   "thresh": -10
+  },
+  {
+   "id": "cafeteria_c10",
+   "archetype": "doctor",
+   "variant": "b",
+   "group": "core",
+   "view": "cafeteria",
+   "thresh": -6
+  },
+  {
+   "id": "cafeteria_g01",
+   "archetype": "granny",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "cafeteria",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "cafeteria_g02",
+   "archetype": "kid",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "cafeteria",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "cafeteria_g03",
+   "archetype": "nurse",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "cafeteria",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "cafeteria_g04",
+   "archetype": "doctor",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "cafeteria",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "cafeteria_g05",
+   "archetype": "mum",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "cafeteria",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "cafeteria_g06",
+   "archetype": "dad",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "cafeteria",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "cafeteria_l01",
+   "archetype": "nurse",
+   "variant": "b",
+   "group": "late",
+   "view": "cafeteria",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "cafeteria_l02",
+   "archetype": "doctor",
+   "variant": "a",
+   "group": "late",
+   "view": "cafeteria",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "cafeteria_l03",
+   "archetype": "mum",
+   "variant": "b",
+   "group": "late",
+   "view": "cafeteria",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "cafeteria_l04",
+   "archetype": "dad",
+   "variant": "a",
+   "group": "late",
+   "view": "cafeteria",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "cafeteria_p01",
+   "archetype": "mum",
+   "variant": "a",
+   "group": "peak",
+   "view": "cafeteria",
+   "enter_from": "side"
+  },
+  {
+   "id": "cafeteria_p02",
+   "archetype": "dad",
+   "variant": "b",
+   "group": "peak",
+   "view": "cafeteria",
+   "enter_from": "side"
+  },
+  {
+   "id": "cafeteria_p03",
+   "archetype": "granny",
+   "variant": "a",
+   "group": "peak",
+   "view": "cafeteria",
+   "enter_from": "side"
+  },
+  {
+   "id": "cafeteria_p04",
+   "archetype": "kid",
+   "variant": "b",
+   "group": "peak",
+   "view": "cafeteria",
+   "enter_from": "side"
+  },
+  {
+   "id": "garden_c01",
+   "archetype": "granny",
+   "variant": "a",
+   "group": "core",
+   "view": "garden",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "garden_c02",
+   "archetype": "kid",
+   "variant": "b",
+   "group": "core",
+   "view": "garden",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "garden_c03",
+   "archetype": "doctor",
+   "variant": "a",
+   "group": "core",
+   "view": "garden",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "garden_c04",
+   "archetype": "nurse",
+   "variant": "b",
+   "group": "core",
+   "view": "garden",
+   "thresh": 4
+  },
+  {
+   "id": "garden_c05",
+   "archetype": "mum",
+   "variant": "a",
+   "group": "core",
+   "view": "garden",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "garden_c06",
+   "archetype": "dad",
+   "variant": "a",
+   "group": "core",
+   "view": "garden",
+   "thresh": 6
+  },
+  {
+   "id": "garden_c07",
+   "archetype": "kid",
+   "variant": "a",
+   "group": "core",
+   "view": "garden",
+   "thresh": 0
+  },
+  {
+   "id": "garden_c08",
+   "archetype": "dad",
+   "variant": "b",
+   "group": "core",
+   "view": "garden",
+   "role": "front",
+   "thresh": -8
+  },
+  {
+   "id": "garden_c09",
+   "archetype": "mum",
+   "variant": "b",
+   "group": "core",
+   "view": "garden",
+   "role": "front",
+   "thresh": -10
+  },
+  {
+   "id": "garden_c10",
+   "archetype": "nurse",
+   "variant": "a",
+   "group": "core",
+   "view": "garden",
+   "thresh": -6
+  },
+  {
+   "id": "garden_g01",
+   "archetype": "kid",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "garden",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "garden_g02",
+   "archetype": "nurse",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "garden",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "garden_g03",
+   "archetype": "doctor",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "garden",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "garden_g04",
+   "archetype": "mum",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "garden",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "garden_g05",
+   "archetype": "dad",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "garden",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "garden_g06",
+   "archetype": "granny",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "garden",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "garden_l01",
+   "archetype": "doctor",
+   "variant": "b",
+   "group": "late",
+   "view": "garden",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "garden_l02",
+   "archetype": "mum",
+   "variant": "a",
+   "group": "late",
+   "view": "garden",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "garden_l03",
+   "archetype": "dad",
+   "variant": "b",
+   "group": "late",
+   "view": "garden",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "garden_l04",
+   "archetype": "granny",
+   "variant": "a",
+   "group": "late",
+   "view": "garden",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "garden_p01",
+   "archetype": "dad",
+   "variant": "a",
+   "group": "peak",
+   "view": "garden",
+   "enter_from": "side"
+  },
+  {
+   "id": "garden_p02",
+   "archetype": "granny",
+   "variant": "b",
+   "group": "peak",
+   "view": "garden",
+   "enter_from": "side"
+  },
+  {
+   "id": "garden_p03",
+   "archetype": "kid",
+   "variant": "a",
+   "group": "peak",
+   "view": "garden",
+   "enter_from": "side"
+  },
+  {
+   "id": "garden_p04",
+   "archetype": "nurse",
+   "variant": "b",
+   "group": "peak",
+   "view": "garden",
+   "enter_from": "side"
+  },
+  {
+   "id": "h01",
+   "archetype": "dad",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "dance",
+   "prop": "drip"
+  },
+  {
+   "id": "h02",
+   "archetype": "nurse",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "check",
+   "prop": "clipboard",
+   "target": "bed"
+  },
+  {
+   "id": "h03",
+   "archetype": "mum",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "sit"
+  },
+  {
+   "id": "h04",
+   "archetype": "dad",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "activity": "sleep"
+  },
+  {
+   "id": "h06",
+   "archetype": "doctor",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "check",
+   "prop": "clipboard"
+  },
+  {
+   "id": "h07",
+   "archetype": "nurse",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "serve",
+   "prop": "tray",
+   "pace_axis": [
+    1,
+    0
+   ],
+   "pace_m": 3.0
+  },
+  {
+   "id": "h08",
+   "archetype": "granny",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "watch",
+   "target": "h10"
+  },
+  {
+   "id": "h10",
+   "archetype": "kid",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "sit"
+  },
+  {
+   "id": "h12",
+   "archetype": "dad",
+   "variant": "a",
+   "group": "core",
+   "view": "cafeteria",
+   "thresh": 0,
+   "activity": "queue"
+  },
+  {
+   "id": "h13",
+   "archetype": "granny",
+   "variant": "b",
+   "group": "core",
+   "view": "cafeteria",
+   "thresh": 0,
+   "activity": "queue"
+  },
+  {
+   "id": "h14",
+   "archetype": "kid",
+   "variant": "a",
+   "group": "core",
+   "view": "cafeteria",
+   "thresh": 0,
+   "activity": "wave"
+  },
+  {
+   "id": "h15",
+   "archetype": "granny",
+   "variant": "a",
+   "group": "core",
+   "view": "garden",
+   "thresh": 0,
+   "activity": "sit"
+  },
+  {
+   "id": "h16",
+   "archetype": "mum",
+   "variant": "a",
+   "group": "core",
+   "view": "garden",
+   "thresh": 0,
+   "activity": "phone",
+   "prop": "phone"
+  },
+  {
+   "id": "h17",
+   "archetype": "doctor",
+   "variant": "a",
+   "group": "core",
+   "view": "garden",
+   "thresh": 0
+  }
+ ],
+ "silhouettes": [
+  {
+   "id": "s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -8
+  },
+  {
+   "id": "s02",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -1
+  },
+  {
+   "id": "s03",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -6
+  },
+  {
+   "id": "s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 2
+  },
+  {
+   "id": "s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -4
+  },
+  {
+   "id": "s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -7
+  },
+  {
+   "id": "s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 3
+  },
+  {
+   "id": "corridor_s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -7,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 4,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -5,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -6,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -8,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 7,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 4,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -8,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s09",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -4,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s10",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 6,
+   "view": "corridor"
+  },
+  {
+   "id": "cafeteria_s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -4,
+   "view": "cafeteria"
+  },
+  {
+   "id": "cafeteria_s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -6,
+   "view": "cafeteria"
+  },
+  {
+   "id": "cafeteria_s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -7,
+   "view": "cafeteria"
+  },
+  {
+   "id": "cafeteria_s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -5,
+   "view": "cafeteria"
+  },
+  {
+   "id": "cafeteria_s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -4,
+   "view": "cafeteria"
+  },
+  {
+   "id": "cafeteria_s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 5,
+   "view": "cafeteria"
+  },
+  {
+   "id": "cafeteria_s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -6,
+   "view": "cafeteria"
+  },
+  {
+   "id": "cafeteria_s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 8,
+   "view": "cafeteria"
+  },
+  {
+   "id": "cafeteria_s09",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -5,
+   "view": "cafeteria"
+  },
+  {
+   "id": "cafeteria_s10",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -1,
+   "view": "cafeteria"
+  },
+  {
+   "id": "garden_s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -1,
+   "view": "garden"
+  },
+  {
+   "id": "garden_s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 4,
+   "view": "garden"
+  },
+  {
+   "id": "garden_s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 2,
+   "view": "garden"
+  },
+  {
+   "id": "garden_s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 4,
+   "view": "garden"
+  },
+  {
+   "id": "garden_s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 1,
+   "view": "garden"
+  },
+  {
+   "id": "garden_s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 6,
+   "view": "garden"
+  },
+  {
+   "id": "garden_s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -6,
+   "view": "garden"
+  },
+  {
+   "id": "garden_s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -3,
+   "view": "garden"
+  },
+  {
+   "id": "garden_s09",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -8,
+   "view": "garden"
+  },
+  {
+   "id": "garden_s10",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -3,
+   "view": "garden"
+  }
+ ]
+}

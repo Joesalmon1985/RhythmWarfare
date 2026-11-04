@@ -1,0 +1,2461 @@
+{
+ "id": "underworld",
+ "title": "The Underworld",
+ "chapter": 3,
+ "art": "underworld",
+ "music_pack": "res://songs/m09_iron_rhythm",
+ "description": "The floor gave way and dropped you into hell's own nightclub. Win over the demons, and the humans dragged down with you might just see the morning.",
+ "intro": "Hell is listening. Entertain them.",
+ "duration_bars": 64,
+ "sequence_bars": 2,
+ "initial_energy": 45,
+ "palettes": {
+  "low": [
+   "#7a1f2a",
+   "#4a1f6a"
+  ],
+  "cool": [
+   "#b04bff",
+   "#ff4f5e"
+  ],
+  "warm": [
+   "#ff9a2e",
+   "#ff3d2e"
+  ],
+  "rave": [
+   "#ff3d2e",
+   "#ffb02e",
+   "#c04bff",
+   "#ff5de0"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Unimpressed",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Dancing",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Hype",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Euphoric",
+    "max": 100
+   }
+  ]
+ },
+ "acts": [
+  {
+   "id": "I",
+   "title": "The descent",
+   "start_bar": 1
+  },
+  {
+   "id": "II",
+   "title": "Court of demons",
+   "start_bar": 17
+  },
+  {
+   "id": "III",
+   "title": "Inferno groove",
+   "start_bar": 33
+  },
+  {
+   "id": "IV",
+   "title": "The last dance",
+   "start_bar": 49
+  }
+ ],
+ "blocks": [
+  {
+   "id": "the_gate",
+   "title": "The gate opens",
+   "act": "Act I",
+   "start_bar": 1,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 1,
+     "action": "lights_low_pulse"
+    },
+    {
+     "at_bar": 1,
+     "action": "doors_open"
+    },
+    {
+     "at_bar": 1,
+     "action": "piece_on",
+     "piece": "bone_arches"
+    },
+    {
+     "at_bar": 1,
+     "action": "player_role",
+     "role": "dancer"
+    },
+    {
+     "at_bar": 2,
+     "action": "player_look",
+     "pitch": 16,
+     "bars": 3
+    },
+    {
+     "at_bar": 3,
+     "action": "piece_on",
+     "piece": "lava_flow"
+    },
+    {
+     "at_bar": 3,
+     "action": "front_row_sway"
+    },
+    {
+     "at_bar": 5,
+     "action": "bring_in",
+     "group": "early"
+    },
+    {
+     "at_bar": 5,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 5,
+     "action": "player_walk",
+     "fwd": 1.6,
+     "bars": 3,
+     "in": [
+      "main"
+     ]
+    },
+    {
+     "at_bar": 7,
+     "action": "led_eq"
+    },
+    {
+     "at_bar": 7,
+     "action": "piece_on",
+     "piece": "chains_swing"
+    }
+   ]
+  },
+  {
+   "id": "judging_eyes",
+   "title": "The demons watch",
+   "act": "Act I",
+   "start_bar": 9,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 9,
+     "action": "piece_on",
+     "piece": "fire_pits_left"
+    },
+    {
+     "at_bar": 9,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 40
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 10,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
+     "at_bar": 11,
+     "action": "piece_on",
+     "piece": "fire_pits_right"
+    },
+    {
+     "at_bar": 11,
+     "action": "beams_sweep"
+    },
+    {
+     "at_bar": 13,
+     "action": "group_footwork",
+     "group": "core",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 13,
+     "action": "player_walk",
+     "to": "arena_edge",
+     "bars": 3,
+     "in": [
+      "main"
+     ]
+    },
+    {
+     "at_bar": 15,
+     "action": "led_bars"
+    },
+    {
+     "at_bar": 15,
+     "action": "piece_on",
+     "piece": "hellmouth_portal"
+    }
+   ]
+  },
+  {
+   "id": "first_bass_reveal",
+   "title": "Through the hellmouth",
+   "act": "Act II",
+   "start_bar": 17,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 17,
+     "action": "bass_reveal"
+    },
+    {
+     "at_bar": 17,
+     "action": "woofer_pump_on"
+    },
+    {
+     "at_bar": 17,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 17,
+     "action": "piece_on",
+     "piece": "court_throne_aura"
+    },
+    {
+     "at_bar": 17,
+     "action": "piece_on",
+     "piece": "court_seal"
+    },
+    {
+     "at_bar": 18,
+     "action": "player_look",
+     "at": "c01",
+     "bars": 2,
+     "in": [
+      "main"
+     ]
+    },
+    {
+     "at_bar": 19,
+     "action": "wave_across",
+     "bars": 3
+    },
+    {
+     "at_bar": 19,
+     "action": "bring_in",
+     "group": "gatherers",
+     "when": {
+      "energy_min": 55
+     },
+     "else": "gather_at_door"
+    },
+    {
+     "at_bar": 21,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 21,
+     "action": "piece_pulse",
+     "piece": "court_throne_aura",
+     "bars": 2
+    },
+    {
+     "at_bar": 21,
+     "action": "player_walk",
+     "fwd": -1.2,
+     "bars": 3,
+     "in": [
+      "main"
+     ]
+    },
+    {
+     "at_bar": 22,
+     "action": "player_look",
+     "pitch": -14,
+     "bars": 2
+    },
+    {
+     "at_bar": 23,
+     "action": "spotlight_sweep"
+    }
+   ]
+  },
+  {
+   "id": "gather_at_the_gate",
+   "title": "The court assembles",
+   "act": "Act II",
+   "start_bar": 25,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 25,
+     "action": "lights_warm"
+    },
+    {
+     "at_bar": 25,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
+     "at_bar": 25,
+     "action": "player_look",
+     "at": "arena_floor",
+     "bars": 2,
+     "in": [
+      "main"
+     ]
+    },
+    {
+     "at_bar": 27,
+     "action": "front_row_sway",
+     "bars": 2
+    },
+    {
+     "at_bar": 28,
+     "action": "player_look",
+     "pitch": 18,
+     "bars": 3
+    },
+    {
+     "at_bar": 29,
+     "action": "beams_cross"
+    },
+    {
+     "at_bar": 29,
+     "action": "piece_pulse",
+     "piece": "court_seal",
+     "bars": 2
+    },
+    {
+     "at_bar": 30,
+     "action": "player_walk",
+     "fwd": 1.5,
+     "bars": 3,
+     "in": [
+      "court"
+     ]
+    },
+    {
+     "at_bar": 31,
+     "action": "led_rings"
+    }
+   ]
+  },
+  {
+   "id": "inferno_circle",
+   "title": "The inferno circle",
+   "act": "Act III",
+   "start_bar": 33,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 33,
+     "action": "piece_on",
+     "piece": "pit_lava_glare"
+    },
+    {
+     "at_bar": 33,
+     "action": "piece_on",
+     "piece": "pit_fortress_glow"
+    },
+    {
+     "at_bar": 34,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
+    },
+    {
+     "at_bar": 35,
+     "action": "circle_form",
+     "group": "circle"
+    },
+    {
+     "at_bar": 36,
+     "action": "player_look",
+     "at": "court_c03",
+     "bars": 2,
+     "in": [
+      "court"
+     ]
+    },
+    {
+     "at_bar": 36,
+     "action": "player_look",
+     "at": "p01",
+     "bars": 2,
+     "in": [
+      "main"
+     ]
+    },
+    {
+     "at_bar": 37,
+     "action": "disco_ball_on"
+    },
+    {
+     "at_bar": 37,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 37,
+     "action": "piece_pulse",
+     "piece": "pit_lava_glare",
+     "bars": 2
+    },
+    {
+     "at_bar": 38,
+     "action": "player_walk",
+     "right": 1.4,
+     "bars": 3,
+     "in": [
+      "main",
+      "court"
+     ]
+    },
+    {
+     "at_bar": 39,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 39,
+     "action": "bring_in",
+     "group": "gatherers",
+     "when": {
+      "energy_min": 50
+     }
+    }
+   ]
+  },
+  {
+   "id": "throne_bass",
+   "title": "The lake and the bass",
+   "act": "Act III",
+   "start_bar": 41,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 41,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
+     "at_bar": 41,
+     "action": "piece_pulse",
+     "piece": "pit_fortress_glow",
+     "bars": 2
+    },
+    {
+     "at_bar": 42,
+     "action": "player_look",
+     "pitch": -16,
+     "bars": 2
+    },
+    {
+     "at_bar": 43,
+     "action": "hero_center"
+    },
+    {
+     "at_bar": 43,
+     "action": "glowsticks_on"
+    },
+    {
+     "at_bar": 45,
+     "action": "light_wave",
+     "bars": 2
+    },
+    {
+     "at_bar": 45,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 45,
+     "action": "player_look",
+     "at": "throne_steps",
+     "bars": 2,
+     "in": [
+      "court"
+     ]
+    },
+    {
+     "at_bar": 46,
+     "action": "player_look",
+     "by": 28,
+     "bars": 3
+    },
+    {
+     "at_bar": 46,
+     "action": "player_walk",
+     "fwd": 1.4,
+     "bars": 3,
+     "in": [
+      "furnace"
+     ]
+    },
+    {
+     "at_bar": 47,
+     "action": "led_wave"
+    },
+    {
+     "at_bar": 47,
+     "action": "piece_pulse",
+     "piece": "pit_lava_glare",
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "last_dance_riser",
+   "title": "Into the forge",
+   "act": "Act IV",
+   "start_bar": 49,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 49,
+     "action": "riser_up"
+    },
+    {
+     "at_bar": 49,
+     "action": "bring_in",
+     "group": "peak"
+    },
+    {
+     "at_bar": 49,
+     "action": "piece_on",
+     "piece": "furnace_eyes"
+    },
+    {
+     "at_bar": 49,
+     "action": "piece_on",
+     "piece": "furnace_channels"
+    },
+    {
+     "at_bar": 50,
+     "action": "player_look",
+     "pitch": 20,
+     "bars": 3
+    },
+    {
+     "at_bar": 51,
+     "action": "hero_solo",
+     "bars": 4
+    },
+    {
+     "at_bar": 51,
+     "action": "spotlight_hero"
+    },
+    {
+     "at_bar": 52,
+     "action": "player_look",
+     "at": "pit_c01",
+     "bars": 2,
+     "in": [
+      "pit"
+     ]
+    },
+    {
+     "at_bar": 53,
+     "action": "lights_rave"
+    },
+    {
+     "at_bar": 53,
+     "action": "piece_pulse",
+     "piece": "furnace_eyes",
+     "bars": 2
+    },
+    {
+     "at_bar": 53,
+     "action": "bring_in",
+     "group": "late",
+     "when": {
+      "energy_min": 55
+     }
+    },
+    {
+     "at_bar": 54,
+     "action": "player_walk",
+     "fwd": -1.2,
+     "bars": 3,
+     "in": [
+      "pit"
+     ]
+    },
+    {
+     "at_bar": 55,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 55,
+     "action": "piece_pulse",
+     "piece": "furnace_channels",
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "final_verdict",
+   "title": "The final verdict",
+   "act": "Act IV",
+   "start_bar": 57,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 57,
+     "action": "piece_on",
+     "piece": "skull_throne"
+    },
+    {
+     "at_bar": 57,
+     "action": "piece_pulse",
+     "piece": "lava_flow",
+     "bars": 2
+    },
+    {
+     "at_bar": 57,
+     "action": "player_look",
+     "at": "pit_in",
+     "bars": 2,
+     "in": [
+      "pit"
+     ]
+    },
+    {
+     "at_bar": 58,
+     "action": "player_look",
+     "pitch": -12,
+     "bars": 3
+    },
+    {
+     "at_bar": 59,
+     "action": "rave_peak",
+     "bars": 4,
+     "when": {
+      "energy_min": 50
+     },
+     "else": "lights_cool"
+    },
+    {
+     "at_bar": 59,
+     "action": "piece_on",
+     "piece": "ember_rain"
+    },
+    {
+     "at_bar": 60,
+     "action": "player_walk",
+     "fwd": 1.4,
+     "bars": 3,
+     "in": [
+      "pit"
+     ]
+    },
+    {
+     "at_bar": 61,
+     "action": "hands_up_all",
+     "bars": 2,
+     "when": {
+      "energy_min": 55
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 61,
+     "action": "confetti",
+     "when": {
+      "energy_min": 85
+     }
+    },
+    {
+     "at_bar": 62,
+     "action": "player_look",
+     "by": -28,
+     "bars": 3
+    },
+    {
+     "at_bar": 63,
+     "action": "beams_cross"
+    }
+   ]
+  }
+ ],
+ "decisions": [
+  {
+   "id": "demon_judges",
+   "title": "The court decides",
+   "at_bar": 17,
+   "block": "first_bass_reveal",
+   "rule": {
+    "energy_min": 55,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.5,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "new_dancers_enter",
+    "applause",
+    {
+     "action": "player_move",
+     "to": "court_in",
+     "style": "walk",
+     "bars": 4,
+     "after_bars": 2
+    }
+   ],
+   "bad": [
+    "dancers_step_back",
+    "look_around",
+    {
+     "action": "fx_queasy",
+     "amount": 0.3,
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "queasy"
+    }
+   ],
+   "good_text": "The court stomped its approval and poured onto the floor.",
+   "bad_text": "The court glared from the shadows, arms folded."
+  },
+  {
+   "id": "throne_spotlight",
+   "title": "The circle on the lake",
+   "at_bar": 41,
+   "block": "throne_bass",
+   "rule": {
+    "energy_min": 58,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "circle_spotlight_cheer",
+    {
+     "action": "player_move",
+     "to": "throne",
+     "style": "climb",
+     "bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "on_stage",
+     "after_bars": 3
+    }
+   ],
+   "bad": [
+    "circle_breaks_awkward",
+    {
+     "action": "fx_queasy",
+     "amount": 0.6,
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "queasy"
+    },
+    {
+     "action": "player_move",
+     "to": "furnace_chains",
+     "style": "stagger",
+     "bars": 4
+    }
+   ],
+   "good_text": "The lake roared and the whole circle erupted.",
+   "bad_text": "The lava hissed and the circle broke apart."
+  },
+  {
+   "id": "hellfire_drop",
+   "title": "The hellfire drop",
+   "at_bar": 49,
+   "block": "last_dance_riser",
+   "rule": {
+    "energy_min": 62,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "drop_synchronised_jump",
+    {
+     "action": "player_move",
+     "to": "pit_stage",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "bring_in",
+     "group": "peak"
+    },
+    {
+     "action": "player_role",
+     "role": "dj",
+     "after_bars": 4
+    }
+   ],
+   "bad": [
+    "drop_stumble",
+    {
+     "action": "fx_queasy",
+     "amount": 0.5,
+     "bars": 2
+    },
+    {
+     "action": "player_move",
+     "to": "cage",
+     "style": "run",
+     "bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "sick",
+     "after_bars": 3
+    },
+    {
+     "action": "sick_beat",
+     "bars": 2,
+     "after_bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "recovered",
+     "after_bars": 5
+    },
+    {
+     "action": "fx_queasy",
+     "amount": 0.0,
+     "bars": 2,
+     "after_bars": 5
+    }
+   ],
+   "good_text": "The drop landed: the whole forge jumped as one.",
+   "bad_text": "The drop stumbled, but the furnaces kept burning."
+  },
+  {
+   "id": "win_back",
+   "title": "Winning the floor back",
+   "at_bar": 53,
+   "block": "last_dance_riser",
+   "rule": {
+    "requires_bad_before": true,
+    "recent_sequences": 6,
+    "recent_pass_min": 0.83,
+    "energy_min": 40
+   },
+   "good": [
+    "winback_cheer",
+    {
+     "action": "player_move",
+     "to": "throne_steps",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "on_stage",
+     "after_bars": 4
+    }
+   ],
+   "bad": [],
+   "good_text": "The forge roars again: you won the floor back.",
+   "bad_text": "",
+   "kind": "winback"
+  },
+  {
+   "id": "final_verdict",
+   "title": "The final verdict",
+   "at_bar": 57,
+   "block": "final_verdict",
+   "rule": {
+    "energy_min": 65,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.65,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "final_chant"
+   ],
+   "bad": [
+    "final_flicker",
+    {
+     "action": "fx_queasy",
+     "amount": 0.4,
+     "bars": 2
+    }
+   ],
+   "good_text": "Hell chanted your name.",
+   "bad_text": "The flames guttered and the demons drifted away."
+  }
+ ],
+ "endings": {
+  "resident_dj": {
+   "title": "Hell's Resident DJ",
+   "energy_min": 85,
+   "pass_min": 0.94,
+   "text": "The demons crown you resident DJ of the underworld. The party never stops.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "pit_stage",
+     "style": "walk",
+     "bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "dj",
+     "after_bars": 3
+    }
+   ]
+  },
+  "survived_the_show": {
+   "title": "Survived the Show",
+   "energy_min": 40,
+   "pass_min": 0.5,
+   "text": "Warm, if smoky, applause. You made it through the show in one piece.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "pit_edge",
+     "style": "walk",
+     "bars": 3
+    }
+   ]
+  },
+  "devoured": {
+   "title": "Devoured by the Crowd",
+   "energy_min": -1,
+   "pass_min": 0.0,
+   "text": "The demons lose interest. Then they get peckish.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "cage",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "out",
+     "after_bars": 4
+    }
+   ]
+  }
+ },
+ "ending_order": [
+  "resident_dj",
+  "survived_the_show",
+  "devoured"
+ ],
+ "groups": {
+  "circle": [
+   "c02",
+   "c03",
+   "c04",
+   "c05",
+   "c06",
+   "c07",
+   "c08",
+   "c09",
+   "e01",
+   "e02",
+   "e03",
+   "e04",
+   "court_c02",
+   "court_c03",
+   "court_c04",
+   "court_c05",
+   "court_c06",
+   "court_c07",
+   "court_c08",
+   "court_c09",
+   "pit_c05",
+   "pit_c03",
+   "pit_c04",
+   "pit_c02",
+   "pit_c06",
+   "pit_c07",
+   "pit_c08",
+   "pit_c09",
+   "furnace_c02",
+   "furnace_c03",
+   "furnace_c04",
+   "furnace_c05",
+   "furnace_c06",
+   "furnace_c07",
+   "furnace_c08",
+   "furnace_c09"
+  ],
+  "all": [
+   "c01",
+   "c02",
+   "c03",
+   "c04",
+   "c05",
+   "c06",
+   "c07",
+   "c08",
+   "c09",
+   "c10",
+   "c11",
+   "c12",
+   "e01",
+   "e02",
+   "e03",
+   "e04",
+   "g01",
+   "g02",
+   "g03",
+   "g04",
+   "g05",
+   "g06",
+   "g07",
+   "g08",
+   "l01",
+   "l02",
+   "l03",
+   "l04",
+   "p01",
+   "p02",
+   "p03",
+   "p04",
+   "court_c01",
+   "court_c02",
+   "court_c03",
+   "court_c04",
+   "court_c05",
+   "court_c06",
+   "court_c07",
+   "court_c08",
+   "court_c09",
+   "court_c10",
+   "court_g01",
+   "court_g02",
+   "court_g03",
+   "court_g04",
+   "court_g05",
+   "court_g06",
+   "court_l01",
+   "court_l02",
+   "court_l03",
+   "court_l04",
+   "court_p01",
+   "court_p02",
+   "court_p03",
+   "court_p04",
+   "pit_c01",
+   "pit_c02",
+   "pit_c03",
+   "pit_c04",
+   "pit_c05",
+   "pit_c06",
+   "pit_c07",
+   "pit_c08",
+   "pit_c09",
+   "pit_c10",
+   "pit_g01",
+   "pit_g02",
+   "pit_g03",
+   "pit_g04",
+   "pit_g05",
+   "pit_g06",
+   "pit_l01",
+   "pit_l02",
+   "pit_l03",
+   "pit_l04",
+   "pit_p01",
+   "pit_p02",
+   "pit_p03",
+   "pit_p04",
+   "furnace_c01",
+   "furnace_c02",
+   "furnace_c03",
+   "furnace_c04",
+   "furnace_c05",
+   "furnace_c06",
+   "furnace_c07",
+   "furnace_c08",
+   "furnace_c09",
+   "furnace_c10",
+   "furnace_g01",
+   "furnace_g02",
+   "furnace_g03",
+   "furnace_g04",
+   "furnace_g05",
+   "furnace_g06",
+   "furnace_l01",
+   "furnace_l02",
+   "furnace_l03",
+   "furnace_l04",
+   "furnace_p01",
+   "furnace_p02",
+   "furnace_p03",
+   "furnace_p04"
+  ]
+ },
+ "actors": [
+  {
+   "id": "c01",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "group": "core",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "c02",
+   "archetype": "imp",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": -4
+  },
+  {
+   "id": "c03",
+   "archetype": "fiend",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": 2
+  },
+  {
+   "id": "c04",
+   "archetype": "brute",
+   "variant": "a",
+   "group": "core",
+   "thresh": 4
+  },
+  {
+   "id": "c05",
+   "archetype": "skeleton",
+   "variant": "a",
+   "group": "core",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "c06",
+   "archetype": "flame",
+   "variant": "b",
+   "group": "core",
+   "thresh": 6
+  },
+  {
+   "id": "c07",
+   "archetype": "imp",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "c08",
+   "archetype": "curly",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": -18,
+   "art": "night_one"
+  },
+  {
+   "id": "c09",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": -22,
+   "art": "night_one"
+  },
+  {
+   "id": "c10",
+   "archetype": "hoodie",
+   "variant": "b",
+   "group": "core",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "c11",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "thresh": -18,
+   "art": "night_one"
+  },
+  {
+   "id": "c12",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "thresh": -16,
+   "art": "night_one"
+  },
+  {
+   "id": "e01",
+   "archetype": "fiend",
+   "variant": "a",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e02",
+   "archetype": "flame",
+   "variant": "b",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e03",
+   "archetype": "brute",
+   "variant": "b",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e04",
+   "archetype": "skeleton",
+   "variant": "b",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "g01",
+   "archetype": "imp",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g02",
+   "archetype": "brute",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g03",
+   "archetype": "fiend",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g04",
+   "archetype": "skeleton",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g05",
+   "archetype": "flame",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g06",
+   "archetype": "horned_queen",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g07",
+   "archetype": "brute",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g08",
+   "archetype": "imp",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 7,
+   "stays_on_bad": false
+  },
+  {
+   "id": "l01",
+   "archetype": "skeleton",
+   "variant": "b",
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l02",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "late",
+   "enter_from": "doorway",
+   "art": "night_one"
+  },
+  {
+   "id": "l03",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l04",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "late",
+   "enter_from": "doorway",
+   "art": "night_one"
+  },
+  {
+   "id": "p01",
+   "archetype": "imp",
+   "variant": "a",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p02",
+   "archetype": "fiend",
+   "variant": "b",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p03",
+   "archetype": "flame",
+   "variant": "a",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p04",
+   "archetype": "brute",
+   "variant": "a",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "court_c01",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "group": "core",
+   "view": "court",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "court_c02",
+   "archetype": "imp",
+   "variant": "b",
+   "group": "core",
+   "view": "court",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "court_c03",
+   "archetype": "fiend",
+   "variant": "a",
+   "group": "core",
+   "view": "court",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "court_c04",
+   "archetype": "brute",
+   "variant": "b",
+   "group": "core",
+   "view": "court",
+   "thresh": 4
+  },
+  {
+   "id": "court_c05",
+   "archetype": "skeleton",
+   "variant": "a",
+   "group": "core",
+   "view": "court",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "court_c06",
+   "archetype": "flame",
+   "variant": "a",
+   "group": "core",
+   "view": "court",
+   "thresh": 6
+  },
+  {
+   "id": "court_c07",
+   "archetype": "imp",
+   "variant": "a",
+   "group": "core",
+   "view": "court",
+   "thresh": 0
+  },
+  {
+   "id": "court_c08",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "court",
+   "role": "front",
+   "thresh": -18,
+   "art": "night_one"
+  },
+  {
+   "id": "court_c09",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "court",
+   "role": "front",
+   "thresh": -22,
+   "art": "night_one"
+  },
+  {
+   "id": "court_c10",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "court",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "court_g01",
+   "archetype": "imp",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "court",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "court_g02",
+   "archetype": "brute",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "court",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "court_g03",
+   "archetype": "fiend",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "court",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "court_g04",
+   "archetype": "skeleton",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "court",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "court_g05",
+   "archetype": "flame",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "court",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "court_g06",
+   "archetype": "horned_queen",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "court",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "court_l01",
+   "archetype": "fiend",
+   "variant": "b",
+   "group": "late",
+   "view": "court",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "court_l02",
+   "archetype": "skeleton",
+   "variant": "a",
+   "group": "late",
+   "view": "court",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "court_l03",
+   "archetype": "flame",
+   "variant": "b",
+   "group": "late",
+   "view": "court",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "court_l04",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "group": "late",
+   "view": "court",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "court_p01",
+   "archetype": "flame",
+   "variant": "a",
+   "group": "peak",
+   "view": "court",
+   "enter_from": "side"
+  },
+  {
+   "id": "court_p02",
+   "archetype": "horned_queen",
+   "variant": "b",
+   "group": "peak",
+   "view": "court",
+   "enter_from": "side"
+  },
+  {
+   "id": "court_p03",
+   "archetype": "imp",
+   "variant": "a",
+   "group": "peak",
+   "view": "court",
+   "enter_from": "side"
+  },
+  {
+   "id": "court_p04",
+   "archetype": "brute",
+   "variant": "b",
+   "group": "peak",
+   "view": "court",
+   "enter_from": "side"
+  },
+  {
+   "id": "pit_c01",
+   "archetype": "flame",
+   "variant": "a",
+   "group": "core",
+   "view": "pit",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "pit_c02",
+   "archetype": "brute",
+   "variant": "b",
+   "group": "core",
+   "view": "pit",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "pit_c03",
+   "archetype": "skeleton",
+   "variant": "a",
+   "group": "core",
+   "view": "pit",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "pit_c04",
+   "archetype": "fiend",
+   "variant": "b",
+   "group": "core",
+   "view": "pit",
+   "thresh": 4
+  },
+  {
+   "id": "pit_c05",
+   "archetype": "imp",
+   "variant": "a",
+   "group": "core",
+   "view": "pit",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "pit_c06",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "group": "core",
+   "view": "pit",
+   "thresh": 6
+  },
+  {
+   "id": "pit_c07",
+   "archetype": "brute",
+   "variant": "a",
+   "group": "core",
+   "view": "pit",
+   "thresh": 0
+  },
+  {
+   "id": "pit_c08",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "pit",
+   "role": "front",
+   "thresh": -18,
+   "art": "night_one"
+  },
+  {
+   "id": "pit_c09",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "pit",
+   "role": "front",
+   "thresh": -22,
+   "art": "night_one"
+  },
+  {
+   "id": "pit_c10",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "pit",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "pit_g01",
+   "archetype": "brute",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "pit",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "pit_g02",
+   "archetype": "fiend",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "pit",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "pit_g03",
+   "archetype": "skeleton",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "pit",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "pit_g04",
+   "archetype": "flame",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "pit",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "pit_g05",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "pit",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "pit_g06",
+   "archetype": "imp",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "pit",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "pit_l01",
+   "archetype": "skeleton",
+   "variant": "b",
+   "group": "late",
+   "view": "pit",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "pit_l02",
+   "archetype": "flame",
+   "variant": "a",
+   "group": "late",
+   "view": "pit",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "pit_l03",
+   "archetype": "horned_queen",
+   "variant": "b",
+   "group": "late",
+   "view": "pit",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "pit_l04",
+   "archetype": "imp",
+   "variant": "a",
+   "group": "late",
+   "view": "pit",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "pit_p01",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "group": "peak",
+   "view": "pit",
+   "enter_from": "side"
+  },
+  {
+   "id": "pit_p02",
+   "archetype": "imp",
+   "variant": "b",
+   "group": "peak",
+   "view": "pit",
+   "enter_from": "side"
+  },
+  {
+   "id": "pit_p03",
+   "archetype": "brute",
+   "variant": "a",
+   "group": "peak",
+   "view": "pit",
+   "enter_from": "side"
+  },
+  {
+   "id": "pit_p04",
+   "archetype": "fiend",
+   "variant": "b",
+   "group": "peak",
+   "view": "pit",
+   "enter_from": "side"
+  },
+  {
+   "id": "furnace_c01",
+   "archetype": "brute",
+   "variant": "a",
+   "group": "core",
+   "view": "furnace",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "furnace_c02",
+   "archetype": "fiend",
+   "variant": "b",
+   "group": "core",
+   "view": "furnace",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "furnace_c03",
+   "archetype": "flame",
+   "variant": "a",
+   "group": "core",
+   "view": "furnace",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "furnace_c04",
+   "archetype": "skeleton",
+   "variant": "b",
+   "group": "core",
+   "view": "furnace",
+   "thresh": 4
+  },
+  {
+   "id": "furnace_c05",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "group": "core",
+   "view": "furnace",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "furnace_c06",
+   "archetype": "imp",
+   "variant": "a",
+   "group": "core",
+   "view": "furnace",
+   "thresh": 6
+  },
+  {
+   "id": "furnace_c07",
+   "archetype": "fiend",
+   "variant": "a",
+   "group": "core",
+   "view": "furnace",
+   "thresh": 0
+  },
+  {
+   "id": "furnace_c08",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "furnace",
+   "role": "front",
+   "thresh": -18,
+   "art": "night_one"
+  },
+  {
+   "id": "furnace_c09",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "furnace",
+   "role": "front",
+   "thresh": -22,
+   "art": "night_one"
+  },
+  {
+   "id": "furnace_c10",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "furnace",
+   "thresh": -14,
+   "art": "night_one"
+  },
+  {
+   "id": "furnace_g01",
+   "archetype": "fiend",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "furnace",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "furnace_g02",
+   "archetype": "skeleton",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "furnace",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "furnace_g03",
+   "archetype": "flame",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "furnace",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "furnace_g04",
+   "archetype": "horned_queen",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "furnace",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "furnace_g05",
+   "archetype": "imp",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "furnace",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "furnace_g06",
+   "archetype": "brute",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "furnace",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "furnace_l01",
+   "archetype": "flame",
+   "variant": "b",
+   "group": "late",
+   "view": "furnace",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "furnace_l02",
+   "archetype": "horned_queen",
+   "variant": "a",
+   "group": "late",
+   "view": "furnace",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "furnace_l03",
+   "archetype": "imp",
+   "variant": "b",
+   "group": "late",
+   "view": "furnace",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "furnace_l04",
+   "archetype": "brute",
+   "variant": "a",
+   "group": "late",
+   "view": "furnace",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "furnace_p01",
+   "archetype": "imp",
+   "variant": "a",
+   "group": "peak",
+   "view": "furnace",
+   "enter_from": "side"
+  },
+  {
+   "id": "furnace_p02",
+   "archetype": "brute",
+   "variant": "b",
+   "group": "peak",
+   "view": "furnace",
+   "enter_from": "side"
+  },
+  {
+   "id": "furnace_p03",
+   "archetype": "fiend",
+   "variant": "a",
+   "group": "peak",
+   "view": "furnace",
+   "enter_from": "side"
+  },
+  {
+   "id": "furnace_p04",
+   "archetype": "skeleton",
+   "variant": "b",
+   "group": "peak",
+   "view": "furnace",
+   "enter_from": "side"
+  },
+  {
+   "id": "gate_bouncer",
+   "archetype": "brute",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "check",
+   "prop": "tickets",
+   "target": "gate_q1"
+  },
+  {
+   "id": "gate_q1",
+   "archetype": "imp",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "queue"
+  },
+  {
+   "id": "gate_q2",
+   "archetype": "imp",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "queue"
+  },
+  {
+   "id": "bartender",
+   "archetype": "fiend",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "serve",
+   "prop": "tray",
+   "pace_axis": [
+    0,
+    1
+   ],
+   "pace_m": 2.2
+  },
+  {
+   "id": "toast_a",
+   "archetype": "skeleton",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "toast",
+   "prop": "cup"
+  },
+  {
+   "id": "toast_b",
+   "archetype": "flame",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "toast",
+   "prop": "cup"
+  },
+  {
+   "id": "sleeper",
+   "archetype": "imp",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "sleep"
+  },
+  {
+   "id": "stair_sit",
+   "archetype": "fiend",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "court",
+   "activity": "sit"
+  },
+  {
+   "id": "stair_chat_a",
+   "archetype": "horned_queen",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "court",
+   "activity": "chat"
+  },
+  {
+   "id": "stair_chat_b",
+   "archetype": "brute",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "court",
+   "activity": "chat"
+  },
+  {
+   "id": "smith_carry",
+   "archetype": "brute",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "furnace",
+   "activity": "carry"
+  },
+  {
+   "id": "smith_check",
+   "archetype": "fiend",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "furnace",
+   "activity": "check",
+   "prop": "clipboard",
+   "target": "smith_carry"
+  },
+  {
+   "id": "smith_pace",
+   "archetype": "flame",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "furnace",
+   "activity": "pace",
+   "pace_axis": [
+    1,
+    0
+   ],
+   "pace_m": 2.5
+  },
+  {
+   "id": "prisoner",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "furnace",
+   "activity": "rock",
+   "art": "night_one"
+  }
+ ],
+ "silhouettes": [
+  {
+   "id": "s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 1
+  },
+  {
+   "id": "s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -6
+  },
+  {
+   "id": "s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 1
+  },
+  {
+   "id": "s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 4
+  },
+  {
+   "id": "s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 3
+  },
+  {
+   "id": "s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -2
+  },
+  {
+   "id": "s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 6
+  },
+  {
+   "id": "s08",
+   "shape": "sil_b",
+   "group": "early",
+   "thresh": -1
+  },
+  {
+   "id": "s09",
+   "shape": "sil_c",
+   "group": "early",
+   "thresh": 6
+  },
+  {
+   "id": "s10",
+   "shape": "sil_a",
+   "group": "early",
+   "thresh": -8
+  },
+  {
+   "id": "s11",
+   "shape": "sil_b",
+   "group": "early",
+   "thresh": -6
+  },
+  {
+   "id": "s12",
+   "shape": "sil_c",
+   "group": "gatherers",
+   "thresh": 7
+  },
+  {
+   "id": "s13",
+   "shape": "sil_a",
+   "group": "gatherers",
+   "thresh": -8
+  },
+  {
+   "id": "s14",
+   "shape": "sil_b",
+   "group": "gatherers",
+   "thresh": 5
+  },
+  {
+   "id": "court_s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 2,
+   "view": "court"
+  },
+  {
+   "id": "court_s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 1,
+   "view": "court"
+  },
+  {
+   "id": "court_s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 8,
+   "view": "court"
+  },
+  {
+   "id": "court_s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 7,
+   "view": "court"
+  },
+  {
+   "id": "court_s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -3,
+   "view": "court"
+  },
+  {
+   "id": "court_s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 0,
+   "view": "court"
+  },
+  {
+   "id": "court_s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -5,
+   "view": "court"
+  },
+  {
+   "id": "court_s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 2,
+   "view": "court"
+  },
+  {
+   "id": "court_s09",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -3,
+   "view": "court"
+  },
+  {
+   "id": "court_s10",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -3,
+   "view": "court"
+  },
+  {
+   "id": "pit_s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 8,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 6,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -1,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 4,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 2,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 6,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 6,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -3,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s09",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 8,
+   "view": "pit"
+  },
+  {
+   "id": "pit_s10",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 5,
+   "view": "pit"
+  },
+  {
+   "id": "furnace_s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 1,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 1,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 2,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 0,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -7,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -3,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -6,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 0,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s09",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -8,
+   "view": "furnace"
+  },
+  {
+   "id": "furnace_s10",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -5,
+   "view": "furnace"
+  }
+ ]
+}

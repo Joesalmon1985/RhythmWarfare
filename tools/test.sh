@@ -8,7 +8,7 @@ GODOT="${GODOT:-$USERPROFILE/Downloads/Godot_v4.5.1-stable_win64.exe/Godot_v4.5.
 GODOT_STATUS="${PIPESTATUS[0]}"
 if [ $# -eq 0 ]; then  # the content build tests (owner WAV/MIDI replacement path), skipped when a --filter is given
   echo "content build tests:"
-  python -m unittest discover -s "$ROOT/tools/content" -p "test_*.py" 2>&1 | tail -3
+  "${PYTHON:-$(command -v python || command -v python3)}" -m unittest discover -s "$ROOT/tools/content" -p "test_*.py" 2>&1 | tail -3
   PY_STATUS="${PIPESTATUS[0]}"
 else
   PY_STATUS=0

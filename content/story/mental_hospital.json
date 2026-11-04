@@ -1,0 +1,2438 @@
+{
+ "id": "mental_hospital",
+ "title": "The Ward",
+ "chapter": 5,
+ "art": "mental_hospital",
+ "music_pack": "res://songs/m07_crossroads",
+ "description": "You come to on a hospital ward among a very eccentric, very kind company in fancy dress. None of it happened. Or did it? Time for one more set.",
+ "intro": "Welcome to the ward. Tea's on, and the talent show is at four.",
+ "duration_bars": 64,
+ "sequence_bars": 2,
+ "initial_energy": 45,
+ "palettes": {
+  "low": [
+   "#4f8a84",
+   "#7462b0"
+  ],
+  "cool": [
+   "#22d6b0",
+   "#8a62ff"
+  ],
+  "warm": [
+   "#ffaa3a",
+   "#ff5c9e"
+  ],
+  "dusk": [
+   "#ff9a4a",
+   "#b05aff"
+  ],
+  "rave": [
+   "#22e0bc",
+   "#ff4fa0",
+   "#ffcf2a",
+   "#8a5aff"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Unimpressed",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Dancing",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Hype",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Euphoric",
+    "max": 100
+   }
+  ]
+ },
+ "acts": [
+  {
+   "id": "I",
+   "title": "Settling in",
+   "start_bar": 1
+  },
+  {
+   "id": "II",
+   "title": "Group activity",
+   "start_bar": 17
+  },
+  {
+   "id": "III",
+   "title": "The talent show",
+   "start_bar": 41
+  },
+  {
+   "id": "IV",
+   "title": "Lights out",
+   "start_bar": 57
+  }
+ ],
+ "blocks": [
+  {
+   "id": "the_day_room",
+   "title": "The day room",
+   "act": "Act I",
+   "start_bar": 1,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 1,
+     "action": "lights_low_pulse"
+    },
+    {
+     "at_bar": 1,
+     "action": "doors_open"
+    },
+    {
+     "at_bar": 1,
+     "action": "piece_on",
+     "piece": "wall_clock"
+    },
+    {
+     "at_bar": 1,
+     "action": "piece_on",
+     "piece": "window_light"
+    },
+    {
+     "at_bar": 1,
+     "action": "player_role",
+     "role": "dancer"
+    },
+    {
+     "at_bar": 2,
+     "action": "player_look",
+     "pitch": 14,
+     "bars": 3
+    },
+    {
+     "at_bar": 3,
+     "action": "front_row_sway"
+    },
+    {
+     "at_bar": 3,
+     "action": "piece_on",
+     "piece": "mood_lamp"
+    },
+    {
+     "at_bar": 3,
+     "action": "piece_on",
+     "piece": "notice_board"
+    },
+    {
+     "at_bar": 5,
+     "action": "bring_in",
+     "group": "early"
+    },
+    {
+     "at_bar": 5,
+     "action": "piece_on",
+     "piece": "craft_table"
+    },
+    {
+     "at_bar": 5,
+     "action": "player_walk",
+     "fwd": 1.5,
+     "in": [
+      "main"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 7,
+     "action": "led_eq"
+    },
+    {
+     "at_bar": 7,
+     "action": "piece_on",
+     "piece": "fairy_lights"
+    },
+    {
+     "at_bar": 7,
+     "action": "haze_burst"
+    }
+   ]
+  },
+  {
+   "id": "morning_meeting",
+   "title": "Morning meeting",
+   "act": "Act I",
+   "start_bar": 9,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 9,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 9,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 40
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 10,
+     "action": "player_look",
+     "at": "c06",
+     "in": [
+      "main"
+     ],
+     "bars": 2
+    },
+    {
+     "at_bar": 11,
+     "action": "piece_on",
+     "piece": "bunting"
+    },
+    {
+     "at_bar": 11,
+     "action": "beams_sweep"
+    },
+    {
+     "at_bar": 13,
+     "action": "group_footwork",
+     "group": "core",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "look_around"
+    },
+    {
+     "at_bar": 13,
+     "action": "piece_on",
+     "piece": "paper_chains"
+    },
+    {
+     "at_bar": 13,
+     "action": "player_walk",
+     "to": "day_edge",
+     "in": [
+      "main"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 15,
+     "action": "led_bars"
+    },
+    {
+     "at_bar": 15,
+     "action": "piece_pulse",
+     "piece": "window_light",
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "down_the_corridor",
+   "title": "Down the corridor",
+   "act": "Act II",
+   "start_bar": 17,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 17,
+     "action": "bass_reveal"
+    },
+    {
+     "at_bar": 17,
+     "action": "woofer_pump_on"
+    },
+    {
+     "at_bar": 17,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 18,
+     "action": "player_look",
+     "at": "day_centre",
+     "in": [
+      "main"
+     ],
+     "bars": 2
+    },
+    {
+     "at_bar": 19,
+     "action": "wave_across",
+     "bars": 3
+    },
+    {
+     "at_bar": 19,
+     "action": "piece_pulse",
+     "piece": "star_garland",
+     "bars": 2
+    },
+    {
+     "at_bar": 19,
+     "action": "player_look",
+     "by": 24,
+     "bars": 3
+    },
+    {
+     "at_bar": 21,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 21,
+     "action": "piece_pulse",
+     "piece": "corridor_end_glow",
+     "bars": 2
+    },
+    {
+     "at_bar": 22,
+     "action": "player_walk",
+     "to": "corridor_c02",
+     "stop": 2,
+     "in": [
+      "corridor"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 22,
+     "action": "player_walk",
+     "fwd": -1.2,
+     "in": [
+      "main"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 23,
+     "action": "spotlight_sweep"
+    },
+    {
+     "at_bar": 23,
+     "action": "piece_pulse",
+     "piece": "corridor_tubes",
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "art_class",
+   "title": "Art class",
+   "act": "Act II",
+   "start_bar": 25,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 25,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
+     "at_bar": 26,
+     "action": "player_look",
+     "pitch": -14,
+     "bars": 2
+    },
+    {
+     "at_bar": 27,
+     "action": "front_row_sway",
+     "bars": 2
+    },
+    {
+     "at_bar": 27,
+     "action": "piece_pulse",
+     "piece": "kiln_glow",
+     "bars": 2
+    },
+    {
+     "at_bar": 29,
+     "action": "beams_cross"
+    },
+    {
+     "at_bar": 29,
+     "action": "bring_in",
+     "group": "gatherers",
+     "when": {
+      "energy_min": 50
+     },
+     "else": "gather_at_door"
+    },
+    {
+     "at_bar": 29,
+     "action": "player_walk",
+     "right": 1.4,
+     "in": [
+      "corridor",
+      "main"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 31,
+     "action": "piece_pulse",
+     "piece": "skylight_beam",
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "easel_circle",
+   "title": "The easel circle",
+   "act": "Act II",
+   "start_bar": 33,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 33,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 34,
+     "action": "player_look",
+     "pitch": 16,
+     "bars": 3
+    },
+    {
+     "at_bar": 35,
+     "action": "circle_form",
+     "group": "circle"
+    },
+    {
+     "at_bar": 37,
+     "action": "disco_ball_on"
+    },
+    {
+     "at_bar": 37,
+     "action": "lights_cool"
+    },
+    {
+     "at_bar": 38,
+     "action": "player_walk",
+     "fwd": 1.6,
+     "in": [
+      "art_room"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 38,
+     "action": "player_walk",
+     "fwd": -1.0,
+     "in": [
+      "treatment"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 39,
+     "action": "beams_fan"
+    },
+    {
+     "at_bar": 39,
+     "action": "piece_pulse",
+     "piece": "hanging_paintings",
+     "bars": 2
+    },
+    {
+     "at_bar": 39,
+     "action": "piece_pulse",
+     "piece": "kiln_glow",
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "into_the_courtyard",
+   "title": "Into the garden",
+   "act": "Act III",
+   "start_bar": 41,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 41,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
+     "at_bar": 42,
+     "action": "player_look",
+     "by": -24,
+     "bars": 3
+    },
+    {
+     "at_bar": 43,
+     "action": "glowsticks_on"
+    },
+    {
+     "at_bar": 43,
+     "action": "hero_center"
+    },
+    {
+     "at_bar": 45,
+     "action": "light_wave",
+     "bars": 2
+    },
+    {
+     "at_bar": 45,
+     "action": "piece_pulse",
+     "piece": "string_lights",
+     "bars": 2
+    },
+    {
+     "at_bar": 45,
+     "action": "player_walk",
+     "to": "art_in",
+     "in": [
+      "art_room"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 45,
+     "action": "player_walk",
+     "right": -1.2,
+     "in": [
+      "treatment"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 47,
+     "action": "piece_pulse",
+     "piece": "fireflies",
+     "bars": 2
+    },
+    {
+     "at_bar": 47,
+     "action": "haze_burst"
+    },
+    {
+     "at_bar": 47,
+     "action": "beams_sweep"
+    }
+   ]
+  },
+  {
+   "id": "talent_show",
+   "title": "The talent show",
+   "act": "Act III",
+   "start_bar": 49,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 49,
+     "action": "bring_in",
+     "group": "peak"
+    },
+    {
+     "at_bar": 50,
+     "action": "player_look",
+     "pitch": 18,
+     "bars": 3
+    },
+    {
+     "at_bar": 51,
+     "action": "hero_solo",
+     "bars": 4
+    },
+    {
+     "at_bar": 51,
+     "action": "spotlight_hero"
+    },
+    {
+     "at_bar": 53,
+     "action": "lights_rave"
+    },
+    {
+     "at_bar": 53,
+     "action": "piece_pulse",
+     "piece": "washing_line",
+     "bars": 2
+    },
+    {
+     "at_bar": 54,
+     "action": "player_walk",
+     "fwd": 1.0,
+     "in": [
+      "treatment"
+     ],
+     "bars": 2
+    },
+    {
+     "at_bar": 55,
+     "action": "clap_sync",
+     "bars": 2,
+     "when": {
+      "energy_min": 45
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 55,
+     "action": "piece_pulse",
+     "piece": "string_lights",
+     "bars": 2
+    }
+   ]
+  },
+  {
+   "id": "lights_out",
+   "title": "Lights out",
+   "act": "Act IV",
+   "start_bar": 57,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 57,
+     "action": "hero_solo",
+     "bars": 8
+    },
+    {
+     "at_bar": 57,
+     "action": "bring_in",
+     "group": "late"
+    },
+    {
+     "at_bar": 57,
+     "action": "piece_pulse",
+     "piece": "fairy_lights",
+     "bars": 2
+    },
+    {
+     "at_bar": 58,
+     "action": "riser_up"
+    },
+    {
+     "at_bar": 58,
+     "action": "player_look",
+     "at": "art_room_c01",
+     "in": [
+      "art_room"
+     ],
+     "bars": 2
+    },
+    {
+     "at_bar": 59,
+     "action": "rave_peak",
+     "bars": 4,
+     "when": {
+      "energy_min": 50
+     },
+     "else": "lights_cool"
+    },
+    {
+     "at_bar": 59,
+     "action": "spotlight_hero"
+    },
+    {
+     "at_bar": 59,
+     "action": "player_walk",
+     "fwd": 0.8,
+     "in": [
+      "treatment"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 60,
+     "action": "player_walk",
+     "fwd": -1.2,
+     "in": [
+      "art_room"
+     ],
+     "bars": 3
+    },
+    {
+     "at_bar": 61,
+     "action": "hands_up_all",
+     "bars": 2,
+     "when": {
+      "energy_min": 55
+     },
+     "else": "front_row_sway"
+    },
+    {
+     "at_bar": 61,
+     "action": "confetti",
+     "when": {
+      "energy_min": 85
+     }
+    },
+    {
+     "at_bar": 61,
+     "action": "bring_in",
+     "group": "peak",
+     "when": {
+      "energy_min": 60
+     }
+    },
+    {
+     "at_bar": 61,
+     "action": "player_look",
+     "pitch": -12,
+     "bars": 2
+    },
+    {
+     "at_bar": 63,
+     "action": "beams_cross"
+    },
+    {
+     "at_bar": 63,
+     "action": "piece_pulse",
+     "piece": "paper_chains",
+     "bars": 2
+    }
+   ]
+  }
+ ],
+ "decisions": [
+  {
+   "id": "morning_meeting",
+   "title": "The morning meeting",
+   "at_bar": 17,
+   "block": "down_the_corridor",
+   "rule": {
+    "energy_min": 55,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.5,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "new_dancers_enter",
+    "applause",
+    {
+     "action": "player_move",
+     "to": "corridor_in",
+     "style": "walk",
+     "bars": 4
+    }
+   ],
+   "bad": [
+    "dancers_step_back",
+    "look_around",
+    {
+     "action": "fx_queasy",
+     "amount": 0.3,
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "queasy"
+    }
+   ],
+   "good_text": "The whole ward poured out of their rooms in their best fancy dress, cheering.",
+   "bad_text": "A few of the regulars peeped round their doors and stayed put, for now."
+  },
+  {
+   "id": "art_class",
+   "title": "Art class",
+   "at_bar": 33,
+   "block": "easel_circle",
+   "rule": {
+    "energy_min": 58,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "circle_spotlight_cheer",
+    {
+     "action": "player_move",
+     "to": "art_in",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "on_stage",
+     "after_bars": 4
+    }
+   ],
+   "bad": [
+    "circle_breaks_awkward",
+    {
+     "action": "fx_queasy",
+     "amount": 0.6,
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "queasy"
+    },
+    {
+     "action": "player_move",
+     "to": "treat",
+     "style": "stagger",
+     "bars": 4
+    }
+   ],
+   "good_text": "The king and the pirate unveiled a masterpiece. Standing ovation!",
+   "bad_text": "An easel wobbled, a paint pot rolled, and the circle drifted off giggling."
+  },
+  {
+   "id": "talent_show_drop",
+   "title": "The talent show drop",
+   "at_bar": 49,
+   "block": "talent_show",
+   "rule": {
+    "energy_min": 62,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.6,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "drop_synchronised_jump",
+    {
+     "action": "player_move",
+     "to": "stage",
+     "style": "climb",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "dj",
+     "after_bars": 4
+    }
+   ],
+   "bad": [
+    "drop_stumble",
+    {
+     "action": "fx_queasy",
+     "amount": 0.5,
+     "bars": 2
+    },
+    {
+     "action": "player_move",
+     "to": "quiet",
+     "style": "run",
+     "bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "sick",
+     "after_bars": 3
+    },
+    {
+     "action": "sick_beat",
+     "bars": 2,
+     "after_bars": 3
+    },
+    {
+     "action": "player_role",
+     "role": "recovered",
+     "after_bars": 4.5
+    },
+    {
+     "action": "fx_queasy",
+     "amount": 0.0,
+     "bars": 2,
+     "after_bars": 4.5
+    }
+   ],
+   "good_text": "The drop landed and the whole garden jumped as one.",
+   "bad_text": "The drop slipped, but the ward clapped you right through it."
+  },
+  {
+   "id": "win_back",
+   "title": "Winning the room back",
+   "at_bar": 53,
+   "block": "talent_show",
+   "rule": {
+    "requires_bad_before": true,
+    "recent_sequences": 6,
+    "recent_pass_min": 0.83,
+    "energy_min": 40
+   },
+   "good": [
+    "winback_cheer",
+    {
+     "action": "player_move",
+     "to": "art_in",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "on_stage",
+     "after_bars": 4
+    }
+   ],
+   "bad": [],
+   "good_text": "You won the ward back after a wobble. Everyone's grinning.",
+   "bad_text": "",
+   "kind": "winback"
+  },
+  {
+   "id": "lights_out",
+   "title": "Lights out",
+   "at_bar": 57,
+   "block": "lights_out",
+   "rule": {
+    "energy_min": 65,
+    "recent_sequences": 8,
+    "recent_pass_min": 0.65,
+    "smooth": 4,
+    "dead_band": 4
+   },
+   "good": [
+    "final_chant"
+   ],
+   "bad": [
+    "final_flicker",
+    {
+     "action": "fx_queasy",
+     "amount": 0.4,
+     "bars": 2
+    }
+   ],
+   "good_text": "The ward chanted for one more song.",
+   "bad_text": "The lights blinked and the ward began to drift off to bed, still humming."
+  }
+ ],
+ "endings": {
+  "star_of_the_ward": {
+   "title": "Star of the Ward",
+   "energy_min": 85,
+   "pass_min": 0.94,
+   "text": "The whole ward is on its feet. You're the star of Ward 7, and everyone's new best friend.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "stage",
+     "style": "walk",
+     "bars": 2
+    },
+    {
+     "action": "player_role",
+     "role": "dj",
+     "after_bars": 2
+    }
+   ]
+  },
+  "group_activity": {
+   "title": "Group Activity",
+   "energy_min": 40,
+   "pass_min": 0.5,
+   "text": "A cheerful, slightly chaotic afternoon. The ward is very glad you came.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "stage_edge",
+     "style": "walk",
+     "bars": 2
+    }
+   ]
+  },
+  "lights_out": {
+   "title": "Lights Out",
+   "energy_min": -1,
+   "pass_min": 0.0,
+   "text": "The ward settles down for the night, still humming your tune. Tomorrow there's another group activity.",
+   "journey": [
+    {
+     "action": "player_move",
+     "to": "quiet",
+     "style": "walk",
+     "bars": 4
+    },
+    {
+     "action": "player_role",
+     "role": "out",
+     "after_bars": 4
+    }
+   ]
+  }
+ },
+ "ending_order": [
+  "star_of_the_ward",
+  "group_activity",
+  "lights_out"
+ ],
+ "groups": {
+  "circle": [
+   "c02",
+   "c03",
+   "c04",
+   "c05",
+   "c06",
+   "c07",
+   "c08",
+   "c09",
+   "corridor_c02",
+   "corridor_c03",
+   "corridor_c04",
+   "corridor_c05",
+   "corridor_c06",
+   "corridor_c07",
+   "corridor_c08",
+   "corridor_c09",
+   "art_room_c02",
+   "art_room_c03",
+   "art_room_c04",
+   "art_room_c05",
+   "art_room_c06",
+   "art_room_c07",
+   "art_room_c08",
+   "art_room_c09",
+   "courtyard_c02",
+   "courtyard_c03",
+   "courtyard_c04",
+   "courtyard_c05",
+   "courtyard_c06",
+   "courtyard_c07",
+   "courtyard_c08",
+   "courtyard_c09"
+  ],
+  "all": [
+   "c01",
+   "c02",
+   "c03",
+   "c04",
+   "c05",
+   "c06",
+   "c07",
+   "c08",
+   "c09",
+   "c10",
+   "e01",
+   "e02",
+   "e03",
+   "e04",
+   "g01",
+   "g02",
+   "g03",
+   "g04",
+   "g05",
+   "g06",
+   "g07",
+   "g08",
+   "l01",
+   "l02",
+   "l03",
+   "l04",
+   "p01",
+   "p02",
+   "p03",
+   "p04",
+   "corridor_c01",
+   "corridor_c02",
+   "corridor_c03",
+   "corridor_c04",
+   "corridor_c05",
+   "corridor_c06",
+   "corridor_c07",
+   "corridor_c08",
+   "corridor_c09",
+   "corridor_c10",
+   "corridor_g01",
+   "corridor_g02",
+   "corridor_g03",
+   "corridor_g04",
+   "corridor_g05",
+   "corridor_g06",
+   "corridor_l01",
+   "corridor_l02",
+   "corridor_l03",
+   "corridor_l04",
+   "corridor_p01",
+   "corridor_p02",
+   "corridor_p03",
+   "corridor_p04",
+   "art_room_c01",
+   "art_room_c02",
+   "art_room_c03",
+   "art_room_c04",
+   "art_room_c05",
+   "art_room_c06",
+   "art_room_c07",
+   "art_room_c08",
+   "art_room_c09",
+   "art_room_c10",
+   "art_room_g01",
+   "art_room_g02",
+   "art_room_g03",
+   "art_room_g04",
+   "art_room_g05",
+   "art_room_g06",
+   "art_room_l01",
+   "art_room_l02",
+   "art_room_l03",
+   "art_room_l04",
+   "art_room_p01",
+   "art_room_p02",
+   "art_room_p03",
+   "art_room_p04",
+   "courtyard_c01",
+   "courtyard_c02",
+   "courtyard_c03",
+   "courtyard_c04",
+   "courtyard_c05",
+   "courtyard_c06",
+   "courtyard_c07",
+   "courtyard_c08",
+   "courtyard_c09",
+   "courtyard_c10",
+   "courtyard_g01",
+   "courtyard_g02",
+   "courtyard_g03",
+   "courtyard_g04",
+   "courtyard_g05",
+   "courtyard_g06",
+   "courtyard_l01",
+   "courtyard_l02",
+   "courtyard_l03",
+   "courtyard_l04",
+   "courtyard_p01",
+   "courtyard_p02",
+   "courtyard_p03",
+   "courtyard_p04"
+  ]
+ },
+ "actors": [
+  {
+   "id": "c01",
+   "archetype": "orderly",
+   "variant": "a",
+   "group": "core",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "c02",
+   "archetype": "pirate",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "c03",
+   "archetype": "chef",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "c04",
+   "archetype": "king",
+   "variant": "b",
+   "group": "core",
+   "thresh": 4
+  },
+  {
+   "id": "c05",
+   "archetype": "superhero",
+   "variant": "a",
+   "group": "core",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "c06",
+   "archetype": "ballerina",
+   "variant": "a",
+   "group": "core",
+   "thresh": 6
+  },
+  {
+   "id": "c07",
+   "archetype": "pirate",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "c08",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "role": "front",
+   "thresh": -8,
+   "art": "night_one"
+  },
+  {
+   "id": "c09",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "c10",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "e01",
+   "archetype": "chef",
+   "variant": "a",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e02",
+   "archetype": "superhero",
+   "variant": "b",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e03",
+   "archetype": "ballerina",
+   "variant": "a",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "e04",
+   "archetype": "orderly",
+   "variant": "b",
+   "group": "early",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "g01",
+   "archetype": "pirate",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g02",
+   "archetype": "king",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "g03",
+   "archetype": "chef",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g04",
+   "archetype": "superhero",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g05",
+   "archetype": "ballerina",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g06",
+   "archetype": "orderly",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g07",
+   "archetype": "pirate",
+   "variant": "a",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 6,
+   "stays_on_bad": false
+  },
+  {
+   "id": "g08",
+   "archetype": "king",
+   "variant": "b",
+   "group": "gatherers",
+   "enter_from": "doorway",
+   "door_slot": 7,
+   "stays_on_bad": false
+  },
+  {
+   "id": "l01",
+   "archetype": "chef",
+   "variant": "b",
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l02",
+   "archetype": "superhero",
+   "variant": "a",
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l03",
+   "archetype": "ballerina",
+   "variant": "b",
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "l04",
+   "archetype": "orderly",
+   "variant": "a",
+   "group": "late",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "p01",
+   "archetype": "ballerina",
+   "variant": "a",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p02",
+   "archetype": "orderly",
+   "variant": "b",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p03",
+   "archetype": "pirate",
+   "variant": "a",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "p04",
+   "archetype": "king",
+   "variant": "b",
+   "group": "peak",
+   "enter_from": "side"
+  },
+  {
+   "id": "corridor_c01",
+   "archetype": "pirate",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "corridor_c02",
+   "archetype": "king",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "corridor_c03",
+   "archetype": "superhero",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "corridor_c04",
+   "archetype": "chef",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 4
+  },
+  {
+   "id": "corridor_c05",
+   "archetype": "ballerina",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "corridor_c06",
+   "archetype": "orderly",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 6
+  },
+  {
+   "id": "corridor_c07",
+   "archetype": "king",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0
+  },
+  {
+   "id": "corridor_c08",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "role": "front",
+   "thresh": -8,
+   "art": "night_one"
+  },
+  {
+   "id": "corridor_c09",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "corridor_c10",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "corridor_g01",
+   "archetype": "king",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "corridor_g02",
+   "archetype": "chef",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "corridor_g03",
+   "archetype": "superhero",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "corridor_g04",
+   "archetype": "ballerina",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "corridor_g05",
+   "archetype": "orderly",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "corridor_g06",
+   "archetype": "pirate",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "corridor",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "corridor_l01",
+   "archetype": "superhero",
+   "variant": "b",
+   "group": "late",
+   "view": "corridor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "corridor_l02",
+   "archetype": "ballerina",
+   "variant": "a",
+   "group": "late",
+   "view": "corridor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "corridor_l03",
+   "archetype": "orderly",
+   "variant": "b",
+   "group": "late",
+   "view": "corridor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "corridor_l04",
+   "archetype": "pirate",
+   "variant": "a",
+   "group": "late",
+   "view": "corridor",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "corridor_p01",
+   "archetype": "orderly",
+   "variant": "a",
+   "group": "peak",
+   "view": "corridor",
+   "enter_from": "side"
+  },
+  {
+   "id": "corridor_p02",
+   "archetype": "pirate",
+   "variant": "b",
+   "group": "peak",
+   "view": "corridor",
+   "enter_from": "side"
+  },
+  {
+   "id": "corridor_p03",
+   "archetype": "king",
+   "variant": "a",
+   "group": "peak",
+   "view": "corridor",
+   "enter_from": "side"
+  },
+  {
+   "id": "corridor_p04",
+   "archetype": "chef",
+   "variant": "b",
+   "group": "peak",
+   "view": "corridor",
+   "enter_from": "side"
+  },
+  {
+   "id": "art_room_c01",
+   "archetype": "king",
+   "variant": "a",
+   "group": "core",
+   "view": "art_room",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "art_room_c02",
+   "archetype": "chef",
+   "variant": "b",
+   "group": "core",
+   "view": "art_room",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "art_room_c03",
+   "archetype": "ballerina",
+   "variant": "a",
+   "group": "core",
+   "view": "art_room",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "art_room_c04",
+   "archetype": "superhero",
+   "variant": "b",
+   "group": "core",
+   "view": "art_room",
+   "thresh": 4
+  },
+  {
+   "id": "art_room_c05",
+   "archetype": "orderly",
+   "variant": "a",
+   "group": "core",
+   "view": "art_room",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "art_room_c06",
+   "archetype": "pirate",
+   "variant": "a",
+   "group": "core",
+   "view": "art_room",
+   "thresh": 6
+  },
+  {
+   "id": "art_room_c07",
+   "archetype": "chef",
+   "variant": "a",
+   "group": "core",
+   "view": "art_room",
+   "thresh": 0
+  },
+  {
+   "id": "art_room_c08",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "art_room",
+   "role": "front",
+   "thresh": -8,
+   "art": "night_one"
+  },
+  {
+   "id": "art_room_c09",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "art_room",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "art_room_c10",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "art_room",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "art_room_g01",
+   "archetype": "chef",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "art_room",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "art_room_g02",
+   "archetype": "superhero",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "art_room",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "art_room_g03",
+   "archetype": "ballerina",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "art_room",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "art_room_g04",
+   "archetype": "orderly",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "art_room",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "art_room_g05",
+   "archetype": "pirate",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "art_room",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "art_room_g06",
+   "archetype": "king",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "art_room",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "art_room_l01",
+   "archetype": "ballerina",
+   "variant": "b",
+   "group": "late",
+   "view": "art_room",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "art_room_l02",
+   "archetype": "orderly",
+   "variant": "a",
+   "group": "late",
+   "view": "art_room",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "art_room_l03",
+   "archetype": "pirate",
+   "variant": "b",
+   "group": "late",
+   "view": "art_room",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "art_room_l04",
+   "archetype": "king",
+   "variant": "a",
+   "group": "late",
+   "view": "art_room",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "art_room_p01",
+   "archetype": "pirate",
+   "variant": "a",
+   "group": "peak",
+   "view": "art_room",
+   "enter_from": "side"
+  },
+  {
+   "id": "art_room_p02",
+   "archetype": "king",
+   "variant": "b",
+   "group": "peak",
+   "view": "art_room",
+   "enter_from": "side"
+  },
+  {
+   "id": "art_room_p03",
+   "archetype": "chef",
+   "variant": "a",
+   "group": "peak",
+   "view": "art_room",
+   "enter_from": "side"
+  },
+  {
+   "id": "art_room_p04",
+   "archetype": "superhero",
+   "variant": "b",
+   "group": "peak",
+   "view": "art_room",
+   "enter_from": "side"
+  },
+  {
+   "id": "courtyard_c01",
+   "archetype": "chef",
+   "variant": "a",
+   "group": "core",
+   "view": "courtyard",
+   "role": "hero",
+   "thresh": -6,
+   "glow": true
+  },
+  {
+   "id": "courtyard_c02",
+   "archetype": "superhero",
+   "variant": "b",
+   "group": "core",
+   "view": "courtyard",
+   "role": "front",
+   "thresh": -3
+  },
+  {
+   "id": "courtyard_c03",
+   "archetype": "orderly",
+   "variant": "a",
+   "group": "core",
+   "view": "courtyard",
+   "role": "front",
+   "thresh": 3
+  },
+  {
+   "id": "courtyard_c04",
+   "archetype": "ballerina",
+   "variant": "b",
+   "group": "core",
+   "view": "courtyard",
+   "thresh": 4
+  },
+  {
+   "id": "courtyard_c05",
+   "archetype": "pirate",
+   "variant": "a",
+   "group": "core",
+   "view": "courtyard",
+   "thresh": -2,
+   "glow": true
+  },
+  {
+   "id": "courtyard_c06",
+   "archetype": "king",
+   "variant": "a",
+   "group": "core",
+   "view": "courtyard",
+   "thresh": 6
+  },
+  {
+   "id": "courtyard_c07",
+   "archetype": "superhero",
+   "variant": "a",
+   "group": "core",
+   "view": "courtyard",
+   "thresh": 0
+  },
+  {
+   "id": "courtyard_c08",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "courtyard",
+   "role": "front",
+   "thresh": -8,
+   "art": "night_one"
+  },
+  {
+   "id": "courtyard_c09",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "courtyard",
+   "role": "front",
+   "thresh": -10,
+   "art": "night_one"
+  },
+  {
+   "id": "courtyard_c10",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "courtyard",
+   "thresh": -6,
+   "art": "night_one"
+  },
+  {
+   "id": "courtyard_g01",
+   "archetype": "superhero",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "courtyard",
+   "enter_from": "doorway",
+   "door_slot": 0,
+   "stays_on_bad": true
+  },
+  {
+   "id": "courtyard_g02",
+   "archetype": "ballerina",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "courtyard",
+   "enter_from": "doorway",
+   "door_slot": 1,
+   "stays_on_bad": true
+  },
+  {
+   "id": "courtyard_g03",
+   "archetype": "orderly",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "courtyard",
+   "enter_from": "doorway",
+   "door_slot": 2,
+   "stays_on_bad": false
+  },
+  {
+   "id": "courtyard_g04",
+   "archetype": "pirate",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "courtyard",
+   "enter_from": "doorway",
+   "door_slot": 3,
+   "stays_on_bad": false
+  },
+  {
+   "id": "courtyard_g05",
+   "archetype": "king",
+   "variant": "a",
+   "group": "gatherers",
+   "view": "courtyard",
+   "enter_from": "doorway",
+   "door_slot": 4,
+   "stays_on_bad": false
+  },
+  {
+   "id": "courtyard_g06",
+   "archetype": "chef",
+   "variant": "b",
+   "group": "gatherers",
+   "view": "courtyard",
+   "enter_from": "doorway",
+   "door_slot": 5,
+   "stays_on_bad": false
+  },
+  {
+   "id": "courtyard_l01",
+   "archetype": "orderly",
+   "variant": "b",
+   "group": "late",
+   "view": "courtyard",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "courtyard_l02",
+   "archetype": "pirate",
+   "variant": "a",
+   "group": "late",
+   "view": "courtyard",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "courtyard_l03",
+   "archetype": "king",
+   "variant": "b",
+   "group": "late",
+   "view": "courtyard",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "courtyard_l04",
+   "archetype": "chef",
+   "variant": "a",
+   "group": "late",
+   "view": "courtyard",
+   "enter_from": "doorway"
+  },
+  {
+   "id": "courtyard_p01",
+   "archetype": "king",
+   "variant": "a",
+   "group": "peak",
+   "view": "courtyard",
+   "enter_from": "side"
+  },
+  {
+   "id": "courtyard_p02",
+   "archetype": "chef",
+   "variant": "b",
+   "group": "peak",
+   "view": "courtyard",
+   "enter_from": "side"
+  },
+  {
+   "id": "courtyard_p03",
+   "archetype": "superhero",
+   "variant": "a",
+   "group": "peak",
+   "view": "courtyard",
+   "enter_from": "side"
+  },
+  {
+   "id": "courtyard_p04",
+   "archetype": "ballerina",
+   "variant": "b",
+   "group": "peak",
+   "view": "courtyard",
+   "enter_from": "side"
+  },
+  {
+   "id": "x01",
+   "archetype": "chef",
+   "variant": "a",
+   "group": "core",
+   "view": "courtyard",
+   "thresh": 0,
+   "activity": "serve",
+   "prop": "tray",
+   "pace_axis": [
+    0,
+    1
+   ],
+   "pace_m": 2.2
+  },
+  {
+   "id": "x02",
+   "archetype": "orderly",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "check",
+   "prop": "clipboard",
+   "target": "x03"
+  },
+  {
+   "id": "x03",
+   "archetype": "pirate",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "queue"
+  },
+  {
+   "id": "x04",
+   "archetype": "ballerina",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "queue"
+  },
+  {
+   "id": "x05",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "art": "night_one",
+   "activity": "queue"
+  },
+  {
+   "id": "x06",
+   "archetype": "king",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "pace",
+   "pace_axis": [
+    1,
+    0
+   ],
+   "pace_m": 1.2
+  },
+  {
+   "id": "x07",
+   "archetype": "superhero",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "pace",
+   "pace_axis": [
+    0,
+    1
+   ],
+   "pace_m": 1.2
+  },
+  {
+   "id": "x08",
+   "archetype": "ballerina",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "rock"
+  },
+  {
+   "id": "x09",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "art": "night_one",
+   "activity": "stare",
+   "target": "bars"
+  },
+  {
+   "id": "x10",
+   "archetype": "ponytail",
+   "variant": "a",
+   "group": "core",
+   "view": "art_room",
+   "thresh": 0,
+   "art": "night_one",
+   "activity": "paint",
+   "prop": "brush"
+  },
+  {
+   "id": "x11",
+   "archetype": "chef",
+   "variant": "b",
+   "group": "core",
+   "view": "art_room",
+   "thresh": 0,
+   "activity": "paint",
+   "prop": "sketchbook"
+  },
+  {
+   "id": "x12",
+   "archetype": "king",
+   "variant": "b",
+   "group": "core",
+   "view": "art_room",
+   "thresh": 0,
+   "activity": "paint",
+   "prop": "brush"
+  },
+  {
+   "id": "x13",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "art": "night_one",
+   "activity": "lie"
+  },
+  {
+   "id": "x14",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "art": "night_one",
+   "activity": "sleep"
+  }
+ ],
+ "silhouettes": [
+  {
+   "id": "s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -7
+  },
+  {
+   "id": "s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 3
+  },
+  {
+   "id": "s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -4
+  },
+  {
+   "id": "s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -7
+  },
+  {
+   "id": "s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -7
+  },
+  {
+   "id": "s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -1
+  },
+  {
+   "id": "s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -2
+  },
+  {
+   "id": "s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -4
+  },
+  {
+   "id": "s09",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 3
+  },
+  {
+   "id": "s10",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 2
+  },
+  {
+   "id": "s11",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 4
+  },
+  {
+   "id": "s12",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 2
+  },
+  {
+   "id": "s13",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -4
+  },
+  {
+   "id": "s14",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 5
+  },
+  {
+   "id": "corridor_s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -1,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -4,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -7,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -5,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -7,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 7,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 2,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -1,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s09",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 4,
+   "view": "corridor"
+  },
+  {
+   "id": "corridor_s10",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -4,
+   "view": "corridor"
+  },
+  {
+   "id": "art_room_s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -3,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -2,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 1,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 5,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 4,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -6,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -4,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 4,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s09",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 6,
+   "view": "art_room"
+  },
+  {
+   "id": "art_room_s10",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -1,
+   "view": "art_room"
+  },
+  {
+   "id": "courtyard_s01",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 2,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s02",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -3,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s03",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 6,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s04",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 5,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s05",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": -5,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s06",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": -8,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s07",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": -6,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s08",
+   "shape": "sil_b",
+   "group": "core",
+   "thresh": 4,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s09",
+   "shape": "sil_c",
+   "group": "core",
+   "thresh": 0,
+   "view": "courtyard"
+  },
+  {
+   "id": "courtyard_s10",
+   "shape": "sil_a",
+   "group": "core",
+   "thresh": 0,
+   "view": "courtyard"
+  }
+ ]
+}

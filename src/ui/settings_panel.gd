@@ -34,6 +34,10 @@ func _build() -> void:
 		func(v: float) -> String: return ["Compact", "Standard", "Large"][int(v)], func(v: float) -> void: Session.pad_size = int(v))
 	_toggle("High contrast pads", Session.high_contrast, func(on: bool) -> void: Session.high_contrast = on)
 	_toggle("Reduced effects", Session.reduced_effects, func(on: bool) -> void: Session.reduced_effects = on)
+	_slider("Story camera motion", 0, 2, 1, Session.story_motion,
+		func(v: float) -> String: return ["Full", "Reduced", "None"][int(v)], func(v: float) -> void: Session.story_motion = int(v))
+	_slider("Story internal resolution", 0, 2, 1, Session.story_lines,
+		func(v: float) -> String: return ["360p", "270p", "180p"][int(v)], func(v: float) -> void: Session.story_lines = int(v))
 	_toggle("Vibrate on hits (phones)", Session.vibration, func(on: bool) -> void: Session.vibration = on)
 	_toggle("Show keyboard keys on pads (D F J K)", Session.show_keys, func(on: bool) -> void: Session.show_keys = on)
 	var cal := HBoxContainer.new()
