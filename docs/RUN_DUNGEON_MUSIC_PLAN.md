@@ -69,6 +69,30 @@ military campaign from the home screen (they stay in the repo).
 - Tests: zone maps validate; every passage's waypoint and exits resolve; the entry and exit transitions keep the beat grid (recorded with record_music.gd: no restart, same
   delay); the dungeon walk by defaults on the real 2.5D scene; screenshots per zone and a contact sheet; frame numbers.
 
+## 2c. Longer levels: paths through each world (owner's note, 2026-11-04, WP-A5)
+
+The owner: the levels are much shorter than the chapters now; each world is one 64-beat phase before the route choice sends the player to another world. The
+rooms built in the polish should be walked, the player should choose between paths inside a world, and each world should use more of its music (the
+variant sets: Lv1 Warehouse (1) (2), Lv2 Alien Spaceship (1) (2) (3), Lv4 Hospital (1) (2) (3), Lv5 Asylum (1) (2) (3), DD Part1 (1) (2) (3)).
+
+Design:
+- A **world** becomes a small graph of **scenes**, each a 64-beat phase at a place in that world: Warehouse floor > (bar | balcony) > (chill-out | booth) > the exit;
+  Mothership deck > (gallery | reactor) > bridge > exit; Underworld arena > (court | furnace) > pit > exit; Hospital ward > corridor > (day room | cafeteria) >
+  garden > exit; Ward day room > (art room | dormitory) > corridor > courtyard > exit. Three to five phases per world (70 to 110 s), with the entry scene fixed, the
+  middle scenes chosen by the player and the last scene carrying the world exit. Depth and the difficulty tier stay per world.
+- The **route window** at the end of a scene offers the paths inside the world (two or three arrows, a marked default, lit exits in the room) and, at the last
+  scene, the other worlds as now. The chosen path is the room the camera walks to through its doorway on the downbeat (the passage frame for a world change,
+  a plain walk through the door inside a world), and its rail (good and bad places) belongs to that room.
+- **Music**: each scene names its pack: the world's base set for the entry scene and the variants for the later scenes (an alternate render of the same chart
+  where the MIDI is identical, else its own chart at the world's tier). The same-chart lock applies between sibling scenes exactly as between worlds. Where a
+  world has no variants (the Underworld until Lv3 Hell has MIDI; the Warehouse's (2)), a treatment stands in and is labelled temporary.
+- **Saves**: "reached" stays per world (a restart begins at the world's entry scene); the home screen's level cards are worlds.
+- **Data**: `content/run/run.json` nodes become scenes grouped by world (`world`, `scene`, `entry`, `exit_scene`, `next` within the world and, on exit scenes, to
+  other worlds); `content/story/music.json` assigns per scene; the hand-off sheet lists sets per scene; `RunData` validates that every world has one entry, that
+  every scene reaches an exit, and that exits lead to other worlds; the matrix, the walk-through and the capture tooling cover scenes.
+- Tests: the run matrix per policy asserts worlds and scenes visited and phases survived; walk_run.sh visits every scene of every world across its scripted
+  paths; the recordings check a variant entering on a path change inside a world.
+
 ## 3. The target, in one paragraph
 
 One game from the home screen: a continuous run through the five 2.5D worlds in which the music builds as you play well, the camera carries you
