@@ -97,6 +97,7 @@ func _validate() -> void:
 				errors.append("node %s: %s pack '%s' does not exist" % [id, key, n[key]])
 		if not (cfg.get("treatments", {}) as Dictionary).has(str(n["treatment"])):
 			errors.append("node %s: treatment '%s' is not in run.json" % [id, n["treatment"]])
+		errors.append_array(RunRail.validate(id, n.get("rail")))
 		if (n["next"] as Array).size() < 2:
 			errors.append("node %s needs at least two routes" % id)
 		var dirs := {}

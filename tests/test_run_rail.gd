@@ -1,0 +1,229 @@
+extends TestCase
+## The rails inside the run: every node's journey data sits on real waypoints, a pass steps up the good rail and a hold along the bad one, two holds start the queasy
+## look, the bottom plays the sick beat, a pass walks back, moves start in the cue-free guard and last 2 to 4 bars, every block has a glance, the passage frame and the
+## lit exits are functions of song time.
+
+const BPM := 174.0
+const BEAT := 60.0 / 174.0
+
+
+func _data() -> RunData:
+	var d := RunData.load_default()
+	assert_eq(d.errors, [], "run data validates")
+	return d
+
+
+func _rail(id: String) -> RunRail:
+	var d := _data()
+	var r := RunRail.new()
+	r.setup(id, d.nodes[id], BPM)
+	return r
+
+
+func _kinds(actions: Array, name: String) -> Array:
+	return actions.filter(func(a: Dictionary) -> bool: return a["action"] == name)
+
+
+func test_every_rail_sits_on_real_waypoints_and_every_step_has_a_route() -> void:
+	var d := _data()
+	for id in d.nodes:
+		var n: Dictionary = d.nodes[id]
+		var map := StoryMap.load_chapter(str(n["world"]))
+		assert_eq(map.errors, [], "%s map is clean" % id)
+		var r := _rail(id)
+		var named: Array = [r.home, r.arrive]
+		for p in r.good:
+			named.append(p["to"])
+		for p in r.bad:
+			named.append(p["to"])
+		for dir in r.exits:
+			named.append(r.exits[dir])
+		for wid in named:
+			if str(wid) != "":
+				assert_true(map.has_waypoint(str(wid)), "%s: waypoint %s exists in %s" % [id, wid, n["world"]])
+		for chain in [[r.home] + r.good.map(func(p: Dictionary) -> String: return p["to"]), [r.home] + r.bad.map(func(p: Dictionary) -> String: return p["to"])]:
+			for i in range(1, chain.size()):
+				var a: Dictionary = map.waypoint(str(chain[i - 1]))
+				var b: Dictionary = map.waypoint(str(chain[i]))
+				var route := map.route(a["at"], str(a["sector"]), b["at"], str(b["sector"]))
+				assert_true((route["points"] as PackedVector2Array).size() >= 2, "%s: a route from %s to %s" % [id, chain[i - 1], chain[i]])
+		for dir in r.exits:  # a doorway for every route of the node
+			assert_true((n["next"] as Array).any(func(e: Dictionary) -> bool: return e["dir"] == dir), "%s: exit %s matches a route" % [id, dir])
+		for e in n["next"]:
+			assert_true(r.exits.has(e["dir"]), "%s: the %s route has a lit doorway" % [id, e["dir"]])
+
+
+func test_the_authored_rails_match_the_chapters() -> void:
+	var want := {
+		"warehouse": [["steps", "stage", "balcony", "booth"], ["floor_edge", "corridor", "cubicle"]],
+		"mothership": [["gallery_in", "reactor_in", "bridge_in", "helm"], ["gallery_in", "medbay", "exam"]],
+		"underworld": [["court_in", "throne", "pit_stage"], ["furnace_chains", "cage"]],
+		"hospital": [["corridor_in", "cafe_in", "bandstand"], ["ward_chair", "quiet", "bed"]],
+		"ward": [["corridor_in", "art_in", "stage"], ["treat", "quiet"]],
+	}
+	for id in want:
+		var r := _rail(id)
+		assert_eq(r.good.map(func(p: Dictionary) -> String: return p["to"]), want[id][0], "%s good rail" % id)
+		assert_eq(r.bad.map(func(p: Dictionary) -> String: return p["to"]), want[id][1], "%s bad rail" % id)
+
+
+func test_passes_climb_the_good_rail_and_stay_at_the_top() -> void:
+	var r := _rail("warehouse")
+	var notes: Array = []
+	var places: Array = []
+	var roles: Array = []
+	for b in 6:
+		var acts := r.step(true, float(b) * 16.0 * BEAT + 12.5 * BEAT, notes)
+		places.append(r.place())
+		roles.append(r.role)
+		if b < 4:
+			assert_eq(_kinds(acts, "player_move").size(), 1, "block %d moves one place" % b)
+		else:
+			assert_eq(_kinds(acts, "player_move").size(), 0, "at the top it stays")
+	assert_eq(places, ["steps", "stage", "balcony", "booth", "booth", "booth"])
+	assert_eq(roles, ["dancer", "on_stage", "on_stage", "dj", "dj", "dj"], "the role follows the place")
+	assert_true(r.at_top())
+
+
+func test_holds_walk_the_bad_rail_with_queasy_and_the_sick_beat_then_a_pass_walks_back() -> void:
+	var r := _rail("warehouse")
+	var notes: Array = []
+	var t := 12.5 * BEAT
+	var a1 := r.step(false, t, notes)
+	assert_eq(r.place(), "floor_edge")
+	assert_eq(_kinds(a1, "fx_queasy").size(), 0, "one hold is not yet queasy")
+	assert_eq(r.role, "queasy")
+	var a2 := r.step(false, t + 16.0 * BEAT, notes)
+	assert_eq(r.place(), "corridor")
+	assert_true(_kinds(a2, "fx_queasy").size() == 1 and float((_kinds(a2, "fx_queasy")[0]["args"])["amount"]) > 0.0, "two holds in a row start the queasy look")
+	var a3 := r.step(false, t + 32.0 * BEAT, notes)
+	assert_eq(r.place(), "cubicle")
+	assert_eq(_kinds(a3, "sick_beat").size(), 1, "the bottom of the bad rail plays the sick beat")
+	assert_eq(r.role, "sick")
+	var a4 := r.step(false, t + 48.0 * BEAT, notes)
+	assert_eq(_kinds(a4, "player_move").size(), 0, "held at the bottom: no new move")
+	assert_eq(_kinds(a4, "sick_beat").size(), 0, "and the sick beat is not replayed")
+	var back: Array = []
+	for i in 3:
+		var acts := r.step(true, t + float(5 + i) * 16.0 * BEAT, notes)
+		back.append(r.place())
+		assert_eq(_kinds(acts, "player_move").size(), 1)
+		if i == 0:
+			assert_true(_kinds(acts, "player_role").any(func(a: Dictionary) -> bool: return (a["args"] as Dictionary)["role"] == "recovered"), "recovered on the way back")
+			assert_true(_kinds(acts, "fx_queasy").any(func(a: Dictionary) -> bool: return float((a["args"] as Dictionary)["amount"]) == 0.0), "the queasy look clears")
+	assert_eq(back, ["corridor", "floor_edge", "floor_centre"], "a pass walks back toward the floor")
+	assert_eq(r.role, "dancer", "and the floor makes a dancer again")
+
+
+func test_a_hold_on_the_good_rail_drops_to_the_bad_rail() -> void:
+	var r := _rail("mothership")
+	r.step(true, 12.5 * BEAT, [])
+	r.step(true, 28.5 * BEAT, [])
+	assert_eq(r.place(), "reactor_in")
+	r.step(false, 44.5 * BEAT, [])
+	assert_eq(r.place(), "gallery_in")
+	assert_eq(r.pos, -1)
+
+
+func test_moves_start_on_the_decision_beat_and_last_two_to_four_bars() -> void:
+	for id in _data().nodes:
+		var r := _rail(id)
+		var t := 12.5 * BEAT
+		for passed in [true, true, false, false, false, true, true, true, true]:
+			for a in r.step(passed, t, []):
+				if a["action"] == "player_move":
+					var bars := float((a["args"] as Dictionary)["bars"])
+					assert_true(bars >= 2.0 and bars <= 4.0, "%s: a move lasts %.1f bars" % [id, bars])
+					assert_true(fposmod(float(a["t0"]) / BEAT, 16.0) >= 12.0, "%s: starts in the cue-free guard" % id)
+			t += 16.0 * BEAT
+		assert_true(r.visited.size() == 9)
+
+
+func test_dense_cues_shorten_a_move_but_never_below_two_bars() -> void:
+	var notes: Array = []
+	for i in 80:  # eight notes a bar from beat 0: dense everywhere
+		notes.append({"time": float(i) * BEAT / 2.0})
+	assert_true(RunRail.move_is_dense(notes, 0.0, 4.0, BPM))
+	assert_eq(RunRail.pick_bars(4.0, notes, 0.0, BPM), 2.0)
+	var sparse: Array = []
+	for i in 10:
+		sparse.append({"time": float(i) * BEAT * 2.0})
+	assert_false(RunRail.move_is_dense(sparse, 0.0, 4.0, BPM))
+	assert_eq(RunRail.pick_bars(4.0, sparse, 0.0, BPM), 4.0)
+	assert_eq(RunRail.pick_bars(9.0, sparse, 0.0, BPM), 4.0, "never more than four bars")
+	assert_eq(RunRail.pick_bars(1.0, sparse, 0.0, BPM), 2.0, "never fewer than two")
+	# only the second bar dense: a move over it is allowed at four bars only when at most half of them are dense
+	var half: Array = []
+	for i in 8:
+		half.append({"time": 4.0 * BEAT + float(i) * BEAT / 2.0})
+	assert_false(RunRail.move_is_dense(half, 0.0, 4.0, BPM))
+
+
+func test_every_block_has_a_glance_and_the_glances_vary() -> void:
+	for id in _data().nodes:
+		var r := _rail(id)
+		var seen := {}
+		var strolls := 0
+		for blk in 12:
+			var acts := r.ambient(float(blk) * 16.0 * BEAT, blk / 4 + 1, blk % 4, [])
+			var looks := _kinds(acts, "player_look")
+			assert_eq(looks.size(), 1, "%s block %d has a glance" % [id, blk])
+			seen[JSON.stringify(looks[0]["args"])] = true
+			strolls += _kinds(acts, "player_walk").size()
+		assert_true(seen.size() >= 3, "%s: the glances vary from block to block (%d kinds)" % [id, seen.size()])
+		assert_true(strolls >= 3, "%s: some blocks add an in-room walk (%d)" % [id, strolls])
+
+
+func test_arriving_in_a_new_world_is_a_cut_to_the_doorway_then_a_walk_home() -> void:
+	var r := _rail("mothership")
+	var t0 := 64.0 * BEAT
+	var acts := r.arrival(t0, [])
+	var moves := _kinds(acts, "player_move")
+	assert_eq(moves.size(), 2)
+	assert_eq((moves[0]["args"] as Dictionary)["to"], "airlock", "in at the doorway")
+	assert_true(bool((moves[0]["args"] as Dictionary).get("cut", false)))
+	assert_eq((moves[1]["args"] as Dictionary)["to"], "deck_centre", "then into the start waypoint")
+	assert_true(float(moves[1]["t0"]) < t0 and fposmod(float(moves[1]["t0"]) / BEAT, 16.0) >= 12.0, "the walk starts in the guard before the downbeat")
+	# on the real stage the walk ends at home
+	var map := StoryMap.load_chapter("mothership")
+	var pl := StoryPlayer.new()
+	pl.setup(map, BPM)
+	for a in acts:
+		pl.apply_action(a)
+	assert_eq(pl.pose_at(t0 - 1.5 * BEAT)["sector"], "airlock", "hidden behind the closed frame it is at the doorway")
+	assert_eq(pl.pose_at(t0 + 20.0 * BEAT)["sector"], "deck")
+
+
+func test_the_passage_frame_closes_before_the_downbeat_and_opens_after_it() -> void:
+	var swap := 64.0 * BEAT
+	assert_eq(RunPassage.aperture(swap - 4.0 * BEAT, swap, BEAT), 1.0, "open before beat 62")
+	assert_true(RunPassage.aperture(swap - 1.0 * BEAT, swap, BEAT) < 0.8, "closing")
+	assert_near(RunPassage.aperture(swap, swap, BEAT), RunPassage.MIN_OPEN, 1e-6, "shut to the doorway on the downbeat")
+	assert_true(RunPassage.aperture(swap + 1.0 * BEAT, swap, BEAT) > RunPassage.MIN_OPEN, "opening")
+	assert_eq(RunPassage.aperture(swap + 3.0 * BEAT, swap, BEAT), 1.0, "fully open again")
+	assert_eq(RunPassage.aperture(swap, -1.0, BEAT), 1.0, "no passage under way: open")
+	var prev := 1.0
+	var t := swap - 2.0 * BEAT
+	while t < swap:  # monotone closing
+		var a := RunPassage.aperture(t, swap, BEAT)
+		assert_true(a <= prev + 1e-9)
+		prev = a
+		t += 0.01
+	var view := Vector2(800, 300)
+	assert_true(RunPassage.doorway(view, RunPassage.MIN_OPEN).size.x < view.x * 0.2)
+	assert_eq(RunPassage.doorway(view, 1.0), Rect2(Vector2.ZERO, view))
+
+
+func test_a_lit_exit_is_placed_by_the_stage_camera() -> void:
+	var map := StoryMap.load_chapter("night_one")
+	var pl := StoryPlayer.new()
+	pl.setup(map, BPM)
+	var pose := pl.pose_at(0.0)  # floor_centre looking toward the stage; the door is behind
+	var ppose := {"cam": pose["cam"], "yaw": pose["yaw"], "pitch": 0.0}
+	var door: Dictionary = map.waypoint("door")
+	var placed := RunExitsView.place(door["at"], 0.0, ppose, Vector2(800, 300))
+	assert_false(placed["visible"], "the door is behind the camera: an arrow at the edge instead")
+	assert_true(float(placed["side"]) == 1.0 or float(placed["side"]) == -1.0)
+	var turned := {"cam": pose["cam"], "yaw": float(pose["yaw"]) + 180.0, "pitch": 0.0}
+	var placed2 := RunExitsView.place(door["at"], 0.0, turned, Vector2(800, 300))
+	assert_true(placed2["visible"], "turned round, the doorway is in the room: a lit frame")
