@@ -1986,6 +1986,157 @@
    "group": "peak",
    "view": "courtyard",
    "enter_from": "side"
+  },
+  {
+   "id": "x01",
+   "archetype": "chef",
+   "variant": "a",
+   "group": "core",
+   "view": "courtyard",
+   "thresh": 0,
+   "activity": "serve",
+   "prop": "tray",
+   "pace_axis": [
+    0,
+    1
+   ],
+   "pace_m": 2.2
+  },
+  {
+   "id": "x02",
+   "archetype": "orderly",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "check",
+   "prop": "clipboard",
+   "target": "x03"
+  },
+  {
+   "id": "x03",
+   "archetype": "pirate",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "queue"
+  },
+  {
+   "id": "x04",
+   "archetype": "ballerina",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "queue"
+  },
+  {
+   "id": "x05",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "art": "night_one",
+   "activity": "queue"
+  },
+  {
+   "id": "x06",
+   "archetype": "king",
+   "variant": "a",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "pace",
+   "pace_axis": [
+    1,
+    0
+   ],
+   "pace_m": 1.2
+  },
+  {
+   "id": "x07",
+   "archetype": "superhero",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "pace",
+   "pace_axis": [
+    0,
+    1
+   ],
+   "pace_m": 1.2
+  },
+  {
+   "id": "x08",
+   "archetype": "ballerina",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "activity": "rock"
+  },
+  {
+   "id": "x09",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "art": "night_one",
+   "activity": "stare",
+   "target": "bars"
+  },
+  {
+   "id": "x10",
+   "archetype": "ponytail",
+   "variant": "a",
+   "group": "core",
+   "view": "art_room",
+   "thresh": 0,
+   "art": "night_one",
+   "activity": "paint",
+   "prop": "brush"
+  },
+  {
+   "id": "x11",
+   "archetype": "chef",
+   "variant": "b",
+   "group": "core",
+   "view": "art_room",
+   "thresh": 0,
+   "activity": "paint",
+   "prop": "sketchbook"
+  },
+  {
+   "id": "x12",
+   "archetype": "king",
+   "variant": "b",
+   "group": "core",
+   "view": "art_room",
+   "thresh": 0,
+   "activity": "paint",
+   "prop": "brush"
+  },
+  {
+   "id": "x13",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "art": "night_one",
+   "activity": "lie"
+  },
+  {
+   "id": "x14",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "corridor",
+   "thresh": 0,
+   "art": "night_one",
+   "activity": "sleep"
   }
  ],
  "silhouettes": [

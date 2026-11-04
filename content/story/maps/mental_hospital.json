@@ -33,19 +33,19 @@
   "wall_window": "textures/wall_window.png"
  },
  "sectors": [
-  {"id": "dayroom", "polygon": [[-7, -3], [7, -3], [7, 9], [-7, 9]], "floor": 0, "ceiling": 3.0, "floor_tex": "floor_check", "ceil_tex": "ceil_tile", "wall_tex": "wall_mint", "light": 0.55, "tint": "#a8e0b0", "room": "main", "flags": ["dance_floor"]},
-  {"id": "day_stage", "polygon": [[-3, -5], [3, -5], [3, -3], [-3, -3]], "floor": 0.35, "ceiling": 3.0, "floor_tex": "floor_dais", "ceil_tex": "ceil_tile", "wall_tex": "wall_mint", "light": 0.68, "tint": "#d8e8a0", "room": "main", "flags": ["stage"]},
-  {"id": "corridor", "polygon": [[7, 4], [33, 4], [33, 8], [7, 8]], "floor": 0, "ceiling": 2.7, "floor_tex": "floor_wood", "ceil_tex": "ceil_pale", "wall_tex": "wall_cdoor", "light": 0.5, "tint": "#8fd0a0", "room": "corridor", "flags": ["dance_floor"]},
-  {"id": "office", "polygon": [[27, 0], [31, 0], [31, 4], [27, 4]], "floor": 0, "ceiling": 2.7, "floor_tex": "floor_wood", "ceil_tex": "ceil_pale", "wall_tex": "wall_door", "light": 0.85, "tint": "#ffd080", "room": "corridor", "flags": []},
-  {"id": "art_room", "polygon": [[33, 0], [47, 0], [47, 12], [33, 12]], "floor": 0, "ceiling": 4.6, "floor_tex": "floor_art", "ceil_tex": "ceil_tile", "wall_tex": "wall_art", "light": 0.6, "tint": "#e8dca0", "room": "art_room", "flags": ["dance_floor"]},
-  {"id": "courtyard", "polygon": [[47, -2], [61, -2], [61, 14], [47, 14]], "floor": 0, "ceiling": 3.2, "floor_tex": "floor_paving", "ceil_tex": "sky", "wall_tex": "wall_brick", "light": 0.55, "tint": "#a0c8b8", "room": "courtyard", "flags": ["dance_floor"]},
-  {"id": "c_stage", "polygon": [[61, 4], [65, 4], [65, 10], [61, 10]], "floor": 0.6, "ceiling": 3.2, "floor_tex": "floor_dais", "ceil_tex": "sky", "wall_tex": "wall_brick", "light": 0.72, "tint": "#ffe0a0", "room": "courtyard", "flags": ["stage"]},
-  {"id": "treatment", "polygon": [[13, 8], [19, 8], [19, 14], [13, 14]], "floor": 0, "ceiling": 2.3, "floor_tex": "tx_floor", "ceil_tex": "tx_tile", "wall_tex": "tx_tile", "light": 0.42, "tint": "#9fe0d0", "room": "treatment", "flags": []},
-  {"id": "quiet", "polygon": [[13, 14], [19, 14], [19, 17], [13, 17]], "floor": 0, "ceiling": 2.3, "floor_tex": "tx_floor", "ceil_tex": "pad_tile", "wall_tex": "pad_tile", "light": 0.4, "tint": "#c8d8cc", "room": "treatment", "flags": []},
-  {"id": "quiet_bed", "polygon": [[14, 17], [18, 17], [18, 18.8], [17, 19.8], [15, 19.8], [14, 18.8]], "floor": 0.35, "ceiling": 2.0, "floor_tex": "tx_floor", "ceil_tex": "pad_tile", "wall_tex": "pad_tile", "light": 0.4, "tint": "#c8d8cc", "room": "treatment", "flags": []},
-  {"id": "quiet_slit", "polygon": [[15.2, 19.8], [16.8, 19.8], [16.8, 20.6], [15.2, 20.6]], "floor": 1.1, "ceiling": 2.0, "floor_tex": "tx_floor", "ceil_tex": "sky", "wall_tex": "wall_window", "light": 0.5, "tint": "#a0b8c8", "room": "treatment", "flags": []},
-  {"id": "dorm", "polygon": [[21, 8], [31, 8], [31, 14], [21, 14]], "floor": 0, "ceiling": 2.2, "floor_tex": "floor_wood", "ceil_tex": "ceil_pale", "wall_tex": "wall_dado", "light": 0.45, "tint": "#8fc8a0", "room": "dorm", "flags": []},
-  {"id": "dorm_alcove", "polygon": [[24, 14], [28, 14], [28, 16.5], [24, 16.5]], "floor": 0.2, "ceiling": 2.0, "floor_tex": "floor_wood", "ceil_tex": "ceil_pale", "wall_tex": "wall_awindow", "light": 0.5, "tint": "#a8d0a8", "room": "dorm", "flags": []}
+  {"id": "dayroom", "polygon": [[-7, -3], [7, -3], [7, 9], [-7, 9]], "floor": 0, "ceiling": 3.0, "floor_tex": "floor_check", "ceil_tex": "ceil_tile", "wall_tex": "wall_mint", "light": 0.55, "tint": "#a8e0b0", "room": "main", "flags": ["dance_floor"], "activities": {"quiet": ["sit", "chat", "stand", "rock", "pace", "watch", "sit"], "dancing": ["dance", "dance", "dance", "dance", "dance", "sit", "chat"], "hype": ["dance", "dance", "dance", "dance", "dance", "wave", "point"], "euphoric": ["dance", "dance", "dance", "dance", "dance", "wave", "hug"]}},
+  {"id": "day_stage", "polygon": [[-3, -5], [3, -5], [3, -3], [-3, -3]], "floor": 0.35, "ceiling": 3.0, "floor_tex": "floor_dais", "ceil_tex": "ceil_tile", "wall_tex": "wall_mint", "light": 0.68, "tint": "#d8e8a0", "room": "main", "flags": ["stage"], "activities": {"quiet": ["stand", "watch", "lean_wall", "sit"], "dancing": ["dance", "dance", "dance", "wave"], "hype": ["dance", "dance", "dance", "wave", "point"], "euphoric": ["dance", "dance", "dance", "wave", "hug"]}},
+  {"id": "corridor", "polygon": [[7, 4], [33, 4], [33, 8], [7, 8]], "floor": 0, "ceiling": 2.7, "floor_tex": "floor_wood", "ceil_tex": "ceil_pale", "wall_tex": "wall_cdoor", "light": 0.5, "tint": "#8fd0a0", "room": "corridor", "flags": ["dance_floor"], "activities": {"quiet": ["pace", "queue", "lean_wall", "stand", "rock", "queue"], "dancing": ["dance", "dance", "dance", "dance", "pace", "queue", "lean_wall"], "hype": ["dance", "dance", "dance", "dance", "dance", "queue", "wave"], "euphoric": ["dance", "dance", "dance", "dance", "wave", "hug", "queue"]}},
+  {"id": "office", "polygon": [[27, 0], [31, 0], [31, 4], [27, 4]], "floor": 0, "ceiling": 2.7, "floor_tex": "floor_wood", "ceil_tex": "ceil_pale", "wall_tex": "wall_door", "light": 0.85, "tint": "#ffd080", "room": "corridor", "flags": [], "activities": {"quiet": ["check", "sit", "stand"], "dancing": ["check", "sit", "drink", "chat"], "hype": ["chat", "drink", "check", "wave"], "euphoric": ["wave", "chat", "hug", "drink"]}},
+  {"id": "art_room", "polygon": [[33, 0], [47, 0], [47, 12], [33, 12]], "floor": 0, "ceiling": 4.6, "floor_tex": "floor_art", "ceil_tex": "ceil_tile", "wall_tex": "wall_art", "light": 0.6, "tint": "#e8dca0", "room": "art_room", "flags": ["dance_floor"], "activities": {"quiet": ["paint", "paint", "stand", "sit", "stare", "watch"], "dancing": ["dance", "dance", "dance", "dance", "dance", "paint", "watch"], "hype": ["dance", "dance", "dance", "dance", "paint", "wave", "point"], "euphoric": ["dance", "dance", "dance", "dance", "wave", "paint", "hug"]}},
+  {"id": "courtyard", "polygon": [[47, -2], [61, -2], [61, 14], [47, 14]], "floor": 0, "ceiling": 3.2, "floor_tex": "floor_paving", "ceil_tex": "sky", "wall_tex": "wall_brick", "light": 0.55, "tint": "#a0c8b8", "room": "courtyard", "flags": ["dance_floor"], "activities": {"quiet": ["stand", "sit", "chat", "drink", "lean_wall", "stare"], "dancing": ["dance", "dance", "dance", "dance", "dance", "drink", "chat"], "hype": ["dance", "dance", "dance", "dance", "dance", "toast", "wave"], "euphoric": ["dance", "dance", "dance", "dance", "dance", "toast", "hug"]}},
+  {"id": "c_stage", "polygon": [[61, 4], [65, 4], [65, 10], [61, 10]], "floor": 0.6, "ceiling": 3.2, "floor_tex": "floor_dais", "ceil_tex": "sky", "wall_tex": "wall_brick", "light": 0.72, "tint": "#ffe0a0", "room": "courtyard", "flags": ["stage"], "activities": {"quiet": ["stand", "watch", "sit"], "dancing": ["dance", "dance", "dance", "wave"], "hype": ["dance", "dance", "dance", "wave", "point"], "euphoric": ["dance", "dance", "dance", "wave", "hug"]}},
+  {"id": "treatment", "polygon": [[13, 8], [19, 8], [19, 14], [13, 14]], "floor": 0, "ceiling": 2.3, "floor_tex": "tx_floor", "ceil_tex": "tx_tile", "wall_tex": "tx_tile", "light": 0.42, "tint": "#9fe0d0", "room": "treatment", "flags": [], "activities": {"quiet": ["stand", "queue", "check", "sit"], "dancing": ["queue", "check", "sit", "stand", "queue"], "hype": ["stand", "check", "watch", "queue"], "euphoric": ["wave", "chat", "check", "queue"]}},
+  {"id": "quiet", "polygon": [[13, 14], [19, 14], [19, 17], [13, 17]], "floor": 0, "ceiling": 2.3, "floor_tex": "tx_floor", "ceil_tex": "pad_tile", "wall_tex": "pad_tile", "light": 0.4, "tint": "#c8d8cc", "room": "treatment", "flags": [], "activities": {"quiet": ["rock", "sit", "stare", "lie"], "dancing": ["rock", "sit", "stare", "rock"], "hype": ["sit", "rock", "watch", "stand"], "euphoric": ["sit", "wave", "chat", "rock"]}},
+  {"id": "quiet_bed", "polygon": [[14, 17], [18, 17], [18, 18.8], [17, 19.8], [15, 19.8], [14, 18.8]], "floor": 0.35, "ceiling": 2.0, "floor_tex": "tx_floor", "ceil_tex": "pad_tile", "wall_tex": "pad_tile", "light": 0.4, "tint": "#c8d8cc", "room": "treatment", "flags": [], "activities": {"quiet": ["lie", "sit", "sleep"], "dancing": ["sit", "lie", "rock"], "hype": ["sit", "rock", "stand"], "euphoric": ["sit", "watch", "wave"]}},
+  {"id": "quiet_slit", "polygon": [[15.2, 19.8], [16.8, 19.8], [16.8, 20.6], [15.2, 20.6]], "floor": 1.1, "ceiling": 2.0, "floor_tex": "tx_floor", "ceil_tex": "sky", "wall_tex": "wall_window", "light": 0.5, "tint": "#a0b8c8", "room": "treatment", "flags": [], "activities": {"quiet": ["stare", "stand"], "dancing": ["stare", "stand", "stare"], "hype": ["stare", "stand", "watch"], "euphoric": ["stare", "wave"]}},
+  {"id": "dorm", "polygon": [[21, 8], [31, 8], [31, 14], [21, 14]], "floor": 0, "ceiling": 2.2, "floor_tex": "floor_wood", "ceil_tex": "ceil_pale", "wall_tex": "wall_dado", "light": 0.45, "tint": "#8fc8a0", "room": "dorm", "flags": [], "activities": {"quiet": ["sleep", "lie", "sit", "rock", "lie"], "dancing": ["sit", "lie", "chat", "rock", "sleep"], "hype": ["chat", "sit", "wave", "watch"], "euphoric": ["chat", "wave", "hug", "sit"]}},
+  {"id": "dorm_alcove", "polygon": [[24, 14], [28, 14], [28, 16.5], [24, 16.5]], "floor": 0.2, "ceiling": 2.0, "floor_tex": "floor_wood", "ceil_tex": "ceil_pale", "wall_tex": "wall_awindow", "light": 0.5, "tint": "#a8d0a8", "room": "dorm", "flags": [], "activities": {"quiet": ["stare", "sit", "rock"], "dancing": ["stare", "sit", "chat"], "hype": ["chat", "sit", "watch"], "euphoric": ["hug", "chat", "wave"]}}
  ],
  "walls": [
   {"from": [-7, -3], "to": [-3, -3], "sector": "dayroom", "tex": "wall_speaker", "portal": null},
@@ -271,7 +271,21 @@
   {"actor": "courtyard_p01", "sector": "courtyard", "at": [56.3, 2.1]},
   {"actor": "courtyard_p02", "sector": "courtyard", "at": [55.41, 4.46]},
   {"actor": "courtyard_p03", "sector": "courtyard", "at": [54.56, 6.92]},
-  {"actor": "courtyard_p04", "sector": "courtyard", "at": [56.27, 9.89]}
+  {"actor": "courtyard_p04", "sector": "courtyard", "at": [56.27, 9.89]},
+  {"actor": "x01", "sector": "courtyard", "at": [57.6, 9.6]},
+  {"actor": "x02", "sector": "treatment", "at": [17.3, 11.4]},
+  {"actor": "x03", "sector": "treatment", "at": [14.9, 11.1]},
+  {"actor": "x04", "sector": "treatment", "at": [14.0, 12.4]},
+  {"actor": "x05", "sector": "treatment", "at": [14.2, 10.2]},
+  {"actor": "x06", "sector": "corridor", "at": [10.8, 5.0]},
+  {"actor": "x07", "sector": "dayroom", "at": [-5.9, 0.4]},
+  {"actor": "x08", "sector": "quiet", "at": [14.0, 16.2]},
+  {"actor": "x09", "sector": "dayroom", "at": [5.2, -1.4]},
+  {"actor": "x10", "sector": "art_room", "at": [35.1, 2.9]},
+  {"actor": "x11", "sector": "art_room", "at": [35.1, 9.1]},
+  {"actor": "x12", "sector": "art_room", "at": [43.2, 9.7]},
+  {"actor": "x13", "sector": "dorm", "at": [21.6, 10.3]},
+  {"actor": "x14", "sector": "dorm", "at": [30.4, 11.5]}
  ],
  "waypoints": [
   {"id": "day_centre", "at": [0, 6.5], "yaw": 0, "sector": "dayroom"},
@@ -283,7 +297,8 @@
   {"id": "stage_edge", "at": [59.4, 7.0], "yaw": 90, "sector": "courtyard"},
   {"id": "treat", "at": [16, 9.8], "yaw": 180, "sector": "treatment"},
   {"id": "quiet", "at": [16, 15.6], "yaw": 180, "sector": "quiet"},
-  {"id": "dorm", "at": [26, 9.4], "yaw": 180, "sector": "dorm"}
+  {"id": "dorm", "at": [26, 9.4], "yaw": 180, "sector": "dorm"},
+  {"id": "bars", "at": [5.0, -2.6], "yaw": 180, "sector": "dayroom"}
  ],
  "spots": {
   "door": {"sector": "dayroom", "at": [0.0, -2.1], "slots": [[-2.25, -2.1], [-0.75, -2.1], [0.75, -2.1], [2.25, -2.1], [-2.25, -1.1], [-0.75, -1.1], [0.75, -1.1], [2.25, -1.1]]},
