@@ -2815,6 +2815,14 @@
    ],
    "metres": 1.0
   },
+  "thing_crack": {
+   "file": "textures/thing_crack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
   "thing_decks": {
    "file": "textures/thing_decks.png",
    "size": [
@@ -2844,6 +2852,14 @@
    "size": [
     128,
     128
+   ],
+   "metres": 1.0
+  },
+  "thing_headphones": {
+   "file": "textures/thing_headphones.png",
+   "size": [
+    64,
+    64
    ],
    "metres": 1.0
   },
@@ -2916,6 +2932,14 @@
    "size": [
     64,
     64
+   ],
+   "metres": 1.0
+  },
+  "thing_wizard": {
+   "file": "textures/thing_wizard.png",
+   "size": [
+    128,
+    128
    ],
    "metres": 1.0
   },

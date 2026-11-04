@@ -96,3 +96,37 @@ stops; every world, scene, route, ending, secret and encounter reachable; the co
 ## 9. Risks
 Small projected targets on phones (minimum 72 px and nearest-within-radius); authoring volume (2 to 4 hotspots per scene, reconnecting branches); the Bassment's narrative without choice text
 (captions carry it); two plans on one engine (ownership in the music plan's section 6; the coordinator integrates).
+
+## 10. Progress log
+
+### Workstream C: campaign conversion content (Sonnet, 2026-11-04)
+
+Data and art for all seven run worlds are in; the engine (A) is not wired yet, so none of it lights up in play. 127 hotspots in 36 scenes (Warehouse 24, Mothership 17, Underworld 17,
+Hospital 20, Ward 20, Hospital late 16, Ward late 13), 138 named cinematics, `python3 tools/run/check_hotspots.py` green (0 errors, 5 route-lock warnings, below). Coverage matrix: `docs/VISUAL_COVERAGE.md`.
+
+What A needs to know to wire it:
+- **Files**: `content/run/hotspots/<world>.json` is `{"world": id, "hotspots": [...]}` (hotspot fields exactly as section 2). Authored by `tools/run/make_hotspots.py` (tables) via `tools/run/make_scenes.py`
+  (the single entry point; it also writes the cinematics, the new things and lights). Do not hand-edit the JSON; edit the tables and run make_scenes.py.
+- **Cinematics**: `run.json` gets a top-level `cinematics`: `{name: {"world", "steps": [{"move": "walk" | "place", "to": waypoint, "bars": 2..4, "role", "style", "look_at"?}]}}`. `walk` is
+  `player_walk` (in the room the rail is in), `place` is `player_move` (a journey place; used only for being dragged to the cage and carried to the treatment room), `role` and `style` use the rail's
+  vocabulary, `look_at` is a waypoint, thing or actor id. A hotspot's own `cinematic` field is the same step inline (the approach walk when it is selected); outcomes name an entry of `cinematics`.
+- **Outcome fields used**: `route` (a scene id of the scene's `next`, or `"1"`, the Bassment's first passage, for the wizard), `flags_set`, `cinematic`, `energy` (int, -12 to +10), `music`
+  (`"variation"` or `"dip"`). `challenge` is null everywhere (the last block decides). Flags are one namespace, prefixed per world (`wh_`, `ms_`, `uw_`, `hp_`, `wd_`, `hl_`, `wl_`).
+- **Exits**: one per route, anchored to the route's doorway waypoint (`place.rail.exits`), the first route the default with look `open`, the others `glow`, the Underworld door `crack` (anchored to
+  the new `crack_door` thing). A failed exit still takes the same door (stagger cinematic, -5 energy): exit failures are setbacks, not other destinations.
+- **Interactions** pick the scene's default route when they carry no `route`. Route outcomes on interactions: the Warehouse promoter (S: booth), the bouncer (F: Underworld), the Mothership exam
+  (F: Ward), the Underworld grudge bouncer (F: furnace), the throne (F: Ward), the Ward's painted door (S: courtyard). Five of these differ in chart pack from the default route (the checker
+  lists them as warnings): the route lock (beat 60.5) must either chart from the hotspot's `on_success.route` and treat a diverting failure as a late swap, or the engine must decide the
+  outcome before the chart is fixed. A decides; the data is final either way.
+- **Availability**: `flags_all` / `flags_none` / `energy_min` / `once`; the checker proves 2 to 4 hotspots available at any time over every flag combination (once-only ones counted present and used).
+  Flags that open things later: `wh_vip_pass` (bar stranger: booth headphones, the bouncer's VIP variant), `wh_thrown_out` (the Underworld bouncer's grudge), `ms_badge` (bridge star chart),
+  `wd_painted` (the corridor's painted door), `hp_token` (late cafeteria's free drink), `hp_lamp_lit` and `hp_sang` (the late garden lamp and the bandstand encore play differently on the second round).
+- **New anchors**: things `wizard_floor`, `wizard_chill`, `headphones_booth`, `crack_door` (Night One), `mic_band` (Hospital), `mural_door` (Ward), lights `lt_crack`, `lt_ship_beam`, `lt_wizard_*`,
+  `lt_band_mic`, `lt_mural`. Sprites `thing_wizard`, `thing_headphones`, `thing_crack`, `thing_mic`, `thing_mural` come from the chapters' generators (`tex_night_one.py`, `tex_hospital.py`,
+  `tex_mental_hospital.py`, listed in `tiles.py`; `build_assets.py <chapter> tiles` is deterministic). The wizard billboard reuses the trial's wizard portrait; A should hide the
+  `_gate` button and wizard `TextureRect` of `run_play.gd` when the hotspot is live. The balcony rail and the decks are `pos` anchors (they are occluders, not things).
+- No new routes, scenes or waypoints were added: all existing routes remain, each is taken by an exit hotspot (the checker's reachability walks success and failure branches from `warehouse`; the
+  Bassment is entered by the wizard's route `"1"` and returns to the entry scene).
+
+Checks run: `check_hotspots.py` (0 errors), `--filter story_map` (16748 checks, 0 failures), `--filter run_` (0 failures), `--filter story_world`, `tools/story/check_assets.py` (OK), `make_scenes.py`
+idempotent. Screenshots of the new things in their rooms: wizard on the floor, headphones on the decks, the crack, the bandstand mic, the painted door.

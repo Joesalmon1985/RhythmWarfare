@@ -1099,6 +1099,28 @@ def p_wheelchair(seed=541):
     c.put(c.rect(40, 30, 96, 80) & (_noise(128, 4, seed) > 0.8) & (c.mat == NAMES.index("cloth")), "rust", 0.3)
     return c.rgba()
 
+def p_mural():
+    """A door the residents painted over (128 px, 2.0 m): a door-shaped panel under a rainbow arch, a sun, a path of stepping stones leading into a green garden,
+    brush strokes and drips, a brass handle. The painting that opens the courtyard."""
+    c = Canvas(128)
+    door = c.rect(30, 8, 98, 126)
+    c.put(c.rect(26, 4, 102, 128), "wood", 0.4)
+    c.put(door, "art_b", 0.35 + (c.y - 8) / 118 * 0.35)
+    for k, m in enumerate(("art_r", "art_y", "art_p")):
+        c.put(c.ell(64, 52, 30 - k * 5, 30 - k * 5) & door & (c.y < 56), m, 0.75)
+    c.put(c.ell(64, 52, 15, 15) & door & (c.y < 56), "art_b", 0.45)
+    c.put(c.ell(64, 30, 8, 8) & door, "light", 0.8)
+    c.put(door & (c.y >= 74), "night", 0.55 + (_noise(128, 6, 461) - 0.5) * 0.3)
+    for k in range(5):
+        c.put(c.ell(64 + (k % 2) * 6 - 3, 82 + k * 9, 9 - k, 3.2 - k * 0.3), "linen", 0.7 - k * 0.05)
+    for sx, sy in ((44, 90), (84, 100), (50, 112), (80, 86)):
+        c.put(c.ell(sx, sy, 6, 8), "art_y", 0.5)
+        c.put(c.ell(sx, sy - 4, 3, 3), "art_r", 0.7)
+    c.put(c.ell(90, 72, 2.2, 2.2), "brass", 0.8)
+    c.put(door & (_noise(128, 3, 462) > 0.86), "linen", 0.5)
+    c.put(door & (_streaks(c, [40, 58, 76, 90], [60, 52, 56, 62], [30, 40, 26, 34], 463) > 0.4), "art_r", 0.5)
+    return c.rgba()
+
 
 PROPS = {
     "thing_chair": lambda: p_chair("plastic_t", 551),
@@ -1120,6 +1142,7 @@ PROPS = {
     "thing_trolley": p_trolley,
     "thing_sink": p_sink,
     "thing_wheelchair": p_wheelchair,
+    "thing_mural": p_mural,
 }
 
 TILES = {

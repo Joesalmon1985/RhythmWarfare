@@ -3262,6 +3262,14 @@
    ],
    "metres": 1.0
   },
+  "thing_mic": {
+   "file": "textures/thing_mic.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
   "thing_monitor": {
    "file": "textures/thing_monitor.png",
    "size": [

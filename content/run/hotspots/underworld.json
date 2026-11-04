@@ -1,0 +1,641 @@
+{
+ "world": "underworld",
+ "hotspots": [
+  {
+   "id": "underworld.exit_court",
+   "world": "underworld",
+   "scene": "underworld",
+   "map": "underworld",
+   "anchor": {
+    "waypoint": "arena_tier_r"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "underworld.court"
+   },
+   "on_failure": {
+    "route": "underworld.court",
+    "cinematic": "underworld.stagger_entry_right",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.exit_furnace",
+   "world": "underworld",
+   "scene": "underworld",
+   "map": "underworld",
+   "anchor": {
+    "waypoint": "arena_tier_l"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "underworld.furnace"
+   },
+   "on_failure": {
+    "route": "underworld.furnace",
+    "cinematic": "underworld.stagger_entry_left",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.bouncer",
+   "world": "underworld",
+   "scene": "underworld",
+   "map": "underworld",
+   "anchor": {
+    "actor": "gate_bouncer"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "wh_thrown_out"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "uw_gate_pass"
+    ],
+    "cinematic": "underworld.gate_nod",
+    "energy": 5
+   },
+   "on_failure": {
+    "flags_set": [
+     "uw_tossed"
+    ],
+    "cinematic": "underworld.gate_shove",
+    "energy": -7
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.bouncer_grudge",
+   "world": "underworld",
+   "scene": "underworld",
+   "map": "underworld",
+   "anchor": {
+    "actor": "gate_bouncer"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [
+     "wh_thrown_out"
+    ],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "uw_gate_pass"
+    ],
+    "cinematic": "underworld.gate_nod",
+    "energy": 4
+   },
+   "on_failure": {
+    "route": "underworld.furnace",
+    "flags_set": [
+     "uw_tossed"
+    ],
+    "cinematic": "underworld.gate_shove",
+    "energy": -8
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.chains",
+   "world": "underworld",
+   "scene": "underworld",
+   "map": "underworld",
+   "anchor": {
+    "thing": "chains_a"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "uw_swung"
+    ],
+    "cinematic": "underworld.chain_swing",
+    "energy": 8,
+    "music": "variation"
+   },
+   "on_failure": {
+    "flags_set": [
+     "uw_caged"
+    ],
+    "cinematic": "underworld.dragged_cage",
+    "energy": -9
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.court.exit_pit",
+   "world": "underworld",
+   "scene": "underworld.court",
+   "map": "underworld",
+   "anchor": {
+    "waypoint": "court_causeway"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "underworld.pit"
+   },
+   "on_failure": {
+    "route": "underworld.pit",
+    "cinematic": "underworld.stagger_court_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.court.seal",
+   "world": "underworld",
+   "scene": "underworld.court",
+   "map": "underworld",
+   "anchor": {
+    "thing": "seal_c"
+   },
+   "kind": "feature",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "uw_seal"
+    ],
+    "cinematic": "underworld.seal_stand",
+    "energy": 6,
+    "music": "variation"
+   },
+   "on_failure": {
+    "cinematic": "underworld.seal_burn",
+    "energy": -8,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.court.queen",
+   "world": "underworld",
+   "scene": "underworld.court",
+   "map": "underworld",
+   "anchor": {
+    "actor": "court_g06"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "uw_queen_favour"
+    ],
+    "cinematic": "underworld.queen_dance",
+    "energy": 8
+   },
+   "on_failure": {
+    "flags_set": [
+     "uw_hexed"
+    ],
+    "energy": -6,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.furnace.exit_pit",
+   "world": "underworld",
+   "scene": "underworld.furnace",
+   "map": "underworld",
+   "anchor": {
+    "waypoint": "furnace_out"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "underworld.pit"
+   },
+   "on_failure": {
+    "route": "underworld.pit",
+    "cinematic": "underworld.stagger_furnace_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.furnace.anvil",
+   "world": "underworld",
+   "scene": "underworld.furnace",
+   "map": "underworld",
+   "anchor": {
+    "thing": "anvil_f0"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "uw_forged"
+    ],
+    "cinematic": "underworld.forge",
+    "energy": 6,
+    "music": "variation"
+   },
+   "on_failure": {
+    "cinematic": "underworld.forge_burn",
+    "energy": -8
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.furnace.ladle",
+   "world": "underworld",
+   "scene": "underworld.furnace",
+   "map": "underworld",
+   "anchor": {
+    "thing": "ladle_f"
+   },
+   "kind": "feature",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "uw_molten"
+    ],
+    "energy": 5
+   },
+   "on_failure": {
+    "cinematic": "underworld.ladle_spill",
+    "energy": -7
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.pit.exit_exit",
+   "world": "underworld",
+   "scene": "underworld.pit",
+   "map": "underworld",
+   "anchor": {
+    "waypoint": "pit_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "underworld.exit"
+   },
+   "on_failure": {
+    "route": "underworld.exit",
+    "cinematic": "underworld.stagger_pit_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.pit.lava_bridge",
+   "world": "underworld",
+   "scene": "underworld.pit",
+   "map": "underworld",
+   "anchor": {
+    "thing": "lavaflow_p"
+   },
+   "kind": "feature",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "uw_bridge"
+    ],
+    "cinematic": "underworld.lava_bridge",
+    "energy": 8,
+    "music": "variation"
+   },
+   "on_failure": {
+    "flags_set": [
+     "uw_scorched"
+    ],
+    "cinematic": "underworld.lava_fall",
+    "energy": -12,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.pit.brazier",
+   "world": "underworld",
+   "scene": "underworld.pit",
+   "map": "underworld",
+   "anchor": {
+    "thing": "uw_br_p0"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "flicker",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "uw_lit"
+    ],
+    "energy": 4
+   },
+   "on_failure": {
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.exit.exit_hospital",
+   "world": "underworld",
+   "scene": "underworld.exit",
+   "map": "underworld",
+   "anchor": {
+    "waypoint": "throne_door_l"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital"
+   },
+   "on_failure": {
+    "route": "hospital",
+    "cinematic": "underworld.stagger_exit_left",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.exit.exit_ward",
+   "world": "underworld",
+   "scene": "underworld.exit",
+   "map": "underworld",
+   "anchor": {
+    "waypoint": "throne_door_r"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward"
+   },
+   "on_failure": {
+    "route": "ward",
+    "cinematic": "underworld.stagger_exit_right",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "underworld.exit.throne",
+   "world": "underworld",
+   "scene": "underworld.exit",
+   "map": "underworld",
+   "anchor": {
+    "thing": "uw_throne"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "uw_throned"
+    ],
+    "cinematic": "underworld.take_throne",
+    "energy": 10,
+    "music": "variation"
+   },
+   "on_failure": {
+    "route": "ward",
+    "flags_set": [
+     "uw_devoured"
+    ],
+    "cinematic": "underworld.devoured",
+    "energy": -10
+   },
+   "default": false,
+   "repeatable": true
+  }
+ ]
+}

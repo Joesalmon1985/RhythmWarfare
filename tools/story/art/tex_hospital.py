@@ -887,11 +887,29 @@ def th_plant() -> np.ndarray:
     c.put(m, col.astype(np.float32) / 255)
     return c.rgba8()
 
+def th_mic() -> np.ndarray:
+    """A bandstand microphone (128 px, 1.5 m): a brass-footed stand, the boom, a silver ball mic with a warm lamp-reflection, the lead looping across the boards."""
+    c = Canvas(128)
+    c.rect(62, 30, 66, 116, "#a8b2c4")
+    c.rect(62, 30, 63, 116, "#d8e0ec")
+    c.disc(64, 118, 11, "#7a5a28")
+    c.disc(64, 116, 11, "#c8963c")
+    c.rect(54, 116, 74, 119, "#7a5a28")
+    c.line([(64, 34), (74, 22)], "#a8b2c4", 3.0)
+    c.disc(78, 16, 9, "#6a7488")
+    c.disc(77, 15, 8, "#c4ccdc")
+    c.disc(74, 12, 3, "#ffffff", 0.9)
+    c.rect(70, 14, 86, 15, "#4a5266")
+    c.rect(70, 18, 86, 19, "#4a5266")
+    c.line([(64, 120), (40, 124), (24, 120)], "#1e2230", 2.0)
+    c.glow(78, 16, 22, "#ffd890", 0.35)
+    return c.rgba8()
+
 
 THINGS = {
     "thing_monitor": th_monitor, "thing_bed": th_bed, "thing_drip": th_drip, "thing_desk": th_desk, "thing_clock": th_clock, "thing_exit": th_exit,
     "thing_nightlight": th_nightlight, "thing_tree": th_tree, "thing_lamppost": th_lamppost, "thing_chair": th_chair, "thing_bench": th_bench,
-    "thing_door_lit": th_door_lit, "thing_plant": th_plant,
+    "thing_door_lit": th_door_lit, "thing_plant": th_plant, "thing_mic": th_mic,
     # the map's billboards name these two by their wall ids (tests check the cafeteria's machines and the day room's TV by them), so the props carry those
     # ids and the walls showing them swap to the *_wall tiles through the map's `animated` swap (StoryWorld swaps surfaces only, never billboards)
     "wall_vending": th_vending, "wall_tv": th_tv,
