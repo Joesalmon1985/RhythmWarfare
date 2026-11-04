@@ -28,6 +28,7 @@ var story_chapter := "night_one"  # the chapter story_play loads
 var story_interlude: Dictionary = {}  # {name, from, to, ending}: the cutscene story_interlude plays before the next chapter
 var story_result: Dictionary = {}  # the last finished story set (StoryRun.summary plus the saved record)
 var run_progress: RunProgress  # the continuous run: levels reached (user://story_run.json)
+var trial_direct := false  # the next run scene starts straight in the Bassment (trial_play.tscn sets it)
 var run_start_node := ""  # the level the next run starts on ("" = the first)
 var run_result: Dictionary = {}  # the last run: {node, phases, energy, reason}
 var debug := false

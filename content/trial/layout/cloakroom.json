@@ -1,0 +1,18 @@
+{
+ "map": "bassment_cloakroom",
+ "passages": {
+  "8": {
+   "waypoint": "coat_aisle",
+   "exits": [
+    "lamp_stand",
+    "door_out"
+   ]
+  },
+  "9": {
+   "waypoint": "lamp_close",
+   "exits": [
+    "door_out"
+   ]
+  }
+ }
+}

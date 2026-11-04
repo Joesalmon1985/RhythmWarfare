@@ -284,3 +284,34 @@ to switch packs. `beatshaper.py assign` does not cover the trial block, so after
   the world swap does not close the frame for same-world routes; frame numbers were taken on a loaded machine; the run is forgiving (accuracy 0.7 survives), tuning left to WP-C4.
 * **Merge notes.** `tests/test_run_engine.gd` and `test_run_progress.gd` were not touched here (the music branch's edits merge cleanly); `content/run/run.json` is only changed here (a `rail` per node);
   `run_data.gd` gained one validation line (the music branch edits the chart-sibling check nearby).
+### WP-B 2.5D (B2 to B6, the Bassment in the story engine, seamless entry and exit), 2026-11-04
+
+Branch cut from `feature/run-on-25d` (`77060085`); commits "Bassment 2.5D, B2 prep", "B2 zone maps", "B3 to B5 ...", and the B6 commit (tests, docs, shots). Written to be read on its own; `docs/TRIAL_OPENING.md` is the user-facing doc.
+
+* **B2 zone maps.** `content/story/maps/bassment_<zone>.json` for all 16 zones (2 to 4 sectors each, `"art": "bassment"`; `StoryMap.load_chapter` now reads an optional `art` key so maps can share one art folder), authored by four
+  Sonnet subagents from a brief (their generators were scratch scripts, only the JSON is in the repo), with `content/trial/layout/<zone>.json` (authoring form of the passages' places) applied by `tools/trial/apply_layout.py`.
+  Each passage now has `map` and `waypoint`, each choice `exit_wp` (deviation: the brief said `exit`, but `exit` is already the way out of the dungeon on death/victory choices). `TrialData` validates all of it
+  (`tools/trial/check_maps.gd` per zone). The art set `assets/story/bassment/` (86 textures: cellar-palette tiles, props, a dawn sky, creature figures) is `tools/story/art/tex_bassment.py`; the zones' look is in TRIAL_OPENING.md.
+* **B4 figures (deviation).** The ten creatures and the wizard are billboard things (idle, attack, struck frames, 128 px) built from the existing 64 px portraits, not wardrobe rigs and sheets (creatures need no skeleton); sized and lifted per creature
+  (`TrialScene.FIGURES`), animated by song time (bob and beat pulse, lunge with a red rim on a lost phrase, struck then sink and fade on a win).
+* **B3 the scene.** `src/trial/trial_scene.gd` (`TrialScene`) is hosted by `RunPlay`: one `StoryStage` per zone (built in a cue-free guard at the commit of a choice for the zone it leads to, or on demand; at most four kept), swapped on a block
+  downbeat through the passage frame; rails (`player_move` to the exit, then to the next waypoint; glance, queasy and stumble on a fail; look down and fade on death, flash and warm light on victory); the choices stay floating buttons (keys 1 to 4) and
+  are also lit in the room as numbered exits through `RunExitsView`. `trial_play.tscn` is now a launcher into the run scene (`Session.trial_direct`); `RW_TRIAL_*` env variables still work. The flat scene pictures are not shown any more (kept in `assets/trial/scenes`).
+* **B5 the seamless transitions.** Built as described in TRIAL_OPENING.md ("The seamless entry and exit"): `RunPlay.arm_trial` (guard 12.75 of the next block: walk to the Warehouse map's new `hatch` waypoint; the guard after: `trial_begin_now`, the pads
+  re-bound to the trial engine whose `origin` is the entry downbeat; the downbeat: the frame opens in the Service Hatch and `RunAudio` gets a `phase_start` for `dd_part1`), `trial_leave` and `RunEngine.resume` (new: fresh level and judge, energy and phase
+  count kept, ticks absolute). The dungeon takes a phase number so the audio bus pairs alternate. Limits: the wizard can only be chosen up to beat 44 of the Warehouse phase; after the entry the HUD is hidden and the run's journey is not applied.
+  Engine fix on the way: `TrialEngine.count_in_s` is relative (a version with the origin added gave a 16-second first window).
+* **Recording** (real time, headless dummy driver, `RW_TRIAL_ENTER=1 RW_TRIAL_LEAVE_AT=30`, `tools/trial/check_transition_audio.py`; the bot re-enters after every return, so there are four visits): one drums voice per stretch
+  (`warehouse` 0.0, `trial` 11.034, `warehouse` 33.103, `trial` 44.138, ...), every group entered on the 16-beat grid of its predecessor, no restart and no gap in the clock stream. Drums delay against each pack's loop (ms): Warehouse -130.6,
+  dungeon -127.6, Warehouse -109.9, dungeon -121.7, Warehouse -121.7, dungeon -118.8, Warehouse **-59.9**, dungeon -115.8: seven of eight within 21 ms, the eighth (the third return, voice started 41 ms late) 60 ms off, so the same-delay
+  criterion (12 ms) is **not met in the recording** (RESULT CHECK); the first group is not far from the later ones, so the offset is a start-up/lateness effect (the voices are compensated by how late they start), probably a main-thread
+  stall at the swap on a loaded machine. Needs a re-run on an idle machine and a look at what runs on the return frame.
+* **Tests and walks.** `tests/test_trial.gd` 38 tests (the scene tests ported to the run scene, plus map/waypoint/exit validation and reachability, zone swaps on a downbeat, the entry, the exit by the back key with energy kept); `bash tools/trial/walk_trial.sh`
+  prints `WALK OK` (Warehouse > wizard > hatch > 16 zones to Daylight at 330 s of song time > back in the Warehouse at phase 3, energy 82). Two run tests fail on this branch for reasons outside this work package (the music branch's per-node chart packs:
+  `test_run_lock` last assertion, `test_run_matrix` accuracy:0.5 glance check); they are listed with the full-suite result below.
+* **Frame times** (windowed 1280x720, vsync off, perfect autoplay, `tools/trial/frames.sh`): cellar 9.7 ms mean (p95 12.5, max 18), stacks 9.4 (11.0, 21), fungus 9.3 (11.1, 22), mirrors 9.5 (11.2, 22); none over 50 ms. A zone swap builds one stage
+  (about 0.1 to 0.3 s) in the guard; not measured separately.
+* **Screenshots**: `docs/shots/trial/contact_bassment.jpg` (16 zones), `zone_<zone>.png`, `entry_1..5`, `fight_1_eel`, `fight_2_eel_lunges`, `death_tableau`, `victory_tableau`.
+* **For the polish agent.** The text panel covers a third of the view (make it collapsible or fade it after a bar); the zone maps' cameras have no pitch (the hatch, shaft and pit read across, not down); dark zones (warren, echo, cellar floor); the cars and the
+  sandwich of the dawn zone; the flat scenes and `make_scenes.py` can be deleted; exit markers are plain rectangles (a lit door sprite would be better); the creatures are enlarged portraits; fight music (`dd_part2`) is still not switched to; the wizard figure
+  is not placed in the hatch zone.

@@ -1,0 +1,1 @@
+{"map": "bassment_mirrors", "passages": {"30": {"waypoint": "mez_entry", "exits": ["aisle_mid", "wave_panel"]}, "31": {"waypoint": "aisle_wave_view", "exits": ["aisle_mid"]}, "32": {"waypoint": "aisle_front", "exits": ["twin_stand", "mirror_right"]}, "33": {"waypoint": "death_floor", "exits": ["entry_door"]}, "34": {"waypoint": "gallery_end", "exits": ["pit_edge"]}}}

@@ -36,7 +36,7 @@ func _ready() -> void:
 	map = StoryMap.load_chapter(chapter)
 	if not map.errors.is_empty():
 		push_error("map %s: %s" % [chapter, "; ".join(PackedStringArray(map.errors))])
-	var assets := StoryAssets.load_art(chapter)
+	var assets := StoryAssets.load_art(map.art)
 	lowres = StoryLowRes.new()
 	lowres.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(lowres)

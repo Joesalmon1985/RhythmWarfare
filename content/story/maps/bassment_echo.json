@@ -1,0 +1,209 @@
+{
+ "art": "bassment",
+ "units_per_m": 1,
+ "eye_height": 1.6,
+ "start": "echo_gate",
+ "textures": {
+  "ceil_arch": "textures/ceil_arch.png",
+  "ceil_rock": "textures/ceil_rock.png",
+  "floor_flag": "textures/floor_flag.png",
+  "thing_door": "textures/thing_door.png",
+  "wall_iron": "textures/wall_iron.png",
+  "wall_rock": "textures/wall_rock.png"
+ },
+ "sectors": [
+  {
+   "id": "e_round",
+   "polygon": [
+    [
+     6.761,
+     1.812
+    ],
+    [
+     4.95,
+     4.95
+    ],
+    [
+     1.812,
+     6.761
+    ],
+    [
+     -1.812,
+     6.761
+    ],
+    [
+     -4.95,
+     4.95
+    ],
+    [
+     -6.761,
+     1.812
+    ],
+    [
+     -6.761,
+     -1.812
+    ],
+    [
+     -4.95,
+     -4.95
+    ],
+    [
+     -1.812,
+     -6.761
+    ],
+    [
+     1.812,
+     -6.761
+    ],
+    [
+     4.95,
+     -4.95
+    ],
+    [
+     6.761,
+     -1.812
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 5,
+   "floor_tex": "floor_flag",
+   "ceil_tex": "ceil_arch",
+   "wall_tex": "wall_iron",
+   "light": 0.5,
+   "tint": "#c8d8f8"
+  },
+  {
+   "id": "e_door",
+   "polygon": [
+    [
+     -1.81,
+     -6.761
+    ],
+    [
+     1.81,
+     -6.761
+    ],
+    [
+     1.81,
+     -8.6
+    ],
+    [
+     -1.81,
+     -8.6
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 3.4,
+   "floor_tex": "floor_flag",
+   "ceil_tex": "ceil_rock",
+   "wall_tex": "wall_rock",
+   "light": 0.4,
+   "tint": "#d8e4ff"
+  }
+ ],
+ "walls": [
+  {
+   "from": [
+    -1.81,
+    -6.761
+   ],
+   "to": [
+    1.81,
+    -6.761
+   ],
+   "sector": "e_round",
+   "portal": "e_door"
+  }
+ ],
+ "things": [
+  {
+   "id": "echo_door",
+   "kind": "billboard",
+   "sprite": "thing_door",
+   "at": [
+    0,
+    -8.2
+   ],
+   "y": 1.2,
+   "size": 2.4,
+   "anim": "none"
+  },
+  {
+   "id": "lt_echo_top",
+   "kind": "light",
+   "at": [
+    0,
+    0
+   ],
+   "y": 4.5,
+   "radius": 10,
+   "color": "#b0c4e8",
+   "strength": 1.6
+  },
+  {
+   "id": "lt_echo_door",
+   "kind": "light",
+   "at": [
+    0,
+    -7.6
+   ],
+   "y": 1.8,
+   "radius": 9,
+   "color": "#e8f0ff",
+   "strength": 1.5,
+   "cone": {
+    "yaw": 180,
+    "angle": 50
+   },
+   "sectors": [
+    "e_door",
+    "e_round"
+   ]
+  },
+  {
+   "id": "lt_echo_gate",
+   "kind": "light",
+   "at": [
+    0,
+    6.2
+   ],
+   "y": 2.0,
+   "radius": 5,
+   "color": "#8898b8",
+   "strength": 1.0
+  }
+ ],
+ "waypoints": [
+  {
+   "id": "echo_gate",
+   "at": [
+    0,
+    5.8
+   ],
+   "yaw": 0,
+   "sector": "e_round"
+  },
+  {
+   "id": "echo_still",
+   "at": [
+    -3.4,
+    0.5
+   ],
+   "yaw": -23,
+   "sector": "e_round"
+  },
+  {
+   "id": "echo_doorway",
+   "at": [
+    0,
+    -7.6
+   ],
+   "yaw": 0,
+   "sector": "e_door"
+  }
+ ],
+ "fog": {
+  "color": "#242c3c",
+  "density": 0.015
+ }
+}

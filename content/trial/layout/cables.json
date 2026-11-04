@@ -1,0 +1,31 @@
+{
+ "map": "bassment_cables",
+ "passages": {
+  "4": {
+   "waypoint": "cable_run",
+   "exits": [
+    "thick_cable",
+    "lost_door"
+   ]
+  },
+  "5": {
+   "waypoint": "junction",
+   "exits": [
+    "edge_past",
+    "dash"
+   ]
+  },
+  "6": {
+   "waypoint": "singed",
+   "exits": [
+    "past_junction"
+   ]
+  },
+  "7": {
+   "waypoint": "nest",
+   "exits": [
+    "gap"
+   ]
+  }
+ }
+}

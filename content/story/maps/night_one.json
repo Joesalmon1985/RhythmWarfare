@@ -232,6 +232,7 @@
   {"id": "stage_edge", "at": [0, -3.7], "yaw": 180, "sector": "steps"},
   {"id": "booth", "at": [0, -9.0], "yaw": 180, "sector": "booth"},
   {"id": "corridor", "at": [-12, 6.5], "yaw": 90, "sector": "corridor"},
+  {"id": "hatch", "at": [-17.9, 6.4], "yaw": 90, "sector": "corridor"},
   {"id": "cubicle", "at": [-16, 12.5], "yaw": 180, "sector": "cubicle_b"},
   {"id": "cubicle_a", "at": [-18, 12.5], "yaw": 180, "sector": "cubicle_a"},
   {"id": "door", "at": [0, 11.2], "yaw": 0, "sector": "entrance"},

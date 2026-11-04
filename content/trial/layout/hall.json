@@ -1,0 +1,38 @@
+{
+ "map": "bassment_hall",
+ "passages": {
+  "52": {
+   "waypoint": "hall_gate",
+   "exits": [
+    "hall_aisle_walk",
+    "hall_statue_foot",
+    "hall_seam_foot"
+   ]
+  },
+  "53": {
+   "waypoint": "hall_statue_view",
+   "exits": [
+    "hall_aisle_walk"
+   ]
+  },
+  "54": {
+   "waypoint": "hall_seam_view",
+   "exits": [
+    "hall_seam_foot"
+   ]
+  },
+  "55": {
+   "waypoint": "hall_gargoyle",
+   "exits": [
+    "hall_door_foot",
+    "hall_wall_creep"
+   ]
+  },
+  "56": {
+   "waypoint": "hall_gargoyle",
+   "exits": [
+    "hall_gargoyle_floor"
+   ]
+  }
+ }
+}

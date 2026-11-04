@@ -1,0 +1,31 @@
+{
+ "map": "bassment_kitchens",
+ "passages": {
+  "48": {
+   "waypoint": "kitchen_door",
+   "exits": [
+    "counter_front",
+    "freezer_hatch",
+    "recipe_stand"
+   ]
+  },
+  "49": {
+   "waypoint": "freezer_in",
+   "exits": [
+    "freezer_hatch"
+   ]
+  },
+  "50": {
+   "waypoint": "book_flames",
+   "exits": [
+    "counter_front"
+   ]
+  },
+  "51": {
+   "waypoint": "cold_store",
+   "exits": [
+    "cold_back_door"
+   ]
+  }
+ }
+}

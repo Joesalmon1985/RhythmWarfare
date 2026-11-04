@@ -1,0 +1,26 @@
+{
+ "map": "bassment_vaults",
+ "passages": {
+  "40": {
+   "waypoint": "vault_gate",
+   "exits": [
+    "bouncer_podium",
+    "velvet_gap",
+    "shelf_mouth"
+   ]
+  },
+  "41": {
+   "waypoint": "shelf_aisle",
+   "exits": [
+    "shelf_mouth"
+   ]
+  },
+  "42": {
+   "waypoint": "inner_vault",
+   "exits": [
+    "damp_door",
+    "hot_door"
+   ]
+  }
+ }
+}

@@ -62,6 +62,7 @@ static func load_chapter(chapter: String, check_files := true) -> StoryMap:
 	if typeof(parsed) != TYPE_DICTIONARY:
 		m.errors.append("%s is not a JSON object" % path)
 		return m
+	m.art = str(parsed.get("art", chapter))  # a map may borrow another art folder (the Bassment's zones share assets/story/bassment/)
 	m.build(parsed, check_files)
 	return m
 
