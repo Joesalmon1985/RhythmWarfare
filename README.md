@@ -1,15 +1,18 @@
 # Rhythm Warfare
 
 A rhythm game in landscape for phones: play four illuminated pads in time with a 174 BPM drum and bass track while your camera is carried through five small
-2.5D, Doom-style worlds (a warehouse club, an alien mothership, an underworld arena, a night hospital, a ward). The story is one continuous run: every level is a
-64-beat phase that starts with drums alone, brings the bass in as you play well, brings the drums back, then lets the bass take over while you choose which way to go
+2.5D, Doom-style worlds (a warehouse club, an alien mothership, an underworld arena, a night hospital, a ward). The story is one continuous run: every world is a
+series of rooms (scenes) and each scene is a 64-beat phase that starts with drums alone, brings the bass in as you play well, brings the drums back, then lets the bass take over while you choose which way to go
 next. Good play keeps the mix building, a missed block holds it for another go, and the crowd's energy is the meter that ends the run if it runs out. Standalone Godot 4.5.1
 project. Home has four buttons: Play (the run), Story chapters (the finished chapter-by-chapter campaign, with its own saves), Start from a reached level, Settings.
 Inside the run the camera rides a rail through each world: a pass at a block steps you one place up the room (floor, steps, stage, balcony, booth), a miss steps you down
-the bad rail (floor edge, corridor, cubicle), and the route window lights the room's exits beside the touch arrows.
+the bad rail (floor edge, corridor, cubicle), and the route window lights the room's exits beside the touch arrows. Each world is a small graph of rooms with paths to choose between
+(the Warehouse floor > bar or balcony > chill-out or booth > the door; 3 to 5 phases, 66 to 110 s, each room with its own variant of the world's music); a path inside a world is a plain
+door walk, a change of world keeps the passage frame.
 
 * Design, route map, rails, tunables and verification: `docs/CONTINUOUS_RUN.md`; the plan and its progress log: `docs/RUN_DUNGEON_MUSIC_PLAN.md`.
 * Adding music (Beat Shaper exports, one command per level): `docs/MUSIC_IMPORT.md`; what each level plays and what to export: `docs/MUSIC_HANDOFF.md`.
+* Authoring the worlds' scenes (rooms, paths, doorway waypoints, each scene's music): `tools/run/make_scenes.py`, described in `docs/CONTINUOUS_RUN.md`.
 * The Bassment, the wizard's dungeon under the club (a wizard in the Warehouse offers it; 63 passages in 16 zones, each a 2.5D map; entered and left seamlessly on the same pads, clock and music): `docs/TRIAL_OPENING.md`.
 * The 2.5D world, art and authoring pipeline: `docs/STORY_CAMPAIGN_HANDOVER.md`, `docs/STORY_25D_PLAN.md`, `docs/STORY_ART.md`.
 
@@ -23,8 +26,8 @@ godot --path . res://src/trial/trial_play.tscn                         # straigh
 bash tools/trial/walk_trial.sh                                          # scripted walk: Warehouse > hatch > the dungeon to the victory > back up into the Warehouse
 godot --headless --path . -s tools/trial/validate.gd                   # check the dungeon's data
 godot --headless --path . -s tests/run_tests.gd -- --filter run_      # the run's tests (engine, saves, home, rails, scene, the policy matrix)
-bash tools/run/walk_run.sh                                              # the run on the real scenes, scripted, all seven levels, isolated save (needs a display)
-bash tools/run/capture.sh                                               # screenshots per level and rail place into docs/shots/run (needs a display)
+bash tools/run/walk_run.sh                                              # the run on the real scenes, scripted, all 36 scenes of the seven worlds, isolated save (needs a display)
+bash tools/run/capture.sh                                               # screenshots per scene, rail place, door walk and passage into docs/shots/run (needs a display)
 bash tools/run/frames.sh                                                # frame times per world (needs a display, an idle machine)
 bash tools/story/walk_campaign.sh                                       # the chapter campaign end to end, scripted
 python tools/content/beatshaper.py validate                             # music data

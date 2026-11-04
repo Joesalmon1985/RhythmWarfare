@@ -315,3 +315,45 @@ Branch cut from `feature/run-on-25d` (`77060085`); commits "Bassment 2.5D, B2 pr
 * **For the polish agent.** The text panel covers a third of the view (make it collapsible or fade it after a bar); the zone maps' cameras have no pitch (the hatch, shaft and pit read across, not down); dark zones (warren, echo, cellar floor); the cars and the
   sandwich of the dawn zone; the flat scenes and `make_scenes.py` can be deleted; exit markers are plain rectangles (a lit door sprite would be better); the creatures are enlarged portraits; fight music (`dd_part2`) is still not switched to; the wizard figure
   is not placed in the hatch zone.
+
+### WP-A5 Longer levels: paths through each world (branch worktree-agent-a733bd2369bae8979, cut from `feature/run-on-25d` at 172ac7ba), 2026-11-04
+
+Five commits "Run, WP-A5 ...": data, music, engine and scene, tests and tooling, docs. Written to be read on its own; `docs/CONTINUOUS_RUN.md` is the user-facing doc.
+
+* **What it is.** Seven **worlds** (the five maps; the Hospital and the Ward again as the late worlds) are graphs of **scenes**, 36 in all; a scene is one 64-beat phase at a place in a world and the run's node. Entry scene
+  id = world id (so the save's reached ids and `RW_RUN_START` are unchanged), one exit scene per world, `loop: true` marks the late exits that go round again. `content/run/run.json` has `worlds` (id, title, `map`, depth, blurb) and
+  `nodes` = scenes with `place` {waypoint, rail}; the old node field `world` (the art world) is now `map`, `world` is the run world. `RunData` loads `place` flat, validates entry/exit/reachability/cycles/loops/doorways and
+  that every home, rail place, arrival and doorway exists in the map. `tools/run/make_scenes.py` authors everything (scene table, `PACK` table, 100 doorway and place waypoints added to the five maps, nudged clear of crowd homes).
+* **Scene table and durations** (a phase is 22.07 s):
+
+| World | Scenes on a path | Phases | Duration |
+| --- | --- | --- | --- |
+| Warehouse (depth 1) | floor > bar or balcony > chill-out or booth > door | 4 | 88 s |
+| The Mothership (2) | deck > gallery or reactor > bridge > airlock | 4 | 88 s |
+| The Underworld (2) | arena > court or furnace > pit > throne | 4 | 88 s |
+| The Hospital (3) | ward > corridor > day room or cafeteria > garden > bandstand | 5 | 110 s |
+| The Ward (3) | day room > art room or dormitory > corridor > courtyard > stage | 5 | 110 s |
+| The Hospital, late (4) | garden > cafeteria or quiet room > bandstand (loop) | 3 | 66 s |
+| The Ward, late (4) | courtyard > treatment room or dormitory > day room (loop) | 3 | 66 s |
+
+  Per-scene arrows, rooms and packs are the tables in `docs/CONTINUOUS_RUN.md`. Single-way scenes (chill-out, booth, gallery, reactor, bridge, day room, cafeteria, garden, ...) show one arrow: the window opens always,
+  `RunData` demands two routes only of exit scenes (deviation: the brief said two or three arrows; the graph has single-way merge scenes).
+* **Music.** One pack per scene in `music.json`: entry = base set, later scenes = variants (Warehouse floor/door `lv1_warehouse`, bar/booth `_v1`, balcony/chill-out `_v2`; Mothership deck/airlock base, gallery `_v1`,
+  reactor `_v3`, bridge `_v2`; Underworld `lv2_alien_spaceship_v2`/`_v3`, all **temporary** until Lv3 Hell has MIDI; Hospital base, `_v2`, `_v3`; Ward base, `_v1`, `_v3`; Hospital late `_v1`, `_v3`, `_v2`; Ward late `_v2`, `_v3`).
+  **No variant is an alternate render**: compared by tier hash every variant has different cues from its base (the three Warehouse packs share their first 12 beats of drums, so a pick between them is audible, not a different
+  chart at the start). So every sibling pair that charts different packs is under the route lock (16 scenes, listed as WARNINGs by `beatshaper.py validate`); the lock is unchanged from WP-A3 and holds between sibling scenes
+  exactly as between sibling worlds (`tests/test_run_lock.gd`, 4 tests). The hand-off sheet lists sets per scene (`music_handoff.py` learned scenes); `beatshaper.py validate` and its test learned scenes.
+* **Engine and scene.** `RunEngine` is unchanged but for event fields: `phase_start` carries `world`, `scene`, `from`; options carry `in_world` and `title` (the room for a path inside the world, the world's title for an exit);
+  `route_commit` carries `same_world`. `RunData.route_title`, `scenes_of`, `entry_of`. **How the in-world door walk differs from the world swap:** a path inside a world has no passage frame and builds no stage: at beat 61 the scene
+  latches the selected route and `RunJourney.leave_walk` starts one `player_move` (2 to 4 bars, `RunRail.leave`, in the cue-free guard) from the camera to the new scene's `rail.arrive`, through the map's portals; the new scene starts on
+  the downbeat as any phase (`RunRail.door_walk` only adds the role, or the move when the choice changed after the latch). A world change (including Hospital to Hospital, late on the shared map) keeps the frame and the cut to the
+  new world's doorway. `reached` in the save stays per world (`enter(world id)`); the loss screen and the pause menu's restart begin at the world's entry scene; the home cards are worlds; the HUD shows world and level, with the scene
+  (room) under it and a title card naming the room. The Bassment: the wizard waits in the Warehouse entry scene and also in `warehouse.chill`; `trial_leave` resumes at `warehouse` (new `RunJourney.skip_arrival`).
+* **Tests.** `test_run_progress` (7), `test_run_lock` (4), `test_run_rail` (door walks for every in-world route on the real StoryPlayer, authored rails), `test_run_rail_scene` (5: climb, bad rail, a path inside a world with no
+  frame, the world swap with the frame, activities), `test_run_scene`, `test_run_engine` (new scene event test), `test_run_matrix` (20 phases, worlds and scenes), `test_trial` (one expectation); numbers in `docs/CONTINUOUS_RUN.md`.
+* **Deviations and temporary things.** The exit scene of a world is an extra scene (Warehouse: the door; Mothership: the airlock; Underworld: the throne; Hospital: the bandstand; Ward: the stage). The Underworld's music is
+  temporary; the Warehouse floor's route dirs are right = bar, up = balcony (left would sit under the wizard's button). The fourth rail step of a phase is cut by the door walk 3.5 beats later exactly as the world swap cuts it.
+  Long cross-map walks (for example the Underworld furnace to the pit, about 50 m) run in 2 to 4 bars. `docs/shots` for the Ward worlds were not taken; the chapter walk (`walk_campaign.sh`) prints missing-asset errors for the
+  Ward chapter because the base branch dropped its source SVGs (fixed on `feature/run-on-25d`): its chains, endings and unlocks passed, the run itself fails on those ERROR lines only; the asset determinism check was skipped.
+* **For the merge.** The save file is unchanged in shape. `content/run/run.json` and `content/story/music.json` are regenerated by `tools/run/make_scenes.py` (do not hand-merge them: edit the tables and rerun). The five
+  map files gained 100 waypoints each time the script runs for the first time (appended lines in `waypoints`). Frame numbers are in `docs/CONTINUOUS_RUN.md`.
