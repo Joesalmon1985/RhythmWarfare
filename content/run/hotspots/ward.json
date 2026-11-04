@@ -1,0 +1,731 @@
+{
+ "world": "ward",
+ "hotspots": [
+  {
+   "id": "ward.exit_art",
+   "world": "ward",
+   "scene": "ward",
+   "map": "mental_hospital",
+   "anchor": {
+    "waypoint": "day_door_a"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward.art"
+   },
+   "on_failure": {
+    "route": "ward.art",
+    "cinematic": "ward.stagger_entry_right",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "ward.exit_dorm",
+   "world": "ward",
+   "scene": "ward",
+   "map": "mental_hospital",
+   "anchor": {
+    "waypoint": "day_door_b"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward.dorm"
+   },
+   "on_failure": {
+    "route": "ward.dorm",
+    "cinematic": "ward.stagger_entry_up",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "ward.orderly",
+   "world": "ward",
+   "scene": "ward",
+   "map": "mental_hospital",
+   "anchor": {
+    "actor": "e04"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wd_orderly_ok"
+    ],
+    "cinematic": "ward.orderly_nod",
+    "energy": 4
+   },
+   "on_failure": {
+    "flags_set": [
+     "wd_treated"
+    ],
+    "cinematic": "ward.to_treatment",
+    "energy": -9
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "ward.window",
+   "world": "ward",
+   "scene": "ward",
+   "map": "mental_hospital",
+   "anchor": {
+    "thing": "wlight_d"
+   },
+   "kind": "feature",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wd_window"
+    ],
+    "cinematic": "ward.window_gaze",
+    "energy": 5,
+    "music": "variation"
+   },
+   "on_failure": {
+    "energy": -5,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "ward.art.exit_corridor",
+   "world": "ward",
+   "scene": "ward.art",
+   "map": "mental_hospital",
+   "anchor": {
+    "waypoint": "art_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward.corridor"
+   },
+   "on_failure": {
+    "route": "ward.corridor",
+    "cinematic": "ward.stagger_art_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "ward.art.painter",
+   "world": "ward",
+   "scene": "ward.art",
+   "map": "mental_hospital",
+   "anchor": {
+    "actor": "x10"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wd_painted"
+    ],
+    "cinematic": "ward.paint_look",
+    "energy": 6
+   },
+   "on_failure": {
+    "flags_set": [
+     "wd_paint_spill"
+    ],
+    "cinematic": "ward.paint_spill",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "ward.art.easel",
+   "world": "ward",
+   "scene": "ward.art",
+   "map": "mental_hospital",
+   "anchor": {
+    "thing": "easel_a3"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wd_own_painting"
+    ],
+    "energy": 5
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "ward.dorm.exit_corridor",
+   "world": "ward",
+   "scene": "ward.dorm",
+   "map": "mental_hospital",
+   "anchor": {
+    "waypoint": "dorm_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward.corridor"
+   },
+   "on_failure": {
+    "route": "ward.corridor",
+    "cinematic": "ward.stagger_dorm_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "ward.dorm.sleeper",
+   "world": "ward",
+   "scene": "ward.dorm",
+   "map": "mental_hospital",
+   "anchor": {
+    "actor": "x14"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wd_lullaby"
+    ],
+    "cinematic": "ward.lullaby",
+    "energy": 8
+   },
+   "on_failure": {
+    "cinematic": "ward.woken",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "ward.dorm.cabinet",
+   "world": "ward",
+   "scene": "ward.dorm",
+   "map": "mental_hospital",
+   "anchor": {
+    "thing": "cab_m0"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wd_dorm_key"
+    ],
+    "cinematic": "ward.search",
+    "energy": 3
+   },
+   "on_failure": {
+    "energy": -7,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "ward.corridor.exit_courtyard",
+   "world": "ward",
+   "scene": "ward.corridor",
+   "map": "mental_hospital",
+   "anchor": {
+    "waypoint": "corr_art_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward.courtyard"
+   },
+   "on_failure": {
+    "route": "ward.courtyard",
+    "cinematic": "ward.stagger_corridor_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "ward.corridor.phone",
+   "world": "ward",
+   "scene": "ward.corridor",
+   "map": "mental_hospital",
+   "anchor": {
+    "thing": "phone_o"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "flicker",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wd_phone_call"
+    ],
+    "energy": 5
+   },
+   "on_failure": {
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "ward.corridor.king",
+   "world": "ward",
+   "scene": "ward.corridor",
+   "map": "mental_hospital",
+   "anchor": {
+    "actor": "x06"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wd_king"
+    ],
+    "cinematic": "ward.king",
+    "energy": 6
+   },
+   "on_failure": {
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "ward.corridor.mural_door",
+   "world": "ward",
+   "scene": "ward.corridor",
+   "map": "mental_hospital",
+   "anchor": {
+    "thing": "mural_door"
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [
+     "wd_painted"
+    ],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward.courtyard",
+    "flags_set": [
+     "wd_mural_open"
+    ],
+    "cinematic": "ward.mural_walk",
+    "energy": 8
+   },
+   "on_failure": {
+    "cinematic": "ward.mural_bump",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "ward.courtyard.exit_exit",
+   "world": "ward",
+   "scene": "ward.courtyard",
+   "map": "mental_hospital",
+   "anchor": {
+    "waypoint": "court_stage_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward.exit"
+   },
+   "on_failure": {
+    "route": "ward.exit",
+    "cinematic": "ward.stagger_courtyard_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "ward.courtyard.chef",
+   "world": "ward",
+   "scene": "ward.courtyard",
+   "map": "mental_hospital",
+   "anchor": {
+    "actor": "x01"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wd_plate"
+    ],
+    "cinematic": "ward.plate",
+    "energy": 6
+   },
+   "on_failure": {
+    "cinematic": "ward.plate_spill",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "ward.courtyard.lights",
+   "world": "ward",
+   "scene": "ward.courtyard",
+   "map": "mental_hospital",
+   "anchor": {
+    "thing": "lights_y"
+   },
+   "kind": "feature",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "flicker",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wd_lights"
+    ],
+    "energy": 5,
+    "music": "variation"
+   },
+   "on_failure": {
+    "energy": -5,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "ward.exit.exit_hospital_late",
+   "world": "ward",
+   "scene": "ward.exit",
+   "map": "mental_hospital",
+   "anchor": {
+    "waypoint": "stage_door_l"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital_late"
+   },
+   "on_failure": {
+    "route": "hospital_late",
+    "cinematic": "ward.stagger_exit_left",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "ward.exit.exit_ward_late",
+   "world": "ward",
+   "scene": "ward.exit",
+   "map": "mental_hospital",
+   "anchor": {
+    "waypoint": "stage_door_r"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward_late"
+   },
+   "on_failure": {
+    "route": "ward_late",
+    "cinematic": "ward.stagger_exit_right",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "ward.exit.talent_lamp",
+   "world": "ward",
+   "scene": "ward.exit",
+   "map": "mental_hospital",
+   "anchor": {
+    "thing": "cage_y"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wd_star"
+    ],
+    "cinematic": "ward.star_turn",
+    "energy": 10,
+    "music": "variation"
+   },
+   "on_failure": {
+    "flags_set": [
+     "wd_lights_out"
+    ],
+    "cinematic": "ward.lights_out",
+    "energy": -10,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  }
+ ]
+}

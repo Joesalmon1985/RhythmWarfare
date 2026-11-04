@@ -47,7 +47,7 @@ MENTAL_HOSPITAL = {
     "wall_office": 2.7, "wall_dwindow": 1.8, "wall_slit": 0.9,
     "thing_chair_b": 1.0, "thing_chair_c": 1.0, "thing_easel_b": 1.0, "thing_jars": 1.0, "thing_phone": 1.0, "thing_radiator": 1.0,
     "thing_fan": 1.0, "thing_clock": 1.0, "thing_cagelamp": 1.0, "thing_tube": 1.0, "thing_cabinet": 1.0, "thing_trolley": 1.0,
-    "thing_sink": 1.0, "thing_wheelchair": 1.0,
+    "thing_sink": 1.0, "thing_wheelchair": 1.0, "thing_mural": 1.0,
 }
 
 UNDERWORLD = {
