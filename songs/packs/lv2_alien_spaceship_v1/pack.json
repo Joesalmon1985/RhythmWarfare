@@ -1,0 +1,513 @@
+{
+ "schema": 1,
+ "id": "lv2_alien_spaceship_v1",
+ "label": "Lv2 Alien Spaceship (1)",
+ "bpm": 174,
+ "phrase_beats": 16,
+ "loop_frames": 264828,
+ "profile": "beat_shaper_174x1",
+ "stems": {
+  "drums": "loops/drums.wav",
+  "bass": "loops/bass.wav",
+  "other": "loops/other.wav"
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 285286,
+   "loop_frames": 264828,
+   "tail_frames": 20458,
+   "padded_frames": 0,
+   "tail_audible_s": 0.305,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -9.81,
+   "rms_db": -28.49,
+   "source_seconds": 5.9435,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Drums (1).wav"
+  },
+  "bass": {
+   "frames_in": 266126,
+   "loop_frames": 264828,
+   "tail_frames": 1298,
+   "padded_frames": 0,
+   "tail_audible_s": 0.027,
+   "laps_folded": 1,
+   "gain_db": 3.0,
+   "peak_db": -9.54,
+   "rms_db": -22.77,
+   "source_seconds": 5.5443,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Bass (1).wav"
+  },
+  "other": {
+   "frames_in": 302960,
+   "loop_frames": 264828,
+   "tail_frames": 38132,
+   "padded_frames": 0,
+   "tail_audible_s": 0.794,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -14.76,
+   "rms_db": -28.2,
+   "source_seconds": 6.3117,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Synth (1).wav"
+  }
+ },
+ "kick_notes": [
+  39
+ ],
+ "snare_notes": [
+  43
+ ],
+ "tiers": {
+  "1": {
+   "drums": [
+    [
+     960,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     2880,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4800,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     6720,
+     0,
+     1,
+     "kick"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3840,
+     3,
+     "bass"
+    ],
+    [
+     4800,
+     1440,
+     4,
+     "bass"
+    ],
+    [
+     7680,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     9600,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     11520,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     13440,
+     480,
+     2,
+     "bass"
+    ]
+   ]
+  },
+  "2": {
+   "drums": [
+    [
+     240,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     960,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     2880,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     3600,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     4800,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     6720,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     7440,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3840,
+     3,
+     "bass"
+    ],
+    [
+     4800,
+     1440,
+     4,
+     "bass"
+    ],
+    [
+     7680,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     9600,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     11520,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     13440,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     14880,
+     480,
+     1,
+     "bass"
+    ]
+   ]
+  },
+  "3": {
+   "drums": [
+    [
+     480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     960,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     1440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2400,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2880,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     3360,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     4320,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     4800,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     5280,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6240,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6720,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     7200,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3840,
+     3,
+     "bass"
+    ],
+    [
+     4800,
+     1440,
+     4,
+     "bass"
+    ],
+    [
+     7680,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     8640,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     9600,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     10560,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     11520,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     12480,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     13440,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     14400,
+     480,
+     2,
+     "bass"
+    ]
+   ]
+  },
+  "4": {
+   "drums": [
+    [
+     480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     960,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     1440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2400,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2880,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     3360,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     4320,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     4800,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     5280,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6240,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6720,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     7200,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3840,
+     3,
+     "bass"
+    ],
+    [
+     4800,
+     1440,
+     4,
+     "bass"
+    ],
+    [
+     7680,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     8640,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     9600,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     10560,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     11520,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     12480,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     13440,
+     480,
+     2,
+     "bass"
+    ],
+    [
+     14400,
+     480,
+     2,
+     "bass"
+    ]
+   ]
+  }
+ },
+ "source": {
+  "project": "Lv2 Alien Spaceship",
+  "variant": 1,
+  "files": {
+   "Bass": {
+    "mid": "Beat Shaper - Lv2 Alien Spaceship-Bass (1).mid",
+    "wav": "Beat Shaper - Lv2 Alien Spaceship-Bass (1).wav"
+   },
+   "Drums": {
+    "mid": "Beat Shaper - Lv2 Alien Spaceship-Drums (1).mid",
+    "wav": "Beat Shaper - Lv2 Alien Spaceship-Drums (1).wav"
+   },
+   "Synth": {
+    "mid": "Beat Shaper - Lv2 Alien Spaceship-Synth (1).mid",
+    "wav": "Beat Shaper - Lv2 Alien Spaceship-Synth (1).wav"
+   }
+  }
+ }
+}

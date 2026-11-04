@@ -1,0 +1,724 @@
+{
+ "schema": 1,
+ "id": "lv2_alien_spaceship_v3",
+ "label": "Lv2 Alien Spaceship (3)",
+ "bpm": 174,
+ "phrase_beats": 16,
+ "loop_frames": 264828,
+ "profile": "beat_shaper_174x1",
+ "stems": {
+  "drums": "loops/drums.wav",
+  "bass": "loops/bass.wav",
+  "other": "loops/other.wav"
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 293558,
+   "loop_frames": 264828,
+   "tail_frames": 28730,
+   "padded_frames": 0,
+   "tail_audible_s": 0.479,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -8.42,
+   "rms_db": -27.27,
+   "source_seconds": 6.1158,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Drums (3).wav"
+  },
+  "bass": {
+   "frames_in": 313953,
+   "loop_frames": 264828,
+   "tail_frames": 49125,
+   "padded_frames": 0,
+   "tail_audible_s": 1.001,
+   "laps_folded": 1,
+   "gain_db": 3.0,
+   "peak_db": -6.29,
+   "rms_db": -19.17,
+   "source_seconds": 6.5407,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Bass (3).wav"
+  },
+  "other": {
+   "frames_in": 303101,
+   "loop_frames": 264828,
+   "tail_frames": 38273,
+   "padded_frames": 0,
+   "tail_audible_s": 0.797,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -12.73,
+   "rms_db": -27.16,
+   "source_seconds": 6.3146,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Synth (3).wav"
+  }
+ },
+ "kick_notes": [
+  36
+ ],
+ "snare_notes": [
+  38,
+  40
+ ],
+ "tiers": {
+  "1": {
+   "drums": [
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     1920,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     5760,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     7680,
+     0,
+     3,
+     "bass"
+    ],
+    [
+     9600,
+     0,
+     3,
+     "bass"
+    ],
+    [
+     11520,
+     0,
+     2,
+     "bass"
+    ],
+    [
+     13440,
+     0,
+     2,
+     "bass"
+    ]
+   ]
+  },
+  "2": {
+   "drums": [
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     1920,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     5760,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     7680,
+     0,
+     3,
+     "bass"
+    ],
+    [
+     9600,
+     0,
+     3,
+     "bass"
+    ],
+    [
+     11520,
+     0,
+     2,
+     "bass"
+    ],
+    [
+     13440,
+     0,
+     2,
+     "bass"
+    ],
+    [
+     14880,
+     0,
+     2,
+     "bass"
+    ]
+   ]
+  },
+  "3": {
+   "drums": [
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9120,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11040,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     12960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14880,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     1920,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     2880,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     5760,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     7680,
+     0,
+     3,
+     "bass"
+    ],
+    [
+     8640,
+     0,
+     3,
+     "bass"
+    ],
+    [
+     9600,
+     0,
+     3,
+     "bass"
+    ],
+    [
+     10560,
+     0,
+     3,
+     "bass"
+    ],
+    [
+     11520,
+     0,
+     2,
+     "bass"
+    ],
+    [
+     12480,
+     0,
+     2,
+     "bass"
+    ],
+    [
+     13440,
+     0,
+     2,
+     "bass"
+    ],
+    [
+     14400,
+     0,
+     2,
+     "bass"
+    ]
+   ]
+  },
+  "4": {
+   "drums": [
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9120,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11040,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     12960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14880,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     720,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     1920,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     2880,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     4560,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     5760,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     6480,
+     0,
+     1,
+     "bass"
+    ],
+    [
+     7680,
+     0,
+     3,
+     "bass"
+    ],
+    [
+     8640,
+     0,
+     3,
+     "bass"
+    ],
+    [
+     9600,
+     0,
+     3,
+     "bass"
+    ],
+    [
+     10560,
+     0,
+     3,
+     "bass"
+    ],
+    [
+     11520,
+     0,
+     2,
+     "bass"
+    ],
+    [
+     12480,
+     0,
+     2,
+     "bass"
+    ],
+    [
+     13440,
+     0,
+     2,
+     "bass"
+    ],
+    [
+     14400,
+     0,
+     2,
+     "bass"
+    ],
+    [
+     15120,
+     0,
+     2,
+     "bass"
+    ]
+   ]
+  }
+ },
+ "source": {
+  "project": "Lv2 Alien Spaceship",
+  "variant": 3,
+  "files": {
+   "Bass": {
+    "mid": "Beat Shaper - Lv2 Alien Spaceship-Bass (3).mid",
+    "wav": "Beat Shaper - Lv2 Alien Spaceship-Bass (3).wav"
+   },
+   "Drums": {
+    "mid": "Beat Shaper - Lv2 Alien Spaceship-Drums (3).mid",
+    "wav": "Beat Shaper - Lv2 Alien Spaceship-Drums (3).wav"
+   },
+   "Synth": {
+    "mid": "Beat Shaper - Lv2 Alien Spaceship-Synth (3).mid",
+    "wav": "Beat Shaper - Lv2 Alien Spaceship-Synth (3).wav"
+   }
+  }
+ }
+}

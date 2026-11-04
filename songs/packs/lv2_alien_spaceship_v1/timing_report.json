@@ -1,0 +1,259 @@
+{
+ "timing": {
+  "header_bpm": 120.0,
+  "profile": "beat_shaper_174x1",
+  "drum_fit": {
+   "hits": 16,
+   "matched": 16,
+   "fitted_bpm": 173.968,
+   "fitted_offset_ms": -2.32,
+   "max_abs_ms": 26.52,
+   "mean_ms": -2.06,
+   "median_ms": 4.66,
+   "within_limit": 0.75,
+   "worst_hits": [
+    {
+     "beat": 4.25,
+     "error_ms": -26.5
+    },
+    {
+     "beat": 4.5,
+     "error_ms": -24.7
+    },
+    {
+     "beat": 3.75,
+     "error_ms": -21.1
+    }
+   ]
+  },
+  "bass": [
+   {
+    "beat": 0.0,
+    "pitch": 48,
+    "error_ms": 0.5,
+    "how": "first sound in the file"
+   },
+   {
+    "beat": 5.0,
+    "pitch": 53,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.0,
+    "pitch": 32,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 9.0,
+    "pitch": 32,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 10.0,
+    "pitch": 32,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 11.0,
+    "pitch": 32,
+    "error_ms": -69.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 11.5,
+    "pitch": 32,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 12.0,
+    "pitch": 32,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 13.0,
+    "pitch": 32,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 14.0,
+    "pitch": 32,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 15.0,
+    "pitch": 32,
+    "error_ms": -69.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 15.5,
+    "pitch": 30,
+    "error_ms": 3.0,
+    "how": "largest spectral change near the note start"
+   }
+  ],
+  "tempo_verified": "loose",
+  "bass_timing": {
+   "mode": "midi_fallback",
+   "why": "the bass detector could not place the notes within 12 ms (median 80.0 ms over 10 notes); charted from the MIDI timing instead",
+   "median_error_ms": 80.0,
+   "notes_measured": 10,
+   "notes_out_of_line": 8
+  }
+ },
+ "import_report": {
+  "set": "Lv2 Alien Spaceship (1)",
+  "drum_notes": {
+   "counts": {
+    "39": 4,
+    "42": 64,
+    "43": 12,
+    "46": 18
+   },
+   "mode": "auto",
+   "kick": [
+    39
+   ],
+   "snare": [
+    43
+   ],
+   "why": "none of 36/38/40 in the drum MIDI (notes {39: 4, 42: 64, 43: 12, 46: 18}); hats 42/44/46 and cymbals skipped; most common low note 39 = kick, most common mid note 43 = snare"
+  },
+  "decisions": [
+   "drum notes chosen automatically: none of 36/38/40 in the drum MIDI (notes {39: 4, 42: 64, 43: 12, 46: 18}); hats 42/44/46 and cymbals skipped; most common low note 39 = kick, most common mid note 43 = snare",
+   "tempo verified loosely: 75% of the cue hits are within 12 ms, outliers [{\"beat\": 4.25, \"error_ms\": -26.5}, {\"beat\": 4.5, \"error_ms\": -24.7}, {\"beat\": 3.75, \"error_ms\": -21.1}] (max 26.52 ms)",
+   "WARNING bass: the bass detector could not place the notes within 12 ms (median 80.0 ms over 10 notes); charted from the MIDI timing instead: [{\"beat\": 5.0, \"pitch\": 53, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 8.0, \"pitch\": 32, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 9.0, \"pitch\": 32, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 10.0, \"pitch\": 32, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 11.0, \"pitch\": 32, \"error_ms\": -69.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 13.0, \"pitch\": 32, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}]"
+  ],
+  "rejected": [],
+  "tempo": {
+   "profile": "beat_shaper_174x1",
+   "verified": "loose",
+   "tried": [
+    {
+     "profile": "beat_shaper_87x2",
+     "fit": {
+      "hits": 16,
+      "matched": 16,
+      "fitted_bpm": 86.766,
+      "fitted_offset_ms": -6.31,
+      "max_abs_ms": 21.66,
+      "mean_ms": 1.13,
+      "median_ms": 5.31,
+      "within_limit": 0.75,
+      "worst_hits": [
+       {
+        "beat": 1.0,
+        "error_ms": -21.7
+       },
+       {
+        "beat": 0.25,
+        "error_ms": -19.4
+       },
+       {
+        "beat": 4.25,
+        "error_ms": -17.0
+       }
+      ]
+     },
+     "verified": null
+    },
+    {
+     "profile": "beat_shaper_174x1",
+     "fit": {
+      "hits": 16,
+      "matched": 16,
+      "fitted_bpm": 173.968,
+      "fitted_offset_ms": -2.32,
+      "max_abs_ms": 26.52,
+      "mean_ms": -2.06,
+      "median_ms": 4.66,
+      "within_limit": 0.75,
+      "worst_hits": [
+       {
+        "beat": 4.25,
+        "error_ms": -26.5
+       },
+       {
+        "beat": 4.5,
+        "error_ms": -24.7
+       },
+       {
+        "beat": 3.75,
+        "error_ms": -21.1
+       }
+      ]
+     },
+     "verified": "loose"
+    }
+   ]
+  }
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 285286,
+   "loop_frames": 264828,
+   "tail_frames": 20458,
+   "padded_frames": 0,
+   "tail_audible_s": 0.305,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -9.81,
+   "rms_db": -28.49,
+   "source_seconds": 5.9435,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Drums (1).wav"
+  },
+  "bass": {
+   "frames_in": 266126,
+   "loop_frames": 264828,
+   "tail_frames": 1298,
+   "padded_frames": 0,
+   "tail_audible_s": 0.027,
+   "laps_folded": 1,
+   "gain_db": 3.0,
+   "peak_db": -9.54,
+   "rms_db": -22.77,
+   "source_seconds": 5.5443,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Bass (1).wav"
+  },
+  "other": {
+   "frames_in": 302960,
+   "loop_frames": 264828,
+   "tail_frames": 38132,
+   "padded_frames": 0,
+   "tail_audible_s": 0.794,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -14.76,
+   "rms_db": -28.2,
+   "source_seconds": 6.3117,
+   "source_file": "Beat Shaper - Lv2 Alien Spaceship-Synth (1).wav"
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 4,
+   "bass": 6
+  },
+  "2": {
+   "drums": 7,
+   "bass": 7
+  },
+  "3": {
+   "drums": 12,
+   "bass": 10
+  },
+  "4": {
+   "drums": 12,
+   "bass": 10
+  }
+ },
+ "chart_problems": []
+}

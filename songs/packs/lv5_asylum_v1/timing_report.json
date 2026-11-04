@@ -1,0 +1,289 @@
+{
+ "timing": {
+  "header_bpm": 120.0,
+  "profile": "beat_shaper_87x2",
+  "drum_fit": {
+   "hits": 22,
+   "matched": 22,
+   "fitted_bpm": 87.001,
+   "fitted_offset_ms": 5.59,
+   "max_abs_ms": 7.93,
+   "mean_ms": 5.54,
+   "median_ms": 5.38,
+   "within_limit": 1.0,
+   "worst_hits": [
+    {
+     "beat": 8.5,
+     "error_ms": 7.9
+    },
+    {
+     "beat": 6.5,
+     "error_ms": 7.2
+    },
+    {
+     "beat": 5.5,
+     "error_ms": 6.9
+    }
+   ]
+  },
+  "bass": [
+   {
+    "beat": 0.5,
+    "pitch": 36,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 4.0,
+    "pitch": 36,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 4.5,
+    "pitch": 36,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.0,
+    "pitch": 36,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.5,
+    "pitch": 53,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 9.25,
+    "pitch": 41,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 10.0,
+    "pitch": 41,
+    "error_ms": -69.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 10.25,
+    "pitch": 49,
+    "error_ms": 1.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 11.0,
+    "pitch": 41,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 11.75,
+    "pitch": 48,
+    "error_ms": -69.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 12.0,
+    "pitch": 48,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 12.25,
+    "pitch": 48,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 12.5,
+    "pitch": 41,
+    "error_ms": -3.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 14.0,
+    "pitch": 41,
+    "error_ms": -69.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 14.25,
+    "pitch": 49,
+    "error_ms": 3.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 15.0,
+    "pitch": 41,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 16.25,
+    "pitch": 48,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   }
+  ],
+  "tempo_verified": "strict",
+  "bass_timing": {
+   "mode": "midi_fallback",
+   "why": "the bass detector could not place the notes within 12 ms (median 80.0 ms over 15 notes); charted from the MIDI timing instead",
+   "median_error_ms": 80.0,
+   "notes_measured": 15,
+   "notes_out_of_line": 12
+  }
+ },
+ "import_report": {
+  "set": "Lv5 Asylum (1)",
+  "drum_notes": {
+   "counts": {
+    "36": 16,
+    "40": 6,
+    "43": 8
+   },
+   "mode": "standard",
+   "kick": [
+    36
+   ],
+   "snare": [
+    38,
+    40
+   ],
+   "why": "the standard notes: kick 36, snare 38/40"
+  },
+  "decisions": [
+   "the MIDI ends at quarter 16.5: taken as the 16-quarter (32 game beat) phrase",
+   "cues past the end of the 32-beat phrase were left out: drums [32.5], bass [32.5]",
+   "WARNING bass: the bass detector could not place the notes within 12 ms (median 80.0 ms over 15 notes); charted from the MIDI timing instead: [{\"beat\": 0.5, \"pitch\": 36, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 4.0, \"pitch\": 36, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 4.5, \"pitch\": 36, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 8.0, \"pitch\": 36, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 8.5, \"pitch\": 53, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 9.25, \"pitch\": 41, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}]"
+  ],
+  "rejected": [],
+  "tempo": {
+   "profile": "beat_shaper_87x2",
+   "verified": "strict",
+   "tried": [
+    {
+     "profile": "beat_shaper_87x2",
+     "fit": {
+      "hits": 22,
+      "matched": 22,
+      "fitted_bpm": 87.001,
+      "fitted_offset_ms": 5.59,
+      "max_abs_ms": 7.93,
+      "mean_ms": 5.54,
+      "median_ms": 5.38,
+      "within_limit": 1.0,
+      "worst_hits": [
+       {
+        "beat": 8.5,
+        "error_ms": 7.9
+       },
+       {
+        "beat": 6.5,
+        "error_ms": 7.2
+       },
+       {
+        "beat": 5.5,
+        "error_ms": 6.9
+       }
+      ]
+     },
+     "verified": "strict"
+    },
+    {
+     "profile": "beat_shaper_174x1",
+     "fit": {
+      "hits": 22,
+      "matched": 21,
+      "fitted_bpm": 174.375,
+      "fitted_offset_ms": 8.43,
+      "max_abs_ms": 37.93,
+      "mean_ms": 1.9,
+      "median_ms": 4.83,
+      "within_limit": 0.286,
+      "worst_hits": [
+       {
+        "beat": 14.25,
+        "error_ms": -37.8
+       },
+       {
+        "beat": 8.5,
+        "error_ms": -37.0
+       },
+       {
+        "beat": 10.5,
+        "error_ms": -36.7
+       }
+      ]
+     },
+     "verified": null
+    }
+   ]
+  }
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 591027,
+   "loop_frames": 529655,
+   "tail_frames": 61372,
+   "padded_frames": 0,
+   "tail_audible_s": 1.171,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -6.9,
+   "rms_db": -22.86,
+   "source_seconds": 12.3131,
+   "source_file": "Beat Shaper - Lv5 Asylum-Drums (1).wav"
+  },
+  "bass": {
+   "frames_in": 547714,
+   "loop_frames": 529655,
+   "tail_frames": 18059,
+   "padded_frames": 0,
+   "tail_audible_s": 0.376,
+   "laps_folded": 1,
+   "gain_db": 3.0,
+   "peak_db": -7.13,
+   "rms_db": -25.13,
+   "source_seconds": 11.4107,
+   "source_file": "Beat Shaper - Lv5 Asylum-Bass (1).wav"
+  },
+  "other": {
+   "frames_in": 590502,
+   "loop_frames": 529655,
+   "tail_frames": 60847,
+   "padded_frames": 0,
+   "tail_audible_s": 1.268,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -16.26,
+   "rms_db": -30.08,
+   "source_seconds": 12.3021,
+   "source_file": "Beat Shaper - Lv5 Asylum-Synth (1).wav"
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 16,
+   "bass": 8
+  },
+  "2": {
+   "drums": 16,
+   "bass": 9
+  },
+  "3": {
+   "drums": 21,
+   "bass": 12
+  },
+  "4": {
+   "drums": 21,
+   "bass": 12
+  }
+ },
+ "chart_problems": []
+}

@@ -1,0 +1,658 @@
+{
+ "schema": 1,
+ "id": "lv4_hospital",
+ "label": "lv4 Hospital",
+ "bpm": 174,
+ "phrase_beats": 16,
+ "loop_frames": 264828,
+ "profile": "beat_shaper_174x1",
+ "stems": {
+  "drums": "loops/drums.wav",
+  "bass": "loops/bass.wav",
+  "other": "loops/other.wav"
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 287539,
+   "loop_frames": 264828,
+   "tail_frames": 22711,
+   "padded_frames": 0,
+   "tail_audible_s": 0.436,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -8.62,
+   "rms_db": -21.99,
+   "source_seconds": 5.9904,
+   "source_file": "Beat Shaper - lv4 Hospital-Drums.wav"
+  },
+  "bass": {
+   "frames_in": 287917,
+   "loop_frames": 264828,
+   "tail_frames": 23089,
+   "padded_frames": 0,
+   "tail_audible_s": 0.462,
+   "laps_folded": 1,
+   "gain_db": 3.0,
+   "peak_db": -9.28,
+   "rms_db": -18.26,
+   "source_seconds": 5.9983,
+   "source_file": "Beat Shaper - lv4 Hospital-Bass.wav"
+  },
+  "other": {
+   "frames_in": 330536,
+   "loop_frames": 264828,
+   "tail_frames": 65708,
+   "padded_frames": 0,
+   "tail_audible_s": 1.369,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -17.06,
+   "rms_db": -27.9,
+   "source_seconds": 6.8862,
+   "source_file": "Beat Shaper - lv4 Hospital-Synth.wav"
+  }
+ },
+ "kick_notes": [
+  36
+ ],
+ "snare_notes": [
+  38,
+  40
+ ],
+ "tiers": {
+  "1": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1920,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5760,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3600,
+     2,
+     "bass"
+    ],
+    [
+     3840,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     7680,
+     3600,
+     4,
+     "bass"
+    ],
+    [
+     11520,
+     3840,
+     3,
+     "bass"
+    ]
+   ]
+  },
+  "2": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1920,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5760,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3600,
+     2,
+     "bass"
+    ],
+    [
+     3840,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     7680,
+     3600,
+     4,
+     "bass"
+    ],
+    [
+     11520,
+     3840,
+     3,
+     "bass"
+    ]
+   ]
+  },
+  "3": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1920,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2400,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5760,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6240,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7200,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10080,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13920,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14880,
+     0,
+     1,
+     "kick"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3600,
+     2,
+     "bass"
+    ],
+    [
+     3840,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     7680,
+     3600,
+     4,
+     "bass"
+    ],
+    [
+     11520,
+     3840,
+     3,
+     "bass"
+    ]
+   ]
+  },
+  "4": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1920,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2400,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5760,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6240,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7200,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10080,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13920,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14880,
+     0,
+     1,
+     "kick"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3600,
+     2,
+     "bass"
+    ],
+    [
+     3840,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     7680,
+     3600,
+     4,
+     "bass"
+    ],
+    [
+     11520,
+     3840,
+     3,
+     "bass"
+    ]
+   ]
+  }
+ },
+ "source": {
+  "project": "lv4 Hospital",
+  "variant": 0,
+  "files": {
+   "Bass": {
+    "mid": "Beat Shaper - lv4 Hospital-Bass.mid",
+    "wav": "Beat Shaper - lv4 Hospital-Bass.wav"
+   },
+   "Drums": {
+    "mid": "Beat Shaper - lv4 Hospital-Drums.mid",
+    "wav": "Beat Shaper - lv4 Hospital-Drums.wav"
+   },
+   "Synth": {
+    "mid": "Beat Shaper - lv4 Hospital-Synth.mid",
+    "wav": "Beat Shaper - lv4 Hospital-Synth.wav"
+   }
+  }
+ }
+}

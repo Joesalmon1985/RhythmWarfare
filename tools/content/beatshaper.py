@@ -382,7 +382,7 @@ def drum_note_choice(notes: list[dict], opts: dict) -> tuple[set, set, dict]:
     if any(p in kick | snare for p in counts):
         present_k, present_s = sorted(kick & set(counts)), sorted(snare & set(counts))
         why = "the standard notes: kick 36, snare 38/40" + ("" if present_k else "; no kick note (36) in this set, the chart has snare cues only") + ("" if present_s else "; no snare note (38/40) in this set, the chart has kick cues only")
-        return set(present_k), set(present_s), {"mode": "standard", "counts": counts, "why": why}
+        return set(kick), set(snare), {"mode": "standard", "counts": counts, "why": why}
     cand = {p: c for p, c in counts.items() if p not in (42, 44, 46) and p < 49}
     if not cand:
         cand = dict(counts)
@@ -497,6 +497,10 @@ def analyse(src: Source, project: str, variant: int, opts: dict) -> dict:
     report["bass_timing"] = {"mode": mode, "why": why, "median_error_ms": round(med, 1), "notes_measured": len(meas), "notes_out_of_line": len(bad)}
     rules = load_rules()
     cues = build_cues(dn, midi["Bass"]["notes"], scale, kick, snare, rules, phrase_beats)
+    over = {fam: [c for c in lst if c[0] >= phrase_beats * PPQ] for fam, lst in cues.items()}
+    if any(over.values()):  # notes that start after the loop's end (a MIDI that runs past its 16 quarters) are not part of the phrase
+        cues = {fam: [c for c in lst if c[0] < phrase_beats * PPQ] for fam, lst in cues.items()}
+        report["decisions"].append("cues past the end of the %d-beat phrase were left out: %s" % (phrase_beats, ", ".join(f"{fam} {[c[0] / PPQ for c in v]}" for fam, v in over.items() if v)))
     tiers, problems = tier_cues(cues, rules, phrase_beats * PPQ)
     for w in warnings:
         report["decisions"].append("WARNING " + w)
