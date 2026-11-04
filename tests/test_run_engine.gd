@@ -42,15 +42,12 @@ func _kinds(log: Array, kind: String) -> Array:
 	return log.filter(func(x: Dictionary) -> bool: return x["kind"] == kind)
 
 
-func test_run_data_validates_and_siblings_share_a_chart() -> void:
+func test_run_data_validates_and_siblings_play_the_same_tier() -> void:
 	var d := _data()
 	assert_true(d.nodes.size() >= 7)
-	var charts := {}
 	for id in d.nodes:
-		var dp := d.tier_of(int(d.nodes[id]["depth"]))
-		if charts.has(dp):
-			assert_eq(charts[dp], d.nodes[id]["chart"], "depth %d shares one chart" % dp)
-		charts[dp] = d.nodes[id]["chart"]
+		var tier := str(d.tier_of(int(d.nodes[id]["depth"])))
+		assert_true((d.packs[d.nodes[id]["chart"]]["tiers"] as Dictionary).has(tier), "%s has its own chart at tier %s (siblings may chart different packs, always the same tier)" % [id, tier])
 
 
 func test_perfect_phase_walks_the_four_stages() -> void:
@@ -110,20 +107,25 @@ func test_changing_direction_until_the_phase_ends() -> void:
 	assert_true(log.size() >= 0)
 
 
-func test_siblings_chart_identical_required_cues() -> void:
-	var cues := {}
+func test_siblings_chart_their_own_required_cues_at_the_same_tier() -> void:
 	for dest in ["mothership", "underworld"]:
 		var e := RunEngine.new(_data())
 		e.begin("warehouse")
-		_play(e, [true, true, true, true, true, true, true, true], 66.0 * e.beat_s, {55.0 * e.beat_s: dest})
+		_play(e, [true, true, true, true, true, true, true, true], 80.0 * e.beat_s, {55.0 * e.beat_s: dest})
 		assert_eq(e.node_id, dest)
 		var rows: Array = []
 		for n in e.level.notes:
-			if int(n["phase"]) == 2 and int(n["block"]) <= 1:
-				rows.append([n["tick"], n["pad"], n["duration_ticks"], n["family"]])
-		cues[dest] = rows
-	assert_true((cues["mothership"] as Array).size() > 10)
-	assert_eq(cues["mothership"], cues["underworld"], "the same progression point has the same required cue events whichever way you went")
+			if int(n["phase"]) == 2 and int(n["block"]) == 1:  # block 0 of a phase is charted before the route is final (see the progress log)
+				rows.append([int(n["tick"]) - 64 * 960, n["pad"], n["duration_ticks"], n["family"]])
+		var ref := RunEngine.new(_data())
+		ref.begin(dest)  # the same node entered fresh: depth tier of its own chart
+		_play(ref, [true, true], 20.0 * ref.beat_s)
+		var want: Array = []
+		for n in ref.level.notes:
+			if int(n["phase"]) == 1 and int(n["block"]) == 1:
+				want.append([n["tick"], n["pad"], n["duration_ticks"], n["family"]])
+		assert_true(rows.size() > 3)
+		assert_eq(rows, want, "%s charts its own pack's block-1 cues" % dest)
 
 
 func test_difficulty_rises_with_depth() -> void:

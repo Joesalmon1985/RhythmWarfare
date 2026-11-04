@@ -72,7 +72,7 @@ func test_the_clock_loop_is_exactly_64_beats() -> void:
 func test_run_data_rejects_broken_routes_and_sibling_charts() -> void:
 	var good := RunData.load_default()
 	assert_eq(good.errors, [])
-	assert_eq(good.warnings, [], "every level is reachable")
+	assert_eq(good.warnings.filter(func(w: String) -> bool: return w.contains("cannot be reached")), [], "every level is reachable")
 	var bad_run: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RunData.RUN_PATH))
 	(bad_run["nodes"][1]["next"] as Array).remove_at(1)  # mothership keeps one route
 	var rp := "user://test_run_bad_run.json"
@@ -90,7 +90,7 @@ func test_run_data_rejects_broken_routes_and_sibling_charts() -> void:
 	f.store_string(JSON.stringify(bad_music))
 	f.close()
 	var d2 := RunData.load_files(RunData.RUN_PATH, mp, RunData.PACKS_DIR)
-	assert_true(d2.errors.any(func(e: String) -> bool: return e.contains("siblings must share one chart")), str(d2.errors))
+	assert_true(d2.warnings.any(func(e: String) -> bool: return e.contains("siblings no longer share one chart")), str(d2.warnings))  # siblings may differ: a warning
 	DirAccess.remove_absolute(rp)
 	DirAccess.remove_absolute(mp)
 
