@@ -323,3 +323,140 @@ func _sign_wc() -> Image:
 	im.load_svg_from_string(svg, 1.0)
 	im.convert(Image.FORMAT_RGBA8)
 	return im
+
+
+
+# ---- The Ward (mental_hospital) -------------------------------------------------------------------------------------
+## Its backdrops are 1536 x 752 and drawn at design position (-128, -32): `_wc` crops in design coordinates.
+
+func _wc(im: Image, r: Rect2i) -> Image:
+	return im.get_region(Rect2i(r.position.x + 128, r.position.y + 32, r.size.x, r.size.y))
+
+
+func _blank(size: int = 128) -> Image:
+	return Image.create(size, size, false, Image.FORMAT_RGBA8)
+
+
+func _mental_hospital() -> Dictionary:
+	return {
+		# the day room (backdrop.svg): mint wall, purple dado, the blackboard, a door, the checkered floor, ceiling tiles, a window
+		"wall_mint": func(s, c): return _fit(_wc(_bd(s, c), Rect2i(250, 70, 60, 110))),
+		"wall_dado": func(s, c): return _rows(_wc(_bd(s, c), Rect2i(330, 196, 640, 56))),
+		"wall_led": func(s, c): return _fit(_wc(_bd(s, c), Rect2i(490, 70, 300, 84))),
+		"wall_door": func(s, c): return _fit(_wc(_bd(s, c), Rect2i(330, 138, 72, 124))),
+		"wall_speaker": func(s, c): return _fit(_svg(s, c, "speaker_l.svg", 1.0)),
+		"wall_window": func(s, c): return _fit(_wc(_bd(s, c), Rect2i(1130, 20, 110, 200))),
+		"floor_check": func(s, c): return _fit(_wc(_bd(s, c), Rect2i(100, 300, 360, 110))),
+		"ceil_tile": func(s, c): return _rows(_wc(_bd(s, c), Rect2i(200, 0, 920, 40))),
+		"floor_dais": func(s, c): return _rows(_svg(s, c, "riser.svg", 1.0)),
+		# the corridor: painted doors on both sides, the wooden floor, ceiling tubes, the lit double doors at the end
+		"wall_cdoor": func(s, c): return _fit(_wc(_view(s, c, "corridor_backdrop"), Rect2i(100, 60, 240, 380))),
+		"wall_cdoor2": func(s, c): return _fit(_wc(_view(s, c, "corridor_backdrop"), Rect2i(880, 120, 360, 280))),
+		"floor_wood": func(s, c): return _fit(_wc(_view(s, c, "corridor_backdrop"), Rect2i(240, 410, 800, 140))),
+		"ceil_pale": func(s, c): return _rows(_wc(_view(s, c, "corridor_backdrop"), Rect2i(0, 0, 1280, 40))),
+		"wall_end": func(s, c): return _fit(_wc(_view(s, c, "corridor_backdrop"), Rect2i(550, 120, 160, 150))),
+		# the art room: the pinned paintings, the big window, the floor
+		"wall_art": func(s, c): return _fit(_wc(_view(s, c, "art_backdrop"), Rect2i(1010, 90, 140, 130))),
+		"wall_awindow": func(s, c): return _fit(_wc(_view(s, c, "art_backdrop"), Rect2i(410, 70, 460, 150))),
+		"floor_art": func(s, c): return _fit(_wc(_view(s, c, "art_backdrop"), Rect2i(260, 260, 760, 200))),
+		# the courtyard: garden-wall brick, paving, the arched door
+		"wall_brick": func(s, c): return _fit(_wc(_view(s, c, "courtyard_backdrop"), Rect2i(340, 130, 580, 110))),
+		"wall_archdoor": func(s, c): return _fit(_wc(_view(s, c, "courtyard_backdrop"), Rect2i(370, 100, 80, 110))),
+		"floor_paving": func(s, c): return _fit(_wc(_view(s, c, "courtyard_backdrop"), Rect2i(200, 300, 920, 170))),
+		# the treatment room and the quiet room have no art of their own: cold green tile, dark linoleum, padded panels
+		"tx_tile": func(s, c): return _tx_tile(Color("#7fa08c"), Color("#6a8c78"), Color("#2c4438")),
+		"tx_floor": func(s, c): return _tx_floor(),
+		"pad_tile": func(s, c): return _pad_tile(),
+		# a night sky through bars, with a moon
+		"sky_moon": func(s, c): return _bars(_sky(Color(0.015, 0.04, 0.05), Color(0.07, 0.14, 0.13), 90, 23, [[190, 16, 9, Color(0.92, 0.96, 0.85)]], Color(0.8, 0.95, 0.9))),
+		# billboards drawn from rectangles: a surgical lamp, a steel table, an iron bed, an easel
+		"thing_lamp": func(s, c): return _th_lamp(),
+		"thing_table": func(s, c): return _th_table(),
+		"thing_bed": func(s, c): return _th_bed(),
+		"thing_easel": func(s, c): return _th_easel(),
+	}
+
+
+func _tx_tile(a: Color, b: Color, grout: Color) -> Image:
+	var im := _filled(64, a)
+	for j in 4:
+		for i in 4:
+			_rect(im, Rect2i(i * 16 + 1, j * 16 + 1, 14, 14), a if (i + j) % 2 == 0 else b)
+			_rect(im, Rect2i(i * 16 + 1, j * 16 + 1, 14, 1), a.lightened(0.25))
+	for k in 4:
+		_rect(im, Rect2i(0, k * 16, 64, 1), grout)
+		_rect(im, Rect2i(k * 16, 0, 1, 64), grout)
+	return im
+
+
+func _tx_floor() -> Image:
+	var im := _filled(64, Color("#3d5246"))
+	for j in 4:
+		for i in 4:
+			if (i + j) % 2 == 1:
+				_rect(im, Rect2i(i * 16, j * 16, 16, 16), Color("#34473c"))
+	_frame(im, Rect2i(0, 0, 64, 64), Color("#26362d"))
+	return im
+
+
+func _pad_tile() -> Image:
+	var im := _filled(64, Color("#b4c0b4"))
+	for j in 2:
+		for i in 2:
+			_rect(im, Rect2i(i * 32 + 2, j * 32 + 2, 28, 28), Color("#c4d0c2"))
+			_rect(im, Rect2i(i * 32 + 15, j * 32 + 15, 2, 2), Color("#6c7a6c"))
+	for k in 2:
+		_rect(im, Rect2i(0, k * 32, 64, 2), Color("#7a8a7a"))
+		_rect(im, Rect2i(k * 32, 0, 2, 64), Color("#7a8a7a"))
+	return im
+
+
+## dark bars over a sky strip (a barred window: the sky of the courtyard)
+func _bars(im: Image) -> Image:
+	for x in range(0, 256, 20):
+		im.fill_rect(Rect2i(x, 0, 3, 64), Color(0.01, 0.02, 0.02))
+	return im
+
+
+func _th_lamp() -> Image:
+	var im := _blank()
+	im.fill_rect(Rect2i(62, 0, 5, 44), Color("#8a9690"))
+	for y in range(40, 100):
+		var w := int(46.0 * sqrt(maxf(1.0 - pow((y - 70.0) / 30.0, 2.0), 0.0)))
+		im.fill_rect(Rect2i(64 - w, y, w * 2, 1), Color("#d8e4dc") if y < 90 else Color("#fff6c8"))
+	im.fill_rect(Rect2i(40, 92, 48, 6), Color("#fff6c8"))
+	return im
+
+
+func _th_table() -> Image:
+	var im := _blank()
+	im.fill_rect(Rect2i(8, 56, 112, 12), Color("#c6d2cc"))
+	im.fill_rect(Rect2i(8, 66, 112, 3), Color("#7a8a84"))
+	im.fill_rect(Rect2i(18, 69, 8, 56), Color("#8a9690"))
+	im.fill_rect(Rect2i(102, 69, 8, 56), Color("#8a9690"))
+	im.fill_rect(Rect2i(14, 52, 100, 4), Color("#a8b8b0"))
+	return im
+
+
+func _th_bed() -> Image:
+	var im := _blank()
+	im.fill_rect(Rect2i(6, 34, 5, 70), Color("#4a5048"))
+	im.fill_rect(Rect2i(117, 48, 5, 56), Color("#4a5048"))
+	im.fill_rect(Rect2i(6, 70, 116, 6), Color("#4a5048"))
+	im.fill_rect(Rect2i(11, 56, 106, 16), Color("#c8d4c4"))
+	im.fill_rect(Rect2i(11, 50, 24, 10), Color("#e8efe4"))
+	im.fill_rect(Rect2i(14, 76, 4, 28), Color("#4a5048"))
+	im.fill_rect(Rect2i(108, 76, 4, 28), Color("#4a5048"))
+	return im
+
+
+func _th_easel() -> Image:
+	var im := _blank()
+	im.fill_rect(Rect2i(36, 20, 56, 46), Color("#f0e8cc"))
+	im.fill_rect(Rect2i(44, 30, 14, 14), Color("#e0604a"))
+	im.fill_rect(Rect2i(62, 40, 18, 18), Color("#4a90d0"))
+	im.fill_rect(Rect2i(32, 66, 64, 3), Color("#8a5a30"))
+	im.fill_rect(Rect2i(46, 66, 4, 60), Color("#8a5a30"))
+	im.fill_rect(Rect2i(78, 66, 4, 60), Color("#8a5a30"))
+	im.fill_rect(Rect2i(62, 62, 4, 64), Color("#6a4220"))
+	return im

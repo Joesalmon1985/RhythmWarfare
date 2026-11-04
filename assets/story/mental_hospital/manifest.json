@@ -3841,5 +3841,231 @@
    ]
   },
   "note": "cell_door is a friendly ward door (pastel frame, porthole, paper stars): swing it open (cell_door_leaf scaled in x, or cell_door_open) to reveal the day room"
+ },
+ "textures": {
+  "ceil_pale": {
+   "file": "textures/ceil_pale.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "ceil_tile": {
+   "file": "textures/ceil_tile.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_art": {
+   "file": "textures/floor_art.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_check": {
+   "file": "textures/floor_check.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_dais": {
+   "file": "textures/floor_dais.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_paving": {
+   "file": "textures/floor_paving.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_wood": {
+   "file": "textures/floor_wood.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "pad_tile": {
+   "file": "textures/pad_tile.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "sky_moon": {
+   "file": "textures/sky_moon.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_bed": {
+   "file": "textures/thing_bed.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_easel": {
+   "file": "textures/thing_easel.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_lamp": {
+   "file": "textures/thing_lamp.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_table": {
+   "file": "textures/thing_table.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "tx_floor": {
+   "file": "textures/tx_floor.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "tx_tile": {
+   "file": "textures/tx_tile.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "wall_archdoor": {
+   "file": "textures/wall_archdoor.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_art": {
+   "file": "textures/wall_art.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_awindow": {
+   "file": "textures/wall_awindow.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 4.0
+  },
+  "wall_brick": {
+   "file": "textures/wall_brick.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "wall_cdoor": {
+   "file": "textures/wall_cdoor.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_cdoor2": {
+   "file": "textures/wall_cdoor2.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_dado": {
+   "file": "textures/wall_dado.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_door": {
+   "file": "textures/wall_door.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_end": {
+   "file": "textures/wall_end.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_led": {
+   "file": "textures/wall_led.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_mint": {
+   "file": "textures/wall_mint.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_speaker": {
+   "file": "textures/wall_speaker.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_window": {
+   "file": "textures/wall_window.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  }
  }
 }
