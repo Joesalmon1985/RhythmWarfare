@@ -82,10 +82,14 @@ func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
 		c.held = str(a.get("prop", "")) if str(a.get("prop", "")) in StoryCharacter.PROPS and str(a.get("activity", "")) != "" else ""
 		if people != null and people.ok() and not people.entry(str(a["id"])).is_empty():
 			c.attach_sheet(people, people.entry(str(a["id"])))
-		actors[str(a["id"])] = {"node": c, "data": a, "seed": _id_seed(str(a["id"])), "lock": str(a.get("activity", "")), "partner": "", "act": "", "home": Vector2.ZERO, "pos": Vector2.ZERO, "present": present, "move": {}, "dir": {},
+		var fl := flair_of(str(a["id"])) if str(a.get("activity", "")) == "" and str(a.get("role", "")) != "hero" else ""
+		if fl != "" and not (c.uses_sheet() and (c.sheet.get("states", {}) as Dictionary).has(fl)):
+			fl = ""  # only a person whose sheet carries the move performs it (the live rig cannot crouch)
+		actors[str(a["id"])] = {"node": c, "data": a, "seed": _id_seed(str(a["id"])), "flair": fl, "lock": str(a.get("activity", "")), "partner": "", "act": "", "home": Vector2.ZERO, "pos": Vector2.ZERO, "present": present, "move": {}, "dir": {},
 			"thresh": float(a.get("thresh", 0.0)), "alpha": 1.0 if present else 0.0, "stay": false, "vanish": {}}
 		n += 1
 	_order = actors.keys()
+	_flair_ids = _order.filter(func(i: Variant) -> bool: return str(actors[i]["flair"]) != "")
 
 
 ## The baked sheet's inputs for one person: the facing (from where they walk or look, relative to the eye), the shader's row, depth fog and brightness, and the light
@@ -209,6 +213,49 @@ static func _id_seed(id: String) -> int:  # a stable small number per actor id (
 	return h
 
 
+## Break-dance flair (docs/DANCE_POLISH.md): about one dancer in eleven carries one move (StoryCharacter.FLAIR_MOVES), by the same hash the sheet baker uses
+## (tools/story/art/people_sheets.flair_of), so exactly those people have the move's frames.
+static func flair_of(id: String) -> String:
+	var sd := _id_seed(id)
+	if (sd * 31 + 7) % 10007 % 11 != 0:
+		return ""
+	return StoryCharacter.FLAIR_MOVES[(sd * 70 + 3) % 997 % 4]
+
+
+const FLAIR_CAP := 3  # never more than this many flair bursts at once in one room
+const FLAIR_E := 50.0  # the dancer's own energy (room energy + threshold) a burst needs: a dancing room, not a quiet one
+var _flair_ids: Array = []
+var _flair_now: Dictionary = {}  # id -> move: the bursts scheduled for the current bar (after the cap)
+
+
+## Whether a flair dancer's burst covers bar `bar`: in every four-bar phrase a dancer takes one slot (a move of FLAIR_BARS bars that starts on a bar of the
+## phrase, a multiple of its length, and ends inside it) on six phrases in ten. A pure function of the person and the bar, so the bursts are the same on every run and land on the bar.
+static func flair_scheduled(sd: int, move: String, bar: int) -> bool:
+	if bar < 2:
+		return false
+	var phrase := bar / 4
+	var bars := int(StoryCharacter.FLAIR_BARS.get(move, 1))
+	if (sd * 13 + phrase * 7919) % 101 >= 60:
+		return false
+	var slot := ((sd + phrase * 3) % (4 / bars)) * bars  # a two-bar move starts on bar 1 or 3 of the phrase, so its cycle lines up with the burst
+	var k := bar % 4 - slot
+	return k >= 0 and k < bars
+
+
+## The bursts of the bar at song position `beats`: the scheduled flair dancers who are in the room, in actor order, at most FLAIR_CAP of them.
+func flair_bursts(beats: float) -> Dictionary:
+	var bar := int(floorf(beats / 4.0))
+	var out := {}
+	for id in _flair_ids:
+		var a: Dictionary = actors[id]
+		if not a["present"] or not flair_scheduled(int(a["seed"]), str(a["flair"]), bar):
+			continue
+		out[id] = str(a["flair"])
+		if out.size() >= FLAIR_CAP:
+			break
+	return out
+
+
 func _xv(a: Dictionary) -> int:  # a stable per-dancer number for the little variations in the mood
 	return int(640.0 + (a["home"] as Vector2).x * 65.0)
 
@@ -270,6 +317,7 @@ func update(t: float, p_energy: float) -> void:
 	var fade := dt * (FADE_PER_S * (0.8 if reduced else 1.0))
 	if _pairs_dirty:
 		_rebuild_pairs()
+	_flair_now = flair_bursts(t * bpm / 60.0) if not _flair_ids.is_empty() else {}
 	for id in _order:
 		var a: Dictionary = actors[id]
 		var c: StoryCharacter = a["node"]
@@ -326,6 +374,9 @@ func update(t: float, p_energy: float) -> void:
 			c.sync = bool(dir.get("sync", false))
 		elif not dir.is_empty() and t >= float(dir["until"]):
 			a["dir"] = {}
+		if not walking and (st == "dance" or st == "cheer") and not c.sync and _ending == "" and _flair_now.has(id) \
+				and energy + float(a["thresh"]) >= FLAIR_E and _dancing_here(a):
+			st = str(_flair_now[id])  # a burst of the dancer's flair move, then back to their dance
 		if st != c.state:
 			c.state = st
 		if not shown:

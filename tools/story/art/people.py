@@ -397,7 +397,12 @@ class Body:
             self.sit_dy = (-0.27 * S) - hip_y
         elif state in FLOORED:
             self.sit_dy = (-0.06 * S) - hip_y
-        dy = self.sit_dy
+        # a crouch (the flair moves): the hips sink by this share of the height and the knees bend (two-bone legs, the feet stay where the straight leg
+        # would put them, minus a lift). Zero for every other state, so their frames are unchanged.
+        self.crouch = 0.0 if state in SEATED + FLOORED else max(0.0, float(pose.get("crouch", 0.0)))
+        self.cdy = self.crouch * S
+        self.lift = {"l": max(0.0, float(pose.get("lift_l", 0.0))) * S, "r": max(0.0, float(pose.get("lift_r", 0.0))) * S}
+        dy = self.sit_dy + self.cdy
         self.hip = (0.0, hip_y + dy)
         lean = float(pose.get("lean", 0.0))
         self.lean = lean
@@ -450,6 +455,25 @@ class Body:
             elif state in FLOORED:
                 kn = (hx * 0.6, self.hip[1] - 0.2 * S)
                 an = (hx * 0.9 + (-sg * 0.02 * S), -0.04 * S)
+            elif self.cdy > 0.0 or self.lift[side] > 0.0:
+                d = rot((0.0, 1.0), sg * lg)
+                d = (d[0] * self.k * self.mir, d[1])
+                an = add((hp[0], hip_y), d, ln)  # where the straight leg of the standing figure puts the foot
+                an = (an[0], min(an[1] - self.lift[side], -0.045 * S))
+                vx, vy = an[0] - hp[0], an[1] - hp[1]
+                D = math.hypot(vx, vy)
+                half = ln * 0.5
+                if D >= ln * 0.999:  # out of reach: the leg is straight towards the foot
+                    an = (hp[0] + vx / D * ln * 0.999, hp[1] + vy / D * ln * 0.999)
+                    kn = ((hp[0] + an[0]) * 0.5, (hp[1] + an[1]) * 0.5)
+                else:
+                    bend = math.sqrt(max(half * half - (D * 0.5) ** 2, 0.0))
+                    px, py = -vy / max(D, 1e-6), vx / max(D, 1e-6)
+                    want = 1.0 if fc == 1 else (1.0 if hx > 0 else -1.0)  # the knee goes forward in the three-quarter view, outwards seen from the front
+                    if px * want < 0:
+                        px, py = -px, -py
+                    out = 1.0 if fc == 1 else 0.55  # seen from the front the thigh comes towards the eye: its bend is foreshortened
+                    kn = ((hp[0] + an[0]) * 0.5 + px * bend * out, (hp[1] + an[1]) * 0.5 + py * bend * out)
             else:
                 d = rot((0.0, 1.0), sg * lg)
                 d = (d[0] * self.k * self.mir, d[1])
@@ -698,7 +722,7 @@ class Painter:
             return rows, mf, z
         jobs = []
         y_w = b.t_waist + 0.02 * S
-        y_kn = (knee_y if knee_y is not None else -0.3 * S) - b.hip[1]
+        y_kn = (knee_y if knee_y is not None else min(-0.3 * S + b.cdy, -0.06 * S)) - b.hip[1]  # a crouch keeps the hem's length (above the floor)
         if top in ("dress", "gown"):
             jobs.append(flare(y_w, y_kn, b.waist_hw * 1.05, hipw * 1.45, "top", 1.2, "top3" if top == "dress" else None,
                               pattern="dots" if top == "gown" else None))
@@ -708,7 +732,7 @@ class Painter:
         elif bot == "tutu":
             jobs.append(flare(-0.04 * S, 0.06 * S, hipw * 1.2, hipw * 2.3, "bottom", 1.25, "bottom2", ragged=True))
         if self.outer and self.outer.get("long") and self.outer.get("kind") != "cape":
-            y_hem = (knee_y - b.hip[1] if knee_y is not None else -0.26 * S - b.hip[1])
+            y_hem = (knee_y - b.hip[1] if knee_y is not None else min(-0.26 * S + b.cdy, -0.06 * S) - b.hip[1])
             gap = 0.035 * S
             rows = [(-0.03 * S, hipw * 1.08, hipw * 1.08), (y_hem, hipw * 1.42, hipw * 1.42)]
 
@@ -899,7 +923,7 @@ class Painter:
     def cape(self):
         b, S, cv = self.b, self.S, self.cv
         ts = b.t_shoulder
-        y1 = (-0.18 * S - b.hip[1]) if b.state not in SEATED else (-0.02 * S - b.hip[1])
+        y1 = (min(-0.18 * S + b.cdy, -0.04 * S) - b.hip[1]) if b.state not in SEATED else (-0.02 * S - b.hip[1])
         rows = [(ts - 0.01 * S, b.sw * 0.9, b.sw * 0.9), (ts + 0.1 * S, b.sw * 1.15, b.sw * 1.15), (y1, b.sw * 1.55, b.sw * 1.55)]
         z = 1.4 if b.fc == 2 else -1.8
 
@@ -907,7 +931,7 @@ class Painter:
             m = np.full(u.shape, M["outer"], np.uint8)
             m = np.where(ly > y1 - _step(S, 0.02), M["outer2"], m)
             return m, -0.2 * (np.sin(lx * 0.5 + 0.7) > 0.5) - 0.1
-        profile(cv, b.hip, b.lean * 0.6, rows, z, mat)
+        profile(cv, b.hip, b.lean * 0.6 * max(0.0, 1.0 - b.crouch / 0.15), rows, z, mat)  # a crouched cape hangs level over the floor
 
     def wings(self, kind):
         b, S, cv = self.b, self.S, self.cv
@@ -2244,6 +2268,8 @@ def render_frame(spec: dict, pose: dict, state: str, facing: int, lod: int, held
     else:
         state_draw = state
     w = int(S * 1.1) + 8
+    if state.startswith("flair"):  # a leg kicked out or an arm flung wide reaches further (an even margin keeps the pixel grid of the other states)
+        w += 2 * int(S * 0.2)
     h = int(S * 1.45) + 8
     ox, oy = w / 2.0, h - 4.0
     cv = Canvas(w, h, ox, oy)

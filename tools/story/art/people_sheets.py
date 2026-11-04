@@ -37,6 +37,17 @@ def id_seed(aid: str) -> int:
     return h
 
 
+FLAIR_MOVES = ["flair_toprock", "flair_drop", "flair_robot", "flair_spin"]
+
+
+def flair_of(aid: str) -> str:
+    """StoryCrowd.flair_of: the one break-dance move this person carries (about one dancer in eleven), or ''."""
+    seed = id_seed(aid)
+    if (seed * 31 + 7) % 10007 % 11 != 0:
+        return ""
+    return FLAIR_MOVES[(seed * 70 + 3) % 997 % 4]
+
+
 def default_activities(flags) -> dict:
     """StoryMap.default_activities."""
     if any(f in ("dance_floor", "stage") for f in flags):
@@ -97,6 +108,9 @@ def actor_states(actor: dict, home_sec: dict, room_secs: list, hero: bool, style
         add("cheer", "front", "side", "back")
         for k in range(5):
             add("dance_s%d" % k, "front")
+    move = flair_of(aid)
+    if move and not lock and not hero and "dance" in want:  # a flair dancer: their move's frames (the spin turns through every facing)
+        add(move, *(("front", "side", "back") if move == "flair_spin" else ("front",)))
     if "dance" in want:
         want["dance_s%d" % style] = want.pop("dance")
     return want
