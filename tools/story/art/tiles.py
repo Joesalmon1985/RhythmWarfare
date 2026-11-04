@@ -54,8 +54,11 @@ UNDERWORLD = {
 
 HOSPITAL = {
     "wall_ward": 2.5, "wall_window": 4.0, "floor_wood": 2.5, "trim": 2.0, "wall_curtain": 1.5, "wall_door": 3.0, "floor_check": 2.5, "ceil_tile": 2.5,
-    "wall_station": 3.0, "wall_counter": 2.0, "wall_vending": 2.5, "floor_cafe": 3.0, "wall_brick": 4.0, "wall_hedge": 3.0, "floor_stone": 3.0,
+    "wall_station": 3.0, "wall_counter": 2.0, "wall_vending": 4.8, "floor_cafe": 3.0, "wall_brick": 4.0, "wall_hedge": 3.0, "floor_stone": 3.0,
     "wall_quiet": 2.0, "floor_lino": 2.0, "wall_tv": 3.0, "sky_night": 1.0, "thing_chair": 1.0, "thing_bench": 1.0,
+    # drawn by art/tex_hospital.py (the surfaces' metres come from its build(); the RGBA billboards are written there and listed here)
+    "thing_monitor": 1.0, "thing_bed": 1.0, "thing_drip": 1.0, "thing_desk": 1.0, "thing_clock": 1.0, "thing_exit": 1.0, "thing_nightlight": 1.0,
+    "thing_tree": 1.0, "thing_lamppost": 1.0, "thing_door_lit": 1.0, "thing_plant": 1.0,
 }
 
 SPECS = {"night_one": NIGHT_ONE, "mothership": MOTHERSHIP, "underworld": UNDERWORLD, "hospital": HOSPITAL, "mental_hospital": MENTAL_HOSPITAL}

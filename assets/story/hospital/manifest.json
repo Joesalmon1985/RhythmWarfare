@@ -3129,10 +3129,10 @@
   "ceil_tile": {
    "file": "textures/ceil_tile.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.5
+   "metres": 2.4
   },
   "floor_cafe": {
    "file": "textures/floor_cafe.png",
@@ -3140,31 +3140,39 @@
     64,
     64
    ],
-   "metres": 3.0
+   "metres": 1.6
   },
   "floor_check": {
    "file": "textures/floor_check.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.5
+   "metres": 2.0
   },
   "floor_lino": {
    "file": "textures/floor_lino.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 2.0
   },
   "floor_stone": {
    "file": "textures/floor_stone.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
    "metres": 3.0
+  },
+  "floor_ward": {
+   "file": "textures/floor_ward.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.0
   },
   "floor_wood": {
    "file": "textures/floor_wood.png",
@@ -3179,6 +3187,14 @@
    "size": [
     256,
     64
+   ],
+   "metres": 1.0
+  },
+  "thing_bed": {
+   "file": "textures/thing_bed.png",
+   "size": [
+    128,
+    128
    ],
    "metres": 1.0
   },
@@ -3198,6 +3214,86 @@
    ],
    "metres": 1.0
   },
+  "thing_clock": {
+   "file": "textures/thing_clock.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_desk": {
+   "file": "textures/thing_desk.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_door_lit": {
+   "file": "textures/thing_door_lit.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_drip": {
+   "file": "textures/thing_drip.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_exit": {
+   "file": "textures/thing_exit.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_lamppost": {
+   "file": "textures/thing_lamppost.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_monitor": {
+   "file": "textures/thing_monitor.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_nightlight": {
+   "file": "textures/thing_nightlight.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_plant": {
+   "file": "textures/thing_plant.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_tree": {
+   "file": "textures/thing_tree.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
   "trim": {
    "file": "textures/trim.png",
    "size": [
@@ -3209,10 +3305,18 @@
   "wall_brick": {
    "file": "textures/wall_brick.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 4.0
+   "metres": 6.0
+  },
+  "wall_cafe": {
+   "file": "textures/wall_cafe.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 4.8
   },
   "wall_counter": {
    "file": "textures/wall_counter.png",
@@ -3230,13 +3334,21 @@
    ],
    "metres": 1.5
   },
+  "wall_dayroom": {
+   "file": "textures/wall_dayroom.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.2
+  },
   "wall_door": {
    "file": "textures/wall_door.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 2.6
   },
   "wall_hedge": {
    "file": "textures/wall_hedge.png",
@@ -3252,47 +3364,63 @@
     64,
     64
    ],
-   "metres": 2.0
+   "metres": 2.4
   },
   "wall_station": {
    "file": "textures/wall_station.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 2.6
   },
   "wall_tv": {
    "file": "textures/wall_tv.png",
    "size": [
-    64,
-    64
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_tv_wall": {
+   "file": "textures/wall_tv_wall.png",
+   "size": [
+    128,
+    128
    ],
    "metres": 3.0
   },
   "wall_vending": {
    "file": "textures/wall_vending.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.5
+   "metres": 4.8
+  },
+  "wall_vending_wall": {
+   "file": "textures/wall_vending_wall.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 4.8
   },
   "wall_ward": {
    "file": "textures/wall_ward.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.5
+   "metres": 2.7
   },
   "wall_window": {
    "file": "textures/wall_window.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 4.0
+   "metres": 5.0
   }
  },
  "people": {
