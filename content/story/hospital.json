@@ -125,7 +125,7 @@
     {
      "at_bar": 2,
      "action": "player_look",
-     "by": 24,
+     "pitch": 15,
      "bars": 3
     },
     {
@@ -147,9 +147,12 @@
      "piece": "balloon_bunch"
     },
     {
-     "at_bar": 6,
-     "action": "player_look",
-     "by": -28,
+     "at_bar": 5,
+     "action": "player_walk",
+     "fwd": 1.0,
+     "in": [
+      "main"
+     ],
      "bars": 3
     },
     {
@@ -197,7 +200,10 @@
     {
      "at_bar": 10,
      "action": "player_look",
-     "by": -24,
+     "at": "c05",
+     "in": [
+      "main"
+     ],
      "bars": 3
     },
     {
@@ -229,10 +235,13 @@
      "piece": "paper_stars"
     },
     {
-     "at_bar": 14,
-     "action": "player_look",
-     "by": 28,
-     "bars": 3
+     "at_bar": 13,
+     "action": "player_walk",
+     "right": 0.8,
+     "in": [
+      "main"
+     ],
+     "bars": 2
     },
     {
      "at_bar": 15,
@@ -268,13 +277,19 @@
     {
      "at_bar": 18,
      "action": "player_look",
-     "by": 24,
-     "bars": 3
+     "pitch": -12,
+     "bars": 2
     },
     {
      "at_bar": 19,
      "action": "wave_across",
      "bars": 3
+    },
+    {
+     "at_bar": 20,
+     "action": "player_look",
+     "by": 30,
+     "bars": 2
     },
     {
      "at_bar": 21,
@@ -288,8 +303,12 @@
     },
     {
      "at_bar": 22,
-     "action": "player_look",
-     "by": -28,
+     "action": "player_walk",
+     "fwd": 1.5,
+     "in": [
+      "corridor",
+      "main"
+     ],
      "bars": 3
     },
     {
@@ -324,8 +343,20 @@
     {
      "at_bar": 26,
      "action": "player_look",
-     "by": -24,
-     "bars": 3
+     "at": "corridor_c04",
+     "in": [
+      "corridor"
+     ],
+     "bars": 2
+    },
+    {
+     "at_bar": 26,
+     "action": "player_look",
+     "at": "c06",
+     "in": [
+      "main"
+     ],
+     "bars": 2
     },
     {
      "at_bar": 27,
@@ -341,6 +372,26 @@
      "action": "piece_pulse",
      "piece": "cafeteria_sun",
      "bars": 2
+    },
+    {
+     "at_bar": 28,
+     "action": "player_walk",
+     "to": "corridor_c01",
+     "stop": 2.5,
+     "in": [
+      "corridor"
+     ],
+     "bars": 4
+    },
+    {
+     "at_bar": 28,
+     "action": "player_walk",
+     "to": "c05",
+     "stop": 1.5,
+     "in": [
+      "main"
+     ],
+     "bars": 4
     },
     {
      "at_bar": 29,
@@ -362,18 +413,18 @@
      "bars": 2
     },
     {
-     "at_bar": 30,
-     "action": "player_look",
-     "by": 28,
-     "bars": 3
-    },
-    {
      "at_bar": 31,
      "action": "led_rings"
     },
     {
      "at_bar": 31,
      "action": "haze_burst"
+    },
+    {
+     "at_bar": 31,
+     "action": "player_look",
+     "by": -28,
+     "bars": 2
     }
    ]
   },
@@ -385,10 +436,32 @@
    "bars": 8,
    "events": [
     {
-     "at_bar": 34,
+     "at_bar": 33,
      "action": "player_look",
-     "by": 24,
-     "bars": 3
+     "at": "dayroom",
+     "in": [
+      "corridor"
+     ],
+     "bars": 1
+    },
+    {
+     "at_bar": 33,
+     "action": "player_look",
+     "at": "bed",
+     "in": [
+      "main"
+     ],
+     "bars": 1
+    },
+    {
+     "at_bar": 34,
+     "action": "player_walk",
+     "fwd": -1.2,
+     "in": [
+      "corridor",
+      "main"
+     ],
+     "bars": 2
     },
     {
      "at_bar": 35,
@@ -399,6 +472,12 @@
      "at_bar": 35,
      "action": "piece_pulse",
      "piece": "garden_sunrays",
+     "bars": 2
+    },
+    {
+     "at_bar": 35,
+     "action": "player_look",
+     "pitch": 16,
      "bars": 2
     },
     {
@@ -418,8 +497,8 @@
     {
      "at_bar": 38,
      "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "pitch": -14,
+     "bars": 2
     },
     {
      "at_bar": 39,
@@ -448,7 +527,7 @@
     {
      "at_bar": 42,
      "action": "player_look",
-     "by": -24,
+     "by": -34,
      "bars": 3
     },
     {
@@ -476,9 +555,18 @@
     },
     {
      "at_bar": 46,
+     "action": "player_walk",
+     "to": "garden_edge",
+     "in": [
+      "garden"
+     ],
+     "bars": 2
+    },
+    {
+     "at_bar": 46,
      "action": "player_look",
-     "by": 28,
-     "bars": 3
+     "pitch": 12,
+     "bars": 2
     },
     {
      "at_bar": 47,
@@ -520,7 +608,7 @@
     {
      "at_bar": 50,
      "action": "player_look",
-     "by": 24,
+     "by": 26,
      "bars": 3
     },
     {
@@ -548,10 +636,20 @@
      "else": "lights_cool"
     },
     {
+     "at_bar": 53,
+     "action": "player_walk",
+     "to": "bandstand",
+     "style": "climb",
+     "in": [
+      "garden"
+     ],
+     "bars": 3
+    },
+    {
      "at_bar": 54,
      "action": "player_look",
-     "by": -28,
-     "bars": 3
+     "pitch": 18,
+     "bars": 2
     },
     {
      "at_bar": 55,
