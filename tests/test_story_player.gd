@@ -45,7 +45,7 @@ func test_move_arrives_at_the_waypoint_facing_it() -> void:
 	assert_true((after["pos"] as Vector2).distance_to(booth["at"]) < 0.001, "arrived: %s" % str(after["pos"]))
 	assert_near(absf(wrapf(float(after["yaw"]) - float(booth["yaw"]), -180.0, 180.0)), 0.0, 0.01, "facing the waypoint's yaw")
 	assert_eq(after["sector"], "booth")
-	assert_near(float(after["ground"]), 1.1, 0.001, "standing on the booth floor")
+	assert_near(float(after["ground"]), 1.6, 0.001, "standing on the booth floor")
 	assert_false(after["moving"])
 	assert_true(p.pose_at(10.0 * b)["moving"], "mid move")
 	assert_eq(p.pose_at(10.0 * b)["style"], "walk")
@@ -86,8 +86,8 @@ func test_the_floor_rises_smoothly_up_the_steps() -> void:
 		prev = g
 		peak = maxf(peak, g)
 		t += 0.02
-	assert_near(peak, 1.1, 0.001)
-	assert_near(float(p.pose_at(end)["ground"]), 1.1, 0.001)
+	assert_near(peak, 1.6, 0.001)
+	assert_near(float(p.pose_at(end)["ground"]), 1.6, 0.001)
 
 
 func test_pose_is_the_same_at_any_step_after_restart_and_out_of_order() -> void:

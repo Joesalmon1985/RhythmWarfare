@@ -320,12 +320,18 @@ func set_camera(pose: Dictionary, size: Vector2, visible_secs: Dictionary) -> vo
 	_fwd = StoryProjector.forward(float(pose["yaw"]))
 	_rgt = StoryProjector.right(float(pose["yaw"]))
 	_focal = StoryProjector.focal_px(size.y)
+	_pitch = deg_to_rad(float(pose.get("pitch", 0.0)))
+	_sin_p = sin(_pitch)
+	_cos_p = cos(_pitch)
 
 
 var _eye := Vector3.ZERO  # the camera, unpacked once a frame for the per-dancer projection
 var _fwd := Vector2.ZERO
 var _rgt := Vector2.ZERO
 var _focal := 1.0
+var _pitch := 0.0  # the head pitched up by this many radians (a look at the lights): the projection tilts with it
+var _sin_p := 0.0
+var _cos_p := 1.0
 
 
 func _ground_of(sec: String) -> float:
@@ -346,12 +352,15 @@ func _place_world(a: Dictionary, c: StoryCharacter, vu: float) -> bool:
 	if not vis_sectors.is_empty() and not vis_sectors.has(sec):
 		return false
 	var rel := pos - Vector2(_eye.x, _eye.z)  # the pinhole projection of StoryProjector.project_ground, inlined: it runs for every dancer every frame
-	var depth := rel.dot(_fwd)
+	var along := rel.dot(_fwd)
+	var up := _ground_of(sec) - _eye.y  # the feet are below the eye
+	var depth := along * _cos_p + up * _sin_p if _pitch != 0.0 else along
 	a["depth"] = depth
 	if depth < StoryProjector.NEAR:
 		return false
 	var ppm := _focal / depth  # pixels per metre at this distance
-	var feet := Vector2(view_size.x * 0.5 + ppm * rel.dot(_rgt), view_size.y * 0.5 + ppm * (_eye.y - _ground_of(sec)))
+	var cy := up * _cos_p - along * _sin_p if _pitch != 0.0 else up
+	var feet := Vector2(view_size.x * 0.5 + ppm * rel.dot(_rgt), view_size.y * 0.5 - ppm * cy)
 	var tall := HERO_M * ppm  # the dancer's height on screen: close ones have their feet below the edge but their body in view
 	if feet.x < -view_size.x * 0.25 or feet.x > view_size.x * 1.25 or feet.y - tall > view_size.y or feet.y < -view_size.y * 0.25:
 		return false

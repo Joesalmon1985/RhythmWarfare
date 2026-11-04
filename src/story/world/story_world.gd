@@ -266,7 +266,8 @@ static func light_of(s: Dictionary, t: float, ctx: Dictionary) -> Color:
 	if "dance_floor" in flags or "stage" in flags:
 		if not pal.is_empty():
 			var bar := int(floor(beats / 4.0))
-			tint = (pal[bar % pal.size()] as Color).lerp(pal[(bar + 1) % pal.size()], clampf(fposmod(beats / 4.0, 1.0) * 2.0 - 1.0, 0.0, 1.0))
+			var pcol: Color = (pal[bar % pal.size()] as Color).lerp(pal[(bar + 1) % pal.size()], clampf(fposmod(beats / 4.0, 1.0) * 2.0 - 1.0, 0.0, 1.0))
+			tint = tint.lerp(pcol, clampf(float(ctx.get("palette_weight", 1.0)), 0.0, 1.0))  # the sector's own tint wins outside the club
 		base *= 0.75 + 0.5 * energy
 		base += 0.12 * pulse * (0.4 + energy)
 	elif "booth" in flags or "stage_steps" in flags:

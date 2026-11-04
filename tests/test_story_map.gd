@@ -25,10 +25,10 @@ func test_night_one_map_is_clean() -> void:
 	var data := StoryData.load_file()
 	m.validate_chapter(data["data"].raw)
 	assert_true(m.errors.is_empty(), str(m.errors))
-	for w in ["floor_centre", "floor_edge", "steps", "stage", "booth", "corridor", "cubicle", "door"]:
+	for w in ["floor_centre", "floor_edge", "steps", "stage", "booth", "balcony", "chill", "corridor", "cubicle", "door"]:
 		assert_true(m.has_waypoint(w), "waypoint " + w)
 	assert_eq(m.homes.size(), 30, "a home for every actor")
-	for room in ["entrance", "floor", "steps", "riser", "booth", "bar", "corridor", "toilets", "cubicle_a", "cubicle_b"]:
+	for room in ["entrance", "tunnel_a", "floor", "steps", "riser", "booth", "balcony", "bstair_1", "bar", "chill", "corridor", "toilets", "cubicle_a", "cubicle_b"]:
 		assert_false(m.sector(room).is_empty(), "sector " + room)
 	assert_true(m.sector("riser")["floor"] > m.sector("steps")["floor"] and m.sector("steps")["floor"] > m.sector("floor")["floor"], "stage steps climb")
 
@@ -238,3 +238,26 @@ func test_every_chapter_map_is_clean_and_complete() -> void:
 		for s in m.sectors:  # no room reads as black, whatever the energy
 			var c := StoryWorld.light_of(s, 1.0, ctx)
 			assert_true(c.r + c.g + c.b >= StoryWorld.MIN_GAIN * 1.5, "%s: sector %s is lit" % [id, s["id"]])
+
+
+func test_blocked_portal_shows_but_never_routes() -> void:
+	var d := _two_rooms()
+	d["walls"][0]["blocked"] = true
+	d["sectors"].append({"id": "c", "polygon": _sq(8, 0, 12, 4), "floor": 0, "ceiling": 3, "wall_tex": "w"})
+	d["walls"].append({"from": [8, 1], "to": [8, 3], "sector": "b", "portal": "c"})
+	d["sectors"][1]["polygon"] = _sq(4, 0, 8, 4)
+	var m := StoryMap.from_dict(d)
+	assert_true(" ".join(PackedStringArray(m.errors)).contains("sector b cannot be reached"), "a sector only a blocked portal leads to is unreachable: %s" % str(m.errors))
+	assert_eq(m.portals().size(), 2, "a blocked portal is still a portal (the other room is in view)")
+	assert_true(m.visible_sectors(Vector2(2, 2), -90.0, "a", 2.8).has("b"), "the room beyond a blocked opening is visible")
+	assert_eq(m.neighbors("a"), [], "but a walker cannot step through it")
+	var r := m.route(Vector2(2, 2), "a", Vector2(6, 2), "b")
+	assert_eq((r["points"] as PackedVector2Array).size(), 0, "no route across a blocked portal")
+
+
+func test_night_one_balcony_is_reached_by_the_stair_not_the_rail() -> void:
+	var m := StoryMap.load_chapter("night_one")
+	var r := m.route(Vector2(0, 6.5), "floor", m.waypoint("balcony")["at"], "balcony")
+	assert_true((r["points"] as PackedVector2Array).size() >= 2, "a route to the balcony exists")
+	assert_true("bstair_2" in r["sectors"], "it goes up the steel stair beside the stage: %s" % str(r["sectors"]))
+	assert_true("balcony" in m.visible_sectors(Vector2(0, 4), 90.0, "floor", 2.8), "the balcony is seen from the floor")

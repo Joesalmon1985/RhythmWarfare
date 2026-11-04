@@ -811,20 +811,27 @@
     "circle_spotlight_cheer",
     {
      "action": "player_move",
-     "to": "booth",
-     "style": "walk",
-     "bars": 2
+     "to": "balcony",
+     "style": "climb",
+     "bars": 4
     },
     {
      "action": "player_look",
      "at": "floor_centre",
      "bars": 2,
-     "after_bars": 2
+     "after_bars": 4
+    },
+    {
+     "action": "player_move",
+     "to": "booth",
+     "style": "walk",
+     "bars": 3,
+     "after_bars": 6
     },
     {
      "action": "player_role",
      "role": "dj",
-     "after_bars": 2
+     "after_bars": 9
     }
    ],
    "bad": [

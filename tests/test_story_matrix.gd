@@ -7,7 +7,7 @@ const CHAPTERS := ["night_one", "mothership", "underworld", "hospital", "mental_
 const POLICIES := ["perfect", "accuracy:0.9", "accuracy:0.8", "accuracy:0.7", "accuracy:0.5", "beginner", "sloppy", "none"]
 ## The journey under perfect play and under no input, as the chapters author it (places in order, the ending's tableau last).
 const TOP := {
-	"night_one": ["steps", "stage", "booth", "booth"],
+	"night_one": ["steps", "stage", "balcony", "booth", "booth"],
 	"mothership": ["gallery_in", "reactor_in", "bridge_in", "helm", "helm"],
 	"underworld": ["court_in", "throne", "pit_stage", "pit_stage"],
 	"hospital": ["corridor_in", "cafe_in", "bandstand", "bandstand"],

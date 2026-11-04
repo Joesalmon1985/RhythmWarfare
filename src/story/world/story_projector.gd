@@ -2,7 +2,7 @@ class_name StoryProjector
 extends RefCounted
 ## Pinhole projection in pure GDScript, the same camera the 3D world renders with (a Camera3D with a vertical field of view of FOV_V degrees, no pitch),
 ## so the 2D crowd can stand in the world: a world point and a camera pose give a screen position, a depth and a pixels-per-metre scale.
-## Pose: {cam: Vector3 (x, eye height, z), yaw: degrees (0 looks toward -z, positive turns left)}. Roll is ignored (it is a few tenths of a degree).
+## Pose: {cam: Vector3 (x, eye height, z), yaw: degrees (0 looks toward -z, positive turns left), pitch: degrees (optional, positive looks up)}. Roll is ignored (it is a few tenths of a degree).
 
 const FOV_V := 52.0
 const NEAR := 0.15
@@ -27,12 +27,16 @@ static func project(world: Vector3, pose: Dictionary, viewport: Vector2, fov_v :
 	var cam: Vector3 = pose["cam"]
 	var yaw := float(pose["yaw"])
 	var d := Vector2(world.x - cam.x, world.z - cam.z)
-	var depth := d.dot(forward(yaw))
+	var along := d.dot(forward(yaw))  # distance along the ground heading
+	var up := world.y - cam.y
+	var pr := deg_to_rad(float(pose.get("pitch", 0.0)))
+	var depth := along * cos(pr) + up * sin(pr) if pr != 0.0 else along  # camera-space depth with the head pitched up by pr
+	var cy := up * cos(pr) - along * sin(pr) if pr != 0.0 else up  # camera-space height
 	if depth < NEAR:
 		return {"visible": false, "screen": Vector2.ZERO, "depth": depth, "scale": 0.0}
 	var f := focal_px(viewport.y, fov_v)
 	var sx := viewport.x * 0.5 + f * d.dot(right(yaw)) / depth
-	var sy := viewport.y * 0.5 - f * (world.y - cam.y) / depth
+	var sy := viewport.y * 0.5 - f * cy / depth
 	var on_screen := sx > -viewport.x * 0.25 and sx < viewport.x * 1.25 and sy > -viewport.y * 0.5 and sy < viewport.y * 1.5
 	return {"visible": on_screen, "screen": Vector2(sx, sy), "depth": depth, "scale": f / depth}
 

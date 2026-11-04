@@ -27,8 +27,8 @@ func test_perfect_play_goes_dancer_to_stage_to_dj() -> void:
 	var r := _played("perfect", 1, 1.0 / 60.0)
 	var stage: StoryStage = r["stage"]
 	assert_eq(r["ending"], "legendary_set")
-	assert_eq(stage.journey(), ["steps", "stage", "booth", "booth"], "the climb and the booth, and the legendary ending's tableau in the booth")
-	assert_eq(r["journey"]["places"], ["steps", "stage", "booth", "booth"])
+	assert_eq(stage.journey(), ["steps", "stage", "balcony", "booth", "booth"], "the climb, the balcony and the booth, and the legendary ending's tableau in the booth")
+	assert_eq(r["journey"]["places"], ["steps", "stage", "balcony", "booth", "booth"])
 	assert_eq(r["journey"]["roles"], ["dancer", "on_stage", "dj"])
 	assert_eq(r["journey"]["name"], "Dancer > On stage > DJ")
 	stage.free()

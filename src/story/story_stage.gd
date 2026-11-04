@@ -287,8 +287,10 @@ func update(t: float, p_energy: float) -> void:
 		player.reduced = reduced or motion >= 1
 		player.cut = motion >= 2
 		pose = player.pose_at(t)
+		if _cam_override != "":
+			pose = _override_pose(pose)
 		var size := Vector2(lowres.sub.size) if lowres != null else Vector2(480, 170)
-		var ppose := {"cam": pose["cam"], "yaw": float(pose["yaw"]) + free_look.offset}
+		var ppose := {"cam": pose["cam"], "yaw": float(pose["yaw"]) + free_look.offset, "pitch": float(pose.get("pitch", 0.0))}
 		var cpos := Vector2(pose["pos"])
 		if _vis_sec != str(pose["sector"]) or _vis_pos.distance_to(cpos) > 0.01 or absf(_vis_yaw - float(ppose["yaw"])) > 0.25 or not _vis_size.is_equal_approx(size):
 			_vis_sec = str(pose["sector"])  # the portal walk only reruns when the camera has really moved or turned
@@ -309,12 +311,36 @@ func update(t: float, p_energy: float) -> void:
 	queue_redraw()
 
 
+## Screenshot aid: RW_STORY_CAM=<waypoint>[,<extra yaw degrees>[,<pitch degrees>]] stands the camera at a waypoint whatever the journey says (the crowd, light and show are the run's).
+var _cam_override: String = OS.get_environment("RW_STORY_CAM")
+
+
+func _override_pose(pose: Dictionary) -> Dictionary:
+	var parts := _cam_override.split(",")
+	var w := map.waypoint(parts[0])
+	if w.is_empty():
+		return pose
+	var out := pose.duplicate()
+	var sec := str(w["sector"])
+	var at: Vector2 = w["at"]
+	var ground := float(map.sector(sec).get("floor", 0.0))
+	out["pos"] = at
+	out["sector"] = sec
+	out["ground"] = ground
+	out["yaw"] = float(w["yaw"]) + (float(parts[1]) if parts.size() > 1 else 0.0)
+	out["pitch"] = float(parts[2]) if parts.size() > 2 else 0.0
+	out["cam"] = Vector3(at.x, ground + map.eye_height, at.y)
+	out["roll"] = 0.0
+	out["moving"] = false
+	return out
+
+
 func _update_world(t: float, p_energy: float, pose: Dictionary) -> void:
 	lowres.apply_pose(pose, free_look.offset)
 	var pcs := {}
 	for pid in _piece_ids:
 		pcs[pid] = piece_state(str(pid), t)
-	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": StoryLight.strobe_at(self, t), "woofer_pump": _woofer_pump, "pieces": pcs}
+	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": StoryLight.strobe_at(self, t), "woofer_pump": _woofer_pump, "pieces": pcs, "palette_weight": map.palette_weight}
 	world.update(t, _world_ctx)
 	fx3d.update(t)
 	lowres.apply_post(StoryLight.post_state(self, t), StoryLight.pal(self, 0).lightened(0.3))

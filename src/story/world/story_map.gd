@@ -36,6 +36,7 @@ var spots: Dictionary = {}  # named places the crowd directives use: {sector, at
 var silhouettes: Dictionary = {}  # rear-row silhouette id -> {sector, at: Vector2}
 var sky: Dictionary = {}
 var rooms: Dictionary = {}  # room id -> {palette: the chapter palette the room's light switches to when the player walks in}
+var palette_weight := 0.25  # how much the stage palette (one colour per bar) overrides the tint of a dance floor or stage sector: 1 in Night One (the club), a little elsewhere so a ward stays blue and a lab stays green
 var fog: Dictionary = {}  # optional {color: hex, density}: the chapter's haze (a hospital is light, the pit is red)
 var animated: Array = []  # animated surfaces: {tex, mode: scroll|pulse|flicker|glow, speed?, rate?, amount?, bright?}
 var errors: Array = []
@@ -84,6 +85,7 @@ func build(d: Dictionary, check_files: bool) -> void:
 			errors.append("texture %s: file %s is missing" % [k, textures[k]])
 	sky = d.get("sky", {}) if typeof(d.get("sky", {})) == TYPE_DICTIONARY else {}
 	rooms = d.get("rooms", {}) if typeof(d.get("rooms", {})) == TYPE_DICTIONARY else {}
+	palette_weight = clampf(float(d.get("palette_weight", 0.25)), 0.0, 1.0)
 	fog = d.get("fog", {}) if typeof(d.get("fog", {})) == TYPE_DICTIONARY else {}
 	animated = d.get("animated", []) if typeof(d.get("animated", [])) == TYPE_ARRAY else []
 	for an in animated:
@@ -258,7 +260,7 @@ func _build_walls(list: Array) -> void:
 		var tex := str(w.get("tex", ""))
 		for k in ["tex", "lower_tex", "upper_tex"]:
 			_tex_ok(str(w.get(k, "")), where)
-		_walls_in.append({"a": a, "b": b, "sector": sid, "portal": portal, "tex": tex, "lower_tex": str(w.get("lower_tex", "")), "upper_tex": str(w.get("upper_tex", ""))})
+		_walls_in.append({"a": a, "b": b, "sector": sid, "portal": portal, "tex": tex, "lower_tex": str(w.get("lower_tex", "")), "upper_tex": str(w.get("upper_tex", "")), "blocked": bool(w.get("blocked", false)) and portal != ""})
 	# a portal is declared once (the other sector sees it implicitly)
 	for k in seen_portals:
 		var segs: Array = seen_portals[k]
@@ -460,7 +462,7 @@ func _collect_portals() -> void:
 	_portals = []
 	for w in _walls_in:
 		if str(w["portal"]) != "":
-			_portals.append({"a": str(w["sector"]), "b": str(w["portal"]), "p0": w["a"], "p1": w["b"], "mid": (w["a"] + w["b"]) * 0.5})
+			_portals.append({"a": str(w["sector"]), "b": str(w["portal"]), "p0": w["a"], "p1": w["b"], "mid": (w["a"] + w["b"]) * 0.5, "blocked": bool(w.get("blocked", false))})
 
 
 func portals() -> Array:
@@ -469,9 +471,13 @@ func portals() -> Array:
 	return _portals
 
 
+## The sectors a walker can step into from `sid`: through the portals that are not `blocked` (a blocked portal is an opening to look through, a balcony rail or a window,
+## that nobody walks across: it still shows the other room and the crowd in it).
 func neighbors(sid: String) -> Array:
 	var out: Array = []
 	for p in portals():
+		if bool(p["blocked"]):
+			continue
 		if p["a"] == sid and not out.has(p["b"]):
 			out.append(p["b"])
 		elif p["b"] == sid and not out.has(p["a"]):
@@ -631,7 +637,7 @@ func route(from: Vector2, from_sec: String, to: Vector2, to_sec: String) -> Dict
 	var secs: Array = [[from_sec], [to_sec]]
 	for p in ps:
 		pos.append(p["mid"])
-		secs.append([p["a"], p["b"]])
+		secs.append([p["a"], p["b"]] if not bool(p["blocked"]) else ["", ""])  # a blocked portal joins nothing for a walker
 	var g := {0: 0.0}
 	var prev := {}
 	var open: Array = [0]

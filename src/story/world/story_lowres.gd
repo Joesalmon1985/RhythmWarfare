@@ -109,7 +109,7 @@ func _fit() -> void:
 func apply_pose(pose: Dictionary, look_offset_deg := 0.0) -> void:
 	var cam: Vector3 = pose["cam"]
 	camera.position = cam
-	camera.rotation_degrees = Vector3(0.0, float(pose["yaw"]) + look_offset_deg, float(pose["roll"]))
+	camera.rotation_degrees = Vector3(float(pose.get("pitch", 0.0)), float(pose["yaw"]) + look_offset_deg, float(pose["roll"]))
 	if world != null:
 		world.follow(cam)
 
@@ -128,4 +128,4 @@ func apply_post(st: Dictionary, flash_color := Color(0.6, 0.7, 1.0)) -> void:
 
 
 func projector_pose(pose: Dictionary, look_offset_deg := 0.0) -> Dictionary:
-	return {"cam": pose["cam"], "yaw": float(pose["yaw"]) + look_offset_deg}
+	return {"cam": pose["cam"], "yaw": float(pose["yaw"]) + look_offset_deg, "pitch": float(pose.get("pitch", 0.0))}

@@ -22,7 +22,7 @@ func test_world_builds_every_sector_wall_and_thing() -> void:
 	# the stage riser is higher than the floor: a lower step wall exists on the floor side only
 	var floor_mesh := (w.sector_node("floor").mesh as ArrayMesh)
 	var aabb := floor_mesh.get_aabb()
-	assert_near(aabb.size.y, 3.6, 0.2, "the dance floor is 3.6 m high")
+	assert_near(aabb.size.y, 6.4, 0.2, "the dance floor is a tall hall, 6.4 m high")
 	w.free()
 
 
