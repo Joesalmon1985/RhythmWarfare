@@ -22,6 +22,7 @@ var _thing_nodes: Array = []  # {node: MeshInstance3D, mat, thing: Dictionary, b
 var _sky: MeshInstance3D
 var _sky_follow := true
 var triangle_count := 0
+var _mats_by_tex: Dictionary = {}  # texture name -> Array of the StandardMaterial3D showing it (animated surfaces swap their texture)
 
 
 func build(p_map: StoryMap, p_assets: StoryAssets) -> void:
@@ -166,6 +167,9 @@ func _make_sector_mesh(s: Dictionary, groups: Dictionary) -> void:
 		var mat := _material(_tex[tex])
 		mesh.surface_set_material(mesh.get_surface_count() - 1, mat)
 		mats.append(mat)
+		if not _mats_by_tex.has(tex):
+			_mats_by_tex[tex] = []
+		_mats_by_tex[tex].append(mat)
 	var mi := MeshInstance3D.new()
 	mi.name = "Sector_" + str(s["id"])
 	mi.mesh = mesh
@@ -298,6 +302,19 @@ func update(t: float, ctx: Dictionary) -> void:
 func follow(cam: Vector3) -> void:
 	if _sky != null:
 		_sky.position = Vector3(cam.x, 20.0, cam.z)
+
+
+## An animated surface: every wall or floor showing the map texture `name` shows `tex` instead (the LED wall).
+func set_texture_override(name: String, tex: Texture2D) -> void:
+	for m in _mats_by_tex.get(name, []):
+		(m as StandardMaterial3D).albedo_texture = tex
+
+
+## Show or hide a billboard thing by its map id (the disco ball is only there once it is switched on).
+func set_thing_visible(id: String, on: bool) -> void:
+	for th in _thing_nodes:
+		if str(th["thing"]["id"]) == id:
+			(th["node"] as Node3D).visible = on
 
 
 func sector_node(id: String) -> MeshInstance3D:

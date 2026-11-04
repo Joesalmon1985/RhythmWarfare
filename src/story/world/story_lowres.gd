@@ -13,6 +13,7 @@ var rect: TextureRect
 var camera: Camera3D
 var world: StoryWorld
 var _env_node: WorldEnvironment
+var post: ShaderMaterial  # queasy wobble, dimming and strobe on the finished low-res image (StoryLight.post_state feeds it)
 
 
 func _init() -> void:
@@ -39,6 +40,9 @@ func _init() -> void:
 	rect.stretch_mode = TextureRect.STRETCH_SCALE
 	rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	post = ShaderMaterial.new()
+	post.shader = load("res://src/story/world/story_post.gdshader")
+	rect.material = post
 	rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(rect)
 	camera = Camera3D.new()
@@ -93,6 +97,17 @@ func apply_pose(pose: Dictionary, look_offset_deg := 0.0) -> void:
 	camera.rotation_degrees = Vector3(0.0, float(pose["yaw"]) + look_offset_deg, float(pose["roll"]))
 	if world != null:
 		world.follow(cam)
+
+
+## Feed the post-process from StoryLight.post_state (and the palette's colour for the bloom).
+func apply_post(st: Dictionary, flash_color := Color(0.6, 0.7, 1.0)) -> void:
+	post.set_shader_parameter("queasy", float(st["queasy"]))
+	post.set_shader_parameter("time_s", float(st["time"]))
+	post.set_shader_parameter("dim", float(st["dim"]))
+	post.set_shader_parameter("strobe", float(st["strobe"]))
+	post.set_shader_parameter("flash", float(st["flash"]))
+	post.set_shader_parameter("vignette", float(st["vignette"]))
+	post.set_shader_parameter("flash_color", Vector3(flash_color.r, flash_color.g, flash_color.b))
 
 
 func projector_pose(pose: Dictionary, look_offset_deg := 0.0) -> Dictionary:

@@ -13,7 +13,6 @@ var _pulses: Array = []  # {t0, passed}
 var _door_t0 := -1.0
 var _points: Array = []
 var _spr: Dictionary = {}
-var _tiles: Array = []  # the LED floor (anchor led_tiles): {quad: PackedVector2Array, i, j, c: Vector2, h: float}
 var _font: Font
 var _floor_y := 400.0  # where the beams land: just below the middle crowd row of this room
 const LED_CELL := 10.0  # design px per LED-screen dot
@@ -33,21 +32,6 @@ func setup(p_assets: StoryAssets) -> void:
 	var frows: Array = assets.anchor("floor_rows", [], view)
 	if not frows.is_empty():
 		_floor_y = float(frows[frows.size() / 2]["y"]) + 50.0
-	_tiles = []
-	var lt: Dictionary = assets.anchor("led_tiles", {}, view)
-	if not lt.is_empty():
-		var vp := Vector2(float(lt["vanishing_point"][0]), float(lt["vanishing_point"][1]))
-		var fy := float(lt["far_y"])
-		var fx: Array = lt["far_x"]
-		var rows: Array = lt["rows"]
-		for j in rows.size() - 1:
-			for i in fx.size() - 1:
-				var q := PackedVector2Array()
-				for k in [[i, j], [i + 1, j], [i + 1, j + 1], [i, j + 1]]:
-					var y := float(rows[k[1]])
-					q.append(Vector2(vp.x + (float(fx[k[0]]) - vp.x) * (y - vp.y) / (fy - vp.y), y))
-				var h := fposmod(sin(float(i * 31 + j * 17) * 12.9898) * 43758.5453, 1.0)
-				_tiles.append({"quad": q, "i": i, "j": j, "c": (q[0] + q[2]) * 0.5, "h": h})
 
 
 func reset() -> void:
@@ -113,7 +97,6 @@ func _led_rect() -> Rect2:
 
 func draw_base_add(ci: CanvasItem) -> void:
 	_draw_pieces(ci, "behind", "add")
-	_draw_led_floor(ci)
 	_draw_woofer_glow(ci)
 	# light that lands on the floor goes under the dancers, so it never washes out their faces
 	var t := stage.t_now
@@ -122,56 +105,6 @@ func draw_base_add(ci: CanvasItem) -> void:
 	_draw_ripples(ci, t)
 	_draw_circle_ring(ci, t)
 	_draw_pulses(ci, t)
-
-
-## The lit dance floor: single LED tiles chase, ripple and flash on the beat (additive, under the crowd). Patterns follow the set:
-## a ripple out of the circle at a drop or a passed sequence, a sweep with the light wave, diagonal chases at energy, a slow breathing
-## when the room is quiet. Reduced effects keeps only the slow, smooth patterns.
-func _draw_led_floor(ci: CanvasItem) -> void:
-	if _tiles.is_empty():
-		return
-	var t := stage.t_now
-	var e := _e01()
-	var b := _beats()
-	var beat := floorf(b)
-	var kp := _kick_pulse()
-	var lost := stage.tableau() == "lost"
-	var level := (0.1 + 0.55 * e) * (0.25 if lost else 1.0) * (0.55 if stage.reduced else 1.0) * (0.5 if stage.high_contrast else 1.0)
-	var ripple_t := -1.0
-	for name in ["bass_reveal", "burst"]:
-		if stage.is_active(name, t):
-			ripple_t = maxf(ripple_t, stage.since(name, t))
-	var last_pass := -INF
-	for p in _pulses:
-		if p["passed"] and float(p["t0"]) <= t:
-			last_pass = maxf(last_pass, float(p["t0"]))
-	var wave_u := stage.progress("light_wave", t)
-	var cc := crowd.circle_c
-	for tile in _tiles:
-		var c: Vector2 = tile["c"]
-		var h: float = tile["h"]
-		var a := 0.0
-		if stage.reduced:
-			a = 0.35 * (0.5 + 0.5 * sin(TAU * (b / 8.0) + float(tile["i"]) * 0.6 + float(tile["j"]) * 0.4))
-		elif e < 0.3:
-			a = 0.4 * maxf(0.0, sin(TAU * (b / 8.0 + h)))
-		else:  # diagonal chase stepping one tile per beat, plus a few random tiles kicking on the beat
-			var lane := (int(tile["i"]) + int(tile["j"]) + int(beat)) % 4
-			a = (0.75 if lane == 0 else 0.0) * (0.45 + 0.55 * kp)
-			if fposmod(h * 7.0 + beat * 0.618, 1.0) < 0.12 + 0.18 * e:
-				a = maxf(a, kp)
-		var d := Vector2((c.x - cc.x) / 3.2, c.y - cc.y).length()  # perspective-flattened distance from the circle
-		if ripple_t >= 0.0:
-			a = maxf(a, 1.2 * exp(-pow((d - ripple_t * 110.0) / 26.0, 2.0)) * exp(-ripple_t * 0.35))
-		if t - last_pass < 1.2:
-			a = maxf(a, 0.8 * exp(-pow((d - (t - last_pass) * 160.0) / 22.0, 2.0)) * (1.0 - (t - last_pass) / 1.2))
-		if wave_u >= 0.0:
-			var wx := lerpf(-120.0, 1400.0, wave_u)
-			a = maxf(a, exp(-pow((c.x - wx) / 90.0, 2.0)))
-		a *= level
-		if a < 0.01:
-			continue
-		ci.draw_colored_polygon(tile["quad"], Color(_pal(int(h * 8.0)), clampf(a, 0.0, 0.85)))
 
 
 func _draw_woofer_glow(ci: CanvasItem) -> void:
@@ -554,7 +487,7 @@ func _draw_pulses(ci: CanvasItem, t: float) -> void:
 	var poly := _floor_poly()
 	for p in _pulses:
 		var age: float = t - float(p["t0"])
-		if age < 0.0 or age > 0.7 or not p["passed"] or poly.size() < 3 or (not _tiles.is_empty() and not stage.reduced):
+		if age < 0.0 or age > 0.7 or not p["passed"] or poly.size() < 3:
 			continue
 		ci.draw_colored_polygon(poly, Color(_pal(1), (1.0 - age / 0.7) * (0.12 if stage.reduced else 0.28)))
 
