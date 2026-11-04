@@ -294,7 +294,8 @@ class Analysis(unittest.TestCase):
         packs = self.dir / "packs"
         music = self.dir / "music.json"
         run = self.dir / "run.json"
-        write_json(run, {"nodes": [{"id": "a", "depth": 1}, {"id": "b", "depth": 2}, {"id": "c", "depth": 2}]})
+        write_json(run, {"worlds": [{"id": "w1", "depth": 1}, {"id": "w2", "depth": 2}],
+                         "nodes": [{"id": "a", "world": "w1", "next": [{"to": "b"}, {"to": "c"}]}, {"id": "b", "world": "w2", "next": []}, {"id": "c", "world": "w2", "next": []}]})
         self.addCleanup(setattr, bs, "RUN_JSON", bs.RUN_JSON)
         self.addCleanup(setattr, bs, "TRIAL_JSON", bs.TRIAL_JSON)
         bs.TRIAL_JSON = self.dir / "no_trial.json"
@@ -308,11 +309,11 @@ class Analysis(unittest.TestCase):
         # a later level gets other recordings with the same MIDI: audio only
         bs.assign("c", "lv9_alt", None, "none", False, music)
         self.assertEqual(bs.validate(packs, music)[0], [])
-        # a different chart for one sibling is allowed (each world its own song) but flagged as a warning
+        # a different chart for one sibling scene is allowed (each scene its own song) but flagged as a warning: the route lock applies
         bs.assign("c", None, "lv9_alt", None, None, music)
         errors, notes = bs.validate(packs, music)
         self.assertEqual(errors, [])
-        self.assertTrue(any(n_.startswith("WARNING depth 2") and "no longer share one chart" in n_ for n_ in notes), notes)
+        self.assertTrue(any(n_.startswith("WARNING scene a") and "route lock" in n_ for n_ in notes), notes)
         # an alternate render whose MIDI differs is refused
         pj = packs / "lv9_alt" / "pack.json"
         p = json.loads(pj.read_text())

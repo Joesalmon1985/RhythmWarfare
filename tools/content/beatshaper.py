@@ -625,23 +625,24 @@ def validate(packs_dir: Path = PACKS, music_path: Path = MUSIC_JSON) -> tuple[li
             if n["audio"] in packs and n["chart"] in packs and packs[n["audio"]]["phrase_beats"] != packs[n["chart"]]["phrase_beats"]:
                 errors.append(f"music.json: node {n['id']} audio '{n['audio']}' and chart '{n['chart']}' have different phrase lengths")
         run = read_json(RUN_JSON) if RUN_JSON.exists() else {"nodes": []}
-        depth_of = {n["id"]: min(int(n["depth"]), 4) for n in run["nodes"]}
-        chart_at: dict = {}
+        # a scene is a 64-beat phase at a place in a world; its difficulty tier is its world's depth (capped at 4)
+        depth_of_world = {w["id"]: min(int(w["depth"]), 4) for w in run.get("worlds", [])}
+        scene_world = {n["id"]: n["world"] for n in run["nodes"]}
+        chart_of = {n["id"]: n["chart"] for n in m["nodes"]}
         for n in m["nodes"]:
-            dp = depth_of.get(n["id"])
-            if dp is None:
+            if n["id"] not in scene_world:
                 errors.append(f"music.json: node {n['id']} is not in run.json")
-                continue
-            if dp in chart_at and chart_at[dp][1] != n["chart"]:
-                # siblings may chart different packs (each world its own song); both play tier `dp` of their own chart pack, so the difficulty tier stays equal
-                stand_in = any(x.get("temporary") for x in m["nodes"] if x["id"] in (n["id"], chart_at[dp][0]))
-                notes.append(f"WARNING depth {dp}: {n['id']} charts '{n['chart']}' but {chart_at[dp][0]} charts '{chart_at[dp][1]}'; siblings no longer share one chart "
-                             f"(both play tier {dp} of their own pack)" + ("; one of them is a temporary stand-in" if stand_in else ""))
-            chart_at.setdefault(dp, (n["id"], n["chart"]))
             if n["audio"] != n["chart"] and n["audio"] in packs and n["chart"] in packs:
                 if packs[n["audio"]]["tiers"] != packs[n["chart"]]["tiers"]:
                     errors.append(f"music.json: node {n['id']} plays the recordings of '{n['audio']}' under the chart of '{n['chart']}', but their MIDI differs; "
-                                  "an alternate render must be exported from the same MIDI (or give the whole depth the new chart)")
+                                  "an alternate render must be exported from the same MIDI (or give the scene the new chart)")
+        for n in run["nodes"]:  # sibling scenes: the routes of one scene that chart different packs fall under the route lock
+            charts = {chart_of[r["to"]] for r in n["next"] if r["to"] in chart_of}
+            if len(charts) > 1:
+                dp = depth_of_world.get(n["world"], 1)
+                temp = any(x.get("temporary") for x in m["nodes"] if x["id"] in {r["to"] for r in n["next"]})
+                notes.append(f"WARNING scene {n['id']} (tier {dp}): its routes chart {', '.join(sorted(charts))}; the route lock applies between them"
+                             + ("; one of them is a temporary stand-in" if temp else ""))
         for n in run["nodes"]:
             if n["id"] not in ids:
                 errors.append(f"run.json node {n['id']} has no music.json entry")
