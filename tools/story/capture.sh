@@ -102,3 +102,20 @@ screen() {  # name scene frames [env assignments...]
 screen ui_story_menu       res://src/scenes/story_campaign.tscn 30 RW_STORY_UI=1
 screen ui_result_legendary res://src/scenes/story_result.tscn  30 RW_STORY_RESULT=perfect
 screen ui_result_lost      res://src/scenes/story_result.tscn  30 RW_STORY_RESULT=none
+
+# chapters 4 and 5 (the waking chapters) and their camera moves
+shot ch4_01_opening         perfect       3  RW_STORY_CHAPTER=hospital
+shot ch4_02_corridor        perfect       21 RW_STORY_CHAPTER=hospital
+shot ch4_03_cafeteria       perfect       29 RW_STORY_CHAPTER=hospital
+shot ch4_04_garden          perfect       43 RW_STORY_CHAPTER=hospital
+shot ch4_05_end_home        perfect       59 RW_STORY_CHAPTER=hospital
+shot ch4_06_end_quiet       none          59 RW_STORY_CHAPTER=hospital
+shot ch5_01_opening         perfect       3  RW_STORY_CHAPTER=mental_hospital
+shot ch5_02_corridor        perfect       21 RW_STORY_CHAPTER=mental_hospital
+shot ch5_03_art_room        perfect       31 RW_STORY_CHAPTER=mental_hospital
+shot ch5_04_courtyard       perfect       47 RW_STORY_CHAPTER=mental_hospital
+shot ch5_05_end_star        perfect       67 RW_STORY_CHAPTER=mental_hospital
+shot ch5_06_end_lights_out  none          67 RW_STORY_CHAPTER=mental_hospital
+shot cam_hospital_step_17   perfect       17.9 RW_STORY_CHAPTER=hospital
+shot cam_ward_walk_41       perfect       41.9 RW_STORY_CHAPTER=mental_hospital
+for t in 3 7 11 13; do interlude awakening $t; interlude sectioned $t; done
