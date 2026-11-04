@@ -146,4 +146,4 @@ func test_motion_settings_calm_the_camera() -> void:
 	Session.story_motion = 2
 	assert_eq(Session.effective_story_motion(), 2)
 	Session.story_motion = 0
-	assert_eq(StoryLowRes.LINE_CHOICES[Session.story_lines], 270, "270p is the default internal resolution")
+	assert_eq(StoryLowRes.LINE_CHOICES[Session.story_lines], 360, "360p is the default internal resolution")

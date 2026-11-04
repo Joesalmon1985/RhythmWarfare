@@ -7,7 +7,7 @@ extends Control
 const FOV_V := StoryProjector.FOV_V
 const LINE_CHOICES := [360, 270, 180]
 
-var lines := 270  # internal vertical resolution of a full-height window (RW_STORY_LINES overrides)
+var lines := 360  # internal vertical resolution of a full-height window (RW_STORY_LINES overrides)
 var sub: SubViewport
 var rect: TextureRect
 var camera: Camera3D
