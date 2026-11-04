@@ -2016,6 +2016,150 @@
    "group": "peak",
    "view": "furnace",
    "enter_from": "side"
+  },
+  {
+   "id": "gate_bouncer",
+   "archetype": "brute",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "check",
+   "prop": "tickets",
+   "target": "gate_q1"
+  },
+  {
+   "id": "gate_q1",
+   "archetype": "imp",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "queue"
+  },
+  {
+   "id": "gate_q2",
+   "archetype": "imp",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "queue"
+  },
+  {
+   "id": "bartender",
+   "archetype": "fiend",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "serve",
+   "prop": "tray",
+   "pace_axis": [
+    0,
+    1
+   ],
+   "pace_m": 2.2
+  },
+  {
+   "id": "toast_a",
+   "archetype": "skeleton",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "toast",
+   "prop": "cup"
+  },
+  {
+   "id": "toast_b",
+   "archetype": "flame",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "toast",
+   "prop": "cup"
+  },
+  {
+   "id": "sleeper",
+   "archetype": "imp",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "main",
+   "activity": "sleep"
+  },
+  {
+   "id": "stair_sit",
+   "archetype": "fiend",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "court",
+   "activity": "sit"
+  },
+  {
+   "id": "stair_chat_a",
+   "archetype": "horned_queen",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "court",
+   "activity": "chat"
+  },
+  {
+   "id": "stair_chat_b",
+   "archetype": "brute",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "court",
+   "activity": "chat"
+  },
+  {
+   "id": "smith_carry",
+   "archetype": "brute",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "furnace",
+   "activity": "carry"
+  },
+  {
+   "id": "smith_check",
+   "archetype": "fiend",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "furnace",
+   "activity": "check",
+   "prop": "clipboard",
+   "target": "smith_carry"
+  },
+  {
+   "id": "smith_pace",
+   "archetype": "flame",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "furnace",
+   "activity": "pace",
+   "pace_axis": [
+    1,
+    0
+   ],
+   "pace_m": 2.5
+  },
+  {
+   "id": "prisoner",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "furnace",
+   "activity": "rock",
+   "art": "night_one"
   }
  ],
  "silhouettes": [
