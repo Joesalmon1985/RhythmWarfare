@@ -2876,5 +2876,135 @@
     ]
    }
   }
+ },
+ "textures": {
+  "bar_front": {
+   "file": "textures/bar_front.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.0
+  },
+  "ceil_truss": {
+   "file": "textures/ceil_truss.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "cubicle_door": {
+   "file": "textures/cubicle_door.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_carpet": {
+   "file": "textures/floor_carpet.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_dark": {
+   "file": "textures/floor_dark.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_led": {
+   "file": "textures/floor_led.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.0
+  },
+  "floor_stage": {
+   "file": "textures/floor_stage.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "toilet_floor": {
+   "file": "textures/toilet_floor.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "toilet_tile": {
+   "file": "textures/toilet_tile.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "trim": {
+   "file": "textures/trim.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_bar": {
+   "file": "textures/wall_bar.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_brick": {
+   "file": "textures/wall_brick.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_door": {
+   "file": "textures/wall_door.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_led": {
+   "file": "textures/wall_led.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_panel": {
+   "file": "textures/wall_panel.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_speaker": {
+   "file": "textures/wall_speaker.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  }
  }
 }

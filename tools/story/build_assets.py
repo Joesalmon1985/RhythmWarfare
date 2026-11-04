@@ -93,6 +93,9 @@ def main(argv) -> int:
         from art import stage
         manifest["silhouettes"] = stage.build_silhouettes()
         manifest["stage"] = stage.build_stage()
+    if not only or "tiles" in only:
+        from art import tiles
+        manifest["textures"] = tiles.build("night_one")
     path = os.path.join(lib.ASSET_DIR, "manifest.json")
     if only and os.path.exists(path):  # partial build: keep the other sections
         with open(path, encoding="utf-8") as fh:

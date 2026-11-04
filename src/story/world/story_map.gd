@@ -1,0 +1,607 @@
+class_name StoryMap
+extends RefCounted
+## A chapter's 2.5D map (content/story/maps/<chapter>.json, docs/STORY_25D_PLAN.md section 3): sectors (convex floor/ceiling polygons
+## with a height range), walls (portals join two sectors), billboard things, an actor home and a waypoint list for the player's rail.
+## Pure logic, no nodes, no renderer. Coordinates are (x, z) metres on the ground plane (z grows toward the audience's back wall); a yaw of
+## 0 degrees looks toward -z, and a positive yaw turns left (forward = (-sin yaw, -cos yaw)), the way Godot's Camera3D rotation.y does.
+##
+## Validation (errors[]): every sector polygon is simple, convex, non-degenerate and does not overlap another; ceilings clear floors;
+## every wall lies on one edge of its sector, every portal also on one edge of the sector on the other side (which sees it implicitly
+## from its side, so a portal is declared once); texture names exist (and their files when art is checked); every waypoint, home and thing
+## lies inside its sector (waypoints and homes keep a margin from the walls); every sector is reachable from the start waypoint through
+## portals; chapter checks: every actor has a home, every player_move / player_look target is a waypoint or actor.
+
+const PATH := "res://content/story/maps/%s.json"
+const EPS := 1.0e-3
+const HOME_MARGIN := 0.25
+const WAYPOINT_MARGIN := 0.3
+const ANIMS := ["none", "pulse", "flicker", "rotate", "bob", "sway", "pump"]
+const MOVE_STYLES := ["walk", "stagger", "run", "climb", "carried"]
+const ROLES := ["dancer", "on_stage", "dj", "queasy", "sick", "recovered", "out"]
+
+var id := ""
+var art := ""  # assets/story/<art>/ holds the textures
+var raw: Dictionary = {}
+var units_per_m := 1.0
+var eye_height := 1.6
+var start_id := ""
+var textures: Dictionary = {}  # name -> file relative to the art folder
+var sectors: Array = []  # {id, poly: PackedVector2Array (counter-clockwise), floor, ceiling, floor_tex, ceil_tex, wall_tex, light, tint: Color, room, flags}
+var things: Array = []
+var homes: Dictionary = {}  # actor id -> {sector, at: Vector2}
+var waypoints: Dictionary = {}  # id -> {at: Vector2, yaw: float (degrees), sector}
+var occluders: Array = []
+var sky: Dictionary = {}
+var errors: Array = []
+
+var _sector_index: Dictionary = {}
+var _walls_in: Array = []  # explicit walls as authored
+var _walls_out: Array = []  # resolved (explicit, implicit reverse portals, filled gaps)
+var _portals: Array = []  # {a, b, p0, p1, mid}
+
+
+static func load_chapter(chapter: String, check_files := true) -> StoryMap:
+	var path := PATH % chapter
+	var m := StoryMap.new()
+	m.id = chapter
+	m.art = chapter
+	if not FileAccess.file_exists(path):
+		m.errors.append("map file missing: " + path)
+		return m
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		m.errors.append("%s is not a JSON object" % path)
+		return m
+	m.build(parsed, check_files)
+	return m
+
+
+static func from_dict(d: Dictionary, chapter := "test", check_files := false) -> StoryMap:
+	var m := StoryMap.new()
+	m.id = chapter
+	m.art = chapter
+	m.build(d, check_files)
+	return m
+
+
+func build(d: Dictionary, check_files: bool) -> void:
+	raw = d
+	units_per_m = float(d.get("units_per_m", 1.0))
+	eye_height = float(d.get("eye_height", 1.6))
+	if units_per_m <= 0.0:
+		errors.append("units_per_m must be positive")
+	if eye_height <= 0.0:
+		errors.append("eye_height must be positive")
+	textures = d.get("textures", {})
+	for k in textures:
+		if check_files and not FileAccess.file_exists("res://assets/story/%s/%s" % [art, str(textures[k])]) and not ResourceLoader.exists("res://assets/story/%s/%s" % [art, str(textures[k])]):
+			errors.append("texture %s: file %s is missing" % [k, textures[k]])
+	sky = d.get("sky", {}) if typeof(d.get("sky", {})) == TYPE_DICTIONARY else {}
+	_build_sectors(d.get("sectors", []))
+	_build_walls(d.get("walls", []))
+	_build_things(d.get("things", []))
+	_build_waypoints(d.get("waypoints", []))
+	start_id = str(d.get("start", ""))
+	if start_id == "" and not waypoints.is_empty():
+		start_id = str(waypoints.keys()[0])
+	if not waypoints.has(start_id):
+		errors.append("start waypoint %s is not a waypoint" % start_id)
+	_build_homes(d.get("homes", []))
+	_build_occluders(d.get("occluders", []))
+	_check_reachability()
+	if errors.is_empty():
+		_resolve_walls()
+
+
+# --- construction and per-element checks ---------------------------------------------------------------------------------------------
+
+func _pt(a: Variant, where: String) -> Vector2:
+	if typeof(a) != TYPE_ARRAY or (a as Array).size() != 2:
+		errors.append("%s: a point is [x, z]" % where)
+		return Vector2.ZERO
+	return Vector2(float(a[0]), float(a[1]))
+
+
+func _tex_ok(name: String, where: String) -> void:
+	if name != "" and name != "sky" and not textures.has(name):
+		errors.append("%s: unknown texture %s" % [where, name])
+
+
+func _build_sectors(list: Array) -> void:
+	for s in list:
+		var sid := str(s.get("id", ""))
+		if sid == "" or _sector_index.has(sid):
+			errors.append("sector id %s missing or duplicated" % sid)
+			continue
+		var pts := PackedVector2Array()
+		for p in s.get("polygon", []):
+			pts.append(_pt(p, "sector " + sid))
+		var sec := {"id": sid, "floor": float(s.get("floor", 0.0)), "ceiling": float(s.get("ceiling", 3.0)),
+			"floor_tex": str(s.get("floor_tex", "")), "ceil_tex": str(s.get("ceil_tex", "")), "wall_tex": str(s.get("wall_tex", "")),
+			"light": float(s.get("light", 0.6)), "tint": Color.html(str(s.get("tint", "#ffffff"))), "room": str(s.get("room", "main")),
+			"flags": s.get("flags", [])}
+		if pts.size() < 3:
+			errors.append("sector %s: a polygon needs 3 points or more" % sid)
+		else:
+			if _signed_area(pts) < 0.0:
+				pts.reverse()
+			sec["poly"] = pts
+			_check_polygon(sid, pts)
+		if float(sec["ceiling"]) <= float(sec["floor"]) + EPS:
+			errors.append("sector %s: ceiling must be above the floor" % sid)
+		if float(sec["light"]) < 0.0 or float(sec["light"]) > 1.0:
+			errors.append("sector %s: light is 0..1" % sid)
+		for k in ["floor_tex", "ceil_tex", "wall_tex"]:
+			_tex_ok(str(sec[k]), "sector " + sid)
+		if not sec.has("poly"):
+			sec["poly"] = PackedVector2Array()
+		_sector_index[sid] = sectors.size()
+		sectors.append(sec)
+	for i in sectors.size():
+		for j in range(i + 1, sectors.size()):
+			_check_overlap(sectors[i], sectors[j])
+
+
+static func _signed_area(p: PackedVector2Array) -> float:
+	var a := 0.0
+	for i in p.size():
+		var q := p[(i + 1) % p.size()]
+		a += p[i].x * q.y - q.x * p[i].y
+	return a * 0.5
+
+
+func _check_polygon(sid: String, p: PackedVector2Array) -> void:
+	var n := p.size()
+	for i in n:
+		if p[i].distance_to(p[(i + 1) % n]) < EPS:
+			errors.append("sector %s: repeated point" % sid)
+			return
+	for i in n:
+		for j in range(i + 1, n):
+			if j == i + 1 or (i == 0 and j == n - 1):
+				continue
+			if Geometry2D.segment_intersects_segment(p[i], p[(i + 1) % n], p[j], p[(j + 1) % n]) != null:
+				errors.append("sector %s: the polygon is not simple (edges %d and %d meet)" % [sid, i, j])
+				return
+	if absf(_signed_area(p)) < 0.01:
+		errors.append("sector %s: the polygon has no area" % sid)
+		return
+	var sign := 0
+	for i in n:
+		var c := (p[(i + 1) % n] - p[i]).cross(p[(i + 2) % n] - p[(i + 1) % n])
+		if absf(c) < EPS:
+			continue
+		var sg := 1 if c > 0.0 else -1
+		if sign != 0 and sg != sign:
+			errors.append("sector %s: the polygon is not convex (split it into sectors; rail pathing needs convex rooms)" % sid)
+			return
+		sign = sg
+
+
+func _check_overlap(a: Dictionary, b: Dictionary) -> void:
+	var pa: PackedVector2Array = a["poly"]
+	var pb: PackedVector2Array = b["poly"]
+	if pa.size() < 3 or pb.size() < 3:
+		return
+	var bad := false
+	for piece in Geometry2D.intersect_polygons(pa, pb):  # shared edges give no area; any real overlap does
+		if absf(_signed_area(piece)) > 0.01:
+			bad = true
+	if bad:
+		errors.append("sectors %s and %s overlap" % [a["id"], b["id"]])
+
+
+static func _dist_to_segment(p: Vector2, a: Vector2, b: Vector2) -> float:
+	return p.distance_to(Geometry2D.get_closest_point_to_segment(p, a, b))
+
+
+static func _dist_to_boundary(p: Vector2, poly: PackedVector2Array) -> float:
+	var best := INF
+	for i in poly.size():
+		best = minf(best, _dist_to_segment(p, poly[i], poly[(i + 1) % poly.size()]))
+	return best
+
+
+## The polygon edge index that holds both a and b (within EPS), or -1.
+static func edge_holding(a: Vector2, b: Vector2, poly: PackedVector2Array) -> int:
+	for i in poly.size():
+		var p := poly[i]
+		var q := poly[(i + 1) % poly.size()]
+		if _dist_to_segment(a, p, q) < EPS and _dist_to_segment(b, p, q) < EPS:
+			return i
+	return -1
+
+
+func _build_walls(list: Array) -> void:
+	var seen_portals := {}
+	for w in list:
+		var sid := str(w.get("sector", ""))
+		var where := "wall in %s" % sid
+		if not _sector_index.has(sid):
+			errors.append("%s: unknown sector" % where)
+			continue
+		var a := _pt(w.get("from"), where)
+		var b := _pt(w.get("to"), where)
+		var poly: PackedVector2Array = sectors[_sector_index[sid]]["poly"]
+		if a.distance_to(b) < 0.05:
+			errors.append("%s: zero length" % where)
+			continue
+		if poly.size() >= 3 and edge_holding(a, b, poly) < 0:
+			errors.append("%s: %s to %s is not on one edge of the sector" % [where, a, b])
+			continue
+		var portal := "" if w.get("portal") == null else str(w["portal"])
+		if portal != "":
+			if not _sector_index.has(portal) or portal == sid:
+				errors.append("%s: portal to %s has no sector on the other side" % [where, portal])
+				continue
+			var opoly: PackedVector2Array = sectors[_sector_index[portal]]["poly"]
+			if opoly.size() >= 3 and edge_holding(a, b, opoly) < 0:
+				errors.append("%s: the portal to %s does not lie on one of its edges" % [where, portal])
+				continue
+			var key := [sid, portal]
+			key.sort()
+			seen_portals[str(key)] = seen_portals.get(str(key), []) + [[a, b]]
+		var tex := str(w.get("tex", ""))
+		for k in ["tex", "lower_tex", "upper_tex"]:
+			_tex_ok(str(w.get(k, "")), where)
+		_walls_in.append({"a": a, "b": b, "sector": sid, "portal": portal, "tex": tex, "lower_tex": str(w.get("lower_tex", "")), "upper_tex": str(w.get("upper_tex", ""))})
+	# a portal is declared once (the other sector sees it implicitly)
+	for k in seen_portals:
+		var segs: Array = seen_portals[k]
+		for i in segs.size():
+			for j in range(i + 1, segs.size()):
+				if _overlap_len(segs[i][0], segs[i][1], segs[j][0], segs[j][1]) > EPS:
+					errors.append("portal %s is declared twice" % k)
+	for i in _walls_in.size():
+		for j in range(i + 1, _walls_in.size()):
+			var wi: Dictionary = _walls_in[i]
+			var wj: Dictionary = _walls_in[j]
+			if wi["sector"] == wj["sector"] and _overlap_len(wi["a"], wi["b"], wj["a"], wj["b"]) > EPS:
+				errors.append("walls %d and %d of sector %s overlap" % [i, j, wi["sector"]])
+
+
+static func _overlap_len(a: Vector2, b: Vector2, c: Vector2, d: Vector2) -> float:
+	var dir := b - a
+	var l := dir.length()
+	if l < EPS:
+		return 0.0
+	dir /= l
+	if absf((c - a).cross(dir)) > EPS or absf((d - a).cross(dir)) > EPS:
+		return 0.0
+	var t0 := (c - a).dot(dir)
+	var t1 := (d - a).dot(dir)
+	return maxf(0.0, minf(l, maxf(t0, t1)) - maxf(0.0, minf(t0, t1)))
+
+
+func _build_things(list: Array) -> void:
+	var seen := {}
+	for t in list:
+		var tid := str(t.get("id", ""))
+		var sid := str(t.get("sector", ""))
+		var at := _pt(t.get("at"), "thing " + tid)
+		if sid == "":  # a thing names no sector: it belongs to the sector that holds it
+			sid = sector_at(at)
+		if tid == "" or seen.has(tid):
+			errors.append("thing id %s missing or duplicated" % tid)
+			continue
+		seen[tid] = true
+		if not _sector_index.has(sid):
+			errors.append("thing %s: lies in no sector" % tid)
+			continue
+		var poly: PackedVector2Array = sectors[_sector_index[sid]]["poly"]
+		if poly.size() >= 3 and not Geometry2D.is_point_in_polygon(at, poly):
+			errors.append("thing %s: %s is not inside sector %s" % [tid, at, sid])
+		if str(t.get("sprite", "")) == "":
+			errors.append("thing %s: no sprite" % tid)
+		if str(t.get("anim", "none")) not in ANIMS:
+			errors.append("thing %s: unknown anim %s" % [tid, t.get("anim")])
+		if float(t.get("size", 1.0)) <= 0.0:
+			errors.append("thing %s: size must be positive" % tid)
+		var th: Dictionary = t.duplicate()
+		th["sector"] = sid
+		th["at"] = at
+		things.append(th)
+
+
+func _inside(p: Vector2, sid: String, margin: float) -> bool:
+	if not _sector_index.has(sid):
+		return false
+	var poly: PackedVector2Array = sectors[_sector_index[sid]]["poly"]
+	return poly.size() >= 3 and Geometry2D.is_point_in_polygon(p, poly) and _dist_to_boundary(p, poly) >= margin - 1.0e-6
+
+
+func _build_waypoints(list: Array) -> void:
+	for w in list:
+		var wid := str(w.get("id", ""))
+		var at := _pt(w.get("at"), "waypoint " + wid)
+		var sid := str(w.get("sector", ""))
+		if wid == "" or waypoints.has(wid):
+			errors.append("waypoint id %s missing or duplicated" % wid)
+			continue
+		if not _sector_index.has(sid):
+			errors.append("waypoint %s: unknown sector %s" % [wid, sid])
+			continue
+		if not _inside(at, sid, WAYPOINT_MARGIN):
+			errors.append("waypoint %s: %s is not inside sector %s (with a %.1f m margin)" % [wid, at, sid, WAYPOINT_MARGIN])
+		waypoints[wid] = {"at": at, "yaw": float(w.get("yaw", 0.0)), "sector": sid}
+
+
+func _build_homes(list: Array) -> void:
+	for h in list:
+		var aid := str(h.get("actor", ""))
+		var sid := str(h.get("sector", ""))
+		var at := _pt(h.get("at"), "home " + aid)
+		if aid == "" or homes.has(aid):
+			errors.append("home for actor %s missing or duplicated" % aid)
+			continue
+		if not _sector_index.has(sid):
+			errors.append("home %s: unknown sector %s" % [aid, sid])
+			continue
+		if not _inside(at, sid, HOME_MARGIN):
+			errors.append("home %s: %s is not inside sector %s (with a %.2f m margin from the walls)" % [aid, at, sid, HOME_MARGIN])
+		homes[aid] = {"sector": sid, "at": at}
+
+
+func _build_occluders(list: Array) -> void:
+	for o in list:
+		var oid := str(o.get("id", ""))
+		var between: Array = o.get("between", [])
+		if oid == "" or between.size() != 2 or not _sector_index.has(str(between[0])) or not _sector_index.has(str(between[1])):
+			errors.append("occluder %s: needs two existing sectors in between" % oid)
+			continue
+		if str(o.get("sprite", "")) == "":
+			errors.append("occluder %s: no sprite" % oid)
+		occluders.append(o)
+
+
+# --- portals, reachability, resolved walls ---------------------------------------------------------------------------------------------
+
+func _collect_portals() -> void:
+	_portals = []
+	for w in _walls_in:
+		if str(w["portal"]) != "":
+			_portals.append({"a": str(w["sector"]), "b": str(w["portal"]), "p0": w["a"], "p1": w["b"], "mid": (w["a"] + w["b"]) * 0.5})
+
+
+func portals() -> Array:
+	if _portals.is_empty():
+		_collect_portals()
+	return _portals
+
+
+func neighbors(sid: String) -> Array:
+	var out: Array = []
+	for p in portals():
+		if p["a"] == sid and not out.has(p["b"]):
+			out.append(p["b"])
+		elif p["b"] == sid and not out.has(p["a"]):
+			out.append(p["a"])
+	return out
+
+
+func reachable_from(sid: String) -> Dictionary:
+	var seen := {sid: true}
+	var queue := [sid]
+	while not queue.is_empty():
+		var s: String = queue.pop_front()
+		for n in neighbors(s):
+			if not seen.has(n):
+				seen[n] = true
+				queue.append(n)
+	return seen
+
+
+func _check_reachability() -> void:
+	if not waypoints.has(start_id) or sectors.is_empty():
+		return
+	var seen := reachable_from(str(waypoints[start_id]["sector"]))
+	for s in sectors:
+		if not seen.has(s["id"]):
+			errors.append("sector %s cannot be reached from the start waypoint through portals" % s["id"])
+
+
+## Every wall as drawn: the explicit ones, each portal's implicit mirror in the sector on the other side, and default walls (the sector's
+## wall_tex) over every stretch of a polygon edge that nothing else covers. {a, b (Vector2), sector, portal ("" for solid), tex, lower_tex,
+## upper_tex}; a and b run along the sector's counter-clockwise edge direction, so the room is on the left of a to b.
+func resolved_walls() -> Array:
+	return _walls_out
+
+
+func _resolve_walls() -> void:
+	_walls_out = []
+	var all: Array = []
+	for w in _walls_in:
+		all.append(w)
+		if str(w["portal"]) != "":
+			all.append({"a": w["b"], "b": w["a"], "sector": w["portal"], "portal": w["sector"], "tex": w["tex"], "lower_tex": w["lower_tex"], "upper_tex": w["upper_tex"], "implicit": true})
+	for s in sectors:
+		var poly: PackedVector2Array = s["poly"]
+		for i in poly.size():
+			var p := poly[i]
+			var q := poly[(i + 1) % poly.size()]
+			var len := p.distance_to(q)
+			var dir := (q - p) / len
+			var pieces: Array = []  # [t0, t1, wall]
+			for w in all:
+				if w["sector"] != s["id"] or edge_holding(w["a"], w["b"], PackedVector2Array([p, q])) != 0:
+					continue
+				var t0: float = ((w["a"] as Vector2) - p).dot(dir)
+				var t1: float = ((w["b"] as Vector2) - p).dot(dir)
+				var nw: Dictionary = (w as Dictionary).duplicate()
+				nw["a"] = p + dir * minf(t0, t1)
+				nw["b"] = p + dir * maxf(t0, t1)
+				pieces.append([minf(t0, t1), maxf(t0, t1), nw])
+			pieces.sort_custom(func(x: Array, y: Array) -> bool: return x[0] < y[0])
+			var at := 0.0
+			for pc in pieces:
+				if float(pc[0]) > at + EPS:
+					_walls_out.append(_default_wall(s, p + dir * at, p + dir * float(pc[0])))
+				_walls_out.append(pc[2])
+				at = maxf(at, float(pc[1]))
+			if at < len - EPS:
+				_walls_out.append(_default_wall(s, p + dir * at, q))
+	for w in _walls_out:  # unset textures fall back to the sector's own
+		var sec: Dictionary = sectors[_sector_index[w["sector"]]]
+		if str(w["tex"]) == "":
+			w["tex"] = str(sec["wall_tex"])
+		if str(w["lower_tex"]) == "":
+			w["lower_tex"] = str(w["tex"])
+		if str(w["upper_tex"]) == "":
+			w["upper_tex"] = str(w["tex"])
+
+
+func _default_wall(s: Dictionary, a: Vector2, b: Vector2) -> Dictionary:
+	return {"a": a, "b": b, "sector": s["id"], "portal": "", "tex": str(s["wall_tex"]), "lower_tex": "", "upper_tex": "", "auto": true}
+
+
+# --- queries -------------------------------------------------------------------------------------------------------------------------------
+
+func sector(sid: String) -> Dictionary:
+	return sectors[_sector_index[sid]] if _sector_index.has(sid) else {}
+
+
+## The sector holding the ground point p ("" when outside every sector).
+func sector_at(p: Vector2) -> String:
+	for s in sectors:
+		var poly: PackedVector2Array = s["poly"]
+		if poly.size() >= 3 and (Geometry2D.is_point_in_polygon(p, poly) or _dist_to_boundary(p, poly) < EPS):
+			return str(s["id"])
+	return ""
+
+
+func waypoint(wid: String) -> Dictionary:
+	return waypoints.get(wid, {})
+
+
+func has_waypoint(wid: String) -> bool:
+	return waypoints.has(wid)
+
+
+func home(actor: String) -> Dictionary:
+	return homes.get(actor, {})
+
+
+func start_waypoint() -> Dictionary:
+	return waypoints.get(start_id, {})
+
+
+## Eye height above the world floor for a point in sector sid.
+func eye_y(sid: String) -> float:
+	return float(sector(sid).get("floor", 0.0)) + eye_height
+
+
+func forward_of_yaw(yaw_deg: float) -> Vector2:
+	var r := deg_to_rad(yaw_deg)
+	return Vector2(-sin(r), -cos(r))
+
+
+## A* over the portal graph. The route runs from `from` (in sector `from_sec`) through the midpoint of each portal crossed to `to`.
+## Returns {points: PackedVector2Array (start, portal midpoints, end), sectors: Array (the sector each leg lies in), length}.
+## Because every sector is convex, each leg stays inside its sector. An empty `points` means no route.
+func route(from: Vector2, from_sec: String, to: Vector2, to_sec: String) -> Dictionary:
+	var none := {"points": PackedVector2Array(), "sectors": [], "length": 0.0}
+	if not _sector_index.has(from_sec) or not _sector_index.has(to_sec):
+		return none
+	var ps := portals()
+	var n := 2 + ps.size()
+	var pos: Array = [from, to]
+	var secs: Array = [[from_sec], [to_sec]]
+	for p in ps:
+		pos.append(p["mid"])
+		secs.append([p["a"], p["b"]])
+	var g := {0: 0.0}
+	var prev := {}
+	var open: Array = [0]
+	var closed := {}
+	while not open.is_empty():
+		var best := 0
+		for i in open.size():  # lowest f, ties by node index: deterministic
+			var fi: float = g[open[i]] + (pos[open[i]] as Vector2).distance_to(to)
+			var fb: float = g[open[best]] + (pos[open[best]] as Vector2).distance_to(to)
+			if fi < fb - 1.0e-9 or (absf(fi - fb) <= 1.0e-9 and open[i] < open[best]):
+				best = i
+		var cur: int = open.pop_at(best)
+		if cur == 1:
+			break
+		closed[cur] = true
+		for nb in n:
+			if nb == cur or closed.has(nb) or (cur == 0 and nb == 1 and from_sec != to_sec):
+				continue
+			var shared := ""
+			for s in secs[cur]:
+				if s in secs[nb]:
+					shared = s
+					break
+			if shared == "":
+				continue
+			var cost: float = g[cur] + (pos[cur] as Vector2).distance_to(pos[nb])
+			if not g.has(nb) or cost < g[nb] - 1.0e-9:
+				g[nb] = cost
+				prev[nb] = [cur, shared]
+				if nb not in open:
+					open.append(nb)
+	if not prev.has(1):
+		return none
+	var chain: Array = []
+	var node := 1
+	while node != 0:
+		chain.push_front(node)
+		node = int(prev[node][0])
+	var pts := PackedVector2Array([from])
+	var legs: Array = []
+	var last := 0
+	for c in chain:
+		pts.append(pos[c])
+		legs.append(str(prev[c][1]))
+		last = c
+	return {"points": pts, "sectors": legs, "length": float(g[1])}
+
+
+# --- the chapter's own references ------------------------------------------------------------------------------------------------------
+
+## Every authored player_move / player_look in a chapter file (events, `else` alternatives and decision outcomes):
+## [{action, args, where}].
+static func journey_actions(chapter_raw: Dictionary) -> Array:
+	var out: Array = []
+	for b in chapter_raw.get("blocks", []):
+		for e in b.get("events", []):
+			for key in ["action", "else"]:
+				var an := str(e.get(key, ""))
+				if an.begins_with("player_"):
+					out.append({"action": an, "args": e, "where": "%s bar %s" % [b.get("id", "?"), e.get("at_bar", "?")]})
+	for d in chapter_raw.get("decisions", []):
+		for outcome in ["good", "bad"]:
+			for a in d.get(outcome, []):
+				if typeof(a) == TYPE_DICTIONARY and str(a.get("action", "")).begins_with("player_"):
+					out.append({"action": str(a["action"]), "args": a, "where": "decision %s %s" % [d.get("id", "?"), outcome]})
+	return out
+
+
+## Chapter-level rules: every actor has a home (and every home an actor), every player_move target is a waypoint, player_look targets are
+## waypoints or actors, styles and roles are known. Errors are appended to `errors`.
+func validate_chapter(chapter_raw: Dictionary) -> void:
+	var actor_ids := {}
+	for a in chapter_raw.get("actors", []):
+		actor_ids[str(a["id"])] = true
+		if not homes.has(str(a["id"])):
+			errors.append("actor %s has no home in the map" % a["id"])
+	for h in homes:
+		if not actor_ids.has(h):
+			errors.append("home %s is not an actor of the chapter" % h)
+	for ja in journey_actions(chapter_raw):
+		var args: Dictionary = ja["args"]
+		match str(ja["action"]):
+			"player_move":
+				if not waypoints.has(str(args.get("to", ""))):
+					errors.append("%s: player_move to %s is not a waypoint" % [ja["where"], args.get("to", "")])
+				if str(args.get("style", "walk")) not in MOVE_STYLES:
+					errors.append("%s: unknown move style %s" % [ja["where"], args.get("style")])
+			"player_look":
+				var at := str(args.get("at", ""))
+				if at != "" and not waypoints.has(at) and not actor_ids.has(at):
+					errors.append("%s: player_look at %s is neither a waypoint nor an actor" % [ja["where"], at])
+				if at == "" and not args.has("yaw"):
+					errors.append("%s: player_look needs yaw or at" % ja["where"])
+			"player_role":
+				if str(args.get("role", "")) not in ROLES:
+					errors.append("%s: unknown role %s" % [ja["where"], args.get("role", "")])

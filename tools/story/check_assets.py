@@ -122,7 +122,38 @@ def validate(chapter: str = "night_one") -> list:
         check_entry(errors, f"sprite {sid}", e)
     if chapter != "night_one":
         chapter_checks(errors, chapter, m, st)
+    texture_checks(errors, chapter, m)
     return errors
+
+
+# the 2.5D world's texture tiles (tools/story/art/tiles.py): chapters list them under manifest["textures"] once their world is authored
+TEXTURES_REQUIRED = {"night_one": {"wall_brick", "wall_panel", "wall_led", "trim", "floor_led", "floor_dark", "floor_stage", "ceil_truss",
+                                   "wall_bar", "bar_front", "toilet_tile", "toilet_floor", "cubicle_door", "wall_door"}}
+
+
+def texture_checks(errors, chapter, m) -> None:
+    tex = m.get("textures")
+    if tex is None:
+        if chapter in TEXTURES_REQUIRED:
+            errors.append("manifest has no textures section")
+        return
+    missing = TEXTURES_REQUIRED.get(chapter, set()) - set(tex)
+    if missing:
+        errors.append(f"textures missing {sorted(missing)}")
+    for tid, e in tex.items():
+        p = os.path.join(ART, e.get("file", ""))
+        if not os.path.exists(p):
+            errors.append(f"texture {tid}: missing {e.get('file')}")
+            continue
+        w, h = png_size(p)
+        if [w, h] != list(e.get("size", [])) or w != h or w not in (32, 64, 128):
+            errors.append(f"texture {tid}: size {w}x{h} (manifest {e.get('size')}); tiles are square 32, 64 or 128 px")
+        if float(e.get("metres", 0)) <= 0:
+            errors.append(f"texture {tid}: metres must be positive")
+    on_disk = {fn for fn in os.listdir(os.path.join(ART, "textures")) if fn.endswith(".png")} if os.path.isdir(os.path.join(ART, "textures")) else set()
+    listed = {os.path.basename(e["file"]) for e in tex.values()}
+    if on_disk - listed:
+        errors.append(f"textures on disk but not in the manifest: {sorted(on_disk - listed)}")
 
 
 VIEW_ANCHORS = {"floor_rows", "floor_polygon", "light_points", "circle_centre", "circle_radii", "vanish"}
