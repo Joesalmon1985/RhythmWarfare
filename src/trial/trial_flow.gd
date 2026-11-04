@@ -24,6 +24,8 @@ var history: Array = []  # [{passage, choice, result}]
 var visited: Array = []
 var exit := ""  # set when the player leaves ("warehouse")
 var rejoined: Array = []  # passages entered more than once (routes that rejoin)
+var flags: Array = []  # items the player carries (ids from the data's "items"); a passage "grants" them on entry and a choice may "require" one
+var gained := ""  # the item picked up on entering the current passage ("" when none)
 
 
 func _init(p_data: TrialData = null, start_passage: int = -1) -> void:
@@ -43,11 +45,24 @@ func begin(p_data: TrialData, start_passage: int = -1) -> void:
 	history = []
 	visited = [passage]
 	rejoined = []
+	flags = []
+	gained = ""
 	exit = ""
+	_collect()
 
 
+## The choices on offer now: those the player's items allow. Indexes into this list are what select() and the engine use.
 func choices() -> Array:
-	return data.choices(passage)
+	return data.choices_for(passage, flags)
+
+
+## Picks up what the current passage grants (an item already held is not announced twice).
+func _collect() -> void:
+	gained = ""
+	for g in current().get("grants", []):
+		if str(g) not in flags:
+			flags.append(str(g))
+			gained = str(data.items.get(str(g), g))
 
 
 func current() -> Dictionary:
@@ -94,7 +109,7 @@ func phrase_done(passed: bool, credit: float) -> Dictionary:
 		var moved := c.duplicate()
 		moved["to"] = dest
 		_move(moved)
-		consequence = "Luck is with you." if passed else "Luck turns against you."
+		consequence = (str(c.get("consequence", "")) if passed and str(c.get("consequence", "")) != "" else ("Luck is with you." if passed else "Luck turns against you.")) + _gain_note()
 		return {"kind": "pass" if passed else "fail", "fight": false, "outcome": "", "text": consequence, "defeated": false}
 	if passed:
 		history.append({"passage": passage, "choice": selected, "result": "pass", "credit": credit})
@@ -103,12 +118,12 @@ func phrase_done(passed: bool, credit: float) -> Dictionary:
 		failure = ""
 		_move(c)
 		if fight:
-			consequence = "%s %s" % [str(enc.get("on_win", "")), str(c.get("consequence", ""))]
+			consequence = ("%s %s" % [str(enc.get("on_win", "")), str(c.get("consequence", ""))]).strip_edges() + _gain_note()
 		return {"kind": "pass", "fight": fight, "outcome": "win" if fight else "", "text": consequence, "defeated": false}
 	history.append({"passage": passage, "choice": selected, "result": "fail", "credit": credit})
 	attempts += 1
 	if fight and int(c.get("lives", 0)) > 0 and attempts >= int(c["lives"]):  # beaten three times: the fight is lost for good, and the adventure with it
-		var lost := {"to": 0, "consequence": "The %s is too much for you. Your adventure ends here." % str(enc.get("name", "creature")).to_lower()}
+		var lost := {"to": 0, "consequence": str(enc.get("on_defeat", "The fight is lost. Your adventure ends here."))}
 		attempts = 0
 		retry_index = -1
 		failure = ""
@@ -129,5 +144,11 @@ func _move(c: Dictionary) -> void:
 	if to not in visited:
 		visited.append(to)
 	consequence = str(c.get("consequence", ""))
+	_collect()
+	consequence = (consequence + _gain_note()).strip_edges()
 	selected = -1
 	state = State.SCENE
+
+
+func _gain_note() -> String:
+	return (" You now carry %s." % gained) if gained != "" else ""

@@ -1,46 +1,20 @@
 {
- "schema": 1,
- "id": "deathtrap_opening",
- "title": "The Trial of Champions",
+ "schema": 2,
+ "id": "bassment",
+ "title": "The Bassment",
  "start": 1,
- "_how_to_add_a_passage": "The whole book (1 to 400) is already playable from content/trial/book_graph.json and book_text.json. To replace a passage by hand, add an entry here under \"passages\" keyed by its number: it wins over the book files. Shape: \"scene\", \"title\", \"text\", \"status\", optional \"tier\", \"choices\": [{\"label\", \"to\", \"book\", \"phrase\", \"consequence\", \"default\": true on exactly ONE choice}]; a choice may carry \"encounter\" + \"lives\" (a fight), \"test\": {\"pass\", \"fail\"} (a luck test) or \"exit\": \"warehouse\" (death or victory). Then run: godot --headless --path . -s tools/trial/validate.gd. See docs/TRIAL_OPENING.md.",
- "provenance": {
-  "links": "DuelMasterBattle DD/Deathtrap_Dungeon_Verified_Backbone.json (status verified_macrograph_not_full_400_node_adjacency), passages 1, 270, 66, 119 with their edges exactly as verified; 56 and 293 are prototype endpoints. Cross-checked with docs/TRIAL_CANON_STATUS.md (rows Crystal Entrance, Footprint Fork, Footprint Galleries; 'the east loop reconnects 119, 56': implemented legacy).",
-  "text": "Scene text adapted from DuelMasterBattle WizardRTSHybrid/wizard_rts/data/trial/legacy_zones.json (dd_entrance, dd_fork) where marked source=legacy; otherwise written for this opening from the verified 'beat' of the passage.",
-  "encounter": "Giant Fly: WizardRTSHybrid/wizard_rts/data/trial/legacy_bestiary.json (giant_fly) and its intro line from legacy_zones.json dd_fork entity fly_east. Placement on passage 119 is ADAPTED: the legacy places the fly on the east loop of the fork zone (dd_fork), which is the area holding passages 66 and 119; the book passage 119 itself is not verified to contain a fly.",
-  "art": "assets/trial/art/ copied from DuelMasterBattle godot_project/assets/pixel (wizard portrait, giant fly portraits, box); assets/trial/scenes/ are drawn for this repo by tools/trial/make_scenes.py (placeholders). Full record: assets/trial/PROVENANCE.md.",
-  "source_commit": "DuelMasterBattle 1b9513dd973087281bfcedeb8a786788331697b0",
-  "book": "The other 396 passages: content/trial/book_graph.json and book_text.json, built by tools/trial/build_book.py from the verified backbone (28), the owner's OCR pack deathtrap_ff (read-only) and a hand-made spine of bridges; see docs/TRIAL_FULL_BOOK.md."
- },
+ "intro": "A trial the wizard runs in the cellars under the club: sixteen places, ten creatures, one way out.",
  "music": {
   "audio": "lv1_warehouse_v1",
   "chart": "lv1_warehouse_v1",
+  "fight_audio": "lv1_warehouse_v1",
+  "fight_chart": "lv1_warehouse_v1",
   "treatment": "hospital",
   "temporary": true,
-  "note": "Stand-in dungeon sound: the Hospital's recordings and filter. Give the dungeon its own with python tools/content/beatshaper.py import ... then edit this block."
+  "note": "Stand-in dungeon sound: the Warehouse recordings under the Hospital's filter. fight_audio and fight_chart are read and checked, but the scene still plays audio and chart for everything; the coordinator assigns the dungeon's own packs (dd_part1, dd_part2) after the merge."
  },
  "pass_credit": 0.6,
  "phrases": {
-  "easy": {
-   "family": "drums",
-   "tier": 1,
-   "label": "Steady drums"
-  },
-  "junction": {
-   "family": "drums",
-   "tier": 2,
-   "label": "Quick drums"
-  },
-  "bass_walk": {
-   "family": "bass",
-   "tier": 1,
-   "label": "Low bass"
-  },
-  "fight": {
-   "family": "drums",
-   "tier": 3,
-   "label": "Fight rhythm"
-  },
   "p_d1": {
    "family": "drums",
    "tier": 1,
@@ -76,10 +50,25 @@
    "tier": 3,
    "label": "Heavy bass"
   },
-  "luck": {
+  "luck_t1": {
    "family": "drums",
    "tier": 2,
-   "label": "Luck"
+   "label": "Luck: a quick run"
+  },
+  "luck_t2": {
+   "family": "bass",
+   "tier": 2,
+   "label": "Luck: a walking line"
+  },
+  "luck_t3": {
+   "family": "drums",
+   "tier": 3,
+   "label": "Luck: a busy run"
+  },
+  "luck_t4": {
+   "family": "bass",
+   "tier": 3,
+   "label": "Luck: a heavy hold"
   },
   "fight_t2": {
    "family": "drums",
@@ -97,182 +86,1575 @@
    "label": "Fight rhythm"
   }
  },
+ "items": {
+  "lamp": "the brass lamp",
+  "token": "the GUEST LIST token",
+  "fork": "the silver tuning fork"
+ },
+ "zones": {
+  "hatch": {
+   "name": "The Service Hatch",
+   "look": "A rusted hatch and a ladder behind the cloakroom, chalk marks on the brick.",
+   "tier": 1,
+   "scene": "hatch"
+  },
+  "cables": {
+   "name": "The Cable Run",
+   "look": "A low tunnel hung with humming cables and spitting junction boxes.",
+   "tier": 1,
+   "scene": "cables"
+  },
+  "cloakroom": {
+   "name": "Lost Property",
+   "look": "A cramped cloakroom heaped with orphaned coats, lit by one brass lamp.",
+   "tier": 1,
+   "scene": "cloakroom"
+  },
+  "boiler": {
+   "name": "The Flooded Boiler Room",
+   "look": "Black water under dripping pipes, steam, and a crackling shape below.",
+   "tier": 1,
+   "scene": "boiler"
+  },
+  "stacks": {
+   "name": "The Crystal Stacks",
+   "look": "A cavern of glowing crystal columns stacked like speaker towers.",
+   "tier": 2,
+   "scene": "stacks"
+  },
+  "cellar": {
+   "name": "The Barrel Cellar",
+   "look": "Barrels, bones and a ruined bar under low brick arches.",
+   "tier": 2,
+   "scene": "cellar"
+  },
+  "fungus": {
+   "name": "The Fungus Farm",
+   "look": "Terraces of luminous mushrooms around a green pool.",
+   "tier": 2,
+   "scene": "fungus"
+  },
+  "mirrors": {
+   "name": "The Mirror Mezzanine",
+   "look": "A long gallery of tall mirrors that show strangers dancing.",
+   "tier": 3,
+   "scene": "mirrors"
+  },
+  "pit": {
+   "name": "The Reverb Pit",
+   "look": "A black shaft where every sound returns late, with a rope and a ledge.",
+   "tier": 3,
+   "scene": "pit"
+  },
+  "vaults": {
+   "name": "The Vault of Records",
+   "look": "Stone shelves of ancient records and a bouncer's velvet rope.",
+   "tier": 3,
+   "scene": "vaults"
+  },
+  "warren": {
+   "name": "The Rat King's Warren",
+   "look": "Gnawed tunnels and a throne of speaker foam.",
+   "tier": 3,
+   "scene": "warren"
+  },
+  "kitchens": {
+   "name": "The Furnace Kitchens",
+   "look": "Red-hot ovens, swinging pots and an imp in a chef's hat.",
+   "tier": 4,
+   "scene": "kitchens"
+  },
+  "hall": {
+   "name": "The Hall of Hands",
+   "look": "Rows of stone statues with raised palms, hushing a crowd.",
+   "tier": 4,
+   "scene": "hall"
+  },
+  "door": {
+   "name": "The Resonance Door",
+   "look": "A round iron door with a speaker grille, humming one low note.",
+   "tier": 4,
+   "scene": "door"
+  },
+  "echo": {
+   "name": "The Echo Chamber",
+   "look": "A perfectly round, bare room that returns every sound as a person.",
+   "tier": 4,
+   "scene": "echo"
+  },
+  "dawn": {
+   "name": "The Dawn Stair",
+   "look": "A spiral stair climbing to grey light, and a door with a push bar.",
+   "tier": 4,
+   "scene": "dawn"
+  }
+ },
  "scenes": {
-  "entrance": {
-   "file": "res://assets/trial/scenes/entrance.png"
+  "hatch": {
+   "file": "res://assets/trial/scenes/hatch.png"
   },
-  "box": {
-   "file": "res://assets/trial/scenes/box.png"
+  "cables": {
+   "file": "res://assets/trial/scenes/cables.png"
   },
-  "fork": {
-   "file": "res://assets/trial/scenes/fork.png"
+  "cloakroom": {
+   "file": "res://assets/trial/scenes/cloakroom.png"
   },
-  "east": {
-   "file": "res://assets/trial/scenes/east.png"
+  "boiler": {
+   "file": "res://assets/trial/scenes/boiler.png"
   },
-  "gallery": {
-   "file": "res://assets/trial/scenes/gallery.png"
+  "stacks": {
+   "file": "res://assets/trial/scenes/stacks.png"
   },
-  "opening": {
-   "file": "res://assets/trial/scenes/opening.png"
+  "cellar": {
+   "file": "res://assets/trial/scenes/cellar.png"
+  },
+  "fungus": {
+   "file": "res://assets/trial/scenes/fungus.png"
+  },
+  "mirrors": {
+   "file": "res://assets/trial/scenes/mirrors.png"
+  },
+  "pit": {
+   "file": "res://assets/trial/scenes/pit.png"
+  },
+  "vaults": {
+   "file": "res://assets/trial/scenes/vaults.png"
+  },
+  "warren": {
+   "file": "res://assets/trial/scenes/warren.png"
+  },
+  "kitchens": {
+   "file": "res://assets/trial/scenes/kitchens.png"
+  },
+  "hall": {
+   "file": "res://assets/trial/scenes/hall.png"
+  },
+  "door": {
+   "file": "res://assets/trial/scenes/door.png"
+  },
+  "echo": {
+   "file": "res://assets/trial/scenes/echo.png"
+  },
+  "dawn": {
+   "file": "res://assets/trial/scenes/dawn.png"
   },
   "death": {
    "file": "res://assets/trial/scenes/death.png"
   },
   "victory": {
    "file": "res://assets/trial/scenes/victory.png"
-  },
-  "dd_pit": {
-   "file": "res://assets/trial/scenes/dd_pit.png"
-  },
-  "dd_lower": {
-   "file": "res://assets/trial/scenes/dd_lower.png"
-  },
-  "dd_trialmaster": {
-   "file": "res://assets/trial/scenes/dd_trialmaster.png"
-  },
-  "dd_idol": {
-   "file": "res://assets/trial/scenes/dd_idol.png"
-  },
-  "dd_grotto": {
-   "file": "res://assets/trial/scenes/dd_grotto.png"
-  },
-  "dd_vaults": {
-   "file": "res://assets/trial/scenes/dd_vaults.png"
-  },
-  "dd_vault_inner": {
-   "file": "res://assets/trial/scenes/dd_vault_inner.png"
-  },
-  "dd_service": {
-   "file": "res://assets/trial/scenes/dd_service.png"
-  },
-  "dd_mirror": {
-   "file": "res://assets/trial/scenes/dd_mirror.png"
-  },
-  "dd_blood": {
-   "file": "res://assets/trial/scenes/dd_blood.png"
-  },
-  "dd_grub": {
-   "file": "res://assets/trial/scenes/dd_grub.png"
-  },
-  "dd_troglodytes": {
-   "file": "res://assets/trial/scenes/dd_troglodytes.png"
-  },
-  "dd_manticore": {
-   "file": "res://assets/trial/scenes/dd_manticore.png"
-  },
-  "dd_igbut": {
-   "file": "res://assets/trial/scenes/dd_igbut.png"
   }
  },
  "encounters": {
-  "giant_fly": {
-   "name": "Giant Fly",
-   "portrait": "res://assets/trial/art/giant_fly_portrait_0.png",
-   "portrait_hit": "res://assets/trial/art/giant_fly_portrait_1.png",
-   "intro": "Something huge buzzes in the eastern dark. It smells of Water.",
-   "on_win": "The Giant Fly spins out of the air and drops, buzzing, into the dark. The way east is open.",
-   "on_fail": "The Giant Fly lunges and stings. You stagger back, ready to try again.",
-   "bestiary": "legacy_bestiary.json giant_fly: 'A horsefly the size of a hound. It lunges first and thinks second, but it does think.' A loser may escape wounded.",
-   "source": "legacy",
-   "placement": "ADAPTED"
+  "lampmoth": {
+   "name": "Lampmoth",
+   "portrait": "res://assets/trial/art/lampmoth_0.png",
+   "portrait_hit": "res://assets/trial/art/lampmoth_1.png",
+   "intro": "The moth turns dinner-plate wings towards you, dusty and furious.",
+   "on_win": "The moth flutters off through a vent, shedding dust and dignity.",
+   "on_fail": "Wings buffet your face and powder fills your eyes. Blink it clear and go again.",
+   "on_defeat": "The moth smothers you in a cloud of dust, and you sneeze until the lights go out."
+  },
+  "cable_eel": {
+   "name": "Cable Eel",
+   "portrait": "res://assets/trial/art/cable_eel_0.png",
+   "portrait_hit": "res://assets/trial/art/cable_eel_1.png",
+   "intro": "The eel rears out of the black water, wrapped in bare copper wire and crackling on every beat.",
+   "on_win": "The eel thrashes, goes dark, and sinks with a last small spark.",
+   "on_fail": "A bolt of blue arcs across the water and your arm tingles to the elbow. Get your timing back.",
+   "on_defeat": "The eel coils round you and the whole room goes white, then black."
+  },
+  "barrel_knight": {
+   "name": "Barrel Knight",
+   "portrait": "res://assets/trial/art/barrel_knight_0.png",
+   "portrait_hit": "res://assets/trial/art/barrel_knight_1.png",
+   "intro": "The skeleton sets down his glass, takes a mop handle for a lance, and clatters over the cellar floor.",
+   "on_win": "The knight comes apart in a rattle of bones and cutlery. The glass, somehow, is still in one piece.",
+   "on_fail": "The mop handle cracks across your ribs. The knight politely waits for you to stand up.",
+   "on_defeat": "The knight buries you in a stack of empties and rings the bell for last orders."
+  },
+  "mildew_mother": {
+   "name": "Mildew Mother",
+   "portrait": "res://assets/trial/art/mildew_mother_0.png",
+   "portrait_hit": "res://assets/trial/art/mildew_mother_1.png",
+   "intro": "The mound of wet fur and fungus heaves itself upright and breathes out a cloud of spores in time with the pulse in your ears.",
+   "on_win": "The Mother sags, hisses, and slides back under the green water with a bubble of complaint.",
+   "on_fail": "A cloud of spores hits you and for a moment the floor is a drum. Find the beat again.",
+   "on_defeat": "The spores take hold, and you become, gently and permanently, part of the farm."
+  },
+  "mirror_twin": {
+   "name": "Mirror Twin",
+   "portrait": "res://assets/trial/art/mirror_twin_0.png",
+   "portrait_hit": "res://assets/trial/art/mirror_twin_1.png",
+   "intro": "Your twin raises its hands exactly as you do, and begins, half a beat early, to play your part better than you.",
+   "on_win": "The twin cracks across the middle and falls into a hundred bright shards, each one laughing.",
+   "on_fail": "Your twin plays your own rhythm back at you and it lands harder than it should. Try again.",
+   "on_defeat": "Your twin plays you out, step by step, until the only reflection left in the glass is its own."
+  },
+  "bouncer": {
+   "name": "Gristle the Bouncer",
+   "portrait": "res://assets/trial/art/bouncer_0.png",
+   "portrait_hit": "res://assets/trial/art/bouncer_1.png",
+   "intro": "The troll rolls his neck, taps his clipboard and steps over the velvet rope. 'Let's discuss it outside,' he says.",
+   "on_win": "Gristle sits down hard against the shelves, rubs his jaw, and waves you through with a hand like a shovel.",
+   "on_fail": "A hand the size of a bass bin shoves you back across the floor. 'Try again,' says Gristle, without malice.",
+   "on_defeat": "Gristle picks you up by the collar, carries you up forty flights of stairs, and sets you gently on the pavement."
+  },
+  "rat_king": {
+   "name": "The Rat King",
+   "portrait": "res://assets/trial/art/rat_king_0.png",
+   "portrait_hit": "res://assets/trial/art/rat_king_1.png",
+   "intro": "The Rat King rises on a hundred tails, every head squeaking the same off-beat, and the court drums its feet in time.",
+   "on_win": "The Rat King falls apart into a hundred separate rats, who scatter in outraged different directions.",
+   "on_fail": "A wave of rats breaks over your boots and a dozen bites find an ankle. Shake them off and keep time.",
+   "on_defeat": "The rats close over you like a dark tide, and the squeaks fade as they carry you off."
+  },
+  "furnace_imp": {
+   "name": "Furnace Imp",
+   "portrait": "res://assets/trial/art/furnace_imp_0.png",
+   "portrait_hit": "res://assets/trial/art/furnace_imp_1.png",
+   "intro": "The imp bows with a flourish, spins three knives into the air and throws one at your feet. 'Table for one?'",
+   "on_win": "The imp tumbles into a stockpot and the lid clangs shut. A muffled voice says, 'Well played.'",
+   "on_fail": "A knife thuds into the floor between your boots and the imp sniggers. Settle yourself and reply.",
+   "on_defeat": "The imp flicks you into the oven with a spoon, and the door swings shut on a fierce red glow."
+  },
+  "gargoyle": {
+   "name": "Hushing Gargoyle",
+   "portrait": "res://assets/trial/art/gargoyle_0.png",
+   "portrait_hit": "res://assets/trial/art/gargoyle_1.png",
+   "intro": "The gargoyle drops from its perch with a grinding of stone, finger still pressed to its lips, and swings a fist.",
+   "on_win": "The gargoyle cracks, wobbles and crashes down in a heap of gravel, finger still to its lips as it lands.",
+   "on_fail": "A stone fist glances off your shoulder and the whole hall rings with it. Find your feet and answer.",
+   "on_defeat": "The gargoyle presses a stone finger to your lips, and the sound of you goes out like a light."
+  },
+  "echo": {
+   "name": "The Echo",
+   "portrait": "res://assets/trial/art/echo_0.png",
+   "portrait_hit": "res://assets/trial/art/echo_1.png",
+   "intro": "The Echo walks out of the dark, a figure made of your own footsteps and breath, and raises your hands to meet yours.",
+   "on_win": "The Echo thins to a whisper and a single clean hi-hat, and then it is gone. The room is yours.",
+   "on_fail": "The Echo returns your last bar a little louder and a little cleaner than you played it. Answer it.",
+   "on_defeat": "The Echo plays you down to a whisper, and then to nothing, and the round room keeps the sound of you."
   }
  },
  "passages": {
   "1": {
-   "title": "The Crystal Entrance",
-   "scene": "entrance",
-   "status": "BOOK_VERIFIED",
-   "text": "Crystal veins hum faintly in the walls; the light has no source. At a stone table stand six boxes. Five are already open: the other contestants have helped themselves. The sixth bears your name.",
-   "text_source": "legacy (dd_crystal, dd_table) and the verified beat",
+   "title": "The Service Hatch",
+   "zone": "hatch",
+   "scene": "hatch",
+   "kind": "normal",
+   "tier": 1,
+   "text": "Behind the cloakroom, a rusted hatch stands open, and the wizard's voice drifts up from below: 'Welcome to the Bassment. You have four bars to choose, and then you play it out.' Chalk marks crowd the wall beside the ladder.",
    "choices": [
     {
-     "label": "Open the box with your name",
-     "to": 270,
-     "book": "open named box",
-     "phrase": "easy",
-     "consequence": "The seal breaks cleanly under your fingers.",
+     "label": "Climb down the ladder",
+     "to": 3,
+     "phrase": "p_d1",
+     "consequence": "The rungs ring under your boots.",
      "default": true
     },
     {
-     "label": "Continue north",
-     "to": 66,
-     "book": "continue north",
-     "phrase": "easy",
-     "consequence": "You leave the boxes behind and follow the crystal light north."
+     "label": "Read the chalk marks first",
+     "to": 2,
+     "phrase": "p_d1"
     }
-   ],
-   "tier": 1
+   ]
   },
-  "270": {
-   "title": "The Named Box",
-   "scene": "box",
-   "status": "BOOK_VERIFIED",
-   "text": "Inside: two gold pieces and a note in a sharp hand. SUKUMVIT: 'The Trial wants useful things, not just strong arms. Carry what matters.' Several items will be needed before this is done.",
-   "text_source": "legacy (aid_box) and the verified beat",
+  "2": {
+   "title": "Chalk on the Wall",
+   "zone": "hatch",
+   "scene": "hatch",
+   "kind": "normal",
+   "tier": 1,
+   "text": "Dozens of tally marks cover the brick, and most of them are crossed out. One note is underlined twice: 'Take a lamp. Mind the eel. The Echo hates silence, so make some noise.'",
+   "side": true,
    "choices": [
     {
-     "label": "Pocket the gold and go on",
-     "to": 56,
-     "book": "continue",
-     "phrase": "easy",
-     "consequence": "Two gold pieces heavier, and warned, you press on.",
+     "label": "Climb down the ladder",
+     "to": 3,
+     "phrase": "p_d1",
+     "consequence": "You pocket the advice and start down.",
      "default": true
     }
-   ],
-   "tier": 1
+   ]
   },
-  "66": {
-   "title": "The Footprint Fork",
-   "scene": "fork",
-   "status": "BOOK_VERIFIED",
-   "text": "A white arrow, painted fresh, points WEST. Below it, in charcoal: 'don't'. Wet footprints, several sets, head west; one smaller set goes east.",
-   "text_source": "legacy (dd_arrow, dd_prints_west, dd_prints_east) and the verified beat",
+  "3": {
+   "title": "The Ladder Foot",
+   "zone": "hatch",
+   "scene": "hatch",
+   "kind": "normal",
+   "tier": 1,
+   "text": "The ladder ends in a damp landing where the club's bass arrives as a slow thud through the stone. A tunnel of fat cables leads left. To the right, warm stairs run down towards the smell of old water.",
    "choices": [
     {
-     "label": "Follow the arrow west",
-     "to": 293,
-     "book": "west",
-     "phrase": "bass_walk",
-     "consequence": "You trust the paint, and the footprints, and walk west.",
+     "label": "Follow the cables",
+     "to": 4,
+     "phrase": "p_d1",
      "default": true
     },
     {
-     "label": "Follow the single set east",
-     "to": 119,
-     "book": "east",
-     "phrase": "junction",
-     "consequence": "The small prints are the odd ones out. You follow them east."
+     "label": "Take the warm stairs",
+     "to": 10,
+     "phrase": "p_d1"
     }
-   ],
-   "tier": 2
+   ]
   },
-  "119": {
-   "title": "The Eastern Branch",
-   "scene": "east",
-   "status": "BOOK_VERIFIED",
-   "text": "A cold draught comes from the east, and a single small footprint is pressed into the wet. An open box with a broken seal: someone got here first. Ahead, a soft grey curtain blocks the way, and something behind it hums.",
-   "text_source": "legacy (dd_east_draught, dd_empty_box) and the verified beat",
+  "4": {
+   "title": "The Cable Run",
+   "zone": "cables",
+   "scene": "cables",
+   "kind": "normal",
+   "tier": 1,
+   "text": "Cables as thick as pythons hang from the ceiling and hum with the club's power. Some are warm to the touch. A small door in the wall is marked LOST PROPERTY in peeling paint.",
    "choices": [
     {
-     "label": "Push through the curtain, east",
-     "to": 56,
-     "book": "continue east",
-     "phrase": "fight",
-     "encounter": "giant_fly",
-     "consequence": "The curtain tears away, and the way east is open.",
+     "label": "Follow the thickest cable",
+     "to": 5,
+     "phrase": "p_d1",
+     "default": true
+    },
+    {
+     "label": "Try the LOST PROPERTY door",
+     "to": 8,
+     "phrase": "p_d1"
+    }
+   ]
+  },
+  "5": {
+   "title": "The Live Junction",
+   "zone": "cables",
+   "scene": "cables",
+   "kind": "normal",
+   "tier": 1,
+   "text": "A split junction box spits blue sparks across the tunnel, one burst to every beat. You could wait for a lull and edge past, or trust your feet and dash beneath it.",
+   "choices": [
+    {
+     "label": "Wait for a lull and edge past",
+     "to": 7,
+     "phrase": "p_d1",
+     "consequence": "You slip by between two bursts.",
+     "default": true
+    },
+    {
+     "label": "Dash under the sparks",
+     "to": 15,
+     "phrase": "luck_t1",
+     "consequence": "You slide through untouched and spot a gap that skips the rest of the run.",
+     "test": {
+      "pass": 15,
+      "fail": 6
+     }
+    }
+   ]
+  },
+  "6": {
+   "title": "Singed",
+   "zone": "cables",
+   "scene": "cables",
+   "kind": "normal",
+   "tier": 1,
+   "text": "The sparks catch you and the tunnel goes white. You come round on the far side with your hair standing on end and a dull ringing in your ears that almost sounds like a hi-hat.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Shake it off and go on",
+     "to": 7,
+     "phrase": "p_d1",
+     "consequence": "You are a little crispier, but you can walk.",
+     "default": true
+    }
+   ]
+  },
+  "7": {
+   "title": "The Cable Nest",
+   "zone": "cables",
+   "scene": "cables",
+   "kind": "normal",
+   "tier": 1,
+   "text": "Chewed cable ends spill from a hole in the wall, and the dust on the floor is printed with hundreds of tiny feet. A narrow gap in the stone leads on towards a cold blue glow.",
+   "choices": [
+    {
+     "label": "Squeeze through the gap",
+     "to": 15,
+     "phrase": "p_b1",
+     "consequence": "Stone scrapes your shoulders, then opens out.",
+     "default": true
+    }
+   ]
+  },
+  "8": {
+   "title": "Lost Property",
+   "zone": "cloakroom",
+   "scene": "cloakroom",
+   "kind": "normal",
+   "tier": 1,
+   "text": "A cramped cloakroom piled with orphaned jackets, odd gloves and a thousand single earrings. On a hook above the heap a brass lamp glows, and a moth the size of a dinner plate is clinging to it.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Shoo the moth off the lamp",
+     "to": 9,
+     "phrase": "fight_t2",
+     "encounter": "lampmoth",
      "lives": 3
     },
     {
-     "label": "Go back and take the arrow west",
-     "to": 293,
-     "book": "return and go west",
-     "phrase": "easy",
-     "consequence": "You turn back to the fork and take the painted way after all.",
+     "label": "Close the door and leave it",
+     "to": 4,
+     "phrase": "p_d1",
+     "consequence": "You pull the door shut on the dust.",
      "default": true
     }
+   ]
+  },
+  "9": {
+   "title": "The Brass Lamp",
+   "zone": "cloakroom",
+   "scene": "cloakroom",
+   "kind": "normal",
+   "tier": 1,
+   "text": "The lamp is yours: warm, heavy and still burning. Something tells you a dark place further down will be glad of it.",
+   "side": true,
+   "secret": true,
+   "grants": [
+    "lamp"
    ],
-   "tier": 2
+   "choices": [
+    {
+     "label": "Back to the cable run",
+     "to": 4,
+     "phrase": "p_d1",
+     "default": true
+    }
+   ]
+  },
+  "10": {
+   "title": "The Warm Stairs",
+   "zone": "boiler",
+   "scene": "boiler",
+   "kind": "normal",
+   "tier": 1,
+   "text": "Steam drifts up the steps and the walls sweat. At the bottom the boiler room lies under a foot of black water, pipes running overhead, and something long and quick moves beneath the surface.",
+   "choices": [
+    {
+     "label": "Wade in",
+     "to": 12,
+     "phrase": "p_d1",
+     "default": true
+    },
+    {
+     "label": "Haul on the valve wheel at the side",
+     "to": 11,
+     "phrase": "p_d1"
+    }
+   ]
+  },
+  "11": {
+   "title": "The Valve Wheel",
+   "zone": "boiler",
+   "scene": "boiler",
+   "kind": "normal",
+   "tier": 1,
+   "text": "You heave on a stiff iron wheel and the pipes shriek, then settle. The water level drops by a hand's width and the thing beneath slows to a lazy circle. It is not much, but it will do.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Wade in",
+     "to": 12,
+     "phrase": "p_d1",
+     "consequence": "The eel looks a little less certain of itself.",
+     "default": true
+    }
+   ]
+  },
+  "12": {
+   "title": "The Flooded Boiler Room",
+   "zone": "boiler",
+   "scene": "boiler",
+   "kind": "normal",
+   "tier": 1,
+   "text": "Oily water covers the floor, and an eel as long as a bus, wrapped in bare copper wire, circles through it crackling. On the far side a dry landing waits.",
+   "choices": [
+    {
+     "label": "Fight the cable eel",
+     "to": 14,
+     "phrase": "fight_t2",
+     "default": true,
+     "encounter": "cable_eel",
+     "lives": 3
+    },
+    {
+     "label": "Climb the pipes over the water",
+     "to": 14,
+     "phrase": "luck_t1",
+     "consequence": "You swing hand over hand across the pipes and drop onto dry concrete.",
+     "test": {
+      "pass": 14,
+      "fail": 13
+     }
+    }
+   ]
+  },
+  "13": {
+   "title": "Fried",
+   "zone": "boiler",
+   "scene": "death",
+   "kind": "death",
+   "tier": 1,
+   "text": "The pipe turns out to be live. There is a crackle, a flash, and a brief, thorough understanding of electricity. The water takes care of the rest.",
+   "choices": [
+    {
+     "label": "Wake in the Warehouse",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "default": true
+    }
+   ]
+  },
+  "14": {
+   "title": "The Dry Landing",
+   "zone": "boiler",
+   "scene": "boiler",
+   "kind": "normal",
+   "tier": 1,
+   "text": "You haul yourself onto warm concrete, dripping. A rough stair climbs through the rock, and the cold blue glow of crystal shines from the top.",
+   "choices": [
+    {
+     "label": "Climb the stair",
+     "to": 15,
+     "phrase": "p_d1",
+     "consequence": "The glow gets brighter with every step.",
+     "default": true
+    }
+   ]
+  },
+  "15": {
+   "title": "The Crystal Stacks",
+   "zone": "stacks",
+   "scene": "stacks",
+   "kind": "normal",
+   "tier": 2,
+   "text": "The tunnel opens into a cavern where crystals grow in glowing columns, stacked like the speaker towers of some giant's rave. Every surface hums faintly in tune.",
+   "choices": [
+    {
+     "label": "Follow the lit path through the columns",
+     "to": 16,
+     "phrase": "p_d2",
+     "default": true
+    },
+    {
+     "label": "Climb the crystal terraces",
+     "to": 18,
+     "phrase": "p_b2"
+    }
+   ]
+  },
+  "16": {
+   "title": "The Humming Hall",
+   "zone": "stacks",
+   "scene": "stacks",
+   "kind": "normal",
+   "tier": 2,
+   "text": "The path winds between tall crystals that ring softly as you pass. One column is cracked, and the glow inside it pulses in a strange rhythm. At the far end, stairs lead down to a heavy cellar door.",
+   "choices": [
+    {
+     "label": "Walk on to the cellar stairs",
+     "to": 19,
+     "phrase": "p_d2",
+     "default": true
+    },
+    {
+     "label": "Tap the cracked crystal",
+     "to": 17,
+     "phrase": "p_d2"
+    }
+   ]
+  },
+  "17": {
+   "title": "The Ringing Niche",
+   "zone": "stacks",
+   "scene": "stacks",
+   "kind": "normal",
+   "tier": 2,
+   "text": "The crystal chimes, and a sliver of it falls away to show a niche in which someone has hidden a bent bar token stamped GUEST LIST. The ring fades into the stone like a note held a moment too long.",
+   "side": true,
+   "secret": true,
+   "grants": [
+    "token"
+   ],
+   "choices": [
+    {
+     "label": "Pocket the token and go on",
+     "to": 19,
+     "phrase": "p_d2",
+     "default": true
+    }
+   ]
+  },
+  "18": {
+   "title": "The Crystal Terraces",
+   "zone": "stacks",
+   "scene": "stacks",
+   "kind": "normal",
+   "tier": 2,
+   "text": "Glassy ledges climb above the cavern floor. From up here you can see the whole hall below, and a rope bridge sagging across to the stairs at the far end. The rope looks old but hopeful.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Cross the rope bridge",
+     "to": 19,
+     "phrase": "p_b2",
+     "consequence": "The bridge sways and holds."
+    },
+    {
+     "label": "Climb back down",
+     "to": 16,
+     "phrase": "p_d2",
+     "default": true
+    }
+   ]
+  },
+  "19": {
+   "title": "The Cellar Stairs",
+   "zone": "cellar",
+   "scene": "cellar",
+   "kind": "normal",
+   "tier": 2,
+   "text": "Worn steps lead down to a low door propped open with a beer crate. Beyond it the air smells of stale lager and cold stone.",
+   "choices": [
+    {
+     "label": "Go in",
+     "to": 20,
+     "phrase": "p_d2",
+     "default": true
+    }
+   ]
+  },
+  "20": {
+   "title": "The Barrel Cellar",
+   "zone": "cellar",
+   "scene": "cellar",
+   "kind": "normal",
+   "tier": 2,
+   "text": "Barrels line the walls and bones are stacked between them like empties waiting for recycling. Behind a ruined bar a skeleton in a stained apron polishes a glass and watches you with hollow patience. Past him are a counter, a trapdoor and a dark archway.",
+   "choices": [
+    {
+     "label": "Challenge the barrel knight",
+     "to": 23,
+     "phrase": "fight_t3",
+     "default": true,
+     "encounter": "barrel_knight",
+     "lives": 3
+    },
+    {
+     "label": "Creep between the barrels",
+     "to": 23,
+     "phrase": "luck_t2",
+     "consequence": "You pick your way past the bar without a creak.",
+     "test": {
+      "pass": 23,
+      "fail": 22
+     }
+    },
+    {
+     "label": "Sit at the old bar",
+     "to": 21,
+     "phrase": "p_d2"
+    }
+   ]
+  },
+  "21": {
+   "title": "The Dead Bar",
+   "zone": "cellar",
+   "scene": "cellar",
+   "kind": "normal",
+   "tier": 2,
+   "text": "A jukebox in the corner still lights up and plays a slow bassline from a record nobody has pressed in years. You rest on a stool and let the groove settle in your hands, until the knight clears his throat for your attention.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Turn round and face him",
+     "to": 20,
+     "phrase": "p_d2",
+     "consequence": "You push back the stool.",
+     "default": true
+    }
+   ]
+  },
+  "22": {
+   "title": "Last Orders",
+   "zone": "cellar",
+   "scene": "death",
+   "kind": "death",
+   "tier": 2,
+   "text": "A barrel lid cracks under your foot and the whole stack tips. You go down in a flood of flat lager and old bones, and the skeleton calls time.",
+   "choices": [
+    {
+     "label": "Wake in the Warehouse",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "default": true
+    }
+   ]
+  },
+  "23": {
+   "title": "Behind the Counter",
+   "zone": "cellar",
+   "scene": "cellar",
+   "kind": "normal",
+   "tier": 2,
+   "text": "Behind the counter a trapdoor breathes out the smell of mushrooms. An archway to the left is as black as a switched-off speaker.",
+   "choices": [
+    {
+     "label": "Open the trapdoor",
+     "to": 26,
+     "phrase": "p_d2",
+     "consequence": "The ladder below glows faintly green.",
+     "default": true
+    },
+    {
+     "label": "Light the brass lamp and take the dark archway",
+     "to": 24,
+     "phrase": "p_b2",
+     "consequence": "The lamp throws a gold circle on the floor ahead.",
+     "requires": "lamp"
+    }
+   ]
+  },
+  "24": {
+   "title": "The Dark Corridor",
+   "zone": "cellar",
+   "scene": "cellar",
+   "kind": "normal",
+   "tier": 2,
+   "text": "Your lamp shows a narrow passage with old gig posters curling off the brick: bands that never made it. The floor is sound, and ahead there is a draught that smells of cold glass.",
+   "side": true,
+   "secret": true,
+   "choices": [
+    {
+     "label": "Walk on",
+     "to": 25,
+     "phrase": "p_d2",
+     "default": true
+    }
+   ]
+  },
+  "25": {
+   "title": "The Old Green Room",
+   "zone": "cellar",
+   "scene": "cellar",
+   "kind": "normal",
+   "tier": 2,
+   "text": "A band's abandoned dressing room, with a sagging sofa, a bulb-ringed mirror and a rider that only asks for water. Your lamp lights a door at the back, and through it a very long gallery gleams.",
+   "side": true,
+   "secret": true,
+   "choices": [
+    {
+     "label": "Through the back door",
+     "to": 30,
+     "phrase": "p_d2",
+     "consequence": "You have skipped the whole fungus farm.",
+     "default": true
+    }
+   ]
+  },
+  "26": {
+   "title": "The Fungus Farm",
+   "zone": "fungus",
+   "scene": "fungus",
+   "kind": "normal",
+   "tier": 2,
+   "text": "Terraces of glowing mushrooms climb a damp cavern and shed spores that drift like glitter under a strobe. A path of flat stones crosses the nearest bed.",
+   "choices": [
+    {
+     "label": "Follow the stepping stones",
+     "to": 28,
+     "phrase": "p_d2",
+     "default": true
+    },
+    {
+     "label": "Pick a glowing cap to eat",
+     "to": 27,
+     "phrase": "p_b2"
+    }
+   ]
+  },
+  "27": {
+   "title": "The Spore Haze",
+   "zone": "fungus",
+   "scene": "fungus",
+   "kind": "normal",
+   "tier": 2,
+   "text": "The cap tastes of cold metal, and then the room tilts. For a while the mushrooms keep time with your pulse and you are quite sure the floor is a drum. Eventually it passes and you find yourself on the far side of the beds.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Walk to the pond",
+     "to": 28,
+     "phrase": "p_d2",
+     "consequence": "Your head still hums.",
+     "default": true
+    }
+   ]
+  },
+  "28": {
+   "title": "The Mildew Pond",
+   "zone": "fungus",
+   "scene": "fungus",
+   "kind": "normal",
+   "tier": 2,
+   "text": "A still pool glows green at the heart of the farm. The surface bulges, and a mound of wet grey fur and fungus hauls itself upright: the Mildew Mother, trailing spores and hunger.",
+   "choices": [
+    {
+     "label": "Stand against the Mildew Mother",
+     "to": 29,
+     "phrase": "fight_t3",
+     "default": true,
+     "encounter": "mildew_mother",
+     "lives": 3
+    },
+    {
+     "label": "Back away to the haze",
+     "to": 27,
+     "phrase": "p_d2"
+    }
+   ]
+  },
+  "29": {
+   "title": "The Spore Stairs",
+   "zone": "fungus",
+   "scene": "fungus",
+   "kind": "normal",
+   "tier": 2,
+   "text": "A spiral stair leads up out of the farm, its steps worn smooth and strangely cold. Behind you the pool settles with a sulky bubble.",
+   "choices": [
+    {
+     "label": "Climb",
+     "to": 30,
+     "phrase": "p_d2",
+     "consequence": "The green light fades below you.",
+     "default": true
+    }
+   ]
+  },
+  "30": {
+   "title": "The Mirror Mezzanine",
+   "zone": "mirrors",
+   "scene": "mirrors",
+   "kind": "normal",
+   "tier": 3,
+   "text": "A long gallery lined with tall mirrors, each showing a dance floor you have never seen, packed with strangers who all turn to watch you pass. Your own reflection lags half a beat behind.",
+   "choices": [
+    {
+     "label": "Walk the centre aisle",
+     "to": 32,
+     "phrase": "p_d3",
+     "default": true
+    },
+    {
+     "label": "Follow the reflection that waves you aside",
+     "to": 31,
+     "phrase": "p_d3"
+    }
+   ]
+  },
+  "31": {
+   "title": "The Waving Reflection",
+   "zone": "mirrors",
+   "scene": "mirrors",
+   "kind": "normal",
+   "tier": 3,
+   "text": "A reflection in a cracked glass beckons you to a seam between the mirrors. Behind it a narrow service stair leads to a ledge, and on the ledge is a handwritten setlist: 'Hold the low note when you cannot hear yourself.' It might be advice. It might be a setlist.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Back to the aisle",
+     "to": 32,
+     "phrase": "p_d3",
+     "consequence": "The stair brings you out behind the twin, who has not noticed you yet.",
+     "default": true
+    }
+   ]
+  },
+  "32": {
+   "title": "The Twin Steps Out",
+   "zone": "mirrors",
+   "scene": "mirrors",
+   "kind": "normal",
+   "tier": 3,
+   "text": "At the centre of the gallery a mirror ripples and your reflection steps out of it, grinning, copying your stance down to the way you hold your hands. It does not blink, and it does not intend to let you pass.",
+   "choices": [
+    {
+     "label": "Face your twin",
+     "to": 34,
+     "phrase": "fight_t4",
+     "default": true,
+     "encounter": "mirror_twin",
+     "lives": 3
+    },
+    {
+     "label": "Turn your back on the mirror",
+     "to": 34,
+     "phrase": "luck_t3",
+     "consequence": "The gallery holds its breath, and then lets it go.",
+     "test": {
+      "pass": 34,
+      "fail": 33
+     }
+    }
+   ]
+  },
+  "33": {
+   "title": "Shattered",
+   "zone": "mirrors",
+   "scene": "death",
+   "kind": "death",
+   "tier": 3,
+   "text": "You turn away and the gallery goes silent. Then every mirror cracks at once, with a sound like one enormous snare, and you are in all the pieces.",
+   "choices": [
+    {
+     "label": "Wake in the Warehouse",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "default": true
+    }
+   ]
+  },
+  "34": {
+   "title": "The Gallery's End",
+   "zone": "mirrors",
+   "scene": "mirrors",
+   "kind": "normal",
+   "tier": 3,
+   "text": "The twin is a handful of bright shards on the floor. At the far end the mezzanine simply stops at the lip of a great black shaft, and a rope runs over the edge.",
+   "choices": [
+    {
+     "label": "Go to the edge",
+     "to": 35,
+     "phrase": "p_d3",
+     "consequence": "The air coming up smells of cold stone.",
+     "default": true
+    }
+   ]
+  },
+  "35": {
+   "title": "The Reverb Pit",
+   "zone": "pit",
+   "scene": "pit",
+   "kind": "normal",
+   "tier": 3,
+   "text": "A bottomless-looking shaft yawns in front of you. Every footstep and breath comes back from the dark a heartbeat late and a little louder. A thick rope hangs from an iron ring.",
+   "choices": [
+    {
+     "label": "Climb down the rope",
+     "to": 37,
+     "phrase": "p_b3",
+     "default": true
+    },
+    {
+     "label": "Shout into the pit",
+     "to": 36,
+     "phrase": "p_d3"
+    }
+   ]
+  },
+  "36": {
+   "title": "A Shout into the Dark",
+   "zone": "pit",
+   "scene": "pit",
+   "kind": "normal",
+   "tier": 3,
+   "text": "Your own voice returns as a choir, a few seconds late, harmonising with itself. Somewhere far below, something small and metallic rings in answer, as though it is glad to be noticed.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Back to the rope",
+     "to": 35,
+     "phrase": "p_d3",
+     "consequence": "It might be worth a look down there.",
+     "default": true
+    }
+   ]
+  },
+  "37": {
+   "title": "The Rope Ledge",
+   "zone": "pit",
+   "scene": "pit",
+   "kind": "normal",
+   "tier": 3,
+   "text": "Halfway down, a stone ledge juts from the wall in front of a studded door. The rope runs on into the dark, and from far below comes the same small bright ringing.",
+   "choices": [
+    {
+     "label": "Step onto the ledge and open the door",
+     "to": 40,
+     "phrase": "p_d3",
+     "consequence": "The studded door groans open.",
+     "default": true
+    },
+    {
+     "label": "Slide down the rope to the pit floor",
+     "to": 38,
+     "phrase": "luck_t3",
+     "consequence": "The rope sings through your gloves and you land on your feet.",
+     "test": {
+      "pass": 38,
+      "fail": 39
+     }
+    }
+   ]
+  },
+  "38": {
+   "title": "The Pit Floor",
+   "zone": "pit",
+   "scene": "pit",
+   "kind": "normal",
+   "tier": 3,
+   "text": "Your boots crunch on a carpet of bones and old guitar picks. In the middle a silver tuning fork stands upright in a crack, still shivering, as if someone has just struck it. When you pull it free, the whole shaft hums one clean note.",
+   "side": true,
+   "secret": true,
+   "grants": [
+    "fork"
+   ],
+   "choices": [
+    {
+     "label": "Climb back to the ledge",
+     "to": 37,
+     "phrase": "p_b3",
+     "consequence": "The note follows you up the rope.",
+     "default": true
+    }
+   ]
+  },
+  "39": {
+   "title": "A Long Way Down",
+   "zone": "pit",
+   "scene": "death",
+   "kind": "death",
+   "tier": 3,
+   "text": "The rope runs through your hands, burns, and lets go. You fall for what feels like a whole track, and then the echo takes up the sound of you and holds it for ever.",
+   "choices": [
+    {
+     "label": "Wake in the Warehouse",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "default": true
+    }
+   ]
+  },
+  "40": {
+   "title": "The Vault of Records",
+   "zone": "vaults",
+   "scene": "vaults",
+   "kind": "normal",
+   "tier": 3,
+   "text": "Stone shelves stretch away into the dark, packed with ancient records in cracked sleeves. A troll in a high-vis vest folds his arms before the inner door and looks you over like a long queue. 'Name on the list?' he rumbles.",
+   "choices": [
+    {
+     "label": "Argue your way past the bouncer",
+     "to": 42,
+     "phrase": "fight_t4",
+     "default": true,
+     "encounter": "bouncer",
+     "lives": 3
+    },
+    {
+     "label": "Show the GUEST LIST token",
+     "to": 42,
+     "phrase": "p_d3",
+     "consequence": "He squints at the token, sniffs, and lifts the rope. 'Go on, then.'",
+     "requires": "token"
+    },
+    {
+     "label": "Slip along the shelves",
+     "to": 41,
+     "phrase": "p_d3"
+    }
+   ]
+  },
+  "41": {
+   "title": "The Long Shelves",
+   "zone": "vaults",
+   "scene": "vaults",
+   "kind": "normal",
+   "tier": 3,
+   "text": "You duck between racks of records, reading spines: a thousand hand-stamped labels you have never heard of, mostly in languages that are mostly bass. Three racks in, a hand the size of a bass bin lifts you by the collar and puts you back at the rope.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Back to the rope",
+     "to": 40,
+     "phrase": "p_d3",
+     "consequence": "'Name on the list?'",
+     "default": true
+    }
+   ]
+  },
+  "42": {
+   "title": "The Inner Vault",
+   "zone": "vaults",
+   "scene": "vaults",
+   "kind": "normal",
+   "tier": 3,
+   "text": "Glass cases glitter in the dark, each one holding a single record: the first pressings, the rare ones, the ones that ended careers. Two doors leave the vault. One is a damp stair towards a chorus of squeaking. The other is hot to the touch.",
+   "choices": [
+    {
+     "label": "Take the damp stair",
+     "to": 43,
+     "phrase": "p_d3",
+     "default": true
+    },
+    {
+     "label": "Take the hot door",
+     "to": 48,
+     "phrase": "p_d3"
+    }
+   ]
+  },
+  "43": {
+   "title": "The Squeaking Stair",
+   "zone": "warren",
+   "scene": "warren",
+   "kind": "normal",
+   "tier": 3,
+   "text": "The stair opens into tunnels gnawed through the foundations. From every hole comes a chorus of squeaks, and to your surprise they keep a steady tempo.",
+   "choices": [
+    {
+     "label": "Walk through the squeaking",
+     "to": 45,
+     "phrase": "p_d3",
+     "default": true
+    },
+    {
+     "label": "Crawl the dry tunnel",
+     "to": 44,
+     "phrase": "p_b3"
+    }
+   ]
+  },
+  "44": {
+   "title": "The Dry Tunnel",
+   "zone": "warren",
+   "scene": "warren",
+   "kind": "normal",
+   "tier": 3,
+   "text": "You crawl on your stomach through a pipe full of grit and feathers, ignoring the tiny bites at your boots. At the end you push out through a hole in the wall, right behind a great throne.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Stand up slowly",
+     "to": 45,
+     "phrase": "p_d3",
+     "consequence": "Nobody has noticed you yet.",
+     "default": true
+    }
+   ]
+  },
+  "45": {
+   "title": "The Rat King's Court",
+   "zone": "warren",
+   "scene": "warren",
+   "kind": "normal",
+   "tier": 3,
+   "text": "A heap of old speaker foam forms a throne, and on it sits the Rat King: a hundred rats twisted into one great body, with a crown of bottle tops on its many heads. They all squeak the same off-beat.",
+   "choices": [
+    {
+     "label": "Take on the Rat King",
+     "to": 47,
+     "phrase": "fight_t4",
+     "default": true,
+     "encounter": "rat_king",
+     "lives": 3
+    },
+    {
+     "label": "Offer it a sandwich",
+     "to": 46,
+     "phrase": "p_d3"
+    }
+   ]
+  },
+  "46": {
+   "title": "Chewed",
+   "zone": "warren",
+   "scene": "warren",
+   "kind": "normal",
+   "tier": 3,
+   "text": "The Rat King accepts the sandwich politely and the rest of your sleeve less politely. A hundred small paws haul you out and dump you back at the edge of the court, scratched and hungrier than before.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Brush yourself down",
+     "to": 45,
+     "phrase": "p_d3",
+     "consequence": "The king licks its crown, unbothered.",
+     "default": true
+    }
+   ]
+  },
+  "47": {
+   "title": "The Gnawed Door",
+   "zone": "warren",
+   "scene": "warren",
+   "kind": "normal",
+   "tier": 3,
+   "text": "The Rat King collapses into a hundred separate rats, who scurry away, offended. Behind the throne a rough door, gnawed from solid oak, opens on a wide and silent hall.",
+   "choices": [
+    {
+     "label": "Go through",
+     "to": 52,
+     "phrase": "p_d3",
+     "consequence": "The squeaks fade behind you.",
+     "default": true
+    }
+   ]
+  },
+  "48": {
+   "title": "The Furnace Kitchens",
+   "zone": "kitchens",
+   "scene": "kitchens",
+   "kind": "normal",
+   "tier": 4,
+   "text": "Heat hits you like a wall. Rows of ovens glow red and a thousand pots hang from the ceiling, swinging. A small red imp in a chef's hat dances on the nearest stove, juggling knives, and grins when he sees you. On the next stove a recipe book lies open, glowing.",
+   "choices": [
+    {
+     "label": "Take on the furnace imp",
+     "to": 51,
+     "phrase": "fight_t4",
+     "default": true,
+     "encounter": "furnace_imp",
+     "lives": 3
+    },
+    {
+     "label": "Cool off in the walk-in freezer",
+     "to": 49,
+     "phrase": "p_d4"
+    },
+    {
+     "label": "Snatch the glowing recipe book",
+     "to": 50,
+     "phrase": "p_d4",
+     "consequence": "The imp watches your hand closely, and hopefully."
+    }
+   ]
+  },
+  "49": {
+   "title": "The Walk-in Freezer",
+   "zone": "kitchens",
+   "scene": "kitchens",
+   "kind": "normal",
+   "tier": 4,
+   "text": "Frost glitters on hanging carcasses of nobody-knows-what. It is blessedly cold. You stay until your sweat turns to ice, then step out again, refreshed and slightly blue.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Back into the heat",
+     "to": 48,
+     "phrase": "p_d4",
+     "consequence": "The imp is still juggling.",
+     "default": true
+    }
+   ]
+  },
+  "50": {
+   "title": "Flambe",
+   "zone": "kitchens",
+   "scene": "death",
+   "kind": "death",
+   "tier": 4,
+   "text": "The book is a mimic, and its cover snaps shut on your hand and bursts into flames. The imp applauds with a pair of oven gloves and serves you up with a sprig of parsley.",
+   "choices": [
+    {
+     "label": "Wake in the Warehouse",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "default": true
+    }
+   ]
+  },
+  "51": {
+   "title": "The Cold Store",
+   "zone": "kitchens",
+   "scene": "kitchens",
+   "kind": "normal",
+   "tier": 4,
+   "text": "The imp tumbles into a stockpot and goes quiet. Beyond the ovens a cold store stands ajar, frosted, and through it a cool wide passage leads out of the heat.",
+   "choices": [
+    {
+     "label": "Slip through the cold store",
+     "to": 52,
+     "phrase": "p_d4",
+     "consequence": "The heat falls away behind you.",
+     "default": true
+    }
+   ]
+  },
+  "52": {
+   "title": "The Hall of Hands",
+   "zone": "hall",
+   "scene": "hall",
+   "kind": "normal",
+   "tier": 4,
+   "text": "Two long rows of stone statues stand with their hands raised, palms out, as if hushing a crowd. The silence is deliberate and thick. At the far end, perched above a round iron door, a gargoyle with a finger to its lips watches the aisle.",
+   "choices": [
+    {
+     "label": "Walk the aisle between the hands",
+     "to": 55,
+     "phrase": "p_d4",
+     "default": true
+    },
+    {
+     "label": "Study the statue with no hands",
+     "to": 53,
+     "phrase": "p_d4"
+    },
+    {
+     "label": "Strike the tuning fork on a stone palm",
+     "to": 54,
+     "phrase": "p_b3",
+     "consequence": "The note runs down the row and every statue shivers in tune.",
+     "requires": "fork"
+    }
+   ]
+  },
+  "53": {
+   "title": "The Statue Without Hands",
+   "zone": "hall",
+   "scene": "hall",
+   "kind": "normal",
+   "tier": 4,
+   "text": "One statue has lost both hands. Where they should be is a plaque: 'THE DOOR OPENS TO A NOTE HELD, NOT A NOTE HIT.' Someone has scratched underneath: 'and it is a very long note'.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Back to the aisle",
+     "to": 52,
+     "phrase": "p_d4",
+     "consequence": "You have a feeling you will need that.",
+     "default": true
+    }
+   ]
+  },
+  "54": {
+   "title": "The Resonant Seam",
+   "zone": "hall",
+   "scene": "hall",
+   "kind": "normal",
+   "tier": 4,
+   "text": "The fork's note finds a flaw in the wall, a thin seam that rings like a bell. A slab swings away and a hidden passage leads round behind the gargoyle, straight to the round door.",
+   "side": true,
+   "secret": true,
+   "choices": [
+    {
+     "label": "Through the seam",
+     "to": 57,
+     "phrase": "p_d4",
+     "consequence": "You have walked right past the gargoyle.",
+     "default": true
+    }
+   ]
+  },
+  "55": {
+   "title": "The Hushing Gargoyle",
+   "zone": "hall",
+   "scene": "hall",
+   "kind": "normal",
+   "tier": 4,
+   "text": "The gargoyle unfolds from its perch with a grinding of stone, finger still on its lips. It does not want you to make a sound, and it has a great deal of weight to put behind the request.",
+   "choices": [
+    {
+     "label": "Fight the gargoyle",
+     "to": 57,
+     "phrase": "fight_t4",
+     "default": true,
+     "encounter": "gargoyle",
+     "lives": 3
+    },
+    {
+     "label": "Creep along the wall",
+     "to": 57,
+     "phrase": "luck_t4",
+     "consequence": "You get all the way round on tiptoe.",
+     "test": {
+      "pass": 57,
+      "fail": 56
+     }
+    }
+   ]
+  },
+  "56": {
+   "title": "Hushed",
+   "zone": "hall",
+   "scene": "hall",
+   "kind": "normal",
+   "tier": 4,
+   "text": "A stone finger presses to your lips, and for a long minute nothing you say makes any sound at all, and nothing you hear has any weight. When the gargoyle loses interest you are back at the edge of the aisle, hoarse and furious.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Square up to it",
+     "to": 55,
+     "phrase": "p_d4",
+     "consequence": "The gargoyle settles back on its haunches.",
+     "default": true
+    }
+   ]
+  },
+  "57": {
+   "title": "The Resonance Door",
+   "zone": "door",
+   "scene": "door",
+   "kind": "normal",
+   "tier": 4,
+   "text": "A great circular door of black iron, with a speaker grille set in its face. It hums a single low note and waits. Hold that note with your hands, not your voice, and it might let you through.",
+   "choices": [
+    {
+     "label": "Match the door's note",
+     "to": 59,
+     "phrase": "luck_t4",
+     "consequence": "The note locks into yours, and the iron swings open.",
+     "default": true,
+     "test": {
+      "pass": 59,
+      "fail": 58
+     }
+    }
+   ]
+  },
+  "58": {
+   "title": "The Door Says No",
+   "zone": "door",
+   "scene": "door",
+   "kind": "normal",
+   "tier": 4,
+   "text": "The door's note rises a half-step, sour, and the grille spits a gust of cold air in your face. Then the hum settles back to its low steady note, as though nothing has happened. It is waiting for you to try again.",
+   "side": true,
+   "choices": [
+    {
+     "label": "Try the note again",
+     "to": 57,
+     "phrase": "p_d4",
+     "consequence": "You roll your shoulders and listen.",
+     "default": true
+    }
+   ]
+  },
+  "59": {
+   "title": "The Echo Chamber",
+   "zone": "echo",
+   "scene": "echo",
+   "kind": "normal",
+   "tier": 4,
+   "text": "A perfectly round room of bare stone, with a ceiling lost in the dark. Every sound you make comes back as a person. Your Echo walks out of the dark, made entirely of your own noise, and starts to copy your breathing.",
+   "choices": [
+    {
+     "label": "Face the Echo",
+     "to": 61,
+     "phrase": "fight_t4",
+     "default": true,
+     "encounter": "echo",
+     "lives": 3
+    },
+    {
+     "label": "Stand perfectly still",
+     "to": 60,
+     "phrase": "p_d1"
+    }
+   ]
+  },
+  "60": {
+   "title": "Swallowed by Silence",
+   "zone": "echo",
+   "scene": "death",
+   "kind": "death",
+   "tier": 4,
+   "text": "You hold your breath and the room holds it with you. The Echo stands quite close, quite patient, and the silence grows heavy and complete. Nothing in the Bassment is as hungry as a room with nothing in it.",
+   "choices": [
+    {
+     "label": "Wake in the Warehouse",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "default": true
+    }
+   ]
+  },
+  "61": {
+   "title": "The Dawn Stair",
+   "zone": "dawn",
+   "scene": "dawn",
+   "kind": "normal",
+   "tier": 4,
+   "text": "A spiral stair climbs towards a thin line of grey light. The bass from the club above is thinning bar by bar, like a tide going out.",
+   "choices": [
+    {
+     "label": "Climb",
+     "to": 62,
+     "phrase": "p_d2",
+     "consequence": "Your legs ache pleasantly.",
+     "default": true
+    }
+   ]
+  },
+  "62": {
+   "title": "The Last Landing",
+   "zone": "dawn",
+   "scene": "dawn",
+   "kind": "normal",
+   "tier": 4,
+   "text": "At the top of the stair the wizard sits on an upturned crate, finishing a sandwich and pretending he has not been waiting. 'Took your time,' he says, and nods at the push-bar door behind him, where daylight leaks around the frame.",
+   "choices": [
+    {
+     "label": "Push the door open",
+     "to": 63,
+     "phrase": "p_d2",
+     "consequence": "The bar clunks and the door swings out.",
+     "default": true
+    },
+    {
+     "label": "Ask if the sandwich is spare",
+     "to": 63,
+     "phrase": "p_d2",
+     "consequence": "'No,' says the wizard, and holds the door."
+    }
+   ]
+  },
+  "63": {
+   "title": "Daylight",
+   "zone": "dawn",
+   "scene": "victory",
+   "kind": "victory",
+   "tier": 4,
+   "text": "You shoulder the door open and step into a cold, bright car park at dawn. The last of the night's bass is still buzzing in your ribs, and behind you the hatch to the Bassment clicks shut. You have passed the Trial, and the next set is yours.",
+   "choices": [
+    {
+     "label": "Walk out into daylight",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "default": true
+    }
+   ]
+  },
+  "0": {
+   "title": "Defeated",
+   "zone": "hatch",
+   "scene": "death",
+   "kind": "death",
+   "tier": 1,
+   "text": "The fight goes against you and the Bassment closes around you like a held breath. The wizard's voice says, kindly, that the music will still be here when you wake.",
+   "choices": [
+    {
+     "label": "Wake in the Warehouse",
+     "to": null,
+     "exit": "warehouse",
+     "phrase": null,
+     "default": true
+    }
+   ]
   }
  }
 }

@@ -1,5 +1,5 @@
 extends Control
-## The Deathtrap Dungeon opening. The rhythm game never stops: cues fall on the four pads the whole time (TrialEngine charts them in 16-beat blocks from a pack on the
+## The Bassment, the wizard's dungeon under the club. The rhythm game never stops: cues fall on the four pads the whole time (TrialEngine charts them in 16-beat blocks from a pack on the
 ## run's audio clock). Over a fixed illustrated scene a short description and floating choices appear; the player has four bars to choose and, if they do not, the
 ## default (marked in the data) is taken. A chosen option is played as a rhythm phrase; a pass shows the consequence and the next choices, a failed phrase can be retried,
 ## and a fight plays an outcome animation. The only inputs are the choices and the pads.
@@ -68,7 +68,7 @@ func _ready() -> void:
 	tdata = TrialData.load_default()
 	rdata = RunData.load_default()
 	if not tdata.errors.is_empty() or not rdata.errors.is_empty():
-		_fatal("The Trial data is invalid:\n" + "\n".join(PackedStringArray(tdata.errors + rdata.errors)))
+		_fatal("The dungeon data is invalid:\n" + "\n".join(PackedStringArray(tdata.errors + rdata.errors)))
 		return
 	virtual_mode = OS.get_environment("RW_TRIAL_VIRTUAL") == "1"
 	if bot == "":
@@ -380,9 +380,7 @@ func _show_passage(ev: Dictionary) -> void:
 	_enemy_id = ""
 	_msg.text = ""
 	_shade.color = Color(0, 0, 0, 0.0)
-	var status := str(p.get("status", ""))
-	_tag.text = "passage %d  ·  %s" % [engine.flow.passage, {"BOOK_VERIFIED": "book-verified links", "OCR_GRAPH": "links from the OCR pack (unverified)", "BRIDGED": "bridged (invented links)",
-		"SYNTHETIC": "synthetic", "ADAPTED": "adapted", "LEGACY": "legacy adaptation"}.get(status, status)]
+	_tag.text = _tag_text()
 	var pk := str(ev.get("passage_kind", p.get("kind", "normal")))
 	if pk == "death":
 		_msg.text = "YOU DIED"
@@ -395,6 +393,15 @@ func _show_passage(ev: Dictionary) -> void:
 		print("TRIAL reached passage %d" % engine.flow.passage)
 		if OS.get_environment("RW_STORY_QUIT") == "1":
 			get_tree().quit()
+
+
+## The line at the bottom of the scene: the zone, and the items the player carries.
+func _tag_text() -> String:
+	var t := tdata.zone_name(engine.flow.passage)
+	if not engine.flow.flags.is_empty():
+		var names: Array = engine.flow.flags.map(func(f: Variant) -> String: return str(tdata.items.get(str(f), f)))
+		t += "  ·  carrying " + ", ".join(PackedStringArray(names))
+	return t
 
 
 func _open_window(ev: Dictionary) -> void:

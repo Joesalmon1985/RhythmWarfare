@@ -1,16 +1,18 @@
 class_name TrialData
 extends RefCounted
-## The Deathtrap Dungeon opening's data (content/trial/passages.json): the passage links as the book verifies them, the text and scene of each passage,
-## the rhythm phrases and the one encounter. validate() checks everything a run of it depends on; errors name the passage.
+## The dungeon's data (content/trial/passages.json): the zones, the passages with their text, scene, tier and choices, the rhythm phrases, the creatures, the items
+## and the music. validate() checks everything a run of it depends on; errors name the passage. docs/TRIAL_OPENING.md describes the format.
 
 const PATH := "res://content/trial/passages.json"
-const MAP_PATH := "res://content/trial/quest_map.json"
+const MAX_DEFAULT_WALK := 120
 
 var raw: Dictionary = {}
-var passages: Dictionary = {}  # int passage -> entry
+var passages: Dictionary = {}  # int passage -> entry (passage 0 is the one a lost fight leads to)
 var phrases: Dictionary = {}
 var encounters: Dictionary = {}
 var scenes: Dictionary = {}
+var zones: Dictionary = {}
+var items: Dictionary = {}
 var start := 1
 var errors: Array = []
 
@@ -35,7 +37,8 @@ static func load_file(path: String, run_data: RunData = null) -> TrialData:
 	d.phrases = v.get("phrases", {})
 	d.encounters = v.get("encounters", {})
 	d.scenes = v.get("scenes", {})
-	TrialBook.compose(d)
+	d.zones = v.get("zones", {})
+	d.items = v.get("items", {})
 	d.validate(run_data if run_data != null else RunData.load_default())
 	return d
 
@@ -48,13 +51,25 @@ func choices(n: int) -> Array:
 	return passage(n).get("choices", [])
 
 
+func zone_name(n: int) -> String:
+	return str((zones.get(str(passage(n).get("zone", "")), {}) as Dictionary).get("name", ""))
+
+
+## The choices of passage `n` that a player holding `flags` may see (a choice with "requires" is hidden until that item is held).
+func choices_for(n: int, flags: Array) -> Array:
+	return choices(n).filter(func(c: Dictionary) -> bool: return str(c.get("requires", "")) == "" or str(c["requires"]) in flags)
+
+
 func validate(run_data: RunData) -> void:
 	if not passages.has(start):
 		errors.append("start passage %d does not exist" % start)
+	if not passages.has(0):
+		errors.append("passage 0 (the one a lost fight leads to) is missing")
 	var music: Dictionary = raw.get("music", {})
-	for key in ["audio", "chart"]:
-		if not run_data.packs.has(str(music.get(key, ""))):
-			errors.append("music.%s pack '%s' does not exist" % [key, music.get(key, "")])
+	for key in ["audio", "chart", "fight_audio", "fight_chart"]:
+		if music.has(key) or key in ["audio", "chart"]:
+			if not run_data.packs.has(str(music.get(key, ""))):
+				errors.append("music.%s pack '%s' does not exist" % [key, music.get(key, "")])
 	if not (run_data.cfg.get("treatments", {}) as Dictionary).has(str(music.get("treatment", "none"))):
 		errors.append("music.treatment '%s' is not in run.json" % music.get("treatment", ""))
 	for pid in phrases:
@@ -63,58 +78,118 @@ func validate(run_data: RunData) -> void:
 			errors.append("phrase %s: family must be drums or bass" % pid)
 		if int(ph.get("tier", 0)) < 1 or int(ph.get("tier", 0)) > RunData.TIERS:
 			errors.append("phrase %s: tier must be 1 to %d" % [pid, RunData.TIERS])
+	for zid in zones:
+		var z: Dictionary = zones[zid]
+		if str(z.get("name", "")) == "" or str(z.get("look", "")) == "":
+			errors.append("zone %s needs a name and a one-line look" % zid)
+		if not scenes.has(str(z.get("scene", ""))):
+			errors.append("zone %s: scene '%s' is not defined" % [zid, z.get("scene", "")])
+		if int(z.get("tier", 0)) < 1 or int(z.get("tier", 0)) > RunData.TIERS:
+			errors.append("zone %s: tier must be 1 to %d" % [zid, RunData.TIERS])
+	for sid in scenes:
+		var f := str(scenes[sid].get("file", ""))
+		if not FileAccess.file_exists(f) and not ResourceLoader.exists(f):
+			errors.append("scene %s: file %s is missing" % [sid, f])
+	var victories := 0
 	for n in passages:
 		var p: Dictionary = passages[n]
+		var kind := str(p.get("kind", "normal"))
+		if kind not in ["normal", "death", "victory"]:
+			errors.append("passage %d: kind must be normal, death or victory" % n)
+		if kind == "victory":
+			victories += 1
+		if n < 0:
+			errors.append("passage %d: ids are 0 or more" % n)
+		if str(p.get("title", "")) == "" or str(p.get("text", "")).length() < 40:
+			errors.append("passage %d: needs a title and real text" % n)
+		if not zones.has(str(p.get("zone", ""))):
+			errors.append("passage %d: zone '%s' is not defined" % [n, p.get("zone", "")])
 		if not scenes.has(str(p.get("scene", ""))):
 			errors.append("passage %d: scene '%s' is not defined" % [n, p.get("scene", "")])
-		elif not FileAccess.file_exists(str(scenes[str(p["scene"])]["file"])) and not ResourceLoader.exists(str(scenes[str(p["scene"])]["file"])):
-			errors.append("passage %d: scene file %s is missing" % [n, scenes[str(p["scene"])]["file"]])
-		var cs: Array = p.get("choices", [])
-		if not (n == 0 or (n >= 1 and n <= 400)):
-			errors.append("passage %d is outside 0 to 400" % n)
-		var defaults := 0
-		for c0 in cs:
-			if bool(c0.get("default", false)):
-				defaults += 1
-		if not cs.is_empty() and defaults != 1:
-			errors.append("passage %d: exactly one choice must be the default (the one taken when nobody chooses within four bars), found %d" % [n, defaults])
 		if int(p.get("tier", 1)) < 1 or int(p.get("tier", 1)) > RunData.TIERS:
 			errors.append("passage %d: tier must be 1 to %d" % [n, RunData.TIERS])
+		for g in p.get("grants", []):
+			if not items.has(str(g)):
+				errors.append("passage %d grants '%s', which is not an item" % [n, g])
+		var cs: Array = p.get("choices", [])
 		if cs.is_empty():
-			errors.append("passage %d has no choices (an endpoint still offers a way out)" % n)
+			errors.append("passage %d has no choices (an ending still offers a way out)" % n)
+		var defaults := 0
+		for c0 in cs:
+			if str(c0.get("requires", "")) == "":
+				if bool(c0.get("default", false)):
+					defaults += 1
+			elif bool(c0.get("default", false)):
+				errors.append("passage %d: a choice that needs an item cannot be the default" % n)
+			elif not items.has(str(c0["requires"])):
+				errors.append("passage %d: choice '%s' needs '%s', which is not an item" % [n, c0.get("label", ""), c0["requires"]])
+		if not cs.is_empty() and defaults != 1:
+			errors.append("passage %d: exactly one choice without a requirement must be the default (taken when nobody chooses within four bars), found %d" % [n, defaults])
+		var exits := 0
 		for c in cs:
 			var to: Variant = c.get("to", null)
 			if to == null:
+				exits += 1
 				if str(c.get("exit", "")) == "":
 					errors.append("passage %d: choice '%s' has neither a destination nor an exit" % [n, c.get("label", "")])
 			elif not passages.has(int(to)):
-				errors.append("passage %d: choice '%s' leads to %d, which has no entry (add it, or make that passage an endpoint)" % [n, c.get("label", ""), int(to)])
+				errors.append("passage %d: choice '%s' leads to %d, which has no entry" % [n, c.get("label", ""), int(to)])
 			var ph: Variant = c.get("phrase", null)
 			if ph != null and not phrases.has(str(ph)):
 				errors.append("passage %d: choice '%s' uses phrase '%s', which is not defined" % [n, c.get("label", ""), ph])
-			if c.has("encounter") and not encounters.has(str(c["encounter"])):
-				errors.append("passage %d: encounter '%s' is not defined" % [n, c["encounter"]])
+			if to != null and ph == null:
+				errors.append("passage %d: choice '%s' needs a phrase (a rhythm to play)" % [n, c.get("label", "")])
+			if c.has("encounter"):
+				if not encounters.has(str(c["encounter"])):
+					errors.append("passage %d: encounter '%s' is not defined" % [n, c["encounter"]])
+				if int(c.get("lives", 0)) < 1:
+					errors.append("passage %d: a fight needs lives (3: the third lost phrase ends the trial)" % n)
 			if c.has("test"):
 				for key in ["pass", "fail"]:
 					if not passages.has(int(c["test"][key])):
 						errors.append("passage %d: the luck test's %s leads to %d, which has no entry" % [n, key, int(c["test"][key])])
-				if c.get("phrase", null) == null:
+				if ph == null:
 					errors.append("passage %d: a luck test needs a phrase" % n)
-			if str(c.get("label", "")) == "" or str(c.get("book", "")) == "":
-				errors.append("passage %d: every choice needs a label and the book's wording of the link" % n)
-		if str(p.get("status", "")) not in ["BOOK_VERIFIED", "PROTOTYPE_ENDPOINT", "ADAPTED", "LEGACY", "OCR_GRAPH", "BRIDGED", "SYNTHETIC"]:
-			errors.append("passage %d: status must be BOOK_VERIFIED, OCR_GRAPH, BRIDGED, ADAPTED, LEGACY, SYNTHETIC or PROTOTYPE_ENDPOINT" % n)
-	_validate_against_map()
+				if int(c["test"]["pass"]) != int(to if to != null else -1):
+					errors.append("passage %d: a luck test's 'to' must be its pass passage" % n)
+			if str(c.get("label", "")) == "":
+				errors.append("passage %d: every choice needs a label" % n)
+		if kind in ["death", "victory"] and exits != cs.size():
+			errors.append("passage %d: a %s only offers the way back to the Warehouse" % [n, kind])
+		if kind == "normal" and exits > 0:
+			errors.append("passage %d: only deaths and the victory lead out of the dungeon" % n)
+	if victories != 1:
+		errors.append("the dungeon needs exactly one victory passage (found %d)" % victories)
 	for eid in encounters:
 		var e: Dictionary = encounters[eid]
 		for key in ["portrait", "portrait_hit"]:
 			if not ResourceLoader.exists(str(e.get(key, ""))) and not FileAccess.file_exists(str(e.get(key, ""))):
 				errors.append("encounter %s: %s %s is missing" % [eid, key, e.get(key, "")])
-		if str(e.get("placement", "")) != "ADAPTED" and str(e.get("placement", "")) != "BOOK":
-			errors.append("encounter %s: placement must say ADAPTED or BOOK" % eid)
+		for key in ["name", "intro", "on_win", "on_fail", "on_defeat"]:
+			if str(e.get(key, "")) == "":
+				errors.append("encounter %s needs %s" % [eid, key])
+	if errors.is_empty():
+		_validate_graph()
 
 
-## Passages reachable from the start (a link map for tests and the docs).
+## Reachability, the walk by defaults and the tier rule, once the links are known to be sound.
+func _validate_graph() -> void:
+	var reach := reachable()
+	for n in passages:
+		if n != 0 and n not in reach:
+			errors.append("passage %d cannot be reached from the start" % n)
+	var walk := default_walk()
+	if walk.is_empty() or str(passage(int(walk[walk.size() - 1])).get("kind", "")) != "victory":
+		errors.append("the default choices alone do not walk from the start to the victory (%s)" % str(walk))
+	var last_tier := 0
+	for n in walk:
+		var t := int(passage(int(n)).get("tier", 1))
+		if t < last_tier:
+			errors.append("passage %d: the tier falls from %d to %d along the default walk (it must rise with depth)" % [n, last_tier, t])
+		last_tier = t
+
+
+## Passages reachable from the start (items ignored: a choice that needs one still counts as a link).
 func reachable() -> Array:
 	var seen := {}
 	var queue: Array = [start]
@@ -133,43 +208,24 @@ func reachable() -> Array:
 	return out
 
 
-var quest_map: Dictionary = {}
-
-
-## Every passage that is playable must be in the quest map, and a book-verified one must offer exactly the map's verified edges.
-func _validate_against_map() -> void:
-	if not FileAccess.file_exists(MAP_PATH):
-		errors.append("%s is missing (python tools/trial/make_quest_map.py)" % MAP_PATH)
-		return
-	var m: Variant = JSON.parse_string(FileAccess.get_file_as_string(MAP_PATH))
-	if typeof(m) != TYPE_DICTIONARY:
-		errors.append("quest_map.json is not valid")
-		return
-	quest_map = m
-	var mp: Dictionary = m["passages"]
-	for n in passages:
-		var entry: Variant = mp.get(str(n), null)
-		var p: Dictionary = passages[n]
-		if entry == null:
-			if str(p.get("status", "")) == "BOOK_VERIFIED":
-				errors.append("passage %d is marked BOOK_VERIFIED but is not in content/trial/quest_map.json (add it to the map first)" % n)
-			continue
-		if str(p.get("status", "")) == "BOOK_VERIFIED":
-			if str(entry["status"]) != "BOOK_VERIFIED":
-				errors.append("passage %d is marked BOOK_VERIFIED here but the map says %s" % [n, entry["status"]])
-				continue
-			var want: Array = []
-			for e in entry["edges"]:
-				var tos: Array = e["to"] if typeof(e["to"]) == TYPE_ARRAY else [e["to"]]
-				for t in tos:
-					want.append("%s>%s" % [e["action"], str(int(t))])
-			var got: Array = []
-			for c in p.get("choices", []):
-				if c.get("to", null) != null and str(c.get("src", "verified")) == "verified":  # bridges and the pack's links are extra, not the verified edges
-					got.append("%s>%s" % [c["book"], str(int(c["to"]))])
-			want = want.filter(func(w: String) -> bool: return int(w.get_slice(">", 1)) <= 400)  # the backbone names a passage 442; the book stops at 400
-			want.sort()
-			got.sort()
-			if want != got:
-				errors.append("passage %d: the choices %s differ from the verified edges %s" % [n, str(got), str(want)])
-
+## The passages visited when nobody ever picks anything and every phrase is passed: [start, ..., ending]. Empty when it loops or runs past MAX_DEFAULT_WALK.
+func default_walk() -> Array:
+	var walk: Array = [start]
+	var n := start
+	while walk.size() <= MAX_DEFAULT_WALK:
+		var next := -1
+		var is_exit := false
+		for c in choices(n):
+			if bool(c.get("default", false)):
+				if c.get("to", null) == null:
+					is_exit = true
+				else:
+					next = int(c["to"])
+				break
+		if is_exit:
+			return walk
+		if next < 0 or next in walk:
+			return []
+		walk.append(next)
+		n = next
+	return []
