@@ -2078,6 +2078,8 @@ def pc_white_swell():
 
 
 def pc_long_shadow():
+    """The Keeper's long shadow. A shadow on a dark floor cannot be seen, so the floor under it is lit: a warm pool of the altar's light, with the shadow cut out of it as a
+    near-black wedge, and a bright rim along the shadow's edge (visual polish 2: it used to be translucent black on a near-black floor)."""
     sp = Cv(256, 128)
     cy = 90
     parts = [sp.ellipse(30, cy, 14, 10), sp.stroke([(40, cy), (58, cy)], 8, 14), sp.ellipse(66, cy, 16, 21), sp.poly([(66, cy - 20), (150, cy - 8), (156, cy + 8), (66, cy + 20)]),
@@ -2086,8 +2088,17 @@ def pc_long_shadow():
     mask = np.zeros((128, 256), bool)
     for p in parts:
         mask |= p
-    a = np.clip(sp.blur(mask, 2.0) * 1.4, 0, 1) * (0.55 + 0.35 * np.clip((sp.x - 10) / 120.0, 0, 1))
-    sp.over(a, "#050506")
+    # the pool of light on the floor: an ellipse round the shadow, strongest at the altar's end (the right), fading to the edges
+    d = np.sqrt(((sp.x - 140) / 124.0) ** 2 + ((sp.y - 88) / 38.0) ** 2)
+    pool = np.clip(1.0 - d, 0.0, 1.0) ** 0.7 * (0.5 + 0.5 * np.clip(sp.x / 256.0 + 0.2, 0, 1))
+    sp.over(np.clip(pool * 0.9, 0, 0.82), "#ff9a58")
+    sp.over(np.clip(pool * 0.45, 0, 0.5), "#ffe6c0")  # a hot core
+    soft = sp.blur(mask, 1.2)
+    # the rim: a bright line just outside the shadow's edge
+    ring = np.clip(sp.blur(mask, 4.0) * 1.9 - soft * 1.9, 0.0, 1.0) * np.clip(pool * 2.2, 0, 1)
+    sp.over(np.clip(ring * 1.2, 0, 1), "#fff0d0")
+    a = np.clip(soft * 1.5, 0, 1) * 0.96
+    sp.over(a, "#0a0305")
     return sp.rgba(outline=False, hard=False)
 
 

@@ -482,7 +482,8 @@ def ash_land() -> Map:
     m.light("lt_crack", 11.9, -22.4, 1.8, 6.0, "#ffa040", 1.2)
     m.wp("wall_in", 0, -1.6, 0)
     m.wp("wall_c", 0, -4.2, 0)
-    m.wp("wall_mid", 0, -11.0, 0)
+    m.wp("wall_mid", 0, -5.0, 0)  # (visual polish 2: the rail stops short of the Hollow One and the riders ahead; it used to walk between them)
+    m.wp("wall_near", 0, -6.6, 0)
     m.wp("wall_gate_wp", 0, -17.2, 0)
     m.wp("wall_w", -9.0, -7.0, 14)
     m.wp("wall_e", 9.0, -7.0, -14)
@@ -502,14 +503,15 @@ def ash_land() -> Map:
     m.light("lt_bell", 18, -48.5, 3.0, 8.0, "#d8a050", 1.0)
     m.wp("stair_in", 12, -33.2, 0)
     m.wp("stair_c", 17, -36.0, 0)
-    m.wp("stair_mid", 18, -44.8, 0)
+    m.wp("stair_mid", 17.4, -37.0, 0)  # (visual polish 2: the rail stops short of the Hollow One and the sentinel, who stood on its line)
+    m.wp("stair_fwd", 17.6, -38.0, 0)
     m.wp("stair_up", 18, -53.0, 0)
     m.wp("stair_w", 11.5, -38.5, 12)
     m.wp("stair_e", 25, -38.5, -12)
     m.wp("stair_side", 25.0, -35.0, -20)
     m.wp("bells_wp", 18, -49.2, 0)
     m.actor("sentinel", "sentinel", 18.0, -47.4, "stair", "stand", person="sentinel", role="hero")
-    m.actor("ho_b", "hollow_one", 14.8, -39.0, "stair", "stand", person="hollow_one")
+    m.actor("ho_b", "hollow_one", 15.6, -42.4, "stair", "stand", person="hollow_one")
 
     # --- E10 the Ash Plain ---
     m.thing("glass_mtn", "thing_glass_mountain", -2, -70.0, size=22.0)
@@ -570,7 +572,7 @@ def ash_land() -> Map:
 
     # --- E13 the Keeper ---
     m.thing("altar", "thing_ember_altar", 25.0, -112.0, size=3.0, anim="pulse")
-    m.thing("long_shadow", "piece_long_shadow", 25.0, -103.5, y=0.05, size=4.0, piece="long_shadow", blend="mix")
+    m.thing("long_shadow", "piece_long_shadow", 25.0, -106.8, y=0.05, size=9.0, piece="long_shadow", blend="mix")  # (visual polish 2: it lay 2 m in front of the rail's camera, under its feet, and was bigger than the screen's floor strip; now across the floor between the pair and the altar, 9 m wide)
     m.thing("stal_k0", "thing_stalagmite_red", 17.0, -110.0, size=2.4)
     m.thing("stal_k1", "thing_stalagmite_red", 34.0, -108.0, size=2.4)
     m.light("lt_altar", 25, -111.0, 1.8, 16, "#ff8a40", 1.9)
@@ -598,7 +600,8 @@ def ash_land() -> Map:
     m.light("lt_camp2", -26, -12, 3.0, 14, "#d86040", 0.9)
     m.wp("camp_in", -15.4, -12.0, 90)
     m.wp("camp_c", -17.4, -11.0, 90)
-    m.wp("camp_mid", -20.0, -11.0, 90)
+    m.wp("camp_mid", -17.8, -11.0, 90)  # (visual polish 2: the rail stops short of Bram and the captain's riders; it used to walk past Bram)
+    m.wp("camp_fwd", -18.5, -11.4, 90)
     m.wp("camp_near", -22.5, -12.0, 90)
     m.wp("camp_n", -18.0, -4.5, 80)
     m.wp("camp_s", -18.0, -19.5, 100)
@@ -607,7 +610,7 @@ def ash_land() -> Map:
     m.actor("captain", "captain", -26.0, -12.4, "camp", "stand", person="captain", role="hero")
     for i, (x, z) in enumerate([(-22.8, -8.4), (-23.0, -14.6), (-27.5, -8.5)]):
         m.actor(f"rd_c{i}", "rider", x, z, "camp", "stand", person=f"rider_c{i}")
-    m.actor("bram_c", "bram", -20.0, -12.6, "camp", "stand", person="bram")
+    m.actor("bram_c", "bram", -21.6, -12.6, "camp", "stand", person="bram")
     return m
 
 

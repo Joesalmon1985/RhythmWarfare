@@ -803,10 +803,10 @@ def thing_fishing_boat():
     hull = c.poly(gun + [(230, 96), (160, 101), (80, 100), (46, 94)])
     yy = c.y - np.array([sheer(x) for x in range(W)])[None, :]
     stk = (yy % 8) < 1.0
-    c.paint(hull, 0.36 + 0.14 * np.sin(c.x * 0.18) + (fnoise((H, W), 4, 851) - 0.5) * 0.18 - 0.2 * stk + 0.08 * (yy < 4) + 0.12 * ((yy % 8) > 6), WOODN)
-    c.solid(hull & (np.abs(yy - 12) < 1.5) & (c.x > 40) & (c.x < 222), "#27405e")
+    c.paint(hull, 0.62 + 0.14 * np.sin(c.x * 0.18) + (fnoise((H, W), 4, 851) - 0.5) * 0.18 - 0.2 * stk + 0.08 * (yy < 4) + 0.12 * ((yy % 8) > 6), WOODN)  # (polish 2: 0.36 -> 0.62, the hull read black)
+    c.solid(hull & (np.abs(yy - 12) < 2.5) & (c.x > 40) & (c.x < 222), "#5f8fd0")
     rail = hull & (yy < 3.5)
-    c.paint(rail, 0.7 + (fnoise((H, W), 3, 852) - 0.5) * 0.2, WOODN)
+    c.paint(rail, 0.95 + (fnoise((H, W), 3, 852) - 0.5) * 0.1, WOODN)
     # nets heaped on the bow, with cork floats
     heap = c.ell(84, 70, 31, 15) & (c.y < sheer(84) + 3)
     mesh = (((c.x + c.y) % 6) < 1.3) | (((c.x - c.y) % 6) < 1.3)
@@ -816,7 +816,7 @@ def thing_fishing_boat():
         c.paint(c.ell(fx, fy, 3.4, 3.0), c.hs(fx - 3.4, fx + 3.4, 0.6, 0.7), STRAW)
     # tarpaulin humped over the stern
     tarp = c.poly([(166, 78), (172, 64), (186, 54), (206, 52), (222, 62), (230, 74), (228, 80), (166, 82)])
-    c.paint(tarp, 0.3 + 0.4 * np.clip(1 - (c.y - 52) / 24, 0, 1) + 0.12 * np.sin(c.x * 0.45 + c.y * 0.1) + 0.1 * (c.x < 190), TARP)
+    c.paint(tarp, 0.5 + 0.4 * np.clip(1 - (c.y - 52) / 24, 0, 1) + 0.12 * np.sin(c.x * 0.45 + c.y * 0.1) + 0.1 * (c.x < 190), TARP)
     c.solid(tarp & (np.abs(((c.x - 190) * 0.18 + c.y * 0.3) % 6) < 0.6) & (c.y > 56), "#08101a")
     for lx in (186, 210):
         c.paint(c.line([(lx, 54), (lx + 6, 80)], 2), 0.5, ROPE)
@@ -853,8 +853,8 @@ def thing_fishing_boat():
     c.solid(refl & (np.abs(c.x - 151) < 2 + (c.y - 94) * 0.2), "#ffd868")
     c.outline()
     c.glow(lx, 43, 46, "#fff0a0", "#7a4a10", 2.0, over=False)
-    sp = np.clip(1 - np.sqrt((c.x - lx) ** 2 + (c.y - 43) ** 2) / 40.0, 0, 1) ** 1.4 * 0.95
-    c.tint_light(hull | heap | tarp, sp, "#ffbe50")
+    sp = np.clip(1 - np.sqrt((c.x - lx) ** 2 + (c.y - 43) ** 2) / 70.0, 0, 1) ** 1.0 * 1.25
+    c.tint_light(hull | heap | tarp, np.clip(sp, 0, 1), "#ffbe50")
     return c.out()
 
 

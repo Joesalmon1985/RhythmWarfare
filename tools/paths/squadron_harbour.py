@@ -61,7 +61,7 @@ def build():
     qy.standard_rail("c12", home=(2.0, 0), good=((5.0, -1.5), (9.0, 1.0)), bad=((1.5, -4.0), (2.6, 3.6)), arrive=(0.6, 0))
     qy.wp("c12_x_up", 14.0, 4.0, -20)  # the searchlights
     qy.wp("c12_x_right", 17.5, -1.0, 10)  # the boat
-    qy.thing("boat", T("thing_fishing_boat", "billboard", "a small wooden fishing boat with a stubby mast, a swinging lantern giving a warm gold glow, nets heaped, a tarpaulin, low in black water, lapping ripples (256x128)", 1.0, 256), 20.0, -0.2, 1.1, 2.8, "bob")
+    qy.thing("boat", T("thing_fishing_boat", "billboard", "a small wooden fishing boat with a stubby mast, a swinging lantern giving a warm gold glow, nets heaped, a tarpaulin, low in black water, lapping ripples (256x128)", 1.0, 256), 19.6, 0.4, 1.45, 4.2, "bob")  # (visual polish 2: bigger and nearer, it was a small dark shape behind the fisherman)
     qy.thing("search_a", T("thing_searchlight", "billboard", "a searchlight on a tripod tower at a quay head: a dark steel tower with a big round lamp throwing a long, wide white-blue beam up and across, additive-looking glow, 128x128", 1.0, 128), 12.0, 4.6, 1.9, 3.8, "sway")
     qy.thing("search_b", "thing_searchlight", 19.0, -4.8, 1.9, 3.8, "sway")
     qy.thing("beam_a", T("thing_beam", "billboard", "a soft wide white-blue searchlight beam as a tall cone (mostly transparent, premultiplied glow), 128x128", 1.0, 128), 12.0, 3.8, 3.4, 6.0, "sway", blend="add")
@@ -70,10 +70,10 @@ def build():
     qy.thing("nets_heap", T("thing_nets", "billboard", "a heap of drying fishing nets with cork floats on a rack", 1.0, 128), 7.0, -4.8, 0.9, 1.8)
     qy.thing("quay_crates", "thing_crate_stack", 9.5, 4.8, 1.0, 1.8)
     qy.thing("quay_lamp", T("thing_quay_lamp", "billboard", "a dim blue-glass quayside lamp on a post", 1.0, 128), 4.0, 4.9, 1.5, 3.0, "flicker")
-    qy.light("lt_boat", 19.0, 0.0, 1.6, 7.0, "#ffc060", 1.3)
+    qy.light("lt_boat", 19.0, 0.0, 1.6, 9.0, "#ffc060", 2.2)  # (visual polish 2: the boat was a dark hulk: a stronger lantern)
     qy.light("lt_search_a", 12.0, 4.6, 3.4, 12.0, "#b8d8ff", 1.1)
     qy.light("lt_moon", 8.0, 0.0, 5.0, 14.0, "#6f8fd0", 0.8)
-    qy.actor("fish", "fisherman", "a", 16.0, -0.2, fixed=True, activity="stand")
+    qy.actor("fish", "fisherman", "a", 16.0, -1.9, fixed=True, activity="stand")  # (polish 2: beside the boat, not in front of it)
     qy.actor("sent", "mp", "a", 11.0, 3.2, fixed=True, activity="stand")
     qy.actor("dock1", "fisherman", "b", 6.0, -3.4)
     qy.actor("dock2", "fisherman", "c", 8.5, 3.0)
@@ -115,7 +115,11 @@ def build():
     ce.actor("mate", "airman", "a", 4.6, 3.1, activity="sit")
 
     mb.portal("hut2", "quay", (0, 3), (0, 6))
-    mb.portal("quay", "coast", (22, 5), (22, 7))
+    mb.portal("quay", "coast", (22, 10.8), (22, 11.7))  # (visual polish 2: was (22, 5)-(22, 7), a 2 m gap behind the boat through which the lit day coast showed as a block of bright dither; now a crack of daylight in the far corner, still a portal because a sector must be reachable)
+    # The root cause of the bright block: the coast's own west wall (wall_dunes, 4.5 m high) lies in the same plane as the quay's east wall and is drawn over it (the walls are not
+    # back-face culled), so the whole end of the quay showed the coast's dunes. The coast's west wall is the harbour wall's other face: the same stone.
+    mb.walls.append({"from": [22, 14], "to": [22, 11.7], "sector": "coast", "portal": None, "tex": "wall_quay"})
+    mb.walls.append({"from": [22, 10.8], "to": [22, 0], "sector": "coast", "portal": None, "tex": "wall_quay"})
     mb.portal("cell", "quay", (3, 0), (7, 0))
     mb.rooms = {"main": {"palette": "khaki"}, "quay": {"palette": "searchlight"}, "coast": {"palette": "bright"}, "cell": {"palette": "cold"}}
     return mb

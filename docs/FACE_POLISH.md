@@ -103,3 +103,7 @@ were added. The hospital's last page (a 10 KB sliver) no longer exists, so `asse
 - The three-quarter view is mirrored by the runtime for the left turn, so a left-facing person is lit from the right on the face (as the bodies always were).
 - Hair over the brows (fringes, hat brims) hides the brows' expression for those actors; that is deliberate, but their mood then rests on eyes and mouth.
 - Singing (an open O) is shown on dance frames with the head tilted back, for the actors with the singer trait; no new frames are baked for it.
+
+## Half-size picture faces (visual polish 2)
+
+The grey, cyclops, insect and skeleton heads are 5 to 9 pixels wide at the half size, too small for the feature rules above, so `tools/story/art/half_faces.py` draws each of the 14 faces of those species as a small picture (rows of characters, one per pixel; see its legend), and the full-size insect and skeleton and the grey's relief / grief / laugh the same way. `tools/content/test_faces_lod2.py` requires every face to differ from every other by a pixel count. Before / after: `docs/shots/polish2/faces_*_before_above_after_below.jpg`. Details and what is still weak: docs/HANDOVER.md A13.

@@ -107,9 +107,9 @@ ACTING: dict[str, dict] = {
         "available": a("stamp", "anger", CAM), "selected": a("block", "anger", CAM), "committed": a("stare", "anger", CAM, 1),
         "success": a("bow", "laugh", CAM, 8), "failure": a("stamp", "anger", CAM, 4, then=a("point", "anger", "arena_edge", 12)),
     },
-    "underworld.court.queen": {  # court_g06: she watches, beckons, nods, or points at the pit while the court laughs
-        "available": a("stare", "resolve", CAM), "selected": a("beckon", "resolve", CAM), "committed": a("stare", "resolve", CAM, 1),
-        "success": a("nod", "resolve", CAM, 8), "failure": a("point", "laugh", "pit_edge", 10, then=a("laugh", "laugh", CAM)),
+    "underworld.court.queen": {  # court_g06: she watches, beckons, then (the commit) points at YOU, sternly; success: an amused nod (the laugh face); failure: points at the pit and laughs
+        "available": a("stare", "resolve", CAM), "selected": a("beckon", "resolve", CAM), "committed": a("point", "anger", CAM, 1),
+        "success": a("nod", "laugh", CAM, 8), "failure": a("point", "laugh", "pit_edge", 10, then=a("laugh", "laugh", CAM)),
     },
     # ---- The Hospital (hospital) ---------------------------------------------------------------------------------------------------------------------------
     "hospital.nurse": {  # h02: calm, sure
