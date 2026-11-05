@@ -1,7 +1,7 @@
 # Repository size and build size
 
 Measured on 5 November 2026 at `710a96a5` (the starting point of this work) and after the changes of this document (branch `paths-size`).
-Part 1 covers everything except the audio packs under `songs/packs/` (Part 2, below). No history was rewritten and no file that the game or the tests read was deleted.
+Part 1 covers everything except the audio packs under `songs/packs/`; Part 2 (section 7) is the packs. No history was rewritten and no file that the game or the tests read was deleted.
 
 ## 1. Numbers
 
@@ -12,7 +12,7 @@ Part 1 covers everything except the audio packs under `songs/packs/` (Part 2, be
 | Exported pack (`--export-pack "Windows Desktop"`) | **611 MB (581 MiB), and broken** | **240 MB (227 MiB), starts and loads every run** | 371 MB, 61 % |
 | `.git` on this machine (`git count-objects -vH`, all branches of all worktrees) | 852 MiB | see section 5 | grows, see 5 |
 
-"After" counts only Part 1. The packs (443 MB raw in the tree, 87 MiB of the 227 MiB pack) are Part 2.
+"After" counts only Part 1. Part 2 (section 7) took the packs further: tracked files 764 MiB raw, exported pack 184 MB.
 
 ### What was in the repository (HEAD `710a96a5`)
 
@@ -166,6 +166,39 @@ python3 tools/pck_origin.py /tmp/rw.pck --depth 3                              #
 cd /tmp && "$GODOT" --headless --main-pack /tmp/rw.pck -s <repo>/tools/export_smoke.gd
 ```
 
-## Part 2 (audio packs)
+## 7. Part 2: the audio packs (`songs/packs`)
 
-Not started in this document; added when the packs are final.
+Measured on 5 November 2026 at `e0fbcb19` (after the audio polish) and after the changes below. Goal: a smaller tree and build without changing what is heard or how it times.
+
+| What | Before | After | Saved |
+| --- | --- | --- | --- |
+| `songs/packs` tracked, raw (222 stem WAVs + 222 `.import`, 74 packs) | 442.9 MiB, 694 files | 305.3 MiB, 590 files (170 stems in `_shared`) | 137.6 MiB (31 %) |
+| All tracked files at `HEAD`, raw | 901.6 MiB, 17 033 files | 764.1 MiB, 16 934 files | 137.5 MiB |
+| New blobs in `.git` | n/a | 258 blobs, 0.2 MiB (the stems move byte for byte: 171 renames) | `.git` does not grow |
+| Exported pack (`--export-pack "Windows Desktop"`) | 239.55 MB (Part 1) | **184.12 MB** (`songs/packs` 86.9 to 34.1 MiB) | 55.4 MB; from the original 611 MB: **70 %** |
+
+### What was done
+
+1. **Dedupe (lossless).** `tools/content/stems.py` moves every stem into `songs/packs/_shared/<stem>_<sha1 of the file, 12 hex>.wav` (170 files for 222: identical stems of different scenes, and of the paths' placeholders, become one file) and `pack.json` names it relative to the pack: `"stems": {"drums": "../_shared/drums_023222f2a0eb.wav", ...}`. **Schema:** `stems` is still a map from stem name to a path relative to the pack folder; only the value changed (`../_shared/...`); `loops`, `tiers`, `bpm`, `loop_frames`, `levels` and `music.json` are untouched. A reader that joins the pack folder and `stems[k]` (RunData, RunAudio, `export_smoke`, every tool except those fixed below) needs no change; one that hard-codes `<pack>/loops/<stem>.wav` must read the manifest (fixed: `tests/test_run_paths.gd`, `tools/content/test_paths.py`, `tools/trial/check_transition_audio.py`, `check_trial_audio.py`). `_shared` has no `pack.json`, so it is never listed as a pack. `make_path_placeholders.py` calls `finish_pack` after each pack and `prune_shared` at the end, so a regeneration writes the shared layout and removes stems nobody names any more. Gospel and Ember regenerate **byte-identical** to the committed files (checked into a scratch folder; the stub path's two packs differ because the audio polish regenerated only Gospel and Ember, not the stub's older bass; the stub is a test fixture and was left). The Ableton and Squadron importers (`beatshaper.py`, `import_squadron.py`) still write plain `loops/*.wav` from the owner's originals; run `python3 tools/content/stems.py` after an import (idempotent) to put the pack in the shared layout. Nothing was converted from the git-ignored originals in `NewMusic/content/imports`.
+2. **Mono in the build (lossless).** 162 of the 170 stems are dual-mono (left equals right in every frame: all drums, all bass, the Ableton pads; only the 8 Gospel, Ember and stub pads are true stereo). `stems.py` sets `force/mono=true` in their `.import`, so the exported sample is one channel (QOA: half the bytes). Checked in Godot on a drums and a bass stem: playback of the stem with the flag equals playback of the same file without it **to 0.0** over 400 000 frames, and both channels are equal. The WAV in the tree is unchanged, which is why git adds no blob.
+3. **Format: Ogg Vorbis rejected, by the proof the task asked for.** `python3 tools/content/ogg_check.py` (with `tools/content/ogg_probe.gd`) encodes one pack per family (Gospel, Ember, Squadron, dd, lv1, cold_fusion: 18 stems; q7 for drums and pads, q9 for bass), lets **Godot's own Ogg player** decode them, and compares with the WAV. Result: **0 of 18 pass**.
+   * (a) Length. The stream states the right length (743 226 frames for a Gospel scene), but Godot plays it **4 frames short** on every stem and at q7 and q9, and with `loop = true` the first 2 frames of every lap after the first differ from the first lap (up to 0.12 on a drum loop whose peak is 0.31: a click when a hit sits at the seam; 16 of the 18 stems fail the lap test). The lap period itself is exact.
+   * (b) Timing. The whole decode is **2.00 frames late** (0.042 ms) on every stem, by cross-correlation and on each of the 24 strongest transients: inside 1 ms, but more than the 1 sample the check demands.
+   * (c) Bass. The 30 to 250 Hz energy is within 0.03 to 0.09 dB: this one passes with margin.
+   So (a) fails because of Godot's decoder, not the encoder (ffmpeg's libvorbis writes the exact end position). Ogg is not used for pack stems and the importer keeps writing WAV. Had it passed it would have **halved the export's `songs/packs` again** (the 18-stem sample: 36.4 MB as WAV, 7.4 MB as QOA in the export, 3.8 MB at q7, 5.5 MB at q9). Opus has no native Godot 4.5 stream. Trimming silence, which would also shrink files, is not allowed (it shifts timing) and was not done.
+4. **Mono WAV files: an option, not the default.** `python3 tools/content/stems.py --mono-files` also rewrites each dual-mono stem as a 16-bit mono WAV: the tree falls from 305 to 163 MiB (63 % below the original 443), the export is the same 184.12 MB as with the flag. It was built and verified (PCM equal for 222 of 222 stems, `measure_mix` byte-identical, the recording fits, `tools/test.sh` 75 653 checks with 0 failures) and **not committed**, because every rewritten stem is a new blob: **+114 MiB in `.git`** for every existing clone, which takes this machine's `.git` (884 MiB with the other agents' commits) past 1 GB. Use it only together with the history rewrite of section 4: then the audio is 142 MiB smaller on every clone for good.
+
+### What it does to the sound (verification)
+
+* PCM: for all 222 stems the sample rate, frame count and both channels' samples are identical before and after (a hash of each channel per stem).
+* `tools/run/measure_mix.py` (main run and the three paths, every scene): output byte-identical (JSON and markdown) before and after, so loudness, bass prominence and timings differ by 0.0.
+* `tools/story/check_run_audio.py` on a fresh recording of the handoff (`record_music.gd`, balcony star to stub to Warehouse, 115 s, dummy driver; the command is the header of `docs/shots/audio/handoff_check_after.txt`): every fitted gain, every "explains" percentage (99.2 to 100 %) and the three voices' offsets from the drums are the same before and after, with the same RESULT CHECK on the delay spread as before (12.6 ms); the two handoff offsets move by at most one mix chunk (5.9 ms) between any two real-time recordings.
+* `tools/export_smoke.gd` against the exported pack: the main run and the three paths load, and **every stem loads from the pack through its `../_shared/` path and is exactly `loop_frames` long** (216 stems; the stub is not exported).
+* `bash tools/test.sh`: green: 75 655 checks, 0 failures in the Godot suite, and the Python content tests OK (including `tools/content/test_stems.py`).
+
+### Risks and what is left
+
+* A new reader that assumes `<pack>/loops/` breaks on a converted pack. The tests that did are fixed; `docs/MUSIC_IMPORT.md` says how stems are stored now.
+* `..` in a `res://` path works (project and exported pack, checked) because Godot normalises it; keep the layout if the export format ever changes.
+* The stub path's two bass stems and the stereo pads stay in the export (1 to 2 MB in all): a glob cannot exclude a `_shared` file that is named by content.
+* The owner's loops arriving scene by scene go through the importers as before; run `stems.py` after each batch to keep the shared layout.
