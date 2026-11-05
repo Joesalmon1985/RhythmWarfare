@@ -8,6 +8,46 @@ const A := "lv2_alien_spaceship"
 const B := "lv2_alien_spaceship_v3"
 const C := "lv2_alien_spaceship_v2"
 
+## Every scene as it played before the arrangements (one pack for audio and chart): the baseline these tests compare against, whatever the shipped music.json names.
+const PLAIN := {
+	"warehouse": "lv1_warehouse",
+	"warehouse.bar": "lv1_warehouse_v1",
+	"warehouse.balcony": "lv1_warehouse_v2",
+	"warehouse.chill": "lv1_warehouse_v2",
+	"warehouse.booth": "lv1_warehouse_v1",
+	"warehouse.exit": "lv1_warehouse",
+	"mothership": "lv2_alien_spaceship",
+	"mothership.gallery": "lv2_alien_spaceship_v1",
+	"mothership.reactor": "lv2_alien_spaceship_v3",
+	"mothership.bridge": "lv2_alien_spaceship_v2",
+	"mothership.exit": "lv2_alien_spaceship",
+	"underworld": "lv2_alien_spaceship_v2",
+	"underworld.court": "lv2_alien_spaceship_v3",
+	"underworld.furnace": "lv2_alien_spaceship_v2",
+	"underworld.pit": "lv2_alien_spaceship_v3",
+	"underworld.exit": "lv2_alien_spaceship_v2",
+	"hospital": "lv4_hospital",
+	"hospital.corridor": "lv4_hospital_v2",
+	"hospital.dayroom": "lv4_hospital_v3",
+	"hospital.cafeteria": "lv4_hospital_v2",
+	"hospital.garden": "lv4_hospital_v3",
+	"hospital.exit": "lv4_hospital",
+	"ward": "lv5_asylum",
+	"ward.art": "lv5_asylum_v1",
+	"ward.dorm": "lv5_asylum_v3",
+	"ward.corridor": "lv5_asylum_v1",
+	"ward.courtyard": "lv5_asylum_v3",
+	"ward.exit": "lv5_asylum",
+	"hospital_late": "lv4_hospital_v1",
+	"hospital_late.cafe": "lv4_hospital_v3",
+	"hospital_late.quiet": "lv4_hospital_v2",
+	"hospital_late.exit": "lv4_hospital_v1",
+	"ward_late": "lv5_asylum_v2",
+	"ward_late.treat": "lv5_asylum_v2",
+	"ward_late.dorm": "lv5_asylum_v3",
+	"ward_late.exit": "lv5_asylum_v2",
+}
+
 
 func _write(path: String, v: Variant) -> void:
 	var f := FileAccess.open(path, FileAccess.WRITE)
@@ -34,6 +74,8 @@ func _data(seed_value: int = 1, alternates: Array = []) -> RunData:
 	var music: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RunData.MUSIC_PATH))
 	for n in music["nodes"]:
 		var plan: Dictionary = {"warehouse": 0, "warehouse.bar": 1, "warehouse.balcony": 0}
+		for k in ["arrangement", "slot", "alternates"]:
+			n.erase(k)
 		if plan.has(str(n["id"])):
 			n.erase("audio")
 			n.erase("chart")
@@ -41,8 +83,24 @@ func _data(seed_value: int = 1, alternates: Array = []) -> RunData:
 			n["slot"] = plan[str(n["id"])]
 			if not alternates.is_empty():
 				n["alternates"] = alternates
+		else:
+			n["audio"] = PLAIN[str(n["id"])]
+			n["chart"] = PLAIN[str(n["id"])]
 	_write(DIR + "/music.json", music)
 	return RunData.load_files(RunData.RUN_PATH, DIR + "/music.json", RunData.PACKS_DIR, seed_value, DIR)
+
+
+## The run as it played before the arrangements: every scene plain.
+func _plain_data() -> RunData:
+	DirAccess.make_dir_recursive_absolute(DIR)
+	var music: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RunData.MUSIC_PATH))
+	for n in music["nodes"]:
+		for k in ["arrangement", "slot", "alternates"]:
+			n.erase(k)
+		n["audio"] = PLAIN[str(n["id"])]
+		n["chart"] = PLAIN[str(n["id"])]
+	_write(DIR + "/music_plain.json", music)
+	return RunData.load_files(RunData.RUN_PATH, DIR + "/music_plain.json", RunData.PACKS_DIR, 1, DIR)
 
 
 func test_a_scene_resolves_the_sections_of_its_phase() -> void:
@@ -64,7 +122,7 @@ func test_a_scene_resolves_the_sections_of_its_phase() -> void:
 
 
 func test_scenes_that_name_audio_and_chart_are_unchanged() -> void:
-	var plain := RunData.load_default()
+	var plain := _plain_data()
 	var d := _data()
 	for id in d.node_order:
 		if id in ["warehouse", "warehouse.bar", "warehouse.balcony"]:
@@ -151,7 +209,7 @@ func test_each_block_is_charted_from_the_section_playing_then() -> void:
 
 
 func test_a_scene_without_an_arrangement_charts_exactly_as_before() -> void:
-	var d := RunData.load_default()
+	var d := _plain_data()
 	var e := RunEngine.new(d)
 	e.begin("warehouse")
 	_play(e, 62.0 * e.beat_s)

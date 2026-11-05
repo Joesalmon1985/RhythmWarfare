@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "ward_late_3",
+ "family": "lv5_asylum",
+ "seed": 4,
+ "bars": 64,
+ "use": "run",
+ "compatible": [],
+ "identity": {"palette": "ward", "filters": {"family_glob": ["lv5_*"], "profile": ["beat_shaper_87x2", "beat_shaper_174x1"], "min_density": 2.0}},
+ "sections": [{"bars": 8, "role": "intro", "pack": "lv5_asylum", "mix": "dark_breakdown", "fills": []}, {"bars": 8, "role": "build", "pack": "lv5_asylum_v3", "mix": "harsh", "fills": [8]}, {"bars": 8, "role": "drop", "pack": "lv5_asylum_v2", "mix": "harsh", "fills": []}, {"bars": 8, "role": "breakdown", "pack": "lv5_asylum_v1", "mix": "dark_breakdown", "fills": []}, {"bars": 8, "role": "drop", "pack": "lv5_asylum", "mix": "harsh", "fills": []}, {"bars": 8, "role": "breakdown", "pack": "lv5_asylum_v1", "mix": "dark_breakdown", "fills": []}, {"bars": 8, "role": "variation", "pack": "lv5_asylum_v3", "mix": "harsh", "fills": [8]}, {"bars": 8, "role": "ending", "pack": "lv5_asylum", "mix": "dark_breakdown", "fills": []}]
+}

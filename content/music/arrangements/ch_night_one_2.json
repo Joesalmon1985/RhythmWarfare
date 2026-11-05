@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "ch_night_one_2",
+ "family": "lv1_warehouse",
+ "seed": 22,
+ "bars": 128,
+ "use": "chapter",
+ "compatible": [],
+ "identity": {"palette": "warehouse", "filters": {"family_glob": ["lv1_*"], "profile": ["beat_shaper_87x2", "beat_shaper_174x1"], "min_density": 3.0}},
+ "sections": [{"bars": 8, "role": "intro", "pack": "lv1_warehouse", "mix": "intro", "fills": []}, {"bars": 8, "role": "build", "pack": "lv1_warehouse_v1", "mix": "build", "fills": [8]}, {"bars": 8, "role": "breakdown", "pack": "lv1_warehouse", "mix": "breakdown", "fills": []}, {"bars": 8, "role": "drop", "pack": "lv1_warehouse_v2", "mix": "drop", "fills": []}, {"bars": 8, "role": "breakdown", "pack": "lv1_warehouse_v1", "mix": "breakdown", "fills": []}, {"bars": 8, "role": "variation", "pack": "lv1_warehouse", "mix": "variation", "fills": [8]}, {"bars": 8, "role": "drop", "pack": "lv1_warehouse_v2", "mix": "drop", "fills": []}, {"bars": 8, "role": "build", "pack": "lv1_warehouse_v1", "mix": "build", "fills": [8]}, {"bars": 16, "role": "variation", "pack": "lv1_warehouse_v2", "mix": "variation", "fills": [16]}, {"bars": 8, "role": "breakdown", "pack": "lv1_warehouse_v1", "mix": "breakdown", "fills": []}, {"bars": 8, "role": "drop", "pack": "lv1_warehouse_v2", "mix": "drop", "fills": []}, {"bars": 8, "role": "breakdown", "pack": "lv1_warehouse_v1", "mix": "breakdown", "fills": []}, {"bars": 8, "role": "variation", "pack": "lv1_warehouse", "mix": "variation", "fills": [8]}, {"bars": 8, "role": "drop", "pack": "lv1_warehouse_v2", "mix": "drop", "fills": []}, {"bars": 8, "role": "ending", "pack": "lv1_warehouse", "mix": "ending", "fills": []}]
+}
