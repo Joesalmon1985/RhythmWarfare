@@ -50,6 +50,7 @@ from import_recorded import db, envelope, fold_loop, onset_near, read_float_wav_
 PACKS = ROOT / "songs" / "packs"
 MUSIC_JSON = ROOT / "content" / "story" / "music.json"
 RUN_JSON = ROOT / "content" / "run" / "run.json"
+ARR_DIR = ROOT / "content" / "music" / "arrangements"
 TRIAL_JSON = ROOT / "content" / "trial" / "passages.json"
 BPM = 174
 PARTS = ("Drums", "Bass", "Synth")
@@ -502,6 +503,34 @@ def describe(a: dict, project: str, variant: int) -> str:
 
 # --- validate -----------------------------------------------------------------------------------------------------
 
+def scene_window(node: dict, arr_id: str | None = None) -> list[dict]:
+    """The sections a scene plays of its arrangement (or of one of its alternates): slot k is bars 16k+1..16k+16 of it, wrapping (RunData does the same)."""
+    arr = read_json(ARR_DIR / f"{arr_id or node['arrangement']}.json")
+    total = int(arr["bars"])
+    lo = (int(node.get("slot", 0)) * 16) % total
+    out, at = [], 0
+    for sec in arr["sections"]:
+        if lo <= at < lo + 16:
+            out.append(sec)
+        at += int(sec["bars"])
+    return out
+
+
+def resolve_music_node(node: dict) -> dict:
+    """A music.json entry as the run sees it: an entry that names an `arrangement` gets audio and chart = the first section's pack (the pack of block 0, which the route lock
+    compares) and `packs` = every pack its window plays, in the arrangement and its alternates. A plain entry is returned unchanged (plus `packs`)."""
+    if "arrangement" not in node:
+        return dict(node, packs=[node["audio"], node["chart"]])
+    ids = [node["arrangement"], *node.get("alternates", [])]
+    packs: list[str] = []
+    for a in ids:
+        for sec in scene_window(node, a):
+            if "pack" in sec and sec["pack"] not in packs:
+                packs.append(sec["pack"])
+    first = scene_window(node)[0]["pack"]
+    return dict(node, audio=first, chart=first, packs=packs)
+
+
 def validate(packs_dir: Path = PACKS, music_path: Path = MUSIC_JSON) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     notes: list[str] = []
@@ -541,6 +570,11 @@ def validate(packs_dir: Path = PACKS, music_path: Path = MUSIC_JSON) -> tuple[li
         notes.append(f"pack {pid}: {p['label']}, {p['phrase_beats']}-beat phrase, profile {p['profile']}; cues in the block guard (not charted): " + (", ".join(f"tier {t} {f} {n}" for (t, f), n in sorted(guarded.items())) or "none"))
     if music_path.exists():
         m = read_json(music_path)
+        try:
+            m["nodes"] = [resolve_music_node(n) for n in m["nodes"]]
+        except (OSError, KeyError, IndexError, ValueError) as exc:
+            errors.append(f"music.json: an arrangement entry cannot be resolved ({exc!r}); run tools/content/arrange.py validate")
+            m["nodes"] = [n for n in m["nodes"] if "arrangement" not in n]
         ids = [n["id"] for n in m["nodes"]]
         if len(ids) != len(set(ids)):
             errors.append("music.json: duplicate node ids")
@@ -548,6 +582,9 @@ def validate(packs_dir: Path = PACKS, music_path: Path = MUSIC_JSON) -> tuple[li
             for key in ("audio", "chart"):
                 if n[key] not in packs:
                     errors.append(f"music.json: node {n['id']} {key} pack '{n[key]}' does not exist (packs: {', '.join(sorted(packs))})")
+            for pid in n.get("packs", []):
+                if pid not in packs:
+                    errors.append(f"music.json: node {n['id']} plays pack '{pid}' in an arrangement and it does not exist")
             if n["audio"] in packs and n["chart"] in packs and packs[n["audio"]]["phrase_beats"] != packs[n["chart"]]["phrase_beats"]:
                 errors.append(f"music.json: node {n['id']} audio '{n['audio']}' and chart '{n['chart']}' have different phrase lengths")
         run = read_json(RUN_JSON) if RUN_JSON.exists() else {"nodes": []}

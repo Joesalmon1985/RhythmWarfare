@@ -120,9 +120,11 @@ def load_catalogue(path: Path) -> dict:
             if isinstance(pair, (list, tuple)) and len(pair) >= 2:
                 out["compatible"].setdefault(pair[0], set()).add(pair[1])
                 out["compatible"].setdefault(pair[1], set()).add(pair[0])
-            elif isinstance(pair, dict) and pair.get("a") and pair.get("b") and not pair.get("uncertain", False):
-                out["compatible"].setdefault(pair["a"], set()).add(pair["b"])
-                out["compatible"].setdefault(pair["b"], set()).add(pair["a"])
+            elif isinstance(pair, dict) and pair.get("a") and pair.get("b") and pair.get("compatible", True) and not pair.get("uncertain", False):
+                # catalogue.py names a Beat Shaper project family "bs_<slug>"; the packs' family is the bare slug
+                a, b = (re.sub(r"^bs_", "", str(pair[k])) for k in ("a", "b"))
+                out["compatible"].setdefault(a, set()).add(b)
+                out["compatible"].setdefault(b, set()).add(a)
     return out
 
 
@@ -374,7 +376,8 @@ def generate(palette_id: str, seed: int, bars: int, packs: dict, rules: dict, pa
     rng = random.Random(f"rw-arrange:{palette_id}:{seed}:{bars}")
     family = rng.choice(list(fams))
     own = fams[family]
-    cross = [p for fam in sorted(packs[own[0]["id"]]["compatible"]) for p in candidate_families(packs, {"filters": {"family_glob": [fam]}}, rules).get(fam, [])]
+    allowed = pal.get("cross")  # families the palette lets a variation borrow from (globs); absent = whatever the catalogue lists as compatible
+    cross = [p for fam in sorted(packs[own[0]["id"]]["compatible"]) if allowed is None or any(fnmatch.fnmatch(fam, g) for g in allowed) for p in candidate_families(packs, {"filters": {"family_glob": [fam]}}, rules).get(fam, [])]
     roles = role_plan(bars // 8, pal, rng)
     ranked = sorted(own, key=lambda p: (density(p), p["id"]))
     sections: list[dict] = []
