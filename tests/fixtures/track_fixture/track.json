@@ -1,0 +1,317 @@
+{
+ "format": "rhythm_warfare.track.v2",
+ "id": "track_fixture",
+ "title": "Track Fixture",
+ "artist": "synthetic",
+ "duration_s": 16.0,
+ "tempo": {
+  "bpm": 120.0,
+  "first_downbeat_s": 0.0,
+  "beats_per_bar": 4,
+  "confidence": 0.9
+ },
+ "voices": [
+  {
+   "key": "drums",
+   "label": "Drums",
+   "kind": "drums",
+   "stem": "stems/drums.ogg",
+   "gain": 1.0
+  },
+  {
+   "key": "lead",
+   "label": "Lead",
+   "kind": "pitched",
+   "stem": "stems/lead.ogg",
+   "gain": 0.8
+  },
+  {
+   "key": "bass",
+   "label": "Bass",
+   "kind": "pitched",
+   "stem": "stems/bass.ogg",
+   "gain": 1.0
+  }
+ ],
+ "backing": [
+  {
+   "key": "backing",
+   "stem": "stems/backing.ogg",
+   "gain": 1.0
+  }
+ ],
+ "sections": [
+  {
+   "id": "intro",
+   "role": "intro",
+   "start_s": 0.0,
+   "end_s": 4.0
+  },
+  {
+   "id": "main",
+   "role": "drop",
+   "start_s": 4.0,
+   "end_s": 13.0
+  },
+  {
+   "id": "end",
+   "role": "outro",
+   "start_s": 13.0,
+   "end_s": 16.0
+  }
+ ],
+ "focus": [
+  {
+   "start_s": 0.0,
+   "end_s": 4.0,
+   "voice": "drums"
+  },
+  {
+   "start_s": 4.0,
+   "end_s": 8.0,
+   "voice": "lead"
+  },
+  {
+   "start_s": 9.0,
+   "end_s": 16.0,
+   "voice": "bass"
+  }
+ ],
+ "charts": {
+  "normal": [
+   {
+    "t": 1.0,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "drums"
+   },
+   {
+    "t": 1.0,
+    "pad": 3,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "drums"
+   },
+   {
+    "t": 1.5,
+    "pad": 2,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "drums"
+   },
+   {
+    "t": 2.0,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "drums"
+   },
+   {
+    "t": 2.5,
+    "pad": 2,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "drums"
+   },
+   {
+    "t": 3.0,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "drums"
+   },
+   {
+    "t": 3.0,
+    "pad": 3,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "drums"
+   },
+   {
+    "t": 3.5,
+    "pad": 2,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "drums"
+   },
+   {
+    "t": 4.5,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "lead"
+   },
+   {
+    "t": 5.0,
+    "pad": 2,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "lead"
+   },
+   {
+    "t": 5.5,
+    "pad": 3,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "lead"
+   },
+   {
+    "t": 6.0,
+    "pad": 4,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "lead"
+   },
+   {
+    "t": 6.5,
+    "pad": 3,
+    "dur": 1.4,
+    "conf": 0.9,
+    "voice": "lead"
+   },
+   {
+    "t": 7.0,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "lead"
+   },
+   {
+    "t": 7.5,
+    "pad": 2,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "lead"
+   },
+   {
+    "t": 9.5,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "bass"
+   },
+   {
+    "t": 10.0,
+    "pad": 2,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "bass"
+   },
+   {
+    "t": 10.5,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "bass"
+   },
+   {
+    "t": 11.0,
+    "pad": 2,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "bass"
+   },
+   {
+    "t": 11.5,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "bass"
+   },
+   {
+    "t": 12.0,
+    "pad": 2,
+    "dur": 1.0,
+    "conf": 0.9,
+    "voice": "bass"
+   },
+   {
+    "t": 13.5,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "bass"
+   },
+   {
+    "t": 14.0,
+    "pad": 2,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "bass"
+   },
+   {
+    "t": 14.5,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "bass"
+   },
+   {
+    "t": 15.0,
+    "pad": 2,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "bass"
+   }
+  ],
+  "easy": [
+   {
+    "t": 2.0,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "drums"
+   },
+   {
+    "t": 3.0,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "drums"
+   },
+   {
+    "t": 5.0,
+    "pad": 2,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "lead"
+   },
+   {
+    "t": 7.0,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "lead"
+   },
+   {
+    "t": 10.0,
+    "pad": 2,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "bass"
+   },
+   {
+    "t": 11.5,
+    "pad": 1,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "bass"
+   },
+   {
+    "t": 14.0,
+    "pad": 2,
+    "dur": 0.0,
+    "conf": 0.9,
+    "voice": "bass"
+   }
+  ]
+ },
+ "default_chart": "normal",
+ "rules": {
+  "restore_after_idle_beats": 8
+ },
+ "source": {
+  "note": "synthetic fixture made by make_fixture.py"
+ }
+}
