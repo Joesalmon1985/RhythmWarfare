@@ -1,5 +1,7 @@
 # Rhythm Warfare
 
+**New agent or new machine: start with `docs/PICKUP.md`.**
+
 A rhythm game in landscape for phones: play four illuminated pads in time with a 174 BPM drum and bass track while your camera is carried through five small
 2.5D, Doom-style worlds (a warehouse club, an alien mothership, an underworld arena, a night hospital, a ward). The story is one continuous run: every world is a
 series of rooms (scenes) and each scene is a 64-beat phase that starts with drums alone, brings the bass in as you play well, brings the drums back, then lets the bass take over while you choose which way to go

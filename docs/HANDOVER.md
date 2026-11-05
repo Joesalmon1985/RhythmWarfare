@@ -1,5 +1,7 @@
 # Rhythm Warfare: handover
 
+**A new agent, or a new machine: start with `docs/PICKUP.md`** (state, setup, files not in git, branch map, prioritised pickup list, how to work with the owner).
+
 State on 5 November 2026, after Stage 6 of `docs/THREE_PATHS_AND_FACES_PLAN.md` (the acting system on every world, the sister-run engine, and the three paths: The Life of Jesus, The Mission Count, The Ember Road).
 This is the single current handover. Part A is the newest work (read it first); Part B is the earlier defense-campaign state of 3 November 2026, kept as it was (its commands and caveats still apply to that code, which is still in the repository).
 Read this, then `README.md` (layout and commands), `docs/CONTINUOUS_RUN.md` (the run, paths, portals, acting, the silent HUD), `docs/paths/{gospel,squadron,ember}.md` (one note per path), `docs/STORY_ART.md` and `docs/MUSIC_HANDOFF.md`
@@ -405,7 +407,7 @@ The owner's brief: *every branching choice must be clear in the world: people an
 * Built: a CURRENT choice (the touched option, else the default) staged in the world from the scene's first beat: people beckon happy (current) or plead sad (other), exits are drawn doors (open with a round green lamp / shut with a square red one), signs outdoors or boards across a doorway thing, the wizard happy or bowed, objects bob and light; data `staging` blocks with `states` steps (pieces, people, frames, props, lamps) for the bespoke briefs. Touch rules, windows, the commit and outcomes are unchanged.
 * Pilot strips `docs/shots/choice/` (Warehouse floor/bar/balcony, Gospel J04, the Mothership door pair, Bassment passage 10); tests `tests/test_choice_clarity.gd`; the per-world remaining work and art briefs are in section 6 of the doc; owner decisions (touch before the window, the window camera) in section 7.
 * Status and the numbered pickup list (done / partly / not started, the author API, phone checks): section 0 of the doc. First pickup: the window camera (E1).
-* Rebase note: the people sheets of all 16 maps were re-baked for the choice acts; after merging another branch that re-bakes people, run `python tools/story/build_assets.py <map> people` for each map again (the bake reads `staging` from the data).
+* Rebase note: the people sheets of all 16 maps were re-baked for the choice acts; after merging another branch that re-bakes people, re-bake each map's people (`build_assets.py <chapter> people` for the Story chapters and airfield / city / harbour, `build_ember.py people`, `build_gospel_art.py --people`; do NOT give the Ember or Gospel map names to `build_assets.py`, it would silently rebuild Night One; the bake reads `staging` from the data). Done after the merge into main (see `docs/PICKUP.md`).
 
 ---
 
