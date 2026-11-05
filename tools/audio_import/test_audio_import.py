@@ -248,7 +248,12 @@ class FocusTests(unittest.TestCase):
         ev = {"bass": synth_events(ts[::4], [33, 35] * (len(ts) // 8)), "drums": synth_events(ts, [11, 12] * (len(ts) // 2))}
         st, rows = focus_of({"bass": bass, "drums": drums}, ev, self.N)
         self.assertTrue(st)
-        self.assertTrue(all(f["voice"] == "drums" for f in st), st)
+        # drums lead every phrase; the bass may only get a phrase by the variety rule (a stretch over
+        # MAX_RUN_BARS hands over), never as the most prominent
+        self.assertTrue(all(r["voices"]["drums"]["score"] > r["voices"]["bass"]["score"] + 6 for r in rows))
+        self.assertEqual(st[0]["voice"], "drums")
+        self.assertGreaterEqual(sum(f["bars"] for f in st if f["voice"] == "drums"), 24)
+        self.assertTrue(all("most prominent" not in w for f in st if f["voice"] == "bass" for w in f["why"]))
         self.assertGreater(rows[0]["voices"]["drums"]["share"], rows[0]["voices"]["bass"]["share"])
 
     def scored_rows(self, scores: dict[str, list[float]], bars_per_unit=8):
