@@ -134,3 +134,22 @@ Each is at least 72 px on screen and wholly inside the stage area (never over th
 `tests/test_wallet.gd`, `test_money_breakdown.gd`, `test_blackjack_rules.gd`, `test_minigame_lifecycle.gd`, `test_blackjack_activity.gd`, `test_blackjack_visual_state.gd`,
 `test_blackjack_integration.gd` (the real run scene on the virtual clock). Run one file with
 `GODOT=/home/joe/godot451/Godot_v4.5.1-stable_linux.x86_64 bash tools/test.sh --filter <name>`; the whole suite with no arguments.
+
+## 8. The picture: canvas, vocabulary and drawing kit
+
+**Canvas.** The view is drawn with `_draw()` primitives inside the stage's low-res viewport, so it comes out as pixel art with no asset pipeline and nothing shared with the art sheets.
+The internal picture is wide and short: about 640 x 230 at the default 360 lines (16:9 window, standard pads), 780 x 231 on an 844 x 390 phone, and half that at 180 lines.
+Everything is laid out from the canvas size with the unit `u = size.y / 230.0`; nothing assumes a fixed size. No fonts and no `draw_string`: the only glyphs are `PixelGlyphs` on cards and currency.
+
+**Seats across the picture.** `npc_a` far left, `dealer` centre, `npc_b` far right, all behind the table; the table top fills the lower part; the player's cards bottom centre, the money pile
+bottom left, the bet spot between the pile and the dealer, the deck by the dealer's hand; the exit is a door standing ajar at the right edge. The room shows above and between the people.
+
+**Vocabulary (data in the activity's snapshot, drawn by the kit).**
+* moods: `neutral`, `happy`, `laugh`, `surprised`, `annoyed`, `sad`, `wince`, `concerned`, `smug`, `thinking`.
+* gestures (people): `rest`, `invite`, `point_deck`, `point_hand`, `deal`, `sweep`, `pay`, `shrug`, `clap`, `facepalm`, `tap_table` (an NPC twists), `wave_off` (an NPC sticks; the dealer refusing).
+* gestures (the player's own hands): `none`, `pockets` (hands go down to the pockets and come up with the money), `lay_money`, `push_bet`, `reach_deck`, `cover_cards`, `drop_cards`, `empty_pockets`, `gather_money`.
+* gaze targets: `player`, `deck`, `own_cards`, `dealer`, `npc_a`, `npc_b`, `pile`, `bet`, `away`.
+
+**Kit files.** `src/minigames/draw/pixel_glyphs.gd` (`PixelGlyphs`: a 3 x 5 cell font for `0123456789AJQK£p`, `draw_text(ci, text, pos, cell, color)`, `text_width(text, cell)`),
+`src/minigames/money/money_view.gd` (`MoneyDraw`: notes, coins, pile layout and the animated transition between two amounts; reusable by shops and other minigames),
+`src/minigames/blackjack/blackjack_draw.gd` (cards, deck, table) and `src/minigames/blackjack/blackjack_people.gd` (the three people: parametric faces, gaze, gestures; the player's hands).
