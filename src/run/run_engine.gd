@@ -15,6 +15,34 @@ extends RefCounted
 ## LAPS (docs/CONTINUOUS_RUN.md "Two laps"): a scene may play `laps` phases in a row (a path's `path.laps`, or the scene's own `laps`; 1 everywhere in the 174 run). Each lap is a phase of its own (its
 ## own phase number, blocks, cues and judge results; the energy rules are per block as ever). Only the LAST lap carries the hotspot window, the route window and the commit; the laps before it end
 ## on the downbeat in the same scene, with the mix stage of the last block carried (a pass of that block steps it on) so the bass already in stays in, and the bass phrase and the cast go on.
+##
+## TRACK SCENES (docs/RUN_TRACK_SCENES.md): a scene that `data.track_scenes` gives a plan (RunTrackScenes.plan_of, RunTrackPlan) plays a whole recorded track. Everything below applies only while
+## `track` is not empty (is_track_scene()); with track scenes off, or in a scene without a plan, nothing here runs and the engine is the one described above, event for event.
+## - Tempo: the scene runs at the track's tempo (a float). The engine re-grids itself at `_enter`: `grid_origin` becomes the scene's first downbeat, `grid_beat0` the run's beat count there (so ticks
+##   keep growing across tempos), `beat_s` and `level.bpm` the scene's. The scene after it re-grids back (to its own tempo) the same way. The phase structure is unchanged: 64 beats, 4 blocks of 16, cues
+##   in the first 12, the decision at 12.5, the window from the third block's decision, the choice at 60.5.
+## - Laps: the plan's `laps` (up to the assignment's max_laps, on any path). From `doors_from_lap` the window opens on EVERY lap (an "open lap"). An exit (any final-window hotspot that is available, or
+##   a plain `choose()`, or the pause menu's leave) touched before the choice beat makes that lap the last: it commits, is judged and walked as a last lap's is. Nothing touched: nothing commits, the
+##   window closes at the choice beat (no door walk), the hotspots reset for the next lap (RunHotspots.begin_lap) and the scene goes on. The plan's final lap is a last lap as ever (default exit).
+## - Hold (a minigame): laps keep counting; at the end of the plan's final lap the scene gets one more lap (instead of re-entering the scene), and so on; a lap that would start with fewer than 16 bars
+##   of the track left starts again from the entry bar (`track_wrap`).
+## - Cues: from the plan's chart (`_chart_track_block`), moved to scene time, tagged with phase (the lap's), block and `lap`; cues in the last 4 beats of a block left out (the run's 12-beat rule), holds
+##   cut to end by beat 12 (shorter than half a beat: a tap). `voice` is the pack's voice key; `family` is "kick" (pads 1, 2) or "snare" (pads 3, 4) for a voice of kind "drums", else "bass" (the
+##   palette and icons of the note lane and the pads); `track_t` the cue's time in the track.
+## - A block without cues is neutral: it passes, its energy is unchanged and the stage does not step (block_result.neutral). The energy of the other blocks follows `energy.track` in run.json.
+##
+## Events only a track scene emits (every other event keeps firing as in any scene; those of a track scene may carry the extra fields named here):
+##   {kind: "tempo", t, node, bpm, beat_s, from_bpm}  the beat changes at a scene's first downbeat (before its phase_start): entering a track scene, or the scene after one at another tempo.
+##   {kind: "track_start", t, node, track, dir, chart, bpm, beat_s, entry, entry_bar, track_t, laps, doors_from_lap, duration_s, index, phase}  just after the scene's phase_start: the track plays from
+##       track time `track_t` (the downbeat of bar `entry_bar`) at song time `t`; `dir` is the pack's folder (TrackPack there: data.track_scenes.plan_of(node)["pack"]); index 0 the track, k its k-th alternate.
+##   {kind: "track_lap", t, node, track, lap, laps, track_t, doors_open, last, phase}  every lap start after the first (just after its lap_start): the track should be at `track_t` at song time `t`.
+##   {kind: "track_last_lap", t, node, track, lap, ends_t, route}  at the choice beat of an open lap where an exit was touched: this lap is now the last, the scene ends at `ends_t`.
+##   {kind: "track_extend", t, node, track, laps}  at the choice beat of the final lap while a minigame holds the run: one more lap (now `laps`).
+##   {kind: "track_wrap", t, node, track, lap, track_t, from_track_t, decided_t}  decided at the last decision of a lap (`decided_t`), due at the next lap's downbeat `t`: the track restarts at
+##       `track_t` (the entry bar) instead of going on to `from_track_t` (fewer than 16 bars would be left).
+##   {kind: "track_end", t, node, track, track_t, reason, to}  the track scene ends at song time `t` (track time `track_t`): reason "route" (the next scene starts on `t`), "handoff" (a path hand-off)
+##       or "depleted" (the run is over; `t` is the depletion boundary).
+##   Extra fields: phase_start.track (the track id); block_result.neutral and .track; route_window.last (false on an open lap) and .track; cues.track and .lap.
 
 const TICKS := 960
 const GUARD_NOTE := "cue_free_guard"
@@ -62,6 +90,13 @@ var _lap_bass_origin := -1  # the bass phrase origin the next lap charts from
 var _blocks_total := 0  # blocks charted in this run (for sequence ids)
 var _note_id := 0
 var part_offset := {"drums": 0.0, "bass": 0.0}  # seconds the audible part sits from the grid in the current phase (RunAudio measures it)
+var track: Dictionary = {}  # the current scene's track plan (RunTrackScenes.plan_of); {} in an ordinary scene
+var doors_from_lap := 0  # a track scene: the first lap whose window opens (0 in an ordinary scene)
+var grid_beat0 := 0  # the run's beat count at grid_origin (0 until a track scene re-grids the engine)
+var _regridded := false  # a track scene has re-gridded this engine: every later scene re-grids on its own first downbeat
+var _lap_track_t0 := 0.0  # a track scene: the track time at the current lap's downbeat
+var _next_lap_track_t0 := 0.0  # ... and at the next lap's (decided at the lap's last decision; a wrap goes back to the entry bar)
+var _track_e: Dictionary = {}  # the energy numbers of a track scene's blocks (run.json energy, with energy.track over it)
 
 
 func _init(p_data: RunData = null) -> void:
@@ -105,6 +140,11 @@ func begin(start_id: String) -> void:
 	_cast_queue = []
 	_depleted_t = -1.0
 	_over_t = -1.0
+	if _regridded:  # (a track scene re-gridded this engine in an earlier run: song time 0 is the first downbeat again)
+		grid_origin = 0.0
+		grid_beat0 = 0
+		beat_s = 60.0 / float(cfg["timing"]["bpm"])
+		_regridded = false
 	_blocks_total = 0
 	_note_id = 0
 	phase_n = 0
@@ -157,6 +197,11 @@ func arrive(start_id: String, t0: float, p_energy: float, p_phase_n: int, p_lap_
 
 func _enter(id: String, t0: float, chart_now: bool) -> void:
 	var prev := node_id if phase_n > 0 else ""
+	var tp := track_plan_of(id)  # ({} for an ordinary scene, and always when track scenes are off)
+	var from_bpm := 60.0 / beat_s
+	if not tp.is_empty() or _regridded:
+		_regrid(t0, float(tp["bpm"]) if not tp.is_empty() else float(cfg["timing"]["bpm"]))
+	track = tp
 	node_id = id
 	var n: Dictionary = data.nodes[id]
 	depth = int(n["depth"])
@@ -164,7 +209,9 @@ func _enter(id: String, t0: float, chart_now: bool) -> void:
 	phase_t0 = t0
 	scene_t0 = t0
 	lap = 1
-	laps = data.laps_of(id)
+	laps = data.laps_of(id) if tp.is_empty() else int(tp["laps"])
+	doors_from_lap = int(tp.get("doors_from_lap", 0))
+	_lap_track_t0 = float(tp.get("entry_t", 0.0))
 	_lap_stage = 0
 	_lap_bass_origin = -1
 	stage = 0
@@ -185,9 +232,53 @@ func _enter(id: String, t0: float, chart_now: bool) -> void:
 	if hotspots != null:
 		hotspots.begin_scene(id, energy)
 	_queue_scene_cast(id, t0)
-	_emit({"kind": "phase_start", "node": id, "world": n["world"], "scene": n["scene"], "from": prev, "depth": depth, "t": t0, "phase": phase_n, "treatment": n["treatment"],
-		"audio": n["audio"], "temporary": n["temporary"], "fresh": phase_n == 1, "path": data.path_id, "lap": 1, "laps": laps, "lap_extra": lap_extra})
+	if _regridded and absf(60.0 / beat_s - from_bpm) > 1e-9:
+		_emit({"kind": "tempo", "t": t0, "node": id, "bpm": 60.0 / beat_s, "beat_s": beat_s, "from_bpm": from_bpm})
+	var ps := {"kind": "phase_start", "node": id, "world": n["world"], "scene": n["scene"], "from": prev, "depth": depth, "t": t0, "phase": phase_n, "treatment": n["treatment"],
+		"audio": n["audio"], "temporary": n["temporary"], "fresh": phase_n == 1, "path": data.path_id, "lap": 1, "laps": laps, "lap_extra": lap_extra}
+	if not tp.is_empty():
+		ps["track"] = str(tp["track"])
+	_emit(ps)
+	if not tp.is_empty():
+		_emit({"kind": "track_start", "t": t0, "node": id, "track": str(tp["track"]), "dir": str(tp["dir"]), "chart": str(tp["chart"]), "bpm": float(tp["bpm"]), "beat_s": beat_s, "entry": str(tp["entry"]),
+			"entry_bar": int(tp["entry_bar"]), "track_t": float(tp["entry_t"]), "laps": laps, "doors_from_lap": doors_from_lap, "duration_s": float(tp["duration_s"]), "index": int(tp.get("index", 0)), "phase": phase_n})
 	_emit({"kind": "mix", "stage": 0, "t": t0, "gains": cfg["stages"][0]["gains"], "cue": cfg["stages"][0]["cue"]})
+
+
+## A new beat grid from the downbeat `t0` at `bpm` (a track scene, or the scene after one): the run's beat count goes on from where the old grid had got to, so ticks keep growing.
+func _regrid(t0: float, bpm: float) -> void:
+	grid_beat0 += int(round((t0 - grid_origin) / beat_s))
+	grid_origin = t0
+	beat_s = 60.0 / bpm
+	level.bpm = bpm
+	_regridded = true
+
+
+## The track plan of scene `id` ({} when it is not a track scene: no track_scenes data, no assignment, no pack). Data, not engine state: safe to call for any scene (the routes' scenes, for loading ahead).
+func track_plan_of(id: String) -> Dictionary:
+	return data.track_scenes.plan_of(id) if data != null and data.track_scenes != null else {}
+
+
+func is_track_scene() -> bool:
+	return not track.is_empty()
+
+
+## The current track scene for overlays and the HUD ({} in an ordinary scene): {track, lap, laps, entry_bar, doors_from_lap, bpm, chart, doors_open}.
+func track_info() -> Dictionary:
+	if track.is_empty():
+		return {}
+	return {"track": str(track["track"]), "lap": lap, "laps": laps, "entry_bar": int(track["entry_bar"]), "doors_from_lap": doors_from_lap, "bpm": float(track["bpm"]), "chart": str(track["chart"]),
+		"doors_open": _doors_open()}
+
+
+## Where the track is (track seconds) at song time `t` of the current lap (-1 in an ordinary scene).
+func track_t_at(t: float) -> float:
+	return _lap_track_t0 + (t - phase_t0) if not track.is_empty() else -1.0
+
+
+## A track scene's lap whose window opens (doors_from_lap on); false in every ordinary scene.
+func _doors_open() -> bool:
+	return not track.is_empty() and lap >= doors_from_lap
 
 
 func _emit(ev: Dictionary) -> void:
@@ -229,7 +320,7 @@ func default_route() -> String:
 
 ## The player picks a route (by destination id); allowed until the phase ends. Returns false when the id is not one of the routes.
 func choose(to: String) -> bool:
-	if lap < laps:  # a lap before the last has no choice to make (the window and the commit belong to the final lap)
+	if lap < laps and not _doors_open():  # a lap before the last has no choice to make (the window and the commit belong to the final lap; a track scene's open laps excepted)
 		return false
 	if hotspots != null:  # with hotspots the route is the outcome of the selected one: choosing a route taps the hotspot that leads there (scripted play, old callers)
 		return hotspots.select_route(to, block, window_open)
@@ -251,7 +342,13 @@ func choose_dir(dir: String) -> bool:
 
 ## False for a route whose chart pack differs from the one already charted for the next phase's first block (the lock falls at the last block's decision, beat 60.5).
 func route_allowed(to: String) -> bool:
-	return not route_locked or not data.nodes.has(to) or str(data.nodes[to]["chart"]) == _locked_chart
+	return not route_locked or not data.nodes.has(to) or _chart_key(to) == _locked_chart
+
+
+## What the route lock compares: a scene's chart pack, or for a track scene its track and chart (two routes into different tracks chart differently, whatever their packs).
+func _chart_key(to: String) -> String:
+	var tp := track_plan_of(to)
+	return str(data.nodes[to]["chart"]) if tp.is_empty() else "track:%s:%s" % [tp["track"], tp["chart"]]
 
 
 func selected_route() -> String:
@@ -398,11 +495,20 @@ func _commit() -> void:
 		away = to
 		_emit({"kind": "path_handoff", "route": to, "target": HotspotContract.path_of(to) if HotspotContract.is_path_route(to) else "warehouse", "from": node_id, "path": data.path_id,
 			"ending": str(data.nodes[node_id].get("ending", "")), "t": t0, "energy": energy, "phase": phase_n, "world": str(data.nodes[node_id]["world"]), "lap_extra": lap_extra})
+		_track_end(t0, "handoff", to)
 		return
 	_emit({"kind": "route_commit", "from": node_id, "to": to, "chosen": choice != "", "t": t0, "treatment": data.nodes[to]["treatment"],
 		"same_world": str(data.nodes[to]["world"]) == str(data.nodes[node_id]["world"])})
 	window_open = false
+	_track_end(t0, "route", to)
 	_enter(to, t0, false)
+
+
+## A track scene ends at song time `t` (nothing in an ordinary scene).
+func _track_end(t: float, reason: String, to: String) -> void:
+	if track.is_empty():
+		return
+	_emit({"kind": "track_end", "t": t, "node": node_id, "track": str(track["track"]), "track_t": track_t_at(t), "reason": reason, "to": to})
 
 
 ## The next lap of the same scene begins on the downbeat `t0`: a new phase number (its own cues, blocks and judge results), the mix stage decided at the last block's decision (the stage of the last block, one
@@ -424,6 +530,12 @@ func _start_lap(t0: float) -> void:
 	if hotspots != null:
 		hotspots.energy = energy
 	_emit({"kind": "lap_start", "node": node_id, "lap": lap, "laps": laps, "t": t0, "phase": phase_n, "stage": stage, "lap_extra": lap_extra, "scene_t0": scene_t0})
+	if not track.is_empty():  # a track scene's next lap: the track goes on (or has wrapped), the touch state starts over
+		_lap_track_t0 = _next_lap_track_t0
+		choice = ""
+		if hotspots != null:
+			hotspots.begin_lap(energy)
+		_emit({"kind": "track_lap", "t": t0, "node": node_id, "track": str(track["track"]), "lap": lap, "laps": laps, "track_t": _lap_track_t0, "doors_open": _doors_open(), "last": lap == laps, "phase": phase_n})
 
 
 ## Judge block `b` at its decision beat, update the mix stage and energy, chart what comes next.
@@ -431,20 +543,27 @@ func _decide(b: int, t_dec: float) -> void:
 	judge.update(t_dec)
 	var credit := block_credit_of(b)
 	var passed := credit >= float(cfg["judgement"]["pass_credit"])
+	var neutral := not track.is_empty() and _block_cue_count(b) == 0  # a track scene's block without cues (the focus rests): it passes, no energy, no stage step
 	block_credit.append(credit)
-	var e: Dictionary = cfg["energy"]
+	var e: Dictionary = cfg["energy"] if track.is_empty() else _track_energy()
 	var pc := float(cfg["judgement"]["pass_credit"])
-	if passed:
+	if neutral:
+		pass
+	elif passed:
 		energy += float(e["pass_gain"]) + float(e["pass_bonus"]) * (credit - pc) / maxf(1.0 - pc, 0.001)
 	else:
-		energy -= float(e["fail_loss"]) * (pc - credit) / pc + 3.0
+		energy -= float(e["fail_loss"]) * (pc - credit) / pc + (3.0 if track.is_empty() else float(e["fail_flat"]))
 	energy = clampf(energy, 0.0, float(e["max"]))
 	var boundary_beat := float((b + 1) * int(timing("block_beats")))
 	var next_stage := stage
-	if b < 3 and passed:
+	if b < 3 and passed and not neutral:
 		next_stage = mini(stage + 1, 3)
-	_emit({"kind": "block_result", "block": b, "credit": credit, "passed": passed, "energy": energy, "stage": stage, "next_stage": next_stage, "t": t_dec,
-		"node": node_id, "phase": phase_n, "lap": lap, "laps": laps})
+	var br := {"kind": "block_result", "block": b, "credit": credit, "passed": passed, "energy": energy, "stage": stage, "next_stage": next_stage, "t": t_dec,
+		"node": node_id, "phase": phase_n, "lap": lap, "laps": laps}
+	if not track.is_empty():
+		br["neutral"] = neutral
+		br["track"] = str(track["track"])
+	_emit(br)
 	block = b + 1
 	if hotspots != null and energy > 0.0 and not hold:
 		_hotspot_decision(b, passed, t_dec, credit)
@@ -452,7 +571,10 @@ func _decide(b: int, t_dec: float) -> void:
 		_depleted_t = t_of(boundary_beat)
 		_over_t = _depleted_t + float(cfg["timing"]["fade_beats"]) * beat_s
 		_emit({"kind": "depleted", "t": _depleted_t, "fade_s": _over_t - _depleted_t, "node": node_id})
+		_track_end(_depleted_t, "depleted", "")
 		return
+	if b == 3 and not track.is_empty():
+		_track_last_block(t_dec)
 	if b < 3:
 		stage = next_stage
 		stage_of_block.append(stage)
@@ -463,17 +585,64 @@ func _decide(b: int, t_dec: float) -> void:
 		_emit({"kind": "mix", "stage": stage, "t": t_of(boundary_beat), "gains": st["gains"], "cue": st["cue"], "beat": boundary_beat})
 		_chart_block(b + 1, b + 1, depth)
 		_next_block_notes[b + 1] = true
-		if b == 2 and lap == laps:  # the choice window is the last block of the last lap: riser when the final bass stage is reached by beat 49, a fall otherwise
+		if b == 2 and (lap == laps or _doors_open()):  # the choice window is the last block of the last lap: riser when the final bass stage is reached by beat 49, a fall otherwise (and of a track scene's open laps)
 			window_open = true
-			_emit({"kind": "route_window", "t": t_of(boundary_beat), "effect": "riser" if stage == 3 else "fall", "options": options(),
-				"default": default_route(), "stage": stage, "lap": lap})
+			var rw := {"kind": "route_window", "t": t_of(boundary_beat), "effect": "riser" if stage == 3 else "fall", "options": options(),
+				"default": default_route(), "stage": stage, "lap": lap}
+			if not track.is_empty():
+				rw["last"] = lap == laps
+				rw["track"] = str(track["track"])
+			_emit(rw)
 	elif lap < laps:
-		_chart_next_lap(passed)  # the scene goes on: the next lap's first block, in the stage this block leaves the mix in
+		_chart_next_lap(passed and not neutral)  # the scene goes on: the next lap's first block, in the stage this block leaves the mix in
 	else:
 		# the last block is over: chart the next phase's first block now from the selected route, and lock it
 		if hold:
 			choice = node_id
 		_chart_next_phase()
+
+
+## A track scene's last block of a lap has been judged (and the hotspots have committed, or not). An open lap where an exit was touched (the commit made `choice` a route out, or a plain choose(),
+## or the pause menu's leave) becomes the last lap; an open lap where nothing was touched closes its window (no door walk) and the scene goes on. A minigame holding the run past the plan's final
+## lap adds one more lap.
+func _track_last_block(t_dec: float) -> void:
+	if lap < laps and _doors_open():
+		if choice != "" and choice != node_id and not hold:
+			laps = lap
+			_emit({"kind": "track_last_lap", "t": t_dec, "node": node_id, "track": str(track["track"]), "lap": lap, "ends_t": t_of(timing("phase_beats")), "route": choice})
+		else:
+			if choice == node_id:  # (an activity that keeps the player here: nothing about leaving was chosen)
+				choice = ""
+			window_open = false
+	elif lap >= laps and hold:
+		laps = lap + 1
+		window_open = false
+		_emit({"kind": "track_extend", "t": t_dec, "node": node_id, "track": str(track["track"]), "laps": laps})
+
+
+## Cues charted for block `b` of the current phase.
+func _block_cue_count(b: int) -> int:
+	var n := 0
+	for i in range(level.notes.size() - 1, -1, -1):
+		var note: Dictionary = level.notes[i]
+		if int(note["phase"]) < phase_n:
+			break
+		if int(note["phase"]) == phase_n and int(note["block"]) == b:
+			n += 1
+	return n
+
+
+## The energy numbers of a track scene's block: run.json `energy`, with `energy.track` over it (`fail_flat` is the fixed part of a fail's loss, 3 in an ordinary scene).
+func _track_energy() -> Dictionary:
+	if _track_e.is_empty():
+		_track_e = (cfg["energy"] as Dictionary).duplicate()
+		_track_e["fail_flat"] = 3.0
+		var over: Variant = (cfg["energy"] as Dictionary).get("track", {})
+		if typeof(over) == TYPE_DICTIONARY:
+			for k in (over as Dictionary):
+				if str(k) != "note":
+					_track_e[str(k)] = float(over[k])
+	return _track_e
 
 
 ## The hotspot window's decisions at the block's decision beat (inside the cue-free guard): the early window (a way into the Bassment) commits at blocks 0 and 1, the final one at block 3 (the route
@@ -483,8 +652,8 @@ func _hotspot_decision(b: int, passed: bool, t_dec: float, credit := -1.0) -> vo
 	var out: Dictionary = {}
 	if b <= 2:
 		out = hotspots.on_block(b, passed, credit)
-	elif lap < laps:
-		return  # (no window, no commit before the last lap)
+	elif lap < laps and not (_doors_open() and _exit_touched()):
+		return  # (no window, no commit before the last lap; on a track scene's open lap, none unless an exit was touched)
 	else:
 		out = hotspots.commit_final(passed, credit)
 		if not out.is_empty():
@@ -497,6 +666,12 @@ func _hotspot_decision(b: int, passed: bool, t_dec: float, credit := -1.0) -> vo
 	_emit({"kind": "hotspot_commit", "t": t_dec, "block": b, "node": node_id, "phase": phase_n, "outcome": out, "energy": energy})
 	if (out["cinematic"] as Dictionary).has("cast"):  # a setback that is acted: the cinematic's cast lines run from the commit
 		_queue_cinematic_cast(out["cinematic"], str(out["cinematic_name"]), t_dec)
+
+
+## On a track scene's open lap: an available final-window hotspot is selected (touching it leaves by it, or by its outcome's route).
+func _exit_touched() -> bool:
+	var h := hotspots.get_hotspot(hotspots.selected) if hotspots.selected != "" else {}
+	return not h.is_empty() and RunHotspots.window_of(h) == "final" and hotspots.is_available(h)
 
 
 ## The last block of a lap that is not the final one has been judged: the next lap starts in the stage this block leaves the mix in (a pass steps it on, as at every block; the bass already in stays in), its
@@ -513,7 +688,20 @@ func _chart_next_lap(passed: bool) -> void:
 		_emit({"kind": "mix", "stage": next_stage, "t": t_of(boundary), "gains": st["gains"], "cue": st["cue"], "beat": 0.0, "lap": lap + 1})
 	if _lap_bass_origin == 0 and bass_origin < 0:
 		_emit({"kind": "reveal", "beat": 0, "t": t_of(boundary), "node": node_id, "block": 0, "lap": lap + 1})
+	if not track.is_empty():
+		_track_next_lap_position(t_of(boundary))
 	_chart_block(0, 0, depth, node_id, true, next_stage)
+
+
+## Where the track will be at the next lap's downbeat `t_next`: on from this lap, or back to the entry bar when fewer than 16 bars of the track would be left (a hold past the plan).
+func _track_next_lap_position(t_next: float) -> void:
+	var lap_s := float(track["lap_s"])
+	var nxt := _lap_track_t0 + lap_s
+	if nxt + lap_s > float(track["duration_s"]) + 1e-6:
+		_emit({"kind": "track_wrap", "t": t_next, "node": node_id, "track": str(track["track"]), "lap": lap + 1, "track_t": float(track["entry_t"]), "from_track_t": nxt,
+			"decided_t": t_of(3.0 * timing("block_beats") + _decision_beat())})
+		nxt = float(track["entry_t"])
+	_next_lap_track_t0 = nxt
 
 
 func _chart_next_phase() -> void:
@@ -523,7 +711,7 @@ func _chart_next_phase() -> void:
 	_chart_block(0, 0, int(data.nodes[to]["depth"]), to, true)
 	_next_phase_charted = true
 	route_locked = true
-	_locked_chart = str(data.nodes[to]["chart"])
+	_locked_chart = _chart_key(to)
 
 
 ## Credit of block `b` of the current phase: the mean credit of its cues (1 when it has none).
@@ -542,6 +730,9 @@ func block_credit_of(b: int) -> float:
 func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = "", next_phase := false, lap_stage := -1) -> void:
 	var nid := node_for_chart if node_for_chart != "" else node_id
 	var new_scene := next_phase and lap_stage < 0  # (lap_stage >= 0: the first block of the next lap of this scene, in that stage, with the bass phrase going on)
+	if (new_scene and not track_plan_of(nid).is_empty()) or (not new_scene and not track.is_empty()):
+		_chart_track_block(b, next_phase, new_scene, nid)
+		return
 	var st_idx := lap_stage if lap_stage >= 0 else (int(stage_of_block[stage_i]) if stage_i < stage_of_block.size() and not next_phase else 0)
 	var fam := str(cfg["stages"][st_idx]["cue"])
 	var block_beats := int(timing("block_beats"))
@@ -573,8 +764,15 @@ func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = 
 		var gbeat := phase_beat0 + start_beat + off / float(tpb)
 		var tick := int(round(gbeat * tpb))
 		var tm := grid_origin + float(tick) * 60.0 / (level.bpm * float(tpb)) + (float(part_offset["drums"]) if fam == "drums" else float(part_offset["bass"])) * (0.0 if new_scene else 1.0)
+		var dur_s := float(dur) * 60.0 / (level.bpm * float(tpb))
+		if _regridded:  # (after a track scene: the grid starts at this scene's downbeat, `grid_beat0` beats in; the next scene's first block is on its own tempo from the next downbeat)
+			var bs := beat_s if not new_scene else 60.0 / float(cfg["timing"]["bpm"])
+			var t_base := grid_origin if not new_scene else t_of(timing("phase_beats"))
+			var b_base := grid_beat0 if not new_scene else phase_beat0
+			tm = t_base + (float(tick) / float(tpb) - float(b_base)) * bs + (float(part_offset["drums"]) if fam == "drums" else float(part_offset["bass"])) * (0.0 if new_scene else 1.0)
+			dur_s = float(dur) / float(tpb) * bs
 		var fam_c := str(c[3]) if c.size() > 3 else fam
-		added.append({"id": "r%05d" % _note_id, "tick": tick, "duration_ticks": dur, "end_tick": tick + dur, "time": tm, "end_time": tm + float(dur) * 60.0 / (level.bpm * float(tpb)),
+		added.append({"id": "r%05d" % _note_id, "tick": tick, "duration_ticks": dur, "end_tick": tick + dur, "time": tm, "end_time": tm + dur_s,
 			"pad": int(c[2]), "button": int(c[2]), "family": fam_c, "lane": fam_c, "slot_id": fam_c, "type": "hold" if dur > 0 else "tap", "seq": _blocks_total,
 			"phase": phase_n_for, "block": b, "voice": fam})
 		_note_id += 1
@@ -596,9 +794,67 @@ func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = 
 	_emit({"kind": "cues", "phase": phase_n_for, "block": b, "family": fam, "count": added.size(), "first": level.notes.size() - added.size()})
 
 
+## Appends the cues of block `b` of a track scene (docs/RUN_TRACK_SCENES.md "Cues"): the chart's cues whose track time falls in the block's 16 beats, moved to song time (the lap's downbeat plus the
+## cue's distance from the lap's track time, so a cue sits exactly where the audio plays it), those after beat 12 of the block left out, a hold cut to end by beat 12 (a tap when less than half a beat
+## is left). `next_phase`: the first block of the next lap (or, `new_scene`, of the next scene `nid`), charted one block ahead as ever.
+func _chart_track_block(b: int, next_phase: bool, new_scene: bool, nid: String) -> void:
+	var plan: Dictionary = track_plan_of(nid) if new_scene else track
+	var lap_k := 1 if new_scene else (lap + 1 if next_phase else lap)
+	var trk0 := float(plan["entry_t"]) if new_scene else (_next_lap_track_t0 if next_phase else _lap_track_t0)
+	var t_lap := t_of(timing("phase_beats")) if next_phase else phase_t0
+	var bs := float(plan["beat_s"])
+	var block_beats := int(timing("block_beats"))
+	var span := timing("cue_span_beats")
+	var tpb := level.ticks_per_beat
+	var phase_n_for := phase_n + 1 if next_phase else phase_n
+	var phase_beat0 := phase_n_for_first_beat(phase_n_for)
+	var w0 := trk0 + float(b * block_beats) * bs
+	var w1 := w0 + float(block_beats) * bs
+	var pack: TrackPack = plan.get("pack", null)
+	var added: Array = []
+	for c: Dictionary in plan["cues"]:
+		var ct := float(c["t"])
+		if ct < w0 - 1e-6:
+			continue
+		if ct >= w1 - 1e-6:
+			break  # (a chart is sorted by time)
+		var beat_in := (ct - w0) / bs
+		if beat_in > span + 1e-6:  # the last 4 beats of a block are rest (the run's rule)
+			continue
+		var dur_b := float(c["dur"]) / bs
+		if dur_b > 0.0:
+			dur_b = minf(dur_b, span - beat_in)
+			if dur_b < 0.5:
+				dur_b = 0.0
+		var tick := int(round((float(phase_beat0 + b * block_beats) + beat_in) * tpb))
+		var dur := int(round(dur_b * tpb))
+		var tm := t_lap + (ct - trk0)
+		var pad := int(c["pad"])
+		var voice := str(c["voice"])
+		var kind := str(pack.voice_by_key(voice).get("kind", "")) if pack != null else ""
+		var fam := ("kick" if pad <= 2 else "snare") if kind == "drums" else "bass"
+		added.append({"id": "r%05d" % _note_id, "tick": tick, "duration_ticks": dur, "end_tick": tick + dur, "time": tm, "end_time": tm + dur_b * bs,
+			"pad": pad, "button": pad, "family": fam, "lane": fam, "slot_id": fam, "type": "hold" if dur > 0 else "tap", "seq": _blocks_total,
+			"phase": phase_n_for, "block": b, "voice": voice, "lap": lap_k, "track_t": ct})
+		_note_id += 1
+	added.sort_custom(func(x: Dictionary, y: Dictionary) -> bool: return x["tick"] < y["tick"] if x["tick"] != y["tick"] else x["pad"] < y["pad"])
+	for a in added:
+		level.notes.append(a)
+	var block_start_tick := int(round(float(phase_beat0 + b * block_beats) * tpb))
+	var pads := {}
+	for a in added:
+		pads[str(a["pad"])] = {"family": a["family"], "ref": a["voice"]}
+	level.sections.append({"id": "p%d_b%d" % [phase_n_for, b], "start_tick": block_start_tick, "end_tick": block_start_tick + block_beats * tpb, "mode": "track",
+		"length_bars": block_beats / 4, "pads": pads, "phase": phase_n_for, "block": b})
+	level.duration_ticks = maxi(level.duration_ticks, block_start_tick + block_beats * tpb)
+	_blocks_total += 1
+	judge.sync_notes()
+	_emit({"kind": "cues", "phase": phase_n_for, "block": b, "family": "track", "count": added.size(), "first": level.notes.size() - added.size(), "track": str(plan["track"]), "lap": lap_k})
+
+
 ## Global beat index of the first beat of phase number `n` (1-based): the current phase (`phase_n`) starts at `phase_t0`; the next one 64 beats later.
 func phase_n_for_first_beat(n: int) -> int:
-	return int(round((phase_t0 - grid_origin) / beat_s)) + (n - phase_n) * int(timing("phase_beats"))
+	return grid_beat0 + int(round((phase_t0 - grid_origin) / beat_s)) + (n - phase_n) * int(timing("phase_beats"))
 
 
 ## Block `b` credit summary for tests and the HUD.
@@ -635,7 +891,7 @@ func progress_at(_t: float) -> Dictionary:
 ## RunAudio measured that a part (drums, or bass with the synth) actually started `offset` seconds after its nominal grid time: its cues in this phase
 ## move by the change, so they sit on what the player hears. Cues already resolved keep their result.
 func apply_part_offset(part: String, phase: int, offset: float) -> void:
-	if phase != phase_n or not part_offset.has(part):
+	if phase != phase_n or not part_offset.has(part) or not track.is_empty():  # (a track scene's cues are the track's own times: no loop part to follow)
 		return
 	var delta := offset - float(part_offset[part])
 	part_offset[part] = offset

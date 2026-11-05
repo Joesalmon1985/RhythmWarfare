@@ -45,6 +45,15 @@ func begin_scene(node_id: String, p_energy: float) -> void:
 	_list = data.hotspots_of(node_id) if data != null else []
 
 
+## A track scene's next lap begins (docs/RUN_TRACK_SCENES.md "open laps"): the final window's touch state starts over (nothing selected, nothing committed), the crowd's energy follows. The early
+## window's commit (the wizard) and what is used up are kept, as across the laps of a path scene. Only the engine of a track scene calls this.
+func begin_lap(p_energy: float) -> void:
+	energy = p_energy
+	selected = ""
+	committed = ""
+	last_outcome = {}
+
+
 func list() -> Array:
 	return _list
 
