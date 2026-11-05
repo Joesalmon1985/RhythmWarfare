@@ -9,7 +9,7 @@ extends RefCounted
 ##   person   the anchor's (or acting's) person: CURRENT beckons happy at the camera, OTHER pleads sad at the camera (still inviting), TOUCHED a quick happy nod,
 ##            COMMITTED a cheer, DECLINED a sad plead that fades. (StoryCrowd.direct_actor: these acts and faces are baked by tools/story/art/directed.py from the same file.)
 ##   door     an exit: a door stands at the anchor (`door`: "drawn" a door prop of assets/run/choice that swings open or shut; "bars" two boards nailed across a doorway that is
-##            already a thing of the map; "pieces" two set pieces of the map, `open_piece` / `shut_piece`; "none"), a lamp above it (round green with a chevron = this way;
+##            already a thing of the map; "sign" a wooden post whose arrow board points on (go) or hangs down crossed (not this way), for a road or a shore; "pieces" two set pieces of the map, `open_piece` / `shut_piece`; "none"), a lamp above it (round green with a chevron = this way;
 ##            square red with a bar = not this way) and a spill of light on the floor when open. The door is open when its route is the DESTINATION (the current option's
 ##            route, or the default way on when the current option has no route of its own).
 ##   object / feature   a lamp over the thing, and a motion on the thing when it is a billboard of the map (`current_motion` / `other_motion`).
@@ -18,7 +18,7 @@ extends RefCounted
 ## Every archetype may also carry `states` {current?, other?, touched?, committed?, declined?}, each a list of steps played on top of the archetype's own look:
 ##   {piece: <map piece id>, op: on|off}                 a set piece of the map (a sail furled, a hatch chained, a lantern lit: art drawn as pieces)
 ##   {actor: <id>, act, face?, look_at?}                  another person of the room directed (the fishermen behind Simon, the friend who shrugs)
-##   {thing: <map thing id>, tex?: <assets/run/choice name>, motion?: still|bob|beckon|slump|pulse|sway_left|sway_right|lean}   a billboard's frame and pose
+##   {thing: <map thing id>, tex?: <assets/run/choice name> | sprite?: <a sprite of the map's art>, motion?: still|bob|beckon|slump|pulse|sway_left|sway_right|lean}   a billboard's frame and pose
 ##   {lamp: go|stop|none}                                 the option's own lamp, overriding the archetype's
 ##   {prop: <assets/run/choice name>, at?: [dx, dy, dz] metres from the anchor, size?: metres, motion?}   a prop of the choice art stood at the anchor (an arrow sign, a sail)
 
@@ -28,7 +28,7 @@ const ROLES := ["current", "other", "committed", "declined"]
 const STATE_KEYS := ["current", "other", "touched", "committed", "declined"]
 const KEYS := ["archetype", "actor", "current", "other", "touched", "committed", "declined", "door", "open_piece", "shut_piece", "door_at", "width_m", "height_m", "lamp",
 	"lamp_y", "current_tex", "other_tex", "thing", "current_motion", "other_motion", "touch", "states"]
-const DOOR_STYLES := ["drawn", "bars", "pieces", "none"]
+const DOOR_STYLES := ["drawn", "bars", "sign", "pieces", "none"]
 const MOTIONS := ["still", "bob", "beckon", "slump", "pulse", "sway_left", "sway_right", "lean"]
 const LAMPS := ["go", "stop", "none"]
 const ART_DIR := "res://assets/run/choice/"
@@ -277,6 +277,8 @@ static func _validate_states(v: Variant, hw: String, idx: Dictionary, errors: Ar
 			elif sp.has("thing"):
 				if ok_map and not (idx["things"] as Dictionary).has(str(sp["thing"])):
 					errors.append("%s: thing '%s' is not a thing of the map" % [sw, sp["thing"]])
+				if sp.has("sprite") and (typeof(sp["sprite"]) != TYPE_STRING or str(sp["sprite"]) == ""):
+					errors.append("%s: sprite must name a sprite of the map's art" % sw)
 				if sp.has("tex") and not _art_ok(str(sp["tex"])):
 					errors.append("%s: tex '%s' is not in %s" % [sw, sp["tex"], ART_DIR])
 				if sp.has("motion") and str(sp["motion"]) not in MOTIONS:

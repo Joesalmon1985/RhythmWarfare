@@ -442,6 +442,8 @@ func _stage_choice(snap: Dictionary, t: float) -> void:
 						props.put(id + "#bars", "bars", foot + Vector3(0.0, hgt * 0.15, 0.0), hgt * 0.7, 0.9, 1.0 - float(o["open_k"]))
 						if float(o["open_k"]) > 0.05:
 							props.put(id + "#spill", "spill", foot, 1.6, 1.0, float(o["open_k"]) * 0.8, true)
+					"sign":
+						props.put(id + "#door", "sign_go" if float(o["open_k"]) >= 0.5 else "sign_stop", foot, hgt, 0.85)
 					"pieces":
 						_piece(id, str(st["open_piece"]) if bool(o["open"]) else str(st["shut_piece"]), str(st["shut_piece"]) if bool(o["open"]) else str(st["open_piece"]), t)
 			"object", "feature":
@@ -516,6 +518,8 @@ func _play_steps(id: String, st: Dictionary, role: String, touched_now: bool, fo
 			var mo := ChoiceStaging.motion(str(sp.get("motion", "still")), u)
 			if sp.has("tex"):
 				mo["tex"] = ChoiceProps.tex(str(sp["tex"]))
+			elif sp.has("sprite") and stage.assets != null:  # a frame of the map's own art (a sibling sprite of the thing: the bar lifted, the receiver off the hook)
+				mo["tex"] = stage.assets.sprite(str(sp["sprite"])).get("tex", null)
 			stage.world.thing_pose[str(sp["thing"])] = mo
 		elif sp.has("prop") and props != null:
 			var at: Array = sp.get("at", [0.0, 0.0, 0.0])

@@ -64,6 +64,7 @@ var _script_taps := false  # RW_TRIAL_TAPS: the scripted picks are real taps thr
 var _script_i := 0
 var _script_pick_at := -1.0
 var _script_pick := -1
+var _script_then := ""  # the taps still to come in this window ("1>0>1")
 var _until := -1
 var _pressed: Dictionary = {}
 var _released: Dictionary = {}
@@ -396,6 +397,10 @@ func update(t: float, audio_t: float) -> void:
 				var hit := tap_centre(_script_pick)
 				print("TRIAL tap %d -> %d" % [_script_pick, hit])
 				_script_pick = -1
+				if _script_then != "":
+					_script_pick = int(_script_then.get_slice(">", 0))
+					_script_then = _script_then.substr(_script_then.find(">") + 1) if _script_then.contains(">") else ""
+					_script_pick_at = audio_t + 4.0 * _beat_s
 		else:
 			pick(_script_pick)
 			_script_pick = -1
@@ -613,9 +618,10 @@ func _open_window(ev: Dictionary) -> void:
 	if _script_i < _script_choices.size():
 		var tok := _script_choices[_script_i].strip_edges()
 		_script_i += 1
-		if tok != "" and tok != "d":
-			_script_pick = int(tok)
+		if tok != "" and tok != "d":  # "1>0": tap 1, then 0 a bar later (the choice-clarity strips change their mind)
+			_script_pick = int(tok.get_slice(">", 0))
 			_script_pick_at = float(ev["t"]) + 1.0
+			_script_then = tok.substr(tok.find(">") + 1) if tok.contains(">") else ""
 	if _outcome.is_empty() and _pending.is_empty():
 		_panel.visible = true
 		_desc.visible = true

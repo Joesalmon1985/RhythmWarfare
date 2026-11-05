@@ -206,6 +206,30 @@ def wizard_sad() -> np.ndarray:
     return img
 
 
+def sign(go: bool) -> np.ndarray:
+    """An outdoor way (a road, a path, a shore): a wooden post. GO: its arrow board raised level and pointing on, pale and freshly painted. STOP: the board hanging down
+    askew from one nail with a dark X daubed on it. 48 x 96 px for 1.2 x 2.4 m."""
+    img = blank(W, H)
+    y, x = np.mgrid[0:H, 0:W]
+    d = dither(W, H)
+    post = (x >= 21) & (x < 27) & (y >= 14)
+    put(img, post, hexc("#7a5230"), 0.8 + 0.25 * (x < 23) + 0.08 * (d > 0.6))
+    put(img, (x >= 18) & (x < 30) & (y >= H - 4), hexc("#5a3a20"))
+    if go:
+        board = (y >= 16) & (y < 30) & (x >= 4) & (x < 38)
+        tip = (x >= 38) & (x < 46) & (np.abs(y - 22.5) < (46 - x) * 0.9)
+        put(img, board | tip, hexc("#f0e2b0"), 0.9 + 0.1 * (d > 0.5))
+        put(img, (board | tip) & ((y == 16) | (y == 29)), hexc("#8a6a3a"))
+        arrow = ((y >= 21) & (y < 24) & (x >= 9) & (x < 36)) | ((x >= 30) & (x < 38) & (np.abs(y - 22.5) < (38 - x) * 0.8))
+        put(img, arrow, hexc("#2e9a50"))
+    else:
+        yy = y - (x - 6) * 0.55  # the board hangs from its nail by the post, sloping down to the left
+        board = (yy >= 26) & (yy < 38) & (x >= 2) & (x < 26)
+        put(img, board, hexc("#8a7a60"), 0.75 + 0.08 * (d > 0.6))
+        put(img, board & ((np.abs((x - 14) - (yy - 32) * 2.0) < 1.6) | (np.abs((x - 14) + (yy - 32) * 2.0) < 1.6)), hexc("#401810"))
+    return img
+
+
 def main() -> int:
     for k in range(4):
         save(door(k), "door_%d" % k)
@@ -213,6 +237,8 @@ def main() -> int:
     save(bars(), "bars")
     save(lamp(True), "lamp_go")
     save(lamp(False), "lamp_stop")
+    save(sign(True), "sign_go")
+    save(sign(False), "sign_stop")
     save(wizard_happy(), "wizard_happy")
     save(wizard_sad(), "wizard_sad")
     return 0
