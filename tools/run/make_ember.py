@@ -51,9 +51,9 @@ SCENES = [
          exits={"up": "boat_wp", "right": "horn_wp", "left": "horn_wp"}, next=[("marsh", "up", False), ("marsh.wall", "right", False), ("mountain.taken", "left", False)]),
     dict(id="marsh", world="marsh", code="E07", name="reed_marsh", title="The Reed Marsh", entry=True, home="marsh_c", arrive="marsh_c", good=["marsh_mid", "marsh_fwd"], bad=["marsh_w", "marsh_e"],
          exits={"up": "marsh_path", "right": "lights_wp"}, next=[("marsh.wall", "up", False), ("marsh.stair", "right", False)]),
-    dict(id="marsh.wall", world="marsh", code="E08", name="black_wall", title="The Black Wall", entry=True, exit=True, home="wall_c", arrive="wall_in", good=["wall_mid", "wall_gate_wp"], bad=["wall_w", "wall_e"],
+    dict(id="marsh.wall", world="marsh", code="E08", name="black_wall", title="The Black Wall", entry=True, exit=True, home="wall_c", arrive="wall_in", good=["wall_mid", "wall_near"], bad=["wall_w", "wall_e"],
          exits={"right": "crack_wp", "up": "wall_gate_wp", "left": "camp_door"}, next=[("marsh.stair", "right", False), ("marsh.plain", "up", False), ("mountain.taken", "left", False)]),
-    dict(id="marsh.stair", world="marsh", code="E09", name="stair_of_bells", title="The Stair of Bells", exit=True, home="stair_c", arrive="stair_in", good=["stair_mid", "stair_up"], bad=["stair_w", "stair_e"],
+    dict(id="marsh.stair", world="marsh", code="E09", name="stair_of_bells", title="The Stair of Bells", exit=True, home="stair_c", arrive="stair_in", good=["stair_mid", "stair_fwd"], bad=["stair_w", "stair_e"],
          exits={"left": "stair_side", "up": "stair_up", "right": "bells_wp"}, next=[("marsh.plain", "left", False), ("mountain", "up", False), ("mountain.taken", "right", False)]),
     dict(id="marsh.plain", world="marsh", code="E10", name="ash_plain", title="The Ash Plain", entry=True, exit=True, home="plain_c", arrive="plain_in", good=["plain_mid", "plain_far"], bad=["plain_w", "plain_e"],
          exits={"up": "road_wp", "left": "tower_wp"}, next=[("mountain", "up", False), ("mountain.taken", "left", False)]),
@@ -63,7 +63,7 @@ SCENES = [
          bad=["spring_w", "spring_e"], exits={"up": "pool_wp"}, next=[("run:warehouse", "up", False)]),
     dict(id="mountain.keeper", world="mountain", code="E13", name="keeper", title="The Keeper", ending="kept", home="keep_c", arrive="keep_in2", good=["keep_mid", "keep_near"], bad=["keep_w", "keep_e"],
          exits={"up": "ember_wp"}, next=[("run:warehouse", "up", False)]),
-    dict(id="mountain.taken", world="mountain", code="E14", name="taken", title="Taken", entry=True, exit=True, home="camp_c", arrive="camp_in", good=["camp_mid", "camp_near"], bad=["camp_n", "camp_s"],
+    dict(id="mountain.taken", world="mountain", code="E14", name="taken", title="Taken", entry=True, exit=True, home="camp_c", arrive="camp_in", good=["camp_mid", "camp_fwd"], bad=["camp_n", "camp_s"],
          exits={"up": "stake_wp", "left": "captain_wp"}, next=[("marsh.plain", "up", True), ("marsh.wall", "left", True)]),
 ]
 BY_ID = {s["id"]: s for s in SCENES}
