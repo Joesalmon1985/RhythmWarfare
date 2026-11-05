@@ -87,7 +87,12 @@ Voices and stems
   All stems have the same length to within 5 ms and start at the same instant: sample 0 of every file is the
   same moment of the recording.
 - Played together at their `gain`s, the stems are the whole track. Nothing of the recording is left out and
-  nothing is in two stems.
+  nothing is in two stems. Because the stems are lossy files this holds approximately: their sum must match
+  the recording to -30 dB or better (the tools reach about -38 dB with Vorbis quality 10).
+- A separated stem can be louder than full scale on its own even though the sum is not, so the tools store
+  every stem scaled down by one common factor and write the inverse as `gain`. The game sums the stems before
+  any clipping and puts a limiter on its music bus, since the summed track can still peak a little above full
+  scale where the original master does.
 - `gain` is linear, 0 to 2, default 1.
 
 Tempo and sections (information for tools and HUD; the game must work if `sections` is empty)
@@ -104,7 +109,8 @@ Charts
 - Cues are sorted by `t`. Every cue lies inside the track: `t >= 1.0` (nothing in the first second) and
   `t + dur <= duration_s - 0.5`.
 - A cue on a pad means that pad's voice audibly plays something at `t`. The tools must not place cues where
-  the voice is silent.
+  the voice is silent. `t` is the audible attack where there is one; for a legato part with no attack (a bass
+  line sliding to a new note) it is the nearest 16th-note grid line to the pitch change.
 - Playability, with B = one beat = 60 / `tempo.bpm` seconds:
   - same pad: two cues at least 0.5 B apart, and a cue never starts inside a hold on its own pad or sooner
     than 0.25 B after that hold ends;

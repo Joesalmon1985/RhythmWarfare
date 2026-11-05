@@ -65,6 +65,7 @@ func _ready() -> void:
 	transport = TrackTransport.new()
 	add_child(transport)
 	var err := transport.load_pack_streams(pack)
+	_limit_music_bus()
 	if not err.is_empty():
 		_refuse([err])
 		return
@@ -318,3 +319,17 @@ func _summary_text(s: Dictionary) -> String:
 			str(v["label"]), int(v["pad"]), int(v["cues"]), int(v["hit_total"]), int(v["hits"]["perfect"]), int(v["hits"]["great"]),
 			int(v["hits"]["ok"]), int(v["misses"]), int(v["hold_let_go"]), float(v["sounding_share"]) * 100.0])
 	return "\n".join(PackedStringArray(lines))
+
+
+## Separated stems partly cancel each other, so their sum peaks above full scale where the recording itself does
+## (about +2 dB on a loud master). A hard limiter on the music bus keeps that from clipping at the output; it is
+## added once and left there, and does nothing to quieter material.
+func _limit_music_bus() -> void:
+	var bus := StemTransport.ensure_music_bus()
+	for i in AudioServer.get_bus_effect_count(bus):
+		if AudioServer.get_bus_effect(bus, i) is AudioEffectHardLimiter:
+			return
+	var limiter := AudioEffectHardLimiter.new()
+	limiter.ceiling_db = -0.3
+	limiter.pre_gain_db = 0.0
+	AudioServer.add_bus_effect(bus, limiter)
