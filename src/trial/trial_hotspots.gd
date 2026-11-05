@@ -22,9 +22,17 @@ static func load_default() -> TrialHotspots:
 		h.errors.append("%s is not a JSON object" % PATH)
 		return h
 	h.raw = v
-	for k in (v.get("hotspots", {}) as Dictionary):
-		h.by_passage[int(k)] = v["hotspots"][k]
+	for hs in (v.get("hotspots", []) as Array):  # a flat list; `scene` is the passage number
+		var n := int(str(hs["scene"]))
+		if not h.by_passage.has(n):
+			h.by_passage[n] = []
+		(h.by_passage[n] as Array).append(hs)
 	return h
+
+
+## What the hotspot is to the Bassment: `trial_kind` (the contract's `kind` says only exit for a default one, whatever it is).
+static func kind_of(h: Dictionary) -> String:
+	return str(h.get("trial_kind", h.get("kind", "")))
 
 
 func count() -> int:
@@ -38,7 +46,7 @@ func kinds() -> Dictionary:
 	var out := {}
 	for k in by_passage:
 		for h in by_passage[k]:
-			out[str(h["kind"])] = int(out.get(str(h["kind"]), 0)) + 1
+			out[kind_of(h)] = int(out.get(kind_of(h), 0)) + 1
 	return out
 
 
@@ -109,7 +117,9 @@ func validate(d: TrialData) -> Array:
 				errs.append("%s: availability disagrees with the choice's requirement" % id)
 			if str(c.get("requires", "")) == "":
 				shown += 1
-			var kind := str(h.get("kind", ""))
+			var kind := kind_of(h)
+			if str(h.get("kind", "")) != ("exit" if bool(h.get("default", false)) else kind):
+				errs.append("%s: `kind` is the contract's (exit for the default, else trial_kind)" % id)
 			var want := "encounter" if c.has("encounter") else ("feature" if c.has("test") else "")
 			if want != "" and kind != want:
 				errs.append("%s: a %s choice must be a %s hotspot, not %s" % [id, "fight" if want == "encounter" else "luck test", want, kind])
@@ -121,7 +131,7 @@ func validate(d: TrialData) -> Array:
 			if not bool(ap["ok"]):
 				errs.append("%s: anchor %s is not in map %s" % [id, h.get("anchor", {}), p.get("map", "")])
 			if c.get("to", null) == null:
-				if (h["on_success"] as Dictionary).get("exit", "") != str(c.get("exit", "")) or h.get("challenge", null) != null:
+				if (h["on_success"] as Dictionary).get("route", "") != "exit" or h.get("challenge", null) != null:
 					errs.append("%s: an exit choice leaves the dungeon with no challenge" % id)
 			else:
 				var ch: Variant = h.get("challenge", null)
@@ -132,16 +142,11 @@ func validate(d: TrialData) -> Array:
 				if str((h["on_success"] as Dictionary).get("route", "")) != str(to_ok):
 					errs.append("%s: on_success routes to %s, the choice to %d" % [id, (h["on_success"] as Dictionary).get("route", ""), to_ok])
 				var fail: Variant = h.get("on_failure", null)
-				if typeof(fail) != TYPE_DICTIONARY:
-					errs.append("%s: a phrase can be failed: on_failure is needed" % id)
-				elif c.has("test"):
-					if str(fail.get("route", "")) != str(int(c["test"]["fail"])):
+				if c.has("test"):
+					if typeof(fail) != TYPE_DICTIONARY or str(fail.get("route", "")) != str(int(c["test"]["fail"])):
 						errs.append("%s: a luck test's miss goes the other way (%d)" % [id, int(c["test"]["fail"])])
-				else:
-					if not bool(fail.get("hold", false)) or not bool(fail.get("make_default", false)):
-						errs.append("%s: a failed choice holds the place and becomes the default" % id)
-					if c.has("encounter") and str((fail.get("on_defeat", {}) as Dictionary).get("route", "")) != "0":
-						errs.append("%s: a lost fight leads to passage 0" % id)
+				elif fail != null:
+					errs.append("%s: a failed plain choice or fight holds the place (TrialFlow): no on_failure is written" % id)
 		if defaults != 1:
 			errs.append("passage %d: exactly one default hotspot without a requirement (found %d)" % [n, defaults])
 		if shown < 1 or shown > 4:

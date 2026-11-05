@@ -710,7 +710,7 @@ func test_every_hotspot_of_every_passage_is_tappable_from_where_the_camera_stand
 		layer.items = []
 		for it in vis:
 			var ap := TrialHotspots.anchor_point(it["hs"], m)
-			layer.items.append({"index": int(it["index"]), "pos": ap["pos"], "ground": float(ap["ground"]), "radius_m": float(it["hs"]["radius_m"]), "default": false, "selected": false, "kind": str(it["hs"]["kind"])})
+			layer.items.append({"index": int(it["index"]), "pos": ap["pos"], "ground": float(ap["ground"]), "radius_m": float(it["hs"]["radius_m"]), "default": false, "selected": false, "kind": TrialHotspots.kind_of(it["hs"])})
 		var rs := layer.rects()
 		for k in rs.size():
 			var rc := rs[k] as Rect2
@@ -770,7 +770,7 @@ func test_a_death_walks_back_to_the_warehouse_after_its_window() -> void:
 	var scene: Node = d["scene"]
 	assert_true(tr._msg.text.contains("DIED"), "the death is shown: " + tr._msg.text)
 	assert_eq(tr.hotspot_items().size(), 1, "a death has one hotspot: the way out")
-	assert_eq(tr.hotspot_of(0)["on_success"], {"exit": "warehouse"})
+	assert_eq(tr.hotspot_of(0)["on_success"], {"route": "exit"})
 	assert_true(_sel(tr, 0)["default"])
 	assert_true(_until(scene, func() -> bool: return not _left(scene).is_empty(), 60.0))
 	assert_eq(_left(scene)[0]["reason"], "death")
@@ -1033,6 +1033,8 @@ func test_the_hotspot_file_agrees_with_the_passages_and_the_maps() -> void:
 	var hot := TrialHotspots.load_default()
 	assert_eq(hot.errors, [], "the hotspot file loads")
 	assert_eq(hot.by_passage.size(), d.passages.size(), "every passage, the defeat passage 0 included")
+	assert_eq(str(hot.raw["world"]), "bassment")
+	assert_true(hot.raw["hotspots"] is Array, "a flat list, as TrialData.load_hotspots reads it")
 	var errs := hot.validate(d)
 	assert_eq(errs, [], "one hotspot per choice, anchors in the zone maps, defaults, routes, challenges and failures agree with passages.json")
 	var total := 0
@@ -1060,7 +1062,8 @@ func test_a_creature_stands_in_the_room_as_its_hotspot_before_the_fight_and_a_ta
 	assert_true(_until(scene, func() -> bool: return tr.engine.window_open and _title_is(tr, "The Flooded Boiler Room") and tr.hotspot_items().size() == 2, 30.0))
 	assert_eq(tr.figure_pose(), "idle", "the eel is already in the room while the window is open: it is the hotspot")
 	var hs := tr.hotspot_of(0)
-	assert_eq(str(hs["kind"]), "encounter")
+	assert_eq(TrialHotspots.kind_of(hs), "encounter")
+	assert_eq(str(hs["kind"]), "exit", "(the contract lets only an exit be the default)")
 	assert_eq(str(hs["anchor"]["thing"]), "hs_cable_eel", "anchored to the creature's thing")
 	var marker := {}
 	for t in tr._map("boiler").things:
@@ -1069,7 +1072,7 @@ func test_a_creature_stands_in_the_room_as_its_hotspot_before_the_fight_and_a_ta
 	assert_false(marker.is_empty(), "the creature's thing is in the zone map")
 	var spot: Vector2 = tr._fig["pos"]
 	assert_true((marker["at"] as Vector2).distance_to(spot) < 0.05, "and stands where the figure does: %s vs %s" % [marker["at"], spot])
-	assert_eq(str(tr.hotspot_of(1)["kind"]), "feature", "the pipes over the water are a luck test: a feature")
+	assert_eq(TrialHotspots.kind_of(tr.hotspot_of(1)), "feature", "the pipes over the water are a luck test: a feature")
 	assert_true(tr.hotspot_items()[0]["default"], "the fight is the default (brighter)")
 	assert_eq(tr.tap_hotspot(1), 1, "a tap on the pipes")
 	assert_true(tr.hotspot_items()[1]["selected"] and not tr.hotspot_items()[0]["default"], "selects them instead")

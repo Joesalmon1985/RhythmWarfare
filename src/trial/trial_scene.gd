@@ -614,7 +614,7 @@ func _sync_hotspots() -> void:
 			var ap := TrialHotspots.anchor_point(h, m)
 			if not bool(ap["ok"]):
 				continue
-			out.append({"index": int(it["index"]), "id": str(h["id"]), "kind": str(h["kind"]), "pos": ap["pos"], "ground": float(ap["ground"]), "radius_m": float(h["radius_m"]),
+			out.append({"index": int(it["index"]), "id": str(h["id"]), "kind": TrialHotspots.kind_of(h), "pos": ap["pos"], "ground": float(ap["ground"]), "radius_m": float(h["radius_m"]),
 				"default": int(it["index"]) == def and engine.selected < 0, "selected": int(it["index"]) == engine.selected})
 	_hot.items = out
 

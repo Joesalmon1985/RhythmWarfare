@@ -216,7 +216,7 @@ Automated (`tests/test_trial.gd`, 42 tests):
   rail and somewhere else in the room; a missing waypoint or exit is refused**;
 * **reachability and defaults**, **items**, **fights, luck, deaths**, **timing and music** (the music game never stops; windows last exactly 16 beats; the commit is on beat 12.75; a pick beats
   the default; a failed phrase reopens the window with the failed option as the default): on the engine, as before;
-* **the hotspots**: the file agrees with the passages (95 hotspots: 74 exits, 10 creatures, 7 features, 4 objects), every anchor is in its zone map, the creature marker stands where the figure does,
+* **the hotspots**: the file agrees with the passages (95 hotspots, a flat list: 74 exit, 10 encounter, 7 feature, 4 object by `trial_kind`), every anchor is in its zone map, the creature marker stands where the figure does,
   an item's hotspot appears only with the item; every hotspot of every passage has a target of at least 72 px from where the camera stands and can be hit at its centre;
 * **the scene** in a phone-sized 844x390 view on the real run scene (virtual clock): a 2.5D stage with the hotspots lit (the default brighter), no button and no choice written anywhere, the caption band across
   the top, a tap selecting and changing the pick (and keys 1 to 4), a tap off a target picking nothing, targets at least 72 px and never over the pads, the thin bar full at four bars, the zone footer, items in the footer; defaults walk through zone swaps (a swap lands on a block's downbeat, the frame is shut before it); death and victory walk back to
