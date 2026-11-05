@@ -14,8 +14,11 @@ are added to content/sounds.json. Then run `python tools/content/build.py`.
 
 Manifest:
 {
- "source_dir": "ToAddTry1",                 relative to the project (or absolute)
- "bars": 8,                                 clip length; the MIDI's first bars are used, the WAV must cover them
+ "source_dir": "ToAddTry1",                 relative to the project (or absolute); a relative folder that is not inside the project is looked for
+                                            in the project's parent folders (the owner's ToAddTry folders sit beside the checkout)
+ "bars": 8,                                 clip length (a clip may say its own "bars"); the MIDI's first bars are used, the WAV must cover them
+ "tail_bars": 1,                            at most this much of a render's release is kept after the clip's last bar (a clip or render may say 0:
+                                            a render longer than its clip is then cut at the last bar with a short fade, nothing past it is a "tail")
  "levels": {"kick": {"peak_db": -4}, "bass": {"peak_db": -4, "rms_db": -17}, ...},
                                             gain per family: the largest gain that keeps the peak under peak_db and
                                             (when given) brings the RMS to rms_db, so one family's sounds match
@@ -84,10 +87,10 @@ def resample(frames: np.ndarray, rate: int) -> np.ndarray:
         return np.frombuffer(dst.read_bytes(), dtype="<f4").reshape(-1, 2).copy()
 
 
-def trim_to_clip(frames: np.ndarray, bars: int) -> tuple[np.ndarray, dict]:
-    """The clip's bars plus the part of the tail that still sounds (at most one bar). Nothing inside the bars changes."""
+def trim_to_clip(frames: np.ndarray, bars: int, tail_bars: int = TAIL_BARS) -> tuple[np.ndarray, dict]:
+    """The clip's bars plus the part of the tail that still sounds (at most `tail_bars`, one by default). Nothing inside the bars changes."""
     musical = bars_to_frames(bars)
-    longest = bars_to_frames(bars + TAIL_BARS)
+    longest = bars_to_frames(bars + tail_bars)
     info = {"frames_in": int(len(frames)), "musical_frames": int(musical)}
     if len(frames) < musical - 2:
         raise ContentError(f"{len(frames)} frames at 48 kHz is shorter than {bars} bars ({musical}); the recording must cover the clip")
@@ -99,7 +102,7 @@ def trim_to_clip(frames: np.ndarray, bars: int) -> tuple[np.ndarray, dict]:
     if keep < SAMPLE_RATE // 1000:  # under a millisecond of tail is resampling spill, not a release
         keep = 0
     if keep > longest - musical:
-        info["tail_cut_while_sounding"] = True
+        info["tail_cut_while_sounding"] = tail_bars > 0  # tail_bars 0: the render is cut at the clip's end on purpose, not a tail
         keep = longest - musical
     out = frames[:musical + keep].copy()
     info["tail_frames"] = int(keep)
@@ -129,6 +132,17 @@ def family_gain(frames: np.ndarray, rule: dict) -> float:
     return min(gains) if gains else 0.0
 
 
+def resolve_source(name: str) -> Path:
+    """An absolute folder as it is; a relative one in the project, else in the nearest parent folder that has it."""
+    p = Path(name)
+    if p.is_absolute():
+        return p
+    for base in (ROOT, *ROOT.parents):
+        if (base / p).is_dir():
+            return base / p
+    return ROOT / p
+
+
 class Importer:
     def __init__(self, manifest: Path, check: bool = False, library: Path = LIBRARY, sounds_path: Path = CONTENT / "sounds.json"):
         self.manifest_path = manifest
@@ -136,12 +150,12 @@ class Importer:
         self.check = check
         self.library = library
         self.sounds_path = sounds_path
-        src = Path(self.m["source_dir"])
-        self.source = src if src.is_absolute() else ROOT / src
+        self.source = resolve_source(self.m["source_dir"])
         self.bars = int(self.m.get("bars", 8))
         self.levels = self.m.get("levels", {})
         self.trim_db = float(self.m.get("trim_db", 0.0))
         self.fade_ms = float(self.m.get("end_fade_ms", 10.0))
+        self.tail_bars = int(self.m.get("tail_bars", TAIL_BARS))
         self.rows: list[dict] = []
         self.warnings: list[str] = []
         self.sounds = {s["id"]: s for s in read_json(sounds_path)["sounds"]} if sounds_path.exists() else {}
@@ -177,20 +191,25 @@ class Importer:
         if set(parts) != set(KINDS[kind]):
             raise ContentError(f"clip {cid}: a {kind} clip has the parts {list(KINDS[kind])}, the manifest gives {sorted(parts)}")
         folder = self.library / cid
-        clip_json = {"id": cid, "kind": kind, "name": c.get("name", cid), "bars": self.bars, "tempo_bpm": BPM}
+        bars = int(c.get("bars", self.bars))
+        tail_bars = int(c.get("tail_bars", self.tail_bars))
+        clip_json = {"id": cid, "kind": kind, "name": c.get("name", cid), "bars": bars, "tempo_bpm": BPM}
         if c.get("key"):
             clip_json["key"] = c["key"]
         if c.get("note"):
             clip_json["note"] = c["note"]
         if audio_only:
             clip_json["audio_only"] = True
+        if c.get("atonal"):
+            clip_json["atonal"] = True
         clip_json["sounds"] = {}
-        source = {"type": "imported", "manifest": rel(self.manifest_path), "source_dir": rel(self.source), "parts": {}, "renders": {}}
+        source_dir = self.m["source_dir"] if not Path(self.m["source_dir"]).is_absolute() else rel(self.source)
+        source = {"type": "imported", "manifest": rel(self.manifest_path), "source_dir": source_dir, "parts": {}, "renders": {}}
         for part, spec in parts.items():
             if not audio_only:
                 if "midi" not in spec:
                     raise ContentError(f"clip {cid}: part {part} needs a midi file (or the clip is audio_only)")
-                source["parts"][part] = self._midi(cid, part, folder, spec["midi"])
+                source["parts"][part] = self._midi(cid, part, folder, spec["midi"], bars)
             renders = spec.get("renders", {})
             if not renders:
                 raise ContentError(f"clip {cid}: part {part} lists no renders")
@@ -199,20 +218,20 @@ class Importer:
                 if snd is None or snd["family"] != part:
                     raise ContentError(f"clip {cid}: render sound '{sid}' is not a {part} sound (add it to the manifest's sounds)")
                 r = {"file": r} if isinstance(r, str) else dict(r)
-                source["renders"][f"{part}__{sid}"] = self._render(cid, part, sid, folder, r, spec)
+                source["renders"][f"{part}__{sid}"] = self._render(cid, part, sid, folder, r, spec, bars, int(r.get("tail_bars", spec.get("tail_bars", tail_bars))))
                 clip_json["sounds"].setdefault(part, []).append(sid)
         clip_json["source"] = source
         if not self.check:
             write_json(folder / "clip.json", clip_json)
 
-    def _midi(self, cid: str, part: str, folder: Path, name: str) -> dict:
+    def _midi(self, cid: str, part: str, folder: Path, name: str, bars: int) -> dict:
         src = self.source / name
         if not src.exists():
             raise ContentError(f"clip {cid}: {rel(src)} is missing")
         info = read_midi(src)
         if info["tempo_bpm"] and abs(info["tempo_bpm"] - BPM) > 0.01:
             raise ContentError(f"{rel(src)}: tempo {info['tempo_bpm']:.2f} BPM; the library is {BPM} BPM")
-        end = self.bars * TICKS_PER_BAR
+        end = bars * TICKS_PER_BAR
         notes = []
         for n in info["notes"]:
             if n["tick"] >= end:
@@ -221,24 +240,24 @@ class Importer:
             m["duration_ticks"] = min(m["duration_ticks"], end - m["tick"])
             notes.append(m)
         if not notes:
-            raise ContentError(f"{rel(src)}: no notes in its first {self.bars} bars")
+            raise ContentError(f"{rel(src)}: no notes in its first {bars} bars")
         total_bars = max(n["tick"] + n["duration_ticks"] for n in info["notes"]) / TICKS_PER_BAR
         row = {"clip": cid, "part": part, "file": name, "kind": "midi", "notes": len(notes), "of": len(info["notes"]),
                "bars_in": round(total_bars, 2), "ppq": info["ppq"], "tempo": info["tempo_source"]}
         self.rows.append(row)
         if not self.check:
             write_midi(folder / f"{part}.mid", notes, f"{cid} {part}")
-        return {"midi": name, "sha256": sha256_file(src), "bars": [1, self.bars], "notes_kept": len(notes), "notes_in_file": len(info["notes"]),
+        return {"midi": name, "sha256": sha256_file(src), "bars": [1, bars], "notes_kept": len(notes), "notes_in_file": len(info["notes"]),
                 "ppq": info["ppq"], "tempo_source": info["tempo_source"]}
 
-    def _render(self, cid: str, part: str, sid: str, folder: Path, r: dict, spec: dict) -> dict:
+    def _render(self, cid: str, part: str, sid: str, folder: Path, r: dict, spec: dict, bars: int, tail_bars: int) -> dict:
         src = self.source / r["file"]
         if not src.exists():
             raise ContentError(f"clip {cid}: {rel(src)} is missing")
         frames, rate = read_any_wav(src)
         peak_in = float(np.abs(frames).max())
         frames = resample(frames, rate)
-        frames, trim = trim_to_clip(frames, self.bars)
+        frames, trim = trim_to_clip(frames, bars, tail_bars)
         rule = self.levels.get(part, {})
         gain = float(r["gain_db"]) if "gain_db" in r else (float(spec["gain_db"]) if "gain_db" in spec else family_gain(frames, rule))
         gain += self.trim_db
@@ -259,8 +278,15 @@ class Importer:
         self.rows.append(row)
         if not self.check:
             write_wav(out, frames)
-        return {"file": r["file"], "sha256": sha256_file(src), "sample_rate_in": rate, "gain_db": round(gain, 3),
-                "tail_frames": trim["tail_frames"], "end_fade_ms": self.fade_ms if faded else 0}
+        out_info = {"file": r["file"], "sha256": sha256_file(src), "sample_rate_in": rate, "gain_db": round(gain, 3),
+                    "tail_frames": trim["tail_frames"], "end_fade_ms": self.fade_ms if faded else 0}
+        if trim["dropped_frames"] > 0:  # nothing is discarded silently: what was left of the recording is recorded here
+            out_info["frames_in"] = trim["frames_in"]
+            out_info["dropped_frames"] = trim["dropped_frames"]
+            out_info["bars_in"] = round(trim["frames_in"] / bars_to_frames(1), 3)
+        if r.get("note") or spec.get("note"):
+            out_info["note"] = r.get("note", spec.get("note"))
+        return out_info
 
     def report(self) -> str:
         lines = [f"{'clip':22s} {'part':6s} {'source':14s} {'kind':4s} {'in':>10s} {'gain':>7s} {'peak':>7s} {'rms':>7s} {'tail':>6s} fade"]

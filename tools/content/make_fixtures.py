@@ -16,9 +16,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import mido
 import numpy as np
 
+from midi_reader import build_midi, ev_note_off, ev_note_on  # noqa: E402
 from common import CONTENT, PPQ, SAMPLE_RATE, TICKS_PER_BAR, bars_to_frames, tick_to_sample, write_json, write_midi, write_wav
 
 FIX = CONTENT / "fixtures"
@@ -41,21 +41,12 @@ def owner_kick(ticks: list[int], bars: int, tail_bars: float) -> np.ndarray:
 
 def write_midi_96ppq_no_tempo(path: Path, notes: list[tuple[int, int, int, int]]) -> None:
     """Notes as (tick at 960 PPQ, duration, pitch, velocity), written at 96 PPQ without a tempo event."""
-    mid = mido.MidiFile(type=1, ticks_per_beat=96)
-    tr = mido.MidiTrack()
     events = []
     for t, d, p, v in notes:
-        events.append((t // 10, 1, mido.Message("note_on", note=p, velocity=v)))
-        events.append(((t + d) // 10, 0, mido.Message("note_off", note=p, velocity=0)))
-    events.sort(key=lambda e: (e[0], e[1]))
-    now = 0
-    for t, _, msg in events:
-        msg.time = t - now
-        now = t
-        tr.append(msg)
-    mid.tracks.append(tr)
+        events.append(ev_note_on(t // 10, p, v))
+        events.append(ev_note_off((t + d) // 10, p))
     path.parent.mkdir(parents=True, exist_ok=True)
-    mid.save(str(path))
+    path.write_bytes(build_midi(96, [events], 1))
 
 
 def main() -> None:

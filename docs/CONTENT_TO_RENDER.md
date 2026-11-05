@@ -1,7 +1,7 @@
 # Content to render: every file that replaces a placeholder
 
 Written by `python tools/content/build.py` (or `python tools/content/render_list.py`) from the loop library; it follows the library.
-There are **31 clips** and **117 WAV renders** below, of which **18 are your recordings already in place** (marked *in place*; the rest play generated placeholders). You never render whole songs or missions: the game plays one 8-bar loop per clip part and sound, so each clip is rendered once per sound it is offered with, and the build turns every render into its loop (`songs/library/loops/`).
+There are **42 clips** and **141 WAV renders** below, of which **42 are your recordings already in place** (marked *in place*; the rest play generated placeholders). You never render whole songs or missions: the game plays one 8-bar loop per clip part and sound, so each clip is rendered once per sound it is offered with, and the build turns every render into its loop (`songs/library/loops/`).
 
 Batches exported from Ableton at 44.1 kHz (and MIDI longer than the clip) go through `tools/content/import_ableton.py`
 with a manifest like `content/imports/first_watch.json`: it converts, trims, gain-stages and files them (see
@@ -61,6 +61,15 @@ missing on a fresh checkout, run the build once.
 
 ## The files
 
+### `groove_cold`: Cold Groove
+
+groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 s), played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/cold_meta.json`). Loop: tiled to fill the 8-bar loop (a 8-bar groove repeats 1 times).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/groove_cold/kick.mid` | `content/library/groove_cold/kick__kick_cold.wav` | Cold Kick | *in place* | `loops/groove_cold__kick__kick_cold.ogg` |
+| snare | `content/library/groove_cold/snare.mid` | `content/library/groove_cold/snare__snare_cold.wav` | Cold Snare | *in place* | `loops/groove_cold__snare__snare_cold.ogg` |
+
 ### `groove_double_step`: Double Step
 
 groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 s), played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/first_watch.json`). Loop: tiled to fill the 8-bar loop (a 8-bar groove repeats 1 times).
@@ -78,6 +87,24 @@ groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 
 | --- | --- | --- | --- | --- | --- |
 | kick | `content/library/groove_half_time/kick.mid` | `content/library/groove_half_time/kick__kick_half_time.wav` | Half-Time Kick | *in place* | `loops/groove_half_time__kick__kick_half_time.ogg` |
 | snare | `content/library/groove_half_time/snare.mid` | `content/library/groove_half_time/snare__snare_backbeat.wav` | Backbeat Snare | *in place* | `loops/groove_half_time__snare__snare_backbeat.ogg` |
+
+### `groove_meta_a`: Meta Groove A
+
+groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 s), played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/cold_meta.json`). Loop: tiled to fill the 8-bar loop (a 8-bar groove repeats 1 times).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/groove_meta_a/kick.mid` | `content/library/groove_meta_a/kick__kick_meta_a.wav` | Meta Kick A | *in place* | `loops/groove_meta_a__kick__kick_meta_a.ogg` |
+| snare | `content/library/groove_meta_a/snare.mid` | `content/library/groove_meta_a/snare__snare_meta.wav` | Meta Snare | *in place* | `loops/groove_meta_a__snare__snare_meta.ogg` |
+
+### `groove_meta_b`: Meta Groove B
+
+groove (kick and snare parts), **8 bars** (11.03 s; with the longest tail 12.41 s), played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/cold_meta.json`). Loop: tiled to fill the 8-bar loop (a 8-bar groove repeats 1 times).
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| kick | `content/library/groove_meta_b/kick.mid` | `content/library/groove_meta_b/kick__kick_meta_b.wav` | Meta Kick B | *in place* | `loops/groove_meta_b__kick__kick_meta_b.ogg` |
+| snare | `content/library/groove_meta_b/snare.mid` | `content/library/groove_meta_b/snare__snare_meta.wav` | Meta Snare | *in place* | `loops/groove_meta_b__snare__snare_meta.ogg` |
 
 ### `groove_push`: Push
 
@@ -208,6 +235,46 @@ fill (kick and snare parts), **1 bars** (1.38 s; with the longest tail 2.76 s), 
 | snare | `content/library/fill_snare_run/snare.mid` | `content/library/fill_snare_run/snare__snare_guard.wav` | Guard Snare | `placeholder/snare__snare_guard.wav` | `loops/fill_snare_run__snare__snare_guard.ogg` |
 | snare | `content/library/fill_snare_run/snare.mid` | `content/library/fill_snare_run/snare__snare_rim.wav` | Rimshot | `placeholder/snare__snare_rim.wav` | `loops/fill_snare_run__snare__snare_rim.ogg` |
 
+### `bass_cold_2`: Cold Bass 2
+
+bass line, **4 bars** (5.52 s; with the longest tail 6.90 s), key B minor, played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/cold_meta.json`). Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| bass | `content/library/bass_cold_2/bass.mid` | `content/library/bass_cold_2/bass__bass_flaring_anger.wav` | Flaring Anger | *in place* | `loops/bass_cold_2__bass__bass_flaring_anger.ogg` |
+| bass | `content/library/bass_cold_2/bass.mid` | `content/library/bass_cold_2/bass__bass_hard_harmonic.wav` | Hard Harmonic | *in place* | `loops/bass_cold_2__bass__bass_hard_harmonic.ogg` |
+| bass | `content/library/bass_cold_2/bass.mid` | `content/library/bass_cold_2/bass__bass_trap.wav` | Trap Bass | *in place* | `loops/bass_cold_2__bass__bass_trap.ogg` |
+
+### `bass_cold_3`: Cold Bass 3
+
+bass line, **4 bars** (5.52 s; with the longest tail 6.90 s), key A# minor, played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/cold_meta.json`). Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| bass | `content/library/bass_cold_3/bass.mid` | `content/library/bass_cold_3/bass__bass_flaring_anger.wav` | Flaring Anger | *in place* | `loops/bass_cold_3__bass__bass_flaring_anger.ogg` |
+| bass | `content/library/bass_cold_3/bass.mid` | `content/library/bass_cold_3/bass__bass_hard_harmonic.wav` | Hard Harmonic | *in place* | `loops/bass_cold_3__bass__bass_hard_harmonic.ogg` |
+| bass | `content/library/bass_cold_3/bass.mid` | `content/library/bass_cold_3/bass__bass_trap.wav` | Trap Bass | *in place* | `loops/bass_cold_3__bass__bass_trap.ogg` |
+
+### `bass_cold_4`: Cold Bass 4
+
+bass line, **4 bars** (5.52 s; with the longest tail 6.90 s), key F major, played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/cold_meta.json`). Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| bass | `content/library/bass_cold_4/bass.mid` | `content/library/bass_cold_4/bass__bass_flaring_anger.wav` | Flaring Anger | *in place* | `loops/bass_cold_4__bass__bass_flaring_anger.ogg` |
+| bass | `content/library/bass_cold_4/bass.mid` | `content/library/bass_cold_4/bass__bass_hard_harmonic.wav` | Hard Harmonic | *in place* | `loops/bass_cold_4__bass__bass_hard_harmonic.ogg` |
+| bass | `content/library/bass_cold_4/bass.mid` | `content/library/bass_cold_4/bass__bass_trap.wav` | Trap Bass | *in place* | `loops/bass_cold_4__bass__bass_trap.ogg` |
+
+### `bass_cold_5`: Cold Bass 5
+
+bass line, **4 bars** (5.52 s; with the longest tail 6.90 s), key E minor, played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/cold_meta.json`). Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| bass | `content/library/bass_cold_5/bass.mid` | `content/library/bass_cold_5/bass__bass_flaring_anger.wav` | Flaring Anger | *in place* | `loops/bass_cold_5__bass__bass_flaring_anger.ogg` |
+| bass | `content/library/bass_cold_5/bass.mid` | `content/library/bass_cold_5/bass__bass_hard_harmonic.wav` | Hard Harmonic | *in place* | `loops/bass_cold_5__bass__bass_hard_harmonic.ogg` |
+| bass | `content/library/bass_cold_5/bass.mid` | `content/library/bass_cold_5/bass__bass_trap.wav` | Trap Bass | *in place* | `loops/bass_cold_5__bass__bass_trap.ogg` |
+
 ### `bass_hold_a`: Long Line
 
 bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MIDI from your First_Three MIDI, level_03 bars 1-8. Loop: used as the 8-bar loop.
@@ -243,6 +310,16 @@ bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key C# minor, MI
 | bass | `content/library/bass_hold_end/bass.mid` | `content/library/bass_hold_end/bass__bass_hollow.wav` | Hollow Sub | `placeholder/bass__bass_hollow.wav` | `loops/bass_hold_end__bass__bass_hollow.ogg` |
 | bass | `content/library/bass_hold_end/bass.mid` | `content/library/bass_hold_end/bass__bass_patrol.wav` | Patrol Sub | `placeholder/bass__bass_patrol.wav` | `loops/bass_hold_end__bass__bass_patrol.ogg` |
 | bass | `content/library/bass_hold_end/bass.mid` | `content/library/bass_hold_end/bass__bass_reese.wav` | Reese | `placeholder/bass__bass_reese.wav` | `loops/bass_hold_end__bass__bass_reese.ogg` |
+
+### `bass_meta_1`: Meta Bass 1
+
+bass line, **8 bars** (11.03 s; with the longest tail 12.41 s), key F major, played only by its own recordings, MIDI from your Ableton export (imported through `content/imports/cold_meta.json`). Loop: used as the 8-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| bass | `content/library/bass_meta_1/bass.mid` | `content/library/bass_meta_1/bass__bass_flaring_anger.wav` | Flaring Anger | *in place* | `loops/bass_meta_1__bass__bass_flaring_anger.ogg` |
+| bass | `content/library/bass_meta_1/bass.mid` | `content/library/bass_meta_1/bass__bass_hard_harmonic.wav` | Hard Harmonic | *in place* | `loops/bass_meta_1__bass__bass_hard_harmonic.ogg` |
+| bass | `content/library/bass_meta_1/bass.mid` | `content/library/bass_meta_1/bass__bass_trap.wav` | Trap Bass | *in place* | `loops/bass_meta_1__bass__bass_trap.ogg` |
 
 ### `bass_octaves`: Octaves
 
@@ -298,6 +375,14 @@ backing (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12
 | Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
 | --- | --- | --- | --- | --- | --- |
 | other | `content/library/acc_backbeat/other.mid` | `content/library/acc_backbeat/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` | `loops/acc_backbeat__other__ensemble.ogg` |
+
+### `acc_cold_loop`: Cold Percussion Loop
+
+backing (pad and hats on one bus), **16 bars** (22.07 s; with the longest tail 23.45 s), played only by its own recordings, MIDI from no MIDI (audio-only backing, never cued). Loop: used as the 16-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | (none: audio only) | `content/library/acc_cold_loop/other__backing_cold_loop.wav` | Cold Percussion Loop | *in place* | `loops/acc_cold_loop__other__backing_cold_loop.ogg` |
 
 ### `acc_counterpoint`: Counterpoint accompaniment
 
@@ -387,6 +472,22 @@ backing (pad and hats on one bus), **8 bars** (11.03 s; with the longest tail 12
 | --- | --- | --- | --- | --- | --- |
 | other | `content/library/acc_last_light/other.mid` | `content/library/acc_last_light/other__ensemble.wav` | Ensemble | `placeholder/other__ensemble.wav` | `loops/acc_last_light__other__ensemble.ogg` |
 
+### `acc_meta_a`: Meta Percussion A
+
+backing (pad and hats on one bus), **16 bars** (22.07 s; with the longest tail 23.45 s), played only by its own recordings, MIDI from no MIDI (audio-only backing, never cued). Loop: used as the 16-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | (none: audio only) | `content/library/acc_meta_a/other__backing_meta_a.wav` | Meta Percussion A | *in place* | `loops/acc_meta_a__other__backing_meta_a.ogg` |
+
+### `acc_meta_b`: Meta Percussion B
+
+backing (pad and hats on one bus), **16 bars** (22.07 s; with the longest tail 23.45 s), played only by its own recordings, MIDI from no MIDI (audio-only backing, never cued). Loop: used as the 16-bar loop.
+
+| Part | MIDI (structure) | WAV to render | Sound | Reference placeholder | Loop |
+| --- | --- | --- | --- | --- | --- |
+| other | (none: audio only) | `content/library/acc_meta_b/other__backing_meta_b.wav` | Meta Percussion B | *in place* | `loops/acc_meta_b__other__backing_meta_b.ogg` |
+
 ### `acc_second_pulse`: Second Pulse accompaniment
 
 backing (pad and hats on one bus), **40 bars** (55.17 s; with the longest tail 56.55 s), key C# minor, MIDI from your First_Three MIDI, level_02 bars 1-40. Loop: used as the 16-bar loop (the clip's first 16 of 40 bars).
@@ -429,6 +530,17 @@ backing (pad and hats on one bus), **40 bars** (55.17 s; with the longest tail 5
 | `hats_driving` | Driving Hats | other |
 | `hats_busy` | Busy Hats | other |
 | `hats_offbeat` | Offbeat Hats | other |
+| `kick_cold` | Cold Kick | kick |
+| `snare_cold` | Cold Snare | snare |
+| `kick_meta_a` | Meta Kick A | kick |
+| `kick_meta_b` | Meta Kick B | kick |
+| `snare_meta` | Meta Snare | snare |
+| `bass_hard_harmonic` | Hard Harmonic | bass |
+| `bass_flaring_anger` | Flaring Anger | bass |
+| `bass_trap` | Trap Bass | bass |
+| `backing_cold_loop` | Cold Percussion Loop | other |
+| `backing_meta_a` | Meta Percussion A | other |
+| `backing_meta_b` | Meta Percussion B | other |
 
 Adding a sound or a clip: add the sound to `content/sounds.json` and say what it produces in
 `data/campaign/instruments.json` (or copy `content/fixtures/example_groove/` to `content/library/<new_id>/` and edit

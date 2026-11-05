@@ -215,6 +215,61 @@
    "id": "hats_offbeat",
    "family": "other",
    "name": "Offbeat Hats"
+  },
+  {
+   "id": "kick_cold",
+   "family": "kick",
+   "name": "Cold Kick"
+  },
+  {
+   "id": "snare_cold",
+   "family": "snare",
+   "name": "Cold Snare"
+  },
+  {
+   "id": "kick_meta_a",
+   "family": "kick",
+   "name": "Meta Kick A"
+  },
+  {
+   "id": "kick_meta_b",
+   "family": "kick",
+   "name": "Meta Kick B"
+  },
+  {
+   "id": "snare_meta",
+   "family": "snare",
+   "name": "Meta Snare"
+  },
+  {
+   "id": "bass_hard_harmonic",
+   "family": "bass",
+   "name": "Hard Harmonic"
+  },
+  {
+   "id": "bass_flaring_anger",
+   "family": "bass",
+   "name": "Flaring Anger"
+  },
+  {
+   "id": "bass_trap",
+   "family": "bass",
+   "name": "Trap Bass"
+  },
+  {
+   "id": "backing_cold_loop",
+   "family": "other",
+   "name": "Cold Percussion Loop"
+  },
+  {
+   "id": "backing_meta_a",
+   "family": "other",
+   "name": "Meta Percussion A"
+  },
+  {
+   "id": "backing_meta_b",
+   "family": "other",
+   "name": "Meta Percussion B"
   }
  ]
 }

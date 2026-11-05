@@ -3,6 +3,26 @@
 One workflow for every level: export a Beat Shaper set, run one command, validate. Nothing in the game code changes and no loadout or
 library registration is involved. Recordings are only ever read; everything the game plays is a generated copy under `songs/packs/<id>/`.
 
+## 0. Catalogue first (any folder, any format)
+
+Before importing anything, measure it. `tools/content/catalogue.py` reads every WAV and MIDI below the source folders (recursively; `.asd` and `.import` files
+are ignored; nothing is ever modified) and writes `content/music/catalogue.json` (machine) and `docs/MUSIC_CATALOGUE.md` (human):
+
+```bash
+python tools/content/catalogue.py                         # ToAddTry1, ToAddTry2, ToAddTry3 found by name (the project folder, then its parents)
+python tools/content/catalogue.py --source NewMusic       # other folders instead (repeatable); or RW_MUSIC_SOURCES=dir1:dir2, or content/music/sources.json
+python tools/content/catalogue.py --check                 # exit 1 when the files on disk are stale
+```
+
+It pairs WAV and MIDI by export group (a Beat Shaper project and variant, an Ableton pattern and its timbres), measures the tempo against the audio (the MIDI header is
+ignored: `174x1`, `87x2` or `unknown`), the musical bars, the repeating pattern length, release tails, leading silence, loudness and clipping, the role, the MIDI notes and an
+estimated tonal centre with a confidence, and lists which families can be layered (never from tempo alone; uncertain pairings are flagged for the owner's ear). Read the
+"Facts" and "Flagged" sections before importing: they say which renders are 16 bars of a 4-bar pattern, which clip, and which key estimates are only guesses. The catalogue
+also records which packs and library clips already use each file (`used_by`). Run it again after every import.
+
+Then the two importers below: **Beat Shaper sets** become packs for the story run (sections 1 to 5); **Ableton renders** (`Bass2Trap.wav` with `Bass2.mid`, `Kick2`, `Snare2`,
+`Other2`) become loop-library clips (section 6).
+
 ## 1. Export
 
 Per level, one *set* in the format you already use: `Beat Shaper - <project>-Drums`, `-Bass`, `-Synth`, each as `.wav` and `.mid`.
@@ -131,4 +151,32 @@ To undo an assignment, point the node back: `python tools/content/beatshaper.py 
 `python -m unittest discover -s tools/content -p "test_beatshaper.py"` builds synthetic exports (87 and 174 BPM, a 130 BPM one that must be
 refused, zips with `(1)`/`(2)` variants, missing files, a late bass, a ghosted snare, other kick/snare notes, a missing Synth, WAVs without MIDI) and checks
 grouping, tempo verification (strict and loose), the bass fallback and `--trust-midi`, note auto-detection, loops, nested tiers, the validator and assignment.
-Without `mido` installed the importer and the tests use a small built-in MIDI reader/writer, so they run anywhere with numpy.
+No `mido` is needed anywhere: `tools/content/midi_reader.py` is the MIDI reader and writer every content tool and test uses (type 0/1 files, running status, tempo, time
+signature; the files it writes are byte-identical to what mido wrote). The tests need only numpy and ffmpeg: `python3 -m unittest discover -s tools/content -p "test_*.py"`.
+
+## 6. Ableton renders into the loop library
+
+The Ableton renders in `Cold/` and `Meta/` (`Bass<N><Timbre>.wav` + `Bass<N>.mid`, `Kick<N>`, `Snare<N>`, `Other<N>`; 44.1 kHz, 16-bit, MIDI with no tempo) are not Beat Shaper
+sets. They are loop-library clips (the loadout of the military missions): a manifest names them, the importer files them, the build makes the 8-bar Ogg loops.
+
+```bash
+python tools/content/import_ableton.py content/imports/cold_meta.json --check   # what would be written, no files touched
+python tools/content/import_ableton.py content/imports/cold_meta.json           # clips, MIDI, 48 kHz WAVs, sounds
+python tools/content/build.py                                                    # loops and songs/library/index.json (about 20 s)
+```
+
+What the manifest (`content/imports/cold_meta.json`, the format of `first_watch.json`) decides, with the catalogue's facts:
+
+* **Clip length follows the pattern.** `bars` per clip: a 4-bar pattern is a 4-bar clip (a bass line or groove of 1, 2, 4 or 8 bars is tiled over the game's 8-bar loop and charted
+  on every repeat), an 8-bar pattern an 8-bar clip, a 16-bar percussion loop a 16-bar backing. A render longer than its pattern (the Cold and Meta kick, snare and Meta bass renders
+  are 16 bars of a shorter MIDI pattern repeated; `Bass2Trap` is 16 bars of a 4-bar pattern) keeps the clip's first bars with `tail_bars: 0`; the cut is written to `clip.json`
+  (`frames_in`, `bars_in`, `dropped_frames`), never silent, and the dropped bars repeat the MIDI that is kept.
+* **Timbre renders of one pattern are sounds of one clip**: `Bass2` is one clip, `bass_cold_2`, declaring `bass_hard_harmonic`, `bass_flaring_anger` and `bass_trap`; the same
+  for Bass3 to Bass5 and Meta Bass1. A declared sound plays only the clips that declare it.
+* **Gain staging per family**: `levels` give the largest gain that keeps each render's peak under `peak_db` and, for bass, brings its RMS to `rms_db`, so the three timbres of a
+  pattern are equally loud; `trim_db` is the headroom of the full mix. A render can say `gain_db`.
+* **Keys.** A pitched clip declares its key (the loadout only offers a backing with a bass of the same key). The Cold and Meta keys are the catalogue's estimates, each with its confidence in the clip's `note`. A percussion
+  backing with no pitch says `"atonal": true` and may leave the key out: the loadout offers it with every bass line.
+* New sounds need an entry in `data/campaign/instruments.json` (what they produce) and stay locked until `data/campaign/campaign.json` lists them in a mission's `new_options`.
+
+The rebuild is deterministic: removing the new clip folders and Oggs and running the two commands again gives byte-identical files (checked for this import).

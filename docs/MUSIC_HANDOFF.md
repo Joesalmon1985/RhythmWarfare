@@ -103,6 +103,10 @@ The dungeon engine plays one pack at a time; if it is taught to switch for fight
 
 | Pack id | Source | Profile | Phrase | Import | Used by |
 | --- | --- | --- | --- | --- | --- |
+| `cold_fusion` | Cold Fusion Interface | beat_shaper_174x1 | 16 beats | tempo strict, bass audio checked | imported, not assigned to a scene yet |
+| `cold_fusion_v1` | Cold Fusion Interface (1) | beat_shaper_174x1 | 16 beats | tempo strict, bass audio checked | imported, not assigned to a scene yet |
+| `cold_fusion_v2` | Cold Fusion Interface (2) | beat_shaper_174x1 | 16 beats | tempo strict, bass audio checked | imported, not assigned to a scene yet |
+| `cold_fusion_v3` | Cold Fusion Interface (3) | beat_shaper_174x1 | 16 beats | tempo strict, bass audio checked | imported, not assigned to a scene yet |
 | `dd_part1` | DD Part1 | beat_shaper_87x2 | 32 beats | tempo strict, bass audio checked | dungeon (now) |
 | `dd_part1_v1` | DD Part1 (1) | beat_shaper_87x2 | 32 beats | tempo strict, bass audio checked | spare (an alternate take) |
 | `dd_part1_v2` | DD Part1 (2) | beat_shaper_87x2 | 32 beats | tempo strict, bass audio checked | spare (an alternate take) |
@@ -123,6 +127,10 @@ The dungeon engine plays one pack at a time; if it is taught to switch for fight
 | `lv5_asylum_v1` | Lv5 Asylum (1) | beat_shaper_87x2 | 32 beats | tempo strict, bass midi fallback | `ward.art`, `ward.corridor` |
 | `lv5_asylum_v2` | Lv5 Asylum (2) | beat_shaper_87x2 | 32 beats | tempo strict, bass midi fallback | `ward_late`, `ward_late.treat`, `ward_late.exit` |
 | `lv5_asylum_v3` | Lv5 Asylum (3) | beat_shaper_87x2 | 32 beats | tempo strict, bass midi fallback | `ward.dorm`, `ward.courtyard`, `ward_late.dorm` |
+| `meta_fusion` | Metaverse Ready Fusion | beat_shaper_174x1 | 32 beats | tempo strict, bass midi fallback | imported, not assigned to a scene yet |
+| `meta_fusion_v1` | Metaverse Ready Fusion (1) | beat_shaper_174x1 | 32 beats | tempo loose, bass midi fallback | imported, not assigned to a scene yet |
+
+`cold_fusion` (+ `_v1` to `_v3`, `Cold Fusion Interface`, 174 BPM, 16-beat phrase) and `meta_fusion` (+ `_v1`, `Metaverse Ready Fusion`, 174 BPM, 32-beat phrase) come from `ToAddTry3/Cold` and `ToAddTry3/Meta`; they validate and wait for the populate step to give them to scenes (`docs/MUSIC_CATALOGUE.md` has their measured facts). The Ableton renders of the same folders are loop-library clips (`content/imports/cold_meta.json`), not packs.
 
 Not imported from `ToAddTry2/`: `Default Project` (an unedited template of the Warehouse groove) and `Lv3 Hell` (audio only, no MIDI: see above).
 

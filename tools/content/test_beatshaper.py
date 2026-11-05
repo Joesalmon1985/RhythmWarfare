@@ -1,6 +1,5 @@
 """Tests for tools/content/beatshaper.py with synthetic Beat Shaper exports (no real recordings needed): grouping by project and variant,
 tempo-profile verification, loops, tiers, the validator and assigning a pack to a level."""
-import io
 import json
 import struct
 import sys
@@ -11,14 +10,10 @@ from pathlib import Path
 
 import numpy as np
 
-try:  # the tests also run without mido: a tiny writer produces the same kind of file the exports are
-    import mido
-except ImportError:
-    mido = None
-
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import beatshaper as bs  # noqa: E402
+from midi_reader import build_midi, ev_note_off, ev_note_on, ev_tempo  # noqa: E402
 from common import ContentError, write_json  # noqa: E402
 
 SR = 48000
@@ -41,34 +36,12 @@ def _vlq(v: int) -> bytes:
 
 
 def midi_bytes(notes: list[tuple], ppq: int = 120) -> bytes:
-    if mido is None:
-        events = []
-        for beat, pitch, dur in notes:
-            events.append((round(beat * ppq), 1, bytes([0x90, pitch, 100])))
-            events.append((round((beat + dur) * ppq), 0, bytes([0x80, pitch, 0])))
-        trk = b"\x00\xff\x51\x03" + (500000).to_bytes(3, "big")  # the headers lie: 120 BPM
-        t = 0
-        for tick, _o, msg in sorted(events, key=lambda e: (e[0], e[1])):
-            trk += _vlq(tick - t) + msg
-            t = tick
-        trk += b"\x00\xff\x2f\x00"
-        return b"MThd" + struct.pack(">IHHH", 6, 0, 1, ppq) + b"MTrk" + struct.pack(">I", len(trk)) + trk
-    mid = mido.MidiFile(ticks_per_beat=ppq)
-    tr = mido.MidiTrack()
-    tr.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(120)))  # the headers lie: 120 BPM
-    events = []
+    """A type 0 file like the exports: (beat, pitch, length in beats) notes, 120 BPM in the header (the headers lie)."""
+    events = [ev_tempo(120)]
     for beat, pitch, dur in notes:
-        events.append((round(beat * ppq), 1, mido.Message("note_on", note=pitch, velocity=100)))
-        events.append((round((beat + dur) * ppq), 0, mido.Message("note_off", note=pitch, velocity=0)))
-    t = 0
-    for tick, _o, msg in sorted(events, key=lambda e: (e[0], e[1])):
-        msg.time = tick - t
-        t = tick
-        tr.append(msg)
-    mid.tracks.append(tr)
-    buf = io.BytesIO()
-    mid.save(file=buf)
-    return buf.getvalue()
+        events.append(ev_note_on(round(beat * ppq), pitch, 100))
+        events.append(ev_note_off(round((beat + dur) * ppq), pitch))
+    return build_midi(ppq, [events], 0)
 
 
 def export_set(bpm: float, project: str = "Lv9 Test", suffix: str = "", beats: int = 16, kick: int = 36, snare: int = 40, bass_shift_s: float = 0.0,
