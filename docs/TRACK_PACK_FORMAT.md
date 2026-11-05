@@ -1,6 +1,6 @@
 # Track packs: a whole recorded track, played one instrument at a time on four pads
 
-Experimental (pilot branch `feature/ai-mp3-import-pilot`). This is the contract between the audio tools
+Experimental. This is the contract between the audio tools
 (`tools/audio_import/`) and the game's track mode (`src/track/`). Either side may be rebuilt without the other
 as long as this file holds.
 
@@ -116,7 +116,8 @@ Focus
   inside the track. `voice` is the key of one of `voices`. There may be gaps between stretches (nothing to
   play there) and the same voice may have many stretches. At least one stretch exists.
 - A stretch is at least 8 beats long. The tools make them much longer (whole phrases) and start and end them
-  on bar lines.
+  on bar lines. A stretch includes its start and not its end: a cue exactly at `end_s` is outside it, and a
+  hold may end exactly at `end_s`.
 - The focus is the same for every chart of the pack.
 
 Charts
@@ -136,7 +137,10 @@ Charts
   names and mean the same kind of thing for every voice: lower sounds to the left, higher to the right, by
   pitch where the part has one and by how low or bright the hit is where it does not (a kick is low, a snare
   higher, a hat highest), so the thumbs follow the shape of the part. The same sound in the same stretch is
-  always the same pad, and a phrase that repeats gets the same pads again. Where strict height order would
+  always the same pad, and a phrase that repeats gets the same pads again. A voice need not use all four
+  pads (a kit of three sounds uses three). A part that sits on a single sound but has a rhythm worth playing
+  is split over two pads by position in the bar (on and off the beat), so it is not one pad hammered; that
+  is the one case where the same sound has two pads. Where strict height order would
   make a part awkward (two sounds that alternate quickly landing on one thumb), the tools may move a sound
   to the other thumb, keeping the order within each thumb.
 - Pads 1 and 2 are the left thumb, pads 3 and 4 the right (keys D F J K on a keyboard).
@@ -161,7 +165,8 @@ separation notes, why each focus stretch was chosen, tool version). The game ign
   time, using the game's existing pad view, input and timing (latency and calibration as everywhere else).
 - Shows which voice the player is playing now (the focus stretch's voice; the pads carry no names), and
   announces a change of focus before it happens: from 8 beats ahead it shows the next voice's name and counts
-  the beats down. Between stretches it shows that there is nothing to play.
+  the beats down (a stretch that begins in the first 8 beats of the track is announced during the count-in).
+  Between stretches it shows that there is nothing to play.
 - All voices start audible. A missed cue (the moment the press window closes, 0.14 s after the cue), or a
   hold let go early, mutes the cue's voice (the stem keeps running silently). The next cue hit for that voice
   brings it back. Backing never mutes. The other voices are not affected.

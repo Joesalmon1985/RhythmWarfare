@@ -1,6 +1,6 @@
 # Audio import: finished recordings to track packs
 
-Pilot (branch `feature/ai-mp3-import-pilot`). Turns finished recordings (FLAC, MP3, WAV: anything ffmpeg reads)
+Turns finished recordings (FLAC, MP3, WAV: anything ffmpeg reads)
 into track packs as defined in `docs/TRACK_PACK_FORMAT.md` (version 2): the recording separated into voices
 (drums, bass, other, vocals) and a backing stem, a **focus** timeline saying which voice is the player's at each
 moment (the most prominent one, decided automatically), and `easy` / `normal` / `hard` charts that lay the focus
@@ -27,7 +27,7 @@ librosa 1.0.0, numpy 2.5.4, scipy 1.18.1, soundfile 0.14.0. Version 2 added no p
 
 One track:
 
-    cd /home/joe/Projects/MusicGame-mp3
+    cd /home/joe/Projects/MusicGame
     OMP_NUM_THREADS=3 nice -n 10 /home/joe/.venvs/rw-audio/bin/python tools/audio_import/import_track.py \
         "/path/to/Artist - Title.flac" [--id artist_title] [--out /home/joe/rw-audio-work] \
         [--model htdemucs|htdemucs_ft|htdemucs_6s] [--from STAGE | --only STAGE] \
@@ -48,6 +48,15 @@ and the batch goes on. The run ends with one line per track, also written to
 The id defaults to `artist_title` from the tags or the file name (`--id` only with one input). Every stage
 caches its result; a rerun skips what is done, and once a stage runs every later stage runs too. `--from chart`
 reruns the chart and everything after it; `--only preview` reruns one stage.
+
+### Play an imported track
+
+    tools/audio_import/play_track.sh <id>                 # the pack's default chart (normal)
+    tools/audio_import/play_track.sh <id> easy 70         # another chart, starting 70 s in
+    RW_AUTOPLAY=accuracy:0.7 tools/audio_import/play_track.sh <id>    # watch it play itself
+
+Keys D F J K. The game's side of this is track mode, `src/track/README.md`. The first time after pulling new
+code, run Godot's import once (`$GODOT --headless --path . --import`) so the new scripts are registered.
 
 ### The summary line and its warnings
 
