@@ -167,6 +167,7 @@
   }
  ],
  "things": [
+  {"id": "hs_cable_eel", "kind": "billboard", "sprite": "thing_glow", "at": [-1.90, 1.86], "y": 1.85, "size": 0.05, "anim": "none"},
   {
    "id": "valve",
    "kind": "billboard",

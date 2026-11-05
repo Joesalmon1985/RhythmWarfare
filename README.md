@@ -6,7 +6,7 @@ series of rooms (scenes) and each scene is a 64-beat phase that starts with drum
 next. Good play keeps the mix building, a missed block holds it for another go, and the crowd's energy is the meter that ends the run if it runs out. Standalone Godot 4.5.1
 project. Home has five buttons: Play (the run), Story chapters (the finished chapter-by-chapter campaign, with its own saves), Start from a reached level, Wizard Duel (wifi) (two phones or windows on one network, or practise alone), Settings.
 Inside the run the camera rides a rail through each world: a pass at a block steps you one place up the room (floor, steps, stage, balcony, booth), a miss steps you down
-the bad rail (floor edge, corridor, cubicle), and the route window lights the room's exits beside the touch arrows. Each world is a small graph of rooms with paths to choose between
+the bad rail (floor edge, corridor, cubicle), and the route window lights the room's exits, doorways and things in the world to touch (no arrows, no written choices). Each world is a small graph of rooms with paths to choose between
 (the Warehouse floor > bar or balcony > chill-out or booth > the door; 3 to 5 phases, 66 to 110 s, each room with its own variant of the world's music); a path inside a world is a plain
 door walk, a change of world keeps the passage frame.
 
@@ -70,7 +70,9 @@ or with `RW_DEV=1`, use it); the run does not depend on it.
 ## Running
 
 Godot 4.5.1: open `project.godot` and press Play, or run the Windows build from `build/windows/` (`docs/EXPORT.md`).
-Desktop keys: D F J K = pads 1 to 4, Esc = pause, F3 = debug line.
+Controls: four pads (D F J K on a desktop) plus touching the world: when a scene's choice window opens (and in the Bassment), things in the room light up (a doorway, a person, an object, a creature);
+touch one to choose it (touch another to change your mind; keys 1 to 4 on a desktop) and your playing in the last block decides how it goes. Nothing tapped takes the brighter default. Esc = pause, F3 = debug line.
+The game needs no flags to launch: open `project.godot` and press Play.
 
 ```
 bash tools/test.sh                                   # all headless tests + the content build tests

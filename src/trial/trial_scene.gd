@@ -2,8 +2,10 @@ class_name TrialScene
 extends Control
 ## The Bassment inside the run scene (docs/TRIAL_OPENING.md). The run's RunPlay hosts it: it owns the TrialEngine (the pads, the clock and RunAudio are the host's and never restart),
 ## one StoryStage per zone (each a 2.5D map from content/story/maps/bassment_<zone>.json, built ahead during a cue-free guard and swapped through the passage frame on a downbeat),
-## the camera on rails between the passages' waypoints, the exits lit while the four-bar window is open (plus the floating labels, the touch targets), creatures as billboard
-## figures with idle, attack and struck poses, and the tableaux of a death and of the victory. Everything is a function of song time.
+## the camera on rails between the passages' waypoints, the passage text as a caption band across the top (narrative only: no choice is ever written), the choices as hotspots in the
+## room while the four-bar window is open (an exit lit where it lies, a creature standing in the room, an object, a feature; the default one brighter; tap to select, tap again to change,
+## keys 1 to 4 on a desktop), creatures as billboard figures with idle, attack and struck poses, and the tableaux of a death and of the victory. Everything is a function of song time.
+## The hotspot data is content/trial/hotspots.json (TrialHotspots); the lights and the hit test are the run's own HotspotView (one per zone stage, inside its low-res picture), fed by `hotspot_items`.
 
 const OUTCOME_S := 1.1
 const SCENE_TEXT := Color(0.93, 0.92, 1.0)
@@ -41,13 +43,13 @@ var _news: Label
 var _msg: Label
 var _tag: Label
 var _timer_bar: ColorRect
-var _timer_label: Label
 var _choice_layer: Control
-var _buttons: Array = []
-var _base_pos: Array = []
+var hotspots: TrialHotspots
+var _items: Array = []  # the open window's hotspots: [{hs, index}] (index into the engine's choices)
+var _sel_t: Dictionary = {}  # choice index -> song time it was selected
+var _commit_view: Dictionary = {}  # {index, hs, zone, t}: the committed hotspot stays drawn for a moment (the flash)
 var _flash: ColorRect
 var _fade: ColorRect
-var _exits: RunExitsView
 var _outcome := {}
 var _pending: Dictionary = {}  # a passage waiting for the zone swap or an outcome animation
 var _swap_zone := ""
@@ -58,6 +60,7 @@ var _last_wp := ""
 var _fig: Dictionary = {}  # {node, mat, id, st, pos, sec, spec}
 var _fig_pose := ""
 var _script_choices: PackedStringArray = PackedStringArray()
+var _script_taps := false  # RW_TRIAL_TAPS: the scripted picks are real taps through the hit test (hotspot centres), not direct picks
 var _script_i := 0
 var _script_pick_at := -1.0
 var _script_pick := -1
@@ -83,8 +86,12 @@ func setup(p_host: Node, p_tdata: TrialData, p_rdata: RunData) -> void:
 	_stage_host = host._stage_host
 	_build_ui()
 	visible = false
+	hotspots = TrialHotspots.load_default()
 	if OS.get_environment("RW_TRIAL_CHOICES") != "":
 		_script_choices = OS.get_environment("RW_TRIAL_CHOICES").split(",")
+	elif OS.get_environment("RW_TRIAL_TAPS") != "":  # one token per window, ";" or "," between them: a choice index to tap, or "d" for no tap
+		_script_choices = OS.get_environment("RW_TRIAL_TAPS").replace(";", ",").split(",")
+		_script_taps = true
 	if OS.get_environment("RW_TRIAL_UNTIL") != "":
 		_until = int(OS.get_environment("RW_TRIAL_UNTIL"))
 	_assets = StoryAssets.load_art("bassment")
@@ -146,13 +153,6 @@ func _build_ui() -> void:
 	_timer_bar.color = Color(1.0, 0.82, 0.5, 0.9)
 	_timer_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_choice_layer.add_child(_timer_bar)
-	_timer_label = Label.new()
-	_timer_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_timer_label.add_theme_color_override("font_color", Color(1, 0.95, 0.8))
-	_timer_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
-	_timer_label.add_theme_constant_override("outline_size", 5)
-	_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_choice_layer.add_child(_timer_label)
 	_msg = Label.new()
 	_msg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_msg.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -166,15 +166,6 @@ func _build_ui() -> void:
 	_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	area.add_child(_flash)
-	_exits = RunExitsView.new()
-	_exits.name = "TrialExits"
-	_exits.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_exits.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_exits.visible = false
-	_exits.beat_s = _beat_s
-	_exits.pose_fn = _exit_pose
-	_exits.now_fn = func() -> float: return _last_t
-	area.add_child(_exits)
 	area.resized.connect(_layout)
 
 
@@ -196,7 +187,6 @@ func _layout() -> void:
 	_title.position = Vector2(w * 0.025, h * 0.03)
 	_desc.add_theme_font_size_override("font_size", fs)
 	_news.add_theme_font_size_override("font_size", fs)
-	_timer_label.add_theme_font_size_override("font_size", fs)
 	_tag.add_theme_font_size_override("font_size", int(fs * 0.8))
 	_tag.position = Vector2(w * 0.025, h - fs * 1.7)
 	_msg.add_theme_font_size_override("font_size", int(fs * 1.9))
@@ -217,29 +207,14 @@ func _shrink_panel() -> void:
 		_panel.size = Vector2(_area().size.x * PANEL_W, 0)
 
 
+## The four-bar window is a thin bar along the bottom of the picture (no text): it empties as the bars run out.
 func _place_choices() -> void:
 	var w := _area().size.x
 	var h := _area().size.y
-	var fs := _fs()
-	var bw := minf(w * 0.42, 460.0)
-	var bh := clampf(h * 0.17, 46.0, 84.0)
-	var n := _buttons.size()
-	var gap := bh * 0.25
-	var total := n * bh + (n - 1) * gap
-	var bar_h := maxf(h * 0.02, 6.0)
-	var y0 := h - total - h * 0.06 - bar_h - fs * 1.6
-	_base_pos.clear()
-	for i in n:
-		var b: Button = _buttons[i]
-		b.size = Vector2(bw, bh)
-		b.add_theme_font_size_override("font_size", int(fs * 1.05))
-		var p := Vector2(w * 0.975 - bw, y0 + i * (bh + gap))
-		_base_pos.append(p)
-		b.position = p
-	_timer_bar.size = Vector2(bw, bar_h)
-	_timer_bar.position = Vector2(w * 0.975 - bw, h - h * 0.06 - bar_h)
-	_timer_label.size = Vector2(bw, fs * 1.4)
-	_timer_label.position = Vector2(w * 0.975 - bw, h - h * 0.06 - bar_h - fs * 1.5)
+	var bar_h := maxf(h * 0.014, 4.0)
+	_timer_bar.size = Vector2(w * 0.95, bar_h)
+	_timer_bar.pivot_offset = Vector2.ZERO
+	_timer_bar.position = Vector2(w * 0.025, h - bar_h - 2.0)
 
 
 # --- zones -------------------------------------------------------------------------------------------------------------------
@@ -275,6 +250,24 @@ func build_zone(z: String) -> Dictionary:
 	if st.map != null:
 		st.attach_world(st.map, true)
 	var rec := {"stage": st, "map": st.map}
+	if st.lowres != null:  # the hotspots are drawn inside the picture, above the room, by the run's own view
+		var hv := HotspotView.new()
+		hv.name = "Hotspots"
+		hv.stage = st
+		hv.beat_s = _beat_s
+		hv.items_fn = func() -> Array: return _view_items(z)
+		hv.pose_fn = _exit_pose
+		hv.now_fn = func() -> float: return _last_t
+		hv.reduced = Session.reduced_effects
+		hv.high_contrast = Session.high_contrast
+		hv.glow_tex = _assets.sprite("glow").get("tex", null)
+		var warm: Array = st.palettes.get("warm", [])
+		if not warm.is_empty():
+			hv.tint = (warm[0] as Color).lerp(Color(1.0, 0.9, 0.6), 0.55)
+		hv.set_anchors_preset(Control.PRESET_FULL_RECT)
+		var layer := st.lowres.add_overlay(hv, "Hotspots")
+		layer.layer = 2
+		rec["hotspot_view"] = hv
 	zone_stages[z] = rec
 	build_log.append({"zone": z, "ms": snappedf(float(Time.get_ticks_usec() - t0) / 1000.0, 0.1)})
 	return rec
@@ -391,8 +384,14 @@ func update(t: float, audio_t: float) -> void:
 	_bot_step(t)
 	_handle(engine.update(t))
 	if _script_pick >= 0 and audio_t >= _script_pick_at:
-		pick(_script_pick)
-		_script_pick = -1
+		if _script_taps:
+			if not _view_items(zone).is_empty():  # (the finger waits for the room: the lights come up after a zone swap)
+				var hit := tap_centre(_script_pick)
+				print("TRIAL tap %d -> %d" % [_script_pick, hit])
+				_script_pick = -1
+		else:
+			pick(_script_pick)
+			_script_pick = -1
 	_prebuild_in_guard(t)
 	if swap_t >= 0.0 and audio_t >= swap_t:
 		_do_swap()
@@ -408,15 +407,9 @@ func update(t: float, audio_t: float) -> void:
 	_animate_figure(audio_t)
 	var open := engine.window_open and swap_t < 0.0 and zone != "" and left_t < 0.0 and _pending.is_empty()
 	_choice_layer.visible = open
-	_exits.visible = open
 	if open:
-		for i in _buttons.size():
-			(_buttons[i] as Button).position = (_base_pos[i] as Vector2) + Vector2(0.0, sin(audio_t * 1.7 + float(i) * 1.3) * _area().size.y * 0.012)
 		var span := float(TrialEngine.BLOCK_BEATS) * _beat_s
-		var left := engine.window_left(t)
-		_timer_bar.scale = Vector2(clampf(left / span, 0.0, 1.0), 1.0)
-		var bars := int(ceil(left / (4.0 * _beat_s)))
-		_timer_label.text = "%d bar%s to choose" % [bars, "" if bars == 1 else "s"]
+		_timer_bar.scale = Vector2(clampf(engine.window_left(t) / span, 0.0, 1.0), 1.0)
 	_panel.visible = _panel.visible and not swapping
 	_update_dark(audio_t)
 	if left_t >= 0.0 and audio_t >= left_t and not ended:
@@ -555,6 +548,7 @@ func _show_passage(ev: Dictionary) -> void:
 	_fit_panel()
 	_msg.text = ""
 	_tag.text = _tag_text()
+	_sync_figure()
 	var pk := str(ev.get("passage_kind", p.get("kind", "normal")))
 	var t := float(ev["t"])
 	if pk == "death":
@@ -588,24 +582,13 @@ func _tag_text() -> String:
 
 
 func _open_window(ev: Dictionary) -> void:
-	for b in _buttons:
-		b.queue_free()
-	_buttons.clear()
-	var cs := engine.choices()
-	for i in cs.size():
-		var b := Button.new()
-		b.theme = StoryStyle.theme()
-		b.focus_mode = Control.FOCUS_NONE
-		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		b.set_meta("index", i)
-		b.set_meta("label", ("Try again: " if i == engine.flow.retry_index else "") + str(cs[i]["label"]))
-		b.pressed.connect(func() -> void: pick(i))
-		_choice_layer.add_child(b)
-		_buttons.append(b)
+	_items = hotspots.visible(engine.flow.passage, engine.flow.flags)
 	_choice_layer.visible = true
 	_place_choices()
-	_sync_buttons()
-	_exits.fade_from = float(ev["t"])
+	if _outcome.is_empty():
+		_sync_figure()
+	_commit_view = {}
+	_sel_t = {}
 	_script_pick = -1
 	_script_pick_at = -1.0
 	if _script_i < _script_choices.size():
@@ -619,60 +602,117 @@ func _open_window(ev: Dictionary) -> void:
 		_desc.visible = true
 
 
-func _sync_buttons() -> void:
-	var def := engine.default_index()
-	for i in _buttons.size():
-		var b: Button = _buttons[i]
-		var tag := ""
-		if engine.selected >= 0:
-			tag = "   [CHOSEN]" if i == engine.selected else ""
-		elif i == def:
-			tag = "   [DEFAULT]"
-		b.text = "%d  %s%s" % [i + 1, str(b.get_meta("label")), tag]
-		var on := (engine.selected == i) or (engine.selected < 0 and i == def)
-		b.modulate = Color(1.0, 0.95, 0.6) if on else Color(0.85, 0.88, 1.0, 0.92)
-	_exits.items = exit_items()
-
-
-## The lit exits of the open window: [{dir, glyph, at, ground, chosen}] for each choice whose exit waypoint the zone map knows.
-func exit_items() -> Array:
+## What the hotspot view of zone `z` draws and a tap hits: [{index, hotspot, state, t_state}] for the open window's hotspots (once the passage's zone is the one on screen: after a zone swap the lights
+## come up in the new room), plus the one that has just committed (it stays for its flash). `hotspot` is the contract's hotspot; its `default` is true only while nothing is picked (the default is
+## brighter until the player chooses).
+func _view_items(z: String) -> Array:
 	var out: Array = []
-	var m := _map(zone)
-	if m == null or engine == null:
+	if engine == null or not active:
 		return out
-	var cs := engine.choices()
-	var eff := engine.effective_choice()
-	for i in cs.size():
-		var wid := str(cs[i].get("exit_wp", ""))
-		if wid == "" or not m.has_waypoint(wid):
-			continue
-		var w: Dictionary = m.waypoint(wid)
-		out.append({"dir": "left" if i % 2 == 0 else "right", "glyph": str(i + 1), "at": w["at"], "ground": float(m.sector(str(w["sector"])).get("floor", 0.0)), "chosen": i == eff})
+	if z == zone and engine.window_open and not _items.is_empty() and tdata.zone_of_passage(engine.flow.passage) == z:
+		var def := engine.default_index()
+		for it in _items:
+			var h: Dictionary = (it["hs"] as Dictionary).duplicate()
+			var i := int(it["index"])
+			h["default"] = i == def and engine.selected < 0
+			var sel := i == engine.selected
+			out.append({"index": i, "hotspot": h, "state": "selected" if sel else "available", "t_state": float(_sel_t.get(i, 0.0)) if sel else 0.0})
+	if not _commit_view.is_empty() and str(_commit_view["zone"]) == z:
+		if _last_t - float(_commit_view["t"]) < 2.0 * _beat_s:
+			out.append({"index": int(_commit_view["index"]), "hotspot": _commit_view["hs"], "state": "committed", "t_state": float(_commit_view["t"])})
+		else:
+			_commit_view = {}
 	return out
 
 
-## The player picks (or changes their pick) in the open window: a tap on a floating choice, a key, or a script.
+## The lights of the open window (what the hotspot view shows now): [{index, hotspot, state, t_state}].
+func hotspot_items() -> Array:
+	return _view_items(zone)
+
+
+func hotspot_of(index: int) -> Dictionary:
+	for it in _items:
+		if int(it["index"]) == index:
+			return it["hs"]
+	return {}
+
+
+## The screen placement of the open window's hotspots in the stage area: HotspotView.layout (the same pure function the view draws with).
+func hotspot_layout() -> Array:
+	var st := _stage(zone)
+	var pose := _exit_pose()
+	var rect := _stage_rect()
+	if st == null or st.map == null or pose.is_empty() or rect.size.x <= 1.0:
+		return []
+	return HotspotView.layout(hotspot_items().filter(func(e: Dictionary) -> bool: return str(e["state"]) != "committed"), st.map, st.crowds, pose, rect.size)
+
+
+func _stage_rect() -> Rect2:
+	var sh: Control = host._stage_host
+	return Rect2(sh.global_position, sh.size)
+
+
+## A touch or click at `pos` (viewport coordinates): only the stage area counts and never a point over a pad (RunPlay hands the touches here while the dungeon is in). The nearest hotspot within
+## its projected radius, at least min_px wide, is picked. Returns the choice index hit (-1 for a tap on nothing).
+func hotspot_tap(pos: Vector2) -> int:
+	if not active or engine == null or not engine.window_open:
+		return -1
+	var rect := _stage_rect()
+	if not rect.has_point(pos):
+		return -1
+	var rects: Dictionary = host.pad_view.button_rects()
+	for p in rects:
+		if (rects[p] as Rect2).has_point(pos):
+			return -1
+	var id := HotspotView.hit(hotspot_layout(), pos - rect.position)
+	if id == "":
+		return -1
+	for it in _items:
+		if str((it["hs"] as Dictionary)["id"]) == id:
+			pick(int(it["index"]))
+			return int(it["index"])
+	return -1
+
+
+## A finger on the centre of hotspot `index` through the same hit test (a script's or a test's tap). Returns the index hit (-1 when it cannot be reached).
+func tap_centre(index: int) -> int:
+	var rect := _stage_rect()
+	var want := str(hotspot_of(index).get("id", ""))
+	for e in hotspot_layout():
+		if want == str(e["id"]):
+			return hotspot_tap((e["centre"] as Vector2) + rect.position)
+	return -1
+
+
+## Bars left of the open window (4 down to 1; 0 when none).
+func bars_left() -> int:
+	if engine == null or not engine.window_open:
+		return 0
+	return int(ceil(engine.window_left(_last_t) / (4.0 * _beat_s)))
+
+
+## The player picks (or changes their pick) in the open window: a tap on a hotspot, a key, or a script.
 func pick(i: int) -> void:
 	if engine != null and engine.select(i):
 		trace.append({"kind": "pick", "choice": i, "t": _last_t})
-		_sync_buttons()
+		_sel_t[i] = _last_t
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if active and event is InputEventKey and event.pressed and not event.echo and engine != null and engine.window_open:
 		var k := (event as InputEventKey).keycode
-		if k >= KEY_1 and k <= KEY_4 and k - KEY_1 < _buttons.size():
+		if k >= KEY_1 and k <= KEY_4 and k - KEY_1 < _items.size():
 			pick(k - KEY_1)
 
 
 func _on_commit(ev: Dictionary) -> void:
 	_choice_layer.visible = false
-	_exits.items = []
-	for b in _buttons:
-		b.queue_free()
-	_buttons.clear()
 	var cs := engine.flow.choices()
 	var i := int(ev["choice"])
+	var hs := hotspot_of(i)
+	if not hs.is_empty():  # the committed hotspot flashes for a moment
+		_commit_view = {"index": i, "hs": hs, "zone": zone, "t": float(ev["t"])}
+	_items = []
 	_last_exit = ""
 	if i >= 0 and i < cs.size():
 		_last_exit = str(cs[i].get("exit_wp", ""))
@@ -697,7 +737,8 @@ func _on_phrase(ev: Dictionary) -> void:
 	var enc := str(ev["encounter"])
 	if enc != "" and not _stage(zone) == null:
 		var e: Dictionary = tdata.encounters[enc]
-		_spawn_figure(enc, float(ev["t"]))
+		if _fig.is_empty() or str(_fig["id"]) != enc:  # (it already stands in the room: the creature is the hotspot that was tapped)
+			_spawn_figure(enc, float(ev["t"]))
 		_news.text = str(e["intro"])
 		_news.visible = true
 		_panel.visible = true
@@ -730,7 +771,7 @@ func _on_exit(ev: Dictionary) -> void:
 	var span := (left_t - t) / (4.0 * _beat_s)
 	_move(zone, _last_exit, t, span)
 	_choice_layer.visible = false
-	_exits.items = []
+	_items = []
 
 
 # --- creatures ---------------------------------------------------------------------------------------------------------------
@@ -755,6 +796,23 @@ func figure_spot(z: String, wp_id: String, dist: float) -> Dictionary:
 			return {"pos": p, "sec": sid}
 		d -= 0.4
 	return {"pos": at + fwd * 1.2, "sec": str(w["sector"])}
+
+
+## The creature of the open window stands in the room as its hotspot (tap it to fight): spawned when a window opens on a passage with a fight on offer, dropped when the passage
+## has none. Never mid-phrase, mid-outcome or mid-swap.
+func _sync_figure() -> void:
+	if engine == null or not engine.window_open or swap_t >= 0.0 or zone == "" or not _outcome.is_empty():
+		return
+	var want := ""
+	for c in engine.choices():
+		if str(c.get("encounter", "")) != "":
+			want = str(c["encounter"])
+			break
+	if want == "":
+		if not _fig.is_empty():
+			_drop_figure()
+	elif _fig.is_empty() or str(_fig["id"]) != want:
+		_spawn_figure(want, _last_t)
 
 
 func _spawn_figure(enc: String, t: float) -> void:
@@ -845,6 +903,7 @@ func _animate_outcome(t: float) -> void:
 		_outcome = {}
 		if won:
 			_drop_figure()
+			_sync_figure()
 		if not _pending.is_empty() and swap_t < 0.0:
 			var ev := _pending
 			_pending = {}
@@ -887,11 +946,9 @@ func deactivate() -> void:
 	_dark_t0 = -1.0
 	_fade.color = Color(0, 0, 0, 0)
 	_flash.color = Color(1, 1, 1, 0)
-	_exits.visible = false
+	_commit_view = {}
+	_items = []
 	_choice_layer.visible = false
-	for b in _buttons:
-		b.queue_free()
-	_buttons.clear()
 	for k in zone_stages:
 		var s: StoryStage = zone_stages[k]["stage"]
 		s.visible = false

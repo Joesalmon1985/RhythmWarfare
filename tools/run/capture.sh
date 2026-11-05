@@ -25,9 +25,9 @@ shot() {  # name node bot routes song_seconds [extra env assignments...]
   local res=()
   for kv in "$@"; do case "$kv" in RW_WINDOW=*) res=(--resolution "${kv#RW_WINDOW=}");; esac; done
   env XDG_DATA_HOME="$TMP/data" RW_RUN_VIRTUAL=1 RW_STORY_RATE=$RATE RW_RUN_START="$node" RW_RUN_BOT="$bot" RW_RUN_ROUTES="$routes" "$@" \
-    "$GODOT" --path "$ROOT" "${res[@]}" -s tools/shoot.gd -- res://src/run/run_play.tscn "$TMP" "$frames:shot:$name" 2>&1 | grep -E "ERROR|SCRIPT" | grep -v "RID allocations\|leaked\|still in use\|ObjectDB" || true
+    "$GODOT" --path "$ROOT" "${res[@]}" -s tools/shoot.gd -- res://src/run/run_play.tscn "$TMP" "$frames:shot:$name" 2>&1 </dev/null | grep -E "ERROR|SCRIPT" | grep -v "RID allocations\|leaked\|still in use\|ObjectDB" || true
   if [ -f "$TMP/$name.png" ]; then
-    ffmpeg -y -loglevel error -i "$TMP/$name.png" -q:v 3 "$OUT/$name.jpg" && rm -f "$TMP/$name.png"
+    ffmpeg -nostdin -y -loglevel error -i "$TMP/$name.png" -q:v 3 "$OUT/$name.jpg" && rm -f "$TMP/$name.png"
     echo "shot $OUT/$name.jpg"
   fi
 }
@@ -87,6 +87,21 @@ shot passage_closing   warehouse.exit perfect up "$(python3 -c "print(64*60/174-
 shot passage_doorway   warehouse.exit perfect up "$(python3 -c "print(64*60/174+0.05)")"
 shot passage_opening   warehouse.exit perfect up "$(python3 -c "print(64*60/174+0.75)")"
 shot passage_arrived   warehouse.exit perfect up "$(python3 -c "print(64*60/174+6.0)")"
+
+# --- hotspots: before a selection, after it, and after a success and a failure outcome (RW_RUN_SELECT=<hotspot id>@<phase beat> touches it; the bot misses the last block with blocks:1110) -------------
+shot hotspots_before     warehouse perfect "" "$(python3 -c "print(53*60/174)")"
+shot hotspots_selected   warehouse perfect "" "$(python3 -c "print(55*60/174)")" "RW_RUN_SELECT=warehouse.exit_balcony@52"
+shot hotspots_committed  warehouse perfect "" "$(python3 -c "print(60.9*60/174)")" "RW_RUN_SELECT=warehouse.exit_balcony@52"
+shot hotspots_success    warehouse perfect "" "$(python3 -c "print(66*60/174)")" "RW_RUN_SELECT=warehouse.dancer@52"
+shot hotspots_failure    warehouse blocks:1110 "" "$(python3 -c "print(66*60/174)")" "RW_RUN_SELECT=warehouse.dancer@52"
+shot hotspots_wizard     warehouse perfect "" "$(python3 -c "print(8*60/174)")" "RW_RUN_SELECT=warehouse.wizard@3"
+shot hotspots_phone      warehouse perfect "" "$(python3 -c "print(55*60/174)")" "RW_RUN_SELECT=warehouse.exit_balcony@52" RW_WINDOW=844x390
+
+# --- the hotspot window of every scene (nothing touched yet: the default brighter), then a contact sheet per world: docs/shots/run/contact_hotspots_<world>.jpg ------------------------------------
+while read -r node entry; do
+  shot "hotspots_${node//./_}" "$node" perfect "" "$(python3 -c "print(54*60/174)")"
+done < "$TMP/scenes.txt"
+if [ -z "$ONLY" ] || [[ "contact_hotspots" =~ $ONLY ]]; then python3 "$ROOT/tools/run/contact_hotspots.py" "$OUT"; fi
 
 # --- layouts and settings ---------------------------------------------------------------------------------------------------------------------------------------------------
 shot phone_route_window warehouse perfect right 19.0 RW_WINDOW=844x390

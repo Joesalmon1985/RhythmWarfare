@@ -2,16 +2,12 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dobebif668x8j"
-path="res://.godot/imported/fight_2_eel_lunges.png-686f7cedc740a9ec0466402e8833daae.ctex"
-metadata={
-"vram_texture": false
-}
+uid="uid://cxk6c874bmq7v"
+valid=false
 
 [deps]
 
 source_file="res://docs/shots/trial/fight_2_eel_lunges.png"
-dest_files=["res://.godot/imported/fight_2_eel_lunges.png-686f7cedc740a9ec0466402e8833daae.ctex"]
 
 [params]
 

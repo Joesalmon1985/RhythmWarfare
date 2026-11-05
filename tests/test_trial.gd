@@ -595,7 +595,14 @@ func _left(scene: Node) -> Array:
 	return scene.trial_log.filter(func(e: Dictionary) -> bool: return e["kind"] == "left")
 
 
-func test_the_scene_is_the_2d5_world_with_lit_exits_and_floating_labels() -> void:
+func _sel(tr: TrialScene, i: int) -> Dictionary:
+	for it in tr.hotspot_items():
+		if int(it["index"]) == i:
+			return it
+	return {}
+
+
+func test_the_scene_is_the_2d5_world_with_hotspots_and_a_caption_band() -> void:
 	var d := _trial_scene("perfect")
 	var tr: TrialScene = d["tr"]
 	var scene: Node = d["scene"]
@@ -603,48 +610,115 @@ func test_the_scene_is_the_2d5_world_with_lit_exits_and_floating_labels() -> voi
 	scene._step_virtual(scene._vt)
 	assert_eq(tr.zone, "hatch", "the first zone is shown at once in a direct launch")
 	assert_true(tr.zone_stages["hatch"]["stage"].visible and tr.zone_stages["hatch"]["stage"].world_active, "a 2.5D stage")
-	assert_eq(tr._buttons.size(), 2, "two floating choices")
-	for b in tr._buttons:
-		assert_true((b as Button).size.x >= 140.0 and (b as Button).size.y >= 40.0, "a big enough target on a phone")
-	assert_true(tr._buttons[0].text.contains("[DEFAULT]"))
-	assert_false(tr._buttons[1].text.contains("[DEFAULT]"))
-	assert_eq(tr._exits.items.size(), 2, "both choices are lit as exits in the room")
+	assert_eq(tr.hotspot_items().size(), 2, "both choices are hotspots in the room")
+	assert_true(_sel(tr, 0)["hotspot"]["default"] and not _sel(tr, 1)["hotspot"]["default"], "the default is the brighter one")
+	assert_false((_sel(tr, 0)["state"] == "selected") or (_sel(tr, 1)["state"] == "selected"))
+	for c in tr.get_children():
+		assert_false(c is Button, "no button is left in the dungeon's overlay")
+	var texts := tr._desc.text + tr._title.text + tr._news.text + tr._tag.text
+	for c in tr.engine.choices():
+		assert_false(texts.contains(str(c["label"])), "the caption band is narrative only: a choice's words are never written")
+	assert_false(texts.contains("[DEFAULT]") or texts.contains("[CHOSEN]"))
 	assert_true(tr._desc.text.length() > 40)
 	assert_eq(tr._title.text, "THE SERVICE HATCH")
 	assert_eq(tr._tag.text, "The Service Hatch")
-	assert_true(tr._choice_layer.visible)
+	assert_true(tr._choice_layer.visible and not tr.hotspot_items().is_empty())
+	assert_true(tr._panel.visible and tr._panel.size.x >= tr._area().size.x * 0.9, "the passage text is a band across the top")
+	assert_eq(tr.hotspot_of(0)["id"], "trial.%d.0" % tr.engine.flow.passage)
+	# select, change and change back (keys 1 to 4 and taps are the same pick)
 	tr.pick(1)
-	assert_true(tr._buttons[1].text.contains("[CHOSEN]") and not tr._buttons[0].text.contains("[DEFAULT]"))
+	assert_true((_sel(tr, 1)["state"] == "selected") and not _sel(tr, 0)["hotspot"]["default"], "the selected one lights, the default mark moves off")
 	tr.pick(0)
-	assert_true(tr._buttons[0].text.contains("[CHOSEN]"))
-	tr.pick(1)
+	assert_true((_sel(tr, 0)["state"] == "selected") and not (_sel(tr, 1)["state"] == "selected"))
+	var key := InputEventKey.new()
+	key.keycode = KEY_2
+	key.pressed = true
+	tr._unhandled_key_input(key)
+	assert_eq(tr.engine.selected, 1, "key 2 picks the second hotspot")
+	assert_eq(tr.tap_centre(0), 0, "a tap on the first hotspot's target hits it")
+	assert_eq(tr.engine.selected, 0, "and picks it")
+	assert_eq(tr.tap_centre(1), 1)
 	var cues_before: int = tr.engine.level.notes.size()
 	assert_true(_until(scene, func() -> bool: return _title_is(tr, "Chalk on the Wall")))
 	assert_true(tr.engine.level.notes.size() > cues_before, "cues were being charted all along")
 	var free := 0
 	var t := 0.0
+	var bar_full := false
 	while t < 40.0 and _title_is(tr, "Chalk on the Wall"):
 		scene._vt += 1.0 / 30.0
 		scene._step_virtual(scene._vt)
 		t += 1.0 / 30.0
-		if tr.engine.window_open and tr._timer_label.text.begins_with("4 bar"):
+		if tr.engine.window_open and tr.bars_left() == 4:
 			free += 1
+			bar_full = bar_full or tr._timer_bar.scale.x > 0.9
 		if free > 3:
 			break
-	assert_true(free > 0, "the window shows how many bars are left")
+	assert_true(free > 0, "the window has four bars left when it opens")
+	assert_true(bar_full, "and the thin bar is full")
 	_free_scene(d)
 
 
-func test_the_phone_layout_keeps_choices_clear_of_the_pads() -> void:
+func test_a_tap_on_empty_room_or_off_a_target_picks_nothing() -> void:
 	var d := _trial_scene("perfect")
 	var tr: TrialScene = d["tr"]
 	var scene: Node = d["scene"]
-	var area_h: float = tr._area().size.y
-	for b in tr._buttons:
-		assert_true((b as Button).position.y + (b as Button).size.y <= area_h + 1.0, "the labels stay in the picture above the pads")
-	var rects: Dictionary = scene.pad_view.button_rects()
-	assert_true(rects.size() == 4)
+	scene._vt += 1.0 / 30.0
+	scene._step_virtual(scene._vt)
+	var hit := tr.hotspot_tap(Vector2(-50.0, -50.0))
+	assert_eq(hit, -1)
+	assert_eq(tr.engine.selected, -1, "nothing was picked")
 	_free_scene(d)
+
+
+func test_the_phone_layout_keeps_hotspot_targets_big_and_clear_of_the_pads() -> void:
+	var d := _trial_scene("perfect")
+	var tr: TrialScene = d["tr"]
+	var scene: Node = d["scene"]
+	scene._vt += 1.0 / 30.0
+	scene._step_virtual(scene._vt)
+	var area_h: float = tr._area().size.y
+	var area_w: float = tr._area().size.x
+	var pads: Dictionary = scene.pad_view.button_rects()
+	assert_true(pads.size() == 4)
+	var lay: Array = tr.hotspot_layout()
+	assert_true(lay.size() >= 2)
+	var stage_rect: Rect2 = tr._stage_rect()
+	for e in lay:
+		var rad := float(e["radius_px"])
+		assert_true(rad * 2.0 >= 72.0 - 0.01, "a hotspot target is at least 72 px: %s" % str(rad * 2.0))
+		var c: Vector2 = e["centre"]
+		assert_true(c.y >= 0.0 and c.y <= area_h and c.x >= 0.0 and c.x <= area_w, "its centre is in the picture above the pads")
+		var global := Rect2(stage_rect.position + c - Vector2(rad, rad), Vector2(rad, rad) * 2.0)
+		for pi in pads:
+			assert_false(global.intersects(pads[pi] as Rect2), "a hotspot never sits over pad %d" % pi)
+	_free_scene(d)
+
+
+## Every hotspot of every passage can be reached by a tap: its target holds its own centre, nothing else steals it, and it never overlaps the pads (the camera at the passage waypoint).
+func test_every_hotspot_of_every_passage_is_tappable_from_where_the_camera_stands() -> void:
+	var d := _data()
+	var hot := TrialHotspots.load_default()
+	var view := Vector2(844.0, 215.0)
+	for n in d.passages:
+		var p: Dictionary = d.passages[n]
+		var m := TrialData.map_of(str(p["map"]))
+		var w: Dictionary = m.waypoint(str(p["waypoint"]))
+		var at: Vector2 = w["at"]
+		var pose := {"cam": Vector3(at.x, float(m.sector(str(w["sector"])).get("floor", 0.0)) + m.eye_height, at.y), "yaw": float(w["yaw"]), "pitch": 0.0}
+		var all_flags: Array = d.items.keys()
+		var vis := hot.visible(int(n), all_flags)
+		var entries: Array = []
+		for it in vis:
+			entries.append({"hotspot": it["hs"], "state": "available"})
+		var lay := HotspotView.layout(entries, m, {}, pose, view)
+		assert_eq(lay.size(), vis.size(), "passage %d: every hotspot has a place" % n)
+		for e in lay:
+			assert_true(float(e["radius_px"]) * 2.0 >= 72.0 - 0.01, "passage %d %s: target at least 72 px" % [n, e["id"]])
+		var hit_count := 0
+		for e in lay:
+			if HotspotView.hit(lay, e["centre"]) == str(e["id"]):
+				hit_count += 1
+		assert_true(hit_count >= maxi(vis.size() - 1, 1), "passage %d: the hotspots can be hit at their centres (%d of %d)" % [n, hit_count, vis.size()])
 
 
 func test_nothing_chosen_means_the_default_and_the_dungeon_goes_on_through_zones() -> void:
@@ -692,8 +766,9 @@ func test_a_death_walks_back_to_the_warehouse_after_its_window() -> void:
 	var tr: TrialScene = d["tr"]
 	var scene: Node = d["scene"]
 	assert_true(tr._msg.text.contains("DIED"), "the death is shown: " + tr._msg.text)
-	assert_eq(tr._buttons.size(), 1)
-	assert_eq(tr._buttons[0].text.contains("Wake in the Warehouse"), true)
+	assert_eq(tr.hotspot_items().size(), 1, "a death has one hotspot: the way out")
+	assert_eq(tr.hotspot_of(0)["on_success"], {"route": "exit"})
+	assert_true(_sel(tr, 0)["hotspot"]["default"])
 	assert_true(_until(scene, func() -> bool: return not _left(scene).is_empty(), 60.0))
 	assert_eq(_left(scene)[0]["reason"], "death")
 	assert_eq(scene.trial_state, "")
@@ -719,7 +794,7 @@ func test_three_lost_phrases_in_a_fight_end_the_adventure_in_the_scene() -> void
 	var guard := 0
 	while _left(scene).is_empty() and guard < 8:
 		guard += 1
-		assert_true(_until(scene, func() -> bool: return tr.engine.window_open and tr._buttons.size() > 0 and tr._outcome.is_empty(), 60.0))
+		assert_true(_until(scene, func() -> bool: return tr.engine.window_open and tr.hotspot_items().size() > 0 and tr._outcome.is_empty(), 60.0))
 		if tr.engine.flow.passage == 0:
 			break
 		tr.pick(0)
@@ -734,7 +809,7 @@ func test_the_fight_puts_the_creature_in_the_room_fails_then_is_retried_and_won(
 	var d := _scene_at("The Flooded Boiler Room", "perfect")
 	var tr: TrialScene = d["tr"]
 	var scene: Node = d["scene"]
-	var win_window := func(title: String) -> bool: return tr.engine.window_open and _title_is(tr, title) and tr._buttons.size() > 0
+	var win_window := func(title: String) -> bool: return tr.engine.window_open and _title_is(tr, title) and tr.hotspot_items().size() > 0
 	assert_true(_until(scene, func() -> bool: return win_window.call("The Flooded Boiler Room")))
 	tr.bot = "no_fights"
 	tr.pick(0)  # the cable eel
@@ -750,7 +825,7 @@ func test_the_fight_puts_the_creature_in_the_room_fails_then_is_retried_and_won(
 		seen["attack"] = seen["attack"] or tr.figure_pose() == "attack"
 		return win_window.call("The Flooded Boiler Room") and tr._outcome.is_empty()))
 	assert_true(seen["attack"], "the creature lunges when the phrase is lost")
-	assert_true(tr._buttons[0].text.contains("Try again"), "the retry is offered: " + tr._buttons[0].text)
+	assert_true(_sel(tr, 0)["hotspot"]["default"] and tr.engine.flow.retry_index == 0, "the retry is the default: the creature's hotspot is the bright one")
 	assert_true(tr._news.text.contains("arcs"), tr._news.text)
 	tr.bot = "perfect"
 	assert_true(_until(scene, func() -> bool:
@@ -847,15 +922,14 @@ func test_the_wizard_offers_the_trial_in_the_warehouse_only() -> void:
 	var d := _run_scene("")
 	var scene: Node = d["scene"]
 	assert_true(scene._gate.visible, "the wizard is in the Warehouse")
-	assert_eq(scene._gate_btn.text, "Enter the Trial")
 	var launched: Array = []
 	scene.trial_launcher = func() -> void: launched.append("trial")
-	scene._gate_btn.pressed.emit()
-	assert_eq(launched, ["trial"], "choosing the option asks for the dungeon")
-	var gate_rect := Rect2(scene._gate_btn.position, scene._gate_btn.size).merge(Rect2(scene._gate_wizard.position, scene._gate_wizard.size))
-	var rects: Dictionary = scene.pad_view.button_rects()
-	for p in rects:
-		assert_false(gate_rect.intersects(rects[p] as Rect2), "the option does not sit on pad %d" % p)
+	var beat := 60.0 / 174.0
+	_step_to(scene, 3.0 * beat)
+	assert_true(scene.hotspot_select("warehouse.wizard"), "touching him selects him")
+	assert_eq(launched, [], "a selection alone leaves the run as it was: the performance decides")
+	_step_to(scene, 13.5 * beat)
+	assert_eq(launched, ["trial"], "the block he waited for was passed: the dungeon is asked for")
 	_end_run(d, saved, "user://test_trial_save.json")
 	var m := _run_scene("mothership")
 	assert_false((m["scene"] as Node)._gate.visible, "no wizard outside the Warehouse")
@@ -946,3 +1020,60 @@ func test_leaving_the_dungeon_resumes_the_run_on_the_same_grid_with_energy_kept(
 	assert_true(_until(scene, func() -> bool: return scene.engine.phase_beat_at(scene._vt) > 20.0, 20.0))
 	assert_eq(scene.trial_state, "", "and the run goes on")
 	_end_run(d, saved, "user://test_trial_save5.json")
+
+
+# --- the hotspots (content/trial/hotspots.json, made from passages.json by tools/trial/make_hotspots.py) -----------------------------------
+
+func test_the_hotspot_file_agrees_with_the_passages_and_the_maps() -> void:
+	var d := _data()
+	var hot := TrialHotspots.load_default()
+	assert_eq(hot.errors, [], "the hotspot file loads")
+	assert_eq(hot.by_passage.size(), d.passages.size(), "every passage, the defeat passage 0 included")
+	assert_eq(str(hot.raw["world"]), "bassment")
+	assert_true(hot.raw["hotspots"] is Array, "a flat list, as TrialData.load_hotspots reads it")
+	var errs := hot.validate(d)
+	assert_eq(errs, [], "one hotspot per choice, anchors in the zone maps, defaults, routes, challenges and failures agree with passages.json")
+	var total := 0
+	for n in d.passages:
+		total += (d.passages[n]["choices"] as Array).size()
+	assert_eq(hot.count(), total, "a hotspot for every choice")
+	var k := hot.kinds()
+	assert_eq(int(k.get("encounter", 0)), 10, "a creature hotspot for each of the ten fights")
+	assert_eq(int(k.get("feature", 0)), 7, "a feature hotspot for each of the seven luck tests")
+	assert_true(int(k.get("object", 0)) >= 4, "the items' objects")
+	assert_true(int(k.get("exit", 0)) > 50)
+	# an item's hotspot is hidden until the item is held
+	var cellar := _id(d, "The Barrel Cellar")
+	assert_eq(hot.visible(cellar, []).size(), (hot.by_passage[cellar] as Array).size() - 0, "nothing gated in the cellar")
+	var gate := _id(d, "The Vault of Records")
+	var without := hot.visible(gate, []).size()
+	var with_item := hot.visible(gate, ["token"]).size()
+	assert_eq(with_item, without + 1, "the token's hotspot appears once the token is held")
+
+
+func test_a_creature_stands_in_the_room_as_its_hotspot_before_the_fight_and_a_tap_chooses_it() -> void:
+	var d := _scene_at("The Flooded Boiler Room", "perfect")
+	var tr: TrialScene = d["tr"]
+	var scene: Node = d["scene"]
+	assert_true(_until(scene, func() -> bool: return tr.engine.window_open and _title_is(tr, "The Flooded Boiler Room") and tr.hotspot_items().size() == 2, 30.0))
+	assert_eq(tr.figure_pose(), "idle", "the eel is already in the room while the window is open: it is the hotspot")
+	var hs := tr.hotspot_of(0)
+	assert_eq(TrialHotspots.kind_of(hs), "encounter")
+	assert_eq(str(hs["kind"]), "encounter", "(the contract lets the Bassment's default be a fight)")
+	assert_eq(str(hs["anchor"]["thing"]), "hs_cable_eel", "anchored to the creature's thing")
+	var marker := {}
+	for t in tr._map("boiler").things:
+		if str(t["id"]) == "hs_cable_eel":
+			marker = t
+	assert_false(marker.is_empty(), "the creature's thing is in the zone map")
+	var spot: Vector2 = tr._fig["pos"]
+	assert_true((marker["at"] as Vector2).distance_to(spot) < 0.05, "and stands where the figure does: %s vs %s" % [marker["at"], spot])
+	assert_eq(TrialHotspots.kind_of(tr.hotspot_of(1)), "feature", "the pipes over the water are a luck test: a feature")
+	assert_true(tr.hotspot_items()[0]["hotspot"]["default"], "the fight is the default (brighter)")
+	assert_eq(tr.tap_centre(1), 1, "a tap on the pipes")
+	assert_true(tr.hotspot_items()[1]["state"] == "selected" and not tr.hotspot_items()[0]["hotspot"]["default"], "selects them instead")
+	assert_eq(tr.tap_centre(0), 0, "a tap on the eel changes the pick back")
+	assert_eq(tr.engine.selected, 0)
+	tr.bot = "perfect"
+	assert_true(_until(scene, func() -> bool: return _title_is(tr, "The Dry Landing"), 60.0), "the fight is played from the tap and won")
+	_free_scene(d)

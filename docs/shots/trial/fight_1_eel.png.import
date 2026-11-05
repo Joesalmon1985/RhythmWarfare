@@ -2,16 +2,12 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c3hrekmas83im"
-path="res://.godot/imported/fight_1_eel.png-9aa4eeb9c0dea2f595536c24d9a6f0fa.ctex"
-metadata={
-"vram_texture": false
-}
+uid="uid://cwrsbtxyo488a"
+valid=false
 
 [deps]
 
 source_file="res://docs/shots/trial/fight_1_eel.png"
-dest_files=["res://.godot/imported/fight_1_eel.png-9aa4eeb9c0dea2f595536c24d9a6f0fa.ctex"]
 
 [params]
 

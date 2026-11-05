@@ -1,0 +1,581 @@
+{
+ "world": "hospital_late",
+ "hotspots": [
+  {
+   "id": "hospital_late.exit_cafe",
+   "world": "hospital_late",
+   "scene": "hospital_late",
+   "map": "hospital",
+   "anchor": {
+    "waypoint": "garden_door_w"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital_late.cafe"
+   },
+   "on_failure": {
+    "route": "hospital_late.cafe",
+    "cinematic": "hospital_late.stagger_entry_left",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.exit_quiet",
+   "world": "hospital_late",
+   "scene": "hospital_late",
+   "map": "hospital",
+   "anchor": {
+    "waypoint": "garden_door_w2"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital_late.quiet"
+   },
+   "on_failure": {
+    "route": "hospital_late.quiet",
+    "cinematic": "hospital_late.stagger_entry_right",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.lamp",
+   "world": "hospital_late",
+   "scene": "hospital_late",
+   "map": "hospital",
+   "anchor": {
+    "thing": "lamp_g1"
+   },
+   "kind": "feature",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "hp_lamp_lit"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "flicker",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "hp_lamp_lit"
+    ],
+    "energy": 5,
+    "music": "variation"
+   },
+   "on_failure": {
+    "energy": -5,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.lamp_lit",
+   "world": "hospital_late",
+   "scene": "hospital_late",
+   "map": "hospital",
+   "anchor": {
+    "thing": "lamp_g1"
+   },
+   "kind": "feature",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [
+     "hp_lamp_lit"
+    ],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "hl_lamp_again"
+    ],
+    "energy": 6,
+    "music": "variation"
+   },
+   "on_failure": {
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.doctor",
+   "world": "hospital_late",
+   "scene": "hospital_late",
+   "map": "hospital",
+   "anchor": {
+    "actor": "h17"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "hl_doctor"
+    ],
+    "cinematic": "hospital_late.doctor",
+    "energy": 5
+   },
+   "on_failure": {
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.cafe.exit_exit",
+   "world": "hospital_late",
+   "scene": "hospital_late.cafe",
+   "map": "hospital",
+   "anchor": {
+    "waypoint": "cafe_garden_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital_late.exit"
+   },
+   "on_failure": {
+    "route": "hospital_late.exit",
+    "cinematic": "hospital_late.stagger_cafe_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.cafe.vending",
+   "world": "hospital_late",
+   "scene": "hospital_late.cafe",
+   "map": "hospital",
+   "anchor": {
+    "thing": "vending_f2"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "hp_token"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "flicker",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "hp_token"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.cafe.vending_token",
+   "world": "hospital_late",
+   "scene": "hospital_late.cafe",
+   "map": "hospital",
+   "anchor": {
+    "thing": "vending_f2"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [
+     "hp_token"
+    ],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "hl_free_drink"
+    ],
+    "energy": 10,
+    "music": "variation"
+   },
+   "on_failure": {
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.cafe.kid",
+   "world": "hospital_late",
+   "scene": "hospital_late.cafe",
+   "map": "hospital",
+   "anchor": {
+    "actor": "h14"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "cinematic": "hospital_late.kid",
+    "energy": 6
+   },
+   "on_failure": {
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.quiet.exit_exit",
+   "world": "hospital_late",
+   "scene": "hospital_late.quiet",
+   "map": "hospital",
+   "anchor": {
+    "waypoint": "quiet_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital_late.exit"
+   },
+   "on_failure": {
+    "route": "hospital_late.exit",
+    "cinematic": "hospital_late.stagger_quiet_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.quiet.nightlight",
+   "world": "hospital_late",
+   "scene": "hospital_late.quiet",
+   "map": "hospital",
+   "anchor": {
+    "thing": "nl_q0"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "hl_calm"
+    ],
+    "cinematic": "hospital_late.calm",
+    "energy": 10
+   },
+   "on_failure": {
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.quiet.nightlight_b",
+   "world": "hospital_late",
+   "scene": "hospital_late.quiet",
+   "map": "hospital",
+   "anchor": {
+    "thing": "nl_q2"
+   },
+   "kind": "feature",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "energy": 5,
+    "music": "variation"
+   },
+   "on_failure": {
+    "energy": -4,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.exit.exit_hospital_late",
+   "world": "hospital_late",
+   "scene": "hospital_late.exit",
+   "map": "hospital",
+   "anchor": {
+    "waypoint": "bandstand_door_l"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital_late"
+   },
+   "on_failure": {
+    "route": "hospital_late",
+    "cinematic": "hospital_late.stagger_exit_left",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.exit.exit_ward_late",
+   "world": "hospital_late",
+   "scene": "hospital_late.exit",
+   "map": "hospital",
+   "anchor": {
+    "waypoint": "bandstand_door_r"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward_late"
+   },
+   "on_failure": {
+    "route": "ward_late",
+    "cinematic": "hospital_late.stagger_exit_right",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.exit.mic",
+   "world": "hospital_late",
+   "scene": "hospital_late.exit",
+   "map": "hospital",
+   "anchor": {
+    "thing": "mic_band"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "hp_sang"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "hp_sang"
+    ],
+    "cinematic": "hospital_late.sing",
+    "energy": 10,
+    "music": "variation"
+   },
+   "on_failure": {
+    "cinematic": "hospital_late.feedback",
+    "energy": -8,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "hospital_late.exit.mic_encore",
+   "world": "hospital_late",
+   "scene": "hospital_late.exit",
+   "map": "hospital",
+   "anchor": {
+    "thing": "mic_band"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [
+     "hp_sang"
+    ],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "hl_encore"
+    ],
+    "cinematic": "hospital_late.sing",
+    "energy": 10,
+    "music": "variation"
+   },
+   "on_failure": {
+    "energy": -6,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  }
+ ]
+}

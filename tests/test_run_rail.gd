@@ -269,16 +269,3 @@ func test_the_passage_frame_closes_before_the_downbeat_and_opens_after_it() -> v
 	assert_eq(RunPassage.doorway(view, 1.0), Rect2(Vector2.ZERO, view))
 
 
-func test_a_lit_exit_is_placed_by_the_stage_camera() -> void:
-	var map := StoryMap.load_chapter("night_one")
-	var pl := StoryPlayer.new()
-	pl.setup(map, BPM)
-	var pose := pl.pose_at(0.0)  # floor_centre looking toward the stage; the door is behind
-	var ppose := {"cam": pose["cam"], "yaw": pose["yaw"], "pitch": 0.0}
-	var door: Dictionary = map.waypoint("door")
-	var placed := RunExitsView.place(door["at"], 0.0, ppose, Vector2(800, 300))
-	assert_false(placed["visible"], "the door is behind the camera: an arrow at the edge instead")
-	assert_true(float(placed["side"]) == 1.0 or float(placed["side"]) == -1.0)
-	var turned := {"cam": pose["cam"], "yaw": float(pose["yaw"]) + 180.0, "pitch": 0.0}
-	var placed2 := RunExitsView.place(door["at"], 0.0, turned, Vector2(800, 300))
-	assert_true(placed2["visible"], "turned round, the doorway is in the room: a lit frame")

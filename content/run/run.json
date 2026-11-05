@@ -3427,5 +3427,1695 @@
     }
    }
   }
- ]
+ ],
+ "cinematics": {
+  "warehouse.stagger_entry_right": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "to_bar",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.stagger_entry_up": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "to_balcony",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.wizard_shrug": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "floor_edge",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "wizard_floor"
+    }
+   ]
+  },
+  "warehouse.join_circle": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "floor_centre",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "g07"
+    }
+   ]
+  },
+  "warehouse.stumble_circle": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "floor_edge",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.stagger_bar_right": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bar_to_chill",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.stagger_bar_left": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bar_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.drink_at_bar": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bar_taps",
+     "bars": 3,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "b01"
+    }
+   ]
+  },
+  "warehouse.spill": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bar_taps",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.whisper": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bar_end",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "b03"
+    }
+   ]
+  },
+  "warehouse.stagger_balcony_right": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "balcony_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.stagger_balcony_left": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "balcony_stairs",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.rail_look": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "balcony_rail",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "floor_centre"
+    }
+   ]
+  },
+  "warehouse.vertigo": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "balcony_far",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.promoter_walk": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "balcony_stairs",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "v03"
+    }
+   ]
+  },
+  "warehouse.stagger_chill_up": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "chill_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.sofa_rest": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "sofa_nook",
+     "bars": 3,
+     "role": "recovered",
+     "style": "walk",
+     "look_at": "s01"
+    }
+   ]
+  },
+  "warehouse.sofa_doze": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "sofa_front",
+     "bars": 2,
+     "role": "queasy",
+     "style": "walk"
+    }
+   ]
+  },
+  "warehouse.stagger_booth_up": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "booth_down",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.drop_decks": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "booth_decks",
+     "bars": 3,
+     "role": "dj",
+     "style": "walk"
+    }
+   ]
+  },
+  "warehouse.wrong_record": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "booth_decks",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.headphones_on": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "booth_decks",
+     "bars": 2,
+     "role": "dj",
+     "style": "walk"
+    }
+   ]
+  },
+  "warehouse.stagger_exit_up": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "tunnel",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.stagger_exit_right": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "door_r",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "warehouse.thrown_out": {
+   "world": "warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "door_r",
+     "bars": 2,
+     "role": "queasy",
+     "style": "run"
+    }
+   ]
+  },
+  "mothership.stagger_entry_right": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "deck_gallery_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "mothership.stagger_entry_up": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "deck_reactor_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "mothership.grey_gentle": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "deck_ramp",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "g08"
+    }
+   ]
+  },
+  "mothership.probe_light": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "deck_sw_corner",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "mothership.dais_walk": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "deck_dais",
+     "bars": 3,
+     "role": "on_stage",
+     "style": "climb",
+     "look_at": "m01"
+    }
+   ]
+  },
+  "mothership.stagger_gallery_up": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "gallery_east",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "mothership.window_gaze": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "planet_window",
+     "bars": 3,
+     "role": "dancer",
+     "style": "walk"
+    }
+   ]
+  },
+  "mothership.cruiser_glare": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "gallery_west",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "mothership.order": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "gallery_mid",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk"
+    }
+   ]
+  },
+  "mothership.bad_order": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "gallery_west",
+     "bars": 2,
+     "role": "queasy",
+     "style": "walk"
+    }
+   ]
+  },
+  "mothership.stagger_reactor_up": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "catwalk_bridge",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "mothership.core_surge": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "reactor_core",
+     "bars": 3,
+     "role": "on_stage",
+     "style": "climb"
+    }
+   ]
+  },
+  "mothership.alarm_run": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "catwalk_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "run"
+    }
+   ]
+  },
+  "mothership.badge": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "catwalk_mid",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "reactor_s01"
+    }
+   ]
+  },
+  "mothership.stagger_bridge_up": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bridge_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "mothership.warp": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "helm",
+     "bars": 3,
+     "role": "on_stage",
+     "style": "climb"
+    }
+   ]
+  },
+  "mothership.crash": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bridge_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "mothership.stagger_exit_left": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "airlock_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "mothership.stagger_exit_right": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "exam_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "mothership.exam_ok": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "exam",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "med01"
+    }
+   ]
+  },
+  "mothership.exam_strapped": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "exam",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "mothership.cycle_lock": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "airlock_door",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk"
+    }
+   ]
+  },
+  "mothership.alarm_lock": {
+   "world": "mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "med_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.stagger_entry_right": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "arena_tier_r",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.stagger_entry_left": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "arena_tier_l",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.gate_nod": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "arena_gate",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "gate_bouncer"
+    }
+   ]
+  },
+  "underworld.gate_shove": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "arena_edge",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.chain_swing": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "arena_gate",
+     "bars": 3,
+     "role": "on_stage",
+     "style": "climb"
+    }
+   ]
+  },
+  "underworld.dragged_cage": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "place",
+     "to": "cage",
+     "bars": 3,
+     "role": "queasy",
+     "style": "carried"
+    }
+   ]
+  },
+  "underworld.stagger_court_up": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "court_causeway",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.seal_stand": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "court_mid",
+     "bars": 2,
+     "role": "on_stage",
+     "style": "walk"
+    }
+   ]
+  },
+  "underworld.seal_burn": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "court_in",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.queen_dance": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "court_mid",
+     "bars": 3,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "court_g06"
+    }
+   ]
+  },
+  "underworld.stagger_furnace_up": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "furnace_out",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.forge": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "furnace_mid",
+     "bars": 2,
+     "role": "on_stage",
+     "style": "walk"
+    }
+   ]
+  },
+  "underworld.forge_burn": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "furnace_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.ladle_spill": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "furnace_in",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.stagger_pit_up": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "pit_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.lava_bridge": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "pit_edge",
+     "bars": 3,
+     "role": "on_stage",
+     "style": "walk"
+    }
+   ]
+  },
+  "underworld.lava_fall": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "pit_rim_e",
+     "bars": 3,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.stagger_exit_left": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "throne_door_l",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.stagger_exit_right": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "throne_door_r",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "underworld.take_throne": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "throne",
+     "bars": 3,
+     "role": "on_stage",
+     "style": "climb"
+    }
+   ]
+  },
+  "underworld.devoured": {
+   "world": "underworld",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "throne_steps",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.stagger_entry_up": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "ward_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.wheel_on": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "ward_door",
+     "bars": 3,
+     "role": "dancer",
+     "style": "carried",
+     "look_at": "h02"
+    }
+   ]
+  },
+  "hospital.back_to_bed": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bed_corner",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.family_cheer": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bed_far",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "h03"
+    }
+   ]
+  },
+  "hospital.flatline": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bed_corner",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.stagger_corridor_left": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "corridor_day_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.stagger_corridor_right": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "corridor_cafe",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.tea": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "corridor_mid",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "h07"
+    }
+   ]
+  },
+  "hospital.tea_spill": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "corridor_mid",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.peek_quiet": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "corridor_quiet_door",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk"
+    }
+   ]
+  },
+  "hospital.stagger_dayroom_up": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dayroom_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.tv_watch": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "day_tv_in",
+     "bars": 3,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "tv_set"
+    }
+   ]
+  },
+  "hospital.tv_static": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dayroom_mid",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.granny": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dayroom_mid",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "h08"
+    }
+   ]
+  },
+  "hospital.granny_long": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dayroom_mid",
+     "bars": 2,
+     "role": "queasy",
+     "style": "walk"
+    }
+   ]
+  },
+  "hospital.stagger_cafeteria_up": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "cafe_garden_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.vend": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "cafe_serving",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk"
+    }
+   ]
+  },
+  "hospital.kid": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "cafe_mid",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "h14"
+    }
+   ]
+  },
+  "hospital.stagger_garden_up": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "garden_door_e",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.phone": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "garden_south",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "h16"
+    }
+   ]
+  },
+  "hospital.stagger_exit_left": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bandstand_door_l",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.stagger_exit_right": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bandstand_door_r",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital.sing": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bandstand_front",
+     "bars": 3,
+     "role": "on_stage",
+     "style": "climb"
+    }
+   ]
+  },
+  "hospital.feedback": {
+   "world": "hospital",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bandstand",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.stagger_entry_right": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "day_door_a",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.stagger_entry_up": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "day_door_b",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.orderly_nod": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "day_centre",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "e04"
+    }
+   ]
+  },
+  "ward.to_treatment": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "place",
+     "to": "treat",
+     "bars": 3,
+     "role": "queasy",
+     "style": "carried"
+    }
+   ]
+  },
+  "ward.window_gaze": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bars_in",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "x09"
+    }
+   ]
+  },
+  "ward.stagger_art_up": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "art_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.paint_look": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "art_easels",
+     "bars": 3,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "x10"
+    }
+   ]
+  },
+  "ward.paint_spill": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "art_mid",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.stagger_dorm_up": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dorm_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.lullaby": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dorm_mid",
+     "bars": 2,
+     "role": "recovered",
+     "style": "walk",
+     "look_at": "x14"
+    }
+   ]
+  },
+  "ward.woken": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dorm_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.search": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dorm_bed",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk"
+    }
+   ]
+  },
+  "ward.stagger_corridor_up": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "corr_art_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.king": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "corr_mid",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "x06"
+    }
+   ]
+  },
+  "ward.mural_walk": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "corr_east",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "mural_door"
+    }
+   ]
+  },
+  "ward.mural_bump": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "corr_mid",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.stagger_courtyard_up": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "court_stage_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.plate": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "court_mid",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "x01"
+    }
+   ]
+  },
+  "ward.plate_spill": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "court_mid",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.stagger_exit_left": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "stage_door_l",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.stagger_exit_right": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "stage_door_r",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward.star_turn": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "stage",
+     "bars": 3,
+     "role": "on_stage",
+     "style": "climb"
+    }
+   ]
+  },
+  "ward.lights_out": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "stage_edge",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital_late.stagger_entry_left": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "garden_door_w",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital_late.stagger_entry_right": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "garden_door_w2",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital_late.doctor": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "garden_north",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "h17"
+    }
+   ]
+  },
+  "hospital_late.stagger_cafe_up": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "cafe_garden_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital_late.kid": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "cafe_mid",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "h14"
+    }
+   ]
+  },
+  "hospital_late.stagger_quiet_up": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "quiet_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital_late.calm": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "quiet_far",
+     "bars": 3,
+     "role": "recovered",
+     "style": "walk"
+    }
+   ]
+  },
+  "hospital_late.stagger_exit_left": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bandstand_door_l",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital_late.stagger_exit_right": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bandstand_door_r",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "hospital_late.sing": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bandstand_front",
+     "bars": 3,
+     "role": "on_stage",
+     "style": "climb"
+    }
+   ]
+  },
+  "hospital_late.feedback": {
+   "world": "hospital_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bandstand",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward_late.stagger_entry_left": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "court_door_w",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward_late.stagger_entry_right": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "court_south",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward_late.stagger_treat_up": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "treat_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward_late.orderly": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "treat",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "x02"
+    }
+   ]
+  },
+  "ward_late.injection": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "treat_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward_late.stagger_dorm_up": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dorm_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward_late.lullaby": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dorm_mid",
+     "bars": 2,
+     "role": "recovered",
+     "style": "walk",
+     "look_at": "x13"
+    }
+   ]
+  },
+  "ward_late.search": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dorm_bed",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk"
+    }
+   ]
+  },
+  "ward_late.stagger_exit_right": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "day_door_a",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward_late.stagger_exit_left": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "day_door_b",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "ward_late.stare": {
+   "world": "ward_late",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bars_in",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "x09"
+    }
+   ]
+  }
+ }
 }

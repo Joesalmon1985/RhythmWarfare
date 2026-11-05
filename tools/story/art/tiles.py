@@ -23,6 +23,7 @@ NIGHT_ONE = {
     "thing_decks": 1.0, "thing_pendant": 1.0, "thing_bulb": 1.0, "thing_sink": 1.0, "thing_dryer": 1.0, "thing_tube": 1.0,
     "thing_toilet": 1.0, "thing_firedoor": 1.0, "thing_exit_sign": 1.0, "thing_sofa": 1.0, "thing_lavalamp": 1.0, "thing_bulbs": 1.0,
     "thing_truss_tower": 1.0, "thing_bin": 1.0, "thing_rail": 1.0,
+    "thing_wizard": 1.0, "thing_headphones": 1.0, "thing_crack": 1.0,
 }
 
 
@@ -46,7 +47,7 @@ MENTAL_HOSPITAL = {
     "wall_office": 2.7, "wall_dwindow": 1.8, "wall_slit": 0.9,
     "thing_chair_b": 1.0, "thing_chair_c": 1.0, "thing_easel_b": 1.0, "thing_jars": 1.0, "thing_phone": 1.0, "thing_radiator": 1.0,
     "thing_fan": 1.0, "thing_clock": 1.0, "thing_cagelamp": 1.0, "thing_tube": 1.0, "thing_cabinet": 1.0, "thing_trolley": 1.0,
-    "thing_sink": 1.0, "thing_wheelchair": 1.0,
+    "thing_sink": 1.0, "thing_wheelchair": 1.0, "thing_mural": 1.0,
 }
 
 UNDERWORLD = {
@@ -65,7 +66,7 @@ HOSPITAL = {
     "wall_quiet": 2.0, "floor_lino": 2.0, "wall_tv": 3.0, "sky_night": 1.0, "thing_chair": 1.0, "thing_bench": 1.0,
     # drawn by art/tex_hospital.py (the surfaces' metres come from its build(); the RGBA billboards are written there and listed here)
     "thing_monitor": 1.0, "thing_bed": 1.0, "thing_drip": 1.0, "thing_desk": 1.0, "thing_clock": 1.0, "thing_exit": 1.0, "thing_nightlight": 1.0,
-    "thing_tree": 1.0, "thing_lamppost": 1.0, "thing_door_lit": 1.0, "thing_plant": 1.0,
+    "thing_tree": 1.0, "thing_lamppost": 1.0, "thing_door_lit": 1.0, "thing_plant": 1.0, "thing_mic": 1.0,
 }
 
 SPECS = {"night_one": NIGHT_ONE, "mothership": MOTHERSHIP, "underworld": UNDERWORLD, "hospital": HOSPITAL, "mental_hospital": MENTAL_HOSPITAL}

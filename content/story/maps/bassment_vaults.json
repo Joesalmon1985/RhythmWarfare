@@ -42,6 +42,7 @@
   {"from": [-7, -8], "to": [-7, -3], "sector": "inner", "portal": null, "tex": "wall_shelf"}
  ],
  "things": [
+  {"id": "hs_bouncer", "kind": "billboard", "sprite": "thing_glow", "at": [0.00, 6.30], "y": 1.25, "size": 0.05, "anim": "none"},
   {"id": "lamp_h1", "kind": "billboard", "sprite": "thing_lamp", "at": [-2.4, 6.5], "y": 2.5, "size": 0.9, "anim": "flicker"},
   {"id": "lamp_h2", "kind": "billboard", "sprite": "thing_lamp", "at": [2.4, 6.5], "y": 2.5, "size": 0.9, "anim": "flicker"},
   {"id": "lamp_h3", "kind": "billboard", "sprite": "thing_lamp", "at": [-2.4, 1.4], "y": 2.5, "size": 0.9, "anim": "flicker"},

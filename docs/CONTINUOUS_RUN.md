@@ -313,8 +313,8 @@ them to the active world's `StoryStage`. Each node in `content/run/run.json` has
 * **Moves** are `player_move` of 2 to 4 bars that start on the decision beat; `RunRail.pick_bars` shortens one (never below 2 bars) when the chart would make more than half its bars dense
   (more than one note per beat), the rule of the chapter director's dense-run warning, which is therefore silent (asserted over the whole policy matrix).
 * **Every block** has a glance (`player_look by/pitch`, varied through the node's list) and most blocks an in-room walk (`player_walk`, skipped while a journey move is under way).
-* **Route window.** The touch arrows stay (phones need them) and, while the window is open, the room's exits are lit (`RunExitsView`): a pulsing doorway at the waypoint of each candidate route,
-  projected with the stage's own camera, or an arrow at the screen edge on the side it lies when it is out of sight; the chosen one is gold.
+* **Route window.** The window is the hotspot window (see "Hotspots" below): the room's exits are lit by `HotspotView` (a door ajar at the waypoint of each route, or a beacon at the screen edge when it is out
+  of sight), touched in the world; there are no arrows and no labels (the old arrows and `RunExitsView` are gone).
 * **World swap** (`RunPassage`, `RunPassageView`): when the selected route at beat 62 leads to another world the frame closes to a lit doorway over the last two beats, the swap happens on the
   downbeat exactly as before (audio untouched), and the new world's camera starts at its doorway (`arrive`, a cut hidden by the closed frame), walks to the start waypoint from beat 62 (the walk
   starts in the guard) while the frame opens over 2.5 beats. Same-world routes and loops do not close the frame. Everything is a function of song time.
@@ -358,3 +358,53 @@ Real-time, 1280x720, vsync off, dummy audio, perfect play, two phases per start 
 
 The over-50 ms frames are the stage builds of the candidate worlds (0.48 to 0.66 s each now, was 0.8 to 2.4 s: people/crowd setup 250 to 270 ms, the 3D world 140 to 290 ms), each done once in a
 cue-free guard from beat 12.6; the first stage of a run builds before the countdown (0.66 to 1.5 s). Further splitting a build across guards would remove them; not done.
+
+## Hotspots (workstream A of the visual rhythm adventure)
+
+The route window is the **hotspot window**: no arrows, no labels, no `[DEFAULT]`. The player touches the world; the music never stops and the pads stay the only other input. Contract and plan:
+`docs/VISUAL_RHYTHM_ADVENTURE_PLAN.md` (section 2), the owner's brief `docs/VisualChoicePlan.md`. The old arrows, lit-door view, labels and the wizard's "Enter the Trial" button are
+removed for good (the Bassment's conversion has landed: `TrialScene` draws and hit-tests with the same `HotspotView`).
+
+| Piece | File | What |
+| --- | --- | --- |
+| Contract | `src/run/hotspot_contract.gd` | field names, vocabularies, the validator both data loaders call (`HotspotContract.validate_scene`), `normalize`, `resolve_cinematic` |
+| Data | `RunData` (`content/run/hotspots/<world>.json`), `TrialData` (`content/trial/hotspots.json`, passage-keyed) | loaded, normalised, validated; a run scene with no authored hotspot gets one exit per route from `rail.exits` (the first the default), so the run is always playable |
+| Engine | `src/run/run_hotspots.gd` (pure) | availability, selection, commit, outcome, world state |
+| View | `src/run/hotspot_view.gd` | drawn inside the low-res viewport above the crowd (`StoryLowRes.add_overlay`, canvas layer 2); pure `layout` and `hit` |
+| Scene | `RunPlay` | taps, keys, the wizard, outcomes to `RunEngine` / `RunJourney` |
+
+**Windows and commit.** The *final* window (any exit, object, character ...) opens with the route window (beat 49) and commits at the decision beat of the last block (beat 60.5 to 60.75, inside the
+cue-free guard, exactly the old route lock). The *early* window belongs to a hotspot whose success route is a Bassment passage (`"1"` or `"trial:1"`, the wizard): it shows in blocks 1 and 2 only and
+commits at the next block decision (two guards are needed to arm the entry). Selection changes freely until the commit; after it nothing can be selected. At the commit the block just judged decides:
+**passed -> `on_success`, missed -> `on_failure`**. Nothing tapped: the scene's default exit whatever the performance (no intent, no failure). The route of the outcome (or, for an outcome with none,
+the scene's default route) becomes `RunEngine.choice` *before* the next phase's first block is charted, so the chart pack is always the resolved route's: there is no late swap and the route lock
+only ever sees the resolved outcome (the five diverting outcomes of the data chart the right pack). `RunEngine.hotspots == null` keeps the plain route choice (engine-level tests and the scripted `RW_RUN_ROUTES` bot only; the scene always has hotspots).
+
+**World state.** `flags_set` names go to `RunProgress.run_flags` (one run, cleared by `run_started`) or, with the `keep:` prefix, to `RunProgress.flags` (persistent, in the save, written at once).
+`available`: `flags_all`, `flags_none` (both read both stores), `energy_min`, `once` (spent by any commit this run). `repeatable: false` (the default) spends an object/character after a *success* without a
+route; exits and `repeatable: true` are never spent. Energy outcomes apply at the commit (never to depletion: clamped to at least 1); `music` ("variation", "dip") rides on the `hotspot_commit` event
+for the audio layer (a no-op today). `challenge` is validated and carried but not consumed (the last block decides).
+
+**Cinematics.** An outcome's `cinematic` is a name in run.json `cinematics` (`{world, steps: [{move: walk|place, to, bars 2..4, role, style, look_at}]}`), else the hotspot's own `cinematic` spec, or an
+inline object. `RunJourney.hotspot_actions` turns steps into rail actions starting at the commit beat (in the guard): `walk` a `player_move` (pick_bars shortens it on dense cues), `place` a cut, `role`,
+`look_at` a `player_look` toward the target. An outcome with a *route* keeps the door walk as the camera's move (only roles and looks are applied; a step's style becomes the door walk's style: an exit
+failure staggers through the same door). An outcome that simply *continues* by the default exit plays the move instead of the door walk (`_door_phase` is latched), and the next scene's door walk waits
+for it to end if that is within 6 beats.
+
+**Taps.** `RunPlay._input` takes a press (touch or left click; an emulated duplicate within 80 ms and 3 px is dropped) and calls `hotspot_tap(pos)`: only the stage area counts, a point over a pad is
+never a hotspot, then `HotspotView.layout` projects every hotspot on show through `StoryProjector` at the stage's screen size and `HotspotView.hit` picks the **nearest centre within its own radius**,
+where the radius is the projected `radius_m` but never under `min_px / 2` (so a target is at least 72 px wide), clamped so the whole target lies inside the stage view (never over the pads). An anchor
+out of sight (behind the camera, round a corner) is a **beacon** of light at the edge of the picture on the side it lies, stacked down the edge, still touchable (free look is never required).
+Desktop: keys 1 to 4 select the hotspots on show in order, the arrow keys the one that leads that way.
+
+**Looks** (no text, no floating rectangles): available = a ring of light on the floor under the anchor (a perspective-correct ring projected point by point) and a glow on the thing, slowly pulsing; the
+`look.available` value picks the character: `glow`, `pulse` (one pulse a beat), `beckon` (a light column with a mote riding it; an actor anchor also *waves* through `StoryCrowd.beckon`, even a bartender
+with a fixed activity), `flicker`, `open` (a slit of light standing at the doorway, spilling on the floor), `crack` (a glowing crack in the floor). The **default exit** is brighter, has a second ring and
+its door stands wider ajar. Selected = a bright ring, a second ring closing in, a lift of the glow and a spark; committed = a flash, the ring opening out, the glow surging (about half a second).
+
+**Tests.** `tests/test_hotspots_data.gd` (the contract and every rule), `test_hotspots_engine.gd` (availability, selection, windows, commit, outcomes, flags, determinism at 30 / 60 / variable frame
+steps with scripted taps at song times), `test_hotspots_view.gd` (projection, 72 px, nearest, beacons), `test_hotspots_scene.gd` (the real scene: view in the viewport, tap/change/commit beat,
+default, failure, cinematic as the move, wizard arms or shrugs, keys, the flag), the touch-target test in `test_run_scene.gd` (844x390: on the stage, 72 px, never over the pads) and the matrix's tap
+policies. **Tap policies** (`RW_RUN_TAPS=scripted|none|changed|failure`, `tools/run/walk_run.sh` and `tests/test_run_matrix.gd`): `scripted` taps the hotspot toward the path's route at beat 52, `none`
+never taps, `changed` taps a decoy at beat 50 first, `failure` taps and misses the last block of every phase. `RW_RUN_SELECT=<hotspot id>@<beat>` touches one hotspot (screenshots:
+`tools/run/capture.sh`, `hotspots_*`: before, selected, committed, success, failure, wizard, phone).

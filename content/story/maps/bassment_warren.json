@@ -40,6 +40,7 @@
   {"from": [-9, 2], "to": [-10, 7], "sector": "dry", "portal": null, "tex": "wall_brick_dark"}
  ],
  "things": [
+  {"id": "hs_rat_king", "kind": "billboard", "sprite": "thing_glow", "at": [3.77, -2.29], "y": 0.85, "size": 0.05, "anim": "none"},
   {"id": "torch_s1", "kind": "billboard", "sprite": "thing_torch", "at": [-1.2, 12.5], "y": 1.7, "size": 1.1, "anim": "flicker"},
   {"id": "glow_s1", "kind": "billboard", "sprite": "thing_glow", "at": [-1.2, 12.45], "y": 1.7, "size": 1.8, "anim": "flicker", "blend": "add"},
   {"id": "bones_s", "kind": "billboard", "sprite": "thing_bones", "at": [1.0, 10.2], "y": 0.3, "size": 0.9, "anim": "none"},
