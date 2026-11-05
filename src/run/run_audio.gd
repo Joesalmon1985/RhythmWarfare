@@ -25,6 +25,9 @@ var _clock_stream: AudioStreamWAV
 var _schedule: Array = []  # {t, kind, ...} sorted by t
 var _groups: Array = []  # active phase groups: {phase, voices: {name: {player, gain, target}}, buses: [drums, bass]}
 var _ramp_s := 0.35
+var _dip := false  # a hotspot outcome's music "dip" is live: the non-drum voices aim lower (DIP_GAIN) until it ends
+const DIP_GAIN := 0.35
+const DIP_BEATS := 8.0  # how long the dip lasts, from the commit's beat
 var _fade_s := 0.6
 var _requested: Dictionary = {}
 var _started := false
@@ -80,6 +83,7 @@ func start() -> void:
 	_fade_target = 1.0
 	_wraps = 0
 	_last_raw = 0.0
+	_dip = false
 	_started = true
 	player.play(0.0)
 
@@ -134,6 +138,10 @@ func on_event(ev: Dictionary) -> void:
 			_schedule_add({"t": float(ev["t"]), "kind": "mix", "gains": ev["gains"]})
 		"reveal":
 			_schedule_add({"t": float(ev["t"]), "kind": "reveal"})
+		"hotspot_commit":  # outcome music "dip": the bass and synth sink for a couple of bars, the drums carry on (the gain ramps do the easing)
+			if str((ev["outcome"] as Dictionary).get("music", "")) == "dip":
+				_schedule_add({"t": float(ev["t"]), "kind": "dip", "on": true})
+				_schedule_add({"t": float(ev["t"]) + DIP_BEATS * beat_s, "kind": "dip", "on": false})
 		"route_window":
 			_schedule_add({"t": float(ev["t"]), "kind": "effect", "name": ev["effect"]})
 		"depleted":
@@ -255,6 +263,12 @@ func _run(item: Dictionary, now: float, ttnm: float) -> void:
 				p.finished.connect(p.queue_free)
 				_effect_players.append(p)
 				voice_log.append({"voice": str(item["name"]), "node": "", "target": float(item["t"]), "lateness_ms": from * 1000.0, "from": from})
+		"dip":
+			_dip = bool(item["on"])
+			for g3 in _groups:
+				for name in g3["voices"]:
+					if float(g3["voices"][name]["target"]) > 0.0:  # a voice that is muted (not revealed yet, mixed out) stays so
+						g3["voices"][name]["target"] = _target_gain(g3, name, g3.get("mix", {}))
 		"fade":
 			fade_out(float(item["seconds"]))
 
@@ -285,7 +299,7 @@ func _begin_phase(ev: Dictionary, t: float, now: float, ttnm: float) -> void:
 
 ## The gain a voice aims at: the phase mix's gain for it times the section's recipe gain (1 when the scene has no arrangement).
 func _target_gain(group: Dictionary, name: String, gains: Dictionary) -> float:
-	return float(gains.get(name, 0.0)) * float((group.get("recipe", {}) as Dictionary).get(name, 1.0))
+	return float(gains.get(name, 0.0)) * float((group.get("recipe", {}) as Dictionary).get(name, 1.0)) * (DIP_GAIN if _dip and name != "drums" else 1.0)
 
 
 ## The scheduled start of section `index` of the live phase: the old section's voices stop and the new pack's start in the same mix chunk, at the gains the phase mix and the new

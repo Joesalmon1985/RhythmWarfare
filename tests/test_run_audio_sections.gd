@@ -317,6 +317,27 @@ func test_a_switch_before_the_reveal_starts_only_the_drums() -> void:
 	a.queue_free()
 
 
+func test_a_hotspot_dip_sinks_the_non_drum_voices_then_restores_them() -> void:
+	var d := _data()
+	var a := _audio(d)
+	a._begin_phase(_phase_ev(d, "warehouse", 0.0), 0.0, 0.0, 0.0)
+	a._run({"t": 16.0 * a.beat_s, "kind": "mix", "gains": d.cfg["stages"][1]["gains"]}, 0.0, 0.0)
+	a._run({"t": 16.0 * a.beat_s, "kind": "reveal"}, 0.0, 0.0)
+	var v: Dictionary = a._live_group()["voices"]
+	var bass0 := float(v["bass"]["target"])
+	var drums0 := float(v["drums"]["target"])
+	a.on_event({"kind": "hotspot_commit", "t": 20.0 * a.beat_s, "outcome": {"music": "variation"}})
+	var n0: int = a._schedule.size()
+	a.on_event({"kind": "hotspot_commit", "t": 20.0 * a.beat_s, "outcome": {"music": "dip"}})
+	assert_eq(a._schedule.size(), n0 + 2, "a dip schedules its start and its end; any other music value schedules nothing")
+	a._run({"t": 20.0 * a.beat_s, "kind": "dip", "on": true}, 0.0, 0.0)
+	assert_near(float(v["bass"]["target"]), bass0 * RunAudio.DIP_GAIN, 1e-6, "the bass aims lower")
+	assert_near(float(v["drums"]["target"]), drums0, 1e-9, "the drums carry on")
+	a._run({"t": 28.0 * a.beat_s, "kind": "dip", "on": false}, 0.0, 0.0)
+	assert_near(float(v["bass"]["target"]), bass0, 1e-6, "the dip ends back at the mix")
+	a.queue_free()
+
+
 func test_a_stale_switch_after_the_phase_is_dropped() -> void:
 	var d := _data()
 	var a := _audio(d)

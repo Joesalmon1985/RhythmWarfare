@@ -37,6 +37,20 @@ def load(p):
 
 
 class Ctx:
+    def chart_pack(self, n):
+        """The chart pack of block 0 of a scene: its own `chart`, else the pack of the first section of its arrangement's slot (the base arrangement, not an alternate)."""
+        if "chart" in n:
+            return n["chart"]
+        arr = load(ROOT / f"content/music/arrangements/{n['arrangement']}.json")
+        phase_bars = int(self.run.get("timing", {}).get("phase_beats", 64)) // 4
+        start = (int(n.get("slot", 0)) * phase_bars) % int(arr["bars"])
+        bar = 0
+        for sec in arr["sections"]:
+            if bar >= start:
+                return sec.get("pack", "")
+            bar += int(sec["bars"])
+        return ""
+
     def __init__(self):
         self.run = load(ROOT / "content/run/run.json")
         self.nodes = {n["id"]: n for n in self.run["nodes"]}
@@ -44,7 +58,7 @@ class Ctx:
         self.cin = self.run.get("cinematics", {})
         self.passages = set(load(ROOT / "content/trial/passages.json")["passages"])
         music = load(ROOT / "content/story/music.json")
-        self.pack = {n["id"]: n["chart"] for n in music["nodes"]}
+        self.pack = {n["id"]: self.chart_pack(n) for n in music["nodes"]}
         self.maps = {}
         self.actors = {}
         for m in CHAPTER:
