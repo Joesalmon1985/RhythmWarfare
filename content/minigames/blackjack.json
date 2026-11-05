@@ -1,0 +1,33 @@
+{
+	"id": "blackjack",
+	"script": "res://src/minigames/blackjack/blackjack_activity.gd",
+	"stake_pence": 500,
+	"wobble_at": 2,
+	"fall_at": 3,
+	"timing_beats": {
+		"sit_pockets": 2.0,
+		"sit_lay": 2.0,
+		"sit_invite": 1.0,
+		"invite_gaze": 1.5,
+		"bet_move": 1.5,
+		"deal_gap": 0.5,
+		"deal_flight": 0.5,
+		"twist_flight": 1.0,
+		"act": 1.0,
+		"point_period": 2.0,
+		"react": 1.5,
+		"others_lead": 1.5,
+		"npc_ask": 1.0,
+		"npc_pause": 0.5,
+		"npc_stand": 1.5,
+		"reveal": 1.5,
+		"dealer_gap": 1.0,
+		"end_react": 1.5,
+		"settle_delay": 1.0,
+		"settle_move": 2.0,
+		"settle_show": 3.0,
+		"clear": 1.0,
+		"leave": 3.0,
+		"fall": 4.0
+	}
+}
