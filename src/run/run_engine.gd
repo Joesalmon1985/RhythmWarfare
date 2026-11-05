@@ -251,6 +251,7 @@ func _regrid(t0: float, bpm: float) -> void:
 	grid_origin = t0
 	beat_s = 60.0 / bpm
 	level.bpm = bpm
+	level.song_offset_ms = int(round((grid_origin - float(grid_beat0) * beat_s) * 1000.0))  # (so Level.seconds_to_tick, which the pad view reads, counts the same ticks as the cues, to the millisecond)
 	_regridded = true
 
 

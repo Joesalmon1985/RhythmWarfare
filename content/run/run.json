@@ -26,7 +26,14 @@
   "pass_bonus": 6.0,
   "fail_loss": 7.0,
   "floor_loss_per_miss": 0.0,
-  "note": "energy += pass_gain + pass_bonus*(credit-pass_credit)/(1-pass_credit) on a pass, -= fail_loss*(pass_credit-credit)/pass_credit+3 on a fail; it ends the run at 0. Seven blocks in a row at credit 0 are needed to end a run from a fresh start."
+  "note": "energy += pass_gain + pass_bonus*(credit-pass_credit)/(1-pass_credit) on a pass, -= fail_loss*(pass_credit-credit)/pass_credit+3 on a fail; it ends the run at 0. Seven blocks in a row at credit 0 are needed to end a run from a fresh start.",
+  "track": {
+   "pass_gain": 1.25,
+   "pass_bonus": 1.5,
+   "fail_loss": 1.75,
+   "fail_flat": 0.75,
+   "note": "Track scenes only (docs/RUN_TRACK_SCENES.md \"Energy\"): a track scene plays about four laps, so four times the blocks of a scene; these are a quarter of the numbers above (fail_flat is the fixed +3 of a fail), so a player of a given accuracy survives about as many scenes as before (bot players over 24 seeds, docs/HANDOVER.md A12's method). A block without cues gives nothing."
+  }
  },
  "stages": [
   {
