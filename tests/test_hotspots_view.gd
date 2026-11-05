@@ -186,3 +186,19 @@ func test_the_claim_look_draws_selected_committed_and_refused_with_reduced_and_h
 			await tree.process_frame
 	assert_true(drawn[0] >= states.size(), "the view drew every state (%d draws)" % drawn[0])
 	_free_ward(d)
+
+
+func test_only_the_card_table_takes_the_claim_path_every_other_hotspot_draws_the_plain_looks() -> void:
+	var data := RunData.load_default()
+	assert_true(data.errors.is_empty(), str(data.errors))
+	var claim: Array = []
+	var n := 0
+	for scene_id in data.hotspots:
+		for h in data.hotspots[scene_id]:
+			n += 1
+			if HotspotView.uses_claim_look(h):
+				claim.append(str(h["id"]))
+	assert_true(n > 50, "every shipped hotspot was looked at (%d)" % n)
+	assert_eq(claim, ["ward.cards"], "the claim look (its free, touched, seated and refused drawing) belongs to the table alone")
+	assert_false(HotspotView.uses_claim_look({"look": {"available": "beckon", "selected": "plain"}}))
+	assert_false(HotspotView.uses_claim_look({}))

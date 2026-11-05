@@ -82,6 +82,7 @@ var _trial_direct := false
 var _stage_hidden := ""
 var minigames: MinigameController  # minigames: the activity that owns the scene while the player is seated at a table (docs/BLACKJACK_INTEGRATION.md section 5)
 var _mg: RunMinigameHost
+var card_table: RunCardTable  # the day room's card table in the room: its players follow the table's hotspot (docs/BLACKJACK_INTEGRATION.md, "The table in the room")
 var trial_log: Array = []  # [{kind, t, ...}] the entry and exit, for the transition tests and recordings
 
 
@@ -198,6 +199,12 @@ func _build_stage(world: String) -> Dictionary:
 	var t_world := Time.get_ticks_usec()
 	if st.map != null:
 		st.attach_world(st.map, true)
+		if card_table == null:
+			card_table = RunCardTable.new()
+			card_table.beat_s = engine.beat_s
+			card_table.reduced = Session.reduced_effects
+			card_table.high_contrast = Session.high_contrast
+		card_table.attach(st)
 	var t_deck := Time.get_ticks_usec()
 	var deck := StoryDeck.new()
 	deck.setup(assets, proxy, st)
@@ -561,6 +568,7 @@ func _advance(t: float, audio_t: float) -> void:
 		_handle(engine.update(t))
 	minigames.update(t)  # minigames: after the engine, so a block's result reaches it before its own clock moves
 	_mg.step(t)
+	_card_table_feed(t)
 	if trial_state == "":
 		_update_passage(t, audio_t)
 	else:
@@ -861,6 +869,23 @@ func hotspot_items() -> Array:
 		else:
 			_commit_view = {}
 	return out
+
+
+## The table's players follow its hotspot: on show, touched, judged, seated (RunCardTable.mood_of, a pure function of these and song time).
+func _card_table_feed(t: float) -> void:
+	if card_table == null:
+		return
+	var entry := {}
+	for e in hotspot_items():
+		if str(e["state"]) != "committed" and RunCardTable.is_table(e["hotspot"]):
+			entry = e
+	var last := {}
+	for i in range(hotspot_log.size() - 1, -1, -1):
+		var l: Dictionary = hotspot_log[i]
+		if str(l["kind"]) == "commit" and hotspots != null and RunCardTable.is_table(hotspots.get_hotspot(str(l["hotspot"]))):
+			last = {"t": float(l["t"]), "success": bool(l["success"])}
+			break
+	card_table.set_mood(RunCardTable.mood_of(entry, last, minigames.state, t, engine.beat_s), t)
 
 
 ## Song time of the decision that will judge a selection of `h`: its window's next decision beat (a final-window hotspot waits for the last block's).

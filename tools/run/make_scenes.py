@@ -66,7 +66,7 @@ NEW_WAYPOINTS = {
         ("court_door_w", (47.8, 7.0), -90, "courtyard"), ("court_mid", (54.0, 7.0), -90, "courtyard"), ("court_stage_door", (60.4, 7.0), -90, "courtyard"),
         ("stage_door_l", (62.6, 4.6), 90, "c_stage"), ("stage_door_r", (62.6, 9.4), 90, "c_stage"),
         ("court_north", (53.0, 1.0), 90, "courtyard"), ("court_south", (53.0, 12.0), 90, "courtyard"),
-        ("treat_door", (16.0, 8.6), 0, "treatment"), ("day_cards", (2.4, 6.4), 0, "dayroom"),
+        ("treat_door", (16.0, 8.6), 0, "treatment"), ("day_cards", (2.4, 5.7), 0, "dayroom"),
     ],
 }
 
@@ -83,7 +83,14 @@ NEW_THINGS = {
 # Occluders (drawn over the crowd when nearer than a dancer): id, texture name, texture file, (x, z) of the feet, width, height. A texture file starting with `res://` is loaded as it stands
 # (the blackjack table's art lives in assets/minigames/blackjack/, drawn by tools/minigames/make_world_table.py).
 NEW_OCCLUDERS = {
-    "mental_hospital": [("cards_table", "cards_table", "res://assets/minigames/blackjack/world_table.png", (2.4, 3.0), 2.8, 2.38)],
+    "mental_hospital": [("cards_table", "cards_table", "res://assets/minigames/blackjack/world_table.png", (2.4, 3.3), 3.2, 2.79)],
+}
+# The card table must read from across the day room (docs/BLACKJACK_INTEGRATION.md, "The table in the room"): no crowd home inside the table's clearing, which is a disc round
+# the table and the sight lines to it from the room's home waypoint and the chair's waypoint, on past the table by `behind` metres so nobody stands right behind the players
+# (the hull of those two points, the table's ends and those ends carried on along the sight lines, widened by `margin`, so the walk between the two points is clear too). A home inside it moves to the nearest free spot of its sector (clear of the clearing, the other homes and the waypoints, and not
+# right in front of the camera). The same numbers are checked by tests/test_blackjack_integration.gd.
+CLEARINGS = {
+    "mental_hospital": {"sector": "dayroom", "table": (2.4, 3.0), "radius": 1.6, "half": 1.25, "margin": 0.35, "behind": 1.5, "views": ("day_centre", "day_cards")},
 }
 NEW_LIGHTS = {  # id, (x, z), y, radius, color, strength
     "night_one": [("lt_crack", (2.5, 10.7), 1.2, 3.2, "#ff5a28", 1.3), ("lt_ship_beam", (0.0, 15.5), 1.5, 4.5, "#7ff0ff", 1.2), ("lt_wizard_floor", (-5.0, 7.0), 1.6, 3.0, "#8060ff", 0.9),
@@ -335,7 +342,18 @@ def _nudge(at, sector, doc, others):
     raise SystemExit("no clear spot near %s in %s" % (at, sector))
 
 
+MOVED_WAYPOINTS = {"mental_hospital": ("day_cards",)}  # placed again where the table above says (the chair's waypoint came nearer the table so the players fill the picture)
+
+
 def add_waypoints() -> None:
+    for mp, ids in MOVED_WAYPOINTS.items():
+        path = MAPS / f"{mp}.json"
+        txt = path.read_text(encoding="utf-8")
+        for wid, at, yaw, sector in NEW_WAYPOINTS[mp]:
+            if wid in ids:
+                txt = re.sub(r'  \{"id": "%s", "at": \[[^\]]+\], "yaw": [-\d.]+, "sector": "[^"]+"\}' % re.escape(wid),
+                             lambda _m, wid=wid, at=at, yaw=yaw, sector=sector: '  {"id": "%s", "at": [%g, %g], "yaw": %g, "sector": "%s"}' % (wid, at[0], at[1], yaw, sector), txt, count=1)
+        path.write_text(txt, encoding="utf-8", newline="\n")
     for mp, rows in NEW_WAYPOINTS.items():
         path = MAPS / f"{mp}.json"
         txt = path.read_text(encoding="utf-8")
@@ -415,11 +433,94 @@ def add_occluders() -> None:
         print(mp, "+%d occluders" % len(lines))
 
 
+def _hull(pts):
+    """Convex hull (counter-clockwise) of a few points."""
+    pts = sorted(set(pts))
+    def cross(o, a, b):
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    lo, hi = [], []
+    for p in pts:
+        while len(lo) >= 2 and cross(lo[-2], lo[-1], p) <= 0:
+            lo.pop()
+        lo.append(p)
+    for p in reversed(pts):
+        while len(hi) >= 2 and cross(hi[-2], hi[-1], p) <= 0:
+            hi.pop()
+        hi.append(p)
+    return lo[:-1] + hi[:-1]
+
+
+def in_clearing(pt, cl, wps, pad=0.0):
+    """True when ground point `pt` lies in a clearing (CLEARINGS entry; `wps` the map's waypoints by id), grown by `pad` metres."""
+    tx, tz = cl["table"]
+    if ((pt[0] - tx) ** 2 + (pt[1] - tz) ** 2) ** 0.5 < cl["radius"] + pad:
+        return True
+    m = cl["margin"] + pad
+    ends = [(tx - cl["half"] - m, tz), (tx + cl["half"] + m, tz)]
+    far = []
+    for v in cl["views"]:
+        for e in ends:
+            dx, dz = e[0] - wps[v][0], e[1] - wps[v][1]
+            n = (dx * dx + dz * dz) ** 0.5
+            far.append((e[0] + dx / n * cl["behind"], e[1] + dz / n * cl["behind"]))
+    hull = _hull([tuple(wps[v]) for v in cl["views"]] + ends + far)
+    inside = all((b[0] - a[0]) * (pt[1] - a[1]) - (b[1] - a[1]) * (pt[0] - a[0]) >= 0 for a, b in zip(hull, hull[1:] + hull[:1]))
+    if inside:
+        return True
+    for a, b in zip(hull, hull[1:] + hull[:1]):  # within the margin of the hull's edges
+        dx, dz = b[0] - a[0], b[1] - a[1]
+        t = max(0.0, min(1.0, ((pt[0] - a[0]) * dx + (pt[1] - a[1]) * dz) / (dx * dx + dz * dz)))
+        if ((pt[0] - a[0] - t * dx) ** 2 + (pt[1] - a[1] - t * dz) ** 2) ** 0.5 < m:
+            return True
+    return False
+
+
+def clear_homes() -> None:
+    """Moves the crowd homes that stand in a CLEARINGS zone to the nearest free spot of their sector, rewriting their lines in place (idempotent: a moved home is outside)."""
+    for mp, cl in CLEARINGS.items():
+        path = MAPS / f"{mp}.json"
+        txt = path.read_text(encoding="utf-8")
+        doc = json.loads(txt)
+        wps = {w["id"]: tuple(w["at"]) for w in doc["waypoints"]}
+        poly = next(sc["polygon"] for sc in doc["sectors"] if sc["id"] == cl["sector"])
+        homes = {h["actor"]: tuple(h["at"]) for h in doc["homes"]}
+        moved = 0
+        for aid in sorted(homes):
+            h = next(x for x in doc["homes"] if x["actor"] == aid)
+            if h["sector"] != cl["sector"] or not in_clearing(homes[aid], cl, wps):
+                continue
+            at = homes[aid]
+            best = None
+            for i in range(-40, 41):
+                for j in range(-40, 41):
+                    c = (round(at[0] + i * 0.1, 2), round(at[1] + j * 0.1, 2))
+                    d = (c[0] - at[0]) ** 2 + (c[1] - at[1]) ** 2
+                    if best is not None and d >= best[0]:
+                        continue
+                    if not _inside(c, poly, 0.6) or in_clearing(c, cl, wps, 0.25):
+                        continue
+                    if any(((c[0] - o[0]) ** 2 + (c[1] - o[1]) ** 2) ** 0.5 < 0.85 for k, o in homes.items() if k != aid):
+                        continue
+                    if any(((c[0] - w[0]) ** 2 + (c[1] - w[1]) ** 2) ** 0.5 < 1.1 for w in wps.values()):
+                        continue
+                    if any(((c[0] - wps[v][0]) ** 2 + (c[1] - wps[v][1]) ** 2) ** 0.5 < 3.0 for v in cl["views"]):
+                        continue
+                    best = (d, c)
+            if best is None:
+                raise SystemExit("no free spot for %s's home in %s" % (aid, mp))
+            homes[aid] = best[1]
+            txt = re.sub(r'(\{"actor": "%s", "sector": "[^"]+", "at": \[)[^\]]+(\])' % re.escape(aid), lambda m_, c=best[1]: "%s%g, %g%s" % (m_.group(1), c[0], c[1], m_.group(2)), txt, count=1)
+            moved += 1
+        path.write_text(txt, encoding="utf-8", newline="\n")
+        print(mp, "%d homes moved out of the card table's clearing" % moved)
+
+
 def main() -> None:
     nodes = build_nodes()
     add_waypoints()
     add_things()
     add_occluders()
+    clear_homes()
     write_run(nodes)
     write_music()
     # the hotspot tables read the scenes just written (exits and doorways) and own the named cinematics (rail actions to waypoints) that go into run.json

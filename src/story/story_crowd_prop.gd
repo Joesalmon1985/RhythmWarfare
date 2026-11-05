@@ -8,8 +8,12 @@ var items: Array = []
 var kind := "occluder"  # "occluder" or "silhouette"
 var depth := 0.0  # metres along the view axis (the crowd's sort key)
 var sector := ""
+var drawer := Callable()  # (prop) -> void: draws it instead of `items` (the run's animated card table, src/run/run_card_table.gd)
 
 
 func _draw() -> void:
+	if drawer.is_valid():
+		drawer.call(self)
+		return
 	for it in items:
 		draw_texture_rect(it[0], it[1], false, it[2])

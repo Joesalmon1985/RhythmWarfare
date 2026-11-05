@@ -229,8 +229,11 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 		draw_arc(c, float(e["radius_px"]) * 0.8, 0.0, TAU, 24, Color(white.r, white.g, white.b, 0.5 + 0.4 * pulse), maxf(1.0, sc * 0.02))
 		return
 	var width := maxf(1.0, sc * 0.035)
-	if str(look["selected"]) == "claim" and state in ["selected", "committed"]:
+	if uses_claim_look(h) and state in ["selected", "committed"]:
 		_draw_claim(e, state, pose, t, u, base, white)
+		return
+	if uses_claim_look(h) and state == "available":
+		_draw_claim_free(e, pose, t, base, white)
 		return
 	match state:
 		"available":
@@ -285,6 +288,28 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 
 
 # --- the "claim" look: touching a place you can sit at (the blackjack table). Bold shapes, no text: the picture is small and the eyes are on the pads. --------------------------
+# The people at the table carry most of it (src/run/run_card_table.gd: they invite, cheer at the touch, welcome or refuse); the light here frames them and never covers them:
+# no beam over the table, nothing white across the players.
+
+## True for a hotspot drawn with the claim look (`look.selected: "claim"`, the card table); every other hotspot keeps the plain looks above.
+static func uses_claim_look(h: Dictionary) -> bool:
+	return str((h.get("look", {}) as Dictionary).get("selected", "")) == "claim"
+
+
+## The table while it is free: a warm pool of light on the floor round it and a bold ring breathing over a bar, so the place reads as somewhere to go from across the room.
+func _draw_claim_free(e: Dictionary, pose: Dictionary, t: float, base: Color, white: Color) -> void:
+	var h: Dictionary = e["hotspot"]
+	var sc := float(e["scale"])
+	var world: Vector3 = e["world"]
+	var gy := float(e["ground_y"])
+	var r_m := float((h["look"] as Dictionary).get("ring_m", h["radius_m"]))
+	var breath := 0.0 if reduced else _pulse(t, 4.0)
+	var thick := maxf(2.0, sc * 0.06)
+	_disc(world, gy, r_m * 1.05, pose, Color(base.r, base.g, base.b, 0.1 + 0.06 * breath))
+	_disc(world, gy, r_m * 0.7, pose, Color(base.r, base.g, base.b, 0.08 + 0.04 * breath))
+	_claim_ring(world, gy, r_m * (1.0 + 0.03 * breath), pose, Color(base.r, base.g, base.b, 0.6 + 0.25 * breath), thick)
+	_claim_ring(world, gy, r_m * 1.18, pose, Color(white.r, white.g, white.b, 0.18 + 0.2 * breath), maxf(1.0, thick * 0.4))
+
 
 ## A warm wash round the edge of the whole picture (peripheral vision sees a touch counted); `a` is its strength at the very edge.
 func _frame_wash(col: Color, a: float) -> void:
@@ -322,14 +347,6 @@ func _disc(world: Vector3, ground_y: float, r: float, pose: Dictionary, col: Col
 		draw_colored_polygon(pts.slice(0, pts.size() - 1), col)
 
 
-## A tall beam of light standing on `g`, fading out at the top.
-func _claim_beam(g: Vector2, h_px: float, w_px: float, col: Color, a: float) -> void:
-	var top := g + Vector2(0.0, -h_px)
-	var cols := PackedColorArray([Color(col.r, col.g, col.b, a), Color(col.r, col.g, col.b, a), Color(col.r, col.g, col.b, 0.0), Color(col.r, col.g, col.b, 0.0)])
-	draw_polygon(PackedVector2Array([g + Vector2(-w_px, 0.0), g + Vector2(w_px, 0.0), top + Vector2(w_px * 0.45, 0.0), top + Vector2(-w_px * 0.45, 0.0)]), cols)
-	draw_line(g, top.lerp(g, 0.15), Color(1, 1, 1, a), maxf(2.0, w_px * 0.35))
-
-
 func _draw_claim(e: Dictionary, state: String, pose: Dictionary, t: float, u: float, base: Color, white: Color) -> void:
 	var h: Dictionary = e["hotspot"]
 	var sc := float(e["scale"])
@@ -346,52 +363,79 @@ func _draw_claim(e: Dictionary, state: String, pose: Dictionary, t: float, u: fl
 		return
 	var beat_ph := fmod(t, beat_s) / beat_s
 	var throb := 0.0 if reduced else pow(1.0 - beat_ph, 3.0)
-	# the whole floor disc: warm light, the ring throbbing on every beat, a tall beam over the table
-	_disc(world, gy, r_m, pose, Color(base.r, base.g, base.b, 0.3 + 0.12 * throb))
-	_claim_beam(g, sc * 3.0, maxf(5.0, sc * 0.3) * (1.0 + 0.2 * throb), white, 0.75)
-	_claim_ring(world, gy, r_m * (1.0 + 0.04 * throb), pose, Color(white.r, white.g, white.b, 0.85 + 0.15 * throb), thick * (1.0 + 0.5 * throb))
-	# the countdown: a ring closing in from well outside, on the main ring exactly at the decision (reduced: an arc filling clockwise)
-	var span := maxf(float(e["t_commit"]) - float(e["t_state"]), 0.05)
-	var left := clampf((float(e["t_commit"]) - t) / span, 0.0, 1.0)
-	if reduced:
-		draw_arc(g, r_m * sc * 0.5 + thick * 2.0, -PI * 0.5, -PI * 0.5 + TAU * (1.0 - left), 40, Color(1, 1, 1, 0.95), thick)
-	else:
-		_claim_ring(world, gy, r_m * (1.0 + 1.6 * left), pose, Color(1, 1, 1, 0.55 + 0.4 * (1.0 - left)), maxf(2.0, thick * 0.8))
-	# the instant of the touch: a flash on the floor, a thick ring flying out, and the picture's edge washed with light
+	# the whole floor disc: warm light, the ring throbbing on every beat (no beam: the people at the table are the show)
+	_disc(world, gy, r_m * 1.05, pose, Color(base.r, base.g, base.b, 0.22 + 0.1 * throb))
+	_claim_ring(world, gy, r_m * (1.0 + 0.04 * throb), pose, Color(white.r, white.g, white.b, 0.8 + 0.2 * throb), thick * (1.0 + 0.5 * throb))
+	_claim_countdown(e, pose, t, world, gy, r_m, sc, thick, white)
+	# the instant of the touch: a warm flash on the floor, a ring flying out and a warm edge round the picture; never a white-out
 	if u < CLAIM_BURST_S and not reduced:
 		var k := u / CLAIM_BURST_S
-		_disc(world, gy, r_m, pose, Color(1, 1, 1, 0.55 * (1.0 - k)))
-		_claim_ring(world, gy, r_m * (1.0 + 1.4 * k), pose, Color(1, 1, 1, 0.95 * (1.0 - k)), thick * 2.2 * (1.0 - k) + 2.0)
-		_frame_wash(white, 0.5 * (1.0 - k))
-		_glow(Vector2(g.x, minf(g.y - sc * 0.5, size.y * 0.8)), r_m * sc * (0.9 + 0.8 * k), Color(1, 1, 1), 0.6 * (1.0 - k))
+		_disc(world, gy, r_m, pose, Color(white.r, white.g, white.b, 0.3 * (1.0 - k)))
+		_claim_ring(world, gy, r_m * (1.0 + 1.4 * k), pose, Color(white.r, white.g, white.b, 0.9 * (1.0 - k)), thick * 2.0 * (1.0 - k) + 2.0)
+		_frame_wash(base, 0.28 * (1.0 - k))
+
+
+## The countdown to the decision that will seat you or wave you off: four lamps round the ring, one lighting on each of the last four beats, the last on the decision itself (a
+## "three, two, one, now" in light), with a thin ring closing in from outside over the whole wait. Before the last four beats the lamps wait unlit; reduced motion: the lamps
+## and an arc filling clockwise, no closing ring.
+const CLAIM_PIPS := 4
+
+
+func _claim_countdown(e: Dictionary, pose: Dictionary, t: float, world: Vector3, gy: float, r_m: float, sc: float, thick: float, white: Color) -> void:
+	var t_commit := float(e["t_commit"])
+	var span := maxf(t_commit - float(e["t_state"]), 0.05)
+	var left := clampf((t_commit - t) / span, 0.0, 1.0)
+	if reduced:
+		draw_arc(e["ground"], r_m * sc * 0.5 + thick * 2.0, -PI * 0.5, -PI * 0.5 + TAU * (1.0 - left), 40, Color(1, 1, 1, 0.9), thick)
+	else:
+		_claim_ring(world, gy, r_m * (1.0 + 1.3 * left), pose, Color(white.r, white.g, white.b, 0.25 + 0.35 * (1.0 - left)), maxf(1.0, thick * 0.5))
+	var beats_left := (t_commit - t) / beat_s
+	var lit := clampi(CLAIM_PIPS - int(ceil(beats_left - 1.0e-6)) + 1, 0, CLAIM_PIPS)  # 1 lamp at 4 beats to go ... all 4 on the decision
+	if beats_left > float(CLAIM_PIPS):
+		lit = 0
+	var near := beats_left <= float(CLAIM_PIPS)
+	for i in CLAIM_PIPS:
+		var a := PI * 0.75 + PI * 0.5 * float(i)  # on the diagonals round the ring, the first at the front left (seen from the room's home), on round
+		var pr := StoryProjector.project(Vector3(world.x + cos(a) * r_m * 1.22, gy, world.z + sin(a) * r_m * 1.22), pose, size)
+		if float(pr["depth"]) < StoryProjector.NEAR:
+			continue
+		var p: Vector2 = pr["screen"]
+		var rr := maxf(2.5, float(pr["scale"]) * 0.09)
+		if i < lit:
+			var fresh := 0.0 if reduced else clampf(1.0 - (t - (t_commit - float(CLAIM_PIPS - 1 - i) * beat_s)) / (0.5 * beat_s), 0.0, 1.0)
+			_glow(p, rr * (2.2 + 1.5 * fresh), white, 0.55 + 0.35 * fresh)
+			draw_circle(p, rr * (1.0 + 0.4 * fresh), Color(1, 1, 1, 0.95))
+		else:
+			draw_arc(p, rr, 0.0, TAU, 12, Color(white.r, white.g, white.b, 0.55 if near else 0.3), maxf(1.0, rr * 0.35))
 
 
 ## Sat down: a bigger, brighter version of the plain flash (the walk to the chair follows).
 func _claim_success(pose: Dictionary, u: float, white: Color, g: Vector2, world: Vector3, gy: float, r_m: float, sc: float, thick: float) -> void:
 	var k := clampf(u / (FLASH_S * 1.6), 0.0, 1.0)
-	_disc(world, gy, r_m, pose, Color(1, 1, 1, 0.85 * (1.0 - k) + 0.1))
-	_claim_ring(world, gy, r_m * (1.0 + 2.6 * k), pose, Color(1, 1, 1, 0.98 * (1.0 - k)), thick * 2.6 * (1.0 - k) + 2.0)
-	_claim_beam(g, sc * (3.0 + 2.0 * k), maxf(6.0, sc * 0.4), white, 0.95 * (1.0 - 0.6 * k))
-	_glow(Vector2(g.x, minf(g.y - sc * 0.6, size.y * 0.8)), r_m * sc * (1.0 + 1.6 * k), Color(1, 1, 1), 0.95 * (1.0 - k) + 0.1)
+	_disc(world, gy, r_m * 1.05, pose, Color(white.r, white.g, white.b, 0.5 * (1.0 - k) + 0.08))
+	_claim_ring(world, gy, r_m * (1.0 + 2.6 * k), pose, Color(1, 1, 1, 0.95 * (1.0 - k)), thick * 2.6 * (1.0 - k) + 2.0)
+	_claim_ring(world, gy, r_m, pose, Color(white.r, white.g, white.b, 0.9 * (1.0 - k)), thick)
+	_glow(Vector2(g.x, minf(g.y - sc * 0.6, size.y * 0.8)), r_m * sc * (1.0 + 1.2 * k), white, 0.45 * (1.0 - k))
 	if not reduced:
-		_frame_wash(white, 0.8 * (1.0 - k))
+		_frame_wash(white, 0.45 * (1.0 - k))
 
 
-## Waved off: cold grey light, the ring breaks into segments that drop and fade, a short sideways shake. Nothing of it is warm or white.
+## Waved off: the warm light goes out at once: a cold dark pool, the ring breaking into segments that drop and fade, a short hard sideways shake and the picture's edge darkening
+## (the opposite of the warm wash of a touch). Nothing of it is warm or white.
 func _claim_refused(pose: Dictionary, u: float, g: Vector2, world: Vector3, gy: float, r_m: float, sc: float, thick: float) -> void:
 	var k := clampf(u / CLAIM_REFUSE_S, 0.0, 1.0)
-	var cold := Color(0.55, 0.62, 0.75) if not high_contrast else Color(0.75, 0.8, 0.9)
-	var shake := 0.0 if reduced else sin(u * 70.0) * (1.0 - k) * sc * 0.14
+	var cold := Color(0.5, 0.58, 0.74) if not high_contrast else Color(0.75, 0.8, 0.95)
+	var shake := 0.0 if reduced else sin(u * 70.0) * (1.0 - k) * sc * 0.2
+	_frame_wash(Color(0.02, 0.03, 0.08), 0.55 * (1.0 - k))
 	draw_set_transform(Vector2(shake, 0.0))
-	_disc(world, gy, r_m, pose, Color(cold.r, cold.g, cold.b, 0.35 * (1.0 - k)))
+	_disc(world, gy, r_m * 1.05, pose, Color(0.03, 0.04, 0.09, 0.45 * (1.0 - k)))
 	var ring := _ring_points(world, gy, r_m, pose)
 	if ring.size() > 2:
 		var per := 4
 		for i in 7:
 			var seg := PackedVector2Array()
-			var fall := 0.0 if reduced else k * k * sc * (0.9 + 0.35 * float(i % 3))
+			var fall := 0.0 if reduced else k * k * sc * (1.1 + 0.4 * float(i % 3))
 			for j in range(i * per, i * per + per):  # four points per arc: three segments drawn, one left out as the gap
 				seg.append(ring[mini(j, ring.size() - 1)] + Vector2(0.0, fall))
-			draw_polyline(seg, Color(cold.r, cold.g, cold.b, 0.9 * (1.0 - k)), thick * (1.0 - 0.4 * k))
-	_claim_beam(g, sc * 3.0 * (1.0 - k), maxf(4.0, sc * 0.2), cold, 0.5 * (1.0 - k))
+			draw_polyline(seg, Color(cold.r, cold.g, cold.b, 0.95 * (1.0 - k)), thick * 1.3 * (1.0 - 0.4 * k))
 	draw_set_transform(Vector2.ZERO)
