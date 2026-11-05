@@ -3,7 +3,7 @@ extends Control
 ## RW_GALLERY_LOW=1 gives 320 x 115 shown at four times). Pages (env RW_GALLERY_PAGE=n): 1 every mood for each person, 2 every gesture for the dealer, 3 gaze in nine directions,
 ## 4 to 6 the player's hand gestures at progress 0.2, 0.55 and 0.9. Env RW_GALLERY_T fixes the animation time (seconds) for repeatable screenshots.
 
-const WALL := Color("a8dcc4")
+const WALL := Color("1d2522")  # the Ward day room's dark wall
 const MARK := Color("ff2fa0")
 const CELL_W := 106.0
 const CELL_H := 115.0
@@ -160,8 +160,8 @@ func _page_gestures() -> void:
 			if target != Vector2.ZERO:
 				gz = target
 			BlackjackPeople.draw_person(ci, "dealer", c, u, face, gz, g, t, _beat(), target, "body")
-			BlackjackDraw.rect(ci, 0.0, c.y + 52.0 * u, ci.size.x, ci.size.y, BlackjackDraw.BAIZE)
-			BlackjackDraw.rect(ci, 0.0, c.y + 52.0 * u, ci.size.x, 2.0 * u, BlackjackDraw.RIM)
+			BlackjackDraw.rect(ci, 0.0, c.y + 52.0 * u, ci.size.x, ci.size.y, BlackjackDraw.FELT)
+			BlackjackDraw.rect(ci, 0.0, c.y + 52.0 * u, ci.size.x, 2.0 * u, BlackjackDraw.WOOD)
 			BlackjackPeople.draw_person(ci, "dealer", c, u, face, gz, g, t, _beat(), target, "arms")
 			if target != Vector2.ZERO:
 				_marker(ci, target)
@@ -220,8 +220,8 @@ func _hands_scene(ci: Control, g: String, p: float) -> void:
 	BlackjackDraw.draw_table(ci, s, u)
 	BlackjackDraw.draw_deck(ci, BlackjackDraw.deck_spot(s), u)
 	var sp := BlackjackDraw.pile_origin(s)
-	ci.draw_rect(Rect2(sp.x, sp.y - 24.0 * u, 70.0 * u, 24.0 * u), Color("86c79a"))
-	ci.draw_rect(Rect2(BlackjackDraw.bet_spot(s) - Vector2(12.0, 5.0) * u, Vector2(24.0, 10.0) * u), Color("86c79a"))
+	ci.draw_rect(Rect2(sp.x, sp.y - 24.0 * u, 70.0 * u, 24.0 * u), Color("4a6a50"))
+	ci.draw_rect(Rect2(BlackjackDraw.bet_spot(s) - Vector2(12.0, 5.0) * u, Vector2(24.0, 10.0) * u), Color("4a6a50"))
 	BlackjackDraw.draw_card(ci, {"rank": 1, "suit": 0}, BlackjackDraw.card_spot("player", 0, s), u, true)
 	BlackjackDraw.draw_card(ci, {"rank": 10, "suit": 1}, BlackjackDraw.card_spot("player", 1, s), u, true)
 	BlackjackPeople.draw_player_hands(ci, s, u, g, p, {})

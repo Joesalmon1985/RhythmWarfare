@@ -21,7 +21,7 @@ const FLIP_S := 0.3
 const FEEDBACK_S := 0.4
 const RING_POINTS := 28
 const REACT_DELAY := {"npc_a": 0.0, "dealer": 0.12, "npc_b": 0.24}  # seconds: a table of people reacting one after another, not as one
-const BACKLIGHT := {"npc_a": Color("e070c8"), "dealer": Color("ffd27a"), "npc_b": Color("5ad0e0")}
+const BACKLIGHT := {"npc_a": BlackjackDraw.SPILL_L, "dealer": BlackjackDraw.LAMP_LIGHT, "npc_b": BlackjackDraw.SPILL_R}
 const CLEAR_BEATS := 0.8
 const RISE_BEATS := 1.2
 const SINK_BEATS := 1.2
@@ -488,7 +488,7 @@ func _prepare() -> void:
 	var lift := _lift(bp)
 	# the room's light on the people (it breathes through the layer's alpha, so its rows are drawn once per size) and the table's shadow on the room
 	var breathe := 0.0 if reduced else 0.03 * sin(TAU * bp / 4.0)
-	(_layers["backlight"] as _Layer).self_modulate = Color(1.0, 1.0, 1.0, 0.045 + breathe * 0.5)
+	(_layers["backlight"] as _Layer).self_modulate = Color(1.0, 1.0, 1.0, 0.14 + breathe * 1.0)
 	_offer("backlight", [size, u])
 	_offer("shadow", [size, u])
 	# the door (always there; it swings and spills light on the beat only while it is a target)
@@ -561,17 +561,22 @@ func _lift(bp: float) -> float:
 	return ph * ph
 
 
-## Soft halos of the room's coloured light behind the three people, so they sit in the live room instead of on top of it (pink from the left, the lamp's warmth on the dealer, teal from the right).
-## Drawn at full alpha: the layer's alpha is the light's strength (0.045, breathing on four beats).
+## The room's coloured light in the air behind the three people, as a haze of dithered pixels (denser toward each person), so they sit in the live room instead of on top of it: magenta
+## from the left behind `npc_a`, the lamp's warmth behind the dealer, teal from the right behind `npc_b`. Drawn at full colour: the layer's alpha is the light's strength (0.14, breathing
+## on four beats).
 func _draw_backlight(ci: Control, s: Array) -> void:
 	var sz: Vector2 = s[0]
 	var u: float = s[1]
+	if u < BlackjackPeople.LOW_U:
+		return  # at low detail a pixel of haze is as big as a face's feature: the people carry their rim of the room's light instead
+	var b := BlackjackDraw.Batch.new(ci)
 	for who in PEOPLE:
 		var c := BlackjackDraw.seat_pos(who, sz)
-		var col: Color = BACKLIGHT[who]
-		for i in 3:
-			var k := 1.0 - 0.22 * float(i)
-			BlackjackDraw.ell(ci, c.x, c.y + 16.0 * u, 52.0 * u * k, 48.0 * u * k, col)
+		b.add(BlackjackDraw.ell_tris(c.x, c.y + 10.0 * u, 54.0 * u, 46.0 * u), BACKLIGHT[who], BlackjackDraw.D_SPARSE)
+	for who in PEOPLE:
+		var c := BlackjackDraw.seat_pos(who, sz)
+		b.add(BlackjackDraw.ell_tris(c.x, c.y + 10.0 * u, 38.0 * u, 34.0 * u), BACKLIGHT[who], BlackjackDraw.D_QUARTER)
+	b.flush()
 
 
 func _draw_shadow(ci: Control, s: Array) -> void:

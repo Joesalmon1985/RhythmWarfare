@@ -29,6 +29,39 @@ const DOOR_FRAME := Color("5a3d26")
 const LAMP_SHADE := Color("3c785a")
 const LAMP_SHADE_LIGHT := Color("78be96")
 
+## The house look (the Ward's day room seen close: a dark room, the green enamel lamp as the key light, the room's magenta and teal spill at the sides). No dark outlines: an edge is a
+## darker step of its own material. Tones step in two or three values with ordered dithering between them (`dither_fill`), never a smooth gradient.
+const FELT_DEEP := Color("13261d")
+const FELT_DARK := Color("1b3528")
+const FELT := Color("244534")
+const FELT_LIT := Color("2f5a40")
+const FELT_HOT := Color("3b6a4a")
+const FELT_LINE := Color("7d8a62")
+const WOOD_DEEP := Color("1e130c")
+const WOOD_DARK := Color("38231a")
+const WOOD := Color("573822")
+const WOOD_LIT := Color("80583a")
+const WOOD_HOT := Color("a87a4e")
+const PAPER := Color("e4dac0")
+const PAPER_SHADE := Color("b9ac8c")
+const PAPER_EDGE := Color("6b604c")
+const CARD_BACK := Color("3a3f6e")
+const CARD_BACK_LIGHT := Color("7d82ae")
+const CARD_BACK_DARK := Color("252848")
+const ENAMEL := Color("2f5f45")
+const ENAMEL_LIT := Color("5f9a6e")
+const ENAMEL_DARK := Color("1a3326")
+const BULB := Color("fff0c0")
+const LAMP_LIGHT := Color("ffd890")
+const SPILL_L := Color("c45ab8")  # the room's magenta from the left
+const SPILL_R := Color("4ab8c8")  # and its teal from the right
+## Ordered-dither densities for `dither_fill` (lit cells of 16).
+const D_SPARSE := 2
+const D_QUARTER := 4
+const D_HALF := 8
+const D_THREE := 12
+const BAYER4 := [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5]
+
 const CARD_W := 26.0
 const CARD_H := 36.0
 const NPC_SCALE := 0.7
@@ -56,6 +89,7 @@ const PIP_SMALL := [
 static var _table_cache: Dictionary = {}
 static var _cap_cache: Dictionary = {}  # radius -> a limb's round end as triangles (`_cap`)
 static var _ell_cache: Dictionary = {}  # [rx, ry, first row, last row] -> an ellipse's rows as triangles, or true once seen (`ell`)
+static var _dither_tex: Dictionary = {}  # density -> a 4 x 4 ordered-dither tile (white where lit, clear elsewhere), generated once
 
 
 # ------------------------------------------------------------------ primitives
@@ -192,6 +226,170 @@ static func _row_tris(rx: float, ry: float, j0: int, j1: int) -> PackedVector2Ar
 	return out
 
 
+## A run of fills drawn as few calls as possible: consecutive fills of one dither density (16 = solid) go to the renderer as one triangle list with per-vertex colours, so the pixels are
+## exactly those of the fills drawn one by one, in order. `flush` before drawing anything else on the item (a rect, a line) and at the end.
+class Batch:
+	var ci: CanvasItem
+	var density := -1
+	var pts := PackedVector2Array()
+	var cols := PackedColorArray()
+
+	func _init(item: CanvasItem = null) -> void:
+		ci = item
+
+	func add(tris: PackedVector2Array, col: Color, d := 16) -> void:
+		if tris.is_empty() or d <= 0:
+			return
+		if d != density:
+			flush()
+			density = d
+		var c := PackedColorArray()
+		c.resize(tris.size())
+		c.fill(col)
+		pts.append_array(tris)
+		cols.append_array(c)
+
+	## Adds a limb (see `BlackjackDraw.limb`) straight into the run, with no list of its own.
+	func add_limb(a: Vector2, b: Vector2, wa: float, wb: float, col: Color, d := 16) -> void:
+		if d != density:
+			flush()
+			density = d
+		var n := pts.size()
+		BlackjackDraw.limb_into(pts, a, b, wa, wb)
+		var c := PackedColorArray()
+		c.resize(pts.size() - n)
+		c.fill(col)
+		cols.append_array(c)
+
+	## Draws what was added since the last flush (or, for a batch made without an item, records it as a run for `BlackjackDraw.draw_runs`).
+	func flush() -> void:
+		if pts.is_empty():
+			return
+		if ci == null:
+			runs.append([density, pts, cols])
+		else:
+			BlackjackDraw.draw_run(ci, density, pts, cols)
+		pts = PackedVector2Array()
+		cols = PackedColorArray()
+
+	var runs: Array = []
+
+
+## One run of a `Batch`: a triangle list with per-vertex colours, solid (`density` 16) or through the dither tile.
+static func draw_run(ci: CanvasItem, density: int, pts: PackedVector2Array, cols: PackedColorArray) -> void:
+	var rid := ci.get_canvas_item()
+	if density >= 16:
+		RenderingServer.canvas_item_add_triangle_array(rid, PackedInt32Array(), pts, cols)
+		return
+	RenderingServer.canvas_item_set_default_texture_repeat(rid, RenderingServer.CANVAS_ITEM_TEXTURE_REPEAT_ENABLED)
+	RenderingServer.canvas_item_set_default_texture_filter(rid, RenderingServer.CANVAS_ITEM_TEXTURE_FILTER_NEAREST)
+	var uvs := Transform2D(Vector2(0.25, 0.0), Vector2(0.0, 0.25), Vector2.ZERO) * pts
+	RenderingServer.canvas_item_add_triangle_array(rid, PackedInt32Array(), pts, cols, uvs, PackedInt32Array(), PackedFloat32Array(), dither_texture(density).get_rid())
+
+
+## Draws runs recorded by a `Batch` made without an item (a shape built once and drawn many times).
+static func draw_runs(ci: CanvasItem, runs: Array) -> void:
+	for r: Array in runs:
+		draw_run(ci, int(r[0]), r[1], r[2])
+
+
+## The part of polygon `a` outside polygon `b`, triangulated (a ring between two nested shapes).
+static func ring_tris(a: PackedVector2Array, b: PackedVector2Array) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	var parts := Geometry2D.clip_polygons(a, b)
+	var holed := false
+	for i in parts.size():
+		for j in parts.size():
+			if i != j and Geometry2D.is_point_in_polygon((parts[j] as PackedVector2Array)[0], parts[i]):
+				holed = true
+	if not holed:
+		for p: PackedVector2Array in parts:
+			out.append_array(tris_of(p))
+		return out
+	# a ring round a hole: cut it into bands of rows so that every piece is a simple polygon
+	var r := Rect2(a[0], Vector2.ZERO)
+	for v in a:
+		r = r.expand(v)
+	var y := floorf(r.position.y)
+	while y < r.end.y:
+		var band := PackedVector2Array([Vector2(r.position.x - 1.0, y), Vector2(r.end.x + 1.0, y), Vector2(r.end.x + 1.0, y + 3.0), Vector2(r.position.x - 1.0, y + 3.0)])
+		for piece: PackedVector2Array in Geometry2D.intersect_polygons(band, a):
+			for q: PackedVector2Array in Geometry2D.clip_polygons(piece, b):
+				out.append_array(tris_of(q))
+		y += 3.0
+	return out
+
+
+## The 4 x 4 ordered-dither tile with `density` cells of 16 lit (white), the rest clear; generated in code once per density.
+static func dither_texture(density: int) -> ImageTexture:
+	var hit: Variant = _dither_tex.get(density)
+	if hit != null:
+		return hit
+	var img := Image.create(4, 4, false, Image.FORMAT_RGBA8)
+	for i in 16:
+		img.set_pixel(i % 4, i / 4, Color(1, 1, 1, 1) if int(BAYER4[i]) < density else Color(1, 1, 1, 0))
+	var tex := ImageTexture.create_from_image(img)
+	_dither_tex[density] = tex
+	return tex
+
+
+## Draws a triangle list in one colour through the ordered-dither tile of `density` (of 16): the pixel-art way to step between two tones (one call, the pattern locked to the canvas
+## item's own pixel grid). Density 16 is a plain `fill`.
+static func dither_fill(ci: CanvasItem, tris: PackedVector2Array, col: Color, density := D_HALF) -> void:
+	if tris.is_empty() or density <= 0:
+		return
+	if density >= 16:
+		fill(ci, tris, col)
+		return
+	var rid := ci.get_canvas_item()
+	RenderingServer.canvas_item_set_default_texture_repeat(rid, RenderingServer.CANVAS_ITEM_TEXTURE_REPEAT_ENABLED)
+	RenderingServer.canvas_item_set_default_texture_filter(rid, RenderingServer.CANVAS_ITEM_TEXTURE_FILTER_NEAREST)
+	var uvs := Transform2D(Vector2(0.25, 0.0), Vector2(0.0, 0.25), Vector2.ZERO) * tris
+	RenderingServer.canvas_item_add_triangle_array(rid, PackedInt32Array(), tris, PackedColorArray([col]), uvs, PackedInt32Array(), PackedFloat32Array(), dither_texture(density).get_rid())
+
+
+## A polygon as a triangle list (empty when it is not simple).
+static func tris_of(pts: PackedVector2Array) -> PackedVector2Array:
+	var idx := Geometry2D.triangulate_polygon(pts)
+	var tri := PackedVector2Array()
+	tri.resize(idx.size())
+	for i in idx.size():
+		tri[i] = pts[idx[i]]
+	return tri
+
+
+## The rect rows of `ell(cx, cy, rx, ry)` as a triangle list (for `fill` / `dither_fill`).
+static func ell_tris(cx: float, cy: float, rx: float, ry: float, top := -1000, bottom := 1000) -> PackedVector2Array:
+	var ryi := int(maxf(0.0, roundf(ry)))
+	return Transform2D(0.0, Vector2(roundf(cx), roundf(cy))) * _row_tris(rx, ry, maxi(-ryi, top), mini(ryi, bottom))
+
+
+## A rect (whole pixels) as two triangles.
+static func rect_tris(x: float, y: float, w: float, h: float) -> PackedVector2Array:
+	var x0 := roundf(x)
+	var y0 := roundf(y)
+	var x1 := x0 + maxf(1.0, roundf(x + w) - x0)
+	var y1 := y0 + maxf(1.0, roundf(y + h) - y0)
+	return PackedVector2Array([Vector2(x0, y0), Vector2(x1, y0), Vector2(x1, y1), Vector2(x0, y0), Vector2(x1, y1), Vector2(x0, y1)])
+
+
+## The parts of polygon `a` inside polygon `b`, triangulated (a pool of light clipped to the felt).
+static func clip_tris(a: PackedVector2Array, b: PackedVector2Array) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	for p: PackedVector2Array in Geometry2D.intersect_polygons(a, b):
+		out.append_array(tris_of(p))
+	return out
+
+
+## An ellipse outline as a polygon of `n` points (rounded to whole pixels).
+static func ell_points(cx: float, cy: float, rx: float, ry: float, n := 40) -> PackedVector2Array:
+	var pts := PackedVector2Array()
+	for i in n:
+		var th := TAU * float(i) / float(n)
+		pts.append(Vector2(roundf(cx + cos(th) * rx), roundf(cy + sin(th) * ry)))
+	return pts
+
+
 static func shade(c: Color, alpha: float) -> Color:
 	return Color(c.r, c.g, c.b, c.a * alpha)
 
@@ -261,15 +459,14 @@ static func draw_card(ci: CanvasItem, card: Dictionary, center: Vector2, u: floa
 	ci.draw_set_transform(c, angle, Vector2(maxf(sx, 0.05), 1.0))
 	var x := -floorf(w * 0.5)
 	var y := -floorf(h * 0.5)
-	# shadow, outline, body (corners cut by one pixel for a rounded card)
-	var sh := shade(INK, 0.28 * alpha)
-	ci.draw_rect(Rect2(x + 1, y + 2, w, h), sh)
-	_round_rect(ci, x, y, w, h, shade(INK, alpha))
+	# its shadow on the felt, the paper's darker edge (no ink line), a step of shade along the bottom and the far side, the lamp-lit face (corners cut by one pixel for a rounded card)
+	ci.draw_rect(Rect2(x + 1, y + 2, w, h), shade(FELT_DEEP, 0.75 * alpha))
+	_round_rect(ci, x, y, w, h, shade(PAPER_EDGE, alpha))
+	_round_rect(ci, x + 1, y + 1, w - 2, h - 2, shade(PAPER_SHADE, alpha))
+	ci.draw_rect(Rect2(x + 1, y + 1, w - 3, h - 3), shade(PAPER, alpha))
 	if showing_face:
-		_round_rect(ci, x + 1, y + 1, w - 2, h - 2, shade(CREAM, alpha))
 		_card_face(ci, card, x, y, w, h, u, scale, alpha)
 	else:
-		_round_rect(ci, x + 1, y + 1, w - 2, h - 2, shade(CREAM, alpha))
 		_card_back(ci, x, y, w, h, alpha)
 	ci.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
@@ -305,22 +502,22 @@ static func _card_face(ci: CanvasItem, card: Dictionary, x: float, y: float, w: 
 
 
 static func _card_back(ci: CanvasItem, x: float, y: float, w: float, h: float, alpha: float) -> void:
-	ci.draw_rect(Rect2(x + 2, y + 2, w - 4, h - 4), shade(BACK_BASE, alpha))
-	ci.draw_rect(Rect2(x + 3, y + 3, w - 6, 1), shade(BACK_LIGHT, alpha))
-	ci.draw_rect(Rect2(x + 3, y + h - 4, w - 6, 1), shade(BACK_LIGHT, alpha))
-	ci.draw_rect(Rect2(x + 3, y + 3, 1, h - 6), shade(BACK_LIGHT, alpha))
-	ci.draw_rect(Rect2(x + w - 4, y + 3, 1, h - 6), shade(BACK_LIGHT, alpha))
+	ci.draw_rect(Rect2(x + 2, y + 2, w - 4, h - 4), shade(CARD_BACK, alpha))
+	ci.draw_rect(Rect2(x + 3, y + 3, w - 6, 1), shade(CARD_BACK_LIGHT, alpha))
+	ci.draw_rect(Rect2(x + 3, y + h - 4, w - 6, 1), shade(CARD_BACK_DARK, alpha))
+	ci.draw_rect(Rect2(x + 3, y + 3, 1, h - 6), shade(CARD_BACK_LIGHT, alpha))
+	ci.draw_rect(Rect2(x + w - 4, y + 3, 1, h - 6), shade(CARD_BACK_DARK, alpha))
 	var cx := x + floorf(w * 0.5)
 	var cy := y + floorf(h * 0.5)
 	var rx := floorf(w * 0.3)
 	var ry := floorf(h * 0.3)
 	var dia := PackedVector2Array([Vector2(cx, cy - ry), Vector2(cx + rx + 1, cy), Vector2(cx, cy + ry + 1), Vector2(cx - rx, cy)])
-	ci.draw_colored_polygon(dia, shade(BACK_LIGHT, alpha))
+	ci.draw_colored_polygon(dia, shade(CARD_BACK_LIGHT, alpha))
 	var rx2 := maxf(1.0, floorf(rx * 0.55))
 	var ry2 := maxf(1.0, floorf(ry * 0.55))
 	var dia2 := PackedVector2Array([Vector2(cx, cy - ry2), Vector2(cx + rx2 + 1, cy), Vector2(cx, cy + ry2 + 1), Vector2(cx - rx2, cy)])
-	ci.draw_colored_polygon(dia2, shade(BACK_DARK, alpha))
-	ci.draw_rect(Rect2(cx, cy, 1, 1), shade(BACK_LIGHT, alpha))
+	ci.draw_colored_polygon(dia2, shade(CARD_BACK_DARK, alpha))
+	ci.draw_rect(Rect2(cx, cy, 1, 1), shade(CARD_BACK_LIGHT, alpha))
 
 
 ## A stack of cards seen from above with visible thickness (`count` cards), back pattern on top. `center` is the middle of the top card.
@@ -329,12 +526,12 @@ static func draw_deck(ci: CanvasItem, center: Vector2, u: float, count := 30) ->
 	var t := clampf(roundf(float(count) / 6.0 * u), 1.0, 9.0 * maxf(u, 1.0))
 	var x := roundf(center.x) - floorf(sz.x * 0.5)
 	var y := roundf(center.y) - floorf(sz.y * 0.5)
-	ci.draw_rect(Rect2(x + 2, y + 2 + t, sz.x, sz.y), shade(INK, 0.3))
-	_round_rect(ci, x, y + t, sz.x, sz.y, INK)
-	for i in int(t):
-		ci.draw_rect(Rect2(x + 1, y + sz.y - 1 + i, sz.x - 2, 1), CREAM if i % 2 == 0 else CREAM_SHADE)
-	_round_rect(ci, x, y, sz.x, sz.y, INK)
-	_round_rect(ci, x + 1, y + 1, sz.x - 2, sz.y - 2, CREAM)
+	ci.draw_rect(Rect2(x + 2, y + 2 + t, sz.x, sz.y), shade(FELT_DEEP, 0.8))
+	_round_rect(ci, x, y + t, sz.x, sz.y, PAPER_EDGE)
+	for i in int(t):  # the edges of the stacked cards, lit from above, darker toward the felt
+		ci.draw_rect(Rect2(x + 1, y + sz.y - 1 + i, sz.x - 2, 1), PAPER_SHADE if i % 2 == 0 else PAPER_EDGE.lerp(PAPER_SHADE, 0.5))
+	_round_rect(ci, x, y, sz.x, sz.y, PAPER_EDGE)
+	_round_rect(ci, x + 1, y + 1, sz.x - 2, sz.y - 2, PAPER)
 	_card_back(ci, x, y, sz.x, sz.y, 1.0)
 
 
@@ -477,70 +674,112 @@ static func _table_shapes(size: Vector2) -> Dictionary:
 	var cy := 236.0 * u
 	var rx := size.x * 0.5 + 34.0 * u
 	var ry := 128.0 * u
+	var rim := _super_points(cx, cy, rx, ry, 56)
+	var baize := _super_points(cx, cy + 4.0 * u, rx - 8.0 * u, ry - 7.0 * u, 56)
+	# the lamp's pool on the felt: nested ellipses round the point under the shade, each clipped to the felt, stepped by dithering (outermost first)
+	var pc := Vector2(cx, 156.0 * u)
+	# the near edge, away from the lamp, falls into the dark; the room's spill tints the far corners
+	var near := PackedVector2Array()
+	near.append_array(clip_tris(rect_points(0.0, 204.0 * u, size.x, 40.0 * u), baize))
+	var nearer := clip_tris(rect_points(0.0, 218.0 * u, size.x, 30.0 * u), baize)
 	var d := {
 		"ink": _super_points(cx, cy + 1.0, rx + 1.0, ry + 1.0, 56),
-		"rim": _super_points(cx, cy, rx, ry, 56),
+		"rim": rim,
 		"rim_low": _super_points(cx, cy + maxf(1.0, roundf(2.0 * u)), rx, ry, 56),
+		"rim_glint": clip_tris(ell_points(cx, 112.0 * u, 150.0 * u, 9.0 * u, 40), rim),
 		"edge": _super_points(cx, cy + 3.0 * u, rx - 6.0 * u, ry - 5.0 * u, 56),
-		"baize": _super_points(cx, cy + 4.0 * u, rx - 8.0 * u, ry - 7.0 * u, 56),
-		"mid": _super_points(cx, cy + 10.0 * u, rx * 0.84, ry * 0.8, 48),
-		"glow": _super_points(cx, cy + 40.0 * u, rx * 0.56, ry * 0.5, 40),
+		"baize": baize,
+		"near": near,
+		"nearer": nearer,
+		"spill_l": clip_tris(ell_points(-20.0 * u, 168.0 * u, 120.0 * u, 70.0 * u), baize),
+		"spill_r": clip_tris(ell_points(size.x + 20.0 * u, 168.0 * u, 120.0 * u, 70.0 * u), baize),
 		"shadow_far": _super_points(cx, cy + 2.0 * u, rx + 10.0 * u, ry + 9.0 * u, 40),
 		"shadow_near": _super_points(cx, cy + 2.0 * u, rx + 4.0 * u, ry + 4.0 * u, 40),
 	}
+	d["shadow_far_tris"] = tris_of(d["shadow_far"])
+	# the table as recorded runs (solid planes, then the dithered steps densest first): the pool's steps as rings between its nested ellipses, so the solid planes and the
+	# dithered seams each go to the renderer in one call
+	var b := Batch.new()
+	b.add(tris_of(d["ink"]), WOOD_DEEP)
+	b.add(tris_of(rim), WOOD_LIT)
+	b.add(tris_of(d["rim_low"]), WOOD)
+	b.add(tris_of(d["edge"]), FELT_DEEP)
+	b.add(tris_of(baize), FELT_DARK)
+	var e := func(rxu: float, ryu: float) -> PackedVector2Array: return ell_points(pc.x, pc.y, rxu * u, ryu * u, 48)
+	var felt_in := Geometry2D.intersect_polygons(e.call(252.0, 68.0), baize)
+	var lit_in := Geometry2D.intersect_polygons(e.call(158.0, 42.0), baize)
+	for q: PackedVector2Array in felt_in:
+		b.add(tris_of(q), FELT)
+	for q: PackedVector2Array in lit_in:
+		b.add(tris_of(q), FELT_LIT)
+	var w := size.x
+	b.add(rect_tris(w * 0.47, 206.0 * u, 10.0 * u, maxf(1.0, u)), FELT_DEEP)
+	b.add(rect_tris(w * 0.74, 142.0 * u, 2.0 * u, 2.0 * u), FELT_DARK)
+	b.add(ell_tris(w * 0.78, 176.0 * u, 7.0 * u, 3.5 * u), FELT_DARK)
+	b.add(ell_tris(w * 0.78, 176.0 * u, 5.0 * u, 2.0 * u), FELT)
+	for q: PackedVector2Array in Geometry2D.intersect_polygons(e.call(300.0, 84.0), baize):
+		for f: PackedVector2Array in felt_in:
+			b.add(ring_tris(q, f), FELT, D_HALF)
+	for q: PackedVector2Array in Geometry2D.intersect_polygons(e.call(200.0, 54.0), baize):
+		for f: PackedVector2Array in lit_in:
+			b.add(ring_tris(q, f), FELT_LIT, D_HALF)
+	b.add(tris_of(e.call(80.0, 21.0)), FELT_HOT, D_HALF)
+	b.add(d["rim_glint"], WOOD_HOT, D_HALF)
+	b.add(rect_tris(w * 0.28, 150.0 * u, 16.0 * u, 3.0 * u), FELT_HOT, D_HALF)
+	b.add(rect_tris(w * 0.62, 168.0 * u, 20.0 * u, 3.0 * u), FELT_LIT, D_HALF)
+	b.add(rect_tris(w * 0.16, 190.0 * u, 4.0 * u, 3.0 * u), FELT_LIT, D_HALF)
+	b.add(nearer, FELT_DEEP, D_HALF)
+	b.add(ring_tris(e.call(112.0, 30.0), e.call(80.0, 21.0)), FELT_HOT, D_QUARTER)
+	b.add(near, FELT_DEEP, D_QUARTER)
+	b.add(d["spill_l"], shade(SPILL_L, 0.4 if u >= 0.75 else 0.25), D_SPARSE)
+	b.add(d["spill_r"], shade(SPILL_R, 0.4 if u >= 0.75 else 0.25), D_SPARSE)
+	b.flush()
+	d["runs"] = b.runs
 	if _table_cache.size() > 6:
 		_table_cache.clear()
 	_table_cache[size] = d
 	return d
 
 
-## The ward day-room table: a worn green baize top with a wooden rim, wide and shallow, far edge higher than the near one, fading into the bottom of the picture.
+static func rect_points(x: float, y: float, w: float, h: float) -> PackedVector2Array:
+	return PackedVector2Array([Vector2(x, y), Vector2(x + w, y), Vector2(x + w, y + h), Vector2(x, y + h)])
+
+
+## The ward day-room table: a worn green felt top in a wooden rim, wide and shallow, far edge higher than the near one. Lit only by the lamp over it: a pool of light on the felt round the
+## point under the shade, stepped by dithering, the near edge falling into the dark, the room's magenta and teal spill on the far corners.
 static func draw_table(ci: CanvasItem, size: Vector2, u: float) -> void:
-	var s := _table_shapes(size)
-	poly(ci, s["ink"], INK)
-	poly(ci, s["rim"], RIM_LIGHT)
-	poly(ci, s["rim_low"], RIM)
-	poly(ci, s["edge"], BAIZE_EDGE)
-	poly(ci, s["baize"], BAIZE_DARK)
-	poly(ci, s["mid"], BAIZE)
-	poly(ci, s["glow"], Color("37895f"))
-	# worn patches, a coffee ring and a scuff (fixed, so they never flicker)
-	var w := size.x
-	rect(ci, w * 0.28, 150.0 * u, 14.0 * u, 2.0 * u, BAIZE_WEAR)
-	rect(ci, w * 0.62, 168.0 * u, 18.0 * u, 2.0 * u, BAIZE_WEAR)
-	rect(ci, w * 0.47, 206.0 * u, 10.0 * u, 2.0 * u, BAIZE_DARK)
-	rect(ci, w * 0.74, 142.0 * u, 3.0 * u, 3.0 * u, BAIZE_DARK)
-	var rc := Vector2(w * 0.78, 176.0 * u)
-	ell(ci, rc.x, rc.y, 7.0 * u, 3.5 * u, BAIZE_DARK)
-	ell(ci, rc.x, rc.y, 5.0 * u, 2.0 * u, BAIZE)
-	rect(ci, w * 0.16, 190.0 * u, 3.0 * u, 3.0 * u, BAIZE_WEAR)
+	draw_runs(ci, _table_shapes(size)["runs"])
 
 
 ## The table's shadow on the room round its far edge (drawn before the people, who cover most of it): it grounds the close-up where the rim meets the live room at the sides.
 static func draw_table_shadow(ci: CanvasItem, size: Vector2, u: float) -> void:
 	var s := _table_shapes(size)
-	poly(ci, s["shadow_far"], shade(INK, 0.22))
-	poly(ci, s["shadow_near"], shade(INK, 0.28))
+	dither_fill(ci, s["shadow_far_tris"], shade(WOOD_DEEP, 0.8), D_HALF)
+	poly(ci, s["shadow_near"], shade(WOOD_DEEP, 0.45))
 
 
-## The lamp over the table, the same hanging lamp the day room shows from across the room: `part` "cone" draws the shade at the top of the picture and its cone of warm light over the
-## people (before the table), "pool" the pool of light on the baize (after the table).
+## The lamp over the table, the same green enamel lamp the day room shows from across the room: `part` "cone" draws the shade at the top of the picture and the haze in its beam
+## (before the table), "pool" the warmth of the bulb on the felt right under it (after the table; the stepped pool itself is part of `draw_table`).
 static func draw_lamp(ci: CanvasItem, size: Vector2, u: float, part: String) -> void:
 	var cx := roundf(size.x * 0.5)
 	if part == "pool":
-		ell(ci, cx, 150.0 * u, 190.0 * u, 44.0 * u, shade(WARM, 0.06))
-		ell(ci, cx, 146.0 * u, 120.0 * u, 26.0 * u, shade(WARM, 0.07))
+		dither_fill(ci, ell_tris(cx, 150.0 * u, 60.0 * u, 14.0 * u), shade(LAMP_LIGHT, 0.35), D_SPARSE)
 		return
 	var t := maxf(1.0, roundf(u))
-	poly(ci, PackedVector2Array([Vector2(cx - 22.0 * u, 14.0 * u), Vector2(cx + 22.0 * u, 14.0 * u), Vector2(cx + 200.0 * u, 120.0 * u), Vector2(cx - 200.0 * u, 120.0 * u)]), shade(WARM, 0.07))
-	poly(ci, PackedVector2Array([Vector2(cx - 18.0 * u, 14.0 * u), Vector2(cx + 18.0 * u, 14.0 * u), Vector2(cx + 120.0 * u, 120.0 * u), Vector2(cx - 120.0 * u, 120.0 * u)]), shade(WARM, 0.07))
-	rect(ci, cx - t, 0.0, 2.0 * t, 6.0 * u, INK)
-	poly_o(ci, PackedVector2Array([Vector2(roundf(cx - 7.0 * u), roundf(5.0 * u)), Vector2(roundf(cx + 7.0 * u), roundf(5.0 * u)), Vector2(roundf(cx + 22.0 * u), roundf(14.0 * u)), Vector2(roundf(cx - 22.0 * u), roundf(14.0 * u))]), LAMP_SHADE, INK, t)
-	rect(ci, cx - 6.0 * u, 6.0 * u, 12.0 * u, maxf(1.0, u), LAMP_SHADE_LIGHT)
-	ell(ci, cx, 15.0 * u, 7.0 * u, 3.0 * u, WARM_HOT)
+	# haze in the beam: a sparse dither, denser toward the bulb (at low detail only the denser core, the sparse pixels would be as big as a face's features)
+	if u >= 0.75:
+		dither_fill(ci, tris_of(PackedVector2Array([Vector2(cx - 20.0 * u, 15.0 * u), Vector2(cx + 20.0 * u, 15.0 * u), Vector2(cx + 150.0 * u, 118.0 * u), Vector2(cx - 150.0 * u, 118.0 * u)])), shade(LAMP_LIGHT, 0.12), D_SPARSE)
+	dither_fill(ci, tris_of(PackedVector2Array([Vector2(cx - 17.0 * u, 15.0 * u), Vector2(cx + 17.0 * u, 15.0 * u), Vector2(cx + 60.0 * u, 50.0 * u), Vector2(cx - 60.0 * u, 50.0 * u)])), shade(LAMP_LIGHT, 0.14), D_QUARTER)
+	rect(ci, cx - t * 0.5, 0.0, t, 6.0 * u, WOOD_DEEP)
+	var shade_pts := PackedVector2Array([Vector2(roundf(cx - 6.0 * u), roundf(5.0 * u)), Vector2(roundf(cx + 6.0 * u), roundf(5.0 * u)), Vector2(roundf(cx + 21.0 * u), roundf(14.0 * u)), Vector2(roundf(cx - 21.0 * u), roundf(14.0 * u))])
+	poly_o(ci, shade_pts, ENAMEL, ENAMEL_DARK, t)
+	dither_fill(ci, tris_of(PackedVector2Array([Vector2(roundf(cx - 5.0 * u), roundf(5.0 * u)), Vector2(roundf(cx + 1.0 * u), roundf(5.0 * u)), Vector2(roundf(cx - 4.0 * u), roundf(14.0 * u)), Vector2(roundf(cx - 17.0 * u), roundf(14.0 * u))])), ENAMEL_LIT, D_HALF)
+	rect(ci, cx - 5.0 * u, 5.0 * u, 10.0 * u, t, ENAMEL_LIT)
+	rect(ci, cx - 21.0 * u, 14.0 * u, 42.0 * u, t, ENAMEL_DARK)
+	ell(ci, cx, 15.0 * u + t, 6.0 * u, 2.0 * u, BULB, 0, 1000)
 
 
-## The bet spot: an oval painted on the baize where the stake goes, worn and faint, `pu` the money's unit (so the ring holds a note).
+## The bet spot: an oval painted on the felt where the stake goes, worn and faint, `pu` the money's unit (so the ring holds a note).
 static func draw_bet_ring(ci: CanvasItem, c: Vector2, pu: float) -> void:
 	var rx := 28.0 * pu
 	var ry := 16.0 * pu
@@ -548,19 +787,20 @@ static func draw_bet_ring(ci: CanvasItem, c: Vector2, pu: float) -> void:
 	for i in 29:
 		var th := TAU * float(i) / 28.0
 		pts.append(Vector2(roundf(c.x + cos(th) * rx), roundf(c.y + sin(th) * ry)))
-	ell(ci, c.x, c.y, rx, ry, shade(BAIZE_DARK, 0.6))
-	ci.draw_polyline(pts, shade(BAIZE_WEAR, 0.9), maxf(1.0, roundf(pu * 0.8)))
+	dither_fill(ci, ell_tris(c.x, c.y, rx, ry), FELT_DEEP, D_QUARTER)
+	ci.draw_polyline(pts, shade(FELT_LINE, 0.6), maxf(1.0, roundf(pu * 0.8)))
 
 
 ## A hint of the player's own chair at the very bottom corners (optional).
 static func draw_chair_back(ci: CanvasItem, size: Vector2, u: float) -> void:
 	var y := size.y - 9.0 * u
-	for sx in [0.0, 1.0]:
+	for sx: float in [0.0, 1.0]:
 		var x0: float = 0.0 if sx == 0.0 else size.x - 22.0 * u
 		poly_o(ci, PackedVector2Array([
 			Vector2(roundf(x0), roundf(y)), Vector2(roundf(x0 + 22.0 * u), roundf(y)),
 			Vector2(roundf(x0 + 22.0 * u), roundf(size.y)), Vector2(roundf(x0), roundf(size.y)),
-		]), RIM_DARK, INK, maxf(1.0, roundf(u)))
+		]), WOOD_DARK, WOOD_DEEP, maxf(1.0, roundf(u)))
+		rect(ci, x0 + 2.0 * u, y, 18.0 * u, maxf(1.0, u), WOOD)
 
 
 ## The exit: a door standing ajar at the right edge with a slit of warm light spilling on the floor. `beat_phase` is continuous beats (only the fraction matters), pulse peaks on the beat;

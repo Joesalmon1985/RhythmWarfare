@@ -2,10 +2,10 @@ extends Control
 ## A complete mock blackjack table over a mint "room" backdrop, rendered through a low-res SubViewport like the game (640 x 230 shown at twice the size; env RW_GALLERY_LOW=1 gives 320 x 115
 ## shown at four times). Env RW_GALLERY_RECTS=1 outlines the four touch rectangles, RW_GALLERY_T fixes the animation time in seconds. Every few seconds the people change mood and gesture.
 
-const WALL := Color("a8dcc4")
-const WALL_DARK := Color("86bfa6")
-const FLOOR_A := Color("d8d0bc")
-const FLOOR_B := Color("b9b19c")
+const WALL := Color("1d2522")
+const WALL_DARK := Color("161c1a")
+const FLOOR_A := Color("1a1b20")
+const FLOOR_B := Color("15161a")
 
 class Layer:
 	extends Control
@@ -111,8 +111,8 @@ func _scene(ci: Control) -> void:
 	BlackjackDraw.draw_card(ci, {"rank": 9, "suit": 2}, Vector2(s.x * 0.5 + 42.0 * u, 150.0 * u), u, true, 1.0, 0.5, 0.8)
 	BlackjackDraw.draw_deck(ci, BlackjackDraw.deck_spot(s), u)
 	var sp := BlackjackDraw.pile_origin(s)
-	ci.draw_rect(Rect2(sp.x, sp.y - 20.0 * u, 70.0 * u, 20.0 * u), Color("86c79a"))
-	ci.draw_rect(Rect2(BlackjackDraw.bet_spot(s) - Vector2(12.0, 5.0) * u, Vector2(24.0, 10.0) * u), Color("86c79a"))
+	ci.draw_rect(Rect2(sp.x, sp.y - 20.0 * u, 70.0 * u, 20.0 * u), Color("4a6a50"))
+	ci.draw_rect(Rect2(BlackjackDraw.bet_spot(s) - Vector2(12.0, 5.0) * u, Vector2(24.0, 10.0) * u), Color("4a6a50"))
 	for i in 3:
 		var c := BlackjackDraw.seat_pos(who[i], s)
 		BlackjackPeople.draw_person(ci, who[i], c, u, BlackjackPeople.face_params(moods[i]), BlackjackPeople.gaze_point("player", who[i], s), gest[i], t, beat, _aim(gest[i], who[i], s, targets), "arms")

@@ -1,6 +1,6 @@
 extends Control
 ## The blackjack table without the whole game: the REAL BlackjackActivity (real RunWallet) on its own clock at 174 BPM, with the BlackjackView inside a 640 x 230 SubViewport shown nearest-neighbour
-## scaled (320 x 115 with RW_GALLERY_LOW=1) over a flat mint day-room backdrop. Every frame advances the song time by RW_DEMO_STEP seconds (default 0.05), so a screenshot at frame N is a known time.
+## scaled (320 x 115 with RW_GALLERY_LOW=1) over a dark stand-in for the Ward's day room (or a picture of the real room: RW_DEMO_BACKDROP). Every frame advances the song time by RW_DEMO_STEP seconds (default 0.05), so a screenshot at frame N is a known time.
 ## Env:
 ##   RW_MINIGAME_SEED=<n>        the deck's seed (default 7)
 ##   RW_DEMO_TAPS="bet@6,deck@14,hand@18,exit@60"   target@beats after sitting; goes through view.hit like a finger (falls back to a direct tap)
@@ -11,12 +11,13 @@ extends Control
 ##   RW_DEMO_STEP=<seconds>      song seconds per rendered frame
 ##   RW_DEMO_DECK=<ranks>        a stacked deck "npc_a,player,npc_b,dealer,npc_a,..." ranks 1..13 (deal order, then draws), suits cycle
 ##   RW_DEMO_REDUCED=1, RW_DEMO_HC=1   reduced motion, high contrast
+##   RW_DEMO_BACKDROP=<image path>     draw this picture (a capture of the day room from the seat, any size: it is cropped to the stage) behind the table
 
 const BEAT := 60.0 / 174.0
-const WALL := Color("a8dcc4")
-const WALL_DARK := Color("86bfa6")
-const FLOOR_A := Color("d8d0bc")
-const FLOOR_B := Color("b9b19c")
+const WALL := Color("1d2522")
+const WALL_DARK := Color("161c1a")
+const FLOOR_A := Color("1a1b20")
+const FLOOR_B := Color("15161a")
 
 
 class Layer:
@@ -40,6 +41,7 @@ var _taps: Array = []
 var _wobbles: Array = []
 var _fall := -1.0
 var _screen := Vector2(1280, 460)
+var _backdrop: Texture2D
 
 
 func _ready() -> void:
@@ -80,6 +82,10 @@ func _ready() -> void:
 	rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(rect)
+	if OS.has_environment("RW_DEMO_BACKDROP"):
+		var img := Image.load_from_file(OS.get_environment("RW_DEMO_BACKDROP"))
+		if img != null:
+			_backdrop = ImageTexture.create_from_image(img)
 	_back = Layer.new()
 	_back.size = _size
 	_back.fn = _room
@@ -148,6 +154,10 @@ func _do_tap(id: String, t: float) -> void:
 func _room(ci: Control) -> void:
 	var s := _size
 	var u := s.y / 230.0
+	if _backdrop != null:  # the stage band of a 16:9 capture (the stage is the top 460 of 720 lines)
+		var bs := _backdrop.get_size()
+		ci.draw_texture_rect_region(_backdrop, Rect2(Vector2.ZERO, s), Rect2(0, 0, bs.x, bs.x * s.y / s.x))
+		return
 	ci.draw_rect(Rect2(0, 0, s.x, 112.0 * u), WALL)
 	ci.draw_rect(Rect2(0, 96.0 * u, s.x, 16.0 * u), WALL_DARK)
 	var tile := roundf(16.0 * u)
@@ -162,3 +172,6 @@ func _room(ci: Control) -> void:
 			col = 1 - col
 		y += tile
 		row += 1
+	# the room's coloured spill from the left and the right
+	BlackjackDraw.dither_fill(ci, BlackjackDraw.ell_tris(0.0, 70.0 * u, 120.0 * u, 80.0 * u), Color("8a3c88"), BlackjackDraw.D_QUARTER)
+	BlackjackDraw.dither_fill(ci, BlackjackDraw.ell_tris(s.x, 70.0 * u, 120.0 * u, 80.0 * u), Color("2c7c8a"), BlackjackDraw.D_QUARTER)
