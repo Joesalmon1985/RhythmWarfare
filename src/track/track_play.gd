@@ -1,6 +1,8 @@
 extends Control
-## Track mode, a developer test scene: a whole recorded track plays start to finish as four voices, one per pad. A
-## missed cue silences that pad's voice until the player hits it again. No battle, no failing, no menus.
+## Track mode, a developer test scene: a whole recorded track plays start to finish. At any moment one instrument (the
+## focus) is the player's and all four pads play its part; the focus moves from instrument to instrument. A missed cue
+## silences the instrument being played until the player hits it again, the others keep playing. No battle, no
+## failing, no menus.
 ## Environment: RW_TRACK (absolute pack folder), RW_TRACK_CHART, RW_AUTOPLAY (perfect | accuracy:<f> | none),
 ## RW_TRACK_START (seconds), RW_TRACK_QUIT=1 (quit when the track ends, or at once with exit code 2 if the pack is
 ## refused). At the end it prints one line: TRACK_SUMMARY <json>.
@@ -24,6 +26,8 @@ var refused: Array = []  # the pack's problems when it was refused
 var ended := false
 
 var _info: Label
+var _focus_label: Label
+var _next_label: Label
 var _status: Label
 var _countdown: Label
 var _pause_label: Label
@@ -123,9 +127,7 @@ func _build_layout() -> void:
 	pad_view.show_keys = Session.show_keys
 	pad_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pad_view.clip_contents = true
-	for v in game.voices:
-		pad_view.voice_labels[int(v["pad"])] = "%s (pad %d)" % [v["label"], int(v["pad"])]
-	pad_view.muted_pad_fn = game.is_muted
+	pad_view.state_fn = _pad_state
 	pad_view.holding_fn = func(pad: int, now: float) -> float: return game.hold_progress(pad, now)
 	add_child(pad_view)
 
@@ -150,6 +152,10 @@ func _build_layout() -> void:
 
 	_info = _label(22, 0.02, 0.0, 14)
 	_status = _label(18, 0.02, 0.0, 70)
+	_focus_label = _label(44, 0.02, 0.5, 100)
+	_focus_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_next_label = _label(30, 0.02, 0.5, 160)
+	_next_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_countdown = _label(110, 0.3, 0.5, 0)
 	_countdown.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_pause_label = _label(48, 0.3, 0.5, 0)
@@ -216,8 +222,41 @@ func _update_text(t: float) -> void:
 	var shown := maxf(t, 0.0)
 	_info.text = "%s%s   %s" % [pack.title, (" - " + pack.artist) if not pack.artist.is_empty() else "", "AUTOPLAY " + autoplay.policy if autoplay != null else ""]
 	var muted := game.muted_keys()
-	_status.text = "%.1f / %.1f s   section: %s   chart: %s   hits %d   misses %d   muted: %s" % [shown, pack.duration_s,
+	_status.text = "%.1f / %.1f s   section: %s   chart: %s   hits %d   misses %d   silent: %s" % [shown, pack.duration_s,
 		pack.section_at(shown), game.chart_name, game.total_hits(), game.total_misses(), ", ".join(PackedStringArray(muted)) if not muted.is_empty() else "none"]
+	_focus_label.text = focus_text(t)
+	_next_label.text = next_text(t)
+
+
+## The state the pads are drawn in: "play", "muted" (the played voice is silent) or "rest" (nothing to play).
+func _pad_state() -> String:
+	return _pad_state_at(clock.judge_time())
+
+
+func _pad_state_at(t: float) -> String:
+	var voice := game.focus_voice(t)
+	if voice.is_empty():
+		return "rest"
+	return "muted" if game.is_muted(voice) else "play"
+
+
+## The big line: which instrument the player is playing at song time `t`, whether it is silent, or that there is nothing to play.
+func focus_text(t: float) -> String:
+	var voice := game.focus_voice(t)
+	if voice.is_empty():
+		return "Nothing to play"
+	var text := "Playing: " + game.label_of(voice)
+	if game.is_muted(voice):
+		text += "  (MUTED - hit a cue to bring it back)"
+	return text
+
+
+## The announcement line: from 8 beats before a change, the next instrument and the beats still to go ("" otherwise).
+func next_text(t: float) -> String:
+	var a := game.focus.announcement(t)
+	if not bool(a["showing"]):
+		return ""
+	return "Next: %s in %d" % [game.label_of(str(a["voice"])), int(a["count"])]
 
 
 func _on_game_event(ev: Dictionary, wall: float) -> void:
@@ -315,8 +354,8 @@ func _finish() -> void:
 func _summary_text(s: Dictionary) -> String:
 	var lines: Array[String] = ["%s: %d cues, %d hits, %d misses" % [str(s["title"]), int(s["cues"]), int(s["hits"]), int(s["misses"])], ""]
 	for v in s["voices"]:
-		lines.append("%-8s pad %d   cues %3d   hit %3d (P %d G %d O %d)   missed %3d   let go %d   sounding %5.1f%%" % [
-			str(v["label"]), int(v["pad"]), int(v["cues"]), int(v["hit_total"]), int(v["hits"]["perfect"]), int(v["hits"]["great"]),
+		lines.append("%-8s cues %3d   hit %3d (P %d G %d O %d)   missed %3d   let go %d   sounding %5.1f%%" % [
+			str(v["label"]), int(v["cues"]), int(v["hit_total"]), int(v["hits"]["perfect"]), int(v["hits"]["great"]),
 			int(v["hits"]["ok"]), int(v["misses"]), int(v["hold_let_go"]), float(v["sounding_share"]) * 100.0])
 	return "\n".join(PackedStringArray(lines))
 
