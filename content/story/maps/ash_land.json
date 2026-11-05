@@ -558,7 +558,7 @@
    "floor_tex": "floor_cavern",
    "ceil_tex": "ceil_cavern",
    "wall_tex": "wall_cavern",
-   "light": 0.38,
+   "light": 0.5,
    "tint": "#ffa070",
    "room": "keeper",
    "flags": []
@@ -1486,6 +1486,19 @@
    "sector": "al_cav_s"
   },
   {
+   "id": "lt_spring_p",
+   "kind": "light",
+   "at": [
+    0,
+    -103.0
+   ],
+   "y": 2.4,
+   "radius": 9.0,
+   "color": "#c8d8ff",
+   "strength": 1.4,
+   "sector": "al_cav_s"
+  },
+  {
    "id": "altar",
    "kind": "billboard",
    "sprite": "thing_ember_altar",
@@ -1561,6 +1574,19 @@
    "color": "#ff6a30",
    "strength": 1.0,
    "sector": "al_keep_in"
+  },
+  {
+   "id": "lt_keep_p",
+   "kind": "light",
+   "at": [
+    24,
+    -101.0
+   ],
+   "y": 2.0,
+   "radius": 10.0,
+   "color": "#ff8a40",
+   "strength": 1.5,
+   "sector": "al_keep"
   },
   {
    "id": "tent0",
@@ -1682,16 +1708,16 @@
    "actor": "rd_w0",
    "sector": "al_wall",
    "at": [
-    -3.4,
-    -11.6
+    -3.8,
+    -14.6
    ]
   },
   {
    "actor": "rd_w1",
    "sector": "al_wall",
    "at": [
-    3.4,
-    -11.8
+    3.8,
+    -14.8
    ]
   },
   {
@@ -1699,7 +1725,7 @@
    "sector": "al_wall",
    "at": [
     0.0,
-    -13.6
+    -20.6
    ]
   },
   {
@@ -1933,7 +1959,7 @@
    "id": "wall_mid",
    "at": [
     0,
-    -12.0
+    -11.0
    ],
    "yaw": 0,
    "sector": "al_wall"
@@ -1942,7 +1968,7 @@
    "id": "wall_gate_wp",
    "at": [
     0,
-    -19.8
+    -17.2
    ],
    "yaw": 0,
    "sector": "al_wall"
