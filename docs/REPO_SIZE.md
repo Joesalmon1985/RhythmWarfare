@@ -80,7 +80,7 @@ Result (`--export-pack "Windows Desktop"`, throwaway folder outside the repo):
 
 What the 227 MiB is: `songs/packs` 86.9 (Part 2), `assets/story` 74.4 (lossless textures, see below), the story and mission Ogg about 56, `songs/library` 9.8, `assets/openra` 3.4, the rest (scripts, data, `.import`, `uid_cache`) under 10.
 
-ANDROID_LINE
+The Android debug APK with the same filter (`--export-debug "Android"` to a folder outside the repo, signed with the debug keystore, 66 s) is **212 MB (202 MiB)**: the pack is stored inside the APK, which deflates it a little (Ogg and QOA do not compress). The old Android size with these filters was not measured (the old pack, 611 MB, would have been about 600 MB).
 
 ### Import options (checked, left as they are)
 
