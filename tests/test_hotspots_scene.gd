@@ -36,7 +36,6 @@ func _free(d: Dictionary) -> void:
 	for k in ["RW_RUN_VIRTUAL", "RW_RUN_BOT", "RW_RUN_ROUTES"]:
 		OS.set_environment(k, "")
 	OS.unset_environment("RW_RUN_START")
-	OS.unset_environment("RW_RUN_ARROWS")
 
 
 func _run_to(scene: Node, t_end: float) -> void:
@@ -128,7 +127,6 @@ func test_a_cinematic_is_the_move_when_the_scene_continues_by_its_default() -> v
 func test_the_wizard_is_a_character_hotspot_that_arms_the_bassment_when_the_block_is_passed() -> void:
 	var d := _scene()
 	var scene: Node = d["scene"]
-	assert_true(scene._gate_btn == null, "no written button")
 	_run_to(scene, 3.0 * BEAT)
 	assert_true(scene.hotspot_items().any(func(e: Dictionary) -> bool: return e["hotspot"]["id"] == "warehouse.wizard"), "he is on show in the first blocks")
 	assert_true(scene.hotspot_select("warehouse.wizard"))
@@ -163,12 +161,3 @@ func test_keys_one_to_four_select_the_hotspots_in_order() -> void:
 	_free(d)
 
 
-func test_the_arrows_come_back_behind_the_flag() -> void:
-	OS.set_environment("RW_RUN_ARROWS", "1")
-	var d := _scene()
-	var scene: Node = d["scene"]
-	assert_true(scene.hotspots == null and scene.engine.hotspots == null)
-	_run_to(scene, 50.0 * BEAT)
-	assert_true(scene._route_buttons.size() >= 2, "the old arrows")
-	assert_true(scene._gate_btn != null, "and the old wizard button")
-	_free(d)

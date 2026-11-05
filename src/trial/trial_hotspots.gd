@@ -5,7 +5,6 @@ extends RefCounted
 ## file and the passages agree (validate). The engine workstream's validator covers the shared contract; this one covers what only the Bassment knows.
 
 const PATH := "res://content/trial/hotspots.json"
-const GROUND_LIFT := 1.0  # a waypoint anchor (a doorway, a gap) is hit about a metre above the floor
 
 var raw: Dictionary = {}
 var by_passage: Dictionary = {}  # int passage -> Array of hotspot dictionaries (in choice order)
@@ -26,11 +25,11 @@ static func load_default() -> TrialHotspots:
 		var n := int(str(hs["scene"]))
 		if not h.by_passage.has(n):
 			h.by_passage[n] = []
-		(h.by_passage[n] as Array).append(hs)
+		(h.by_passage[n] as Array).append(HotspotContract.normalize(hs, str(v.get("world", "bassment")), str(hs.get("map", ""))))  # every optional field filled in: the view reads them
 	return h
 
 
-## What the hotspot is to the Bassment: `trial_kind` (the contract's `kind` says only exit for a default one, whatever it is).
+## What the hotspot is to the Bassment: `trial_kind` (it repeats the contract's `kind`).
 static func kind_of(h: Dictionary) -> String:
 	return str(h.get("trial_kind", h.get("kind", "")))
 
@@ -66,25 +65,6 @@ func visible(n: int, flags: Array) -> Array:
 	return out
 
 
-## Where an anchor stands in its zone map: {ok, pos: Vector3 (x, y, z), ground: float}. A waypoint is hit a metre above the floor; a thing at its own height.
-static func anchor_point(hs: Dictionary, m: StoryMap) -> Dictionary:
-	var a: Dictionary = hs.get("anchor", {})
-	if a.has("waypoint"):
-		if not m.has_waypoint(str(a["waypoint"])):
-			return {"ok": false}
-		var w: Dictionary = m.waypoint(str(a["waypoint"]))
-		var floor_y := float(m.sector(str(w["sector"])).get("floor", 0.0))
-		var at: Vector2 = w["at"]
-		return {"ok": true, "pos": Vector3(at.x, floor_y + GROUND_LIFT, at.y), "ground": floor_y}
-	if a.has("thing"):
-		for t in m.things:
-			if str(t["id"]) == str(a["thing"]):
-				var floor_t := float(m.sector(str(t["sector"])).get("floor", 0.0))
-				var at2: Vector2 = t["at"]
-				return {"ok": true, "pos": Vector3(at2.x, floor_t + float(t.get("y", float(t.get("size", 1.0)) * 0.5)), at2.y), "ground": floor_t}
-	return {"ok": false}
-
-
 ## Every hotspot against the passages and the zone maps; the errors name the hotspot. Empty when the two agree.
 func validate(d: TrialData) -> Array:
 	var errs: Array = errors.duplicate()
@@ -118,8 +98,8 @@ func validate(d: TrialData) -> Array:
 			if str(c.get("requires", "")) == "":
 				shown += 1
 			var kind := kind_of(h)
-			if str(h.get("kind", "")) != ("exit" if bool(h.get("default", false)) else kind):
-				errs.append("%s: `kind` is the contract's (exit for the default, else trial_kind)" % id)
+			if str(h.get("kind", "")) != kind:
+				errs.append("%s: `trial_kind` repeats `kind`" % id)
 			var want := "encounter" if c.has("encounter") else ("feature" if c.has("test") else "")
 			if want != "" and kind != want:
 				errs.append("%s: a %s choice must be a %s hotspot, not %s" % [id, "fight" if want == "encounter" else "luck test", want, kind])
@@ -127,8 +107,7 @@ func validate(d: TrialData) -> Array:
 				errs.append("%s: kind '%s' is not one the Bassment uses" % [id, kind])
 			if int(h.get("min_px", 0)) < 72:
 				errs.append("%s: min_px is at least 72" % id)
-			var ap := anchor_point(h, m)
-			if not bool(ap["ok"]):
+			if not bool(HotspotView.resolve(h.get("anchor", {}), m, {})["ok"]):
 				errs.append("%s: anchor %s is not in map %s" % [id, h.get("anchor", {}), p.get("map", "")])
 			if c.get("to", null) == null:
 				if (h["on_success"] as Dictionary).get("route", "") != "exit" or h.get("challenge", null) != null:

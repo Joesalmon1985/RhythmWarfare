@@ -76,7 +76,6 @@ func test_a_path_inside_a_world_is_a_door_walk_with_no_passage_frame() -> void:
 	var scene: Node = d["scene"]
 	_run_to(scene, 50.0 * BEAT)
 	assert_eq(scene.hotspot_items().size(), 3, "the hotspots are on show while the window is open: the bar door, the balcony stair and the dancer (the wizard has an earlier window)")
-	assert_eq(scene._route_buttons.size(), 0, "and no arrows")
 	assert_eq(scene.engine.selected_route(), "warehouse.bar", "the scripted tap is on the bar door")
 	_run_to(scene, 60.0 * BEAT)
 	var walked_before: int = (scene.journey_log as Array).filter(func(a: Dictionary) -> bool: return a["action"] == "player_move" and float(a["t0"]) > 60.5 * BEAT).size()

@@ -12,7 +12,7 @@ anchor: exit -> {"waypoint": exit_wp}; others -> {"thing": id}. Creatures have n
         on every run (lines whose id starts "hs_").
 on_success: {"route": "<passage>"} or {"route": "exit"} (a death's or the victory's way out); on_failure only for a luck test: {"route": <fail passage>}. A failed plain choice or fight holds the place
         and a third lost fight leads to 0: TrialFlow does that, and the contract's outcome keys have no word for it. The consequence text and the fight's texts come from passages.json at run time.
-The file is {"world": "bassment", "hotspots": [...]} as TrialData.load_hotspots reads it. `kind` follows the contract (only an exit may be the default), `trial_kind` is what the Bassment means.
+The file is {"world": "bassment", "hotspots": [...]} as TrialData.load_hotspots reads it. `kind` is what the hotspot is (a default may be an exit, a fight, a luck test or an item: the contract allows it for the Bassment); `trial_kind` repeats it under the Bassment's own name.
 """
 import json
 import math
@@ -163,8 +163,7 @@ def main():
             look = LOOK[kind]
             h = {
                 "id": f"trial.{n}.{i}", "world": "bassment", "scene": n, "map": p["map"], "choice": i, "anchor": anchor,
-                # the engine contract lets only an exit be the default: a default fight, luck test or object is an `exit` there, and `trial_kind` keeps what it really is
-                "kind": "exit" if default else kind, "trial_kind": kind,
+                "kind": kind, "trial_kind": kind,
                 "radius_m": RADIUS[kind], "min_px": 72, "available": avail,
                 "look": {"available": look, "selected": "ring", "committed": "flash"},
                 "challenge": chal, "on_success": ok,

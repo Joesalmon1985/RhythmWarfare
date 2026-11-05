@@ -641,7 +641,7 @@
    "anchor": {
     "thing": "hs_cable_eel"
    },
-   "kind": "exit",
+   "kind": "encounter",
    "trial_kind": "encounter",
    "radius_m": 1.2,
    "min_px": 72,
@@ -1060,7 +1060,7 @@
    "anchor": {
     "thing": "hs_barrel_knight"
    },
-   "kind": "exit",
+   "kind": "encounter",
    "trial_kind": "encounter",
    "radius_m": 1.2,
    "min_px": 72,
@@ -1481,7 +1481,7 @@
    "anchor": {
     "thing": "hs_mildew_mother"
    },
-   "kind": "exit",
+   "kind": "encounter",
    "trial_kind": "encounter",
    "radius_m": 1.2,
    "min_px": 72,
@@ -1691,7 +1691,7 @@
    "anchor": {
     "thing": "hs_mirror_twin"
    },
-   "kind": "exit",
+   "kind": "encounter",
    "trial_kind": "encounter",
    "radius_m": 1.2,
    "min_px": 72,
@@ -2074,7 +2074,7 @@
    "anchor": {
     "thing": "hs_bouncer"
    },
-   "kind": "exit",
+   "kind": "encounter",
    "trial_kind": "encounter",
    "radius_m": 1.2,
    "min_px": 72,
@@ -2391,7 +2391,7 @@
    "anchor": {
     "thing": "hs_rat_king"
    },
-   "kind": "exit",
+   "kind": "encounter",
    "trial_kind": "encounter",
    "radius_m": 1.2,
    "min_px": 72,
@@ -2531,7 +2531,7 @@
    "anchor": {
     "thing": "hs_furnace_imp"
    },
-   "kind": "exit",
+   "kind": "encounter",
    "trial_kind": "encounter",
    "radius_m": 1.2,
    "min_px": 72,
@@ -2914,7 +2914,7 @@
    "anchor": {
     "thing": "hs_gargoyle"
    },
-   "kind": "exit",
+   "kind": "encounter",
    "trial_kind": "encounter",
    "radius_m": 1.2,
    "min_px": 72,
@@ -3022,7 +3022,7 @@
    "anchor": {
     "thing": "door_glow"
    },
-   "kind": "exit",
+   "kind": "feature",
    "trial_kind": "feature",
    "radius_m": 1.0,
    "min_px": 72,
@@ -3095,7 +3095,7 @@
    "anchor": {
     "thing": "hs_echo"
    },
-   "kind": "exit",
+   "kind": "encounter",
    "trial_kind": "encounter",
    "radius_m": 1.2,
    "min_px": 72,

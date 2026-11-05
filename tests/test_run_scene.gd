@@ -60,8 +60,6 @@ func test_hotspots_are_touch_targets_on_the_stage_clear_of_the_pads() -> void:
 	var scene: Node = d["scene"]
 	var beat: float = 60.0 / 174.0
 	_run_to(scene, 52.0 * beat)
-	assert_eq(scene._route_buttons.size(), 0, "no arrows: the world is the menu")
-	assert_false(scene._exits.visible, "and no lit-door frames")
 	var items: Array = scene.hotspot_items()
 	assert_true(items.size() >= 2 and items.size() <= 4, "two to four hotspots from the first beat of block 4 (%d)" % items.size())
 	var stage := Rect2(scene._stage_host.global_position, scene._stage_host.size)
@@ -89,36 +87,6 @@ func test_hotspots_are_touch_targets_on_the_stage_clear_of_the_pads() -> void:
 	var pad: Rect2 = pad_rects[1]
 	assert_eq(scene.hotspot_tap(pad.get_center()), "", "a touch on a pad is never a hotspot")
 	assert_eq(scene.hotspots.selected, str(second["id"]), "and changes nothing")
-	_free(d)
-
-
-func test_route_arrows_still_work_behind_the_flag() -> void:
-	OS.set_environment("RW_RUN_ARROWS", "1")
-	var d := _scene(Vector2(844, 390))
-	var scene: Node = d["scene"]
-	var beat: float = 60.0 / 174.0
-	_run_to(scene, 52.0 * beat)
-	var btns: Dictionary = scene._route_buttons
-	assert_true(btns.size() >= 2, "at least two arrows are shown throughout beats 49 to 64")
-	var pad_rects: Dictionary = scene.pad_view.button_rects()
-	for dir in btns:
-		var b: Button = btns[dir]
-		var r := Rect2(b.global_position, b.size)
-		assert_true(r.size.x >= 100.0 and r.size.y >= 48.0, "%s arrow is a big enough target (%s)" % [dir, str(r.size)])
-		for p in pad_rects:
-			assert_false(r.intersects(pad_rects[p] as Rect2), "the %s arrow does not touch pad %d" % [dir, p])
-		assert_true(Rect2(Vector2.ZERO, Vector2(844, 390)).encloses(r), "%s arrow is on screen" % dir)
-	var keys: Array = btns.keys()
-	if keys.size() >= 2:
-		var first := (btns[keys[0]] as Button)
-		var second := (btns[keys[1]] as Button)
-		assert_false(Rect2(first.global_position, first.size).intersects(Rect2(second.global_position, second.size)), "the arrows do not overlap each other")
-		second.pressed.emit()
-		assert_eq(scene.engine.choice, str(second.get_meta("to")), "tapping an arrow selects it")
-		assert_true(second.text.contains("CHOSEN"))
-		first.pressed.emit()
-		assert_eq(scene.engine.choice, str(first.get_meta("to")), "and it can be changed")
-	OS.unset_environment("RW_RUN_ARROWS")
 	_free(d)
 
 

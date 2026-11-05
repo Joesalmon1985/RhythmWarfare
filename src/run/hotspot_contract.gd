@@ -5,7 +5,12 @@ extends RefCounted
 ##
 ## A file is {"world": "<run world id | bassment>", "hotspots": [ hotspot, ... ]}; a hotspot (every field except id, scene, anchor, kind, on_success is optional):
 ##   id, world, scene (a run scene id, or a Bassment passage number), map, anchor, kind, radius_m (0.8), min_px (72, never less), available, look, challenge, on_success, on_failure,
-##   cinematic, default, repeatable.
+##   cinematic, default, repeatable, trial_kind (the Bassment's name for `kind`: when present it is one of KINDS and equals `kind`).
+##
+## Defaults. A run scene's default is always an exit (the way on when nothing is tapped). The Bassment's passages have no such rule: a passage's default choice may be a fight, a luck test or
+## an item, so TrialData passes ctx `default_any_kind` and the default may be any kind (it must still be unconditional). Failure semantics are not the contract's there: TrialFlow keeps them
+## (a failed plain choice holds the place and becomes the default, a lost fight counts toward three, a luck miss goes its other way, and an outcome's `hold`, `lives`, `caption` and `on_defeat` are the
+## Bassment's extras).
 
 const KINDS := ["exit", "object", "character", "feature", "encounter", "secret"]
 const ANCHORS := ["thing", "waypoint", "actor", "pos"]
@@ -139,10 +144,10 @@ static func validate_scene(list: Array, ctx: Dictionary, errors: Array) -> void:
 		if at_start(h, start_e):
 			n_start += 1
 		if bool(h.get("default", false)):
-			if str(h.get("kind", "")) != "exit":
+			if str(h.get("kind", "")) != "exit" and not bool(ctx.get("default_any_kind", false)):
 				errors.append("%s: only an exit can be the default" % hw)
 			elif not unconditional(h):
-				errors.append("%s: the default exit must always be available (no flags_all, flags_none, energy_min or once)" % hw)
+				errors.append("%s: the default must always be available (no flags_all, flags_none, energy_min or once)" % hw)
 			defaults += 1
 			var dr := str((h.get("on_success", {}) as Dictionary).get("route", ""))
 			var want := str(ctx.get("default_route", ""))
@@ -174,6 +179,8 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 	if ctx.has("world") and str(h.get("world", ctx["world"])) != str(ctx["world"]):
 		errors.append("%s: world '%s' is not '%s'" % [hw, h.get("world", ""), ctx["world"]])
 	var kind := str(h.get("kind", ""))
+	if h.has("trial_kind") and (str(h["trial_kind"]) not in KINDS or str(h["trial_kind"]) != kind):
+		errors.append("%s: trial_kind '%s' must be a kind and equal `kind` '%s'" % [hw, h["trial_kind"], kind])
 	if kind not in KINDS:
 		errors.append("%s: kind '%s' is not one of %s" % [hw, kind, ", ".join(PackedStringArray(KINDS))])
 	var an: Variant = h.get("anchor", null)

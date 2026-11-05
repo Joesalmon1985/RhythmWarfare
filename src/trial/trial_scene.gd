@@ -5,7 +5,7 @@ extends Control
 ## the camera on rails between the passages' waypoints, the passage text as a caption band across the top (narrative only: no choice is ever written), the choices as hotspots in the
 ## room while the four-bar window is open (an exit lit where it lies, a creature standing in the room, an object, a feature; the default one brighter; tap to select, tap again to change,
 ## keys 1 to 4 on a desktop), creatures as billboard figures with idle, attack and struck poses, and the tableaux of a death and of the victory. Everything is a function of song time.
-## The hotspot data is content/trial/hotspots.json (TrialHotspots); until the engine workstream's hotspot_view is merged the lights and taps are TrialHotspotFallback.
+## The hotspot data is content/trial/hotspots.json (TrialHotspots); the lights and the hit test are the run's own HotspotView (one per zone stage, inside its low-res picture), fed by `hotspot_items`.
 
 const OUTCOME_S := 1.1
 const SCENE_TEXT := Color(0.93, 0.92, 1.0)
@@ -45,11 +45,11 @@ var _tag: Label
 var _timer_bar: ColorRect
 var _choice_layer: Control
 var hotspots: TrialHotspots
-var _hot_key := ""  # zone/passage/retry the lights were last built for
 var _items: Array = []  # the open window's hotspots: [{hs, index}] (index into the engine's choices)
+var _sel_t: Dictionary = {}  # choice index -> song time it was selected
+var _commit_view: Dictionary = {}  # {index, hs, zone, t}: the committed hotspot stays drawn for a moment (the flash)
 var _flash: ColorRect
 var _fade: ColorRect
-var _hot: TrialHotspotFallback  # DELETE WITH THE MERGE: replaced by the engine's hotspot_view
 var _outcome := {}
 var _pending: Dictionary = {}  # a passage waiting for the zone swap or an outcome animation
 var _swap_zone := ""
@@ -166,16 +166,6 @@ func _build_ui() -> void:
 	_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	area.add_child(_flash)
-	_hot = TrialHotspotFallback.new()
-	_hot.name = "TrialHotspots"
-	_hot.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_hot.mouse_filter = Control.MOUSE_FILTER_PASS
-	_hot.visible = false
-	_hot.beat_s = _beat_s
-	_hot.pose_fn = _exit_pose
-	_hot.now_fn = func() -> float: return _last_t
-	_hot.tapped.connect(pick)
-	area.add_child(_hot)
 	area.resized.connect(_layout)
 
 
@@ -260,6 +250,24 @@ func build_zone(z: String) -> Dictionary:
 	if st.map != null:
 		st.attach_world(st.map, true)
 	var rec := {"stage": st, "map": st.map}
+	if st.lowres != null:  # the hotspots are drawn inside the picture, above the room, by the run's own view
+		var hv := HotspotView.new()
+		hv.name = "Hotspots"
+		hv.stage = st
+		hv.beat_s = _beat_s
+		hv.items_fn = func() -> Array: return _view_items(z)
+		hv.pose_fn = _exit_pose
+		hv.now_fn = func() -> float: return _last_t
+		hv.reduced = Session.reduced_effects
+		hv.high_contrast = Session.high_contrast
+		hv.glow_tex = _assets.sprite("glow").get("tex", null)
+		var warm: Array = st.palettes.get("warm", [])
+		if not warm.is_empty():
+			hv.tint = (warm[0] as Color).lerp(Color(1.0, 0.9, 0.6), 0.55)
+		hv.set_anchors_preset(Control.PRESET_FULL_RECT)
+		var layer := st.lowres.add_overlay(hv, "Hotspots")
+		layer.layer = 2
+		rec["hotspot_view"] = hv
 	zone_stages[z] = rec
 	build_log.append({"zone": z, "ms": snappedf(float(Time.get_ticks_usec() - t0) / 1000.0, 0.1)})
 	return rec
@@ -377,8 +385,8 @@ func update(t: float, audio_t: float) -> void:
 	_handle(engine.update(t))
 	if _script_pick >= 0 and audio_t >= _script_pick_at:
 		if _script_taps:
-			if not _hot.items.is_empty() and _hot.visible:  # (the finger waits for the room: the lights come up after a zone swap)
-				var hit := tap_hotspot(_script_pick)
+			if not _view_items(zone).is_empty():  # (the finger waits for the room: the lights come up after a zone swap)
+				var hit := tap_centre(_script_pick)
 				print("TRIAL tap %d -> %d" % [_script_pick, hit])
 				_script_pick = -1
 		else:
@@ -399,11 +407,7 @@ func update(t: float, audio_t: float) -> void:
 	_animate_figure(audio_t)
 	var open := engine.window_open and swap_t < 0.0 and zone != "" and left_t < 0.0 and _pending.is_empty()
 	_choice_layer.visible = open
-	_hot.visible = open or _hot.flashing(audio_t)
 	if open:
-		if _hot_key != "%s/%d/%d" % [zone, engine.flow.passage, engine.flow.retry_index]:  # the zone swap landed: the lights come up in it
-			_hot.fade_from = audio_t
-			_sync_hotspots()
 		var span := float(TrialEngine.BLOCK_BEATS) * _beat_s
 		_timer_bar.scale = Vector2(clampf(engine.window_left(t) / span, 0.0, 1.0), 1.0)
 	_panel.visible = _panel.visible and not swapping
@@ -583,10 +587,8 @@ func _open_window(ev: Dictionary) -> void:
 	_place_choices()
 	if _outcome.is_empty():
 		_sync_figure()
-	_hot.flash = {}
-	_hot.fade_from = float(ev["t"])
-	_hot_key = ""
-	_sync_hotspots()
+	_commit_view = {}
+	_sel_t = {}
 	_script_pick = -1
 	_script_pick_at = -1.0
 	if _script_i < _script_choices.size():
@@ -600,33 +602,32 @@ func _open_window(ev: Dictionary) -> void:
 		_desc.visible = true
 
 
-## The hotspot layer's items from the open window and the engine's pick: where each anchor stands in its zone, which is the default (brighter) and which is selected.
-func _sync_hotspots() -> void:
-	var m := _map(zone)
-	if tdata.zone_of_passage(engine.flow.passage) != zone:  # the passage's zone is not on screen yet (a swap is pending): the lights wait for it
-		m = null
-	_hot_key = "%s/%d/%d" % [zone, engine.flow.passage, engine.flow.retry_index]
-	var def := engine.default_index()
+## What the hotspot view of zone `z` draws and a tap hits: [{index, hotspot, state, t_state}] for the open window's hotspots (once the passage's zone is the one on screen: after a zone swap the lights
+## come up in the new room), plus the one that has just committed (it stays for its flash). `hotspot` is the contract's hotspot; its `default` is true only while nothing is picked (the default is
+## brighter until the player chooses).
+func _view_items(z: String) -> Array:
 	var out: Array = []
-	if m != null:
+	if engine == null or not active:
+		return out
+	if z == zone and engine.window_open and not _items.is_empty() and tdata.zone_of_passage(engine.flow.passage) == z:
+		var def := engine.default_index()
 		for it in _items:
-			var h: Dictionary = it["hs"]
-			var ap := TrialHotspots.anchor_point(h, m)
-			if not bool(ap["ok"]):
-				continue
-			out.append({"index": int(it["index"]), "id": str(h["id"]), "kind": TrialHotspots.kind_of(h), "pos": ap["pos"], "ground": float(ap["ground"]), "radius_m": float(h["radius_m"]),
-				"default": int(it["index"]) == def and engine.selected < 0, "selected": int(it["index"]) == engine.selected})
-	_hot.items = out
+			var h: Dictionary = (it["hs"] as Dictionary).duplicate()
+			var i := int(it["index"])
+			h["default"] = i == def and engine.selected < 0
+			var sel := i == engine.selected
+			out.append({"index": i, "hotspot": h, "state": "selected" if sel else "available", "t_state": float(_sel_t.get(i, 0.0)) if sel else 0.0})
+	if not _commit_view.is_empty() and str(_commit_view["zone"]) == z:
+		if _last_t - float(_commit_view["t"]) < 2.0 * _beat_s:
+			out.append({"index": int(_commit_view["index"]), "hotspot": _commit_view["hs"], "state": "committed", "t_state": float(_commit_view["t"])})
+		else:
+			_commit_view = {}
+	return out
 
 
-## The lights of the open window (what the hotspot layer shows now): [{index, id, kind, pos, ground, radius_m, default, selected}].
+## The lights of the open window (what the hotspot view shows now): [{index, hotspot, state, t_state}].
 func hotspot_items() -> Array:
-	return _hot.items
-
-
-## Target rectangles of the open window's hotspots in the picture's coordinates (the layer's), one per item.
-func hotspot_rects() -> Array:
-	return _hot.rects()
+	return _view_items(zone)
 
 
 func hotspot_of(index: int) -> Dictionary:
@@ -636,14 +637,51 @@ func hotspot_of(index: int) -> Dictionary:
 	return {}
 
 
-## A finger on the picture: the nearest hotspot target it falls in is picked. Returns the index hit (-1 when none).
-func tap_at(pos: Vector2) -> int:
-	return _hot.tap_at(pos)
+## The screen placement of the open window's hotspots in the stage area: HotspotView.layout (the same pure function the view draws with).
+func hotspot_layout() -> Array:
+	var st := _stage(zone)
+	var pose := _exit_pose()
+	var rect := _stage_rect()
+	if st == null or st.map == null or pose.is_empty() or rect.size.x <= 1.0:
+		return []
+	return HotspotView.layout(hotspot_items().filter(func(e: Dictionary) -> bool: return str(e["state"]) != "committed"), st.map, st.crowds, pose, rect.size)
 
 
-## A finger on the centre of hotspot `index`, through the same hit test.
-func tap_hotspot(index: int) -> int:
-	return _hot.tap_index(index)
+func _stage_rect() -> Rect2:
+	var sh: Control = host._stage_host
+	return Rect2(sh.global_position, sh.size)
+
+
+## A touch or click at `pos` (viewport coordinates): only the stage area counts and never a point over a pad (RunPlay hands the touches here while the dungeon is in). The nearest hotspot within
+## its projected radius, at least min_px wide, is picked. Returns the choice index hit (-1 for a tap on nothing).
+func hotspot_tap(pos: Vector2) -> int:
+	if not active or engine == null or not engine.window_open:
+		return -1
+	var rect := _stage_rect()
+	if not rect.has_point(pos):
+		return -1
+	var rects: Dictionary = host.pad_view.button_rects()
+	for p in rects:
+		if (rects[p] as Rect2).has_point(pos):
+			return -1
+	var id := HotspotView.hit(hotspot_layout(), pos - rect.position)
+	if id == "":
+		return -1
+	for it in _items:
+		if str((it["hs"] as Dictionary)["id"]) == id:
+			pick(int(it["index"]))
+			return int(it["index"])
+	return -1
+
+
+## A finger on the centre of hotspot `index` through the same hit test (a script's or a test's tap). Returns the index hit (-1 when it cannot be reached).
+func tap_centre(index: int) -> int:
+	var rect := _stage_rect()
+	var want := str(hotspot_of(index).get("id", ""))
+	for e in hotspot_layout():
+		if want == str(e["id"]):
+			return hotspot_tap((e["centre"] as Vector2) + rect.position)
+	return -1
 
 
 ## Bars left of the open window (4 down to 1; 0 when none).
@@ -657,7 +695,7 @@ func bars_left() -> int:
 func pick(i: int) -> void:
 	if engine != null and engine.select(i):
 		trace.append({"kind": "pick", "choice": i, "t": _last_t})
-		_sync_hotspots()
+		_sel_t[i] = _last_t
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
@@ -671,10 +709,9 @@ func _on_commit(ev: Dictionary) -> void:
 	_choice_layer.visible = false
 	var cs := engine.flow.choices()
 	var i := int(ev["choice"])
-	for h in _hot.items:  # the committed hotspot flashes for a beat
-		if int(h["index"]) == i:
-			_hot.flash = {"item": h, "t0": float(ev["t"])}
-	_hot.items = []
+	var hs := hotspot_of(i)
+	if not hs.is_empty():  # the committed hotspot flashes for a moment
+		_commit_view = {"index": i, "hs": hs, "zone": zone, "t": float(ev["t"])}
 	_items = []
 	_last_exit = ""
 	if i >= 0 and i < cs.size():
@@ -734,7 +771,6 @@ func _on_exit(ev: Dictionary) -> void:
 	var span := (left_t - t) / (4.0 * _beat_s)
 	_move(zone, _last_exit, t, span)
 	_choice_layer.visible = false
-	_hot.items = []
 	_items = []
 
 
@@ -910,9 +946,7 @@ func deactivate() -> void:
 	_dark_t0 = -1.0
 	_fade.color = Color(0, 0, 0, 0)
 	_flash.color = Color(1, 1, 1, 0)
-	_hot.visible = false
-	_hot.items = []
-	_hot.flash = {}
+	_commit_view = {}
 	_items = []
 	_choice_layer.visible = false
 	for k in zone_stages:

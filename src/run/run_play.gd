@@ -5,14 +5,12 @@ extends Control
 ##
 ## Scripted play for tests and recordings: RW_RUN_BOT=perfect|none|accuracy:<f>|blocks:<10110...>, RW_RUN_ROUTES=left,right,... (a direction per
 ## phase: the bot taps the hotspot that leads there), RW_RUN_TAPS=scripted|none|changed|failure (the tap policy: the scripted taps, no taps at all (the default exits), a decoy tapped first and
-## then the scripted one, the scripted taps with the last block of every phase missed), RW_RUN_VIRTUAL=1 (no audio, a stepped clock), RW_RUN_UNTIL_PHASE=<n>, RW_RUN_START=<node id>,
-## RW_RUN_ARROWS=1 (the old route arrows and lit doors instead of the hotspots, until the data is converted).
+## then the scripted one, the scripted taps with the last block of every phase missed), RW_RUN_VIRTUAL=1 (no audio, a stepped clock), RW_RUN_UNTIL_PHASE=<n>, RW_RUN_START=<node id>.
 ##
 ## The route window is the hotspot window (docs/CONTINUOUS_RUN.md "Hotspots"): the player touches the world (HotspotView, RunHotspots); the last block's result picks the outcome.
 
 const COUNTDOWN_S := 2.0
 const RESUME_COUNTDOWN_S := 3.0
-const ARROW_GLYPH := {"left": "<", "right": ">", "up": "^", "down": "v"}
 
 var data: RunData
 var engine: RunEngine
@@ -30,8 +28,7 @@ var stages: Dictionary = {}  # world id -> {stage, assets, data, deck, waypoint}
 var active_world := ""
 var virtual_mode := false
 var trial_launcher: Callable  # called when the wizard is chosen and the block he waited for is passed (tests replace it)
-var hotspots: RunHotspots  # the scene's hotspots (null with RW_RUN_ARROWS=1: the old arrows)
-var arrows := false  # RW_RUN_ARROWS=1
+var hotspots: RunHotspots  # the scene's hotspots: the world is the menu
 var hotspot_log: Array = []  # [{kind: select | tap_miss | commit, t, ...}] for the tests and the walks
 var tap_policy := "scripted"
 var _sel_t: Dictionary = {}  # hotspot id -> song time it was selected
@@ -40,16 +37,12 @@ var _last_tap_ms := -1000
 var _last_tap_pos := Vector2(-9999, -9999)
 var _bot_decoy_done := -1
 var _gate: Control
-var _gate_btn: Button
-var _gate_wizard: TextureRect
 
 var _stage_host: Control
 var _pause_btn: Button
 var _dim: ColorRect
 var _pause_panel: PanelContainer
 var _settings_panel: Control
-var _route_box: Control
-var _route_buttons: Dictionary = {}  # dir -> Button
 var _debug_label: Label
 var _resume_at_wall := -1.0
 var _vt := -COUNTDOWN_S
@@ -76,7 +69,6 @@ var _passage_swap := -1.0  # song time of the downbeat a world swap walks throug
 var _door_phase := -1  # the phase whose door walk (a path inside the world) was started
 var _run_world := ""  # the run world of the phase before the current one (a change closes the passage frame)
 var _passage: RunPassageView
-var _exits: RunExitsView
 var trial: TrialScene  # the Bassment, hosted here: the same scene, clock, pads and audio (docs/TRIAL_OPENING.md)
 var tdata: TrialData
 var trial_state := ""  # "" | "armed" (the wizard was chosen: the walk to the hatch is scheduled) | "in" (the dungeon owns the pads) | "leaving"
@@ -110,11 +102,9 @@ func _ready() -> void:
 		start = "warehouse" if data.nodes.has("warehouse") else start
 	engine = RunEngine.new(data)
 	journey = RunJourney.new(data)
-	arrows = OS.get_environment("RW_RUN_ARROWS") == "1"
 	tap_policy = OS.get_environment("RW_RUN_TAPS") if OS.has_environment("RW_RUN_TAPS") and OS.get_environment("RW_RUN_TAPS") != "" else "scripted"
-	if not arrows:
-		hotspots = RunHotspots.new(data, Session.run_progress.run_flags, Session.run_progress.flags)
-		engine.hotspots = hotspots
+	hotspots = RunHotspots.new(data, Session.run_progress.run_flags, Session.run_progress.flags)
+	engine.hotspots = hotspots
 	engine.begin(start)
 	proxy = StoryRun.new()
 	proxy.level = engine.level
@@ -329,26 +319,10 @@ func _build_layout(start: String) -> void:
 	_passage.anchor_bottom = split
 	_passage.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_passage)
-	_exits = RunExitsView.new()
-	_exits.name = "Exits"
-	_exits.anchor_right = 1.0
-	_exits.anchor_bottom = split
-	_exits.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_exits.visible = false
-	_exits.beat_s = engine.beat_s
-	_exits.pose_fn = _exit_pose
-	_exits.process_mode = Node.PROCESS_MODE_INHERIT if arrows else Node.PROCESS_MODE_DISABLED
-	_exits.now_fn = func() -> float: return hud.now_t
-	add_child(_exits)
 	trial = TrialScene.new()
 	trial.name = "Trial"
 	add_child(trial)
 	trial.setup(self, tdata, data)
-	_route_box = Control.new()
-	_route_box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_route_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_route_box.visible = false
-	add_child(_route_box)
 	_debug_label = Label.new()
 	_debug_label.position = Vector2(12, 8)
 	_debug_label.add_theme_font_size_override("font_size", 13)
@@ -390,7 +364,7 @@ func _build_layout(start: String) -> void:
 
 # --- the wizard and the Trial ----------------------------------------------------------------------------------------------
 
-## A wizard waits at the edge of the Warehouse floor with a floating "Enter the Trial". Choosing it leaves the run for the Deathtrap Dungeon opening
+## A wizard waits in the Warehouse as a character hotspot (his picture is a thing of the map, no overlay and no text). Touching it leaves the run for the Deathtrap Dungeon opening
 ## (res://src/trial/trial_play.tscn); ignoring it changes nothing: the run, its pads and its routes go on as before.
 func _build_gate() -> void:
 	_gate = Control.new()
@@ -399,39 +373,7 @@ func _build_gate() -> void:
 	_gate.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_gate.visible = false
 	add_child(_gate)
-	_gate_wizard = TextureRect.new()
-	_gate_wizard.texture = load("res://assets/trial/art/wizard.png") as Texture2D
-	_gate_wizard.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_gate_wizard.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
-	_gate_wizard.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_gate_wizard.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_gate.add_child(_gate_wizard)
-	if arrows:  # the old floating button (RW_RUN_ARROWS=1); otherwise the wizard is a character hotspot and carries no text
-		_gate_btn = Button.new()
-		_gate_btn.text = "Enter the Trial"
-		_gate_btn.theme = StoryStyle.theme()
-		_gate_btn.focus_mode = Control.FOCUS_NONE
-		_gate_btn.modulate = Color(1.0, 0.9, 0.6)
-		_gate_btn.pressed.connect(func() -> void: trial_launcher.call())
-		_gate.add_child(_gate_btn)
-	_gate_wizard.visible = arrows  # with hotspots the wizard is a thing of the map
 	trial_launcher = func() -> void: arm_trial()
-	resized.connect(_layout_gate)
-	_layout_gate()
-
-
-func _layout_gate() -> void:
-	if _gate == null:
-		return
-	var stage_h := size.y * (1.0 - float(Session.PAD_SIZES[clampi(Session.pad_size, 0, 2)]))
-	var s := clampf(stage_h * 0.42, 64.0, 150.0)
-	_gate_wizard.size = Vector2(s, s)
-	_gate_wizard.position = Vector2(size.x * 0.02, stage_h - s - 4.0)
-	if _gate_btn == null:
-		return
-	_gate_btn.add_theme_font_size_override("font_size", int(clampf(stage_h * 0.05, 13.0, 22.0)))
-	_gate_btn.size = Vector2(maxf(s * 1.9, 150.0), clampf(stage_h * 0.13, 40.0, 60.0))
-	_gate_btn.position = Vector2(size.x * 0.02, _gate_wizard.position.y - _gate_btn.size.y - 6.0)
 
 
 # --- scripted player ------------------------------------------------------------------------------------------------------
@@ -480,16 +422,8 @@ func _bot_step(t: float) -> void:
 				_bot_released[i] = true
 				engine.release(int(n["pad"]), end_t, int(n["pad"]))
 				pad_view.button_down[int(n["pad"])] = false
-	if hotspots != null:
-		_scripted_select(t)
-		_bot_taps(t)
-		return
-	if engine.window_open and _bot_route_done != engine.phase_n and engine.phase_beat_at(t) > 52.0:
-		_bot_route_done = engine.phase_n
-		var k := engine.phase_n - 1
-		if k < _bot_routes.size() and _bot_routes[k] != "":
-			engine.choose_dir(_bot_routes[k])
-			_sync_route_buttons()
+	_scripted_select(t)
+	_bot_taps(t)
 
 
 ## The scripted taps (RW_RUN_TAPS): `scripted` taps the hotspot that leads where RW_RUN_ROUTES says (a direction per phase) at beat 52; `none` never taps; `changed` first taps a decoy at beat 50;
@@ -613,11 +547,6 @@ func _advance(t: float, audio_t: float) -> void:
 	if trial_state == "in":
 		trial.update(t, audio_t)
 		return
-	if _gate.visible and _gate_btn != null:  # the option floats
-		var bob := sin(audio_t * 2.0) * 4.0
-		_gate_btn.position.y = _gate_wizard.position.y - _gate_btn.size.y - 6.0 + bob
-	elif hotspots != null:
-		_place_wizard(audio_t)
 	if trial_state == "armed" and trial_entry_t >= 0.0:
 		_handle(engine.update(minf(t, trial_entry_t - 0.001)))
 	else:
@@ -676,23 +605,6 @@ func _exit_pose() -> Dictionary:
 		return {}
 	var pose := st.player.pose_at(hud.now_t)
 	return {"cam": pose["cam"], "yaw": float(pose["yaw"]) + st.free_look.offset, "pitch": float(pose.get("pitch", 0.0))}
-
-
-## The exits to light while the window is open: [{dir, glyph, at, ground, chosen}] for the routes whose doorway the rail knows.
-func exit_items() -> Array:
-	var out: Array = []
-	var st: StoryStage = stages[active_world]["stage"]
-	if st.map == null or journey.rail == null:
-		return out
-	var picked := engine.selected_route()
-	for o in engine.options():
-		var dir := str(o["dir"])
-		var wid := str(journey.rail.exits.get(dir, ""))
-		if wid == "" or not st.map.has_waypoint(wid):
-			continue
-		var w: Dictionary = st.map.waypoint(wid)
-		out.append({"dir": dir, "glyph": ARROW_GLYPH.get(dir, "?"), "at": w["at"], "ground": float(st.map.sector(str(w["sector"])).get("floor", 0.0)), "chosen": str(o["to"]) == picked})
-	return out
 
 
 ## What a scripted run did, for tools/run/walk_run.sh: the levels in order, the rail places per level, the journey's moves and glances, the worlds shown.
@@ -880,8 +792,6 @@ func _on_mix(ev: Dictionary) -> void:
 
 
 func _on_block_result(ev: Dictionary) -> void:
-	if int(ev["block"]) == 3 and not _route_buttons.is_empty():
-		_sync_route_buttons()  # the route lock has fallen: routes with another chart pack grey out
 	var t := float(ev["t"]) + 0.2
 	if bool(ev["passed"]):
 		if int(ev["block"]) < 3:
@@ -899,113 +809,25 @@ func _end_fade(_t: float, seconds: float) -> void:
 
 # --- routes ---------------------------------------------------------------------------------------------------------------
 
-func _open_routes(ev: Dictionary) -> void:
-	if hotspots != null:  # the hotspot window: the world is the menu, nothing to build
-		if audio != null:
-			for o in ev["options"]:
-				audio.preload_pack(str(data.nodes[str(o["to"])]["audio"]))
-		hud.caption("RISER" if str(ev["effect"]) == "riser" else "FALL", "info", float(ev["t"]), 2.0)
-		return
-	for c in _route_box.get_children():
-		c.queue_free()
-	_route_buttons.clear()
-	var opts: Array = ev["options"]
-	var w := size.x
-	var h := size.y * (1.0 - float(Session.PAD_SIZES[clampi(Session.pad_size, 0, 2)]))
-	for o in opts:
-		var dir := str(o["dir"])
-		var b := Button.new()
-		b.theme = StoryStyle.theme()
-		b.focus_mode = Control.FOCUS_NONE
-		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART  # a long room name or label wraps inside the button
-		b.add_theme_font_size_override("font_size", int(clampf(h * 0.09, 16.0, 30.0)))
-		b.custom_minimum_size = Vector2(minf(w * 0.3, 360.0), clampf(h * 0.22, 64.0, 120.0))
-		b.size = b.custom_minimum_size
-		var pos := Vector2.ZERO
-		match dir:
-			"left":
-				pos = Vector2(w * 0.02, h * 0.42)
-			"right":
-				pos = Vector2(w * 0.98 - b.size.x, h * 0.42)
-			"up":
-				pos = Vector2((w - b.size.x) * 0.5, h * 0.08)
-			_:
-				pos = Vector2((w - b.size.x) * 0.5, h * 0.62)
-		b.position = pos
-		b.set_meta("to", str(o["to"]))
-		b.set_meta("label", str(o["label"]))
-		b.set_meta("default", bool(o["default"]))
-		b.pressed.connect(func() -> void:
-			engine.choose(str(o["to"]))
-			_sync_route_buttons())
-		_route_box.add_child(b)
-		_route_buttons[dir] = b
-	_route_box.visible = true
-	_exits.fade_from = float(ev["t"])
-	_exits.visible = true
-	_sync_route_buttons()
+func _open_routes(ev: Dictionary) -> void:  # the hotspot window: the world is the menu, nothing to build
 	if audio != null:
-		for o in opts:
+		for o in ev["options"]:
 			audio.preload_pack(str(data.nodes[str(o["to"])]["audio"]))
-	hud.caption("RISER: CHOOSE YOUR WAY" if str(ev["effect"]) == "riser" else "FALL: CHOOSE YOUR WAY", "info", float(ev["t"]), 3.0)
-
-
-func _sync_route_buttons() -> void:
-	var picked := engine.selected_route()
-	for dir in _route_buttons:
-		var b: Button = _route_buttons[dir]
-		var to := str(b.get_meta("to"))
-		var chosen := to == picked
-		var tag := ""
-		if chosen:
-			tag = "  [DEFAULT]" if engine.choice == "" else "  [CHOSEN]"
-		b.text = "%s  %s%s\n%s" % [ARROW_GLYPH.get(dir, "?"), data.route_title(engine.node_id, to), tag, str(b.get_meta("label"))]
-		b.modulate = Color(1.0, 0.95, 0.6) if chosen else Color(0.85, 0.88, 1.0, 0.9)
-		b.disabled = not engine.route_allowed(to)  # after beat 60.5 only routes that play the chart already charted
-	_exits.items = exit_items()
-	hud.route_hint = "Tap an arrow to choose where to go (arrow keys work too). Changes count until the downbeat."
+	hud.caption("RISER" if str(ev["effect"]) == "riser" else "FALL", "info", float(ev["t"]), 2.0)
 
 
 func _close_routes(_ev: Dictionary) -> void:
-	if hotspots != null:
-		return
-	_route_box.visible = false
-	_exits.visible = false
-	_exits.items = []
 	hud.route_hint = ""
-	for c in _route_box.get_children():
-		c.queue_free()
-	_route_buttons.clear()
 
 
-func _unhandled_key_input(event: InputEvent) -> void:
-	if hotspots != null and event is InputEventKey and event.pressed and not event.echo and trial_state == "":
-		var kc := (event as InputEventKey).keycode  # desktop: 1 to 4 pick the hotspots on show in order, the arrow keys the hotspot that leads that way
-		if kc >= KEY_1 and kc <= KEY_4:
-			var shown := hotspots.shown(engine.block, engine.window_open)
-			if kc - KEY_1 < shown.size():
-				hotspot_select(str(shown[kc - KEY_1]["id"]))
-			return
-		var d := "left" if kc == KEY_LEFT else "right" if kc == KEY_RIGHT else "up" if kc == KEY_UP else ""
-		if d != "":
-			for o in engine.options():
-				if str(o["dir"]) == d:
-					for h in hotspots.shown(engine.block, engine.window_open):
-						if str(h["on_success"].get("route", "")) == str(o["to"]):
-							hotspot_select(str(h["id"]))
+func _unhandled_key_input(event: InputEvent) -> void:  # desktop: 1 to 4 pick the hotspots on show, in order
+	if hotspots == null or not (event is InputEventKey) or not event.pressed or event.echo or trial_state != "":
 		return
-	if not (event is InputEventKey) or not event.pressed or event.echo or not engine.window_open:
-		return
-	var dir := ""
-	match (event as InputEventKey).keycode:
-		KEY_LEFT:
-			dir = "left"
-		KEY_RIGHT:
-			dir = "right"
-		KEY_UP:
-			dir = "up"
-	if dir != "" and engine.choose_dir(dir):
-		_sync_route_buttons()
+	var kc := (event as InputEventKey).keycode
+	if kc >= KEY_1 and kc <= KEY_4:
+		var shown := hotspots.shown(engine.block, engine.window_open)
+		if kc - KEY_1 < shown.size():
+			hotspot_select(str(shown[kc - KEY_1]["id"]))
 
 
 # --- hotspots -------------------------------------------------------------------------------------------------------------
@@ -1081,12 +903,10 @@ func _input(event: InputEvent) -> void:
 		return
 	_last_tap_ms = now
 	_last_tap_pos = pos
-	hotspot_tap(pos)
-
-
-## The wizard is a character hotspot anchored on a thing of the map (wizard_floor, wizard_chill): his picture is in the room, so the old overlay is never shown with hotspots.
-func _place_wizard(_t: float) -> void:
-	_gate_wizard.visible = false
+	if trial_state == "in" and trial != null and trial.active:  # inside the Bassment the same touch is the dungeon's
+		trial.hotspot_tap(pos)
+	else:
+		hotspot_tap(pos)
 
 
 func _on_hotspot_commit(ev: Dictionary) -> void:
