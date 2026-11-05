@@ -192,7 +192,7 @@ func attach_map(p_map: StoryMap) -> void:
 	for o in map.occluders:
 		if map.room_of(str(o["sector"])) != view:
 			continue
-		var tex: Texture2D = assets.texture("textures/%s.png" % str(o["sprite"])) if assets != null else null
+		var tex: Texture2D = assets.texture("textures/%s.png" % str(o["sprite"])) if assets != null and not str(map.textures.get(str(o["sprite"]), "")).begins_with("res://") else null
 		if tex == null and assets != null:
 			var file := str(map.textures.get(str(o["sprite"]), ""))
 			tex = assets.texture(file)

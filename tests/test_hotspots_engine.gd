@@ -291,7 +291,7 @@ func test_every_shipped_hotspot_resolves_its_success_and_failure_outcomes() -> v
 				assert_false(out.is_empty(), "%s resolves (%s)" % [h["id"], str(success)])
 				var r := str(out["route"])
 				if r != "":
-					assert_true(r in routes or HotspotContract.is_trial_route(r), "%s %s: route %s is a route of %s" % [h["id"], str(success), r, node_id])
+					assert_true(r in routes or HotspotContract.is_trial_route(r) or (bool(out.get("stays", false)) and r == node_id), "%s %s: route %s is a route of %s (or the scene itself, for an activity that stays)" % [h["id"], str(success), r, node_id])
 				for f in out["flags_set"]:
 					assert_true(run_flags.has(str(f)) or flags.has(str(f)), "%s: flag %s is applied" % [h["id"], f])
 				n += 1

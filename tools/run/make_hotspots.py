@@ -58,7 +58,7 @@ def cin(world, name, *steps):
     return full
 
 
-def out(route=None, flags=(), cin=None, energy=None, music=None):
+def out(route=None, flags=(), cin=None, energy=None, music=None, activity=None):
     o = {}
     if route:
         o["route"] = route
@@ -70,6 +70,8 @@ def out(route=None, flags=(), cin=None, energy=None, music=None):
         o["energy"] = energy
     if music:
         o["music"] = music
+    if activity:
+        o["activity"] = activity
     return o
 
 
@@ -372,6 +374,10 @@ ft("ward", "window", T("wlight_d"), "glow",
    out(flags=["wd_window"], energy=5, music="variation", cin=cin(w, "window_gaze", walk("bars_in", "dancer", "walk", 2, look="x09"))),
    out(energy=-5, music="dip"), s_text="the barred window lets the light in (+5, music variation)", f_text="the bars rattle (-5, music dips)")
 
+ob("ward", "cards", P(2.4, 0.5, 3.0), "beckon",
+   out(activity="blackjack", cin=cin(w, "cards_sit", walk("day_cards", "dancer", "walk", 2))),
+   out(energy=-3, cin=cin(w, "cards_waved_off", walk("day_cards", "dancer", "walk", 2))),
+   s_text="sit at the empty chair: blackjack, the run stays in the day room (minigame)", f_text="the dealer waves you off (-3), the scene goes on by its default exit")
 exits("ward.art")
 ch("ward.art", "painter", A("x10"), "beckon",
    out(flags=["wd_painted"], energy=6, cin=cin(w, "paint_look", walk("art_easels", "dancer", "walk", 3, look="x10"))),

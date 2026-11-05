@@ -2267,7 +2267,8 @@
       "up": "day_door_b"
      }
     }
-   }
+   },
+   "max_hotspots": 5
   },
   {
    "id": "ward.art",
@@ -4624,6 +4625,30 @@
      "role": "dancer",
      "style": "walk",
      "look_at": "x09"
+    }
+   ]
+  },
+  "ward.cards_sit": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "day_cards",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk"
+    }
+   ]
+  },
+  "ward.cards_waved_off": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "day_cards",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk"
     }
    ]
   },

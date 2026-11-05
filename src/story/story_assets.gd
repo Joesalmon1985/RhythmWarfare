@@ -130,7 +130,7 @@ func texture(file: String) -> Texture2D:
 		return null
 	if _tex.has(file):
 		return _tex[file]
-	var path := root + file
+	var path := file if file.begins_with("res://") else root + file  # a `res://` file is loaded as it stands (the blackjack table's art lives outside the chapter)
 	var t: Texture2D = null
 	if ResourceLoader.exists(path):
 		t = load(path) as Texture2D

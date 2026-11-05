@@ -66,7 +66,7 @@ NEW_WAYPOINTS = {
         ("court_door_w", (47.8, 7.0), -90, "courtyard"), ("court_mid", (54.0, 7.0), -90, "courtyard"), ("court_stage_door", (60.4, 7.0), -90, "courtyard"),
         ("stage_door_l", (62.6, 4.6), 90, "c_stage"), ("stage_door_r", (62.6, 9.4), 90, "c_stage"),
         ("court_north", (53.0, 1.0), 90, "courtyard"), ("court_south", (53.0, 12.0), 90, "courtyard"),
-        ("treat_door", (16.0, 8.6), 0, "treatment"),
+        ("treat_door", (16.0, 8.6), 0, "treatment"), ("day_cards", (2.4, 6.4), 0, "dayroom"),
     ],
 }
 
@@ -79,6 +79,11 @@ NEW_THINGS = {
     ],
     "hospital": [("mic_band", "thing_mic", (62.3, 1.4), 0.75, 1.5, "none")],
     "mental_hospital": [("mural_door", "thing_mural", (24.0, 7.85), 1.0, 2.0, "none")],
+}
+# Occluders (drawn over the crowd when nearer than a dancer): id, texture name, texture file, (x, z) of the feet, width, height. A texture file starting with `res://` is loaded as it stands
+# (the blackjack table's art lives in assets/minigames/blackjack/, drawn by tools/minigames/make_world_table.py).
+NEW_OCCLUDERS = {
+    "mental_hospital": [("cards_table", "cards_table", "res://assets/minigames/blackjack/world_table.png", (2.4, 3.0), 2.4, 1.56)],
 }
 NEW_LIGHTS = {  # id, (x, z), y, radius, color, strength
     "night_one": [("lt_crack", (2.5, 10.7), 1.2, 3.2, "#ff5a28", 1.3), ("lt_ship_beam", (0.0, 15.5), 1.5, 4.5, "#7ff0ff", 1.2), ("lt_wizard_floor", (-5.0, 7.0), 1.6, 3.0, "#8060ff", 0.9),
@@ -269,6 +274,8 @@ def build_nodes() -> list[dict]:
              "place": {"waypoint": s["home"], "rail": {"good": s["good"], "bad": s["bad"], "arrive": s["arrive"], "glances": rot(gl), "strolls": rot(st), "exits": s["exits"]}}}
         if s["id"] in ("warehouse", "warehouse.chill"):  # the wizard waits on the floor and in the chill-out; the Bassment returns to the entry scene
             n["trial_gate"] = "deathtrap_opening"
+        if s["id"] == "ward":  # the day room's card table is a fifth hotspot (docs/BLACKJACK_INTEGRATION.md B3)
+            n["max_hotspots"] = 5
         nodes.append(n)
     return nodes
 
@@ -379,10 +386,37 @@ def add_things() -> None:
         print(mp, "+%d things" % len(lines))
 
 
+def add_occluders() -> None:
+    """NEW_OCCLUDERS go in as one line each at the end of the map's occluders; their textures join the map's textures."""
+    for mp, rows in NEW_OCCLUDERS.items():
+        path = MAPS / f"{mp}.json"
+        txt = path.read_text(encoding="utf-8")
+        doc = json.loads(txt)
+        have = {x["id"] for x in doc["occluders"]}
+        lines = ['  {"id": "%s", "sprite": "%s", "at": [%g, %g], "width": %g, "height": %g}' % (oid, tex, at[0], at[1], w, h) for oid, tex, _f, at, w, h in rows if oid not in have]
+        if lines:
+            if doc["occluders"]:
+                m = re.search(r'("occluders": \[\n)(.*?)(\n \],)', txt, re.S)
+                assert m, mp
+                txt = txt[:m.start(2)] + m.group(2) + ",\n" + ",\n".join(lines) + txt[m.end(2):]
+            else:
+                assert '"occluders": [],' in txt, mp
+                txt = txt.replace('"occluders": [],', '"occluders": [\n' + ",\n".join(lines) + '\n ],', 1)
+        for _oid, tex, f, *_ in rows:
+            if tex not in doc["textures"]:
+                m = re.search(r'("textures": \{\n)(.*?)(\n \},)', txt, re.S)
+                assert m, mp
+                txt = txt[:m.start(2)] + m.group(2) + ',\n  "%s": "%s"' % (tex, f) + txt[m.end(2):]
+                doc["textures"][tex] = f
+        path.write_text(txt, encoding="utf-8", newline="\n")
+        print(mp, "+%d occluders" % len(lines))
+
+
 def main() -> None:
     nodes = build_nodes()
     add_waypoints()
     add_things()
+    add_occluders()
     write_run(nodes)
     write_music()
     # the hotspot tables read the scenes just written (exits and doorways) and own the named cinematics (rail actions to waypoints) that go into run.json

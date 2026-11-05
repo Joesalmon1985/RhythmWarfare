@@ -58,7 +58,7 @@ func build(p_map: StoryMap, p_assets: StoryAssets) -> void:
 
 
 func _load_tex(file: String) -> Texture2D:
-	var path := "res://assets/story/%s/%s" % [map.art, file]
+	var path := file if file.begins_with("res://") else "res://assets/story/%s/%s" % [map.art, file]
 	var t: Texture2D = null
 	if ResourceLoader.exists(path):
 		t = load(path) as Texture2D
