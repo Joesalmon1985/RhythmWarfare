@@ -32,7 +32,7 @@ No flags are needed: open `project.godot` and press Play (Home, Play enters the 
 
 ## Tests executed on the integrated branch
 
-* Full Godot suite: `godot --headless --path . -s tests/run_tests.gd`: 61735 checks, 0 failures (before the last two test additions; the added ones were run on their own: see below).
+* Full Godot suite: `godot --headless --path . -s tests/run_tests.gd`: 62344 checks, 0 failures (on the final code).
 * `tests/test_hotspots_engine.gd`: 684 checks, 0 failures (includes the new test that resolves every shipped run hotspot both ways, success and failure).
 * Run matrix `--filter run_matrix` under every tap policy (scripted 651, none 652, changed 649, failure 635 checks): 0 failures. The perfect-play "never visits the bad rail" assertion is skipped under `failure`, which misses the last block on purpose.
 * `tools/run/walk_run.sh` for all seven paths and every `RW_RUN_TAPS` policy (scripted, none, changed, failure): OK; the scripted and changed walks visit 36 of 36 scenes.
@@ -41,7 +41,7 @@ No flags are needed: open `project.godot` and press Play (Home, Play enters the 
   52 routes, 93 flags, the Bassment via the wizard. `tools/trial/validate.gd` (63 of 63 reachable from passage 1) and `check_maps.gd` (95 hotspots, all maps) OK.
 * Determinism at 30 fps, 60 fps and a variable frame step (`test_the_same_taps_give_the_same_outcomes_at_any_frame_step`) and the Bassment's tap tests.
 * Screenshots regenerated: `tools/run/capture.sh` (hotspot window per scene; contact sheets `docs/shots/run/contact_hotspots_<world>.jpg`) and `tools/trial/capture.sh` (`docs/shots/trial/contact_bassment.jpg`).
-* Frame time per world (`tools/run/frames.sh`): see section 10 of the plan.
+* Frame time per world (`tools/run/frames.sh`, two phases of perfect play, not an idle machine): mean 11.8 to 14.5 ms, p95 14.5 to 18.9 ms in all seven worlds, one frame over 50 ms (a stage build in Ward late); the view costs under 1 ms.
 
 ## Known limitations
 
