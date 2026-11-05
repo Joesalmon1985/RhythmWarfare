@@ -1,7 +1,8 @@
 class_name BlackjackPeople
 extends RefCounted
 ## The blackjack drawing kit, part two: three expressive people seen from across the table (a parametric face, gaze, twelve arm gestures) and the player's own hands entering from the
-## bottom edge. Everything is flat colours with dark outlines built from whole-pixel rect rows and polygons (see `BlackjackDraw`), sized from `u = canvas height / 230`.
+## bottom edge, in the house look (see `LOOKS`): no dark outlines, each material in two or three tones stepped by ordered dithering, the lamp as the key light and the room's spill as a rim,
+## all built from whole-pixel rect rows and triangle lists (see `BlackjackDraw`), sized from `u = canvas height / 230`.
 ##
 ## Coordinates: a person is drawn around `center`, the middle of the head (`BlackjackDraw.seat_pos`). The head is about 38 u tall, the shoulders 64 u wide and the torso is cut 52 u
 ## below the head centre where the table's far edge hides it. Draw order for a scene: room, `draw_exit`, every person with `layer = "body"`, the table, then every person with `layer = "arms"`
@@ -1044,7 +1045,7 @@ static func _hand(bb: BlackjackDraw.Batch, p: Vector2, ang: float, kind: String,
 
 
 ## One hand at `p` with fingers pointing along `ang`, added to a triangle list. Kinds: `flat` (mitten and thumb), `fist`, `point` (index finger out), `open` (fanned fingers), `claw` (curled fingers).
-## Drawn in two passes: `g` > 0 is the outline pass (every shape grown by g pixels, drawn in ink), 0 the fill pass.
+## Drawn in two passes: `g` > 0 is the edge pass (every shape grown by g pixels, drawn in a dark step of the skin), 0 the fill pass.
 static func _hand_into(tris: PackedVector2Array, p: Vector2, ang: float, kind: String, k: float, u: float, g: float, side: float) -> void:
 	var d := Vector2(cos(ang), sin(ang))
 	var n := Vector2(-d.y, d.x)
