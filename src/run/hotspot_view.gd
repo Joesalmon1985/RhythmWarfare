@@ -284,6 +284,8 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 			var flick := 1.0
 			if look_a == "flicker" and not reduced:
 				flick = 0.35 + 0.65 * float(int(floor(t * 14.0)) * 7919 % 5) / 4.0
+			if role != "":  # a staged option: the thing itself shows its state (ChoiceStaging); the light stays on the floor and never covers a face or a door
+				return
 			_glow(c, r_m * sc * 0.55, base, (0.3 + 0.25 * pulse + (0.15 if is_default else 0.0)) * flick)
 			match look_a:
 				"open":  # a door ajar: a slit of light standing at the doorway, spilling on the floor
@@ -323,6 +325,8 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 				var close := 1.0 - minf(u / 0.3, 1.0)  # a second ring closes in on the selected one
 				if close > 0.02:
 					draw_polyline(_ring_points(world, float(e["ground_y"]), r_m * (1.08 + 0.8 * close), pose), Color(white.r, white.g, white.b, 0.8 * close), width)
+			if role != "":
+				return
 			_glow(c + Vector2(0.0, -lift), r_m * sc * 0.75, white, 0.7)
 			draw_circle(c + Vector2(0.0, -lift), maxf(2.0, sc * 0.07), Color(1, 1, 1, 0.95))
 			draw_line(g, c + Vector2(0.0, -lift), Color(white.r, white.g, white.b, 0.5), width)
@@ -332,7 +336,8 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 			var ring3 := _ring_points(world, float(e["ground_y"]), out_r, pose)
 			if ring3.size() > 2:
 				draw_polyline(ring3, Color(1, 1, 1, 0.95 * (1.0 - k)), width * 3.0 * (1.0 - k) + 1.0)
-			_glow(c + Vector2(0.0, -LIFT_M * sc), r_m * sc * (0.8 + 1.4 * k), Color(1, 1, 1), 0.95 * (1.0 - k) + 0.1)
+			if role == "":  # (a staged option's commit is its door swinging wide and its people reacting: no flash over them)
+				_glow(c + Vector2(0.0, -LIFT_M * sc), r_m * sc * (0.8 + 1.4 * k), Color(1, 1, 1), 0.95 * (1.0 - k) + 0.1)
 
 
 # --- the choice layer (docs/CHOICE_CLARITY.md) ----------------------------------------------------------------------------------
@@ -469,13 +474,13 @@ func _stage_person(id: String, h: Dictionary, st: Dictionary, o: Dictionary, t: 
 		return  # (the outcome's own acts play: RunPlay._act_outcome)
 	var spec := ChoiceStaging.person_spec(st, role, float(o["since_role_s"]), float(o["since_touch_s"]), beat_s)
 	var key := "%s|%s|%s" % [role, str(spec.get("act", "")), str(spec.get("face", ""))]
-	if str(m.get("key_act", "")) == key:
-		return
 	for rid in stage.crowds:
 		var c := stage.crowds[rid] as StoryCrowd
 		if not c.actors.has(aid):
 			continue
 		var cur_src := c.directing(aid, t)
+		if str(m.get("key_act", "")) == key and (cur_src == "choice" or spec.is_empty()):
+			return  # (told already and still doing it; a story beat that took the person over and ended hands them back here)
 		if spec.is_empty():
 			c.stand_down(aid, "choice")
 			m["key_act"] = key
