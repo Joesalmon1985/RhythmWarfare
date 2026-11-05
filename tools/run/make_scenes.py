@@ -14,6 +14,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import acting_data  # noqa: E402
+
 RUN = ROOT / "content/run/run.json"
 MUSIC = ROOT / "content/story/music.json"
 MAPS = ROOT / "content/story/maps"
@@ -267,6 +270,8 @@ def build_nodes() -> list[dict]:
              "blurb": w["blurb"] if s["entry"] else s["title"],
              "next": [{"to": t[0], "dir": t[1], "label": t[2], **({"loop": True} if len(t) > 3 and t[3] else {})} for t in s["next"]],
              "place": {"waypoint": s["home"], "rail": {"good": s["good"], "bad": s["bad"], "arrive": s["arrive"], "glances": rot(gl), "strolls": rot(st), "exits": s["exits"]}}}
+        if s["id"] in acting_data.CAST:  # stage 1d: the story beats of the scene (tools/run/acting_data.py)
+            n["cast"] = json.loads(json.dumps(acting_data.CAST[s["id"]]))
         if s["id"] in ("warehouse", "warehouse.chill"):  # the wizard waits on the floor and in the chill-out; the Bassment returns to the entry scene
             n["trial_gate"] = "deathtrap_opening"
         nodes.append(n)
@@ -384,10 +389,11 @@ def main() -> None:
     add_waypoints()
     add_things()
     write_run(nodes)
-    write_music()
+    # (write_music() is no longer called: content/story/music.json is authored by tools/content/arrange.py now, and the old table here would overwrite it with the superseded audio/chart shape)
     # the hotspot tables read the scenes just written (exits and doorways) and own the named cinematics (rail actions to waypoints) that go into run.json
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     import make_hotspots
+    make_hotspots.apply_acting()
     write_run(nodes, make_hotspots.CINEMATICS)
     make_hotspots.write()
     print("%d scenes in %d worlds, %d cinematics" % (len(nodes), len(WORLDS), len(make_hotspots.CINEMATICS)))

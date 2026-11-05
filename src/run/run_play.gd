@@ -121,7 +121,13 @@ func _ready() -> void:
 		clock.calibration_ms = Session.calibration_ms
 	_build_layout(start)
 	_setup_bot()
+	if OS.get_environment("RW_RUN_CLEAN") == "1":  # screenshot aid: no falling notes and no HUD over the picture (tools/run/capture.sh --acting)
+		note_lane.visible = false
+		hud.visible = false
 	Session.run_progress.run_started()
+	if OS.get_environment("RW_RUN_FLAGS") != "":  # screenshot aid (tools/run/capture.sh --acting): world-state flags to start the run with, so a hotspot that needs one is on show
+		for f in OS.get_environment("RW_RUN_FLAGS").split(",", false):
+			hotspots.run_flags[f] = true
 	if _trial_direct:  # a launch straight into the dungeon: the run's first phase is never heard
 		var sp := int(OS.get_environment("RW_TRIAL_START")) if OS.get_environment("RW_TRIAL_START") != "" else -1
 		trial.bot = OS.get_environment("RW_TRIAL_BOT") if OS.get_environment("RW_TRIAL_BOT") != "" else str(_bot.get("policy", ""))

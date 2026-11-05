@@ -185,6 +185,7 @@ func _manage_acting(items: Array, t: float) -> void:
 			if not bool(w["touch"]) and c.directing(str(id), t) == "cast":
 				break  # (their story beat first; this tries again next frame)
 			var sp: Dictionary = w["spec"]
+			c.ensure_present(str(id))  # (a gatherer or a late arrival the hotspot anchors on is there when it asks for you)
 			done = c.direct_actor(str(id), str(sp["act"]), str(sp.get("face", "")), t, t + RunActing.STATE_S, str(sp.get("look_at", "")), "hotspot")
 			break
 		if done:

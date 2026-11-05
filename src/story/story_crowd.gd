@@ -843,6 +843,16 @@ func direct_actor(id: String, act: String, face: String, t0: float, until: float
 	return direct_chain(id, [{"act": act, "face": face, "look_at": look_at, "from": t0, "until": until}], src)
 
 
+## The person a hotspot asks you to touch is in the room: someone who has not come in yet (a gatherer, an early or late arrival; the continuous run brings none of them in by itself) fades in at their own place.
+## False when there is nobody of that name here.
+func ensure_present(id: String) -> bool:
+	if not actors.has(id):
+		return false
+	if not bool(actors[id]["present"]):
+		actors[id]["present"] = true
+	return true
+
+
 ## A chain of acts played end to end: [{act, face, look_at, from, until}, ...] (RunActing.outcome_chain). Each hands over to the next when it ends; the last hands back to the person's own life.
 func direct_chain(id: String, segs: Array, src := "") -> bool:
 	if segs.is_empty() or not actors.has(id) or not bool(actors[id]["present"]):

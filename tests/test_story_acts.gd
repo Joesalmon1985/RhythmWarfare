@@ -99,33 +99,83 @@ func _json(path: String) -> Variant:
 	return JSON.parse_string(f.get_as_text())
 
 
-func test_directed_actors_are_baked_in_every_act_and_face() -> void:
-	var directed: Dictionary = _json("res://content/story/directed_actors.json")
+## The people the story directs, from the data itself (what tools/story/art/directed.py derives): {map id: {actor id: {sheet key: facings}}}. A sheet key is the act for the act's own face and
+## `act@face` for another; a hotspot's `acting` states (and their `then` chains), a scene's `cast` lines and a cinematic's `cast` lines all count.
+func _directed_from_data() -> Dictionary:
+	var out := {}
+	var run: Dictionary = _json("res://content/run/run.json")
+	var maps := {}
+	for w in run["worlds"]:
+		maps[str(w["id"])] = str(w["map"])
+
+	var add := func(map_id: String, aid: String, act: String, face: String) -> void:
+		if act == "" or aid == "":
+			return
+		var fc := face if face != "" else str(StoryCharacter.FACE_OF.get(act, "neutral"))
+		var key := act if fc == str(StoryCharacter.FACE_OF.get(act, "neutral")) else "%s@%s" % [act, fc]
+		if not out.has(map_id):
+			out[map_id] = {}
+		if not (out[map_id] as Dictionary).has(aid):
+			out[map_id][aid] = {}
+		out[map_id][aid][key] = true
+
+	var dir := DirAccess.open("res://content/run/hotspots")
+	for fn in dir.get_files():
+		if not fn.ends_with(".json"):
+			continue
+		var doc: Dictionary = _json("res://content/run/hotspots/" + fn)
+		for h in doc["hotspots"]:
+			var a: Variant = h.get("acting", null)
+			if typeof(a) != TYPE_DICTIONARY:
+				continue
+			var aid := str((a as Dictionary).get("actor", (h["anchor"] as Dictionary).get("actor", "")))
+			var map_id := str(h.get("map", maps.get(str(doc["world"]), "")))
+			for ph in ["available", "selected", "committed", "success", "failure"]:
+				var st: Variant = (a as Dictionary).get(ph, null)
+				while typeof(st) == TYPE_DICTIONARY:
+					add.call(map_id, aid, str(st.get("act", "")), str(st.get("face", "")))
+					st = (st as Dictionary).get("then", null)
+	for node in run["nodes"]:
+		for line in node.get("cast", []):
+			add.call(str(maps[str(node["world"])]), str(line["actor"]), str(line["act"]), str(line.get("face", "")))
+	for name in run["cinematics"]:
+		var cine: Dictionary = run["cinematics"][name]
+		for line in cine.get("cast", []):
+			add.call(str(maps[str(cine["world"])]), str(line["actor"]), str(line["act"]), str(line.get("face", "")))
+	return out
+
+
+func test_exactly_the_directed_people_are_baked_in_exactly_their_acts_and_faces() -> void:
+	var want := _directed_from_data()
+	var extras: Dictionary = _json("res://content/story/directed_actors.json")  # hand-kept additions (none shipped since stage 1d)
 	for ch in CHAPTERS:
-		assert_true(directed.has(ch) and not (directed[ch] as Dictionary).is_empty(), "%s has a test actor" % ch)
 		var doc: Dictionary = _json("res://assets/story/%s/people/people.json" % ch)
 		var actors: Dictionary = doc["actors"]
-		var first := true
-		for aid in directed[ch]:
+		var directed: Dictionary = want.get(ch, {})
+		assert_true(not directed.is_empty(), "%s has directed people in the run data" % ch)
+		assert_true((extras.get(ch, {}) as Dictionary).is_empty(), "%s: no hand-kept extras" % ch)
+		var n_states := 0
+		for aid in directed:
 			assert_true(actors.has(aid), "%s: directed actor %s has a sheet" % [ch, aid])
 			if not actors.has(aid):
 				continue
 			var states: Dictionary = actors[aid]["states"]
-			for f in NEW_FACES:
-				assert_true(states.has("stare@%s" % f), "%s %s has the %s face" % [ch, aid, f])
-			if first:  # the first actor of a chapter is the one with every act
-				for act in StoryCharacter.ACTS:
-					assert_true(states.has(act), "%s %s has the act %s" % [ch, aid, act])
-					if states.has(act):
-						assert_true(states[act][2] != null and states[act][3] != null, "%s %s.%s has the front and the side" % [ch, aid, act])
-				for act in ["bow", "kneel", "collapse"]:
-					if states.has(act):
-						assert_true(states[act][4] != null, "%s %s.%s has the back" % [ch, aid, act])
-			first = false
-		var undirected := 0
+			for key in directed[aid]:
+				n_states += 1
+				assert_true(states.has(key), "%s %s is baked in %s" % [ch, aid, key])
+				if states.has(key):
+					var st0 := str(key).get_slice("@", 0)
+					if st0 in StoryCharacter.ACTS:
+						assert_true(states[key][2] != null and states[key][3] != null, "%s %s.%s has the front and the side" % [ch, aid, key])
+						if st0 in ["bow", "kneel", "collapse"]:
+							assert_true(states[key][4] != null, "%s %s.%s has the back" % [ch, aid, key])
+		assert_true(n_states > 10, "%s: %d directed states" % [ch, n_states])
+		# nothing is baked that the story does not use: no directed act or acted face for anyone else, and only the used ones for the directed
+		var stray := 0
 		for aid in actors:
-			if not directed[ch].has(aid):
-				for act in StoryCharacter.ACTS:
-					if (actors[aid]["states"] as Dictionary).has(act):
-						undirected += 1
-		assert_eq(undirected, 0, "%s: no act is baked for anyone the story does not direct" % ch)
+			for key in (actors[aid]["states"] as Dictionary):
+				var is_act: bool = str(key).get_slice("@", 0) in StoryCharacter.ACTS
+				if str(key).contains("@") or is_act:
+					if not directed.has(aid) or not (directed[aid] as Dictionary).has(key):
+						stray += 1
+		assert_eq(stray, 0, "%s: no act or acted face is baked for anything the story does not direct" % ch)

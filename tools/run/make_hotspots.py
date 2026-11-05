@@ -13,9 +13,11 @@ A `route` is a scene id (a route of that scene) or a Bassment passage id ("1"). 
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 OUT = ROOT / "content/run/hotspots"
 DOC = ROOT / "docs/VISUAL_COVERAGE.md"
 
@@ -516,7 +518,25 @@ def bassment_section() -> list:
     return out
 
 
+def apply_acting() -> None:
+    """Stage 1d: the acting blocks of the people hotspots and the cast lines of the named cinematics (tools/run/acting_data.py). Idempotent; every character hotspot must have its acting."""
+    import acting_data
+    by_id = {h["id"]: h for lst in HOTSPOTS.values() for h in lst}
+    for hid, block in acting_data.ACTING.items():
+        if hid not in by_id:
+            raise SystemExit("acting_data.ACTING names a hotspot that does not exist: " + hid)
+        by_id[hid]["acting"] = json.loads(json.dumps(block))
+    missing = [hid for hid, h in by_id.items() if h["kind"] == "character" and hid not in acting_data.ACTING and hid not in acting_data.NO_ACTOR]
+    if missing:
+        raise SystemExit("character hotspots without acting: " + ", ".join(missing))
+    for name, lines in acting_data.CINE_CAST.items():
+        if name not in CINEMATICS:
+            raise SystemExit("acting_data.CINE_CAST names a cinematic that does not exist: " + name)
+        CINEMATICS[name]["cast"] = json.loads(json.dumps(lines))
+
+
 def write() -> None:
+    apply_acting()
     OUT.mkdir(parents=True, exist_ok=True)
     for world, lst in HOTSPOTS.items():
         (OUT / f"{world}.json").write_text(json.dumps({"world": world, "hotspots": lst}, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")

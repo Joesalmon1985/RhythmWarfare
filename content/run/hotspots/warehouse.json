@@ -164,7 +164,43 @@
     "look_at": "g07"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "happy",
+     "look_at": "floor_centre",
+     "beats": 1
+    },
+    "success": {
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 4,
+     "then": {
+      "act": "shake_head",
+      "face": "doubt",
+      "look_at": "camera",
+      "beats": 8
+     }
+    }
+   }
   },
   {
    "id": "warehouse.led_wall",
@@ -322,7 +358,42 @@
     "look_at": "b01"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "anger",
+      "look_at": "camera"
+     }
+    }
+   }
   },
   {
    "id": "warehouse.bar.stranger",
@@ -364,7 +435,41 @@
     "energy": -3
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "doubt",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 6,
+     "then": {
+      "act": "look",
+      "face": "neutral"
+     }
+    }
+   }
   },
   {
    "id": "warehouse.balcony.exit_chill",
@@ -530,7 +635,42 @@
     "look_at": "v03"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "offer",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "neutral",
+      "look_at": "camera"
+     }
+    }
+   }
   },
   {
    "id": "warehouse.chill.exit_exit",
@@ -924,7 +1064,43 @@
     "energy": -6
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "block",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "stamp",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 4,
+     "then": {
+      "act": "point",
+      "face": "anger",
+      "look_at": "floor_centre",
+      "beats": 12
+     }
+    }
+   }
   },
   {
    "id": "warehouse.exit.bouncer_vip",
@@ -966,7 +1142,42 @@
     "energy": -3
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "bow",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "bow",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "doubt",
+      "look_at": "camera"
+     }
+    }
+   }
   }
  ]
 }

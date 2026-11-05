@@ -354,7 +354,7 @@ func test_every_shipped_hotspots_acting_is_playable_both_ways() -> void:
 						assert_true(str(seg["face"]) == "" or str(seg["face"]) in HotspotContract.FACES)
 						assert_true(float(seg["from"]) >= t - 1.0e-9 and float(seg["until"]) > float(seg["from"]), "%s: segments run forward" % h["id"])
 						t = float(seg["until"])
-	assert_true(acted >= 0, "(%d acted outcomes; the five worlds' acting is stage 1d)" % acted)
+	assert_true(acted >= 58, "every acted hotspot both ways (%d outcomes: twenty-eight people hotspots and the stranger, stage 1d)" % acted)
 
 
 func test_the_validator_checks_a_hotspots_acting_block() -> void:

@@ -623,13 +623,16 @@ Every actor of every chapter is drawn as an individual and baked to their own pi
   `fwd` (0 to 1): the three-quarter view leans into the turn, the front and back views shorten the trunk and sink the head; hands raised to the face are the forearm folded up from a hanging arm
   (the rig cannot put a hand in front of a face seen from the front, so `cover_face` and `collapse` read through the head sunk to the hands and the grief face). `point`, `stare` and the other
   old states take a face parameter too and keep their own default faces; `look_at` on `point` is the existing `toward` (stage 1b resolves a target id into it: `StoryCrowd.look_point`, see `docs/CONTINUOUS_RUN.md` "Acting in the run").
-- **Which people are baked in which acts** (`tools/story/art/directed.py`): only the directed people, never the whole crowd. The list is merged from `content/story/directed_actors.json` (the
-  test actors of stage 1a: per chapter one person with every act and face and a few with the ten faces, one per species or look), the `acting` blocks of `content/run/hotspots/*.json` and the
-  `cast` lines of `content/run/run.json` (stages 1b and 1d fill those; the reader is in place, entries may be `act`, `act@face` or `act@face:front+side`). A face other than the act's own
+- **Which people are baked in which acts** (`tools/story/art/directed.py`): only the directed people, never the whole crowd, and since stage 1d **exactly what the story uses**: the list is derived from the `acting` blocks of
+  `content/run/hotspots/*.json` and the `cast` lines of scenes and cinematics in `content/run/run.json` (both authored in `tools/run/acting_data.py`, see `docs/CONTINUOUS_RUN.md` "Acting in the run"). `content/story/directed_actors.json`
+  is the hand-kept extras file and ships empty (stage 1a's proof actors with every act and face are gone; entries may be `act`, `act@face` or `act@face:front+side`). A face other than the act's own
   default is a separate frame set named `act@face` in `people.json` (`beckon@plea`); `StoryCharacter.face_override` picks it in `sheet_pick`. Frames are shared through the usual dedupe.
-  `check_assets.py` fails when a directed person lacks an act, a face or a facing, when a state names an unknown face, or when `people_poses.json` and `people.py` disagree about the faces and acts.
-- **Proof**: `python3 tools/story/face_sheets.py acting` writes `docs/shots/faces/<chapter>_acting.jpg`: each directed person's fourteen faces (front, three-quarter, half size) cropped from the
-  built sheets, then their acts (the middle frame of each cycle, front and three-quarter).
+  `check_assets.py` fails when a directed person lacks an act, a face or a facing, when a state names an unknown face, or when `people_poses.json` and `people.py` disagree about the faces and acts;
+  `tests/test_story_acts.gd` fails when anything directed is not baked or anything undirected is.
+- **Proof**: `python3 tools/story/face_sheets.py acting` writes `docs/shots/faces/<chapter>_acting.jpg`: each directed person's faces (front, three-quarter, half size) cropped from the
+  built sheets, then their acts (the middle frame of each cycle, front and three-quarter). The committed images are stage 1a's (the proof actors that wore every one of the fourteen faces and fifteen acts, since removed
+  from the sheets); with the stage 1d data the sheet shows only the faces each directed person really wears, about 30 people per chapter (3 MB a chapter, so it is not regenerated into the repo). The stage 1d proof is
+  `docs/shots/acting/` (`bash tools/run/capture.sh --acting`).
 - **Rebuild**: edit poses in `StoryCharacter.sample`, rerun `godot --headless --path . -s tools/story/dump_poses.gd`, then the five `build_assets.py <chapter> people` commands, as in `docs/FACE_POLISH.md`.
 
 ## The pixel look of the rooms (polish, art direction 2.D)

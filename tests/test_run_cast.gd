@@ -13,9 +13,14 @@ const WAREHOUSE_LINES := [
 ]
 
 
+## The shipped run data with its authored cast removed (stage 1d ships cast on every scene): the fixtures below inject their own lines into a bare run. `_shipped()` keeps the real data.
 func _data(casts: Dictionary = {}) -> RunData:
 	var d := RunData.load_default()
 	assert_eq(d.errors, [], "run data validates")
+	for nid in d.nodes:
+		(d.nodes[nid] as Dictionary).erase("cast")
+	for cn in d.cfg["cinematics"]:
+		(d.cfg["cinematics"][cn] as Dictionary).erase("cast")
 	for nid in casts:
 		d.nodes[nid]["cast"] = casts[nid]
 	return d
@@ -42,7 +47,10 @@ func _play(e: RunEngine, step: Callable, until_phase := 2, taps: Array = [], mis
 			var tp: Dictionary = taps[i]
 			if not done.has(i) and e.phase_n == 1 and t >= e.t_of(float(tp["beat"])):
 				done[i] = true
-				e.hotspots.select_route(str(tp["route"]), e.block, e.window_open)
+				if tp.has("id"):
+					e.hotspots.select(str(tp["id"]), e.block, e.window_open)
+				else:
+					e.hotspots.select_route(str(tp["route"]), e.block, e.window_open)
 		log.append_array(e.update(t))
 		for i in e.level.notes.size():
 			var n: Dictionary = e.level.notes[i]
@@ -193,6 +201,161 @@ func test_a_cinematics_cast_fires_relative_to_the_commit() -> void:
 	d2.cfg["cinematics"]["warehouse.stagger_entry_right"]["cast"] = cine["cast"]
 	var ok := _casts(_play(_engine(d2), func(_i: int) -> float: return 1.0 / 60.0, 2, taps))
 	assert_eq(ok.size(), 0, "a clean run takes the success outcome: no stagger, no cast")
+
+
+# --- the shipped data (stage 1d): every authored line is valid and fires once at its beat -----------------------------------------------
+
+## The engine begun at any scene of the shipped run (its own cast, nothing injected), played one phase with every cue hit (`miss` empty) or with the blocks named missed.
+func _shipped_phase(d: RunData, node_id: String, miss: Array, taps: Array = [], run_flags: Dictionary = {}) -> Dictionary:
+	var e := RunEngine.new(d)
+	e.hotspots = RunHotspots.new(d, run_flags, {})
+	e.begin(node_id)
+	var log := _play(e, func(_i: int) -> float: return 1.0 / 30.0, 2, taps, miss)
+	log = log.filter(func(ev: Dictionary) -> bool: return str(ev["kind"]) != "cast" or int(ev["phase"]) == 1)  # (the update that ends the phase also starts the next scene: its beat 0 is not this phase's)
+	return {"engine": e, "log": log}
+
+
+const ALL_MISSED := [[1, 0], [1, 1], [1, 2], [1, 3]]
+
+
+func test_every_scene_of_the_run_has_two_to_four_cast_lines_that_validate() -> void:
+	var d := RunData.load_default()
+	assert_eq(d.errors, [], "the shipped run data (cast and acting included) validates")
+	var scenes := 0
+	for nid in d.nodes:
+		var lines: Array = d.nodes[nid].get("cast", [])
+		scenes += 1
+		assert_true(lines.size() >= 2 and lines.size() <= 4, "%s has %d cast lines (2 to 4)" % [nid, lines.size()])
+		for ln in lines:
+			assert_true(float(ln["at_beat"]) >= 0.0 and float(ln["at_beat"]) <= 63.0, "%s: at_beat in the phase" % nid)
+			assert_false((ln as Dictionary).has("text"), "%s: nothing but acts, faces and looks" % nid)
+	assert_eq(scenes, 36, "all 36 scenes")
+
+
+func test_every_shipped_scene_cast_line_fires_once_in_order_at_its_beat() -> void:
+	var d := RunData.load_default()
+	var fired_total := 0
+	for nid in d.nodes:
+		var lines: Array = d.nodes[nid]["cast"]
+		var seen := {}  # line index -> true when it fired in a perfect phase or in a missed one
+		for miss in [[], ALL_MISSED]:
+			var r := _shipped_phase(d, nid, miss)
+			var e: RunEngine = r["engine"]
+			var last_t := -1.0
+			var in_play := {}
+			for c in _casts(r["log"]):
+				assert_eq(str(c["node"]), nid, "%s: the cast of the scene" % nid)
+				assert_eq(int(c["phase"]), 1)
+				assert_eq(str(c["source"]), "scene")
+				assert_true(float(c["t"]) >= last_t, "%s: in time order" % nid)
+				last_t = float(c["t"])
+				var idx := int(c["index"])
+				var ln: Dictionary = lines[idx]
+				assert_near(float(c["t"]), e.beat_s * float(ln["at_beat"]), 1.0e-6, "%s line %d fires on the clock at its beat %s" % [nid, idx, str(ln["at_beat"])])
+				assert_eq(str(c["actor"]), str(ln["actor"]))
+				assert_eq(str(c["act"]), str(ln["act"]))
+				assert_false(in_play.has(idx), "%s line %d fires once per phase" % [nid, idx])
+				in_play[idx] = true
+				seen[idx] = true
+				fired_total += 1
+			for i in lines.size():  # a line with no condition always fires
+				var ln2: Dictionary = lines[i]
+				var conditional := false
+				for k in ["if_energy_below", "if_energy_above", "if_flags_all", "if_flags_none"]:
+					conditional = conditional or ln2.has(k)
+				if not conditional:
+					assert_true(in_play.has(i), "%s line %d (no condition) fired" % [nid, i])
+		for i in lines.size():
+			assert_true(seen.has(i), "%s line %d is reachable: it fires in a perfect phase or a missed one" % [nid, i])
+	assert_true(fired_total > 150, "%d cast events over the 72 phases" % fired_total)
+
+
+func test_the_energy_conditions_hold_at_their_beat() -> void:
+	var d := RunData.load_default()
+	var checked := 0
+	for nid in d.nodes:
+		for i in (d.nodes[nid]["cast"] as Array).size():
+			var ln: Dictionary = d.nodes[nid]["cast"][i]
+			if not ln.has("if_energy_below") and not ln.has("if_energy_above"):
+				continue
+			for miss in [[], ALL_MISSED]:
+				var r := _shipped_phase(d, nid, miss)
+				var e: RunEngine = r["engine"]
+				var fired := false
+				for c in _casts(r["log"]):
+					if int(c["index"]) == i:
+						fired = true
+				var energy := 60.0  # the run's start energy, then each block's result up to the line's beat
+				for ev in r["log"]:
+					if str(ev["kind"]) == "block_result" and float(ev["t"]) <= e.beat_s * float(ln["at_beat"]):
+						energy = float(ev["energy"])
+				var want := true
+				if ln.has("if_energy_below"):
+					want = want and energy < float(ln["if_energy_below"])
+				if ln.has("if_energy_above"):
+					want = want and energy > float(ln["if_energy_above"])
+				assert_eq(fired, want, "%s line %d (%s at beat %s) with energy %.1f" % [nid, i, ln["act"], str(ln["at_beat"]), energy])
+				checked += 1
+	assert_true(checked >= 40, "%d conditional lines checked" % checked)
+
+
+func test_every_shipped_cinematic_cast_line_fires_once_after_its_commit() -> void:
+	var d := RunData.load_default()
+	var checked := {}
+	for nid in d.nodes:
+		for h in d.hotspots_of(nid):
+			for success in [true, false]:
+				var oc: Dictionary = h["on_success"] if success else h.get("on_failure", {})
+				if not oc.has("cinematic") or typeof(oc["cinematic"]) != TYPE_STRING:
+					continue
+				var cname := str(oc["cinematic"])
+				var cine: Dictionary = d.cfg["cinematics"].get(cname, {})
+				if not cine.has("cast"):
+					continue
+				var flags := {}
+				for f in (h["available"]["flags_all"] as Array):
+					flags[str(f)] = true
+				var r := _shipped_phase(d, nid, [] if success else [[1, 3]], [{"beat": 52.0, "id": str(h["id"])}], flags)
+				var e: RunEngine = r["engine"]
+				var commit: Dictionary = {}
+				for ev in r["log"]:
+					if str(ev["kind"]) == "hotspot_commit":
+						commit = ev
+				assert_false(commit.is_empty(), "%s committed" % h["id"])
+				if commit.is_empty():
+					continue
+				assert_eq(bool(commit["outcome"]["success"]), success, "%s: the result asked for" % h["id"])
+				var cs := _casts(r["log"]).filter(func(c: Dictionary) -> bool: return str(c["source"]) == "cinematic")
+				var lines: Array = cine["cast"]
+				assert_eq(cs.size(), lines.size(), "%s (%s): every line of %s fired once" % [h["id"], str(success), cname])
+				for i in cs.size():
+					assert_eq(str(cs[i]["name"]), cname)
+					assert_near(float(cs[i]["t"]), float(commit["t"]) + e.beat_s * float(lines[int(cs[i]["index"])]["at_beat"]), 1.0e-6, "%s line %d after the commit" % [cname, i])
+				checked[cname] = true
+	for cname in d.cfg["cinematics"]:
+		if (d.cfg["cinematics"][cname] as Dictionary).has("cast"):
+			assert_true(checked.has(cname), "%s: its cast is played by some hotspot's outcome" % cname)
+	assert_true(checked.size() >= 12, "%d acted cinematics" % checked.size())
+
+
+func test_every_character_hotspot_acts_in_all_five_states() -> void:
+	var d := RunData.load_default()
+	var n_char := 0
+	var n_acted := 0
+	for nid in d.nodes:
+		for h in d.hotspots_of(nid):
+			if str(h["kind"]) != "character":
+				continue
+			n_char += 1
+			if RunActing.has_acting(h):
+				n_acted += 1
+				assert_true(RunActing.actor_of(h) != "", "%s names the person it directs" % h["id"])
+				for ph in ["available", "selected", "committed", "success", "failure"]:
+					assert_false(RunActing.spec_of(h, ph).is_empty(), "%s has the %s state" % [h["id"], ph])
+			else:
+				assert_true(str(h["id"]) in ["warehouse.wizard", "warehouse.chill.wizard"], "%s acts (only the two wizards, billboard things, have nobody to direct)" % h["id"])
+	assert_eq(n_char, 30, "thirty character hotspots")
+	assert_eq(n_acted, 28, "twenty-eight of them have a person to direct")
 
 
 # --- validation ------------------------------------------------------------------------------------------------------------

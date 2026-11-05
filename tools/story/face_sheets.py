@@ -145,8 +145,21 @@ OLD_FACE_STATES = {"neutral": ("idle", "stare", "watch", "walk"), "happy": ("dan
                    "sad": ("sad", "rock")}
 
 
-def face_state_keys(face):
-    return OLD_FACE_STATES[face] if face in OLD_FACE_STATES else (f"stare@{face}",)
+def face_state_keys(face, states=None, face_of=None):
+    """The states of an actor that wear `face`: for the four old faces the crowd's states; for an acted face every directed state with that face (`act@face`, or an act whose own face it is),
+    the first one is shown. Since stage 1d the directed people are the ones the story directs, each baked only in the acts and faces it uses, so a face an actor never wears has no cell."""
+    if face in OLD_FACE_STATES:
+        return OLD_FACE_STATES[face]
+    if states is None:
+        return (f"stare@{face}",)
+    found = []
+    for k in states:
+        base, _, fc = k.partition("@")
+        if base.startswith("dance"):
+            continue
+        if (fc or (face_of or {}).get(base, "neutral")) == face and (fc or base in directed_mod.NEW_ACTS):
+            found.append(k)
+    return tuple(sorted(found, key=lambda k: (k.partition("@")[0] not in directed_mod.NEW_ACTS, k)))
 
 
 def pose_of(poses, key, frame=0):
@@ -191,7 +204,7 @@ def acting_sheet(chapter, out_dir, zoom=5, tag="acting"):
             cells = []
             for face in faces:
                 im = None
-                for key in face_state_keys(face):
+                for key in face_state_keys(face, a["states"], poses["face_of"]):
                     e = a["states"].get(key)
                     if not e or e[2 + fc] is None:
                         continue

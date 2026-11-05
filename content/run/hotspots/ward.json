@@ -107,7 +107,43 @@
     "energy": -9
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "block",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 4,
+     "then": {
+      "act": "point",
+      "face": "resolve",
+      "look_at": "treat",
+      "beats": 12
+     }
+    }
+   }
   },
   {
    "id": "ward.window",
@@ -219,7 +255,43 @@
     "energy": -6
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "offer",
+     "face": "awe",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "awe",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "cheer",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 4,
+     "then": {
+      "act": "shake_head",
+      "face": "doubt",
+      "look_at": "camera",
+      "beats": 8
+     }
+    }
+   }
   },
   {
    "id": "ward.art.easel",
@@ -325,7 +397,40 @@
     "energy": -6
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "sleep",
+     "face": "neutral"
+    },
+    "selected": {
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "rock",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "sleep",
+     "face": "relief",
+     "beats": 8
+    },
+    "failure": {
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 6,
+     "then": {
+      "act": "cover_face",
+      "face": "fear",
+      "look_at": "camera"
+     }
+    }
+   }
   },
   {
    "id": "ward.dorm.cabinet",
@@ -467,7 +572,42 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "bow",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "bow",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "stamp",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 4,
+     "then": {
+      "act": "block",
+      "face": "anger",
+      "look_at": "camera"
+     }
+    }
+   }
   },
   {
    "id": "ward.corridor.mural_door",
@@ -578,7 +718,48 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "offer",
+      "face": "happy",
+      "look_at": "camera"
+     }
+    },
+    "failure": {
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 4,
+     "then": {
+      "act": "stamp",
+      "face": "anger",
+      "look_at": "camera",
+      "beats": 8
+     }
+    }
+   }
   },
   {
    "id": "ward.courtyard.lights",

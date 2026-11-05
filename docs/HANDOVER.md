@@ -38,7 +38,27 @@ https://github.com/Joesalmon1985/RhythmWarfare.
   `test_run_scene.gd` set `RW_DEV_TEXT=1` where they read text. Proof shots (look at them): `docs/shots/silent/` from `tools/run/shoot_silent.sh`. Test run at the end of 1c: `bash tools/test.sh` green: 67690 checks, 0 failures (the run before stage 1b: 67007), and the 169 Python content tests.
   Not verified: how the acts, faces, light swell and the thin bar look and feel on the owner's phone in real time (only the virtual clock, the tests and desktop screenshots were run), and nobody has
   listened to or watched a full run with the text gone. Divergence: the Bassment's caption text is hidden, not removed (the labels still carry it for `RW_DEV_TEXT`).
-- Stages 1d (acting pass on the five worlds), 2 to 6 are not started.
+- **Stage 1d done (5 November 2026): the acting pass on the five worlds** (`docs/CONTINUOUS_RUN.md` "Acting in the run", "Authored (stage 1d)"). Authored in one table file, `tools/run/acting_data.py`
+  (`ACTING`, `CAST`, `CINE_CAST`), copied into the generated hotspot files and `run.json` by `make_hotspots.py` / `make_scenes.py` (rerun `python3 tools/run/make_scenes.py`; its `write_music()` call is gone,
+  `content/story/music.json` is `arrange.py`'s now): 28 character hotspots with a person to direct plus the Warehouse stranger carry all five states; all 36 scenes carry 2 to 4 `cast` lines (blocks 0, 16, 32, 48;
+  21 lines conditional on energy); 15 existing success and setback cinematics carry the acted reactions of the people around (the circle turning its back, the bar laughing, the family weeping, the queue cowering).
+  Unconditional cast lines use `core` people only (the continuous run brings no gatherer, early, late or peak person in by itself; the conditional high-energy lines may name them and simply do nothing when they are
+  absent). The sheets bake exactly what the data uses: `content/story/directed_actors.json` is empty, `directed.py` derives everything, `tests/test_story_acts.gd` checks both directions.
+  Proof: `bash tools/run/capture.sh --acting` (`docs/shots/acting/<hotspot>.jpg`: the five states side by side, the person framed at about twice the usual size; `contact_acting_<world>.jpg`). Its screenshot aids:
+  `RW_STORY_CAM=actor:<id>:<m>:<pitch>` (StoryStage; a standpoint with nobody in the way, the free look ignored), `RW_RUN_CLEAN=1` (no notes, no HUD), `RW_RUN_FLAGS=a,b`.
+  **Divergences:** (1) the two wizard hotspots (`warehouse.wizard`, `warehouse.chill.wizard`) have no `acting`: the wizard is a billboard *thing*, not a baked person, so there is nobody to give a face to; making it
+  act needs a figure-motion on a world thing (the Bassment's `RunActing.figure_motion` is the model), left for later. (2) Found while shooting: four hotspot people (`g07` the dancer, `g08` the grey, `court_g06` the queen,
+  `e04` the Ward orderly) belong to groups the continuous run never brings in, so those hotspots anchored on nobody visible; `HotspotView._manage_acting` now calls the new `StoryCrowd.ensure_present` so the person fades in
+  at their place when their hotspot is on show (nothing else about presence changed). (3) The plan's "committed" flash is one beat here (two left almost no time to see the result before the passage frame closes over
+  routes to another world: a result is seen for about three beats at best, which is why the strongest act of a route-leaving hotspot is in its `success`/`failure`, shortly, not in `then`). (4) The plan's `acting.look_at` of
+  a hotspot is used with `camera` and map ids only.
+  Not verified: how any of it moves and reads on a phone in real time (only still frames from the virtual clock, desktop window), that an act at beat 50 and an outcome at beat 62 are seen by a player who is looking at the pads, and no
+  listening or live-audio run at all. People-sheet page bytes (plan budget +15 % per chapter, against the rebuilt pre-1a heads): night_one 3,288,010 -> 3,555,788 (+8.1 %), mothership 9,441,871 -> 9,645,545 (+2.2 %), underworld 9,071,134 -> 9,236,297 (+1.8 %),
+  hospital 8,666,621 -> 8,963,276 (+3.4 %), mental_hospital 9,692,138 -> 10,056,393 (+3.8 %); total 40,159,774 -> 41,457,299 (+3.2 %). Shots I am not happy with (`docs/shots/acting/`): `underworld_court_queen` (the queen is hidden in a
+  crowd of dancers whatever the standpoint, her acts do not read), `ward_dorm_sleeper` (the sleeper's selected and committed acts do not show), `ward_late_exit_stare` (the acts are faces only), the two bouncers and `mothership_exit_exam`
+  (the success and failure panels are in the passage frame: the world is already changing). Test run at the end of 1d: `bash tools/test.sh` green: 71389 checks, 0 failures (the run before stage 1d: 67690), and the 169 Python content tests;
+  `tools/run/check_hotspots.py` 0 errors (the same 5 warnings as before).
+- Stages 2 to 6 are not started by this agent (stage 2 is in another worktree).
 
 ## What the game is now
 

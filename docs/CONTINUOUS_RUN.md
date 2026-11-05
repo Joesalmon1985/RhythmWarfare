@@ -439,7 +439,15 @@ People are told what to do and what to feel by data, never by text.
   field: nothing can carry text). `tests/test_run_cast.gd` (events, order, beats, conditions, determinism at any frame step, no cast = unchanged, cinematic cast, validator, the crowd's face and look),
   `tests/test_hotspots_engine.gd` (acting leaves the outcomes alone, chains, validator, every shipped hotspot both ways). `tools/story/art/directed.py` reads hotspot `acting`, scene `cast` and cinematic
   `cast` so the sheets bake exactly the acts and faces the data names (`tools/content/test_directed.py`).
-- **Stage 1b ships no authored acting or cast** (the five worlds' pass is stage 1d); the tests inject lines into the shipped data.
+- **Authored (stage 1d, 5 November 2026)**: every character hotspot with a person to direct (28 of the 30, the two wizards are billboard things; plus the Warehouse stranger) carries an `acting` block with all five states, every one of
+  the 36 scenes carries 2 to 4 `cast` lines (blocks 0, 16, 32, 48, a few conditional on energy: `if_energy_below` 35 to 50 for the people who react to a played-out player, `if_energy_above` 55 to 85 for the ones who
+  celebrate) and 16 existing setback and success cinematics carry acted reactions of the people around. The tables are `tools/run/acting_data.py` (`ACTING`, `CAST`, `CINE_CAST`); `make_hotspots.py` and `make_scenes.py`
+  copy them into the generated `content/run/hotspots/<world>.json` and `content/run/run.json`, so edit the table and rerun `python3 tools/run/make_scenes.py`. The hotspot windows decide when an act is seen: a final-window
+  hotspot is on show from beat 48 (available, then selected once touched), commits at 60.5 (the committed act for two beats, then the result for `beats`, about four of which are seen before the next room), so a
+  bystander's reaction to a result in a scene whose outcome has no cinematic is a `cast` line at beat 61 to 63 conditional on the flag the outcome sets (`if_flags_all`). Only the acts and faces the data names are baked
+  (`content/story/directed_actors.json` is empty now). Proof shots: `bash tools/run/capture.sh --acting` (`docs/shots/acting/`, a strip of the five states per person and a contact sheet per world; `RW_STORY_CAM=actor:<id>:<m>:<pitch>`,
+  `RW_RUN_CLEAN=1` and `RW_RUN_FLAGS=a,b` are its screenshot aids). Tests: `tests/test_run_cast.gd` (every shipped scene line fires once at its beat in a perfect and in a missed phase, every energy condition holds at its beat,
+  every cinematic line fires after its commit, 28 people hotspots act in all five states), `tests/test_story_acts.gd` (the sheets bake exactly the directed people and their acts and faces).
 
 ## The silent HUD (docs/THREE_PATHS_AND_FACES_PLAN.md D3 and 2.4, stage 1c)
 
