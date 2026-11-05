@@ -1,0 +1,16 @@
+{
+  "doc": "The choice language's defaults (docs/CHOICE_CLARITY.md section 2). A hotspot's own `staging` block is merged over the defaults of its archetype; read by src/run/choice_staging.gd and tools/story/art/directed.py (the people's acts are baked from it).",
+  "person": {
+    "current": {"act": "beckon", "face": "happy", "look_at": "camera"},
+    "other": {"act": "plead", "face": "sad", "look_at": "camera"},
+    "touched": {"act": "nod", "face": "happy", "look_at": "camera", "beats": 1.5},
+    "committed": {"act": "cheer", "face": "cheer", "look_at": "camera", "beats": 4},
+    "declined": {"act": "plead", "face": "sad", "look_at": "camera", "beats": 2},
+    "touch": {"w": 1.2, "h": 2.1}
+  },
+  "door": {"door": "drawn", "width_m": 1.2, "height_m": 2.4, "lamp": true, "touch": {"w": 1.7, "h": 2.6}},
+  "object": {"lamp": true, "current_motion": "bob", "other_motion": "still", "touch": {"w": 1.4, "h": 1.6}},
+  "figure": {"lamp": false, "current_motion": "beckon", "other_motion": "slump", "touch": {"w": 1.4, "h": 2.0}},
+  "feature": {"lamp": true, "current_motion": "bob", "other_motion": "still", "touch": {"w": 1.4, "h": 1.6}},
+  "creature": {"other_act": "recoil"}
+}

@@ -1,0 +1,363 @@
+{
+ "version": 1,
+ "level": "galilee_shore",
+ "px_scale_note": "the Gospel path's maps have no SVG rigs: the world is textures, billboards and baked people",
+ "textures": {
+  "floor_clay": {
+   "file": "textures/floor_clay.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_dust": {
+   "file": "textures/floor_dust.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "floor_path": {
+   "file": "textures/floor_path.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_sand": {
+   "file": "textures/floor_sand.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_water": {
+   "file": "textures/floor_water.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 4.0
+  },
+  "sky_dawn": {
+   "file": "textures/sky_dawn.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "sky_day": {
+   "file": "textures/sky_day.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "sky_morning": {
+   "file": "textures/sky_morning.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "sky_night": {
+   "file": "textures/sky_night.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_basket_full": {
+   "file": "textures/thing_basket_full.png",
+   "size": [
+    48,
+    48
+   ],
+   "metres": 1.0
+  },
+  "thing_bush": {
+   "file": "textures/thing_bush.png",
+   "size": [
+    64,
+    56
+   ],
+   "metres": 1.0
+  },
+  "thing_cart": {
+   "file": "textures/thing_cart.png",
+   "size": [
+    128,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_dove": {
+   "file": "textures/thing_dove.png",
+   "size": [
+    96,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_fire": {
+   "file": "textures/thing_fire.png",
+   "size": [
+    48,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_grass": {
+   "file": "textures/thing_grass.png",
+   "size": [
+    48,
+    32
+   ],
+   "metres": 1.0
+  },
+  "thing_hay": {
+   "file": "textures/thing_hay.png",
+   "size": [
+    64,
+    48
+   ],
+   "metres": 1.0
+  },
+  "thing_house_a": {
+   "file": "textures/thing_house_a.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_jars": {
+   "file": "textures/thing_jars.png",
+   "size": [
+    64,
+    56
+   ],
+   "metres": 1.0
+  },
+  "thing_olive_small": {
+   "file": "textures/thing_olive_small.png",
+   "size": [
+    96,
+    112
+   ],
+   "metres": 1.0
+  },
+  "thing_palm": {
+   "file": "textures/thing_palm.png",
+   "size": [
+    96,
+    176
+   ],
+   "metres": 1.0
+  },
+  "thing_planks": {
+   "file": "textures/thing_planks.png",
+   "size": [
+    64,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_reeds": {
+   "file": "textures/thing_reeds.png",
+   "size": [
+    64,
+    80
+   ],
+   "metres": 1.0
+  },
+  "thing_rock_a": {
+   "file": "textures/thing_rock_a.png",
+   "size": [
+    64,
+    48
+   ],
+   "metres": 1.0
+  },
+  "thing_rock_b": {
+   "file": "textures/thing_rock_b.png",
+   "size": [
+    96,
+    72
+   ],
+   "metres": 1.0
+  },
+  "thing_rock_c": {
+   "file": "textures/thing_rock_c.png",
+   "size": [
+    128,
+    112
+   ],
+   "metres": 1.0
+  },
+  "thing_sheep": {
+   "file": "textures/thing_sheep.png",
+   "size": [
+    48,
+    40
+   ],
+   "metres": 1.0
+  },
+  "thing_sheep_lie": {
+   "file": "textures/thing_sheep_lie.png",
+   "size": [
+    48,
+    32
+   ],
+   "metres": 1.0
+  },
+  "thing_stable": {
+   "file": "textures/thing_stable.png",
+   "size": [
+    160,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_star": {
+   "file": "textures/thing_star.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_stool": {
+   "file": "textures/thing_stool.png",
+   "size": [
+    32,
+    32
+   ],
+   "metres": 1.0
+  },
+  "thing_town_far": {
+   "file": "textures/thing_town_far.png",
+   "size": [
+    256,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_waves": {
+   "file": "textures/thing_waves.png",
+   "size": [
+    128,
+    32
+   ],
+   "metres": 1.0
+  },
+  "thing_workbench": {
+   "file": "textures/thing_workbench.png",
+   "size": [
+    128,
+    72
+   ],
+   "metres": 1.0
+  },
+  "trim": {
+   "file": "textures/trim.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.0
+  },
+  "wall_door": {
+   "file": "textures/wall_door.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_hill": {
+   "file": "textures/wall_hill.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 6.0
+  },
+  "wall_limestone": {
+   "file": "textures/wall_limestone.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_reeds": {
+   "file": "textures/wall_reeds.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "wall_rock": {
+   "file": "textures/wall_rock.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 4.0
+  }
+ },
+ "stage": {
+  "sprites": {
+   "glow": {
+    "file": "processed/glow.png",
+    "pivot": [
+     128.0,
+     128.0
+    ],
+    "px_scale": 1.0
+   },
+   "vignette": {
+    "file": "processed/vignette.png",
+    "pivot": [
+     320.0,
+     180.0
+    ],
+    "px_scale": 2.0
+   }
+  },
+  "pieces": [
+   {
+    "id": "bank_night.star",
+    "file": "textures/thing_star.png",
+    "blend": "add",
+    "anim": "none"
+   },
+   {
+    "id": "bank_dawn.dove",
+    "file": "textures/thing_dove.png",
+    "blend": "add",
+    "anim": "none"
+   }
+  ],
+  "views": []
+ },
+ "archetypes": {},
+ "people": {
+  "file": "people/people.json",
+  "pages": [
+   "people/page_0.png",
+   "people/page_1.png"
+  ],
+  "palette": "people/palette.png"
+ }
+}

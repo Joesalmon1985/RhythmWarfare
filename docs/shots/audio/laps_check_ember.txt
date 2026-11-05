@@ -1,0 +1,18 @@
+# check_run_audio.py on a real-time recording of a TWO-LAP scene (RW_RUN_BOT=perfect RW_RUN_PATH=ember RW_RUN_START=north RW_SEED=2, tools/story/record_music.gd 66 s, dummy audio driver, 5 Nov 2026): each lap is fitted block by block, the drums' delay is fitted 8 beats before and after the lap boundary (jump), and the voices started at the boundary are counted (docs/HANDOVER.md A12)
+recording 69.5 s at 48000 Hz; song started at wall 3.606; 2 phases in the log
+phase 1 north          145 BPM x2 laps (measured 145.000) treatment none       delay -120.90 ms
+   lap boundary 1 -> 2: drums delay -120.90 ms before, -120.90 ms after (jump -0.00 ms), voices started at the boundary: 0  ok
+   block 1 stage 0 (Drums         ) fitted {'drums': 0.79}  expected {'drums': 0.7943}  explains  99.2%  ok
+   block 2 stage 1 (Bass enters   ) fitted {'drums': 0.4, 'bass': 0.79, 'other': 0.36}  expected {'drums': 0.3972, 'bass': 0.7943, 'other': 0.3574}  explains 100.0%  ok
+   block 3 stage 2 (Drums return  ) fitted {'drums': 0.79, 'bass': 0.68, 'other': 0.36}  expected {'drums': 0.7943, 'bass': 0.6752, 'other': 0.3574}  explains  99.9%  ok
+   block 4 stage 3 (Bass strongest) fitted {'drums': 0.32, 'bass': 0.79, 'other': 0.4}  expected {'drums': 0.3177, 'bass': 0.7943, 'other': 0.3972}  explains 100.0%  ok
+   block 5 stage 3 (Bass strongest) fitted {'drums': 0.32, 'bass': 0.79, 'other': 0.4}  expected {'drums': 0.3177, 'bass': 0.7943, 'other': 0.3972}  explains 100.0%  ok
+   block 6 stage 3 (Bass strongest) fitted {'drums': 0.32, 'bass': 0.79, 'other': 0.4}  expected {'drums': 0.3177, 'bass': 0.7943, 'other': 0.3972}  explains 100.0%  ok
+   block 7 stage 3 (Bass strongest) fitted {'drums': 0.32, 'bass': 0.79, 'other': 0.4}  expected {'drums': 0.3177, 'bass': 0.7943, 'other': 0.3972}  explains 100.0%  ok
+   block 8 stage 3 (Bass strongest) fitted {'drums': 0.32, 'bass': 0.79, 'other': 0.4, 'riser': 0.5}  expected {'drums': 0.3177, 'bass': 0.7943, 'other': 0.3972, 'riser': 0.5011872336272722}  explains 100.0%  ok
+   bass and synth started from beat 16 of the phase
+bass   sits +8.8 to +8.8 ms from its nominal start relative to the drums (7 blocks measured)
+other  sits +8.8 to +8.8 ms from its nominal start relative to the drums (7 blocks measured)
+riser  sits +5.9 to +5.9 ms from its nominal start relative to the drums (1 blocks measured)
+delay per phase: min -120.90 ms, max -120.90 ms, spread 0.00 ms
+RESULT ok

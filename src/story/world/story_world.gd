@@ -23,6 +23,8 @@ var _metres: Dictionary = {}  # texture name -> metres per repeat
 var _sector_nodes: Dictionary = {}  # sector id -> {node: MeshInstance3D, mats: Array[StandardMaterial3D]}
 var _thing_nodes: Array = []  # {node: MeshInstance3D, mat, thing: Dictionary, base_scale: Vector3, base_y: float}
 var _sky: MeshInstance3D
+var _skies: Dictionary = {}  # sky name -> MeshInstance3D (the map sky's `by_name`: one cylinder each, only the camera sector's is shown)
+var _atmo := ""  # the atmosphere last set (a sector id), so a frame in the same sector does nothing
 var _sky_follow := true
 var triangle_count := 0
 var _anim_sectors: Dictionary = {}  # sectors that show an animated surface (their colour is rewritten every frame, the animation builds on it)
@@ -58,7 +60,7 @@ func build(p_map: StoryMap, p_assets: StoryAssets) -> void:
 
 
 func _load_tex(file: String) -> Texture2D:
-	var path := "res://assets/story/%s/%s" % [map.art, file]
+	var path := file if file.begins_with("res://") else "res://assets/story/%s/%s" % [map.art, file]
 	var t: Texture2D = null
 	if ResourceLoader.exists(path):
 		t = load(path) as Texture2D
@@ -303,6 +305,10 @@ func _make_sector_mesh(s: Dictionary, groups: Dictionary) -> void:
 	_sector_nodes[str(s["id"])] = {"node": mi, "mats": mats}
 
 
+## The choice layer's poses of map things (docs/CHOICE_CLARITY.md): thing id -> {tex?: Texture2D, dx, dy, sx, sy}; an id not here is drawn as the map says.
+var thing_pose: Dictionary = {}
+
+
 func _make_thing(t: Dictionary) -> void:
 	var spr: Dictionary = assets.sprite(str(t["sprite"])) if assets != null else {}
 	var tex: Texture2D = spr.get("tex", null)
@@ -346,13 +352,23 @@ func _make_thing(t: Dictionary) -> void:
 	add_child(mi)
 	if t.has("piece"):
 		mi.visible = false
-	_thing_nodes.append({"node": mi, "mat": mat, "thing": t, "base_y": y, "add": blend == "add"})
+	_thing_nodes.append({"node": mi, "mat": mat, "thing": t, "base_y": y, "add": blend == "add", "tex0": tex, "h": h, "base_x": at.x})
 
 
 func _make_sky() -> void:
 	if map.sky.is_empty() or str(map.sky.get("tex", "")) == "":
 		return
-	var tex := _load_tex(str(map.sky["tex"]))
+	_sky = _sky_mesh(str(map.sky["tex"]), "Sky")
+	var by_name: Variant = map.sky.get("by_name", {})
+	if typeof(by_name) == TYPE_DICTIONARY:
+		for nm in by_name:
+			var m := _sky_mesh(str(by_name[nm]), "Sky_" + str(nm))
+			m.visible = false
+			_skies[str(nm)] = m
+
+
+func _sky_mesh(file: String, nm: String) -> MeshInstance3D:
+	var tex := _load_tex(file)
 	var cyl := CylinderMesh.new()
 	cyl.top_radius = 80.0
 	cyl.bottom_radius = 80.0
@@ -363,12 +379,34 @@ func _make_sky() -> void:
 	var mat := _material(tex)
 	mat.disable_fog = true
 	mat.no_depth_test = false
-	_sky = MeshInstance3D.new()
-	_sky.name = "Sky"
-	_sky.mesh = cyl
-	_sky.material_override = mat
-	_sky.position.y = 20.0
-	add_child(_sky)
+	var mi := MeshInstance3D.new()
+	mi.name = nm
+	mi.mesh = cyl
+	mi.material_override = mat
+	mi.position.y = 20.0
+	add_child(mi)
+	return mi
+
+
+## The sky and the haze of the sector the camera is in (a map may hold a night room and a dawn one): the sector's `sky` names one of the map sky's `by_name`, its `fog` replaces the map's.
+func set_atmosphere(sec: Dictionary) -> void:
+	var sid := str(sec.get("id", ""))
+	if sid == _atmo or sid == "":
+		return
+	_atmo = sid
+	var want := str(sec.get("sky", ""))
+	if not _skies.is_empty():
+		for nm in _skies:
+			(_skies[nm] as MeshInstance3D).visible = (nm == want)
+		if _sky != null:
+			_sky.visible = not _skies.has(want)
+	if env != null:
+		var fg: Dictionary = sec.get("fog", {})
+		var fc: Color = Color.html(str(fg["color"])) if fg.has("color") else (Color.html(str(map.fog["color"])) if map.fog.has("color") else FOG_COLOR)
+		env.background_color = fc
+		env.fog_light_color = fc
+		if not OS.has_environment("RW_STORY_FOG"):
+			env.fog_density = float(fg.get("density", map.fog.get("density", FOG_DENSITY)))
 
 
 # --- light, a function of song time ------------------------------------------------------------------------------------------------------
@@ -400,6 +438,9 @@ static func light_of(s: Dictionary, t: float, ctx: Dictionary) -> Color:
 	var strobe := float(ctx.get("strobe", 0.0))
 	if strobe > 0.0:
 		col = col.lerp(Color(2, 2, 2), strobe)
+	var swell := float(ctx.get("swell_gain", 1.0))  # a new room's lamps rising (StoryStage "room_swell")
+	if swell != 1.0:  # (below 1 on the downbeat, a flare above 1 a beat later)
+		col *= swell
 	col.a = 1.0
 	return col
 
@@ -475,12 +516,28 @@ func update(t: float, ctx: Dictionary) -> void:
 				sc = 1.0 + 0.03 * sin(beats * PI * 0.5)
 			"flicker":
 				alpha *= 0.6 + 0.4 * absf(sin(t * 29.0))
-		var key := Vector4(col.r + col.g * 3.0 + col.b * 7.0, sc, dy, alpha)  # unchanged since the last frame (a lamp in a steady room): leave the node alone
+		var sx := 1.0
+		var sy := 1.0
+		var dx := 0.0
+		var tp: Dictionary = thing_pose.get(str(t_def["id"]), {})  # the choice layer's pose of an option's billboard (ChoiceStaging: a texture and a motion per state)
+		if not tp.is_empty():
+			sx = float(tp.get("sx", 1.0))
+			sy = float(tp.get("sy", 1.0))
+			dx = float(tp.get("dx", 0.0))
+			dy += float(tp.get("dy", 0.0)) - float(th["h"]) * sc * (1.0 - sy) * 0.5  # (the feet stay on the floor)
+		var want_tex: Texture2D = tp.get("tex", null) if tp.get("tex", null) != null else th.get("tex0", null)
+		if want_tex != null and (th["mat"] as StandardMaterial3D).albedo_texture != want_tex:
+			(th["mat"] as StandardMaterial3D).albedo_texture = want_tex
+			th["key"] = Vector4.INF
+		var key := Vector4(col.r + col.g * 3.0 + col.b * 7.0 + dx * 13.0, sc + sx * 10.0 + sy * 100.0, dy, alpha)  # unchanged since the last frame (a lamp in a steady room): leave the node alone
 		if key == th.get("key", Vector4.INF):
 			continue
 		th["key"] = key
-		node.scale = Vector3(sc, sc, sc)
+		node.scale = Vector3(sc * sx, sc * sy, sc)
 		node.position.y = float(th["base_y"]) + dy
+		if not tp.is_empty() or th.has("posed"):
+			node.position.x = float(th["base_x"]) + dx
+			th["posed"] = true
 		(th["mat"] as StandardMaterial3D).albedo_color = Color(col.r, col.g, col.b, alpha)
 
 
@@ -488,6 +545,8 @@ func update(t: float, ctx: Dictionary) -> void:
 func follow(cam: Vector3) -> void:
 	if _sky != null:
 		_sky.position = Vector3(cam.x, 20.0, cam.z)
+	for nm in _skies:
+		(_skies[nm] as MeshInstance3D).position = Vector3(cam.x, 20.0, cam.z)
 
 
 ## An animated surface: every wall or floor showing the map texture `name` shows `tex` instead (the LED wall).

@@ -1,16 +1,470 @@
 # Rhythm Warfare: handover
 
-State on 3 November 2026, after `docs/BRIEF_PADS_SEQUENCES_TEN_MISSIONS.md` (four pads, sequence rewards, ten missions,
-the loop library and the owner's drop-in content path), the rebuild of Mission 1 on the owner's own Ableton
-recordings (`ToAddTry1/`, imported by `tools/content/import_ableton.py`) and the village version of Mission 1
-(128 bars, civilians, tap-to-deploy sections, Red Alert sound effects) and the owner's first-play tweaks of the same
-day (units fight on the move, a bigger zoomed-out village, the rally flag always shown, the bass chart by pitch,
-a quieter battle mix, misses that silence the instrument) and then the loadout redesign of that night (one global
-loadout, a loop library, missions as bases plus waves plus a form). Read this first, then `README.md` (layout and
-commands), `docs/PRD.md` sections 15 and 16 (the mission rules; section 16 is the current content model; sections 1 to
-13 describe the legacy duel) and
-`docs/CONTENT_TO_RENDER.md` (the owner's render list). Everything is committed on `main` at
-https://github.com/Joesalmon1985/RhythmWarfare.
+**A new agent, or a new machine: start with `docs/PICKUP.md`** (state, setup, files not in git, branch map, prioritised pickup list, how to work with the owner).
+
+State on 5 November 2026, after Stage 6 of `docs/THREE_PATHS_AND_FACES_PLAN.md` (the acting system on every world, the sister-run engine, and the three paths: The Life of Jesus, The Mission Count, The Ember Road).
+This is the single current handover. Part A is the newest work (read it first); Part B is the earlier defense-campaign state of 3 November 2026, kept as it was (its commands and caveats still apply to that code, which is still in the repository).
+Read this, then `README.md` (layout and commands), `docs/CONTINUOUS_RUN.md` (the run, paths, portals, acting, the silent HUD), `docs/paths/{gospel,squadron,ember}.md` (one note per path), `docs/STORY_ART.md` and `docs/MUSIC_HANDOFF.md`
+(the owner's shopping list). **For playtesting use the home screen's Debug / Playtest (A11, `docs/DEBUG_MODE.md`).** Everything is on `main` at https://github.com/Joesalmon1985/RhythmWarfare.
+
+**In one paragraph.** Three adventures branch off the Warehouse club and are played on the same four pads: a house-music Gospel story (17 scenes, 124 BPM), a dubstep story about a bomber crew trapped by an absurd regulation (14 scenes, 140 BPM, on the
+owner's own loops) and a psytrance story about a small carrier bearing a cursed ember across a dangerous land (15 scenes, 145 BPM). In all eight worlds the people's faces and acts carry the story and nothing is written during play. Everything was built and
+checked by an agent on a desktop with a virtual clock and a dummy audio driver: **nobody has played it by hand, on a phone, or listened to it.** The next thing that matters is the owner's phone run and ears.
+
+# Part A: the three paths and the acting system
+
+## A1. What is done, stage by stage
+
+| Stage | What | Commits (first to last) | Notes |
+| --- | --- | --- | --- |
+| 1a | fourteen faces and fifteen directed acts in the pixel people, baked only for the directed people | `3caa067c`, `88df541e` | `docs/STORY_ART.md` "Acting" |
+| 1b | the acting contract: `acting` on hotspots, `cast` on scenes and cinematics, `StoryCrowd.direct_actor`, validator | `a72384f9` | `docs/CONTINUOUS_RUN.md` "Acting in the run" |
+| 1c | the silent HUD (no title card, captions, names, countdown, caption band); `RW_DEV_TEXT=1` restores them; the Bassment's ten creatures act | `713be82d`, `5bb0b9c8` | `docs/CONTINUOUS_RUN.md` "The silent HUD" |
+| 1d | the acting pass on the five old worlds: 28 character hotspots plus the stranger, cast lines on all 36 scenes, 15 cinematics acted | `e82b9e8b`, `866b7aa2` | `tools/run/acting_data.py`; shots `docs/shots/acting/` |
+| 2 | sister runs: `content/paths/<id>/`, relaxed graph rules, the three Warehouse portals, the tempo handoff, `paths` in the save, the home screen's path section, `beatshaper --path`, placeholders, the `stub` path | `5285f2ac`, `68a3f20c`, `6e30f6f2` | `docs/CONTINUOUS_RUN.md` "Paths" |
+| 3 | The Life of Jesus (`gospel`): 17 scenes, 4 worlds, 4 maps, 130 people, 43 hotspots, two endings (`tomb`, `road`) | `91f0a611`, `b8bcad5e`, `16ee5aec`, `0ab74184`, `c230b0ff`, `c64a6b09` | `docs/paths/gospel.md` |
+| 4 | The Mission Count (`squadron`): 14 scenes, 4 worlds, 3 maps, the Clause and the loop, one ending (`free`); the owner's 14 loops | `42c908c4`, `fbe0f69b`, `db342a11`, `3a9868e8`, `ad96378a`, `e2a9ca86` | `docs/paths/squadron.md` |
+| 5 | The Ember Road (`ember`): 15 scenes, 5 worlds, 4 maps, flags that change later scenes, two endings (`quenched`, `kept`) and a setback | `461bc1c1`, `1ad2cb3b`, `91976d84`, `d995ede0`, `8f0d8b0e`, `dac0a5b5`, `97d361d4` | `docs/paths/ember.md` |
+| 6 | this handover; README, CONTINUOUS_RUN, STORY_ART, MUSIC_IMPORT and MUSIC_HANDOFF brought up to date; the final whole-project check; the repo-size audit | the "Stage 6" commits | below |
+
+How the stage 1 to 2 details differ from the plan, in the order they were written, is in the stage notes this file replaced (kept in git history: `git show e2a9ca86:docs/HANDOVER.md`). The ones that still matter are in A3.
+
+## A2. What was verified, and what was not
+
+### Verified (5 November 2026, this PC, Godot 4.5.1 console, Windows 11; the final whole-project run of Stage 6)
+
+| Check | Result |
+| --- | --- |
+| `bash tools/test.sh` (Godot suite + Python content tests) | **73,712 checks, 0 failures** (Godot suite, exit code 0) and **181 Python content tests OK**. The output also carries expected noise: 73 Godot 'non-equal opposite anchors' warnings from the trial tests, the corrupt-save test's `Parse JSON failed`, a negative test's `story map missing`, an unknown-civilian fallback warning and Godot's leak notice at shutdown (4 resources in use); none is a failure |
+| `python3 tools/run/check_hotspots.py` (main run) | 0 errors, 5 warnings (route-lock chart differences, as before); 36 of 36 scenes reached, 52 routes taken, 93 flags settable, portals into the paths: ember, gospel, squadron |
+| `python3 tools/run/check_hotspots.py --path gospel` / `squadron` / `ember` | gospel 0 errors, 15 warnings, 17 of 17 scenes reached, both endings (`road`, `tomb`) left by `run:warehouse`; squadron 0 errors, 1 warning, 14 of 14, ending `free`; ember 0 errors, 19 warnings, 15 of 15, endings `kept`, `quenched`. Every warning is the route lock (a route whose chart pack differs from the default route's); `stub` 0 and 0 |
+| `bash tools/run/walk_run.sh --path gospel` / `squadron` / `ember` (real scenes, virtual clock, isolated save, dummy audio) | all three `run walk-through: OK`: gospel 7 walks (`perfect`, `sloppy`, `none`, `road_end`, `branch_a`, `branch_b`, `branch_c`), **17 of 17 scenes visited**; squadron 5 walks (`perfect`, `sloppy`, `none`, `loop`, `clause`), **14 of 14**; ember 6 walks (`perfect`, `sloppy`, `none`, `kept`, `taken`, `lantern`), **15 of 15**; no ERROR or SCRIPT line in any. The main run's own `walk_run.sh` (36 scenes) was not re-run in Stage 6 (the suite's run-scene tests and the matrix cover it) |
+| `python3 tools/story/check_assets.py` | OK (night_one, mothership, underworld, hospital, mental_hospital, airfield, city, harbour, manifest check) |
+| other | `make_path_placeholders.py ember --force` into a scratch folder reproduced the committed WAV and `pack.json` bytes (deterministic); `tools/content/music_handoff.py` regenerated `docs/MUSIC_HANDOFF.md` |
+
+What the tests cover for the paths: `tests/test_run_paths.gd` (rates, relaxed rules, wrong-tempo pack refused, portals both ways, save migration, the handoff in both directions with `beat_s` before and after, the phase on the downbeat, cue times on the new grid,
+the clock swap, the real scene entering the stub through the balcony and leaving by its ending), `test_gospel.gd`, `test_run_squadron.gd`, `test_run_ember.gd` (data, flags, cast, pieces, `hide`, acting in five states, the real scene through the real portal, every
+ending), the per-path policy matrix in `test_run_matrix.gd` (each path under every tap policy and four skills), `test_story_acts.gd` (every directed person is baked in exactly the acts the data uses), `test_run_hud_silent.gd`, and the Python content tests
+(placeholders, importer, gospel, directed actors). The history of test counts: 67,513 (1b), 67,690 (1c), 71,389 (1d), 72,444 (Gospel), 73,056 (Ember), 73,647 (Squadron), 73,712 now.
+
+Also verified earlier and not repeated now (still valid, nothing it covers has changed): the handoff recording (`docs/shots/run/path_handoff_check.txt`: beat grids 174 -> 124 -> 174 BPM, the new grid's first downbeat +2.9 ms from the old drums in, -6.5 ms out, every block fitting its stage
+gains); the prebuild of a path's first stage in a cue-free guard (75 ms to 250 ms per map, none behind the closed frame); the balcony star opening the Gospel for real; the booth radio entering Squadron at 174 -> 140 and leaving at 140 -> 174; shots of every scene of
+every path and of every character hotspot in five states, looked at by the agents (`docs/shots/{gospel,squadron,ember}/`, `docs/shots/acting/`).
+
+### NOT verified (the honest list)
+
+1. **Nothing has been played by hand and nothing has been heard.** No phone, no real output latency, no touch feel, no frame times on a phone (the maps were built on a desktop). The placeholders were measured (bass-forward, sub share), never auditioned; the Squadron gains come from
+   measurements of the written loops, not ears. The owner's phone run (`How to run the phone check`, Part B) is still the first real test of anything in the game.
+2. **Acts, faces, set pieces and the Golgotha staging have only been seen as still frames** from the virtual clock. Whether a player who is watching the pads sees an act at beat 50 and an outcome at beat 62 is unknown. Several pieces (`swell`, `long_shadow`, `river_rise`,
+   `rider_shadow`, `drowned`, the Gospel's sky pieces) were validated and fired at their beats in tests; nobody looked at most of them on screen.
+3. **No real Gospel or Ember loops exist.** 32 scenes play synthesised placeholders (17 Gospel, 15 Ember). Whether the owner's loops, when they arrive, will pass the importer is unknown: the Squadron ones needed `--max-error-ms 40` for six scenes and are 4-bar phrases.
+4. **The tempo handoff and its clock fix were measured with the dummy audio driver only** (see A4); no real output latency.
+5. **The Android and Windows exports predate all of this** (they predate even the loadout redesign, Part B item 17). Nothing was exported; the size of an export with the path packs was not measured (A8).
+6. `tools/story/check_assets.py` covers the five old chapters and the three Squadron worlds, not the Gospel's or the Ember's maps (their art is checked by their own tests and `tools/story/check_map.gd`).
+7. The pause menu's "Leave this path" button was built and tested through the scene but not looked at on a real screen.
+
+## A3. Divergences from the plan, gathered from the stage notes
+
+Plan-wide (stages 1 and 2):
+* The pose key `fwd` (a forward bend) was added to the pixel rig; `point` and `stare` keep their old default faces; the plan's `StoryCrowd.direct(...)` is `direct_actor` (the name `direct` was taken by the crowd's group directive).
+* The wizard hotspots in the Warehouse (`warehouse.wizard`, `warehouse.chill.wizard`) have no `acting`: the wizard is a billboard thing, not a baked person.
+* The "committed" flash is one beat, not two; a result is seen about three beats at best before the passage frame closes over a route to another world, so the strongest act of a route-leaving hotspot is in its `success` / `failure`, briefly.
+* The portals are gated so they fit the 2 to 4 rule: the star needs `wh_saw_floor`, the ember `wh_vip_pass`, the radio nothing.
+* Path placeholders are WAV, not Ogg (the format `beatshaper.py import` writes; Ogg cannot promise a sample-exact loop), with MIDI beside them.
+* The way back from a path is the world-change arrival (door, walk to the floor), not `trial_leave`'s fresh rail, because a path may leave the camera in another sector. `path_enter` marks a path's worlds in `paths`, never in `reached`.
+* The engine got `grid_origin` so cues sit on the new tempo's grid counted from the handoff downbeat.
+* Four directed people (`g07`, `g08`, `court_g06`, `e04`) belonged to groups the run never brings in; `StoryCrowd.ensure_present` fades them in.
+
+The Gospel (stage 3): one map per world means the plan's four maps became four maps with 17 views (a view per scene), `galilee_shore` is the Jordan's alone and the lakeshore is on `hillside`; J00 and J14 have a harmless second hotspot (the shepherd, the women) because the
+contract needs two in every scene; a path's exit scene may lead on inside its world and to a non-entry scene of it; for a path `check_hotspots.py` wants some hotspot leading to a route, not an exit of its own; the sky pieces of Golgotha are billboards at 12 m (they dim the sky
+behind the hill, not the people in front).
+
+The Mission Count (stage 4): three maps, not four (the night bomber is a room of `airfield`; `base` and `air` share a map); the loops are 16-beat (4-bar) phrases, not 8 bars, so a phase is four laps and each lap brings a new layer (the path's own `stages` in run.json, data only);
+six scenes needed a 40 ms MIDI tolerance; the plan's `object` touches whose success is a route are `exit` hotspots here (the validator wants an exit anchored on a thing or a doorway per route); exit scenes route in their own world only with `loop: true` and the depth rule is
+lifted; there is no placeholder music at all; the booth portal gained a visible radio and a bomber's shadow (Night One props).
+
+The Ember Road (stage 5): five worlds, not four (the plan's `north` world listed two maps, so it is split into `north` and `deeps`); the default exit of a scene is an invented lit way on where the plan lists two non-exit touches (E03, E06 to E09, E11 to E14); E00 has a second touch
+(the Ember in its bowl); the grandmother lies and sleeps instead of offering; the gate's laughing mouths are a set piece, not an act; "alone" and "lost companions" are `hide` cast lines (a new kind of cast line); directed companions are per-room instances of one `person`;
+the Birch Hall's and the lake's setbacks go to the High Pass across a world border as `loop` routes; the placeholders are WAV at 145 BPM.
+
+## A4. Known problems and weak spots
+
+**Audio.**
+* *The 88 ms phase-change offset: found and fixed (commit `56adc157`, after the stages).* After a tempo handoff, `RunAudio._swap_clock` set the song base to the downbeat, but a new stream's position reads one mix period ahead after its first mix, so the clock (cues, voices, judge) ran that far ahead
+  of the sound from every swap on: 88.5 ms with the dummy driver, estimated 5.9 to 20 ms on a device. `song_base` is now `t - mix_period`; `check_run_audio.py` asserts every in-path phase boundary within the dummy driver's 29.4 ms floor; the handoff recording went from -88.58 ms (spread 95.1 ms) to -6.12 ms
+  (spread 12.6 ms) on the stub and -5.92 ms (spread 5.9 ms) on the real Gospel. Measured with the dummy driver only: whether a phone's handoff is tight is still to be heard.
+* *Squadron bass* (since lifted at the bus level, without touching the loops: A10). C05 and C06 have a short loud bass transient on a quiet body (peak-limited: RMS about -23 to -25 dBFS; at stage 2 the bass sits below the drums); C03, C05, C06, C09 and C11 are mid-heavy (8 to 31 % of the bass under 90 Hz). Nothing was edited; a re-export with the
+  transient tamed, or a game-side limiter, would give more.
+* *Placeholders on a phone speaker.* Bass-forward by measurement (RMS: drums -20 to -21, bass -11 to -12, pad -28 dBFS; at least 45 to 50 % of the bass under 90 Hz); whether that is prominent enough on a phone speaker is the owner's to judge.
+
+**Shots and art the agents were not happy with** (all are looked-at stills, in `docs/shots/`):
+* Gospel: the acting strips of route-leaving hotspots (`gospel_jordan_wilderness_*`, the exits) show their success and failure panels inside the passage frame, so the tempter's `recoil` and `laugh` do not read; for `galilee.capernaum.family` and `galilee.fishermen` the committed and success
+  panels differ little from `available`; the dusk and night views (J09, J12) are dark and the grove's far crowd is a few pixels; `wall_hill` and `wall_columns` read as flat bands and heavy shadow; the skies are built from large dither cells at this resolution; the grove's torch and the
+  Bethlehem fire are lights, not animated art.
+* Squadron: `route_cNN` where the rail's wandering camera looks at a wall or the ceiling at beat 56 (C03, C04, C05, C06 above all: the hotspots then show as edge beacons, touchable but not pretty); the quay (`node_c12`, `route_c12`, the sentry's and the boat's acting strips) shows the neutral
+  coast through its gap as a glitchy block of dither and the fishing boat reads as a dark hulk; the flight line's sandbag berm is very loud orange; C04's lever is hard to find from the home camera; weak art: `thing_tent_flap` (a cross on a white sheet could be read as a flag), `thing_truck`,
+  `thing_staff_car`, `thing_medkit`, `wall_hangar`, `wall_stucco`; the gunner reads as a small person in a helmet more than a boy, the MP's helmet is a white dome, the patient's head bandage a turban, the ribbons and stripes are small.
+* Ember: `route_*` shots of the dark scenes (Deep Halls, Falls, the Keeper) have small dim people at the default camera; `node_hollow_ford` has Bram and his lantern at the edge; E12 and E13 have Bram and the Hollow One at the edges of a very dark cavern, and the `swell` and `long_shadow`
+  pieces are seen late in the phase and were not shot; the Hollow One's skin reads cyan in the teal marsh (the light's colour, not the rig's).
+* Stage 1d: `underworld_court_queen` (hidden in a crowd of dancers), `ward_dorm_sleeper` (selected and committed acts do not show), `ward_late_exit_stare` (faces only), the two bouncers and `mothership_exit_exam` (panels inside the passage frame).
+
+**Engine and tool limits.**
+* A hotspot whose person belongs to a group the run never brings in anchors on nobody unless `ensure_present` is called; the Gospel's `late` group relies on cast lines. A new path author should check each acting hotspot's person exists in the room.
+* The Warehouse portals are small, pulsing and gated; a first-time player may never find them (A6 question 5).
+* The matrix, the walks and the checks all run on the virtual clock; real-time behaviour (frame times, GC pauses at a map build) is only measured for the prebuild.
+* `walk_run.sh` and the capture scripts default to the Linux Godot path: set `GODOT` on Windows.
+
+## A5. Backlog (not built)
+
+1. ~~The Warehouse portal's changed look once a path has been finished (plan D10)~~: built in the visual polish (A9), `look.finished`.
+2. The Warehouse wizards do not act (they are billboard things, not people); `RunActing.figure_motion` (the Bassment's) is the model.
+3. Gospel and Ember maps in `check_assets.py`.
+4. Nothing exercises the real-time audio on a path other than the stub handoff recording; a re-record with `tools/story/record_music.gd` through `warehouse.booth.radio` (140 BPM) and the bar ember (145) would extend `docs/shots/run/path_handoff_check.txt`.
+5. Part B's backlog still applies to the defense campaign.
+
+## A6. Open decisions for the owner
+
+1. **Squadron timing: loosen or re-export?** C01, C02, C04, C08, C09 and C12 were imported with a 40 ms MIDI tolerance (their kick or snare hits sit 31 to 38 ms from the MIDI notes; the importer's default is 12 ms). Nothing was retimed. If hits feel late or early in those scenes, re-export
+   from the DAW with the drums quantised, or accept it. C09, C11 and C14 have no snare note.
+2. **Squadron loops are 4 bars, not 8.** They tile the 64-beat phase four times and the stage mix changes every lap (every 6.9 s), so the arrangement moves even though the loop does not. If 8-bar loops are wanted, they have to be re-exported; the importer takes either.
+3. **Gospel and Ember need their real loops.** 17 and 15 prompts, verbatim, are in `docs/MUSIC_HANDOFF.md`; drop the exports in `content/imports/<path>/<scene>/` and run `beatshaper.py --path <id> apply ...`. Until then the placeholders are WAV (not Ogg), bass-forward and never auditioned.
+4. **Judgement words.** PERFECT, GREAT and MISS are still drawn on the pads as feedback ("not story"). Decision: keep them, or remove them for the full silent-HUD intent (one flag in `RunPlay._on_judge_event`).
+5. **Portal discoverability.** The star appears only after the floor has been seen from the balcony rail (`wh_saw_floor`) and the ember only after the stranger's VIP pass (`wh_vip_pass`); the radio is always there. Keep the gating (it fits the 2 to 4 rule) or make the portals easier to find, e.g. a second hint
+   in the room or a home-screen shortcut for review.
+6. **A look for a finished path** (plan D10, A5 item 1): build it, or leave the home screen's "Endings found" as the only trace.
+7. **Squadron's thin bass** in C05 and C06 (and mid-heavy C03, C09, C11): re-export, or a game-side limiter.
+8. **The Gospel path's subject.** It follows a public-domain source with alternative-history branches and never shows the player; no painting or film is depicted (plan D2). Whether to ship it, and in which stores or ratings, is the owner's call and was not examined by the agents.
+9. **Repo size** (A8): keep the placeholder WAVs in git, or git-ignore them and regenerate by script.
+10. **Two laps per path scene** (A12): keep them, revert a path or a scene (one value in the data), or ask for a drums-cue block inside lap 2 (four bass-cue blocks in a row is the current rule). Also: is the weaker player's harder economy (A12 section 3) acceptable, or should the energy numbers be eased?
+
+## A7. How to run the checks (the short list; the full list is `README.md`)
+
+```
+bash tools/test.sh                                        # whole suite (10 to 15 minutes for the Godot part on this PC)
+python3 tools/run/check_hotspots.py [--path gospel|squadron|ember]
+GODOT=<godot console binary> bash tools/run/walk_run.sh --path gospel      # also squadron, ember; no --path: the five old worlds (all need a display)
+python3 tools/story/check_assets.py
+python3 tools/content/music_handoff.py                    # regenerate docs/MUSIC_HANDOFF.md
+```
+
+## A8. Repo size
+
+Measured on 5 November 2026 (report only: no history was rewritten and no tracked file was deleted).
+
+| What | Number |
+| --- | --- |
+| Repository, packed (`git count-objects -vH`) | 852 MiB `size-pack` (+9.5 MiB loose); all reachable blobs at `HEAD` 850 MiB packed |
+| The same at the plan's starting commit `5efcfd2` | 598 MiB packed (857 MiB raw) |
+| Growth since the plan | +252 MiB packed (+342 MiB raw): packs of the paths 116 MiB, new story art (textures, sprites, people sheets) 90 MiB, screenshots 49 MiB, everything else about 1 MiB |
+| The paths' packs, packed in git (unique blobs) | Gospel 42.5 MiB (65.5 MiB raw), Ember 34.0 MiB (51.2 raw), Squadron 28.5 MiB (52.9 raw, the owner's real loops), `stub` 10.9 MiB (17.1 raw) |
+| The same on disk in a working tree (`du`, no sharing) | `songs/packs` 445 MB in all: Gospel 146 MB (17 packs, 8.6 MB each), Ember 110 MB (15 packs), Squadron 54 MB (14 packs) |
+| Largest single tracked file | 8.7 MB (`docs/shots/faces/mothership_after.jpg`); no tracked file is over 20 MB |
+| Largest blob among the paths' packs | 2.8 MiB (one WAV stem); a placeholder pack is three 2.9 MB stems plus MIDI |
+
+Git stores identical stems once (Gospel's 51 WAV files are only 23 distinct blobs), which is why the packed numbers are well under the working-tree ones. **Nothing is near GitHub's 100 MB per-file limit**; the repository as a whole (852 MiB) is under GitHub's 1 GB
+"recommended" size and 5 GB soft limit but is the number to watch: the owner's real loops for 32 more scenes (Squadron's 14 added 28.5 MiB packed for 4-bar loops; 8-bar WAV loops would be about twice that each) would take it past 1 GB.
+
+**Could the placeholders be git-ignored and regenerated?** They could. `python tools/content/make_path_placeholders.py <path> --force` is deterministic: regenerating Ember's packs into a scratch folder gave byte-identical `loops/*.wav` and `pack.json` to the committed ones (checked for two scenes; the
+generator seeds by path and scene), and it takes about 12 s a path. The Gospel's and Ember's placeholders are 76.5 MiB packed (87 MiB with `stub`), about 10 % of the repository. What it would cost: the game, `tools/test.sh` and the walks fail on a fresh clone until the script has been run
+for `gospel`, `ember` and `stub` (a `tools/test.sh` pre-step could do it); the tracked `.wav.import` files would also have to go or be regenerated; and a blanket ignore of `songs/packs/gospel_*` would also hide the owner's real imports, so each imported pack would need `git add -f` or an exception.
+Ignoring them also does not shrink history (the 76.5 MiB stays in every clone until the history is rewritten, which is not recommended while other people's clones and the Android checkout exist).
+
+**Recommendation.** Do nothing now. Keep the placeholders tracked until the owner's real loops arrive scene by scene; when a scene is imported, the placeholder pack is replaced (the importer's `apply` writes over it) (its old blobs stay in history; the real loop is added to the repository on top). If the repository nears 1 GB before then, ignore
+and regenerate only `stub_*` and the placeholder packs that still carry `"placeholder": true`, add the generation step to `tools/test.sh`, and think about moving the real WAV loops to Git LFS or Ogg (Ogg cannot promise a sample-exact loop, which is why the importer writes WAV). Separately, **the export**: the presets used to pack everything (611 MB, 346 MiB of it proof shots) and, because of `content/.gdignore`, no `content/` at all, so a build could not start a run. Fixed (see `docs/REPO_SIZE.md`): exclude filters in both presets, `.gdignore` moved, the pack is now 240 MB and `tools/export_smoke.gd` proves the run, the paths and the story load from it. Part 2 then stored the packs' stems once per distinct sound in `songs/packs/_shared` (pack.json `stems` name `../_shared/...`; run `python3 tools/content/stems.py` after an import) and imports the dual-mono ones as one channel: tree 901 to 764 MiB, no new git blob, exported pack 184 MB (Ogg was tested and fails: `tools/content/ogg_check.py`). `docs/REPO_SIZE.md` also has the measured numbers, the history-rewrite option (commands, not run) and the recommendation (stop committing proof shots; do not rewrite history until the packs are final).
+
+
+## A9. Visual polish (5 November 2026, after Stage 6)
+
+A pass on the weak shots of A4, done by an agent from still frames on the virtual clock (worktree `MusicGame-paths2`). Every change below was looked at before and after; the pairs are in `docs/shots/polish/` (`before_*` / `after_*`, or one image with before on top / left).
+
+**What changed**
+
+| Weak point (A4) | Fix | Proof (`docs/shots/polish/`) |
+| --- | --- | --- |
+| Outcome acts of a route-leaving hotspot fell inside the closing passage frame (both bouncers, `mothership.exit.exam`, the Gospel J02 exits, ...) | A commit whose scene is left at the downbeat (its route, or the phase's route, is another scene) cuts the commit flash to half a beat (`RunActing.LEAVING_COMMITTED_BEATS`): the outcome act starts at beat 61, a full beat before the frame starts closing at 62. Route timing, the window and the judgement are unchanged (only when the act starts). The acting strips now shoot committed at 60.8 and success / failure at 61.8 (`tools/run/capture.sh`, `capture_path.sh`) | `before_acting_*` / `after_acting_*` for `mothership_exit_exam`, `underworld_bouncer`, `warehouse_exit_bouncer`, `gospel_jordan_wilderness_path`, `gospel_jordan_wilderness_fires` |
+| `ward.dorm.sleeper` selected act did not show | Two bugs, both general: a scene's own cast line on the person the player has just touched undid the touch (`RunPlay._touched_actor`: a scene cast line on the touched person is skipped and logged `held_by_touch`), and the room's two-bar cheer / wave / group directive overwrote a forced act for good (`StoryCrowd._acted` guards `react`, `wave`, `direct`) | `before/after_acting_ward_dorm_sleeper.jpg` |
+| `underworld.court.queen` hidden in the dancers | Her home is now the front of the court (`content/story/maps/underworld.json`, 14.9, 4.0); every person a hotspot or its outcome directs is also drawn a little brighter (`StoryCrowd.STORY_LIT` 1.25) | `before/after_acting_underworld_court_queen.jpg` |
+| `ward_late.exit.stare`: five states, one body | Turned to the window, turned to you in doubt, resolve, arms up in wonder (success), a stamp (failure); only acts x09 was already baked in, so no sheet changed (`tools/run/acting_data.py`) | `before/after_acting_ward_late_exit_stare.jpg` |
+| Gospel fishermen / family: committed barely differs | With the earlier outcome the success (cheer, collapse in relief) is now on screen in the open frame; the fishermen's selected act is a nod (baked) | `before/after_acting_gospel_galilee_fishermen.jpg`, `..._capernaum_family.jpg` |
+| Golgotha: the sky darkens behind the hill, not the people | A map thing may carry `dim_people` (0 to 1): while its piece shows, the room and its people are dimmed by it (`StoryStage.people_gain`, the world context's `swell_gain`); `dark1..3` dim 0.10 / 0.16 / 0.22 (about 0.59 with all three) | `golgotha_beats_10_30_58_before_top_after_bottom.jpg`, `golgotha_beat58_people_before_left_after_right.jpg` |
+| The room swell is too subtle | 0.40 of the light on the new room's downbeat, a 1.35 flare one beat in, settled after four beats (was 0.55 rising to 1 over two); it lights the people too. Measured on the Warehouse door walk: the upper picture is 35 % brighter at beats 64.3 to 65 than before, equal at 68 | `swell_warehouse_beats_63-68_before_top_after_bottom.jpg` |
+| Ember people small / out of the picture in the dark scenes | The real cause: the good rail walked the camera past the scene's companions (the Keeper, the Spring, the Deep Halls, the Falls, the marsh, the High Pass, the plain, the throat, the Birch Hall, the ford). The rail now stops short and the companions stand ahead of it in a lamp (`tools/story/ember_maps.py`, regenerated maps); the drowned thing is larger and nearer the bridge | `before/after_ember_keeper_*`, `before/after_ember_spring_swell_*`, `ember_deep_halls_drowned_*`, `ember_falls_*`, `before/after_ember_companions_*` |
+| The Hollow One reads cyan in the marsh | A warm lamp (`lt_ho_m`) on the pair | in `after_ember_companions_*` (first row) |
+| Squadron C03 to C06: the camera looks at a wall or the ceiling in the window | The rail's glance in the hotspot window (the last block) never pitches and turns at most 8 degrees, and its in-room walk does not turn (`RunRail.WINDOW_GLANCE_DEG`; every world) | `before_squadron_route_*.jpg` / `after_squadron_c03_c04_c05_c06_c12_c02_beats_44_54.jpg` |
+| C02's loud orange berm, C12's bright coast | The flight line's light 0.85 to 0.72 and a cooler tint; the coast 0.95 to 0.78 | same strips |
+| Pieces nobody looked at | `swell` (the Spring) reads as a big white flare at beat 51; `drowned` now reads between Bram and the Warden; `rider_shadow` was off the picture (moved beside the hearth, now a clear rider on the wall at beats 50 and 56); `long_shadow` is still not visible on the dark floor (see below) | `after_piece_rider_shadow_*`, `after_ember_spring_swell_*`, `ember_deep_halls_drowned_*`, `after_ember_keeper_*` |
+| Plan D10: a finished path's portal | `look.finished` on a hotspot: `{flags_any, available, tint}`; the three Warehouse portals carry their path's ending flags (`keep:path_<id>_<ending>`, read from each path's run.json by `make_hotspots.py`) and the new look `crown` (a gold ring with three motes circling the portal). Validated by `HotspotContract._validate_finished` and, for portals, by `RunData._check_portal`. The home screen already lists a path's reached worlds under Start from a reached level (`src/run/run_levels.gd`) | `d10_portal_radio_beat54_plain_left_finished_right.png`, `d10_portal_radio_beats_50_54_plain_top_finished_bottom.jpg` |
+| Screenshot aid | The hotspot view now draws from the screenshot camera (`RW_STORY_CAM`), so a framed shot shows rings, not edge beacons (play is unchanged) | the D10 shots |
+
+Checks after the pass: `bash tools/test.sh` **74,354 checks, 0 failures**, the Python content tests OK; `check_hotspots.py` 0 errors (main, gospel, squadron, ember; warnings as before). New tests: the half-beat flash for a scene that is left (`test_run_cast.gd`), the bigger swell and the people taking it (`test_run_hud_silent.gd`), Golgotha dimming the people (`test_gospel.gd`), the window glance (`test_run_rail.gd`), the finished portal look and its validator (`test_run_paths.gd`).
+
+**What still looks weak** (the leftovers were taken up in A13)
+* Faces at half size (A4 item: relief / grief / laugh on greys and skeletons, the cyclops's anger / doubt / shame, insect mandibles, `kneel`, hands to the face): not touched. It needs rig work in `tools/story/art/people.py` and a re-bake of the mothership and underworld sheets; left for a pass with the sheet budget in hand.
+* `long_shadow` in the Keeper's cavern is still invisible on the dark floor (a translucent piece on a near-black texture); it needs art or a lighter blend.
+* C12: the day coast still shows through the quay's gap (dimmer now, not gone); the boat is still a dark hulk. The portal could be closed by a gate thing.
+* Many Gospel crowd scenes have directed people at 35 to 60 degrees from the rail's view (wide crowd views; their shots read, but a tool check would flag them). The Ember scenes `marsh.wall`, `marsh.stair` and `mountain.taken` still walk past their companion.
+* The queen's committed and success acts (a stare and a nod) still look alike; the Warehouse booth radio is an edge beacon at beats 50 to 54 under perfect play (discoverability, A6 question 5).
+* The acting strips in `docs/shots/acting/` were not all re-shot: only the hotspots above (in `docs/shots/polish/`).
+
+**Only the owner's eyes on a phone can judge**: whether the half-beat flash and the outcome at beat 61 read in motion before the frame closes; whether the 1.35 swell flare is "somewhere new" or a flicker; the Golgotha darkness on a phone screen in daylight; the crown look at phone size; the brighter directed people (do they look lit or pasted on).
+
+## A10. Audio polish (5 November 2026, after Stage 6)
+
+The owner's brief: *the bass is not prominent enough, and some songs or phases do not sit with the player long enough.* An agent cannot listen, so everything below was **measured**, made **data**, and every call made on the owner's behalf has a one-line
+revert. Nothing in gameplay changed: judgement, energy, tap windows, cue families, charts, the reveal beat, the route window and the phase length are as they were (the 174 run's timing is untouched; the walks and the matrix still pass).
+The owner's Squadron WAVs and all MIDI are untouched on disk; the only audio files rewritten are the Gospel and Ember placeholders' bass stems (synthesised, see 4).
+
+### 1. The measuring tool
+
+`python tools/run/measure_mix.py [--run main|gospel|squadron|ember] [--out x.md] [--json x.json] [--before old.json] [--root other checkout]` renders every scene's 64-beat phase offline from the packs the way `RunAudio` plays it under perfect play (stage table, reveal on beat 16,
+arrangement sections and recipes, the bass bus, the run level, the carry) and reports per scene: seconds each voice is audible and the block it enters, seconds the bass leads, LUFS (BS.1770), the sample peak, BASS PROMINENCE (30-250 Hz and 30-80 Hz share of the mix
+with the bass in), bass minus drums and minus synth (dB), PHONE BASS (the bass's 150-1000 Hz energy against the mix's 150-8000 Hz: what a phone speaker can play), and a dwell table per run. The bass bus model was checked against Godot itself: in a real recording
+`check_run_audio.py` (which now fits the bass as it leaves the bus) explains 99.5 to 100 % of every block on the stub and on Squadron C08 and C10, and 96 % on C05 (its heavy setting: the model reads Godot's bass about 0.8 dB low there).
+Results: `docs/shots/audio/mix_before.md` (origin/main 710a96a5, measured with the same tool on an extracted copy) and `docs/shots/audio/mix_after.md` (with the before/after table at the top; both also as JSON).
+
+### 2. What the measurements said (before)
+
+| | main run (174) | Gospel (124) | Squadron (140) | Ember (145) |
+| --- | --- | --- | --- | --- |
+| phase / block | 22.1 s / 5.5 s | 31.0 / 7.7 s | 27.4 / 6.9 s | 26.5 / 6.6 s |
+| how long one song stays | a world's family: 4, 4 and 8 phases along the default route (88 to 177 s), but **two 8-bar sections per phase: the arrangement turns over every 11 s** | **one phase per loop (31 s)** | **one phase per loop (27 s)** | **one phase per loop (26.5 s)** |
+| bass audible / leading per phase | 16.6 s / **11.6 s** | 23.2 / 23.2 s | 20.6 / 19.6 s | 19.9 / 19.9 s |
+| bass minus drums | **+3.9 dB** | +10.0 | +11.0 (C05 **-1.3**, C06 **+1.8**) | +12.0 |
+| LUFS / worst peak | **-20.7** / -2.8 dBFS | -12.6 / **+1.0** | -14.3 / -0.5 | -12.6 / **+0.2** |
+
+The 174 run was the weak one: stage 2 ("drums return") cut the bass to 0.5, the arrangement recipes cut it again (`fragile` and `intro` 0.7: the Hospital's bass sat at 0.35 for a whole block), every scene change dropped the bass for the 16-beat drums-alone block
+(5.5 s of every 22 s), 24 hotspots dipped the bass 9 dB for 8 beats at the end of the strongest block, and the whole run was 6 to 8 LU quieter than the paths (a jump at every portal). The paths were already bass-led; Gospel and Ember clipped (+1.0 and +0.2 dBFS);
+Squadron C05/C06 had the bass under the drums.
+
+### 3. What changed (all data; the revert is the old value)
+
+| Decision | Where | Value now | Revert to |
+| --- | --- | --- | --- |
+| Stage 2 keeps the bass in (no strip-back while the drums return) | `content/run/run.json` `stages[2].gains.bass` (Gospel, Ember, stub inherit; Squadron has its own 0.9) | 0.85 | 0.5 |
+| The synth sits a little under the bass in the strongest block | `stages[3].gains.other` | 0.5 | 0.6 |
+| A recipe never takes the bass under 0.9 in the run (recipes themselves untouched: the chapters' renders use them) | `mix.recipe_bass_floor` | 0.9 | 0 |
+| **The bass carries over a scene change inside one music family** (same world: same key and sound): the old scene's bass plays on at half gain under the new scene's drums-alone block and fades as the new bass enters on beat 16. Never across a world change, a path handoff or a phase without a reveal | `mix.carry_bass` | `{gain 0.5, beats 16}` (31 of 36 main scenes carry; paths: every scene is its own loop, so none) | `gain: 0` |
+| A gentler hotspot dip | `mix.dip_gain`, `mix.dip_beats` | 0.55 (-5.2 dB) for 6 beats | 0.35 for 8 |
+| The bass bus (`RunBassToneA/B`, bass voice only, before the treatment): high-pass, low shelf, Godot WAVESHAPE drive with pre and post gain: harmonics a phone speaker plays, body lifted, peaks rounded | `mix.bass_bus` (main) | HP 30 Hz, shelf +2 dB at 110 Hz, drive 0.6, pre +6, post -9 dB | `enabled: false` |
+| per path | `content/paths/<id>/run.json` `mix.bass_bus` (merged key by key over the main run's) | Gospel and Ember: HP 25, no shelf, drive 0.4, post -2; Squadron: no HP (the sub stays), drive 0.4, pre +3, post -4 | remove the path's `mix` |
+| per scene (Squadron) | `content/paths/squadron/music.json` `bass_bus` | C05, C06: shelf +4 dB at 80 Hz, drive 0.6, pre +10, post -8 / -9 (lifts the quiet body under the transient); C03, C09, C11: shelf +4 dB at 80 Hz (weight for the mid-heavy basses) | remove the scene's `bass_bus` |
+| The run's level on the new `RunMix` bus (a plain bus volume: linear, no delay) | `mix.gain_db` | main +2, Gospel -3, Squadron -1.5, Ember -2 dB | 0 |
+| Placeholder bass re-synthesised (Gospel house, Ember psytrance; MIDI, charts, drums and pads byte-identical; deterministic) | `tools/content/make_path_placeholders.py` `BASS_VOICES`, then `make_path_placeholders.py gospel|ember --force` | sub sine + saturated mid layer (partials under 150 Hz kept light), psytrance notes plucked (a clear sixteenth pulse); the bass stem's 150-1000 Hz share 0.22 -> 0.34 (Gospel), 0.19 -> 0.35 (Ember), sub share still 47 to 66 % | `git revert` the regenerated-packs commit (+7.7 MiB of git: 6 unique new blobs) |
+
+The path generators (`make_gospel.py`, `make_ember.py`, `make_squadron.py`, `make_path_placeholders.py`) keep `mix` and each scene's `bass_bus` when they rewrite their files. `beatshaper.py apply` (an owner's import) writes a fresh music.json entry, so
+a scene-level `bass_bus` is dropped when its loop is replaced: re-measure with `measure_mix.py --run <path>` and set it again if needed. No limiter: a hard limiter would add a look-ahead delay to the whole run, so the peaks are held by data and
+`tools/content/test_mix_polish.py` fails if any scene of any run renders over -0.5 dBFS.
+
+### 4. After (`docs/shots/audio/mix_after.md`)
+
+| run | bass minus drums | bass leads s / phase | bass audible s / phase | phone bass | LUFS | worst peak |
+| --- | --- | --- | --- | --- | --- | --- |
+| main | +3.9 -> **+9.3 dB** | 11.6 -> **20.2 of 22.1** | 16.6 -> **21.3** (the carry) | -2.9 -> -1.3 dB | -20.7 -> **-14.8** | -2.8 -> -1.1 dBFS |
+| Gospel | +10.0 -> +12.0 | 23.2 -> 23.2 of 31.0 | 23.2 | -0.2 -> -0.2 | -12.6 -> -14.1 | +1.0 -> **-0.8** |
+| Squadron | +11.0 -> +14.4 (C05 -1.3 -> **+9.1**, C06 +1.8 -> **+10.4**) | 19.6 -> 20.6 of 27.4 | 20.6 | -1.2 -> -0.6 (C05 -5.0 -> -1.2) | -14.3 -> -12.9 | -0.5 -> -0.9 |
+| Ember | +12.0 -> +13.3 | 19.9 -> 19.9 of 26.5 | 19.9 | -0.2 -> -0.1 | -12.6 -> -13.1 | +0.2 -> **-1.3** |
+
+The four runs now sit within 2 LU of each other (they were 8 apart), so a portal no longer jumps in level. Ember's sub share of the whole mix fell (52 -> 44 %) because its new bass puts more energy where a phone can hear it; Squadron's thin-sub scenes gained a little
+(C11 10 -> 17 %). Recordings (dummy driver): `docs/shots/audio/handoff_check_after.txt` (balcony star -> stub -> Warehouse: every block fitted, 99.2 to 99.5 % explained, handoffs +2.2 ms in and -6.5 ms out, in-path boundary -6.1 ms, delay spread 12.6 ms:
+the same numbers as before the polish, so no regression in the grid; `RESULT CHECK` only because the stub's spread is over the script's 6 ms, as it was before) and `docs/shots/audio/squadron_check_after.txt` (C05, C08, C10: every block ok, boundaries +9.1 ms against the
+29.4 ms floor; spread 18.3 ms on a loaded machine).
+
+### 5. Not done: it would change gameplay (recommendations for the owner)
+
+1. **A second lap for the paths' loops** (built afterwards: A12). Gospel, Squadron and Ember play each loop for exactly one phase (26 to 31 s) and then the scene, and so the song, changes. Letting a scene play two phases (a `laps: 2`, the route window only in the second) would double each song's
+   time with the player, but it doubles the blocks judged per scene (energy), moves every hotspot window and cast line, and breaks the 2 to 4 hotspot rule's pacing: the owner's call.
+2. **Bass in the first scene of a world's drums-alone block.** The carry fills block 0 after the first scene; at a world entry the block stays drums alone, because a bass started before the reveal would move the bass phrase (and the bass cues) off the reveal beat.
+3. **Fewer turnovers in the 174 run.** Most scenes play two 8-bar sections (a pack and a mix recipe change every 11 s). One 16-bar section per scene would hold one arrangement for the whole phase, but the second section's chart changes the cues of blocks 3 and 4: an
+   `arrange.py generate` option, and a gameplay change.
+4. **Squadron C05/C06** would gain most from a re-export with the bass transient tamed (the bus lifts the body; it cannot restore what the source lacks), and 8-bar loops would halve how often the loop repeats inside a phase.
+
+### 6. What only the owner's ears can judge (listen for these)
+
+1. **The carry, Warehouse floor -> bar (and every in-world door walk):** the floor's bass at half level under the bar's drums-alone block, then the bar's own bass on beat 16. Seamless, or a muddy overlap where the two bass lines differ? (`carry_bass.gain` 0 turns it off.)
+2. **The 174 bass's saturation on earbuds and on the phone speaker** (drive 0.6 with +6 dB in): audible on the phone speaker now, but is it fuzzy on the Underworld and Ward reese basses? (lower `drive` or `pre_gain_db`; raise `gain_db` to keep the level).
+3. **Squadron C05 and C06:** the body under the transient is lifted ~9 dB; does the hit still punch, or does it sound squashed? (their `bass_bus` in squadron music.json).
+4. **Drum blocks still readable:** in stage 2 the bass is now at 0.85 under the drum cues (was 0.5). Can the player still hear the kick and snare they tap? (`stages[2].gains.bass`).
+5. **Levels at the portals and the new placeholder bass:** the main run is ~6 LU louder than before and now level with the paths; the Gospel house and Ember psytrance bass were re-synthesised (sub + saturated mid, plucked sixteenths). Too loud, too buzzy, or right?
+
+---
+
+## A11. Debug / Playtest mode (5 November 2026)
+
+The owner's brief: *a debug mode where I can simply choose each musical / visual scene, with the audio used clearly identified, so if I don't like a passage it is easy to identify which songs or visuals I don't like.*
+Built (`docs/DEBUG_MODE.md` is the manual): the home screen's **Debug / Playtest** button opens a scrollable list of all 82 scenes (the 174 run's 36, Gospel 17, Squadron 14, Ember 15; the stub only outside exports); a row starts the
+game AT the scene through the run's own start machinery; **Info** shows the pack ids, the stem files named as the owner's exports (from `pack.json`), OWNER / PLACEHOLDER / temporary from `music.json`, the MIDI the cues come from,
+the mix in force and the visual ids (map, view, light preset, pieces, cast, crowd, hotspots); an in-play overlay (debug only) shows the same live with the phase and block clock, and three feedback buttons (keys M, V, L)
+append to `user://playtest_notes.md` and `.jsonl`; a notes screen with Copy all; `tools/run/playtest_notes_summary.py` ranks the disliked songs and visuals. Pause shows Back to scene list.
+Decisions made: the list plays in a **throwaway save** (the owner's reached levels are never touched); **every 174-run scene has three arrangements and the game picks one by the per-run seed**, so the list has an arrangement option
+(`RunData.arrangement_override`, default off: the game's own pick) and the notes record the arrangement that played; the autoplay assist is the existing `RW_RUN_BOT=perfect`; no gameplay changed. Code in `src/debug/`, tests
+`tests/test_playtest.gd`, shots `docs/shots/debug/` (`tools/run/shoot_debug.sh`). Not run on a phone.
+
+## A12. Two laps per path scene (5 November 2026)
+
+The owner approved the fix A10 section 5 item 1 recommended: *the three paths' songs did not sit with the player long enough* (a scene, and so its song, lasted one 64-beat phase: Gospel 31.0 s, Squadron 27.4 s, Ember 26.5 s), so **a scene of a path now plays its music and staging for two consecutive phases ("laps") before the route commits**. The 174 BPM main run keeps one and is untouched.
+Everything is data plus a small engine change; the full description is `docs/CONTINUOUS_RUN.md` "Two laps per path scene". Nobody has played or heard it: it was built and measured on the virtual clock with the dummy audio driver.
+
+### 1. What it is, in one screen
+
+| | |
+| --- | --- |
+| **Data** | `path.laps` in a path's `run.json` (the default of its scenes) and `laps` on a scene (wins); 1 to 4; only paths may exceed 1. Shipped: `path.laps` 2 in `gospel`, `squadron`, `ember`. `RunData.laps_of(id)`; `check_path.gd` and `check_hotspots.py` validate it |
+| **Single-lap scenes** | **J00 `jordan`** (the prologue: a night road with one way on; a minute of it before the first story scene would be a wait), **J14 `jerusalem.golgotha`** (the sky darkens a step a block and a witness or a soldier steps forward a block: one descent, authored for one pass; a second lap would only repeat it), **E00 `hollow`** (the orchard prologue, one way on). `stub` stays 1. Squadron has no exception (its first scene has two ways on). **The endings take two laps** (J15, J16, C13, E12, E13): the finale is where the player most wants to sit in the song, and the ending's `keep:` flag is still set by its default exit at the end of the last lap |
+| **Lap 1** | the scene's full phase by the stage table (drums, bass, drums back, bass strongest) with **no hotspot window, no route window, no commit, no riser or fall**: `choose()` is refused and `shown()` is empty |
+| **The boundary** | the stage of lap 2's first block is the stage of lap 1's last block, one step on after a pass (a perfect player: stages 0 1 2 3 \| 3 3 3 3). **Nothing is stripped back and no voice restarts** (RunAudio schedules nothing for a lap; every loop tiles a lap). A player who earned nothing in lap 1 starts lap 2 on drums alone and the table brings the bass in again: a second chance, never a harsher one. A perfect scene's cue families: drums, bass, drums, bass, **bass x 4** |
+| **Lap 2** | the phase as it always was: hotspots (2 to 4, **lap 2 only**), the 16-beat route window at beat 48 (riser if the strongest stage is in), the commit at beat 60.5, the route lock, the door walk (beat 61), the passage frame (beats 62 to 64), the tempo handoff, the flags. No timing of them moved |
+| **Cast** | `at_beat` counts from the scene's first downbeat over both laps (validator: 0 to 64 x laps - 1). Re-timed by `tools/run/laps.py` inside the three generators (their tables still author one phase): a line before beat 48 is spread (b x 2; a hold of 12 beats or more holds twice as long), a line from beat 48 on keeps its place in the last lap (b + 64), so every reaction to the commit still lands at beats 125 to 127. No line added, so no text. `block_fx` entries take an optional `lap` (default 1) |
+| **Staging** | lamps, set pieces, rail, people and `lights_*` are not reset at the boundary (no room swell, no pieces reset). The rail keeps stepping |
+| **Pause menu** | "Leave this path" now also ends the scene at the end of a lap before the last |
+| **Debug mode** | the scene list shows `x2`; the overlay reads `lap 2 of 2 \| block k/4 \| ... beat 70.0/128 of the scene (6.0 of the lap)`; Info says "2 laps of 64 beats"; the notes carry `lap` and `laps` (`docs/DEBUG_MODE.md`) |
+| **Counting** | `phase_n` counts laps and `scene_index()` scenes; the result screen, the save's best phases, the scripted bots' routes and `RW_RUN_UNTIL_PHASE` count scenes. The audio's two bus pairs still alternate per scene |
+
+### 2. Dwell, before and after (`docs/shots/audio/mix_laps_before.md` with `measure_mix.py --force-laps 1`, and `mix_laps_after.md`; the same render and tool, perfect play)
+
+| path | a two-lap scene lasts | default route (12 or 13 scenes) | bass audible in a two-lap scene | bass leads | mean LUFS | worst peak | bass minus drums |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Gospel (124 BPM) | 31.0 -> **61.9 s** | 372 -> **681 s** | 23.2 -> **54.2 s** (75 -> 88 % of the scene) | same as audible | -14.1 -> -13.6 | -0.8 -> -0.8 dBFS | +12.0 -> +13.9 dB |
+| Squadron (140) | 27.4 -> **54.9 s** | 329 -> **658 s** | 20.6 -> **48.0 s** (75 -> 87 %) | same | -12.9 -> -12.6 | -0.9 -> -0.9 | +14.4 -> +16.0 |
+| Ember (145) | 26.5 -> **53.0 s** | 344 -> **662 s** | 19.9 -> **46.3 s** (75 -> 87 %) | same | -13.1 -> -12.6 | -1.3 -> -1.3 | +13.3 -> +15.4 |
+
+(A one-lap scene keeps its old numbers.) The level rises about half a LU because the second lap is all at the strongest stage (drums 0.4, bass 1.0, synth 0.5); no peak moved, `tools/content/test_mix_polish.py` still passes. A song's loop now repeats: Gospel and Ember 8-bar loops 4 times in a scene, **Squadron's 4-bar loops 8 times in 55 s** (7 s each).
+Real-time check (dummy driver): see section 5.
+
+### 3. The energy economy (not retuned; `tools/run/laps_energy.gd`, `RW_MATRIX_LAPS=1` on the matrix)
+
+Judgement windows, the pass credit and the energy gain and loss of a block are exactly the single phase's (asserted against the formula in `tests/test_run_laps.gd`), and so is a hotspot outcome's energy; but a scene now has 8 blocks to survive and one commit per 8 blocks instead of 4. `tools/run/laps_energy.gd` plays each path with scripted players of a given cue accuracy over 24 seeds, default exits:
+
+| accuracy | Gospel reaches an ending (one lap -> two) | Ember | Squadron |
+| --- | --- | --- | --- |
+| 0.50 | 0/24 -> 0/24 (dies after 6.4 -> 4.4 scenes, 24 -> 27 blocks) | 0/24 -> 0/24 | never (the default exits loop) |
+| 0.55 | **16/24 -> 7/24** | **15/24 -> 11/24** | survives 270 -> 190 blocks before the loop's 3000 s cap |
+| 0.60 and up | 24/24 -> 24/24, lowest crowd energy the same (29.7 at 0.6, 49 at 0.7), mean energy 81 -> 85 | same (34.8; 82 -> 87) | 0.60: a seed or two now dies (437 -> 421 blocks of 437); 0.70 and up reach the cap either way |
+
+So a player who hits more than about 60 % of the cues feels no difference; a marginal one (about 55 %) loses the floor in the longer scene noticeably more often, and a 50 % player dies about as many blocks in, but in an earlier scene. The matrix (`tests/test_run_matrix.gd`: perfect, 0.8, sloppy, none; every tap policy) is unchanged for perfect, 0.8 and sloppy (they end at 100 energy); a player who never touches the pads now dies in Squadron's first scene instead of its second. **Not retuned, as asked**; if it is too harsh for the 55 % player, the knobs are `energy.fail_loss` / `pass_gain` in `run.json` (they also move the main run), or `laps` back to 1.
+
+### 4. What was verified (this PC, 5 November 2026, Godot 4.5.1 console, Windows 11)
+
+* `bash tools/test.sh` (the whole project, exit code 0): **80,754 checks, 0 failures** in the Godot suite (was 74,354 after A9) and the Python content tests OK (208; they were 181); the Godot suite grew by `tests/test_run_laps.gd` (19 tests, about 2,100 checks: the shipped laps, the validator, the window and commit in the last lap only, the stage and cue families across the boundary, the bass phrase on the loop's own grid in all three paths, a missed block and a late reveal, the energy per block against the formula, the cast across laps at any frame step and across a stall, leaving in lap 1, the handoff after two laps and the Warehouse grid, the main run without laps, the audio voices across the boundary, the real scene's two laps with the hotspots in the second only, the pause menu's leave in lap 1, the debug mode) and `tools/content/test_laps.py` (9). Existing tests that assumed a path scene was one phase were changed to count scenes (`test_run_matrix`, `test_run_ember`, `test_gospel`, `test_playtest`); no main-run test was changed and all pass.
+* `python3 tools/run/check_hotspots.py --path gospel|squadron|ember|stub` and the main run: 0 errors (the laps and every cast range are checked); `check_path.gd` 0 errors for all four.
+* `GODOT=<console> bash tools/run/walk_run.sh --path gospel|squadron|ember` (real scenes, virtual clock, isolated save, dummy audio; the walk's own check now also compares the sequence of `lap_start`s with the data): all three `run walk-through: OK`: gospel 7 walks (`perfect`, `sloppy`, `none`, `road_end`, `branch_a`, `branch_b`, `branch_c`) **17 of 17 scenes**, squadron 5 walks (`perfect`, `sloppy`, `none`, `loop`, `clause`) **14 of 14**, ember 6 walks (`perfect`, `sloppy`, `none`, `kept`, `taken`, `lantern`) **15 of 15**; a perfect Gospel walk from the star to the tomb and back to the Warehouse is 681 s of song time.
+* **Real-time recordings** (`tools/story/record_music.gd`, dummy audio driver, perfect play, then `tools/story/check_run_audio.py`, which now fits both laps and reports each lap boundary): Squadron `air.c05` (85 s), Gospel `jordan.baptism` (72 s), Ember `north` (66 s), all `RESULT ok` (`docs/shots/audio/laps_check_{squadron,gospel,ember}.txt`): the eight blocks of the scene fit their stage gains (96 to 100 % explained; the bass fitted at its full gain through lap 2: no strip-back), **the drums' delay 8 beats before and 8 beats after the lap boundary is the same to 0.00 ms** (the beat grid goes on without a jump), **no voice was started at the boundary**, the delay is the same in the whole scene (spread 0.00 ms) and the recorded tempo equals the engine's (124.000, 140.000, 145.000 BPM).
+* `python tools/run/measure_mix.py` (before: `--force-laps 1`): section 2.
+* `tools/run/laps_energy.gd`: section 3 (`docs/shots/audio/laps_energy.txt`).
+
+### 5. What could not be verified
+
+* **Nobody has listened to it or played it by hand, and nothing ran on a phone.** The feel of the longer scene, the bass across the boundary and the hotspots arriving after a minute are the owner's.
+* The dummy audio driver has no output latency; the recording check proves the grid and the voices, not the sound. The recordings stop shortly after the first scene's second lap, so the scene change after a two-lap scene (the ordinary phase change, unchanged) was not re-recorded; the tempo handoff after two laps is proven by the engine test (the handoff on the 128th beat, the Warehouse's cues on the 174 grid) and not by a recording.
+* The Squadron loops were not re-exported: 4-bar loops repeat 8 times per scene.
+
+### 6. What only the owner's ears and phone can judge
+
+1. **Does it drag?** A minute in one room on one loop (Squadron: a 7-second loop eight times) before the choice: does lap 2 feel earned, or like a wait? If it drags, set that path's `laps` back to 1 (one value) or a single scene's `"laps": 1`.
+2. **Does the bass hold across the boundary?** At the downbeat of lap 2 nothing should change except the cue pattern (bass cues for four blocks in a row); no dropout, no restart of the loop, no gap in the groove. Listen at the J01 / C01 / E01 boundaries on a phone speaker and on earbuds.
+3. **Four blocks of bass cues in a row** (lap 2, perfect play): is it a pleasure ("enjoy the bass") or tiring? An alternative is a drums-cue block inside lap 2 (the stage table is data, but this needs a lap-2 stage rule in the engine: not built).
+4. **Hotspots only after a minute:** do people notice the doors and people in lap 2, or do they stop looking in lap 1? Do the people's acts spread over 128 beats (stretched story beats, the reactions at the end) still read?
+5. **The cast stretched over two laps:** a person holding an act for 24 or 32 beats (a stare, a kneel) between story beats: patient or frozen?
+6. **The energy for a weaker player** (section 3): does the 55 % player lose the crowd too soon in a longer scene?
+7. **The pause menu's "Leave this path"** now ends the scene at the end of lap 1 as well: the passage frame closing at the end of the first lap should look like any other exit.
+
+### 7. How to revert
+
+* All three paths: `path.laps` to 1 in `content/paths/gospel|squadron|ember/run.json` (or `LAPS = 1` in the generator and re-run it: `python3 tools/content/make_gospel.py --run-only`, `python3 tools/paths/make_squadron.py`, `python3 tools/run/make_ember.py`; the cast goes back to its authored beats). One path: that path's value. One scene: `"laps": 1` on it. Nothing else changes; the tests and walks follow the data. Gospel / Ember / Squadron's old `run.json` is also in `git show 55f6cd3f:content/paths/<id>/run.json`.
+* The engine can stay: with every `laps` 1 it is the old engine (the main run's 36 scenes never reach any lap code).
+
+## A13. Visual polish 2 (5 November 2026): the leftovers of A9
+
+Branch `feature/polish-leftovers` (cut from origin/main 55f6cd3f), done from stills on the virtual clock; every picture below was looked at before and after. Pairs are in `docs/shots/polish2/`.
+
+| A9 "not fixed" item | What changed | Proof (`docs/shots/polish2/`) |
+| --- | --- | --- |
+| Faces at half size alike (relief / grief / laugh on greys and skeletons, the cyclops's anger / doubt / shame, insect mandibles) | New module `tools/story/art/half_faces.py`: a small hand-drawn picture per face for the four species whose heads are 5 to 9 pixels wide at the half size (grey, cyclops, insect, skeleton: all 14 faces), and for the full-size insect and skeleton (11 pixels wide) and the grey's relief / grief / laugh. Each face differs from every other in the eye's shape (round, slanted, closed line, drooping diagonal), the brow, a tear column, an open mouth or dropped jaw, the teeth or the mandibles (now dark pincers that open, clamp, droop or cross). `Painter.half_face` draws them as the face decal (the three-quarter turn shifts the picture and closes up its far half). The grey's fear / awe mouths at full size differ too (`act_grey`). Other species and the humans are untouched | `faces_half_size_before_above_after_below.jpg`, `faces_full_size_before_above_after_below.jpg` (14 faces; the half-size strip is shown 9x, the full-size one 5x) |
+| `kneel` read as a kneel-sit, `cover_face` / `collapse` hands never reached the face | `Body._one_knee_down`: the hip sinks a thigh's length, one knee is on the floor under it with the shin gone back (the foot lifted, or lying behind in the three-quarter view), the other thigh goes out (forward in the three-quarter view) with its shin straight down. `Body._hands_to_face`: for the front and three-quarter facings the hands go to the face (elbow solved from the hand, out and low), and `Painter.arm` draws them as wide palms with finger gaps in front of the head, so the face (and its grief) is hidden. Back views are unchanged | `kneel_cover_face_collapse_before_top_after_bottom.jpg` (underworld punk and brute, mothership alien) |
+| Ember `marsh.wall`, `marsh.stair`, `mountain.taken`: the rail walks past the companion | The rails stop short (`wall_mid`/`wall_near`, `stair_mid`/`stair_fwd`, `camp_mid`/`camp_fwd`; the Hollow One of the stair and Bram of the camp stand a little further on) | `ember_marsh_wall_beats_10_30_52_...`, `ember_marsh_stair_beats_10_30_52_...`, `ember_mountain_taken_beats_10_30_52_before_top_after_bottom.jpg` (the companion, the Hollow One or Bram, now stays in the picture; the stair's people are small because the rail stops about 5 m short) |
+| `long_shadow` invisible on the dark floor | The piece is now a pool of the altar's light on the floor with the shadow cut out of it as a near-black wedge and a bright rim along its edge (`pc_long_shadow`), and it lies across the floor between the pair and the altar, 9 m wide (it lay 2 m in front of the rail's camera, under its feet: that, more than the colour, was why it was never seen). It is a flat decal, so from the rail's grazing eye height it reads as a warm lit pool with a dark band, not as the figure's silhouette | `ember_keeper_long_shadow_beats_38_50_58_before_top_after_bottom.jpg` (visible at 38 and 50; at 58 the rail has moved on and the pool is out of the picture) |
+| C12 quay: the bright day coast, the dark boat | The bright block was not the gap: the coast's own west wall (`wall_dunes`, 4.5 m) lies in the quay's east wall's plane and is drawn over it (walls are not back-face culled). The coast's west wall is now `wall_quay` (the harbour wall's other face), the quay-to-coast portal is a 0.9 m crack of daylight in the far corner (a sector must stay reachable), the boat is bigger, nearer, lighter and lit by a stronger lantern, the fisherman stands beside it | `squadron_c12_quay_beats_30_52_before_top_after_bottom.jpg` |
+| Queen's committed and success acts alike | Committed: she points at you, sternly (`point`, `anger`); success: an amused nod (`nod`, `laugh`). Both acts and faces are baked for her | `acting/underworld_court_queen.jpg` |
+| Stale acting strips | Re-shot with `capture.sh --acting` and `capture_path.sh <path> --acting` for the main run, the Gospel, the Mission Count and Ember; contact sheets rebuilt | `docs/shots/acting/` |
+
+**Sheet bytes** (people pages, before -> after, from origin/main): night_one 3,555,788 -> 3,553,613; mothership 9,645,545 -> 9,658,359 (+0.13 %); underworld 9,236,297 -> 9,245,310 (+0.10 %); hospital 8,963,276 -> 8,961,056; mental_hospital 10,056,393 -> 10,050,469; the path maps within +-1.5 % (ash_land +0.16 %, deep_halls -1.46 %). Nothing is near the +15 % budget; the pictures are flat colour, so they compress like the old faces. The sheets are a separate commit from the code.
+
+**Tests**: `tools/content/test_faces_lod2.py` (unittest, run by `tools/test.sh`): every one of the 14 faces of a grey, a cyclops, an insect and a skeleton differs from every other by at least 5 pixels at the half size in front view (3 in the three-quarter view; 3 at full size for the ten acted faces), the owner's listed pairs by at least 6 at both sizes, every picture is well formed, `kneel` has one knee on the floor and the other up in all three facings, the hands of `cover_face` and `collapse` are over the face in front and three-quarter, and two different faces of a person covering theirs are the same picture.
+
+**Rebuild**: `python3 tools/story/build_assets.py <chapter> people` (five chapters), `build_assets.py airfield|city|harbour`, `build_ember.py people`, `build_gospel_art.py --people`, then `godot --headless --path . --import`; `build_gospel_art.py` also rewrites its map and story JSON with CRLF line ends on Windows: restore those with `git checkout`.
+
+**What remains weak**
+* The picture faces are 5 to 9 pixels wide; they differ, but a grey's relief and shame, or an insect's neutral and doubt, differ by only 5 to 8 pixels at half size, and in the three-quarter view some pairs by 3. Only a phone will say whether the eye resolves them at the real distance.
+* The cyclops at full size is untouched (its pairs were already 10 or more pixels apart); the humanoid aliens, blobs, demons and humans have no half-size picture faces (blobs' neutral / happy / cheer / sad are still identical at half size).
+* `kneel`: the planted knee is large on the front view (the thigh comes towards the camera); long skirts and gowns hide the whole leg pose. `cover_face`: the hands cover the whole face (the grief face cannot be seen, by design); the elbows are wide and at shoulder height, so the sleeves make a wing shape on a long-sleeved person.
+* The C12 crack of daylight is a thin strip of bright coast (a tease, and a bright pixel column on a dark quay). The wall z-fighting (coplanar walls of two sectors, no back-face culling) probably affects other maps with adjacent rooms; not audited.
+
+**Only the owner's eyes on a phone can judge**: whether the half-size faces read at the distance the crowd is seen from; whether the one-knee kneel and the hands over the face read in motion (the frames cycle through the pose); whether the long shadow's lit pool reads as a shadow cast by a figure or as a glowing floor patch; whether the Ember rails now feel right (the camera stops about four metres short of the companions).
+
+## A14. Choice clarity (5 November 2026, branch `feature/choice-clarity`)
+
+The owner's brief: *every branching choice must be clear in the world: people and things show the options, the default, the current choice and how a touch changes it; not just lights.* **Read `docs/CHOICE_CLARITY.md`.**
+* Audit: of 82 run scenes 2 were clear, 28 unclear (options only as light on a doorway point or an empty spot), 52 had an option the player cannot see in the window (an edge beacon); no scene showed the current choice except by a brighter ring. The Bassment's 27 branching passages were all unclear.
+* Built: a CURRENT choice (the touched option, else the default) staged in the world from the scene's first beat: people beckon happy (current) or plead sad (other), exits are drawn doors (open with a round green lamp / shut with a square red one), signs outdoors or boards across a doorway thing, the wizard happy or bowed, objects bob and light; data `staging` blocks with `states` steps (pieces, people, frames, props, lamps) for the bespoke briefs. Touch rules, windows, the commit and outcomes are unchanged.
+* Pilot strips `docs/shots/choice/` (Warehouse floor/bar/balcony, Gospel J04, the Mothership door pair, Bassment passage 10); tests `tests/test_choice_clarity.gd`; the per-world remaining work and art briefs are in section 6 of the doc; owner decisions (touch before the window, the window camera) in section 7.
+* Status and the numbered pickup list (done / partly / not started, the author API, phone checks): section 0 of the doc. First pickup: the window camera (E1).
+* Rebase note: the people sheets of all 16 maps were re-baked for the choice acts; after merging another branch that re-bakes people, re-bake each map's people (`build_assets.py <chapter> people` for the Story chapters and airfield / city / harbour, `build_ember.py people`, `build_gospel_art.py --people`; do NOT give the Ember or Gospel map names to `build_assets.py`, it would silently rebuild Night One; the bake reads `staging` from the data). Done after the merge into main (see `docs/PICKUP.md`).
+
+
+## A15. Look pass merged with choice clarity (5 November 2026, branch `integrate/look-pass`)
+
+`origin/feature/look-pass` (paused, 4 commits on an old main) was merged into main's tip. It is a visual branch: no music, stem, pack, assignment or debug-listing file differs from `origin/main` (`git diff --stat` over `songs`, `content/library`, `content/music`, `content/paths`, `content/run`, `assets/audio`, `src/audio`, `src/debug`: empty). What it brings: the Bassment's `wall_echo` and `wall_burrow` textures, the hotspot light language and edge beacons, the camera that faces the window (the "window camera" of A14's pickup E1), and the StoryPlayer face-look fix. The pictures were taken from three checkouts, `A` origin/main, `B` the look-pass tip alone (an older base: it has no doors, lamps or paths, and its Gospel and Ember shots are not valid), `C` the merge, all on the virtual clock at 1280 x 720 with the player's own camera, in `docs/shots/lookpass_merge/cmp_*.jpg` (three panels, top to bottom A, B, C).
+
+**Conflicts (3 files).** `docs/TRIAL_OPENING.md`: both sentences kept (main's silent-HUD note, look-pass's rewording of the hotspot language). `tests/test_run_matrix.gd`: main's `start` scene argument and `lap_start` event plus look-pass's `face` switch and window counters; the signature is now `_simulate(policy, seed, data, taps, start, face)` and the window test passes `"warehouse", face`. `src/run/hotspot_view.gd`: not a text merge. The two sides redrew the same function in opposite ways (main: one `_draw_entry`, the choice layer staged inside `_draw`; look-pass: a per-frame layout in `_process` and two passes, additive light plus crisp rings). The result takes look-pass's drawing as the base and ports main onto it: `_process` now runs `choice_snapshot`, `_stage_choice` and `_manage_acting` (before it did so inside `_draw`; they must run whether or not a hotspot is on show, so the choice lets go of the world when it ends); the entries get their `role` from the snapshot; `layout(..., rects)`, `hit` with `touch_rect`, `finished`, `acting`, the choice layer and `refresh_choice` are main's, unchanged. Everything else merged without conflict (`run_journey`, `run_play`, `story_player`, `trial_scene`, `story_data`, the Bassment maps and manifest).
+
+**How the two hotspot languages combine.** A staged option (two or more options staged, `role` set) is lit by its role as main wants (green `CURRENT_COL` when current or committed, red `OTHER_COL` otherwise; the current one is the doubled ring) but drawn in look-pass's shapes: a pool of light on the floor, a thick outlined ring, the ripple on every beat; its selected ring keeps the role colour (pale green) with the circling motes instead of going white; it gets no shaft, glow or slit, because the person or the drawn door shows the state (main's rule, "the light stays on the floor and never covers a face or a door"); other staged options only dim to 75 % (`DIM_STAGED`) while one is selected, so the red still reads. A hotspot with no staged choice (single ways on in the Bassment, objects alone) is look-pass's full language (pool, ring, ripple, shaft with motes, glow, door slit, crack). Edge beacons (look-pass: border leak, half-sun, ring, ripple, motes) take the role colour too. A finished portal keeps its own tint and the `crown` look (ring and three orbiting motes, ported to both passes). High contrast still overrides colour.
+
+**Look verdict per piece** (shots `docs/shots/lookpass_merge/`; I looked at each file):
+
+| Piece | Winner | Why, and where to look |
+| --- | --- | --- |
+| Bassment textures (`wall_echo`, `wall_burrow`) | look-pass, taken whole | Main's echo chamber is a dark red-mottled wall that merges with the figure and the lit hotspots; look-pass's cold pale ashlar with carved rings makes the round room read as a room and the figure and rings stand out. The warren's warm gnawed earth and brick stair beat main's cold grey-green stone, which reads as any dungeon rather than a rat tunnel, and warm walls make the green and red pools stand out. `cmp_bass_echo.jpg`, `cmp_bass_warren.jpg`; the merged shots keep main's drawn door and green/red lamps on the new walls. The other Bassment zones are unchanged (main's look: the boiler room's red mottle is still the worst; `cmp_bass_boiler_tap.jpg`). |
+| Camera faces the window | look-pass, taken whole | Main's options in the window are mostly faint beacons on the border (`cmp_wh_selected.jpg`, `cmp_mship_selected.jpg`, `cmp_gospel_selected.jpg`: panel A); in B and C the head is turned so the exits, people and rings are in the picture. This is A14's missing E1. Caveat: the frame is chosen from the hotspot anchors, not from `door_at`, so a drawn door can be off-centre. |
+| Hotspot light language: rings, ripple, pools | look-pass drawing, with main's role colours | Main's ring is a thin 1 to 3 px line that vanishes on a bright floor; look-pass's outlined ring, floor pool and beat ripple read clearly at the same size (`cmp_mship_selected.jpg`, `cmp_bar_selected.jpg`). Look-pass alone has no role colour, no doors and no lamps, so for staged choices merged is better than B: the green/red answer to the owner's brief survives. B's shaft, glow and slit are the most striking effect, so they stay for single hotspots (`cmp_single_hotspot_bassment.jpg`, panels C) and are left off staged options. |
+| Edge beacons | look-pass drawing, role-coloured | Main's beacon is a faint ring; look-pass's has a leak of light along the border, a ring with ripple and a white core (`cmp_wh_wizard.jpg`). Merged keeps that, in green or red; selected it keeps the circling motes. |
+| Face-look facing fix (`StoryPlayer`, once per song time) | look-pass, taken whole | Not a picture: `pose_at` is asked for the same song time several times a frame, so the face look's five-sample facing is memoised on `t` (dropped when the schedule changes); covered by `tests/test_story_player.gd`. It is inseparable from the `face` look, which is why it comes with it. |
+| Door and signpost choice (main A14) | main, untouched | Main's drawn doors, lamps and sign post render as before in C (`cmp_bar_selected.jpg`, `cmp_gospel_selected.jpg`); the merge only changes the rings and camera around them. |
+
+**Not changed on purpose / found.** Main's docs call the "other" ring red and dashed; the code only coloured it (no dashes), and the merge does not add them. The Ember Road's first scene shows a very large pale checker door in both A and C (main's default drawn door at the orchard gate, its "door in the middle of a room until `door_at` is set" limit): not a merge effect. Phone-size shots (844 x 390) were not retaken (the `RW_WINDOW` variable is not read by my capture script).
+
+**Verification.** Full `bash tools/test.sh` on the merged tree: **82,123 checks, 0 failures, exit 0** (14 minutes; origin/main alone was 82,082; the difference is look-pass's added tests and the two new ones in `tests/test_hotspots_view.gd`); Python content tests OK. The window matrix prints `window at beat 49, with the turn: 60 windows, a hotspot in view 60, the default 60, all 33; without: 60, 39, 26, 8`. `check_hotspots.py` main / gospel / squadron / ember: 0 errors (5 / 15 / 1 / 19 warnings, as on main). `walk_run.sh` (all walks of the main run: 36 of 36 scenes; gospel 17 of 17, squadron 14 of 14, ember 15 of 15, each `run walk-through: OK`). Not run: `walk_trial.sh`, `walk_campaign.sh`, `frames.sh` timings. The run and Bassment shots in `docs/shots/run` (all `hotspots_*` and the seven `contact_hotspots_*`) and `docs/shots/trial` that look-pass had retaken on its old base were retaken on the merged tree; `docs/shots/look_pass/` keeps the branch's own old-base pairs (their `.import` sidecars were dropped: `docs/` is `.gdignore`d). The Bassment textures were not regenerated: running `tex_bassment.py` here rewrites 84 PNGs byte-differently (machine-varying encoding, the known `check_assets.py --determinism` behaviour), so the committed bytes stay. Not verified: anything on a phone, phone-size shots, motion (the `face` turn and the beat ripple are only seen in stills), how it sounds (nothing audio changed).
+
+## A16. The combined result: blackjack + look pass + choice clarity on one branch (5 November 2026, branch `integrate/all`)
+
+`integrate/all` = `origin/main` (f79e1576) + the blackjack minigame (`feature/blackjack-minigame` and the room-table work of `wip/blackjack-polish-b`, merged as `integrate/blackjack`) + `integrate/look-pass` (A15). Nothing was pushed. No music, stem, pack or assignment file differs from main; the table is silent (no audio reference in `src/minigames`, `run_minigame_host.gd` or `run_card_table.gd`). The two blackjack branches are not a superset of one another: both forked at b0faaf08, one carries the exit doors, the house-look close-up and the guide, the other the table in the room (animated people, invitation, claim look); both are in. How the table works and how it sits on the three engines: `docs/BLACKJACK_INTEGRATION.md` 9.2 (every shared-file edit) and 9.12.
+
+**Conflicts, and which side won.**
+
+| File | Resolution |
+| --- | --- |
+| `src/run/hotspot_contract.gd`, `run_data.gd`, `run_hotspots.gd`, `run_engine.gd`, `run_progress.gd`, `run_hud.gd`, `tools/run/check_hotspots.py`, `tests/test_hotspots_engine.gd`, `content/run/run.json` | both kept: main's acting, pieces, laps, paths and DevText stay; the `activity` outcome, `window` "any", `pass_credit`, `on_select`, the lifecycle `hold`, the wallet, `RunHud.silent` and `max_hotspots` ride on top. `run.json` is regenerated by `tools/run/make_scenes.py` (two compact main lines restored by hand). |
+| `src/run/run_play.gd` | both kept (blackjack's `# minigames` sites, `_claim_*`, main's playtest and path-leave code, look-pass's `face_fn`, `_window_face`, `_look_by`); `hotspot_items` carries `finished`, `t_commit`, `success`, and the committed state shows for `(FLASH_S + SETTLE_S) * 1.05`. |
+| `src/run/hotspot_view.gd` | **look-pass's drawing, blackjack's claim look ported onto it** (`_light_claim`, `_marks_claim`, `_claim_*`; see 9.12). |
+| `tests/test_hotspots_view.gd`, `tests/test_blackjack_integration.gd` | both test sets kept. |
+
+**Three things the merge itself had to fix** (none of them is a conflict marker):
+1. The choice layer staged the table as an option (`RunHotspots.staged` took every available hotspot): its ring was red ("another way") and touching it turned the day room's exits red. `staged()` now skips `window: "any"`; `tests/test_choice_clarity.gd` skips such a hotspot in its "touch each option" loop, and `test_hotspots_any_window.gd` has a test that the table is no option. (The first blackjack-only integration, `integrate/blackjack` 4a25c97b, has this red-ring bug.)
+2. Look-pass's held `face` look (the head on the window's exits from the block-2 decision) kept the head on the exits after a touch of the table, so the camera did not walk to the table. A touch now releases the held look over two beats (`StoryPlayer.release_faces`, tested), and `_back_to_rail` re-frames the window if the last block's window is still open (the table was waved off, or the player got up).
+3. The claim ring uses `look.ring_m` as before (the table's own size, not its touch radius).
+
+**What the camera does in the ward.** Beats 49 to 51 (the window camera): the exits, the table and the people are all in the picture (`docs/shots/integrate_all/camera_beats_49_to_60_merged.jpg`, top row; the table's warm ring beside the exits' rings). A touch at beat 52: the head lets go, the camera walks to the table with the tip down; the swing past the table to the left around beats 55 to 56.5 is the same as on `integrate/blackjack` (`..._blackjack_only.jpg`, second row), not a regression; at beat 60 the table fills the picture with the claim ring and the countdown lamps. The window camera does not frame the table (`_window_face` lists only final-window hotspots).
+
+**Pictures** (`docs/shots/integrate_all/`, taken with `tools/shoot.gd` on the virtual clock at 1280 x 720, the repo's capture script's environment): `30_invitation` (the free table: warm pool and ring, three players beckoning), `01_claim_at_the_table`, `17_32_18_19_33_touch_wait_refusal` (burst and arms up, the closing ring and lamps, the dark broken ring and the dealer's head shake), `07_seated`, `08_after_exit_tap`, `ward_window_and_warehouse_window` (a non-ward scene with the look-pass light and green role ring), the two camera sheets. The committed blackjack shots 01 to 33 in `docs/shots/blackjack/` are the branches' own and were not regenerated.
+
+**Verification.** Full `bash tools/test.sh` on the final tree: **124,995 checks, 0 failures, exit 0, no SCRIPT ERROR in the log** (main alone was 82,082, blackjack-only 124,928; the Python content tests OK; about 20 minutes). `check_hotspots.py`: main, gospel, squadron, ember 0 errors (5, 15, 1, 19 warnings, as on main). `walk_run.sh`: main 36 of 36, gospel 17 of 17, squadron 14 of 14, ember 15 of 15, all `run walk-through: OK`. `export_smoke.gd` and `check_assets.py` OK on the blackjack-only tree (nothing in them changed since). A test that dies with a SCRIPT ERROR is not counted as a failure by the runner: grep the test log for `SCRIPT ERROR` as well as the totals.
+
+**Not verified.** Phones and real frame times with the two-pass light plus the table (the table's per-frame cost was measured only before the look pass, section 9.11); the table's shots in `docs/shots/blackjack/` were not retaken on the combined drawing; a minigame inside a multi-lap path scene; the refusal and the touched-wait were looked at in one frame each, not in motion.
+
+
+---
+
+# Part B: the defense campaign and loadout (state of 3 November 2026, unchanged)
+
+The text below is the earlier handover. Its commands, verified lists and backlog describe the defense-campaign code (missions, loadout, loop library), which is still in the repository but no longer on the home screen.
 
 ## What the game is now
 

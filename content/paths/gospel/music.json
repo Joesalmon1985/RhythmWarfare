@@ -1,0 +1,154 @@
+{
+ "schema": 1,
+ "note": "Which pack each scene of the Gospel path plays. Written by tools/content/make_path_placeholders.py gospel (synthesised, temporary); the owner's loops replace them with beatshaper.py import --path gospel. `prompt` is the owner's music prompt for the scene, verbatim (docs/paths/gospel.md). placeholder.levels_db are the RMS levels of the three stems (dBFS): the placeholder mix is bass-forward.",
+ "placeholder": {
+  "genre": "house",
+  "key": 45,
+  "levels_db": {
+   "drums": -20.0,
+   "bass": -12.0,
+   "other": -28.0
+  },
+  "sub_hz": 90.0,
+  "sub_share_min": 0.5,
+  "bass_over_pad_db_min": 10.0
+ },
+ "nodes": [
+  {
+   "id": "jordan",
+   "audio": "gospel_bethlehem",
+   "chart": "gospel_bethlehem",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM soulful house, 8-bar seamless loop. Soft kick, dusty claps, warm organ, gentle plucks, choir-like synth and rounded bass. Separate editable MIDI tracks."
+  },
+  {
+   "id": "jordan.baptism",
+   "audio": "gospel_baptism",
+   "chart": "gospel_baptism",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM uplifting gospel house, 8-bar seamless loop. Shimmering keys, warm bass, handclaps, four-on-floor kick and sparkling water percussion. Separate editable MIDI tracks."
+  },
+  {
+   "id": "jordan.wilderness",
+   "audio": "gospel_wilderness",
+   "chart": "gospel_wilderness",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM minimal deep house, 8-bar seamless loop. Dry kick, hollow percussion, sparse organ, uneasy bass pulse and desert-wind synth. Separate editable MIDI tracks."
+  },
+  {
+   "id": "jordan.nazareth",
+   "audio": "gospel_nazareth",
+   "chart": "gospel_nazareth",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM organic house, 8-bar seamless loop. Wooden percussion, warm piano chords, mellow bass, soft shaker and gentle handclaps. Separate editable MIDI tracks."
+  },
+  {
+   "id": "galilee",
+   "audio": "gospel_lakeshore",
+   "chart": "gospel_lakeshore",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM funky house, 8-bar seamless loop. Bouncy bass, crisp claps, rhythmic guitar-like synth, bright organ and rolling hi-hats. Separate editable MIDI tracks."
+  },
+  {
+   "id": "galilee.capernaum",
+   "audio": "gospel_capernaum",
+   "chart": "gospel_capernaum",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM soulful deep house, 8-bar seamless loop. Tender electric piano, rounded bass, soft drums, hopeful strings and delicate melodic responses. Separate editable MIDI tracks."
+  },
+  {
+   "id": "galilee.mount",
+   "audio": "gospel_mount",
+   "chart": "gospel_mount",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM joyful gospel house, 8-bar seamless loop. Rich organ chords, celebratory claps, melodic bass, uplifting piano and spacious choir-like synth. Separate editable MIDI tracks."
+  },
+  {
+   "id": "galilee.storm",
+   "audio": "gospel_storm",
+   "chart": "gospel_storm",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM dark progressive house, 8-bar seamless loop. Thunderous kick, rolling toms, tense sub-bass, stormy pads and urgent arpeggios. Separate editable MIDI tracks."
+  },
+  {
+   "id": "road",
+   "audio": "gospel_bethany",
+   "chart": "gospel_bethany",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM warm soulful house, 8-bar seamless loop. Gentle Rhodes, soft kick, hand percussion, expressive bass and intimate organ chords. Separate editable MIDI tracks."
+  },
+  {
+   "id": "road.loaves",
+   "audio": "gospel_loaves",
+   "chart": "gospel_loaves",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM euphoric gospel house, 8-bar seamless loop. Layered piano stabs, warm bass, claps, jubilant synth harmonies and uplifting four-on-floor drums. Separate editable MIDI tracks."
+  },
+  {
+   "id": "road.entry",
+   "audio": "gospel_entry",
+   "chart": "gospel_entry",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM festival house, 8-bar seamless loop. Triumphant brass-like synths, driving kick, crowd-style percussion, bright organ and energetic bass. Separate editable MIDI tracks."
+  },
+  {
+   "id": "jerusalem",
+   "audio": "gospel_temple",
+   "chart": "gospel_temple",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM tense tech house, 8-bar seamless loop. Metallic percussion, sharp claps, distorted bass, clipped organ stabs and escalating rhythmic tension. Separate editable MIDI tracks."
+  },
+  {
+   "id": "jerusalem.gethsemane",
+   "audio": "gospel_gethsemane",
+   "chart": "gospel_gethsemane",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM melancholic deep house, 8-bar seamless loop. Muted kick, sparse piano, low bass heartbeat, haunting pads and restrained percussion. Separate editable MIDI tracks."
+  },
+  {
+   "id": "jerusalem.trial",
+   "audio": "gospel_trial",
+   "chart": "gospel_trial",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM cinematic dark house, 8-bar seamless loop. Heavy kick, ominous organ, slow chord changes, deep bass and tense metallic percussion. Separate editable MIDI tracks."
+  },
+  {
+   "id": "jerusalem.golgotha",
+   "audio": "gospel_golgotha",
+   "chart": "gospel_golgotha",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM atmospheric minimal house, 8-bar seamless loop. Sparse kick, distant bells, solemn organ, subdued sub-bass and slowly rising ambient strings. Separate editable MIDI tracks."
+  },
+  {
+   "id": "jerusalem.tomb",
+   "audio": "gospel_tomb",
+   "chart": "gospel_tomb",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM uplifting melodic house, 8-bar seamless loop. Radiant piano, warm bass, soaring choir-like pads, bright claps and expansive harmonies. Separate editable MIDI tracks."
+  },
+  {
+   "id": "jerusalem.road",
+   "audio": "gospel_road_beyond",
+   "chart": "gospel_road_beyond",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "124 BPM reflective organic house, 8-bar seamless loop. Gentle percussion, warm acoustic plucks, wandering bass melody, soft piano and hopeful atmospheric pads. Separate editable MIDI tracks."
+  }
+ ]
+}

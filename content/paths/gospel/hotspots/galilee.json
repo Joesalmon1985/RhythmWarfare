@@ -1,0 +1,572 @@
+{
+ "world": "galilee",
+ "hotspots": [
+  {
+   "id": "galilee.mount",
+   "world": "galilee",
+   "scene": "galilee",
+   "map": "hillside",
+   "anchor": {
+    "waypoint": "lakeshore.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "galilee.mount"
+   },
+   "on_failure": {
+    "route": "galilee.mount",
+    "cinematic": "gospel.stagger_galilee_mount",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true,
+   "staging": {
+    "door": "sign",
+    "door_at": [
+     0.6,
+     -5.2
+    ]
+   }
+  },
+  {
+   "id": "galilee.fishermen",
+   "world": "galilee",
+   "scene": "galilee",
+   "map": "hillside",
+   "anchor": {
+    "actor": "f1_lakeshore"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "galilee.mount",
+    "flags_set": [
+     "gospel_called"
+    ],
+    "energy": 8
+   },
+   "on_failure": {
+    "route": "galilee.storm",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "f1_lakeshore",
+    "available": {
+     "act": "stare",
+     "face": "awe",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "awe",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "nod",
+     "face": "awe",
+     "beats": 4
+    },
+    "success": {
+     "act": "cheer",
+     "face": "cheer",
+     "beats": 8,
+     "then": {
+      "act": "nod",
+      "face": "happy",
+      "beats": 8
+     }
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 8,
+     "then": {
+      "act": "check",
+      "face": "doubt",
+      "beats": 8
+     }
+    }
+   }
+  },
+  {
+   "id": "galilee.boat",
+   "world": "galilee",
+   "scene": "galilee",
+   "map": "hillside",
+   "anchor": {
+    "thing": "lakeshore.boat_far"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "galilee.storm",
+    "energy": 5
+   },
+   "on_failure": {
+    "route": "galilee.mount",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "galilee.capernaum.mount",
+   "world": "galilee",
+   "scene": "galilee.capernaum",
+   "map": "hillside",
+   "anchor": {
+    "waypoint": "street.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "galilee.mount"
+   },
+   "on_failure": {
+    "route": "galilee.mount",
+    "cinematic": "gospel.stagger_galilee_capernaum_mount",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "galilee.capernaum.family",
+   "world": "galilee",
+   "scene": "galilee.capernaum",
+   "map": "hillside",
+   "anchor": {
+    "actor": "p2"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "galilee.mount",
+    "flags_set": [
+     "gospel_healed"
+    ],
+    "energy": 10
+   },
+   "on_failure": {
+    "route": "galilee.mount",
+    "cinematic": "gospel.led_out",
+    "energy": -8
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "p2",
+    "available": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "plead",
+     "face": "fear",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "plead",
+     "face": "plea",
+     "beats": 4
+    },
+    "success": {
+     "act": "collapse",
+     "face": "relief",
+     "beats": 8,
+     "then": {
+      "act": "cheer",
+      "face": "cheer",
+      "beats": 8
+     }
+    },
+    "failure": {
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "galilee.capernaum.caravan",
+   "world": "galilee",
+   "scene": "galilee.capernaum",
+   "map": "hillside",
+   "anchor": {
+    "thing": "street.caravan"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "road"
+   },
+   "on_failure": {
+    "route": "road",
+    "cinematic": "gospel.stagger_galilee_capernaum_caravan",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "galilee.mount.loaves",
+   "world": "galilee",
+   "scene": "galilee.mount",
+   "map": "hillside",
+   "anchor": {
+    "waypoint": "slope.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "road.loaves"
+   },
+   "on_failure": {
+    "route": "road.loaves",
+    "cinematic": "gospel.stagger_galilee_mount_loaves",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "galilee.mount.crowd",
+   "world": "galilee",
+   "scene": "galilee.mount",
+   "map": "hillside",
+   "anchor": {
+    "actor": "c4"
+   },
+   "kind": "feature",
+   "radius_m": 1.2,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "road.loaves",
+    "flags_set": [
+     "gospel_mount_heard"
+    ],
+    "energy": 8
+   },
+   "on_failure": {
+    "route": "galilee.storm",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "c4",
+    "available": {
+     "act": "sit",
+     "face": "awe",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "sit",
+     "face": "awe",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "nod",
+     "face": "awe",
+     "beats": 4
+    },
+    "success": {
+     "act": "cheer",
+     "face": "cheer",
+     "beats": 8
+    },
+    "failure": {
+     "act": "sad",
+     "face": "sad",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "galilee.mount.boat",
+   "world": "galilee",
+   "scene": "galilee.mount",
+   "map": "hillside",
+   "anchor": {
+    "thing": "slope.boat_far"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "galilee.storm",
+    "energy": 5
+   },
+   "on_failure": {
+    "route": "road.loaves",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "galilee.storm.loaves",
+   "world": "galilee",
+   "scene": "galilee.storm",
+   "map": "hillside",
+   "anchor": {
+    "waypoint": "storm.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "road.loaves"
+   },
+   "on_failure": {
+    "route": "road.loaves",
+    "cinematic": "gospel.stagger_galilee_storm_loaves",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "galilee.storm.south",
+   "world": "galilee",
+   "scene": "galilee.storm",
+   "map": "hillside",
+   "anchor": {
+    "waypoint": "storm.door_right"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "road"
+   },
+   "on_failure": {
+    "route": "road",
+    "cinematic": "gospel.stagger_galilee_storm_south",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "galilee.storm.beacon",
+   "world": "galilee",
+   "scene": "galilee.storm",
+   "map": "hillside",
+   "anchor": {
+    "thing": "storm.beacon"
+   },
+   "kind": "feature",
+   "radius_m": 1.2,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "road.loaves",
+    "flags_set": [
+     "gospel_calm"
+    ],
+    "energy": 8,
+    "pieces": {
+     "off": [
+      "storm.storm_cloud",
+      "storm.rain",
+      "storm.lightning"
+     ]
+    }
+   },
+   "on_failure": {
+    "route": "road",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "d03_storm",
+    "available": {
+     "act": "plead",
+     "face": "fear",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "recoil",
+     "face": "fear",
+     "beats": 4
+    },
+    "success": {
+     "act": "stare",
+     "face": "relief",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "awe",
+      "beats": 8
+     }
+    },
+    "failure": {
+     "act": "collapse",
+     "face": "grief",
+     "beats": 8
+    }
+   }
+  }
+ ]
+}

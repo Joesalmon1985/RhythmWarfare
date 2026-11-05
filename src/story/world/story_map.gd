@@ -85,7 +85,10 @@ func build(d: Dictionary, check_files: bool) -> void:
 		errors.append("eye_height must be positive")
 	textures = d.get("textures", {})
 	for k in textures:
-		if check_files and not FileAccess.file_exists("res://assets/story/%s/%s" % [art, str(textures[k])]) and not ResourceLoader.exists("res://assets/story/%s/%s" % [art, str(textures[k])]):
+		if check_files and str(textures[k]).begins_with("res://"):  # a `res://` texture lives outside the chapter (the blackjack table)
+			if not ResourceLoader.exists(str(textures[k])):
+				errors.append("texture %s: file %s is missing" % [k, textures[k]])
+		elif check_files and not FileAccess.file_exists("res://assets/story/%s/%s" % [art, str(textures[k])]) and not ResourceLoader.exists("res://assets/story/%s/%s" % [art, str(textures[k])]):
 			errors.append("texture %s: file %s is missing" % [k, textures[k]])
 	sky = d.get("sky", {}) if typeof(d.get("sky", {})) == TYPE_DICTIONARY else {}
 	rooms = d.get("rooms", {}) if typeof(d.get("rooms", {})) == TYPE_DICTIONARY else {}
@@ -141,6 +144,8 @@ func _build_sectors(list: Array) -> void:
 			"light": float(s.get("light", 0.6)), "ambient": float(s.get("ambient", -1.0)), "tint": Color.html(str(s.get("tint", "#ffffff"))), "room": str(s.get("room", "main")),
 			"flags": s.get("flags", [])}
 		sec["activities"] = _build_activities(sid, s.get("activities", {}), sec["flags"])
+		sec["sky"] = str(s.get("sky", ""))  # a name of the map sky's `by_name`: the sky (and `fog`, {color, density}) this sector shows (a map holding a night room and a dawn one)
+		sec["fog"] = s.get("fog", {}) if typeof(s.get("fog", {})) == TYPE_DICTIONARY else {}
 		if pts.size() < 3:
 			errors.append("sector %s: a polygon needs 3 points or more" % sid)
 		else:

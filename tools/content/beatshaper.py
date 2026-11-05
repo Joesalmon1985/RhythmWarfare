@@ -11,6 +11,14 @@
                                                                               # import one set and give it to a level (music.json), no code changes
     python tools/content/beatshaper.py assign --node ward --audio lv3_ward    # re-point a level at packs that are already imported
 
+Every command takes `--path <id>` (before the command): the work is then a PATH's (content/paths/<id>/run.json, music.json, packs tagged "path": "<id>"), at the path's tempo instead of 174 BPM. The profile is
+`<id>_x1` (the recording is at the path's tempo, one game beat per source quarter), `validate` checks the path's packs and its music.json against its run.json tempo, `check`/`import`/`apply` fit the drums
+to that tempo and `assign` edits the path's music.json:
+
+    python tools/content/beatshaper.py --path gospel import <folder> --set "J01 Baptism" --id gospel_jordan --label "J01 Baptism"
+    python tools/content/beatshaper.py --path gospel apply  <folder> --node gospel.jordan --set "J01 Baptism" --id gospel_jordan
+    python tools/content/beatshaper.py --path gospel validate
+
 A *set* is the three files an export writes for one project: `Beat Shaper - <project>-Drums|Bass|Synth` as .wav and .mid. A numbered
 copy `... (1)` is another variant of the same project; the three files of a variant share the suffix. Files are grouped by
 project name and variant suffix, never by position, so `(1)` and `(2)` stay with their own stems. The sources (a ZIP is only read
@@ -53,12 +61,33 @@ RUN_JSON = ROOT / "content" / "run" / "run.json"
 ARR_DIR = ROOT / "content" / "music" / "arrangements"
 TRIAL_JSON = ROOT / "content" / "trial" / "passages.json"
 BPM = 174
+PLANNED_TEMPOS = {"gospel": 124, "squadron": 140, "ember": 145}  # docs/THREE_PATHS_AND_FACES_PLAN.md D1
+PATH_ID = ""  # set by --path: the work is a path's (content/paths/<id>), at the path's tempo
 PARTS = ("Drums", "Bass", "Synth")
 NAME_RE = re.compile(r"^(?:Beat Shaper - )?(?P<project>.+)-(?P<part>Drums|Bass|Synth)(?: \((?P<variant>\d+)\))?\.(?P<ext>wav|mid)$")
 PROFILES = {
     "beat_shaper_87x2": {"source_bpm": 87.0, "scale": 2, "verified_on": "Lv1 Warehouse"},
     "beat_shaper_174x1": {"source_bpm": 174.0, "scale": 1, "verified_on": "Lv2 Alien Spaceship"},
 }
+def select_path(path_id: str, bpm: int | None = None) -> None:
+    """Switches the module to a path: its run.json / music.json, its tempo for BPM, and a profile `<id>_x1` whose recording tempo is the path's (one game beat per source quarter).
+    Nothing is read from the main run's data."""
+    global BPM, RUN_JSON, MUSIC_JSON, PATH_ID
+    pdir = ROOT / "content" / "paths" / path_id
+    if (pdir / "run.json").exists():
+        BPM = int(read_json(pdir / "run.json")["timing"]["bpm"])
+    elif bpm or path_id in PLANNED_TEMPOS:  # a path whose run.json is not written yet (its stage has not come): scan / check / import work at the planned tempo
+        BPM = int(bpm or PLANNED_TEMPOS[path_id])
+        print(f"note: content/paths/{path_id}/run.json does not exist yet; using {BPM} BPM ({'--bpm' if bpm else 'the planned tempo'})")
+    else:
+        raise ContentError(f"no path '{path_id}': {pdir / 'run.json'} does not exist (pass --bpm for a path that is not written yet)")
+    RUN_JSON = pdir / "run.json"
+    MUSIC_JSON = pdir / "music.json"
+    PATH_ID = path_id
+    PROFILES.clear()
+    PROFILES[f"{path_id}_x1"] = {"source_bpm": float(BPM), "scale": 1, "verified_on": f"the {path_id} path's tempo ({BPM} BPM)"}
+
+
 # Difficulty tiers are nested: tier 1 is the sparse base set (cues at least BASE_GAP beats apart, whole beats first); tier 4 is everything the chart rules
 # allow (FULL_GAP, 0.5 beat); tier 2 and 3 add 1/3 and 2/3 of the cues that tier 4 has over tier 1 (every k-th extra cue in time order). Every tier is a
 # subset of the next, so density rises with depth in every pack whose MIDI has syncopation to give (docs/CONTINUOUS_RUN.md, "Difficulty").
@@ -470,6 +499,8 @@ def write_pack(src: Source, project: str, variant: int, pack_id: str, a: dict, g
             "profile": a["profile"], "stems": {k: f"loops/{k}.wav" for k in loops}, "loops": loops,
             "kick_notes": a["kick"], "snare_notes": a["snare"], "tiers": a["tiers"],
             "source": {"project": project, "variant": variant, "files": a["parts"]}}
+    if PATH_ID:  # a path's pack: only that path's run loads it (the main run never does), and an import replaces the placeholder of the same id
+        pack["path"] = PATH_ID
     write_json(out / "pack.json", pack, indent=1)
     report = {"timing": {"header_bpm": a["header_bpm"], "profile": a["profile"], "drum_fit": a["fit"], "bass": a["bass"],
                          "tempo_verified": a["report"]["tempo"]["verified"], "bass_timing": a["report"]["bass_timing"]},
@@ -531,14 +562,21 @@ def resolve_music_node(node: dict) -> dict:
     return dict(node, audio=first, chart=first, packs=packs)
 
 
-def validate(packs_dir: Path = PACKS, music_path: Path = MUSIC_JSON) -> tuple[list[str], list[str]]:
+def validate(packs_dir: Path | None = None, music_path: Path | None = None) -> tuple[list[str], list[str]]:
+    """The packs and music.json of the main run, or (with `--path`) of the selected path: a pack belongs to the run its `path` field names, and must be at that run's tempo."""
+    packs_dir = PACKS if packs_dir is None else packs_dir
+    music_path = MUSIC_JSON if music_path is None else music_path
     errors: list[str] = []
     notes: list[str] = []
     packs: dict = {}
     seen = set()
     for pj in sorted(packs_dir.glob("*/pack.json")):
         p = read_json(pj)
+        if p.get("path", "") != PATH_ID:
+            continue
         pid = p.get("id")
+        if int(p.get("bpm", 174)) != BPM:
+            errors.append(f"{pid}: the pack is {p.get('bpm')} BPM, the {'path ' + PATH_ID if PATH_ID else 'run'} is {BPM} BPM")
         if pid != pj.parent.name:
             errors.append(f"{pj}: id '{pid}' must equal the folder name")
         if pid in seen:
@@ -611,9 +649,9 @@ def validate(packs_dir: Path = PACKS, music_path: Path = MUSIC_JSON) -> tuple[li
                 errors.append(f"run.json node {n['id']} has no music.json entry")
         notes.append(f"music.json: {len(ids)} nodes assigned")
     else:
-        errors.append("content/story/music.json is missing")
+        errors.append(f"{music_path.relative_to(ROOT).as_posix()} is missing")
     trial = TRIAL_JSON
-    if trial.exists():  # the dungeon opening's phrases play a pack too
+    if trial.exists() and not PATH_ID:  # the dungeon opening's phrases play a pack too
         tm = read_json(trial).get("music", {})
         for key in ("audio", "chart"):
             if tm.get(key) not in packs:
@@ -670,6 +708,8 @@ def _opts(args) -> dict:
         o["profile"] = args.profile
     if getattr(args, "trust_midi", False):
         o["trust_midi"] = True
+    if getattr(args, "max_error_ms", None):
+        o["max_error_ms"] = float(args.max_error_ms)
     return o
 
 
@@ -692,8 +732,9 @@ def cmd_import(args) -> int:
     return 0
 
 
-def assign(node: str, audio: str | None, chart: str | None, treatment: str | None, temporary: bool | None, music_path: Path = MUSIC_JSON) -> None:
+def assign(node: str, audio: str | None, chart: str | None, treatment: str | None, temporary: bool | None, music_path: Path | None = None) -> None:
     """Point a node at other packs without touching code. Node ids never change."""
+    music_path = MUSIC_JSON if music_path is None else music_path
     m = read_json(music_path)
     for n in m["nodes"]:
         if n["id"] == node:
@@ -745,6 +786,8 @@ def cmd_validate(args) -> int:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--path", help="work on a path (content/paths/<id>) at its own tempo instead of the main run at 174 BPM")
+    ap.add_argument("--bpm", type=int, help="with --path: the tempo, for a path whose run.json is not written yet (gospel 124, squadron 140 and ember 145 are known)")
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("scan")
     s.add_argument("source")
@@ -756,6 +799,7 @@ def main() -> int:
         c.add_argument("--kick", help="kick MIDI notes, comma separated (default 36)")
         c.add_argument("--snare", help="snare MIDI notes (default 38,40)")
         c.add_argument("--profile", choices=sorted(PROFILES), help="force one tempo profile (it must still verify)")
+        c.add_argument("--max-error-ms", type=float, help="how far a drum hit may sit from its MIDI note (default 12 ms); a loop whose render is humanised or swung needs a deliberate, recorded loosening")
         c.add_argument("--trust-midi", action="store_true", help="chart the bass from the MIDI timing even if the audio bass detector disagrees (recorded in timing_report.json; "
                        "the same happens automatically, with a warning, when the detector cannot place the notes)")
         if name == "import":
@@ -783,6 +827,7 @@ def main() -> int:
     ap2.add_argument("--snare")
     ap2.add_argument("--profile", choices=sorted(PROFILES))
     ap2.add_argument("--trust-midi", action="store_true")
+    ap2.add_argument("--max-error-ms", type=float)
     ap2.add_argument("--drums-db", type=float, default=0.0)
     ap2.add_argument("--bass-db", type=float, default=3.0)
     ap2.add_argument("--synth-db", type=float, default=10.0)
@@ -793,9 +838,12 @@ def main() -> int:
     sv.add_argument("--snare")
     sv.add_argument("--profile", choices=sorted(PROFILES))
     sv.add_argument("--trust-midi", action="store_true")
+    sv.add_argument("--max-error-ms", type=float)
     sub.add_parser("validate")
     args = ap.parse_args()
     try:
+        if args.path:
+            select_path(args.path, args.bpm)
         return {"scan": cmd_scan, "check": cmd_check, "import": cmd_import, "validate": cmd_validate, "assign": cmd_assign, "apply": cmd_apply, "survey": cmd_survey}[args.cmd](args)
     except ContentError as exc:
         print(f"ERROR {exc}")

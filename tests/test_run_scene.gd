@@ -110,6 +110,7 @@ func test_the_chosen_world_starts_on_the_downbeat_and_is_saved_as_reached() -> v
 
 
 func test_a_scene_inside_a_world_is_not_a_reached_level_and_the_hud_names_it() -> void:
+	OS.set_environment("RW_DEV_TEXT", "1")  # the title card exists only with the play text on (the silent default is tests/test_run_hud_silent.gd)
 	var d := _scene(Vector2(1152, 648))
 	var scene: Node = d["scene"]
 	var beat: float = 60.0 / 174.0
@@ -125,6 +126,7 @@ func test_a_scene_inside_a_world_is_not_a_reached_level_and_the_hud_names_it() -
 	assert_eq(node["title"], "The Balcony", "the HUD's second line is the room")
 	assert_eq(scene.hud.title_card["text"], "THE BALCONY", "the title card names the room")
 	assert_eq(scene.hud.title_card["kicker"], "WAREHOUSE", "under the world")
+	OS.set_environment("RW_DEV_TEXT", "")
 	_free(d)
 
 

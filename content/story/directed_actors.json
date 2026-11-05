@@ -1,0 +1,8 @@
+{
+ "_about": "Hand-kept extras for the sheets stage 1a bakes (tools/story/art/directed.py): per chapter, actor id -> acts and faces (entries `act`, `act@face`, `act@face:front+side`). Empty since stage 1d: the directed people are derived from the data itself, the `acting` blocks of content/run/hotspots/*.json and the `cast` lines of scenes and cinematics in content/run/run.json (authored in tools/run/acting_data.py), so the sheet builder bakes exactly the acts and faces the story uses. Add an entry here only for a person the run data does not name.",
+ "night_one": {},
+ "mothership": {},
+ "underworld": {},
+ "hospital": {},
+ "mental_hospital": {}
+}

@@ -109,7 +109,43 @@
     "energy": -7
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "bow",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "stamp",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 4,
+     "then": {
+      "act": "point",
+      "face": "anger",
+      "look_at": "arena_edge",
+      "beats": 12
+     }
+    }
+   }
   },
   {
    "id": "underworld.bouncer_grudge",
@@ -152,7 +188,43 @@
     "energy": -8
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "stamp",
+     "face": "anger",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "stare",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "bow",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "stamp",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 4,
+     "then": {
+      "act": "point",
+      "face": "anger",
+      "look_at": "arena_edge",
+      "beats": 12
+     }
+    }
+   }
   },
   {
    "id": "underworld.chains",
@@ -306,7 +378,42 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "beckon",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "point",
+     "face": "laugh",
+     "look_at": "pit_edge",
+     "beats": 10,
+     "then": {
+      "act": "laugh",
+      "face": "laugh",
+      "look_at": "camera"
+     }
+    }
+   }
   },
   {
    "id": "underworld.furnace.exit_pit",

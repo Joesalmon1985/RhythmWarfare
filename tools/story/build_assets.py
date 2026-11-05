@@ -20,7 +20,8 @@ from art import lib  # noqa: E402
 
 # Chapter art builds: None = built in this file (build_chapter), a module path = that module's build(argv). Night One is the default.
 CHAPTERS = {"mothership": None, "underworld": "art.chapter_underworld", "hospital": "art.chapter_hospital",
-            "mental_hospital": "art.chapter_mental_hospital"}
+            "mental_hospital": "art.chapter_mental_hospital",
+            "airfield": "art.chapter_airfield", "city": "art.chapter_city", "harbour": "art.chapter_harbour"}  # (the last three: the Mission Count path's worlds)
 
 
 def strip_dead(path: str) -> None:

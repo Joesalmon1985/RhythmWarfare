@@ -1,0 +1,87 @@
+{
+ "jordan": {
+  "scene": "bethlehem",
+  "title": "Bethlehem: the Star",
+  "prompt": "124 BPM soulful house, 8-bar seamless loop. Soft kick, dusty claps, warm organ, gentle plucks, choir-like synth and rounded bass. Separate editable MIDI tracks."
+ },
+ "jordan.baptism": {
+  "scene": "baptism",
+  "title": "Baptism in the Jordan",
+  "prompt": "124 BPM uplifting gospel house, 8-bar seamless loop. Shimmering keys, warm bass, handclaps, four-on-floor kick and sparkling water percussion. Separate editable MIDI tracks."
+ },
+ "jordan.wilderness": {
+  "scene": "wilderness",
+  "title": "Temptation in the Wilderness",
+  "prompt": "124 BPM minimal deep house, 8-bar seamless loop. Dry kick, hollow percussion, sparse organ, uneasy bass pulse and desert-wind synth. Separate editable MIDI tracks."
+ },
+ "jordan.nazareth": {
+  "scene": "nazareth",
+  "title": "Nazareth Workshop",
+  "prompt": "124 BPM organic house, 8-bar seamless loop. Wooden percussion, warm piano chords, mellow bass, soft shaker and gentle handclaps. Separate editable MIDI tracks."
+ },
+ "galilee": {
+  "scene": "lakeshore",
+  "title": "Calling the Fishermen",
+  "prompt": "124 BPM funky house, 8-bar seamless loop. Bouncy bass, crisp claps, rhythmic guitar-like synth, bright organ and rolling hi-hats. Separate editable MIDI tracks."
+ },
+ "galilee.capernaum": {
+  "scene": "capernaum",
+  "title": "Healing in Capernaum",
+  "prompt": "124 BPM soulful deep house, 8-bar seamless loop. Tender electric piano, rounded bass, soft drums, hopeful strings and delicate melodic responses. Separate editable MIDI tracks."
+ },
+ "galilee.mount": {
+  "scene": "mount",
+  "title": "Sermon on the Mount",
+  "prompt": "124 BPM joyful gospel house, 8-bar seamless loop. Rich organ chords, celebratory claps, melodic bass, uplifting piano and spacious choir-like synth. Separate editable MIDI tracks."
+ },
+ "galilee.storm": {
+  "scene": "storm",
+  "title": "Storm on Galilee",
+  "prompt": "124 BPM dark progressive house, 8-bar seamless loop. Thunderous kick, rolling toms, tense sub-bass, stormy pads and urgent arpeggios. Separate editable MIDI tracks."
+ },
+ "road": {
+  "scene": "bethany",
+  "title": "Bethany: the Shared Table",
+  "prompt": "124 BPM warm soulful house, 8-bar seamless loop. Gentle Rhodes, soft kick, hand percussion, expressive bass and intimate organ chords. Separate editable MIDI tracks."
+ },
+ "road.loaves": {
+  "scene": "loaves",
+  "title": "Loaves and Fishes",
+  "prompt": "124 BPM euphoric gospel house, 8-bar seamless loop. Layered piano stabs, warm bass, claps, jubilant synth harmonies and uplifting four-on-floor drums. Separate editable MIDI tracks."
+ },
+ "road.entry": {
+  "scene": "entry",
+  "title": "Entry into Jerusalem",
+  "prompt": "124 BPM festival house, 8-bar seamless loop. Triumphant brass-like synths, driving kick, crowd-style percussion, bright organ and energetic bass. Separate editable MIDI tracks."
+ },
+ "jerusalem": {
+  "scene": "temple",
+  "title": "The Temple",
+  "prompt": "124 BPM tense tech house, 8-bar seamless loop. Metallic percussion, sharp claps, distorted bass, clipped organ stabs and escalating rhythmic tension. Separate editable MIDI tracks."
+ },
+ "jerusalem.gethsemane": {
+  "scene": "gethsemane",
+  "title": "Gethsemane",
+  "prompt": "124 BPM melancholic deep house, 8-bar seamless loop. Muted kick, sparse piano, low bass heartbeat, haunting pads and restrained percussion. Separate editable MIDI tracks."
+ },
+ "jerusalem.trial": {
+  "scene": "trial",
+  "title": "The Trial",
+  "prompt": "124 BPM cinematic dark house, 8-bar seamless loop. Heavy kick, ominous organ, slow chord changes, deep bass and tense metallic percussion. Separate editable MIDI tracks."
+ },
+ "jerusalem.golgotha": {
+  "scene": "golgotha",
+  "title": "Golgotha",
+  "prompt": "124 BPM atmospheric minimal house, 8-bar seamless loop. Sparse kick, distant bells, solemn organ, subdued sub-bass and slowly rising ambient strings. Separate editable MIDI tracks."
+ },
+ "jerusalem.tomb": {
+  "scene": "tomb",
+  "title": "The Empty Tomb",
+  "prompt": "124 BPM uplifting melodic house, 8-bar seamless loop. Radiant piano, warm bass, soaring choir-like pads, bright claps and expansive harmonies. Separate editable MIDI tracks."
+ },
+ "jerusalem.road": {
+  "scene": "road_beyond",
+  "title": "The Road Beyond Jerusalem",
+  "prompt": "124 BPM reflective organic house, 8-bar seamless loop. Gentle percussion, warm acoustic plucks, wandering bass melody, soft piano and hopeful atmospheric pads. Separate editable MIDI tracks."
+ }
+}

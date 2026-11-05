@@ -1,0 +1,356 @@
+# Choice clarity
+
+Branch `feature/choice-clarity` (phase 1, 5 November 2026). The owner's playtest verdict: *every time there is a branching choice the visuals need to make that clear: NPCs and objects should indicate the
+choice, the default, and how pressing the screen changes what will happen; not just things of light. The wizard beckons and looks happy when touched, the others beckon and look sad; two doors, one lit
+green and one red, and pressing the red one swaps them.* This document is the audit of every branching point, the choice language that answers it, the engine that now plays it, the pilot that proves
+it, and the work left for the authoring agents.
+
+**In one paragraph.** Today 80 of the 82 run scenes do not make their choice clear (52 have at least one option the player cannot see in the window: an edge beacon only; 28 show their options only as
+light on a doorway point or an empty spot), and in none of them is the *current* choice shown by anything but a brighter ring. The engine now has a CURRENT choice (the touched option, else the
+default) that the world stages **from the scene's first beat**: a person option beckons, happy, when current and pleads, sad, when not (both still facing you); a way out is a door that stands open with a
+round green lamp or shut with a square red one (or, outdoors, a sign post whose arrow points on or hangs down crossed; or boards nailed across a doorway that is a thing of the map); a billboard figure (the
+wizard) swaps to a happy, beckoning frame or a bowed, sad one; any option can add data steps (set pieces, other people, frames of the map's art, props, lamps). A touch swaps it all within one beat. The
+pilot strips are in `docs/shots/choice/`. Gameplay, the windows, the commit and every test are unchanged.
+
+## 0. Status at the stopping point (read this first)
+
+**DONE and verified** (`bash tools/test.sh` green; strips looked at at phone size)
+1. The CURRENT choice in the engine (`RunHotspots.staged / current_id / destination`), staged from beat 0 in the run and in the Bassment; touch rules, windows, commit and outcomes unchanged.
+2. The staging contract (`staging` block, archetypes person / door / object / feature / figure / custom, `states` steps), its defaults (`content/run/choice_staging.json`) and validator; every shipped hotspot validates.
+3. The view: people directed per role, doors (drawn, sign, bars, pieces) with go/stop lamps, billboard poses (`StoryWorld.thing_pose`), props, role-coloured rings (solid green / dashed red), touch rectangles on the thing, the debug line `CHOICE current | default | going to`.
+4. The bake: all 16 maps' people re-baked in the person roles' acts and faces.
+5. Pilot data and strips: Warehouse floor (wizard figure, two doors), bar, balcony; Gospel J04 (sign post); Mothership deck door pair; Bassment passage 10 (`docs/shots/choice/`).
+6. Tests: `tests/test_choice_clarity.gd` (every branching scene of the four runs), `tests/test_story_acts.gd` extended.
+
+**PARTLY done**
+7. Every scene is staged by the defaults (people invite, waypoint exits get a drawn door, thing exits get boards), but only the pilot scenes were looked at; many defaults will put a door in the middle of a room until `door_at` is set (section 6).
+8. Objects and features only get a lamp and a bob: their state frames (sail up/furled, hatch open/chained...) are art not yet drawn.
+9. The Bassment: doors and creature recoil work; carriers, door-bar kits and creature frames from `docs/choice/bassment.md` are not built.
+
+**NOT started (pickup list, by priority)**
+10. **E1 the window camera**: built on `integrate/look-pass` (HANDOVER A15): from the block-2 decision the head is held on the window's hotspots (`RunJourney.window_face`, a `face` look; the rail's `WINDOW_GLANCE_DEG` is untouched). It frames the hotspots' anchors, not `door_at`; the strips below still use a framed camera.
+11. Per-world authoring lanes A to F (section 6): `door_at` / `sign` / `pieces` per exit, `states` per object, re-anchor the five `pos` options of the Warehouse.
+12. The art briefs of section 6 (door skins per setting, object state pairs, a finger-post, creature frames).
+13. E2 a lamp/key light on dark people and figures; E3 a `people: [ids]` shorthand; E5 the briefs' new acts (rig + re-bake).
+14. Owner decisions (section 7): touch before the window (`run.json` `"choice": {"preselect": true}`), the window camera, plead vs sad beckon, drawn doors everywhere.
+
+**Engine API a scene author uses** (data only): in `tools/run/staging_data.py` add `"<hotspot id>": {...}` with any of `archetype`, `actor`, `current/other/touched/committed/declined` ({act, face, look_at, beats}), `door` (drawn | sign | bars | pieces | none), `door_at` [x, z], `open_piece`/`shut_piece`, `height_m`, `lamp`, `lamp_y`, `current_tex`/`other_tex`/`current_motion`/`other_motion` (figures), `touch` {w, h}, `states` {role: [{piece, op} | {actor, act, face} | {thing, tex|sprite, motion} | {prop, at, size, motion} | {lamp}]}; run `python tools/run/apply_staging.py`; re-bake people if a new act/face is named (`python tools/story/build_assets.py <map> people`); look with `bash tools/run/capture_choice.sh` (section 8). New shared art goes in `tools/run/make_choice_art.py` (`assets/run/choice/`), a map's own frames in its `tex_*.py` and are named by `sprite`.
+
+**Authoring a scene from a brief** (`docs/choice/*.md`, branch `feature/choice-briefs`): each row is one option; its CURRENT / NOT CURRENT columns become `states.current` / `states.other` steps (a frame pair = two `{thing, sprite}` steps or `{piece, op}` pairs; a person's act = the role's act spec or an `{actor}` step for a helper); a pointer that swings is a `{thing, sprite}` step on the shared pointer in each option's `current` list; a carrier the brief places is a new map thing plus a re-anchor in the generator, then `apply_staging.py`.
+
+**Known bugs / limits**: the drawn door is a billboard (it turns with the camera, it is not cut into the wall); a door at an exit waypoint in the middle of a room stands in the room until `door_at` is set; props are lit at a fixed 0.85 (not the room's light); person faces read only at the full level of detail (posture carries it further away); the Bassment draws doors over its own doorway art; touching before beat 48 does nothing unless `preselect` is on.
+
+**What the owner must check on a phone**: that the open/shut doors and green/red lamps are seen while playing the pads; that the people's beckon vs plead reads at arm's length; whether staging from beat 0 helps or distracts; the wizard's happy/bowed frames in the dark floor; whether tapping a person or a door anywhere on its body selects it (the touch rectangles).
+
+## 1. Audit: every branching scene today
+
+**Method.** `tools/run/choice_audit.gd` plays every scene of the four runs on the virtual clock (perfect play, no taps, a fresh save) and places **every** hotspot of the scene (whatever its flags) with
+`HotspotView.layout` from the camera the player really has, at beat 4 (the scene's start), 50 and 56 (the route window). `tools/run/choice_audit.py` turns that into the tables below, with the data:
+kind, anchor, window, conditions, route. The Bassment is grouped from its data (content/trial/hotspots.json) and its shots (`docs/shots/trial/`). Rerun:
+
+```
+godot --headless --path . -s tools/run/choice_audit.gd -- all | grep '^AUDIT' > audit.jsonl
+python tools/run/choice_audit.py audit.jsonl
+```
+
+**Verdict rule.** Per option: CLEAR = a person or a thing of the map, on screen in the window, a person at least 40 px tall; UNCLEAR = on screen but only a light on a doorway point or an empty spot, or
+a person under 40 px; INVISIBLE = an edge beacon at both window beats, an anchor that does not resolve or a person not in the room. A scene takes the worst verdict of its options that are on offer at the
+start (flag-gated options are listed, not counted). Separately, **no scene shows which option is current except by a brighter ring and a second ring under the default** (light only): that is a failure
+of the owner's model in all 82, whatever the column says.
+
+| Run | Scenes | Clear | Unclear | Invisible |
+| --- | --- | --- | --- | --- |
+| main (174 BPM, 7 worlds) | 36 | 0 | 3 | 33 |
+| The Life of Jesus (Gospel) | 17 | 0 | 16 | 1 |
+| The Mission Count (Squadron) | 14 | 0 | 3 | 11 |
+| The Ember Road | 15 | 2 | 6 | 7 |
+| **all runs** | **82** | **2** | **28** | **52** |
+| The Bassment | 63 passages: 27 branching (2 to 3 options), 36 single ways on | 0 | 27 | 0 |
+
+**What the numbers say, bluntly.**
+* **The camera looks away in the window.** Of 239 options, 120 are an edge beacon at both window beats; 155 were on screen at beat 4. The rail walks the camera through the room in blocks 1 to 3 and the
+  window opens wherever it ends up (the floor's shot at beat 53 is a corridor; the Squadron's C03 to C06 a wall). Staging the options from beat 0 (done) uses the start; turning the camera to them in the
+  window is still to do (section 6, E1).
+* **Exits are points, not doors.** Every main-run exit and most path exits are anchored on a waypoint in a doorway or in the middle of the floor: there was no door, only a slit of light. The pilot draws one.
+* **The wizard is not in the choice.** Both Warehouse wizards are early-window options (blocks 1 and 2 only); in the window the player sees the other options without him. He is staged from beat 0 now.
+* **Options on nothing.** Five Warehouse options sit on an empty `pos` (`balcony.rail`, `balcony.star`, `booth.decks`, `booth.radio`, `bar.ember`): a light in the air. The portals are by design hidden
+  (secrets), but the rail and the decks are plain options and show nothing.
+* **Two options on one thing.** `warehouse.exit.bouncer` and `bouncer_vip` share `d01` (flags make them exclusive: fine); several Squadron exits are anchored on a person (`base.board`, `base.c02.ladder`,
+  `crates`, ...) so the person *is* the way, which the person archetype handles.
+* **People who act only once touched.** 28 acted people did their `available` act (often `stare`, `write`, `sit`) while waiting: nothing said "come with me". Now every person option invites.
+* **Small and dark.** Mothership `grey` is 25 px tall in the window, the Ember deeps and the Gospel night scenes are dim; faces at that size are pixels (A9), so the state must also be posture.
+
+The full per-scene tables follow (generated; option ids are shortened after the scene id; `*(early)*` is the wizard's window).
+
+### The main 174 BPM run (36 scenes: 0 clear, 3 unclear, 33 invisible)
+
+| Scene | Options: id (kind, anchor) -> route; [D] default; conditions | What the player sees in the window (beats 50/56) | At the scene's start (beat 4) | Verdict |
+| --- | --- | --- | --- | --- |
+| `warehouse` The Floor | [D] `exit_bar` (exit, waypoint to_bar) -> warehouse.bar<br>`exit_balcony` (exit, waypoint to_balcony) -> warehouse.balcony<br>`wizard` (character, thing wizard_floor) -> 1 *(early)*; not wh_wizard_met<br>`dancer` (character, actor g07) -> (stays, then default); not wh_circle<br>`led_wall` (feature, thing disco_ball) -> (stays, then default); needs wh_circle; not wh_led | UNCLEAR: doorway point: a light, no door object<br>INVISIBLE: edge beacon only<br>CLEAR: thing on screen (22 px)<br>INVISIBLE: edge beacon only<br>CLEAR: thing on screen (29 px) | doorway point: a light, no door object<br>doorway point: a light, no door object<br>edge beacon only<br>edge beacon only<br>edge beacon only | **INVISIBLE**<br>early-window option (blocks 1-2) is never on show together with the others |
+| `warehouse.bar` The Bar | [D] `bar.exit_chill` (exit, waypoint bar_to_chill) -> warehouse.chill<br>`bar.exit_booth` (exit, waypoint bar_door) -> warehouse.booth<br>`bar.bartender` (character, actor b01) -> (stays, then default)<br>`bar.stranger` (secret, actor b03) -> (stays, then default); not wh_vip_pass,wh_stranger_gone; once<br>`bar.ember` (secret, pos (empty spot)) -> path:ember; needs wh_vip_pass | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: doorway point: a light, no door object<br>INVISIBLE: edge beacon only<br>CLEAR: person on screen, 80 px tall<br>UNCLEAR: a light on an empty spot | edge beacon only<br>doorway point: a light, no door object<br>person on screen, 43 px tall<br>person on screen, 78 px tall<br>a light on an empty spot | **INVISIBLE** |
+| `warehouse.balcony` The Balcony | [D] `balcony.exit_chill` (exit, waypoint balcony_door) -> warehouse.chill<br>`balcony.exit_booth` (exit, waypoint balcony_stairs) -> warehouse.booth<br>`balcony.rail` (feature, pos (empty spot)) -> (stays, then default); not wh_saw_floor<br>`balcony.promoter` (character, actor v03) -> warehouse.booth<br>`balcony.star` (secret, pos (empty spot)) -> path:gospel; needs wh_saw_floor | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | edge beacon only<br>edge beacon only<br>edge beacon only<br>edge beacon only<br>edge beacon only | **INVISIBLE** |
+| `warehouse.chill` The Chill-out | [D] `chill.exit_exit` (exit, waypoint chill_door) -> warehouse.exit<br>`chill.sofas` (object, thing sofa_left) -> (stays, then default)<br>`chill.wizard` (character, thing wizard_chill) -> 1 *(early)*; not wh_wizard_met<br>`chill.lavalamp` (feature, thing lavalamp) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | edge beacon only<br>edge beacon only<br>edge beacon only<br>edge beacon only | **INVISIBLE**<br>early-window option (blocks 1-2) is never on show together with the others |
+| `warehouse.booth` The Booth | [D] `booth.exit_exit` (exit, waypoint booth_down) -> warehouse.exit<br>`booth.decks` (object, pos (empty spot)) -> (stays, then default)<br>`booth.headphones` (secret, thing headphones_booth) -> (stays, then default); needs wh_vip_pass; not wh_headphones,wh_headphones_wrong; once<br>`booth.radio` (secret, pos (empty spot)) -> path:squadron | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>CLEAR: thing on screen (179 px)<br>INVISIBLE: edge beacon only | edge beacon only<br>edge beacon only<br>edge beacon only<br>edge beacon only | **INVISIBLE** |
+| `warehouse.exit` The Door | [D] `exit.exit_mothership` (exit, waypoint tunnel) -> mothership<br>`exit.exit_underworld` (exit, thing crack_door) -> underworld<br>`exit.bouncer` (character, actor d01) -> mothership; not wh_vip_pass<br>`exit.bouncer_vip` (character, actor d01) -> mothership; needs wh_vip_pass | INVISIBLE: edge beacon only<br>CLEAR: thing on screen (38 px)<br>CLEAR: person on screen, 50 px tall<br>CLEAR: person on screen, 50 px tall | edge beacon only<br>edge beacon only<br>edge beacon only<br>edge beacon only | **INVISIBLE**<br>two options share one anchor (actor d01) |
+| `mothership` The Deck | [D] `exit_gallery` (exit, waypoint deck_gallery_door) -> mothership.gallery<br>`exit_reactor` (exit, waypoint deck_reactor_door) -> mothership.reactor<br>`grey` (character, actor g08) -> (stays, then default)<br>`dj` (character, actor m01) -> (stays, then default) | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: person on screen, 25 px tall<br>INVISIBLE: edge beacon only | edge beacon only<br>edge beacon only<br>person on screen, 66 px tall<br>person on screen, 19 px tall | **INVISIBLE** |
+| `mothership.gallery` The Gallery | [D] `gallery.exit_bridge` (exit, waypoint gallery_east) -> mothership.bridge<br>`gallery.window` (feature, thing glow_g) -> (stays, then default)<br>`gallery.menu` (object, thing menu_g) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>edge beacon only<br>thing on screen (12 px) | **INVISIBLE** |
+| `mothership.reactor` The Reactor | [D] `reactor.exit_bridge` (exit, waypoint catwalk_bridge) -> mothership.bridge<br>`reactor.core` (object, thing core_r) -> (stays, then default)<br>`reactor.engineer` (character, actor reactor_s01) -> (stays, then default); not ms_badge | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | edge beacon only<br>thing on screen (21 px)<br>edge beacon only | **INVISIBLE** |
+| `mothership.bridge` The Bridge | [D] `bridge.exit_exit` (exit, waypoint bridge_door) -> mothership.exit<br>`bridge.helm` (object, thing captain_h) -> (stays, then default)<br>`bridge.star_chart` (secret, thing globe_b) -> (stays, then default); needs ms_badge; not ms_star_chart,ms_lockout; once | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>CLEAR: thing on screen (78 px) | doorway point: a light, no door object<br>thing on screen (9 px)<br>thing on screen (12 px) | **INVISIBLE** |
+| `mothership.exit` The Airlock | [D] `exit.exit_hospital` (exit, waypoint airlock_door) -> hospital<br>`exit.exit_ward` (exit, waypoint exam_door) -> ward<br>`exit.exam` (character, actor med02) -> (stays, then default)<br>`exit.airlock_wheel` (object, thing wheel_a) -> hospital | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>doorway point: a light, no door object<br>person on screen, 13 px tall<br>thing on screen (19 px) | **INVISIBLE** |
+| `underworld` The Arena | [D] `exit_court` (exit, waypoint arena_tier_r) -> underworld.court<br>`exit_furnace` (exit, waypoint arena_tier_l) -> underworld.furnace<br>`bouncer` (character, actor gate_bouncer) -> (stays, then default); not wh_thrown_out<br>`bouncer_grudge` (character, actor gate_bouncer) -> (stays, then default); needs wh_thrown_out<br>`chains` (object, thing chains_a) -> (stays, then default) | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: person on screen, 28 px tall<br>UNCLEAR: person on screen, 28 px tall<br>CLEAR: thing on screen (23 px) | edge beacon only<br>edge beacon only<br>edge beacon only<br>edge beacon only<br>edge beacon only | **UNCLEAR**<br>two options share one anchor (actor gate_bouncer) |
+| `underworld.court` The Court | [D] `court.exit_pit` (exit, waypoint court_causeway) -> underworld.pit<br>`court.seal` (feature, thing seal_c) -> (stays, then default)<br>`court.queen` (character, actor court_g06) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>thing on screen (19 px)<br>person on screen, 40 px tall | **INVISIBLE** |
+| `underworld.furnace` The Furnace | [D] `furnace.exit_pit` (exit, waypoint furnace_out) -> underworld.pit<br>`furnace.anvil` (object, thing anvil_f0) -> (stays, then default)<br>`furnace.ladle` (feature, thing ladle_f) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | edge beacon only<br>thing on screen (29 px)<br>edge beacon only | **INVISIBLE** |
+| `underworld.pit` The Pit | [D] `pit.exit_exit` (exit, waypoint pit_door) -> underworld.exit<br>`pit.lava_bridge` (feature, thing lavaflow_p) -> (stays, then default)<br>`pit.brazier` (object, thing uw_br_p0) -> (stays, then default) | UNCLEAR: doorway point: a light, no door object<br>INVISIBLE: edge beacon only<br>CLEAR: thing on screen (16 px) | doorway point: a light, no door object<br>thing on screen (12 px)<br>edge beacon only | **INVISIBLE** |
+| `underworld.exit` The Throne | [D] `exit.exit_hospital` (exit, waypoint throne_door_l) -> hospital<br>`exit.exit_ward` (exit, waypoint throne_door_r) -> ward<br>`exit.throne` (object, thing uw_throne) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>doorway point: a light, no door object<br>thing on screen (18 px) | **INVISIBLE** |
+| `hospital` The Ward | [D] `exit_corridor` (exit, waypoint ward_door) -> hospital.corridor<br>`nurse` (character, actor h02) -> (stays, then default)<br>`family` (character, actor h03) -> (stays, then default)<br>`monitor` (feature, thing monitor_w) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>person on screen, 144 px tall<br>edge beacon only<br>edge beacon only | **INVISIBLE** |
+| `hospital.corridor` The Corridor | [D] `corridor.exit_dayroom` (exit, waypoint corridor_day_door) -> hospital.dayroom<br>`corridor.exit_cafeteria` (exit, waypoint corridor_cafe) -> hospital.cafeteria<br>`corridor.trolley` (character, actor h07) -> (stays, then default)<br>`corridor.quiet_door` (secret, waypoint corridor_quiet_door) -> (stays, then default); not hp_saw_quiet,hp_quiet_locked; once | INVISIBLE: edge beacon only<br>UNCLEAR: doorway point: a light, no door object<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>doorway point: a light, no door object<br>person on screen, 14 px tall<br>a light on an empty spot | **INVISIBLE** |
+| `hospital.dayroom` The Day Room | [D] `dayroom.exit_garden` (exit, waypoint dayroom_door) -> hospital.garden<br>`dayroom.tv` (object, thing tv_set) -> (stays, then default)<br>`dayroom.granny` (character, actor h08) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | edge beacon only<br>thing on screen (14 px)<br>person on screen, 32 px tall | **INVISIBLE** |
+| `hospital.cafeteria` The Cafeteria | [D] `cafeteria.exit_garden` (exit, waypoint cafe_garden_door) -> hospital.garden<br>`cafeteria.vending` (secret, thing vending_f) -> (stays, then default); not hp_token,hp_jam; once<br>`cafeteria.kid` (character, actor h14) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | edge beacon only<br>edge beacon only<br>edge beacon only | **INVISIBLE** |
+| `hospital.garden` The Garden | [D] `garden.exit_exit` (exit, waypoint garden_door_e) -> hospital.exit<br>`garden.lamp` (feature, thing lamp_g0) -> (stays, then default)<br>`garden.mum` (character, actor h16) -> (stays, then default) | UNCLEAR: doorway point: a light, no door object<br>CLEAR: thing on screen (15 px)<br>UNCLEAR: person on screen, 29 px tall | doorway point: a light, no door object<br>thing on screen (14 px)<br>person on screen, 14 px tall | **UNCLEAR** |
+| `hospital.exit` The Bandstand | [D] `exit.exit_hospital_late` (exit, waypoint bandstand_door_l) -> hospital_late<br>`exit.exit_ward_late` (exit, waypoint bandstand_door_r) -> ward_late<br>`exit.mic` (object, thing mic_band) -> (stays, then default) | UNCLEAR: doorway point: a light, no door object<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | edge beacon only<br>edge beacon only<br>edge beacon only | **INVISIBLE** |
+| `ward` The Day Room | [D] `exit_art` (exit, waypoint day_door_a) -> ward.art<br>`exit_dorm` (exit, waypoint day_door_b) -> ward.dorm<br>`orderly` (character, actor e04) -> (stays, then default)<br>`window` (feature, thing wlight_d) -> (stays, then default) | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: person on screen, 39 px tall<br>CLEAR: thing on screen (30 px) | edge beacon only<br>edge beacon only<br>person on screen, 40 px tall<br>edge beacon only | **UNCLEAR** |
+| `ward.art` The Art Room | [D] `art.exit_corridor` (exit, waypoint art_door) -> ward.corridor<br>`art.painter` (character, actor x10) -> (stays, then default)<br>`art.easel` (object, thing easel_a3) -> (stays, then default) | INVISIBLE: edge beacon only<br>UNCLEAR: person on screen, 27 px tall<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>person on screen, 20 px tall<br>thing on screen (13 px) | **INVISIBLE** |
+| `ward.dorm` The Dormitory | [D] `dorm.exit_corridor` (exit, waypoint dorm_door) -> ward.corridor<br>`dorm.sleeper` (character, actor x14) -> (stays, then default)<br>`dorm.cabinet` (object, thing cab_m0) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>person on screen, 20 px tall<br>edge beacon only | **INVISIBLE** |
+| `ward.corridor` The Corridor | [D] `corridor.exit_courtyard` (exit, waypoint corr_art_door) -> ward.courtyard<br>`corridor.phone` (object, thing phone_o) -> (stays, then default)<br>`corridor.king` (character, actor x06) -> (stays, then default)<br>`corridor.mural_door` (secret, thing mural_door) -> ward.courtyard; needs wd_painted | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>thing on screen (9 px)<br>person on screen, 41 px tall<br>thing on screen (13 px) | **INVISIBLE** |
+| `ward.courtyard` The Courtyard | [D] `courtyard.exit_exit` (exit, waypoint court_stage_door) -> ward.exit<br>`courtyard.chef` (character, actor x01) -> (stays, then default)<br>`courtyard.lights` (feature, thing lights_y) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>person on screen, 11 px tall<br>thing on screen (10 px) | **INVISIBLE** |
+| `ward.exit` The Stage | [D] `exit.exit_hospital_late` (exit, waypoint stage_door_l) -> hospital_late<br>`exit.exit_ward_late` (exit, waypoint stage_door_r) -> ward_late<br>`exit.talent_lamp` (object, thing cage_y) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | edge beacon only<br>edge beacon only<br>edge beacon only | **INVISIBLE** |
+| `hospital_late` The Garden | [D] `exit_cafe` (exit, waypoint garden_door_w) -> hospital_late.cafe<br>`exit_quiet` (exit, waypoint garden_door_w2) -> hospital_late.quiet<br>`lamp` (feature, thing lamp_g1) -> (stays, then default); not hp_lamp_lit<br>`lamp_lit` (feature, thing lamp_g1) -> (stays, then default); needs hp_lamp_lit<br>`doctor` (character, actor h17) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | edge beacon only<br>edge beacon only<br>edge beacon only<br>edge beacon only<br>edge beacon only | **INVISIBLE**<br>two options share one anchor (thing lamp_g1) |
+| `hospital_late.cafe` The Cafeteria | [D] `cafe.exit_exit` (exit, waypoint cafe_garden_door) -> hospital_late.exit<br>`cafe.vending` (object, thing vending_f2) -> (stays, then default); not hp_token<br>`cafe.vending_token` (object, thing vending_f2) -> (stays, then default); needs hp_token<br>`cafe.kid` (character, actor h14) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>thing on screen (24 px)<br>thing on screen (24 px)<br>person on screen, 35 px tall | **INVISIBLE**<br>two options share one anchor (thing vending_f2) |
+| `hospital_late.quiet` The Quiet Room | [D] `quiet.exit_exit` (exit, waypoint quiet_door) -> hospital_late.exit<br>`quiet.nightlight` (object, thing nl_q0) -> (stays, then default)<br>`quiet.nightlight_b` (feature, thing nl_q2) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | edge beacon only<br>edge beacon only<br>edge beacon only | **INVISIBLE** |
+| `hospital_late.exit` The Bandstand | [D] `exit.exit_hospital_late` (exit, waypoint bandstand_door_l) -> hospital_late<br>`exit.exit_ward_late` (exit, waypoint bandstand_door_r) -> ward_late<br>`exit.mic` (object, thing mic_band) -> (stays, then default); not hp_sang<br>`exit.mic_encore` (object, thing mic_band) -> (stays, then default); needs hp_sang | UNCLEAR: doorway point: a light, no door object<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | edge beacon only<br>edge beacon only<br>edge beacon only<br>edge beacon only | **INVISIBLE**<br>two options share one anchor (thing mic_band) |
+| `ward_late` The Courtyard | [D] `exit_treat` (exit, waypoint court_door_w) -> ward_late.treat<br>`exit_dorm` (exit, waypoint court_south) -> ward_late.dorm<br>`stage_lamp` (feature, thing cage_y) -> (stays, then default)<br>`fireflies` (feature, thing flies_y) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>CLEAR: thing on screen (18 px)<br>CLEAR: thing on screen (159 px) | edge beacon only<br>edge beacon only<br>edge beacon only<br>edge beacon only | **INVISIBLE** |
+| `ward_late.treat` The Treatment Room | [D] `treat.exit_exit` (exit, waypoint treat_door) -> ward_late.exit<br>`treat.orderly` (character, actor x02) -> (stays, then default)<br>`treat.trolley` (object, thing trolley_t) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>person on screen, 36 px tall<br>thing on screen (27 px) | **INVISIBLE** |
+| `ward_late.dorm` The Dormitory | [D] `dorm.exit_exit` (exit, waypoint dorm_door) -> ward_late.exit<br>`dorm.sleeper` (character, actor x13) -> (stays, then default)<br>`dorm.cabinet` (object, thing cab_m1) -> (stays, then default) | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>person on screen, 72 px tall<br>thing on screen (25 px) | **INVISIBLE** |
+| `ward_late.exit` The Day Room | [D] `exit.exit_ward_late` (exit, waypoint day_door_a) -> ward_late<br>`exit.exit_hospital_late` (exit, waypoint day_door_b) -> hospital_late<br>`exit.stare` (character, actor x09) -> (stays, then default) | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: doorway point: a light, no door object<br>INVISIBLE: edge beacon only | edge beacon only<br>edge beacon only<br>person on screen, 22 px tall | **INVISIBLE** |
+
+### The Life of Jesus (Gospel) (17 scenes: 0 clear, 16 unclear, 1 invisible)
+
+| Scene | Options: id (kind, anchor) -> route; [D] default; conditions | What the player sees in the window (beats 50/56) | At the scene's start (beat 4) | Verdict |
+| --- | --- | --- | --- | --- |
+| `jordan` Bethlehem: the Star | [D] `road` (exit, waypoint bank_night.door_up) -> jordan.baptism<br>`shepherd` (character, actor sh2) -> (stays, then default) | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: person on screen, 32 px tall | doorway point: a light, no door object<br>person on screen, 27 px tall | **UNCLEAR** |
+| `jordan.baptism` Baptism in the Jordan | [D] `baptism.nazareth` (exit, thing bank_dawn.town) -> jordan.nazareth<br>`baptism.dove` (feature, thing bank_dawn.dove) -> jordan.wilderness | CLEAR: thing on screen (17 px)<br>UNCLEAR: person on screen, 26 px tall | thing on screen (13 px)<br>person on screen, 17 px tall | **UNCLEAR** |
+| `jordan.wilderness` Temptation in the Wilderness | [D] `wilderness.path` (exit, waypoint rocks.door_up) -> galilee<br>`wilderness.fires` (exit, thing rocks.fires) -> galilee.capernaum | UNCLEAR: person on screen, 21 px tall<br>UNCLEAR: person on screen, 15 px tall | person on screen, 15 px tall<br>person on screen, 13 px tall | **UNCLEAR** |
+| `jordan.nazareth` Nazareth Workshop | [D] `nazareth.road` (exit, waypoint workshop.door_up) -> galilee<br>`nazareth.neighbour` (character, actor n1) -> galilee.capernaum<br>`nazareth.cart` (object, thing workshop.cart) -> galilee | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: person on screen, 21 px tall<br>CLEAR: thing on screen (27 px) | doorway point: a light, no door object<br>person on screen, 15 px tall<br>edge beacon only | **UNCLEAR** |
+| `galilee` Calling the Fishermen | [D] `mount` (exit, waypoint lakeshore.door_up) -> galilee.mount<br>`fishermen` (character, actor f1_lakeshore) -> galilee.mount<br>`boat` (object, thing lakeshore.boat_far) -> galilee.storm | UNCLEAR: doorway point: a light, no door object<br>CLEAR: person on screen, 49 px tall<br>CLEAR: thing on screen (24 px) | doorway point: a light, no door object<br>person on screen, 44 px tall<br>thing on screen (19 px) | **UNCLEAR** |
+| `galilee.capernaum` Healing in Capernaum | [D] `capernaum.mount` (exit, waypoint street.door_up) -> galilee.mount<br>`capernaum.family` (character, actor p2) -> galilee.mount<br>`capernaum.caravan` (exit, thing street.caravan) -> road | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: person on screen, 39 px tall<br>CLEAR: thing on screen (18 px) | doorway point: a light, no door object<br>person on screen, 23 px tall<br>thing on screen (13 px) | **UNCLEAR** |
+| `galilee.mount` Sermon on the Mount | [D] `mount.loaves` (exit, waypoint slope.door_up) -> road.loaves<br>`mount.crowd` (feature, actor c4) -> road.loaves<br>`mount.boat` (object, thing slope.boat_far) -> galilee.storm | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: person on screen, 39 px tall<br>CLEAR: thing on screen (21 px) | doorway point: a light, no door object<br>person on screen, 21 px tall<br>thing on screen (15 px) | **UNCLEAR** |
+| `galilee.storm` Storm on Galilee | [D] `storm.loaves` (exit, waypoint storm.door_up) -> road.loaves<br>`storm.south` (exit, waypoint storm.door_right) -> road<br>`storm.beacon` (feature, thing storm.beacon) -> road.loaves | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: doorway point: a light, no door object<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>edge beacon only<br>person on screen, 32 px tall | **INVISIBLE** |
+| `road` Bethany: the Shared Table | [D] `loaves` (exit, waypoint courtyard.door_up) -> road.loaves<br>`table` (character, actor s1) -> road.loaves<br>`donkey` (object, thing courtyard.donkey) -> road.entry | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: person on screen, 27 px tall<br>CLEAR: thing on screen (54 px) | doorway point: a light, no door object<br>person on screen, 22 px tall<br>thing on screen (38 px) | **UNCLEAR** |
+| `road.loaves` Loaves and Fishes | [D] `loaves.entry` (exit, waypoint hill_dusk.door_up) -> road.entry<br>`loaves.baskets` (object, thing hill_dusk.basket2) -> road.entry<br>`loaves.lantern` (character, actor tr1) -> road | UNCLEAR: doorway point: a light, no door object<br>CLEAR: thing on screen (36 px)<br>UNCLEAR: person on screen, 28 px tall | doorway point: a light, no door object<br>thing on screen (22 px)<br>person on screen, 19 px tall | **UNCLEAR** |
+| `road.entry` Entry into Jerusalem | [D] `entry.steps` (exit, waypoint gate.door_up) -> jerusalem<br>`entry.grove` (exit, waypoint gate.door_left) -> jerusalem.gethsemane | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: doorway point: a light, no door object | doorway point: a light, no door object<br>doorway point: a light, no door object | **UNCLEAR** |
+| `jerusalem` The Temple | [D] `garden` (exit, waypoint temple.door_up) -> jerusalem.gethsemane<br>`tables` (object, thing temple.t2_up) -> jerusalem.gethsemane<br>`guards` (encounter, actor g1_temple) -> jerusalem.trial | UNCLEAR: doorway point: a light, no door object<br>CLEAR: thing on screen (27 px)<br>UNCLEAR: person on screen, 18 px tall | doorway point: a light, no door object<br>thing on screen (23 px)<br>person on screen, 17 px tall | **UNCLEAR** |
+| `jerusalem.gethsemane` Gethsemane | [D] `gethsemane.trial` (exit, waypoint grove.door_up) -> jerusalem.trial<br>`gethsemane.sleepers` (character, actor d10) -> jerusalem.trial<br>`gethsemane.shadowed` (exit, waypoint grove.door_right) -> jerusalem.road | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: person on screen, 33 px tall<br>UNCLEAR: doorway point: a light, no door object | doorway point: a light, no door object<br>person on screen, 21 px tall<br>doorway point: a light, no door object | **UNCLEAR** |
+| `jerusalem.trial` The Trial | [D] `trial.passage` (exit, waypoint praetorium.door_up) -> jerusalem.golgotha<br>`trial.gate` (exit, waypoint praetorium.door_right) -> jerusalem.road | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: doorway point: a light, no door object | doorway point: a light, no door object<br>doorway point: a light, no door object | **UNCLEAR** |
+| `jerusalem.golgotha` Golgotha | [D] `golgotha.hill` (exit, waypoint hill.door_up) -> jerusalem.tomb<br>`golgotha.women` (character, actor w1_hill) -> (stays, then default) | UNCLEAR: doorway point: a light, no door object<br>CLEAR: person on screen, 46 px tall | doorway point: a light, no door object<br>person on screen, 25 px tall | **UNCLEAR** |
+| `jerusalem.tomb` The Empty Tomb | [D] `tomb.home` (exit, waypoint tomb.door_up) -> run:warehouse<br>`tomb.stone` (feature, thing tomb.stone_rolled) -> run:warehouse | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: person on screen, 23 px tall | edge beacon only<br>edge beacon only | **UNCLEAR** |
+| `jerusalem.road` The Road Beyond Jerusalem | [D] `road.home` (exit, waypoint road.door_up) -> run:warehouse<br>`road.followers` (character, actor d02) -> (stays, then default) | UNCLEAR: doorway point: a light, no door object<br>CLEAR: person on screen, 60 px tall | edge beacon only<br>edge beacon only | **UNCLEAR** |
+
+### The Mission Count (Squadron) (14 scenes: 0 clear, 3 unclear, 11 invisible)
+
+| Scene | Options: id (kind, anchor) -> route; [D] default; conditions | What the player sees in the window (beats 50/56) | At the scene's start (beat 4) | Verdict |
+| --- | --- | --- | --- | --- |
+| `base` The Briefing Room | [D] `cot` (exit, thing cot_empty) -> base.c03<br>`board` (exit, thing board) -> base.c02 | INVISIBLE: edge beacon only<br>CLEAR: person on screen, 43 px tall | thing on screen (48 px)<br>person on screen, 20 px tall | **INVISIBLE** |
+| `base.c02` The Flight Line | [D] `c02.ladder` (exit, thing ladder) -> air<br>`c02.crates` (exit, thing crates) -> air.c05 | INVISIBLE: edge beacon only<br>UNCLEAR: person on screen, 18 px tall | edge beacon only<br>person on screen, 13 px tall | **INVISIBLE** |
+| `base.c03` The Hospital | [D] `c03.hatch` (exit, thing kitchen_hatch) -> air.c05<br>`c03.office_door` (exit, waypoint c03_x_right) -> air.c06<br>`c03.clipboard` (character, actor surg) -> air.c06 | INVISIBLE: edge beacon only<br>UNCLEAR: doorway point: a light, no door object<br>CLEAR: person on screen, 141 px tall | edge beacon only<br>doorway point: a light, no door object<br>person on screen, 29 px tall | **INVISIBLE** |
+| `air` The Bombing Mission | [D] `lever` (exit, thing release_lever) -> city<br>`emergency` (exit, thing emergency_box) -> base.c03 | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | person on screen, 32 px tall<br>person on screen, 46 px tall | **INVISIBLE** |
+| `air.c05` The Syndicate | [D] `c05.truck` (exit, thing truck) -> city.c08<br>`c05.ledger` (exit, thing ledger) -> air.c06 | INVISIBLE: edge beacon only<br>CLEAR: person on screen, 56 px tall | edge beacon only<br>person on screen, 17 px tall | **INVISIBLE** |
+| `air.c06` The Surgeon's Office | [D] `c06.door_a` (exit, thing door_a) -> base.c02<br>`c06.certificate` (exit, thing certificate) -> city.c09 | CLEAR: thing on screen (36 px)<br>INVISIBLE: edge beacon only | thing on screen (25 px)<br>edge beacon only | **INVISIBLE** |
+| `city` The Gunner's Last Flight | [D] `jacket` (exit, thing jacket) -> city.c10<br>`medkit` (exit, thing medkit) -> base.c03 | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | person on screen, 48 px tall<br>edge beacon only | **INVISIBLE** |
+| `city.c08` The Old City | [D] `c08.arch` (exit, thing arch) -> city.c10<br>`c08.staff_car` (exit, thing staff_car) -> city.c09 | UNCLEAR: person on screen, 21 px tall<br>CLEAR: person on screen, 70 px tall | person on screen, 13 px tall<br>person on screen, 36 px tall | **UNCLEAR** |
+| `city.c09` The Colonel's Deal | [D] `c09.map` (exit, thing escape_map) -> escape.c12<br>`c09.medal` (exit, thing medal) -> escape | INVISIBLE: edge beacon only<br>CLEAR: person on screen, 120 px tall | edge beacon only<br>person on screen, 45 px tall | **INVISIBLE** |
+| `city.c10` The Ruined City | [D] `c10.hq` (exit, thing hq_door) -> city.c09<br>`c10.train` (exit, thing night_train) -> escape.c12 | INVISIBLE: edge beacon only<br>UNCLEAR: person on screen, 23 px tall | person on screen, 45 px tall<br>person on screen, 10 px tall | **INVISIBLE** |
+| `escape` Endless Missions | [D] `aircraft` (exit, thing aircraft_door) -> base.c02<br>`radio` (exit, thing radio_broken) -> escape.c12 | INVISIBLE: edge beacon only<br>CLEAR: person on screen, 51 px tall | edge beacon only<br>person on screen, 27 px tall | **INVISIBLE** |
+| `escape.c12` Escape North | [D] `c12.searchlights` (exit, thing search_a) -> escape.c14<br>`c12.boat` (exit, thing boat) -> escape.c13 | CLEAR: person on screen, 78 px tall<br>UNCLEAR: person on screen, 18 px tall | edge beacon only<br>person on screen, 15 px tall | **UNCLEAR** |
+| `escape.c13` The Neutral Coast | [D] `c13.shore` (exit, thing shore_post) -> run:warehouse<br>`c13.fisherman` (character, actor fish_c) -> (stays, then default) | CLEAR: thing on screen (20 px)<br>UNCLEAR: person on screen, 38 px tall | edge beacon only<br>edge beacon only | **UNCLEAR** |
+| `escape.c14` Captured | [D] `c14.order` (exit, thing order_paper) -> escape<br>`c14.latch` (exit, thing latch) -> escape.c12 | INVISIBLE: edge beacon only<br>CLEAR: person on screen, 64 px tall | person on screen, 28 px tall<br>person on screen, 27 px tall | **INVISIBLE** |
+
+### The Ember Road (15 scenes: 2 clear, 6 unclear, 7 invisible)
+
+| Scene | Options: id (kind, anchor) -> route; [D] default; conditions | What the player sees in the window (beats 50/56) | At the scene's start (beat 4) | Verdict |
+| --- | --- | --- | --- | --- |
+| `hollow` The Orchard | [D] `gate` (exit, waypoint orchard_gate) -> hollow.ford<br>`ember_bowl` (object, thing ember_bowl) -> (stays, then default) | UNCLEAR: doorway point: a light, no door object<br>CLEAR: thing on screen (85 px) | doorway point: a light, no door object<br>thing on screen (25 px) | **UNCLEAR** |
+| `hollow.ford` The Ford at Night | [D] `ford.crossing` (exit, waypoint ford_cross) -> hollow.inn<br>`ford.lantern` (character, actor bram_f) -> north | INVISIBLE: edge beacon only<br>CLEAR: person on screen, 53 px tall | doorway point: a light, no door object<br>person on screen, 12 px tall | **INVISIBLE** |
+| `hollow.inn` The Lantern Inn | [D] `inn.back_door` (exit, waypoint inn_back) -> north<br>`inn.hooded_man` (character, actor warden_i) -> north.pass | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>person on screen, 9 px tall | **INVISIBLE** |
+| `north` The Birch Hall | [D] `porch` (exit, waypoint hall_far) -> north.pass<br>`ladys_hand` (character, actor lady) -> deeps<br>`map_table` (object, thing table_map) -> north.pass | UNCLEAR: doorway point: a light, no door object<br>UNCLEAR: person on screen, 27 px tall<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>person on screen, 13 px tall<br>thing on screen (20 px) | **INVISIBLE** |
+| `north.pass` The High Pass | [D] `pass.cave_mouth` (exit, thing cave) -> deeps<br>`pass.ridge_path` (exit, thing ridge) -> deeps.falls | CLEAR: thing on screen (12 px)<br>CLEAR: thing on screen (13 px) | thing on screen (7 px)<br>thing on screen (7 px) | **CLEAR** |
+| `deeps` The Deep Halls | [D] `bridge` (exit, waypoint bridge_wp) -> deeps.falls<br>`lake` (encounter, thing drowned) -> deeps.falls | UNCLEAR: doorway point: a light, no door object<br>CLEAR: thing on screen (9 px) | doorway point: a light, no door object<br>thing on screen (7 px) | **UNCLEAR** |
+| `deeps.falls` The Falls | [D] `falls.landing` (exit, waypoint boat_wp) -> marsh<br>`falls.boat` (character, actor bram_fb) -> marsh<br>`falls.horn` (object, thing horn) -> marsh.wall; not ember_warden_lost<br>`falls.riders_horn` (object, thing horn) -> mountain.taken; needs ember_warden_lost | UNCLEAR: doorway point: a light, no door object<br>CLEAR: person on screen, 46 px tall<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>person on screen, 7 px tall<br>thing on screen (8 px)<br>thing on screen (8 px) | **INVISIBLE**<br>two options share one anchor (thing horn) |
+| `marsh` The Reed Marsh | [D] `path` (exit, waypoint marsh_path) -> marsh.wall<br>`hollow_one` (character, actor ho_m) -> marsh.stair<br>`lights` (feature, thing mlight1) -> marsh.wall | UNCLEAR: doorway point: a light, no door object<br>CLEAR: person on screen, 67 px tall<br>CLEAR: thing on screen (18 px) | doorway point: a light, no door object<br>person on screen, 21 px tall<br>thing on screen (11 px) | **UNCLEAR** |
+| `marsh.wall` The Black Wall | [D] `wall.crack` (exit, thing crack) -> marsh.stair<br>`wall.gate` (encounter, thing gate_black) -> marsh.plain | CLEAR: thing on screen (26 px)<br>CLEAR: thing on screen (34 px) | thing on screen (7 px)<br>thing on screen (7 px) | **CLEAR** |
+| `marsh.stair` The Stair of Bells | [D] `stair.side_path` (exit, waypoint stair_side) -> marsh.plain<br>`stair.bells` (feature, thing bells) -> marsh.plain; not ember_no_vial<br>`stair.bells_hard` (feature, thing bells) -> marsh.plain; needs ember_no_vial<br>`stair.sentinel` (encounter, actor sentinel) -> mountain | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>thing on screen (7 px)<br>thing on screen (7 px)<br>person on screen, 7 px tall | **INVISIBLE**<br>two options share one anchor (thing bells) |
+| `marsh.plain` The Ash Plain | [D] `plain.road` (exit, waypoint road_wp) -> mountain<br>`plain.tower` (feature, thing tower) -> mountain.taken | UNCLEAR: doorway point: a light, no door object<br>CLEAR: thing on screen (19 px) | doorway point: a light, no door object<br>thing on screen (5 px) | **UNCLEAR** |
+| `mountain` The Throat | [D] `way_down` (exit, waypoint down_wp) -> mountain.spring<br>`whisper` (feature, thing vent1) -> mountain.keeper | UNCLEAR: doorway point: a light, no door object<br>INVISIBLE: edge beacon only | doorway point: a light, no door object<br>thing on screen (5 px) | **INVISIBLE** |
+| `mountain.spring` The Drowned Spring | [D] `spring.way_back` (exit, waypoint pool_wp) -> run:warehouse<br>`spring.pool` (feature, thing pool_stones) -> run:warehouse | UNCLEAR: doorway point: a light, no door object<br>CLEAR: thing on screen (15 px) | doorway point: a light, no door object<br>thing on screen (4 px) | **UNCLEAR** |
+| `mountain.keeper` The Keeper | [D] `keeper.way_back` (exit, waypoint ember_wp) -> run:warehouse<br>`keeper.ember` (feature, thing altar) -> run:warehouse | UNCLEAR: doorway point: a light, no door object<br>CLEAR: thing on screen (19 px) | doorway point: a light, no door object<br>thing on screen (5 px) | **UNCLEAR** |
+| `mountain.taken` Taken | [D] `taken.camp_out` (exit, waypoint stake_wp) -> marsh.plain<br>`taken.stake` (object, thing stake) -> marsh.plain<br>`taken.captain` (encounter, actor captain) -> marsh.wall | INVISIBLE: edge beacon only<br>INVISIBLE: edge beacon only<br>CLEAR: person on screen, 107 px tall | doorway point: a light, no door object<br>thing on screen (11 px)<br>person on screen, 10 px tall | **INVISIBLE** |
+
+### The Bassment (63 passages, grouped by the shape of their choice; from the data and docs/shots/trial)
+
+| Choice shape (kinds, (D) the default) | Passages | What the player sees today | Verdict |
+| --- | --- | --- | --- |
+| exit(D) | 0, 2, 6, 7, 9, 11, 13, 14, 17, 19, 21, 22, 24, 25, 27, 29, 31, 33, 34, 36, 38, 39, 41, 44, 46, 47, 49, 50, 51, 53, 54, 56, 58, 60, 61, 63 | a single way on (no choice: the window only times the walk) | n/a (not a branching point) |
+| exit + exit(D) | 1, 3, 4, 10, 15, 18, 26, 30, 35, 42, 43, 62 | two or more lit doorway points on waypoints, no door; the default ring brighter | UNCLEAR (exits read only as light, nothing says which is current) |
+| encounter(D) + feature | 12, 32, 55 | a creature billboard stands in the room (acts: block/offer/laugh...) beside lit doorway points | UNCLEAR (the creature is visible; the other way is a light; current = brighter ring only) |
+| encounter(D) + exit | 28, 45, 59 | a creature billboard stands in the room (acts: block/offer/laugh...) beside lit doorway points | UNCLEAR (the creature is visible; the other way is a light; current = brighter ring only) |
+| exit(D) + feature | 5, 37 | an item or a feature glows on an empty spot or a thing beside lit doorway points | UNCLEAR |
+| exit(D) + object | 16, 23 | an item or a feature glows on an empty spot or a thing beside lit doorway points | UNCLEAR |
+| encounter + exit(D) | 8 | a creature billboard stands in the room (acts: block/offer/laugh...) beside lit doorway points | UNCLEAR (the creature is visible; the other way is a light; current = brighter ring only) |
+| encounter(D) + exit + feature | 20 | a creature billboard stands in the room (acts: block/offer/laugh...) beside lit doorway points | UNCLEAR (the creature is visible; the other way is a light; current = brighter ring only) |
+| encounter(D) + exit + object | 40 | a creature billboard stands in the room (acts: block/offer/laugh...) beside lit doorway points | UNCLEAR (the creature is visible; the other way is a light; current = brighter ring only) |
+| encounter(D) + exit + exit | 48 | a creature billboard stands in the room (acts: block/offer/laugh...) beside lit doorway points | UNCLEAR (the creature is visible; the other way is a light; current = brighter ring only) |
+| exit + exit(D) + object | 52 | an item or a feature glows on an empty spot or a thing beside lit doorway points | UNCLEAR |
+| feature(D) | 57 | an item or a feature glows on an empty spot or a thing beside lit doorway points | UNCLEAR |
+
+
+## 2. The choice language
+
+One rule for every branching point: **exactly one option is CURRENT** (the default until a touch; the one that happens if the player does nothing more), and every option shows whether it is, by a
+thing in the world **and** a light, never by colour alone. Roles: `current`, `other`, and after the commit `committed` / `declined`; `touched` is the first 1.5 beats of becoming current by a touch.
+The destination (where the player will walk) is the current option's success route, or the default way on when the current option has no route of its own (an object, a person who gives you something).
+
+| Archetype | Chosen when | CURRENT | OTHER (not current) | TOUCHED | COMMITTED / DECLINED | Touch area | In the engine |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| **person** (invites) | the option directs a person (`anchor.actor`, `acting.actor` or `staging.actor`) | `beckon`, face `happy`, looking at the camera; green solid double ring on the floor in the window | `plead`, face `sad`, looking at the camera (still inviting); red dashed ring | `nod`, `happy` for 1.5 beats, then current | the outcome's own acts (acting block) or `cheer` 4 beats / `plead` sad 2 beats then they go back to the room | 1.2 x 2.1 m on the person | **built** (the acts and faces were baked for every person option: commit "People sheets re-baked") |
+| **door / gate / road** (a way) | `kind: exit` | `drawn`: the door stands wide (door_3), a spill of light on the floor, a **round green lamp with an up chevron** above it; `sign`: a post whose arrow board points on; `bars`: no boards; `pieces`: the map's open piece | `drawn`: shut leaf (door_0) under a **square red lamp with a white bar**; `sign`: the board hangs down crossed; `bars`: two red-and-white boards nailed in an X across the doorway; `pieces`: the shut piece | the door swings over one beat (door_0 to door_3 or back) | the chosen door stays open, the others shut | 1.7 x 2.6 m on the door | **built**: drawn, sign, bars, pieces. `door_at` moves the door into the wall's opening when the exit's waypoint stands in the room |
+| **object** (boat, ladder, cart, lever, table) | `kind: object`, or anything without a person that is not an exit | green lamp over it; its billboard **bobs**; `states` steps swap its frames (sail up, hatch open) or pieces | red lamp; still; the "not this" frames | the `touched` steps | as current / other | 1.4 x 1.6 m | **built** (lamp, motion, steps); the state frames are art still to draw per object |
+| **feature / encounter** (creature, hazard) | `kind: feature`, `encounter` | lamp + motion as an object; a Bassment creature keeps its own waiting act (planted, offering, laughing: squared up to you) | it **recoils** (backs off a step) | | the fight's own acts (`TrialScene`) | 1.4 x 1.6 m | **built** for run features and Bassment creatures (`content/run/choice_staging.json` `creature`) |
+| **figure** (a billboard person of the map: the wizard) | `staging.archetype: figure` | `current_tex` (`wizard_happy`: free arm raised beckoning, eyes bright, orb blazing) with the `beckon` hop | `other_tex` (`wizard_sad`: head bowed, eyes dark, orb dim) with `slump` | | as current / other | 1.4 x 2.0 m | **built** |
+| **custom** | `staging.archetype: custom` | only its `states` steps | | | | `touch` | **built** |
+
+**States steps** (any archetype; `staging.states.{current,other,touched,committed,declined}`: lists, validated): `{piece, op: on|off}` a set piece of the map; `{actor, act, face?, look_at?}` another
+person of the room (the friends behind Simon, a sulking nurse); `{thing, tex? | sprite?, motion?}` a map billboard's frame from `assets/run/choice` or from the map's own art, and its motion (`still`,
+`bob`, `beckon`, `slump`, `pulse`, `sway_left`, `sway_right`, `lean`); `{prop, at?, size?, motion?}` a choice prop stood at the anchor (an arrow sign over a fork); `{lamp: go|stop|none}`.
+
+**Lights.** The ring on the floor is green and doubled under the current option and red and dashed under the others (shape as well as colour); a staged option no longer gets the glow and light
+column *over* the thing (they hid the wizard's face), the light stays on the floor; the edge beacon of an option out of sight is green or red. High contrast mode keeps its own colours.
+
+**The Bassment's billboards.** The same `HotspotView` stages the passages: exits get drawn doors with lamps (the room's own doorway art is not a door), a creature stamps or recoils, items and luck tests get
+the lamp. A passage with one way on has nothing to stage (a choice needs two options). The Bassment brief (`docs/choice/bassment.md` on `feature/choice-briefs`) goes further (carriers per option,
+door-bar kits): see section 6.
+
+## 3. The engine (what was built)
+
+| Piece | File | What |
+| --- | --- | --- |
+| Current choice | `src/run/run_hotspots.gd` | `staged(block)` (every available option of the visit from beat 0; the wizard while his window can come), `current_id(block)` (the committed one, else the touched one, else the default), `destination(block)`, `preselect` (off: an owner's decision, section 7). `select`, `commit_final`, the windows and an untouched default's "no intent" are unchanged |
+| Staging data | `src/run/choice_staging.gd`, `content/run/choice_staging.json` | archetypes, defaults derived from kind and anchor, the merge of a hotspot's `staging` block, roles, door opening over one beat, lamps, motions, the validator (`HotspotContract._validate_one` calls it) |
+| View | `src/run/hotspot_view.gd` | `choice_fn` (RunPlay / TrialScene give `{staged, current, committed, dest, default, touched, changed_t}`), `choice_snapshot`, `refresh_choice`, people directed with source `choice` (a story `cast` beat or an outcome act wins; the person comes back when it ends), billboard poses, pieces, props; ring colours; touch rectangles (`layout(..., rects=true)`) |
+| Props | `src/run/choice_props.gd`, `assets/run/choice/*.png` (`tools/run/make_choice_art.py`) | billboards with depth (doors 0..3, bars, sign go/stop, lamps, spill, the wizard happy/sad) |
+| World | `src/story/world/story_world.gd` | `thing_pose`: a map thing's texture and motion set by the choice layer (feet stay on the floor) |
+| Scene | `src/run/run_play.gd`, `src/trial/trial_scene.gd` | `choice_state()`, the thing-touch areas in the tap, `RW_RUN_SELECT=a@50,b@53,...` (several touches), `RW_CHOICE_PRESELECT=1`, `RW_TRIAL_TAPS="1>0"` (a change of mind) |
+| Debug | `src/debug/playtest_overlay.gd` | `CHOICE current: <id> | default: <id> | committed | going to: <route>` |
+| Bake | `tools/story/art/directed.py` | reads `staging` (the person's five roles and the people of `states` steps), so `build_assets.py <map> people` bakes them; `tests/test_story_acts.gd` checks the same |
+| Data | `tools/run/staging_data.py`, `tools/run/apply_staging.py` | hand staging keyed by hotspot id, written into the shipped files of all runs and the Bassment (rerun after any generator; `make_hotspots.py` calls it) |
+
+**Before the first touch, today vs now.** Before: nothing at all until beat 48 (the window), then rings, the default's brighter. Now: from beat 0 the people invite (current happy, others sad), the doors
+stand open or shut with their lamps, the wizard is happy or bowed; the rings come at the window as before (touch rules unchanged), coloured by role.
+
+## 4. The pilot (`docs/shots/choice/`, phone size 844 x 390, virtual clock; `bash tools/run/capture_choice.sh`)
+
+The shots use a framed camera (`RW_STORY_CAM=@x:z:yaw:pitch`) because the player's camera often looks away in the window (section 1); `warehouse_floor_asplayed_*` are the player's own view for honesty.
+
+| Strip | States | What it shows | What still does not read |
+| --- | --- | --- | --- |
+| `warehouse_floor_wizard_strip` | start, wizard touched, door touched, wizard again, committed (with preselect) | the wizard bowed and dim, then arm up beckoning, orb blazing, green ring; red dashed when the door is chosen | he is dark against a dark wall: a lamp on him would help; his commit shows the plain sprite (he leaves for the Bassment) |
+| `warehouse_floor_doors_strip` | start, balcony, bar, committed | the bar door open with its green lamp, the balcony stairs door shut; they swap on each touch | from the middle of the floor the doors are 6 to 7 m away: small; the dancer `g07`'s plead is lost in the crowd |
+| `warehouse_bar_strip` | early, start, bartender, booth, chill, committed | the chill door open / booth door shut, swapped by the booth touch; the bartender's touch keeps the chill door open (he gives a drink, then you go on) | the people are far from this camera and the bartender stands at the frame's edge |
+| `warehouse_balcony_strip` | early, start, promoter, booth, chill, committed | two doors side by side, the promoter's touch opens the booth door (his route), the promoter points | clear |
+| `gospel_j04_fishermen_strip` | early, start, Simon, boat, path, committed | the sign post's arrow points up the shore path; it hangs crossed when the boat is chosen; Simon pleads (hands together) or nods/beckons | the boat out on the lake is too small to see its bob or lamp; faces are a few pixels |
+| `mothership_deck_doors_strip` | start, reactor, gallery, committed | the pure door pair: gallery open/green, reactor shut/red, swapped twice | clear; the grey and the DJ are red edge beacons from this camera |
+| `bassment_p10_strip` | start, valve, wade, committed | the boiler room's two ways as doors, swapped by a touch and back | the commit is the passage's own flash; the doors are drawn in front of the room's art |
+
+## 5. Tests
+
+`tests/test_choice_clarity.gd` (11 tests, 1158 checks): the pure model (the default is current, a touch moves current, touching current again changes nothing, the commit takes current, an
+untouched default still commits as "nothing tapped", touch rules unchanged unless `preselect`), the archetype defaults, lamps and doors by shape, the validator naming twelve bad blocks and passing a custom
+one, **every branching scene of the four runs**: exactly one current at block 0 and 3, the default current at the start, at most one door open, each option touched in turn becomes the only current and
+the commit takes it; the Bassment's data loads clean; the real Warehouse scene (the default door open from beat 2, the wizard touch turning his frame happy and shutting the bar door within a beat, the
+window's swap and the commit), and the same state at 30 fps, 60 fps and a ragged step. `tests/test_story_acts.gd` now also derives the staging people. Everything else is untouched.
+
+## 6. Remaining work (for the authoring agents, in parallel per world)
+
+### E. Engine items (one agent, before or alongside the data)
+1. **E1 the window glance**: in the window the rail should turn the camera to frame the staged options (today 120 of 239 are edge beacons there). `RunRail.WINDOW_GLANCE_DEG` limits the turn to 8 degrees; a
+   `choice.glance` that aims at the centroid of the staged anchors (clamped by the room) would make the pilot's framed shots what the player sees. The paths' and Bassment briefs ask for it too.
+2. **E2 a lamp on people and figures** (`lamp: true` works for them, the position is centre + 0.6 m: check it clears the head) and a warm key light on the current figure (the wizard is dark).
+3. **E3 multi-person options**: `states` steps direct extra people; a `people: [ids]` shorthand that gives each the person roles would save data.
+4. **E4 doors drawn over the map's own doorways** in the Bassment: use `bars` or `pieces` where the zone already has door art; `door_at` per exit.
+5. **E5 the briefs' new acts and motions** (`hop`, `lean_toward`, `turn_back`, `hold_door`, `perk`, `slump`, ...): a person act is a rig pose (`StoryCharacter.sample`, `SHEET_CYCLES`, then a re-bake); a figure
+   motion is one line in `ChoiceStaging.motion`. Named-frame figures for the Bassment creatures (a `figure_tex` per role) mirror the wizard's.
+6. **E6 committed reactions for non-acting people** use `cheer`; the briefs' "wave goodbye / sag" for the declined are `states.declined` steps (supported).
+
+### What the briefs need from the engine (read from `MusicGame-merge/docs/choice/*.md`, branch `feature/choice-briefs`)
+* Sibling frame flips on CURRENT ("state frames are sibling pieces", door-bar kits with 2 frames, a receiver off the hook): **supported** as `states` steps `{piece, op}` or `{thing, sprite}` (a sprite of the
+  map's art) per role, and `door: "pieces"`.
+* Acts and faces per role for people, including extra people: **supported** (`current/other/touched/committed/declined` and `{actor, act, face}` steps); new acts need the rig (E5).
+* A pointer that swings to the current exit (finger-post, baton, follow-spot): a `{prop}` or `{thing, sprite}` per option role works for two states; a pointer that turns to *each* option is one thing
+  shared by several options: give each option a step on the same thing with its own sprite (the current option's step wins because only its role is `current`; give the others `none`). Needs E1 to be seen.
+* Carriers placed in the zone maps (`cr_<passage>_<n>`) and re-anchoring hotspots on them: data (maps and `make_hotspots.py`), no engine change; the anchor change is allowed (it does not touch the outcome).
+* "Default from beat 48" vs beat 0: the engine stages from beat 0; a brief that wants a calm room until the window can give the roles' steps from data; a `choice.stage_from_beat` knob is a two-line change if the owner wants it.
+* An "assist rings" setting (rings off for players who read the world): not built; one flag in `HotspotView._draw_entry`.
+
+### Per world: what each scene still needs (generated from the data; "auto" works with no hand data)
+
+| Run / world | Scenes | Exits on a doorway point (drawn door: check `door_at`, or `sign` outdoors) | Exits on a thing (boards across: check it reads, or `pieces`) | Person options (auto: beckon/plead, baked) | Objects / features on a thing (lamp + motion: wants a state frame pair) | Options on an empty `pos` (nothing to see: need a prop or a re-anchor) | Hand-staged now |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| main / hospital | 6 | 8 | 0 | 6 | 6 | 0 | 0 |
+| main / hospital_late | 4 | 6 | 0 | 2 | 8 | 0 | 0 |
+| main / mothership | 5 | 7 | 0 | 4 | 6 | 0 | 0 |
+| main / underworld | 5 | 7 | 0 | 3 | 7 | 0 | 0 |
+| main / ward | 6 | 8 | 0 | 5 | 7 | 0 | 0 |
+| main / ward_late | 4 | 6 | 0 | 3 | 4 | 0 | 0 |
+| main / warehouse | 6 | 9 | 1 | 6 | 6 | 5 | 4 |
+| gospel / galilee | 4 | 5 | 1 | 4 | 2 | 0 | 1 |
+| gospel / jerusalem | 6 | 8 | 0 | 5 | 1 | 0 | 0 |
+| gospel / jordan | 4 | 2 | 1 | 5 | 1 | 0 | 0 |
+| gospel / road | 3 | 4 | 0 | 2 | 2 | 0 | 0 |
+| squadron / air | 3 | 0 | 1 | 5 | 0 | 0 | 0 |
+| squadron / base | 3 | 1 | 2 | 4 | 0 | 0 | 0 |
+| squadron / city | 4 | 0 | 0 | 8 | 0 | 0 | 0 |
+| squadron / escape | 4 | 0 | 2 | 6 | 0 | 0 | 0 |
+| ember / deeps | 2 | 2 | 0 | 1 | 3 | 0 | 0 |
+| ember / hollow | 3 | 3 | 0 | 2 | 1 | 0 | 0 |
+| ember / marsh | 4 | 3 | 1 | 2 | 5 | 0 | 0 |
+| ember / mountain | 4 | 4 | 0 | 1 | 4 | 0 | 0 |
+| ember / north | 2 | 1 | 2 | 1 | 1 | 0 | 0 |
+
+Every scene's people already invite (baked) and every exit already has a drawn door; the authoring per scene is: (1) look at the scene with `bash tools/run/capture_choice.sh` from the player's camera
+and a framed one; (2) give each waypoint exit a `door_at` in its wall opening, or `door: "sign"` outdoors (Gospel, Ember, the Hospital garden, the Ward courtyard, the Squadron airfield), or `"pieces"`
+where the map has a door; (3) give each object/feature its state frames (art below) as `states` steps; (4) re-anchor or give a prop to every option on an empty `pos`; (5) write the staging into
+`tools/run/staging_data.py`, run `python tools/run/apply_staging.py`, re-bake the map's people if a step names a new act or face (`python tools/story/build_assets.py <map> people`), and make the strip.
+
+| Agent lane | Worlds | Scenes | Main jobs |
+| --- | --- | --- | --- |
+| A | main: warehouse (rest), mothership, underworld | 16 | Warehouse: the chill (wizard figure done; sofas, lava lamp frames), booth (`decks` and `radio` on `pos`: give the decks a thing and a lit/dark pair), the door (tunnel door and the crack's bars: check), the portals' looks; Mothership: `door_at` for 7 exits, the gallery window/menu, reactor, bridge, airlock exam; Underworld: 7 exits (the court gates as gate art), 7 features (the furnace, the pit) |
+| B | main: hospital, hospital_late, ward, ward_late | 20 | 28 exits (glazed doors, the garden gate as `sign` or gate art), 25 objects (trolley, phone, cabinet, lamp: frame pairs); follow `docs/choice/main_b_hospital_ward.md` |
+| C | gospel | 17 | 19 exits outdoors (signs, the tomb stone as `pieces`), 16 people (multi-person options: the fishermen, the crowd), 6 objects (boats, loaves, the lantern); follow `path_gospel.md` |
+| D | squadron | 14 | 5 thing exits (the cot, the hatch, the boat), 23 person options (many exits are people: check each reads as a way), follow `path_squadron.md` |
+| E | ember | 15 | 13 exits (caves, ridges, fords: signs or pieces), 14 objects and features (the Ember bowl, lanterns, the boat), the dark scenes need E2's lamp; follow `path_ember.md` |
+| F | the Bassment | 27 branching passages | door kits and carriers per `bassment.md`, creature frames (E5), `door_at` / `bars` where the zone has door art |
+
+### Art still missing (briefs for the pixel pipeline: `tools/run/make_choice_art.py` for shared props, the map's `tex_*.py` for a map's own things)
+* **Door skins per setting** (48 x 96, frames 0 to 3 shut to wide, the leaf on the left hinge, a lit doorway behind): steel airlock (Mothership: a sliding panel instead of a swinging leaf, frames = gap widths), iron
+  gate (Underworld: bars, a red glow behind), glazed ward door (Hospital/Ward: frosted glass upper panel, pale paint), plank door (Ember inns and halls), stone tomb door (Gospel: a round stone rolled aside in 4 frames), tent flap (Squadron).
+* **Gates and ways outdoors**: a field gate (open on its post / latched with a chain), a rope across a path with a hanging rag (Ember), a plank bridge raised/lowered (Ember ford).
+* **Object state pairs** (sibling sprites of the map's thing, same size as the thing): boat sail up / furled; hatch open / chained; lantern lit / dark; ladder down / pulled up; cart loaded / empty;
+  lever up / down; table laid / bare; phone receiver off the hook / on; sofa cushion plumped / flat; DJ decks lit / dark; lava lamp blobs rising / settled.
+* **A finger-post** with an arrow board in three angles (left, centre, right), 48 x 96, for forks where one pointer serves several ways.
+* **Figures**: the Warehouse wizard is done (happy / sad); the Bassment's creatures need a CURRENT (squared up) and OTHER (turned aside) frame each (`tools/trial/make_creatures.py`); a lamp-lit variant of the wizard for dark rooms.
+
+## 7. Decisions for the owner
+
+1. **Touch before the window?** The world now shows the choice from the scene's first beat, but a touch still only counts in the window (beats 49 to 64; the wizard in blocks 1 and 2). Allowing touches from
+   beat 0 (the commit stays at the route lock) is one data switch, `run.json` `"choice": {"preselect": true}`; it changes no outcome rule. Recommended: on, after a phone test.
+2. **The camera in the window (E1).** Turning the camera to the choice in the window changes what the player sees during the strongest block (and the rail's look). Recommended: yes.
+3. **Plead for "not this one".** The other people plead with a sad face (still inviting). If it reads as begging, `beckon` with the sad face is the alternative (one line in `content/run/choice_staging.json`).
+4. **Drawn doors in every room.** A drawn door appears in every doorway that has an exit; some rooms had an open arch. Keep, or prefer boards/signs per setting.
+
+## 8. Commands
+
+```
+python tools/run/make_choice_art.py              # the shared props (assets/run/choice), then godot --headless --path . --import
+python tools/run/apply_staging.py [--check]      # hand staging into the shipped hotspot files
+python tools/story/build_assets.py <map> people  # re-bake a map's people after a new act or face
+GODOT=<console binary> bash tools/run/capture_choice.sh <name> <scene> <touch B> <touch A> [RW_RUN_PATH=gospel] [RW_STORY_CAM=@x:z:yaw:pitch]   # SHOTS="label@beat ..." SELECT="id@beat,..." BPM=124
+bash tools/test.sh
+```

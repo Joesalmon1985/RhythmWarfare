@@ -1,0 +1,1211 @@
+"""Seamless pixel textures and sky strips for the Gospel adventure (the Life of Jesus): sunlit, dusty and warm, in the pixel look of pixeltex.
+
+`build(out_dir)` writes every tile as an opaque RGB PNG into out_dir and returns {name: {"size": [w, h], "metres": float}}. Floors repeat in both directions;
+walls repeat horizontally and run top to bottom over their `metres` (StoryWorld maps v = 0 to the TOP of a wall, so skirting and bases sit at the bottom of the
+tile and shadows under cornices at the top). Everything is painted as DAYLIGHT mid-tones (no pure black, no pure white): the engine multiplies each room's light
+colour over it, so a night room goes indigo and a dusk room orange. Skies are 256 x 64, seamless left to right, zenith at the top and the horizon at about row 44.
+Nothing here is copied from any picture; every random value comes from a seeded generator, so the same code gives the same bytes.
+"""
+from __future__ import annotations
+
+import os
+import sys
+
+import numpy as np
+
+try:
+    from . import pixeltex as px
+except ImportError:  # run as a script
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import pixeltex as px
+
+R = px.ramp
+BAYER = px.BAYER8
+
+
+# ---- small kit -------------------------------------------------------------------------------------------------------------------------------------------
+
+def hexu(h: str) -> np.ndarray:
+    return (px.hexc(h) * 255 + 0.5).astype(np.uint8)
+
+
+def G(w: int, h: int | None = None):
+    h = w if h is None else h
+    y, x = np.mgrid[0:h, 0:w].astype(np.float32)
+    return x, y
+
+
+def pn(w: int, h: int, sx: float, sy: float, seed: int, octaves: int = 3, c: float = 1.0) -> np.ndarray:
+    """Periodic value noise 0..1 on a w x h canvas, feature size sx x sy pixels, contrast c about 0.5."""
+    rng = np.random.RandomState(seed)
+    out = np.zeros((h, w), np.float32)
+    amp, tot = 1.0, 0.0
+    y, x = np.mgrid[0:h, 0:w].astype(np.float32)
+    for o in range(octaves):
+        cx = max(1, int(round(w / sx * 2 ** o)))
+        cy = max(1, int(round(h / sy * 2 ** o)))
+        g = rng.rand(cy, cx).astype(np.float32)
+        fx, fy = x / w * cx, y / h * cy
+        x0, y0 = np.floor(fx).astype(int), np.floor(fy).astype(int)
+        tx, ty = fx - x0, fy - y0
+        tx, ty = tx * tx * (3 - 2 * tx), ty * ty * (3 - 2 * ty)
+        x0, y0 = x0 % cx, y0 % cy
+        x1, y1 = (x0 + 1) % cx, (y0 + 1) % cy
+        v = (g[y0, x0] * (1 - tx) + g[y0, x1] * tx) * (1 - ty) + (g[y1, x0] * (1 - tx) + g[y1, x1] * tx) * ty
+        out += v * amp
+        tot += amp
+        amp *= 0.5
+    out /= tot
+    return np.clip((out - 0.5) * c + 0.5, 0, 1).astype(np.float32)
+
+
+def Q(shade, pal: np.ndarray, dither: float = 1.0) -> np.ndarray:
+    return px.quantise(np.asarray(shade, np.float32), pal, dither)
+
+
+def qloc(shade, pal: np.ndarray, ys: np.ndarray, xs: np.ndarray, dither: float = 1.0) -> np.ndarray:
+    """Quantise with the Bayer cell of the GLOBAL pixel coordinates (ys, xs index arrays), for window drawing."""
+    b = BAYER[ys[:, None] % 8, xs[None, :] % 8]
+    k = len(pal) - 1
+    i = np.clip(np.round(np.clip(shade, 0, 1) * k + b * dither), 0, k).astype(int)
+    return (pal[i] * 255 + 0.5).astype(np.uint8)
+
+
+def put(img: np.ndarray, mask, layer) -> np.ndarray:
+    m = np.asarray(mask, bool)
+    if isinstance(layer, str):
+        img[m] = hexu(layer)
+    elif layer.ndim == 1:
+        img[m] = layer
+    else:
+        img[m] = layer[m]
+    return img
+
+
+def speck(n: int, density: float, seed: int, h: int | None = None) -> np.ndarray:
+    h = n if h is None else h
+    return np.random.RandomState(seed).rand(h, n) < density
+
+
+def smooth(a, lo, hi):
+    t = np.clip((a - lo) / (hi - lo), 0, 1)
+    return t * t * (3 - 2 * t)
+
+
+def wrapd(a, b, n):
+    return (a - b + n / 2.0) % n - n / 2.0
+
+
+def blob(img, cx, cy, rx, ry, ang, shade_fn, pal, shadow: float = 0.0, sdx: float = 1.0, sdy: float = 1.0) -> None:
+    """Draw a shaded ellipse (rotated by ang) into img with wrap-around, with an optional cast shadow offset (sdx, sdy)."""
+    h, w = img.shape[:2]
+    rr = int(max(rx, ry)) + 3
+    xs = np.arange(int(np.floor(cx)) - rr, int(np.floor(cx)) + rr + 1)
+    ys = np.arange(int(np.floor(cy)) - rr, int(np.floor(cy)) + rr + 1)
+    dx = (xs - cx)[None, :] + 0 * ys[:, None]
+    dy = (ys - cy)[:, None] + 0 * xs[None, :]
+    ca, sa = np.cos(ang), np.sin(ang)
+    u, v = (dx * ca + dy * sa) / rx, (-dx * sa + dy * ca) / ry
+    body = u * u + v * v <= 1
+    ix = np.ix_(ys % h, xs % w)
+    sub = img[ix].copy()
+    if shadow > 0:
+        ux, vx = ((dx - sdx) * ca + (dy - sdy) * sa) / rx, (-(dx - sdx) * sa + (dy - sdy) * ca) / ry
+        sm = (ux * ux + vx * vx <= 1) & ~body
+        sub[sm] = (sub[sm].astype(np.float32) * (1 - shadow)).astype(np.uint8)
+    sub = np.where(body[..., None], qloc(shade_fn(u, v), pal, ys % h, xs % w), sub)
+    img[ix] = sub
+
+
+def dome(tone: float, k: float = 0.3):
+    """A lit-from-the-upper-left dome shading for blob()."""
+    return lambda u, v: tone - k * (u + v) * 0.7 - 0.18 * (u * u + v * v)
+
+
+def line(img, x0, y0, x1, y1, col) -> None:
+    """A 1 px line with wrap-around; col is a uint8 triple or an array of triples, one per step."""
+    h, w = img.shape[:2]
+    steps = int(max(abs(x1 - x0), abs(y1 - y0))) + 1
+    t = np.linspace(0, 1, steps + 1)
+    xs = np.round(x0 + (x1 - x0) * t).astype(int) % w
+    ys = np.round(y0 + (y1 - y0) * t).astype(int) % h
+    img[ys, xs] = col
+
+
+def pix(img, x, y, col) -> None:
+    img[int(y) % img.shape[0], int(x) % img.shape[1]] = col
+
+
+def voronoi(n: int, cells: int, seed: int, jitter: float = 0.9) -> dict:
+    """Periodic Voronoi: distance to the nearest (f1) and second nearest (f2) point, the nearest id and the vector to it."""
+    rng = np.random.RandomState(seed)
+    gx = (np.arange(cells)[None, :] + 0.5 + (rng.rand(cells, cells) - 0.5) * jitter) * n / cells
+    gy = (np.arange(cells)[:, None] + 0.5 + (rng.rand(cells, cells) - 0.5) * jitter) * n / cells
+    X, Y = G(n)
+    b1 = np.full((n, n), 1e9, np.float32)
+    b2 = np.full((n, n), 1e9, np.float32)
+    idx = np.zeros((n, n), int)
+    bdx = np.zeros((n, n), np.float32)
+    bdy = np.zeros((n, n), np.float32)
+    for k, (qx, qy) in enumerate(zip(gx.ravel(), gy.ravel())):
+        dx, dy = wrapd(X, qx, n), wrapd(Y, qy, n)
+        d = np.sqrt(dx * dx + dy * dy)
+        m1 = d < b1
+        b2 = np.where(m1, b1, np.minimum(b2, d))
+        idx = np.where(m1, k, idx)
+        bdx = np.where(m1, dx, bdx)
+        bdy = np.where(m1, dy, bdy)
+        b1 = np.where(m1, d, b1)
+    return {"f1": b1, "f2": b2, "id": idx, "dx": bdx, "dy": bdy, "rnd": rng.rand(cells * cells).astype(np.float32)}
+
+
+def courses(n: int, rows, seed: int, wmean: float, wjit: float = 0.3, hjit: float = 0.0, stagger: bool = True) -> dict:
+    """Masonry courses tiling horizontally: per-pixel block id, local x/y, block width/height and a tone per block. rows is a count or a list of heights."""
+    rng = np.random.RandomState(seed)
+    if isinstance(rows, (list, tuple)):
+        ys = np.concatenate([[0], np.cumsum(rows)]).astype(int)
+        ys[-1] = n
+    else:
+        hs = 1 + (rng.rand(rows) - 0.5) * 2 * hjit
+        ys = np.round(np.concatenate([[0], np.cumsum(hs / hs.sum() * n)])).astype(int)
+    out = {k: np.zeros((n, n), np.float32) for k in ("lx", "ly", "bw", "bh", "tone")}
+    out["bid"] = np.zeros((n, n), int)
+    bi = 0
+    for r in range(len(ys) - 1):
+        y0, y1 = ys[r], ys[r + 1]
+        k = max(1, int(round(n / wmean)))
+        ws = 1 + (rng.rand(k) - 0.5) * 2 * wjit
+        ed = np.round(np.concatenate([[0], np.cumsum(ws / ws.sum() * n)])).astype(int)
+        ed[-1] = n
+        off = int(rng.randint(0, n)) if stagger else 0
+        xs = (np.arange(n) - off) % n
+        i = np.searchsorted(ed, xs, "right") - 1
+        tn = rng.rand(k).astype(np.float32)[i]
+        out["lx"][y0:y1, :] = (xs - ed[i])[None, :]
+        out["bw"][y0:y1, :] = (ed[i + 1] - ed[i])[None, :]
+        out["tone"][y0:y1, :] = tn[None, :]
+        out["ly"][y0:y1, :] = (np.arange(y0, y1) - y0)[:, None]
+        out["bh"][y0:y1, :] = y1 - y0
+        out["bid"][y0:y1, :] = (bi + i)[None, :]
+        bi += k
+    return out
+
+
+def masonry(n: int, rows, seed: int, wmean: float, pal, jpal, tone: float = 0.16, wjit: float = 0.3, hjit: float = 0.0, joint: int = 1,
+            wear: float = 0.5, extra=None, bevel: float = 0.13, scale: float = 9, stagger: bool = True):
+    """Dressed blocks with a lit top/left lip, a shaded bottom/right edge, chips and mottle: (rgb, courses, joint mask, shade)."""
+    c = courses(n, rows, seed, wmean, wjit, hjit, stagger)
+    sh = 0.52 + (c["tone"] - 0.5) * 2 * tone + (pn(n, n, scale, scale, seed + 1, 3) - 0.5) * 0.5 * wear
+    sh -= 0.17 * (pn(n, n, 3, 3, seed + 2, 2) > 0.74) * wear * 1.6
+    lip = ((c["ly"] >= joint) & (c["ly"] < joint + 1)) | ((c["lx"] >= joint) & (c["lx"] < joint + 1))
+    low = (c["ly"] >= c["bh"] - 1) | (c["lx"] >= c["bw"] - 1)
+    sh = sh + bevel * lip - bevel * low
+    if extra is not None:
+        sh = sh + extra
+    img = Q(sh, pal)
+    mort = (c["ly"] < joint) | (c["lx"] < joint)
+    jsh = 0.5 + (pn(n, n, 5, 5, seed + 3, 2) - 0.5) * 0.8 + (0 if extra is None else extra * 0.6)
+    img[mort] = Q(jsh, jpal)[mort]
+    return img, c, mort, sh
+
+
+def cracks(n: int, seed: int, sx: float = 14, sy: float = 14, width: float = 0.014, h: int | None = None) -> np.ndarray:
+    v = pn(n, n if h is None else h, sx, sy, seed, 3)
+    return np.abs(v - 0.5) < width
+
+
+# ---- palettes (dark to light; daylight mid-tones) ---------------------------------------------------------------------------------------------------------
+
+SAND = R("#a89570", "#bba67f", "#cdb98f", "#dccaa0", "#e8dab4")
+DUST = R("#8e6538", "#a47940", "#b98e4f", "#cca262", "#dcb678")
+PATHP = R("#a99575", "#b9a583", "#c9b794", "#d7c8a6", "#e3d6b8")
+GRASS = R("#646230", "#7a7838", "#908c40", "#a69e4e", "#bcb264")
+GARDEN = R("#566a30", "#687c3a", "#7a9048", "#8ea25a", "#a2b46c")
+SHING = R("#6c6358", "#80766a", "#948978", "#a89d88", "#bdb29b")
+WATER = R("#6c8ca4", "#80a0b6", "#96b4c6", "#adc7d6", "#c6dbe6")
+COBB = R("#9a8668", "#ae9a79", "#c1ad8b", "#d1be9d", "#e0cfae")
+COBBJ = R("#5e5038", "#6e5e46", "#806e54")
+FLAG = R("#b5a98f", "#c5b99f", "#d3c8ae", "#e0d6bb", "#ebe2c8")
+FLAGJ = R("#7c705a", "#8c8068", "#9c9078")
+PLANK = R("#6a5640", "#7e6a50", "#927d62", "#a89478", "#bca98c")
+PLANKJ = R("#3e3224", "#4c3e2e", "#5c4c3a")
+CLAY = R("#a86a40", "#bc7c4a", "#cc8e58", "#da9f69", "#e6b27e")
+CLAYT = R("#b8825a", "#c99468", "#d8a778", "#e4b98c")
+SOIL = R("#4a3a28", "#5a4832", "#6c593e", "#806a4a", "#947c58")
+LEAF = R("#7a5a2c", "#92702e", "#a88838", "#7c7a38", "#98963f")
+ROCK = R("#6e665a", "#827a6c", "#968c7a", "#aa9f8a", "#bdb29b")
+ROCKO = R("#7c6a4a", "#92805a", "#a8946a", "#bca67c", "#cdb98e")
+ROCKJ = R("#4e463c", "#5a5044", "#665c50")
+ROAD = R("#a79d88", "#b8ae98", "#c9bfa7", "#d9cfb6", "#e6ddc4")
+ROADJ = R("#6c6250", "#7c725e", "#8c826c")
+STRAW = R("#8a6c30", "#a28238", "#b89a48", "#cdb15a", "#ddc470")
+LIME = R("#a8997c", "#bcad90", "#cfc2a5", "#ded3b8", "#eae0c6")
+LIMEJ = R("#7e7058", "#8c7e66", "#9c8e76")
+MUDO = R("#a87a48", "#bb8c56", "#cc9e68", "#dcb07a", "#e8c18c")
+MUDB = R("#7c5634", "#8e6640", "#a07650", "#b08660")
+MUDJ = R("#5e4026", "#6e4c30")
+HILLO = R("#665f34", "#7c743e", "#928848", "#a89c58", "#bdb06c")
+HILLC = R("#7a6a3c", "#90804a", "#a69658", "#bcac6c", "#cfc084")
+REEDS = R("#3a4624", "#4c5a2c", "#627238", "#7e8a44", "#a09a4e", "#c4b45e")
+REEDG = R("#52602e", "#6a7a38", "#86924a", "#a4a858")
+OLIVE = R("#3e4a34", "#56634a", "#6e7b5a", "#8a9674", "#a7b08f")
+BARK = R("#4a4034", "#5e5242", "#746654", "#8a7b66")
+WOOD = R("#5c4a38", "#6e5a44", "#826c52", "#98826a", "#ac9880")
+WOODJ = R("#2e241a", "#3c2f22")
+DOOR = R("#4a3422", "#5c452e", "#70573a", "#866a48")
+CYP = R("#243626", "#324630", "#415a3a", "#546e48", "#688458")
+PLASTER = R("#b8ab8e", "#c9bda0", "#d8ccb0", "#e4dac0", "#eee5cd")
+RED = R("#74302a", "#8a3c30", "#9e4a38", "#b25a42")
+DEEP = R("#262a38", "#343644", "#463f48", "#5a4c4c", "#725e58")
+CLOTHW = R("#bcae8e", "#cdc0a2", "#dccfb2", "#e8ddc2")
+CLOTHB = R("#5c432c", "#6e5238", "#84644a", "#9a785a")
+
+
+# ---- floors ----------------------------------------------------------------------------------------------------------------------------------------------
+
+def floor_sand() -> np.ndarray:
+    n = 64
+    X, Y = G(n)
+    s = 0.52 + (pn(n, n, 16, 16, 1, 3, 1.3) - 0.5) * 0.5 + (pn(n, n, 6, 6, 2, 2) - 0.5) * 0.25
+    s += 0.06 * np.sin(2 * np.pi * (Y / n * 6 + pn(n, n, 20, 20, 3, 2) * 1.8))  # faint river ripples in the sand
+    img = Q(s, SAND)
+    put(img, speck(n, 0.05, 4), Q(s - 0.35, SAND))
+    put(img, speck(n, 0.03, 5), Q(s + 0.35, SAND))
+    rng = np.random.RandomState(6)
+    pal = R("#7e7262", "#968a76", "#b0a48c", "#c8bca2", "#dcd0b6")
+    for _ in range(16):
+        r = 1.1 + rng.rand() * 1.6
+        blob(img, rng.rand() * n, rng.rand() * n, r * 1.2, r, rng.rand() * 3, dome(0.25 + rng.rand() * 0.5), pal, 0.28)
+    return img
+
+
+def floor_dust() -> np.ndarray:
+    n = 128
+    s = 0.52 + (pn(n, n, 26, 26, 11, 3) - 0.5) * 0.4 + (pn(n, n, 8, 8, 12, 3) - 0.5) * 0.32
+    s -= 0.1 * (pn(n, n, 14, 14, 13, 3) > 0.68)
+    img = Q(s, DUST)
+    put(img, speck(n, 0.05, 14), Q(s - 0.32, DUST))
+    put(img, speck(n, 0.035, 15), Q(s + 0.32, DUST))
+    rng = np.random.RandomState(16)
+    pal = R("#6e5a44", "#8a7458", "#a48e70", "#bca686", "#d0bc9c")
+    for _ in range(78):
+        r = 1.1 + rng.rand() * 2.4
+        blob(img, rng.rand() * n, rng.rand() * n, r * 1.15, r, rng.rand() * 3, dome(0.25 + rng.rand() * 0.5), pal, 0.3)
+    return img
+
+
+def floor_path() -> np.ndarray:
+    n = 64
+    X, Y = G(n)
+    s = 0.55 + (pn(n, n, 16, 16, 21, 3) - 0.5) * 0.38 + (pn(n, n, 6, 6, 22, 2) - 0.5) * 0.24
+    for cx, ph in ((16.0, 0.0), (47.0, 1.7)):  # two faint wheel ruts running along the path
+        d = wrapd(X + 1.4 * np.sin(Y / n * 2 * np.pi + ph) + 3.0 * (pn(n, n, 40, 14, 26 + int(cx), 2) - 0.5), cx, n)
+        s -= 0.17 * np.exp(-(d / 3.6) ** 2) * (0.6 + 0.8 * pn(n, n, 50, 12, 28 + int(cx), 2))
+        s += 0.05 * np.exp(-((np.abs(d) - 5.8) / 1.3) ** 2)
+    img = Q(s, PATHP)
+    put(img, speck(n, 0.05, 23), Q(s - 0.3, PATHP))
+    put(img, speck(n, 0.03, 24), Q(s + 0.3, PATHP))
+    rng = np.random.RandomState(25)
+    pal = R("#8e826c", "#a89c84", "#c0b49c", "#d4c8ae")
+    for _ in range(9):
+        r = 1.0 + rng.rand() * 1.3
+        blob(img, rng.rand() * n, rng.rand() * n, r * 1.2, r, rng.rand() * 3, dome(0.3 + rng.rand() * 0.5), pal, 0.28)
+    return img
+
+
+def floor_grass() -> np.ndarray:
+    n = 128
+    s = 0.4 + (pn(n, n, 26, 26, 31, 3) - 0.5) * 0.4 + (pn(n, n, 7, 7, 32, 2) - 0.5) * 0.3
+    img = Q(s, GRASS)
+    rng = np.random.RandomState(33)
+    top = GRASS
+
+    def blade(x, y, ln, lean, tone):
+        for t in range(ln):
+            k = t / max(ln - 1, 1)
+            sh = np.clip(tone * 0.5 + 0.1 + 0.45 * k, 0, 1.0)
+            pix(img, x + lean * t, y - t, top[int(round(sh * (len(top) - 1)))] * 255 + 0.5)
+
+    for _ in range(300):  # single blades
+        blade(rng.rand() * n, rng.rand() * n, int(rng.randint(3, 6)), (rng.rand() - 0.5) * 0.8, rng.rand())
+    for _ in range(56):  # tufts: a fan of blades from one root, dark at the root, pale and golden at the tip
+        cx, cy = rng.rand() * n, rng.rand() * n
+        pix(img, cx + 1, cy + 1, hexu("#4e4a24"))
+        pix(img, cx + 2, cy + 1, hexu("#4e4a24"))
+        for k in range(9):
+            blade(cx, cy, int(rng.randint(5, 10)), (k - 4) * 0.42, 0.3 + rng.rand() * 0.7)
+    put(img, speck(n, 0.01, 34), hexu("#e2d68a"))
+    return img
+
+
+def floor_shingle() -> np.ndarray:
+    n = 64
+    v = voronoi(n, 8, 41, 0.85)
+    t = v["f1"] / (v["f1"] + v["f2"] + 1e-3)
+    lit = -(v["dx"] + v["dy"]) / (np.abs(v["dx"]) + np.abs(v["dy"]) + 1.0)
+    dm = 1 - (t / 0.5) ** 2
+    s = 0.12 + 0.62 * v["rnd"][v["id"]] + 0.3 * dm + 0.1 * lit * (1 - dm) + (pn(n, n, 4, 4, 42, 2) - 0.5) * 0.18
+    img = Q(s, SHING)
+    put(img, t > 0.455, Q(0.12 + (pn(n, n, 3, 3, 43, 2) - 0.5) * 0.4, SHING))
+    put(img, speck(n, 0.03, 44) & (t < 0.4), Q(s + 0.3, SHING))
+    return img
+
+
+def floor_water() -> np.ndarray:
+    n = 128
+    X, Y = G(n)
+    s = 0.45 + (pn(n, n, 64, 64, 51, 2) - 0.5) * 0.18 + (pn(n, n, 22, 10, 52, 2) - 0.5) * 0.12
+
+    def ridge(v, w):
+        return np.clip(1 - np.abs(v - 0.5) / w, 0, 1)
+
+    r1 = ridge(pn(n, n, 42, 16, 53, 3), 0.045) ** 1.5
+    r2 = ridge(pn(n, n, 24, 9, 54, 3), 0.04) ** 1.5
+    s = s + 0.42 * r1 + 0.22 * r2 - 0.1 * np.roll(r1, 2, 0) - 0.06 * np.roll(r2, 1, 0)
+    img = Q(s, WATER)
+    put(img, speck(n, 0.004, 55) & (r1 + r2 < 0.2), hexu("#d6e4ea"))
+    return img
+
+
+def floor_cobble() -> np.ndarray:
+    n = 128
+    v = voronoi(n, 8, 61, 0.78)
+    t = v["f1"] / (v["f1"] + v["f2"] + 1e-3)
+    lit = -(v["dx"] + v["dy"]) / (np.abs(v["dx"]) + np.abs(v["dy"]) + 1.0)
+    dm = 1 - (t / 0.5) ** 2.2
+    s = 0.22 + 0.34 * v["rnd"][v["id"]] + 0.34 * dm + 0.1 * lit * (1 - dm) + (pn(n, n, 6, 6, 62, 3) - 0.5) * 0.2
+    img = Q(s, COBB)
+    put(img, speck(n, 0.04, 63) & (t < 0.42), Q(s - 0.3, COBB))
+    put(img, t > 0.455, Q(0.35 + (pn(n, n, 4, 4, 64, 2) - 0.5) * 0.7, COBBJ))
+    return img
+
+
+def floor_flag() -> np.ndarray:
+    n = 128
+    rows = [38, 46, 44]
+    img, c, mort, sh = masonry(n, rows, 71, 62, FLAG, FLAGJ, tone=0.1, wjit=0.28, joint=2, wear=0.55, bevel=0.1, scale=14)
+    ck = cracks(n, 72, 20, 20, 0.008) & ~mort
+    put(img, ck, Q(sh - 0.38, FLAG))
+    stain = (pn(n, n, 26, 26, 73, 3) > 0.64) & ~mort
+    put(img, stain, Q(sh - 0.17, FLAG))
+    return img
+
+
+def floor_plank() -> np.ndarray:
+    n = 64
+    c = courses(n, 5, 81, 44, 0.25, 0.1)
+    X, Y = G(n)
+    gr = pn(n, n, 30, 2.6, 82, 3, 1.8)
+    s = 0.5 + (c["tone"] - 0.5) * 0.35 + (gr - 0.5) * 0.4 + (pn(n, n, 9, 9, 83, 2) - 0.5) * 0.15
+    s += 0.1 * (c["ly"] == 1) - 0.12 * (c["ly"] >= c["bh"] - 2)
+    img = Q(s, PLANK)
+    put(img, speck(n, 0.03, 84), Q(s - 0.3, PLANK))
+    gap = (c["ly"] < 1) | (c["lx"] < 1)
+    put(img, gap, Q(0.3 + (pn(n, n, 4, 4, 85, 2) - 0.5) * 0.5, PLANKJ))
+    # nails at the plank ends and a couple of knots
+    m = (c["lx"] == 3) & (np.abs(c["ly"] - c["bh"] / 2) < 0.6)
+    put(img, m, hexu("#40362a"))
+    put(img, np.roll(m, 1, 1), hexu("#b8a888"))
+    for kx, ky in ((27, 21),):
+        for rr, col in ((3.0, "#6a5238"), (2.0, "#4e3a28"), (1.0, "#3a2c1e")):
+            blob(img, kx, ky, rr * 1.5, rr * 0.8, 0, lambda u, v: np.full_like(u, 0.5), px.ramp(col, col))
+    return img
+
+
+def floor_clay() -> np.ndarray:
+    n = 64
+    X, Y = G(n)
+    s = 0.5 + (pn(n, n, 26, 26, 91, 3) - 0.5) * 0.45 + (pn(n, n, 7, 7, 92, 2) - 0.5) * 0.25
+    sweep = np.sin(2 * np.pi * (X / n * 4 + 1.6 * pn(n, n, 34, 34, 93, 2) + 0.35 * Y / n))
+    s += 0.09 * sweep  # the broom's long strokes
+    img = Q(s, CLAY)
+    put(img, speck(n, 0.05, 94), Q(s - 0.3, CLAY))
+    put(img, speck(n, 0.03, 95), Q(s + 0.3, CLAY))
+    # a few worn square tiles half-buried in the swept clay
+    for tx, ty, sz in ((3, 5, 27), (38, 38, 17)):
+        box = (X >= tx) & (X < tx + sz) & (Y >= ty) & (Y < ty + sz)
+        wear = pn(n, n, 14, 14, 96 + tx, 2, 1.6) > 0.22
+        ts = 0.5 + (pn(n, n, 5, 5, 97 + ty, 2) - 0.5) * 0.4
+        put(img, box & wear, Q(ts, CLAYT))
+        gap = ((X == tx) | (Y == ty) | (X == tx + sz) | (Y == ty + sz)) & (X >= tx) & (Y >= ty) & (X <= tx + sz) & (Y <= ty + sz) & wear
+        put(img, gap, Q(np.full((n, n), 0.0), CLAY))
+        put(img, box & wear & ((X == tx + 1) | (Y == ty + 1)), Q(ts + 0.2, CLAYT))
+    return img
+
+
+def floor_soil() -> np.ndarray:
+    n = 128
+    X, Y = G(n)
+    s = 0.45 + (pn(n, n, 40, 40, 101, 3) - 0.5) * 0.6 + (pn(n, n, 8, 8, 102, 3) - 0.5) * 0.35
+    img = Q(s, SOIL)
+    put(img, speck(n, 0.05, 103), Q(s - 0.3, SOIL))
+    put(img, speck(n, 0.03, 104), Q(s + 0.35, SOIL))
+    rng = np.random.RandomState(105)
+    clod = R("#3c2e20", "#54432e", "#6c5840", "#86704e")
+    for _ in range(26):
+        r = 1.5 + rng.rand() * 2.2
+        blob(img, rng.rand() * n, rng.rand() * n, r * 1.2, r, rng.rand() * 3, dome(0.3 + rng.rand() * 0.5), clod, 0.3)
+    # leaf litter first, then a few roots creeping over it (one thick, forking, one thin)
+    for _ in range(44):
+        blob(img, rng.rand() * n, rng.rand() * n, 2.6 + rng.rand() * 1.4, 1.1 + rng.rand() * 0.5, rng.rand() * 3.14, lambda u, v, t=rng.rand(): np.full_like(u, 0.1 + 0.5 * t) + 0.1 * (u - v) * 0.3, LEAF, 0.0)
+    rootp = R("#3a2c1e", "#52402c", "#6a5438", "#86704c")
+
+    def root(x0, y0, x1, y1, w0, w1, wob, seed):
+        rr = np.random.RandomState(seed)
+        steps = int(max(abs(x1 - x0), abs(y1 - y0)) * 1.5) + 2
+        ph = rr.rand() * 6.28
+        for i in range(steps):
+            t = i / (steps - 1)
+            cx = x0 + (x1 - x0) * t + wob * np.sin(t * 9 + ph)
+            cy = y0 + (y1 - y0) * t + wob * 0.8 * np.sin(t * 7 + ph * 2)
+            w = w0 + (w1 - w0) * t
+            for dy in range(-int(w) - 1, int(w) + 2):
+                for dx in range(-int(w) - 1, int(w) + 2):
+                    if dx * dx + dy * dy <= w * w:
+                        sh = np.clip(0.5 - 0.3 * (dx + dy) / max(w, 1) + 0.07 * np.sin(t * 40), 0, 1)
+                        pix(img, cx + dx, cy + dy, rootp[int(round(sh * 3))] * 255 + 0.5)
+
+    root(-6, 34, 70, 58, 4.0, 2.0, 2.2, 106)
+    root(48, 49, 84, 38, 1.6, 0.8, 1.2, 107)
+    root(70, 100, 140, 88, 2.2, 1.0, 1.6, 108)
+    return img
+
+
+def floor_rock() -> np.ndarray:
+    n = 128
+    v = voronoi(n, 4, 111, 0.75)
+    edge = v["f2"] - v["f1"]
+    lit = -(v["dx"] + v["dy"]) / (np.abs(v["dx"]) + np.abs(v["dy"]) + 1.0)
+    X, Y = G(n)
+    tone = v["rnd"][v["id"]]
+    strata = np.sin(2 * np.pi * (X * 0.6 + Y * 0.25) / n * 3 + pn(n, n, 30, 30, 112, 2) * 5 + tone * 6) * 0.07
+    s = 0.34 + 0.34 * tone + strata + (pn(n, n, 14, 14, 113, 3) - 0.5) * 0.3 + (pn(n, n, 4, 4, 114, 2) - 0.5) * 0.12
+    s += 0.1 * ((edge >= 2) & (edge < 5)) * lit
+    img = Q(s, ROCK)
+    ochre = pn(n, n, 22, 22, 115, 2, 2.0) > 0.74
+    put(img, ochre, Q(s - 0.02, ROCKO))
+    cr = (edge < 1.8) | cracks(n, 116, 16, 16, 0.009)
+    put(img, cr, Q(0.15 + (pn(n, n, 4, 4, 117, 2) - 0.5) * 0.5, ROCKJ))
+    put(img, speck(n, 0.05, 118) & ~cr, Q(s - 0.28, ROCK))
+    return img
+
+
+def floor_road() -> np.ndarray:
+    n = 128
+    v = voronoi(n, 5, 121, 0.9)
+    edge = v["f2"] - v["f1"]
+    lit = -(v["dx"] + v["dy"]) / (np.abs(v["dx"]) + np.abs(v["dy"]) + 1.0)
+    tone = v["rnd"][v["id"]]
+    tilt = (v["dx"] * 0.004 + v["dy"] * 0.006)
+    s = 0.3 + 0.4 * tone + tilt + (pn(n, n, 10, 10, 122, 3) - 0.5) * 0.28 + 0.12 * ((edge >= 2.2) & (edge < 4.5)) * lit
+    img = Q(s, ROAD)
+    put(img, speck(n, 0.04, 123), Q(s - 0.3, ROAD))
+    put(img, edge < 2.2, Q(0.3 + (pn(n, n, 3, 3, 124, 2) - 0.5) * 0.8, ROADJ))
+    # wear scratches
+    rng = np.random.RandomState(125)
+    for _ in range(30):
+        x0, y0 = rng.rand() * n, rng.rand() * n
+        a = rng.rand() * 3.14
+        ln = 5 + rng.rand() * 10
+        line(img, x0, y0, x0 + np.cos(a) * ln, y0 + np.sin(a) * ln * 0.5, Q(np.full((1, 1), 0.88), ROAD)[0, 0])
+    return img
+
+
+def floor_straw() -> np.ndarray:
+    n = 64
+    s = 0.35 + (pn(n, n, 14, 14, 131, 3) - 0.5) * 0.4
+    img = Q(s, STRAW)
+    rng = np.random.RandomState(132)
+    for _ in range(240):
+        x0, y0 = rng.rand() * n, rng.rand() * n
+        a = (rng.rand() - 0.5) * 1.3 + (np.pi * 0.5 if rng.rand() < 0.15 else 0.0)
+        ln = 7 + rng.rand() * 8
+        tone = 0.2 + rng.rand() * 0.8
+        x1, y1 = x0 + np.cos(a) * ln, y0 + np.sin(a) * ln
+        line(img, x0, y1 + 1, x1, y1 + 2, STRAW[0] * 255 + 0.5) if False else None
+        line(img, x0, y0 + 1, x1, y1 + 1, STRAW[max(0, int(tone * 4) - 2)] * 255 + 0.5)
+        line(img, x0, y0, x1, y1, STRAW[int(round(tone * 4))] * 255 + 0.5)
+    return img
+
+
+def floor_garden() -> np.ndarray:
+    n = 128
+    s = 0.5 + (pn(n, n, 26, 26, 141, 3) - 0.5) * 0.36 + (pn(n, n, 7, 7, 142, 2) - 0.5) * 0.3
+    img = Q(s, GARDEN)
+    rng = np.random.RandomState(143)
+    for _ in range(360):
+        x0, y0, ln, lean, tone = rng.rand() * n, rng.rand() * n, int(rng.randint(2, 5)), (rng.rand() - 0.5) * 0.6, rng.rand()
+        for t in range(ln):
+            k = t / max(ln - 1, 1)
+            sh = np.clip(tone * 0.5 + 0.2 + 0.4 * k, 0, 1)
+            pix(img, x0 + lean * t, y0 - t, GARDEN[int(round(sh * 4))] * 255 + 0.5)
+    for _ in range(90):  # tiny yellow buds
+        x0, y0 = rng.rand() * n, rng.rand() * n
+        pix(img, x0, y0 + 1, hexu("#3e5a24"))
+        pix(img, x0, y0, hexu("#e6cc4a"))
+    for _ in range(60):  # tiny white daisies: four petals round a gold eye
+        x0, y0 = rng.rand() * n, rng.rand() * n
+        for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+            pix(img, x0 + dx, y0 + dy, hexu("#ece6d2"))
+        pix(img, x0, y0, hexu("#e2b838"))
+        pix(img, x0 + 1, y0 + 2, hexu("#3e5a24"))
+    return img
+
+
+# ---- walls (top-down: v = 0 at the top) ------------------------------------------------------------------------------------------------------------------
+
+def wall_limestone() -> np.ndarray:
+    n = 128
+    X, Y = G(n)
+    extra = -0.17 * np.exp(-Y / 7.0) - 0.07 * (Y / n) ** 2 - 0.16 * smooth(Y, 110, 126)
+    extra -= (pn(n, n, 3, 44, 202, 2, 1.8) - 0.5) * 0.12 * np.clip(Y / n * 1.4, 0, 1)  # rain streaks run down
+    img, c, mort, sh = masonry(n, 8, 201, 34, LIME, LIMEJ, tone=0.12, wjit=0.28, extra=extra, wear=0.6, bevel=0.13)
+    put(img, (Y >= 111) & (Y < 113) & ~mort, Q(sh + 0.1, LIME))
+    return img
+
+
+def wall_mudbrick() -> np.ndarray:
+    n = 128
+    X, Y = G(n)
+    brick, c, mort, bsh = masonry(n, 10, 211, 26, MUDB, MUDJ, tone=0.14, wjit=0.25, joint=1, wear=0.6, bevel=0.1, scale=6)
+    sh = 0.55 + (pn(n, n, 30, 30, 212, 3) - 0.5) * 0.5 + (pn(n, n, 6, 6, 213, 2) - 0.5) * 0.22
+    sh += 0.07 * np.sin(2 * np.pi * (X * 0.02 + Y * 0.11 + pn(n, n, 20, 20, 214, 2) * 2))  # trowel marks
+    sh += -0.17 * np.exp(-Y / 6.0) - 0.1 * smooth(Y, 100, 128)
+    plaster = Q(sh, MUDO)
+    put(plaster, speck(n, 0.04, 215), Q(sh - 0.3, MUDO))
+    flake = pn(n, n, 16, 14, 216, 3, 1.8) > 0.7
+    up = flake & ~np.roll(flake, 1, 0)       # the lip's lit upper edge
+    down = flake & ~np.roll(flake, -1, 0)
+    img = np.where(flake[..., None], brick, plaster)
+    put(img, up, Q(sh + 0.25, MUDO))
+    put(img, np.roll(down, 1, 0) & flake, Q(bsh - 0.2, MUDB))
+    crng = np.random.RandomState(218)
+    for _ in range(3):  # a few long hairline cracks running down the plaster
+        x, y0 = crng.rand() * n, crng.rand() * 60
+        for i in range(int(crng.randint(22, 44))):
+            x += (crng.rand() - 0.5) * 1.6
+            if not flake[int(y0 + i) % n, int(x) % n]:
+                pix(img, x, y0 + i, hexu("#7a5636"))
+    return img
+
+
+def wall_rock() -> np.ndarray:
+    n = 128
+    X, Y = G(n)
+    rng = np.random.RandomState(221)
+    hs = []
+    while sum(hs) < n + 50:
+        hs.append(int(rng.randint(9, 28)))
+    edges = np.cumsum(hs)
+    warp = (pn(n, n, 64, 56, 222, 3) - 0.5) * 22
+    yw = Y + warp
+    band = np.searchsorted(edges, yw, "right")
+    start = np.where(band > 0, edges[np.clip(band - 1, 0, len(edges) - 1)], 0)
+    height = edges[np.clip(band, 0, len(edges) - 1)] - start
+    ly = yw - start
+    bt = rng.rand(len(edges) + 2).astype(np.float32)[band]
+    ochre = (rng.rand(len(edges) + 2) < 0.4)[band]
+    s = 0.5 + (bt - 0.5) * 0.34 + (pn(n, n, 14, 6, 223, 3) - 0.5) * 0.3 + (pn(n, n, 3, 3, 224, 2) - 0.5) * 0.14
+    s += 0.18 * (ly < 2.2) - 0.22 * (ly > height - 3.2) - 0.1 * np.clip((ly - 2) / np.maximum(height, 1), 0, 1)
+    s -= 0.17 * np.exp(-Y / 8.0)
+    img = np.where(ochre[..., None], Q(s, ROCKO), Q(s, ROCK))
+    put(img, speck(n, 0.04, 228), Q(s - 0.3, ROCK))
+    # a few vertical cracks: they start at a ledge and run down through one or two strata, with a lit edge beside them
+    for k in range(7):
+        x0, y0 = rng.rand() * n, rng.rand() * 90
+        ln = int(rng.randint(14, 44))
+        x = x0
+        for i in range(ln):
+            x += (rng.rand() - 0.5) * 1.3
+            col = Q(np.full((1, 1), 0.08 + 0.2 * rng.rand()), ROCKJ)[0, 0]
+            pix(img, x, y0 + i, col)
+            if i % 7 < 4:
+                pix(img, x + 1, y0 + i, Q(np.full((1, 1), 0.85), ROCK)[0, 0])
+    return img
+
+
+def wall_hill() -> np.ndarray:
+    n = 128
+    X, Y = G(n)
+    t = Y / n
+    s = 0.74 - 0.36 * t + (pn(n, n, 36, 16, 231, 3) - 0.5) * 0.26 + (pn(n, n, 6, 6, 236, 2) - 0.5) * 0.12
+    s += 0.05 * np.sin(2 * np.pi * (t * 5 + pn(n, n, 50, 30, 232, 2) * 1.6))  # terraces and folds in the slope
+    s -= 0.3 * smooth(t, 0.84, 1.0)
+    hue = smooth(pn(n, n, 36, 22, 233, 3, 1.6), 0.4, 0.62)
+    b = BAYER[np.arange(n)[:, None] % 8, np.arange(n)[None, :] % 8]
+    img = np.where((hue > b + 0.5)[..., None], Q(s, HILLC), Q(s, HILLO))
+    # pale rock outcrops in long strata on the upper slope
+    out = (pn(n, n, 30, 5, 237, 3, 1.8) > 0.72) & (t < 0.6)
+    put(img, out, Q(s + 0.22, HILLC))
+    rng = np.random.RandomState(234)
+    for _ in range(420):  # scrub dots, denser lower down
+        x0, y0 = rng.rand() * n, (rng.rand() ** 0.8) * n
+        if rng.rand() < 0.1 + 0.9 * (y0 / n):
+            col = hexu("#555530") if rng.rand() < 0.6 else hexu("#706c38")
+            pix(img, x0, y0, col)
+            if rng.rand() < 0.5:
+                pix(img, x0 + 1, y0, col)
+    return img
+
+
+def wall_reeds() -> np.ndarray:
+    n = 64
+    X, Y = G(n)
+    s = 0.3 + (pn(n, n, 6, 40, 241, 3) - 0.5) * 0.4 - 0.25 * smooth(Y / n, 0.85, 1.0)
+    img = Q(s, REEDS)
+    rng = np.random.RandomState(242)
+    for layer, (count, lo, hi) in enumerate(((46, 0.0, 0.55), (46, 0.25, 0.8), (40, 0.5, 1.0))):
+        for _ in range(count):
+            x0 = rng.rand() * n
+            wdt = int(rng.randint(1, 3))
+            lean = (rng.rand() - 0.5) * 0.09
+            ph = rng.rand() * 6.28
+            gold = lo + rng.rand() * (hi - lo)
+            top = int(rng.randint(0, 12))
+            for y in range(top, n):
+                xx = x0 + lean * y + 1.1 * np.sin(y * 0.05 + ph)
+                k = y / n
+                # green at the root, gold up the reed, a pale tip
+                sh = np.clip(0.15 + 0.35 * (1 - k) + 0.15 * gold + (0.15 if y < top + 5 else 0), 0, 1)
+                pal = REEDG if gold < 0.45 else REEDS
+                col = pal[int(round(sh * (len(pal) - 1)))] * 255 + 0.5
+                for d in range(wdt):
+                    pix(img, xx + d, y, col * (0.82 if d == wdt - 1 and wdt > 1 else 1.0))
+    # feathery seed heads at the top of some reeds
+    for _ in range(26):
+        x0, y0 = rng.rand() * n, rng.rand() * 9
+        for k in range(5):
+            pix(img, x0 + (k % 2), y0 + k, REEDS[4] * 255 + 0.5)
+    return img
+
+
+def wall_city() -> np.ndarray:
+    n = 128
+    X, Y = G(n)
+    rows = [17, 5, 13, 13, 14, 13, 13, 14, 13, 13]
+    extra = -0.24 * np.exp(-np.clip(Y - 22, 0, None) / 6.0) * (Y >= 22) - 0.34 * smooth(Y, 48, 128) ** 1.1 + 0.1 * (Y < 3)
+    img, c, mort, sh = masonry(n, rows, 251, 40, LIME, LIMEJ, tone=0.11, wjit=0.28, joint=1, wear=0.5, extra=extra, bevel=0.12, scale=12)
+    mx = X % 32
+    merlon = (mx >= 6) & (mx < 26)
+    gap = (Y < 17) & ~merlon
+    skyc = R("#6a94b8", "#7fa4c2", "#94b4cc")
+    put(img, gap, Q(0.9 - Y / 17.0 * 0.7, skyc))
+    # shade the merlons' sides and the crenel's inner faces
+    put(img, (Y < 17) & merlon & ((mx == 25) | (mx == 24)), Q(sh - 0.2, LIME))
+    put(img, (Y < 17) & merlon & ((mx == 6) | (mx == 7)), Q(sh + 0.12, LIME))
+    put(img, (Y >= 17) & (Y < 19) & ~mort, Q(sh + 0.1, LIME))  # the lit lip of the ledge the merlons stand on
+    put(img, (Y == 21) & ~mort, Q(np.full((n, n), 0.15), LIME))
+    return img
+
+
+def wall_door() -> np.ndarray:
+    n = 128
+    X, Y = G(n)
+    extra = -0.17 * np.exp(-Y / 7.0) - 0.07 * (Y / n) ** 2 - 0.14 * smooth(Y, 112, 127)
+    img, c, mort, sh = masonry(n, 10, 261, 30, LIME, LIMEJ, tone=0.12, wjit=0.28, extra=extra, wear=0.6, bevel=0.12)
+    x0, x1, ytop = 46, 82, 42
+    # jamb stones either side, a heavy lintel with a drip shadow under it
+    for k, yy in enumerate(range(ytop - 2, n, 11)):
+        for xa in (x0 - 5, x1):
+            ln = 5 if (k % 2 == 0) else 7
+            blk = (X >= xa) & (X < xa + ln) & (Y >= yy) & (Y < yy + 10)
+            put(img, blk, Q(sh * 0 + 0.55 + 0.1 * (k % 2) - 0.1 * (X >= xa + ln - 1), LIME))
+            put(img, blk & ((Y == yy) | (X == xa)), Q(np.full((n, n), 0.18), LIMEJ))
+    lint = (X >= x0 - 9) & (X < x1 + 9) & (Y >= ytop - 10) & (Y < ytop - 1)
+    put(img, lint, Q(0.62 + (pn(n, n, 6, 6, 262, 2) - 0.5) * 0.2 - 0.1 * (Y > ytop - 4), LIME))
+    put(img, lint & ((Y == ytop - 10) | (X == x0 - 9) | (X == x1 + 8)), Q(np.full((n, n), 0.12), LIMEJ))
+    put(img, (X >= x0 - 9) & (X < x1 + 9) & (Y == ytop - 1), Q(np.full((n, n), 0.06), LIMEJ))
+    # the door leaf: vertical planks with grain, two iron straps, a ring pull
+    door = (X >= x0) & (X < x1) & (Y >= ytop)
+    pw = (X - x0) % 9
+    plk = (X - x0) // 9
+    tn = np.random.RandomState(263).rand(8).astype(np.float32)[np.clip(plk, 0, 7).astype(int)]
+    s = 0.45 + (tn - 0.5) * 0.3 + (pn(n, n, 2.5, 30, 264, 3, 1.6) - 0.5) * 0.35 + 0.12 * (pw == 1) - 0.14 * (pw >= 8)
+    s -= 0.25 * np.exp(-np.clip(Y - ytop, 0, None) / 4.0) * 0.8
+    put(img, door, Q(s, DOOR))
+    put(img, door & (pw == 0), Q(np.full((n, n), 0.0), DOOR))
+    put(img, door & (Y < ytop + 3), Q(np.full((n, n), 0.0), DOOR))
+    for sy in (ytop + 14, ytop + 60):
+        strap = door & (Y >= sy) & (Y < sy + 5)
+        put(img, strap, Q(0.35 + 0.2 * (Y == sy), R("#2c2a2a", "#3e3a38", "#58524c", "#76706a")))
+        for rx in range(int(x0) + 4, int(x1) - 2, 9):
+            put(img, (X == rx) & (Y == sy + 2), hexu("#8a8478"))
+    put(img, (X >= x1 - 9) & (X < x1 - 5) & (Y >= ytop + 42) & (Y < ytop + 46), hexu("#2e2a28"))
+    put(img, (X >= x1 - 8) & (X < x1 - 6) & (Y >= ytop + 43) & (Y < ytop + 45), hexu("#8a8478"))
+    put(img, (Y >= 124) & (X >= x0 - 7) & (X < x1 + 7), Q(0.7 - 0.2 * (Y > 125), LIME))  # worn threshold step
+    return img
+
+
+def wall_arch() -> np.ndarray:
+    n = 128
+    X, Y = G(n)
+    extra = -0.17 * np.exp(-Y / 7.0) - 0.08 * (Y / n) ** 2 - 0.12 * smooth(Y, 112, 127)
+    img, c, mort, sh = masonry(n, 8, 271, 30, LIME, LIMEJ, tone=0.12, wjit=0.28, extra=extra, wear=0.55, bevel=0.12)
+    cx, spring, r0 = 64.0, 62.0, 40.0
+    r = np.hypot(X - cx, Y - spring)
+    d = np.where(Y >= spring, np.minimum(X - 24, 104 - X), r0 - r)
+    d = np.where((Y >= spring) & ((X < 24) | (X >= 104)), -1, d)
+    # voussoirs round the arch and a keystone
+    a = np.arctan2(spring - Y, X - cx)
+    vs = (Y < spring) & (r >= r0) & (r < r0 + 9)
+    k = np.floor(a / (np.pi / 13)).astype(int)
+    kf = (a / (np.pi / 13)) % 1.0
+    vt = np.random.RandomState(272).rand(16).astype(np.float32)[np.clip(k, 0, 15)]
+    put(img, vs, Q(0.52 + (vt - 0.5) * 0.25 + 0.1 * (r < r0 + 2) - 0.08 * (r > r0 + 7), LIME))
+    put(img, vs & ((kf < 0.09) | (r < r0 + 0.6)), Q(np.full((n, n), 0.18), LIMEJ))
+    key = (np.abs(a - np.pi / 2) < np.pi / 24) & (r >= r0 - 1) & (r < r0 + 14) & (Y < spring)
+    put(img, key, Q(0.72 + (pn(n, n, 5, 5, 273, 2) - 0.5) * 0.15, LIME))
+    put(img, key & ((np.abs(a - np.pi / 2) > np.pi / 24 - 0.04) | (r > r0 + 13)), Q(np.full((n, n), 0.15), LIMEJ))
+    # the pier bases
+    # the opening: a stone reveal, then deep blue-brown shadow, floor light creeping in at the foot
+    op = d >= 0
+    rev = op & (d < 5)
+    put(img, rev, Q(0.5 - 0.09 * d + (X < cx) * 0.06 - 0.18 * (Y < spring - 8) * (1 - d / 5) * 0.0, LIMEJ.copy() if False else LIME))
+    deep = op & (d >= 5)
+    ds = 0.5 - 0.3 * np.clip((d - 5) / 26, 0, 1) + (pn(n, n, 10, 10, 274, 2) - 0.5) * 0.12 + 0.32 * smooth(Y, 96, 128) * (1 - 0.4 * np.clip((d - 5) / 26, 0, 1))
+    put(img, deep, Q(ds, DEEP))
+    put(img, op & (d < 7) & (d >= 5), Q(np.full((n, n), 0.2), DEEP))
+    return img
+
+
+def wall_timber() -> np.ndarray:
+    n = 64
+    X, Y = G(n)
+    widths = [9, 8, 9, 7, 8, 9, 7, 7]
+    edges = np.concatenate([[0], np.cumsum(widths)])
+    b = np.searchsorted(edges, X, "right") - 1
+    lx = X - edges[b]
+    tn = np.random.RandomState(281).rand(len(widths)).astype(np.float32)[b]
+    s = 0.46 + (tn - 0.5) * 0.35 + (pn(n, n, 2.6, 40, 282, 3, 1.7) - 0.5) * 0.35 + (pn(n, n, 12, 12, 283, 2) - 0.5) * 0.14
+    s += 0.1 * (lx == 1) - 0.1 * (lx >= widths[0] - 2) * 0
+    s -= 0.17 * np.exp(-Y / 5.0)
+    img = Q(s, WOOD)
+    put(img, lx == 0, Q(0.28 + (pn(n, n, 3, 6, 284, 2) - 0.5) * 0.3, WOODJ))
+    for ry in (10, 44):  # two battens across, nailed
+        rail = (Y >= ry) & (Y < ry + 7)
+        rs = 0.62 + (pn(n, n, 22, 2.4, 285 + ry, 3, 1.5) - 0.5) * 0.3 + 0.1 * (Y == ry) - 0.15 * (Y == ry + 6)
+        put(img, rail, Q(rs, WOOD))
+        put(img, rail & ((Y == ry + 6) | (Y == ry)), Q(rs - 0.25, WOOD))
+        for nx in (4, 17, 30, 43, 56):
+            put(img, (X == nx) & (Y == ry + 3), hexu("#3a3024"))
+            put(img, (X == nx + 1) & (Y == ry + 3), hexu("#b8a888"))
+    for kx, ky in ((20, 28), (50, 56)):  # knots
+        for rr, col in ((3.0, "#5c4a36"), (2.0, "#403224"), (0.9, "#2e241a")):
+            blob(img, kx, ky, rr * 0.8, rr * 1.3, 0, lambda u, v: np.full_like(u, 0.5), px.ramp(col, col))
+    return img
+
+
+def wall_olive() -> np.ndarray:
+    n = 128
+    X, Y = G(n)
+    s = 0.5 + (pn(n, n, 12, 12, 291, 4, 1.4) - 0.5) * 0.5 - 0.05 * (Y / n)
+    img = Q(s, OLIVE)
+    rng = np.random.RandomState(292)
+    for _ in range(1900):  # narrow silver-green leaves: short strokes, lit where the foliage mass is lit
+        x0, y0 = rng.rand() * n, rng.rand() * n * 0.94
+        a = rng.rand() * 6.28
+        ln = 2.5 + rng.rand() * 2.5
+        loc = s[int(y0) % n, int(x0) % n]
+        k = int(round(np.clip(loc + (rng.rand() - 0.4) * 0.8, 0, 1) * 4))
+        line(img, x0, y0, x0 + np.cos(a) * ln, y0 + np.sin(a) * ln * 0.6, OLIVE[k] * 255 + 0.5)
+    gaps = (pn(n, n, 7, 7, 293, 3, 2.2) > 0.86)
+    put(img, gaps, Q(np.full((n, n), 0.0) + (pn(n, n, 3, 3, 294, 2) - 0.5) * 0.3, OLIVE))
+    # the grove floor shadow and the gnarled trunks showing underneath the foliage
+    sh_b = smooth(Y, 74, 104)
+    base = Q(0.06 + (pn(n, n, 6, 6, 295, 2) - 0.5) * 0.3 + 0.1 * smooth(Y, 120, 128), OLIVE)
+    dap = speck(n, 0.03, 296) | (pn(n, n, 8, 8, 297, 2, 2.0) > 0.78)
+    put(base, dap, Q(np.full((n, n), 0.5), OLIVE))
+    img = np.where(((Y > 74) & (rng.rand(n, n) < sh_b))[..., None], base, img)
+    for tx, tw in ((20, 9), (66, 11), (104, 8)):
+        ty0 = 70 + rng.randint(0, 8)
+        for y in range(ty0, n):
+            k = (y - ty0) / (n - ty0)
+            cx = tx + 4 * np.sin(y * 0.09 + tx) + 2.5 * np.sin(y * 0.23)
+            w = tw * (0.7 + 0.5 * k) + 1.5 * np.sin(y * 0.3)
+            for xx in range(int(cx - w / 2), int(cx + w / 2) + 1):
+                u = (xx - cx) / (w / 2 + 1e-3)
+                sh = np.clip(0.5 - 0.35 * u - 0.12 * abs(u) + 0.12 * np.sin(xx * 1.7 + y * 0.1), 0, 1)
+                pix(img, xx, y, BARK[int(round(sh * 3))] * 255 + 0.5)
+    return img
+
+
+def wall_stable() -> np.ndarray:
+    n = 64
+    X, Y = G(n)
+    s = 0.5 + (pn(n, n, 16, 16, 301, 3) - 0.5) * 0.5 + (pn(n, n, 4, 4, 302, 2) - 0.5) * 0.24
+    daub = R("#8a6e4c", "#9c805a", "#ae926a", "#c0a47a", "#d0b88c")
+    img = Q(s, daub)
+    put(img, cracks(n, 303, 10, 10, 0.007), hexu("#7a6046"))
+    rng = np.random.RandomState(304)
+    for _ in range(60):  # straw chopped into the daub
+        x0, y0 = rng.rand() * n, 14 + rng.rand() * 50
+        a = rng.rand() * 3.14
+        line(img, x0, y0, x0 + np.cos(a) * 3, y0 + np.sin(a) * 1.5, STRAW[int(1 + rng.rand() * 3)] * 255 + 0.5)
+    # timber frame: two posts, a mid rail and a sill
+    for x0 in (0, 32):
+        post = ((X - x0) % n < 6)
+        ps = 0.45 + (pn(n, n, 2.5, 30, 305 + x0, 3, 1.6) - 0.5) * 0.4 + 0.15 * (((X - x0) % n) == 1) - 0.18 * (((X - x0) % n) == 5)
+        put(img, post & (Y > 10), Q(ps, WOOD))
+    for ry in (34, 56):
+        rail = (Y >= ry) & (Y < ry + 6 + (2 if ry > 50 else 0))
+        rs = 0.55 + (pn(n, n, 20, 2.4, 307 + ry, 3, 1.5) - 0.5) * 0.35 + 0.15 * (Y == ry) - 0.15 * (Y >= ry + 5)
+        put(img, rail, Q(rs, WOOD))
+    put(img, (Y >= 12) & (Y < 16), Q(0.12 + (pn(n, n, 4, 4, 308, 2) - 0.5) * 0.3, daub))  # shadow under the thatch
+    # the thatch edge: straw hanging in ragged strands, jagged along its lower edge
+    edge = 10 + 3 * pn(n, 1, 3, 1, 309, 2)[0] * 3 + (np.random.RandomState(310).rand(n) * 3)
+    th = Y < edge[X.astype(int)]
+    ts = 0.5 + (pn(n, n, 1.6, 12, 311, 3, 1.8) - 0.5) * 0.6 + 0.1 * (1 - Y / 12.0)
+    put(img, th, Q(ts, STRAW))
+    put(img, th & (Y >= edge[X.astype(int)] - 1.5), Q(ts - 0.25, STRAW))
+    return img
+
+
+def _column(n, img, cx, hw, y0, y1, sh_mod=None):
+    X, Y = G(n)
+    u = np.clip((X - cx) / hw, -1, 1)
+    th = np.arcsin(u)
+    lamb = np.clip(np.cos(th + 0.65), 0, 1)
+    t = (th / 0.5236) % 1.0
+    groove = 1 - np.abs(2 * t - 1)  # 0 at the arris, 1 at the flute's centre
+    s = 0.28 + 0.62 * lamb - 0.14 * groove ** 1.3 * (0.5 + 0.5 * np.abs(u) ** 0.2) + 0.05 * np.sin(2 * np.pi * t)
+    s += (pn(n, n, 3, 40, int(cx) + 7, 2) - 0.5) * 0.1
+    m = (np.abs(X - cx) <= hw) & (Y >= y0) & (Y < y1)
+    put(img, m, Q(s, LIME))
+    return m
+
+
+def wall_columns() -> np.ndarray:
+    n = 128
+    X, Y = G(n)
+    ds = 0.42 + (pn(n, n, 12, 18, 321, 2) - 0.5) * 0.14 - 0.14 * (Y / n) + 0.0
+    img = Q(ds, DEEP)
+    # faint courses of the back wall far behind
+    put(img, ((Y % 22) < 1) & (Y > 30), Q(np.full((n, n), 0.08), DEEP))
+    put(img, (Y >= 118), Q(0.55 + 0.25 * (Y == 118), DEEP))
+    # entablature across the top: a pale architrave in two fasciae, shadow under it
+    put(img, Y < 7, Q(0.58 + 0.12 * (Y < 2) + (pn(n, n, 8, 8, 322, 2) - 0.5) * 0.15 - 0.06 * (Y >= 5), LIME))
+    put(img, (Y >= 7) & (Y < 11), Q(0.38 - 0.07 * (Y - 7) + (pn(n, n, 8, 8, 323, 2) - 0.5) * 0.1, DEEP))
+    put(img, (Y == 6), hexu("#8c7e66"))
+    for cx in (32.0, 96.0):
+        _column(n, img, cx, 10.5, 17, 108)
+        # capital: neck ring, a curved echinus, a square abacus; base: a torus on a plinth
+        cap = [(14, 17, 11.5, 0.30), (11, 14, 14.0, 0.55), (7, 11, 16.5, 0.68)]
+        for ya, yb, hw, tone in cap:
+            m = (np.abs(X - cx) <= hw) & (Y >= ya) & (Y < yb)
+            put(img, m, Q(tone + 0.2 * (np.abs(X - cx) < hw * 0.5) * 0.4 - 0.12 * (X > cx + hw * 0.6) + (pn(n, n, 6, 6, 330, 2) - 0.5) * 0.1, LIME))
+            put(img, m & (Y == ya), Q(np.full((n, n), 0.12) + 0.0, LIME))
+        put(img, (np.abs(X - cx) <= 16.5) & (Y == 10), Q(np.full((n, n), 0.15), LIME))
+        for ya, yb, hw, tone in ((108, 112, 12.5, 0.55), (112, 116, 14.5, 0.62), (116, 120, 15.5, 0.52)):
+            m = (np.abs(X - cx) <= hw) & (Y >= ya) & (Y < yb)
+            put(img, m, Q(tone - 0.14 * (X > cx + hw * 0.6) + 0.1 * (Y == ya) + (pn(n, n, 6, 6, 331, 2) - 0.5) * 0.1, LIME))
+        put(img, (np.abs(X - cx) <= 12) & (Y >= 17) & (Y < 21), Q(np.full((n, n), 0.12), LIME))
+        # a soft cast shadow of the column on the back wall
+        sx = (X > cx + 11) & (X < cx + 17) & (Y > 11) & (Y < 118)
+        put(img, sx, Q(0.12 + 0.0 * Y, DEEP))
+    put(img, (Y >= 120), Q(0.6 + 0.12 * (Y == 120) - 0.05 * (Y >= 126) + (pn(n, n, 10, 3, 332, 2) - 0.5) * 0.12, LIME))
+    put(img, (Y == 125), Q(np.full((n, n), 0.2), LIMEJ))
+    return img
+
+
+def wall_praetorium() -> np.ndarray:
+    n = 128
+    X, Y = G(n)
+    sh = 0.58 + (pn(n, n, 30, 30, 341, 3) - 0.5) * 0.35 + (pn(n, n, 6, 6, 342, 2) - 0.5) * 0.16
+    sh += -0.17 * np.exp(-Y / 7.0) - 0.07 * smooth(Y, 84, 104)
+    img = Q(sh, PLASTER)
+    put(img, speck(n, 0.025, 343), Q(sh - 0.3, PLASTER))
+    put(img, cracks(n, 344, 6, 46, 0.006) & (Y < 100) & (pn(n, n, 30, 30, 349, 2) > 0.52), Q(sh - 0.3, PLASTER))
+    # the deep red band across the upper third, with pale fillets and a darker hairline
+    band = (Y >= 34) & (Y < 54)
+    bs = 0.52 + (pn(n, n, 16, 16, 345, 3) - 0.5) * 0.45 + (pn(n, n, 4, 4, 346, 2) - 0.5) * 0.18 - 0.12 * (Y >= 50) + 0.1 * (Y < 38)
+    put(img, band, Q(bs, RED))
+    put(img, (Y >= 31) & (Y < 33), Q(np.full((n, n), 0.85), PLASTER))
+    put(img, (Y >= 56) & (Y < 58), Q(np.full((n, n), 0.8), PLASTER))
+    put(img, (Y == 33) | (Y == 55), Q(np.full((n, n), 0.15), RED))
+    put(img, band & speck(n, 0.01, 347), "#b8806a")
+    # a stone base: two courses of dressed ashlar under a projecting lip
+    base_rows = [11, 12]
+    ashlar, c, mort, bsh = masonry(n, [104] + base_rows + [1], 348, 38, LIME, LIMEJ, tone=0.12, wjit=0.3, extra=-0.1, bevel=0.12)
+    put(img, Y >= 106, ashlar)
+    put(img, (Y >= 103) & (Y < 106), Q(0.62 - 0.12 * (Y - 103) / 2.0, LIME))
+    put(img, Y == 103, Q(np.full((n, n), 0.78), LIME))
+    return img
+
+
+def wall_cloth() -> np.ndarray:
+    n = 64
+    X, Y = G(n)
+    pat = [(14, 0), (6, 1), (4, 0), (8, 1)] * 2
+    stripe = np.zeros(n, int)
+    x = 0
+    for w, k in pat:
+        stripe[x:x + w] = k
+        x += w
+    st = stripe[X.astype(int)]
+    drape = 0.12 * np.sin(2 * np.pi * (X / n * 2 + 0.07 * pn(n, n, 30, 30, 351, 2) * 3 + 0.0)) + (pn(n, n, 40, 30, 352, 2) - 0.5) * 0.14
+    drape += 0.04 * np.sin(2 * np.pi * (Y / n * 3 + X / n * 1)) - 0.08 * (Y / n)
+    weave = 0.05 * (((X + Y) % 2) - 0.5) + 0.03 * (((X // 2 + Y // 2) % 2) - 0.5)
+    wool = Q(0.5 + drape + weave, CLOTHW)
+    brown = Q(0.5 + drape * 1.2 + weave, CLOTHB)
+    img = np.where((st == 1)[..., None], brown, wool)
+    put(img, speck(n, 0.03, 353) & (st == 0), Q(np.full((n, n), 0.1), CLOTHW))
+    put(img, (Y < 3), Q(0.4 + 0.15 * (Y == 0) * 0 - 0.1 * (Y == 2) + weave, CLOTHB))  # the top seam
+    put(img, (Y >= 58) & (Y < 61), Q(0.55 + weave - 0.12 * (Y == 58), CLOTHB))  # the hem, with a row of stitches
+    put(img, (Y == 59) & (X % 3 < 2), Q(np.full((n, n), 0.9), CLOTHW))
+    put(img, (Y >= 61), Q(0.3 + weave, CLOTHB))
+    return img
+
+
+def wall_cypress() -> np.ndarray:
+    n = 64
+    X, Y = G(n)
+    s = 0.5 + (pn(n, n, 5, 36, 361, 3, 1.2) - 0.5) * 0.45 + (pn(n, n, 16, 16, 362, 2) - 0.5) * 0.18
+    s += 0.1 * np.exp(-((Y - 16) / 24.0) ** 2) - 0.06 * (Y / n)
+    img = Q(s, CYP)
+    rng = np.random.RandomState(363)
+    for _ in range(200):  # upswept foliage sprays: dark crown, paler tip, lit where the flame-shaped clump is lit
+        x0, y0 = rng.rand() * n, rng.rand() * n
+        ln = int(rng.randint(5, 11))
+        lean = (rng.rand() - 0.5) * 0.3
+        loc = s[int(y0) % n, int(x0) % n]
+        for t in range(ln):
+            k = t / ln
+            sh = np.clip(loc - 0.2 + 0.28 * k, 0, 1)
+            pix(img, x0 + lean * t, y0 - t, CYP[int(round(sh * 4))] * 255 + 0.5)
+    put(img, speck(n, 0.02, 364), Q(np.full((n, n), 0.0), CYP))
+    # the foot of the hedge is in deep shade
+    put(img, Y > 56, Q(0.1 + (pn(n, n, 4, 4, 365, 2) - 0.5) * 0.3 + 0.2 * speck(n, 0.1, 366), CYP))
+    return img
+
+
+# ---- ceilings, trim -------------------------------------------------------------------------------------------------------------------------------------
+
+def ceil_beams() -> np.ndarray:
+    n = 64
+    X, Y = G(n)
+    # reed/thatch laid across the rafters: long horizontal strokes in browns and golds
+    rs = 0.5 + (pn(n, n, 22, 2.2, 371, 3, 1.7) - 0.5) * 0.6 + (pn(n, n, 10, 10, 372, 2) - 0.5) * 0.2
+    img = Q(rs, STRAW)
+    put(img, speck(n, 0.06, 373), Q(rs - 0.4, STRAW))
+    img = (img.astype(np.float32) * 0.82).astype(np.uint8)
+    bx = X % 32
+    beam = (bx >= 10) & (bx < 24)
+    bs = 0.5 + (pn(n, n, 3, 34, 374, 3, 1.6) - 0.5) * 0.4 + 0.15 * (bx < 12) - 0.2 * (bx >= 21)
+    put(img, beam, Q(bs, R("#3e2e20", "#50402e", "#64523c", "#7a6650", "#8e7a62")))
+    put(img, beam & ((bx == 10) | (bx == 23)), hexu("#2c2016"))
+    put(img, ((bx >= 24) & (bx < 27)), (img.astype(np.float32) * 0.78).astype(np.uint8))  # shadow the beam throws on the thatch
+    return img
+
+
+def ceil_awning() -> np.ndarray:
+    n = 64
+    X, Y = G(n)
+    st = ((X // 16) % 2).astype(int)
+    sag = 0.5 + 0.18 * np.cos(2 * np.pi * Y / 32.0 * 1) + 0.07 * np.sin(2 * np.pi * (X / n * 2 + pn(n, n, 32, 32, 381, 2) * 0.6))
+    weave = 0.05 * (((X + Y) % 2) - 0.5)
+    cream = Q(sag + weave + (pn(n, n, 10, 10, 382, 2) - 0.5) * 0.12, CLOTHW)
+    red = Q(sag + weave + (pn(n, n, 10, 10, 383, 2) - 0.5) * 0.12, R("#7a3a2a", "#90472f", "#a65a3a", "#b9704a"))
+    img = np.where((st == 1)[..., None], red, cream)
+    put(img, (Y % 32) < 2, Q(0.3 + 0.2 * (Y % 32 == 1), CLOTHB))  # seams between cloth widths
+    put(img, ((X % 16) == 0) & (st == 0), Q(np.full((n, n), 0.15), CLOTHW))
+    return img
+
+
+def trim() -> np.ndarray:
+    n = 64
+    X, Y = G(n)
+    c = courses(n, [14, 50], 391, 32, 0.0, 0.0, stagger=False)
+    s = 0.5 + (c["tone"] - 0.5) * 0.2 + (pn(n, n, 8, 8, 392, 3) - 0.5) * 0.34
+    s += 0.14 * (Y < 3) - 0.16 * ((Y >= 11) & (Y < 14)) * 1.0 - 0.1 * (Y > 58)
+    img = Q(s, FLAG)
+    put(img, (Y >= 14) & (Y < 15), Q(np.full((n, n), 0.1) + (pn(n, n, 4, 4, 393, 2) - 0.5) * 0.4, FLAGJ))  # the nosing's lower edge
+    put(img, (X % 32 < 1) & (Y >= 15), Q(np.full((n, n), 0.2) + (pn(n, n, 4, 4, 394, 2) - 0.5) * 0.3, FLAGJ))
+    put(img, speck(n, 0.03, 395), Q(s - 0.3, FLAG))
+    return img
+
+
+# ---- skies -----------------------------------------------------------------------------------------------------------------------------------------------
+
+SW, SH, HORIZON = 256, 64, 44
+
+
+def _gradient(stops):
+    ys = np.arange(SH)
+    rows = np.zeros((SH, 3), np.float32)
+    for k in range(3):
+        rows[:, k] = np.interp(ys, [s[0] for s in stops], [px.hexc(s[1])[k] for s in stops])
+    return np.repeat(rows[:, None, :], SW, axis=1)
+
+
+def _ridge(seed: int, base: float, amp: float, bumps) -> np.ndarray:
+    rng = np.random.RandomState(seed)
+    x = np.arange(SW, dtype=np.float32)
+    top = np.full(SW, base, np.float32)
+    for fr in (2, 3, 5, 8, 13):
+        top += amp / fr ** 0.8 * np.sin(2 * np.pi * fr * x / SW + rng.rand() * 6.28)
+    for cx, hgt, wd in bumps:
+        d = wrapd(x, cx, SW)
+        top -= hgt * np.exp(-(d / wd) ** 2)
+    return top
+
+
+def _hills(rgb, far, mid, haze):
+    """Two layers of hills along the horizon, the same shape in every sky; far = (top colour), mid = (top colour); haze = the horizon colour they fade to."""
+    X, Y = G(SW, SH)
+    layers = [
+        (_ridge(401, 43.2, 1.0, [(38, 8.0, 20), (112, 4.0, 15), (176, 9.0, 26), (232, 5.0, 12)]), far, 0.5),
+        (_ridge(402, 46.4, 0.8, [(74, 4.5, 14), (150, 5.5, 18), (210, 4.0, 12), (12, 3.5, 10)]), mid, 0.0),
+    ]
+    for top, col, hz in layers:
+        t = np.clip((Y - top[X.astype(int)]) / 11.0, 0, 1)
+        c0, c1 = px.hexc(col), px.hexc(col) * (1 - hz) + px.hexc(haze) * hz
+        c = c0[None, None, :] * (1 - t[..., None]) + c1[None, None, :] * t[..., None]
+        m = Y > top[X.astype(int)]
+        rgb = np.where(m[..., None], c, rgb)
+    return rgb
+
+
+def _finish(rgb, levels: int = 22) -> np.ndarray:
+    b = BAYER[np.arange(SH)[:, None] % 8, np.arange(SW)[None, :] % 8][..., None]
+    v = np.clip(rgb, 0.04, 0.93) * (levels - 1) + b
+    return (np.clip(np.round(v), 0, levels - 1) / (levels - 1) * 255 + 0.5).astype(np.uint8)
+
+
+def _glow(rgb, cx, cy, rx, ry, col, k):
+    X, Y = G(SW, SH)
+    d = np.sqrt((wrapd(X, cx, SW) / rx) ** 2 + ((Y - cy) / ry) ** 2)
+    return rgb + px.hexc(col)[None, None, :] * (np.clip(1 - d, 0, 1) ** 2 * k)[..., None]
+
+
+def _clouds(rgb, col, seed, rows=(6, 34), thresh=0.55, k=0.85, sx=70, sy=7, shade=None):
+    X, Y = G(SW, SH)
+    v = pn(SW, SH, sx, sy, seed, 4)
+    cl = np.clip((v - thresh) * 6, 0, 1) * smooth(Y, rows[0], rows[0] + 6) * (1 - smooth(Y, rows[1] - 6, rows[1]))
+    c = px.hexc(col)[None, None, :]
+    if shade is not None:
+        under = np.clip(cl - np.roll(cl, -2, 0), 0, 1)
+        c = c * (1 - 0.5 * under[..., None]) + px.hexc(shade)[None, None, :] * 0.5 * under[..., None]
+    return rgb * (1 - cl[..., None] * k) + c * cl[..., None] * k
+
+
+def sky_day() -> np.ndarray:
+    rgb = _gradient([(0, "#2e62b0"), (18, "#4a84c8"), (34, "#8cc0de"), (44, "#c4e0e8")])
+    rgb = _clouds(rgb, "#e6eef0", 411, (8, 36), 0.57, 0.9, 80, 6, "#b4c8d8")
+    rgb = _clouds(rgb, "#e0eaee", 412, (2, 20), 0.6, 0.6, 50, 5)
+    rgb = _hills(rgb, "#7c92b0", "#6a809e", "#c4e0e8")
+    return _finish(rgb)
+
+
+def sky_dawn() -> np.ndarray:
+    rgb = _gradient([(0, "#26346c"), (14, "#4a4a8e"), (28, "#c0708a"), (38, "#f0a47a"), (44, "#f6d68e")])
+    rgb = _glow(rgb, 64, 44, 78, 28, "#ffc47a", 0.75)
+    rgb = _glow(rgb, 64, 44, 26, 10, "#ffe6a8", 0.5)
+    rgb = _clouds(rgb, "#f0a8a0", 421, (14, 38), 0.6, 0.6, 70, 5, "#8a5a88")
+    rgb = _hills(rgb, "#7a68a0", "#5a4a80", "#f0b890")
+    return _finish(rgb)
+
+
+def sky_dusk() -> np.ndarray:
+    rgb = _gradient([(0, "#2c2252"), (14, "#54366e"), (28, "#a8466e"), (38, "#e4703c"), (44, "#f4a04a")])
+    rgb = _glow(rgb, 190, 44, 80, 26, "#ffb060", 0.6)
+    rgb = _clouds(rgb, "#d8708a", 431, (12, 38), 0.58, 0.7, 76, 5, "#5a3468")
+    rgb = _hills(rgb, "#4a2e56", "#34223e", "#d8683c")
+    return _finish(rgb)
+
+
+def sky_night() -> np.ndarray:
+    rgb = _gradient([(0, "#0c1234"), (20, "#16204e"), (36, "#26356a"), (44, "#3a4a80")])
+    X, Y = G(SW, SH)
+    yc = 20 + 6 * np.sin(2 * np.pi * X / SW + 1.0) + 2 * np.sin(2 * np.pi * 2 * X / SW)
+    band = np.exp(-(((Y - yc) / 9.0) ** 2)) * (0.45 + pn(SW, SH, 40, 12, 441, 3) * 0.9)
+    rgb = rgb + px.hexc("#6a7cb8")[None, None, :] * (band * 0.4)[..., None]
+    rng = np.random.RandomState(442)
+    for i in range(210):
+        sx, sy = rng.randint(0, SW), int(rng.rand() ** 1.3 * 40)
+        dens = 1.0
+        if (i % 9) == 0:
+            for dx, dy in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)):
+                rgb[sy + dy, (sx + dx) % SW] = px.hexc("#ecf0ff") if (dx == 0 and dy == 0) else px.hexc("#7a8abe")
+        else:
+            rgb[sy, sx] = px.hexc("#c4cef0") if i % 3 == 0 else px.hexc("#8494c8")
+    for _ in range(160):  # fine stars thickest inside the pale band
+        sx = rng.randint(0, SW)
+        sy = int(20 + 6 * np.sin(2 * np.pi * sx / SW + 1.0) + 2 * np.sin(2 * np.pi * 2 * sx / SW) + rng.randn() * 5)
+        if 0 <= sy < 38:
+            rgb[sy, sx] = px.hexc("#a8b4e0")
+    rgb = _hills(rgb, "#2a3260", "#1c2248", "#3a4a80")
+    return _finish(rgb, 24)
+
+
+def sky_storm() -> np.ndarray:
+    X, Y = G(SW, SH)
+    rgb = _gradient([(0, "#252d2a"), (24, "#333c36"), (38, "#4a5648"), (44, "#657260")])
+    # heavy billows: big dark masses with paler, greener bellies
+    v1 = pn(SW, SH, 64, 14, 451, 5, 1.9)
+    v2 = pn(SW, SH, 36, 9, 452, 4, 1.7)
+    mass = np.clip(0.6 * v1 + 0.4 * v2, 0, 1)
+    rgb = rgb * (0.62 + 0.62 * mass[..., None])
+    # the bruised light slits: three long thin seams of sickly yellow-green with violet bruising round them
+    for k, (yc, amp, th, ph) in enumerate(((22, 3.0, 1.1, 0.4), (30, 2.4, 1.4, 2.0), (37, 2.0, 1.0, 4.1))):
+        path = yc + amp * np.sin(2 * np.pi * (X[0] / SW * (2 + k) + ph / 6.28)) + 1.5 * (pn(SW, SH, 50, SH, 455 + k, 2)[0] - 0.5)
+        env = smooth(pn(SW, SH, 70, SH, 460 + k, 2, 1.6)[0], 0.5, 0.65)
+        d = Y - path[X.astype(int)]
+        core = np.exp(-(d / th) ** 2) * env[X.astype(int)]
+        halo = np.exp(-(d / (th * 3.6)) ** 2) * env[X.astype(int)]
+        rgb = rgb + px.hexc("#a0a040")[None, None, :] * (core * 0.2)[..., None] + px.hexc("#7a5a96")[None, None, :] * (halo * 0.34)[..., None]
+    rgb = _glow(rgb, 150, 42, 90, 9, "#7c8a6a", 0.25)
+    rgb = _hills(rgb, "#3a443c", "#323a34", "#586454")
+    return _finish(rgb)
+
+
+def sky_dark() -> np.ndarray:
+    rgb = _gradient([(0, "#201430"), (22, "#2c1a40"), (34, "#3c224a"), (40, "#6a3a46"), (44, "#c08a3a"), (47, "#a87430")])
+    X, Y = G(SW, SH)
+    v = pn(SW, SH, 80, 10, 461, 4, 1.4)
+    rgb = rgb * (0.86 + 0.28 * v[..., None])
+    sl = np.clip(1 - np.abs(pn(SW, SH, 100, 8, 462, 3, 1.3) - 0.5) / 0.03, 0, 1) * smooth(Y, 18, 28) * (1 - smooth(Y, 38, 42))
+    rgb = rgb + px.hexc("#5a3a6c")[None, None, :] * (sl * 0.4)[..., None]
+    rgb = _glow(rgb, 128, 45, 150, 7, "#d09a44", 0.5)
+    rgb = _hills(rgb, "#1e1628", "#140e1c", "#5a3a3a")
+    return _finish(rgb, 24)
+
+
+def sky_morning() -> np.ndarray:
+    rgb = _gradient([(0, "#8cb4d8"), (20, "#aecbe2"), (34, "#dad8bc"), (44, "#f2e2b0")])
+    rgb = _glow(rgb, 200, 44, 90, 22, "#fff0b8", 0.35)
+    rgb = _clouds(rgb, "#f4eed8", 471, (14, 38), 0.62, 0.45, 90, 5, "#d8cdb4")
+    rgb = _hills(rgb, "#9a9a58", "#7c8044", "#f0e0b0")
+    return _finish(rgb)
+
+
+# ---- build -----------------------------------------------------------------------------------------------------------------------------------------------
+
+TILES = [
+    ("floor_sand", floor_sand, 2.0), ("floor_dust", floor_dust, 3.0), ("floor_path", floor_path, 2.0), ("floor_grass", floor_grass, 3.0),
+    ("floor_shingle", floor_shingle, 2.0), ("floor_water", floor_water, 4.0), ("floor_cobble", floor_cobble, 2.5), ("floor_flag", floor_flag, 3.0),
+    ("floor_plank", floor_plank, 2.0), ("floor_clay", floor_clay, 2.0), ("floor_soil", floor_soil, 3.0), ("floor_rock", floor_rock, 3.0),
+    ("floor_road", floor_road, 3.0), ("floor_straw", floor_straw, 1.5), ("floor_garden", floor_garden, 3.0),
+    ("wall_limestone", wall_limestone, 3.0), ("wall_mudbrick", wall_mudbrick, 3.0), ("wall_rock", wall_rock, 4.0), ("wall_hill", wall_hill, 6.0),
+    ("wall_reeds", wall_reeds, 3.0), ("wall_city", wall_city, 6.0), ("wall_door", wall_door, 3.0), ("wall_arch", wall_arch, 4.0),
+    ("wall_timber", wall_timber, 2.5), ("wall_olive", wall_olive, 4.0), ("wall_stable", wall_stable, 2.5), ("wall_columns", wall_columns, 5.0),
+    ("wall_praetorium", wall_praetorium, 5.0), ("wall_cloth", wall_cloth, 3.0), ("wall_cypress", wall_cypress, 5.0),
+    ("ceil_beams", ceil_beams, 2.0), ("ceil_awning", ceil_awning, 2.0), ("trim", trim, 1.0),
+    ("sky_dawn", sky_dawn, 1.0), ("sky_day", sky_day, 1.0), ("sky_dusk", sky_dusk, 1.0), ("sky_night", sky_night, 1.0), ("sky_storm", sky_storm, 1.0),
+    ("sky_dark", sky_dark, 1.0), ("sky_morning", sky_morning, 1.0),
+]
+
+
+def build(out_dir: str) -> dict:
+    from PIL import Image
+    os.makedirs(out_dir, exist_ok=True)
+    out: dict = {}
+    for name, fn, metres in TILES:
+        rgb = fn()
+        assert rgb.dtype == np.uint8 and rgb.ndim == 3 and rgb.shape[2] == 3, name
+        Image.fromarray(rgb, "RGB").save(os.path.join(out_dir, name + ".png"), optimize=False, compress_level=9)
+        out[name] = {"size": [int(rgb.shape[1]), int(rgb.shape[0])], "metres": float(metres)}
+    return out
+
+
+if __name__ == "__main__":
+    print(len(build(sys.argv[1])), "textures written")

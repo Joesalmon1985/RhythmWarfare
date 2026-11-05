@@ -6,12 +6,14 @@ extends TestCase
 ## The numbers are written to user://run_matrix.txt for the docs (docs/CONTINUOUS_RUN.md).
 ## The route window is the hotspot window: the player taps through RunHotspots under a tap policy (RW_RUN_TAPS=scripted (default: seed 1 taps nothing, seed 2 the second exit, seed 3 a random one) |
 ## none (never taps: the default exits) | changed (a decoy first, then the seed's pick) | failure (scripted taps and the last block of every phase missed: every tapped hotspot fails)); the
-## hotspots' cinematics are given to the journey like the scene does, so they are checked for guards, bars, density and valid sectors too.
+## hotspots' cinematics are given to the journey like the scene does, so they are checked for guards, bars, density and valid sectors too. The journey's window turn (RunJourney.face_fn) is given
+## like the scene gives it (StoryPlayer.best_facing over the window's hotspots), and the hotspots in the picture at beat 49 of every phase are counted.
 
 const BPM := 174.0
 const BEAT := 60.0 / 174.0
 const MAX_PHASES := 20  # scenes: a path through the first three worlds is 13 to 14 phases
 const POLICIES := ["perfect", "accuracy:0.9", "accuracy:0.8", "accuracy:0.7", "accuracy:0.5", "sloppy", "none"]
+const STAGE_VIEW := Vector2(1280.0, 460.0)  # the stage strip of a 1280 x 720 window (the hotspot view's aspect)
 
 var _maps: Dictionary = {}
 
@@ -23,13 +25,29 @@ func _map(world: String) -> StoryMap:
 
 
 ## One scripted run. Returns {over, phases, depth, energy, nodes, places, kinds, moves, camera_bad, dense, bad_starts, glances, log}.
-func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictionary:
+func _simulate(policy: String, seed: int, data: RunData, taps := "", start := "warehouse", face := true) -> Dictionary:
+	var bpm := float(data.cfg["timing"]["bpm"])  # (a path runs at its own tempo)
+	var beat := 60.0 / bpm
+	if OS.get_environment("RW_MATRIX_LAPS") != "":  # the matrix at another lap count (1 = the paths as they were before the two laps, for the energy comparison in docs/HANDOVER.md A12)
+		for nid in data.nodes:
+			(data.nodes[nid] as Dictionary)["laps"] = int(OS.get_environment("RW_MATRIX_LAPS"))
 	if taps == "":
 		taps = OS.get_environment("RW_RUN_TAPS") if OS.get_environment("RW_RUN_TAPS") != "" else "scripted"
 	var e := RunEngine.new(data)
 	e.hotspots = RunHotspots.new(data, {}, {})
-	e.begin("warehouse")
+	e.begin(start)
 	var j := RunJourney.new(data)
+	var windows: Array = []  # [{t0, node, hs}] the hotspot window of every phase, as the block-2 decision sees it
+	if face:  # the run scene's window turn, with the map alone (actor anchors need the crowd: they are left out here)
+		j.face_fn = func(node_id: String, _place: String) -> Array:
+			var m := _map(str(data.nodes[node_id]["map"]))
+			var pts: Array = []
+			for h in e.hotspots.shown(3, true):
+				var r := HotspotView.resolve(h["anchor"], m, {})
+				if bool(r["ok"]):
+					var p: Vector3 = r["pos"]
+					pts.append([p.x, p.z, 1.0 if bool(h["default"]) else 0.0, p.y])
+			return pts
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 	var hit_p := 1.0
@@ -52,7 +70,10 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictiona
 	var routes_done := {}
 	var door_done := -1
 	var t := -0.5
-	var end_t := float(MAX_PHASES) * e.phase_s()
+	var max_laps := 1
+	for nid in data.nodes:
+		max_laps = maxi(max_laps, data.laps_of(nid))
+	var end_t := float(MAX_PHASES) * e.phase_s() * float(max_laps)  # (a scene of a path plays its laps: MAX_PHASES counts scenes)
 	var kinds := {}
 	var places := {}
 	var actions: Array = []
@@ -60,10 +81,12 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictiona
 	var commits := 0
 	var failures := 0
 	var cinematics := 0
-	while t < end_t and not e.over:
+	while t < end_t and not e.over and e.away == "":  # (a path's ending hands the run back to the Warehouse: the simulation ends there)
 		var events := e.update(t)
 		for ev in events:
-			if str(ev["kind"]) in ["phase_start", "block_result"]:
+			if str(ev["kind"]) == "block_result" and int(ev["block"]) == 2:
+				windows.append({"t0": e.phase_t0, "node": str(ev["node"]), "hs": e.hotspots.shown(3, true)})
+			if str(ev["kind"]) in ["phase_start", "block_result", "lap_start"]:
 				actions.append_array(j.on_event(ev, e))
 			if str(ev["kind"]) == "hotspot_commit":
 				var oc: Dictionary = ev["outcome"]
@@ -107,14 +130,20 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictiona
 				e.choose(str((opts[opts.size() - 1] as Dictionary)["to"]))
 			if taps != "none":
 				if seed == 2:
-					e.choose(str((opts[mini(1, opts.size() - 1)] as Dictionary)["to"]))
+					var pick := mini(1, opts.size() - 1)
+					if data.is_path() and nodes.has(str((opts[pick] as Dictionary)["to"])):  # a path's setbacks lead back: never take the second arrow to a scene already played while another is new
+						for k in opts.size():
+							if not nodes.has(str((opts[k] as Dictionary)["to"])):
+								pick = k
+								break
+					e.choose(str((opts[pick] as Dictionary)["to"]))
 				elif seed == 3:
 					e.choose(str((opts[rng.randi() % opts.size()] as Dictionary)["to"]))
 		# a path inside the world: the door walk starts three beats before the phase ends (the run scene latches it once per phase)
 		if e.window_open and door_done != e.phase_n and e.phase_beat_at(t) >= 61.0:
 			door_done = e.phase_n
 			var to := e.selected_route()
-			if str(data.nodes[to]["world"]) == str(data.nodes[e.node_id]["world"]) and to != e.node_id:
+			if data.nodes.has(to) and str(data.nodes[to]["world"]) == str(data.nodes[e.node_id]["world"]) and to != e.node_id:
 				actions.append_array(j.leave_walk(e.t_of(61.0), to, e))
 		t += 1.0 / 30.0
 	for entry in j.log:
@@ -131,7 +160,7 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictiona
 		var w := str(a["world"])
 		if not players.has(w):
 			var p := StoryPlayer.new()
-			p.setup(_map(w), BPM)
+			p.setup(_map(w), bpm)
 			players[w] = p
 		(players[w] as StoryPlayer).apply_action(a)
 		if a["action"] == "player_look":
@@ -141,9 +170,9 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictiona
 			var bars := float((a["args"] as Dictionary)["bars"])
 			if bars < 2.0 or bars > 4.0:
 				bad_bars += 1
-			if fposmod(float(a["t0"]) / BEAT, 16.0) < 12.0:
+			if fposmod(float(a["t0"]) / beat, 16.0) < 12.0:
 				bad_starts += 1
-			if RunRail.move_is_dense(e.level.notes, float(a["t0"]), bars, BPM):
+			if RunRail.move_is_dense(e.level.notes, float(a["t0"]), bars, bpm):
 				dense += 1
 	var camera_bad := 0
 	var samples := 0
@@ -157,13 +186,45 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictiona
 			if m.sector(str(pose["sector"])).is_empty() or m.sector_at(Vector2(pose["pos"])) == "" or (p2.errors as Array).size() > 0:
 				camera_bad += 1
 			s += 0.25
+	# the window's hotspots in the picture at beat 49 (the window open, the turn done): how many, and the default (one at the player's feet counts: its ring is around them)
+	var win_n := 0
+	var win_any := 0
+	var win_default := 0
+	var win_all := 0
+	for wdw in windows:
+		var w2 := str(data.nodes[str(wdw["node"])]["map"])
+		var t49 := float(wdw["t0"]) + 49.0 * BEAT
+		if not players.has(w2) or t49 > t:
+			continue
+		var pose := (players[w2] as StoryPlayer).pose_at(t49)
+		var seen := 0
+		var placed := 0
+		var def_seen := false
+		for h in wdw["hs"]:
+			var r := HotspotView.resolve(h["anchor"], _map(w2), {})
+			if not bool(r["ok"]):
+				continue
+			placed += 1
+			var pc := StoryProjector.project(r["pos"], pose, STAGE_VIEW)
+			var sp: Vector2 = pc["screen"]
+			var at_feet := Vector2((r["pos"] as Vector3).x, (r["pos"] as Vector3).z).distance_to(pose["pos"]) < StoryPlayer.FACE_NEAR_M  # its ring is around the player
+			if at_feet or bool(pc["visible"]) and float(pc["depth"]) > 0.4 and sp.x >= 0.0 and sp.x <= STAGE_VIEW.x and sp.y >= 0.0 and sp.y <= STAGE_VIEW.y:
+				seen += 1
+				def_seen = def_seen or bool(h["default"])
+		if placed == 0:
+			continue
+		win_n += 1
+		win_any += 1 if seen > 0 else 0
+		win_default += 1 if def_seen else 0
+		win_all += 1 if seen == placed else 0
 	var worlds_seen: Array = []
 	for nid in nodes:
 		var wid := str(data.nodes[nid]["world"])
 		if worlds_seen.is_empty() or worlds_seen[worlds_seen.size() - 1] != wid:
 			worlds_seen.append(wid)
 	return {"worlds": worlds_seen, "over": e.over, "phases": max_phase, "depth": depth, "energy": e.energy, "nodes": nodes, "places": places, "kinds": kinds, "moves": moves, "camera_bad": camera_bad,
-		"samples": samples, "dense": dense, "bad_starts": bad_starts, "bad_bars": bad_bars, "glances": glances, "log": j.log, "commits": commits, "failures": failures, "cinematics": cinematics, "taps": taps}
+		"away": e.away, "samples": samples, "dense": dense, "bad_starts": bad_starts, "bad_bars": bad_bars, "glances": glances, "log": j.log, "commits": commits, "failures": failures, "cinematics": cinematics, "taps": taps,
+		"windows": win_n, "win_any": win_any, "win_default": win_default, "win_all": win_all}
 
 
 func test_policy_matrix_survival_depth_rails_and_camera() -> void:
@@ -221,6 +282,31 @@ func test_policy_matrix_survival_depth_rails_and_camera() -> void:
 	assert_true(d9 >= d5, "better play goes at least as far as sloppy play")
 
 
+## The last block turns the camera to the window's hotspots (RunJourney.window_face): at beat 49 the default exit is in the picture (or at the player's feet) in at least 85% of the windows (a few stand just under the picture, a step or two away: the camera does not tip down), and at least one hotspot in every one.
+## The same runs without the turn are measured for comparison (the rail alone often faces away from the exits).
+func test_the_window_opens_facing_its_hotspots() -> void:
+	var data := RunData.load_default()
+	var tot := {"on": [0, 0, 0, 0], "off": [0, 0, 0, 0]}
+	for seed in [1, 2, 3]:
+		for face in [true, false]:
+			var r := _simulate("perfect", seed, data, "scripted", "warehouse", face)
+			var k := "on" if face else "off"
+			var a: Array = tot[k]
+			a[0] += int(r["windows"])
+			a[1] += int(r["win_any"])
+			a[2] += int(r["win_default"])
+			a[3] += int(r["win_all"])
+			if face:
+				assert_eq(r["camera_bad"], 0, "seed %d: the camera stays in valid sectors with the turn" % seed)
+				assert_eq(int(r["win_any"]), int(r["windows"]), "seed %d: some hotspot is in the picture when every window opens (%d of %d)" % [seed, int(r["win_any"]), int(r["windows"])])
+	var on: Array = tot["on"]
+	var off: Array = tot["off"]
+	print("  window at beat 49, with the turn: %d windows, a hotspot in view %d, the default %d, all %d; without: %d, %d, %d, %d" % [on[0], on[1], on[2], on[3], off[0], off[1], off[2], off[3]])
+	assert_true(int(on[0]) >= 30, "enough windows measured (%d)" % int(on[0]))
+	assert_true(float(on[2]) >= 0.85 * float(on[0]), "the default exit is in the picture (or at the player's feet) in at least 85%% of the windows (%d of %d)" % [int(on[2]), int(on[0])])
+	assert_true(int(on[2]) > int(off[2]) and int(on[3]) > int(off[3]), "the turn frames more of them than the rail alone")
+
+
 func test_tap_policies_commit_inside_the_guard_and_keep_every_journey_valid() -> void:
 	var data := RunData.load_default()
 	for taps in ["none", "scripted", "changed", "failure"]:
@@ -242,3 +328,56 @@ func test_tap_policies_commit_inside_the_guard_and_keep_every_journey_valid() ->
 				assert_true(int(r["failures"]) >= 1, "failure taps: the tapped hotspots fail (%d of %d)" % [int(r["failures"]), int(r["commits"])])
 			if taps == "scripted" and policy == "perfect":
 				assert_eq(int(r["failures"]), 0, "perfect play passes every last block")
+
+
+## The matrix once per path (content/paths/<id>): every tap policy against four skills, the same checks on the journeys (guards, bars, density, the camera in a valid sector) at the path's own
+## tempo; a perfect player reaches an ending and is handed back to the Warehouse (the simulation ends at the handoff), nobody ever skips a scene that is not a route of the one before.
+func test_policy_matrix_on_every_path_under_every_tap_policy() -> void:
+	var ids: Array = []
+	for pid in RunData.path_ids():
+		if RunData.path_exists(str(pid)):
+			ids.append(pid)
+	assert_true(ids.has("stub"), "the stub path is there: %s" % str(ids))
+	var rows: Array = []
+	for pid in ids:
+		var data := RunData.load_path(str(pid))
+		assert_eq(data.errors, [], "path %s validates" % pid)
+		var bpm := float(data.cfg["timing"]["bpm"])
+		for taps in ["none", "scripted", "changed", "failure"]:
+			for policy in ["perfect", "accuracy:0.8", "sloppy", "none"]:
+				var r := _simulate(policy, 2, data, taps, data.start_node())
+				var tag := "path %s, %s taps, %s" % [pid, taps, policy]
+				rows.append("%-8s %-9s %-13s %s after %2d scenes (%2d phases), away %s, energy %3.0f, scenes %s" % [pid, taps, policy, "ENDED   " if r["over"] else "survived", (r["nodes"] as Array).size(), r["phases"], r["away"], r["energy"], ">".join(PackedStringArray(r["nodes"]))])
+				assert_eq(r["camera_bad"], 0, "%s: the camera is always in a valid sector" % tag)
+				assert_eq(r["bad_starts"], 0, "%s: every move starts in a cue-free guard" % tag)
+				assert_eq(r["bad_bars"], 0, "%s: every move lasts 2 to 4 bars" % tag)
+				assert_eq(r["dense"], 0, "%s: no move sits on dense cues" % tag)
+				var seq: Array = r["nodes"]
+				assert_eq(seq[0], data.start_node(), "%s: it begins at the start scene" % tag)
+				for k in range(1, seq.size()):
+					var ok := false
+					for e2 in data.nodes[str(seq[k - 1])]["next"]:
+						ok = ok or str(e2["to"]) == str(seq[k])
+					assert_true(ok, "%s: %s leads to %s" % [tag, seq[k - 1], seq[k]])
+				# a path may own a loop (the Mission Count's endless missions, route marked `loop`): a player who never touches its way out lives in it for as long as the crowd stays, which is the design
+				var has_loop := false
+				for nid in data.nodes:
+					for e3 in data.nodes[nid]["next"]:
+						has_loop = has_loop or bool(e3.get("loop", false))
+				var lives_in_loop: bool = has_loop and seq.size() > 1 and seq.size() != _unique(seq).size() and taps in ["none", "failure"]
+				assert_true(bool(r["over"]) or str(r["away"]) == "run:warehouse" or lives_in_loop, "%s: the path ends by the crowd leaving or by the way back to the Warehouse (%s)" % [tag, str(r["away"])])
+				if policy == "perfect" and taps != "failure" and not lives_in_loop:
+					assert_eq(str(r["away"]), "run:warehouse", "%s: perfect play reaches an ending and is handed back" % tag)
+					assert_true(str(data.nodes[str(seq[seq.size() - 1])]["ending"]) != "", "%s: the last scene is an ending" % tag)
+				assert_true(absf(bpm - float(data.cfg["timing"]["bpm"])) < 1e-9)
+	var f := FileAccess.open("user://run_matrix_paths%s.txt" % ("_laps" + OS.get_environment("RW_MATRIX_LAPS") if OS.get_environment("RW_MATRIX_LAPS") != "" else ""), FileAccess.WRITE)
+	f.store_string("\n".join(PackedStringArray(rows)) + "\n")
+	f.close()
+
+
+func _unique(a: Array) -> Array:
+	var out: Array = []
+	for x in a:
+		if not out.has(x):
+			out.append(x)
+	return out

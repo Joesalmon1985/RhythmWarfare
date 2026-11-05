@@ -1,0 +1,375 @@
+{
+ "world": "mountain",
+ "hotspots": [
+  {
+   "id": "mountain.way_down",
+   "world": "mountain",
+   "scene": "mountain",
+   "map": "ash_land",
+   "anchor": {
+    "waypoint": "down_wp"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mountain.spring"
+   },
+   "on_failure": {
+    "route": "mountain.spring",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "mountain.whisper",
+   "world": "mountain",
+   "scene": "mountain",
+   "map": "ash_land",
+   "anchor": {
+    "thing": "vent1"
+   },
+   "kind": "feature",
+   "radius_m": 1.2,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mountain.keeper",
+    "flags_set": [
+     "ember_listened"
+    ]
+   },
+   "on_failure": {
+    "route": "mountain.spring",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": false
+  },
+  {
+   "id": "mountain.spring.way_back",
+   "world": "mountain",
+   "scene": "mountain.spring",
+   "map": "ash_land",
+   "anchor": {
+    "waypoint": "pool_wp"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_ember_quenched"
+    ]
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_ember_quenched"
+    ],
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "mountain.spring.pool",
+   "world": "mountain",
+   "scene": "mountain.spring",
+   "map": "ash_land",
+   "anchor": {
+    "thing": "pool_stones"
+   },
+   "kind": "feature",
+   "radius_m": 1.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_ember_quenched"
+    ]
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_ember_quenched"
+    ],
+    "cinematic": "ember.snatched"
+   },
+   "default": false,
+   "repeatable": false
+  },
+  {
+   "id": "mountain.keeper.way_back",
+   "world": "mountain",
+   "scene": "mountain.keeper",
+   "map": "ash_land",
+   "anchor": {
+    "waypoint": "ember_wp"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_ember_kept"
+    ]
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_ember_kept"
+    ],
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "mountain.keeper.ember",
+   "world": "mountain",
+   "scene": "mountain.keeper",
+   "map": "ash_land",
+   "anchor": {
+    "thing": "altar"
+   },
+   "kind": "feature",
+   "radius_m": 1.4,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_ember_kept"
+    ]
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_ember_kept"
+    ],
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": false
+  },
+  {
+   "id": "mountain.taken.camp_out",
+   "world": "mountain",
+   "scene": "mountain.taken",
+   "map": "ash_land",
+   "anchor": {
+    "waypoint": "stake_wp"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh.plain"
+   },
+   "on_failure": {
+    "route": "marsh.plain",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "mountain.taken.stake",
+   "world": "mountain",
+   "scene": "mountain.taken",
+   "map": "ash_land",
+   "anchor": {
+    "thing": "stake"
+   },
+   "kind": "object",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh.plain",
+    "flags_set": [
+     "ember_escaped"
+    ]
+   },
+   "on_failure": {
+    "route": "marsh.wall",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": false
+  },
+  {
+   "id": "mountain.taken.captain",
+   "world": "mountain",
+   "scene": "mountain.taken",
+   "map": "ash_land",
+   "anchor": {
+    "actor": "captain"
+   },
+   "kind": "encounter",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "flicker",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh.wall",
+    "flags_set": [
+     "ember_bargain"
+    ]
+   },
+   "on_failure": {
+    "route": "marsh.plain",
+    "energy": -10
+   },
+   "default": false,
+   "repeatable": false,
+   "acting": {
+    "actor": "captain",
+    "available": {
+     "act": "offer",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "success": {
+     "act": "bow",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "neutral",
+      "look_at": "camera"
+     }
+    },
+    "failure": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "resolve",
+      "look_at": "camera"
+     }
+    }
+   }
+  }
+ ]
+}

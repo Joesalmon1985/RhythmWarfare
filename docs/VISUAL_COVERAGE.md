@@ -16,7 +16,7 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | warehouse | warehouse.bar | bar.stranger | secret | a stranger on a phone slips you a VIP pass (flag wh_vip_pass: the booth headphones, the bouncer) | he pockets the phone and goes (-3) | not wh_vip_pass, not wh_stranger_gone | verified |
 | warehouse | warehouse.balcony | balcony.exit_chill (default) | exit | route warehouse.chill | same door, staggering (-5 energy) | always | verified |
 | warehouse | warehouse.balcony | balcony.exit_booth | exit | route warehouse.booth | same door, staggering (-5 energy) | always | verified |
-| warehouse | warehouse.balcony | balcony.rail | feature | look over the floor, the crowd waves (+4, music variation) | vertigo (-6, queasy) | always | verified |
+| warehouse | warehouse.balcony | balcony.rail | feature | look over the floor, the crowd waves (+4, music variation) | vertigo (-6, queasy) | not wh_saw_floor | verified |
 | warehouse | warehouse.balcony | balcony.promoter | character | the promoter waves you straight to the booth (route warehouse.booth) | he looks through you (-4) | always | verified |
 | warehouse | warehouse.chill | chill.exit_exit (default) | exit | route warehouse.exit | same door, staggering (-5 energy) | always | verified |
 | warehouse | warehouse.chill | chill.sofas | object | sink into the sofa and recover (+10) | you doze off and a phase is lost (-10) | always | verified |
@@ -29,6 +29,9 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | warehouse | warehouse.exit | exit.exit_underworld | exit | route underworld | same door, staggering (-5 energy) | always | verified |
 | warehouse | warehouse.exit | exit.bouncer | character | the bouncer nods you through to the light (route mothership) | thrown out, through the crack (route underworld, -6, flag wh_thrown_out) | not wh_vip_pass | verified |
 | warehouse | warehouse.exit | exit.bouncer_vip | character | the VIP pass: waved on to the light (+6) | he squints at the pass; the same door, slower (-3) | wh_vip_pass | verified |
+| warehouse | warehouse.balcony | balcony.star | secret | the figure under the projected star: the Gospel path (route path:gospel, house 124) | the star flickers out (-4) | wh_saw_floor | verified |
+| warehouse | warehouse.booth | booth.radio | secret | the flickering military radio and the bomber's shadow: the Mission Count path (route path:squadron, dubstep 140) | the radio crackles out (-4) | always | verified |
+| warehouse | warehouse.bar | bar.ember | secret | a warm ember in a glass: the Ember Road path (route path:ember, psytrance 145) | the ember gutters out (-4) | wh_vip_pass | verified |
 | mothership | mothership | exit_gallery (default) | exit | route mothership.gallery | same door, staggering (-5 energy) | always | verified |
 | mothership | mothership | exit_reactor | exit | route mothership.reactor | same door, staggering (-5 energy) | always | verified |
 | mothership | mothership | grey | character | a grey beckons; it is examined gently (+5) | the probe light finds you (-7, flag ms_probed) | always | verified |
@@ -87,6 +90,7 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | ward | ward | exit_dorm | exit | route ward.dorm | same door, staggering (-5 energy) | always | verified |
 | ward | ward | orderly | character | the orderly lets it pass (+4) | taken to the treatment room (-9) | always | verified |
 | ward | ward | window | feature | the barred window lets the light in (+5, music variation) | the bars rattle (-5, music dips) | always | verified |
+| ward | ward | cards | object | sit at the empty chair: blackjack, the run stays in the day room (minigame) | the dealer waves you off (-3), the scene goes on by its default exit | always | verified |
 | ward | ward.art | art.exit_corridor (default) | exit | route ward.corridor | same door, staggering (-5 energy) | always | verified |
 | ward | ward.art | art.painter | character | the painter shows a painting of a door (flag wd_painted: opens the courtyard from the corridor) (+6) | paint thrown over you (-6) | always | verified |
 | ward | ward.art | art.easel | object | paint your own (+5) | a smudge (-4) | always | verified |

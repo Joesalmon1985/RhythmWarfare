@@ -1,0 +1,260 @@
+{
+ "world": "deeps",
+ "hotspots": [
+  {
+   "id": "deeps.bridge",
+   "world": "deeps",
+   "scene": "deeps",
+   "map": "deep_halls",
+   "anchor": {
+    "waypoint": "bridge_wp"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "deeps.falls"
+   },
+   "on_failure": {
+    "route": "deeps.falls",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "deeps.lake",
+   "world": "deeps",
+   "scene": "deeps",
+   "map": "deep_halls",
+   "anchor": {
+    "thing": "drowned"
+   },
+   "kind": "encounter",
+   "radius_m": 1.6,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "flicker",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "deeps.falls",
+    "flags_set": [
+     "ember_lake_calm"
+    ]
+   },
+   "on_failure": {
+    "route": "north.pass",
+    "flags_set": [
+     "ember_warden_lost"
+    ],
+    "energy": -8,
+    "cinematic": "ember.warden_falls"
+   },
+   "default": false,
+   "repeatable": false
+  },
+  {
+   "id": "deeps.falls.landing",
+   "world": "deeps",
+   "scene": "deeps.falls",
+   "map": "deep_halls",
+   "anchor": {
+    "waypoint": "boat_wp"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh"
+   },
+   "on_failure": {
+    "route": "marsh",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "deeps.falls.boat",
+   "world": "deeps",
+   "scene": "deeps.falls",
+   "map": "deep_halls",
+   "anchor": {
+    "actor": "bram_fb"
+   },
+   "kind": "character",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh",
+    "flags_set": [
+     "ember_bram_boat"
+    ]
+   },
+   "on_failure": {
+    "route": "marsh.wall",
+    "flags_set": [
+     "ember_alone"
+    ],
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": false,
+   "acting": {
+    "actor": "bram_fb",
+    "available": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "boat_wp"
+    },
+    "success": {
+     "act": "cheer",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 10,
+     "then": {
+      "act": "stare",
+      "face": "sad",
+      "look_at": "camera"
+     }
+    }
+   }
+  },
+  {
+   "id": "deeps.falls.horn",
+   "world": "deeps",
+   "scene": "deeps.falls",
+   "map": "deep_halls",
+   "anchor": {
+    "thing": "horn"
+   },
+   "kind": "object",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "ember_warden_lost"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh.wall",
+    "flags_set": [
+     "ember_horn"
+    ]
+   },
+   "on_failure": {
+    "route": "marsh",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": false
+  },
+  {
+   "id": "deeps.falls.riders_horn",
+   "world": "deeps",
+   "scene": "deeps.falls",
+   "map": "deep_halls",
+   "anchor": {
+    "thing": "horn"
+   },
+   "kind": "object",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [
+     "ember_warden_lost"
+    ],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mountain.taken",
+    "flags_set": [
+     "ember_horn_riders"
+    ]
+   },
+   "on_failure": {
+    "route": "marsh",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": false
+  }
+ ]
+}

@@ -1,0 +1,32 @@
+{
+ "schema": 1,
+ "note": "Which pack each scene of the stub path plays. Written by tools/content/make_path_placeholders.py stub (synthesised, temporary); the owner's loops replace them with beatshaper.py import --path stub. placeholder.levels_db are the RMS levels of the three stems (dBFS): the placeholder mix is bass-forward.",
+ "placeholder": {
+  "genre": "house",
+  "key": 45,
+  "levels_db": {
+   "drums": -20.0,
+   "bass": -13.0,
+   "other": -27.0
+  },
+  "sub_hz": 90.0,
+  "sub_share_min": 0.4,
+  "bass_over_pad_db_min": 8.0
+ },
+ "nodes": [
+  {
+   "id": "stub",
+   "audio": "stub_start",
+   "chart": "stub_start",
+   "treatment": "none",
+   "temporary": true
+  },
+  {
+   "id": "stub.end",
+   "audio": "stub_end",
+   "chart": "stub_end",
+   "treatment": "none",
+   "temporary": true
+  }
+ ]
+}

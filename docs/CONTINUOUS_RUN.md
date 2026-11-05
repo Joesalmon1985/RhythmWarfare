@@ -12,14 +12,17 @@ godot --path . res://src/run/run_play.tscn        # straight into the run (RW_RU
 
 ## The phase
 
-174 BPM, 4/4. A phase is 64 beats (22.07 s) of one level, four blocks of 16 beats. One required cue family is active at a time.
+174 BPM, 4/4. A phase is 64 beats (22.07 s) of one level, four blocks of 16 beats. One required cue family is active at a time. (A scene of a PATH may play several phases in a row, its LAPS: the main run never
+does, see "Two laps per path scene" at the end.)
 
 | Beats | Stage | Mix (drums / bass / synth) | Cues |
 | --- | --- | --- | --- |
 | 1-16 | Drums alone | 1.0 / 0 / 0 | drums |
 | 17-32 | Bass enters | 0.5 / 1.0 / 0.45 | bass |
-| 33-48 | Drums return | 1.0 / 0.5 / 0.45 | drums |
-| 49-64 | Bass strongest | 0.4 / 1.0 / 0.6 | bass, plus the direction choice |
+| 33-48 | Drums return | 1.0 / 0.85 / 0.45 (bass 0.5 before the audio polish) | drums |
+| 49-64 | Bass strongest | 0.4 / 1.0 / 0.5 (synth 0.6 before the audio polish) | bass, plus the direction choice |
+
+The audio polish (docs/HANDOVER.md A10) added `mix.recipe_bass_floor`, `mix.carry_bass` (the bass of the previous scene under the drums-alone block, same music family only), the bass bus (`mix.bass_bus`, per path and per scene) and the run level (`mix.gain_db`); `tools/run/measure_mix.py` measures it all.
 
 * **Advance or hold.** Each block is judged at its decision beat (12.75 of 16, once its last cue and hit window have resolved). A pass moves the stage one
   step on; a miss holds the stage (and so the cue family) for another block. Missing block 1 and passing block 2 reveals the bass on beat 33. The phase is still
@@ -211,7 +214,7 @@ played becomes a reached level (Night One -> Warehouse, Mothership, Underworld, 
 | Save | `src/run/run_progress.gd` | reached levels, migration |
 | Import | `tools/content/beatshaper.py` | scan, check, import, assign, apply, validate |
 
-The HUD names the world and, under it, the scene (room); a new scene shows a title card (the world above, the room as the title). Stages are keyed by art world (map), so the Hospital and
+The HUD is silent during play (see "The silent HUD" below): it no longer names the world, the room or the stage and shows no title card. Stages are keyed by art world (map), so the Hospital and
 Hospital, late share one stage. World swap: the stage of each world is built once and kept; candidates for the next level are built during cue-free guards (one per guard) and the swap on the downbeat is a
 visibility change plus a flash. Audio for the candidates is loaded on a thread when the route window opens. The old chapter scenes (`story_play`, `story_campaign`, `story_result`,
 `story_interlude`) and the military screens still exist in the repository for the art pipeline, tests and the developer button (editor only), but nothing in the run path
@@ -383,7 +386,7 @@ only ever sees the resolved outcome (the five diverting outcomes of the data cha
 **World state.** `flags_set` names go to `RunProgress.run_flags` (one run, cleared by `run_started`) or, with the `keep:` prefix, to `RunProgress.flags` (persistent, in the save, written at once).
 `available`: `flags_all`, `flags_none` (both read both stores), `energy_min`, `once` (spent by any commit this run). `repeatable: false` (the default) spends an object/character after a *success* without a
 route; exits and `repeatable: true` are never spent. Energy outcomes apply at the commit (never to depletion: clamped to at least 1); `music` ("variation", "dip") rides on the `hotspot_commit` event
-for the audio layer: `dip` sinks the non-drum voices to 0.35 of their gain for 8 beats from the commit beat (`RunAudio`, through the existing gain ramps); `variation` is a documented no-op (a scene's arrangement is picked
+for the audio layer: `dip` sinks the non-drum voices to `mix.dip_gain` of their gain (0.55; 0.35 before the audio polish) for `mix.dip_beats` beats (6; 8 before) from the commit beat (`RunAudio`, through the existing gain ramps); `variation` is a documented no-op (a scene's arrangement is picked
 by the per-run seed when the data loads, and re-picking it for the next scene would change that scene's chart pack after the route lock compared it). `challenge` is validated and carried but not consumed (the last block decides).
 
 **Cinematics.** An outcome's `cinematic` is a name in run.json `cinematics` (`{world, steps: [{move: walk|place, to, bars 2..4, role, style, look_at}]}`), else the hotspot's own `cinematic` spec, or an
@@ -392,16 +395,29 @@ inline object. `RunJourney.hotspot_actions` turns steps into rail actions starti
 failure staggers through the same door). An outcome that simply *continues* by the default exit plays the move instead of the door walk (`_door_phase` is latched), and the next scene's door walk waits
 for it to end if that is within 6 beats.
 
+**Acting.** A hotspot may carry an `acting` block (what its person does while it waits, when touched, at the commit and after the result), and scenes and cinematics may carry `cast` lines: see "Acting in the run" below.
+
 **Taps.** `RunPlay._input` takes a press (touch or left click; an emulated duplicate within 80 ms and 3 px is dropped) and calls `hotspot_tap(pos)`: only the stage area counts, a point over a pad is
 never a hotspot, then `HotspotView.layout` projects every hotspot on show through `StoryProjector` at the stage's screen size and `HotspotView.hit` picks the **nearest centre within its own radius**,
 where the radius is the projected `radius_m` but never under `min_px / 2` (so a target is at least 72 px wide), clamped so the whole target lies inside the stage view (never over the pads). An anchor
 out of sight (behind the camera, round a corner) is a **beacon** of light at the edge of the picture on the side it lies, stacked down the edge, still touchable (free look is never required).
 Desktop: keys 1 to 4 select the hotspots on show in order, the arrow keys the one that leads that way.
 
-**Looks** (no text, no floating rectangles): available = a ring of light on the floor under the anchor (a perspective-correct ring projected point by point) and a glow on the thing, slowly pulsing; the
-`look.available` value picks the character: `glow`, `pulse` (one pulse a beat), `beckon` (a light column with a mote riding it; an actor anchor also *waves* through `StoryCrowd.beckon`, even a bartender
-with a fixed activity), `flicker`, `open` (a slit of light standing at the doorway, spilling on the floor), `crack` (a glowing crack in the floor). The **default exit** is brighter, has a second ring and
-its door stands wider ajar. Selected = a bright ring, a second ring closing in, a lift of the glow and a spark; committed = a flash, the ring opening out, the glow surging (about half a second).
+**Looks** (no text, no floating rectangles; the full language is in `docs/VISUAL_RHYTHM_ADVENTURE_HANDOVER.md` "Look"): available = a pool of light on the floor, a thick ring (projected point by point)
+kicking on every beat with a ripple, a shaft with motes, a glow on the thing; `look.available` adds `glow`, `pulse` (a harder beat), `beckon` (a taller shaft; an actor anchor also *waves* through
+`StoryCrowd.beckon`, even a bartender with a fixed activity), `flicker`, `open` (a lit slit standing in the doorway, its light spilling toward the player), `crack` (a glowing crack in the floor). The
+**default exit** is brighter with a second ring. Selected = white-hot ring thumping on the beat, four motes circling once a bar, the others dimmed; committed = a white flash bursting outward, then a
+calm light that fades (1.2 s). From the block-2 decision the camera holds the window's hotspots in the picture (a `face` look, `RunJourney.window_face`) until the lock beat.
+
+**Joining any block (`window: "any"`, `pass_credit`, the "claim" look).** A hotspot whose `on_success` has an `activity` (the blackjack table) may say `window: "any"` (default `"final"`): it is on show in every block of the phase until
+a final commit has happened, and a touch in block 0, 1 or 2 commits at that block's decision beat (`RunHotspots.on_block`, the block's credit passed in by `RunEngine._hotspot_decision`). Success is the activity outcome (`route` = the scene, `stays`:
+the run holds here; the player is seated at the end of the block just judged, `RunPlay._on_hotspot_commit`); failure is `on_failure` with no route and no camera move. An "any" hotspot never latches `committed`, so it can be touched again after a wave-off
+or after getting up, and the scene's default exit still commits at the final as ever (in block 3 it commits like any final hotspot). `pass_credit` (0 to 1, only with an activity) makes it succeed when the judged block's credit is at least that,
+instead of the run's pass (0.6): the table uses 0.25. `radius_m` is the touch radius, `look.ring_m` the radius of the ring that is drawn (default `radius_m`), so a generous target does not draw a giant ring. `look.selected: "claim"` is the table's look: a burst
+at the touch (floor flash, a thick ring flying out, a wash round the picture's edge), then light filling the floor disc, a thick ring throbbing on every beat, a tall beam, and a second ring closing in from outside that lands on the first exactly at the decision
+(`t_commit` on the `hotspot_items()` entry); seated = a bigger flash, waved off = cold grey light, the ring breaking into segments that drop, a short shake. Reduced motion: no throb, burst or shake, the countdown is an arc filling clockwise.
+`on_select: {"cinematic": name}` is a walk the touch itself starts (the table's `ward.cards_approach` to the chair): `RunPlay._on_select_walk` plays it at the touch, the rail's block steps are held meanwhile, the sit cinematic skips a move to the same waypoint,
+and a wave-off, or touching another hotspot, gives the camera back to the rail with `RunPlay._back_to_rail` (the same restart-and-walk-home the end of a minigame uses).
 
 **Tests.** `tests/test_hotspots_data.gd` (the contract and every rule), `test_hotspots_engine.gd` (availability, selection, windows, commit, outcomes, flags, determinism at 30 / 60 / variable frame
 steps with scripted taps at song times), `test_hotspots_view.gd` (projection, 72 px, nearest, beacons), `test_hotspots_scene.gd` (the real scene: view in the viewport, tap/change/commit beat,
@@ -409,3 +425,199 @@ default, failure, cinematic as the move, wizard arms or shrugs, keys, the flag),
 policies. **Tap policies** (`RW_RUN_TAPS=scripted|none|changed|failure`, `tools/run/walk_run.sh` and `tests/test_run_matrix.gd`): `scripted` taps the hotspot toward the path's route at beat 52, `none`
 never taps, `changed` taps a decoy at beat 50 first, `failure` taps and misses the last block of every phase. `RW_RUN_SELECT=<hotspot id>@<beat>` touches one hotspot (screenshots:
 `tools/run/capture.sh`, `hotspots_*`: before, selected, committed, success, failure, wizard, phone).
+
+## Acting in the run: hotspot `acting`, scene `cast` and cinematic `cast` (docs/THREE_PATHS_AND_FACES_PLAN.md 2.3, stage 1b)
+
+People are told what to do and what to feel by data, never by text.
+
+- **`acting` on a hotspot** (`content/run/hotspots/<world>.json`; validated by `HotspotContract.validate_acting`): `{actor?, available?, selected?, committed?, success?, failure?}`, each state
+  `{act, face?, look_at?, beats?, then?}`. `actor` defaults to the anchor's actor and may be named on a thing or waypoint anchor (the bouncer by the door). `look_at` is `camera` or the id of an actor,
+  a thing or a waypoint of the scene's map (`HotspotContract.look_ok`). `beats` is how long an outcome act holds (8 by default; a `then` holds 16 unless it says), `then` is what the person settles into.
+  Acts are the fifteen directed ones plus the older states (`HotspotContract.ACTS`, built from `StoryCharacter.ACTS` and `DIRECTABLE_OLD`); faces are `StoryCharacter.FACES`. The pure helpers are
+  `RunActing`: `available_spec` / `selected_spec` (a hotspot with **no** `acting` block keeps the old `wave` at the player, so nothing shipped changed), `outcome_chain` (the `committed` act for two
+  beats, then the success or failure act, then each `then`, end to end from the commit's song time).
+- **Who plays it.** `HotspotView._manage_acting` tells the crowd the `available` act while the hotspot waits and the `selected` act once touched (`StoryCrowd.direct_actor`, forced, so a bartender or a
+  bouncer obeys), and stands its own act down when the hotspot leaves. `RunPlay._act_outcome` plays the commit's chain (`StoryCrowd.direct_chain`, source "outcome") from the `hotspot_commit` event's song time.
+  A story beat already in force on a person (source "cast") is not interrupted by an `available` act; a touch always is. Divergence from the plan: the plan calls the new crowd call `direct`; that name is
+  the crowd's group directive (twenty callers), so it is `direct_actor(id, act, face, t0, until, look_at, src)`.
+- **The crowd's `dir`** carries `state`, `from`, `until`, `sync`, `force` and now `face`, `look_at`, `src` and `chain` (the segments still to come). While it is in force `StoryCharacter.face_override` is
+  the face (so `sheet_pick` chooses `act@face` frames when the person was baked with them, else the act's own) and a live `look_at` turns the person toward the target (`StoryCrowd.look_point`:
+  `camera` is the eye, so they face us; an actor, a thing or a waypoint is its ground position; it also decides the arm of a `point`).
+- **`cast` on a scene node of `run.json`**: `[{actor, at_beat, act, face?, look_at?, beats?, if_energy_below?, if_energy_above?, if_flags_all?, if_flags_none?}]`, `at_beat` 0 to 63 of the scene's phase (0 to 64 x laps - 1 for a scene of a path that plays several laps, counted from the scene's first downbeat).
+  `RunEngine` queues the lines when the scene begins and emits one `cast` event per line at `phase_t0 + at_beat * beat_s` (`t` is the line's own time, whatever the frame step; ties in file order; a
+  line due on the same instant as a block decision goes first, so its conditions read the energy as it stood at that beat). Conditions read the crowd's energy and the world-state flags (run or `keep:`) at
+  that beat; a line whose conditions fail emits nothing. A stall across several lines fires them all, in order. The lines of a scene left before they came due are dropped.
+- **`cast` on a cinematic** (`run.json` `cinematics.<name>.cast`, the same lines with `at_beat` 0 to 16 relative to the commit): the outcome's cinematic carries them (`HotspotContract.resolve_cinematic`),
+  `RunEngine` queues them from the `hotspot_commit` and they play on if the scene changes; `RunPlay._on_cast` acts them in the world the cinematic names.
+- **Checks**: `RunData._validate_casts` validates every scene's and cinematic's lines against the scene's map (a person with a home in it, a known act and face, a look target, `at_beat` in range, no stray
+  field: nothing can carry text). `tests/test_run_cast.gd` (events, order, beats, conditions, determinism at any frame step, no cast = unchanged, cinematic cast, validator, the crowd's face and look),
+  `tests/test_hotspots_engine.gd` (acting leaves the outcomes alone, chains, validator, every shipped hotspot both ways). `tools/story/art/directed.py` reads hotspot `acting`, scene `cast` and cinematic
+  `cast` so the sheets bake exactly the acts and faces the data names (`tools/content/test_directed.py`).
+- **Authored (stage 1d, 5 November 2026)**: every character hotspot with a person to direct (28 of the 30, the two wizards are billboard things; plus the Warehouse stranger) carries an `acting` block with all five states, every one of
+  the 36 scenes carries 2 to 4 `cast` lines (blocks 0, 16, 32, 48, a few conditional on energy: `if_energy_below` 35 to 50 for the people who react to a played-out player, `if_energy_above` 55 to 85 for the ones who
+  celebrate) and 16 existing setback and success cinematics carry acted reactions of the people around. The tables are `tools/run/acting_data.py` (`ACTING`, `CAST`, `CINE_CAST`); `make_hotspots.py` and `make_scenes.py`
+  copy them into the generated `content/run/hotspots/<world>.json` and `content/run/run.json`, so edit the table and rerun `python3 tools/run/make_scenes.py`. The hotspot windows decide when an act is seen: a final-window
+  hotspot is on show from beat 48 (available, then selected once touched), commits at 60.5 (the committed act for two beats, then the result for `beats`, about four of which are seen before the next room), so a
+  bystander's reaction to a result in a scene whose outcome has no cinematic is a `cast` line at beat 61 to 63 conditional on the flag the outcome sets (`if_flags_all`). Only the acts and faces the data names are baked
+  (`content/story/directed_actors.json` is empty now). Proof shots: `bash tools/run/capture.sh --acting` (`docs/shots/acting/`, a strip of the five states per person and a contact sheet per world; `RW_STORY_CAM=actor:<id>:<m>:<pitch>`,
+  `RW_RUN_CLEAN=1` and `RW_RUN_FLAGS=a,b` are its screenshot aids). Tests: `tests/test_run_cast.gd` (every shipped scene line fires once at its beat in a perfect and in a missed phase, every energy condition holds at its beat,
+  every cinematic line fires after its commit, 28 people hotspots act in all five states), `tests/test_story_acts.gd` (the sheets bake exactly the directed people and their acts and faces).
+
+## The silent HUD (docs/THREE_PATHS_AND_FACES_PLAN.md D3 and 2.4, stage 1c)
+
+During play nothing is written: no title card, no HUD captions (BASS ENTERS, RISER, FALL, HOLDING THE MIX, THE CROWD DRIFTS AWAY), no world or room name, no stage label, no "CROWD" label, no numeric
+countdown, no DRUMS / BASS banner and no "CROWD" caption on the pads, no "Nice: the mix moves on" status line, and in the Bassment no title, caption band, zone tag or banner (YOU DIED, VICTORY, DEFEATED). What stays: the four
+mix pips, the energy meter, the pads' judgement words (PERFECT, GREAT, MISS: feedback, not story), menus, the pause panel, settings, the result screens and the F3 line. `RW_DEV_TEXT=1` (`DevText.on()`, read
+at call time) brings all of it back, and the tests that read captions or title cards set it (`test_run_scene`, `test_trial`).
+
+The information the text carried is in the world: BASS ENTERS is the bass coming in with the lights lifting, ROUTE CHOSEN the hotspot's committed flash, RISER / FALL are audible, and a new room is the door
+walk plus a **light swell**: `StoryStage` action `room_swell` (RunPlay sends it on every phase start but the first) lowers the room's lamps to 55 % on the downbeat and brings them up over two beats
+(`StoryStage.swell_gain`, `StoryWorld.light_of` ctx `swell_gain`). The choice window is a thin gold bar along the bottom of the picture that empties over the 16 beats (`RunHud.window_left`), the same
+bar the Bassment's four-bar window uses.
+
+The Bassment's 63 passages' narrative is acted by the creature standing in the room: `content/trial/hotspots.json` encounters carry `acting: {figure, available, selected, success, failure}` authored from
+one table keyed by creature kind in `tools/trial/make_hotspots.py` (`CREATURE_ACTING`; the contract's `figure` names a creature instead of an `actor`). A creature is a billboard, not a baked person, so its
+acts are motions on the figure (`RunActing.figure_motion`: block, offer, laugh, stamp, recoil, bow, collapse, shake_head, nod, plead, stare), played by `TrialScene._animate_figure`: the `available` act
+while it waits, `selected` once tapped or while the fight is on, `success` when it is beaten, `failure` when it beats you. Items, exits and luck tests have no acts (their lights are the look).
+`tests/test_run_hud_silent.gd` hooks `RunHud._outlined` (a counter, `strings_drawn`) over a scripted run from the count-in through the second scene; `test_trial.gd` checks the Bassment's text is hidden.
+Before/after shots: `bash tools/run/shoot_silent.sh` writes `docs/shots/silent/`.
+
+
+## Paths: sister runs at their own tempo (docs/THREE_PATHS_AND_FACES_PLAN.md section 3, stage 2)
+
+A path is a second run beside the 174 BPM one: its own `run.json` (`timing.bpm` 124 / 140 / 145), `music.json`, hotspot files and packs, played by the same `RunEngine`, `RunAudio`, `RunPlay`, `HotspotView` and
+stage code. The 174 run is not changed (it never loads a path's pack, validates exactly as before and its scenes behave as before). The proof path is `stub` (two scenes at 124 BPM on the Warehouse's own art,
+synthesised placeholder music, `dev`: listed on the home screen only once reached); the three real paths are `gospel` (The Life of Jesus, house 124 BPM, 17 scenes in 4 worlds, music still placeholders), `squadron` (The Mission Count,
+dubstep 140 BPM, 14 scenes in 4 worlds, on the owner's own loops) and `ember` (The Ember Road, psytrance 145 BPM, 15 scenes in 5 worlds, placeholders). Per-path notes with the scene tables, flags, art and checks:
+`docs/paths/gospel.md`, `docs/paths/squadron.md`, `docs/paths/ember.md`; the whole project's state: `docs/HANDOVER.md`.
+
+```
+content/paths/<id>/run.json        "path": {id, title, entry_from, returns_to: "warehouse", opens, laps?, dev?}, timing.bpm, worlds, nodes, cinematics (judgement, energy, stages, mix, effects, treatments are the main run's unless the file says otherwise)
+content/paths/<id>/music.json      one entry per scene (audio / chart pack, "temporary": true for placeholders); "placeholder": {genre, key, levels_db, sub_hz, ...} = the mix of the synthesised stand-ins
+content/paths/<id>/hotspots/<world>.json     the path's hotspots (the same contract; an ending's default exit sets keep:path_<id>_<ending>)
+content/paths/<id>/walks.json      (optional) extra walks for tools/run/walk_run.sh --path
+songs/packs/<id>_<scene>/          the path's packs, pack.json carries "path": "<id>" (the main run never loads it; the path's run loads only its own) and its BPM must equal the path's
+content/imports/<id>/<scene>/      the owner's drops (git-ignored: large); a scene with a drop never gets a placeholder
+```
+
+**Data rules** (`RunData`, when run.json carries `"path"`; `RunData.load_path(id)`, `load_default()` is the Warehouse run): a world may have several entry scenes (its own id stays one of them) and several exit
+scenes; routes to another world's entries are allowed from any exit scene; the graph is acyclic except through `loop` routes; every scene must reach an **ending** (`"ending": "<name>"`, whose one route is
+`run:warehouse` and whose default hotspot sets `keep:path_<id>_<name>`); a pack at another tempo than the path's is refused; a path never leads into another path or the Bassment. The Warehouse run keeps its strict rules.
+
+**Portals.** `warehouse.balcony.star` (`path:gospel`), `warehouse.booth.radio` (`path:squadron`), `warehouse.bar.ember` (`path:ember`) are `secret` hotspots with `look.available: pulse`, never the default,
+`repeatable`; success routes `path:<id>`, failure flickers out (-4 energy, no route: the scene's default exit takes over). They count in the 2 to 4 rule: the star appears once the floor has been seen from the rail
+(flag `wh_saw_floor`, set by the balcony rail hotspot's own success, which is then spent), the ember once the stranger's VIP pass is taken (`wh_vip_pass`), the radio always (the booth has room). All three paths now
+exist, so all three portals are live in the shipped Warehouse (`RunData` still leaves a portal out of play, logging `RUN portal ... is hidden`, if its `content/paths/<id>/run.json` is missing). `RW_PATH_REMAP=gospel=stub` plays the stub
+through the star. **Gating flags in one table:** star `wh_saw_floor` (the player must have looked at the floor from the balcony rail first), radio none, ember `wh_vip_pass` (the stranger's VIP pass); `RW_RUN_FLAGS=wh_saw_floor` /
+`wh_vip_pass` set them for a test or a review. Not built (plan D10): the Warehouse portal showing a different look once a path has been finished (the flags `keep:path_<id>_<ending>` are set and saved; nothing reads them yet except the
+home screen's "Endings found: N").
+
+**The tempo handoff** (`RunEngine._commit`, `RunPlay._path_swap`, `RunAudio.schedule_clock_swap`). When the phase ends on a `path:<id>` (or `run:warehouse`) route the engine emits `path_handoff` instead of
+entering a scene and freezes (`away`). The passage frame closes over beats 62 to 64 as for a world change. On the downbeat: `RunAudio` replaces the clock stream (one scheduled item, before the new phase's
+voices) by the 64-beat silent loop of the new tempo (`silent_loop`; the rate makes a beat a whole number of frames: 8680 Hz at 124, 8400 at 140, 8700 at 145 and 174; `RunAudio.frames_per_beat`), the song time
+stays one unbroken line (`song_base` becomes the downbeat, the wrap count restarts; the old loop's length is used until then because its last wrap is this downbeat), and the old voices fade through the usual
+phase change; a **new `RunEngine` / `RunHotspots` / `RunJourney`** of the other run begins its start scene on drums alone with `arrive(start, t0, energy, phase_n)`: its beat grid starts on that downbeat
+(`grid_origin`: cue times are `grid_origin + tick * 60 / (bpm * 960)`, so they sit on sixteenths of the new beat counted from the downbeat, not on the old grid), the crowd's energy and the phase count are carried
+over. The pads, note lane, HUD, hotspot views, `StoryStage.set_tempo` and the stage's `proxy.level` follow the new engine (the pads and the judge read the active engine's `beat_s`). The way back (`run:warehouse`
+from an ending, or the pause menu's **Leave this path**, taken from beat 61 of the phase) is the same swap in reverse into a fresh Warehouse engine with a fresh rail (the camera steps in through the door as for
+a world change; energy carries). A path that cannot be loaded does not strand the run: the Warehouse goes on by its default exit. `RW_RUN_PATH=<id>` starts a path directly (`RW_RUN_START` names its scene);
+`RW_RUN_PORTAL=<hotspot id>` makes the bot touch a portal, `RW_RUN_FLAGS=a,b` sets world-state flags after the run starts.
+
+**Save and home.** `user://story_run.json` gains `paths: {"<id>": {"reached": [worlds], "endings": [names]}}` (added on load to older saves, version stays 2; a path's worlds never enter `reached`). Start from a
+reached level lists each path that has data under its own heading once one of its worlds is reached; a locked card says how the path opens (`path.opens`); a `dev` path (the stub) is listed only when reached.
+
+**Placeholders.** `python tools/content/make_path_placeholders.py <id>` writes, for every scene with no import, `songs/packs/<id>_<scene>/`: 8-bar loops (32 beats) of drums, bass and a pad as 48 kHz stereo WAV of
+exactly `loop_frames` (not Ogg: that is the format `beatshaper.py import` writes and Ogg cannot guarantee a sample-exact loop) plus the MIDI they were made from (`midi/*.mid`), charted through beatshaper's own
+`build_cues` / `tier_cues`, `"placeholder": true`, `temporary` in music.json. Genres: house (four on the floor, claps on 2 and 4, offbeat open hats), dubstep (half time, sub with a wobble), psytrance (a 16th-note
+rolling bass between the kicks). The mix is **bass-forward and lives in music.json** (`placeholder.levels_db`: RMS dBFS of each stem, default drums -20, bass -13, pad -27; the generator refuses a bass that is
+not 8 dB over the pad and louder than the drums, or whose sub share (under `sub_hz`) is under `sub_share_min`). `beatshaper.py --path <id> <command>` does the owner's imports at the path's tempo (profile
+`<id>_x1`, `--bpm` for a path whose run.json is not written yet, `--max-error-ms` for a deliberate, recorded loosening); see `docs/MUSIC_IMPORT.md` section 7.
+
+**Checks.** `tests/test_run_paths.gd` (rates, data and relaxed rules, wrong-tempo pack, portals both ways, save migration, the engine handoff in both directions with beat_s before and after, the phase on the
+downbeat and the cues on the new grid, the audio clock swap, the real scene entering the stub through the balcony and leaving by its ending, starting in a path and leaving by the menu), the per-path matrix in
+`tests/test_run_matrix.gd`, `tools/content/test_paths.py`, `python3 tools/run/check_hotspots.py --path <id>`, `bash tools/run/walk_run.sh --path <id>`, and the recording of a handoff
+(`tools/story/record_music.gd` on `run_play.tscn` with the variables above, then `tools/story/check_run_audio.py`, which reports the measured beat grid per phase and at each handoff).
+
+
+### The three real paths: what the stages added to the engine (stages 3 to 5)
+
+* **Graph rules** (`RunData`, only when run.json carries `"path"`): beyond the stage 2 relaxations, a path's exit scene may lead on inside its own world and to a non-entry scene of it (`is_path()` relaxes the checks; the Gospel's J05, J06 and J07
+  route within `galilee`); the depth rule of exit scenes (one level deeper) is lifted, because a setback goes back to an easier world (Squadron's C04, C06, C07, C11, Ember's setbacks); scenes entered from another world are `entry` scenes (several per
+  world); a route that goes back is `loop: true` where the validator wants it (Squadron C05 -> C06, C07 -> C10, C11 -> C12, the C11 -> C02 absurd loop, the cell, Ember's Taken and the Birch Hall setbacks). `tools/run/check_hotspots.py --path`: a route needs
+  *some* hotspot (a feature, an object, a person, any kind) that leads to it, not an exit of its own; the main run keeps the strict rule.
+* **Maps and worlds**: a world has one map, but several worlds may share one (`base` and `air` on `airfield`, `marsh` and `mountain` on `ash_land`); a world names its story data with `"story": "res://content/story/<map>.json"` (`RunPlay._story_entry`), so a
+  path's maps are never chapters of the Story chapters menu. A path's first stage is built in a cue-free guard (`RunPlay._prebuild_in_guard`, `_prewarm_routes`; `build_log` records phase and scene), so the stage a portal opens on is not built behind the
+  closed frame. A sector may name its own `sky` and `fog` (`StoryMap`, `StoryWorld.set_atmosphere`, applied by `StoryStage` when the camera's sector changes): one map holds a night room and a dawn one.
+* **Set pieces** (`HotspotContract.validate_pieces`, `RunPlay._apply_pieces`, `RunPlay.piece_log`): a map thing with `"piece": "<id>"` is shown while it is on. A scene node may carry `"pieces": {"on": [...]}` (listed pieces are on from the downbeat, every
+  other piece of the stage is off), an outcome `"pieces": {"on": [...], "off": [...]}` (applied at the commit), and a scene `"block_fx": [{"block": 0..3, "pass": {pieces?, cast?}, "miss": {...}}]` (applied at that block's boundary; cast lines use `at_beat` 0).
+  The Gospel's Golgotha is staged this way (the sky darkens every block; a passed block brings a witness forward, a missed one a laughing soldier). Validated by `RunData._validate_stage_fx`.
+* **Cast lines** (`HotspotContract.CAST_KEYS`): besides the acting lines of "Acting in the run", `{"piece": "<id>", "op": "on|off|pulse", "at_beat": n}` switches a set piece, `{"actor": "<id>", "hide": true, "at_beat": 0, "if_flags_all": [...]}` removes a person
+  from the scene (`StoryCrowd.hide_actor`: Bram when you are alone, the Warden once he has fallen); cinematic `cast` takes them too. `RunPlay._on_cast` calls `StoryCrowd.ensure_present`, so a cast line brings its person in (the grove's traitor and guards are group `late`).
+* **A path's own mix**: a path's run.json may carry its own `stages` (Squadron's four laps of its 16-beat loop: drums alone; drums 0.7 + bass 1.0; drums 1.0 + bass 0.9 + synth 0.5; drums 0.55 + bass 1.0 + synth 0.7). A 4-bar loop tiles the 64-beat phase four times, so each
+  16-beat block is one lap and brings a new layer. Gospel and Ember use the main run's stage table.
+* **Flags**: endings and meetings are `keep:` flags (`keep:path_gospel_tomb`, `_road`, `keep:path_squadron_free`, `_clause`, `_met_*`, `keep:path_ember_quenched`, `_kept`); per-path run flags are prefixed (`sq_*`, `ember_*`, `gospel_*`) and cleared with the run. Ember's flags change later scenes
+  (`ember_no_vial` swaps E09's plain bells for the hard bells, `ember_warden_lost` and `ember_alone` take companions out of later scenes by `hide` lines); see `docs/paths/ember.md`.
+* **Environment variables** (all read by `RunPlay`): `RW_RUN_PATH=<id>` starts a path directly; `RW_RUN_START=<scene id>` names the start scene (of the path with `RW_RUN_PATH`, otherwise of the main run); `RW_RUN_PATH_START=<scene id>` names the first scene when a path is
+  entered through its portal; `RW_RUN_PORTAL=<hotspot id>` makes the bot touch a portal in the final window; `RW_RUN_FLAGS=a,b` sets flags after the run starts; `RW_PATH_REMAP=gospel=stub` plays one path through another's portal; `RW_DEV_TEXT=1` brings back the play text of
+  the silent HUD; `RW_RUN_SELECT=<hotspot id>@<beat>` selects a hotspot at a beat (tests, shots); `RW_RUN_CLEAN=1` draws no notes and no HUD (acting shots); `RW_STORY_CAM=actor:<id>:<m>:<pitch>` frames a person (acting shots).
+* **Tools**: `bash tools/run/walk_run.sh --path <id> [walk ...]` (the walks come from `tools/run/path_walk_spec.py` plus `content/paths/<id>/walks.json`; on Windows set `GODOT` to the console binary, the script's default is the Linux one);
+  `python3 tools/run/check_hotspots.py --path <id>`; `python3 tools/content/beatshaper.py --path <id> validate|scan|survey|check|import|apply [--max-error-ms N]`; `python3 tools/content/make_path_placeholders.py <id> [--force]`;
+  `godot --headless --path . -s tools/run/check_path.gd -- <id>` (a path's data) and `-s tools/story/check_map.gd` (a map and its chapter); shots: `bash tools/run/capture_path.sh <id> [--acting]`, `tools/run/shoot_gospel.sh`, `tools/paths/shoot_squadron.sh`.
+  Authoring: `python3 tools/content/make_gospel.py`, `python3 tools/paths/make_squadron.py`, `python3 tools/run/make_ember.py` (each writes the path's run.json, hotspots and walks from its tables; edit the table, rerun).
+* **Save**: `user://story_run.json` has `paths: {"<id>": {"reached": [...], "endings": [...]}}`; a path's worlds are never in `reached`.
+* **The tempo handoff and the song clock**: the first phase change inside a path used to sit 88 ms off (a new stream's position reads one mix period ahead after its first mix, so the clock ran ahead of the sound after every swap). Fixed in `56adc157`: `RunAudio._swap_clock` sets `song_base = t - mix_period(ttnm)`,
+  `clock_log` records the period, `tools/story/check_run_audio.py` asserts every in-path phase boundary within 29.4 ms (the dummy driver's floor). Measured with the dummy driver only.
+
+
+## Two laps per path scene (docs/HANDOVER.md A12)
+
+The audio polish (A10) found that the three paths' music turned over every phase (Gospel 31.0 s, Squadron 27.4 s, Ember 26.5 s), so the player never sat in a song. A scene of a path now plays its music and its
+staging for **two consecutive 64-beat phases ("laps") before the route commits**. The 174 BPM main run keeps one (and behaves, validates and tests exactly as before). (In `docs/paths/squadron.md` "lap" also names
+one repeat of the 4-bar loop inside a phase; here a lap is a whole 64-beat phase.)
+
+**Data.** `path.laps` in a path's `run.json` is the default of every scene of the path (1 when absent); a scene node may carry its own `laps`, which wins. A whole number from 1 to `RunData.MAX_LAPS` (4); only a
+path's scenes may play more than one (the main run refuses it) and a scene that plays an arrangement (the main run's two sections per phase) plays one. Shipped: `path.laps` 2 in `gospel`, `squadron` and `ember`;
+`"laps": 1` on **J00 `jordan`** (the prologue: a night road, one way on; a minute of it before the first story scene would be a wait, not a song), **J14 `jerusalem.golgotha`** (the sky darkens one step a block and
+a witness or a soldier steps forward a block: one descent, a second lap would only repeat it; its `block_fx` and its cast are authored for one pass) and **E00 `hollow`** (the orchard prologue, one way on). Every
+other scene takes two, **the endings included** (J15 tomb, J16 road, C13 quay, E12 spring, E13 keeper): the finale is where the player most wants to sit in the song, and the ending's flag is still set by its
+default exit at the end of the last lap. `stub` stays at one. `RunData.laps_of(scene)`.
+
+**What a lap is.** Each lap is a phase of the engine: its own phase number (`phase_n` counts laps; `RunEngine.scene_index()` = `phase_n - lap_extra` counts scenes), its own four blocks, cues and judge results,
+its own `block_result`. The per-block rules are the single phase's, untouched: the tap windows, the pass credit, the energy gain and loss of a block, the 16-beat blocks, the 12-beat cue span and the decision at
+12.5. `RunEngine` has `lap`, `laps`, `scene_t0` and `lap_extra`; `phase_start` carries `lap` (1), `laps` and `lap_extra`; `block_result` and `route_window` carry `lap`. At the end of a lap before the last the
+engine does not commit: it emits `lap_start` {node, lap, laps, t, phase, stage, lap_extra, scene_t0} on the downbeat and the scene goes on.
+
+* **Lap 1** is the scene's full phase by the stage table (drums alone; bass enters; drums return; bass strongest) with no route window, no hotspot window, no commit and no riser or fall: `choose()` is refused,
+  `RunHotspots.shown` is empty (the final window needs `window_open`), `_hotspot_decision` makes no final commit, no door walk is latched and no passage frame closes. Its last block is judged like any other.
+* **The boundary.** The stage of lap 2's first block is the stage of lap 1's last block, **one step on after a pass** (as at every block; `min(stage + 1, 3)`), so a player who earned the bass keeps it at its strongest:
+  a perfect player's stages over the scene are 0 1 2 3 | 3 3 3 3, and a miss in the last block holds the stage. **Nothing is stripped back and nothing restarts**: `RunAudio` schedules nothing for a lap (its
+  voices simply go on; every pack's phrase divides a 64-beat lap, which `RunData` validates), the engine emits a `mix` event at the boundary only if the stage changes and a `reveal` only if the bass enters on that very
+  downbeat. A player who earned nothing in lap 1 starts lap 2 on drums alone and the stage table brings the bass in again from there: a second chance, never a harsher one. `bass_origin` is kept (it counts modulo the
+  phrase, so lap 2's bass cues stay on the loop's own phrase) and the first block of lap 2 is charted at lap 1's last decision like any next block. The cue families of a perfect scene are drums, bass, drums, bass,
+  then **bass for all four blocks of lap 2** (the stage holds at "bass strongest": drums 0.4, bass 1.0, synth 0.5). The part offsets (`part_offset`) carry on.
+* **Lap 2 (the last lap)** is the phase as it always was from the player's side: hotspots on show from beat 49, the route window at beat 48 (riser if the strongest stage is in), the commit at the decision of the last
+  block (beat 60.5), the route lock, the door walk (beat 61), the passage frame (beats 62 to 64), the tempo handoff: all at the LAST lap's beats, none of them moved or resized. **Hotspots are available in lap 2 only**
+  (least risky: the 2 to 4 rule, `RunHotspots` and the whole hotspot contract are per scene and untouched; showing them in lap 1 would have needed a second, non-committing window state).
+* **Leaving a path** (the pause menu's "Leave this path", beat 61 on) now also works in a lap before the last: the scene ends at that lap's downbeat, through the passage frame (`RunEngine.exit_pending()`).
+* **Cast.** A scene's `cast` lines count `at_beat` from the scene's first downbeat across its laps: 0 to 64 x laps - 1 (`RunData.cast_last_beat`, `HotspotContract.validate_cast`'s `last_beat`). They are queued once when
+  the scene begins and fire at `scene_t0 + at_beat * beat_s` as ever (stamped with the phase of the lap they fall in); a line of a later lap waits for its lap, so a stalled frame cannot fire it early. `block_fx`
+  entries take an optional `lap` (1 to the scene's laps; default 1: an entry without it plays in the scene's first lap only, as it did).
+* **The staging goes on.** The scene's lamps, set pieces, rail, people and the stage's `lights_*` actions are not reset at the boundary (`RunPlay._on_lap_start` only logs and clears the touch state; there is no
+  `room_swell`, no `lights_low_pulse`, no pieces reset). `RunJourney` gives the lap's first block its glance and stroll and the rail keeps stepping, so the camera's walk goes on from where it was.
+* **Counting scenes.** The result screen and the save's "best phases" count scenes (`run_over.scenes`), the scripted bots' routes are one per scene, `RW_RUN_UNTIL_PHASE` and the debug list's "back to the list when
+  the scene ends" count scenes. `RunAudio` picks its bus pair from `phase - lap_extra`, so two scenes in a row still alternate pairs.
+
+**Cast re-timing (tools/run/laps.py, called by the three generators).** The generators' tables still author one phase (beats 0 to 63); `laps.finish_run(run, laps, single)` writes `path.laps`, gives the
+single-lap scenes `"laps": 1` and re-times the cast of the others: a line before beat 48 is spread over the laps (b x laps: 0, 16, 32 become 0, 32, 64; a line that holds 12 beats or more holds laps times as long, so
+the person stays in the act until the next line takes over) and a line from beat 48 on (the last block: the window, the commit, the reactions at beat 61) keeps its place in the LAST lap (b + 64 for two laps). Nothing is
+added or removed, so no text appears in play, and every reaction to a commit still lands at beats 125 to 127. After the change no cast beat lies between 96 and 111. Re-run
+`python3 tools/content/make_gospel.py --run-only`, `python3 tools/paths/make_squadron.py` or `python3 tools/run/make_ember.py` after editing a table.
+
+**Checks.** `tests/test_run_laps.gd` (the shipped laps, the validator, the window, commit and hotspots in the last lap only, the stage and cue families across the boundary, the bass phrase on the loop's own grid, a
+missed block and a late reveal, the energy per block against the single-phase formula, the cast across laps at any frame step and across a stall, leaving in lap 1, the handoff after two laps and the Warehouse grid,
+the main run without laps, the audio voices across the boundary, the real scene, the debug mode), `tools/content/test_laps.py`, `test_run_cast.gd`, `test_run_ember.gd`, `test_run_matrix.gd` (a scene of a path may take
+twice as long; `RW_MATRIX_LAPS=1` replays the matrix at one lap), `python3 tools/run/check_hotspots.py --path <id>` (laps and cast ranges), `bash tools/run/walk_run.sh --path <id>` (the lap_start sequence of every
+walk), `python tools/run/measure_mix.py --force-laps 1` (the before) against the data (the after), `tools/story/check_run_audio.py` (lap boundaries: no jump in the beat grid, no voice started there).
+
+**Revert.** Set `path.laps` to 1 in `content/paths/<id>/run.json` (or change `LAPS` in the path's generator and re-run it: the cast goes back to its authored beats; the walks and tests follow the data). One value per
+path; a scene's own `"laps": 1` stays. Nothing else in the data changes.

@@ -1,0 +1,383 @@
+{
+ "version": 1,
+ "level": "ash_land",
+ "px_scale_note": "the Ember Road's maps have no rigs; their world is textures and sprite sheets only",
+ "textures": {
+  "ceil_cavern": {
+   "file": "textures/ceil_cavern.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 4.0
+  },
+  "ceil_hot": {
+   "file": "textures/ceil_hot.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "ceil_mist_teal": {
+   "file": "textures/ceil_mist_teal.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 6.0
+  },
+  "ceil_smoke": {
+   "file": "textures/ceil_smoke.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 6.0
+  },
+  "floor_ash": {
+   "file": "textures/floor_ash.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_basalt": {
+   "file": "textures/floor_basalt.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_camp": {
+   "file": "textures/floor_camp.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_cavern": {
+   "file": "textures/floor_cavern.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_marsh": {
+   "file": "textures/floor_marsh.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_mud": {
+   "file": "textures/floor_mud.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_pool": {
+   "file": "textures/floor_pool.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_red_rock": {
+   "file": "textures/floor_red_rock.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_stair": {
+   "file": "textures/floor_stair.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_vent": {
+   "file": "textures/floor_vent.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "piece_gate_mouths": {
+   "file": "textures/piece_gate_mouths.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "piece_light_shaft": {
+   "file": "textures/piece_light_shaft.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "piece_long_shadow": {
+   "file": "textures/piece_long_shadow.png",
+   "size": [
+    256,
+    128
+   ],
+   "metres": 1.0
+  },
+  "piece_white_swell": {
+   "file": "textures/piece_white_swell.png",
+   "size": [
+    256,
+    128
+   ],
+   "metres": 1.0
+  },
+  "sky_ash": {
+   "file": "textures/sky_ash.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_banner_rider": {
+   "file": "textures/thing_banner_rider.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_bell": {
+   "file": "textures/thing_bell.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_bell_row": {
+   "file": "textures/thing_bell_row.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_brazier_red": {
+   "file": "textures/thing_brazier_red.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_camp_fire": {
+   "file": "textures/thing_camp_fire.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_chain_post": {
+   "file": "textures/thing_chain_post.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_dead_tree": {
+   "file": "textures/thing_dead_tree.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_ember_altar": {
+   "file": "textures/thing_ember_altar.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_gate_black": {
+   "file": "textures/thing_gate_black.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_glass_mountain": {
+   "file": "textures/thing_glass_mountain.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_marsh_light": {
+   "file": "textures/thing_marsh_light.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_pool_stones": {
+   "file": "textures/thing_pool_stones.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_reed_clump": {
+   "file": "textures/thing_reed_clump.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_stake": {
+   "file": "textures/thing_stake.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_stalagmite_red": {
+   "file": "textures/thing_stalagmite_red.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_tent": {
+   "file": "textures/thing_tent.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_tower_light": {
+   "file": "textures/thing_tower_light.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_vent_glow": {
+   "file": "textures/thing_vent_glow.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_wall_crack": {
+   "file": "textures/thing_wall_crack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "wall_ash_dune": {
+   "file": "textures/wall_ash_dune.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_cavern": {
+   "file": "textures/wall_cavern.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_cliff": {
+   "file": "textures/wall_cliff.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_gate": {
+   "file": "textures/wall_gate.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_obsidian": {
+   "file": "textures/wall_obsidian.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_reed": {
+   "file": "textures/wall_reed.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_tent": {
+   "file": "textures/wall_tent.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "wall_vent": {
+   "file": "textures/wall_vent.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  }
+ },
+ "people": {
+  "file": "people/people.json",
+  "pages": [
+   "people/page_0.png",
+   "people/page_1.png"
+  ],
+  "palette": "people/palette.png"
+ }
+}

@@ -6,6 +6,16 @@ For every phase on an untreated level it fits each 16-beat block of the recordin
 bass and Synth loops (from the reveal beat the engine reported: a delayed reveal moves their origin) and the riser or fall, and compares the
 fitted coefficients with the gains of the mix stage in force. Treated levels (filters, distortion) are only checked for their delay. It also
 reports the delay per phase: the same value in every phase and across a world change means the voices are on the clock and nothing drifts.
+
+A recording may cross into a PATH (docs/CONTINUOUS_RUN.md "Paths") and back: each phase_start event names its `path` ("" = the main run), the phase is checked against that run's own run.json,
+music.json and tempo, and the BEAT GRID is reported per phase: the drum loop is fitted at the start and at the end of the phase (beats 0-8 and 56-63), the drift between the two delays gives the tempo
+the recording really has (compared with the engine's), and at every change of tempo the line "handoff" says the grid before and after and how far the new phase's first downbeat sits from the old
+phase's delay (0 = the new grid starts on the downbeat).
+
+A scene of a path may play several LAPS (docs/CONTINUOUS_RUN.md "Two laps"): its phase_start event says `laps`, and the scene is then fitted as laps x 64 beats (blocks 1 to 4 x laps, the mix stage carried
+over a block that has no mix event, the riser or fall in the last block of the last lap, the bass origin at the reveal's own time). At every LAP BOUNDARY the drums are fitted in the 8 beats before and the 8 beats
+after: the delay must not jump (the beat grid goes on without a seam), and no voice may have been started at the boundary (the loops go on; the bass already in stays in, which the block fits show as the stage's
+gains with the bass at its strongest in the first block of the next lap).
 """
 from __future__ import annotations
 
@@ -20,7 +30,10 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
-BEAT = 60.0 / 174.0
+sys.path.insert(0, str(ROOT / "tools" / "run"))
+import measure_mix  # noqa: E402  (the bass bus model: the bass loop is fitted as it leaves RunAudio's bass bus, docs/HANDOVER.md "Audio polish")
+BEAT = 60.0 / 174.0  # (the main run's; each phase uses its own run's beat)
+CHUNK_FLOOR_MS = 29.4  # the dummy driver's measurement floor on this machine (every recorded voice lateness is a multiple of it plus a constant)
 
 
 def read_pcm(path: Path) -> tuple[np.ndarray, int]:
@@ -62,9 +75,22 @@ def main() -> int:
     rec, rate = read_pcm(base.with_suffix(".wav"))
     info = json.loads(base.with_suffix(".json").read_text())
     run = json.loads((ROOT / "content/run/run.json").read_text())
-    music = {n["id"]: n for n in json.loads((Path(os.environ["RW_RUN_MUSIC"]) if os.environ.get("RW_RUN_MUSIC") else ROOT / "content/story/music.json").read_text())["nodes"]}
-    nodes = {n["id"]: n for n in run["nodes"]}
-    stages = run["stages"]
+    ctxs: dict = {}
+
+    def ctx_for(pid: str) -> dict:
+        """The run a phase belongs to: its run.json (a path inherits the main run's stages), its music.json, its nodes and its beat."""
+        if pid not in ctxs:
+            if pid == "":
+                r, mp = run, (Path(os.environ["RW_RUN_MUSIC"]) if os.environ.get("RW_RUN_MUSIC") else ROOT / "content/story/music.json")
+            else:
+                r = json.loads((ROOT / "content/paths" / pid / "run.json").read_text())
+                for k in ("stages", "effects"):
+                    r.setdefault(k, run[k])
+                r["mix"] = measure_mix.merged_mix(run["mix"], r.get("mix"))
+                mp = ROOT / "content/paths" / pid / "music.json"
+            ctxs[pid] = {"run": r, "music": {n["id"]: n for n in json.loads(mp.read_text())["nodes"]}, "nodes": {n["id"]: n for n in r["nodes"]}, "stages": r["stages"],
+                         "beat": 60.0 / float(r["timing"]["bpm"]), "bpm": float(r["timing"]["bpm"])}
+        return ctxs[pid]
     s0 = float(info["started_wall"])
     events = info.get("events", [])
     t0u = int(info.get("t0_usec", 0))
@@ -82,7 +108,6 @@ def main() -> int:
     def wall_of(t: float) -> float:
         return s0 + t + sum(d for at, d in pauses if at < t)
     starts = [e for e in events if e["kind"] == "phase_start"]
-    rev = {int(e["t"] / BEAT // 64): e for e in events if e["kind"] == "reveal"}
     mixes = [e for e in events if e["kind"] == "mix"]
     windows = [e for e in events if e["kind"] == "route_window"]
     loops: dict = {}
@@ -92,7 +117,25 @@ def main() -> int:
             d = ROOT / "songs/packs" / pid
             pk = json.loads((d / "pack.json").read_text())
             loops[pid] = {k: resampled(d / v, rate) for k, v in pk["stems"].items()}
+            pk["dir"] = d
+            loops[pid]["_pack"] = pk
         return loops[pid]
+
+    bussed: dict = {}
+
+    def bass_as_heard(pid: str, gain: float, bb: dict) -> np.ndarray:
+        """The bass loop as it leaves the bass bus at the player gain `gain`, divided by that gain (so the fitted coefficient is still the stage gain); the raw loop when the bus is off."""
+        lp = pack_loops(pid)
+        if not bb.get("enabled", False) or gain <= 0 or rate != measure_mix.RATE:
+            return lp["bass"]
+        key = (pid, round(gain, 6), json.dumps(bb, sort_keys=True))
+        if key not in bussed:
+            pk = lp["_pack"]
+            with wave.open(str(pk["dir"] / pk["stems"]["bass"]), "rb") as w:
+                st = np.frombuffer(w.readframes(w.getnframes()), "<i2").astype(np.float64).reshape(-1, w.getnchannels()) / 32768.0
+            st = np.repeat(st, 2, axis=1) if st.shape[1] == 1 else st  # (a stem stored mono plays as the same signal on both sides)
+            bussed[key] = (measure_mix.bass_bus(st, gain, bb) / gain).mean(axis=1)[:len(lp["bass"])]
+        return bussed[key]
 
     fx = {k: resampled(ROOT / "assets/run" / f"{k}.wav", rate) for k in ("riser", "fall")}
     gain_fx = 10 ** (run["effects"]["gain_db"] / 20.0)
@@ -100,33 +143,63 @@ def main() -> int:
     delays = []
     bad = 0
     voice_off: dict = {}
+    lap_bad: list = []  # [(scene, boundary, jump ms, voices started)] lap boundaries where the grid jumped or a voice restarted
+    grid: list = []  # [{phase, path, bpm, measured_bpm, delay_ms, t0}] for the handoff report
     for ph in starts:
-        n = int(round(float(ph["t"]) / BEAT / 64))
-        node = nodes[ph["node"]]
+        cx = ctx_for(str(ph.get("path", "")))
+        BEAT = cx["beat"]
+        music = cx["music"]
+        stages = cx["stages"]
         mu = music[ph["node"]]
-        treated = mu["treatment"] != "none"
+        bb = measure_mix.bass_bus_of(cx["run"]["mix"], mu.get("bass_bus"))
+        level = 10 ** (float(cx["run"]["mix"].get("gain_db", 0.0)) / 20.0)  # RunMix's volume: every voice but the riser and fall (on the Music bus)
+        treated = mu["treatment"] != "none" or "arrangement" in mu  # (a scene that plays an arrangement switches packs inside the phase: only its delay and tempo are checked here, tools/content/check_section_audio.py does the rest)
         t0 = float(ph["t"])
-        if wall_of(t0 + 64 * BEAT) > len(rec) / rate:
+        nlaps = int(ph.get("laps", 1))
+        total = 64 * nlaps  # beats of the scene across its laps
+        if wall_of(t0 + total * BEAT) > len(rec) / rate:
             break
-        loops_ = pack_loops(mu["audio"])
+        loops_ = pack_loops(str(ph["audio"]))  # (the pack the engine resolved: the scene's own, or the first section's)
         a = int(round(wall_of(t0) * rate))
         # delay from the drums-alone first block
         seg = rec[a - int(0.3 * rate):a + int(8 * BEAT * rate)]
         mod = tiled(loops_["drums"], a - int(0.3 * rate), len(seg), a)
         d = xcorr_delay(seg, mod, rate, 0.4)
         delays.append(d * 1000.0)
-        print(f"phase {ph['phase']} {ph['node']:14s} treatment {mu['treatment']:10s} delay {d * 1000.0:+7.2f} ms")
+        a2 = a + int(round((total - 8) * BEAT * rate))  # the same fit at the end of the scene: the drift between the two is the tempo error of the recording
+        seg2 = rec[a2 - int(0.3 * rate):a2 + int(7 * BEAT * rate)]
+        d2 = d + xcorr_delay(seg2, tiled(loops_["drums"], a2 - int(0.3 * rate), len(seg2), a + int(round(d * rate))), rate, 0.1)  # searched round the start delay: a four-on-the-floor loop repeats every beat
+        measured_beat = BEAT * (1.0 + (d2 - d) / ((total - 8) * BEAT))
+        if "arrangement" in mu:  # two packs play inside the phase: the drum loop of the first does not fit its second half, so the end-of-phase fit says nothing about the tempo
+            measured_beat = BEAT
+        grid.append({"phase": int(ph["phase"]), "path": str(ph.get("path", "")), "bpm": cx["bpm"], "measured_bpm": 60.0 / measured_beat, "delay_ms": d * 1000.0, "end_delay_ms": d2 * 1000.0, "t0": t0})
+        print(f"phase {ph['phase']} {ph['node']:14s} {cx['bpm']:g} BPM{(' x%d laps' % nlaps) if nlaps > 1 else ''} (measured {60.0 / measured_beat:7.3f}{' *' if 'arrangement' in mu else ''}) treatment {mu['treatment']:10s} delay {d * 1000.0:+7.2f} ms")
+        for k in range(1, nlaps):  # the lap boundaries: the beat grid goes on (the drums' delay before and after), and no voice was started there (nothing restarts)
+            ab = a + int(round((64 * k - 8) * BEAT * rate))
+            aa = a + int(round(64 * k * BEAT * rate))
+            sb = rec[ab - int(0.3 * rate):ab + int(7 * BEAT * rate)]
+            sa = rec[aa - int(0.3 * rate):aa + int(7 * BEAT * rate)]
+            d_b = d + xcorr_delay(sb, tiled(loops_["drums"], ab - int(0.3 * rate), len(sb), a + int(round(d * rate))), rate, 0.1)
+            d_a = d + xcorr_delay(sa, tiled(loops_["drums"], aa - int(0.3 * rate), len(sa), a + int(round(d * rate))), rate, 0.1)
+            jump = (d_a - d_b) * 1000.0
+            started = [v for v in info.get("voices", []) if str(v.get("node", "")) == str(ph["node"]) and t0 + (64 * k - 1) * BEAT < float(v.get("target", -1e9)) < t0 + (64 * k + 1) * BEAT]
+            lap_ok = abs(jump) < 6.0 and not started
+            if not lap_ok:
+                lap_bad.append((ph["node"], k, round(jump, 2), len(started)))
+            print(f"   lap boundary {k} -> {k + 1}: drums delay {d_b * 1000.0:+7.2f} ms before, {d_a * 1000.0:+7.2f} ms after (jump {jump:+.2f} ms), voices started at the boundary: {len(started)}  {'ok' if lap_ok else 'CHECK'}")
         if treated:
             continue
         ad = a + int(round(d * rate))
-        r_ev = rev.get(n - 0, None)
         reveal_beat = None
         for e in events:
-            if e["kind"] == "reveal" and t0 - 1e-6 <= float(e["t"]) < t0 + 64 * BEAT:
-                reveal_beat = float(e["beat"])
-        for b in range(4):
+            if e["kind"] == "reveal" and t0 - 1e-6 <= float(e["t"]) < t0 + total * BEAT:
+                reveal_beat = round((float(e["t"]) - t0) / BEAT, 4)  # (in beats from the scene's first downbeat: a reveal in a later lap names its lap-relative beat)
+        stage_now = None
+        for b in range(4 * nlaps):
             mix = [m for m in mixes if t0 + b * 16 * BEAT - 1e-6 <= float(m["t"]) < t0 + (b + 1) * 16 * BEAT - 1e-6]
-            stage = int(mix[0]["stage"]) if mix else None
+            if mix:
+                stage_now = int(mix[0]["stage"])
+            stage = stage_now  # (a block with no mix event keeps the stage: the first block of a later lap, when the lap does not change it)
             if stage is None:
                 continue
             g = stages[stage]["gains"]
@@ -141,11 +214,11 @@ def main() -> int:
             comps: dict = {"drums": (loops_["drums"], 0)}
             if reveal_beat is not None and b * 16 >= reveal_beat:
                 borigin = int(round(reveal_beat * BEAT * rate))
-                comps["bass"] = (loops_["bass"], borigin)
+                comps["bass"] = (bass_as_heard(str(ph["audio"]), float(g["bass"]), bb), borigin)
                 comps["other"] = (loops_["other"], borigin)
-            if b == 3:
+            if b == 4 * nlaps - 1:
                 eff = "riser" if stage == 3 else "fall"
-                comps[eff] = (fx[eff], int(48 * BEAT * rate))
+                comps[eff] = (fx[eff], int((total - 16) * BEAT * rate))
             shift = {k: 0 for k in comps}  # samples each voice sits from its nominal start (found below)
             y = rec[lo:lo + ln]
             for _ in range(3):
@@ -165,7 +238,7 @@ def main() -> int:
                 print(f"      (after a pause: the whole block sits {shift['drums'] / rate * 1000.0:+.1f} ms from where the wall clock puts it, the voices {', '.join('%s %+.1f ms' % (k, v) for k, v in rel.items()) or 'alone'} from the drums)")
             fit = m_ @ coef
             expl = 1.0 - float(((y - fit) ** 2).sum() / ((y ** 2).sum() + 1e-12))
-            exp = {k: g[k] for k in names if k in g}
+            exp = {k: round(g[k] * level, 4) for k in names if k in g}
             exp.update({k: gain_fx for k in names if k in ("riser", "fall")})
             got = dict(zip(names, [round(float(c), 2) for c in coef]))
             ok = all(abs(got[k] - exp[k]) < 0.12 for k in exp) and expl > 0.9
@@ -178,9 +251,31 @@ def main() -> int:
             print(f"   bass and synth started from beat {reveal_beat:g} of the phase")
     for k, v in voice_off.items():
         print(f"{k:6s} sits {min(v):+.1f} to {max(v):+.1f} ms from its nominal start relative to the drums ({len(v)} blocks measured)")
+    for g0, g1 in zip(grid, grid[1:]):
+        if abs(g0["bpm"] - g1["bpm"]) > 1e-9:
+            print(f"handoff at song time {g1['t0']:.3f} s: the grid goes from {g0['bpm']:g} BPM (measured {g0['measured_bpm']:.3f}) to {g1['bpm']:g} BPM (measured {g1['measured_bpm']:.3f}); the drums of the new phase sit "
+                  f"{g1['delay_ms'] - g0['end_delay_ms']:+.2f} ms from where the old phase's drums sat at its end (0 = the new grid's first downbeat is exactly the old phase's last; judge it against the mix chunk: 5.9 ms for 256 frames, 85 ms for the 4096-frame chunk the dummy driver may use; the ends of two phases are compared, not their starts, because the recorder drifts against the clock)")
+    # every phase boundary inside a path (the first one after a tempo handoff above all): the new phase's drums must sit where the old phase's drums sat at its end, to within one measurement
+    # step of the dummy driver (CHUNK_FLOOR_MS: the 29.4 ms the voice lateness is quantised to on this machine). The Stage 2 recordings showed 88.6 ms here: the clock swap put the song time one
+    # mix period ahead of the old line (RunAudio._swap_clock, docs/paths/gospel.md).
+    boundary_bad = []
+    for g0, g1 in zip(grid, grid[1:]):
+        if g0["path"] != "" and g0["path"] == g1["path"]:
+            step = g1["delay_ms"] - g0["end_delay_ms"]
+            first = sum(1 for g in grid if g["path"] == g0["path"] and g["phase"] <= g0["phase"]) == 1
+            print(f"in-path phase boundary {g0['phase']} -> {g1['phase']}{' (the first after the handoff)' if first else ''}: the new drums sit {step:+.2f} ms from the old phase's end (floor {CHUNK_FLOOR_MS} ms)")
+            if abs(step) > CHUNK_FLOOR_MS:
+                boundary_bad.append((g0["phase"], g1["phase"], round(step, 1)))
+    if boundary_bad:
+        print("CHECK: in-path phase boundaries off by more than the chunk floor:", boundary_bad)
+    if lap_bad:
+        print("CHECK: lap boundaries where the grid jumped or a voice restarted:", lap_bad)
+    tempo_bad = [g for g in grid if abs(g["measured_bpm"] - g["bpm"]) > 0.35]
+    if tempo_bad:
+        print("CHECK: phases whose recorded tempo differs from the engine's:", [(g["phase"], round(g["measured_bpm"], 3), g["bpm"]) for g in tempo_bad])
     if delays:
         print(f"delay per phase: min {min(delays):+.2f} ms, max {max(delays):+.2f} ms, spread {max(delays) - min(delays):.2f} ms")
-    ok = bool(delays) and max(delays) - min(delays) < 6.0 and bad == 0
+    ok = bool(delays) and max(delays) - min(delays) < 6.0 and bad == 0 and not tempo_bad and not boundary_bad and not lap_bad
     print("RESULT", "ok" if ok else "CHECK")
     return 0 if ok else 1
 

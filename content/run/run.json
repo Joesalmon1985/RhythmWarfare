@@ -55,7 +55,7 @@
    "cue": "drums",
    "gains": {
     "drums": 1.0,
-    "bass": 0.5,
+    "bass": 0.85,
     "other": 0.45
    }
   },
@@ -66,13 +66,20 @@
    "gains": {
     "drums": 0.4,
     "bass": 1.0,
-    "other": 0.6
+    "other": 0.5
    }
   }
  ],
  "mix": {
   "ramp_s": 0.35,
-  "phase_fade_s": 0.6
+  "phase_fade_s": 0.6,
+  "note": "The audio polish (docs/HANDOVER.md 'Audio polish'): gain_db = the run's level on RunMix; bass_bus = the bass voice's tone bus (high-pass, low shelf, WAVESHAPE drive with pre and post gain; a path's run.json mix and a scene's music.json bass_bus override it key by key; enabled false = off); recipe_bass_floor lifts an arrangement recipe's bass gain in the run; carry_bass = the previous scene's bass under the drums-alone block when both scenes play one music family (gain 0 = off); dip_gain / dip_beats = a hotspot's music dip. Before the polish: no gain, no bass bus, no floor, no carry, dip 0.35 for 8 beats, stage 2 bass 0.5, stage 3 synth 0.6.",
+  "gain_db": 2.0,
+  "dip_gain": 0.55,
+  "dip_beats": 6.0,
+  "recipe_bass_floor": 0.9,
+  "carry_bass": {"gain": 0.5, "beats": 16.0},
+  "bass_bus": {"enabled": true, "highpass_hz": 30.0, "shelf_hz": 110.0, "shelf_db": 2.0, "drive": 0.6, "pre_gain_db": 6.0, "gain_db": -9.0}
  },
  "effects": {
   "riser": "res://assets/run/riser.wav",
@@ -299,6 +306,41 @@
      }
     }
    },
+   "cast": [
+    {
+     "actor": "c01",
+     "at_beat": 0,
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 10
+    },
+    {
+     "actor": "c02",
+     "at_beat": 16,
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "c08",
+     "at_beat": 36,
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "c03",
+     "at_beat": 44,
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 8,
+     "if_energy_below": 45
+    }
+   ],
    "trial_gate": "deathtrap_opening"
   },
   {
@@ -393,7 +435,41 @@
       "left": "bar_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "b02",
+     "at_beat": 0,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "b04",
+     "beats": 10
+    },
+    {
+     "actor": "b04",
+     "at_beat": 16,
+     "act": "nod",
+     "face": "happy",
+     "look_at": "b01",
+     "beats": 8
+    },
+    {
+     "actor": "b03",
+     "at_beat": 30,
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "b02",
+     "at_beat": 48,
+     "act": "cover_face",
+     "face": "shame",
+     "beats": 10,
+     "if_energy_below": 40
+    }
+   ]
   },
   {
    "id": "warehouse.balcony",
@@ -487,7 +563,42 @@
       "left": "balcony_stairs"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "v01",
+     "at_beat": 0,
+     "act": "watch",
+     "face": "awe",
+     "look_at": "floor_centre",
+     "beats": 16
+    },
+    {
+     "actor": "v02",
+     "at_beat": 16,
+     "act": "clap",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "v03",
+     "at_beat": 36,
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 10
+    },
+    {
+     "actor": "e03",
+     "at_beat": 48,
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 10,
+     "if_energy_above": 65
+    }
+   ]
   },
   {
    "id": "warehouse.chill",
@@ -576,6 +687,41 @@
      }
     }
    },
+   "cast": [
+    {
+     "actor": "s03",
+     "at_beat": 0,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "s02",
+     "beats": 12
+    },
+    {
+     "actor": "s02",
+     "at_beat": 16,
+     "act": "nod",
+     "face": "relief",
+     "look_at": "s03",
+     "beats": 8
+    },
+    {
+     "actor": "s04",
+     "at_beat": 36,
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "s03",
+     "at_beat": 52,
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 8,
+     "if_energy_below": 45
+    }
+   ],
    "trial_gate": "deathtrap_opening"
   },
   {
@@ -658,7 +804,43 @@
       "up": "booth_down"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "c10",
+     "at_beat": 0,
+     "act": "cheer",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "c07",
+     "at_beat": 20,
+     "act": "clap",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "e01",
+     "at_beat": 40,
+     "act": "bow",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 8,
+     "if_energy_above": 70
+    },
+    {
+     "actor": "g02",
+     "at_beat": 52,
+     "act": "kneel",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 10,
+     "if_energy_above": 85
+    }
+   ]
   },
   {
    "id": "warehouse.exit",
@@ -746,7 +928,42 @@
       "right": "door_r"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "d01",
+     "at_beat": 0,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "c01",
+     "at_beat": 16,
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "d01",
+     "at_beat": 24,
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "c09",
+     "at_beat": 48,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 10,
+     "if_energy_below": 40
+    }
+   ]
   },
   {
    "id": "mothership",
@@ -840,7 +1057,42 @@
       "up": "deck_reactor_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "c07",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "c10",
+     "at_beat": 16,
+     "act": "wave",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 10
+    },
+    {
+     "actor": "m01",
+     "at_beat": 36,
+     "act": "point",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "c08",
+     "at_beat": 48,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 8,
+     "if_energy_below": 40
+    }
+   ]
   },
   {
    "id": "mothership.gallery",
@@ -928,7 +1180,42 @@
       "up": "gallery_east"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "gallery_c03",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "planet_window",
+     "beats": 16
+    },
+    {
+     "actor": "gallery_c05",
+     "at_beat": 16,
+     "act": "nod",
+     "face": "happy",
+     "look_at": "gallery_c03",
+     "beats": 8
+    },
+    {
+     "actor": "gallery_c01",
+     "at_beat": 32,
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "gallery_s01",
+     "at_beat": 48,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 8,
+     "if_energy_below": 45
+    }
+   ]
   },
   {
    "id": "mothership.reactor",
@@ -1016,7 +1303,40 @@
       "up": "catwalk_bridge"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "reactor_c01",
+     "at_beat": 0,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "core_r",
+     "beats": 12
+    },
+    {
+     "actor": "reactor_c09",
+     "at_beat": 16,
+     "act": "cover_face",
+     "face": "fear",
+     "beats": 10
+    },
+    {
+     "actor": "reactor_s01",
+     "at_beat": 24,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "reactor_core",
+     "beats": 12
+    },
+    {
+     "actor": "reactor_c06",
+     "at_beat": 52,
+     "act": "collapse",
+     "face": "grief",
+     "beats": 10,
+     "if_energy_below": 35
+    }
+   ]
   },
   {
    "id": "mothership.bridge",
@@ -1104,7 +1424,41 @@
       "up": "bridge_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "bridge_c03",
+     "at_beat": 0,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "bridge_c05",
+     "at_beat": 16,
+     "act": "nod",
+     "face": "happy",
+     "look_at": "helm",
+     "beats": 8
+    },
+    {
+     "actor": "bridge_c01",
+     "at_beat": 32,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "bridge_c01",
+     "beats": 8
+    },
+    {
+     "actor": "bridge_c07",
+     "at_beat": 48,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "warp_b",
+     "beats": 12
+    }
+   ]
   },
   {
    "id": "mothership.exit",
@@ -1198,7 +1552,41 @@
       "right": "exam_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "med01",
+     "at_beat": 0,
+     "act": "write",
+     "face": "neutral",
+     "beats": 16
+    },
+    {
+     "actor": "med02",
+     "at_beat": 16,
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "med01",
+     "at_beat": 36,
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "med02",
+     "beats": 8
+    },
+    {
+     "actor": "med02",
+     "at_beat": 52,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 8,
+     "if_energy_below": 35
+    }
+   ]
   },
   {
    "id": "underworld",
@@ -1291,7 +1679,41 @@
       "left": "arena_tier_l"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "gate_bouncer",
+     "at_beat": 0,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "c07",
+     "at_beat": 16,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "c12",
+     "at_beat": 32,
+     "act": "cheer",
+     "face": "cheer",
+     "beats": 8
+    },
+    {
+     "actor": "c06",
+     "at_beat": 48,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 8,
+     "if_energy_below": 40
+    }
+   ]
   },
   {
    "id": "underworld.court",
@@ -1378,7 +1800,41 @@
       "up": "court_causeway"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "court_c04",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "court_c03",
+     "at_beat": 16,
+     "act": "bow",
+     "face": "awe",
+     "look_at": "court_c04",
+     "beats": 8
+    },
+    {
+     "actor": "court_c07",
+     "at_beat": 32,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "court_c05",
+     "at_beat": 48,
+     "act": "cover_face",
+     "face": "fear",
+     "beats": 10,
+     "if_energy_below": 40
+    }
+   ]
   },
   {
    "id": "underworld.furnace",
@@ -1465,7 +1921,41 @@
       "up": "furnace_out"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "furnace_c10",
+     "at_beat": 0,
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "furnace_c02",
+     "at_beat": 16,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "furnace_c10",
+     "beats": 8
+    },
+    {
+     "actor": "smith_carry",
+     "at_beat": 32,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 8
+    },
+    {
+     "actor": "furnace_c04",
+     "at_beat": 48,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 8,
+     "if_energy_below": 40
+    }
+   ]
   },
   {
    "id": "underworld.pit",
@@ -1552,7 +2042,42 @@
       "up": "pit_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "pit_c06",
+     "at_beat": 0,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "pit_c01",
+     "at_beat": 16,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "pit_c09",
+     "at_beat": 32,
+     "act": "kneel",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "pit_c05",
+     "at_beat": 48,
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 10,
+     "if_energy_above": 60
+    }
+   ]
   },
   {
    "id": "underworld.exit",
@@ -1639,7 +2164,42 @@
       "right": "throne_door_r"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "stair_chat_a",
+     "at_beat": 0,
+     "act": "bow",
+     "face": "awe",
+     "look_at": "uw_throne",
+     "beats": 16
+    },
+    {
+     "actor": "stair_chat_b",
+     "at_beat": 16,
+     "act": "kneel",
+     "face": "awe",
+     "look_at": "uw_throne",
+     "beats": 16
+    },
+    {
+     "actor": "stair_sit",
+     "at_beat": 32,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "stair_chat_a",
+     "at_beat": 48,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 8,
+     "if_energy_above": 60
+    }
+   ]
   },
   {
    "id": "hospital",
@@ -1727,7 +2287,41 @@
       "up": "ward_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "h03",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "h03",
+     "at_beat": 16,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "h02",
+     "at_beat": 32,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "ward_door",
+     "beats": 12
+    },
+    {
+     "actor": "h03",
+     "at_beat": 48,
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 12,
+     "if_energy_below": 40
+    }
+   ]
   },
   {
    "id": "hospital.corridor",
@@ -1821,7 +2415,42 @@
       "right": "corridor_cafe"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "corridor_c03",
+     "at_beat": 0,
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "corridor_c02",
+     "at_beat": 16,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "corridor_c09",
+     "beats": 12
+    },
+    {
+     "actor": "corridor_c09",
+     "at_beat": 32,
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "corridor_c02",
+     "beats": 10
+    },
+    {
+     "actor": "corridor_c08",
+     "at_beat": 48,
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 10,
+     "if_energy_above": 55
+    }
+   ]
   },
   {
    "id": "hospital.dayroom",
@@ -1909,7 +2538,33 @@
       "up": "dayroom_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "h10",
+     "at_beat": 0,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "tv_set",
+     "beats": 14
+    },
+    {
+     "actor": "h08",
+     "at_beat": 28,
+     "act": "offer",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 10
+    },
+    {
+     "actor": "h10",
+     "at_beat": 48,
+     "act": "cover_face",
+     "face": "fear",
+     "beats": 10,
+     "if_energy_below": 40
+    }
+   ]
   },
   {
    "id": "hospital.cafeteria",
@@ -1997,7 +2652,40 @@
       "up": "cafe_garden_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "h14",
+     "at_beat": 0,
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "cafeteria_c08",
+     "at_beat": 16,
+     "act": "nod",
+     "face": "relief",
+     "look_at": "h14",
+     "beats": 8
+    },
+    {
+     "actor": "cafeteria_c02",
+     "at_beat": 32,
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "h06",
+     "at_beat": 48,
+     "act": "write",
+     "face": "doubt",
+     "beats": 12
+    }
+   ]
   },
   {
    "id": "hospital.garden",
@@ -2085,7 +2773,40 @@
       "up": "garden_door_e"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "garden_c01",
+     "at_beat": 0,
+     "act": "rock",
+     "face": "relief",
+     "beats": 16
+    },
+    {
+     "actor": "garden_c02",
+     "at_beat": 16,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "garden_c07",
+     "beats": 10
+    },
+    {
+     "actor": "garden_c03",
+     "at_beat": 32,
+     "act": "nod",
+     "face": "relief",
+     "look_at": "garden_c06",
+     "beats": 10
+    },
+    {
+     "actor": "garden_c06",
+     "at_beat": 48,
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 10,
+     "if_energy_below": 40
+    }
+   ]
   },
   {
    "id": "hospital.exit",
@@ -2173,7 +2894,42 @@
       "right": "bandstand_door_r"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "garden_c10",
+     "at_beat": 0,
+     "act": "clap",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "h15",
+     "at_beat": 16,
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "garden_c05",
+     "at_beat": 32,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "garden_c07",
+     "beats": 10
+    },
+    {
+     "actor": "garden_c07",
+     "at_beat": 48,
+     "act": "cheer",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 10,
+     "if_energy_above": 60
+    }
+   ]
   },
   {
    "id": "ward",
@@ -2267,7 +3023,42 @@
       "up": "day_door_b"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "c03",
+     "at_beat": 0,
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 10
+    },
+    {
+     "actor": "x09",
+     "at_beat": 16,
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "wlight_d",
+     "beats": 16
+    },
+    {
+     "actor": "c05",
+     "at_beat": 32,
+     "act": "block",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "c06",
+     "at_beat": 48,
+     "act": "cover_face",
+     "face": "shame",
+     "beats": 10,
+     "if_energy_below": 40
+    }
+   ],
+   "max_hotspots": 5
   },
   {
    "id": "ward.art",
@@ -2355,7 +3146,41 @@
       "up": "art_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "art_room_c03",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "art_easels",
+     "beats": 16
+    },
+    {
+     "actor": "art_room_c02",
+     "at_beat": 16,
+     "act": "cheer",
+     "face": "awe",
+     "beats": 10
+    },
+    {
+     "actor": "x10",
+     "at_beat": 32,
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "art_room_c01",
+     "at_beat": 48,
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "easel_a3",
+     "beats": 10,
+     "if_energy_below": 50
+    }
+   ]
   },
   {
    "id": "ward.dorm",
@@ -2443,7 +3268,40 @@
       "up": "dorm_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "x13",
+     "at_beat": 0,
+     "act": "sleep",
+     "face": "relief",
+     "beats": 28
+    },
+    {
+     "actor": "x14",
+     "at_beat": 36,
+     "act": "rock",
+     "face": "fear",
+     "beats": 10
+    },
+    {
+     "actor": "x13",
+     "at_beat": 48,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 8,
+     "if_energy_below": 45
+    },
+    {
+     "actor": "x14",
+     "at_beat": 54,
+     "act": "sleep",
+     "face": "relief",
+     "beats": 10,
+     "if_energy_above": 55
+    }
+   ]
   },
   {
    "id": "ward.corridor",
@@ -2531,7 +3389,41 @@
       "up": "corr_art_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "x06",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "corridor_c03",
+     "at_beat": 16,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "x06",
+     "beats": 12
+    },
+    {
+     "actor": "corridor_c02",
+     "at_beat": 32,
+     "act": "kneel",
+     "face": "awe",
+     "look_at": "x06",
+     "beats": 12
+    },
+    {
+     "actor": "x04",
+     "at_beat": 40,
+     "act": "cover_face",
+     "face": "fear",
+     "beats": 10,
+     "if_energy_below": 45
+    }
+   ]
   },
   {
    "id": "ward.courtyard",
@@ -2619,7 +3511,41 @@
       "up": "court_stage_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "courtyard_c03",
+     "at_beat": 0,
+     "act": "write",
+     "face": "neutral",
+     "beats": 16
+    },
+    {
+     "actor": "courtyard_c01",
+     "at_beat": 16,
+     "act": "bow",
+     "face": "happy",
+     "look_at": "courtyard_c01",
+     "beats": 10
+    },
+    {
+     "actor": "x01",
+     "at_beat": 32,
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "courtyard_c02",
+     "at_beat": 48,
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 10,
+     "if_energy_above": 60
+    }
+   ]
   },
   {
    "id": "ward.exit",
@@ -2707,7 +3633,42 @@
       "right": "stage_door_r"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "courtyard_c10",
+     "at_beat": 0,
+     "act": "clap",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "x01",
+     "at_beat": 16,
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "courtyard_c05",
+     "at_beat": 32,
+     "act": "bow",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 10
+    },
+    {
+     "actor": "courtyard_c07",
+     "at_beat": 48,
+     "act": "cheer",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 10,
+     "if_energy_above": 65
+    }
+   ]
   },
   {
    "id": "hospital_late",
@@ -2801,7 +3762,40 @@
       "right": "garden_door_w2"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "garden_c06",
+     "at_beat": 0,
+     "act": "nod",
+     "face": "relief",
+     "look_at": "garden_c10",
+     "beats": 12
+    },
+    {
+     "actor": "garden_c10",
+     "at_beat": 16,
+     "act": "rock",
+     "face": "relief",
+     "beats": 16
+    },
+    {
+     "actor": "garden_c04",
+     "at_beat": 32,
+     "act": "write",
+     "face": "neutral",
+     "beats": 12
+    },
+    {
+     "actor": "garden_c07",
+     "at_beat": 48,
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8,
+     "if_energy_above": 55
+    }
+   ]
   },
   {
    "id": "hospital_late.cafe",
@@ -2889,7 +3883,40 @@
       "up": "cafe_garden_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "cafeteria_c05",
+     "at_beat": 0,
+     "act": "write",
+     "face": "doubt",
+     "beats": 16
+    },
+    {
+     "actor": "cafeteria_c09",
+     "at_beat": 16,
+     "act": "nod",
+     "face": "relief",
+     "look_at": "cafeteria_c05",
+     "beats": 10
+    },
+    {
+     "actor": "cafeteria_c07",
+     "at_beat": 32,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "cafeteria_g06",
+     "beats": 10
+    },
+    {
+     "actor": "cafeteria_c10",
+     "at_beat": 48,
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 10
+    }
+   ]
   },
   {
    "id": "hospital_late.quiet",
@@ -2971,7 +3998,33 @@
       "up": "quiet_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "h07",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "relief",
+     "look_at": "quiet_door",
+     "beats": 16
+    },
+    {
+     "actor": "corridor_c03",
+     "at_beat": 16,
+     "act": "wave",
+     "face": "happy",
+     "look_at": "quiet_door",
+     "beats": 12
+    },
+    {
+     "actor": "corridor_c08",
+     "at_beat": 36,
+     "act": "nod",
+     "face": "relief",
+     "look_at": "quiet_door",
+     "beats": 12
+    }
+   ]
   },
   {
    "id": "hospital_late.exit",
@@ -3060,7 +4113,42 @@
       "right": "bandstand_door_r"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "garden_c10",
+     "at_beat": 0,
+     "act": "clap",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "h15",
+     "at_beat": 16,
+     "act": "cheer",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "garden_c07",
+     "at_beat": 32,
+     "act": "nod",
+     "face": "relief",
+     "look_at": "garden_c07",
+     "beats": 10
+    },
+    {
+     "actor": "garden_p03",
+     "at_beat": 48,
+     "act": "cheer",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 10,
+     "if_energy_above": 60
+    }
+   ]
   },
   {
    "id": "ward_late",
@@ -3154,7 +4242,41 @@
       "right": "court_south"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "courtyard_c10",
+     "at_beat": 0,
+     "act": "nod",
+     "face": "relief",
+     "look_at": "x01",
+     "beats": 12
+    },
+    {
+     "actor": "x01",
+     "at_beat": 24,
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "courtyard_c07",
+     "at_beat": 40,
+     "act": "bow",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 10
+    },
+    {
+     "actor": "courtyard_c06",
+     "at_beat": 52,
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 10,
+     "if_energy_below": 35
+    }
+   ]
   },
   {
    "id": "ward_late.treat",
@@ -3242,7 +4364,40 @@
       "up": "treat_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "x02",
+     "at_beat": 0,
+     "act": "write",
+     "face": "neutral",
+     "beats": 16
+    },
+    {
+     "actor": "x03",
+     "at_beat": 16,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "x04",
+     "at_beat": 32,
+     "act": "cover_face",
+     "face": "fear",
+     "beats": 12
+    },
+    {
+     "actor": "x02",
+     "at_beat": 48,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "treat_door",
+     "beats": 10,
+     "if_energy_below": 50
+    }
+   ]
   },
   {
    "id": "ward_late.dorm",
@@ -3330,7 +4485,31 @@
       "up": "dorm_door"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "x14",
+     "at_beat": 0,
+     "act": "sleep",
+     "face": "relief",
+     "beats": 30
+    },
+    {
+     "actor": "x13",
+     "at_beat": 36,
+     "act": "rock",
+     "face": "fear",
+     "beats": 12
+    },
+    {
+     "actor": "x14",
+     "at_beat": 52,
+     "act": "shake_head",
+     "face": "fear",
+     "beats": 8,
+     "if_energy_below": 40
+    }
+   ]
   },
   {
    "id": "ward_late.exit",
@@ -3425,7 +4604,42 @@
       "left": "day_door_b"
      }
     }
-   }
+   },
+   "cast": [
+    {
+     "actor": "c08",
+     "at_beat": 0,
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "c02",
+     "at_beat": 16,
+     "act": "bow",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 10
+    },
+    {
+     "actor": "c04",
+     "at_beat": 32,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 10
+    },
+    {
+     "actor": "x07",
+     "at_beat": 48,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 10,
+     "if_energy_above": 60
+    }
+   ]
   }
  ],
  "cinematics": {
@@ -3477,6 +4691,32 @@
      "style": "walk",
      "look_at": "g07"
     }
+   ],
+   "cast": [
+    {
+     "actor": "c02",
+     "at_beat": 0.5,
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "c03",
+     "at_beat": 1,
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "c04",
+     "at_beat": 1.5,
+     "act": "clap",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8
+    }
    ]
   },
   "warehouse.stumble_circle": {
@@ -3488,6 +4728,32 @@
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "c02",
+     "at_beat": 0.5,
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "stage",
+     "beats": 8
+    },
+    {
+     "actor": "c03",
+     "at_beat": 1,
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "c01",
+     "at_beat": 1.5,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "stage",
+     "beats": 6
     }
    ]
   },
@@ -3537,6 +4803,24 @@
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "b02",
+     "at_beat": 0.5,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "b04",
+     "at_beat": 1,
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 6
     }
    ]
   },
@@ -3734,6 +5018,24 @@
      "role": "queasy",
      "style": "run"
     }
+   ],
+   "cast": [
+    {
+     "actor": "c01",
+     "at_beat": 1,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "c05",
+     "at_beat": 2,
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 6
+    }
    ]
   },
   "mothership.stagger_entry_right": {
@@ -3782,6 +5084,23 @@
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "c07",
+     "at_beat": 0.5,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "c06",
+     "at_beat": 1,
+     "act": "cover_face",
+     "face": "fear",
+     "beats": 6
     }
    ]
   },
@@ -3990,6 +5309,15 @@
      "role": "queasy",
      "style": "stagger"
     }
+   ],
+   "cast": [
+    {
+     "actor": "med01",
+     "at_beat": 1,
+     "act": "write",
+     "face": "neutral",
+     "beats": 8
+    }
    ]
   },
   "mothership.cycle_lock": {
@@ -4062,6 +5390,24 @@
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "c07",
+     "at_beat": 1,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "c06",
+     "at_beat": 2,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 6
     }
    ]
   },
@@ -4305,6 +5651,23 @@
      "role": "queasy",
      "style": "stagger"
     }
+   ],
+   "cast": [
+    {
+     "actor": "h03",
+     "at_beat": 1,
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 8
+    },
+    {
+     "actor": "c01",
+     "at_beat": 0.5,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "bed_corner",
+     "beats": 8
+    }
    ]
   },
   "hospital.family_cheer": {
@@ -4317,6 +5680,24 @@
      "role": "dancer",
      "style": "walk",
      "look_at": "h03"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "c02",
+     "at_beat": 1,
+     "act": "cheer",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "c01",
+     "at_beat": 1.5,
+     "act": "clap",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8
     }
    ]
   },
@@ -4378,6 +5759,24 @@
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "corridor_c03",
+     "at_beat": 0.5,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "corridor_c02",
+     "at_beat": 1,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 6
     }
    ]
   },
@@ -4452,6 +5851,16 @@
      "bars": 2,
      "role": "queasy",
      "style": "walk"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "h10",
+     "at_beat": 1,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "tv_set",
+     "beats": 8
     }
    ]
   },
@@ -4612,6 +6021,23 @@
      "role": "queasy",
      "style": "carried"
     }
+   ],
+   "cast": [
+    {
+     "actor": "x03",
+     "at_beat": 1,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "x04",
+     "at_beat": 2,
+     "act": "cover_face",
+     "face": "fear",
+     "beats": 8
+    }
    ]
   },
   "ward.window_gaze": {
@@ -4624,6 +6050,42 @@
      "role": "dancer",
      "style": "walk",
      "look_at": "x09"
+    }
+   ]
+  },
+  "ward.cards_sit": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "day_cards",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk"
+    }
+   ]
+  },
+  "ward.cards_waved_off": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "day_cards",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk"
+    }
+   ]
+  },
+  "ward.cards_approach": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "day_cards",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk"
     }
    ]
   },
@@ -4662,6 +6124,24 @@
      "role": "queasy",
      "style": "stagger"
     }
+   ],
+   "cast": [
+    {
+     "actor": "art_room_c03",
+     "at_beat": 0.5,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "art_room_c02",
+     "at_beat": 1,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 6
+    }
    ]
   },
   "ward.stagger_dorm_up": {
@@ -4698,6 +6178,16 @@
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "x13",
+     "at_beat": 0.5,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 8
     }
    ]
   },
@@ -4797,6 +6287,24 @@
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "courtyard_c01",
+     "at_beat": 0.5,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "courtyard_c02",
+     "at_beat": 1,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 6
     }
    ]
   },
@@ -5040,6 +6548,23 @@
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "x03",
+     "at_beat": 1,
+     "act": "cover_face",
+     "face": "fear",
+     "beats": 8
+    },
+    {
+     "actor": "x04",
+     "at_beat": 2,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 8
     }
    ]
   },

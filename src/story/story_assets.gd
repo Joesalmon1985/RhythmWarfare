@@ -130,7 +130,7 @@ func texture(file: String) -> Texture2D:
 		return null
 	if _tex.has(file):
 		return _tex[file]
-	var path := root + file
+	var path := file if file.begins_with("res://") else root + file  # a `res://` file is loaded as it stands (the blackjack table's art lives outside the chapter)
 	var t: Texture2D = null
 	if ResourceLoader.exists(path):
 		t = load(path) as Texture2D
@@ -143,6 +143,8 @@ func texture(file: String) -> Texture2D:
 ## A sprite entry ({file, pivot, px_scale}) as {tex, pivot: Vector2, scale: float}.
 func sprite(id: String) -> Dictionary:
 	var s: Dictionary = manifest.get("stage", {}).get("sprites", {}).get(id, manifest.get("sprites", {}).get(id, {}))
+	if s.is_empty() and extra != null and bool(manifest.get("borrow_sprites", false)):  # a path's art world (assets/story/airfield ...) borrows Night One's light and deck sprites
+		return extra.sprite(id)
 	return _entry(s)
 
 

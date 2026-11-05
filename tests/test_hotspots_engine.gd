@@ -291,8 +291,108 @@ func test_every_shipped_hotspot_resolves_its_success_and_failure_outcomes() -> v
 				assert_false(out.is_empty(), "%s resolves (%s)" % [h["id"], str(success)])
 				var r := str(out["route"])
 				if r != "":
-					assert_true(r in routes or HotspotContract.is_trial_route(r), "%s %s: route %s is a route of %s" % [h["id"], str(success), r, node_id])
+					assert_true(r in routes or HotspotContract.is_special_route(r) or (bool(out.get("stays", false)) and r == node_id), "%s %s: route %s is a route of %s (or the scene itself, for an activity that stays)" % [h["id"], str(success), r, node_id])  # (the Bassment, a path portal, a path's way back)
 				for f in out["flags_set"]:
 					assert_true(run_flags.has(str(f)) or flags.has(str(f)), "%s: flag %s is applied" % [h["id"], f])
 				n += 1
 	assert_true(n >= 254, "every hotspot both ways (%d)" % n)
+
+
+# --- the acting contract rides on the hotspots without changing them (stage 1b) ---------------------------------------------------
+
+func test_an_acting_block_changes_no_outcome_and_the_outcome_chain_follows_the_result() -> void:
+	var acting := {"actor": "g07", "available": {"act": "beckon", "face": "plea", "look_at": "camera"}, "selected": {"act": "nod", "face": "relief"},
+		"committed": {"act": "point", "face": "resolve"}, "success": {"act": "cheer", "face": "cheer"}, "failure": {"act": "shake_head", "face": "doubt", "then": {"act": "stare", "face": "sad"}}}
+	var plain := _engine_for([_h("a", {"default": true}), _h("b", {"kind": "character", "anchor": {"actor": "g07"}})])
+	for success in [true, false]:
+		var p := _engine_for([_h("a", {"default": true}), _h("b", {"kind": "character", "anchor": {"actor": "g07"}})])
+		var q := _engine_for([_h("a", {"default": true}), _h("b", {"kind": "character", "anchor": {"actor": "g07"}, "acting": acting})])
+		p.select("b", 3, true)
+		q.select("b", 3, true)
+		var op := p.commit_final(success)
+		var oq := q.commit_final(success)
+		for k in ["hotspot", "success", "route", "energy", "flags_set", "continued"]:
+			assert_eq(oq[k], op[k], "%s: acting leaves the outcome's %s alone" % [str(success), k])
+		var chain := RunActing.outcome_chain(q.get_hotspot("b"), success, 100.0, 0.34)
+		assert_true(chain.size() >= 2, "a committed act then the result's")
+		assert_eq(str(chain[chain.size() - 1 if success else chain.size() - 2]["act"]), "cheer" if success else "shake_head")
+		for i in range(1, chain.size()):
+			assert_near(float(chain[i]["from"]), float(chain[i - 1]["until"]), 1.0e-9, "end to end")
+	assert_true(RunActing.outcome_chain(plain.get_hotspot("b"), true, 0.0, 0.3).is_empty(), "no block, no chain")
+
+
+func test_a_named_cinematics_cast_is_carried_by_its_outcome_and_a_cinematic_without_cast_is_unchanged() -> void:
+	var named := {"c.with": {"world": "w", "steps": [{"move": "walk", "to": "x"}], "cast": [{"actor": "g07", "at_beat": 1, "act": "nod"}]}, "c.without": {"world": "w", "steps": [{"move": "walk", "to": "x"}]}}
+	var with := HotspotContract.resolve_cinematic({}, {"cinematic": "c.with"}, named)
+	assert_eq(with["steps"].size(), 1)
+	assert_eq(with["cast"].size(), 1)
+	assert_eq(with["world"], "w")
+	var without := HotspotContract.resolve_cinematic({}, {"cinematic": "c.without"}, named)
+	assert_eq(without.keys(), ["steps"], "exactly as before: steps and nothing else")
+
+
+## The coverage matrix, extended: every shipped hotspot still resolves both ways, and when it acts, its outcome chain is made of real acts and faces in order (the validator also ran at load).
+func test_every_shipped_hotspots_acting_is_playable_both_ways() -> void:
+	var d := RunData.load_default()
+	assert_eq(d.errors, [])
+	var acted := 0
+	for node_id in d.nodes:
+		for h in d.hotspots_of(node_id):
+			for success in [true, false]:
+				var hs := RunHotspots.new(d, {}, {})
+				hs.begin_scene(node_id, 60.0)
+				for f in (h["available"]["flags_all"] as Array):
+					hs.run_flags[str(f)] = true
+				hs.selected = str(h["id"])
+				var out := hs.on_block(0, success) if RunHotspots.window_of(h) == "early" else hs.commit_final(success)
+				assert_false(out.is_empty(), "%s resolves" % h["id"])
+				if RunActing.has_acting(h):
+					acted += 1
+					var t := 50.0
+					for seg in RunActing.outcome_chain(h, success, t, 0.345):
+						assert_true(str(seg["act"]) in HotspotContract.ACTS, "%s: %s is an act" % [h["id"], seg["act"]])
+						assert_true(str(seg["face"]) == "" or str(seg["face"]) in HotspotContract.FACES)
+						assert_true(float(seg["from"]) >= t - 1.0e-9 and float(seg["until"]) > float(seg["from"]), "%s: segments run forward" % h["id"])
+						t = float(seg["until"])
+	assert_true(acted >= 58, "every acted hotspot both ways (%d outcomes: twenty-eight people hotspots and the stranger, stage 1d)" % acted)
+
+
+func test_the_validator_checks_a_hotspots_acting_block() -> void:
+	var errors: Array = []
+	var ok := _h("a", {"kind": "character", "anchor": {"actor": "g07"}, "acting": {"available": {"act": "beckon", "face": "plea", "look_at": "camera"}}, "default": true})
+	ok["map"] = "night_one"
+	HotspotContract.validate_scene([ok, _two("b")], {"where": "t", "map": "night_one", "world": "w", "routes": ["to_a", "to_b", "to_default"], "default_route": "to_a"}, errors)
+	assert_false(_any(errors, "acting"), "a good block passes: %s" % str(errors))
+	for bad in [{"available": {"act": "moonwalk"}}, {"available": {"act": "nod", "face": "smug"}}, {"actor": "nobody", "available": {"act": "nod"}}, {"mood": {"act": "nod"}},
+			{"success": {"act": "nod", "then": {"act": "bow", "face": "smug"}}}, {"available": {"act": "nod", "look_at": "the_moon"}}, {"available": "nod"}]:
+		errors = []
+		var h := _h("a", {"kind": "character", "anchor": {"actor": "g07"}, "acting": bad, "default": true})
+		h["map"] = "night_one"
+		HotspotContract.validate_scene([h, _two("b")], {"where": "t", "map": "night_one", "world": "w", "routes": ["to_a", "to_b", "to_default"], "default_route": "to_a"}, errors)
+		assert_true(_any(errors, "acting"), "refused: %s" % str(bad))
+	errors = []
+	var thing := _h("a", {"kind": "object", "anchor": {"thing": "wizard_floor"}, "acting": {"available": {"act": "beckon"}}, "default": true})
+	thing["map"] = "night_one"
+	HotspotContract.validate_scene([thing, _two("b")], {"where": "t", "map": "night_one", "world": "w", "routes": ["to_a", "to_b", "to_default"], "default_route": "to_a"}, errors)
+	assert_true(_any(errors, "acting needs an actor"), "a hotspot on a thing must name its person")
+	errors = []
+	var fig := _h("a", {"kind": "encounter", "anchor": {"thing": "wizard_floor"}, "acting": {"figure": "bouncer", "available": {"act": "block", "face": "anger"}}, "default": true})
+	fig["map"] = "night_one"
+	HotspotContract.validate_scene([fig, _two("b")], {"where": "t", "map": "night_one", "world": "w", "routes": ["to_a", "to_b", "to_default"], "default_route": "to_a", "default_any_kind": true, "figures": ["bouncer"]}, errors)
+	assert_false(_any(errors, "acting"), "a creature's figure passes where creatures exist: %s" % str(errors))
+	errors = []
+	HotspotContract.validate_scene([fig, _two("b")], {"where": "t", "map": "night_one", "world": "w", "routes": ["to_a", "to_b", "to_default"], "default_route": "to_a", "default_any_kind": true}, errors)
+	assert_true(_any(errors, "not a creature here"), "and not in the run")
+
+
+func _two(id: String) -> Dictionary:
+	var h := _h(id)
+	h["map"] = "night_one"
+	return h
+
+
+func _any(errors: Array, needle: String) -> bool:
+	for e in errors:
+		if str(e).contains(needle):
+			return true
+	return false

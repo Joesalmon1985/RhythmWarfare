@@ -33,7 +33,13 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "staging": {
+    "door_at": [
+     6.85,
+     2.0
+    ]
+   }
   },
   {
    "id": "warehouse.exit_balcony",
@@ -67,7 +73,13 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "staging": {
+    "door_at": [
+     -6.85,
+     1.75
+    ]
+   }
   },
   {
    "id": "warehouse.wizard",
@@ -116,7 +128,18 @@
     "look_at": "wizard_floor"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "staging": {
+    "archetype": "figure",
+    "current_tex": "wizard_happy",
+    "other_tex": "wizard_sad",
+    "current_motion": "beckon",
+    "other_motion": "slump",
+    "touch": {
+     "w": 1.4,
+     "h": 2.0
+    }
+   }
   },
   {
    "id": "warehouse.dancer",
@@ -164,7 +187,43 @@
     "look_at": "g07"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "happy",
+     "look_at": "floor_centre",
+     "beats": 1
+    },
+    "success": {
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 4,
+     "then": {
+      "act": "shake_head",
+      "face": "doubt",
+      "look_at": "camera",
+      "beats": 8
+     }
+    }
+   }
   },
   {
    "id": "warehouse.led_wall",
@@ -322,7 +381,42 @@
     "look_at": "b01"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "anger",
+      "look_at": "camera"
+     }
+    }
+   }
   },
   {
    "id": "warehouse.bar.stranger",
@@ -364,7 +458,41 @@
     "energy": -3
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "doubt",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 6,
+     "then": {
+      "act": "look",
+      "face": "neutral"
+     }
+    }
+   }
   },
   {
    "id": "warehouse.balcony.exit_chill",
@@ -451,7 +579,9 @@
    "min_px": 72,
    "available": {
     "flags_all": [],
-    "flags_none": [],
+    "flags_none": [
+     "wh_saw_floor"
+    ],
     "energy_min": 0,
     "once": false
    },
@@ -530,7 +660,42 @@
     "look_at": "v03"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "offer",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "neutral",
+      "look_at": "camera"
+     }
+    }
+   }
   },
   {
    "id": "warehouse.chill.exit_exit",
@@ -644,7 +809,18 @@
     "energy": -2
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "staging": {
+    "archetype": "figure",
+    "current_tex": "wizard_happy",
+    "other_tex": "wizard_sad",
+    "current_motion": "beckon",
+    "other_motion": "slump",
+    "touch": {
+     "w": 1.4,
+     "h": 2.0
+    }
+   }
   },
   {
    "id": "warehouse.chill.lavalamp",
@@ -924,7 +1100,43 @@
     "energy": -6
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "block",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "stamp",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 4,
+     "then": {
+      "act": "point",
+      "face": "anger",
+      "look_at": "floor_centre",
+      "beats": 12
+     }
+    }
+   }
   },
   {
    "id": "warehouse.exit.bouncer_vip",
@@ -964,6 +1176,176 @@
      "wh_pass_scuffed"
     ],
     "energy": -3
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "bow",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "bow",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "doubt",
+      "look_at": "camera"
+     }
+    }
+   }
+  },
+  {
+   "id": "warehouse.balcony.star",
+   "world": "warehouse",
+   "scene": "warehouse.balcony",
+   "map": "night_one",
+   "anchor": {
+    "pos": [
+     -10.4,
+     1.8,
+     0.8
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [
+     "wh_saw_floor"
+    ],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_gospel_road",
+      "keep:path_gospel_tomb"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:gospel"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.booth.radio",
+   "world": "warehouse",
+   "scene": "warehouse.booth",
+   "map": "night_one",
+   "anchor": {
+    "pos": [
+     1.5,
+     1.2,
+     -9.4
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_squadron_free"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:squadron"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.bar.ember",
+   "world": "warehouse",
+   "scene": "warehouse.bar",
+   "map": "night_one",
+   "anchor": {
+    "pos": [
+     10.0,
+     1.0,
+     5.0
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [
+     "wh_vip_pass"
+    ],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_ember_kept",
+      "keep:path_ember_quenched"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:ember"
+   },
+   "on_failure": {
+    "energy": -4
    },
    "default": false,
    "repeatable": true

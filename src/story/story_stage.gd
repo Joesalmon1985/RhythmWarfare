@@ -4,6 +4,10 @@ extends Control
 ## the director sends. Every effect is a function of song time (the audio clock) and of action start times; nothing here advances on frame counts.
 
 const NO_END := 1.0e9
+const SWELL_BEATS := 4.0  # a new room's light: dim on its downbeat, a bright flare at SWELL_PEAK_BEATS, settled to the room's own light after this many beats
+const SWELL_FROM := 0.4  # ... the share of the light on the downbeat
+const SWELL_PEAK := 1.35  # ... the flare (visual polish: the old 0.55 to 1 rise over two beats was too subtle to read as "somewhere new")
+const SWELL_PEAK_BEATS := 1.0
 const PALETTES := {
 	"low": [Color(0.35, 0.3, 0.9), Color(0.6, 0.25, 0.8)],
 	"cool": [Color(0.2, 0.85, 1.0), Color(0.55, 0.35, 1.0)],
@@ -57,6 +61,7 @@ var _vis_yaw := 1e9
 var _vis_size := Vector2.ZERO
 var _world_ctx: Dictionary = {}
 var _piece_ids: Array = []  # the set pieces the map shows as things
+var _piece_dims: Dictionary = {}  # piece id -> how much it darkens the people while shown (a thing's `dim_people`)
 
 
 func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
@@ -99,6 +104,16 @@ func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
 	reset()
 
 
+## The tempo changed (a path at its own tempo took the clock, RunPlay): every beat-timed thing of the stage follows. Animations are functions of song time, so they jump to the new beat on the swap, behind the
+## closed passage frame.
+func set_tempo(p_bpm: float) -> void:
+	bpm = p_bpm
+	for id in crowds:
+		(crowds[id] as StoryCrowd).bpm = p_bpm
+	if player != null:
+		player.bpm = p_bpm
+
+
 ## The crowd of the room the camera is in (the one the authored actions direct).
 var crowd: StoryCrowd:
 	get:
@@ -126,6 +141,8 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	for t in map.things:
 		if t.has("piece") and str(t["piece"]) not in _piece_ids:
 			_piece_ids.append(str(t["piece"]))
+		if t.has("piece") and t.has("dim_people"):
+			_piece_dims[str(t["piece"])] = float(t["dim_people"])
 	world = StoryWorld.new()
 	world.name = "World"
 	world.build(map, assets)
@@ -297,6 +314,29 @@ func bar_s() -> float:
 	return 4.0 * 60.0 / bpm
 
 
+## The room's light gain at song time `t`: the swell of a new room (SWELL_FROM of the light on its downbeat, easing up to a SWELL_PEAK flare at SWELL_PEAK_BEATS, then settling to all of it by
+## SWELL_BEATS), 1 when no swell is under way. The people of the room take the same gain (people_gain).
+func swell_gain(t: float) -> float:
+	var u := progress("room_swell", t)
+	if u < 0.0:
+		return 1.0
+	var b := u * SWELL_BEATS
+	if b < SWELL_PEAK_BEATS:
+		return lerpf(SWELL_FROM, SWELL_PEAK, 1.0 - pow(1.0 - b / SWELL_PEAK_BEATS, 2.0))
+	return lerpf(SWELL_PEAK, 1.0, smoothstep(0.0, 1.0, (b - SWELL_PEAK_BEATS) / (SWELL_BEATS - SWELL_PEAK_BEATS)))
+
+
+## The light of the room and its people at `t` (the world context's `swell_gain`; the figures are lit by their sector's light): the room swell times every shown piece that darkens the
+## scene (a map thing's `dim_people`, 0 to 1, scaled by the piece's alpha: the Golgotha sky darkening block by block dims the people in front of the hill, not only the sky behind it).
+func people_gain(t: float) -> float:
+	var g := swell_gain(t)
+	for pid in _piece_dims:
+		var ps := piece_state(str(pid), t)
+		if bool(ps["visible"]):
+			g *= 1.0 - clampf(float(_piece_dims[pid]), 0.0, 1.0) * float(ps["alpha"])
+	return g
+
+
 func update(t: float, p_energy: float) -> void:
 	t_now = t
 	energy = p_energy
@@ -308,7 +348,8 @@ func update(t: float, p_energy: float) -> void:
 		if _cam_override != "":
 			pose = _override_pose(pose)
 		var size := Vector2(lowres.sub.size) if lowres != null else Vector2(480, 170)
-		var ppose := {"cam": pose["cam"], "yaw": float(pose["yaw"]) + free_look.offset, "pitch": float(pose.get("pitch", 0.0))}
+		var look_off := 0.0 if _cam_override.begins_with("actor:") else free_look.offset  # (a screenshot framed on a person is not turned away by the player's look at a touch)
+		var ppose := {"cam": pose["cam"], "yaw": float(pose["yaw"]) + look_off, "pitch": float(pose.get("pitch", 0.0))}
 		var cpos := Vector2(pose["pos"])
 		if _vis_sec != str(pose["sector"]) or _vis_pos.distance_to(cpos) > 0.01 or absf(_vis_yaw - float(ppose["yaw"])) > 0.25 or not _vis_size.is_equal_approx(size):
 			_vis_sec = str(pose["sector"])  # the portal walk only reruns when the camera has really moved or turned
@@ -319,6 +360,7 @@ func update(t: float, p_energy: float) -> void:
 			_vis_geo = map.visible_sectors(cpos, _vis_yaw, _vis_sec, size.x / maxf(size.y, 1.0), 7)  # the geometry is drawn deeper than the crowd is (long sightlines)
 			if world_active:
 				world.set_visible_sectors(_vis_geo)
+				world.set_atmosphere(map.sector(_vis_sec))
 		for id in crowds:
 			(crowds[id] as StoryCrowd).set_camera(ppose, size, _vis)
 	_sec_light = {}
@@ -337,9 +379,20 @@ func update(t: float, p_energy: float) -> void:
 	queue_redraw()
 
 
-## Screenshot aid: RW_STORY_CAM=<waypoint>[,<extra yaw degrees>[,<pitch degrees>]] stands the camera at a waypoint whatever the journey says, or RW_STORY_CAM=@<x>:<z>:<yaw>[:<pitch>]
+## Screenshot aid: RW_STORY_CAM=<waypoint>[,<extra yaw degrees>[,<pitch degrees>]] stands the camera at a waypoint whatever the journey says, or RW_STORY_CAM=actor:<id>[:<metres>[:<pitch>]] in front of a person (tools/run/capture.sh --acting), or RW_STORY_CAM=@<x>:<z>:<yaw>[:<pitch>]
 ## at an absolute ground point (any sector). The crowd of the camera's room is then the one the authored crowd actions direct, so the room is populated the way a visit would find it.
 var _cam_override: String = OS.get_environment("RW_STORY_CAM")
+
+
+## The camera pose the picture is drawn from: the player's, or the screenshot aid's (RW_STORY_CAM) when one is set.
+func screen_pose(pose: Dictionary) -> Dictionary:
+	return _override_pose(pose) if _cam_override != "" and not pose.is_empty() else pose
+
+
+## Whether a screenshot frames a person (RW_STORY_CAM=actor:...): the player's look offset is not applied.
+func cam_framed() -> bool:
+	return _cam_override.begins_with("actor:")
+var _cam_actor_at: Variant = null  # (the standpoint chosen for RW_STORY_CAM=actor:...)
 
 
 func _override_pose(pose: Dictionary) -> Dictionary:
@@ -347,7 +400,54 @@ func _override_pose(pose: Dictionary) -> Dictionary:
 	var yaw := 0.0
 	var pitch := 0.0
 	var sec := ""
-	if _cam_override.begins_with("@"):
+	if _cam_override.begins_with("actor:"):  # RW_STORY_CAM=actor:<id>[:<metres>[:<pitch>]]: the camera stands that far from the person (their current place), on the side the rail's camera stands, facing them
+		var q := _cam_override.substr(6).split(":")
+		var found: Variant = _person_pos(q[0])
+		if found == null:
+			return pose
+		var ap: Vector2 = found
+		var dist := float(q[1]) if q.size() > 1 else 2.4
+		if _cam_actor_at != null and ((_cam_actor_at as Vector2).distance_to(ap) > dist * 1.7 or (_cam_actor_at as Vector2).distance_to(ap) < dist * 0.55):
+			_cam_actor_at = null  # (a person who walks off, or into the camera: stand somewhere new)
+		if _cam_actor_at == null:  # chosen once, so the picture holds still while the rail moves: the standpoint with the clearest line to the person (nobody between), nearest to the side the rail's camera stood on
+			var base := ((pose["pos"] as Vector2) - ap).angle() if pose.has("pos") else 0.0
+			var room := map.room_of(map.sector_at(ap))
+			var others: Array = []
+			for rid in crowds:
+				for oid in (crowds[rid] as StoryCrowd).actors:
+					if str(oid) != q[0]:
+						others.append(((crowds[rid] as StoryCrowd).actors[oid] as Dictionary)["pos"])
+			var first: Variant = null  # (the clearest standpoint seen, when none is clear enough)
+			var first_clear := -1.0
+			for same_only in [true, false]:  # the person's own sector first (a balcony's edge, a booth), then any sector of the room
+				for k in [1.0, 0.8, 0.65, 0.5]:
+					for da in [0.0, 0.4, -0.4, 0.8, -0.8, 1.2, -1.2, 1.6, -1.6, 2.2, -2.2, PI]:  # nearest the rail's side first
+						var p: Vector2 = ap + Vector2.from_angle(base + da) * dist * k
+						var psec := map.sector_at(p)
+						if psec == "" or map.room_of(psec) != room or (same_only and psec != map.sector_at(ap)):
+							continue
+						var clear := 9.0
+						for o in others:
+							clear = minf(clear, Geometry2D.get_closest_point_to_segment(o, p, ap).distance_to(o))
+						if clear > first_clear:
+							first_clear = clear
+							first = p
+						if clear >= 0.6:  # nobody stands between the camera and the person
+							_cam_actor_at = p
+							break
+					if _cam_actor_at != null:
+						break
+				if _cam_actor_at != null:
+					break
+			if _cam_actor_at == null:
+				_cam_actor_at = first
+		if _cam_actor_at == null:
+			return pose
+		at = _cam_actor_at
+		yaw = rad_to_deg(atan2(-(ap.x - at.x), -(ap.y - at.y)))
+		pitch = float(q[2]) if q.size() > 2 else -3.0
+		sec = map.sector_at(at)
+	elif _cam_override.begins_with("@"):
 		var q := _cam_override.substr(1).split(":")
 		if q.size() < 3:
 			return pose
@@ -382,6 +482,15 @@ func _override_pose(pose: Dictionary) -> Dictionary:
 	return out
 
 
+## Where a person is now on the ground (a person of any room's crowd), or null.
+func _person_pos(id: String) -> Variant:
+	for rid in crowds:
+		var c := crowds[rid] as StoryCrowd
+		if c.actors.has(id):
+			return c.actors[id]["pos"]
+	return null
+
+
 ## One draw order for every visible figure of every room, far to near by distance from the eye (z_index of the 2D nodes in the shared overlay): a dancer seen through a doorway
 ## is behind or in front of this room's dancers by true distance. The crowds' own shadow blobs (z 0) stay under everyone.
 func _order_crowds() -> void:
@@ -411,11 +520,11 @@ func _figure_light(sec: String, pos: Vector2, song: bool) -> Color:
 
 
 func _update_world(t: float, p_energy: float, pose: Dictionary) -> void:
-	lowres.apply_pose(pose, free_look.offset)
+	lowres.apply_pose(pose, 0.0 if _cam_override.begins_with("actor:") else free_look.offset)
 	var pcs := {}
 	for pid in _piece_ids:
 		pcs[pid] = piece_state(str(pid), t)
-	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": StoryLight.strobe_at(self, t), "woofer_pump": _woofer_pump, "pieces": pcs, "palette_weight": map.palette_weight}
+	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": StoryLight.strobe_at(self, t), "woofer_pump": _woofer_pump, "pieces": pcs, "palette_weight": map.palette_weight, "swell_gain": people_gain(t)}  # (the room swell and a darkening sky light the room as they light the people)
 	world.update(t, _world_ctx)
 	fx3d.update(t)
 	lowres.apply_post(StoryLight.post_state(self, t), StoryLight.pal(self, 0).lightened(0.3))
@@ -473,6 +582,8 @@ func apply(a: Dictionary) -> void:
 	match act:
 		"doors_open":
 			_act["doors_open"] = {"t0": t0, "t1": t0 + 6.0 * bar_s()}
+		"room_swell":
+			_act["room_swell"] = {"t0": t0, "t1": t0 + SWELL_BEATS * bar_s() / 4.0}
 		"lights_low_pulse":
 			palette = "low"
 		"lights_warm":

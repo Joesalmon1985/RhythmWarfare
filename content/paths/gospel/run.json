@@ -1,0 +1,3140 @@
+{
+ "schema": 1,
+ "path": {
+  "id": "gospel",
+  "title": "The Life of Jesus",
+  "entry_from": "warehouse.balcony.star",
+  "returns_to": "warehouse",
+  "opens": "A figure of light under a projected star on the Warehouse balcony: touch it in time and follow.",
+  "laps": 2
+ },
+ "timing": {
+  "bpm": 124,
+  "phase_beats": 64,
+  "block_beats": 16,
+  "cue_span_beats": 12.0,
+  "decision_beat": 12.5,
+  "fade_beats": 2.0
+ },
+ "mix": {
+  "note": "The Gospel's level and bass bus over the main run's mix (docs/HANDOVER.md 'Audio polish'): the placeholders are already bass-forward, so a gentle drive only (harmonics, tamed peaks) and 3 dB down to sit at the main run's loudness without clipping.",
+  "gain_db": -3.0,
+  "bass_bus": {
+   "enabled": true,
+   "highpass_hz": 25.0,
+   "shelf_db": 0.0,
+   "drive": 0.4,
+   "pre_gain_db": 0.0,
+   "gain_db": -2.0
+  }
+ },
+ "start_node": "jordan",
+ "worlds": [
+  {
+   "id": "jordan",
+   "title": "The Jordan",
+   "map": "galilee_shore",
+   "depth": 1,
+   "story": "res://content/story/galilee_shore.json",
+   "blurb": "A night road, a river at dawn, the wilderness, a workshop door."
+  },
+  {
+   "id": "galilee",
+   "title": "Galilee",
+   "map": "hillside",
+   "depth": 2,
+   "story": "res://content/story/hillside.json",
+   "blurb": "Nets and boats, a village street, the hillside, a storm on the lake."
+  },
+  {
+   "id": "road",
+   "title": "The Road to Jerusalem",
+   "map": "bethany",
+   "depth": 3,
+   "story": "res://content/story/bethany.json",
+   "blurb": "A shared table, a hill at dusk, the gate with palms."
+  },
+  {
+   "id": "jerusalem",
+   "title": "Jerusalem",
+   "map": "jerusalem",
+   "depth": 4,
+   "story": "res://content/story/jerusalem.json",
+   "blurb": "The temple, the olive grove, the court, the hill, the garden, the road."
+  }
+ ],
+ "nodes": [
+  {
+   "id": "jordan",
+   "world": "jordan",
+   "scene": "bethlehem",
+   "title": "Bethlehem: the Star",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "Bethlehem: the Star",
+   "laps": 1,
+   "next": [
+    {
+     "to": "jordan.baptism",
+     "dir": "up",
+     "label": "to jordan.baptism"
+    }
+   ],
+   "place": {
+    "waypoint": "bank_night.home",
+    "rail": {
+     "good": [
+      {
+       "to": "bank_night.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "bank_night.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "bank_night.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "bank_night.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "bank_night.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "bank_night.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "bank_night.door_up"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "sh1",
+     "at_beat": 0,
+     "act": "kneel",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "sh3",
+     "at_beat": 0,
+     "act": "kneel",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "m1",
+     "at_beat": 16,
+     "act": "stare",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "sh1",
+     "at_beat": 32,
+     "act": "bow",
+     "face": "awe",
+     "beats": 12
+    },
+    {
+     "actor": "el1",
+     "at_beat": 48,
+     "act": "nod",
+     "face": "happy",
+     "look_at": "m1",
+     "beats": 10
+    }
+   ],
+   "pieces": {
+    "on": [
+     "bank_night.star"
+    ]
+   }
+  },
+  {
+   "id": "jordan.baptism",
+   "world": "jordan",
+   "scene": "baptism",
+   "title": "Baptism in the Jordan",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "Baptism in the Jordan",
+   "next": [
+    {
+     "to": "jordan.nazareth",
+     "dir": "up",
+     "label": "to jordan.nazareth"
+    },
+    {
+     "to": "jordan.wilderness",
+     "dir": "right",
+     "label": "to jordan.wilderness"
+    }
+   ],
+   "place": {
+    "waypoint": "bank_dawn.home",
+    "rail": {
+     "good": [
+      {
+       "to": "bank_dawn.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "bank_dawn.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "bank_dawn.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "bank_dawn.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "bank_dawn.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "bank_dawn.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "bank_dawn.door_up",
+      "right": "bank_dawn.door_right"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "b1",
+     "at_beat": 0,
+     "act": "bow",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 24
+    },
+    {
+     "actor": "b1",
+     "at_beat": 64,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "bank_dawn.door_right",
+     "beats": 24
+    },
+    {
+     "actor": "v2",
+     "at_beat": 32,
+     "act": "cheer",
+     "face": "cheer",
+     "beats": 24,
+     "if_energy_above": 55
+    },
+    {
+     "actor": "v3",
+     "at_beat": 32,
+     "act": "cheer",
+     "face": "cheer",
+     "beats": 24,
+     "if_energy_above": 55
+    },
+    {
+     "actor": "v1_bank_dawn",
+     "at_beat": 80,
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 10,
+     "if_energy_below": 45
+    },
+    {
+     "actor": "v4",
+     "at_beat": 112,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 12
+    }
+   ],
+   "pieces": {
+    "on": [
+     "bank_dawn.dove"
+    ]
+   }
+  },
+  {
+   "id": "jordan.wilderness",
+   "world": "jordan",
+   "scene": "wilderness",
+   "title": "Temptation in the Wilderness",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "Temptation in the Wilderness",
+   "next": [
+    {
+     "to": "galilee",
+     "dir": "up",
+     "label": "to galilee"
+    },
+    {
+     "to": "galilee.capernaum",
+     "dir": "right",
+     "label": "to galilee.capernaum"
+    }
+   ],
+   "place": {
+    "waypoint": "rocks.home",
+    "rail": {
+     "good": [
+      {
+       "to": "rocks.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "rocks.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "rocks.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "rocks.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "rocks.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "rocks.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "rocks.door_up",
+      "right": "rocks.door_right"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "t1",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "t1",
+     "at_beat": 32,
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "t1",
+     "at_beat": 64,
+     "act": "laugh",
+     "face": "laugh",
+     "beats": 24,
+     "if_energy_below": 50
+    },
+    {
+     "actor": "t1",
+     "at_beat": 112,
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 12,
+     "if_energy_above": 50
+    }
+   ]
+  },
+  {
+   "id": "jordan.nazareth",
+   "world": "jordan",
+   "scene": "nazareth",
+   "title": "Nazareth Workshop",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "Nazareth Workshop",
+   "next": [
+    {
+     "to": "galilee",
+     "dir": "up",
+     "label": "to galilee"
+    },
+    {
+     "to": "galilee.capernaum",
+     "dir": "right",
+     "label": "to galilee.capernaum"
+    }
+   ],
+   "place": {
+    "waypoint": "workshop.home",
+    "rail": {
+     "good": [
+      {
+       "to": "workshop.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "workshop.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "workshop.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "workshop.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "workshop.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "workshop.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "workshop.door_up",
+      "right": "workshop.door_right"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "c1",
+     "at_beat": 0,
+     "act": "write",
+     "face": "neutral",
+     "beats": 32
+    },
+    {
+     "actor": "c1",
+     "at_beat": 64,
+     "act": "nod",
+     "face": "happy",
+     "beats": 10
+    },
+    {
+     "actor": "n1",
+     "at_beat": 32,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "v1_workshop",
+     "at_beat": 112,
+     "act": "watch",
+     "face": "neutral",
+     "look_at": "workshop.cart",
+     "beats": 12
+    }
+   ]
+  },
+  {
+   "id": "galilee",
+   "world": "galilee",
+   "scene": "lakeshore",
+   "title": "Calling the Fishermen",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "Calling the Fishermen",
+   "next": [
+    {
+     "to": "galilee.mount",
+     "dir": "up",
+     "label": "to galilee.mount"
+    },
+    {
+     "to": "galilee.storm",
+     "dir": "right",
+     "label": "to galilee.storm"
+    }
+   ],
+   "place": {
+    "waypoint": "lakeshore.home",
+    "rail": {
+     "good": [
+      {
+       "to": "lakeshore.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "lakeshore.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "lakeshore.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "lakeshore.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "lakeshore.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "lakeshore.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "lakeshore.door_up",
+      "right": "lakeshore.door_right"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "f1_lakeshore",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "f2",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "f1_lakeshore",
+     "at_beat": 32,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "f2",
+     "at_beat": 64,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "f2",
+     "at_beat": 125,
+     "act": "cheer",
+     "face": "cheer",
+     "beats": 4,
+     "if_flags_all": [
+      "gospel_called"
+     ]
+    },
+    {
+     "actor": "f4",
+     "at_beat": 125,
+     "act": "cheer",
+     "face": "cheer",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_called"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "galilee.capernaum",
+   "world": "galilee",
+   "scene": "capernaum",
+   "title": "Healing in Capernaum",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "Healing in Capernaum",
+   "next": [
+    {
+     "to": "galilee.mount",
+     "dir": "up",
+     "label": "to galilee.mount"
+    },
+    {
+     "to": "road",
+     "dir": "right",
+     "label": "to road"
+    }
+   ],
+   "place": {
+    "waypoint": "street.home",
+    "rail": {
+     "good": [
+      {
+       "to": "street.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "street.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "street.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "street.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "street.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "street.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "street.door_up",
+      "right": "street.door_right"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "p1",
+     "at_beat": 0,
+     "act": "plead",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "p2",
+     "at_beat": 0,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "p1",
+     "at_beat": 64,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "e1",
+     "at_beat": 112,
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "k1_street",
+     "at_beat": 125,
+     "act": "sit",
+     "face": "happy",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_healed"
+     ]
+    },
+    {
+     "actor": "p1",
+     "at_beat": 125,
+     "act": "collapse",
+     "face": "relief",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_healed"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "galilee.mount",
+   "world": "galilee",
+   "scene": "mount",
+   "title": "Sermon on the Mount",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "Sermon on the Mount",
+   "next": [
+    {
+     "to": "road.loaves",
+     "dir": "up",
+     "label": "to road.loaves"
+    },
+    {
+     "to": "galilee.storm",
+     "dir": "right",
+     "label": "to galilee.storm"
+    }
+   ],
+   "place": {
+    "waypoint": "slope.home",
+    "rail": {
+     "good": [
+      {
+       "to": "slope.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "slope.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "slope.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "slope.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "slope.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "slope.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "slope.door_up",
+      "right": "slope.door_right"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "c1",
+     "at_beat": 0,
+     "act": "sit",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "c3",
+     "at_beat": 0,
+     "act": "sit",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "c5",
+     "at_beat": 32,
+     "act": "sit",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "h1",
+     "at_beat": 32,
+     "act": "laugh",
+     "face": "laugh",
+     "beats": 24
+    },
+    {
+     "actor": "d02_slope",
+     "at_beat": 112,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "slope.boat_far",
+     "beats": 12
+    },
+    {
+     "actor": "h1",
+     "at_beat": 125,
+     "act": "cover_face",
+     "face": "shame",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_mount_heard"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "galilee.storm",
+   "world": "galilee",
+   "scene": "storm",
+   "title": "Storm on Galilee",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "Storm on Galilee",
+   "next": [
+    {
+     "to": "road.loaves",
+     "dir": "up",
+     "label": "to road.loaves"
+    },
+    {
+     "to": "road",
+     "dir": "right",
+     "label": "to road"
+    }
+   ],
+   "place": {
+    "waypoint": "storm.home",
+    "rail": {
+     "good": [
+      {
+       "to": "storm.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "storm.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "storm.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "storm.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "storm.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "storm.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "storm.door_up",
+      "right": "storm.door_right"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "d01_storm",
+     "at_beat": 0,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "d05",
+     "at_beat": 0,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "d02_storm",
+     "at_beat": 32,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "d06",
+     "at_beat": 64,
+     "act": "plead",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "d04_storm",
+     "at_beat": 125,
+     "act": "stare",
+     "face": "awe",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_calm"
+     ]
+    },
+    {
+     "actor": "d02_storm",
+     "at_beat": 125,
+     "act": "stare",
+     "face": "relief",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_calm"
+     ]
+    }
+   ],
+   "pieces": {
+    "on": [
+     "storm.storm_cloud",
+     "storm.rain",
+     "storm.lightning"
+    ]
+   }
+  },
+  {
+   "id": "road",
+   "world": "road",
+   "scene": "bethany",
+   "title": "Bethany: the Shared Table",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "Bethany: the Shared Table",
+   "next": [
+    {
+     "to": "road.loaves",
+     "dir": "up",
+     "label": "to road.loaves"
+    },
+    {
+     "to": "road.entry",
+     "dir": "right",
+     "label": "to road.entry"
+    }
+   ],
+   "place": {
+    "waypoint": "courtyard.home",
+    "rail": {
+     "good": [
+      {
+       "to": "courtyard.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "courtyard.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "courtyard.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "courtyard.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "courtyard.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "courtyard.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "courtyard.door_up",
+      "right": "courtyard.door_right"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "s1",
+     "at_beat": 0,
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "s2",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "s2",
+     "at_beat": 64,
+     "act": "write",
+     "face": "doubt",
+     "beats": 24
+    },
+    {
+     "actor": "d12",
+     "at_beat": 64,
+     "act": "stare",
+     "face": "shame",
+     "look_at": "courtyard.door_right",
+     "beats": 40
+    },
+    {
+     "actor": "s1",
+     "at_beat": 112,
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    }
+   ]
+  },
+  {
+   "id": "road.loaves",
+   "world": "road",
+   "scene": "loaves",
+   "title": "Loaves and Fishes",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "Loaves and Fishes",
+   "next": [
+    {
+     "to": "road.entry",
+     "dir": "up",
+     "label": "to road.entry"
+    },
+    {
+     "to": "road",
+     "dir": "left",
+     "label": "to road",
+     "loop": true
+    }
+   ],
+   "place": {
+    "waypoint": "hill_dusk.home",
+    "rail": {
+     "good": [
+      {
+       "to": "hill_dusk.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "hill_dusk.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "hill_dusk.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "hill_dusk.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "hill_dusk.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "hill_dusk.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "hill_dusk.door_up",
+      "left": "hill_dusk.door_left"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "c2",
+     "at_beat": 0,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "c5",
+     "at_beat": 32,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "c1",
+     "at_beat": 64,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "c7",
+     "at_beat": 64,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "c3",
+     "at_beat": 125,
+     "act": "cheer",
+     "face": "cheer",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_fed"
+     ]
+    },
+    {
+     "actor": "c6",
+     "at_beat": 125,
+     "act": "laugh",
+     "face": "laugh",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_fed"
+     ]
+    },
+    {
+     "actor": "c4",
+     "at_beat": 125,
+     "act": "shake_head",
+     "face": "sad",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_hungry"
+     ]
+    },
+    {
+     "actor": "c8",
+     "at_beat": 125,
+     "act": "sad",
+     "face": "sad",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_hungry"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "road.entry",
+   "world": "road",
+   "scene": "entry",
+   "title": "Entry into Jerusalem",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "Entry into Jerusalem",
+   "next": [
+    {
+     "to": "jerusalem",
+     "dir": "up",
+     "label": "to jerusalem"
+    },
+    {
+     "to": "jerusalem.gethsemane",
+     "dir": "left",
+     "label": "to jerusalem.gethsemane"
+    }
+   ],
+   "place": {
+    "waypoint": "gate.home",
+    "rail": {
+     "good": [
+      {
+       "to": "gate.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "gate.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "gate.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "gate.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "gate.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "gate.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "gate.door_up",
+      "left": "gate.door_left"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "pr1",
+     "at_beat": 0,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "pr2",
+     "at_beat": 0,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "k1",
+     "at_beat": 32,
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "cr2",
+     "at_beat": 64,
+     "act": "cheer",
+     "face": "cheer",
+     "beats": 28
+    },
+    {
+     "actor": "pr1",
+     "at_beat": 112,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 12,
+     "if_energy_above": 60
+    },
+    {
+     "actor": "cr5",
+     "at_beat": 112,
+     "act": "cheer",
+     "face": "cheer",
+     "beats": 12
+    }
+   ]
+  },
+  {
+   "id": "jerusalem",
+   "world": "jerusalem",
+   "scene": "temple",
+   "title": "The Temple",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Temple",
+   "next": [
+    {
+     "to": "jerusalem.gethsemane",
+     "dir": "up",
+     "label": "to jerusalem.gethsemane"
+    },
+    {
+     "to": "jerusalem.trial",
+     "dir": "right",
+     "label": "to jerusalem.trial"
+    }
+   ],
+   "place": {
+    "waypoint": "temple.home",
+    "rail": {
+     "good": [
+      {
+       "to": "temple.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "temple.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "temple.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "temple.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "temple.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "temple.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "temple.door_up",
+      "right": "temple.door_right"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "mc1",
+     "at_beat": 0,
+     "act": "write",
+     "face": "neutral",
+     "beats": 32
+    },
+    {
+     "actor": "mc2",
+     "at_beat": 32,
+     "act": "laugh",
+     "face": "laugh",
+     "beats": 28
+    },
+    {
+     "actor": "mc3",
+     "at_beat": 64,
+     "act": "write",
+     "face": "neutral",
+     "beats": 28
+    },
+    {
+     "actor": "g1_temple",
+     "at_beat": 112,
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 12
+    },
+    {
+     "actor": "mc1",
+     "at_beat": 125,
+     "act": "recoil",
+     "face": "fear",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_tables"
+     ]
+    },
+    {
+     "actor": "mc2",
+     "at_beat": 125,
+     "act": "recoil",
+     "face": "fear",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_tables"
+     ]
+    },
+    {
+     "actor": "pr1",
+     "at_beat": 125,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_tables"
+     ]
+    },
+    {
+     "actor": "pr2",
+     "at_beat": 125,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 3,
+     "if_flags_all": [
+      "gospel_tables"
+     ]
+    }
+   ],
+   "pieces": {
+    "on": [
+     "temple.t1_up",
+     "temple.t2_up",
+     "temple.t3_up"
+    ]
+   }
+  },
+  {
+   "id": "jerusalem.gethsemane",
+   "world": "jerusalem",
+   "scene": "gethsemane",
+   "title": "Gethsemane",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "Gethsemane",
+   "next": [
+    {
+     "to": "jerusalem.trial",
+     "dir": "up",
+     "label": "to jerusalem.trial"
+    },
+    {
+     "to": "jerusalem.road",
+     "dir": "right",
+     "label": "to jerusalem.road"
+    }
+   ],
+   "place": {
+    "waypoint": "grove.home",
+    "rail": {
+     "good": [
+      {
+       "to": "grove.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "grove.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "grove.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "grove.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "grove.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "grove.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "grove.door_up",
+      "right": "grove.door_right"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "d11",
+     "at_beat": 64,
+     "act": "sit",
+     "face": "shame",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "d12",
+     "at_beat": 112,
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "g1_grove",
+     "beats": 12
+    },
+    {
+     "actor": "g1_grove",
+     "at_beat": 112,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "g2_grove",
+     "at_beat": 112,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "d12",
+     "at_beat": 120,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "g3",
+     "at_beat": 120,
+     "act": "stare",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 8
+    }
+   ]
+  },
+  {
+   "id": "jerusalem.trial",
+   "world": "jerusalem",
+   "scene": "trial",
+   "title": "The Trial",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Trial",
+   "next": [
+    {
+     "to": "jerusalem.golgotha",
+     "dir": "up",
+     "label": "to jerusalem.golgotha"
+    },
+    {
+     "to": "jerusalem.road",
+     "dir": "right",
+     "label": "to jerusalem.road"
+    }
+   ],
+   "place": {
+    "waypoint": "praetorium.home",
+    "rail": {
+     "good": [
+      {
+       "to": "praetorium.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "praetorium.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "praetorium.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "praetorium.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "praetorium.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "praetorium.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "praetorium.door_up",
+      "right": "praetorium.door_right"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "gov",
+     "at_beat": 0,
+     "act": "write",
+     "face": "neutral",
+     "beats": 32
+    },
+    {
+     "actor": "gov",
+     "at_beat": 32,
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 28
+    },
+    {
+     "actor": "gov",
+     "at_beat": 64,
+     "act": "offer",
+     "face": "resolve",
+     "look_at": "praetorium.bowl",
+     "beats": 28
+    },
+    {
+     "actor": "cr2",
+     "at_beat": 64,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 28
+    },
+    {
+     "actor": "cr4",
+     "at_beat": 64,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 28
+    },
+    {
+     "actor": "cr6",
+     "at_beat": 80,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 10
+    },
+    {
+     "actor": "w1_praetorium",
+     "at_beat": 112,
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 14
+    },
+    {
+     "actor": "sc1",
+     "at_beat": 32,
+     "act": "write",
+     "face": "neutral",
+     "beats": 24
+    }
+   ]
+  },
+  {
+   "id": "jerusalem.golgotha",
+   "world": "jerusalem",
+   "scene": "golgotha",
+   "title": "Golgotha",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "Golgotha",
+   "laps": 1,
+   "next": [
+    {
+     "to": "jerusalem.tomb",
+     "dir": "up",
+     "label": "to jerusalem.tomb"
+    }
+   ],
+   "place": {
+    "waypoint": "hill.home",
+    "rail": {
+     "good": [
+      {
+       "to": "hill.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "hill.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "hill.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "hill.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "hill.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "hill.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "hill.door_up"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "w1_hill",
+     "at_beat": 0,
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 16
+    },
+    {
+     "actor": "w2_hill",
+     "at_beat": 0,
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 16
+    },
+    {
+     "actor": "w3_hill",
+     "at_beat": 16,
+     "act": "kneel",
+     "face": "grief",
+     "beats": 16
+    },
+    {
+     "actor": "s1",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "s3",
+     "at_beat": 32,
+     "act": "stare",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 24
+    },
+    {
+     "actor": "s3",
+     "at_beat": 60,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 4
+    },
+    {
+     "actor": "w2_hill",
+     "at_beat": 40,
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 16
+    }
+   ],
+   "block_fx": [
+    {
+     "block": 0,
+     "pass": {
+      "pieces": {
+       "on": [
+        "hill.dark1"
+       ]
+      },
+      "cast": [
+       {
+        "actor": "x1",
+        "at_beat": 0,
+        "act": "kneel",
+        "face": "grief",
+        "look_at": "camera",
+        "beats": 14
+       }
+      ]
+     },
+     "miss": {
+      "pieces": {
+       "on": [
+        "hill.dark1"
+       ]
+      },
+      "cast": [
+       {
+        "actor": "s1",
+        "at_beat": 0,
+        "act": "laugh",
+        "face": "laugh",
+        "beats": 10
+       }
+      ]
+     }
+    },
+    {
+     "block": 1,
+     "pass": {
+      "pieces": {
+       "on": [
+        "hill.dark2"
+       ]
+      },
+      "cast": [
+       {
+        "actor": "x2",
+        "at_beat": 0,
+        "act": "kneel",
+        "face": "grief",
+        "look_at": "camera",
+        "beats": 14
+       }
+      ]
+     },
+     "miss": {
+      "pieces": {
+       "on": [
+        "hill.dark2"
+       ]
+      },
+      "cast": [
+       {
+        "actor": "s2",
+        "at_beat": 0,
+        "act": "laugh",
+        "face": "laugh",
+        "beats": 10
+       }
+      ]
+     }
+    },
+    {
+     "block": 2,
+     "pass": {
+      "pieces": {
+       "on": [
+        "hill.dark3"
+       ]
+      },
+      "cast": [
+       {
+        "actor": "x3",
+        "at_beat": 0,
+        "act": "kneel",
+        "face": "grief",
+        "look_at": "camera",
+        "beats": 14
+       }
+      ]
+     },
+     "miss": {
+      "pieces": {
+       "on": [
+        "hill.dark3"
+       ]
+      },
+      "cast": [
+       {
+        "actor": "s3",
+        "at_beat": 0,
+        "act": "laugh",
+        "face": "laugh",
+        "beats": 10
+       }
+      ]
+     }
+    },
+    {
+     "block": 3,
+     "pass": {
+      "cast": [
+       {
+        "actor": "x1",
+        "at_beat": 0,
+        "act": "bow",
+        "face": "grief",
+        "beats": 3
+       }
+      ]
+     },
+     "miss": {
+      "cast": [
+       {
+        "actor": "s1",
+        "at_beat": 0,
+        "act": "laugh",
+        "face": "laugh",
+        "beats": 3
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "id": "jerusalem.tomb",
+   "world": "jerusalem",
+   "scene": "tomb",
+   "title": "The Empty Tomb",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Empty Tomb",
+   "next": [
+    {
+     "to": "run:warehouse",
+     "dir": "up",
+     "label": "to run:warehouse"
+    }
+   ],
+   "place": {
+    "waypoint": "tomb.home",
+    "rail": {
+     "good": [
+      {
+       "to": "tomb.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "tomb.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "tomb.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "tomb.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "tomb.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "tomb.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "tomb.door_up"
+     }
+    }
+   },
+   "ending": "tomb",
+   "cast": [
+    {
+     "actor": "w1_tomb",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "grief",
+     "beats": 32
+    },
+    {
+     "actor": "w2_tomb",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "grief",
+     "beats": 32
+    },
+    {
+     "actor": "w1_tomb",
+     "at_beat": 32,
+     "act": "recoil",
+     "face": "fear",
+     "beats": 28
+    },
+    {
+     "actor": "w2_tomb",
+     "at_beat": 32,
+     "act": "recoil",
+     "face": "fear",
+     "beats": 28
+    },
+    {
+     "actor": "w1_tomb",
+     "at_beat": 64,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "w3_tomb",
+     "at_beat": 64,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "w1_tomb",
+     "at_beat": 112,
+     "act": "cheer",
+     "face": "cheer",
+     "beats": 14
+    },
+    {
+     "actor": "w2_tomb",
+     "at_beat": 112,
+     "act": "cheer",
+     "face": "cheer",
+     "beats": 14
+    },
+    {
+     "actor": "gd1",
+     "at_beat": 112,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "tomb.door_up",
+     "beats": 14
+    }
+   ],
+   "pieces": {
+    "on": [
+     "tomb.stone_closed"
+    ]
+   },
+   "block_fx": [
+    {
+     "block": 0,
+     "pass": {
+      "pieces": {
+       "off": [
+        "tomb.stone_closed"
+       ],
+       "on": [
+        "tomb.stone_rolled"
+       ]
+      }
+     },
+     "miss": {
+      "pieces": {
+       "off": [
+        "tomb.stone_closed"
+       ],
+       "on": [
+        "tomb.stone_rolled"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "jerusalem.road",
+   "world": "jerusalem",
+   "scene": "road_beyond",
+   "title": "The Road Beyond Jerusalem",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Road Beyond Jerusalem",
+   "next": [
+    {
+     "to": "run:warehouse",
+     "dir": "up",
+     "label": "to run:warehouse"
+    }
+   ],
+   "place": {
+    "waypoint": "road.home",
+    "rail": {
+     "good": [
+      {
+       "to": "road.g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "road.g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "road.g3",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "road.b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "road.b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "road.arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "road.door_up"
+     }
+    }
+   },
+   "ending": "road",
+   "cast": [
+    {
+     "actor": "d01",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "d02",
+     "at_beat": 32,
+     "act": "laugh",
+     "face": "laugh",
+     "beats": 28
+    },
+    {
+     "actor": "sp1",
+     "at_beat": 64,
+     "act": "bow",
+     "face": "awe",
+     "beats": 28
+    },
+    {
+     "actor": "g1_road",
+     "at_beat": 112,
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 14
+    },
+    {
+     "actor": "g2_road",
+     "at_beat": 112,
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 14
+    }
+   ]
+  }
+ ],
+ "cinematics": {
+  "gospel.stagger_jordan_road": {
+   "world": "jordan",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bank_night.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_jordan_baptism_nazareth": {
+   "world": "jordan",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "bank_dawn.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_jordan_wilderness_path": {
+   "world": "jordan",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "rocks.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_jordan_wilderness_fires": {
+   "world": "jordan",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "rocks.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_jordan_nazareth_road": {
+   "world": "jordan",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "workshop.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_galilee_mount": {
+   "world": "galilee",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "lakeshore.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.led_out": {
+   "world": "galilee",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "street.door_up",
+     "bars": 3,
+     "role": "queasy",
+     "style": "stagger",
+     "look_at": "e1"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "e1",
+     "at_beat": 0,
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "p2",
+     "at_beat": 0,
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 10
+    },
+    {
+     "actor": "p1",
+     "at_beat": 2,
+     "act": "collapse",
+     "face": "grief",
+     "beats": 10
+    }
+   ]
+  },
+  "gospel.stagger_galilee_capernaum_mount": {
+   "world": "galilee",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "street.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_galilee_capernaum_caravan": {
+   "world": "galilee",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "street.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_galilee_mount_loaves": {
+   "world": "galilee",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "slope.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_galilee_storm_loaves": {
+   "world": "galilee",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "storm.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_galilee_storm_south": {
+   "world": "galilee",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "storm.door_right",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_road_loaves": {
+   "world": "road",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "courtyard.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_road_loaves_entry": {
+   "world": "road",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "hill_dusk.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_road_entry_steps": {
+   "world": "road",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "gate.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_road_entry_grove": {
+   "world": "road",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "gate.door_left",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.walked_out": {
+   "world": "jerusalem",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "temple.door_right",
+     "bars": 3,
+     "role": "queasy",
+     "style": "stagger",
+     "look_at": "g1_temple"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "g1_temple",
+     "at_beat": 0,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "g2_temple",
+     "at_beat": 0,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "mc2",
+     "at_beat": 2,
+     "act": "laugh",
+     "face": "laugh",
+     "beats": 8
+    }
+   ]
+  },
+  "gospel.stagger_jerusalem_garden": {
+   "world": "jerusalem",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "temple.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_jerusalem_gethsemane_trial": {
+   "world": "jerusalem",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "grove.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_jerusalem_gethsemane_shadowed": {
+   "world": "jerusalem",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "grove.door_right",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_jerusalem_trial_passage": {
+   "world": "jerusalem",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "praetorium.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_jerusalem_trial_gate": {
+   "world": "jerusalem",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "praetorium.door_right",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "gospel.stagger_jerusalem_golgotha_hill": {
+   "world": "jerusalem",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "hill.door_up",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  }
+ }
+}

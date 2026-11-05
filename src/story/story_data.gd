@@ -13,6 +13,8 @@ const ACTIONS := [
 	"beams_off", "bass_reveal", "haze_burst", "led_eq", "led_rings", "led_bars", "led_wave", "disco_ball_on", "woofer_pump_on",
 	"woofer_pump_off", "spotlight_hero", "spotlight_sweep", "spotlight_off", "riser_up", "riser_down", "confetti",
 	"glowsticks_on", "glowsticks_off", "light_wave", "floor_ripple", "rave_peak",
+	# room_swell: a new room's lamps rise over two beats from its downbeat (the run's silent HUD, docs/THREE_PATHS_AND_FACES_PLAN.md 2.4)
+	"room_swell",
 	# crowd
 	"front_row_sway", "clap_sync", "wave_across", "jump_sync", "hands_up_all", "circle_form", "hero_center", "hero_solo",
 	"group_footwork", "bring_in", "gather_at_door", "regroup", "applause", "look_around", "ending_lean",
@@ -24,7 +26,7 @@ const ACTIONS := [
 	# the player's journey in the 2.5D world (docs/STORY_25D_PLAN.md section 4.1): player_move {to: waypoint, style, bars}, player_look {yaw | at | by (a glance), bars},
 	# player_role {role}, fx_queasy {amount 0..1, bars}, sick_beat {bars}
 	"player_move", "player_look", "player_role", "fx_queasy", "sick_beat",
-	# player_walk {to | fwd, right, face | turn, stop, in, style, bars}: a walk inside the room the rail is in (docs/STORY_25D_ART_DIRECTION.md 2.B); player_look also takes `pitch` (degrees up)
+	# player_walk {to | fwd, right, face | turn, stop, in, style, bars}: a walk inside the room the rail is in (docs/STORY_25D_ART_DIRECTION.md 2.B); player_look also takes `pitch` (degrees up), and `face` [x, z] with turn_bars and release_bars (the head held on a point: the run turns it to the hotspots for the window)
 	"player_walk",
 ]
 

@@ -19,6 +19,12 @@ var run_flags: Dictionary = {}
 var flags: Dictionary:
 	get:
 		return data["flags"]
+## The paths (docs/THREE_PATHS_AND_FACES_PLAN.md 3.4): {"<path id>": {"reached": [world ids], "endings": [names]}}. Added on load to a save that has none (the version stays 2).
+var paths: Dictionary:
+	get:
+		return data["paths"]
+## The player's money for the run (docs/BLACKJACK_INTEGRATION.md section 2). Written into `data["wallet"]` and saved whenever it changes.
+var wallet: RunWallet = RunWallet.new()
 
 
 static func load_data(p_path: String = SAVE_PATH, p_old: String = OLD_PATH) -> RunProgress:
@@ -37,10 +43,15 @@ static func load_data(p_path: String = SAVE_PATH, p_old: String = OLD_PATH) -> R
 			DirAccess.rename_absolute(p_path, p_path + ".corrupt")
 	elif FileAccess.file_exists(p_old):
 		p._migrate_old()
+	if typeof(p.data.get("paths", null)) != TYPE_DICTIONARY:  # saves from before the paths: the field is added on load, the file is rewritten at the next save (the version stays 2)
+		p.data["paths"] = {}
 	if not p.data.has("seed"):  # saves from before the arrangements: the field is added on load, the file is rewritten at the next save (the version stays 2)
 		var rng := RandomNumberGenerator.new()
 		rng.randomize()
 		p.data["seed"] = rng.randi() & 0x7fffffff
+	p.wallet.load_dict(p.data.get("wallet", null))  # a save from before the wallet has none: a fresh 20 pounds; held stakes fold back into the balance
+	p.data["wallet"] = p.wallet.to_dict()
+	p.wallet.changed.connect(p._on_wallet_changed)
 	return p
 
 
@@ -50,7 +61,7 @@ func run_seed() -> int:
 
 
 static func _fresh() -> Dictionary:
-	return {"version": VERSION, "reached": {}, "runs": 0, "best_phases": 0, "migrated_from": "", "flags": {}}  # "seed" is added by load_data
+	return {"version": VERSION, "reached": {}, "runs": 0, "best_phases": 0, "migrated_from": "", "flags": {}, "paths": {}, "wallet": {"pence": RunWallet.START_PENCE, "held": {}}}  # "seed" is added by load_data
 
 
 ## Reads the old chapter save (never writes it) and marks the matching levels reached. Night One is always reached.
@@ -86,10 +97,52 @@ func enter(node_id: String) -> bool:
 	return fresh
 
 
+## The player enters a world of a path (a phase begins on one of its scenes). Returns true when it was new. The main run's `reached` is never touched.
+func path_enter(path_id: String, world: String) -> bool:
+	var rec: Dictionary = paths.get(path_id, {})
+	var reached: Array = rec.get("reached", [])
+	var fresh := not reached.has(world)
+	if fresh:
+		reached.append(world)
+	rec["reached"] = reached
+	rec["endings"] = rec.get("endings", [])
+	paths[path_id] = rec
+	if fresh:
+		save()
+	return fresh
+
+
+## A path's ending was reached (the way back to the Warehouse was taken from it). Returns true when it was new.
+func path_ending(path_id: String, name: String) -> bool:
+	var rec: Dictionary = paths.get(path_id, {"reached": [], "endings": []})
+	var endings: Array = rec.get("endings", [])
+	var fresh := not endings.has(name)
+	if fresh:
+		endings.append(name)
+	rec["endings"] = endings
+	rec["reached"] = rec.get("reached", [])
+	paths[path_id] = rec
+	if fresh:
+		save()
+	return fresh
+
+
+func path_world_reached(path_id: String, world: String) -> bool:
+	return (paths.get(path_id, {}).get("reached", []) as Array).has(world)
+
+
+func path_endings(path_id: String) -> Array:
+	return paths.get(path_id, {}).get("endings", [])
+
+
 func run_started() -> void:
 	data["runs"] = int(data["runs"]) + 1
 	data["seed"] = (int(data.get("seed", 0)) * 1103515245 + 12345 + int(data["runs"])) & 0x7fffffff  # the next run's seed: this run already loaded its data
 	run_flags.clear()
+	wallet.changed.disconnect(_on_wallet_changed)  # the save below covers the reset: one write
+	wallet.reset()
+	wallet.changed.connect(_on_wallet_changed)
+	data["wallet"] = wallet.to_dict()
 	save()
 
 
@@ -112,6 +165,14 @@ func set_flag(name: String) -> bool:
 	else:
 		run_flags[name] = true
 	return true
+
+
+func _on_wallet_changed() -> void:
+	var was := RunWallet.new()
+	was.load_dict(data.get("wallet", null))  # what a load of the data so far gives back (held stakes fold into the balance)
+	data["wallet"] = wallet.to_dict()
+	if was.balance_pence() != wallet.balance_pence() + wallet.held_pence():  # a hold or a release only moves money into or out of a stake: a load would give back the same, so no write
+		save()
 
 
 func save() -> bool:

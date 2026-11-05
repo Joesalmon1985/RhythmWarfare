@@ -1,0 +1,296 @@
+{
+ "version": 1,
+ "level": "harbour",
+ "px_scale_note": "the Mission Count's worlds have no SVG rigs: textures and baked people only",
+ "borrow_sprites": true,
+ "textures": {
+  "ceil_beams": {
+   "file": "textures/ceil_beams.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "ceil_cell": {
+   "file": "textures/ceil_cell.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "ceil_night_blue": {
+   "file": "textures/ceil_night_blue.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 4.0
+  },
+  "ceil_sky_day": {
+   "file": "textures/ceil_sky_day.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 4.0
+  },
+  "floor_boards": {
+   "file": "textures/floor_boards.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_cell": {
+   "file": "textures/floor_cell.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.0
+  },
+  "floor_quay": {
+   "file": "textures/floor_quay.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "floor_sand": {
+   "file": "textures/floor_sand.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "sky_harbour": {
+   "file": "textures/sky_harbour.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_aircraft_door": {
+   "file": "textures/thing_aircraft_door.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_beam": {
+   "file": "textures/thing_beam.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_birds": {
+   "file": "textures/thing_birds.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_bollard": {
+   "file": "textures/thing_bollard.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_bunk": {
+   "file": "textures/thing_bunk.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_cell_door": {
+   "file": "textures/thing_cell_door.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_count_board": {
+   "file": "textures/thing_count_board.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_crate_stack": {
+   "file": "textures/thing_crate_stack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_fishing_boat": {
+   "file": "textures/thing_fishing_boat.png",
+   "size": [
+    256,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_lamp_hang": {
+   "file": "textures/thing_lamp_hang.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_nets": {
+   "file": "textures/thing_nets.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_order_paper": {
+   "file": "textures/thing_order_paper.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_pine_umbrella": {
+   "file": "textures/thing_pine_umbrella.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_quay_lamp": {
+   "file": "textures/thing_quay_lamp.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_radio_broken": {
+   "file": "textures/thing_radio_broken.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_searchlight": {
+   "file": "textures/thing_searchlight.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_shore_boat": {
+   "file": "textures/thing_shore_boat.png",
+   "size": [
+    256,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_stove": {
+   "file": "textures/thing_stove.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_sunshade": {
+   "file": "textures/thing_sunshade.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_window_hut": {
+   "file": "textures/thing_window_hut.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_window_latch": {
+   "file": "textures/thing_window_latch.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_wooden_post": {
+   "file": "textures/thing_wooden_post.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "wall_cell": {
+   "file": "textures/wall_cell.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.0
+  },
+  "wall_dunes": {
+   "file": "textures/wall_dunes.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 4.5
+  },
+  "wall_hut": {
+   "file": "textures/wall_hut.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_quay": {
+   "file": "textures/wall_quay.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  }
+ },
+ "people": {
+  "file": "people/people.json",
+  "pages": [
+   "people/page_0.png",
+   "people/page_1.png"
+  ],
+  "palette": "people/palette.png"
+ }
+}

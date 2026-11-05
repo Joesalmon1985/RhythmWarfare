@@ -11,9 +11,14 @@ extends RefCounted
 ##
 ## Everything is a function of (song time, the judge's results, the player's choice), so any frame step, a pause or a calibration change
 ## gives the same events at the same song times.
+##
+## LAPS (docs/CONTINUOUS_RUN.md "Two laps"): a scene may play `laps` phases in a row (a path's `path.laps`, or the scene's own `laps`; 1 everywhere in the 174 run). Each lap is a phase of its own (its
+## own phase number, blocks, cues and judge results; the energy rules are per block as ever). Only the LAST lap carries the hotspot window, the route window and the commit; the laps before it end
+## on the downbeat in the same scene, with the mix stage of the last block carried (a pass of that block steps it on) so the bass already in stays in, and the bass phrase and the cast go on.
 
 const TICKS := 960
 const GUARD_NOTE := "cue_free_guard"
+const LEAVE_ROUTE := "run:warehouse"  # the way back from a path (an ending's route, or the pause menu's "Leave this path")
 
 var data: RunData
 var cfg: Dictionary
@@ -35,14 +40,25 @@ var block_credit: Array = []
 var choice := ""  # the chosen destination node id ("" until the player picks one)
 var window_open := false
 var hotspots: RunHotspots = null  # when set, the route is the outcome of a hotspot (the tap is the intent, block 4 decides): see _hotspot_decision; null keeps the plain route choice (tests, RW_RUN_ARROWS=1)
+var hold := false  # a minigame owns the scene (MinigameController): the run stays here, no hotspot commits, the chart and the route lock agree on this node; phases, cues, judging and energy go on as usual
 var route_locked := false  # block 0 of the next phase has been charted: routes with another chart pack can no longer be chosen
 var _locked_chart := ""
+var grid_origin := 0.0  # song time this engine's beat grid starts at (0 for the run's own clock; a path's engine starts on the downbeat its clock was swapped in, docs/CONTINUOUS_RUN.md "Paths")
+var lap := 1  # the lap being played (1..laps) of the current scene
+var laps := 1  # laps of the current scene (data: path.laps / the scene's `laps`)
+var scene_t0 := 0.0  # song time of the current scene's first downbeat (lap 1)
+var lap_extra := 0  # laps played beyond the first, over the whole run: phase_n - lap_extra counts scenes
+var away := ""  # the route the engine was handed off by ("path:<id>" or "run:warehouse"): the run left this engine's world, it is frozen and gives no more events
 
 var _events: Array = []
+var _cast_queue: Array = []  # the story beats still to come, earliest first: [{t, seq, beat, index, line, source, node, phase, name}] (the scene's `cast` lines, and a committed outcome's cinematic cast)
+var _cast_seq := 0
 var _next_block_notes := {}  # block index -> true once charted
 var _next_phase_charted := false
 var _depleted_t := -1.0
 var _over_t := -1.0
+var _lap_stage := 0  # the mix stage the next lap starts in (decided at the last block's decision of a lap that is not the final one)
+var _lap_bass_origin := -1  # the bass phrase origin the next lap charts from
 var _blocks_total := 0  # blocks charted in this run (for sequence ids)
 var _note_id := 0
 var part_offset := {"drums": 0.0, "bass": 0.0}  # seconds the audible part sits from the grid in the current phase (RunAudio measures it)
@@ -86,11 +102,13 @@ func begin(start_id: String) -> void:
 	energy = float(cfg["energy"]["start"])
 	over = false
 	_events = []
+	_cast_queue = []
 	_depleted_t = -1.0
 	_over_t = -1.0
 	_blocks_total = 0
 	_note_id = 0
 	phase_n = 0
+	lap_extra = 0
 	phase_t0 = 0.0
 	_next_phase_charted = false
 	_enter(start_id, 0.0, true)
@@ -117,12 +135,24 @@ func resume(start_id: String, t0: float) -> void:
 	judge.setup(level.notes, [])
 	energy = keep
 	over = false
+	away = ""
 	_events = []
+	_cast_queue = []
 	_depleted_t = -1.0
 	_over_t = -1.0
 	_next_phase_charted = false
 	phase_n = n
 	_enter(start_id, t0, true)
+
+
+## The run arrives here from another run (a portal into a path, or an ending back to the Warehouse): this engine's grid starts on the downbeat `t0` of the new clock, the crowd's energy and the phase
+## count are carried over, and the scene `start_id` begins on drums alone.
+func arrive(start_id: String, t0: float, p_energy: float, p_phase_n: int, p_lap_extra: int = 0) -> void:
+	grid_origin = t0
+	energy = p_energy
+	phase_n = p_phase_n
+	lap_extra = p_lap_extra
+	resume(start_id, t0)
 
 
 func _enter(id: String, t0: float, chart_now: bool) -> void:
@@ -132,6 +162,11 @@ func _enter(id: String, t0: float, chart_now: bool) -> void:
 	depth = int(n["depth"])
 	phase_n += 1
 	phase_t0 = t0
+	scene_t0 = t0
+	lap = 1
+	laps = data.laps_of(id)
+	_lap_stage = 0
+	_lap_bass_origin = -1
 	stage = 0
 	block = 0
 	bass_origin = -1
@@ -149,8 +184,9 @@ func _enter(id: String, t0: float, chart_now: bool) -> void:
 	_next_block_notes[0] = true
 	if hotspots != null:
 		hotspots.begin_scene(id, energy)
+	_queue_scene_cast(id, t0)
 	_emit({"kind": "phase_start", "node": id, "world": n["world"], "scene": n["scene"], "from": prev, "depth": depth, "t": t0, "phase": phase_n, "treatment": n["treatment"],
-		"audio": n["audio"], "temporary": n["temporary"], "fresh": phase_n == 1})
+		"audio": n["audio"], "temporary": n["temporary"], "fresh": phase_n == 1, "path": data.path_id, "lap": 1, "laps": laps, "lap_extra": lap_extra})
 	_emit({"kind": "mix", "stage": 0, "t": t0, "gains": cfg["stages"][0]["gains"], "cue": cfg["stages"][0]["cue"]})
 
 
@@ -158,11 +194,17 @@ func _emit(ev: Dictionary) -> void:
 	_events.append(ev)
 
 
+## Scenes entered so far in this run, counting the current one (phase_n counts every lap).
+func scene_index() -> int:
+	return phase_n - lap_extra
+
+
 ## Song time of a beat of the current phase.
 func t_of(phase_beat: float) -> float:
 	return phase_t0 + phase_beat * beat_s
 
 
+## The beat of a block at which it is judged (and a hotspot commits).
 func _decision_beat() -> float:
 	return maxf(timing("decision_beat"), timing("cue_span_beats") + judge.accept_s / beat_s + 0.05)
 
@@ -174,7 +216,7 @@ func options() -> Array:
 	for e in data.nodes[node_id]["next"]:
 		var o: Dictionary = (e as Dictionary).duplicate()
 		o["default"] = first
-		o["in_world"] = str(data.nodes[str(e["to"])]["world"]) == str(data.nodes[node_id]["world"])
+		o["in_world"] = data.nodes.has(str(e["to"])) and str(data.nodes[str(e["to"])]["world"]) == str(data.nodes[node_id]["world"])  # (an ending's "run:warehouse" is no scene)
 		o["title"] = data.route_title(node_id, str(e["to"]))
 		first = false
 		out.append(o)
@@ -187,6 +229,8 @@ func default_route() -> String:
 
 ## The player picks a route (by destination id); allowed until the phase ends. Returns false when the id is not one of the routes.
 func choose(to: String) -> bool:
+	if lap < laps:  # a lap before the last has no choice to make (the window and the commit belong to the final lap)
+		return false
 	if hotspots != null:  # with hotspots the route is the outcome of the selected one: choosing a route taps the hotspot that leads there (scripted play, old callers)
 		return hotspots.select_route(to, block, window_open)
 	for e in data.nodes[node_id]["next"]:
@@ -207,17 +251,38 @@ func choose_dir(dir: String) -> bool:
 
 ## False for a route whose chart pack differs from the one already charted for the next phase's first block (the lock falls at the last block's decision, beat 60.5).
 func route_allowed(to: String) -> bool:
-	return not route_locked or str(data.nodes[to]["chart"]) == _locked_chart
+	return not route_locked or not data.nodes.has(to) or str(data.nodes[to]["chart"]) == _locked_chart
 
 
 func selected_route() -> String:
+	if hold:
+		return node_id
 	if choice != "":
 		return choice
 	if hotspots != null and hotspots.selected != "":  # the route the selected hotspot leads to on success (the final outcome is only known at the commit)
 		var r := str((hotspots.get_hotspot(hotspots.selected).get("on_success", {}) as Dictionary).get("route", ""))
-		if r != "" and not HotspotContract.is_trial_route(r):
+		if r != "" and not HotspotContract.is_special_route(r):  # (the Bassment, a portal or the way back are known only at the commit)
 			return r
 	return default_route()
+
+
+## The player leaves the path by the pause menu: the way back to the Warehouse becomes the choice. Allowed in a path only; returns false elsewhere.
+func force_leave() -> bool:
+	if not data.is_path() or away != "":
+		return false
+	choice = LEAVE_ROUTE
+	return true
+
+
+## True when this phase ends by leaving the scene: the choice window is open (the final lap), or the player has asked to leave the path during a lap before the last (the lap then ends the scene).
+func exit_pending() -> bool:
+	return window_open or (lap < laps and choice == LEAVE_ROUTE)
+
+
+## The special route the phase ends by ("path:<id>" / "run:warehouse"), "" when it ends in a scene of this run.
+func special_route() -> String:
+	var r := selected_route()
+	return r if HotspotContract.is_special_route(r) and not data.nodes.has(r) else ""
 
 
 func press(pad: int, t: float, touch: int = 0) -> Dictionary:
@@ -237,21 +302,19 @@ func cue_family(b: int) -> String:
 func update(t: float) -> Array:
 	if level == null:
 		return []
+	if away != "":  # handed off: the run lives in another engine now
+		var rest := _events
+		_events = []
+		return rest
 	judge.update(t)
 	for ev in judge.drain_events():
 		_emit({"kind": "judge", "event": ev, "t": t})
 	if _depleted_t >= 0.0:
 		if not over and t >= _over_t:
 			over = true
-			_emit({"kind": "run_over", "t": _over_t, "energy": energy, "phase": phase_n, "node": node_id})
+			_emit({"kind": "run_over", "t": _over_t, "energy": energy, "phase": phase_n, "scenes": scene_index(), "node": node_id})
 	else:
-		var bb := int(timing("block_beats"))
-		var guard := 0
-		while block <= 3 and guard < 8 and t >= t_of(float(block * bb) + _decision_beat()):
-			guard += 1
-			_decide(block, t_of(float(block * bb) + _decision_beat()))
-			if _depleted_t >= 0.0:
-				break
+		_run_due(t)
 		if _depleted_t < 0.0 and block == 4 and t >= t_of(timing("phase_beats")):
 			_commit()
 			var first := _events
@@ -263,13 +326,104 @@ func update(t: float) -> Array:
 	return out
 
 
+## Everything due by song time `t` inside the current phase, in time order: the blocks' decisions and the cast lines (a line on the same instant as a decision goes first, so its conditions read
+## the energy as it stood at that beat). A stall across several of either gives the same events as small steps would.
+func _run_due(t: float) -> void:
+	var bb := int(timing("block_beats"))
+	var guard := 0
+	while guard < 96 and _depleted_t < 0.0:
+		var t_dec := t_of(float(block * bb) + _decision_beat()) if block <= 3 else INF
+		var t_cast: float = float(_cast_queue[0]["t"]) if not _cast_queue.is_empty() else INF
+		if t_cast >= t_of(timing("phase_beats")) and lap < laps:  # a line of a later lap waits for its lap (a stall must not fire it before the lap begins)
+			t_cast = INF
+		if minf(t_dec, t_cast) > t:
+			break
+		guard += 1
+		if t_cast <= t_dec:
+			_fire_cast(_cast_queue.pop_front())
+		else:
+			_decide(block, t_dec)
+
+
+## The scene's cast lines, scheduled on the clock: line k fires at `t0 + at_beat * beat_s` (ties in file order); `at_beat` counts from the scene's first downbeat across all its laps. Lines of the scene just left that never fired are dropped; a committed outcome's
+## cinematic cast, already queued, plays on.
+func _queue_scene_cast(id: String, t0: float) -> void:
+	_cast_queue = _cast_queue.filter(func(q: Dictionary) -> bool: return str(q["source"]) != "scene")
+	var lines: Array = data.nodes[id].get("cast", [])
+	for i in lines.size():
+		var line: Dictionary = lines[i]
+		_cast_queue.append({"t": t0 + float(line["at_beat"]) * beat_s, "seq": _cast_seq, "beat": float(line["at_beat"]), "index": i, "line": line, "source": "scene", "node": id, "phase": phase_n + int(floor(float(line["at_beat"]) / timing("phase_beats"))), "name": ""})
+		_cast_seq += 1
+	_sort_cast()
+
+
+func _sort_cast() -> void:
+	_cast_queue.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["t"]) < float(b["t"]) if float(a["t"]) != float(b["t"]) else int(a["seq"]) < int(b["seq"]))
+
+
+## An outcome's cinematic with cast lines: each line is due `at_beat` beats after the commit at `t_commit`.
+func _queue_cinematic_cast(cin: Dictionary, name: String, t_commit: float) -> void:
+	var lines: Array = cin.get("cast", [])
+	for i in lines.size():
+		var line: Dictionary = lines[i]
+		_cast_queue.append({"t": t_commit + float(line["at_beat"]) * beat_s, "seq": _cast_seq, "beat": float(line["at_beat"]), "index": i, "line": line, "source": "cinematic", "node": node_id, "phase": phase_n, "name": name})
+		_cast_seq += 1
+	_sort_cast()
+
+
+## A cast line comes due: if its conditions hold (the crowd's energy, the world-state flags) one `cast` event goes out, stamped with the line's own time. RunPlay hands it to the crowd.
+func _fire_cast(q: Dictionary) -> void:
+	var line: Dictionary = q["line"]
+	var has_flag := func(f: String) -> bool: return hotspots != null and hotspots.has_flag(f)
+	if not RunActing.conditions_hold(line, energy, has_flag):
+		return
+	if line.has("piece"):  # a set piece switched on, off or pulsed (the river rising, the storm calming)
+		_emit({"kind": "cast", "t": float(q["t"]), "beat": float(q["beat"]), "index": int(q["index"]), "source": str(q["source"]), "name": str(q["name"]), "node": str(q["node"]), "phase": int(q["phase"]),
+			"actor": "", "act": "", "face": "", "look_at": "", "beats": 0.0, "piece": str(line["piece"]), "op": str(line["op"]), "hide": false})
+		return
+	_emit({"kind": "cast", "t": float(q["t"]), "beat": float(q["beat"]), "index": int(q["index"]), "source": str(q["source"]), "name": str(q["name"]), "node": str(q["node"]), "phase": int(q["phase"]),
+		"actor": str(line["actor"]), "act": str(line.get("act", "")), "face": str(line.get("face", "")), "look_at": str(line.get("look_at", "")), "beats": float(line.get("beats", RunActing.HOLD_BEATS)),
+		"piece": "", "op": "", "hide": bool(line.get("hide", false))})
+
+
 func _commit() -> void:
-	var to := selected_route()
 	var t0 := t_of(timing("phase_beats"))
+	if lap < laps and choice != LEAVE_ROUTE:  # not the last lap: the scene goes on, the same music, the bass already in staying in
+		_start_lap(t0)
+		return
+	var to := selected_route()
+	if HotspotContract.is_path_route(to) or HotspotContract.is_run_route(to):  # leaves this run's worlds: no next scene here, the scene hands the clock and the pads to the other run
+		_emit({"kind": "route_commit", "from": node_id, "to": to, "chosen": true, "t": t0, "treatment": "none", "same_world": false})
+		window_open = false
+		away = to
+		_emit({"kind": "path_handoff", "route": to, "target": HotspotContract.path_of(to) if HotspotContract.is_path_route(to) else "warehouse", "from": node_id, "path": data.path_id,
+			"ending": str(data.nodes[node_id].get("ending", "")), "t": t0, "energy": energy, "phase": phase_n, "world": str(data.nodes[node_id]["world"]), "lap_extra": lap_extra})
+		return
 	_emit({"kind": "route_commit", "from": node_id, "to": to, "chosen": choice != "", "t": t0, "treatment": data.nodes[to]["treatment"],
 		"same_world": str(data.nodes[to]["world"]) == str(data.nodes[node_id]["world"])})
 	window_open = false
 	_enter(to, t0, false)
+
+
+## The next lap of the same scene begins on the downbeat `t0`: a new phase number (its own cues, blocks and judge results), the mix stage decided at the last block's decision (the stage of the last block, one
+## step on after a pass), the bass phrase as it was (`bass_origin` is kept: every pack's phrase tiles a lap, so the origin counts modulo the phrase), no window and no commit until the last lap.
+func _start_lap(t0: float) -> void:
+	lap += 1
+	phase_n += 1
+	lap_extra += 1
+	phase_t0 = t0
+	stage = _lap_stage
+	block = 0
+	if _lap_bass_origin >= 0:
+		bass_origin = _lap_bass_origin
+	stage_of_block = [stage]
+	block_credit = []
+	_next_block_notes = {0: true}
+	_next_phase_charted = false
+	window_open = false
+	if hotspots != null:
+		hotspots.energy = energy
+	_emit({"kind": "lap_start", "node": node_id, "lap": lap, "laps": laps, "t": t0, "phase": phase_n, "stage": stage, "lap_extra": lap_extra, "scene_t0": scene_t0})
 
 
 ## Judge block `b` at its decision beat, update the mix stage and energy, chart what comes next.
@@ -290,10 +444,10 @@ func _decide(b: int, t_dec: float) -> void:
 	if b < 3 and passed:
 		next_stage = mini(stage + 1, 3)
 	_emit({"kind": "block_result", "block": b, "credit": credit, "passed": passed, "energy": energy, "stage": stage, "next_stage": next_stage, "t": t_dec,
-		"node": node_id, "phase": phase_n})
+		"node": node_id, "phase": phase_n, "lap": lap, "laps": laps})
 	block = b + 1
-	if hotspots != null and energy > 0.0:
-		_hotspot_decision(b, passed, t_dec)
+	if hotspots != null and energy > 0.0 and not hold:
+		_hotspot_decision(b, passed, t_dec, credit)
 	if energy <= 0.0:
 		_depleted_t = t_of(boundary_beat)
 		_over_t = _depleted_t + float(cfg["timing"]["fade_beats"]) * beat_s
@@ -309,24 +463,30 @@ func _decide(b: int, t_dec: float) -> void:
 		_emit({"kind": "mix", "stage": stage, "t": t_of(boundary_beat), "gains": st["gains"], "cue": st["cue"], "beat": boundary_beat})
 		_chart_block(b + 1, b + 1, depth)
 		_next_block_notes[b + 1] = true
-		if b == 2:  # the choice window is the last block: riser when the final bass stage is reached by beat 49, a fall otherwise
+		if b == 2 and lap == laps:  # the choice window is the last block of the last lap: riser when the final bass stage is reached by beat 49, a fall otherwise
 			window_open = true
 			_emit({"kind": "route_window", "t": t_of(boundary_beat), "effect": "riser" if stage == 3 else "fall", "options": options(),
-				"default": default_route(), "stage": stage})
+				"default": default_route(), "stage": stage, "lap": lap})
+	elif lap < laps:
+		_chart_next_lap(passed)  # the scene goes on: the next lap's first block, in the stage this block leaves the mix in
 	else:
 		# the last block is over: chart the next phase's first block now from the selected route, and lock it
+		if hold:
+			choice = node_id
 		_chart_next_phase()
 
 
 ## The hotspot window's decisions at the block's decision beat (inside the cue-free guard): the early window (a way into the Bassment) commits at blocks 0 and 1, the final one at block 3 (the route
 ## lock beat), where the outcome's route becomes the engine's choice before the next phase is charted from it. The outcome's energy is applied here (never to the point of depletion).
-func _hotspot_decision(b: int, passed: bool, t_dec: float) -> void:
+func _hotspot_decision(b: int, passed: bool, t_dec: float, credit := -1.0) -> void:
 	hotspots.energy = energy
 	var out: Dictionary = {}
 	if b <= 2:
-		out = hotspots.on_block(b, passed)
+		out = hotspots.on_block(b, passed, credit)
+	elif lap < laps:
+		return  # (no window, no commit before the last lap)
 	else:
-		out = hotspots.commit_final(passed)
+		out = hotspots.commit_final(passed, credit)
 		if not out.is_empty():
 			choice = str(out["route"])
 	if out.is_empty():
@@ -335,10 +495,31 @@ func _hotspot_decision(b: int, passed: bool, t_dec: float) -> void:
 		energy = clampf(energy + float(out["energy"]), 1.0, float(cfg["energy"]["max"]))
 		hotspots.energy = energy
 	_emit({"kind": "hotspot_commit", "t": t_dec, "block": b, "node": node_id, "phase": phase_n, "outcome": out, "energy": energy})
+	if (out["cinematic"] as Dictionary).has("cast"):  # a setback that is acted: the cinematic's cast lines run from the commit
+		_queue_cinematic_cast(out["cinematic"], str(out["cinematic_name"]), t_dec)
+
+
+## The last block of a lap that is not the final one has been judged: the next lap starts in the stage this block leaves the mix in (a pass steps it on, as at every block; the bass already in stays in), its
+## first block is charted now (one block ahead, as ever) and the mix change and a first reveal at the boundary are announced at the boundary's song time.
+func _chart_next_lap(passed: bool) -> void:
+	var boundary := timing("phase_beats")
+	var next_stage := mini(stage + 1, 3) if passed else stage
+	_lap_stage = next_stage
+	_lap_bass_origin = bass_origin
+	if next_stage >= 1 and bass_origin < 0:
+		_lap_bass_origin = 0  # revealed on this very downbeat: lap-relative beat 0
+	var st: Dictionary = cfg["stages"][next_stage]
+	if next_stage != stage:
+		_emit({"kind": "mix", "stage": next_stage, "t": t_of(boundary), "gains": st["gains"], "cue": st["cue"], "beat": 0.0, "lap": lap + 1})
+	if _lap_bass_origin == 0 and bass_origin < 0:
+		_emit({"kind": "reveal", "beat": 0, "t": t_of(boundary), "node": node_id, "block": 0, "lap": lap + 1})
+	_chart_block(0, 0, depth, node_id, true, next_stage)
 
 
 func _chart_next_phase() -> void:
 	var to := selected_route()  # the player's pick so far, else the default: the chosen world's own chart, then locked
+	if not data.nodes.has(to):  # the phase ends by a path portal or an ending's way back: there is no next scene to chart
+		return
 	_chart_block(0, 0, int(data.nodes[to]["depth"]), to, true)
 	_next_phase_charted = true
 	route_locked = true
@@ -358,9 +539,10 @@ func block_credit_of(b: int) -> float:
 
 
 ## Appends the cues of block `b` (stage `stage_i` of the phase) to the level and the judge.
-func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = "", next_phase := false) -> void:
+func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = "", next_phase := false, lap_stage := -1) -> void:
 	var nid := node_for_chart if node_for_chart != "" else node_id
-	var st_idx := int(stage_of_block[stage_i]) if stage_i < stage_of_block.size() and not next_phase else 0
+	var new_scene := next_phase and lap_stage < 0  # (lap_stage >= 0: the first block of the next lap of this scene, in that stage, with the bass phrase going on)
+	var st_idx := lap_stage if lap_stage >= 0 else (int(stage_of_block[stage_i]) if stage_i < stage_of_block.size() and not next_phase else 0)
 	var fam := str(cfg["stages"][st_idx]["cue"])
 	var block_beats := int(timing("block_beats"))
 	var start_beat := b * block_beats
@@ -368,7 +550,7 @@ func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = 
 	var tier := str(data.tier_of(at_depth))
 	var cues: Array = pack["tiers"][tier]["drums" if fam == "drums" else "bass"]
 	var phrase_beats := int(pack["phrase_beats"])
-	var origin := 0 if fam == "drums" or next_phase else maxi(bass_origin, 0)
+	var origin := 0 if fam == "drums" or new_scene else maxi(_lap_bass_origin if lap_stage >= 0 else bass_origin, 0)
 	origin = maxi(origin, data.section_start_at(nid, start_beat))  # a new section's loops start with the section, so its phrase does too
 	var pos := ((start_beat - origin) % phrase_beats + phrase_beats) % phrase_beats  # phrase beat the block starts at
 	var span := timing("cue_span_beats")
@@ -390,7 +572,7 @@ func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = 
 				dur = 0
 		var gbeat := phase_beat0 + start_beat + off / float(tpb)
 		var tick := int(round(gbeat * tpb))
-		var tm := float(tick) * 60.0 / (level.bpm * float(tpb)) + (float(part_offset["drums"]) if fam == "drums" else float(part_offset["bass"])) * (0.0 if next_phase else 1.0)
+		var tm := grid_origin + float(tick) * 60.0 / (level.bpm * float(tpb)) + (float(part_offset["drums"]) if fam == "drums" else float(part_offset["bass"])) * (0.0 if new_scene else 1.0)
 		var fam_c := str(c[3]) if c.size() > 3 else fam
 		added.append({"id": "r%05d" % _note_id, "tick": tick, "duration_ticks": dur, "end_tick": tick + dur, "time": tm, "end_time": tm + float(dur) * 60.0 / (level.bpm * float(tpb)),
 			"pad": int(c[2]), "button": int(c[2]), "family": fam_c, "lane": fam_c, "slot_id": fam_c, "type": "hold" if dur > 0 else "tap", "seq": _blocks_total,
@@ -416,7 +598,7 @@ func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = 
 
 ## Global beat index of the first beat of phase number `n` (1-based): the current phase (`phase_n`) starts at `phase_t0`; the next one 64 beats later.
 func phase_n_for_first_beat(n: int) -> int:
-	return int(round(phase_t0 / beat_s)) + (n - phase_n) * int(timing("phase_beats"))
+	return int(round((phase_t0 - grid_origin) / beat_s)) + (n - phase_n) * int(timing("phase_beats"))
 
 
 ## Block `b` credit summary for tests and the HUD.

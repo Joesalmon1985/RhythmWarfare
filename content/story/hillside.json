@@ -1,0 +1,495 @@
+{
+ "id": "hillside",
+ "title": "Hillside",
+ "chapter": 9,
+ "art": "hillside",
+ "description": "A map of the Gospel path (content/paths/gospel).",
+ "intro": "",
+ "duration_bars": 128,
+ "sequence_bars": 2,
+ "initial_energy": 60,
+ "blocks": [],
+ "decisions": [],
+ "endings": {},
+ "ending_order": [],
+ "acts": [],
+ "groups": {
+  "all": [
+   "f1_lakeshore",
+   "f2",
+   "f3",
+   "f4",
+   "f5",
+   "k1_lakeshore",
+   "p1",
+   "p2",
+   "k1_street",
+   "e1",
+   "v1",
+   "v2",
+   "v3",
+   "c1",
+   "c2",
+   "c3",
+   "c4",
+   "c5",
+   "c6",
+   "c7",
+   "c8",
+   "h1",
+   "d01_slope",
+   "d02_slope",
+   "d03_slope",
+   "d04_slope",
+   "d01_storm",
+   "d02_storm",
+   "d03_storm",
+   "d04_storm",
+   "d05",
+   "d06",
+   "d07",
+   "d08",
+   "f1_storm"
+  ]
+ },
+ "actors": [
+  {
+   "id": "f1_lakeshore",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "main",
+   "wear": "fisher",
+   "seed_id": "hillside/f1_lakeshore",
+   "activity": "stand",
+   "thresh": 5
+  },
+  {
+   "id": "f2",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "fisher",
+   "seed_id": "hillside/f2",
+   "activity": "stand",
+   "thresh": 1
+  },
+  {
+   "id": "f3",
+   "archetype": "hoodie",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "fisher",
+   "seed_id": "hillside/f3",
+   "activity": "sit",
+   "thresh": -4
+  },
+  {
+   "id": "f4",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "fisher",
+   "seed_id": "hillside/f4",
+   "activity": "stand",
+   "thresh": -5
+  },
+  {
+   "id": "f5",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "elder",
+   "seed_id": "hillside/f5",
+   "activity": "stand",
+   "thresh": -1
+  },
+  {
+   "id": "k1_lakeshore",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "child",
+   "seed_id": "hillside/k1_lakeshore",
+   "activity": "stand",
+   "thresh": 1
+  },
+  {
+   "id": "p1",
+   "archetype": "ponytail",
+   "variant": "a",
+   "group": "core",
+   "view": "street",
+   "wear": "villager",
+   "seed_id": "hillside/p1",
+   "activity": "stand",
+   "thresh": -1
+  },
+  {
+   "id": "p2",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "street",
+   "wear": "woman",
+   "seed_id": "hillside/p2",
+   "activity": "stand",
+   "thresh": 5
+  },
+  {
+   "id": "k1_street",
+   "archetype": "ponytail",
+   "variant": "a",
+   "group": "core",
+   "view": "street",
+   "wear": "child",
+   "seed_id": "hillside/k1_street",
+   "activity": "lie",
+   "thresh": -1
+  },
+  {
+   "id": "e1",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "street",
+   "wear": "elder",
+   "seed_id": "hillside/e1",
+   "activity": "stand",
+   "thresh": 1
+  },
+  {
+   "id": "v1",
+   "archetype": "curly",
+   "variant": "a",
+   "group": "core",
+   "view": "street",
+   "wear": "villager",
+   "seed_id": "hillside/v1",
+   "activity": "watch",
+   "thresh": 1
+  },
+  {
+   "id": "v2",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "street",
+   "wear": "woman",
+   "seed_id": "hillside/v2",
+   "activity": "stand",
+   "thresh": -2
+  },
+  {
+   "id": "v3",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "street",
+   "wear": "villager",
+   "seed_id": "hillside/v3",
+   "activity": "stand",
+   "thresh": -4
+  },
+  {
+   "id": "c1",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "slope",
+   "wear": "villager",
+   "seed_id": "hillside/c1",
+   "activity": "sit",
+   "thresh": 1
+  },
+  {
+   "id": "c2",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "slope",
+   "wear": "woman",
+   "seed_id": "hillside/c2",
+   "activity": "sit",
+   "thresh": 2
+  },
+  {
+   "id": "c3",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "slope",
+   "wear": "villager",
+   "seed_id": "hillside/c3",
+   "activity": "sit",
+   "thresh": -3
+  },
+  {
+   "id": "c4",
+   "archetype": "hoodie",
+   "variant": "b",
+   "group": "core",
+   "view": "slope",
+   "wear": "elder",
+   "seed_id": "hillside/c4",
+   "activity": "sit",
+   "thresh": -1
+  },
+  {
+   "id": "c5",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "view": "slope",
+   "wear": "woman",
+   "seed_id": "hillside/c5",
+   "activity": "sit",
+   "thresh": -2
+  },
+  {
+   "id": "c6",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "slope",
+   "wear": "villager",
+   "seed_id": "hillside/c6",
+   "activity": "sit",
+   "thresh": -1
+  },
+  {
+   "id": "c7",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "slope",
+   "wear": "child",
+   "seed_id": "hillside/c7",
+   "activity": "sit",
+   "thresh": -5
+  },
+  {
+   "id": "c8",
+   "archetype": "curly",
+   "variant": "a",
+   "group": "core",
+   "view": "slope",
+   "wear": "villager",
+   "seed_id": "hillside/c8",
+   "activity": "sit",
+   "thresh": 4
+  },
+  {
+   "id": "h1",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "slope",
+   "wear": "villager",
+   "seed_id": "hillside/h1",
+   "activity": "stand",
+   "thresh": 1
+  },
+  {
+   "id": "d01_slope",
+   "archetype": "ponytail",
+   "variant": "a",
+   "group": "core",
+   "view": "slope",
+   "wear": "disciple",
+   "seed_id": "d01",
+   "activity": "stand",
+   "thresh": 0
+  },
+  {
+   "id": "d02_slope",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "slope",
+   "wear": "disciple",
+   "seed_id": "d02",
+   "activity": "stand",
+   "thresh": 4
+  },
+  {
+   "id": "d03_slope",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "slope",
+   "wear": "disciple",
+   "seed_id": "d03",
+   "activity": "stand",
+   "thresh": 4
+  },
+  {
+   "id": "d04_slope",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "slope",
+   "wear": "disciple",
+   "seed_id": "d04",
+   "activity": "stand",
+   "thresh": -5
+  },
+  {
+   "id": "d01_storm",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "storm",
+   "wear": "disciple",
+   "seed_id": "d01",
+   "activity": "stand",
+   "thresh": -6
+  },
+  {
+   "id": "d02_storm",
+   "archetype": "hoodie",
+   "variant": "b",
+   "group": "core",
+   "view": "storm",
+   "wear": "disciple",
+   "seed_id": "d02",
+   "activity": "stand",
+   "thresh": 5
+  },
+  {
+   "id": "d03_storm",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "storm",
+   "wear": "disciple",
+   "seed_id": "d03",
+   "activity": "stand",
+   "thresh": -2
+  },
+  {
+   "id": "d04_storm",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "storm",
+   "wear": "disciple",
+   "seed_id": "d04",
+   "activity": "stand",
+   "thresh": -2
+  },
+  {
+   "id": "d05",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "storm",
+   "wear": "disciple",
+   "seed_id": "d05",
+   "activity": "stand",
+   "thresh": 3
+  },
+  {
+   "id": "d06",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "storm",
+   "wear": "disciple",
+   "seed_id": "d06",
+   "activity": "stand",
+   "thresh": -1
+  },
+  {
+   "id": "d07",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "storm",
+   "wear": "disciple",
+   "seed_id": "d07",
+   "activity": "stand",
+   "thresh": -6
+  },
+  {
+   "id": "d08",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "storm",
+   "wear": "disciple",
+   "seed_id": "d08",
+   "activity": "stand",
+   "thresh": -2
+  },
+  {
+   "id": "f1_storm",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "storm",
+   "wear": "fisher",
+   "seed_id": "hillside/f1_storm",
+   "activity": "stand",
+   "thresh": -2
+  }
+ ],
+ "silhouettes": [],
+ "palettes": {
+  "low": [
+   "#7a5a4a",
+   "#a8785a"
+  ],
+  "cool": [
+   "#6a8ac8",
+   "#9aa8d8"
+  ],
+  "warm": [
+   "#ffb060",
+   "#ff8a50"
+  ],
+  "rave": [
+   "#ffc060",
+   "#8ab0ff",
+   "#ff9060",
+   "#ffe090"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Quiet",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Gathered",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Moved",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Joyful",
+    "max": 100
+   }
+  ]
+ }
+}

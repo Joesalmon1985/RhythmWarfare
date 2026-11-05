@@ -5,7 +5,10 @@ extends RefCounted
 ##
 ## A file is {"world": "<run world id | bassment>", "hotspots": [ hotspot, ... ]}; a hotspot (every field except id, scene, anchor, kind, on_success is optional):
 ##   id, world, scene (a run scene id, or a Bassment passage number), map, anchor, kind, radius_m (0.8), min_px (72, never less), available, look, challenge, on_success, on_failure,
-##   cinematic, default, repeatable, trial_kind (the Bassment's name for `kind`: when present it is one of KINDS and equals `kind`).
+##   cinematic, default, repeatable, window ("final" | "any"), on_select ({cinematic}), look.ring_m, pass_credit (0 to 1, with an activity), trial_kind (the Bassment's name for `kind`: when present it is one of KINDS and equals `kind`), acting (what a person does in each state of the hotspot and
+##   after its outcome, docs/THREE_PATHS_AND_FACES_PLAN.md 2.3a: see validate_acting; a Bassment creature names a `figure` instead of an `actor`).
+##
+## The same family carries the other half of the acting contract, the `cast` lines of a scene node of run.json and of a cinematic (2.3b, 2.3c), validated by validate_cast.
 ##
 ## Defaults. A run scene's default is always an exit (the way on when nothing is tapped). The Bassment's passages have no such rule: a passage's default choice may be a fight, a luck test or
 ## an item, so TrialData passes ctx `default_any_kind` and the default may be any kind (it must still be unconditional). Failure semantics are not the contract's there: TrialFlow keeps them
@@ -15,8 +18,11 @@ extends RefCounted
 const KINDS := ["exit", "object", "character", "feature", "encounter", "secret"]
 const ANCHORS := ["thing", "waypoint", "actor", "pos"]
 const LOOK_AVAILABLE := ["glow", "pulse", "beckon", "flicker", "open", "crack"]
-const LOOK_SELECTED := ["ring"]
+const LOOK_SELECTED := ["ring", "claim"]
 const LOOK_COMMITTED := ["flash"]
+const LOOK_FINISHED := ["crown"]  # look.finished.available: what a portal shows once its path has been finished (plan D10): the pulse ringed by three orbiting motes, in the finished tint
+const FINISHED_TINT := "#ffd25a"
+const WINDOWS := ["final", "any"]  # `window`: "any" (a hotspot with an activity) is on show and commits in every block of the phase
 const FAMILIES := ["drums", "bass"]
 const MIN_PX := 72.0
 const MIN_PER_SCENE := 2
@@ -24,11 +30,25 @@ const MAX_PER_SCENE := 4
 const MAX_FAIL_ENERGY := -20.0  # a failure may cost at most this much energy (it must stay recoverable)
 const MAX_GAIN_ENERGY := 20.0
 const TRIAL_PREFIX := "trial:"  # a run route "trial:<passage>", or just "<passage>" ("1": the first), is the wizard's way into the Bassment
+const PATH_PREFIX := "path:"  # a run route "path:<id>" is a portal into a sister run (content/paths/<id>/run.json) at its own tempo (docs/THREE_PATHS_AND_FACES_PLAN.md 3.3)
+const RUN_PREFIX := "run:"  # a path ending's route "run:warehouse" leads back to the main run
+const RUN_ROUTES := ["run:warehouse"]
 const KEEP_PREFIX := "keep:"  # a flag name with this prefix is persistent (RunProgress.flags, saved); any other is per run (RunProgress.run_flags)
-const OUTCOME_KEYS := ["route", "flags_set", "cinematic", "energy", "music"]
+const OUTCOME_KEYS := ["route", "flags_set", "cinematic", "energy", "music", "pieces", "activity"]  # `pieces`: {on: [piece ids], off: [...]}, the map's set pieces a result switches (the storm goes, the tables fall); `activity`: a minigame the success sits the player into
 const CINEMATIC_KEYS := ["move", "to", "bars", "look_at", "role", "style"]
 const MOVES := ["place", "walk", "stagger", "run", "climb", "carried"]  # `place` is a cut (the drag to the cage); the others are RunRail styles (`walk` with a `style`)
 const MUSIC := ["variation", "dip", "lift", "drop", "fill", "none"]
+## The acting contract. The faces and the directed acts are StoryCharacter's (the Stage 1a sheets bake exactly these); a story may also direct the older states (DIRECTABLE_OLD).
+const FACES: Array = StoryCharacter.FACES
+const ACTS: Array = StoryCharacter.ACTS + StoryCharacter.DIRECTABLE_OLD
+const ACTING_PHASES := ["available", "selected", "committed", "success", "failure"]
+const LOOK_TARGETS := ["camera", "actor", "thing", "waypoint"]  # `look_at` is the word camera, or the id of an actor (a home), a thing or a waypoint of the scene's map
+const ACTING_KEYS := ["actor", "figure"]  # besides the phases
+const ACT_KEYS := ["act", "face", "look_at", "beats", "then"]
+const CAST_KEYS := ["actor", "at_beat", "act", "face", "look_at", "beats", "if_energy_below", "if_energy_above", "if_flags_all", "if_flags_none", "piece", "op", "hide"]
+const PIECE_OPS := ["on", "off", "pulse"]  # a cast line with `piece` + `op` switches a set piece of the map (a thing with "piece": id) instead of directing a person; with `hide: true` it removes a person from the scene
+const CAST_LAST_BEAT := 63.0  # a scene's cast line fires inside its own 64 beats
+const CINE_CAST_LAST_BEAT := 16.0  # a cinematic's lines are relative to its start and run a few bars at most
 
 static var _maps: Dictionary = {}  # map id -> index
 
@@ -37,7 +57,7 @@ static var _maps: Dictionary = {}  # map id -> index
 static func map_index(map_id: String) -> Dictionary:
 	if _maps.has(map_id):
 		return _maps[map_id]
-	var idx := {"ok": false, "waypoints": {}, "things": {}, "actors": {}, "sectors": []}
+	var idx := {"ok": false, "waypoints": {}, "things": {}, "actors": {}, "sectors": [], "pieces": {}}
 	var path: String = StoryMap.PATH % map_id
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path)) if FileAccess.file_exists(path) else null
 	if typeof(parsed) == TYPE_DICTIONARY:
@@ -46,6 +66,8 @@ static func map_index(map_id: String) -> Dictionary:
 			idx["waypoints"][str(w["id"])] = true
 		for t in parsed.get("things", []):
 			idx["things"][str(t["id"])] = true
+			if t.has("piece"):
+				idx["pieces"][str(t["piece"])] = true
 		for h in parsed.get("homes", []):
 			idx["actors"][str(h["actor"])] = true
 		for s in parsed.get("sectors", []):
@@ -60,6 +82,25 @@ static func map_index(map_id: String) -> Dictionary:
 ## A run route that is not a scene but a Bassment passage: "trial:1" or "1".
 static func is_trial_route(route: String) -> bool:
 	return route.begins_with(TRIAL_PREFIX) or (route != "" and route.is_valid_int())
+
+
+## A run route "path:<id>" (the three portals of the Warehouse).
+static func is_path_route(route: String) -> bool:
+	return route.begins_with(PATH_PREFIX) and route.length() > PATH_PREFIX.length()
+
+
+static func path_of(route: String) -> String:
+	return route.trim_prefix(PATH_PREFIX) if is_path_route(route) else ""
+
+
+## "run:warehouse": the way back from a path to the main run.
+static func is_run_route(route: String) -> bool:
+	return route in RUN_ROUTES
+
+
+## A route that is not a scene of the run that carries it: the Bassment, a path, or the way back.
+static func is_special_route(route: String) -> bool:
+	return is_trial_route(route) or is_path_route(route) or is_run_route(route)
 
 
 static func is_keep(flag: String) -> bool:
@@ -96,13 +137,19 @@ static func normalize(h: Dictionary, world: String, map_id: String) -> Dictionar
 	lk["available"] = str(lk.get("available", "glow"))
 	lk["selected"] = str(lk.get("selected", "ring"))
 	lk["committed"] = str(lk.get("committed", "flash"))
+	if typeof(lk.get("finished", null)) == TYPE_DICTIONARY:
+		var fin: Dictionary = lk["finished"]
+		fin["flags_any"] = fin.get("flags_any", [])
+		fin["available"] = str(fin.get("available", "crown"))
+		fin["tint"] = str(fin.get("tint", FINISHED_TINT))
 	out["look"] = lk
 	out["default"] = bool(out.get("default", false))
 	out["repeatable"] = bool(out.get("repeatable", false))
+	out["window"] = str(out.get("window", "final"))
 	return out
 
 
-## The cinematic an outcome names, as {"steps": [step, ...]} (a step: {move, to, bars, role, style, look_at}); {} when none or unresolved. The outcome's `cinematic` is a name looked up in `named`
+## The cinematic an outcome names, as {"steps": [step, ...]} (a step: {move, to, bars, role, style, look_at}) plus {"cast": [line, ...], "world"} when a named cinematic has cast lines; {} when none or unresolved. The outcome's `cinematic` is a name looked up in `named`
 ## (run.json `cinematics`: name -> {world, steps}), else in the hotspot's own `cinematic` (one spec, which every name of the hotspot is, or a map name -> spec), or an object written inline.
 static func resolve_cinematic(h: Dictionary, outcome: Dictionary, named: Dictionary = {}) -> Dictionary:
 	if not outcome.has("cinematic"):
@@ -111,7 +158,12 @@ static func resolve_cinematic(h: Dictionary, outcome: Dictionary, named: Diction
 	if typeof(c) == TYPE_DICTIONARY:
 		return c if (c as Dictionary).has("steps") else {"steps": [c]}
 	if named.has(str(c)) and typeof(named[str(c)]) == TYPE_DICTIONARY and (named[str(c)] as Dictionary).has("steps"):
-		return {"steps": (named[str(c)] as Dictionary)["steps"]}
+		var nm: Dictionary = named[str(c)]
+		var res := {"steps": nm["steps"]}
+		if nm.has("cast"):  # (only when it has some: a cinematic with no cast resolves exactly as before)
+			res["cast"] = nm["cast"]
+			res["world"] = str(nm.get("world", ""))
+		return res
 	var spec: Variant = h.get("cinematic", null)
 	if typeof(spec) != TYPE_DICTIONARY:
 		return {}
@@ -240,6 +292,8 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 			errors.append("%s: look.selected '%s' is not one of %s" % [hw, lk.get("selected"), ", ".join(PackedStringArray(LOOK_SELECTED))])
 		if str(lk.get("committed", "flash")) not in LOOK_COMMITTED:
 			errors.append("%s: look.committed '%s' is not one of %s" % [hw, lk.get("committed"), ", ".join(PackedStringArray(LOOK_COMMITTED))])
+		if (lk as Dictionary).has("finished"):
+			_validate_finished(lk["finished"], hw, errors)
 	var ch: Variant = h.get("challenge", null)
 	if ch != null:
 		if typeof(ch) != TYPE_DICTIONARY or str((ch as Dictionary).get("family", "")) not in FAMILIES or int((ch as Dictionary).get("tier", 0)) < 1 or int((ch as Dictionary).get("tier", 0)) > RunData.TIERS:
@@ -253,7 +307,7 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 		if typeof(oc) != TYPE_DICTIONARY:
 			errors.append("%s: %s must be an object" % [hw, key])
 			continue
-		_validate_outcome(h, key, oc, hw, routes, idx, ctx.get("cinematics", {}), errors)
+		_validate_outcome(h, key, oc, hw, routes, idx, ctx.get("cinematics", {}), errors, ctx.get("activities", null))
 	if kind == "exit" and str((h.get("on_success", {}) as Dictionary).get("route", "")) == "":
 		errors.append("%s: an exit's on_success needs a route" % hw)
 	var cin: Variant = h.get("cinematic", null)
@@ -273,11 +327,41 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 						errors.append("%s: cinematic '%s' must be an object" % [hw, cname])
 					else:
 						_validate_cine(cin[cname], "%s cinematic '%s'" % [hw, cname], idx, errors)
+	var has_act := typeof(h.get("on_success", null)) == TYPE_DICTIONARY and str((h["on_success"] as Dictionary).get("activity", "")) != ""
+	if h.has("window") and (typeof(h["window"]) != TYPE_STRING or str(h["window"]) not in WINDOWS):
+		errors.append("%s: window '%s' is not one of %s" % [hw, h["window"], ", ".join(PackedStringArray(WINDOWS))])
+	elif str(h.get("window", "final")) == "any" and not has_act:
+		errors.append("%s: window 'any' needs an on_success activity" % hw)
+	if h.has("pass_credit"):
+		var pc: Variant = h["pass_credit"]
+		if (typeof(pc) != TYPE_FLOAT and typeof(pc) != TYPE_INT) or float(pc) < 0.0 or float(pc) > 1.0:
+			errors.append("%s: pass_credit must be a number from 0 to 1" % hw)
+		elif not has_act:
+			errors.append("%s: pass_credit needs an on_success activity" % hw)
+	if h.has("on_select"):  # the walk the touch itself starts: {cinematic: <name>} resolved like an outcome's
+		var osel: Variant = h["on_select"]
+		if typeof(osel) != TYPE_DICTIONARY or (osel as Dictionary).keys() != ["cinematic"]:
+			errors.append("%s: on_select must be {cinematic: <name>}" % hw)
+		else:
+			var spec := resolve_cinematic(h, osel, ctx.get("cinematics", {}))
+			if spec.is_empty():
+				errors.append("%s: on_select.cinematic '%s' does not resolve" % [hw, str((osel as Dictionary)["cinematic"])])
+			else:
+				for st in spec["steps"]:
+					_validate_cine(st, "%s on_select" % hw, idx, errors)
+	if typeof(lk) == TYPE_DICTIONARY and (lk as Dictionary).has("ring_m"):  # the drawn floor ring's radius when it is not the touch radius
+		var rm: Variant = lk["ring_m"]
+		if (typeof(rm) != TYPE_FLOAT and typeof(rm) != TYPE_INT) or float(rm) <= 0.0 or float(rm) > 4.0:
+			errors.append("%s: look.ring_m must be above 0 and at most 4" % hw)
 	if typeof(h.get("default", false)) != TYPE_BOOL or typeof(h.get("repeatable", false)) != TYPE_BOOL:
 		errors.append("%s: default and repeatable are true or false" % hw)
+	if h.has("acting"):
+		validate_acting(h, hw, idx, ctx, errors)
+	if h.has("staging"):  # how the option shows it is the current choice or not (docs/CHOICE_CLARITY.md): ChoiceStaging
+		ChoiceStaging.validate(h, hw, idx, errors)
 
 
-static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: String, routes: Array, idx: Dictionary, named: Dictionary, errors: Array) -> void:
+static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: String, routes: Array, idx: Dictionary, named: Dictionary, errors: Array, ctx_activities: Variant = null) -> void:
 	for k in oc:
 		if str(k) not in OUTCOME_KEYS:
 			errors.append("%s: %s.%s is not a field (%s)" % [hw, key, k, ", ".join(PackedStringArray(OUTCOME_KEYS))])
@@ -296,6 +380,19 @@ static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: St
 			errors.append("%s: %s.energy %s is outside %d..%d" % [hw, key, str(e), int(MAX_FAIL_ENERGY), int(MAX_GAIN_ENERGY)])
 		if key == "on_failure" and e > 0.0:
 			errors.append("%s: a failure must not give energy" % hw)
+	if oc.has("pieces"):
+		validate_pieces(oc["pieces"], "%s: %s.pieces" % [hw, key], idx, errors)
+	if oc.has("activity"):  # a minigame the success sits the player into (MinigameController): only on success, never with a route, an id the registry knows
+		var act := str(oc["activity"]) if typeof(oc["activity"]) == TYPE_STRING else ""
+		if act == "":
+			errors.append("%s: %s.activity must be a non-empty string" % [hw, key])
+		else:
+			if key != "on_success":
+				errors.append("%s: activity is only allowed in on_success" % hw)
+			if route != "":
+				errors.append("%s: %s.activity cannot be combined with a route" % [hw, key])
+			if typeof(ctx_activities) == TYPE_ARRAY and act not in (ctx_activities as Array):
+				errors.append("%s: %s.activity '%s' is not a registered minigame (%s)" % [hw, key, act, ", ".join(PackedStringArray(ctx_activities as Array))])
 	if oc.has("music") and str(oc["music"]) not in MUSIC:
 		errors.append("%s: %s.music '%s' is not one of %s" % [hw, key, oc["music"], ", ".join(PackedStringArray(MUSIC))])
 	if oc.has("cinematic"):
@@ -329,3 +426,163 @@ static func _validate_cine(c: Dictionary, where: String, idx: Dictionary, errors
 			var l := str(c["look_at"])
 			if not ((idx["actors"] as Dictionary).has(l) or (idx["things"] as Dictionary).has(l) or (idx["waypoints"] as Dictionary).has(l)):
 				errors.append("%s: cinematic.look_at '%s' is no actor, thing or waypoint of the map" % [where, l])
+
+
+# --- the acting contract (docs/THREE_PATHS_AND_FACES_PLAN.md 2.3) ----------------------------------------------------------------
+
+## True when `target` is something a person can look at in the map `idx` (map_index): the word camera, an actor (a home), a thing or a waypoint.
+## look.finished {flags_any, available?, tint?}: the look a hotspot takes once any of those persistent (keep:) flags is held (a portal whose path has been finished).
+static func _validate_finished(fin: Variant, hw: String, errors: Array) -> void:
+	if typeof(fin) != TYPE_DICTIONARY:
+		errors.append("%s: look.finished must be an object" % hw)
+		return
+	var fl: Variant = (fin as Dictionary).get("flags_any", [])
+	if typeof(fl) != TYPE_ARRAY or (fl as Array).is_empty():
+		errors.append("%s: look.finished.flags_any must be a non-empty list" % hw)
+	else:
+		for f in fl:
+			if not is_keep(str(f)):
+				errors.append("%s: look.finished.flags_any '%s' must be a keep: flag (it outlives the run)" % [hw, f])
+	var av := str((fin as Dictionary).get("available", "crown"))
+	if av not in LOOK_FINISHED and av not in LOOK_AVAILABLE:
+		errors.append("%s: look.finished.available '%s' is not one of %s" % [hw, av, ", ".join(PackedStringArray(LOOK_FINISHED + LOOK_AVAILABLE))])
+	if not Color.html_is_valid(str((fin as Dictionary).get("tint", FINISHED_TINT))):
+		errors.append("%s: look.finished.tint '%s' is not a colour" % [hw, (fin as Dictionary).get("tint")])
+
+
+## Whether a hotspot shows its finished look: one of look.finished.flags_any is held (`has_flag`: Callable(String) -> bool).
+static func finished_look(h: Dictionary, has_flag: Callable) -> bool:
+	var fin: Variant = (h.get("look", {}) as Dictionary).get("finished", null)
+	if typeof(fin) != TYPE_DICTIONARY or not has_flag.is_valid():
+		return false
+	for f in (fin as Dictionary).get("flags_any", []):
+		if bool(has_flag.call(str(f))):
+			return true
+	return false
+
+
+static func look_ok(target: String, idx: Dictionary) -> bool:
+	if target == "camera":
+		return true
+	return (idx["actors"] as Dictionary).has(target) or (idx["things"] as Dictionary).has(target) or (idx["waypoints"] as Dictionary).has(target)
+
+
+## One act with its face, look and hold: {act, face?, look_at?, beats?, then?}; `then` is another such object (what the person settles into).
+static func _validate_act(spec: Variant, where: String, idx: Dictionary, errors: Array, depth := 0) -> void:
+	if typeof(spec) != TYPE_DICTIONARY:
+		errors.append("%s: must be an object {act, face, look_at, beats, then}" % where)
+		return
+	var sp: Dictionary = spec
+	for k in sp:
+		if str(k) not in ACT_KEYS:
+			errors.append("%s: '%s' is not a field (%s)" % [where, k, ", ".join(PackedStringArray(ACT_KEYS))])
+	if str(sp.get("act", "")) not in ACTS:
+		errors.append("%s: act '%s' is not one of the acts" % [where, sp.get("act", "")])
+	if sp.has("face") and str(sp["face"]) not in FACES:
+		errors.append("%s: face '%s' is not one of the %d faces" % [where, sp["face"], FACES.size()])
+	if sp.has("look_at") and bool(idx["ok"]) and not look_ok(str(sp["look_at"]), idx):
+		errors.append("%s: look_at '%s' is not camera, nor an actor, thing or waypoint of the map" % [where, sp["look_at"]])
+	if sp.has("beats") and (typeof(sp["beats"]) not in [TYPE_INT, TYPE_FLOAT] or float(sp["beats"]) <= 0.0 or float(sp["beats"]) > 64.0):
+		errors.append("%s: beats must be a number above 0 and at most 64" % where)
+	if sp.has("then"):
+		if depth >= 3:
+			errors.append("%s: `then` goes three deep at most" % where)
+		else:
+			_validate_act(sp["then"], where + " then", idx, errors, depth + 1)
+
+
+## A hotspot's `acting` block: {actor?, figure?, available?, selected?, committed?, success?, failure?}. `actor` (default: the anchor's) is a person of the scene's map; a Bassment creature is named by
+## `figure` instead (ctx `figures`, the creature kinds). A hotspot anchored on a thing with no actor named has nobody to direct, which is an error.
+static func validate_acting(h: Dictionary, hw: String, idx: Dictionary, ctx: Dictionary, errors: Array) -> void:
+	var a: Variant = h.get("acting", null)
+	if typeof(a) != TYPE_DICTIONARY:
+		errors.append("%s: acting must be an object" % hw)
+		return
+	var ac: Dictionary = a
+	for k in ac:
+		if str(k) not in ACTING_PHASES and str(k) not in ACTING_KEYS:
+			errors.append("%s: acting.%s is not a field (%s)" % [hw, k, ", ".join(PackedStringArray(ACTING_PHASES + ACTING_KEYS))])
+	var an: Variant = h.get("anchor", {})
+	var anchor_actor := str((an as Dictionary).get("actor", "")) if typeof(an) == TYPE_DICTIONARY else ""
+	if ac.has("figure"):
+		if ac.has("actor"):
+			errors.append("%s: acting names an actor or a figure, not both" % hw)
+		if not (ctx.get("figures", []) as Array).has(str(ac["figure"])):
+			errors.append("%s: acting.figure '%s' is not a creature here" % [hw, ac["figure"]])
+	else:
+		var who := str(ac.get("actor", anchor_actor))
+		if who == "":
+			errors.append("%s: acting needs an actor (the anchor is not one: name acting.actor)" % hw)
+		elif bool(idx["ok"]) and not (idx["actors"] as Dictionary).has(who):
+			errors.append("%s: acting.actor '%s' has no home in map %s" % [hw, who, ctx.get("map", "")])
+	for ph in ACTING_PHASES:
+		if ac.has(ph):
+			_validate_act(ac[ph], "%s acting.%s" % [hw, ph], idx, errors)
+
+
+## The `cast` lines of a scene node or a cinematic (plan 2.3b and 2.3c): [{actor, at_beat, act, face?, look_at?, beats?, if_energy_below?, if_energy_above?, if_flags_all?, if_flags_none?}]. `idx` is the
+## map's map_index. `last_beat` is the latest beat a line may name (a scene's 63; a cinematic's lines are relative to its start).
+## A set-piece switch {on: [ids], off: [ids]} (a scene node's `pieces`, a block effect's, an outcome's): every id is a piece thing of the map.
+static func validate_pieces(spec: Variant, where: String, idx: Dictionary, errors: Array) -> void:
+	if typeof(spec) != TYPE_DICTIONARY:
+		errors.append("%s: must be {on: [...], off: [...]}" % where)
+		return
+	for k in spec:
+		if str(k) not in ["on", "off"]:
+			errors.append("%s: '%s' is not a field (on, off)" % [where, k])
+		elif typeof(spec[k]) != TYPE_ARRAY:
+			errors.append("%s: %s must be a list of piece ids" % [where, k])
+		elif bool(idx["ok"]):
+			for pid in spec[k]:
+				if not (idx["pieces"] as Dictionary).has(str(pid)):
+					errors.append("%s: %s '%s' is not a piece thing of the map" % [where, k, pid])
+
+
+static func validate_cast(lines: Variant, where: String, idx: Dictionary, errors: Array, last_beat := CAST_LAST_BEAT) -> void:
+	if typeof(lines) != TYPE_ARRAY:
+		errors.append("%s: cast must be a list of lines" % where)
+		return
+	var i := 0
+	for line in lines:
+		var lw := "%s cast[%d]" % [where, i]
+		i += 1
+		if typeof(line) != TYPE_DICTIONARY:
+			errors.append("%s: not an object" % lw)
+			continue
+		var ln: Dictionary = line
+		for k in ln:
+			if str(k) not in CAST_KEYS:
+				errors.append("%s: '%s' is not a field (%s)" % [lw, k, ", ".join(PackedStringArray(CAST_KEYS))])
+		var who := str(ln.get("actor", ""))
+		var is_piece := ln.has("piece")
+		var is_hide := bool(ln.get("hide", false))
+		if is_piece:
+			if who != "" or ln.has("act") or is_hide:
+				errors.append("%s: a piece line has `piece` and `op` only (no actor, act or hide)" % lw)
+			if str(ln.get("op", "")) not in PIECE_OPS:
+				errors.append("%s: op must be one of %s" % [lw, ", ".join(PackedStringArray(PIECE_OPS))])
+			if bool(idx["ok"]) and not (idx["pieces"] as Dictionary).has(str(ln["piece"])):
+				errors.append("%s: piece '%s' is not a piece of the scene's map" % [lw, ln["piece"]])
+		elif who == "":
+			errors.append("%s: actor is required" % lw)
+		elif bool(idx["ok"]) and not (idx["actors"] as Dictionary).has(who):
+			errors.append("%s: actor '%s' has no home in the scene's map" % [lw, who])
+		if not ln.has("at_beat") or typeof(ln["at_beat"]) not in [TYPE_INT, TYPE_FLOAT] or float(ln["at_beat"]) < 0.0 or float(ln["at_beat"]) > last_beat:
+			errors.append("%s: at_beat must be a number from 0 to %d" % [lw, int(last_beat)])
+		var spec := {}
+		for k in ["act", "face", "look_at", "beats"]:
+			if ln.has(k):
+				spec[k] = ln[k]
+		if not is_piece and not is_hide:
+			_validate_act(spec, lw, idx, errors)
+		for k in ["if_energy_below", "if_energy_above"]:
+			if ln.has(k) and (typeof(ln[k]) not in [TYPE_INT, TYPE_FLOAT] or float(ln[k]) < 0.0 or float(ln[k]) > 100.0):
+				errors.append("%s: %s must be a number from 0 to 100" % [lw, k])
+		for k in ["if_flags_all", "if_flags_none"]:
+			if ln.has(k):
+				if typeof(ln[k]) != TYPE_ARRAY:
+					errors.append("%s: %s must be a list of flags" % [lw, k])
+				else:
+					for f in ln[k]:
+						if str(f) == "":
+							errors.append("%s: %s holds an empty flag" % [lw, k])

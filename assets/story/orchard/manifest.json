@@ -1,0 +1,303 @@
+{
+ "version": 1,
+ "level": "orchard",
+ "px_scale_note": "the Ember Road's maps have no rigs; their world is textures and sprite sheets only",
+ "textures": {
+  "ceil_beams": {
+   "file": "textures/ceil_beams.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "ceil_stars": {
+   "file": "textures/ceil_stars.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 6.0
+  },
+  "floor_bank": {
+   "file": "textures/floor_bank.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_boards": {
+   "file": "textures/floor_boards.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_flags": {
+   "file": "textures/floor_flags.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_ford": {
+   "file": "textures/floor_ford.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_grass": {
+   "file": "textures/floor_grass.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_lane": {
+   "file": "textures/floor_lane.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "piece_rider_shadow": {
+   "file": "textures/piece_rider_shadow.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "piece_river_rise": {
+   "file": "textures/piece_river_rise.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "sky_dusk": {
+   "file": "textures/sky_dusk.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_apple_basket": {
+   "file": "textures/thing_apple_basket.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_apple_tree": {
+   "file": "textures/thing_apple_tree.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_barrel": {
+   "file": "textures/thing_barrel.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_cot": {
+   "file": "textures/thing_cot.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_door_back": {
+   "file": "textures/thing_door_back.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_ember": {
+   "file": "textures/thing_ember.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_gate": {
+   "file": "textures/thing_gate.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_hanging_lamp": {
+   "file": "textures/thing_hanging_lamp.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_hay_bale": {
+   "file": "textures/thing_hay_bale.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_hearth": {
+   "file": "textures/thing_hearth.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_horse_far": {
+   "file": "textures/thing_horse_far.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_inn_table": {
+   "file": "textures/thing_inn_table.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_lantern_post": {
+   "file": "textures/thing_lantern_post.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_lantern_stake": {
+   "file": "textures/thing_lantern_stake.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_rock_ford": {
+   "file": "textures/thing_rock_ford.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_signpost": {
+   "file": "textures/thing_signpost.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_stool": {
+   "file": "textures/thing_stool.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_willow": {
+   "file": "textures/thing_willow.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "wall_cottage": {
+   "file": "textures/wall_cottage.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_fence": {
+   "file": "textures/wall_fence.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_hedge": {
+   "file": "textures/wall_hedge.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_inn": {
+   "file": "textures/wall_inn.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "wall_inn_door": {
+   "file": "textures/wall_inn_door.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "wall_inn_window": {
+   "file": "textures/wall_inn_window.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "wall_reeds": {
+   "file": "textures/wall_reeds.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  }
+ },
+ "people": {
+  "file": "people/people.json",
+  "pages": [
+   "people/page_0.png",
+   "people/page_1.png"
+  ],
+  "palette": "people/palette.png"
+ }
+}

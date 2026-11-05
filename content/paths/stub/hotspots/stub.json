@@ -1,0 +1,151 @@
+{
+ "world": "stub",
+ "hotspots": [
+  {
+   "id": "stub.exit_end",
+   "world": "stub",
+   "scene": "stub",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "chill_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "stub.end"
+   },
+   "on_failure": {
+    "route": "stub.end",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "stub.sofas",
+   "world": "stub",
+   "scene": "stub",
+   "map": "night_one",
+   "anchor": {
+    "thing": "sofa_left"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "stub_rested"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "stub.end.exit_home",
+   "world": "stub",
+   "scene": "stub.end",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "booth_down"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_stub_done"
+    ]
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_stub_done"
+    ],
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "stub.end.decks",
+   "world": "stub",
+   "scene": "stub.end",
+   "map": "night_one",
+   "anchor": {
+    "pos": [
+     0.0,
+     1.1,
+     -8.25
+    ]
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "stub_dj"
+    ],
+    "energy": 8
+   },
+   "on_failure": {
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true
+  }
+ ]
+}

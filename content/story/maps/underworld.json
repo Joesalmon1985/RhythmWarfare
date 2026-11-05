@@ -328,7 +328,7 @@
   {"actor": "court_g03", "sector": "court", "at": [17.59, 3.25], "side": [17.59, 0.45]},
   {"actor": "court_g04", "sector": "court", "at": [18.43, 4.9], "side": [18.43, 7.55]},
   {"actor": "court_g05", "sector": "court", "at": [18.28, 3.48], "side": [18.28, 0.45]},
-  {"actor": "court_g06", "sector": "court", "at": [19.34, 4.05], "side": [19.34, 7.55]},
+  {"actor": "court_g06", "sector": "court", "at": [14.9, 4.0], "side": [14.9, 7.55]},
   {"actor": "court_l01", "sector": "court", "at": [17.02, 3.52]},
   {"actor": "court_l02", "sector": "court", "at": [20.56, 5.34]},
   {"actor": "court_l03", "sector": "court", "at": [15.93, 2.84]},

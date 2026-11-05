@@ -13,9 +13,11 @@ A `route` is a scene id (a route of that scene) or a Bassment passage id ("1"). 
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 OUT = ROOT / "content/run/hotspots"
 DOC = ROOT / "docs/VISUAL_COVERAGE.md"
 
@@ -58,7 +60,7 @@ def cin(world, name, *steps):
     return full
 
 
-def out(route=None, flags=(), cin=None, energy=None, music=None):
+def out(route=None, flags=(), cin=None, energy=None, music=None, activity=None):
     o = {}
     if route:
         o["route"] = route
@@ -70,6 +72,8 @@ def out(route=None, flags=(), cin=None, energy=None, music=None):
         o["energy"] = energy
     if music:
         o["music"] = music
+    if activity:
+        o["activity"] = activity
     return o
 
 
@@ -84,15 +88,23 @@ WORLD_MAP = {w["id"]: w["map"] for w in RUN["worlds"]}
 EXIT_LOOK = {"default": "open", "other": "glow"}
 
 
-def add(scene, name, kind, anchor, look, s, f, *, s_text, f_text, default=False, av=None, hook=None, radius=0.8, min_px=72, repeatable=True):
+def add(scene, name, kind, anchor, look, s, f, *, s_text, f_text, default=False, av=None, hook=None, radius=0.8, min_px=72, repeatable=True, selected="ring", window=None, pass_credit=None, on_select=None, ring_m=None):
     n = NODES[scene]
     world = n["world"]
     h = {"id": f"{scene}.{name}", "world": world, "scene": scene, "map": WORLD_MAP[world], "anchor": anchor, "kind": kind, "radius_m": radius, "min_px": min_px,
-         "available": av or avail(), "look": {"available": look, "selected": "ring", "committed": "flash"}, "challenge": None, "on_success": s, "on_failure": f}
+         "available": av or avail(), "look": {"available": look, "selected": selected, "committed": "flash"}, "challenge": None, "on_success": s, "on_failure": f}
+    if ring_m is not None:
+        h["look"]["ring_m"] = ring_m
     if hook:
         h["cinematic"] = hook
     h["default"] = default
     h["repeatable"] = repeatable
+    if window:
+        h["window"] = window
+    if pass_credit is not None:
+        h["pass_credit"] = pass_credit
+    if on_select:
+        h["on_select"] = {"cinematic": on_select}
     HOTSPOTS.setdefault(world, []).append(h)
     ROWS.append({"world": world, "scene": scene, "hotspot": h["id"], "kind": kind, "s": s_text, "f": f_text, "default": default,
                  "gate": (av or {}).get("flags_all", []) + ["not " + x for x in (av or {}).get("flags_none", [])]})
@@ -130,7 +142,14 @@ def ft(scene, name, anchor, look, s, f, **kw):
 
 
 def sc(scene, name, anchor, look, s, f, **kw):
-    add(scene, name, "secret", anchor, look, s, f, **kw)
+    return add(scene, name, "secret", anchor, look, s, f, **kw)
+
+
+def finished(path_id):
+    """Plan D10: a portal's look once its path has been finished (any ending's keep: flag), the endings read from content/paths/<id>/run.json."""
+    run = json.loads((ROOT / "content/paths" / path_id / "run.json").read_text(encoding="utf-8"))
+    ends = sorted({n["ending"] for n in run["nodes"] if n.get("ending")})
+    return {"flags_any": [f"keep:path_{path_id}_{e}" for e in ends], "available": "crown", "tint": "#ffd25a"}
 
 
 # =========================================================================================================================================================
@@ -164,7 +183,8 @@ exits("warehouse.balcony")
 ft("warehouse.balcony", "rail", P(-7.15, 1.2, 1.0), "glow",
    out(flags=["wh_saw_floor"], energy=4, music="variation", cin=cin(w, "rail_look", walk("balcony_rail", "dancer", "walk", 2, look="floor_centre"))),
    out(energy=-6, cin=cin(w, "vertigo", walk("balcony_far", "queasy", "stagger", 2))),
-   s_text="look over the floor, the crowd waves (+4, music variation)", f_text="vertigo (-6, queasy)", hook=walk("balcony_rail", "dancer", "walk", 2, look="floor_centre"))
+   s_text="look over the floor, the crowd waves (+4, music variation)", f_text="vertigo (-6, queasy)", hook=walk("balcony_rail", "dancer", "walk", 2, look="floor_centre"),
+   av=avail(none=["wh_saw_floor"]))  # (once the floor has been seen the star below takes its place in the 2 to 4 rule)
 ch("warehouse.balcony", "promoter", A("v03"), "beckon",
    out(route="warehouse.booth", flags=["wh_promoter_nod"], energy=4, cin=cin(w, "promoter_walk", walk("balcony_stairs", "dancer", "walk", 2, look="v03"))),
    out(flags=["wh_promoter_snub"], energy=-4),
@@ -198,6 +218,20 @@ ch("warehouse.exit", "bouncer", A("d01"), "beckon",
 ch("warehouse.exit", "bouncer_vip", A("d01"), "beckon",
    out(route="mothership", flags=["wh_guest_list"], energy=6), out(route="mothership", flags=["wh_pass_scuffed"], energy=-3),
    s_text="the VIP pass: waved on to the light (+6)", f_text="he squints at the pass; the same door, slower (-3)", av=avail(all=["wh_vip_pass"]))
+
+# ---- the three portals into the paths (docs/THREE_PATHS_AND_FACES_PLAN.md 3.3, stage 2): secrets that pulse, never the default, repeatable; a failure flickers out (-4) and the default exit takes over.
+# Each takes the place of something in its room's 2 to 4 rule: the star appears once the floor has been seen from the rail, the ember once the stranger's VIP pass is in the pocket, the radio always (the booth has room).
+# The route is "path:<id>"; RunData leaves a portal out of play until content/paths/<id>/run.json exists (RW_PATH_REMAP=gospel=stub plays the stub path through the balcony star).
+w = "warehouse"
+_portal = sc("warehouse.balcony", "star", P(-10.4, 1.8, 0.8), "pulse", out(route="path:gospel"), out(energy=-4),
+   s_text="the figure under the projected star: the Gospel path (route path:gospel, house 124)", f_text="the star flickers out (-4)", av=avail(all=["wh_saw_floor"]))
+_portal["look"]["finished"] = finished("gospel")
+_portal = sc("warehouse.booth", "radio", P(1.5, 1.2, -9.4), "pulse", out(route="path:squadron"), out(energy=-4),
+   s_text="the flickering military radio and the bomber's shadow: the Mission Count path (route path:squadron, dubstep 140)", f_text="the radio crackles out (-4)")
+_portal["look"]["finished"] = finished("squadron")
+_portal = sc("warehouse.bar", "ember", P(10.0, 1.0, 5.0), "pulse", out(route="path:ember"), out(energy=-4),
+   s_text="a warm ember in a glass: the Ember Road path (route path:ember, psytrance 145)", f_text="the ember gutters out (-4)", av=avail(all=["wh_vip_pass"]))
+_portal["look"]["finished"] = finished("ember")
 
 # =========================================================================================================================================================
 # The Mothership (mothership)
@@ -372,6 +406,12 @@ ft("ward", "window", T("wlight_d"), "glow",
    out(flags=["wd_window"], energy=5, music="variation", cin=cin(w, "window_gaze", walk("bars_in", "dancer", "walk", 2, look="x09"))),
    out(energy=-5, music="dip"), s_text="the barred window lets the light in (+5, music variation)", f_text="the bars rattle (-5, music dips)")
 
+ob("ward", "cards", P(2.4, 0.5, 3.0), "beckon",
+   out(activity="blackjack", cin=cin(w, "cards_sit", walk("day_cards", "dancer", "walk", 2))),
+   out(energy=-3, cin=cin(w, "cards_waved_off", walk("day_cards", "dancer", "walk", 2))),
+   s_text="sit at the empty chair: blackjack, the run stays in the day room (minigame)", f_text="the dealer waves you off (-3), the scene goes on by its default exit",
+   radius=2.4, min_px=220, ring_m=1.7, selected="claim", window="any", pass_credit=0.25,
+   on_select=cin(w, "cards_approach", walk("day_cards", "dancer", "walk", 2)))
 exits("ward.art")
 ch("ward.art", "painter", A("x10"), "beckon",
    out(flags=["wd_painted"], energy=6, cin=cin(w, "paint_look", walk("art_easels", "dancer", "walk", 3, look="x10"))),
@@ -516,7 +556,25 @@ def bassment_section() -> list:
     return out
 
 
+def apply_acting() -> None:
+    """Stage 1d: the acting blocks of the people hotspots and the cast lines of the named cinematics (tools/run/acting_data.py). Idempotent; every character hotspot must have its acting."""
+    import acting_data
+    by_id = {h["id"]: h for lst in HOTSPOTS.values() for h in lst}
+    for hid, block in acting_data.ACTING.items():
+        if hid not in by_id:
+            raise SystemExit("acting_data.ACTING names a hotspot that does not exist: " + hid)
+        by_id[hid]["acting"] = json.loads(json.dumps(block))
+    missing = [hid for hid, h in by_id.items() if h["kind"] == "character" and hid not in acting_data.ACTING and hid not in acting_data.NO_ACTOR]
+    if missing:
+        raise SystemExit("character hotspots without acting: " + ", ".join(missing))
+    for name, lines in acting_data.CINE_CAST.items():
+        if name not in CINEMATICS:
+            raise SystemExit("acting_data.CINE_CAST names a cinematic that does not exist: " + name)
+        CINEMATICS[name]["cast"] = json.loads(json.dumps(lines))
+
+
 def write() -> None:
+    apply_acting()
     OUT.mkdir(parents=True, exist_ok=True)
     for world, lst in HOTSPOTS.items():
         (OUT / f"{world}.json").write_text(json.dumps({"world": world, "hotspots": lst}, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
@@ -531,6 +589,8 @@ def write() -> None:
     lines += bassment_section()
     DOC.write_text("\n".join(lines), encoding="utf-8", newline="\n")
     print("%d hotspots in %d worlds, %d cinematics" % (sum(len(v) for v in HOTSPOTS.values()), len(HOTSPOTS), len(CINEMATICS)))
+    import apply_staging  # the choice layer's hand-authored staging blocks (docs/CHOICE_CLARITY.md) go back in
+    apply_staging.main([])
 
 
 if __name__ == "__main__":

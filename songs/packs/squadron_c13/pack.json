@@ -1,0 +1,653 @@
+{
+ "schema": 1,
+ "id": "squadron_c13",
+ "label": "C13",
+ "bpm": 140,
+ "phrase_beats": 16,
+ "loop_frames": 329143,
+ "profile": "squadron_x1",
+ "stems": {
+  "drums": "../_shared/drums_ae302ca47c12.wav",
+  "bass": "../_shared/bass_c3105a520237.wav",
+  "other": "../_shared/other_b61bedcb675b.wav"
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 344715,
+   "loop_frames": 329143,
+   "tail_frames": 15572,
+   "padded_frames": 0,
+   "tail_audible_s": 0.242,
+   "laps_folded": 1,
+   "gain_db": -6.0,
+   "peak_db": -11.57,
+   "rms_db": -27.65,
+   "source_seconds": 7.1816,
+   "source_file": "Beat Shaper - C13-Drums.wav"
+  },
+  "bass": {
+   "frames_in": 348152,
+   "loop_frames": 329143,
+   "tail_frames": 19009,
+   "padded_frames": 0,
+   "tail_audible_s": 0.396,
+   "laps_folded": 1,
+   "gain_db": 11.0,
+   "peak_db": -1.91,
+   "rms_db": -10.65,
+   "source_seconds": 7.2532,
+   "source_file": "Beat Shaper - C13-Bass.wav"
+  },
+  "other": {
+   "frames_in": 370794,
+   "loop_frames": 329143,
+   "tail_frames": 41651,
+   "padded_frames": 0,
+   "tail_audible_s": 0.868,
+   "laps_folded": 1,
+   "gain_db": 10.5,
+   "peak_db": -15.06,
+   "rms_db": -28.75,
+   "source_seconds": 7.7249,
+   "source_file": "Beat Shaper - C13-Synth.wav"
+  }
+ },
+ "kick_notes": [
+  36
+ ],
+ "snare_notes": [
+  38,
+  40
+ ],
+ "tiers": {
+  "1": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1920,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5760,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     2640,
+     1,
+     "bass"
+    ],
+    [
+     2880,
+     960,
+     4,
+     "bass"
+    ],
+    [
+     6720,
+     960,
+     2,
+     "bass"
+    ],
+    [
+     10560,
+     960,
+     2,
+     "bass"
+    ],
+    [
+     14400,
+     720,
+     2,
+     "bass"
+    ]
+   ]
+  },
+  "2": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1920,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5760,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     2640,
+     1,
+     "bass"
+    ],
+    [
+     2880,
+     960,
+     4,
+     "bass"
+    ],
+    [
+     6720,
+     960,
+     2,
+     "bass"
+    ],
+    [
+     10560,
+     720,
+     2,
+     "bass"
+    ],
+    [
+     11520,
+     1440,
+     3,
+     "bass"
+    ],
+    [
+     14400,
+     720,
+     2,
+     "bass"
+    ]
+   ]
+  },
+  "3": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1920,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5760,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     2640,
+     1,
+     "bass"
+    ],
+    [
+     2880,
+     960,
+     4,
+     "bass"
+    ],
+    [
+     6720,
+     720,
+     2,
+     "bass"
+    ],
+    [
+     7680,
+     2640,
+     3,
+     "bass"
+    ],
+    [
+     10560,
+     720,
+     2,
+     "bass"
+    ],
+    [
+     11520,
+     1440,
+     3,
+     "bass"
+    ],
+    [
+     14400,
+     720,
+     2,
+     "bass"
+    ]
+   ]
+  },
+  "4": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     1920,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     5760,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     9600,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13440,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     2640,
+     1,
+     "bass"
+    ],
+    [
+     2880,
+     720,
+     4,
+     "bass"
+    ],
+    [
+     3840,
+     2640,
+     3,
+     "bass"
+    ],
+    [
+     6720,
+     720,
+     2,
+     "bass"
+    ],
+    [
+     7680,
+     2640,
+     3,
+     "bass"
+    ],
+    [
+     10560,
+     720,
+     2,
+     "bass"
+    ],
+    [
+     11520,
+     1200,
+     3,
+     "bass"
+    ],
+    [
+     12960,
+     1200,
+     3,
+     "bass"
+    ],
+    [
+     14400,
+     720,
+     2,
+     "bass"
+    ]
+   ]
+  }
+ },
+ "source": {
+  "project": "C13",
+  "variant": 0,
+  "files": {
+   "Bass": {
+    "mid": "Beat Shaper - C13-Bass.mid",
+    "wav": "Beat Shaper - C13-Bass.wav"
+   },
+   "Drums": {
+    "mid": "Beat Shaper - C13-Drums.mid",
+    "wav": "Beat Shaper - C13-Drums.wav"
+   },
+   "Synth": {
+    "mid": "Beat Shaper - C13-Synth.mid",
+    "wav": "Beat Shaper - C13-Synth.wav"
+   }
+  }
+ },
+ "path": "squadron"
+}

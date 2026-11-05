@@ -83,6 +83,13 @@ Re-running an import with the same `--id` rewrites the same files (ids and outpu
 `content/story/music.json` says which pack a level plays, and `treatment` (a filter, distortion or reverb chosen in `content/run/run.json`)
 colours the same recordings when no alternate render exists. `temporary: true` marks stand-ins.
 
+**How the stems are stored (docs/REPO_SIZE.md, Part 2).** `import` writes plain `loops/*.wav` into the pack. The committed packs are then converted, losslessly, by
+`python3 tools/content/stems.py` (idempotent; run it after any import, `make_path_placeholders.py` does it by itself): a stem whose two channels are equal is
+stored as a mono WAV, and equal stems of different packs are stored once in `songs/packs/_shared/<stem>_<sha1>.wav`; `pack.json` then says
+`"stems": {"drums": "../_shared/drums_<sha1>.wav", ...}`. Readers must resolve `stems[k]` against the pack's folder (RunData, RunAudio and the tools do) and never assume
+`<pack>/loops/`. The importer always writes WAV from the owner's originals, so a pack can be rebuilt from them at any time; Ogg is not used for pack stems (it fails the loop
+checks of `tools/content/ogg_check.py`, see docs/REPO_SIZE.md).
+
 ## 3. What `validate` checks
 
 * every set's three WAV/MIDI pairs exist (missing or ambiguous files are listed by name);
@@ -180,3 +187,30 @@ What the manifest (`content/imports/cold_meta.json`, the format of `first_watch.
 * New sounds need an entry in `data/campaign/instruments.json` (what they produce) and stay locked until `data/campaign/campaign.json` lists them in a mission's `new_options`.
 
 The rebuild is deterministic: removing the new clip folders and Oggs and running the two commands again gives byte-identical files (checked for this import).
+
+
+## 7. Paths (the owner's loops for gospel, squadron, ember)
+
+A path is a sister run at its own tempo (`docs/CONTINUOUS_RUN.md` "Paths"). Every command takes `--path <id>` before the command name: the tempo comes from `content/paths/<id>/run.json` (gospel 124, squadron 140,
+ember 145 when that file is not written yet; `--bpm` overrides), the profile is `<id>_x1` (one game beat per source quarter), packs are tagged `"path": "<id>"` and `validate` checks only that path's packs and
+music.json. Drop a scene's export (`Beat Shaper - C01-Drums|Bass|Synth` as .wav and .mid) into `content/imports/<id>/<scene>/` (git-ignored, large); `tools/content/make_path_placeholders.py` never writes a
+placeholder for a scene that has a drop or an imported pack.
+
+```bash
+python tools/content/beatshaper.py --path squadron scan   content/imports/squadron/C01
+python tools/content/beatshaper.py --path squadron survey "C:/.../NewMusic/C level Music"          # all 14 sets, nothing written
+python tools/content/beatshaper.py --path squadron check  content/imports/squadron/C06 --set C06
+python tools/content/beatshaper.py --path squadron import content/imports/squadron/C06 --set C06 --id squadron_c06 --drums-db -2 --bass-db -4 --synth-db 0
+python tools/content/beatshaper.py --path squadron apply  content/imports/squadron/C06 --node squadron.c06 --set C06 --id squadron_c06   # import + assign (clears "temporary")
+```
+
+What the Squadron drop measures (5 November 2026, `survey`): all 14 sets fit 140 BPM (139.78 to 140.20; a loop at another tempo would be refused, never stretched). Each loop is a **16-beat phrase** (the MIDI is 16
+quarter notes, 6.857 s: four bars, not eight), which tiles the 64-beat phase four times. Strict timing (every kick and snare within 12 ms of its MIDI note) holds for C06, C07, C11, C13 and C14; C03, C05 and C10 verify loosely (a hit or two sits 31 to 34 ms out);
+**C01, C02, C04, C08, C09, C12 are refused at 12 ms** (kick or snare hits sit 31 to 38 ms from the MIDI, offset up to 21 ms): `--max-error-ms 40` is the deliberate loosening and is recorded in
+the report; all 14 pass at 40. The default `--bass-db 3` clips on C06 (the bass stem is already near full scale): use about `--bass-db -4`. Which of the 6 to loosen, or whether to re-export them, is the owner's call.
+
+**State after stages 3 to 5.** The 14 Squadron sets are imported (`squadron_c01` .. `c14`, all with `--max-error-ms 40`; `python3 tools/content/import_squadron.py [--only C06,C07] [--check]` redoes it in about 11 s and writes the report `docs/paths/squadron_music_report.json`:
+per scene the worst hit error, the gains, the peaks and the command line). The gains are the strongest bass that does not clip (the importer has no limiter and refuses a stem at 0.999 or above); the table is in `docs/paths/squadron.md` section 4.
+The Gospel (17 scenes) and Ember (15 scenes) have no import yet: they play the placeholders of `tools/content/make_path_placeholders.py` (WAV, not Ogg), and their loops are expected to be 8 bars each, one prompt per scene
+(`docs/MUSIC_HANDOFF.md` lists them verbatim). The importer was not changed after the loosening of stage 2 (`--max-error-ms`, `--path`, the `<id>_x1` profile); if a Gospel or Ember export is a 4-bar phrase like the Squadron's, it should import the same way (not tried)
+(a 16-beat phrase tiles the 64-beat phase four times).

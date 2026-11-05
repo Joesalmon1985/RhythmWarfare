@@ -25,12 +25,16 @@ WAITING = {"underworld": "Lv3 Hell: the three WAVs are in `ToAddTry2/` but its t
                          "Until then every scene of the Underworld plays arrangements of the Cold Fusion Interface family (dark, aggressive, 174 BPM; with Metaverse Ready Fusion "
                          "as a contrasting section) as the nearest match the catalogue offers."}
 NOT_YET = [
+    "**The paths:** the 17 Gospel scenes (124 BPM) and the 15 Ember scenes (145 BPM) still play synthesised placeholders; the prompts to give your music tool are in the section \"The three paths\" above (one per scene, 8-bar seamless loop, separate MIDI tracks). "
+    "The 14 Squadron scenes already play your loops; if you re-export, C05 and C06 (thin bass) are the ones to look at first.",
     "`Lv3 Hell`: export `Beat Shaper - Lv3 Hell-Drums.mid` and `-Bass.mid` (the Synth MIDI is not needed). The WAVs are already there. "
     "Then: `python tools/content/beatshaper.py import NewMusic --set \"Lv3 Hell\" --id lv3_hell`, add `lv3_*` families to the Underworld palette's first position (`content/music/palettes.json` already lists `lv3_*`) and run `arrange.py generate underworld --seed N --bars 80 --id underworld_N --write` (docs/MUSIC_REPORT.md, \"Importing a new folder\").",
     "Optional: more `Lv1 Warehouse (n)`, `Lv2`, `Lv4`, `Lv5` takes: every pack of a family is one more loop for its arrangements (a new take only needs `beatshaper.py import` and a new `arrange.py generate`). "
     "The `DD Part1` variants are spare (the dungeon plays `dd_part1` and does not read arrangements).",
     "A dungeon fight set and ambient set are imported (`dd_part2`, `dd_part1`); if you want a different feel per zone, export more `DD ...` projects.",
 ]
+
+PATH_ORDER = ["gospel", "squadron", "ember"]
 
 
 def pack_status(pid: str) -> str:
@@ -50,6 +54,59 @@ def pack_status(pid: str) -> str:
     return ", ".join(parts)
 
 
+def paths_section(packs: dict) -> list[str]:
+    """The three paths' shopping lists (content/paths/<id>/): placeholder scenes with the owner's prompt, imported scenes with their gains."""
+    L = ["## The three paths (sister runs at their own tempo)", "",
+         "Each path (`content/paths/<id>/run.json`, `docs/CONTINUOUS_RUN.md` \"Paths\") has its own tempo and its own packs (`songs/packs/<id>_*`, tagged `\"path\"`, never loaded by the 174 BPM run). "
+         "A scene marked **placeholder** plays a synthesised stand-in (`tools/content/make_path_placeholders.py`, WAV not Ogg, bass-forward by measurement, never auditioned); drop the owner's export "
+         "into `content/imports/<id>/<scene>/` and import it with `python tools/content/beatshaper.py --path <id> apply ...` (`docs/MUSIC_IMPORT.md` section 7), which replaces the pack and clears the flag. "
+         "A loop at another tempo than the path's is refused, never stretched.", ""]
+    for pd in sorted((ROOT / "content" / "paths").iterdir(), key=lambda d: (PATH_ORDER.index(d.name) if d.name in PATH_ORDER else 99, d.name)):
+        rj, mj = pd / "run.json", pd / "music.json"
+        if not (rj.exists() and mj.exists()):
+            continue
+        run = read_json(rj)
+        info = run.get("path", {})
+        if info.get("dev"):
+            continue
+        pid, bpm = info.get("id", pd.name), run["timing"]["bpm"]
+        music = {n["id"]: n for n in read_json(mj)["nodes"]}
+        report = {}
+        rp = ROOT / "docs" / "paths" / f"{pid}_music_report.json"
+        if rp.exists():
+            report = read_json(rp).get("scenes", {})
+        nodes = run["nodes"]
+        temp = [n for n in nodes if music[n["id"]].get("temporary")]
+        L += [f"### {info.get('title', pid)} (`{pid}`, {bpm} BPM, {len(nodes)} scenes, entered from `{info.get('entry_from')}`)", "",
+              f"{len(temp)} of {len(nodes)} scenes are placeholders; {len(nodes) - len(temp)} play the owner's loops.", ""]
+        if temp:
+            L += ["| Scene id | Scene | Pack now | Status | The owner's prompt (verbatim) |", "| --- | --- | --- | --- | --- |"]
+            for n in nodes:
+                m = music[n["id"]]
+                if m.get("temporary"):
+                    L.append(f"| `{n['id']}` | {n['title']} | `{m['chart']}` | placeholder | {m.get('prompt', '(none recorded)')} |")
+            L.append("")
+        if len(temp) < len(nodes):
+            L += ["| Scene id | Scene | Pack | Status | Gains drums / bass / synth (dB) | Import notes |", "| --- | --- | --- | --- | --- | --- |"]
+            for n in nodes:
+                m = music[n["id"]]
+                if m.get("temporary"):
+                    continue
+                pk = packs.get(m["chart"], {})
+                lp = pk.get("loops", {})
+                g = " / ".join(f"{lp[k]['gain_db']:+g}" if k in lp and "gain_db" in lp[k] else "?" for k in ("drums", "bass", "other"))
+                rep = report.get(str(pk.get("label", "")), {})
+                note = pack_status(m["chart"])
+                if rep.get("max_error_ms_required"):
+                    note += f", needed --max-error-ms {read_json(rp).get('max_error_ms', 40)} (worst hit {rep.get('worst_error_ms', '?')} ms)"
+                L.append(f"| `{n['id']}` | {n['title']} | `{m['chart']}` | owner's loops imported | {g} | {note} |")
+            L.append("")
+        if pid == "squadron":
+            L += ["The Squadron loops are 16-beat (4-bar) phrases, not the 8 bars the prompts asked for; a 64-beat phase plays four laps, each with a new layer (`docs/CONTINUOUS_RUN.md` \"Paths\"). "
+                  "`docs/paths/squadron_music_report.json` has the full measurements; the bass is thin in C05 and C06 (see `docs/HANDOVER.md`).", ""]
+    return L
+
+
 def main() -> None:
     run = read_json(ROOT / "content/run/run.json")
     music = {n["id"]: resolve_music_node(n) for n in read_json(ROOT / "content/story/music.json")["nodes"]}
@@ -57,6 +114,8 @@ def main() -> None:
     for pj in sorted((ROOT / "songs/packs").glob("*/pack.json")):
         p = read_json(pj)
         packs[p["id"]] = p
+    path_packs = {k: v for k, v in packs.items() if v.get("path")}
+    packs = {k: v for k, v in packs.items() if not v.get("path")}  # the paths' packs are listed by `paths_section`
     trial_music = {}
     tj = ROOT / "content/trial/passages.json"
     if tj.exists():
@@ -92,6 +151,7 @@ def main() -> None:
     waiting = [(i, WAITING[i]) for i in worlds if i in WAITING and any(music[n["id"]]["temporary"] for n in run["nodes"] if n["world"] == i)]
     if waiting:
         L += ["### Still a nearest match", ""] + [f"- `{i}`: {why}" for i, why in waiting] + [""]
+    L += paths_section(path_packs)
     L += ["## What to export next", ""] + [f"- {s}" for s in NOT_YET] + [""]
     L += ["## The Deathtrap Dungeon", "",
           "The dungeon (`content/trial/passages.json`, `music` block) plays: "

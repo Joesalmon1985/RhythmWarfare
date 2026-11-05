@@ -2,7 +2,7 @@ class_name TrialScene
 extends Control
 ## The Bassment inside the run scene (docs/TRIAL_OPENING.md). The run's RunPlay hosts it: it owns the TrialEngine (the pads, the clock and RunAudio are the host's and never restart),
 ## one StoryStage per zone (each a 2.5D map from content/story/maps/bassment_<zone>.json, built ahead during a cue-free guard and swapped through the passage frame on a downbeat),
-## the camera on rails between the passages' waypoints, the passage text as a caption band across the top (narrative only: no choice is ever written), the choices as hotspots in the
+## the camera on rails between the passages' waypoints, the passage text as a caption band across the top (narrative only: no choice is ever written; off during play, see `_gate_text`: the creatures act what it said), the choices as hotspots in the
 ## room while the four-bar window is open (an exit lit where it lies, a creature standing in the room, an object, a feature; the default one brighter; tap to select, tap again to change,
 ## keys 1 to 4 on a desktop), creatures as billboard figures with idle, attack and struck poses, and the tableaux of a death and of the victory. Everything is a function of song time.
 ## The hotspot data is content/trial/hotspots.json (TrialHotspots); the lights and the hit test are the run's own HotspotView (one per zone stage, inside its low-res picture), fed by `hotspot_items`.
@@ -64,6 +64,7 @@ var _script_taps := false  # RW_TRIAL_TAPS: the scripted picks are real taps thr
 var _script_i := 0
 var _script_pick_at := -1.0
 var _script_pick := -1
+var _script_then := ""  # the taps still to come in this window ("1>0>1")
 var _until := -1
 var _pressed: Dictionary = {}
 var _released: Dictionary = {}
@@ -74,6 +75,12 @@ var _dark_kind := ""
 var _guard_key := -1
 var _last_area := Vector2.ZERO
 var _ap_t := -1.0  # the downbeat the passage frame is working round (closing, then opening)
+
+
+## The run's data changed under the dungeon (a path's tempo handoff, RunPlay._path_swap): the Bassment plays on whichever run is the Warehouse's again.
+func retarget(p_rdata: RunData) -> void:
+	rdata = p_rdata
+	_beat_s = 60.0 / float(rdata.cfg["timing"]["bpm"])
 
 
 func setup(p_host: Node, p_tdata: TrialData, p_rdata: RunData) -> void:
@@ -256,6 +263,7 @@ func build_zone(z: String) -> Dictionary:
 		hv.stage = st
 		hv.beat_s = _beat_s
 		hv.items_fn = func() -> Array: return _view_items(z)
+		hv.choice_fn = func() -> Dictionary: return choice_state(z)  # the current choice staged in the room (docs/CHOICE_CLARITY.md)
 		hv.pose_fn = _exit_pose
 		hv.now_fn = func() -> float: return _last_t
 		hv.reduced = Session.reduced_effects
@@ -263,7 +271,7 @@ func build_zone(z: String) -> Dictionary:
 		hv.glow_tex = _assets.sprite("glow").get("tex", null)
 		var warm: Array = st.palettes.get("warm", [])
 		if not warm.is_empty():
-			hv.tint = (warm[0] as Color).lerp(Color(1.0, 0.9, 0.6), 0.55)
+			hv.tint = HotspotView.light_tint(warm[0] as Color)
 		hv.set_anchors_preset(Control.PRESET_FULL_RECT)
 		var layer := st.lowres.add_overlay(hv, "Hotspots")
 		layer.layer = 2
@@ -389,6 +397,10 @@ func update(t: float, audio_t: float) -> void:
 				var hit := tap_centre(_script_pick)
 				print("TRIAL tap %d -> %d" % [_script_pick, hit])
 				_script_pick = -1
+				if _script_then != "":
+					_script_pick = int(_script_then.get_slice(">", 0))
+					_script_then = _script_then.substr(_script_then.find(">") + 1) if _script_then.contains(">") else ""
+					_script_pick_at = audio_t + 4.0 * _beat_s
 		else:
 			pick(_script_pick)
 			_script_pick = -1
@@ -411,10 +423,22 @@ func update(t: float, audio_t: float) -> void:
 		var span := float(TrialEngine.BLOCK_BEATS) * _beat_s
 		_timer_bar.scale = Vector2(clampf(engine.window_left(t) / span, 0.0, 1.0), 1.0)
 	_panel.visible = _panel.visible and not swapping
+	_gate_text()
 	_update_dark(audio_t)
 	if left_t >= 0.0 and audio_t >= left_t and not ended:
 		ended = true
 		host.trial_leave(left_t, leave_reason)
+
+
+## No text during play (docs/THREE_PATHS_AND_FACES_PLAN.md D3): the title, the caption band (what happened, what you carry), the zone tag and the big banners (YOU DIED, VICTORY, DEFEATED) stay hidden
+## unless RW_DEV_TEXT=1. The labels keep their text (the tests and the debug view read it); the creature's acts, the light and the fade tell it instead.
+func _gate_text() -> void:
+	if DevText.on():
+		return
+	_title.visible = false
+	_panel.visible = false
+	_tag.visible = false
+	_msg.visible = false
 
 
 func _update_dark(t: float) -> void:
@@ -594,9 +618,10 @@ func _open_window(ev: Dictionary) -> void:
 	if _script_i < _script_choices.size():
 		var tok := _script_choices[_script_i].strip_edges()
 		_script_i += 1
-		if tok != "" and tok != "d":
-			_script_pick = int(tok)
+		if tok != "" and tok != "d":  # "1>0": tap 1, then 0 a bar later (the choice-clarity strips change their mind)
+			_script_pick = int(tok.get_slice(">", 0))
 			_script_pick_at = float(ev["t"]) + 1.0
+			_script_then = tok.substr(tok.find(">") + 1) if tok.contains(">") else ""
 	if _outcome.is_empty() and _pending.is_empty():
 		_panel.visible = true
 		_desc.visible = true
@@ -618,11 +643,39 @@ func _view_items(z: String) -> Array:
 			var sel := i == engine.selected
 			out.append({"index": i, "hotspot": h, "state": "selected" if sel else "available", "t_state": float(_sel_t.get(i, 0.0)) if sel else 0.0})
 	if not _commit_view.is_empty() and str(_commit_view["zone"]) == z:
-		if _last_t - float(_commit_view["t"]) < 2.0 * _beat_s:
+		if _last_t - float(_commit_view["t"]) < (HotspotView.FLASH_S + HotspotView.SETTLE_S) * 1.05:
 			out.append({"index": int(_commit_view["index"]), "hotspot": _commit_view["hs"], "state": "committed", "t_state": float(_commit_view["t"])})
 		else:
 			_commit_view = {}
 	return out
+
+
+## The choice the room stages (HotspotView.choice_fn, docs/CHOICE_CLARITY.md) while the four-bar window is open on zone `z`: the passage's options, the current one (the picked one, else
+## the default), the committed one for its flash, and where the player is going (a passage's route). {} when no window is open there.
+func choice_state(z: String) -> Dictionary:
+	if engine == null or not active or z != zone:
+		return {}
+	var staged: Array = []
+	var by_index := {}
+	if engine.window_open and tdata.zone_of_passage(engine.flow.passage) == z:
+		for it in _items:
+			staged.append(it["hs"])
+			by_index[int(it["index"])] = it["hs"]
+	var committed := ""
+	if not _commit_view.is_empty() and str(_commit_view["zone"]) == z and _last_t - float(_commit_view["t"]) < 2.0 * _beat_s:
+		committed = str((_commit_view["hs"] as Dictionary).get("id", ""))
+		if staged.is_empty():
+			return {}
+	if staged.is_empty():
+		return {}
+	var cur_i := engine.selected if engine.selected >= 0 else engine.default_index()
+	var cur: Dictionary = by_index.get(cur_i, {})
+	var touched := {}
+	for i in _sel_t:
+		if by_index.has(int(i)):
+			touched[str((by_index[int(i)] as Dictionary).get("id", ""))] = float(_sel_t[i])
+	return {"staged": staged, "current": str(cur.get("id", "")), "committed": committed, "dest": str((cur.get("on_success", {}) as Dictionary).get("route", "")), "default": str((by_index.get(engine.default_index(), {}) as Dictionary).get("id", "")), "touched": touched,
+		"changed_t": maxf(touched.values().max() if not touched.is_empty() else -INF, float(_commit_view.get("t", -INF)))}
 
 
 ## The lights of the open window (what the hotspot view shows now): [{index, hotspot, state, t_state}].
@@ -839,7 +892,7 @@ func _spawn_figure(enc: String, t: float) -> void:
 	mi.mesh = q
 	mi.material_override = mat
 	st.world.add_child(mi)
-	_fig = {"node": mi, "mat": mat, "id": enc, "pos": spot["pos"], "sec": spot["sec"], "spec": spec, "t0": t, "stage": st}
+	_fig = {"node": mi, "mat": mat, "id": enc, "pos": spot["pos"], "sec": spot["sec"], "spec": spec, "t0": t, "stage": st, "acting": _figure_acting(enc)}
 	_fig_pose = "idle"
 	_animate_figure(t)
 
@@ -847,6 +900,45 @@ func _spawn_figure(enc: String, t: float) -> void:
 func figure_pose() -> String:
 	return _fig_pose
 
+
+## The `acting` block of the hotspot whose creature this is (content/trial/hotspots.json, authored by tools/trial/make_hotspots.py's table), looked up in the passage on show.
+func _figure_acting(enc: String) -> Dictionary:
+	if engine == null:
+		return {}
+	for h in tdata.hotspots.get(engine.flow.passage, []):
+		if typeof(h.get("acting", null)) == TYPE_DICTIONARY and str(h["acting"].get("figure", "")) == enc:
+			return {"block": h["acting"], "choice": int(h.get("choice", -1))}
+	return {}
+
+
+## What the creature is doing at song time `t`: {act, u (beats since it began)}: its `available` act while it waits, `selected` once the player has tapped it or the fight is on, `success` when it is
+## beaten, `failure` when it beats the player. An empty act when it has no acting block.
+func figure_act_at(t: float) -> Dictionary:
+	return _figure_act(t)
+
+
+func _figure_act(t: float) -> Dictionary:
+	var none := {"act": "", "u": 0.0}
+	if _fig.is_empty() or (_fig["acting"] as Dictionary).is_empty():
+		return none
+	var block: Dictionary = _fig["acting"]["block"]
+	var phase := "available"
+	var t0 := float(_fig["t0"])
+	if not _outcome.is_empty():
+		phase = "success" if str(_outcome["kind"]) == "win" else "failure"
+		t0 = float(_outcome["t0"])
+	elif engine != null and (engine.selected == int(_fig["acting"]["choice"]) or not engine.window_open):
+		phase = "selected"
+		t0 = maxf(float(_sel_t.get(int(_fig["acting"]["choice"]), t0)), t0)
+	var spec: Variant = block.get(phase, block.get("available", {}))
+	if phase == "available" and engine != null and engine.window_open and _items.size() >= 2:  # a creature that is one of two or more options shows whether it is the current choice: its own waiting act, or backing off (docs/CHOICE_CLARITY.md)
+		var cur_i := engine.selected if engine.selected >= 0 else engine.default_index()
+		var cr: Dictionary = ChoiceStaging.defaults().get("creature", {})
+		if cur_i != int(_fig["acting"]["choice"]):  # (the current one keeps its own waiting act: block, offer, laugh... it is squared up to you)
+			spec = {"act": str(cr.get("other_act", "recoil"))}
+	if typeof(spec) != TYPE_DICTIONARY:
+		return none
+	return {"act": str((spec as Dictionary).get("act", "")), "u": maxf(t - t0, 0.0) / _beat_s}
 
 func _animate_figure(t: float) -> void:
 	if _fig.is_empty() or not is_instance_valid(_fig["node"]):
@@ -858,6 +950,8 @@ func _animate_figure(t: float) -> void:
 	var floor_y := float(m.sector(str(_fig["sec"])).get("floor", 0.0))
 	var h := float(spec["size"])
 	var pose := "idle"
+	var sc_x := 1.0
+	var sc_y := 1.0
 	var y := floor_y + float(spec["lift"]) + h * 0.5 + sin(t * 2.2) * 0.04
 	var sc := 1.0 + 0.03 * pow(1.0 - fposmod(t / _beat_s, 1.0), 3.0)
 	var alpha := clampf((t - float(_fig["t0"])) / _beat_s, 0.0, 1.0)  # steps out of the dark over a beat
@@ -877,6 +971,16 @@ func _animate_figure(t: float) -> void:
 			p3.x += dir.x * lunge * 1.1
 			p3.z += dir.y * lunge * 1.1
 			sc *= 1.0 + lunge * 0.35
+	var act := _figure_act(t)
+	var mo := RunActing.figure_motion(str(act["act"]), float(act["u"])) if str(act["act"]) != "" else {}
+	if not mo.is_empty():  # the creature's body language (its `acting` in content/trial/hotspots.json): a motion on the billboard, towards the player and sideways to the view
+		var cam2: Vector3 = st.player.pose_at(t)["cam"]
+		var to_cam := (Vector2(cam2.x, cam2.z) - pos).normalized()
+		p3.x += to_cam.x * float(mo["dz"]) + to_cam.y * float(mo["dx"])
+		p3.z += to_cam.y * float(mo["dz"]) - to_cam.x * float(mo["dx"])
+		p3.y += float(mo["dy"])
+		sc_x = float(mo["sx"])
+		sc_y = float(mo["sy"])
 	if pose != _fig_pose:
 		if OS.get_environment("RW_TRIAL_TRACE") == "1":
 			print("TRIAL figure pose ", pose)
@@ -884,7 +988,7 @@ func _animate_figure(t: float) -> void:
 		(_fig["mat"] as StandardMaterial3D).albedo_texture = _assets.texture("textures/fig_%s_%s.png" % [_fig["id"], pose])
 	var node: MeshInstance3D = _fig["node"]
 	node.position = p3
-	node.scale = Vector3(sc, sc, sc)
+	node.scale = Vector3(sc * sc_x, sc * sc_y, sc)
 	var col := Color.WHITE
 	if st.world != null:
 		col = st.world.figure_light(pos, str(_fig["sec"])) * 1.0

@@ -13,6 +13,7 @@ extends RefCounted
 
 const MOVE_BARS_MIN := 2.0
 const MOVE_BARS_MAX := 4.0
+const WINDOW_GLANCE_DEG := 8.0  # the glance of the hotspot window turns the head this far at most, and never up
 const DENSE_PER_BAR := 4  # more notes than this in a bar (one per beat) is a dense bar
 const ROLES := ["dancer", "on_stage", "dj", "queasy", "sick", "recovered"]
 const STYLES := ["walk", "stagger", "run", "climb", "carried"]
@@ -233,11 +234,19 @@ func ambient(t_block: float, phase_n: int, block: int, notes: Array) -> Array:
 	var out: Array = []
 	var beat := 60.0 / bpm
 	var idx := phase_n * 4 + block + node_id.length()
+	var window := block >= 3  # the last block is the hotspot window: the head stays on the room (no look at the ceiling, no turn away from the hotspots; visual polish)
 	if not glances.is_empty():
 		var g: Dictionary = glances[idx % glances.size()]
-		out.append(_action(t_block + 5.0 * beat, "player_look", {"by": float(g.get("by", 0.0)), "pitch": float(g.get("pitch", 0.0)), "bars": float(g.get("bars", 2.0))}))
+		var by := float(g.get("by", 0.0))
+		var pitch := float(g.get("pitch", 0.0))
+		if window:
+			by = clampf(by, -WINDOW_GLANCE_DEG, WINDOW_GLANCE_DEG)
+			pitch = 0.0
+		out.append(_action(t_block + 5.0 * beat, "player_look", {"by": by, "pitch": pitch, "bars": float(g.get("bars", 2.0))}))
 	if not strolls.is_empty() and idx % 3 != 0:
-		var s: Dictionary = strolls[floori(idx / 3.0) % strolls.size()]
+		var s: Dictionary = (strolls[floori(idx / 3.0) % strolls.size()] as Dictionary).duplicate()
+		if window:
+			s.erase("turn")
 		var t_s := maxf(t_block + 6.0 * beat, busy_until + 0.25 * beat)
 		if t_s <= t_block + 9.0 * beat:
 			var bars := pick_bars(float(s.get("bars", 3.0)), notes, t_s, bpm)

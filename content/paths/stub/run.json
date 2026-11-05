@@ -1,0 +1,203 @@
+{
+ "schema": 1,
+ "path": {
+  "id": "stub",
+  "title": "The Stub",
+  "entry_from": "warehouse.balcony.star",
+  "returns_to": "warehouse",
+  "dev": true,
+  "opens": "A two-scene test path at 124 BPM, entered through the star on the Warehouse balcony (RW_PATH_REMAP=gospel=stub) or started with RW_RUN_PATH=stub."
+ },
+ "timing": {
+  "bpm": 124,
+  "phase_beats": 64,
+  "block_beats": 16,
+  "cue_span_beats": 12.0,
+  "decision_beat": 12.5,
+  "fade_beats": 2.0
+ },
+ "start_node": "stub",
+ "worlds": [
+  {
+   "id": "stub",
+   "title": "The Stub",
+   "map": "night_one",
+   "depth": 1,
+   "blurb": "Two rooms at 124 BPM: the proof that a path can be entered and left."
+  }
+ ],
+ "nodes": [
+  {
+   "id": "stub",
+   "world": "stub",
+   "scene": "start",
+   "title": "The Stub",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The first room of the test path.",
+   "next": [
+    {
+     "to": "stub.end",
+     "dir": "up",
+     "label": "On to the second room"
+    }
+   ],
+   "place": {
+    "waypoint": "chill",
+    "rail": {
+     "good": [
+      {
+       "to": "sofa_nook",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "sofa_front",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "chill_door",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "bar_taps",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "chill_door",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "chill_door"
+     }
+    }
+   }
+  },
+  {
+   "id": "stub.end",
+   "world": "stub",
+   "scene": "end",
+   "title": "The Way Back",
+   "entry": false,
+   "exit_scene": false,
+   "ending": "done",
+   "role": "dancer",
+   "blurb": "The ending of the test path: the way back to the Warehouse.",
+   "next": [
+    {
+     "to": "run:warehouse",
+     "dir": "up",
+     "label": "Back to the Warehouse"
+    }
+   ],
+   "place": {
+    "waypoint": "booth",
+    "rail": {
+     "good": [
+      {
+       "to": "booth_decks",
+       "role": "dj",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "stage",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "steps",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "stage_edge",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "booth_down"
+     }
+    }
+   }
+  }
+ ],
+ "cinematics": {}
+}

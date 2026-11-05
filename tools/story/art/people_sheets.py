@@ -17,11 +17,12 @@ from multiprocessing import Pool
 import numpy as np
 from PIL import Image
 
+from . import directed as directed_mod
 from . import lib, people, wardrobe
 
 PAGE = 2048
 PAD = 1
-DEFAULT_PROPS = {"drink": "cup", "toast": "cup", "phone": "phone", "paint": "brush", "carry": "tray", "serve": "tray", "check": "clipboard"}
+DEFAULT_PROPS = {"drink": "cup", "toast": "cup", "phone": "phone", "paint": "brush", "carry": "tray", "serve": "tray", "check": "clipboard", "write": "clipboard"}
 DANCE_SET = ["idle", "dance", "cheer", "sad", "clap", "hands_up", "look", "footwork"]
 BANDS = ["quiet", "dancing", "hype", "euphoric"]
 DANCING = ("dance_floor", "stage", "stage_steps", "booth")
@@ -116,6 +117,13 @@ def actor_states(actor: dict, home_sec: dict, room_secs: list, hero: bool, style
     return want
 
 
+def add_directed(want: dict, entries: list, face_of: dict) -> None:
+    """The acts and faces the story directs this person in (directed.py), each as its own state: `act` for the act's own face, `act@face` for another."""
+    for act, face, facings in entries:
+        key = directed_mod.state_key(act, face, face_of)
+        want.setdefault(key, set()).update(facings)
+
+
 def held_of(actor: dict, state: str) -> str:
     fixed = str(actor.get("prop", ""))
     if fixed:
@@ -133,13 +141,14 @@ def _render_actor(job):
     out = {}
     cache = {}
     for st in sorted(states):
-        pst = poses["states"].get(st if not st.startswith("dance_s") else st)
+        st0, _, face_ov = st.partition("@")  # `beckon@plea`: the act shown with another face
+        pst = poses["states"].get(st0)
         if pst is None:
             continue
-        base = "dance" if st.startswith("dance_s") else st
+        base = "dance" if st0.startswith("dance_s") else st0
         held = held_of(actor, base)
-        face = face_of.get(base, "neutral")
-        if base == "sleep":
+        face = face_ov or face_of.get(base, "neutral")
+        if base == "sleep" and not face_ov:
             face = "sleep"
         for fc in sorted(states[st]):
             fci = people.FACINGS.index(fc)
@@ -147,9 +156,10 @@ def _render_actor(job):
                 pose = dict(zip(keys, row))
                 for lod in people.LODS:
                     q = tuple(round(v * (20 if lod == 1 else 10 if lod == 2 else 5), 0) for v in row)
-                    ck = (base if base in ("sit", "sleep", "rock", "lie") else "_", fci, lod, held, face, q)
+                    lface = people.LOD4_FALLBACK.get(face, face) if lod >= 4 else face  # the quarter-size head only has the four old faces
+                    ck = (base if base in ("sit", "sleep", "rock", "lie") else "_", fci, lod, held, lface, q)
                     if ck not in cache:
-                        img, piv, hand = people.render_frame(spec, pose, base, fci, lod, held, face, int(spec.get("seed", 0)))
+                        img, piv, hand = people.render_frame(spec, pose, base, fci, lod, held, lface, int(spec.get("seed", 0)))
                         cache[ck] = (img.tobytes(), img.shape, (round(piv[0]), round(piv[1])), (round(hand[0]), round(hand[1])))
                     out[(st, fc, lod, i)] = cache[ck]
     return out
@@ -165,6 +175,10 @@ def build(chapter: str, jobs_n: int = 4) -> dict:
     actors = data["actors"]
     cast = wardrobe.cast_chapter(chapter, actors)
     face_of = poses.get("face_of", {})
+    directed = directed_mod.directed(chapter, poses)
+    unknown = sorted(set(directed) - {str(a["id"]) for a in actors})
+    if unknown:
+        raise ValueError(f"{chapter}: directed actors not in the chapter: {unknown}")
     jobs, metas = [], []
     for a in actors:
         aid = str(a["id"])
@@ -177,6 +191,7 @@ def build(chapter: str, jobs_n: int = 4) -> dict:
         spec = cast[aid]
         style = int(spec["seed"]) % 5
         states = actor_states(a, home_sec, room_secs, str(a.get("role", "")) == "hero", style)
+        add_directed(states, directed.get(aid, []), face_of)
         jobs.append((spec, states, poses, a, face_of))
         metas.append((aid, spec, states, style))
     with Pool(jobs_n) as pool:
@@ -230,10 +245,9 @@ def build(chapter: str, jobs_n: int = 4) -> dict:
         res = results[row]
         st_out = {}
         for st in sorted(states):
-            base = "dance" if st.startswith("dance_s") else st
-            if st not in poses["states"]:
+            if st.partition("@")[0] not in poses["states"]:
                 continue
-            cyc = poses["states"][st]
+            cyc = poses["states"][st.partition("@")[0]]
             n = len(cyc["frames"])
             facing_lists = []
             for fc in people.FACINGS:

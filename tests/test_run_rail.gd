@@ -182,6 +182,19 @@ func test_every_block_has_a_glance_and_the_glances_vary() -> void:
 		assert_true(strolls >= 3, "%s: some blocks add an in-room walk (%d)" % [id, strolls])
 
 
+## Visual polish: in the hotspot window (the last block) the head stays on the room, so the hotspots are things in the picture and not beacons at its edge.
+func test_the_glance_of_the_hotspot_window_never_looks_up_or_far_away() -> void:
+	for id in _data().nodes:
+		var r := _rail(id)
+		for ph in 6:
+			var acts := r.ambient(48.0 * BEAT, ph + 1, 3, [])
+			for a in _kinds(acts, "player_look"):
+				assert_eq(float(a["args"]["pitch"]), 0.0, "%s: no look at the ceiling in the window" % id)
+				assert_true(absf(float(a["args"]["by"])) <= RunRail.WINDOW_GLANCE_DEG, "%s: a small turn at most" % id)
+			for w in _kinds(acts, "player_walk"):
+				assert_false((w["args"] as Dictionary).has("turn"), "%s: an in-room walk in the window does not turn away" % id)
+
+
 func test_arriving_in_a_new_world_is_a_cut_to_the_doorway_then_a_walk_home() -> void:
 	var r := _rail("hospital")
 	var t0 := 64.0 * BEAT

@@ -1,0 +1,49 @@
+# tools/run/laps_energy.gd (docs/HANDOVER.md A12): scripted players of a cue accuracy, 24 seeds, default exits; 'one lap' = every scene forced to laps 1, 'as the data' = the shipped laps. Squadron's default exits loop for ever (a 3000 s cap): read its blocks, not 'reached'.
+energy economy of gospel, 24 seeds per accuracy, default exits, scripted hits
+accuracy  laps            reached   scenes   blocks    mean E     min E
+0.50      one lap            0/24      6.4     24.3      31.6       0.0
+0.50      as the data        0/24      4.4     27.2      33.3       0.0
+0.55      one lap           16/24     11.3     44.8      44.7       0.0
+0.55      as the data        7/24      9.0     63.3      48.5       0.0
+0.60      one lap           24/24     12.0     48.0      80.4      29.7
+0.60      as the data       24/24     12.0     88.0      84.8      29.7
+0.70      one lap           24/24     12.0     48.0      95.6      49.0
+0.70      as the data       24/24     12.0     88.0      96.1      49.0
+0.80      one lap           24/24     12.0     48.0      98.6      56.0
+0.80      as the data       24/24     12.0     88.0      98.5      56.0
+0.90      one lap           24/24     12.0     48.0      99.4      64.5
+0.90      as the data       24/24     12.0     88.0      99.5      64.5
+1.00      one lap           24/24     12.0     48.0     100.0      71.0
+1.00      as the data       24/24     12.0     88.0     100.0      71.0
+energy economy of squadron, 24 seeds per accuracy, default exits, scripted hits
+accuracy  laps            reached   scenes   blocks    mean E     min E
+0.50      one lap            0/24      9.2     35.0      34.8       0.0
+0.50      as the data        0/24      5.2     38.0      37.4       0.0
+0.55      one lap            0/24     67.9    269.8      68.0       0.0
+0.55      as the data        0/24     24.2    190.1      62.0       0.0
+0.60      one lap            0/24    110.0    437.0      92.3      27.3
+0.60      as the data        0/24     53.0    420.6      90.4       0.0
+0.70      one lap            0/24    110.0    437.0      98.3      50.6
+0.70      as the data        0/24     55.0    437.0      98.2      50.6
+0.80      one lap            0/24    110.0    437.0      99.5      55.3
+0.80      as the data        0/24     55.0    437.0      99.4      55.3
+0.90      one lap            0/24    110.0    437.0      99.9      66.9
+0.90      as the data        0/24     55.0    437.0      99.9      66.9
+1.00      one lap            0/24    110.0    437.0     100.0      71.0
+1.00      as the data        0/24     55.0    437.0     100.0      71.0
+energy economy of ember, 24 seeds per accuracy, default exits, scripted hits
+accuracy  laps            reached   scenes   blocks    mean E     min E
+0.50      one lap            0/24      6.4     24.2      31.7       0.0
+0.50      as the data        0/24      4.0     24.2      33.3       0.0
+0.55      one lap           15/24     12.0     47.5      47.8       0.0
+0.55      as the data       11/24     10.0     74.2      54.7       0.0
+0.60      one lap           24/24     13.0     52.0      81.7      34.8
+0.60      as the data       24/24     13.0    100.0      87.0      34.8
+0.70      one lap           24/24     13.0     52.0      96.0      49.0
+0.70      as the data       24/24     13.0    100.0      96.8      49.0
+0.80      one lap           24/24     13.0     52.0      98.8      56.8
+0.80      as the data       24/24     13.0    100.0      98.8      56.8
+0.90      one lap           24/24     13.0     52.0      99.7      66.8
+0.90      as the data       24/24     13.0    100.0      99.7      66.8
+1.00      one lap           24/24     13.0     52.0     100.0      71.0
+1.00      as the data       24/24     13.0    100.0     100.0      71.0

@@ -1,0 +1,2285 @@
+{
+ "schema": 1,
+ "path": {
+  "id": "squadron",
+  "title": "The Mission Count",
+  "entry_from": "warehouse.booth.radio",
+  "returns_to": "warehouse",
+  "opens": "A flickering military radio in the booth, with the shadow of a bomber on the wall behind it.",
+  "laps": 2
+ },
+ "timing": {
+  "bpm": 140,
+  "phase_beats": 64,
+  "block_beats": 16,
+  "cue_span_beats": 12.0,
+  "decision_beat": 12.5,
+  "fade_beats": 2.0
+ },
+ "mix": {
+  "note": "The Mission Count's level and bass bus over the main run's mix (docs/HANDOVER.md 'Audio polish'): the owner's loops are untouched on disk; a gentle drive gives the bass harmonics a phone plays and tames its peaks (no high-pass: the sub stays), 1.5 dB down so no scene clips. C05 and C06 (a loud transient on a quiet body) and the mid-heavy C03, C09, C11 have their own bass_bus in music.json.",
+  "gain_db": -1.5,
+  "bass_bus": {
+   "enabled": true,
+   "highpass_hz": 0.0,
+   "shelf_db": 0.0,
+   "drive": 0.4,
+   "pre_gain_db": 3.0,
+   "gain_db": -4.0
+  }
+ },
+ "stages": [
+  {
+   "id": "drums_alone",
+   "label": "Drums",
+   "cue": "drums",
+   "gains": {
+    "drums": 1.0,
+    "bass": 0.0,
+    "other": 0.0
+   }
+  },
+  {
+   "id": "bass_enters",
+   "label": "Bass enters",
+   "cue": "bass",
+   "gains": {
+    "drums": 0.7,
+    "bass": 1.0,
+    "other": 0.0
+   }
+  },
+  {
+   "id": "synth_joins",
+   "label": "Drums return, synth joins",
+   "cue": "drums",
+   "gains": {
+    "drums": 1.0,
+    "bass": 0.9,
+    "other": 0.5
+   }
+  },
+  {
+   "id": "bass_strongest",
+   "label": "Bass strongest",
+   "cue": "bass",
+   "gains": {
+    "drums": 0.55,
+    "bass": 1.0,
+    "other": 0.7
+   }
+  }
+ ],
+ "start_node": "base",
+ "worlds": [
+  {
+   "id": "base",
+   "title": "The Airfield",
+   "map": "airfield",
+   "depth": 1,
+   "blurb": "A small island, a war that never ends and the briefing hut.",
+   "story": "res://content/story/airfield.json"
+  },
+  {
+   "id": "air",
+   "title": "The Mission",
+   "map": "airfield",
+   "depth": 2,
+   "blurb": "The bomber's nose, the Quartermaster's store and the Surgeon's office.",
+   "story": "res://content/story/airfield.json"
+  },
+  {
+   "id": "city",
+   "title": "The Old City",
+   "map": "city",
+   "depth": 3,
+   "blurb": "Red light over the sea, an old city's streets and the Colonel's deal.",
+   "story": "res://content/story/city.json"
+  },
+  {
+   "id": "escape",
+   "title": "The Way Out",
+   "map": "harbour",
+   "depth": 4,
+   "blurb": "The count painted higher, a harbour at night, and the neutral coast.",
+   "story": "res://content/story/harbour.json"
+  }
+ ],
+ "nodes": [
+  {
+   "id": "base",
+   "world": "base",
+   "scene": "c01",
+   "title": "The Briefing Room",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "C01: The Briefing Room.",
+   "next": [
+    {
+     "to": "base.c03",
+     "dir": "up",
+     "label": "On to The Hospital"
+    },
+    {
+     "to": "base.c02",
+     "dir": "right",
+     "label": "On to The Flight Line"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "col",
+     "at_beat": 0,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "board",
+     "beats": 28
+    },
+    {
+     "actor": "a01",
+     "at_beat": 32,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "a02",
+     "at_beat": 33,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "a03",
+     "at_beat": 34,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "a06",
+     "at_beat": 64,
+     "act": "shake_head",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 24
+    },
+    {
+     "actor": "a04",
+     "at_beat": 112,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "col",
+     "at_beat": 112,
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 12
+    }
+   ],
+   "place": {
+    "waypoint": "c01_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c01_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c01_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c01_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c01_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c01_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c01_x_up",
+      "right": "c01_x_right"
+     }
+    }
+   }
+  },
+  {
+   "id": "base.c02",
+   "world": "base",
+   "scene": "c02",
+   "title": "The Flight Line",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "C02: The Flight Line.",
+   "next": [
+    {
+     "to": "air",
+     "dir": "up",
+     "label": "On to The Bombing Mission"
+    },
+    {
+     "to": "air.c05",
+     "dir": "right",
+     "label": "On to The Syndicate"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "gun",
+     "at_beat": 0,
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "qm",
+     "at_beat": 32,
+     "act": "offer",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "mech",
+     "at_beat": 64,
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "qm",
+     "at_beat": 112,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 12
+    }
+   ],
+   "place": {
+    "waypoint": "c02_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c02_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c02_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c02_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c02_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c02_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c02_x_up",
+      "right": "c02_x_right"
+     }
+    }
+   }
+  },
+  {
+   "id": "base.c03",
+   "world": "base",
+   "scene": "c03",
+   "title": "The Hospital",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "C03: The Hospital.",
+   "next": [
+    {
+     "to": "air.c05",
+     "dir": "up",
+     "label": "On to The Syndicate"
+    },
+    {
+     "to": "air.c06",
+     "dir": "right",
+     "label": "On to The Surgeon's Office"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "surg",
+     "at_beat": 0,
+     "act": "write",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "p01",
+     "at_beat": 32,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 24
+    },
+    {
+     "actor": "surg",
+     "at_beat": 64,
+     "act": "write",
+     "face": "doubt",
+     "look_at": "surg",
+     "beats": 28
+    },
+    {
+     "actor": "p01",
+     "at_beat": 112,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 10
+    }
+   ],
+   "place": {
+    "waypoint": "c03_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c03_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c03_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c03_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c03_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c03_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c03_x_up",
+      "right": "c03_x_right"
+     }
+    }
+   }
+  },
+  {
+   "id": "air",
+   "world": "air",
+   "scene": "c04",
+   "title": "The Bombing Mission",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "C04: The Bombing Mission.",
+   "next": [
+    {
+     "to": "city",
+     "dir": "up",
+     "label": "On to The Gunner's Last Flight"
+    },
+    {
+     "to": "base.c03",
+     "dir": "right",
+     "label": "On to The Hospital"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "pilot",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "fear",
+     "look_at": "nose_glass",
+     "beats": 28
+    },
+    {
+     "actor": "crew1",
+     "at_beat": 32,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "nose_glass",
+     "beats": 24
+    },
+    {
+     "actor": "gun_b",
+     "at_beat": 64,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "c04_b1",
+     "beats": 28
+    },
+    {
+     "actor": "crew2",
+     "at_beat": 64,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 24
+    },
+    {
+     "actor": "crew1",
+     "at_beat": 125,
+     "act": "cheer",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 3,
+     "if_flags_all": [
+      "sq_released"
+     ]
+    },
+    {
+     "actor": "gun_b",
+     "at_beat": 125.5,
+     "act": "collapse",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 6,
+     "if_flags_all": [
+      "sq_released"
+     ]
+    },
+    {
+     "actor": "pilot",
+     "at_beat": 125,
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 6,
+     "if_flags_none": [
+      "sq_released"
+     ]
+    }
+   ],
+   "place": {
+    "waypoint": "c04_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c04_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c04_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c04_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c04_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c04_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c04_x_up",
+      "right": "c04_x_right"
+     }
+    }
+   }
+  },
+  {
+   "id": "air.c05",
+   "world": "air",
+   "scene": "c05",
+   "title": "The Syndicate",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "C05: The Syndicate.",
+   "next": [
+    {
+     "to": "city.c08",
+     "dir": "up",
+     "label": "On to The Old City"
+    },
+    {
+     "to": "air.c06",
+     "dir": "right",
+     "label": "On to The Surgeon's Office",
+     "loop": true
+    }
+   ],
+   "cast": [
+    {
+     "actor": "qm_s",
+     "at_beat": 0,
+     "act": "write",
+     "face": "laugh",
+     "look_at": "ledger",
+     "beats": 28
+    },
+    {
+     "actor": "sc1",
+     "at_beat": 32,
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "sc2",
+     "at_beat": 34,
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "qm_s",
+     "at_beat": 64,
+     "act": "offer",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "sc1",
+     "at_beat": 112,
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "sc2",
+     "at_beat": 113,
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8
+    }
+   ],
+   "place": {
+    "waypoint": "c05_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c05_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c05_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c05_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c05_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c05_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c05_x_up",
+      "right": "c05_x_right"
+     }
+    }
+   }
+  },
+  {
+   "id": "air.c06",
+   "world": "air",
+   "scene": "c06",
+   "title": "The Surgeon's Office",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "C06: The Surgeon's Office.",
+   "next": [
+    {
+     "to": "base.c02",
+     "dir": "up",
+     "label": "On to The Flight Line"
+    },
+    {
+     "to": "city.c09",
+     "dir": "right",
+     "label": "On to The Colonel's Deal"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "surg_o",
+     "at_beat": 0,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "clerk",
+     "beats": 28
+    },
+    {
+     "actor": "clerk",
+     "at_beat": 0,
+     "act": "write",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "clerk",
+     "at_beat": 32,
+     "act": "stare",
+     "face": "neutral",
+     "look_at": "surg_o",
+     "beats": 28
+    },
+    {
+     "actor": "surg_o",
+     "at_beat": 64,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "clerk",
+     "beats": 28
+    },
+    {
+     "actor": "clerk",
+     "at_beat": 112,
+     "act": "stare",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 14
+    }
+   ],
+   "place": {
+    "waypoint": "c06_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c06_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c06_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c06_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c06_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c06_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c06_x_up",
+      "right": "c06_x_right"
+     }
+    }
+   }
+  },
+  {
+   "id": "city",
+   "world": "city",
+   "scene": "c07",
+   "title": "The Gunner's Last Flight",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "C07: The Gunner's Last Flight.",
+   "next": [
+    {
+     "to": "city.c10",
+     "dir": "up",
+     "label": "On to The Ruined City",
+     "loop": true
+    },
+    {
+     "to": "base.c03",
+     "dir": "right",
+     "label": "On to The Hospital"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "gun_c",
+     "at_beat": 0,
+     "act": "lie",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 64
+    },
+    {
+     "actor": "gun_c",
+     "at_beat": 112,
+     "act": "lie",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "crew1c",
+     "at_beat": 32,
+     "act": "cover_face",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 40
+    },
+    {
+     "actor": "crew2c",
+     "at_beat": 64,
+     "act": "cover_face",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 40
+    },
+    {
+     "actor": "pilot_c",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "nose_glass_r",
+     "beats": 64
+    }
+   ],
+   "place": {
+    "waypoint": "c07_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c07_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c07_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c07_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c07_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c07_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c07_x_up",
+      "right": "c07_x_right"
+     }
+    }
+   }
+  },
+  {
+   "id": "city.c08",
+   "world": "city",
+   "scene": "c08",
+   "title": "The Old City",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "C08: The Old City.",
+   "next": [
+    {
+     "to": "city.c10",
+     "dir": "up",
+     "label": "On to The Ruined City"
+    },
+    {
+     "to": "city.c09",
+     "dir": "right",
+     "label": "On to The Colonel's Deal"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "singer",
+     "at_beat": 0,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 24
+    },
+    {
+     "actor": "singer",
+     "at_beat": 32,
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "mp1",
+     "at_beat": 0,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "mp2",
+     "at_beat": 64,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "kid_c",
+     "at_beat": 32,
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 24
+    },
+    {
+     "actor": "kid_c",
+     "at_beat": 112,
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    }
+   ],
+   "place": {
+    "waypoint": "c08_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c08_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c08_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c08_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c08_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c08_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c08_x_up",
+      "right": "c08_x_right"
+     }
+    }
+   }
+  },
+  {
+   "id": "city.c09",
+   "world": "city",
+   "scene": "c09",
+   "title": "The Colonel's Deal",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "C09: The Colonel's Deal.",
+   "next": [
+    {
+     "to": "escape.c12",
+     "dir": "up",
+     "label": "On to Escape North"
+    },
+    {
+     "to": "escape",
+     "dir": "right",
+     "label": "On to Endless Missions"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "col_c",
+     "at_beat": 0,
+     "act": "offer",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 60
+    },
+    {
+     "actor": "aide_c",
+     "at_beat": 0,
+     "act": "write",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 60
+    },
+    {
+     "actor": "chap",
+     "at_beat": 32,
+     "act": "shake_head",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 24
+    },
+    {
+     "actor": "chap",
+     "at_beat": 112,
+     "act": "shake_head",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 12
+    }
+   ],
+   "place": {
+    "waypoint": "c09_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c09_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c09_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c09_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c09_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c09_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c09_x_up",
+      "right": "c09_x_right"
+     }
+    }
+   }
+  },
+  {
+   "id": "city.c10",
+   "world": "city",
+   "scene": "c10",
+   "title": "The Ruined City",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "C10: The Ruined City.",
+   "next": [
+    {
+     "to": "city.c09",
+     "dir": "up",
+     "label": "On to The Colonel's Deal",
+     "loop": true
+    },
+    {
+     "to": "escape.c12",
+     "dir": "right",
+     "label": "On to Escape North"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "surv1",
+     "at_beat": 0,
+     "act": "collapse",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "surv2",
+     "at_beat": 32,
+     "act": "collapse",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "wom",
+     "at_beat": 32,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "drunk",
+     "at_beat": 64,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "wom",
+     "at_beat": 112,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "night_train",
+     "beats": 12
+    }
+   ],
+   "place": {
+    "waypoint": "c10_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c10_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c10_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c10_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c10_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c10_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c10_x_up",
+      "right": "c10_x_right"
+     }
+    }
+   }
+  },
+  {
+   "id": "escape",
+   "world": "escape",
+   "scene": "c11",
+   "title": "Endless Missions",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "C11: Endless Missions.",
+   "next": [
+    {
+     "to": "base.c02",
+     "dir": "up",
+     "label": "On to The Flight Line",
+     "loop": true
+    },
+    {
+     "to": "escape.c12",
+     "dir": "right",
+     "label": "On to Escape North",
+     "loop": true
+    }
+   ],
+   "cast": [
+    {
+     "actor": "col_h",
+     "at_beat": 0,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "count_board",
+     "beats": 28
+    },
+    {
+     "actor": "h01",
+     "at_beat": 0,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 3
+    },
+    {
+     "actor": "h02",
+     "at_beat": 1,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 3
+    },
+    {
+     "actor": "h03",
+     "at_beat": 2,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 3
+    },
+    {
+     "actor": "h01",
+     "at_beat": 32,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "h02",
+     "at_beat": 33,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "h03",
+     "at_beat": 34,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "h01",
+     "at_beat": 64,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 10
+    },
+    {
+     "actor": "h02",
+     "at_beat": 65,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 10
+    },
+    {
+     "actor": "h03",
+     "at_beat": 66,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 10
+    },
+    {
+     "actor": "h01",
+     "at_beat": 112,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "h02",
+     "at_beat": 112.5,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "h03",
+     "at_beat": 113,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "chap_h",
+     "at_beat": 32,
+     "act": "cover_face",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "chap_h",
+     "at_beat": 112,
+     "act": "cover_face",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 12
+    }
+   ],
+   "place": {
+    "waypoint": "c11_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c11_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c11_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c11_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c11_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c11_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c11_x_up",
+      "right": "c11_x_right"
+     }
+    }
+   }
+  },
+  {
+   "id": "escape.c12",
+   "world": "escape",
+   "scene": "c12",
+   "title": "Escape North",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "C12: Escape North.",
+   "next": [
+    {
+     "to": "escape.c14",
+     "dir": "up",
+     "label": "On to Captured"
+    },
+    {
+     "to": "escape.c13",
+     "dir": "right",
+     "label": "On to The Neutral Coast"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "fish",
+     "at_beat": 0,
+     "act": "beckon",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "sent",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 60
+    },
+    {
+     "actor": "fish",
+     "at_beat": 64,
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "sent",
+     "at_beat": 125,
+     "act": "stare",
+     "face": "shame",
+     "look_at": "camera",
+     "beats": 3,
+     "if_flags_all": [
+      "sq_boat"
+     ]
+    },
+    {
+     "actor": "sent",
+     "at_beat": 125,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 3,
+     "if_flags_none": [
+      "sq_boat"
+     ]
+    }
+   ],
+   "place": {
+    "waypoint": "c12_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c12_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c12_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c12_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c12_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c12_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c12_x_up",
+      "right": "c12_x_right"
+     }
+    }
+   }
+  },
+  {
+   "id": "escape.c13",
+   "world": "escape",
+   "scene": "c13",
+   "title": "The Neutral Coast",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "C13: The Neutral Coast.",
+   "next": [
+    {
+     "to": "run:warehouse",
+     "dir": "up",
+     "label": "Back to the Warehouse"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "fish_c",
+     "at_beat": 0,
+     "act": "laugh",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "quay_w",
+     "at_beat": 32,
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "dock_c",
+     "at_beat": 64,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 24
+    },
+    {
+     "actor": "kid_q",
+     "at_beat": 112,
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 12
+    }
+   ],
+   "place": {
+    "waypoint": "c13_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c13_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c13_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c13_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c13_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c13_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c13_x_up"
+     }
+    }
+   },
+   "ending": "free"
+  },
+  {
+   "id": "escape.c14",
+   "world": "escape",
+   "scene": "c14",
+   "title": "Captured",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "C14: Captured.",
+   "next": [
+    {
+     "to": "escape",
+     "dir": "up",
+     "label": "On to Endless Missions",
+     "loop": true
+    },
+    {
+     "to": "escape.c12",
+     "dir": "right",
+     "label": "On to Escape North",
+     "loop": true
+    }
+   ],
+   "cast": [
+    {
+     "actor": "guard",
+     "at_beat": 0,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "clerk_k",
+     "at_beat": 0,
+     "act": "write",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "mate",
+     "at_beat": 32,
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 24
+    },
+    {
+     "actor": "clerk_k",
+     "at_beat": 64,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "mate",
+     "at_beat": 64,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "latch",
+     "beats": 28
+    }
+   ],
+   "place": {
+    "waypoint": "c14_home",
+    "rail": {
+     "good": [
+      {
+       "to": "c14_g1",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "c14_g2",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "c14_b1",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "c14_b2",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "c14_arrive",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.2,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 0.8,
+       "bars": 3
+      },
+      {
+       "right": 1.0,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "c14_x_up",
+      "right": "c14_x_right"
+     }
+    }
+   }
+  }
+ ],
+ "cinematics": {
+  "squadron.double_stamp": {
+   "world": "air",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "c06_desk",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "stamp_big"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "clerk",
+     "at_beat": 0.5,
+     "act": "stamp",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 4
+    },
+    {
+     "actor": "clerk",
+     "at_beat": 3,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "surg_o",
+     "at_beat": 1.5,
+     "act": "cover_face",
+     "face": "shame",
+     "look_at": "camera",
+     "beats": 10
+    }
+   ]
+  },
+  "squadron.medal_pinned": {
+   "world": "city",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "c09_g1",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "col_c"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "col_c",
+     "at_beat": 0.5,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "aide_c",
+     "at_beat": 1,
+     "act": "write",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "chap",
+     "at_beat": 1.5,
+     "act": "shake_head",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 8
+    }
+   ]
+  },
+  "squadron.count_raised": {
+   "world": "escape",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "c11_count",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "count_board"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "clerk_h",
+     "at_beat": 0.5,
+     "act": "write",
+     "face": "laugh",
+     "look_at": "count_board",
+     "beats": 8
+    },
+    {
+     "actor": "col_h",
+     "at_beat": 1,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "count_board",
+     "beats": 8
+    },
+    {
+     "actor": "chap_h",
+     "at_beat": 1.5,
+     "act": "cover_face",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 8
+    }
+   ]
+  },
+  "squadron.turn_back": {
+   "world": "air",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "c04_b1",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger",
+     "look_at": "pilot"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "pilot",
+     "at_beat": 0.5,
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "crew2",
+     "at_beat": 1,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "gun_b",
+     "at_beat": 2,
+     "act": "cover_face",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 8
+    }
+   ]
+  }
+ }
+}

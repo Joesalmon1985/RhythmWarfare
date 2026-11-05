@@ -1,0 +1,423 @@
+{
+ "id": "bethany",
+ "title": "Bethany",
+ "chapter": 9,
+ "art": "bethany",
+ "description": "A map of the Gospel path (content/paths/gospel).",
+ "intro": "",
+ "duration_bars": 128,
+ "sequence_bars": 2,
+ "initial_energy": 60,
+ "blocks": [],
+ "decisions": [],
+ "endings": {},
+ "ending_order": [],
+ "acts": [],
+ "groups": {
+  "all": [
+   "s1",
+   "s2",
+   "d01_courtyard",
+   "d02_courtyard",
+   "d03",
+   "d04",
+   "d12",
+   "c1",
+   "c2",
+   "c3",
+   "c4",
+   "c5",
+   "c6",
+   "c7",
+   "c8",
+   "tr1",
+   "d01_hill_dusk",
+   "d02_hill_dusk",
+   "cr1",
+   "cr2",
+   "cr3",
+   "cr4",
+   "cr5",
+   "cr6",
+   "cr7",
+   "cr8",
+   "pr1",
+   "pr2",
+   "k1"
+  ]
+ },
+ "actors": [
+  {
+   "id": "s1",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "main",
+   "wear": "sister",
+   "seed_id": "bethany/s1",
+   "activity": "stand",
+   "thresh": -3
+  },
+  {
+   "id": "s2",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "sister",
+   "seed_id": "bethany/s2",
+   "activity": "stand",
+   "thresh": -4
+  },
+  {
+   "id": "d01_courtyard",
+   "archetype": "hoodie",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "disciple",
+   "seed_id": "d01",
+   "activity": "sit",
+   "thresh": 3
+  },
+  {
+   "id": "d02_courtyard",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "disciple",
+   "seed_id": "d02",
+   "activity": "sit",
+   "thresh": 2
+  },
+  {
+   "id": "d03",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "disciple",
+   "seed_id": "d03",
+   "activity": "sit",
+   "thresh": 3
+  },
+  {
+   "id": "d04",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "disciple",
+   "seed_id": "d04",
+   "activity": "sit",
+   "thresh": 6
+  },
+  {
+   "id": "d12",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "disciple",
+   "seed_id": "d12",
+   "activity": "stand",
+   "thresh": 4
+  },
+  {
+   "id": "c1",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "hill_dusk",
+   "wear": "villager",
+   "seed_id": "bethany/c1",
+   "activity": "sit",
+   "thresh": 1
+  },
+  {
+   "id": "c2",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "hill_dusk",
+   "wear": "woman",
+   "seed_id": "bethany/c2",
+   "activity": "sit",
+   "thresh": 2
+  },
+  {
+   "id": "c3",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "hill_dusk",
+   "wear": "child",
+   "seed_id": "bethany/c3",
+   "activity": "sit",
+   "thresh": -3
+  },
+  {
+   "id": "c4",
+   "archetype": "hoodie",
+   "variant": "b",
+   "group": "core",
+   "view": "hill_dusk",
+   "wear": "elder",
+   "seed_id": "bethany/c4",
+   "activity": "sit",
+   "thresh": -1
+  },
+  {
+   "id": "c5",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "view": "hill_dusk",
+   "wear": "villager",
+   "seed_id": "bethany/c5",
+   "activity": "sit",
+   "thresh": -2
+  },
+  {
+   "id": "c6",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "hill_dusk",
+   "wear": "woman",
+   "seed_id": "bethany/c6",
+   "activity": "sit",
+   "thresh": -1
+  },
+  {
+   "id": "c7",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "hill_dusk",
+   "wear": "child",
+   "seed_id": "bethany/c7",
+   "activity": "sit",
+   "thresh": -5
+  },
+  {
+   "id": "c8",
+   "archetype": "curly",
+   "variant": "a",
+   "group": "core",
+   "view": "hill_dusk",
+   "wear": "villager",
+   "seed_id": "bethany/c8",
+   "activity": "sit",
+   "thresh": 4
+  },
+  {
+   "id": "tr1",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "hill_dusk",
+   "wear": "villager",
+   "seed_id": "bethany/tr1",
+   "activity": "stand",
+   "thresh": 0
+  },
+  {
+   "id": "d01_hill_dusk",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "hill_dusk",
+   "wear": "disciple",
+   "seed_id": "d01",
+   "activity": "stand",
+   "thresh": 2
+  },
+  {
+   "id": "d02_hill_dusk",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "hill_dusk",
+   "wear": "disciple",
+   "seed_id": "d02",
+   "activity": "stand",
+   "thresh": 3
+  },
+  {
+   "id": "cr1",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "gate",
+   "wear": "villager",
+   "seed_id": "bethany/cr1",
+   "activity": "wave",
+   "thresh": -4
+  },
+  {
+   "id": "cr2",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "gate",
+   "wear": "woman",
+   "seed_id": "bethany/cr2",
+   "activity": "wave",
+   "thresh": 2
+  },
+  {
+   "id": "cr3",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "gate",
+   "wear": "villager",
+   "seed_id": "bethany/cr3",
+   "activity": "wave",
+   "thresh": -6
+  },
+  {
+   "id": "cr4",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "gate",
+   "wear": "elder",
+   "seed_id": "bethany/cr4",
+   "activity": "wave",
+   "thresh": -3
+  },
+  {
+   "id": "cr5",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "view": "gate",
+   "wear": "woman",
+   "seed_id": "bethany/cr5",
+   "activity": "wave",
+   "thresh": 5
+  },
+  {
+   "id": "cr6",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "gate",
+   "wear": "villager",
+   "seed_id": "bethany/cr6",
+   "activity": "wave",
+   "thresh": 3
+  },
+  {
+   "id": "cr7",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "gate",
+   "wear": "villager",
+   "seed_id": "bethany/cr7",
+   "activity": "wave",
+   "thresh": 0
+  },
+  {
+   "id": "cr8",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "gate",
+   "wear": "woman",
+   "seed_id": "bethany/cr8",
+   "activity": "wave",
+   "thresh": 4
+  },
+  {
+   "id": "pr1",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "gate",
+   "wear": "priest",
+   "seed_id": "bethany/pr1",
+   "activity": "stand",
+   "thresh": 1
+  },
+  {
+   "id": "pr2",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "gate",
+   "wear": "priest",
+   "seed_id": "bethany/pr2",
+   "activity": "stand",
+   "thresh": 3
+  },
+  {
+   "id": "k1",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "gate",
+   "wear": "child",
+   "seed_id": "bethany/k1",
+   "activity": "stand",
+   "thresh": -2
+  }
+ ],
+ "silhouettes": [],
+ "palettes": {
+  "low": [
+   "#7a5a4a",
+   "#a8785a"
+  ],
+  "cool": [
+   "#6a8ac8",
+   "#9aa8d8"
+  ],
+  "warm": [
+   "#ffb060",
+   "#ff8a50"
+  ],
+  "rave": [
+   "#ffc060",
+   "#8ab0ff",
+   "#ff9060",
+   "#ffe090"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Quiet",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Gathered",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Moved",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Joyful",
+    "max": 100
+   }
+  ]
+ }
+}

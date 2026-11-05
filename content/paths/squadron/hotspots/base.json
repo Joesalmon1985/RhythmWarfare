@@ -1,0 +1,391 @@
+{
+ "world": "base",
+ "hotspots": [
+  {
+   "id": "base.cot",
+   "world": "base",
+   "scene": "base",
+   "map": "airfield",
+   "anchor": {
+    "thing": "cot_empty"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "base.c03"
+   },
+   "on_failure": {
+    "route": "base.c03",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "base.board",
+   "world": "base",
+   "scene": "base",
+   "map": "airfield",
+   "anchor": {
+    "thing": "board"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "base.c02",
+    "flags_set": [
+     "sq_briefed"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "route": "base.c03",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "col",
+    "available": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "board"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "board",
+     "beats": 1
+    },
+    "success": {
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 6,
+     "then": {
+      "act": "stare",
+      "face": "neutral",
+      "look_at": "camera",
+      "beats": 8
+     }
+    }
+   }
+  },
+  {
+   "id": "base.c02.ladder",
+   "world": "base",
+   "scene": "base.c02",
+   "map": "airfield",
+   "anchor": {
+    "thing": "ladder"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "air"
+   },
+   "on_failure": {
+    "route": "air",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true,
+   "acting": {
+    "actor": "gun",
+    "available": {
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "wave",
+     "face": "cheer",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "ladder",
+     "beats": 1
+    },
+    "success": {
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 6
+    }
+   }
+  },
+  {
+   "id": "base.c02.crates",
+   "world": "base",
+   "scene": "base.c02",
+   "map": "airfield",
+   "anchor": {
+    "thing": "crates"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "air.c05",
+    "flags_set": [
+     "sq_egg",
+     "keep:path_squadron_met_quartermaster"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "route": "air",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "qm",
+    "available": {
+     "act": "offer",
+     "face": "laugh",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "happy",
+     "look_at": "crates",
+     "beats": 1
+    },
+    "success": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "doubt",
+      "look_at": "camera",
+      "beats": 8
+     }
+    }
+   }
+  },
+  {
+   "id": "base.c03.hatch",
+   "world": "base",
+   "scene": "base.c03",
+   "map": "airfield",
+   "anchor": {
+    "thing": "kitchen_hatch"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "air.c05"
+   },
+   "on_failure": {
+    "route": "air.c05",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "base.c03.office_door",
+   "world": "base",
+   "scene": "base.c03",
+   "map": "airfield",
+   "anchor": {
+    "waypoint": "c03_x_right"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "air.c06"
+   },
+   "on_failure": {
+    "route": "air.c06",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "base.c03.clipboard",
+   "world": "base",
+   "scene": "base.c03",
+   "map": "airfield",
+   "anchor": {
+    "actor": "surg"
+   },
+   "kind": "character",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "air.c06",
+    "flags_set": [
+     "sq_examined",
+     "keep:path_squadron_met_surgeon"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "route": "air.c05",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": false,
+   "acting": {
+    "available": {
+     "act": "write",
+     "face": "doubt",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "write",
+     "face": "doubt",
+     "look_at": "surg"
+    },
+    "committed": {
+     "act": "nod",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 6,
+     "then": {
+      "act": "point",
+      "face": "resolve",
+      "look_at": "kitchen_hatch",
+      "beats": 8
+     }
+    }
+   }
+  }
+ ]
+}

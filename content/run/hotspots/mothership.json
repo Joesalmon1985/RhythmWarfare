@@ -115,7 +115,42 @@
     "look_at": "g08"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "awe",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "awe",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "offer",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "cheer",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 6,
+     "then": {
+      "act": "stare",
+      "face": "fear",
+      "look_at": "camera"
+     }
+    }
+   }
   },
   {
    "id": "mothership.dj",
@@ -156,7 +191,42 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "laugh",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "cheer",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "doubt",
+      "look_at": "camera"
+     }
+    }
+   }
   },
   {
    "id": "mothership.gallery.exit_bridge",
@@ -385,7 +455,41 @@
     "energy": -3
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "reactor_core"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "reactor_core",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "collapse",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "sad",
+      "face": "grief"
+     }
+    }
+   }
   },
   {
    "id": "mothership.bridge.exit_exit",
@@ -614,7 +718,41 @@
     "energy": -8
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "write",
+     "face": "neutral",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "write",
+      "face": "neutral"
+     }
+    }
+   }
   },
   {
    "id": "mothership.exit.airlock_wheel",

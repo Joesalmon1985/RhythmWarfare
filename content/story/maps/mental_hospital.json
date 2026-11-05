@@ -48,7 +48,8 @@
   "wall_slit": "textures/wall_slit.png",
   "wall_speaker": "textures/wall_speaker.png",
   "wall_window": "textures/wall_window.png",
-  "thing_mural": "textures/thing_mural.png"
+  "thing_mural": "textures/thing_mural.png",
+  "cards_table": "res://assets/minigames/blackjack/world_table.png"
  },
  "sectors": [
   {"id": "dayroom", "polygon": [[-7, -3], [7, -3], [7, 9], [-7, 9]], "floor": 0, "ceiling": 3.0, "floor_tex": "floor_check", "ceil_tex": "ceil_tile", "wall_tex": "wall_mint", "light": 0.5, "tint": "#86ad92", "room": "main", "flags": ["dance_floor"], "activities": {"quiet": ["sit", "chat", "stand", "rock", "pace", "watch", "sit"], "dancing": ["dance", "dance", "dance", "dance", "dance", "sit", "chat"], "hype": ["dance", "dance", "dance", "dance", "dance", "wave", "point"], "euphoric": ["dance", "dance", "dance", "dance", "dance", "wave", "hug"]}, "ambient": 0.4},
@@ -272,38 +273,39 @@
   {"id": "lt_court_strings", "kind": "light", "at": [54.0, 6.0], "y": 2.8, "radius": 6.5, "color": "#ffd08a", "strength": 1.2},
   {"id": "lt_court_stage", "kind": "light", "at": [63.0, 7.0], "y": 2.9, "radius": 5.0, "color": "#ffd090", "strength": 1.6},
   {"id": "mural_door", "kind": "billboard", "sprite": "thing_mural", "at": [24, 7.85], "y": 1, "size": 2, "anim": "none"},
-  {"id": "lt_mural", "kind": "light", "at": [24, 7.2], "y": 1.8, "radius": 3, "color": "#ffd27a", "strength": 1}
+  {"id": "lt_mural", "kind": "light", "at": [24, 7.2], "y": 1.8, "radius": 3, "color": "#ffd27a", "strength": 1},
+  {"id": "lt_cards_lamp", "kind": "light", "at": [2.4, 3.1], "y": 2, "radius": 2.6, "color": "#ffc870", "strength": 1.2}
  ],
  "homes": [
-  {"actor": "c01", "sector": "dayroom", "at": [0.0, 3.27]},
+  {"actor": "c01", "sector": "dayroom", "at": [-0.8, 3.57]},
   {"actor": "c02", "sector": "dayroom", "at": [-1.76, 4.11]},
-  {"actor": "c03", "sector": "dayroom", "at": [1.86, 4.25]},
+  {"actor": "c03", "sector": "dayroom", "at": [4.86, 3.95]},
   {"actor": "c04", "sector": "dayroom", "at": [-2.93, 2.17]},
-  {"actor": "c05", "sector": "dayroom", "at": [3.16, 2.03]},
+  {"actor": "c05", "sector": "dayroom", "at": [3.76, 0.83]},
   {"actor": "c06", "sector": "dayroom", "at": [-0.67, 1.45]},
   {"actor": "c07", "sector": "dayroom", "at": [0.9, 1.17]},
   {"actor": "c08", "sector": "dayroom", "at": [-3.91, 3.76]},
-  {"actor": "c09", "sector": "dayroom", "at": [3.81, 3.55]},
+  {"actor": "c09", "sector": "dayroom", "at": [5.31, 3.15]},
   {"actor": "c10", "sector": "dayroom", "at": [0.1, -0.05]},
   {"actor": "e01", "sector": "dayroom", "at": [-2.05, 0.29]},
   {"actor": "e02", "sector": "dayroom", "at": [2.34, 0.5]},
   {"actor": "e03", "sector": "dayroom", "at": [-4.39, 1.68]},
-  {"actor": "e04", "sector": "dayroom", "at": [4.39, 1.47]},
+  {"actor": "e04", "sector": "dayroom", "at": [4.59, 1.07]},
   {"actor": "g01", "sector": "dayroom", "at": [-4.6, 0.64], "side": [-6.55, 0.64]},
   {"actor": "g02", "sector": "dayroom", "at": [-3.26, 1.47], "side": [-6.55, 1.47]},
   {"actor": "g03", "sector": "dayroom", "at": [-1.99, 2.03], "side": [-6.55, 2.03]},
   {"actor": "g04", "sector": "dayroom", "at": [-0.93, 2.72], "side": [-6.55, 2.72]},
   {"actor": "g05", "sector": "dayroom", "at": [0.19, 0.64], "side": [6.55, 0.64]},
-  {"actor": "g06", "sector": "dayroom", "at": [1.51, 1.36], "side": [6.55, 1.36]},
-  {"actor": "g07", "sector": "dayroom", "at": [2.52, 2.03], "side": [6.55, 2.03]},
-  {"actor": "g08", "sector": "dayroom", "at": [3.86, 2.72], "side": [6.55, 2.72]},
+  {"actor": "g06", "sector": "dayroom", "at": [1.41, 0.46], "side": [6.55, 1.36]},
+  {"actor": "g07", "sector": "dayroom", "at": [3.12, 0.13], "side": [6.55, 2.03]},
+  {"actor": "g08", "sector": "dayroom", "at": [5.96, 2.52], "side": [6.55, 2.72]},
   {"actor": "l01", "sector": "dayroom", "at": [-3.82, 2.03]},
   {"actor": "l02", "sector": "dayroom", "at": [-1.57, 2.72]},
-  {"actor": "l03", "sector": "dayroom", "at": [1.2, 3.41]},
-  {"actor": "l04", "sector": "dayroom", "at": [3.78, 2.03]},
+  {"actor": "l03", "sector": "dayroom", "at": [-2.2, 3.31]},
+  {"actor": "l04", "sector": "dayroom", "at": [5.48, 1.23]},
   {"actor": "p01", "sector": "dayroom", "at": [-3.14, 0.85]},
   {"actor": "p02", "sector": "dayroom", "at": [-1.3, 1.56]},
-  {"actor": "p03", "sector": "dayroom", "at": [1.13, 2.1]},
+  {"actor": "p03", "sector": "dayroom", "at": [-0.67, 0.6]},
   {"actor": "p04", "sector": "dayroom", "at": [2.84, 0.99]},
   {"actor": "corridor_c01", "sector": "corridor", "at": [16.29, 5.99]},
   {"actor": "corridor_c02", "sector": "corridor", "at": [13.07, 5.65]},
@@ -427,7 +429,8 @@
   {"id": "stage_door_r", "at": [62.6, 9.4], "yaw": 90, "sector": "c_stage"},
   {"id": "court_north", "at": [53, 1], "yaw": 90, "sector": "courtyard"},
   {"id": "court_south", "at": [53, 12], "yaw": 90, "sector": "courtyard"},
-  {"id": "treat_door", "at": [16, 8.6], "yaw": 0, "sector": "treatment"}
+  {"id": "treat_door", "at": [16, 8.6], "yaw": 0, "sector": "treatment"},
+  {"id": "day_cards", "at": [2.4, 5.7], "yaw": 0, "sector": "dayroom"}
  ],
  "spots": {
   "door": {"sector": "dayroom", "at": [0.0, -2.1], "slots": [[-2.25, -2.1], [-0.75, -2.1], [0.75, -2.1], [2.25, -2.1], [-2.25, -1.1], [-0.75, -1.1], [0.75, -1.1], [2.25, -1.1]]},
@@ -497,7 +500,9 @@
   {"id": "courtyard_s09", "at": [60.25, 11.14]},
   {"id": "courtyard_s10", "at": [59.9, 12.61]}
  ],
- "occluders": [],
+ "occluders": [
+  {"id": "cards_table", "sprite": "cards_table", "at": [2.4, 3.3], "width": 3.2, "height": 2.79}
+ ],
  "rooms": {"corridor": {"palette": "low"}, "art_room": {"palette": "warm"}},
  "sky": {"tex": "textures/sky_moon.png", "mode": "cylinder"},
  "fog": {"color": "#06110c", "density": 0.028},

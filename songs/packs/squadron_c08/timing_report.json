@@ -1,0 +1,193 @@
+{
+ "timing": {
+  "header_bpm": 120.0,
+  "profile": "squadron_x1",
+  "drum_fit": {
+   "hits": 26,
+   "matched": 26,
+   "fitted_bpm": 139.89,
+   "fitted_offset_ms": 6.66,
+   "max_abs_ms": 33.29,
+   "mean_ms": 9.21,
+   "median_ms": 6.29,
+   "within_limit": 0.962,
+   "worst_hits": [
+    {
+     "beat": 14.0,
+     "error_ms": -33.0
+    },
+    {
+     "beat": 10.0,
+     "error_ms": 33.3
+    },
+    {
+     "beat": 15.5,
+     "error_ms": 33.1
+    }
+   ]
+  },
+  "bass": [
+   {
+    "beat": 0.0,
+    "pitch": 41,
+    "error_ms": 0.6,
+    "how": "first sound in the file"
+   },
+   {
+    "beat": 6.0,
+    "pitch": 41,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.0,
+    "pitch": 34,
+    "error_ms": -6.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 9.5,
+    "pitch": 34,
+    "error_ms": -8.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 11.0,
+    "pitch": 37,
+    "error_ms": -10.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 12.5,
+    "pitch": 36,
+    "error_ms": -4.0,
+    "how": "largest spectral change near the note start"
+   }
+  ],
+  "tempo_verified": "strict",
+  "bass_timing": {
+   "mode": "audio_checked",
+   "why": "the audio bass detector agrees with the bass MIDI (median 7.0 ms)",
+   "median_error_ms": 7.0,
+   "notes_measured": 6,
+   "notes_out_of_line": 1
+  }
+ },
+ "import_report": {
+  "set": "C08",
+  "drum_notes": {
+   "counts": {
+    "36": 16,
+    "40": 14,
+    "42": 64
+   },
+   "mode": "standard",
+   "kick": [
+    36
+   ],
+   "snare": [
+    38,
+    40
+   ],
+   "why": "the standard notes: kick 36, snare 38/40"
+  },
+  "decisions": [
+   "WARNING bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 6.0, \"pitch\": 41, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}]"
+  ],
+  "rejected": [],
+  "tempo": {
+   "profile": "squadron_x1",
+   "verified": "strict",
+   "tried": [
+    {
+     "profile": "squadron_x1",
+     "fit": {
+      "hits": 26,
+      "matched": 26,
+      "fitted_bpm": 139.89,
+      "fitted_offset_ms": 6.66,
+      "max_abs_ms": 33.29,
+      "mean_ms": 9.21,
+      "median_ms": 6.29,
+      "within_limit": 0.962,
+      "worst_hits": [
+       {
+        "beat": 14.0,
+        "error_ms": -33.0
+       },
+       {
+        "beat": 10.0,
+        "error_ms": 33.3
+       },
+       {
+        "beat": 15.5,
+        "error_ms": 33.1
+       }
+      ]
+     },
+     "verified": "strict"
+    }
+   ]
+  }
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 350475,
+   "loop_frames": 329143,
+   "tail_frames": 21332,
+   "padded_frames": 0,
+   "tail_audible_s": 0.348,
+   "laps_folded": 1,
+   "gain_db": -5.0,
+   "peak_db": -9.48,
+   "rms_db": -24.34,
+   "source_seconds": 7.3016,
+   "source_file": "Beat Shaper - C08-Drums.wav"
+  },
+  "bass": {
+   "frames_in": 332607,
+   "loop_frames": 329143,
+   "tail_frames": 3464,
+   "padded_frames": 0,
+   "tail_audible_s": 0.072,
+   "laps_folded": 1,
+   "gain_db": 12.0,
+   "peak_db": -0.95,
+   "rms_db": -10.98,
+   "source_seconds": 6.9293,
+   "source_file": "Beat Shaper - C08-Bass.wav"
+  },
+  "other": {
+   "frames_in": 369385,
+   "loop_frames": 329143,
+   "tail_frames": 40242,
+   "padded_frames": 0,
+   "tail_audible_s": 0.838,
+   "laps_folded": 1,
+   "gain_db": 8.0,
+   "peak_db": -18.48,
+   "rms_db": -32.62,
+   "source_seconds": 7.6955,
+   "source_file": "Beat Shaper - C08-Synth.wav"
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 20,
+   "bass": 4
+  },
+  "2": {
+   "drums": 22,
+   "bass": 4
+  },
+  "3": {
+   "drums": 24,
+   "bass": 5
+  },
+  "4": {
+   "drums": 26,
+   "bass": 6
+  }
+ },
+ "chart_problems": []
+}

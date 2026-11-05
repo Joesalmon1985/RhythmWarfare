@@ -1,0 +1,385 @@
+{
+ "id": "harbour",
+ "title": "The Harbour",
+ "chapter": 0,
+ "art": "harbour",
+ "run_only": true,
+ "duration_bars": 64,
+ "sequence_bars": 2,
+ "initial_energy": 60,
+ "description": "A map of the Mission Count path (content/paths/squadron): the stage the run builds, not a chapter of the old campaign.",
+ "palettes": {
+  "low": [
+   "#a88a58",
+   "#7a6a50"
+  ],
+  "cool": [
+   "#6f8fd0",
+   "#a0c0ff"
+  ],
+  "warm": [
+   "#ffb060",
+   "#ffd890"
+  ],
+  "rave": [
+   "#ffd890",
+   "#ffb060",
+   "#a0c0ff",
+   "#fff0c0"
+  ],
+  "khaki": [
+   "#ffd890",
+   "#ffb060"
+  ],
+  "searchlight": [
+   "#a0c8ff",
+   "#ffffff"
+  ],
+  "bright": [
+   "#fff0a0",
+   "#ffffff"
+  ],
+  "cold": [
+   "#8aa0d0",
+   "#6070a0"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Unimpressed",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Dancing",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Hype",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Euphoric",
+    "max": 100
+   }
+  ]
+ },
+ "acts": [],
+ "blocks": [],
+ "decisions": [],
+ "endings": {},
+ "ending_order": [],
+ "groups": {
+  "all": [
+   "col_h",
+   "chap_h",
+   "clerk_h",
+   "h01",
+   "h02",
+   "h03",
+   "h04",
+   "h05",
+   "h06",
+   "fish",
+   "sent",
+   "dock1",
+   "dock2",
+   "dock3",
+   "fish_c",
+   "quay_w",
+   "kid_q",
+   "dock_c",
+   "guard",
+   "clerk_k",
+   "mate"
+  ],
+  "core": [
+   "col_h",
+   "chap_h",
+   "clerk_h",
+   "h01",
+   "h02",
+   "h03",
+   "h04",
+   "h05",
+   "h06",
+   "fish",
+   "sent",
+   "dock1",
+   "dock2",
+   "dock3",
+   "fish_c",
+   "quay_w",
+   "kid_q",
+   "dock_c",
+   "guard",
+   "clerk_k",
+   "mate"
+  ]
+ },
+ "actors": [
+  {
+   "id": "col_h",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "officer",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "fixed": true,
+   "same_as": "col",
+   "activity": "stand",
+   "prop": "medal"
+  },
+  {
+   "id": "chap_h",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "officer",
+   "look": "c",
+   "group": "core",
+   "thresh": 0,
+   "fixed": true,
+   "same_as": "chap",
+   "activity": "stand"
+  },
+  {
+   "id": "clerk_h",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "clerk",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "fixed": true,
+   "same_as": "clerk",
+   "activity": "paint",
+   "prop": "brush",
+   "target": "c11_count"
+  },
+  {
+   "id": "h01",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "airman",
+   "look": "a",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "h02",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "airman",
+   "look": "b",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "h03",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "airman",
+   "look": "a",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "h04",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "airman",
+   "look": "c",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "h05",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "airman",
+   "look": "b",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "h06",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "airman",
+   "look": "a",
+   "group": "core",
+   "thresh": 0
+  },
+  {
+   "id": "fish",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "fisherman",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "quay",
+   "fixed": true,
+   "activity": "stand"
+  },
+  {
+   "id": "sent",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "mp",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "quay",
+   "fixed": true,
+   "activity": "stand"
+  },
+  {
+   "id": "dock1",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "fisherman",
+   "look": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "quay"
+  },
+  {
+   "id": "dock2",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "fisherman",
+   "look": "c",
+   "group": "core",
+   "thresh": 0,
+   "view": "quay"
+  },
+  {
+   "id": "dock3",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "civilian_city",
+   "look": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "quay"
+  },
+  {
+   "id": "fish_c",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "fisherman",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "coast",
+   "fixed": true,
+   "same_as": "fish",
+   "activity": "stand"
+  },
+  {
+   "id": "quay_w",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "civilian_city",
+   "look": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "coast",
+   "fixed": true,
+   "activity": "stand"
+  },
+  {
+   "id": "kid_q",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "civilian_city",
+   "look": "c",
+   "group": "core",
+   "thresh": 0,
+   "view": "coast",
+   "activity": "stand"
+  },
+  {
+   "id": "dock_c",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "fisherman",
+   "look": "c",
+   "group": "core",
+   "thresh": 0,
+   "view": "coast"
+  },
+  {
+   "id": "guard",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "mp",
+   "look": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "cell",
+   "activity": "stand"
+  },
+  {
+   "id": "clerk_k",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "clerk",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "cell",
+   "fixed": true,
+   "same_as": "clerk",
+   "activity": "stand",
+   "prop": "stamp"
+  },
+  {
+   "id": "mate",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "airman",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "cell",
+   "activity": "sit"
+  }
+ ],
+ "silhouettes": []
+}

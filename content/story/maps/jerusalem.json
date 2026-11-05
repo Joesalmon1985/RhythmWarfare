@@ -1,0 +1,2529 @@
+{
+ "units_per_m": 1,
+ "palette_weight": 0.0,
+ "eye_height": 1.6,
+ "start": "temple.home",
+ "textures": {
+  "floor_flag": "textures/floor_flag.png",
+  "floor_garden": "textures/floor_garden.png",
+  "floor_path": "textures/floor_path.png",
+  "floor_road": "textures/floor_road.png",
+  "floor_rock": "textures/floor_rock.png",
+  "floor_soil": "textures/floor_soil.png",
+  "thing_bench": "textures/thing_bench.png",
+  "thing_bowl_set": "textures/thing_bowl_set.png",
+  "thing_brazier": "textures/thing_brazier.png",
+  "thing_bush": "textures/thing_bush.png",
+  "thing_cart": "textures/thing_cart.png",
+  "thing_city_far": "textures/thing_city_far.png",
+  "thing_cross": "textures/thing_cross.png",
+  "thing_cypress": "textures/thing_cypress.png",
+  "thing_dais": "textures/thing_dais.png",
+  "thing_flowers": "textures/thing_flowers.png",
+  "thing_grass": "textures/thing_grass.png",
+  "thing_hill_far": "textures/thing_hill_far.png",
+  "thing_jar": "textures/thing_jar.png",
+  "thing_olive": "textures/thing_olive.png",
+  "thing_olive_small": "textures/thing_olive_small.png",
+  "thing_pillar": "textures/thing_pillar.png",
+  "thing_rock_a": "textures/thing_rock_a.png",
+  "thing_rock_b": "textures/thing_rock_b.png",
+  "thing_rock_c": "textures/thing_rock_c.png",
+  "thing_sheep": "textures/thing_sheep.png",
+  "thing_sky_dark1": "textures/thing_sky_dark1.png",
+  "thing_sky_dark2": "textures/thing_sky_dark2.png",
+  "thing_sky_dark3": "textures/thing_sky_dark3.png",
+  "thing_spears": "textures/thing_spears.png",
+  "thing_stone_closed": "textures/thing_stone_closed.png",
+  "thing_stone_rolled": "textures/thing_stone_rolled.png",
+  "thing_table_coins": "textures/thing_table_coins.png",
+  "thing_table_over": "textures/thing_table_over.png",
+  "thing_temple_front": "textures/thing_temple_front.png",
+  "thing_tomb": "textures/thing_tomb.png",
+  "thing_torch": "textures/thing_torch.png",
+  "thing_wall_low": "textures/thing_wall_low.png",
+  "trim": "textures/trim.png",
+  "wall_columns": "textures/wall_columns.png",
+  "wall_cypress": "textures/wall_cypress.png",
+  "wall_hill": "textures/wall_hill.png",
+  "wall_limestone": "textures/wall_limestone.png",
+  "wall_olive": "textures/wall_olive.png",
+  "wall_praetorium": "textures/wall_praetorium.png",
+  "wall_rock": "textures/wall_rock.png",
+  "sky_day": "textures/sky_day.png",
+  "sky_night": "textures/sky_night.png",
+  "sky_dusk": "textures/sky_dusk.png",
+  "sky_morning": "textures/sky_morning.png"
+ },
+ "sectors": [
+  {
+   "id": "temple",
+   "polygon": [
+    [
+     -8.0,
+     -12.0
+    ],
+    [
+     8.0,
+     -12.0
+    ],
+    [
+     8.0,
+     4.0
+    ],
+    [
+     -8.0,
+     4.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 5.2,
+   "floor_tex": "floor_flag",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_columns",
+   "light": 0.74,
+   "tint": "#fff0d0",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "day",
+   "fog": {
+    "color": "#d6c8a8",
+    "density": 0.01
+   }
+  },
+  {
+   "id": "grove",
+   "polygon": [
+    [
+     10.0,
+     -12.0
+    ],
+    [
+     26.0,
+     -12.0
+    ],
+    [
+     26.0,
+     4.0
+    ],
+    [
+     10.0,
+     4.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 3.6,
+   "floor_tex": "floor_soil",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_olive",
+   "light": 0.34,
+   "tint": "#4a5ab0",
+   "room": "grove",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "night",
+   "fog": {
+    "color": "#10163a",
+    "density": 0.02
+   }
+  },
+  {
+   "id": "praetorium",
+   "polygon": [
+    [
+     28.0,
+     -12.0
+    ],
+    [
+     44.0,
+     -12.0
+    ],
+    [
+     44.0,
+     4.0
+    ],
+    [
+     28.0,
+     4.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 5.2,
+   "floor_tex": "floor_flag",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_praetorium",
+   "light": 0.74,
+   "tint": "#fff0d0",
+   "room": "praetorium",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "day",
+   "fog": {
+    "color": "#d6c8a8",
+    "density": 0.01
+   }
+  },
+  {
+   "id": "hill",
+   "polygon": [
+    [
+     46.0,
+     -12.0
+    ],
+    [
+     62.0,
+     -12.0
+    ],
+    [
+     62.0,
+     4.0
+    ],
+    [
+     46.0,
+     4.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 3.4,
+   "floor_tex": "floor_rock",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_rock",
+   "light": 0.58,
+   "tint": "#ff9a60",
+   "room": "hill",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "dusk",
+   "fog": {
+    "color": "#c08060",
+    "density": 0.014
+   }
+  },
+  {
+   "id": "tomb",
+   "polygon": [
+    [
+     64.0,
+     -12.0
+    ],
+    [
+     80.0,
+     -12.0
+    ],
+    [
+     80.0,
+     4.0
+    ],
+    [
+     64.0,
+     4.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 4.5,
+   "floor_tex": "floor_garden",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_cypress",
+   "light": 0.72,
+   "tint": "#ffecc8",
+   "room": "tomb",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "morning",
+   "fog": {
+    "color": "#e2d4b0",
+    "density": 0.01
+   }
+  },
+  {
+   "id": "road",
+   "polygon": [
+    [
+     82.0,
+     -12.0
+    ],
+    [
+     98.0,
+     -12.0
+    ],
+    [
+     98.0,
+     4.0
+    ],
+    [
+     82.0,
+     4.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 3.4,
+   "floor_tex": "floor_road",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_hill",
+   "light": 0.72,
+   "tint": "#ffecc8",
+   "room": "road",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "morning",
+   "fog": {
+    "color": "#e2d4b0",
+    "density": 0.01
+   }
+  },
+  {
+   "id": "jerusalem_spine",
+   "polygon": [
+    [
+     -10.0,
+     4.0
+    ],
+    [
+     100.0,
+     4.0
+    ],
+    [
+     100.0,
+     8.0
+    ],
+    [
+     -10.0,
+     8.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_path",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_rock",
+   "light": 0.6,
+   "tint": "#ffe8c8",
+   "room": "spine",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "day",
+   "fog": {
+    "color": "#c0a880",
+    "density": 0.012
+   }
+  }
+ ],
+ "walls": [
+  {
+   "from": [
+    -8.0,
+    -12.0
+   ],
+   "to": [
+    8.0,
+    -12.0
+   ],
+   "sector": "temple",
+   "tex": "wall_columns"
+  },
+  {
+   "from": [
+    8.0,
+    -12.0
+   ],
+   "to": [
+    8.0,
+    4.0
+   ],
+   "sector": "temple",
+   "tex": "wall_columns"
+  },
+  {
+   "from": [
+    -8.0,
+    -12.0
+   ],
+   "to": [
+    -8.0,
+    4.0
+   ],
+   "sector": "temple",
+   "tex": "wall_columns"
+  },
+  {
+   "from": [
+    -8.0,
+    4.0
+   ],
+   "to": [
+    -2.0,
+    4.0
+   ],
+   "sector": "temple",
+   "tex": "wall_limestone"
+  },
+  {
+   "from": [
+    -2.0,
+    4.0
+   ],
+   "to": [
+    2.0,
+    4.0
+   ],
+   "sector": "temple",
+   "portal": "jerusalem_spine"
+  },
+  {
+   "from": [
+    2.0,
+    4.0
+   ],
+   "to": [
+    8.0,
+    4.0
+   ],
+   "sector": "temple",
+   "tex": "wall_limestone"
+  },
+  {
+   "from": [
+    10.0,
+    -12.0
+   ],
+   "to": [
+    26.0,
+    -12.0
+   ],
+   "sector": "grove",
+   "tex": "wall_olive"
+  },
+  {
+   "from": [
+    26.0,
+    -12.0
+   ],
+   "to": [
+    26.0,
+    4.0
+   ],
+   "sector": "grove",
+   "tex": "wall_olive"
+  },
+  {
+   "from": [
+    10.0,
+    -12.0
+   ],
+   "to": [
+    10.0,
+    4.0
+   ],
+   "sector": "grove",
+   "tex": "wall_olive"
+  },
+  {
+   "from": [
+    10.0,
+    4.0
+   ],
+   "to": [
+    16.0,
+    4.0
+   ],
+   "sector": "grove",
+   "tex": "wall_olive"
+  },
+  {
+   "from": [
+    16.0,
+    4.0
+   ],
+   "to": [
+    20.0,
+    4.0
+   ],
+   "sector": "grove",
+   "portal": "jerusalem_spine"
+  },
+  {
+   "from": [
+    20.0,
+    4.0
+   ],
+   "to": [
+    26.0,
+    4.0
+   ],
+   "sector": "grove",
+   "tex": "wall_olive"
+  },
+  {
+   "from": [
+    28.0,
+    -12.0
+   ],
+   "to": [
+    44.0,
+    -12.0
+   ],
+   "sector": "praetorium",
+   "tex": "wall_praetorium"
+  },
+  {
+   "from": [
+    44.0,
+    -12.0
+   ],
+   "to": [
+    44.0,
+    4.0
+   ],
+   "sector": "praetorium",
+   "tex": "wall_praetorium"
+  },
+  {
+   "from": [
+    28.0,
+    -12.0
+   ],
+   "to": [
+    28.0,
+    4.0
+   ],
+   "sector": "praetorium",
+   "tex": "wall_praetorium"
+  },
+  {
+   "from": [
+    28.0,
+    4.0
+   ],
+   "to": [
+    34.0,
+    4.0
+   ],
+   "sector": "praetorium",
+   "tex": "wall_limestone"
+  },
+  {
+   "from": [
+    34.0,
+    4.0
+   ],
+   "to": [
+    38.0,
+    4.0
+   ],
+   "sector": "praetorium",
+   "portal": "jerusalem_spine"
+  },
+  {
+   "from": [
+    38.0,
+    4.0
+   ],
+   "to": [
+    44.0,
+    4.0
+   ],
+   "sector": "praetorium",
+   "tex": "wall_limestone"
+  },
+  {
+   "from": [
+    46.0,
+    -12.0
+   ],
+   "to": [
+    62.0,
+    -12.0
+   ],
+   "sector": "hill",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    62.0,
+    -12.0
+   ],
+   "to": [
+    62.0,
+    4.0
+   ],
+   "sector": "hill",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    46.0,
+    -12.0
+   ],
+   "to": [
+    46.0,
+    4.0
+   ],
+   "sector": "hill",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    46.0,
+    4.0
+   ],
+   "to": [
+    52.0,
+    4.0
+   ],
+   "sector": "hill",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    52.0,
+    4.0
+   ],
+   "to": [
+    56.0,
+    4.0
+   ],
+   "sector": "hill",
+   "portal": "jerusalem_spine"
+  },
+  {
+   "from": [
+    56.0,
+    4.0
+   ],
+   "to": [
+    62.0,
+    4.0
+   ],
+   "sector": "hill",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    64.0,
+    -12.0
+   ],
+   "to": [
+    80.0,
+    -12.0
+   ],
+   "sector": "tomb",
+   "tex": "wall_cypress"
+  },
+  {
+   "from": [
+    80.0,
+    -12.0
+   ],
+   "to": [
+    80.0,
+    4.0
+   ],
+   "sector": "tomb",
+   "tex": "wall_cypress"
+  },
+  {
+   "from": [
+    64.0,
+    -12.0
+   ],
+   "to": [
+    64.0,
+    4.0
+   ],
+   "sector": "tomb",
+   "tex": "wall_cypress"
+  },
+  {
+   "from": [
+    64.0,
+    4.0
+   ],
+   "to": [
+    70.0,
+    4.0
+   ],
+   "sector": "tomb",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    70.0,
+    4.0
+   ],
+   "to": [
+    74.0,
+    4.0
+   ],
+   "sector": "tomb",
+   "portal": "jerusalem_spine"
+  },
+  {
+   "from": [
+    74.0,
+    4.0
+   ],
+   "to": [
+    80.0,
+    4.0
+   ],
+   "sector": "tomb",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    82.0,
+    -12.0
+   ],
+   "to": [
+    98.0,
+    -12.0
+   ],
+   "sector": "road",
+   "tex": "wall_hill"
+  },
+  {
+   "from": [
+    98.0,
+    -12.0
+   ],
+   "to": [
+    98.0,
+    4.0
+   ],
+   "sector": "road",
+   "tex": "wall_hill"
+  },
+  {
+   "from": [
+    82.0,
+    -12.0
+   ],
+   "to": [
+    82.0,
+    4.0
+   ],
+   "sector": "road",
+   "tex": "wall_hill"
+  },
+  {
+   "from": [
+    82.0,
+    4.0
+   ],
+   "to": [
+    88.0,
+    4.0
+   ],
+   "sector": "road",
+   "tex": "wall_hill"
+  },
+  {
+   "from": [
+    88.0,
+    4.0
+   ],
+   "to": [
+    92.0,
+    4.0
+   ],
+   "sector": "road",
+   "portal": "jerusalem_spine"
+  },
+  {
+   "from": [
+    92.0,
+    4.0
+   ],
+   "to": [
+    98.0,
+    4.0
+   ],
+   "sector": "road",
+   "tex": "wall_hill"
+  }
+ ],
+ "things": [
+  {
+   "id": "temple.front",
+   "sprite": "thing_temple_front",
+   "at": [
+    0.0,
+    -11.2
+   ],
+   "size": 6.6
+  },
+  {
+   "id": "temple.pillar1",
+   "sprite": "thing_pillar",
+   "at": [
+    -5.4,
+    -9.4
+   ],
+   "size": 5.0
+  },
+  {
+   "id": "temple.pillar2",
+   "sprite": "thing_pillar",
+   "at": [
+    5.4,
+    -9.4
+   ],
+   "size": 5.0
+  },
+  {
+   "id": "temple.pillar3",
+   "sprite": "thing_pillar",
+   "at": [
+    -5.8,
+    -3.4
+   ],
+   "size": 5.0
+  },
+  {
+   "id": "temple.pillar4",
+   "sprite": "thing_pillar",
+   "at": [
+    5.8,
+    -3.4
+   ],
+   "size": 5.0
+  },
+  {
+   "id": "temple.t1_up",
+   "sprite": "thing_table_coins",
+   "at": [
+    -3.8,
+    -6.4
+   ],
+   "size": 1.1,
+   "piece": "temple.t1_up"
+  },
+  {
+   "id": "temple.t2_up",
+   "sprite": "thing_table_coins",
+   "at": [
+    0.0,
+    -7.0
+   ],
+   "size": 1.1,
+   "piece": "temple.t2_up"
+  },
+  {
+   "id": "temple.t3_up",
+   "sprite": "thing_table_coins",
+   "at": [
+    3.8,
+    -6.4
+   ],
+   "size": 1.1,
+   "piece": "temple.t3_up"
+  },
+  {
+   "id": "temple.t1_over",
+   "sprite": "thing_table_over",
+   "at": [
+    -3.8,
+    -6.4
+   ],
+   "size": 1.1,
+   "piece": "temple.t1_over"
+  },
+  {
+   "id": "temple.t2_over",
+   "sprite": "thing_table_over",
+   "at": [
+    0.0,
+    -7.0
+   ],
+   "size": 1.1,
+   "piece": "temple.t2_over"
+  },
+  {
+   "id": "temple.t3_over",
+   "sprite": "thing_table_over",
+   "at": [
+    3.8,
+    -6.4
+   ],
+   "size": 1.1,
+   "piece": "temple.t3_over"
+  },
+  {
+   "id": "temple.jar1",
+   "sprite": "thing_jar",
+   "at": [
+    -2.0,
+    -4.4
+   ],
+   "size": 0.7
+  },
+  {
+   "id": "temple.brazier",
+   "sprite": "thing_brazier",
+   "at": [
+    2.0,
+    -4.2
+   ],
+   "size": 1.0
+  },
+  {
+   "id": "temple.spears",
+   "sprite": "thing_spears",
+   "at": [
+    7.0,
+    -7.6
+   ],
+   "size": 2.0
+  },
+  {
+   "id": "grove.olive1",
+   "sprite": "thing_olive",
+   "at": [
+    12.0,
+    -9.0
+   ],
+   "size": 4.0
+  },
+  {
+   "id": "grove.olive2",
+   "sprite": "thing_olive",
+   "at": [
+    24.0,
+    -9.6
+   ],
+   "size": 4.2
+  },
+  {
+   "id": "grove.olive3",
+   "sprite": "thing_olive",
+   "at": [
+    11.4,
+    -3.4
+   ],
+   "size": 3.6
+  },
+  {
+   "id": "grove.olive4",
+   "sprite": "thing_olive",
+   "at": [
+    24.6,
+    -3.8
+   ],
+   "size": 3.8
+  },
+  {
+   "id": "grove.olive5",
+   "sprite": "thing_olive_small",
+   "at": [
+    16.8,
+    -10.4
+   ],
+   "size": 2.8
+  },
+  {
+   "id": "grove.olive6",
+   "sprite": "thing_olive_small",
+   "at": [
+    20.6,
+    -10.8
+   ],
+   "size": 2.8
+  },
+  {
+   "id": "grove.rock1",
+   "sprite": "thing_rock_b",
+   "at": [
+    18.4,
+    -2.0
+   ],
+   "size": 1.2
+  },
+  {
+   "id": "grove.rock2",
+   "sprite": "thing_rock_a",
+   "at": [
+    14.2,
+    -7.4
+   ],
+   "size": 0.9
+  },
+  {
+   "id": "grove.torch1",
+   "sprite": "thing_torch",
+   "at": [
+    24.6,
+    -11.0
+   ],
+   "size": 1.4,
+   "anim": "flicker"
+  },
+  {
+   "id": "grove.torch2",
+   "sprite": "thing_torch",
+   "at": [
+    25.4,
+    -10.0
+   ],
+   "size": 1.4,
+   "anim": "flicker"
+  },
+  {
+   "id": "grove.grass1",
+   "sprite": "thing_grass",
+   "at": [
+    20.0,
+    -2.6
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "grove.lt_torch",
+   "kind": "light",
+   "at": [
+    25.0,
+    -10.4
+   ],
+   "y": 1.4,
+   "radius": 7.0,
+   "color": "#ff9a40",
+   "strength": 1.4,
+   "sector": "grove"
+  },
+  {
+   "id": "grove.lt_moon",
+   "kind": "light",
+   "at": [
+    18.0,
+    -5.0
+   ],
+   "y": 6.0,
+   "radius": 14.0,
+   "color": "#8fb4ff",
+   "strength": 0.9,
+   "sector": "grove"
+  },
+  {
+   "id": "praetorium.dais",
+   "sprite": "thing_dais",
+   "at": [
+    36.0,
+    -9.0
+   ],
+   "size": 2.2
+  },
+  {
+   "id": "praetorium.bowl",
+   "sprite": "thing_bowl_set",
+   "at": [
+    38.4,
+    -7.6
+   ],
+   "size": 0.9
+  },
+  {
+   "id": "praetorium.pillar1",
+   "sprite": "thing_pillar",
+   "at": [
+    31.2,
+    -10.4
+   ],
+   "size": 5.0
+  },
+  {
+   "id": "praetorium.pillar2",
+   "sprite": "thing_pillar",
+   "at": [
+    40.8,
+    -10.4
+   ],
+   "size": 5.0
+  },
+  {
+   "id": "praetorium.brazier1",
+   "sprite": "thing_brazier",
+   "at": [
+    33.0,
+    -6.8
+   ],
+   "size": 1.0,
+   "anim": "flicker"
+  },
+  {
+   "id": "praetorium.brazier2",
+   "sprite": "thing_brazier",
+   "at": [
+    39.0,
+    -6.8
+   ],
+   "size": 1.0,
+   "anim": "flicker"
+  },
+  {
+   "id": "praetorium.spears",
+   "sprite": "thing_spears",
+   "at": [
+    29.0,
+    -3.4
+   ],
+   "size": 2.0
+  },
+  {
+   "id": "praetorium.bench",
+   "sprite": "thing_bench",
+   "at": [
+    30.4,
+    -8.2
+   ],
+   "size": 0.7
+  },
+  {
+   "id": "praetorium.jar",
+   "sprite": "thing_jar",
+   "at": [
+    42.6,
+    -9.6
+   ],
+   "size": 0.8
+  },
+  {
+   "id": "praetorium.bench2",
+   "sprite": "thing_bench",
+   "at": [
+    42.0,
+    -3.0
+   ],
+   "size": 0.7
+  },
+  {
+   "id": "hill.hill",
+   "sprite": "thing_hill_far",
+   "at": [
+    54.0,
+    -11.7
+   ],
+   "size": 6.0
+  },
+  {
+   "id": "hill.cross1",
+   "sprite": "thing_cross",
+   "at": [
+    51.2,
+    -10.4
+   ],
+   "size": 3.0
+  },
+  {
+   "id": "hill.cross2",
+   "sprite": "thing_cross",
+   "at": [
+    54.0,
+    -11.0
+   ],
+   "size": 3.6
+  },
+  {
+   "id": "hill.cross3",
+   "sprite": "thing_cross",
+   "at": [
+    56.8,
+    -10.4
+   ],
+   "size": 3.0
+  },
+  {
+   "id": "hill.rockA",
+   "sprite": "thing_rock_c",
+   "at": [
+    47.4,
+    -8.6
+   ],
+   "size": 3.0
+  },
+  {
+   "id": "hill.rockB",
+   "sprite": "thing_rock_c",
+   "at": [
+    60.8,
+    -9.0
+   ],
+   "size": 3.0
+  },
+  {
+   "id": "hill.rock1",
+   "sprite": "thing_rock_b",
+   "at": [
+    59.0,
+    -2.2
+   ],
+   "size": 1.3
+  },
+  {
+   "id": "hill.rock2",
+   "sprite": "thing_rock_a",
+   "at": [
+    49.0,
+    -1.8
+   ],
+   "size": 0.8
+  },
+  {
+   "id": "hill.dark1",
+   "sprite": "thing_sky_dark1",
+   "at": [
+    54.0,
+    -11.9
+   ],
+   "size": 34.0,
+   "piece": "hill.dark1",
+   "y": 14.0,
+   "blend": "mix",
+   "dim_people": 0.1
+  },
+  {
+   "id": "hill.dark2",
+   "sprite": "thing_sky_dark2",
+   "at": [
+    54.0,
+    -11.9
+   ],
+   "size": 34.0,
+   "piece": "hill.dark2",
+   "y": 14.0,
+   "blend": "mix",
+   "dim_people": 0.16
+  },
+  {
+   "id": "hill.dark3",
+   "sprite": "thing_sky_dark3",
+   "at": [
+    54.0,
+    -11.9
+   ],
+   "size": 34.0,
+   "piece": "hill.dark3",
+   "y": 14.0,
+   "blend": "mix",
+   "dim_people": 0.22
+  },
+  {
+   "id": "hill.spears",
+   "sprite": "thing_spears",
+   "at": [
+    59.4,
+    -5.8
+   ],
+   "size": 2.0
+  },
+  {
+   "id": "hill.grass1",
+   "sprite": "thing_grass",
+   "at": [
+    55.0,
+    -2.0
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "tomb.tomb",
+   "sprite": "thing_tomb",
+   "at": [
+    72.0,
+    -10.2
+   ],
+   "size": 4.2
+  },
+  {
+   "id": "tomb.stone_closed",
+   "sprite": "thing_stone_closed",
+   "at": [
+    71.8,
+    -8.4
+   ],
+   "size": 2.0,
+   "piece": "tomb.stone_closed"
+  },
+  {
+   "id": "tomb.stone_rolled",
+   "sprite": "thing_stone_rolled",
+   "at": [
+    74.4,
+    -8.4
+   ],
+   "size": 1.3,
+   "piece": "tomb.stone_rolled"
+  },
+  {
+   "id": "tomb.cyp1",
+   "sprite": "thing_cypress",
+   "at": [
+    66.4,
+    -9.4
+   ],
+   "size": 4.4
+  },
+  {
+   "id": "tomb.cyp2",
+   "sprite": "thing_cypress",
+   "at": [
+    77.8,
+    -9.8
+   ],
+   "size": 4.4
+  },
+  {
+   "id": "tomb.cyp3",
+   "sprite": "thing_cypress",
+   "at": [
+    65.0,
+    -4.0
+   ],
+   "size": 4.0
+  },
+  {
+   "id": "tomb.cyp4",
+   "sprite": "thing_cypress",
+   "at": [
+    79.0,
+    -4.2
+   ],
+   "size": 4.0
+  },
+  {
+   "id": "tomb.flowers1",
+   "sprite": "thing_flowers",
+   "at": [
+    69.0,
+    -3.0
+   ],
+   "size": 0.7
+  },
+  {
+   "id": "tomb.flowers2",
+   "sprite": "thing_flowers",
+   "at": [
+    75.2,
+    -2.4
+   ],
+   "size": 0.7
+  },
+  {
+   "id": "tomb.flowers3",
+   "sprite": "thing_flowers",
+   "at": [
+    73.0,
+    -5.4
+   ],
+   "size": 0.7
+  },
+  {
+   "id": "tomb.bush1",
+   "sprite": "thing_bush",
+   "at": [
+    67.0,
+    -6.4
+   ],
+   "size": 1.0
+  },
+  {
+   "id": "tomb.olive",
+   "sprite": "thing_olive_small",
+   "at": [
+    77.6,
+    -6.6
+   ],
+   "size": 2.6
+  },
+  {
+   "id": "tomb.grass1",
+   "sprite": "thing_grass",
+   "at": [
+    70.6,
+    -2.0
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "tomb.lt_dawn",
+   "kind": "light",
+   "at": [
+    72.0,
+    -8.0
+   ],
+   "y": 4.0,
+   "radius": 12.0,
+   "color": "#ffe0a8",
+   "strength": 1.1,
+   "sector": "tomb"
+  },
+  {
+   "id": "road.city",
+   "sprite": "thing_city_far",
+   "at": [
+    95.6,
+    -11.5
+   ],
+   "size": 3.6
+  },
+  {
+   "id": "road.olive",
+   "sprite": "thing_olive",
+   "at": [
+    83.6,
+    -9.0
+   ],
+   "size": 3.8
+  },
+  {
+   "id": "road.rock1",
+   "sprite": "thing_rock_b",
+   "at": [
+    95.8,
+    -2.4
+   ],
+   "size": 1.3
+  },
+  {
+   "id": "road.bush1",
+   "sprite": "thing_bush",
+   "at": [
+    83.2,
+    -3.0
+   ],
+   "size": 1.0
+  },
+  {
+   "id": "road.flowers1",
+   "sprite": "thing_flowers",
+   "at": [
+    93.0,
+    -2.0
+   ],
+   "size": 0.6
+  },
+  {
+   "id": "road.sheep1",
+   "sprite": "thing_sheep",
+   "at": [
+    84.8,
+    -8.0
+   ],
+   "size": 0.75
+  },
+  {
+   "id": "road.sheep2",
+   "sprite": "thing_sheep",
+   "at": [
+    86.2,
+    -9.4
+   ],
+   "size": 0.75
+  },
+  {
+   "id": "road.cart",
+   "sprite": "thing_cart",
+   "at": [
+    96.4,
+    -7.0
+   ],
+   "size": 1.5
+  },
+  {
+   "id": "road.grass1",
+   "sprite": "thing_grass",
+   "at": [
+    88.0,
+    -2.2
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "road.wall",
+   "sprite": "thing_wall_low",
+   "at": [
+    87.0,
+    -6.0
+   ],
+   "size": 0.9
+  }
+ ],
+ "homes": [
+  {
+   "actor": "mc1",
+   "sector": "temple",
+   "at": [
+    -3.8,
+    -8.0
+   ]
+  },
+  {
+   "actor": "mc2",
+   "sector": "temple",
+   "at": [
+    0.0,
+    -8.6
+   ]
+  },
+  {
+   "actor": "mc3",
+   "sector": "temple",
+   "at": [
+    3.8,
+    -8.0
+   ]
+  },
+  {
+   "actor": "pr1",
+   "sector": "temple",
+   "at": [
+    -6.4,
+    -6.0
+   ]
+  },
+  {
+   "actor": "pr2",
+   "sector": "temple",
+   "at": [
+    6.4,
+    -5.6
+   ]
+  },
+  {
+   "actor": "g1_temple",
+   "sector": "temple",
+   "at": [
+    -2.0,
+    -10.4
+   ]
+  },
+  {
+   "actor": "g2_temple",
+   "sector": "temple",
+   "at": [
+    2.0,
+    -10.4
+   ]
+  },
+  {
+   "actor": "v1_temple",
+   "sector": "temple",
+   "at": [
+    -1.6,
+    -3.0
+   ]
+  },
+  {
+   "actor": "v2",
+   "sector": "temple",
+   "at": [
+    1.8,
+    -3.0
+   ]
+  },
+  {
+   "actor": "d09",
+   "sector": "grove",
+   "at": [
+    15.0,
+    -4.4
+   ]
+  },
+  {
+   "actor": "d10",
+   "sector": "grove",
+   "at": [
+    18.0,
+    -5.6
+   ]
+  },
+  {
+   "actor": "d11",
+   "sector": "grove",
+   "at": [
+    21.0,
+    -4.6
+   ]
+  },
+  {
+   "actor": "d12",
+   "sector": "grove",
+   "at": [
+    23.4,
+    -9.4
+   ]
+  },
+  {
+   "actor": "g1_grove",
+   "sector": "grove",
+   "at": [
+    24.2,
+    -8.4
+   ]
+  },
+  {
+   "actor": "g2_grove",
+   "sector": "grove",
+   "at": [
+    22.6,
+    -10.2
+   ]
+  },
+  {
+   "actor": "g3",
+   "sector": "grove",
+   "at": [
+    25.2,
+    -7.2
+   ]
+  },
+  {
+   "actor": "gov",
+   "sector": "praetorium",
+   "at": [
+    36.0,
+    -9.6
+   ]
+  },
+  {
+   "actor": "sc1",
+   "sector": "praetorium",
+   "at": [
+    33.6,
+    -7.8
+   ]
+  },
+  {
+   "actor": "sc2",
+   "sector": "praetorium",
+   "at": [
+    38.0,
+    -8.4
+   ]
+  },
+  {
+   "actor": "w1_praetorium",
+   "sector": "praetorium",
+   "at": [
+    30.0,
+    -4.6
+   ]
+  },
+  {
+   "actor": "g1_praetorium",
+   "sector": "praetorium",
+   "at": [
+    32.4,
+    -10.2
+   ]
+  },
+  {
+   "actor": "g2_praetorium",
+   "sector": "praetorium",
+   "at": [
+    39.6,
+    -10.2
+   ]
+  },
+  {
+   "actor": "cr1",
+   "sector": "praetorium",
+   "at": [
+    32.6,
+    -3.0
+   ]
+  },
+  {
+   "actor": "cr2",
+   "sector": "praetorium",
+   "at": [
+    34.6,
+    -4.2
+   ]
+  },
+  {
+   "actor": "cr3",
+   "sector": "praetorium",
+   "at": [
+    36.8,
+    -3.2
+   ]
+  },
+  {
+   "actor": "cr4",
+   "sector": "praetorium",
+   "at": [
+    38.6,
+    -4.0
+   ]
+  },
+  {
+   "actor": "cr5",
+   "sector": "praetorium",
+   "at": [
+    40.6,
+    -3.0
+   ]
+  },
+  {
+   "actor": "cr6",
+   "sector": "praetorium",
+   "at": [
+    41.6,
+    -5.2
+   ]
+  },
+  {
+   "actor": "w1_hill",
+   "sector": "hill",
+   "at": [
+    50.4,
+    -4.0
+   ]
+  },
+  {
+   "actor": "w2_hill",
+   "sector": "hill",
+   "at": [
+    51.8,
+    -3.2
+   ]
+  },
+  {
+   "actor": "w3_hill",
+   "sector": "hill",
+   "at": [
+    49.2,
+    -3.0
+   ]
+  },
+  {
+   "actor": "s1",
+   "sector": "hill",
+   "at": [
+    56.4,
+    -6.0
+   ]
+  },
+  {
+   "actor": "s2",
+   "sector": "hill",
+   "at": [
+    58.0,
+    -5.0
+   ]
+  },
+  {
+   "actor": "s3",
+   "sector": "hill",
+   "at": [
+    54.8,
+    -7.4
+   ]
+  },
+  {
+   "actor": "x1",
+   "sector": "hill",
+   "at": [
+    48.0,
+    -6.0
+   ]
+  },
+  {
+   "actor": "x2",
+   "sector": "hill",
+   "at": [
+    60.0,
+    -3.4
+   ]
+  },
+  {
+   "actor": "x3",
+   "sector": "hill",
+   "at": [
+    57.0,
+    -3.0
+   ]
+  },
+  {
+   "actor": "w1_tomb",
+   "sector": "tomb",
+   "at": [
+    69.0,
+    -3.8
+   ]
+  },
+  {
+   "actor": "w2_tomb",
+   "sector": "tomb",
+   "at": [
+    70.6,
+    -3.0
+   ]
+  },
+  {
+   "actor": "w3_tomb",
+   "sector": "tomb",
+   "at": [
+    73.2,
+    -3.6
+   ]
+  },
+  {
+   "actor": "gd1",
+   "sector": "tomb",
+   "at": [
+    76.4,
+    -5.0
+   ]
+  },
+  {
+   "actor": "d01",
+   "sector": "road",
+   "at": [
+    88.0,
+    -3.4
+   ]
+  },
+  {
+   "actor": "d02",
+   "sector": "road",
+   "at": [
+    91.6,
+    -3.2
+   ]
+  },
+  {
+   "actor": "sp1",
+   "sector": "road",
+   "at": [
+    85.0,
+    -6.6
+   ]
+  },
+  {
+   "actor": "g1_road",
+   "sector": "road",
+   "at": [
+    94.6,
+    -6.4
+   ]
+  },
+  {
+   "actor": "g2_road",
+   "sector": "road",
+   "at": [
+    96.2,
+    -4.6
+   ]
+  },
+  {
+   "actor": "v1_road",
+   "sector": "road",
+   "at": [
+    93.6,
+    -3.0
+   ]
+  }
+ ],
+ "waypoints": [
+  {
+   "id": "temple.home",
+   "at": [
+    0.0,
+    1.6
+   ],
+   "yaw": 0.0,
+   "sector": "temple"
+  },
+  {
+   "id": "temple.arrive",
+   "at": [
+    0.0,
+    3.0
+   ],
+   "yaw": 0.0,
+   "sector": "temple"
+  },
+  {
+   "id": "temple.g1",
+   "at": [
+    -2.2,
+    1.4
+   ],
+   "yaw": 0.0,
+   "sector": "temple"
+  },
+  {
+   "id": "temple.g2",
+   "at": [
+    2.4,
+    0.8
+   ],
+   "yaw": 0.0,
+   "sector": "temple"
+  },
+  {
+   "id": "temple.g3",
+   "at": [
+    0.0,
+    0.4
+   ],
+   "yaw": 0.0,
+   "sector": "temple"
+  },
+  {
+   "id": "temple.b1",
+   "at": [
+    -6.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "temple"
+  },
+  {
+   "id": "temple.b2",
+   "at": [
+    6.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "temple"
+  },
+  {
+   "id": "temple.door_up",
+   "at": [
+    -5.2,
+    -7.8
+   ],
+   "yaw": 0.0,
+   "sector": "temple"
+  },
+  {
+   "id": "temple.door_left",
+   "at": [
+    -6.4,
+    -2.0
+   ],
+   "yaw": 0.0,
+   "sector": "temple"
+  },
+  {
+   "id": "temple.door_right",
+   "at": [
+    6.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "temple"
+  },
+  {
+   "id": "grove.home",
+   "at": [
+    18.0,
+    1.6
+   ],
+   "yaw": 0.0,
+   "sector": "grove"
+  },
+  {
+   "id": "grove.arrive",
+   "at": [
+    18.0,
+    3.0
+   ],
+   "yaw": 0.0,
+   "sector": "grove"
+  },
+  {
+   "id": "grove.g1",
+   "at": [
+    15.8,
+    1.4
+   ],
+   "yaw": 0.0,
+   "sector": "grove"
+  },
+  {
+   "id": "grove.g2",
+   "at": [
+    20.4,
+    0.8
+   ],
+   "yaw": 0.0,
+   "sector": "grove"
+  },
+  {
+   "id": "grove.g3",
+   "at": [
+    18.0,
+    0.4
+   ],
+   "yaw": 0.0,
+   "sector": "grove"
+  },
+  {
+   "id": "grove.b1",
+   "at": [
+    11.8,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "grove"
+  },
+  {
+   "id": "grove.b2",
+   "at": [
+    24.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "grove"
+  },
+  {
+   "id": "grove.door_up",
+   "at": [
+    18.0,
+    -9.6
+   ],
+   "yaw": 0.0,
+   "sector": "grove"
+  },
+  {
+   "id": "grove.door_left",
+   "at": [
+    11.8,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "grove"
+  },
+  {
+   "id": "grove.door_right",
+   "at": [
+    24.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "grove"
+  },
+  {
+   "id": "praetorium.home",
+   "at": [
+    36.0,
+    1.6
+   ],
+   "yaw": 0.0,
+   "sector": "praetorium"
+  },
+  {
+   "id": "praetorium.arrive",
+   "at": [
+    36.0,
+    3.0
+   ],
+   "yaw": 0.0,
+   "sector": "praetorium"
+  },
+  {
+   "id": "praetorium.g1",
+   "at": [
+    33.8,
+    1.4
+   ],
+   "yaw": 0.0,
+   "sector": "praetorium"
+  },
+  {
+   "id": "praetorium.g2",
+   "at": [
+    38.4,
+    0.8
+   ],
+   "yaw": 0.0,
+   "sector": "praetorium"
+  },
+  {
+   "id": "praetorium.g3",
+   "at": [
+    36.0,
+    0.4
+   ],
+   "yaw": 0.0,
+   "sector": "praetorium"
+  },
+  {
+   "id": "praetorium.b1",
+   "at": [
+    29.8,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "praetorium"
+  },
+  {
+   "id": "praetorium.b2",
+   "at": [
+    42.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "praetorium"
+  },
+  {
+   "id": "praetorium.door_up",
+   "at": [
+    34.4,
+    -11.0
+   ],
+   "yaw": 0.0,
+   "sector": "praetorium"
+  },
+  {
+   "id": "praetorium.door_left",
+   "at": [
+    29.6,
+    -1.0
+   ],
+   "yaw": 0.0,
+   "sector": "praetorium"
+  },
+  {
+   "id": "praetorium.door_right",
+   "at": [
+    42.4,
+    -8.0
+   ],
+   "yaw": 0.0,
+   "sector": "praetorium"
+  },
+  {
+   "id": "hill.home",
+   "at": [
+    54.0,
+    1.6
+   ],
+   "yaw": 0.0,
+   "sector": "hill"
+  },
+  {
+   "id": "hill.arrive",
+   "at": [
+    54.0,
+    3.0
+   ],
+   "yaw": 0.0,
+   "sector": "hill"
+  },
+  {
+   "id": "hill.g1",
+   "at": [
+    51.8,
+    1.4
+   ],
+   "yaw": 0.0,
+   "sector": "hill"
+  },
+  {
+   "id": "hill.g2",
+   "at": [
+    56.4,
+    0.8
+   ],
+   "yaw": 0.0,
+   "sector": "hill"
+  },
+  {
+   "id": "hill.g3",
+   "at": [
+    54.0,
+    0.4
+   ],
+   "yaw": 0.0,
+   "sector": "hill"
+  },
+  {
+   "id": "hill.b1",
+   "at": [
+    47.8,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "hill"
+  },
+  {
+   "id": "hill.b2",
+   "at": [
+    60.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "hill"
+  },
+  {
+   "id": "hill.door_up",
+   "at": [
+    54.0,
+    -8.6
+   ],
+   "yaw": 0.0,
+   "sector": "hill"
+  },
+  {
+   "id": "hill.door_left",
+   "at": [
+    47.8,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "hill"
+  },
+  {
+   "id": "hill.door_right",
+   "at": [
+    60.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "hill"
+  },
+  {
+   "id": "tomb.home",
+   "at": [
+    72.0,
+    1.6
+   ],
+   "yaw": 0.0,
+   "sector": "tomb"
+  },
+  {
+   "id": "tomb.arrive",
+   "at": [
+    72.0,
+    3.0
+   ],
+   "yaw": 0.0,
+   "sector": "tomb"
+  },
+  {
+   "id": "tomb.g1",
+   "at": [
+    69.8,
+    1.4
+   ],
+   "yaw": 0.0,
+   "sector": "tomb"
+  },
+  {
+   "id": "tomb.g2",
+   "at": [
+    74.4,
+    0.8
+   ],
+   "yaw": 0.0,
+   "sector": "tomb"
+  },
+  {
+   "id": "tomb.g3",
+   "at": [
+    72.0,
+    0.4
+   ],
+   "yaw": 0.0,
+   "sector": "tomb"
+  },
+  {
+   "id": "tomb.b1",
+   "at": [
+    65.8,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "tomb"
+  },
+  {
+   "id": "tomb.b2",
+   "at": [
+    78.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "tomb"
+  },
+  {
+   "id": "tomb.door_up",
+   "at": [
+    72.0,
+    -6.4
+   ],
+   "yaw": 0.0,
+   "sector": "tomb"
+  },
+  {
+   "id": "tomb.door_left",
+   "at": [
+    65.8,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "tomb"
+  },
+  {
+   "id": "tomb.door_right",
+   "at": [
+    78.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "tomb"
+  },
+  {
+   "id": "road.home",
+   "at": [
+    90.0,
+    1.6
+   ],
+   "yaw": 0.0,
+   "sector": "road"
+  },
+  {
+   "id": "road.arrive",
+   "at": [
+    90.0,
+    3.0
+   ],
+   "yaw": 0.0,
+   "sector": "road"
+  },
+  {
+   "id": "road.g1",
+   "at": [
+    87.8,
+    1.4
+   ],
+   "yaw": 0.0,
+   "sector": "road"
+  },
+  {
+   "id": "road.g2",
+   "at": [
+    92.4,
+    0.8
+   ],
+   "yaw": 0.0,
+   "sector": "road"
+  },
+  {
+   "id": "road.g3",
+   "at": [
+    90.0,
+    0.4
+   ],
+   "yaw": 0.0,
+   "sector": "road"
+  },
+  {
+   "id": "road.b1",
+   "at": [
+    83.8,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "road"
+  },
+  {
+   "id": "road.b2",
+   "at": [
+    96.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "road"
+  },
+  {
+   "id": "road.door_up",
+   "at": [
+    90.0,
+    -9.4
+   ],
+   "yaw": 0.0,
+   "sector": "road"
+  },
+  {
+   "id": "road.door_left",
+   "at": [
+    83.8,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "road"
+  },
+  {
+   "id": "road.door_right",
+   "at": [
+    96.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "road"
+  }
+ ],
+ "spots": {},
+ "silhouettes": [],
+ "occluders": [],
+ "sky": {
+  "tex": "textures/sky_day.png",
+  "mode": "cylinder",
+  "by_name": {
+   "day": "textures/sky_day.png",
+   "dusk": "textures/sky_dusk.png",
+   "morning": "textures/sky_morning.png",
+   "night": "textures/sky_night.png"
+  }
+ },
+ "fog": {
+  "color": "#40384a",
+  "density": 0.012
+ },
+ "rooms": {},
+ "animated": []
+}

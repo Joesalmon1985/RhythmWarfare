@@ -16,6 +16,12 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def stem_path(pack: str, stem: str) -> Path:
+    """A pack's stem file as its manifest names it (songs/packs/_shared since docs/REPO_SIZE.md, Part 2)."""
+    d = ROOT / "songs/packs" / pack
+    return (d / json.loads((d / "pack.json").read_text(encoding="utf-8"))["stems"][stem]).resolve()
 BEAT = 60.0 / 174.0
 
 
@@ -45,7 +51,7 @@ def main() -> int:
     pid = td["music"]["audio"]
     with tempfile.TemporaryDirectory() as tmp:
         out = Path(tmp) / "d.wav"
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(ROOT / "songs/packs" / pid / "loops/drums.wav"), "-ar", str(rate), "-ac", "1", str(out)], check=True)
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(stem_path(pid, "drums")), "-ar", str(rate), "-ac", "1", str(out)], check=True)
         loop, _ = read_pcm(out)
     s0 = float(info["started_wall"])
     events = info.get("events", [])

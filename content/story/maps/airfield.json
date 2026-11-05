@@ -1,0 +1,2609 @@
+{
+ "art": "airfield",
+ "units_per_m": 1,
+ "eye_height": 1.6,
+ "start": "c01_home",
+ "textures": {
+  "ceil_beams": "textures/ceil_beams.png",
+  "ceil_canvas": "textures/ceil_canvas.png",
+  "ceil_fuselage": "textures/ceil_fuselage.png",
+  "ceil_hangar": "textures/ceil_hangar.png",
+  "ceil_plaster": "textures/ceil_plaster.png",
+  "floor_boards": "textures/floor_boards.png",
+  "floor_concrete": "textures/floor_concrete.png",
+  "floor_dust": "textures/floor_dust.png",
+  "floor_lino": "textures/floor_lino.png",
+  "floor_metal": "textures/floor_metal.png",
+  "sky_day": "textures/sky_day.png",
+  "thing_board": "textures/thing_board.png",
+  "thing_bomber_nose": "textures/thing_bomber_nose.png",
+  "thing_certificate": "textures/thing_certificate.png",
+  "thing_cot_empty": "textures/thing_cot_empty.png",
+  "thing_cot_ward": "textures/thing_cot_ward.png",
+  "thing_crate_stack": "textures/thing_crate_stack.png",
+  "thing_desk_lamp": "textures/thing_desk_lamp.png",
+  "thing_desk_office": "textures/thing_desk_office.png",
+  "thing_door_office": "textures/thing_door_office.png",
+  "thing_door_open_light": "textures/thing_door_open_light.png",
+  "thing_drip_stand": "textures/thing_drip_stand.png",
+  "thing_emergency_box": "textures/thing_emergency_box.png",
+  "thing_filing_cabinet": "textures/thing_filing_cabinet.png",
+  "thing_flak_burst": "textures/thing_flak_burst.png",
+  "thing_fuel_drums": "textures/thing_fuel_drums.png",
+  "thing_hangar_front": "textures/thing_hangar_front.png",
+  "thing_instrument_panel": "textures/thing_instrument_panel.png",
+  "thing_jeep": "textures/thing_jeep.png",
+  "thing_kitchen_hatch": "textures/thing_kitchen_hatch.png",
+  "thing_ladder": "textures/thing_ladder.png",
+  "thing_lamp_hang": "textures/thing_lamp_hang.png",
+  "thing_lamp_red": "textures/thing_lamp_red.png",
+  "thing_ledger": "textures/thing_ledger.png",
+  "thing_nose_glass": "textures/thing_nose_glass.png",
+  "thing_release_lever": "textures/thing_release_lever.png",
+  "thing_sandbags": "textures/thing_sandbags.png",
+  "thing_scales": "textures/thing_scales.png",
+  "thing_screen_cloth": "textures/thing_screen_cloth.png",
+  "thing_shelves_tins": "textures/thing_shelves_tins.png",
+  "thing_sign_ledgerless": "textures/thing_sign_ledgerless.png",
+  "thing_stamp_big": "textures/thing_stamp_big.png",
+  "thing_stove": "textures/thing_stove.png",
+  "thing_table_maps": "textures/thing_table_maps.png",
+  "thing_tent_flap": "textures/thing_tent_flap.png",
+  "thing_truck": "textures/thing_truck.png",
+  "thing_window_hut": "textures/thing_window_hut.png",
+  "thing_window_office": "textures/thing_window_office.png",
+  "thing_windsock": "textures/thing_windsock.png",
+  "wall_berm": "textures/wall_berm.png",
+  "wall_bomber": "textures/wall_bomber.png",
+  "wall_hangar": "textures/wall_hangar.png",
+  "wall_hut": "textures/wall_hut.png",
+  "wall_office": "textures/wall_office.png",
+  "wall_tent": "textures/wall_tent.png"
+ },
+ "sectors": [
+  {
+   "id": "hut",
+   "polygon": [
+    [
+     -12,
+     0
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     8
+    ],
+    [
+     -12,
+     8
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 2.8,
+   "light": 0.55,
+   "tint": "#f0dcae",
+   "room": "main",
+   "flags": [],
+   "floor_tex": "floor_boards",
+   "ceil_tex": "ceil_beams",
+   "wall_tex": "wall_hut",
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "watch",
+     "check"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "point"
+    ]
+   }
+  },
+  {
+   "id": "line",
+   "polygon": [
+    [
+     0,
+     0
+    ],
+    [
+     26,
+     0
+    ],
+    [
+     26,
+     14
+    ],
+    [
+     0,
+     14
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 5.0,
+   "light": 0.72,
+   "tint": "#f2ead8",
+   "room": "line",
+   "flags": [],
+   "floor_tex": "floor_dust",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_berm",
+   "activities": {
+    "quiet": [
+     "carry",
+     "check",
+     "stand",
+     "chat"
+    ],
+    "dancing": [
+     "carry",
+     "check",
+     "chat",
+     "serve"
+    ],
+    "hype": [
+     "carry",
+     "wave",
+     "chat",
+     "check"
+    ],
+    "euphoric": [
+     "wave",
+     "carry",
+     "chat",
+     "watch"
+    ]
+   }
+  },
+  {
+   "id": "tent",
+   "polygon": [
+    [
+     0,
+     -10
+    ],
+    [
+     10,
+     -10
+    ],
+    [
+     10,
+     0
+    ],
+    [
+     0,
+     0
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 3.0,
+   "light": 0.6,
+   "tint": "#fff2d8",
+   "room": "tent",
+   "flags": [],
+   "floor_tex": "floor_lino",
+   "ceil_tex": "ceil_canvas",
+   "wall_tex": "wall_tent",
+   "activities": {
+    "quiet": [
+     "sit",
+     "lie",
+     "chat",
+     "stand"
+    ],
+    "dancing": [
+     "sit",
+     "lie",
+     "chat",
+     "watch"
+    ],
+    "hype": [
+     "sit",
+     "chat",
+     "watch",
+     "wave"
+    ],
+    "euphoric": [
+     "wave",
+     "chat",
+     "watch",
+     "sit"
+    ]
+   }
+  },
+  {
+   "id": "office",
+   "polygon": [
+    [
+     -12,
+     -10
+    ],
+    [
+     0,
+     -10
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     -12,
+     0
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 2.9,
+   "light": 0.55,
+   "tint": "#f4e6b8",
+   "room": "office",
+   "flags": [],
+   "floor_tex": "floor_boards",
+   "ceil_tex": "ceil_plaster",
+   "wall_tex": "wall_office",
+   "activities": {
+    "quiet": [
+     "stand",
+     "lean_wall",
+     "check",
+     "chat"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "chat",
+     "check"
+    ],
+    "hype": [
+     "watch",
+     "chat",
+     "point",
+     "wave"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat"
+    ]
+   }
+  },
+  {
+   "id": "bomber",
+   "polygon": [
+    [
+     10,
+     14
+    ],
+    [
+     14,
+     14
+    ],
+    [
+     14,
+     22
+    ],
+    [
+     10,
+     22
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 2.2,
+   "light": 0.6,
+   "tint": "#a8d0a0",
+   "room": "bomber",
+   "flags": [],
+   "floor_tex": "floor_metal",
+   "ceil_tex": "ceil_fuselage",
+   "wall_tex": "wall_bomber",
+   "ambient": 0.9,
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "rock",
+     "stare"
+    ],
+    "dancing": [
+     "stand",
+     "sit",
+     "rock",
+     "stare"
+    ],
+    "hype": [
+     "stand",
+     "sit",
+     "rock",
+     "stare"
+    ],
+    "euphoric": [
+     "stand",
+     "sit",
+     "rock",
+     "stare"
+    ]
+   }
+  },
+  {
+   "id": "store",
+   "polygon": [
+    [
+     26,
+     0
+    ],
+    [
+     38,
+     0
+    ],
+    [
+     38,
+     12
+    ],
+    [
+     26,
+     12
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 4.0,
+   "light": 0.7,
+   "tint": "#f0e0b8",
+   "room": "store",
+   "flags": [],
+   "floor_tex": "floor_concrete",
+   "ceil_tex": "ceil_hangar",
+   "wall_tex": "wall_hangar",
+   "ambient": 0.85,
+   "activities": {
+    "quiet": [
+     "carry",
+     "check",
+     "stand",
+     "chat"
+    ],
+    "dancing": [
+     "carry",
+     "check",
+     "chat",
+     "serve"
+    ],
+    "hype": [
+     "carry",
+     "wave",
+     "chat",
+     "check"
+    ],
+    "euphoric": [
+     "wave",
+     "carry",
+     "chat",
+     "watch"
+    ]
+   }
+  }
+ ],
+ "walls": [
+  {
+   "from": [
+    0,
+    3
+   ],
+   "to": [
+    0,
+    6
+   ],
+   "sector": "hut",
+   "portal": "line"
+  },
+  {
+   "from": [
+    -8,
+    0
+   ],
+   "to": [
+    -4,
+    0
+   ],
+   "sector": "hut",
+   "portal": "office"
+  },
+  {
+   "from": [
+    0,
+    -7
+   ],
+   "to": [
+    0,
+    -4
+   ],
+   "sector": "office",
+   "portal": "tent"
+  },
+  {
+   "from": [
+    3,
+    0
+   ],
+   "to": [
+    7,
+    0
+   ],
+   "sector": "tent",
+   "portal": "line"
+  },
+  {
+   "from": [
+    26,
+    4
+   ],
+   "to": [
+    26,
+    8
+   ],
+   "sector": "line",
+   "portal": "store"
+  },
+  {
+   "from": [
+    11,
+    14
+   ],
+   "to": [
+    13,
+    14
+   ],
+   "sector": "line",
+   "portal": "bomber"
+  }
+ ],
+ "things": [
+  {
+   "id": "board",
+   "kind": "billboard",
+   "sprite": "thing_board",
+   "at": [
+    -11.6,
+    4.0
+   ],
+   "y": 1.55,
+   "size": 2.6,
+   "anim": "none",
+   "sector": "hut"
+  },
+  {
+   "id": "cot_empty",
+   "kind": "billboard",
+   "sprite": "thing_cot_empty",
+   "at": [
+    -6.0,
+    0.6
+   ],
+   "y": 0.5,
+   "size": 1.3,
+   "anim": "none",
+   "sector": "hut"
+  },
+  {
+   "id": "hut_cot_b",
+   "kind": "billboard",
+   "sprite": "thing_cot_empty",
+   "at": [
+    -9.4,
+    0.6
+   ],
+   "y": 0.5,
+   "size": 1.3,
+   "anim": "none",
+   "sector": "hut"
+  },
+  {
+   "id": "hut_stove",
+   "kind": "billboard",
+   "sprite": "thing_stove",
+   "at": [
+    -2.2,
+    7.3
+   ],
+   "y": 0.75,
+   "size": 1.5,
+   "anim": "flicker",
+   "sector": "hut"
+  },
+  {
+   "id": "hut_table",
+   "kind": "billboard",
+   "sprite": "thing_table_maps",
+   "at": [
+    -8.2,
+    6.6
+   ],
+   "y": 0.55,
+   "size": 1.4,
+   "anim": "none",
+   "sector": "hut"
+  },
+  {
+   "id": "hut_lamp_a",
+   "kind": "billboard",
+   "sprite": "thing_lamp_hang",
+   "at": [
+    -4.0,
+    4.0
+   ],
+   "y": 2.3,
+   "size": 0.8,
+   "anim": "sway",
+   "sector": "hut"
+  },
+  {
+   "id": "hut_lamp_b",
+   "kind": "billboard",
+   "sprite": "thing_lamp_hang",
+   "at": [
+    -8.0,
+    3.8
+   ],
+   "y": 2.3,
+   "size": 0.8,
+   "anim": "sway",
+   "sector": "hut"
+  },
+  {
+   "id": "hut_window",
+   "kind": "billboard",
+   "sprite": "thing_window_hut",
+   "at": [
+    -5.0,
+    7.9
+   ],
+   "y": 1.7,
+   "size": 1.3,
+   "anim": "none",
+   "sector": "hut"
+  },
+  {
+   "id": "hut_window_b",
+   "kind": "billboard",
+   "sprite": "thing_window_hut",
+   "at": [
+    -10.0,
+    7.9
+   ],
+   "y": 1.7,
+   "size": 1.3,
+   "anim": "none",
+   "sector": "hut"
+  },
+  {
+   "id": "hut_door",
+   "kind": "billboard",
+   "sprite": "thing_door_open_light",
+   "at": [
+    -0.25,
+    5.6
+   ],
+   "y": 1.15,
+   "size": 2.3,
+   "anim": "none",
+   "sector": "hut"
+  },
+  {
+   "id": "lt_hut_a",
+   "kind": "light",
+   "at": [
+    -4.0,
+    4.0
+   ],
+   "y": 2.2,
+   "radius": 5.5,
+   "color": "#ffd890",
+   "strength": 1.0,
+   "sector": "hut"
+  },
+  {
+   "id": "lt_hut_b",
+   "kind": "light",
+   "at": [
+    -8.0,
+    4.0
+   ],
+   "y": 2.2,
+   "radius": 5.5,
+   "color": "#ffd890",
+   "strength": 0.9,
+   "sector": "hut"
+  },
+  {
+   "id": "lt_hut_door",
+   "kind": "light",
+   "at": [
+    -0.4,
+    5.6
+   ],
+   "y": 1.5,
+   "radius": 6.0,
+   "color": "#fff0c0",
+   "strength": 1.1,
+   "sector": "hut",
+   "cone": {
+    "yaw": 90.0,
+    "angle": 55
+   }
+  },
+  {
+   "id": "bomber_nose",
+   "kind": "billboard",
+   "sprite": "thing_bomber_nose",
+   "at": [
+    13.0,
+    11.4
+   ],
+   "y": 2.1,
+   "size": 4.2,
+   "anim": "none",
+   "sector": "line"
+  },
+  {
+   "id": "ladder",
+   "kind": "billboard",
+   "sprite": "thing_ladder",
+   "at": [
+    11.0,
+    13.0
+   ],
+   "y": 1.3,
+   "size": 2.5,
+   "anim": "none",
+   "sector": "line"
+  },
+  {
+   "id": "crates",
+   "kind": "billboard",
+   "sprite": "thing_crate_stack",
+   "at": [
+    20.5,
+    3.8
+   ],
+   "y": 1.0,
+   "size": 2.1,
+   "anim": "none",
+   "sector": "line"
+  },
+  {
+   "id": "crates_b",
+   "kind": "billboard",
+   "sprite": "thing_crate_stack",
+   "at": [
+    22.5,
+    11.6
+   ],
+   "y": 1.0,
+   "size": 2.0,
+   "anim": "none",
+   "sector": "line"
+  },
+  {
+   "id": "fuel_drums",
+   "kind": "billboard",
+   "sprite": "thing_fuel_drums",
+   "at": [
+    7.0,
+    11.6
+   ],
+   "y": 0.7,
+   "size": 1.4,
+   "anim": "none",
+   "sector": "line"
+  },
+  {
+   "id": "windsock",
+   "kind": "billboard",
+   "sprite": "thing_windsock",
+   "at": [
+    17.0,
+    1.4
+   ],
+   "y": 2.5,
+   "size": 4.8,
+   "anim": "sway",
+   "sector": "line"
+  },
+  {
+   "id": "tent_flap",
+   "kind": "billboard",
+   "sprite": "thing_tent_flap",
+   "at": [
+    5.0,
+    0.5
+   ],
+   "y": 1.25,
+   "size": 2.5,
+   "anim": "none",
+   "sector": "line"
+  },
+  {
+   "id": "hangar_front",
+   "kind": "billboard",
+   "sprite": "thing_hangar_front",
+   "at": [
+    25.5,
+    6.0
+   ],
+   "y": 2.0,
+   "size": 4.2,
+   "anim": "none",
+   "sector": "line"
+  },
+  {
+   "id": "sandbags",
+   "kind": "billboard",
+   "sprite": "thing_sandbags",
+   "at": [
+    14.5,
+    0.8
+   ],
+   "y": 0.55,
+   "size": 1.2,
+   "anim": "none",
+   "sector": "line"
+  },
+  {
+   "id": "jeep",
+   "kind": "billboard",
+   "sprite": "thing_jeep",
+   "at": [
+    4.5,
+    12.5
+   ],
+   "y": 0.8,
+   "size": 1.8,
+   "anim": "none",
+   "sector": "line"
+  },
+  {
+   "id": "lt_line_sun",
+   "kind": "light",
+   "at": [
+    12.0,
+    7.0
+   ],
+   "y": 4.0,
+   "radius": 24.0,
+   "color": "#fff4d0",
+   "strength": 1.3,
+   "sector": "line"
+  },
+  {
+   "id": "cot_l0",
+   "kind": "billboard",
+   "sprite": "thing_cot_ward",
+   "at": [
+    1.3,
+    -2.6
+   ],
+   "y": 0.5,
+   "size": 1.3,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "cot_r0",
+   "kind": "billboard",
+   "sprite": "thing_cot_ward",
+   "at": [
+    8.7,
+    -3.2
+   ],
+   "y": 0.5,
+   "size": 1.3,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "cot_l1",
+   "kind": "billboard",
+   "sprite": "thing_cot_ward",
+   "at": [
+    1.3,
+    -4.4
+   ],
+   "y": 0.5,
+   "size": 1.3,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "cot_r1",
+   "kind": "billboard",
+   "sprite": "thing_cot_ward",
+   "at": [
+    8.7,
+    -5.0
+   ],
+   "y": 0.5,
+   "size": 1.3,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "cot_l2",
+   "kind": "billboard",
+   "sprite": "thing_cot_ward",
+   "at": [
+    1.3,
+    -6.2
+   ],
+   "y": 0.5,
+   "size": 1.3,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "cot_r2",
+   "kind": "billboard",
+   "sprite": "thing_cot_ward",
+   "at": [
+    8.7,
+    -6.8
+   ],
+   "y": 0.5,
+   "size": 1.3,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "cot_l3",
+   "kind": "billboard",
+   "sprite": "thing_cot_ward",
+   "at": [
+    1.3,
+    -8.0
+   ],
+   "y": 0.5,
+   "size": 1.3,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "cot_r3",
+   "kind": "billboard",
+   "sprite": "thing_cot_ward",
+   "at": [
+    8.7,
+    -8.6
+   ],
+   "y": 0.5,
+   "size": 1.3,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "kitchen_hatch",
+   "kind": "billboard",
+   "sprite": "thing_kitchen_hatch",
+   "at": [
+    9.8,
+    -6.4
+   ],
+   "y": 1.3,
+   "size": 1.8,
+   "anim": "flicker",
+   "sector": "tent"
+  },
+  {
+   "id": "tent_drip",
+   "kind": "billboard",
+   "sprite": "thing_drip_stand",
+   "at": [
+    3.2,
+    -5.0
+   ],
+   "y": 1.0,
+   "size": 1.8,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "tent_lamp",
+   "kind": "billboard",
+   "sprite": "thing_lamp_hang",
+   "at": [
+    5.0,
+    -5.0
+   ],
+   "y": 2.5,
+   "size": 0.9,
+   "anim": "sway",
+   "sector": "tent"
+  },
+  {
+   "id": "tent_curtain",
+   "kind": "billboard",
+   "sprite": "thing_screen_cloth",
+   "at": [
+    6.2,
+    -3.0
+   ],
+   "y": 0.9,
+   "size": 1.7,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "lt_tent",
+   "kind": "light",
+   "at": [
+    5.0,
+    -5.0
+   ],
+   "y": 2.6,
+   "radius": 7.0,
+   "color": "#fff0d0",
+   "strength": 1.1,
+   "sector": "tent"
+  },
+  {
+   "id": "lt_tent_door",
+   "kind": "light",
+   "at": [
+    5.0,
+    -0.6
+   ],
+   "y": 1.5,
+   "radius": 6.0,
+   "color": "#fff6d8",
+   "strength": 1.0,
+   "sector": "tent",
+   "cone": {
+    "yaw": 0.0,
+    "angle": 60
+   }
+  },
+  {
+   "id": "desk_clerk",
+   "kind": "billboard",
+   "sprite": "thing_desk_office",
+   "at": [
+    -8.4,
+    -5.0
+   ],
+   "y": 0.7,
+   "size": 1.9,
+   "anim": "none",
+   "sector": "office"
+  },
+  {
+   "id": "stamp_big",
+   "kind": "billboard",
+   "sprite": "thing_stamp_big",
+   "at": [
+    -8.0,
+    -4.1
+   ],
+   "y": 1.1,
+   "size": 1.0,
+   "anim": "none",
+   "sector": "office"
+  },
+  {
+   "id": "certificate",
+   "kind": "billboard",
+   "sprite": "thing_certificate",
+   "at": [
+    -5.5,
+    -9.8
+   ],
+   "y": 1.6,
+   "size": 1.4,
+   "anim": "none",
+   "sector": "office"
+  },
+  {
+   "id": "door_a",
+   "kind": "billboard",
+   "sprite": "thing_door_office",
+   "at": [
+    -11.7,
+    -3.2
+   ],
+   "y": 1.1,
+   "size": 2.2,
+   "anim": "none",
+   "sector": "office"
+  },
+  {
+   "id": "door_b",
+   "kind": "billboard",
+   "sprite": "thing_door_office",
+   "at": [
+    -11.7,
+    -6.9
+   ],
+   "y": 1.1,
+   "size": 2.2,
+   "anim": "none",
+   "sector": "office"
+  },
+  {
+   "id": "files",
+   "kind": "billboard",
+   "sprite": "thing_filing_cabinet",
+   "at": [
+    -6.0,
+    -0.7
+   ],
+   "y": 0.9,
+   "size": 1.8,
+   "anim": "none",
+   "sector": "office"
+  },
+  {
+   "id": "office_lamp",
+   "kind": "billboard",
+   "sprite": "thing_desk_lamp",
+   "at": [
+    -8.2,
+    -5.9
+   ],
+   "y": 1.0,
+   "size": 0.7,
+   "anim": "none",
+   "sector": "office"
+  },
+  {
+   "id": "office_window",
+   "kind": "billboard",
+   "sprite": "thing_window_office",
+   "at": [
+    -2.0,
+    -0.2
+   ],
+   "y": 1.7,
+   "size": 1.6,
+   "anim": "none",
+   "sector": "office"
+  },
+  {
+   "id": "lt_office",
+   "kind": "light",
+   "at": [
+    -7.0,
+    -5.0
+   ],
+   "y": 2.4,
+   "radius": 6.0,
+   "color": "#ffe3a0",
+   "strength": 1.0,
+   "sector": "office"
+  },
+  {
+   "id": "lt_office_lamp",
+   "kind": "light",
+   "at": [
+    -8.2,
+    -5.9
+   ],
+   "y": 1.2,
+   "radius": 3.0,
+   "color": "#ffd070",
+   "strength": 1.2,
+   "sector": "office"
+  },
+  {
+   "id": "nose_glass",
+   "kind": "billboard",
+   "sprite": "thing_nose_glass",
+   "at": [
+    12.0,
+    21.7
+   ],
+   "y": 1.2,
+   "size": 3.0,
+   "anim": "none",
+   "sector": "bomber"
+  },
+  {
+   "id": "flak_a",
+   "kind": "billboard",
+   "sprite": "thing_flak_burst",
+   "at": [
+    12.7,
+    21.4
+   ],
+   "y": 1.5,
+   "size": 1.6,
+   "anim": "flicker",
+   "sector": "bomber",
+   "blend": "add"
+  },
+  {
+   "id": "flak_b",
+   "kind": "billboard",
+   "sprite": "thing_flak_burst",
+   "at": [
+    11.2,
+    21.4
+   ],
+   "y": 1.0,
+   "size": 1.2,
+   "anim": "flicker",
+   "sector": "bomber",
+   "blend": "add"
+  },
+  {
+   "id": "release_lever",
+   "kind": "billboard",
+   "sprite": "thing_release_lever",
+   "at": [
+    11.8,
+    19.6
+   ],
+   "y": 0.9,
+   "size": 1.1,
+   "anim": "none",
+   "sector": "bomber"
+  },
+  {
+   "id": "emergency_box",
+   "kind": "billboard",
+   "sprite": "thing_emergency_box",
+   "at": [
+    10.25,
+    17.0
+   ],
+   "y": 1.2,
+   "size": 0.9,
+   "anim": "pulse",
+   "sector": "bomber"
+  },
+  {
+   "id": "bomber_panel",
+   "kind": "billboard",
+   "sprite": "thing_instrument_panel",
+   "at": [
+    13.55,
+    20.6
+   ],
+   "y": 1.1,
+   "size": 1.3,
+   "anim": "none",
+   "sector": "bomber"
+  },
+  {
+   "id": "bomber_lamp",
+   "kind": "billboard",
+   "sprite": "thing_lamp_red",
+   "at": [
+    12.0,
+    17.8
+   ],
+   "y": 2.0,
+   "size": 0.5,
+   "anim": "pulse",
+   "sector": "bomber"
+  },
+  {
+   "id": "lt_bomber_panel",
+   "kind": "light",
+   "at": [
+    13.0,
+    20.0
+   ],
+   "y": 1.2,
+   "radius": 4.5,
+   "color": "#8cf0a0",
+   "strength": 1.0,
+   "sector": "bomber"
+  },
+  {
+   "id": "lt_bomber_flak",
+   "kind": "light",
+   "at": [
+    12.0,
+    21.2
+   ],
+   "y": 1.4,
+   "radius": 6.0,
+   "color": "#ffa060",
+   "strength": 1.0,
+   "sector": "bomber"
+  },
+  {
+   "id": "ledger",
+   "kind": "billboard",
+   "sprite": "thing_ledger",
+   "at": [
+    35.0,
+    3.2
+   ],
+   "y": 0.95,
+   "size": 1.6,
+   "anim": "none",
+   "sector": "store"
+  },
+  {
+   "id": "truck",
+   "kind": "billboard",
+   "sprite": "thing_truck",
+   "at": [
+    36.0,
+    9.8
+   ],
+   "y": 1.4,
+   "size": 2.8,
+   "anim": "bob",
+   "sector": "store"
+  },
+  {
+   "id": "store_crates_a",
+   "kind": "billboard",
+   "sprite": "thing_crate_stack",
+   "at": [
+    32.0,
+    1.2
+   ],
+   "y": 1.0,
+   "size": 2.2,
+   "anim": "none",
+   "sector": "store"
+  },
+  {
+   "id": "store_crates_b",
+   "kind": "billboard",
+   "sprite": "thing_crate_stack",
+   "at": [
+    36.6,
+    1.2
+   ],
+   "y": 1.0,
+   "size": 2.4,
+   "anim": "none",
+   "sector": "store"
+  },
+  {
+   "id": "store_shelves",
+   "kind": "billboard",
+   "sprite": "thing_shelves_tins",
+   "at": [
+    37.2,
+    7.0
+   ],
+   "y": 1.4,
+   "size": 2.8,
+   "anim": "none",
+   "sector": "store"
+  },
+  {
+   "id": "store_scales",
+   "kind": "billboard",
+   "sprite": "thing_scales",
+   "at": [
+    32.4,
+    8.2
+   ],
+   "y": 0.9,
+   "size": 1.0,
+   "anim": "none",
+   "sector": "store"
+  },
+  {
+   "id": "store_lamp",
+   "kind": "billboard",
+   "sprite": "thing_lamp_hang",
+   "at": [
+    33.0,
+    6.0
+   ],
+   "y": 3.2,
+   "size": 1.0,
+   "anim": "sway",
+   "sector": "store"
+  },
+  {
+   "id": "store_sign",
+   "kind": "billboard",
+   "sprite": "thing_sign_ledgerless",
+   "at": [
+    37.7,
+    6.0
+   ],
+   "y": 3.0,
+   "size": 1.2,
+   "anim": "none",
+   "sector": "store"
+  },
+  {
+   "id": "lt_store",
+   "kind": "light",
+   "at": [
+    33.0,
+    6.0
+   ],
+   "y": 3.0,
+   "radius": 8.0,
+   "color": "#ffe0a0",
+   "strength": 1.1,
+   "sector": "store"
+  },
+  {
+   "id": "lt_store_door",
+   "kind": "light",
+   "at": [
+    26.5,
+    6.0
+   ],
+   "y": 2.0,
+   "radius": 7.0,
+   "color": "#fff0c8",
+   "strength": 1.0,
+   "sector": "store",
+   "cone": {
+    "yaw": -90.0,
+    "angle": 55
+   }
+  }
+ ],
+ "homes": [
+  {
+   "actor": "col",
+   "sector": "hut",
+   "at": [
+    -10.3,
+    3.1
+   ]
+  },
+  {
+   "actor": "aide",
+   "sector": "hut",
+   "at": [
+    -10.0,
+    5.2
+   ]
+  },
+  {
+   "actor": "a01",
+   "sector": "hut",
+   "at": [
+    -6.6,
+    6.6
+   ]
+  },
+  {
+   "actor": "a02",
+   "sector": "hut",
+   "at": [
+    -6.6,
+    4.9
+   ]
+  },
+  {
+   "actor": "a03",
+   "sector": "hut",
+   "at": [
+    -6.6,
+    3.2
+   ]
+  },
+  {
+   "actor": "a04",
+   "sector": "hut",
+   "at": [
+    -6.6,
+    1.5
+   ]
+  },
+  {
+   "actor": "a05",
+   "sector": "hut",
+   "at": [
+    -8.0,
+    5.7
+   ]
+  },
+  {
+   "actor": "a06",
+   "sector": "hut",
+   "at": [
+    -8.0,
+    3.8
+   ]
+  },
+  {
+   "actor": "gun",
+   "sector": "line",
+   "at": [
+    11.5,
+    12.0
+   ]
+  },
+  {
+   "actor": "qm",
+   "sector": "line",
+   "at": [
+    19.2,
+    4.6
+   ]
+  },
+  {
+   "actor": "mech",
+   "sector": "line",
+   "at": [
+    8.4,
+    10.6
+   ]
+  },
+  {
+   "actor": "l01",
+   "sector": "line",
+   "at": [
+    5.5,
+    9.0
+   ]
+  },
+  {
+   "actor": "l02",
+   "sector": "line",
+   "at": [
+    15.5,
+    7.8
+   ]
+  },
+  {
+   "actor": "l03",
+   "sector": "line",
+   "at": [
+    18.0,
+    10.5
+   ]
+  },
+  {
+   "actor": "l04",
+   "sector": "line",
+   "at": [
+    13.0,
+    3.2
+   ]
+  },
+  {
+   "actor": "surg",
+   "sector": "tent",
+   "at": [
+    5.6,
+    -7.6
+   ]
+  },
+  {
+   "actor": "p01",
+   "sector": "tent",
+   "at": [
+    8.2,
+    -4.6
+   ]
+  },
+  {
+   "actor": "p02",
+   "sector": "tent",
+   "at": [
+    1.3,
+    -2.6
+   ]
+  },
+  {
+   "actor": "p03",
+   "sector": "tent",
+   "at": [
+    1.3,
+    -4.4
+   ]
+  },
+  {
+   "actor": "p04",
+   "sector": "tent",
+   "at": [
+    1.3,
+    -6.2
+   ]
+  },
+  {
+   "actor": "p05",
+   "sector": "tent",
+   "at": [
+    8.2,
+    -8.2
+   ]
+  },
+  {
+   "actor": "orderly",
+   "sector": "tent",
+   "at": [
+    5.0,
+    -3.0
+   ]
+  },
+  {
+   "actor": "clerk",
+   "sector": "office",
+   "at": [
+    -9.2,
+    -5.0
+   ]
+  },
+  {
+   "actor": "surg_o",
+   "sector": "office",
+   "at": [
+    -6.8,
+    -3.6
+   ]
+  },
+  {
+   "actor": "q01",
+   "sector": "office",
+   "at": [
+    -3.2,
+    -7.6
+   ]
+  },
+  {
+   "actor": "q02",
+   "sector": "office",
+   "at": [
+    -4.2,
+    -7.6
+   ]
+  },
+  {
+   "actor": "pilot",
+   "sector": "bomber",
+   "at": [
+    12.8,
+    17.8
+   ]
+  },
+  {
+   "actor": "gun_b",
+   "sector": "bomber",
+   "at": [
+    10.8,
+    16.6
+   ]
+  },
+  {
+   "actor": "crew1",
+   "sector": "bomber",
+   "at": [
+    11.1,
+    18.9
+   ]
+  },
+  {
+   "actor": "crew2",
+   "sector": "bomber",
+   "at": [
+    12.9,
+    19.9
+   ]
+  },
+  {
+   "actor": "qm_s",
+   "sector": "store",
+   "at": [
+    34.0,
+    5.6
+   ]
+  },
+  {
+   "actor": "sc1",
+   "sector": "store",
+   "at": [
+    33.6,
+    3.4
+   ]
+  },
+  {
+   "actor": "sc2",
+   "sector": "store",
+   "at": [
+    34.4,
+    7.9
+   ]
+  },
+  {
+   "actor": "po1",
+   "sector": "store",
+   "at": [
+    30.0,
+    4.2
+   ]
+  },
+  {
+   "actor": "po2",
+   "sector": "store",
+   "at": [
+    31.4,
+    8.0
+   ]
+  },
+  {
+   "actor": "drv",
+   "sector": "store",
+   "at": [
+    35.4,
+    10.3
+   ]
+  }
+ ],
+ "waypoints": [
+  {
+   "id": "c01_home",
+   "at": [
+    -1.8,
+    4.0
+   ],
+   "yaw": 90.0,
+   "sector": "hut"
+  },
+  {
+   "id": "c01_g1",
+   "at": [
+    -4.0,
+    5.2
+   ],
+   "yaw": 80.0,
+   "sector": "hut"
+  },
+  {
+   "id": "c01_g2",
+   "at": [
+    -6.0,
+    2.8
+   ],
+   "yaw": 102.0,
+   "sector": "hut"
+  },
+  {
+   "id": "c01_b1",
+   "at": [
+    -1.0,
+    1.2
+   ],
+   "yaw": 125.0,
+   "sector": "hut"
+  },
+  {
+   "id": "c01_b2",
+   "at": [
+    -2.4,
+    6.8
+   ],
+   "yaw": 50.0,
+   "sector": "hut"
+  },
+  {
+   "id": "c01_arrive",
+   "at": [
+    -0.5,
+    4.0
+   ],
+   "yaw": 90.0,
+   "sector": "hut"
+  },
+  {
+   "id": "c01_x_up",
+   "at": [
+    -6.0,
+    1.0
+   ],
+   "yaw": 130.0,
+   "sector": "hut"
+  },
+  {
+   "id": "c01_x_right",
+   "at": [
+    -0.7,
+    5.6
+   ],
+   "yaw": 60.0,
+   "sector": "hut"
+  },
+  {
+   "id": "c01_board",
+   "at": [
+    -9.0,
+    4.0
+   ],
+   "yaw": 90.0,
+   "sector": "hut"
+  },
+  {
+   "id": "c02_home",
+   "at": [
+    2.2,
+    7.0
+   ],
+   "yaw": -90.0,
+   "sector": "line"
+  },
+  {
+   "id": "c02_g1",
+   "at": [
+    5.0,
+    5.5
+   ],
+   "yaw": -100.0,
+   "sector": "line"
+  },
+  {
+   "id": "c02_g2",
+   "at": [
+    8.5,
+    7.8
+   ],
+   "yaw": -78.0,
+   "sector": "line"
+  },
+  {
+   "id": "c02_b1",
+   "at": [
+    1.5,
+    2.5
+   ],
+   "yaw": -55.0,
+   "sector": "line"
+  },
+  {
+   "id": "c02_b2",
+   "at": [
+    2.5,
+    11.0
+   ],
+   "yaw": -130.0,
+   "sector": "line"
+  },
+  {
+   "id": "c02_arrive",
+   "at": [
+    0.8,
+    7.0
+   ],
+   "yaw": -90.0,
+   "sector": "line"
+  },
+  {
+   "id": "c02_x_up",
+   "at": [
+    10.0,
+    12.0
+   ],
+   "yaw": -30.0,
+   "sector": "line"
+  },
+  {
+   "id": "c02_x_right",
+   "at": [
+    20.0,
+    4.0
+   ],
+   "yaw": -100.0,
+   "sector": "line"
+  },
+  {
+   "id": "c02_ladder",
+   "at": [
+    10.6,
+    12.6
+   ],
+   "yaw": -90.0,
+   "sector": "line"
+  },
+  {
+   "id": "c03_home",
+   "at": [
+    5.0,
+    -1.8
+   ],
+   "yaw": 0.0,
+   "sector": "tent"
+  },
+  {
+   "id": "c03_g1",
+   "at": [
+    4.0,
+    -3.6
+   ],
+   "yaw": -10.0,
+   "sector": "tent"
+  },
+  {
+   "id": "c03_g2",
+   "at": [
+    6.0,
+    -5.2
+   ],
+   "yaw": 12.0,
+   "sector": "tent"
+  },
+  {
+   "id": "c03_b1",
+   "at": [
+    7.8,
+    -1.0
+   ],
+   "yaw": 35.0,
+   "sector": "tent"
+  },
+  {
+   "id": "c03_b2",
+   "at": [
+    2.2,
+    -2.4
+   ],
+   "yaw": -40.0,
+   "sector": "tent"
+  },
+  {
+   "id": "c03_arrive",
+   "at": [
+    5.0,
+    -0.7
+   ],
+   "yaw": 0.0,
+   "sector": "tent"
+  },
+  {
+   "id": "c03_x_up",
+   "at": [
+    8.6,
+    -6.4
+   ],
+   "yaw": 70.0,
+   "sector": "tent"
+  },
+  {
+   "id": "c03_x_right",
+   "at": [
+    0.8,
+    -5.4
+   ],
+   "yaw": -90.0,
+   "sector": "tent"
+  },
+  {
+   "id": "c06_home",
+   "at": [
+    -1.8,
+    -5.0
+   ],
+   "yaw": 90.0,
+   "sector": "office"
+  },
+  {
+   "id": "c06_g1",
+   "at": [
+    -4.0,
+    -3.8
+   ],
+   "yaw": 80.0,
+   "sector": "office"
+  },
+  {
+   "id": "c06_g2",
+   "at": [
+    -6.0,
+    -6.2
+   ],
+   "yaw": 102.0,
+   "sector": "office"
+  },
+  {
+   "id": "c06_b1",
+   "at": [
+    -1.2,
+    -7.8
+   ],
+   "yaw": 125.0,
+   "sector": "office"
+  },
+  {
+   "id": "c06_b2",
+   "at": [
+    -2.6,
+    -2.2
+   ],
+   "yaw": 50.0,
+   "sector": "office"
+  },
+  {
+   "id": "c06_arrive",
+   "at": [
+    -0.6,
+    -5.0
+   ],
+   "yaw": 90.0,
+   "sector": "office"
+  },
+  {
+   "id": "c06_x_up",
+   "at": [
+    -10.5,
+    -3.4
+   ],
+   "yaw": 90.0,
+   "sector": "office"
+  },
+  {
+   "id": "c06_x_right",
+   "at": [
+    -10.5,
+    -6.8
+   ],
+   "yaw": 90.0,
+   "sector": "office"
+  },
+  {
+   "id": "c06_desk",
+   "at": [
+    -8.0,
+    -5.0
+   ],
+   "yaw": 90.0,
+   "sector": "office"
+  },
+  {
+   "id": "c04_home",
+   "at": [
+    12.0,
+    15.2
+   ],
+   "yaw": 180.0,
+   "sector": "bomber"
+  },
+  {
+   "id": "c04_g1",
+   "at": [
+    12.6,
+    16.8
+   ],
+   "yaw": 170.0,
+   "sector": "bomber"
+  },
+  {
+   "id": "c04_g2",
+   "at": [
+    11.3,
+    18.4
+   ],
+   "yaw": 192.0,
+   "sector": "bomber"
+  },
+  {
+   "id": "c04_b1",
+   "at": [
+    10.7,
+    15.0
+   ],
+   "yaw": 215.0,
+   "sector": "bomber"
+  },
+  {
+   "id": "c04_b2",
+   "at": [
+    13.3,
+    16.0
+   ],
+   "yaw": 140.0,
+   "sector": "bomber"
+  },
+  {
+   "id": "c04_arrive",
+   "at": [
+    12.0,
+    14.5
+   ],
+   "yaw": 180.0,
+   "sector": "bomber"
+  },
+  {
+   "id": "c04_x_up",
+   "at": [
+    11.1,
+    19.4
+   ],
+   "yaw": 180.0,
+   "sector": "bomber"
+  },
+  {
+   "id": "c04_x_right",
+   "at": [
+    10.6,
+    17.0
+   ],
+   "yaw": 240.0,
+   "sector": "bomber"
+  },
+  {
+   "id": "c05_home",
+   "at": [
+    27.8,
+    6.0
+   ],
+   "yaw": -90.0,
+   "sector": "store"
+  },
+  {
+   "id": "c05_g1",
+   "at": [
+    30.0,
+    4.6
+   ],
+   "yaw": -100.0,
+   "sector": "store"
+  },
+  {
+   "id": "c05_g2",
+   "at": [
+    33.0,
+    7.2
+   ],
+   "yaw": -78.0,
+   "sector": "store"
+  },
+  {
+   "id": "c05_b1",
+   "at": [
+    27.2,
+    9.0
+   ],
+   "yaw": -55.0,
+   "sector": "store"
+  },
+  {
+   "id": "c05_b2",
+   "at": [
+    28.6,
+    2.8
+   ],
+   "yaw": -130.0,
+   "sector": "store"
+  },
+  {
+   "id": "c05_arrive",
+   "at": [
+    26.8,
+    6.0
+   ],
+   "yaw": -90.0,
+   "sector": "store"
+  },
+  {
+   "id": "c05_x_up",
+   "at": [
+    34.0,
+    10.2
+   ],
+   "yaw": -50.0,
+   "sector": "store"
+  },
+  {
+   "id": "c05_x_right",
+   "at": [
+    35.0,
+    2.5
+   ],
+   "yaw": -110.0,
+   "sector": "store"
+  }
+ ],
+ "spots": {
+  "door": {
+   "sector": "hut",
+   "at": [
+    -0.7,
+    4.0
+   ],
+   "slots": [
+    [
+     -0.6,
+     5.5
+    ],
+    [
+     -0.6,
+     4.5
+    ],
+    [
+     -0.6,
+     3.5
+    ],
+    [
+     -0.6,
+     2.5
+    ],
+    [
+     -1.5,
+     5.5
+    ],
+    [
+     -1.5,
+     4.5
+    ],
+    [
+     -1.5,
+     3.5
+    ],
+    [
+     -1.5,
+     2.5
+    ]
+   ]
+  },
+  "circle": {
+   "sector": "hut",
+   "at": [
+    -6.0,
+    4.0
+   ],
+   "radii": [
+    2.0,
+    1.4
+   ],
+   "open": [
+    0.0,
+    1.0
+   ]
+  },
+  "riser": {
+   "sector": "hut",
+   "at": [
+    -11.0,
+    4.0
+   ]
+  },
+  "side_l": {
+   "sector": "hut",
+   "at": [
+    -6.0,
+    7.5
+   ]
+  },
+  "side_r": {
+   "sector": "hut",
+   "at": [
+    -6.0,
+    0.5
+   ]
+  },
+  "line.door": {
+   "sector": "line",
+   "at": [
+    0.7,
+    7.0
+   ],
+   "slots": [
+    [
+     0.6,
+     5.5
+    ],
+    [
+     0.6,
+     6.5
+    ],
+    [
+     0.6,
+     7.5
+    ],
+    [
+     0.6,
+     8.5
+    ],
+    [
+     1.5,
+     5.5
+    ],
+    [
+     1.5,
+     6.5
+    ],
+    [
+     1.5,
+     7.5
+    ],
+    [
+     1.5,
+     8.5
+    ]
+   ]
+  },
+  "line.circle": {
+   "sector": "line",
+   "at": [
+    13.0,
+    7.0
+   ],
+   "radii": [
+    2.0,
+    1.4
+   ],
+   "open": [
+    0.0,
+    1.0
+   ]
+  },
+  "line.riser": {
+   "sector": "line",
+   "at": [
+    25.0,
+    7.0
+   ]
+  },
+  "line.side_l": {
+   "sector": "line",
+   "at": [
+    13.0,
+    0.5
+   ]
+  },
+  "line.side_r": {
+   "sector": "line",
+   "at": [
+    13.0,
+    13.5
+   ]
+  },
+  "tent.door": {
+   "sector": "tent",
+   "at": [
+    5.0,
+    -0.7
+   ],
+   "slots": [
+    [
+     3.5,
+     -0.6
+    ],
+    [
+     4.5,
+     -0.6
+    ],
+    [
+     5.5,
+     -0.6
+    ],
+    [
+     6.5,
+     -0.6
+    ],
+    [
+     3.5,
+     -1.5
+    ],
+    [
+     4.5,
+     -1.5
+    ],
+    [
+     5.5,
+     -1.5
+    ],
+    [
+     6.5,
+     -1.5
+    ]
+   ]
+  },
+  "tent.circle": {
+   "sector": "tent",
+   "at": [
+    5.0,
+    -5.0
+   ],
+   "radii": [
+    2.0,
+    1.4
+   ],
+   "open": [
+    0.0,
+    1.0
+   ]
+  },
+  "tent.riser": {
+   "sector": "tent",
+   "at": [
+    5.0,
+    -9.0
+   ]
+  },
+  "tent.side_l": {
+   "sector": "tent",
+   "at": [
+    0.5,
+    -5.0
+   ]
+  },
+  "tent.side_r": {
+   "sector": "tent",
+   "at": [
+    9.5,
+    -5.0
+   ]
+  },
+  "office.door": {
+   "sector": "office",
+   "at": [
+    -0.7,
+    -5.0
+   ],
+   "slots": [
+    [
+     -0.6,
+     -3.5
+    ],
+    [
+     -0.6,
+     -4.5
+    ],
+    [
+     -0.6,
+     -5.5
+    ],
+    [
+     -0.6,
+     -6.5
+    ],
+    [
+     -1.5,
+     -3.5
+    ],
+    [
+     -1.5,
+     -4.5
+    ],
+    [
+     -1.5,
+     -5.5
+    ],
+    [
+     -1.5,
+     -6.5
+    ]
+   ]
+  },
+  "office.circle": {
+   "sector": "office",
+   "at": [
+    -6.0,
+    -5.0
+   ],
+   "radii": [
+    2.0,
+    1.4
+   ],
+   "open": [
+    0.0,
+    1.0
+   ]
+  },
+  "office.riser": {
+   "sector": "office",
+   "at": [
+    -11.0,
+    -5.0
+   ]
+  },
+  "office.side_l": {
+   "sector": "office",
+   "at": [
+    -6.0,
+    -0.5
+   ]
+  },
+  "office.side_r": {
+   "sector": "office",
+   "at": [
+    -6.0,
+    -9.5
+   ]
+  },
+  "bomber.door": {
+   "sector": "bomber",
+   "at": [
+    12.0,
+    14.7
+   ],
+   "slots": [
+    [
+     13.5,
+     14.6
+    ],
+    [
+     12.5,
+     14.6
+    ],
+    [
+     11.5,
+     14.6
+    ],
+    [
+     10.5,
+     14.6
+    ],
+    [
+     13.5,
+     15.5
+    ],
+    [
+     12.5,
+     15.5
+    ],
+    [
+     11.5,
+     15.5
+    ],
+    [
+     10.5,
+     15.5
+    ]
+   ]
+  },
+  "bomber.circle": {
+   "sector": "bomber",
+   "at": [
+    12.0,
+    18.0
+   ],
+   "radii": [
+    1.2,
+    1.4
+   ],
+   "open": [
+    0.0,
+    1.0
+   ]
+  },
+  "bomber.riser": {
+   "sector": "bomber",
+   "at": [
+    12.0,
+    21.0
+   ]
+  },
+  "bomber.side_l": {
+   "sector": "bomber",
+   "at": [
+    13.5,
+    18.0
+   ]
+  },
+  "bomber.side_r": {
+   "sector": "bomber",
+   "at": [
+    10.5,
+    18.0
+   ]
+  },
+  "store.door": {
+   "sector": "store",
+   "at": [
+    26.7,
+    6.0
+   ],
+   "slots": [
+    [
+     26.6,
+     4.5
+    ],
+    [
+     26.6,
+     5.5
+    ],
+    [
+     26.6,
+     6.5
+    ],
+    [
+     26.6,
+     7.5
+    ],
+    [
+     27.5,
+     4.5
+    ],
+    [
+     27.5,
+     5.5
+    ],
+    [
+     27.5,
+     6.5
+    ],
+    [
+     27.5,
+     7.5
+    ]
+   ]
+  },
+  "store.circle": {
+   "sector": "store",
+   "at": [
+    32.0,
+    6.0
+   ],
+   "radii": [
+    2.0,
+    1.4
+   ],
+   "open": [
+    0.0,
+    1.0
+   ]
+  },
+  "store.riser": {
+   "sector": "store",
+   "at": [
+    37.0,
+    6.0
+   ]
+  },
+  "store.side_l": {
+   "sector": "store",
+   "at": [
+    32.0,
+    0.5
+   ]
+  },
+  "store.side_r": {
+   "sector": "store",
+   "at": [
+    32.0,
+    11.5
+   ]
+  }
+ },
+ "silhouettes": [],
+ "occluders": [],
+ "rooms": {
+  "main": {
+   "palette": "khaki"
+  },
+  "line": {
+   "palette": "glare"
+  },
+  "tent": {
+   "palette": "khaki"
+  },
+  "office": {
+   "palette": "khaki"
+  },
+  "bomber": {
+   "palette": "instrument"
+  },
+  "store": {
+   "palette": "khaki"
+  }
+ },
+ "sky": {
+  "tex": "textures/sky_day.png",
+  "mode": "cylinder"
+ },
+ "fog": {
+  "color": "#d8c79c",
+  "density": 0.012
+ },
+ "animated": []
+}

@@ -5,7 +5,7 @@ extends SceneTree
 ## The dance is written once per personal style (dance_s0 .. dance_s4). Deterministic (fixed formatting, sorted keys).
 
 const OUT := "res://assets/story/people_poses.json"
-const LIMB_KEYS := ["arm_l", "arm_r", "elb_l", "elb_r", "leg_l", "leg_r", "lean", "head_tilt", "head_drop", "squash", "roll", "crouch", "lift_l", "lift_r"]
+const LIMB_KEYS := ["arm_l", "arm_r", "elb_l", "elb_r", "leg_l", "leg_r", "lean", "head_tilt", "head_drop", "squash", "roll", "crouch", "lift_l", "lift_r", "fwd"]
 
 
 func _init() -> void:
@@ -38,7 +38,7 @@ func _init() -> void:
 					row.append(snappedf(float(p[k]), 0.0001))
 				frames.append(row)
 			states[v[0]] = {"beats": float(cyc[0]), "frames": frames}
-	var out := {"keys": LIMB_KEYS, "face_of": StoryCharacter.FACE_OF, "kicked": StoryCharacter.SHEET_KICKED, "states": states}
+	var out := {"keys": LIMB_KEYS, "face_of": StoryCharacter.FACE_OF, "faces": StoryCharacter.FACES, "acts": StoryCharacter.ACTS, "kicked": StoryCharacter.SHEET_KICKED, "states": states}
 	var f := FileAccess.open(OUT, FileAccess.WRITE)
 	f.store_string(JSON.stringify(out, " ", true) + "\n")
 	f.close()

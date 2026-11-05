@@ -17,6 +17,8 @@ import math
 
 import numpy as np
 
+from . import half_faces
+
 # ---- materials (5 bits) and shade steps (2 bits) --------------------------------------------------------------------------------------------------------
 
 MATS = ["none", "skin", "skin2", "hair", "hair2", "top", "top2", "top3", "outer", "outer2", "bottom", "bottom2", "shoes", "shoes2", "hat", "hat2",
@@ -30,6 +32,14 @@ H0 = 112  # the standing height in sheet pixels of a build-1.0 adult at the full
 LODS = (1, 2, 4)  # the levels of detail: full, half, quarter size
 FACINGS = ("front", "side", "back")
 SIDE_DEG = 52.0  # the three-quarter turn (towards screen right; the runtime mirrors it for the left)
+
+# The fourteen faces (docs/THREE_PATHS_AND_FACES_PLAN.md 2.1): the four of the crowd and ten acted ones. At the quarter level of detail a face falls back to the
+# nearest of the four old ones (the head is two pixels wide there); StoryCharacter.FACES is the same list (tools/story/check_assets.py compares them).
+FACES = ("neutral", "happy", "cheer", "sad", "fear", "anger", "plea", "doubt", "relief", "awe", "grief", "laugh", "resolve", "shame")
+OLD_FACES = FACES[:4]
+ACT_FACES = FACES[4:]
+LOD4_FALLBACK = {"fear": "sad", "anger": "sad", "plea": "sad", "doubt": "neutral", "relief": "happy", "awe": "cheer", "grief": "sad", "laugh": "cheer",
+                 "resolve": "neutral", "shame": "sad"}
 
 BAYER4 = np.array([[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]], dtype=np.float32) / 16.0 - 0.47
 
@@ -365,6 +375,7 @@ def add(a, b, k=1.0):
 REST_UP = math.radians(7.0)
 REST_FORE = math.radians(10.0)
 SEATED = ("sit", "sleep")
+COVER_STATES = ("cover_face", "collapse")  # the hands go to the face
 FLOORED = ("rock",)
 
 
@@ -400,11 +411,17 @@ class Body:
         # a crouch (the flair moves): the hips sink by this share of the height and the knees bend (two-bone legs, the feet stay where the straight leg
         # would put them, minus a lift). Zero for every other state, so their frames are unchanged.
         self.crouch = 0.0 if state in SEATED + FLOORED else max(0.0, float(pose.get("crouch", 0.0)))
+        self.kneeling = state == "kneel" and self.crouch >= 0.12
+        if self.kneeling:
+            self.crouch = 0.25  # the hip sinks a thigh's length above the floor: the kneeling knee is on the ground under it
         self.cdy = self.crouch * S
         self.lift = {"l": max(0.0, float(pose.get("lift_l", 0.0))) * S, "r": max(0.0, float(pose.get("lift_r", 0.0))) * S}
         dy = self.sit_dy + self.cdy
         self.hip = (0.0, hip_y + dy)
-        lean = float(pose.get("lean", 0.0))
+        # fwd: the body bent forward from the hips (a bow, a plea). The three-quarter view leans into the turn; the front and back views have no depth, so the
+        # trunk shortens (the head sinks towards the hips) instead.
+        fwd = float(pose.get("fwd", 0.0))
+        lean = float(pose.get("lean", 0.0)) + (0.7 * fwd if fc == 1 else 0.0)
         self.lean = lean
         # the torso's own points, relative to the hip joint, then leaned
         sw = 0.125 * W * (1.0 - 0.08 * cu) * S
@@ -416,6 +433,11 @@ class Body:
         self.t_neck = sh_y - hip_y - 0.01 * S + drop * 0.4
         self.t_chin = chin - hip_y + drop
         self.t_waist = -0.1 * S if legs >= 0.9 else (sh_y - hip_y) * 0.35
+        if fwd > 0.0:
+            ub = 1.0 - (0.07 if fc == 1 else 0.3) * fwd
+            self.t_shoulder *= ub
+            self.t_neck *= ub
+            self.t_chin *= ub
 
         def T(p):  # torso-local point -> rig point
             q = rot(p, lean)
@@ -429,6 +451,8 @@ class Body:
         for side, sg in (("l", 1.0), ("r", -1.0)):
             a = float(pose.get("arm_" + side, 0.14))
             e = float(pose.get("elb_" + side, 0.2))
+            if spec.get("sling") and side == "l":  # an arm in a sling: held across the chest whatever the pose
+                a, e = 0.1, 1.95
             sx = -sg * sw * 0.86
             shp = T((sx, self.t_shoulder + 0.012 * S))
             up_len = 0.17 * S * float(sp.get("arm_len", 1.0))
@@ -480,7 +504,63 @@ class Body:
                 an = add(hp, d, ln)
                 kn = add(hp, d, ln * 0.5)
             self.legs[side] = {"hip": hp, "knee": kn, "ankle": an}
+        if self.kneeling:
+            self._one_knee_down(S, hip_y)
+        self.covering = state in COVER_STATES and fc != 2
+        if self.covering:
+            self._hands_to_face(S, sp)
         self.top_y = min(self.head_c[1] - self.head_h * 0.55, min(a["hand"][1] for a in self.arms.values()))
+
+    def _one_knee_down(self, S, hip_y):
+        """`kneel`: one knee on the floor under the hip with the shin gone behind it (the foot seen lifted, or lying back in the three-quarter view), the other leg's
+        thigh out to the side (forward, in the three-quarter view) and its shin straight down to a flat foot: the classic one-knee-down."""
+        ks = self.k * self.mir
+        floor = -0.02 * S
+        kneeler, planted = ("l", "r") if self.fc == 1 else ("r", "l")  # the near leg kneels in the three-quarter view (its shin is seen along the floor)
+        hk = self.legs[kneeler]["hip"]
+        if self.fc == 1:
+            kn = (hk[0] + 0.015 * S, floor)
+            an = (kn[0] - 0.12 * S, floor - 0.012 * S)
+        else:
+            kn = (hk[0] + 0.01 * S * ks, floor)
+            an = (kn[0] + 0.02 * S * ks, floor - 0.075 * S)
+        self.legs[kneeler] = {"hip": hk, "knee": kn, "ankle": an}
+        hp = self.legs[planted]["hip"]
+        out = (1.0 if self.fc == 1 else (1.0 if hp[0] > self.hip[0] else -1.0)) * (0.13 if self.fc == 1 else 0.115)
+        kn = (hp[0] + out * S * (ks if self.fc != 1 else 1.0), self.hip[1] + 0.035 * S)
+        an = (kn[0] + 0.01 * S * (1.0 if out > 0 else -1.0), -0.045 * S)
+        self.legs[planted] = {"hip": hp, "knee": kn, "ankle": an}
+
+    def _hands_to_face(self, S, sp):
+        """`cover_face`, `collapse`: both hands up over the face (the elbows out and low: weeping, the head in the hands). The rig's arm angles fold the forearm back along the
+        upper arm, which ends the hand beside the shoulder; here the hand goes where the face is and the elbow is solved from it (two bones, bent outwards and down)."""
+        up_len = 0.17 * S * float(sp.get("arm_len", 1.0))
+        fo_len = 0.138 * S * float(sp.get("arm_len", 1.0))
+        hc = self.head_c
+        for side, sg in (("l", 1.0), ("r", -1.0)):
+            a = self.arms[side]
+            sh = a["sh"]
+            if self.fc == 1:
+                tx = hc[0] + (-0.2 if side == "l" else 0.2) * self.head_w * self.k + 0.02 * S
+            else:
+                tx = hc[0] - sg * self.head_w * 0.27
+            hand = (tx, hc[1] + 0.06 * self.head_h)
+            wr = (hand[0] + sg * 0.004 * S, hand[1] + 0.03 * S)
+            dx, dy = wr[0] - sh[0], wr[1] - sh[1]
+            D = max(math.hypot(dx, dy), 1e-6)
+            D = min(D, up_len + fo_len - 0.004 * S)
+            ux, uy = dx / math.hypot(dx, dy), dy / math.hypot(dx, dy)
+            aa = (up_len * up_len - fo_len * fo_len + D * D) / (2.0 * D)
+            h = math.sqrt(max(up_len * up_len - aa * aa, 0.0))
+            px, py = -uy, ux
+            if px * (-sg) < 0:  # the elbow goes outwards (the left arm is on the screen's left)
+                px, py = -px, -py
+            if py < 0:
+                px, py = -px, -py
+            el = (sh[0] + ux * aa + px * h, sh[1] + uy * aa + py * h)
+            fd = (hand[0] - wr[0], hand[1] - wr[1])
+            n = max(math.hypot(*fd), 1e-6)
+            self.arms[side] = {"sh": sh, "el": el, "wr": wr, "hand": hand, "fd": (fd[0] / n, fd[1] / n), "ud": a["ud"]}
 
 
 def build_body(spec, pose, S, fc, state) -> Body:
@@ -624,6 +704,10 @@ class Painter:
             r_hip *= 1.1
         if self.species == "skeleton":
             r_hip, r_knee, r_ank = 0.022 * S, 0.02 * S, 0.016 * S
+        cast = self.sp.get("plaster") == side  # a leg in plaster: a thick white cast from the thigh to the ankle
+        if cast:
+            r_knee = max(r_knee, 0.058 * W * S)
+            r_ank = max(r_ank, 0.05 * W * S)
         boots = self.shoes.get("kind") in ("boots", "wellies")
         shorts = bot in ("shorts", "loincloth")
         bare = bot in ("skirt", "gownlegs", "tutu", "dress_legs")
@@ -652,10 +736,21 @@ class Painter:
                     q = _step(S, 0.03, 2)
                     gx = (np.floor((u + 1.0) * 2.0) % 2 == 0) ^ (np.floor(t * 0.23 * S / q) % 2 == 0)
                     m = np.where(gx & (m == M["bottom"]), M["bottom2"], m)
+                elif self.bottom.get("pattern") == "stripes":  # pyjama stripes down the leg
+                    m = np.where((np.floor((u + 1.0) * 2.5) % 2 == 1) & (m == M["bottom"]), M["bottom2"], m)
                 if part == 1 and bot not in ("leggings",):
                     ex -= 0.25 * (t > 0.9)  # the cuff's shadow
             if boots and part == 1:
                 m = np.where(t > 0.62, M["shoes"], m)
+            if shorts and self.sp.get("socks") and part == 1:  # socks to below the knee
+                m = np.where(t > 0.4, M["bottom2"], np.where(t > 0.32, M["top3"], m))
+            if cast:
+                if part == 1:
+                    m = np.full(t.shape, M["prop2"], np.uint8)
+                    ex = ex - 0.12 * (np.abs(u) > 0.6) - 0.1 * (np.sin(t * 9.0 + u * 3.0) > 0.8)
+                elif part == 0:
+                    m = np.where(t > 0.4, M["prop2"], m)
+                    ex = ex - 0.3 * (np.abs(t - 0.4) < 0.05)  # the top edge of the cast
             return m, ex
         kn, an, hp = L["knee"], L["ankle"], L["hip"]
         z = 0.1 if (b.fc == 1 and side == "l") else 0.0
@@ -670,6 +765,8 @@ class Painter:
     def foot(self, side, an, z):
         b, S, cv = self.b, self.S, self.cv
         kind = self.shoes.get("kind", "trainers")
+        if self.sp.get("plaster") == side:
+            kind = "bare"  # the foot sticks out of the cast
         sg = 1.0 if side == "l" else -1.0
         if b.fc == 1:
             c = (an[0] + 0.022 * S, an[1] + 0.012 * S)
@@ -734,12 +831,20 @@ class Painter:
         if self.outer and self.outer.get("long") and self.outer.get("kind") != "cape":
             y_hem = (knee_y - b.hip[1] if knee_y is not None else min(-0.26 * S + b.cdy, -0.06 * S) - b.hip[1])
             gap = 0.035 * S
-            rows = [(-0.03 * S, hipw * 1.08, hipw * 1.08), (y_hem, hipw * 1.42, hipw * 1.42)]
+            closed = self.outer.get("kind") == "oilskin"  # a fisherman's oilskin hangs closed to the knee
+            rows = [(-0.03 * S, hipw * 1.08, hipw * 1.08), (y_hem, hipw * (1.42 if not closed else 1.55), hipw * (1.42 if not closed else 1.55))]
 
             def mf(lx, ly, u, gap=gap):
+                if closed:
+                    m = np.full(u.shape, M["outer"], np.uint8)
+                    m = np.where(np.abs(lx - sh * 0.4) < 0.6, M["outer2"], m)
+                    m = np.where(ly > y_hem - _step(S, 0.016), M["outer2"], m)
+                    return m, -0.18 * (np.sin(lx * 0.7 + 1.3) > 0.6) + 0.2 * (np.sin(lx * 0.45 + 0.4) > 0.92)
                 m = np.where(np.abs(lx - sh * 0.4) < gap + (ly / S) * 0.06 * S, 0, M["outer"]).astype(np.uint8)
                 if self.outer.get("trim"):
                     m = np.where((m > 0) & (np.abs(np.abs(lx - sh * 0.4) - gap - (ly / S) * 0.06 * S) < _step(S, 0.016)), M["outer2"], m)
+                if self.outer.get("pattern") == "stained":
+                    m = np.where((m == M["outer"]) & (self._stain(lx, ly) > 0.86), M["horn"], m)
                 return m, -0.18 * (np.sin(lx * 0.7 + 1.3) > 0.6)
             jobs.append((rows, mf, 1.3))
         for rows, mf, z in jobs:
@@ -768,7 +873,8 @@ class Painter:
         neck = top.get("neck", "crew")
         hem = {"crop": b.t_waist - 0.035 * S, "tank": 0.0, "tee": 0.012 * S, "longsleeve": 0.01 * S, "jumper": 0.02 * S, "hoodie": 0.03 * S,
                "shirt": 0.01 * S, "polo": 0.008 * S, "scrubs": 0.03 * S, "jumpsuit": 1.0 * S, "dress": 1.0 * S, "gown": 1.0 * S, "chef": 0.035 * S,
-               "leotard": 1.0 * S, "bare": -1.0 * S, "vest": 0.0, "robe": 1.0 * S, "tunic": 0.06 * S, "bra": b.t_shoulder + 0.11 * S}.get(kind, 0.01 * S)
+               "leotard": 1.0 * S, "bare": -1.0 * S, "vest": 0.0, "robe": 1.0 * S, "tunic": 0.06 * S, "bra": b.t_shoulder + 0.11 * S,
+               "uniform": 0.035 * S, "pyjamas": 0.03 * S}.get(kind, 0.01 * S)
         wb = -0.045 * S  # the waistband of the bottoms
         front = b.fc != 2
         seed = self.seed
@@ -850,6 +956,32 @@ class Painter:
                 m = np.where((np.abs(lx) < 0.6) & (ly > ts) & (ly < hem) & (m != M["skin"]), M["top3"], m)
             if kind == "robe":
                 m = np.where(np.abs(lx - 0.25 * (ly - ts) * 0.0) < 0.6, M["top3"], m)
+            if kind in ("uniform", "pyjamas"):
+                if front:  # the placket with its buttons
+                    pl = (np.abs(lx) < 0.6) & (ly > ts + 0.02 * S_) & (ly < hem) & (m == M["top"])
+                    m = np.where(pl, M["top3"], m)
+                    m = np.where(pl & (np.round(ly - ts) % _step(S_, 0.04, 3) == 0) & (ly > ts + 0.05 * S_), M["top2"], m)
+                if kind == "uniform":
+                    if front and self.lod < 4:  # patch pockets with a flap and a button
+                        pw, pcx = 0.026 * S_, 0.064 * S_
+                        for sgp in (-1, 1):
+                            inx = np.abs(lx - sgp * pcx) < pw
+                            flap = inx & (ly > chest_y + 0.015 * S_) & (ly < chest_y + 0.034 * S_) & (m == M["top"])
+                            body = inx & (ly >= chest_y + 0.034 * S_) & (ly < chest_y + 0.07 * S_) & (m == M["top"])
+                            m = np.where(flap, M["top2"], m)
+                            ex = np.where(body, ex - 0.14, ex)
+                            ex = np.where(body & (np.abs(np.abs(lx - sgp * pcx) - pw) < 0.6), ex - 0.2, ex)
+                            if self.lod < 2:
+                                m = np.where((np.abs(lx - sgp * pcx) < 0.6) & (np.abs(ly - chest_y - 0.034 * S_) < 0.6), M["top3"], m)
+                    if top.get("epaulettes", True):  # shoulder loops, with plain stripes for rank
+                        ep = (ly > ts - 0.004 * S_) & (ly < ts + 0.034 * S_) & (np.abs(lx) > b.sw * 0.5 * k) & (np.abs(lx) < b.sw * 0.9 * k) & (m == M["top"])
+                        m = np.where(ep, M["top2"], m)
+                        rank = int(top.get("rank", 0))
+                        if rank > 0 and self.lod < 4:
+                            ex_ = max(1.0, round(0.02 * S_))
+                            for rk in range(rank):
+                                yy = ts + 0.006 * S_ + rk * ex_ * 1.6
+                                m = np.where(ep & (np.abs(ly - yy) < ex_ * 0.5), M["acc2"], m)
             # folds and the body's shading
             ex += np.where((np.sin(lx * 0.55 + ly * 0.35 + seed) > 0.8) & (m == M["top"]), -0.2, 0.0)
             ex += -0.12 * np.clip((ly - b.t_waist) / (0.08 * S_), 0, 1) * (m == M["bottom"])
@@ -875,12 +1007,26 @@ class Painter:
         pat = o.get("pattern", "plain")
         q = _step(S, 0.032, 2)
         ts = b.t_shoulder
-        rows2 = [(r[0], r[1] * 1.06, r[2] * 1.06) for r in rows[:-1]] + [(0.04 * S, rows[-1][1] * 1.1, rows[-1][2] * 1.1)]
+        big = float(o.get("big", 1.0))  # an oversized coat (a boy in a man's flight jacket)
+        rows2 = [(r[0], r[1] * (1.06 * big), r[2] * (1.06 * big)) for r in rows[:-1]] + [(float(o.get("hem", 0.04)) * S, rows[-1][1] * (1.1 * big), rows[-1][2] * (1.1 * big))]
 
         def mat(lx, ly, u):
             m = np.full(u.shape, M["outer"], np.uint8)
             ex = np.zeros(u.shape, np.float32)
-            if front:
+            if front and kind == "waistcoat":  # buttoned to a deep V
+                off = lx - sh * 0.5
+                vy = ts + 0.09 * S
+                m = np.where((ly > ts - 0.02 * S) & (ly < vy) & (np.abs(off) < (vy - ly) * 0.55), 0, m)
+                m = np.where((np.abs(off) < 0.6) & (ly > vy) & (np.round(ly - ts) % _step(S, 0.04, 3) == 0), M["outer2"], m)
+                m = np.where((np.abs(np.abs(off) - (vy - ly) * 0.55) < 0.7) & (ly < vy) & (ly > ts) & (m > 0), M["outer2"], m)
+            elif front and kind == "oilskin":  # closed to the throat: a seam, toggles, a stiff collar
+                off = lx - sh * 0.5
+                m = np.where((np.abs(off) < 0.6) & (ly > ts), M["outer2"], m)
+                tg = (np.abs(np.abs(off) - 0.028 * S) < 0.7) & (np.round(ly - ts) % _step(S, 0.05, 4) == 0) & (ly > ts + 0.025 * S)
+                m = np.where(tg & (m > 0), M["outer2"], m)
+                ex += np.where((ly < ts + 0.02 * S), -0.2, 0.0)
+                ex += np.where(np.sin(lx * 0.5 + 0.4) > 0.92, 0.2, 0.0)
+            elif front:
                 off = lx - sh * 0.5
                 opening = np.abs(off) < gap + np.maximum(0, (ly - ts)) * (0.12 if kind in ("jacket", "overshirt", "cardigan", "labcoat", "coat") else 0.05)
                 m = np.where(opening & (ly > ts - 0.02 * S), 0, m)
@@ -894,6 +1040,8 @@ class Painter:
                 m = np.where((m == M["outer"]) & (gx ^ gy), M["outer2"], m)
             if o.get("trim") and front:
                 m = np.where((m == M["outer"]) & (np.abs(np.abs(lx - sh * 0.5) - gap - np.maximum(0, (ly - ts)) * 0.12) < _step(S, 0.02)), M["outer2"], m)
+            if pat == "stained":
+                m = np.where((m == M["outer"]) & (self._stain(lx, ly) > 0.86), M["horn"], m)
             ex += np.where(np.sin(lx * 0.6 + ly * 0.25) > 0.82, -0.2, 0.0)
             return m, ex
         profile(cv, b.hip, b.lean, rows2, 1.3, mat, shift=sh)
@@ -902,6 +1050,11 @@ class Painter:
         hole = (cv.mat == 0) & (cv.z > 1.25) & (cv.z < 1.35)
         if hole.any():
             pass
+
+    def _stain(self, lx, ly):
+        """Blotches over a coat (0..1, the high values are the stains)."""
+        sd = self.seed % 97
+        return np.sin(lx * 0.29 + ly * 0.43 + sd) * np.sin(lx * 0.21 - ly * 0.35 + sd * 0.7) * 0.5 + 0.5
 
     def dungarees(self):
         b, S, cv = self.b, self.S, self.cv
@@ -981,11 +1134,11 @@ class Painter:
         sleeves = self.top.get("sleeves", {"tank": "none", "crop": "short", "tee": "short", "longsleeve": "long", "jumper": "long", "hoodie": "long",
                                             "shirt": "long", "polo": "short", "scrubs": "short", "jumpsuit": "long", "dress": "short", "gown": "short",
                                             "chef": "long", "leotard": "none", "bare": "none", "vest": "none", "robe": "long", "tunic": "short",
-                                            "bra": "none"}.get(top, "short"))
-        outer = self.outer if (self.outer and self.outer.get("kind") not in ("cape", "gilet")) else None
+                                            "bra": "none", "uniform": "long", "pyjamas": "long"}.get(top, "short"))
+        outer = self.outer if (self.outer and self.outer.get("kind") not in ("cape", "gilet", "waistcoat")) else None
         W = b.W * b.limb
         r_sh, r_el, r_wr = 0.042 * W * S, 0.035 * W * S, 0.026 * W * S
-        if sleeves == "long" or outer:
+        if sleeves in ("long", "rolled") or outer:
             r_sh *= 1.12
             r_el *= 1.15
             r_wr *= 1.25
@@ -1011,6 +1164,12 @@ class Painter:
                 m = np.where((t >= lim - 0.12) & (t < lim), M["top3"] if self.top.get("neck") == "crew" else sl_mat, m)
             if stripes:
                 m = np.where((m == M["top"]) & (np.floor(t * 0.17 * S / q) % 2 == 1), M["top2"], m)
+            if sleeves == "rolled":  # the sleeve rolled up above the elbow
+                m = np.where(t > 0.78, M["top3"], m)
+            if "garters" in acc and sleeves != "none":  # sleeve garters: a dark band above the elbow
+                m = np.where(np.abs(t - 0.42) < 0.075, M["acc"], m)
+            if "armband" in acc and side == "l":  # a plain band on the upper arm
+                m = np.where(np.abs(t - 0.4) < 0.15, M["prop2"], m)
             return m
 
         def fore_mat(t, u):
@@ -1029,6 +1188,16 @@ class Painter:
         capsule(cv, a["el"], a["wr"], r_el * 0.95, r_wr, z + 0.02, lambda t, u: (fore_mat(t, u), 0.0))
         hand_r = 0.024 * S * (1.15 if self.species in ("brute",) else 1.0)
         glove = self.sp.get("gloves")
+        if b.covering:  # a palm over half the face: wide enough to hide the eyes, with the gaps between the fingers
+            z = 2.6
+            rxh, ryh = max(b.head_w * 0.3, hand_r), max(b.head_h * 0.36, hand_r * 1.12)
+            ellipse(cv, a["hand"], rxh, ryh, 0.0, z + 0.04, lambda lx, ly, u, v: (np.full(u.shape, M["acc"] if glove else skin, np.uint8), np.where(u < -0.25, 0.25, np.where(v > 0.55, -0.25, 0.0))))
+            if not glove and S >= 80:
+                ax, ay = a["hand"]
+                for k in (-0.4, 0.0, 0.4):
+                    cv.dot(ax + k * rxh, ay - ryh * 0.55, skin, DARK, z + 0.1)
+                    cv.dot(ax + k * rxh, ay - ryh * 0.2, skin, DARK, z + 0.1)
+            return
         ellipse(cv, a["hand"], hand_r, hand_r * 1.12, math.atan2(a["fd"][0], a["fd"][1]), z + 0.04,
                 lambda *x: M["acc"] if glove else skin)
 
@@ -1223,6 +1392,8 @@ class Painter:
             mood = "sing"  # head back to the music: singing along
         if face == "sleep":
             return "sleep", "closed"
+        if face in ACT_FACES:  # an acted face wins over the person's lost-in-the-music eyes
+            return face, {"relief": "bliss", "laugh": "bliss", "grief": "closed"}.get(face, "open")
         e = f.get("eyes", "open")
         if e == "closed":
             return mood, "bliss" if mood in ("happy", "cheer", "sing") else "closed"
@@ -1242,6 +1413,7 @@ class Painter:
         iris = "extra" if not spk else "eye_d"
         fc = b.fc
         glasses = f.get("glasses")
+        acting = mood in ACT_FACES
         if cls == "XS":
             # a far face: two eye shadows and, when they shout, the mouth
             if eyes == "open":
@@ -1260,12 +1432,21 @@ class Painter:
         if demon and spk in ("fiend", "queen"):
             lash = 2
         shape = f.get("eye", "almond")
-        for cols, sg in eye_cols:
-            self.eye(P, cols, sg, ey, cls, eyes, mood, lash, shape, iris, glasses, far=(fc == 1 and sg == 1))
+        small_act = acting and cls == "S"
+        if small_act:
+            self.act_small(P, dec, L, eye_cols, mood, f, demon, glasses)
+        for cols, sg in ([] if small_act else eye_cols):
+            if acting:
+                self.act_eye(P, cols, sg, ey, mood, lash, shape, iris, glasses, far=(fc == 1 and sg == 1), L=L)
+            else:
+                self.eye(P, cols, sg, ey, cls, eyes, mood, lash, shape, iris, glasses, far=(fc == 1 and sg == 1))
         # brows
-        if f.get("brows", True):
+        if f.get("brows", True) and not small_act:
             for cols, sg in eye_cols:
-                self.brow(P, cols, sg, L, mood, eyes, glasses, f.get("brow", "straight") if spk != "brute" else "thick")
+                if acting:
+                    self.act_brow(P, cols, sg, L, mood, glasses, f.get("brow", "straight") if spk != "brute" else "thick")
+                else:
+                    self.brow(P, cols, sg, L, mood, eyes, glasses, f.get("brow", "straight") if spk != "brute" else "thick")
         if spk == "brute":  # a heavy ridge over the eyes
             for x in range(-(ein + ew), ein + ew + 1):
                 if (x + sx, L["brow"] + 1) not in dec:
@@ -1276,10 +1457,358 @@ class Painter:
         # nose, cheeks, lines, freckles
         self.nose(P, L, f.get("nose", "straight") if not demon else ("wide" if spk == "brute" else "straight"))
         self.cheeks(P, dec, L, mood, f)
+        if acting and not small_act:
+            self.act_cheeks(P, L, mood)
         beard = f.get("beard") if not spk else None
         if beard:
             self.beard(P, dec, L, beard)
-        self.mouth(P, dec, L, mood, f, demon)
+        if acting:
+            if not small_act:
+                self.act_mouth(P, dec, L, mood, f, demon)
+        else:
+            self.mouth(P, dec, L, mood, f, demon)
+
+    # -- the acted faces (fear, anger, plea, doubt, relief, awe, grief, laugh, resolve, shame): the same face on the person's own traits --
+    def act_eye(self, P, cols, sg, ey, mood, lash, shape, iris, glasses, far, L=None):
+        """One eye of an acted face (cols outer to inner). The person's own lash, eye colour and shape stay; the lids, the whites and the iris carry the feeling:
+        wide with whites above (fear), wide and lit (awe), wide, looking up and wet (plea), narrowed with a heavy lid (anger), one narrowed (doubt), a crescent
+        (relief, laugh), closed and slanting down with a tear (grief), a straight steady lid (resolve), lowered and looking at the floor (shame)."""
+        n = len(cols)
+        out, inn = cols[0], cols[-1]
+        lash_m, lash_s = ("eye_d", EDGE) if lash >= 1 else ("skin", EDGE)
+        irs = DARK if iris == "extra" else EDGE
+        ir = cols[1] if n >= 3 else (cols[0] if far else cols[-1])
+
+        def lid(y, soft=True):
+            for i, x in enumerate(cols):
+                if soft and i == n - 1 and n >= 3:
+                    P(x, y, "skin", EDGE)
+                else:
+                    P(x, y, lash_m, lash_s)
+
+        def whites(y, skip=None):
+            for i, x in enumerate(cols):
+                if x != skip:
+                    P(x, y, "eye_w", DARK if i == 0 else MID)
+
+        if mood in ("fear", "awe", "plea"):
+            lid(ey - 2)
+            if mood == "plea":  # looking up, the lower rim wet
+                whites(ey - 1, skip=ir)
+                P(ir, ey - 1, iris, irs)
+                whites(ey)
+                P(out, ey + 1, "glass", LIT)
+            else:
+                whites(ey - 1)
+                whites(ey, skip=ir)
+                P(ir, ey, iris, irs)
+                if mood == "awe":  # the iris centred in the white, a catch light
+                    whites(ey + 1, skip=ir)
+                    P(inn if n < 3 else cols[0], ey - 1, "lit", LIT)
+        elif mood == "anger":  # narrowed: a heavy lid, the iris glaring, the lower lid up
+            lid(ey - 1, soft=False)
+            for i, x in enumerate(cols):
+                if i == 0 and n >= 2:
+                    P(x, ey, "eye_w", DARK)
+                else:
+                    P(x, ey, iris, irs)
+            P(ir, ey + 1, "skin", DARK)
+        elif mood == "doubt":
+            if sg < 0:  # the raised-brow side: the eye as it is
+                self.eye(P, cols, sg, ey, "L", "open", "neutral", lash, shape, iris, glasses, far)
+            else:  # the other eye narrowed
+                lid(ey - 1, soft=False)
+                whites(ey, skip=ir)
+                P(ir, ey, iris, irs)
+                for x in cols:
+                    P(x, ey + 1, "skin", DARK)
+        elif mood in ("relief", "laugh"):
+            self.eye(P, cols, sg, ey, "L", "bliss", "happy", lash, shape, iris, glasses, far)
+            if mood == "laugh":
+                P(out + sg, ey, "skin", DARK)  # the lines at the outer corner
+                P(out + sg, ey + 1, "skin", DARK)
+        elif mood == "grief":  # shut tight, slanting down to the outer corner, a tear
+            for i, x in enumerate(cols):
+                y = ey + 1 if i == 0 else ey
+                P(x, y, lash_m, lash_s)
+                P(x, y - 1, "skin", MID if i < n - 1 else LIT)
+            P(out, ey + 2, "glass", LIT)
+            P(out, ey + 3, "glass", MID)
+        elif mood == "resolve":  # a straight steady lid, the eye wide enough to hold
+            lid(ey - 1, soft=False)
+            whites(ey, skip=ir)
+            P(ir, ey, iris, irs)
+        elif mood == "shame":  # lowered lids, the iris down, looking at the floor
+            for x in cols:
+                P(x, ey - 1, "skin", LIT)
+                P(x, ey, lash_m, lash_s)
+            P(ir, ey + 1, iris, irs)
+            if n >= 3:
+                P(out, ey + 1, "eye_w", DARK)
+
+    def act_brow(self, P, cols, sg, L, mood, glasses, kind):
+        """A brow of an acted face: fear raised with the inner ends higher and drawn together; anger down and in with a furrow between; plea arched with the inner ends up;
+        doubt one up, one flat and low; relief up and relaxed; awe high and arched; grief inner ends high; laugh up; resolve flat and thick; shame flat, the inner end a little up."""
+        by = L["brow"] - (1 if glasses and L["cls"] == "L" else 0)
+        n = len(cols)
+        inn = cols[-1]
+        ext = inn - sg  # one step towards the middle of the face
+        # y offsets for the columns outer .. inner (three-column eyes; two-column eyes use the ends)
+        tab = {"fear": (-1, -1, -2), "anger": (-1, 0, 1), "plea": (0, -1, -2), "relief": (-1, -2, -1), "awe": (-2, -3, -2), "grief": (1, 0, -1), "laugh": (-1, -1, -1),
+               "resolve": (0, 0, 0), "shame": (0, 0, -1)}
+        if mood == "doubt":
+            offs = (-2, -2, -2) if sg < 0 else (0, 0, 1)
+        else:
+            offs = tab[mood]
+        for i, x in enumerate(cols):
+            j = 0 if i == 0 else (2 if i == n - 1 else 1)
+            y = by + offs[j]
+            st = DARK if kind == "thin" else EDGE
+            P(x, y, "hair", st)
+            if kind == "thick" or mood in ("resolve", "anger"):
+                P(x, y - 1, "hair", DARK)
+        if mood in ("fear", "anger", "grief", "plea") and L["sx"] == 0:  # drawn together
+            P(ext, by + offs[2], "hair", EDGE)
+        if mood == "anger" and sg < 0:
+            P(0, by - 1, "skin", DARK)  # the furrow between the brows
+            P(0, by, "skin", DARK)
+
+    def act_cheeks(self, P, L, mood):
+        """Fear's pallor, anger's flush, shame's blush, a laugh's warm cheeks."""
+        ey, ein, ew, sx = L["ey"], L["ein"], L["ew"], L["sx"]
+        sides = (-1, 1) if self.b.fc == 0 else (-1,)
+        for sg in sides:
+            cx = sx + sg * (ein + ew - 1)
+            if mood == "fear":
+                P(cx, ey + 2, "skin", LIT)
+                P(cx - sg, ey + 2, "skin", LIT)
+            elif mood == "anger":
+                P(cx, ey + 2, "skin2", MID)
+                P(cx - sg, ey + 3, "skin2", MID)
+            elif mood == "shame":
+                P(cx, ey + 2, "skin2", MID)
+                P(cx - sg, ey + 2, "skin2", MID)
+                P(cx, ey + 3, "skin2", DARK)
+            elif mood in ("laugh", "relief"):
+                P(cx, ey + 2, "skin2", DARK)
+
+    def act_mouth(self, P, dec, L, mood, f, demon=False):
+        """The mouth of an acted face, in the person's own lips: fear a small O pulled down; anger a tight line with the corners down (bared teeth on a brute); plea
+        parted with the corners down; doubt pulled to one side; relief a soft open smile with the lower lip loose; awe open and slack; grief turned down with a puckered
+        chin; laugh wide open with teeth and the lower lip; resolve closed and firm with the jaw set; shame small with the corners down."""
+        my, sx = L["mouth"], L["sx"]
+        fc = self.b.fc
+        lips = f.get("lips", "thin")
+        hw = 2 if lips == "wide" else 1
+        mc = sx
+        lo = mc - hw
+        hi = mc + (hw if fc == 0 else max(0, hw - 1) + 1)
+        two = fc == 0
+
+        def row(y, x0, x1, m, st):
+            for x in range(x0, x1 + 1):
+                P(x, y, m, st)
+        if mood == "fear":
+            P(mc, my - 1, "mouth", DARK)
+            row(my, mc - 1, mc + (1 if two else 1), "eye_d", EDGE)
+            row(my + 1, mc - 1, mc + 1, "eye_d", EDGE)
+            P(mc - 1, my, "mouth", EDGE)
+            if two:
+                P(mc + 1, my, "mouth", EDGE)
+            row(my + 2, mc - 1, mc + 1, "mouth", MID)
+        elif mood == "anger":
+            if demon and self.species == "brute":  # bared teeth
+                row(my - 1, lo, hi, "mouth", DARK)
+                row(my, lo, hi, "teeth", LIT)
+                row(my + 1, lo, hi, "mouth", EDGE)
+            else:
+                row(my, lo, hi, "mouth", EDGE)
+            P(lo - 1, my + 1, "mouth", DARK)
+            if two:
+                P(hi + 1, my + 1, "mouth", DARK)
+        elif mood == "plea":
+            row(my - 1, mc - 1, mc + 1, "mouth", DARK)
+            P(mc, my, "eye_d", EDGE)
+            P(mc - 1, my, "mouth", EDGE)
+            if two:
+                P(mc + 1, my, "mouth", EDGE)
+            row(my + 1, mc - 1, mc + 1, "mouth", MID)
+            P(mc - 2, my + 1, "mouth", DARK)
+            if two:
+                P(mc + 2, my + 1, "mouth", DARK)
+        elif mood == "doubt":
+            P(lo - 1, my + 1, "mouth", DARK)
+            P(lo, my + 1, "mouth", EDGE)
+            P(mc, my, "mouth", EDGE)
+            P(hi, my, "mouth", EDGE)
+            P(hi + 1, my - 1, "mouth", DARK)
+            if two:
+                P(hi + 2, my - 2, "skin", DARK)  # the dimple where the cheek is pulled
+        elif mood == "relief":
+            P(lo - 1, my - 1, "mouth", DARK)
+            if two:
+                P(hi + 1, my - 1, "mouth", DARK)
+            row(my, lo, hi, "eye_d", EDGE if hw == 1 else DARK)
+            row(my + 1, lo + 1, hi - 1 if two else hi, "mouth", LIT)
+            P(mc, my + 2, "mouth", MID)
+        elif mood == "awe":
+            row(my - 1, mc - 1, mc + 1, "mouth", DARK)
+            for y in (my, my + 1, my + 2):
+                row(y, mc - 1, mc + 1, "eye_d", EDGE)
+            row(my + 3, mc - 1, mc + 1, "mouth", MID)
+        elif mood == "grief":
+            row(my, mc - 1, mc + 1, "mouth", EDGE)
+            P(mc - 2, my + 1, "mouth", DARK)
+            if two:
+                P(mc + 2, my + 1, "mouth", DARK)
+            row(my + 2, mc - 1, mc + 1, "skin", DARK)  # the chin puckers
+            P(mc, my + 3, "skin", DARK)
+        elif mood == "laugh":
+            wlo, whi = lo - 1, hi + 1 if two else hi
+            row(my - 1, wlo, whi, "mouth", DARK)
+            row(my, wlo + 1, whi - (1 if two else 0), "teeth", LIT)
+            P(wlo, my, "mouth", EDGE)
+            if two:
+                P(whi, my, "mouth", EDGE)
+            row(my + 1, wlo + 1, whi - (1 if two else 0), "eye_d", EDGE)
+            P(mc, my + 1, "mouth", MID)
+            row(my + 2, wlo + 1, whi - (1 if two else 0), "mouth", MID)
+        elif mood == "resolve":
+            row(my, lo - 1, hi + 1 if two else hi, "mouth", EDGE)
+            row(my + 1, mc - 1, mc + 1, "mouth", LIT)
+            P(lo - 2, my - 1, "skin", DARK)
+            if two:
+                P(hi + 2, my - 1, "skin", DARK)
+        elif mood == "shame":
+            P(mc, my + 1, "mouth", EDGE)
+            P(mc - 1, my + 2, "mouth", DARK)
+            if two:
+                P(mc + 1, my + 2, "mouth", DARK)
+            else:
+                P(mc + 1, my + 2, "mouth", DARK)
+
+    def act_small(self, P, dec, L, eye_cols, mood, f, demon, glasses):
+        """The acted faces at the half level of detail: one pixel per eye, so the brows (a slant of two pixels), the eye's height and the mouth's shape carry it."""
+        ey, sx, my = L["ey"], L["sx"], L["mouth"]
+        fc = self.b.fc
+        mc = sx
+        two = fc == 0
+        for cols, sg in eye_cols:
+            ex = cols[0]
+            inner = ex - sg  # towards the middle of the face
+            outer = ex + sg
+            far = fc == 1 and sg == 1
+            # eyes
+            if mood in ("fear", "plea", "awe"):
+                P(ex, ey - 1, "lit" if mood == "awe" else "eye_w", LIT)
+                P(ex, ey, "eye_d", EDGE)
+            elif mood in ("relief", "laugh"):
+                P(ex, ey - 1 if mood == "laugh" else ey, "eye_d", DARK)
+            elif mood == "grief":
+                P(ex, ey, "eye_d", DARK)
+                if not far:
+                    P(ex, ey + 1, "glass", LIT)
+            elif mood == "shame":
+                P(ex, ey + 1, "eye_d", EDGE)
+            elif mood == "doubt" and sg > 0:
+                P(ex, ey, "eye_d", EDGE)
+                P(ex, ey + 1, "skin", DARK)
+            else:
+                P(ex, ey, "eye_d", EDGE)
+            # brows, outer .. inner
+            if mood == "anger":
+                P(inner, ey - 1, "hair", EDGE)
+                P(ex, ey - 1, "hair", EDGE)
+                P(outer, ey - 2, "hair", EDGE) if not far else None
+            elif mood in ("fear", "plea", "grief"):
+                P(ex, ey - 2, "hair", EDGE)
+                P(outer, ey - 1, "hair", EDGE) if not far else None
+            elif mood in ("awe", "relief"):
+                P(ex, ey - 2, "hair", EDGE)
+                P(outer, ey - 2, "hair", EDGE) if not far else None
+            elif mood == "doubt":
+                if sg < 0:
+                    P(ex, ey - 2, "hair", EDGE)
+                    P(outer, ey - 2, "hair", EDGE)
+                else:
+                    P(ex, ey - 1, "hair", EDGE)
+                    P(inner, ey, "hair", DARK)
+            elif mood == "resolve":
+                P(ex, ey - 1, "hair", EDGE)
+                P(inner, ey - 1, "hair", EDGE)
+            elif mood == "laugh":
+                P(ex, ey - 2, "hair", DARK)
+        if mood == "anger":
+            P(mc, ey - 1, "skin", DARK)
+        # cheeks
+        if mood in ("shame", "anger"):
+            for cols, sg in eye_cols:
+                if not (fc == 1 and sg == 1):
+                    P(cols[0] + sg, ey + 1, "skin2", MID)
+        if mood == "fear":
+            for cols, sg in eye_cols:
+                if not (fc == 1 and sg == 1):
+                    P(cols[0] + sg, ey + 1, "skin", LIT)
+        # mouth
+        if mood == "fear":
+            P(mc, my, "eye_d", EDGE)
+            P(mc, my + 1, "eye_d", EDGE)
+        elif mood == "awe":
+            P(mc, my, "eye_d", EDGE)
+            P(mc, my + 1, "eye_d", EDGE)
+            P(mc - 1, my, "mouth", DARK)
+            if two:
+                P(mc + 1, my, "mouth", DARK)
+        elif mood == "anger":
+            if demon and self.species == "brute":
+                P(mc, my, "teeth", LIT)
+                P(mc - 1, my, "teeth", MID)
+                if two:
+                    P(mc + 1, my, "teeth", MID)
+            else:
+                P(mc - 1, my, "mouth", EDGE)
+                P(mc, my, "mouth", EDGE)
+                if two:
+                    P(mc + 1, my, "mouth", EDGE)
+            P(mc - 2, my + 1, "mouth", DARK)
+            if two:
+                P(mc + 2, my + 1, "mouth", DARK)
+        elif mood == "plea":
+            P(mc, my, "eye_d", EDGE)
+            P(mc - 1, my + 1, "mouth", DARK)
+            if two:
+                P(mc + 1, my + 1, "mouth", DARK)
+        elif mood == "doubt":
+            P(mc - 1, my + 1, "mouth", DARK)
+            P(mc, my, "mouth", EDGE)
+            P(mc + 1, my - 1, "mouth", DARK)
+        elif mood == "relief":
+            P(mc, my, "eye_d", EDGE)
+            P(mc - 1, my - 1, "mouth", DARK)
+            if two:
+                P(mc + 1, my - 1, "mouth", DARK)
+            P(mc, my + 1, "mouth", LIT)
+        elif mood == "grief":
+            P(mc, my, "mouth", EDGE)
+            P(mc - 1, my + 1, "mouth", DARK)
+            if two:
+                P(mc + 1, my + 1, "mouth", DARK)
+            P(mc, my + 2, "skin", DARK)
+        elif mood == "laugh":
+            P(mc, my - 1, "mouth", DARK)
+            P(mc - 1, my, "teeth", MID)
+            P(mc, my, "teeth", LIT)
+            if two:
+                P(mc + 1, my, "teeth", MID)
+            P(mc, my + 1, "eye_d", EDGE)
+        elif mood == "resolve":
+            P(mc - 1, my, "mouth", EDGE)
+            P(mc, my, "mouth", EDGE)
+            if two:
+                P(mc + 1, my, "mouth", EDGE)
+            P(mc, my + 1, "mouth", LIT)
+        elif mood == "shame":
+            P(mc, my + 1, "mouth", DARK)
 
     def eye(self, P, cols, sg, ey, cls, eyes, mood, lash, shape, iris, glasses, far):
         """One eye. cols: outer to inner. Open: the upper lid's lash line, the white, the iris (and its pupil), a lit inner corner; closed: the lash line
@@ -1629,10 +2158,424 @@ class Painter:
             P(lo, my - 1, "teeth", LIT)
             P(hi, my - 1, "teeth", LIT)
 
+    # -- the acted faces in the other species' own vocabulary --
+    def act_skeleton(self, L, dec, mood):
+        """A skeleton cannot move its face: the sockets open wider (fear, awe, plea) or narrow (anger, resolve), droop (grief, shame) and a brow ridge slants over them;
+        the jaw is what acts: dropped far (fear, awe, laugh), a little (plea, grief, shame, relief), clenched (anger, resolve), skewed (doubt)."""
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        ey, ein, ew, sx, ny, my = L["ey"], L["ein"], L["ew"], L["sx"], L["nose"], L["mouth"]
+        fc = self.b.fc
+        big = L["cls"] == "L"
+        if mood in ("fear", "awe", "plea"):
+            rows = (ey - 2, ey - 1, ey)
+        elif mood in ("anger", "resolve"):
+            rows = (ey,)
+        elif mood in ("grief", "shame"):
+            rows = (ey, ey + 1)
+        elif mood in ("relief", "laugh"):
+            rows = (ey,)
+        else:
+            rows = (ey - 1, ey)
+        if not big:
+            rows = (ey,) if mood in ("anger", "resolve", "relief", "laugh") else (ey - 1, ey) if mood in ("fear", "awe", "plea") else (ey,)
+        for sg in (-1, 1):
+            if fc == 1 and sg == 1:
+                xs = [sx + ein]
+            else:
+                xs = [sx + sg * (ein + k) for k in range(max(1, ew - 1) if big else 1)]
+            narrow_one = mood == "doubt" and sg > 0
+            for x in xs:
+                for y in (rows if not narrow_one else (ey,)):
+                    P(x, y, "eye_d", EDGE)
+            if big:
+                inner = xs[-1]
+                outer = xs[0]
+                if mood in ("anger", "resolve") or narrow_one:
+                    P(inner, ey - 1, "horn", DARK)  # the brow ridge slants down to the nose
+                    P(outer, ey - 2, "horn", LIT)
+                elif mood in ("fear", "awe", "plea", "relief", "laugh"):
+                    P(inner, ey - 3 if mood in ("fear", "awe") else ey - 2, "horn", LIT)
+                    P(outer, ey - 2, "horn", MID)
+                else:
+                    P(inner, ey - 2, "horn", LIT)
+                if mood in ("fear", "awe", "plea", "doubt") and not narrow_one:
+                    P(outer, ey, "eye_w", MID)
+                if mood == "grief":
+                    P(outer, ey + 2, "glass", LIT)
+                    P(outer, ey + 3, "glass", MID)
+                if mood in ("relief", "laugh"):
+                    P(outer, ey + 1, "horn", LIT)  # the cheekbone lifted in a smile
+                P(outer + sg if fc == 0 else outer, ey + 1 + (1 if mood in ("grief", "shame") else 0), "horn", DARK)
+        if not big:
+            P(sx, my, "eye_d", EDGE if mood in ("fear", "awe", "laugh") else DARK)
+            if mood in ("fear", "awe", "laugh"):
+                P(sx, my + 1, "eye_d", EDGE)
+            return
+        P(sx, ny - 1, "eye_d", EDGE)
+        P(sx + 1 if fc == 1 else sx, ny, "eye_d", EDGE)
+        if fc == 0:
+            P(sx - 1, ny, "eye_d", DARK)
+        # the jaw: upper teeth on row my, the lower jaw `drop` rows below the upper
+        drop = {"fear": 2, "awe": 2, "laugh": 2, "plea": 1, "grief": 1, "shame": 1, "relief": 1, "anger": 0, "resolve": 0, "doubt": 0}[mood]
+        for x in range(sx - 2, sx + 3):
+            lit = LIT if (x % 2 == 0 or mood in ("anger", "resolve")) else MID
+            P(x, my, "teeth", lit)
+            ly = my + 1 + drop
+            if mood == "doubt" and x < sx:
+                ly += 1
+            P(x, ly, "teeth", MID if x % 2 == 0 else DARK)
+            for g in range(my + 1, ly):
+                P(x, g, "eye_d", EDGE)
+        P(sx - 3, my, "horn", EDGE)
+        P(sx + 3, my, "horn", EDGE)
+        if mood == "anger":
+            P(sx - 3, my + 1, "horn", DARK)
+            P(sx + 3, my + 1, "horn", DARK)
+
+    def act_grey(self, L, dec, mood):
+        """A grey's feeling is in its great eyes: wide with catch lights (fear, awe, plea), narrowed to slits (anger), one slit (doubt), closed arcs (relief, laugh),
+        closed and slanting down with a tear (grief), steady straight slits (resolve), lowered (shame); the small mouth follows."""
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        ey, sx = L["ey"], L["sx"]
+        rx = L["rx"]
+        fc = self.b.fc
+        big = L["cls"] == "L"
+        w = max(2, int(round(rx * 0.42))) if big else 1
+        gap = max(1, int(round(rx * 0.18)))
+        for sg in (-1, 1):
+            far = fc == 1 and sg == 1
+            ww = max(1, w - (2 if far else 0))
+            inner = sx + sg * gap
+            xs = [inner + sg * k for k in range(ww)]
+            slit = mood == "anger" or (mood == "doubt" and sg > 0)
+            for k, x in enumerate(xs):
+                t = k / max(1, ww - 1)
+                if mood in ("relief", "laugh"):
+                    P(x, ey - (1 if 0.2 < t < 0.85 else 0) if big else ey - 1, "eye_d", EDGE)
+                    P(x, ey + 1, "skin", LIT) if big else None
+                    continue
+                if mood == "grief":
+                    P(x, ey + (1 if t > 0.55 else 0), "eye_d", EDGE)
+                    if k == len(xs) - 1 and not far:
+                        P(x, ey + 2, "glass", LIT)
+                        P(x, ey + 3, "glass", MID)
+                    continue
+                if slit:
+                    P(x, ey - (1 if t > 0.5 else 0) + (0 if big else 0), "eye_d", EDGE)
+                    P(x, ey - (1 if t > 0.5 else 0) + 1, "eye_d", DARK) if (big and 0.2 < t < 0.8) else None
+                    continue
+                if mood == "resolve":
+                    for y in (ey - 1, ey):
+                        P(x, y, "eye_d", EDGE)
+                    continue
+                if mood == "shame":
+                    for y in (ey, ey + 1) + ((ey + 2,) if big and 0.15 < t < 0.85 else ()):
+                        P(x, y, "eye_d", EDGE if y < ey + 2 else DARK)
+                    continue
+                # wide: fear, awe, plea, and the open eye of doubt
+                lift = 1 if (t > 0.55 and big) else 0
+                top = ey - 1 - lift - (1 if mood in ("fear", "awe", "plea") else 0)
+                bot = ey + (1 if 0.15 < t < 0.85 and big else 0) + (1 if mood in ("fear", "awe", "plea") else 0)
+                for y in range(top, bot + 1):
+                    P(x, y, "eye_d", EDGE if y < bot or not big else DARK)
+            if big and not far and mood in ("fear", "awe", "plea", "doubt") and not slit:
+                P(xs[min(len(xs) - 1, 1)], ey - 2 if mood != "doubt" else ey - 1, "eye_w", LIT)
+                if mood in ("awe", "plea"):
+                    P(xs[0], ey, "eye_w", LIT)
+            if mood in ("anger", "doubt") and big and (mood == "anger" or sg > 0):
+                P(xs[0], ey - 2, "skin", DARK)  # a brow ridge over the slit
+        if not big:
+            return
+        ny, my = L["nose"] + 1, L["mouth"] + 1
+        P(sx - 1 if fc == 0 else sx, ny, "skin", EDGE)
+        P(sx + 1, ny, "skin", EDGE)
+        if mood == "fear":  # a wide, flat open mouth
+            for x in range(sx - 2, sx + 3):
+                P(x, my, "eye_d", DARK)
+            for x in range(sx - 1, sx + 2):
+                P(x, my + 1, "eye_d", EDGE)
+        elif mood == "awe":  # a tall round O
+            for y in range(my, my + 4):
+                P(sx, y, "eye_d", EDGE)
+                if y in (my + 1, my + 2):
+                    P(sx - 1, y, "eye_d", DARK)
+                    P(sx + 1, y, "eye_d", DARK)
+        elif mood == "laugh":
+            for x in (sx - 1, sx, sx + 1):
+                P(x, my, "mouth", EDGE)
+                P(x, my + 1, "mouth", DARK)
+            P(sx - 2, my - 1, "skin", DARK)
+            P(sx + 2, my - 1, "skin", DARK)
+        elif mood == "plea":
+            P(sx, my, "mouth", EDGE)
+            P(sx - 1, my + 1, "skin", DARK)
+            P(sx + 1, my + 1, "skin", DARK)
+        elif mood == "anger":
+            for x in (sx - 1, sx, sx + 1):
+                P(x, my, "mouth", EDGE)
+            P(sx - 2, my + 1, "skin", DARK)
+            P(sx + 2, my + 1, "skin", DARK)
+        elif mood == "doubt":
+            P(sx - 1, my + 1, "skin", DARK)
+            P(sx, my, "skin", EDGE)
+            P(sx + 1, my, "skin", EDGE)
+            P(sx + 2, my - 1, "skin", DARK)
+        elif mood == "relief":
+            for x in (sx - 1, sx, sx + 1):
+                P(x, my, "skin", EDGE)
+            P(sx - 2, my - 1, "skin", DARK)
+            P(sx + 2, my - 1, "skin", DARK)
+            P(sx, my + 1, "mouth", LIT)
+        elif mood in ("grief", "shame"):
+            for x in (sx - 1, sx, sx + 1) if mood == "grief" else (sx,):
+                P(x, my, "skin", EDGE)
+            P(sx - 1 if mood == "shame" else sx - 2, my + 1, "skin", DARK)
+            P(sx + 1 if mood == "shame" else sx + 2, my + 1, "skin", DARK)
+        elif mood == "resolve":
+            for x in (sx - 1, sx, sx + 1):
+                P(x, my, "skin", EDGE)
+            P(sx, my + 1, "skin", LIT)
+
+    def act_cyclops(self, L, dec, mood):
+        """One great eye: lids and the brow carry it. Wide with a ring of white (fear, awe, plea), pressed to a slit under a heavy lid (anger), half shut (doubt, shame),
+        a closed arc (relief, laugh), closed with a tear (grief), a straight lid (resolve); the brow slants as a face's would."""
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        ey, sx = L["ey"], L["sx"]
+        mood_eyes = {"relief": "arc", "laugh": "arc", "grief": "shut"}.get(mood, "open")
+        brow_dy = {"fear": lambda dx: -1 - (1 if abs(dx) <= 1 else 0), "awe": lambda dx: -2, "plea": lambda dx: -1 - (1 if abs(dx) <= 1 else 0),
+                   "anger": lambda dx: 1 if abs(dx) <= 1 else (0 if abs(dx) == 2 else -1), "doubt": lambda dx: -2 if dx < 0 else 1,
+                   "relief": lambda dx: -1, "laugh": lambda dx: -1, "grief": lambda dx: 1 - (2 if abs(dx) <= 1 else 0), "resolve": lambda dx: 1,
+                   "shame": lambda dx: 0}[mood]
+        if mood_eyes == "open":
+            wide = mood in ("fear", "awe", "plea")
+            lid = {"anger": 1, "doubt": 1, "shame": 1, "resolve": 0}.get(mood, -1 if wide else -1)  # the top row the eye shows
+            for dx in range(-3, 4):
+                for dy in range(-1, 2):
+                    if abs(dx) == 3 and dy != 0:
+                        continue
+                    if dy < lid:
+                        continue
+                    if mood == "shame" and dy == 1 and False:
+                        continue
+                    P(sx + dx, ey + dy, "eye_w", LIT if dy < 0 and dx < 0 else (MID if dy < 1 else DARK))
+            if wide:  # a ring of white above the iris
+                for dx in range(-2, 3):
+                    P(sx + dx, ey - 2, "eye_w", MID)
+            ioff = 1 if mood == "shame" else (-1 if mood == "plea" else 0)
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    if ey + dy + ioff - ey >= lid and (mood != "shame" or dy + ioff <= 1):
+                        P(sx + dx, ey + dy + ioff, "eye_d", MID if abs(dx) + abs(dy) == 2 else DARK)
+            P(sx, ey + ioff, "eye_d", EDGE)
+            P(sx - 1, ey - 1 + ioff, "eye_w", LIT)
+            if mood == "awe":
+                P(sx + 1, ey - 1, "lit", LIT)
+            for dx in range(-3, 4):  # the lid
+                P(sx + dx, ey + lid - 1, "skin", EDGE if abs(dx) < 3 else DARK)
+            if mood in ("anger", "doubt", "shame", "resolve"):
+                for dx in range(-3, 4):
+                    P(sx + dx, ey + lid - 2 if lid > -1 else ey - 2, "skin", DARK)
+        elif mood_eyes == "arc":
+            for dx in range(-3, 4):
+                P(sx + dx, ey - (1 if abs(dx) <= 1 else 0), "skin", EDGE)
+                P(sx + dx, ey + 1, "skin", LIT)
+        else:
+            for dx in range(-3, 4):
+                P(sx + dx, ey + (1 if abs(dx) >= 2 else 0), "skin", EDGE)
+                P(sx + dx, ey - 1, "skin", MID)
+            P(sx + 3, ey + 2, "glass", LIT)
+            P(sx + 3, ey + 3, "glass", MID)
+        by = ey - 3
+        for dx in range(-3, 4):
+            y = by + brow_dy(dx)
+            P(sx + dx, y, "hair" if (self.hair.get("style") not in ("none", None)) else "skin", EDGE)
+        f = {"lips": "wide"}
+        self.act_mouth(P, dec, L, mood, f, False)
+
+    def act_insect(self, L, dec, mood):
+        """Compound eyes that grow (fear, awe, plea), slant (anger, resolve), sag (grief, shame); the mandibles are the mouth: flung open (fear, awe, laugh), clamped
+        (anger, resolve), drooping (grief, shame, plea), one raised (doubt), loose (relief)."""
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        ey, sx = L["ey"], L["sx"]
+        rx = L["rx"]
+        fc = self.b.fc
+        big = L["cls"] == "L"
+        for sg in (-1, 1):
+            if fc == 1 and sg == 1:
+                cx = sx + int(round(rx * 0.5))
+            else:
+                cx = sx + sg * int(round(rx * 0.55))
+            if big:
+                pts = [(dx, dy) for dx in (-1, 0, 1) for dy in (-2, -1, 0, 1) if not (abs(dx) == 1 and dy in (-2, 1))]
+                if mood in ("fear", "awe", "plea"):
+                    pts += [(dx, -3) for dx in (0,)] + [(dx, 2) for dx in (0,)] + [(sg, -1), (-sg, 0)]
+                elif mood in ("anger", "resolve") or (mood == "doubt" and sg > 0):
+                    pts = [(dx, dy) for dx, dy in pts if dy >= -1]
+                    pts = [(dx, dy) for dx, dy in pts if not (dx == -sg and dy == -1)] + [(sg, -2)]  # slanted
+                elif mood in ("relief", "laugh"):
+                    pts = [(-1, 0), (0, -1), (1, 0)]
+                elif mood == "grief":
+                    pts = [(-1, 0), (0, 0), (1, 1)] + [(sg, 2), (sg, 3)]
+                elif mood == "shame":
+                    pts = [(dx, dy + 1) for dx, dy in pts if dy >= -1]
+            else:
+                pts = [(0, 0)] if mood not in ("fear", "awe", "plea") else [(0, 0), (0, -1)]
+            for dx, dy in pts:
+                x, y = cx + dx, ey + dy
+                tear = mood == "grief" and dy >= 2
+                st = DARK if (x + y) % 2 == 0 else MID
+                if tear:
+                    P(x, y, "glass", LIT if dy == 2 else MID)
+                else:
+                    P(x, y, "eye_d", st if big else EDGE)
+            if big and mood not in ("relief", "laugh", "grief"):
+                P(cx - 1 if sg < 0 or fc == 1 else cx, ey - 1 - (1 if mood in ("fear", "awe", "plea") else 0), "eye_w", LIT)
+                P(cx + (1 if sg > 0 else 0), ey + 1, "eye_d", EDGE)
+        if not big:
+            return
+        my = L["mouth"] + 1
+        sides = (-1, 1) if fc == 0 else (1,)
+        for sg in sides:
+            if mood in ("fear", "awe", "laugh"):
+                P(sx + sg * 3, my + 1, "horn", EDGE)
+                P(sx + sg * 3, my + 2, "horn", DARK)
+                P(sx + sg * 2, my, "horn", EDGE)
+            elif mood in ("anger", "resolve"):
+                P(sx + sg * 1, my, "horn", EDGE)
+                P(sx + sg * 1, my + 1, "horn", DARK)
+                P(sx + sg * 2, my - 1, "horn", DARK) if mood == "anger" else None
+            elif mood in ("grief", "shame", "plea"):
+                P(sx + sg * 2, my + 1, "horn", DARK)
+                P(sx + sg * 2, my + 2, "horn", EDGE)
+            elif mood == "doubt":
+                P(sx + sg * 1, my + (1 if sg < 0 else -1), "horn", EDGE)
+                P(sx + sg * 2, my + (2 if sg < 0 else -1), "horn", DARK)
+            else:
+                P(sx + sg * 2, my, "horn", EDGE)
+                P(sx + sg * 1, my + 1, "horn", MID)
+        if mood in ("fear", "awe", "laugh"):
+            P(sx, my, "mouth", EDGE)
+            P(sx, my + 1, "mouth", DARK)
+
+    def act_blob(self, L, dec, mood):
+        """Round eyes that go huge (fear, awe, plea), flat (anger, resolve), arcs (relief, laugh), shut with a tear (grief), dropped (shame), one flat (doubt); the wide
+        mouth is a frown, a O, a grin or a wobble."""
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        ey, sx, ein = L["ey"], L["sx"], L["ein"]
+        fc = self.b.fc
+        big = L["cls"] == "L"
+        for sg in (-1, 1):
+            x0 = sx + sg * (ein + 1) if not (fc == 1 and sg == 1) else sx + ein + 1
+            x_lo = x0 - (1 if sg < 0 else 0)
+            if not big:
+                if mood in ("relief", "laugh", "grief"):
+                    P(x0, ey - (1 if mood != "grief" else 0), "eye_d", EDGE)
+                elif mood in ("fear", "awe", "plea"):
+                    P(x0, ey - 1, "eye_d", EDGE)
+                    P(x0, ey, "eye_d", EDGE)
+                elif mood == "shame":
+                    P(x0, ey + 1, "eye_d", EDGE)
+                else:
+                    P(x0, ey, "eye_d", EDGE)
+                continue
+            if mood in ("relief", "laugh"):
+                P(x_lo, ey, "eye_d", EDGE)
+                P(x_lo + 1, ey - 1, "eye_d", EDGE)
+                P(x_lo + 2, ey, "eye_d", EDGE)
+            elif mood == "grief":
+                for dx in (0, 1):
+                    P(x_lo + dx, ey, "eye_d", EDGE)
+                P(x_lo + (0 if sg < 0 else 1), ey + 1, "glass", LIT)
+                P(x_lo + (0 if sg < 0 else 1), ey + 2, "glass", MID)
+            elif mood in ("fear", "awe", "plea"):
+                for dx in (0, 1):
+                    for dy in (-2, -1, 0):
+                        P(x_lo + dx, ey + dy, "eye_d", EDGE)
+                P(x_lo, ey - 2, "eye_w", LIT)
+                if mood == "awe":
+                    P(x_lo + 1, ey - 1, "lit", LIT)
+            elif mood in ("anger", "resolve") or (mood == "doubt" and sg > 0):
+                for dx in (0, 1):
+                    P(x_lo + dx, ey, "eye_d", EDGE)
+                    P(x_lo + dx, ey - 1, "skin", DARK)
+            elif mood == "shame":
+                for dx in (0, 1):
+                    P(x_lo + dx, ey, "eye_d", EDGE)
+                    P(x_lo + dx, ey + 1, "eye_d", EDGE)
+                P(x_lo, ey - 1, "skin", DARK)
+            else:  # doubt, the open eye
+                for dx in (0, 1):
+                    for dy in (-1, 0):
+                        P(x_lo + dx, ey + dy, "eye_d", EDGE)
+                P(x_lo, ey - 1, "eye_w", LIT)
+        my = L["mouth"]
+        if not big:
+            P(sx, my + (1 if mood in ("grief", "shame", "fear", "plea") else 0), "mouth", EDGE)
+            return
+        w = 3
+        for x in range(sx - w, sx + w + 1):
+            e = abs(x - sx)
+            if mood in ("relief", "laugh"):
+                y = my + (1 if e < w else 0) - 1 + (1 if mood == "laugh" and e < 2 else 0)
+            elif mood in ("grief", "plea"):
+                y = my + (0 if e < w else 1)
+            elif mood == "shame":
+                if e > 1:
+                    continue
+                y = my + (0 if e < 1 else 1)
+            elif mood in ("anger", "resolve"):
+                y = my - 1 + (1 if e >= w and mood == "anger" else 0)
+            elif mood == "doubt":
+                y = my - 1 + (1 if x < sx else 0) - (1 if x > sx + 1 else 0)
+            else:  # fear, awe: the mouth is a round O
+                if e > 1:
+                    continue
+                y = my - 1
+            P(x, y, "mouth", EDGE)
+        if mood in ("fear", "awe"):
+            for x in range(sx - 1, sx + 2):
+                for y in range(my, my + (2 if mood == "fear" else 3)):
+                    P(x, y, "mouth", DARK)
+        elif mood == "laugh":
+            for x in range(sx - 2, sx + 3):
+                P(x, my + 1, "mouth", DARK)
+            P(sx - 1, my, "teeth", LIT)
+            P(sx + 1, my, "teeth", MID)
+
     # -- the faces of the other species --
+    def half_face(self, species, L, dec, mood):
+        """The half-size head of a grey, skeleton, cyclops or insect (and the full-size head of a skeleton or insect): a picture per face (half_faces.py). False when the head is another size or the mood has no picture
+        (singing, sleeping): the species' own rules then draw it."""
+        if L["cls"] == "S":
+            pic = half_faces.PICTURES[species].get(mood)
+        elif L["cls"] == "L":
+            pic = half_faces.PICTURES_L.get(species, {}).get(mood)
+        else:
+            return False
+        if pic is None:
+            return False
+        fc, sx, ey = self.b.fc, L["sx"], L["ey"]
+        for dy, row in pic.items():
+            w = len(row)
+            for k, ch in enumerate(row):
+                if ch == ".":
+                    continue
+                x = k - w // 2
+                if fc == 1:  # the three-quarter turn: the far half closes up towards the middle, the whole face moves into the turn
+                    x = x - 1 if x > 0 else x
+                    x += sx
+                m, st = half_faces.LEGEND[ch]
+                self._P(dec, x, ey + dy, m, st)
+        return True
+
     def face_skeleton(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if self.half_face("skeleton", L, dec, mood):
+            return
+        if mood in ACT_FACES and L["cls"] != "XS":
+            self.act_skeleton(L, dec, mood)
+            return
         ey, ein, ew, sx, ny, my = L["ey"], L["ein"], L["ew"], L["sx"], L["nose"], L["mouth"]
         fc = self.b.fc
         if L["cls"] == "XS":
@@ -1672,6 +2615,11 @@ class Painter:
     def face_grey(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if self.half_face("grey", L, dec, mood):
+            return
+        if mood in ACT_FACES and L["cls"] != "XS":
+            self.act_grey(L, dec, mood)
+            return
         ey, sx = L["ey"], L["sx"]
         rx, ry = L["rx"], L["ry"]
         fc = self.b.fc
@@ -1723,6 +2671,11 @@ class Painter:
     def face_cyclops(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if self.half_face("cyclops", L, dec, mood):
+            return
+        if mood in ACT_FACES and L["cls"] != "XS":
+            self.act_cyclops(L, dec, mood)
+            return
         ey, sx = L["ey"], L["sx"]
         fc = self.b.fc
         if L["cls"] == "XS":
@@ -1767,6 +2720,11 @@ class Painter:
     def face_insect(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if self.half_face("insect", L, dec, mood):
+            return
+        if mood in ACT_FACES and L["cls"] != "XS":
+            self.act_insect(L, dec, mood)
+            return
         ey, sx = L["ey"], L["sx"]
         rx = L["rx"]
         fc = self.b.fc
@@ -1800,6 +2758,9 @@ class Painter:
     def face_blob(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if mood in ACT_FACES and L["cls"] != "XS":
+            self.act_blob(L, dec, mood)
+            return
         ey, sx, ein = L["ey"], L["sx"], L["ein"]
         fc = self.b.fc
         if L["cls"] == "XS":
@@ -1900,7 +2861,7 @@ class Painter:
         vol = {"curly": 1.32, "afro": 1.6, "curly_long": 1.3, "spiky": 1.12, "short": 1.07, "buzz": 1.0, "shaved": 1.0, "bun": 1.08,
                "mohawk": 1.0, "long": 1.09, "bob": 1.12, "ponytail": 1.07, "wavy": 1.12, "pigtails": 1.08, "locs": 1.1, "braids": 1.06,
                "tentacles": 1.05, "flames": 1.0, "perm": 1.3, "quiff": 1.1}.get(st, 1.07)
-        if hat in ("beanie", "bucket", "chef", "scrubcap", "scarf", "cap"):
+        if hat in ("beanie", "bucket", "chef", "scrubcap", "scarf", "cap", "peaked", "sidecap", "flightcap", "mphelm", "flatcap", "knit", "fisher", "fedora", "eyeshade", "surgcap"):
             vol = min(vol, 1.12) if st not in ("afro", "curly") else vol * 0.92
         z = 2.3
         line = {"long": 0.45, "bob": 0.55, "wavy": 0.5, "curly_long": 0.5, "pigtails": 0.25}.get(st, 0.15)
@@ -2047,8 +3008,116 @@ class Painter:
                 m = np.where(face & (b.fc != 2), 0, M["hat"]).astype(np.uint8)
                 return m, -0.2 * (np.sin(lx * 0.8 + ly * 0.4) > 0.6)
             ellipse(cv, F(0, ry * 0.05), rx * 1.25, ry * 1.18, tilt, z, mf)
+        elif kind == "helmet":  # a plain plumeless helmet: a bronze dome, a rim, cheek guards (the Gospel path's soldiers)
+            ellipse(cv, F(0, -ry * 0.5), rx * 1.12, ry * 0.78, tilt, z, lambda lx, ly, u, v: (np.where(v > 0.5, 0, M["hat"]).astype(np.uint8), 0.25 * (u < -0.3) - 0.1 * (v > 0.2)))
+            seg(cv, F(-rx * 1.12, -ry * 0.22), F(rx * 1.12, -ry * 0.22), "hat2", MID, z + 0.01, 1.5 if S > 80 else 1.0)
+            if b.fc != 2:
+                for sg in ((-1, 1) if b.fc == 0 else (1,)):
+                    seg(cv, F(sg * rx * 1.02, -ry * 0.2), F(sg * rx * 0.95, ry * 0.5), "hat2", DARK, z + 0.01, 1.5 if S > 80 else 1.0)
+        elif kind == "turban":  # wrapped cloth: layered bands round the head
+            ellipse(cv, F(0, -ry * 0.5), rx * 1.14, ry * 0.8, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.52, 0, np.where(np.sin((v * 5.0 + u * 1.5) * 3.14) > 0.45, M["hat2"], M["hat"])).astype(np.uint8), -0.05))
+        elif kind == "hood":  # a cloak's hood (the Ember Road): the opening shows the face; `blank` fills it (the riders' dark with a red glint, the sentinel's pale blank face)
+            blank = hat.get("blank", "")
+
+            def hf(lx, ly, u, v):
+                opening = (u * u / 0.5 + (v - 0.14) ** 2 / 0.62) < 1.0
+                if blank and b.fc != 2:
+                    m = np.where(opening, M["hat2"] if blank == "dark" else M["skin"], M["hat"]).astype(np.uint8)
+                else:
+                    m = np.where(opening & (b.fc != 2), 0, M["hat"]).astype(np.uint8)
+                return m, -0.2 * (np.sin(lx * 0.7 + ly * 0.4) > 0.6)
+            ellipse(cv, F(0, ry * 0.02), rx * 1.32, ry * 1.22, tilt, z, hf)
+            if blank == "dark" and b.fc != 2 and self.lod < 4:  # the red glint of two eyes in the dark
+                off = rx * 0.38 if b.fc == 1 else 0.0
+                for sg in (-1, 1):
+                    cv.dot(*F(sg * rx * 0.34 + off, ry * 0.12), "acc2", LIT, z + 0.02)
         elif kind == "halo":
             ellipse(cv, F(0, -ry * 1.4), rx * 0.9, ry * 0.18, 0, z, lambda lx, ly, u, v: np.where(u * u + v * v < 0.45, 0, M["lit"]).astype(np.uint8))
+        elif kind == "peaked":  # an officer's cap: a drum a little wider than the head, a band round its foot, a flat visor
+            off = rx * 0.16 if b.fc == 1 else 0.0
+
+            def crown(lx, ly, u, v):
+                m = np.where(v > 0.5, 0, np.where(v > 0.1, M["hat2"], M["hat"])).astype(np.uint8)
+                return m, np.where(v < -0.5, 0.22, 0.0) + np.where(v > 0.1, -0.1, 0.0)
+            ellipse(cv, F(off, -ry * 0.8), rx * 1.2, ry * 0.62, tilt, z, crown)
+            if b.fc != 2:
+                ellipse(cv, F(off * 1.5, -ry * 0.44), rx * (1.04 if b.fc == 0 else 0.95), ry * 0.14, tilt, z + 0.02,
+                        lambda lx, ly, u, v: (M["hat2"], np.where(v < -0.3, 0.0, -0.25)))
+                if self.lod < 4:
+                    cv.dot(*F(off, -ry * 0.72), "acc2", LIT, z + 0.03)  # a plain brass button
+        elif kind == "sidecap":  # a forage / side cap folded flat, tipped on the head
+            sg = 1.0 if b.fc != 2 else -1.0
+            ellipse(cv, F(rx * 0.08, -ry * 0.86), rx * 1.0, ry * 0.4, tilt + 0.2 * sg, z,
+                    lambda lx, ly, u, v: (M["hat"], np.where(v > 0.45, -0.25, 0.0) + np.where(v < -0.55, 0.2, 0.0)))
+            ellipse(cv, F(rx * 0.08, -ry * 0.86), rx * 0.86, ry * 0.07, tilt + 0.2 * sg, z + 0.02, lambda lx, ly, u, v: (M["hat2"], -0.1))
+            if b.fc != 2 and self.lod < 4:  # the turn-up flap on the near side
+                ellipse(cv, F(-rx * 0.5, -ry * 0.56), rx * 0.5, ry * 0.2, tilt + 0.5, z + 0.01, lambda lx, ly, u, v: (M["hat"], -0.22))
+        elif kind == "flightcap":  # a leather flying helmet: a skull cap, ear flaps, a strap, goggles pushed up
+            big = float(hat.get("big", 1.0))
+            ellipse(cv, F(0, -ry * 0.66), rx * 1.14 * big, ry * 0.72 * big, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.52, 0, M["hat"]).astype(np.uint8), np.where(v < -0.6, 0.18, 0.0) - 0.14 * (np.sin(lx * 0.8 + ly * 0.5) > 0.75)))
+            for sgn in ((-1, 1) if b.fc != 1 else (-1,)):  # ear flaps
+                ellipse(cv, F(sgn * rx * 1.0, ry * 0.12), rx * 0.27 * big, ry * 0.46 * big, tilt, z + 0.01,
+                        lambda lx, ly, u, v: (M["hat"], np.where(u < -0.3, -0.05, -0.28)))
+                if self.lod < 4 and b.fc != 2:
+                    seg(cv, F(sgn * rx * 0.9, ry * 0.5), F(sgn * rx * 0.4, ry * 1.0), "hat2", DARK, z + 0.02)
+            if hat.get("goggles", True):
+                gy = -ry * 0.58
+                seg(cv, F(-rx * 1.05, gy), F(rx * 1.05, gy), "acc", DARK, z + 0.02, 1.5 if S > 80 else 1.0)
+                if b.fc != 2:
+                    for sgn in (-1, 1):
+                        cxl = sgn * rx * 0.5 + (rx * 0.3 if b.fc == 1 else 0.0)
+                        ellipse(cv, F(cxl, gy), rx * 0.3, ry * 0.2, tilt, z + 0.03,
+                                lambda lx, ly, u, v: (np.where(u * u + v * v > 0.5, M["metal"], M["glass"]).astype(np.uint8), np.where((u < -0.1) & (v < 0.0), 0.2, 0.0)))
+        elif kind == "mphelm":  # a white-painted helmet liner: a smooth dome, a rim, cheek flares, a chin strap
+            ellipse(cv, F(0, -ry * 0.7), rx * 1.22, ry * 0.78, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.5, 0, np.where(v > 0.34, M["hat2"], M["hat"])).astype(np.uint8),
+                                          np.where(np.abs(u) < 0.1, 0.12, 0.0) + np.where(v < -0.5, 0.12, 0.0)))
+            for sgn in ((-1, 1) if b.fc != 1 else (-1,)):
+                ellipse(cv, F(sgn * rx * 1.12, -ry * 0.06), rx * 0.2, ry * 0.5, tilt, z + 0.01, lambda lx, ly, u, v: (M["hat"], -0.15 + 0.1 * (v < -0.4)))
+                if self.lod < 4 and b.fc != 2:
+                    seg(cv, F(sgn * rx * 1.0, ry * 0.42), F(sgn * rx * 0.45, ry * 1.02), "acc", DARK, z + 0.02)
+            if b.fc != 2:  # a short front peak
+                ellipse(cv, F(0, -ry * 0.34), rx * 1.0, ry * 0.1, tilt, z + 0.02, lambda lx, ly, u, v: (M["hat2"], np.where(v < 0, 0.0, -0.2)))
+            if b.fc == 2:  # the nape flare
+                ellipse(cv, F(0, ry * 0.08), rx * 1.18, ry * 0.5, tilt, z - 0.01, lambda lx, ly, u, v: (M["hat2"], -0.1 + 0.1 * (v < -0.2)))
+        elif kind == "flatcap":  # a flat cap with a short peak
+            off = rx * 0.2 if b.fc == 1 else 0.0
+            ellipse(cv, F(off * 0.5, -ry * 0.66), rx * 1.22, ry * 0.48, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.5, 0, M["hat"]).astype(np.uint8), np.where(v < -0.4, 0.16, 0.0) - 0.18 * (np.sin(lx * 1.1 + 0.5) > 0.7)))
+            if b.fc != 2:
+                ellipse(cv, F(off, -ry * 0.4), rx * 0.96, ry * 0.11, tilt, z + 0.02, lambda lx, ly, u, v: (M["hat2"], -0.1))
+            if self.lod < 4:
+                cv.dot(*F(off * 0.4, -ry * 1.04), "hat2", LIT, z + 0.03)
+        elif kind == "knit":  # a knitted watch cap with a rolled rib cuff
+            ellipse(cv, F(0, -ry * 0.62), rx * 1.14, ry * 0.78, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.4, 0, np.where(v > 0.0, M["hat2"], M["hat"])).astype(np.uint8),
+                                          np.where(v > 0.0, np.where(np.round(lx) % 2 == 0, -0.22, 0.05), np.where((np.round(lx) + np.round(ly)) % 2 == 0, -0.12, 0.04))))
+            if hat.get("pom"):
+                ellipse(cv, F(0, -ry * 1.4), rx * 0.28, rx * 0.26, tilt, z + 0.01, lambda *a: (M["hat2"], 0.2))
+        elif kind == "fisher":  # a sou'wester: a round crown, a brim in front, a long flap down the neck
+            ellipse(cv, F(0, -ry * 0.72), rx * 1.18, ry * 0.66, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.5, 0, np.where(v > 0.28, M["hat2"], M["hat"])).astype(np.uint8), np.where(v < -0.5, 0.15, 0.0)))
+            if b.fc != 2:
+                ellipse(cv, F(0, -ry * 0.4), rx * 1.4, ry * 0.15, tilt, z + 0.02, lambda lx, ly, u, v: (M["hat"], np.where(v < 0.0, 0.1, -0.25)))
+            rows = [(-ry * 0.34, rx * 1.3, rx * 1.3), (ry * 1.15, rx * 1.12, rx * 1.12)]
+            profile(cv, c, tilt, rows, z + 0.4 if b.fc == 2 else -1.4, lambda lx, ly, u: (M["hat"], np.where(ly > ry * 0.9, -0.3, -0.12 * (np.sin(lx) > 0.6))))
+        elif kind == "fedora":  # a felt hat: a pinched crown, a band, a brim all round
+            off = rx * 0.14 if b.fc == 1 else 0.0
+            ellipse(cv, F(off, -ry * 0.9), rx * 1.0, ry * 0.52, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.55, 0, np.where(v > 0.12, M["hat2"], M["hat"])).astype(np.uint8),
+                                          np.where((np.abs(u) < 0.14) & (v < -0.1), -0.28, 0.0) + np.where(v < -0.5, 0.15, 0.0)))
+            ellipse(cv, F(0, -ry * 0.46), rx * 1.58, ry * 0.15, tilt, z + 0.02, lambda lx, ly, u, v: (M["hat"], np.where(v < -0.1, 0.12, -0.3)))
+        elif kind == "surgcap":  # a close cloth skull cap tied at the back
+            ellipse(cv, F(0, -ry * 0.68), rx * 1.1, ry * 0.7, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.5, 0, M["hat"]).astype(np.uint8), np.where(v < -0.55, 0.14, 0.0) - 0.1 * (np.sin(lx * 0.9 + ly * 0.4) > 0.8)))
+            if b.fc == 2 and self.lod < 4:
+                seg(cv, F(0, -ry * 0.1), F(rx * 0.4, ry * 0.5), "hat2", MID, z + 0.02)
+                seg(cv, F(0, -ry * 0.1), F(-rx * 0.4, ry * 0.5), "hat2", MID, z + 0.02)
+        elif kind == "eyeshade":  # a clerk's green celluloid eyeshade
+            ellipse(cv, F(0, -ry * 0.5), rx * 1.12, ry * 0.2, tilt, z, lambda lx, ly, u, v: (M["hat"], np.where(v < 0, 0.15, -0.2)))
+            seg(cv, F(-rx * 1.08, -ry * 0.5), F(rx * 1.08, -ry * 0.5), "hat2", DARK, z + 0.01)
 
     def headwear_props(self, c, rx, ry, ang):
         """Headphones (the DJ), the alien DJ's worn the wrong way round, an eyepatch, a mask."""
@@ -2067,6 +3136,15 @@ class Painter:
             ellipse(cv, F(rx * 0.1, ry * 1.08), rx * 0.42, ry * 0.3, ang, z + 0.01, lambda lx, ly, u, v: (np.where(u * u + v * v < 0.3, M["acc2"], M["acc"]).astype(np.uint8), -0.1))
             seg(cv, F(rx * 0.42, -ry * 0.55), F(rx * 0.95, ry * 0.2), "acc", MID, z, 1.5 if S > 80 else 1.0)
             seg(cv, F(rx * 0.95, ry * 0.2), F(rx * 0.5, ry * 1.0), "acc", DARK, z, 1.5 if S > 80 else 1.0)
+        if "bandage" in self.acc:  # a head bandage wound round the crown, with a stain
+            ellipse(self.cv, F(0, -ry * 0.58), rx * 1.1, ry * 0.7, ang, z - 0.05,
+                    lambda lx, ly, u, v: (np.where(v > 0.38, 0, M["prop2"]).astype(np.uint8),
+                                          np.where(((lx * 0.8 + ly * 1.0 + 40) % 5.0) < 1.0, -0.3, 0.0) + np.where(v > 0.2, -0.12, 0.0)))
+            if self.lod < 4:
+                cv.dot(*F(rx * 0.35, -ry * 0.75), "horn", MID, z)
+                if self.lod < 2:
+                    cv.dot(*F(rx * 0.35 + 1, -ry * 0.75), "horn", DARK, z)
+                    cv.dot(*F(rx * 0.35, -ry * 0.75 + 1), "horn", DARK, z)
         if "eyepatch" in self.acc and b.fc != 2 and self.lod < 4:
             ex = rx * 0.42 + (rx * 0.38 if b.fc == 1 else 0)
             for dx in (-0.5, 0.5):
@@ -2167,6 +3245,133 @@ class Painter:
         if "plates" in acc:
             for sg in (-1, 1):
                 ellipse(cv, b.T((sg * b.sw * 0.95, ts + 0.005 * S)), 0.05 * S, 0.035 * S, b.lean, 1.7, lambda lx, ly, u, v: (M["metal"], 0.15 * (v < -0.2)))
+        if "webbing" in acc:  # a belt, and a cross strap from the hip over the shoulder (white for the police, tan for officers)
+            wy = -0.045 * S
+            wid = 1.5 if S > 80 else 1.0
+            seg(cv, b.T((-b.waist_hw * 1.08, wy)), b.T((b.waist_hw * 1.08, wy)), "acc", MID, 0.95, wid)
+            if front:
+                seg(cv, b.T((b.sw * 0.45 * b.mir, ts + 0.004 * S)), b.T((-b.waist_hw * 0.95 * b.mir, wy)), "acc", MID, 0.96, wid)
+                cv.dot(*b.T((0.0, wy)), "acc2", LIT, 0.97)
+                if self.lod < 4:
+                    cv.dot(*b.T((0.0, wy + 1.0)), "acc2", MID, 0.97)
+        if "braces" in acc:  # braces over the shirt
+            for sgn in (-1, 1):
+                seg(cv, b.T((sgn * 0.05 * S * b.W, ts + 0.004 * S)), b.T((sgn * 0.062 * S * b.W, -0.04 * S)), "acc", MID, 0.95, 1.5 if S > 80 else 1.0)
+        if "ribbons" in acc and front:
+            self.ribbons()
+        if "collarband" in acc and front:  # a dark plain band round the throat, a white tab at the front
+            ellipse(cv, b.T((0.0, ts - 0.006 * S)), 0.04 * S * b.W, 0.012 * S, b.lean, 1.19, lambda lx, ly, u, v: (M["acc"], -0.1 * (v > 0.2)))
+            if self.lod < 4:
+                cv.dot(*b.T((0.0, ts - 0.002 * S)), "prop2", LIT, 1.2)
+        if "maskdown" in acc:  # a surgical mask pulled down under the chin
+            c0 = b.T((0.0, ts - 0.002 * S))
+            ellipse(cv, c0, 0.05 * S * b.W, 0.019 * S, b.lean, 1.19, lambda lx, ly, u, v: (M["acc"], np.where(v < -0.3, 0.2, -0.1) + 0.12 * (np.round(lx) % 3 == 0)))
+            if front and self.lod < 4:
+                seg(cv, (c0[0] - 0.045 * S, c0[1]), (c0[0] - 0.052 * S, c0[1] - 0.03 * S), "acc", DARK, 1.18)
+                seg(cv, (c0[0] + 0.045 * S, c0[1]), (c0[0] + 0.052 * S, c0[1] - 0.03 * S), "acc", DARK, 1.18)
+        if "rag" in acc and front:  # an oily rag tucked in the belt
+            r0 = b.T((0.075 * S * b.W, -0.04 * S))
+            poly_fill(cv, [(r0[0] - 0.014 * S, r0[1]), (r0[0] + 0.016 * S, r0[1]), (r0[0] + 0.02 * S, r0[1] + 0.07 * S), (r0[0] - 0.01 * S, r0[1] + 0.06 * S)], 1.42, "prop2",
+                      lambda X, Y: np.where(((np.round(X) + np.round(Y)) % 5 == 0) | (Y > r0[1] + 0.04 * S), 0.25, 0.62))
+        if "chain" in acc and front and self.lod < 4:  # a watch chain looped across the waistcoat
+            for kk in np.linspace(0.0, 1.0, 7):
+                cv.dot(*b.T((0.01 * S + kk * 0.055 * S, ts + 0.12 * S + math.sin(kk * math.pi) * 0.012 * S)), "acc2", MID if kk < 0.9 else LIT, 0.97)
+        if "apron" in acc:
+            self.apron()
+        if "sling" in acc:
+            self.sling()
+
+    def ribbons(self):
+        """A chestful of ribbon bars on the left breast: rows of little coloured oblongs, each with a stripe, in the spec's colours (invented; no real award)."""
+        b, S, cv = self.b, self.S, self.cv
+        rb = self.sp.get("ribbons") or {}
+        rows, cols = int(rb.get("rows", 3)), int(rb.get("cols", 3))
+        mats = rb.get("mats") or ["prop", "liquid", "horn", "glass", "shoes2"]
+        bw = max(1, int(round(0.027 * S)))
+        bh = 2 if S > 60 else 1
+        gap = 1 if S > 60 else 0
+        if self.lod >= 4:
+            rows, cols = min(rows, 2), min(cols, 2)
+        ts = b.t_shoulder
+        o = b.T((0.026 * S * b.W + (0.03 * S * b.W if b.fc == 1 else 0.0), ts + 0.056 * S))
+        ox0 = math.floor(o[0] + cv.ox)
+        oy0 = math.floor(o[1] + cv.oy)
+        n = 0
+        for r_ in range(rows):
+            for c_ in range(cols):
+                a_ = mats[(r_ * 2 + c_ * 3 + int(rb.get("seed", 0))) % len(mats)]
+                b_ = mats[(r_ * 3 + c_ * 5 + 1 + int(rb.get("seed", 0))) % len(mats)]
+                if a_ == b_:
+                    b_ = mats[(mats.index(a_) + 1) % len(mats)]
+                for yy in range(bh):
+                    for xx in range(bw):
+                        mid = bw >= 3 and xx == bw // 2
+                        edge_ = bw == 2 and xx == 1
+                        mt = b_ if (mid or edge_) else a_
+                        px = ox0 + c_ * (bw + (1 if bw >= 3 else 0)) + xx + 0.5 - cv.ox
+                        py = oy0 + r_ * (bh + gap) + yy + 0.5 - cv.oy
+                        cv.dot(px, py, mt, MID, 0.99)
+                n += 1
+
+    def apron(self):
+        """A bib apron over the uniform: a bib on the chest, a skirt to the knee, a pocket, a hem, neck loop and waist ties."""
+        b, S, cv = self.b, self.S, self.cv
+        ts = b.t_shoulder
+        sh = 0.035 * S * b.W if b.fc == 1 else 0.0
+        front = b.fc != 2
+        bw = b.chest_hw * 0.58
+        seated = b.state in SEATED + FLOORED
+        y_hem = (-0.02 * S - b.hip[1]) if seated else (min(-0.27 * S + b.cdy, -0.06 * S) - b.hip[1])
+        wb = b.t_waist
+        seed = self.seed
+        if front:
+            rows = [(ts + 0.07 * S, bw * 0.85, bw * 0.85), (wb, b.waist_hw * 1.0, b.waist_hw * 1.0), (0.04 * S, b.hip_hw * 1.08, b.hip_hw * 1.08)]
+
+            def mb(lx, ly, u):
+                m = np.full(u.shape, M["outer"], np.uint8)
+                m = np.where((ly < ts + 0.078 * S), M["outer2"], m)
+                return m, -0.15 * (np.sin(lx * 0.8 + seed) > 0.7)
+            profile(cv, b.hip, b.lean, rows, 1.45, mb, shift=sh)
+            rows2 = [(-0.03 * S, b.hip_hw * 1.06, b.hip_hw * 1.06), (y_hem, b.hip_hw * 1.28, b.hip_hw * 1.28)]
+            pk = (0.045 * S, 0.1 * S)
+
+            def mf(lx, ly, u):
+                m = np.full(u.shape, M["outer"], np.uint8)
+                inpk = (np.abs(lx - sh * 0.4) > 0.02 * S) & (np.abs(lx - sh * 0.4) < 0.075 * S) & (ly > pk[0]) & (ly < pk[1])
+                edge = inpk & ((np.abs(np.abs(lx - sh * 0.4) - 0.02 * S) < 0.6) | (np.abs(np.abs(lx - sh * 0.4) - 0.075 * S) < 0.6) | (np.abs(ly - pk[1]) < 0.6))
+                m = np.where(edge, M["outer2"], m)
+                m = np.where(ly > y_hem - _step(S, 0.016), M["outer2"], m)
+                return m, -0.2 * (np.sin(lx * 0.7 + 1.3 + seed) > 0.6) + np.where(inpk, -0.08, 0.0)
+            profile(cv, b.hip, 0.0, rows2, 1.46, mf, shift=sh)
+            for sgn in (-1, 1):  # the neck loop
+                seg(cv, b.T((sgn * bw * 0.7, ts + 0.072 * S)), b.T((sgn * 0.034 * S, ts - 0.004 * S)), "outer2", DARK, 1.47)
+        else:
+            seg(cv, b.T((-b.waist_hw * 1.0, wb)), b.T((b.waist_hw * 1.0, wb)), "outer2", MID, 1.45, 1.5 if S > 80 else 1.0)
+            for sgn in (-1, 1):
+                seg(cv, b.T((sgn * 0.02 * S, wb)), b.T((sgn * 0.045 * S, wb + 0.05 * S)), "outer2", DARK, 1.46)
+            for sgn in (-1, 1):
+                seg(cv, b.T((sgn * 0.034 * S, ts - 0.004 * S)), b.T((-sgn * 0.034 * S, ts + 0.05 * S)), "outer2", DARK, 1.46)
+
+    def sling(self):
+        """An arm in a sling: a cloth under the folded forearm, a strap up to the neck (the arm itself is posed across the chest by Body)."""
+        b, S, cv = self.b, self.S, self.cv
+        a = b.arms["l"]
+        el, wr, hand = a["el"], a["wr"], a["hand"]
+        dx, dy = wr[0] - el[0], wr[1] - el[1]
+        ln = math.hypot(dx, dy) or 1.0
+        nx, ny = -dy / ln, dx / ln
+        if ny < 0:
+            nx, ny = -nx, -ny
+        w0 = 0.036 * S
+        z = self.arm_z("l") + 0.03
+        pts = [(el[0] - dx / ln * 0.012 * S - nx * w0 * 0.6, el[1] - dy / ln * 0.012 * S - ny * w0 * 0.6),
+               (el[0] - dx / ln * 0.012 * S + nx * w0 * 1.1, el[1] - dy / ln * 0.012 * S + ny * w0 * 1.1),
+               (wr[0] + dx / ln * 0.01 * S + nx * w0 * 0.7, wr[1] + dy / ln * 0.01 * S + ny * w0 * 0.7),
+               (wr[0] + dx / ln * 0.01 * S - nx * w0 * 0.6, wr[1] + dy / ln * 0.01 * S - ny * w0 * 0.6)]
+        poly_fill(cv, pts, z, "prop2", lambda X, Y: np.where(((X + Y * 0.6) % 6.0) < 1.0, 0.4, 0.66))
+        if b.fc != 2:
+            nb = b.neck_base
+            seg(cv, (nb[0] - 0.02 * S, nb[1]), (wr[0] + dx / ln * 0.01 * S, wr[1] + 0.01 * S), "prop2", DARK, z + 0.01, 1.5 if S > 80 else 1.0)
 
     # -- props in the hand --
     def prop(self):
@@ -2253,6 +3458,24 @@ class Painter:
             ln = [(px_ - 0.005 * S, top + 0.09 * S), (px_ - 0.03 * S, top + 0.35 * S), (hx, hy)]
             seg(cv, ln[0], ln[1], "glass", LIT, z0 + 0.02)
             seg(cv, ln[1], ln[2], "glass", LIT, z0 + 0.02)
+        elif held == "stamp":  # a rubber stamp: a wooden handle, a black rubber block
+            poly_fill(cv, [(hx - 0.01 * S, hy - 0.058 * S), (hx + 0.01 * S, hy - 0.058 * S), (hx + 0.008 * S, hy + 0.006 * S), (hx - 0.008 * S, hy + 0.006 * S)], z, "prop",
+                      lambda X, Y: np.where(X < hx - 0.002 * S, 0.8, 0.45))
+            ellipse(cv, (hx, hy - 0.062 * S), 0.014 * S, 0.01 * S, 0, z + 0.01, lambda lx, ly, u, v: (M["prop"], 0.2 * (v < 0)))
+            poly_fill(cv, [(hx - 0.03 * S, hy + 0.006 * S), (hx + 0.03 * S, hy + 0.006 * S), (hx + 0.03 * S, hy + 0.022 * S), (hx - 0.03 * S, hy + 0.022 * S)], z + 0.01, "eye_d",
+                      lambda X, Y: np.where(Y < hy + 0.012 * S, 0.5, 0.2))
+        elif held == "egg":  # one egg, held up
+            ellipse(cv, (hx, hy - 0.03 * S), 0.026 * S, 0.036 * S, 0.0, z + 0.05, lambda lx, ly, u, v: (M["prop2"], 0.12 * (v > 0.2) - 0.0),
+                    shape=lambda u, v: 1.0 + 0.2 * np.clip(v, 0, 1) * 0.0 - 0.18 * np.clip(-v, 0, 1) * np.abs(u))
+        elif held == "medal":  # a plain gold disc on a ribbon, held out
+            rbw = 0.011 * S
+            poly_fill(cv, [(hx - rbw, hy - 0.01 * S), (hx + rbw, hy - 0.01 * S), (hx + rbw, hy + 0.035 * S), (hx - rbw, hy + 0.035 * S)], z, "prop",
+                      lambda X, Y: np.where(np.abs(X - hx) < rbw * 0.35, 0.85, 0.5))
+            ellipse(cv, (hx, hy + 0.05 * S), 0.02 * S, 0.02 * S, 0.0, z + 0.02, lambda lx, ly, u, v: (np.where(u * u + v * v < 0.25, M["acc2"], M["acc2"]).astype(np.uint8),
+                                                                                          np.where(u * u + v * v < 0.28, 0.05, -0.1) + 0.18 * ((u < -0.1) & (v < -0.1))))
+        elif held == "hat":  # a hat held out, crown up, for coins
+            ellipse(cv, (hx, hy - 0.004 * S), 0.05 * S, 0.014 * S, 0.0, z + 0.05, lambda lx, ly, u, v: (np.where(v < -0.1, M["hat2"], M["hat"]).astype(np.uint8), np.where(v < -0.1, 0.0, 0.1)))
+            ellipse(cv, (hx, hy + 0.012 * S), 0.034 * S, 0.016 * S, 0.0, z + 0.04, lambda lx, ly, u, v: (M["hat"], -0.15))
 
 
 

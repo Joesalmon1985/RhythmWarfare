@@ -1,0 +1,23 @@
+{
+ "perfect": {
+  "bot": "perfect",
+  "routes": "right,right,right,right,right,right,right",
+  "until": 8,
+  "start": "",
+  "expect": "base,base.c02,air.c05,air.c06,city.c09,escape,escape.c12,escape.c13,warehouse"
+ },
+ "loop": {
+  "bot": "perfect",
+  "routes": "",
+  "until": 11,
+  "start": "",
+  "expect": "base,base.c03,air.c05,city.c08,city.c10,city.c09,escape.c12,escape.c14,escape,base.c02,air,city"
+ },
+ "clause": {
+  "bot": "perfect",
+  "routes": "right,up,right",
+  "until": 3,
+  "start": "air.c06",
+  "expect": "air.c06,city.c09,escape.c12,escape.c13"
+ }
+}

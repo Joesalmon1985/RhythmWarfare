@@ -6,10 +6,14 @@
 # Each shot runs the actual run scene on the virtual song clock (no audio) with a scripted player up to a song time, so the crowd, the camera on its rail, the lights and
 # the route window are what a run of that skill is at that moment. `node_*`: the level a few seconds in (the journey's arrival), `rail_<node>_<place>`: the camera stood at
 # that rail place (RW_STORY_CAM) in the middle of a perfect phase, `journey_*`: the camera really walking the rail under scripted play.
+#   bash tools/run/capture.sh --acting [out_dir]   (stage 1d) every character hotspot in its five states, the actor framed at about 2x: docs/shots/acting/<hotspot>.jpg (a strip of
+#                                                   available | selected | committed | success | failure) and contact_acting_<world>.jpg; RW_SHOTS=<regex> limits it to matching hotspot ids
 set -eu
+ACTING=0
+if [ "${1:-}" = "--acting" ]; then ACTING=1; shift; fi
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 GODOT="${GODOT:-$HOME/godot/Godot_v4.5.1-stable_linux.x86_64}"
-OUT="${1:-$ROOT/docs/shots/run}"
+if [ "$ACTING" = 1 ]; then OUT="${1:-$ROOT/docs/shots/acting}"; else OUT="${1:-$ROOT/docs/shots/run}"; fi
 TMP="$(mktemp -d)"
 mkdir -p "$OUT"
 RATE=0.5
@@ -31,6 +35,36 @@ shot() {  # name node bot routes song_seconds [extra env assignments...]
     echo "shot $OUT/$name.jpg"
   fi
 }
+
+
+# --- the acting pass (--acting): every character hotspot in its five states, the actor framed by RW_STORY_CAM at about twice the usual size ---------------------------------------------------
+# One run with perfect play gives available (beat 50), selected (the scripted touch is at beat 52), committed (the commit is at beat 60.5; a scene left at the downbeat cuts the flash to half a beat, RunActing.LEAVING_COMMITTED_BEATS) and success (beat 61.8, before the passage frame closes at 62); a second run that
+# misses the last block gives failure. The camera stands where tools/run/acting_frames.py says for the whole run, so the person is in the picture whatever the room does.
+acting_run() {  # id scene flags cam policy shot_beat:state ...
+  local hid="$1" scene="$2" flags="$3" cam="$4" bot="$5"; shift 5
+  local name="${hid//./_}" steps=() last=0
+  for bs in "$@"; do
+    local beat="${bs%%:*}" st="${bs##*:}" f
+    f=$(python3 -c "print(int(($beat*60/174+2.0)/$RATE)+2)")
+    steps+=("$f:shot:${name}__${st}"); last="$f"
+  done
+  local fl=(); [ "$flags" = "-" ] || fl=("RW_RUN_FLAGS=$flags")
+  env XDG_DATA_HOME="$TMP/data" RW_RUN_VIRTUAL=1 RW_STORY_RATE=$RATE RW_RUN_START="$scene" RW_RUN_BOT="$bot" RW_RUN_ROUTES="" RW_RUN_CLEAN=1 RW_STORY_CAM="$cam" RW_RUN_SELECT="$hid@52" "${fl[@]}"     "$GODOT" --path "$ROOT" -s tools/shoot.gd -- res://src/run/run_play.tscn "$TMP/acting" "${steps[@]}" 2>&1 </dev/null | grep -E "ERROR|SCRIPT" | grep -v "RID allocations\|leaked\|still in use\|ObjectDB\|WASAPI\|ERR_CANT_OPEN" || true
+}
+if [ "$ACTING" = 1 ]; then
+  mkdir -p "$TMP/acting"
+  RATE=0.25
+  python3 "$ROOT/tools/run/acting_frames.py" > "$TMP/acting_frames.txt"
+  while read -r _world hid scene actor flags cam; do
+    want "$hid" || continue
+    echo "acting $hid ($actor)"
+    acting_run "$hid" "$scene" "$flags" "$cam" perfect 50.5:available 56:selected 60.8:committed 61.8:success
+    acting_run "$hid" "$scene" "$flags" "$cam" blocks:1110 61.8:failure
+  done < "$TMP/acting_frames.txt"
+  python3 "$ROOT/tools/run/contact_acting.py" "$TMP/acting" "$OUT"
+  rm -rf "$TMP"
+  exit 0
+fi
 
 # --- every scene, a few seconds in (the camera has just walked in) and again with the route window open (lit doors) -------------------------------------------------------
 python3 - "$ROOT" > "$TMP/scenes.txt" <<'PY'

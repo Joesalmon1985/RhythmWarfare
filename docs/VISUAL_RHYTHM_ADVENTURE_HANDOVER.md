@@ -23,6 +23,32 @@ hotspot contract and the same `HotspotView`; its passage text is a caption band 
 Failure semantics: a run scene's failed hotspot has its own `on_failure` (a setback or another door). In the Bassment they stay in `TrialFlow` (a failed plain choice holds the place and becomes the
 default, a lost fight counts toward three, a luck miss goes its other way); the data only names the luck test's other passage.
 
+## Look (the Opus look pass)
+
+One hotspot language in all seven run worlds and the Bassment, drawn by `HotspotView` inside the low-res picture (so it pixelates with the world), with no text, arrows or widgets; every value is a function of song time
+(the beat is `fposmod(t / beat_s, 1)`). The colour is the world's warm accent as light (`HotspotView.light_tint`: its hue, saturation held in 0.35 to 0.6, full value), so the Warehouse's amber and the Ward's
+own hue are equally bright; the shapes are the same everywhere. The view has two passes: an additive light child (pools, shafts, glows, the door's slit, edge leaks: they add to the picture like real light)
+behind a crisp pass (rings with a dark pixel outline so they read on a bright floor, motes, the crack).
+
+| State | What the player sees |
+| --- | --- |
+| Available | A pool of light on the floor under the thing, a thick ring (2 px, 3 px for the default) that kicks brighter on every beat with a ripple leaving it, a soft shaft rising from the pool with motes riding up it every two beats, and a glow on the thing. The default has a second ring inside and is brighter. `look.available` adds character: `open` a door ajar (a lit slit standing in the doorway, its light spilling across the floor toward the player), `beckon` and any figure a taller shaft and the crowd's own wave toward the player, `pulse` a harder beat and a wider ripple, `flicker` a stutter, `crack` a glowing crack in the floor. Near the player the shaft and slit fade so they never wash the picture. |
+| Selected | The ring goes white-hot (3 px) and thumps on every beat (a held pulse), four motes circle it once a bar, the pool and shaft brighten, the glow lifts off the thing; a second ring closes in at the moment of the touch. Every other hotspot dims to 45 %, so the pick reads by contrast. |
+| Committed | A white flash bursting outward (0.3 s: the ring flies out, the glow blooms), then the pool settles to a calm warm light and a steady ring that fade over 0.9 s. |
+| Out of sight (edge beacon) | Light leaking in along the border on the side it lies (a band fading inward and along the edge), a half-sun at the border, and the same ring, beat ripple and white core as a hotspot in view; selected it turns white with the circling motes. It is the same touch target as before (`layout` is unchanged). |
+
+Before and after pairs: `docs/shots/look_pass/` (the Warehouse floor with a hotspot selected, the Bassment's echo chamber and warren, and the Bassment contact sheet). The pass is paused: see the plan's section 10 "Opus look pass" for what is still unverified (the walks and most of the run shots).
+
+**The camera faces the window.** At the block-2 decision (in its cue-free guard) `RunJourney` replaces block 3's glance and stroll with a held `face` look (`player_look {face: [[x, z, keep], ...],
+turn_bars, release_bars}`): the head turns over the window's hotspots by beat 49, holds them whatever the rail walks underneath (`StoryPlayer.best_facing` from wherever the rail is: the facing
+that keeps the default and as many of the others as fit within 36 degrees either side, averaged over the last beat so a change of group is a turn), and hands back to the rail from the lock beat
+(60.5) to the phase's end, where the door walk takes over. It is a look, never a move: the rail rules (moves only in the guard, 2 to 4 bars, never over dense cues) are untouched, and the cinematic
+glances of an outcome are measured from the rail's facing (`rail_yaw`). In the matrix (perfect play, seeds 1 to 3, 60 windows) the default exit is in the picture at beat 49 in 59 windows
+(26 without the turn) and every hotspot of the window in 32 (7 without); `face_tip` tips the head down (at most 28 degrees) when the held hotspots are below the picture (a balcony, a stair).
+
+**The Bassment.** The echo chamber is cold pale ashlar with the rings of a sound carved across it (`wall_echo`), the warren packed warm earth gnawed with rat holes (`wall_burrow`) behind a
+warm brick stair, its fog lifted (both textures from `tools/story/art/tex_bassment.py`); the hotspots are the run's.
+
 ## How to launch
 
 No flags are needed: open `project.godot` and press Play (Home, Play enters the run), or `godot --path . res://src/run/run_play.tscn`. Scripted play for tests and recordings (virtual clock, no audio):
@@ -45,7 +71,7 @@ No flags are needed: open `project.godot` and press Play (Home, Play enters the 
 
 ## Known limitations
 
-* The look is first-pass: the edge beacons for hotspots behind the camera are dim, and the camera faces away from the exits when the window opens (the Opus look pass).
+* A hotspot a step or two away and below the eye (a stair foot, a doorway the camera stands in) can still sit just under the picture; it then shows as its edge beacon. The window turn is a look over the rail: while the block-2 move is still walking (up to beat 60.5) the framing follows the walk.
 * `challenge` on a run hotspot is validated but not consumed (the last block decides); the Bassment's per-hotspot `challenge.phrase` is likewise informational (the choice's phrase is played by `TrialEngine`).
 * Five hotspot outcomes divert to a route with another chart pack than the default (the checker's warnings); they are safe because the outcome is resolved at the decision beat, before the next scene is charted.
 * Music outcomes (merged with the music branch): `dip` is wired (`RunAudio`: bass and synth to 0.35 of their gain for 8 beats from the commit beat, through the gain ramps); `variation` stays a documented no-op, because the arrangement of a scene is resolved once at load by the per-run seed and re-picking it for the next scene would change its chart pack after the route lock compared it.
@@ -54,5 +80,4 @@ No flags are needed: open `project.godot` and press Play (Home, Play enters the 
 
 ## Remaining work
 
-The Opus look pass (hotspots obvious without text: silhouette, light and motion; selection and commit animations; the echo chamber and the warren; phone readability), the performance pass
-(stage build hitches, sheet memory, Android), and merging the music branch (`feature/music-library`), which owns the music files and will consume the outcomes' `music` field.
+The performance pass (stage build hitches, sheet memory, Android). The music branch is merged (`dip` wired, `variation` a documented no-op). Look work left for later: the other Bassment zones beyond the echo chamber and the warren were only checked by eye on the contact sheet, not restyled.

@@ -1,5 +1,7 @@
 # Three new paths and faces that tell the story: the plan
 
+> **Status (5 November 2026): stages 1a to 6 are done.** What was built, where it diverged from this plan, what was verified and what is open: `docs/HANDOVER.md` and `docs/paths/`.
+
 Written 5 November 2026 from the owner's brief (the "Rhythm Warfare: Three New Musical Adventures" discussion) and a read of `main` at `5efcfd2`.
 This is the document the local agent executes. It makes every design call the owner has already made (section 1), leaves nothing routine to re-ask, and is
 ordered so that `main` is playable and the tests green at the end of every stage. Where the agent must diverge, it says so in the commit message and in

@@ -1,0 +1,214 @@
+{
+ "version": 1,
+ "level": "deep_halls",
+ "px_scale_note": "the Ember Road's maps have no rigs; their world is textures and sprite sheets only",
+ "textures": {
+  "ceil_black": {
+   "file": "textures/ceil_black.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 4.0
+  },
+  "ceil_stars": {
+   "file": "textures/ceil_stars.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 6.0
+  },
+  "floor_boardwalk": {
+   "file": "textures/floor_boardwalk.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_bridge": {
+   "file": "textures/floor_bridge.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_deep": {
+   "file": "textures/floor_deep.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_lake": {
+   "file": "textures/floor_lake.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_wet_rock": {
+   "file": "textures/floor_wet_rock.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "piece_drowned_thing": {
+   "file": "textures/piece_drowned_thing.png",
+   "size": [
+    256,
+    128
+   ],
+   "metres": 1.0
+  },
+  "sky_falls": {
+   "file": "textures/sky_falls.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_boat": {
+   "file": "textures/thing_boat.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_bridge_rail": {
+   "file": "textures/thing_bridge_rail.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_cold_light": {
+   "file": "textures/thing_cold_light.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_drum": {
+   "file": "textures/thing_drum.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_ember": {
+   "file": "textures/thing_ember.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_horn": {
+   "file": "textures/thing_horn.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_lantern_boat": {
+   "file": "textures/thing_lantern_boat.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_mist": {
+   "file": "textures/thing_mist.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_pillar_deep": {
+   "file": "textures/thing_pillar_deep.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_rope_post": {
+   "file": "textures/thing_rope_post.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_stalagmite": {
+   "file": "textures/thing_stalagmite.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_waterfall_edge": {
+   "file": "textures/thing_waterfall_edge.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "wall_deep": {
+   "file": "textures/wall_deep.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_deep_arch": {
+   "file": "textures/wall_deep_arch.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_falls": {
+   "file": "textures/wall_falls.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 4.0
+  },
+  "wall_rock_wet": {
+   "file": "textures/wall_rock_wet.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  }
+ },
+ "people": {
+  "file": "people/people.json",
+  "pages": [
+   "people/page_0.png"
+  ],
+  "palette": "people/palette.png"
+ }
+}

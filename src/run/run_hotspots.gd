@@ -23,6 +23,7 @@ var committed_count: Dictionary = {}  # hotspot id -> times committed this run (
 var last_outcome: Dictionary = {}
 var log: Array = []  # every outcome: the tests and the walks read it
 var persist_dirty := false  # a persistent flag changed since the owner last saved
+var preselect := false  # (run.json `choice.preselect`, off by default: an owner's decision) a staged final-window option may be touched before its window opens; the commit is unchanged
 
 var _list: Array = []
 
@@ -73,9 +74,11 @@ func is_available(h: Dictionary) -> bool:
 	return not spent.has(str(h["id"]))
 
 
-## "early" for a hotspot that leaves the run for the Bassment, "final" for every other.
+## "early" for a hotspot that leaves the run for the Bassment, "any" for one that says `window: "any"` (an activity, on show and committed in every block), "final" for every other.
 static func window_of(h: Dictionary) -> String:
-	return "early" if HotspotContract.is_trial_route(str((h.get("on_success", {}) as Dictionary).get("route", ""))) else "final"
+	if HotspotContract.is_trial_route(str((h.get("on_success", {}) as Dictionary).get("route", ""))):
+		return "early"
+	return "any" if str(h.get("window", "final")) == "any" else "final"
 
 
 ## The hotspots on show: `block` is the engine's block counter (0 to 3, the block being played), `final_open` the choice window (beat 48 on). The early window shows in blocks 0 and 1.
@@ -86,6 +89,9 @@ func shown(block: int, final_open: bool) -> Array:
 			continue
 		if window_of(h) == "early":
 			if block <= 1 and committed_early == "":
+				out.append(h)
+		elif window_of(h) == "any":
+			if committed == "":
 				out.append(h)
 		elif final_open and committed == "":
 			out.append(h)
@@ -101,7 +107,7 @@ func is_shown(id: String, block: int, final_open: bool) -> bool:
 
 ## The player touches a hotspot. Allowed while it is on show and nothing has committed; changing the selection is always allowed until then. False when it cannot be selected.
 func select(id: String, block: int, final_open: bool) -> bool:
-	if not is_shown(id, block, final_open):
+	if not is_shown(id, block, final_open) and not (preselect and committed == "" and window_of(get_hotspot(id)) == "final" and staged(block).has(get_hotspot(id))):
 		return false
 	selected = id
 	return true
@@ -136,6 +142,46 @@ func default_route() -> String:
 	return str((default_hotspot().get("on_success", {}) as Dictionary).get("route", ""))
 
 
+## --- the current choice (docs/CHOICE_CLARITY.md) ------------------------------------------------------------------------------
+## The options the world stages in this visit (from the scene's first beat, whether or not their window is open yet): every available final-window hotspot until the
+## commit, then the committed one and the others as they were; an early-window one (the wizard) while its window can still come (blocks 0 and 1, not yet committed).
+func staged(block: int) -> Array:
+	var out: Array = []
+	for h in _list:
+		var id := str(h["id"])
+		if window_of(h) == "any":  # a place to sit (the card table), not a way on: it is no option of the choice, so it never turns the doors red or green
+			continue
+		if window_of(h) == "early":
+			if block <= 1 and committed_early == "" and committed == "" and is_available(h):
+				out.append(h)
+		elif id == committed or is_available(h):
+			out.append(h)
+	return out
+
+
+## The CURRENT choice: what happens if the player does nothing more. The committed hotspot once the commit is made; else the touched one while it is staged; else the default
+## exit. Exactly one at any time in a scene with a default (every run scene has one). Touching does not change what an untouched default does (commit_final still treats an
+## untouched default as nothing tapped): `current` is what the world shows, `selected` is still what the player did.
+func current_id(block: int) -> String:
+	if committed != "":
+		return committed
+	if selected != "":
+		for h in staged(block):
+			if str(h["id"]) == selected:
+				return selected
+	return str(default_hotspot().get("id", ""))
+
+
+## Where the player is going now: the route of the commit's outcome once made, else the current option's success route, else (an option that stays, then goes on) the default route.
+## A route into the Bassment or a path is returned as it is (no exit of the room leads there, so every door shows shut).
+func destination(block: int) -> String:
+	if committed != "" and not last_outcome.is_empty() and str(last_outcome.get("hotspot", "")) == committed:
+		return str(last_outcome.get("route", ""))
+	var h := get_hotspot(current_id(block))
+	var r := str((h.get("on_success", {}) as Dictionary).get("route", ""))
+	return r if r != "" else default_route()
+
+
 ## "available" | "selected" | "committed" | "" (not on show) for the view.
 func state_of(id: String, block: int, final_open: bool) -> String:
 	if id == committed or id == committed_early:
@@ -145,12 +191,17 @@ func state_of(id: String, block: int, final_open: bool) -> String:
 	return "selected" if id == selected else "available"
 
 
-## A block decision (`b` 0 to 2) with its result: the early window commits here. Returns the outcome ({} when nothing committed). At b == 2 an early selection expires (too late to arm the Bassment).
-func on_block(b: int, passed: bool) -> Dictionary:
+## A block decision (`b` 0 to 2) with its result: the early window commits here, and so does a selected "any" hotspot (it stays touchable after, nothing latches). Returns the outcome ({} when nothing
+## committed). At b == 2 an early selection expires (too late to arm the Bassment). `credit` is the block's credit (-1: unknown, `passed` decides).
+func on_block(b: int, passed: bool, credit := -1.0) -> Dictionary:
 	if selected == "":
 		return {}
 	var h := get_hotspot(selected)
-	if h.is_empty() or window_of(h) != "early":
+	if h.is_empty():
+		return {}
+	if window_of(h) == "any":
+		return _commit_any(h, passed, credit, "any")
+	if window_of(h) != "early":
 		return {}
 	if b > 1:
 		selected = ""
@@ -163,18 +214,38 @@ func on_block(b: int, passed: bool) -> Dictionary:
 
 ## The final commit at the decision of the last block (the route lock beat): the selected hotspot resolves by `passed`; nothing selected is the default exit. Returns the outcome; its
 ## `route` is always a scene route (an object or a failure without a route continues by the default exit).
-func commit_final(passed: bool) -> Dictionary:
+func commit_final(passed: bool, credit := -1.0) -> Dictionary:
 	var h := get_hotspot(selected) if selected != "" else {}
-	var tapped := not h.is_empty() and window_of(h) == "final" and is_available(h)
+	var tapped := not h.is_empty() and window_of(h) != "early" and is_available(h)
 	if not tapped:
 		h = default_hotspot()
 		if h.is_empty():
 			return {}
-	var out := _resolve(h, passed or not tapped, tapped, "final")
+	var out := _resolve(h, (_success_of(h, passed, credit) if tapped else true), tapped, "final")
 	committed = str(h["id"])
-	if out["route"] == "":
+	if str(out["activity"]) != "":  # a minigame: the run stays at this scene while it lasts
+		out["route"] = node
+		out["stays"] = true
+	elif out["route"] == "":
 		out["route"] = default_route()
 		out["continued"] = true
+	selected = ""
+	return out
+
+
+## The success rule: a hotspot with `pass_credit` (and a known credit) succeeds when the block's credit reaches it, any other by the run's pass.
+func _success_of(h: Dictionary, passed: bool, credit: float) -> bool:
+	if h.has("pass_credit") and credit >= 0.0:
+		return credit >= float(h["pass_credit"])
+	return passed
+
+
+## An "any" hotspot commits at a block's decision: success sits the player (the scene stays), failure is the on_failure outcome with no route. Neither latches `committed`, so it can be touched again.
+func _commit_any(h: Dictionary, passed: bool, credit: float, window: String) -> Dictionary:
+	var out := _resolve(h, _success_of(h, passed, credit), true, window)
+	if str(out["activity"]) != "":
+		out["route"] = node
+		out["stays"] = true
 	selected = ""
 	return out
 
@@ -189,7 +260,8 @@ func _resolve(h: Dictionary, success: bool, tapped: bool, window: String) -> Dic
 	var id := str(h["id"])
 	var out := {"hotspot": id, "kind": str(h["kind"]), "scene": node, "window": window, "success": success, "tapped": tapped, "defaulted": not tapped, "route": str(oc.get("route", "")),
 		"flags_set": (oc.get("flags_set", []) as Array).duplicate(), "cinematic": HotspotContract.resolve_cinematic(h, oc, data.cfg.get("cinematics", {}) if data != null else {}), "cinematic_name": str(oc.get("cinematic", "")) if typeof(oc.get("cinematic", "")) != TYPE_DICTIONARY else "inline",
-		"energy": float(oc.get("energy", 0.0)), "music": str(oc.get("music", "")), "look": h["look"], "continued": false}
+		"energy": float(oc.get("energy", 0.0)), "music": str(oc.get("music", "")), "pieces": (oc.get("pieces", {}) as Dictionary).duplicate(true), "look": h["look"], "continued": false,
+		"activity": str(oc.get("activity", "")), "stays": false}
 	for f in out["flags_set"]:
 		if HotspotContract.is_keep(str(f)):
 			if not flags.has(str(f)):

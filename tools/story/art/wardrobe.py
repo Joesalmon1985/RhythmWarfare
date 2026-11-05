@@ -416,18 +416,684 @@ def ward(r: random.Random, arch: str) -> dict:
     return spec
 
 
+# ---- the Gospel path: robes, tunics and sandals (docs/THREE_PATHS_AND_FACES_PLAN.md 4.3) --------------------------------------------------------------------
+
+GOSPEL_MAPS = ("galilee_shore", "hillside", "bethany", "jerusalem")
+WOOL = ["#e6dcc0", "#d8c8a0", "#c8b088", "#bca078", "#a88860", "#8a6a48", "#d2c4a4", "#b8a688"]
+DYE = ["#8a4a30", "#4a5a7a", "#8a3a2a", "#5a6a48", "#6a4a6a", "#a8782a", "#3a6a6a", "#7a5a3a"]
+HEAD_CLOTH = ["#e8e0cc", "#d4c4a0", "#c8a878", "#a86a48", "#7a8aa8", "#b8b098"]
+MID_SKINS = SKINS[2:9]
+
+
+def gospel(r: random.Random, actor: dict) -> dict:
+    """The Gospel path's people. `wear` names who they are (fisher, villager, disciple, priest, soldier, merchant, sister / woman / mother, child, elder, governor, tempter, baptist,
+    shepherd, carpenter, gardener); undyed wool, stripes, headscarves, sandals; soldiers in a plain lamellar cuirass and a plumeless helmet, priests in white with a blue sash, the
+    governor in a white toga with one red band. No emblem of any real force and no copy of any painting."""
+    wear = str(actor.get("wear", "villager"))
+    spec = _build(r, height=(0.94, 1.08))
+    skin = r.choice(MID_SKINS)
+    hc = r.choice(["#1b1416", "#2a1c18", "#3b281e", "#523422", "#6e4426"])
+    cols = {"skin": skin, "hair": hc, "hair2": _lighter(hc, 0.25), "shoes": r.choice(["#6a4a32", "#8a6a48", "#5a3a28"]), "acc": "#5a3a22", "acc2": "#c8a050",
+            "hat": r.choice(HEAD_CLOTH), "outer": r.choice(WOOL), "outer2": r.choice(DYE)}
+    cols["hat2"] = _darker(cols["hat"], 0.3)
+    top = {"kind": "dress", "pattern": "plain", "neck": "v"}
+    bottom = {"kind": "dress_legs"}
+    outer = None
+    hat = None
+    acc: list = []
+    shoes = {"kind": "slippers"}
+    hair = {"style": r.choice(["short", "curly", "long", "wavy", "buzz"]), "part": round(r.uniform(-0.3, 0.3), 2)}
+    face = _face(r, 0.55)
+    c1 = r.choice(WOOL + DYE[:4])
+    c2 = r.choice(DYE)
+    cols.update(top=c1, top2=c2, top3=_darker(c1, 0.22), bottom=c1, bottom2=_darker(c1, 0.3))
+    fem = wear in ("sister", "woman", "mother")
+    if fem:
+        spec.update(curve=round(r.uniform(0.6, 1.0), 2), height=round(r.uniform(0.9, 1.0), 3))
+        hair = {"style": r.choice(["long", "bun", "braids", "wavy"])}
+        face = _face(r, 0.0)
+        hat = {"kind": "scarf"} if r.random() < 0.8 else None
+        top["pattern"] = r.choice(["plain", "band", "plain", "stripes"])
+        cols["top3"] = r.choice(DYE)
+    else:
+        spec.update(curve=round(r.uniform(0.0, 0.3), 2))
+    if wear == "disciple":
+        top["pattern"] = r.choice(["plain", "stripes", "band", "vstripes"])
+        outer = {"kind": "cape"} if r.random() < 0.35 else None
+        acc = ["sash"] if r.random() < 0.6 else (["belt"] if r.random() < 0.5 else [])
+        hat = {"kind": "scarf"} if r.random() < 0.25 else None
+    elif wear == "villager":
+        top["pattern"] = r.choice(["plain", "stripes", "plain"])
+        hat = {"kind": "scarf"} if r.random() < 0.4 else None
+        acc = ["belt"] if r.random() < 0.4 else []
+    elif wear in ("sister", "woman", "mother"):
+        acc = ["necklace"] if r.random() < 0.3 else []
+    elif wear == "fisher":
+        top = {"kind": "tank", "pattern": r.choice(["plain", "stripes"]), "neck": "scoop"}
+        bottom = {"kind": r.choice(["shorts", "baggy"])}
+        cols.update(top=r.choice(["#d8c8a0", "#bca078", "#9a8a68"]), bottom=r.choice(["#8a6a48", "#6a5a48", "#a89060"]), bottom2="#5a4a38")
+        spec.update(width=round(r.uniform(1.0, 1.2), 3))
+        hat = {"kind": "bandana"} if r.random() < 0.6 else None
+        cols["hat"] = r.choice(["#b04a30", "#c8b088", "#4a5a7a"])
+        shoes = {"kind": "bare"}
+        face["beard"] = r.choice(["beard", "stubble", "beard", None])
+        acc = ["belt"]
+    elif wear == "priest":
+        c = r.choice(["#f2eee4", "#ece6d6"])
+        cols.update(top=c, top3=_darker(c, 0.18), top2="#3a5a9a", bottom=c, acc="#3a5a9a", acc2="#d8c8a0")
+        top["pattern"] = "plain"
+        acc = ["sash"]
+        hat = {"kind": "turban"} if r.random() < 0.7 else None
+        cols["hat"] = "#e8e2d2"
+        cols["hat2"] = "#c8c0a8"
+        face["beard"] = r.choice(["beard", "beard", "moustache"])
+        spec.update(height=round(r.uniform(1.0, 1.1), 3))
+    elif wear == "soldier":
+        top = {"kind": "tee", "pattern": "check", "neck": "crew"}
+        bottom = {"kind": "shorts"}
+        cols.update(top="#a8864a", top2="#6a4a30", top3="#8a6a38", bottom="#7a3a2a", bottom2="#5a2a20", shoes="#4a3424", hat="#a8905a", hat2="#7a6a3a", metal="#a8905a", acc="#4a3424", acc2="#c8a050")
+        acc = ["plates", "belt"]
+        hat = {"kind": "helmet"}
+        shoes = {"kind": "boots"}
+        spec.update(width=round(r.uniform(1.05, 1.22), 3), height=round(r.uniform(1.0, 1.1), 3))
+        hair = {"style": "buzz"}
+        face["beard"] = r.choice([None, "stubble", "moustache"])
+    elif wear == "merchant":
+        top = {"kind": "longsleeve", "pattern": r.choice(["stripes", "band", "vstripes"]), "neck": "crew"}
+        bottom = {"kind": "trousers"}
+        outer = {"kind": "gilet", "pattern": "plain"} if r.random() < 0.6 else None
+        cols.update(top=r.choice(["#8a3a2a", "#a8782a", "#3a6a6a", "#6a4a6a"]), top2="#e6dcc0", bottom="#5a4a38", outer="#7a5a3a", hat=r.choice(["#a8782a", "#8a3a2a", "#3a6a6a"]))
+        hat = {"kind": "turban"}
+        acc = ["necklace", "belt"]
+        shoes = {"kind": "boots"}
+        spec.update(width=round(r.uniform(1.05, 1.2), 3))
+    elif wear == "child":
+        spec.update(height=round(r.uniform(0.6, 0.72), 3), head=1.28, width=round(r.uniform(0.9, 1.05), 3))
+        top = {"kind": "tee", "pattern": "plain", "neck": "crew"}
+        bottom = {"kind": "shorts"}
+        hair = {"style": r.choice(["short", "curly", "braids", "bob"])}
+        face = _face(r, 0.0)
+        hat = None
+        acc = []
+        shoes = {"kind": "bare"}
+    elif wear == "elder":
+        spec.update(height=round(r.uniform(0.9, 0.97), 3), curve=round(r.uniform(0.3, 0.7), 2))
+        hc = r.choice(["#d8d4cf", "#ece8e2", "#b8b4b0", "#c9c3bd"])
+        cols.update(hair=hc, hair2=_lighter(hc, 0.2))
+        hair = {"style": r.choice(["short", "bald", "wavy", "long"])}
+        face["beard"] = r.choice(["beard", "beard", None])
+        outer = {"kind": "cape"}
+        hat = {"kind": "scarf"} if r.random() < 0.5 else None
+    elif wear == "governor":
+        cols.update(top="#f4f0e6", top3="#a02a2a", top2="#a02a2a", bottom="#f4f0e6", outer="#f4f0e6", outer2="#a02a2a", acc="#a02a2a", acc2="#c8a050")
+        top = {"kind": "dress", "pattern": "band", "neck": "v"}
+        outer = {"kind": "cape"}
+        hair = {"style": "short"}
+        hat = None
+        spec.update(height=round(r.uniform(1.0, 1.06), 3), width=round(r.uniform(1.1, 1.2), 3))
+        face["beard"] = None
+        acc = ["necklace"]
+    elif wear == "tempter":
+        c = r.choice(["#b8a078", "#a89068", "#c0a880"])
+        cols.update(top=c, top3=_darker(c, 0.25), bottom=c, hat="#a08c64", hat2="#7a6a48")
+        top["pattern"] = "plain"
+        hat = {"kind": "scarf"}
+        spec.update(height=1.12, width=0.9)
+        face["beard"] = "stubble"
+        outer = {"kind": "cape"}
+    elif wear == "baptist":
+        cols.update(top="#8a6a40", top3="#6a4a28", bottom="#8a6a40", acc="#4a3018")
+        top = {"kind": "dress", "pattern": "plain", "neck": "v"}
+        hair = {"style": "long"}
+        face["beard"] = "beard"
+        acc = ["belt"]
+        shoes = {"kind": "bare"}
+        hat = None
+        spec.update(height=1.04, width=1.0)
+    elif wear == "shepherd":
+        cols.update(top=r.choice(["#c8b088", "#a88860", "#8a6a48"]), outer="#e6dcc0", outer2="#c8b088")
+        outer = {"kind": "gilet", "pattern": "plain"}
+        hat = {"kind": "scarf"}
+        acc = ["belt"]
+        face["beard"] = r.choice(["beard", "stubble", None])
+    elif wear == "carpenter":
+        top = {"kind": "longsleeve", "pattern": "plain", "neck": "crew"}
+        bottom = {"kind": "trousers"}
+        cols.update(top="#d8c8a0", bottom="#8a6a48", outer="#6a4a30", hat="#c8b088")
+        outer = {"kind": "gilet", "pattern": "plain"}
+        hair = {"style": "short"}
+        acc = ["belt"]
+        shoes = {"kind": "boots"}
+        face["beard"] = "stubble"
+    elif wear == "gardener":
+        top = {"kind": "longsleeve", "pattern": "plain", "neck": "crew"}
+        bottom = {"kind": "trousers"}
+        cols.update(top="#c8b088", bottom="#6a5a48", hat="#d8c070")
+        hat = {"kind": "bucket"}
+        acc = ["strap"]
+        shoes = {"kind": "boots"}
+        face["beard"] = r.choice(["stubble", None])
+    spec.update({"hair": hair, "top": top, "outer": outer, "bottom": bottom, "shoes": shoes, "hat": hat, "acc": acc, "face": face, "colours": cols})
+    return spec
+
+
+# ---- the Squadron: the people of "The Mission Count" (docs/THREE_PATHS_AND_FACES_PLAN.md 5.3) -------------------------------------------------------
+# A dark-comic 1940s air-force story told in generic khaki: no roundels, flags, national badges, unit emblems or lettering anywhere. Rank is shown only by
+# invented things (plain gold stripes on the shoulder loops, ribbon bars in made-up colours, plain white or green bands). An actor carries `wear` (one of
+# SQUADRON_WEARS) and a `variant` letter; `squadron()` dresses them. The airfield people are muted (bleached khaki, olive drab, orange dust, whites for the
+# coats) so that the Colonel's ribbon bars are the only bright colour among them; the city is sepia and browns; the harbour cold blue with yellow oilskins.
+
+SQUADRON_WEARS = ("airman", "officer", "clerk", "surgeon", "quartermaster", "gunner", "mp", "civilian_city", "fisherman", "patient")
+VARIANT_ALIAS = {"man": "a", "woman": "b", "child": "c", "singer": "d", "mechanic": "b", "pilot": "c", "colonel": "a", "aide": "b", "chaplain": "c"}
+
+KHAKI = ["#b4a474", "#ab9c6a", "#bcae80", "#a89a68", "#b8a878", "#c0b284"]
+KHAKI_DK = ["#9c8e5e", "#948858", "#8a7e54"]
+OLIVE = ["#6e7048", "#7a7a50", "#60673f", "#7c7e58"]
+LEATHER = ["#7a5232", "#6a4628", "#8a6038", "#5e3e26"]
+BOOTS = ["#3e2e22", "#4a3626", "#2e241c", "#54402c"]
+DUST = ["#b8803a", "#a8703a", "#c09050"]
+WHITES = ["#ebe8de", "#e4dfd0", "#f0ece2"]
+SEPIA = ["#7a6248", "#5c4a38", "#8a7458", "#6a5440", "#9a8668", "#4a3c30", "#a08a6a", "#605848", "#8a6a50", "#6c6252", "#52483e", "#98846a"]
+SEPIA_DRESS = ["#7a5a50", "#5a6068", "#6a6a50", "#805e48", "#4e5058", "#8a7070", "#6a5a6a", "#7a7058"]
+SEPIA_LIGHT = ["#cbbfa4", "#d4c8ac", "#bcb094", "#c8bca0", "#ddd2b8"]
+COLD = ["#3e5068", "#4a5a70", "#566878", "#2e3e52", "#6a7a8a", "#44586a", "#d4d0c0", "#8c9aa6"]
+OILSKIN = ["#d6b030", "#c8a428", "#dcbc3c", "#c4a030"]
+OIL_DARK = ["#26364a", "#2a3a40", "#32323c"]
+PYJ = [("#cfd6d8", "#8da4b8"), ("#d8d4c6", "#98a8a0"), ("#c8d0d8", "#a89a8a"), ("#d4d8d0", "#9aa0b4"), ("#e0dcd0", "#b0b8c4")]
+SCRUB_GREEN = ["#6a8a7a", "#5e8078", "#7a9a88"]
+
+SQ_HAIR = ["short", "short", "quiff", "buzz", "curly", "wavy", "bald", "short", "spiky", "perm"]
+SQ_HAIR_TIDY = ["short", "quiff", "buzz", "short"]
+
+
+def _skin(r: random.Random, pale: bool = False) -> str:
+    return r.choice(SKINS[:7]) if pale else r.choice(SKINS)
+
+
+def _sq_cols(r: random.Random, skin: str, hair: str) -> dict:
+    """The colours every squadron spec starts from (muted khaki); each wear then changes what it wears."""
+    k = r.choice(KHAKI)
+    return {"skin": skin, "hair": hair, "hair2": _lighter(hair, 0.25), "top": k, "top2": _darker(k, 0.14), "top3": _lighter(k, 0.2),
+            "bottom": r.choice(KHAKI + OLIVE), "bottom2": "#4a4030", "shoes": r.choice(BOOTS), "shoes2": "#2a2018", "outer": r.choice(OLIVE),
+            "outer2": "#4e5034", "hat": r.choice(KHAKI + OLIVE), "hat2": "#5a5a3c", "acc": r.choice(LEATHER), "acc2": "#c0a24c", "prop": "#7a4a2c",
+            "prop2": "#ece6d6", "liquid": "#c8a040", "glass": "#d6e4ec", "horn": "#8a5444"}
+
+
+def _sq_hair(r: random.Random, old: bool = False, pool=None) -> str:
+    if old:
+        return r.choice(OLD_HAIR)
+    return r.choice(HAIR_NATURAL[:8])
+
+
+def _sq_build(r, height, width, curve=None, **kw):
+    b = _build(r, height, width, curve)
+    b.update(kw)
+    return b
+
+
+def _w_airman(r, variant, actor):
+    c = _sq_cols(r, _skin(r), _sq_hair(r))
+    spec = _sq_build(r, (0.94, 1.07), (0.86, 1.12), curve=round(r.uniform(0.0, 0.4), 2))
+    sleeves = r.choice(["rolled", "rolled", "long", "short"])
+    top = {"kind": "uniform", "pattern": "plain", "neck": "collar", "sleeves": sleeves, "rank": 0, "epaulettes": r.random() < 0.5}
+    outer, hat, acc = None, None, []
+    bottom = {"kind": "trousers"}
+    hair = {"style": r.choice(SQ_HAIR), "part": round(r.uniform(-0.3, 0.3), 2)}
+    shoes = {"kind": "boots"}
+    face = _face(r, 0.25)
+    if variant == "b":  # ground crew: overalls, an oily rag, grime
+        v = r.choice(OLIVE + KHAKI_DK)
+        top = {"kind": "jumpsuit", "pattern": "plain", "neck": "collar", "sleeves": r.choice(["rolled", "long", "rolled"])}
+        c.update(top=v, top2=_darker(v, 0.2), top3=_lighter(v, 0.18), bottom=v, bottom2=_darker(v, 0.25), acc=r.choice(["#3a3028", "#4a3c2c"]))
+        hat = {"kind": "sidecap"} if r.random() < 0.4 else ({"kind": "knit"} if r.random() < 0.15 else None)
+        c.update(hat=_darker(v, 0.05), hat2=_darker(v, 0.3))
+        if hat and hat["kind"] == "knit":
+            c.update(hat="#4a5058", hat2="#34383e")
+        acc = ["rag"] if r.random() < 0.8 else []
+        c["prop2"] = r.choice(["#d8d0bc", "#c8c0a8", "#b8b098"])
+        bottom = {"kind": "trousers"}
+    elif variant == "c":  # pilot: a leather flight jacket with a fleece collar, a scarf, a flying cap with goggles
+        lea = r.choice(LEATHER)
+        outer = {"kind": "jacket", "trim": True, "pattern": "plain"}
+        c.update(outer=lea, outer2=r.choice(["#d8ccb0", "#cfc4a6", "#e0d6bc"]), hat=_darker(lea, 0.1), hat2=_darker(lea, 0.35), acc=r.choice(["#e4dcc4", "#d8c8a0", DUST[0], "#cfc6ac"]))
+        c["glass"] = r.choice(["#d6e4ec", "#e0c88c", "#b8d0c8"])
+        hat = {"kind": "flightcap", "goggles": True}
+        acc = ["scarf"]
+        top["sleeves"] = "long"
+        hair = {"style": r.choice(SQ_HAIR_TIDY + ["wavy"]), "part": round(r.uniform(-0.3, 0.3), 2)}
+        face = _face(r, 0.12)
+    else:  # a plain airman
+        if r.random() < 0.55:
+            hat = {"kind": "sidecap"}
+        if r.random() < 0.22:
+            bottom = {"kind": "shorts"}
+            spec["socks"] = True
+            c["bottom2"] = r.choice(["#8a8a68", "#cfc7ac", "#9a9078"])
+            shoes = {"kind": "boots"}
+        acc = ["belt"]
+        c["acc"] = r.choice(["#6a4a2c", "#54402c", "#7a5a38"])
+        if r.random() < 0.18:
+            top["rank"] = r.choice([1, 1, 2])
+            top["epaulettes"] = True
+    spec.update({"hair": hair, "top": top, "outer": outer, "bottom": bottom, "shoes": shoes, "hat": hat, "acc": acc, "face": face, "colours": c})
+    return spec
+
+
+def _w_officer(r, variant, actor):
+    old = variant in ("a", "c") and r.random() < 0.85
+    hc = _sq_hair(r, old=old)
+    c = _sq_cols(r, _skin(r), hc)
+    k = r.choice(["#bcae80", "#b4a678", "#c2b688"])  # smarter, pressed khaki
+    c.update(top=k, top2=_darker(k, 0.14), top3=_lighter(k, 0.22), bottom=_darker(k, 0.08), bottom2=_darker(k, 0.3), shoes=r.choice(["#2e2218", "#3a2a1c"]),
+             acc=r.choice(["#6a4a2c", "#5a3c24"]), hat=_darker(k, 0.04), hat2=r.choice(["#5a5a3c", "#4e4a34"]))
+    top = {"kind": "uniform", "pattern": "plain", "neck": "collar", "sleeves": "long", "rank": 1, "epaulettes": True}
+    outer, hat, acc = None, None, ["webbing"]
+    bottom = {"kind": "trousers"}
+    shoes = {"kind": "boots"}
+    face = _face(r, 0.0)
+    extra = {}
+    if variant == "a":  # the Colonel: broad, a peaked cap, a grey moustache, a chestful of ribbons
+        spec = _sq_build(r, (1.0, 1.07), (1.14, 1.28), curve=round(r.uniform(0.0, 0.15), 2))
+        top["rank"] = 3
+        hat = {"kind": "peaked"}
+        face["beard"] = "moustache"
+        hair = {"style": r.choice(["short", "buzz", "bald", "short"]), "part": round(r.uniform(-0.2, 0.2), 2)}
+        c.update(hair=r.choice(["#c9c3bd", "#b8b4b0", "#d8d4cf"]))
+        c["hair2"] = _lighter(c["hair"], 0.25)
+        c.update(prop="#a8403a", liquid="#d4a83a", horn="#3a5f9a", glass="#e8e6dc", shoes2="#3f7a4a")
+        extra["ribbons"] = {"rows": 4, "cols": 3, "mats": ["prop", "liquid", "horn", "glass", "shoes2"], "seed": r.randrange(7)}
+        acc = ["webbing", "ribbons"]
+    elif variant == "b":  # the aide: slim, glasses, a neat head, a cap under his arm or on
+        spec = _sq_build(r, (1.0, 1.08), (0.82, 0.93), curve=round(r.uniform(0.0, 0.35), 2))
+        top["rank"] = 1
+        hat = {"kind": "peaked"} if r.random() < 0.5 else ({"kind": "sidecap"} if r.random() < 0.5 else None)
+        face["glasses"] = r.choice(["round", "square", "round"])
+        hair = {"style": r.choice(SQ_HAIR_TIDY), "part": round(r.uniform(-0.3, 0.3), 2)}
+        c.update(prop2="#f0ecdf")
+        c["hair"] = r.choice(["#2a1c18", "#3b281e", "#523422", "#1b1416", "#6e4426"])
+        c["hair2"] = _lighter(c["hair"], 0.25)
+    else:  # the Chaplain: the same uniform without the belt, a dark plain collar band, no cap, bald or grey
+        spec = _sq_build(r, (0.96, 1.03), (0.9, 1.05), curve=round(r.uniform(0.0, 0.3), 2))
+        top["rank"] = 0
+        top["epaulettes"] = False
+        acc = ["collarband"]
+        c.update(acc="#2e2a28")
+        hair = {"style": r.choice(["bald", "short", "bald"]), "part": 0.0}
+        if face.get("glasses") is None and r.random() < 0.4:
+            face["glasses"] = "round"
+    spec.update({"hair": hair, "top": top, "outer": outer, "bottom": bottom, "shoes": shoes, "hat": hat, "acc": acc, "face": face, "colours": c})
+    spec.update(extra)
+    return spec
+
+
+def _w_clerk(r, variant, actor):
+    old = variant == "c"
+    hc = _sq_hair(r, old=old)
+    c = _sq_cols(r, _skin(r, pale=r.random() < 0.7), hc)
+    shirt = r.choice(["#e6e0cc", "#ddd8c4", "#ece6d4", "#d8d4c0"])
+    c.update(top=shirt, top2=_darker(shirt, 0.16), top3=_lighter(shirt, 0.15), bottom=r.choice(["#5e5a48", "#4e5040", "#6a6450", "#585a54"]), bottom2="#3a3628",
+             shoes=r.choice(["#3a2a1e", "#2e241c"]), outer=r.choice(["#5e5a48", "#6a6248", "#54584c", "#6a6658"]), outer2="#34301f", acc="#3a3028", acc2="#b89a48",
+             hat="#7aa088", hat2="#4e6e5c", prop="#6a3c26", prop2="#f0ecdf")
+    spec = _sq_build(r, (0.79, 0.85), (0.84, 0.98), curve=round(r.uniform(0.05, 0.55), 2))
+    top = {"kind": "shirt", "pattern": r.choice(["plain", "plain", "vstripes"]), "neck": "collar", "sleeves": "long"}
+    outer, hat = {"kind": "waistcoat"}, None
+    acc = ["garters", "bow"] if r.random() < 0.7 else ["garters"]
+    face = _face(r, 0.0)
+    face["glasses"] = "round"
+    face["eyes"] = "open"
+    hair = {"style": r.choice(["short", "quiff", "short", "buzz"]) if spec["curve"] < 0.5 else r.choice(["bob", "short", "bun"]),
+            "part": round(r.choice([-0.3, -0.2, 0.2, 0.3]), 2)}
+    if variant == "b":  # sleeves rolled, a cardigan instead of the waistcoat
+        top["sleeves"] = "rolled"
+        outer = {"kind": "cardigan", "pattern": "plain"}
+        c.update(outer=r.choice(["#6a7060", "#7a6a58", "#5e6a6a"]), outer2="#e0dcc8")
+        acc = ["bow"] if r.random() < 0.5 else []
+    elif variant == "c":  # an older clerk with an eyeshade and a moustache
+        hat = {"kind": "eyeshade"}
+        face["beard"] = "moustache" if r.random() < 0.6 else None
+        hair = {"style": r.choice(["short", "bald", "short"]), "part": 0.2}
+        acc = ["garters", "chain"]
+    else:
+        acc = acc + (["chain"] if r.random() < 0.5 else [])
+    spec.update({"hair": hair, "top": top, "outer": outer, "bottom": {"kind": "trousers"}, "shoes": {"kind": "boots"}, "hat": hat, "acc": acc, "face": face,
+                 "colours": c})
+    return spec
+
+
+def _w_surgeon(r, variant, actor):
+    old = variant == "c" or r.random() < 0.6
+    hc = _sq_hair(r, old=old)
+    c = _sq_cols(r, _skin(r, pale=r.random() < 0.65), hc)
+    white = r.choice(WHITES)
+    c.update(outer=white, outer2=_darker(white, 0.12), horn=r.choice(["#8a4c3c", "#7a4a3c", "#94503e"]), acc=r.choice(SCRUB_GREEN), hat=r.choice(SCRUB_GREEN),
+             hat2=_darker(r.choice(SCRUB_GREEN), 0.2), bottom=r.choice(KHAKI_DK), shoes=r.choice(["#e4e0d4", "#3a2a1e", "#cfcabc"]), metal="#9aa2ac")
+    spec = _sq_build(r, (1.0, 1.08), (0.86, 1.0), curve=round(r.uniform(0.0, 0.35), 2))
+    top = {"kind": "uniform", "pattern": "plain", "neck": "collar", "sleeves": "long", "rank": 0, "epaulettes": False}
+    outer = {"kind": "labcoat", "long": True, "pattern": "stained"}
+    hat = {"kind": "surgcap"} if variant == "a" else None
+    acc = ["stethoscope", "maskdown"]
+    face = _face(r, 0.0)
+    face["beard"] = "stubble"
+    face["glasses"] = r.choice([None, None, "round", "square"])
+    face["eyes"] = "open"
+    hair = {"style": "bald" if variant == "c" else r.choice(["short", "bald", "buzz", "short"]), "part": round(r.uniform(-0.2, 0.2), 2)}
+    spec.update({"hair": hair, "top": top, "outer": outer, "bottom": {"kind": "trousers"}, "shoes": {"kind": r.choice(["boots", "clogs"])}, "hat": hat, "acc": acc,
+                 "face": face, "colours": c})
+    return spec
+
+
+def _w_quartermaster(r, variant, actor):
+    hc = _sq_hair(r, old=variant == "c" and r.random() < 0.6)
+    c = _sq_cols(r, _skin(r), hc)
+    cream = r.choice(["#d8ceb2", "#cfc4a4", "#c4b894", "#d4cab0"])
+    c.update(outer=cream, outer2=_darker(cream, 0.28), acc=r.choice(["#6a4a2c", "#54402c"]), prop2="#f2ecda", hat=r.choice(KHAKI_DK + OLIVE), hat2="#4a4630")
+    spec = _sq_build(r, (0.93, 1.0), (1.12, 1.3), curve=round(r.uniform(0.05, 0.4), 2))
+    top = {"kind": "uniform", "pattern": "plain", "neck": "collar", "sleeves": "rolled", "rank": 0, "epaulettes": False}
+    hat = None
+    face = _face(r, 0.0)
+    face["beard"] = r.choice(["moustache", "moustache", "stubble"])
+    hair = {"style": r.choice(["short", "bald", "quiff", "buzz", "short"]), "part": round(r.uniform(-0.3, 0.3), 2)}
+    if variant == "b":
+        hat = {"kind": "sidecap"} if r.random() < 0.5 else {"kind": "flatcap"}
+    elif variant == "c":
+        hair = {"style": "bald", "part": 0.0}
+    spec.update({"hair": hair, "top": top, "outer": None, "bottom": {"kind": "trousers"}, "shoes": {"kind": "boots"}, "hat": hat, "acc": ["apron"], "face": face,
+                 "colours": c})
+    return spec
+
+
+def _w_gunner(r, variant, actor):
+    c = _sq_cols(r, _skin(r), _sq_hair(r))
+    lea = r.choice(LEATHER)
+    c.update(outer=_darker(lea, 0.1), outer2=r.choice(["#d8ccb0", "#cfc4a6"]), hat=r.choice(["#a07a4c", "#946e44", "#b08456"]), hat2=_darker(lea, 0.3), acc=r.choice(["#e4dcc4", "#cfc6ac"]),
+             glass=r.choice(["#d6e4ec", "#e0c88c"]), bottom=r.choice(KHAKI_DK + OLIVE), shoes=r.choice(BOOTS))
+    spec = _build(r, (0.66, 0.74), (0.92, 1.04), curve=0.3)
+    spec["head"] = round(r.uniform(1.24, 1.32), 2)
+    spec["limb"] = 1.05
+    top = {"kind": "uniform", "pattern": "plain", "neck": "collar", "sleeves": "long", "epaulettes": False}
+    outer = {"kind": "jacket", "trim": True, "big": 1.38, "hem": 0.1, "pattern": "plain"}
+    hat = {"kind": "flightcap", "goggles": True, "big": 1.1}
+    acc = ["scarf"] if variant == "b" else []
+    face = _face(r, 0.0)
+    face["freckles"] = variant == "c" or r.random() < 0.3
+    face["glasses"] = None
+    hair = {"style": r.choice(["short", "curly", "spiky", "short"]), "part": round(r.uniform(-0.3, 0.3), 2)}
+    spec.update({"hair": hair, "top": top, "outer": outer, "bottom": {"kind": "trousers"}, "shoes": {"kind": "boots"}, "hat": hat, "acc": acc, "face": face,
+                 "colours": c})
+    return spec
+
+
+def _w_mp(r, variant, actor):
+    c = _sq_cols(r, _skin(r), _sq_hair(r))
+    k = r.choice(["#b8aa7c", "#b0a274", "#bcae82"])
+    c.update(top=k, top2=_darker(k, 0.14), top3=_lighter(k, 0.2), bottom=_darker(k, 0.06), bottom2=_darker(k, 0.3), shoes=r.choice(["#1e1812", "#2a2018"]),
+             acc="#ece8dc", acc2="#c0a24c", hat="#ece9e0", hat2="#a8a498", prop2="#f4f0e4")
+    spec = _sq_build(r, (1.0, 1.1), (1.02, 1.2), curve=round(r.uniform(0.0, 0.2), 2))
+    spec["gloves"] = r.random() < 0.6
+    top = {"kind": "uniform", "pattern": "plain", "neck": "collar", "sleeves": "long", "rank": 2 if variant != "c" else 1, "epaulettes": True}
+    face = _face(r, 0.1)
+    face["glasses"] = "shades" if variant == "b" else None
+    hair = {"style": r.choice(["buzz", "short", "short", "bald"]), "part": 0.0}
+    spec.update({"hair": hair, "top": top, "outer": None, "bottom": {"kind": "trousers"}, "shoes": {"kind": "boots"}, "hat": {"kind": "mphelm"},
+                 "acc": ["webbing", "armband"], "face": face, "colours": c})
+    return spec
+
+
+def _w_civilian(r, variant, actor):
+    sep = r.choice(SEPIA)
+    c = _sq_cols(r, _skin(r), _sq_hair(r))
+    c.update(top=r.choice(SEPIA_LIGHT), top2=_darker(sep, 0.1), bottom=r.choice(SEPIA[:8]), bottom2="#4a4034", shoes=r.choice(["#3a2a1e", "#2e241c", "#4a3626"]),
+             outer=sep, outer2=_darker(sep, 0.3), hat=r.choice(SEPIA[:8]), hat2=r.choice(["#3a3028", "#4a3c30"]), acc=r.choice(["#3a3028", "#6a5440"]),
+             acc2="#b09a60", prop2="#e8e0cc")
+    c["top3"] = _lighter(c["top"], 0.2)
+    face = _face(r, 0.0)
+    if variant == "b":  # a woman
+        spec = _sq_build(r, (0.9, 1.0), (0.84, 1.04), curve=round(r.uniform(0.6, 1.0), 2))
+        dress = r.random() < 0.45
+        dc = r.choice(SEPIA_DRESS)
+        if dress:
+            top = {"kind": "dress", "pattern": r.choice(["plain", "plain", "dots"]), "neck": "scoop" if r.random() < 0.4 else "crew", "sleeves": "short"}
+            c.update(top=dc, top2=_lighter(dc, 0.25), top3=_lighter(dc, 0.3), bottom=dc)
+            bottom = {"kind": "trousers"}
+            bottom = {"kind": "skirt", "len": 0.95, "tights": r.random() < 0.5}
+            c["bottom2"] = r.choice(["#4a4034", "#6a5a48"])
+        else:
+            top = {"kind": r.choice(["shirt", "jumper", "longsleeve"]), "pattern": "plain", "neck": "collar", "sleeves": "long"}
+            c.update(top=r.choice(SEPIA_LIGHT + [dc]), bottom=r.choice(SEPIA_DRESS), bottom2="#4a4034")
+            bottom = {"kind": "skirt", "len": 0.95, "tights": r.random() < 0.5}
+        outer, acc = None, []
+        roll = r.random()
+        if roll < 0.4:
+            outer = {"kind": "coat", "long": True, "pattern": "plain"}
+        elif roll < 0.65:
+            outer = {"kind": "cardigan", "pattern": "plain"}
+        elif roll < 0.85:
+            acc = ["apron"]
+            c.update(outer=r.choice(SEPIA_LIGHT), outer2=r.choice(["#8a7a62", "#6a5a48"]))
+        hat = {"kind": "scarf"} if r.random() < 0.55 else None
+        if hat:
+            c.update(hat=r.choice(SEPIA_DRESS + SEPIA_LIGHT), hat2=r.choice(["#4a4034", "#6a5a48"]))
+        hair = {"style": r.choice(["bun", "bob", "wavy", "long", "perm", "ponytail", "braids"]), "part": round(r.uniform(-0.3, 0.3), 2)}
+        shoes = {"kind": r.choice(["heels", "boots", "boots"])}
+        face = _face(r, 0.0)
+    elif variant == "c":  # a child
+        spec = _build(r, (0.6, 0.72), (0.9, 1.04), curve=0.3)
+        spec["head"] = round(r.uniform(1.24, 1.32), 2)
+        top = {"kind": r.choice(["jumper", "shirt", "longsleeve"]), "pattern": r.choice(["plain", "stripes", "plain"]), "neck": "crew", "sleeves": "long"}
+        c.update(top=r.choice(SEPIA_LIGHT + COLD[:2] + SEPIA[:4]))
+        c["top2"] = _darker(c["top"], 0.18)
+        bottom = {"kind": "shorts"}
+        spec["socks"] = True
+        c.update(bottom=r.choice(SEPIA[:8]), bottom2=r.choice(["#8a8a7a", "#cfc7ac", "#9a9078"]))
+        outer = {"kind": "gilet", "pattern": "plain"} if r.random() < 0.35 else None
+        acc = ["braces"] if r.random() < 0.4 else []
+        hat = {"kind": "flatcap"} if r.random() < 0.55 else None
+        hair = {"style": r.choice(["short", "curly", "pigtails", "bob", "spiky", "short"]), "part": round(r.uniform(-0.3, 0.3), 2)}
+        shoes = {"kind": r.choice(["boots", "boots", "slippers"])}
+        face["freckles"] = r.random() < 0.3
+    elif variant == "d":  # a street singer: a waistcoat, rolled sleeves, a hat held out for coins
+        spec = _sq_build(r, (0.97, 1.06), (0.9, 1.12), curve=round(r.uniform(0.0, 0.3), 2))
+        top = {"kind": "shirt", "pattern": r.choice(["plain", "vstripes"]), "neck": "collar", "sleeves": "rolled"}
+        c.update(top=r.choice(["#e0d8c0", "#d8d0b8", "#cfc6aa"]), outer=r.choice(["#4a4034", "#5c4a38", "#3e3a34"]), outer2="#c0a24c")
+        outer = {"kind": "waistcoat"}
+        bottom = {"kind": "trousers"}
+        acc = ["chain"] if r.random() < 0.5 else []
+        hat = None
+        c.update(hat=r.choice(["#6a5440", "#5c4a38", "#4e463a"]), hat2="#3a3028")
+        hair = {"style": r.choice(["short", "curly", "quiff", "wavy"]), "part": round(r.uniform(-0.3, 0.3), 2)}
+        shoes = {"kind": "boots"}
+        face = _face(r, 0.35)
+        face["eyes"] = "lost"
+    else:  # a man
+        spec = _sq_build(r, (0.95, 1.08), (0.9, 1.16), curve=round(r.uniform(0.0, 0.35), 2))
+        top = {"kind": r.choice(["shirt", "shirt", "jumper", "longsleeve"]), "pattern": r.choice(["plain", "plain", "vstripes"]), "neck": "collar", "sleeves": "long"}
+        if top["kind"] != "shirt":
+            top["neck"] = "crew"
+        c.update(top=r.choice(SEPIA_LIGHT + COLD[6:7]))
+        c["top2"] = _darker(c["top"], 0.18)
+        roll = r.random()
+        outer, acc = None, []
+        if roll < 0.45:
+            outer = {"kind": "coat", "long": True, "pattern": "plain"}
+        elif roll < 0.7:
+            outer = {"kind": "jacket", "pattern": "plain"}
+        elif roll < 0.85:
+            outer = {"kind": "waistcoat"}
+        else:
+            acc = ["braces"]
+        if r.random() < 0.3:
+            acc = acc + ["scarf"]
+        bottom = {"kind": "trousers"}
+        hat = r.choice([{"kind": "flatcap"}, {"kind": "flatcap"}, {"kind": "fedora"}, None])
+        hair = {"style": r.choice(SQ_HAIR), "part": round(r.uniform(-0.3, 0.3), 2)}
+        shoes = {"kind": "boots"}
+        face = _face(r, 0.38)
+        if c["bottom"] in SEPIA_LIGHT:
+            c["bottom"] = "#5c4a38"
+    spec.update({"hair": hair, "top": top, "outer": outer, "bottom": bottom, "shoes": shoes, "hat": hat, "acc": acc, "face": face, "colours": c})
+    return spec
+
+
+def _w_fisherman(r, variant, actor):
+    old = r.random() < 0.3
+    c = _sq_cols(r, _skin(r), _sq_hair(r, old=old))
+    sw = r.choice(COLD)
+    yellow = variant != "b"
+    oil = r.choice(OILSKIN) if yellow else r.choice(OIL_DARK)
+    c.update(top=sw, top2=_darker(sw, 0.2), top3=_lighter(sw, 0.2), outer=oil, outer2=_darker(oil, 0.3), bottom=r.choice(["#2e3a48", "#34343c", "#3e4650"]),
+             bottom2="#20262e", shoes=r.choice(["#1e1c1c", "#2a2624"]), hat=r.choice(["#34465a", "#7a3a34", "#44505a", "#6a6a58"]), hat2="#222c38", acc="#4a3c2c")
+    spec = _sq_build(r, (0.98, 1.08), (1.04, 1.24), curve=round(r.uniform(0.0, 0.2), 2))
+    top = {"kind": "jumper", "pattern": "knit", "neck": "crew", "sleeves": "long"}
+    outer = {"kind": "oilskin", "long": True, "pattern": "plain"}
+    hat = {"kind": "knit"}
+    acc = []
+    if variant == "b":
+        hat = {"kind": "fisher"}
+        c.update(hat=oil, hat2=_darker(oil, 0.3))
+    elif variant == "c":  # in his jersey, no coat
+        outer = None
+        acc = ["scarf"] if r.random() < 0.5 else []
+        c["acc"] = r.choice(["#a89a78", "#6a3a34", "#4a5a70"])
+        top["pattern"] = "knit"
+    face = _face(r, 0.0)
+    face["beard"] = r.choice(["beard", "beard", "beard", "stubble"])
+    hair = {"style": r.choice(["short", "curly", "buzz", "wavy"]), "part": round(r.uniform(-0.3, 0.3), 2)}
+    spec.update({"hair": hair, "top": top, "outer": outer, "bottom": {"kind": "trousers"}, "shoes": {"kind": r.choice(["wellies", "boots"])}, "hat": hat, "acc": acc,
+                 "face": face, "colours": c})
+    return spec
+
+
+def _w_patient(r, variant, actor):
+    c = _sq_cols(r, _skin(r), _sq_hair(r))
+    pj = r.choice(PYJ)
+    c.update(top=pj[0], top2=pj[1], top3=_lighter(pj[0], 0.2), bottom=pj[0], bottom2=pj[1], shoes=r.choice(["#6a5a48", "#8a8070"]), shoes2="#c8c0b0", prop2="#f2eee4",
+             horn=r.choice(["#9a5a48", "#8a4c3c"]), acc="#d8d4c8")
+    spec = _sq_build(r, (0.94, 1.06), (0.84, 1.08), curve=round(r.uniform(0.0, 0.45), 2))
+    gown = variant == "c" and r.random() < 0.3
+    if gown:
+        top = {"kind": "gown", "pattern": "dots", "neck": "crew"}
+        c.update(top=r.choice(GOWN), top2="#6a8ab0")
+        bottom = {"kind": "gownlegs"}
+    else:
+        top = {"kind": "pyjamas", "pattern": r.choice(["stripes", "vstripes", "plain"]), "neck": "collar", "sleeves": "long"}
+        bottom = {"kind": "pyjamas", "pattern": "stripes" if r.random() < 0.7 else "plain"}
+    acc = []
+    face = _face(r, 0.4)
+    if variant == "a":
+        acc = ["bandage"]
+    elif variant == "b":
+        spec["sling"] = True
+        acc = ["sling"]
+    else:
+        spec["plaster"] = r.choice(["l", "r"])
+    shoes = {"kind": r.choice(["slippers", "bare", "slippers"])}
+    hair = {"style": r.choice(SQ_HAIR), "part": round(r.uniform(-0.3, 0.3), 2)}
+    spec.update({"hair": hair, "top": top, "outer": None, "bottom": bottom, "shoes": shoes, "hat": None, "acc": acc, "face": face, "colours": c})
+    return spec
+
+
+_SQ_WEAR = {"airman": _w_airman, "officer": _w_officer, "clerk": _w_clerk, "surgeon": _w_surgeon, "quartermaster": _w_quartermaster, "gunner": _w_gunner,
+            "mp": _w_mp, "civilian_city": _w_civilian, "fisherman": _w_fisherman, "patient": _w_patient}
+
+
+def squadron(r: random.Random, wear: str, actor: dict) -> dict:
+    """The spec of a squadron-story actor: `wear` (SQUADRON_WEARS) and `variant` a/b/c (civilian_city also d). The wear fixes who they are; the seed everything else."""
+    if wear not in _SQ_WEAR:
+        raise ValueError(f"unknown wear {wear!r}: one of {', '.join(SQUADRON_WEARS)}")
+    v = str(actor.get("look", actor.get("variant", "a"))).lower()
+    v = VARIANT_ALIAS.get(v, v)
+    if v not in ("a", "b", "c", "d"):
+        v = "a"
+    if v == "d" and wear != "civilian_city":
+        v = "c"
+    spec = _SQ_WEAR[wear](r, v, actor)
+    spec["wear"] = wear
+    spec["variant"] = v
+    return spec
+
+
+def _squadron_face(spec: dict, chapter: str, aid: str, wear: str, variant: str) -> None:
+    """Face traits that make the squadron's people individuals and fit who they are (brows, nose, lips, chin, eyes), from a random stream of their own."""
+    r = random.Random(seed_of(chapter, aid) * 53 + 1301)
+    f = spec["face"]
+    cols = spec["colours"]
+    old = f.get("age") == "old"
+    pk = r.choice
+    if wear == "clerk":  # a small, exact, bird-like face
+        f.update(brow=pk(["thin", "arched", "angled", "thin"]), nose=pk(["long", "hooked", "button", "straight"]), lips="thin", chin=pk(["pointed", "round", "pointed"]),
+                 jaw=round(r.uniform(0.18, 0.34), 2), eye=pk(["round", "almond", "round"]), wk=pk([0.93, 1.0]), cheek=False, sing=False)
+        f["lash"] = 1 if spec.get("curve", 0.3) < 0.55 else 2
+    elif wear == "surgeon":  # long, tired, hooded
+        f.update(brow=pk(["angled", "thick", "straight"]), nose=pk(["long", "hooked", "straight"]), lips="thin", chin=pk(["square", "pointed", "round"]),
+                 jaw=round(r.uniform(0.28, 0.45), 2), eye="hooded", wk=pk([0.93, 1.0]), cheek=True, sing=False, lines=True)
+    elif wear == "officer":
+        if variant == "a":  # broad, heavy, assured
+            f.update(brow="thick", nose=pk(["wide", "hooked", "straight"]), lips=pk(["thin", "full"]), chin="square", jaw=round(r.uniform(0.3, 0.45), 2),
+                     eye=pk(["hooded", "almond"]), wk=pk([1.0, 1.04]), cheek=True, sing=False, lines=True)
+        elif variant == "b":  # clean, narrow, alert
+            f.update(brow=pk(["thin", "arched", "straight"]), nose=pk(["straight", "long", "button"]), lips=pk(["thin", "full"]), chin=pk(["pointed", "round"]),
+                     jaw=round(r.uniform(0.15, 0.3), 2), eye=pk(["almond", "round"]), wk=pk([0.93, 1.0]), cheek=False, sing=False)
+        else:  # soft, kindly, old
+            f.update(brow=pk(["arched", "straight"]), nose=pk(["wide", "straight", "button"]), lips=pk(["full", "thin"]), chin="round", jaw=round(r.uniform(0.15, 0.3), 2),
+                     eye=pk(["round", "almond"]), wk=1.0, cheek=False, sing=False, lines=True)
+    elif wear == "quartermaster":  # sly, round, a wide mouth, hooded eyes
+        f.update(brow=pk(["angled", "arched"]), nose=pk(["long", "wide", "hooked"]), lips="wide", chin=pk(["round", "round", "pointed"]), jaw=round(r.uniform(0.12, 0.3), 2),
+                 eye="hooded", wk=pk([1.0, 1.04]), cheek=True, sing=pk([True, False]))
+    elif wear == "mp":  # stern
+        f.update(brow=pk(["thick", "angled"]), nose=pk(["straight", "wide"]), lips="thin", chin="square", jaw=round(r.uniform(0.32, 0.46), 2), eye=pk(["hooded", "almond"]),
+                 cheek=True, sing=False)
+    elif wear == "gunner":
+        f.update(brow=pk(["straight", "arched", "thin"]), nose="button", lips="thin", chin="round", jaw=round(r.uniform(0.1, 0.2), 2), eye=pk(["round", "round", "almond"]),
+                 cheek=False, sing=False)
+        f["blush"] = True
+    elif wear == "fisherman":
+        f.update(brow=pk(["thick", "straight", "angled"]), nose=pk(["wide", "long", "straight"]), eye=pk(["hooded", "almond"]), cheek=True, lines=True if r.random() < 0.6 else f.get("lines", False))
+    if wear == "civilian_city" and variant == "d":
+        f["sing"] = True
+    f["age"] = f.get("age", "adult")
+    if wear in ("officer",) and variant == "c":
+        f["age"] = "old"
+
+
 # ---- casting -----------------------------------------------------------------------------------------------------------------------------------------
 
 CHAPTER_FURNITURE = {"night_one": ("#4a3a4c", "#2a2230"), "mothership": ("#8aa0b8", "#4a5a70"), "underworld": ("#3a2a2a", "#1a1010"),
-                     "hospital": ("#5a7a8a", "#3a4a5a"), "mental_hospital": ("#6a7a5a", "#3a4a3a")}
+                     "hospital": ("#5a7a8a", "#3a4a5a"), "mental_hospital": ("#6a7a5a", "#3a4a3a"),
+                     "airfield": ("#6a5e44", "#463e2c"), "city": ("#5e4e3e", "#3a2e24"), "harbour": ("#3e4e5e", "#26323e")}
+
+
+PATH_WARDROBES = {"orchard", "birch_hall", "deep_halls", "ash_land"}  # the Ember Road's maps (tools/story/art/wardrobe_ember.py); other paths add theirs here
 
 
 def dress(chapter: str, actor: dict, salt: int = 0) -> dict:
     aid = str(actor["id"])
-    r = random.Random(seed_of(chapter, aid) + salt * 7919)
+    wear = str(actor.get("wear", ""))
+    if wear not in SQUADRON_WEARS:  # (the Gospel path names its own `wear` values: only the squadron's ten are this branch)
+        wear = ""
+    chapter_seed = chapter
+    sq_aid = aid
+    if chapter in GOSPEL_MAPS:  # a look comes from the seed id: a disciple (d01..d12) wears the same face in every map of the path
+        aid = str(actor.get("seed_id", aid))
+        sq_aid = aid
+        chapter_seed = "gospel" if (aid[0] == "d" and aid[1:].isdigit()) else chapter
+    elif chapter in PATH_WARDROBES:  # a named person who stands in several rooms (`person`) is dressed and faced the same in each, on every map of the Ember Road
+        aid = str(actor.get("person") or aid)
+        sq_aid = aid
+        chapter_seed = "ember"
+    if wear:  # the squadron's recurring people look the same in every map: seeded by who they are (`same_as` names the first actor of the same person), not by chapter
+        chapter_seed, sq_aid = "squadron", str(actor.get("same_as", aid))
+    r = random.Random(seed_of(chapter_seed, sq_aid) + salt * 7919)
     arch = str(actor.get("archetype", ""))
     borrowed = str(actor.get("art", "")) == "night_one" or chapter == "night_one"
-    if borrowed:
+    # the squadron story's people: a wear and a look (a/b/c/d) come before every other rule
+    if wear:
+        spec = squadron(r, wear, actor)
+    elif chapter in GOSPEL_MAPS:
+        spec = gospel(r, actor)
+    elif chapter in PATH_WARDROBES:
+        from . import wardrobe_ember
+        spec = wardrobe_ember.dress(r, str(actor.get("kind", arch)), actor)
+    elif borrowed:
         spec = raver(r, arch)
     elif chapter == "mothership":
         spec = alien(r, arch)
@@ -441,10 +1107,12 @@ def dress(chapter: str, actor: dict, salt: int = 0) -> dict:
     fu = CHAPTER_FURNITURE.get(chapter, ("#4a3e4c", "#2e2634"))
     cols["furn"], cols["furn2"] = fu
     if str(actor.get("activity", "")) == "lie":
-        cols["furn"], cols["furn2"] = ("#c8d0dc", "#e8ecf2") if chapter in ("hospital",) else ("#8a9a7a", "#c8ccc0")
+        cols["furn"], cols["furn2"] = ("#c8d0dc", "#e8ecf2") if (chapter in ("hospital",) or wear) else ("#8a9a7a", "#c8ccc0")
     spec["colours"] = cols
-    spec["seed"] = seed_of(chapter, aid) % 100000
-    _face_detail(spec, chapter, aid, arch)
+    spec["seed"] = seed_of(chapter_seed, sq_aid) % 100000
+    _face_detail(spec, chapter_seed, sq_aid, arch)
+    if wear:
+        _squadron_face(spec, chapter_seed, sq_aid, wear, spec.get("variant", "a"))
     return spec
 
 
@@ -535,7 +1203,7 @@ def cast_chapter(chapter: str, actors: list) -> dict:
         for salt in range(40):
             spec = dress(chapter, a, salt)
             k = look_key(spec)
-            if k not in keys:
+            if k not in keys or a.get("fixed"):  # (a recurring named person is never re-rolled: they must look the same in every room and map)
                 break
         keys.add(k)
         out[str(a["id"])] = spec

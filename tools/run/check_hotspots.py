@@ -4,6 +4,7 @@ route, secret and the Bassment are reachable through hotspots alone. Pure Python
 
     python3 tools/run/check_hotspots.py            # all worlds; exit code 1 on any error
     python3 tools/run/check_hotspots.py warehouse  # one world's rules (reachability still walks the whole run)
+    python3 tools/run/check_hotspots.py --path gospel   # a path's run (content/paths/gospel): the same rules, with the path's relaxations (several entries and exits, endings)
 
 Rules (errors): every hotspot has the contract's fields; its world, scene and map agree with run.json; its anchor exists in the map (thing, waypoint, actor with a home, or a 3-float
 pos); kind and looks are in the vocabularies; every route is a route of the scene (its `next`) or a Bassment passage; every cinematic names an entry of run.json `cinematics` whose
@@ -12,7 +13,9 @@ read, with once-only hotspots present or already used: the minimum counts withou
 route, one exit hotspot per route anchored to that route's doorway; a failure outcome is never a dead end (a route, or a state change: flags, energy, music or a cinematic) and differs
 from the success outcome. Reachability: from the start scene, following every route of every outcome (success and failure) and the default exits, every scene is reached, every route
 of every scene is taken by some exit hotspot, every Bassment hotspot target is a passage, and every hotspot (secrets included) can become available: its flags are set by some outcome
-of a reachable hotspot. Warnings: outcomes whose route differs from the scene's default route when the chart packs differ (the route lock of docs/CONTINUOUS_RUN.md decides the
+of a reachable hotspot. A route "path:<id>" (a portal of the Warehouse) is accepted for a secret that pulses and is never the default, repeatable, whose failure has no route and costs energy; the path's run.json must exist (a warning
+while it does not: the game leaves the portal out of play). In a path, an ending scene (`"ending": "<name>"`) has the one route "run:warehouse" and its default hotspot sets keep:path_<id>_<name>; reachability
+needs every scene reachable from the start, every ending reached and its way back taken; there is no Bassment. Warnings: outcomes whose route differs from the scene's default route when the chart packs differ (the route lock of docs/CONTINUOUS_RUN.md decides the
 chart at beat 60.5).
 """
 from __future__ import annotations
@@ -23,6 +26,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+PATH_ID = ""  # set by --path
+KNOWN_PATHS = {"gospel", "squadron", "ember"}  # the three portals of the Warehouse; any folder under content/paths is one too
 KINDS = {"exit", "object", "character", "feature", "encounter", "secret"}
 LOOKS = {"glow", "pulse", "beckon", "flicker", "open", "crack"}
 ROLES = {"dancer", "on_stage", "dj", "queasy", "sick", "recovered"}
@@ -34,6 +39,22 @@ CHAPTER = {"night_one": "night_one", "mothership": "mothership", "underworld": "
 
 def load(p):
     return json.loads(Path(p).read_text(encoding="utf-8"))
+
+
+def run_json_path():
+    return ROOT / "content/paths" / PATH_ID / "run.json" if PATH_ID else ROOT / "content/run/run.json"
+
+
+def music_json_path():
+    return ROOT / "content/paths" / PATH_ID / "music.json" if PATH_ID else ROOT / "content/story/music.json"
+
+
+def hotspots_dir():
+    return ROOT / "content/paths" / PATH_ID / "hotspots" if PATH_ID else ROOT / "content/run/hotspots"
+
+
+def path_exists(pid):
+    return (ROOT / "content/paths" / pid / "run.json").exists() and (ROOT / "content/paths" / pid / "music.json").exists()
 
 
 class Ctx:
@@ -52,25 +73,47 @@ class Ctx:
         return ""
 
     def __init__(self):
-        self.run = load(ROOT / "content/run/run.json")
+        self.run = load(run_json_path())
         self.nodes = {n["id"]: n for n in self.run["nodes"]}
         self.worlds = {w["id"]: w for w in self.run["worlds"]}
         self.cin = self.run.get("cinematics", {})
-        self.passages = set(load(ROOT / "content/trial/passages.json")["passages"])
-        music = load(ROOT / "content/story/music.json")
+        self.passages = set() if PATH_ID else set(load(ROOT / "content/trial/passages.json")["passages"])
+        music = load(music_json_path())
         self.pack = {n["id"]: self.chart_pack(n) for n in music["nodes"]}
         self.maps = {}
         self.actors = {}
-        for m in CHAPTER:
+        for m in sorted({w["map"] for w in self.run["worlds"]} | set(CHAPTER)):
+            CHAPTER.setdefault(m, m)
             d = load(ROOT / f"content/story/maps/{m}.json")
             self.maps[m] = {"things": {t["id"] for t in d["things"]}, "wps": {w["id"] for w in d["waypoints"]}, "homes": {h["actor"] for h in d["homes"]}}
             self.actors[m] = {a["id"] for a in load(ROOT / f"content/story/{CHAPTER[m]}.json")["actors"]}
 
 
+def minigame_ids():
+    """Ids of the registered minigames: the `id` of every content/minigames/*.json (the file's basename when it has none); empty when the directory does not exist."""
+    out = set()
+    for f in sorted((ROOT / "content/minigames").glob("*.json")):
+        try:
+            out.add(str(json.loads(f.read_text()).get("id", f.stem)))
+        except (OSError, ValueError, AttributeError):
+            out.add(f.stem)
+    return out
+
+
 def outcome_keys_ok(o, where, errs):
     for k in o:
-        if k not in ("route", "flags_set", "cinematic", "energy", "music"):
+        if k not in ("route", "flags_set", "cinematic", "energy", "music", "pieces", "activity"):
             errs.append(f"{where}: unknown outcome field {k}")
+    if "activity" in o:
+        if not isinstance(o["activity"], str) or not o["activity"]:
+            errs.append(f"{where}: activity must be a non-empty string")
+        else:
+            if not where.endswith("on_success"):
+                errs.append(f"{where}: activity is only allowed in on_success")
+            if o.get("route"):
+                errs.append(f"{where}: activity cannot be combined with a route")
+            if o["activity"] not in minigame_ids():
+                errs.append(f"{where}: activity '{o['activity']}' is not a registered minigame ({', '.join(sorted(minigame_ids()))})")
     if "energy" in o and not (isinstance(o["energy"], int) and -20 <= o["energy"] <= 20):
         errs.append(f"{where}: energy must be an int in -20..20")
     if "music" in o and o["music"] not in MUSIC:
@@ -113,6 +156,27 @@ def check_cin(c, mapname, ctx, where, errs):
         check_step(c, mapname, ctx, where + " (inline)", errs)
 
 
+def check_portal(h, which, route, errs):
+    """A portal (docs/THREE_PATHS_AND_FACES_PLAN.md 3.3): only on_success may lead into a path, the main run only, a secret that pulses, never the default, repeatable, failing without a route for a little energy."""
+    hid = h["id"]
+    pid = route[len("path:"):]
+    if PATH_ID:
+        errs.append(f"{hid}: a path does not lead into another path ({route})")
+    if which != "on_success":
+        errs.append(f"{hid}: only on_success may lead into a path")
+    if not pid.isidentifier():
+        errs.append(f"{hid}: {route} needs a path id")
+    if h["kind"] != "secret" or h["look"].get("available") != "pulse":
+        errs.append(f"{hid}: a portal is a secret with look.available pulse")
+    if h["default"]:
+        errs.append(f"{hid}: a portal is never the default")
+    if not h["repeatable"]:
+        errs.append(f"{hid}: a portal is repeatable")
+    f = h["on_failure"]
+    if f.get("route") or not (isinstance(f.get("energy"), int) and f["energy"] < 0):
+        errs.append(f"{hid}: a portal that fails flickers out: no route, an energy cost")
+
+
 def check_hotspot(h, ctx, errs):
     hid = h.get("id", "?")
     for f in FIELDS:
@@ -147,10 +211,19 @@ def check_hotspot(h, ctx, errs):
             errs.append(f"{hid}: anchor kind {k}")
     if h["kind"] not in KINDS:
         errs.append(f"{hid}: kind {h['kind']}")
-    if h["look"].get("available") not in LOOKS or h["look"].get("selected") != "ring" or h["look"].get("committed") != "flash":
+    if h["look"].get("available") not in LOOKS or h["look"].get("selected") not in ("ring", "claim") or h["look"].get("committed") != "flash":
         errs.append(f"{hid}: look {h['look']}")
     if h["min_px"] < 72 or not (0.3 <= h["radius_m"] <= 3.0):
         errs.append(f"{hid}: radius_m 0.3 to 3, min_px at least 72")
+    if h.get("window", "final") not in ("final", "any"):
+        errs.append(f"{hid}: window {h.get('window')} is final or any")
+    has_act = bool(h["on_success"].get("activity"))
+    if h.get("window") == "any" and not has_act:
+        errs.append(f"{hid}: window any needs an on_success activity")
+    if "pass_credit" in h:
+        pc = h["pass_credit"]
+        if isinstance(pc, bool) or not isinstance(pc, (int, float)) or not (0 <= pc <= 1) or not has_act:
+            errs.append(f"{hid}: pass_credit is a number 0 to 1 and needs an on_success activity")
     av = h["available"]
     if set(av) != {"flags_all", "flags_none", "energy_min", "once"}:
         errs.append(f"{hid}: available fields {sorted(av)}")
@@ -160,11 +233,22 @@ def check_hotspot(h, ctx, errs):
         o = h[which]
         outcome_keys_ok(o, f"{hid} {which}", errs)
         r = o.get("route")
-        if r and r not in [n["to"] for n in node["next"]] and r not in ctx.passages:
+        if r and r.startswith("path:"):
+            check_portal(h, which, r, errs)
+        elif r and r not in [n["to"] for n in node["next"]] and r not in ctx.passages:
             errs.append(f"{hid} {which}: route {r} is neither a route of {h['scene']} nor a Bassment passage")
         check_cin(o.get("cinematic"), h["map"], ctx, f"{hid} {which}", errs)
     if "cinematic" in h:
         check_cin(h["cinematic"], h["map"], ctx, f"{hid} hook", errs)
+    if "on_select" in h:
+        os_ = h["on_select"]
+        if not isinstance(os_, dict) or set(os_) != {"cinematic"} or not isinstance(os_["cinematic"], str):
+            errs.append(f"{hid}: on_select is {{cinematic: <name>}}")
+        else:
+            check_cin(os_["cinematic"], h["map"], ctx, f"{hid} on_select", errs)
+    rm = h["look"].get("ring_m")
+    if rm is not None and (isinstance(rm, bool) or not isinstance(rm, (int, float)) or not (0 < rm <= 4)):
+        errs.append(f"{hid}: look.ring_m is a number above 0 and at most 4")
     s, f = h["on_success"], h["on_failure"]
     if not f or not (f.get("route") or f.get("flags_set") or f.get("energy") or f.get("music") or f.get("cinematic")):
         errs.append(f"{hid}: failure is a dead end (no route, no state change)")
@@ -173,7 +257,7 @@ def check_hotspot(h, ctx, errs):
     if h["kind"] == "exit":
         if not s.get("route"):
             errs.append(f"{hid}: an exit leads somewhere")
-    elif not (s.get("route") or s.get("flags_set") or s.get("energy") or s.get("music") or s.get("cinematic")):
+    elif not (s.get("route") or s.get("activity") or s.get("flags_set") or s.get("energy") or s.get("music") or s.get("cinematic")):
         errs.append(f"{hid}: success changes nothing")
     if h["challenge"] is not None:
         c = h["challenge"]
@@ -201,8 +285,9 @@ def check_scene(sid, hs, ctx, errs, warns):
         errs.append(f"{sid}: no hotspots")
         return
     lo, hi = counts(hs)
-    if lo < 2 or hi > 4:
-        errs.append(f"{sid}: {lo} to {hi} hotspots available (must stay 2 to 4)")
+    cap = int(node.get("max_hotspots", 4))
+    if lo < 2 or hi > cap:
+        errs.append(f"{sid}: {lo} to {hi} hotspots available (must stay 2 to {cap})")
     exits = [h for h in hs if h["kind"] == "exit"]
     defaults = [h for h in exits if h["default"]]
     if len(defaults) != 1:
@@ -214,9 +299,20 @@ def check_scene(sid, hs, ctx, errs, warns):
     for h in exits:
         if h["available"] != {"flags_all": [], "flags_none": [], "energy_min": 0, "once": False}:
             errs.append(f"{h['id']}: an exit is always available")
+    if node.get("ending"):  # an ending's default exit marks the ending reached and leads back to the Warehouse
+        flag = f"keep:path_{PATH_ID}_{node['ending']}"
+        if [r["to"] for r in node["next"]] != ["run:warehouse"]:
+            errs.append(f"{sid}: an ending has the one route run:warehouse")
+        for h in defaults:
+            if flag not in h["on_success"].get("flags_set", []):
+                errs.append(f"{h['id']}: the default exit of an ending sets {flag}")
     ex = node["place"]["rail"]["exits"]
     for r in node["next"]:
         mine = [h for h in exits if h["on_success"].get("route") == r["to"]]
+        if PATH_ID and not mine:  # a path's route may be reached by a touch (a feature, an object, a person) instead of an exit of its own
+            if not any(h[w].get("route") == r["to"] for h in hs for w in ("on_success", "on_failure")):
+                errs.append(f"{sid}: no hotspot leads to route {r['to']}")
+            continue
         if len(mine) != 1:
             errs.append(f"{sid}: {len(mine)} exit hotspots for route {r['to']} (one)")
             continue
@@ -243,6 +339,8 @@ def reachability(allh, ctx, errs):
     taken_routes = set()
     reached_h = set()
     trial = False
+    portals = set()
+    endings = set()
     changed = True
     while changed:
         changed = False
@@ -262,7 +360,12 @@ def reachability(allh, ctx, errs):
                             changed = True
                     r = o.get("route")
                     if r:
-                        if r in ctx.nodes:
+                        if r.startswith("path:"):
+                            portals.add(r[len("path:"):])
+                        elif r.startswith("run:"):
+                            taken_routes.add((sid, r))
+                            endings.add(sid)
+                        elif r in ctx.nodes:
                             taken_routes.add((sid, r))
                             if r not in seen_scenes:
                                 seen_scenes.add(r)
@@ -284,17 +387,44 @@ def reachability(allh, ctx, errs):
     for h in allh:
         if h["id"] not in reached_h:
             errs.append(f"hotspot {h['id']} can never become available (its flags_all {h['available']['flags_all']} are never set)")
-    if not trial:
+    if PATH_ID:
+        want = {i for i, n in ctx.nodes.items() if n.get("ending")}
+        for e in sorted(want - endings):
+            errs.append(f"the ending {e} is never left by its way back to the Warehouse")
+        if not want:
+            errs.append("the path has no ending scene")
+    elif not trial:
         errs.append("the Bassment (a trial passage route) is not reachable")
-    return len(seen_scenes), len(taken_routes), len(flags)
+    return len(seen_scenes), len(taken_routes), len(flags), portals, endings
+
+
+def check_laps(ctx, errs):
+    """Two laps (docs/CONTINUOUS_RUN.md "Two laps"): a scene's laps (its own, else the path's, else 1) is a whole number from 1 to 4, only a path plays more than one, and every cast line of a scene
+    names a beat inside its laps (0 to 64 * laps - 1). The hotspot rules above are per scene, not per lap: the hotspots are on show in the last lap only, so nothing else changes. Returns {laps: scenes}."""
+    default = int(ctx.run.get("path", {}).get("laps", 1)) if PATH_ID else 1
+    beats = int(ctx.run.get("timing", {}).get("phase_beats", 64))
+    count: dict = {}
+    for sid, n in ctx.nodes.items():
+        laps = n.get("laps", default)
+        if not isinstance(laps, int) or isinstance(laps, bool) or laps < 1 or laps > 4:
+            errs.append(f"scene {sid}: laps {laps!r} is not a whole number from 1 to 4")
+            continue
+        if laps > 1 and not PATH_ID:
+            errs.append(f"scene {sid}: laps {laps}, only a path's scenes play more than one lap")
+        count[laps] = count.get(laps, 0) + 1
+        for i, c in enumerate(n.get("cast", [])):
+            if not 0 <= float(c.get("at_beat", -1)) <= beats * laps - 1:
+                errs.append(f"scene {sid} cast[{i}]: at_beat {c.get('at_beat')} is outside the scene's {laps} lap(s) (0 to {beats * laps - 1})")
+    return count
 
 
 def main(argv):
     ctx = Ctx()
     errs, warns = [], []
+    lap_counts = check_laps(ctx, errs)
     want = set(argv[1:])
     allh = []
-    files = sorted((ROOT / "content/run/hotspots").glob("*.json"))
+    files = sorted(hotspots_dir().glob("*.json"))
     worlds_found = set()
     for p in files:
         d = load(p)
@@ -325,7 +455,10 @@ def main(argv):
         if r:
             rows.append((ctx.nodes[sid]["world"], sid, len(hs), r))
             per_world.setdefault(ctx.nodes[sid]["world"], []).append(len(hs))
-    ns, nr, nf = reachability(allh, ctx, errs)
+    ns, nr, nf, portals, endings = reachability(allh, ctx, errs)
+    for pid in sorted(portals):
+        if not path_exists(pid):
+            warns.append(f"portal into path '{pid}': content/paths/{pid}/run.json does not exist yet (the game leaves the portal out of play)")
     # unused cinematics are a sign of drift
     used = set()
     for h in allh:
@@ -333,6 +466,9 @@ def main(argv):
             c = h.get(which, {}).get("cinematic")
             if isinstance(c, str):
                 used.add(c)
+        c = h.get("on_select", {}).get("cinematic")
+        if isinstance(c, str):
+            used.add(c)
     for c in ctx.cin:
         if c not in used:
             warns.append(f"cinematic {c} is not used by any outcome")
@@ -341,8 +477,12 @@ def main(argv):
     for w in ctx.worlds:
         if w in per_world:
             print(f"{w}: {sum(per_world[w])} hotspots in {len(per_world[w])} scenes")
-    print(f"reachability: {ns}/{len(ctx.nodes)} scenes, {nr} routes taken, {nf} flags settable, Bassment via passage")
+    if PATH_ID:
+        print(f"reachability: {ns}/{len(ctx.nodes)} scenes, {nr} routes taken, {nf} flags settable, endings {', '.join(ctx.nodes[e]['ending'] for e in sorted(endings)) or 'none'} left by run:warehouse")
+    else:
+        print(f"reachability: {ns}/{len(ctx.nodes)} scenes, {nr} routes taken, {nf} flags settable, Bassment via passage; portals into paths: {', '.join(sorted(portals)) or 'none'}")
     print(f"{len(allh)} hotspots, {len(ctx.cin)} cinematics")
+    print("laps: " + ", ".join(f"{n} scene(s) x{k}" for k, n in sorted(lap_counts.items())))
     for w in warns:
         print("warning:", w)
     for e in errs:
@@ -352,4 +492,9 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    argv = list(sys.argv)
+    if "--path" in argv:
+        i = argv.index("--path")
+        PATH_ID = argv[i + 1]
+        del argv[i:i + 2]
+    sys.exit(main(argv))

@@ -609,6 +609,32 @@ Every actor of every chapter is drawn as an individual and baked to their own pi
 - **Changing a look**: edit the chapter's function in `wardrobe.py` (or `people.py` for drawing), then `python3 tools/story/build_assets.py <chapter> people` and
   `godot --headless --path . --import`. Changing a pose in `StoryCharacter.sample` or a cycle in `SHEET_CYCLES`: rerun `dump_poses.gd` first.
 
+## Acting: fourteen faces and fifteen directed acts (docs/THREE_PATHS_AND_FACES_PLAN.md 2.1 and 2.2, stage 1a)
+
+- **Faces** (`people.FACES`, `StoryCharacter.FACES`): the crowd's `neutral`, `happy`, `cheer`, `sad` and ten acted ones, `fear`, `anger`, `plea`, `doubt`, `relief`, `awe`, `grief`, `laugh`,
+  `resolve`, `shame`. They are drawn on the person's own face traits (`Painter.act_eye`, `act_brow`, `act_mouth`, `act_cheeks`; `act_small` at the half level of detail, where an eye is one
+  pixel and the brows' slant, the eye's height and the mouth's shape carry the feeling). The species keep their vocabulary: a skeleton's jaw drops (fear, awe, laugh), clenches (anger) or
+  hangs (grief) while its sockets widen or narrow; a grey's eyes go wide with catch lights or narrow to slits; the cyclops's one eye is lidded or ringed with white and its brow slants; an insect's
+  compound eyes grow, slant or sag and its mandibles open, clamp or droop; a blob's round eyes and wide mouth do the same; a brute's anger bares its teeth. The quarter-size head has only the
+  four old faces: `people.LOD4_FALLBACK` maps each acted face to the nearest (fear, anger, plea, grief, shame to sad; doubt, resolve to neutral; relief to happy; awe, laugh to cheer).
+  The four old faces are drawn exactly as before. Hair or a hat brim that covers the brows hides them (as before); the eyes and the mouth carry the face for those people.
+- **Acts** (`StoryCharacter.ACTS`): `beckon`, `nod`, `shake_head`, `recoil`, `bow`, `kneel`, `offer`, `plead`, `collapse`, `salute`, `block`, `cover_face`, `stamp`, `laugh`, `write`; each a state with a
+  pose in `sample()`, a cycle in `SHEET_CYCLES` and a default face in `FACE_OF`. They start on the bar (bar-locked like the flair moves). The pixel rig is 2D, so a forward bend is the pose key
+  `fwd` (0 to 1): the three-quarter view leans into the turn, the front and back views shorten the trunk and sink the head; hands raised to the face are the forearm folded up from a hanging arm
+  (since visual polish 2, docs/HANDOVER.md A13, `Body._hands_to_face` puts both hands over the face for the front and three-quarter views and `Body._one_knee_down` gives `kneel` its one-knee-down legs). `point`, `stare` and the other
+  old states take a face parameter too and keep their own default faces; `look_at` on `point` is the existing `toward` (stage 1b resolves a target id into it: `StoryCrowd.look_point`, see `docs/CONTINUOUS_RUN.md` "Acting in the run").
+- **Which people are baked in which acts** (`tools/story/art/directed.py`): only the directed people, never the whole crowd, and since stage 1d **exactly what the story uses**: the list is derived from the `acting` blocks of
+  `content/run/hotspots/*.json` and the `cast` lines of scenes and cinematics in `content/run/run.json` (both authored in `tools/run/acting_data.py`, see `docs/CONTINUOUS_RUN.md` "Acting in the run"). `content/story/directed_actors.json`
+  is the hand-kept extras file and ships empty (stage 1a's proof actors with every act and face are gone; entries may be `act`, `act@face` or `act@face:front+side`). A face other than the act's own
+  default is a separate frame set named `act@face` in `people.json` (`beckon@plea`); `StoryCharacter.face_override` picks it in `sheet_pick`. Frames are shared through the usual dedupe.
+  `check_assets.py` fails when a directed person lacks an act, a face or a facing, when a state names an unknown face, or when `people_poses.json` and `people.py` disagree about the faces and acts;
+  `tests/test_story_acts.gd` fails when anything directed is not baked or anything undirected is.
+- **Proof**: `python3 tools/story/face_sheets.py acting` writes `docs/shots/faces/<chapter>_acting.jpg`: each directed person's faces (front, three-quarter, half size) cropped from the
+  built sheets, then their acts (the middle frame of each cycle, front and three-quarter). The committed images are stage 1a's (the proof actors that wore every one of the fourteen faces and fifteen acts, since removed
+  from the sheets); with the stage 1d data the sheet shows only the faces each directed person really wears, about 30 people per chapter (3 MB a chapter, so it is not regenerated into the repo). The stage 1d proof is
+  `docs/shots/acting/` (`bash tools/run/capture.sh --acting`).
+- **Rebuild**: edit poses in `StoryCharacter.sample`, rerun `godot --headless --path . -s tools/story/dump_poses.gd`, then the five `build_assets.py <chapter> people` commands, as in `docs/FACE_POLISH.md`.
+
 ## The pixel look of the rooms (polish, art direction 2.D)
 
 - `tools/story/art/pixeltex.py`: tileable procedural textures drawn in numpy at tile size and quantised to a chapter palette ramp with 8x8 ordered dithering (bricks
@@ -616,3 +642,126 @@ Every actor of every chapter is drawn as an individual and baked to their own pi
   `tools/story/art/tex_<chapter>.py` composes them; `tiles.build` writes its tiles after the Godot bake (an id the bake also makes is replaced; a new id is added).
 - The post-process has an optional ordered dither and a palette clamp from the chapter's fog colour (the "Story pixel dithering" setting, on by default, off with
   reduced effects).
+
+# Story art: the maps of the three paths (`gospel`, `squadron`, `ember`; stages 3 to 5 of docs/THREE_PATHS_AND_FACES_PLAN.md)
+
+Eleven maps in all (the plan counted twelve: the Mission Count's night bomber is a room of its `airfield` map, not a map of its own). All of it is original and drawn by code, seeded and byte-identical on a rebuild; no
+downloaded or published art, no text anywhere (the only glyphs are the painted digits of the Mission Count's boards), no emblem of any real force or book. None of them has an SVG rig: a path map is `assets/story/<map>/`
+with `manifest.json` (`textures`, `people`, `borrow_sprites: true` where the path uses Night One's light and deck sprites), `textures/*.png` (surfaces as 64 px tiles, props as 128 px billboards, a few wide props
+256 x 128, skies 256 x 64) and `people/` (the baked sheets). The map is `content/story/maps/<map>.json` and its chapter data (actors, groups, palettes; `run_only`, so these are **not** chapters of the Story chapters
+menu) is `content/story/<map>.json`; a path's run.json names it per world with `"story": "res://content/story/<map>.json"` (`RunPlay._story_entry`). Where the engine needed new map features they are listed in
+`docs/CONTINUOUS_RUN.md` "Paths": set pieces (a thing with `"piece": id`), sector `sky` and `fog`, the cast lines `piece` and `hide`.
+
+| Path | Map (world) | Built by | Rooms (views) |
+| --- | --- | --- | --- |
+| gospel | `galilee_shore` (`jordan`), `hillside` (`galilee`), `bethany` (`road`), `jerusalem` (`jerusalem`) | `python3 tools/story/build_gospel_art.py --people` (`gospel_maps.py`, `gospel_tex.py`, `gospel_things_a.py`, `gospel_things_b.py`, `wardrobe.gospel()`) | 17 views |
+| squadron | `airfield` (`base`, `air`), `city` (`city`), `harbour` (`escape`) | `python3 tools/story/build_assets.py airfield\|city\|harbour` (maps: `tools/paths/squadron_{lib,airfield,city,harbour}.py`; textures `tex_squadron*.py`, `chapter_squadron.py`) | 4 + 4 + 4 rooms |
+| ember | `orchard` (`hollow`), `birch_hall` (`north`), `deep_halls` (`deeps`), `ash_land` (`marsh`, `mountain`) | `python3 tools/story/build_ember.py` (`ember_maps.py`, `art/ember_spec.py`, `tex_ember_tiles.py`, `tex_ember_things.py`, `wardrobe_ember.py`) | 8 + 4 + 4 + 17 sectors |
+
+Run `godot --headless --path . --import` after any rebuild. `tools/story/check_assets.py` checks the three Squadron worlds only (`PATH_CHAPTERS`); the Gospel's four maps are checked by `tests/test_gospel.gd` and `tools/content/test_gospel.py`, the Ember's four by `tests/test_run_ember.gd` and
+`godot --headless -s tools/story/check_map.gd` (a map and its chapter). This gap (the Gospel and Ember maps are not in `check_assets.py`) is on the backlog in `docs/HANDOVER.md`.
+
+## The Gospel maps
+
+Views side by side 18 m apart behind a spine road with a portal in each view's back wall (the rail walks from any room to any other through it). A world has one map (the engine rule), so the plan's "galilee_shore day"
+is `hillside`'s lakeshore. Palette: ochre, olive, limestone, the lake silver-blue; night indigo with oil-lamp amber (`TOD` in `gospel_maps.py`: light 0.34 and tint `#4a5ab0` at night, `#ffc89a` at dawn).
+
+### Map `galilee_shore` (assets/story/galilee_shore/): the world `jordan`
+`bank_night` (J00): a night road in `floor_dust`, a thatched stable lit from inside (`thing_stable`, a lamp light), the star over it (the piece `star`, additive), a campfire (`flicker`), sheep, a far hill town, the stars of
+`sky_night`; `bank_dawn` (J01): a sand bank and a river band (`floor_water`, scrolled, 0.4 m lower, an open step between), reeds, palms, the Baptist standing in the water, the dove (the piece `dove`), a far town (Nazareth's
+rooftops) as the exit; `rocks` (J02): the wilderness, boulders (`thing_rock_a/b/c`), the tempter, a basket of bread on a rock, the village fires far off; `workshop` (J03): a clay yard, a limestone house with a door, the bench,
+planks, the cart with nets.
+
+### Map `hillside` (assets/story/hillside/): the world `galilee`
+`lakeshore` (J04): shingle shore, two boats, nets drying on poles, a fish rack, a lake band with boats far out; `street` (J05): a cobbled Capernaum street between limestone houses, the family, the child on a mat, the caravan far
+down the road; `slope` (J06): a grassy slope with the crowd seated, the disciples standing, a far hill, a lake band; `storm` (J07): a shore at night under `sky_storm`, a boat with the disciples before it, the beacon fire, the
+pieces `storm_cloud`, `rain`, `lightning`.
+
+### Map `bethany` (assets/story/bethany/): the world `road`
+`courtyard` (J08): clay court between mud-brick walls, the laid table (`thing_table_meal`), stools, the donkey, the sisters and the disciples; `hill_dusk` (J09): a hillside at dusk (`sky_dusk`, `#ff9a60`), baskets empty
+(`thing_basket`) and the full ones as pieces, the crowd seated, a lantern; `gate` (J10): a paved road to the city gate (`thing_citygate`, `wall_city`), four palms, the steps, the olive tree, the waving crowd and the priests at the gate.
+
+### Map `jerusalem` (assets/story/jerusalem/): the world `jerusalem`
+`temple` (J11): flagstones, colonnades (`wall_columns`), the portico far off, three money-changers' tables (`t1_up`..`t3_up`) and the same tables overturned (`t1_over`..`t3_over`) as pieces; `grove` (J12): olive trees on dark
+soil at night, torches far off; `praetorium` (J13): pale walls with the red band, the dais with the seat, the bowl and jug, braziers; `hill` (J14): bare rock under `sky_dusk`, three plain crosses (`thing_cross`), the sky
+pieces `dark1`..`dark3` (bruised gradients, alpha 0.35 / 0.6 / 0.82); `tomb` (J15): a garden of cypress and flowers, the rock tomb (`thing_tomb`), the stone closed and rolled (`stone_closed`, `stone_rolled`), `sky_morning`;
+`road` (J16): a paved road in the morning, the city hazy behind, sheep.
+
+### The Gospel people (`wardrobe.gospel`)
+Archetypes by `wear`: `fisher` (bare-armed, bandana, bare feet, belt), `villager` and `woman`/`sister`/`mother` (long tunics in undyed wool or dye, stripes, headscarves), `disciple` (twelve recurring robes with sashes and
+cloaks: `d01`..`d12` have the same look in every map, `wardrobe.dress` seeds a disciple from "gospel/dNN"), `priest` (white, blue sash, turban), `soldier` (plain lamellar-pattern cuirass, shoulder plates, plumeless helmet,
+boots, no emblem), `merchant` (striped, gilet, turban), `child`, `elder` (grey, cloaked), `governor` (white with one red band), `tempter` (tall, dust-coloured, hooded), `baptist` (camel-hair tunic, long hair and beard), plus
+`shepherd`, `carpenter`, `gardener`. New hats `helmet` and `turban` in `people.py`. Sheets: galilee_shore 19 people, hillside 35, bethany 29, jerusalem 47 (130 in all). The live Night One rig stands in only as a fallback:
+the actors name a Night One archetype so that `StoryCrowd` creates them.
+
+## The Squadron maps
+
+Grainy, over-exposed Mediterranean daylight outside, warm bulbs inside, sepia and noir in the city, a cold blue night at the harbour; the neutral coast is the only saturated place of the path. No insignia (the Colonel's
+ribbons are colour bars, the military police have blank white armbands, the cross on the tent is a plain grey cross). Textures 64 px tiles, props 128 px billboards, six wide props 256 x 128, a 256 x 64 sky.
+
+### Map `airfield` (worlds `base` and `air`, scenes C01 to C06)
+Bleached khaki, olive drab, orange dust, a white-blue sky, fog `#d8c79c`; the bomber green-black lit by instrument lamps. Six rooms (rectangles, metres, x east / z south): `hut` (-12..0, 0..8, view `main`: the mission board
+with a painted tally, the empty cot at the north doorway, stove, maps table, hanging bulbs, the east door onto the line), `line` (0..26, 0..14: sandbag berm, orange dust, the invented twin-engine bomber nose with its ladder,
+crates, windsock, jeep, the tent flap and the hangar front), `tent` (0..10, -10..0: cots, drip stands, the kitchen hatch), `office` (-12..0, -10..0: the desk with a huge stamp, a framed certificate, two doors, filing
+cabinets), `bomber` (10..14, 14..22: the glazed nose at night with flak flashes, the release lever, the emergency box, instrument panel; ambient 0.9 so the crew read), `store` (26..38, 0..12: the Quartermaster's ledger, the
+truck, crates and shelves of tins). No pieces; things with `anim` (`flicker` stove, hatch and flak, `sway` lamps and windsock, `pulse` emergency box, `bob` truck). Palettes `khaki`, `glare`, `instrument`. 36 people.
+
+### Map `city` (world `city`, scenes C07 to C10)
+Sepia and noir without neon (fog `#7a6046`): `bomber_r` (-4, the bomber again under red alarm lamps, view `main`), `street` (0..24, 0..8: stucco shopfronts, cobbles, the staff car, the broken arch at the far end, washing
+lines, cafe table), `office_c` (2..12, 8..16: dark panelling, the Colonel's desk, the medal case, the torn map, globe, the tally slate), `ruins` (24..46, 0..10: blackened brick under a fire-lit sky, the burnt car, the fire
+barrel, headquarters' door and, far off, the night train with its lamp). Palettes `red`, `sepia`, `fire`. 20 people.
+
+### Map `harbour` (world `escape`, scenes C11 to C14)
+A cold blue night cut by white searchlight beams (fog `#0e1c34`): `hut2` (the briefing hut again, the count board reading 47 in fresh paint, the smashed radio, the aircraft in the door), `quay` (0..22, 0..12: wet planks, the
+fishing boat with one gold lantern, two searchlight towers with additive beams, nets, bollard), `cell` (0..10, -8..0: tally scratches, the barred window with its latch and a shaft of moonlight, the order on the table), and
+the **neutral coast** `coast` (22..44, 0..14, ceiling 4.5): golden sand, turquoise sea, cobalt sky, bright umbrella pines, gulls, a blue-and-white boat, seen from the quay only through a narrow gap behind the boat. Palettes
+`khaki`, `searchlight`, `bright`, `cold`. 21 people.
+
+### The Squadron people (`wardrobe.squadron()`)
+`airman` (a plain, b ground crew in overalls, c pilot in a leather jacket with goggles), `officer` (a colonel: broad, peaked cap, 4 x 3 ribbon bars, b aide with glasses, c chaplain with a dark collar band), `clerk` (0.82 high,
+round glasses, garters, bow tie; holds a `stamp`), `surgeon` (long stained white coat, stethoscope, mask down, stubble), `quartermaster` (broad, apron, moustache; an `egg`), `gunner` (a boy: 0.7 high, oversized jacket, flying
+cap), `mp` (white helmet, belt, cross strap and blank armband), `civilian_city` (a man, b woman, c child, d street singer), `fisherman` (a yellow oilskin, b dark oilskin with sou'wester, c jersey and beard), `patient` (striped
+pyjamas; a head bandage, b sling, c plaster on a leg). Recurring people (the Colonel, the aide, the chaplain, the Clerk, the Surgeon, the Quartermaster, the Gunner, the pilot, the crew) are one person in every map (`same_as`,
+`fixed`: seeded by who they are). New in `people.py`: hats `peaked sidecap flightcap mphelm flatcap knit fisher fedora eyeshade surgcap`, tops `uniform pyjamas`, outers `waistcoat oilskin`, accessories `ribbons webbing armband
+garters bandage sling apron braces collarband maskdown rag chain`, props `stamp egg medal hat`. The five old chapters are pixel-identical (511 specs and 7,965 frames hashed before and after). The booth portal's props (a
+radio, the bomber's shadow) are Night One's own procedural props (`tex_night_one.py` `thing_booth_radio`, `thing_bomber_shadow`; `content/story/maps/night_one.json` `booth_radio`, `booth_bomber_shadow`). Preview:
+`tools/story/squadron_wardrobe_preview.py`.
+
+## The Ember maps
+
+### Map `orchard` (assets/story/orchard/): the Orchard, the Ford, the Lantern Inn (world `hollow`)
+Eight rectangular sectors: the orchard (open, harvest dusk), the lane, the near bank, the ford (water 30 cm down, scrolling), the far bank, the inn road, the inn (beams, hearth, back door and a window for the rider's shadow
+piece) and the back yard. Surfaces by `tex_ember_tiles.py` (grass, lane, ford water, bank mud, boards, flags, hedge, cottage, fence, reeds, inn panelling, door, window, beams, a starry ceiling, `sky_dusk`), billboards by
+`tex_ember_things.py` (apple trees, baskets, the cot, lanterns, hearth, tables, barrels, stools, the hanging lamp, **the Ember** in its bowl, the gate, willows, black horses with a red glint, stepping stones; pieces
+`river_rise`, `rider_shadow`). People (`wardrobe_ember.py`): `villager_hollow` (wool jerkin, smock, leather belt, no pointed ears, no wizard hats), `grandmother`, `bram` (broad, straw hat, dungarees, apron-coloured gilet),
+`innkeeper` (round, waistcoat, ledger), `drinker`, `warden` (grey hooded cloak, belt, plain sword at the hip as a strap), `rider` (ash-grey cloak and hood, nothing inside but two red glints).
+
+### Map `birch_hall` (assets/story/birch_hall/): the Birch Hall and the High Pass (world `north`)
+A white hall (birch-trunk pillars with silver bands, banners with a leaf spray, silver lamps, a high chair, a vial on a pedestal, a table with an abstract inked chart: no real land, no writing), a porch and the snow pass
+(slate, snow, pines, a cairn, the cave mouth and the ridge marker on the far wall; piece `storm`, a wall of snow switched off when the pass is calmed). People: `lady` (white robe, cape, circlet), `birch_folk` (white and
+silver wool, pale sash).
+
+### Map `deep_halls` (assets/story/deep_halls/): the Deep Halls and the Falls (world `deeps`)
+A pillared dark (black-blue fluted columns, one cold hanging light), the lake (black, scrolling, the drowned thing rises as piece `drowned` at beat 46), a bridge and a ledge with the drums, the far hall, a tunnel and the top of
+the falls (wet boardwalk, a boat at its landing, the Warden's horn on a rock, a starry sky, the waterfall wall scrolling).
+
+### Map `ash_land` (assets/story/ash_land/): the marsh, the wall, the stair, the plain (world `marsh`) and the mountain (world `mountain`)
+Seventeen sectors: the reed marsh (teal mist, bioluminescent lights with sad faces), the Black Wall (obsidian, a colossal gate with piece `gate_mouths`, a glowing crack, braziers, the riders), the riders' camp (tents, a stake
+and chain, a fire), the stair of bells (three steps of cliff stair, three bell groups, the blind sentinel: a hood over a pale blank face), the ash plain (the Glass Mountain: a black obsidian cone with one red vent, a tower with
+a red light), the throat (red vent rock, pulsing walls), the Drowned Spring (black pool, a shaft of white light as piece `shaft`, `swell` = the light swelling white at beat 48 of E12) and the Keeper's cavern (lit by the Ember on
+its altar alone, `long_shadow` stretching at beat 32 of E13). People: `hollow_one` (grey species rig, wide pale eyes, barefoot, rags), `rider`, `captain` (bigger, bronze trim, a brighter glint), `sentinel`, Bram. The Ember is
+the only warm light east of the ford except the braziers and the camp fire (the riders' own), and the vents.
+
+### The Ember people (`wardrobe_ember.py`)
+`wardrobe.PATH_WARDROBES` dispatches a path's dress to its own file; a `person` key gives one look to a named person who stands in several rooms (`bram_f`, `bram_p`, `bram_fb` ... are per-room instances of `person: bram`: a crowd
+lives in one room, so a companion who walks with you is one actor per scene). New in `people.py`: the hat kind `hood` (`blank`: `dark` = the riders' empty hood with a red glint, `skin` = the sentinel's pale blank face).
+
+## Wardrobe archetypes of the paths, in one table
+
+| Path | Wears (`wear`) |
+| --- | --- |
+| gospel | `fisher villager woman sister mother disciple priest soldier merchant child elder governor tempter baptist shepherd carpenter gardener` |
+| squadron | `airman officer clerk surgeon quartermaster gunner mp civilian_city fisherman patient` |
+| ember | `villager_hollow grandmother bram innkeeper drinker warden rider lady birch_folk hollow_one captain sentinel` |
+
+Sheet budget: the path maps' people sheets are 0.2 to 1.6 MB a map (the Underworld's are 9 MB); the five old chapters' sheets grew 3.2 % in all with the acting data (stage 1d).

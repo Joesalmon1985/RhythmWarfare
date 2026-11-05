@@ -1,0 +1,27 @@
+# check_run_audio.py on a Squadron recording after the audio polish (RW_RUN_BOT=perfect RW_RUN_PATH=squadron RW_RUN_START=air.c05, record_music.gd 85 s, dummy driver, 5 Nov 2026): C05 with its own heavy bass bus, C08 and C10 with the path's
+recording 88.1 s at 48000 Hz; song started at wall 3.178; 4 phases in the log
+phase 1 air.c05        140 BPM (measured 140.000) treatment none       delay -120.02 ms
+   block 1 stage 0 (Drums         ) fitted {'drums': 0.84}  expected {'drums': 0.8414}  explains  99.7%  ok
+   block 2 stage 1 (Bass enters   ) fitted {'drums': 0.6, 'bass': 0.92, 'other': 0.04}  expected {'drums': 0.589, 'bass': 0.8414, 'other': 0.0}  explains  96.0%  ok
+   block 3 stage 2 (Drums return, synth joins) fitted {'drums': 0.85, 'bass': 0.83, 'other': 0.4}  expected {'drums': 0.8414, 'bass': 0.7573, 'other': 0.4207}  explains  96.3%  ok
+   block 4 stage 3 (Bass strongest) fitted {'drums': 0.47, 'bass': 0.92, 'other': 0.56, 'riser': 0.5}  expected {'drums': 0.4628, 'bass': 0.8414, 'other': 0.589, 'riser': 0.5011872336272722}  explains  96.0%  ok
+   bass and synth started from beat 16 of the phase
+phase 2 city.c08       140 BPM (measured 140.000) treatment none       delay -110.90 ms
+   block 1 stage 0 (Drums         ) fitted {'drums': 0.84}  expected {'drums': 0.8414}  explains  99.8%  ok
+   block 2 stage 1 (Bass enters   ) fitted {'drums': 0.59, 'bass': 0.84, 'other': 0.0}  expected {'drums': 0.589, 'bass': 0.8414, 'other': 0.0}  explains 100.0%  ok
+   block 3 stage 2 (Drums return, synth joins) fitted {'drums': 0.84, 'bass': 0.76, 'other': 0.42}  expected {'drums': 0.8414, 'bass': 0.7573, 'other': 0.4207}  explains 100.0%  ok
+   block 4 stage 3 (Bass strongest) fitted {'drums': 0.46, 'bass': 0.84, 'other': 0.59, 'riser': 0.5}  expected {'drums': 0.4628, 'bass': 0.8414, 'other': 0.589, 'riser': 0.5011872336272722}  explains 100.0%  ok
+   bass and synth started from beat 16 of the phase
+phase 3 city.c10       140 BPM (measured 140.153) treatment none       delay -101.73 ms
+   block 1 stage 0 (Drums         ) fitted {'drums': 0.84}  expected {'drums': 0.8414}  explains  99.8%  ok
+   block 2 stage 1 (Bass enters   ) fitted {'drums': 0.59, 'bass': 0.84, 'other': 0.0}  expected {'drums': 0.589, 'bass': 0.8414, 'other': 0.0}  explains 100.0%  ok
+   block 3 stage 2 (Drums return, synth joins) fitted {'drums': 0.84, 'bass': 0.76, 'other': 0.42}  expected {'drums': 0.8414, 'bass': 0.7573, 'other': 0.4207}  explains 100.0%  ok
+   block 4 stage 3 (Bass strongest) fitted {'drums': 0.46, 'bass': 0.84, 'other': 0.59, 'riser': 0.5}  expected {'drums': 0.4628, 'bass': 0.8414, 'other': 0.589, 'riser': 0.5011872336272722}  explains 100.0%  ok
+   bass and synth started from beat 16 of the phase
+bass   sits -6.1 to +15.3 ms from its nominal start relative to the drums (9 blocks measured)
+other  sits -12.3 to +15.2 ms from its nominal start relative to the drums (9 blocks measured)
+riser  sits -6.1 to +9.2 ms from its nominal start relative to the drums (3 blocks measured)
+in-path phase boundary 1 -> 2 (the first after the handoff): the new drums sit +9.12 ms from the old phase's end (floor 29.4 ms)
+in-path phase boundary 2 -> 3: the new drums sit +9.17 ms from the old phase's end (floor 29.4 ms)
+delay per phase: min -120.02 ms, max -101.73 ms, spread 18.29 ms
+RESULT CHECK

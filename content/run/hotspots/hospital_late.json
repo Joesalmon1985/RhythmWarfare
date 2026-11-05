@@ -180,7 +180,41 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "write",
+     "face": "doubt",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "doubt",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "write",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "write",
+      "face": "doubt"
+     }
+    }
+   }
   },
   {
    "id": "hospital_late.cafe.exit_exit",
@@ -322,7 +356,37 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "sad",
+     "face": "sad",
+     "look_at": "camera",
+     "beats": 8
+    }
+   }
   },
   {
    "id": "hospital_late.quiet.exit_exit",

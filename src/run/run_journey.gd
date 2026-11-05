@@ -15,6 +15,12 @@ var log: Array = []  # [{phase, block, node, place, kind, role, pos}] one per bl
 var actions: Array = []  # every action emitted, with its world
 var door_style := "walk"  # the walking style of the next door walk (an exit failure staggers)
 var cine_until := -1.0  # song time a hotspot cinematic's move ends (the next scene's door walk waits for it)
+## (node id, the rail's place after the block-2 decision) -> [[x, z, keep, height], ...]: the window's hotspots, the default kept ([] none). The run scene gives it; the camera frames them with a
+## StoryPlayer `face` look (StoryPlayer.best_facing from wherever the rail is); unset, block 3 keeps its ordinary glance and stroll.
+var face_fn: Callable
+
+const FACE_TURN_BEAT := 49.0  # the phase beat the window's hotspots are framed by
+const FACE_RELEASE_BEAT := 60.5  # the head hands back to the rail from the lock beat (the commit), by the phase's end
 
 
 func _init(p_data: RunData) -> void:
@@ -28,6 +34,8 @@ func on_event(ev: Dictionary, engine: RunEngine) -> Array:
 			out = _phase_start(ev, engine)
 		"block_result":
 			out = _block_result(ev, engine)
+		"lap_start":  # the same scene again, the rail where it has got to: only the glance and the stroll of the lap's first block
+			out = _tag(rail.ambient(float(ev["t"]), int(ev["phase"]), 0, engine.level.notes), world)
 	actions.append_array(out)
 	return out
 
@@ -129,6 +137,20 @@ func _block_result(ev: Dictionary, engine: RunEngine) -> Array:
 	var out: Array = rail.step(bool(ev["passed"]), float(ev["t"]), notes)
 	var last: Dictionary = rail.visited[rail.visited.size() - 1]
 	log.append({"phase": int(ev["phase"]), "block": b, "node": str(ev["node"]), "place": last["place"], "kind": last["kind"], "role": last["role"], "pos": last["pos"]})
-	if b < 3:  # the glance and the stroll of the next block
-		out.append_array(rail.ambient(engine.t_of(float(b + 1) * engine.timing("block_beats")), int(ev["phase"]), b + 1, notes))
+	if b < 3:  # the glance and the stroll of the next block; the last block's is the turn to the window's hotspots
+		var face: Array = face_fn.call(str(ev["node"]), rail.place()) if b == 2 and face_fn.is_valid() else []
+		if not face.is_empty():
+			out.append(window_face(face, float(ev["t"]), engine))
+		else:
+			out.append_array(rail.ambient(engine.t_of(float(b + 1) * engine.timing("block_beats")), int(ev["phase"]), b + 1, notes))
 	return _tag(out, world)
+
+
+## The last block's look: from the block-2 decision (in its cue-free guard) the head turns to frame `pts` ([[x, z, keep, height], ...], the window's hotspots) by beat 49, holds them from wherever the
+## rail walks underneath, and hands back to the rail from the lock beat to the phase's end (where a door walk takes over). A look, never a move: the route is untouched.
+func window_face(pts: Array, t: float, engine: RunEngine) -> Dictionary:
+	var bar := rail.bar_s()
+	var t_end := engine.t_of(4.0 * engine.timing("block_beats"))
+	var turn := maxf(engine.t_of(FACE_TURN_BEAT) - t, 0.5 * bar)
+	var release := maxf(t_end - engine.t_of(FACE_RELEASE_BEAT), 0.25 * bar)
+	return {"t0": t, "action": "player_look", "args": {"face": pts.duplicate(true), "bars": (t_end - t) / bar, "turn_bars": turn / bar, "release_bars": release / bar}}

@@ -78,7 +78,43 @@
     "look_at": "h02"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "ward_door",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 6,
+     "then": {
+      "act": "point",
+      "face": "resolve",
+      "look_at": "bed_corner",
+      "beats": 8
+     }
+    }
+   }
   },
   {
    "id": "hospital.family",
@@ -118,7 +154,41 @@
     "energy": -4
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "cheer",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "cover_face",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "sad",
+      "face": "grief"
+     }
+    }
+   }
   },
   {
    "id": "hospital.monitor",
@@ -258,7 +328,48 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "offer",
+      "face": "happy",
+      "look_at": "camera"
+     }
+    },
+    "failure": {
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 4,
+     "then": {
+      "act": "shake_head",
+      "face": "doubt",
+      "look_at": "camera",
+      "beats": 8
+     }
+    }
+   }
   },
   {
    "id": "hospital.corridor.quiet_door",
@@ -410,7 +521,47 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "offer",
+     "face": "relief",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "offer",
+      "face": "happy",
+      "look_at": "camera"
+     }
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 6,
+     "then": {
+      "act": "watch",
+      "face": "neutral",
+      "look_at": "tv_set"
+     }
+    }
+   }
   },
   {
    "id": "hospital.cafeteria.exit_garden",
@@ -522,7 +673,41 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "laugh",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "wave",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "cheer",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "shame",
+     "look_at": "camera",
+     "beats": 6,
+     "then": {
+      "act": "sad",
+      "face": "sad"
+     }
+    }
+   }
   },
   {
    "id": "hospital.garden.exit_exit",
@@ -629,7 +814,47 @@
     "energy": -4
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "beckon",
+     "face": "grief",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "grief",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 3,
+     "then": {
+      "act": "cheer",
+      "face": "relief",
+      "look_at": "camera",
+      "beats": 8
+     }
+    },
+    "failure": {
+     "act": "cover_face",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "sad",
+      "face": "grief"
+     }
+    }
+   }
   },
   {
    "id": "hospital.exit.exit_hospital_late",

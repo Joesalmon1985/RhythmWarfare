@@ -144,3 +144,10 @@ it does not grant the app anything).
 - Nothing under `src/`, `songs/`, `data/`, `assets/`, `tests/`, `project.godot` or the
   editor settings was modified. No SDK packages had to be installed: build-tools
   35.0.0 (apksigner, zipalign, aapt2) and platform android-35 were already present.
+
+## What a build contains (5 November 2026)
+
+Both presets carry an `exclude_filter` (docs, tests, tools except `tools/autoplay.gd`, MIDI, the stub path, owner source drops; the list and reasons are in
+`docs/REPO_SIZE.md`). `content/` is exported (only `content/library` and `content/fixtures` are `.gdignore`d). The pack is about 240 MB. After changing the
+filters, check it: `--export-pack "Windows Desktop" <folder outside the repo>/rw.pck`, then
+`GODOT --headless --main-pack <that pck> -s <repo>/tools/export_smoke.gd` (run from a folder that is not a project) must print `0 failure(s)`.

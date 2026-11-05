@@ -1,0 +1,265 @@
+{
+ "id": "birch_hall",
+ "title": "The Birch Hall",
+ "chapter": 9,
+ "art": "birch_hall",
+ "description": "The Ember Road: a sister run at 145 BPM (docs/THREE_PATHS_AND_FACES_PLAN.md section 6). Not a Story Campaign chapter.",
+ "intro": "",
+ "duration_bars": 8,
+ "sequence_bars": 2,
+ "initial_energy": 45,
+ "palettes": {
+  "low": [
+   "#5c6fae",
+   "#a86a8e"
+  ],
+  "cool": [
+   "#22c7bd",
+   "#6d8dff"
+  ],
+  "warm": [
+   "#ff9b3d",
+   "#ff5f7e"
+  ],
+  "rave": [
+   "#ffad2e",
+   "#1fd1c1",
+   "#ff5c8c",
+   "#ffd84a"
+  ],
+  "ward": [
+   "#ffb052",
+   "#2fc9b9"
+  ],
+  "tea": [
+   "#ff8f4a",
+   "#ffc24a"
+  ],
+  "golden": [
+   "#ffa53a",
+   "#ff6a5e"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Unimpressed",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Dancing",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Hype",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Euphoric",
+    "max": 100
+   }
+  ]
+ },
+ "acts": [
+  {
+   "id": "I",
+   "title": "The Birch Hall",
+   "start_bar": 1
+  }
+ ],
+ "blocks": [
+  {
+   "id": "the_road",
+   "title": "The Birch Hall",
+   "act": "Act I",
+   "start_bar": 1,
+   "bars": 8,
+   "events": [
+    {
+     "at_bar": 1,
+     "action": "lights_warm"
+    },
+    {
+     "at_bar": 1,
+     "action": "player_role",
+     "role": "dancer"
+    }
+   ]
+  }
+ ],
+ "decisions": [],
+ "endings": {
+  "road_open": {
+   "title": "The road opens",
+   "energy_min": 80,
+   "pass_min": 0.9,
+   "text": "",
+   "journey": []
+  },
+  "road_hard": {
+   "title": "A hard road",
+   "energy_min": 40,
+   "pass_min": 0.5,
+   "text": "",
+   "journey": []
+  },
+  "road_lost": {
+   "title": "Lost on the road",
+   "energy_min": 0,
+   "pass_min": 0.0,
+   "text": "",
+   "journey": []
+  }
+ },
+ "ending_order": [
+  "road_open",
+  "road_hard",
+  "road_lost"
+ ],
+ "groups": {
+  "all": [
+   "lady",
+   "warden_h",
+   "bram_h",
+   "bf0",
+   "bf1",
+   "bf2",
+   "bf3",
+   "bf4",
+   "bram_p",
+   "warden_p"
+  ]
+ },
+ "actors": [
+  {
+   "id": "lady",
+   "archetype": "groover",
+   "variant": "a",
+   "kind": "lady",
+   "group": "core",
+   "view": "hall",
+   "role": "hero",
+   "thresh": 0,
+   "activity": "stand",
+   "person": "lady"
+  },
+  {
+   "id": "warden_h",
+   "archetype": "groover",
+   "variant": "a",
+   "kind": "warden",
+   "group": "core",
+   "view": "hall",
+   "role": "front",
+   "thresh": 0,
+   "activity": "stand",
+   "person": "warden"
+  },
+  {
+   "id": "bram_h",
+   "archetype": "groover",
+   "variant": "a",
+   "kind": "bram",
+   "group": "core",
+   "view": "hall",
+   "role": "front",
+   "thresh": 0,
+   "activity": "stand",
+   "person": "bram"
+  },
+  {
+   "id": "bf0",
+   "archetype": "groover",
+   "variant": "a",
+   "kind": "birch_folk",
+   "group": "core",
+   "view": "hall",
+   "role": "front",
+   "thresh": 0,
+   "activity": "stand"
+  },
+  {
+   "id": "bf1",
+   "archetype": "groover",
+   "variant": "a",
+   "kind": "birch_folk",
+   "group": "core",
+   "view": "hall",
+   "role": "front",
+   "thresh": 0,
+   "activity": "stand"
+  },
+  {
+   "id": "bf2",
+   "archetype": "groover",
+   "variant": "a",
+   "kind": "birch_folk",
+   "group": "core",
+   "view": "hall",
+   "role": "front",
+   "thresh": 0,
+   "activity": "watch",
+   "target": "lady"
+  },
+  {
+   "id": "bf3",
+   "archetype": "groover",
+   "variant": "a",
+   "kind": "birch_folk",
+   "group": "core",
+   "view": "hall",
+   "role": "front",
+   "thresh": 0,
+   "activity": "stand"
+  },
+  {
+   "id": "bf4",
+   "archetype": "groover",
+   "variant": "a",
+   "kind": "birch_folk",
+   "group": "core",
+   "view": "hall",
+   "role": "front",
+   "thresh": 0,
+   "activity": "watch",
+   "target": "lady"
+  },
+  {
+   "id": "bram_p",
+   "archetype": "groover",
+   "variant": "a",
+   "kind": "bram",
+   "group": "core",
+   "view": "pass",
+   "role": "front",
+   "thresh": 0,
+   "activity": "stand",
+   "person": "bram"
+  },
+  {
+   "id": "warden_p",
+   "archetype": "groover",
+   "variant": "a",
+   "kind": "warden",
+   "group": "core",
+   "view": "pass",
+   "role": "front",
+   "thresh": 0,
+   "activity": "stand",
+   "person": "warden"
+  }
+ ],
+ "silhouettes": []
+}

@@ -1,0 +1,361 @@
+{
+ "version": 1,
+ "level": "hillside",
+ "px_scale_note": "the Gospel path's maps have no SVG rigs: the world is textures, billboards and baked people",
+ "textures": {
+  "floor_cobble": {
+   "file": "textures/floor_cobble.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "floor_grass": {
+   "file": "textures/floor_grass.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "floor_path": {
+   "file": "textures/floor_path.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_shingle": {
+   "file": "textures/floor_shingle.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_water": {
+   "file": "textures/floor_water.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 4.0
+  },
+  "sky_day": {
+   "file": "textures/sky_day.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "sky_storm": {
+   "file": "textures/sky_storm.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_bench": {
+   "file": "textures/thing_bench.png",
+   "size": [
+    96,
+    40
+   ],
+   "metres": 1.0
+  },
+  "thing_boat": {
+   "file": "textures/thing_boat.png",
+   "size": [
+    192,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_boat_far": {
+   "file": "textures/thing_boat_far.png",
+   "size": [
+    64,
+    40
+   ],
+   "metres": 1.0
+  },
+  "thing_bush": {
+   "file": "textures/thing_bush.png",
+   "size": [
+    64,
+    56
+   ],
+   "metres": 1.0
+  },
+  "thing_caravan": {
+   "file": "textures/thing_caravan.png",
+   "size": [
+    224,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_donkey": {
+   "file": "textures/thing_donkey.png",
+   "size": [
+    96,
+    80
+   ],
+   "metres": 1.0
+  },
+  "thing_fire": {
+   "file": "textures/thing_fire.png",
+   "size": [
+    48,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_fishrack": {
+   "file": "textures/thing_fishrack.png",
+   "size": [
+    96,
+    72
+   ],
+   "metres": 1.0
+  },
+  "thing_flowers": {
+   "file": "textures/thing_flowers.png",
+   "size": [
+    64,
+    40
+   ],
+   "metres": 1.0
+  },
+  "thing_grass": {
+   "file": "textures/thing_grass.png",
+   "size": [
+    48,
+    32
+   ],
+   "metres": 1.0
+  },
+  "thing_hay": {
+   "file": "textures/thing_hay.png",
+   "size": [
+    64,
+    48
+   ],
+   "metres": 1.0
+  },
+  "thing_hill_mount": {
+   "file": "textures/thing_hill_mount.png",
+   "size": [
+    256,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_house_a": {
+   "file": "textures/thing_house_a.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_house_b": {
+   "file": "textures/thing_house_b.png",
+   "size": [
+    128,
+    112
+   ],
+   "metres": 1.0
+  },
+  "thing_jar": {
+   "file": "textures/thing_jar.png",
+   "size": [
+    32,
+    48
+   ],
+   "metres": 1.0
+  },
+  "thing_jars": {
+   "file": "textures/thing_jars.png",
+   "size": [
+    64,
+    56
+   ],
+   "metres": 1.0
+  },
+  "thing_lightning": {
+   "file": "textures/thing_lightning.png",
+   "size": [
+    96,
+    192
+   ],
+   "metres": 1.0
+  },
+  "thing_nets": {
+   "file": "textures/thing_nets.png",
+   "size": [
+    96,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_olive_small": {
+   "file": "textures/thing_olive_small.png",
+   "size": [
+    96,
+    112
+   ],
+   "metres": 1.0
+  },
+  "thing_palm": {
+   "file": "textures/thing_palm.png",
+   "size": [
+    96,
+    176
+   ],
+   "metres": 1.0
+  },
+  "thing_rain": {
+   "file": "textures/thing_rain.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_rock_a": {
+   "file": "textures/thing_rock_a.png",
+   "size": [
+    64,
+    48
+   ],
+   "metres": 1.0
+  },
+  "thing_rock_b": {
+   "file": "textures/thing_rock_b.png",
+   "size": [
+    96,
+    72
+   ],
+   "metres": 1.0
+  },
+  "thing_rock_c": {
+   "file": "textures/thing_rock_c.png",
+   "size": [
+    128,
+    112
+   ],
+   "metres": 1.0
+  },
+  "thing_storm_cloud": {
+   "file": "textures/thing_storm_cloud.png",
+   "size": [
+    256,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_waves": {
+   "file": "textures/thing_waves.png",
+   "size": [
+    128,
+    32
+   ],
+   "metres": 1.0
+  },
+  "trim": {
+   "file": "textures/trim.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.0
+  },
+  "wall_door": {
+   "file": "textures/wall_door.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_hill": {
+   "file": "textures/wall_hill.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 6.0
+  },
+  "wall_limestone": {
+   "file": "textures/wall_limestone.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_rock": {
+   "file": "textures/wall_rock.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 4.0
+  }
+ },
+ "stage": {
+  "sprites": {
+   "glow": {
+    "file": "processed/glow.png",
+    "pivot": [
+     128.0,
+     128.0
+    ],
+    "px_scale": 1.0
+   },
+   "vignette": {
+    "file": "processed/vignette.png",
+    "pivot": [
+     320.0,
+     180.0
+    ],
+    "px_scale": 2.0
+   }
+  },
+  "pieces": [
+   {
+    "id": "storm.storm_cloud",
+    "file": "textures/thing_storm_cloud.png",
+    "blend": "mix",
+    "anim": "none"
+   },
+   {
+    "id": "storm.rain",
+    "file": "textures/thing_rain.png",
+    "blend": "mix",
+    "anim": "none"
+   },
+   {
+    "id": "storm.lightning",
+    "file": "textures/thing_lightning.png",
+    "blend": "add",
+    "anim": "none"
+   }
+  ],
+  "views": []
+ },
+ "archetypes": {},
+ "people": {
+  "file": "people/people.json",
+  "pages": [
+   "people/page_0.png",
+   "people/page_1.png"
+  ],
+  "palette": "people/palette.png"
+ }
+}

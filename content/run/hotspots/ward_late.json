@@ -208,7 +208,43 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "write",
+     "face": "neutral",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "treat_door"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "treat_door",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 6,
+     "then": {
+      "act": "point",
+      "face": "resolve",
+      "look_at": "treat_door",
+      "beats": 12
+     }
+    }
+   }
   },
   {
    "id": "ward_late.treat.trolley",
@@ -310,7 +346,40 @@
     "energy": -6
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "sleep",
+     "face": "neutral"
+    },
+    "selected": {
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "rock",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "sleep",
+     "face": "relief",
+     "beats": 8
+    },
+    "failure": {
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 6,
+     "then": {
+      "act": "cover_face",
+      "face": "fear",
+      "look_at": "camera"
+     }
+    }
+   }
   },
   {
    "id": "ward_late.dorm.cabinet",
@@ -451,7 +520,46 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "acting": {
+    "available": {
+     "act": "stare",
+     "face": "neutral"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "cheer",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "awe",
+      "look_at": "camera"
+     }
+    },
+    "failure": {
+     "act": "stamp",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "anger",
+      "look_at": "camera"
+     }
+    }
+   }
   }
  ]
 }
