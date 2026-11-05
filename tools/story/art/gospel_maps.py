@@ -208,8 +208,8 @@ _v("praetorium", "jerusalem", 2, "day", "floor_flag", "wall_praetorium", "wall_p
 _v("hill", "jerusalem", 3, "dusk", "floor_rock", "wall_rock", "wall_rock", "wall_rock", "wall_rock",
    [T("hill", "thing_hill_far", 0.0, -11.7, 6.0), T("cross1", "thing_cross", -2.8, -10.4, 3.0), T("cross2", "thing_cross", 0.0, -11.0, 3.6), T("cross3", "thing_cross", 2.8, -10.4, 3.0),
     T("rockA", "thing_rock_c", -6.6, -8.6, 3.0), T("rockB", "thing_rock_c", 6.8, -9.0, 3.0), T("rock1", "thing_rock_b", 5.0, -2.2, 1.3), T("rock2", "thing_rock_a", -5.0, -1.8, 0.8),
-    T("dark1", "thing_sky_dark1", 0.0, -11.9, 34.0, piece="dark1", y=14.0, blend="mix"), T("dark2", "thing_sky_dark2", 0.0, -11.9, 34.0, piece="dark2", y=14.0, blend="mix"),
-    T("dark3", "thing_sky_dark3", 0.0, -11.9, 34.0, piece="dark3", y=14.0, blend="mix"), T("spears", "thing_spears", 5.4, -5.8, 2.0), T("grass1", "thing_grass", 1.0, -2.0, 0.5)],
+    T("dark1", "thing_sky_dark1", 0.0, -11.9, 34.0, piece="dark1", y=14.0, blend="mix", dim_people=0.1), T("dark2", "thing_sky_dark2", 0.0, -11.9, 34.0, piece="dark2", y=14.0, blend="mix", dim_people=0.16),
+    T("dark3", "thing_sky_dark3", 0.0, -11.9, 34.0, piece="dark3", y=14.0, blend="mix", dim_people=0.22), T("spears", "thing_spears", 5.4, -5.8, 2.0), T("grass1", "thing_grass", 1.0, -2.0, 0.5)],
    [P("w1", "woman", -3.6, -4.0, "stand"), P("w2", "woman", -2.2, -3.2, "stand"), P("w3", "woman", -4.8, -2.6, "stand"), P("s1", "soldier", 2.4, -6.0, "stand"), P("s2", "soldier", 4.0, -5.0, "stand"),
     P("s3", "soldier", 0.8, -7.4, "stand"), P("x1", "disciple", -6.0, -6.0, "stand"), P("x2", "villager", 6.0, -3.4, "stand"), P("x3", "elder", 3.0, -2.4, "stand")],
    exits={"up": (0.0, -8.6)})

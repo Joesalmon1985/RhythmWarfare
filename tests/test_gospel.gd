@@ -183,6 +183,10 @@ func test_golgotha_darkens_block_by_block_and_the_play_decides_who_acts() -> voi
 		ons.append_array(p["on"])
 	for k in ["hill.dark1", "hill.dark2", "hill.dark3"]:
 		assert_true(k in ons, "%s is switched on by its block (%s)" % [k, str(ons)])
+	var gst: StoryStage = scene.stages["jerusalem"]["stage"]
+	var gt: float = scene._vt
+	assert_true(gst.people_gain(gt) < 0.8, "the darkened sky dims the people in front of the hill too, not only the sky behind it (%.2f)" % gst.people_gain(gt))
+	assert_true(gst.people_gain(gt) > 0.45, "but they still read (%.2f)" % gst.people_gain(gt))
 	var who: Array = scene.cast_log.filter(func(c: Dictionary) -> bool: return str(c["source"]) == "block").map(func(c: Dictionary) -> String: return "%s:%s" % [c["actor"], c["act"]])
 	assert_true("x1:kneel" in who and "x2:kneel" in who and "x3:kneel" in who, "perfect play brings a witness forward each block: %s" % str(who))
 	assert_false("s1:laugh" in who, "and no soldier laughs")

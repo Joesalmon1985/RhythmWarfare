@@ -1317,7 +1317,8 @@
    "size": 34.0,
    "piece": "hill.dark1",
    "y": 14.0,
-   "blend": "mix"
+   "blend": "mix",
+   "dim_people": 0.1
   },
   {
    "id": "hill.dark2",
@@ -1329,7 +1330,8 @@
    "size": 34.0,
    "piece": "hill.dark2",
    "y": 14.0,
-   "blend": "mix"
+   "blend": "mix",
+   "dim_people": 0.16
   },
   {
    "id": "hill.dark3",
@@ -1341,7 +1343,8 @@
    "size": 34.0,
    "piece": "hill.dark3",
    "y": 14.0,
-   "blend": "mix"
+   "blend": "mix",
+   "dim_people": 0.22
   },
   {
    "id": "hill.spears",

@@ -435,7 +435,7 @@ static func light_of(s: Dictionary, t: float, ctx: Dictionary) -> Color:
 	if strobe > 0.0:
 		col = col.lerp(Color(2, 2, 2), strobe)
 	var swell := float(ctx.get("swell_gain", 1.0))  # a new room's lamps rising (StoryStage "room_swell")
-	if swell < 1.0:
+	if swell != 1.0:  # (below 1 on the downbeat, a flare above 1 a beat later)
 		col *= swell
 	col.a = 1.0
 	return col

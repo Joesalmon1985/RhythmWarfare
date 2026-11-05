@@ -4,8 +4,10 @@ extends Control
 ## the director sends. Every effect is a function of song time (the audio clock) and of action start times; nothing here advances on frame counts.
 
 const NO_END := 1.0e9
-const SWELL_BEATS := 2.0  # a new room's lamps rise over this many beats from its downbeat
-const SWELL_FROM := 0.55  # ... from this share of their light
+const SWELL_BEATS := 4.0  # a new room's light: dim on its downbeat, a bright flare at SWELL_PEAK_BEATS, settled to the room's own light after this many beats
+const SWELL_FROM := 0.4  # ... the share of the light on the downbeat
+const SWELL_PEAK := 1.35  # ... the flare (visual polish: the old 0.55 to 1 rise over two beats was too subtle to read as "somewhere new")
+const SWELL_PEAK_BEATS := 1.0
 const PALETTES := {
 	"low": [Color(0.35, 0.3, 0.9), Color(0.6, 0.25, 0.8)],
 	"cool": [Color(0.2, 0.85, 1.0), Color(0.55, 0.35, 1.0)],
@@ -59,6 +61,7 @@ var _vis_yaw := 1e9
 var _vis_size := Vector2.ZERO
 var _world_ctx: Dictionary = {}
 var _piece_ids: Array = []  # the set pieces the map shows as things
+var _piece_dims: Dictionary = {}  # piece id -> how much it darkens the people while shown (a thing's `dim_people`)
 
 
 func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
@@ -138,6 +141,8 @@ func attach_world(p_map: StoryMap, with_nodes := true) -> void:
 	for t in map.things:
 		if t.has("piece") and str(t["piece"]) not in _piece_ids:
 			_piece_ids.append(str(t["piece"]))
+		if t.has("piece") and t.has("dim_people"):
+			_piece_dims[str(t["piece"])] = float(t["dim_people"])
 	world = StoryWorld.new()
 	world.name = "World"
 	world.build(map, assets)
@@ -309,12 +314,27 @@ func bar_s() -> float:
 	return 4.0 * 60.0 / bpm
 
 
-## The room's light gain at song time `t`: the swell of a new room (SWELL_FROM of the light on its downbeat, easing up to all of it over SWELL_BEATS beats), 1 when no swell is under way.
+## The room's light gain at song time `t`: the swell of a new room (SWELL_FROM of the light on its downbeat, easing up to a SWELL_PEAK flare at SWELL_PEAK_BEATS, then settling to all of it by
+## SWELL_BEATS), 1 when no swell is under way. The people of the room take the same gain (people_gain).
 func swell_gain(t: float) -> float:
 	var u := progress("room_swell", t)
 	if u < 0.0:
 		return 1.0
-	return lerpf(SWELL_FROM, 1.0, 1.0 - pow(1.0 - u, 2.0))
+	var b := u * SWELL_BEATS
+	if b < SWELL_PEAK_BEATS:
+		return lerpf(SWELL_FROM, SWELL_PEAK, 1.0 - pow(1.0 - b / SWELL_PEAK_BEATS, 2.0))
+	return lerpf(SWELL_PEAK, 1.0, smoothstep(0.0, 1.0, (b - SWELL_PEAK_BEATS) / (SWELL_BEATS - SWELL_PEAK_BEATS)))
+
+
+## The light of the room and its people at `t` (the world context's `swell_gain`; the figures are lit by their sector's light): the room swell times every shown piece that darkens the
+## scene (a map thing's `dim_people`, 0 to 1, scaled by the piece's alpha: the Golgotha sky darkening block by block dims the people in front of the hill, not only the sky behind it).
+func people_gain(t: float) -> float:
+	var g := swell_gain(t)
+	for pid in _piece_dims:
+		var ps := piece_state(str(pid), t)
+		if bool(ps["visible"]):
+			g *= 1.0 - clampf(float(_piece_dims[pid]), 0.0, 1.0) * float(ps["alpha"])
+	return g
 
 
 func update(t: float, p_energy: float) -> void:
@@ -362,6 +382,16 @@ func update(t: float, p_energy: float) -> void:
 ## Screenshot aid: RW_STORY_CAM=<waypoint>[,<extra yaw degrees>[,<pitch degrees>]] stands the camera at a waypoint whatever the journey says, or RW_STORY_CAM=actor:<id>[:<metres>[:<pitch>]] in front of a person (tools/run/capture.sh --acting), or RW_STORY_CAM=@<x>:<z>:<yaw>[:<pitch>]
 ## at an absolute ground point (any sector). The crowd of the camera's room is then the one the authored crowd actions direct, so the room is populated the way a visit would find it.
 var _cam_override: String = OS.get_environment("RW_STORY_CAM")
+
+
+## The camera pose the picture is drawn from: the player's, or the screenshot aid's (RW_STORY_CAM) when one is set.
+func screen_pose(pose: Dictionary) -> Dictionary:
+	return _override_pose(pose) if _cam_override != "" and not pose.is_empty() else pose
+
+
+## Whether a screenshot frames a person (RW_STORY_CAM=actor:...): the player's look offset is not applied.
+func cam_framed() -> bool:
+	return _cam_override.begins_with("actor:")
 var _cam_actor_at: Variant = null  # (the standpoint chosen for RW_STORY_CAM=actor:...)
 
 
@@ -494,7 +524,7 @@ func _update_world(t: float, p_energy: float, pose: Dictionary) -> void:
 	var pcs := {}
 	for pid in _piece_ids:
 		pcs[pid] = piece_state(str(pid), t)
-	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": StoryLight.strobe_at(self, t), "woofer_pump": _woofer_pump, "pieces": pcs, "palette_weight": map.palette_weight, "swell_gain": swell_gain(t)}
+	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": StoryLight.strobe_at(self, t), "woofer_pump": _woofer_pump, "pieces": pcs, "palette_weight": map.palette_weight, "swell_gain": people_gain(t)}  # (the room swell and a darkening sky light the room as they light the people)
 	world.update(t, _world_ctx)
 	fx3d.update(t)
 	lowres.apply_post(StoryLight.post_state(self, t), StoryLight.pal(self, 0).lightened(0.3))
