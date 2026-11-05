@@ -25,6 +25,8 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tools" / "run"))
+import measure_mix  # noqa: E402  (the bass bus model: the bass loop is fitted as it leaves RunAudio's bass bus, docs/HANDOVER.md "Audio polish")
 BEAT = 60.0 / 174.0  # (the main run's; each phase uses its own run's beat)
 CHUNK_FLOOR_MS = 29.4  # the dummy driver's measurement floor on this machine (every recorded voice lateness is a multiple of it plus a constant)
 
@@ -79,6 +81,7 @@ def main() -> int:
                 r = json.loads((ROOT / "content/paths" / pid / "run.json").read_text())
                 for k in ("stages", "effects"):
                     r.setdefault(k, run[k])
+                r["mix"] = measure_mix.merged_mix(run["mix"], r.get("mix"))
                 mp = ROOT / "content/paths" / pid / "music.json"
             ctxs[pid] = {"run": r, "music": {n["id"]: n for n in json.loads(mp.read_text())["nodes"]}, "nodes": {n["id"]: n for n in r["nodes"]}, "stages": r["stages"],
                          "beat": 60.0 / float(r["timing"]["bpm"]), "bpm": float(r["timing"]["bpm"])}
@@ -109,7 +112,24 @@ def main() -> int:
             d = ROOT / "songs/packs" / pid
             pk = json.loads((d / "pack.json").read_text())
             loops[pid] = {k: resampled(d / v, rate) for k, v in pk["stems"].items()}
+            pk["dir"] = d
+            loops[pid]["_pack"] = pk
         return loops[pid]
+
+    bussed: dict = {}
+
+    def bass_as_heard(pid: str, gain: float, bb: dict) -> np.ndarray:
+        """The bass loop as it leaves the bass bus at the player gain `gain`, divided by that gain (so the fitted coefficient is still the stage gain); the raw loop when the bus is off."""
+        lp = pack_loops(pid)
+        if not bb.get("enabled", False) or gain <= 0 or rate != measure_mix.RATE:
+            return lp["bass"]
+        key = (pid, round(gain, 6), json.dumps(bb, sort_keys=True))
+        if key not in bussed:
+            pk = lp["_pack"]
+            with wave.open(str(pk["dir"] / pk["stems"]["bass"]), "rb") as w:
+                st = np.frombuffer(w.readframes(w.getnframes()), "<i2").astype(np.float64).reshape(-1, w.getnchannels()) / 32768.0
+            bussed[key] = (measure_mix.bass_bus(st, gain, bb) / gain).mean(axis=1)[:len(lp["bass"])]
+        return bussed[key]
 
     fx = {k: resampled(ROOT / "assets/run" / f"{k}.wav", rate) for k in ("riser", "fall")}
     gain_fx = 10 ** (run["effects"]["gain_db"] / 20.0)
@@ -124,6 +144,8 @@ def main() -> int:
         music = cx["music"]
         stages = cx["stages"]
         mu = music[ph["node"]]
+        bb = measure_mix.bass_bus_of(cx["run"]["mix"], mu.get("bass_bus"))
+        level = 10 ** (float(cx["run"]["mix"].get("gain_db", 0.0)) / 20.0)  # RunMix's volume: every voice but the riser and fall (on the Music bus)
         treated = mu["treatment"] != "none" or "arrangement" in mu  # (a scene that plays an arrangement switches packs inside the phase: only its delay and tempo are checked here, tools/content/check_section_audio.py does the rest)
         t0 = float(ph["t"])
         if wall_of(t0 + 64 * BEAT) > len(rec) / rate:
@@ -167,7 +189,7 @@ def main() -> int:
             comps: dict = {"drums": (loops_["drums"], 0)}
             if reveal_beat is not None and b * 16 >= reveal_beat:
                 borigin = int(round(reveal_beat * BEAT * rate))
-                comps["bass"] = (loops_["bass"], borigin)
+                comps["bass"] = (bass_as_heard(str(ph["audio"]), float(g["bass"]), bb), borigin)
                 comps["other"] = (loops_["other"], borigin)
             if b == 3:
                 eff = "riser" if stage == 3 else "fall"
@@ -191,7 +213,7 @@ def main() -> int:
                 print(f"      (after a pause: the whole block sits {shift['drums'] / rate * 1000.0:+.1f} ms from where the wall clock puts it, the voices {', '.join('%s %+.1f ms' % (k, v) for k, v in rel.items()) or 'alone'} from the drums)")
             fit = m_ @ coef
             expl = 1.0 - float(((y - fit) ** 2).sum() / ((y ** 2).sum() + 1e-12))
-            exp = {k: g[k] for k in names if k in g}
+            exp = {k: round(g[k] * level, 4) for k in names if k in g}
             exp.update({k: gain_fx for k in names if k in ("riser", "fall")})
             got = dict(zip(names, [round(float(c), 2) for c in coef]))
             ok = all(abs(got[k] - exp[k]) < 0.12 for k in exp) and expl > 0.9

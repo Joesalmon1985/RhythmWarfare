@@ -328,6 +328,10 @@ def main() -> int:
            "start_node": "hollow",
            "worlds": [{"id": w, "title": t, "map": m, "story": f"res://content/story/{m}.json", "depth": d, "blurb": b} for (w, t, m, d, b) in WORLDS],
            "nodes": [node_json(s) for s in SCENES], "cinematics": CINEMATICS}
+    if os.path.exists(os.path.join(OUT, "run.json")):  # the path's mix (the audio polish: level, bass bus) is data kept across a rewrite
+        old = json.load(open(os.path.join(OUT, "run.json"), encoding="utf-8"))
+        if "mix" in old:
+            run["mix"] = old["mix"]
     write(os.path.join(OUT, "run.json"), run)
     by_world: dict = {}
     for h in HOTSPOTS:

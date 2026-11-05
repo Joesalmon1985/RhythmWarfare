@@ -13,6 +13,9 @@ const HOTSPOTS_DIR := "res://content/run/hotspots"  # <world>.json per run world
 const PATHS_DIR := "res://content/paths"  # <id>/run.json, music.json, hotspots/<world>.json: a sister run at its own tempo (docs/THREE_PATHS_AND_FACES_PLAN.md section 3)
 const INHERITED := ["judgement", "energy", "stages", "mix", "effects", "treatments"]  # a path's run.json may leave these out: the main run's apply
 const TIERS := 4  # difficulty tiers (pack.tiers "1".."4"); a node's tier is min(depth, TIERS)
+## The bass bus (RunAudio): run.json `mix.bass_bus`, a path's run.json `mix.bass_bus` over it, a scene's music.json `bass_bus` over that (docs/HANDOVER.md "Audio polish"). A key left out is the
+## default here; `enabled: false` (or no `bass_bus` anywhere) is the bass straight onto its bus, as before the polish.
+const BASS_BUS_DEFAULT := {"enabled": false, "highpass_hz": 0.0, "shelf_hz": 100.0, "shelf_db": 0.0, "drive": 0.0, "pre_gain_db": 0.0, "gain_db": 0.0, "keep_hf_hz": 16000.0}
 
 var cfg: Dictionary = {}
 ## A node is a SCENE: one 64-beat phase at a place in a world. id -> {id, world (the run world's id: the save and the home cards), map (the art world the stage is built from), scene, title (the room),
@@ -145,6 +148,7 @@ static func load_files(run_path: String, music_path: String, packs_dir: String, 
 		d.node_order.append(id)
 		if m.has("arrangement"):
 			d._resolve_arrangement(id, m)
+		d._resolve_music_mix(id, m)
 	for id in assign:
 		if not d.nodes.has(id):
 			d.errors.append("music.json lists node %s that run.json does not have" % id)
@@ -174,6 +178,48 @@ func _setup_path(run: Dictionary) -> void:
 		for k in INHERITED:
 			if not run.has(k) and (base as Dictionary).has(k):
 				run[k] = (base as Dictionary)[k].duplicate(true) if typeof(base[k]) in [TYPE_DICTIONARY, TYPE_ARRAY] else base[k]
+		if run.has("mix") and typeof(run["mix"]) == TYPE_DICTIONARY and (base as Dictionary).has("mix"):  # a path's `mix` names only what it changes: the main run's mix fills in the rest
+			run["mix"] = merge_mix(base["mix"], run["mix"])
+
+
+## `over` on top of `base`, key by key; a dictionary value (bass_bus, carry_bass) is merged one level deeper, so a path or a scene names only the keys it changes.
+static func merge_mix(base: Dictionary, over: Dictionary) -> Dictionary:
+	var out: Dictionary = base.duplicate(true)
+	for k in over:
+		if typeof(over[k]) == TYPE_DICTIONARY and typeof(out.get(k)) == TYPE_DICTIONARY:
+			var sub: Dictionary = (out[k] as Dictionary).duplicate(true)
+			sub.merge(over[k] as Dictionary, true)
+			out[k] = sub
+		else:
+			out[k] = over[k]
+	return out
+
+
+## A scene's music family (an arrangement's `family`, else its pack: two scenes of one family share key and sound, so the bass may carry from one into the next) and its resolved bass bus.
+func _resolve_music_mix(id: String, m: Dictionary) -> void:
+	var node: Dictionary = nodes[id]
+	var fam := str(node["audio"])
+	if str(node.get("arrangement", "")) != "" and arrangements.has(str(node["arrangement"])):
+		fam = str(arrangements[str(node["arrangement"])].get("family", fam))
+	node["family"] = (path_id + ":" if path_id != "" else "") + fam
+	var bb: Dictionary = BASS_BUS_DEFAULT.duplicate()
+	var mixc: Dictionary = cfg.get("mix", {})
+	for src in [mixc.get("bass_bus", {}), m.get("bass_bus", {})]:
+		if typeof(src) != TYPE_DICTIONARY:
+			errors.append("scene %s: bass_bus must be an object" % id)
+			continue
+		for k in src:
+			if k == "note":  # (a word for the owner on why this scene's bass bus differs)
+				continue
+			if not BASS_BUS_DEFAULT.has(k):
+				errors.append("scene %s: bass_bus key '%s' is unknown (%s)" % [id, k, ", ".join(PackedStringArray(BASS_BUS_DEFAULT.keys()))])
+			elif k == "enabled":
+				bb[k] = bool(src[k])
+			else:
+				bb[k] = float(src[k])
+	if float(bb["drive"]) < 0.0 or float(bb["drive"]) > 0.95:
+		errors.append("scene %s: bass_bus.drive %s is outside 0 to 0.95" % [id, bb["drive"]])
+	node["bass_bus"] = bb
 
 
 func is_path() -> bool:

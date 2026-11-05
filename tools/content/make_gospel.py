@@ -409,6 +409,9 @@ def write_run():
                     "opens": "A figure of light under a projected star on the Warehouse balcony: touch it in time and follow."},
            "timing": {"bpm": 124, "phase_beats": 64, "block_beats": 16, "cue_span_beats": 12.0, "decision_beat": 12.5, "fade_beats": 2.0},
            "start_node": "jordan", "worlds": WORLDS, "nodes": nodes, "cinematics": CINEMATICS}
+    old = OUT / "run.json"
+    if old.exists() and "mix" in json.loads(old.read_text(encoding="utf-8")):  # the path's mix (the audio polish: level, bass bus) is data kept across a rewrite
+        run["mix"] = json.loads(old.read_text(encoding="utf-8"))["mix"]
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "hotspots").mkdir(exist_ok=True)
     (OUT / "run.json").write_text(json.dumps(run, indent=1) + "\n", encoding="utf-8")

@@ -152,10 +152,25 @@ def standins(mbs: dict) -> None:
             im.save(p)
 
 
+def keep_mix(run: dict, music: dict) -> None:
+    """The audio polish's data survives a rewrite: run.json `mix` (the path's level and bass bus) and each scene's music.json `bass_bus` (docs/HANDOVER.md "Audio polish")."""
+    if (PATHDIR / "run.json").exists():
+        old = json.loads((PATHDIR / "run.json").read_text(encoding="utf-8"))
+        if "mix" in old:
+            run["mix"] = old["mix"]
+    if (PATHDIR / "music.json").exists():
+        bb = {n["id"]: n["bass_bus"] for n in json.loads((PATHDIR / "music.json").read_text(encoding="utf-8"))["nodes"] if "bass_bus" in n}
+        for n in music["nodes"]:
+            if n["id"] in bb:
+                n["bass_bus"] = bb[n["id"]]
+
+
 def main(argv) -> int:
     mbs = build_maps()
-    dump(PATHDIR / "run.json", build_run())
-    dump(PATHDIR / "music.json", build_music())
+    run, music = build_run(), build_music()
+    keep_mix(run, music)
+    dump(PATHDIR / "run.json", run)
+    dump(PATHDIR / "music.json", music)
     for w, doc in build_hotspots().items():
         dump(PATHDIR / "hotspots" / f"{w}.json", doc)
     brief = {}
