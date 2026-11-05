@@ -1,6 +1,6 @@
 extends TestCase
 ## The real track_play scene on the fixture under autoplay: it plays to the end and reports the summary; a refused pack
-## is reported and does not play. Real time: the fixture is 12 s plus a 2 s countdown, so the full run takes about 14 s.
+## is reported and does not play. Real time: the fixture is 16 s plus a 2 s countdown, so the full run takes about 18 s.
 
 const SCENE := "res://src/track/track_play.tscn"
 
@@ -31,14 +31,26 @@ func test_perfect_autoplay_runs_the_whole_track() -> void:
 	var s: Dictionary = scene.summary
 	assert_false(s.is_empty(), "a summary was produced")
 	if not s.is_empty():
-		assert_eq(s["cues"], 29)
-		assert_eq(s["hits"], 29)
+		assert_eq(s["cues"], 25)
+		assert_eq(s["hits"], 25)
 		assert_eq(s["misses"], 0)
 		assert_eq(s["autoplay"], "perfect")
+		assert_eq(s["voices"].size(), 3, "a line of numbers per voice")
 		for v in s["voices"]:
 			assert_eq(v["sounding_share"], 1.0, str(v["key"]))
-		assert_near(float(s["end_s"]), 12.0, 0.001)
-		assert_eq(JSON.parse_string(JSON.stringify(s))["cues"], 29, "the summary is plain JSON")
+			assert_eq(v["misses"], 0)
+		assert_eq(TrackTestKit.voice(s, "drums")["hit_total"], 8)
+		assert_eq(TrackTestKit.voice(s, "lead")["hit_total"], 7)
+		assert_eq(TrackTestKit.voice(s, "bass")["hit_total"], 10)
+		assert_near(float(s["end_s"]), 16.0, 0.001)
+		assert_eq(JSON.parse_string(JSON.stringify(s))["cues"], 25, "the summary is plain JSON")
+		assert_contains([scene._result.text], "Bass")
+		# what the screen says about the focus
+		assert_eq(scene.focus_text(2.0), "Playing: Drums")
+		assert_eq(scene.focus_text(8.5), "Nothing to play")
+		assert_eq(scene.next_text(5.0), "Next: Bass in 8")
+		assert_eq(scene.next_text(4.0), "")
+		assert_eq(scene.next_text(0.0), "Next: Lead in 8")
 	scene.queue_free()
 	await tree.process_frame
 
@@ -49,10 +61,14 @@ func test_start_part_way_and_missing_everything() -> void:
 	assert_true(scene.ended)
 	var s: Dictionary = scene.summary
 	if not s.is_empty():
-		assert_eq(s["cues"], 5, "only the cues from 9.0 s on")
-		assert_eq(s["misses"], 5)
+		assert_eq(s["cues"], 10, "only the cues from 9.0 s on")
+		assert_eq(s["misses"], 10)
 		assert_eq(s["hits"], 0)
 		assert_near(float(s["start_s"]), 9.0, 1e-9)
+		assert_true(scene.game.is_muted("bass"))
+		assert_contains([scene.focus_text(12.0)], "MUTED")
+		assert_eq(scene._pad_state_at(12.0), "muted")
+		assert_eq(scene._pad_state_at(8.5), "rest")
 	scene.queue_free()
 	await tree.process_frame
 

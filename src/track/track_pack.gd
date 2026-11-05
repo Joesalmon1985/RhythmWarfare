@@ -1,11 +1,15 @@
 class_name TrackPack
 extends RefCounted
-## A `rhythm_warfare.track.v1` pack (docs/TRACK_PACK_FORMAT.md): one recording as four playable voices (one per pad)
-## plus backing, with charts in seconds. `TrackPack.load_pack(folder)` reads track.json, checks every rule of the
+## A `rhythm_warfare.track.v2` pack (docs/TRACK_PACK_FORMAT.md): one recording as one to six voices plus backing, a
+## focus (which voice the player plays, stretch by stretch), and charts in seconds. `TrackPack.load_pack(folder)` reads track.json, checks every rule of the
 ## contract that needs no audio analysis, decodes the stems, and either returns the pack or the list of problems
 ## (clear sentences naming the field or the cue). A pack that breaks a rule is refused, never played.
 
-const FORMAT := "rhythm_warfare.track.v1"
+const FORMAT := "rhythm_warfare.track.v2"
+const FORMAT_V1 := "rhythm_warfare.track.v1"
+const KINDS := ["drums", "pitched"]
+const MIN_STRETCH_BEATS := 8.0
+const MAX_VOICES := 6
 const ROLES := ["intro", "build", "drop", "breakdown", "outro", "other"]
 const STEM_RATE := 48000
 const STEM_CHANNELS := 2
@@ -24,10 +28,11 @@ var artist := ""
 var duration_s := 0.0
 var bpm := 120.0
 var first_downbeat_s := 0.0
-var voices: Array = []  # [{key, label, pad, stem, gain}] in pad order 1 to 4
+var voices: Array = []  # [{key, label, kind, stem, gain}] in file order; kind is "" when the pack gives none
+var focus: Array = []  # [{start_s, end_s, voice}] in time order
 var backing: Array = []  # [{key, stem, gain}]
 var sections: Array = []  # [{id, role, start_s, end_s}]
-var charts: Dictionary = {}  # name -> Array of {t, pad, dur, conf}
+var charts: Dictionary = {}  # name -> Array of {t, pad, dur, conf, voice}
 var default_chart := ""
 var restore_after_idle_beats := DEFAULT_RESTORE_BEATS
 var streams: Dictionary = {}  # stem key -> decoded AudioStream (only when loaded with decode on)
@@ -39,12 +44,19 @@ func beat_s() -> float:
 	return 60.0 / bpm
 
 
-## The voice of a pad (1 to 4), or {} when there is none.
-func voice_of_pad(pad: int) -> Dictionary:
+## The voice with key `key`, or {} when there is none.
+func voice_by_key(key: String) -> Dictionary:
 	for v in voices:
-		if int(v["pad"]) == pad:
+		if v["key"] == key:
 			return v
 	return {}
+
+
+## The pack's focus as plain logic (see TrackFocus).
+func focus_state() -> TrackFocus:
+	var f := TrackFocus.new()
+	f.setup(focus, bpm)
+	return f
 
 
 ## Voices then backing: [{key, stem, gain, voice: bool}], the order the transport plays them in.
@@ -88,6 +100,8 @@ static func load_pack(folder: String, decode: bool = true) -> Dictionary:
 	p.dir = root
 
 	# header
+	if str(d.get("format", "")) == FORMAT_V1:
+		return _refused(["This pack is version 1 ('%s'): one pad per instrument. This game reads version 2 ('%s') only, so the pack must be re-imported with the current audio tools." % [FORMAT_V1, FORMAT]])
 	if str(d.get("format", "")) != FORMAT:
 		errors.append("format is '%s' but must be exactly '%s'." % [str(d.get("format", "")), FORMAT])
 	p.id = str(d.get("id", ""))
@@ -123,10 +137,9 @@ static func load_pack(folder: String, decode: bool = true) -> Dictionary:
 
 	# voices and backing
 	var keys: Dictionary = {}
-	var pads_seen: Dictionary = {}
 	var voices_raw: Variant = d.get("voices")
-	if typeof(voices_raw) != TYPE_ARRAY or (voices_raw as Array).size() != 4:
-		errors.append("voices must hold exactly four entries (one per pad), found %s." % (str((voices_raw as Array).size()) if typeof(voices_raw) == TYPE_ARRAY else "none"))
+	if typeof(voices_raw) != TYPE_ARRAY or (voices_raw as Array).size() < 1 or (voices_raw as Array).size() > MAX_VOICES:
+		errors.append("voices must hold one to six entries, found %s." % (str((voices_raw as Array).size()) if typeof(voices_raw) == TYPE_ARRAY else "none"))
 	if typeof(voices_raw) == TYPE_ARRAY:
 		for i in (voices_raw as Array).size():
 			var v: Variant = (voices_raw as Array)[i]
@@ -140,20 +153,15 @@ static func load_pack(folder: String, decode: bool = true) -> Dictionary:
 			var label := str(vd.get("label", ""))
 			if label.strip_edges().is_empty():
 				errors.append("%s has no label." % name)
-			var pad := -1
-			if _is_number(vd.get("pad")) and float(vd["pad"]) == floorf(float(vd["pad"])):
-				pad = int(vd["pad"])
-			if pad < 1 or pad > 4:
-				errors.append("%s has pad %s but a voice's pad must be 1, 2, 3 or 4." % [name, str(vd.get("pad", "(none)"))])
-			elif pads_seen.has(pad):
-				errors.append("%s uses pad %d, which voice '%s' already has: the four voices need pads 1, 2, 3 and 4 once each." % [name, pad, pads_seen[pad]])
-			else:
-				pads_seen[pad] = key
+			var kind := ""
+			if vd.has("kind"):
+				kind = str(vd["kind"])
+				if not kind in KINDS:
+					errors.append("%s has kind '%s' but a kind is drums or pitched." % [name, kind])
 			var gain := _gain_of(vd, name, errors)
 			var stem := str(vd.get("stem", ""))
 			_check_stem_path(stem, name, errors)
-			p.voices.append({"key": key, "label": label, "pad": pad, "stem": stem, "gain": gain})
-		p.voices.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a["pad"]) < int(b["pad"]))
+			p.voices.append({"key": key, "label": label, "kind": kind, "stem": stem, "gain": gain})
 	var backing_raw: Variant = d.get("backing", [])
 	if typeof(backing_raw) != TYPE_ARRAY:
 		errors.append("backing must be a list (it may be empty).")
@@ -207,6 +215,9 @@ static func load_pack(folder: String, decode: bool = true) -> Dictionary:
 			prev_id = sid
 			p.sections.append({"id": sid, "role": str(sd.get("role", "other")), "start_s": a, "end_s": b})
 
+	# focus
+	_parse_focus(d.get("focus"), p, errors)
+
 	# rules
 	var rules: Variant = d.get("rules", {})
 	if typeof(rules) != TYPE_DICTIONARY:
@@ -233,6 +244,45 @@ static func load_pack(folder: String, decode: bool = true) -> Dictionary:
 	if not errors.is_empty():
 		return _refused(errors)
 	return {"pack": p, "errors": errors}
+
+
+## Checks the focus stretches: ordered, not overlapping, inside the track, a known voice, at least 8 beats long, at least one.
+static func _parse_focus(raw: Variant, p: TrackPack, errors: Array[String]) -> void:
+	if typeof(raw) != TYPE_ARRAY or (raw as Array).is_empty():
+		errors.append("focus must be a list with at least one stretch {start_s, end_s, voice}.")
+		return
+	var keys: Array = p.voices.map(func(v: Dictionary) -> String: return v["key"])
+	var prev_end := 0.0
+	var prev_start := -INF
+	for i in (raw as Array).size():
+		var s: Variant = (raw as Array)[i]
+		if typeof(s) != TYPE_DICTIONARY:
+			errors.append("focus stretch #%d must be an object {start_s, end_s, voice}." % (i + 1))
+			continue
+		var sd: Dictionary = s
+		var voice := str(sd.get("voice", ""))
+		if not _is_number(sd.get("start_s")) or not _is_number(sd.get("end_s")):
+			errors.append("focus stretch #%d needs numeric start_s and end_s." % (i + 1))
+			continue
+		var a := float(sd["start_s"])
+		var b := float(sd["end_s"])
+		var name := "focus stretch #%d (%.3f to %.3f s, voice '%s')" % [i + 1, a, b, voice]
+		if not voice in keys:
+			errors.append("%s names the voice '%s' but the pack has no such voice (it has: %s)." % [name, voice, ", ".join(PackedStringArray(keys))])
+		if a < 0.0 or b <= a:
+			errors.append("%s must start at 0 or later and end after it starts." % name)
+		else:
+			if p.duration_s > 0.0 and b > p.duration_s + EPS:
+				errors.append("%s ends after the track ends at %.3f s." % [name, p.duration_s])
+			if p.bpm > 0.0 and b - a < MIN_STRETCH_BEATS * p.beat_s() - EPS:
+				errors.append("%s is %.3f s long but a stretch is at least 8 beats (%.3f s)." % [name, b - a, MIN_STRETCH_BEATS * p.beat_s()])
+		if a < prev_start - EPS:
+			errors.append("%s starts before the stretch before it (at %.3f s): stretches must be in time order." % [name, prev_start])
+		elif i > 0 and a < prev_end - EPS:
+			errors.append("%s starts at %.3f s, before the stretch before it ends at %.3f s: stretches must not overlap." % [name, a, prev_end])
+		prev_start = maxf(prev_start, a)
+		prev_end = maxf(prev_end, b)
+		p.focus.append({"start_s": a, "end_s": b, "voice": voice})
 
 
 static func _refused(errors: Array) -> Dictionary:
@@ -343,20 +393,24 @@ static func _parse_chart(chart_name: String, raw: Variant, p: TrackPack, errors:
 	for i in (raw as Array).size():
 		var c: Variant = (raw as Array)[i]
 		if typeof(c) != TYPE_DICTIONARY:
-			errors.append("chart '%s' cue #%d must be an object {t, pad, dur, conf}." % [chart_name, i + 1])
+			errors.append("chart '%s' cue #%d must be an object {t, pad, dur, conf, voice}." % [chart_name, i + 1])
 			continue
 		var cd: Dictionary = c
 		if not _is_number(cd.get("t")) or not _is_number(cd.get("pad")) or not _is_number(cd.get("dur", 0.0)):
 			errors.append("chart '%s' cue #%d needs numeric t, pad and dur." % [chart_name, i + 1])
 			continue
 		var conf := float(cd.get("conf", 1.0)) if _is_number(cd.get("conf", 1.0)) else -1.0
-		var cue := {"t": float(cd["t"]), "pad": int(cd["pad"]), "dur": float(cd.get("dur", 0.0)), "conf": conf}
+		var cue := {"t": float(cd["t"]), "pad": int(cd["pad"]), "dur": float(cd.get("dur", 0.0)), "conf": conf, "voice": str(cd.get("voice", ""))}
 		var label := _cue_name(chart_name, i, cue, p)
 		if float(cd["pad"]) != floorf(float(cd["pad"])) or cue["pad"] < 1 or cue["pad"] > 4:
 			errors.append("%s has pad %s but a cue's pad is 1, 2, 3 or 4." % [label, str(cd["pad"])])
 			continue
 		if conf < 0.0 or conf > 1.0:
 			errors.append("%s has conf %s but conf is a number from 0 to 1." % [label, str(cd.get("conf"))])
+		if str(cue["voice"]).is_empty():
+			errors.append("%s has no voice: every cue names the voice it plays." % label)
+		elif p.voice_by_key(str(cue["voice"])).is_empty():
+			errors.append("%s names the voice '%s' but the pack has no such voice." % [label, str(cue["voice"])])
 		cues.append(cue)
 	if p.bpm <= 0.0 or p.duration_s <= 0.0:
 		return cues
@@ -381,6 +435,7 @@ static func _parse_chart(chart_name: String, raw: Variant, p: TrackPack, errors:
 			errors.append("%s has a negative dur." % label)
 		elif dur > 0.0 and dur < 0.5 * beat - EPS:
 			errors.append("%s is a hold of %.3f s but a hold is at least half a beat (%.3f s)." % [label, dur, 0.5 * beat])
+		_check_in_stretch(label, cue, p, errors)
 		var prev: Dictionary = last.get(pad, {})
 		if not prev.is_empty():
 			if t - float(prev["t"]) < 0.5 * beat - EPS:
@@ -406,7 +461,24 @@ static func _parse_chart(chart_name: String, raw: Variant, p: TrackPack, errors:
 	return cues
 
 
-static func _cue_name(chart_name: String, i: int, cue: Dictionary, p: TrackPack) -> String:
-	var v := p.voice_of_pad(int(cue["pad"]))
-	var voice := " '%s'" % str(v.get("label", "")) if not v.is_empty() else ""
+## A cue lies inside a focus stretch of its own voice, and a hold ends inside that same stretch.
+static func _check_in_stretch(label: String, cue: Dictionary, p: TrackPack, errors: Array[String]) -> void:
+	if p.focus.is_empty() or str(cue["voice"]).is_empty() or p.voice_by_key(str(cue["voice"])).is_empty():
+		return
+	var t: float = cue["t"]
+	var found: Dictionary = {}
+	for s in p.focus:
+		if t >= float(s["start_s"]) - EPS and t < float(s["end_s"]) - EPS:
+			found = s
+			break
+	if found.is_empty():
+		errors.append("%s lies outside every focus stretch: there are no cues where nothing is being played." % label)
+	elif str(found["voice"]) != str(cue["voice"]):
+		errors.append("%s is for voice '%s' but the focus stretch at that time (%.3f to %.3f s) belongs to '%s'." % [label, str(cue["voice"]), float(found["start_s"]), float(found["end_s"]), str(found["voice"])])
+	elif t + float(cue["dur"]) > float(found["end_s"]) + EPS:
+		errors.append("%s is a hold ending at %.3f s, after its focus stretch ends at %.3f s: a hold must end inside the same stretch." % [label, t + float(cue["dur"]), float(found["end_s"])])
+
+
+static func _cue_name(chart_name: String, i: int, cue: Dictionary, _p: TrackPack) -> String:
+	var voice := " '%s'" % str(cue["voice"]) if not str(cue["voice"]).is_empty() else ""
 	return "chart '%s' cue #%d (t=%.3f s, pad %d%s)" % [chart_name, i + 1, float(cue["t"]), int(cue["pad"]), voice]

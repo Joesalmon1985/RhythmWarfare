@@ -1,13 +1,15 @@
 class_name TrackPadView
 extends PadView
-## The four pads for track mode (a developer view): each pad is labelled with its voice, and a muted voice's pad is
-## drawn dark with "MUTED" on it. Geometry, key labels, touch rectangles and the feedback text are PadView's; only
-## the drawing is replaced because PadView names pads by mission family.
+## The four pads for track mode (a developer view). All four pads play the one voice that has the focus, so the pads
+## carry no instrument or lane names, only their key letters. When that voice is muted all four pads are drawn dark
+## with "MUTED" on them; between focus stretches (nothing to play) they are drawn dim with no mark. Geometry, key
+## labels, touch rectangles and the feedback text are PadView's; only the drawing is replaced because PadView names
+## pads by mission family.
 
 const PAD_COLOR := {1: Color(0.98, 0.62, 0.25), 2: Color(0.35, 0.85, 0.98), 3: Color(0.72, 0.55, 1.0), 4: Color(0.55, 0.9, 0.5)}
 
-var voice_labels: Dictionary = {1: "", 2: "", 3: "", 4: ""}  # pad -> voice label
-var muted_pad_fn: Callable  # (pad: int) -> bool
+## () -> String: "play" (the focus voice is sounding), "muted" (it is silent) or "rest" (nothing to play now).
+var state_fn: Callable
 
 
 func _ready() -> void:
@@ -20,18 +22,20 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), Color(0.05, 0.06, 0.08, 0.92))
 	draw_line(Vector2(0, 0), Vector2(size.x, 0), Color(0.3, 0.32, 0.36), 2.0)
 	var rects := _pad_rects()
+	var state := str(state_fn.call()) if state_fn.is_valid() else "play"
 	for pad in range(1, BUTTONS + 1):
-		_draw_track_pad(pad, rects[pad], now, wall)
+		_draw_track_pad(pad, rects[pad], now, wall, state)
 
 
-func _draw_track_pad(pad: int, r: Rect2, now: float, wall: float) -> void:
+func _draw_track_pad(pad: int, r: Rect2, now: float, wall: float, state: String) -> void:
 	var base: Color = PAD_COLOR[pad]
 	if high_contrast:
 		base = base.lightened(0.25)
-	var muted := muted_pad_fn.is_valid() and bool(muted_pad_fn.call(pad))
+	var muted := state == "muted"
+	var rest := state == "rest"
 	var hold := float(holding_fn.call(pad, now)) if holding_fn.is_valid() else -1.0
 	var down: bool = button_down.get(pad, false)
-	var fill := Color(0.1, 0.1, 0.11) if muted else base.darkened(0.7)
+	var fill := Color(0.1, 0.1, 0.11) if (muted or rest) else base.darkened(0.7)
 	if hold >= 0.0 and not muted:
 		fill = base.darkened(0.25)
 	if down:
@@ -41,11 +45,8 @@ func _draw_track_pad(pad: int, r: Rect2, now: float, wall: float) -> void:
 	if hold >= 0.0:
 		var hr := Rect2(r.position.x, r.end.y - r.size.y * hold, r.size.x, r.size.y * hold)
 		_round_rect(hr, (Color(0.35, 0.35, 0.37) if muted else base.lightened(0.15)), radius)
-	_round_outline(r, (Color(0.3, 0.3, 0.32) if muted else base).lightened(0.2 if down else 0.0), radius, 2.0 if muted else 4.0)
+	_round_outline(r, (Color(0.3, 0.3, 0.32) if (muted or rest) else base).lightened(0.2 if down else 0.0), radius, 2.0 if muted else 4.0)
 	var fs := int(clampf(r.size.x * 0.13, 12.0, 24.0))
-	var text_alpha := 0.35 if muted else 0.95
-	draw_string(_font, Vector2(r.position.x, r.position.y + fs + 6.0), str(voice_labels.get(pad, "")), HORIZONTAL_ALIGNMENT_CENTER,
-		r.size.x, fs, Color(1, 1, 1, text_alpha))
 	if muted:
 		draw_string(_font, Vector2(r.position.x, r.get_center().y + fs * 0.4), "MUTED", HORIZONTAL_ALIGNMENT_CENTER, r.size.x,
 			int(fs * 1.1), Color(1.0, 0.45, 0.4, 0.9))

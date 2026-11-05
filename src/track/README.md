@@ -1,7 +1,10 @@
 # Track mode (developer test mode)
 
-A whole recorded track plays start to finish as four voices, one per pad (keys D F J K). A missed cue silences that
-voice until you hit it again. Format: `docs/TRACK_PACK_FORMAT.md`. No battle, no failing: the track always plays out.
+A whole recorded track plays start to finish. At any moment one instrument (the focus) is yours and all four pads
+(keys D F J K, no names) play its part; the focus moves from instrument to instrument. The screen shows which one
+("Playing: Lead"), counts down a change from 8 beats ahead ("Next: Bass in 5"), and says "Nothing to play" between
+stretches. A missed cue silences the instrument you are playing (all four pads go dark and say MUTED) until you hit
+one of its cues again; the other instruments keep playing. Format (version 2 only; a version 1 pack is refused, re-import it): `docs/TRACK_PACK_FORMAT.md`. No battle, no failing: the track always plays out.
 
 All commands run from the project folder. Set `GODOT` to the Godot 4.5.1 binary and `PACK` to the pack folder.
 
@@ -33,3 +36,7 @@ Esc (or losing focus) pauses; resuming counts down 3 s. At the end the per-voice
 
 Tests: `$GODOT --headless --path . -s tests/run_tests.gd -- --filter test_track`. The synthetic fixture pack is made
 by `tests/fixtures/track_fixture/make_fixture.py` (output is committed).
+
+Files: `track_pack.gd` (loader and every rule that needs no audio analysis), `track_focus.gd` (which voice is played
+when, and the change announcement, as plain logic), `track_game.gd` (rules, per-voice mutes, statistics, event log),
+`track_autoplay.gd`, `track_transport.gd`, `track_pad_view.gd`, `track_play.gd` and `.tscn` (the scene).
