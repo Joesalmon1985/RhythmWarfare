@@ -76,10 +76,11 @@ def main() -> int:
         before = 2 if ch == "mothership" else 1
         print(f"chapter {ch}: before {before} version(s), after {len(listed)}")
     pb = {p for n in old for p in n["packs"]} | trial_packs
-    pa = {p for n in new for p in n["packs"]} | trial_packs
+    chapter_packs = {sec["pack"] for f in (ROOT / "content" / "music" / "arrangements").glob("ch_*.json") for sec in read_json(f)["sections"] if "pack" in sec}
+    pa = {p for n in new for p in n["packs"]} | trial_packs | chapter_packs
     fa = len([f for f in cat["files"] if f["kind"] == "wav"])
     ub, ua = used_files(pb, cat), used_files(pa, cat)
-    print(f"packs played by scenes (and the dungeon): before {len(pb)}, after {len(pa)} of {len(list((ROOT / 'songs' / 'packs').glob('*/pack.json')))}")
+    print(f"packs played by scenes, the rendered chapters and the dungeon: before {len(pb)}, after {len(pa)} of {len(list((ROOT / 'songs' / 'packs').glob('*/pack.json')))}")
     print(f"source WAVs behind those packs: before {len(ub)}, after {len(ua)} of {fa} available in the catalogue")
     spare = sorted(p.parent.name for p in (ROOT / 'songs' / 'packs').glob('*/pack.json') if p.parent.name not in pa)
     print("packs no scene plays:", ", ".join(spare))

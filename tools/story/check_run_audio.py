@@ -10,6 +10,7 @@ reports the delay per phase: the same value in every phase and across a world ch
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -61,7 +62,7 @@ def main() -> int:
     rec, rate = read_pcm(base.with_suffix(".wav"))
     info = json.loads(base.with_suffix(".json").read_text())
     run = json.loads((ROOT / "content/run/run.json").read_text())
-    music = {n["id"]: n for n in json.loads((ROOT / "content/story/music.json").read_text())["nodes"]}
+    music = {n["id"]: n for n in json.loads((Path(os.environ["RW_RUN_MUSIC"]) if os.environ.get("RW_RUN_MUSIC") else ROOT / "content/story/music.json").read_text())["nodes"]}
     nodes = {n["id"]: n for n in run["nodes"]}
     stages = run["stages"]
     s0 = float(info["started_wall"])
