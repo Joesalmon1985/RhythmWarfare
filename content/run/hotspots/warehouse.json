@@ -33,7 +33,13 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "staging": {
+    "door_at": [
+     6.85,
+     2.0
+    ]
+   }
   },
   {
    "id": "warehouse.exit_balcony",
@@ -67,7 +73,13 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "staging": {
+    "door_at": [
+     -6.85,
+     1.75
+    ]
+   }
   },
   {
    "id": "warehouse.wizard",
@@ -116,7 +128,18 @@
     "look_at": "wizard_floor"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "staging": {
+    "archetype": "figure",
+    "current_tex": "wizard_happy",
+    "other_tex": "wizard_sad",
+    "current_motion": "beckon",
+    "other_motion": "slump",
+    "touch": {
+     "w": 1.4,
+     "h": 2.0
+    }
+   }
   },
   {
    "id": "warehouse.dancer",
@@ -786,7 +809,18 @@
     "energy": -2
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "staging": {
+    "archetype": "figure",
+    "current_tex": "wizard_happy",
+    "other_tex": "wizard_sad",
+    "current_motion": "beckon",
+    "other_motion": "slump",
+    "touch": {
+     "w": 1.4,
+     "h": 2.0
+    }
+   }
   },
   {
    "id": "warehouse.chill.lavalamp",
