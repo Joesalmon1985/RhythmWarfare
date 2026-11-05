@@ -56,7 +56,7 @@ every path and of every character hotspot in five states, looked at by the agent
 2. **Acts, faces, set pieces and the Golgotha staging have only been seen as still frames** from the virtual clock. Whether a player who is watching the pads sees an act at beat 50 and an outcome at beat 62 is unknown. Several pieces (`swell`, `long_shadow`, `river_rise`,
    `rider_shadow`, `drowned`, the Gospel's sky pieces) were validated and fired at their beats in tests; nobody looked at most of them on screen.
 3. **No real Gospel or Ember loops exist.** 32 scenes play synthesised placeholders (17 Gospel, 15 Ember). Whether the owner's loops, when they arrive, will pass the importer is unknown: the Squadron ones needed `--max-error-ms 40` for six scenes and are 4-bar phrases.
-4. **The tempo handoff and the 88 ms finding were measured with the dummy audio driver only** (see A4).
+4. **The tempo handoff and its clock fix were measured with the dummy audio driver only** (see A4); no real output latency.
 5. **The Android and Windows exports predate all of this** (they predate even the loadout redesign, Part B item 17). Nothing was exported; the size of an export with the path packs was not measured (A8).
 6. `tools/story/check_assets.py` covers the five old chapters and the three Squadron worlds, not the Gospel's or the Ember's maps (their art is checked by their own tests and `tools/story/check_map.gd`).
 7. The pause menu's "Leave this path" button was built and tested through the scene but not looked at on a real screen.
@@ -88,9 +88,9 @@ the Birch Hall's and the lake's setbacks go to the High Pass across a world bord
 ## A4. Known problems and weak spots
 
 **Audio.**
-* *The 88 ms phase-change offset.* In the recorded handoff (balcony star -> stub -> back) the first phase change *inside* the path sits about 88 ms (three 29.4 ms chunks of the dummy driver) from the one before it, and the shift persists into the Warehouse afterwards. A plain main-run
-  phase change measured 8.8 ms of spread and a path started directly 11.4 ms, so it is not the dummy driver's chunk alone: something the first wrap of the clock loop after a handoff does (`RunAudio._swap_clock`). The checker tolerance was not changed. If a phone shows cues
-  arriving a fraction of a second early from the second room of a path on, this is where to look.
+* *The 88 ms phase-change offset: found and fixed (commit `56adc157`, after the stages).* After a tempo handoff, `RunAudio._swap_clock` set the song base to the downbeat, but a new stream's position reads one mix period ahead after its first mix, so the clock (cues, voices, judge) ran that far ahead
+  of the sound from every swap on: 88.5 ms with the dummy driver, estimated 5.9 to 20 ms on a device. `song_base` is now `t - mix_period`; `check_run_audio.py` asserts every in-path phase boundary within the dummy driver's 29.4 ms floor; the handoff recording went from -88.58 ms (spread 95.1 ms) to -6.12 ms
+  (spread 12.6 ms) on the stub and -5.92 ms (spread 5.9 ms) on the real Gospel. Measured with the dummy driver only: whether a phone's handoff is tight is still to be heard.
 * *Squadron bass.* C05 and C06 have a short loud bass transient on a quiet body (peak-limited: RMS about -23 to -25 dBFS; at stage 2 the bass sits below the drums); C03, C05, C06, C09 and C11 are mid-heavy (8 to 31 % of the bass under 90 Hz). Nothing was edited; a re-export with the
   transient tamed, or a game-side limiter, would give more.
 * *Placeholders on a phone speaker.* Bass-forward by measurement (RMS: drums -20 to -21, bass -11 to -12, pad -28 dBFS; at least 45 to 50 % of the bass under 90 Hz); whether that is prominent enough on a phone speaker is the owner's to judge.
