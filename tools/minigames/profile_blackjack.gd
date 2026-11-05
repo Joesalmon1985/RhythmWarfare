@@ -13,9 +13,15 @@ extends SceneTree
 ## Then, per moment, the five layers that cost most: mean microseconds per frame and the share of frames that redrew them.
 ## Song time moves by a fixed step per frame inside each moment (the moment's span over the frame count), so the same arguments give the same pictures.
 ## The timing wraps the view from outside (its drawing callable and its snapshot callable), so the game code carries no profiling switches.
+## RW_PROFILE_EXITS=1 seats the table in a room with two ways out (the day room's: the art room, the default, on the right and the dormitory), so every moment draws two doors
+## with their glimpses instead of the one plain door; without it the activity is given no exits.
 
 const BEAT := 60.0 / 174.0
 const WARMUP := 8
+const EXITS := [
+	{"id": "ward.exit_art", "route": "ward.art", "scene": "art", "dir": "right", "default": true, "tint": "#a0b494", "light": 0.52},
+	{"id": "ward.exit_dorm", "route": "ward.dorm", "scene": "dorm", "dir": "up", "tint": "#8aa892", "light": 0.62},
+]
 
 ## name, size, seed, wallet (pence), taps {beat: target}, wobble [[beat, level]], fall beat (-1 none), from and to (beats after sitting), reduced, high contrast.
 const MOMENTS := [
@@ -108,7 +114,7 @@ func _start_moment(m: Dictionary) -> void:
 		wallet.add(int(m["wallet"]))
 	var cfg: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://content/minigames/blackjack.json"))
 	_activity = BlackjackActivity.new()
-	_activity.setup({"wallet": wallet, "seed": int(m.get("seed", 3)), "beat_s": BEAT, "config": cfg})
+	_activity.setup({"wallet": wallet, "seed": int(m.get("seed", 3)), "beat_s": BEAT, "config": cfg, "exits": EXITS if OS.get_environment("RW_PROFILE_EXITS") == "1" else []})
 	_activity.begin(0.0)
 	_view = _activity.make_view() as BlackjackView
 	_view.now_fn = func() -> float: return _t
