@@ -265,10 +265,10 @@ func arrival(t0: float, notes: Array) -> Array:
 ## Moving to a new scene of the same world (the stage stays): a plain walk through the door, no cut and no frame. It is one `player_move` that starts three beats before the
 ## phase ends (in the cue-free guard) from wherever the camera is, to the new scene's arrival place (just inside its door; home when it has none); the map's portal route
 ## takes it through the doorway, and it ends a few beats into the new phase. The rail then steps from there at the first block decision.
-func leave(t: float, to_wp: String, notes: Array) -> Array:
+func leave(t: float, to_wp: String, notes: Array, style := "walk") -> Array:
 	var out: Array = []
 	if to_wp != "":
-		_move_to(out, t, to_wp, "walk", 4.0, notes)
+		_move_to(out, t, to_wp, style, 4.0, notes)
 	return out
 
 

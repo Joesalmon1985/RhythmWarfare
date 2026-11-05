@@ -34,6 +34,7 @@ var stage_of_block: Array = []
 var block_credit: Array = []
 var choice := ""  # the chosen destination node id ("" until the player picks one)
 var window_open := false
+var hotspots: RunHotspots = null  # when set, the route is the outcome of a hotspot (the tap is the intent, block 4 decides): see _hotspot_decision; null keeps the plain route choice (tests, RW_RUN_ARROWS=1)
 var route_locked := false  # block 0 of the next phase has been charted: routes with another chart pack can no longer be chosen
 var _locked_chart := ""
 
@@ -146,6 +147,8 @@ func _enter(id: String, t0: float, chart_now: bool) -> void:
 		_chart_block(0, 0, depth)
 	_next_phase_charted = false
 	_next_block_notes[0] = true
+	if hotspots != null:
+		hotspots.begin_scene(id, energy)
 	_emit({"kind": "phase_start", "node": id, "world": n["world"], "scene": n["scene"], "from": prev, "depth": depth, "t": t0, "phase": phase_n, "treatment": n["treatment"],
 		"audio": n["audio"], "temporary": n["temporary"], "fresh": phase_n == 1})
 	_emit({"kind": "mix", "stage": 0, "t": t0, "gains": cfg["stages"][0]["gains"], "cue": cfg["stages"][0]["cue"]})
@@ -184,6 +187,8 @@ func default_route() -> String:
 
 ## The player picks a route (by destination id); allowed until the phase ends. Returns false when the id is not one of the routes.
 func choose(to: String) -> bool:
+	if hotspots != null:  # with hotspots the route is the outcome of the selected one: choosing a route taps the hotspot that leads there (scripted play, old callers)
+		return hotspots.select_route(to, block, window_open)
 	for e in data.nodes[node_id]["next"]:
 		if str(e["to"]) == to:
 			if not route_allowed(to):
@@ -206,7 +211,13 @@ func route_allowed(to: String) -> bool:
 
 
 func selected_route() -> String:
-	return choice if choice != "" else default_route()
+	if choice != "":
+		return choice
+	if hotspots != null and hotspots.selected != "":  # the route the selected hotspot leads to on success (the final outcome is only known at the commit)
+		var r := str((hotspots.get_hotspot(hotspots.selected).get("on_success", {}) as Dictionary).get("route", ""))
+		if r != "" and not HotspotContract.is_trial_route(r):
+			return r
+	return default_route()
 
 
 func press(pad: int, t: float, touch: int = 0) -> Dictionary:
@@ -281,6 +292,8 @@ func _decide(b: int, t_dec: float) -> void:
 	_emit({"kind": "block_result", "block": b, "credit": credit, "passed": passed, "energy": energy, "stage": stage, "next_stage": next_stage, "t": t_dec,
 		"node": node_id, "phase": phase_n})
 	block = b + 1
+	if hotspots != null and energy > 0.0:
+		_hotspot_decision(b, passed, t_dec)
 	if energy <= 0.0:
 		_depleted_t = t_of(boundary_beat)
 		_over_t = _depleted_t + float(cfg["timing"]["fade_beats"]) * beat_s
@@ -303,6 +316,25 @@ func _decide(b: int, t_dec: float) -> void:
 	else:
 		# the last block is over: chart the next phase's first block now from the selected route, and lock it
 		_chart_next_phase()
+
+
+## The hotspot window's decisions at the block's decision beat (inside the cue-free guard): the early window (a way into the Bassment) commits at blocks 0 and 1, the final one at block 3 (the route
+## lock beat), where the outcome's route becomes the engine's choice before the next phase is charted from it. The outcome's energy is applied here (never to the point of depletion).
+func _hotspot_decision(b: int, passed: bool, t_dec: float) -> void:
+	hotspots.energy = energy
+	var out: Dictionary = {}
+	if b <= 2:
+		out = hotspots.on_block(b, passed)
+	else:
+		out = hotspots.commit_final(passed)
+		if not out.is_empty():
+			choice = str(out["route"])
+	if out.is_empty():
+		return
+	if float(out["energy"]) != 0.0:
+		energy = clampf(energy + float(out["energy"]), 1.0, float(cfg["energy"]["max"]))
+		hotspots.energy = energy
+	_emit({"kind": "hotspot_commit", "t": t_dec, "block": b, "node": node_id, "phase": phase_n, "outcome": out, "energy": energy})
 
 
 func _chart_next_phase() -> void:

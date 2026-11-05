@@ -5,6 +5,9 @@
 # is not a route of the scene before it, a rail place that is not on the scene's rails, missing glances, a wrong run save (reached = the worlds visited, never a scene), or a
 # chapter save written by the run. Needs a display (the worlds are rendered).
 #   RW_WALK_IGNORE=<regex> drops matching ERROR lines from the check.
+#   RW_RUN_TAPS=scripted|none|changed|failure  the tap policy of the hotspot window (default scripted: the bot taps the hotspot that leads where the path says; none: no taps, the default exits;
+#                changed: a decoy first, then the scripted tap; failure: scripted taps with the last block of every phase missed, so every tapped hotspot takes its failure outcome). With none and
+#                failure the scene sequence is not fixed (only "every step is a route of the scene before it" and the saves are checked, and the all-scenes check is skipped).
 #   bash tools/run/walk_run.sh [path ...]     paths: perfect_a perfect_b perfect_c perfect_d sloppy none start_late   (default: all)
 set -u
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -31,6 +34,7 @@ spec() {
 
 for p in "${PATHS[@]}"; do
   IFS='|' read -r BOT ROUTES UNTIL START EXPECT <<< "$(spec "$p")"
+  case "${RW_RUN_TAPS:-scripted}" in none|failure) EXPECT="-";; esac
   DIR="$(mktemp -d)"
   echo "== path $p ($BOT, routes $ROUTES)"
   env XDG_DATA_HOME="$DIR/data" RW_RUN_VIRTUAL=1 RW_STORY_RATE="$RATE" RW_STORY_QUIT=1 RW_RUN_BOT="$BOT" RW_RUN_ROUTES="$ROUTES" RW_RUN_UNTIL_PHASE="$UNTIL" RW_SEED=2 \
@@ -97,7 +101,7 @@ sys.exit(0 if ok else 1)
 PY
   rm -rf "$DIR"
 done
-if [ "${#PATHS[@]}" -ge 4 ]; then  # a full walk must have visited every scene of every world
+if [ "${#PATHS[@]}" -ge 4 ] && [ "${RW_RUN_TAPS:-scripted}" != "none" ] && [ "${RW_RUN_TAPS:-scripted}" != "failure" ]; then  # a full walk must have visited every scene of every world
   python3 - "$ROOT" "$SEEN" <<'PY' || FAIL=1
 import json, sys
 run = json.load(open(sys.argv[1] + "/content/run/run.json"))

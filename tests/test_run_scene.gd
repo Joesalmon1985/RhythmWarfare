@@ -55,7 +55,45 @@ func _run_to(scene: Node, t_end: float) -> void:
 		scene._step_virtual(t)
 
 
-func test_route_arrows_are_touch_targets_clear_of_the_pads() -> void:
+func test_hotspots_are_touch_targets_on_the_stage_clear_of_the_pads() -> void:
+	var d := _scene(Vector2(844, 390))
+	var scene: Node = d["scene"]
+	var beat: float = 60.0 / 174.0
+	_run_to(scene, 52.0 * beat)
+	assert_eq(scene._route_buttons.size(), 0, "no arrows: the world is the menu")
+	assert_false(scene._exits.visible, "and no lit-door frames")
+	var items: Array = scene.hotspot_items()
+	assert_true(items.size() >= 2 and items.size() <= 4, "two to four hotspots from the first beat of block 4 (%d)" % items.size())
+	var stage := Rect2(scene._stage_host.global_position, scene._stage_host.size)
+	var st: StoryStage = scene.stages[scene.active_world]["stage"]
+	var lay := HotspotView.layout(items, st.map, st.crowds, scene._exit_pose(), stage.size)
+	assert_eq(lay.size(), items.size(), "every hotspot has a place on the screen")
+	var pad_rects: Dictionary = scene.pad_view.button_rects()
+	var ids: Array = []
+	for e in lay:
+		var c: Vector2 = (e["centre"] as Vector2) + stage.position
+		var r := Rect2(c - Vector2(float(e["radius_px"]), float(e["radius_px"])), Vector2(float(e["radius_px"]), float(e["radius_px"])) * 2.0)
+		assert_true(r.size.x >= 72.0 - 0.01, "%s is a 72 px target (%s)" % [e["id"], str(r.size)])
+		assert_true(stage.has_point(c), "%s centres on the stage" % e["id"])
+		for p in pad_rects:
+			assert_false(r.intersects(pad_rects[p] as Rect2), "%s does not touch pad %d" % [e["id"], p])
+			assert_false((pad_rects[p] as Rect2).has_point(c))
+		ids.append(e["id"])
+	# a tap on the first selects it, a tap on another changes it, a tap on a pad selects nothing
+	var first: Dictionary = lay[0]
+	var second: Dictionary = lay[lay.size() - 1]
+	assert_eq(scene.hotspot_tap((first["centre"] as Vector2) + stage.position), str(first["id"]), "tapping a hotspot selects it")
+	assert_eq(scene.hotspots.selected, str(first["id"]))
+	assert_eq(scene.hotspot_tap((second["centre"] as Vector2) + stage.position), str(second["id"]), "and it can be changed")
+	assert_eq(scene.hotspots.selected, str(second["id"]))
+	var pad: Rect2 = pad_rects[1]
+	assert_eq(scene.hotspot_tap(pad.get_center()), "", "a touch on a pad is never a hotspot")
+	assert_eq(scene.hotspots.selected, str(second["id"]), "and changes nothing")
+	_free(d)
+
+
+func test_route_arrows_still_work_behind_the_flag() -> void:
+	OS.set_environment("RW_RUN_ARROWS", "1")
 	var d := _scene(Vector2(844, 390))
 	var scene: Node = d["scene"]
 	var beat: float = 60.0 / 174.0
@@ -80,6 +118,7 @@ func test_route_arrows_are_touch_targets_clear_of_the_pads() -> void:
 		assert_true(second.text.contains("CHOSEN"))
 		first.pressed.emit()
 		assert_eq(scene.engine.choice, str(first.get_meta("to")), "and it can be changed")
+	OS.unset_environment("RW_RUN_ARROWS")
 	_free(d)
 
 

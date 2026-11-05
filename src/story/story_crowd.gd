@@ -369,7 +369,7 @@ func update(t: float, p_energy: float) -> void:
 		if walking:
 			st = "walk"
 			c.toward = 0.0
-		elif str(a["lock"]) == "" and not dir.is_empty() and t < float(dir["until"]) and t >= float(dir.get("from", -1.0)):
+		elif (str(a["lock"]) == "" or bool(dir.get("force", false))) and not dir.is_empty() and t < float(dir["until"]) and t >= float(dir.get("from", -1.0)):
 			st = str(dir["state"])
 			c.sync = bool(dir.get("sync", false))
 		elif not dir.is_empty() and t >= float(dir["until"]):
@@ -813,6 +813,17 @@ func direct(ids: Array, state: String, t0: float, seconds: float, sync := false,
 			continue
 		a["dir"] = {"state": state, "from": t0 + float(k) * stagger, "until": t0 + seconds + float(k) * stagger, "sync": sync}
 		k += 1
+
+
+## A person beckons the player (a hotspot anchored on an actor): they wave at us until `until`, even a bartender or a bouncer with a fixed activity. `stand_down` puts them back.
+func beckon(id: String, t0: float, until: float) -> void:
+	if actors.has(id) and bool(actors[id]["present"]):
+		actors[id]["dir"] = {"state": "wave", "from": t0, "until": until, "sync": false, "force": true}
+
+
+func stand_down(id: String) -> void:
+	if actors.has(id) and bool((actors[id]["dir"] as Dictionary).get("force", false)):
+		actors[id]["dir"] = {}
 
 
 ## A wave of `state` travelling left to right across the room over `seconds`, each dancer holding it for `hold` seconds.

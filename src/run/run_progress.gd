@@ -14,6 +14,11 @@ var old_path := OLD_PATH
 var data: Dictionary = {}
 var recovered_from_corrupt := false
 var migrated: Array = []  # level ids carried over from the old chapter save on this load
+## World state (hotspot outcomes, docs/CONTINUOUS_RUN.md "Hotspots"): `run_flags` lasts one run (cleared by run_started, never saved); `flags` (the "keep:" names: discoveries) persists in the save.
+var run_flags: Dictionary = {}
+var flags: Dictionary:
+	get:
+		return data["flags"]
 
 
 static func load_data(p_path: String = SAVE_PATH, p_old: String = OLD_PATH) -> RunProgress:
@@ -25,6 +30,8 @@ static func load_data(p_path: String = SAVE_PATH, p_old: String = OLD_PATH) -> R
 		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(p_path))
 		if typeof(parsed) == TYPE_DICTIONARY and int(parsed.get("version", 0)) == VERSION and typeof(parsed.get("reached", null)) == TYPE_DICTIONARY:
 			p.data = parsed
+			if typeof(p.data.get("flags", null)) != TYPE_DICTIONARY:  # a save from before the hotspots has no flags
+				p.data["flags"] = {}
 		else:
 			p.recovered_from_corrupt = true
 			DirAccess.rename_absolute(p_path, p_path + ".corrupt")
@@ -34,7 +41,7 @@ static func load_data(p_path: String = SAVE_PATH, p_old: String = OLD_PATH) -> R
 
 
 static func _fresh() -> Dictionary:
-	return {"version": VERSION, "reached": {}, "runs": 0, "best_phases": 0, "migrated_from": ""}
+	return {"version": VERSION, "reached": {}, "runs": 0, "best_phases": 0, "migrated_from": "", "flags": {}}
 
 
 ## Reads the old chapter save (never writes it) and marks the matching levels reached. Night One is always reached.
@@ -72,12 +79,29 @@ func enter(node_id: String) -> bool:
 
 func run_started() -> void:
 	data["runs"] = int(data["runs"]) + 1
+	run_flags.clear()
 	save()
 
 
 func run_ended(phases: int) -> void:
 	data["best_phases"] = maxi(int(data["best_phases"]), phases)
 	save()
+
+
+func has_flag(name: String) -> bool:
+	return run_flags.has(name) or flags.has(name)
+
+
+## Sets a flag: a "keep:" name persists (saved at once), any other lasts the run. True when it changed.
+func set_flag(name: String) -> bool:
+	if has_flag(name):
+		return false
+	if HotspotContract.is_keep(name):
+		flags[name] = true
+		save()
+	else:
+		run_flags[name] = true
+	return true
 
 
 func save() -> bool:

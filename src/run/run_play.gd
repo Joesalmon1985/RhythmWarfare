@@ -4,7 +4,11 @@ extends Control
 ## the downbeat; the clock, the beat grid, the judge and the crowd energy never restart.
 ##
 ## Scripted play for tests and recordings: RW_RUN_BOT=perfect|none|accuracy:<f>|blocks:<10110...>, RW_RUN_ROUTES=left,right,... (a direction per
-## phase), RW_RUN_VIRTUAL=1 (no audio, a stepped clock), RW_RUN_UNTIL_PHASE=<n>, RW_RUN_START=<node id>.
+## phase: the bot taps the hotspot that leads there), RW_RUN_TAPS=scripted|none|changed|failure (the tap policy: the scripted taps, no taps at all (the default exits), a decoy tapped first and
+## then the scripted one, the scripted taps with the last block of every phase missed), RW_RUN_VIRTUAL=1 (no audio, a stepped clock), RW_RUN_UNTIL_PHASE=<n>, RW_RUN_START=<node id>,
+## RW_RUN_ARROWS=1 (the old route arrows and lit doors instead of the hotspots, until the data is converted).
+##
+## The route window is the hotspot window (docs/CONTINUOUS_RUN.md "Hotspots"): the player touches the world (HotspotView, RunHotspots); the last block's result picks the outcome.
 
 const COUNTDOWN_S := 2.0
 const RESUME_COUNTDOWN_S := 3.0
@@ -25,7 +29,16 @@ var proxy: StoryRun  # what StoryStage and StoryDeck read: level.bpm and crowd.e
 var stages: Dictionary = {}  # world id -> {stage, assets, data, deck, waypoint}
 var active_world := ""
 var virtual_mode := false
-var trial_launcher: Callable  # called when the wizard's "Enter the Trial" is chosen (tests replace it)
+var trial_launcher: Callable  # called when the wizard is chosen and the block he waited for is passed (tests replace it)
+var hotspots: RunHotspots  # the scene's hotspots (null with RW_RUN_ARROWS=1: the old arrows)
+var arrows := false  # RW_RUN_ARROWS=1
+var hotspot_log: Array = []  # [{kind: select | tap_miss | commit, t, ...}] for the tests and the walks
+var tap_policy := "scripted"
+var _sel_t: Dictionary = {}  # hotspot id -> song time it was selected
+var _commit_view: Dictionary = {}  # {id, t, hotspot}: the committed hotspot stays drawn for a moment (the flash)
+var _last_tap_ms := -1000
+var _last_tap_pos := Vector2(-9999, -9999)
+var _bot_decoy_done := -1
 var _gate: Control
 var _gate_btn: Button
 var _gate_wizard: TextureRect
@@ -97,6 +110,11 @@ func _ready() -> void:
 		start = "warehouse" if data.nodes.has("warehouse") else start
 	engine = RunEngine.new(data)
 	journey = RunJourney.new(data)
+	arrows = OS.get_environment("RW_RUN_ARROWS") == "1"
+	tap_policy = OS.get_environment("RW_RUN_TAPS") if OS.has_environment("RW_RUN_TAPS") and OS.get_environment("RW_RUN_TAPS") != "" else "scripted"
+	if not arrows:
+		hotspots = RunHotspots.new(data, Session.run_progress.run_flags, Session.run_progress.flags)
+		engine.hotspots = hotspots
 	engine.begin(start)
 	proxy = StoryRun.new()
 	proxy.level = engine.level
@@ -187,6 +205,24 @@ func _build_stage(world: String) -> Dictionary:
 	deck.setup(assets, proxy, st)
 	deck.reduced = Session.reduced_effects
 	var rec := {"stage": st, "assets": assets, "data": sd, "deck": deck, "waypoint": st.map.start_id if st.map != null else ""}
+	if hotspots != null and st.lowres != null:  # the hotspots are drawn inside the picture, above the crowd
+		var hv := HotspotView.new()
+		hv.name = "Hotspots"
+		hv.stage = st
+		hv.beat_s = engine.beat_s
+		hv.items_fn = hotspot_items
+		hv.pose_fn = _exit_pose
+		hv.now_fn = func() -> float: return hud.now_t
+		hv.reduced = Session.reduced_effects
+		hv.high_contrast = Session.high_contrast
+		hv.glow_tex = assets.sprite("glow").get("tex", null)
+		var warm: Array = st.palettes.get("warm", [])
+		if not warm.is_empty():
+			hv.tint = (warm[0] as Color).lerp(Color(1.0, 0.9, 0.6), 0.55)
+		hv.set_anchors_preset(Control.PRESET_FULL_RECT)
+		var layer := st.lowres.add_overlay(hv, "Hotspots")
+		layer.layer = 2
+		rec["hotspot_view"] = hv
 	stages[world] = rec
 	var now := Time.get_ticks_usec()
 	build_log.append({"world": world, "ms": snappedf(float(now - t_build) / 1000.0, 0.1), "parts_ms": {"data": snappedf(float(t_art - t_build) / 1000.0, 1.0), "art": snappedf(float(t_stage - t_art) / 1000.0, 1.0),
@@ -301,6 +337,7 @@ func _build_layout(start: String) -> void:
 	_exits.visible = false
 	_exits.beat_s = engine.beat_s
 	_exits.pose_fn = _exit_pose
+	_exits.process_mode = Node.PROCESS_MODE_INHERIT if arrows else Node.PROCESS_MODE_DISABLED
 	_exits.now_fn = func() -> float: return hud.now_t
 	add_child(_exits)
 	trial = TrialScene.new()
@@ -369,13 +406,15 @@ func _build_gate() -> void:
 	_gate_wizard.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_gate_wizard.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_gate.add_child(_gate_wizard)
-	_gate_btn = Button.new()
-	_gate_btn.text = "Enter the Trial"
-	_gate_btn.theme = StoryStyle.theme()
-	_gate_btn.focus_mode = Control.FOCUS_NONE
-	_gate_btn.modulate = Color(1.0, 0.9, 0.6)
-	_gate_btn.pressed.connect(func() -> void: trial_launcher.call())
-	_gate.add_child(_gate_btn)
+	if arrows:  # the old floating button (RW_RUN_ARROWS=1); otherwise the wizard is a character hotspot and carries no text
+		_gate_btn = Button.new()
+		_gate_btn.text = "Enter the Trial"
+		_gate_btn.theme = StoryStyle.theme()
+		_gate_btn.focus_mode = Control.FOCUS_NONE
+		_gate_btn.modulate = Color(1.0, 0.9, 0.6)
+		_gate_btn.pressed.connect(func() -> void: trial_launcher.call())
+		_gate.add_child(_gate_btn)
+	_gate_wizard.visible = arrows  # with hotspots the wizard is a thing of the map
 	trial_launcher = func() -> void: arm_trial()
 	resized.connect(_layout_gate)
 	_layout_gate()
@@ -388,6 +427,8 @@ func _layout_gate() -> void:
 	var s := clampf(stage_h * 0.42, 64.0, 150.0)
 	_gate_wizard.size = Vector2(s, s)
 	_gate_wizard.position = Vector2(size.x * 0.02, stage_h - s - 4.0)
+	if _gate_btn == null:
+		return
 	_gate_btn.add_theme_font_size_override("font_size", int(clampf(stage_h * 0.05, 13.0, 22.0)))
 	_gate_btn.size = Vector2(maxf(s * 1.9, 150.0), clampf(stage_h * 0.13, 40.0, 60.0))
 	_gate_btn.position = Vector2(size.x * 0.02, _gate_wizard.position.y - _gate_btn.size.y - 6.0)
@@ -407,6 +448,8 @@ func _setup_bot() -> void:
 
 func _bot_wants(n: Dictionary, idx: int) -> bool:
 	var pol := str(_bot["policy"])
+	if tap_policy == "failure" and int(n["block"]) == 3:  # the failure taps: the last block of every phase is missed, so the selected hotspot fails
+		return false
 	if pol == "perfect":
 		return true
 	if pol == "none":
@@ -437,12 +480,61 @@ func _bot_step(t: float) -> void:
 				_bot_released[i] = true
 				engine.release(int(n["pad"]), end_t, int(n["pad"]))
 				pad_view.button_down[int(n["pad"])] = false
+	if hotspots != null:
+		_scripted_select(t)
+		_bot_taps(t)
+		return
 	if engine.window_open and _bot_route_done != engine.phase_n and engine.phase_beat_at(t) > 52.0:
 		_bot_route_done = engine.phase_n
 		var k := engine.phase_n - 1
 		if k < _bot_routes.size() and _bot_routes[k] != "":
 			engine.choose_dir(_bot_routes[k])
 			_sync_route_buttons()
+
+
+## The scripted taps (RW_RUN_TAPS): `scripted` taps the hotspot that leads where RW_RUN_ROUTES says (a direction per phase) at beat 52; `none` never taps; `changed` first taps a decoy at beat 50;
+## `failure` is `scripted` with the last block missed (see _bot_wants). Taps go through hotspot_select exactly as a finger would (the same availability, the same window).
+func _bot_taps(t: float) -> void:
+	if tap_policy == "none" or not engine.window_open:
+		return
+	var beat := engine.phase_beat_at(t)
+	var k := engine.phase_n - 1
+	if tap_policy == "changed" and _bot_decoy_done != engine.phase_n and beat > 50.0:
+		_bot_decoy_done = engine.phase_n
+		var want := _route_for_dir(k)
+		for h in hotspots.shown(engine.block, engine.window_open):
+			if str(h["on_success"].get("route", "")) != want:
+				hotspot_select(str(h["id"]))
+				break
+	if _bot_route_done != engine.phase_n and beat > 52.0:
+		_bot_route_done = engine.phase_n
+		var to := _route_for_dir(k)
+		if to != "":
+			for h in hotspots.shown(engine.block, engine.window_open):
+				if str(h["on_success"].get("route", "")) == to:
+					hotspot_select(str(h["id"]))
+					break
+
+
+## RW_RUN_SELECT=<hotspot id>@<phase beat> (the screenshots): that hotspot is touched once, in the first phase, when its beat comes.
+var _select_done := false
+
+
+func _scripted_select(t: float) -> void:
+	if _select_done or not OS.has_environment("RW_RUN_SELECT") or engine.phase_n != 1:
+		return
+	var spec := OS.get_environment("RW_RUN_SELECT")
+	if engine.phase_beat_at(t) >= float(spec.get_slice("@", 1)):
+		_select_done = hotspot_select(spec.get_slice("@", 0)) or engine.phase_beat_at(t) > 62.0
+
+
+func _route_for_dir(k: int) -> String:
+	if k < 0 or k >= _bot_routes.size() or _bot_routes[k] == "":
+		return ""
+	for o in engine.options():
+		if str(o["dir"]) == _bot_routes[k]:
+			return str(o["to"])
+	return ""
 
 
 # --- frame loop -----------------------------------------------------------------------------------------------------------
@@ -521,9 +613,11 @@ func _advance(t: float, audio_t: float) -> void:
 	if trial_state == "in":
 		trial.update(t, audio_t)
 		return
-	if _gate.visible:  # the option floats
+	if _gate.visible and _gate_btn != null:  # the option floats
 		var bob := sin(audio_t * 2.0) * 4.0
 		_gate_btn.position.y = _gate_wizard.position.y - _gate_btn.size.y - 6.0 + bob
+	elif hotspots != null:
+		_place_wizard(audio_t)
 	if trial_state == "armed" and trial_entry_t >= 0.0:
 		_handle(engine.update(minf(t, trial_entry_t - 0.001)))
 	else:
@@ -707,6 +801,8 @@ func _handle(events: Array) -> void:
 			"route_window":
 				if trial_state == "":
 					_open_routes(ev)
+			"hotspot_commit":
+				_on_hotspot_commit(ev)
 			"route_commit":
 				_close_routes(ev)
 			"depleted":
@@ -729,6 +825,9 @@ func _on_phase_start(ev: Dictionary) -> void:
 	var world := str(node["map"])
 	var t0 := float(ev["t"])
 	phase_log.append({"phase": ev["phase"], "node": ev["node"], "t": t0})
+	_sel_t.clear()
+	if int(ev["phase"]) > 1 or trial_state == "":
+		_commit_view = {}
 	Session.run_progress.enter(str(node["world"]))  # "reached" is per world: a restart begins at the world's entry scene
 	var first := int(ev["phase"]) == 1
 	var world_changed := not first and str(node["world"]) != _run_world
@@ -801,6 +900,12 @@ func _end_fade(_t: float, seconds: float) -> void:
 # --- routes ---------------------------------------------------------------------------------------------------------------
 
 func _open_routes(ev: Dictionary) -> void:
+	if hotspots != null:  # the hotspot window: the world is the menu, nothing to build
+		if audio != null:
+			for o in ev["options"]:
+				audio.preload_pack(str(data.nodes[str(o["to"])]["audio"]))
+		hud.caption("RISER" if str(ev["effect"]) == "riser" else "FALL", "info", float(ev["t"]), 2.0)
+		return
 	for c in _route_box.get_children():
 		c.queue_free()
 	_route_buttons.clear()
@@ -862,6 +967,8 @@ func _sync_route_buttons() -> void:
 
 
 func _close_routes(_ev: Dictionary) -> void:
+	if hotspots != null:
+		return
 	_route_box.visible = false
 	_exits.visible = false
 	_exits.items = []
@@ -872,6 +979,21 @@ func _close_routes(_ev: Dictionary) -> void:
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
+	if hotspots != null and event is InputEventKey and event.pressed and not event.echo and trial_state == "":
+		var kc := (event as InputEventKey).keycode  # desktop: 1 to 4 pick the hotspots on show in order, the arrow keys the hotspot that leads that way
+		if kc >= KEY_1 and kc <= KEY_4:
+			var shown := hotspots.shown(engine.block, engine.window_open)
+			if kc - KEY_1 < shown.size():
+				hotspot_select(str(shown[kc - KEY_1]["id"]))
+			return
+		var d := "left" if kc == KEY_LEFT else "right" if kc == KEY_RIGHT else "up" if kc == KEY_UP else ""
+		if d != "":
+			for o in engine.options():
+				if str(o["dir"]) == d:
+					for h in hotspots.shown(engine.block, engine.window_open):
+						if str(h["on_success"].get("route", "")) == str(o["to"]):
+							hotspot_select(str(h["id"]))
+		return
 	if not (event is InputEventKey) or not event.pressed or event.echo or not engine.window_open:
 		return
 	var dir := ""
@@ -884,6 +1006,133 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			dir = "up"
 	if dir != "" and engine.choose_dir(dir):
 		_sync_route_buttons()
+
+
+# --- hotspots -------------------------------------------------------------------------------------------------------------
+
+## What the hotspot view draws and the taps hit: [{hotspot, state, t_state}] for the hotspots on show now, plus the one that has just committed (it stays for its flash).
+func hotspot_items() -> Array:
+	var out: Array = []
+	if hotspots == null or trial_state != "" or engine == null:
+		return out
+	for h in hotspots.shown(engine.block, engine.window_open):
+		var id := str(h["id"])
+		var sel := id == hotspots.selected
+		out.append({"hotspot": h, "state": "selected" if sel else "available", "t_state": float(_sel_t.get(id, 0.0)) if sel else 0.0})
+	if not _commit_view.is_empty():
+		if hud.now_t - float(_commit_view["t"]) < 2.5 * engine.beat_s:
+			out.append({"hotspot": _commit_view["hotspot"], "state": "committed", "t_state": float(_commit_view["t"])})
+		else:
+			_commit_view = {}
+	return out
+
+
+## The player (or the bot) touches a hotspot by id. Allowed while it is on show and nothing has committed; the selection can be changed until the commit. Returns whether it was selected.
+func hotspot_select(id: String) -> bool:
+	if hotspots == null or _ended or trial_state != "":
+		return false
+	var ok := hotspots.select(id, engine.block, engine.window_open)
+	if ok:
+		_sel_t[id] = hud.now_t
+		hotspot_log.append({"kind": "select", "t": hud.now_t, "hotspot": id, "block": engine.block, "phase": engine.phase_n})
+	return ok
+
+
+## True when a world-state flag is set (this run's or a kept discovery).
+func run_flag_set(name: String) -> bool:
+	return Session.run_progress.has_flag(name)
+
+
+## A touch or click at `pos` (viewport coordinates). Only the stage area counts (the pads are below it and never reach this), and never a point over a pad. The nearest hotspot within its projected
+## radius, at least min_px wide, is selected. Returns the id selected ("" for a tap on nothing).
+func hotspot_tap(pos: Vector2) -> String:
+	if hotspots == null or _ended or trial_state != "" or _stage_host == null or not stages.has(active_world):
+		return ""
+	var rect := Rect2(_stage_host.global_position, _stage_host.size)
+	if not rect.has_point(pos):
+		return ""
+	for p in pad_view.button_rects():
+		if (pad_view.button_rects()[p] as Rect2).has_point(pos):
+			return ""
+	var st: StoryStage = stages[active_world]["stage"]
+	var pose := _exit_pose()
+	if st.map == null or pose.is_empty():
+		return ""
+	var items := hotspot_items().filter(func(e: Dictionary) -> bool: return str(e["state"]) != "committed")
+	var id := HotspotView.hit(HotspotView.layout(items, st.map, st.crowds, pose, rect.size), pos - rect.position)
+	if id == "":
+		hotspot_log.append({"kind": "tap_miss", "t": hud.now_t, "pos": pos})
+		return ""
+	return id if hotspot_select(id) else ""
+
+
+func _input(event: InputEvent) -> void:
+	if hotspots == null or engine == null or clock == null or _ended or clock.state == SongClock.State.PAUSED or _pause_panel.visible or _settings_panel != null:
+		return
+	var pos := Vector2.ZERO
+	if event is InputEventScreenTouch and (event as InputEventScreenTouch).pressed:
+		pos = (event as InputEventScreenTouch).position
+	elif event is InputEventMouseButton and (event as InputEventMouseButton).pressed and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
+		pos = (event as InputEventMouseButton).position
+	else:
+		return
+	var now := Time.get_ticks_msec()  # a touch also arrives as an emulated click (or the reverse): one tap is one selection
+	if now - _last_tap_ms < 80 and pos.distance_to(_last_tap_pos) < 3.0:
+		return
+	_last_tap_ms = now
+	_last_tap_pos = pos
+	hotspot_tap(pos)
+
+
+## The wizard is a character hotspot anchored on a thing of the map (wizard_floor, wizard_chill): his picture is in the room, so the old overlay is never shown with hotspots.
+func _place_wizard(_t: float) -> void:
+	_gate_wizard.visible = false
+
+
+func _on_hotspot_commit(ev: Dictionary) -> void:
+	var out: Dictionary = ev["outcome"]
+	var t := float(ev["t"])
+	hotspot_log.append({"kind": "commit", "t": t, "hotspot": str(out["hotspot"]), "success": bool(out["success"]), "route": str(out["route"]), "window": str(out["window"]), "tapped": bool(out["tapped"]),
+		"energy": float(ev["energy"]), "phase": int(ev["phase"]), "node": str(ev["node"]), "continued": bool(out["continued"]), "flags": out["flags_set"]})
+	_commit_view = {"id": str(out["hotspot"]), "t": t, "hotspot": hotspots.get_hotspot(str(out["hotspot"]))}
+	if hotspots.persist_dirty:
+		Session.run_progress.save()
+		hotspots.persist_dirty = false
+	if not (out["cinematic"] as Dictionary).is_empty():
+		_hotspot_cinematic(out, t)
+	if str(out["window"]) == "early" and bool(out["success"]) and HotspotContract.is_trial_route(str(out["route"])):
+		trial_launcher.call()  # the wizard's way in: the walk to the hatch is scheduled by arm_trial on the next cue-free guard
+
+
+## An outcome's cinematic is rail actions (RunJourney.hotspot_actions): steps of role, look and move. The move replaces the door walk only when the scene simply continues by its default exit;
+## when the outcome names a route the door walk toward it is the camera's move.
+func _hotspot_cinematic(out: Dictionary, t: float) -> void:
+	var spec: Dictionary = out["cinematic"]
+	var move_ok := bool(out["continued"]) or str(out["window"]) == "early"
+	var steps_move := false
+	for st in spec.get("steps", []):
+		steps_move = steps_move or (st.has("move") and st.has("to"))
+	for a in journey.hotspot_actions(spec, t, engine, _look_by, move_ok):
+		_journey_apply(a)
+	if move_ok and steps_move and str(out["window"]) == "final":
+		_door_phase = engine.phase_n  # the cinematic is the move: no door walk is latched for this phase
+
+
+## The turn (degrees, relative to the camera's facing now) toward an actor, thing or waypoint of the scene's map; NAN when it cannot be placed.
+func _look_by(target: String) -> float:
+	if not stages.has(active_world):
+		return NAN
+	var st: StoryStage = stages[active_world]["stage"]
+	var pose := _exit_pose()
+	if st.map == null or pose.is_empty():
+		return NAN
+	for key in ["actor", "thing", "waypoint"]:
+		var r := HotspotView.resolve({key: target}, st.map, st.crowds)
+		if bool(r["ok"]):
+			var p: Vector3 = r["pos"]
+			var cam: Vector3 = pose["cam"]
+			return wrapf(rad_to_deg(atan2(-(p.x - cam.x), -(p.z - cam.z))) - float(pose["yaw"]), -180.0, 180.0)
+	return NAN
 
 
 # --- judge feedback and input ---------------------------------------------------------------------------------------------

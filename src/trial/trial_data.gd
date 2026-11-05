@@ -5,6 +5,7 @@ extends RefCounted
 
 const PATH := "res://content/trial/passages.json"
 const MAX_DEFAULT_WALK := 120
+const HOTSPOTS_PATH := "res://content/trial/hotspots.json"  # the passages' hotspots (HotspotContract), keyed by passage
 
 var raw: Dictionary = {}
 var passages: Dictionary = {}  # int passage -> entry (passage 0 is the one a lost fight leads to)
@@ -14,6 +15,7 @@ var scenes: Dictionary = {}
 var zones: Dictionary = {}
 var items: Dictionary = {}
 var start := 1
+var hotspots: Dictionary = {}  # int passage -> Array of normalised hotspot dictionaries (authored in content/trial/hotspots.json; a passage with none has no entry)
 var errors: Array = []
 static var _maps: Dictionary = {}  # map id -> StoryMap (the zone maps are read once)
 
@@ -41,6 +43,8 @@ static func load_file(path: String, run_data: RunData = null) -> TrialData:
 	d.zones = v.get("zones", {})
 	d.items = v.get("items", {})
 	d.validate(run_data if run_data != null else RunData.load_default())
+	if path == PATH and d.errors.is_empty():  # the Bassment's hotspots (content/trial/hotspots.json) are read with the default data only
+		d.load_hotspots(HOTSPOTS_PATH)
 	return d
 
 
@@ -206,6 +210,58 @@ func _validate_maps() -> void:
 				errors.append("passage %d: choice '%s' exit_wp '%s' is not a waypoint of map %s" % [n, c.get("label", ""), c.get("exit_wp", ""), zmap])
 			elif str(c["exit_wp"]) == str(p.get("waypoint", "")):
 				errors.append("passage %d: choice '%s' exit_wp is the passage's own waypoint (an exit is somewhere else in the room)" % [n, c.get("label", "")])
+
+
+## Loads and validates content/trial/hotspots.json ({"world": "bassment", "hotspots": [...]}, each hotspot's `scene` the passage number) with HotspotContract. A route is a passage number as a string
+## ("12") or "exit" (the way back to the Warehouse); the allowed ones are the passage's choice destinations, a luck test's fail passage, "0" where it has a fight. A Bassment passage shows 1 to 4
+## hotspots (37 passages have a single way on, so the run's minimum of 2 is 1 here); the default exit leads where the passage's default choice does. A missing file is fine (not authored yet).
+func load_hotspots(path: String) -> void:
+	if not FileAccess.file_exists(path):
+		return
+	var v: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(v) != TYPE_DICTIONARY:
+		errors.append("%s is not a JSON object" % path)
+		return
+	var by_passage: Dictionary = {}
+	for h in v.get("hotspots", []):
+		if typeof(h) != TYPE_DICTIONARY:
+			errors.append("%s: a hotspot is not an object" % path)
+			continue
+		var sc := str(h.get("scene", ""))
+		if not sc.is_valid_int() or not passages.has(int(sc)):
+			errors.append("%s: hotspot %s: scene '%s' is not a passage" % [path, h.get("id", ""), sc])
+			continue
+		var n := int(sc)
+		var p: Dictionary = passages[n]
+		if not by_passage.has(n):
+			by_passage[n] = []
+		by_passage[n].append(HotspotContract.normalize(h, str(v.get("world", "bassment")), str(p.get("map", ""))))
+	for n in by_passage:
+		var p2: Dictionary = passages[n]
+		var routes: Array = []
+		var default_route := ""
+		for c in p2.get("choices", []):
+			var dest := "exit" if c.get("to", null) == null else str(int(c["to"]))
+			if dest not in routes:
+				routes.append(dest)
+			if bool(c.get("default", false)):
+				default_route = dest
+			if c.has("test"):
+				var f := str(int(c["test"]["fail"]))
+				if f not in routes:
+					routes.append(f)
+			if c.has("encounter") and "0" not in routes:
+				routes.append("0")
+		var required: Array = []
+		for c in p2.get("choices", []):
+			required.append("exit" if c.get("to", null) == null else str(int(c["to"])))
+		HotspotContract.validate_scene(by_passage[n], {"where": "passage %d" % n, "map": str(p2.get("map", "")), "world": str(v.get("world", "bassment")), "routes": routes,
+			"start_energy": 60.0, "min_available": 1, "max_available": 4, "default_route": default_route, "exit_routes_required": required}, errors)
+		hotspots[n] = by_passage[n]
+
+
+func hotspots_of(passage_n: int) -> Array:
+	return hotspots.get(passage_n, [])
 
 
 ## The zone's start waypoint (where the camera comes in) and the map id.
