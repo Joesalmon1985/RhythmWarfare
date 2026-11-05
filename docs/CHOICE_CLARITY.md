@@ -12,6 +12,36 @@ round green lamp or shut with a square red one (or, outdoors, a sign post whose 
 wizard) swaps to a happy, beckoning frame or a bowed, sad one; any option can add data steps (set pieces, other people, frames of the map's art, props, lamps). A touch swaps it all within one beat. The
 pilot strips are in `docs/shots/choice/`. Gameplay, the windows, the commit and every test are unchanged.
 
+## 0. Status at the stopping point (read this first)
+
+**DONE and verified** (`bash tools/test.sh` green; strips looked at at phone size)
+1. The CURRENT choice in the engine (`RunHotspots.staged / current_id / destination`), staged from beat 0 in the run and in the Bassment; touch rules, windows, commit and outcomes unchanged.
+2. The staging contract (`staging` block, archetypes person / door / object / feature / figure / custom, `states` steps), its defaults (`content/run/choice_staging.json`) and validator; every shipped hotspot validates.
+3. The view: people directed per role, doors (drawn, sign, bars, pieces) with go/stop lamps, billboard poses (`StoryWorld.thing_pose`), props, role-coloured rings (solid green / dashed red), touch rectangles on the thing, the debug line `CHOICE current | default | going to`.
+4. The bake: all 16 maps' people re-baked in the person roles' acts and faces.
+5. Pilot data and strips: Warehouse floor (wizard figure, two doors), bar, balcony; Gospel J04 (sign post); Mothership deck door pair; Bassment passage 10 (`docs/shots/choice/`).
+6. Tests: `tests/test_choice_clarity.gd` (every branching scene of the four runs), `tests/test_story_acts.gd` extended.
+
+**PARTLY done**
+7. Every scene is staged by the defaults (people invite, waypoint exits get a drawn door, thing exits get boards), but only the pilot scenes were looked at; many defaults will put a door in the middle of a room until `door_at` is set (section 6).
+8. Objects and features only get a lamp and a bob: their state frames (sail up/furled, hatch open/chained...) are art not yet drawn.
+9. The Bassment: doors and creature recoil work; carriers, door-bar kits and creature frames from `docs/choice/bassment.md` are not built.
+
+**NOT started (pickup list, by priority)**
+10. **E1 the window camera**: turn the rail's camera to the staged options in the window (`src/run/run_rail.gd` `WINDOW_GLANCE_DEG`); without it half the options are edge beacons in play (the strips use a framed camera).
+11. Per-world authoring lanes A to F (section 6): `door_at` / `sign` / `pieces` per exit, `states` per object, re-anchor the five `pos` options of the Warehouse.
+12. The art briefs of section 6 (door skins per setting, object state pairs, a finger-post, creature frames).
+13. E2 a lamp/key light on dark people and figures; E3 a `people: [ids]` shorthand; E5 the briefs' new acts (rig + re-bake).
+14. Owner decisions (section 7): touch before the window (`run.json` `"choice": {"preselect": true}`), the window camera, plead vs sad beckon, drawn doors everywhere.
+
+**Engine API a scene author uses** (data only): in `tools/run/staging_data.py` add `"<hotspot id>": {...}` with any of `archetype`, `actor`, `current/other/touched/committed/declined` ({act, face, look_at, beats}), `door` (drawn | sign | bars | pieces | none), `door_at` [x, z], `open_piece`/`shut_piece`, `height_m`, `lamp`, `lamp_y`, `current_tex`/`other_tex`/`current_motion`/`other_motion` (figures), `touch` {w, h}, `states` {role: [{piece, op} | {actor, act, face} | {thing, tex|sprite, motion} | {prop, at, size, motion} | {lamp}]}; run `python tools/run/apply_staging.py`; re-bake people if a new act/face is named (`python tools/story/build_assets.py <map> people`); look with `bash tools/run/capture_choice.sh` (section 8). New shared art goes in `tools/run/make_choice_art.py` (`assets/run/choice/`), a map's own frames in its `tex_*.py` and are named by `sprite`.
+
+**Authoring a scene from a brief** (`docs/choice/*.md`, branch `feature/choice-briefs`): each row is one option; its CURRENT / NOT CURRENT columns become `states.current` / `states.other` steps (a frame pair = two `{thing, sprite}` steps or `{piece, op}` pairs; a person's act = the role's act spec or an `{actor}` step for a helper); a pointer that swings is a `{thing, sprite}` step on the shared pointer in each option's `current` list; a carrier the brief places is a new map thing plus a re-anchor in the generator, then `apply_staging.py`.
+
+**Known bugs / limits**: the drawn door is a billboard (it turns with the camera, it is not cut into the wall); a door at an exit waypoint in the middle of a room stands in the room until `door_at` is set; props are lit at a fixed 0.85 (not the room's light); person faces read only at the full level of detail (posture carries it further away); the Bassment draws doors over its own doorway art; touching before beat 48 does nothing unless `preselect` is on.
+
+**What the owner must check on a phone**: that the open/shut doors and green/red lamps are seen while playing the pads; that the people's beckon vs plead reads at arm's length; whether staging from beat 0 helps or distracts; the wizard's happy/bowed frames in the dark floor; whether tapping a person or a door anywhere on its body selects it (the touch rectangles).
+
 ## 1. Audit: every branching scene today
 
 **Method.** `tools/run/choice_audit.gd` plays every scene of the four runs on the virtual clock (perfect play, no taps, a fresh save) and places **every** hotspot of the scene (whatever its flags) with
