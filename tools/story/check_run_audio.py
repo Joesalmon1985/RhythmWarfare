@@ -26,6 +26,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
 BEAT = 60.0 / 174.0  # (the main run's; each phase uses its own run's beat)
+CHUNK_FLOOR_MS = 29.4  # the dummy driver's measurement floor on this machine (every recorded voice lateness is a multiple of it plus a constant)
 
 
 def read_pcm(path: Path) -> tuple[np.ndarray, int]:
@@ -207,12 +208,25 @@ def main() -> int:
         if abs(g0["bpm"] - g1["bpm"]) > 1e-9:
             print(f"handoff at song time {g1['t0']:.3f} s: the grid goes from {g0['bpm']:g} BPM (measured {g0['measured_bpm']:.3f}) to {g1['bpm']:g} BPM (measured {g1['measured_bpm']:.3f}); the drums of the new phase sit "
                   f"{g1['delay_ms'] - g0['end_delay_ms']:+.2f} ms from where the old phase's drums sat at its end (0 = the new grid's first downbeat is exactly the old phase's last; judge it against the mix chunk: 5.9 ms for 256 frames, 85 ms for the 4096-frame chunk the dummy driver may use; the ends of two phases are compared, not their starts, because the recorder drifts against the clock)")
+    # every phase boundary inside a path (the first one after a tempo handoff above all): the new phase's drums must sit where the old phase's drums sat at its end, to within one measurement
+    # step of the dummy driver (CHUNK_FLOOR_MS: the 29.4 ms the voice lateness is quantised to on this machine). The Stage 2 recordings showed 88.6 ms here: the clock swap put the song time one
+    # mix period ahead of the old line (RunAudio._swap_clock, docs/paths/gospel.md).
+    boundary_bad = []
+    for g0, g1 in zip(grid, grid[1:]):
+        if g0["path"] != "" and g0["path"] == g1["path"]:
+            step = g1["delay_ms"] - g0["end_delay_ms"]
+            first = sum(1 for g in grid if g["path"] == g0["path"] and g["phase"] <= g0["phase"]) == 1
+            print(f"in-path phase boundary {g0['phase']} -> {g1['phase']}{' (the first after the handoff)' if first else ''}: the new drums sit {step:+.2f} ms from the old phase's end (floor {CHUNK_FLOOR_MS} ms)")
+            if abs(step) > CHUNK_FLOOR_MS:
+                boundary_bad.append((g0["phase"], g1["phase"], round(step, 1)))
+    if boundary_bad:
+        print("CHECK: in-path phase boundaries off by more than the chunk floor:", boundary_bad)
     tempo_bad = [g for g in grid if abs(g["measured_bpm"] - g["bpm"]) > 0.35]
     if tempo_bad:
         print("CHECK: phases whose recorded tempo differs from the engine's:", [(g["phase"], round(g["measured_bpm"], 3), g["bpm"]) for g in tempo_bad])
     if delays:
         print(f"delay per phase: min {min(delays):+.2f} ms, max {max(delays):+.2f} ms, spread {max(delays) - min(delays):.2f} ms")
-    ok = bool(delays) and max(delays) - min(delays) < 6.0 and bad == 0 and not tempo_bad
+    ok = bool(delays) and max(delays) - min(delays) < 6.0 and bad == 0 and not tempo_bad and not boundary_bad
     print("RESULT", "ok" if ok else "CHECK")
     return 0 if ok else 1
 

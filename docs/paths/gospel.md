@@ -139,12 +139,16 @@ only as a fallback: the actors name a Night One archetype so that `StoryCrowd` c
 The owner's loops drop into `content/imports/gospel/<scene>/` and `beatshaper.py --path gospel import` replaces the placeholder (`docs/MUSIC_IMPORT.md` section 7). The placeholders are 8.6 MB a pack (146 MB for the 17, about 110 MB compressed in git): a size the owner may want to cut by dropping the placeholders
 once the loops are in.
 
-### The Stage 2 audio finding (the 88.6 ms phase-change offset inside the stub path)
-Re-recorded on this machine today (`tools/story/record_music.gd`, `check_run_audio.py`, dummy driver). The hypothesis "the dummy driver's 4096-frame chunk, so a main-run phase change would show it too" is **not supported**: a plain main-run
-phase change (balcony -> chill -> exit, 78 s) shows a delay spread of 8.8 ms and no jump; the stub started directly (`RW_RUN_PATH=stub`) 11.4 ms; the handoff recording (balcony star -> stub -> back) reproduces the jump exactly at its first
-in-path phase change (stub -> stub.end, delays -83.3 then -171.9 ms, the shift persists into the Warehouse that follows). Here the dummy driver mixes in chunks of about 29.4 ms (every `lateness_ms` in the recorded voice log is a multiple of 29.4 ms plus a
-constant) and the jump is three of them (88.2 ms), so the size is a quantisation but the cause is something the first phase change after a tempo handoff does and an ordinary one does not: most likely the new clock stream's playback position settling at its
-first wrap. **The checker tolerance was not changed.** If a phone shows cues arriving a fraction of a second early from the second room of a path on, this is the place to look (`RunAudio._swap_clock`, the first wrap of the clock loop).
+### The Stage 2 audio finding: found and fixed (Stage 3 follow-up)
+Symptom: in the handoff recording the first in-path phase change (stub -> stub.end) sat 88.6 ms from the old phase's end, and the shift stayed for the rest of the run; a main-run phase change (8.8 ms spread) and a direct path start (11.4 ms) did not show it.
+**Cause**: `RunAudio._swap_clock` set `song_base = t` and called `player.play(from)`. A stream's position is read as of the END of the last mixed chunk, and the new stream's first chunk starts at `from`, so after its first
+mix it reads `from` + one mix period: the song-time line jumped forward by one mix period at every swap (measured with a debug trace: `now_t` 22.092 before the swap, 22.203 on the first frame after it, 22.110 expected; the logged song time minus wall time stepped +85 ms at both swaps),
+and everything keyed to the clock (cues, voices, the judge) ran that much ahead of the sound from then on. The mix period is 88.5 ms with the headless dummy driver (the raw position advances 0.0885 s per mix; the 29.4 ms steps of the voice lateness are a third of it), 5.9 to 20 ms on a device, so on a phone
+the error would have been small: this was mostly a headless artefact, but a real one in kind.
+**Fix**: `song_base = t - mix_period(ttnm)` (time since the last mix plus the time to the next one), so the new line meets the old one at the next mix; `clock_log` records the `period`.
+**Proof** (same machine, dummy driver, handoff recording through the balcony star): before, stub: boundary 2 -> 3 at -88.58 ms, delay spread 95.1 ms; after, stub: -6.12 ms, spread 12.6 ms; after, the real gospel path: boundary -5.92 ms, handoffs +5.9 ms, delay spread 5.9 ms, `RESULT ok`.
+`tools/story/check_run_audio.py` now asserts every in-path phase boundary (the first after a handoff included) to within `CHUNK_FLOOR_MS` = 29.4 ms (the dummy driver's measurement floor) and fails the recording otherwise; the unit test `test_the_clock_swap_is_one_scheduled_item_...` asserts the base and
+that the new line meets the old one. The 174 run has no swap and is unchanged.
 
 ## Verified and not verified
 
@@ -159,7 +163,7 @@ first wrap. **The checker tolerance was not changed.** If a phone shows cues arr
 * Looked at (Read tool): all 34 scene shots in `docs/shots/gospel`, 16 acting strips and the contact sheet in `docs/shots/acting/gospel_*`; people are told apart (robes, fishers, soldiers, priests), faces are readable, the camera no longer walks up to the crowd.
 
 **Not verified / known weak:**
-* No phone, no real output latency, no listening to anything (the placeholders were measured, never heard; the owner's loops are not here). The tempo handoff and its 88 ms finding are measured with the dummy driver only.
+* No phone, no real output latency, no listening to anything (the placeholders were measured, never heard; the owner's loops are not here). The tempo handoff and the clock fix are measured with the dummy driver only.
 * Nothing was played by hand: the acts, faces, set-piece fades and the Golgotha staging are only seen as still frames from the virtual clock; whether a player who is watching the pads sees an act at beat 50 and an outcome at beat 62 is unknown.
 * Shots I am not happy with: the acting strips of the route-leaving hotspots (`gospel_jordan_wilderness_*`, the exits) show their success and failure panels inside the passage frame (the tempter's `recoil` and `laugh` do not read), and for `galilee.capernaum.family` and `galilee.fishermen` the committed and success panels
   differ little from `available`; the dusk and night views (J09, J12) are dark and the far crowd of the grove is a few pixels; the wall tiles `wall_hill` and `wall_columns` read as flat bands and heavy shadow; the sky is built from large dither cells at this resolution.

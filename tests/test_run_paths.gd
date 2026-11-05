@@ -494,7 +494,13 @@ func test_the_clock_swap_is_one_scheduled_item_before_the_phase_that_starts_on_i
 	assert_eq(int(c["rate"]), 8680)
 	assert_near(float(c["from"]), 0.007, 1e-9, "it starts as far in as the call is late")
 	assert_eq(a.player.stream.mix_rate, 8680)
-	assert_near(a.song_base, t, 1e-12, "the song time counts on from the downbeat")
+	# The song time stays ONE unbroken line across the swap (the Stage 3 follow-up, docs/paths/gospel.md): a stream's position reads as of the END of the last mixed chunk and the new stream's first chunk
+	# starts at `from`, so after its first mix it reads from + one mix period; the base is lowered by that period, which makes song_base + from + period = now + the time to the next mix, the old
+	# line's value at that mix. (Before the fix the base was the downbeat itself: the clock ran one mix period ahead from the swap on, 88.5 ms with the dummy driver.)
+	var period := float(c["period"])
+	assert_true(period >= 0.003 and period <= 0.25, "a mix period (%f)" % period)
+	assert_near(a.song_base, t - period, 1e-12, "the base is the downbeat less one mix period")
+	assert_near(a.song_base + float(c["from"]) + period, (t + 0.004) + 0.003, 1e-9, "the new line meets the old one at the next mix")
 	assert_near(a.loop_seconds, 64.0 * 60.0 / 124.0, 1e-9)
 	assert_eq(a._wraps, 0)
 	# and back

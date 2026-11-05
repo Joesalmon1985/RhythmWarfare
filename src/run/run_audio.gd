@@ -327,14 +327,23 @@ func _swap_clock(item: Dictionary, now: float, ttnm: float) -> void:
 	var bpm := int(item["bpm"])
 	_clock_stream = silent_loop(int(item["beats"]), bpm)
 	var from := maxf(now + ttnm - t, 0.0)
-	song_base = t
+	# The new stream's position is reported, like every stream's, as of the END of the last mixed chunk, and its first chunk starts at `from`: after the first mix it reads from + one mix period, a
+	# period ahead of the old line (measured: 88.5 ms with the dummy driver, the "88 ms jump" of the first in-path phase change, which the clock then carried into every cue and voice of
+	# the new run). The song time stays one unbroken line only if the base is lowered by that period (docs/paths/gospel.md "The Stage 2 audio finding").
+	var period := mix_period(ttnm)
+	song_base = t - period
 	loop_seconds = float(item["beats"]) * 60.0 / float(bpm)  # (the old loop's length is kept until now: its last wrap, at this very downbeat, is counted with it)
 	_wraps = 0
 	_last_raw = 0.0
 	player.stream = _clock_stream
 	player.play(from)
 	player.stream_paused = false
-	clock_log.append({"t": t, "bpm": bpm, "beat_s": 60.0 / float(bpm), "from": from, "frames_per_beat": frames_per_beat(bpm), "rate": clock_rate(bpm), "loop_seconds": loop_seconds})
+	clock_log.append({"period": period, "t": t, "bpm": bpm, "beat_s": 60.0 / float(bpm), "from": from, "frames_per_beat": frames_per_beat(bpm), "rate": clock_rate(bpm), "loop_seconds": loop_seconds})
+
+
+## The length of one audio mix chunk as it is now (time since the last mix plus the time to the next one): 5.9 ms to 20 ms on a device, 88.5 ms with the dummy driver of the headless recordings.
+func mix_period(ttnm: float) -> float:
+	return clampf(AudioServer.get_time_since_last_mix() + ttnm, 0.0, 0.25)
 
 
 func _live_group() -> Dictionary:
