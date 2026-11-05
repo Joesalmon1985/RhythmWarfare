@@ -3,7 +3,12 @@
 
     /home/joe/.venvs/rw-audio/bin/python tools/audio_import/import_track.py FILE_OR_FOLDER [...]
         [--id ID] [--out /home/joe/rw-audio-work] [--model htdemucs] [--from STAGE | --only STAGE]
-        [--min-bars 8] [--focus VOICE] [--focus-at WHERE=VOICE ...] [--focus-auto]
+        [--min-bars 8] [--focus VOICE] [--focus-at WHERE=VOICE ...] [--focus-auto] [--skip-imported] [--prune-cache]
+    /home/joe/.venvs/rw-audio/bin/python tools/audio_import/import_track.py --rechart [ID ...]
+
+--rechart reruns focus, chart, pack, preview and validate of existing packs from the cached analysis and the
+encoded stems (no recording, no Demucs). Every summary line ends with ok, ok with warnings or FAILED; the exit
+code is 0 unless a pack has validator violations (1) or a track failed (2).
 
 Several files or folders are processed one after another; one bad file never stops the batch, and the run ends
 with one summary line per track (also written to <out>/batch_summary.txt and a time-stamped copy).
@@ -41,7 +46,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from audio_io import mono, probe  # noqa: E402
 
 STAGES = ("separate", "analyse", "voices", "events", "focus", "chart", "pack", "preview", "validate")
-VERSION = "audio_import 0.2 (track format v2)"
+VERSION = "audio_import 0.3 (track format v2)"
 AUDIO_EXT = {".flac", ".mp3", ".wav", ".ogg", ".m4a", ".aiff", ".aif", ".opus", ".wma", ".aac"}
 CONTRACT_KIND = {"drums": "drums", "bass": "pitched", "melodic": "pitched", "vocal": "pitched"}
 VOICE_ORDER = ("drums", "kick", "tops", "bass", "other", "lead", "pads", "guitar", "piano", "vocals")

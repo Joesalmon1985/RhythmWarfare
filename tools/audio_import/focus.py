@@ -27,8 +27,8 @@ Rules added so that there is always something to play where there is music (vers
    is judged again with relaxed rules: a voice with at least RELAXED_MIN_SHARE of the perceived power whose
    level in the unit is no more than FLOOR_DB under the loudest unit of the whole recording (the floor on how
    quiet a focus voice may be), counting as playable every event that is audible by level (MIN_REL_DB,
-   MIN_OWN_DB in chart.py) and strong for that unit (at least RELAXED_LOCAL of the unit's 90th percentile of
-   that voice's strengths, and at least RELAXED_MIN_STRENGTH). Such a stretch is marked relaxed and the chart
+   MIN_OWN_DB in chart.py) and strong for that unit (at least RELAXED_LOCAL of the median strength of that
+   voice's events there, and at least RELAXED_MIN_STRENGTH). Such a stretch is marked relaxed and the chart
    uses the same relaxed test for it (relaxed_playable()). Only units with no voice even then are gaps.
 7. Separation. A voice whose stem separated badly (sep_quality under 0.85: its attacks follow the drum hits,
    or its envelope moves with another stem) loses up to SEP_DB of prominence, so a cleanly separated voice is
@@ -57,7 +57,7 @@ GAP_DB = 12.0
 PHRASE_BARS = 8
 INF = 1e9
 RELAXED_MIN_SHARE = 0.20
-RELAXED_LOCAL = 0.5
+RELAXED_LOCAL = 0.6
 RELAXED_MIN_STRENGTH = 0.08
 FLOOR_DB = 30.0
 SEP_DB = 4.0
@@ -74,7 +74,7 @@ def relaxed_playable(evs: list) -> list:
     lv = [e for e in evs if e.rel_db >= MIN_REL_DB and e.own_db >= MIN_OWN_DB]
     if not lv:
         return []
-    ref = float(np.percentile([e.strength for e in lv], 90)) or 1e-6
+    ref = float(np.median([e.strength for e in lv])) or 1e-6
     return [e for e in lv if e.strength >= max(RELAXED_MIN_STRENGTH, RELAXED_LOCAL * ref)]
 
 
