@@ -15,6 +15,18 @@
   "decision_beat": 12.5,
   "fade_beats": 2.0
  },
+ "mix": {
+  "note": "The Ember Road's level and bass bus over the main run's mix (docs/HANDOVER.md 'Audio polish'): a gentle drive on the already bass-forward placeholders, 2 dB down to the main run's loudness.",
+  "gain_db": -2.0,
+  "bass_bus": {
+   "enabled": true,
+   "highpass_hz": 25.0,
+   "shelf_db": 0.0,
+   "drive": 0.4,
+   "pre_gain_db": 0.0,
+   "gain_db": -2.0
+  }
+ },
  "start_node": "hollow",
  "worlds": [
   {

@@ -15,6 +15,18 @@
   "decision_beat": 12.5,
   "fade_beats": 2.0
  },
+ "mix": {
+  "note": "The Mission Count's level and bass bus over the main run's mix (docs/HANDOVER.md 'Audio polish'): the owner's loops are untouched on disk; a gentle drive gives the bass harmonics a phone plays and tames its peaks (no high-pass: the sub stays), 1.5 dB down so no scene clips. C05 and C06 (a loud transient on a quiet body) and the mid-heavy C03, C09, C11 have their own bass_bus in music.json.",
+  "gain_db": -1.5,
+  "bass_bus": {
+   "enabled": true,
+   "highpass_hz": 0.0,
+   "shelf_db": 0.0,
+   "drive": 0.4,
+   "pre_gain_db": 3.0,
+   "gain_db": -4.0
+  }
+ },
  "stages": [
   {
    "id": "drums_alone",

@@ -18,7 +18,12 @@
    "id": "base.c03",
    "audio": "squadron_c03",
    "chart": "squadron_c03",
-   "treatment": "none"
+   "treatment": "none",
+   "bass_bus": {
+    "note": "C03: mid-heavy (little under 90 Hz): a low shelf for weight",
+    "shelf_hz": 80.0,
+    "shelf_db": 4.0
+   }
   },
   {
    "id": "air",
@@ -30,13 +35,29 @@
    "id": "air.c05",
    "audio": "squadron_c05",
    "chart": "squadron_c05",
-   "treatment": "none"
+   "treatment": "none",
+   "bass_bus": {
+    "note": "C05: a short loud transient on a quiet body; pre-gain into a harder drive lifts the body, the shelf adds weight under 80 Hz",
+    "drive": 0.6,
+    "pre_gain_db": 10.0,
+    "gain_db": -8.0,
+    "shelf_hz": 80.0,
+    "shelf_db": 4.0
+   }
   },
   {
    "id": "air.c06",
    "audio": "squadron_c06",
    "chart": "squadron_c06",
-   "treatment": "none"
+   "treatment": "none",
+   "bass_bus": {
+    "note": "C06: as C05",
+    "drive": 0.6,
+    "pre_gain_db": 10.0,
+    "gain_db": -9.0,
+    "shelf_hz": 80.0,
+    "shelf_db": 4.0
+   }
   },
   {
    "id": "city",
@@ -54,7 +75,12 @@
    "id": "city.c09",
    "audio": "squadron_c09",
    "chart": "squadron_c09",
-   "treatment": "none"
+   "treatment": "none",
+   "bass_bus": {
+    "note": "C09: mid-heavy: a low shelf for weight",
+    "shelf_hz": 80.0,
+    "shelf_db": 4.0
+   }
   },
   {
    "id": "city.c10",
@@ -66,7 +92,12 @@
    "id": "escape",
    "audio": "squadron_c11",
    "chart": "squadron_c11",
-   "treatment": "none"
+   "treatment": "none",
+   "bass_bus": {
+    "note": "C11: mid-heavy: a low shelf for weight",
+    "shelf_hz": 80.0,
+    "shelf_db": 4.0
+   }
   },
   {
    "id": "escape.c12",

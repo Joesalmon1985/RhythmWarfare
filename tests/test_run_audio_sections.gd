@@ -280,7 +280,7 @@ func test_a_switch_replaces_the_voice_group_without_touching_the_clock() -> void
 	a._run({"t": 16.0 * a.beat_s, "kind": "mix", "gains": d.cfg["stages"][1]["gains"]}, 0.0, 0.0)
 	a._run({"t": 16.0 * a.beat_s, "kind": "reveal"}, 0.0, 0.0)
 	var g: Dictionary = a._live_group()
-	assert_near(float(g["voices"]["bass"]["target"]), 1.0 * 0.7, 1e-6, "bass: stage gain x the section's recipe")
+	assert_near(float(g["voices"]["bass"]["target"]), 1.0 * maxf(0.7, float(d.cfg["mix"].get("recipe_bass_floor", 0.0))), 1e-6, "bass: stage gain x the section's recipe (lifted to the run's recipe_bass_floor)")
 	assert_near(float(g["voices"]["other"]["target"]), 0.45 * 0.6, 1e-6)
 	assert_near(float(g["voices"]["drums"]["target"]), 0.5 * 1.0, 1e-6)
 	var t_switch := 32.0 * a.beat_s
@@ -331,7 +331,7 @@ func test_a_hotspot_dip_sinks_the_non_drum_voices_then_restores_them() -> void:
 	a.on_event({"kind": "hotspot_commit", "t": 20.0 * a.beat_s, "outcome": {"music": "dip"}})
 	assert_eq(a._schedule.size(), n0 + 2, "a dip schedules its start and its end; any other music value schedules nothing")
 	a._run({"t": 20.0 * a.beat_s, "kind": "dip", "on": true}, 0.0, 0.0)
-	assert_near(float(v["bass"]["target"]), bass0 * RunAudio.DIP_GAIN, 1e-6, "the bass aims lower")
+	assert_near(float(v["bass"]["target"]), bass0 * a.dip_gain(), 1e-6, "the bass aims lower")
 	assert_near(float(v["drums"]["target"]), drums0, 1e-9, "the drums carry on")
 	a._run({"t": 28.0 * a.beat_s, "kind": "dip", "on": false}, 0.0, 0.0)
 	assert_near(float(v["bass"]["target"]), bass0, 1e-6, "the dip ends back at the mix")
