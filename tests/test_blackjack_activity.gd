@@ -966,4 +966,6 @@ func test_config_file() -> void:
 	var script: Variant = load(str(d["script"]))
 	assert_true(script is GDScript)
 	assert_true((script as GDScript).new() is MinigameActivity)
-	assert_eq(BlackjackActivity.new().make_view(), null)
+	var view: Control = BlackjackActivity.new().make_view()
+	assert_true(view is BlackjackView, "the activity makes its table view")
+	view.free()

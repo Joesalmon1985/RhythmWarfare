@@ -161,7 +161,7 @@ func interrupt(reason: String, t: float) -> void:
 
 
 func make_view() -> Control:
-	return null
+	return BlackjackView.new()
 
 
 func state() -> Dictionary:
