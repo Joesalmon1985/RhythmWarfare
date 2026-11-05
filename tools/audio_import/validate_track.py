@@ -2,7 +2,7 @@
 """Check a track pack against docs/TRACK_PACK_FORMAT.md. Needs only numpy and ffmpeg/ffprobe.
 
     python3 tools/audio_import/validate_track.py /home/joe/rw-audio-work/packs/<id> [--recording FILE]
-        [--sum-tol-db -24] [--quick]
+        [--sum-tol-db -30] [--quick]
 
 Exits 1 on any violation, 0 otherwise, after printing every problem found and per-voice cue counts and
 densities. The recording (for the 'stems sum to the recording' and alignment checks) is taken from
@@ -329,7 +329,7 @@ def densities(tj: dict) -> list[str]:
     return lines
 
 
-def validate(pack: str | Path, recording: str | None = None, sum_tol_db: float = -24.0,
+def validate(pack: str | Path, recording: str | None = None, sum_tol_db: float = -30.0,
              quick: bool = False) -> tuple[Report, dict]:
     pack = Path(pack).resolve()
     r = Report()
@@ -360,8 +360,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("pack")
     ap.add_argument("--recording", help="the original recording (default: source.input_path)")
-    ap.add_argument("--sum-tol-db", type=float, default=-24.0,
-                    help="max energy of (sum of stems - recording) relative to the recording, dB (default -24)")
+    ap.add_argument("--sum-tol-db", type=float, default=-30.0,
+                    help="max energy of (sum of stems - recording) relative to the recording, dB (default -30)")
     ap.add_argument("--quick", action="store_true", help="no audio decoding")
     a = ap.parse_args(argv)
     r, stats = validate(a.pack, a.recording, a.sum_tol_db, a.quick)

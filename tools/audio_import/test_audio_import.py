@@ -235,7 +235,7 @@ class ValidatorTests(unittest.TestCase):
     def test_good_pack_passes_with_audio(self):
         r, stats = validate(self.pack)
         self.assertEqual(r.errors, [])
-        self.assertLess(stats["sum_error_db"], -24)
+        self.assertLess(stats["sum_error_db"], -30)
 
     def test_rejects_each_kind_of_broken_pack(self):
         cases = {

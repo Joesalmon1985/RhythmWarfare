@@ -15,7 +15,7 @@ import numpy as np
 FFMPEG = "/usr/bin/ffmpeg"
 FFPROBE = "/usr/bin/ffprobe"
 PACK_RATE = 48000
-VORBIS_QUALITY = 6  # about 192 kbit/s stereo
+VORBIS_QUALITY = 10  # about 440 kbit/s stereo: separated stems partly cancel, so each stem's coding noise must be low for the sum to match the record (q6 -24 dB, q8 -29 dB, q10 -38 dB on this music)
 
 
 def resample_filter(rate: int) -> str:
@@ -74,11 +74,12 @@ def mono(x: np.ndarray) -> np.ndarray:
 def frame_rms(x: np.ndarray, rate: int, hop_s: float, win_s: float | None = None) -> np.ndarray:
     """RMS of mono x in frames of win_s every hop_s (centred on frame k*hop_s)."""
     m = mono(x).astype(np.float64)
-    hop = max(1, int(round(hop_s * rate)))
-    win = max(hop, int(round((win_s or hop_s) * rate)))
+    # frame k is centred on sample round(k * hop_s * rate) exactly: a whole-sample hop would drift (0.005 s at
+    # 44.1 kHz is 220.5 samples; rounding it put frames 0.2 s off by 90 s into a track)
+    win = max(1, int(round((win_s or hop_s) * rate)))
     c = np.concatenate([[0.0], np.cumsum(m * m)])
-    n = len(m) // hop + 1
-    centres = np.arange(n) * hop
+    n = int(len(m) / (hop_s * rate)) + 1
+    centres = np.round(np.arange(n) * hop_s * rate).astype(np.int64)
     a = np.clip(centres - win // 2, 0, len(m))
     b = np.clip(centres + win // 2, 0, len(m))
     return np.sqrt((c[b] - c[a]) / np.maximum(b - a, 1))

@@ -179,9 +179,11 @@ def choose_voices(mix: np.ndarray, stems: dict[str, np.ndarray], rate: int, rep:
             "notes": notes}
 
 
-def co_occurrence(events: dict[str, np.ndarray], beat_s: float, window_beats: float = 0.5) -> dict[tuple, float]:
-    """For each voice pair, the share of the rarer voice's strong events that have an event of the other voice
-    within window_beats: how often a player would be asked for both at once."""
+def co_occurrence(events: dict[str, np.ndarray], beat_s: float, window_beats: float = 0.5,
+                  count: bool = False) -> dict[tuple, float]:
+    """For each voice pair, how often one voice's events have an event of the other within window_beats: as the
+    larger of the two shares (count=False), or as the larger of the two counts (count=True: the number of presses
+    that could not both be kept if the two voices shared a thumb)."""
     out = {}
     for a, b in itertools.combinations(sorted(events), 2):
         ea, eb = np.sort(events[a]), np.sort(events[b])
@@ -191,7 +193,8 @@ def co_occurrence(events: dict[str, np.ndarray], beat_s: float, window_beats: fl
         def near(x, y):
             i = np.searchsorted(y, x)
             d = np.minimum(np.abs(x - y[np.clip(i, 0, len(y) - 1)]), np.abs(x - y[np.clip(i - 1, 0, len(y) - 1)]))
-            return float((d < window_beats * beat_s).mean())
+            hit = d < window_beats * beat_s
+            return float(hit.sum() if count else hit.mean())
         out[(a, b)] = max(near(ea, eb), near(eb, ea))
     return out
 
@@ -200,7 +203,7 @@ ORDER = ("drums", "kick", "tops", "bass", "vocals", "other", "lead", "pads", "gu
 
 
 def assign_pads(keys: list[str], co: dict[tuple, float]) -> tuple[dict[str, int], dict]:
-    """Split the four voices into two thumbs so the pairs sharing a thumb overlap least, then order: the thumb
+    """Split the four voices into two thumbs so the pairs sharing a thumb clash least (co: pair -> overlap), then order: the thumb
     holding the first voice in ORDER is the left thumb, and within a thumb the earlier voice in ORDER is the
     outer pad (1 or 4 is 'outer' only in name; the order is just stable)."""
     def c(a, b):

@@ -84,6 +84,8 @@ def write_previews(prev_dir: Path, mix: np.ndarray, voices: list[dict], cues: li
     """mix with every cue clicked (one pitch per pad), each voice solo with its clicks, and one miss demo:
     miss = {key, start_s, end_s, mute_from_s, mute_to_s}: the voice drops out like a missed cue would make it."""
     prev_dir.mkdir(parents=True, exist_ok=True)
+    for old in prev_dir.glob("*.ogg"):  # a rerun may have different pads: no stale files
+        old.unlink()
     out = []
     p = prev_dir / "mix_clicks_normal.ogg"
     encode_ogg(_norm(add_clicks(mix, rate, cues)), rate, p, out_rate=rate, quality=5)

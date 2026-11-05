@@ -143,7 +143,7 @@ def st_analyse(c: Ctx) -> None:
     for s in secs:
         a, b = float(edges[s["bar_start"]]), float(edges[s["bar_end"]])
         sections.append({"id": s["id"], "role": s["role"], "start_s": round(a, 4), "end_s": round(b, 4),
-                         "bars": s["bar_end"] - s["bar_start"], "intensity_db": s["intensity_db"]})
+                         "bars": s["bar_end"] - s["bar_start"], "intensity_db": s["intensity_db"], "parts_db": s["parts_db"]})
     rep = stem_report(mix, stems, rate, sections, drum_onsets=t[w >= 0.3])
     conf = float(np.clip(grid["share_on_grid"] * (1 - grid["drift_ms_max_abs"] / 40.0)
                          * (0.7 + 0.3 * dbt["confidence"] / max(dbt["confidence"], 0.3)), 0, 1))
@@ -195,6 +195,7 @@ def st_voices(c: Ctx) -> None:
     np.save(vdir / "backing.npy", ch["backing"])
     co = co_occurrence(strong, g.beat_s)
     pads, why = assign_pads(list(ch["voices"]), co)
+    why["basis"] = "strong onsets (provisional: the chart stage reassigns from candidate cues)"
     rep = an["stem_report"]
     info = {k: {"pad": pads[k], "label": LABELS.get(k, k.title()), "from": v["from"], "op": v["op"], "kind": v["kind"],
                 "sep_quality": sep_quality(v["from"][0], rep) if v["op"] == "stem" else 0.6}
@@ -216,14 +217,27 @@ def st_chart(c: Ctx) -> None:
     vj = c.jload("voices.json")
     va = _voice_audio(c)
     kinds = {k: v["kind"] for k, v in vj["voices"].items()}
-    pads = {k: v["pad"] for k, v in vj["voices"].items()}
     ve = {}
     for k, x in va.items():
         evs = events(x, mix, rate, kinds[k], g)
         rank(evs, kinds[k], an["sections"])
         ve[k] = evs
-    charts = build_charts(ve, pads, kinds, an["sections"], g, an["duration_s"],
-                          {k: v["sep_quality"] for k, v in vj["voices"].items()})
+    # pads from the candidate cues themselves: the hard selection does not depend on the pads, so count for each
+    # voice pair how many of their candidate presses fall within half a beat of each other (those could not all
+    # be kept on one thumb) and put the pairs that clash most on different thumbs
+    from chart import select
+    from voices import assign_pads, co_occurrence
+    sq = {k: v["sep_quality"] for k, v in vj["voices"].items()}
+    cand = select(ve, {k: 1 for k in ve}, kinds, an["sections"], g, an["duration_s"], sq, None, "hard")
+    times = {k: np.array([cu.t for cu in cand if cu.voice == k]) for k in ve}
+    co = co_occurrence(times, g.beat_s, 0.5, count=True)
+    pads, why = assign_pads(list(ve), co)
+    why["basis"] = "candidate hard cues within half a beat of each other (count)"
+    for k in vj["voices"]:
+        vj["voices"][k]["pad"] = pads[k]
+    vj["pads"] = why
+    c.jsave("voices.json", vj)
+    charts = build_charts(ve, pads, kinds, an["sections"], g, an["duration_s"], sq)
     out = {"charts": {d: [dict(cu.as_json(), voice=cu.voice, score=round(cu.score, 3), ev_t=round(cu.ev.t, 4),
                                natural=round(cu.natural, 3), kind=cu.ev.kind, dev_ms=round(cu.ev.dev_ms, 1))
                           for cu in cues] for d, cues in charts.items()},

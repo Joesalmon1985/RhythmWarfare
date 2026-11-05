@@ -113,17 +113,11 @@ def tempo_candidates(t: np.ndarray, w: np.ndarray, lo: float = 60.0, hi: float =
     return {"chosen_bpm": chosen, "candidates": cands}
 
 
-def fit_grid(t: np.ndarray, w: np.ndarray, bpm: float, sub: int = 4, tol_s: float = 0.025,
-             iters: int = 4) -> dict:
-    """Weighted least-squares constant grid t = t0 + n * P/sub over every onset near a grid line.
-
-    Returns bpm (float), t0 (time of some grid line, not yet the downbeat), residual statistics and the
-    windowed drift of the onsets against the fitted grid."""
-    P = 60.0 / bpm
-    step = P / sub
+def _ls_grid(t: np.ndarray, w: np.ndarray, bpm: float, sub: int, tol_s: float, iters: int) -> tuple[float, float, float]:
+    """Iterated weighted least squares of a constant grid with lines every 60/bpm/sub s: (t0, step, tol)."""
+    step = 60.0 / bpm / sub
     ph = np.angle((w * np.exp(2j * np.pi * t / step)).sum())
     t0 = (ph / (2 * np.pi)) * step % step
-    keep = np.ones(len(t), bool)
     for _ in range(iters):
         n = np.round((t - t0) / step)
         dev = t - (t0 + n * step)
@@ -135,6 +129,18 @@ def fit_grid(t: np.ndarray, w: np.ndarray, bpm: float, sub: int = 4, tol_s: floa
         a, b = np.linalg.lstsq(A * sw[:, None], t[keep] * sw, rcond=None)[0]
         t0, step = float(a), float(b)
         tol_s = max(0.012, min(tol_s, 4 * float(np.sqrt(np.average(dev[keep] ** 2, weights=w[keep])))))
+    return t0, step, tol_s
+
+
+def fit_grid(t: np.ndarray, w: np.ndarray, bpm: float, sub: int = 4, tol_s: float = 0.025,
+             iters: int = 4) -> dict:
+    """Weighted least-squares constant grid t = t0 + n * P/sub over every onset near a grid line.
+
+    Returns bpm (float), t0 (time of a beat line, not yet the downbeat), residual statistics and the drift:
+    in 8-bar windows a grid is fitted on its own (local tempo within 3% and phase), and the drift is where
+    that local grid sits against the global one at the window's centre, unwrapped from window to window with
+    the local tempi, so a slow tempo slide shows even when it moves the beat by more than a 16th."""
+    t0, step, tol_s = _ls_grid(t, w, bpm, sub, tol_s, iters)
     n = np.round((t - t0) / step)
     dev = t - (t0 + n * step)
     keep = np.abs(dev) < max(tol_s, 0.02)
@@ -144,23 +150,35 @@ def fit_grid(t: np.ndarray, w: np.ndarray, bpm: float, sub: int = 4, tol_s: floa
     ph = np.mod(n, sub).astype(int)
     load = np.array([w[keep & (ph == k)].sum() for k in range(sub)])
     t0 = (t0 + int(np.argmax(load)) * step) % beat
-    # drift: the phase of the onsets against the fitted grid in 8-bar windows (circular mean at the grid-line
-    # rate, unwrapped across windows, so a slow tempo slide shows even when it passes a whole 16th)
     win = 32 * beat
     drift = []
+    local_bpm = []
     if len(t):
         raw = []
-        for s in np.arange(0, t.max() + 1e-9, win):
-            m = (t >= s) & (t < s + win)
-            if m.sum() < 8:
+        for s0 in np.arange(0, t.max() + 1e-9, win):
+            m = (t >= s0) & (t < s0 + win)
+            if m.sum() < 24:  # drumless stretches: too few onsets for a local tempo; they do not judge drift
                 continue
-            z = (w[m] * np.exp(2j * np.pi * (t[m] - t0) / step)).sum()
-            if abs(z) / w[m].sum() < 0.3:
+            tl, wl = t[m], w[m]
+            cands = np.arange(bpm_fit * 0.97, bpm_fit * 1.03, 0.02)
+            lb = float(cands[int(np.argmax(comb_score(tl, wl, cands, harmonics=(4,))))])
+            lt0, lstep, _ = _ls_grid(tl, wl, lb, sub, 0.025, iters)
+            c = s0 + win / 2
+            line = lt0 + np.round((c - lt0) / lstep) * lstep
+            g = t0 + np.round((line - t0) / step) * step
+            raw.append((float(s0), float(line - g), lstep, int(m.sum()), c))
+        off = []
+        for i, r in enumerate(raw):
+            if not off:
+                off.append(r[1])
                 continue
-            raw.append((s, np.angle(z), int(m.sum())))
-        if raw:
-            un = np.unwrap([r[1] for r in raw]) / (2 * np.pi) * step
-            drift = [(round(float(r[0]), 2), round(1000 * float(u), 2), r[2]) for r, u in zip(raw, un)]
+            pr = raw[i - 1]
+            predicted = off[-1] + (r[4] - pr[4]) / step * ((pr[2] + r[2]) / 2 - step)
+            k = np.round((predicted - r[1]) / step)
+            off.append(r[1] + k * step)
+        centre = float(np.median(off)) if off else 0.0  # the global grid's own phase is arbitrary to within this
+        drift = [(round(r[0], 2), round(1000 * float(o - centre), 2), r[3]) for r, o in zip(raw, off)]
+        local_bpm = [round(60.0 / (r[2] * sub), 3) for r in raw]
     half = len(t) // 2
     halves = []
     for m in (keep & (np.arange(len(t)) < half), keep & (np.arange(len(t)) >= half)):
@@ -177,6 +195,7 @@ def fit_grid(t: np.ndarray, w: np.ndarray, bpm: float, sub: int = 4, tol_s: floa
         "drift_windows_ms": drift,
         "drift_ms_max_abs": round(max((abs(x) for x in dw), default=0.0), 2),
         "drift_ms_first_last": [dw[0], dw[-1]] if dw else None,
+        "local_bpm_range": [min(local_bpm), max(local_bpm)] if local_bpm else None,
         "bpm_first_half": round(halves[0], 4) if len(halves) == 2 else None,
         "bpm_second_half": round(halves[1], 4) if len(halves) == 2 else None,
     }
@@ -302,10 +321,26 @@ def label_sections(levels: dict[str, np.ndarray], bounds: list[int], bars: np.nd
             role = "build" if (nxt and nxt["is_drop"] and i > 0 and s["intensity"] > secs[i - 1]["intensity"] + 2
                                and not secs[i - 1]["is_drop"]) else "breakdown"
         s["role"] = role
+    # the section right before a drop is a build when it is clearly busier than the opening
+    for i, s in enumerate(secs):
+        if (s["role"] in ("intro", "breakdown") and i + 1 < len(secs) and secs[i + 1]["is_drop"]
+                and s["intensity"] > secs[0]["intensity"] + 6):
+            s["role"] = "build"
+    # consecutive sections with the same role become one
+    merged = []
+    for s in secs:
+        if merged and merged[-1]["role"] == s["role"]:
+            merged[-1]["bar_end"] = s["bar_end"]
+            merged[-1]["parts"].append(round(s["intensity"], 1))
+            merged[-1]["intensity"] = max(merged[-1]["intensity"], s["intensity"])
+        else:
+            merged.append({**s, "parts": [round(s["intensity"], 1)]})
+    secs = merged
     counts: dict[str, int] = {}
     out = []
     for s in secs:
         counts[s["role"]] = counts.get(s["role"], 0) + 1
         out.append({"id": f"{s['role']}{counts[s['role']]}", "role": s["role"], "bar_start": s["bar_start"],
-                    "bar_end": s["bar_end"], "intensity_db": round(s["intensity"], 1)})
+                    "bar_end": s["bar_end"], "intensity_db": round(s["intensity"], 1),
+                    "parts_db": s["parts"]})
     return out
