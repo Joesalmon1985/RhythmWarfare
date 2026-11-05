@@ -152,10 +152,10 @@ func _build_layout() -> void:
 
 	_info = _label(22, 0.02, 0.0, 14)
 	_status = _label(18, 0.02, 0.0, 70)
-	_focus_label = _label(44, 0.02, 0.5, 100)
-	_focus_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_next_label = _label(30, 0.02, 0.5, 160)
-	_next_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	# the instrument being played and the next one sit in the gap between the two thumbs' pads, clear of the
+	# falling cues
+	_focus_label = _centre_label(30, 0.60, 0)
+	_next_label = _centre_label(24, 0.60, 130)
 	_countdown = _label(110, 0.3, 0.5, 0)
 	_countdown.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_pause_label = _label(48, 0.3, 0.5, 0)
@@ -164,6 +164,16 @@ func _build_layout() -> void:
 	_result.anchor_left = 0.5
 	_result.anchor_right = 0.5
 	_result.grow_horizontal = Control.GROW_DIRECTION_BOTH
+
+
+## A centred, wrapping label 300 px wide: the width of the gap between pads 2 and 3.
+func _centre_label(font_size: int, anchor_y: float, offset_y: int) -> Label:
+	var l := _label(font_size, anchor_y, 0.5, offset_y)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.offset_left = -150
+	l.offset_right = 150
+	return l
 
 
 func _label(font_size: int, anchor_y: float, anchor_x: float, offset_y: int) -> Label:
