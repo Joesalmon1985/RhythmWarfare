@@ -21,6 +21,22 @@
    the focus is handed between them phrase by phrase, and where one voice clearly leads it keeps it.
    Units with no eligible voice are gaps (nothing to play).
 5. Overrides: a fixed voice for the whole track, or a voice (or none) for a section id or a time range.
+
+Rules added so that there is always something to play where there is music (version 0.3):
+6. Fallback where nobody is eligible. A unit where no voice passes step 3 (a breakdown on held strings, say)
+   is judged again with relaxed rules: a voice with at least RELAXED_MIN_SHARE of the perceived power whose
+   level in the unit is no more than FLOOR_DB under the loudest unit of the whole recording (the floor on how
+   quiet a focus voice may be), counting as playable every event that is audible by level (MIN_REL_DB,
+   MIN_OWN_DB in chart.py) and strong for that unit (at least RELAXED_LOCAL of the median strength of that
+   voice's events there, and at least RELAXED_MIN_STRENGTH). Such a stretch is marked relaxed and the chart
+   uses the same relaxed test for it (relaxed_playable()). Only units with no voice even then are gaps.
+7. Separation. A voice whose stem separated badly (sep_quality under 0.85: its attacks follow the drum hits,
+   or its envelope moves with another stem) loses up to SEP_DB of prominence, so a cleanly separated voice is
+   preferred when the two are close.
+8. Variety. Every unit a voice keeps the focus beyond MAX_RUN_BARS in one stretch costs LONG_DB when another
+   voice is eligible there, so a voice that leads a whole drop hands over for a phrase. In a breakdown a drums
+   voice loses BREAKDOWN_DRUMS_DB when a pitched voice is eligible there (the melody or the vocal is the part
+   to play, not the ticking hats).
 """
 from __future__ import annotations
 
@@ -40,6 +56,30 @@ FATIGUE_DB = CLOSE_DB + 2 * SWITCH_DB
 GAP_DB = 12.0
 PHRASE_BARS = 8
 INF = 1e9
+RELAXED_MIN_SHARE = 0.20
+RELAXED_LOCAL = 0.6
+RELAXED_MIN_STRENGTH = 0.08
+FLOOR_DB = 30.0
+SEP_DB = 4.0
+SEP_OK = 0.85
+MAX_RUN_BARS = 24
+LONG_DB = 12.0
+BREAKDOWN_DRUMS_DB = 6.0
+
+
+def relaxed_playable(evs: list) -> list:
+    """Events of one voice in one unit (or stretch) that are playable under the relaxed rules (module doc, 6):
+    audible by level, and strong for the place they are in."""
+    from chart import MIN_OWN_DB, MIN_REL_DB
+    lv = [e for e in evs if e.rel_db >= MIN_REL_DB and e.own_db >= MIN_OWN_DB]
+    if not lv:
+        return []
+    ref = float(np.median([e.strength for e in lv])) or 1e-6
+    return [e for e in lv if e.strength >= max(RELAXED_MIN_STRENGTH, RELAXED_LOCAL * ref)]
+
+
+def sep_penalty(q: float | None) -> float:
+    return 0.0 if q is None else SEP_DB * float(np.clip((SEP_OK - q) / 0.25, 0.0, 1.0))
 
 
 def half_a_weight(f: np.ndarray) -> np.ndarray:
@@ -100,10 +140,15 @@ def parse_overrides(specs: list[str], sections: list[dict], voices: list[str]) -
 
 
 def unit_table(power: dict[str, np.ndarray], events: dict[str, list], units: list[tuple[int, int]],
-               edges: np.ndarray, beat_s: float) -> list[dict]:
-    """Per unit and voice: perceived share, playable events, rate, motion, entry, prominence, eligibility."""
+               edges: np.ndarray, beat_s: float, quality: dict[str, float] | None = None,
+               kinds: dict[str, str] | None = None, sections: list[dict] | None = None) -> list[dict]:
+    """Per unit and voice: perceived share, playable events, rate, motion, entry, prominence, eligibility
+    (strict, else relaxed: module doc, 6 to 8)."""
     keys = list(power)
     P = np.array([power[k] for k in keys])
+    quality = quality or {}
+    kinds = kinds or {}
+    loudest = 10 * np.log10(max(float(P.sum(0).max()) if P.size else 0.0, 1e-20))
     rows = []
     prev_db = None
     for (a, b) in units:
@@ -113,26 +158,54 @@ def unit_table(power: dict[str, np.ndarray], events: dict[str, list], units: lis
         pw = P[:, a:b].mean(1)
         share = pw / max(pw.sum(), 1e-20)
         lvl = 10 * np.log10(pw + 1e-20)
-        row = {"bars": [a, b], "start_s": float(t0), "end_s": float(t1), "voices": {}}
-        for i, k in enumerate(keys):
-            pl = [e for e in events.get(k, []) if e.audible and e.strength >= PLAYABLE_STRENGTH and t0 <= e.t < t1]
+        role = None
+        if sections:
+            mid = (t0 + t1) / 2
+            role = next((s["role"] for s in sections if s["start_s"] <= mid < s["end_s"]), None)
+        row = {"bars": [a, b], "start_s": float(t0), "end_s": float(t1), "role": role, "voices": {}}
+
+        def judge(pl):
             # a bar counts as played if a playable event starts in it or a held note runs through it
             covered = np.zeros(nbars, bool)
             for e in pl:
                 i0 = int(np.searchsorted(edges, e.t, side="right")) - 1
                 i1 = int(np.searchsorted(edges, e.t + max(e.length, 0.0), side="left"))
                 covered[max(i0 - a, 0):min(i1 - a, nbars)] = True
+            return len(pl) >= MIN_EVENTS_PER_BAR * nbars and covered.sum() >= nbars / 2
+
+        for i, k in enumerate(keys):
+            inside = [e for e in events.get(k, []) if t0 <= e.t < t1]
+            pl = [e for e in inside if e.audible and e.strength >= PLAYABLE_STRENGTH]
+            strict = share[i] >= MIN_SHARE and judge(pl)
+            relaxed = False
+            if not strict and share[i] >= RELAXED_MIN_SHARE and lvl[i] >= loudest - FLOOR_DB:
+                rp = relaxed_playable(inside)
+                if judge(rp):
+                    relaxed, pl = True, rp
             hs = [e.height for e in pl if np.isfinite(e.height)]
             motion = float(np.mean(np.abs(np.diff(hs)) >= 0.5)) if len(hs) > 2 else 0.0
             rate = len(pl) / max(beats, 1e-9)
             entry = prev_db is not None and lvl[i] >= prev_db[i] + 10.0
-            eligible = (share[i] >= MIN_SHARE and len(pl) >= MIN_EVENTS_PER_BAR * nbars
-                        and covered.sum() >= nbars / 2)
+            pen = sep_penalty(quality.get(k))
             score = (10 * np.log10(max(share[i], 1e-6)) + ACT_DB * min(1.0, rate) + MOTION_DB * motion
-                     + (ENTRY_DB if entry else 0.0))
+                     + (ENTRY_DB if entry else 0.0) - pen)
             row["voices"][k] = {"share": round(float(share[i]), 3), "events": len(pl), "rate": round(rate, 2),
                                 "motion": round(motion, 2), "entry": bool(entry), "score": round(float(score), 2),
-                                "eligible": bool(eligible)}
+                                "eligible": bool(strict), "relaxed": relaxed, "sep_penalty": round(pen, 2)}
+        # relaxed eligibility only counts where no voice is eligible by the strict rules
+        if not any(v["eligible"] for v in row["voices"].values()):
+            for v in row["voices"].values():
+                v["eligible"] = v["relaxed"]
+        else:
+            for v in row["voices"].values():
+                v["relaxed"] = False
+        # a breakdown: a pitched voice is the part to play rather than ticking drums
+        if role == "breakdown" and any(v["eligible"] and kinds.get(k, "drums") != "drums"
+                                       for k, v in row["voices"].items()):
+            for k, v in row["voices"].items():
+                if kinds.get(k) == "drums":
+                    v["score"] = round(v["score"] - BREAKDOWN_DRUMS_DB, 2)
+                    v["breakdown_penalty"] = BREAKDOWN_DRUMS_DB
         prev_db = lvl
         rows.append(row)
     return rows
@@ -145,6 +218,7 @@ def decide(rows: list[dict], keys: list[str], min_bars: int = 8, fixed: str | No
     states = [*keys, None]
     cost = np.zeros((U, len(states)))
     close = np.zeros((U, len(states)))
+    others = np.zeros((U, len(states)))  # another voice is eligible in the unit
     for u, r in enumerate(rows):
         el = {k: v for k, v in r["voices"].items() if v["eligible"]}
         top = max((v["score"] for v in el.values()), default=0.0)
@@ -165,6 +239,7 @@ def decide(rows: list[dict], keys: list[str], min_bars: int = 8, fixed: str | No
                 # a tiny tie-break: the earlier unit of a close pair goes to the leader
                 cost[u, s] = (top - el[k]["score"]) * (1 + 1e-4 * (U - u))
                 close[u, s] = float(any(w != k and el[w]["score"] >= el[k]["score"] - CLOSE_DB for w in el))
+                others[u, s] = float(any(w != k for w in el))
             else:
                 cost[u, s] = INF
     bars = [r["bars"][1] - r["bars"][0] for r in rows]
@@ -185,6 +260,8 @@ def decide(rows: list[dict], keys: list[str], min_bars: int = 8, fixed: str | No
                         continue
                     if k is not None:
                         seg += FATIGUE_DB * close[j + 1:i, s].sum()
+                        run = np.cumsum([0, *bars[j:i - 1]])  # bars held before each unit of the stretch
+                        seg += LONG_DB * float(sum(others[j + q, s] for q in range(i - j) if run[q] >= MAX_RUN_BARS))
                     for p in range(len(states)):
                         if (p == s and j > 0) or best[j, p] >= INF:
                             continue
@@ -226,7 +303,7 @@ def stretches(rows: list[dict], choice: list[str | None], fixed: str | None,
                          "sections": secs,
                          "why": "forced" if (fixed or overrides) and any(
                              any(r["voices"][x]["eligible"] for x in r["voices"]) for r in rows[u:v + 1])
-                         else "no voice loud enough (perceived share >= 10%) with a playable part"})
+                         else "no voice loud enough with a playable part, even by the relaxed rules"})
         else:
             reasons = []
             for r in rows[u:v + 1]:
@@ -235,6 +312,8 @@ def stretches(rows: list[dict], choice: list[str | None], fixed: str | None,
                 lead = max(el, key=lambda x: el[x]["score"]) if el else None
                 if not vv[k]["eligible"]:
                     reasons.append("forced")
+                elif vv[k].get("relaxed"):
+                    reasons.append("no voice passes the strict rules here; the most prominent audible one (relaxed rules)")
                 elif lead == k:
                     second = max((x for x in el if x != k), key=lambda x: el[x]["score"], default=None)
                     if second is None:
@@ -254,6 +333,8 @@ def stretches(rows: list[dict], choice: list[str | None], fixed: str | None,
             sh = {x: float(np.average([r["voices"][x]["share"] for r in rows[u:v + 1]], weights=w)) for x in rows[u]["voices"]}
             ru = max((x for x in sh if x != k), key=lambda x: sh[x], default=None)
             out.append({"start_s": round(a, 4), "end_s": round(b, 4), "voice": k,
+                        "relaxed_spans": [[round(r["start_s"], 4), round(r["end_s"], 4)] for r in rows[u:v + 1]
+                                          if r["voices"][k].get("relaxed")],
                         "bars": rows[v]["bars"][1] - rows[u]["bars"][0], "bar_range": [rows[u]["bars"][0], rows[v]["bars"][1]],
                         "sections": secs, "share": round(sh[k], 3), "runner_up": ru,
                         "runner_up_share": round(sh[ru], 3) if ru else None, "why": reasons})

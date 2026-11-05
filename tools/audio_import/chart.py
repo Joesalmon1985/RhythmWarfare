@@ -515,44 +515,189 @@ def stretch_events(evs: list[Event], st: dict, duration: float, B: float) -> lis
             and 1.0 <= e.t <= duration - 0.6]
 
 
+# ceilings in cues per beat of focus time (Go Back, the reference chart, is under all of them): per stretch, by
+# kind, in a drop (other section roles scale by ROLE_FACTOR); and over the whole chart, where the densest
+# stretches are thinned (by score, whole positions of the cycle first) until the chart is under it
+CAP = {"hard": {"drums": 1.45, "pitched": 1.0}, "normal": {"drums": 1.0, "pitched": 0.75},
+       "easy": {"drums": 0.5, "pitched": 0.45}}
+CEILING = {"hard": 0.84, "normal": 0.67, "easy": 0.41}
+ONE_PAD_MIN = 4  # a stretch with at least this many cues, all on one pad, is spread over two (spread_one_pad)
+
+
+def apply_relaxed(voice_events: dict[str, list[Event]], focus: list[dict]) -> int:
+    """Mark as audible the events that the focus stage counted as playable under its relaxed rules (focus.py,
+    rule 6) in the units of a stretch where it used them; returns how many were marked."""
+    from focus import relaxed_playable
+    n = 0
+    for st in focus:
+        for a, b in st.get("relaxed_spans") or []:
+            for e in relaxed_playable([e for e in voice_events[st["voice"]] if a <= e.t < b]):
+                if not e.audible:
+                    e.audible = True
+                    e.extra["relaxed"] = True
+                    n += 1
+    return n
+
+
+def _water_cap(counts: list[int], beats: list[float], ceiling: float) -> float | None:
+    """The largest per-beat cap X with sum(min(n_i, X * beats_i)) <= ceiling * sum(beats), or None if the
+    chart is already under the ceiling."""
+    total = ceiling * sum(beats)
+    if sum(counts) <= total:
+        return None
+    lo, hi = 0.0, max(n / b for n, b in zip(counts, beats) if b > 0)
+    for _ in range(40):
+        mid = (lo + hi) / 2
+        if sum(min(n, mid * b) for n, b in zip(counts, beats)) > total:
+            hi = mid
+        else:
+            lo = mid
+    return lo
+
+
+def spread_one_pad(cues: list["Cue"]) -> tuple[list["Cue"], int]:
+    """A stretch whose cues (at least ONE_PAD_MIN) all sit on one pad is spread over two by position in the bar:
+    off the beat, else beats 2 and 4, else the second half of the bar, go to the inner pad of the other thumb
+    when the part is on the left thumb (they are the higher side), or the on-beat side goes to the inner pad of
+    the left thumb when it is on the right. Position in the bar decides, so a repeated phrase gets the same pads.
+    Returns the cues and how many stretches were spread."""
+    by: dict[int, list[Cue]] = {}
+    for c in cues:
+        by.setdefault(c.stretch, []).append(c)
+    n = 0
+    for si, cs in by.items():
+        pads = {c.pad for c in cs}
+        if len(cs) < ONE_PAD_MIN or len(pads) != 1:
+            continue
+        pad = pads.pop()
+        pos = np.array([c.ev.pos if c.ev is not None else 0.0 for c in cs])
+        for side in (np.abs(pos - np.round(pos)) > 1e-6, (np.floor(pos + 1e-6) % 2) == 1, (pos % 4) >= 2 - 1e-6):
+            if 0.2 <= side.mean() <= 0.8:
+                break
+        else:
+            side = np.arange(len(cs)) % 2 == 1  # no metric contrast at all: every other cue
+        for c, hi in zip(cs, side):
+            if pad <= 2 and hi:
+                c.pad = 3
+            elif pad >= 3 and not hi:
+                c.pad = 2
+        n += 1
+    return cues, n
+
+
 def build_charts(voice_events: dict[str, list[Event]], focus: list[dict], kinds: dict[str, str],
-                 sections: list[dict], grid: Grid, duration: float, sep_quality: dict[str, float]
-                 ) -> tuple[dict[str, list[Cue]], list[dict]]:
-    """Charts easy / normal / hard and, per stretch, the pad layout (see layout.py) with its reasons."""
+                 sections: list[dict], grid: Grid, duration: float, sep_quality: dict[str, float],
+                 sound_check=None, stats: dict | None = None) -> tuple[dict[str, list[Cue]], list[dict]]:
+    """Charts easy / normal / hard and, per stretch, the pad layout (see layout.py) with its reasons.
+
+    sound_check(cue_json) -> problem or None: the validator's audibility test (validate_track.SoundLevels);
+    every cue that fails it is removed (holds first become taps) and counted in stats["sound_check_removed"]."""
     from layout import layout_stretch
     B = grid.beat_s
     charts: dict[str, list[Cue]] = {}
     layouts: list[dict] = []
     pad_of: dict[tuple[int, float], int] = {}
     pool: set | None = None
+    stats = stats if stats is not None else {}
+    stats.setdefault("sound_check_removed", {})
+    stats.setdefault("sound_check_shortened", {})
+    stats.setdefault("ceiling_cap_per_beat", {})
+    stats.setdefault("one_pad_spread", {})
+    beats_of = [(st["end_s"] - st["start_s"]) / B for st in focus]
     for diff in DIFFICULTIES:
-        cues: list[Cue] = []
+        cand: dict[int, list[Event]] = {}
+        quota0: dict[int, float] = {}
+        cap0: dict[int, float] = {}
         for si, st in enumerate(focus):
             v = st["voice"]
             kind = kinds[v]
-            evs = [e for e in stretch_events(voice_events[v], st, duration, B)
-                   if pool is None or (si, round(e.t, 4)) in pool]
-            beats = (st["end_s"] - st["start_s"]) / B
-            r = RATE[diff]["drums" if kind == "drums" else "pitched"] * ROLE_FACTOR.get(stretch_role(st, sections), 0.85)
-            picked = pattern_pick(evs, int(round(r * beats)), MIN_GAP[diff], CYCLE_BEATS.get(kind, 8), B)
-            if diff == "hard":
-                lay = layout_stretch(picked, kind, B)
-                lay["stretch"] = si
-                layouts.append(lay)
-                for e, p in zip(picked, lay["pads"]):
-                    pad_of[(si, round(e.t, 4))] = p
-            for e in picked:
-                cues.append(Cue(t=cue_time(e, grid), pad=pad_of[(si, round(e.t, 4))], dur=0.0,
-                                conf=confidence(e, sep_quality.get(v, 0.5)), score=e.score, voice=v,
-                                natural=max(0.0, min(e.length, st["end_s"] - 0.01 - cue_time(e, grid))),
-                                ev=e, prio=e.score, stretch=si))
-        cues.sort(key=lambda c: (c.t, c.pad))
-        cues = resolve(cues, B, duration, {"bass", "melodic", "vocal"}, kinds)
+            fam = "drums" if kind == "drums" else "pitched"
+            cand[si] = [e for e in stretch_events(voice_events[v], st, duration, B)
+                        if pool is None or (si, round(e.t, 4)) in pool]
+            role = ROLE_FACTOR.get(stretch_role(st, sections), 0.85)
+            quota0[si] = RATE[diff][fam] * role * beats_of[si]
+            cap0[si] = CAP[diff][fam] * beats_of[si]
+
+        def build(limits: dict[int, float]) -> list[Cue]:
+            cues: list[Cue] = []
+            for si, st in enumerate(focus):
+                v = st["voice"]
+                cyc = CYCLE_BEATS.get(kinds[v], 8)
+                q = quota0[si] if si not in limits else min(quota0[si], np.floor(limits[si] + 1e-9))
+                picked = pattern_pick(cand[si], int(round(q)), MIN_GAP[diff], cyc, B)
+                if si in limits and len(picked) > limits[si] + 1e-9:  # the 1.2 slack of pattern_pick: by score
+                    n = int(np.floor(limits[si] + 1e-9))
+                    drop = {id(e) for e in sorted(picked, key=lambda e: (e.score, -e.t))[:len(picked) - n]}
+                    picked = [e for e in picked if id(e) not in drop]
+                if diff == "hard":
+                    lay = layout_stretch(picked, kinds[v], B)
+                    lay["stretch"] = si
+                    lays[si] = lay
+                    for e, p in zip(picked, lay["pads"]):
+                        pad_of[(si, round(e.t, 4))] = p
+                for e in picked:
+                    cues.append(Cue(t=cue_time(e, grid), pad=pad_of[(si, round(e.t, 4))], dur=0.0,
+                                    conf=confidence(e, sep_quality.get(v, 0.5)), score=e.score, voice=v,
+                                    natural=max(0.0, min(e.length, st["end_s"] - 0.01 - cue_time(e, grid))),
+                                    ev=e, prio=e.score, stretch=si))
+            cues.sort(key=lambda c: (c.t, c.pad))
+            return resolve(cues, B, duration, {"bass", "melodic", "vocal"}, kinds)
+
+        lays: dict[int, dict] = {}
+        limits: dict[int, float] = {}
+        cues = build(limits)
+        for _ in range(3):
+            # ceilings, judged on the playable chart: each stretch under its cap, the chart under CEILING
+            counts = [0] * len(focus)
+            for c in cues:
+                counts[c.stretch] += 1
+            new = {si: cap0[si] for si in range(len(focus)) if counts[si] > cap0[si] + 1e-9}
+            capped = [min(n, cap0[si]) for si, n in enumerate(counts)]
+            x = _water_cap(capped, beats_of, CEILING[diff])
+            if x is not None:
+                for si in range(len(focus)):
+                    if counts[si] > x * beats_of[si] + 1e-9:
+                        new[si] = min(new.get(si, cap0[si]), x * beats_of[si], limits.get(si, np.inf))
+            new = {si: v for si, v in new.items() if v < limits.get(si, np.inf) - 1e-9 or si not in limits}
+            if not new:
+                break
+            limits.update(new)
+            cues = build(limits)
+        stats["ceiling_cap_per_beat"][diff] = {str(si): round(v / beats_of[si], 3) for si, v in limits.items()}
+        if diff == "hard":
+            layouts = [lays[si] for si in sorted(lays)]
+        cues, stats["one_pad_spread"][diff] = spread_one_pad(cues)
+        if stats["one_pad_spread"][diff]:
+            cues.sort(key=lambda c: (c.t, c.pad))
+            cues = resolve(cues, B, duration, {"bass", "melodic", "vocal"}, kinds)
+        if sound_check is not None:
+            cues, removed, shortened = self_check(cues, sound_check)
+            stats["sound_check_removed"][diff] = removed
+            stats["sound_check_shortened"][diff] = shortened
         charts[diff] = cues
         pool = {(c.stretch, round(c.ev.t, 4)) for c in cues}
     for lay in layouts:
         lay.pop("pads", None)
     return charts, layouts
+
+
+def self_check(cues: list[Cue], sound_check) -> tuple[list[Cue], int, int]:
+    """The last word before a chart is written: every cue must pass the validator's audibility test. A hold
+    that fails becomes a tap and is tested again; a tap that fails is removed. Removing a cue or shortening a
+    hold never breaks a playability rule. Returns (cues, removed, shortened)."""
+    keep, removed, shortened = [], 0, 0
+    for c in cues:
+        if sound_check(c.as_json()) is None:
+            keep.append(c)
+            continue
+        if c.dur > 0:
+            c.dur = 0.0
+            if sound_check(c.as_json()) is None:
+                keep.append(c)
+                shortened += 1
+                continue
+        removed += 1
+    return keep, removed, shortened
 
 
 def resolve(cues: list[Cue], beat_s: float, duration: float, hold_kinds: set[str], kinds: dict[str, str]) -> list[Cue]:

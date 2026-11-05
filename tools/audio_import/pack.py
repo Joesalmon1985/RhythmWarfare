@@ -10,6 +10,7 @@ track rewrites track.json in seconds.
 from __future__ import annotations
 
 import json
+import os
 import shutil
 from pathlib import Path
 
@@ -28,17 +29,16 @@ def common_scale(arrays: list[np.ndarray]) -> float:
     return 1.0 if peak <= HEADROOM else HEADROOM / peak
 
 
-def write_stems(pack_dir: Path, voices: list[dict], backing: list[dict], rate: int, stamp: str) -> dict:
-    """Encode every stem unless stems/.made_from already says they came from the same voice files.
-    Returns {"gain", "scale", "frames"}."""
-    stems_dir = pack_dir / "stems"
+def write_stems(stems_dir: Path, voices: list[dict], backing: list[dict], rate: int, stamp: str) -> dict:
+    """Encode every stem into stems_dir unless its .made_from already says they came from the same voice files.
+    Returns {"stamp", "gain", "scale", "frames"}."""
     made = stems_dir / ".made_from"
     if made.is_file():
         old = json.loads(made.read_text())
         if old.get("stamp") == stamp and all((stems_dir / f"{e['key']}.ogg").is_file() for e in voices + backing):
             return old
     if stems_dir.exists():
-        shutil.rmtree(stems_dir)
+        shutil.rmtree(stems_dir)  # never write into a file in place: it may be a hard link shared with the pack
     stems_dir.mkdir(parents=True)
     scale = common_scale([v["audio"] for v in voices + backing])
     for e in voices + backing:
@@ -52,9 +52,60 @@ def write_stems(pack_dir: Path, voices: list[dict], backing: list[dict], rate: i
     return info
 
 
-def write_pack(pack_dir: Path, meta: dict, voices: list[dict], backing: list[dict], rate: int, stamp: str) -> dict:
-    """voices: {key, label, kind, audio}; backing: {key, audio}; meta: the rest of track.json. Returns the json."""
-    info = write_stems(pack_dir, voices, backing, rate, stamp)
+def _link(a: Path, b: Path) -> None:
+    try:
+        os.link(a, b)
+    except OSError:
+        shutil.copy2(a, b)
+
+
+def pack_stems(pack_dir: Path, src_dir: Path, keys: list[str], folded: list[str]) -> dict:
+    """The pack's stems from the encoded stems of every voice (src_dir, as stem_src or an older pack keeps
+    them): each kept voice is the same file (a hard link, no re-encoding); the backing is the same file too
+    unless voices are folded into it, then it is decoded, summed with them and encoded once. Skipped when the
+    pack already has stems made from the same source and fold."""
+    src = json.loads((src_dir / ".made_from").read_text())
+    stamp = json.dumps({"src": src["stamp"], "folded": sorted(folded)})
+    stems_dir = pack_dir / "stems"
+    made = stems_dir / ".made_from"
+    if made.is_file():
+        old = json.loads(made.read_text())
+        if old.get("stamp") == stamp and all((stems_dir / f"{k}.ogg").is_file() for k in [*keys, "backing"]):
+            return old
+    tmp = pack_dir / "stems.new"
+    if tmp.exists():
+        shutil.rmtree(tmp)
+    tmp.mkdir(parents=True)
+    for k in keys:
+        _link(src_dir / f"{k}.ogg", tmp / f"{k}.ogg")
+    if folded:
+        x, _ = decode(src_dir / "backing.ogg", rate=PACK_RATE)
+        for k in folded:
+            y, _ = decode(src_dir / f"{k}.ogg", rate=PACK_RATE)
+            n = min(len(x), len(y))
+            x = x[:n] + y[:n]
+        peak = float(np.abs(x).max())
+        if peak > 1.0:  # cannot happen when the stems summed under full scale before; refuse rather than clip
+            raise RuntimeError(f"folded backing peaks at {peak:.3f}")
+        encode_ogg(x, PACK_RATE, tmp / "backing.ogg", out_rate=PACK_RATE)
+        n_b = len(decode(tmp / "backing.ogg", rate=PACK_RATE)[0])
+        if abs(n_b - src["frames"]) / PACK_RATE > 0.002:
+            raise RuntimeError(f"folded backing is {n_b} frames, the voices {src['frames']}")
+    else:
+        _link(src_dir / "backing.ogg", tmp / "backing.ogg")
+    info = {**{k: src[k] for k in ("scale", "gain", "frames")}, "stamp": stamp, "folded": sorted(folded)}
+    (tmp / ".made_from").write_text(json.dumps(info))
+    if stems_dir.exists():
+        shutil.rmtree(stems_dir)
+    tmp.rename(stems_dir)
+    return info
+
+
+def write_pack(pack_dir: Path, meta: dict, voices: list[dict], backing: list[dict], src_dir: Path,
+               folded: list[str]) -> dict:
+    """voices: {key, label, kind}; backing: [{key: backing}]; meta: the rest of track.json. Returns the json."""
+    pack_dir.mkdir(parents=True, exist_ok=True)
+    info = pack_stems(pack_dir, src_dir, [v["key"] for v in voices], folded)
     gain = info["gain"]
     out_v = [{"key": v["key"], "label": v["label"], "kind": v["kind"], "stem": f"stems/{v['key']}.ogg", "gain": gain}
              for v in voices]

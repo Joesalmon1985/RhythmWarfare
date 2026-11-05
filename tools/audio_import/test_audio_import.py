@@ -248,7 +248,12 @@ class FocusTests(unittest.TestCase):
         ev = {"bass": synth_events(ts[::4], [33, 35] * (len(ts) // 8)), "drums": synth_events(ts, [11, 12] * (len(ts) // 2))}
         st, rows = focus_of({"bass": bass, "drums": drums}, ev, self.N)
         self.assertTrue(st)
-        self.assertTrue(all(f["voice"] == "drums" for f in st), st)
+        # drums lead every phrase; the bass may only get a phrase by the variety rule (a stretch over
+        # MAX_RUN_BARS hands over), never as the most prominent
+        self.assertTrue(all(r["voices"]["drums"]["score"] > r["voices"]["bass"]["score"] + 6 for r in rows))
+        self.assertEqual(st[0]["voice"], "drums")
+        self.assertGreaterEqual(sum(f["bars"] for f in st if f["voice"] == "drums"), 24)
+        self.assertTrue(all("most prominent" not in w for f in st if f["voice"] == "bass" for w in f["why"]))
         self.assertGreater(rows[0]["voices"]["drums"]["share"], rows[0]["voices"]["bass"]["share"])
 
     def scored_rows(self, scores: dict[str, list[float]], bars_per_unit=8):
@@ -274,10 +279,11 @@ class FocusTests(unittest.TestCase):
                     self.assertEqual(f["bar_range"][0] % 8, 0)
 
     def test_no_flicker(self):
-        # a leads by 6.5 to 9 dB with phrase-to-phrase noise: b never comes near enough, no switch
+        # a leads by 6.5 to 9 dB with phrase-to-phrase noise: b never comes near enough, no switch (within
+        # MAX_RUN_BARS: beyond it a long stretch hands over, test_long_stretch_hands_over)
         rng = np.random.default_rng(4)
-        rows = self.scored_rows({"a": [0.0] * 10, "b": list(-rng.uniform(6.5, 9.0, 10))})
-        self.assertEqual(decide(rows, ["a", "b"]), ["a"] * 10)
+        rows = self.scored_rows({"a": [0.0] * 3, "b": list(-rng.uniform(6.5, 9.0, 3))})
+        self.assertEqual(decide(rows, ["a", "b"]), ["a"] * 3)
         # leadership changing back and forth by small margins inside a close pair hands over at most once a phrase
         rng = np.random.default_rng(2)
         rows = self.scored_rows({"a": list(rng.normal(0, 0.5, 10)), "b": list(rng.normal(-1, 0.5, 10))}, bars_per_unit=4)
@@ -499,3 +505,219 @@ class ValidatorTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# ---------------------------------------------------------------- hardening rules (version 0.3)
+
+class AudibilityTests(unittest.TestCase):
+    """Rule A: the chart stage and the validator share one audibility test; no cue the validator rejects."""
+
+    def test_charter_never_emits_a_cue_the_validator_rejects(self):
+        from validate_track import SoundLevels
+        dur = 20.0
+        g = Grid(bpm=BPM_T, first_downbeat=0.0)
+        ts = [t for t in np.arange(1.0, dur - 1, B_T / 2)]
+        # the drum voice sounds only in the first half; its events go on into the silent half (bad separation,
+        # or a detector fooled by bleed), all claimed audible
+        x = tone_hits([t for t in ts if t < 10.0], 3000, 0.5, dur, decay=0.02)
+        mix = x + tone_hits(ts, 200, 0.3, dur, decay=0.2)
+        evs = synth_events(ts, [10.0, 11.0] * (len(ts) // 2 + 1))
+        for e in evs:
+            e.kind, e.feat = "kick", [0.0, 0.0]
+        focus = [{"start_s": 0.0, "end_s": dur, "voice": "drums"}]
+        lv = SoundLevels({"drums": x}, mix, RATE)
+        stats = {}
+        charts, _ = build_charts({"drums": evs}, focus, {"drums": "drums"}, [], g, dur, {"drums": 1.0},
+                                 sound_check=lambda c: lv.problem(c, 1.5), stats=stats)
+        self.assertGreater(stats["sound_check_removed"]["hard"], 0)
+        for d, cues in charts.items():
+            self.assertTrue(cues, d)
+            for c in cues:
+                self.assertIsNone(lv.problem(c.as_json()), (d, c.t))
+                self.assertLess(c.t, 10.2)
+
+    def test_self_check_turns_a_failing_hold_into_a_tap(self):
+        from chart import self_check
+        cues = [Cue(t=2.0, pad=1, dur=2.0, conf=1, score=1, voice="v"), Cue(t=5.0, pad=2, dur=0, conf=1, score=1, voice="v")]
+        chk = lambda c: "hold" if c["dur"] > 0 else ("silent" if c["t"] > 4 else None)  # noqa: E731
+        out, removed, shortened = self_check(cues, chk)
+        self.assertEqual([(c.t, c.dur) for c in out], [(2.0, 0.0)])
+        self.assertEqual((removed, shortened), (1, 1))
+
+
+class TempoTests(unittest.TestCase):
+    """Rule B: a constant tempo with sparse and drumless stretches is not flagged; a slide still is."""
+
+    def test_sparse_and_drumless_stretches_do_not_raise_a_false_alarm(self):
+        from analysis import constant_tempo_ok
+        bpm = 175.0
+        B = 60 / bpm
+        rng = np.random.default_rng(3)
+        times = []
+        for k in range(int(150 / B)):
+            t = 0.3 + k * B
+            if 50 < t < 100:
+                continue  # a drumless breakdown
+            if 30 < t < 50 and rng.random() < 0.6:
+                continue  # sparse drums: a local reading is noisy here
+            times += [t, t + B / 2] if rng.random() < 0.5 else [t]
+        times = np.array(times) + rng.normal(0, 0.004, len(times))
+        tt, w = pick_onsets(click_track(times, noise=0.002), RATE)
+        g = fit_grid(tt, w, tempo_candidates(tt, w)["chosen_bpm"])
+        self.assertTrue(constant_tempo_ok(g), g["drift_windows_ms"])
+        self.assertLess(g["drift_windows_judged"], g["drift_windows_total"])
+
+    def test_slide_still_detected(self):
+        from analysis import constant_tempo_ok
+        t, b = 0.5, []
+        while t < 90:
+            b.append(t)
+            t += 60 / (170 + 8 * t / 90)
+        tt, w = pick_onsets(click_track(b), RATE)
+        g = fit_grid(tt, w, tempo_candidates(tt, w)["chosen_bpm"])
+        self.assertFalse(constant_tempo_ok(g))
+
+
+class FocusRuleTests(unittest.TestCase):
+    """Rule C: something to play wherever a voice is clearly audible; clean separation preferred; long stretches
+    hand over; a breakdown prefers the pitched voice; voices never played are folded into the backing."""
+    N = 32
+
+    def test_held_voice_with_soft_attacks_gets_the_focus_where_nothing_else_plays(self):
+        dur = self.N * BAR_T + 0.5
+        ts = [t for t in np.arange(0, self.N * BAR_T - 1e-9, B_T)]
+        pad_ = tone_hits(ts, 440, 0.3, dur, decay=0.5)
+        drums = tone_hits([t for t in ts if t < 16 * BAR_T], 3000, 0.6, dur, decay=0.02)
+        soft = synth_events(ts, [57, 60, 64, 62] * (len(ts) // 4 + 1), strength=0.2)
+        for e in soft:
+            e.audible = False  # under the attack threshold of the strict rules
+        dev = synth_events([t for t in ts if t < 16 * BAR_T], [10, 11] * len(ts))
+        st, rows = focus_of({"drums": drums, "pad": pad_}, {"drums": dev, "pad": soft}, self.N)
+        late = [f for f in st if f["bar_range"][1] > 16]
+        self.assertTrue(late, st)
+        self.assertEqual(late[-1]["voice"], "pad")
+        self.assertTrue(late[-1]["relaxed_spans"])
+        self.assertTrue(any(r["voices"]["pad"]["relaxed"] for r in rows))
+
+    def test_quiet_voice_under_the_floor_gives_a_gap(self):
+        from focus import FLOOR_DB
+        dur = self.N * BAR_T + 0.5
+        ts = [t for t in np.arange(0, self.N * BAR_T - 1e-9, B_T)]
+        loud = tone_hits([t for t in ts if t < 16 * BAR_T], 3000, 0.6, dur, decay=0.02)
+        faint = tone_hits([t for t in ts if t >= 16 * BAR_T], 440, 0.6 * 10 ** (-(FLOOR_DB + 10) / 20), dur, decay=0.5)
+        ev = {"d": synth_events([t for t in ts if t < 16 * BAR_T], [10, 11] * len(ts)),
+              "p": synth_events([t for t in ts if t >= 16 * BAR_T], [60, 62] * len(ts), strength=0.2)}
+        for e in ev["p"]:
+            e.audible = False
+        st, _ = focus_of({"d": loud, "p": faint}, ev, self.N)
+        self.assertTrue(all(f["bar_range"][1] <= 16 for f in st), st)
+
+    def rows(self, scores, quality=None):
+        return FocusTests.scored_rows(FocusTests(), scores)
+
+    def test_badly_separated_voice_loses_when_close(self):
+        from focus import sep_penalty
+        self.assertEqual(sep_penalty(1.0), 0.0)
+        self.assertEqual(sep_penalty(0.9), 0.0)
+        self.assertGreater(sep_penalty(0.61), 3.0)
+
+    def test_long_stretch_hands_over(self):
+        from focus import MAX_RUN_BARS
+        rows = self.rows({"a": [0.0] * 8, "b": [-10.0] * 8})
+        ch = decide(rows, ["a", "b"])
+        self.assertIn("b", ch)
+        run = longest = 0
+        for k in ch:
+            run = run + 8 if k == "a" else 0
+            longest = max(longest, run)
+        self.assertLessEqual(longest, MAX_RUN_BARS + 8)
+        # with nobody else eligible the leader keeps it
+        self.assertEqual(decide(self.rows({"a": [0.0] * 8, "b": [-99.0] * 8}), ["a", "b"]), ["a"] * 8)
+
+    def test_breakdown_prefers_the_pitched_voice(self):
+        from focus import BREAKDOWN_DRUMS_DB
+        dur = 16 * BAR_T + 0.5
+        ts = [t for t in np.arange(0, 16 * BAR_T - 1e-9, B_T / 2)]
+        drums = tone_hits(ts, 3000, 0.5, dur, decay=0.02)
+        lead = tone_hits(ts[::2], 660, 0.5, dur, decay=0.1)
+        ev = {"drums": synth_events(ts, [10, 11] * len(ts)), "lead": synth_events(ts[::2], [64, 67] * len(ts))}
+        edges = np.arange(17) * BAR_T
+        out = {}
+        for role in ("drop", "breakdown"):
+            secs = [{"id": "s", "role": role, "start_s": 0.0, "end_s": float(edges[-1])}]
+            units = make_units(secs, edges)
+            power = {k: perceived_bar_power(x, RATE, edges) for k, x in {"drums": drums, "lead": lead}.items()}
+            rows = unit_table(power, ev, units, edges, B_T, kinds={"drums": "drums", "lead": "melodic"}, sections=secs)
+            out[role] = rows[0]["voices"]["drums"]["score"] - rows[0]["voices"]["lead"]["score"]
+        self.assertAlmostEqual(out["drop"] - out["breakdown"], BREAKDOWN_DRUMS_DB, delta=0.01)
+
+    def test_voice_never_played_is_folded_into_the_backing(self):
+        from import_track import folded_voices
+        vj = {"voices": {"kick": {}, "tops": {}, "bass": {}}}
+        fj = {"focus": [{"voice": "tops"}, {"voice": "bass"}]}
+        ch = {"charts": {"hard": [{"voice": "tops"}]}}
+        self.assertEqual(folded_voices(vj, fj, ch), ["kick"])
+        self.assertEqual(len(folded_voices(vj, {"focus": []}, {"charts": {}})), 2)  # one voice always stays
+
+
+class PadAndDensityTests(unittest.TestCase):
+    """Rules D and E: no rhythm on one pad; density under the ceilings."""
+
+    def test_one_pad_stretch_is_spread_by_position_in_the_bar(self):
+        from chart import spread_one_pad
+        ts = [1.0 + i * B_T / 2 for i in range(32)]
+        evs = synth_events(ts, [40] * 32, t0=1.0)
+        cues = [Cue(t=e.t, pad=2, dur=0, conf=1, score=1, voice="v", ev=e, stretch=0) for e in evs]
+        out, n = spread_one_pad(cues)
+        self.assertEqual(n, 1)
+        self.assertEqual({c.pad for c in out}, {2, 3})
+        by_pos = {}
+        for c in out:
+            by_pos.setdefault(c.ev.pos % 4, set()).add(c.pad)
+        self.assertTrue(all(len(p) == 1 for p in by_pos.values()), by_pos)  # same place in the bar, same pad
+
+    def test_dense_drums_stay_under_the_ceilings(self):
+        from chart import CAP, CEILING
+        dur = 60.0
+        g = Grid(bpm=BPM_T, first_downbeat=0.0)
+        ts = [t for t in np.arange(1.0, dur - 1, B_T / 4)]  # every 16th, all strong
+        evs = synth_events(ts, [6.0, 7.0, 8.0, 9.0] * len(ts))
+        for i, e in enumerate(evs):
+            e.kind = ("kick", "hat", "snare", "hat")[i % 4]
+            e.feat = [[20.0, -20.0], [-20.0, 20.0], [0.0, 0.0], [-20.0, 20.0]][i % 4]
+            e.score = 0.5 + 0.1 * (i % 4 == 0)
+        focus = [{"start_s": 0.0, "end_s": dur, "voice": "drums"}]
+        secs = [{"id": "drop1", "role": "drop", "start_s": 0.0, "end_s": dur}]
+        charts, _ = build_charts({"drums": evs}, focus, {"drums": "drums"}, secs, g, dur, {"drums": 1.0})
+        beats = dur / B_T
+        for d, cues in charts.items():
+            self.assertLessEqual(len(cues) / beats, min(CAP[d]["drums"], CEILING[d]) + 1e-6, d)
+            self.assertEqual(playability_violations([c.as_json() for c in cues], BPM_T), [], d)
+
+
+class BatchTests(unittest.TestCase):
+    """Rule G: verdicts, and ids that would collide."""
+
+    def test_verdicts(self):
+        from import_track import verdict
+        self.assertEqual(verdict(None, [], 0), "ok")
+        self.assertEqual(verdict(None, ["tempo confidence 0.4"], 0), "ok with warnings")
+        self.assertEqual(verdict(None, ["validator: 2 violation(s)"], 2), "FAILED")
+        self.assertEqual(verdict("ValueError: x", [], None), "FAILED")
+
+    def test_two_recordings_with_one_id_do_not_overwrite_each_other(self):
+        import argparse
+        from import_track import Ctx
+        with tempfile.TemporaryDirectory() as d:
+            a = argparse.Namespace(out=d, id=None, model="htdemucs", focus_auto=False, min_bars=None, focus=None,
+                                   focus_at=None)
+            meta = {"artist": "A", "title": "T", "id": "a_t", "probe": {}}
+            f1, f2 = Path(d) / "one.flac", Path(d) / "two.flac"
+            taken = set()
+            c1 = Ctx(f1, a, meta=meta, taken=taken)
+            taken.add(c1.id)
+            c2 = Ctx(f2, a, meta=meta, taken=taken)
+            self.assertEqual((c1.id, c2.id, c2.renamed_from), ("a_t", "a_t_2", "a_t"))
+            # a later run, alone: the second file still finds its own id, the first keeps its own
+            self.assertEqual(Ctx(f2, a, meta=meta, taken=set()).id, "a_t_2")
+            self.assertEqual(Ctx(f1, a, meta=meta, taken=set()).id, "a_t")
