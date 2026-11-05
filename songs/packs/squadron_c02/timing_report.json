@@ -1,0 +1,316 @@
+{
+ "timing": {
+  "header_bpm": 120.0,
+  "profile": "squadron_x1",
+  "drum_fit": {
+   "hits": 34,
+   "matched": 34,
+   "fitted_bpm": 140.014,
+   "fitted_offset_ms": 7.67,
+   "max_abs_ms": 33.14,
+   "mean_ms": 7.32,
+   "median_ms": 6.29,
+   "within_limit": 1.0,
+   "worst_hits": [
+    {
+     "beat": 8.5,
+     "error_ms": 33.1
+    },
+    {
+     "beat": 0.5,
+     "error_ms": 32.7
+    },
+    {
+     "beat": 12.0,
+     "error_ms": 32.1
+    }
+   ]
+  },
+  "bass": [
+   {
+    "beat": 0.0,
+    "pitch": 29,
+    "error_ms": 0.9,
+    "how": "first sound in the file"
+   },
+   {
+    "beat": 4.0,
+    "pitch": 41,
+    "error_ms": 14.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.25,
+    "pitch": 34,
+    "error_ms": -42.9,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.5,
+    "pitch": 37,
+    "error_ms": 39.1,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.75,
+    "pitch": 34,
+    "error_ms": 3.1,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 9.25,
+    "pitch": 34,
+    "error_ms": -42.9,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 9.5,
+    "pitch": 46,
+    "error_ms": 5.1,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 9.75,
+    "pitch": 39,
+    "error_ms": -12.9,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 10.25,
+    "pitch": 34,
+    "error_ms": -42.9,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 10.5,
+    "pitch": 37,
+    "error_ms": 39.1,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 10.75,
+    "pitch": 34,
+    "error_ms": 1.1,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 11.25,
+    "pitch": 34,
+    "error_ms": -42.9,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 11.5,
+    "pitch": 47,
+    "error_ms": 7.1,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 11.75,
+    "pitch": 34,
+    "error_ms": 17.1,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 12.25,
+    "pitch": 34,
+    "error_ms": -42.9,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 12.5,
+    "pitch": 37,
+    "error_ms": 37.1,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 12.75,
+    "pitch": 34,
+    "error_ms": 3.1,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 13.25,
+    "pitch": 34,
+    "error_ms": -42.9,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 13.5,
+    "pitch": 46,
+    "error_ms": 5.1,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 13.75,
+    "pitch": 39,
+    "error_ms": -12.9,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 14.25,
+    "pitch": 34,
+    "error_ms": -42.9,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 14.5,
+    "pitch": 37,
+    "error_ms": 7.1,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 14.75,
+    "pitch": 34,
+    "error_ms": 1.1,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 15.25,
+    "pitch": 34,
+    "error_ms": -42.9,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 15.5,
+    "pitch": 44,
+    "error_ms": -10.9,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 15.75,
+    "pitch": 39,
+    "error_ms": 19.1,
+    "how": "largest spectral change near the note start"
+   }
+  ],
+  "tempo_verified": "strict",
+  "bass_timing": {
+   "mode": "audio_checked",
+   "why": "the audio bass detector agrees with the bass MIDI (median 15.6 ms)",
+   "median_error_ms": 15.6,
+   "notes_measured": 26,
+   "notes_out_of_line": 8
+  }
+ },
+ "import_report": {
+  "set": "C02",
+  "drum_notes": {
+   "counts": {
+    "36": 12,
+    "39": 4,
+    "40": 22,
+    "42": 32,
+    "43": 10,
+    "46": 36
+   },
+   "mode": "standard",
+   "kick": [
+    36
+   ],
+   "snare": [
+    38,
+    40
+   ],
+   "why": "the standard notes: kick 36, snare 38/40"
+  },
+  "decisions": [
+   "WARNING bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 8.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 9.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 10.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 11.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 12.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 13.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 14.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 15.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}]"
+  ],
+  "rejected": [],
+  "tempo": {
+   "profile": "squadron_x1",
+   "verified": "strict",
+   "tried": [
+    {
+     "profile": "squadron_x1",
+     "fit": {
+      "hits": 34,
+      "matched": 34,
+      "fitted_bpm": 140.014,
+      "fitted_offset_ms": 7.67,
+      "max_abs_ms": 33.14,
+      "mean_ms": 7.32,
+      "median_ms": 6.29,
+      "within_limit": 1.0,
+      "worst_hits": [
+       {
+        "beat": 8.5,
+        "error_ms": 33.1
+       },
+       {
+        "beat": 0.5,
+        "error_ms": 32.7
+       },
+       {
+        "beat": 12.0,
+        "error_ms": 32.1
+       }
+      ]
+     },
+     "verified": "strict"
+    }
+   ]
+  }
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 356696,
+   "loop_frames": 329143,
+   "tail_frames": 27553,
+   "padded_frames": 0,
+   "tail_audible_s": 0.449,
+   "laps_folded": 1,
+   "gain_db": -3.5,
+   "peak_db": -9.38,
+   "rms_db": -23.58,
+   "source_seconds": 7.4312,
+   "source_file": "Beat Shaper - C02-Drums.wav"
+  },
+  "bass": {
+   "frames_in": 330820,
+   "loop_frames": 329143,
+   "tail_frames": 1677,
+   "padded_frames": 0,
+   "tail_audible_s": 0.035,
+   "laps_folded": 1,
+   "gain_db": 11.0,
+   "peak_db": -1.11,
+   "rms_db": -13.67,
+   "source_seconds": 6.8921,
+   "source_file": "Beat Shaper - C02-Bass.wav"
+  },
+  "other": {
+   "frames_in": 363827,
+   "loop_frames": 329143,
+   "tail_frames": 34684,
+   "padded_frames": 0,
+   "tail_audible_s": 0.723,
+   "laps_folded": 1,
+   "gain_db": 12.0,
+   "peak_db": -12.43,
+   "rms_db": -28.2,
+   "source_seconds": 7.5797,
+   "source_file": "Beat Shaper - C02-Synth.wav"
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 12,
+   "bass": 6
+  },
+  "2": {
+   "drums": 15,
+   "bass": 7
+  },
+  "3": {
+   "drums": 18,
+   "bass": 8
+  },
+  "4": {
+   "drums": 21,
+   "bass": 10
+  }
+ },
+ "chart_problems": []
+}

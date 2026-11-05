@@ -1,0 +1,231 @@
+{
+ "timing": {
+  "header_bpm": 120.0,
+  "profile": "squadron_x1",
+  "drum_fit": {
+   "hits": 34,
+   "matched": 34,
+   "fitted_bpm": 139.923,
+   "fitted_offset_ms": 4.97,
+   "max_abs_ms": 37.71,
+   "mean_ms": 6.84,
+   "median_ms": 7.43,
+   "within_limit": 1.0,
+   "worst_hits": [
+    {
+     "beat": 7.0,
+     "error_ms": -33.0
+    },
+    {
+     "beat": 1.0,
+     "error_ms": -32.6
+    },
+    {
+     "beat": 2.25,
+     "error_ms": -31.3
+    }
+   ]
+  },
+  "bass": [
+   {
+    "beat": 0.0,
+    "pitch": 43,
+    "error_ms": 0.6,
+    "how": "first sound in the file"
+   },
+   {
+    "beat": 4.0,
+    "pitch": 43,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 6.0,
+    "pitch": 40,
+    "error_ms": -6.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.0,
+    "pitch": 31,
+    "error_ms": 6.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.5,
+    "pitch": 43,
+    "error_ms": -6.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 9.5,
+    "pitch": 43,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 11.0,
+    "pitch": 41,
+    "error_ms": 32.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 12.0,
+    "pitch": 31,
+    "error_ms": -6.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 12.5,
+    "pitch": 43,
+    "error_ms": -14.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 13.5,
+    "pitch": 43,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 14.5,
+    "pitch": 43,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 15.5,
+    "pitch": 41,
+    "error_ms": -12.0,
+    "how": "largest spectral change near the note start"
+   }
+  ],
+  "tempo_verified": "strict",
+  "bass_timing": {
+   "mode": "audio_checked",
+   "why": "the audio bass detector agrees with the bass MIDI (median 6.0 ms)",
+   "median_error_ms": 6.0,
+   "notes_measured": 9,
+   "notes_out_of_line": 1
+  }
+ },
+ "import_report": {
+  "set": "C01",
+  "drum_notes": {
+   "counts": {
+    "36": 22,
+    "40": 12,
+    "42": 30,
+    "43": 10,
+    "46": 20
+   },
+   "mode": "standard",
+   "kick": [
+    36
+   ],
+   "snare": [
+    38,
+    40
+   ],
+   "why": "the standard notes: kick 36, snare 38/40"
+  },
+  "decisions": [
+   "WARNING bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 4.0, \"pitch\": 43, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}]"
+  ],
+  "rejected": [],
+  "tempo": {
+   "profile": "squadron_x1",
+   "verified": "strict",
+   "tried": [
+    {
+     "profile": "squadron_x1",
+     "fit": {
+      "hits": 34,
+      "matched": 34,
+      "fitted_bpm": 139.923,
+      "fitted_offset_ms": 4.97,
+      "max_abs_ms": 37.71,
+      "mean_ms": 6.84,
+      "median_ms": 7.43,
+      "within_limit": 1.0,
+      "worst_hits": [
+       {
+        "beat": 7.0,
+        "error_ms": -33.0
+       },
+       {
+        "beat": 1.0,
+        "error_ms": -32.6
+       },
+       {
+        "beat": 2.25,
+        "error_ms": -31.3
+       }
+      ]
+     },
+     "verified": "strict"
+    }
+   ]
+  }
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 356293,
+   "loop_frames": 329143,
+   "tail_frames": 27150,
+   "padded_frames": 0,
+   "tail_audible_s": 0.44,
+   "laps_folded": 1,
+   "gain_db": -4.0,
+   "peak_db": -9.95,
+   "rms_db": -22.38,
+   "source_seconds": 7.4228,
+   "source_file": "Beat Shaper - C01-Drums.wav"
+  },
+  "bass": {
+   "frames_in": 325418,
+   "loop_frames": 329143,
+   "tail_frames": 0,
+   "padded_frames": 3725,
+   "tail_audible_s": 0.0,
+   "laps_folded": 0,
+   "gain_db": 11.5,
+   "peak_db": -0.59,
+   "rms_db": -13.29,
+   "source_seconds": 6.7795,
+   "source_file": "Beat Shaper - C01-Bass.wav"
+  },
+  "other": {
+   "frames_in": 392669,
+   "loop_frames": 329143,
+   "tail_frames": 63526,
+   "padded_frames": 0,
+   "tail_audible_s": 1.323,
+   "laps_folded": 1,
+   "gain_db": 12.0,
+   "peak_db": -13.62,
+   "rms_db": -27.85,
+   "source_seconds": 8.1806,
+   "source_file": "Beat Shaper - C01-Synth.wav"
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 14,
+   "bass": 7
+  },
+  "2": {
+   "drums": 17,
+   "bass": 8
+  },
+  "3": {
+   "drums": 20,
+   "bass": 10
+  },
+  "4": {
+   "drums": 23,
+   "bass": 12
+  }
+ },
+ "chart_problems": []
+}

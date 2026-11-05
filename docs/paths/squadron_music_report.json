@@ -1,0 +1,1110 @@
+{
+ "path": "squadron",
+ "bpm": 140,
+ "max_error_ms": 40,
+ "stage_gains_drums_bass_synth": {
+  "stage0": [
+   1.0,
+   0.0,
+   0.0
+  ],
+  "stage1": [
+   0.7,
+   1.0,
+   0.0
+  ],
+  "stage2": [
+   1.0,
+   0.9,
+   0.5
+  ],
+  "stage3": [
+   0.55,
+   1.0,
+   0.7
+  ]
+ },
+ "scenes": {
+  "C01": {
+   "pack": "squadron_c01",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -9.95,
+    "bass": -0.59,
+    "other": -13.62
+   },
+   "stem_rms_dbfs": {
+    "drums": -22.38,
+    "bass": -13.29,
+    "other": -27.85
+   },
+   "bass_db_max_noclip": 11.79,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -9.95,
+     "rms_dbfs": -22.38
+    },
+    "stage1": {
+     "peak_dbfs": -0.52,
+     "rms_dbfs": -13.0
+    },
+    "stage2": {
+     "peak_dbfs": -0.97,
+     "rms_dbfs": -13.5
+    },
+    "stage3": {
+     "peak_dbfs": -0.59,
+     "rms_dbfs": -13.02
+    }
+   },
+   "bass_share_below_90hz": 0.424,
+   "bass_vs_drums_rms_db": {
+    "stage1": 12.19,
+    "stage2": 8.18,
+    "stage3": 14.29
+   },
+   "bass_vs_drums_rms_db_stems": 9.09,
+   "scene": "C01",
+   "drums_db": -4,
+   "bass_db": 11.5,
+   "synth_db": 12,
+   "default_12ms": "refused",
+   "kick": {
+    "hits": 22,
+    "matched": 22,
+    "worst_error_ms": 37.7,
+    "worst_error_after_offset_ms": 32.7
+   },
+   "snare": {
+    "hits": 12,
+    "matched": 12,
+    "worst_error_ms": 33.0,
+    "worst_error_after_offset_ms": 38.0
+   },
+   "fitted_bpm": 139.923,
+   "fitted_offset_ms": 4.97,
+   "worst_error_ms": 37.71,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": true,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 6.0 ms)",
+    "median_error_ms": 6.0,
+    "notes_measured": 9,
+    "notes_out_of_line": 1
+   },
+   "warnings": [
+    "bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 4.0, \"pitch\": 43, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}]"
+   ],
+   "import_seconds": 0.4,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C01 --set C01 --id squadron_c01 --max-error-ms 40 --drums-db -4 --bass-db 11.5 --synth-db 12",
+   "bass_db_headroom_unused": 0.29
+  },
+  "C02": {
+   "pack": "squadron_c02",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -9.38,
+    "bass": -1.11,
+    "other": -12.43
+   },
+   "stem_rms_dbfs": {
+    "drums": -23.58,
+    "bass": -13.67,
+    "other": -28.2
+   },
+   "bass_db_max_noclip": 11.81,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -9.38,
+     "rms_dbfs": -23.58
+    },
+    "stage1": {
+     "peak_dbfs": -0.5,
+     "rms_dbfs": -13.45
+    },
+    "stage2": {
+     "peak_dbfs": -1.06,
+     "rms_dbfs": -14.03
+    },
+    "stage3": {
+     "peak_dbfs": -0.79,
+     "rms_dbfs": -13.47
+    }
+   },
+   "bass_share_below_90hz": 0.621,
+   "bass_vs_drums_rms_db": {
+    "stage1": 13.01,
+    "stage2": 9.0,
+    "stage3": 15.1
+   },
+   "bass_vs_drums_rms_db_stems": 9.91,
+   "scene": "C02",
+   "drums_db": -3.5,
+   "bass_db": 11,
+   "synth_db": 12,
+   "default_12ms": "refused",
+   "kick": {
+    "hits": 12,
+    "matched": 12,
+    "worst_error_ms": 33.1,
+    "worst_error_after_offset_ms": 25.5
+   },
+   "snare": {
+    "hits": 22,
+    "matched": 22,
+    "worst_error_ms": 17.3,
+    "worst_error_after_offset_ms": 25.0
+   },
+   "fitted_bpm": 140.014,
+   "fitted_offset_ms": 7.67,
+   "worst_error_ms": 33.14,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": true,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 15.6 ms)",
+    "median_error_ms": 15.6,
+    "notes_measured": 26,
+    "notes_out_of_line": 8
+   },
+   "warnings": [
+    "bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 8.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 9.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 10.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 11.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 12.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 13.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 14.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 15.25, \"pitch\": 34, \"error_ms\": -42.9, \"how\": \"largest spectral change near the note start\"}]"
+   ],
+   "import_seconds": 0.4,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C02 --set C02 --id squadron_c02 --max-error-ms 40 --drums-db -3.5 --bass-db 11 --synth-db 12",
+   "bass_db_headroom_unused": 0.81
+  },
+  "C03": {
+   "pack": "squadron_c03",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -10.32,
+    "bass": -1.79,
+    "other": -13.76
+   },
+   "stem_rms_dbfs": {
+    "drums": -28.24,
+    "bass": -19.7,
+    "other": -27.84
+   },
+   "bass_db_max_noclip": 10.99,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -10.32,
+     "rms_dbfs": -28.24
+    },
+    "stage1": {
+     "peak_dbfs": -0.56,
+     "rms_dbfs": -19.33
+    },
+    "stage2": {
+     "peak_dbfs": -0.85,
+     "rms_dbfs": -19.66
+    },
+    "stage3": {
+     "peak_dbfs": -0.83,
+     "rms_dbfs": -19.19
+    }
+   },
+   "bass_share_below_90hz": 0.208,
+   "bass_vs_drums_rms_db": {
+    "stage1": 11.64,
+    "stage2": 7.63,
+    "stage3": 13.74
+   },
+   "bass_vs_drums_rms_db_stems": 8.54,
+   "scene": "C03",
+   "drums_db": -3.5,
+   "bass_db": 9.5,
+   "synth_db": 14,
+   "default_12ms": "loose",
+   "kick": {
+    "hits": 4,
+    "matched": 4,
+    "worst_error_ms": 31.4,
+    "worst_error_after_offset_ms": 20.7
+   },
+   "snare": {
+    "hits": 4,
+    "matched": 4,
+    "worst_error_ms": 8.3,
+    "worst_error_after_offset_ms": 4.8
+   },
+   "fitted_bpm": 140.003,
+   "fitted_offset_ms": 10.7,
+   "worst_error_ms": 31.43,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": false,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 18.0 ms)",
+    "median_error_ms": 18.0,
+    "notes_measured": 4,
+    "notes_out_of_line": 1
+   },
+   "warnings": [
+    "bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 4.0, \"pitch\": 43, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}]",
+    "the MIDI ends at quarter 15.75: taken as the 16-quarter (16 game beat) phrase"
+   ],
+   "import_seconds": 0.3,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C03 --set C03 --id squadron_c03 --max-error-ms 40 --drums-db -3.5 --bass-db 9.5 --synth-db 14",
+   "bass_db_headroom_unused": 1.49
+  },
+  "C04": {
+   "pack": "squadron_c04",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -6.54,
+    "bass": -1.13,
+    "other": -14.61
+   },
+   "stem_rms_dbfs": {
+    "drums": -22.81,
+    "bass": -13.58,
+    "other": -28.16
+   },
+   "bass_db_max_noclip": 12.33,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -6.54,
+     "rms_dbfs": -22.81
+    },
+    "stage1": {
+     "peak_dbfs": -0.53,
+     "rms_dbfs": -13.38
+    },
+    "stage2": {
+     "peak_dbfs": -0.52,
+     "rms_dbfs": -13.94
+    },
+    "stage3": {
+     "peak_dbfs": -0.84,
+     "rms_dbfs": -13.4
+    }
+   },
+   "bass_share_below_90hz": 0.602,
+   "bass_vs_drums_rms_db": {
+    "stage1": 12.34,
+    "stage2": 8.32,
+    "stage3": 14.43
+   },
+   "bass_vs_drums_rms_db_stems": 9.24,
+   "scene": "C04",
+   "drums_db": -2.5,
+   "bass_db": 11.5,
+   "synth_db": 10,
+   "default_12ms": "refused",
+   "kick": {
+    "hits": 10,
+    "matched": 10,
+    "worst_error_ms": 26.3,
+    "worst_error_after_offset_ms": 21.1
+   },
+   "snare": {
+    "hits": 18,
+    "matched": 18,
+    "worst_error_ms": 33.6,
+    "worst_error_after_offset_ms": 38.8
+   },
+   "fitted_bpm": 140.006,
+   "fitted_offset_ms": 5.18,
+   "worst_error_ms": 33.57,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": true,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 4.0 ms)",
+    "median_error_ms": 4.0,
+    "notes_measured": 3,
+    "notes_out_of_line": 1
+   },
+   "warnings": [
+    "bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 8.0, \"pitch\": 40, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}]"
+   ],
+   "import_seconds": 0.3,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C04 --set C04 --id squadron_c04 --max-error-ms 40 --drums-db -2.5 --bass-db 11.5 --synth-db 10",
+   "bass_db_headroom_unused": 0.83
+  },
+  "C05": {
+   "pack": "squadron_c05",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -4.5,
+    "bass": -1.15,
+    "other": -17.04
+   },
+   "stem_rms_dbfs": {
+    "drums": -21.59,
+    "bass": -24.79,
+    "other": -31.21
+   },
+   "bass_db_max_noclip": -1.15,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -4.5,
+     "rms_dbfs": -21.59
+    },
+    "stage1": {
+     "peak_dbfs": -0.62,
+     "rms_dbfs": -21.64
+    },
+    "stage2": {
+     "peak_dbfs": -1.17,
+     "rms_dbfs": -19.99
+    },
+    "stage3": {
+     "peak_dbfs": -0.67,
+     "rms_dbfs": -22.28
+    }
+   },
+   "bass_share_below_90hz": 0.313,
+   "bass_vs_drums_rms_db": {
+    "stage1": -0.11,
+    "stage2": -4.12,
+    "stage3": 1.98
+   },
+   "bass_vs_drums_rms_db_stems": -3.21,
+   "scene": "C05",
+   "drums_db": 0,
+   "bass_db": -2,
+   "synth_db": 9.5,
+   "default_12ms": "loose",
+   "kick": {
+    "hits": 8,
+    "matched": 8,
+    "worst_error_ms": 8.1,
+    "worst_error_after_offset_ms": 4.6
+   },
+   "snare": {
+    "hits": 18,
+    "matched": 18,
+    "worst_error_ms": 33.7,
+    "worst_error_after_offset_ms": 39.3
+   },
+   "fitted_bpm": 140.198,
+   "fitted_offset_ms": 5.61,
+   "worst_error_ms": 33.71,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": false,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 7.1 ms)",
+    "median_error_ms": 7.1,
+    "notes_measured": 28,
+    "notes_out_of_line": 1
+   },
+   "warnings": [
+    "bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 2.0, \"pitch\": 43, \"error_ms\": -52.0, \"how\": \"largest spectral change near the note start\"}]"
+   ],
+   "import_seconds": 0.5,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C05 --set C05 --id squadron_c05 --max-error-ms 40 --drums-db 0 --bass-db -2 --synth-db 9.5",
+   "bass_db_headroom_unused": 0.85
+  },
+  "C06": {
+   "pack": "squadron_c06",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -1.07,
+    "bass": -0.83,
+    "other": -16.98
+   },
+   "stem_rms_dbfs": {
+    "drums": -23.17,
+    "bass": -23.34,
+    "other": -29.8
+   },
+   "bass_db_max_noclip": -0.47,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -1.07,
+     "rms_dbfs": -23.17
+    },
+    "stage1": {
+     "peak_dbfs": -0.8,
+     "rms_dbfs": -21.46
+    },
+    "stage2": {
+     "peak_dbfs": -0.53,
+     "rms_dbfs": -20.45
+    },
+    "stage3": {
+     "peak_dbfs": -0.62,
+     "rms_dbfs": -21.74
+    }
+   },
+   "bass_share_below_90hz": 0.27,
+   "bass_vs_drums_rms_db": {
+    "stage1": 2.93,
+    "stage2": -1.08,
+    "stage3": 5.02
+   },
+   "bass_vs_drums_rms_db_stems": -0.17,
+   "scene": "C06",
+   "drums_db": -1,
+   "bass_db": -1,
+   "synth_db": 9,
+   "default_12ms": "strict",
+   "kick": {
+    "hits": 6,
+    "matched": 6,
+    "worst_error_ms": 6.0,
+    "worst_error_after_offset_ms": 4.1
+   },
+   "snare": {
+    "hits": 24,
+    "matched": 24,
+    "worst_error_ms": 8.1,
+    "worst_error_after_offset_ms": 4.1
+   },
+   "fitted_bpm": 139.954,
+   "fitted_offset_ms": 5.12,
+   "worst_error_ms": 8.14,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": false,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 8.0 ms)",
+    "median_error_ms": 8.0,
+    "notes_measured": 24,
+    "notes_out_of_line": 1
+   },
+   "warnings": [
+    "bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 14.5, \"pitch\": 45, \"error_ms\": -50.0, \"how\": \"largest spectral change near the note start\"}]"
+   ],
+   "import_seconds": 0.6,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C06 --set C06 --id squadron_c06 --max-error-ms 40 --drums-db -1 --bass-db -1 --synth-db 9",
+   "bass_db_headroom_unused": 0.53
+  },
+  "C07": {
+   "pack": "squadron_c07",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -8.57,
+    "bass": -1.31,
+    "other": -16.66
+   },
+   "stem_rms_dbfs": {
+    "drums": -27.83,
+    "bass": -12.06,
+    "other": -27.93
+   },
+   "bass_db_max_noclip": 13.51,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -8.57,
+     "rms_dbfs": -27.83
+    },
+    "stage1": {
+     "peak_dbfs": -0.62,
+     "rms_dbfs": -12.0
+    },
+    "stage2": {
+     "peak_dbfs": -0.61,
+     "rms_dbfs": -12.79
+    },
+    "stage3": {
+     "peak_dbfs": -0.76,
+     "rms_dbfs": -11.97
+    }
+   },
+   "bass_share_below_90hz": 0.788,
+   "bass_vs_drums_rms_db": {
+    "stage1": 18.87,
+    "stage2": 14.86,
+    "stage3": 20.97
+   },
+   "bass_vs_drums_rms_db_stems": 15.77,
+   "scene": "C07",
+   "drums_db": -3,
+   "bass_db": 12.5,
+   "synth_db": 11,
+   "default_12ms": "strict",
+   "kick": {
+    "hits": 2,
+    "matched": 2,
+    "worst_error_ms": 7.4,
+    "worst_error_after_offset_ms": 2.9
+   },
+   "snare": {
+    "hits": 8,
+    "matched": 8,
+    "worst_error_ms": 7.3,
+    "worst_error_after_offset_ms": 2.4
+   },
+   "fitted_bpm": 139.955,
+   "fitted_offset_ms": 4.89,
+   "worst_error_ms": 7.43,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": false,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 10.0 ms)",
+    "median_error_ms": 10.0,
+    "notes_measured": 6,
+    "notes_out_of_line": 1
+   },
+   "warnings": [
+    "bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 7.0, \"pitch\": 27, \"error_ms\": 52.0, \"how\": \"largest spectral change near the note start\"}]"
+   ],
+   "import_seconds": 0.3,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C07 --set C07 --id squadron_c07 --max-error-ms 40 --drums-db -3 --bass-db 12.5 --synth-db 11",
+   "bass_db_headroom_unused": 1.01
+  },
+  "C08": {
+   "pack": "squadron_c08",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -9.48,
+    "bass": -0.95,
+    "other": -18.48
+   },
+   "stem_rms_dbfs": {
+    "drums": -24.34,
+    "bass": -10.98,
+    "other": -32.62
+   },
+   "bass_db_max_noclip": 12.65,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -9.48,
+     "rms_dbfs": -24.34
+    },
+    "stage1": {
+     "peak_dbfs": -0.59,
+     "rms_dbfs": -10.89
+    },
+    "stage2": {
+     "peak_dbfs": -0.78,
+     "rms_dbfs": -11.67
+    },
+    "stage3": {
+     "peak_dbfs": -0.5,
+     "rms_dbfs": -10.93
+    }
+   },
+   "bass_share_below_90hz": 0.833,
+   "bass_vs_drums_rms_db": {
+    "stage1": 16.46,
+    "stage2": 12.45,
+    "stage3": 18.55
+   },
+   "bass_vs_drums_rms_db_stems": 13.36,
+   "scene": "C08",
+   "drums_db": -5,
+   "bass_db": 12,
+   "synth_db": 8,
+   "default_12ms": "refused",
+   "kick": {
+    "hits": 16,
+    "matched": 16,
+    "worst_error_ms": 33.3,
+    "worst_error_after_offset_ms": 26.6
+   },
+   "snare": {
+    "hits": 14,
+    "matched": 14,
+    "worst_error_ms": 33.0,
+    "worst_error_after_offset_ms": 39.7
+   },
+   "fitted_bpm": 139.89,
+   "fitted_offset_ms": 6.66,
+   "worst_error_ms": 33.29,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": true,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 7.0 ms)",
+    "median_error_ms": 7.0,
+    "notes_measured": 6,
+    "notes_out_of_line": 1
+   },
+   "warnings": [
+    "bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 6.0, \"pitch\": 41, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}]"
+   ],
+   "import_seconds": 0.4,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C08 --set C08 --id squadron_c08 --max-error-ms 40 --drums-db -5 --bass-db 12 --synth-db 8",
+   "bass_db_headroom_unused": 0.65
+  },
+  "C09": {
+   "pack": "squadron_c09",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -7.33,
+    "bass": -1.11,
+    "other": -12.98
+   },
+   "stem_rms_dbfs": {
+    "drums": -20.43,
+    "bass": -17.17,
+    "other": -28.96
+   },
+   "bass_db_max_noclip": 7.31,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -7.33,
+     "rms_dbfs": -20.43
+    },
+    "stage1": {
+     "peak_dbfs": -0.65,
+     "rms_dbfs": -16.21
+    },
+    "stage2": {
+     "peak_dbfs": -1.07,
+     "rms_dbfs": -15.97
+    },
+    "stage3": {
+     "peak_dbfs": -0.5,
+     "rms_dbfs": -16.43
+    }
+   },
+   "bass_share_below_90hz": 0.184,
+   "bass_vs_drums_rms_db": {
+    "stage1": 6.35,
+    "stage2": 2.34,
+    "stage3": 8.45
+   },
+   "bass_vs_drums_rms_db_stems": 3.26,
+   "scene": "C09",
+   "drums_db": -1,
+   "bass_db": 6.5,
+   "synth_db": 12.5,
+   "default_12ms": "refused",
+   "kick": {
+    "hits": 16,
+    "matched": 16,
+    "worst_error_ms": 33.0,
+    "worst_error_after_offset_ms": 15.4
+   },
+   "snare": {
+    "hits": 0,
+    "matched": 0,
+    "worst_error_ms": 0.0,
+    "worst_error_after_offset_ms": 0.0
+   },
+   "fitted_bpm": 140.188,
+   "fitted_offset_ms": 21.4,
+   "worst_error_ms": 33.0,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": true,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 5.1 ms)",
+    "median_error_ms": 5.1,
+    "notes_measured": 12,
+    "notes_out_of_line": 1
+   },
+   "warnings": [
+    "bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 15.5, \"pitch\": 31, \"error_ms\": -74.0, \"how\": \"largest spectral change near the note start\"}]",
+    "the standard notes: kick 36, snare 38/40; no snare note (38/40) in this set, the chart has kick cues only"
+   ],
+   "import_seconds": 0.3,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C09 --set C09 --id squadron_c09 --max-error-ms 40 --drums-db -1 --bass-db 6.5 --synth-db 12.5",
+   "bass_db_headroom_unused": 0.81
+  },
+  "C10": {
+   "pack": "squadron_c10",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -10.88,
+    "bass": -0.85,
+    "other": -14.72
+   },
+   "stem_rms_dbfs": {
+    "drums": -27.26,
+    "bass": -11.6,
+    "other": -28.09
+   },
+   "bass_db_max_noclip": 13.05,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -10.88,
+     "rms_dbfs": -27.26
+    },
+    "stage1": {
+     "peak_dbfs": -0.59,
+     "rms_dbfs": -11.53
+    },
+    "stage2": {
+     "peak_dbfs": -0.58,
+     "rms_dbfs": -12.32
+    },
+    "stage3": {
+     "peak_dbfs": -0.59,
+     "rms_dbfs": -11.51
+    }
+   },
+   "bass_share_below_90hz": 0.695,
+   "bass_vs_drums_rms_db": {
+    "stage1": 18.76,
+    "stage2": 14.74,
+    "stage3": 20.85
+   },
+   "bass_vs_drums_rms_db_stems": 15.66,
+   "scene": "C10",
+   "drums_db": -4.5,
+   "bass_db": 12.5,
+   "synth_db": 13.5,
+   "default_12ms": "loose",
+   "kick": {
+    "hits": 6,
+    "matched": 6,
+    "worst_error_ms": 8.0,
+    "worst_error_after_offset_ms": 9.0
+   },
+   "snare": {
+    "hits": 8,
+    "matched": 8,
+    "worst_error_ms": 33.7,
+    "worst_error_after_offset_ms": 32.8
+   },
+   "fitted_bpm": 139.882,
+   "fitted_offset_ms": -0.95,
+   "worst_error_ms": 33.71,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": false,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 4.0 ms)",
+    "median_error_ms": 4.0,
+    "notes_measured": 19,
+    "notes_out_of_line": 1
+   },
+   "warnings": [
+    "bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 14.5, \"pitch\": 28, \"error_ms\": -42.0, \"how\": \"largest spectral change near the note start\"}]"
+   ],
+   "import_seconds": 0.5,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C10 --set C10 --id squadron_c10 --max-error-ms 40 --drums-db -4.5 --bass-db 12.5 --synth-db 13.5",
+   "bass_db_headroom_unused": 0.55
+  },
+  "C11": {
+   "pack": "squadron_c11",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -11.53,
+    "bass": -0.75,
+    "other": -17.91
+   },
+   "stem_rms_dbfs": {
+    "drums": -25.27,
+    "bass": -13.96,
+    "other": -28.17
+   },
+   "bass_db_max_noclip": 6.95,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -11.53,
+     "rms_dbfs": -25.27
+    },
+    "stage1": {
+     "peak_dbfs": -0.51,
+     "rms_dbfs": -13.78
+    },
+    "stage2": {
+     "peak_dbfs": -1.25,
+     "rms_dbfs": -14.44
+    },
+    "stage3": {
+     "peak_dbfs": -0.55,
+     "rms_dbfs": -13.8
+    }
+   },
+   "bass_share_below_90hz": 0.08,
+   "bass_vs_drums_rms_db": {
+    "stage1": 14.41,
+    "stage2": 10.4,
+    "stage3": 16.5
+   },
+   "bass_vs_drums_rms_db_stems": 11.31,
+   "scene": "C11",
+   "drums_db": -4,
+   "bass_db": 6.5,
+   "synth_db": 10,
+   "default_12ms": "strict",
+   "kick": {
+    "hits": 16,
+    "matched": 16,
+    "worst_error_ms": 7.3,
+    "worst_error_after_offset_ms": 3.6
+   },
+   "snare": {
+    "hits": 0,
+    "matched": 0,
+    "worst_error_ms": 0.0,
+    "worst_error_after_offset_ms": 0.0
+   },
+   "fitted_bpm": 139.947,
+   "fitted_offset_ms": 4.63,
+   "worst_error_ms": 7.29,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": false,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 10.0 ms)",
+    "median_error_ms": 10.0,
+    "notes_measured": 13,
+    "notes_out_of_line": 1
+   },
+   "warnings": [
+    "bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 4.0, \"pitch\": 35, \"error_ms\": -54.0, \"how\": \"largest spectral change near the note start\"}]",
+    "the standard notes: kick 36, snare 38/40; no snare note (38/40) in this set, the chart has kick cues only"
+   ],
+   "import_seconds": 0.4,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C11 --set C11 --id squadron_c11 --max-error-ms 40 --drums-db -4 --bass-db 6.5 --synth-db 10",
+   "bass_db_headroom_unused": 0.45
+  },
+  "C12": {
+   "pack": "squadron_c12",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -4.59,
+    "bass": -0.93,
+    "other": -14.75
+   },
+   "stem_rms_dbfs": {
+    "drums": -20.38,
+    "bass": -13.18,
+    "other": -28.03
+   },
+   "bass_db_max_noclip": 10.63,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -4.59,
+     "rms_dbfs": -20.38
+    },
+    "stage1": {
+     "peak_dbfs": -0.95,
+     "rms_dbfs": -12.88
+    },
+    "stage2": {
+     "peak_dbfs": -1.0,
+     "rms_dbfs": -13.27
+    },
+    "stage3": {
+     "peak_dbfs": -1.11,
+     "rms_dbfs": -12.95
+    }
+   },
+   "bass_share_below_90hz": 0.548,
+   "bass_vs_drums_rms_db": {
+    "stage1": 10.3,
+    "stage2": 6.29,
+    "stage3": 12.39
+   },
+   "bass_vs_drums_rms_db_stems": 7.2,
+   "scene": "C12",
+   "drums_db": 0,
+   "bass_db": 10,
+   "synth_db": 10.5,
+   "default_12ms": "refused",
+   "kick": {
+    "hits": 12,
+    "matched": 12,
+    "worst_error_ms": 37.9,
+    "worst_error_after_offset_ms": 31.3
+   },
+   "snare": {
+    "hits": 8,
+    "matched": 8,
+    "worst_error_ms": 8.3,
+    "worst_error_after_offset_ms": 2.5
+   },
+   "fitted_bpm": 139.781,
+   "fitted_offset_ms": 6.52,
+   "worst_error_ms": 37.86,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": true,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 7.0 ms)",
+    "median_error_ms": 7.0,
+    "notes_measured": 16,
+    "notes_out_of_line": 2
+   },
+   "warnings": [
+    "bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 7.0, \"pitch\": 29, \"error_ms\": 80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 11.75, \"pitch\": 48, \"error_ms\": 50.0, \"how\": \"largest spectral change near the note start\"}]"
+   ],
+   "import_seconds": 0.4,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C12 --set C12 --id squadron_c12 --max-error-ms 40 --drums-db 0 --bass-db 10 --synth-db 10.5",
+   "bass_db_headroom_unused": 0.63
+  },
+  "C13": {
+   "pack": "squadron_c13",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -11.57,
+    "bass": -1.91,
+    "other": -15.06
+   },
+   "stem_rms_dbfs": {
+    "drums": -27.65,
+    "bass": -10.65,
+    "other": -28.75
+   },
+   "bass_db_max_noclip": 12.61,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -11.57,
+     "rms_dbfs": -27.65
+    },
+    "stage1": {
+     "peak_dbfs": -0.52,
+     "rms_dbfs": -10.6
+    },
+    "stage2": {
+     "peak_dbfs": -0.5,
+     "rms_dbfs": -11.42
+    },
+    "stage3": {
+     "peak_dbfs": -0.79,
+     "rms_dbfs": -10.58
+    }
+   },
+   "bass_share_below_90hz": 0.809,
+   "bass_vs_drums_rms_db": {
+    "stage1": 20.1,
+    "stage2": 16.08,
+    "stage3": 22.19
+   },
+   "bass_vs_drums_rms_db_stems": 17.0,
+   "scene": "C13",
+   "drums_db": -6,
+   "bass_db": 11,
+   "synth_db": 10.5,
+   "default_12ms": "strict",
+   "kick": {
+    "hits": 8,
+    "matched": 8,
+    "worst_error_ms": 8.6,
+    "worst_error_after_offset_ms": 3.5
+   },
+   "snare": {
+    "hits": 8,
+    "matched": 8,
+    "worst_error_ms": 8.3,
+    "worst_error_after_offset_ms": 2.7
+   },
+   "fitted_bpm": 139.958,
+   "fitted_offset_ms": 5.55,
+   "worst_error_ms": 8.57,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": false,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 9.0 ms)",
+    "median_error_ms": 9.0,
+    "notes_measured": 8,
+    "notes_out_of_line": 0
+   },
+   "warnings": [],
+   "import_seconds": 0.3,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C13 --set C13 --id squadron_c13 --max-error-ms 40 --drums-db -6 --bass-db 11 --synth-db 10.5",
+   "bass_db_headroom_unused": 1.61
+  },
+  "C14": {
+   "pack": "squadron_c14",
+   "loop_frames": 329143,
+   "phrase_beats": 16,
+   "profile": "squadron_x1",
+   "stem_peaks_dbfs": {
+    "drums": -9.96,
+    "bass": -0.81,
+    "other": -17.45
+   },
+   "stem_rms_dbfs": {
+    "drums": -22.29,
+    "bass": -13.09,
+    "other": -28.08
+   },
+   "bass_db_max_noclip": 11.51,
+   "stage_sums": {
+    "stage0": {
+     "peak_dbfs": -9.96,
+     "rms_dbfs": -22.29
+    },
+    "stage1": {
+     "peak_dbfs": -0.82,
+     "rms_dbfs": -12.8
+    },
+    "stage2": {
+     "peak_dbfs": -1.45,
+     "rms_dbfs": -13.3
+    },
+    "stage3": {
+     "peak_dbfs": -0.52,
+     "rms_dbfs": -12.83
+    }
+   },
+   "bass_share_below_90hz": 0.786,
+   "bass_vs_drums_rms_db": {
+    "stage1": 12.3,
+    "stage2": 8.28,
+    "stage3": 14.39
+   },
+   "bass_vs_drums_rms_db_stems": 9.2,
+   "scene": "C14",
+   "drums_db": 0,
+   "bass_db": 11,
+   "synth_db": 14,
+   "default_12ms": "strict",
+   "kick": {
+    "hits": 8,
+    "matched": 8,
+    "worst_error_ms": 9.1,
+    "worst_error_after_offset_ms": 4.2
+   },
+   "snare": {
+    "hits": 0,
+    "matched": 0,
+    "worst_error_ms": 0.0,
+    "worst_error_after_offset_ms": 0.0
+   },
+   "fitted_bpm": 139.949,
+   "fitted_offset_ms": 4.96,
+   "worst_error_ms": 9.14,
+   "tempo_verified_at_40ms": "strict",
+   "max_error_ms_required": false,
+   "bass_timing": {
+    "mode": "audio_checked",
+    "why": "the audio bass detector agrees with the bass MIDI (median 4.0 ms)",
+    "median_error_ms": 4.0,
+    "notes_measured": 2,
+    "notes_out_of_line": 0
+   },
+   "warnings": [
+    "the standard notes: kick 36, snare 38/40; no snare note (38/40) in this set, the chart has kick cues only",
+    "the MIDI ends at quarter 15: taken as the 16-quarter (16 game beat) phrase"
+   ],
+   "import_seconds": 0.2,
+   "command": "python tools/content/beatshaper.py --path squadron import content/imports/squadron/C14 --set C14 --id squadron_c14 --max-error-ms 40 --drums-db 0 --bass-db 11 --synth-db 14",
+   "bass_db_headroom_unused": 0.51
+  }
+ },
+ "note": "written by tools/content/import_squadron.py; sums are computed from the written 16-bit loops/*.wav, not from the sources"
+}

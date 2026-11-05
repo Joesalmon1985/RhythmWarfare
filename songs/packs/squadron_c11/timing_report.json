@@ -1,0 +1,303 @@
+{
+ "timing": {
+  "header_bpm": 120.0,
+  "profile": "squadron_x1",
+  "drum_fit": {
+   "hits": 16,
+   "matched": 16,
+   "fitted_bpm": 139.947,
+   "fitted_offset_ms": 4.63,
+   "max_abs_ms": 7.29,
+   "mean_ms": 5.84,
+   "median_ms": 6.0,
+   "within_limit": 1.0,
+   "worst_hits": [
+    {
+     "beat": 0.0,
+     "error_ms": 1.0
+    },
+    {
+     "beat": 10.0,
+     "error_ms": 7.3
+    },
+    {
+     "beat": 12.0,
+     "error_ms": 7.1
+    }
+   ]
+  },
+  "bass": [
+   {
+    "beat": 0.0,
+    "pitch": 35,
+    "error_ms": 0.2,
+    "how": "first sound in the file"
+   },
+   {
+    "beat": 0.75,
+    "pitch": 47,
+    "error_ms": 4.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 1.5,
+    "pitch": 31,
+    "error_ms": 8.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 2.0,
+    "pitch": 35,
+    "error_ms": -14.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 2.75,
+    "pitch": 47,
+    "error_ms": -8.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 3.5,
+    "pitch": 31,
+    "error_ms": 0.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 4.0,
+    "pitch": 35,
+    "error_ms": -54.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 4.75,
+    "pitch": 47,
+    "error_ms": -10.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 5.5,
+    "pitch": 31,
+    "error_ms": 6.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 6.0,
+    "pitch": 35,
+    "error_ms": -14.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 6.75,
+    "pitch": 47,
+    "error_ms": -10.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 7.5,
+    "pitch": 31,
+    "error_ms": -12.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.0,
+    "pitch": 35,
+    "error_ms": -14.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.5,
+    "pitch": 35,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 9.0,
+    "pitch": 35,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 10.0,
+    "pitch": 35,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 10.75,
+    "pitch": 35,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 11.0,
+    "pitch": 35,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 12.0,
+    "pitch": 35,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 12.5,
+    "pitch": 35,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 13.0,
+    "pitch": 35,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 14.0,
+    "pitch": 35,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 14.75,
+    "pitch": 35,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 15.0,
+    "pitch": 35,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   }
+  ],
+  "tempo_verified": "strict",
+  "bass_timing": {
+   "mode": "audio_checked",
+   "why": "the audio bass detector agrees with the bass MIDI (median 10.0 ms)",
+   "median_error_ms": 10.0,
+   "notes_measured": 13,
+   "notes_out_of_line": 1
+  }
+ },
+ "import_report": {
+  "set": "C11",
+  "drum_notes": {
+   "counts": {
+    "36": 16,
+    "42": 64,
+    "43": 18,
+    "46": 42
+   },
+   "mode": "standard",
+   "kick": [
+    36
+   ],
+   "snare": [
+    38,
+    40
+   ],
+   "why": "the standard notes: kick 36, snare 38/40; no snare note (38/40) in this set, the chart has kick cues only"
+  },
+  "decisions": [
+   "the standard notes: kick 36, snare 38/40; no snare note (38/40) in this set, the chart has kick cues only",
+   "WARNING bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 4.0, \"pitch\": 35, \"error_ms\": -54.0, \"how\": \"largest spectral change near the note start\"}]"
+  ],
+  "rejected": [],
+  "tempo": {
+   "profile": "squadron_x1",
+   "verified": "strict",
+   "tried": [
+    {
+     "profile": "squadron_x1",
+     "fit": {
+      "hits": 16,
+      "matched": 16,
+      "fitted_bpm": 139.947,
+      "fitted_offset_ms": 4.63,
+      "max_abs_ms": 7.29,
+      "mean_ms": 5.84,
+      "median_ms": 6.0,
+      "within_limit": 1.0,
+      "worst_hits": [
+       {
+        "beat": 0.0,
+        "error_ms": 1.0
+       },
+       {
+        "beat": 10.0,
+        "error_ms": 7.3
+       },
+       {
+        "beat": 12.0,
+        "error_ms": 7.1
+       }
+      ]
+     },
+     "verified": "strict"
+    }
+   ]
+  }
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 376595,
+   "loop_frames": 329143,
+   "tail_frames": 47452,
+   "padded_frames": 0,
+   "tail_audible_s": 0.694,
+   "laps_folded": 1,
+   "gain_db": -4.0,
+   "peak_db": -11.53,
+   "rms_db": -25.27,
+   "source_seconds": 7.8457,
+   "source_file": "Beat Shaper - C11-Drums.wav"
+  },
+  "bass": {
+   "frames_in": 337801,
+   "loop_frames": 329143,
+   "tail_frames": 8658,
+   "padded_frames": 0,
+   "tail_audible_s": 0.18,
+   "laps_folded": 1,
+   "gain_db": 6.5,
+   "peak_db": -0.75,
+   "rms_db": -13.96,
+   "source_seconds": 7.0375,
+   "source_file": "Beat Shaper - C11-Bass.wav"
+  },
+  "other": {
+   "frames_in": 348353,
+   "loop_frames": 329143,
+   "tail_frames": 19210,
+   "padded_frames": 0,
+   "tail_audible_s": 0.4,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -17.91,
+   "rms_db": -28.17,
+   "source_seconds": 7.2574,
+   "source_file": "Beat Shaper - C11-Synth.wav"
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 16,
+   "bass": 8
+  },
+  "2": {
+   "drums": 16,
+   "bass": 12
+  },
+  "3": {
+   "drums": 16,
+   "bass": 17
+  },
+  "4": {
+   "drums": 16,
+   "bass": 22
+  }
+ },
+ "chart_problems": []
+}
