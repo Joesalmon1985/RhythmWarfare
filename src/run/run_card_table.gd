@@ -3,7 +3,7 @@ extends RefCounted
 ## The day room's card table as the room shows it (docs/BLACKJACK_INTEGRATION.md, "The table in the room"): the table, its lamp, the empty chair and the three players of the
 ## close-up, drawn by the Story people's pixel rig (tools/minigames/make_world_table.py) and played here as loops of a sheet, two frames a beat, on the map's `cards_table`
 ## occluder in place of its still (StoryCrowdProp.drawer). Which loop shows follows the table's hotspot: `idle` (they play among themselves), `invite` (the table is on show:
-## they look at you and wave you over), `pleased` (it is touched: arms up and grins until the block is judged), `welcome` (seated: until the close-up takes over), `refuse`
+## they look at you and wave you over), `pleased` (it is touched: arms up and grins until the block is judged), `welcome` (seated: until the close-up has risen over them), `refuse`
 ## (waved off: the dealer shakes his head, the others shrug, then they invite again); while the player is seated the close-up owns the table and the room's version is not
 ## drawn. Everything is a pure function of song time and the hotspot state (`mood_of`, `frame_of`); nothing is generated at run time.
 
@@ -46,10 +46,16 @@ static func is_table(h: Dictionary) -> bool:
 
 
 ## What the players do at song time `t`. `entry`: the table's hotspot_items() entry on show now ({} when it is not on show); `last_commit`: {t, success} of the table's latest
-## decision ({} none); `mg_state`: the minigame controller's state ("" | "entering" | "active" | "leaving"). Returns {loop, t0} (t0: when the loop started).
-static func mood_of(entry: Dictionary, last_commit: Dictionary, mg_state: String, t: float, p_beat_s: float) -> Dictionary:
+## decision ({} none); `mg_state`: the minigame controller's state ("" | "entering" | "active" | "leaving"); `closeup_up`: the close-up's picture covers the table now
+## (`closeup_up`, below: false while it rises at the sitting down and sinks at the getting up, so the room's table is not missing behind it). Returns {loop, t0}
+## (t0: when the loop started).
+static func mood_of(entry: Dictionary, last_commit: Dictionary, mg_state: String, t: float, p_beat_s: float, p_closeup_up := true) -> Dictionary:
 	if mg_state == "active" or mg_state == "leaving":
-		return {"loop": "hidden", "t0": 0.0}  # seated: the close-up is the table
+		if p_closeup_up:
+			return {"loop": "hidden", "t0": 0.0}  # seated: the close-up is the table
+		if mg_state == "active" and not last_commit.is_empty() and bool(last_commit["success"]):
+			return {"loop": "welcome", "t0": float(last_commit["t"])}  # the close-up still rising over them
+		return {"loop": "invite", "t0": 0.0}  # the close-up sinking away: the table is free again
 	if not last_commit.is_empty() and t >= float(last_commit["t"]):
 		if bool(last_commit["success"]) and mg_state == "entering":
 			return {"loop": "welcome", "t0": float(last_commit["t"])}
@@ -75,6 +81,25 @@ static func frame_of(loop: String, t0: float, t: float, n: int, fpb: int, p_beat
 	if loop == "pleased" and t - t0 < BURST_BEATS * p_beat_s:
 		return 0
 	return posmod(int(floor(t / p_beat_s * float(fpb) + 1.0e-6)), n)
+
+
+## Whether the close-up's picture is up over the room at song time `t`, from the activity's `state()` snapshot ({} none): the blackjack view raises it over its first
+## RISE_BEATS when the player sits and lowers it over the last SINK_BEATS of the getting up (src/minigames/blackjack/blackjack_view.gd `_pose`); it counts as up from half
+## way. A pure function of the snapshot and song time.
+static func closeup_up(snap: Dictionary, t: float, p_beat_s: float) -> bool:
+	if snap.is_empty():
+		return false
+	var t0 := float(snap.get("phase_t0", 0.0))
+	match str(snap.get("phase", "")):
+		"sitting":
+			return t - t0 >= 0.5 * BlackjackView.RISE_BEATS * p_beat_s
+		"leaving":
+			var pile: Dictionary = snap.get("pile", {})
+			var end := t0
+			if str(pile.get("via", "")) == "pockets":
+				end = float(pile.get("t0", t0)) + float(pile.get("dur", 0.0))
+			return t < end - 0.5 * BlackjackView.SINK_BEATS * p_beat_s
+	return true
 
 
 func set_mood(m: Dictionary, t: float) -> void:

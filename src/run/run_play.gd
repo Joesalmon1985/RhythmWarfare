@@ -885,7 +885,8 @@ func _card_table_feed(t: float) -> void:
 		if str(l["kind"]) == "commit" and hotspots != null and RunCardTable.is_table(hotspots.get_hotspot(str(l["hotspot"]))):
 			last = {"t": float(l["t"]), "success": bool(l["success"])}
 			break
-	card_table.set_mood(RunCardTable.mood_of(entry, last, minigames.state, t, engine.beat_s), t)
+	var snap: Dictionary = minigames.activity.state() if minigames.activity != null else {}
+	card_table.set_mood(RunCardTable.mood_of(entry, last, minigames.state, t, engine.beat_s, RunCardTable.closeup_up(snap, t, engine.beat_s)), t)
 
 
 ## Song time of the decision that will judge a selection of `h`: its window's next decision beat (a final-window hotspot waits for the last block's).
