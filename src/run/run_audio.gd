@@ -11,6 +11,10 @@ extends StemTransport
 ## lateness compensation as a phase start (drums from the section downbeat; bass and synth too once the bass has been revealed), so a voice group per section, no restart of
 ## the clock, no gap. The section's mix recipe scales the phase mix (stage gain x recipe gain); the phase mix stays the gameplay.
 ##
+## A PATH (content/paths/<id>, docs/CONTINUOUS_RUN.md "Paths") runs at its own tempo. Its start is a TEMPO HANDOFF: on the downbeat the clock stream is swapped (`schedule_clock_swap`): the 64-beat silent loop of
+## the path's tempo replaces the old one, the song time stays one unbroken line (`song_base` becomes the downbeat, the wrap count restarts), the new engine's first phase starts on the same downbeat, and the old
+## phase's voices fade out through the usual fade of a phase change. The way back is the same swap in reverse.
+##
 ## Gains ramp smoothly towards targets the mix stages set; a treatment (filter, distortion, reverb) is a set of effects on that phase's own
 ## drum and bass buses (two sets of buses alternate, so the previous phase rings out untouched). Streams are loaded ahead on a thread.
 
@@ -22,7 +26,9 @@ var beat_s := 60.0 / 174.0
 var voice_log: Array = []  # {voice, node, target, lateness_ms, from} for every voice started (tests and the sync check read it)
 
 var _clock_stream: AudioStreamWAV
-var _schedule: Array = []  # {t, kind, ...} sorted by t
+var _schedule: Array = []  # {t, kind, ...} sorted by t, then by the order they were added (a clock swap goes before the phase that starts on it)
+var _seq := 0
+var clock_log: Array = []  # [{t, bpm, beat_s, from, frames_per_beat, rate}] every clock swap (tests and the recording check read it)
 var _groups: Array = []  # active phase groups: {phase, voices: {name: {player, gain, target}}, buses: [drums, bass]}
 var _ramp_s := 0.35
 var _dip := false  # a hotspot outcome's music "dip" is live: the non-drum voices aim lower (DIP_GAIN) until it ends
@@ -37,9 +43,7 @@ var _effect_players: Array = []
 func configure(p_data: RunData) -> void:
 	data = p_data
 	cfg = data.cfg
-	beat_s = 60.0 / float(cfg["timing"]["bpm"])
-	_ramp_s = float(cfg["mix"]["ramp_s"])
-	_fade_s = float(cfg["mix"]["phase_fade_s"])
+	retarget(p_data)
 	loop_seconds = float(cfg["timing"]["phase_beats"]) * beat_s
 	_clock_stream = silent_loop(int(cfg["timing"]["phase_beats"]), int(cfg["timing"]["bpm"]))
 	if player != null:  # added to the tree before configure()
@@ -53,11 +57,42 @@ func configure(p_data: RunData) -> void:
 				AudioServer.set_bus_send(i, AudioServer.get_bus_name(ensure_music_bus()))
 
 
+## The run's tempo and mix settings come from `p_data` (the main run's, or a path's after a handoff). Nothing is started or stopped: the clock stream (and `loop_seconds`) is swapped by `schedule_clock_swap`.
+func retarget(p_data: RunData) -> void:
+	data = p_data
+	cfg = data.cfg
+	beat_s = 60.0 / float(cfg["timing"]["bpm"])
+	_ramp_s = float(cfg["mix"]["ramp_s"])
+	_fade_s = float(cfg["mix"]["phase_fade_s"])
+
+
+## The clock's mix rate for a tempo: one where a beat is a whole number of frames (60 / bpm * rate is an integer), so a 64-beat loop has no rounding at all. 174, 124, 140 and 145 BPM have the rates
+## the paths were planned with (8700, 8680, 8400, 8700); any other whole tempo gets the smallest rate from 8000 Hz up whose beat is whole.
+const CLOCK_RATES := {174: 8700, 124: 8680, 140: 8400, 145: 8700}
+
+
+static func clock_rate(bpm: int) -> int:
+	if CLOCK_RATES.has(bpm):
+		return int(CLOCK_RATES[bpm])
+	var g := _gcd(bpm, 60)
+	var step := bpm / g  # rate * 60 / bpm is whole exactly when the rate is a multiple of bpm / gcd(bpm, 60)
+	return ((8000 + step - 1) / step) * step
+
+
+static func _gcd(a: int, b: int) -> int:
+	return a if b == 0 else _gcd(b, a % b)
+
+
+## Frames in one beat of the clock loop at `bpm` (a whole number by construction).
+static func frames_per_beat(bpm: int) -> int:
+	return int(round(60.0 / float(bpm) * float(clock_rate(bpm))))
+
+
 ## A silent mono 8-bit loop of exactly `beats` beats: the mix rate is chosen so a beat is a whole number of frames, so the loop has no rounding.
 static func silent_loop(beats: int, bpm: int) -> AudioStreamWAV:
-	var rate := 8700 if bpm == 174 else 8000  # 60/174 s * 8700 = 3000 frames per beat
-	var frames_per_beat := int(round(60.0 / float(bpm) * float(rate)))
-	var n := frames_per_beat * beats
+	var rate := clock_rate(bpm)  # 60/174 s * 8700 = 3000 frames per beat
+	var fpb := frames_per_beat(bpm)
+	var n := fpb * beats
 	var s := AudioStreamWAV.new()
 	s.format = AudioStreamWAV.FORMAT_8_BITS
 	s.mix_rate = rate
@@ -149,16 +184,26 @@ func on_event(ev: Dictionary) -> void:
 
 
 func _schedule_add(item: Dictionary) -> void:
+	item["seq"] = _seq
+	_seq += 1
 	_schedule.append(item)
-	_schedule.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["t"]) < float(b["t"]))
+	_schedule.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["t"]) < float(b["t"]) if float(a["t"]) != float(b["t"]) else int(a["seq"]) < int(b["seq"]))
+
+
+## The tempo handoff: on the downbeat `t` (song time) the clock stream becomes the 64-beat silent loop of `p_data`'s tempo. Call it before the new engine's events are fed (`retarget` is done here, so that
+## the new phase's sections are scheduled on the new beat).
+func schedule_clock_swap(p_data: RunData, t: float) -> void:
+	retarget(p_data)
+	_schedule_add({"t": t, "kind": "clock", "bpm": int(p_data.cfg["timing"]["bpm"]), "beats": int(p_data.cfg["timing"]["phase_beats"])})
 
 
 ## Loads a pack's loops ahead of need (a thread); call for every candidate destination as soon as the route window opens.
-func preload_pack(pack_id: String) -> void:
-	if not data.packs.has(pack_id):
+func preload_pack(pack_id: String, from_data: RunData = null) -> void:
+	var d := from_data if from_data != null else data  # (a portal's path: its start pack is loaded ahead from the path's own data)
+	if not d.packs.has(pack_id):
 		return
-	for key in (data.packs[pack_id]["stems"] as Dictionary):
-		var path := _stem_path(pack_id, str(key))
+	for key in (d.packs[pack_id]["stems"] as Dictionary):
+		var path := _stem_path(pack_id, str(key), d)
 		if not _requested.has(path) and not ResourceLoader.has_cached(path):
 			_requested[path] = true
 			ResourceLoader.load_threaded_request(path)
@@ -169,8 +214,8 @@ func preload_pack(pack_id: String) -> void:
 			ResourceLoader.load_threaded_request(ep)
 
 
-func _stem_path(pack_id: String, key: String) -> String:
-	var p: Dictionary = data.packs[pack_id]
+func _stem_path(pack_id: String, key: String, from_data: RunData = null) -> String:
+	var p: Dictionary = (from_data if from_data != null else data).packs[pack_id]
 	return str(p["dir"]).path_join(str(p["stems"][key]))
 
 
@@ -226,6 +271,8 @@ func _process(delta: float) -> void:
 
 func _run(item: Dictionary, now: float, ttnm: float) -> void:
 	match str(item["kind"]):
+		"clock":
+			_swap_clock(item, now, ttnm)
 		"phase":
 			_begin_phase(item["ev"], float(item["t"]), now, ttnm)
 		"section":
@@ -271,6 +318,23 @@ func _run(item: Dictionary, now: float, ttnm: float) -> void:
 						g3["voices"][name]["target"] = _target_gain(g3, name, g3.get("mix", {}))
 		"fade":
 			fade_out(float(item["seconds"]))
+
+
+## Replaces the clock stream on the downbeat: the new loop starts as far in as the call is late, the song time restarts counting from the downbeat (so it stays one unbroken line), the old tempo's
+## phase fades through the next `phase` item exactly as in a world change.
+func _swap_clock(item: Dictionary, now: float, ttnm: float) -> void:
+	var t := float(item["t"])
+	var bpm := int(item["bpm"])
+	_clock_stream = silent_loop(int(item["beats"]), bpm)
+	var from := maxf(now + ttnm - t, 0.0)
+	song_base = t
+	loop_seconds = float(item["beats"]) * 60.0 / float(bpm)  # (the old loop's length is kept until now: its last wrap, at this very downbeat, is counted with it)
+	_wraps = 0
+	_last_raw = 0.0
+	player.stream = _clock_stream
+	player.play(from)
+	player.stream_paused = false
+	clock_log.append({"t": t, "bpm": bpm, "beat_s": 60.0 / float(bpm), "from": from, "frames_per_beat": frames_per_beat(bpm), "rate": clock_rate(bpm), "loop_seconds": loop_seconds})
 
 
 func _live_group() -> Dictionary:

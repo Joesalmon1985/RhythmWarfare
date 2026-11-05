@@ -7,3 +7,5 @@ content/library/*/placeholder/
 *.asd
 midi_export/**/*.wav
 /audition/
+
+content/imports/

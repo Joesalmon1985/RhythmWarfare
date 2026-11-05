@@ -1,0 +1,22 @@
+recording 115.2 s at 48000 Hz; song started at wall 3.427; 5 phases in the log
+phase 1 warehouse.balcony 174 BPM (measured 174.000 *) treatment none       delay -112.25 ms
+phase 2 stub           124 BPM (measured 124.000) treatment none       delay -106.35 ms
+   block 1 stage 0 (Drums         ) fitted {'drums': 1.0}  expected {'drums': 1.0}  explains  99.2%  ok
+   block 2 stage 1 (Bass enters   ) fitted {'drums': 0.42, 'bass': 0.3, 'other': 0.44}  expected {'drums': 0.5, 'bass': 1.0, 'other': 0.45}  explains  13.0%  CHECK
+   block 3 stage 2 (Drums return  ) fitted {'drums': 0.96, 'bass': 0.15, 'other': 0.32}  expected {'drums': 1.0, 'bass': 0.5, 'other': 0.45}  explains  46.8%  CHECK
+   block 4 stage 3 (Bass strongest) fitted {'drums': 0.32, 'bass': 0.3, 'other': 0.51, 'riser': 0.01}  expected {'drums': 0.4, 'bass': 1.0, 'other': 0.6, 'riser': 0.5011872336272722}  explains  12.0%  CHECK
+   bass and synth started from beat 16 of the phase
+phase 3 stub.end       124 BPM (measured 124.000) treatment none       delay -194.98 ms
+   block 1 stage 0 (Drums         ) fitted {'drums': 1.0}  expected {'drums': 1.0}  explains  99.3%  ok
+   block 2 stage 1 (Bass enters   ) fitted {'drums': 0.5, 'bass': 1.0, 'other': 0.45}  expected {'drums': 0.5, 'bass': 1.0, 'other': 0.45}  explains 100.0%  ok
+   block 3 stage 2 (Drums return  ) fitted {'drums': 1.0, 'bass': 0.5, 'other': 0.45}  expected {'drums': 1.0, 'bass': 0.5, 'other': 0.45}  explains  99.7%  ok
+   block 4 stage 3 (Bass strongest) fitted {'drums': 0.4, 'bass': 1.0, 'other': 0.6, 'riser': 0.5}  expected {'drums': 0.4, 'bass': 1.0, 'other': 0.6, 'riser': 0.5011872336272722}  explains 100.0%  ok
+   bass and synth started from beat 16 of the phase
+phase 4 warehouse      174 BPM (measured 174.000 *) treatment none       delay -201.46 ms
+bass   sits -6.1 to +2.9 ms from its nominal start relative to the drums (6 blocks measured)
+other  sits -6.1 to +26.9 ms from its nominal start relative to the drums (6 blocks measured)
+riser  sits -1.9 to +14.4 ms from its nominal start relative to the drums (2 blocks measured)
+handoff at song time 22.069 s: the grid goes from 174 BPM (measured 174.000) to 124 BPM (measured 124.000); the drums of the new phase sit +2.94 ms from where the old phase's drums sat at its end (0 = the new grid's first downbeat is exactly the old phase's last; a mix chunk is 5.9 ms; the recorder drifts against the clock when the machine is loaded, so the two ends are compared, not the phases' starts)
+handoff at song time 84.004 s: the grid goes from 124 BPM (measured 124.000) to 174 BPM (measured 174.000); the drums of the new phase sit -6.48 ms from where the old phase's drums sat at its end (0 = the new grid's first downbeat is exactly the old phase's last; a mix chunk is 5.9 ms; the recorder drifts against the clock when the machine is loaded, so the two ends are compared, not the phases' starts)
+delay per phase: min -201.46 ms, max -106.35 ms, spread 95.10 ms
+RESULT CHECK

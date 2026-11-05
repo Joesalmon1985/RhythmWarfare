@@ -30,6 +30,7 @@ var story_result: Dictionary = {}  # the last finished story set (StoryRun.summa
 var run_progress: RunProgress  # the continuous run: levels reached (user://story_run.json)
 var trial_direct := false  # the next run scene starts straight in the Bassment (trial_play.tscn sets it)
 var run_start_node := ""  # the level the next run starts on ("" = the first)
+var run_start_path := ""  # the path the next run starts in ("" = the main run); RW_RUN_PATH overrides it
 var run_result: Dictionary = {}  # the last run: {node, phases, energy, reason}
 var debug := false
 var settings_migrated := false

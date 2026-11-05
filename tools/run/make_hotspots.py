@@ -166,7 +166,8 @@ exits("warehouse.balcony")
 ft("warehouse.balcony", "rail", P(-7.15, 1.2, 1.0), "glow",
    out(flags=["wh_saw_floor"], energy=4, music="variation", cin=cin(w, "rail_look", walk("balcony_rail", "dancer", "walk", 2, look="floor_centre"))),
    out(energy=-6, cin=cin(w, "vertigo", walk("balcony_far", "queasy", "stagger", 2))),
-   s_text="look over the floor, the crowd waves (+4, music variation)", f_text="vertigo (-6, queasy)", hook=walk("balcony_rail", "dancer", "walk", 2, look="floor_centre"))
+   s_text="look over the floor, the crowd waves (+4, music variation)", f_text="vertigo (-6, queasy)", hook=walk("balcony_rail", "dancer", "walk", 2, look="floor_centre"),
+   av=avail(none=["wh_saw_floor"]))  # (once the floor has been seen the star below takes its place in the 2 to 4 rule)
 ch("warehouse.balcony", "promoter", A("v03"), "beckon",
    out(route="warehouse.booth", flags=["wh_promoter_nod"], energy=4, cin=cin(w, "promoter_walk", walk("balcony_stairs", "dancer", "walk", 2, look="v03"))),
    out(flags=["wh_promoter_snub"], energy=-4),
@@ -200,6 +201,17 @@ ch("warehouse.exit", "bouncer", A("d01"), "beckon",
 ch("warehouse.exit", "bouncer_vip", A("d01"), "beckon",
    out(route="mothership", flags=["wh_guest_list"], energy=6), out(route="mothership", flags=["wh_pass_scuffed"], energy=-3),
    s_text="the VIP pass: waved on to the light (+6)", f_text="he squints at the pass; the same door, slower (-3)", av=avail(all=["wh_vip_pass"]))
+
+# ---- the three portals into the paths (docs/THREE_PATHS_AND_FACES_PLAN.md 3.3, stage 2): secrets that pulse, never the default, repeatable; a failure flickers out (-4) and the default exit takes over.
+# Each takes the place of something in its room's 2 to 4 rule: the star appears once the floor has been seen from the rail, the ember once the stranger's VIP pass is in the pocket, the radio always (the booth has room).
+# The route is "path:<id>"; RunData leaves a portal out of play until content/paths/<id>/run.json exists (RW_PATH_REMAP=gospel=stub plays the stub path through the balcony star).
+w = "warehouse"
+sc("warehouse.balcony", "star", P(-10.4, 1.8, 0.8), "pulse", out(route="path:gospel"), out(energy=-4),
+   s_text="the figure under the projected star: the Gospel path (route path:gospel, house 124)", f_text="the star flickers out (-4)", av=avail(all=["wh_saw_floor"]))
+sc("warehouse.booth", "radio", P(1.5, 1.2, -9.4), "pulse", out(route="path:squadron"), out(energy=-4),
+   s_text="the flickering military radio and the bomber's shadow: the Mission Count path (route path:squadron, dubstep 140)", f_text="the radio crackles out (-4)")
+sc("warehouse.bar", "ember", P(10.0, 1.0, 5.0), "pulse", out(route="path:ember"), out(energy=-4),
+   s_text="a warm ember in a glass: the Ember Road path (route path:ember, psytrance 145)", f_text="the ember gutters out (-4)", av=avail(all=["wh_vip_pass"]))
 
 # =========================================================================================================================================================
 # The Mothership (mothership)

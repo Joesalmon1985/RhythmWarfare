@@ -76,6 +76,12 @@ var _last_area := Vector2.ZERO
 var _ap_t := -1.0  # the downbeat the passage frame is working round (closing, then opening)
 
 
+## The run's data changed under the dungeon (a path's tempo handoff, RunPlay._path_swap): the Bassment plays on whichever run is the Warehouse's again.
+func retarget(p_rdata: RunData) -> void:
+	rdata = p_rdata
+	_beat_s = 60.0 / float(rdata.cfg["timing"]["bpm"])
+
+
 func setup(p_host: Node, p_tdata: TrialData, p_rdata: RunData) -> void:
 	host = p_host
 	tdata = p_tdata

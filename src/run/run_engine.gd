@@ -37,6 +37,8 @@ var window_open := false
 var hotspots: RunHotspots = null  # when set, the route is the outcome of a hotspot (the tap is the intent, block 4 decides): see _hotspot_decision; null keeps the plain route choice (tests, RW_RUN_ARROWS=1)
 var route_locked := false  # block 0 of the next phase has been charted: routes with another chart pack can no longer be chosen
 var _locked_chart := ""
+var grid_origin := 0.0  # song time this engine's beat grid starts at (0 for the run's own clock; a path's engine starts on the downbeat its clock was swapped in, docs/CONTINUOUS_RUN.md "Paths")
+var away := ""  # the route the engine was handed off by ("path:<id>" or "run:warehouse"): the run left this engine's world, it is frozen and gives no more events
 
 var _events: Array = []
 var _cast_queue: Array = []  # the story beats still to come, earliest first: [{t, seq, beat, index, line, source, node, phase, name}] (the scene's `cast` lines, and a committed outcome's cinematic cast)
@@ -120,6 +122,7 @@ func resume(start_id: String, t0: float) -> void:
 	judge.setup(level.notes, [])
 	energy = keep
 	over = false
+	away = ""
 	_events = []
 	_cast_queue = []
 	_depleted_t = -1.0
@@ -127,6 +130,15 @@ func resume(start_id: String, t0: float) -> void:
 	_next_phase_charted = false
 	phase_n = n
 	_enter(start_id, t0, true)
+
+
+## The run arrives here from another run (a portal into a path, or an ending back to the Warehouse): this engine's grid starts on the downbeat `t0` of the new clock, the crowd's energy and the phase
+## count are carried over, and the scene `start_id` begins on drums alone.
+func arrive(start_id: String, t0: float, p_energy: float, p_phase_n: int) -> void:
+	grid_origin = t0
+	energy = p_energy
+	phase_n = p_phase_n
+	resume(start_id, t0)
 
 
 func _enter(id: String, t0: float, chart_now: bool) -> void:
@@ -155,7 +167,7 @@ func _enter(id: String, t0: float, chart_now: bool) -> void:
 		hotspots.begin_scene(id, energy)
 	_queue_scene_cast(id, t0)
 	_emit({"kind": "phase_start", "node": id, "world": n["world"], "scene": n["scene"], "from": prev, "depth": depth, "t": t0, "phase": phase_n, "treatment": n["treatment"],
-		"audio": n["audio"], "temporary": n["temporary"], "fresh": phase_n == 1})
+		"audio": n["audio"], "temporary": n["temporary"], "fresh": phase_n == 1, "path": data.path_id})
 	_emit({"kind": "mix", "stage": 0, "t": t0, "gains": cfg["stages"][0]["gains"], "cue": cfg["stages"][0]["cue"]})
 
 
@@ -179,7 +191,7 @@ func options() -> Array:
 	for e in data.nodes[node_id]["next"]:
 		var o: Dictionary = (e as Dictionary).duplicate()
 		o["default"] = first
-		o["in_world"] = str(data.nodes[str(e["to"])]["world"]) == str(data.nodes[node_id]["world"])
+		o["in_world"] = data.nodes.has(str(e["to"])) and str(data.nodes[str(e["to"])]["world"]) == str(data.nodes[node_id]["world"])  # (an ending's "run:warehouse" is no scene)
 		o["title"] = data.route_title(node_id, str(e["to"]))
 		first = false
 		out.append(o)
@@ -212,7 +224,7 @@ func choose_dir(dir: String) -> bool:
 
 ## False for a route whose chart pack differs from the one already charted for the next phase's first block (the lock falls at the last block's decision, beat 60.5).
 func route_allowed(to: String) -> bool:
-	return not route_locked or str(data.nodes[to]["chart"]) == _locked_chart
+	return not route_locked or not data.nodes.has(to) or str(data.nodes[to]["chart"]) == _locked_chart
 
 
 func selected_route() -> String:
@@ -220,9 +232,23 @@ func selected_route() -> String:
 		return choice
 	if hotspots != null and hotspots.selected != "":  # the route the selected hotspot leads to on success (the final outcome is only known at the commit)
 		var r := str((hotspots.get_hotspot(hotspots.selected).get("on_success", {}) as Dictionary).get("route", ""))
-		if r != "" and not HotspotContract.is_trial_route(r):
+		if r != "" and not HotspotContract.is_special_route(r):  # (the Bassment, a portal or the way back are known only at the commit)
 			return r
 	return default_route()
+
+
+## The player leaves the path by the pause menu: the way back to the Warehouse becomes the choice. Allowed in a path only; returns false elsewhere.
+func force_leave() -> bool:
+	if not data.is_path() or away != "":
+		return false
+	choice = "run:warehouse"
+	return true
+
+
+## The special route the phase ends by ("path:<id>" / "run:warehouse"), "" when it ends in a scene of this run.
+func special_route() -> String:
+	var r := selected_route()
+	return r if HotspotContract.is_special_route(r) and not data.nodes.has(r) else ""
 
 
 func press(pad: int, t: float, touch: int = 0) -> Dictionary:
@@ -242,6 +268,10 @@ func cue_family(b: int) -> String:
 func update(t: float) -> Array:
 	if level == null:
 		return []
+	if away != "":  # handed off: the run lives in another engine now
+		var rest := _events
+		_events = []
+		return rest
 	judge.update(t)
 	for ev in judge.drain_events():
 		_emit({"kind": "judge", "event": ev, "t": t})
@@ -318,6 +348,13 @@ func _fire_cast(q: Dictionary) -> void:
 func _commit() -> void:
 	var to := selected_route()
 	var t0 := t_of(timing("phase_beats"))
+	if HotspotContract.is_path_route(to) or HotspotContract.is_run_route(to):  # leaves this run's worlds: no next scene here, the scene hands the clock and the pads to the other run
+		_emit({"kind": "route_commit", "from": node_id, "to": to, "chosen": true, "t": t0, "treatment": "none", "same_world": false})
+		window_open = false
+		away = to
+		_emit({"kind": "path_handoff", "route": to, "target": HotspotContract.path_of(to) if HotspotContract.is_path_route(to) else "warehouse", "from": node_id, "path": data.path_id,
+			"ending": str(data.nodes[node_id].get("ending", "")), "t": t0, "energy": energy, "phase": phase_n, "world": str(data.nodes[node_id]["world"])})
+		return
 	_emit({"kind": "route_commit", "from": node_id, "to": to, "chosen": choice != "", "t": t0, "treatment": data.nodes[to]["treatment"],
 		"same_world": str(data.nodes[to]["world"]) == str(data.nodes[node_id]["world"])})
 	window_open = false
@@ -393,6 +430,8 @@ func _hotspot_decision(b: int, passed: bool, t_dec: float) -> void:
 
 func _chart_next_phase() -> void:
 	var to := selected_route()  # the player's pick so far, else the default: the chosen world's own chart, then locked
+	if not data.nodes.has(to):  # the phase ends by a path portal or an ending's way back: there is no next scene to chart
+		return
 	_chart_block(0, 0, int(data.nodes[to]["depth"]), to, true)
 	_next_phase_charted = true
 	route_locked = true
@@ -444,7 +483,7 @@ func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = 
 				dur = 0
 		var gbeat := phase_beat0 + start_beat + off / float(tpb)
 		var tick := int(round(gbeat * tpb))
-		var tm := float(tick) * 60.0 / (level.bpm * float(tpb)) + (float(part_offset["drums"]) if fam == "drums" else float(part_offset["bass"])) * (0.0 if next_phase else 1.0)
+		var tm := grid_origin + float(tick) * 60.0 / (level.bpm * float(tpb)) + (float(part_offset["drums"]) if fam == "drums" else float(part_offset["bass"])) * (0.0 if next_phase else 1.0)
 		var fam_c := str(c[3]) if c.size() > 3 else fam
 		added.append({"id": "r%05d" % _note_id, "tick": tick, "duration_ticks": dur, "end_tick": tick + dur, "time": tm, "end_time": tm + float(dur) * 60.0 / (level.bpm * float(tpb)),
 			"pad": int(c[2]), "button": int(c[2]), "family": fam_c, "lane": fam_c, "slot_id": fam_c, "type": "hold" if dur > 0 else "tap", "seq": _blocks_total,
@@ -470,7 +509,7 @@ func _chart_block(b: int, stage_i: int, at_depth: int, node_for_chart: String = 
 
 ## Global beat index of the first beat of phase number `n` (1-based): the current phase (`phase_n`) starts at `phase_t0`; the next one 64 beats later.
 func phase_n_for_first_beat(n: int) -> int:
-	return int(round(phase_t0 / beat_s)) + (n - phase_n) * int(timing("phase_beats"))
+	return int(round((phase_t0 - grid_origin) / beat_s)) + (n - phase_n) * int(timing("phase_beats"))
 
 
 ## Block `b` credit summary for tests and the HUD.

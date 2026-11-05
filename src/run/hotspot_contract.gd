@@ -27,6 +27,9 @@ const MAX_PER_SCENE := 4
 const MAX_FAIL_ENERGY := -20.0  # a failure may cost at most this much energy (it must stay recoverable)
 const MAX_GAIN_ENERGY := 20.0
 const TRIAL_PREFIX := "trial:"  # a run route "trial:<passage>", or just "<passage>" ("1": the first), is the wizard's way into the Bassment
+const PATH_PREFIX := "path:"  # a run route "path:<id>" is a portal into a sister run (content/paths/<id>/run.json) at its own tempo (docs/THREE_PATHS_AND_FACES_PLAN.md 3.3)
+const RUN_PREFIX := "run:"  # a path ending's route "run:warehouse" leads back to the main run
+const RUN_ROUTES := ["run:warehouse"]
 const KEEP_PREFIX := "keep:"  # a flag name with this prefix is persistent (RunProgress.flags, saved); any other is per run (RunProgress.run_flags)
 const OUTCOME_KEYS := ["route", "flags_set", "cinematic", "energy", "music"]
 const CINEMATIC_KEYS := ["move", "to", "bars", "look_at", "role", "style"]
@@ -73,6 +76,25 @@ static func map_index(map_id: String) -> Dictionary:
 ## A run route that is not a scene but a Bassment passage: "trial:1" or "1".
 static func is_trial_route(route: String) -> bool:
 	return route.begins_with(TRIAL_PREFIX) or (route != "" and route.is_valid_int())
+
+
+## A run route "path:<id>" (the three portals of the Warehouse).
+static func is_path_route(route: String) -> bool:
+	return route.begins_with(PATH_PREFIX) and route.length() > PATH_PREFIX.length()
+
+
+static func path_of(route: String) -> String:
+	return route.trim_prefix(PATH_PREFIX) if is_path_route(route) else ""
+
+
+## "run:warehouse": the way back from a path to the main run.
+static func is_run_route(route: String) -> bool:
+	return route in RUN_ROUTES
+
+
+## A route that is not a scene of the run that carries it: the Bassment, a path, or the way back.
+static func is_special_route(route: String) -> bool:
+	return is_trial_route(route) or is_path_route(route) or is_run_route(route)
 
 
 static func is_keep(flag: String) -> bool:

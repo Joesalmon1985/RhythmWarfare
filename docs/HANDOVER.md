@@ -58,7 +58,31 @@ https://github.com/Joesalmon1985/RhythmWarfare.
   crowd of dancers whatever the standpoint, her acts do not read), `ward_dorm_sleeper` (the sleeper's selected and committed acts do not show), `ward_late_exit_stare` (the acts are faces only), the two bouncers and `mothership_exit_exam`
   (the success and failure panels are in the passage frame: the world is already changing). Test run at the end of 1d: `bash tools/test.sh` green: 71389 checks, 0 failures (the run before stage 1d: 67690), and the 169 Python content tests;
   `tools/run/check_hotspots.py` 0 errors (the same 5 warnings as before).
-- Stages 2 to 6 are not started by this agent (stage 2 is in another worktree).
+- **Stage 2 done (5 November 2026): sister runs and the tempo handoff** (`docs/CONTINUOUS_RUN.md` "Paths"). `content/paths/<id>/` data layout, `RunData.load_path` with the relaxed graph rules (several entries
+  and exits, `ending` scenes with the way back `run:warehouse`), packs tagged `"path"` and refused at the wrong tempo, `RunAudio.silent_loop` at 124 / 140 / 145 (rates 8680 / 8400 / 8700, whole frames per beat,
+  asserted), the `path:<id>` route handled like `trial:` with the tempo handoff in `RunEngine` / `RunPlay._path_swap` / `RunAudio.schedule_clock_swap` and the reverse swap, `RW_RUN_PATH`, `RW_RUN_START`,
+  `RW_RUN_PORTAL`, `RW_RUN_FLAGS`, `RW_PATH_REMAP`, the three portal hotspots (hidden until their path exists), the save's `paths`, the home screen's path section, `beatshaper.py --path`,
+  `tools/content/make_path_placeholders.py`, `check_hotspots.py --path`, `walk_run.sh --path`, the stub path (2 scenes, 124 BPM, entered from the balcony star with `RW_PATH_REMAP=gospel=stub`).
+  Divergences from the plan: (1) the portals are gated so they fit the 2 to 4 rule (the balcony and the bar already show four hotspots): the star needs `wh_saw_floor` (the balcony rail, now `flags_none` that flag,
+  is spent by its own success anyway), the ember needs `wh_vip_pass`; the radio is unconditional; (2) the placeholder loops are WAV, not Ogg (the format `beatshaper.py import` writes; Ogg cannot promise a
+  sample-exact loop), with MIDI beside them; (3) a portal into a path with no run.json is left out of play and logged instead of failing; `RW_PATH_REMAP` plays the stub through the gospel star; (4) the plan's
+  "fresh rail like trial_leave" on the way back is the world-change arrival (door, walk to the floor), because a path may leave the camera in another sector; (5) `path_enter` marks a path's worlds in `paths`,
+  never in `reached`; (6) the engine got `grid_origin` so that cues sit on the new tempo's grid counted from the handoff downbeat (the old engine counted from song time 0, which is not a beat of any other tempo).
+  Owner's real Squadron music (14 scenes, `NewMusic/C level Music`) is copied to `content/imports/squadron/C01..C14` (git-ignored): all 14 measure 140 BPM (139.78 to 140.20), but each loop is a **16-beat (4-bar)
+  phrase**, not 8 bars, and 6 of 14 (C01, C02, C04, C08, C09, C12) have drum hits 31 to 38 ms from their MIDI notes so the strict 12 ms check refuses them: `--max-error-ms 40` is the deliberate loosening, nothing was
+  stretched; C06 imported cleanly (`--drums-db -2 --bass-db -4 --synth-db 0`: the default +3 dB bass clips) as a throwaway proof. Stage 4 does the import (see `docs/MUSIC_IMPORT.md` section 7).
+  Proof of the handoff (`docs/shots/run/path_handoff_check.txt`, `tools/story/record_music.gd` on `run_play.tscn` in real time with `RW_PATH_REMAP=gospel=stub RW_RUN_FLAGS=wh_saw_floor RW_RUN_PORTAL=warehouse.balcony.star
+  RW_RUN_START=warehouse.balcony RW_RUN_BOT=perfect`, then `tools/story/check_run_audio.py`, which now reports the beat grid per phase and at each handoff): the machine CAN record real mixed audio (dummy driver, Music bus),
+  so this is a recording, not an offline render. Warehouse balcony 174.000 BPM, stub 124.000, stub.end 124.000, Warehouse 174.000 (measured from the drum loop fitted at the start and the end of each phase); at the
+  way in the new grid's first downbeat sits +2.9 ms from the old phase's drums at its end, at the way out -6.5 ms; every block of both stub phases fits its stage gains (drums/bass/synth/riser within 0.01, 99.2 to
+  100 % explained); `RunAudio.clock_log` records the two swaps (8680 Hz, 4200 frames a beat; 8700 Hz, 3000). The script still says RESULT CHECK: the per-phase delay spread is 95 ms because the stub -> stub.end phase
+  change (an ordinary phase change inside the path) sits 88.6 ms from the one before it, which is one 4096-frame mix chunk (85 ms) of the dummy driver on this machine (not the 5.9 ms chunk of the older recordings): a voice
+  started by `play(from)` lands on whichever mix boundary the audio thread gets to first, so the chunk is the resolution of the compensation; the same quantisation would be seen on a main-run phase change here. Found and
+  fixed on the way (two real bugs the virtual tests could not see): `_open_routes` crashed at an ending's window when the audio was on (an ending's `run:warehouse` is no scene), and a path's first pack was loaded
+  synchronously at the reveal (bass and synth 90 ms late): the portals' paths are now read and their start packs preloaded before the countdown. Not verified: nothing was played on a phone; the handoff was recorded and measured with the dummy audio driver only (no real output latency); the stub's stage is the Warehouse's own map, so a path with its own
+  art will build its stage at the handoff (a stall behind the closed frame; prebuilding it in a guard like a world change is a stage 3 item); the pause menu's "Leave this path" button was built but not
+  looked at on a real screen.
+- Stages 3 to 6 are not started.
 
 ## What the game is now
 

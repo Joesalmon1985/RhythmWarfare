@@ -467,3 +467,54 @@ acts are motions on the figure (`RunActing.figure_motion`: block, offer, laugh, 
 while it waits, `selected` once tapped or while the fight is on, `success` when it is beaten, `failure` when it beats you. Items, exits and luck tests have no acts (their lights are the look).
 `tests/test_run_hud_silent.gd` hooks `RunHud._outlined` (a counter, `strings_drawn`) over a scripted run from the count-in through the second scene; `test_trial.gd` checks the Bassment's text is hidden.
 Before/after shots: `bash tools/run/shoot_silent.sh` writes `docs/shots/silent/`.
+
+
+## Paths: sister runs at their own tempo (docs/THREE_PATHS_AND_FACES_PLAN.md section 3, stage 2)
+
+A path is a second run beside the 174 BPM one: its own `run.json` (`timing.bpm` 124 / 140 / 145), `music.json`, hotspot files and packs, played by the same `RunEngine`, `RunAudio`, `RunPlay`, `HotspotView` and
+stage code. The 174 run is not changed (it never loads a path's pack, validates exactly as before and its scenes behave as before). The proof path is `stub` (two scenes at 124 BPM on the Warehouse's own art,
+synthesised placeholder music); the real `gospel`, `squadron` and `ember` paths are stages 3 to 5.
+
+```
+content/paths/<id>/run.json        "path": {id, title, entry_from, returns_to: "warehouse", opens, dev?}, timing.bpm, worlds, nodes, cinematics (judgement, energy, stages, mix, effects, treatments are the main run's unless the file says otherwise)
+content/paths/<id>/music.json      one entry per scene (audio / chart pack, "temporary": true for placeholders); "placeholder": {genre, key, levels_db, sub_hz, ...} = the mix of the synthesised stand-ins
+content/paths/<id>/hotspots/<world>.json     the path's hotspots (the same contract; an ending's default exit sets keep:path_<id>_<ending>)
+content/paths/<id>/walks.json      (optional) extra walks for tools/run/walk_run.sh --path
+songs/packs/<id>_<scene>/          the path's packs, pack.json carries "path": "<id>" (the main run never loads it; the path's run loads only its own) and its BPM must equal the path's
+content/imports/<id>/<scene>/      the owner's drops (git-ignored: large); a scene with a drop never gets a placeholder
+```
+
+**Data rules** (`RunData`, when run.json carries `"path"`; `RunData.load_path(id)`, `load_default()` is the Warehouse run): a world may have several entry scenes (its own id stays one of them) and several exit
+scenes; routes to another world's entries are allowed from any exit scene; the graph is acyclic except through `loop` routes; every scene must reach an **ending** (`"ending": "<name>"`, whose one route is
+`run:warehouse` and whose default hotspot sets `keep:path_<id>_<name>`); a pack at another tempo than the path's is refused; a path never leads into another path or the Bassment. The Warehouse run keeps its strict rules.
+
+**Portals.** `warehouse.balcony.star` (`path:gospel`), `warehouse.booth.radio` (`path:squadron`), `warehouse.bar.ember` (`path:ember`) are `secret` hotspots with `look.available: pulse`, never the default,
+`repeatable`; success routes `path:<id>`, failure flickers out (-4 energy, no route: the scene's default exit takes over). They count in the 2 to 4 rule: the star appears once the floor has been seen from the rail
+(flag `wh_saw_floor`; the rail hotspot is then spent), the ember once the stranger's VIP pass is taken (`wh_vip_pass`), the radio always (the booth has room). `RunData` leaves a portal out of play (and logs
+`RUN portal ... is hidden`) until `content/paths/<id>/run.json` exists, so today the shipped Warehouse plays exactly as before. `RW_PATH_REMAP=gospel=stub` plays the stub through the star.
+
+**The tempo handoff** (`RunEngine._commit`, `RunPlay._path_swap`, `RunAudio.schedule_clock_swap`). When the phase ends on a `path:<id>` (or `run:warehouse`) route the engine emits `path_handoff` instead of
+entering a scene and freezes (`away`). The passage frame closes over beats 62 to 64 as for a world change. On the downbeat: `RunAudio` replaces the clock stream (one scheduled item, before the new phase's
+voices) by the 64-beat silent loop of the new tempo (`silent_loop`; the rate makes a beat a whole number of frames: 8680 Hz at 124, 8400 at 140, 8700 at 145 and 174; `RunAudio.frames_per_beat`), the song time
+stays one unbroken line (`song_base` becomes the downbeat, the wrap count restarts; the old loop's length is used until then because its last wrap is this downbeat), and the old voices fade through the usual
+phase change; a **new `RunEngine` / `RunHotspots` / `RunJourney`** of the other run begins its start scene on drums alone with `arrive(start, t0, energy, phase_n)`: its beat grid starts on that downbeat
+(`grid_origin`: cue times are `grid_origin + tick * 60 / (bpm * 960)`, so they sit on sixteenths of the new beat counted from the downbeat, not on the old grid), the crowd's energy and the phase count are carried
+over. The pads, note lane, HUD, hotspot views, `StoryStage.set_tempo` and the stage's `proxy.level` follow the new engine (the pads and the judge read the active engine's `beat_s`). The way back (`run:warehouse`
+from an ending, or the pause menu's **Leave this path**, taken from beat 61 of the phase) is the same swap in reverse into a fresh Warehouse engine with a fresh rail (the camera steps in through the door as for
+a world change; energy carries). A path that cannot be loaded does not strand the run: the Warehouse goes on by its default exit. `RW_RUN_PATH=<id>` starts a path directly (`RW_RUN_START` names its scene);
+`RW_RUN_PORTAL=<hotspot id>` makes the bot touch a portal, `RW_RUN_FLAGS=a,b` sets world-state flags after the run starts.
+
+**Save and home.** `user://story_run.json` gains `paths: {"<id>": {"reached": [worlds], "endings": [names]}}` (added on load to older saves, version stays 2; a path's worlds never enter `reached`). Start from a
+reached level lists each path that has data under its own heading once one of its worlds is reached; a locked card says how the path opens (`path.opens`); a `dev` path (the stub) is listed only when reached.
+
+**Placeholders.** `python tools/content/make_path_placeholders.py <id>` writes, for every scene with no import, `songs/packs/<id>_<scene>/`: 8-bar loops (32 beats) of drums, bass and a pad as 48 kHz stereo WAV of
+exactly `loop_frames` (not Ogg: that is the format `beatshaper.py import` writes and Ogg cannot guarantee a sample-exact loop) plus the MIDI they were made from (`midi/*.mid`), charted through beatshaper's own
+`build_cues` / `tier_cues`, `"placeholder": true`, `temporary` in music.json. Genres: house (four on the floor, claps on 2 and 4, offbeat open hats), dubstep (half time, sub with a wobble), psytrance (a 16th-note
+rolling bass between the kicks). The mix is **bass-forward and lives in music.json** (`placeholder.levels_db`: RMS dBFS of each stem, default drums -20, bass -13, pad -27; the generator refuses a bass that is
+not 8 dB over the pad and louder than the drums, or whose sub share (under `sub_hz`) is under `sub_share_min`). `beatshaper.py --path <id> <command>` does the owner's imports at the path's tempo (profile
+`<id>_x1`, `--bpm` for a path whose run.json is not written yet, `--max-error-ms` for a deliberate, recorded loosening); see `docs/MUSIC_IMPORT.md` section 7.
+
+**Checks.** `tests/test_run_paths.gd` (rates, data and relaxed rules, wrong-tempo pack, portals both ways, save migration, the engine handoff in both directions with beat_s before and after, the phase on the
+downbeat and the cues on the new grid, the audio clock swap, the real scene entering the stub through the balcony and leaving by its ending, starting in a path and leaving by the menu), the per-path matrix in
+`tests/test_run_matrix.gd`, `tools/content/test_paths.py`, `python3 tools/run/check_hotspots.py --path <id>`, `bash tools/run/walk_run.sh --path <id>`, and the recording of a handoff
+(`tools/story/record_music.gd` on `run_play.tscn` with the variables above, then `tools/story/check_run_audio.py`, which reports the measured beat grid per phase and at each handoff).

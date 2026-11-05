@@ -101,6 +101,16 @@ func setup(p_assets: StoryAssets, p_data: StoryData, p_run: StoryRun) -> void:
 	reset()
 
 
+## The tempo changed (a path at its own tempo took the clock, RunPlay): every beat-timed thing of the stage follows. Animations are functions of song time, so they jump to the new beat on the swap, behind the
+## closed passage frame.
+func set_tempo(p_bpm: float) -> void:
+	bpm = p_bpm
+	for id in crowds:
+		(crowds[id] as StoryCrowd).bpm = p_bpm
+	if player != null:
+		player.bpm = p_bpm
+
+
 ## The crowd of the room the camera is in (the one the authored actions direct).
 var crowd: StoryCrowd:
 	get:

@@ -23,12 +23,14 @@ func _map(world: String) -> StoryMap:
 
 
 ## One scripted run. Returns {over, phases, depth, energy, nodes, places, kinds, moves, camera_bad, dense, bad_starts, glances, log}.
-func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictionary:
+func _simulate(policy: String, seed: int, data: RunData, taps := "", start := "warehouse") -> Dictionary:
+	var bpm := float(data.cfg["timing"]["bpm"])  # (a path runs at its own tempo)
+	var beat := 60.0 / bpm
 	if taps == "":
 		taps = OS.get_environment("RW_RUN_TAPS") if OS.get_environment("RW_RUN_TAPS") != "" else "scripted"
 	var e := RunEngine.new(data)
 	e.hotspots = RunHotspots.new(data, {}, {})
-	e.begin("warehouse")
+	e.begin(start)
 	var j := RunJourney.new(data)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
@@ -60,7 +62,7 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictiona
 	var commits := 0
 	var failures := 0
 	var cinematics := 0
-	while t < end_t and not e.over:
+	while t < end_t and not e.over and e.away == "":  # (a path's ending hands the run back to the Warehouse: the simulation ends there)
 		var events := e.update(t)
 		for ev in events:
 			if str(ev["kind"]) in ["phase_start", "block_result"]:
@@ -114,7 +116,7 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictiona
 		if e.window_open and door_done != e.phase_n and e.phase_beat_at(t) >= 61.0:
 			door_done = e.phase_n
 			var to := e.selected_route()
-			if str(data.nodes[to]["world"]) == str(data.nodes[e.node_id]["world"]) and to != e.node_id:
+			if data.nodes.has(to) and str(data.nodes[to]["world"]) == str(data.nodes[e.node_id]["world"]) and to != e.node_id:
 				actions.append_array(j.leave_walk(e.t_of(61.0), to, e))
 		t += 1.0 / 30.0
 	for entry in j.log:
@@ -131,7 +133,7 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictiona
 		var w := str(a["world"])
 		if not players.has(w):
 			var p := StoryPlayer.new()
-			p.setup(_map(w), BPM)
+			p.setup(_map(w), bpm)
 			players[w] = p
 		(players[w] as StoryPlayer).apply_action(a)
 		if a["action"] == "player_look":
@@ -141,9 +143,9 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictiona
 			var bars := float((a["args"] as Dictionary)["bars"])
 			if bars < 2.0 or bars > 4.0:
 				bad_bars += 1
-			if fposmod(float(a["t0"]) / BEAT, 16.0) < 12.0:
+			if fposmod(float(a["t0"]) / beat, 16.0) < 12.0:
 				bad_starts += 1
-			if RunRail.move_is_dense(e.level.notes, float(a["t0"]), bars, BPM):
+			if RunRail.move_is_dense(e.level.notes, float(a["t0"]), bars, bpm):
 				dense += 1
 	var camera_bad := 0
 	var samples := 0
@@ -163,7 +165,7 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictiona
 		if worlds_seen.is_empty() or worlds_seen[worlds_seen.size() - 1] != wid:
 			worlds_seen.append(wid)
 	return {"worlds": worlds_seen, "over": e.over, "phases": max_phase, "depth": depth, "energy": e.energy, "nodes": nodes, "places": places, "kinds": kinds, "moves": moves, "camera_bad": camera_bad,
-		"samples": samples, "dense": dense, "bad_starts": bad_starts, "bad_bars": bad_bars, "glances": glances, "log": j.log, "commits": commits, "failures": failures, "cinematics": cinematics, "taps": taps}
+		"away": e.away, "samples": samples, "dense": dense, "bad_starts": bad_starts, "bad_bars": bad_bars, "glances": glances, "log": j.log, "commits": commits, "failures": failures, "cinematics": cinematics, "taps": taps}
 
 
 func test_policy_matrix_survival_depth_rails_and_camera() -> void:
@@ -242,3 +244,42 @@ func test_tap_policies_commit_inside_the_guard_and_keep_every_journey_valid() ->
 				assert_true(int(r["failures"]) >= 1, "failure taps: the tapped hotspots fail (%d of %d)" % [int(r["failures"]), int(r["commits"])])
 			if taps == "scripted" and policy == "perfect":
 				assert_eq(int(r["failures"]), 0, "perfect play passes every last block")
+
+
+## The matrix once per path (content/paths/<id>): every tap policy against four skills, the same checks on the journeys (guards, bars, density, the camera in a valid sector) at the path's own
+## tempo; a perfect player reaches an ending and is handed back to the Warehouse (the simulation ends at the handoff), nobody ever skips a scene that is not a route of the one before.
+func test_policy_matrix_on_every_path_under_every_tap_policy() -> void:
+	var ids: Array = []
+	for pid in RunData.path_ids():
+		if RunData.path_exists(str(pid)):
+			ids.append(pid)
+	assert_true(ids.has("stub"), "the stub path is there: %s" % str(ids))
+	var rows: Array = []
+	for pid in ids:
+		var data := RunData.load_path(str(pid))
+		assert_eq(data.errors, [], "path %s validates" % pid)
+		var bpm := float(data.cfg["timing"]["bpm"])
+		for taps in ["none", "scripted", "changed", "failure"]:
+			for policy in ["perfect", "accuracy:0.8", "sloppy", "none"]:
+				var r := _simulate(policy, 2, data, taps, data.start_node())
+				var tag := "path %s, %s taps, %s" % [pid, taps, policy]
+				rows.append("%-8s %-9s %-13s %s after %d phases, away %s, energy %3.0f, scenes %s" % [pid, taps, policy, "ENDED   " if r["over"] else "survived", r["phases"], r["away"], r["energy"], ">".join(PackedStringArray(r["nodes"]))])
+				assert_eq(r["camera_bad"], 0, "%s: the camera is always in a valid sector" % tag)
+				assert_eq(r["bad_starts"], 0, "%s: every move starts in a cue-free guard" % tag)
+				assert_eq(r["bad_bars"], 0, "%s: every move lasts 2 to 4 bars" % tag)
+				assert_eq(r["dense"], 0, "%s: no move sits on dense cues" % tag)
+				var seq: Array = r["nodes"]
+				assert_eq(seq[0], data.start_node(), "%s: it begins at the start scene" % tag)
+				for k in range(1, seq.size()):
+					var ok := false
+					for e2 in data.nodes[str(seq[k - 1])]["next"]:
+						ok = ok or str(e2["to"]) == str(seq[k])
+					assert_true(ok, "%s: %s leads to %s" % [tag, seq[k - 1], seq[k]])
+				assert_true(bool(r["over"]) or str(r["away"]) == "run:warehouse", "%s: the path ends by the crowd leaving or by the way back to the Warehouse (%s)" % [tag, str(r["away"])])
+				if policy == "perfect" and taps != "failure":
+					assert_eq(str(r["away"]), "run:warehouse", "%s: perfect play reaches an ending and is handed back" % tag)
+					assert_true(str(data.nodes[str(seq[seq.size() - 1])]["ending"]) != "", "%s: the last scene is an ending" % tag)
+				assert_true(absf(bpm - float(data.cfg["timing"]["bpm"])) < 1e-9)
+	var f := FileAccess.open("user://run_matrix_paths.txt", FileAccess.WRITE)
+	f.store_string("\n".join(PackedStringArray(rows)) + "\n")
+	f.close()

@@ -81,6 +81,11 @@ python tools/content/import_ableton.py content/imports/first_watch.json   # file
 python tools/extract_openra.py --no-map              # sprites from your OpenRA content (allow-list in the script)
 python tools/extract_openra_sounds.py                # Red Alert sounds into assets/sfx
 python tools/campaign/build_battlefield.py           # regenerate the maps and battlefields (add village_01 for the village only)
+bash tools/run/walk_run.sh --path stub               # a sister run (content/paths/stub) walked on the virtual clock: in through the portal's path and back out (needs a display)
+python tools/content/make_path_placeholders.py stub  # synthesised, bass-forward stand-in music for the scenes of a path that have no import (docs/CONTINUOUS_RUN.md "Paths")
+python tools/content/beatshaper.py --path squadron survey "<folder>"   # the owner's loops for a path, measured at the path's tempo
+python tools/run/check_hotspots.py --path stub       # a path's hotspots: the same rules with the path's relaxations
+RW_RUN_PATH=stub godot --path . res://src/run/run_play.tscn           # start inside a path (RW_PATH_REMAP=gospel=stub plays it through the balcony star instead)
 python tools/content/build.py                        # rebuild the loop library and every mission pack from content/ (about 23 s)
 python tools/content/render_list.py                  # rewrite docs/CONTENT_TO_RENDER.md
 python tools/balance_missions.py > /tmp/balance.md   # seeded trials, every mission (docs/BALANCE.md); --loadout heavy for the other preset
