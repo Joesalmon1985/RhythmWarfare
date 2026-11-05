@@ -118,7 +118,7 @@ The Ember is the only warm light east of the ford except the braziers and the ca
 
 ## Verified
 
-* `bash tools/test.sh` (see the commit message of the push for the counts): green, including `tests/test_run_ember.gd` (data, 145 BPM, the relaxed graph rules, endings and flags, acting in five states for the seven people you touch,
+* `bash tools/test.sh` after the rebase onto the Gospel stage: 73056 checks, 0 failures, and the 181 Python content tests OK; it includes including `tests/test_run_ember.gd` (data, 145 BPM, the relaxed graph rules, endings and flags, acting in five states for the seven people you touch,
   hide and piece cast lines, the real scene entering through the bar portal with the tempo handoff and leaving by an ending, the snatched failure), the per-path matrix (the ember path under all four tap policies) and the Python content tests.
 * `python3 tools/run/check_hotspots.py --path ember`: 0 errors, 19 warnings (all of one kind: a route whose chart pack differs from the default route's, i.e. the route lock, as in the main run). 15/15 scenes reachable, both endings
   and the way back reachable, 23 flags settable.
