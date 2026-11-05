@@ -230,8 +230,8 @@ static func draw_glow(ci: CanvasItem, size: Vector2, u: float, hc: bool, lit: Ar
 			Vector2(roundf(o.end.x + lean + 6.0 * u), roundf(by + reach)), Vector2(roundf(o.position.x + lean - 6.0 * u), roundf(by + reach)),
 		]), BlackjackDraw.shade(col, 0.7 if chosen else 0.42))
 		BlackjackDraw.ell(ci, o.get_center().x, o.get_center().y, o.size.x * 0.9, o.size.y * 0.62, BlackjackDraw.shade(col, 0.18 if not chosen else 0.34))
-		if chosen:
-			BlackjackDraw.rect(ci, o.position.x, o.position.y, o.size.x, o.size.y, BlackjackDraw.shade(WARM_HOT, 0.5))
+		if chosen:  # lit, but light enough that the room it leads to still shows through
+			BlackjackDraw.rect(ci, o.position.x, o.position.y, o.size.x, o.size.y, BlackjackDraw.shade(WARM_HOT, 0.24))
 		if urged or chosen:
 			var c := Vector2(o.get_center().x + lean * 0.4, by + 2.0 * u)
 			var rx := o.size.x * 0.5 + 12.0 * u
