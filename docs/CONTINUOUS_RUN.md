@@ -21,7 +21,7 @@ godot --path . res://src/run/run_play.tscn        # straight into the run (RW_RU
 | 33-48 | Drums return | 1.0 / 0.85 / 0.45 (bass 0.5 before the audio polish) | drums |
 | 49-64 | Bass strongest | 0.4 / 1.0 / 0.5 (synth 0.6 before the audio polish) | bass, plus the direction choice |
 
-The audio polish (docs/HANDOVER.md A9) added `mix.recipe_bass_floor`, `mix.carry_bass` (the bass of the previous scene under the drums-alone block, same music family only), the bass bus (`mix.bass_bus`, per path and per scene) and the run level (`mix.gain_db`); `tools/run/measure_mix.py` measures it all.
+The audio polish (docs/HANDOVER.md A10) added `mix.recipe_bass_floor`, `mix.carry_bass` (the bass of the previous scene under the drums-alone block, same music family only), the bass bus (`mix.bass_bus`, per path and per scene) and the run level (`mix.gain_db`); `tools/run/measure_mix.py` measures it all.
 
 * **Advance or hold.** Each block is judged at its decision beat (12.75 of 16, once its last cue and hit window have resolved). A pass moves the stage one
   step on; a miss holds the stage (and so the cue family) for another block. Missing block 1 and passing block 2 reveals the bass on beat 33. The phase is still

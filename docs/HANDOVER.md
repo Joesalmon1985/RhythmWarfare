@@ -91,7 +91,7 @@ the Birch Hall's and the lake's setbacks go to the High Pass across a world bord
 * *The 88 ms phase-change offset: found and fixed (commit `56adc157`, after the stages).* After a tempo handoff, `RunAudio._swap_clock` set the song base to the downbeat, but a new stream's position reads one mix period ahead after its first mix, so the clock (cues, voices, judge) ran that far ahead
   of the sound from every swap on: 88.5 ms with the dummy driver, estimated 5.9 to 20 ms on a device. `song_base` is now `t - mix_period`; `check_run_audio.py` asserts every in-path phase boundary within the dummy driver's 29.4 ms floor; the handoff recording went from -88.58 ms (spread 95.1 ms) to -6.12 ms
   (spread 12.6 ms) on the stub and -5.92 ms (spread 5.9 ms) on the real Gospel. Measured with the dummy driver only: whether a phone's handoff is tight is still to be heard.
-* *Squadron bass* (since lifted at the bus level, without touching the loops: A9). C05 and C06 have a short loud bass transient on a quiet body (peak-limited: RMS about -23 to -25 dBFS; at stage 2 the bass sits below the drums); C03, C05, C06, C09 and C11 are mid-heavy (8 to 31 % of the bass under 90 Hz). Nothing was edited; a re-export with the
+* *Squadron bass* (since lifted at the bus level, without touching the loops: A10). C05 and C06 have a short loud bass transient on a quiet body (peak-limited: RMS about -23 to -25 dBFS; at stage 2 the bass sits below the drums); C03, C05, C06, C09 and C11 are mid-heavy (8 to 31 % of the bass under 90 Hz). Nothing was edited; a re-export with the
   transient tamed, or a game-side limiter, would give more.
 * *Placeholders on a phone speaker.* Bass-forward by measurement (RMS: drums -20 to -21, bass -11 to -12, pad -28 dBFS; at least 45 to 50 % of the bass under 90 Hz); whether that is prominent enough on a phone speaker is the owner's to judge.
 
@@ -205,7 +205,7 @@ Checks after the pass: `bash tools/test.sh` **74,354 checks, 0 failures**, the P
 
 **Only the owner's eyes on a phone can judge**: whether the half-beat flash and the outcome at beat 61 read in motion before the frame closes; whether the 1.35 swell flare is "somewhere new" or a flicker; the Golgotha darkness on a phone screen in daylight; the crown look at phone size; the brighter directed people (do they look lit or pasted on).
 
-## A9. Audio polish (5 November 2026, after Stage 6)
+## A10. Audio polish (5 November 2026, after Stage 6)
 
 The owner's brief: *the bass is not prominent enough, and some songs or phases do not sit with the player long enough.* An agent cannot listen, so everything below was **measured**, made **data**, and every call made on the owner's behalf has a one-line
 revert. Nothing in gameplay changed: judgement, energy, tap windows, cue families, charts, the reveal beat, the route window and the phase length are as they were (the 174 run's timing is untouched; the walks and the matrix still pass).
