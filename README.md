@@ -98,7 +98,9 @@ RW_RUN_PORTAL=warehouse.booth.radio RW_RUN_START=warehouse.booth RW_RUN_BOT=perf
 RW_PATH_REMAP=gospel=stub RW_RUN_FLAGS=wh_saw_floor RW_RUN_PORTAL=warehouse.balcony.star RW_RUN_START=warehouse.balcony <godot> --path . res://src/run/run_play.tscn   # play the stub path through another path's portal
 RW_DEV_TEXT=1 <godot> --path . res://src/run/run_play.tscn             # the play text (title card, captions, names, countdown) is off by default; this restores it for debugging
 GODOT=<godot> bash tools/run/walk_run.sh --path squadron               # a path on the real scenes, virtual clock, isolated save: perfect, loop, clause, sloppy, none (names: python3 tools/run/path_walk_spec.py <id> names); needs a display
-python tools/run/check_hotspots.py --path gospel                       # a path's hotspots and reachability (also: squadron, ember; without --path: the main run)
+python tools/run/check_hotspots.py --path gospel                       # a path's hotspots and reachability (also: squadron, ember; without --path: the main run); it also lists the laps of the scenes
+python tools/run/measure_mix.py --run gospel [--force-laps 1]          # the mix of every scene, dwell per scene and per route; --force-laps 1 measures the paths as they were before the two laps (docs/HANDOVER.md A12)
+python tools/run/laps.py content/paths/gospel/run.json                 # prints each scene's laps and cast beats (the cast is re-timed by the generators: docs/CONTINUOUS_RUN.md "Two laps per path scene")
 python tools/content/beatshaper.py --path squadron survey "<folder>"   # the owner's loops for a path, measured at the path's tempo (validate, scan, check, import, apply: docs/MUSIC_IMPORT.md section 7)
 python tools/content/beatshaper.py --path squadron import content/imports/squadron/C06 --set C06 --id squadron_c06 --max-error-ms 40   # --max-error-ms N loosens the drum-hit check from its 12 ms default and records it; nothing is stretched
 python tools/content/make_path_placeholders.py gospel [--force]        # synthesised, bass-forward stand-in WAV loops for every scene of a path without an import (also: ember, stub)

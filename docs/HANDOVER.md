@@ -133,6 +133,7 @@ the Birch Hall's and the lake's setbacks go to the High Pass across a world bord
 7. **Squadron's thin bass** in C05 and C06 (and mid-heavy C03, C09, C11): re-export, or a game-side limiter.
 8. **The Gospel path's subject.** It follows a public-domain source with alternative-history branches and never shows the player; no painting or film is depicted (plan D2). Whether to ship it, and in which stores or ratings, is the owner's call and was not examined by the agents.
 9. **Repo size** (A8): keep the placeholder WAVs in git, or git-ignore them and regenerate by script.
+10. **Two laps per path scene** (A12): keep them, revert a path or a scene (one value in the data), or ask for a drums-cue block inside lap 2 (four bass-cue blocks in a row is the current rule). Also: is the weaker player's harder economy (A12 section 3) acceptable, or should the energy numbers be eased?
 
 ## A7. How to run the checks (the short list; the full list is `README.md`)
 
@@ -268,7 +269,7 @@ the same numbers as before the polish, so no regression in the grid; `RESULT CHE
 
 ### 5. Not done: it would change gameplay (recommendations for the owner)
 
-1. **A second lap for the paths' loops.** Gospel, Squadron and Ember play each loop for exactly one phase (26 to 31 s) and then the scene, and so the song, changes. Letting a scene play two phases (a `laps: 2`, the route window only in the second) would double each song's
+1. **A second lap for the paths' loops** (built afterwards: A12). Gospel, Squadron and Ember play each loop for exactly one phase (26 to 31 s) and then the scene, and so the song, changes. Letting a scene play two phases (a `laps: 2`, the route window only in the second) would double each song's
    time with the player, but it doubles the blocks judged per scene (energy), moves every hotspot window and cast line, and breaks the 2 to 4 hotspot rule's pacing: the owner's call.
 2. **Bass in the first scene of a world's drums-alone block.** The carry fills block 0 after the first scene; at a world entry the block stays drums alone, because a bass started before the reveal would move the bass phrase (and the bass cues) off the reveal beat.
 3. **Fewer turnovers in the 174 run.** Most scenes play two 8-bar sections (a pack and a mix recipe change every 11 s). One 16-bar section per scene would hold one arrangement for the whole phase, but the second section's chart changes the cues of blocks 3 and 4: an
@@ -295,6 +296,79 @@ append to `user://playtest_notes.md` and `.jsonl`; a notes screen with Copy all;
 Decisions made: the list plays in a **throwaway save** (the owner's reached levels are never touched); **every 174-run scene has three arrangements and the game picks one by the per-run seed**, so the list has an arrangement option
 (`RunData.arrangement_override`, default off: the game's own pick) and the notes record the arrangement that played; the autoplay assist is the existing `RW_RUN_BOT=perfect`; no gameplay changed. Code in `src/debug/`, tests
 `tests/test_playtest.gd`, shots `docs/shots/debug/` (`tools/run/shoot_debug.sh`). Not run on a phone.
+
+## A12. Two laps per path scene (5 November 2026)
+
+The owner approved the fix A10 section 5 item 1 recommended: *the three paths' songs did not sit with the player long enough* (a scene, and so its song, lasted one 64-beat phase: Gospel 31.0 s, Squadron 27.4 s, Ember 26.5 s), so **a scene of a path now plays its music and staging for two consecutive phases ("laps") before the route commits**. The 174 BPM main run keeps one and is untouched.
+Everything is data plus a small engine change; the full description is `docs/CONTINUOUS_RUN.md` "Two laps per path scene". Nobody has played or heard it: it was built and measured on the virtual clock with the dummy audio driver.
+
+### 1. What it is, in one screen
+
+| | |
+| --- | --- |
+| **Data** | `path.laps` in a path's `run.json` (the default of its scenes) and `laps` on a scene (wins); 1 to 4; only paths may exceed 1. Shipped: `path.laps` 2 in `gospel`, `squadron`, `ember`. `RunData.laps_of(id)`; `check_path.gd` and `check_hotspots.py` validate it |
+| **Single-lap scenes** | **J00 `jordan`** (the prologue: a night road with one way on; a minute of it before the first story scene would be a wait), **J14 `jerusalem.golgotha`** (the sky darkens a step a block and a witness or a soldier steps forward a block: one descent, authored for one pass; a second lap would only repeat it), **E00 `hollow`** (the orchard prologue, one way on). `stub` stays 1. Squadron has no exception (its first scene has two ways on). **The endings take two laps** (J15, J16, C13, E12, E13): the finale is where the player most wants to sit in the song, and the ending's `keep:` flag is still set by its default exit at the end of the last lap |
+| **Lap 1** | the scene's full phase by the stage table (drums, bass, drums back, bass strongest) with **no hotspot window, no route window, no commit, no riser or fall**: `choose()` is refused and `shown()` is empty |
+| **The boundary** | the stage of lap 2's first block is the stage of lap 1's last block, one step on after a pass (a perfect player: stages 0 1 2 3 \| 3 3 3 3). **Nothing is stripped back and no voice restarts** (RunAudio schedules nothing for a lap; every loop tiles a lap). A player who earned nothing in lap 1 starts lap 2 on drums alone and the table brings the bass in again: a second chance, never a harsher one. A perfect scene's cue families: drums, bass, drums, bass, **bass x 4** |
+| **Lap 2** | the phase as it always was: hotspots (2 to 4, **lap 2 only**), the 16-beat route window at beat 48 (riser if the strongest stage is in), the commit at beat 60.5, the route lock, the door walk (beat 61), the passage frame (beats 62 to 64), the tempo handoff, the flags. No timing of them moved |
+| **Cast** | `at_beat` counts from the scene's first downbeat over both laps (validator: 0 to 64 x laps - 1). Re-timed by `tools/run/laps.py` inside the three generators (their tables still author one phase): a line before beat 48 is spread (b x 2; a hold of 12 beats or more holds twice as long), a line from beat 48 on keeps its place in the last lap (b + 64), so every reaction to the commit still lands at beats 125 to 127. No line added, so no text. `block_fx` entries take an optional `lap` (default 1) |
+| **Staging** | lamps, set pieces, rail, people and `lights_*` are not reset at the boundary (no room swell, no pieces reset). The rail keeps stepping |
+| **Pause menu** | "Leave this path" now also ends the scene at the end of a lap before the last |
+| **Debug mode** | the scene list shows `x2`; the overlay reads `lap 2 of 2 \| block k/4 \| ... beat 70.0/128 of the scene (6.0 of the lap)`; Info says "2 laps of 64 beats"; the notes carry `lap` and `laps` (`docs/DEBUG_MODE.md`) |
+| **Counting** | `phase_n` counts laps and `scene_index()` scenes; the result screen, the save's best phases, the scripted bots' routes and `RW_RUN_UNTIL_PHASE` count scenes. The audio's two bus pairs still alternate per scene |
+
+### 2. Dwell, before and after (`docs/shots/audio/mix_laps_before.md` with `measure_mix.py --force-laps 1`, and `mix_laps_after.md`; the same render and tool, perfect play)
+
+| path | a two-lap scene lasts | default route (12 or 13 scenes) | bass audible in a two-lap scene | bass leads | mean LUFS | worst peak | bass minus drums |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Gospel (124 BPM) | 31.0 -> **61.9 s** | 372 -> **681 s** | 23.2 -> **54.2 s** (75 -> 88 % of the scene) | same as audible | -14.1 -> -13.6 | -0.8 -> -0.8 dBFS | +12.0 -> +13.9 dB |
+| Squadron (140) | 27.4 -> **54.9 s** | 329 -> **658 s** | 20.6 -> **48.0 s** (75 -> 87 %) | same | -12.9 -> -12.6 | -0.9 -> -0.9 | +14.4 -> +16.0 |
+| Ember (145) | 26.5 -> **53.0 s** | 344 -> **662 s** | 19.9 -> **46.3 s** (75 -> 87 %) | same | -13.1 -> -12.6 | -1.3 -> -1.3 | +13.3 -> +15.4 |
+
+(A one-lap scene keeps its old numbers.) The level rises about half a LU because the second lap is all at the strongest stage (drums 0.4, bass 1.0, synth 0.5); no peak moved, `tools/content/test_mix_polish.py` still passes. A song's loop now repeats: Gospel and Ember 8-bar loops 4 times in a scene, **Squadron's 4-bar loops 8 times in 55 s** (7 s each).
+Real-time check (dummy driver): see section 5.
+
+### 3. The energy economy (not retuned; `tools/run/laps_energy.gd`, `RW_MATRIX_LAPS=1` on the matrix)
+
+Judgement windows, the pass credit and the energy gain and loss of a block are exactly the single phase's (asserted against the formula in `tests/test_run_laps.gd`), and so is a hotspot outcome's energy; but a scene now has 8 blocks to survive and one commit per 8 blocks instead of 4. `tools/run/laps_energy.gd` plays each path with scripted players of a given cue accuracy over 24 seeds, default exits:
+
+| accuracy | Gospel reaches an ending (one lap -> two) | Ember | Squadron |
+| --- | --- | --- | --- |
+| 0.50 | 0/24 -> 0/24 (dies after 6.4 -> 4.4 scenes, 24 -> 27 blocks) | 0/24 -> 0/24 | never (the default exits loop) |
+| 0.55 | **16/24 -> 7/24** | **15/24 -> 11/24** | survives 270 -> 190 blocks before the loop's 3000 s cap |
+| 0.60 and up | 24/24 -> 24/24, lowest crowd energy the same (29.7 at 0.6, 49 at 0.7), mean energy 81 -> 85 | same (34.8; 82 -> 87) | 0.60: a seed or two now dies (437 -> 421 blocks of 437); 0.70 and up reach the cap either way |
+
+So a player who hits more than about 60 % of the cues feels no difference; a marginal one (about 55 %) loses the floor in the longer scene noticeably more often, and a 50 % player dies about as many blocks in, but in an earlier scene. The matrix (`tests/test_run_matrix.gd`: perfect, 0.8, sloppy, none; every tap policy) is unchanged for perfect, 0.8 and sloppy (they end at 100 energy); a player who never touches the pads now dies in Squadron's first scene instead of its second. **Not retuned, as asked**; if it is too harsh for the 55 % player, the knobs are `energy.fail_loss` / `pass_gain` in `run.json` (they also move the main run), or `laps` back to 1.
+
+### 4. What was verified (this PC, 5 November 2026, Godot 4.5.1 console, Windows 11)
+
+* `bash tools/test.sh` (the whole project, exit code 0): **80,754 checks, 0 failures** in the Godot suite (was 74,354 after A9) and the Python content tests OK (208; they were 181); the Godot suite grew by `tests/test_run_laps.gd` (19 tests, about 2,100 checks: the shipped laps, the validator, the window and commit in the last lap only, the stage and cue families across the boundary, the bass phrase on the loop's own grid in all three paths, a missed block and a late reveal, the energy per block against the formula, the cast across laps at any frame step and across a stall, leaving in lap 1, the handoff after two laps and the Warehouse grid, the main run without laps, the audio voices across the boundary, the real scene's two laps with the hotspots in the second only, the pause menu's leave in lap 1, the debug mode) and `tools/content/test_laps.py` (9). Existing tests that assumed a path scene was one phase were changed to count scenes (`test_run_matrix`, `test_run_ember`, `test_gospel`, `test_playtest`); no main-run test was changed and all pass.
+* `python3 tools/run/check_hotspots.py --path gospel|squadron|ember|stub` and the main run: 0 errors (the laps and every cast range are checked); `check_path.gd` 0 errors for all four.
+* `GODOT=<console> bash tools/run/walk_run.sh --path gospel|squadron|ember` (real scenes, virtual clock, isolated save, dummy audio; the walk's own check now also compares the sequence of `lap_start`s with the data): all three `run walk-through: OK`: gospel 7 walks (`perfect`, `sloppy`, `none`, `road_end`, `branch_a`, `branch_b`, `branch_c`) **17 of 17 scenes**, squadron 5 walks (`perfect`, `sloppy`, `none`, `loop`, `clause`) **14 of 14**, ember 6 walks (`perfect`, `sloppy`, `none`, `kept`, `taken`, `lantern`) **15 of 15**; a perfect Gospel walk from the star to the tomb and back to the Warehouse is 681 s of song time.
+* **Real-time recordings** (`tools/story/record_music.gd`, dummy audio driver, perfect play, then `tools/story/check_run_audio.py`, which now fits both laps and reports each lap boundary): Squadron `air.c05` (85 s), Gospel `jordan.baptism` (72 s), Ember `north` (66 s), all `RESULT ok` (`docs/shots/audio/laps_check_{squadron,gospel,ember}.txt`): the eight blocks of the scene fit their stage gains (96 to 100 % explained; the bass fitted at its full gain through lap 2: no strip-back), **the drums' delay 8 beats before and 8 beats after the lap boundary is the same to 0.00 ms** (the beat grid goes on without a jump), **no voice was started at the boundary**, the delay is the same in the whole scene (spread 0.00 ms) and the recorded tempo equals the engine's (124.000, 140.000, 145.000 BPM).
+* `python tools/run/measure_mix.py` (before: `--force-laps 1`): section 2.
+* `tools/run/laps_energy.gd`: section 3 (`docs/shots/audio/laps_energy.txt`).
+
+### 5. What could not be verified
+
+* **Nobody has listened to it or played it by hand, and nothing ran on a phone.** The feel of the longer scene, the bass across the boundary and the hotspots arriving after a minute are the owner's.
+* The dummy audio driver has no output latency; the recording check proves the grid and the voices, not the sound. The recordings stop shortly after the first scene's second lap, so the scene change after a two-lap scene (the ordinary phase change, unchanged) was not re-recorded; the tempo handoff after two laps is proven by the engine test (the handoff on the 128th beat, the Warehouse's cues on the 174 grid) and not by a recording.
+* The Squadron loops were not re-exported: 4-bar loops repeat 8 times per scene.
+
+### 6. What only the owner's ears and phone can judge
+
+1. **Does it drag?** A minute in one room on one loop (Squadron: a 7-second loop eight times) before the choice: does lap 2 feel earned, or like a wait? If it drags, set that path's `laps` back to 1 (one value) or a single scene's `"laps": 1`.
+2. **Does the bass hold across the boundary?** At the downbeat of lap 2 nothing should change except the cue pattern (bass cues for four blocks in a row); no dropout, no restart of the loop, no gap in the groove. Listen at the J01 / C01 / E01 boundaries on a phone speaker and on earbuds.
+3. **Four blocks of bass cues in a row** (lap 2, perfect play): is it a pleasure ("enjoy the bass") or tiring? An alternative is a drums-cue block inside lap 2 (the stage table is data, but this needs a lap-2 stage rule in the engine: not built).
+4. **Hotspots only after a minute:** do people notice the doors and people in lap 2, or do they stop looking in lap 1? Do the people's acts spread over 128 beats (stretched story beats, the reactions at the end) still read?
+5. **The cast stretched over two laps:** a person holding an act for 24 or 32 beats (a stare, a kneel) between story beats: patient or frozen?
+6. **The energy for a weaker player** (section 3): does the 55 % player lose the crowd too soon in a longer scene?
+7. **The pause menu's "Leave this path"** now ends the scene at the end of lap 1 as well: the passage frame closing at the end of the first lap should look like any other exit.
+
+### 7. How to revert
+
+* All three paths: `path.laps` to 1 in `content/paths/gospel|squadron|ember/run.json` (or `LAPS = 1` in the generator and re-run it: `python3 tools/content/make_gospel.py --run-only`, `python3 tools/paths/make_squadron.py`, `python3 tools/run/make_ember.py`; the cast goes back to its authored beats). One path: that path's value. One scene: `"laps": 1` on it. Nothing else changes; the tests and walks follow the data. Gospel / Ember / Squadron's old `run.json` is also in `git show 55f6cd3f:content/paths/<id>/run.json`.
+* The engine can stay: with every `laps` 1 it is the old engine (the main run's 36 scenes never reach any lap code).
 
 ---
 

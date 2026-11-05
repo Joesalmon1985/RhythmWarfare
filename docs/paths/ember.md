@@ -146,3 +146,11 @@ The Ember is the only warm light east of the ford except the braziers and the ca
 * Frame times on a phone (the four maps were built on a desktop; the stage build of each map costs 75 to 250 ms and the prebuild runs in a cue-free guard before a portal or a world change).
 * The Warehouse portal's look after an ending (Stage 6), and the home screen's section for the path (the data is there: `paths.ember`).
 * `docs/MUSIC_HANDOFF.md` is not regenerated (Stage 6); the shopping list is in `content/paths/ember/music.json` and above.
+
+## Two laps per scene (5 November 2026, `docs/HANDOVER.md` A12)
+
+Every scene of the Ember Road plays **two 64-beat phases** (2 x 26.5 s = 53.0 s) before the route window and the commit, except **E00 `hollow`** (the orchard prologue, one way on), which stays at 26.5 s. The two
+endings (E12 the Spring, E13 the Keeper) and the Taken setback take two laps like the rest. Lap 1 is the scene's full phase without the choice window; lap 2 holds the bass at its strongest and carries the window,
+the commit and the passage as before (hotspots in lap 2 only). The flags that change later scenes (`ember_no_vial`, `ember_warden_lost`, `ember_alone`) are set at the commit, so nothing about them moved; the cast
+lines are re-timed by `tools/run/laps.py` (lines before beat 48 spread b x 2, so the `hide` lines at beat 0 stay at 0; the last block's lines keep their place in lap 2, so the rider's shadow of the inn crosses at 112 and 125 instead of 48 and 61) and no line is added. To go back:
+`path.laps` to 1 in `content/paths/ember/run.json` (or `LAPS = 1` in `make_ember.py` and re-run it).
