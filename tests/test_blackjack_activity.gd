@@ -969,3 +969,225 @@ func test_config_file() -> void:
 	var view: Control = BlackjackActivity.new().make_view()
 	assert_true(view is BlackjackView, "the activity makes its table view")
 	view.free()
+
+
+# exits while seated: the room's ways out as doors (MinigameActivity "exits")
+
+const ROOM_EXITS := [
+	{"id": "r.exit_art", "route": "r.art", "scene": "art", "world": "w", "dir": "right", "default": true},
+	{"id": "r.exit_dorm", "route": "r.dorm", "scene": "dorm", "world": "w", "dir": "up", "default": false},
+	{"id": "r.exit_yard", "route": "r.yard", "scene": "courtyard", "world": "w", "dir": "left", "default": false},
+	{"id": "r.exit_lab", "route": "r.lab", "scene": "nowhere", "world": "w2", "dir": "up", "default": false},
+]
+
+
+func _rig_x(n: int, cards: Array = [], pence: int = 2000, seed: int = 7) -> Dictionary:
+	var w := RunWallet.new()
+	if pence < 2000:
+		w.spend(2000 - pence)
+	var a := BlackjackActivity.new()
+	var cfg: Variant = JSON.parse_string(FileAccess.get_file_as_string(CONFIG_PATH))
+	var ctx := {"wallet": w, "seed": seed, "beat_s": BEAT, "config": cfg, "exits": ROOM_EXITS.slice(0, n)}
+	if not cards.is_empty():
+		ctx["deck"] = BlackjackDeck.stacked(cards, 99)
+	a.setup(ctx)
+	a.begin(0.0)
+	return {"a": a, "w": w, "t": 0.0, "bad": [], "scan": false, "seen": {}}
+
+
+func _doors(n: int) -> Array:
+	var out: Array = []
+	for e in ROOM_EXITS.slice(0, n):
+		out.append("exit:" + str(e["route"]))
+	return out
+
+
+func test_one_exit_target_per_door_in_every_phase_with_0_1_2_and_4_exits() -> void:
+	for n in [0, 1, 2, 4]:
+		var doors := _doors(n) if n > 0 else ["exit"]
+		var rig := _rig_x(n, _deal([10, 9], [10, 7], [5, 5, 5]))
+		assert_eq(_st(rig)["targets"], [], "nothing while sitting (%d exits)" % n)
+		_sit(rig)
+		assert_eq(_st(rig)["targets"], ["bet"] + doors, "await_bet with %d exits" % n)
+		_tap(rig, "bet")
+		assert_eq(_st(rig)["targets"], doors, "dealing with %d exits" % n)
+		_until(rig, "player_turn", 20.0)
+		assert_eq(_st(rig)["targets"], ["deck", "hand"] + doors, "player_turn with %d exits" % n)
+		_tap(rig, "deck")
+		assert_eq(_st(rig)["targets"], doors, "a twisted card in flight: only the doors (%d exits)" % n)
+		_until(rig, "others", 20.0)
+		assert_eq(_st(rig)["targets"], doors, "others with %d exits" % n)
+		_until(rig, "settling", 30.0)
+		assert_eq(_st(rig)["targets"], doors, "settling with %d exits" % n)
+		var s := _st(rig)
+		assert_eq((s["exits"] as Array).size(), n)
+		assert_true(bool(s["hints"]["exit"]))
+		_tap(rig, doors[doors.size() - 1])
+		assert_eq(_st(rig)["targets"], [], "nothing while leaving (%d exits)" % n)
+		assert_false(_tap(rig, doors[0]), "a door refused while leaving")
+
+
+func test_the_bare_exit_is_the_default_door_and_a_door_of_another_room_is_refused() -> void:
+	var rig := _rig_x(2)
+	_sit(rig)
+	assert_false(_tap(rig, "exit:somewhere.else"), "not a door of this room")
+	assert_false(_tap(rig, "exit:"), "no route")
+	assert_eq(_phase(rig), "await_bet")
+	assert_true(_tap(rig, "exit"), "the alias")
+	var a: BlackjackActivity = rig["a"]
+	assert_eq(a.leave_route, "r.art", "the default exit's route")
+	assert_eq(_st(rig)["leave_route"], "r.art")
+	assert_true(bool(_st(rig)["exits"][0]["chosen"]))
+	assert_false(bool(_st(rig)["exits"][1]["chosen"]))
+	_adv(rig, 4.0 * BEAT)
+	assert_true(a.is_done())
+	assert_eq(a.done_route(), "r.art")
+	# the other door
+	rig = _rig_x(2)
+	_sit(rig)
+	assert_true(_tap(rig, "exit:r.dorm"))
+	a = rig["a"]
+	assert_eq(a.leave_route, "r.dorm")
+	_adv(rig, 4.0 * BEAT)
+	assert_eq(a.done_reason(), "left")
+	assert_eq(a.done_route(), "r.dorm")
+	# no exits: the plain door gets up with no route
+	rig = _rig_x(0)
+	_sit(rig)
+	assert_false(_tap(rig, "exit:r.art"), "a room without exits has no such door")
+	assert_true(_tap(rig, "exit"))
+	_adv(rig, 4.0 * BEAT)
+	assert_eq((rig["a"] as BlackjackActivity).done_route(), "")
+
+
+func test_every_door_keeps_the_same_stake_rules() -> void:
+	for door in ["exit", "exit:r.art", "exit:r.dorm", "exit:r.yard", "exit:r.lab"]:
+		# a live hand: forfeited (decision B4)
+		var rig := _rig_x(4, _deal([10, 9], [10, 7]))
+		_sit(rig)
+		_tap(rig, "bet")
+		_until(rig, "player_turn", 20.0)
+		assert_true(_tap(rig, door), door)
+		assert_eq(_bal(rig), 1500, "%s forfeits a live stake" % door)
+		assert_eq(_held(rig), 0)
+		_adv(rig, 5.0)
+		assert_eq(_bal(rig), 1500, door)
+		# between hands: the money is kept
+		rig = _rig_x(4, _deal([10, 9], [10, 7]))
+		_sit(rig)
+		_play(rig, "stick")
+		assert_eq(_bal(rig), 2500)
+		assert_true(_tap(rig, door))
+		_adv(rig, 5.0)
+		assert_eq(_bal(rig), 2500, "%s keeps the payout" % door)
+		assert_eq(_held(rig), 0)
+		# a fall after choosing a door changes nothing: still leaving, no refund of a forfeited stake
+		rig = _rig_x(4, _deal([10, 9], [10, 7]))
+		_sit(rig)
+		_tap(rig, "bet")
+		_tap(rig, door)
+		(rig["a"] as BlackjackActivity).interrupt("fall", float(rig["t"]))
+		_adv(rig, 5.0)
+		assert_eq(_bal(rig), 1500, door)
+		assert_eq((rig["a"] as BlackjackActivity).done_reason(), "left")
+		# an interrupt refunds and carries no route
+		rig = _rig_x(4, _deal([10, 9], [10, 7]))
+		_sit(rig)
+		_tap(rig, "bet")
+		(rig["a"] as BlackjackActivity).interrupt("fall", float(rig["t"]))
+		_adv(rig, 5.0)
+		assert_eq(_bal(rig), 2000, "a fall refunds")
+		assert_eq((rig["a"] as BlackjackActivity).done_route(), "", "a fall leaves by no door")
+
+
+func test_the_snapshot_lists_the_exits_read_only_with_target_urged_and_chosen() -> void:
+	var rig := _rig_x(2, _deal([10, 6], [10, 8]), 500)
+	var s := _st(rig)
+	var ex: Array = s["exits"]
+	assert_eq(ex.size(), 2)
+	assert_eq(ex.map(func(e: Dictionary) -> String: return str(e["route"])), ["r.art", "r.dorm"])
+	assert_eq(str(ex[0]["id"]), "r.exit_art")
+	assert_eq(str(ex[1]["scene"]), "dorm")
+	assert_eq(str(ex[1]["world"]), "w")
+	assert_eq(str(ex[1]["dir"]), "up")
+	assert_true(bool(ex[0]["default"]))
+	assert_false(bool(ex[1]["default"]))
+	assert_false(bool(ex[0]["target"]), "not touchable while sitting")
+	assert_true(ex.is_read_only())
+	assert_true((ex[0] as Dictionary).is_read_only())
+	_sit(rig)
+	s = _st(rig)
+	assert_true(bool(s["exits"][0]["target"]) and bool(s["exits"][1]["target"]))
+	assert_false(bool(s["exits"][0]["urged"]), "not urged with money to bet")
+	_play(rig, "stick")
+	assert_eq(_phase(rig), "broke")
+	s = _st(rig)
+	assert_true(bool(s["exits"][0]["urged"]) and bool(s["exits"][1]["urged"]), "both urged when broke")
+	assert_true(bool(s["hints"]["exit_urged"]))
+	assert_eq(s["targets"], _doors(2), "broke: only the doors")
+	assert_true(_tap(rig, "exit:r.dorm"))
+	s = _st(rig)
+	assert_false(bool(s["exits"][0]["chosen"]))
+	assert_true(bool(s["exits"][1]["chosen"]))
+	assert_false(bool(s["exits"][1]["target"]))
+	assert_false(bool(s["exits"][1]["urged"]))
+
+
+func test_the_exits_are_normalized_default_first_at_most_four_no_duplicates() -> void:
+	var list: Array = [{"route": "b", "dir": "up"}, {"route": "a", "default": true}, {"route": "b"}, {"route": ""}, {"nope": 1}, {"route": "c"}, {"route": "d"}, {"route": "e"}]
+	var ex := MinigameActivity.normalize_exits(list)
+	assert_eq(ex.map(func(e: Dictionary) -> String: return str(e["route"])), ["a", "b", "c", "d"])
+	assert_true(ex.is_read_only())
+	assert_eq(MinigameActivity.normalize_exits("junk"), [])
+	var two := MinigameActivity.normalize_exits([{"route": "a", "default": true}, {"route": "b", "default": true}])
+	assert_eq(two.filter(func(e: Dictionary) -> bool: return bool(e["default"])).size(), 1, "one default")
+	assert_true(MinigameActivity.is_exit_target("exit") and MinigameActivity.is_exit_target("exit:x"))
+	assert_false(MinigameActivity.is_exit_target("exits") or MinigameActivity.is_exit_target("bet"))
+
+
+func test_the_snapshot_cache_follows_every_change_of_the_exits() -> void:
+	var rig := _rig_x(2, _deal([10, 6], [10, 8]), 500)
+	var a: BlackjackActivity = rig["a"]
+	var s0 := a.state()
+	assert_true(is_same(a.state()["exits"], s0["exits"]), "unchanged: the same shared list")
+	_sit(rig)
+	var s1 := a.state()
+	assert_false(is_same(s1["exits"], s0["exits"]), "the doors became targets: rebuilt")
+	assert_true(bool(s1["exits"][0]["target"]))
+	_play(rig, "stick")
+	var s2 := a.state()
+	assert_true(bool(s2["exits"][0]["urged"]), "the broke step rebuilt it")
+	_tap(rig, "exit:r.art")
+	var s3 := a.state()
+	assert_true(bool(s3["exits"][0]["chosen"]), "the tap rebuilt it at once")
+	assert_eq(s3["leave_route"], "r.art")
+	# a refused door tap changes nothing visible
+	var s4 := a.state()
+	assert_false(a.tap("exit:r.dorm", float(rig["t"])))
+	assert_eq(_stripped(a.state()), _stripped(s4))
+
+
+func test_leaving_by_a_door_is_deterministic_at_any_frame_rate() -> void:
+	var run := func(dt: float) -> Array:
+		var rig := _rig_x(2, [], 2000, 5)
+		var a: BlackjackActivity = rig["a"]
+		var taps := [[5.0 * BEAT, "bet"], [12.0 * BEAT, "exit:r.dorm"]]
+		var t := 0.0
+		var i := 0
+		while t < 30.0 * BEAT:
+			var nt := t + dt
+			if i < taps.size() and float(taps[i][0]) <= nt:
+				nt = float(taps[i][0])
+			t = nt
+			a.update(t)
+			while i < taps.size() and float(taps[i][0]) <= t:
+				a.tap(str(taps[i][1]), t)
+				i += 1
+		return [_stripped(a.state()), a.done_route(), (rig["w"] as RunWallet).balance_pence()]
+	var ref: Array = run.call(1.0 / 60.0)
+	assert_eq(ref[1], "r.dorm")
+	for dt in [1.0 / 30.0, 1.0 / 144.0, 0.047]:
+		var other: Array = run.call(dt)
+		assert_eq(other[0], ref[0], "the same end at step %f" % dt)
+		assert_eq(other[1], ref[1])
+		assert_eq(other[2], ref[2])

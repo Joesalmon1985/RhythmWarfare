@@ -71,6 +71,7 @@ var _cards_until := INF  # set by `_card_entries`
 ## Per person, the inputs the last torso and arms states were made from (the torso moves only in a shrug, resting arms not at all).
 var _torso_in: Dictionary = {}
 var _arms_in: Dictionary = {}
+var _doors_memo := {"ex": null, "tg": null, "hn": null, "phase": "", "size": Vector2.ZERO, "doors": []}  # the doors last made (`_doors`)
 
 
 func _init() -> void:
@@ -82,6 +83,9 @@ func _init() -> void:
 	_add_layer("backlight", _draw_backlight)
 	_add_layer("shadow", _draw_shadow)
 	_add_layer("door", _draw_door)
+	_add_layer("door_glow", _draw_door_glow)
+	for l: String in ["door", "door_glow"]:
+		(_layers[l] as _Layer).texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	for who in PEOPLE:
 		_add_layer("torso_" + who, _draw_person)
 		_add_layer("head_" + who, _draw_person)
@@ -324,9 +328,51 @@ func _target_rects(snap: Dictionary) -> Dictionary:
 				out[id] = BlackjackDraw.target_rect("deck", size)
 			"hand":
 				out[id] = BlackjackDraw.target_rect("hand", size, _player_count(snap, _now))
-			"exit":
-				out[id] = BlackjackDraw.exit_rect(size)
+			_:
+				if MinigameActivity.is_exit_target(id):
+					var d := _door_of(snap, id)
+					if not d.is_empty():
+						out[id] = d["touch"]
 	return out
+
+
+## The doors of the room as the snapshot gives them (BlackjackExits): one per exit, or the one plain door when the room gave none, each the slot's rectangles plus
+## {id (its target), scene, tint, light, target, urged, chosen}.
+## Made again only when the snapshot's exits, targets or hints (shared, read-only parts: the same objects until the snapshot is rebuilt), its phase or the size change.
+func _doors(snap: Dictionary) -> Array:
+	var ex: Array = snap.get("exits", [])
+	var tg: Array = snap.get("targets", [])
+	var hn: Variant = snap.get("hints", null)
+	var m := _doors_memo
+	if is_same(m["ex"], ex) and is_same(m["tg"], tg) and is_same(m["hn"], hn) and m["phase"] == snap.get("phase", "") and m["size"] == size:
+		return m["doors"]
+	var doors := _make_doors(snap, ex, tg)
+	_doors_memo = {"ex": ex, "tg": tg, "hn": hn, "phase": snap.get("phase", ""), "size": size, "doors": doors}
+	return doors
+
+
+func _make_doors(snap: Dictionary, ex: Array, tg: Array) -> Array:
+	var leaving := str(snap.get("phase", "")) == "leaving"
+	if ex.is_empty():
+		var lay: Dictionary = BlackjackExits.layout([{"route": "", "dir": ""}], size)[0]
+		lay.merge({"id": "exit", "scene": "", "tint": "", "light": 0.5, "target": "exit" in tg, "urged": "exit" in tg and bool((snap.get("hints", {}) as Dictionary).get("exit_urged", false)), "chosen": leaving})
+		return [lay]
+	var out: Array = BlackjackExits.layout(ex, size)
+	for i in ex.size():
+		var e: Dictionary = ex[i]
+		out[i].merge({"id": "exit:" + str(e["route"]), "scene": str(e.get("scene", "")), "tint": str(e.get("tint", "")), "light": float(e.get("light", 0.5)), "target": bool(e.get("target", false)),
+			"urged": bool(e.get("urged", false)), "chosen": bool(e.get("chosen", false))})
+	return out
+
+
+func _door_of(snap: Dictionary, id: String) -> Dictionary:
+	var want := id
+	if id == "exit" and not (snap.get("exits", []) as Array).is_empty():
+		want = "exit:" + str((snap["exits"][0] as Dictionary)["route"])  # the bare "exit" is the default door
+	for d: Dictionary in _doors(snap):
+		if str(d["id"]) == want:
+			return d
+	return {}
 
 
 # ------------------------------------------------------------------ money
@@ -491,8 +537,8 @@ func _prepare() -> void:
 	(_layers["backlight"] as _Layer).self_modulate = Color(1.0, 1.0, 1.0, 0.14 + breathe * 1.0)
 	_offer("backlight", [size, u])
 	_offer("shadow", [size, u])
-	# the door (always there; it swings and spills light on the beat only while it is a target)
-	_offer("door", [size, u, bp if "exit" in tg else 0.5, bool(hints.get("exit_urged", false))])
+	# the doors (always there, each showing the room it leads to; their light spills while they are targets and breathes on the beat, urged when leaving is the thing to do)
+	_prepare_doors(snap, u, bp)
 	# people: bodies before the table, arms after it
 	for who in PEOPLE:
 		var s: Dictionary = seats.get(who, {})
@@ -584,7 +630,38 @@ func _draw_shadow(ci: Control, s: Array) -> void:
 
 
 func _draw_door(ci: Control, s: Array) -> void:
-	BlackjackDraw.draw_exit(ci, s[0], s[1], s[2], s[3])
+	BlackjackExits.draw_doors(ci, s[0], s[1], s[2])
+
+
+func _draw_door_glow(ci: Control, s: Array) -> void:
+	BlackjackExits.draw_glow(ci, s[0], s[1], s[2], s[3])
+
+
+## The doors' two layers: the doors themselves (redrawn only when what they show changes) and their light, whose strength is the layer's alpha: a slow breath while a door may be
+## touched, a beat-locked swell when leaving is urged, steady and full on the door being left by (steady in reduced motion).
+func _prepare_doors(snap: Dictionary, u: float, bp: float) -> void:
+	var doors := _doors(snap)
+	var art: Array = []
+	var lit: Array = []
+	var urged := false
+	var chosen := false
+	for d: Dictionary in doors:
+		art.append([d["slot"], d["scene"], d["tint"], d["light"], d["chosen"], high_contrast])
+		if bool(d["target"]) or bool(d["chosen"]):
+			lit.append([d["slot"], d["scene"], d["tint"], d["light"], d["urged"], d["chosen"]])
+			urged = urged or bool(d["urged"])
+			chosen = chosen or bool(d["chosen"])
+	_offer("door", [size, u, art])
+	_offer("door_glow", [size, u, high_contrast, lit])
+	var a := 1.0
+	if not chosen:
+		if reduced:
+			a = 0.85
+		elif urged:
+			a = 0.5 + 0.5 * _lift(bp)
+		else:
+			a = 0.72 + 0.18 * sin(TAU * bp / 4.0)
+	(_layers["door_glow"] as _Layer).self_modulate = Color(1.0, 1.0, 1.0, a)
 
 
 func _draw_person(ci: Control, s: Array) -> void:
@@ -830,4 +907,5 @@ func _thing_rect(id: String, snap: Dictionary, hand_box: Rect2) -> Rect2:
 			return _deck_box()
 		"hand":
 			return hand_box
-	return BlackjackDraw.exit_rect(size).grow(-6.0 * float(_geometry()["u"]))
+	var d := _door_of(snap, id)
+	return (d["open"] as Rect2).grow(maxf(1.0, roundf(4.0 * float(_geometry()["u"])))) if not d.is_empty() else Rect2()

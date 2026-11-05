@@ -5,6 +5,7 @@ extends RefCounted
 ## States: "" (none), "entering" (requested at the commit; the run is held at its scene until the seat time), "active" (seated), "leaving" (an exit or a fall was asked for; the activity
 ## finishes its animation). While a minigame lives `engine.hold` is true; it is released when the activity reports `is_done()`. The generic rhythm rule lives here: failed blocks in a row
 ## wobble the player (`wobble_at`, 2) and then drop them (`fall_at`, 3); a pass resets the count. Both come from the activity's config. Same calls give the same log.
+## The room's exits are handed to the activity at the request; a door the player gets up by is logged (`leave` with its route) and, once the activity is done, is `last_route` for the host.
 
 const DIR := "res://content/minigames"
 
@@ -19,6 +20,7 @@ var started := 0  # activities started so far in this run
 var last_seed := 0
 var begin_t := -1.0  # song time the player was seated
 var seat_t := -1.0  # song time the player will be seated (the next downbeat after the request)
+var last_route := ""  # the route of the door the last activity was left by ("" none: it ended otherwise, or the room had no exits); set when it finishes
 
 var _registry: Dictionary = {}  # id -> {script: GDScript | String, config: Dictionary}
 var _fails := 0
@@ -74,7 +76,8 @@ func is_registered(id: String) -> bool:
 
 
 ## The player sits: the run is held at its scene from now, `begin` is called at `t_seat` (the next downbeat). False for an unknown id or while another activity lives.
-func request(id: String, t_commit: float, t_seat: float) -> bool:
+## `exits`: the room's ways out (MinigameActivity, "exits"), handed to the activity.
+func request(id: String, t_commit: float, t_seat: float, exits: Array = []) -> bool:
 	if state != "" or not _registry.has(id):
 		return false
 	var rec: Dictionary = _registry[id]
@@ -94,7 +97,8 @@ func request(id: String, t_commit: float, t_seat: float) -> bool:
 	_fails = 0
 	begin_t = -1.0
 	seat_t = t_seat
-	activity.setup({"wallet": wallet, "seed": last_seed, "beat_s": engine.beat_s if engine != null else 60.0 / 174.0, "config": _config})
+	last_route = ""
+	activity.setup({"wallet": wallet, "seed": last_seed, "beat_s": engine.beat_s if engine != null else 60.0 / 174.0, "config": _config, "exits": exits})
 	if engine != null:
 		engine.hold = true
 	state = "entering"
@@ -153,12 +157,14 @@ func on_run_over(t: float) -> void:
 		_interrupt("run_over", t)
 
 
-## The player chose to get up (the host's own exit, a scripted tap). The activity's exit target does the same through `tap`.
-func request_leave(t: float) -> void:
+## The player chose to get up (the host's own exit, a scripted tap), by the door to `route` ("" none: the room decides). The activity's exit targets do the same through `tap`.
+func request_leave(t: float, route := "") -> void:
 	if state == "active":
+		if activity.leave_route == "":  # a door already chosen stays chosen
+			activity.leave_route = route
 		activity.request_leave(t)
 		state = "leaving"
-		log.append({"kind": "leave", "t": t})
+		log.append({"kind": "leave", "t": t, "route": route})
 
 
 ## A touch on an activity target; forwarded only while seated. Returns whether the activity took it.
@@ -167,6 +173,8 @@ func tap(target: String, t: float) -> bool:
 		return false
 	var ok := activity.tap(target, t)
 	log.append({"kind": "tap", "target": target, "ok": ok, "t": t})
+	if ok and MinigameActivity.is_exit_target(target):
+		log.append({"kind": "leave", "t": t, "route": activity.leave_route, "target": target})
 	return ok
 
 
@@ -178,6 +186,7 @@ func _interrupt(reason: String, t: float) -> void:
 
 func _finish(t: float, reason := "") -> void:
 	var why := reason if reason != "" else activity.done_reason()
+	last_route = activity.done_route() if why == "left" else ""
 	if engine != null:
 		engine.hold = false
 	state = ""
