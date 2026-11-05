@@ -58,6 +58,27 @@ reruns the chart and everything after it; `--only preview` reruns one stage.
 Keys D F J K. The game's side of this is track mode, `src/track/README.md`. The first time after pulling new
 code, run Godot's import once (`$GODOT --headless --path . --import`) so the new scripts are registered.
 
+### A whole folder overnight
+
+    OMP_NUM_THREADS=4 nice -n 10 /home/joe/.venvs/rw-audio/bin/python tools/audio_import/import_track.py \
+        /home/joe/Projects/MusicGame/ToAddTry4/ --skip-imported --prune-cache
+
+`--skip-imported` leaves alone any recording whose pack already exists and validated, so the same command can
+be run again after an interruption and carries on where it stopped. `--prune-cache` deletes a recording's
+cached separated audio (about 1 GB each) once its pack is written and validated; without it 60 recordings need
+60 GB of cache. A pruned recording that is imported again later (to change its focus, say) is separated again.
+
+### The catalogue (metadata in the repository)
+
+    /home/joe/.venvs/rw-audio/bin/python tools/audio_import/catalogue_tracks.py /home/joe/Projects/MusicGame/ToAddTry4
+
+writes `content/music/tracks/catalogue.json` (every recording: tags, length, and a quick look at tempo,
+loudness, bass weight, brightness, busyness and a rough loud/quiet map), one `content/music/tracks/<id>.json`
+per imported recording (measured tempo, bar-accurate sections, which instrument is played when, cue counts)
+and `docs/MUSIC_TRACKS.md` (the same as tables). Metadata only, never audio: this is what is committed, so
+that work on the game can choose and place tracks without having the recordings. It takes about three seconds
+per recording and is cached; run it again after importing more and commit the result.
+
 ### The summary line and its warnings
 
 - `NNN.NN BPM constant|NOT constant (drift, conf)`: the tempo, the largest drift of 8-bar windows from one

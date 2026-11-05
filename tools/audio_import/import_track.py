@@ -520,6 +520,15 @@ def inputs(paths: list[str]) -> list[Path]:
     return out
 
 
+def _imported(c: Ctx) -> bool:
+    """A pack exists for this recording and its last validation found nothing wrong."""
+    try:
+        rep = json.loads((c.pack / "report.json").read_text())
+        return (c.pack / "track.json").exists() and rep.get("validation", {}).get("violations") == 0
+    except (OSError, ValueError):
+        return False
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("audio", nargs="+", help="audio files and/or folders of audio files")
@@ -535,6 +544,11 @@ def main(argv: list[str] | None = None) -> int:
                     help="force the focus in a section id or a time range: drop1=bass, 77.2-132.4=drums, "
                          "breakdown1=none; repeatable")
     ap.add_argument("--focus-auto", action="store_true", help="forget focus options remembered for the track")
+    ap.add_argument("--skip-imported", action="store_true",
+                    help="leave alone any recording whose pack already exists and validated (for resuming a batch)")
+    ap.add_argument("--prune-cache", action="store_true",
+                    help="after a recording is packed and validated, delete its cached separated audio (about "
+                         "1 GB each); a later rerun of that recording separates it again")
     a = ap.parse_args(argv)
     os.environ.setdefault("HF_HUB_OFFLINE", "1")
     files = inputs(a.audio)
@@ -547,8 +561,16 @@ def main(argv: list[str] | None = None) -> int:
             if not f.is_file():
                 raise FileNotFoundError(f"{f} not found")
             c = Ctx(f, a)
+            if a.skip_imported and _imported(c):
+                lines.append(f"{c.id} | already imported (pack validated), skipped")
+                print(lines[-1], flush=True)
+                continue
             res = run_track(c, a)
             rc = max(rc, res["rc"])
+            if a.prune_cache and res["rc"] == 0:
+                import shutil
+                for d in [*c.cache.glob("sep_*"), c.cache / "voices"]:
+                    shutil.rmtree(d, ignore_errors=True)
         except Exception as e:  # noqa: BLE001  one bad file never stops the batch
             traceback.print_exc()
             import subprocess
