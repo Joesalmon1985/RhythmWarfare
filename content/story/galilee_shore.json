@@ -1,0 +1,303 @@
+{
+ "id": "galilee_shore",
+ "title": "Galilee Shore",
+ "chapter": 9,
+ "art": "galilee_shore",
+ "description": "A map of the Gospel path (content/paths/gospel).",
+ "intro": "",
+ "duration_bars": 128,
+ "sequence_bars": 2,
+ "initial_energy": 60,
+ "blocks": [],
+ "decisions": [],
+ "endings": {},
+ "ending_order": [],
+ "acts": [],
+ "groups": {
+  "all": [
+   "sh1",
+   "sh2",
+   "sh3",
+   "sh4",
+   "m1",
+   "el1",
+   "b1",
+   "v1_bank_dawn",
+   "v2",
+   "v3",
+   "v4",
+   "v5",
+   "v6",
+   "k1_bank_dawn",
+   "t1",
+   "c1",
+   "n1",
+   "k1_workshop",
+   "v1_workshop"
+  ]
+ },
+ "actors": [
+  {
+   "id": "sh1",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "shepherd",
+   "seed_id": "galilee_shore/sh1",
+   "activity": "stand",
+   "thresh": -4
+  },
+  {
+   "id": "sh2",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "main",
+   "wear": "shepherd",
+   "seed_id": "galilee_shore/sh2",
+   "activity": "stand",
+   "thresh": 6
+  },
+  {
+   "id": "sh3",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "main",
+   "wear": "shepherd",
+   "seed_id": "galilee_shore/sh3",
+   "activity": "stand",
+   "thresh": 3
+  },
+  {
+   "id": "sh4",
+   "archetype": "ponytail",
+   "variant": "a",
+   "group": "core",
+   "view": "main",
+   "wear": "shepherd",
+   "seed_id": "galilee_shore/sh4",
+   "activity": "sit",
+   "thresh": -3
+  },
+  {
+   "id": "m1",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "mother",
+   "seed_id": "galilee_shore/m1",
+   "activity": "stand",
+   "thresh": -5
+  },
+  {
+   "id": "el1",
+   "archetype": "hoodie",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "elder",
+   "seed_id": "galilee_shore/el1",
+   "activity": "watch",
+   "thresh": -2
+  },
+  {
+   "id": "b1",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "bank_dawn",
+   "wear": "baptist",
+   "seed_id": "galilee_shore/b1",
+   "activity": "stand",
+   "thresh": -5
+  },
+  {
+   "id": "v1_bank_dawn",
+   "archetype": "curly",
+   "variant": "a",
+   "group": "core",
+   "view": "bank_dawn",
+   "wear": "villager",
+   "seed_id": "galilee_shore/v1_bank_dawn",
+   "activity": "stand",
+   "thresh": 1
+  },
+  {
+   "id": "v2",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "bank_dawn",
+   "wear": "villager",
+   "seed_id": "galilee_shore/v2",
+   "activity": "watch",
+   "thresh": -2
+  },
+  {
+   "id": "v3",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "bank_dawn",
+   "wear": "villager",
+   "seed_id": "galilee_shore/v3",
+   "activity": "stand",
+   "thresh": -4
+  },
+  {
+   "id": "v4",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "bank_dawn",
+   "wear": "villager",
+   "seed_id": "galilee_shore/v4",
+   "activity": "watch",
+   "thresh": -6
+  },
+  {
+   "id": "v5",
+   "archetype": "hoodie",
+   "variant": "b",
+   "group": "core",
+   "view": "bank_dawn",
+   "wear": "woman",
+   "seed_id": "galilee_shore/v5",
+   "activity": "stand",
+   "thresh": 0
+  },
+  {
+   "id": "v6",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "bank_dawn",
+   "wear": "elder",
+   "seed_id": "galilee_shore/v6",
+   "activity": "sit",
+   "thresh": -6
+  },
+  {
+   "id": "k1_bank_dawn",
+   "archetype": "curly",
+   "variant": "a",
+   "group": "core",
+   "view": "bank_dawn",
+   "wear": "child",
+   "seed_id": "galilee_shore/k1_bank_dawn",
+   "activity": "stand",
+   "thresh": -1
+  },
+  {
+   "id": "t1",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "rocks",
+   "wear": "tempter",
+   "seed_id": "galilee_shore/t1",
+   "activity": "stand",
+   "thresh": -1
+  },
+  {
+   "id": "c1",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "workshop",
+   "wear": "carpenter",
+   "seed_id": "galilee_shore/c1",
+   "activity": "check",
+   "thresh": 1
+  },
+  {
+   "id": "n1",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "view": "workshop",
+   "wear": "villager",
+   "seed_id": "galilee_shore/n1",
+   "activity": "stand",
+   "thresh": -3
+  },
+  {
+   "id": "k1_workshop",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "workshop",
+   "wear": "child",
+   "seed_id": "galilee_shore/k1_workshop",
+   "activity": "stand",
+   "thresh": -3
+  },
+  {
+   "id": "v1_workshop",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "workshop",
+   "wear": "woman",
+   "seed_id": "galilee_shore/v1_workshop",
+   "activity": "watch",
+   "thresh": -2
+  }
+ ],
+ "silhouettes": [],
+ "palettes": {
+  "low": [
+   "#7a5a4a",
+   "#a8785a"
+  ],
+  "cool": [
+   "#6a8ac8",
+   "#9aa8d8"
+  ],
+  "warm": [
+   "#ffb060",
+   "#ff8a50"
+  ],
+  "rave": [
+   "#ffc060",
+   "#8ab0ff",
+   "#ff9060",
+   "#ffe090"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Quiet",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Gathered",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Moved",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Joyful",
+    "max": 100
+   }
+  ]
+ }
+}

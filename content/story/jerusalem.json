@@ -1,0 +1,639 @@
+{
+ "id": "jerusalem",
+ "title": "Jerusalem",
+ "chapter": 9,
+ "art": "jerusalem",
+ "description": "A map of the Gospel path (content/paths/gospel).",
+ "intro": "",
+ "duration_bars": 128,
+ "sequence_bars": 2,
+ "initial_energy": 60,
+ "blocks": [],
+ "decisions": [],
+ "endings": {},
+ "ending_order": [],
+ "acts": [],
+ "groups": {
+  "all": [
+   "mc1",
+   "mc2",
+   "mc3",
+   "pr1",
+   "pr2",
+   "g1_temple",
+   "g2_temple",
+   "v1_temple",
+   "v2",
+   "d09",
+   "d10",
+   "d11",
+   "d12",
+   "g1_grove",
+   "g2_grove",
+   "g3",
+   "gov",
+   "sc1",
+   "sc2",
+   "w1_praetorium",
+   "g1_praetorium",
+   "g2_praetorium",
+   "cr1",
+   "cr2",
+   "cr3",
+   "cr4",
+   "cr5",
+   "cr6",
+   "w1_hill",
+   "w2_hill",
+   "w3_hill",
+   "s1",
+   "s2",
+   "s3",
+   "x1",
+   "x2",
+   "x3",
+   "w1_tomb",
+   "w2_tomb",
+   "w3_tomb",
+   "gd1",
+   "d01",
+   "d02",
+   "sp1",
+   "g1_road",
+   "g2_road",
+   "v1_road"
+  ]
+ },
+ "actors": [
+  {
+   "id": "mc1",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "merchant",
+   "seed_id": "jerusalem/mc1",
+   "activity": "stand",
+   "thresh": 4
+  },
+  {
+   "id": "mc2",
+   "archetype": "curly",
+   "variant": "a",
+   "group": "core",
+   "view": "main",
+   "wear": "merchant",
+   "seed_id": "jerusalem/mc2",
+   "activity": "stand",
+   "thresh": 2
+  },
+  {
+   "id": "mc3",
+   "archetype": "ponytail",
+   "variant": "a",
+   "group": "core",
+   "view": "main",
+   "wear": "merchant",
+   "seed_id": "jerusalem/mc3",
+   "activity": "stand",
+   "thresh": 6
+  },
+  {
+   "id": "pr1",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "priest",
+   "seed_id": "jerusalem/pr1",
+   "activity": "stand",
+   "thresh": 1
+  },
+  {
+   "id": "pr2",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "main",
+   "wear": "priest",
+   "seed_id": "jerusalem/pr2",
+   "activity": "stand",
+   "thresh": 3
+  },
+  {
+   "id": "g1_temple",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "main",
+   "wear": "soldier",
+   "seed_id": "jerusalem/g1_temple",
+   "activity": "stand",
+   "thresh": 4
+  },
+  {
+   "id": "g2_temple",
+   "archetype": "curly",
+   "variant": "a",
+   "group": "core",
+   "view": "main",
+   "wear": "soldier",
+   "seed_id": "jerusalem/g2_temple",
+   "activity": "stand",
+   "thresh": -3
+  },
+  {
+   "id": "v1_temple",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "main",
+   "wear": "villager",
+   "seed_id": "jerusalem/v1_temple",
+   "activity": "watch",
+   "thresh": 3
+  },
+  {
+   "id": "v2",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "main",
+   "wear": "woman",
+   "seed_id": "jerusalem/v2",
+   "activity": "watch",
+   "thresh": -2
+  },
+  {
+   "id": "d09",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "grove",
+   "wear": "disciple",
+   "seed_id": "d09",
+   "activity": "sleep",
+   "thresh": 1
+  },
+  {
+   "id": "d10",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "grove",
+   "wear": "disciple",
+   "seed_id": "d10",
+   "activity": "sleep",
+   "thresh": 1
+  },
+  {
+   "id": "d11",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "grove",
+   "wear": "disciple",
+   "seed_id": "d11",
+   "activity": "sleep",
+   "thresh": 2
+  },
+  {
+   "id": "d12",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "late",
+   "view": "grove",
+   "wear": "disciple",
+   "seed_id": "d12",
+   "activity": "stand",
+   "thresh": 4
+  },
+  {
+   "id": "g1_grove",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "late",
+   "view": "grove",
+   "wear": "soldier",
+   "seed_id": "jerusalem/g1_grove",
+   "activity": "stand",
+   "thresh": 2
+  },
+  {
+   "id": "g2_grove",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "late",
+   "view": "grove",
+   "wear": "soldier",
+   "seed_id": "jerusalem/g2_grove",
+   "activity": "stand",
+   "thresh": 2
+  },
+  {
+   "id": "g3",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "late",
+   "view": "grove",
+   "wear": "soldier",
+   "seed_id": "jerusalem/g3",
+   "activity": "stand",
+   "thresh": 1
+  },
+  {
+   "id": "gov",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "praetorium",
+   "wear": "governor",
+   "seed_id": "jerusalem/gov",
+   "activity": "stand",
+   "thresh": 4
+  },
+  {
+   "id": "sc1",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "praetorium",
+   "wear": "priest",
+   "seed_id": "jerusalem/sc1",
+   "activity": "stand",
+   "thresh": 1
+  },
+  {
+   "id": "sc2",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "praetorium",
+   "wear": "merchant",
+   "seed_id": "jerusalem/sc2",
+   "activity": "stand",
+   "thresh": 5
+  },
+  {
+   "id": "w1_praetorium",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "praetorium",
+   "wear": "woman",
+   "seed_id": "jerusalem/w1_praetorium",
+   "activity": "stand",
+   "thresh": -4
+  },
+  {
+   "id": "g1_praetorium",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "praetorium",
+   "wear": "soldier",
+   "seed_id": "jerusalem/g1_praetorium",
+   "activity": "stand",
+   "thresh": 3
+  },
+  {
+   "id": "g2_praetorium",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "praetorium",
+   "wear": "soldier",
+   "seed_id": "jerusalem/g2_praetorium",
+   "activity": "stand",
+   "thresh": -3
+  },
+  {
+   "id": "cr1",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "praetorium",
+   "wear": "villager",
+   "seed_id": "jerusalem/cr1",
+   "activity": "stand",
+   "thresh": -4
+  },
+  {
+   "id": "cr2",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "praetorium",
+   "wear": "villager",
+   "seed_id": "jerusalem/cr2",
+   "activity": "stand",
+   "thresh": 2
+  },
+  {
+   "id": "cr3",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "praetorium",
+   "wear": "elder",
+   "seed_id": "jerusalem/cr3",
+   "activity": "stand",
+   "thresh": -6
+  },
+  {
+   "id": "cr4",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "praetorium",
+   "wear": "villager",
+   "seed_id": "jerusalem/cr4",
+   "activity": "stand",
+   "thresh": -3
+  },
+  {
+   "id": "cr5",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "view": "praetorium",
+   "wear": "priest",
+   "seed_id": "jerusalem/cr5",
+   "activity": "stand",
+   "thresh": 5
+  },
+  {
+   "id": "cr6",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "praetorium",
+   "wear": "woman",
+   "seed_id": "jerusalem/cr6",
+   "activity": "stand",
+   "thresh": 3
+  },
+  {
+   "id": "w1_hill",
+   "archetype": "hoodie",
+   "variant": "a",
+   "group": "core",
+   "view": "hill",
+   "wear": "woman",
+   "seed_id": "jerusalem/w1_hill",
+   "activity": "stand",
+   "thresh": -6
+  },
+  {
+   "id": "w2_hill",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "hill",
+   "wear": "woman",
+   "seed_id": "jerusalem/w2_hill",
+   "activity": "stand",
+   "thresh": 1
+  },
+  {
+   "id": "w3_hill",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "hill",
+   "wear": "woman",
+   "seed_id": "jerusalem/w3_hill",
+   "activity": "stand",
+   "thresh": 4
+  },
+  {
+   "id": "s1",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "hill",
+   "wear": "soldier",
+   "seed_id": "jerusalem/s1",
+   "activity": "stand",
+   "thresh": -3
+  },
+  {
+   "id": "s2",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "hill",
+   "wear": "soldier",
+   "seed_id": "jerusalem/s2",
+   "activity": "stand",
+   "thresh": -4
+  },
+  {
+   "id": "s3",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "view": "hill",
+   "wear": "soldier",
+   "seed_id": "jerusalem/s3",
+   "activity": "stand",
+   "thresh": -2
+  },
+  {
+   "id": "x1",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "view": "hill",
+   "wear": "disciple",
+   "seed_id": "jerusalem/x1",
+   "activity": "stand",
+   "thresh": 3
+  },
+  {
+   "id": "x2",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "hill",
+   "wear": "villager",
+   "seed_id": "jerusalem/x2",
+   "activity": "stand",
+   "thresh": 2
+  },
+  {
+   "id": "x3",
+   "archetype": "ponytail",
+   "variant": "a",
+   "group": "core",
+   "view": "hill",
+   "wear": "elder",
+   "seed_id": "jerusalem/x3",
+   "activity": "stand",
+   "thresh": 2
+  },
+  {
+   "id": "w1_tomb",
+   "archetype": "ponytail",
+   "variant": "a",
+   "group": "core",
+   "view": "tomb",
+   "wear": "woman",
+   "seed_id": "jerusalem/w1_tomb",
+   "activity": "stand",
+   "thresh": -5
+  },
+  {
+   "id": "w2_tomb",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "view": "tomb",
+   "wear": "woman",
+   "seed_id": "jerusalem/w2_tomb",
+   "activity": "stand",
+   "thresh": 4
+  },
+  {
+   "id": "w3_tomb",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "tomb",
+   "wear": "woman",
+   "seed_id": "jerusalem/w3_tomb",
+   "activity": "stand",
+   "thresh": 6
+  },
+  {
+   "id": "gd1",
+   "archetype": "bob",
+   "variant": "b",
+   "group": "core",
+   "view": "tomb",
+   "wear": "gardener",
+   "seed_id": "jerusalem/gd1",
+   "activity": "stand",
+   "thresh": 3
+  },
+  {
+   "id": "d01",
+   "archetype": "punk",
+   "variant": "a",
+   "group": "core",
+   "view": "road",
+   "wear": "disciple",
+   "seed_id": "d01",
+   "activity": "stand",
+   "thresh": 0
+  },
+  {
+   "id": "d02",
+   "archetype": "ponytail",
+   "variant": "b",
+   "group": "core",
+   "view": "road",
+   "wear": "disciple",
+   "seed_id": "d02",
+   "activity": "stand",
+   "thresh": -4
+  },
+  {
+   "id": "sp1",
+   "archetype": "ponytail",
+   "variant": "a",
+   "group": "core",
+   "view": "road",
+   "wear": "shepherd",
+   "seed_id": "jerusalem/sp1",
+   "activity": "stand",
+   "thresh": -1
+  },
+  {
+   "id": "g1_road",
+   "archetype": "groover",
+   "variant": "b",
+   "group": "core",
+   "view": "road",
+   "wear": "soldier",
+   "seed_id": "jerusalem/g1_road",
+   "activity": "stand",
+   "thresh": -2
+  },
+  {
+   "id": "g2_road",
+   "archetype": "bob",
+   "variant": "a",
+   "group": "core",
+   "view": "road",
+   "wear": "soldier",
+   "seed_id": "jerusalem/g2_road",
+   "activity": "stand",
+   "thresh": 5
+  },
+  {
+   "id": "v1_road",
+   "archetype": "groover",
+   "variant": "a",
+   "group": "core",
+   "view": "road",
+   "wear": "woman",
+   "seed_id": "jerusalem/v1_road",
+   "activity": "stand",
+   "thresh": -6
+  }
+ ],
+ "silhouettes": [],
+ "palettes": {
+  "low": [
+   "#7a5a4a",
+   "#a8785a"
+  ],
+  "cool": [
+   "#6a8ac8",
+   "#9aa8d8"
+  ],
+  "warm": [
+   "#ffb060",
+   "#ff8a50"
+  ],
+  "rave": [
+   "#ffc060",
+   "#8ab0ff",
+   "#ff9060",
+   "#ffe090"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Quiet",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Gathered",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Moved",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Joyful",
+    "max": 100
+   }
+  ]
+ }
+}

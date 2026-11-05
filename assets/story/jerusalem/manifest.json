@@ -1,0 +1,506 @@
+{
+ "version": 1,
+ "level": "jerusalem",
+ "px_scale_note": "the Gospel path's maps have no SVG rigs: the world is textures, billboards and baked people",
+ "textures": {
+  "floor_flag": {
+   "file": "textures/floor_flag.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "floor_garden": {
+   "file": "textures/floor_garden.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "floor_path": {
+   "file": "textures/floor_path.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_road": {
+   "file": "textures/floor_road.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "floor_rock": {
+   "file": "textures/floor_rock.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "floor_soil": {
+   "file": "textures/floor_soil.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "sky_day": {
+   "file": "textures/sky_day.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "sky_dusk": {
+   "file": "textures/sky_dusk.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "sky_morning": {
+   "file": "textures/sky_morning.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "sky_night": {
+   "file": "textures/sky_night.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_bench": {
+   "file": "textures/thing_bench.png",
+   "size": [
+    96,
+    40
+   ],
+   "metres": 1.0
+  },
+  "thing_bowl_set": {
+   "file": "textures/thing_bowl_set.png",
+   "size": [
+    48,
+    56
+   ],
+   "metres": 1.0
+  },
+  "thing_brazier": {
+   "file": "textures/thing_brazier.png",
+   "size": [
+    40,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_bush": {
+   "file": "textures/thing_bush.png",
+   "size": [
+    64,
+    56
+   ],
+   "metres": 1.0
+  },
+  "thing_cart": {
+   "file": "textures/thing_cart.png",
+   "size": [
+    128,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_city_far": {
+   "file": "textures/thing_city_far.png",
+   "size": [
+    256,
+    112
+   ],
+   "metres": 1.0
+  },
+  "thing_cross": {
+   "file": "textures/thing_cross.png",
+   "size": [
+    40,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_cypress": {
+   "file": "textures/thing_cypress.png",
+   "size": [
+    56,
+    144
+   ],
+   "metres": 1.0
+  },
+  "thing_dais": {
+   "file": "textures/thing_dais.png",
+   "size": [
+    128,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_flowers": {
+   "file": "textures/thing_flowers.png",
+   "size": [
+    64,
+    40
+   ],
+   "metres": 1.0
+  },
+  "thing_grass": {
+   "file": "textures/thing_grass.png",
+   "size": [
+    48,
+    32
+   ],
+   "metres": 1.0
+  },
+  "thing_hill_far": {
+   "file": "textures/thing_hill_far.png",
+   "size": [
+    256,
+    112
+   ],
+   "metres": 1.0
+  },
+  "thing_jar": {
+   "file": "textures/thing_jar.png",
+   "size": [
+    32,
+    48
+   ],
+   "metres": 1.0
+  },
+  "thing_olive": {
+   "file": "textures/thing_olive.png",
+   "size": [
+    128,
+    160
+   ],
+   "metres": 1.0
+  },
+  "thing_olive_small": {
+   "file": "textures/thing_olive_small.png",
+   "size": [
+    96,
+    112
+   ],
+   "metres": 1.0
+  },
+  "thing_pillar": {
+   "file": "textures/thing_pillar.png",
+   "size": [
+    48,
+    192
+   ],
+   "metres": 1.0
+  },
+  "thing_rock_a": {
+   "file": "textures/thing_rock_a.png",
+   "size": [
+    64,
+    48
+   ],
+   "metres": 1.0
+  },
+  "thing_rock_b": {
+   "file": "textures/thing_rock_b.png",
+   "size": [
+    96,
+    72
+   ],
+   "metres": 1.0
+  },
+  "thing_rock_c": {
+   "file": "textures/thing_rock_c.png",
+   "size": [
+    128,
+    112
+   ],
+   "metres": 1.0
+  },
+  "thing_sheep": {
+   "file": "textures/thing_sheep.png",
+   "size": [
+    48,
+    40
+   ],
+   "metres": 1.0
+  },
+  "thing_sky_dark1": {
+   "file": "textures/thing_sky_dark1.png",
+   "size": [
+    128,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_sky_dark2": {
+   "file": "textures/thing_sky_dark2.png",
+   "size": [
+    128,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_sky_dark3": {
+   "file": "textures/thing_sky_dark3.png",
+   "size": [
+    128,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_spears": {
+   "file": "textures/thing_spears.png",
+   "size": [
+    48,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_stone_closed": {
+   "file": "textures/thing_stone_closed.png",
+   "size": [
+    96,
+    96
+   ],
+   "metres": 1.0
+  },
+  "thing_stone_rolled": {
+   "file": "textures/thing_stone_rolled.png",
+   "size": [
+    96,
+    72
+   ],
+   "metres": 1.0
+  },
+  "thing_table_coins": {
+   "file": "textures/thing_table_coins.png",
+   "size": [
+    112,
+    72
+   ],
+   "metres": 1.0
+  },
+  "thing_table_over": {
+   "file": "textures/thing_table_over.png",
+   "size": [
+    128,
+    72
+   ],
+   "metres": 1.0
+  },
+  "thing_temple_front": {
+   "file": "textures/thing_temple_front.png",
+   "size": [
+    256,
+    160
+   ],
+   "metres": 1.0
+  },
+  "thing_tomb": {
+   "file": "textures/thing_tomb.png",
+   "size": [
+    192,
+    144
+   ],
+   "metres": 1.0
+  },
+  "thing_torch": {
+   "file": "textures/thing_torch.png",
+   "size": [
+    24,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_wall_low": {
+   "file": "textures/thing_wall_low.png",
+   "size": [
+    128,
+    48
+   ],
+   "metres": 1.0
+  },
+  "trim": {
+   "file": "textures/trim.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.0
+  },
+  "wall_columns": {
+   "file": "textures/wall_columns.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 5.0
+  },
+  "wall_cypress": {
+   "file": "textures/wall_cypress.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 5.0
+  },
+  "wall_hill": {
+   "file": "textures/wall_hill.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 6.0
+  },
+  "wall_limestone": {
+   "file": "textures/wall_limestone.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_olive": {
+   "file": "textures/wall_olive.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 4.0
+  },
+  "wall_praetorium": {
+   "file": "textures/wall_praetorium.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 5.0
+  },
+  "wall_rock": {
+   "file": "textures/wall_rock.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 4.0
+  }
+ },
+ "stage": {
+  "sprites": {
+   "glow": {
+    "file": "processed/glow.png",
+    "pivot": [
+     128.0,
+     128.0
+    ],
+    "px_scale": 1.0
+   },
+   "vignette": {
+    "file": "processed/vignette.png",
+    "pivot": [
+     320.0,
+     180.0
+    ],
+    "px_scale": 2.0
+   }
+  },
+  "pieces": [
+   {
+    "id": "temple.t1_up",
+    "file": "textures/thing_table_coins.png",
+    "blend": "mix",
+    "anim": "none"
+   },
+   {
+    "id": "temple.t2_up",
+    "file": "textures/thing_table_coins.png",
+    "blend": "mix",
+    "anim": "none"
+   },
+   {
+    "id": "temple.t3_up",
+    "file": "textures/thing_table_coins.png",
+    "blend": "mix",
+    "anim": "none"
+   },
+   {
+    "id": "temple.t1_over",
+    "file": "textures/thing_table_over.png",
+    "blend": "mix",
+    "anim": "none"
+   },
+   {
+    "id": "temple.t2_over",
+    "file": "textures/thing_table_over.png",
+    "blend": "mix",
+    "anim": "none"
+   },
+   {
+    "id": "temple.t3_over",
+    "file": "textures/thing_table_over.png",
+    "blend": "mix",
+    "anim": "none"
+   },
+   {
+    "id": "hill.dark1",
+    "file": "textures/thing_sky_dark1.png",
+    "blend": "mix",
+    "anim": "none"
+   },
+   {
+    "id": "hill.dark2",
+    "file": "textures/thing_sky_dark2.png",
+    "blend": "mix",
+    "anim": "none"
+   },
+   {
+    "id": "hill.dark3",
+    "file": "textures/thing_sky_dark3.png",
+    "blend": "mix",
+    "anim": "none"
+   },
+   {
+    "id": "tomb.stone_closed",
+    "file": "textures/thing_stone_closed.png",
+    "blend": "mix",
+    "anim": "none"
+   },
+   {
+    "id": "tomb.stone_rolled",
+    "file": "textures/thing_stone_rolled.png",
+    "blend": "mix",
+    "anim": "none"
+   }
+  ],
+  "views": []
+ },
+ "archetypes": {},
+ "people": {
+  "file": "people/people.json",
+  "pages": [
+   "people/page_0.png",
+   "people/page_1.png",
+   "people/page_2.png"
+  ],
+  "palette": "people/palette.png"
+ }
+}

@@ -1,0 +1,1313 @@
+{
+ "units_per_m": 1,
+ "palette_weight": 0.0,
+ "eye_height": 1.6,
+ "start": "courtyard.home",
+ "textures": {
+  "floor_clay": "textures/floor_clay.png",
+  "floor_grass": "textures/floor_grass.png",
+  "floor_path": "textures/floor_path.png",
+  "floor_road": "textures/floor_road.png",
+  "thing_basket": "textures/thing_basket.png",
+  "thing_basket_full": "textures/thing_basket_full.png",
+  "thing_bush": "textures/thing_bush.png",
+  "thing_citygate": "textures/thing_citygate.png",
+  "thing_donkey": "textures/thing_donkey.png",
+  "thing_flowers": "textures/thing_flowers.png",
+  "thing_grass": "textures/thing_grass.png",
+  "thing_hay": "textures/thing_hay.png",
+  "thing_hill_mount": "textures/thing_hill_mount.png",
+  "thing_house_b": "textures/thing_house_b.png",
+  "thing_jar": "textures/thing_jar.png",
+  "thing_jars": "textures/thing_jars.png",
+  "thing_lantern": "textures/thing_lantern.png",
+  "thing_olive": "textures/thing_olive.png",
+  "thing_olive_small": "textures/thing_olive_small.png",
+  "thing_palm": "textures/thing_palm.png",
+  "thing_rock_b": "textures/thing_rock_b.png",
+  "thing_stairs": "textures/thing_stairs.png",
+  "thing_stool": "textures/thing_stool.png",
+  "thing_table_meal": "textures/thing_table_meal.png",
+  "trim": "textures/trim.png",
+  "wall_city": "textures/wall_city.png",
+  "wall_hill": "textures/wall_hill.png",
+  "wall_limestone": "textures/wall_limestone.png",
+  "wall_mudbrick": "textures/wall_mudbrick.png",
+  "wall_rock": "textures/wall_rock.png",
+  "sky_day": "textures/sky_day.png",
+  "sky_dusk": "textures/sky_dusk.png"
+ },
+ "sectors": [
+  {
+   "id": "courtyard",
+   "polygon": [
+    [
+     -8.0,
+     -12.0
+    ],
+    [
+     8.0,
+     -12.0
+    ],
+    [
+     8.0,
+     4.0
+    ],
+    [
+     -8.0,
+     4.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 3.4,
+   "floor_tex": "floor_clay",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_mudbrick",
+   "light": 0.74,
+   "tint": "#fff0d0",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "day",
+   "fog": {
+    "color": "#d6c8a8",
+    "density": 0.01
+   }
+  },
+  {
+   "id": "hill_dusk",
+   "polygon": [
+    [
+     10.0,
+     -12.0
+    ],
+    [
+     26.0,
+     -12.0
+    ],
+    [
+     26.0,
+     4.0
+    ],
+    [
+     10.0,
+     4.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 3.4,
+   "floor_tex": "floor_grass",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_hill",
+   "light": 0.58,
+   "tint": "#ff9a60",
+   "room": "hill_dusk",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "dusk",
+   "fog": {
+    "color": "#c08060",
+    "density": 0.014
+   }
+  },
+  {
+   "id": "gate",
+   "polygon": [
+    [
+     28.0,
+     -12.0
+    ],
+    [
+     44.0,
+     -12.0
+    ],
+    [
+     44.0,
+     4.0
+    ],
+    [
+     28.0,
+     4.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 4.5,
+   "floor_tex": "floor_road",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_limestone",
+   "light": 0.74,
+   "tint": "#fff0d0",
+   "room": "gate",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "day",
+   "fog": {
+    "color": "#d6c8a8",
+    "density": 0.01
+   }
+  },
+  {
+   "id": "bethany_spine",
+   "polygon": [
+    [
+     -10.0,
+     4.0
+    ],
+    [
+     46.0,
+     4.0
+    ],
+    [
+     46.0,
+     8.0
+    ],
+    [
+     -10.0,
+     8.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_path",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_rock",
+   "light": 0.6,
+   "tint": "#ffe8c8",
+   "room": "spine",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "day",
+   "fog": {
+    "color": "#c0a880",
+    "density": 0.012
+   }
+  }
+ ],
+ "walls": [
+  {
+   "from": [
+    -8.0,
+    -12.0
+   ],
+   "to": [
+    8.0,
+    -12.0
+   ],
+   "sector": "courtyard",
+   "tex": "wall_limestone"
+  },
+  {
+   "from": [
+    8.0,
+    -12.0
+   ],
+   "to": [
+    8.0,
+    4.0
+   ],
+   "sector": "courtyard",
+   "tex": "wall_mudbrick"
+  },
+  {
+   "from": [
+    -8.0,
+    -12.0
+   ],
+   "to": [
+    -8.0,
+    4.0
+   ],
+   "sector": "courtyard",
+   "tex": "wall_mudbrick"
+  },
+  {
+   "from": [
+    -8.0,
+    4.0
+   ],
+   "to": [
+    -2.0,
+    4.0
+   ],
+   "sector": "courtyard",
+   "tex": "wall_limestone"
+  },
+  {
+   "from": [
+    -2.0,
+    4.0
+   ],
+   "to": [
+    2.0,
+    4.0
+   ],
+   "sector": "courtyard",
+   "portal": "bethany_spine"
+  },
+  {
+   "from": [
+    2.0,
+    4.0
+   ],
+   "to": [
+    8.0,
+    4.0
+   ],
+   "sector": "courtyard",
+   "tex": "wall_limestone"
+  },
+  {
+   "from": [
+    10.0,
+    -12.0
+   ],
+   "to": [
+    26.0,
+    -12.0
+   ],
+   "sector": "hill_dusk",
+   "tex": "wall_hill"
+  },
+  {
+   "from": [
+    26.0,
+    -12.0
+   ],
+   "to": [
+    26.0,
+    4.0
+   ],
+   "sector": "hill_dusk",
+   "tex": "wall_hill"
+  },
+  {
+   "from": [
+    10.0,
+    -12.0
+   ],
+   "to": [
+    10.0,
+    4.0
+   ],
+   "sector": "hill_dusk",
+   "tex": "wall_hill"
+  },
+  {
+   "from": [
+    10.0,
+    4.0
+   ],
+   "to": [
+    16.0,
+    4.0
+   ],
+   "sector": "hill_dusk",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    16.0,
+    4.0
+   ],
+   "to": [
+    20.0,
+    4.0
+   ],
+   "sector": "hill_dusk",
+   "portal": "bethany_spine"
+  },
+  {
+   "from": [
+    20.0,
+    4.0
+   ],
+   "to": [
+    26.0,
+    4.0
+   ],
+   "sector": "hill_dusk",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    28.0,
+    -12.0
+   ],
+   "to": [
+    44.0,
+    -12.0
+   ],
+   "sector": "gate",
+   "tex": "wall_city"
+  },
+  {
+   "from": [
+    44.0,
+    -12.0
+   ],
+   "to": [
+    44.0,
+    4.0
+   ],
+   "sector": "gate",
+   "tex": "wall_limestone"
+  },
+  {
+   "from": [
+    28.0,
+    -12.0
+   ],
+   "to": [
+    28.0,
+    4.0
+   ],
+   "sector": "gate",
+   "tex": "wall_limestone"
+  },
+  {
+   "from": [
+    28.0,
+    4.0
+   ],
+   "to": [
+    34.0,
+    4.0
+   ],
+   "sector": "gate",
+   "tex": "wall_limestone"
+  },
+  {
+   "from": [
+    34.0,
+    4.0
+   ],
+   "to": [
+    38.0,
+    4.0
+   ],
+   "sector": "gate",
+   "portal": "bethany_spine"
+  },
+  {
+   "from": [
+    38.0,
+    4.0
+   ],
+   "to": [
+    44.0,
+    4.0
+   ],
+   "sector": "gate",
+   "tex": "wall_limestone"
+  }
+ ],
+ "things": [
+  {
+   "id": "courtyard.table",
+   "sprite": "thing_table_meal",
+   "at": [
+    0.0,
+    -6.4
+   ],
+   "size": 1.2
+  },
+  {
+   "id": "courtyard.stool1",
+   "sprite": "thing_stool",
+   "at": [
+    -2.6,
+    -5.0
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "courtyard.stool2",
+   "sprite": "thing_stool",
+   "at": [
+    2.6,
+    -5.0
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "courtyard.jars",
+   "sprite": "thing_jars",
+   "at": [
+    -6.6,
+    -9.4
+   ],
+   "size": 0.9
+  },
+  {
+   "id": "courtyard.house",
+   "sprite": "thing_house_b",
+   "at": [
+    5.8,
+    -10.8
+   ],
+   "size": 3.2
+  },
+  {
+   "id": "courtyard.olive",
+   "sprite": "thing_olive_small",
+   "at": [
+    -6.6,
+    -3.6
+   ],
+   "size": 2.6
+  },
+  {
+   "id": "courtyard.donkey",
+   "sprite": "thing_donkey",
+   "at": [
+    6.4,
+    -3.8
+   ],
+   "size": 1.3
+  },
+  {
+   "id": "courtyard.lantern",
+   "sprite": "thing_lantern",
+   "at": [
+    -3.8,
+    -8.2
+   ],
+   "size": 1.0
+  },
+  {
+   "id": "courtyard.hay",
+   "sprite": "thing_hay",
+   "at": [
+    6.8,
+    -7.0
+   ],
+   "size": 0.8
+  },
+  {
+   "id": "courtyard.grass1",
+   "sprite": "thing_grass",
+   "at": [
+    0.0,
+    -2.0
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "hill_dusk.basket1",
+   "sprite": "thing_basket",
+   "at": [
+    15.6,
+    -4.4
+   ],
+   "size": 0.6
+  },
+  {
+   "id": "hill_dusk.basket2",
+   "sprite": "thing_basket",
+   "at": [
+    18.0,
+    -5.0
+   ],
+   "size": 0.6
+  },
+  {
+   "id": "hill_dusk.basket3",
+   "sprite": "thing_basket",
+   "at": [
+    20.4,
+    -4.4
+   ],
+   "size": 0.6
+  },
+  {
+   "id": "hill_dusk.full1",
+   "sprite": "thing_basket_full",
+   "at": [
+    15.6,
+    -4.4
+   ],
+   "size": 0.7,
+   "piece": "hill_dusk.full1"
+  },
+  {
+   "id": "hill_dusk.full2",
+   "sprite": "thing_basket_full",
+   "at": [
+    18.0,
+    -5.0
+   ],
+   "size": 0.7,
+   "piece": "hill_dusk.full2"
+  },
+  {
+   "id": "hill_dusk.full3",
+   "sprite": "thing_basket_full",
+   "at": [
+    20.4,
+    -4.4
+   ],
+   "size": 0.7,
+   "piece": "hill_dusk.full3"
+  },
+  {
+   "id": "hill_dusk.hill",
+   "sprite": "thing_hill_mount",
+   "at": [
+    18.0,
+    -11.7
+   ],
+   "size": 5.0
+  },
+  {
+   "id": "hill_dusk.rock1",
+   "sprite": "thing_rock_b",
+   "at": [
+    24.8,
+    -2.4
+   ],
+   "size": 1.4
+  },
+  {
+   "id": "hill_dusk.olive",
+   "sprite": "thing_olive",
+   "at": [
+    11.0,
+    -8.8
+   ],
+   "size": 3.6
+  },
+  {
+   "id": "hill_dusk.grass1",
+   "sprite": "thing_grass",
+   "at": [
+    22.0,
+    -2.0
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "hill_dusk.lantern",
+   "sprite": "thing_lantern",
+   "at": [
+    22.8,
+    -6.2
+   ],
+   "size": 1.0
+  },
+  {
+   "id": "hill_dusk.bush1",
+   "sprite": "thing_bush",
+   "at": [
+    13.0,
+    -10.0
+   ],
+   "size": 1.0
+  },
+  {
+   "id": "hill_dusk.flowers1",
+   "sprite": "thing_flowers",
+   "at": [
+    13.4,
+    -1.6
+   ],
+   "size": 0.6
+  },
+  {
+   "id": "hill_dusk.lt_lantern",
+   "kind": "light",
+   "at": [
+    22.8,
+    -6.0
+   ],
+   "y": 1.2,
+   "radius": 6.0,
+   "color": "#ffc070",
+   "strength": 1.3,
+   "sector": "hill_dusk"
+  },
+  {
+   "id": "gate.gate",
+   "sprite": "thing_citygate",
+   "at": [
+    36.0,
+    -11.0
+   ],
+   "size": 7.5
+  },
+  {
+   "id": "gate.palm1",
+   "sprite": "thing_palm",
+   "at": [
+    29.4,
+    -7.0
+   ],
+   "size": 5.4
+  },
+  {
+   "id": "gate.palm2",
+   "sprite": "thing_palm",
+   "at": [
+    42.6,
+    -7.0
+   ],
+   "size": 5.4
+  },
+  {
+   "id": "gate.palm3",
+   "sprite": "thing_palm",
+   "at": [
+    29.0,
+    -2.4
+   ],
+   "size": 5.0
+  },
+  {
+   "id": "gate.palm4",
+   "sprite": "thing_palm",
+   "at": [
+    43.0,
+    -2.0
+   ],
+   "size": 5.0
+  },
+  {
+   "id": "gate.stairs",
+   "sprite": "thing_stairs",
+   "at": [
+    30.6,
+    -9.2
+   ],
+   "size": 2.4
+  },
+  {
+   "id": "gate.olive",
+   "sprite": "thing_olive",
+   "at": [
+    42.0,
+    -10.0
+   ],
+   "size": 3.6
+  },
+  {
+   "id": "gate.grass1",
+   "sprite": "thing_grass",
+   "at": [
+    38.6,
+    -2.6
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "gate.jar",
+   "sprite": "thing_jar",
+   "at": [
+    32.4,
+    -2.4
+   ],
+   "size": 0.7
+  }
+ ],
+ "homes": [
+  {
+   "actor": "s1",
+   "sector": "courtyard",
+   "at": [
+    -1.2,
+    -7.6
+   ]
+  },
+  {
+   "actor": "s2",
+   "sector": "courtyard",
+   "at": [
+    1.2,
+    -7.6
+   ]
+  },
+  {
+   "actor": "d01_courtyard",
+   "sector": "courtyard",
+   "at": [
+    -2.8,
+    -6.0
+   ]
+  },
+  {
+   "actor": "d02_courtyard",
+   "sector": "courtyard",
+   "at": [
+    2.8,
+    -6.2
+   ]
+  },
+  {
+   "actor": "d03",
+   "sector": "courtyard",
+   "at": [
+    -4.2,
+    -4.6
+   ]
+  },
+  {
+   "actor": "d04",
+   "sector": "courtyard",
+   "at": [
+    4.4,
+    -4.2
+   ]
+  },
+  {
+   "actor": "d12",
+   "sector": "courtyard",
+   "at": [
+    0.6,
+    -4.4
+   ]
+  },
+  {
+   "actor": "c1",
+   "sector": "hill_dusk",
+   "at": [
+    13.0,
+    -3.4
+   ]
+  },
+  {
+   "actor": "c2",
+   "sector": "hill_dusk",
+   "at": [
+    14.2,
+    -6.2
+   ]
+  },
+  {
+   "actor": "c3",
+   "sector": "hill_dusk",
+   "at": [
+    16.6,
+    -3.0
+   ]
+  },
+  {
+   "actor": "c4",
+   "sector": "hill_dusk",
+   "at": [
+    19.4,
+    -3.2
+   ]
+  },
+  {
+   "actor": "c5",
+   "sector": "hill_dusk",
+   "at": [
+    21.6,
+    -3.2
+   ]
+  },
+  {
+   "actor": "c6",
+   "sector": "hill_dusk",
+   "at": [
+    23.4,
+    -4.2
+   ]
+  },
+  {
+   "actor": "c7",
+   "sector": "hill_dusk",
+   "at": [
+    12.0,
+    -5.4
+   ]
+  },
+  {
+   "actor": "c8",
+   "sector": "hill_dusk",
+   "at": [
+    18.4,
+    -7.0
+   ]
+  },
+  {
+   "actor": "tr1",
+   "sector": "hill_dusk",
+   "at": [
+    23.4,
+    -6.4
+   ]
+  },
+  {
+   "actor": "d01_hill_dusk",
+   "sector": "hill_dusk",
+   "at": [
+    17.0,
+    -5.8
+   ]
+  },
+  {
+   "actor": "d02_hill_dusk",
+   "sector": "hill_dusk",
+   "at": [
+    19.2,
+    -5.8
+   ]
+  },
+  {
+   "actor": "cr1",
+   "sector": "gate",
+   "at": [
+    31.4,
+    -3.0
+   ]
+  },
+  {
+   "actor": "cr2",
+   "sector": "gate",
+   "at": [
+    33.2,
+    -4.0
+   ]
+  },
+  {
+   "actor": "cr3",
+   "sector": "gate",
+   "at": [
+    35.4,
+    -3.0
+   ]
+  },
+  {
+   "actor": "cr4",
+   "sector": "gate",
+   "at": [
+    37.6,
+    -3.6
+   ]
+  },
+  {
+   "actor": "cr5",
+   "sector": "gate",
+   "at": [
+    39.4,
+    -3.0
+   ]
+  },
+  {
+   "actor": "cr6",
+   "sector": "gate",
+   "at": [
+    41.0,
+    -4.2
+   ]
+  },
+  {
+   "actor": "cr7",
+   "sector": "gate",
+   "at": [
+    30.0,
+    -5.0
+   ]
+  },
+  {
+   "actor": "cr8",
+   "sector": "gate",
+   "at": [
+    42.4,
+    -5.8
+   ]
+  },
+  {
+   "actor": "pr1",
+   "sector": "gate",
+   "at": [
+    34.4,
+    -8.2
+   ]
+  },
+  {
+   "actor": "pr2",
+   "sector": "gate",
+   "at": [
+    37.6,
+    -8.2
+   ]
+  },
+  {
+   "actor": "k1",
+   "sector": "gate",
+   "at": [
+    36.2,
+    -3.0
+   ]
+  }
+ ],
+ "waypoints": [
+  {
+   "id": "courtyard.home",
+   "at": [
+    0.0,
+    1.6
+   ],
+   "yaw": 0.0,
+   "sector": "courtyard"
+  },
+  {
+   "id": "courtyard.arrive",
+   "at": [
+    0.0,
+    3.0
+   ],
+   "yaw": 0.0,
+   "sector": "courtyard"
+  },
+  {
+   "id": "courtyard.g1",
+   "at": [
+    -2.2,
+    1.4
+   ],
+   "yaw": 0.0,
+   "sector": "courtyard"
+  },
+  {
+   "id": "courtyard.g2",
+   "at": [
+    2.4,
+    0.8
+   ],
+   "yaw": 0.0,
+   "sector": "courtyard"
+  },
+  {
+   "id": "courtyard.g3",
+   "at": [
+    0.0,
+    0.4
+   ],
+   "yaw": 0.0,
+   "sector": "courtyard"
+  },
+  {
+   "id": "courtyard.b1",
+   "at": [
+    -6.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "courtyard"
+  },
+  {
+   "id": "courtyard.b2",
+   "at": [
+    6.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "courtyard"
+  },
+  {
+   "id": "courtyard.door_up",
+   "at": [
+    0.0,
+    -9.6
+   ],
+   "yaw": 0.0,
+   "sector": "courtyard"
+  },
+  {
+   "id": "courtyard.door_left",
+   "at": [
+    -6.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "courtyard"
+  },
+  {
+   "id": "courtyard.door_right",
+   "at": [
+    6.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "courtyard"
+  },
+  {
+   "id": "hill_dusk.home",
+   "at": [
+    18.0,
+    1.6
+   ],
+   "yaw": 0.0,
+   "sector": "hill_dusk"
+  },
+  {
+   "id": "hill_dusk.arrive",
+   "at": [
+    18.0,
+    3.0
+   ],
+   "yaw": 0.0,
+   "sector": "hill_dusk"
+  },
+  {
+   "id": "hill_dusk.g1",
+   "at": [
+    15.8,
+    1.4
+   ],
+   "yaw": 0.0,
+   "sector": "hill_dusk"
+  },
+  {
+   "id": "hill_dusk.g2",
+   "at": [
+    20.4,
+    0.8
+   ],
+   "yaw": 0.0,
+   "sector": "hill_dusk"
+  },
+  {
+   "id": "hill_dusk.g3",
+   "at": [
+    18.0,
+    0.4
+   ],
+   "yaw": 0.0,
+   "sector": "hill_dusk"
+  },
+  {
+   "id": "hill_dusk.b1",
+   "at": [
+    11.8,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "hill_dusk"
+  },
+  {
+   "id": "hill_dusk.b2",
+   "at": [
+    24.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "hill_dusk"
+  },
+  {
+   "id": "hill_dusk.door_up",
+   "at": [
+    18.0,
+    -9.6
+   ],
+   "yaw": 0.0,
+   "sector": "hill_dusk"
+  },
+  {
+   "id": "hill_dusk.door_left",
+   "at": [
+    11.8,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "hill_dusk"
+  },
+  {
+   "id": "hill_dusk.door_right",
+   "at": [
+    24.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "hill_dusk"
+  },
+  {
+   "id": "gate.home",
+   "at": [
+    36.0,
+    1.6
+   ],
+   "yaw": 0.0,
+   "sector": "gate"
+  },
+  {
+   "id": "gate.arrive",
+   "at": [
+    36.0,
+    3.0
+   ],
+   "yaw": 0.0,
+   "sector": "gate"
+  },
+  {
+   "id": "gate.g1",
+   "at": [
+    33.8,
+    1.4
+   ],
+   "yaw": 0.0,
+   "sector": "gate"
+  },
+  {
+   "id": "gate.g2",
+   "at": [
+    38.4,
+    0.8
+   ],
+   "yaw": 0.0,
+   "sector": "gate"
+  },
+  {
+   "id": "gate.g3",
+   "at": [
+    36.0,
+    0.4
+   ],
+   "yaw": 0.0,
+   "sector": "gate"
+  },
+  {
+   "id": "gate.b1",
+   "at": [
+    29.8,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "gate"
+  },
+  {
+   "id": "gate.b2",
+   "at": [
+    42.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "gate"
+  },
+  {
+   "id": "gate.door_up",
+   "at": [
+    30.6,
+    -7.6
+   ],
+   "yaw": 0.0,
+   "sector": "gate"
+  },
+  {
+   "id": "gate.door_left",
+   "at": [
+    29.6,
+    -5.6
+   ],
+   "yaw": 0.0,
+   "sector": "gate"
+  },
+  {
+   "id": "gate.door_right",
+   "at": [
+    42.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "gate"
+  }
+ ],
+ "spots": {},
+ "silhouettes": [],
+ "occluders": [],
+ "sky": {
+  "tex": "textures/sky_day.png",
+  "mode": "cylinder",
+  "by_name": {
+   "day": "textures/sky_day.png",
+   "dusk": "textures/sky_dusk.png"
+  }
+ },
+ "fog": {
+  "color": "#40384a",
+  "density": 0.012
+ },
+ "rooms": {},
+ "animated": []
+}

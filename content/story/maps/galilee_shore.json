@@ -1,0 +1,1813 @@
+{
+ "units_per_m": 1,
+ "palette_weight": 0.0,
+ "eye_height": 1.6,
+ "start": "bank_night.home",
+ "textures": {
+  "floor_clay": "textures/floor_clay.png",
+  "floor_dust": "textures/floor_dust.png",
+  "floor_path": "textures/floor_path.png",
+  "floor_sand": "textures/floor_sand.png",
+  "floor_water": "textures/floor_water.png",
+  "thing_basket_full": "textures/thing_basket_full.png",
+  "thing_bush": "textures/thing_bush.png",
+  "thing_cart": "textures/thing_cart.png",
+  "thing_dove": "textures/thing_dove.png",
+  "thing_fire": "textures/thing_fire.png",
+  "thing_grass": "textures/thing_grass.png",
+  "thing_hay": "textures/thing_hay.png",
+  "thing_house_a": "textures/thing_house_a.png",
+  "thing_jars": "textures/thing_jars.png",
+  "thing_olive_small": "textures/thing_olive_small.png",
+  "thing_palm": "textures/thing_palm.png",
+  "thing_planks": "textures/thing_planks.png",
+  "thing_reeds": "textures/thing_reeds.png",
+  "thing_rock_a": "textures/thing_rock_a.png",
+  "thing_rock_b": "textures/thing_rock_b.png",
+  "thing_rock_c": "textures/thing_rock_c.png",
+  "thing_sheep": "textures/thing_sheep.png",
+  "thing_sheep_lie": "textures/thing_sheep_lie.png",
+  "thing_stable": "textures/thing_stable.png",
+  "thing_star": "textures/thing_star.png",
+  "thing_stool": "textures/thing_stool.png",
+  "thing_town_far": "textures/thing_town_far.png",
+  "thing_waves": "textures/thing_waves.png",
+  "thing_workbench": "textures/thing_workbench.png",
+  "trim": "textures/trim.png",
+  "wall_door": "textures/wall_door.png",
+  "wall_hill": "textures/wall_hill.png",
+  "wall_limestone": "textures/wall_limestone.png",
+  "wall_reeds": "textures/wall_reeds.png",
+  "wall_rock": "textures/wall_rock.png",
+  "sky_night": "textures/sky_night.png",
+  "sky_dawn": "textures/sky_dawn.png",
+  "sky_day": "textures/sky_day.png",
+  "sky_morning": "textures/sky_morning.png"
+ },
+ "sectors": [
+  {
+   "id": "bank_night",
+   "polygon": [
+    [
+     -8.0,
+     -12.0
+    ],
+    [
+     8.0,
+     -12.0
+    ],
+    [
+     8.0,
+     4.0
+    ],
+    [
+     -8.0,
+     4.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 3.4,
+   "floor_tex": "floor_dust",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_hill",
+   "light": 0.34,
+   "tint": "#4a5ab0",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "night",
+   "fog": {
+    "color": "#10163a",
+    "density": 0.02
+   }
+  },
+  {
+   "id": "bank_dawn",
+   "polygon": [
+    [
+     10.0,
+     -6.5
+    ],
+    [
+     26.0,
+     -6.5
+    ],
+    [
+     26.0,
+     4.0
+    ],
+    [
+     10.0,
+     4.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 3.4,
+   "floor_tex": "floor_sand",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_reeds",
+   "light": 0.62,
+   "tint": "#ffc89a",
+   "room": "bank_dawn",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "dawn",
+   "fog": {
+    "color": "#e8c0a0",
+    "density": 0.014
+   }
+  },
+  {
+   "id": "bank_dawn_river",
+   "polygon": [
+    [
+     10.0,
+     -12.0
+    ],
+    [
+     26.0,
+     -12.0
+    ],
+    [
+     26.0,
+     -6.5
+    ],
+    [
+     10.0,
+     -6.5
+    ]
+   ],
+   "floor": -0.4,
+   "ceiling": 3.0,
+   "floor_tex": "floor_water",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_reeds",
+   "light": 0.62,
+   "tint": "#ffc89a",
+   "room": "bank_dawn",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "dawn",
+   "fog": {
+    "color": "#e8c0a0",
+    "density": 0.014
+   }
+  },
+  {
+   "id": "rocks",
+   "polygon": [
+    [
+     28.0,
+     -12.0
+    ],
+    [
+     44.0,
+     -12.0
+    ],
+    [
+     44.0,
+     4.0
+    ],
+    [
+     28.0,
+     4.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 3.4,
+   "floor_tex": "floor_dust",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_rock",
+   "light": 0.74,
+   "tint": "#fff0d0",
+   "room": "rocks",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "day",
+   "fog": {
+    "color": "#d6c8a8",
+    "density": 0.01
+   }
+  },
+  {
+   "id": "workshop",
+   "polygon": [
+    [
+     46.0,
+     -12.0
+    ],
+    [
+     62.0,
+     -12.0
+    ],
+    [
+     62.0,
+     4.0
+    ],
+    [
+     46.0,
+     4.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 3.4,
+   "floor_tex": "floor_clay",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_limestone",
+   "light": 0.72,
+   "tint": "#ffecc8",
+   "room": "workshop",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "morning",
+   "fog": {
+    "color": "#e2d4b0",
+    "density": 0.01
+   }
+  },
+  {
+   "id": "galilee_shore_spine",
+   "polygon": [
+    [
+     -10.0,
+     4.0
+    ],
+    [
+     64.0,
+     4.0
+    ],
+    [
+     64.0,
+     8.0
+    ],
+    [
+     -10.0,
+     8.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "floor_path",
+   "ceil_tex": "sky",
+   "wall_tex": "wall_rock",
+   "light": 0.6,
+   "tint": "#ffe8c8",
+   "room": "spine",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "sit",
+     "watch"
+    ],
+    "dancing": [
+     "stand",
+     "watch",
+     "wave"
+    ],
+    "hype": [
+     "wave",
+     "watch",
+     "point"
+    ],
+    "euphoric": [
+     "wave",
+     "watch"
+    ]
+   },
+   "sky": "night",
+   "fog": {
+    "color": "#c0a880",
+    "density": 0.012
+   }
+  }
+ ],
+ "walls": [
+  {
+   "from": [
+    -8.0,
+    -12.0
+   ],
+   "to": [
+    8.0,
+    -12.0
+   ],
+   "sector": "bank_night",
+   "tex": "wall_hill"
+  },
+  {
+   "from": [
+    8.0,
+    -12.0
+   ],
+   "to": [
+    8.0,
+    4.0
+   ],
+   "sector": "bank_night",
+   "tex": "wall_reeds"
+  },
+  {
+   "from": [
+    -8.0,
+    -12.0
+   ],
+   "to": [
+    -8.0,
+    4.0
+   ],
+   "sector": "bank_night",
+   "tex": "wall_hill"
+  },
+  {
+   "from": [
+    -8.0,
+    4.0
+   ],
+   "to": [
+    -2.0,
+    4.0
+   ],
+   "sector": "bank_night",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    -2.0,
+    4.0
+   ],
+   "to": [
+    2.0,
+    4.0
+   ],
+   "sector": "bank_night",
+   "portal": "galilee_shore_spine"
+  },
+  {
+   "from": [
+    2.0,
+    4.0
+   ],
+   "to": [
+    8.0,
+    4.0
+   ],
+   "sector": "bank_night",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    10.0,
+    -12.0
+   ],
+   "to": [
+    26.0,
+    -12.0
+   ],
+   "sector": "bank_dawn_river",
+   "tex": "wall_hill"
+  },
+  {
+   "from": [
+    26.0,
+    -12.0
+   ],
+   "to": [
+    26.0,
+    -6.5
+   ],
+   "sector": "bank_dawn_river",
+   "tex": "wall_reeds"
+  },
+  {
+   "from": [
+    10.0,
+    -12.0
+   ],
+   "to": [
+    10.0,
+    -6.5
+   ],
+   "sector": "bank_dawn_river",
+   "tex": "wall_reeds"
+  },
+  {
+   "from": [
+    26.0,
+    -6.5
+   ],
+   "to": [
+    26.0,
+    4.0
+   ],
+   "sector": "bank_dawn",
+   "tex": "wall_reeds"
+  },
+  {
+   "from": [
+    10.0,
+    -6.5
+   ],
+   "to": [
+    10.0,
+    4.0
+   ],
+   "sector": "bank_dawn",
+   "tex": "wall_reeds"
+  },
+  {
+   "from": [
+    10.0,
+    -6.5
+   ],
+   "to": [
+    26.0,
+    -6.5
+   ],
+   "sector": "bank_dawn",
+   "portal": "bank_dawn_river",
+   "lower_tex": "trim",
+   "upper_tex": "wall_hill"
+  },
+  {
+   "from": [
+    10.0,
+    4.0
+   ],
+   "to": [
+    16.0,
+    4.0
+   ],
+   "sector": "bank_dawn",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    16.0,
+    4.0
+   ],
+   "to": [
+    20.0,
+    4.0
+   ],
+   "sector": "bank_dawn",
+   "portal": "galilee_shore_spine"
+  },
+  {
+   "from": [
+    20.0,
+    4.0
+   ],
+   "to": [
+    26.0,
+    4.0
+   ],
+   "sector": "bank_dawn",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    28.0,
+    -12.0
+   ],
+   "to": [
+    44.0,
+    -12.0
+   ],
+   "sector": "rocks",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    44.0,
+    -12.0
+   ],
+   "to": [
+    44.0,
+    4.0
+   ],
+   "sector": "rocks",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    28.0,
+    -12.0
+   ],
+   "to": [
+    28.0,
+    4.0
+   ],
+   "sector": "rocks",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    28.0,
+    4.0
+   ],
+   "to": [
+    34.0,
+    4.0
+   ],
+   "sector": "rocks",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    34.0,
+    4.0
+   ],
+   "to": [
+    38.0,
+    4.0
+   ],
+   "sector": "rocks",
+   "portal": "galilee_shore_spine"
+  },
+  {
+   "from": [
+    38.0,
+    4.0
+   ],
+   "to": [
+    44.0,
+    4.0
+   ],
+   "sector": "rocks",
+   "tex": "wall_rock"
+  },
+  {
+   "from": [
+    46.0,
+    -12.0
+   ],
+   "to": [
+    62.0,
+    -12.0
+   ],
+   "sector": "workshop",
+   "tex": "wall_door"
+  },
+  {
+   "from": [
+    62.0,
+    -12.0
+   ],
+   "to": [
+    62.0,
+    4.0
+   ],
+   "sector": "workshop",
+   "tex": "wall_limestone"
+  },
+  {
+   "from": [
+    46.0,
+    -12.0
+   ],
+   "to": [
+    46.0,
+    4.0
+   ],
+   "sector": "workshop",
+   "tex": "wall_limestone"
+  },
+  {
+   "from": [
+    46.0,
+    4.0
+   ],
+   "to": [
+    52.0,
+    4.0
+   ],
+   "sector": "workshop",
+   "tex": "wall_limestone"
+  },
+  {
+   "from": [
+    52.0,
+    4.0
+   ],
+   "to": [
+    56.0,
+    4.0
+   ],
+   "sector": "workshop",
+   "portal": "galilee_shore_spine"
+  },
+  {
+   "from": [
+    56.0,
+    4.0
+   ],
+   "to": [
+    62.0,
+    4.0
+   ],
+   "sector": "workshop",
+   "tex": "wall_limestone"
+  }
+ ],
+ "things": [
+  {
+   "id": "bank_night.stable",
+   "sprite": "thing_stable",
+   "at": [
+    3.6,
+    -9.0
+   ],
+   "size": 3.4
+  },
+  {
+   "id": "bank_night.star",
+   "sprite": "thing_star",
+   "at": [
+    3.6,
+    -10.0
+   ],
+   "size": 3.2,
+   "piece": "bank_night.star",
+   "y": 4.9,
+   "blend": "add"
+  },
+  {
+   "id": "bank_night.fire",
+   "sprite": "thing_fire",
+   "at": [
+    -3.4,
+    -4.4
+   ],
+   "size": 1.0,
+   "anim": "flicker"
+  },
+  {
+   "id": "bank_night.hay",
+   "sprite": "thing_hay",
+   "at": [
+    5.8,
+    -7.4
+   ],
+   "size": 0.9
+  },
+  {
+   "id": "bank_night.sheep1",
+   "sprite": "thing_sheep",
+   "at": [
+    -6.2,
+    -7.0
+   ],
+   "size": 0.75
+  },
+  {
+   "id": "bank_night.sheep2",
+   "sprite": "thing_sheep",
+   "at": [
+    -5.0,
+    -9.0
+   ],
+   "size": 0.75
+  },
+  {
+   "id": "bank_night.sheep3",
+   "sprite": "thing_sheep_lie",
+   "at": [
+    -1.2,
+    -8.2
+   ],
+   "size": 0.6
+  },
+  {
+   "id": "bank_night.sheep4",
+   "sprite": "thing_sheep",
+   "at": [
+    1.0,
+    -6.6
+   ],
+   "size": 0.75
+  },
+  {
+   "id": "bank_night.sheep5",
+   "sprite": "thing_sheep_lie",
+   "at": [
+    -7.0,
+    -2.4
+   ],
+   "size": 0.6
+  },
+  {
+   "id": "bank_night.rock1",
+   "sprite": "thing_rock_c",
+   "at": [
+    -7.2,
+    -11.0
+   ],
+   "size": 2.8
+  },
+  {
+   "id": "bank_night.rock2",
+   "sprite": "thing_rock_b",
+   "at": [
+    7.2,
+    -2.0
+   ],
+   "size": 1.4
+  },
+  {
+   "id": "bank_night.rock3",
+   "sprite": "thing_rock_a",
+   "at": [
+    -2.4,
+    -2.0
+   ],
+   "size": 0.8
+  },
+  {
+   "id": "bank_night.grass1",
+   "sprite": "thing_grass",
+   "at": [
+    0.0,
+    -3.0
+   ],
+   "size": 0.55
+  },
+  {
+   "id": "bank_night.grass2",
+   "sprite": "thing_grass",
+   "at": [
+    5.4,
+    -4.0
+   ],
+   "size": 0.55
+  },
+  {
+   "id": "bank_night.grass3",
+   "sprite": "thing_grass",
+   "at": [
+    -4.6,
+    -10.0
+   ],
+   "size": 0.55
+  },
+  {
+   "id": "bank_night.reeds1",
+   "sprite": "thing_reeds",
+   "at": [
+    7.3,
+    -6.0
+   ],
+   "size": 1.6
+  },
+  {
+   "id": "bank_night.town",
+   "sprite": "thing_town_far",
+   "at": [
+    -3.0,
+    -11.6
+   ],
+   "size": 4.2
+  },
+  {
+   "id": "bank_night.lt_stable",
+   "kind": "light",
+   "at": [
+    3.6,
+    -7.6
+   ],
+   "y": 2.0,
+   "radius": 8.0,
+   "color": "#ffd080",
+   "strength": 1.7,
+   "sector": "bank_night"
+  },
+  {
+   "id": "bank_night.lt_fire",
+   "kind": "light",
+   "at": [
+    -3.4,
+    -4.4
+   ],
+   "y": 1.0,
+   "radius": 6.0,
+   "color": "#ff9a40",
+   "strength": 1.4,
+   "sector": "bank_night"
+  },
+  {
+   "id": "bank_night.lt_star",
+   "kind": "light",
+   "at": [
+    3.6,
+    -9.0
+   ],
+   "y": 5.0,
+   "radius": 11.0,
+   "color": "#fff0c0",
+   "strength": 0.9,
+   "sector": "bank_night"
+  },
+  {
+   "id": "bank_dawn.dove",
+   "sprite": "thing_dove",
+   "at": [
+    18.0,
+    -8.0
+   ],
+   "size": 2.4,
+   "piece": "bank_dawn.dove",
+   "y": 4.2,
+   "blend": "add"
+  },
+  {
+   "id": "bank_dawn.palm1",
+   "sprite": "thing_palm",
+   "at": [
+    11.2,
+    -9.4
+   ],
+   "size": 5.2
+  },
+  {
+   "id": "bank_dawn.palm2",
+   "sprite": "thing_palm",
+   "at": [
+    24.8,
+    -10.4
+   ],
+   "size": 5.0
+  },
+  {
+   "id": "bank_dawn.town",
+   "sprite": "thing_town_far",
+   "at": [
+    23.2,
+    -11.6
+   ],
+   "size": 4.6
+  },
+  {
+   "id": "bank_dawn.reeds1",
+   "sprite": "thing_reeds",
+   "at": [
+    10.8,
+    -3.2
+   ],
+   "size": 1.6
+  },
+  {
+   "id": "bank_dawn.reeds2",
+   "sprite": "thing_reeds",
+   "at": [
+    25.3,
+    -2.6
+   ],
+   "size": 1.6
+  },
+  {
+   "id": "bank_dawn.reeds3",
+   "sprite": "thing_reeds",
+   "at": [
+    11.6,
+    -7.2
+   ],
+   "size": 1.7
+  },
+  {
+   "id": "bank_dawn.reeds4",
+   "sprite": "thing_reeds",
+   "at": [
+    24.4,
+    -7.6
+   ],
+   "size": 1.7
+  },
+  {
+   "id": "bank_dawn.rock1",
+   "sprite": "thing_rock_b",
+   "at": [
+    23.2,
+    -3.4
+   ],
+   "size": 1.3
+  },
+  {
+   "id": "bank_dawn.rock2",
+   "sprite": "thing_rock_a",
+   "at": [
+    12.4,
+    -1.6
+   ],
+   "size": 0.8
+  },
+  {
+   "id": "bank_dawn.grass1",
+   "sprite": "thing_grass",
+   "at": [
+    20.0,
+    -1.6
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "bank_dawn.grass2",
+   "sprite": "thing_grass",
+   "at": [
+    15.4,
+    -3.0
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "bank_dawn.waves",
+   "sprite": "thing_waves",
+   "at": [
+    18.0,
+    -6.8
+   ],
+   "size": 0.7,
+   "blend": "mix"
+  },
+  {
+   "id": "bank_dawn.lt_dawn",
+   "kind": "light",
+   "at": [
+    18.0,
+    -6.0
+   ],
+   "y": 3.0,
+   "radius": 14.0,
+   "color": "#ffd9a8",
+   "strength": 1.0,
+   "sector": "bank_dawn"
+  },
+  {
+   "id": "rocks.rockA",
+   "sprite": "thing_rock_c",
+   "at": [
+    29.6,
+    -9.4
+   ],
+   "size": 3.2
+  },
+  {
+   "id": "rocks.rockB",
+   "sprite": "thing_rock_c",
+   "at": [
+    42.6,
+    -9.0
+   ],
+   "size": 3.0
+  },
+  {
+   "id": "rocks.rockC",
+   "sprite": "thing_rock_b",
+   "at": [
+    33.0,
+    -10.4
+   ],
+   "size": 1.8
+  },
+  {
+   "id": "rocks.rockD",
+   "sprite": "thing_rock_b",
+   "at": [
+    39.4,
+    -10.6
+   ],
+   "size": 1.8
+  },
+  {
+   "id": "rocks.rockE",
+   "sprite": "thing_rock_a",
+   "at": [
+    31.6,
+    -2.4
+   ],
+   "size": 0.9
+  },
+  {
+   "id": "rocks.rockF",
+   "sprite": "thing_rock_b",
+   "at": [
+    40.6,
+    -1.8
+   ],
+   "size": 1.3
+  },
+  {
+   "id": "rocks.rockG",
+   "sprite": "thing_rock_a",
+   "at": [
+    43.0,
+    -5.0
+   ],
+   "size": 1.0
+  },
+  {
+   "id": "rocks.bush1",
+   "sprite": "thing_bush",
+   "at": [
+    35.0,
+    -3.0
+   ],
+   "size": 1.0
+  },
+  {
+   "id": "rocks.bush2",
+   "sprite": "thing_bush",
+   "at": [
+    41.4,
+    -6.4
+   ],
+   "size": 1.1
+  },
+  {
+   "id": "rocks.grass1",
+   "sprite": "thing_grass",
+   "at": [
+    37.0,
+    -2.6
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "rocks.bread",
+   "sprite": "thing_basket_full",
+   "at": [
+    37.6,
+    -5.6
+   ],
+   "size": 0.55
+  },
+  {
+   "id": "rocks.fires",
+   "sprite": "thing_fire",
+   "at": [
+    29.6,
+    -11.0
+   ],
+   "size": 0.9,
+   "anim": "flicker"
+  },
+  {
+   "id": "rocks.fires2",
+   "sprite": "thing_fire",
+   "at": [
+    31.0,
+    -11.2
+   ],
+   "size": 0.8,
+   "anim": "flicker"
+  },
+  {
+   "id": "rocks.village",
+   "sprite": "thing_town_far",
+   "at": [
+    31.4,
+    -11.7
+   ],
+   "size": 3.4
+  },
+  {
+   "id": "rocks.lt_fires",
+   "kind": "light",
+   "at": [
+    30.4,
+    -10.8
+   ],
+   "y": 1.4,
+   "radius": 6.0,
+   "color": "#ff9a40",
+   "strength": 0.9,
+   "sector": "rocks"
+  },
+  {
+   "id": "workshop.bench",
+   "sprite": "thing_workbench",
+   "at": [
+    50.8,
+    -8.6
+   ],
+   "size": 1.3
+  },
+  {
+   "id": "workshop.planks",
+   "sprite": "thing_planks",
+   "at": [
+    47.6,
+    -7.0
+   ],
+   "size": 1.8
+  },
+  {
+   "id": "workshop.cart",
+   "sprite": "thing_cart",
+   "at": [
+    59.0,
+    -6.6
+   ],
+   "size": 1.6
+  },
+  {
+   "id": "workshop.jars",
+   "sprite": "thing_jars",
+   "at": [
+    60.6,
+    -9.6
+   ],
+   "size": 0.9
+  },
+  {
+   "id": "workshop.house",
+   "sprite": "thing_house_a",
+   "at": [
+    47.4,
+    -10.6
+   ],
+   "size": 3.4
+  },
+  {
+   "id": "workshop.stool",
+   "sprite": "thing_stool",
+   "at": [
+    52.6,
+    -6.4
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "workshop.olive",
+   "sprite": "thing_olive_small",
+   "at": [
+    61.0,
+    -2.4
+   ],
+   "size": 2.6
+  },
+  {
+   "id": "workshop.grass1",
+   "sprite": "thing_grass",
+   "at": [
+    54.4,
+    -2.6
+   ],
+   "size": 0.5
+  },
+  {
+   "id": "workshop.hay",
+   "sprite": "thing_hay",
+   "at": [
+    57.2,
+    -2.2
+   ],
+   "size": 0.8
+  }
+ ],
+ "homes": [
+  {
+   "actor": "sh1",
+   "sector": "bank_night",
+   "at": [
+    -4.4,
+    -3.2
+   ]
+  },
+  {
+   "actor": "sh2",
+   "sector": "bank_night",
+   "at": [
+    -2.0,
+    -5.8
+   ]
+  },
+  {
+   "actor": "sh3",
+   "sector": "bank_night",
+   "at": [
+    -5.6,
+    -5.4
+   ]
+  },
+  {
+   "actor": "sh4",
+   "sector": "bank_night",
+   "at": [
+    -2.6,
+    -3.0
+   ]
+  },
+  {
+   "actor": "m1",
+   "sector": "bank_night",
+   "at": [
+    2.0,
+    -6.2
+   ]
+  },
+  {
+   "actor": "el1",
+   "sector": "bank_night",
+   "at": [
+    5.6,
+    -4.8
+   ]
+  },
+  {
+   "actor": "b1",
+   "sector": "bank_dawn_river",
+   "at": [
+    18.0,
+    -8.4
+   ]
+  },
+  {
+   "actor": "v1_bank_dawn",
+   "sector": "bank_dawn",
+   "at": [
+    14.4,
+    -3.0
+   ]
+  },
+  {
+   "actor": "v2",
+   "sector": "bank_dawn",
+   "at": [
+    16.2,
+    -3.6
+   ]
+  },
+  {
+   "actor": "v3",
+   "sector": "bank_dawn",
+   "at": [
+    20.0,
+    -3.2
+   ]
+  },
+  {
+   "actor": "v4",
+   "sector": "bank_dawn",
+   "at": [
+    22.2,
+    -3.0
+   ]
+  },
+  {
+   "actor": "v5",
+   "sector": "bank_dawn",
+   "at": [
+    13.0,
+    -3.9
+   ]
+  },
+  {
+   "actor": "v6",
+   "sector": "bank_dawn",
+   "at": [
+    23.6,
+    -4.0
+   ]
+  },
+  {
+   "actor": "k1_bank_dawn",
+   "sector": "bank_dawn",
+   "at": [
+    19.0,
+    -3.0
+   ]
+  },
+  {
+   "actor": "t1",
+   "sector": "rocks",
+   "at": [
+    38.4,
+    -6.4
+   ]
+  },
+  {
+   "actor": "c1",
+   "sector": "workshop",
+   "at": [
+    51.8,
+    -6.8
+   ]
+  },
+  {
+   "actor": "n1",
+   "sector": "workshop",
+   "at": [
+    56.6,
+    -9.0
+   ]
+  },
+  {
+   "actor": "k1_workshop",
+   "sector": "workshop",
+   "at": [
+    49.0,
+    -3.4
+   ]
+  },
+  {
+   "actor": "v1_workshop",
+   "sector": "workshop",
+   "at": [
+    54.2,
+    -4.2
+   ]
+  }
+ ],
+ "waypoints": [
+  {
+   "id": "bank_night.home",
+   "at": [
+    0.0,
+    1.6
+   ],
+   "yaw": 0.0,
+   "sector": "bank_night"
+  },
+  {
+   "id": "bank_night.arrive",
+   "at": [
+    0.0,
+    3.0
+   ],
+   "yaw": 0.0,
+   "sector": "bank_night"
+  },
+  {
+   "id": "bank_night.g1",
+   "at": [
+    -2.2,
+    1.4
+   ],
+   "yaw": 0.0,
+   "sector": "bank_night"
+  },
+  {
+   "id": "bank_night.g2",
+   "at": [
+    2.4,
+    0.8
+   ],
+   "yaw": 0.0,
+   "sector": "bank_night"
+  },
+  {
+   "id": "bank_night.g3",
+   "at": [
+    0.0,
+    0.4
+   ],
+   "yaw": 0.0,
+   "sector": "bank_night"
+  },
+  {
+   "id": "bank_night.b1",
+   "at": [
+    -6.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "bank_night"
+  },
+  {
+   "id": "bank_night.b2",
+   "at": [
+    6.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "bank_night"
+  },
+  {
+   "id": "bank_night.door_up",
+   "at": [
+    0.0,
+    -9.6
+   ],
+   "yaw": 0.0,
+   "sector": "bank_night"
+  },
+  {
+   "id": "bank_night.door_left",
+   "at": [
+    -6.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "bank_night"
+  },
+  {
+   "id": "bank_night.door_right",
+   "at": [
+    6.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "bank_night"
+  },
+  {
+   "id": "bank_dawn.home",
+   "at": [
+    18.0,
+    1.6
+   ],
+   "yaw": 0.0,
+   "sector": "bank_dawn"
+  },
+  {
+   "id": "bank_dawn.arrive",
+   "at": [
+    18.0,
+    3.0
+   ],
+   "yaw": 0.0,
+   "sector": "bank_dawn"
+  },
+  {
+   "id": "bank_dawn.g1",
+   "at": [
+    15.8,
+    1.4
+   ],
+   "yaw": 0.0,
+   "sector": "bank_dawn"
+  },
+  {
+   "id": "bank_dawn.g2",
+   "at": [
+    20.4,
+    0.8
+   ],
+   "yaw": 0.0,
+   "sector": "bank_dawn"
+  },
+  {
+   "id": "bank_dawn.g3",
+   "at": [
+    18.0,
+    0.4
+   ],
+   "yaw": 0.0,
+   "sector": "bank_dawn"
+  },
+  {
+   "id": "bank_dawn.b1",
+   "at": [
+    11.8,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "bank_dawn"
+  },
+  {
+   "id": "bank_dawn.b2",
+   "at": [
+    24.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "bank_dawn"
+  },
+  {
+   "id": "bank_dawn.door_up",
+   "at": [
+    18.0,
+    -9.6
+   ],
+   "yaw": 0.0,
+   "sector": "bank_dawn_river"
+  },
+  {
+   "id": "bank_dawn.door_left",
+   "at": [
+    11.8,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "bank_dawn_river"
+  },
+  {
+   "id": "bank_dawn.door_right",
+   "at": [
+    24.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "bank_dawn_river"
+  },
+  {
+   "id": "rocks.home",
+   "at": [
+    36.0,
+    1.6
+   ],
+   "yaw": 0.0,
+   "sector": "rocks"
+  },
+  {
+   "id": "rocks.arrive",
+   "at": [
+    36.0,
+    3.0
+   ],
+   "yaw": 0.0,
+   "sector": "rocks"
+  },
+  {
+   "id": "rocks.g1",
+   "at": [
+    33.8,
+    1.4
+   ],
+   "yaw": 0.0,
+   "sector": "rocks"
+  },
+  {
+   "id": "rocks.g2",
+   "at": [
+    38.4,
+    0.8
+   ],
+   "yaw": 0.0,
+   "sector": "rocks"
+  },
+  {
+   "id": "rocks.g3",
+   "at": [
+    36.0,
+    0.4
+   ],
+   "yaw": 0.0,
+   "sector": "rocks"
+  },
+  {
+   "id": "rocks.b1",
+   "at": [
+    29.8,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "rocks"
+  },
+  {
+   "id": "rocks.b2",
+   "at": [
+    42.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "rocks"
+  },
+  {
+   "id": "rocks.door_up",
+   "at": [
+    36.0,
+    -9.6
+   ],
+   "yaw": 0.0,
+   "sector": "rocks"
+  },
+  {
+   "id": "rocks.door_left",
+   "at": [
+    29.8,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "rocks"
+  },
+  {
+   "id": "rocks.door_right",
+   "at": [
+    42.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "rocks"
+  },
+  {
+   "id": "workshop.home",
+   "at": [
+    54.0,
+    1.6
+   ],
+   "yaw": 0.0,
+   "sector": "workshop"
+  },
+  {
+   "id": "workshop.arrive",
+   "at": [
+    54.0,
+    3.0
+   ],
+   "yaw": 0.0,
+   "sector": "workshop"
+  },
+  {
+   "id": "workshop.g1",
+   "at": [
+    51.8,
+    1.4
+   ],
+   "yaw": 0.0,
+   "sector": "workshop"
+  },
+  {
+   "id": "workshop.g2",
+   "at": [
+    56.4,
+    0.8
+   ],
+   "yaw": 0.0,
+   "sector": "workshop"
+  },
+  {
+   "id": "workshop.g3",
+   "at": [
+    54.0,
+    0.4
+   ],
+   "yaw": 0.0,
+   "sector": "workshop"
+  },
+  {
+   "id": "workshop.b1",
+   "at": [
+    47.8,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "workshop"
+  },
+  {
+   "id": "workshop.b2",
+   "at": [
+    60.2,
+    2.6
+   ],
+   "yaw": 0.0,
+   "sector": "workshop"
+  },
+  {
+   "id": "workshop.door_up",
+   "at": [
+    54.0,
+    -10.0
+   ],
+   "yaw": 0.0,
+   "sector": "workshop"
+  },
+  {
+   "id": "workshop.door_left",
+   "at": [
+    47.8,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "workshop"
+  },
+  {
+   "id": "workshop.door_right",
+   "at": [
+    60.2,
+    -8.2
+   ],
+   "yaw": 0.0,
+   "sector": "workshop"
+  }
+ ],
+ "spots": {},
+ "silhouettes": [],
+ "occluders": [],
+ "sky": {
+  "tex": "textures/sky_night.png",
+  "mode": "cylinder",
+  "by_name": {
+   "dawn": "textures/sky_dawn.png",
+   "day": "textures/sky_day.png",
+   "morning": "textures/sky_morning.png",
+   "night": "textures/sky_night.png"
+  }
+ },
+ "fog": {
+  "color": "#40384a",
+  "density": 0.012
+ },
+ "rooms": {},
+ "animated": [
+  {
+   "tex": "floor_water",
+   "mode": "scroll",
+   "speed": [
+    0.015,
+    0.006
+   ],
+   "amount": 0.15,
+   "bright": 0.2
+  }
+ ]
+}
