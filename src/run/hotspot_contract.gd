@@ -25,7 +25,7 @@ const MAX_FAIL_ENERGY := -20.0  # a failure may cost at most this much energy (i
 const MAX_GAIN_ENERGY := 20.0
 const TRIAL_PREFIX := "trial:"  # a run route "trial:<passage>", or just "<passage>" ("1": the first), is the wizard's way into the Bassment
 const KEEP_PREFIX := "keep:"  # a flag name with this prefix is persistent (RunProgress.flags, saved); any other is per run (RunProgress.run_flags)
-const OUTCOME_KEYS := ["route", "flags_set", "cinematic", "energy", "music"]
+const OUTCOME_KEYS := ["route", "flags_set", "cinematic", "energy", "music", "activity"]
 const CINEMATIC_KEYS := ["move", "to", "bars", "look_at", "role", "style"]
 const MOVES := ["place", "walk", "stagger", "run", "climb", "carried"]  # `place` is a cut (the drag to the cage); the others are RunRail styles (`walk` with a `style`)
 const MUSIC := ["variation", "dip", "lift", "drop", "fill", "none"]
@@ -253,7 +253,7 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 		if typeof(oc) != TYPE_DICTIONARY:
 			errors.append("%s: %s must be an object" % [hw, key])
 			continue
-		_validate_outcome(h, key, oc, hw, routes, idx, ctx.get("cinematics", {}), errors)
+		_validate_outcome(h, key, oc, hw, routes, idx, ctx.get("cinematics", {}), errors, ctx.get("activities", null))
 	if kind == "exit" and str((h.get("on_success", {}) as Dictionary).get("route", "")) == "":
 		errors.append("%s: an exit's on_success needs a route" % hw)
 	var cin: Variant = h.get("cinematic", null)
@@ -277,7 +277,7 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 		errors.append("%s: default and repeatable are true or false" % hw)
 
 
-static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: String, routes: Array, idx: Dictionary, named: Dictionary, errors: Array) -> void:
+static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: String, routes: Array, idx: Dictionary, named: Dictionary, errors: Array, ctx_activities: Variant = null) -> void:
 	for k in oc:
 		if str(k) not in OUTCOME_KEYS:
 			errors.append("%s: %s.%s is not a field (%s)" % [hw, key, k, ", ".join(PackedStringArray(OUTCOME_KEYS))])
@@ -296,6 +296,17 @@ static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: St
 			errors.append("%s: %s.energy %s is outside %d..%d" % [hw, key, str(e), int(MAX_FAIL_ENERGY), int(MAX_GAIN_ENERGY)])
 		if key == "on_failure" and e > 0.0:
 			errors.append("%s: a failure must not give energy" % hw)
+	if oc.has("activity"):  # a minigame the success sits the player into (MinigameController): only on success, never with a route, an id the registry knows
+		var act := str(oc["activity"]) if typeof(oc["activity"]) == TYPE_STRING else ""
+		if act == "":
+			errors.append("%s: %s.activity must be a non-empty string" % [hw, key])
+		else:
+			if key != "on_success":
+				errors.append("%s: activity is only allowed in on_success" % hw)
+			if route != "":
+				errors.append("%s: %s.activity cannot be combined with a route" % [hw, key])
+			if typeof(ctx_activities) == TYPE_ARRAY and act not in (ctx_activities as Array):
+				errors.append("%s: %s.activity '%s' is not a registered minigame (%s)" % [hw, key, act, ", ".join(PackedStringArray(ctx_activities as Array))])
 	if oc.has("music") and str(oc["music"]) not in MUSIC:
 		errors.append("%s: %s.music '%s' is not one of %s" % [hw, key, oc["music"], ", ".join(PackedStringArray(MUSIC))])
 	if oc.has("cinematic"):

@@ -487,7 +487,8 @@ func _load_hotspots(dir_path: String) -> void:
 				else:
 					routes.append(r)
 		HotspotContract.validate_scene(by_scene[sid], {"where": "scene %s" % sid, "map": str(n["map"]), "world": str(n["world"]), "routes": routes, "start_energy": start_e, "cinematics": cfg.get("cinematics", {}),
-			"default_route": str(n["next"][0]["to"]) if not (n["next"] as Array).is_empty() else "", "exit_routes_required": required}, errors)
+			"default_route": str(n["next"][0]["to"]) if not (n["next"] as Array).is_empty() else "", "exit_routes_required": required,
+			"max_available": int(n.get("max_hotspots", HotspotContract.MAX_PER_SCENE)), "activities": MinigameController.registered_ids()}, errors)
 
 
 func _synth_hotspots(sid: String, n: Dictionary) -> Array:

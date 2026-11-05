@@ -35,6 +35,7 @@ var block_credit: Array = []
 var choice := ""  # the chosen destination node id ("" until the player picks one)
 var window_open := false
 var hotspots: RunHotspots = null  # when set, the route is the outcome of a hotspot (the tap is the intent, block 4 decides): see _hotspot_decision; null keeps the plain route choice (tests, RW_RUN_ARROWS=1)
+var hold := false  # a minigame owns the scene (MinigameController): the run stays here, no hotspot commits, the chart and the route lock agree on this node; phases, cues, judging and energy go on as usual
 var route_locked := false  # block 0 of the next phase has been charted: routes with another chart pack can no longer be chosen
 var _locked_chart := ""
 
@@ -211,6 +212,8 @@ func route_allowed(to: String) -> bool:
 
 
 func selected_route() -> String:
+	if hold:
+		return node_id
 	if choice != "":
 		return choice
 	if hotspots != null and hotspots.selected != "":  # the route the selected hotspot leads to on success (the final outcome is only known at the commit)
@@ -292,7 +295,7 @@ func _decide(b: int, t_dec: float) -> void:
 	_emit({"kind": "block_result", "block": b, "credit": credit, "passed": passed, "energy": energy, "stage": stage, "next_stage": next_stage, "t": t_dec,
 		"node": node_id, "phase": phase_n})
 	block = b + 1
-	if hotspots != null and energy > 0.0:
+	if hotspots != null and energy > 0.0 and not hold:
 		_hotspot_decision(b, passed, t_dec)
 	if energy <= 0.0:
 		_depleted_t = t_of(boundary_beat)
@@ -315,6 +318,8 @@ func _decide(b: int, t_dec: float) -> void:
 				"default": default_route(), "stage": stage})
 	else:
 		# the last block is over: chart the next phase's first block now from the selected route, and lock it
+		if hold:
+			choice = node_id
 		_chart_next_phase()
 
 

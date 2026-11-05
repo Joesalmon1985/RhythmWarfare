@@ -67,10 +67,31 @@ class Ctx:
             self.actors[m] = {a["id"] for a in load(ROOT / f"content/story/{CHAPTER[m]}.json")["actors"]}
 
 
+def minigame_ids():
+    """Ids of the registered minigames: the `id` of every content/minigames/*.json (the file's basename when it has none); empty when the directory does not exist."""
+    out = set()
+    for f in sorted((ROOT / "content/minigames").glob("*.json")):
+        try:
+            out.add(str(json.loads(f.read_text()).get("id", f.stem)))
+        except (OSError, ValueError, AttributeError):
+            out.add(f.stem)
+    return out
+
+
 def outcome_keys_ok(o, where, errs):
     for k in o:
-        if k not in ("route", "flags_set", "cinematic", "energy", "music"):
+        if k not in ("route", "flags_set", "cinematic", "energy", "music", "activity"):
             errs.append(f"{where}: unknown outcome field {k}")
+    if "activity" in o:
+        if not isinstance(o["activity"], str) or not o["activity"]:
+            errs.append(f"{where}: activity must be a non-empty string")
+        else:
+            if not where.endswith("on_success"):
+                errs.append(f"{where}: activity is only allowed in on_success")
+            if o.get("route"):
+                errs.append(f"{where}: activity cannot be combined with a route")
+            if o["activity"] not in minigame_ids():
+                errs.append(f"{where}: activity '{o['activity']}' is not a registered minigame ({', '.join(sorted(minigame_ids()))})")
     if "energy" in o and not (isinstance(o["energy"], int) and -20 <= o["energy"] <= 20):
         errs.append(f"{where}: energy must be an int in -20..20")
     if "music" in o and o["music"] not in MUSIC:
@@ -173,7 +194,7 @@ def check_hotspot(h, ctx, errs):
     if h["kind"] == "exit":
         if not s.get("route"):
             errs.append(f"{hid}: an exit leads somewhere")
-    elif not (s.get("route") or s.get("flags_set") or s.get("energy") or s.get("music") or s.get("cinematic")):
+    elif not (s.get("route") or s.get("activity") or s.get("flags_set") or s.get("energy") or s.get("music") or s.get("cinematic")):
         errs.append(f"{hid}: success changes nothing")
     if h["challenge"] is not None:
         c = h["challenge"]
@@ -201,8 +222,9 @@ def check_scene(sid, hs, ctx, errs, warns):
         errs.append(f"{sid}: no hotspots")
         return
     lo, hi = counts(hs)
-    if lo < 2 or hi > 4:
-        errs.append(f"{sid}: {lo} to {hi} hotspots available (must stay 2 to 4)")
+    cap = int(node.get("max_hotspots", 4))
+    if lo < 2 or hi > cap:
+        errs.append(f"{sid}: {lo} to {hi} hotspots available (must stay 2 to {cap})")
     exits = [h for h in hs if h["kind"] == "exit"]
     defaults = [h for h in exits if h["default"]]
     if len(defaults) != 1:

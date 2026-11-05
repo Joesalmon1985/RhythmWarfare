@@ -172,7 +172,10 @@ func commit_final(passed: bool) -> Dictionary:
 			return {}
 	var out := _resolve(h, passed or not tapped, tapped, "final")
 	committed = str(h["id"])
-	if out["route"] == "":
+	if str(out["activity"]) != "":  # a minigame: the run stays at this scene while it lasts
+		out["route"] = node
+		out["stays"] = true
+	elif out["route"] == "":
 		out["route"] = default_route()
 		out["continued"] = true
 	selected = ""
@@ -189,7 +192,8 @@ func _resolve(h: Dictionary, success: bool, tapped: bool, window: String) -> Dic
 	var id := str(h["id"])
 	var out := {"hotspot": id, "kind": str(h["kind"]), "scene": node, "window": window, "success": success, "tapped": tapped, "defaulted": not tapped, "route": str(oc.get("route", "")),
 		"flags_set": (oc.get("flags_set", []) as Array).duplicate(), "cinematic": HotspotContract.resolve_cinematic(h, oc, data.cfg.get("cinematics", {}) if data != null else {}), "cinematic_name": str(oc.get("cinematic", "")) if typeof(oc.get("cinematic", "")) != TYPE_DICTIONARY else "inline",
-		"energy": float(oc.get("energy", 0.0)), "music": str(oc.get("music", "")), "look": h["look"], "continued": false}
+		"energy": float(oc.get("energy", 0.0)), "music": str(oc.get("music", "")), "look": h["look"], "continued": false,
+		"activity": str(oc.get("activity", "")), "stays": false}
 	for f in out["flags_set"]:
 		if HotspotContract.is_keep(str(f)):
 			if not flags.has(str(f)):

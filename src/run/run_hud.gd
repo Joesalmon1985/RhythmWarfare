@@ -14,6 +14,7 @@ var title_card := {}  # {kicker, text, t0}
 var now_t := 0.0
 var route_hint := ""
 var stage_h := 0.0  # height of the stage area above the pads (0: the whole control)
+var silent := false  # a minigame owns the picture: caption() and show_title() do nothing while this is true
 var fade := 0.0  # 0..1 black overlay for the end of a run
 
 var _font: Font
@@ -25,11 +26,15 @@ func _ready() -> void:
 
 
 func caption(text: String, tone: String, t0: float, hold := 1.8) -> void:
+	if silent:
+		return
 	captions = captions.filter(func(c: Dictionary) -> bool: return now_t - float(c["t0"]) < float(c["hold"]) + 0.5)
 	captions.append({"text": text, "tone": tone, "t0": t0, "hold": hold})
 
 
 func show_title(kicker: String, text: String, t0: float) -> void:
+	if silent:
+		return
 	title_card = {"kicker": kicker, "text": text, "t0": t0}
 
 

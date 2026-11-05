@@ -77,6 +77,8 @@ var _trial_g1 := -1.0  # the cue-free guard the walk to the hatch starts on
 var _trial_g2 := -1.0  # the guard the dungeon takes the pads on
 var _trial_direct := false
 var _stage_hidden := ""
+var minigames: MinigameController  # minigames: the activity that owns the scene while the player is seated at a table (docs/BLACKJACK_INTEGRATION.md section 5)
+var _mg: RunMinigameHost
 var trial_log: Array = []  # [{kind, t, ...}] the entry and exit, for the transition tests and recordings
 
 
@@ -105,6 +107,9 @@ func _ready() -> void:
 	tap_policy = OS.get_environment("RW_RUN_TAPS") if OS.has_environment("RW_RUN_TAPS") and OS.get_environment("RW_RUN_TAPS") != "" else "scripted"
 	hotspots = RunHotspots.new(data, Session.run_progress.run_flags, Session.run_progress.flags)
 	engine.hotspots = hotspots
+	minigames = MinigameController.new(engine, Session.run_progress.get("wallet"), Session.run_progress.run_seed())  # minigames: registry from content/minigames
+	minigames.load_registry()
+	_mg = RunMinigameHost.new(self)
 	engine.begin(start)
 	proxy = StoryRun.new()
 	proxy.level = engine.level
@@ -551,6 +556,8 @@ func _advance(t: float, audio_t: float) -> void:
 		_handle(engine.update(minf(t, trial_entry_t - 0.001)))
 	else:
 		_handle(engine.update(t))
+	minigames.update(t)  # minigames: after the engine, so a block's result reaches it before its own clock moves
+	_mg.step(t)
 	if trial_state == "":
 		_update_passage(t, audio_t)
 	else:
@@ -629,7 +636,7 @@ func summary() -> Dictionary:
 		if worlds_seen.is_empty() or worlds_seen[worlds_seen.size() - 1] != wid:
 			worlds_seen.append(wid)
 	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "worlds_seen": worlds_seen, "rail": rails, "moves": moves, "glances": looks, "strolls": walks, "worlds": stages.keys(),
-		"energy": snappedf(engine.energy, 0.1), "reached": Session.run_progress.reached_ids()}
+		"energy": snappedf(engine.energy, 0.1), "reached": Session.run_progress.reached_ids(), "minigames": minigames.log.size()}
 
 
 ## "FRAMES n mean .. p95 .. max .. ms" of the frames played so far, and how many ran over 50 ms (a stage build or a stall). Real-time runs only.
@@ -689,7 +696,7 @@ func _scripted_pause(audio_t: float) -> void:
 
 func _handle(events: Array) -> void:
 	for ev in events:
-		if str(ev["kind"]) in ["phase_start", "block_result"] and trial_state == "":  # the journey first: the stage already holds its actions when the scene reacts
+		if str(ev["kind"]) in ["phase_start", "block_result"] and trial_state == "" and not minigames.active():  # the journey first: the stage already holds its actions when the scene reacts
 			for a in journey.on_event(ev, engine):
 				_journey_apply(a)
 		if str(ev["kind"]) != "judge" and str(ev["kind"]) != "cues":
@@ -710,6 +717,7 @@ func _handle(events: Array) -> void:
 				hud.caption("BASS ENTERS", "good", float(ev["t"]))
 			"block_result":
 				_on_block_result(ev)
+				minigames.on_block_result(bool(ev["passed"]), float(ev["t"]))  # minigames
 			"route_window":
 				if trial_state == "":
 					_open_routes(ev)
@@ -721,6 +729,7 @@ func _handle(events: Array) -> void:
 				hud.caption("THE CROWD DRIFTS AWAY", "bad", float(ev["t"]), 2.4)
 				_end_fade(float(ev["t"]), float(ev["fade_s"]))
 			"run_over":
+				minigames.on_run_over(float(ev["t"]))  # minigames
 				_over_at = float(Time.get_ticks_msec()) / 1000.0 + (0.4 if not virtual_mode else 0.0)
 				_ended = true if virtual_mode else _ended
 				Session.run_result = {"node": ev["node"], "phases": ev["phase"], "energy": ev["energy"], "reason": "the crowd left", "start": engine.node_id}
@@ -835,7 +844,7 @@ func _unhandled_key_input(event: InputEvent) -> void:  # desktop: 1 to 4 pick th
 ## What the hotspot view draws and the taps hit: [{hotspot, state, t_state}] for the hotspots on show now, plus the one that has just committed (it stays for its flash).
 func hotspot_items() -> Array:
 	var out: Array = []
-	if hotspots == null or trial_state != "" or engine == null:
+	if hotspots == null or trial_state != "" or engine == null or minigames.active():  # minigames: the table's view owns the touches
 		return out
 	for h in hotspots.shown(engine.block, engine.window_open):
 		var id := str(h["id"])
@@ -851,7 +860,7 @@ func hotspot_items() -> Array:
 
 ## The player (or the bot) touches a hotspot by id. Allowed while it is on show and nothing has committed; the selection can be changed until the commit. Returns whether it was selected.
 func hotspot_select(id: String) -> bool:
-	if hotspots == null or _ended or trial_state != "":
+	if hotspots == null or _ended or trial_state != "" or minigames.active():  # minigames: nothing is selected while seated
 		return false
 	var ok := hotspots.select(id, engine.block, engine.window_open)
 	if ok:
@@ -876,6 +885,11 @@ func hotspot_tap(pos: Vector2) -> String:
 	for p in pad_view.button_rects():
 		if (pad_view.button_rects()[p] as Rect2).has_point(pos):
 			return ""
+	if minigames.active():  # minigames: the activity's view decides what was touched
+		var target := _mg.hit(pos - rect.position, rect.size)
+		if target != "":
+			hotspot_log.append({"kind": "minigame_tap", "t": hud.now_t, "target": target, "ok": minigames.tap(target, hud.now_t)})
+		return target
 	var st: StoryStage = stages[active_world]["stage"]
 	var pose := _exit_pose()
 	if st.map == null or pose.is_empty():
@@ -918,6 +932,9 @@ func _on_hotspot_commit(ev: Dictionary) -> void:
 	if hotspots.persist_dirty:
 		Session.run_progress.save()
 		hotspots.persist_dirty = false
+	if str(out.get("activity", "")) != "" and bool(out["success"]):  # minigames: sit down on the next downbeat; the run stays here and no door walk starts
+		minigames.request(str(out["activity"]), t, engine.t_of(64.0))
+		_door_phase = engine.phase_n
 	if not (out["cinematic"] as Dictionary).is_empty():
 		_hotspot_cinematic(out, t)
 	if str(out["window"]) == "early" and bool(out["success"]) and HotspotContract.is_trial_route(str(out["route"])):
@@ -928,7 +945,7 @@ func _on_hotspot_commit(ev: Dictionary) -> void:
 ## when the outcome names a route the door walk toward it is the camera's move.
 func _hotspot_cinematic(out: Dictionary, t: float) -> void:
 	var spec: Dictionary = out["cinematic"]
-	var move_ok := bool(out["continued"]) or str(out["window"]) == "early"
+	var move_ok := bool(out["continued"]) or str(out["window"]) == "early" or bool(out.get("stays", false))
 	var steps_move := false
 	for st in spec.get("steps", []):
 		steps_move = steps_move or (st.has("move") and st.has("to"))
