@@ -25,14 +25,15 @@ const COIN_GRID_X := 69.0
 const COIN_CELL := Vector2(16.0, 15.0)
 const COIN_GRID_TOP := -10.0
 
-const CREAM := Color(0.95, 0.92, 0.80)
-const FOIL := Color(0.93, 0.85, 0.50)
-const GOLD := Color(0.90, 0.74, 0.28)
-const GOLD_DARK := Color(0.58, 0.42, 0.10)
-const SILVER := Color(0.84, 0.86, 0.88)
-const SILVER_DARK := Color(0.46, 0.49, 0.55)
-const COPPER := Color(0.76, 0.42, 0.22)
-const COPPER_DARK := Color(0.38, 0.18, 0.09)
+## Paper and metal in the house look: muted, lit warm from above, no dark outline (a note's edge is a darker step of its own colour, a coin's rim its own dark metal).
+const CREAM := Color(0.91, 0.87, 0.74)
+const FOIL := Color(0.84, 0.76, 0.46)
+const GOLD := Color(0.80, 0.64, 0.28)
+const GOLD_DARK := Color(0.46, 0.33, 0.12)
+const SILVER := Color(0.74, 0.75, 0.74)
+const SILVER_DARK := Color(0.40, 0.41, 0.44)
+const COPPER := Color(0.66, 0.38, 0.22)
+const COPPER_DARK := Color(0.32, 0.16, 0.09)
 const WARM := Color(1.0, 0.85, 0.5)
 
 static var _spans := {}  # sides * 1000 + diameter -> PackedInt32Array of (x0, x1) per row
@@ -60,11 +61,11 @@ static func draw_item(ci: CanvasItem, denomination: int, center: Vector2, u: flo
 static func _note_palette(denomination: int) -> Array:
 	match denomination:
 		500:
-			return [Color(0.17, 0.62, 0.66), Color(0.08, 0.37, 0.42), Color(0.55, 0.85, 0.84)]
+			return [Color(0.20, 0.50, 0.50), Color(0.10, 0.29, 0.31), Color(0.50, 0.72, 0.66)]
 		1000:
-			return [Color(0.80, 0.47, 0.18), Color(0.48, 0.25, 0.09), Color(0.95, 0.74, 0.45)]
+			return [Color(0.70, 0.43, 0.19), Color(0.40, 0.22, 0.10), Color(0.86, 0.66, 0.40)]
 		_:
-			return [Color(0.52, 0.32, 0.64), Color(0.29, 0.16, 0.41), Color(0.76, 0.60, 0.84)]
+			return [Color(0.46, 0.31, 0.55), Color(0.26, 0.16, 0.35), Color(0.68, 0.55, 0.72)]
 
 
 static func _a(c: Color, alpha: float) -> Color:
@@ -106,9 +107,10 @@ static func draw_note(ci: CanvasItem, denomination: int, center: Vector2, u: flo
 	var y0 := -(h / 2)
 	var num: String = NOTE_LABEL.get(denomination, "")
 	ci.draw_set_transform(Vector2(roundf(center.x), roundf(center.y)), angle, Vector2.ONE)
-	_rect(ci, x0 + 1, y0 + 2, w + 1, h + 1, Color(0, 0, 0, 0.28 * alpha))
-	_rect(ci, x0 - 1, y0 - 1, w + 2, h + 2, Color(0.06, 0.04, 0.08, 0.85 * alpha))
+	_rect(ci, x0 + 1, y0 + 2, w + 1, h + 1, Color(0.03, 0.06, 0.05, 0.45 * alpha))
+	_rect(ci, x0 - 1, y0 - 1, w + 2, h + 2, _a(dark.darkened(0.35), alpha))
 	_rect(ci, x0, y0, w, h, _a(CREAM, alpha))
+	_rect(ci, x0, y0 + h - 1, w, 1, _a(CREAM.darkened(0.25), alpha))
 	_rect(ci, x0 + 1, y0 + 1, w - 2, h - 2, _a(body, alpha))
 	_rect(ci, x0 + 1, y0 + h - 1 - maxi(1, h / 8), w - 2, maxi(1, h / 8), _a(dark, alpha))
 	if h < 16:
@@ -225,9 +227,9 @@ static func draw_coin(ci: CanvasItem, denomination: int, center: Vector2, u: flo
 	elif denomination >= 100:
 		metal = GOLD
 		edge = GOLD_DARK
-	var shine := metal.lerp(Color.WHITE, 0.55)
+	var shine := metal.lerp(Color(1.0, 0.95, 0.82), 0.45)
 	ci.draw_set_transform(Vector2(roundf(center.x), roundf(center.y)), 0.0, Vector2.ONE)
-	_fill_shape(ci, sides, d, bx + 1, by + 1, Color(0, 0, 0, 0.30 * alpha))
+	_fill_shape(ci, sides, d, bx + 1, by + 1, Color(0.03, 0.06, 0.05, 0.45 * alpha))
 	_fill_shape(ci, sides, d, bx, by, _a(edge, alpha))
 	_fill_shape(ci, sides, d - 2, bx + 1, by + 1, _a(metal, alpha))
 	var face := d - 2

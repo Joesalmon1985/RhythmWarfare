@@ -1,7 +1,8 @@
 class_name BlackjackPeople
 extends RefCounted
 ## The blackjack drawing kit, part two: three expressive people seen from across the table (a parametric face, gaze, twelve arm gestures) and the player's own hands entering from the
-## bottom edge. Everything is flat colours with dark outlines built from whole-pixel rect rows and polygons (see `BlackjackDraw`), sized from `u = canvas height / 230`.
+## bottom edge, in the house look (see `LOOKS`): no dark outlines, each material in two or three tones stepped by ordered dithering, the lamp as the key light and the room's spill as a rim,
+## all built from whole-pixel rect rows and triangle lists (see `BlackjackDraw`), sized from `u = canvas height / 230`.
 ##
 ## Coordinates: a person is drawn around `center`, the middle of the head (`BlackjackDraw.seat_pos`). The head is about 38 u tall, the shoulders 64 u wide and the torso is cut 52 u
 ## below the head centre where the table's far edge hides it. Draw order for a scene: room, `draw_exit`, every person with `layer = "body"`, the table, then every person with `layer = "arms"`
@@ -76,37 +77,55 @@ const MOODS := {
 	},
 }
 
-## Palettes and looks. The three people differ in silhouette (visor and bare forearms, grey hair and glasses, big wild hair), skin and clothes.
+## Palettes and looks: the three are residents of the Ward seen close, in the house style (real proportions, a head about a third of the shoulders' width, no outlines, every material in
+## three or four steps). `lx` is the side the lamp lights them from (+1 from screen right, -1 from screen left, 0 from above); `rim` the side the room's coloured spill catches
+## (-1 left, magenta; +1 right, teal; 0 both, faintly). `hw`/`hh` the head's half width and half height in u.
 const LOOKS := {
 	"dealer": {
-		"skin": Color("f0bd96"), "skin_shade": Color("c98a63"), "hair": Color("4a3020"), "brow": Color("3a2416"), "cloth": Color("e9edf2"), "cloth_shade": Color("b3bfce"),
-		"cloth_dark": Color("8f9db1"), "accent": Color("b8323f"), "hw": 17.0, "hh": 19.0, "forearm_skin": true, "brow_dy": 0.0,
+		"skin_light": Color("e6b28c"), "skin": Color("cc9673"), "skin_shade": Color("a06a53"), "skin_deep": Color("6c4034"), "lip": Color("b0705e"), "lip_dark": Color("6e3a32"),
+		"hair": Color("4a3020"), "hair_light": Color("6e4a30"), "hair_shade": Color("2c1c14"), "brow": Color("3a2416"), "iris": Color("3e2a1c"),
+		"cloth_light": Color("ece6d4"), "cloth": Color("cfc9b8"), "cloth_shade": Color("9c9a98"), "cloth_dark": Color("63666e"),
+		"accent": Color("a3323a"), "accent_dark": Color("651c24"), "accent_light": Color("c85a58"),
+		"hw": 11.0, "hh": 15.0, "lx": 0.0, "rim": 0, "forearm_skin": true,
 	},
 	"npc_a": {
-		"skin": Color("f6d6c0"), "skin_shade": Color("d9a98e"), "hair": Color("e6e6ee"), "brow": Color("a0a0b0"), "cloth": Color("d4a73e"), "cloth_shade": Color("a07d27"),
-		"cloth_dark": Color("7a5e1c"), "accent": Color("f0e4c4"), "hw": 16.0, "hh": 19.0, "forearm_skin": false, "brow_dy": -3.0,
+		"skin_light": Color("eec6aa"), "skin": Color("d8a88c"), "skin_shade": Color("ad7c68"), "skin_deep": Color("774c44"), "lip": Color("b46c68"), "lip_dark": Color("7a3e40"),
+		"hair": Color("cdcad4"), "hair_light": Color("f0eef2"), "hair_shade": Color("8e8a9e"), "brow": Color("a29eae"), "iris": Color("4c5c6c"),
+		"cloth_light": Color("d6b058"), "cloth": Color("b08a3c"), "cloth_shade": Color("80622a"), "cloth_dark": Color("4e3a1a"),
+		"accent": Color("e2d8c0"), "accent_dark": Color("a89c84"), "accent_light": Color("f2ead6"), "frame": Color("c0a468"),
+		"hw": 10.5, "hh": 14.5, "lx": 1.0, "rim": -1, "forearm_skin": false,
 	},
 	"npc_b": {
-		"skin": Color("96623f"), "skin_shade": Color("6f4329"), "hair": Color("2a1f45"), "brow": Color("1d1530"), "cloth": Color("cc6a82"), "cloth_shade": Color("9c435d"),
-		"cloth_dark": Color("742c43"), "accent": Color("5a7fd0"), "hw": 16.0, "hh": 18.0, "forearm_skin": false, "brow_dy": 0.0,
+		"skin_light": Color("aa7550"), "skin": Color("8a5638"), "skin_shade": Color("663c27"), "skin_deep": Color("44261b"), "lip": Color("7a3c3e"), "lip_dark": Color("40181e"),
+		"hair": Color("3c2c5e"), "hair_light": Color("634c8e"), "hair_shade": Color("22193a"), "brow": Color("1c1430"), "iris": Color("2a1810"),
+		"cloth_light": Color("d58498"), "cloth": Color("b25c76"), "cloth_shade": Color("843e58"), "cloth_dark": Color("56243c"),
+		"accent": Color("5a88cc"), "accent_dark": Color("2c4a80"), "accent_light": Color("a8c8f0"), "gold": Color("d0a440"), "clip": Color("d8508a"),
+		"hw": 10.5, "hh": 14.5, "lx": -1.0, "rim": 1, "forearm_skin": false,
 	},
 }
 
 const INK := BlackjackDraw.INK
-const PUPIL := Color("14121f")
-const WHITE := Color("f8f8f4")
-const MOUTH_IN := Color("3a1424")
-const TONGUE := Color("d4506a")
-const BLUSH := Color("ee7f8f")
-const SWEAT := Color("8fd4f4")
-const GLOVE_SKIN := Color("cf9468")
-const SLEEVE := Color("4c5b94")
-const SLEEVE_LIGHT := Color("7183c4")
-const SLEEVE_DARK := Color("2f3a66")
-const CUFF := Color("ece5d0")
-const LINING := Color("dcdce6")
+const SCLERA := Color("e2dccc")
+const MOUTH_IN := Color("3a1820")
+const TEETH := Color("e6dfcc")
+const TONGUE := Color("b04a58")
+const BLUSH := Color("d86a78")
+const SWEAT := Color("9ad0e8")
+const WHITE := Color("f4f0e6")
+const GLOVE_SKIN := Color("c48e6a")
+const GLOVE_LIGHT := Color("dcaa84")
+const GLOVE_SHADE := Color("9a6a4e")
+const GLOVE_DEEP := Color("6a4434")
+const SLEEVE := Color("3a4262")
+const SLEEVE_LIGHT := Color("566088")
+const SLEEVE_DARK := Color("262b44")
+const SLEEVE_DEEP := Color("181b2e")
+const CUFF := Color("d8d0bc")
+const CUFF_SHADE := Color("a8a090")
+const LINING := Color("c8c6cc")
 
 const ARM_L := 28.0
+const HAND_K := 1.2  # a hand's drawing scale on the people (life size against their heads)
 const LOW_U := 0.75  # below this unit (the 320 x 115 canvas) faces switch to their bolder low-detail drawing
 
 
@@ -240,49 +259,142 @@ static func draw_person_state(ci: CanvasItem, st: Dictionary) -> void:
 
 # ------------------------------------------------------------------ body
 
+const D_HALF := BlackjackDraw.D_HALF
+const D_QUARTER := BlackjackDraw.D_QUARTER
+const D_SPARSE := BlackjackDraw.D_SPARSE
+
+static var _head_cache: Dictionary = {}  # [who, u] -> the head's and hair's shapes as triangle lists in head-local pixels (`_head_shapes`)
+
+
+## A colour as the room's spill catches it on the `side` (-1 left magenta, +1 right teal) of a person.
+static func _rimc(look: Dictionary, base: Color, side: int) -> Color:
+	var spill := BlackjackDraw.SPILL_L if side < 0 else BlackjackDraw.SPILL_R
+	return base.lerp(spill, 0.5 if int(look["rim"]) != 0 else 0.3).lightened(0.08)
+
+
+static func _rim_sides(look: Dictionary) -> Array:
+	var r := int(look["rim"])
+	return [-1, 1] if r == 0 else [r]
+
+
+## A one-pixel line from `a` to `b` (whole pixels, one rect per step along the longer axis).
+static func _line(ci: CanvasItem, a: Vector2, b: Vector2, col: Color, px := 1.0) -> void:
+	var d := b - a
+	var n := int(maxf(absf(d.x), absf(d.y)) / px)
+	for i in n + 1:
+		var p := a + d * (float(i) / float(maxi(n, 1)))
+		ci.draw_rect(Rect2(roundf(p.x), roundf(p.y), px, px), col)
+
+
+## A one-pixel line (see `_line`) as a triangle list.
+static func _line_tris(a: Vector2, b: Vector2, px := 1.0) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	var d := b - a
+	var n := int(maxf(absf(d.x), absf(d.y)) / px)
+	for i in n + 1:
+		var p := a + d * (float(i) / float(maxi(n, 1)))
+		out.append_array(BlackjackDraw.rect_tris(roundf(p.x), roundf(p.y), px, px))
+	return out
+
+
 static func _body(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictionary, lift: float) -> void:
 	var cloth: Color = look["cloth"]
+	var light: Color = look["cloth_light"]
 	var shade: Color = look["cloth_shade"]
 	var dark: Color = look["cloth_dark"]
 	var accent: Color = look["accent"]
-	var skin: Color = look["skin"]
-	var sk: Color = look["skin_shade"]
+	var lx := float(look["lx"])
 	var lf := lift * 5.0
 	var t := maxf(1.0, roundf(u))
+	var bb := BlackjackDraw.Batch.new(ci)
 	var pts := PackedVector2Array([
-		c + Vector2(_p(-9.0, u), _p(15.0 - lf, u)), c + Vector2(_p(-22.0, u), _p(20.0 - lf, u)), c + Vector2(_p(-31.0, u), _p(28.0 - lf * 0.6, u)), c + Vector2(_p(-32.0, u), _p(52.0, u)),
-		c + Vector2(_p(32.0, u), _p(52.0, u)), c + Vector2(_p(31.0, u), _p(28.0 - lf * 0.6, u)), c + Vector2(_p(22.0, u), _p(20.0 - lf, u)), c + Vector2(_p(9.0, u), _p(15.0 - lf, u)),
+		c + Vector2(_p(-9.0, u), _p(15.0 - lf, u)), c + Vector2(_p(-21.0, u), _p(19.0 - lf, u)), c + Vector2(_p(-29.0, u), _p(27.0 - lf * 0.6, u)), c + Vector2(_p(-30.0, u), _p(53.0, u)),
+		c + Vector2(_p(30.0, u), _p(53.0, u)), c + Vector2(_p(29.0, u), _p(27.0 - lf * 0.6, u)), c + Vector2(_p(21.0, u), _p(19.0 - lf, u)), c + Vector2(_p(9.0, u), _p(15.0 - lf, u)),
 	])
-	BlackjackDraw.rect(ci, c.x - _p(6.5, u) - t, c.y + _p(10.0, u), _p(13.0, u) + 2.0 * t, _p(12.0, u), INK)
-	BlackjackDraw.poly_o(ci, pts, cloth, INK, t)
-	# shaded lower half and shoulder fold
-	BlackjackDraw.rect(ci, c.x - _p(31.0, u), c.y + _p(42.0, u), _p(62.0, u), _p(10.0, u), shade)
-	BlackjackDraw.rect(ci, c.x - _p(31.0, u), c.y + _p(28.0, u) - lf * u * 0.6, t, _p(24.0, u), shade)
-	BlackjackDraw.rect(ci, c.x + _p(30.0, u), c.y + _p(28.0, u) - lf * u * 0.6, t, _p(24.0, u), shade)
-	BlackjackDraw.rect(ci, c.x - _p(6.5, u), c.y + _p(10.0, u), _p(13.0, u), _p(10.0, u), sk)
+	# the neck: in the chin's shadow at the top, lit down the lamp's side
+	var nw := _p(4.5, u)
+	var ny := c.y + _p(9.0, u)
+	bb.add(BlackjackDraw.rect_tris(c.x - nw, ny, 2.0 * nw, _p(13.0, u)), look["skin_shade"])
+	bb.add(BlackjackDraw.rect_tris(c.x - nw, ny, 2.0 * nw, _p(3.0, u)), look["skin_deep"])
+	var lit_x := c.x - _p(1.5, u) if lx == 0.0 else (c.x + nw - _p(3.0, u) if lx > 0.0 else c.x - nw)
+	bb.add(BlackjackDraw.rect_tris(lit_x, ny + _p(5.0, u), _p(3.0, u), _p(8.0, u)), look["skin"], D_HALF)
+	# the room's coloured spill on the outer edge, then the cloth
+	for sd: int in _rim_sides(look):
+		bb.add(BlackjackDraw.tris_of(Transform2D(0.0, Vector2(float(sd) * t, 0.0)) * pts), _rimc(look, cloth, sd))
+	bb.add(BlackjackDraw.tris_of(pts), cloth)
+	if who == "npc_a":  # the knit of the cardigan
+		bb.add(BlackjackDraw.tris_of(pts), shade, D_SPARSE)
+	# the lamp from above lights the tops of the shoulders; the side away from it and the chest toward the table fall into shade: clean planes, a two-pixel dithered seam between them
+	var top := c.y + _p(15.0 - lf, u)
+	var seam := maxf(1.0, _p(2.0, u))
+	_plane(bb, pts, c.x - _p(40.0, u), top - 4.0, _p(80.0, u), _p(5.0, u) + 4.0, light, 0, seam)
+	var sides: Array = [-1.0, 1.0] if lx == 0.0 else [-lx]
+	for sd: float in sides:
+		var wide := _p(7.0 if lx != 0.0 else 4.0, u)
+		var x0 := c.x + sd * _p(31.0, u)
+		var xa := minf(x0, x0 - sd * wide)
+		_plane(bb, pts, xa, top + _p(4.0, u), wide, _p(40.0, u), shade, int(sd), seam)
+	_plane(bb, pts, c.x - _p(40.0, u), c.y + _p(45.0, u), _p(80.0, u), _p(10.0, u), shade, -2, seam)
 	match who:
 		"dealer":
-			var vee := PackedVector2Array([c + Vector2(_p(-8.0, u), _p(15.0 - lf, u)), c + Vector2(_p(8.0, u), _p(15.0 - lf, u)), c + Vector2(0.0, _p(27.0, u))])
-			BlackjackDraw.poly_o(ci, vee, skin, INK, t)
-			for sx in [-1.0, 1.0]:
-				var col := PackedVector2Array([c + Vector2(sx * _p(9.0, u), _p(14.0 - lf, u)), c + Vector2(sx * _p(1.0, u), _p(27.0, u)), c + Vector2(sx * _p(13.0, u), _p(27.0, u)), c + Vector2(sx * _p(15.0, u), _p(19.0 - lf, u))])
-				BlackjackDraw.poly_o(ci, col, cloth, INK, t)
-				BlackjackDraw.rect(ci, c.x + sx * _p(13.0, u) - _p(2.5, u), c.y + _p(25.0, u), _p(5.0, u), _p(27.0, u), INK)
-				BlackjackDraw.rect(ci, c.x + sx * _p(13.0, u) - _p(1.5, u), c.y + _p(25.0, u), _p(3.0, u), _p(27.0, u), accent)
+			# an open collar: the throat in the shadow of the chin, the collar points lit, red braces over the shoulders with their shadow side
+			var vee := PackedVector2Array([c + Vector2(_p(-6.0, u), _p(15.0 - lf, u)), c + Vector2(_p(6.0, u), _p(15.0 - lf, u)), c + Vector2(0.0, _p(25.0, u))])
+			bb.add(BlackjackDraw.tris_of(vee), look["skin_shade"])
+			bb.add(BlackjackDraw.tris_of(vee), look["skin"], D_HALF)
+			for sx: float in [-1.0, 1.0]:
+				var col := PackedVector2Array([c + Vector2(sx * _p(8.0, u), _p(14.0 - lf, u)), c + Vector2(sx * _p(1.0, u), _p(26.0, u)), c + Vector2(sx * _p(10.0, u), _p(24.0, u)), c + Vector2(sx * _p(13.0, u), _p(18.0 - lf, u))])
+				bb.add(BlackjackDraw.tris_of(Transform2D(0.0, Vector2(0.0, t)) * col), shade)
+				bb.add(BlackjackDraw.tris_of(col), look["cloth_light"])
+				var bt := c + Vector2(sx * _p(16.0, u), _p(19.0 - lf, u))
+				var bbot := c + Vector2(sx * _p(12.0, u), _p(53.0, u))
+				bb.add_limb(bt + Vector2(-sx * t, 0.0), bbot + Vector2(-sx * t, 0.0), maxf(2.0, _p(3.6, u)), maxf(2.0, _p(3.6, u)), look["accent_dark"])
+				bb.add_limb(bt, bbot, maxf(2.0, _p(3.0, u)), maxf(2.0, _p(3.0, u)), accent)
+				bb.add(_line_tris(bt + Vector2(sx * t, 0.0), bt + Vector2(sx * t, _p(4.0, u)), t), look["accent_light"])
+			# folds of the shirt under the arms
+			for sx: float in [-1.0, 1.0]:
+				bb.add(_line_tris(c + Vector2(sx * _p(27.0, u), _p(33.0, u)), c + Vector2(sx * _p(21.0, u), _p(40.0, u)), t), shade)
 		"npc_a":
-			var vee := PackedVector2Array([c + Vector2(_p(-9.0, u), _p(15.0 - lf, u)), c + Vector2(_p(9.0, u), _p(15.0 - lf, u)), c + Vector2(0.0, _p(36.0, u))])
-			BlackjackDraw.poly_o(ci, vee, accent, INK, t)
-			BlackjackDraw.rect(ci, c.x, c.y + _p(34.0, u), t, _p(18.0, u), INK)
+			# the cardigan open over a cream blouse, its ribbed front edges lit, three buttons
+			var vee := PackedVector2Array([c + Vector2(_p(-8.0, u), _p(15.0 - lf, u)), c + Vector2(_p(8.0, u), _p(15.0 - lf, u)), c + Vector2(0.0, _p(36.0, u))])
+			bb.add(BlackjackDraw.tris_of(vee), accent)
+			bb.add(BlackjackDraw.clip_tris(BlackjackDraw.rect_points(c.x - _p(9.0, u), c.y + _p(26.0, u), _p(18.0, u), _p(12.0, u)), vee), look["accent_dark"], D_HALF)
+			for sx: float in [-1.0, 1.0]:
+				bb.add(BlackjackDraw.tris_of(PackedVector2Array([c + Vector2(sx * _p(5.0, u), _p(15.0 - lf, u)), c + Vector2(sx * _p(1.0, u), _p(19.0, u)), c + Vector2(sx * _p(3.0, u), _p(21.0, u)), c + Vector2(sx * _p(8.0, u), _p(16.0 - lf, u))])), look["accent_light"])
+				bb.add(_line_tris(c + Vector2(sx * _p(9.0, u), _p(15.0 - lf, u)), c + Vector2(sx * _p(1.0, u), _p(52.0, u)), t), light)
+				bb.add(_line_tris(c + Vector2(sx * _p(10.0, u), _p(15.0 - lf, u)), c + Vector2(sx * _p(2.0, u), _p(52.0, u)), t), shade)
 			for i in 3:
-				BlackjackDraw.rect(ci, c.x + _p(3.0, u), c.y + _p(37.0 + 5.0 * i, u), maxf(2.0, _p(2.5, u)), maxf(2.0, _p(2.5, u)), dark)
+				bb.add(BlackjackDraw.rect_tris(c.x + _p(3.0, u), c.y + _p(37.0 + 5.0 * i, u), maxf(1.0, _p(2.0, u)), maxf(1.0, _p(2.0, u))), dark)
 		"npc_b":
-			var vee := PackedVector2Array([c + Vector2(_p(-10.0, u), _p(15.0 - lf, u)), c + Vector2(_p(10.0, u), _p(15.0 - lf, u)), c + Vector2(0.0, _p(38.0, u))])
-			BlackjackDraw.poly_o(ci, vee, dark, INK, t)
-			var inner := PackedVector2Array([c + Vector2(_p(-5.0, u), _p(15.0 - lf, u)), c + Vector2(_p(5.0, u), _p(15.0 - lf, u)), c + Vector2(0.0, _p(30.0, u))])
-			BlackjackDraw.poly(ci, inner, accent)
-			BlackjackDraw.poly(ci, PackedVector2Array([c + Vector2(_p(-1.5, u), _p(15.0 - lf, u)), c + Vector2(_p(1.5, u), _p(15.0 - lf, u)), c + Vector2(0.0, _p(26.0, u))]), WHITE)
-			for sx in [-1.0, 1.0]:
-				BlackjackDraw.limb(ci, c + Vector2(sx * _p(9.0, u), _p(18.0 - lf, u)), c + Vector2(sx * _p(2.0, u), _p(40.0, u)), maxf(2.0, _p(3.5, u)), maxf(2.0, _p(3.5, u)), shade)
+			# a scoop neck: skin lit on the lamp's side, a fine gold chain and a blue pendant; drapery folds across the top
+			var scoop := PackedVector2Array([c + Vector2(_p(-9.0, u), _p(15.0 - lf, u)), c + Vector2(_p(9.0, u), _p(15.0 - lf, u)), c + Vector2(_p(7.0, u), _p(22.0, u)), c + Vector2(0.0, _p(25.0, u)), c + Vector2(_p(-7.0, u), _p(22.0, u))])
+			bb.add(BlackjackDraw.tris_of(scoop), look["skin"])
+			bb.add(BlackjackDraw.clip_tris(BlackjackDraw.rect_points(c.x - _p(10.0, u), c.y + _p(14.0, u), _p(20.0, u), _p(4.0, u)), scoop), look["skin_shade"], D_HALF)
+			bb.add(BlackjackDraw.clip_tris(BlackjackDraw.rect_points(c.x - _p(10.0, u), c.y + _p(15.0, u), _p(8.0, u), _p(10.0, u)), scoop), look["skin_light"], D_HALF)
+			bb.add(_line_tris(c + Vector2(_p(-5.0, u), _p(16.0, u)), c + Vector2(0.0, _p(21.0, u)), t), look["gold"])
+			bb.add(_line_tris(c + Vector2(_p(5.0, u), _p(16.0, u)), c + Vector2(0.0, _p(21.0, u)), t), look["gold"])
+			bb.add(BlackjackDraw.rect_tris(c.x - t, c.y + _p(21.0, u), 2.0 * t, 2.0 * t), accent)
+			bb.add(BlackjackDraw.rect_tris(c.x - t, c.y + _p(21.0, u), t, t), look["accent_light"])
+			for sx: float in [-1.0, 1.0]:
+				bb.add(_line_tris(c + Vector2(sx * _p(24.0, u), _p(31.0, u)), c + Vector2(sx * _p(9.0, u), _p(42.0, u)), t), shade)
+				bb.add(_line_tris(c + Vector2(sx * _p(25.0, u), _p(38.0, u)), c + Vector2(sx * _p(13.0, u), _p(47.0, u)), t), shade)
+	bb.flush()
+
+
+## A plane of `col` over the part of polygon `pts` inside the rect (x, y, w, h), with a dithered seam `seam` pixels wide on its open side: `open` -2 the top, 0 the bottom,
+## -1 the right (a plane on the left side), 1 the left (a plane on the right side).
+static func _plane(bb: BlackjackDraw.Batch, pts: PackedVector2Array, x: float, y: float, w: float, h: float, col: Color, open: int, seam: float) -> void:
+	bb.add(BlackjackDraw.clip_tris(BlackjackDraw.rect_points(x, y, w, h), pts), col)
+	var r := Rect2()
+	match open:
+		0:
+			r = Rect2(x, y + h, w, seam)
+		-2:
+			r = Rect2(x, y - seam, w, seam)
+		-1:
+			r = Rect2(x + w, y, seam, h)
+		_:
+			r = Rect2(x - seam, y, seam, h)
+	bb.add(BlackjackDraw.clip_tris(BlackjackDraw.rect_points(r.position.x, r.position.y, r.size.x, r.size.y), pts), col, D_HALF)
 
 
 # ------------------------------------------------------------------ head and face
@@ -299,119 +411,192 @@ static func _blink_seed(who: String) -> float:
 	return 0.0 if who == "dealer" else (2.3 if who == "npc_a" else 4.1)
 
 
-static func _head(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictionary, f: Dictionary, gaze_to: Vector2, bob: float, blink: float, tilt_add := 0.0) -> void:
-	var skin: Color = look["skin"]
-	var sk: Color = look["skin_shade"]
-	var hair: Color = look["hair"]
-	var hw := _p(float(look["hw"]), u)
-	var hh := _p(float(look["hh"]), u)
+## The head's outline `k` u in from its edge and moved by `off` u: a skull round on top, full cheeks, a jaw narrowing to the chin (head-local pixels).
+static func _head_pts(hw: float, hh: float, u: float, k: float, off: Vector2) -> PackedVector2Array:
+	var w := maxf(2.0, hw - k)
+	var h := maxf(2.0, hh - k)
+	var raw: Array = []
+	for i in 13:
+		var th := PI + PI * float(i) / 12.0
+		raw.append(Vector2(cos(th) * w, -1.0 + sin(th) * (h - 1.0)))
+	for q: Vector2 in [Vector2(1.0, 0.22), Vector2(0.93, 0.5), Vector2(0.76, 0.76), Vector2(0.45, 0.95), Vector2(0.0, 1.0), Vector2(-0.45, 0.95), Vector2(-0.76, 0.76), Vector2(-0.93, 0.5), Vector2(-1.0, 0.22)]:
+		raw.append(Vector2(q.x * w, q.y * h))
+	var out := PackedVector2Array()
+	for p: Vector2 in raw:
+		out.append(Vector2(roundf((p.x + off.x) * u), roundf((p.y + off.y) * u)))
+	return out
+
+
+## A curly mass: an ellipse whose edge is scalloped into `bumps` curls (head-local u, rounded to pixels).
+static func _curls(cx: float, cy: float, rx: float, ry: float, bumps: int, amp: float, u: float, n := 54) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	for i in n:
+		var th := TAU * float(i) / float(n)
+		var r := 1.0 + amp * (absf(sin(th * float(bumps) * 0.5)) - 0.6)
+		out.append(Vector2(roundf((cx + cos(th) * rx * r) * u), roundf((cy + sin(th) * ry * r) * u)))
+	return out
+
+
+static func _pts(raw: Array, u: float) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	for p: Vector2 in raw:
+		out.append(Vector2(roundf(p.x * u), roundf(p.y * u)))
+	return out
+
+
+## The head and hair of `who` at unit `u` as triangle lists (head-local pixels), made once: the skin in four steps (shadow, a dithered step, the mid tone, a dithered step, the light,
+## offset toward the lamp so the shadow lies on the far side and under the jaw), the hair behind and in front with its light and shade.
+static func _head_shapes(who: String, look: Dictionary, u: float) -> Dictionary:
+	var key := [who, u]
+	var hit: Variant = _head_cache.get(key)
+	if hit != null:
+		return hit
+	var hw := float(look["hw"])
+	var hh := float(look["hh"])
+	var lx := float(look["lx"])
+	var d := {}
+	d["head_pts"] = _head_pts(hw, hh, u, 0.0, Vector2.ZERO)
+	d["head"] = BlackjackDraw.tris_of(d["head_pts"])
+	d["head_e"] = BlackjackDraw.tris_of(_head_pts(hw, hh, u, 0.6, Vector2(lx * 0.6, -0.5)))
+	d["head_mid"] = BlackjackDraw.tris_of(_head_pts(hw, hh, u, 1.4, Vector2(lx * 1.4, -1.0)))
+	d["head_ld"] = BlackjackDraw.tris_of(_head_pts(hw, hh, u, 4.0, Vector2(lx * 2.6, -2.6)))
+	d["head_lit"] = BlackjackDraw.tris_of(_head_pts(hw, hh, u, 6.5, Vector2(lx * 3.4, -4.0)))
+	var back := PackedVector2Array()
+	var front := PackedVector2Array()
+	match who:
+		"npc_b":  # a big mass of dark curls round the head, a curly fringe and locks down past the temples
+			back = _curls(0.0, -3.0, hw + 6.5, hh + 1.5, 11, 0.12, u)
+			front = _pts([
+				Vector2(-hw - 2.5, -5.0), Vector2(-hw - 1.0, 4.0), Vector2(-hw + 0.5, 3.0), Vector2(-hw + 1.0, -4.0), Vector2(-hw + 2.5, -7.0), Vector2(-5.0, -9.0), Vector2(-3.0, -7.5),
+				Vector2(-0.5, -10.0), Vector2(2.0, -8.0), Vector2(5.0, -9.5), Vector2(hw - 2.5, -7.0), Vector2(hw - 1.0, -4.0), Vector2(hw - 0.5, 3.0), Vector2(hw + 1.0, 4.0),
+				Vector2(hw + 2.5, -5.0), Vector2(hw + 1.5, -11.0), Vector2(6.0, -hh - 2.5), Vector2(0.0, -hh - 3.5), Vector2(-6.0, -hh - 2.5), Vector2(-hw - 1.5, -11.0)], u)
+		"npc_a":  # a short white perm: soft curls over the crown and puffed at the sides over the ears
+			back = _curls(0.0, -4.0, hw + 2.5, hh - 0.5, 9, 0.14, u)
+			front = _pts([
+				Vector2(-hw - 2.0, -4.0), Vector2(-hw - 1.0, 3.0), Vector2(-hw + 0.5, 1.0), Vector2(-hw + 1.0, -5.0), Vector2(-6.0, -8.5), Vector2(-3.0, -9.5), Vector2(0.0, -8.5),
+				Vector2(3.0, -9.5), Vector2(6.0, -8.5), Vector2(hw - 1.0, -5.0), Vector2(hw - 0.5, 1.0), Vector2(hw + 1.0, 3.0), Vector2(hw + 2.0, -4.0), Vector2(hw + 1.0, -11.0),
+				Vector2(5.0, -hh - 1.5), Vector2(0.0, -hh - 2.0), Vector2(-5.0, -hh - 1.5), Vector2(-hw - 1.0, -11.0)], u)
+		_:  # the dealer: short brown hair round the crown, sideburns, the visor over the forehead
+			back = _head_pts(hw + 0.8, hh + 0.2, u, 0.0, Vector2(0.0, -1.0))
+			front = _pts([
+				Vector2(-hw - 0.8, -8.0), Vector2(-hw - 0.5, 1.0), Vector2(-hw + 1.0, 1.0), Vector2(-hw + 1.0, -8.0), Vector2(hw - 1.0, -8.0), Vector2(hw - 1.0, 1.0), Vector2(hw + 0.5, 1.0),
+				Vector2(hw + 0.8, -8.0), Vector2(hw, -12.0), Vector2(5.0, -hh - 0.8), Vector2(0.0, -hh - 1.2), Vector2(-5.0, -hh - 0.8), Vector2(-hw, -12.0)], u)
+	d["back_pts"] = back
+	d["back"] = BlackjackDraw.tris_of(back)
+	d["back_shade"] = BlackjackDraw.clip_tris(BlackjackDraw.rect_points(-40.0 * u, 2.0 * u, 80.0 * u, 40.0 * u), back)
+	d["back_far"] = BlackjackDraw.clip_tris(BlackjackDraw.rect_points((-40.0 if lx >= 0.0 else 4.0) * u, -40.0 * u, (36.0 if lx >= 0.0 else 36.0) * u, 80.0 * u), back) if lx != 0.0 else PackedVector2Array()
+	d["front"] = BlackjackDraw.tris_of(front)
+	d["front_light"] = BlackjackDraw.clip_tris(BlackjackDraw.ell_points((lx * 4.0) * u, (-hh + 1.0) * u, 8.0 * u, 4.5 * u, 24), front)
+	# everything under the face as recorded runs (the hair behind with its rim, shade and curls; the ears; the skin in clean planes with dithered seams), and the hair in front
 	var t := maxf(1.0, roundf(u))
-	var pull := roundf(float(f.get("pull", 0.0)) * u)
+	var hair: Color = look["hair"]
+	var b := BlackjackDraw.Batch.new()
+	for sd: int in _rim_sides(look):
+		b.add(Transform2D(0.0, Vector2(float(sd) * t, 0.0)) * (d["back"] as PackedVector2Array), _rimc(look, hair, sd))
+	b.add(d["back"], hair)
+	b.add(d["back_far"], look["hair_shade"], D_HALF)
+	b.add(d["back_shade"], look["hair_shade"], D_HALF)
+	if who != "dealer":
+		b.add(d["back"], look["hair_light"], D_SPARSE)  # curls catching the light
+	var hwp := _p(hw, u)
+	for sx: float in [-1.0, 1.0]:
+		var lit := lx * sx > 0.0
+		b.add(BlackjackDraw.ell_tris(sx * hwp, _p(1.0, u), maxf(1.0, _p(1.6, u)), maxf(1.0, _p(3.0, u))), look["skin"] if lit else look["skin_shade"])
+		b.add(BlackjackDraw.rect_tris(sx * hwp, 0.0, maxf(1.0, _p(1.0, u)), maxf(1.0, _p(2.0, u))), look["skin_deep"])
+	for sd: int in _rim_sides(look):
+		b.add(Transform2D(0.0, Vector2(float(sd) * t, 0.0)) * (d["head"] as PackedVector2Array), _rimc(look, look["skin_shade"], sd))
+	b.add(d["head"], look["skin_shade"])
+	b.add(d["head_mid"], look["skin"])
+	b.add(d["head_lit"], look["skin_light"])
+	var e_pts := _head_pts(hw, hh, u, 0.6, Vector2(lx * 0.6, -0.5))
+	var mid_pts := _head_pts(hw, hh, u, 1.4, Vector2(lx * 1.4, -1.0))
+	var ld_pts := _head_pts(hw, hh, u, 4.0, Vector2(lx * 2.6, -2.6))
+	var lit_pts := _head_pts(hw, hh, u, 6.5, Vector2(lx * 3.4, -4.0))
+	b.add(BlackjackDraw.ring_tris(e_pts, mid_pts), look["skin"], D_HALF)
+	b.add(BlackjackDraw.ring_tris(ld_pts, lit_pts), look["skin_light"], D_HALF)
+	b.flush()
+	d["under"] = b.runs
+	var f := BlackjackDraw.Batch.new()
+	f.add(d["front"], hair)
+	f.add(d["front_light"], look["hair_light"], D_HALF)
+	if who != "dealer":
+		f.add(d["front"], look["hair_light"], D_SPARSE)
+	f.flush()
+	d["over"] = f.runs
+	if _head_cache.size() > 24:
+		_head_cache.clear()
+	_head_cache[key] = d
+	return d
+
+
+static func _head(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictionary, f: Dictionary, gaze_to: Vector2, bob: float, blink: float, tilt_add := 0.0) -> void:
+	var hw := _p(float(look["hw"]), u)
+	var t := maxf(1.0, roundf(u))
+	var pull := roundf(float(f.get("pull", 0.0)) * u * 0.7)
 	var origin := c + Vector2(0.0, bob - pull)
 	var tilt := deg_to_rad(float(f.get("head_tilt", 0.0)) + tilt_add)
+	var sh := _head_shapes(who, look, u)
 	ci.draw_set_transform(origin, tilt, Vector2.ONE)
-	# hair behind the head
-	if who == "npc_b":
-		_wild_hair_back(ci, u, look)
-	elif who == "npc_a":
-		BlackjackDraw.ell_o(ci, 0.0, -_p(2.0, u), hw + _p(2.0, u), hh - _p(3.0, u), hair, INK, t)
-	# ears
-	for sx in [-1.0, 1.0]:
-		BlackjackDraw.ell_o(ci, sx * (hw + _p(0.5, u)), _p(2.0, u), maxf(2.0, _p(3.0, u)), maxf(3.0, _p(4.5, u)), sk, INK, t)
-	# the head itself: shade ring at the chin, skin on top
-	BlackjackDraw.ell_o(ci, 0.0, 0.0, hw, hh, sk, INK, t)
-	BlackjackDraw.ell(ci, 0.0, 0.0, hw - 1.0 if hw > 8.0 else hw, hh - 1.0, skin, -1000, int(hh) - maxi(2, int(_p(3.0, u))))
-	match who:
-		"dealer":
-			BlackjackDraw.rect(ci, -hw, -_p(13.0, u), t * 2.0, _p(10.0, u), look["hair"])
-			BlackjackDraw.rect(ci, hw - 2.0 * t + 1.0, -_p(13.0, u), t * 2.0, _p(10.0, u), look["hair"])
+	BlackjackDraw.draw_runs(ci, sh["under"])
 	_face_features(ci, who, u, look, f, origin, tilt, gaze_to, blink)
+	BlackjackDraw.draw_runs(ci, sh["over"])
 	match who:
 		"dealer":
-			_visor(ci, u, hw, hh)
-		"npc_a":
-			_old_hair(ci, u, look, hw, hh)
+			_visor(ci, u, float(look["hw"]), float(look["hh"]))
 		"npc_b":
-			_wild_hair_front(ci, u, look)
+			# a gold hoop in the ear on the left, a pink clip in the curls
+			var ex := -hw - _p(0.5, u)
+			var ey := _p(4.0, u)
+			var g: Color = look["gold"]
+			BlackjackDraw.rect(ci, ex - t, ey, t, _p(3.0, u), g)
+			BlackjackDraw.rect(ci, ex + t, ey, t, _p(3.0, u), g.darkened(0.3))
+			BlackjackDraw.rect(ci, ex - t, ey + _p(3.0, u), 3.0 * t, t, g.darkened(0.15))
+			BlackjackDraw.rect(ci, _p(-6.0, u), _p(-float(look["hh"]) - 1.0, u), _p(3.0, u), maxf(1.0, _p(2.0, u)), look["clip"])
 	ci.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 
+## The dealer's green celluloid visor: the band round the forehead, the brim, and the green-tinted shade it throws on the brow.
 static func _visor(ci: CanvasItem, u: float, hw: float, hh: float) -> void:
 	var t := maxf(1.0, roundf(u))
-	var top := -hh - _p(1.0, u)
-	var y0 := top
-	var y1 := -_p(13.0, u)
-	var w := hw + _p(4.0, u)
-	var band := PackedVector2Array([Vector2(-w, y1), Vector2(-w + _p(2.0, u), y0), Vector2(w - _p(2.0, u), y0), Vector2(w, y1)])
-	BlackjackDraw.poly_o(ci, band, Color("46a864"), INK, t)
-	BlackjackDraw.rect(ci, -w + t, y0 + t, 2.0 * w - 2.0 * t, maxf(1.0, _p(1.5, u)), Color("7bd48e"))
-	# the brim: a darker lip with the forehead shadow under it
-	BlackjackDraw.rect(ci, -w + t, y1 - maxf(2.0, _p(2.5, u)), 2.0 * w - 2.0 * t, maxf(2.0, _p(2.5, u)), Color("2b7a45"))
-	BlackjackDraw.rect(ci, -hw + t + 1.0, y1 + 1.0, 2.0 * hw - 2.0 * t - 2.0, maxf(1.0, _p(2.0, u)), Color("c98a63"))
+	var green := Color("3f8a55")
+	var green_lit := Color("7cbf88")
+	var green_dark := Color("22513a")
+	BlackjackDraw.dither_fill(ci, BlackjackDraw.rect_tris(_p(-hw + 1.0, u), _p(-5.0, u), _p(2.0 * hw - 2.0, u), _p(3.0, u)), green_dark, D_HALF)
+	var band := _pts([Vector2(-hw - 1.0, -11.5), Vector2(hw + 1.0, -11.5), Vector2(hw + 1.0, -8.0), Vector2(-hw - 1.0, -8.0)], u)
+	BlackjackDraw.poly(ci, band, green)
+	BlackjackDraw.rect(ci, _p(-hw - 1.0, u), _p(-11.5, u), _p(2.0 * hw + 2.0, u), t, green_lit)
+	var brim := _pts([Vector2(-hw - 4.0, -8.0), Vector2(hw + 4.0, -8.0), Vector2(hw + 2.0, -5.0), Vector2(-hw - 2.0, -5.0)], u)
+	BlackjackDraw.poly(ci, brim, green_dark)
+	BlackjackDraw.rect(ci, _p(-hw - 4.0, u), _p(-8.0, u), _p(2.0 * hw + 8.0, u), t, green)
+	BlackjackDraw.dither_fill(ci, BlackjackDraw.rect_tris(_p(-hw - 3.0, u), _p(-8.0, u) + t, _p(2.0 * hw + 6.0, u), t), green_lit, D_HALF)
 
 
-static func _old_hair(ci: CanvasItem, u: float, look: Dictionary, hw: float, hh: float) -> void:
-	var hair: Color = look["hair"]
-	var t := maxf(1.0, roundf(u))
-	# a thin wispy top and a bald shine, side tufts already drawn behind
-	var wisp := PackedVector2Array([Vector2(-hw + 1.0, -_p(8.0, u)), Vector2(-hw + _p(3.0, u), -hh + 1.0), Vector2(-_p(4.0, u), -hh - _p(3.0, u)), Vector2(_p(1.0, u), -hh - _p(1.0, u)),
-		Vector2(_p(7.0, u), -hh - _p(3.0, u)), Vector2(hw - _p(3.0, u), -hh + 1.0), Vector2(hw - 1.0, -_p(8.0, u)), Vector2(hw - _p(3.0, u), -_p(11.0, u)), Vector2(0.0, -hh + _p(3.0, u)), Vector2(-hw + _p(3.0, u), -_p(11.0, u))])
-	BlackjackDraw.poly_o(ci, wisp, hair, INK, t)
-
-
-static func _wild_hair_back(ci: CanvasItem, u: float, look: Dictionary) -> void:
-	var hair: Color = look["hair"]
-	var t := maxf(1.0, roundf(u))
-	var pts := PackedVector2Array()
-	var spikes := [
-		Vector2(-27, 8), Vector2(-30, -2), Vector2(-25, -6), Vector2(-31, -14), Vector2(-22, -17), Vector2(-24, -28), Vector2(-14, -25), Vector2(-12, -34), Vector2(-5, -27), Vector2(1, -36),
-		Vector2(7, -27), Vector2(13, -34), Vector2(15, -25), Vector2(24, -28), Vector2(22, -17), Vector2(31, -14), Vector2(25, -6), Vector2(30, -2), Vector2(27, 8), Vector2(18, 14),
-		Vector2(-18, 14),
-	]
-	for s: Vector2 in spikes:
-		pts.append(Vector2(_p(s.x, u), _p(s.y, u)))
-	BlackjackDraw.poly_o(ci, pts, hair, INK, t)
-	# a pink streak through the hair
-	BlackjackDraw.poly(ci, PackedVector2Array([Vector2(_p(-4.0, u), _p(-27.0, u)), Vector2(_p(1.0, u), _p(-35.0, u)), Vector2(_p(6.0, u), _p(-27.0, u)), Vector2(_p(2.0, u), _p(-24.0, u))]), Color("e0508a"))
-
-
-static func _wild_hair_front(ci: CanvasItem, u: float, look: Dictionary) -> void:
-	var hair: Color = look["hair"]
-	var t := maxf(1.0, roundf(u))
-	var pts := PackedVector2Array()
-	var fr := [
-		Vector2(-17, -6), Vector2(-18, -16), Vector2(-14, -22), Vector2(-6, -25), Vector2(2, -25), Vector2(10, -24), Vector2(16, -20), Vector2(18, -14), Vector2(17, -6),
-		Vector2(13, -10), Vector2(10, -16), Vector2(6, -9), Vector2(2, -17), Vector2(-2, -9), Vector2(-6, -17), Vector2(-10, -10), Vector2(-14, -15),
-	]
-	for s: Vector2 in fr:
-		pts.append(Vector2(_p(s.x, u), _p(s.y, u)))
-	BlackjackDraw.poly_o(ci, pts, hair, INK, t)
-	# a hoop earring
-	BlackjackDraw.ell(ci, -_p(17.0, u), _p(9.0, u), maxf(2.0, _p(2.5, u)), maxf(2.0, _p(3.5, u)), INK)
-	BlackjackDraw.ell(ci, -_p(17.0, u), _p(9.0, u), maxf(1.0, _p(1.5, u)), maxf(1.0, _p(2.5, u)), Color("f2c14a"))
-	BlackjackDraw.ell(ci, -_p(17.0, u), _p(9.0, u), maxf(0.0, _p(0.5, u)), maxf(1.0, _p(1.5, u)), look["skin_shade"])
-
-
-## Eyes, brows, nose, mouth and extras, drawn in the head's local space (origin at the head centre).
+## Eyes, brows, nose, mouth and extras: small pixel features in the head's local space (origin at the head centre), as the room's people have them, only closer.
 static func _face_features(ci: CanvasItem, who: String, u: float, look: Dictionary, f: Dictionary, origin: Vector2, tilt: float, gaze_to: Vector2, blink: float) -> void:
-	var t := maxf(1.0, roundf(u))
-	var erx := maxf(2.0, _p(5.5, u))
-	var ery := maxf(3.0, _p(6.0, u))
-	var ex := maxf(erx + 3.0, _p(8.2, u))
-	var ey := -_p(1.0, u)
+	var px := maxf(1.0, roundf(u))
+	var low := u < LOW_U
+	var ex := maxf(2.0, _p(4.5, u))
+	var ew := maxf(2.0, _p(4.0, u))
+	var ey := 0.0
+	var lx := float(look["lx"])
 	var glasses := who == "npc_a"
-	var brow_col: Color = look["brow"]
-	var sk: Color = look["skin_shade"]
 	var gl: Vector2 = f.get("gaze_bias", Vector2.ZERO)
 	var lock := float(f.get("gaze_lock", 0.0))
 	var crescent := float(f.get("crescent", 0.0))
 	var pupil_s := float(f.get("pupil", 1.0))
 	var rot := Transform2D(tilt, Vector2.ZERO)
-	# blush
+	var lash: Color = (look["skin_deep"] as Color).lerp(Color("140c10"), 0.65)
+	# the socket's shade under the brow (lit faces only show it on the far side of the nose)
+	var bt := BlackjackDraw.Batch.new(ci)
+	if not low:
+		for sx: float in [-1.0, 1.0]:
+			bt.add(BlackjackDraw.rect_tris(sx * ex - ew * 0.5, ey - 2.0 * px, ew, px), look["skin_shade"], D_HALF)
+	# blush: a dithered flush on the cheeks
 	var bl := float(f.get("blush", 0.0))
 	if bl > 0.05:
-		for sx in [-1.0, 1.0]:
-			BlackjackDraw.ell(ci, sx * ex * 1.25, _p(7.0, u), maxf(2.0, _p(3.5, u)), maxf(1.0, _p(2.0, u)), BlackjackDraw.shade(BLUSH, clampf(bl, 0.0, 1.0)))
+		for sx: float in [-1.0, 1.0]:
+			bt.add(BlackjackDraw.rect_tris(sx * (ex + px) - _p(2.5, u), ey + _p(3.0, u), maxf(2.0, _p(5.0, u)), maxf(1.0, _p(2.0, u))), BlackjackDraw.shade(BLUSH, clampf(bl, 0.0, 1.0)), D_HALF)
+	bt.flush()
 	# eyes
 	for si in 2:
 		var sx := -1.0 if si == 0 else 1.0
@@ -419,10 +604,6 @@ static func _face_features(ci: CanvasItem, who: String, u: float, look: Dictiona
 		if blink > 0.5 and crescent < 0.5:
 			lid = minf(lid, 0.0)
 		var cx := sx * ex
-		if glasses and u >= LOW_U:
-			var ro := maxf(1.0, _p(2.0, u))
-			BlackjackDraw.ell(ci, cx, ey, erx + ro + t, ery + ro + t, INK)
-			BlackjackDraw.ell(ci, cx, ey, erx + ro, ery + ro, Color("dff0f8"))
 		var world := origin + rot * Vector2(cx, ey)
 		var dir := gaze_to - world
 		var dl := dir.length()
@@ -430,135 +611,197 @@ static func _face_features(ci: CanvasItem, who: String, u: float, look: Dictiona
 		if dl > 0.5:
 			dv = dir / dl * minf(1.0, dl / maxf(1.0, 16.0 * u))
 		dv = dv.lerp(gl, lock)
-		_eye(ci, cx, ey, erx, ery, lid, crescent, pupil_s, dv, u, sx)
-	if glasses and u < LOW_U:  # at low detail the glasses are only a bridge and two rims over the eyes, so the eyes keep their shape
-		BlackjackDraw.rect(ci, -ex + erx, ey - 1.0, 2.0 * (ex - erx) + 1.0, 1.0, INK)
-		for sx2 in [-1.0, 1.0]:
-			BlackjackDraw.rect(ci, sx2 * ex - erx - 1.0, ey - ery - 2.0, 2.0 * erx + 3.0, 1.0, INK)
-	# brows (their movement is never smaller than at u 0.8, so moods still read at low detail)
+		_eye(ci, cx, ey, ew, lid, crescent, pupil_s, dv, u, sx, look, lash, low)
+	if glasses:
+		var fr: Color = look["frame"]
+		if low:
+			BlackjackDraw.rect(ci, -ex + ew * 0.5, ey - px, 2.0 * ex - ew, px, fr)
+		else:
+			for sx: float in [-1.0, 1.0]:
+				var x0 := roundf(sx * ex - ew * 0.5) - px
+				var w := ew + 2.0 * px
+				BlackjackDraw.rect(ci, x0 + px, ey - 3.0 * px, w - 2.0 * px, px, fr)
+				BlackjackDraw.rect(ci, x0 + px, ey + 2.0 * px, w - 2.0 * px, px, fr.darkened(0.25))
+				BlackjackDraw.rect(ci, x0, ey - 2.0 * px, px, 4.0 * px, fr if sx * lx < 0.0 or lx == 0.0 else fr.darkened(0.2))
+				BlackjackDraw.rect(ci, x0 + w - px, ey - 2.0 * px, px, 4.0 * px, fr.darkened(0.2) if sx * lx < 0.0 else fr)
+				BlackjackDraw.rect(ci, x0 + (w - 2.0 * px if lx > 0.0 else px), ey - 2.0 * px, px, px, WHITE)  # a glint on the lens toward the lamp
+			BlackjackDraw.rect(ci, -ex + ew * 0.5 + px, ey - 2.0 * px, 2.0 * ex - ew - 2.0 * px, px, fr)
+	# brows: one-pixel strokes in the brow colour; height and tilt carry the mood (never less than a pixel of movement, so moods read at low detail)
 	var ku := maxf(u, 0.8)
 	for si in 2:
 		var sx := -1.0 if si == 0 else 1.0
 		var b: Vector2 = f.get("brow_l" if si == 0 else "brow_r", Vector2.ZERO)
-		var by := ey - ery - _p(3.2, u) - b.x * roundf(4.5 * ku) + _p(float(look["brow_dy"]), u)
-		var inner := Vector2(sx * maxf(erx * 0.5, _p(3.0, u)), by - b.y * roundf(4.6 * ku))
-		var outer := Vector2(sx * (ex + erx), by + b.y * roundf(2.4 * ku))
-		if who == "dealer":
-			outer.x *= 0.92
-		BlackjackDraw.limb(ci, Vector2(roundf(inner.x), roundf(inner.y)), Vector2(roundf(outer.x), roundf(outer.y)), maxf(2.0, _p(2.6, u)), maxf(2.0, _p(2.6, u)), brow_col)
-	# nose
-	BlackjackDraw.rect(ci, -_p(1.5, u), _p(4.5, u), maxf(2.0, _p(3.0, u)), maxf(2.0, _p(2.0, u)), sk)
-	_mouth(ci, u, look, f)
+		var by := ey - _p(3.5, u) - (px if glasses and not low else 0.0) - roundf(b.x * 1.6 * ku)
+		var yi := by - roundf(b.y * 1.3 * ku)
+		var yo := by + roundf(b.y * 0.6 * ku)
+		var xi := sx * maxf(1.0, _p(1.5, u))
+		var xo := sx * (ex + ew * 0.5 + (0.0 if low else px))
+		_line(ci, Vector2(xi, yi), Vector2(xo, yo), look["brow"], px)
+		if not low and absf(b.y) > 0.6:  # a knit brow gets a crease
+			BlackjackDraw.rect(ci, sx * px - (px if sx < 0.0 else 0.0), yi + px, px, px, look["skin_shade"])
+	# the nose: a lit bridge, its shadow side, the nostrils' row under a lit tip
+	var sd := -1.0 if lx > 0.0 else 1.0
+	var nt := ey + _p(4.0, u)
+	if not low:
+		BlackjackDraw.rect(ci, sd * px, ey + px, px, nt - ey, look["skin_shade"])
+		BlackjackDraw.rect(ci, 0.0, ey + px, px, nt - ey - px, look["skin_light"])
+		BlackjackDraw.rect(ci, -px, nt + px, 3.0 * px, px, look["skin_shade"])
+		BlackjackDraw.rect(ci, -px, nt + px, px, px, look["skin_deep"])
+		BlackjackDraw.rect(ci, px, nt + px, px, px, look["skin_deep"])
+		BlackjackDraw.rect(ci, 0.0, nt, px, px, look["skin_light"])
+	_mouth(ci, u, look, f, low)
+	if who == "npc_a" and not low:  # age: lines from the nose to the mouth's corners, soft bags under the eyes
+		for sx: float in [-1.0, 1.0]:
+			BlackjackDraw.rect(ci, sx * _p(4.0, u) - (px if sx < 0.0 else 0.0), nt + 2.0 * px, px, 2.0 * px, look["skin_shade"])
 	# extras
 	if float(f.get("sweat", 0.0)) > 0.3:
-		_drop(ci, Vector2(float(look["hw"]) * u - _p(1.0, u), -_p(11.0, u)), u, 1.0)
+		_drop(ci, Vector2(_p(float(look["hw"]) - 2.0, u), -_p(6.0, u)), u, px)
 	if float(f.get("tear", 0.0)) > 0.3:
-		for sx in [-1.0, 1.0]:
-			var tx: float = sx * (ex + erx * 0.4)
-			BlackjackDraw.rect(ci, tx - 1.0, ey + ery + _p(1.0, u), maxf(2.0, _p(2.0, u)), _p(6.0, u), SWEAT)
-			_drop(ci, Vector2(tx, ey + ery + _p(9.0, u)), u, 0.7)
+		for sx: float in [-1.0, 1.0]:
+			var tx := roundf(sx * ex + sx * ew * 0.25)
+			BlackjackDraw.rect(ci, tx, ey + 2.0 * px, px, _p(4.0, u), SWEAT)
+			BlackjackDraw.rect(ci, tx, ey + 2.0 * px + _p(4.0, u), px, px, WHITE)
 
 
-static func _drop(ci: CanvasItem, p: Vector2, u: float, k: float) -> void:
-	var w := maxf(2.0, _p(3.0 * k, u))
-	var h := maxf(3.0, _p(5.0 * k, u))
-	var pts := PackedVector2Array([p + Vector2(0.0, -h), p + Vector2(w, h * 0.3), p + Vector2(w * 0.5, h), p + Vector2(-w * 0.5, h), p + Vector2(-w, h * 0.3)])
-	BlackjackDraw.poly_o(ci, pts, SWEAT, INK, 1.0)
-	BlackjackDraw.rect(ci, p.x - w * 0.4, p.y + h * 0.1, 1.0, 1.0, WHITE)
+## A bead of sweat at the temple: three pixels of pale blue and a glint.
+static func _drop(ci: CanvasItem, p: Vector2, u: float, px: float) -> void:
+	var h := maxf(2.0, _p(3.0, u))
+	BlackjackDraw.rect(ci, p.x, p.y + px, maxf(1.0, _p(2.0, u)), h, SWEAT)
+	BlackjackDraw.rect(ci, p.x, p.y, px, px, SWEAT)
+	BlackjackDraw.rect(ci, p.x, p.y + px, px, px, WHITE)
 
 
-static func _eye(ci: CanvasItem, cx: float, cy: float, erx: float, ery: float, lid: float, crescent: float, pupil_s: float, dv: Vector2, u: float, side: float) -> void:
-	var t := maxf(1.0, roundf(u))
-	cx = roundf(cx)
-	cy = roundf(cy)
+## One eye `ew` pixels wide centred on (cx, cy): the lid / lash line, one to three rows of white (from a heavy lid to wide open), a two-pixel iris that follows `dv` (-1..1), the lower lid
+## of a wide eye. Shut: a lash line; shut in a laugh (`crescent`): an arc bowed upward.
+static func _eye(ci: CanvasItem, cx: float, cy: float, ew: float, lid: float, crescent: float, pupil_s: float, dv: Vector2, u: float, side: float, look: Dictionary, lash: Color, low: bool) -> void:
+	var px := maxf(1.0, roundf(u))
+	var x0 := roundf(cx - ew * 0.5)
+	var x1 := x0 + ew - px
+	var y := roundf(cy)
+	var outer := x1 + px if side > 0.0 else x0 - px
 	if lid < 0.12:
-		var th := maxf(1.0, roundf(1.6 * u))
 		if crescent > 0.5:
-			var rise := maxf(2.0, _p(3.0, u))
-			var x := -erx
-			while x <= erx:
-				var k := x / erx
-				BlackjackDraw.rect(ci, cx + x, cy + rise * (k * k) - rise * 0.5, 1.0, th, INK)
-				x += 1.0
+			BlackjackDraw.rect(ci, x0, y, px, px, lash)
+			BlackjackDraw.rect(ci, x1, y, px, px, lash)
+			BlackjackDraw.rect(ci, x0 + px, y - px, maxf(px, ew - 2.0 * px), px, lash)
+			if not low:
+				BlackjackDraw.rect(ci, x0, y + px, ew, px, look["skin_light"])  # the cheeks pushed up by the smile
 		else:
-			BlackjackDraw.rect(ci, cx - erx, cy + 1.0, erx * 2.0 + 1.0, th, INK)
-			# little squeeze lines at the outer corner
-			BlackjackDraw.rect(ci, cx + side * (erx + 1.0), cy - 1.0, 1.0, th + 1.0, INK)
+			BlackjackDraw.rect(ci, x0, y, ew, px, lash)
+			if not low:
+				BlackjackDraw.rect(ci, outer, y - px, px, px, lash)
 		return
-	var ry := ery
-	var rx := erx
-	if lid > 1.0:
-		ry = ery * (1.0 + (lid - 1.0) * 0.9)
-		rx = erx + roundf((lid - 1.0) * 2.0 * u)
-	var top := -1000
-	if lid < 1.0:
-		top = -int(roundf(ry)) + int(roundf(2.0 * ry * (1.0 - lid)))
-	BlackjackDraw.ell(ci, cx, cy, rx + t, ry + t, INK, -1000 if top == -1000 else top - t, 1000)
-	BlackjackDraw.ell(ci, cx, cy, rx, ry, WHITE, top, 1000)
-	if top != -1000:
-		BlackjackDraw.rect(ci, cx - rx - t, cy + top - t, 2.0 * (rx + t) + 1.0, t + 1.0, INK)
-	var pr := maxf(1.0, roundf(2.4 * u * pupil_s))
-	var mx := maxf(0.0, rx - pr)
-	var my := maxf(0.0, ry - pr)
-	var po := Vector2(roundf(dv.x * mx), roundf(dv.y * my * 0.8))
-	var vis_top := -1000 if top == -1000 else top
-	BlackjackDraw.ell(ci, cx + po.x, cy + po.y, pr, pr, PUPIL, vis_top, 1000)
-	if pr >= 2.0:
-		BlackjackDraw.rect(ci, cx + po.x + 1.0, cy + po.y - 2.0, 1.0, 1.0, WHITE)
+	var rows := 1 if lid < 0.7 else (2 if lid <= 1.15 else 3)
+	if low:
+		rows = 1 if lid <= 1.15 else 2
+	var top := y - (px if rows == 3 else 0.0)
+	var sclera: Color = SCLERA.lerp(look["skin"], 0.22)
+	if not low:
+		BlackjackDraw.rect(ci, x0, top, ew, rows * px, sclera)
+		BlackjackDraw.rect(ci, (x1 if side > 0.0 else x0), top, px, rows * px, sclera.lerp(look["skin_shade"], 0.5))  # the white darker in the outer corner
+	var iw := px if (low or pupil_s < 0.7 or ew < 4.0 * px) else 2.0 * px
+	var ih := rows * px if rows < 3 else 2.0 * px
+	var iy := top
+	if rows == 3:
+		iy = top + (px if dv.y > -0.3 else 0.0)
+	elif rows == 2 and dv.y > 0.45:
+		ih = px
+		iy = top + px
+	var ix := roundf(x0 + (ew - iw) * 0.5 + dv.x * (ew - iw) * 0.5)
+	ix = clampf(ix, x0, x1 - iw + px)
+	BlackjackDraw.rect(ci, ix, iy, iw, ih, lash if low else look["iris"])
+	if not low and iw >= 2.0 * px and pupil_s >= 1.1:
+		BlackjackDraw.rect(ci, ix + (iw - px if side < 0.0 else 0.0), iy, px, px, sclera.lightened(0.2))  # a bright catch light
+	# the upper lid and lashes (heavier, and over the iris, on a drooping lid); a lower lid under a wide eye
+	BlackjackDraw.rect(ci, minf(x0, outer) if not low else x0, top - px, ew + (0.0 if low else px), px, lash)
+	if rows == 3 and not low:
+		BlackjackDraw.rect(ci, x0, top + 3.0 * px, ew, px, look["skin_shade"])
 
 
-static func _mouth(ci: CanvasItem, u: float, look: Dictionary, f: Dictionary) -> void:
-	var mw := maxf(3.0, _p(7.0 * float(f.get("mouth_w", 1.0)), u))
-	var cx := roundf(float(f.get("mouth_x", 0.0)) * u)
-	var y0 := _p(11.5, u)
+## The mouth at low detail (a head eleven pixels wide): three to five pixels, so it reads as a mouth and never as a moustache. Closed: the lip line in the lips' colour, its corners up in
+## a smile and down in a frown; a grin: a row of teeth over a dark pixel row narrower than it; an O: a two-by-two dark pixel block.
+static func _mouth_low(ci: CanvasItem, look: Dictionary, cx: float, y0: float, mw: float, curve: float, skew: float, open: float, teeth: bool) -> void:
+	var lipd: Color = look["lip_dark"]
+	if open > 0.12 and curve > 0.25:
+		BlackjackDraw.rect(ci, cx - mw, y0 - 1.0, 2.0 * mw + 1.0, 1.0, TEETH if teeth else lipd)
+		BlackjackDraw.rect(ci, cx - mw + 1.0, y0, 2.0 * mw - 1.0, 1.0 if open < 0.7 else 2.0, MOUTH_IN)
+		return
+	if open > 0.12:
+		BlackjackDraw.rect(ci, cx - 1.0, y0 - 1.0, 2.0, 2.0, MOUTH_IN)
+		return
+	var lip: Color = (look["lip"] as Color).lerp(lipd, 0.5)
+	BlackjackDraw.rect(ci, cx - mw + 1.0, y0, 2.0 * mw - 1.0, 1.0, lip)
+	var lc := 0.0 if absf(curve) < 0.3 else (-1.0 if curve > 0.0 else 1.0)
+	var lsk := 0.0 if absf(skew) < 0.5 else -1.0
+	BlackjackDraw.rect(ci, cx - mw, y0 + lc, 1.0, 1.0, lip)
+	BlackjackDraw.rect(ci, cx + mw, y0 + lc + lsk, 1.0, 1.0, lip)
+
+
+## The mouth: the dark line between the lips (curving up in a smile, down in a frown, skewed in a smirk) over a lit lower lip; open: a grin with the top teeth, or an O; gritted teeth.
+static func _mouth(ci: CanvasItem, u: float, look: Dictionary, f: Dictionary, low: bool) -> void:
+	var px := maxf(1.0, roundf(u))
+	var mw := maxf(1.0, roundf(3.2 * u * float(f.get("mouth_w", 1.0))))
+	var cx := roundf(float(f.get("mouth_x", 0.0)) * u * 0.55)
+	var y0 := _p(8.5, u)
 	var curve := float(f.get("mouth_curve", 0.0))
 	var skew := float(f.get("mouth_skew", 0.0))
 	var open := float(f.get("mouth_open", 0.0))
-	var th := maxf(2.0 if u < LOW_U else 1.0, roundf(1.6 * u))
-	var t := maxf(1.0, roundf(u))
-	var amp := maxf(3.6 * u, 2.6)  # how far a smile or frown bends (never under 2.6 pixels, so it reads at low detail)
-	var samp := maxf(3.0 * u, 2.0)
+	var lipd: Color = look["lip_dark"]
+	var lip: Color = look["lip"]
 	if float(f.get("grit", 0.0)) > 0.5:
-		var gh := maxf(3.0, _p(5.5, u))
-		BlackjackDraw.rect(ci, cx - mw - t, y0 - gh * 0.5 - t, 2.0 * mw + 2.0 * t + 1.0, gh + 2.0 * t, INK)
-		BlackjackDraw.rect(ci, cx - mw, y0 - gh * 0.5, 2.0 * mw + 1.0, gh, WHITE)
-		BlackjackDraw.rect(ci, cx - mw, y0 - 0.5, 2.0 * mw + 1.0, 1.0, INK)
-		var x := -mw + maxf(2.0, _p(3.5, u))
-		while x < mw - 1.0:
-			BlackjackDraw.rect(ci, cx + x, y0 - gh * 0.5, 1.0, gh, INK)
-			x += maxf(2.0, _p(3.5, u))
+		var gh := 3.0 * px if not low else 2.0 * px
+		BlackjackDraw.rect(ci, cx - mw - px, y0 - px, 2.0 * mw + 3.0 * px, gh, lipd)
+		BlackjackDraw.rect(ci, cx - mw, y0 - (0.0 if low else 0.0), 2.0 * mw + px, px, TEETH)
+		var x := cx - mw + px
+		while x < cx + mw:
+			BlackjackDraw.rect(ci, x, y0, px, px, TEETH.darkened(0.3))
+			x += 2.0 * px
+		return
+	if low:
+		_mouth_low(ci, look, cx, y0, mw, curve, skew, open, float(f.get("teeth", 0.0)) > 0.5 or float(f.get("grit", 0.0)) > 0.5)
 		return
 	if open > 0.12:
-		var h := maxf(3.0, _p(2.0 + open * 9.0, u))
-		if curve > 0.25:  # a D-shaped grin: flat on top, round below
-			var rows := int(h)
-			for j in range(-1, rows + 2):
-				var k := clampf(float(j) / (h + 0.5), 0.0, 1.0)
-				var hwi := floorf(mw * sqrt(maxf(0.0, 1.0 - k * k)) + 0.5) + (t if j >= 0 else t)
-				BlackjackDraw.rect(ci, cx - hwi, y0 + j - 1.0, 2.0 * hwi + 1.0, 1.0, INK)
-			for j in range(0, rows + 1):
-				var k := clampf(float(j) / (h + 0.5), 0.0, 1.0)
-				var hwi := floorf(mw * sqrt(maxf(0.0, 1.0 - k * k)) + 0.5)
+		var h := maxf(2.0 * px, roundf((1.0 + open * 4.0) * u))
+		if curve > 0.25:  # a grin: flat on top with the top teeth, round below, the corners lifted
+			var rows := int(h / px)
+			for j in rows:
+				var k := float(j) / float(rows)
+				var hwj := roundf(mw * sqrt(maxf(0.0, 1.0 - k * k)))
 				var col := MOUTH_IN
-				if float(f.get("teeth", 0.0)) > 0.5 and j < maxi(2, int(h * 0.38)):
-					col = WHITE
-				elif j >= rows - 2 and h >= 6.0:
+				if float(f.get("teeth", 0.0)) > 0.5 and j == 0 and not low:
+					col = TEETH
+				elif j == rows - 1 and rows >= 4:
 					col = TONGUE
-				BlackjackDraw.rect(ci, cx - hwi, y0 + j - 1.0, 2.0 * hwi + 1.0, 1.0, col)
+				BlackjackDraw.rect(ci, cx - hwj, y0 - px + j * px, 2.0 * hwj + px, px, col)
+			BlackjackDraw.rect(ci, cx - mw - px, y0 - 2.0 * px, px, px, lipd)
+			BlackjackDraw.rect(ci, cx + mw + px, y0 - 2.0 * px, px, px, lipd)
+			if not low:
+				BlackjackDraw.rect(ci, cx - roundf(mw * 0.5), y0 - px + h, 2.0 * roundf(mw * 0.5) + px, px, lip)
+				BlackjackDraw.rect(ci, cx - mw - 2.0 * px, y0 - 2.0 * px, px, 2.0 * px, look["skin_shade"])  # the cheeks crease
+				BlackjackDraw.rect(ci, cx + mw + 2.0 * px, y0 - 2.0 * px, px, 2.0 * px, look["skin_shade"])
 		else:  # an O
-			var ry := h * 0.5
-			BlackjackDraw.ell_o(ci, cx, y0 + ry * 0.4, mw, ry, MOUTH_IN, INK, t)
-			if ry >= 4.0:
-				BlackjackDraw.ell(ci, cx, y0 + ry * 0.4 + ry * 0.5, maxf(1.0, mw * 0.6), maxf(1.0, ry * 0.4), TONGUE)
+			var rx := maxf(1.0, roundf(mw * 0.6))
+			var ry := maxf(1.0, roundf(h * 0.5))
+			BlackjackDraw.ell(ci, cx, y0 + ry * 0.3, rx + (0.0 if low else px), ry + (0.0 if low else px), lipd)
+			BlackjackDraw.ell(ci, cx, y0 + ry * 0.3, maxf(0.0, rx - (px if low else 0.0)), maxf(0.0, ry - (px if low else 0.0)), MOUTH_IN)
 		return
+	var amp := maxf(1.7 * u, 1.0)
+	var samp := maxf(1.6 * u, 1.0)
 	var x := -mw
 	while x <= mw:
 		var tt := x / mw
 		var side := tt * signf(skew) if skew != 0.0 else 1.0
 		var cw := 1.0 if side >= 0.0 else 0.15
-		var y := y0 - curve * amp * tt * tt * cw - (skew * maxf(0.0, tt) * samp if skew > 0.0 else 0.0) + (skew * maxf(0.0, -tt) * samp if skew < 0.0 else 0.0)
-		BlackjackDraw.rect(ci, cx + x, roundf(y), 1.0, th, INK)
-		x += 1.0
+		var yy := y0 - curve * amp * tt * tt * cw - (skew * maxf(0.0, tt) * samp if skew > 0.0 else 0.0) + (skew * maxf(0.0, -tt) * samp if skew < 0.0 else 0.0)
+		BlackjackDraw.rect(ci, cx + x, roundf(yy), px, px, lipd)
+		x += px
+	if not low:
+		var lw := roundf(mw * (0.55 if curve > 0.5 else 0.7))
+		BlackjackDraw.rect(ci, cx - lw, y0 + px, 2.0 * lw + px, px, lip)
+		BlackjackDraw.rect(ci, cx - roundf(mw * 0.4), y0 + 2.0 * px, 2.0 * roundf(mw * 0.4) + px, px, look["skin_shade"])  # the shadow under the lower lip
+		if curve > 0.6:
+			BlackjackDraw.rect(ci, cx - mw - px, y0 - roundf(amp) - px, px, px, look["skin_shade"])
+			BlackjackDraw.rect(ci, cx + mw + px, y0 - roundf(amp) - px, px, px, look["skin_shade"])
 
 
 # ------------------------------------------------------------------ arms
@@ -704,7 +947,10 @@ static func _elbow(s: Vector2, h: Vector2, side: float) -> Vector2:
 
 
 static func _arms(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictionary, poses: Array, lift: float) -> void:
-	var ink := PackedVector2Array()  # the outline pass is all ink: both arms and hands go to the renderer as one triangle list
+	# the edge pass first (every shape grown a pixel, in the darkest step of its own material: sleeves in the cloth's, hands in the skin's), one triangle list each, then the fills
+	var edge_cloth := PackedVector2Array()
+	var edge_skin := PackedVector2Array()
+	var bb := BlackjackDraw.Batch.new(ci)
 	for pass_i in 2:
 		var dk := pass_i == 0
 		for si in 2:
@@ -716,16 +962,27 @@ static func _arms(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dicti
 			if dd.length() > ARM_L * 2.0 - 1.0:
 				hp = sh + dd.normalized() * (ARM_L * 2.0 - 1.0)
 			var el := _elbow(sh, hp, side)
-			_arm(ci, who, c, u, look, sh, el, hp, String(po["kind"]), float(po["ang"]), float(po["k"]), side, dk, ink)
+			_arm(bb, who, c, u, look, sh, el, hp, String(po["kind"]), float(po["ang"]), float(po["k"]), side, dk, edge_cloth, edge_skin)
 		if dk:
-			BlackjackDraw.fill(ci, ink, INK)
+			bb.add(edge_cloth, look["cloth_dark"])
+			bb.add(edge_skin, look["skin_deep"])
+	bb.flush()
 
 
-## One arm: in the outline pass (`dk`) its shapes, grown, are added to `ink`; in the fill pass they are drawn in their colours.
-static func _arm(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictionary, sh: Vector2, el: Vector2, hp: Vector2, kind: String, ang: float, k: float, side: float, dk: bool, ink: PackedVector2Array) -> void:
+## The side of segment a-b that faces up (toward the lamp), as a unit normal.
+static func _up_normal(a: Vector2, b: Vector2) -> Vector2:
+	var d := b - a
+	if d.length() < 0.5:
+		return Vector2(0.0, -1.0)
+	var n := Vector2(-d.y, d.x).normalized()
+	return n if n.y <= 0.0 else -n
+
+
+## One arm: in the edge pass (`dk`) its shapes, grown, are added to the edge lists; in the fill pass they are drawn in their colours: the sleeve with the lamp's light along its upper side
+## and shade along the lower, a bare forearm (the dealer's rolled sleeves) or a cuff, the hand lit on its back.
+static func _arm(bb: BlackjackDraw.Batch, who: String, c: Vector2, u: float, look: Dictionary, sh: Vector2, el: Vector2, hp: Vector2, kind: String, ang: float, k: float, side: float, dk: bool, edge_cloth: PackedVector2Array, edge_skin: PackedVector2Array) -> void:
 	var g := maxf(1.0, roundf(u)) if dk else 0.0
 	var cloth: Color = look["cloth"]
-	var shade: Color = look["cloth_shade"]
 	var skin: Color = look["skin"]
 	var fore_skin: bool = look["forearm_skin"]
 	var s := c + Vector2(roundf(sh.x * u), roundf(sh.y * u))
@@ -735,42 +992,60 @@ static func _arm(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictio
 	var wf := 8.4 * u
 	var ee := e
 	var fdir := (h - e).normalized() if (h - e).length() > 0.5 else Vector2(0.0, 1.0)
+	var hk := k * HAND_K
 	if dk:
-		BlackjackDraw.limb_into(ink, s, e, wu + 2.0 * g, wu - 0.6 * u + 2.0 * g)
-		BlackjackDraw.limb_into(ink, ee, h, wf + 2.0 * g, wf - 0.8 * u + 2.0 * g)
+		BlackjackDraw.limb_into(edge_cloth, s, e, wu + 2.0 * g, wu - 0.6 * u + 2.0 * g)
 		if fore_skin:
-			BlackjackDraw.limb_into(ink, ee - fdir * 1.0, ee + fdir * maxf(3.0, 5.0 * u), wf + 3.4 * u + 2.0 * g, wf + 3.4 * u + 2.0 * g)
-		_hand_into(ink, h, ang, kind, k * 1.45, u, g, side)
+			BlackjackDraw.limb_into(edge_skin, ee, h, wf + 2.0 * g, wf - 0.8 * u + 2.0 * g)
+			BlackjackDraw.limb_into(edge_cloth, ee - fdir * 1.0, ee + fdir * maxf(3.0, 5.0 * u), wf + 3.4 * u + 2.0 * g, wf + 3.4 * u + 2.0 * g)
+		else:
+			BlackjackDraw.limb_into(edge_cloth, ee, h, wf + 2.0 * g, wf - 0.8 * u + 2.0 * g)
+		_hand_into(edge_skin, h, ang, kind, hk, u, g, side)
 		return
-	BlackjackDraw.limb(ci, s, e, wu, wu - 0.6 * u, cloth)
-	BlackjackDraw.limb(ci, s.lerp(e, 0.45), e, wu * 0.4, wu * 0.35, shade)
+	var nu := _up_normal(s, e)
+	bb.add_limb(s, e, wu, wu - 0.6 * u, cloth)
+	bb.add_limb(s - nu * wu * 0.3, e - nu * wu * 0.3, wu * 0.4, wu * 0.35, look["cloth_shade"])
+	bb.add_limb(s + nu * wu * 0.28, e + nu * wu * 0.28, wu * 0.3, wu * 0.26, look["cloth_light"])
+	var nf := _up_normal(ee, h)
 	var fcol: Color = skin if fore_skin else cloth
-	BlackjackDraw.limb(ci, ee, h, wf, wf - 0.8 * u, fcol)
-	if fore_skin:  # rolled sleeve at the elbow
-		BlackjackDraw.limb(ci, ee - fdir * 1.0, ee + fdir * maxf(3.0, 5.0 * u), wf + 3.4 * u, wf + 3.4 * u, cloth)
-		BlackjackDraw.limb(ci, ee + fdir * maxf(3.0, 5.0 * u) - fdir, ee + fdir * maxf(3.0, 5.0 * u), wf + 3.4 * u, wf + 3.4 * u, look["cloth_shade"])
-	else:
-		var cuff: Color = look["accent"] if who == "npc_a" else Color("e8d8c8")
-		BlackjackDraw.limb(ci, h - fdir * maxf(4.0, 6.0 * u), h - fdir * maxf(2.0, 3.0 * u), wf + 0.8 * u, wf + 0.8 * u, cuff)
-	_hand(ci, h, ang, kind, k * 1.45, u, skin, side, look["skin_shade"])
+	bb.add_limb(ee, h, wf, wf - 0.8 * u, fcol)
+	bb.add_limb(ee + nf * wf * 0.28, h + nf * wf * 0.28, wf * 0.28, wf * 0.24, look["skin_light"] if fore_skin else look["cloth_light"])
+	if fore_skin:  # rolled sleeve at the elbow, lit on top
+		bb.add_limb(ee - fdir * 1.0, ee + fdir * maxf(3.0, 5.0 * u), wf + 3.4 * u, wf + 3.4 * u, look["cloth"])
+	elif who == "npc_a":  # the blouse's cuff
+		bb.add_limb(h - fdir * maxf(4.0, 6.0 * u), h - fdir * maxf(2.0, 3.0 * u), wf + 0.8 * u, wf + 0.8 * u, look["accent"])
+	else:  # gold bangles at the wrist
+		bb.add_limb(h - fdir * maxf(4.0, 5.0 * u), h - fdir * maxf(3.0, 4.0 * u), wf + 0.4 * u, wf + 0.4 * u, look["gold"])
+	_hand(bb, h, ang, kind, hk, u, skin, side, look["skin_shade"], look["skin_light"])
 
 
-## A hand's fill pass: its shapes in `col` as one triangle list, then a fist's knuckle lines in `shade_col`.
-static func _hand(ci: CanvasItem, p: Vector2, ang: float, kind: String, k: float, u: float, col: Color, side: float, shade_col: Color) -> void:
+## A limb (see `BlackjackDraw.limb`) as a triangle list.
+static func _lt(a: Vector2, b: Vector2, wa: float, wb: float) -> PackedVector2Array:
+	var tris := PackedVector2Array()
+	BlackjackDraw.limb_into(tris, a, b, wa, wb)
+	return tris
+
+
+## A hand's fill pass: its shapes in `col` as one triangle list, the back of the hand lit (dithered `light_col`), a fist's knuckle lines in `shade_col`.
+static func _hand(bb: BlackjackDraw.Batch, p: Vector2, ang: float, kind: String, k: float, u: float, col: Color, side: float, shade_col: Color, light_col: Color) -> void:
 	var tris := PackedVector2Array()
 	_hand_into(tris, p, ang, kind, k, u, 0.0, side)
-	BlackjackDraw.fill(ci, tris, col)
+	bb.add(tris, col)
+	var d := Vector2(cos(ang), sin(ang))
+	var n := Vector2(-d.y, d.x)
+	var q := u * k
+	bb.add(BlackjackDraw.ell_tris(p.x + d.x * 0.5 * q, p.y + d.y * 0.5 * q - 1.5 * q, 2.4 * q, 1.4 * q), light_col)
 	if kind == "fist":
-		var d := Vector2(cos(ang), sin(ang))
-		var n := Vector2(-d.y, d.x)
-		var q := u * k
 		for fi in 3:
 			var off := (float(fi) - 1.0) * 2.7 * q
-			BlackjackDraw.limb(ci, p + n * off + d * 1.2 * q, p + n * off + d * 2.8 * q, 1.0, 1.0, shade_col)
+			bb.add_limb(p + n * off + d * 1.2 * q, p + n * off + d * 2.8 * q, 1.0, 1.0, shade_col)
+	elif kind == "flat":  # the fingers held together: a shade line between each
+		for fo: float in [-2.2, 0.0, 2.2]:
+			bb.add_limb(p + d * 3.5 * q + n * fo * q, p + d * 7.0 * q + n * fo * 1.05 * q, 1.0, 1.0, shade_col)
 
 
 ## One hand at `p` with fingers pointing along `ang`, added to a triangle list. Kinds: `flat` (mitten and thumb), `fist`, `point` (index finger out), `open` (fanned fingers), `claw` (curled fingers).
-## Drawn in two passes: `g` > 0 is the outline pass (every shape grown by g pixels, drawn in ink), 0 the fill pass.
+## Drawn in two passes: `g` > 0 is the edge pass (every shape grown by g pixels, drawn in a dark step of the skin), 0 the fill pass.
 static func _hand_into(tris: PackedVector2Array, p: Vector2, ang: float, kind: String, k: float, u: float, g: float, side: float) -> void:
 	var d := Vector2(cos(ang), sin(ang))
 	var n := Vector2(-d.y, d.x)
@@ -802,6 +1077,11 @@ static func _hand_into(tris: PackedVector2Array, p: Vector2, ang: float, kind: S
 
 
 # ------------------------------------------------------------------ the player's hands
+
+## The convex hull of a triangle list's points, as a polygon (to clip against).
+static func _hull(tris: PackedVector2Array) -> PackedVector2Array:
+	return Geometry2D.convex_hull(tris)
+
 
 ## The player's own hands in first person, entering from the bottom edge. `gesture` is one of `PLAYER_GESTURES`, `gesture_t` 0..1 through a one-shot; `targets` may hold canvas points
 ## `bet`, `deck`, `hand` (middle of the player's cards), `pile` and `pockets`; missing ones come from `BlackjackDraw`. Suggested lengths in beats: pockets 2, lay_money 2, push_bet 1.5, reach_deck 1,
@@ -898,7 +1178,7 @@ static func draw_player_hands(ci: CanvasItem, size: Vector2, u: float, gesture: 
 			lh["k"] = 1.5
 			rh["k"] = 1.5
 			var pull := _trap(t, 0.1, 0.45, 0.85, 1.0)
-			for sx in [-1.0, 1.0]:
+			for sx: float in [-1.0, 1.0]:
 				_lining(ci, Vector2(cx + sx * 105.0 * u, bot), u, pull)
 		"gather_money":
 			var reach := _smooth(t / 0.3)
@@ -933,52 +1213,66 @@ static func _lining(ci: CanvasItem, p: Vector2, u: float, pull: float) -> void:
 	var w := 17.0 * u
 	var pts := PackedVector2Array([Vector2(roundf(p.x - w * 0.5), roundf(p.y + 2.0)), Vector2(roundf(p.x - w * 0.5), roundf(p.y - h * 0.7)), Vector2(roundf(p.x - w * 0.3), roundf(p.y - h)),
 		Vector2(roundf(p.x + w * 0.3), roundf(p.y - h)), Vector2(roundf(p.x + w * 0.5), roundf(p.y - h * 0.7)), Vector2(roundf(p.x + w * 0.5), roundf(p.y + 2.0))])
-	BlackjackDraw.poly_o(ci, pts, LINING, INK, maxf(1.0, roundf(u)))
-	BlackjackDraw.rect(ci, p.x - 1.0, p.y - h * 0.8, 1.0, h * 0.6, Color("a8a8ba"))
+	BlackjackDraw.poly_o(ci, pts, LINING, LINING.darkened(0.45), maxf(1.0, roundf(u)))
+	BlackjackDraw.dither_fill(ci, BlackjackDraw.tris_of(pts), LINING.darkened(0.25), D_QUARTER)
+	BlackjackDraw.rect(ci, p.x - 1.0, p.y - h * 0.8, 1.0, h * 0.6, LINING.darkened(0.3))
 
 
+## The player's own arms: a dark jacket sleeve from below the picture, its upper side lit by the lamp ahead and its near end lost in the dark, the shirt cuff, the hand lit on its back.
+## Drawn in three runs for both arms together: the edges and the sleeves (solid), the light and the dark on the cloth (dithered), then the cuffs and the hands (solid).
 static func _phand_pair(ci: CanvasItem, size: Vector2, u: float, lh: Dictionary, rh: Dictionary, wad: float) -> void:
-	var ink := PackedVector2Array()  # the outline pass is all ink: both sleeves and hands as one triangle list
-	for pass_i in 2:
-		var dk := pass_i == 0
-		for si in 2:
-			var po: Dictionary = lh if si == 0 else rh
-			var side := -1.0 if si == 0 else 1.0
-			var w: Vector2 = po["w"]
-			if w.y > size.y + 60.0 * u:
-				continue
-			var g := maxf(1.0, roundf(u)) if dk else 0.0
-			var ww := 21.0 * u
-			var wr := Vector2(roundf(w.x), roundf(w.y))
-			# a sleeve in two parts: the upper arm from below the picture to an elbow bent outward, then the forearm to the cuff
-			var anchor := Vector2(w.x + (w.x - size.x * 0.5) * 0.35 + side * 26.0 * u, size.y + 70.0 * u)
-			var elbow := anchor.lerp(wr, 0.5) + Vector2(side * 15.0 * u, 8.0 * u)
-			var wrist := wr + Vector2(0.0, 3.0 * u)
-			if dk:
-				BlackjackDraw.limb_into(ink, anchor, elbow, ww * 1.75 + 2.0 * g, ww * 1.3 + 2.0 * g)
-				BlackjackDraw.limb_into(ink, elbow, wrist, ww * 1.3 + 2.0 * g, ww * 0.88 + 2.0 * g)
-				_hand_into(ink, wr, float(po["ang"]), String(po["kind"]), float(po["k"]), u, g, side)
-				continue
-			var sleeve := PackedVector2Array()
-			BlackjackDraw.limb_into(sleeve, anchor, elbow, ww * 1.75, ww * 1.3)
-			BlackjackDraw.limb_into(sleeve, elbow, wrist, ww * 1.3, ww * 0.88)
-			BlackjackDraw.fill(ci, sleeve, SLEEVE)
-			var fd := (wrist - elbow).normalized()
-			var fn := Vector2(-fd.y, fd.x) * (1.0 if Vector2(-fd.y, fd.x).x * side > 0.0 else -1.0)
-			var ud := (elbow - anchor).normalized()
-			var un := Vector2(-ud.y, ud.x) * (1.0 if Vector2(-ud.y, ud.x).x * side > 0.0 else -1.0)
-			var light := PackedVector2Array()
-			BlackjackDraw.limb_into(light, anchor + un * ww * 0.55, elbow + un * ww * 0.4, ww * 0.32, ww * 0.26)
-			BlackjackDraw.limb_into(light, elbow + fn * ww * 0.38, wrist - fd * 6.0 * u + fn * ww * 0.24, ww * 0.26, ww * 0.18)
-			BlackjackDraw.fill(ci, light, SLEEVE_LIGHT)
-			# the crease inside the elbow
-			BlackjackDraw.limb(ci, elbow - fn * ww * 0.45 - fd * 3.0 * u, elbow - fn * ww * 0.2 + fd * 4.0 * u, maxf(1.0, 2.0 * u), maxf(1.0, 1.5 * u), SLEEVE_DARK)
-			# the shirt cuff and its button
-			BlackjackDraw.limb(ci, wrist - fd * 6.0 * u, wrist - fd * 1.0 * u, ww * 0.82, ww * 0.82, CUFF)
-			BlackjackDraw.rect(ci, wrist.x - fd.x * 4.0 * u + fn.x * ww * 0.2, wrist.y - fd.y * 4.0 * u + fn.y * ww * 0.2, maxf(1.0, 2.0 * u), maxf(1.0, 2.0 * u), SLEEVE_DARK)
-			_hand(ci, wr, float(po["ang"]), String(po["kind"]), float(po["k"]), u, GLOVE_SKIN, side, Color("a06f48"))
-		if dk:
-			BlackjackDraw.fill(ci, ink, INK)
+	var edge_cloth := PackedVector2Array()
+	var edge_skin := PackedVector2Array()
+	var sleeves := PackedVector2Array()
+	var dith := BlackjackDraw.Batch.new()
+	var top := BlackjackDraw.Batch.new()
+	for si in 2:
+		var po: Dictionary = lh if si == 0 else rh
+		var side := -1.0 if si == 0 else 1.0
+		var w: Vector2 = po["w"]
+		if w.y > size.y + 60.0 * u:
+			continue
+		var g := maxf(1.0, roundf(u))
+		var ww := 21.0 * u
+		var wr := Vector2(roundf(w.x), roundf(w.y))
+		# a sleeve in two parts: the upper arm from below the picture to an elbow bent outward, then the forearm to the cuff
+		var anchor := Vector2(w.x + (w.x - size.x * 0.5) * 0.35 + side * 26.0 * u, size.y + 70.0 * u)
+		var elbow := anchor.lerp(wr, 0.5) + Vector2(side * 15.0 * u, 8.0 * u)
+		var wrist := wr + Vector2(0.0, 3.0 * u)
+		BlackjackDraw.limb_into(edge_cloth, anchor, elbow, ww * 1.75 + 2.0 * g, ww * 1.3 + 2.0 * g)
+		BlackjackDraw.limb_into(edge_cloth, elbow, wrist, ww * 1.3 + 2.0 * g, ww * 0.88 + 2.0 * g)
+		_hand_into(edge_skin, wr, float(po["ang"]), String(po["kind"]), float(po["k"]), u, g, side)
+		BlackjackDraw.limb_into(sleeves, anchor, elbow, ww * 1.75, ww * 1.3)
+		BlackjackDraw.limb_into(sleeves, elbow, wrist, ww * 1.3, ww * 0.88)
+		var fd := (wrist - elbow).normalized()
+		var fn := Vector2(-fd.y, fd.x) * (1.0 if Vector2(-fd.y, fd.x).x * side > 0.0 else -1.0)
+		var ud := (elbow - anchor).normalized()
+		var un := Vector2(-ud.y, ud.x) * (1.0 if Vector2(-ud.y, ud.x).x * side > 0.0 else -1.0)
+		# the lamp ahead lights the forearm's top and the inside of the upper arm; the outer side and the near end are in the dark
+		var light := PackedVector2Array()
+		BlackjackDraw.limb_into(light, elbow - fn * ww * 0.1, wrist - fd * 6.0 * u - fn * ww * 0.05, ww * 0.7, ww * 0.5)
+		dith.add(light, SLEEVE_LIGHT, D_HALF)
+		var dark := PackedVector2Array()
+		BlackjackDraw.limb_into(dark, anchor + un * ww * 0.55, elbow + un * ww * 0.45, ww * 0.55, ww * 0.4)
+		BlackjackDraw.limb_into(dark, anchor, anchor.lerp(elbow, 0.45), ww * 1.75, ww * 1.5)
+		dith.add(dark, SLEEVE_DARK, D_HALF)
+		top.add_limb(elbow.lerp(wrist, 0.35) - fn * ww * 0.15, wrist - fd * 7.0 * u - fn * ww * 0.1, ww * 0.3, ww * 0.25, SLEEVE_LIGHT)
+		# the crease inside the elbow
+		top.add_limb(elbow - fn * ww * 0.45 - fd * 3.0 * u, elbow - fn * ww * 0.2 + fd * 4.0 * u, maxf(1.0, 2.0 * u), maxf(1.0, 1.5 * u), SLEEVE_DEEP)
+		# the shirt cuff, shaded on its under side, and its button
+		top.add_limb(wrist - fd * 6.0 * u, wrist - fd * 1.0 * u, ww * 0.82, ww * 0.82, CUFF_SHADE)
+		top.add_limb(wrist - fd * 6.0 * u - fn * u, wrist - fd * 2.0 * u - fn * u, ww * 0.62, ww * 0.62, CUFF)
+		top.add(BlackjackDraw.rect_tris(wrist.x - fd.x * 4.0 * u + fn.x * ww * 0.2, wrist.y - fd.y * 4.0 * u + fn.y * ww * 0.2, maxf(1.0, 2.0 * u), maxf(1.0, 2.0 * u)), SLEEVE_DARK)
+		_hand(top, wr, float(po["ang"]), String(po["kind"]), float(po["k"]), u, GLOVE_SKIN, side, GLOVE_SHADE, GLOVE_LIGHT)
+	var base := BlackjackDraw.Batch.new(ci)
+	base.add(edge_cloth, SLEEVE_DEEP)
+	base.add(edge_skin, GLOVE_DEEP)
+	base.add(sleeves, SLEEVE)
+	base.flush()
+	dith.flush()
+	BlackjackDraw.draw_runs(ci, dith.runs)
+	top.flush()
+	BlackjackDraw.draw_runs(ci, top.runs)
 	if wad > 0.5:  # the money in the hand: real fivers, the same notes that land on the table
 		var lw: Vector2 = lh["w"]
 		var rw: Vector2 = rh["w"]

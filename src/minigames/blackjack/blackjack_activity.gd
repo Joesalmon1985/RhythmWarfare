@@ -93,10 +93,14 @@ func begin(t: float) -> void:
 	_gesture("player", "pockets", t, sp)
 	_gesture("player", "lay_money", t + sp, sl)
 	_pile = {"from": 0, "t0": t + sp, "dur": sl, "via": "pockets"}
+	# the welcome: all three pleased to have you, the dealer's open palm toward your seat, the two players beckoning you in one after the other
 	_gaze_all(t, "player")
-	_mood("npc_a", "happy" if _par("npc_a") == 0 else "neutral", t)
-	_mood("npc_b", "happy" if _par("npc_b") == 0 else "neutral", t)
+	for seat in SEATS:
+		if seat != "player":
+			_mood(seat, "happy", t)
+	_gesture("dealer", "invite", t, _b("act") * 2.0)
 	_gesture(NPCS[0], "invite", t + _b("sit_invite"), _b("act"))
+	_gesture(NPCS[1], "invite", t + _b("sit_invite") + _b("act"), _b("act"))
 	_at(t + sp + sl, "ready", {"pid": _pid})
 
 
@@ -350,16 +354,21 @@ func _gaze_all(t: float, target: String, include_player := false) -> void:
 # phases
 
 func _enter_ready(t: float) -> void:
+	var first := _hand == 0  # the first bet of the visit: the table is still welcoming you
 	for seat in SEATS:
 		if seat != "player":
-			_mood(seat, "neutral", t)
+			_mood(seat, "happy" if first else "neutral", t)
 	if wallet.can_afford(_stake):
 		_enter_phase("await_bet", t)
 		_gesture("dealer", "invite", t, _b("act") * 2.0)
 		_gaze("dealer", "bet", t)
 		_gaze("dealer", "player", t + _b("invite_gaze"))
-		_gaze("npc_a", "dealer", t)
-		_gaze("npc_b", "dealer", t)
+		_gaze("npc_a", "player" if first else "dealer", t)
+		_gaze("npc_b", "player" if first else "dealer", t)
+		if first:  # the welcome settles after a few beats of waiting (dropped once the bet is down: their faces then follow the hand)
+			for seat in SEATS:
+				if seat != "player":
+					_at(t + _b("act") * 4.0, "mood", {"seat": seat, "name": "neutral", "pid": _pid})
 		_gesture("player", "none", t, 0.0)
 	else:
 		_enter_phase("broke", t)
