@@ -193,6 +193,8 @@ def loop_of(pack: dict, stem: str) -> np.ndarray:
         with wave.open(str(Path(pack["dir"]) / pack["stems"][stem]), "rb") as w:
             assert w.getframerate() == RATE and w.getsampwidth() == 2
             a = np.frombuffer(w.readframes(w.getnframes()), "<i2").astype(np.float64).reshape(-1, w.getnchannels()) / 32768.0
+        if a.shape[1] == 1:  # a stem stored mono (tools/content/stems.py) plays as the same signal on both sides
+            a = np.repeat(a, 2, axis=1)
         n = int(pack.get("loop_frames", len(a)))
         _LOOPS[key] = a[:n] if len(a) >= n else np.concatenate([a, np.zeros((n - len(a), a.shape[1]))])
     return _LOOPS[key]

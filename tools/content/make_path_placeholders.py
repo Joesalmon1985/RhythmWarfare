@@ -4,8 +4,8 @@
     python tools/content/make_path_placeholders.py <path> --force    # also regenerate the placeholders already written
     python tools/content/make_path_placeholders.py <path> --out DIR  # packs into DIR instead of songs/packs (tests)
 
-For each scene it writes an 8-bar drum loop (kick, snare/clap, hats), a bass loop and a synth pad, in the pack format `beatshaper.py import` writes (pack.json with the three loops as 48 kHz stereo WAV of exactly
-`loop_frames`, the tiered cues, `profile` `<path>_x1`), plus the MIDI the chart is made from (midi/drums.mid, bass.mid, synth.mid: the cues come out of these same notes through beatshaper's own
+For each scene it writes an 8-bar drum loop (kick, snare/clap, hats), a bass loop and a synth pad, in the pack format `beatshaper.py import` writes (pack.json with the three loops as 48 kHz 16-bit WAV of exactly
+`loop_frames`, stored by tools/content/stems.py: mono where the channels are equal, one shared file per distinct stem in songs/packs/_shared, the tiered cues, `profile` `<path>_x1`), plus the MIDI the chart is made from (midi/drums.mid, bass.mid, synth.mid: the cues come out of these same notes through beatshaper's own
 build_cues / tier_cues, so the placeholder is charted exactly like an import). pack.json carries `"path": "<id>"` (the main run never loads it, the path's run loads only its own), `"placeholder": true`
 and `"temporary"` music.json entries are written for the scenes. When the owner's loop arrives, `beatshaper.py import --path <id> ...` replaces the pack and `assign --final` clears the flag. Nothing is
 sampled or stretched: the sounds are numpy oscillators and noise (like make_run_effects.py), deterministic per path and scene.
@@ -34,6 +34,7 @@ from chart import load_rules  # noqa: E402
 from common import PPQ, ROOT, SAMPLE_RATE, ContentError, read_json, write_json, write_wav  # noqa: E402
 from import_recorded import db, fold_loop  # noqa: E402
 from midi_reader import build_midi, ev_name, ev_tempo, ev_time_sig, note_events  # noqa: E402
+from stems import finish_pack, prune_shared  # noqa: E402
 
 PATHS = ROOT / "content" / "paths"
 IMPORTS = ROOT / "content" / "imports"  # <path>/<scene>/Beat Shaper - <scene>-Drums|Bass|Synth .wav/.mid: the owner's drops (D5)
@@ -316,6 +317,7 @@ def write_scene_pack(out_root: Path, path_id: str, scene: str, node_id: str, tit
             "path": path_id, "placeholder": True, "genre": mix["genre"], "levels": levels}
     write_json(out / "pack.json", pack, indent=1)
     write_json(out / "timing_report.json", {"synthesised": True, "bpm": bpm, "levels": levels, "cue_counts": {t: {k: len(v) for k, v in d.items()} for t, d in tiers.items()}}, indent=1)
+    pack["stems"] = finish_pack(out)  # dual-mono stems stored mono, equal stems stored once in <packs>/_shared (docs/REPO_SIZE.md, tools/content/stems.py)
     return pack
 
 
@@ -378,6 +380,7 @@ def generate(path_id: str, out_root: Path = PACKS, force: bool = False, paths_ro
         done.append(pack_id)
     music["nodes"] = [entries[n["id"]] for n in run["nodes"] if n["id"] in entries]
     write_json(music_path, music, indent=1)
+    prune_shared(out_root)  # a regenerated pack may have left the shared stems of its old sound unreferenced
     return done
 
 

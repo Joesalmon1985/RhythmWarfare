@@ -48,8 +48,12 @@ func _stems(rd: RunData, label: String) -> void:
 		for k in p.get("stems", {}):
 			n += 1
 			var path := str(p["dir"]).path_join(str(p["stems"][k]))
-			if not ResourceLoader.exists(path):
+			var s: AudioStream = load(path) if ResourceLoader.exists(path) else null
+			var frames := -1
+			if s is AudioStreamWAV:
+				frames = int(round(s.get_length() * float((s as AudioStreamWAV).mix_rate)))
+			if frames != int(p.get("loop_frames", -2)):  # the stem loads and is exactly one loop of the pack's frames
 				bad += 1
 				if bad <= 3:
-					print("  missing stem " + path)
-	_check(bad == 0, "%s: %d stems resolve" % [label, n])
+					print("  bad stem %s (%d frames, pack says %s)" % [path, frames, str(p.get("loop_frames"))])
+	_check(bad == 0, "%s: %d stems load, each exactly loop_frames long" % [label, n])

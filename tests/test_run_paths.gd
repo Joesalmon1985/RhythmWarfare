@@ -710,7 +710,8 @@ func test_a_window_opens_with_the_audio_on_even_at_an_ending_and_a_portals_start
 	au.configure(main)
 	var pd := RunData.load_path("stub")
 	au.preload_pack("stub_start", pd)
-	var stem := "res://songs/packs/stub_start/loops/drums.wav"
+	var sp: Dictionary = pd.packs["stub_start"]
+	var stem := str(sp["dir"]).path_join(str(sp["stems"]["drums"]))  # (the stem sits in songs/packs/_shared: the manifest names it)
 	assert_true(au._requested.has(stem) or ResourceLoader.has_cached(stem), "a pack of another run's data is loaded ahead from that data (requested, or already cached)")
 	au.preload_pack("stub_start")  # without the other data the main run's own packs are searched: a pack it does not have is ignored (no error)
 	au.queue_free()

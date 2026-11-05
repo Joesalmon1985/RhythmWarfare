@@ -53,7 +53,7 @@ class Placeholders(unittest.TestCase):
                 for stem in ("drums", "bass", "other"):
                     x = read_wav(out / "t_one" / p["stems"][stem])
                     self.assertEqual(len(x), p["loop_frames"], f"{genre} {stem}: exactly one loop of frames")
-                    self.assertEqual(x.shape[1], 2)
+                    self.assertIn(x.shape[1], (1, 2), "mono where the channels are equal (tools/content/stems.py)")
                     self.assertLess(np.abs(x).max(), 1.0)
                 lv = p["levels"]
                 self.assertGreater(lv["bass"]["rms_db"], lv["drums"]["rms_db"], f"{genre}: the bass is louder than the drums")
@@ -79,7 +79,9 @@ class Placeholders(unittest.TestCase):
             mpp.generate("t", tmp / "b", paths_root=paths, imports_root=tmp / "i")
             pa = json.loads((tmp / "a" / "t_one" / "pack.json").read_text(encoding="utf-8"))
             self.assertAlmostEqual(pa["levels"]["bass"]["rms_db"], -10.0, places=1)
-            self.assertEqual((tmp / "a" / "t_one" / "loops" / "bass.wav").read_bytes(), (tmp / "b" / "t_one" / "loops" / "bass.wav").read_bytes(), "same bytes twice")
+            stem = lambda root: (root / "t_one" / json.loads((root / "t_one" / "pack.json").read_text(encoding="utf-8"))["stems"]["bass"]).resolve()  # noqa: E731
+            self.assertEqual(stem(tmp / "a").read_bytes(), stem(tmp / "b").read_bytes(), "same bytes twice")
+            self.assertEqual(stem(tmp / "a").name, stem(tmp / "b").name, "the shared file is named by its content: the same name twice")
 
     def test_a_scene_with_an_import_gets_no_placeholder(self):
         with tempfile.TemporaryDirectory() as t:

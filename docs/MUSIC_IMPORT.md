@@ -83,6 +83,13 @@ Re-running an import with the same `--id` rewrites the same files (ids and outpu
 `content/story/music.json` says which pack a level plays, and `treatment` (a filter, distortion or reverb chosen in `content/run/run.json`)
 colours the same recordings when no alternate render exists. `temporary: true` marks stand-ins.
 
+**How the stems are stored (docs/REPO_SIZE.md, Part 2).** `import` writes plain `loops/*.wav` into the pack. The committed packs are then converted, losslessly, by
+`python3 tools/content/stems.py` (idempotent; run it after any import, `make_path_placeholders.py` does it by itself): a stem whose two channels are equal is
+stored as a mono WAV, and equal stems of different packs are stored once in `songs/packs/_shared/<stem>_<sha1>.wav`; `pack.json` then says
+`"stems": {"drums": "../_shared/drums_<sha1>.wav", ...}`. Readers must resolve `stems[k]` against the pack's folder (RunData, RunAudio and the tools do) and never assume
+`<pack>/loops/`. The importer always writes WAV from the owner's originals, so a pack can be rebuilt from them at any time; Ogg is not used for pack stems (it fails the loop
+checks of `tools/content/ogg_check.py`, see docs/REPO_SIZE.md).
+
 ## 3. What `validate` checks
 
 * every set's three WAV/MIDI pairs exist (missing or ambiguous files are listed by name);

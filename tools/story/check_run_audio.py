@@ -128,6 +128,7 @@ def main() -> int:
             pk = lp["_pack"]
             with wave.open(str(pk["dir"] / pk["stems"]["bass"]), "rb") as w:
                 st = np.frombuffer(w.readframes(w.getnframes()), "<i2").astype(np.float64).reshape(-1, w.getnchannels()) / 32768.0
+            st = np.repeat(st, 2, axis=1) if st.shape[1] == 1 else st  # (a stem stored mono plays as the same signal on both sides)
             bussed[key] = (measure_mix.bass_bus(st, gain, bb) / gain).mean(axis=1)[:len(lp["bass"])]
         return bussed[key]
 
