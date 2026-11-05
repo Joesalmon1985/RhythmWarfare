@@ -189,3 +189,38 @@ func test_three_failed_blocks_at_the_table_make_the_player_fall() -> void:
 	assert_false(scene.engine.hold)
 	assert_false(scene.hud.silent)
 	_free(d)
+
+
+## Exits while seated, through the generic layer: the room's ways out reach the activity, a door touched in the minigame travels to the run scene, the camera walks toward that door, and
+## the door's exit hotspot is selected when the final window opens, so the last block decides as if the player had touched that door in the room.
+func test_a_door_taken_in_the_minigame_is_the_rooms_exit_at_the_next_route_lock() -> void:
+	var d := _scene("exit:warehouse.balcony@6")
+	var scene: Node = d["scene"]
+	_arm(scene, false)
+	_run_to(scene, 49.5 * BEAT)
+	assert_true(scene.hotspot_select("warehouse.dancer"))
+	_run_to(scene, 64.5 * BEAT)
+	var mg: MinigameController = scene.minigames
+	var fake := mg.activity as FakeMinigame
+	assert_eq(fake.exits.map(func(e: Dictionary) -> String: return str(e["route"])), ["warehouse.bar", "warehouse.balcony"], "the room's two exits, the default first")
+	assert_eq(str(fake.exits[1]["id"]), "warehouse.exit_balcony")
+	assert_eq(str(fake.exits[1]["dir"]), "up")
+	assert_eq(str(fake.exits[1]["world"]), "warehouse")
+	assert_eq(str(fake.exits[1]["scene"]), str(scene.data.nodes["warehouse.balcony"]["scene"]))
+	assert_true(bool(fake.exits[0]["default"]))
+	fake.taken = ["bet"] + fake.exit_targets()
+	_run_to(scene, 71.0 * BEAT)
+	assert_eq(mg.state, "", "left at beat 6 after sitting")
+	assert_eq(mg.last_route, "warehouse.balcony")
+	assert_eq((mg.log as Array).filter(func(e: Dictionary) -> bool: return e["kind"] == "leave")[0]["route"], "warehouse.balcony", "the route is logged")
+	assert_eq(scene._mg.pending_exit, "warehouse.exit_balcony", "the door waits for the final window")
+	var walk: Array = (scene.journey_log as Array).filter(func(a: Dictionary) -> bool: return a["action"] == "player_walk" and str(a["args"].get("to", "")) == "to_balcony")
+	assert_eq(walk.size(), 1, "the camera walks toward that door")
+	assert_eq(str(walk[0]["args"]["face"]), "to_balcony")
+	_run_to(scene, (64.0 + 49.0) * BEAT)
+	assert_eq(scene.hotspots.selected, "warehouse.exit_balcony", "selected as the window opens")
+	assert_eq(scene._mg.pending_exit, "")
+	assert_true((scene.hotspot_log as Array).any(func(e: Dictionary) -> bool: return e["kind"] == "select" and e["hotspot"] == "warehouse.exit_balcony"), "through the same path a finger takes")
+	_run_to(scene, (64.0 + 66.0) * BEAT)
+	assert_eq((scene.phase_log as Array).map(func(p: Dictionary) -> String: return str(p["node"])).slice(0, 3), ["warehouse", "warehouse", "warehouse.balcony"], "out by the balcony")
+	_free(d)

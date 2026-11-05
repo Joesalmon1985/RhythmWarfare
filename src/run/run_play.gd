@@ -699,7 +699,7 @@ func _scripted_pause(audio_t: float) -> void:
 
 func _handle(events: Array) -> void:
 	for ev in events:
-		if str(ev["kind"]) in ["phase_start", "block_result"] and trial_state == "" and not minigames.active() and not (_claim_id != "" and str(ev["kind"]) == "block_result"):  # the journey first: the stage already holds its actions when the scene reacts
+		if str(ev["kind"]) in ["phase_start", "block_result"] and trial_state == "" and not minigames.active() and not (_claim_id != "" and str(ev["kind"]) == "block_result") and not (_mg.holds_rail() and str(ev["kind"]) == "block_result"):  # the journey first: the stage already holds its actions when the scene reacts
 			for a in journey.on_event(ev, engine):
 				_journey_apply(a)
 		if str(ev["kind"]) != "judge" and str(ev["kind"]) != "cues":
@@ -1004,7 +1004,7 @@ func _on_hotspot_commit(ev: Dictionary) -> void:
 		Session.run_progress.save()
 		hotspots.persist_dirty = false
 	if str(out.get("activity", "")) != "" and bool(out["success"]):  # minigames: sit down on the next downbeat; the run stays here and no door walk starts
-		minigames.request(str(out["activity"]), t, engine.t_of(float((int(ev["block"]) + 1) * int(engine.timing("block_beats")))))
+		minigames.request(str(out["activity"]), t, engine.t_of(float((int(ev["block"]) + 1) * int(engine.timing("block_beats")))), _mg.exits_for(engine.node_id))
 		_door_phase = engine.phase_n
 	if not (out["cinematic"] as Dictionary).is_empty():
 		_hotspot_cinematic(out, t, claim_to)

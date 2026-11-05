@@ -11,6 +11,8 @@ extends Control
 ##   RW_DEMO_STEP=<seconds>      song seconds per rendered frame
 ##   RW_DEMO_DECK=<ranks>        a stacked deck "npc_a,player,npc_b,dealer,npc_a,..." ranks 1..13 (deal order, then draws), suits cycle
 ##   RW_DEMO_REDUCED=1, RW_DEMO_HC=1   reduced motion, high contrast
+##   RW_DEMO_EXITS=<run node id>  the table sits in that scene: its ways out (RunMinigameHost.room_exits, from the run data and the map) become the doors; taps may name
+##                               "exit:<route>" (e.g. RW_DEMO_TAPS=bet@5,exit:ward.dorm@20). RW_DEMO_EXITS=<n>x gives n made-up doors (1 to 4) to try the layout.
 
 const BEAT := 60.0 / 174.0
 const WALL := Color("a8dcc4")
@@ -54,6 +56,8 @@ func _ready() -> void:
 		_wallet.add(want)
 	var cfg: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://content/minigames/blackjack.json"))
 	var ctx := {"wallet": _wallet, "seed": int(OS.get_environment("RW_MINIGAME_SEED")) if OS.has_environment("RW_MINIGAME_SEED") else 7, "beat_s": BEAT, "config": cfg}
+	if OS.get_environment("RW_DEMO_EXITS") != "":
+		ctx["exits"] = _demo_exits(OS.get_environment("RW_DEMO_EXITS"))
 	if OS.has_environment("RW_DEMO_DECK"):
 		var cards: Array = []
 		var i := 0
@@ -96,6 +100,21 @@ func _ready() -> void:
 	var t0 := float(OS.get_environment("RW_DEMO_T0")) if OS.has_environment("RW_DEMO_T0") else 0.0
 	while _t < t0:
 		_advance(minf(_t + 1.0 / 60.0, t0))
+
+
+## The exits of run node `spec` as the run scene would give them, or `<n>x`: n made-up doors to unknown rooms (the layout of 1 to 4).
+func _demo_exits(spec: String) -> Array:
+	if spec.ends_with("x") and spec.length() == 2:
+		var out: Array = []
+		var dirs := ["right", "up", "left", "up"]
+		var scenes := ["corridor", "art", "dorm", "courtyard"]
+		for i in clampi(int(spec.substr(0, 1)), 0, 4):
+			out.append({"id": "demo.%d" % i, "route": "demo.%d" % i, "scene": scenes[i], "world": "", "dir": dirs[i], "default": i == 0})
+		return out
+	var data := RunData.load_default()
+	var hs := RunHotspots.new(data, {}, {})
+	hs.begin_scene(spec, 60.0)
+	return RunMinigameHost.room_exits(data, hs, spec, func(map_id: String) -> StoryMap: return StoryMap.load_chapter(map_id, false) if map_id != "" else null)
 
 
 func _parse(key: String, into: Array) -> void:

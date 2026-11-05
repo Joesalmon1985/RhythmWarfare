@@ -12,12 +12,15 @@ extends MinigameActivity
 ## `interrupt`: release (refund). Never twice: a live-stake flag plus the wallet's own tag rules.
 ##
 ## Phases: "" (before begin), sitting, await_bet, dealing, player_turn, others, settling, broke, leaving, falling. Targets: await_bet [bet, exit]; dealing, others, settling, broke [exit];
-## player_turn [deck, hand, exit] (just [exit] while a twisted card is in flight); sitting, leaving, falling [].
+## player_turn [deck, hand, exit] (just [exit] while a twisted card is in flight); sitting, leaving, falling []. Where the room gave exits, "exit" stands for one "exit:<route>" per exit
+## (MinigameActivity, `exit_targets`); the bare "exit" is then still accepted as the default exit. Every door leaves the same way (the stake rules are the same whichever door).
 ##
 ## state() snapshot:
 ##   { "phase", "phase_t0", "t" (last update time), "hand", "stake_pence", "wobble": {level, t0},
 ##     "seats": {"npc_a", "player", "npc_b", "dealer": S}, "pile": P, "bet": B, "targets": [ids],
-##     "hints": {bet, deck, hand, exit, exit_urged}, "done", "done_reason" }
+##     "hints": {bet, deck, hand, exit, exit_urged}, "exits": [X], "leave_route", "done", "done_reason" }
+##   X = { "route", "id" (the exit hotspot), "scene", "world" (the destination's), "dir", "default", "tint", "light", "target" (touchable now), "urged" (leaving is the thing to do: broke),
+##         "chosen" (the door the player is leaving by) }, one per exit of the room in the room's order (default first); empty when the room gave none.
 ##   S = { "cards": [ {rank, suit, face_up (as of now), t_deal (leaves the deck), t_land (arrives), t_flip (-1 never), t_clear (-1 not yet)} ], "total" (landed face-up cards),
 ##         "result" ("" until settled), "mood": {name, t0}, "gaze": {target, t0}, "gesture": {name, t0, dur} }  (the player's gesture uses the player-hand vocabulary)
 ##   P = { "pence", "from_pence", "t0", "dur", "via" }: the pile (always the wallet's balance, except 0 while leaving). Animate from_pence to pence over t0..t0+dur; `via` names the other end of the
@@ -107,13 +110,14 @@ func update(t: float) -> void:
 func targets() -> Array:
 	if _done:
 		return []
+	var ex := exit_targets()
 	match _phase:
 		"await_bet":
-			return ["bet", "exit"]
+			return ["bet"] + ex
 		"player_turn":
-			return ["exit"] if _busy else ["deck", "hand", "exit"]
+			return ex.duplicate() if _busy else ["deck", "hand"] + ex
 		"dealing", "others", "settling", "broke":
-			return ["exit"]
+			return ex.duplicate()
 	return []
 
 
@@ -122,12 +126,14 @@ func tap(target: String, t: float) -> bool:
 		return false
 	_advance(t)
 	_ver += 1
-	if not (target in targets()):
+	var id := exit_alias(target)  # the bare "exit" is the default door
+	if not (id in targets()):
 		return false
-	match target:
-		"exit":
-			_start_leave(_now)
-			return true
+	if is_exit_target(id):
+		leave_route = exit_route(id)
+		_start_leave(_now)
+		return true
+	match id:
 		"bet":
 			return _do_bet(_now)
 		"deck":
@@ -216,13 +222,24 @@ func _build_state() -> Dictionary:
 			"gesture": _frozen((s["gesture"] as Dictionary).duplicate())})
 	var tg := targets()
 	var balance: int = wallet.balance_pence()
+	var any_exit := false
+	for id: String in tg:
+		any_exit = any_exit or is_exit_target(id)
+	var doors: Array = []
+	for e: Dictionary in exits:
+		var x := e.duplicate()
+		x["target"] = ("exit:" + str(e["route"])) in tg
+		x["urged"] = bool(x["target"]) and _phase == "broke"
+		x["chosen"] = _phase == "leaving" and leave_route == str(e["route"])
+		doors.append(_frozen(x))
 	return {
 		"phase": _phase, "phase_t0": _phase_t0, "t": _last, "hand": _hand, "stake_pence": _stake,
 		"wobble": _frozen(_wobble.duplicate()), "seats": _frozen(seats),
 		"pile": _frozen({"pence": 0 if _phase == "leaving" else balance, "from_pence": _pile["from"], "t0": _pile["t0"], "dur": _pile["dur"], "via": _pile["via"]}),
 		"bet": _frozen({"pence": wallet.held_pence(), "from_pence": _bet["from"], "t0": _bet["t0"], "dur": _bet["dur"], "via": _bet["via"]}),
 		"targets": _frozen(tg),
-		"hints": _frozen({"bet": "bet" in tg, "deck": "deck" in tg, "hand": "hand" in tg, "exit": "exit" in tg, "exit_urged": _phase == "broke"}),
+		"hints": _frozen({"bet": "bet" in tg, "deck": "deck" in tg, "hand": "hand" in tg, "exit": any_exit, "exit_urged": _phase == "broke"}),
+		"exits": _frozen(doors), "leave_route": leave_route,
 		"done": _done, "done_reason": _reason,
 	}
 

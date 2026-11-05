@@ -509,8 +509,8 @@ func test_leaving_keeps_the_wallet_forfeits_a_live_hand_and_the_table_can_be_sat
 	assert_eq(w.balance_pence(), kept, "leaving between hands keeps the wallet")
 	assert_eq(w.held_pence(), 0)
 	assert_false(scene.engine.hold)
-	var back: Array = (scene.journey_log as Array).filter(func(a: Dictionary) -> bool: return a["action"] == "player_move" and float(a["t0"]) >= t_leave and str((a["args"] as Dictionary).get("to", "")) == "day_centre")
-	assert_false(back.is_empty(), "the camera walks back to the room's home")
+	var back: Array = (scene.journey_log as Array).filter(func(a: Dictionary) -> bool: return a["action"] == "player_walk" and float(a["t0"]) >= t_leave and str((a["args"] as Dictionary).get("to", "")) == "day_door_a")
+	assert_false(back.is_empty(), "the camera walks toward the default exit's door (the bare exit is the default door)")
 	assert_eq(float(back[0]["args"]["bars"]), 2.0)
 	assert_true(scene.engine.phase_beat_at(scene._vt) < 48.0, "still before the final window of this phase")
 	_to_beat(scene, 50.0)
@@ -552,7 +552,7 @@ func test_a_player_without_the_stake_is_broke_and_can_only_leave() -> void:
 	_run_to(scene, float(scene._vt) + 5.0 * BEAT)
 	var s := _snap(scene)
 	assert_eq(str(s["phase"]), "broke")
-	assert_eq(s["targets"], ["exit"], "only the exit is a target")
+	assert_eq(s["targets"], ["exit:ward.art", "exit:ward.dorm"], "only the room's doors are targets")
 	assert_true(bool(s["hints"]["exit_urged"]))
 	assert_false(_mg(scene).tap("bet", scene._vt), "a bet is refused")
 	assert_eq(w.balance_pence(), 300)
@@ -571,7 +571,7 @@ func test_a_player_without_the_stake_is_broke_and_can_only_leave() -> void:
 	assert_eq(w.balance_pence(), 0)
 	assert_eq(w.held_pence(), 0)
 	s = _snap(scene)
-	assert_eq(s["targets"], ["exit"])
+	assert_eq(s["targets"], ["exit:ward.art", "exit:ward.dorm"])
 	assert_false(_mg(scene).tap("bet", scene._vt), "a bet is refused")
 	assert_eq(w.balance_pence(), 0)
 	assert_eq(ctx["viol"], [])
@@ -973,4 +973,260 @@ func test_getting_up_after_the_route_lock_of_a_held_phase_keeps_the_run_in_the_d
 	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", 8.0), "left")
 	assert_eq(scene.journey.door_target, "", "no door walk: the route was locked to the day room")
 	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward"], "the next phase is the day room again")
+	_free(d)
+
+
+# ---- 15: exits while seated: each door of the room is a door at the table, and touching one sends you that way ---------------------------------------
+
+## Sits in block 0 of the first phase (touched at beat 6, seated at beat 16) and runs to beat 18.
+func _sit_early(scene: Node) -> void:
+	_to_beat(scene, 6.0)
+	assert_true(scene.hotspot_select("ward.cards"), "the table touched in block 0")
+	_to_beat(scene, 18.0)
+	assert_eq(_mg(scene).state, "active", "seated at beat 16")
+
+
+## Touches `target` at the table and runs until the player is up. Returns the song time of the touch.
+func _leave_by(scene: Node, target: String) -> float:
+	var mg := _mg(scene)
+	var t: float = scene._vt
+	assert_true(mg.tap(target, t), "%s taken" % target)
+	var ctx := _ctx("stick")
+	ctx["play"] = false
+	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", 8.0), "up after %s" % target)
+	return t
+
+
+func _walks_to(scene: Node, wp: String, from_t: float) -> Array:
+	return (scene.journey_log as Array).filter(func(a: Dictionary) -> bool: return a["action"] == "player_walk" and str((a["args"] as Dictionary).get("to", "")) == wp and float(a["t0"]) >= from_t)
+
+
+func test_the_rooms_exits_are_doors_at_the_table_each_its_own_target() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	_sit_early(scene)
+	_to_beat(scene, 22.0)
+	var s := _snap(scene)
+	assert_eq(str(s["phase"]), "await_bet")
+	assert_eq(s["targets"], ["bet", "exit:ward.art", "exit:ward.dorm"], "one target per door")
+	var ex: Array = s["exits"]
+	assert_eq(ex.map(func(e: Dictionary) -> String: return str(e["id"])), ["ward.exit_art", "ward.exit_dorm"], "the day room's exits, the default first")
+	assert_eq(ex.map(func(e: Dictionary) -> String: return str(e["scene"])), ["art", "dorm"], "where each leads")
+	assert_eq(ex.map(func(e: Dictionary) -> String: return str(e["dir"])), ["right", "up"])
+	assert_true(str(ex[0]["tint"]) != "" and str(ex[1]["tint"]) != "", "the destinations' colours come from the map")
+	assert_true(str(ex[0]["tint"]) != str(ex[1]["tint"]), "and differ")
+	# the view draws a door for each and hit-tests it
+	var view: Control = scene._mg.view
+	assert_true(view is BlackjackView, "the table's view is mounted")
+	var rects: Dictionary = view.target_rects()
+	assert_true(rects.has("exit:ward.art") and rects.has("exit:ward.dorm"), "both doors are live")
+	var host: Control = scene._stage_host
+	var cv: Vector2 = view.size
+	for id in ["exit:ward.art", "exit:ward.dorm"]:
+		var c: Vector2 = (rects[id] as Rect2).get_center()
+		var local := Vector2(c.x * host.size.x / cv.x, c.y * host.size.y / cv.y)
+		assert_eq(scene._mg.hit(local, host.size), id, "a touch on the %s door hits it" % id)
+	_free(d)
+
+
+func test_leaving_by_the_dormitory_door_before_the_window_arms_it_walks_there_and_the_run_goes_to_the_dormitory() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	_sit_early(scene)
+	_to_beat(scene, 20.0)
+	var t_leave := _leave_by(scene, "exit:ward.dorm")
+	assert_eq((_log(scene, "leave") as Array)[0]["route"], "ward.dorm", "the controller logs the route")
+	assert_eq(scene._mg.pending_exit, "ward.exit_dorm", "the dormitory door waits for the window")
+	assert_eq(scene.hotspots.selected, "", "not on show yet: nothing selected")
+	var walk := _walks_to(scene, "day_door_b", t_leave)
+	assert_eq(walk.size(), 1, "the camera walks toward the dormitory's door, not home")
+	assert_true(_moves_to(scene, "day_centre", t_leave).is_empty(), "nothing walks it home")
+	var before := _cam_dist(scene, "day_door_b")
+	_to_beat(scene, 40.0)
+	assert_true(_cam_dist(scene, "day_door_b") < before - 0.5, "nearer the door (%.2f -> %.2f)" % [before, _cam_dist(scene, "day_door_b")])
+	assert_true(absf(_cam_dist(scene, "day_door_b") - RunMinigameHost.DOOR_STOP_M) < 0.3, "standing before it: %.2f" % _cam_dist(scene, "day_door_b"))
+	var rail_log: int = scene.journey.log.size()
+	_to_beat(scene, 48.2)
+	assert_eq(scene.hotspots.selected, "ward.exit_dorm", "selected as soon as it is on show")
+	var items: Array = (scene.hotspot_items() as Array).filter(func(e: Dictionary) -> bool: return str(e["hotspot"]["id"]) == "ward.exit_dorm")
+	assert_eq(str(items[0]["state"]), "selected", "the normal selected look")
+	var sel: Array = (scene.hotspot_log as Array).filter(func(e: Dictionary) -> bool: return e["kind"] == "select" and e["hotspot"] == "ward.exit_dorm")
+	assert_eq(sel.size(), 1, "logged as a touch is")
+	assert_true(scene.engine.phase_beat_at(float(sel[0]["t"])) < 48.2)
+	_to_beat(scene, 60.3)
+	assert_eq(scene.journey.log.size(), rail_log, "the camera waited by the door: no rail step")
+	_to_beat(scene, 62.0)
+	assert_eq(scene.journey.door_target, "ward.dorm", "the door walk at beat 61 goes through it")
+	_to_beat(scene, 68.0)
+	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward.dorm"], "the run is in the dormitory")
+	assert_eq(scene._mg.pending_exit, "")
+	assert_eq(scene._mg.armed_exit, "", "used up")
+	_free(d)
+
+
+func test_leaving_by_the_art_room_door_goes_to_the_art_room() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	_sit_early(scene)
+	_to_beat(scene, 20.0)
+	var t_leave := _leave_by(scene, "exit:ward.art")
+	assert_eq(scene._mg.pending_exit, "ward.exit_art")
+	assert_eq(_walks_to(scene, "day_door_a", t_leave).size(), 1, "toward the art room's door")
+	_to_beat(scene, 50.0)
+	assert_eq(scene.hotspots.selected, "ward.exit_art")
+	_to_beat(scene, 68.0)
+	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward.art"])
+	_free(d)
+
+
+func test_the_bare_exit_tap_is_the_default_door() -> void:
+	var d := _scene("perfect", 7, "exit@4")
+	var scene: Node = d["scene"]
+	_sit_early(scene)
+	_to_beat(scene, 24.0)
+	assert_eq(_mg(scene).state, "", "up after the scripted bare exit")
+	assert_eq(_mg(scene).last_route, "ward.art", "the default exit's route")
+	assert_eq(scene._mg.pending_exit, "ward.exit_art")
+	_to_beat(scene, 68.0)
+	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward.art"])
+	_free(d)
+
+
+func test_a_scripted_door_tap_names_its_route() -> void:
+	var d := _scene("perfect", 7, "exit:ward.dorm@4")
+	var scene: Node = d["scene"]
+	_sit_early(scene)
+	_to_beat(scene, 24.0)
+	assert_eq(_mg(scene).last_route, "ward.dorm")
+	_to_beat(scene, 68.0)
+	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward.dorm"])
+	_free(d)
+
+
+func test_touching_the_other_exit_in_the_room_wins_over_the_door_taken_at_the_table() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	_sit_early(scene)
+	_to_beat(scene, 20.0)
+	_leave_by(scene, "exit:ward.dorm")
+	_to_beat(scene, 50.0)
+	assert_eq(scene.hotspots.selected, "ward.exit_dorm")
+	assert_true(scene.hotspot_select("ward.exit_art"), "the player touches the art room's door in the room")
+	_to_beat(scene, 51.0)
+	assert_eq(scene.hotspots.selected, "ward.exit_art", "and it stays: the pending door does not take it back")
+	assert_eq(scene._mg.armed_exit, "")
+	_to_beat(scene, 68.0)
+	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward.art"], "the other door won")
+	_free(d)
+
+
+func test_touching_the_table_again_seats_the_player_and_the_pending_door_is_gone() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	_sit_early(scene)
+	_to_beat(scene, 20.0)
+	_leave_by(scene, "exit:ward.dorm")
+	_to_beat(scene, 26.0)
+	assert_eq(scene._mg.pending_exit, "ward.exit_dorm")
+	assert_true(scene.hotspot_select("ward.cards"), "the table again, in block 1")
+	_to_beat(scene, 27.0)
+	assert_eq(scene._mg.pending_exit, "", "replaced by the touch")
+	assert_true((scene.hotspot_log as Array).any(func(e: Dictionary) -> bool: return e["kind"] == "exit_dropped" and e["why"] == "replaced"))
+	_to_beat(scene, 33.0)
+	assert_eq(_mg(scene).state, "active", "seated again at the end of block 1")
+	assert_eq(_mg(scene).started, 2)
+	_to_beat(scene, 50.0)
+	assert_eq(scene.hotspots.selected, "", "no door is selected for the seated player")
+	_to_beat(scene, 68.0)
+	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward"], "held in the day room")
+	_free(d)
+
+
+func test_leaving_by_a_door_after_the_route_lock_stays_one_more_phase_then_goes_that_way() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	_sit_early(scene)
+	_to_beat(scene, 62.0)
+	assert_true(scene.engine.hold, "still seated after the lock")
+	var down: float = scene.engine.t_of(64.0)
+	_leave_by(scene, "exit:ward.dorm")
+	assert_eq(scene.journey.door_target, "", "no door walk: the route was locked to the day room")
+	assert_eq(scene._mg.pending_exit, "ward.exit_dorm", "kept for the next phase")
+	_run_to(scene, maxf(down + 0.1, float(scene._vt)))
+	assert_eq(scene.engine.phase_n, 2)
+	assert_true(scene.engine.phase_beat_at(scene._vt) < 40.0, "early in the next phase")
+	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward"], "one more phase in the day room")
+	assert_eq(scene._mg.pending_exit, "ward.exit_dorm", "still pending in the same room")
+	_to_beat(scene, 48.5)
+	assert_eq(scene.hotspots.selected, "ward.exit_dorm", "selected when that phase's window opens")
+	_run_to(scene, scene.engine.t_of(64.0) + 4.0 * BEAT)
+	assert_eq(_nodes(scene).slice(0, 3), ["ward", "ward", "ward.dorm"], "then out by the chosen door")
+	_free(d)
+
+
+func test_a_failed_last_block_after_leaving_by_a_door_follows_that_doors_failure() -> void:
+	var d := _scene("blocks:1110")
+	var scene: Node = d["scene"]
+	_sit_early(scene)
+	_to_beat(scene, 20.0)
+	_leave_by(scene, "exit:ward.dorm")
+	_to_beat(scene, 62.0)
+	var commit: Dictionary = (scene.hotspot_log as Array).filter(func(e: Dictionary) -> bool: return e["kind"] == "commit" and e["hotspot"] == "ward.exit_dorm")[0]
+	assert_false(bool(commit["success"]), "the last block failed")
+	var h: Dictionary = scene.hotspots.get_hotspot("ward.exit_dorm")
+	assert_eq(str(commit["route"]), str(h["on_failure"]["route"]), "that exit's on_failure route")
+	var out: Dictionary = (_events(scene, "hotspot_commit").filter(func(e: Dictionary) -> bool: return str(e["outcome"]["hotspot"]) == "ward.exit_dorm"))[0]["outcome"]
+	assert_eq(str(out["cinematic_name"]), str(h["on_failure"]["cinematic"]), "with its stagger")
+	assert_near(float(out["energy"]), float(h["on_failure"]["energy"]), 1e-9)
+	_to_beat(scene, 68.0)
+	assert_eq(_nodes(scene).slice(0, 2), ["ward", str(h["on_failure"]["route"])])
+	_free(d)
+
+
+func test_the_run_ending_clears_a_pending_door_and_a_door_taken_while_the_run_ends_is_not_carried_out() -> void:
+	# a pending door, then the crowd leaves before the window opens
+	var d := _scene(_pattern("0".repeat(40)).replace("blocks:1111", "blocks:1"))
+	var scene: Node = d["scene"]
+	_sit_early(scene)
+	_to_beat(scene, 20.0)
+	_leave_by(scene, "exit:ward.dorm")
+	assert_eq(scene._mg.pending_exit, "ward.exit_dorm")
+	scene.engine.energy = 1.0
+	_to_beat(scene, 30.0)
+	assert_false(_events(scene, "depleted").is_empty(), "the crowd is leaving")
+	assert_eq(scene._mg.pending_exit, "", "the pending door is dropped")
+	assert_true((scene.hotspot_log as Array).any(func(e: Dictionary) -> bool: return e["kind"] == "exit_dropped" and e["why"] == "gone"))
+	_run_to(scene, float(scene._vt) + 20.0 * BEAT)
+	assert_false(_events(scene, "run_over").is_empty())
+	assert_eq(scene.hotspots.selected, "", "nothing selected")
+	_free(d)
+	# a door touched while the run is ending: the player gets up, nothing is carried out
+	d = _scene(_pattern("0".repeat(40)))
+	scene = d["scene"]
+	var w := _wallet()
+	_sit(scene)
+	var mg := _mg(scene)
+	var ctx := _ctx("stick")
+	ctx["play"] = false
+	assert_true(_until(scene, ctx, func() -> bool: return _phase(scene) == "await_bet", 20.0))
+	assert_true(mg.tap("bet", scene._vt))
+	scene.engine.energy = 1.0
+	assert_true(_until(scene, ctx, func() -> bool: return not _events(scene, "depleted").is_empty(), 40.0), "the crowd is leaving")
+	assert_true(mg.tap("exit:ward.dorm", scene._vt), "a door while the run ends")
+	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "" and not _events(scene, "run_over").is_empty(), 40.0))
+	assert_eq(scene._mg.pending_exit, "", "nothing pending")
+	assert_eq(scene._mg.armed_exit, "")
+	assert_false((scene.hotspot_log as Array).any(func(e: Dictionary) -> bool: return e["kind"] == "exit_pending"), "never carried out")
+	assert_eq(w.held_pence(), 0, "no stake left held")
+	assert_false(scene.engine.hold)
+	_free(d)
+
+
+func test_with_the_table_never_touched_the_doors_change_nothing() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	_run_to(scene, 140.0 * BEAT)
+	assert_eq(scene._mg.pending_exit, "")
+	assert_false((scene.hotspot_log as Array).any(func(e: Dictionary) -> bool: return str(e["kind"]).begins_with("exit_")), "no exit bookkeeping at all")
+	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward.art"])
 	_free(d)

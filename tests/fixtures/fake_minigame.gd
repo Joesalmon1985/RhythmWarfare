@@ -1,6 +1,7 @@
 class_name FakeMinigame
 extends MinigameActivity
 ## A scripted activity for the lifecycle tests: it records every call the host makes and finishes when told to (`finish_now`), when it is asked to leave, or when it is interrupted.
+## A door of the room ("exit:<route>", when listed in `taken`) leaves by that route; the plain "exit" leaves by none.
 
 var calls: Array = []  # [{call, t, ...}]
 var taken: Array = ["bet", "exit"]  # the targets it accepts
@@ -32,7 +33,11 @@ func targets() -> Array:
 
 func tap(target: String, t: float) -> bool:
 	calls.append({"call": "tap", "target": target, "t": t})
-	if target == "exit":
+	if target == "exit":  # the plain way out: get up, the room decides
+		request_leave(t)
+		return true
+	if target.begins_with("exit:") and target in taken:
+		leave_route = exit_route(target)
 		request_leave(t)
 		return true
 	return target in taken

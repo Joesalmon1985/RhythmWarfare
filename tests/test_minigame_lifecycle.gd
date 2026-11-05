@@ -439,3 +439,110 @@ func test_the_registry_reads_json_files_and_a_missing_directory_is_empty() -> vo
 	DirAccess.remove_absolute(TMP + "/table.json")
 	DirAccess.remove_absolute(TMP)
 	assert_true(c.request("fake", 0.0, 1.0) == false, "one at a time still")
+
+
+# --- exits while seated: the room's ways out travel to the activity and the door chosen travels back -----------------------------------------------
+
+const EXITS := [{"id": "s.exit_a", "route": "to_a", "scene": "art", "world": "w", "dir": "right", "default": true}, {"id": "s.exit_b", "route": "to_b", "scene": "dorm", "world": "w", "dir": "up", "default": false}]
+
+
+func test_the_exits_reach_the_activity_and_the_door_taken_is_logged_and_handed_back() -> void:
+	var c := _controller()
+	c.request("fake", 0.0, 1.0, EXITS)
+	var a := c.activity as FakeMinigame
+	assert_eq((a.ctx_seen["exits"] as Array).size(), 2, "handed over in the context")
+	assert_eq(a.exits.map(func(e: Dictionary) -> String: return str(e["route"])), ["to_a", "to_b"], "normalized, the default first")
+	assert_eq(a.exit_targets(), ["exit:to_a", "exit:to_b"])
+	a.taken = ["bet"] + a.exit_targets()
+	c.update(1.0)
+	assert_true(c.tap("exit:to_b", 2.0))
+	var leave: Array = c.log.filter(func(e: Dictionary) -> bool: return str(e["kind"]) == "leave")
+	assert_eq(leave.size(), 1, "one leave entry")
+	assert_eq(leave[0], {"kind": "leave", "t": 2.0, "route": "to_b", "target": "exit:to_b"})
+	c.update(2.1)
+	assert_eq(c.state, "")
+	assert_eq(c.last_route, "to_b", "the route is handed back when the activity is done")
+	assert_eq((c.log[c.log.size() - 1] as Dictionary)["reason"], "left")
+	# a new activity starts with no route; the fake's plain exit leaves by none
+	c.request("fake", 3.0, 4.0, EXITS)
+	assert_eq(c.last_route, "", "a new activity starts with no route")
+	c.update(4.0)
+	assert_true(c.tap("exit", 5.0))
+	assert_eq((c.log[c.log.size() - 1] as Dictionary)["route"], "", "logged with no route")
+	c.update(5.1)
+	assert_eq(c.last_route, "")
+
+
+func test_the_hosts_own_leave_carries_a_route_and_an_interrupt_carries_none() -> void:
+	var c := _controller()
+	c.request("fake", 0.0, 1.0, EXITS)
+	c.update(1.0)
+	c.request_leave(2.0, "to_b")
+	assert_eq(c.log[c.log.size() - 1], {"kind": "leave", "t": 2.0, "route": "to_b"})
+	c.update(2.5)
+	assert_eq(c.last_route, "to_b")
+	c.request("fake", 3.0, 4.0, EXITS)
+	c.update(4.0)
+	c.on_block_result(false, 5.0)
+	c.on_block_result(false, 6.0)
+	c.on_block_result(false, 7.0)
+	c.update(7.5)
+	assert_eq(c.state, "")
+	assert_eq(c.last_route, "", "a fall leaves by no door")
+	c.request("fake", 8.0, 9.0)
+	c.update(9.0)
+	assert_true(c.tap("exit", 10.0))
+	c.update(10.5)
+	assert_eq(c.last_route, "", "no exits: the plain door has no route")
+
+
+func test_the_same_calls_with_doors_give_the_same_log() -> void:
+	var run := func() -> String:
+		var c := _controller()
+		c.request("fake", 1.0, 2.0, EXITS)
+		(c.activity as FakeMinigame).taken = ["bet", "exit:to_a", "exit:to_b"]
+		c.update(2.5)
+		c.tap("bet", 3.0)
+		c.tap("exit:to_b", 7.0)
+		c.update(7.5)
+		return JSON.stringify(c.log) + c.last_route
+	assert_eq(run.call(), run.call())
+
+
+## Leaving the table by a door and touching that door when the window opens is, for the engine, exactly a phase in which the player touched that door: the same block results, mixes,
+## cues, phase times and route; leaving by the other door changes only the route (and so the next phase's chart), never the timing.
+func test_leaving_by_each_door_changes_no_timing_or_charting_and_the_door_decides_the_route() -> void:
+	var run := func(sit: bool, door: String) -> Array:
+		var d := RunData.load_default()
+		var e := RunEngine.new(d)
+		e.hotspots = RunHotspots.new(d, {}, {})
+		e.begin("ward")
+		var events := _drive(e, 3, func(en: RunEngine, t: float) -> void:
+			if sit and en.phase_n == 1 and en.phase_beat_at(t) > 6.0 and en.block == 0:
+				en.hotspots.select("ward.cards", en.block, en.window_open)
+			if sit:
+				en.hold = en.phase_n == 1 and en.phase_beat_at(t) > 13.0 and en.phase_beat_at(t) < 30.0
+			if door != "" and en.phase_n == 1 and en.window_open and en.hotspots.selected == "":
+				en.hotspots.select(door, en.block, en.window_open))
+		return events
+	var keep := func(events: Array, t_end: float) -> String:
+		var out: Array = []
+		for ev in events:
+			if float(ev.get("t", 0.0)) < t_end and str(ev["kind"]) in ["block_result", "mix", "reveal", "route_window"]:
+				out.append(ev)
+			elif str(ev["kind"]) == "cues" and int(ev["phase"]) == 1:
+				out.append(ev)
+		return JSON.stringify(out)
+	var plain_dorm: Array = run.call(false, "ward.exit_dorm")
+	var sat_dorm: Array = run.call(true, "ward.exit_dorm")
+	var sat_art: Array = run.call(true, "ward.exit_art")
+	var t_end := float((_of_kind(plain_dorm, "phase_start")[1] as Dictionary)["t"])
+	assert_eq(keep.call(sat_dorm, t_end), keep.call(plain_dorm, t_end), "sat, left and armed the dormitory door: phase 1 is the phase of a player who touched that door")
+	assert_eq(keep.call(sat_art, t_end), keep.call(plain_dorm, t_end), "whichever door: the same phase 1")
+	var times := func(events: Array) -> Array:
+		return _of_kind(events, "phase_start").map(func(ev: Dictionary) -> float: return float(ev["t"]))
+	assert_eq(times.call(sat_dorm), times.call(plain_dorm), "the phases start at the same song times")
+	assert_eq(times.call(sat_art), times.call(plain_dorm))
+	assert_eq(str((_of_kind(sat_dorm, "route_commit")[0] as Dictionary)["to"]), "ward.dorm", "the door decides the route")
+	assert_eq(str((_of_kind(sat_art, "route_commit")[0] as Dictionary)["to"]), "ward.art")
+	assert_eq(_of_kind(sat_dorm, "hotspot_commit").map(func(ev: Dictionary) -> String: return str(ev["outcome"]["hotspot"])), ["ward.cards", "ward.exit_dorm", _of_kind(plain_dorm, "hotspot_commit")[1]["outcome"]["hotspot"]], "the table, then the door")
