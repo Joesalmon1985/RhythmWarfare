@@ -273,7 +273,8 @@
   {"id": "lt_court_strings", "kind": "light", "at": [54.0, 6.0], "y": 2.8, "radius": 6.5, "color": "#ffd08a", "strength": 1.2},
   {"id": "lt_court_stage", "kind": "light", "at": [63.0, 7.0], "y": 2.9, "radius": 5.0, "color": "#ffd090", "strength": 1.6},
   {"id": "mural_door", "kind": "billboard", "sprite": "thing_mural", "at": [24, 7.85], "y": 1, "size": 2, "anim": "none"},
-  {"id": "lt_mural", "kind": "light", "at": [24, 7.2], "y": 1.8, "radius": 3, "color": "#ffd27a", "strength": 1}
+  {"id": "lt_mural", "kind": "light", "at": [24, 7.2], "y": 1.8, "radius": 3, "color": "#ffd27a", "strength": 1},
+  {"id": "lt_cards_lamp", "kind": "light", "at": [2.4, 3.1], "y": 2, "radius": 2.6, "color": "#ffc870", "strength": 1.2}
  ],
  "homes": [
   {"actor": "c01", "sector": "dayroom", "at": [0.0, 3.27]},
@@ -500,7 +501,7 @@
   {"id": "courtyard_s10", "at": [59.9, 12.61]}
  ],
  "occluders": [
-  {"id": "cards_table", "sprite": "cards_table", "at": [2.4, 3], "width": 2.4, "height": 1.56}
+  {"id": "cards_table", "sprite": "cards_table", "at": [2.4, 3], "width": 2.8, "height": 2.38}
  ],
  "rooms": {"corridor": {"palette": "low"}, "art_room": {"palette": "warm"}},
  "sky": {"tex": "textures/sky_moon.png", "mode": "cylinder"},

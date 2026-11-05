@@ -61,7 +61,7 @@ demo() {
 }
 
 WIN="bet@5,hand@13"
-real 3 "$WIN,exit@40" perfect "" 01_table_in_room:p63.6 02_sitting_down:0.5 03_money_from_pockets:1.6 04_twenty_on_the_table:4.3 05_placing_the_bet:5.8 06_dealing:8.2 07_dealer_signals_turn:12.2 09_sticking:13.8 10_dealer_reveals:17.7 11_winning_and_paid:23.6
+real 3 "$WIN,exit@40" perfect "" 01_table_in_room:p58 02_sitting_down:0.5 03_money_from_pockets:1.6 04_twenty_on_the_table:4.3 05_placing_the_bet:5.8 06_dealing:8.2 07_dealer_signals_turn:12.2 09_sticking:13.8 10_dealer_reveals:17.7 11_winning_and_paid:23.6
 real 16 "bet@5,deck@12,hand@16" perfect "" 08_twisting:12.55
 real 5 "$WIN" perfect "" 12_losing_and_collected:25.6
 # every hand is a bet and an immediate stick; a tap that is not live is simply refused, so one of each every beat plays all four hands whatever the length of the NPC turns (seed 6 is broke at beat 89.6)

@@ -83,13 +83,13 @@ NEW_THINGS = {
 # Occluders (drawn over the crowd when nearer than a dancer): id, texture name, texture file, (x, z) of the feet, width, height. A texture file starting with `res://` is loaded as it stands
 # (the blackjack table's art lives in assets/minigames/blackjack/, drawn by tools/minigames/make_world_table.py).
 NEW_OCCLUDERS = {
-    "mental_hospital": [("cards_table", "cards_table", "res://assets/minigames/blackjack/world_table.png", (2.4, 3.0), 2.4, 1.56)],
+    "mental_hospital": [("cards_table", "cards_table", "res://assets/minigames/blackjack/world_table.png", (2.4, 3.0), 2.8, 2.38)],
 }
 NEW_LIGHTS = {  # id, (x, z), y, radius, color, strength
     "night_one": [("lt_crack", (2.5, 10.7), 1.2, 3.2, "#ff5a28", 1.3), ("lt_ship_beam", (0.0, 15.5), 1.5, 4.5, "#7ff0ff", 1.2), ("lt_wizard_floor", (-5.0, 7.0), 1.6, 3.0, "#8060ff", 0.9),
                   ("lt_wizard_chill", (8.6, 9.2), 1.6, 2.6, "#8060ff", 0.8)],
     "hospital": [("lt_band_mic", (62.0, 1.2), 1.8, 3.5, "#ffd890", 1.0)],
-    "mental_hospital": [("lt_mural", (24.0, 7.2), 1.8, 3.0, "#ffd27a", 1.0)],
+    "mental_hospital": [("lt_mural", (24.0, 7.2), 1.8, 3.0, "#ffd27a", 1.0), ("lt_cards_lamp", (2.4, 3.1), 2.0, 2.6, "#ffc870", 1.2)],
 }
 
 # ---- journeys inside a scene ------------------------------------------------------------------------------------------------------------------
@@ -387,12 +387,15 @@ def add_things() -> None:
 
 
 def add_occluders() -> None:
-    """NEW_OCCLUDERS go in as one line each at the end of the map's occluders; their textures join the map's textures."""
+    """NEW_OCCLUDERS go in as one line each at the end of the map's occluders (a line already there under the same id is rewritten in place); their textures join the map's textures."""
     for mp, rows in NEW_OCCLUDERS.items():
         path = MAPS / f"{mp}.json"
         txt = path.read_text(encoding="utf-8")
         doc = json.loads(txt)
         have = {x["id"] for x in doc["occluders"]}
+        for oid, tex, _f, at, w, h in rows:
+            if oid in have:
+                txt = re.sub(r'  \{"id": "%s", [^\n]*?\}' % re.escape(oid), lambda _m: '  {"id": "%s", "sprite": "%s", "at": [%g, %g], "width": %g, "height": %g}' % (oid, tex, at[0], at[1], w, h), txt, count=1)
         lines = ['  {"id": "%s", "sprite": "%s", "at": [%g, %g], "width": %g, "height": %g}' % (oid, tex, at[0], at[1], w, h) for oid, tex, _f, at, w, h in rows if oid not in have]
         if lines:
             if doc["occluders"]:

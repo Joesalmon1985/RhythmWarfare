@@ -14,7 +14,7 @@ var title_card := {}  # {kicker, text, t0}
 var now_t := 0.0
 var route_hint := ""
 var stage_h := 0.0  # height of the stage area above the pads (0: the whole control)
-var silent := false  # a minigame owns the picture: caption() and show_title() do nothing while this is true
+var silent := false  # a minigame owns the picture: caption() and show_title() do nothing and no text is drawn while this is true (the meter and the stage pips stay)
 var fade := 0.0  # 0..1 black overlay for the end of a run
 
 var _font: Font
@@ -39,6 +39,8 @@ func show_title(kicker: String, text: String, t0: float) -> void:
 
 
 func _outlined(pos: Vector2, s: String, fs: int, col: Color, w := -1.0, align := HORIZONTAL_ALIGNMENT_LEFT) -> void:
+	if silent and (countdown.is_empty() or s != countdown):  # the count back in after a pause still shows
+		return
 	draw_string_outline(_font, pos, s, align, w, fs, 6, Color(0, 0, 0, col.a * 0.85))
 	draw_string(_font, pos, s, align, w, fs, col)
 

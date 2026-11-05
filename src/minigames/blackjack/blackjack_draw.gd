@@ -26,6 +26,8 @@ const WARM_HOT := Color("fff3b8")
 const DOOR_LEAF := Color("9fb8aa")
 const DOOR_LEAF_DARK := Color("6f8a7c")
 const DOOR_FRAME := Color("5a3d26")
+const LAMP_SHADE := Color("3c785a")
+const LAMP_SHADE_LIGHT := Color("78be96")
 
 const CARD_W := 26.0
 const CARD_H := 36.0
@@ -297,29 +299,31 @@ static func card_spot(seat: String, index: int, size: Vector2) -> Vector2:
 		"dealer":
 			return Vector2(roundf(cx + (-18.0 + index * 13.0) * u), roundf(131.0 * u))
 	var sp := seat_pos(seat, size)
-	return Vector2(roundf(sp.x + (-18.0 + index * 13.0) * u), roundf(sp.y + 70.0 * u))
+	return Vector2(roundf(sp.x + (-18.0 + index * 13.0) * u), roundf(sp.y + 63.0 * u))
 
 
 static func deck_spot(size: Vector2) -> Vector2:
 	var u := unit(size)
-	return Vector2(roundf(size.x * 0.5 + 112.0 * u), roundf(113.0 * u))
+	return Vector2(roundf(size.x * 0.5 + 74.0 * u), roundf(112.0 * u))
 
 
+## The bet spot: a ring on the baize between the player's money and the dealer, above the pile and left of the player's cards (inside the picture's middle, which the falling notes cross least).
 static func bet_spot(size: Vector2) -> Vector2:
 	var u := unit(size)
-	return Vector2(roundf(size.x * 0.5 - 150.0 * u), roundf(182.0 * u))
+	return Vector2(roundf(size.x * 0.5 - 88.0 * u), roundf(124.0 * u))
 
 
-## The bottom left corner of the player's money pile (the pile grows up and to the right from here).
+## The centre of the first £5 note of the player's money pile (`MoneyDraw.pile_layout` origin): twenties lie to its left, coins to its right, more fivers below it toward the player.
+## It sits at 0.23 of the width, in the gap between the first two pads' lanes of falling notes, so the fivers you touch are crossed by the notes as little as possible.
 static func pile_origin(size: Vector2) -> Vector2:
 	var u := unit(size)
-	return Vector2(roundf(14.0 * u), roundf(222.0 * u))
+	return Vector2(roundf(size.x * 0.23), roundf(154.0 * u))
 
 
-## The rectangle the money pile may occupy (bottom left).
+## The rectangle the money pile may occupy (bottom left, under the bet spot, left of the player's cards).
 static func pile_rect(size: Vector2) -> Rect2:
 	var u := unit(size)
-	return Rect2(0.0, 150.0 * u, 118.0 * u, 80.0 * u)
+	return Rect2(0.0, 140.0 * u, size.x * 0.5 - 52.0 * u, 90.0 * u)
 
 
 ## Off the bottom edge: where the player's money comes from and goes back to.
@@ -331,7 +335,7 @@ static func pockets_spot(size: Vector2) -> Vector2:
 ## Where the dealer keeps and collects money.
 static func dealer_tray_spot(size: Vector2) -> Vector2:
 	var u := unit(size)
-	return Vector2(roundf(size.x * 0.5 - 74.0 * u), roundf(124.0 * u))
+	return Vector2(roundf(size.x * 0.5 - 52.0 * u), roundf(114.0 * u))
 
 
 static func exit_rect(size: Vector2) -> Rect2:
@@ -400,6 +404,8 @@ static func _table_shapes(size: Vector2) -> Dictionary:
 		"baize": _super_points(cx, cy + 4.0 * u, rx - 8.0 * u, ry - 7.0 * u, 56),
 		"mid": _super_points(cx, cy + 10.0 * u, rx * 0.84, ry * 0.8, 48),
 		"glow": _super_points(cx, cy + 40.0 * u, rx * 0.56, ry * 0.5, 40),
+		"shadow_far": _super_points(cx, cy + 2.0 * u, rx + 10.0 * u, ry + 9.0 * u, 40),
+		"shadow_near": _super_points(cx, cy + 2.0 * u, rx + 4.0 * u, ry + 4.0 * u, 40),
 	}
 	if _table_cache.size() > 6:
 		_table_cache.clear()
@@ -427,6 +433,42 @@ static func draw_table(ci: CanvasItem, size: Vector2, u: float) -> void:
 	ell(ci, rc.x, rc.y, 7.0 * u, 3.5 * u, BAIZE_DARK)
 	ell(ci, rc.x, rc.y, 5.0 * u, 2.0 * u, BAIZE)
 	rect(ci, w * 0.16, 190.0 * u, 3.0 * u, 3.0 * u, BAIZE_WEAR)
+
+
+## The table's shadow on the room round its far edge (drawn before the people, who cover most of it): it grounds the close-up where the rim meets the live room at the sides.
+static func draw_table_shadow(ci: CanvasItem, size: Vector2, u: float) -> void:
+	var s := _table_shapes(size)
+	poly(ci, s["shadow_far"], shade(INK, 0.22))
+	poly(ci, s["shadow_near"], shade(INK, 0.28))
+
+
+## The lamp over the table, the same hanging lamp the day room shows from across the room: `part` "cone" draws the shade at the top of the picture and its cone of warm light over the
+## people (before the table), "pool" the pool of light on the baize (after the table).
+static func draw_lamp(ci: CanvasItem, size: Vector2, u: float, part: String) -> void:
+	var cx := roundf(size.x * 0.5)
+	if part == "pool":
+		ell(ci, cx, 150.0 * u, 190.0 * u, 44.0 * u, shade(WARM, 0.06))
+		ell(ci, cx, 146.0 * u, 120.0 * u, 26.0 * u, shade(WARM, 0.07))
+		return
+	var t := maxf(1.0, roundf(u))
+	poly(ci, PackedVector2Array([Vector2(cx - 22.0 * u, 14.0 * u), Vector2(cx + 22.0 * u, 14.0 * u), Vector2(cx + 200.0 * u, 120.0 * u), Vector2(cx - 200.0 * u, 120.0 * u)]), shade(WARM, 0.07))
+	poly(ci, PackedVector2Array([Vector2(cx - 18.0 * u, 14.0 * u), Vector2(cx + 18.0 * u, 14.0 * u), Vector2(cx + 120.0 * u, 120.0 * u), Vector2(cx - 120.0 * u, 120.0 * u)]), shade(WARM, 0.07))
+	rect(ci, cx - t, 0.0, 2.0 * t, 6.0 * u, INK)
+	poly_o(ci, PackedVector2Array([Vector2(roundf(cx - 7.0 * u), roundf(5.0 * u)), Vector2(roundf(cx + 7.0 * u), roundf(5.0 * u)), Vector2(roundf(cx + 22.0 * u), roundf(14.0 * u)), Vector2(roundf(cx - 22.0 * u), roundf(14.0 * u))]), LAMP_SHADE, INK, t)
+	rect(ci, cx - 6.0 * u, 6.0 * u, 12.0 * u, maxf(1.0, u), LAMP_SHADE_LIGHT)
+	ell(ci, cx, 15.0 * u, 7.0 * u, 3.0 * u, WARM_HOT)
+
+
+## The bet spot: an oval painted on the baize where the stake goes, worn and faint, `pu` the money's unit (so the ring holds a note).
+static func draw_bet_ring(ci: CanvasItem, c: Vector2, pu: float) -> void:
+	var rx := 28.0 * pu
+	var ry := 16.0 * pu
+	var pts := PackedVector2Array()
+	for i in 29:
+		var th := TAU * float(i) / 28.0
+		pts.append(Vector2(roundf(c.x + cos(th) * rx), roundf(c.y + sin(th) * ry)))
+	ell(ci, c.x, c.y, rx, ry, shade(BAIZE_DARK, 0.6))
+	ci.draw_polyline(pts, shade(BAIZE_WEAR, 0.9), maxf(1.0, roundf(pu * 0.8)))
 
 
 ## A hint of the player's own chair at the very bottom corners (optional).

@@ -4,21 +4,24 @@ extends RefCounted
 ## Everything is built from whole-pixel rects (coins from scanline spans, notes from a few rects and ellipse rows) so it stays crisp in the low-res viewport; `u = size.y / 230.0` scales it.
 ## Positions and sizes passed in are centres, in the canvas item's own coordinates. The draw functions reset the item's draw transform to identity when they finish.
 ##
-## Pile layout. Origin is the centre of the first (bottom) £5 note. Fivers form a column that grows toward the player (each note 8 u lower than the last, so every top-left numeral shows and four
-## fivers read as four); twenties form a second column 46 u to the left; coins sit in a fixed 4 x 2 grid to the right, one cell per denomination. A note's place depends only on its denomination and
+## Pile layout. Origin is the centre of the first £5 note. Fivers form columns of four that grow toward the player (each note 10 u lower than the last, so every top-left numeral shows and four
+## fivers read as four); the fifth fiver starts a second column 44 u to the right; twenties form a column 46 u to the left; coins sit in a fixed grid two cells wide and four tall right of the
+## second fiver column (pounds on top), one cell per denomination. A note's place depends only on its denomination and
 ## its index within that denomination, so an item shared by two amounts never moves when the pile changes.
 
 const NOTE_SIZE := {500: Vector2(38, 20), 1000: Vector2(40, 21), 2000: Vector2(42, 22)}
 const COIN_DIAMETER := {200: 14.0, 100: 12.0, 50: 13.0, 20: 11.0, 10: 12.0, 5: 9.0, 2: 13.0, 1: 10.0}
 const COIN_SIDES := {200: 0, 100: 12, 50: 7, 20: 7, 10: 0, 5: 0, 2: 0, 1: 0}
-const COIN_LANE := {200: Vector2i(0, 0), 100: Vector2i(1, 0), 50: Vector2i(2, 0), 20: Vector2i(3, 0), 10: Vector2i(0, 1), 5: Vector2i(1, 1), 2: Vector2i(2, 1), 1: Vector2i(3, 1)}
-const COIN_LABEL := {200: "2", 100: "1", 50: "50", 20: "20", 10: "10", 5: "5", 2: "2p", 1: "1p"}
+const COIN_LANE := {200: Vector2i(0, 0), 100: Vector2i(1, 0), 50: Vector2i(0, 1), 20: Vector2i(1, 1), 10: Vector2i(0, 2), 5: Vector2i(1, 2), 2: Vector2i(0, 3), 1: Vector2i(1, 3)}
+const COIN_LABEL := {200: "£2", 100: "£1", 50: "50", 20: "20", 10: "10", 5: "5", 2: "2p", 1: "1p"}
 const NOTE_LABEL := {500: "5", 1000: "10", 2000: "20"}
 const NOTE_COLUMN_X := {500: 0.0, 1000: -46.0, 2000: -46.0}
-const NOTE_STEP := 8.0
+const NOTE_STEP := 10.0
+const NOTE_ROWS := 4  # a column holds four notes; the fifth of a denomination starts the next column to the right
+const NOTE_COLUMN_STEP := 44.0
 const MIN_NOTE_STEP_PX := 6.0  # the numeral is 5 pixels tall, so even the low-res stack shows each one whole
 const NOTE_JITTER: Array[float] = [0.0, 1.0, 0.0, -1.0, 1.0, 0.0]
-const COIN_GRID_X := 25.0
+const COIN_GRID_X := 69.0
 const COIN_CELL := Vector2(16.0, 15.0)
 const COIN_GRID_TOP := -10.0
 
@@ -88,7 +91,9 @@ static func _ellipse(ci: CanvasItem, cx: int, cy: int, rx: int, ry: int, c: Colo
 		_rect(ci, cx - hw, cy + dy, hw * 2 + 1, 1, c)
 
 
-## One note, centred on `center`, tilted by `angle` radians. Whole-pixel size from u.
+## One note, centred on `center`, tilted by `angle` radians. Whole-pixel size from u. The value is told three ways: a big cream numeral in the top-left corner (the largest thing on the note),
+## the colour (£5 teal, £10 orange, £20 purple) and the size (a twenty is a little bigger than a fiver). At low detail (a note under 16 pixels tall) everything else is dropped so the numeral
+## stays clean: just the body, a dark lower edge and the numeral on a darker plate.
 static func draw_note(ci: CanvasItem, denomination: int, center: Vector2, u: float, angle := 0.0, alpha := 1.0) -> void:
 	var pal := _note_palette(denomination)
 	var body: Color = pal[0]
@@ -99,47 +104,49 @@ static func draw_note(ci: CanvasItem, denomination: int, center: Vector2, u: flo
 	var h := maxi(6, roundi(base.y * u))
 	var x0 := -(w / 2)
 	var y0 := -(h / 2)
-	var cell := maxi(1, roundi(u))
+	var num: String = NOTE_LABEL.get(denomination, "")
 	ci.draw_set_transform(Vector2(roundf(center.x), roundf(center.y)), angle, Vector2.ONE)
-	_rect(ci, x0 + 1, y0 + 1, w, h, Color(0, 0, 0, 0.30 * alpha))
+	_rect(ci, x0 + 1, y0 + 2, w + 1, h + 1, Color(0, 0, 0, 0.28 * alpha))
+	_rect(ci, x0 - 1, y0 - 1, w + 2, h + 2, Color(0.06, 0.04, 0.08, 0.85 * alpha))
 	_rect(ci, x0, y0, w, h, _a(CREAM, alpha))
 	_rect(ci, x0 + 1, y0 + 1, w - 2, h - 2, _a(body, alpha))
-	if h >= 16:
-		_frame(ci, x0 + 3, y0 + 3, w - 6, h - 6, _a(dark, 0.6 * alpha))
-	# foil strip
-	var fx := x0 + roundi(w * 0.46)
-	var fw := maxi(1, roundi(w * 0.06))
-	_rect(ci, fx, y0 + 1, fw, h - 2, _a(FOIL, alpha))
-	if fw >= 2:
-		_rect(ci, fx, y0 + 1, 1, h - 2, _a(CREAM, 0.7 * alpha))
-	# head and shoulders
-	if h >= 10:
-		var hx := x0 + roundi(w * 0.67)
-		var hy := y0 + roundi(h * 0.42)
-		var rx := maxi(1, roundi(w * 0.085))
-		var ry := maxi(2, roundi(h * 0.22))
-		_ellipse(ci, hx, hy, rx, ry, _a(dark, alpha))
-		if h >= 16:
-			_ellipse(ci, hx, hy + ry + 1, roundi(w * 0.165), maxi(1, y0 + h - 7 - (hy + ry + 1)), _a(dark, alpha), 1)
-		_rect(ci, hx - rx + 1, hy - ry + 1, 1, maxi(1, ry - 1), _a(light, 0.55 * alpha))
-	# security window in the top right
-	if w >= 30 and h >= 16:
-		var s := 4 * cell
-		_rect(ci, x0 + w - 3 - s, y0 + 3, s, s, _a(light, alpha))
-		_frame(ci, x0 + w - 3 - s, y0 + 3, s, s, _a(dark, alpha))
-	# value numerals
-	var num: String = NOTE_LABEL.get(denomination, "")
-	var label := "£" + num if w >= 30 else num
-	if PixelGlyphs.text_width(label, cell) <= w * 0.5 and PixelGlyphs.text_height(cell) <= h - 3:
-		var inset := maxi(1, 2 * cell if w >= 30 else cell)
-		var tl := Vector2(x0 + inset, y0 + inset)
-		if w >= 30:
-			PixelGlyphs.draw_text(ci, label, tl + Vector2(1, 1), cell, Color(dark.r, dark.g, dark.b, alpha))
-		PixelGlyphs.draw_text(ci, label, tl, cell, _a(CREAM, alpha))
-		if w >= 30 and h >= 16:
-			var br := Vector2(x0 + w - inset - PixelGlyphs.text_width(label, cell), y0 + h - inset - PixelGlyphs.text_height(cell))
-			PixelGlyphs.draw_text(ci, label, br + Vector2(1, 1), cell, Color(dark.r, dark.g, dark.b, alpha))
-			PixelGlyphs.draw_text(ci, label, br, cell, _a(CREAM, alpha))
+	_rect(ci, x0 + 1, y0 + h - 1 - maxi(1, h / 8), w - 2, maxi(1, h / 8), _a(dark, alpha))
+	if h < 16:
+		# low detail: the numeral on a darker plate, a light corner tick on the right so the note still looks like a note
+		var c1 := 1
+		var tw := int(PixelGlyphs.text_width(num, c1))
+		_rect(ci, x0 + 1, y0 + 1, tw + 3, 5 * c1 + 1, _a(dark, alpha))
+		PixelGlyphs.draw_text(ci, num, Vector2(x0 + 2, y0 + 1), c1, _a(CREAM, alpha))
+		if w - tw - 8 >= 6:
+			_ellipse(ci, x0 + w - 1 - maxi(3, w / 5), y0 + h / 2, maxi(1, w / 10), maxi(1, h / 2 - 2), _a(light, 0.6 * alpha))
+		ci.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		return
+	_frame(ci, x0 + 2, y0 + 2, w - 4, h - 4, _a(light, 0.45 * alpha))
+	# the portrait on the right: a head and shoulders in the dark tone, with a light watermark oval behind
+	var hx := x0 + roundi(w * 0.72)
+	var hy := y0 + roundi(h * 0.44)
+	_ellipse(ci, hx, hy + 1, roundi(w * 0.15), roundi(h * 0.34), _a(light, 0.55 * alpha))
+	var rx := maxi(2, roundi(w * 0.07))
+	var ry := maxi(2, roundi(h * 0.17))
+	_ellipse(ci, hx, hy - 1, rx, ry, _a(dark, alpha))
+	_ellipse(ci, hx, hy + ry + rx, roundi(w * 0.13), maxi(1, y0 + h - 3 - (hy + ry + rx)), _a(dark, alpha), 1)
+	# the foil strip
+	var fx := x0 + roundi(w * 0.5)
+	_rect(ci, fx, y0 + 1, maxi(1, roundi(w * 0.05)), h - 2, _a(FOIL, alpha))
+	_rect(ci, fx, y0 + 1, 1, h - 2, _a(CREAM, 0.8 * alpha))
+	# the big numeral, with a dark drop shadow, top left; the small £ sits before it, the value repeats small in the bottom right corner
+	var cell := maxi(2, floori(h / 10.0))
+	var small := maxi(1, cell / 2)
+	var pound_w := int(PixelGlyphs.text_width("£", small)) + small
+	var nx := x0 + 3 + pound_w
+	var ny := y0 + 2
+	PixelGlyphs.draw_text(ci, "£", Vector2(x0 + 3 + 1, ny + 1), small, _a(dark, alpha))
+	PixelGlyphs.draw_text(ci, "£", Vector2(x0 + 3, ny), small, _a(CREAM, alpha))
+	PixelGlyphs.draw_text(ci, num, Vector2(nx + 1, ny + 1), cell, _a(dark, alpha))
+	PixelGlyphs.draw_text(ci, num, Vector2(nx, ny), cell, _a(CREAM, alpha))
+	if h >= 20:
+		var bw := PixelGlyphs.text_width(num, small)
+		PixelGlyphs.draw_text(ci, num, Vector2(x0 + w - 3 - bw, y0 + h - 3 - maxi(1, h / 8) - PixelGlyphs.text_height(small)), small, _a(CREAM, 0.9 * alpha))
 	ci.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 
@@ -242,8 +249,8 @@ static func draw_coin(ci: CanvasItem, denomination: int, center: Vector2, u: flo
 		_rect(ci, bx + sp[row * 2] + 1, by + row, maxi(1, d / 5), 1, _a(shine, 0.9 * alpha))
 	var cell := maxi(1, roundi(u))
 	var label: String = COIN_LABEL.get(denomination, "")
-	if label.length() == 2 and label.ends_with("p") and PixelGlyphs.text_width(label, cell) > face - 1:
-		label = label.left(1)
+	if label.length() == 2 and PixelGlyphs.text_width(label, cell) > face - 1:
+		label = label.right(1) if label.begins_with("£") else label.left(1)
 	if not label.is_empty() and PixelGlyphs.text_width(label, cell) <= face - 1 and PixelGlyphs.text_height(cell) <= face - 1:
 		var tw := PixelGlyphs.text_width(label, cell)
 		var th := PixelGlyphs.text_height(cell)
@@ -266,8 +273,8 @@ static func pile_layout(pence: int, origin: Vector2, u: float) -> Array:
 		seen[d] = k + 1
 		var pos: Vector2
 		if MoneyBreakdown.is_note(d):
-			var colx: float = NOTE_COLUMN_X.get(d, 0.0)
-			pos = origin + Vector2(roundf((colx + NOTE_JITTER[k % NOTE_JITTER.size()]) * u), roundf(k * maxf(NOTE_STEP * u, MIN_NOTE_STEP_PX)))
+			var colx: float = float(NOTE_COLUMN_X.get(d, 0.0)) + float(k / NOTE_ROWS) * NOTE_COLUMN_STEP
+			pos = origin + Vector2(roundf((colx + NOTE_JITTER[k % NOTE_JITTER.size()]) * u), roundf((k % NOTE_ROWS) * maxf(NOTE_STEP * u, MIN_NOTE_STEP_PX)))
 		else:
 			var lane: Vector2i = COIN_LANE.get(d, Vector2i.ZERO)
 			var cx := COIN_GRID_X + lane.x * COIN_CELL.x + COIN_CELL.x * 0.5 + k * 2.0
@@ -330,16 +337,18 @@ static func _t(p: float, slot: Vector2) -> float:
 static func _flight(it: Dictionary, a: Vector2, b: Vector2, t: float, u: float, alpha_in: bool, seq: int) -> Dictionary:
 	var d: int = it["denomination"]
 	var e := _ease(t)
-	var lift := (10.0 if MoneyBreakdown.is_note(d) else 14.0) * u
-	var pos := a.lerp(b, e) + Vector2(0.0, -sin(PI * t) * lift)
+	var lift := (16.0 if MoneyBreakdown.is_note(d) else 18.0) * u
+	var ground := a.lerp(b, e)
+	var pos := ground + Vector2(0.0, -sin(PI * t) * lift)
 	var angle := 0.0
 	if MoneyBreakdown.is_note(d):
 		angle = sin(PI * t) * 0.28 * (1.0 if seq % 2 == 0 else -1.0)
 	var alpha := _ease(clampf(t / 0.25, 0.0, 1.0)) if alpha_in else 1.0 - _ease(clampf((t - 0.75) / 0.25, 0.0, 1.0))
-	return {"denomination": d, "pos": pos, "angle": angle, "alpha": alpha, "moving": true, "index": it["index"]}
+	return {"denomination": d, "pos": pos, "angle": angle, "alpha": alpha, "moving": true, "index": it["index"], "lift": sin(PI * t), "ground": ground}
 
 
-## The items on show at `progress` (0..1) while the pile goes from `from_pence` to `to_pence`, in draw order (resting items first, moving ones last): [{denomination, pos, angle, alpha, moving, index}].
+## The items on show at `progress` (0..1) while the pile goes from `from_pence` to `to_pence`, in draw order (resting items first, moving ones last): [{denomination, pos, angle, alpha, moving, index}];
+## a moving item also carries `lift` (0..1, the height of its arc now) and `ground` (the point on the table under it), for a caller that draws its shadow or swells it in flight.
 ## Removed items travel to `away` one after another (top of the pile first), then new ones travel from `away` to their places. Items in both amounts never move.
 static func transition_items(from_pence: int, to_pence: int, progress: float, origin: Vector2, u: float, away: Vector2) -> Array:
 	var p := clampf(progress, 0.0, 1.0)

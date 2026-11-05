@@ -51,7 +51,7 @@ const MOODS := {
 	},
 	"sad": {
 		"brow_l": Vector2(0.15, 1.0), "brow_r": Vector2(0.15, 1.0), "lid_l": 0.65, "lid_r": 0.65, "crescent": 0.0, "pupil": 1.35, "mouth_curve": -1.0, "mouth_open": 0.0, "mouth_w": 0.8,
-		"mouth_x": 0.0, "mouth_skew": 0.0, "teeth": 0.0, "grit": 0.0, "blush": 0.0, "sweat": 0.0, "tear": 1.0, "head_tilt": 5.0, "head_bob": 0.0, "pull": 0.0,
+		"mouth_x": 0.0, "mouth_skew": 0.0, "teeth": 0.0, "grit": 0.0, "blush": 0.0, "sweat": 0.0, "tear": 1.0, "head_tilt": 7.0, "head_bob": 0.0, "pull": -4.0,
 		"gaze_bias": Vector2(0.0, 0.7), "gaze_lock": 0.7,
 	},
 	"wince": {
@@ -60,14 +60,14 @@ const MOODS := {
 		"gaze_bias": Vector2.ZERO, "gaze_lock": 0.0,
 	},
 	"concerned": {
-		"brow_l": Vector2(0.55, 1.0), "brow_r": Vector2(0.55, 1.0), "lid_l": 1.1, "lid_r": 1.1, "crescent": 0.0, "pupil": 1.0, "mouth_curve": -0.45, "mouth_open": 0.0, "mouth_w": 0.75,
-		"mouth_x": 0.0, "mouth_skew": 0.0, "teeth": 0.0, "grit": 0.0, "blush": 0.0, "sweat": 0.5, "tear": 0.0, "head_tilt": 5.0, "head_bob": 0.0, "pull": 0.0,
+		"brow_l": Vector2(0.9, 1.0), "brow_r": Vector2(0.9, 1.0), "lid_l": 1.2, "lid_r": 1.2, "crescent": 0.0, "pupil": 0.8, "mouth_curve": -0.8, "mouth_open": 0.0, "mouth_w": 0.95,
+		"mouth_x": 0.0, "mouth_skew": -0.6, "teeth": 0.0, "grit": 0.0, "blush": 0.0, "sweat": 1.0, "tear": 0.0, "head_tilt": 7.0, "head_bob": 0.0, "pull": 1.0,
 		"gaze_bias": Vector2.ZERO, "gaze_lock": 0.0,
 	},
 	"smug": {
-		"brow_l": Vector2(1.0, 0.5), "brow_r": Vector2(-0.3, -0.25), "lid_l": 0.5, "lid_r": 0.5, "crescent": 0.0, "pupil": 1.0, "mouth_curve": 0.7, "mouth_open": 0.0, "mouth_w": 0.95,
-		"mouth_x": 1.5, "mouth_skew": 1.0, "teeth": 0.0, "grit": 0.0, "blush": 0.0, "sweat": 0.0, "tear": 0.0, "head_tilt": -5.0, "head_bob": 0.0, "pull": 0.0,
-		"gaze_bias": Vector2.ZERO, "gaze_lock": 0.0,
+		"brow_l": Vector2(1.0, 0.6), "brow_r": Vector2(-0.5, -0.6), "lid_l": 0.42, "lid_r": 0.42, "crescent": 0.0, "pupil": 1.0, "mouth_curve": 0.9, "mouth_open": 0.0, "mouth_w": 1.1,
+		"mouth_x": 2.0, "mouth_skew": 1.4, "teeth": 0.0, "grit": 0.0, "blush": 0.0, "sweat": 0.0, "tear": 0.0, "head_tilt": -8.0, "head_bob": 0.0, "pull": 2.0,
+		"gaze_bias": Vector2(0.9, 0.2), "gaze_lock": 0.6,
 	},
 	"thinking": {
 		"brow_l": Vector2(0.9, 0.5), "brow_r": Vector2(-0.1, 0.0), "lid_l": 0.95, "lid_r": 0.95, "crescent": 0.0, "pupil": 1.0, "mouth_curve": -0.15, "mouth_open": 0.0, "mouth_w": 0.55,
@@ -102,13 +102,12 @@ const SWEAT := Color("8fd4f4")
 const GLOVE_SKIN := Color("cf9468")
 const SLEEVE := Color("4c5b94")
 const SLEEVE_LIGHT := Color("7183c4")
+const SLEEVE_DARK := Color("2f3a66")
 const CUFF := Color("ece5d0")
-const NOTE := Color("86c79a")
-const NOTE_DARK := Color("4e8f66")
 const LINING := Color("dcdce6")
-const SPARK := Color("fff3b8")
 
-const ARM_L := 26.0
+const ARM_L := 28.0
+const LOW_U := 0.75  # below this unit (the 320 x 115 canvas) faces switch to their bolder low-detail drawing
 
 
 # ------------------------------------------------------------------ moods
@@ -198,13 +197,14 @@ static func draw_person(ci: CanvasItem, who: String, center: Vector2, u: float, 
 	var lift := 0.0
 	if g == "shrug":
 		lift = _trap(gesture_t, 0.0, 0.2, 0.8, 1.0)
+	var rel := Vector2.ZERO
+	if point_to != Vector2.ZERO:
+		rel = (point_to - c) / u
 	if layer != "arms":
 		_body(ci, who, c, u, look, lift)
-		_head(ci, who, c, u, look, face, gaze_to, beat_phase)
+		var hm := _head_motion(g, gesture_t, rel)
+		_head(ci, who, c + Vector2(roundf(hm.x * u), roundf(hm.y * u)), u, look, face, gaze_to, beat_phase, hm.z)
 	if layer != "body":
-		var rel := Vector2.ZERO
-		if point_to != Vector2.ZERO:
-			rel = (point_to - c) / u
 		var poses := _poses(g, gesture_t, rel, lift, point_to != Vector2.ZERO)
 		_arms(ci, who, c, u, look, poses, lift)
 
@@ -258,7 +258,7 @@ static func _body(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dicti
 
 # ------------------------------------------------------------------ head and face
 
-static func _head(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictionary, f: Dictionary, gaze_to: Vector2, beat: float) -> void:
+static func _head(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictionary, f: Dictionary, gaze_to: Vector2, beat: float, tilt_add := 0.0) -> void:
 	var skin: Color = look["skin"]
 	var sk: Color = look["skin_shade"]
 	var hair: Color = look["hair"]
@@ -271,7 +271,7 @@ static func _head(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dicti
 	var bob := roundf(bob_amp * pow(0.5 + 0.5 * cos(TAU * bph), 2.0))
 	var pull := roundf(float(f.get("pull", 0.0)) * u)
 	var origin := c + Vector2(0.0, bob - pull)
-	var tilt := deg_to_rad(float(f.get("head_tilt", 0.0)))
+	var tilt := deg_to_rad(float(f.get("head_tilt", 0.0)) + tilt_add)
 	ci.draw_set_transform(origin, tilt, Vector2.ONE)
 	# hair behind the head
 	if who == "npc_b":
@@ -384,7 +384,7 @@ static func _face_features(ci: CanvasItem, who: String, u: float, look: Dictiona
 		if blink > 0.5 and crescent < 0.5:
 			lid = minf(lid, 0.0)
 		var cx := sx * ex
-		if glasses:
+		if glasses and u >= LOW_U:
 			var ro := maxf(1.0, _p(2.0, u))
 			BlackjackDraw.ell(ci, cx, ey, erx + ro + t, ery + ro + t, INK)
 			BlackjackDraw.ell(ci, cx, ey, erx + ro, ery + ro, Color("dff0f8"))
@@ -396,13 +396,18 @@ static func _face_features(ci: CanvasItem, who: String, u: float, look: Dictiona
 			dv = dir / dl * minf(1.0, dl / maxf(1.0, 16.0 * u))
 		dv = dv.lerp(gl, lock)
 		_eye(ci, cx, ey, erx, ery, lid, crescent, pupil_s, dv, u, sx)
-	# brows
+	if glasses and u < LOW_U:  # at low detail the glasses are only a bridge and two rims over the eyes, so the eyes keep their shape
+		BlackjackDraw.rect(ci, -ex + erx, ey - 1.0, 2.0 * (ex - erx) + 1.0, 1.0, INK)
+		for sx2 in [-1.0, 1.0]:
+			BlackjackDraw.rect(ci, sx2 * ex - erx - 1.0, ey - ery - 2.0, 2.0 * erx + 3.0, 1.0, INK)
+	# brows (their movement is never smaller than at u 0.8, so moods still read at low detail)
+	var ku := maxf(u, 0.8)
 	for si in 2:
 		var sx := -1.0 if si == 0 else 1.0
 		var b: Vector2 = f.get("brow_l" if si == 0 else "brow_r", Vector2.ZERO)
-		var by := ey - ery - _p(3.2, u) - b.x * _p(4.5, u) + _p(float(look["brow_dy"]), u)
-		var inner := Vector2(sx * maxf(erx * 0.5, _p(3.0, u)), by - b.y * _p(4.6, u))
-		var outer := Vector2(sx * (ex + erx), by + b.y * _p(2.4, u))
+		var by := ey - ery - _p(3.2, u) - b.x * roundf(4.5 * ku) + _p(float(look["brow_dy"]), u)
+		var inner := Vector2(sx * maxf(erx * 0.5, _p(3.0, u)), by - b.y * roundf(4.6 * ku))
+		var outer := Vector2(sx * (ex + erx), by + b.y * roundf(2.4 * ku))
 		if who == "dealer":
 			outer.x *= 0.92
 		BlackjackDraw.limb(ci, Vector2(roundf(inner.x), roundf(inner.y)), Vector2(roundf(outer.x), roundf(outer.y)), maxf(2.0, _p(2.6, u)), maxf(2.0, _p(2.6, u)), brow_col)
@@ -468,14 +473,16 @@ static func _eye(ci: CanvasItem, cx: float, cy: float, erx: float, ery: float, l
 
 
 static func _mouth(ci: CanvasItem, u: float, look: Dictionary, f: Dictionary) -> void:
-	var mw := maxf(2.0, _p(7.0 * float(f.get("mouth_w", 1.0)), u))
+	var mw := maxf(3.0, _p(7.0 * float(f.get("mouth_w", 1.0)), u))
 	var cx := roundf(float(f.get("mouth_x", 0.0)) * u)
 	var y0 := _p(11.5, u)
 	var curve := float(f.get("mouth_curve", 0.0))
 	var skew := float(f.get("mouth_skew", 0.0))
 	var open := float(f.get("mouth_open", 0.0))
-	var th := maxf(1.0, roundf(1.6 * u))
+	var th := maxf(2.0 if u < LOW_U else 1.0, roundf(1.6 * u))
 	var t := maxf(1.0, roundf(u))
+	var amp := maxf(3.6 * u, 2.6)  # how far a smile or frown bends (never under 2.6 pixels, so it reads at low detail)
+	var samp := maxf(3.0 * u, 2.0)
 	if float(f.get("grit", 0.0)) > 0.5:
 		var gh := maxf(3.0, _p(5.5, u))
 		BlackjackDraw.rect(ci, cx - mw - t, y0 - gh * 0.5 - t, 2.0 * mw + 2.0 * t + 1.0, gh + 2.0 * t, INK)
@@ -514,7 +521,7 @@ static func _mouth(ci: CanvasItem, u: float, look: Dictionary, f: Dictionary) ->
 		var tt := x / mw
 		var side := tt * signf(skew) if skew != 0.0 else 1.0
 		var cw := 1.0 if side >= 0.0 else 0.15
-		var y := y0 - curve * 3.6 * u * tt * tt * cw - (skew * maxf(0.0, tt) * 3.0 * u if skew > 0.0 else 0.0) + (skew * maxf(0.0, -tt) * 3.0 * u if skew < 0.0 else 0.0)
+		var y := y0 - curve * amp * tt * tt * cw - (skew * maxf(0.0, tt) * samp if skew > 0.0 else 0.0) + (skew * maxf(0.0, -tt) * samp if skew < 0.0 else 0.0)
 		BlackjackDraw.rect(ci, cx + x, roundf(y), 1.0, th, INK)
 		x += 1.0
 
@@ -530,88 +537,121 @@ static func _mix(a: Dictionary, b: Dictionary, w: float) -> Dictionary:
 	return {"h": (a["h"] as Vector2).lerp(b["h"] as Vector2, w), "kind": b["kind"] if w > 0.4 else a["kind"], "ang": ang, "k": lerpf(float(a["k"]), float(b["k"]), w)}
 
 
+## A pose along keyframes: `ts` rising times 0..1, `ps` the poses at them; eased (smoothstep) between neighbours, so every move starts and lands softly.
+static func _keys(t: float, ts: Array, ps: Array) -> Dictionary:
+	if t <= float(ts[0]):
+		return ps[0]
+	for i in range(1, ts.size()):
+		if t <= float(ts[i]):
+			return _mix(ps[i - 1], ps[i], _smooth((t - float(ts[i - 1])) / maxf(float(ts[i]) - float(ts[i - 1]), 0.0001)))
+	return ps[ps.size() - 1]
+
+
 ## The two arm poses (left of the screen first) for a gesture: hand position in u from the head centre, hand kind, finger angle (radians, 0 = right, down = PI/2) and hand scale.
+## One-shots (deal, pay, sweep, shrug, facepalm) begin and end exactly at rest, with a wind-up before the move and a follow-through after it, so nothing snaps when they finish.
+## Silhouettes differ: deal is a flick outward from the deck, pay a flat palm pushing a stack toward the player, sweep a long reach and a clawed rake back, invite an open palm offered toward
+## the player's money, point a long arm and a big index finger.
 static func _poses(g: String, t: float, pt: Vector2, lift: float, has_target: bool) -> Array:
 	var rest_l := _pose(Vector2(-26.0, 70.0), "flat", PI * 0.5 - 0.35)
 	var rest_r := _pose(Vector2(26.0, 70.0), "flat", PI * 0.5 + 0.35)
 	var l := rest_l
 	var r := rest_r
 	var side := 1.0 if (pt.x >= 0.0 or not has_target) else -1.0
+	var rest_s := rest_r if side > 0.0 else rest_l
+	var sh := Vector2(side * 25.0, 27.0)
+	var p := rest_s
 	match g:
 		"point_deck", "point_hand":
 			var aim := pt
 			if not has_target:
-				aim = Vector2(70.0, 54.0) if g == "point_deck" else Vector2(6.0, 130.0)
-			var sh := Vector2(side * 25.0, 27.0)
+				aim = Vector2(74.0, 56.0) if g == "point_deck" else Vector2(6.0, 130.0)
 			var dv := aim - sh
-			var dist := dv.length()
-			var dn := dv / maxf(dist, 0.01)
-			var reach := clampf(dist, 30.0, 46.0) + 4.0 * sin(TAU * t * 2.0)
-			var p := _pose(sh + dn * reach, "point", dn.angle())
-			if side > 0.0:
-				r = p
-			else:
-				l = p
+			var dn := dv / maxf(dv.length(), 0.01)
+			var e := _smooth(t / 0.25)
+			var wind := _trap(t, 0.0, 0.08, 0.1, 0.22)  # a small pull back before the arm shoots out
+			var jab := 6.0 * maxf(0.0, sin(TAU * (t - 0.25) * 3.0)) if t > 0.25 else 0.0
+			var reach := clampf(dv.length() - 12.0, 30.0, 54.0) * e + jab - 8.0 * wind
+			var out := _pose(sh + dn * maxf(reach, 14.0), "point", dn.angle(), 1.3)
+			p = _mix(rest_s, out, maxf(e, wind * 0.5))
 		"invite":
 			var aim := pt if has_target else Vector2(0.0, 130.0)
-			var sh := Vector2(side * 25.0, 27.0)
 			var dn := (aim - sh).normalized()
-			var reach := 34.0 + 14.0 * (0.5 - 0.5 * cos(TAU * t))
-			var p := _pose(sh + dn * reach, "open", dn.angle() + 0.3 * sin(TAU * t) * -side, 1.15)
-			if side > 0.0:
-				r = p
-			else:
-				l = p
+			var reach := 42.0 + 6.0 * (0.5 - 0.5 * cos(TAU * t))
+			var curl := 0.35 * maxf(0.0, sin(TAU * t * 2.0))  # the fingers curl in twice: come on, it is your turn
+			p = _pose(sh + dn * reach, "open", dn.angle() - side * 0.25 - side * curl, 1.3)
 		"tap_table":
 			var up := pow(0.5 - 0.5 * cos(TAU * t * 2.0), 1.4)
-			r = _pose(Vector2(32.0, 77.0 - 11.0 * up), "point", PI * 0.5 + 0.25)
+			r = _pose(Vector2(32.0, 77.0 - 13.0 * up), "point", PI * 0.5 + 0.25, 1.15)
 		"wave_off":
-			r = _pose(Vector2(22.0 + 17.0 * sin(TAU * t * 2.0), 36.0), "flat", -PI * 0.5 + 0.18 * cos(TAU * t * 2.0), 1.2)
-			l = rest_l
+			var sw := sin(TAU * t * 2.0)
+			r = _pose(Vector2(30.0 + 12.0 * sw, 26.0), "open", -PI * 0.5 + 0.35 * sw, 1.35)
 		"deal":
-			var aim := pt if has_target else Vector2(0.0, 110.0)
-			var sh := Vector2(25.0, 27.0)
-			var dn := (aim - sh).normalized()
-			var back := _trap(t, 0.0, 0.3, 0.3, 0.55)
-			var out := _trap(t, 0.2, 0.5, 0.58, 1.0)
-			var hp := rest_r["h"] as Vector2
-			hp = hp.lerp(Vector2(30.0, 60.0), back)
-			hp = hp.lerp(sh + dn * 48.0, out)
-			r = _pose(hp, "open" if out > 0.5 else "flat", lerp_angle(float(rest_r["ang"]), dn.angle(), out), 1.0)
+			var aim := pt if has_target else Vector2(74.0, 56.0)
+			var at := sh + (aim - sh).limit_length(50.0)
+			var flick := (aim - sh).normalized().rotated(-0.9 if side > 0.0 else 0.9)
+			p = _keys(t, [0.0, 0.25, 0.36, 0.52, 0.64, 1.0], [
+				rest_s,
+				_pose(at + Vector2(0.0, -2.0), "flat", PI * 0.5, 1.1),
+				_pose(at + Vector2(side * 4.0, -8.0), "flat", PI * 0.5 - side * 0.4, 1.1),
+				_pose(at + flick * 18.0 + Vector2(0.0, 10.0), "open", flick.angle(), 1.25),
+				_pose(at + flick * 22.0 + Vector2(0.0, 14.0), "open", flick.angle() + side * 0.3, 1.25),
+				rest_s])
 		"sweep":
-			var aim := pt if has_target else Vector2(-30.0, 100.0)
-			var sh := Vector2(side * 25.0, 27.0)
+			var aim := pt if has_target else Vector2(-60.0, 70.0)
 			var dn := (aim - sh).normalized()
-			var far := sh + dn * clampf((aim - sh).length(), 34.0, 48.0)
-			var near := Vector2(side * 12.0, 66.0)
-			var w := _trap(t, 0.0, 0.4, 0.45, 0.9)
-			var p := _pose(near.lerp(far, w), "claw" if t > 0.4 else "flat", lerp_angle(dn.angle(), PI * 0.5, 1.0 - w), 1.1)
-			if side > 0.0:
-				r = p
-			else:
-				l = p
+			var far := sh + (aim - sh).limit_length(52.0)
+			p = _keys(t, [0.0, 0.3, 0.4, 0.75, 1.0], [
+				rest_s,
+				_pose(far, "open", dn.angle(), 1.3),
+				_pose(far + dn * 2.0, "claw", dn.angle() + side * 0.2, 1.3),
+				_pose(Vector2(side * 14.0, 64.0), "claw", PI * 0.5 + side * 0.6, 1.3),
+				rest_s])
 		"pay":
-			var aim := pt if has_target else Vector2(10.0, 140.0)
-			var sh := Vector2(side * 25.0, 27.0)
-			var dn := (aim - sh).normalized()
-			var w := _trap(t, 0.0, 0.4, 0.7, 1.0)
-			var from := Vector2(side * 20.0, 66.0)
-			var p := _pose(from.lerp(sh + dn * 48.0, w), "flat", dn.angle(), 1.1)
-			if side > 0.0:
-				r = p
-			else:
-				l = p
+			var aim := pt if has_target else Vector2(-52.0, 58.0)
+			var at := sh + (aim - sh).limit_length(48.0)
+			var toward := Vector2(side * -4.0, 34.0)
+			p = _keys(t, [0.0, 0.2, 0.3, 0.6, 0.75, 1.0], [
+				rest_s,
+				_pose(at, "flat", PI * 0.5 + side * 0.2, 1.25),
+				_pose(at + Vector2(0.0, 2.0), "flat", PI * 0.5 + side * 0.2, 1.25),
+				_pose(at + toward, "flat", PI * 0.5, 1.3),
+				_pose(at + toward + Vector2(0.0, 3.0), "open", PI * 0.5 - side * 0.3, 1.3),
+				rest_s])
 		"shrug":
-			l = _mix(rest_l, _pose(Vector2(-43.0, 50.0), "open", -PI * 0.5 - 0.55, 1.1), lift)
-			r = _mix(rest_r, _pose(Vector2(43.0, 50.0), "open", -PI * 0.5 + 0.55, 1.1), lift)
+			l = _mix(rest_l, _pose(Vector2(-43.0, 50.0), "open", -PI * 0.5 - 0.55, 1.2), lift)
+			r = _mix(rest_r, _pose(Vector2(43.0, 50.0), "open", -PI * 0.5 + 0.55, 1.2), lift)
 		"clap":
 			var gap := 3.0 + 14.0 * (0.5 + 0.5 * cos(TAU * t * 2.0))
-			l = _pose(Vector2(-gap, 46.0), "flat", -PI * 0.5 + 0.12, 1.1)
-			r = _pose(Vector2(gap, 46.0), "flat", -PI * 0.5 - 0.12, 1.1)
+			l = _pose(Vector2(-gap, 42.0), "flat", -PI * 0.5 + 0.12, 1.2)
+			r = _pose(Vector2(gap, 42.0), "flat", -PI * 0.5 - 0.12, 1.2)
 		"facepalm":
 			var w := _trap(t, 0.0, 0.3, 0.85, 1.0)
 			r = _mix(rest_r, _pose(Vector2(2.0, 5.0), "flat", -PI * 0.5 - 0.1, 1.45), w)
+	if g in ["point_deck", "point_hand", "invite", "deal", "sweep", "pay"]:
+		if side > 0.0:
+			r = p
+		else:
+			l = p
 	return [l, r]
+
+
+## How a gesture moves the head: Vector3(dx, dy, extra tilt in degrees). A nod with the invite, a lean toward what is pointed at, a shake with the wave-off, bobs with the clap.
+static func _head_motion(g: String, t: float, pt: Vector2) -> Vector3:
+	var side := 1.0 if pt.x >= 0.0 else -1.0
+	match g:
+		"invite":
+			return Vector3(side * 2.0, 3.0 * maxf(0.0, sin(TAU * t * 2.0)), side * 4.0)
+		"point_deck", "point_hand":
+			var e := _smooth(t / 0.25)
+			return Vector3(side * 4.0 * e, 2.0 * e, side * 5.0 * e)
+		"deal", "pay", "sweep":
+			var w := _trap(t, 0.0, 0.3, 0.7, 1.0)
+			return Vector3(side * 3.0 * w, 2.0 * w, side * 3.0 * w)
+		"wave_off":
+			return Vector3(0.0, 0.0, 9.0 * sin(TAU * t * 2.0 + 0.6))
+		"clap":
+			return Vector3(0.0, 2.5 * absf(sin(TAU * t * 2.0)), 0.0)
+	return Vector3.ZERO
 
 
 static func _elbow(s: Vector2, h: Vector2, side: float) -> Vector2:
@@ -669,7 +709,7 @@ static func _arm(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictio
 	elif not dk:
 		var cuff: Color = look["accent"] if who == "npc_a" else Color("e8d8c8")
 		BlackjackDraw.limb(ci, h - fdir * maxf(4.0, 6.0 * u), h - fdir * maxf(2.0, 3.0 * u), wf + 0.8 * u, wf + 0.8 * u, cuff)
-	_hand(ci, h, ang, kind, k * 1.3, u, ink if dk else skin, g, side, skin if dk else look["skin_shade"])
+	_hand(ci, h, ang, kind, k * 1.45, u, ink if dk else skin, g, side, skin if dk else look["skin_shade"])
 
 
 ## One hand at `p` with fingers pointing along `ang`. Kinds: `flat` (mitten and thumb), `fist`, `point` (index finger out), `open` (fanned fingers), `claw` (curled fingers).
@@ -682,7 +722,7 @@ static func _hand(ci: CanvasItem, p: Vector2, ang: float, kind: String, k: float
 	match kind:
 		"point":
 			BlackjackDraw.limb(ci, p - d * 1.0 * q, p + d * 1.5 * q, 9.5 * q + gg, 9.5 * q + gg, col)
-			BlackjackDraw.limb(ci, p + d * 3.0 * q, p + d * 15.0 * q, 3.8 * q + gg, 3.4 * q + gg, col)
+			BlackjackDraw.limb(ci, p + d * 3.0 * q, p + d * 17.0 * q, 4.2 * q + gg, 3.6 * q + gg, col)
 			BlackjackDraw.limb(ci, p + n * side * 3.0 * q, p + n * side * 5.0 * q + d * 4.0 * q, 3.2 * q + gg, 3.0 * q + gg, col)
 		"fist":
 			BlackjackDraw.limb(ci, p - d * 1.0 * q, p + d * 2.0 * q, 10.0 * q + gg, 10.0 * q + gg, col)
@@ -696,14 +736,13 @@ static func _hand(ci: CanvasItem, p: Vector2, ang: float, kind: String, k: float
 				BlackjackDraw.limb(ci, p + d * 3.0 * q + n * (a * 9.0 * q), p + fd * fl * q + n * (a * 3.0 * q), 2.9 * q + gg, 2.6 * q + gg, col)
 			var td := Vector2(cos(ang - side * 1.2), sin(ang - side * 1.2))
 			BlackjackDraw.limb(ci, p + n * side * 3.5 * q, p + td * 8.0 * q + n * side * 2.0 * q, 3.4 * q + gg, 3.0 * q + gg, col)
-		_:
-			BlackjackDraw.limb(ci, p - d * 2.5 * q, p + d * 4.5 * q, 9.6 * q + gg, 9.2 * q + gg, col)
+		_:  # flat: a palm and four fingers held together, the thumb out to the side
+			BlackjackDraw.limb(ci, p - d * 2.0 * q, p + d * 2.0 * q, 9.6 * q + gg, 9.2 * q + gg, col)
+			for fo: float in [-3.3, -1.1, 1.1, 3.3]:
+				var fl2 := 8.5 - absf(fo) * 0.45
+				BlackjackDraw.limb(ci, p + d * 2.0 * q + n * fo * q, p + d * fl2 * q + n * fo * 1.05 * q, 2.6 * q + gg, 2.4 * q + gg, col)
 			BlackjackDraw.limb(ci, p + n * side * 4.0 * q - d * 1.0 * q, p + n * side * 6.5 * q + d * 3.0 * q, 3.4 * q + gg, 3.0 * q + gg, col)
-	if g == 0.0 and kind == "flat":  # finger lines
-		for fi in 3:
-			var off := (float(fi) - 1.0) * 2.7 * q
-			BlackjackDraw.limb(ci, p + n * off + d * 1.5 * q, p + n * off + d * 4.6 * q, 1.0, 1.0, shade_col)
-	elif g == 0.0 and kind == "fist":
+	if g == 0.0 and kind == "fist":
 		for fi in 3:
 			var off := (float(fi) - 1.0) * 2.7 * q
 			BlackjackDraw.limb(ci, p + n * off + d * 1.2 * q, p + n * off + d * 2.8 * q, 1.0, 1.0, shade_col)
@@ -757,14 +796,16 @@ static func draw_player_hands(ci: CanvasItem, size: Vector2, u: float, gesture: 
 			if t >= 0.55:
 				lh["kind"] = "open"
 				rh["kind"] = "open"
-		"push_bet":
-			var go := _trap(t, 0.0, 0.5, 0.7, 1.0)
-			rh["w"] = Vector2(cx - 40.0 * u, bot + 34.0 * u).lerp(bet + Vector2(8.0 * u, 12.0 * u), go)
-			rh["ang"] = lerp_angle(-PI * 0.5 - 0.3, -PI * 0.5 - 0.1, go)
+		"push_bet":  # the hand takes the top fiver and carries it along its arc to the bet ring (the same easing and height as the note's own flight), then lets go
+			var e := _smooth(t)
+			var on_note := pile.lerp(bet, e) + Vector2(4.0 * u, 12.0 * u - sin(PI * t) * 16.0 * u)
+			var come := _smooth(t / 0.12)
+			var go := _smooth((t - 0.86) / 0.14)
+			var below := Vector2(cx - 40.0 * u, bot + 40.0 * u)
+			rh["w"] = below.lerp(on_note, come).lerp(below, go)
+			rh["ang"] = -PI * 0.5 - 0.15
+			rh["kind"] = "open" if t > 0.8 else "flat"
 			lh["w"] = Vector2(cx - 60.0 * u, bot + 40.0 * u)
-			extra = 2.0 if t < 0.6 else 0.0
-			if t >= 0.6:
-				rh["kind"] = "open"
 		"reach_deck":
 			var go := _trap(t, 0.0, 0.4, 0.62, 1.0)
 			var tap := maxf(0.0, sin((t - 0.4) / 0.22 * TAU)) * 5.0 * u if t > 0.4 and t < 0.62 else 0.0
@@ -852,23 +893,32 @@ static func _phand_pair(ci: CanvasItem, size: Vector2, u: float, lh: Dictionary,
 			var w: Vector2 = po["w"]
 			if w.y > size.y + 60.0 * u:
 				continue
-			var anchor := Vector2(w.x + (w.x - size.x * 0.5) * 0.35, size.y + 60.0 * u)
 			var g := maxf(1.0, roundf(u)) if dk else 0.0
 			var ww := 21.0 * u
 			var wr := Vector2(roundf(w.x), roundf(w.y))
-			BlackjackDraw.limb(ci, anchor, wr + Vector2(0.0, 3.0 * u), ww * 1.55 + 2.0 * g, ww * 0.85 + 2.0 * g, INK if dk else SLEEVE)
+			# a sleeve in two parts: the upper arm from below the picture to an elbow bent outward, then the forearm to the cuff
+			var anchor := Vector2(w.x + (w.x - size.x * 0.5) * 0.35 + side * 26.0 * u, size.y + 70.0 * u)
+			var elbow := anchor.lerp(wr, 0.5) + Vector2(side * 15.0 * u, 8.0 * u)
+			var wrist := wr + Vector2(0.0, 3.0 * u)
+			BlackjackDraw.limb(ci, anchor, elbow, ww * 1.75 + 2.0 * g, ww * 1.3 + 2.0 * g, INK if dk else SLEEVE)
+			BlackjackDraw.limb(ci, elbow, wrist, ww * 1.3 + 2.0 * g, ww * 0.88 + 2.0 * g, INK if dk else SLEEVE)
 			if not dk:
-				BlackjackDraw.limb(ci, anchor + Vector2(-ww * 0.4 * side, 0.0), wr + Vector2(-ww * 0.2 * side, 3.0 * u), ww * 0.34, ww * 0.16, SLEEVE_LIGHT)
-				BlackjackDraw.limb(ci, wr + Vector2(0.0, 8.0 * u), wr + Vector2(0.0, 3.0 * u), ww * 0.8, ww * 0.8, CUFF)
+				var fd := (wrist - elbow).normalized()
+				var fn := Vector2(-fd.y, fd.x) * (1.0 if Vector2(-fd.y, fd.x).x * side > 0.0 else -1.0)
+				var ud := (elbow - anchor).normalized()
+				var un := Vector2(-ud.y, ud.x) * (1.0 if Vector2(-ud.y, ud.x).x * side > 0.0 else -1.0)
+				BlackjackDraw.limb(ci, anchor + un * ww * 0.55, elbow + un * ww * 0.4, ww * 0.32, ww * 0.26, SLEEVE_LIGHT)
+				BlackjackDraw.limb(ci, elbow + fn * ww * 0.38, wrist - fd * 6.0 * u + fn * ww * 0.24, ww * 0.26, ww * 0.18, SLEEVE_LIGHT)
+				# the crease inside the elbow
+				BlackjackDraw.limb(ci, elbow - fn * ww * 0.45 - fd * 3.0 * u, elbow - fn * ww * 0.2 + fd * 4.0 * u, maxf(1.0, 2.0 * u), maxf(1.0, 1.5 * u), SLEEVE_DARK)
+				# the shirt cuff and its button
+				BlackjackDraw.limb(ci, wrist - fd * 6.0 * u, wrist - fd * 1.0 * u, ww * 0.82, ww * 0.82, CUFF)
+				BlackjackDraw.rect(ci, wrist.x - fd.x * 4.0 * u + fn.x * ww * 0.2, wrist.y - fd.y * 4.0 * u + fn.y * ww * 0.2, maxf(1.0, 2.0 * u), maxf(1.0, 2.0 * u), SLEEVE_DARK)
 			_hand(ci, wr, float(po["ang"]), String(po["kind"]), float(po["k"]), u, INK if dk else GLOVE_SKIN, g, side, Color("a06f48"))
-	if wad > 0.5:
+	if wad > 0.5:  # the money in the hand: real fivers, the same notes that land on the table
 		var lw: Vector2 = lh["w"]
 		var rw: Vector2 = rh["w"]
 		var mid := (lw + rw) * 0.5 if wad < 1.5 else rw
 		mid += Vector2(0.0, -14.0 * u)
 		for i in 3:
-			var o := Vector2(i * 2.0, -i * 2.0) * u * 0.7
-			BlackjackDraw.rect(ci, mid.x - 12.0 * u + o.x - 1.0, mid.y - 6.0 * u + o.y - 1.0, 24.0 * u + 2.0, 12.0 * u + 2.0, INK)
-			BlackjackDraw.rect(ci, mid.x - 12.0 * u + o.x, mid.y - 6.0 * u + o.y, 24.0 * u, 12.0 * u, NOTE)
-			BlackjackDraw.rect(ci, mid.x - 12.0 * u + o.x, mid.y - 6.0 * u + o.y + 8.0 * u, 24.0 * u, 4.0 * u, NOTE_DARK)
-		BlackjackDraw.rect(ci, mid.x - 3.0 * u + 4.0 * u, mid.y - 8.0 * u, 3.0 * u, 7.0 * u, SPARK)
+			MoneyDraw.draw_note(ci, 500, mid + Vector2(float(i) * 2.0 - 2.0, -float(i) * 3.0) * u, u * 1.25, (float(i) - 1.0) * 0.12)
