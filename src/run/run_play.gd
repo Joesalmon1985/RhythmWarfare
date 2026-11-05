@@ -207,11 +207,31 @@ func _run_world_of(node_id: String) -> String:
 	return str(data.nodes[node_id]["world"])
 
 
-func _build_stage(world: String) -> Dictionary:
+## The story data file of an art world (a map): a chapter's entry of content/story/chapters.json, else the `story` path a world of a path's run.json names (a path's maps are not chapters:
+## they never appear in the Story chapters menu). `from` is the path data to look in first (a portal's path read ahead).
+func _story_entry(world: String, from: RunData = null) -> Dictionary:
+	var entry := StoryChapters.load_default().chapter(world)
+	if not entry.is_empty():
+		return entry
+	var sources: Array = [data]
+	if from != null:
+		sources.push_front(from)
+	sources.append_array(_path_cache.values())
+	if main_data != null:
+		sources.append(main_data)
+	for rd in sources:
+		for wid in (rd as RunData).worlds:
+			var wd: Dictionary = rd.worlds[wid]
+			if str(wd.get("map", "")) == world and str(wd.get("story", "")) != "":
+				return {"id": world, "data": str(wd["story"])}
+	return {}
+
+
+func _build_stage(world: String, from: RunData = null) -> Dictionary:
 	if stages.has(world):
 		return stages[world]
 	var t_build := Time.get_ticks_usec()
-	var entry := StoryChapters.load_default().chapter(world)
+	var entry := _story_entry(world, from)
 	var loaded := StoryData.load_file(str(entry["data"]))
 	var sd: StoryData = loaded["data"]
 	var t_art := Time.get_ticks_usec()
@@ -257,7 +277,7 @@ func _build_stage(world: String) -> Dictionary:
 		rec["hotspot_view"] = hv
 	stages[world] = rec
 	var now := Time.get_ticks_usec()
-	build_log.append({"world": world, "ms": snappedf(float(now - t_build) / 1000.0, 0.1), "parts_ms": {"data": snappedf(float(t_art - t_build) / 1000.0, 1.0), "art": snappedf(float(t_stage - t_art) / 1000.0, 1.0),
+	build_log.append({"world": world, "phase": engine.phase_n if engine != null else 0, "node": engine.node_id if engine != null else "", "ms": snappedf(float(now - t_build) / 1000.0, 0.1), "parts_ms": {"data": snappedf(float(t_art - t_build) / 1000.0, 1.0), "art": snappedf(float(t_stage - t_art) / 1000.0, 1.0),
 		"stage": snappedf(float(t_world - t_stage) / 1000.0, 1.0), "world": snappedf(float(t_deck - t_world) / 1000.0, 1.0), "deck": snappedf(float(now - t_deck) / 1000.0, 1.0)}})
 	return rec
 
@@ -273,9 +293,32 @@ func _prewarm_routes(node_id: String) -> void:
 		if stages.has(w) or _prewarmed.has(w):
 			continue
 		_prewarmed[w] = true
-		var entry := StoryChapters.load_default().chapter(w)
+		var entry := _story_entry(w)
 		var sd: StoryData = StoryData.load_file(str(entry["data"]))["data"]
 		StoryPeople.prewarm(StoryAssets.load_art(sd.art))
+	for pw in _portal_worlds(node_id):  # a portal's path opens on its own art world: its sheets are decoded ahead too
+		if stages.has(pw[0]) or _prewarmed.has(pw[0]):
+			continue
+		_prewarmed[pw[0]] = true
+		var pentry := _story_entry(pw[0], pw[1])
+		if not pentry.is_empty():
+			var psd: StoryData = StoryData.load_file(str(pentry["data"]))["data"]
+			StoryPeople.prewarm(StoryAssets.load_art(psd.art))
+
+
+## The art worlds the path portals of a scene open on: [[map, the path's RunData], ...] (only paths that loaded; a portal hidden for want of data is not here).
+func _portal_worlds(node_id: String) -> Array:
+	var out: Array = []
+	if run_path != "" or not data.nodes.has(node_id):
+		return out
+	for h in data.hotspots_of(node_id):
+		var pid := HotspotContract.path_of(str((h["on_success"] as Dictionary).get("route", "")))
+		if pid == "" or not _path_cache.has(pid):
+			continue
+		var pd: RunData = _path_cache[pid]
+		if pd.errors.is_empty() and pd.nodes.has(pd.start_node()):
+			out.append([str(pd.nodes[pd.start_node()]["map"]), pd])
+	return out
 
 
 func _show_world(world: String) -> void:
@@ -731,7 +774,11 @@ func _prebuild_in_guard(t: float) -> void:
 			var w := _world_of(str(opt["to"]))
 			if not stages.has(w):
 				_build_stage(w)
-				break
+				return
+		for pw in _portal_worlds(engine.node_id):  # a path portal in this room: its first world is built here too (one build per guard), never at the handoff behind the closed frame
+			if not stages.has(pw[0]):
+				_build_stage(pw[0], pw[1])
+				return
 
 
 ## RW_RUN_PAUSE_AT=<song seconds>: pauses there once and resumes a second later (the recording checks nothing drifts across it).
