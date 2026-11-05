@@ -1,0 +1,457 @@
+{
+ "version": 1,
+ "level": "airfield",
+ "px_scale_note": "the Mission Count's worlds have no SVG rigs: textures and baked people only",
+ "borrow_sprites": true,
+ "textures": {
+  "ceil_beams": {
+   "file": "textures/ceil_beams.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "ceil_canvas": {
+   "file": "textures/ceil_canvas.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "ceil_fuselage": {
+   "file": "textures/ceil_fuselage.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "ceil_hangar": {
+   "file": "textures/ceil_hangar.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "ceil_plaster": {
+   "file": "textures/ceil_plaster.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_boards": {
+   "file": "textures/floor_boards.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_concrete": {
+   "file": "textures/floor_concrete.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_dust": {
+   "file": "textures/floor_dust.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_lino": {
+   "file": "textures/floor_lino.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "floor_metal": {
+   "file": "textures/floor_metal.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "sky_day": {
+   "file": "textures/sky_day.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_board": {
+   "file": "textures/thing_board.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_bomber_nose": {
+   "file": "textures/thing_bomber_nose.png",
+   "size": [
+    256,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_certificate": {
+   "file": "textures/thing_certificate.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_cot_empty": {
+   "file": "textures/thing_cot_empty.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_cot_ward": {
+   "file": "textures/thing_cot_ward.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_crate_stack": {
+   "file": "textures/thing_crate_stack.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_desk_lamp": {
+   "file": "textures/thing_desk_lamp.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_desk_office": {
+   "file": "textures/thing_desk_office.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_door_office": {
+   "file": "textures/thing_door_office.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_door_open_light": {
+   "file": "textures/thing_door_open_light.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_drip_stand": {
+   "file": "textures/thing_drip_stand.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_emergency_box": {
+   "file": "textures/thing_emergency_box.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_filing_cabinet": {
+   "file": "textures/thing_filing_cabinet.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_flak_burst": {
+   "file": "textures/thing_flak_burst.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_fuel_drums": {
+   "file": "textures/thing_fuel_drums.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_hangar_front": {
+   "file": "textures/thing_hangar_front.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_instrument_panel": {
+   "file": "textures/thing_instrument_panel.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_jeep": {
+   "file": "textures/thing_jeep.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_kitchen_hatch": {
+   "file": "textures/thing_kitchen_hatch.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_ladder": {
+   "file": "textures/thing_ladder.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_lamp_hang": {
+   "file": "textures/thing_lamp_hang.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_lamp_red": {
+   "file": "textures/thing_lamp_red.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_ledger": {
+   "file": "textures/thing_ledger.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_nose_glass": {
+   "file": "textures/thing_nose_glass.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_release_lever": {
+   "file": "textures/thing_release_lever.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_sandbags": {
+   "file": "textures/thing_sandbags.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_scales": {
+   "file": "textures/thing_scales.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_screen_cloth": {
+   "file": "textures/thing_screen_cloth.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_shelves_tins": {
+   "file": "textures/thing_shelves_tins.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_sign_ledgerless": {
+   "file": "textures/thing_sign_ledgerless.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_stamp_big": {
+   "file": "textures/thing_stamp_big.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_stove": {
+   "file": "textures/thing_stove.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_table_maps": {
+   "file": "textures/thing_table_maps.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_tent_flap": {
+   "file": "textures/thing_tent_flap.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_truck": {
+   "file": "textures/thing_truck.png",
+   "size": [
+    256,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_window_hut": {
+   "file": "textures/thing_window_hut.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_window_office": {
+   "file": "textures/thing_window_office.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_windsock": {
+   "file": "textures/thing_windsock.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "wall_berm": {
+   "file": "textures/wall_berm.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "wall_bomber": {
+   "file": "textures/wall_bomber.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "wall_hangar": {
+   "file": "textures/wall_hangar.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "wall_hut": {
+   "file": "textures/wall_hut.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  },
+  "wall_office": {
+   "file": "textures/wall_office.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "wall_tent": {
+   "file": "textures/wall_tent.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.0
+  }
+ },
+ "people": {
+  "file": "people/people.json",
+  "pages": [
+   "people/page_0.png",
+   "people/page_1.png",
+   "people/page_2.png"
+  ],
+  "palette": "people/palette.png"
+ }
+}

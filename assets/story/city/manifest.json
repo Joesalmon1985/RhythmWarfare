@@ -1,0 +1,312 @@
+{
+ "version": 1,
+ "level": "city",
+ "px_scale_note": "the Mission Count's worlds have no SVG rigs: textures and baked people only",
+ "borrow_sprites": true,
+ "textures": {
+  "ceil_arcade": {
+   "file": "textures/ceil_arcade.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 4.0
+  },
+  "ceil_fuselage": {
+   "file": "textures/ceil_fuselage.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "ceil_night_red": {
+   "file": "textures/ceil_night_red.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 4.0
+  },
+  "ceil_plaster": {
+   "file": "textures/ceil_plaster.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_carpet": {
+   "file": "textures/floor_carpet.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_cobble": {
+   "file": "textures/floor_cobble.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_metal": {
+   "file": "textures/floor_metal.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "floor_rubble": {
+   "file": "textures/floor_rubble.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "sky_dusk": {
+   "file": "textures/sky_dusk.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_arch_broken": {
+   "file": "textures/thing_arch_broken.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_awning": {
+   "file": "textures/thing_awning.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_broken_wall": {
+   "file": "textures/thing_broken_wall.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_burnt_car": {
+   "file": "textures/thing_burnt_car.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_cafe_table": {
+   "file": "textures/thing_cafe_table.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_count_slate": {
+   "file": "textures/thing_count_slate.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_desk_colonel": {
+   "file": "textures/thing_desk_colonel.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_fire_barrel": {
+   "file": "textures/thing_fire_barrel.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_flak_burst": {
+   "file": "textures/thing_flak_burst.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_globe": {
+   "file": "textures/thing_globe.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_hq_door": {
+   "file": "textures/thing_hq_door.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_instrument_panel": {
+   "file": "textures/thing_instrument_panel.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_jacket_blood": {
+   "file": "textures/thing_jacket_blood.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_lamp_alarm": {
+   "file": "textures/thing_lamp_alarm.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_map_wall": {
+   "file": "textures/thing_map_wall.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_medal_case": {
+   "file": "textures/thing_medal_case.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_medkit": {
+   "file": "textures/thing_medkit.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_night_train": {
+   "file": "textures/thing_night_train.png",
+   "size": [
+    256,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_nose_glass": {
+   "file": "textures/thing_nose_glass.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_rubble": {
+   "file": "textures/thing_rubble.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_staff_car": {
+   "file": "textures/thing_staff_car.png",
+   "size": [
+    256,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_street_lamp": {
+   "file": "textures/thing_street_lamp.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_washing_line": {
+   "file": "textures/thing_washing_line.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_window_dusk": {
+   "file": "textures/thing_window_dusk.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "wall_bomber": {
+   "file": "textures/wall_bomber.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 1.5
+  },
+  "wall_panel": {
+   "file": "textures/wall_panel.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "wall_ruin": {
+   "file": "textures/wall_ruin.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "wall_stucco": {
+   "file": "textures/wall_stucco.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  }
+ },
+ "people": {
+  "file": "people/people.json",
+  "pages": [
+   "people/page_0.png",
+   "people/page_1.png"
+  ],
+  "palette": "people/palette.png"
+ }
+}

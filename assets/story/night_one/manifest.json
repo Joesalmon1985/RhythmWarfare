@@ -3030,6 +3030,22 @@
     128
    ],
    "metres": 2.0
+  },
+  "thing_booth_radio": {
+   "file": "textures/thing_booth_radio.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_bomber_shadow": {
+   "file": "textures/thing_bomber_shadow.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
   }
  },
  "people": {
