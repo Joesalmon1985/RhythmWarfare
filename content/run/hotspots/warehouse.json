@@ -1,46 +1,972 @@
 {
-	"world": "warehouse",
-	"note": "A SAMPLE covering only the Warehouse entry scene (workstream A, the contract's reference). Workstream C replaces this file with the whole world's hotspots.",
-	"hotspots": [
-		{
-			"id": "warehouse.floor.bar_door", "world": "warehouse", "scene": "warehouse", "map": "night_one",
-			"anchor": {"waypoint": "to_bar"}, "kind": "exit", "radius_m": 1.1, "min_px": 72,
-			"available": {"flags_all": [], "flags_none": [], "energy_min": 0, "once": false},
-			"look": {"available": "open", "selected": "ring", "committed": "flash"},
-			"challenge": null,
-			"on_success": {"route": "warehouse.bar"},
-			"on_failure": {"route": "warehouse.balcony", "energy": -3},
-			"default": true, "repeatable": true
-		},
-		{
-			"id": "warehouse.floor.balcony_stair", "world": "warehouse", "scene": "warehouse", "map": "night_one",
-			"anchor": {"waypoint": "to_balcony"}, "kind": "exit", "radius_m": 1.1, "min_px": 72,
-			"available": {"flags_all": [], "flags_none": [], "energy_min": 0, "once": false},
-			"look": {"available": "glow", "selected": "ring", "committed": "flash"},
-			"challenge": null,
-			"on_success": {"route": "warehouse.balcony"},
-			"on_failure": {"route": "warehouse.bar", "energy": -3},
-			"default": false, "repeatable": true
-		},
-		{
-			"id": "warehouse.floor.wizard", "world": "warehouse", "scene": "warehouse", "map": "night_one",
-			"anchor": {"waypoint": "hatch"}, "kind": "character", "radius_m": 1.0, "min_px": 72,
-			"available": {"flags_all": [], "flags_none": [], "energy_min": 0, "once": false},
-			"look": {"available": "beckon", "selected": "ring", "committed": "flash"},
-			"challenge": {"family": "drums", "tier": 1},
-			"on_success": {"route": "trial:1", "flags_set": ["keep:met_wizard"]},
-			"on_failure": {"flags_set": ["wizard_shrugged"], "energy": -2},
-			"default": false, "repeatable": true
-		},
-		{
-			"id": "warehouse.floor.dancer", "world": "warehouse", "scene": "warehouse", "map": "night_one",
-			"anchor": {"actor": "c01"}, "kind": "character", "radius_m": 0.8, "min_px": 72,
-			"available": {"flags_all": [], "flags_none": ["danced_with"], "energy_min": 0, "once": false},
-			"look": {"available": "beckon", "selected": "ring", "committed": "flash"},
-			"challenge": {"family": "drums", "tier": 1},
-			"on_success": {"flags_set": ["danced_with"], "energy": 6, "music": "variation"},
-			"on_failure": {"flags_set": ["stumbled"], "energy": -5},
-			"default": false, "repeatable": false
-		}
-	]
+ "world": "warehouse",
+ "hotspots": [
+  {
+   "id": "warehouse.exit_bar",
+   "world": "warehouse",
+   "scene": "warehouse",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "to_bar"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse.bar"
+   },
+   "on_failure": {
+    "route": "warehouse.bar",
+    "cinematic": "warehouse.stagger_entry_right",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.exit_balcony",
+   "world": "warehouse",
+   "scene": "warehouse",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "to_balcony"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse.balcony"
+   },
+   "on_failure": {
+    "route": "warehouse.balcony",
+    "cinematic": "warehouse.stagger_entry_up",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.wizard",
+   "world": "warehouse",
+   "scene": "warehouse",
+   "map": "night_one",
+   "anchor": {
+    "thing": "wizard_floor"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "wh_wizard_met"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "1",
+    "flags_set": [
+     "wh_wizard_met"
+    ]
+   },
+   "on_failure": {
+    "flags_set": [
+     "wh_wizard_shrug"
+    ],
+    "cinematic": "warehouse.wizard_shrug",
+    "energy": -2
+   },
+   "cinematic": {
+    "move": "walk",
+    "to": "floor_edge",
+    "bars": 2,
+    "role": "dancer",
+    "style": "walk",
+    "look_at": "wizard_floor"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.dancer",
+   "world": "warehouse",
+   "scene": "warehouse",
+   "map": "night_one",
+   "anchor": {
+    "actor": "g07"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "wh_circle"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wh_circle"
+    ],
+    "cinematic": "warehouse.join_circle",
+    "energy": 6,
+    "music": "variation"
+   },
+   "on_failure": {
+    "cinematic": "warehouse.stumble_circle",
+    "energy": -6
+   },
+   "cinematic": {
+    "move": "walk",
+    "to": "floor_centre",
+    "bars": 2,
+    "role": "dancer",
+    "style": "walk",
+    "look_at": "g07"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.led_wall",
+   "world": "warehouse",
+   "scene": "warehouse",
+   "map": "night_one",
+   "anchor": {
+    "thing": "disco_ball"
+   },
+   "kind": "feature",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [
+     "wh_circle"
+    ],
+    "flags_none": [
+     "wh_led"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wh_led"
+    ],
+    "energy": 5,
+    "music": "variation"
+   },
+   "on_failure": {
+    "energy": -4,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.bar.exit_chill",
+   "world": "warehouse",
+   "scene": "warehouse.bar",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "bar_to_chill"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse.chill"
+   },
+   "on_failure": {
+    "route": "warehouse.chill",
+    "cinematic": "warehouse.stagger_bar_right",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.bar.exit_booth",
+   "world": "warehouse",
+   "scene": "warehouse.bar",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "bar_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse.booth"
+   },
+   "on_failure": {
+    "route": "warehouse.booth",
+    "cinematic": "warehouse.stagger_bar_left",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.bar.bartender",
+   "world": "warehouse",
+   "scene": "warehouse.bar",
+   "map": "night_one",
+   "anchor": {
+    "actor": "b01"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wh_drink"
+    ],
+    "cinematic": "warehouse.drink_at_bar",
+    "energy": 6,
+    "music": "variation"
+   },
+   "on_failure": {
+    "flags_set": [
+     "wh_spilled"
+    ],
+    "cinematic": "warehouse.spill",
+    "energy": -8
+   },
+   "cinematic": {
+    "move": "walk",
+    "to": "bar_taps",
+    "bars": 2,
+    "role": "dancer",
+    "style": "walk",
+    "look_at": "b01"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.bar.stranger",
+   "world": "warehouse",
+   "scene": "warehouse.bar",
+   "map": "night_one",
+   "anchor": {
+    "actor": "b03"
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "wh_vip_pass",
+     "wh_stranger_gone"
+    ],
+    "energy_min": 0,
+    "once": true
+   },
+   "look": {
+    "available": "flicker",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wh_vip_pass"
+    ],
+    "cinematic": "warehouse.whisper",
+    "energy": 2
+   },
+   "on_failure": {
+    "flags_set": [
+     "wh_stranger_gone"
+    ],
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.balcony.exit_chill",
+   "world": "warehouse",
+   "scene": "warehouse.balcony",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "balcony_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse.chill"
+   },
+   "on_failure": {
+    "route": "warehouse.chill",
+    "cinematic": "warehouse.stagger_balcony_right",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.balcony.exit_booth",
+   "world": "warehouse",
+   "scene": "warehouse.balcony",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "balcony_stairs"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse.booth"
+   },
+   "on_failure": {
+    "route": "warehouse.booth",
+    "cinematic": "warehouse.stagger_balcony_left",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.balcony.rail",
+   "world": "warehouse",
+   "scene": "warehouse.balcony",
+   "map": "night_one",
+   "anchor": {
+    "pos": [
+     -7.15,
+     1.2,
+     1.0
+    ]
+   },
+   "kind": "feature",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wh_saw_floor"
+    ],
+    "cinematic": "warehouse.rail_look",
+    "energy": 4,
+    "music": "variation"
+   },
+   "on_failure": {
+    "cinematic": "warehouse.vertigo",
+    "energy": -6
+   },
+   "cinematic": {
+    "move": "walk",
+    "to": "balcony_rail",
+    "bars": 2,
+    "role": "dancer",
+    "style": "walk",
+    "look_at": "floor_centre"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.balcony.promoter",
+   "world": "warehouse",
+   "scene": "warehouse.balcony",
+   "map": "night_one",
+   "anchor": {
+    "actor": "v03"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse.booth",
+    "flags_set": [
+     "wh_promoter_nod"
+    ],
+    "cinematic": "warehouse.promoter_walk",
+    "energy": 4
+   },
+   "on_failure": {
+    "flags_set": [
+     "wh_promoter_snub"
+    ],
+    "energy": -4
+   },
+   "cinematic": {
+    "move": "walk",
+    "to": "balcony_stairs",
+    "bars": 2,
+    "role": "dancer",
+    "style": "walk",
+    "look_at": "v03"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.chill.exit_exit",
+   "world": "warehouse",
+   "scene": "warehouse.chill",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "chill_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse.exit"
+   },
+   "on_failure": {
+    "route": "warehouse.exit",
+    "cinematic": "warehouse.stagger_chill_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.chill.sofas",
+   "world": "warehouse",
+   "scene": "warehouse.chill",
+   "map": "night_one",
+   "anchor": {
+    "thing": "sofa_left"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wh_rested"
+    ],
+    "cinematic": "warehouse.sofa_rest",
+    "energy": 10
+   },
+   "on_failure": {
+    "flags_set": [
+     "wh_dozed"
+    ],
+    "cinematic": "warehouse.sofa_doze",
+    "energy": -10
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.chill.wizard",
+   "world": "warehouse",
+   "scene": "warehouse.chill",
+   "map": "night_one",
+   "anchor": {
+    "thing": "wizard_chill"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "wh_wizard_met"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "1",
+    "flags_set": [
+     "wh_wizard_met"
+    ]
+   },
+   "on_failure": {
+    "flags_set": [
+     "wh_wizard_shrug"
+    ],
+    "energy": -2
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.chill.lavalamp",
+   "world": "warehouse",
+   "scene": "warehouse.chill",
+   "map": "night_one",
+   "anchor": {
+    "thing": "lavalamp"
+   },
+   "kind": "feature",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wh_lava_gaze"
+    ],
+    "energy": 5,
+    "music": "variation"
+   },
+   "on_failure": {
+    "energy": -3,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.booth.exit_exit",
+   "world": "warehouse",
+   "scene": "warehouse.booth",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "booth_down"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "warehouse.exit"
+   },
+   "on_failure": {
+    "route": "warehouse.exit",
+    "cinematic": "warehouse.stagger_booth_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.booth.decks",
+   "world": "warehouse",
+   "scene": "warehouse.booth",
+   "map": "night_one",
+   "anchor": {
+    "pos": [
+     0.0,
+     1.1,
+     -8.25
+    ]
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wh_dj_set"
+    ],
+    "cinematic": "warehouse.drop_decks",
+    "energy": 8,
+    "music": "variation"
+   },
+   "on_failure": {
+    "flags_set": [
+     "wh_wrong_record"
+    ],
+    "cinematic": "warehouse.wrong_record",
+    "energy": -8,
+    "music": "dip"
+   },
+   "cinematic": {
+    "move": "walk",
+    "to": "booth_decks",
+    "bars": 2,
+    "role": "dj",
+    "style": "walk"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.booth.headphones",
+   "world": "warehouse",
+   "scene": "warehouse.booth",
+   "map": "night_one",
+   "anchor": {
+    "thing": "headphones_booth"
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [
+     "wh_vip_pass"
+    ],
+    "flags_none": [
+     "wh_headphones",
+     "wh_headphones_wrong"
+    ],
+    "energy_min": 0,
+    "once": true
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "wh_headphones"
+    ],
+    "cinematic": "warehouse.headphones_on",
+    "energy": 6,
+    "music": "variation"
+   },
+   "on_failure": {
+    "flags_set": [
+     "wh_headphones_wrong"
+    ],
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.exit.exit_mothership",
+   "world": "warehouse",
+   "scene": "warehouse.exit",
+   "map": "night_one",
+   "anchor": {
+    "waypoint": "tunnel"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mothership"
+   },
+   "on_failure": {
+    "route": "mothership",
+    "cinematic": "warehouse.stagger_exit_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.exit.exit_underworld",
+   "world": "warehouse",
+   "scene": "warehouse.exit",
+   "map": "night_one",
+   "anchor": {
+    "thing": "crack_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "crack",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "underworld"
+   },
+   "on_failure": {
+    "route": "underworld",
+    "cinematic": "warehouse.stagger_exit_right",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.exit.bouncer",
+   "world": "warehouse",
+   "scene": "warehouse.exit",
+   "map": "night_one",
+   "anchor": {
+    "actor": "d01"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "wh_vip_pass"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mothership",
+    "flags_set": [
+     "wh_door_clear"
+    ],
+    "energy": 4
+   },
+   "on_failure": {
+    "route": "underworld",
+    "flags_set": [
+     "wh_thrown_out"
+    ],
+    "cinematic": "warehouse.thrown_out",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "warehouse.exit.bouncer_vip",
+   "world": "warehouse",
+   "scene": "warehouse.exit",
+   "map": "night_one",
+   "anchor": {
+    "actor": "d01"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [
+     "wh_vip_pass"
+    ],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mothership",
+    "flags_set": [
+     "wh_guest_list"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "route": "mothership",
+    "flags_set": [
+     "wh_pass_scuffed"
+    ],
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true
+  }
+ ]
 }

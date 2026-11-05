@@ -1,0 +1,662 @@
+{
+ "world": "mothership",
+ "hotspots": [
+  {
+   "id": "mothership.exit_gallery",
+   "world": "mothership",
+   "scene": "mothership",
+   "map": "mothership",
+   "anchor": {
+    "waypoint": "deck_gallery_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mothership.gallery"
+   },
+   "on_failure": {
+    "route": "mothership.gallery",
+    "cinematic": "mothership.stagger_entry_right",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.exit_reactor",
+   "world": "mothership",
+   "scene": "mothership",
+   "map": "mothership",
+   "anchor": {
+    "waypoint": "deck_reactor_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mothership.reactor"
+   },
+   "on_failure": {
+    "route": "mothership.reactor",
+    "cinematic": "mothership.stagger_entry_up",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.grey",
+   "world": "mothership",
+   "scene": "mothership",
+   "map": "mothership",
+   "anchor": {
+    "actor": "g08"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "ms_grey_friend"
+    ],
+    "cinematic": "mothership.grey_gentle",
+    "energy": 5
+   },
+   "on_failure": {
+    "flags_set": [
+     "ms_probed"
+    ],
+    "cinematic": "mothership.probe_light",
+    "energy": -7
+   },
+   "cinematic": {
+    "move": "walk",
+    "to": "deck_ramp",
+    "bars": 2,
+    "role": "dancer",
+    "style": "walk",
+    "look_at": "g08"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.dj",
+   "world": "mothership",
+   "scene": "mothership",
+   "map": "mothership",
+   "anchor": {
+    "actor": "m01"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "ms_dj_pal"
+    ],
+    "cinematic": "mothership.dais_walk",
+    "energy": 6,
+    "music": "variation"
+   },
+   "on_failure": {
+    "flags_set": [
+     "ms_feedback"
+    ],
+    "energy": -6,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.gallery.exit_bridge",
+   "world": "mothership",
+   "scene": "mothership.gallery",
+   "map": "mothership",
+   "anchor": {
+    "waypoint": "gallery_east"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mothership.bridge"
+   },
+   "on_failure": {
+    "route": "mothership.bridge",
+    "cinematic": "mothership.stagger_gallery_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.gallery.window",
+   "world": "mothership",
+   "scene": "mothership.gallery",
+   "map": "mothership",
+   "anchor": {
+    "thing": "glow_g"
+   },
+   "kind": "feature",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "ms_saw_planet"
+    ],
+    "cinematic": "mothership.window_gaze",
+    "energy": 5,
+    "music": "variation"
+   },
+   "on_failure": {
+    "cinematic": "mothership.cruiser_glare",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.gallery.menu",
+   "world": "mothership",
+   "scene": "mothership.gallery",
+   "map": "mothership",
+   "anchor": {
+    "thing": "menu_g"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "ms_ordered"
+    ],
+    "cinematic": "mothership.order",
+    "energy": 8
+   },
+   "on_failure": {
+    "flags_set": [
+     "ms_bad_order"
+    ],
+    "cinematic": "mothership.bad_order",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.reactor.exit_bridge",
+   "world": "mothership",
+   "scene": "mothership.reactor",
+   "map": "mothership",
+   "anchor": {
+    "waypoint": "catwalk_bridge"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mothership.bridge"
+   },
+   "on_failure": {
+    "route": "mothership.bridge",
+    "cinematic": "mothership.stagger_reactor_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.reactor.core",
+   "world": "mothership",
+   "scene": "mothership.reactor",
+   "map": "mothership",
+   "anchor": {
+    "thing": "core_r"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "ms_surge"
+    ],
+    "cinematic": "mothership.core_surge",
+    "energy": 8,
+    "music": "variation"
+   },
+   "on_failure": {
+    "flags_set": [
+     "ms_alarm"
+    ],
+    "cinematic": "mothership.alarm_run",
+    "energy": -8,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.reactor.engineer",
+   "world": "mothership",
+   "scene": "mothership.reactor",
+   "map": "mothership",
+   "anchor": {
+    "actor": "reactor_s01"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "ms_badge"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "ms_badge"
+    ],
+    "cinematic": "mothership.badge",
+    "energy": 4
+   },
+   "on_failure": {
+    "flags_set": [
+     "ms_shooed"
+    ],
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.bridge.exit_exit",
+   "world": "mothership",
+   "scene": "mothership.bridge",
+   "map": "mothership",
+   "anchor": {
+    "waypoint": "bridge_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mothership.exit"
+   },
+   "on_failure": {
+    "route": "mothership.exit",
+    "cinematic": "mothership.stagger_bridge_up",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.bridge.helm",
+   "world": "mothership",
+   "scene": "mothership.bridge",
+   "map": "mothership",
+   "anchor": {
+    "thing": "captain_h"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "ms_warp"
+    ],
+    "cinematic": "mothership.warp",
+    "energy": 10,
+    "music": "variation"
+   },
+   "on_failure": {
+    "flags_set": [
+     "ms_crash"
+    ],
+    "cinematic": "mothership.crash",
+    "energy": -10,
+    "music": "dip"
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.bridge.star_chart",
+   "world": "mothership",
+   "scene": "mothership.bridge",
+   "map": "mothership",
+   "anchor": {
+    "thing": "globe_b"
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [
+     "ms_badge"
+    ],
+    "flags_none": [
+     "ms_star_chart",
+     "ms_lockout"
+    ],
+    "energy_min": 0,
+    "once": true
+   },
+   "look": {
+    "available": "flicker",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "ms_star_chart"
+    ],
+    "energy": 6,
+    "music": "variation"
+   },
+   "on_failure": {
+    "flags_set": [
+     "ms_lockout"
+    ],
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.exit.exit_hospital",
+   "world": "mothership",
+   "scene": "mothership.exit",
+   "map": "mothership",
+   "anchor": {
+    "waypoint": "airlock_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital"
+   },
+   "on_failure": {
+    "route": "hospital",
+    "cinematic": "mothership.stagger_exit_left",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.exit.exit_ward",
+   "world": "mothership",
+   "scene": "mothership.exit",
+   "map": "mothership",
+   "anchor": {
+    "waypoint": "exam_door"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward"
+   },
+   "on_failure": {
+    "route": "ward",
+    "cinematic": "mothership.stagger_exit_right",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.exit.exam",
+   "world": "mothership",
+   "scene": "mothership.exit",
+   "map": "mothership",
+   "anchor": {
+    "actor": "med02"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "ms_exam_ok"
+    ],
+    "cinematic": "mothership.exam_ok",
+    "energy": 6
+   },
+   "on_failure": {
+    "route": "ward",
+    "flags_set": [
+     "ms_probed"
+    ],
+    "cinematic": "mothership.exam_strapped",
+    "energy": -8
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "mothership.exit.airlock_wheel",
+   "world": "mothership",
+   "scene": "mothership.exit",
+   "map": "mothership",
+   "anchor": {
+    "thing": "wheel_a"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital",
+    "flags_set": [
+     "ms_airlock_cycled"
+    ],
+    "cinematic": "mothership.cycle_lock",
+    "energy": 5
+   },
+   "on_failure": {
+    "route": "hospital",
+    "flags_set": [
+     "ms_airlock_alarm"
+    ],
+    "cinematic": "mothership.alarm_lock",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": true
+  }
+ ]
+}

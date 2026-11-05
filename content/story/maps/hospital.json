@@ -38,7 +38,8 @@
   "wall_vending": "textures/wall_vending.png",
   "wall_vending_wall": "textures/wall_vending_wall.png",
   "wall_ward": "textures/wall_ward.png",
-  "wall_window": "textures/wall_window.png"
+  "wall_window": "textures/wall_window.png",
+  "thing_mic": "textures/thing_mic.png"
  },
  "sectors": [
   {"id": "ward", "polygon": [[-5, -3], [5, -3], [5, 5], [-5, 5]], "floor": 0, "ceiling": 2.7, "floor_tex": "floor_ward", "ceil_tex": "ceil_tile", "wall_tex": "wall_ward", "light": 0.5, "tint": "#6f8fe0", "room": "main", "flags": ["dance_floor"], "activities": {"quiet": ["sit", "chat", "stand", "sleep", "check"], "dancing": ["dance", "dance", "dance", "chat", "sit"], "hype": ["dance", "dance", "dance", "wave", "chat"], "euphoric": ["dance", "dance", "wave", "hug", "dance"]}},
@@ -236,7 +237,9 @@
   {"id": "lt_lamp_g1", "kind": "light", "at": [48.0, 6.6], "y": 2.6, "radius": 5.0, "color": "#ffd890", "strength": 1.0, "sectors": ["garden"]},
   {"id": "lt_lamp_g2", "kind": "light", "at": [58.4, -5.2], "y": 2.6, "radius": 5.0, "color": "#ffd890", "strength": 1.0, "sectors": ["garden"]},
   {"id": "lt_lamp_g3", "kind": "light", "at": [58.4, 7.2], "y": 2.6, "radius": 5.0, "color": "#ffd890", "strength": 1.0, "sectors": ["garden"]},
-  {"id": "lt_moon_garden", "kind": "light", "at": [53.0, -8.0], "y": 6.0, "radius": 16.0, "color": "#8fb0ff", "strength": 0.6, "sectors": ["garden"]}
+  {"id": "lt_moon_garden", "kind": "light", "at": [53.0, -8.0], "y": 6.0, "radius": 16.0, "color": "#8fb0ff", "strength": 0.6, "sectors": ["garden"]},
+  {"id": "mic_band", "kind": "billboard", "sprite": "thing_mic", "at": [62.3, 1.4], "y": 0.75, "size": 1.5, "anim": "none"},
+  {"id": "lt_band_mic", "kind": "light", "at": [62, 1.2], "y": 1.8, "radius": 3.5, "color": "#ffd890", "strength": 1}
  ],
  "homes": [
   {"actor": "c01", "sector": "ward", "at": [0.0, 2.57]},

@@ -3387,6 +3387,14 @@
    ],
    "metres": 1.0
   },
+  "thing_mural": {
+   "file": "textures/thing_mural.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
   "thing_phone": {
    "file": "textures/thing_phone.png",
    "size": [
