@@ -13,7 +13,11 @@ const MAPS_DIR := "res://content/story/maps"
 const SOURCE_LABELS := {"owner": "OWNER'S LOOP", "owner_standin": "OWNER'S LOOP (stand-in, temporary)", "placeholder": "PLACEHOLDER (synthesised, temporary)"}
 const SOURCE_TAGS := {"owner": "OWNER", "owner_standin": "OWNER stand-in", "placeholder": "PLACEHOLDER"}
 
+const ROLES := {"drums": "drums", "bass": "bass", "other": "synth"}  # the pack stem key -> the role named in the labels
+
 static var _maps: Dictionary = {}
+static var _users_key := ""
+static var _users: Dictionary = {}  # simplified stem path -> ["<run>/<scene>", ...] of the scenes that play it under the current arrangement choice and seed
 
 
 # --- the list --------------------------------------------------------------------------------------------------------------------
@@ -85,7 +89,38 @@ static func _pack_label(data: RunData, pack_id: String) -> String:
 	return str(data.packs[pack_id].get("label", pack_id)) if data.packs.has(pack_id) else "(missing pack)"
 
 
-## A pack's three stems and its chart files, named as the pack.json names them: {voices: {drums|bass|other: {label, file, stem, path, exists}}, charts: {drums, bass}, loop_beats, loop_s, ...}.
+## Which scenes play each stem file. Stems are shared between packs on disk (songs/packs/_shared/<voice>_<sha>.wav, tools/content/stems.py), so one file can serve several scenes: the debug labels name the owner's
+## export (pack.json loops.<voice>.source_file) and list the other scenes that play the same file. Built once from every run's data (cached per arrangement choice and seed).
+static func stem_users() -> Dictionary:
+	var key := "%d/%d" % [RunData.arrangement_override, RunData.run_seed()]
+	if key == _users_key:
+		return _users
+	_users = {}
+	_users_key = key
+	for rid in run_ids():
+		var data := load_run(str(rid))
+		for id in data.node_order:
+			var node: Dictionary = data.nodes[id]
+			var packs: Array = []
+			for s in node.get("sections", []):
+				packs.append(str(s["pack"]))
+			if packs.is_empty():
+				packs.append(str(node["audio"]))
+			for pk in packs:
+				if not data.packs.has(pk):
+					continue
+				var p: Dictionary = data.packs[pk]
+				for vk in (p.get("stems", {}) as Dictionary):
+					var path := str(p["dir"]).path_join(str(p["stems"][vk])).simplify_path()
+					if not _users.has(path):
+						_users[path] = []
+					var who := "%s/%s" % [rid, id]
+					if not (_users[path] as Array).has(who):
+						(_users[path] as Array).append(who)
+	return _users
+
+
+## A pack's three stems and its chart files, named as the pack.json names them: {voices: {drums|bass|other: {label, role, file (the owner's export name), owner_name, shared_file, stem, path, exists, shared_with}}, charts: {drums, bass}, loop_beats, loop_s, ...}.
 static func pack_identity(data: RunData, pack_id: String) -> Dictionary:
 	var out := {"id": pack_id, "known": data.packs.has(pack_id), "label": _pack_label(data, pack_id), "voices": {}, "charts": {}, "problems": [], "placeholder": false, "profile": "", "bpm": 0, "loop_beats": 0, "loop_s": 0.0}
 	if not data.packs.has(pack_id):
@@ -106,13 +141,15 @@ static func pack_identity(data: RunData, pack_id: String) -> Dictionary:
 		var path := str(p.get("dir", "")).path_join(rel) if rel != "" else ""
 		var file := str((loops.get(key, {}) as Dictionary).get("source_file", ""))
 		var exists := path != "" and ResourceLoader.exists(path)
+		var owner_name := file
 		if file == "":
 			file = rel.get_file() if rel != "" else "(none)"
-		elif file.to_lower() == "synthesised":  # a placeholder: no owner's file, so say which stem of which pack it is
-			file = "synthesised placeholder (%s: %s)" % [pack_id, rel if rel != "" else key]
+		elif file.to_lower() == "synthesised":  # a placeholder: no owner's export exists, so say which stem of which pack it is
+			owner_name = ""
+			file = "synthesised placeholder (%s: %s)" % [pack_id, key]
 		if not exists:
 			(out["problems"] as Array).append("%s stem of %s is missing (%s)" % [str(pair[1]), pack_id, path])
-		(out["voices"] as Dictionary)[key] = {"label": str(pair[1]), "file": file, "stem": rel, "path": path, "exists": exists}
+		(out["voices"] as Dictionary)[key] = {"label": str(pair[1]), "role": str(ROLES[key]), "file": file, "owner_name": owner_name, "shared_file": rel.get_file(), "stem": rel, "path": path, "exists": exists, "shared_with": []}
 	var src: Dictionary = p.get("source", {}) if typeof(p.get("source", {})) == TYPE_DICTIONARY else {}
 	var files: Dictionary = src.get("files", {}) if typeof(src.get("files", {})) == TYPE_DICTIONARY else {}
 	for pair in VOICES.slice(0, 2):  # the cues come from the Drums and Bass MIDI
@@ -143,6 +180,16 @@ static func _audio(data: RunData, node: Dictionary) -> Dictionary:
 	else:
 		for s in raw:
 			sections.append(_section(data, float(s["start_beat"]), float(s["beats"]), str(s["pack"]), str(s["pack"]), str(s["role"]), str(s["mix"]), s["gains"], tier))
+	var users := stem_users()
+	for s in sections:  # which other scenes play the same stem files
+		for vk in (s["audio"]["voices"] as Dictionary):
+			var v: Dictionary = s["audio"]["voices"][vk]
+			var others: Array = []
+			var me := "%s/%s" % [data.path_id if data.is_path() else "main", str(node["id"])]
+			for who in users.get(str(v["path"]).simplify_path(), []):
+				if str(who) != me and not others.has(who):
+					others.append(who)
+			v["shared_with"] = others
 	var packs: Array = []
 	var problems: Array = []
 	var placeholder := false
@@ -281,6 +328,14 @@ static func bus_text(bb: Dictionary) -> String:
 	return "high-pass %.0f Hz, shelf %+.1f dB at %.0f Hz, drive %.2f, pre %+.1f dB, post %+.1f dB" % [float(bb["highpass_hz"]), float(bb["shelf_db"]), float(bb["shelf_hz"]), float(bb["drive"]), float(bb["pre_gain_db"]), float(bb["gain_db"])]
 
 
+## "; also played in n other scenes: a, b" for a stem file that other scenes use too, else "; used by no other scene".
+static func shared_text(v: Dictionary) -> String:
+	var w: Array = v.get("shared_with", [])
+	if w.is_empty():
+		return "; used by no other scene"
+	return "; also played in %d other scenes: %s" % [w.size(), ", ".join(PackedStringArray(w))]
+
+
 ## The audio detail as [[heading, [lines]], ...]; the detail screen draws it and `identity_text` joins it.
 static func audio_sections(info: Dictionary) -> Array:
 	var a: Dictionary = info["audio"]
@@ -302,7 +357,8 @@ static func audio_sections(info: Dictionary) -> Array:
 		lines.append("Pack %s  (%s)   loop %d beats, %.2f s%s" % [str(s["pack"]), str(ident["label"]), int(ident["loop_beats"]), float(ident["loop_s"]), "   PLACEHOLDER" if bool(ident["placeholder"]) else ""])
 		for pair in VOICES:
 			var v: Dictionary = (ident["voices"] as Dictionary).get(str(pair[0]), {})
-			lines.append("   %s: %s%s" % [str(pair[1]), str(v.get("file", "?")), "" if bool(v.get("exists", false)) else "   (STEM MISSING)"])
+			lines.append("   %s (%s): %s%s" % [str(pair[1]), str(v.get("role", "?")), str(v.get("file", "?")), "" if bool(v.get("exists", false)) else "   (STEM MISSING)"])
+			lines.append("      file %s%s" % [str(v.get("shared_file", "?")), shared_text(v)])
 		var chart: Dictionary = s["chart"]
 		if str(s["chart_pack"]) != str(s["pack"]):
 			lines.append("Chart pack %s (%s)" % [str(s["chart_pack"]), str(chart["label"])])

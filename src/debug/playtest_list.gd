@@ -257,7 +257,8 @@ func open_detail(run_id: String, scene_id: String) -> void:
 			var hl := UiStyle.note(str(sec[0]), UiStyle.ACCENT, 15)
 			_detail_body.add_child(hl)
 			for l in sec[1]:
-				var lab := UiStyle.note(str(l), UiStyle.WARN if str(sec[0]) == "PROBLEMS" else UiStyle.TEXT, 15)
+				var small := str(l).begins_with("      ")  # the shared-file lines are small print
+				var lab := UiStyle.note(str(l).strip_edges() if small else str(l), UiStyle.MUTED if small else (UiStyle.WARN if str(sec[0]) == "PROBLEMS" else UiStyle.TEXT), 12 if small else 15)
 				_detail_body.add_child(lab)
 	_list_view.visible = false
 	_detail_view.visible = true

@@ -22,6 +22,7 @@ var _cache: Dictionary = {}  # "<data id>/<scene id>" -> PlaytestCatalog.scene_i
 func setup(p_play: Node) -> void:
 	play = p_play
 	name = "PlaytestOverlay"
+	PlaytestCatalog.stem_users()  # (read every run's stems once, now, so no frame of play pays for it)
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_panel = PanelContainer.new()
@@ -202,7 +203,8 @@ static func lines(info: Dictionary, live: Dictionary) -> Array:
 	out.append("MUSIC %s (%s) | %s | tier %d%s" % [str(live["pack"]), str(ident["label"]), str(a["source_label"]), int(a["tier"]), sec_txt])
 	for pair in PlaytestCatalog.VOICES:
 		var vv: Dictionary = (ident["voices"] as Dictionary).get(str(pair[0]), {})
-		out.append("   %s  %s" % [str(pair[1]).substr(0, 1), str(vv.get("file", "?"))])
+		var sw: Array = vv.get("shared_with", [])
+		out.append("   %s  %s   (%s%s)" % [str(vv.get("role", pair[1])), str(vv.get("file", "?")), str(vv.get("shared_file", "?")), (", shared with %d scenes" % sw.size()) if not sw.is_empty() else ""])
 	var ch: Dictionary = (cur["chart"] as Dictionary).get("charts", {})
 	if str(live.get("chart_pack", live["pack"])) != str(live["pack"]):
 		out.append("   cues from %s" % str(live["chart_pack"]))

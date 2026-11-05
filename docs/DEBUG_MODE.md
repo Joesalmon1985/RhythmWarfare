@@ -34,8 +34,10 @@ choose "1st / 2nd / 3rd arrangement of every scene" to hear and rate each one. T
 
 **AUDIO**
 * *Source*: `OWNER'S LOOP`; `OWNER'S LOOP (stand-in, temporary)` (music.json `temporary`: the Underworld plays Lv2 / Cold Fusion loops until Lv3 Hell exists); `PLACEHOLDER (synthesised, temporary)` (the Gospel and Ember).
-* *Pack* `squadron_c07 (C07)`: the pack id, its label, the loop length. Under it the three **stem files exactly as in your exports**: `Drums: Beat Shaper - C07-Drums.wav`, `Bass: ...`, `Synth: ...`
-  (read from each pack's `pack.json`, `loops.<voice>.source_file`; a placeholder has none, so it names the pack's stem instead). `(STEM MISSING)` would mean the stem does not load.
+* *Pack* `squadron_c07 (C07)`: the pack id, its label, the loop length. Under it each stem as **role (owner's export name)**: `Bass (bass): Beat Shaper - C07-Bass.wav`, then in small print the file it is stored as
+  and the other scenes that play the same file: `file bass_a06475939410.wav; also played in 2 other scenes: ...` (the owner's name is `pack.json` `loops.<voice>.source_file`, recorded for all 120 owner stems; the
+  game plays the deduplicated `songs/packs/_shared/<role>_<sha>.wav`, which the label shows only as the small-print file name). A placeholder has no export, so it says `synthesised placeholder (pack: voice)`.
+  `(STEM MISSING)` would mean the stem does not load. The notes carry the same: `stems` (owner names), `stem_roles`, `stem_files` and `stem_shared_with` (scene ids) per voice.
 * *Cues (tier n)*: the Drums and Bass **MIDI** files the cues are charted from, at the difficulty tier of the world (min(depth, 4)).
 * *Sections*: a 174-run scene is two 8-bar sections (or one 16-bar) of an arrangement, each its own pack and **mix recipe**; "CHART PACK PER BLOCK" lists which pack charts each of the four blocks.
 * *Music family*: scenes of one family share key and sound; the bass of the scene you leave carries into the next (`mix.carry_bass`).

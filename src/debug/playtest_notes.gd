@@ -40,6 +40,8 @@ static func make_entry(info: Dictionary, live: Dictionary, verdict: String, text
 	var v: Dictionary = info.get("visual", {})
 	var live_pack := str(live.get("pack", ""))
 	var stems := {}
+	var stem_files := {}
+	var stem_shared := {}
 	var charts := {}
 	var label := ""
 	for s in a.get("sections", []):
@@ -48,11 +50,13 @@ static func make_entry(info: Dictionary, live: Dictionary, verdict: String, text
 			label = str((s["audio"] as Dictionary).get("label", ""))
 			for key in (s["audio"] as Dictionary)["voices"]:
 				stems[key] = str(s["audio"]["voices"][key]["file"])
+				stem_files[key] = str(s["audio"]["voices"][key]["shared_file"])
+				stem_shared[key] = s["audio"]["voices"][key]["shared_with"]
 			charts = (s["chart"] as Dictionary).get("charts", {}).duplicate()
 	return {"ts": timestamp(), "verdict": verdict, "run": str(info.get("run", "")), "scene": str(info.get("id", "")), "scene_title": str(info.get("title", "")), "world": str(info.get("world", "")),
 		"phase": int(live.get("phase", 0)), "block": int(live.get("block", 0)), "stage": str(live.get("stage_label", "")), "beat": snappedf(float(live.get("beat", 0.0)), 0.1), "song_t": snappedf(float(live.get("t", 0.0)), 0.01),
 		"bpm": int(info.get("bpm", 0)), "energy": snappedf(float(live.get("energy", 0.0)), 0.1),
-		"packs": a.get("packs", []), "pack_playing": live_pack, "pack_label": label, "stems": stems, "charts": charts, "source": str(a.get("source", "")), "temporary": bool(a.get("temporary", false)),
+		"packs": a.get("packs", []), "pack_playing": live_pack, "pack_label": label, "stems": stems, "stem_roles": PlaytestCatalog.ROLES, "stem_files": stem_files, "stem_shared_with": stem_shared, "charts": charts, "source": str(a.get("source", "")), "temporary": bool(a.get("temporary", false)),
 		"arrangement": str(a.get("arrangement", "")), "tier": int(a.get("tier", 0)),
 		"visual": {"map": str(v.get("map", "")), "view": str(v.get("view", "")), "sector": str(v.get("sector", "")), "light": str(v.get("time_of_day", "")), "pieces_on": v.get("pieces_on", []),
 			"cast": v.get("cast", []), "hotspots": (v.get("hotspots", []) as Array).map(func(h: Dictionary) -> String: return str(h["id"]))},
@@ -68,9 +72,13 @@ static func entry_markdown(e: Dictionary) -> String:
 	lines.append("- music: %s (%s)   %s%s" % [str(e.get("pack_playing", "")), str(e.get("pack_label", "")), str(PlaytestCatalog.SOURCE_LABELS.get(str(e.get("source", "")), str(e.get("source", "")))), "   [TEMPORARY]" if bool(e.get("temporary", false)) else ""])
 	lines.append("  - packs in this scene: %s   tier %d%s" % [", ".join(PackedStringArray(e.get("packs", []))), int(e.get("tier", 0)), ("   arrangement " + str(e["arrangement"])) if str(e.get("arrangement", "")) != "" else ""])
 	var st: Dictionary = e.get("stems", {})
+	var sf: Dictionary = e.get("stem_files", {})
+	var ss: Dictionary = e.get("stem_shared_with", {})
 	for pair in PlaytestCatalog.VOICES:
 		if st.has(str(pair[0])):
-			lines.append("  - %s: %s" % [str(pair[1]), str(st[str(pair[0])])])
+			var w: Array = ss.get(str(pair[0]), [])
+			var also := ("also played in " + ", ".join(PackedStringArray(w))) if not w.is_empty() else "used by no other scene"
+			lines.append("  - %s (%s): %s   [file %s; %s]" % [str(pair[1]), str(PlaytestCatalog.ROLES.get(str(pair[0]), "")), str(st[str(pair[0])]), str(sf.get(str(pair[0]), "?")), also])
 	var ch: Dictionary = e.get("charts", {})
 	if not ch.is_empty():
 		lines.append("  - cues: drums %s, bass %s" % [str(ch.get("drums", "?")), str(ch.get("bass", "?"))])

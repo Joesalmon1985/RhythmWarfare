@@ -174,6 +174,51 @@ func test_source_labels_follow_music_json() -> void:
 	assert_eq(c07["sections"][0]["chart"]["charts"]["bass"], "Beat Shaper - C07-Bass.mid")
 
 
+func test_stems_show_role_owner_name_shared_file_and_the_scenes_that_share_it() -> void:
+	var sq := RunData.load_path("squadron")
+	var info := PlaytestCatalog.scene_info(sq, "city")
+	var voices: Dictionary = info["audio"]["sections"][0]["audio"]["voices"]
+	for pair in [["drums", "drums", "Beat Shaper - C07-Drums.wav"], ["bass", "bass", "Beat Shaper - C07-Bass.wav"], ["other", "synth", "Beat Shaper - C07-Synth.wav"]]:
+		var v: Dictionary = voices[str(pair[0])]
+		assert_eq(v["role"], pair[1])
+		assert_eq(v["owner_name"], pair[2], "the owner's export name, not the shared file")
+		assert_eq(v["file"], pair[2])
+		assert_true(str(v["stem"]).contains("_shared/") or str(v["shared_file"]) != "", "the shared file name is kept")
+		assert_true(str(v["shared_file"]).get_extension() == "wav" and str(v["shared_file"]) != str(v["owner_name"]), "small print: %s" % str(v["shared_file"]))
+	var text := PlaytestCatalog.identity_text(info)
+	assert_contains(text, "Bass (bass): Beat Shaper - C07-Bass.wav")
+	assert_contains(text, "file " + str(voices["bass"]["shared_file"]))
+	assert_false(text.contains("../_shared"), "the label never shows the relative path")
+	# several scenes share one file: every owner of it names the others, and it is symmetrical
+	var users := PlaytestCatalog.stem_users()
+	var checked := 0
+	for path in users:
+		var who: Array = users[path]
+		if who.size() < 2:
+			continue
+		var a_run := str(who[0]).get_slice("/", 0)
+		var a_scene := str(who[0]).get_slice("/", 1)
+		var d := PlaytestCatalog.load_run(a_run)
+		var inf := PlaytestCatalog.scene_info(d, a_scene)
+		var found := false
+		for s in inf["audio"]["sections"]:
+			for vk in s["audio"]["voices"]:
+				var v2: Dictionary = s["audio"]["voices"][vk]
+				if str(v2["path"]).simplify_path() == path:
+					found = true
+					assert_eq((v2["shared_with"] as Array).size(), who.size() - 1, "%s: the other scenes sharing %s" % [str(who[0]), str(path)])
+					assert_false((v2["shared_with"] as Array).has(str(who[0])))
+		assert_true(found)
+		checked += 1
+		if checked >= 6:
+			break
+	assert_true(checked > 0, "some stem file is played by several scenes")
+	var gospel := PlaytestCatalog.scene_info(RunData.load_path("gospel"), "jordan")["audio"]["sections"][0]["audio"]["voices"]["bass"] as Dictionary
+	assert_eq(gospel["owner_name"], "", "a placeholder has no owner's export")
+	assert_contains(gospel["file"], "synthesised placeholder")
+	assert_eq(gospel["role"], "bass")
+
+
 func test_an_arrangement_scene_names_each_sections_pack_and_the_pack_per_block() -> void:
 	var main := RunData.load_default()
 	var info := PlaytestCatalog.scene_info(main, "warehouse.bar")
@@ -211,13 +256,16 @@ func test_notes_are_written_to_both_files_and_read_back() -> void:
 	assert_eq(back[0]["packs"], info["audio"]["packs"])
 	assert_eq(back[0]["stems"]["bass"], info["audio"]["sections"][0]["audio"]["voices"]["bass"]["file"], "the stem file names are in the entry")
 	assert_eq(back[0]["temporary"], false)
+	assert_eq(back[0]["stem_roles"]["other"], "synth")
+	assert_eq(back[0]["stem_files"]["bass"], info["audio"]["sections"][0]["audio"]["voices"]["bass"]["shared_file"], "the shared file name is in the entry too")
+	assert_true(back[0]["stem_shared_with"].has("bass"))
 	assert_eq(back[0]["phase"], 3)
 	assert_eq(back[0]["visual"]["map"], "night_one")
 	assert_eq(back[2]["run"], "gospel")
 	assert_eq(back[2]["temporary"], true, "the Gospel placeholder is marked temporary")
 	assert_eq(back[2]["text"], "too dark, \"quoted\" and\nmultiline", "free text survives a round trip")
 	var md := PlaytestNotes.all_markdown()
-	for want in ["DON'T LIKE THE MUSIC", "LIKE IT", "DON'T LIKE THE VISUALS", "warehouse.bar", "Beat Shaper - ", "[TEMPORARY]", "block 2"]:
+	for want in ["DON'T LIKE THE MUSIC", "LIKE IT", "DON'T LIKE THE VISUALS", "warehouse.bar", "Beat Shaper - ", "[TEMPORARY]", "block 2", "Bass (bass):", "[file "]:
 		assert_contains(md, want, "the readable file has " + want)
 	assert_eq(PlaytestNotes.count(), 3)
 	assert_contains(PlaytestNotes.summary_line(back[0]), "MUSIC -")
