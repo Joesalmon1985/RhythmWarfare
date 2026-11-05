@@ -617,13 +617,13 @@ def audition_bars(arr: dict, lo_s: float = 30.0, hi_s: float = 60.0) -> int:
 
 
 def audition(arr: dict, packs: dict, recipes: dict, path: Path) -> float:
-    """Writes the audition WAV (the voices of the first sections summed at the run's last mix stage, limited): returns its length in seconds."""
+    """Writes the audition WAV (the voices of the first sections summed at the run's last mix stage, peak-normalised): returns its length in seconds."""
     bars = audition_bars(arr)
     stems = render_stems(arr, packs, recipes, bars)
     mix = 0.45 * stems["drums"] + 1.0 * stems["bass"] + 0.6 * stems["other"]
     peak = float(np.max(np.abs(mix)))
-    if peak > 0.97:
-        mix *= 0.97 / peak
+    if peak > 0.0:
+        mix *= 0.89 / peak  # -1 dBFS: the previews are for listening, not for level matching
     write_wav(path, mix.astype(np.float32))
     return len(mix) / SAMPLE_RATE
 
@@ -736,7 +736,7 @@ def cmd_audition(args) -> int:
         for _, _, p in rows:
             p.replace(AUDITION_LOCAL / p.name)
         out_dir = AUDITION_LOCAL
-        print(f"{total / 1e6:.1f} MB exceeds {AUDITION_BUDGET / 1e6:.0f} MB: written to {AUDITION_LOCAL} (ignored by git)")
+        print(f"{total / 1e6:.1f} MB exceeds {AUDITION_BUDGET / 2**20:.0f} MiB: written to {AUDITION_LOCAL} (ignored by git)")
     write_audition_readme(rows, out_dir, total)
     return 0
 
@@ -749,7 +749,7 @@ def write_audition_readme(rows: list, out_dir: Path, total: int) -> None:
              "16-bit stereo, 48 kHz, 30 to 60 s. Written by `tools/content/arrange.py audition`.", "",
              f"The WAVs are in {where} ({total / 1e6:.1f} MB in all)."]
     if not here:
-        lines += ["They are over the 30 MB budget, so they are not committed. Regenerate them with:", "", "    python tools/content/arrange.py audition", ""]
+        lines += ["They are over the 30 MiB budget, so they are not committed. Regenerate them with:", "", "    python tools/content/arrange.py audition", ""]
     lines += ["", "| Arrangement | Palette | Family | Bars | Preview | Sections |", "| --- | --- | --- | --- | --- | --- |"]
     for arr, secs, p in rows:
         lines.append(f"| {arr['id']} | {arr['identity']['palette']} | {arr['family']} | {arr['bars']} | {secs:.0f} s | " +
