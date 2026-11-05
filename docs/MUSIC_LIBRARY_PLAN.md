@@ -85,3 +85,30 @@ M1 then M2 (one agent, sequential); M3 in parallel with M2 (a second agent, agai
 Music owns: `tools/content/*`, `content/music/*`, `content/library/*`, `songs/*`, `content/story/music.json`, the `music` fields of `content/story/<chapter>.json` and `content/trial/passages.json`,
 `src/run/run_audio.gd`, `src/audio/*`, `src/run/run_data.gd` music validation only, `docs/MUSIC_*.md`, `docs/audition/`. Visual owns everything else under `src/run`, `src/trial`, `src/story`,
 `content/run`, `content/trial` (except `music`), `content/story/maps`, `assets/`, `tools/run`, `tools/trial`, `tools/story`.
+
+## 7. Progress log
+
+### M3 Arrangement system (Sonnet, 2026-11-05; commits `Music, M3 ...` on the worktree branch)
+Built against `songs/packs/*/pack.json` (the catalogue was not there yet); `arrange.py` reads `content/music/catalogue.json` when it exists (tolerantly: `packs: [{id, family}]` and
+`compatible: {family: [family]}` or pairs; anything else is ignored) and otherwise takes family = the Beat Shaper project's slug, so `lv2_alien_spaceship` and its `_v1.._v3` are one family.
+- **Format** `content/music/arrangements/<id>.json`: `{id, family, seed, bars, use: run|chapter, compatible, identity: {palette, filters}, sections: [{bars: 8|16, role, pack | stems, mix, fills}]}`.
+  The five palettes are `content/music/palettes.json` (filters: `family_glob`, `profile`, density; role -> recipe; lead and tail roles), the recipes `content/music/mix_recipes.json` (gains that scale the run's phase mix, bass never under 0.5).
+  `use: run` means a multiple of 16 bars with every 16-bar section on a 16-bar line (a scene's phase is 16 bars); `chapter` allows any multiple of 8.
+- **`tools/content/arrange.py`**: `generate <palette> --seed N [--bars 64] [--use ..] [--write]` (seeded `random.Random`, one family from those the palette passes, role plan = lead + rotated middle + tail,
+  16-bar merges of drop/variation pairs, a pack per section by role: base for intro and ending, densest two for drops, sparsest two for breakdowns, never the previous pack twice; cross-family only for a
+  variation and only when the catalogue lists the families compatible), `validate` (tiling, packs exist, tempo, phrase tiles the section, family/identity/recipe rules, chart legality per tier from
+  `chart.check_cues` plus density floors plus no gap over 6 beats in the drum chart, 12 in the bass chart: the shipped bass lines have gaps up to 10 beats), `render`, `audition`.
+  `tools/content/test_arrangements.py`: 33 tests on synthetic packs. Seven example arrangements are committed (one per palette, two Mothership seeds, one 80-bar chapter one); M4 replaces/extends them.
+- **Run**: `music.json` entry `{"id", "arrangement", "slot"?, "alternates"?, "treatment", "temporary"}`; `RunData` resolves `node.sections` (and `audio`/`chart` = first section's pack), `RunEngine._chart_block`
+  asks `RunData.chart_pack_at`/`section_start_at` (two lines), `RunAudio` schedules a `section` item per later section (see `docs/CONTINUOUS_RUN.md`, "Arrangements"). Per-run seed in `RunProgress.data.seed`
+  (added on load, version 2 kept), `RW_RUN_SEED` overrides, `RW_RUN_MUSIC` reads another music.json. Tests `tests/test_run_audio_sections.gd` (12). Recording (Warehouse on `warehouse_1`, perfect play,
+  58 s, `tools/content/check_section_audio.py`): one drums voice per section, every block within 0.01 of stage gain x recipe, 99.8 to 100 % explained, section 2's drums 2.9 ms from the phase's, RESULT ok.
+- **Chapters**: `arrange.py render <id> --bars N --chapter <c> [--out dir] [--format wav|ogg] [--tier 3]` writes `level.json` (the chapter's first `music_packs` entry's level + `recorded_music` with
+  `loop_bars` = the whole chapter) and three stems; `content/story/mothership.json` lists `music_packs: [m10_last_light, story_mothership_1]`; `StoryRun.pick_music_pack` (the only change in `story_run.gd`,
+  plus a `music_seed` option) and `story_play._music_seed` (one function, one option) choose. `songs/story_mothership_1` (from `mothership_ch1`, ogg: 4.3 MB; wav stereo would be 64 MB) plays whole in
+  `tests/test_story_music_packs.gd`; a 34 s recording of it fits the stems at 1.0 / 1.0, 100 % explained, the same delay in both 8-bar laps.
+- **For M4**: assign with `{"id": scene, "arrangement": id, "slot": k, "alternates": [same family ids], "treatment": ..}` (slot k of a 64-bar arrangement = the k-th scene of a world; an arrangement of 16n bars
+  serves n scenes); generate with `arrange.py generate <palette> --seed N --write` (a pack that fails `pack_problems`, e.g. `lv2_alien_spaceship_v1` with a 10-beat gap in its drum chart, is skipped, so
+  such packs only play as plain scene packs); sections that name library `stems` validate but neither the run nor `render` plays them (library clips have no tiered charts); `fills` only act in `render`;
+  `arrange.py validate` also checks that `music.json` arrangement names exist and alternates share a family; chapter renders need a `--bars` equal to the chapter's `duration_bars`; run `godot --import` after
+  a render and commit the `.import` sidecars. Audition WAVs (44 MB) are in the ignored `audition/`: `arrange.py audition`.
