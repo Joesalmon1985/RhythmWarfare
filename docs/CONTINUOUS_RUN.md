@@ -473,7 +473,9 @@ Before/after shots: `bash tools/run/shoot_silent.sh` writes `docs/shots/silent/`
 
 A path is a second run beside the 174 BPM one: its own `run.json` (`timing.bpm` 124 / 140 / 145), `music.json`, hotspot files and packs, played by the same `RunEngine`, `RunAudio`, `RunPlay`, `HotspotView` and
 stage code. The 174 run is not changed (it never loads a path's pack, validates exactly as before and its scenes behave as before). The proof path is `stub` (two scenes at 124 BPM on the Warehouse's own art,
-synthesised placeholder music); the real `gospel`, `squadron` and `ember` paths are stages 3 to 5.
+synthesised placeholder music, `dev`: listed on the home screen only once reached); the three real paths are `gospel` (The Life of Jesus, house 124 BPM, 17 scenes in 4 worlds, music still placeholders), `squadron` (The Mission Count,
+dubstep 140 BPM, 14 scenes in 4 worlds, on the owner's own loops) and `ember` (The Ember Road, psytrance 145 BPM, 15 scenes in 5 worlds, placeholders). Per-path notes with the scene tables, flags, art and checks:
+`docs/paths/gospel.md`, `docs/paths/squadron.md`, `docs/paths/ember.md`; the whole project's state: `docs/HANDOVER.md`.
 
 ```
 content/paths/<id>/run.json        "path": {id, title, entry_from, returns_to: "warehouse", opens, dev?}, timing.bpm, worlds, nodes, cinematics (judgement, energy, stages, mix, effects, treatments are the main run's unless the file says otherwise)
@@ -490,8 +492,11 @@ scenes; routes to another world's entries are allowed from any exit scene; the g
 
 **Portals.** `warehouse.balcony.star` (`path:gospel`), `warehouse.booth.radio` (`path:squadron`), `warehouse.bar.ember` (`path:ember`) are `secret` hotspots with `look.available: pulse`, never the default,
 `repeatable`; success routes `path:<id>`, failure flickers out (-4 energy, no route: the scene's default exit takes over). They count in the 2 to 4 rule: the star appears once the floor has been seen from the rail
-(flag `wh_saw_floor`; the rail hotspot is then spent), the ember once the stranger's VIP pass is taken (`wh_vip_pass`), the radio always (the booth has room). `RunData` leaves a portal out of play (and logs
-`RUN portal ... is hidden`) until `content/paths/<id>/run.json` exists, so today the shipped Warehouse plays exactly as before. `RW_PATH_REMAP=gospel=stub` plays the stub through the star.
+(flag `wh_saw_floor`, set by the balcony rail hotspot's own success, which is then spent), the ember once the stranger's VIP pass is taken (`wh_vip_pass`), the radio always (the booth has room). All three paths now
+exist, so all three portals are live in the shipped Warehouse (`RunData` still leaves a portal out of play, logging `RUN portal ... is hidden`, if its `content/paths/<id>/run.json` is missing). `RW_PATH_REMAP=gospel=stub` plays the stub
+through the star. **Gating flags in one table:** star `wh_saw_floor` (the player must have looked at the floor from the balcony rail first), radio none, ember `wh_vip_pass` (the stranger's VIP pass); `RW_RUN_FLAGS=wh_saw_floor` /
+`wh_vip_pass` set them for a test or a review. Not built (plan D10): the Warehouse portal showing a different look once a path has been finished (the flags `keep:path_<id>_<ending>` are set and saved; nothing reads them yet except the
+home screen's "Endings found: N").
 
 **The tempo handoff** (`RunEngine._commit`, `RunPlay._path_swap`, `RunAudio.schedule_clock_swap`). When the phase ends on a `path:<id>` (or `run:warehouse`) route the engine emits `path_handoff` instead of
 entering a scene and freezes (`away`). The passage frame closes over beats 62 to 64 as for a world change. On the downbeat: `RunAudio` replaces the clock stream (one scheduled item, before the new phase's
@@ -518,3 +523,33 @@ not 8 dB over the pad and louder than the drums, or whose sub share (under `sub_
 downbeat and the cues on the new grid, the audio clock swap, the real scene entering the stub through the balcony and leaving by its ending, starting in a path and leaving by the menu), the per-path matrix in
 `tests/test_run_matrix.gd`, `tools/content/test_paths.py`, `python3 tools/run/check_hotspots.py --path <id>`, `bash tools/run/walk_run.sh --path <id>`, and the recording of a handoff
 (`tools/story/record_music.gd` on `run_play.tscn` with the variables above, then `tools/story/check_run_audio.py`, which reports the measured beat grid per phase and at each handoff).
+
+
+### The three real paths: what the stages added to the engine (stages 3 to 5)
+
+* **Graph rules** (`RunData`, only when run.json carries `"path"`): beyond the stage 2 relaxations, a path's exit scene may lead on inside its own world and to a non-entry scene of it (`is_path()` relaxes the checks; the Gospel's J05, J06 and J07
+  route within `galilee`); the depth rule of exit scenes (one level deeper) is lifted, because a setback goes back to an easier world (Squadron's C04, C06, C07, C11, Ember's setbacks); scenes entered from another world are `entry` scenes (several per
+  world); a route that goes back is `loop: true` where the validator wants it (Squadron C05 -> C06, C07 -> C10, C11 -> C12, the C11 -> C02 absurd loop, the cell, Ember's Taken and the Birch Hall setbacks). `tools/run/check_hotspots.py --path`: a route needs
+  *some* hotspot (a feature, an object, a person, any kind) that leads to it, not an exit of its own; the main run keeps the strict rule.
+* **Maps and worlds**: a world has one map, but several worlds may share one (`base` and `air` on `airfield`, `marsh` and `mountain` on `ash_land`); a world names its story data with `"story": "res://content/story/<map>.json"` (`RunPlay._story_entry`), so a
+  path's maps are never chapters of the Story chapters menu. A path's first stage is built in a cue-free guard (`RunPlay._prebuild_in_guard`, `_prewarm_routes`; `build_log` records phase and scene), so the stage a portal opens on is not built behind the
+  closed frame. A sector may name its own `sky` and `fog` (`StoryMap`, `StoryWorld.set_atmosphere`, applied by `StoryStage` when the camera's sector changes): one map holds a night room and a dawn one.
+* **Set pieces** (`HotspotContract.validate_pieces`, `RunPlay._apply_pieces`, `RunPlay.piece_log`): a map thing with `"piece": "<id>"` is shown while it is on. A scene node may carry `"pieces": {"on": [...]}` (listed pieces are on from the downbeat, every
+  other piece of the stage is off), an outcome `"pieces": {"on": [...], "off": [...]}` (applied at the commit), and a scene `"block_fx": [{"block": 0..3, "pass": {pieces?, cast?}, "miss": {...}}]` (applied at that block's boundary; cast lines use `at_beat` 0).
+  The Gospel's Golgotha is staged this way (the sky darkens every block; a passed block brings a witness forward, a missed one a laughing soldier). Validated by `RunData._validate_stage_fx`.
+* **Cast lines** (`HotspotContract.CAST_KEYS`): besides the acting lines of "Acting in the run", `{"piece": "<id>", "op": "on|off|pulse", "at_beat": n}` switches a set piece, `{"actor": "<id>", "hide": true, "at_beat": 0, "if_flags_all": [...]}` removes a person
+  from the scene (`StoryCrowd.hide_actor`: Bram when you are alone, the Warden once he has fallen); cinematic `cast` takes them too. `RunPlay._on_cast` calls `StoryCrowd.ensure_present`, so a cast line brings its person in (the grove's traitor and guards are group `late`).
+* **A path's own mix**: a path's run.json may carry its own `stages` (Squadron's four laps of its 16-beat loop: drums alone; drums 0.7 + bass 1.0; drums 1.0 + bass 0.9 + synth 0.5; drums 0.55 + bass 1.0 + synth 0.7). A 4-bar loop tiles the 64-beat phase four times, so each
+  16-beat block is one lap and brings a new layer. Gospel and Ember use the main run's stage table.
+* **Flags**: endings and meetings are `keep:` flags (`keep:path_gospel_tomb`, `_road`, `keep:path_squadron_free`, `_clause`, `_met_*`, `keep:path_ember_quenched`, `_kept`); per-path run flags are prefixed (`sq_*`, `ember_*`, `gospel_*`) and cleared with the run. Ember's flags change later scenes
+  (`ember_no_vial` swaps E09's plain bells for the hard bells, `ember_warden_lost` and `ember_alone` take companions out of later scenes by `hide` lines); see `docs/paths/ember.md`.
+* **Environment variables** (all read by `RunPlay`): `RW_RUN_PATH=<id>` starts a path directly; `RW_RUN_START=<scene id>` names the start scene (of the path with `RW_RUN_PATH`, otherwise of the main run); `RW_RUN_PATH_START=<scene id>` names the first scene when a path is
+  entered through its portal; `RW_RUN_PORTAL=<hotspot id>` makes the bot touch a portal in the final window; `RW_RUN_FLAGS=a,b` sets flags after the run starts; `RW_PATH_REMAP=gospel=stub` plays one path through another's portal; `RW_DEV_TEXT=1` brings back the play text of
+  the silent HUD; `RW_RUN_SELECT=<hotspot id>@<beat>` selects a hotspot at a beat (tests, shots); `RW_RUN_CLEAN=1` draws no notes and no HUD (acting shots); `RW_STORY_CAM=actor:<id>:<m>:<pitch>` frames a person (acting shots).
+* **Tools**: `bash tools/run/walk_run.sh --path <id> [walk ...]` (the walks come from `tools/run/path_walk_spec.py` plus `content/paths/<id>/walks.json`; on Windows set `GODOT` to the console binary, the script's default is the Linux one);
+  `python3 tools/run/check_hotspots.py --path <id>`; `python3 tools/content/beatshaper.py --path <id> validate|scan|survey|check|import|apply [--max-error-ms N]`; `python3 tools/content/make_path_placeholders.py <id> [--force]`;
+  `godot --headless --path . -s tools/run/check_path.gd -- <id>` (a path's data) and `-s tools/story/check_map.gd` (a map and its chapter); shots: `bash tools/run/capture_path.sh <id> [--acting]`, `tools/run/shoot_gospel.sh`, `tools/paths/shoot_squadron.sh`.
+  Authoring: `python3 tools/content/make_gospel.py`, `python3 tools/paths/make_squadron.py`, `python3 tools/run/make_ember.py` (each writes the path's run.json, hotspots and walks from its tables; edit the table, rerun).
+* **Save**: `user://story_run.json` has `paths: {"<id>": {"reached": [...], "endings": [...]}}`; a path's worlds are never in `reached`.
+* **The tempo handoff and the dummy driver** (the open audio finding): the first phase change *inside* a path after a handoff measured 88 ms off the previous one with the dummy audio driver (three 29.4 ms mix chunks, cause not found; see `docs/HANDOVER.md`). The checker
+  tolerance was not changed. If a phone shows cues early from the second room of a path on, look at `RunAudio._swap_clock` and the first wrap of the clock loop.

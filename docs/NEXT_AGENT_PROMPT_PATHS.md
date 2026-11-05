@@ -1,3 +1,5 @@
+> **Status (5 November 2026): all six stages are done and pushed.** This prompt is kept for history. The current state, what was verified and the open decisions are in `docs/HANDOVER.md`.
+
 # Prompt for the local agent: three paths and faces (paste everything below the line into a new session)
 
 Intended for a Claude session started in `C:\Users\joesa\Documents\Cursor\MusicGame` on the owner's PC, on the `main` branch of

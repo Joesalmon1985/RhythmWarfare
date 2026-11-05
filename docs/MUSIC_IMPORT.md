@@ -201,3 +201,9 @@ What the Squadron drop measures (5 November 2026, `survey`): all 14 sets fit 140
 quarter notes, 6.857 s: four bars, not eight), which tiles the 64-beat phase four times. Strict timing (every kick and snare within 12 ms of its MIDI note) holds for C06, C07, C11, C13 and C14; C03, C05 and C10 verify loosely (a hit or two sits 31 to 34 ms out);
 **C01, C02, C04, C08, C09, C12 are refused at 12 ms** (kick or snare hits sit 31 to 38 ms from the MIDI, offset up to 21 ms): `--max-error-ms 40` is the deliberate loosening and is recorded in
 the report; all 14 pass at 40. The default `--bass-db 3` clips on C06 (the bass stem is already near full scale): use about `--bass-db -4`. Which of the 6 to loosen, or whether to re-export them, is the owner's call.
+
+**State after stages 3 to 5.** The 14 Squadron sets are imported (`squadron_c01` .. `c14`, all with `--max-error-ms 40`; `python3 tools/content/import_squadron.py [--only C06,C07] [--check]` redoes it in about 11 s and writes the report `docs/paths/squadron_music_report.json`:
+per scene the worst hit error, the gains, the peaks and the command line). The gains are the strongest bass that does not clip (the importer has no limiter and refuses a stem at 0.999 or above); the table is in `docs/paths/squadron.md` section 4.
+The Gospel (17 scenes) and Ember (15 scenes) have no import yet: they play the placeholders of `tools/content/make_path_placeholders.py` (WAV, not Ogg), and their loops are expected to be 8 bars each, one prompt per scene
+(`docs/MUSIC_HANDOFF.md` lists them verbatim). The importer was not changed after the loosening of stage 2 (`--max-error-ms`, `--path`, the `<id>_x1` profile); if a Gospel or Ember export is a 4-bar phrase like the Squadron's, it should import the same way (not tried)
+(a 16-beat phrase tiles the 64-beat phase four times).

@@ -5,17 +5,20 @@ A rhythm game in landscape for phones: play four illuminated pads in time with a
 series of rooms (scenes) and each scene is a 64-beat phase that starts with drums alone, brings the bass in as you play well, brings the drums back, then lets the bass take over while you choose which way to go
 next. Good play keeps the mix building, a missed block holds it for another go, and the crowd's energy is the meter that ends the run if it runs out. Standalone Godot 4.5.1
 project. Home has five buttons: Play (the run), Story chapters (the finished chapter-by-chapter campaign, with its own saves), Start from a reached level, Wizard Duel (wifi) (two phones or windows on one network, or practise alone), Settings.
-Inside the run the camera rides a rail through each world: a pass at a block steps you one place up the room (floor, steps, stage, balcony, booth), a miss steps you down
+Three more adventures branch off the Warehouse (the Gospel at 124 BPM, the Mission Count at 140, the Ember Road at 145; see below). Inside the run the camera rides a rail through each world: a pass at a block steps you one place up the room (floor, steps, stage, balcony, booth), a miss steps you down
 the bad rail (floor edge, corridor, cubicle), and the route window lights the room's exits, doorways and things in the world to touch (no arrows, no written choices). Each world is a small graph of rooms with paths to choose between
 (the Warehouse floor > bar or balcony > chill-out or booth > the door; 3 to 5 phases, 66 to 110 s, each room with its own variant of the world's music); a path inside a world is a plain
 door walk, a change of world keeps the passage frame.
 
-* Design, route map, rails, tunables and verification: `docs/CONTINUOUS_RUN.md`; the plan and its progress log: `docs/RUN_DUNGEON_MUSIC_PLAN.md`.
-* Adding music (Beat Shaper exports, one command per level): `docs/MUSIC_IMPORT.md`; what each level plays and what to export: `docs/MUSIC_HANDOFF.md`.
+* Design, route map, rails, paths, portals, tunables and verification: `docs/CONTINUOUS_RUN.md`; the plan and its progress log: `docs/RUN_DUNGEON_MUSIC_PLAN.md`.
+* Adding music (Beat Shaper exports, one command per level): `docs/MUSIC_IMPORT.md`; what each level and path plays and what to export (the Gospel and Ember prompts): `docs/MUSIC_HANDOFF.md`.
 * Authoring the worlds' scenes (rooms, paths, doorway waypoints, each scene's music): `tools/run/make_scenes.py`, described in `docs/CONTINUOUS_RUN.md`.
 * The Bassment, the wizard's dungeon under the club (a wizard in the Warehouse offers it; 63 passages in 16 zones, each a 2.5D map; entered and left seamlessly on the same pads, clock and music): `docs/TRIAL_OPENING.md`.
 * Wizard Duel, local wifi multiplayer: two wizards play the same notes and cast spells at each other when they pass a phrase (home > Wizard Duel, or practise alone against a scripted rival): `docs/DUEL.md`.
 * The 2.5D world, art and authoring pipeline: `docs/STORY_CAMPAIGN_HANDOVER.md`, `docs/STORY_25D_PLAN.md`, `docs/STORY_ART.md`.
+* Three paths branch off the Warehouse, each a sister run at its own tempo with its own music, rooms and endings, entered and left by a tempo handoff on the same pads: **The Life of Jesus** (`gospel`, house 124 BPM, 17 scenes, from the star on the balcony),
+  **The Mission Count** (`squadron`, dubstep 140 BPM, 14 scenes, from the radio in the booth) and **The Ember Road** (`ember`, psytrance 145 BPM, 15 scenes, from the ember in a glass at the bar). Their notes: `docs/paths/{gospel,squadron,ember}.md`; the engine:
+  `docs/CONTINUOUS_RUN.md` "Paths". Across every world the people's faces and acts carry the story and nothing is written during play (`RW_DEV_TEXT=1` brings the text back): `docs/THREE_PATHS_AND_FACES_PLAN.md`. Start with `docs/HANDOVER.md`.
 
 ```
 godot --path .                                                         # home screen
@@ -54,6 +57,7 @@ or with `RW_DEV=1`, use it); the run does not depend on it.
   `note_lane.gd` the falling notes, `battle_view.gd` sprites only, `hud.gd` the legacy duel's bar only, `section_picker.gd`, `ui_style.gd`, `settings_panel.gd`),
   `audio/` (`stem_transport.gd` the song, `battle_sfx.gd` the Red Alert effects), `scenes/` (home, missions, mission
   briefing, loadout, play, result, settings, calibration, developer).
+- `content/paths/<id>/` the three paths' data (`run.json`, `music.json`, `hotspots/`, `walks.json`); their maps are in `content/story/maps/`, their art in `assets/story/<map>/`, their packs in `songs/packs/<id>_*`, the owner's drops in `content/imports/<id>/` (git-ignored). Tools: `tools/content/make_gospel.py`, `tools/paths/` (Squadron), `tools/run/make_ember.py`, `tools/story/build_gospel_art.py`, `build_ember.py`.
 - `content/` the loop library (`library/<clip>/`: MIDI per part, owner WAV renders, generated placeholders), sounds,
   the ten slim mission files (`missions/`; `missions_legacy/` is the old authoring the MIDI exporter reads), fixtures;
   Godot ignores it. `tools/content/build.py` turns it into `songs/library/` and `songs/m01_*` to `m10_*`.
@@ -81,11 +85,28 @@ python tools/content/import_ableton.py content/imports/first_watch.json   # file
 python tools/extract_openra.py --no-map              # sprites from your OpenRA content (allow-list in the script)
 python tools/extract_openra_sounds.py                # Red Alert sounds into assets/sfx
 python tools/campaign/build_battlefield.py           # regenerate the maps and battlefields (add village_01 for the village only)
-bash tools/run/walk_run.sh --path stub               # a sister run (content/paths/stub) walked on the virtual clock: in through the portal's path and back out (needs a display)
-python tools/content/make_path_placeholders.py stub  # synthesised, bass-forward stand-in music for the scenes of a path that have no import (docs/CONTINUOUS_RUN.md "Paths")
-python tools/content/beatshaper.py --path squadron survey "<folder>"   # the owner's loops for a path, measured at the path's tempo
-python tools/run/check_hotspots.py --path stub       # a path's hotspots: the same rules with the path's relaxations
-RW_RUN_PATH=stub godot --path . res://src/run/run_play.tscn           # start inside a path (RW_PATH_REMAP=gospel=stub plays it through the balcony star instead)
+```
+
+The three paths (`gospel`, `squadron`, `ember`; `stub` is a two-scene proof path). `<godot>` is the console binary; `walk_run.sh` and the capture scripts read `GODOT` (their default is the Linux path), `tools/test.sh` reads it too.
+
+```
+RW_RUN_PATH=gospel <godot> --path . res://src/run/run_play.tscn        # start inside a path (RW_RUN_START=<scene id> picks its scene, e.g. jerusalem.trial); without RW_RUN_PATH the paths are entered through the Warehouse portals
+RW_RUN_PORTAL=warehouse.booth.radio RW_RUN_START=warehouse.booth RW_RUN_BOT=perfect <godot> --path . res://src/run/run_play.tscn   # the bot touches a portal (a gated portal needs its flag: RW_RUN_FLAGS=wh_saw_floor for the star, wh_vip_pass for the ember)
+RW_PATH_REMAP=gospel=stub RW_RUN_FLAGS=wh_saw_floor RW_RUN_PORTAL=warehouse.balcony.star RW_RUN_START=warehouse.balcony <godot> --path . res://src/run/run_play.tscn   # play the stub path through another path's portal
+RW_DEV_TEXT=1 <godot> --path . res://src/run/run_play.tscn             # the play text (title card, captions, names, countdown) is off by default; this restores it for debugging
+GODOT=<godot> bash tools/run/walk_run.sh --path squadron               # a path on the real scenes, virtual clock, isolated save: perfect, loop, clause, sloppy, none (names: python3 tools/run/path_walk_spec.py <id> names); needs a display
+python tools/run/check_hotspots.py --path gospel                       # a path's hotspots and reachability (also: squadron, ember; without --path: the main run)
+python tools/content/beatshaper.py --path squadron survey "<folder>"   # the owner's loops for a path, measured at the path's tempo (validate, scan, check, import, apply: docs/MUSIC_IMPORT.md section 7)
+python tools/content/beatshaper.py --path squadron import content/imports/squadron/C06 --set C06 --id squadron_c06 --max-error-ms 40   # --max-error-ms N loosens the drum-hit check from its 12 ms default and records it; nothing is stretched
+python tools/content/make_path_placeholders.py gospel [--force]        # synthesised, bass-forward stand-in WAV loops for every scene of a path without an import (also: ember, stub)
+python tools/content/import_squadron.py [--only C06,C07] [--check]     # the Mission Count's 14 loops from NewMusic/C level Music (source folder untouched)
+python tools/content/music_handoff.py                                  # regenerate docs/MUSIC_HANDOFF.md (the shopping lists, including the three paths')
+bash tools/run/capture_path.sh ember [--acting]                        # screenshots of every scene of a path (and of every character hotspot in five states) into docs/shots/
+godot --headless --path . -s tools/run/check_path.gd -- gospel         # a path's run data: errors and warnings
+python tools/story/check_assets.py                                     # the art contract (the five chapters and the three Squadron worlds)
+```
+
+```
 python tools/content/build.py                        # rebuild the loop library and every mission pack from content/ (about 23 s)
 python tools/content/render_list.py                  # rewrite docs/CONTENT_TO_RENDER.md
 python tools/balance_missions.py > /tmp/balance.md   # seeded trials, every mission (docs/BALANCE.md); --loadout heavy for the other preset
@@ -99,7 +120,7 @@ screen of a mission: `RW_MISSION=1 RW_SCENE=play RW_AUTOPLAY=perfect godot --pat
 
 ## Documents
 
-`docs/HANDOVER.md` (start here: state, decisions, what was verified and what was not), `docs/PRD.md` (sections 15 and 16 the
+`docs/HANDOVER.md` (start here: state, decisions, what was verified and what was not, the open decisions for the owner), `docs/THREE_PATHS_AND_FACES_PLAN.md` (the plan the three paths and the acting system were built from), `docs/paths/` (one note per path, the Mission Count's music report), `docs/PRD.md` (sections 15 and 16 the
 mission rules and the loadout model; 1 to 13 the duel), `docs/CONTENT_TO_RENDER.md` (every WAV and MIDI to make in Ableton),
 `docs/BALANCE.md` (seeded trials, coverage and tuning), `docs/BRIEF_PADS_SEQUENCES_TEN_MISSIONS.md` (the brief this
 build implements), `docs/EXPORT.md` (Android and Windows builds), `docs/TIMING.md`, `docs/OPENRA_BEHAVIOUR_SPEC.md`,

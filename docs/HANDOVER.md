@@ -1,88 +1,180 @@
 # Rhythm Warfare: handover
 
-State on 3 November 2026, after `docs/BRIEF_PADS_SEQUENCES_TEN_MISSIONS.md` (four pads, sequence rewards, ten missions,
-the loop library and the owner's drop-in content path), the rebuild of Mission 1 on the owner's own Ableton
-recordings (`ToAddTry1/`, imported by `tools/content/import_ableton.py`) and the village version of Mission 1
-(128 bars, civilians, tap-to-deploy sections, Red Alert sound effects) and the owner's first-play tweaks of the same
-day (units fight on the move, a bigger zoomed-out village, the rally flag always shown, the bass chart by pitch,
-a quieter battle mix, misses that silence the instrument) and then the loadout redesign of that night (one global
-loadout, a loop library, missions as bases plus waves plus a form). Read this first, then `README.md` (layout and
-commands), `docs/PRD.md` sections 15 and 16 (the mission rules; section 16 is the current content model; sections 1 to
-13 describe the legacy duel) and
-`docs/CONTENT_TO_RENDER.md` (the owner's render list). Everything is committed on `main` at
-https://github.com/Joesalmon1985/RhythmWarfare.
+State on 5 November 2026, after Stage 6 of `docs/THREE_PATHS_AND_FACES_PLAN.md` (the acting system on every world, the sister-run engine, and the three paths: The Life of Jesus, The Mission Count, The Ember Road).
+This is the single current handover. Part A is the newest work (read it first); Part B is the earlier defense-campaign state of 3 November 2026, kept as it was (its commands and caveats still apply to that code, which is still in the repository).
+Read this, then `README.md` (layout and commands), `docs/CONTINUOUS_RUN.md` (the run, paths, portals, acting, the silent HUD), `docs/paths/{gospel,squadron,ember}.md` (one note per path), `docs/STORY_ART.md` and `docs/MUSIC_HANDOFF.md`
+(the owner's shopping list). Everything is on `main` at https://github.com/Joesalmon1985/RhythmWarfare.
 
-## Three paths and the acting system: progress (docs/THREE_PATHS_AND_FACES_PLAN.md)
+**In one paragraph.** Three adventures branch off the Warehouse club and are played on the same four pads: a house-music Gospel story (17 scenes, 124 BPM), a dubstep story about a bomber crew trapped by an absurd regulation (14 scenes, 140 BPM, on the
+owner's own loops) and a psytrance story about a small carrier bearing a cursed ember across a dangerous land (15 scenes, 145 BPM). In all eight worlds the people's faces and acts carry the story and nothing is written during play. Everything was built and
+checked by an agent on a desktop with a virtual clock and a dummy audio driver: **nobody has played it by hand, on a phone, or listened to it.** The next thing that matters is the owner's phone run and ears.
 
-- **Stage 1a done (5 November 2026): fourteen faces and fifteen directed acts in the pixel people.** Faces `fear`, `anger`, `plea`, `doubt`, `relief`, `awe`, `grief`, `laugh`, `resolve`,
-  `shame` on top of the four old ones, per species (`tools/story/art/people.py`); acts `beckon`, `nod`, `shake_head`, `recoil`, `bow`, `kneel`, `offer`, `plead`, `collapse`, `salute`, `block`,
-  `cover_face`, `stamp`, `laugh`, `write` (`StoryCharacter.STATES`, `sample()`, `SHEET_CYCLES`, `FACE_OF`); baked only for the directed people (`content/story/directed_actors.json`, later the hotspots'
-  `acting` blocks and the scenes' `cast` lines, `tools/story/art/directed.py`); `check_assets.py` fails when a directed person lacks an act, a face or a facing; proof in
-  `docs/shots/faces/<chapter>_acting.jpg`; how it works in `docs/STORY_ART.md` "Acting". Divergences: the pose key `fwd` (a forward bend) was added to the dumped limb keys, because the pixel rig
-  is 2D; `point` and `stare` keep their old default faces (neutral) for the crowd, the directed data names `resolve` where the story wants it; `look_at` on `point` is the existing `toward`
-  (stage 1b resolves a target id into it); `StoryCharacter.face_override` and the `act@face` sheet key are the only runtime additions (`StoryCrowd.direct` is stage 1b).
-  Not verified: how the acts and faces look moving in a real run on the owner's phone (only the sheets, the poses and the tests were checked).
-- **Stage 1b done (5 November 2026): the acting contract** (`docs/CONTINUOUS_RUN.md` "Acting in the run"). `acting` on hotspots, `cast` on scene nodes and on cinematics, validated in `HotspotContract`
-  (`FACES`, `ACTS`, `ACTING_PHASES`, `LOOK_TARGETS`, built from `StoryCharacter`, not copied; `StoryCharacter.DIRECTABLE_OLD` lists the older states a story may also direct) and `RunData._validate_casts`;
-  `RunEngine` emits one `cast` event per line at `phase_t0 + at_beat * beat_s` (pure; conditions `if_energy_below/above`, `if_flags_all/none` read at that beat; cinematic cast from the commit);
-  `RunActing` (pure helpers), `StoryCrowd.direct_actor` / `direct_chain` / `directing` / `look_point` / `stand_down(id, src)` (the crowd's `dir` carries `face`, `look_at`, `src`, `chain`),
-  `HotspotView._manage_acting` (available and selected acts, replacing the hard-coded wave), `RunPlay._on_cast` and `_act_outcome`. Hotspots with no `acting` block behave exactly as before (the old wave).
-  `tools/story/art/directed.py` now also reads cinematic `cast` lines and skips Bassment `figure` blocks (`tools/content/test_directed.py`). Divergences: the plan's `StoryCrowd.direct(actor, act, face, ...)` is
-  `direct_actor` (the name `direct` is the crowd's group directive with twenty callers); `sheet_pick` choosing by state and face was already done in stage 1a; no acting or cast is authored yet (stage 1d), so
-  the tests inject lines into the shipped data and "every shipped cast line" is vacuously the empty set today (the loop is in place and will cover the data the day it lands). Test run at the end of 1b: `bash tools/test.sh` green: 67513 checks, 0 failures (the run before stage 1b: 67007), and the 169 Python content tests.
-- **Stage 1c done (5 November 2026): the silent HUD and the Bassment without its caption band** (`docs/CONTINUOUS_RUN.md` "The silent HUD"). With `RW_DEV_TEXT` unset the run draws no title card, captions,
-  world or room name, stage label, numeric countdown, DRUMS / BASS banner or status line, and the Bassment shows no title, caption band, zone tag or banner; the stage pips, the energy meter and a new thin
-  route-window bar stay, and a new room's lamps swell over two beats from its downbeat (`room_swell`). The pads' judgement words (PERFECT, GREAT, MISS) were kept as feedback, not story: if the owner
-  wants those gone too it is one flag in `RunPlay._on_judge_event`. The Bassment's ten creatures carry `acting` authored from `CREATURE_ACTING` in `tools/trial/make_hotspots.py`
-  (regenerated `content/trial/hotspots.json`) and play it as motions on the billboard (`RunActing.figure_motion`; the contract's `figure` key). `tests/test_run_hud_silent.gd`, `test_trial.gd` and
-  `test_run_scene.gd` set `RW_DEV_TEXT=1` where they read text. Proof shots (look at them): `docs/shots/silent/` from `tools/run/shoot_silent.sh`. Test run at the end of 1c: `bash tools/test.sh` green: 67690 checks, 0 failures (the run before stage 1b: 67007), and the 169 Python content tests.
-  Not verified: how the acts, faces, light swell and the thin bar look and feel on the owner's phone in real time (only the virtual clock, the tests and desktop screenshots were run), and nobody has
-  listened to or watched a full run with the text gone. Divergence: the Bassment's caption text is hidden, not removed (the labels still carry it for `RW_DEV_TEXT`).
-- **Stage 1d done (5 November 2026): the acting pass on the five worlds** (`docs/CONTINUOUS_RUN.md` "Acting in the run", "Authored (stage 1d)"). Authored in one table file, `tools/run/acting_data.py`
-  (`ACTING`, `CAST`, `CINE_CAST`), copied into the generated hotspot files and `run.json` by `make_hotspots.py` / `make_scenes.py` (rerun `python3 tools/run/make_scenes.py`; its `write_music()` call is gone,
-  `content/story/music.json` is `arrange.py`'s now): 28 character hotspots with a person to direct plus the Warehouse stranger carry all five states; all 36 scenes carry 2 to 4 `cast` lines (blocks 0, 16, 32, 48;
-  21 lines conditional on energy); 15 existing success and setback cinematics carry the acted reactions of the people around (the circle turning its back, the bar laughing, the family weeping, the queue cowering).
-  Unconditional cast lines use `core` people only (the continuous run brings no gatherer, early, late or peak person in by itself; the conditional high-energy lines may name them and simply do nothing when they are
-  absent). The sheets bake exactly what the data uses: `content/story/directed_actors.json` is empty, `directed.py` derives everything, `tests/test_story_acts.gd` checks both directions.
-  Proof: `bash tools/run/capture.sh --acting` (`docs/shots/acting/<hotspot>.jpg`: the five states side by side, the person framed at about twice the usual size; `contact_acting_<world>.jpg`). Its screenshot aids:
-  `RW_STORY_CAM=actor:<id>:<m>:<pitch>` (StoryStage; a standpoint with nobody in the way, the free look ignored), `RW_RUN_CLEAN=1` (no notes, no HUD), `RW_RUN_FLAGS=a,b`.
-  **Divergences:** (1) the two wizard hotspots (`warehouse.wizard`, `warehouse.chill.wizard`) have no `acting`: the wizard is a billboard *thing*, not a baked person, so there is nobody to give a face to; making it
-  act needs a figure-motion on a world thing (the Bassment's `RunActing.figure_motion` is the model), left for later. (2) Found while shooting: four hotspot people (`g07` the dancer, `g08` the grey, `court_g06` the queen,
-  `e04` the Ward orderly) belong to groups the continuous run never brings in, so those hotspots anchored on nobody visible; `HotspotView._manage_acting` now calls the new `StoryCrowd.ensure_present` so the person fades in
-  at their place when their hotspot is on show (nothing else about presence changed). (3) The plan's "committed" flash is one beat here (two left almost no time to see the result before the passage frame closes over
-  routes to another world: a result is seen for about three beats at best, which is why the strongest act of a route-leaving hotspot is in its `success`/`failure`, shortly, not in `then`). (4) The plan's `acting.look_at` of
-  a hotspot is used with `camera` and map ids only.
-  Not verified: how any of it moves and reads on a phone in real time (only still frames from the virtual clock, desktop window), that an act at beat 50 and an outcome at beat 62 are seen by a player who is looking at the pads, and no
-  listening or live-audio run at all. People-sheet page bytes (plan budget +15 % per chapter, against the rebuilt pre-1a heads): night_one 3,288,010 -> 3,555,788 (+8.1 %), mothership 9,441,871 -> 9,645,545 (+2.2 %), underworld 9,071,134 -> 9,236,297 (+1.8 %),
-  hospital 8,666,621 -> 8,963,276 (+3.4 %), mental_hospital 9,692,138 -> 10,056,393 (+3.8 %); total 40,159,774 -> 41,457,299 (+3.2 %). Shots I am not happy with (`docs/shots/acting/`): `underworld_court_queen` (the queen is hidden in a
-  crowd of dancers whatever the standpoint, her acts do not read), `ward_dorm_sleeper` (the sleeper's selected and committed acts do not show), `ward_late_exit_stare` (the acts are faces only), the two bouncers and `mothership_exit_exam`
-  (the success and failure panels are in the passage frame: the world is already changing). Test run at the end of 1d: `bash tools/test.sh` green: 71389 checks, 0 failures (the run before stage 1d: 67690), and the 169 Python content tests;
-  `tools/run/check_hotspots.py` 0 errors (the same 5 warnings as before).
-- **Stage 2 done (5 November 2026): sister runs and the tempo handoff** (`docs/CONTINUOUS_RUN.md` "Paths"). `content/paths/<id>/` data layout, `RunData.load_path` with the relaxed graph rules (several entries
-  and exits, `ending` scenes with the way back `run:warehouse`), packs tagged `"path"` and refused at the wrong tempo, `RunAudio.silent_loop` at 124 / 140 / 145 (rates 8680 / 8400 / 8700, whole frames per beat,
-  asserted), the `path:<id>` route handled like `trial:` with the tempo handoff in `RunEngine` / `RunPlay._path_swap` / `RunAudio.schedule_clock_swap` and the reverse swap, `RW_RUN_PATH`, `RW_RUN_START`,
-  `RW_RUN_PORTAL`, `RW_RUN_FLAGS`, `RW_PATH_REMAP`, the three portal hotspots (hidden until their path exists), the save's `paths`, the home screen's path section, `beatshaper.py --path`,
-  `tools/content/make_path_placeholders.py`, `check_hotspots.py --path`, `walk_run.sh --path`, the stub path (2 scenes, 124 BPM, entered from the balcony star with `RW_PATH_REMAP=gospel=stub`).
-  Divergences from the plan: (1) the portals are gated so they fit the 2 to 4 rule (the balcony and the bar already show four hotspots): the star needs `wh_saw_floor` (the balcony rail, now `flags_none` that flag,
-  is spent by its own success anyway), the ember needs `wh_vip_pass`; the radio is unconditional; (2) the placeholder loops are WAV, not Ogg (the format `beatshaper.py import` writes; Ogg cannot promise a
-  sample-exact loop), with MIDI beside them; (3) a portal into a path with no run.json is left out of play and logged instead of failing; `RW_PATH_REMAP` plays the stub through the gospel star; (4) the plan's
-  "fresh rail like trial_leave" on the way back is the world-change arrival (door, walk to the floor), because a path may leave the camera in another sector; (5) `path_enter` marks a path's worlds in `paths`,
-  never in `reached`; (6) the engine got `grid_origin` so that cues sit on the new tempo's grid counted from the handoff downbeat (the old engine counted from song time 0, which is not a beat of any other tempo).
-  Owner's real Squadron music (14 scenes, `NewMusic/C level Music`) is copied to `content/imports/squadron/C01..C14` (git-ignored): all 14 measure 140 BPM (139.78 to 140.20), but each loop is a **16-beat (4-bar)
-  phrase**, not 8 bars, and 6 of 14 (C01, C02, C04, C08, C09, C12) have drum hits 31 to 38 ms from their MIDI notes so the strict 12 ms check refuses them: `--max-error-ms 40` is the deliberate loosening, nothing was
-  stretched; C06 imported cleanly (`--drums-db -2 --bass-db -4 --synth-db 0`: the default +3 dB bass clips) as a throwaway proof. Stage 4 does the import (see `docs/MUSIC_IMPORT.md` section 7).
-  Proof of the handoff (`docs/shots/run/path_handoff_check.txt`, `tools/story/record_music.gd` on `run_play.tscn` in real time with `RW_PATH_REMAP=gospel=stub RW_RUN_FLAGS=wh_saw_floor RW_RUN_PORTAL=warehouse.balcony.star
-  RW_RUN_START=warehouse.balcony RW_RUN_BOT=perfect`, then `tools/story/check_run_audio.py`, which now reports the beat grid per phase and at each handoff): the machine CAN record real mixed audio (dummy driver, Music bus),
-  so this is a recording, not an offline render. Warehouse balcony 174.000 BPM, stub 124.000, stub.end 124.000, Warehouse 174.000 (measured from the drum loop fitted at the start and the end of each phase); at the
-  way in the new grid's first downbeat sits +2.9 ms from the old phase's drums at its end, at the way out -6.5 ms; every block of both stub phases fits its stage gains (drums/bass/synth/riser within 0.01, 99.2 to
-  100 % explained); `RunAudio.clock_log` records the two swaps (8680 Hz, 4200 frames a beat; 8700 Hz, 3000). The script still says RESULT CHECK: the per-phase delay spread is 95 ms because the stub -> stub.end phase
-  change (an ordinary phase change inside the path) sits 88.6 ms from the one before it, which is one 4096-frame mix chunk (85 ms) of the dummy driver on this machine (not the 5.9 ms chunk of the older recordings): a voice
-  started by `play(from)` lands on whichever mix boundary the audio thread gets to first, so the chunk is the resolution of the compensation; the same quantisation would be seen on a main-run phase change here. Found and
-  fixed on the way (two real bugs the virtual tests could not see): `_open_routes` crashed at an ending's window when the audio was on (an ending's `run:warehouse` is no scene), and a path's first pack was loaded
-  synchronously at the reveal (bass and synth 90 ms late): the portals' paths are now read and their start packs preloaded before the countdown. Not verified: nothing was played on a phone; the handoff was recorded and measured with the dummy audio driver only (no real output latency); the stub's stage is the Warehouse's own map, so a path with its own
-  art will build its stage at the handoff (a stall behind the closed frame; prebuilding it in a guard like a world change is a stage 3 item); the pause menu's "Leave this path" button was built but not
-  looked at on a real screen.
-- Stages 3 to 6 are not started.
+# Part A: the three paths and the acting system
+
+## A1. What is done, stage by stage
+
+| Stage | What | Commits (first to last) | Notes |
+| --- | --- | --- | --- |
+| 1a | fourteen faces and fifteen directed acts in the pixel people, baked only for the directed people | `3caa067c`, `88df541e` | `docs/STORY_ART.md` "Acting" |
+| 1b | the acting contract: `acting` on hotspots, `cast` on scenes and cinematics, `StoryCrowd.direct_actor`, validator | `a72384f9` | `docs/CONTINUOUS_RUN.md` "Acting in the run" |
+| 1c | the silent HUD (no title card, captions, names, countdown, caption band); `RW_DEV_TEXT=1` restores them; the Bassment's ten creatures act | `713be82d`, `5bb0b9c8` | `docs/CONTINUOUS_RUN.md` "The silent HUD" |
+| 1d | the acting pass on the five old worlds: 28 character hotspots plus the stranger, cast lines on all 36 scenes, 15 cinematics acted | `e82b9e8b`, `866b7aa2` | `tools/run/acting_data.py`; shots `docs/shots/acting/` |
+| 2 | sister runs: `content/paths/<id>/`, relaxed graph rules, the three Warehouse portals, the tempo handoff, `paths` in the save, the home screen's path section, `beatshaper --path`, placeholders, the `stub` path | `5285f2ac`, `68a3f20c`, `6e30f6f2` | `docs/CONTINUOUS_RUN.md` "Paths" |
+| 3 | The Life of Jesus (`gospel`): 17 scenes, 4 worlds, 4 maps, 130 people, 43 hotspots, two endings (`tomb`, `road`) | `91f0a611`, `b8bcad5e`, `16ee5aec`, `0ab74184`, `c230b0ff`, `c64a6b09` | `docs/paths/gospel.md` |
+| 4 | The Mission Count (`squadron`): 14 scenes, 4 worlds, 3 maps, the Clause and the loop, one ending (`free`); the owner's 14 loops | `42c908c4`, `fbe0f69b`, `db342a11`, `3a9868e8`, `ad96378a`, `e2a9ca86` | `docs/paths/squadron.md` |
+| 5 | The Ember Road (`ember`): 15 scenes, 5 worlds, 4 maps, flags that change later scenes, two endings (`quenched`, `kept`) and a setback | `461bc1c1`, `1ad2cb3b`, `91976d84`, `d995ede0`, `8f0d8b0e`, `dac0a5b5`, `97d361d4` | `docs/paths/ember.md` |
+| 6 | this handover; README, CONTINUOUS_RUN, STORY_ART, MUSIC_IMPORT and MUSIC_HANDOFF brought up to date; the final whole-project check; the repo-size audit | the "Stage 6" commits | below |
+
+How the stage 1 to 2 details differ from the plan, in the order they were written, is in the stage notes this file replaced (kept in git history: `git show e2a9ca86:docs/HANDOVER.md`). The ones that still matter are in A3.
+
+## A2. What was verified, and what was not
+
+### Verified (5 November 2026, this PC, Godot 4.5.1 console, Windows 11; the final whole-project run of Stage 6)
+
+| Check | Result |
+| --- | --- |
+| `bash tools/test.sh` (Godot suite + Python content tests) | **73,712 checks, 0 failures** (Godot suite, exit code 0) and **181 Python content tests OK**. The output also carries expected noise: 73 Godot 'non-equal opposite anchors' warnings from the trial tests, the corrupt-save test's `Parse JSON failed`, a negative test's `story map missing`, an unknown-civilian fallback warning and Godot's leak notice at shutdown (4 resources in use); none is a failure |
+| `python3 tools/run/check_hotspots.py` (main run) | 0 errors, 5 warnings (route-lock chart differences, as before); 36 of 36 scenes reached, 52 routes taken, 93 flags settable, portals into the paths: ember, gospel, squadron |
+| `python3 tools/run/check_hotspots.py --path gospel` / `squadron` / `ember` | gospel 0 errors, 15 warnings, 17 of 17 scenes reached, both endings (`road`, `tomb`) left by `run:warehouse`; squadron 0 errors, 1 warning, 14 of 14, ending `free`; ember 0 errors, 19 warnings, 15 of 15, endings `kept`, `quenched`. Every warning is the route lock (a route whose chart pack differs from the default route's); `stub` 0 and 0 |
+| `bash tools/run/walk_run.sh --path gospel` / `squadron` / `ember` (real scenes, virtual clock, isolated save, dummy audio) | all three `run walk-through: OK`: gospel 7 walks (`perfect`, `sloppy`, `none`, `road_end`, `branch_a`, `branch_b`, `branch_c`), **17 of 17 scenes visited**; squadron 5 walks (`perfect`, `sloppy`, `none`, `loop`, `clause`), **14 of 14**; ember 6 walks (`perfect`, `sloppy`, `none`, `kept`, `taken`, `lantern`), **15 of 15**; no ERROR or SCRIPT line in any. The main run's own `walk_run.sh` (36 scenes) was not re-run in Stage 6 (the suite's run-scene tests and the matrix cover it) |
+| `python3 tools/story/check_assets.py` | OK (night_one, mothership, underworld, hospital, mental_hospital, airfield, city, harbour, manifest check) |
+| other | `make_path_placeholders.py ember --force` into a scratch folder reproduced the committed WAV and `pack.json` bytes (deterministic); `tools/content/music_handoff.py` regenerated `docs/MUSIC_HANDOFF.md` |
+
+What the tests cover for the paths: `tests/test_run_paths.gd` (rates, relaxed rules, wrong-tempo pack refused, portals both ways, save migration, the handoff in both directions with `beat_s` before and after, the phase on the downbeat, cue times on the new grid,
+the clock swap, the real scene entering the stub through the balcony and leaving by its ending), `test_gospel.gd`, `test_run_squadron.gd`, `test_run_ember.gd` (data, flags, cast, pieces, `hide`, acting in five states, the real scene through the real portal, every
+ending), the per-path policy matrix in `test_run_matrix.gd` (each path under every tap policy and four skills), `test_story_acts.gd` (every directed person is baked in exactly the acts the data uses), `test_run_hud_silent.gd`, and the Python content tests
+(placeholders, importer, gospel, directed actors). The history of test counts: 67,513 (1b), 67,690 (1c), 71,389 (1d), 72,444 (Gospel), 73,056 (Ember), 73,647 (Squadron), 73,712 now.
+
+Also verified earlier and not repeated now (still valid, nothing it covers has changed): the handoff recording (`docs/shots/run/path_handoff_check.txt`: beat grids 174 -> 124 -> 174 BPM, the new grid's first downbeat +2.9 ms from the old drums in, -6.5 ms out, every block fitting its stage
+gains); the prebuild of a path's first stage in a cue-free guard (75 ms to 250 ms per map, none behind the closed frame); the balcony star opening the Gospel for real; the booth radio entering Squadron at 174 -> 140 and leaving at 140 -> 174; shots of every scene of
+every path and of every character hotspot in five states, looked at by the agents (`docs/shots/{gospel,squadron,ember}/`, `docs/shots/acting/`).
+
+### NOT verified (the honest list)
+
+1. **Nothing has been played by hand and nothing has been heard.** No phone, no real output latency, no touch feel, no frame times on a phone (the maps were built on a desktop). The placeholders were measured (bass-forward, sub share), never auditioned; the Squadron gains come from
+   measurements of the written loops, not ears. The owner's phone run (`How to run the phone check`, Part B) is still the first real test of anything in the game.
+2. **Acts, faces, set pieces and the Golgotha staging have only been seen as still frames** from the virtual clock. Whether a player who is watching the pads sees an act at beat 50 and an outcome at beat 62 is unknown. Several pieces (`swell`, `long_shadow`, `river_rise`,
+   `rider_shadow`, `drowned`, the Gospel's sky pieces) were validated and fired at their beats in tests; nobody looked at most of them on screen.
+3. **No real Gospel or Ember loops exist.** 32 scenes play synthesised placeholders (17 Gospel, 15 Ember). Whether the owner's loops, when they arrive, will pass the importer is unknown: the Squadron ones needed `--max-error-ms 40` for six scenes and are 4-bar phrases.
+4. **The tempo handoff and the 88 ms finding were measured with the dummy audio driver only** (see A4).
+5. **The Android and Windows exports predate all of this** (they predate even the loadout redesign, Part B item 17). Nothing was exported; the size of an export with the path packs was not measured (A8).
+6. `tools/story/check_assets.py` covers the five old chapters and the three Squadron worlds, not the Gospel's or the Ember's maps (their art is checked by their own tests and `tools/story/check_map.gd`).
+7. The pause menu's "Leave this path" button was built and tested through the scene but not looked at on a real screen.
+
+## A3. Divergences from the plan, gathered from the stage notes
+
+Plan-wide (stages 1 and 2):
+* The pose key `fwd` (a forward bend) was added to the pixel rig; `point` and `stare` keep their old default faces; the plan's `StoryCrowd.direct(...)` is `direct_actor` (the name `direct` was taken by the crowd's group directive).
+* The wizard hotspots in the Warehouse (`warehouse.wizard`, `warehouse.chill.wizard`) have no `acting`: the wizard is a billboard thing, not a baked person.
+* The "committed" flash is one beat, not two; a result is seen about three beats at best before the passage frame closes over a route to another world, so the strongest act of a route-leaving hotspot is in its `success` / `failure`, briefly.
+* The portals are gated so they fit the 2 to 4 rule: the star needs `wh_saw_floor`, the ember `wh_vip_pass`, the radio nothing.
+* Path placeholders are WAV, not Ogg (the format `beatshaper.py import` writes; Ogg cannot promise a sample-exact loop), with MIDI beside them.
+* The way back from a path is the world-change arrival (door, walk to the floor), not `trial_leave`'s fresh rail, because a path may leave the camera in another sector. `path_enter` marks a path's worlds in `paths`, never in `reached`.
+* The engine got `grid_origin` so cues sit on the new tempo's grid counted from the handoff downbeat.
+* Four directed people (`g07`, `g08`, `court_g06`, `e04`) belonged to groups the run never brings in; `StoryCrowd.ensure_present` fades them in.
+
+The Gospel (stage 3): one map per world means the plan's four maps became four maps with 17 views (a view per scene), `galilee_shore` is the Jordan's alone and the lakeshore is on `hillside`; J00 and J14 have a harmless second hotspot (the shepherd, the women) because the
+contract needs two in every scene; a path's exit scene may lead on inside its world and to a non-entry scene of it; for a path `check_hotspots.py` wants some hotspot leading to a route, not an exit of its own; the sky pieces of Golgotha are billboards at 12 m (they dim the sky
+behind the hill, not the people in front).
+
+The Mission Count (stage 4): three maps, not four (the night bomber is a room of `airfield`; `base` and `air` share a map); the loops are 16-beat (4-bar) phrases, not 8 bars, so a phase is four laps and each lap brings a new layer (the path's own `stages` in run.json, data only);
+six scenes needed a 40 ms MIDI tolerance; the plan's `object` touches whose success is a route are `exit` hotspots here (the validator wants an exit anchored on a thing or a doorway per route); exit scenes route in their own world only with `loop: true` and the depth rule is
+lifted; there is no placeholder music at all; the booth portal gained a visible radio and a bomber's shadow (Night One props).
+
+The Ember Road (stage 5): five worlds, not four (the plan's `north` world listed two maps, so it is split into `north` and `deeps`); the default exit of a scene is an invented lit way on where the plan lists two non-exit touches (E03, E06 to E09, E11 to E14); E00 has a second touch
+(the Ember in its bowl); the grandmother lies and sleeps instead of offering; the gate's laughing mouths are a set piece, not an act; "alone" and "lost companions" are `hide` cast lines (a new kind of cast line); directed companions are per-room instances of one `person`;
+the Birch Hall's and the lake's setbacks go to the High Pass across a world border as `loop` routes; the placeholders are WAV at 145 BPM.
+
+## A4. Known problems and weak spots
+
+**Audio.**
+* *The 88 ms phase-change offset.* In the recorded handoff (balcony star -> stub -> back) the first phase change *inside* the path sits about 88 ms (three 29.4 ms chunks of the dummy driver) from the one before it, and the shift persists into the Warehouse afterwards. A plain main-run
+  phase change measured 8.8 ms of spread and a path started directly 11.4 ms, so it is not the dummy driver's chunk alone: something the first wrap of the clock loop after a handoff does (`RunAudio._swap_clock`). The checker tolerance was not changed. If a phone shows cues
+  arriving a fraction of a second early from the second room of a path on, this is where to look.
+* *Squadron bass.* C05 and C06 have a short loud bass transient on a quiet body (peak-limited: RMS about -23 to -25 dBFS; at stage 2 the bass sits below the drums); C03, C05, C06, C09 and C11 are mid-heavy (8 to 31 % of the bass under 90 Hz). Nothing was edited; a re-export with the
+  transient tamed, or a game-side limiter, would give more.
+* *Placeholders on a phone speaker.* Bass-forward by measurement (RMS: drums -20 to -21, bass -11 to -12, pad -28 dBFS; at least 45 to 50 % of the bass under 90 Hz); whether that is prominent enough on a phone speaker is the owner's to judge.
+
+**Shots and art the agents were not happy with** (all are looked-at stills, in `docs/shots/`):
+* Gospel: the acting strips of route-leaving hotspots (`gospel_jordan_wilderness_*`, the exits) show their success and failure panels inside the passage frame, so the tempter's `recoil` and `laugh` do not read; for `galilee.capernaum.family` and `galilee.fishermen` the committed and success
+  panels differ little from `available`; the dusk and night views (J09, J12) are dark and the grove's far crowd is a few pixels; `wall_hill` and `wall_columns` read as flat bands and heavy shadow; the skies are built from large dither cells at this resolution; the grove's torch and the
+  Bethlehem fire are lights, not animated art.
+* Squadron: `route_cNN` where the rail's wandering camera looks at a wall or the ceiling at beat 56 (C03, C04, C05, C06 above all: the hotspots then show as edge beacons, touchable but not pretty); the quay (`node_c12`, `route_c12`, the sentry's and the boat's acting strips) shows the neutral
+  coast through its gap as a glitchy block of dither and the fishing boat reads as a dark hulk; the flight line's sandbag berm is very loud orange; C04's lever is hard to find from the home camera; weak art: `thing_tent_flap` (a cross on a white sheet could be read as a flag), `thing_truck`,
+  `thing_staff_car`, `thing_medkit`, `wall_hangar`, `wall_stucco`; the gunner reads as a small person in a helmet more than a boy, the MP's helmet is a white dome, the patient's head bandage a turban, the ribbons and stripes are small.
+* Ember: `route_*` shots of the dark scenes (Deep Halls, Falls, the Keeper) have small dim people at the default camera; `node_hollow_ford` has Bram and his lantern at the edge; E12 and E13 have Bram and the Hollow One at the edges of a very dark cavern, and the `swell` and `long_shadow`
+  pieces are seen late in the phase and were not shot; the Hollow One's skin reads cyan in the teal marsh (the light's colour, not the rig's).
+* Stage 1d: `underworld_court_queen` (hidden in a crowd of dancers), `ward_dorm_sleeper` (selected and committed acts do not show), `ward_late_exit_stare` (faces only), the two bouncers and `mothership_exit_exam` (panels inside the passage frame).
+
+**Engine and tool limits.**
+* A hotspot whose person belongs to a group the run never brings in anchors on nobody unless `ensure_present` is called; the Gospel's `late` group relies on cast lines. A new path author should check each acting hotspot's person exists in the room.
+* The Warehouse portals are small, pulsing and gated; a first-time player may never find them (A6 question 5).
+* The matrix, the walks and the checks all run on the virtual clock; real-time behaviour (frame times, GC pauses at a map build) is only measured for the prebuild.
+* `walk_run.sh` and the capture scripts default to the Linux Godot path: set `GODOT` on Windows.
+
+## A5. Backlog (not built)
+
+1. The Warehouse portal's changed look once a path has been finished (plan D10): the flags `keep:path_<id>_<ending>` are set, saved and counted on the home screen ("Endings found: N"); no hotspot reads them yet.
+2. The Warehouse wizards do not act (they are billboard things, not people); `RunActing.figure_motion` (the Bassment's) is the model.
+3. Gospel and Ember maps in `check_assets.py`.
+4. Nothing exercises the real-time audio on a path other than the stub handoff recording; a re-record with `tools/story/record_music.gd` through `warehouse.booth.radio` (140 BPM) and the bar ember (145) would extend `docs/shots/run/path_handoff_check.txt`.
+5. Part B's backlog still applies to the defense campaign.
+
+## A6. Open decisions for the owner
+
+1. **Squadron timing: loosen or re-export?** C01, C02, C04, C08, C09 and C12 were imported with a 40 ms MIDI tolerance (their kick or snare hits sit 31 to 38 ms from the MIDI notes; the importer's default is 12 ms). Nothing was retimed. If hits feel late or early in those scenes, re-export
+   from the DAW with the drums quantised, or accept it. C09, C11 and C14 have no snare note.
+2. **Squadron loops are 4 bars, not 8.** They tile the 64-beat phase four times and the stage mix changes every lap (every 6.9 s), so the arrangement moves even though the loop does not. If 8-bar loops are wanted, they have to be re-exported; the importer takes either.
+3. **Gospel and Ember need their real loops.** 17 and 15 prompts, verbatim, are in `docs/MUSIC_HANDOFF.md`; drop the exports in `content/imports/<path>/<scene>/` and run `beatshaper.py --path <id> apply ...`. Until then the placeholders are WAV (not Ogg), bass-forward and never auditioned.
+4. **Judgement words.** PERFECT, GREAT and MISS are still drawn on the pads as feedback ("not story"). Decision: keep them, or remove them for the full silent-HUD intent (one flag in `RunPlay._on_judge_event`).
+5. **Portal discoverability.** The star appears only after the floor has been seen from the balcony rail (`wh_saw_floor`) and the ember only after the stranger's VIP pass (`wh_vip_pass`); the radio is always there. Keep the gating (it fits the 2 to 4 rule) or make the portals easier to find, e.g. a second hint
+   in the room or a home-screen shortcut for review.
+6. **A look for a finished path** (plan D10, A5 item 1): build it, or leave the home screen's "Endings found" as the only trace.
+7. **Squadron's thin bass** in C05 and C06 (and mid-heavy C03, C09, C11): re-export, or a game-side limiter.
+8. **The Gospel path's subject.** It follows a public-domain source with alternative-history branches and never shows the player; no painting or film is depicted (plan D2). Whether to ship it, and in which stores or ratings, is the owner's call and was not examined by the agents.
+9. **Repo size** (A8): keep the placeholder WAVs in git, or git-ignore them and regenerate by script.
+
+## A7. How to run the checks (the short list; the full list is `README.md`)
+
+```
+bash tools/test.sh                                        # whole suite (10 to 15 minutes for the Godot part on this PC)
+python3 tools/run/check_hotspots.py [--path gospel|squadron|ember]
+GODOT=<godot console binary> bash tools/run/walk_run.sh --path gospel      # also squadron, ember; no --path: the five old worlds (all need a display)
+python3 tools/story/check_assets.py
+python3 tools/content/music_handoff.py                    # regenerate docs/MUSIC_HANDOFF.md
+```
+
+## A8. Repo size
+
+Measured on 5 November 2026 (report only: no history was rewritten and no tracked file was deleted).
+
+| What | Number |
+| --- | --- |
+| Repository, packed (`git count-objects -vH`) | 852 MiB `size-pack` (+9.5 MiB loose); all reachable blobs at `HEAD` 850 MiB packed |
+| The same at the plan's starting commit `5efcfd2` | 598 MiB packed (857 MiB raw) |
+| Growth since the plan | +252 MiB packed (+342 MiB raw): packs of the paths 116 MiB, new story art (textures, sprites, people sheets) 90 MiB, screenshots 49 MiB, everything else about 1 MiB |
+| The paths' packs, packed in git (unique blobs) | Gospel 42.5 MiB (65.5 MiB raw), Ember 34.0 MiB (51.2 raw), Squadron 28.5 MiB (52.9 raw, the owner's real loops), `stub` 10.9 MiB (17.1 raw) |
+| The same on disk in a working tree (`du`, no sharing) | `songs/packs` 445 MB in all: Gospel 146 MB (17 packs, 8.6 MB each), Ember 110 MB (15 packs), Squadron 54 MB (14 packs) |
+| Largest single tracked file | 8.7 MB (`docs/shots/faces/mothership_after.jpg`); no tracked file is over 20 MB |
+| Largest blob among the paths' packs | 2.8 MiB (one WAV stem); a placeholder pack is three 2.9 MB stems plus MIDI |
+
+Git stores identical stems once (Gospel's 51 WAV files are only 23 distinct blobs), which is why the packed numbers are well under the working-tree ones. **Nothing is near GitHub's 100 MB per-file limit**; the repository as a whole (852 MiB) is under GitHub's 1 GB
+"recommended" size and 5 GB soft limit but is the number to watch: the owner's real loops for 32 more scenes (Squadron's 14 added 28.5 MiB packed for 4-bar loops; 8-bar WAV loops would be about twice that each) would take it past 1 GB.
+
+**Could the placeholders be git-ignored and regenerated?** They could. `python tools/content/make_path_placeholders.py <path> --force` is deterministic: regenerating Ember's packs into a scratch folder gave byte-identical `loops/*.wav` and `pack.json` to the committed ones (checked for two scenes; the
+generator seeds by path and scene), and it takes about 12 s a path. The Gospel's and Ember's placeholders are 76.5 MiB packed (87 MiB with `stub`), about 10 % of the repository. What it would cost: the game, `tools/test.sh` and the walks fail on a fresh clone until the script has been run
+for `gospel`, `ember` and `stub` (a `tools/test.sh` pre-step could do it); the tracked `.wav.import` files would also have to go or be regenerated; and a blanket ignore of `songs/packs/gospel_*` would also hide the owner's real imports, so each imported pack would need `git add -f` or an exception.
+Ignoring them also does not shrink history (the 76.5 MiB stays in every clone until the history is rewritten, which is not recommended while other people's clones and the Android checkout exist).
+
+**Recommendation.** Do nothing now. Keep the placeholders tracked until the owner's real loops arrive scene by scene; when a scene is imported, the placeholder pack is replaced (the importer's `apply` writes over it) (its old blobs stay in history; the real loop is added to the repository on top). If the repository nears 1 GB before then, ignore
+and regenerate only `stub_*` and the placeholder packs that still carry `"placeholder": true`, add the generation step to `tools/test.sh`, and think about moving the real WAV loops to Git LFS or Ogg (Ogg cannot promise a sample-exact loop, which is why the importer writes WAV). Separately, **an export would carry the packs too**:
+`export_presets.cfg` has `export_filter="all_resources"` and no exclude filter, so a Windows or Android build would include about 300 MB of path WAVs (the Android export was not run; its size is unmeasured). Consider an `exclude_filter` for `songs/packs/stub_*` (and for the placeholders of any path that is not shipping) before the next export.
+
+---
+
+# Part B: the defense campaign and loadout (state of 3 November 2026, unchanged)
+
+The text below is the earlier handover. Its commands, verified lists and backlog describe the defense-campaign code (missions, loadout, loop library), which is still in the repository but no longer on the home screen.
 
 ## What the game is now
 
