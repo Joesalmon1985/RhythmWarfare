@@ -22,8 +22,9 @@ func _cast_of(d: RunData, scene: String, run_flags: Dictionary = {}) -> Array:
 	var out: Array = []
 	var t := 0.0
 	var guard := 0
-	while e.phase_n < 2 and not e.over and guard < 20000:
+	while e.scene_index() < 2 and not e.over and guard < 40000:  # (the scene's laps: its cast lines count beats from its first downbeat)
 		guard += 1
+		e.energy = maxf(e.energy, 60.0)  # (nobody plays: two laps of misses would end the run, the cast does not depend on it)
 		for ev in e.update(t):
 			if str(ev["kind"]) == "cast":
 				out.append(ev)
@@ -140,8 +141,8 @@ func test_set_pieces_are_switched_by_cast_lines_at_their_beats() -> void:
 	var d := _data()
 	var sig := func(log: Array) -> Array:
 		return log.filter(func(c: Dictionary) -> bool: return str(c["piece"]) != "").map(func(c: Dictionary) -> String: return "%s:%s:%d" % [c["piece"], c["op"], int(c["beat"])])
-	assert_eq(sig.call(_cast_of(d, "marsh.wall")), ["gate_mouths:off:0", "gate_mouths:on:34"], "the gate's mouths open at beat 34")
-	assert_eq(sig.call(_cast_of(d, "hollow.inn")), ["rider_shadow:on:48", "rider_shadow:off:61"], "a rider's shadow crosses the window at beat 48")
+	assert_eq(sig.call(_cast_of(d, "marsh.wall")), ["gate_mouths:off:0", "gate_mouths:on:68"], "the gate's mouths open at beat 34 of the single phase: beat 68, early in the second lap")
+	assert_eq(sig.call(_cast_of(d, "hollow.inn")), ["rider_shadow:on:112", "rider_shadow:off:125"], "a rider's shadow crosses the window (beat 48 and 61 of the last lap)")
 	for c in _cast_of(d, "marsh.wall"):
 		if str(c["piece"]) != "":
 			assert_eq(str(c["actor"]), "", "a piece line directs nobody")

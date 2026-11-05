@@ -11,6 +11,10 @@ low shelf, Godot's WAVESHAPE distortion, post gain; per path in the path's run.j
 over (`mix.carry_bass`) when the previous scene plays the same music family. Gain ramps (0.35 s) and the hotspot dip are left out of the render (the dip is reported in the dwell
 table). The linear filters are applied in the frequency domain over one loop (a looped signal's steady state, exact for an LTI filter); the waveshaper sample by sample, as Godot does.
 
+LAPS (docs/HANDOVER.md A12, docs/CONTINUOUS_RUN.md "Two laps"): a scene of a path may play `laps` phases in a row (path.laps / the scene's `laps`; `--force-laps N` overrides every scene). The render is then
+laps x 64 beats: block g of the scene (g = 4 * lap + block) is mix stage min(g, 3) under perfect play, so the bass revealed at beat 16 stays in, at its strongest, through every later lap and the loops simply go on
+(every loop tiles a lap). The seconds are per SCENE (laps x the phase), the LUFS and the peak over the whole scene.
+
 Per scene it reports: seconds each voice is audible per phase (gain > 0 and within 20 dB of the mix in that block) and the block it enters; the seconds the bass LEADS (its RMS
 within 1 dB of the loudest voice or above it); integrated loudness (BS.1770 K-weighted, gated, LUFS); the sample peak of the mix before the run's limiter (dBFS); BASS PROMINENCE
 = the mix's energy in 30-250 Hz over its whole energy, and the sub (30-80 Hz) share, over the blocks with the bass in; bass RMS minus drums RMS and minus synth RMS (dB, as heard,
@@ -29,6 +33,7 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]  # (--root measures another checkout with this same tool: the "before" table)
+FORCE_LAPS = 0  # --force-laps N: every scene plays N laps whatever the data says (0 = the data)
 RATE = 48000
 RUNS = ["main", "gospel", "squadron", "ember"]
 DEFAULT_BUS = {"enabled": False, "highpass_hz": 0.0, "shelf_hz": 100.0, "shelf_db": 0.0, "drive": 0.0, "pre_gain_db": 0.0, "gain_db": 0.0, "keep_hf_hz": 16000.0}
@@ -86,7 +91,8 @@ def load_run(rid: str) -> dict:
     for n in run["nodes"]:
         nid = str(n["id"])
         mu = m[nid]
-        node = {"id": nid, "world": str(n["world"]), "next": [str(e["to"]) for e in n.get("next", [])], "music": mu}
+        node = {"id": nid, "world": str(n["world"]), "next": [str(e["to"]) for e in n.get("next", [])], "music": mu,
+                "laps": FORCE_LAPS or int(n.get("laps", (run.get("path") or {}).get("laps", 1)))}
         if "arrangement" in mu:
             arr = arrs[str(mu["arrangement"])]  # (the scene's own arrangement: the seed may pick an alternate of the same family in the game)
             first = int(mu.get("slot", 0)) * 16 % int(arr["bars"])
@@ -252,31 +258,34 @@ def predecessor(R: dict, nid: str) -> str:
 def render(R: dict, nid: str) -> dict:
     node = R["nodes"][nid]
     beat_n = 60.0 / R["bpm"] * RATE
-    N = int(round(64 * beat_n))
+    laps = int(node.get("laps", 1))
+    N = int(round(64 * laps * beat_n))
     bb = node["bass_bus"]
     voices = {k: np.zeros((N, 2)) for k in ("drums", "bass", "other", "carry")}
     gains = []
-    for b in range(4):
-        s0, s1 = int(round(16 * b * beat_n)), int(round(16 * (b + 1) * beat_n))
-        st = stage_gains(R, b)
+    for g in range(4 * laps):  # the scene's blocks, lap after lap: the stage steps on a block at a time under perfect play and stays at the strongest (stage 4) in the laps after the first
+        b, lap = g % 4, g // 4
+        s_stage = min(g, 3)
+        st = stage_gains(R, s_stage)
         # the sections that play in this block (a switch is always on a block boundary at 32-beat sections; cut at the section start anyway)
         for sec in node["sections"]:
             lo, hi = max(sec["start"], 16 * b), min(sec["start"] + sec["beats"], 16 * (b + 1))
             if hi <= lo:
                 continue
             p = R["packs"][sec["pack"]]
-            a0, a1 = int(round(lo * beat_n)), int(round(hi * beat_n))
+            off = 64 * lap
+            a0, a1 = int(round((lo + off) * beat_n)), int(round((hi + off) * beat_n))
             gd = float(st["drums"]) * recipe_gain(R, sec, "drums")
             place(voices["drums"], loop_of(p, "drums") * gd, a0, a1, int(round(sec["start"] * beat_n)))
-            if b >= 1:  # revealed at beat 16 (perfect play); the bass and synth start with the reveal, or with the section when it starts later
+            if g >= 1:  # revealed at beat 16 (perfect play); the bass and synth start with the reveal, or with the section when it starts later
                 origin = int(round(max(16, sec["start"]) * beat_n))
                 gbass = float(st["bass"]) * recipe_gain(R, sec, "bass")
                 go = float(st["other"]) * recipe_gain(R, sec, "other")
                 if gbass > 0:
                     place(voices["bass"], bussed(p, gbass, bb), a0, a1, origin)
                 place(voices["other"], loop_of(p, "other") * go, a0, a1, origin)
-            gains.append({"block": b, "section": sec["pack"], "drums": round(gd, 3), "bass": round(float(st["bass"]) * recipe_gain(R, sec, "bass"), 3) if b >= 1 else 0.0,
-                          "other": round(float(st["other"]) * recipe_gain(R, sec, "other"), 3) if b >= 1 else 0.0})
+            gains.append({"block": g, "section": sec["pack"], "drums": round(gd, 3), "bass": round(float(st["bass"]) * recipe_gain(R, sec, "bass"), 3) if g >= 1 else 0.0,
+                          "other": round(float(st["other"]) * recipe_gain(R, sec, "other"), 3) if g >= 1 else 0.0})
     carry = R["run"]["mix"].get("carry_bass") or {}
     cg = float(carry.get("gain", 0.0))
     prev = predecessor(R, nid)
@@ -286,7 +295,7 @@ def render(R: dict, nid: str) -> dict:
         last = pn["sections"][-1]
         p = R["packs"][last["pack"]]
         beats = float(carry.get("beats", 16))
-        origin = -int(round((64 - max(16, last["start"])) * beat_n))  # it started at the previous phase's reveal (or its last section) and runs on
+        origin = -int(round((64 * int(pn.get("laps", 1)) - max(16, last["start"])) * beat_n))  # it started at the previous scene's reveal (or its last section) and runs on
         place(voices["carry"], bussed(p, cg, pn["bass_bus"]), 0, int(round(beats * beat_n)), origin)
         carried = True
     lvl = 10 ** (float(R["run"]["mix"].get("gain_db", 0.0)) / 20.0)  # the run's level (RunMix's volume): every voice, as heard
@@ -344,7 +353,8 @@ def measure(R: dict, nid: str) -> dict:
     aud = {k: 0.0 for k in ("drums", "bass", "other")}
     entry = {k: None for k in aud}
     lead = 0.0
-    for b in range(4):
+    laps = int(R["nodes"][nid].get("laps", 1))
+    for b in range(4 * laps):
         s0, s1 = int(round(16 * b * bn)), int(round(16 * (b + 1) * bn))
         m = _rms(mix[s0:s1])
         lv = {k: _rms(v[k][s0:s1]) + (_rms(v["carry"][s0:s1]) if k == "bass" else 0.0) for k in aud}
@@ -359,7 +369,7 @@ def measure(R: dict, nid: str) -> dict:
     mb, bb = mix[s16:], v["bass"][s16:]
     tot = band_energy(mb, 0, RATE / 2)
     out = {
-        "scene": nid, "family": R["nodes"][nid]["family"], "carry": r["carried"],
+        "scene": nid, "family": R["nodes"][nid]["family"], "carry": r["carried"], "laps": laps, "scene_s": laps * 64 * 60.0 / R["bpm"],
         "aud": aud, "entry": entry, "bass_lead_s": lead,
         "lufs": lufs(mix), "peak_db": _db(float(np.abs(mix).max())),
         "bass_band": band_energy(mb, 30, 250) / tot, "sub_band": band_energy(mb, 30, 80) / tot,
@@ -388,6 +398,7 @@ def dwell(R: dict) -> dict:
     beat = 60.0 / R["bpm"]
     phase = 64 * beat
     seq = default_route(R)
+    scene_s = [int(R["nodes"][n].get("laps", 1)) * phase for n in seq]  # seconds the player sits in each scene of the default route
     runs_family, runs_world = [], []
     for key, store in (("family", runs_family), ("world", runs_world)):
         cur, n = None, 0
@@ -408,6 +419,8 @@ def dwell(R: dict) -> dict:
     carry = float((mixd.get("carry_bass") or {}).get("gain", 0.0))
     return {
         "bpm": R["bpm"], "phase_s": phase, "block_s": 16 * beat, "scenes": len(R["order"]), "default_route": len(seq),
+        "scene_s_mean": float(np.mean(scene_s)), "scene_s_min": float(min(scene_s)), "scene_s_max": float(max(scene_s)), "route_s": float(sum(scene_s)),
+        "laps": sorted({int(R["nodes"][n].get("laps", 1)) for n in R["order"]}),
         "phases_per_family": runs_family, "phases_per_world": runs_world,
         "sections_per_phase": (min(secs), max(secs)), "min_section_s": min_sec,
         "arrangement_changes_per_phase": 3 + max(secs) - 1,
@@ -431,7 +444,8 @@ def report(results: dict, title: str) -> str:
     for rid, res in results.items():
         d = res["dwell"]
         L += [f"## {rid} ({d['bpm']:g} BPM)", "",
-              f"Dwell: phase {d['phase_s']:.1f} s (4 blocks of {d['block_s']:.2f} s); {d['scenes']} scenes; default route {d['default_route']} phases; phases per music family along it {d['phases_per_family']}, per world {d['phases_per_world']}; "
+              f"Dwell: phase {d['phase_s']:.1f} s (4 blocks of {d['block_s']:.2f} s), laps per scene {d.get('laps', [1])}: a scene lasts {d.get('scene_s_min', d['phase_s']):.1f}-{d.get('scene_s_max', d['phase_s']):.1f} s "
+              f"(mean {d.get('scene_s_mean', d['phase_s']):.1f} s) and the default route {d.get('route_s', d['phase_s'] * d['default_route']):.0f} s; {d['scenes']} scenes; default route {d['default_route']} phases; phases per music family along it {d['phases_per_family']}, per world {d['phases_per_world']}; "
               f"{d['sections_per_phase'][0]}-{d['sections_per_phase'][1]} arrangement sections per phase (shortest {d['min_section_s']:.1f} s); up to {d['arrangement_changes_per_phase']} mix/arrangement changes per phase; "
               f"stage bass gains {d['stage_bass']}; recipe bass floor {d['recipe_bass_floor']:g}; bass in {d['bass_on_s']:.1f} s then out {d['bass_off_s']:.1f} s at every scene change (carried at {d['carry_gain']:g} within a family); "
               f"{d['dip_hotspots']} hotspots dip the music to {d['dip_gain']:g} ({_db(d['dip_gain']):.1f} dB) for {d['dip_beats']:g} beats ({d['dip_s']:.1f} s); phase fade {d['phase_fade_s']:g} s; run level {d.get('gain_db', 0.0):+g} dB.", "",
@@ -442,7 +456,7 @@ def report(results: dict, title: str) -> str:
                      f"{m['bass_lead_s']:.1f} | {m['lufs']:.1f} | {m['peak_db']:.1f} | {m['bass_band'] * 100:.0f}% | {m['sub_band'] * 100:.0f}% | {m['bass_vs_drums_db']:+.1f} | {m['bass_vs_other_db']:+.1f} | {m['phone_bass_db']:.1f} | {'yes' if m['carry'] else ''} |")
         s = summary(res)
         L += ["", f"Mean over the {len(res['scenes'])} scenes: bass band {s['bass_band'] * 100:.1f}%, sub {s['sub_band'] * 100:.1f}%, bass-drums {s['bass_vs_drums_db']:+.1f} dB, phone bass {s['phone_bass_db']:.1f} dB, "
-              f"bass audible {s['bass_s']:.1f} s and leading {s['lead_s']:.1f} s of {d['phase_s']:.1f} s, LUFS {s['lufs']:.1f}, worst peak {s['peak_max']:.1f} dBFS.", ""]
+              f"bass audible {s['bass_s']:.1f} s and leading {s['lead_s']:.1f} s of {s['scene_s']:.1f} s in a scene, LUFS {s['lufs']:.1f}, worst peak {s['peak_max']:.1f} dBFS.", ""]
     return "\n".join(L) + "\n"
 
 
@@ -457,9 +471,10 @@ def comparison(before: dict, after: dict) -> str:
         b, a = before[rid]["summary"], after[rid]["summary"]
         cb = sum(1 for m in before[rid]["scenes"] if m["carry"])
         ca = sum(1 for m in after[rid]["scenes"] if m["carry"])
-        ph = after[rid]["dwell"]["phase_s"]
+        ph = after[rid]["summary"].get("scene_s", after[rid]["dwell"]["phase_s"])
+        phb = before[rid]["summary"].get("scene_s", before[rid]["dwell"]["phase_s"])
         L.append(f"| {rid} | {b['bass_band'] * 100:.1f}% -> {a['bass_band'] * 100:.1f}% | {b['sub_band'] * 100:.1f}% -> {a['sub_band'] * 100:.1f}% | {b['bass_vs_drums_db']:+.1f} -> {a['bass_vs_drums_db']:+.1f} | "
-                 f"{b['phone_bass_db']:.1f} -> {a['phone_bass_db']:.1f} | {b['bass_s']:.1f} -> {a['bass_s']:.1f} of {ph:.1f} | {b['lead_s']:.1f} -> {a['lead_s']:.1f} | {cb} -> {ca} of {len(after[rid]['scenes'])} | "
+                 f"{b['phone_bass_db']:.1f} -> {a['phone_bass_db']:.1f} | {b['bass_s']:.1f} of {phb:.1f} -> {a['bass_s']:.1f} of {ph:.1f} | {b['lead_s']:.1f} -> {a['lead_s']:.1f} | {cb} -> {ca} of {len(after[rid]['scenes'])} | "
                  f"{b['lufs']:.1f} -> {a['lufs']:.1f} | {b['peak_max']:.1f} -> {a['peak_max']:.1f} |")
     return "\n".join(L) + "\n\n"
 
@@ -469,7 +484,7 @@ def summary(res: dict) -> dict:
     mean = lambda k: float(np.mean([m[k] for m in sc]))  # noqa: E731
     return {"bass_band": mean("bass_band"), "sub_band": mean("sub_band"), "bass_vs_drums_db": mean("bass_vs_drums_db"), "phone_bass_db": mean("phone_bass_db"),
             "bass_s": float(np.mean([m["aud"]["bass"] for m in sc])), "lead_s": mean("bass_lead_s"), "lufs": mean("lufs"), "peak_max": max(m["peak_db"] for m in sc),
-            "bass_band_min": min(m["bass_band"] for m in sc)}
+            "bass_band_min": min(m["bass_band"] for m in sc), "scene_s": float(np.mean([m.get("scene_s", 0.0) for m in sc]))}
 
 
 def measure_run(rid: str, scenes: list | None = None) -> dict:
@@ -486,9 +501,11 @@ def main() -> int:
     ap.add_argument("--title", default="Mix measurement")
     ap.add_argument("--before", help="a --json file of an earlier measurement: adds the before/after table")
     ap.add_argument("--root", help="measure another checkout (its content and packs) with this tool")
+    ap.add_argument("--force-laps", type=int, default=0, help="every scene plays this many laps whatever the data says (1 = the single phase of before the two laps)")
     args = ap.parse_args()
+    global ROOT, FORCE_LAPS
+    FORCE_LAPS = max(args.force_laps, 0)
     if args.root:
-        global ROOT
         ROOT = Path(args.root).resolve()
     results = {}
     for rid in args.run or RUNS:

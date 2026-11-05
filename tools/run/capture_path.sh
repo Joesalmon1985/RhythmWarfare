@@ -19,6 +19,8 @@ BPM=$(python3 -c "import json; print(json.load(open('$ROOTW/content/paths/$PID/r
 ONLY="${RW_SHOTS:-}"
 want() { [ -z "$ONLY" ] || [[ "$1" =~ $ONLY ]]; }
 beats() { python3 -c "print($1*60/$BPM)"; }
+# a scene that plays several laps (docs/CONTINUOUS_RUN.md "Two laps") shows its hotspots in the LAST lap: beats of the window are counted from the scene's start
+lapoff() { python3 -c "import json; r = json.load(open('$ROOTW/content/paths/$PID/run.json')); n = [x for x in r['nodes'] if x['id'] == '$1'][0]; print(64 * (int(n.get('laps', r['path'].get('laps', 1))) - 1))"; }
 
 shot() {  # name node bot routes song_seconds [env...]
   local name="$1" node="$2" bot="$3" routes="$4" secs="$5"; shift 5
@@ -37,7 +39,7 @@ acting_run() {  # id scene flags cam policy shot_beat:state ...
   local name="${hid//./_}" steps=()
   for bs in "$@"; do
     local beat="${bs%%:*}" st="${bs##*:}" f
-    f=$(python3 -c "print(int(($beat*60/$BPM+2.0)/$RATE)+2)")
+    f=$(python3 -c "print(int((($beat+$(lapoff "$scene"))*60/$BPM+2.0)/$RATE)+2)")
     steps+=("$f:shot:${name}__${st}")
   done
   local fl=(); [ "$flags" = "-" ] || fl=("RW_RUN_FLAGS=$flags")
@@ -69,6 +71,6 @@ PY
 while read -r node; do
   f="${node//./_}"
   shot "node_${f}" "$node" perfect "" "$(beats 28)"
-  shot "route_${f}" "$node" perfect "" "$(beats 52)"
+  shot "route_${f}" "$node" perfect "" "$(beats $((52 + $(lapoff "$node"))))"
 done < "$TMP/scenes.txt"
 rm -rf "$TMP"

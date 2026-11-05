@@ -385,6 +385,9 @@ func test_the_picker_builds_one_row_per_scene_with_its_audio_line_and_an_info_vi
 	assert_contains(b.text, "squadron_c07", "and the pack")
 	assert_contains(b.text, "OWNER", "and where the music comes from")
 	assert_contains((scr.rows["gospel/jordan"] as Button).text, "PLACEHOLDER")
+	assert_contains((scr.rows["gospel/jordan.baptism"] as Button).text, "x2", "a scene that plays two laps says so on its row")
+	assert_false((scr.rows["gospel/jordan"] as Button).text.contains("x2"), "and one that plays one lap does not")
+	assert_false((scr.rows["main/warehouse"] as Button).text.contains("x2"), "nor does a scene of the 174 run")
 	for run_id in ["main", "gospel", "squadron", "ember"]:
 		assert_true(scr.headers.has(run_id), "a heading for " + run_id)
 	scr.open_detail("main", "warehouse.bar")
@@ -426,7 +429,7 @@ func test_in_debug_mode_the_overlay_shows_the_live_identity_and_the_hud_still_wr
 	assert_true(ov != null)
 	await _run_to(scene, 3.0 * 60.0 / 140.0)
 	var txt := ov.last_text
-	for want in ["SQUADRON", "city", "140 BPM", "squadron_c07", "Beat Shaper - C07-Bass.wav", "Beat Shaper - C07-Drums.wav", "Beat Shaper - C07-Synth.wav", "OWNER", "phase 1", "block 1/4", "stage 1", "VISUAL", "map city", "hotspots", "bass bus"]:
+	for want in ["SQUADRON", "city", "140 BPM", "squadron_c07", "Beat Shaper - C07-Bass.wav", "Beat Shaper - C07-Drums.wav", "Beat Shaper - C07-Synth.wav", "OWNER", "lap 1 of 2", "block 1/4", "stage 1", "VISUAL", "map city", "hotspots", "bass bus"]:
 		assert_contains(txt, want, "the overlay shows " + want)
 	assert_eq(scene.hud.strings_drawn, 0, "the HUD itself is still silent: the overlay is a separate node")
 	for n in ["Btn_music_dislike", "Btn_visual_dislike", "Btn_like"]:
