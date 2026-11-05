@@ -1068,6 +1068,8 @@ PATH_WARDROBES = {"orchard", "birch_hall", "deep_halls", "ash_land"}  # the Embe
 def dress(chapter: str, actor: dict, salt: int = 0) -> dict:
     aid = str(actor["id"])
     wear = str(actor.get("wear", ""))
+    if wear not in SQUADRON_WEARS:  # (the Gospel path names its own `wear` values: only the squadron's ten are this branch)
+        wear = ""
     chapter_seed = chapter
     sq_aid = aid
     if chapter in GOSPEL_MAPS:  # a look comes from the seed id: a disciple (d01..d12) wears the same face in every map of the path
