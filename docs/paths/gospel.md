@@ -149,7 +149,7 @@ first wrap. **The checker tolerance was not changed.** If a phone shows cues arr
 ## Verified and not verified
 
 **Verified (5 November 2026, this PC, virtual clock and headless unless stated):**
-* `bash tools/test.sh`: the Godot suite 72,457 checks at the last full run with 3 failures, all three tests that assumed the gospel path did not exist yet (`test_hotspots_engine` accepted no `path:` route, `test_run_paths` expected the star
+* `bash tools/test.sh`: the Godot suite 72,444 checks, 0 failures, plus the Python content tests (exit code 0), on the final commit; an earlier full run had 3 failures, all tests that assumed the gospel path did not exist yet (`test_hotspots_engine` accepted no `path:` route, `test_run_paths` expected the star
   hidden); fixed so they follow the data and re-run by filter green (`run_paths` 308 checks, `hotspots_engine` 1,428, `gospel` 446); the Python content tests run without failures. A last full run was made after the rebase onto `origin/main` before the push (see the commit log).
 * `python3 tools/run/check_hotspots.py --path gospel`: 0 errors (17 of 17 scenes reachable, 30 routes taken, 14 flags settable, both endings left by `run:warehouse`; 15 warnings are the route lock between sibling charts); the main run's check: 0 errors.
 * `bash tools/run/walk_run.sh --path gospel` (real scenes, virtual clock, isolated save): seven walks, **17 of 17 scenes visited, `run walk-through: OK`**: `perfect` (every default route to the tomb and on to the Warehouse), `road_end` (the road ending), `branch_a`, `branch_b`, `branch_c`
