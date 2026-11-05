@@ -192,6 +192,21 @@ func test_a_face_look_turns_to_a_point_holds_it_through_a_move_and_hands_back() 
 		assert_near(float(q.pose_at(k * b)["yaw"]), float(p.pose_at(k * b)["yaw"]), 1e-6, "the same in any order of arrival")
 
 
+func test_release_faces_hands_the_head_back_over_the_given_time_without_a_jump() -> void:
+	var p := _player()
+	var b := p.bar_s()
+	p.apply_action(_act(4.0 * b, "player_look", {"face": [[-6.0, 4.0, 1.0]], "bars": 6.0, "turn_bars": 1.0, "release_bars": 1.0}))
+	var t := 6.0 * b
+	var w_before := float(p.face_at(t)["w"])
+	assert_near(w_before, 1.0, 1e-6, "held at full")
+	p.release_faces(t, 2.0 * b)
+	assert_near(float(p.face_at(t)["w"]), 1.0, 1e-6, "no jump at the instant it is released")
+	assert_true(float(p.face_at(t + b)["w"]) < 1.0 and float(p.face_at(t + b)["w"]) > 0.0, "handing back")
+	assert_near(float(p.face_at(t + 2.0 * b + 0.001)["w"]), 0.0, 1e-6, "the rail's again after it")
+	var pose := p.pose_at(t + 3.0 * b)
+	assert_near(float(pose["yaw"]), float(pose["rail_yaw"]), 1e-6, "the head is the rail's")
+
+
 func _in_view(yaw: float, p: Vector2, from: Vector2) -> bool:
 	var a := rad_to_deg(atan2(-(p - from).x, -(p - from).y))
 	return absf(wrapf(a - yaw, -180.0, 180.0)) <= StoryPlayer.FACE_HALF_DEG + 0.01

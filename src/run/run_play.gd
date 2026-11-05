@@ -1271,6 +1271,7 @@ func _claim_frame(t: float, t_commit: float) -> void:
 	var pl: StoryPlayer = (stages[active_world]["stage"] as StoryStage).player
 	if pl == null:
 		return
+	pl.release_faces(t, 2.0 * engine.beat_s)  # the head held on the window's hotspots (the look-pass window camera) lets go: the table is what the touch is about
 	var span := 4.0 * engine.beat_s
 	pl._glances = pl._glances.filter(func(g: Dictionary) -> bool: return float(g["t1"]) <= t or float(g["t0"]) >= t_commit + span)
 	for k in int(ceil(maxf(t_commit - t, 0.0) / span)) + 1:
@@ -1287,6 +1288,12 @@ func _back_to_rail(t: float) -> void:
 	if wp != "":
 		_journey_apply({"world": active_world, "t0": t, "action": "player_move", "args": {"to": wp, "bars": 2.0, "style": "walk"}})
 	_journey_apply({"world": active_world, "t0": t, "action": "player_role", "args": {"role": "dancer"}})
+	if engine.window_open and t < engine.t_of(3.0 * float(engine.timing("block_beats")) + 12.0):  # the last block's window: the head frames the window's hotspots again (the camera the touch took away)
+		var pts := _window_face(engine.node_id, "")
+		if not pts.is_empty():
+			var fa: Dictionary = journey.window_face(pts, t, engine)
+			fa["world"] = active_world
+			_journey_apply(fa)
 
 
 ## True when a world-state flag is set (this run's or a kept discovery).

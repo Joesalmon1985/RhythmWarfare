@@ -149,6 +149,8 @@ func staged(block: int) -> Array:
 	var out: Array = []
 	for h in _list:
 		var id := str(h["id"])
+		if window_of(h) == "any":  # a place to sit (the card table), not a way on: it is no option of the choice, so it never turns the doors red or green
+			continue
 		if window_of(h) == "early":
 			if block <= 1 and committed_early == "" and committed == "" and is_available(h):
 				out.append(h)

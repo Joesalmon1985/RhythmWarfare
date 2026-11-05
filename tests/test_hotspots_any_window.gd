@@ -40,6 +40,16 @@ func test_window_of_and_shown_in_every_block() -> void:
 	assert_false(hs.is_shown("table", 3, true), "gone once the final commit has happened")
 
 
+func test_the_table_is_no_option_of_the_choice_so_it_never_recolours_the_doors() -> void:
+	var hs := _hs([_exit("a", true), _exit("b", false), _any()])
+	for b in 4:
+		var ids: Array = hs.staged(b).map(func(h: Dictionary) -> String: return str(h["id"]))
+		assert_eq(ids, ["a", "b"], "only the ways on are staged in block %d" % b)
+	hs.select("table", 1, false)
+	assert_eq(hs.current_id(1), "a", "touching the table does not make it the current choice: the default exit stays current")
+	assert_eq(hs.destination(1), hs.destination(0), "and where the player is going is unchanged")
+
+
 func test_a_touch_in_block_0_1_or_2_commits_at_that_block_with_the_activity_outcome() -> void:
 	for b in 3:
 		var hs := _hs()

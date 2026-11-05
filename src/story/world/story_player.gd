@@ -499,6 +499,16 @@ func _face_yaw(pts: Array, t: float) -> float:
 	return rad_to_deg(atan2(-sum.x, -sum.y))
 
 
+## Ends every `face` look in force at `t`, handing the head back to the rail over `over_s` (a touch that takes the camera somewhere else: the card table).
+func release_faces(t: float, over_s: float) -> void:
+	for f in _faces:
+		if t >= float(f["t0"]) and t < float(f["t1"]):
+			f["t1"] = minf(float(f["t1"]), t + over_s)
+			f["release_s"] = maxf(over_s, 0.001)
+			f["turn_s"] = maxf(float(f["turn_s"]), 0.001)
+	_face_memo = {"t": NAN}
+
+
 ## How much a held `face` look owns the head at t (0 none, 1 fully on its points) and the points: {w, pts}. The latest one that is active wins.
 func face_at(t: float) -> Dictionary:
 	var out := {"w": 0.0, "pts": []}

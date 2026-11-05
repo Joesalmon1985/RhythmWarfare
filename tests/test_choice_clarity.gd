@@ -145,7 +145,7 @@ func test_every_shipped_staging_validates_and_every_branching_scene_has_exactly_
 				# a touch on each other option on show makes it the only current one, and the commit takes it
 				if block == 3:
 					for h in hs.shown(3, true):
-						if str(h["id"]) == def:
+						if str(h["id"]) == def or RunHotspots.window_of(h) == "any":  # (a place to sit, the card table, is no option of the choice: staged() leaves it out)
 							continue
 						var hs2 := RunHotspots.new(d, {}, {})
 						hs2.begin_scene(str(nid), 60.0)
