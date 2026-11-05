@@ -1,0 +1,4682 @@
+{
+ "main": {
+  "dwell": {
+   "bpm": 174.0,
+   "phase_s": 22.06896551724138,
+   "block_s": 5.517241379310345,
+   "scenes": 36,
+   "default_route": 16,
+   "phases_per_family": [
+    4,
+    4,
+    8
+   ],
+   "phases_per_world": [
+    4,
+    4,
+    5,
+    3
+   ],
+   "sections_per_phase": [
+    1,
+    2
+   ],
+   "min_section_s": 11.03448275862069,
+   "arrangement_changes_per_phase": 4,
+   "stage_bass": [
+    0.0,
+    1.0,
+    0.5,
+    1.0
+   ],
+   "bass_on_s": 16.551724137931036,
+   "bass_off_s": 5.517241379310345,
+   "carry_gain": 0.0,
+   "dip_hotspots": 24,
+   "dip_gain": 0.35,
+   "dip_beats": 8.0,
+   "dip_s": 2.7586206896551726,
+   "phase_fade_s": 0.6,
+   "recipe_bass_floor": 0.0,
+   "gain_db": 0.0
+  },
+  "summary": {
+   "bass_band": 0.8288327756093958,
+   "sub_band": 0.39611649199477783,
+   "bass_vs_drums_db": 3.907259836580999,
+   "phone_bass_db": -2.94606388332849,
+   "bass_s": 16.551724137931036,
+   "lead_s": 11.647509578544064,
+   "lufs": -20.715703262498423,
+   "peak_max": -2.76709559431064,
+   "bass_band_min": 0.7020563569353871
+  },
+  "scenes": [
+   {
+    "scene": "warehouse",
+    "family": "lv1_warehouse",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -21.489032782943525,
+    "peak_db": -6.642055590035647,
+    "bass_band": 0.783473329874301,
+    "sub_band": 0.41930166261289403,
+    "bass_vs_drums_db": 1.6994420094876723,
+    "bass_vs_other_db": 11.747875088506657,
+    "phone_bass_db": -4.530870517375996,
+    "bass_rms_db": -25.081365488638458,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv1_warehouse",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv1_warehouse",
+      "drums": 0.5,
+      "bass": 0.7,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "lv1_warehouse_v1",
+      "drums": 1.0,
+      "bass": 0.425,
+      "other": 0.36
+     },
+     {
+      "block": 3,
+      "section": "lv1_warehouse_v1",
+      "drums": 0.4,
+      "bass": 0.85,
+      "other": 0.48
+     }
+    ]
+   },
+   {
+    "scene": "warehouse.bar",
+    "family": "lv1_warehouse",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 16.551724137931036,
+    "lufs": -21.351438870198724,
+    "peak_db": -7.562549577187472,
+    "bass_band": 0.8167295449769358,
+    "sub_band": 0.460779425661386,
+    "bass_vs_drums_db": 7.721784184229598,
+    "bass_vs_other_db": 12.075471664647921,
+    "phone_bass_db": -2.7436535228778336,
+    "bass_rms_db": -22.862051060496846,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv1_warehouse",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv1_warehouse",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv1_warehouse_v1",
+      "drums": 0.55,
+      "bass": 0.5,
+      "other": 0.405
+     },
+     {
+      "block": 3,
+      "section": "lv1_warehouse_v1",
+      "drums": 0.22,
+      "bass": 1.0,
+      "other": 0.54
+     }
+    ]
+   },
+   {
+    "scene": "warehouse.balcony",
+    "family": "lv1_warehouse",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -20.831410775052458,
+    "peak_db": -7.888749781726348,
+    "bass_band": 0.9005891593095001,
+    "sub_band": 0.5308267902772135,
+    "bass_vs_drums_db": 5.596983544924463,
+    "bass_vs_other_db": 13.472936999033323,
+    "phone_bass_db": -4.611537708659961,
+    "bass_rms_db": -22.180693951177773,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv1_warehouse",
+      "drums": 0.9,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv1_warehouse",
+      "drums": 0.45,
+      "bass": 1.0,
+      "other": 0.383
+     },
+     {
+      "block": 2,
+      "section": "lv1_warehouse",
+      "drums": 0.9,
+      "bass": 0.5,
+      "other": 0.383
+     },
+     {
+      "block": 3,
+      "section": "lv1_warehouse",
+      "drums": 0.36,
+      "bass": 1.0,
+      "other": 0.51
+     }
+    ]
+   },
+   {
+    "scene": "warehouse.chill",
+    "family": "lv1_warehouse",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -20.920753102801118,
+    "peak_db": -7.147295422331777,
+    "bass_band": 0.8620455015628133,
+    "sub_band": 0.41632090022674895,
+    "bass_vs_drums_db": 4.051375719217351,
+    "bass_vs_other_db": 12.729082138965648,
+    "phone_bass_db": -3.504968123205499,
+    "bass_rms_db": -23.408299672269077,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv1_warehouse_v1",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv1_warehouse_v1",
+      "drums": 0.5,
+      "bass": 0.85,
+      "other": 0.36
+     },
+     {
+      "block": 2,
+      "section": "lv1_warehouse",
+      "drums": 0.9,
+      "bass": 0.5,
+      "other": 0.383
+     },
+     {
+      "block": 3,
+      "section": "lv1_warehouse",
+      "drums": 0.36,
+      "bass": 1.0,
+      "other": 0.51
+     }
+    ]
+   },
+   {
+    "scene": "warehouse.booth",
+    "family": "lv1_warehouse",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 16.551724137931036,
+    "lufs": -21.164681524058427,
+    "peak_db": -7.613984977022069,
+    "bass_band": 0.8738150373153271,
+    "sub_band": 0.4305974196149683,
+    "bass_vs_drums_db": 7.379313219634074,
+    "bass_vs_other_db": 12.319301064847224,
+    "phone_bass_db": -2.5161321682629048,
+    "bass_rms_db": -22.89128989990339,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv1_warehouse_v2",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv1_warehouse_v2",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv1_warehouse",
+      "drums": 0.55,
+      "bass": 0.5,
+      "other": 0.405
+     },
+     {
+      "block": 3,
+      "section": "lv1_warehouse",
+      "drums": 0.22,
+      "bass": 1.0,
+      "other": 0.54
+     }
+    ]
+   },
+   {
+    "scene": "warehouse.exit",
+    "family": "lv1_warehouse",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -20.95132666084933,
+    "peak_db": -6.946196908776296,
+    "bass_band": 0.8477382350145048,
+    "sub_band": 0.4224083745520232,
+    "bass_vs_drums_db": 2.7618822102948677,
+    "bass_vs_other_db": 13.963562256849794,
+    "phone_bass_db": -3.5821658274645056,
+    "bass_rms_db": -23.94079256980515,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv1_warehouse_v2",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv1_warehouse_v2",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv1_warehouse",
+      "drums": 1.0,
+      "bass": 0.4,
+      "other": 0.225
+     },
+     {
+      "block": 3,
+      "section": "lv1_warehouse",
+      "drums": 0.4,
+      "bass": 0.8,
+      "other": 0.3
+     }
+    ]
+   },
+   {
+    "scene": "mothership",
+    "family": "lv2_alien_spaceship",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 16.551724137931036,
+    "lufs": -20.941914996975896,
+    "peak_db": -6.540638834275736,
+    "bass_band": 0.7561634351190225,
+    "sub_band": 0.4856158683935347,
+    "bass_vs_drums_db": 6.2106831645059515,
+    "bass_vs_other_db": 12.64492386499424,
+    "phone_bass_db": -4.868316229788964,
+    "bass_rms_db": -23.206731183215126,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv2_alien_spaceship",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv2_alien_spaceship",
+      "drums": 0.5,
+      "bass": 0.7,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "lv2_alien_spaceship_v3",
+      "drums": 1.0,
+      "bass": 0.425,
+      "other": 0.36
+     },
+     {
+      "block": 3,
+      "section": "lv2_alien_spaceship_v3",
+      "drums": 0.4,
+      "bass": 0.85,
+      "other": 0.48
+     }
+    ]
+   },
+   {
+    "scene": "mothership.gallery",
+    "family": "lv2_alien_spaceship",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 16.551724137931036,
+    "lufs": -20.18428999812893,
+    "peak_db": -8.41643216579133,
+    "bass_band": 0.8321019474955452,
+    "sub_band": 0.38301139507407184,
+    "bass_vs_drums_db": 8.338355964769296,
+    "bass_vs_other_db": 14.054014792372737,
+    "phone_bass_db": -2.685599559860437,
+    "bass_rms_db": -21.640800628217573,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv2_alien_spaceship_v2",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv2_alien_spaceship_v2",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv2_alien_spaceship",
+      "drums": 0.55,
+      "bass": 0.5,
+      "other": 0.405
+     },
+     {
+      "block": 3,
+      "section": "lv2_alien_spaceship",
+      "drums": 0.22,
+      "bass": 1.0,
+      "other": 0.54
+     }
+    ]
+   },
+   {
+    "scene": "mothership.reactor",
+    "family": "lv2_alien_spaceship",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -18.76989287446788,
+    "peak_db": -7.494659309226894,
+    "bass_band": 0.8198452015829485,
+    "sub_band": 0.2947418432061048,
+    "bass_vs_drums_db": 6.67848000428188,
+    "bass_vs_other_db": 15.676825625091936,
+    "phone_bass_db": -2.2380109246967006,
+    "bass_rms_db": -20.50877601221488,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv2_alien_spaceship_v2",
+      "drums": 0.9,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv2_alien_spaceship_v2",
+      "drums": 0.45,
+      "bass": 1.0,
+      "other": 0.383
+     },
+     {
+      "block": 2,
+      "section": "lv2_alien_spaceship_v2",
+      "drums": 0.9,
+      "bass": 0.5,
+      "other": 0.383
+     },
+     {
+      "block": 3,
+      "section": "lv2_alien_spaceship_v2",
+      "drums": 0.36,
+      "bass": 1.0,
+      "other": 0.51
+     }
+    ]
+   },
+   {
+    "scene": "mothership.bridge",
+    "family": "lv2_alien_spaceship",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -19.600419363557585,
+    "peak_db": -7.4928879682821625,
+    "bass_band": 0.8251238879197041,
+    "sub_band": 0.3851448719598464,
+    "bass_vs_drums_db": 6.574408329081134,
+    "bass_vs_other_db": 14.800044832607625,
+    "phone_bass_db": -2.632012066850516,
+    "bass_rms_db": -21.048587775068555,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv2_alien_spaceship_v3",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv2_alien_spaceship_v3",
+      "drums": 0.5,
+      "bass": 0.85,
+      "other": 0.36
+     },
+     {
+      "block": 2,
+      "section": "lv2_alien_spaceship_v2",
+      "drums": 0.9,
+      "bass": 0.5,
+      "other": 0.383
+     },
+     {
+      "block": 3,
+      "section": "lv2_alien_spaceship_v2",
+      "drums": 0.36,
+      "bass": 1.0,
+      "other": 0.51
+     }
+    ]
+   },
+   {
+    "scene": "mothership.exit",
+    "family": "lv2_alien_spaceship",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 11.03448275862069
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -21.027656555119112,
+    "peak_db": -5.390815686603583,
+    "bass_band": 0.7851822742947092,
+    "sub_band": 0.4582644455027049,
+    "bass_vs_drums_db": 2.6342205255393942,
+    "bass_vs_other_db": 15.632770835283292,
+    "phone_bass_db": -6.496322494520225,
+    "bass_rms_db": -23.791646999783627,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv2_alien_spaceship",
+      "drums": 0.9,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv2_alien_spaceship",
+      "drums": 0.45,
+      "bass": 1.0,
+      "other": 0.383
+     },
+     {
+      "block": 2,
+      "section": "lv2_alien_spaceship",
+      "drums": 1.0,
+      "bass": 0.4,
+      "other": 0.225
+     },
+     {
+      "block": 3,
+      "section": "lv2_alien_spaceship",
+      "drums": 0.4,
+      "bass": 0.8,
+      "other": 0.3
+     }
+    ]
+   },
+   {
+    "scene": "underworld",
+    "family": "cold_fusion_interface",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 11.03448275862069
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -20.559612433052372,
+    "peak_db": -6.795886939149959,
+    "bass_band": 0.7166799809897364,
+    "sub_band": 0.30737764696772824,
+    "bass_vs_drums_db": 3.8549602351639862,
+    "bass_vs_other_db": 15.652160788156408,
+    "phone_bass_db": -1.840114654992688,
+    "bass_rms_db": -22.358857332218648,
+    "gains": [
+     {
+      "block": 0,
+      "section": "cold_fusion",
+      "drums": 0.5,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "cold_fusion",
+      "drums": 0.25,
+      "bass": 1.0,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "cold_fusion_v2",
+      "drums": 1.0,
+      "bass": 0.425,
+      "other": 0.36
+     },
+     {
+      "block": 3,
+      "section": "cold_fusion_v2",
+      "drums": 0.4,
+      "bass": 0.85,
+      "other": 0.48
+     }
+    ]
+   },
+   {
+    "scene": "underworld.court",
+    "family": "cold_fusion_interface",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 11.03448275862069
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -20.326369832922243,
+    "peak_db": -7.0760365650736485,
+    "bass_band": 0.7735237211443364,
+    "sub_band": 0.31865133584774735,
+    "bass_vs_drums_db": 4.80274492239954,
+    "bass_vs_other_db": 16.526034488966733,
+    "phone_bass_db": -1.676565600216301,
+    "bass_rms_db": -22.150376722887867,
+    "gains": [
+     {
+      "block": 0,
+      "section": "cold_fusion_v1",
+      "drums": 0.5,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "cold_fusion_v1",
+      "drums": 0.25,
+      "bass": 1.0,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "cold_fusion",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.315
+     },
+     {
+      "block": 3,
+      "section": "cold_fusion",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.42
+     }
+    ]
+   },
+   {
+    "scene": "underworld.furnace",
+    "family": "cold_fusion_interface",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 11.03448275862069
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -19.911857070667768,
+    "peak_db": -7.22300301383693,
+    "bass_band": 0.7040594521543313,
+    "sub_band": 0.30059299438491666,
+    "bass_vs_drums_db": 3.909945460686572,
+    "bass_vs_other_db": 15.060109150596318,
+    "phone_bass_db": -1.924179879730342,
+    "bass_rms_db": -22.34399099984418,
+    "gains": [
+     {
+      "block": 0,
+      "section": "cold_fusion_v2",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "cold_fusion_v2",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.315
+     },
+     {
+      "block": 2,
+      "section": "cold_fusion",
+      "drums": 1.0,
+      "bass": 0.425,
+      "other": 0.36
+     },
+     {
+      "block": 3,
+      "section": "cold_fusion",
+      "drums": 0.4,
+      "bass": 0.85,
+      "other": 0.48
+     }
+    ]
+   },
+   {
+    "scene": "underworld.pit",
+    "family": "cold_fusion_interface",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -20.21334124712045,
+    "peak_db": -2.76709559431064,
+    "bass_band": 0.7020563569353871,
+    "sub_band": 0.2832700999881441,
+    "bass_vs_drums_db": 2.026313468938252,
+    "bass_vs_other_db": 15.29903565060555,
+    "phone_bass_db": -2.8929925722167593,
+    "bass_rms_db": -23.40132891907498,
+    "gains": [
+     {
+      "block": 0,
+      "section": "cold_fusion_v3",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "cold_fusion_v3",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.315
+     },
+     {
+      "block": 2,
+      "section": "cold_fusion_v2",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.315
+     },
+     {
+      "block": 3,
+      "section": "cold_fusion_v2",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.42
+     }
+    ]
+   },
+   {
+    "scene": "underworld.exit",
+    "family": "cold_fusion_interface",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -20.765946566987946,
+    "peak_db": -2.76709559431064,
+    "bass_band": 0.7580784210707611,
+    "sub_band": 0.3486013713029157,
+    "bass_vs_drums_db": 0.8523104988274461,
+    "bass_vs_other_db": 15.027269699241504,
+    "phone_bass_db": -2.4471554953467205,
+    "bass_rms_db": -25.25383622336324,
+    "gains": [
+     {
+      "block": 0,
+      "section": "cold_fusion_v3",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "cold_fusion_v3",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.315
+     },
+     {
+      "block": 2,
+      "section": "cold_fusion",
+      "drums": 1.0,
+      "bass": 0.4,
+      "other": 0.225
+     },
+     {
+      "block": 3,
+      "section": "cold_fusion",
+      "drums": 0.4,
+      "bass": 0.8,
+      "other": 0.3
+     }
+    ]
+   },
+   {
+    "scene": "hospital",
+    "family": "lv4_hospital",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -20.874834487748192,
+    "peak_db": -8.152932176945622,
+    "bass_band": 0.8931428967969011,
+    "sub_band": 0.25612734798661024,
+    "bass_vs_drums_db": 5.317205634224958,
+    "bass_vs_other_db": 11.454198370988511,
+    "phone_bass_db": -3.077911315477259,
+    "bass_rms_db": -22.897302749377925,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv4_hospital",
+      "drums": 0.7,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv4_hospital",
+      "drums": 0.35,
+      "bass": 0.7,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv4_hospital_v2",
+      "drums": 0.7,
+      "bass": 0.35,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "lv4_hospital_v2",
+      "drums": 0.28,
+      "bass": 0.7,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "hospital.corridor",
+    "family": "lv4_hospital",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -19.283548613507048,
+    "peak_db": -7.436213993703492,
+    "bass_band": 0.8843468960927137,
+    "sub_band": 0.3442358384874862,
+    "bass_vs_drums_db": 5.400075017225859,
+    "bass_vs_other_db": 12.385140376298349,
+    "phone_bass_db": -3.2616795811558115,
+    "bass_rms_db": -21.785421531664237,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv4_hospital_v1",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv4_hospital_v1",
+      "drums": 0.5,
+      "bass": 0.9,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv4_hospital_v2",
+      "drums": 0.7,
+      "bass": 0.35,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "lv4_hospital_v2",
+      "drums": 0.28,
+      "bass": 0.7,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "hospital.dayroom",
+    "family": "lv4_hospital",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -17.806133787922906,
+    "peak_db": -5.972252989748526,
+    "bass_band": 0.8881367694752376,
+    "sub_band": 0.420958265173933,
+    "bass_vs_drums_db": 2.4959793718454755,
+    "bass_vs_other_db": 13.414208302262072,
+    "phone_bass_db": -4.454154488006316,
+    "bass_rms_db": -20.565018266154592,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv4_hospital_v1",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv4_hospital_v1",
+      "drums": 0.5,
+      "bass": 0.9,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv4_hospital_v3",
+      "drums": 1.0,
+      "bass": 0.45,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "lv4_hospital_v3",
+      "drums": 0.4,
+      "bass": 0.9,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "hospital.cafeteria",
+    "family": "lv4_hospital",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -19.296720441377285,
+    "peak_db": -6.298253807158211,
+    "bass_band": 0.90079437210784,
+    "sub_band": 0.35545799325721356,
+    "bass_vs_drums_db": 4.278439712074938,
+    "bass_vs_other_db": 12.371912480583042,
+    "phone_bass_db": -3.4492921504930587,
+    "bass_rms_db": -21.298752660923952,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv4_hospital_v1",
+      "drums": 0.7,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv4_hospital_v1",
+      "drums": 0.35,
+      "bass": 0.7,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv4_hospital",
+      "drums": 1.0,
+      "bass": 0.45,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "lv4_hospital",
+      "drums": 0.4,
+      "bass": 0.9,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "hospital.garden",
+    "family": "lv4_hospital",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -18.91749886618231,
+    "peak_db": -7.169539861268415,
+    "bass_band": 0.8906067972881134,
+    "sub_band": 0.3339776940753601,
+    "bass_vs_drums_db": 4.806413470541408,
+    "bass_vs_other_db": 12.655533097931205,
+    "phone_bass_db": -3.2679549174317373,
+    "bass_rms_db": -21.823240610372828,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv4_hospital_v3",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv4_hospital_v3",
+      "drums": 0.5,
+      "bass": 0.9,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv4_hospital_v2",
+      "drums": 0.7,
+      "bass": 0.35,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "lv4_hospital_v2",
+      "drums": 0.28,
+      "bass": 0.7,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "hospital.exit",
+    "family": "lv4_hospital",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -17.92027562541824,
+    "peak_db": -6.298253807158211,
+    "bass_band": 0.9066040216579432,
+    "sub_band": 0.36239646035084,
+    "bass_vs_drums_db": 4.227158680802216,
+    "bass_vs_other_db": 13.44403767246806,
+    "phone_bass_db": -3.30797884717855,
+    "bass_rms_db": -20.500248421937602,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv4_hospital_v3",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv4_hospital_v3",
+      "drums": 0.5,
+      "bass": 0.9,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv4_hospital",
+      "drums": 1.0,
+      "bass": 0.45,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "lv4_hospital",
+      "drums": 0.4,
+      "bass": 0.9,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "ward",
+    "family": "lv5_asylum",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 5.517241379310345
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -22.581420765008342,
+    "peak_db": -6.151396302604603,
+    "bass_band": 0.8049472255431778,
+    "sub_band": 0.49129317233102515,
+    "bass_vs_drums_db": 0.5867390456386055,
+    "bass_vs_other_db": 15.565113691693895,
+    "phone_bass_db": -1.5245187350941858,
+    "bass_rms_db": -26.203783971923706,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv5_asylum",
+      "drums": 0.5,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv5_asylum",
+      "drums": 0.25,
+      "bass": 1.0,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "lv5_asylum_v2",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.27
+     },
+     {
+      "block": 3,
+      "section": "lv5_asylum_v2",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.36
+     }
+    ]
+   },
+   {
+    "scene": "ward.art",
+    "family": "lv5_asylum",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -21.990255466218287,
+    "peak_db": -6.673372769075013,
+    "bass_band": 0.8283604373527796,
+    "sub_band": 0.4330806554527671,
+    "bass_vs_drums_db": 0.23334776051551387,
+    "bass_vs_other_db": 13.183253309510704,
+    "phone_bass_db": -2.3731339828062783,
+    "bass_rms_db": -25.867232412931237,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv5_asylum_v3",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv5_asylum_v3",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "lv5_asylum",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.27
+     },
+     {
+      "block": 3,
+      "section": "lv5_asylum",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.36
+     }
+    ]
+   },
+   {
+    "scene": "ward.dorm",
+    "family": "lv5_asylum",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -22.639647522721702,
+    "peak_db": -6.279963716759983,
+    "bass_band": 0.788240620258455,
+    "sub_band": 0.41649931416741276,
+    "bass_vs_drums_db": 4.654018814712355,
+    "bass_vs_other_db": 15.324361315609924,
+    "phone_bass_db": -1.4669436506793327,
+    "bass_rms_db": -25.680207507960073,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv5_asylum_v2",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv5_asylum_v2",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "lv5_asylum_v1",
+      "drums": 0.5,
+      "bass": 0.5,
+      "other": 0.27
+     },
+     {
+      "block": 3,
+      "section": "lv5_asylum_v1",
+      "drums": 0.2,
+      "bass": 1.0,
+      "other": 0.36
+     }
+    ]
+   },
+   {
+    "scene": "ward.corridor",
+    "family": "lv5_asylum",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -22.639647522721702,
+    "peak_db": -6.279963716759983,
+    "bass_band": 0.788240620258455,
+    "sub_band": 0.41649931416741276,
+    "bass_vs_drums_db": 4.654018814712355,
+    "bass_vs_other_db": 15.324361315609924,
+    "phone_bass_db": -1.4669436506793327,
+    "bass_rms_db": -25.680207507960073,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv5_asylum_v2",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv5_asylum_v2",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "lv5_asylum_v1",
+      "drums": 0.5,
+      "bass": 0.5,
+      "other": 0.27
+     },
+     {
+      "block": 3,
+      "section": "lv5_asylum_v1",
+      "drums": 0.2,
+      "bass": 1.0,
+      "other": 0.36
+     }
+    ]
+   },
+   {
+    "scene": "ward.courtyard",
+    "family": "lv5_asylum",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 11.03448275862069
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -21.89537339068443,
+    "peak_db": -5.447264960302839,
+    "bass_band": 0.8493797426280073,
+    "sub_band": 0.5961102241785424,
+    "bass_vs_drums_db": 0.6583603535160663,
+    "bass_vs_other_db": 17.02140323345577,
+    "phone_bass_db": -1.780785823092196,
+    "bass_rms_db": -25.54285536072433,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv5_asylum_v2",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv5_asylum_v2",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "lv5_asylum_v2",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.27
+     },
+     {
+      "block": 3,
+      "section": "lv5_asylum_v2",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.36
+     }
+    ]
+   },
+   {
+    "scene": "ward.exit",
+    "family": "lv5_asylum",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -23.335084111575505,
+    "peak_db": -6.9408170288018365,
+    "bass_band": 0.7990945553673309,
+    "sub_band": 0.30381092680051597,
+    "bass_vs_drums_db": 5.275838048448023,
+    "bass_vs_other_db": 13.183253309510704,
+    "phone_bass_db": -1.6388716902224858,
+    "bass_rms_db": -25.867232412931237,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv5_asylum_v3",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv5_asylum_v3",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "lv5_asylum",
+      "drums": 0.5,
+      "bass": 0.5,
+      "other": 0.27
+     },
+     {
+      "block": 3,
+      "section": "lv5_asylum",
+      "drums": 0.2,
+      "bass": 1.0,
+      "other": 0.36
+     }
+    ]
+   },
+   {
+    "scene": "hospital_late",
+    "family": "lv4_hospital",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -20.874834487748192,
+    "peak_db": -8.152932176945622,
+    "bass_band": 0.8931428967969011,
+    "sub_band": 0.25612734798661024,
+    "bass_vs_drums_db": 5.317205634224958,
+    "bass_vs_other_db": 11.454198370988511,
+    "phone_bass_db": -3.077911315477259,
+    "bass_rms_db": -22.897302749377925,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv4_hospital",
+      "drums": 0.7,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv4_hospital",
+      "drums": 0.35,
+      "bass": 0.7,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv4_hospital_v2",
+      "drums": 0.7,
+      "bass": 0.35,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "lv4_hospital_v2",
+      "drums": 0.28,
+      "bass": 0.7,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "hospital_late.cafe",
+    "family": "lv4_hospital",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -19.420631784601355,
+    "peak_db": -5.223984459331602,
+    "bass_band": 0.884442657062102,
+    "sub_band": 0.25277401812797684,
+    "bass_vs_drums_db": 3.896400390626738,
+    "bass_vs_other_db": 12.734814512437776,
+    "phone_bass_db": -3.3345322217655764,
+    "bass_rms_db": -21.61668660792866,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv4_hospital",
+      "drums": 0.7,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv4_hospital",
+      "drums": 0.35,
+      "bass": 0.7,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv4_hospital_v2",
+      "drums": 1.0,
+      "bass": 0.45,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "lv4_hospital_v2",
+      "drums": 0.4,
+      "bass": 0.9,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "hospital_late.quiet",
+    "family": "lv4_hospital",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -19.249920629316616,
+    "peak_db": -7.436213993703492,
+    "bass_band": 0.9071999700344593,
+    "sub_band": 0.384811347449394,
+    "bass_vs_drums_db": 5.7451129573458815,
+    "bass_vs_other_db": 12.109359102726376,
+    "phone_bass_db": -3.139364603171775,
+    "bass_rms_db": -21.561306038780618,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv4_hospital_v1",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv4_hospital_v1",
+      "drums": 0.5,
+      "bass": 0.9,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv4_hospital",
+      "drums": 0.7,
+      "bass": 0.35,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "lv4_hospital",
+      "drums": 0.28,
+      "bass": 0.7,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "hospital_late.exit",
+    "family": "lv4_hospital",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -18.20862617398938,
+    "peak_db": -6.298253807158211,
+    "bass_band": 0.9025567444430771,
+    "sub_band": 0.37076989416351713,
+    "bass_vs_drums_db": 4.6055364773813,
+    "bass_vs_other_db": 13.198336199901018,
+    "phone_bass_db": -3.305626372245436,
+    "bass_rms_db": -20.472328941605976,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv4_hospital_v1",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv4_hospital_v1",
+      "drums": 0.5,
+      "bass": 0.9,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "lv4_hospital",
+      "drums": 1.0,
+      "bass": 0.45,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "lv4_hospital",
+      "drums": 0.4,
+      "bass": 0.9,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "ward_late",
+    "family": "lv5_asylum",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 5.517241379310345
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -22.581420765008342,
+    "peak_db": -6.151396302604603,
+    "bass_band": 0.8049472255431778,
+    "sub_band": 0.49129317233102515,
+    "bass_vs_drums_db": 0.5867390456386055,
+    "bass_vs_other_db": 15.565113691693895,
+    "phone_bass_db": -1.5245187350941858,
+    "bass_rms_db": -26.203783971923706,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv5_asylum",
+      "drums": 0.5,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv5_asylum",
+      "drums": 0.25,
+      "bass": 1.0,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "lv5_asylum_v2",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.27
+     },
+     {
+      "block": 3,
+      "section": "lv5_asylum_v2",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.36
+     }
+    ]
+   },
+   {
+    "scene": "ward_late.treat",
+    "family": "lv5_asylum",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -22.286467745207776,
+    "peak_db": -6.799377076036324,
+    "bass_band": 0.7928180391039178,
+    "sub_band": 0.5018296046712003,
+    "bass_vs_drums_db": 2.0870396592795366,
+    "bass_vs_other_db": 11.924715870298876,
+    "phone_bass_db": -2.953521057296432,
+    "bass_rms_db": -26.336652290669477,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv5_asylum",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv5_asylum",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "lv5_asylum_v3",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.27
+     },
+     {
+      "block": 3,
+      "section": "lv5_asylum_v3",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.36
+     }
+    ]
+   },
+   {
+    "scene": "ward_late.dorm",
+    "family": "lv5_asylum",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -22.26105079478641,
+    "peak_db": -6.562149612966897,
+    "bass_band": 0.8567936953856916,
+    "sub_band": 0.6084089372502905,
+    "bass_vs_drums_db": -3.406996523361279,
+    "bass_vs_other_db": 10.15329152662931,
+    "phone_bass_db": -4.600552841498011,
+    "bass_rms_db": -29.042607066791874,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv5_asylum",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv5_asylum",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "lv5_asylum",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.27
+     },
+     {
+      "block": 3,
+      "section": "lv5_asylum",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.36
+     }
+    ]
+   },
+   {
+    "scene": "ward_late.exit",
+    "family": "lv5_asylum",
+    "carry": false,
+    "aud": {
+     "drums": 22.06896551724138,
+     "bass": 16.551724137931036,
+     "other": 16.551724137931036
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 2
+    },
+    "bass_lead_s": 11.03448275862069,
+    "lufs": -22.69197981329533,
+    "peak_db": -6.900830464687999,
+    "bass_band": 0.8169782519821068,
+    "sub_band": 0.4182257378299197,
+    "bass_vs_drums_db": 4.14951828954095,
+    "bass_vs_other_db": 13.583131933077357,
+    "phone_bass_db": -1.8615064748940524,
+    "bass_rms_db": -25.884481980190085,
+    "gains": [
+     {
+      "block": 0,
+      "section": "lv5_asylum_v1",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "lv5_asylum_v1",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.27
+     },
+     {
+      "block": 2,
+      "section": "lv5_asylum",
+      "drums": 0.5,
+      "bass": 0.5,
+      "other": 0.27
+     },
+     {
+      "block": 3,
+      "section": "lv5_asylum",
+      "drums": 0.2,
+      "bass": 1.0,
+      "other": 0.36
+     }
+    ]
+   }
+  ]
+ },
+ "gospel": {
+  "dwell": {
+   "bpm": 124.0,
+   "phase_s": 30.967741935483872,
+   "block_s": 7.741935483870968,
+   "scenes": 17,
+   "default_route": 12,
+   "phases_per_family": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "phases_per_world": [
+    3,
+    2,
+    2,
+    5
+   ],
+   "sections_per_phase": [
+    1,
+    1
+   ],
+   "min_section_s": 30.967741935483872,
+   "arrangement_changes_per_phase": 3,
+   "stage_bass": [
+    0.0,
+    1.0,
+    0.5,
+    1.0
+   ],
+   "bass_on_s": 23.225806451612904,
+   "bass_off_s": 7.741935483870968,
+   "carry_gain": 0.0,
+   "dip_hotspots": 0,
+   "dip_gain": 0.35,
+   "dip_beats": 8.0,
+   "dip_s": 3.870967741935484,
+   "phase_fade_s": 0.6,
+   "recipe_bass_floor": 0.0,
+   "gain_db": 0.0
+  },
+  "summary": {
+   "bass_band": 0.8638694126147696,
+   "sub_band": 0.4805984435052853,
+   "bass_vs_drums_db": 10.029602631403725,
+   "phone_bass_db": -0.23731352662464023,
+   "bass_s": 23.225806451612904,
+   "lead_s": 23.225806451612904,
+   "lufs": -12.648441595125526,
+   "peak_max": 1.040833311462245,
+   "bass_band_min": 0.8444467200050864
+  },
+  "scenes": [
+   {
+    "scene": "jordan",
+    "family": "gospel_bethlehem",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.887391444302368,
+    "peak_db": 0.5253188099433197,
+    "bass_band": 0.8765438570463691,
+    "sub_band": 0.5076135116219475,
+    "bass_vs_drums_db": 10.029603263374035,
+    "bass_vs_other_db": 20.68522707126198,
+    "phone_bass_db": -0.2561825058155144,
+    "bass_rms_db": -13.24936637656224,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_bethlehem",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_bethlehem",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_bethlehem",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_bethlehem",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "jordan.baptism",
+    "family": "gospel_baptism",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.65413784663027,
+    "peak_db": 0.6183745823156845,
+    "bass_band": 0.8686679109712215,
+    "sub_band": 0.4853999611644614,
+    "bass_vs_drums_db": 10.029723847182476,
+    "bass_vs_other_db": 20.68520462726385,
+    "phone_bass_db": -0.15514476987840486,
+    "bass_rms_db": -13.24939536064158,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_baptism",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_baptism",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_baptism",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_baptism",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "jordan.wilderness",
+    "family": "gospel_wilderness",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.395888695285008,
+    "peak_db": 0.6617376970836842,
+    "bass_band": 0.846218675124911,
+    "sub_band": 0.4467758191605082,
+    "bass_vs_drums_db": 10.029708320826723,
+    "bass_vs_other_db": 20.685204528255547,
+    "phone_bass_db": -0.3020119409117753,
+    "bass_rms_db": -13.249394549599847,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_wilderness",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_wilderness",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_wilderness",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_wilderness",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "jordan.nazareth",
+    "family": "gospel_nazareth",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.893950902484177,
+    "peak_db": 0.3432483086169825,
+    "bass_band": 0.8769637543048364,
+    "sub_band": 0.5078561808286212,
+    "bass_vs_drums_db": 10.029546322826757,
+    "bass_vs_other_db": 20.68522707126198,
+    "phone_bass_db": -0.25464206181735827,
+    "bass_rms_db": -13.24936637656224,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_nazareth",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_nazareth",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_nazareth",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_nazareth",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "galilee",
+    "family": "gospel_lakeshore",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.635343531862679,
+    "peak_db": 0.41470566553879207,
+    "bass_band": 0.8666604896756016,
+    "sub_band": 0.48163753539602955,
+    "bass_vs_drums_db": 10.029841806740274,
+    "bass_vs_other_db": 20.68520462726385,
+    "phone_bass_db": -0.16556703333728942,
+    "bass_rms_db": -13.24939536064158,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_lakeshore",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_lakeshore",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_lakeshore",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_lakeshore",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "galilee.capernaum",
+    "family": "gospel_capernaum",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.379854663506114,
+    "peak_db": 1.001606156080474,
+    "bass_band": 0.8451554361308196,
+    "sub_band": 0.4464882191016502,
+    "bass_vs_drums_db": 10.029605877683474,
+    "bass_vs_other_db": 20.685204528255547,
+    "phone_bass_db": -0.30154403687599984,
+    "bass_rms_db": -13.249394549599847,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_capernaum",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_capernaum",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_capernaum",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_capernaum",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "galilee.mount",
+    "family": "gospel_mount",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.886140051263048,
+    "peak_db": 0.13496779141570506,
+    "bass_band": 0.8765320748582736,
+    "sub_band": 0.507368611697667,
+    "bass_vs_drums_db": 10.029711285665048,
+    "bass_vs_other_db": 20.68522707126198,
+    "phone_bass_db": -0.25559312552456737,
+    "bass_rms_db": -13.24936637656224,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_mount",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_mount",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_mount",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_mount",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "galilee.storm",
+    "family": "gospel_storm",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.625360272943235,
+    "peak_db": 0.6660473953098444,
+    "bass_band": 0.8660702577363999,
+    "sub_band": 0.4811991849667914,
+    "bass_vs_drums_db": 10.02953133898581,
+    "bass_vs_other_db": 20.68520462726385,
+    "phone_bass_db": -0.1686801405759564,
+    "bass_rms_db": -13.24939536064158,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_storm",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_storm",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_storm",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_storm",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "road",
+    "family": "gospel_bethany",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.36987299182128,
+    "peak_db": 0.6154364858238319,
+    "bass_band": 0.8446176653226789,
+    "sub_band": 0.44608620716088676,
+    "bass_vs_drums_db": 10.029615073831154,
+    "bass_vs_other_db": 20.685204528255547,
+    "phone_bass_db": -0.29858445437356473,
+    "bass_rms_db": -13.249394549599847,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_bethany",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_bethany",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_bethany",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_bethany",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "road.loaves",
+    "family": "gospel_loaves",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.891377587676473,
+    "peak_db": 0.19588944047952947,
+    "bass_band": 0.8767838854069285,
+    "sub_band": 0.5078114760372091,
+    "bass_vs_drums_db": 10.029547751262342,
+    "bass_vs_other_db": 20.68522707126198,
+    "phone_bass_db": -0.2573241370865742,
+    "bass_rms_db": -13.24936637656224,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_loaves",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_loaves",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_loaves",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_loaves",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "road.entry",
+    "family": "gospel_entry",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.614450126937188,
+    "peak_db": 0.48410092729290427,
+    "bass_band": 0.8655230406428256,
+    "sub_band": 0.48086766459418157,
+    "bass_vs_drums_db": 10.029636657120014,
+    "bass_vs_other_db": 20.68520462726385,
+    "phone_bass_db": -0.16446399466734246,
+    "bass_rms_db": -13.24939536064158,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_entry",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_entry",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_entry",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_entry",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "jerusalem",
+    "family": "gospel_temple",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.378927106524397,
+    "peak_db": 0.5360662983855533,
+    "bass_band": 0.845170785271692,
+    "sub_band": 0.44644956084480303,
+    "bass_vs_drums_db": 10.02956940618026,
+    "bass_vs_other_db": 20.685204528255547,
+    "phone_bass_db": -0.3009686853883127,
+    "bass_rms_db": -13.249394549599847,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_temple",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_temple",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_temple",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_temple",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "jerusalem.gethsemane",
+    "family": "gospel_gethsemane",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.887354893675182,
+    "peak_db": 0.3138838170893094,
+    "bass_band": 0.8766323775860324,
+    "sub_band": 0.5078471097318871,
+    "bass_vs_drums_db": 10.029411783105253,
+    "bass_vs_other_db": 20.68522707126198,
+    "phone_bass_db": -0.2560407048082651,
+    "bass_rms_db": -13.24936637656224,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_gethsemane",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_gethsemane",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_gethsemane",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_gethsemane",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "jerusalem.trial",
+    "family": "gospel_trial",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.62113030558694,
+    "peak_db": 0.914985464823025,
+    "bass_band": 0.8659084138688575,
+    "sub_band": 0.4811393408706647,
+    "bass_vs_drums_db": 10.029544649458392,
+    "bass_vs_other_db": 20.68520462726385,
+    "phone_bass_db": -0.17036049696402436,
+    "bass_rms_db": -13.24939536064158,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_trial",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_trial",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_trial",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_trial",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "jerusalem.golgotha",
+    "family": "gospel_golgotha",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.364938901823573,
+    "peak_db": 0.8449941878299282,
+    "bass_band": 0.8444467200050864,
+    "sub_band": 0.44594971202677575,
+    "bass_vs_drums_db": 10.029631699269432,
+    "bass_vs_other_db": 20.685204528255547,
+    "phone_bass_db": -0.30162248443463024,
+    "bass_rms_db": -13.249394549599847,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_golgotha",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_golgotha",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_golgotha",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_golgotha",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "jerusalem.tomb",
+    "family": "gospel_tomb",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.904502757892033,
+    "peak_db": 0.3666457637133639,
+    "bass_band": 0.8774168139045403,
+    "sub_band": 0.5081059741465712,
+    "bass_vs_drums_db": 10.02941507574176,
+    "bass_vs_other_db": 20.68522707126198,
+    "phone_bass_db": -0.258563407545157,
+    "bass_rms_db": -13.24936637656224,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_tomb",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_tomb",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_tomb",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_tomb",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "jerusalem.road",
+    "family": "gospel_road_beyond",
+    "carry": false,
+    "aud": {
+     "drums": 30.967741935483872,
+     "bass": 23.225806451612904,
+     "other": 7.741935483870968
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 23.225806451612904,
+    "lufs": -12.632885036919973,
+    "peak_db": 1.040833311462245,
+    "bass_band": 0.8664678565940106,
+    "sub_band": 0.4815774702391942,
+    "bass_vs_drums_db": 10.02960057461012,
+    "bass_vs_other_db": 20.68520462726385,
+    "phone_bass_db": -0.1670359726141475,
+    "bass_rms_db": -13.24939536064158,
+    "gains": [
+     {
+      "block": 0,
+      "section": "gospel_road_beyond",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "gospel_road_beyond",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "gospel_road_beyond",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "gospel_road_beyond",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   }
+  ]
+ },
+ "squadron": {
+  "dwell": {
+   "bpm": 140.0,
+   "phase_s": 27.428571428571427,
+   "block_s": 6.857142857142857,
+   "scenes": 14,
+   "default_route": 12,
+   "phases_per_family": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "phases_per_world": [
+    2,
+    1,
+    3,
+    3,
+    1,
+    1,
+    1
+   ],
+   "sections_per_phase": [
+    1,
+    1
+   ],
+   "min_section_s": 27.428571428571427,
+   "arrangement_changes_per_phase": 3,
+   "stage_bass": [
+    0.0,
+    1.0,
+    0.9,
+    1.0
+   ],
+   "bass_on_s": 20.57142857142857,
+   "bass_off_s": 6.857142857142857,
+   "carry_gain": 0.0,
+   "dip_hotspots": 0,
+   "dip_gain": 0.35,
+   "dip_beats": 8.0,
+   "dip_s": 3.4285714285714284,
+   "phase_fade_s": 0.6,
+   "recipe_bass_floor": 0.0,
+   "gain_db": 0.0
+  },
+  "summary": {
+   "bass_band": 0.8479093661382323,
+   "sub_band": 0.3811897392031408,
+   "bass_vs_drums_db": 10.964453231206491,
+   "phone_bass_db": -1.1622187851145613,
+   "bass_s": 20.571428571428562,
+   "lead_s": 19.591836734693867,
+   "lufs": -14.34796987740114,
+   "peak_max": -0.5008386690741308,
+   "bass_band_min": 0.680645970200091
+  },
+  "scenes": [
+   {
+    "scene": "base",
+    "family": "squadron_c01",
+    "carry": false,
+    "aud": {
+     "drums": 27.428571428571427,
+     "bass": 20.57142857142857,
+     "other": 6.857142857142857
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 4
+    },
+    "bass_lead_s": 20.57142857142857,
+    "lufs": -13.249819983730166,
+    "peak_db": -0.5212772896584338,
+    "bass_band": 0.8117736889505462,
+    "sub_band": 0.33490620223487555,
+    "bass_vs_drums_db": 11.047002267202515,
+    "bass_vs_other_db": 20.35628917128748,
+    "phone_bass_db": -0.7386214077032499,
+    "bass_rms_db": -13.573015566997796,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c01",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c01",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c01",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c01",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   },
+   {
+    "scene": "base.c02",
+    "family": "squadron_c02",
+    "carry": false,
+    "aud": {
+     "drums": 27.428571428571427,
+     "bass": 20.57142857142857,
+     "other": 6.857142857142857
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 4
+    },
+    "bass_lead_s": 20.57142857142857,
+    "lufs": -14.333346181287618,
+    "peak_db": -0.5045180061883869,
+    "bass_band": 0.680645970200091,
+    "sub_band": 0.35172466529641033,
+    "bass_vs_drums_db": 11.863213656761097,
+    "bass_vs_other_db": 20.319015588997374,
+    "phone_bass_db": -0.9640418926385969,
+    "bass_rms_db": -13.958066428061201,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c02",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c02",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c02",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c02",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   },
+   {
+    "scene": "base.c03",
+    "family": "squadron_c03",
+    "carry": false,
+    "aud": {
+     "drums": 27.428571428571427,
+     "bass": 20.57142857142857,
+     "other": 13.714285714285714
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 20.57142857142857,
+    "lufs": -18.052382693425617,
+    "peak_db": -0.5625256233794451,
+    "bass_band": 0.8168252790067004,
+    "sub_band": 0.1680580294673861,
+    "bass_vs_drums_db": 10.49525165913921,
+    "bass_vs_other_db": 13.934965029694752,
+    "phone_bass_db": -0.8404704160477672,
+    "bass_rms_db": -19.985734885334054,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c03",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c03",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c03",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c03",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   },
+   {
+    "scene": "air",
+    "family": "squadron_c04",
+    "carry": false,
+    "aud": {
+     "drums": 27.428571428571427,
+     "bass": 20.57142857142857,
+     "other": 6.857142857142857
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 4
+    },
+    "bass_lead_s": 20.57142857142857,
+    "lufs": -13.648641351104388,
+    "peak_db": -0.5236700928588964,
+    "bass_band": 0.8407564361350539,
+    "sub_band": 0.33195430981733587,
+    "bass_vs_drums_db": 11.190627378336846,
+    "bass_vs_other_db": 20.381667563497317,
+    "phone_bass_db": -0.8807760716672965,
+    "bass_rms_db": -13.859358537346353,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c04",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c04",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c04",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c04",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   },
+   {
+    "scene": "air.c05",
+    "family": "squadron_c05",
+    "carry": false,
+    "aud": {
+     "drums": 27.428571428571427,
+     "bass": 20.57142857142857,
+     "other": 13.714285714285714
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 13.714285714285714,
+    "lufs": -19.615097528498016,
+    "peak_db": -0.6180765584732401,
+    "bass_band": 0.7370450495426534,
+    "sub_band": 0.4501853636062029,
+    "bass_vs_drums_db": -1.2556575793146116,
+    "bass_vs_other_db": 12.205568282436968,
+    "phone_bass_db": -4.967719114852147,
+    "bass_rms_db": -25.07914458017137,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c05",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c05",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c05",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c05",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   },
+   {
+    "scene": "air.c06",
+    "family": "squadron_c06",
+    "carry": false,
+    "aud": {
+     "drums": 27.428571428571427,
+     "bass": 20.57142857142857,
+     "other": 13.714285714285714
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 13.714285714285714,
+    "lufs": -20.08389721953621,
+    "peak_db": -0.5348828195584936,
+    "bass_band": 0.746276355356689,
+    "sub_band": 0.3327773189848395,
+    "bass_vs_drums_db": 1.7838835435091838,
+    "bass_vs_other_db": 12.253968768238401,
+    "phone_bass_db": -3.9505209564426433,
+    "bass_rms_db": -23.621606094672373,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c06",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c06",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c06",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c06",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   },
+   {
+    "scene": "city",
+    "family": "squadron_c07",
+    "carry": false,
+    "aud": {
+     "drums": 20.57142857142857,
+     "bass": 20.57142857142857,
+     "other": 6.857142857142857
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 4
+    },
+    "bass_lead_s": 20.57142857142857,
+    "lufs": -13.21835381010798,
+    "peak_db": -0.6141496650887459,
+    "bass_band": 0.8966169383883626,
+    "sub_band": 0.6800569585547045,
+    "bass_vs_drums_db": 17.725043113185325,
+    "bass_vs_other_db": 21.664945402622276,
+    "phone_bass_db": -0.7304948181905223,
+    "bass_rms_db": -12.342866635822357,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c07",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c07",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c07",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c07",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   },
+   {
+    "scene": "city.c08",
+    "family": "squadron_c08",
+    "carry": false,
+    "aud": {
+     "drums": 27.428571428571427,
+     "bass": 20.57142857142857,
+     "other": 0.0
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": null
+    },
+    "bass_lead_s": 20.57142857142857,
+    "lufs": -10.457290019308322,
+    "peak_db": -0.501526670898345,
+    "bass_band": 0.9177574498188598,
+    "sub_band": 0.5099239381722828,
+    "bass_vs_drums_db": 15.313187287848324,
+    "bass_vs_other_db": 27.43572596018609,
+    "phone_bass_db": -0.2314288455296975,
+    "bass_rms_db": -11.26574348103822,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c08",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c08",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c08",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c08",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   },
+   {
+    "scene": "city.c09",
+    "family": "squadron_c09",
+    "carry": false,
+    "aud": {
+     "drums": 27.428571428571427,
+     "bass": 20.57142857142857,
+     "other": 13.714285714285714
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 20.57142857142857,
+    "lufs": -16.00715918099922,
+    "peak_db": -0.5020743031381063,
+    "bass_band": 0.8908008735096851,
+    "sub_band": 0.3085449242975705,
+    "bass_vs_drums_db": 5.2088613125990655,
+    "bass_vs_other_db": 17.58692044943887,
+    "phone_bass_db": -0.6321388084804204,
+    "bass_rms_db": -17.456386244231552,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c09",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c09",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c09",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c09",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   },
+   {
+    "scene": "city.c10",
+    "family": "squadron_c10",
+    "carry": false,
+    "aud": {
+     "drums": 20.57142857142857,
+     "bass": 20.57142857142857,
+     "other": 6.857142857142857
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 4
+    },
+    "bass_lead_s": 20.57142857142857,
+    "lufs": -11.446450386253423,
+    "peak_db": -0.5833652221584457,
+    "bass_band": 0.8601533888160272,
+    "sub_band": 0.4729805265794912,
+    "bass_vs_drums_db": 17.609440346791818,
+    "bass_vs_other_db": 22.288565879383945,
+    "phone_bass_db": -0.43529502424981115,
+    "bass_rms_db": -11.882897677053961,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c10",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c10",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c10",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c10",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   },
+   {
+    "scene": "escape",
+    "family": "squadron_c11",
+    "carry": false,
+    "aud": {
+     "drums": 27.428571428571427,
+     "bass": 20.57142857142857,
+     "other": 13.714285714285714
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 20.57142857142857,
+    "lufs": -13.098920150531287,
+    "peak_db": -0.5122187617787768,
+    "bass_band": 0.935507308806271,
+    "sub_band": 0.10429181496881988,
+    "bass_vs_drums_db": 13.264010374242709,
+    "bass_vs_other_db": 20.000552400701327,
+    "phone_bass_db": -0.3473021433417464,
+    "bass_rms_db": -14.245701202615262,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c11",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c11",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c11",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c11",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   },
+   {
+    "scene": "escape.c12",
+    "family": "squadron_c12",
+    "carry": false,
+    "aud": {
+     "drums": 27.428571428571427,
+     "bass": 20.57142857142857,
+     "other": 6.857142857142857
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 4
+    },
+    "bass_lead_s": 20.57142857142857,
+    "lufs": -13.41177960238448,
+    "peak_db": -0.9533451769667725,
+    "bass_band": 0.861000058093756,
+    "sub_band": 0.4788200825991792,
+    "bass_vs_drums_db": 9.154406288643477,
+    "bass_vs_other_db": 20.651866413937903,
+    "phone_bass_db": -0.4777838106588694,
+    "bass_rms_db": -13.461661478266953,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c12",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c12",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c12",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c12",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   },
+   {
+    "scene": "escape.c13",
+    "family": "squadron_c13",
+    "carry": false,
+    "aud": {
+     "drums": 13.714285714285714,
+     "bass": 20.57142857142857,
+     "other": 0.0
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": null
+    },
+    "bass_lead_s": 20.57142857142857,
+    "lufs": -10.75775472246182,
+    "peak_db": -0.5008386690741308,
+    "bass_band": 0.918976836642976,
+    "sub_band": 0.38191653209846005,
+    "bass_vs_drums_db": 18.95151790575946,
+    "bass_vs_other_db": 23.894387044205043,
+    "phone_bass_db": -0.22601829563964726,
+    "bass_rms_db": -10.931612342368691,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c13",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c13",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c13",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c13",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   },
+   {
+    "scene": "escape.c14",
+    "family": "squadron_c14",
+    "carry": false,
+    "aud": {
+     "drums": 27.428571428571427,
+     "bass": 20.57142857142857,
+     "other": 6.857142857142857
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 4
+    },
+    "bass_lead_s": 20.57142857142857,
+    "lufs": -13.490685453987423,
+    "peak_db": -0.5162686127727794,
+    "bass_band": 0.9565954926675808,
+    "sub_band": 0.4305156821664134,
+    "bass_vs_drums_db": 11.151557682186438,
+    "bass_vs_other_db": 20.79140578540538,
+    "phone_bass_db": -0.8484513861614458,
+    "bass_rms_db": -13.370130771080897,
+    "gains": [
+     {
+      "block": 0,
+      "section": "squadron_c14",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "squadron_c14",
+      "drums": 0.7,
+      "bass": 1.0,
+      "other": 0.0
+     },
+     {
+      "block": 2,
+      "section": "squadron_c14",
+      "drums": 1.0,
+      "bass": 0.9,
+      "other": 0.5
+     },
+     {
+      "block": 3,
+      "section": "squadron_c14",
+      "drums": 0.55,
+      "bass": 1.0,
+      "other": 0.7
+     }
+    ]
+   }
+  ]
+ },
+ "ember": {
+  "dwell": {
+   "bpm": 145.0,
+   "phase_s": 26.482758620689655,
+   "block_s": 6.620689655172414,
+   "scenes": 15,
+   "default_route": 13,
+   "phases_per_family": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "phases_per_world": [
+    3,
+    2,
+    2,
+    4,
+    2
+   ],
+   "sections_per_phase": [
+    1,
+    1
+   ],
+   "min_section_s": 26.482758620689655,
+   "arrangement_changes_per_phase": 3,
+   "stage_bass": [
+    0.0,
+    1.0,
+    0.5,
+    1.0
+   ],
+   "bass_on_s": 19.862068965517242,
+   "bass_off_s": 6.620689655172414,
+   "carry_gain": 0.0,
+   "dip_hotspots": 0,
+   "dip_gain": 0.35,
+   "dip_beats": 8.0,
+   "dip_s": 3.310344827586207,
+   "phase_fade_s": 0.6,
+   "recipe_bass_floor": 0.0,
+   "gain_db": 0.0
+  },
+  "summary": {
+   "bass_band": 0.8806465376633491,
+   "sub_band": 0.5194533120856017,
+   "bass_vs_drums_db": 12.029675462381816,
+   "phone_bass_db": -0.1510449508932063,
+   "bass_s": 19.862068965517246,
+   "lead_s": 19.862068965517246,
+   "lufs": -12.568137304542384,
+   "peak_max": 0.15592570175579,
+   "bass_band_min": 0.8625314616614549
+  },
+  "scenes": [
+   {
+    "scene": "hollow",
+    "family": "ember_e00_orchard",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.870448443255757,
+    "peak_db": -0.5324164684320278,
+    "bass_band": 0.8935951627141637,
+    "sub_band": 0.5952304178349954,
+    "bass_vs_drums_db": 12.02962759622194,
+    "bass_vs_other_db": 21.685209381080668,
+    "phone_bass_db": -0.09558856365066391,
+    "bass_rms_db": -12.249384411556433,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e00_orchard",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e00_orchard",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e00_orchard",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e00_orchard",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "hollow.ford",
+    "family": "ember_e01_ford",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.597540036674243,
+    "peak_db": -0.5189132844934284,
+    "bass_band": 0.886949158633451,
+    "sub_band": 0.5128275255031075,
+    "bass_vs_drums_db": 12.029810897638686,
+    "bass_vs_other_db": 21.685213763391815,
+    "phone_bass_db": -0.1350492693490502,
+    "bass_rms_db": -12.249387340241888,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e01_ford",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e01_ford",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e01_ford",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e01_ford",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "hollow.inn",
+    "family": "ember_e02_inn",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.2758903356847,
+    "peak_db": -0.21110359254051475,
+    "bass_band": 0.8636679028164783,
+    "sub_band": 0.4538544941766959,
+    "bass_vs_drums_db": 12.02974089119391,
+    "bass_vs_other_db": 21.685219318232512,
+    "phone_bass_db": -0.2276427514785686,
+    "bass_rms_db": -12.249380282171678,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e02_inn",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e02_inn",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e02_inn",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e02_inn",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "north",
+    "family": "ember_e03_birch_hall",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.857139720004728,
+    "peak_db": -0.08295161526330032,
+    "bass_band": 0.8931008512919925,
+    "sub_band": 0.5946430669688679,
+    "bass_vs_drums_db": 12.029720318819896,
+    "bass_vs_other_db": 21.685209381080668,
+    "phone_bass_db": -0.09687626149902723,
+    "bass_rms_db": -12.249384411556433,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e03_birch_hall",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e03_birch_hall",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e03_birch_hall",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e03_birch_hall",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "north.pass",
+    "family": "ember_e04_high_pass",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.56202265977583,
+    "peak_db": -0.08176080603066796,
+    "bass_band": 0.8847097842573086,
+    "sub_band": 0.5087030016400809,
+    "bass_vs_drums_db": 12.029869381200854,
+    "bass_vs_other_db": 21.685213763391815,
+    "phone_bass_db": -0.1271049453949908,
+    "bass_rms_db": -12.249387340241888,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e04_high_pass",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e04_high_pass",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e04_high_pass",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e04_high_pass",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "deeps",
+    "family": "ember_e05_deep_halls",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.260015738326842,
+    "peak_db": -0.5012879702142091,
+    "bass_band": 0.8628494811365559,
+    "sub_band": 0.453433554337763,
+    "bass_vs_drums_db": 12.029468329452477,
+    "bass_vs_other_db": 21.685219318232512,
+    "phone_bass_db": -0.22941160305529607,
+    "bass_rms_db": -12.249380282171678,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e05_deep_halls",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e05_deep_halls",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e05_deep_halls",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e05_deep_halls",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "deeps.falls",
+    "family": "ember_e06_falls",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.875906681969129,
+    "peak_db": -0.07316239085108692,
+    "bass_band": 0.8938973413932243,
+    "sub_band": 0.5954111073262038,
+    "bass_vs_drums_db": 12.029776952976691,
+    "bass_vs_other_db": 21.685209381080668,
+    "phone_bass_db": -0.09778577279683466,
+    "bass_rms_db": -12.249384411556433,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e06_falls",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e06_falls",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e06_falls",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e06_falls",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "marsh",
+    "family": "ember_e07_reed_marsh",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.561571008741929,
+    "peak_db": -0.5012458472450114,
+    "bass_band": 0.8846714257874659,
+    "sub_band": 0.5087546148514265,
+    "bass_vs_drums_db": 12.029654533271248,
+    "bass_vs_other_db": 21.685213763391815,
+    "phone_bass_db": -0.1243691003914605,
+    "bass_rms_db": -12.249387340241888,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e07_reed_marsh",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e07_reed_marsh",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e07_reed_marsh",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e07_reed_marsh",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "marsh.wall",
+    "family": "ember_e08_black_wall",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.270600254253374,
+    "peak_db": -0.2522522825977086,
+    "bass_band": 0.8633662810280517,
+    "sub_band": 0.4537877916587974,
+    "bass_vs_drums_db": 12.029549599250458,
+    "bass_vs_other_db": 21.685219318232512,
+    "phone_bass_db": -0.22680169852522722,
+    "bass_rms_db": -12.249380282171678,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e08_black_wall",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e08_black_wall",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e08_black_wall",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e08_black_wall",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "marsh.stair",
+    "family": "ember_e09_stair_of_bells",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.86662825290252,
+    "peak_db": 0.034272414151358496,
+    "bass_band": 0.8935353356535709,
+    "sub_band": 0.5949962145401323,
+    "bass_vs_drums_db": 12.029634229986625,
+    "bass_vs_other_db": 21.685209381080668,
+    "phone_bass_db": -0.09544820651065647,
+    "bass_rms_db": -12.249384411556433,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e09_stair_of_bells",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e09_stair_of_bells",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e09_stair_of_bells",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e09_stair_of_bells",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "marsh.plain",
+    "family": "ember_e10_ash_plain",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.557759660800377,
+    "peak_db": -0.2449966176689986,
+    "bass_band": 0.8845174211798073,
+    "sub_band": 0.5086586206594077,
+    "bass_vs_drums_db": 12.029530721841684,
+    "bass_vs_other_db": 21.685213763391815,
+    "phone_bass_db": -0.12827233302521157,
+    "bass_rms_db": -12.249387340241888,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e10_ash_plain",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e10_ash_plain",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e10_ash_plain",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e10_ash_plain",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "mountain",
+    "family": "ember_e11_throat",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.251775009435512,
+    "peak_db": 0.15592570175579,
+    "bass_band": 0.8625314616614549,
+    "sub_band": 0.45337842219789026,
+    "bass_vs_drums_db": 12.029726443764766,
+    "bass_vs_other_db": 21.685219318232512,
+    "phone_bass_db": -0.226882317739739,
+    "bass_rms_db": -12.249380282171678,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e11_throat",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e11_throat",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e11_throat",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e11_throat",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "mountain.spring",
+    "family": "ember_e12_drowned_spring",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.870808692546928,
+    "peak_db": -0.5387176245849664,
+    "bass_band": 0.8937380828382694,
+    "sub_band": 0.5953653838775893,
+    "bass_vs_drums_db": 12.029681308446511,
+    "bass_vs_other_db": 21.685209381080668,
+    "phone_bass_db": -0.0967557124400413,
+    "bass_rms_db": -12.249384411556433,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e12_drowned_spring",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e12_drowned_spring",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e12_drowned_spring",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e12_drowned_spring",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "mountain.keeper",
+    "family": "ember_e13_keeper",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.570509688433644,
+    "peak_db": -0.324607655578304,
+    "bass_band": 0.8851164023315774,
+    "sub_band": 0.5090690584843398,
+    "bass_vs_drums_db": 12.029710584599705,
+    "bass_vs_other_db": 21.685213763391815,
+    "phone_bass_db": -0.12953059473742468,
+    "bass_rms_db": -12.249387340241888,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e13_keeper",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e13_keeper",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e13_keeper",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e13_keeper",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   },
+   {
+    "scene": "mountain.taken",
+    "family": "ember_e14_taken",
+    "carry": false,
+    "aud": {
+     "drums": 26.482758620689655,
+     "bass": 19.862068965517242,
+     "other": 6.620689655172414
+    },
+    "entry": {
+     "drums": 1,
+     "bass": 2,
+     "other": 3
+    },
+    "bass_lead_s": 19.862068965517242,
+    "lufs": -12.273443385330259,
+    "peak_db": 0.12362057304229403,
+    "bass_band": 0.863451972226865,
+    "sub_band": 0.4536864072267281,
+    "bass_vs_drums_db": 12.029630147061802,
+    "bass_vs_other_db": 21.685219318232512,
+    "phone_bass_db": -0.22815513280390223,
+    "bass_rms_db": -12.249380282171678,
+    "gains": [
+     {
+      "block": 0,
+      "section": "ember_e14_taken",
+      "drums": 1.0,
+      "bass": 0.0,
+      "other": 0.0
+     },
+     {
+      "block": 1,
+      "section": "ember_e14_taken",
+      "drums": 0.5,
+      "bass": 1.0,
+      "other": 0.45
+     },
+     {
+      "block": 2,
+      "section": "ember_e14_taken",
+      "drums": 1.0,
+      "bass": 0.5,
+      "other": 0.45
+     },
+     {
+      "block": 3,
+      "section": "ember_e14_taken",
+      "drums": 0.4,
+      "bass": 1.0,
+      "other": 0.6
+     }
+    ]
+   }
+  ]
+ }
+}
