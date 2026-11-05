@@ -1,0 +1,37 @@
+{
+ "synthesised": true,
+ "bpm": 145,
+ "levels": {
+  "drums": {
+   "rms_db": -21.0,
+   "peak_db": -3.8
+  },
+  "bass": {
+   "rms_db": -11.0,
+   "peak_db": -1.38,
+   "sub_share": 0.617
+  },
+  "other": {
+   "rms_db": -28.0,
+   "peak_db": -15.04
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 48,
+   "bass": 16
+  },
+  "2": {
+   "drums": 48,
+   "bass": 21
+  },
+  "3": {
+   "drums": 49,
+   "bass": 26
+  },
+  "4": {
+   "drums": 50,
+   "bass": 32
+  }
+ }
+}
