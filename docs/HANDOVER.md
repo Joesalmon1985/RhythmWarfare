@@ -114,7 +114,7 @@ the Birch Hall's and the lake's setbacks go to the High Pass across a world bord
 
 ## A5. Backlog (not built)
 
-1. The Warehouse portal's changed look once a path has been finished (plan D10): the flags `keep:path_<id>_<ending>` are set, saved and counted on the home screen ("Endings found: N"); no hotspot reads them yet.
+1. ~~The Warehouse portal's changed look once a path has been finished (plan D10)~~: built in the visual polish (A9), `look.finished`.
 2. The Warehouse wizards do not act (they are billboard things, not people); `RunActing.figure_motion` (the Bassment's) is the model.
 3. Gospel and Ember maps in `check_assets.py`.
 4. Nothing exercises the real-time audio on a path other than the stub handoff recording; a re-record with `tools/story/record_music.gd` through `warehouse.booth.radio` (140 BPM) and the bar ember (145) would extend `docs/shots/run/path_handoff_check.txt`.
@@ -168,6 +168,42 @@ Ignoring them also does not shrink history (the 76.5 MiB stays in every clone un
 
 **Recommendation.** Do nothing now. Keep the placeholders tracked until the owner's real loops arrive scene by scene; when a scene is imported, the placeholder pack is replaced (the importer's `apply` writes over it) (its old blobs stay in history; the real loop is added to the repository on top). If the repository nears 1 GB before then, ignore
 and regenerate only `stub_*` and the placeholder packs that still carry `"placeholder": true`, add the generation step to `tools/test.sh`, and think about moving the real WAV loops to Git LFS or Ogg (Ogg cannot promise a sample-exact loop, which is why the importer writes WAV). Separately, **the export**: the presets used to pack everything (611 MB, 346 MiB of it proof shots) and, because of `content/.gdignore`, no `content/` at all, so a build could not start a run. Fixed (see `docs/REPO_SIZE.md`): exclude filters in both presets, `.gdignore` moved, the pack is now 240 MB and `tools/export_smoke.gd` proves the run, the paths and the story load from it. The packs are still 87 MiB of that; `docs/REPO_SIZE.md` also has the measured numbers, the history-rewrite option (commands, not run) and the recommendation (stop committing proof shots; do not rewrite history until the packs are final).
+
+
+## A9. Visual polish (5 November 2026, after Stage 6)
+
+A pass on the weak shots of A4, done by an agent from still frames on the virtual clock (worktree `MusicGame-paths2`). Every change below was looked at before and after; the pairs are in `docs/shots/polish/` (`before_*` / `after_*`, or one image with before on top / left).
+
+**What changed**
+
+| Weak point (A4) | Fix | Proof (`docs/shots/polish/`) |
+| --- | --- | --- |
+| Outcome acts of a route-leaving hotspot fell inside the closing passage frame (both bouncers, `mothership.exit.exam`, the Gospel J02 exits, ...) | A commit whose scene is left at the downbeat (its route, or the phase's route, is another scene) cuts the commit flash to half a beat (`RunActing.LEAVING_COMMITTED_BEATS`): the outcome act starts at beat 61, a full beat before the frame starts closing at 62. Route timing, the window and the judgement are unchanged (only when the act starts). The acting strips now shoot committed at 60.8 and success / failure at 61.8 (`tools/run/capture.sh`, `capture_path.sh`) | `before_acting_*` / `after_acting_*` for `mothership_exit_exam`, `underworld_bouncer`, `warehouse_exit_bouncer`, `gospel_jordan_wilderness_path`, `gospel_jordan_wilderness_fires` |
+| `ward.dorm.sleeper` selected act did not show | Two bugs, both general: a scene's own cast line on the person the player has just touched undid the touch (`RunPlay._touched_actor`: a scene cast line on the touched person is skipped and logged `held_by_touch`), and the room's two-bar cheer / wave / group directive overwrote a forced act for good (`StoryCrowd._acted` guards `react`, `wave`, `direct`) | `before/after_acting_ward_dorm_sleeper.jpg` |
+| `underworld.court.queen` hidden in the dancers | Her home is now the front of the court (`content/story/maps/underworld.json`, 14.9, 4.0); every person a hotspot or its outcome directs is also drawn a little brighter (`StoryCrowd.STORY_LIT` 1.25) | `before/after_acting_underworld_court_queen.jpg` |
+| `ward_late.exit.stare`: five states, one body | Turned to the window, turned to you in doubt, resolve, arms up in wonder (success), a stamp (failure); only acts x09 was already baked in, so no sheet changed (`tools/run/acting_data.py`) | `before/after_acting_ward_late_exit_stare.jpg` |
+| Gospel fishermen / family: committed barely differs | With the earlier outcome the success (cheer, collapse in relief) is now on screen in the open frame; the fishermen's selected act is a nod (baked) | `before/after_acting_gospel_galilee_fishermen.jpg`, `..._capernaum_family.jpg` |
+| Golgotha: the sky darkens behind the hill, not the people | A map thing may carry `dim_people` (0 to 1): while its piece shows, the room and its people are dimmed by it (`StoryStage.people_gain`, the world context's `swell_gain`); `dark1..3` dim 0.10 / 0.16 / 0.22 (about 0.59 with all three) | `golgotha_beats_10_30_58_before_top_after_bottom.jpg`, `golgotha_beat58_people_before_left_after_right.jpg` |
+| The room swell is too subtle | 0.40 of the light on the new room's downbeat, a 1.35 flare one beat in, settled after four beats (was 0.55 rising to 1 over two); it lights the people too. Measured on the Warehouse door walk: the upper picture is 35 % brighter at beats 64.3 to 65 than before, equal at 68 | `swell_warehouse_beats_63-68_before_top_after_bottom.jpg` |
+| Ember people small / out of the picture in the dark scenes | The real cause: the good rail walked the camera past the scene's companions (the Keeper, the Spring, the Deep Halls, the Falls, the marsh, the High Pass, the plain, the throat, the Birch Hall, the ford). The rail now stops short and the companions stand ahead of it in a lamp (`tools/story/ember_maps.py`, regenerated maps); the drowned thing is larger and nearer the bridge | `before/after_ember_keeper_*`, `before/after_ember_spring_swell_*`, `ember_deep_halls_drowned_*`, `ember_falls_*`, `before/after_ember_companions_*` |
+| The Hollow One reads cyan in the marsh | A warm lamp (`lt_ho_m`) on the pair | in `after_ember_companions_*` (first row) |
+| Squadron C03 to C06: the camera looks at a wall or the ceiling in the window | The rail's glance in the hotspot window (the last block) never pitches and turns at most 8 degrees, and its in-room walk does not turn (`RunRail.WINDOW_GLANCE_DEG`; every world) | `before_squadron_route_*.jpg` / `after_squadron_c03_c04_c05_c06_c12_c02_beats_44_54.jpg` |
+| C02's loud orange berm, C12's bright coast | The flight line's light 0.85 to 0.72 and a cooler tint; the coast 0.95 to 0.78 | same strips |
+| Pieces nobody looked at | `swell` (the Spring) reads as a big white flare at beat 51; `drowned` now reads between Bram and the Warden; `rider_shadow` was off the picture (moved beside the hearth, now a clear rider on the wall at beats 50 and 56); `long_shadow` is still not visible on the dark floor (see below) | `after_piece_rider_shadow_*`, `after_ember_spring_swell_*`, `ember_deep_halls_drowned_*`, `after_ember_keeper_*` |
+| Plan D10: a finished path's portal | `look.finished` on a hotspot: `{flags_any, available, tint}`; the three Warehouse portals carry their path's ending flags (`keep:path_<id>_<ending>`, read from each path's run.json by `make_hotspots.py`) and the new look `crown` (a gold ring with three motes circling the portal). Validated by `HotspotContract._validate_finished` and, for portals, by `RunData._check_portal`. The home screen already lists a path's reached worlds under Start from a reached level (`src/run/run_levels.gd`) | `d10_portal_radio_beat54_plain_left_finished_right.png`, `d10_portal_radio_beats_50_54_plain_top_finished_bottom.jpg` |
+| Screenshot aid | The hotspot view now draws from the screenshot camera (`RW_STORY_CAM`), so a framed shot shows rings, not edge beacons (play is unchanged) | the D10 shots |
+
+Checks after the pass: `bash tools/test.sh` **74,354 checks, 0 failures**, the Python content tests OK; `check_hotspots.py` 0 errors (main, gospel, squadron, ember; warnings as before). New tests: the half-beat flash for a scene that is left (`test_run_cast.gd`), the bigger swell and the people taking it (`test_run_hud_silent.gd`), Golgotha dimming the people (`test_gospel.gd`), the window glance (`test_run_rail.gd`), the finished portal look and its validator (`test_run_paths.gd`).
+
+**What still looks weak**
+* Faces at half size (A4 item: relief / grief / laugh on greys and skeletons, the cyclops's anger / doubt / shame, insect mandibles, `kneel`, hands to the face): not touched. It needs rig work in `tools/story/art/people.py` and a re-bake of the mothership and underworld sheets; left for a pass with the sheet budget in hand.
+* `long_shadow` in the Keeper's cavern is still invisible on the dark floor (a translucent piece on a near-black texture); it needs art or a lighter blend.
+* C12: the day coast still shows through the quay's gap (dimmer now, not gone); the boat is still a dark hulk. The portal could be closed by a gate thing.
+* Many Gospel crowd scenes have directed people at 35 to 60 degrees from the rail's view (wide crowd views; their shots read, but a tool check would flag them). The Ember scenes `marsh.wall`, `marsh.stair` and `mountain.taken` still walk past their companion.
+* The queen's committed and success acts (a stare and a nod) still look alike; the Warehouse booth radio is an edge beacon at beats 50 to 54 under perfect play (discoverability, A6 question 5).
+* The acting strips in `docs/shots/acting/` were not all re-shot: only the hotspots above (in `docs/shots/polish/`).
+
+**Only the owner's eyes on a phone can judge**: whether the half-beat flash and the outcome at beat 61 read in motion before the frame closes; whether the 1.35 swell flare is "somewhere new" or a flicker; the Golgotha darkness on a phone screen in daylight; the crown look at phone size; the brighter directed people (do they look lit or pasted on).
 
 ---
 
