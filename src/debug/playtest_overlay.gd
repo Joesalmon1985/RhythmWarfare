@@ -178,7 +178,8 @@ func live_state() -> Dictionary:
 	var stage_g: Dictionary = e.cfg["stages"][e.stage]["gains"]
 	return {"phase": e.phase_n, "block": clampi(e.block, 0, 3) + 1, "stage": e.stage, "stage_label": str(e.cfg["stages"][e.stage]["label"]), "cue": str(e.cfg["stages"][e.stage]["cue"]), "beat": beat, "t": t,
 		"energy": e.energy, "section": sec_idx + 1, "sections": maxi(sections.size(), 1), "pack": pack, "chart_pack": data.chart_pack_at(e.node_id, maxf(beat, 0.0)), "gains": gains, "stage_gains": stage_g,
-		"counting_in": t < 0.0, "bassment": str(play.trial_state) != "", "bass_in": e.bass_origin >= 0}
+		"counting_in": t < 0.0, "bassment": str(play.trial_state) != "", "bass_in": e.bass_origin >= 0,
+		"choice": play.choice_state() if play.has_method("choice_state") else {}}
 
 
 ## The panel's lines for a scene identity and a live state (pure: the tests call it with hand-made input).
@@ -219,6 +220,9 @@ static func lines(info: Dictionary, live: Dictionary) -> Array:
 	out.append("VISUAL map %s | view %s | %s, light %.2f | pieces on: %s" % [str(v["map"]), str(v["view"]), str(v["time_of_day"]), float(v["light"]), ", ".join(PackedStringArray(v["pieces_on"])) if not (v["pieces_on"] as Array).is_empty() else "none"])
 	var hs: Array = (v["hotspots"] as Array).map(func(h: Dictionary) -> String: return str(h["id"]))
 	out.append("   cast: %s | hotspots: %s" % [", ".join(PackedStringArray(v["cast"])) if not (v["cast"] as Array).is_empty() else "none", ", ".join(PackedStringArray(hs)) if not hs.is_empty() else "none"])
+	var ch2: Dictionary = live.get("choice", {})
+	if not ch2.is_empty():  # the choice the world stages (docs/CHOICE_CLARITY.md)
+		out.append("CHOICE current: %s | default: %s%s | going to: %s" % [str(ch2.get("current", "")), str(ch2.get("default", "")), (" | committed: %s" % str(ch2["committed"])) if str(ch2.get("committed", "")) != "" else "", str(ch2.get("dest", ""))])
 	return out
 
 
