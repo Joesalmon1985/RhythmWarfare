@@ -90,7 +90,7 @@ Check a pack (only numpy and ffmpeg needed, so plain `python3` works):
 
 Unit tests (synthetic audio made in the test; no recordings, no Demucs; about 40 s):
 
-    cd tools/audio_import && /home/joe/.venvs/rw-audio/bin/python -m unittest test_audio_import -v
+    /home/joe/.venvs/rw-audio/bin/python -m unittest discover -s tools/audio_import -p 'test_*.py' -v
 
 ## Stages and caches
 

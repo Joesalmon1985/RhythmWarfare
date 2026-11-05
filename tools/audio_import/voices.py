@@ -1,4 +1,4 @@
-"""Stage 4: how well each stem separated, which four parts become voices, and which pad each gets.
+"""Stage 3: how well each stem separated and which parts become voices (format v2: voices have no pads).
 
 Every voice is built from the separated stems by complementary operations only (a stem as it is, a band split
 whose two halves are x_low and x - x_low, a harmonic/percussive split whose halves are H and x - H, or the sum of
@@ -11,7 +11,7 @@ import itertools
 
 import numpy as np
 
-from analysis import band_filter, onset_envelope, pick_onsets
+from analysis import band_filter, onset_envelope
 from audio_io import db, frame_rms, mono
 
 KIND_OF_STEM = {"drums": "drums", "bass": "bass", "vocals": "vocal", "other": "melodic", "guitar": "melodic",
@@ -177,50 +177,3 @@ def choose_voices(mix: np.ndarray, stems: dict[str, np.ndarray], rate: int, rep:
     backing = mix - sum(v["audio"] for v in voices.values())
     return {"voices": voices, "backing": backing.astype(np.float32), "backing_from": backing_from + ["residual"],
             "notes": notes}
-
-
-def co_occurrence(events: dict[str, np.ndarray], beat_s: float, window_beats: float = 0.5,
-                  count: bool = False) -> dict[tuple, float]:
-    """For each voice pair, how often one voice's events have an event of the other within window_beats: as the
-    larger of the two shares (count=False), or as the larger of the two counts (count=True: the number of presses
-    that could not both be kept if the two voices shared a thumb)."""
-    out = {}
-    for a, b in itertools.combinations(sorted(events), 2):
-        ea, eb = np.sort(events[a]), np.sort(events[b])
-        if not len(ea) or not len(eb):
-            out[(a, b)] = 0.0
-            continue
-        def near(x, y):
-            i = np.searchsorted(y, x)
-            d = np.minimum(np.abs(x - y[np.clip(i, 0, len(y) - 1)]), np.abs(x - y[np.clip(i - 1, 0, len(y) - 1)]))
-            hit = d < window_beats * beat_s
-            return float(hit.sum() if count else hit.mean())
-        out[(a, b)] = max(near(ea, eb), near(eb, ea))
-    return out
-
-
-ORDER = ("drums", "kick", "tops", "bass", "vocals", "other", "lead", "pads", "guitar", "piano")
-
-
-def assign_pads(keys: list[str], co: dict[tuple, float]) -> tuple[dict[str, int], dict]:
-    """Split the four voices into two thumbs so the pairs sharing a thumb clash least (co: pair -> overlap), then order: the thumb
-    holding the first voice in ORDER is the left thumb, and within a thumb the earlier voice in ORDER is the
-    outer pad (1 or 4 is 'outer' only in name; the order is just stable)."""
-    def c(a, b):
-        return co.get((a, b), co.get((b, a), 0.0))
-    rank = {k: (ORDER.index(k) if k in ORDER else len(ORDER)) for k in keys}
-    ks = sorted(keys, key=lambda k: rank[k])
-    best = None
-    for partner in ks[1:]:
-        left = [ks[0], partner]
-        right = [k for k in ks if k not in left]
-        cost = c(*left) + c(*right)
-        if best is None or cost < best[0]:
-            best = (cost, left, right)
-    cost, left, right = best
-    left.sort(key=lambda k: rank[k])
-    right.sort(key=lambda k: rank[k])
-    pads = {left[0]: 1, left[1]: 2, right[0]: 3, right[1]: 4}
-    pairs = {f"{a}+{b}": round(c(a, b), 3) for a, b in itertools.combinations(ks, 2)}
-    return pads, {"same_thumb_cost": round(cost, 3), "pair_overlap": pairs,
-                  "left_thumb": left, "right_thumb": right}

@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from analysis import band_filter, onset_envelope, pick_onsets, refine_onset
+from analysis import band_filter, onset_envelope, pick_onsets
 from audio_io import db, frame_rms, mono
 from validate_track import playability_violations
 

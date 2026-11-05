@@ -241,8 +241,10 @@ def stretches(rows: list[dict], choice: list[str | None], fixed: str | None,
                         reasons.append("only voice with a part")
                     else:
                         reasons.append(f"most prominent ({el[k]['score'] - el[second]['score']:.1f} dB over {second})")
-                else:
+                elif el[lead]["score"] - el[k]["score"] <= CLOSE_DB:
                     reasons.append(f"handed over from {lead} ({el[lead]['score'] - el[k]['score']:.1f} dB behind, within {CLOSE_DB:.0f})")
+                else:
+                    reasons.append(f"{el[lead]['score'] - el[k]['score']:.1f} dB behind {lead}")
             if fixed or overrides:
                 mids = [(r["start_s"] + r["end_s"]) / 2 for r in rows[u:v + 1]]
                 if fixed or any(o[0] <= m < o[1] for m in mids for o in overrides or []):

@@ -364,21 +364,26 @@ def st_pack(c: Ctx) -> None:
 
 
 def pick_miss(an: dict, tj: dict) -> dict:
-    """30 s from the loudest drop with its focus voice silent from a cue 8 s in until that voice's first cue at
-    least 4 bars later, like a run of missed presses (the game brings the voice back on the next hit)."""
+    """30 s around the longest focus stretch, inside a drop, of the voice that has the focus most of the drops'
+    time: that voice plays for a few seconds, then is silent from one of its cues until its first cue at least 4
+    bars later (a run of missed presses; the game brings it back on the next hit), and plays on."""
     drops = [s for s in an["sections"] if s["role"] == "drop"] or an["sections"]
-    s = max(drops, key=lambda s: s["intensity_db"] + 0.01 * (s["end_s"] - s["start_s"]))
-    cues = tj["charts"]["normal"]
-    st = max(tj["focus"], key=lambda f: min(f["end_s"], s["end_s"]) - max(f["start_s"], s["start_s"]))
-    start = max(st["start_s"], s["start_s"]) - 2.0
+
+    def inside(f):
+        return sum(max(0.0, min(f["end_s"], d["end_s"]) - max(f["start_s"], d["start_s"])) for d in drops)
+    time_of: dict[str, float] = {}
+    for f in tj["focus"]:
+        time_of[f["voice"]] = time_of.get(f["voice"], 0.0) + inside(f)
+    key = max(time_of, key=lambda k: (time_of[k], k))
+    st = max((f for f in tj["focus"] if f["voice"] == key), key=lambda f: (inside(f), -f["start_s"]))
+    B = 60.0 / an["grid"]["bpm"]
+    start = max(0.0, st["start_s"] - 2.0)
     end = min(start + 30.0, an["duration_s"] - 0.5)
-    key = st["voice"]
-    mine = [x["t"] for x in cues if x["voice"] == key and start + 8 <= x["t"] < end]
-    bar = 4 * 60.0 / an["grid"]["bpm"]
-    m0 = mine[0] if mine else start + 8
-    after = [x["t"] for x in cues if x["voice"] == key and x["t"] >= m0 + 4 * bar]
-    m1 = after[0] if after else min(end - 1, m0 + 4 * bar)
-    return {"key": key, "start_s": start, "end_s": end, "mute_from_s": m0, "mute_to_s": min(m1, end - 0.5)}
+    mine = [x["t"] for x in tj["charts"]["normal"] if x["voice"] == key and st["start_s"] <= x["t"] < st["end_s"]]
+    m0 = next((t for t in mine if t >= st["start_s"] + 5.0), st["start_s"] + 5.0)
+    m1 = next((t for t in mine if t >= m0 + 16 * B), min(st["end_s"], m0 + 16 * B))
+    return {"key": key, "start_s": round(start, 4), "end_s": round(end, 4), "mute_from_s": round(m0, 4),
+            "mute_to_s": round(min(m1, end - 0.5), 4), "stretch": [st["start_s"], st["end_s"]]}
 
 
 def st_preview(c: Ctx) -> None:
@@ -546,7 +551,11 @@ def main(argv: list[str] | None = None) -> int:
             rc = max(rc, res["rc"])
         except Exception as e:  # noqa: BLE001  one bad file never stops the batch
             traceback.print_exc()
-            err = f"{type(e).__name__}: {e}"
+            import subprocess
+            if isinstance(e, subprocess.CalledProcessError) and c is None:
+                err = "cannot read the audio (ffprobe failed on it)"
+            else:
+                err = f"{type(e).__name__}: {e}"
             rc = 2
         line, _ = summary_line(c, f, err)
         lines.append(line)

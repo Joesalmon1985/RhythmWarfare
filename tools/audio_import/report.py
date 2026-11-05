@@ -10,7 +10,7 @@ import json
 
 import numpy as np
 
-from audio_io import PACK_RATE, db, decode, frame_rms, mono
+from audio_io import PACK_RATE, decode, mono
 
 
 def _q(a, ps=(50, 95)):
