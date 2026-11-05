@@ -392,6 +392,8 @@ inline object. `RunJourney.hotspot_actions` turns steps into rail actions starti
 failure staggers through the same door). An outcome that simply *continues* by the default exit plays the move instead of the door walk (`_door_phase` is latched), and the next scene's door walk waits
 for it to end if that is within 6 beats.
 
+**Acting.** A hotspot may carry an `acting` block (what its person does while it waits, when touched, at the commit and after the result), and scenes and cinematics may carry `cast` lines: see "Acting in the run" below.
+
 **Taps.** `RunPlay._input` takes a press (touch or left click; an emulated duplicate within 80 ms and 3 px is dropped) and calls `hotspot_tap(pos)`: only the stage area counts, a point over a pad is
 never a hotspot, then `HotspotView.layout` projects every hotspot on show through `StoryProjector` at the stage's screen size and `HotspotView.hit` picks the **nearest centre within its own radius**,
 where the radius is the projected `radius_m` but never under `min_px / 2` (so a target is at least 72 px wide), clamped so the whole target lies inside the stage view (never over the pads). An anchor
@@ -409,3 +411,32 @@ default, failure, cinematic as the move, wizard arms or shrugs, keys, the flag),
 policies. **Tap policies** (`RW_RUN_TAPS=scripted|none|changed|failure`, `tools/run/walk_run.sh` and `tests/test_run_matrix.gd`): `scripted` taps the hotspot toward the path's route at beat 52, `none`
 never taps, `changed` taps a decoy at beat 50 first, `failure` taps and misses the last block of every phase. `RW_RUN_SELECT=<hotspot id>@<beat>` touches one hotspot (screenshots:
 `tools/run/capture.sh`, `hotspots_*`: before, selected, committed, success, failure, wizard, phone).
+
+## Acting in the run: hotspot `acting`, scene `cast` and cinematic `cast` (docs/THREE_PATHS_AND_FACES_PLAN.md 2.3, stage 1b)
+
+People are told what to do and what to feel by data, never by text.
+
+- **`acting` on a hotspot** (`content/run/hotspots/<world>.json`; validated by `HotspotContract.validate_acting`): `{actor?, available?, selected?, committed?, success?, failure?}`, each state
+  `{act, face?, look_at?, beats?, then?}`. `actor` defaults to the anchor's actor and may be named on a thing or waypoint anchor (the bouncer by the door). `look_at` is `camera` or the id of an actor,
+  a thing or a waypoint of the scene's map (`HotspotContract.look_ok`). `beats` is how long an outcome act holds (8 by default; a `then` holds 16 unless it says), `then` is what the person settles into.
+  Acts are the fifteen directed ones plus the older states (`HotspotContract.ACTS`, built from `StoryCharacter.ACTS` and `DIRECTABLE_OLD`); faces are `StoryCharacter.FACES`. The pure helpers are
+  `RunActing`: `available_spec` / `selected_spec` (a hotspot with **no** `acting` block keeps the old `wave` at the player, so nothing shipped changed), `outcome_chain` (the `committed` act for two
+  beats, then the success or failure act, then each `then`, end to end from the commit's song time).
+- **Who plays it.** `HotspotView._manage_acting` tells the crowd the `available` act while the hotspot waits and the `selected` act once touched (`StoryCrowd.direct_actor`, forced, so a bartender or a
+  bouncer obeys), and stands its own act down when the hotspot leaves. `RunPlay._act_outcome` plays the commit's chain (`StoryCrowd.direct_chain`, source "outcome") from the `hotspot_commit` event's song time.
+  A story beat already in force on a person (source "cast") is not interrupted by an `available` act; a touch always is. Divergence from the plan: the plan calls the new crowd call `direct`; that name is
+  the crowd's group directive (twenty callers), so it is `direct_actor(id, act, face, t0, until, look_at, src)`.
+- **The crowd's `dir`** carries `state`, `from`, `until`, `sync`, `force` and now `face`, `look_at`, `src` and `chain` (the segments still to come). While it is in force `StoryCharacter.face_override` is
+  the face (so `sheet_pick` chooses `act@face` frames when the person was baked with them, else the act's own) and a live `look_at` turns the person toward the target (`StoryCrowd.look_point`:
+  `camera` is the eye, so they face us; an actor, a thing or a waypoint is its ground position; it also decides the arm of a `point`).
+- **`cast` on a scene node of `run.json`**: `[{actor, at_beat, act, face?, look_at?, beats?, if_energy_below?, if_energy_above?, if_flags_all?, if_flags_none?}]`, `at_beat` 0 to 63 of the scene's phase.
+  `RunEngine` queues the lines when the scene begins and emits one `cast` event per line at `phase_t0 + at_beat * beat_s` (`t` is the line's own time, whatever the frame step; ties in file order; a
+  line due on the same instant as a block decision goes first, so its conditions read the energy as it stood at that beat). Conditions read the crowd's energy and the world-state flags (run or `keep:`) at
+  that beat; a line whose conditions fail emits nothing. A stall across several lines fires them all, in order. The lines of a scene left before they came due are dropped.
+- **`cast` on a cinematic** (`run.json` `cinematics.<name>.cast`, the same lines with `at_beat` 0 to 16 relative to the commit): the outcome's cinematic carries them (`HotspotContract.resolve_cinematic`),
+  `RunEngine` queues them from the `hotspot_commit` and they play on if the scene changes; `RunPlay._on_cast` acts them in the world the cinematic names.
+- **Checks**: `RunData._validate_casts` validates every scene's and cinematic's lines against the scene's map (a person with a home in it, a known act and face, a look target, `at_beat` in range, no stray
+  field: nothing can carry text). `tests/test_run_cast.gd` (events, order, beats, conditions, determinism at any frame step, no cast = unchanged, cinematic cast, validator, the crowd's face and look),
+  `tests/test_hotspots_engine.gd` (acting leaves the outcomes alone, chains, validator, every shipped hotspot both ways). `tools/story/art/directed.py` reads hotspot `acting`, scene `cast` and cinematic
+  `cast` so the sheets bake exactly the acts and faces the data names (`tools/content/test_directed.py`).
+- **Stage 1b ships no authored acting or cast** (the five worlds' pass is stage 1d); the tests inject lines into the shipped data.

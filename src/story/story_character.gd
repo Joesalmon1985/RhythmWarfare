@@ -19,6 +19,9 @@ const STATES := ["idle", "dance", "cheer", "sad", "clap", "hands_up", "walk", "f
 ## The directed acts (docs/THREE_PATHS_AND_FACES_PLAN.md 2.2): what a named person can be told to do. They are baked only for the actors a hotspot or a cast line directs
 ## (tools/story/art/people_sheets.py, content/story/directed_actors.json), start on the bar like the flair moves, and take any of the FACES.
 const ACTS := ["beckon", "nod", "shake_head", "recoil", "bow", "kneel", "offer", "plead", "collapse", "salute", "block", "cover_face", "stamp", "laugh", "write"]
+## The older states a story may also direct (a hotspot's `acting`, a scene's `cast`): they keep the facings the crowd gives them and take any face like the new acts do. Mirrors
+## OLD_ACTS in tools/story/art/directed.py (the sheet baker's list).
+const DIRECTABLE_OLD := ["wave", "point", "stare", "hug", "clap", "cheer", "sad", "rock", "check", "sleep", "lie", "sit", "idle", "walk", "chat", "watch", "look"]
 ## The fourteen faces: the crowd's four and ten acted ones (tools/story/art/people.py draws them; its list is checked against this one by check_assets.py).
 const FACES := ["neutral", "happy", "cheer", "sad", "fear", "anger", "plea", "doubt", "relief", "awe", "grief", "laugh", "resolve", "shame"]
 ## Break-dance flair (docs/DANCE_POLISH.md): a few dancers carry one signature move and perform it now and then for a bar or two, on the bar, then go back to their

@@ -39,6 +39,8 @@ var route_locked := false  # block 0 of the next phase has been charted: routes 
 var _locked_chart := ""
 
 var _events: Array = []
+var _cast_queue: Array = []  # the story beats still to come, earliest first: [{t, seq, beat, index, line, source, node, phase, name}] (the scene's `cast` lines, and a committed outcome's cinematic cast)
+var _cast_seq := 0
 var _next_block_notes := {}  # block index -> true once charted
 var _next_phase_charted := false
 var _depleted_t := -1.0
@@ -86,6 +88,7 @@ func begin(start_id: String) -> void:
 	energy = float(cfg["energy"]["start"])
 	over = false
 	_events = []
+	_cast_queue = []
 	_depleted_t = -1.0
 	_over_t = -1.0
 	_blocks_total = 0
@@ -118,6 +121,7 @@ func resume(start_id: String, t0: float) -> void:
 	energy = keep
 	over = false
 	_events = []
+	_cast_queue = []
 	_depleted_t = -1.0
 	_over_t = -1.0
 	_next_phase_charted = false
@@ -149,6 +153,7 @@ func _enter(id: String, t0: float, chart_now: bool) -> void:
 	_next_block_notes[0] = true
 	if hotspots != null:
 		hotspots.begin_scene(id, energy)
+	_queue_scene_cast(id, t0)
 	_emit({"kind": "phase_start", "node": id, "world": n["world"], "scene": n["scene"], "from": prev, "depth": depth, "t": t0, "phase": phase_n, "treatment": n["treatment"],
 		"audio": n["audio"], "temporary": n["temporary"], "fresh": phase_n == 1})
 	_emit({"kind": "mix", "stage": 0, "t": t0, "gains": cfg["stages"][0]["gains"], "cue": cfg["stages"][0]["cue"]})
@@ -245,13 +250,7 @@ func update(t: float) -> Array:
 			over = true
 			_emit({"kind": "run_over", "t": _over_t, "energy": energy, "phase": phase_n, "node": node_id})
 	else:
-		var bb := int(timing("block_beats"))
-		var guard := 0
-		while block <= 3 and guard < 8 and t >= t_of(float(block * bb) + _decision_beat()):
-			guard += 1
-			_decide(block, t_of(float(block * bb) + _decision_beat()))
-			if _depleted_t >= 0.0:
-				break
+		_run_due(t)
 		if _depleted_t < 0.0 and block == 4 and t >= t_of(timing("phase_beats")):
 			_commit()
 			var first := _events
@@ -261,6 +260,59 @@ func update(t: float) -> Array:
 	var out := _events
 	_events = []
 	return out
+
+
+## Everything due by song time `t` inside the current phase, in time order: the blocks' decisions and the cast lines (a line on the same instant as a decision goes first, so its conditions read
+## the energy as it stood at that beat). A stall across several of either gives the same events as small steps would.
+func _run_due(t: float) -> void:
+	var bb := int(timing("block_beats"))
+	var guard := 0
+	while guard < 96 and _depleted_t < 0.0:
+		var t_dec := t_of(float(block * bb) + _decision_beat()) if block <= 3 else INF
+		var t_cast: float = float(_cast_queue[0]["t"]) if not _cast_queue.is_empty() else INF
+		if minf(t_dec, t_cast) > t:
+			break
+		guard += 1
+		if t_cast <= t_dec:
+			_fire_cast(_cast_queue.pop_front())
+		else:
+			_decide(block, t_dec)
+
+
+## The phase's cast lines, scheduled on the clock: line k fires at `t0 + at_beat * beat_s` (ties in file order). Lines of the scene just left that never fired are dropped; a committed outcome's
+## cinematic cast, already queued, plays on.
+func _queue_scene_cast(id: String, t0: float) -> void:
+	_cast_queue = _cast_queue.filter(func(q: Dictionary) -> bool: return str(q["source"]) != "scene")
+	var lines: Array = data.nodes[id].get("cast", [])
+	for i in lines.size():
+		var line: Dictionary = lines[i]
+		_cast_queue.append({"t": t0 + float(line["at_beat"]) * beat_s, "seq": _cast_seq, "beat": float(line["at_beat"]), "index": i, "line": line, "source": "scene", "node": id, "phase": phase_n, "name": ""})
+		_cast_seq += 1
+	_sort_cast()
+
+
+func _sort_cast() -> void:
+	_cast_queue.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["t"]) < float(b["t"]) if float(a["t"]) != float(b["t"]) else int(a["seq"]) < int(b["seq"]))
+
+
+## An outcome's cinematic with cast lines: each line is due `at_beat` beats after the commit at `t_commit`.
+func _queue_cinematic_cast(cin: Dictionary, name: String, t_commit: float) -> void:
+	var lines: Array = cin.get("cast", [])
+	for i in lines.size():
+		var line: Dictionary = lines[i]
+		_cast_queue.append({"t": t_commit + float(line["at_beat"]) * beat_s, "seq": _cast_seq, "beat": float(line["at_beat"]), "index": i, "line": line, "source": "cinematic", "node": node_id, "phase": phase_n, "name": name})
+		_cast_seq += 1
+	_sort_cast()
+
+
+## A cast line comes due: if its conditions hold (the crowd's energy, the world-state flags) one `cast` event goes out, stamped with the line's own time. RunPlay hands it to the crowd.
+func _fire_cast(q: Dictionary) -> void:
+	var line: Dictionary = q["line"]
+	var has_flag := func(f: String) -> bool: return hotspots != null and hotspots.has_flag(f)
+	if not RunActing.conditions_hold(line, energy, has_flag):
+		return
+	_emit({"kind": "cast", "t": float(q["t"]), "beat": float(q["beat"]), "index": int(q["index"]), "source": str(q["source"]), "name": str(q["name"]), "node": str(q["node"]), "phase": int(q["phase"]),
+		"actor": str(line["actor"]), "act": str(line["act"]), "face": str(line.get("face", "")), "look_at": str(line.get("look_at", "")), "beats": float(line.get("beats", RunActing.HOLD_BEATS))})
 
 
 func _commit() -> void:
@@ -335,6 +387,8 @@ func _hotspot_decision(b: int, passed: bool, t_dec: float) -> void:
 		energy = clampf(energy + float(out["energy"]), 1.0, float(cfg["energy"]["max"]))
 		hotspots.energy = energy
 	_emit({"kind": "hotspot_commit", "t": t_dec, "block": b, "node": node_id, "phase": phase_n, "outcome": out, "energy": energy})
+	if (out["cinematic"] as Dictionary).has("cast"):  # a setback that is acted: the cinematic's cast lines run from the commit
+		_queue_cinematic_cast(out["cinematic"], str(out["cinematic_name"]), t_dec)
 
 
 func _chart_next_phase() -> void:

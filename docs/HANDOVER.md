@@ -22,7 +22,15 @@ https://github.com/Joesalmon1985/RhythmWarfare.
   is 2D; `point` and `stare` keep their old default faces (neutral) for the crowd, the directed data names `resolve` where the story wants it; `look_at` on `point` is the existing `toward`
   (stage 1b resolves a target id into it); `StoryCharacter.face_override` and the `act@face` sheet key are the only runtime additions (`StoryCrowd.direct` is stage 1b).
   Not verified: how the acts and faces look moving in a real run on the owner's phone (only the sheets, the poses and the tests were checked).
-- Stages 1b (acting contract), 1c (silent HUD), 1d (acting pass on the five worlds), 2 to 6 are not started.
+- **Stage 1b done (5 November 2026): the acting contract** (`docs/CONTINUOUS_RUN.md` "Acting in the run"). `acting` on hotspots, `cast` on scene nodes and on cinematics, validated in `HotspotContract`
+  (`FACES`, `ACTS`, `ACTING_PHASES`, `LOOK_TARGETS`, built from `StoryCharacter`, not copied; `StoryCharacter.DIRECTABLE_OLD` lists the older states a story may also direct) and `RunData._validate_casts`;
+  `RunEngine` emits one `cast` event per line at `phase_t0 + at_beat * beat_s` (pure; conditions `if_energy_below/above`, `if_flags_all/none` read at that beat; cinematic cast from the commit);
+  `RunActing` (pure helpers), `StoryCrowd.direct_actor` / `direct_chain` / `directing` / `look_point` / `stand_down(id, src)` (the crowd's `dir` carries `face`, `look_at`, `src`, `chain`),
+  `HotspotView._manage_acting` (available and selected acts, replacing the hard-coded wave), `RunPlay._on_cast` and `_act_outcome`. Hotspots with no `acting` block behave exactly as before (the old wave).
+  `tools/story/art/directed.py` now also reads cinematic `cast` lines and skips Bassment `figure` blocks (`tools/content/test_directed.py`). Divergences: the plan's `StoryCrowd.direct(actor, act, face, ...)` is
+  `direct_actor` (the name `direct` is the crowd's group directive with twenty callers); `sheet_pick` choosing by state and face was already done in stage 1a; no acting or cast is authored yet (stage 1d), so
+  the tests inject lines into the shipped data and "every shipped cast line" is vacuously the empty set today (the loop is in place and will cover the data the day it lands). Test run at the end of 1b: `bash tools/test.sh` green: 67513 checks, 0 failures (the run before stage 1b: 67007), and the 169 Python content tests.
+- Stages 1c (silent HUD), 1d (acting pass on the five worlds), 2 to 6 are not started.
 
 ## What the game is now
 

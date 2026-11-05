@@ -8,7 +8,8 @@ three places (later stages fill the last two; stage 1a seeds the first):
    test actors that prove every face and act, and anything the run data does not name.
 2. the `acting` blocks of the hotspots in `content/run/hotspots/*.json` (plan 2.3a): `acting.actor` (default `anchor.actor`) and the `act` / `face` of each of its
    `available`, `selected`, `committed`, `success` and `failure` states and their `then`.
-3. the `cast` lines of the scenes in `content/run/run.json` (plan 2.3b): `actor`, `act`, `face`.
+3. the `cast` lines of the scenes in `content/run/run.json` (plan 2.3b) and of its `cinematics` (2.3c): `actor`, `act`, `face`.
+   A hotspot whose acting names a Bassment `figure` instead of an actor is skipped: creatures are billboards, not baked people.
 
 `directed(chapter)` returns {actor id: [(act, face, facings), ...]}, deduplicated, in a stable order. A face equal to the act's own default (StoryCharacter.FACE_OF) is the
 plain act (`beckon`); any other is a separate frame set the sheet names `beckon@plea` (people_sheets.state_key). Unknown acts or faces are errors, not skipped.
@@ -88,30 +89,38 @@ def directed(chapter: str, poses: dict | None = None, root: str = ROOT) -> dict:
         for aid, entries in (_load(p).get(chapter) or {}).items():
             for raw in entries:
                 add(aid, raw, f"directed_actors.json {chapter}/{aid}")
+    rp = os.path.join(root, "content", "run", "run.json")
+    run = _load(rp) if os.path.exists(rp) else {}
+    maps = {w["id"]: w.get("map", "") for w in run.get("worlds", [])}
     hs = os.path.join(root, "content", "run", "hotspots")
     if os.path.isdir(hs):
         for fn in sorted(os.listdir(hs)):
             if not fn.endswith(".json"):
                 continue
-            for h in _load(os.path.join(hs, fn)).get("hotspots", []):
+            doc = _load(os.path.join(hs, fn))
+            for h in doc.get("hotspots", []):
                 a = h.get("acting")
-                if not a or str(h.get("map", "")) != chapter:
+                if not a:
+                    continue
+                if (h.get("map") or maps.get(h.get("world") or doc.get("world"), "")) != chapter:
                     continue
                 aid = a.get("actor") or (h.get("anchor") or {}).get("actor")
-                if not aid:
+                if not aid:  # a Bassment creature (`figure`) is a billboard, not a baked person
                     continue
                 for act, face in _acting_pairs(a):
                     add(aid, {"act": act, "face": face}, f"hotspot {h.get('id')}")
-    rp = os.path.join(root, "content", "run", "run.json")
-    if os.path.exists(rp):
-        run = _load(rp)
-        maps = {w["id"]: w.get("map", "") for w in run.get("worlds", [])}
-        for node in run.get("nodes", []):
-            if maps.get(node.get("world", "")) != chapter:
-                continue
-            for line in node.get("cast", []) or []:
-                if line.get("actor") and line.get("act"):
-                    add(line["actor"], {"act": line["act"], "face": line.get("face", "")}, f"cast {node.get('id')}")
+    for node in run.get("nodes", []):
+        if maps.get(node.get("world", "")) != chapter:
+            continue
+        for line in node.get("cast", []) or []:
+            if line.get("actor") and line.get("act"):
+                add(line["actor"], {"act": line["act"], "face": line.get("face", "")}, f"cast {node.get('id')}")
+    for name, cine in (run.get("cinematics") or {}).items():  # an outcome's cinematic may carry cast lines too (plan 2.3c)
+        if maps.get(cine.get("world", "")) != chapter:
+            continue
+        for line in cine.get("cast", []) or []:
+            if line.get("actor") and line.get("act"):
+                add(line["actor"], {"act": line["act"], "face": line.get("face", "")}, f"cinematic {name}")
     return found
 
 

@@ -5,7 +5,10 @@ extends RefCounted
 ##
 ## A file is {"world": "<run world id | bassment>", "hotspots": [ hotspot, ... ]}; a hotspot (every field except id, scene, anchor, kind, on_success is optional):
 ##   id, world, scene (a run scene id, or a Bassment passage number), map, anchor, kind, radius_m (0.8), min_px (72, never less), available, look, challenge, on_success, on_failure,
-##   cinematic, default, repeatable, trial_kind (the Bassment's name for `kind`: when present it is one of KINDS and equals `kind`).
+##   cinematic, default, repeatable, trial_kind (the Bassment's name for `kind`: when present it is one of KINDS and equals `kind`), acting (what a person does in each state of the hotspot and
+##   after its outcome, docs/THREE_PATHS_AND_FACES_PLAN.md 2.3a: see validate_acting; a Bassment creature names a `figure` instead of an `actor`).
+##
+## The same family carries the other half of the acting contract, the `cast` lines of a scene node of run.json and of a cinematic (2.3b, 2.3c), validated by validate_cast.
 ##
 ## Defaults. A run scene's default is always an exit (the way on when nothing is tapped). The Bassment's passages have no such rule: a passage's default choice may be a fight, a luck test or
 ## an item, so TrialData passes ctx `default_any_kind` and the default may be any kind (it must still be unconditional). Failure semantics are not the contract's there: TrialFlow keeps them
@@ -29,6 +32,16 @@ const OUTCOME_KEYS := ["route", "flags_set", "cinematic", "energy", "music"]
 const CINEMATIC_KEYS := ["move", "to", "bars", "look_at", "role", "style"]
 const MOVES := ["place", "walk", "stagger", "run", "climb", "carried"]  # `place` is a cut (the drag to the cage); the others are RunRail styles (`walk` with a `style`)
 const MUSIC := ["variation", "dip", "lift", "drop", "fill", "none"]
+## The acting contract. The faces and the directed acts are StoryCharacter's (the Stage 1a sheets bake exactly these); a story may also direct the older states (DIRECTABLE_OLD).
+const FACES: Array = StoryCharacter.FACES
+const ACTS: Array = StoryCharacter.ACTS + StoryCharacter.DIRECTABLE_OLD
+const ACTING_PHASES := ["available", "selected", "committed", "success", "failure"]
+const LOOK_TARGETS := ["camera", "actor", "thing", "waypoint"]  # `look_at` is the word camera, or the id of an actor (a home), a thing or a waypoint of the scene's map
+const ACTING_KEYS := ["actor", "figure"]  # besides the phases
+const ACT_KEYS := ["act", "face", "look_at", "beats", "then"]
+const CAST_KEYS := ["actor", "at_beat", "act", "face", "look_at", "beats", "if_energy_below", "if_energy_above", "if_flags_all", "if_flags_none"]
+const CAST_LAST_BEAT := 63.0  # a scene's cast line fires inside its own 64 beats
+const CINE_CAST_LAST_BEAT := 16.0  # a cinematic's lines are relative to its start and run a few bars at most
 
 static var _maps: Dictionary = {}  # map id -> index
 
@@ -102,7 +115,7 @@ static func normalize(h: Dictionary, world: String, map_id: String) -> Dictionar
 	return out
 
 
-## The cinematic an outcome names, as {"steps": [step, ...]} (a step: {move, to, bars, role, style, look_at}); {} when none or unresolved. The outcome's `cinematic` is a name looked up in `named`
+## The cinematic an outcome names, as {"steps": [step, ...]} (a step: {move, to, bars, role, style, look_at}) plus {"cast": [line, ...], "world"} when a named cinematic has cast lines; {} when none or unresolved. The outcome's `cinematic` is a name looked up in `named`
 ## (run.json `cinematics`: name -> {world, steps}), else in the hotspot's own `cinematic` (one spec, which every name of the hotspot is, or a map name -> spec), or an object written inline.
 static func resolve_cinematic(h: Dictionary, outcome: Dictionary, named: Dictionary = {}) -> Dictionary:
 	if not outcome.has("cinematic"):
@@ -111,7 +124,12 @@ static func resolve_cinematic(h: Dictionary, outcome: Dictionary, named: Diction
 	if typeof(c) == TYPE_DICTIONARY:
 		return c if (c as Dictionary).has("steps") else {"steps": [c]}
 	if named.has(str(c)) and typeof(named[str(c)]) == TYPE_DICTIONARY and (named[str(c)] as Dictionary).has("steps"):
-		return {"steps": (named[str(c)] as Dictionary)["steps"]}
+		var nm: Dictionary = named[str(c)]
+		var res := {"steps": nm["steps"]}
+		if nm.has("cast"):  # (only when it has some: a cinematic with no cast resolves exactly as before)
+			res["cast"] = nm["cast"]
+			res["world"] = str(nm.get("world", ""))
+		return res
 	var spec: Variant = h.get("cinematic", null)
 	if typeof(spec) != TYPE_DICTIONARY:
 		return {}
@@ -275,6 +293,8 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 						_validate_cine(cin[cname], "%s cinematic '%s'" % [hw, cname], idx, errors)
 	if typeof(h.get("default", false)) != TYPE_BOOL or typeof(h.get("repeatable", false)) != TYPE_BOOL:
 		errors.append("%s: default and repeatable are true or false" % hw)
+	if h.has("acting"):
+		validate_acting(h, hw, idx, ctx, errors)
 
 
 static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: String, routes: Array, idx: Dictionary, named: Dictionary, errors: Array) -> void:
@@ -329,3 +349,107 @@ static func _validate_cine(c: Dictionary, where: String, idx: Dictionary, errors
 			var l := str(c["look_at"])
 			if not ((idx["actors"] as Dictionary).has(l) or (idx["things"] as Dictionary).has(l) or (idx["waypoints"] as Dictionary).has(l)):
 				errors.append("%s: cinematic.look_at '%s' is no actor, thing or waypoint of the map" % [where, l])
+
+
+# --- the acting contract (docs/THREE_PATHS_AND_FACES_PLAN.md 2.3) ----------------------------------------------------------------
+
+## True when `target` is something a person can look at in the map `idx` (map_index): the word camera, an actor (a home), a thing or a waypoint.
+static func look_ok(target: String, idx: Dictionary) -> bool:
+	if target == "camera":
+		return true
+	return (idx["actors"] as Dictionary).has(target) or (idx["things"] as Dictionary).has(target) or (idx["waypoints"] as Dictionary).has(target)
+
+
+## One act with its face, look and hold: {act, face?, look_at?, beats?, then?}; `then` is another such object (what the person settles into).
+static func _validate_act(spec: Variant, where: String, idx: Dictionary, errors: Array, depth := 0) -> void:
+	if typeof(spec) != TYPE_DICTIONARY:
+		errors.append("%s: must be an object {act, face, look_at, beats, then}" % where)
+		return
+	var sp: Dictionary = spec
+	for k in sp:
+		if str(k) not in ACT_KEYS:
+			errors.append("%s: '%s' is not a field (%s)" % [where, k, ", ".join(PackedStringArray(ACT_KEYS))])
+	if str(sp.get("act", "")) not in ACTS:
+		errors.append("%s: act '%s' is not one of the acts" % [where, sp.get("act", "")])
+	if sp.has("face") and str(sp["face"]) not in FACES:
+		errors.append("%s: face '%s' is not one of the %d faces" % [where, sp["face"], FACES.size()])
+	if sp.has("look_at") and bool(idx["ok"]) and not look_ok(str(sp["look_at"]), idx):
+		errors.append("%s: look_at '%s' is not camera, nor an actor, thing or waypoint of the map" % [where, sp["look_at"]])
+	if sp.has("beats") and (typeof(sp["beats"]) not in [TYPE_INT, TYPE_FLOAT] or float(sp["beats"]) <= 0.0 or float(sp["beats"]) > 64.0):
+		errors.append("%s: beats must be a number above 0 and at most 64" % where)
+	if sp.has("then"):
+		if depth >= 3:
+			errors.append("%s: `then` goes three deep at most" % where)
+		else:
+			_validate_act(sp["then"], where + " then", idx, errors, depth + 1)
+
+
+## A hotspot's `acting` block: {actor?, figure?, available?, selected?, committed?, success?, failure?}. `actor` (default: the anchor's) is a person of the scene's map; a Bassment creature is named by
+## `figure` instead (ctx `figures`, the creature kinds). A hotspot anchored on a thing with no actor named has nobody to direct, which is an error.
+static func validate_acting(h: Dictionary, hw: String, idx: Dictionary, ctx: Dictionary, errors: Array) -> void:
+	var a: Variant = h.get("acting", null)
+	if typeof(a) != TYPE_DICTIONARY:
+		errors.append("%s: acting must be an object" % hw)
+		return
+	var ac: Dictionary = a
+	for k in ac:
+		if str(k) not in ACTING_PHASES and str(k) not in ACTING_KEYS:
+			errors.append("%s: acting.%s is not a field (%s)" % [hw, k, ", ".join(PackedStringArray(ACTING_PHASES + ACTING_KEYS))])
+	var an: Variant = h.get("anchor", {})
+	var anchor_actor := str((an as Dictionary).get("actor", "")) if typeof(an) == TYPE_DICTIONARY else ""
+	if ac.has("figure"):
+		if ac.has("actor"):
+			errors.append("%s: acting names an actor or a figure, not both" % hw)
+		if not (ctx.get("figures", []) as Array).has(str(ac["figure"])):
+			errors.append("%s: acting.figure '%s' is not a creature here" % [hw, ac["figure"]])
+	else:
+		var who := str(ac.get("actor", anchor_actor))
+		if who == "":
+			errors.append("%s: acting needs an actor (the anchor is not one: name acting.actor)" % hw)
+		elif bool(idx["ok"]) and not (idx["actors"] as Dictionary).has(who):
+			errors.append("%s: acting.actor '%s' has no home in map %s" % [hw, who, ctx.get("map", "")])
+	for ph in ACTING_PHASES:
+		if ac.has(ph):
+			_validate_act(ac[ph], "%s acting.%s" % [hw, ph], idx, errors)
+
+
+## The `cast` lines of a scene node or a cinematic (plan 2.3b and 2.3c): [{actor, at_beat, act, face?, look_at?, beats?, if_energy_below?, if_energy_above?, if_flags_all?, if_flags_none?}]. `idx` is the
+## map's map_index. `last_beat` is the latest beat a line may name (a scene's 63; a cinematic's lines are relative to its start).
+static func validate_cast(lines: Variant, where: String, idx: Dictionary, errors: Array, last_beat := CAST_LAST_BEAT) -> void:
+	if typeof(lines) != TYPE_ARRAY:
+		errors.append("%s: cast must be a list of lines" % where)
+		return
+	var i := 0
+	for line in lines:
+		var lw := "%s cast[%d]" % [where, i]
+		i += 1
+		if typeof(line) != TYPE_DICTIONARY:
+			errors.append("%s: not an object" % lw)
+			continue
+		var ln: Dictionary = line
+		for k in ln:
+			if str(k) not in CAST_KEYS:
+				errors.append("%s: '%s' is not a field (%s)" % [lw, k, ", ".join(PackedStringArray(CAST_KEYS))])
+		var who := str(ln.get("actor", ""))
+		if who == "":
+			errors.append("%s: actor is required" % lw)
+		elif bool(idx["ok"]) and not (idx["actors"] as Dictionary).has(who):
+			errors.append("%s: actor '%s' has no home in the scene's map" % [lw, who])
+		if not ln.has("at_beat") or typeof(ln["at_beat"]) not in [TYPE_INT, TYPE_FLOAT] or float(ln["at_beat"]) < 0.0 or float(ln["at_beat"]) > last_beat:
+			errors.append("%s: at_beat must be a number from 0 to %d" % [lw, int(last_beat)])
+		var spec := {}
+		for k in ["act", "face", "look_at", "beats"]:
+			if ln.has(k):
+				spec[k] = ln[k]
+		_validate_act(spec, lw, idx, errors)
+		for k in ["if_energy_below", "if_energy_above"]:
+			if ln.has(k) and (typeof(ln[k]) not in [TYPE_INT, TYPE_FLOAT] or float(ln[k]) < 0.0 or float(ln[k]) > 100.0):
+				errors.append("%s: %s must be a number from 0 to 100" % [lw, k])
+		for k in ["if_flags_all", "if_flags_none"]:
+			if ln.has(k):
+				if typeof(ln[k]) != TYPE_ARRAY:
+					errors.append("%s: %s must be a list of flags" % [lw, k])
+				else:
+					for f in ln[k]:
+						if str(f) == "":
+							errors.append("%s: %s holds an empty flag" % [lw, k])

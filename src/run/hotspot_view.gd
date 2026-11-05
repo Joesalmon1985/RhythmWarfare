@@ -5,7 +5,7 @@ extends Control
 ##
 ## Looks, with no text and no floating rectangles: AVAILABLE a ring of light on the floor under the anchor and a glow on the thing (`look.available` picks the character: glow, a slow pulse, a
 ## beckoning light column, a flicker, a door ajar with its light spilling, a crack in the floor); the default exit is brighter and its ring is doubled, its door wider ajar. SELECTED: a bright ring
-## and a lift (the glow rises and a second ring closes in). COMMITTED: a flash and the ring opening out; an actor anchor beckons by the crowd's own `wave` from the moment it is on show.
+## and a lift (the glow rises and a second ring closes in). COMMITTED: a flash and the ring opening out; an actor anchor acts from the moment it is on show (its `acting` block, else the crowd's own `wave`).
 ## An anchor out of sight (behind the camera, off to a side) is a soft beacon of light at the edge of the picture, still touchable: free look is never needed.
 
 const SEGMENTS := 28
@@ -23,7 +23,7 @@ var reduced := false
 var high_contrast := false
 var glow_tex: Texture2D = null
 
-var _beckoning: Dictionary = {}  # actor id -> true while the crowd was told to wave at the player
+var _acting: Dictionary = {}  # actor id -> "<state>|<hotspot id>" of the act the crowd was last told (so it is told once per change)
 
 
 func _ready() -> void:
@@ -145,7 +145,7 @@ func _draw() -> void:
 		return
 	var t := float(now_fn.call()) if now_fn.is_valid() else 0.0
 	var items: Array = items_fn.call()
-	_manage_beckons(items, t)
+	_manage_acting(items, t)
 	var lay := layout(items, stage.map, stage.crowds, pose, size)
 	lay.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["depth"]) > float(b["depth"]))  # far first
 	for e in lay:
@@ -156,23 +156,44 @@ func _pulse(t: float, per_beats: float) -> float:
 	return 0.5 + 0.5 * sin(t / (beat_s * per_beats) * TAU)
 
 
-func _manage_beckons(items: Array, t: float) -> void:
-	var want := {}
+## The people the hotspots on show direct (docs/THREE_PATHS_AND_FACES_PLAN.md 2.3a): a hotspot with an `acting` block has its person do the `available` act while it waits and the `selected` act
+## once touched; one with no block at all keeps the old wave at the player. When the hotspot leaves (committed, or its window shut) the view stands its own act down; the commit's outcome acts
+## are RunPlay's and play on. A story beat (`cast`) already in force on the person is not interrupted by the available act (it waits its turn); a touch always is.
+func _manage_acting(items: Array, t: float) -> void:
+	var want := {}  # actor id -> {key, spec}
 	for e in items:
 		var h: Dictionary = e["hotspot"]
-		var an: Dictionary = h["anchor"]
-		if an.has("actor") and str(e["state"]) != "committed":
-			want[str(an["actor"])] = true
+		var st := str(e["state"])
+		if st == "committed":
+			continue
+		var aid := RunActing.actor_of(h)
+		if aid == "":
+			continue
+		var spec := RunActing.selected_spec(h) if st == "selected" else RunActing.available_spec(h)
+		if spec.is_empty():
+			continue
+		want[aid] = {"key": st + "|" + str(h["id"]), "spec": spec, "touch": st == "selected"}
 	for id in want:
-		if not _beckoning.has(id):
-			_beckoning[id] = true
-			for rid in stage.crowds:
-				(stage.crowds[rid] as StoryCrowd).beckon(str(id), t, t + 30.0)
-	for id in _beckoning.keys():
+		var w: Dictionary = want[id]
+		if _acting.get(id, "") == str(w["key"]):
+			continue
+		var done := false
+		for rid in stage.crowds:
+			var c := stage.crowds[rid] as StoryCrowd
+			if not c.actors.has(id):
+				continue
+			if not bool(w["touch"]) and c.directing(str(id), t) == "cast":
+				break  # (their story beat first; this tries again next frame)
+			var sp: Dictionary = w["spec"]
+			done = c.direct_actor(str(id), str(sp["act"]), str(sp.get("face", "")), t, t + RunActing.STATE_S, str(sp.get("look_at", "")), "hotspot")
+			break
+		if done:
+			_acting[id] = str(w["key"])
+	for id in _acting.keys():
 		if not want.has(id):
-			_beckoning.erase(id)
+			_acting.erase(id)
 			for rid in stage.crowds:
-				(stage.crowds[rid] as StoryCrowd).stand_down(str(id))
+				(stage.crowds[rid] as StoryCrowd).stand_down(str(id), "hotspot")
 
 
 func _ring_points(world: Vector3, ground_y: float, r: float, pose: Dictionary) -> PackedVector2Array:

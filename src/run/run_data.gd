@@ -261,6 +261,7 @@ func _validate() -> void:
 		_validate_routes(id, n)
 	_validate_worlds()
 	_validate_places()
+	_validate_casts(errors)
 	# sibling scenes (the routes of one scene) may chart different packs: the route lock then applies between them (the engine greys the others out at the last block's decision)
 	for id in nodes:
 		var charts := {}
@@ -424,6 +425,29 @@ func _validate_places() -> void:
 		for wid in want:
 			if not ids2.has(wid):
 				errors.append("scene %s: waypoint '%s' is not in map %s" % [id, wid, mp])
+
+
+## The acting contract's cast lines (docs/THREE_PATHS_AND_FACES_PLAN.md 2.3b, 2.3c): the `cast` of every scene and of every cinematic in run.json is checked against its scene's map.
+func _validate_casts(out: Array) -> void:
+	for id in node_order:
+		var n: Dictionary = nodes[id]
+		if n.has("cast"):
+			validate_cast_lines(n, n["cast"], "scene %s" % id, out)
+	var cines: Dictionary = cfg.get("cinematics", {})
+	for name in cines:
+		var c: Variant = cines[name]
+		if typeof(c) != TYPE_DICTIONARY or not (c as Dictionary).has("cast"):
+			continue
+		var wd: Dictionary = worlds.get(str((c as Dictionary).get("world", "")), {})
+		if wd.is_empty():
+			out.append("cinematic %s: cast needs the cinematic's `world`" % name)
+			continue
+		HotspotContract.validate_cast(c["cast"], "cinematic %s" % name, HotspotContract.map_index(str(wd["map"])), out, HotspotContract.CINE_CAST_LAST_BEAT)
+
+
+## Checks `lines` (a scene node's `cast`) against the map of scene node `n`.
+func validate_cast_lines(n: Dictionary, lines: Variant, where: String, out: Array) -> void:
+	HotspotContract.validate_cast(lines, where, HotspotContract.map_index(str(n["map"])), out)
 
 
 ## The scenes of a world in file order.

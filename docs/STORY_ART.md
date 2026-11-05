@@ -622,7 +622,7 @@ Every actor of every chapter is drawn as an individual and baked to their own pi
   pose in `sample()`, a cycle in `SHEET_CYCLES` and a default face in `FACE_OF`. They start on the bar (bar-locked like the flair moves). The pixel rig is 2D, so a forward bend is the pose key
   `fwd` (0 to 1): the three-quarter view leans into the turn, the front and back views shorten the trunk and sink the head; hands raised to the face are the forearm folded up from a hanging arm
   (the rig cannot put a hand in front of a face seen from the front, so `cover_face` and `collapse` read through the head sunk to the hands and the grief face). `point`, `stare` and the other
-  old states take a face parameter too and keep their own default faces; `look_at` on `point` is the existing `toward` (stage 1b resolves a target id into it).
+  old states take a face parameter too and keep their own default faces; `look_at` on `point` is the existing `toward` (stage 1b resolves a target id into it: `StoryCrowd.look_point`, see `docs/CONTINUOUS_RUN.md` "Acting in the run").
 - **Which people are baked in which acts** (`tools/story/art/directed.py`): only the directed people, never the whole crowd. The list is merged from `content/story/directed_actors.json` (the
   test actors of stage 1a: per chapter one person with every act and face and a few with the ten faces, one per species or look), the `acting` blocks of `content/run/hotspots/*.json` and the
   `cast` lines of `content/run/run.json` (stages 1b and 1d fill those; the reader is in place, entries may be `act`, `act@face` or `act@face:front+side`). A face other than the act's own

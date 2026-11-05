@@ -78,6 +78,8 @@ var _trial_g2 := -1.0  # the guard the dungeon takes the pads on
 var _trial_direct := false
 var _stage_hidden := ""
 var trial_log: Array = []  # [{kind, t, ...}] the entry and exit, for the transition tests and recordings
+var cast_log: Array = []  # [{t, beat, actor, act, face, look_at, source, applied}] every cast line handed to the crowd (the acting contract, docs/THREE_PATHS_AND_FACES_PLAN.md 2.3b), for tests and walks
+var acting_log: Array = []  # [{t, hotspot, actor, success, acts}] every outcome chain handed to the crowd (2.3a)
 
 
 func _ready() -> void:
@@ -715,6 +717,8 @@ func _handle(events: Array) -> void:
 					_open_routes(ev)
 			"hotspot_commit":
 				_on_hotspot_commit(ev)
+			"cast":
+				_on_cast(ev)
 			"route_commit":
 				_close_routes(ev)
 			"depleted":
@@ -805,6 +809,50 @@ func _end_fade(_t: float, seconds: float) -> void:
 	var tw := create_tween()
 	tw.tween_interval(maxf(_t - hud.now_t, 0.0))
 	tw.tween_property(hud, "fade", 1.0, maxf(seconds, 0.2))
+
+
+# --- the acting contract: cast lines and outcome acts ----------------------------------------------------------------------------
+
+## The crowd (StoryCrowd) of the active stage that holds person `actor`; null when nobody of that id stands in the shown world.
+func _crowd_of(actor: String, world: String = "") -> StoryCrowd:
+	var w := world if world != "" and stages.has(world) else active_world
+	if not stages.has(w):
+		return null
+	var st: StoryStage = stages[w]["stage"]
+	for rid in st.crowds:
+		if (st.crowds[rid] as StoryCrowd).actors.has(actor):
+			return st.crowds[rid]
+	return null
+
+
+## A cast line came due (RunEngine "cast"): the named person does the act from the line's own time (song time, so a late frame changes nothing).
+func _on_cast(ev: Dictionary) -> void:
+	if trial_state != "":
+		return
+	var world := ""
+	if str(ev["source"]) == "cinematic":  # a setback's cast acts in the world the cinematic belongs to
+		var cin: Dictionary = data.cfg.get("cinematics", {}).get(str(ev["name"]), {})
+		world = str(data.worlds.get(str(cin.get("world", "")), {}).get("map", ""))
+	var c := _crowd_of(str(ev["actor"]), world)
+	var t0 := float(ev["t"])
+	var applied := c != null and c.direct_actor(str(ev["actor"]), str(ev["act"]), str(ev["face"]), t0, t0 + float(ev["beats"]) * engine.beat_s, str(ev["look_at"]), "cast")
+	cast_log.append({"t": t0, "beat": float(ev["beat"]), "actor": str(ev["actor"]), "act": str(ev["act"]), "face": str(ev["face"]), "look_at": str(ev["look_at"]), "source": str(ev["source"]), "applied": applied})
+
+
+## A hotspot committed: its person plays the outcome's acts (the `committed` flash, then `success` or `failure`, then what follows) from the commit's song time. A hotspot with no `acting` block does
+## nothing here (the view stands its person down, as it always did).
+func _act_outcome(out: Dictionary, t: float) -> void:
+	var h := hotspots.get_hotspot(str(out["hotspot"]))
+	if h.is_empty() or not RunActing.has_acting(h):
+		return
+	var who := RunActing.actor_of(h)
+	var chain := RunActing.outcome_chain(h, bool(out["success"]), t, engine.beat_s)
+	if who == "" or chain.is_empty():
+		return
+	var c := _crowd_of(who)
+	if c != null:
+		c.direct_chain(who, chain, "outcome")
+	acting_log.append({"t": t, "hotspot": str(out["hotspot"]), "actor": who, "success": bool(out["success"]), "acts": chain.map(func(s: Dictionary) -> String: return str(s["act"]))})
 
 
 # --- routes ---------------------------------------------------------------------------------------------------------------
@@ -918,6 +966,7 @@ func _on_hotspot_commit(ev: Dictionary) -> void:
 	if hotspots.persist_dirty:
 		Session.run_progress.save()
 		hotspots.persist_dirty = false
+	_act_outcome(out, t)
 	if not (out["cinematic"] as Dictionary).is_empty():
 		_hotspot_cinematic(out, t)
 	if str(out["window"]) == "early" and bool(out["success"]) and HotspotContract.is_trial_route(str(out["route"])):
