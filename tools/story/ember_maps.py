@@ -572,7 +572,7 @@ def ash_land() -> Map:
 
     # --- E13 the Keeper ---
     m.thing("altar", "thing_ember_altar", 25.0, -112.0, size=3.0, anim="pulse")
-    m.thing("long_shadow", "piece_long_shadow", 25.0, -103.5, y=0.05, size=4.0, piece="long_shadow", blend="mix")
+    m.thing("long_shadow", "piece_long_shadow", 25.0, -106.8, y=0.05, size=9.0, piece="long_shadow", blend="mix")  # (visual polish 2: it lay 2 m in front of the rail's camera, under its feet, and was bigger than the screen's floor strip; now across the floor between the pair and the altar, 9 m wide)
     m.thing("stal_k0", "thing_stalagmite_red", 17.0, -110.0, size=2.4)
     m.thing("stal_k1", "thing_stalagmite_red", 34.0, -108.0, size=2.4)
     m.light("lt_altar", 25, -111.0, 1.8, 16, "#ff8a40", 1.9)
