@@ -17,6 +17,8 @@ import math
 
 import numpy as np
 
+from . import half_faces
+
 # ---- materials (5 bits) and shade steps (2 bits) --------------------------------------------------------------------------------------------------------
 
 MATS = ["none", "skin", "skin2", "hair", "hair2", "top", "top2", "top3", "outer", "outer2", "bottom", "bottom2", "shoes", "shoes2", "hat", "hat2",
@@ -373,6 +375,7 @@ def add(a, b, k=1.0):
 REST_UP = math.radians(7.0)
 REST_FORE = math.radians(10.0)
 SEATED = ("sit", "sleep")
+COVER_STATES = ("cover_face", "collapse")  # the hands go to the face
 FLOORED = ("rock",)
 
 
@@ -408,6 +411,9 @@ class Body:
         # a crouch (the flair moves): the hips sink by this share of the height and the knees bend (two-bone legs, the feet stay where the straight leg
         # would put them, minus a lift). Zero for every other state, so their frames are unchanged.
         self.crouch = 0.0 if state in SEATED + FLOORED else max(0.0, float(pose.get("crouch", 0.0)))
+        self.kneeling = state == "kneel" and self.crouch >= 0.12
+        if self.kneeling:
+            self.crouch = 0.25  # the hip sinks a thigh's length above the floor: the kneeling knee is on the ground under it
         self.cdy = self.crouch * S
         self.lift = {"l": max(0.0, float(pose.get("lift_l", 0.0))) * S, "r": max(0.0, float(pose.get("lift_r", 0.0))) * S}
         dy = self.sit_dy + self.cdy
@@ -498,7 +504,63 @@ class Body:
                 an = add(hp, d, ln)
                 kn = add(hp, d, ln * 0.5)
             self.legs[side] = {"hip": hp, "knee": kn, "ankle": an}
+        if self.kneeling:
+            self._one_knee_down(S, hip_y)
+        self.covering = state in COVER_STATES and fc != 2
+        if self.covering:
+            self._hands_to_face(S, sp)
         self.top_y = min(self.head_c[1] - self.head_h * 0.55, min(a["hand"][1] for a in self.arms.values()))
+
+    def _one_knee_down(self, S, hip_y):
+        """`kneel`: one knee on the floor under the hip with the shin gone behind it (the foot seen lifted, or lying back in the three-quarter view), the other leg's
+        thigh out to the side (forward, in the three-quarter view) and its shin straight down to a flat foot: the classic one-knee-down."""
+        ks = self.k * self.mir
+        floor = -0.02 * S
+        kneeler, planted = ("l", "r") if self.fc == 1 else ("r", "l")  # the near leg kneels in the three-quarter view (its shin is seen along the floor)
+        hk = self.legs[kneeler]["hip"]
+        if self.fc == 1:
+            kn = (hk[0] + 0.015 * S, floor)
+            an = (kn[0] - 0.12 * S, floor - 0.012 * S)
+        else:
+            kn = (hk[0] + 0.01 * S * ks, floor)
+            an = (kn[0] + 0.02 * S * ks, floor - 0.075 * S)
+        self.legs[kneeler] = {"hip": hk, "knee": kn, "ankle": an}
+        hp = self.legs[planted]["hip"]
+        out = (1.0 if self.fc == 1 else (1.0 if hp[0] > self.hip[0] else -1.0)) * (0.13 if self.fc == 1 else 0.115)
+        kn = (hp[0] + out * S * (ks if self.fc != 1 else 1.0), self.hip[1] + 0.035 * S)
+        an = (kn[0] + 0.01 * S * (1.0 if out > 0 else -1.0), -0.045 * S)
+        self.legs[planted] = {"hip": hp, "knee": kn, "ankle": an}
+
+    def _hands_to_face(self, S, sp):
+        """`cover_face`, `collapse`: both hands up over the face (the elbows out and low: weeping, the head in the hands). The rig's arm angles fold the forearm back along the
+        upper arm, which ends the hand beside the shoulder; here the hand goes where the face is and the elbow is solved from it (two bones, bent outwards and down)."""
+        up_len = 0.17 * S * float(sp.get("arm_len", 1.0))
+        fo_len = 0.138 * S * float(sp.get("arm_len", 1.0))
+        hc = self.head_c
+        for side, sg in (("l", 1.0), ("r", -1.0)):
+            a = self.arms[side]
+            sh = a["sh"]
+            if self.fc == 1:
+                tx = hc[0] + (-0.2 if side == "l" else 0.2) * self.head_w * self.k + 0.02 * S
+            else:
+                tx = hc[0] - sg * self.head_w * 0.27
+            hand = (tx, hc[1] + 0.06 * self.head_h)
+            wr = (hand[0] + sg * 0.004 * S, hand[1] + 0.03 * S)
+            dx, dy = wr[0] - sh[0], wr[1] - sh[1]
+            D = max(math.hypot(dx, dy), 1e-6)
+            D = min(D, up_len + fo_len - 0.004 * S)
+            ux, uy = dx / math.hypot(dx, dy), dy / math.hypot(dx, dy)
+            aa = (up_len * up_len - fo_len * fo_len + D * D) / (2.0 * D)
+            h = math.sqrt(max(up_len * up_len - aa * aa, 0.0))
+            px, py = -uy, ux
+            if px * (-sg) < 0:  # the elbow goes outwards (the left arm is on the screen's left)
+                px, py = -px, -py
+            if py < 0:
+                px, py = -px, -py
+            el = (sh[0] + ux * aa + px * h, sh[1] + uy * aa + py * h)
+            fd = (hand[0] - wr[0], hand[1] - wr[1])
+            n = max(math.hypot(*fd), 1e-6)
+            self.arms[side] = {"sh": sh, "el": el, "wr": wr, "hand": hand, "fd": (fd[0] / n, fd[1] / n), "ud": a["ud"]}
 
 
 def build_body(spec, pose, S, fc, state) -> Body:
@@ -1126,6 +1188,16 @@ class Painter:
         capsule(cv, a["el"], a["wr"], r_el * 0.95, r_wr, z + 0.02, lambda t, u: (fore_mat(t, u), 0.0))
         hand_r = 0.024 * S * (1.15 if self.species in ("brute",) else 1.0)
         glove = self.sp.get("gloves")
+        if b.covering:  # a palm over half the face: wide enough to hide the eyes, with the gaps between the fingers
+            z = 2.6
+            rxh, ryh = max(b.head_w * 0.3, hand_r), max(b.head_h * 0.36, hand_r * 1.12)
+            ellipse(cv, a["hand"], rxh, ryh, 0.0, z + 0.04, lambda lx, ly, u, v: (np.full(u.shape, M["acc"] if glove else skin, np.uint8), np.where(u < -0.25, 0.25, np.where(v > 0.55, -0.25, 0.0))))
+            if not glove and S >= 80:
+                ax, ay = a["hand"]
+                for k in (-0.4, 0.0, 0.4):
+                    cv.dot(ax + k * rxh, ay - ryh * 0.55, skin, DARK, z + 0.1)
+                    cv.dot(ax + k * rxh, ay - ryh * 0.2, skin, DARK, z + 0.1)
+            return
         ellipse(cv, a["hand"], hand_r, hand_r * 1.12, math.atan2(a["fd"][0], a["fd"][1]), z + 0.04,
                 lambda *x: M["acc"] if glove else skin)
 
@@ -2217,9 +2289,17 @@ class Painter:
         ny, my = L["nose"] + 1, L["mouth"] + 1
         P(sx - 1 if fc == 0 else sx, ny, "skin", EDGE)
         P(sx + 1, ny, "skin", EDGE)
-        if mood in ("fear", "awe"):
-            for y in range(my, my + (3 if mood == "awe" else 2)):
-                P(sx, y, "mouth", EDGE)
+        if mood == "fear":  # a wide, flat open mouth
+            for x in range(sx - 2, sx + 3):
+                P(x, my, "eye_d", DARK)
+            for x in range(sx - 1, sx + 2):
+                P(x, my + 1, "eye_d", EDGE)
+        elif mood == "awe":  # a tall round O
+            for y in range(my, my + 4):
+                P(sx, y, "eye_d", EDGE)
+                if y in (my + 1, my + 2):
+                    P(sx - 1, y, "eye_d", DARK)
+                    P(sx + 1, y, "eye_d", DARK)
         elif mood == "laugh":
             for x in (sx - 1, sx, sx + 1):
                 P(x, my, "mouth", EDGE)
@@ -2463,9 +2543,36 @@ class Painter:
             P(sx + 1, my, "teeth", MID)
 
     # -- the faces of the other species --
+    def half_face(self, species, L, dec, mood):
+        """The half-size head of a grey, skeleton, cyclops or insect (and the full-size head of a skeleton or insect): a picture per face (half_faces.py). False when the head is another size or the mood has no picture
+        (singing, sleeping): the species' own rules then draw it."""
+        if L["cls"] == "S":
+            pic = half_faces.PICTURES[species].get(mood)
+        elif L["cls"] == "L":
+            pic = half_faces.PICTURES_L.get(species, {}).get(mood)
+        else:
+            return False
+        if pic is None:
+            return False
+        fc, sx, ey = self.b.fc, L["sx"], L["ey"]
+        for dy, row in pic.items():
+            w = len(row)
+            for k, ch in enumerate(row):
+                if ch == ".":
+                    continue
+                x = k - w // 2
+                if fc == 1:  # the three-quarter turn: the far half closes up towards the middle, the whole face moves into the turn
+                    x = x - 1 if x > 0 else x
+                    x += sx
+                m, st = half_faces.LEGEND[ch]
+                self._P(dec, x, ey + dy, m, st)
+        return True
+
     def face_skeleton(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if self.half_face("skeleton", L, dec, mood):
+            return
         if mood in ACT_FACES and L["cls"] != "XS":
             self.act_skeleton(L, dec, mood)
             return
@@ -2508,6 +2615,8 @@ class Painter:
     def face_grey(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if self.half_face("grey", L, dec, mood):
+            return
         if mood in ACT_FACES and L["cls"] != "XS":
             self.act_grey(L, dec, mood)
             return
@@ -2562,6 +2671,8 @@ class Painter:
     def face_cyclops(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if self.half_face("cyclops", L, dec, mood):
+            return
         if mood in ACT_FACES and L["cls"] != "XS":
             self.act_cyclops(L, dec, mood)
             return
@@ -2609,6 +2720,8 @@ class Painter:
     def face_insect(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if self.half_face("insect", L, dec, mood):
+            return
         if mood in ACT_FACES and L["cls"] != "XS":
             self.act_insect(L, dec, mood)
             return
