@@ -64,6 +64,7 @@ var _script_taps := false  # RW_TRIAL_TAPS: the scripted picks are real taps thr
 var _script_i := 0
 var _script_pick_at := -1.0
 var _script_pick := -1
+var _script_then := ""  # the taps still to come in this window ("1>0>1")
 var _until := -1
 var _pressed: Dictionary = {}
 var _released: Dictionary = {}
@@ -262,6 +263,7 @@ func build_zone(z: String) -> Dictionary:
 		hv.stage = st
 		hv.beat_s = _beat_s
 		hv.items_fn = func() -> Array: return _view_items(z)
+		hv.choice_fn = func() -> Dictionary: return choice_state(z)  # the current choice staged in the room (docs/CHOICE_CLARITY.md)
 		hv.pose_fn = _exit_pose
 		hv.now_fn = func() -> float: return _last_t
 		hv.reduced = Session.reduced_effects
@@ -395,6 +397,10 @@ func update(t: float, audio_t: float) -> void:
 				var hit := tap_centre(_script_pick)
 				print("TRIAL tap %d -> %d" % [_script_pick, hit])
 				_script_pick = -1
+				if _script_then != "":
+					_script_pick = int(_script_then.get_slice(">", 0))
+					_script_then = _script_then.substr(_script_then.find(">") + 1) if _script_then.contains(">") else ""
+					_script_pick_at = audio_t + 4.0 * _beat_s
 		else:
 			pick(_script_pick)
 			_script_pick = -1
@@ -612,9 +618,10 @@ func _open_window(ev: Dictionary) -> void:
 	if _script_i < _script_choices.size():
 		var tok := _script_choices[_script_i].strip_edges()
 		_script_i += 1
-		if tok != "" and tok != "d":
-			_script_pick = int(tok)
+		if tok != "" and tok != "d":  # "1>0": tap 1, then 0 a bar later (the choice-clarity strips change their mind)
+			_script_pick = int(tok.get_slice(">", 0))
 			_script_pick_at = float(ev["t"]) + 1.0
+			_script_then = tok.substr(tok.find(">") + 1) if tok.contains(">") else ""
 	if _outcome.is_empty() and _pending.is_empty():
 		_panel.visible = true
 		_desc.visible = true
@@ -641,6 +648,34 @@ func _view_items(z: String) -> Array:
 		else:
 			_commit_view = {}
 	return out
+
+
+## The choice the room stages (HotspotView.choice_fn, docs/CHOICE_CLARITY.md) while the four-bar window is open on zone `z`: the passage's options, the current one (the picked one, else
+## the default), the committed one for its flash, and where the player is going (a passage's route). {} when no window is open there.
+func choice_state(z: String) -> Dictionary:
+	if engine == null or not active or z != zone:
+		return {}
+	var staged: Array = []
+	var by_index := {}
+	if engine.window_open and tdata.zone_of_passage(engine.flow.passage) == z:
+		for it in _items:
+			staged.append(it["hs"])
+			by_index[int(it["index"])] = it["hs"]
+	var committed := ""
+	if not _commit_view.is_empty() and str(_commit_view["zone"]) == z and _last_t - float(_commit_view["t"]) < 2.0 * _beat_s:
+		committed = str((_commit_view["hs"] as Dictionary).get("id", ""))
+		if staged.is_empty():
+			return {}
+	if staged.is_empty():
+		return {}
+	var cur_i := engine.selected if engine.selected >= 0 else engine.default_index()
+	var cur: Dictionary = by_index.get(cur_i, {})
+	var touched := {}
+	for i in _sel_t:
+		if by_index.has(int(i)):
+			touched[str((by_index[int(i)] as Dictionary).get("id", ""))] = float(_sel_t[i])
+	return {"staged": staged, "current": str(cur.get("id", "")), "committed": committed, "dest": str((cur.get("on_success", {}) as Dictionary).get("route", "")), "default": str((by_index.get(engine.default_index(), {}) as Dictionary).get("id", "")), "touched": touched,
+		"changed_t": maxf(touched.values().max() if not touched.is_empty() else -INF, float(_commit_view.get("t", -INF)))}
 
 
 ## The lights of the open window (what the hotspot view shows now): [{index, hotspot, state, t_state}].
@@ -896,6 +931,11 @@ func _figure_act(t: float) -> Dictionary:
 		phase = "selected"
 		t0 = maxf(float(_sel_t.get(int(_fig["acting"]["choice"]), t0)), t0)
 	var spec: Variant = block.get(phase, block.get("available", {}))
+	if phase == "available" and engine != null and engine.window_open and _items.size() >= 2:  # a creature that is one of two or more options shows whether it is the current choice: its own waiting act, or backing off (docs/CHOICE_CLARITY.md)
+		var cur_i := engine.selected if engine.selected >= 0 else engine.default_index()
+		var cr: Dictionary = ChoiceStaging.defaults().get("creature", {})
+		if cur_i != int(_fig["acting"]["choice"]):  # (the current one keeps its own waiting act: block, offer, laugh... it is squared up to you)
+			spec = {"act": str(cr.get("other_act", "recoil"))}
 	if typeof(spec) != TYPE_DICTIONARY:
 		return none
 	return {"act": str((spec as Dictionary).get("act", "")), "u": maxf(t - t0, 0.0) / _beat_s}

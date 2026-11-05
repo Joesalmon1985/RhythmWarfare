@@ -129,6 +129,7 @@ func _ready() -> void:
 	journey = RunJourney.new(data)
 	tap_policy = OS.get_environment("RW_RUN_TAPS") if OS.has_environment("RW_RUN_TAPS") and OS.get_environment("RW_RUN_TAPS") != "" else "scripted"
 	hotspots = RunHotspots.new(data, Session.run_progress.run_flags, Session.run_progress.flags)
+	hotspots.preselect = bool((data.cfg.get("choice", {}) as Dictionary).get("preselect", false)) or OS.get_environment("RW_CHOICE_PRESELECT") == "1"  # (an owner decision, off: touch only in the window; the env turns it on for a strip)
 	engine.hotspots = hotspots
 	engine.begin(start)
 	if float(playtest.get("energy", -1.0)) >= 0.0:  # the scene list's start-energy option
@@ -278,6 +279,7 @@ func _build_stage(world: String, from: RunData = null) -> Dictionary:
 		hv.stage = st
 		hv.beat_s = engine.beat_s
 		hv.items_fn = hotspot_items
+		hv.choice_fn = choice_state  # the current choice staged in the world from the scene's first beat (docs/CHOICE_CLARITY.md)
 		hv.pose_fn = _exit_pose
 		hv.now_fn = func() -> float: return hud.now_t
 		hv.reduced = Session.reduced_effects
@@ -595,12 +597,22 @@ func _bot_taps(t: float) -> void:
 var _select_done := false
 
 
-func _scripted_select(t: float) -> void:
+var _select_i := 0
+
+
+func _scripted_select(t: float) -> void:  # (several touches in order: RW_RUN_SELECT=a@50,b@53,a@56, the choice-clarity strips)
 	if _select_done or not OS.has_environment("RW_RUN_SELECT") or engine.phase_n != 1:
 		return
-	var spec := OS.get_environment("RW_RUN_SELECT")
-	if engine.phase_beat_at(t) >= float(spec.get_slice("@", 1)):
-		_select_done = hotspot_select(spec.get_slice("@", 0)) or engine.phase_beat_at(t) > 62.0
+	var specs := OS.get_environment("RW_RUN_SELECT").split(",", false)
+	while _select_i < specs.size():
+		var spec := specs[_select_i]
+		if engine.phase_beat_at(t) < float(spec.get_slice("@", 1)):
+			return
+		if hotspot_select(spec.get_slice("@", 0)) or engine.phase_beat_at(t) > 62.0:
+			_select_i += 1
+		else:
+			return
+	_select_done = true
 
 
 func _route_for_dir(k: int) -> String:
@@ -1137,6 +1149,24 @@ func hotspot_items() -> Array:
 	return out
 
 
+## The choice the world stages now (HotspotView.choice_fn, docs/CHOICE_CLARITY.md): the scene's staged options, the current one (the touched one, else the default), the commit,
+## where the player is going, and when each was last touched. Empty in the Bassment (TrialScene stages its own) and before the run is under way.
+func choice_state() -> Dictionary:
+	if hotspots == null or engine == null or trial_state != "" or _ended:
+		return {}
+	return {"staged": hotspots.staged(engine.block), "current": hotspots.current_id(engine.block), "committed": hotspots.committed, "dest": hotspots.destination(engine.block),
+		"default": str(hotspots.default_hotspot().get("id", "")), "touched": _sel_t, "changed_t": _choice_changed_t()}
+
+
+func _choice_changed_t() -> float:  # the last touch or commit of this scene's choice
+	var t := -INF
+	for id in _sel_t:
+		t = maxf(t, float(_sel_t[id]))
+	if not _commit_view.is_empty():
+		t = maxf(t, float(_commit_view["t"]))
+	return t
+
+
 ## The player (or the bot) touches a hotspot by id. Allowed while it is on show and nothing has committed; the selection can be changed until the commit. Returns whether it was selected.
 func hotspot_select(id: String) -> bool:
 	if hotspots == null or _ended or trial_state != "":
@@ -1169,7 +1199,7 @@ func hotspot_tap(pos: Vector2) -> String:
 	if st.map == null or pose.is_empty():
 		return ""
 	var items := hotspot_items().filter(func(e: Dictionary) -> bool: return str(e["state"]) != "committed")
-	var id := HotspotView.hit(HotspotView.layout(items, st.map, st.crowds, pose, rect.size), pos - rect.position)
+	var id := HotspotView.hit(HotspotView.layout(items, st.map, st.crowds, pose, rect.size, true), pos - rect.position)  # (the thing itself is touchable: ChoiceStaging `touch`)
 	if id == "":
 		hotspot_log.append({"kind": "tap_miss", "t": hud.now_t, "pos": pos})
 		return ""
@@ -1461,6 +1491,7 @@ func _path_swap(ev: Dictionary) -> void:
 	var carried := float(ev["energy"])
 	engine = RunEngine.new(data)
 	hotspots = RunHotspots.new(data, Session.run_progress.run_flags, Session.run_progress.flags)
+	hotspots.preselect = bool((data.cfg.get("choice", {}) as Dictionary).get("preselect", false)) or OS.get_environment("RW_CHOICE_PRESELECT") == "1"  # (an owner decision, off: touch only in the window; the env turns it on for a strip)
 	engine.hotspots = hotspots
 	engine.arrive(start, t_swap, carried, int(ev["phase"]))
 	journey = RunJourney.new(data)

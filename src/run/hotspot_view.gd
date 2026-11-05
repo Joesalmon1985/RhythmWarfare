@@ -12,6 +12,8 @@ const SEGMENTS := 28
 const EDGE_MARGIN := 0.07  # of the view's short side
 const LIFT_M := 0.28
 const FLASH_S := 0.5
+const CURRENT_COL := Color(0.25, 1.0, 0.45)
+const OTHER_COL := Color(1.0, 0.32, 0.22)
 
 var items_fn: Callable  # () -> Array of {hotspot: Dictionary, state: "available" | "selected" | "committed", t_state: float (song time the state began)}
 var pose_fn: Callable  # () -> {cam: Vector3, yaw, pitch} (empty: nothing to draw)
@@ -24,6 +26,14 @@ var high_contrast := false
 var glow_tex: Texture2D = null
 
 var _acting: Dictionary = {}  # actor id -> "<state>|<hotspot id>" of the act the crowd was last told (so it is told once per change)
+
+## The choice layer (docs/CHOICE_CLARITY.md): () -> {staged: [hotspot], current: id, committed: id, dest: route, default: id, touched: {id: song time of the last touch}}; empty or
+## unset: no staging (the old look). From the scene's first beat every staged option shows whether it is the current choice (ChoiceStaging), not only in the window.
+var choice_fn: Callable
+var props: ChoiceProps = null
+var touch_rects := false  # a generous touch area on the thing itself (ChoiceStaging `touch`), besides the ring's radius
+var last_snapshot: Dictionary = {}
+var _mem: Dictionary = {}  # hotspot id -> {role, t_role, open, t_open, key_act, key_steps}
 
 
 func _ready() -> void:
@@ -79,7 +89,7 @@ static func resolve(anchor: Dictionary, map: StoryMap, crowds: Dictionary) -> Di
 
 ## Screen placement of every entry ({hotspot, state}) for a camera pose in a view of `view` pixels: [{id, hotspot, state, centre, ground, scale, depth, radius_px, edge, ok}]. A hotspot whose
 ## anchor is out of sight is placed at the edge of the picture on the side it lies (edge: true), so it can still be seen and touched. The touch radius is the projected radius_m, never under half of min_px.
-static func layout(entries: Array, map: StoryMap, crowds: Dictionary, pose: Dictionary, view: Vector2) -> Array:
+static func layout(entries: Array, map: StoryMap, crowds: Dictionary, pose: Dictionary, view: Vector2, rects := false) -> Array:
 	var out: Array = []
 	if pose.is_empty() or view.x <= 1.0:
 		return out
@@ -106,6 +116,14 @@ static func layout(entries: Array, map: StoryMap, crowds: Dictionary, pose: Dict
 			entry["scale"] = sc
 			entry["depth"] = float(pc["depth"])
 			entry["radius_px"] = rad
+			if rects:  # the thing itself is touchable: a rectangle of the staging's {w, h} metres standing on the floor under the anchor, inside the view
+				var tch: Dictionary = ChoiceStaging.of(h).get("touch", {})
+				var hw := float(tch.get("w", 1.2)) * sc * 0.5
+				var gy: float = (entry["ground"] as Vector2).y
+				var top := StoryProjector.project(Vector3(p.x, float(r["ground"]) + float(tch.get("h", 2.0)), p.z), pose, view)
+				var ty: float = top["screen"].y if bool(top["visible"]) else gy - float(tch.get("h", 2.0)) * sc
+				var rr := Rect2(Vector2(sp.x - hw, ty), Vector2(hw * 2.0, maxf(gy - ty, 1.0)))
+				entry["touch_rect"] = rr.intersection(Rect2(Vector2.ZERO, view))
 		else:  # out of sight: a beacon at the edge on the side it lies
 			var cam: Vector3 = pose["cam"]
 			var d := Vector2(p.x - cam.x, p.z - cam.z)
@@ -130,7 +148,8 @@ static func hit(layout_entries: Array, point: Vector2) -> String:
 	var best_d := INF
 	for e in layout_entries:
 		var d := (e["centre"] as Vector2).distance_to(point)
-		if d <= float(e["radius_px"]) and d < best_d - 1.0e-6:
+		var inside: bool = d <= float(e["radius_px"]) or (e.has("touch_rect") and (e["touch_rect"] as Rect2).has_point(point))
+		if inside and d < best_d - 1.0e-6:
 			best_d = d
 			best = str(e["id"])
 	return best
@@ -146,10 +165,15 @@ func _draw() -> void:
 		return
 	var t := float(now_fn.call()) if now_fn.is_valid() else 0.0
 	var items: Array = items_fn.call()
-	_manage_acting(items, t)
+	var snap := choice_snapshot(t)
+	_stage_choice(snap, t)
+	_manage_acting(items, t, snap)
 	var lay := layout(items, stage.map, stage.crowds, pose, size)
 	lay.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["depth"]) > float(b["depth"]))  # far first
+	var opts: Dictionary = snap.get("options", {})
 	for e in lay:
+		if opts.has(str(e["id"])):
+			e["role"] = str(opts[str(e["id"])]["role"])
 		_draw_entry(e, pose, t)
 
 
@@ -160,15 +184,16 @@ func _pulse(t: float, per_beats: float) -> float:
 ## The people the hotspots on show direct (docs/THREE_PATHS_AND_FACES_PLAN.md 2.3a): a hotspot with an `acting` block has its person do the `available` act while it waits and the `selected` act
 ## once touched; one with no block at all keeps the old wave at the player. When the hotspot leaves (committed, or its window shut) the view stands its own act down; the commit's outcome acts
 ## are RunPlay's and play on. A story beat (`cast`) already in force on the person is not interrupted by the available act (it waits its turn); a touch always is.
-func _manage_acting(items: Array, t: float) -> void:
+func _manage_acting(items: Array, t: float, snap: Dictionary = {}) -> void:
 	var want := {}  # actor id -> {key, spec}
+	var staged_people: Dictionary = snap.get("people", {})
 	for e in items:
 		var h: Dictionary = e["hotspot"]
 		var st := str(e["state"])
 		if st == "committed":
 			continue
 		var aid := RunActing.actor_of(h)
-		if aid == "":
+		if aid == "" or staged_people.has(aid):  # (an option of a staged choice is played by the choice layer)
 			continue
 		var spec := RunActing.selected_spec(h) if st == "selected" else RunActing.available_spec(h)
 		if spec.is_empty():
@@ -236,6 +261,10 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 		base = Color.html(str((look["finished"] as Dictionary).get("tint", HotspotContract.FINISHED_TINT)))
 	if high_contrast:
 		base = Color(1.0, 1.0, 0.4)
+	var role := str(e.get("role", ""))
+	if role != "" and not finished and not high_contrast:  # the current choice: green and doubled; another option: red and dashed (shape as well as colour)
+		base = CURRENT_COL if role == "current" or role == "committed" else OTHER_COL
+		is_default = role == "current"
 	var pulse := 0.0 if reduced else _pulse(t, 4.0 if str(look["available"]) != "pulse" else 1.0)
 	var strength := 0.32 + 0.3 * pulse + (0.2 if is_default else 0.0)
 	var white := base.lerp(Color(1, 1, 1), 0.7)
@@ -255,6 +284,8 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 			var flick := 1.0
 			if look_a == "flicker" and not reduced:
 				flick = 0.35 + 0.65 * float(int(floor(t * 14.0)) * 7919 % 5) / 4.0
+			if role != "":  # a staged option: the thing itself shows its state (ChoiceStaging); the light stays on the floor and never covers a face or a door
+				return
 			_glow(c, r_m * sc * 0.55, base, (0.3 + 0.25 * pulse + (0.15 if is_default else 0.0)) * flick)
 			match look_a:
 				"open":  # a door ajar: a slit of light standing at the doorway, spilling on the floor
@@ -294,6 +325,8 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 				var close := 1.0 - minf(u / 0.3, 1.0)  # a second ring closes in on the selected one
 				if close > 0.02:
 					draw_polyline(_ring_points(world, float(e["ground_y"]), r_m * (1.08 + 0.8 * close), pose), Color(white.r, white.g, white.b, 0.8 * close), width)
+			if role != "":
+				return
 			_glow(c + Vector2(0.0, -lift), r_m * sc * 0.75, white, 0.7)
 			draw_circle(c + Vector2(0.0, -lift), maxf(2.0, sc * 0.07), Color(1, 1, 1, 0.95))
 			draw_line(g, c + Vector2(0.0, -lift), Color(white.r, white.g, white.b, 0.5), width)
@@ -303,4 +336,231 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 			var ring3 := _ring_points(world, float(e["ground_y"]), out_r, pose)
 			if ring3.size() > 2:
 				draw_polyline(ring3, Color(1, 1, 1, 0.95 * (1.0 - k)), width * 3.0 * (1.0 - k) + 1.0)
-			_glow(c + Vector2(0.0, -LIFT_M * sc), r_m * sc * (0.8 + 1.4 * k), Color(1, 1, 1), 0.95 * (1.0 - k) + 0.1)
+			if role == "":  # (a staged option's commit is its door swinging wide and its people reacting: no flash over them)
+				_glow(c + Vector2(0.0, -LIFT_M * sc), r_m * sc * (0.8 + 1.4 * k), Color(1, 1, 1), 0.95 * (1.0 - k) + 0.1)
+
+
+# --- the choice layer (docs/CHOICE_CLARITY.md) ----------------------------------------------------------------------------------
+
+## The staged options now: {current, default, committed, dest, options: {id: {role, archetype, open (target), open_k (0..1 now), lamp, since_role_s, since_touch_s}},
+## people: {actor id: hotspot id}, hotspots: {id: hotspot}}. The roles' change times are remembered here (song time), so a door swings and a touched person nods over the next
+## beat whatever the frame step. Empty when fewer than two options are staged (no choice to show).
+func choice_snapshot(t: float) -> Dictionary:
+	if not choice_fn.is_valid():
+		return {}
+	var c: Dictionary = choice_fn.call()
+	if c.is_empty() or (c.get("staged", []) as Array).size() < 2:
+		if not _mem.is_empty():
+			clear_choice()
+		last_snapshot = {}
+		return {}
+	var staged: Array = c["staged"]
+	var roles := ChoiceStaging.roles(staged, str(c.get("current", "")), str(c.get("committed", "")), str(c.get("dest", "")))
+	var out := {"current": str(c.get("current", "")), "default": str(c.get("default", "")), "committed": str(c.get("committed", "")), "dest": str(c.get("dest", "")), "options": {}, "people": {}, "hotspots": {}}
+	var touched: Dictionary = c.get("touched", {})
+	for h in staged:
+		var id := str(h["id"])
+		var r: Dictionary = roles[id]
+		var m: Dictionary = _mem.get(id, {})
+		if m.is_empty():  # first seen: already in its role and its door already where it belongs (the default stands open from the scene's first beat)
+			m = {"role": r["role"], "t_role": -INF, "open": r["open"], "t_open": -INF}
+		var t_ch := minf(float(c.get("changed_t", t)), t)  # (the song time of the touch or the commit that changed it, from the data: the same at any frame step)
+		if str(m["role"]) != str(r["role"]):
+			m["role"] = r["role"]
+			m["t_role"] = t_ch
+		if bool(m["open"]) != bool(r["open"]):
+			m["open"] = r["open"]
+			m["t_open"] = t_ch
+		_mem[id] = m
+		var st := ChoiceStaging.of(h)
+		var open_k := ChoiceStaging.open_amount(bool(r["open"]), t - float(m["t_open"]), beat_s)
+		var o := {"role": str(r["role"]), "archetype": str(r["archetype"]), "open": bool(r["open"]), "open_k": open_k, "since_role_s": t - float(m["t_role"]),
+			"since_touch_s": t - float(touched[id]) if touched.has(id) else INF}
+		o["lamp"] = ChoiceStaging.lamp_of(st, str(r["role"]), bool(r["open"]))
+		out["options"][id] = o
+		out["hotspots"][id] = h
+		if str(st["archetype"]) == "person" and str(st.get("actor", "")) != "":
+			out["people"][str(st["actor"])] = id
+	for id in _mem.keys():
+		if not (out["options"] as Dictionary).has(id):
+			_forget(str(id))
+	last_snapshot = out
+	return out
+
+
+## Computes the snapshot and plays it (what _draw does each frame; the tests call it on the virtual clock, where nothing is drawn).
+func refresh_choice(t: float) -> Dictionary:
+	var snap := choice_snapshot(t)
+	_stage_choice(snap, t)
+	return snap
+
+
+## Plays a snapshot in the world: the people's acts and faces, the billboards' textures and motions, the set pieces, and the props (doors, boards, lamps, spills, `states` props).
+func _stage_choice(snap: Dictionary, t: float) -> void:
+	if stage == null or stage.world == null:
+		return
+	if props == null and not snap.is_empty():
+		props = ChoiceProps.new()
+		props.name = "ChoiceProps"
+		stage.world.add_child(props)
+	if props != null:
+		props.begin_frame()
+	var opts: Dictionary = snap.get("options", {})
+	var u := (t / beat_s) if beat_s > 0.0 else 0.0
+	for id in opts:
+		var o: Dictionary = opts[id]
+		var h: Dictionary = snap["hotspots"][id]
+		var st := ChoiceStaging.of(h)
+		var role := str(o["role"])
+		var lit := role == "current" or role == "committed"
+		var r := resolve(h["anchor"], stage.map, stage.crowds)
+		var foot := Vector3.ZERO
+		var centre_y := 1.0
+		if bool(r.get("ok", false)):
+			var p: Vector3 = r["pos"]
+			foot = Vector3(p.x, float(r["ground"]), p.z)
+			centre_y = p.y - float(r["ground"])
+		if st.has("door_at"):
+			var da: Array = st["door_at"]
+			foot = Vector3(float(da[0]), foot.y, float(da[1]))
+		var touched_now := float(o["since_touch_s"]) < 1.5 * beat_s and role == "current"
+		match str(st["archetype"]):
+			"person":
+				_stage_person(id, h, st, o, t)
+			"figure":
+				var th := str(st.get("thing", ""))
+				if th != "":
+					var mo := ChoiceStaging.motion(str(st.get("current_motion" if lit else "other_motion", "still")), u)
+					var tx := str(st.get("current_tex" if lit else "other_tex", ""))
+					if tx != "":
+						mo["tex"] = ChoiceProps.tex(tx)
+					stage.world.thing_pose[th] = mo
+					_mem[id]["thing"] = th
+			"door":
+				var hgt := float(st.get("height_m", 2.4))
+				match str(st.get("door", "drawn")):
+					"drawn":
+						props.put(id + "#door", ChoiceProps.door_frame(float(o["open_k"])), foot, hgt, 0.85)
+						if float(o["open_k"]) > 0.05:
+							props.put(id + "#spill", "spill", foot, 1.6, 1.0, float(o["open_k"]) * 0.8, true)
+					"bars":
+						props.put(id + "#bars", "bars", foot + Vector3(0.0, hgt * 0.15, 0.0), hgt * 0.7, 0.9, 1.0 - float(o["open_k"]))
+						if float(o["open_k"]) > 0.05:
+							props.put(id + "#spill", "spill", foot, 1.6, 1.0, float(o["open_k"]) * 0.8, true)
+					"sign":
+						props.put(id + "#door", "sign_go" if float(o["open_k"]) >= 0.5 else "sign_stop", foot, hgt, 0.85)
+					"pieces":
+						_piece(id, str(st["open_piece"]) if bool(o["open"]) else str(st["shut_piece"]), str(st["shut_piece"]) if bool(o["open"]) else str(st["open_piece"]), t)
+			"object", "feature":
+				var an: Dictionary = h["anchor"]
+				if an.has("thing"):
+					stage.world.thing_pose[str(an["thing"])] = ChoiceStaging.motion(str(st.get("current_motion" if lit else "other_motion", "still")), u)
+					_mem[id]["thing"] = str(an["thing"])
+		var lamp := str(o["lamp"])
+		if lamp != "none" and props != null:
+			var ly := float(st.get("lamp_y", float(st.get("height_m", 2.4)) + 0.15 if str(st["archetype"]) == "door" else centre_y + 0.6))
+			props.put(id + "#lamp", "lamp_go" if lamp == "go" else "lamp_stop", foot + Vector3(0.0, ly, 0.0), 0.34, 1.0)
+		_play_steps(id, st, role, touched_now, foot, u, t)
+	if props != null:
+		props.end_frame()
+
+
+func _stage_person(id: String, h: Dictionary, st: Dictionary, o: Dictionary, t: float) -> void:
+	var aid := str(st.get("actor", ""))
+	var role := str(o["role"])
+	var m: Dictionary = _mem[id]
+	m["actor"] = aid
+	if role == "committed" and RunActing.has_acting(h):
+		return  # (the outcome's own acts play: RunPlay._act_outcome)
+	var spec := ChoiceStaging.person_spec(st, role, float(o["since_role_s"]), float(o["since_touch_s"]), beat_s)
+	var key := "%s|%s|%s" % [role, str(spec.get("act", "")), str(spec.get("face", ""))]
+	for rid in stage.crowds:
+		var c := stage.crowds[rid] as StoryCrowd
+		if not c.actors.has(aid):
+			continue
+		var cur_src := c.directing(aid, t)
+		if str(m.get("key_act", "")) == key and (cur_src == "choice" or spec.is_empty()):
+			return  # (told already and still doing it; a story beat that took the person over and ended hands them back here)
+		if spec.is_empty():
+			c.stand_down(aid, "choice")
+			m["key_act"] = key
+			return
+		var fresh := float(o["since_role_s"]) < beat_s or float(o["since_touch_s"]) < beat_s
+		if cur_src == "outcome" or (cur_src == "cast" and not fresh):
+			return  # (an outcome's act or a story beat first; this tries again next frame)
+		c.ensure_present(aid)
+		if c.direct_actor(aid, str(spec.get("act", "")), str(spec.get("face", "")), t, t + RunActing.STATE_S, str(spec.get("look_at", "")), "choice"):
+			m["key_act"] = key
+		return
+
+
+## The `states` steps of an option's role: pieces and directed people once per role change, billboards and props every frame.
+func _play_steps(id: String, st: Dictionary, role: String, touched_now: bool, foot: Vector3, u: float, t: float) -> void:
+	var steps := ChoiceStaging.steps(st, role, touched_now)
+	var m: Dictionary = _mem[id]
+	var key := "%s|%s" % [role, str(touched_now)]
+	var once := str(m.get("key_steps", "")) != key
+	m["key_steps"] = key
+	var i := 0
+	for s in steps:
+		var sp: Dictionary = s
+		i += 1
+		if sp.has("piece"):
+			if once:
+				stage.apply({"t0": t, "action": "piece_on" if str(sp["op"]) == "on" else "piece_off", "args": {"piece": str(sp["piece"])}})
+		elif sp.has("actor"):
+			if once:
+				for rid in stage.crowds:
+					var c := stage.crowds[rid] as StoryCrowd
+					if c.actors.has(str(sp["actor"])):
+						c.ensure_present(str(sp["actor"]))
+						c.direct_actor(str(sp["actor"]), str(sp.get("act", "")), str(sp.get("face", "")), t, t + RunActing.STATE_S, str(sp.get("look_at", "")), "choice")
+				var extra: Array = m.get("extra_actors", [])
+				if not extra.has(str(sp["actor"])):
+					extra.append(str(sp["actor"]))
+				m["extra_actors"] = extra
+		elif sp.has("thing"):
+			var mo := ChoiceStaging.motion(str(sp.get("motion", "still")), u)
+			if sp.has("tex"):
+				mo["tex"] = ChoiceProps.tex(str(sp["tex"]))
+			elif sp.has("sprite") and stage.assets != null:  # a frame of the map's own art (a sibling sprite of the thing: the bar lifted, the receiver off the hook)
+				mo["tex"] = stage.assets.sprite(str(sp["sprite"])).get("tex", null)
+			stage.world.thing_pose[str(sp["thing"])] = mo
+		elif sp.has("prop") and props != null:
+			var at: Array = sp.get("at", [0.0, 0.0, 0.0])
+			var mo2 := ChoiceStaging.motion(str(sp.get("motion", "still")), u)
+			props.put("%s#prop%d" % [id, i], str(sp["prop"]), foot + Vector3(float(at[0]) + float(mo2["dx"]), float(at[1]) + float(mo2["dy"]), float(at[2])), float(sp.get("size", 1.0)) * float(mo2["sy"]), 0.9)
+
+
+func _piece(id: String, on_id: String, off_id: String, t: float) -> void:
+	var m: Dictionary = _mem[id]
+	if str(m.get("piece_on", "")) == on_id:
+		return
+	stage.apply({"t0": t, "action": "piece_on", "args": {"piece": on_id}})
+	stage.apply({"t0": t, "action": "piece_off", "args": {"piece": off_id}})
+	m["piece_on"] = on_id
+
+
+## An option that is no longer staged lets go of what it held: its people's acts, its billboard's pose.
+func _forget(id: String) -> void:
+	var m: Dictionary = _mem.get(id, {})
+	_mem.erase(id)
+	if stage == null:
+		return
+	var who: Array = (m.get("extra_actors", []) as Array).duplicate()
+	if str(m.get("actor", "")) != "":
+		who.append(str(m["actor"]))
+	for aid in who:
+		for rid in stage.crowds:
+			(stage.crowds[rid] as StoryCrowd).stand_down(str(aid), "choice")
+	if stage.world != null and str(m.get("thing", "")) != "":
+		stage.world.thing_pose.erase(str(m["thing"]))
+
+
+## Clears the choice layer: every act of the layer stood down, every billboard pose dropped (a new scene, or no choice on show).
+func clear_choice() -> void:
+	for id in _mem.keys():
+		_forget(str(id))
+	_mem = {}
+	if stage != null and stage.world != null:
+		stage.world.thing_pose = {}

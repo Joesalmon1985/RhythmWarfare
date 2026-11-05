@@ -305,6 +305,10 @@ func _make_sector_mesh(s: Dictionary, groups: Dictionary) -> void:
 	_sector_nodes[str(s["id"])] = {"node": mi, "mats": mats}
 
 
+## The choice layer's poses of map things (docs/CHOICE_CLARITY.md): thing id -> {tex?: Texture2D, dx, dy, sx, sy}; an id not here is drawn as the map says.
+var thing_pose: Dictionary = {}
+
+
 func _make_thing(t: Dictionary) -> void:
 	var spr: Dictionary = assets.sprite(str(t["sprite"])) if assets != null else {}
 	var tex: Texture2D = spr.get("tex", null)
@@ -348,7 +352,7 @@ func _make_thing(t: Dictionary) -> void:
 	add_child(mi)
 	if t.has("piece"):
 		mi.visible = false
-	_thing_nodes.append({"node": mi, "mat": mat, "thing": t, "base_y": y, "add": blend == "add"})
+	_thing_nodes.append({"node": mi, "mat": mat, "thing": t, "base_y": y, "add": blend == "add", "tex0": tex, "h": h, "base_x": at.x})
 
 
 func _make_sky() -> void:
@@ -512,12 +516,28 @@ func update(t: float, ctx: Dictionary) -> void:
 				sc = 1.0 + 0.03 * sin(beats * PI * 0.5)
 			"flicker":
 				alpha *= 0.6 + 0.4 * absf(sin(t * 29.0))
-		var key := Vector4(col.r + col.g * 3.0 + col.b * 7.0, sc, dy, alpha)  # unchanged since the last frame (a lamp in a steady room): leave the node alone
+		var sx := 1.0
+		var sy := 1.0
+		var dx := 0.0
+		var tp: Dictionary = thing_pose.get(str(t_def["id"]), {})  # the choice layer's pose of an option's billboard (ChoiceStaging: a texture and a motion per state)
+		if not tp.is_empty():
+			sx = float(tp.get("sx", 1.0))
+			sy = float(tp.get("sy", 1.0))
+			dx = float(tp.get("dx", 0.0))
+			dy += float(tp.get("dy", 0.0)) - float(th["h"]) * sc * (1.0 - sy) * 0.5  # (the feet stay on the floor)
+		var want_tex: Texture2D = tp.get("tex", null) if tp.get("tex", null) != null else th.get("tex0", null)
+		if want_tex != null and (th["mat"] as StandardMaterial3D).albedo_texture != want_tex:
+			(th["mat"] as StandardMaterial3D).albedo_texture = want_tex
+			th["key"] = Vector4.INF
+		var key := Vector4(col.r + col.g * 3.0 + col.b * 7.0 + dx * 13.0, sc + sx * 10.0 + sy * 100.0, dy, alpha)  # unchanged since the last frame (a lamp in a steady room): leave the node alone
 		if key == th.get("key", Vector4.INF):
 			continue
 		th["key"] = key
-		node.scale = Vector3(sc, sc, sc)
+		node.scale = Vector3(sc * sx, sc * sy, sc)
 		node.position.y = float(th["base_y"]) + dy
+		if not tp.is_empty() or th.has("posed"):
+			node.position.x = float(th["base_x"]) + dx
+			th["posed"] = true
 		(th["mat"] as StandardMaterial3D).albedo_color = Color(col.r, col.g, col.b, alpha)
 
 

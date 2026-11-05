@@ -125,11 +125,20 @@ func _directed_from_data() -> Dictionary:
 			continue
 		var doc: Dictionary = _json("res://content/run/hotspots/" + fn)
 		for h in doc["hotspots"]:
+			var map_id := str(h.get("map", maps.get(str(doc["world"]), "")))
+			var stg := ChoiceStaging.of(h)  # the choice layer's people (docs/CHOICE_CLARITY.md): an option's person in each of its roles, and the people its states steps direct
+			if str(stg["archetype"]) == "person":
+				for ph in ["current", "other", "touched", "committed", "declined"]:
+					var sp: Dictionary = stg.get(ph, {})
+					add.call(map_id, str(stg["actor"]), str(sp.get("act", "")), str(sp.get("face", "")))
+			for steps in (stg["states"] as Dictionary).values():
+				for step in steps:
+					if (step as Dictionary).has("actor"):
+						add.call(map_id, str(step["actor"]), str(step.get("act", "")), str(step.get("face", "")))
 			var a: Variant = h.get("acting", null)
 			if typeof(a) != TYPE_DICTIONARY:
 				continue
 			var aid := str((a as Dictionary).get("actor", (h["anchor"] as Dictionary).get("actor", "")))
-			var map_id := str(h.get("map", maps.get(str(doc["world"]), "")))
 			for ph in ["available", "selected", "committed", "success", "failure"]:
 				var st: Variant = (a as Dictionary).get(ph, null)
 				while typeof(st) == TYPE_DICTIONARY:
