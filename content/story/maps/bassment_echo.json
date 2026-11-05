@@ -8,7 +8,7 @@
   "ceil_rock": "textures/ceil_rock.png",
   "floor_flag": "textures/floor_flag.png",
   "thing_door": "textures/thing_door.png",
-  "wall_iron": "textures/wall_iron.png",
+  "wall_echo": "textures/wall_echo.png",
   "wall_rock": "textures/wall_rock.png"
  },
  "sectors": [
@@ -68,7 +68,7 @@
    "ceiling": 5,
    "floor_tex": "floor_flag",
    "ceil_tex": "ceil_arch",
-   "wall_tex": "wall_iron",
+   "wall_tex": "wall_echo",
    "light": 0.8,
    "ambient": 0.75,
    "tint": "#c8d8f8"

@@ -4,7 +4,7 @@
  "art": "bassment",
  "eye_height": 1.6,
  "start": "stair_head",
- "fog": {"color": "#1c0c06", "density": 0.04},
+ "fog": {"color": "#2a1408", "density": 0.028},
  "textures": {
   "ceil_arch": "textures/ceil_arch.png",
   "ceil_rock": "textures/ceil_rock.png",
@@ -19,16 +19,18 @@
   "thing_skull": "textures/thing_skull.png",
   "thing_torch": "textures/thing_torch.png",
   "wall_barrel": "textures/wall_barrel.png",
+  "wall_brick": "textures/wall_brick.png",
   "wall_brick_dark": "textures/wall_brick_dark.png",
+  "wall_burrow": "textures/wall_burrow.png",
   "wall_door": "textures/wall_door.png",
   "wall_hands": "textures/wall_hands.png",
   "wall_rock": "textures/wall_rock.png"
  },
  "sectors": [
-  {"id": "stair", "polygon": [[-1.5, 14], [1.5, 14], [1.5, 9], [-1.5, 9]], "floor": 0.8, "ceiling": 2.8, "floor_tex": "floor_flag", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick_dark", "light": 0.8, "tint": "#c08060", "ambient": 0.75},
-  {"id": "tunnel", "polygon": [[-1.5, 9], [1.5, 9], [5, 3], [2, -1], [-3, 3]], "floor": 0, "ceiling": 2.3, "floor_tex": "floor_straw", "ceil_tex": "ceil_rock", "wall_tex": "wall_rock", "light": 0.8, "tint": "#d08048", "ambient": 0.75},
-  {"id": "dry", "polygon": [[-2.1, 6.6], [-2.625, 4.5], [-9, 2], [-10, 7], [-6, 10]], "floor": 0, "ceiling": 1.95, "floor_tex": "floor_dirt", "ceil_tex": "ceil_rock", "wall_tex": "wall_rock", "light": 0.8, "tint": "#d88848", "ambient": 0.75},
-  {"id": "court", "polygon": [[2, -1], [5, 3], [11, 2], [12, -6], [6, -11], [0, -6]], "floor": 0, "ceiling": 3.4, "floor_tex": "floor_straw", "ceil_tex": "ceil_rock", "wall_tex": "wall_rock", "light": 0.8, "tint": "#d86a30", "ambient": 0.75}
+  {"id": "stair", "polygon": [[-1.5, 14], [1.5, 14], [1.5, 9], [-1.5, 9]], "floor": 0.8, "ceiling": 2.8, "floor_tex": "floor_flag", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick", "light": 0.8, "tint": "#c08060", "ambient": 0.75},
+  {"id": "tunnel", "polygon": [[-1.5, 9], [1.5, 9], [5, 3], [2, -1], [-3, 3]], "floor": 0, "ceiling": 2.3, "floor_tex": "floor_straw", "ceil_tex": "ceil_rock", "wall_tex": "wall_burrow", "light": 0.8, "tint": "#d08048", "ambient": 0.75},
+  {"id": "dry", "polygon": [[-2.1, 6.6], [-2.625, 4.5], [-9, 2], [-10, 7], [-6, 10]], "floor": 0, "ceiling": 1.95, "floor_tex": "floor_dirt", "ceil_tex": "ceil_rock", "wall_tex": "wall_burrow", "light": 0.8, "tint": "#d88848", "ambient": 0.75},
+  {"id": "court", "polygon": [[2, -1], [5, 3], [11, 2], [12, -6], [6, -11], [0, -6]], "floor": 0, "ceiling": 3.4, "floor_tex": "floor_straw", "ceil_tex": "ceil_rock", "wall_tex": "wall_burrow", "light": 0.8, "tint": "#d86a30", "ambient": 0.75}
  ],
  "walls": [
   {"from": [-1.5, 9], "to": [1.5, 9], "sector": "stair", "portal": "tunnel", "lower_tex": "wall_brick_dark"},
