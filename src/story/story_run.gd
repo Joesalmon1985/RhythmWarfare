@@ -25,7 +25,7 @@ static func create(options: Dictionary = {}, data_path: String = StoryData.PATH)
 	if loaded["data"] == null:
 		return run
 	run.data = loaded["data"]
-	var lr := LevelLoader.load_pack(str(run.data.raw["music_pack"]), options)
+	var lr := LevelLoader.load_pack(pick_music_pack(run.data.raw, int(options.get("music_seed", -1))), options)
 	run.errors.append_array(lr["errors"])
 	run.warnings.append_array(lr["warnings"])
 	if lr["level"] == null:
@@ -38,6 +38,17 @@ static func create(options: Dictionary = {}, data_path: String = StoryData.PATH)
 	run.reset()
 	run.warnings.append_array(run.director.warnings)
 	return run
+
+
+## The mission pack a chapter plays: its `music_pack`, or when the chapter lists `music_packs` (the first is the chapter's own recording, the others pre-rendered
+## arrangements, tools/content/arrange.py render) one of them chosen by `seed`; a negative seed (the default, so tests and tools) always takes the first.
+static func pick_music_pack(raw: Dictionary, seed_value: int) -> String:
+	var packs: Array = raw.get("music_packs", [])
+	if packs.is_empty():
+		return str(raw["music_pack"])
+	if seed_value < 0:
+		return str(packs[0])
+	return str(packs[absi(("%d:%s" % [seed_value, raw.get("id", "")]).hash()) % packs.size()])
 
 
 func reset() -> void:
