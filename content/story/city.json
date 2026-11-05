@@ -1,0 +1,380 @@
+{
+ "id": "city",
+ "title": "The Old City",
+ "chapter": 0,
+ "art": "city",
+ "run_only": true,
+ "duration_bars": 64,
+ "sequence_bars": 2,
+ "initial_energy": 60,
+ "description": "A map of the Mission Count path (content/paths/squadron): the stage the run builds, not a chapter of the old campaign.",
+ "palettes": {
+  "low": [
+   "#a88a58",
+   "#7a6a50"
+  ],
+  "cool": [
+   "#6f8fd0",
+   "#a0c0ff"
+  ],
+  "warm": [
+   "#ffb060",
+   "#ffd890"
+  ],
+  "rave": [
+   "#ffd890",
+   "#ffb060",
+   "#a0c0ff",
+   "#fff0c0"
+  ],
+  "red": [
+   "#ff4030",
+   "#ff8060"
+  ],
+  "sepia": [
+   "#ffc070",
+   "#d08040"
+  ],
+  "fire": [
+   "#ff7030",
+   "#ffb060"
+  ]
+ },
+ "energy": {
+  "pass_delta": {
+   "sharp": 4,
+   "steady": 3,
+   "loose": 2
+  },
+  "fail_delta": -5,
+  "min": 0,
+  "max": 100,
+  "bands": [
+   {
+    "id": "quiet",
+    "label": "Unimpressed",
+    "max": 29
+   },
+   {
+    "id": "dancing",
+    "label": "Dancing",
+    "max": 64
+   },
+   {
+    "id": "hype",
+    "label": "Hype",
+    "max": 84
+   },
+   {
+    "id": "euphoric",
+    "label": "Euphoric",
+    "max": 100
+   }
+  ]
+ },
+ "acts": [],
+ "blocks": [],
+ "decisions": [],
+ "endings": {},
+ "ending_order": [],
+ "groups": {
+  "all": [
+   "gun_c",
+   "pilot_c",
+   "crew1c",
+   "crew2c",
+   "singer",
+   "mp1",
+   "mp2",
+   "kid_c",
+   "civ1",
+   "civ2",
+   "civ3",
+   "col_c",
+   "aide_c",
+   "chap",
+   "surv1",
+   "surv2",
+   "surv3",
+   "wom",
+   "drunk",
+   "surv4"
+  ],
+  "core": [
+   "gun_c",
+   "pilot_c",
+   "crew1c",
+   "crew2c",
+   "singer",
+   "mp1",
+   "mp2",
+   "kid_c",
+   "civ1",
+   "civ2",
+   "civ3",
+   "col_c",
+   "aide_c",
+   "chap",
+   "surv1",
+   "surv2",
+   "surv3",
+   "wom",
+   "drunk",
+   "surv4"
+  ]
+ },
+ "actors": [
+  {
+   "id": "gun_c",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "gunner",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "fixed": true,
+   "same_as": "gun",
+   "activity": "lie"
+  },
+  {
+   "id": "pilot_c",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "airman",
+   "look": "c",
+   "group": "core",
+   "thresh": 0,
+   "fixed": true,
+   "same_as": "pilot",
+   "activity": "stand"
+  },
+  {
+   "id": "crew1c",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "airman",
+   "look": "b",
+   "group": "core",
+   "thresh": 0,
+   "fixed": true,
+   "same_as": "crew1",
+   "activity": "sit"
+  },
+  {
+   "id": "crew2c",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "airman",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "fixed": true,
+   "same_as": "crew2",
+   "activity": "rock"
+  },
+  {
+   "id": "singer",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "civilian_city",
+   "look": "d",
+   "group": "core",
+   "thresh": 0,
+   "view": "street",
+   "activity": "stand",
+   "prop": "hat"
+  },
+  {
+   "id": "mp1",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "mp",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "street",
+   "activity": "stand"
+  },
+  {
+   "id": "mp2",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "mp",
+   "look": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "street",
+   "activity": "stand"
+  },
+  {
+   "id": "kid_c",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "civilian_city",
+   "look": "c",
+   "group": "core",
+   "thresh": 0,
+   "view": "street",
+   "activity": "stand"
+  },
+  {
+   "id": "civ1",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "civilian_city",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "street"
+  },
+  {
+   "id": "civ2",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "civilian_city",
+   "look": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "street"
+  },
+  {
+   "id": "civ3",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "civilian_city",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "street"
+  },
+  {
+   "id": "col_c",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "officer",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "colonel",
+   "fixed": true,
+   "same_as": "col",
+   "activity": "stand",
+   "prop": "medal"
+  },
+  {
+   "id": "aide_c",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "officer",
+   "look": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "colonel",
+   "fixed": true,
+   "same_as": "aide",
+   "activity": "check",
+   "prop": "clipboard",
+   "target": "c09_x_right"
+  },
+  {
+   "id": "chap",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "officer",
+   "look": "c",
+   "group": "core",
+   "thresh": 0,
+   "view": "colonel",
+   "fixed": true,
+   "activity": "stand"
+  },
+  {
+   "id": "surv1",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "civilian_city",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "ruins",
+   "activity": "sit"
+  },
+  {
+   "id": "surv2",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "civilian_city",
+   "look": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "ruins",
+   "activity": "sit"
+  },
+  {
+   "id": "surv3",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "civilian_city",
+   "look": "a",
+   "group": "core",
+   "thresh": 0,
+   "view": "ruins",
+   "activity": "stand"
+  },
+  {
+   "id": "wom",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "civilian_city",
+   "look": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "ruins",
+   "fixed": true,
+   "activity": "stand"
+  },
+  {
+   "id": "drunk",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "officer",
+   "look": "b",
+   "group": "core",
+   "thresh": 0,
+   "view": "ruins",
+   "activity": "stand"
+  },
+  {
+   "id": "surv4",
+   "archetype": "groover",
+   "variant": "a",
+   "art": "night_one",
+   "wear": "civilian_city",
+   "look": "c",
+   "group": "core",
+   "thresh": 0,
+   "view": "ruins",
+   "activity": "stand"
+  }
+ ],
+ "silhouettes": []
+}

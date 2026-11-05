@@ -1,0 +1,548 @@
+{
+ "world": "city",
+ "hotspots": [
+  {
+   "id": "city.jacket",
+   "world": "city",
+   "scene": "city",
+   "map": "city",
+   "anchor": {
+    "thing": "jacket"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "city.c10"
+   },
+   "on_failure": {
+    "route": "city.c10",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true,
+   "acting": {
+    "actor": "pilot_c",
+    "available": {
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "nose_glass_r"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "jacket"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "jacket",
+     "beats": 1
+    },
+    "success": {
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "nose_glass_r",
+     "beats": 8
+    },
+    "failure": {
+     "act": "stare",
+     "face": "grief",
+     "look_at": "gun_c",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "city.medkit",
+   "world": "city",
+   "scene": "city",
+   "map": "city",
+   "anchor": {
+    "thing": "medkit"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "base.c03",
+    "flags_set": [
+     "sq_kit"
+    ],
+    "energy": 3
+   },
+   "on_failure": {
+    "route": "city.c10",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "crew1c",
+    "available": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "medkit"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "plea",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "plea",
+     "look_at": "medkit",
+     "beats": 1
+    },
+    "success": {
+     "act": "cover_face",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "city.c08.arch",
+   "world": "city",
+   "scene": "city.c08",
+   "map": "city",
+   "anchor": {
+    "thing": "arch"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "city.c10"
+   },
+   "on_failure": {
+    "route": "city.c10",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true,
+   "acting": {
+    "actor": "mp1",
+    "available": {
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "anger",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "stamp",
+     "face": "anger",
+     "look_at": "arch",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "stamp",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 8,
+     "then": {
+      "act": "point",
+      "face": "resolve",
+      "look_at": "street_lamp",
+      "beats": 8
+     }
+    }
+   }
+  },
+  {
+   "id": "city.c08.staff_car",
+   "world": "city",
+   "scene": "city.c08",
+   "map": "city",
+   "anchor": {
+    "thing": "staff_car"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "city.c09",
+    "flags_set": [
+     "sq_car"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "route": "city.c10",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "mp2",
+    "available": {
+     "act": "stare",
+     "face": "neutral",
+     "look_at": "staff_car"
+    },
+    "selected": {
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "stare",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "city.c09.map",
+   "world": "city",
+   "scene": "city.c09",
+   "map": "city",
+   "anchor": {
+    "thing": "escape_map"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "escape.c12",
+    "flags_set": [
+     "sq_map"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "route": "escape.c12",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true,
+   "acting": {
+    "actor": "aide_c",
+    "available": {
+     "act": "write",
+     "face": "doubt",
+     "look_at": "escape_map"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "escape_map"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "escape_map",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "city.c09.medal",
+   "world": "city",
+   "scene": "city.c09",
+   "map": "city",
+   "anchor": {
+    "thing": "medal"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "escape",
+    "flags_set": [
+     "sq_medal",
+     "keep:path_squadron_met_colonel"
+    ],
+    "cinematic": "squadron.medal_pinned",
+    "energy": 5
+   },
+   "on_failure": {
+    "route": "escape.c12",
+    "flags_set": [
+     "sq_map"
+    ],
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "col_c",
+    "available": {
+     "act": "offer",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "medal",
+     "beats": 1
+    },
+    "success": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "point",
+     "face": "anger",
+     "look_at": "c09_x_up",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "city.c10.hq",
+   "world": "city",
+   "scene": "city.c10",
+   "map": "city",
+   "anchor": {
+    "thing": "hq_door"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "city.c09"
+   },
+   "on_failure": {
+    "route": "city.c09",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true,
+   "acting": {
+    "actor": "drunk",
+    "available": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "hq_door"
+    },
+    "committed": {
+     "act": "point",
+     "face": "laugh",
+     "look_at": "hq_door",
+     "beats": 1
+    },
+    "success": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "city.c10.train",
+   "world": "city",
+   "scene": "city.c10",
+   "map": "city",
+   "anchor": {
+    "thing": "night_train"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "escape.c12",
+    "flags_set": [
+     "sq_train"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "route": "city.c09",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "wom",
+    "available": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "night_train"
+    },
+    "committed": {
+     "act": "point",
+     "face": "plea",
+     "look_at": "night_train",
+     "beats": 1
+    },
+    "success": {
+     "act": "cheer",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "collapse",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 8
+    }
+   }
+  }
+ ]
+}

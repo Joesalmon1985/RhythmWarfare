@@ -45,7 +45,9 @@
   "wall_speaker": "textures/wall_speaker.png",
   "thing_wizard": "textures/thing_wizard.png",
   "thing_headphones": "textures/thing_headphones.png",
-  "thing_crack": "textures/thing_crack.png"
+  "thing_crack": "textures/thing_crack.png",
+  "thing_booth_radio": "textures/thing_booth_radio.png",
+  "thing_bomber_shadow": "textures/thing_bomber_shadow.png"
  },
  "sectors": [
   {"id": "entrance", "polygon": [[-3, 9], [3, 9], [3, 13], [-3, 13]], "floor": 0, "ceiling": 3.4, "floor_tex": "floor_carpet", "ceil_tex": "ceil_low", "wall_tex": "wall_brick", "light": 0.45, "tint": "#ffc23f", "room": "entrance", "flags": ["entrance"], "activities": {"quiet": ["queue", "phone", "lean_wall"], "dancing": ["queue", "chat", "phone"], "hype": ["wave", "chat", "queue"], "euphoric": ["wave", "chat", "queue"]}},
@@ -183,6 +185,8 @@
   {"id": "exit_tunnel_glow", "kind": "billboard", "sprite": "glow", "at": [0, 18.8], "y": 1.75, "size": 0.8, "anim": "pulse", "blend": "add"},
   {"id": "wizard_floor", "kind": "billboard", "sprite": "thing_wizard", "at": [-5.2, 7.4], "y": 0.85, "size": 1.7, "anim": "sway"},
   {"id": "wizard_chill", "kind": "billboard", "sprite": "thing_wizard", "at": [8.4, 9.7], "y": 0.85, "size": 1.7, "anim": "sway"},
+  {"id": "booth_radio", "kind": "billboard", "sprite": "thing_booth_radio", "at": [1.5, -9.4], "y": 0.62, "size": 0.9, "anim": "flicker"},
+  {"id": "booth_bomber_shadow", "kind": "billboard", "sprite": "thing_bomber_shadow", "at": [0.4, -9.85], "y": 1.7, "size": 2.4, "anim": "pulse"},
   {"id": "headphones_booth", "kind": "billboard", "sprite": "thing_headphones", "at": [0.9, -8.4], "y": 1.15, "size": 0.5, "anim": "none"},
   {"id": "crack_door", "kind": "billboard", "sprite": "thing_crack", "at": [2.85, 10.7], "y": 1.2, "size": 2.4, "anim": "none"},
   {"id": "lt_crack", "kind": "light", "at": [2.5, 10.7], "y": 1.2, "radius": 3.2, "color": "#ff5a28", "strength": 1.3},

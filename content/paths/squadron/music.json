@@ -1,0 +1,90 @@
+{
+ "schema": 1,
+ "note": "The owner's 14 Squadron loops (140 BPM, 4-bar phrases), imported by tools/content/import_squadron.py into songs/packs/squadron_c01 .. c14. Not temporary.",
+ "nodes": [
+  {
+   "id": "base",
+   "audio": "squadron_c01",
+   "chart": "squadron_c01",
+   "treatment": "none"
+  },
+  {
+   "id": "base.c02",
+   "audio": "squadron_c02",
+   "chart": "squadron_c02",
+   "treatment": "none"
+  },
+  {
+   "id": "base.c03",
+   "audio": "squadron_c03",
+   "chart": "squadron_c03",
+   "treatment": "none"
+  },
+  {
+   "id": "air",
+   "audio": "squadron_c04",
+   "chart": "squadron_c04",
+   "treatment": "none"
+  },
+  {
+   "id": "air.c05",
+   "audio": "squadron_c05",
+   "chart": "squadron_c05",
+   "treatment": "none"
+  },
+  {
+   "id": "air.c06",
+   "audio": "squadron_c06",
+   "chart": "squadron_c06",
+   "treatment": "none"
+  },
+  {
+   "id": "city",
+   "audio": "squadron_c07",
+   "chart": "squadron_c07",
+   "treatment": "none"
+  },
+  {
+   "id": "city.c08",
+   "audio": "squadron_c08",
+   "chart": "squadron_c08",
+   "treatment": "none"
+  },
+  {
+   "id": "city.c09",
+   "audio": "squadron_c09",
+   "chart": "squadron_c09",
+   "treatment": "none"
+  },
+  {
+   "id": "city.c10",
+   "audio": "squadron_c10",
+   "chart": "squadron_c10",
+   "treatment": "none"
+  },
+  {
+   "id": "escape",
+   "audio": "squadron_c11",
+   "chart": "squadron_c11",
+   "treatment": "none"
+  },
+  {
+   "id": "escape.c12",
+   "audio": "squadron_c12",
+   "chart": "squadron_c12",
+   "treatment": "none"
+  },
+  {
+   "id": "escape.c13",
+   "audio": "squadron_c13",
+   "chart": "squadron_c13",
+   "treatment": "none"
+  },
+  {
+   "id": "escape.c14",
+   "audio": "squadron_c14",
+   "chart": "squadron_c14",
+   "treatment": "none"
+  }
+ ]
+}

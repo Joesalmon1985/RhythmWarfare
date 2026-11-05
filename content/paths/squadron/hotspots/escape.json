@@ -1,0 +1,475 @@
+{
+ "world": "escape",
+ "hotspots": [
+  {
+   "id": "escape.aircraft",
+   "world": "escape",
+   "scene": "escape",
+   "map": "harbour",
+   "anchor": {
+    "thing": "aircraft_door"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "base.c02"
+   },
+   "on_failure": {
+    "route": "base.c02",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "escape.radio",
+   "world": "escape",
+   "scene": "escape",
+   "map": "harbour",
+   "anchor": {
+    "thing": "radio_broken"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "flicker",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "escape.c12",
+    "flags_set": [
+     "sq_radio"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "route": "base.c02",
+    "cinematic": "squadron.count_raised",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "chap_h",
+    "available": {
+     "act": "shake_head",
+     "face": "grief",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "radio_broken"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "radio_broken",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "cover_face",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "escape.c12.searchlights",
+   "world": "escape",
+   "scene": "escape.c12",
+   "map": "harbour",
+   "anchor": {
+    "thing": "search_a"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "escape.c14"
+   },
+   "on_failure": {
+    "route": "escape.c14",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true,
+   "acting": {
+    "actor": "sent",
+    "available": {
+     "act": "stare",
+     "face": "neutral",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "anger",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "search_a",
+     "beats": 1
+    },
+    "success": {
+     "act": "point",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "stamp",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "escape.c12.boat",
+   "world": "escape",
+   "scene": "escape.c12",
+   "map": "harbour",
+   "anchor": {
+    "thing": "boat"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "escape.c13",
+    "flags_set": [
+     "sq_boat"
+    ],
+    "energy": 8
+   },
+   "on_failure": {
+    "route": "escape.c14",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "fish",
+    "available": {
+     "act": "beckon",
+     "face": "fear",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "beckon",
+     "face": "resolve",
+     "look_at": "boat",
+     "beats": 1
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "camera",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "escape.c13.shore",
+   "world": "escape",
+   "scene": "escape.c13",
+   "map": "harbour",
+   "anchor": {
+    "thing": "shore_post"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_squadron_free"
+    ]
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_squadron_free"
+    ],
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "escape.c13.fisherman",
+   "world": "escape",
+   "scene": "escape.c13",
+   "map": "harbour",
+   "anchor": {
+    "actor": "fish_c"
+   },
+   "kind": "character",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "energy": 8,
+    "flags_set": [
+     "sq_thanks"
+    ]
+   },
+   "on_failure": {
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": false,
+   "acting": {
+    "available": {
+     "act": "laugh",
+     "face": "relief",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 1
+    },
+    "success": {
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 6
+    }
+   }
+  },
+  {
+   "id": "escape.c14.order",
+   "world": "escape",
+   "scene": "escape.c14",
+   "map": "harbour",
+   "anchor": {
+    "thing": "order_paper"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "escape"
+   },
+   "on_failure": {
+    "route": "escape",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true,
+   "acting": {
+    "actor": "clerk_k",
+    "available": {
+     "act": "write",
+     "face": "laugh",
+     "look_at": "order_paper"
+    },
+    "selected": {
+     "act": "stamp",
+     "face": "laugh",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "stamp",
+     "face": "laugh",
+     "look_at": "order_paper",
+     "beats": 1
+    },
+    "success": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "escape.c14.latch",
+   "world": "escape",
+   "scene": "escape.c14",
+   "map": "harbour",
+   "anchor": {
+    "thing": "latch"
+   },
+   "kind": "exit",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "escape.c12",
+    "flags_set": [
+     "sq_latch"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "route": "escape",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "mate",
+    "available": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "latch"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "latch",
+     "beats": 1
+    },
+    "success": {
+     "act": "cheer",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "look_at": "camera",
+     "beats": 8
+    }
+   }
+  }
+ ]
+}
