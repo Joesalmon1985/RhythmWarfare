@@ -281,11 +281,25 @@ func test_policy_matrix_on_every_path_under_every_tap_policy() -> void:
 					for e2 in data.nodes[str(seq[k - 1])]["next"]:
 						ok = ok or str(e2["to"]) == str(seq[k])
 					assert_true(ok, "%s: %s leads to %s" % [tag, seq[k - 1], seq[k]])
-				assert_true(bool(r["over"]) or str(r["away"]) == "run:warehouse", "%s: the path ends by the crowd leaving or by the way back to the Warehouse (%s)" % [tag, str(r["away"])])
-				if policy == "perfect" and taps != "failure":
+				# a path may own a loop (the Mission Count's endless missions, route marked `loop`): a player who never touches its way out lives in it for as long as the crowd stays, which is the design
+				var has_loop := false
+				for nid in data.nodes:
+					for e3 in data.nodes[nid]["next"]:
+						has_loop = has_loop or bool(e3.get("loop", false))
+				var lives_in_loop: bool = has_loop and seq.size() > 1 and seq.size() != _unique(seq).size() and taps in ["none", "failure"]
+				assert_true(bool(r["over"]) or str(r["away"]) == "run:warehouse" or lives_in_loop, "%s: the path ends by the crowd leaving or by the way back to the Warehouse (%s)" % [tag, str(r["away"])])
+				if policy == "perfect" and taps != "failure" and not lives_in_loop:
 					assert_eq(str(r["away"]), "run:warehouse", "%s: perfect play reaches an ending and is handed back" % tag)
 					assert_true(str(data.nodes[str(seq[seq.size() - 1])]["ending"]) != "", "%s: the last scene is an ending" % tag)
 				assert_true(absf(bpm - float(data.cfg["timing"]["bpm"])) < 1e-9)
 	var f := FileAccess.open("user://run_matrix_paths.txt", FileAccess.WRITE)
 	f.store_string("\n".join(PackedStringArray(rows)) + "\n")
 	f.close()
+
+
+func _unique(a: Array) -> Array:
+	var out: Array = []
+	for x in a:
+		if not out.has(x):
+			out.append(x)
+	return out

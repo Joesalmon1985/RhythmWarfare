@@ -1,0 +1,1033 @@
+{
+ "ceil_arcade": {
+  "kind": "ceil",
+  "size": 64,
+  "metres": 4.0,
+  "desc": "dusk sky strip seen between sagging washing lines and wires: sepia-amber, smoke wisps",
+  "maps": [
+   "city"
+  ]
+ },
+ "ceil_beams": {
+  "kind": "ceil",
+  "size": 64,
+  "metres": 2.0,
+  "desc": "plank ceiling with dark beams, cobwebs, a stovepipe stain",
+  "maps": [
+   "airfield",
+   "harbour"
+  ]
+ },
+ "ceil_canvas": {
+  "kind": "ceil",
+  "size": 64,
+  "metres": 2.0,
+  "desc": "canvas tent roof lit from above, ridge seam, rope",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "ceil_cell": {
+  "kind": "ceil",
+  "size": 64,
+  "metres": 2.0,
+  "desc": "dark vaulted stone cell ceiling with a single iron ring",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "ceil_fuselage": {
+  "kind": "ceil",
+  "size": 64,
+  "metres": 1.5,
+  "desc": "curved aircraft ceiling ribs, wiring loom, dark green-black",
+  "maps": [
+   "airfield",
+   "city"
+  ]
+ },
+ "ceil_hangar": {
+  "kind": "ceil",
+  "size": 64,
+  "metres": 2.5,
+  "desc": "dim corrugated iron roof with trusses and rust",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "ceil_night_blue": {
+  "kind": "ceil",
+  "size": 64,
+  "metres": 4.0,
+  "desc": "a painted cold night sky with searchlight smears crossing it, a few stars, high thin cloud",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "ceil_night_red": {
+  "kind": "ceil",
+  "size": 64,
+  "metres": 4.0,
+  "desc": "a painted night sky ceiling (256 wide look): smoke clouds lit red-orange from below by fires, a few stars",
+  "maps": [
+   "city"
+  ]
+ },
+ "ceil_plaster": {
+  "kind": "ceil",
+  "size": 64,
+  "metres": 2.5,
+  "desc": "yellowed plaster ceiling with a water stain and a bulb rose",
+  "maps": [
+   "airfield",
+   "city"
+  ]
+ },
+ "ceil_sky_day": {
+  "kind": "ceil",
+  "size": 64,
+  "metres": 4.0,
+  "desc": "a bright saturated cobalt sky with soft white clouds (painted ceiling), warm sun glow, the only saturated sky of the path",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "floor_boards": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.0,
+  "desc": "worn pale wooden floorboards with gaps, dust, boot scuffs",
+  "maps": [
+   "airfield",
+   "harbour"
+  ]
+ },
+ "floor_carpet": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.5,
+  "desc": "a worn burgundy-brown office carpet with a pale border pattern",
+  "maps": [
+   "city"
+  ]
+ },
+ "floor_cell": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.0,
+  "desc": "cold stone cell floor with a drain, straw and a damp patch",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "floor_cobble": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.5,
+  "desc": "sepia cobblestones, wheel ruts, puddles, scattered straw and paper",
+  "maps": [
+   "city"
+  ]
+ },
+ "floor_concrete": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.5,
+  "desc": "stained concrete hangar floor, expansion joints, oil and dust, scattered straw",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "floor_dust": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 3.0,
+  "desc": "packed orange dust and gravel airfield ground, tyre tracks, tufts of dry grass",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "floor_lino": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.0,
+  "desc": "cracked cream-and-green linoleum, dirty",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "floor_metal": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 1.5,
+  "desc": "dark aircraft floor grating with a diamond tread plate strip, oil stains",
+  "maps": [
+   "airfield",
+   "city"
+  ]
+ },
+ "floor_quay": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.5,
+  "desc": "wet dark quay planks and stone setts, puddles reflecting blue light, a coil of rope here and there",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "floor_rubble": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 3.0,
+  "desc": "broken paving and rubble, brick dust, charred planks, glass glints",
+  "maps": [
+   "city"
+  ]
+ },
+ "floor_sand": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 3.0,
+  "desc": "warm bright sand with tiny shells, footprints, dry seaweed lines (saturated golden)",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "sky_day": {
+  "kind": "sky",
+  "size": 256,
+  "metres": 1.0,
+  "desc": "bleached white-blue Mediterranean daylight strip (256x64), a pale haze at the horizon, a few thin streaks of cloud, grainy over-exposed",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "sky_dusk": {
+  "kind": "sky",
+  "size": 256,
+  "metres": 1.0,
+  "desc": "a sepia dusk strip (256x64): amber glow low at the horizon fading to a brown-grey sky, thin smoke columns, no stars",
+  "maps": [
+   "city"
+  ]
+ },
+ "sky_harbour": {
+  "kind": "sky",
+  "size": 256,
+  "metres": 1.0,
+  "desc": "a cold blue night strip (256x64): deep navy to a slightly lighter horizon, a few small stars, thin high cloud, a pale smear of moon glow",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_aircraft_door": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "the hut's open east door framing the invented bomber waiting outside with its engines turning, a white sun glare, dust, 128x128",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_arch_broken": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a big stone archway half collapsed: a gap in the top, fallen keystone, sunset-orange sky and a smoky street beyond, 128x128",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_awning": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a striped shop awning sagging over a shuttered shopfront, sun-faded sepia stripes",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_beam": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a soft wide white-blue searchlight beam as a tall cone (mostly transparent, premultiplied glow), 128x128",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_birds": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a loose flock of white gulls in flight against the sky, transparent background, 128x128",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_board": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "the mission board: a cork-and-plank board with a hand-drawn island map, red pins, strings, and a big painted number on a small slate (a tally of missions, painted digits only), seen face on, 128x128",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_bollard": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "an iron mooring bollard with a coil of rope",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_bomber_nose": {
+  "kind": "billboard",
+  "size": 256,
+  "metres": 1.0,
+  "desc": "an invented twin-engine bomber parked nose-on at three-quarter view: glazed nose, two radial engines with olive drab cowls, a faded paint patch, no roundels or markings, orange dust on the tyres (a wide sprite, 256x128)",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_broken_wall": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a freestanding jagged remnant of a brick wall with a hole where a window was, lit from behind by orange",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_bunk": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a plank bunk bed against a wall with a grey blanket, a tin cup, scratched wall behind, 128x128",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_burnt_car": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a burnt-out car shell on its rims, soot black, a glow of embers in it",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_cafe_table": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a little round cafe table with two bentwood chairs, a bottle and glasses",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_cell_door": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a heavy iron-banded cell door with a small grille and a big lock, a guard's lantern glow in the grille, 128x128",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_certificate": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a framed certificate on a wall: ornate border, a blank cream centre with ruled lines and a red ribbon seal (no readable text), 128x128",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_cot_empty": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "an empty army cot: grey blanket folded square, pillow, kit bag at its foot, a pair of boots beside it, 128x128 side-on three-quarter",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_cot_ward": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "an iron hospital cot with a white sheet and grey blanket, a bedside crate with a tin mug, seen from the side, 128x128",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_count_board": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "the mission count: a big plank board with an enormous painted number in white digits, the last digit freshly painted and still dripping, an old crossed-out number under it, a paint pot and brush on a ledge",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_count_slate": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a small blackboard on the wall with a painted number in white digits (a tally: the digits are the only marks), a duster",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_crate_stack": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a stack of wooden supply crates, stencilled with blank painted squares (no letters), rope, a tarp half over them, an egg basket on top",
+  "maps": [
+   "airfield",
+   "harbour"
+  ]
+ },
+ "thing_desk_colonel": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a huge polished officer's desk seen from the front: a green leather top, brass lamp, a stack of ribbon-tied papers and a tiny model aeroplane, 128x128",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_desk_lamp": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a green-shaded desk lamp with a warm cone of light",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_desk_office": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a big battered wooden office desk seen from the front: blotter, an inkwell, tidy piles of forms, an in-tray and an out-tray, 128x128",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_door_office": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a heavy panelled office door, dark green paint, a brass handle, a frosted glass panel (blank), 128x128",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_door_open_light": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "an open wooden door with blinding white daylight beyond, door leaf swung inward",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_drip_stand": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "an iron drip stand with a bottle and tube",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_emergency_box": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a red steel emergency control box on the wall with a pull handle behind a wire guard and a warning triangle (no letters), 128x128",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_filing_cabinet": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "two grey steel filing cabinets, drawers one open with paper spilling out",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_fire_barrel": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "an oil drum fire: flames licking out the top, a few sparks",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_fishing_boat": {
+  "kind": "billboard",
+  "size": 256,
+  "metres": 1.0,
+  "desc": "a small wooden fishing boat with a stubby mast, a swinging lantern giving a warm gold glow, nets heaped, a tarpaulin, low in black water, lapping ripples (256x128)",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_flak_burst": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a soft orange-white flak burst with black smoke puff and a spray of tiny sparks, additive-looking (premultiplied glow, mostly transparent), 128x128",
+  "maps": [
+   "airfield",
+   "city"
+  ]
+ },
+ "thing_fuel_drums": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "three olive fuel drums with a hand pump, orange dust",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_globe": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a brass-mounted globe with blank pale continents, in a stand",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_hangar_front": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "the front of a corrugated store hangar with a big sliding door ajar on dark, crates visible inside, 128x128",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_hq_door": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "the battered door of the headquarters building in a half-ruined wall: a lit rectangle, sandbags, a blank brass plate, 128x128",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_instrument_panel": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "an aircraft instrument panel: round dials with green-lit needles, switches, a compass, 128x128",
+  "maps": [
+   "airfield",
+   "city"
+  ]
+ },
+ "thing_jacket_blood": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a leather flight jacket thrown over a seat, dark stains on it (stylised, not gory), a scarf trailing, 128x128",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_jeep": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "an open dusty utility jeep, olive, no markings, a spare wheel on the back",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_kitchen_hatch": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a serving hatch cut in a wall with a shutter propped open, steam, a ladle and a bucket, a glimpse of a kitchen lamp",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_ladder": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a short wooden boarding ladder leaning against a dark hatch, 128x128",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_lamp_alarm": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a caged ceiling lamp glowing deep red with a halo, 128x128",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_lamp_hang": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a hanging bare bulb on a flex with a tin shade, warm glow, 128x128 (hangs from the top)",
+  "maps": [
+   "airfield",
+   "harbour"
+  ]
+ },
+ "thing_lamp_red": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a small caged ceiling lamp glowing dim green",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_ledger": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "an enormous open ledger on a lectern, ruled columns of tiny neat figures (drawn as lines, no letters), a pen and an inkwell, a green-shaded lamp, 128x128",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_map_wall": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a large wall map of a sea with coasts drawn in ink, a dotted route line, one corner torn and loose, pins; no names (scribble marks only), 128x128",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_medal_case": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a velvet-lined display case holding one big gold medal on a striped ribbon (colour bars only, no text) glinting on a stand, 128x128",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_medkit": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a white first-aid case with a plain grey cross (no colour flag), open on the floor with bandages out, 128x128",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_nets": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a heap of drying fishing nets with cork floats on a rack",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_night_train": {
+  "kind": "billboard",
+  "size": 256,
+  "metres": 1.0,
+  "desc": "a long dark steam train standing on a viaduct far away across the ruins, one big lamp glowing yellow-white on the engine, smoke, silhouetted wagons (a wide sprite, 256x128)",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_nose_glass": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "the glazed bomber nose from inside: a curved frame of dark struts around black night glass with distant flak flashes and tiny orange tracer lines, an instrument-lit rim, 128x128",
+  "maps": [
+   "airfield",
+   "city"
+  ]
+ },
+ "thing_order_paper": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a table with a single sheet of paper bearing a huge red stamp bar and a ruled body of wavy lines (no readable text), an ink pad and a lamp, 128x128",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_pine_umbrella": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a tall umbrella pine, saturated green crown, warm brown trunk, bright",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_quay_lamp": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a dim blue-glass quayside lamp on a post",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_radio_broken": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a smashed military radio set on a crate: dented grey case, a dangling headset cable, one valve still glowing orange, sparks, 128x128",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_release_lever": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a bomb release lever: a red-knobbed iron lever on a dark box with a dial and a toggle, lit by a small green lamp, 128x128",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_rubble": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a low pile of fallen bricks and plaster with a bent lamp bracket",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_sandbags": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a low wall of sandbags with a lazy stack of ammunition boxes",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_scales": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a brass shop balance scale on a counter with a bag of flour and weights",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_screen_cloth": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a folding hospital screen of grey cloth on a wooden frame",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_searchlight": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a searchlight on a tripod tower at a quay head: a dark steel tower with a big round lamp throwing a long, wide white-blue beam up and across, additive-looking glow, 128x128",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_shelves_tins": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "tall metal shelving packed with tins, jars, boots and blankets, price tags drawn as small coloured squares",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_shore_boat": {
+  "kind": "billboard",
+  "size": 256,
+  "metres": 1.0,
+  "desc": "the small fishing boat pulled up on the sand in bright sun, blue and white paint, nets drying, 256x128",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_sign_ledgerless": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a hand-painted board over the store door with a drawing of a crate and a coin and a small crown-less star (pictures only, no letters)",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_staff_car": {
+  "kind": "billboard",
+  "size": 256,
+  "metres": 1.0,
+  "desc": "a boxy 1940s staff car, olive green, a pennant-less bonnet, chrome headlamps, dust and a dented wing, three-quarter front view (256x128)",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_stamp_big": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a huge rubber stamp on a stand beside an ink pad, the stamp's face a plain red bar (no letters), larger than life, 128x128",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_stove": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a squat iron stove with a stovepipe going up, a kettle on top, a glow in the door",
+  "maps": [
+   "airfield",
+   "harbour"
+  ]
+ },
+ "thing_street_lamp": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a tall iron street lamp, glass cracked, a faint warm glow",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_sunshade": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a faded orange-and-white beach sunshade over a little table with a jug and cups",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_table_maps": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a trestle table covered with maps, a lamp and tin mugs",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_tent_flap": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a tent doorway: canvas flaps tied back, a dark interior, a white cross painted on a sheet hanging beside (no flags, a plain red-free cross shape in grey)",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_truck": {
+  "kind": "billboard",
+  "size": 256,
+  "metres": 1.0,
+  "desc": "an olive canvas-backed truck seen from three-quarters front, engine running, loaded with crates under a tarp, no markings, a driver's elbow out of the cab, exhaust puff, 256x128",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_washing_line": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a washing line of sepia shirts and sheets strung across the street (hangs from the top)",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_window_dusk": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a tall window with heavy velvet curtains, an amber dusk sky and a column of smoke beyond",
+  "maps": [
+   "city"
+  ]
+ },
+ "thing_window_hut": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a small square hut window with a bright white-hot sky behind it, taped glass, a half-drawn curtain",
+  "maps": [
+   "airfield",
+   "harbour"
+  ]
+ },
+ "thing_window_latch": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a small barred cell window high in a stone wall with a rusty iron latch on its frame and a thin shaft of cold moonlight, 128x128",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "thing_window_office": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a tall office window with a venetian blind half-drawn, white sun slats across it",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_windsock": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a limp windsock on a tall pole, orange and white bands, 128x128",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "thing_wooden_post": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "a weathered wooden jetty post with a coil of rope and a bright blue-painted top",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "wall_berm": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.5,
+  "desc": "stacked sandbags and packed orange earth, bleached by the sun, tufts of dry grass",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "wall_bomber": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 1.5,
+  "desc": "riveted aircraft interior panels, dark green-black, a lighter ribbed strip, instrument-lamp scuffs",
+  "maps": [
+   "airfield",
+   "city"
+  ]
+ },
+ "wall_cell": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.0,
+  "desc": "damp cell wall of grey stone blocks with scratched tally marks (scratches only), a pale smear of light, drips",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "wall_dunes": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 4.5,
+  "desc": "bright sandy dunes with tufts of green marram grass and a white wall of sea haze above, saturated warm",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "wall_hangar": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.5,
+  "desc": "corrugated iron, rust streaks, olive-drab paint worn to orange metal, bolts",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "wall_hut": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.0,
+  "desc": "weathered bleached-khaki planked hut wall (vertical planks, nail heads, sun-faded paint peeling, dust streaks)",
+  "maps": [
+   "airfield",
+   "harbour"
+  ]
+ },
+ "wall_office": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.5,
+  "desc": "yellowed plaster upper wall over a dark green painted dado, a thin dark rail between, peeling patches",
+  "maps": [
+   "airfield"
+  ]
+ },
+ "wall_panel": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.5,
+  "desc": "dark oak wall panelling with a gold-trimmed picture rail, polished, a sepia sheen",
+  "maps": [
+   "city"
+  ]
+ },
+ "wall_quay": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.5,
+  "desc": "cold dark harbour wall: wet stone blocks with green weed at the base, iron rings, blue night light",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "wall_ruin": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.5,
+  "desc": "blown-out brick wall, blackened by fire, rubble at its foot, bare lath, deep shadow",
+  "maps": [
+   "city"
+  ]
+ },
+ "wall_stucco": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.5,
+  "desc": "cracked ochre-and-grey stucco with bare brick showing through, faded shutters painted on, stains",
+  "maps": [
+   "city"
+  ]
+ },
+ "wall_tent": {
+  "kind": "surface",
+  "size": 64,
+  "metres": 2.0,
+  "desc": "dirty cream canvas tent wall with seams, rope loops, a faint red-brown stain; soft folds",
+  "maps": [
+   "airfield"
+  ]
+ }
+}

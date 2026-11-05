@@ -445,6 +445,8 @@ class Body:
         for side, sg in (("l", 1.0), ("r", -1.0)):
             a = float(pose.get("arm_" + side, 0.14))
             e = float(pose.get("elb_" + side, 0.2))
+            if spec.get("sling") and side == "l":  # an arm in a sling: held across the chest whatever the pose
+                a, e = 0.1, 1.95
             sx = -sg * sw * 0.86
             shp = T((sx, self.t_shoulder + 0.012 * S))
             up_len = 0.17 * S * float(sp.get("arm_len", 1.0))
@@ -640,6 +642,10 @@ class Painter:
             r_hip *= 1.1
         if self.species == "skeleton":
             r_hip, r_knee, r_ank = 0.022 * S, 0.02 * S, 0.016 * S
+        cast = self.sp.get("plaster") == side  # a leg in plaster: a thick white cast from the thigh to the ankle
+        if cast:
+            r_knee = max(r_knee, 0.058 * W * S)
+            r_ank = max(r_ank, 0.05 * W * S)
         boots = self.shoes.get("kind") in ("boots", "wellies")
         shorts = bot in ("shorts", "loincloth")
         bare = bot in ("skirt", "gownlegs", "tutu", "dress_legs")
@@ -668,10 +674,21 @@ class Painter:
                     q = _step(S, 0.03, 2)
                     gx = (np.floor((u + 1.0) * 2.0) % 2 == 0) ^ (np.floor(t * 0.23 * S / q) % 2 == 0)
                     m = np.where(gx & (m == M["bottom"]), M["bottom2"], m)
+                elif self.bottom.get("pattern") == "stripes":  # pyjama stripes down the leg
+                    m = np.where((np.floor((u + 1.0) * 2.5) % 2 == 1) & (m == M["bottom"]), M["bottom2"], m)
                 if part == 1 and bot not in ("leggings",):
                     ex -= 0.25 * (t > 0.9)  # the cuff's shadow
             if boots and part == 1:
                 m = np.where(t > 0.62, M["shoes"], m)
+            if shorts and self.sp.get("socks") and part == 1:  # socks to below the knee
+                m = np.where(t > 0.4, M["bottom2"], np.where(t > 0.32, M["top3"], m))
+            if cast:
+                if part == 1:
+                    m = np.full(t.shape, M["prop2"], np.uint8)
+                    ex = ex - 0.12 * (np.abs(u) > 0.6) - 0.1 * (np.sin(t * 9.0 + u * 3.0) > 0.8)
+                elif part == 0:
+                    m = np.where(t > 0.4, M["prop2"], m)
+                    ex = ex - 0.3 * (np.abs(t - 0.4) < 0.05)  # the top edge of the cast
             return m, ex
         kn, an, hp = L["knee"], L["ankle"], L["hip"]
         z = 0.1 if (b.fc == 1 and side == "l") else 0.0
@@ -686,6 +703,8 @@ class Painter:
     def foot(self, side, an, z):
         b, S, cv = self.b, self.S, self.cv
         kind = self.shoes.get("kind", "trainers")
+        if self.sp.get("plaster") == side:
+            kind = "bare"  # the foot sticks out of the cast
         sg = 1.0 if side == "l" else -1.0
         if b.fc == 1:
             c = (an[0] + 0.022 * S, an[1] + 0.012 * S)
@@ -750,12 +769,20 @@ class Painter:
         if self.outer and self.outer.get("long") and self.outer.get("kind") != "cape":
             y_hem = (knee_y - b.hip[1] if knee_y is not None else min(-0.26 * S + b.cdy, -0.06 * S) - b.hip[1])
             gap = 0.035 * S
-            rows = [(-0.03 * S, hipw * 1.08, hipw * 1.08), (y_hem, hipw * 1.42, hipw * 1.42)]
+            closed = self.outer.get("kind") == "oilskin"  # a fisherman's oilskin hangs closed to the knee
+            rows = [(-0.03 * S, hipw * 1.08, hipw * 1.08), (y_hem, hipw * (1.42 if not closed else 1.55), hipw * (1.42 if not closed else 1.55))]
 
             def mf(lx, ly, u, gap=gap):
+                if closed:
+                    m = np.full(u.shape, M["outer"], np.uint8)
+                    m = np.where(np.abs(lx - sh * 0.4) < 0.6, M["outer2"], m)
+                    m = np.where(ly > y_hem - _step(S, 0.016), M["outer2"], m)
+                    return m, -0.18 * (np.sin(lx * 0.7 + 1.3) > 0.6) + 0.2 * (np.sin(lx * 0.45 + 0.4) > 0.92)
                 m = np.where(np.abs(lx - sh * 0.4) < gap + (ly / S) * 0.06 * S, 0, M["outer"]).astype(np.uint8)
                 if self.outer.get("trim"):
                     m = np.where((m > 0) & (np.abs(np.abs(lx - sh * 0.4) - gap - (ly / S) * 0.06 * S) < _step(S, 0.016)), M["outer2"], m)
+                if self.outer.get("pattern") == "stained":
+                    m = np.where((m == M["outer"]) & (self._stain(lx, ly) > 0.86), M["horn"], m)
                 return m, -0.18 * (np.sin(lx * 0.7 + 1.3) > 0.6)
             jobs.append((rows, mf, 1.3))
         for rows, mf, z in jobs:
@@ -784,7 +811,8 @@ class Painter:
         neck = top.get("neck", "crew")
         hem = {"crop": b.t_waist - 0.035 * S, "tank": 0.0, "tee": 0.012 * S, "longsleeve": 0.01 * S, "jumper": 0.02 * S, "hoodie": 0.03 * S,
                "shirt": 0.01 * S, "polo": 0.008 * S, "scrubs": 0.03 * S, "jumpsuit": 1.0 * S, "dress": 1.0 * S, "gown": 1.0 * S, "chef": 0.035 * S,
-               "leotard": 1.0 * S, "bare": -1.0 * S, "vest": 0.0, "robe": 1.0 * S, "tunic": 0.06 * S, "bra": b.t_shoulder + 0.11 * S}.get(kind, 0.01 * S)
+               "leotard": 1.0 * S, "bare": -1.0 * S, "vest": 0.0, "robe": 1.0 * S, "tunic": 0.06 * S, "bra": b.t_shoulder + 0.11 * S,
+               "uniform": 0.035 * S, "pyjamas": 0.03 * S}.get(kind, 0.01 * S)
         wb = -0.045 * S  # the waistband of the bottoms
         front = b.fc != 2
         seed = self.seed
@@ -866,6 +894,32 @@ class Painter:
                 m = np.where((np.abs(lx) < 0.6) & (ly > ts) & (ly < hem) & (m != M["skin"]), M["top3"], m)
             if kind == "robe":
                 m = np.where(np.abs(lx - 0.25 * (ly - ts) * 0.0) < 0.6, M["top3"], m)
+            if kind in ("uniform", "pyjamas"):
+                if front:  # the placket with its buttons
+                    pl = (np.abs(lx) < 0.6) & (ly > ts + 0.02 * S_) & (ly < hem) & (m == M["top"])
+                    m = np.where(pl, M["top3"], m)
+                    m = np.where(pl & (np.round(ly - ts) % _step(S_, 0.04, 3) == 0) & (ly > ts + 0.05 * S_), M["top2"], m)
+                if kind == "uniform":
+                    if front and self.lod < 4:  # patch pockets with a flap and a button
+                        pw, pcx = 0.026 * S_, 0.064 * S_
+                        for sgp in (-1, 1):
+                            inx = np.abs(lx - sgp * pcx) < pw
+                            flap = inx & (ly > chest_y + 0.015 * S_) & (ly < chest_y + 0.034 * S_) & (m == M["top"])
+                            body = inx & (ly >= chest_y + 0.034 * S_) & (ly < chest_y + 0.07 * S_) & (m == M["top"])
+                            m = np.where(flap, M["top2"], m)
+                            ex = np.where(body, ex - 0.14, ex)
+                            ex = np.where(body & (np.abs(np.abs(lx - sgp * pcx) - pw) < 0.6), ex - 0.2, ex)
+                            if self.lod < 2:
+                                m = np.where((np.abs(lx - sgp * pcx) < 0.6) & (np.abs(ly - chest_y - 0.034 * S_) < 0.6), M["top3"], m)
+                    if top.get("epaulettes", True):  # shoulder loops, with plain stripes for rank
+                        ep = (ly > ts - 0.004 * S_) & (ly < ts + 0.034 * S_) & (np.abs(lx) > b.sw * 0.5 * k) & (np.abs(lx) < b.sw * 0.9 * k) & (m == M["top"])
+                        m = np.where(ep, M["top2"], m)
+                        rank = int(top.get("rank", 0))
+                        if rank > 0 and self.lod < 4:
+                            ex_ = max(1.0, round(0.02 * S_))
+                            for rk in range(rank):
+                                yy = ts + 0.006 * S_ + rk * ex_ * 1.6
+                                m = np.where(ep & (np.abs(ly - yy) < ex_ * 0.5), M["acc2"], m)
             # folds and the body's shading
             ex += np.where((np.sin(lx * 0.55 + ly * 0.35 + seed) > 0.8) & (m == M["top"]), -0.2, 0.0)
             ex += -0.12 * np.clip((ly - b.t_waist) / (0.08 * S_), 0, 1) * (m == M["bottom"])
@@ -891,12 +945,26 @@ class Painter:
         pat = o.get("pattern", "plain")
         q = _step(S, 0.032, 2)
         ts = b.t_shoulder
-        rows2 = [(r[0], r[1] * 1.06, r[2] * 1.06) for r in rows[:-1]] + [(0.04 * S, rows[-1][1] * 1.1, rows[-1][2] * 1.1)]
+        big = float(o.get("big", 1.0))  # an oversized coat (a boy in a man's flight jacket)
+        rows2 = [(r[0], r[1] * (1.06 * big), r[2] * (1.06 * big)) for r in rows[:-1]] + [(float(o.get("hem", 0.04)) * S, rows[-1][1] * (1.1 * big), rows[-1][2] * (1.1 * big))]
 
         def mat(lx, ly, u):
             m = np.full(u.shape, M["outer"], np.uint8)
             ex = np.zeros(u.shape, np.float32)
-            if front:
+            if front and kind == "waistcoat":  # buttoned to a deep V
+                off = lx - sh * 0.5
+                vy = ts + 0.09 * S
+                m = np.where((ly > ts - 0.02 * S) & (ly < vy) & (np.abs(off) < (vy - ly) * 0.55), 0, m)
+                m = np.where((np.abs(off) < 0.6) & (ly > vy) & (np.round(ly - ts) % _step(S, 0.04, 3) == 0), M["outer2"], m)
+                m = np.where((np.abs(np.abs(off) - (vy - ly) * 0.55) < 0.7) & (ly < vy) & (ly > ts) & (m > 0), M["outer2"], m)
+            elif front and kind == "oilskin":  # closed to the throat: a seam, toggles, a stiff collar
+                off = lx - sh * 0.5
+                m = np.where((np.abs(off) < 0.6) & (ly > ts), M["outer2"], m)
+                tg = (np.abs(np.abs(off) - 0.028 * S) < 0.7) & (np.round(ly - ts) % _step(S, 0.05, 4) == 0) & (ly > ts + 0.025 * S)
+                m = np.where(tg & (m > 0), M["outer2"], m)
+                ex += np.where((ly < ts + 0.02 * S), -0.2, 0.0)
+                ex += np.where(np.sin(lx * 0.5 + 0.4) > 0.92, 0.2, 0.0)
+            elif front:
                 off = lx - sh * 0.5
                 opening = np.abs(off) < gap + np.maximum(0, (ly - ts)) * (0.12 if kind in ("jacket", "overshirt", "cardigan", "labcoat", "coat") else 0.05)
                 m = np.where(opening & (ly > ts - 0.02 * S), 0, m)
@@ -910,6 +978,8 @@ class Painter:
                 m = np.where((m == M["outer"]) & (gx ^ gy), M["outer2"], m)
             if o.get("trim") and front:
                 m = np.where((m == M["outer"]) & (np.abs(np.abs(lx - sh * 0.5) - gap - np.maximum(0, (ly - ts)) * 0.12) < _step(S, 0.02)), M["outer2"], m)
+            if pat == "stained":
+                m = np.where((m == M["outer"]) & (self._stain(lx, ly) > 0.86), M["horn"], m)
             ex += np.where(np.sin(lx * 0.6 + ly * 0.25) > 0.82, -0.2, 0.0)
             return m, ex
         profile(cv, b.hip, b.lean, rows2, 1.3, mat, shift=sh)
@@ -918,6 +988,11 @@ class Painter:
         hole = (cv.mat == 0) & (cv.z > 1.25) & (cv.z < 1.35)
         if hole.any():
             pass
+
+    def _stain(self, lx, ly):
+        """Blotches over a coat (0..1, the high values are the stains)."""
+        sd = self.seed % 97
+        return np.sin(lx * 0.29 + ly * 0.43 + sd) * np.sin(lx * 0.21 - ly * 0.35 + sd * 0.7) * 0.5 + 0.5
 
     def dungarees(self):
         b, S, cv = self.b, self.S, self.cv
@@ -997,11 +1072,11 @@ class Painter:
         sleeves = self.top.get("sleeves", {"tank": "none", "crop": "short", "tee": "short", "longsleeve": "long", "jumper": "long", "hoodie": "long",
                                             "shirt": "long", "polo": "short", "scrubs": "short", "jumpsuit": "long", "dress": "short", "gown": "short",
                                             "chef": "long", "leotard": "none", "bare": "none", "vest": "none", "robe": "long", "tunic": "short",
-                                            "bra": "none"}.get(top, "short"))
-        outer = self.outer if (self.outer and self.outer.get("kind") not in ("cape", "gilet")) else None
+                                            "bra": "none", "uniform": "long", "pyjamas": "long"}.get(top, "short"))
+        outer = self.outer if (self.outer and self.outer.get("kind") not in ("cape", "gilet", "waistcoat")) else None
         W = b.W * b.limb
         r_sh, r_el, r_wr = 0.042 * W * S, 0.035 * W * S, 0.026 * W * S
-        if sleeves == "long" or outer:
+        if sleeves in ("long", "rolled") or outer:
             r_sh *= 1.12
             r_el *= 1.15
             r_wr *= 1.25
@@ -1027,6 +1102,12 @@ class Painter:
                 m = np.where((t >= lim - 0.12) & (t < lim), M["top3"] if self.top.get("neck") == "crew" else sl_mat, m)
             if stripes:
                 m = np.where((m == M["top"]) & (np.floor(t * 0.17 * S / q) % 2 == 1), M["top2"], m)
+            if sleeves == "rolled":  # the sleeve rolled up above the elbow
+                m = np.where(t > 0.78, M["top3"], m)
+            if "garters" in acc and sleeves != "none":  # sleeve garters: a dark band above the elbow
+                m = np.where(np.abs(t - 0.42) < 0.075, M["acc"], m)
+            if "armband" in acc and side == "l":  # a plain band on the upper arm
+                m = np.where(np.abs(t - 0.4) < 0.15, M["prop2"], m)
             return m
 
         def fore_mat(t, u):
@@ -2667,7 +2748,7 @@ class Painter:
         vol = {"curly": 1.32, "afro": 1.6, "curly_long": 1.3, "spiky": 1.12, "short": 1.07, "buzz": 1.0, "shaved": 1.0, "bun": 1.08,
                "mohawk": 1.0, "long": 1.09, "bob": 1.12, "ponytail": 1.07, "wavy": 1.12, "pigtails": 1.08, "locs": 1.1, "braids": 1.06,
                "tentacles": 1.05, "flames": 1.0, "perm": 1.3, "quiff": 1.1}.get(st, 1.07)
-        if hat in ("beanie", "bucket", "chef", "scrubcap", "scarf", "cap"):
+        if hat in ("beanie", "bucket", "chef", "scrubcap", "scarf", "cap", "peaked", "sidecap", "flightcap", "mphelm", "flatcap", "knit", "fisher", "fedora", "eyeshade", "surgcap"):
             vol = min(vol, 1.12) if st not in ("afro", "curly") else vol * 0.92
         z = 2.3
         line = {"long": 0.45, "bob": 0.55, "wavy": 0.5, "curly_long": 0.5, "pigtails": 0.25}.get(st, 0.15)
@@ -2840,6 +2921,90 @@ class Painter:
                     cv.dot(*F(sg * rx * 0.34 + off, ry * 0.12), "acc2", LIT, z + 0.02)
         elif kind == "halo":
             ellipse(cv, F(0, -ry * 1.4), rx * 0.9, ry * 0.18, 0, z, lambda lx, ly, u, v: np.where(u * u + v * v < 0.45, 0, M["lit"]).astype(np.uint8))
+        elif kind == "peaked":  # an officer's cap: a drum a little wider than the head, a band round its foot, a flat visor
+            off = rx * 0.16 if b.fc == 1 else 0.0
+
+            def crown(lx, ly, u, v):
+                m = np.where(v > 0.5, 0, np.where(v > 0.1, M["hat2"], M["hat"])).astype(np.uint8)
+                return m, np.where(v < -0.5, 0.22, 0.0) + np.where(v > 0.1, -0.1, 0.0)
+            ellipse(cv, F(off, -ry * 0.8), rx * 1.2, ry * 0.62, tilt, z, crown)
+            if b.fc != 2:
+                ellipse(cv, F(off * 1.5, -ry * 0.44), rx * (1.04 if b.fc == 0 else 0.95), ry * 0.14, tilt, z + 0.02,
+                        lambda lx, ly, u, v: (M["hat2"], np.where(v < -0.3, 0.0, -0.25)))
+                if self.lod < 4:
+                    cv.dot(*F(off, -ry * 0.72), "acc2", LIT, z + 0.03)  # a plain brass button
+        elif kind == "sidecap":  # a forage / side cap folded flat, tipped on the head
+            sg = 1.0 if b.fc != 2 else -1.0
+            ellipse(cv, F(rx * 0.08, -ry * 0.86), rx * 1.0, ry * 0.4, tilt + 0.2 * sg, z,
+                    lambda lx, ly, u, v: (M["hat"], np.where(v > 0.45, -0.25, 0.0) + np.where(v < -0.55, 0.2, 0.0)))
+            ellipse(cv, F(rx * 0.08, -ry * 0.86), rx * 0.86, ry * 0.07, tilt + 0.2 * sg, z + 0.02, lambda lx, ly, u, v: (M["hat2"], -0.1))
+            if b.fc != 2 and self.lod < 4:  # the turn-up flap on the near side
+                ellipse(cv, F(-rx * 0.5, -ry * 0.56), rx * 0.5, ry * 0.2, tilt + 0.5, z + 0.01, lambda lx, ly, u, v: (M["hat"], -0.22))
+        elif kind == "flightcap":  # a leather flying helmet: a skull cap, ear flaps, a strap, goggles pushed up
+            big = float(hat.get("big", 1.0))
+            ellipse(cv, F(0, -ry * 0.66), rx * 1.14 * big, ry * 0.72 * big, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.52, 0, M["hat"]).astype(np.uint8), np.where(v < -0.6, 0.18, 0.0) - 0.14 * (np.sin(lx * 0.8 + ly * 0.5) > 0.75)))
+            for sgn in ((-1, 1) if b.fc != 1 else (-1,)):  # ear flaps
+                ellipse(cv, F(sgn * rx * 1.0, ry * 0.12), rx * 0.27 * big, ry * 0.46 * big, tilt, z + 0.01,
+                        lambda lx, ly, u, v: (M["hat"], np.where(u < -0.3, -0.05, -0.28)))
+                if self.lod < 4 and b.fc != 2:
+                    seg(cv, F(sgn * rx * 0.9, ry * 0.5), F(sgn * rx * 0.4, ry * 1.0), "hat2", DARK, z + 0.02)
+            if hat.get("goggles", True):
+                gy = -ry * 0.58
+                seg(cv, F(-rx * 1.05, gy), F(rx * 1.05, gy), "acc", DARK, z + 0.02, 1.5 if S > 80 else 1.0)
+                if b.fc != 2:
+                    for sgn in (-1, 1):
+                        cxl = sgn * rx * 0.5 + (rx * 0.3 if b.fc == 1 else 0.0)
+                        ellipse(cv, F(cxl, gy), rx * 0.3, ry * 0.2, tilt, z + 0.03,
+                                lambda lx, ly, u, v: (np.where(u * u + v * v > 0.5, M["metal"], M["glass"]).astype(np.uint8), np.where((u < -0.1) & (v < 0.0), 0.2, 0.0)))
+        elif kind == "mphelm":  # a white-painted helmet liner: a smooth dome, a rim, cheek flares, a chin strap
+            ellipse(cv, F(0, -ry * 0.7), rx * 1.22, ry * 0.78, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.5, 0, np.where(v > 0.34, M["hat2"], M["hat"])).astype(np.uint8),
+                                          np.where(np.abs(u) < 0.1, 0.12, 0.0) + np.where(v < -0.5, 0.12, 0.0)))
+            for sgn in ((-1, 1) if b.fc != 1 else (-1,)):
+                ellipse(cv, F(sgn * rx * 1.12, -ry * 0.06), rx * 0.2, ry * 0.5, tilt, z + 0.01, lambda lx, ly, u, v: (M["hat"], -0.15 + 0.1 * (v < -0.4)))
+                if self.lod < 4 and b.fc != 2:
+                    seg(cv, F(sgn * rx * 1.0, ry * 0.42), F(sgn * rx * 0.45, ry * 1.02), "acc", DARK, z + 0.02)
+            if b.fc != 2:  # a short front peak
+                ellipse(cv, F(0, -ry * 0.34), rx * 1.0, ry * 0.1, tilt, z + 0.02, lambda lx, ly, u, v: (M["hat2"], np.where(v < 0, 0.0, -0.2)))
+            if b.fc == 2:  # the nape flare
+                ellipse(cv, F(0, ry * 0.08), rx * 1.18, ry * 0.5, tilt, z - 0.01, lambda lx, ly, u, v: (M["hat2"], -0.1 + 0.1 * (v < -0.2)))
+        elif kind == "flatcap":  # a flat cap with a short peak
+            off = rx * 0.2 if b.fc == 1 else 0.0
+            ellipse(cv, F(off * 0.5, -ry * 0.66), rx * 1.22, ry * 0.48, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.5, 0, M["hat"]).astype(np.uint8), np.where(v < -0.4, 0.16, 0.0) - 0.18 * (np.sin(lx * 1.1 + 0.5) > 0.7)))
+            if b.fc != 2:
+                ellipse(cv, F(off, -ry * 0.4), rx * 0.96, ry * 0.11, tilt, z + 0.02, lambda lx, ly, u, v: (M["hat2"], -0.1))
+            if self.lod < 4:
+                cv.dot(*F(off * 0.4, -ry * 1.04), "hat2", LIT, z + 0.03)
+        elif kind == "knit":  # a knitted watch cap with a rolled rib cuff
+            ellipse(cv, F(0, -ry * 0.62), rx * 1.14, ry * 0.78, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.4, 0, np.where(v > 0.0, M["hat2"], M["hat"])).astype(np.uint8),
+                                          np.where(v > 0.0, np.where(np.round(lx) % 2 == 0, -0.22, 0.05), np.where((np.round(lx) + np.round(ly)) % 2 == 0, -0.12, 0.04))))
+            if hat.get("pom"):
+                ellipse(cv, F(0, -ry * 1.4), rx * 0.28, rx * 0.26, tilt, z + 0.01, lambda *a: (M["hat2"], 0.2))
+        elif kind == "fisher":  # a sou'wester: a round crown, a brim in front, a long flap down the neck
+            ellipse(cv, F(0, -ry * 0.72), rx * 1.18, ry * 0.66, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.5, 0, np.where(v > 0.28, M["hat2"], M["hat"])).astype(np.uint8), np.where(v < -0.5, 0.15, 0.0)))
+            if b.fc != 2:
+                ellipse(cv, F(0, -ry * 0.4), rx * 1.4, ry * 0.15, tilt, z + 0.02, lambda lx, ly, u, v: (M["hat"], np.where(v < 0.0, 0.1, -0.25)))
+            rows = [(-ry * 0.34, rx * 1.3, rx * 1.3), (ry * 1.15, rx * 1.12, rx * 1.12)]
+            profile(cv, c, tilt, rows, z + 0.4 if b.fc == 2 else -1.4, lambda lx, ly, u: (M["hat"], np.where(ly > ry * 0.9, -0.3, -0.12 * (np.sin(lx) > 0.6))))
+        elif kind == "fedora":  # a felt hat: a pinched crown, a band, a brim all round
+            off = rx * 0.14 if b.fc == 1 else 0.0
+            ellipse(cv, F(off, -ry * 0.9), rx * 1.0, ry * 0.52, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.55, 0, np.where(v > 0.12, M["hat2"], M["hat"])).astype(np.uint8),
+                                          np.where((np.abs(u) < 0.14) & (v < -0.1), -0.28, 0.0) + np.where(v < -0.5, 0.15, 0.0)))
+            ellipse(cv, F(0, -ry * 0.46), rx * 1.58, ry * 0.15, tilt, z + 0.02, lambda lx, ly, u, v: (M["hat"], np.where(v < -0.1, 0.12, -0.3)))
+        elif kind == "surgcap":  # a close cloth skull cap tied at the back
+            ellipse(cv, F(0, -ry * 0.68), rx * 1.1, ry * 0.7, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.5, 0, M["hat"]).astype(np.uint8), np.where(v < -0.55, 0.14, 0.0) - 0.1 * (np.sin(lx * 0.9 + ly * 0.4) > 0.8)))
+            if b.fc == 2 and self.lod < 4:
+                seg(cv, F(0, -ry * 0.1), F(rx * 0.4, ry * 0.5), "hat2", MID, z + 0.02)
+                seg(cv, F(0, -ry * 0.1), F(-rx * 0.4, ry * 0.5), "hat2", MID, z + 0.02)
+        elif kind == "eyeshade":  # a clerk's green celluloid eyeshade
+            ellipse(cv, F(0, -ry * 0.5), rx * 1.12, ry * 0.2, tilt, z, lambda lx, ly, u, v: (M["hat"], np.where(v < 0, 0.15, -0.2)))
+            seg(cv, F(-rx * 1.08, -ry * 0.5), F(rx * 1.08, -ry * 0.5), "hat2", DARK, z + 0.01)
 
     def headwear_props(self, c, rx, ry, ang):
         """Headphones (the DJ), the alien DJ's worn the wrong way round, an eyepatch, a mask."""
@@ -2858,6 +3023,15 @@ class Painter:
             ellipse(cv, F(rx * 0.1, ry * 1.08), rx * 0.42, ry * 0.3, ang, z + 0.01, lambda lx, ly, u, v: (np.where(u * u + v * v < 0.3, M["acc2"], M["acc"]).astype(np.uint8), -0.1))
             seg(cv, F(rx * 0.42, -ry * 0.55), F(rx * 0.95, ry * 0.2), "acc", MID, z, 1.5 if S > 80 else 1.0)
             seg(cv, F(rx * 0.95, ry * 0.2), F(rx * 0.5, ry * 1.0), "acc", DARK, z, 1.5 if S > 80 else 1.0)
+        if "bandage" in self.acc:  # a head bandage wound round the crown, with a stain
+            ellipse(self.cv, F(0, -ry * 0.58), rx * 1.1, ry * 0.7, ang, z - 0.05,
+                    lambda lx, ly, u, v: (np.where(v > 0.38, 0, M["prop2"]).astype(np.uint8),
+                                          np.where(((lx * 0.8 + ly * 1.0 + 40) % 5.0) < 1.0, -0.3, 0.0) + np.where(v > 0.2, -0.12, 0.0)))
+            if self.lod < 4:
+                cv.dot(*F(rx * 0.35, -ry * 0.75), "horn", MID, z)
+                if self.lod < 2:
+                    cv.dot(*F(rx * 0.35 + 1, -ry * 0.75), "horn", DARK, z)
+                    cv.dot(*F(rx * 0.35, -ry * 0.75 + 1), "horn", DARK, z)
         if "eyepatch" in self.acc and b.fc != 2 and self.lod < 4:
             ex = rx * 0.42 + (rx * 0.38 if b.fc == 1 else 0)
             for dx in (-0.5, 0.5):
@@ -2958,6 +3132,133 @@ class Painter:
         if "plates" in acc:
             for sg in (-1, 1):
                 ellipse(cv, b.T((sg * b.sw * 0.95, ts + 0.005 * S)), 0.05 * S, 0.035 * S, b.lean, 1.7, lambda lx, ly, u, v: (M["metal"], 0.15 * (v < -0.2)))
+        if "webbing" in acc:  # a belt, and a cross strap from the hip over the shoulder (white for the police, tan for officers)
+            wy = -0.045 * S
+            wid = 1.5 if S > 80 else 1.0
+            seg(cv, b.T((-b.waist_hw * 1.08, wy)), b.T((b.waist_hw * 1.08, wy)), "acc", MID, 0.95, wid)
+            if front:
+                seg(cv, b.T((b.sw * 0.45 * b.mir, ts + 0.004 * S)), b.T((-b.waist_hw * 0.95 * b.mir, wy)), "acc", MID, 0.96, wid)
+                cv.dot(*b.T((0.0, wy)), "acc2", LIT, 0.97)
+                if self.lod < 4:
+                    cv.dot(*b.T((0.0, wy + 1.0)), "acc2", MID, 0.97)
+        if "braces" in acc:  # braces over the shirt
+            for sgn in (-1, 1):
+                seg(cv, b.T((sgn * 0.05 * S * b.W, ts + 0.004 * S)), b.T((sgn * 0.062 * S * b.W, -0.04 * S)), "acc", MID, 0.95, 1.5 if S > 80 else 1.0)
+        if "ribbons" in acc and front:
+            self.ribbons()
+        if "collarband" in acc and front:  # a dark plain band round the throat, a white tab at the front
+            ellipse(cv, b.T((0.0, ts - 0.006 * S)), 0.04 * S * b.W, 0.012 * S, b.lean, 1.19, lambda lx, ly, u, v: (M["acc"], -0.1 * (v > 0.2)))
+            if self.lod < 4:
+                cv.dot(*b.T((0.0, ts - 0.002 * S)), "prop2", LIT, 1.2)
+        if "maskdown" in acc:  # a surgical mask pulled down under the chin
+            c0 = b.T((0.0, ts - 0.002 * S))
+            ellipse(cv, c0, 0.05 * S * b.W, 0.019 * S, b.lean, 1.19, lambda lx, ly, u, v: (M["acc"], np.where(v < -0.3, 0.2, -0.1) + 0.12 * (np.round(lx) % 3 == 0)))
+            if front and self.lod < 4:
+                seg(cv, (c0[0] - 0.045 * S, c0[1]), (c0[0] - 0.052 * S, c0[1] - 0.03 * S), "acc", DARK, 1.18)
+                seg(cv, (c0[0] + 0.045 * S, c0[1]), (c0[0] + 0.052 * S, c0[1] - 0.03 * S), "acc", DARK, 1.18)
+        if "rag" in acc and front:  # an oily rag tucked in the belt
+            r0 = b.T((0.075 * S * b.W, -0.04 * S))
+            poly_fill(cv, [(r0[0] - 0.014 * S, r0[1]), (r0[0] + 0.016 * S, r0[1]), (r0[0] + 0.02 * S, r0[1] + 0.07 * S), (r0[0] - 0.01 * S, r0[1] + 0.06 * S)], 1.42, "prop2",
+                      lambda X, Y: np.where(((np.round(X) + np.round(Y)) % 5 == 0) | (Y > r0[1] + 0.04 * S), 0.25, 0.62))
+        if "chain" in acc and front and self.lod < 4:  # a watch chain looped across the waistcoat
+            for kk in np.linspace(0.0, 1.0, 7):
+                cv.dot(*b.T((0.01 * S + kk * 0.055 * S, ts + 0.12 * S + math.sin(kk * math.pi) * 0.012 * S)), "acc2", MID if kk < 0.9 else LIT, 0.97)
+        if "apron" in acc:
+            self.apron()
+        if "sling" in acc:
+            self.sling()
+
+    def ribbons(self):
+        """A chestful of ribbon bars on the left breast: rows of little coloured oblongs, each with a stripe, in the spec's colours (invented; no real award)."""
+        b, S, cv = self.b, self.S, self.cv
+        rb = self.sp.get("ribbons") or {}
+        rows, cols = int(rb.get("rows", 3)), int(rb.get("cols", 3))
+        mats = rb.get("mats") or ["prop", "liquid", "horn", "glass", "shoes2"]
+        bw = max(1, int(round(0.027 * S)))
+        bh = 2 if S > 60 else 1
+        gap = 1 if S > 60 else 0
+        if self.lod >= 4:
+            rows, cols = min(rows, 2), min(cols, 2)
+        ts = b.t_shoulder
+        o = b.T((0.026 * S * b.W + (0.03 * S * b.W if b.fc == 1 else 0.0), ts + 0.056 * S))
+        ox0 = math.floor(o[0] + cv.ox)
+        oy0 = math.floor(o[1] + cv.oy)
+        n = 0
+        for r_ in range(rows):
+            for c_ in range(cols):
+                a_ = mats[(r_ * 2 + c_ * 3 + int(rb.get("seed", 0))) % len(mats)]
+                b_ = mats[(r_ * 3 + c_ * 5 + 1 + int(rb.get("seed", 0))) % len(mats)]
+                if a_ == b_:
+                    b_ = mats[(mats.index(a_) + 1) % len(mats)]
+                for yy in range(bh):
+                    for xx in range(bw):
+                        mid = bw >= 3 and xx == bw // 2
+                        edge_ = bw == 2 and xx == 1
+                        mt = b_ if (mid or edge_) else a_
+                        px = ox0 + c_ * (bw + (1 if bw >= 3 else 0)) + xx + 0.5 - cv.ox
+                        py = oy0 + r_ * (bh + gap) + yy + 0.5 - cv.oy
+                        cv.dot(px, py, mt, MID, 0.99)
+                n += 1
+
+    def apron(self):
+        """A bib apron over the uniform: a bib on the chest, a skirt to the knee, a pocket, a hem, neck loop and waist ties."""
+        b, S, cv = self.b, self.S, self.cv
+        ts = b.t_shoulder
+        sh = 0.035 * S * b.W if b.fc == 1 else 0.0
+        front = b.fc != 2
+        bw = b.chest_hw * 0.58
+        seated = b.state in SEATED + FLOORED
+        y_hem = (-0.02 * S - b.hip[1]) if seated else (min(-0.27 * S + b.cdy, -0.06 * S) - b.hip[1])
+        wb = b.t_waist
+        seed = self.seed
+        if front:
+            rows = [(ts + 0.07 * S, bw * 0.85, bw * 0.85), (wb, b.waist_hw * 1.0, b.waist_hw * 1.0), (0.04 * S, b.hip_hw * 1.08, b.hip_hw * 1.08)]
+
+            def mb(lx, ly, u):
+                m = np.full(u.shape, M["outer"], np.uint8)
+                m = np.where((ly < ts + 0.078 * S), M["outer2"], m)
+                return m, -0.15 * (np.sin(lx * 0.8 + seed) > 0.7)
+            profile(cv, b.hip, b.lean, rows, 1.45, mb, shift=sh)
+            rows2 = [(-0.03 * S, b.hip_hw * 1.06, b.hip_hw * 1.06), (y_hem, b.hip_hw * 1.28, b.hip_hw * 1.28)]
+            pk = (0.045 * S, 0.1 * S)
+
+            def mf(lx, ly, u):
+                m = np.full(u.shape, M["outer"], np.uint8)
+                inpk = (np.abs(lx - sh * 0.4) > 0.02 * S) & (np.abs(lx - sh * 0.4) < 0.075 * S) & (ly > pk[0]) & (ly < pk[1])
+                edge = inpk & ((np.abs(np.abs(lx - sh * 0.4) - 0.02 * S) < 0.6) | (np.abs(np.abs(lx - sh * 0.4) - 0.075 * S) < 0.6) | (np.abs(ly - pk[1]) < 0.6))
+                m = np.where(edge, M["outer2"], m)
+                m = np.where(ly > y_hem - _step(S, 0.016), M["outer2"], m)
+                return m, -0.2 * (np.sin(lx * 0.7 + 1.3 + seed) > 0.6) + np.where(inpk, -0.08, 0.0)
+            profile(cv, b.hip, 0.0, rows2, 1.46, mf, shift=sh)
+            for sgn in (-1, 1):  # the neck loop
+                seg(cv, b.T((sgn * bw * 0.7, ts + 0.072 * S)), b.T((sgn * 0.034 * S, ts - 0.004 * S)), "outer2", DARK, 1.47)
+        else:
+            seg(cv, b.T((-b.waist_hw * 1.0, wb)), b.T((b.waist_hw * 1.0, wb)), "outer2", MID, 1.45, 1.5 if S > 80 else 1.0)
+            for sgn in (-1, 1):
+                seg(cv, b.T((sgn * 0.02 * S, wb)), b.T((sgn * 0.045 * S, wb + 0.05 * S)), "outer2", DARK, 1.46)
+            for sgn in (-1, 1):
+                seg(cv, b.T((sgn * 0.034 * S, ts - 0.004 * S)), b.T((-sgn * 0.034 * S, ts + 0.05 * S)), "outer2", DARK, 1.46)
+
+    def sling(self):
+        """An arm in a sling: a cloth under the folded forearm, a strap up to the neck (the arm itself is posed across the chest by Body)."""
+        b, S, cv = self.b, self.S, self.cv
+        a = b.arms["l"]
+        el, wr, hand = a["el"], a["wr"], a["hand"]
+        dx, dy = wr[0] - el[0], wr[1] - el[1]
+        ln = math.hypot(dx, dy) or 1.0
+        nx, ny = -dy / ln, dx / ln
+        if ny < 0:
+            nx, ny = -nx, -ny
+        w0 = 0.036 * S
+        z = self.arm_z("l") + 0.03
+        pts = [(el[0] - dx / ln * 0.012 * S - nx * w0 * 0.6, el[1] - dy / ln * 0.012 * S - ny * w0 * 0.6),
+               (el[0] - dx / ln * 0.012 * S + nx * w0 * 1.1, el[1] - dy / ln * 0.012 * S + ny * w0 * 1.1),
+               (wr[0] + dx / ln * 0.01 * S + nx * w0 * 0.7, wr[1] + dy / ln * 0.01 * S + ny * w0 * 0.7),
+               (wr[0] + dx / ln * 0.01 * S - nx * w0 * 0.6, wr[1] + dy / ln * 0.01 * S - ny * w0 * 0.6)]
+        poly_fill(cv, pts, z, "prop2", lambda X, Y: np.where(((X + Y * 0.6) % 6.0) < 1.0, 0.4, 0.66))
+        if b.fc != 2:
+            nb = b.neck_base
+            seg(cv, (nb[0] - 0.02 * S, nb[1]), (wr[0] + dx / ln * 0.01 * S, wr[1] + 0.01 * S), "prop2", DARK, z + 0.01, 1.5 if S > 80 else 1.0)
 
     # -- props in the hand --
     def prop(self):
@@ -3044,6 +3345,24 @@ class Painter:
             ln = [(px_ - 0.005 * S, top + 0.09 * S), (px_ - 0.03 * S, top + 0.35 * S), (hx, hy)]
             seg(cv, ln[0], ln[1], "glass", LIT, z0 + 0.02)
             seg(cv, ln[1], ln[2], "glass", LIT, z0 + 0.02)
+        elif held == "stamp":  # a rubber stamp: a wooden handle, a black rubber block
+            poly_fill(cv, [(hx - 0.01 * S, hy - 0.058 * S), (hx + 0.01 * S, hy - 0.058 * S), (hx + 0.008 * S, hy + 0.006 * S), (hx - 0.008 * S, hy + 0.006 * S)], z, "prop",
+                      lambda X, Y: np.where(X < hx - 0.002 * S, 0.8, 0.45))
+            ellipse(cv, (hx, hy - 0.062 * S), 0.014 * S, 0.01 * S, 0, z + 0.01, lambda lx, ly, u, v: (M["prop"], 0.2 * (v < 0)))
+            poly_fill(cv, [(hx - 0.03 * S, hy + 0.006 * S), (hx + 0.03 * S, hy + 0.006 * S), (hx + 0.03 * S, hy + 0.022 * S), (hx - 0.03 * S, hy + 0.022 * S)], z + 0.01, "eye_d",
+                      lambda X, Y: np.where(Y < hy + 0.012 * S, 0.5, 0.2))
+        elif held == "egg":  # one egg, held up
+            ellipse(cv, (hx, hy - 0.03 * S), 0.026 * S, 0.036 * S, 0.0, z + 0.05, lambda lx, ly, u, v: (M["prop2"], 0.12 * (v > 0.2) - 0.0),
+                    shape=lambda u, v: 1.0 + 0.2 * np.clip(v, 0, 1) * 0.0 - 0.18 * np.clip(-v, 0, 1) * np.abs(u))
+        elif held == "medal":  # a plain gold disc on a ribbon, held out
+            rbw = 0.011 * S
+            poly_fill(cv, [(hx - rbw, hy - 0.01 * S), (hx + rbw, hy - 0.01 * S), (hx + rbw, hy + 0.035 * S), (hx - rbw, hy + 0.035 * S)], z, "prop",
+                      lambda X, Y: np.where(np.abs(X - hx) < rbw * 0.35, 0.85, 0.5))
+            ellipse(cv, (hx, hy + 0.05 * S), 0.02 * S, 0.02 * S, 0.0, z + 0.02, lambda lx, ly, u, v: (np.where(u * u + v * v < 0.25, M["acc2"], M["acc2"]).astype(np.uint8),
+                                                                                          np.where(u * u + v * v < 0.28, 0.05, -0.1) + 0.18 * ((u < -0.1) & (v < -0.1))))
+        elif held == "hat":  # a hat held out, crown up, for coins
+            ellipse(cv, (hx, hy - 0.004 * S), 0.05 * S, 0.014 * S, 0.0, z + 0.05, lambda lx, ly, u, v: (np.where(v < -0.1, M["hat2"], M["hat"]).astype(np.uint8), np.where(v < -0.1, 0.0, 0.1)))
+            ellipse(cv, (hx, hy + 0.012 * S), 0.034 * S, 0.016 * S, 0.0, z + 0.04, lambda lx, ly, u, v: (M["hat"], -0.15))
 
 
 

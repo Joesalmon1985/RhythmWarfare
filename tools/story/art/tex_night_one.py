@@ -1004,11 +1004,56 @@ def thing_crack() -> np.ndarray:
     return sp.rgba()
 
 
+def thing_booth_radio() -> np.ndarray:
+    """The portal to the Mission Count (128 px, 0.9 m): a battered olive military radio set on a crate, a dial with a lit needle, a coiled headset lead, a crackle of
+    amber static over it, a handle on top (nothing written on it)."""
+    n = N
+    sp = Sprite(n)
+    x, y = px.grid(n)
+    OLIVE = px.ramp("#0c0e08", "#1c2014", "#2e3420", "#444c2c", "#5e683a", "#7e8a4c")
+    sp.paint(rect(n, 30, 84, 98, 128), WOOD, 0.35 + 0.3 * (x < 40) + 0.1 * (px.noise(n, 6, 1801) > 0.5))  # the crate
+    sp.paint(rect(n, 30, 84, 98, 87), WOOD, 0.8)
+    sp.paint(rect(n, 24, 30, 104, 84), OLIVE, 0.45 + 0.35 * (x < 34) + 0.1 * (px.noise(n, 5, 1802) > 0.55))  # the set
+    sp.paint(rect(n, 24, 30, 104, 33), OLIVE, 0.85)
+    sp.paint(rect(n, 40, 20, 88, 24), STEEL, 0.6)  # the handle
+    sp.paint(rect(n, 40, 20, 44, 30) | rect(n, 84, 20, 88, 30), STEEL, 0.5)
+    sp.paint(rect(n, 32, 40, 72, 62), CAB, 0.15)  # the dial window
+    sp.paint(rect(n, 34, 42, 70, 60), AMBER, 0.55 + 0.4 * (x < 52))
+    sp.paint(seg(n, 52, 58, 62, 44, 1.6), CAB, 0.1)
+    for cx in (84, 94):  # two knobs
+        sp.paint(ell(n, cx, 46, 5, 5), STEEL, 0.6 + 0.3 * (x < cx))
+    sp.paint(rect(n, 78, 60, 100, 74), CAB, 0.2)  # a speaker grille
+    for gy in range(62, 74, 3):
+        sp.paint(rect(n, 80, gy, 98, gy + 1), OLIVE, 0.3)
+    sp.paint(sag(n, 78, 24, 1.3, 26, 8) | sag(n, 80, 20, 1.3, 10, 26), CAB, np.full((n, n), 0.2))  # the headset lead
+    rng = np.random.RandomState(1803)  # a crackle of static round the dial
+    for _ in range(26):
+        cx, cy = int(rng.randint(14, 114)), int(rng.randint(12, 70))
+        sp.paint(seg(n, cx, cy, cx + int(rng.randint(-5, 6)), cy + int(rng.randint(-5, 6)), 1.0), AMBER, 0.95)
+    return sp.rgba()
+
+
+def thing_bomber_shadow() -> np.ndarray:
+    """The bomber's shadow on the booth wall (128 px, 2.6 m): a dark twin-engined silhouette seen from the front, wide wings, two engines, the glazed nose, drawn in
+    near-black violet with a thin magenta rim so it reads against the club's wall without being a light."""
+    n = N
+    sp = Sprite(n)
+    x, y = px.grid(n)
+    sil = (ell(n, 64, 66, 10, 22) | rect(n, 4, 54, 124, 64) | ell(n, 30, 62, 9, 11) | ell(n, 98, 62, 9, 11) | rect(n, 56, 28, 72, 48) | ell(n, 64, 74, 7, 14))
+    sil &= ~(rect(n, 4, 54, 8, 60) & (x < 6))
+    edge = sil & (np.roll(~sil, 1, axis=1) | np.roll(~sil, -1, axis=1) | np.roll(~sil, 1, axis=0))
+    sp.paint(sil, PURPLE, 0.12 + 0.12 * (px.noise(n, 5, 1811) > 0.5))
+    sp.paint(edge & (x > 64), MAGENTA, 0.35)
+    sp.paint(ell(n, 64, 74, 3, 5), MAGENTA, 0.4)  # the nose glass catches the club's light
+    return sp.rgba()
+
+
 SPRITES = {
     "thing_decks": thing_decks, "thing_pendant": thing_pendant, "thing_bulb": thing_bulb, "thing_sink": thing_sink,
     "thing_dryer": thing_dryer, "thing_tube": thing_tube, "thing_toilet": thing_toilet, "thing_firedoor": thing_firedoor, "thing_exit_sign": thing_exit_sign,
     "thing_sofa": thing_sofa, "thing_lavalamp": thing_lavalamp, "thing_bulbs": thing_bulbs, "thing_truss_tower": thing_truss_tower, "thing_bin": thing_bin,
     "thing_rail": thing_rail, "thing_wizard": thing_wizard, "thing_headphones": thing_headphones, "thing_crack": thing_crack,
+    "thing_booth_radio": thing_booth_radio, "thing_bomber_shadow": thing_bomber_shadow,  # the Mission Count portal in the booth
 }
 
 

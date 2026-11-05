@@ -23,7 +23,7 @@ NIGHT_ONE = {
     "thing_decks": 1.0, "thing_pendant": 1.0, "thing_bulb": 1.0, "thing_sink": 1.0, "thing_dryer": 1.0, "thing_tube": 1.0,
     "thing_toilet": 1.0, "thing_firedoor": 1.0, "thing_exit_sign": 1.0, "thing_sofa": 1.0, "thing_lavalamp": 1.0, "thing_bulbs": 1.0,
     "thing_truss_tower": 1.0, "thing_bin": 1.0, "thing_rail": 1.0,
-    "thing_wizard": 1.0, "thing_headphones": 1.0, "thing_crack": 1.0,
+    "thing_wizard": 1.0, "thing_headphones": 1.0, "thing_crack": 1.0, "thing_booth_radio": 1.0, "thing_bomber_shadow": 1.0,
 }
 
 

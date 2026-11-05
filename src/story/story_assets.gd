@@ -143,6 +143,8 @@ func texture(file: String) -> Texture2D:
 ## A sprite entry ({file, pivot, px_scale}) as {tex, pivot: Vector2, scale: float}.
 func sprite(id: String) -> Dictionary:
 	var s: Dictionary = manifest.get("stage", {}).get("sprites", {}).get(id, manifest.get("sprites", {}).get(id, {}))
+	if s.is_empty() and extra != null and bool(manifest.get("borrow_sprites", false)):  # a path's art world (assets/story/airfield ...) borrows Night One's light and deck sprites
+		return extra.sprite(id)
 	return _entry(s)
 
 

@@ -12,7 +12,7 @@ const ACTIVITIES := ["stand", "dance", "drink", "toast", "chat", "point", "phone
 ## The activities that need a partner (they stand facing them) and the ones that face a target (a waypoint, a person or the stage).
 const PAIRED := ["chat", "hug", "toast"]
 const TARGETED := ["watch", "stare", "point"]
-const PROPS := ["", "cup", "bottle", "tray", "phone", "clipboard", "tickets", "brush", "sketchbook", "drip", "headphones", "headphones_wrong", "mug"]
+const PROPS := ["", "cup", "bottle", "tray", "phone", "clipboard", "tickets", "brush", "sketchbook", "drip", "headphones", "headphones_wrong", "mug", "stamp", "egg", "medal"]
 const STATES := ["idle", "dance", "cheer", "sad", "clap", "hands_up", "walk", "footwork", "look", "solo", "drink", "toast", "chat", "point", "phone", "lean_wall", "sit", "lie", "sleep",
 	"paint", "pace", "carry", "serve", "check", "stare", "rock", "hug", "queue", "wave", "watch", "mix", "stand", "flair_toprock", "flair_drop", "flair_robot", "flair_spin",
 	"beckon", "nod", "shake_head", "recoil", "bow", "kneel", "offer", "plead", "collapse", "salute", "block", "cover_face", "stamp", "laugh", "write"]

@@ -22,6 +22,7 @@ from art import directed as directed_mod  # noqa: E402
 from art import people  # noqa: E402
 ART = os.path.join(STORY, "night_one")  # the folder being checked (set per chapter by validate)
 CHAPTERS = ("night_one", "mothership", "underworld", "hospital", "mental_hospital")
+PATH_CHAPTERS = ("airfield", "city", "harbour")  # the Mission Count path's art worlds: textures, billboards and baked people only (no SVG rigs)
 INTERLUDE = {"mothership": ({"ufo", "tractor_beam", "ufo_glow", "sparkle", "light_flood"}, {"ufo_hover", "beam_floor"}),
              "underworld": ({"crack_glow", "flame_jet", "portal_vortex", "embers", "dark_wash"}, {"crack_origin", "portal_centre"}),
              "hospital": ({"eyelid_top", "eyelid_bottom", "white_wash", "monitor_line"}, set()),
@@ -231,7 +232,7 @@ def people_checks(errors, chapter, m) -> None:
             errors.append(f"people: {aid} palette row {e['row']} outside the palette ({pw}x{ph})")
         st = e["states"]
         need = set(PEOPLE_STATES)
-        if a.get("activity"):
+        if a.get("activity") and str(a["activity"]) != "stand":  # (a locked `stand` is the idle frames)
             need.add(str(a["activity"]) if str(a["activity"]) != "dance" else "dance")
         if not need <= set(st):
             errors.append(f"people: {aid} lacks states {sorted(need - set(st))}")
@@ -345,8 +346,41 @@ def all_hash() -> str:
     return h.hexdigest()
 
 
+def validate_path_art(chapter: str) -> list:
+    """A path's art world (tools/story/art/chapter_squadron.py): every texture listed exists at its stated size (tiles square 32 to 128, wide props 256 x 128, a sky 256 x 64), nothing on disk is unlisted, and the people sheets pass the same checks as a chapter's."""
+    global ART
+    ART = os.path.join(STORY, chapter)
+    errors: list = []
+    with open(os.path.join(ART, "manifest.json"), encoding="utf-8") as fh:
+        m = json.load(fh)
+    tex = m.get("textures") or {}
+    if not tex:
+        errors.append("manifest has no textures section")
+    for tid, e in tex.items():
+        p = os.path.join(ART, e.get("file", ""))
+        if not os.path.exists(p):
+            errors.append(f"texture {tid}: missing {e.get('file')}")
+            continue
+        w, h = png_size(p)
+        ok = (w, h) == (256, 64) if tid.startswith("sky_") else ((w, h) == (256, 128) if tid.startswith("thing_") and w == 256 else (w == h and w in (32, 64, 128)) or (tid.startswith("thing_") and (w, h) == (128, 128)))
+        if [w, h] != list(e.get("size", [])) or not ok:
+            errors.append(f"texture {tid}: size {w}x{h} (manifest {e.get('size')})")
+        if float(e.get("metres", 0)) <= 0:
+            errors.append(f"texture {tid}: metres must be positive")
+    on_disk = {fn for fn in os.listdir(os.path.join(ART, "textures")) if fn.endswith(".png")} if os.path.isdir(os.path.join(ART, "textures")) else set()
+    if on_disk - {os.path.basename(e["file"]) for e in tex.values()}:
+        errors.append(f"textures on disk but not in the manifest: {sorted(on_disk - {os.path.basename(e['file']) for e in tex.values()})}")
+    people_checks(errors, chapter, m)
+    return errors
+
+
 def main(argv) -> int:
     errors: list = []
+    for ch in PATH_CHAPTERS:
+        if os.path.isdir(os.path.join(STORY, ch)):
+            errs = validate_path_art(ch)
+            errors += [f"[{ch}] {e}" for e in errs]
+            print(f"{ch}:", "OK" if not errs else f"{len(errs)} problems")
     for ch in CHAPTERS:
         if os.path.isdir(os.path.join(STORY, ch)):
             errs = validate(ch)
