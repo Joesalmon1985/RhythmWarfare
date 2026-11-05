@@ -17,6 +17,9 @@ const TIERS := 4  # difficulty tiers (pack.tiers "1".."4"); a node's tier is min
 ## default here; `enabled: false` (or no `bass_bus` anywhere) is the bass straight onto its bus, as before the polish.
 const BASS_BUS_DEFAULT := {"enabled": false, "highpass_hz": 0.0, "shelf_hz": 100.0, "shelf_db": 0.0, "drive": 0.0, "pre_gain_db": 0.0, "gain_db": 0.0, "keep_hf_hz": 16000.0}
 
+## Debug / Playtest (PlaytestMode): >= 0 plays that choice of every scene's arrangements (0 = the scene's own `arrangement`, 1 and 2 = its `alternates`) instead of the per-run seed's pick; -1 (the default) is the game.
+static var arrangement_override := -1
+
 var cfg: Dictionary = {}
 ## A node is a SCENE: one 64-beat phase at a place in a world. id -> {id, world (the run world's id: the save and the home cards), map (the art world the stage is built from), scene, title (the room),
 ## world_title, entry, exit_scene, depth (the world's), waypoint (home), rail, role, blurb, next: [{to, dir, label, loop?}], audio, chart, treatment, temporary}
@@ -266,6 +269,10 @@ func _resolve_arrangement(id: String, m: Dictionary) -> void:
 		errors.append("node %s: its arrangement and alternates are of several families (%s)" % [id, ", ".join(PackedStringArray(fams.keys()))])
 		return
 	var pick := 0 if ids.size() == 1 else absi(("%d:%s" % [seed_value, id]).hash()) % ids.size()
+	if arrangement_override >= 0:
+		pick = mini(arrangement_override, ids.size() - 1)
+	node["arrangement_ids"] = ids
+	node["arrangement_pick"] = pick
 	var arr: Dictionary = arrangements[str(ids[pick])]
 	var total := int(arr.get("bars", 0))
 	var phase_bars := int(cfg.get("timing", {}).get("phase_beats", 64)) / 4

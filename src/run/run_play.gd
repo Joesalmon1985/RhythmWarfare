@@ -93,12 +93,16 @@ var _bot_portal_done := -1
 var _path_cache: Dictionary = {}  # path id -> RunData read ahead (the portals' paths)
 var cast_log: Array = []  # [{t, beat, actor, act, face, look_at, source, applied}] every cast line handed to the crowd (the acting contract, docs/THREE_PATHS_AND_FACES_PLAN.md 2.3b), for tests and walks
 var acting_log: Array = []  # [{t, hotspot, actor, success, acts}] every outcome chain handed to the crowd (2.3a)
+var playtest: Dictionary = {}  # the options of a start from the Debug / Playtest scene list ({} otherwise): see PlaytestMode, docs/DEBUG_MODE.md
+var playtest_overlay: PlaytestOverlay  # the playtest overlay; null unless PlaytestMode.on()
+var _pause_note: LineEdit
 
 
 func _ready() -> void:
 	theme = UiStyle.theme()
 	var want_path := OS.get_environment("RW_RUN_PATH") if OS.get_environment("RW_RUN_PATH") != "" else Session.run_start_path
 	Session.run_start_path = ""
+	playtest = PlaytestMode.consume_launch()
 	data = RunData.load_path(want_path) if want_path != "" else RunData.load_default()
 	if not data.errors.is_empty():
 		_fatal("The run data is invalid:\n" + "\n".join(PackedStringArray(data.errors)))
@@ -127,6 +131,9 @@ func _ready() -> void:
 	hotspots = RunHotspots.new(data, Session.run_progress.run_flags, Session.run_progress.flags)
 	engine.hotspots = hotspots
 	engine.begin(start)
+	if float(playtest.get("energy", -1.0)) >= 0.0:  # the scene list's start-energy option
+		engine.energy = float(playtest["energy"])
+		hotspots.energy = engine.energy
 	proxy = StoryRun.new()
 	proxy.level = engine.level
 	proxy.crowd = CrowdController.new()
@@ -145,6 +152,13 @@ func _ready() -> void:
 		note_lane.visible = false
 		hud.visible = false
 	Session.run_progress.run_started()
+	if bool(playtest.get("give_flags", false)):  # the scene list: the flags this scene's hotspots need, so all of them are on offer
+		var need: Array = PlaytestCatalog.scene_info(data, start).get("visual", {}).get("flags_needed", [])
+		for f in need:
+			if str(f).begins_with("keep:"):
+				Session.run_progress.flags[str(f)] = true
+			else:
+				hotspots.run_flags[str(f)] = true
 	if OS.get_environment("RW_RUN_FLAGS") != "":  # screenshot aid (tools/run/capture.sh --acting): world-state flags to start the run with, so a hotspot that needs one is on show
 		for f in OS.get_environment("RW_RUN_FLAGS").split(",", false):
 			hotspots.run_flags[f] = true
@@ -430,6 +444,10 @@ func _build_layout(start: String) -> void:
 	_pause_btn.offset_bottom = 64
 	_pause_btn.pressed.connect(_pause)
 	add_child(_pause_btn)
+	if PlaytestMode.on():  # debug / playtest only: the identity panel and the feedback buttons (docs/DEBUG_MODE.md); regular play has no such node
+		playtest_overlay = PlaytestOverlay.new()
+		add_child(playtest_overlay)
+		playtest_overlay.setup(self)
 	_dim = ColorRect.new()
 	_dim.color = Color(0, 0, 0, 0.6)
 	_dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -447,12 +465,32 @@ func _build_layout(start: String) -> void:
 	pv.add_theme_constant_override("separation", 12)
 	_pause_panel.add_child(pv)
 	pv.add_child(StoryStyle.title("PAUSED", 36))
-	for item in [["Resume", _resume], ["Restart this level", _retry], ["Leave this path", _leave_path], ["Settings", _open_settings], ["Quit to home", _quit]]:
-		var pb := UiStyle.button(item[0], item[1], 360)
-		pv.add_child(pb)
+	var items: Array = [["Resume", _resume], ["Restart this level", _retry], ["Leave this path", _leave_path], ["Settings", _open_settings], ["Quit to home", _quit]]
+	var holder: Container = pv
+	if playtest_overlay != null:  # debug: a two-column panel with the way back to the list and a note field, short enough for a phone held sideways
+		items.insert(1, ["Back to scene list", _playtest_back])
+		var grid := GridContainer.new()
+		grid.columns = 2
+		grid.add_theme_constant_override("h_separation", 10)
+		grid.add_theme_constant_override("v_separation", 8)
+		pv.add_child(grid)
+		holder = grid
+	for item in items:
+		var pb := UiStyle.button(item[0], item[1], 300 if playtest_overlay != null else 360, 52 if playtest_overlay != null else 60)
+		holder.add_child(pb)
 		if item[0] == "Leave this path":
 			_leave_btn = pb
 			pb.visible = false
+	if playtest_overlay != null:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 10)
+		pv.add_child(row)
+		_pause_note = LineEdit.new()
+		_pause_note.placeholder_text = "Type a note about this scene"
+		_pause_note.custom_minimum_size = Vector2(430, 48)
+		_pause_note.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(_pause_note)
+		row.add_child(UiStyle.button("Save note", _playtest_save_note, 150, 48))
 
 
 # --- the wizard and the Trial ----------------------------------------------------------------------------------------------
@@ -473,6 +511,8 @@ func _build_gate() -> void:
 
 func _setup_bot() -> void:
 	var pol := OS.get_environment("RW_RUN_BOT")
+	if pol == "" and bool(playtest.get("autoplay", false)):  # the scene list's autoplay option: the same perfect bot the tests use
+		pol = "perfect"
 	if pol == "":
 		return
 	_bot = {"policy": pol}
@@ -638,6 +678,8 @@ func _step_virtual(t: float) -> void:
 
 func _advance(t: float, audio_t: float) -> void:
 	hud.now_t = audio_t
+	if playtest_overlay != null:
+		playtest_overlay.refresh()
 	hud.stage_h = hud.size.y * (1.0 - float(Session.PAD_SIZES[clampi(Session.pad_size, 0, 2)]))  # (the thin route-window bar sits on the bottom edge of the picture, above the pads)
 	if trial_state == "in" or trial_state == "leaving":
 		if OS.has_environment("RW_TRIAL_LEAVE_AT") and audio_t >= float(OS.get_environment("RW_TRIAL_LEAVE_AT")) and trial.active:
@@ -653,6 +695,9 @@ func _advance(t: float, audio_t: float) -> void:
 		_handle(engine.update(minf(t, trial_entry_t - 0.001)))
 	else:
 		_handle(engine.update(t))
+	if not playtest.is_empty() and not bool(playtest.get("continue_run", true)) and engine.phase_n > 1 and not _ended:  # the list's "back to the list when the scene ends"
+		_playtest_back()
+		return
 	if trial_state == "":
 		_update_passage(t, audio_t)
 	else:
@@ -1322,6 +1367,8 @@ func _retry() -> void:
 		audio.stop()
 	Session.run_start_node = _run_world_of(engine.node_id)  # a restart begins at the world's entry scene (its id is the world's id)
 	Session.run_start_path = run_path
+	if not playtest.is_empty():  # a debug start restarts the scene being played, with the same options
+		PlaytestMode.prepare("main" if run_path == "" else run_path, engine.node_id)
 	get_tree().reload_current_scene()
 
 
@@ -1336,7 +1383,29 @@ func _go_over() -> void:
 		audio.stop()
 	Session.run_progress.run_ended(int(Session.run_result.get("phases", 0)))
 	set_process(false)
+	if PlaytestMode.active:  # a debug-started run that the crowd left: back to the scene list, not the retry screen
+		PlaytestMode.back_to_list(get_tree())
+		return
 	get_tree().change_scene_to_file("res://src/run/run_over.tscn")
+
+
+## Debug / playtest: leave this scene for the scene list (the pause panel's "Back to scene list", and the end of a scene when "continue the run" is off).
+func _playtest_back() -> void:
+	event_log.append({"kind": "playtest_back", "t": clock.audio_time() if clock != null else 0.0, "phase": engine.phase_n, "node": engine.node_id})
+	_ended = true
+	if virtual_mode:
+		return
+	if audio != null:
+		audio.stop()
+	PlaytestMode.back_to_list(get_tree())
+
+
+func _playtest_save_note() -> void:
+	if playtest_overlay == null or _pause_note == null or _pause_note.text.strip_edges() == "":
+		return
+	playtest_overlay.record("note", _pause_note.text.strip_edges())
+	_pause_note.text = ""
+	_pause_note.placeholder_text = "Saved to the playtest notes"
 
 
 # --- paths: the tempo handoff ----------------------------------------------------------------------------------------------------

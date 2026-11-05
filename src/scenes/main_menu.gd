@@ -12,7 +12,7 @@ const DUEL_SCENE := "res://src/duel/duel_lobby.tscn"
 
 var _box: VBoxContainer
 var _title: Label
-var _buttons: Array = []  # [chapters, reached, settings, play]
+var _buttons: Array = []  # [chapters, reached, duel, settings, debug, play] (Play last)
 
 
 ## A short window (a phone held sideways) gets a smaller title, tighter gaps and lower buttons so all four fit.
@@ -21,10 +21,11 @@ func _fit() -> void:
 	_title.add_theme_font_size_override("font_size", 38 if compact else 56)
 	_box.add_theme_constant_override("separation", 8 if compact else UiStyle.GAP)
 	for b in _buttons:
-		(b as Button).custom_minimum_size.y = (56.0 if b == _buttons[3] else 48.0) if compact else (76.0 if b == _buttons[3] else 60.0)
+		(b as Button).custom_minimum_size.y = (56.0 if b == _buttons[_buttons.size() - 1] else 48.0) if compact else (76.0 if b == _buttons[_buttons.size() - 1] else 60.0)
 
 
 func _ready() -> void:
+	PlaytestMode.end_session()  # (Debug / Playtest ends when home is shown: the real progress comes back)
 	theme = UiStyle.theme()
 	var bg := ColorRect.new()
 	bg.color = UiStyle.BG
@@ -59,8 +60,17 @@ func _ready() -> void:
 	var duel := UiStyle.button("Wizard Duel (wifi)", func() -> void: get_tree().change_scene_to_file(DUEL_SCENE))
 	duel.set_meta("scene", DUEL_SCENE)
 	box.add_child(duel)
-	box.add_child(settings)
-	for b in [chapters, reached, duel, settings]:
+	var tail := HBoxContainer.new()  # Settings and the Debug / Playtest list share a row (the six buttons still fit a phone held sideways)
+	tail.add_theme_constant_override("separation", UiStyle.GAP)
+	box.add_child(tail)
+	settings.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tail.add_child(settings)
+	var debug := UiStyle.button("Debug / Playtest" + (" (on)" if OS.get_environment("RW_DEBUG") == "1" else ""), func() -> void: PlaytestMode.open_list(get_tree()))
+	debug.set_meta("scene", PlaytestMode.LIST_SCENE)
+	debug.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	debug.add_theme_color_override("font_color", Color(0.55, 0.92, 1.0))
+	tail.add_child(debug)
+	for b in [chapters, reached, duel, settings, debug]:
 		_buttons.append(b)
 	_buttons.append(play)
 	resized.connect(_fit)
