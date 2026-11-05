@@ -76,8 +76,7 @@ real 3 "bet@5" "blocks:111111000" "" 16_falling_off_the_chair:78
 # the others shrugging, the ring breaking). A finer clock (0.05 s a frame), the touch at beat 13.2 of phase 1 (the table in view, the title card gone; judged at block 1's decision).
 RATE=0.05
 SEL="ward.cards@13.2"
-real 3 "bet@5" perfect "" 17_touch_registered:p13.35 32_pleased_at_the_touch:p15.5
-real 3 "bet@5" perfect "" 18_waiting_to_sit:p27.6
+real 3 "bet@5" perfect "" 17_touch_registered:p13.35 32_pleased_at_the_touch:p15.5 18_waiting_to_sit:p27.6
 real 3 "bet@5" none "" 19_waved_off:p28.75 33_refusal_on_the_people:p29.6
 # the table in the room before any touch (docs/BLACKJACK_INTEGRATION.md, "The table in the room"): the invitation from the room's home; 31 is the same frame's table, enlarged
 SEL="none@0"
