@@ -90,7 +90,7 @@ func _refuse(errors: Array) -> void:
 	ended = true
 	var text := "Track pack refused:\n" + "\n".join(PackedStringArray(errors))
 	print("TRACK_REFUSED ", JSON.stringify(errors))
-	push_error(text)
+	printerr(text)
 	var l := Label.new()
 	l.text = text
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

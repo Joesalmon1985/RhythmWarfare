@@ -62,6 +62,7 @@ func test_folder_and_json_problems() -> void:
 	assert_contains(r["errors"], "does not exist")
 	var folder := TrackTestKit.temp_root().path_join("no_json")
 	DirAccess.make_dir_recursive_absolute(folder)
+	DirAccess.remove_absolute(folder.path_join("track.json"))  # left over from an earlier run
 	assert_contains(TrackPack.load_pack(folder)["errors"], "no track.json")
 	var f := FileAccess.open(folder.path_join("track.json"), FileAccess.WRITE)
 	f.store_string("{ not json")
