@@ -211,7 +211,7 @@ played becomes a reached level (Night One -> Warehouse, Mothership, Underworld, 
 | Save | `src/run/run_progress.gd` | reached levels, migration |
 | Import | `tools/content/beatshaper.py` | scan, check, import, assign, apply, validate |
 
-The HUD names the world and, under it, the scene (room); a new scene shows a title card (the world above, the room as the title). Stages are keyed by art world (map), so the Hospital and
+The HUD is silent during play (see "The silent HUD" below): it no longer names the world, the room or the stage and shows no title card. Stages are keyed by art world (map), so the Hospital and
 Hospital, late share one stage. World swap: the stage of each world is built once and kept; candidates for the next level are built during cue-free guards (one per guard) and the swap on the downbeat is a
 visibility change plus a flash. Audio for the candidates is loaded on a thread when the route window opens. The old chapter scenes (`story_play`, `story_campaign`, `story_result`,
 `story_interlude`) and the military screens still exist in the repository for the art pipeline, tests and the developer button (editor only), but nothing in the run path
@@ -440,3 +440,22 @@ People are told what to do and what to feel by data, never by text.
   `tests/test_hotspots_engine.gd` (acting leaves the outcomes alone, chains, validator, every shipped hotspot both ways). `tools/story/art/directed.py` reads hotspot `acting`, scene `cast` and cinematic
   `cast` so the sheets bake exactly the acts and faces the data names (`tools/content/test_directed.py`).
 - **Stage 1b ships no authored acting or cast** (the five worlds' pass is stage 1d); the tests inject lines into the shipped data.
+
+## The silent HUD (docs/THREE_PATHS_AND_FACES_PLAN.md D3 and 2.4, stage 1c)
+
+During play nothing is written: no title card, no HUD captions (BASS ENTERS, RISER, FALL, HOLDING THE MIX, THE CROWD DRIFTS AWAY), no world or room name, no stage label, no "CROWD" label, no numeric
+countdown, no DRUMS / BASS banner and no "CROWD" caption on the pads, no "Nice: the mix moves on" status line, and in the Bassment no title, caption band, zone tag or banner (YOU DIED, VICTORY, DEFEATED). What stays: the four
+mix pips, the energy meter, the pads' judgement words (PERFECT, GREAT, MISS: feedback, not story), menus, the pause panel, settings, the result screens and the F3 line. `RW_DEV_TEXT=1` (`DevText.on()`, read
+at call time) brings all of it back, and the tests that read captions or title cards set it (`test_run_scene`, `test_trial`).
+
+The information the text carried is in the world: BASS ENTERS is the bass coming in with the lights lifting, ROUTE CHOSEN the hotspot's committed flash, RISER / FALL are audible, and a new room is the door
+walk plus a **light swell**: `StoryStage` action `room_swell` (RunPlay sends it on every phase start but the first) lowers the room's lamps to 55 % on the downbeat and brings them up over two beats
+(`StoryStage.swell_gain`, `StoryWorld.light_of` ctx `swell_gain`). The choice window is a thin gold bar along the bottom of the picture that empties over the 16 beats (`RunHud.window_left`), the same
+bar the Bassment's four-bar window uses.
+
+The Bassment's 63 passages' narrative is acted by the creature standing in the room: `content/trial/hotspots.json` encounters carry `acting: {figure, available, selected, success, failure}` authored from
+one table keyed by creature kind in `tools/trial/make_hotspots.py` (`CREATURE_ACTING`; the contract's `figure` names a creature instead of an `actor`). A creature is a billboard, not a baked person, so its
+acts are motions on the figure (`RunActing.figure_motion`: block, offer, laugh, stamp, recoil, bow, collapse, shake_head, nod, plead, stare), played by `TrialScene._animate_figure`: the `available` act
+while it waits, `selected` once tapped or while the fight is on, `success` when it is beaten, `failure` when it beats you. Items, exits and luck tests have no acts (their lights are the look).
+`tests/test_run_hud_silent.gd` hooks `RunHud._outlined` (a counter, `strings_drawn`) over a scripted run from the count-in through the second scene; `test_trial.gd` checks the Bassment's text is hidden.
+Before/after shots: `bash tools/run/shoot_silent.sh` writes `docs/shots/silent/`.

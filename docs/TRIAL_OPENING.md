@@ -48,7 +48,7 @@ no pick, so the default applies); `RW_TRIAL_TAPS` is the same list (`;` or `,` b
   the entry and the walk back out are unchanged). Ignoring it changes nothing: the run goes on by its ordinary routes. Choosing it walks into the dungeon (see above).
 * **The music game never stops.** Cues fall on the four pads the whole time, in 16-beat blocks (four bars) on the same clock, packs and judge as the run. Nothing pauses for reading
   or choosing.
-* **A passage.** The camera stands in the passage's place in its zone map. Across the top is the **caption band**: the title and two to four sentences of narrative (what the place is, what is
+* **A passage.** (Since stage 1c the caption band, the title, the zone tag and the banners are **off during play**; `RW_DEV_TEXT=1` brings them back and the creature acts what the caption said, see `docs/CONTINUOUS_RUN.md` "The silent HUD".) The camera stands in the passage's place in its zone map. Across the top is the **caption band**: the title and two to four sentences of narrative (what the place is, what is
   in it), never a choice, with the consequence of the last move or the stumble of a failed one on a line of its own. **Every choice is a hotspot in the room**, drawn as light and no words: a ring on the
   floor and a glow on the thing, and four corner ticks on the default; an exit is lit where it lies (a door, a ladder foot, a gap, the water's edge, a seam), a creature **stands in the room** and
   the fight is a tap on it, an item's place (the cracked crystal, the dark archway, a stone palm) is an object, a luck test is a feature (the pipes, the rope, the barrels, the door's grille). A hotspot behind

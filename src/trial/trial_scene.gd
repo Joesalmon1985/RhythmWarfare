@@ -2,7 +2,7 @@ class_name TrialScene
 extends Control
 ## The Bassment inside the run scene (docs/TRIAL_OPENING.md). The run's RunPlay hosts it: it owns the TrialEngine (the pads, the clock and RunAudio are the host's and never restart),
 ## one StoryStage per zone (each a 2.5D map from content/story/maps/bassment_<zone>.json, built ahead during a cue-free guard and swapped through the passage frame on a downbeat),
-## the camera on rails between the passages' waypoints, the passage text as a caption band across the top (narrative only: no choice is ever written), the choices as hotspots in the
+## the camera on rails between the passages' waypoints, the passage text as a caption band across the top (narrative only: no choice is ever written; off during play, see `_gate_text`: the creatures act what it said), the choices as hotspots in the
 ## room while the four-bar window is open (an exit lit where it lies, a creature standing in the room, an object, a feature; the default one brighter; tap to select, tap again to change,
 ## keys 1 to 4 on a desktop), creatures as billboard figures with idle, attack and struck poses, and the tableaux of a death and of the victory. Everything is a function of song time.
 ## The hotspot data is content/trial/hotspots.json (TrialHotspots); the lights and the hit test are the run's own HotspotView (one per zone stage, inside its low-res picture), fed by `hotspot_items`.
@@ -411,10 +411,22 @@ func update(t: float, audio_t: float) -> void:
 		var span := float(TrialEngine.BLOCK_BEATS) * _beat_s
 		_timer_bar.scale = Vector2(clampf(engine.window_left(t) / span, 0.0, 1.0), 1.0)
 	_panel.visible = _panel.visible and not swapping
+	_gate_text()
 	_update_dark(audio_t)
 	if left_t >= 0.0 and audio_t >= left_t and not ended:
 		ended = true
 		host.trial_leave(left_t, leave_reason)
+
+
+## No text during play (docs/THREE_PATHS_AND_FACES_PLAN.md D3): the title, the caption band (what happened, what you carry), the zone tag and the big banners (YOU DIED, VICTORY, DEFEATED) stay hidden
+## unless RW_DEV_TEXT=1. The labels keep their text (the tests and the debug view read it); the creature's acts, the light and the fade tell it instead.
+func _gate_text() -> void:
+	if DevText.on():
+		return
+	_title.visible = false
+	_panel.visible = false
+	_tag.visible = false
+	_msg.visible = false
 
 
 func _update_dark(t: float) -> void:
@@ -839,7 +851,7 @@ func _spawn_figure(enc: String, t: float) -> void:
 	mi.mesh = q
 	mi.material_override = mat
 	st.world.add_child(mi)
-	_fig = {"node": mi, "mat": mat, "id": enc, "pos": spot["pos"], "sec": spot["sec"], "spec": spec, "t0": t, "stage": st}
+	_fig = {"node": mi, "mat": mat, "id": enc, "pos": spot["pos"], "sec": spot["sec"], "spec": spec, "t0": t, "stage": st, "acting": _figure_acting(enc)}
 	_fig_pose = "idle"
 	_animate_figure(t)
 
@@ -847,6 +859,40 @@ func _spawn_figure(enc: String, t: float) -> void:
 func figure_pose() -> String:
 	return _fig_pose
 
+
+## The `acting` block of the hotspot whose creature this is (content/trial/hotspots.json, authored by tools/trial/make_hotspots.py's table), looked up in the passage on show.
+func _figure_acting(enc: String) -> Dictionary:
+	if engine == null:
+		return {}
+	for h in tdata.hotspots.get(engine.flow.passage, []):
+		if typeof(h.get("acting", null)) == TYPE_DICTIONARY and str(h["acting"].get("figure", "")) == enc:
+			return {"block": h["acting"], "choice": int(h.get("choice", -1))}
+	return {}
+
+
+## What the creature is doing at song time `t`: {act, u (beats since it began)}: its `available` act while it waits, `selected` once the player has tapped it or the fight is on, `success` when it is
+## beaten, `failure` when it beats the player. An empty act when it has no acting block.
+func figure_act_at(t: float) -> Dictionary:
+	return _figure_act(t)
+
+
+func _figure_act(t: float) -> Dictionary:
+	var none := {"act": "", "u": 0.0}
+	if _fig.is_empty() or (_fig["acting"] as Dictionary).is_empty():
+		return none
+	var block: Dictionary = _fig["acting"]["block"]
+	var phase := "available"
+	var t0 := float(_fig["t0"])
+	if not _outcome.is_empty():
+		phase = "success" if str(_outcome["kind"]) == "win" else "failure"
+		t0 = float(_outcome["t0"])
+	elif engine != null and (engine.selected == int(_fig["acting"]["choice"]) or not engine.window_open):
+		phase = "selected"
+		t0 = maxf(float(_sel_t.get(int(_fig["acting"]["choice"]), t0)), t0)
+	var spec: Variant = block.get(phase, block.get("available", {}))
+	if typeof(spec) != TYPE_DICTIONARY:
+		return none
+	return {"act": str((spec as Dictionary).get("act", "")), "u": maxf(t - t0, 0.0) / _beat_s}
 
 func _animate_figure(t: float) -> void:
 	if _fig.is_empty() or not is_instance_valid(_fig["node"]):
@@ -858,6 +904,8 @@ func _animate_figure(t: float) -> void:
 	var floor_y := float(m.sector(str(_fig["sec"])).get("floor", 0.0))
 	var h := float(spec["size"])
 	var pose := "idle"
+	var sc_x := 1.0
+	var sc_y := 1.0
 	var y := floor_y + float(spec["lift"]) + h * 0.5 + sin(t * 2.2) * 0.04
 	var sc := 1.0 + 0.03 * pow(1.0 - fposmod(t / _beat_s, 1.0), 3.0)
 	var alpha := clampf((t - float(_fig["t0"])) / _beat_s, 0.0, 1.0)  # steps out of the dark over a beat
@@ -877,6 +925,16 @@ func _animate_figure(t: float) -> void:
 			p3.x += dir.x * lunge * 1.1
 			p3.z += dir.y * lunge * 1.1
 			sc *= 1.0 + lunge * 0.35
+	var act := _figure_act(t)
+	var mo := RunActing.figure_motion(str(act["act"]), float(act["u"])) if str(act["act"]) != "" else {}
+	if not mo.is_empty():  # the creature's body language (its `acting` in content/trial/hotspots.json): a motion on the billboard, towards the player and sideways to the view
+		var cam2: Vector3 = st.player.pose_at(t)["cam"]
+		var to_cam := (Vector2(cam2.x, cam2.z) - pos).normalized()
+		p3.x += to_cam.x * float(mo["dz"]) + to_cam.y * float(mo["dx"])
+		p3.z += to_cam.y * float(mo["dz"]) - to_cam.x * float(mo["dx"])
+		p3.y += float(mo["dy"])
+		sc_x = float(mo["sx"])
+		sc_y = float(mo["sy"])
 	if pose != _fig_pose:
 		if OS.get_environment("RW_TRIAL_TRACE") == "1":
 			print("TRIAL figure pose ", pose)
@@ -884,7 +942,7 @@ func _animate_figure(t: float) -> void:
 		(_fig["mat"] as StandardMaterial3D).albedo_texture = _assets.texture("textures/fig_%s_%s.png" % [_fig["id"], pose])
 	var node: MeshInstance3D = _fig["node"]
 	node.position = p3
-	node.scale = Vector3(sc, sc, sc)
+	node.scale = Vector3(sc * sc_x, sc * sc_y, sc)
 	var col := Color.WHITE
 	if st.world != null:
 		col = st.world.figure_light(pos, str(_fig["sec"])) * 1.0

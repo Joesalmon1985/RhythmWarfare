@@ -543,7 +543,8 @@ func test_the_fight_loses_then_the_retry_wins() -> void:
 # --- the scene: the Bassment in 2.5D inside the run scene -----------------------------------------------------------------------------
 
 ## A run scene launched straight into the dungeon (RW_TRIAL_DIRECT), virtual clock, on a phone-shaped window.
-func _trial_scene(bot: String) -> Dictionary:
+func _trial_scene(bot: String, dev_text := true) -> Dictionary:
+	OS.set_environment("RW_DEV_TEXT", "1" if dev_text else "")  # these tests read the caption band and the banners; the silent default is tested on its own (test_play_text_is_off_without_rw_dev_text)
 	OS.set_environment("RW_RUN_VIRTUAL", "1")
 	OS.set_environment("RW_TRIAL_DIRECT", "1")
 	OS.set_environment("RW_TRIAL_BOT", bot)
@@ -578,6 +579,7 @@ func _free_scene(d: Dictionary) -> void:
 	DirAccess.remove_absolute("user://test_trial_save3.json")
 	OS.set_environment("RW_RUN_VIRTUAL", "")
 	OS.set_environment("RW_TRIAL_START", "")
+	OS.set_environment("RW_DEV_TEXT", "")
 
 
 func _scene_at(title: String, bot: String) -> Dictionary:
@@ -1076,4 +1078,46 @@ func test_a_creature_stands_in_the_room_as_its_hotspot_before_the_fight_and_a_ta
 	assert_eq(tr.engine.selected, 0)
 	tr.bot = "perfect"
 	assert_true(_until(scene, func() -> bool: return _title_is(tr, "The Dry Landing"), 60.0), "the fight is played from the tap and won")
+	_free_scene(d)
+
+
+# --- the silent Bassment (stage 1c, docs/THREE_PATHS_AND_FACES_PLAN.md D3 and 2.6) ----------------------------------------------
+
+## Without RW_DEV_TEXT nothing is written during the dungeon: no title, no caption band, no zone tag, no banner. The labels still hold their text (the debug view reads it).
+func test_play_text_is_off_without_rw_dev_text() -> void:
+	var d := _trial_scene("perfect", false)
+	var tr: TrialScene = d["tr"]
+	var scene: Node = d["scene"]
+	assert_true(_until(scene, func() -> bool: return tr.engine.window_open and tr._desc.text.length() > 40, 30.0), "the first passage's window opens")
+	assert_true(tr._choice_layer.visible, "the choice window (the hotspots and the thin bar) is shown")
+	assert_false(tr._panel.visible, "no caption band")
+	assert_false(tr._title.visible, "no title")
+	assert_false(tr._tag.visible, "no zone tag")
+	assert_false(tr._msg.visible, "no banner")
+	assert_true(tr._timer_bar.visible, "the four-bar window bar stays")
+	assert_true(tr._desc.text.length() > 40, "(the text is still set for the debug view)")
+	_free_scene(d)
+	var d2 := _trial_scene("perfect", true)
+	var tr2: TrialScene = d2["tr"]
+	assert_true(_until(d2["scene"], func() -> bool: return tr2.engine.window_open and tr2._desc.text.length() > 40, 30.0))
+	assert_true(tr2._panel.visible and tr2._title.visible and tr2._tag.visible, "RW_DEV_TEXT=1 brings the band back")
+	_free_scene(d2)
+
+
+## The creature acts what the caption said: its `available` act while it waits, `selected` once it is tapped, and the motion is applied to the billboard.
+func test_a_creature_acts_instead_of_a_caption() -> void:
+	var d := _scene_at("The Flooded Boiler Room", "perfect")
+	var tr: TrialScene = d["tr"]
+	var scene: Node = d["scene"]
+	assert_true(_until(scene, func() -> bool: return tr.engine.window_open and _title_is(tr, "The Flooded Boiler Room") and tr.hotspot_items().size() == 2 and not tr._fig.is_empty(), 30.0))
+	var hs := tr.hotspot_of(0)
+	assert_eq(str(hs["acting"]["figure"]), "cable_eel", "the eel's hotspot carries its acting")
+	var a := tr.figure_act_at(scene.hud.now_t)
+	assert_eq(a["act"], str(hs["acting"]["available"]["act"]), "waiting: its available act")
+	assert_eq(tr.tap_centre(0), 0)
+	scene._vt += 1.0 / 30.0
+	scene._step_virtual(scene._vt)
+	assert_eq(tr.figure_act_at(scene.hud.now_t)["act"], str(hs["acting"]["selected"]["act"]), "tapped: its selected act")
+	var node: MeshInstance3D = tr._fig["node"]
+	assert_true(node.scale.x > 0.0 and node.scale.y > 0.0)
 	_free_scene(d)

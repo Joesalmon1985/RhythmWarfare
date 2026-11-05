@@ -283,6 +283,27 @@ func test_acting_chain_orders_committed_then_the_outcome_then_what_follows() -> 
 	assert_true(RunActing.outcome_chain(_h({}), true, 0.0, bs).is_empty())
 
 
+func test_the_bassment_table_gives_every_creature_an_acting_block_that_validates() -> void:
+	var td := TrialData.load_default()
+	assert_eq(td.errors, [], "the Bassment's data validates with its acting blocks")
+	var seen := {}
+	for n in td.hotspots:
+		for h in td.hotspots[n]:
+			if str(h["kind"]) == "encounter":
+				assert_true(RunActing.has_acting(h), "%s: the creature acts" % h["id"])
+				var fig := str(h["acting"].get("figure", ""))
+				assert_true(td.encounters.has(fig), "%s names a creature (%s)" % [h["id"], fig])
+				for ph in ["available", "success", "failure"]:
+					assert_true(not RunActing.spec_of(h, ph).is_empty(), "%s has %s" % [h["id"], ph])
+				seen[fig] = true
+			else:
+				assert_false(RunActing.has_acting(h), "%s: only creatures act in the Bassment" % h["id"])
+	assert_eq(seen.size(), td.encounters.size(), "all ten creatures")
+	var m := RunActing.figure_motion("laugh", 0.25)
+	assert_true(float(m["dy"]) > 0.0, "a laughing creature bounces")
+	assert_eq(RunActing.figure_motion("idle", 3.0)["sx"], 1.0)
+
+
 # --- the crowd plays it ----------------------------------------------------------------------------------------------------
 
 func _stage() -> StoryStage:

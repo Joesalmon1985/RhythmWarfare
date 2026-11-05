@@ -276,6 +276,7 @@ func _build_layout(start: String) -> void:
 	pad_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pad_view.clip_contents = true
 	pad_view.show_reward = false
+	pad_view.show_crowd_label = DevText.on()
 	pad_view.holding_fn = engine.judge.hold_progress
 	pad_view.progress_fn = engine.progress_at
 	pad_view.muted_fn = func(_f: String) -> bool: return false
@@ -539,6 +540,7 @@ func _step_virtual(t: float) -> void:
 
 func _advance(t: float, audio_t: float) -> void:
 	hud.now_t = audio_t
+	hud.stage_h = hud.size.y * (1.0 - float(Session.PAD_SIZES[clampi(Session.pad_size, 0, 2)]))  # (the thin route-window bar sits on the bottom edge of the picture, above the pads)
 	if trial_state == "in" or trial_state == "leaving":
 		if OS.has_environment("RW_TRIAL_LEAVE_AT") and audio_t >= float(OS.get_environment("RW_TRIAL_LEAVE_AT")) and trial.active:
 			trial.request_leave()  # scripted: the back key, for the recordings
@@ -564,7 +566,7 @@ func _advance(t: float, audio_t: float) -> void:
 	proxy.crowd.energy = engine.energy
 	for b in range(1, PadView.BUTTONS + 1):
 		pad_view.button_down[b] = lane_input.is_button_down(b) or bool(pad_view.button_down.get(b, false)) and not _bot.is_empty()
-	pad_view.banner_text = _banner(t)
+	pad_view.banner_text = _banner(t) if DevText.on() else ""
 	note_lane.queue_redraw()
 	hud.queue_redraw()
 	if trial_state == "":
@@ -765,6 +767,8 @@ func _on_phase_start(ev: Dictionary) -> void:
 		_journey_apply({"world": world, "t0": t0 - 4.0 * engine.beat_s, "action": "player_move", "args": {"to": wp, "bars": 3.0, "style": "walk"}})
 		rec["waypoint"] = wp
 	_stage_action(st, "lights_low_pulse", t0)
+	if not first:
+		_stage_action(st, "room_swell", t0)  # a new room: its lamps rise over two beats from the downbeat (the title card is gone: the light says "somewhere new")
 	if int(ev["phase"]) == 1:
 		_stage_action(st, "doors_open", t0)
 
@@ -799,10 +803,12 @@ func _on_block_result(ev: Dictionary) -> void:
 	var t := float(ev["t"]) + 0.2
 	if bool(ev["passed"]):
 		if int(ev["block"]) < 3:
-			pad_view.show_status("Nice: the mix moves on", Color(0.7, 1.0, 0.8), float(Time.get_ticks_msec()) / 1000.0)
+			if DevText.on():
+				pad_view.show_status("Nice: the mix moves on", Color(0.7, 1.0, 0.8), float(Time.get_ticks_msec()) / 1000.0)
 	else:
 		hud.caption("HOLDING THE MIX: HAVE ANOTHER GO", "bad", t, 2.2)
-		pad_view.show_status("Missed it: same cues again", Color(1.0, 0.75, 0.55), float(Time.get_ticks_msec()) / 1000.0)
+		if DevText.on():
+			pad_view.show_status("Missed it: same cues again", Color(1.0, 0.75, 0.55), float(Time.get_ticks_msec()) / 1000.0)
 
 
 func _end_fade(_t: float, seconds: float) -> void:

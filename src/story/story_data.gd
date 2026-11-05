@@ -13,6 +13,8 @@ const ACTIONS := [
 	"beams_off", "bass_reveal", "haze_burst", "led_eq", "led_rings", "led_bars", "led_wave", "disco_ball_on", "woofer_pump_on",
 	"woofer_pump_off", "spotlight_hero", "spotlight_sweep", "spotlight_off", "riser_up", "riser_down", "confetti",
 	"glowsticks_on", "glowsticks_off", "light_wave", "floor_ripple", "rave_peak",
+	# room_swell: a new room's lamps rise over two beats from its downbeat (the run's silent HUD, docs/THREE_PATHS_AND_FACES_PLAN.md 2.4)
+	"room_swell",
 	# crowd
 	"front_row_sway", "clap_sync", "wave_across", "jump_sync", "hands_up_all", "circle_form", "hero_center", "hero_solo",
 	"group_footwork", "bring_in", "gather_at_door", "regroup", "applause", "look_around", "ending_lean",

@@ -4,6 +4,8 @@ extends Control
 ## the director sends. Every effect is a function of song time (the audio clock) and of action start times; nothing here advances on frame counts.
 
 const NO_END := 1.0e9
+const SWELL_BEATS := 2.0  # a new room's lamps rise over this many beats from its downbeat
+const SWELL_FROM := 0.55  # ... from this share of their light
 const PALETTES := {
 	"low": [Color(0.35, 0.3, 0.9), Color(0.6, 0.25, 0.8)],
 	"cool": [Color(0.2, 0.85, 1.0), Color(0.55, 0.35, 1.0)],
@@ -297,6 +299,14 @@ func bar_s() -> float:
 	return 4.0 * 60.0 / bpm
 
 
+## The room's light gain at song time `t`: the swell of a new room (SWELL_FROM of the light on its downbeat, easing up to all of it over SWELL_BEATS beats), 1 when no swell is under way.
+func swell_gain(t: float) -> float:
+	var u := progress("room_swell", t)
+	if u < 0.0:
+		return 1.0
+	return lerpf(SWELL_FROM, 1.0, 1.0 - pow(1.0 - u, 2.0))
+
+
 func update(t: float, p_energy: float) -> void:
 	t_now = t
 	energy = p_energy
@@ -415,7 +425,7 @@ func _update_world(t: float, p_energy: float, pose: Dictionary) -> void:
 	var pcs := {}
 	for pid in _piece_ids:
 		pcs[pid] = piece_state(str(pid), t)
-	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": StoryLight.strobe_at(self, t), "woofer_pump": _woofer_pump, "pieces": pcs, "palette_weight": map.palette_weight}
+	_world_ctx = {"bpm": bpm, "palette": palette_colors(), "energy": p_energy, "flicker": flickering(t), "strobe": StoryLight.strobe_at(self, t), "woofer_pump": _woofer_pump, "pieces": pcs, "palette_weight": map.palette_weight, "swell_gain": swell_gain(t)}
 	world.update(t, _world_ctx)
 	fx3d.update(t)
 	lowres.apply_post(StoryLight.post_state(self, t), StoryLight.pal(self, 0).lightened(0.3))
@@ -473,6 +483,8 @@ func apply(a: Dictionary) -> void:
 	match act:
 		"doors_open":
 			_act["doors_open"] = {"t0": t0, "t1": t0 + 6.0 * bar_s()}
+		"room_swell":
+			_act["room_swell"] = {"t0": t0, "t1": t0 + SWELL_BEATS * bar_s() / 4.0}
 		"lights_low_pulse":
 			palette = "low"
 		"lights_warm":

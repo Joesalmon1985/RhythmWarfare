@@ -30,7 +30,15 @@ https://github.com/Joesalmon1985/RhythmWarfare.
   `tools/story/art/directed.py` now also reads cinematic `cast` lines and skips Bassment `figure` blocks (`tools/content/test_directed.py`). Divergences: the plan's `StoryCrowd.direct(actor, act, face, ...)` is
   `direct_actor` (the name `direct` is the crowd's group directive with twenty callers); `sheet_pick` choosing by state and face was already done in stage 1a; no acting or cast is authored yet (stage 1d), so
   the tests inject lines into the shipped data and "every shipped cast line" is vacuously the empty set today (the loop is in place and will cover the data the day it lands). Test run at the end of 1b: `bash tools/test.sh` green: 67513 checks, 0 failures (the run before stage 1b: 67007), and the 169 Python content tests.
-- Stages 1c (silent HUD), 1d (acting pass on the five worlds), 2 to 6 are not started.
+- **Stage 1c done (5 November 2026): the silent HUD and the Bassment without its caption band** (`docs/CONTINUOUS_RUN.md` "The silent HUD"). With `RW_DEV_TEXT` unset the run draws no title card, captions,
+  world or room name, stage label, numeric countdown, DRUMS / BASS banner or status line, and the Bassment shows no title, caption band, zone tag or banner; the stage pips, the energy meter and a new thin
+  route-window bar stay, and a new room's lamps swell over two beats from its downbeat (`room_swell`). The pads' judgement words (PERFECT, GREAT, MISS) were kept as feedback, not story: if the owner
+  wants those gone too it is one flag in `RunPlay._on_judge_event`. The Bassment's ten creatures carry `acting` authored from `CREATURE_ACTING` in `tools/trial/make_hotspots.py`
+  (regenerated `content/trial/hotspots.json`) and play it as motions on the billboard (`RunActing.figure_motion`; the contract's `figure` key). `tests/test_run_hud_silent.gd`, `test_trial.gd` and
+  `test_run_scene.gd` set `RW_DEV_TEXT=1` where they read text. Proof shots (look at them): `docs/shots/silent/` from `tools/run/shoot_silent.sh`. Test run at the end of 1c: `bash tools/test.sh` green: 67690 checks, 0 failures (the run before stage 1b: 67007), and the 169 Python content tests.
+  Not verified: how the acts, faces, light swell and the thin bar look and feel on the owner's phone in real time (only the virtual clock, the tests and desktop screenshots were run), and nobody has
+  listened to or watched a full run with the text gone. Divergence: the Bassment's caption text is hidden, not removed (the labels still carry it for `RW_DEV_TEXT`).
+- Stages 1d (acting pass on the five worlds), 2 to 6 are not started.
 
 ## What the game is now
 

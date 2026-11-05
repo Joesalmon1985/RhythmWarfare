@@ -13,6 +13,7 @@ const LCD_EDGE := Color(0.3, 0.85, 1.0)
 
 var deck: StoryDeck  # for the glow sprite and the crowd energy
 var energy_fn: Callable  # () -> float 0..100: the crowd energy shown on the LCD
+var show_crowd_label := true  # the run turns the "CROWD" caption of the LCD off during play (RW_DEV_TEXT brings it back)
 var _bursts: Dictionary = {}  # pad -> {t, color, kind}
 var _glow: Dictionary = {}
 var _sb := StyleBoxFlat.new()
@@ -255,7 +256,8 @@ func _draw_centre(rects: Dictionary, now: float, wall: float) -> void:
 		var e := clampf(float(energy_fn.call()) / 100.0, 0.0, 1.0)
 		var ey := inner.end.y - meter_h * 0.8
 		var bar := Rect2(inner.position.x + fs * 4.2, ey, inner.size.x - fs * 4.4, meter_h * 0.7)
-		draw_string(_font, Vector2(inner.position.x, ey + meter_h * 0.7), "CROWD", HORIZONTAL_ALIGNMENT_LEFT, fs * 4.0, int(fs * 0.72), Color(0.75, 0.85, 1.0, 0.75))
+		if show_crowd_label:
+			draw_string(_font, Vector2(inner.position.x, ey + meter_h * 0.7), "CROWD", HORIZONTAL_ALIGNMENT_LEFT, fs * 4.0, int(fs * 0.72), Color(0.75, 0.85, 1.0, 0.75))
 		draw_rect(bar, Color(0.12, 0.14, 0.24))
 		var n := 24
 		for k in n:

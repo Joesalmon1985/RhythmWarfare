@@ -22,6 +22,7 @@ godot --path .                                                         # home sc
 godot --path . res://src/run/run_play.tscn                             # straight into the run (RW_RUN_START=<level id> picks the level)
 RW_RUN_BOT=perfect RW_RUN_ROUTES=up,left godot --path . res://src/run/run_play.tscn   # scripted play: perfect | none | accuracy:<f> | blocks:<1011...>
 RW_RUN_VIRTUAL=1 RW_RUN_BOT=perfect RW_RUN_UNTIL_PHASE=3 RW_STORY_QUIT=1 godot --headless --path . res://src/run/run_play.tscn   # no audio, stepped clock
+RW_DEV_TEXT=1 godot --path . res://src/run/run_play.tscn               # the run writes nothing during play; this brings back the title card, captions, names, countdown and the Bassment's caption band
 godot --headless --path . -s tests/run_tests.gd -- --filter run_      # the run's tests
 godot --path . res://src/trial/trial_play.tscn                         # straight into the Bassment dungeon (RW_TRIAL_START=<passage>)
 bash tools/trial/walk_trial.sh                                          # scripted walk: Warehouse > hatch > the dungeon to the victory > back up into the Warehouse

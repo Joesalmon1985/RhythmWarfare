@@ -455,7 +455,26 @@
     "route": "9"
    },
    "default": false,
-   "repeatable": false
+   "repeatable": false,
+   "acting": {
+    "figure": "lampmoth",
+    "available": {
+     "act": "stare",
+     "face": "neutral"
+    },
+    "selected": {
+     "act": "recoil",
+     "face": "fear"
+    },
+    "success": {
+     "act": "collapse",
+     "face": "grief"
+    },
+    "failure": {
+     "act": "laugh",
+     "face": "laugh"
+    }
+   }
   },
   {
    "id": "trial.8.1",
@@ -665,7 +684,26 @@
     "route": "14"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "acting": {
+    "figure": "cable_eel",
+    "available": {
+     "act": "block",
+     "face": "anger"
+    },
+    "selected": {
+     "act": "stamp",
+     "face": "anger"
+    },
+    "success": {
+     "act": "collapse",
+     "face": "grief"
+    },
+    "failure": {
+     "act": "stamp",
+     "face": "anger"
+    }
+   }
   },
   {
    "id": "trial.12.1",
@@ -1084,7 +1122,30 @@
     "route": "23"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "acting": {
+    "figure": "barrel_knight",
+    "available": {
+     "act": "block",
+     "face": "resolve"
+    },
+    "selected": {
+     "act": "bow",
+     "face": "neutral"
+    },
+    "success": {
+     "act": "collapse",
+     "face": "shame"
+    },
+    "failure": {
+     "act": "bow",
+     "face": "neutral",
+     "then": {
+      "act": "laugh",
+      "face": "laugh"
+     }
+    }
+   }
   },
   {
    "id": "trial.20.1",
@@ -1505,7 +1566,26 @@
     "route": "29"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "acting": {
+    "figure": "mildew_mother",
+    "available": {
+     "act": "block",
+     "face": "anger"
+    },
+    "selected": {
+     "act": "stamp",
+     "face": "anger"
+    },
+    "success": {
+     "act": "collapse",
+     "face": "grief"
+    },
+    "failure": {
+     "act": "laugh",
+     "face": "laugh"
+    }
+   }
   },
   {
    "id": "trial.28.1",
@@ -1715,7 +1795,26 @@
     "route": "34"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "acting": {
+    "figure": "mirror_twin",
+    "available": {
+     "act": "stare",
+     "face": "neutral"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "doubt"
+    },
+    "success": {
+     "act": "collapse",
+     "face": "grief"
+    },
+    "failure": {
+     "act": "laugh",
+     "face": "laugh"
+    }
+   }
   },
   {
    "id": "trial.32.1",
@@ -2098,7 +2197,26 @@
     "route": "42"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "acting": {
+    "figure": "bouncer",
+    "available": {
+     "act": "block",
+     "face": "anger"
+    },
+    "selected": {
+     "act": "stamp",
+     "face": "anger"
+    },
+    "success": {
+     "act": "bow",
+     "face": "shame"
+    },
+    "failure": {
+     "act": "stamp",
+     "face": "anger"
+    }
+   }
   },
   {
    "id": "trial.40.1",
@@ -2415,7 +2533,26 @@
     "route": "47"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "acting": {
+    "figure": "rat_king",
+    "available": {
+     "act": "block",
+     "face": "anger"
+    },
+    "selected": {
+     "act": "stamp",
+     "face": "anger"
+    },
+    "success": {
+     "act": "collapse",
+     "face": "grief"
+    },
+    "failure": {
+     "act": "laugh",
+     "face": "laugh"
+    }
+   }
   },
   {
    "id": "trial.45.1",
@@ -2555,7 +2692,26 @@
     "route": "51"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "acting": {
+    "figure": "furnace_imp",
+    "available": {
+     "act": "bow",
+     "face": "laugh"
+    },
+    "selected": {
+     "act": "laugh",
+     "face": "laugh"
+    },
+    "success": {
+     "act": "collapse",
+     "face": "shame"
+    },
+    "failure": {
+     "act": "laugh",
+     "face": "laugh"
+    }
+   }
   },
   {
    "id": "trial.48.1",
@@ -2938,7 +3094,26 @@
     "route": "57"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "acting": {
+    "figure": "gargoyle",
+    "available": {
+     "act": "block",
+     "face": "anger"
+    },
+    "selected": {
+     "act": "stamp",
+     "face": "anger"
+    },
+    "success": {
+     "act": "collapse",
+     "face": "grief"
+    },
+    "failure": {
+     "act": "stamp",
+     "face": "anger"
+    }
+   }
   },
   {
    "id": "trial.55.1",
@@ -3119,7 +3294,26 @@
     "route": "61"
    },
    "default": true,
-   "repeatable": false
+   "repeatable": false,
+   "acting": {
+    "figure": "echo",
+    "available": {
+     "act": "stare",
+     "face": "neutral"
+    },
+    "selected": {
+     "act": "shake_head",
+     "face": "doubt"
+    },
+    "success": {
+     "act": "bow",
+     "face": "relief"
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt"
+    }
+   }
   },
   {
    "id": "trial.59.1",
