@@ -85,3 +85,18 @@ M1 then M2 (one agent, sequential); M3 in parallel with M2 (a second agent, agai
 Music owns: `tools/content/*`, `content/music/*`, `content/library/*`, `songs/*`, `content/story/music.json`, the `music` fields of `content/story/<chapter>.json` and `content/trial/passages.json`,
 `src/run/run_audio.gd`, `src/audio/*`, `src/run/run_data.gd` music validation only, `docs/MUSIC_*.md`, `docs/audition/`. Visual owns everything else under `src/run`, `src/trial`, `src/story`,
 `content/run`, `content/trial` (except `music`), `content/story/maps`, `assets/`, `tools/run`, `tools/trial`, `tools/story`.
+
+## 7. Progress log
+
+### M1 and M2 (Sonnet, 2026-11-05)
+- `tools/content/midi_reader.py` is the one MIDI reader/writer (no mido anywhere; the 39 library MIDI files rewrite byte for byte). The three old content tests were rewritten
+  on it; `python3 -m unittest discover -s tools/content -p "test_*.py"` passes.
+- `tools/content/catalogue.py` -> `content/music/catalogue.json` (schema 1) and `docs/MUSIC_CATALOGUE.md`: 123 WAV, 97 MIDI, 32 families. Tempo is measured (59 of the 60
+  already-imported pack files agree with their packs; the 60th was fixed by a length rule); `used_by` links files to packs and clips. Deviations from the plan text: phrase lengths
+  that tile (4 under 8) count as a length match but make a pairing `uncertain`; an atonal-only pairing across source folders is `uncertain` too (rules only).
+- Beat Shaper packs imported, not assigned to any scene: `cold_fusion`, `_v1`..`_v3` (174x1, 16 beats), `meta_fusion`, `_v1` (174x1, 32 beats). `cold_fusion_v3`'s bass peaks above
+  full scale in the source, so it is imported at -4 dB instead of +3 dB (`--bass-db -4`). `beatshaper.py validate` is OK.
+- Ableton renders: `content/imports/cold_meta.json` -> 11 clips, 11 sounds (library 42 clips, 41 sounds, 141 loops). Library format extended: per-clip `bars`/`tail_bars`,
+  bass lines of 1/2/4/8 bars tiled over the loop, `atonal` percussion backings, `source_dir` found in parent folders, cuts recorded in clip.json. Grooves are 8 bars (the 16-bar
+  kick/snare renders repeat an 8-bar pattern), not 16. Rebuild checked byte-identical (twice).
+- New sounds are in `data/campaign/instruments.json` but locked: nothing lists them in `campaign.json` `new_options`; the populate step or the owner decides.

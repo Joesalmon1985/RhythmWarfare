@@ -1,0 +1,70 @@
+{
+ "id": "bass_cold_5",
+ "kind": "bass",
+ "name": "Cold Bass 5",
+ "bars": 4,
+ "tempo_bpm": 174,
+ "key": "E minor",
+ "note": "Bass5: ten notes over 4 bars; the renders keep sounding for 1.8 bars after the MIDI ends, so one bar of the release is kept and the rest is cut (warned). Key E minor, estimate confidence 0.51.",
+ "sounds": {
+  "bass": [
+   "bass_hard_harmonic",
+   "bass_flaring_anger",
+   "bass_trap"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/cold_meta.json",
+  "source_dir": "ToAddTry3",
+  "parts": {
+   "bass": {
+    "midi": "Cold/Bass5.mid",
+    "sha256": "2cb47dc962a40914fc91593dac8ca077b44712f0c9483a8236ff04ee981b4684",
+    "bars": [
+     1,
+     4
+    ],
+    "notes_kept": 10,
+    "notes_in_file": 10,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   }
+  },
+  "renders": {
+   "bass__bass_hard_harmonic": {
+    "file": "Cold/Bass5HardHarmonic.wav",
+    "sha256": "adf97103dc36549ea786b5a07cedb149e9dcc4fc5c9b5337bab026bbdc35fef2",
+    "sample_rate_in": 44100,
+    "gain_db": -11.793,
+    "tail_frames": 66206,
+    "end_fade_ms": 10.0,
+    "frames_in": 384000,
+    "dropped_frames": 52966,
+    "bars_in": 5.8
+   },
+   "bass__bass_flaring_anger": {
+    "file": "Cold/Bass5FlaringAnger.wav",
+    "sha256": "314ede867e870b456c790015073db0768bc73ee421d1fc410f321b0bf9b7f1e1",
+    "sample_rate_in": 44100,
+    "gain_db": -16.037,
+    "tail_frames": 66206,
+    "end_fade_ms": 10.0,
+    "frames_in": 384000,
+    "dropped_frames": 52966,
+    "bars_in": 5.8
+   },
+   "bass__bass_trap": {
+    "file": "Cold/Bass5Trap.wav",
+    "sha256": "72a6fa4a54757de8f5bcba8e220f589c2f46948c13118758d4aa9ee3baeb917b",
+    "sample_rate_in": 44100,
+    "gain_db": -11.312,
+    "tail_frames": 66206,
+    "end_fade_ms": 10.0,
+    "frames_in": 384000,
+    "dropped_frames": 52966,
+    "bars_in": 5.8
+   }
+  }
+ }
+}

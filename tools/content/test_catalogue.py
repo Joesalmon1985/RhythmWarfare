@@ -82,6 +82,8 @@ class Fixture(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.tmp = tempfile.TemporaryDirectory()
         root = Path(cls.tmp.name)
+        cls.repo = root / "repo"
+        cls.repo.mkdir()
         cls.src = root / "Owner"
         sub = cls.src / "Cold"
         sub.mkdir(parents=True)
@@ -113,7 +115,7 @@ class Fixture(unittest.TestCase):
         (sub / "Bass3.wav.asd").write_bytes(b"ignored")
         (sub / "Kick2.wav.import").write_bytes(b"ignored")
         (sub / "readme.txt").write_bytes(b"ignored")
-        cls.cat = cat.build_catalogue([cls.src])
+        cls.cat = cat.build_catalogue([cls.src], cls.repo)
         cls.files = {f["name"]: f for f in cls.cat["files"]}
         cls.midis = {m["name"]: m for m in cls.cat["midis"]}
 
@@ -216,7 +218,7 @@ class Tempo(Fixture):
             d.mkdir()
             (d / "Kick9.mid").write_bytes(ableton_midi([(b, 36, 0.3) for b in range(0, 32, 2)]))
             (d / "Kick9.wav").write_bytes(wav44(stereo(clicks([b for b in range(0, 32, 2)], 12.0, bpm=150.0))))
-            c = cat.build_catalogue([d])
+            c = cat.build_catalogue([d], Path(tempfile.gettempdir()) / 'no_repo')
             self.assertEqual(c["files"][0]["tempo"]["profile"], "unknown")
             self.assertIsNone(c["files"][0]["tempo"]["measured_bpm"])
 
@@ -257,7 +259,7 @@ class Bars(Fixture):
             frames = tones(line, 4 * BAR + 1.2)
             frames[int(4 * BAR * SR_IN):] = 0.3 * np.sin(2 * np.pi * 110 * np.arange(len(frames) - int(4 * BAR * SR_IN)) / SR_IN)
             (d / "Bass1a.wav").write_bytes(wav44(stereo(frames)))
-            f = cat.build_catalogue([d])["files"][0]
+            f = cat.build_catalogue([d], Path(tempfile.gettempdir()) / 'no_repo')["files"][0]
             self.assertEqual(f["tail"]["class"], "cut while sounding")
             self.assertEqual(f["bars"]["musical"], 4)
 
@@ -269,6 +271,24 @@ class Bars(Fixture):
         g = self.files["Beat Shaper - Lv9 Fast-Drums.wav"]
         self.assertEqual((g["format"]["sample_rate"], g["format"]["bits"], g["format"]["encoding"]), (48000, 32, "float"))
         self.assertGreater(g["duration_s"], 4 * BAR)
+
+
+class UsedBy(Fixture):
+    def test_packs_and_clips_built_from_a_file_are_listed(self) -> None:
+        pack = self.repo / "songs" / "packs" / "fast_pack"
+        pack.mkdir(parents=True, exist_ok=True)
+        (pack / "pack.json").write_text(json.dumps({"id": "fast_pack", "source": {"project": "Lv9 Fast", "variant": 1, "files": {"Drums": {}, "Bass": {}}}}))
+        clip = self.repo / "content" / "library" / "kick_clip"
+        clip.mkdir(parents=True, exist_ok=True)
+        (clip / "clip.json").write_text(json.dumps({"id": "kick_clip", "source": {"type": "imported", "source_dir": "Owner", "parts": {"kick": {"midi": "Cold/Kick2.mid"}},
+                                                                                  "renders": {"kick__k": {"file": "Cold/Kick2.wav"}}}}))
+        c = cat.build_catalogue([self.src], self.repo)
+        files = {f["name"]: f for f in c["files"]}
+        self.assertEqual(files["Beat Shaper - Lv9 Fast-Drums (1).wav"]["used_by"], [{"type": "pack", "id": "fast_pack"}])
+        self.assertNotIn("used_by", files["Beat Shaper - Lv9 Fast-Drums.wav"], "only the variant the pack was built from")
+        self.assertEqual(files["Kick2.wav"]["used_by"], [{"type": "clip", "id": "kick_clip"}])
+        self.assertEqual(next(m for m in c["midis"] if m["name"] == "Kick2.mid")["used_by"], [{"type": "clip", "id": "kick_clip"}])
+        self.assertEqual(c["summary"]["wavs_used_in_game"], 3)
 
 
 class Roles(Fixture):
@@ -285,9 +305,9 @@ class Roles(Fixture):
             d = Path(tmp) / "P"
             d.mkdir()
             t = np.arange(int(8 * BAR * SR_IN)) / SR_IN
-            pad = 0.2 * (np.sin(2 * np.pi * 220 * t) + np.sin(2 * np.pi * 277.2 * t) + np.sin(2 * np.pi * 329.6 * t))
+            pad = 0.2 * (np.sin(2 * np.pi * 220 * t) + 0.5 * np.sin(2 * np.pi * 440 * t) + 0.3 * np.sin(2 * np.pi * 660 * t))  # one steady note
             (d / "Other4.wav").write_bytes(wav44(stereo(pad)))
-            f = cat.build_catalogue([d])["files"][0]
+            f = cat.build_catalogue([d], Path(tempfile.gettempdir()) / 'no_repo')["files"][0]
             self.assertIn(f["role"], ("pad", "synth"))
             self.assertFalse(f["tonal"]["atonal"])
             self.assertEqual(f["tonal"]["basis"], "audio chroma")
@@ -429,7 +449,7 @@ class Compatibility(unittest.TestCase):
                 (src / name).write_bytes(data)
             for name, data in export_set(87.0, project="Lv8 Slow").items():
                 (src / name).write_bytes(data)
-            c = cat.build_catalogue([src])
+            c = cat.build_catalogue([src], Path(tmp) / 'no_repo')
             row = next(r for r in c["compatibility"] if {r["a"], r["b"]} == {"bs_lv8_slow", "bs_lv9_fast"})
             self.assertFalse(row["compatible"], "an 87x2 set and a 174x1 set are not mixed")
             self.assertTrue(all("profiles differs" in x for cb in row["combos"] for x in cb.get("against", [])))
@@ -437,8 +457,8 @@ class Compatibility(unittest.TestCase):
 
 class Output(Fixture):
     def test_output_is_deterministic_and_machine_independent(self) -> None:
-        a = cat.catalogue_text(cat.build_catalogue([self.src]))
-        b = cat.catalogue_text(cat.build_catalogue([self.src]))
+        a = cat.catalogue_text(cat.build_catalogue([self.src], self.repo))
+        b = cat.catalogue_text(cat.build_catalogue([self.src], self.repo))
         self.assertEqual(a, b)
         self.assertEqual(cat.markdown(json.loads(a)), cat.markdown(json.loads(b)))
         self.assertNotIn(self.tmp.name, a, "no absolute path in the catalogue")
@@ -456,11 +476,11 @@ class Output(Fixture):
 
     def test_check_mode_compares_with_the_files_on_disk(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
-            js, md, _ = cat.run([self.src])
+            js, md, _ = cat.run([self.src], self.repo)
             out, mdp = Path(tmp) / "c.json", Path(tmp) / "c.md"
             out.write_text(js, encoding="utf-8")
             mdp.write_text(md, encoding="utf-8")
-            self.assertEqual(out.read_text(encoding="utf-8"), cat.run([self.src])[0])
+            self.assertEqual(out.read_text(encoding="utf-8"), cat.run([self.src], self.repo)[0])
 
 
 if __name__ == "__main__":

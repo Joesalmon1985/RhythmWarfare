@@ -509,6 +509,217 @@
     }
    },
    "placeholders": {}
+  },
+  "acc_cold_loop": {
+   "midi": {
+    "other": {}
+   },
+   "renders": {
+    "other__backing_cold_loop": {
+     "wav_sha256": "d3f68126939ff58ca98ba2f2621086c9fce9374be9b7947ac574096016732a24",
+     "midi_sha256": "",
+     "frames": 1059310
+    }
+   },
+   "placeholders": {}
+  },
+  "acc_meta_a": {
+   "midi": {
+    "other": {}
+   },
+   "renders": {
+    "other__backing_meta_a": {
+     "wav_sha256": "7852d9183cdfc22e07dd82dc6703bca68ba94e6c08076991f12dbc75cc0b6488",
+     "midi_sha256": "",
+     "frames": 1059310
+    }
+   },
+   "placeholders": {}
+  },
+  "acc_meta_b": {
+   "midi": {
+    "other": {}
+   },
+   "renders": {
+    "other__backing_meta_b": {
+     "wav_sha256": "98f6642d7140d461d83e652cfc709c826207cc18710b55bece55e344cca64d75",
+     "midi_sha256": "",
+     "frames": 1059310
+    }
+   },
+   "placeholders": {}
+  },
+  "bass_cold_2": {
+   "midi": {
+    "bass": {}
+   },
+   "renders": {
+    "bass__bass_hard_harmonic": {
+     "wav_sha256": "a197ef732655960339367cf46e2d82d795952f720f1eea73dcb4735a8f471055",
+     "midi_sha256": "616e954642f03dcbfb7a14ceedfdec97b0467b2c8fc6ec04b1f49a68b4aac29c",
+     "frames": 264828
+    },
+    "bass__bass_flaring_anger": {
+     "wav_sha256": "9488d1f2862860e50d8310027c877c06c9aac64c2c2f9b336a0031b18313348d",
+     "midi_sha256": "616e954642f03dcbfb7a14ceedfdec97b0467b2c8fc6ec04b1f49a68b4aac29c",
+     "frames": 264828
+    },
+    "bass__bass_trap": {
+     "wav_sha256": "fb1c52e1971cb0b9655a812b367362261f513d1459bb68af11c37b4051f8409d",
+     "midi_sha256": "616e954642f03dcbfb7a14ceedfdec97b0467b2c8fc6ec04b1f49a68b4aac29c",
+     "frames": 264828
+    }
+   },
+   "placeholders": {}
+  },
+  "bass_cold_3": {
+   "midi": {
+    "bass": {}
+   },
+   "renders": {
+    "bass__bass_hard_harmonic": {
+     "wav_sha256": "b96dc105c0ade097a5eb2b9d009f4f43b2f8e384909fba742f96d6dad0018795",
+     "midi_sha256": "b0d45eba7aba5b61152ddcdd0a9ee2977a2811eb811d714be3dcf470473d87f3",
+     "frames": 264828
+    },
+    "bass__bass_flaring_anger": {
+     "wav_sha256": "b8a87914fac1e8d2c25155615a2c3ccf242708e6ee2ecf3666f9beb415feda3a",
+     "midi_sha256": "b0d45eba7aba5b61152ddcdd0a9ee2977a2811eb811d714be3dcf470473d87f3",
+     "frames": 264828
+    },
+    "bass__bass_trap": {
+     "wav_sha256": "dcb045bda80113501089e45cf6bbcd2e4ba9810474e6f27f05c1721d02e2e6b7",
+     "midi_sha256": "b0d45eba7aba5b61152ddcdd0a9ee2977a2811eb811d714be3dcf470473d87f3",
+     "frames": 264828
+    }
+   },
+   "placeholders": {}
+  },
+  "bass_cold_4": {
+   "midi": {
+    "bass": {}
+   },
+   "renders": {
+    "bass__bass_hard_harmonic": {
+     "wav_sha256": "f11dfc817b44aedcd27e9aeee31c72b65738d0d2ca5f30784b126feac4c140fc",
+     "midi_sha256": "f863a945e1731036763eee6f5642aedc5317c8b3c9ac36e883e2911f36ee92cd",
+     "frames": 264828
+    },
+    "bass__bass_flaring_anger": {
+     "wav_sha256": "c2b52b0c558f458202032f8bf3534e9b43332c7df3c69eda1aeb2c14b375f4da",
+     "midi_sha256": "f863a945e1731036763eee6f5642aedc5317c8b3c9ac36e883e2911f36ee92cd",
+     "frames": 264828
+    },
+    "bass__bass_trap": {
+     "wav_sha256": "e980b0a533ea43a4661ba546e74142dd60f4fff5f4f9fc7ea8ca657c98b73cd6",
+     "midi_sha256": "f863a945e1731036763eee6f5642aedc5317c8b3c9ac36e883e2911f36ee92cd",
+     "frames": 264828
+    }
+   },
+   "placeholders": {}
+  },
+  "bass_cold_5": {
+   "midi": {
+    "bass": {}
+   },
+   "renders": {
+    "bass__bass_hard_harmonic": {
+     "wav_sha256": "a7bccd9d5c39683896086c2e7e278dc2bb115200e43c5bd91aa3161516f83c95",
+     "midi_sha256": "5d68d777966d56e91378a53a4ffab7d9bdd97fc87844e2c02d453a93b1fd5c18",
+     "frames": 331034
+    },
+    "bass__bass_flaring_anger": {
+     "wav_sha256": "6ea254d6aac0e3bc444e3f76a10be247223fc7c00dfbda8f49963b760bf940e1",
+     "midi_sha256": "5d68d777966d56e91378a53a4ffab7d9bdd97fc87844e2c02d453a93b1fd5c18",
+     "frames": 331034
+    },
+    "bass__bass_trap": {
+     "wav_sha256": "8ed08b319950251a3c7c92f27a1c4700c88950b47a8b77669cbf1795650a98de",
+     "midi_sha256": "5d68d777966d56e91378a53a4ffab7d9bdd97fc87844e2c02d453a93b1fd5c18",
+     "frames": 331034
+    }
+   },
+   "placeholders": {}
+  },
+  "bass_meta_1": {
+   "midi": {
+    "bass": {}
+   },
+   "renders": {
+    "bass__bass_hard_harmonic": {
+     "wav_sha256": "307598f782e3f704f8b62681aeae9e6c9a669b758f0aa337f663c49672422cbc",
+     "midi_sha256": "9278395ec9537a4270f1174fe734b1a2c13a5eb9073d8b25b5538ebcdde6185e",
+     "frames": 529655
+    },
+    "bass__bass_flaring_anger": {
+     "wav_sha256": "2e24a4898128075c749f4fa306c08cea0ec0a21ee04e24868b9591fc3653324c",
+     "midi_sha256": "9278395ec9537a4270f1174fe734b1a2c13a5eb9073d8b25b5538ebcdde6185e",
+     "frames": 529655
+    },
+    "bass__bass_trap": {
+     "wav_sha256": "ee3043989cb1e70d3e3a44bdef8449279694e7035887a6f56f2ee6b5d91d1996",
+     "midi_sha256": "9278395ec9537a4270f1174fe734b1a2c13a5eb9073d8b25b5538ebcdde6185e",
+     "frames": 529655
+    }
+   },
+   "placeholders": {}
+  },
+  "groove_cold": {
+   "midi": {
+    "kick": {},
+    "snare": {}
+   },
+   "renders": {
+    "kick__kick_cold": {
+     "wav_sha256": "7406962eff34d2618ceece27be32276b20bf50d17625cb2fcfa73763a9485209",
+     "midi_sha256": "479d5dd5c2ccc783ebda3a19bae2d156b7c41547c3ed8825375e20abcfda53d4",
+     "frames": 529655
+    },
+    "snare__snare_cold": {
+     "wav_sha256": "6ebaf291851689b8625237adbb13a80a283ab2c74a5ebfbaa5470e6cc3a13dba",
+     "midi_sha256": "83fda9cac9f1a7981cc9b21e7e6825f37eaa3ba972215634529de5efd589e5df",
+     "frames": 529655
+    }
+   },
+   "placeholders": {}
+  },
+  "groove_meta_a": {
+   "midi": {
+    "kick": {},
+    "snare": {}
+   },
+   "renders": {
+    "kick__kick_meta_a": {
+     "wav_sha256": "3168d3f89fb386e58471c841d7e4ccc625d479e61d0cdf26b14aad2c757fbe7c",
+     "midi_sha256": "812b7b2afef9b828b2442fa3b3c96009cd33182b5c1afe7a55f0b0c8033fbbe7",
+     "frames": 529655
+    },
+    "snare__snare_meta": {
+     "wav_sha256": "31ba5716374bd9035c330b2e01a491423f80e08f456ab144d66056dfd4f09ec4",
+     "midi_sha256": "f5b50953abfcbd07d74de64287e991f9c395d4f60878c0671291c524cc10d9d9",
+     "frames": 529655
+    }
+   },
+   "placeholders": {}
+  },
+  "groove_meta_b": {
+   "midi": {
+    "kick": {},
+    "snare": {}
+   },
+   "renders": {
+    "kick__kick_meta_b": {
+     "wav_sha256": "7bad4021f85315f092e2436c61a81a39c12ce384a17b6331bb4d3ae760e0356a",
+     "midi_sha256": "9d17bba53fa262f995328eb3216c747db40e10edfeb075435c627e58acf1d87f",
+     "frames": 529655
+    },
+    "snare__snare_meta": {
+     "wav_sha256": "31ba5716374bd9035c330b2e01a491423f80e08f456ab144d66056dfd4f09ec4",
+     "midi_sha256": "2c8300c4cda63b363c8292a5fcc9e9c06b610bf704c95d78f0530b3332702e14",
+     "frames": 529655
+    }
+   },
+   "placeholders": {}
   }
  },
  "loops": {
@@ -979,6 +1190,102 @@
   "loops/groove_watch__snare__snare_rim.ogg": {
    "key": "5c511592d4af77a6dadf4ab8e9c9319295f49b5b13ae3c857e06289f7fe3136f",
    "peak_db": -14.48
+  },
+  "loops/acc_cold_loop__other__backing_cold_loop.ogg": {
+   "key": "351153c6ad74df3e902d412bf438bd02444d0d0ea873bef8d79b6fbc2161dd89",
+   "peak_db": -10.0
+  },
+  "loops/acc_meta_a__other__backing_meta_a.ogg": {
+   "key": "7a040d4ce5337eede6271cb92fc781c575737de0ad8d0dfdba74a275db20a75e",
+   "peak_db": -10.0
+  },
+  "loops/acc_meta_b__other__backing_meta_b.ogg": {
+   "key": "6d637fdad3860c2dca358e13314a56438dcfa98b8611dc8f4b1457eb14496638",
+   "peak_db": -10.0
+  },
+  "loops/bass_cold_2__bass__bass_hard_harmonic.ogg": {
+   "key": "7b27e7edaf89887183258fc8a46c095082893b6acdb0b635b037a88b6e6d3a93",
+   "peak_db": -13.4
+  },
+  "loops/bass_cold_2__bass__bass_flaring_anger.ogg": {
+   "key": "1bec6aa4bddd08e15bd3cf109a6b2cc58ae88b600b400b6a132f8c0287cfa56e",
+   "peak_db": -21.99
+  },
+  "loops/bass_cold_2__bass__bass_trap.ogg": {
+   "key": "abf481626c1b4082b6a940e04f8480c5b4452a13f040c995c5054524ed265f5b",
+   "peak_db": -11.0
+  },
+  "loops/bass_cold_3__bass__bass_hard_harmonic.ogg": {
+   "key": "bb64de58cc2e19f6ee6ea77fd9e1cca8bf48a53ff8d66969b90ab0449049efee",
+   "peak_db": -15.51
+  },
+  "loops/bass_cold_3__bass__bass_flaring_anger.ogg": {
+   "key": "50182fe55eb4fffde4aa5fe4d200ce106061621f19b428310415e70e7ffc72a0",
+   "peak_db": -22.33
+  },
+  "loops/bass_cold_3__bass__bass_trap.ogg": {
+   "key": "5485263930b0e01ce4b8ab1255b5343bfdfa3f74651d1dd4dcb849c4e05db17e",
+   "peak_db": -11.0
+  },
+  "loops/bass_cold_4__bass__bass_hard_harmonic.ogg": {
+   "key": "7ce1c21167cef8e44f09229648c9888b8e9c4b71c6ce65b8bc3875cc1e09590c",
+   "peak_db": -14.27
+  },
+  "loops/bass_cold_4__bass__bass_flaring_anger.ogg": {
+   "key": "4e16d9124641a9d8ad169691b49fc3a33894eb44c02bb3916d0beb3a903a985e",
+   "peak_db": -22.28
+  },
+  "loops/bass_cold_4__bass__bass_trap.ogg": {
+   "key": "6cd7a9a9e9f2faf232f51fbeb3a3e8318c86a995dd7e30f7f2d144a3caa8d6ed",
+   "peak_db": -11.0
+  },
+  "loops/bass_cold_5__bass__bass_hard_harmonic.ogg": {
+   "key": "4a0a0a7f59fa8844fbf6a6b1b0986262728c7612f54fec2a0dbe78adc26ec929",
+   "peak_db": -9.98
+  },
+  "loops/bass_cold_5__bass__bass_flaring_anger.ogg": {
+   "key": "dfe9e9fc9954520303d5f49c6e0e15d9923839293d3975e97116baff514b7184",
+   "peak_db": -16.73
+  },
+  "loops/bass_cold_5__bass__bass_trap.ogg": {
+   "key": "b050e402aa36ac568f84dc51ceaadba788bdff7b8e5f868db6dd317d1984436a",
+   "peak_db": -7.14
+  },
+  "loops/bass_meta_1__bass__bass_hard_harmonic.ogg": {
+   "key": "86f25d10d63384fe02598d11da288510a9ec1ac3e6c59799a952aea08b3f1262",
+   "peak_db": -15.02
+  },
+  "loops/bass_meta_1__bass__bass_flaring_anger.ogg": {
+   "key": "f8eaf680f2693e72b0255bb829031b1497b022c0cd9616d45f78681f9071a654",
+   "peak_db": -22.82
+  },
+  "loops/bass_meta_1__bass__bass_trap.ogg": {
+   "key": "938496f3e3743b076658f67560dc391b60ed3401ee9f418145e28c6c0f61ce6f",
+   "peak_db": -11.0
+  },
+  "loops/groove_cold__kick__kick_cold.ogg": {
+   "key": "5f81131f0eee90024c819348f7c2844d3f128c374921b2eb4891e58999424a75",
+   "peak_db": -11.0
+  },
+  "loops/groove_cold__snare__snare_cold.ogg": {
+   "key": "61b8cecdf8ec450b42ad0872d0a83b02a2c22ada8569e20e0f6288c7f8bff984",
+   "peak_db": -11.0
+  },
+  "loops/groove_meta_a__kick__kick_meta_a.ogg": {
+   "key": "319a642b02afaabe7c65713abead80333073e623d71e07238fa1e0172cbe2020",
+   "peak_db": -11.0
+  },
+  "loops/groove_meta_a__snare__snare_meta.ogg": {
+   "key": "48d186f1abfc47734091b3446fc534bf4b8ce02fee80020522f54496e7d6cd0e",
+   "peak_db": -11.0
+  },
+  "loops/groove_meta_b__kick__kick_meta_b.ogg": {
+   "key": "7422c59816cd2691e6878a0149bd4406cb7fe4d3b461ac45f3b5fc03b590bfd4",
+   "peak_db": -11.0
+  },
+  "loops/groove_meta_b__snare__snare_meta.ogg": {
+   "key": "48d186f1abfc47734091b3446fc534bf4b8ce02fee80020522f54496e7d6cd0e",
+   "peak_db": -11.0
   }
  }
 }

@@ -103,6 +103,8 @@ def main() -> None:
           "(`python tools/content/beatshaper.py validate` also checks that the pack named in `passages.json` exists).", ""]
     L += ["## Packs in the repository", "",
           "| Pack id | Source | Profile | Phrase | Import | Used by |", "| --- | --- | --- | --- | --- | --- |"]
+    in_use = {p["source"]["project"] for pid, p in packs.items() if any(pid in (m["audio"], m["chart"]) for m in music.values())
+              or pid in (trial_music.get("audio"), trial_music.get("chart"), DUNGEON["ambient"], DUNGEON["fight"])}
     for pid, p in packs.items():
         used = [f"`{i}`" for i, m in music.items() if pid in (m["audio"], m["chart"])]
         used = [", ".join(used[:6]) + (f" and {len(used) - 6} more" if len(used) > 6 else "")] if used else []
@@ -112,8 +114,11 @@ def main() -> None:
             used.append("dungeon (suggested)")
         src = p["source"]
         L.append(f"| `{pid}` | {src['project']}{' (%d)' % src['variant'] if src['variant'] else ''} | {p['profile']} | {p['phrase_beats']} beats | {pack_status(pid)} | "
-                 f"{', '.join(used) or 'spare (an alternate take)'} |")
-    L += ["", "Not imported from `ToAddTry2/`: `Default Project` (an unedited template of the Warehouse groove) and `Lv3 Hell` (audio only, no MIDI: see above).", ""]
+                 f"{', '.join(used) or ('spare (an alternate take)' if src['project'] in in_use else 'imported, not assigned to a scene yet')} |")
+    L += ["", "`cold_fusion` (+ `_v1` to `_v3`, `Cold Fusion Interface`, 174 BPM, 16-beat phrase) and `meta_fusion` (+ `_v1`, `Metaverse Ready Fusion`, 174 BPM, 32-beat phrase) come from "
+          "`ToAddTry3/Cold` and `ToAddTry3/Meta`; they validate and wait for the populate step to give them to scenes (`docs/MUSIC_CATALOGUE.md` has their measured facts). "
+          "The Ableton renders of the same folders are loop-library clips (`content/imports/cold_meta.json`), not packs.", ""]
+    L += ["Not imported from `ToAddTry2/`: `Default Project` (an unedited template of the Warehouse groove) and `Lv3 Hell` (audio only, no MIDI: see above).", ""]
     L += ["## Format reminder", "",
           "- One **set** per level: `Beat Shaper - <project>-Drums`, `-Bass` and `-Synth`, each as **.wav and .mid**. Variants keep the ` (1)`, ` (2)` suffix on all three files.",
           "- **Needed:** Drums.wav/.mid and Bass.wav/.mid. A missing Synth is imported as a silent backing; the Synth MIDI is never read.",

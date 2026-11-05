@@ -1,0 +1,64 @@
+{
+ "id": "bass_cold_2",
+ "kind": "bass",
+ "name": "Cold Bass 2",
+ "bars": 4,
+ "tempo_bpm": 174,
+ "key": "B minor",
+ "note": "Bass2: a 4-bar pattern (long notes with a pickup) that the MIDI repeats four times; the Trap render is 16 bars, the other two 4, so every render is cut to the first 4 bars. Key B minor, estimate confidence 0.37.",
+ "sounds": {
+  "bass": [
+   "bass_hard_harmonic",
+   "bass_flaring_anger",
+   "bass_trap"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/cold_meta.json",
+  "source_dir": "ToAddTry3",
+  "parts": {
+   "bass": {
+    "midi": "Cold/Bass2.mid",
+    "sha256": "36fceefa743e792b68b3e35d43022e8f3c1c4bc503d0df00c39222d935d36e7c",
+    "bars": [
+     1,
+     4
+    ],
+    "notes_kept": 12,
+    "notes_in_file": 48,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   }
+  },
+  "renders": {
+   "bass__bass_hard_harmonic": {
+    "file": "Cold/Bass2Hardharmonic.wav",
+    "sha256": "c10dcbfe386bb5fb3dcd73af560a78a3c875e669b3dd7bf492f21aed4e821b5f",
+    "sample_rate_in": 44100,
+    "gain_db": -11.061,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   },
+   "bass__bass_flaring_anger": {
+    "file": "Cold/Bass2FlaringAnger.wav",
+    "sha256": "6f83de1ba4bc857baa3892b60abb891dc464e419a5517e71778312347fb2ad55",
+    "sample_rate_in": 44100,
+    "gain_db": -15.879,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   },
+   "bass__bass_trap": {
+    "file": "Cold/Bass2Trap.wav",
+    "sha256": "83a34f1a5bb7323dcc770941b24740868b07aa6d35131383ddb6f4b794a7d4fe",
+    "sample_rate_in": 44100,
+    "gain_db": -11.187,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0,
+    "frames_in": 1059311,
+    "dropped_frames": 794483,
+    "bars_in": 16.0
+   }
+  }
+ }
+}

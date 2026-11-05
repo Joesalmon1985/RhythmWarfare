@@ -1,0 +1,34 @@
+{
+ "id": "acc_meta_a",
+ "kind": "accompaniment",
+ "name": "Meta Percussion A",
+ "bars": 16,
+ "tempo_bpm": 174,
+ "note": "Meta Other1: a 16-bar bright top loop.",
+ "audio_only": true,
+ "atonal": true,
+ "sounds": {
+  "other": [
+   "backing_meta_a"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/cold_meta.json",
+  "source_dir": "ToAddTry3",
+  "parts": {},
+  "renders": {
+   "other__backing_meta_a": {
+    "file": "Meta/Other1.wav",
+    "sha256": "57c24a10c9fee9403f9b6dec8fe6ef614f7ca4f09a3ea5ebc37531b00b4d6ca4",
+    "sample_rate_in": 44100,
+    "gain_db": -7.573,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0,
+    "frames_in": 1059311,
+    "dropped_frames": 1,
+    "bars_in": 16.0
+   }
+  }
+ }
+}

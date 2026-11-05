@@ -79,6 +79,11 @@ What the importer does with each file (the originals are never modified):
   (type `imported`, the manifest, the SHA-256 of every export, the gain applied). Sounds the manifest introduces are
   merged into `sounds.json` with their friendly names.
 
+Clips need not be 8 bars. A clip says its own `bars`, and `tail_bars` (default 1; 0 for a render longer than its pattern) says how much release is kept after
+the last bar; a bass line or groove of 1, 2, 4 or 8 bars is tiled over the game's 8-bar loop, a backing is 8 or 16 bars. `source_dir` may name a folder beside the checkout
+(`ToAddTry3`): it is looked for in the project and then in its parent folders. An `audio_only` backing with no pitch may say `"atonal": true` instead of a key. Whatever a
+cut drops is recorded in the clip's `source` block. `content/imports/cold_meta.json` is the worked example (Cold and Meta, `docs/MUSIC_IMPORT.md` section 6).
+
 The importer prints a report (sample rate, peak before and after, attack of the first note against the MIDI, trimmed
 bars, fade) and refuses an export that does not cover the clip, a MIDI with no notes in the clip's bars, or a sound
 whose family does not match the part.

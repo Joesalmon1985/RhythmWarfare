@@ -31,7 +31,7 @@ What is measured (details and the reasoning in docs/MUSIC_CATALOGUE.md):
   the profiles are equal and the tonal centres agree or one side is atonal; `uncertain` where an estimate is low-confidence; never from tempo alone.
 
 Schema (content/music/catalogue.json, "schema": 1): top-level keys `schema`, `tool`, `sources`, `summary`, `files` (one record per WAV),
-`midis` (one record per MIDI), `families`, `compatibility`. Other tools (arrange.py) read only this file.
+`midis` (one record per MIDI), `families`, `within_family`, `compatibility`. A record's `used_by` lists the packs and library clips built from it. Other tools (arrange.py) read only this file.
 """
 from __future__ import annotations
 
@@ -197,9 +197,10 @@ def active_end(mono: np.ndarray) -> int:
 
 
 def onset_times(mono: np.ndarray, rate: int) -> list[float]:
-    env, step = envelope(mono, rate)
+    """Onset times (s): sharp rises of a 5 ms RMS envelope (a longer window than the transient fit's, so a low steady tone does not ripple into onsets)."""
+    env, step = envelope(mono, rate, 5.0)
     d = np.log(env + 1e-4)
-    d = d[3:] - d[:-3]
+    d = d[2:] - d[:-2]
     out: list[float] = []
     for i in range(1, len(d) - 1):
         if d[i] > 0.7 and d[i] >= d[i - 1] and d[i] > d[i + 1]:
@@ -523,6 +524,8 @@ def decide_role(info: dict, spec: dict, onsets_per_beat: float, notes: list[dict
     # "other" and unrecognised names: the spectrum decides
     if spec["high"] > 0.4 and onsets_per_beat >= 0.5:
         return "perc", "spectrum: energy above 4 kHz, regular onsets"
+    if onsets_per_beat >= 3.0:
+        return "perc", "rhythm: three or more onsets per beat"
     if spec["sub"] > 0.6:
         return "kick" if onsets_per_beat >= 0.1 else "bass", "spectrum: sub bass"
     if spec["flatness"] > 0.2 and onsets_per_beat < 0.5:
@@ -811,9 +814,44 @@ def within_family(families: list[dict], files: list[dict]) -> list[dict]:
     return out
 
 
+# --- what the game already uses ------------------------------------------------------------------------------------------
+
+def used_by(repo: Path, files: list[dict], midis: dict[str, dict]) -> None:
+    """Annotate records with `used_by`: the packs (songs/packs/*/pack.json) and library clips (content/library/*/clip.json) built from them."""
+    by_group = {(f["group"], f["part"]): f for f in files if f["source"] == "beat_shaper"}
+    by_id = {**{f["id"]: f for f in files}, **midis}
+    mid_group = {(m["group"], m["part"]): m for m in midis.values() if m["family"].startswith("bs_")}
+
+    def add(rec: dict | None, kind: str, ident: str) -> None:
+        if rec is not None and {"type": kind, "id": ident} not in rec.setdefault("used_by", []):
+            rec["used_by"].append({"type": kind, "id": ident})
+
+    for path in sorted((repo / "songs" / "packs").glob("*/pack.json")):
+        d = json.loads(path.read_text(encoding="utf-8"))
+        src = d.get("source", {})
+        fam = "bs_" + slug(src.get("project", ""))
+        for part in src.get("files", {}):
+            key = (f"{fam}:v{src.get('variant', 0)}", part.lower())
+            add(by_group.get(key), "pack", d["id"])
+            add(mid_group.get(key), "pack", d["id"])
+    for path in sorted((repo / "content" / "library").glob("*/clip.json")):
+        d = json.loads(path.read_text(encoding="utf-8"))
+        src = d.get("source", {})
+        if src.get("type") != "imported":
+            continue
+        base = src.get("source_dir", "")
+        for r in src.get("renders", {}).values():
+            add(by_id.get(f"{base}/{r['file']}"), "clip", d["id"])
+        for p in src.get("parts", {}).values():
+            add(by_id.get(f"{base}/{p['midi']}"), "clip", d["id"])
+    for rec in by_id.values():
+        if "used_by" in rec:
+            rec["used_by"].sort(key=lambda u: (u["type"], u["id"]))
+
+
 # --- the catalogue -------------------------------------------------------------------------------------------------------
 
-def build_catalogue(sources: list[Path]) -> dict:
+def build_catalogue(sources: list[Path], repo: Path = ROOT) -> dict:
     entries = discover(sources)
     parsed = {e["id"]: parse_name(e["folder"], e["name"]) for e in entries}
     midi_by_key, wav_by_key = {}, defaultdict(list)
@@ -865,6 +903,7 @@ def build_catalogue(sources: list[Path]) -> dict:
         if f["midi"] is None:
             f["onsets_per_bar"] = density
     files.sort(key=lambda f: f["id"])
+    used_by(repo, files, midis)
     families = build_families(files, midis)
     comp = compatibility(families)
     wf = within_family(families, files)
@@ -878,17 +917,20 @@ def build_catalogue(sources: list[Path]) -> dict:
 def summarise(files: list[dict], midis: dict, families: list[dict], comp: list[dict]) -> dict:
     folders: dict[str, dict] = {}
     for f in files:
-        d = folders.setdefault(f["folder"], {"wavs": 0, "midis": 0, "profiles": Counter(), "bars": Counter(), "header_bpm": Counter(), "roles": Counter()})
+        d = folders.setdefault(f["folder"], {"wavs": 0, "used": 0, "midis": 0, "profiles": Counter(), "bars": Counter(), "header_bpm": Counter(), "roles": Counter()})
         d["wavs"] += 1
+        d["used"] += 1 if f.get("used_by") else 0
         d["profiles"][f["tempo"]["profile"]] += 1
         d["bars"][f["bars"]["musical"]] += 1
         d["roles"][f["role"]] += 1
         if f["tempo"]["header_bpm"] is not None:
             d["header_bpm"][f["tempo"]["header_bpm"]] += 1
     for m in midis.values():
-        folders.setdefault(m["folder"], {"wavs": 0, "midis": 0, "profiles": Counter(), "bars": Counter(), "header_bpm": Counter(), "roles": Counter()})["midis"] += 1
+        folders.setdefault(m["folder"], {"wavs": 0, "used": 0, "midis": 0, "profiles": Counter(), "bars": Counter(), "header_bpm": Counter(),
+                                         "roles": Counter()})["midis"] += 1
     return {"wavs": len(files), "midis": len(midis), "families": len(families),
-            "folders": {k: {"wavs": v["wavs"], "midis": v["midis"], "profiles": dict(sorted(v["profiles"].items())),
+            "wavs_used_in_game": sum(1 for f in files if f.get("used_by")),
+            "folders": {k: {"wavs": v["wavs"], "wavs_used_in_game": v["used"], "midis": v["midis"], "profiles": dict(sorted(v["profiles"].items())),
                             "bars": {str(b): n for b, n in sorted(v["bars"].items())}, "midi_header_bpm": {str(b): n for b, n in sorted(v["header_bpm"].items())},
                             "roles": dict(sorted(v["roles"].items()))} for k, v in sorted(folders.items())},
             "family_pairs": len(comp), "compatible_pairs": sum(1 for r in comp if r["compatible"]),
@@ -924,11 +966,11 @@ def markdown(cat: dict) -> str:
          "Written by `python tools/content/catalogue.py` from the owner's folders (never modified; `.asd` and `.import` files ignored). Do not edit; regenerate.",
          "The machine-readable form is `content/music/catalogue.json` (schema 1); the arrangement tool reads only that. Tempo is measured, never taken from the MIDI header.", ""]
     s = cat["summary"]
-    L += ["## Summary", "", f"{s['wavs']} WAV files, {s['midis']} MIDI files, {s['families']} families; {s['family_pairs']} family pairs have parts that can be layered, "
+    L += ["## Summary", "", f"{s['wavs']} WAV files ({s['wavs_used_in_game']} already used by a pack or library clip), {s['midis']} MIDI files, {s['families']} families; {s['family_pairs']} family pairs have parts that can be layered, "
           f"{s['compatible_pairs']} pass the rules and {s['uncertain_pairs']} of those are flagged uncertain.", "",
-          "| Folder | WAV | MIDI | Profile | Musical bars | MIDI header BPM |", "| --- | --- | --- | --- | --- | --- |"]
+          "| Folder | WAV | Used in game | MIDI | Profile | Musical bars | MIDI header BPM |", "| --- | --- | --- | --- | --- | --- | --- |"]
     for k, v in s["folders"].items():
-        L.append(f"| {k} | {v['wavs']} | {v['midis']} | {', '.join(f'{p} x{n}' for p, n in v['profiles'].items()) or '-'} | "
+        L.append(f"| {k} | {v['wavs']} | {v['wavs_used_in_game']} | {v['midis']} | {', '.join(f'{p} x{n}' for p, n in v['profiles'].items()) or '-'} | "
                  f"{', '.join(f'{b} x{n}' for b, n in v['bars'].items()) or '-'} | {', '.join(f'{b} x{n}' for b, n in v['midi_header_bpm'].items()) or 'none'} |")
     L += ["", "## Facts the audio shows", ""]
     for line in facts(cat):
@@ -936,13 +978,13 @@ def markdown(cat: dict) -> str:
     L += ["", "## Files by folder", "",
           "Profile `174x1`: one source quarter is one game beat; `87x2`: one quarter is two. Bars are whole game bars of music (4 beats at 174 BPM); `pat` is the "
           "repeating pattern length of the MIDI; tail is the release after the musical end. Key is a Krumhansl-Schmuckler estimate with its confidence (advisory). "
-          "Clip = samples at full scale (an over-full-scale float counts).", ""]
+          "Clip = samples at full scale (an over-full-scale float counts). Used = the packs and library clips built from the file (`used_by` in the JSON).", ""]
     folders: dict[str, list] = defaultdict(list)
     for f in cat["files"]:
         folders[f["folder"]].append(f)
     for folder in sorted(folders):
-        L += [f"### {folder}", "", "| File | Role | Family | Pair | Profile | BPM | Bars (pat) | Lead ms | Tail s | Key | RMS | Peak | Clip |",
-              "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
+        L += [f"### {folder}", "", "| File | Role | Family | Pair | Profile | BPM | Bars (pat) | Lead ms | Tail s | Key | RMS | Peak | Clip | Used |",
+              "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
         for f in folders[folder]:
             pair = "MIDI" if f["midi"] else "audio only"
             bpm = f["tempo"]["measured_bpm"]
@@ -950,7 +992,8 @@ def markdown(cat: dict) -> str:
             L.append(f"| {f['name']} | {f['role']} | {f['family']} | {pair} | {f['tempo']['profile']} | {'-' if bpm is None else f'{bpm:.1f}'} | "
                      f"{f['bars']['musical']} ({f['bars']['pattern'] or '-'}) | {'-' if lead is None else f'{lead:.0f}'} | {f['tail']['seconds']:.2f} {f['tail']['class']} | "
                      f"{fmt_key(f['tonal'])} | {f['loudness']['rms_db']:.1f} | {f['loudness']['peak_db']:.1f} | "
-                     f"{f['loudness']['clipping_samples'] + f['loudness']['over_full_scale']} |")
+                     f"{f['loudness']['clipping_samples'] + f['loudness']['over_full_scale']} | "
+                     f"{', '.join(u['id'] for u in f.get('used_by', [])) or '-'} |")
         L.append("")
     L += ["## Families", "",
           "A family is the strongest grouping the exports give: a Beat Shaper project with all its variants, or an Ableton pattern with all its timbre renders.", "",
@@ -1040,8 +1083,8 @@ def facts(cat: dict) -> list[str]:
     return out
 
 
-def run(sources: list[Path]) -> tuple[str, str, dict]:
-    cat = build_catalogue(sources)
+def run(sources: list[Path], repo: Path = ROOT) -> tuple[str, str, dict]:
+    cat = build_catalogue(sources, repo)
     return catalogue_text(cat), markdown(cat) + "\n", cat
 
 

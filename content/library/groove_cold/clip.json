@@ -1,0 +1,71 @@
+{
+ "id": "groove_cold",
+ "kind": "groove",
+ "name": "Cold Groove",
+ "bars": 8,
+ "tempo_bpm": 174,
+ "note": "Cold Kick2 with Snare2. The renders are 16 bars of an 8-bar kick pattern and a 1-bar snare pattern repeated; the first 8 bars are the clip (the MIDI of bars 9 to 16 is a copy of bars 1 to 8). Same notes as Meta Kick1 and Snare1.",
+ "sounds": {
+  "kick": [
+   "kick_cold"
+  ],
+  "snare": [
+   "snare_cold"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/cold_meta.json",
+  "source_dir": "ToAddTry3",
+  "parts": {
+   "kick": {
+    "midi": "Cold/Kick2.mid",
+    "sha256": "bea640b2eeb9f6eda0165c2fb8a8dfb3ee2e6d5e008ae750a4a5fa9123c0c027",
+    "bars": [
+     1,
+     8
+    ],
+    "notes_kept": 21,
+    "notes_in_file": 42,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   },
+   "snare": {
+    "midi": "Cold/Snare2.mid",
+    "sha256": "a7a7f07fa2b582e36c292becb77c77f7aff7f70f3f8e76a16e27be9a39c8499c",
+    "bars": [
+     1,
+     8
+    ],
+    "notes_kept": 16,
+    "notes_in_file": 32,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   }
+  },
+  "renders": {
+   "kick__kick_cold": {
+    "file": "Cold/Kick2.wav",
+    "sha256": "e738832bab4be91c4a4562224157c37f3c89fcf854dc8f0c218106a603c2d8bd",
+    "sample_rate_in": 44100,
+    "gain_db": -10.521,
+    "tail_frames": 0,
+    "end_fade_ms": 0,
+    "frames_in": 1059311,
+    "dropped_frames": 529656,
+    "bars_in": 16.0
+   },
+   "snare__snare_cold": {
+    "file": "Cold/Snare2.wav",
+    "sha256": "e08f066aaa21739cd3bf71344e2177dfd5166ac08db30600d0d2d4bdce573275",
+    "sample_rate_in": 44100,
+    "gain_db": -11.658,
+    "tail_frames": 0,
+    "end_fade_ms": 0,
+    "frames_in": 1059311,
+    "dropped_frames": 529656,
+    "bars_in": 16.0
+   }
+  }
+ }
+}

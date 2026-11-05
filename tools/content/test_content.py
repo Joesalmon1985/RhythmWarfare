@@ -481,7 +481,7 @@ class InstrumentsTests(unittest.TestCase):
         ins = read_json(INSTRUMENTS)
         rewards = read_json(ROOT / "data" / "campaign" / "rules.json")["rewards"]
         self.assertEqual(set(ins), {s["id"] for s in sounds})
-        self.assertEqual(len(sounds), 30)
+        self.assertEqual(len(sounds), 41)
         for s in sounds:
             e = ins[s["id"]]
             self.assertTrue(e["blurb"], s["id"])
@@ -525,12 +525,12 @@ class RealLibraryTests(unittest.TestCase):
         self.assertTrue(k["sounds"]["other"])
 
     def test_every_clip_and_sound_has_its_keys_and_every_loop_exists(self):
-        self.assertEqual(len(self.idx["clips"]), 31)
-        self.assertEqual(len(self.idx["sounds"]), 30)
+        self.assertEqual(len(self.idx["clips"]), 42)
+        self.assertEqual(len(self.idx["sounds"]), 41)
         count = 0
         for cid, c in self.idx["clips"].items():
             self.assertEqual(set(c), CONTRACT_CLIP_KEYS, cid)
-            self.assertEqual(c["bars"], 16 if cid in ("acc_second_pulse", "acc_hold_the_line", "acc_first_watch") else 8, cid)
+            self.assertEqual(c["bars"], 16 if cid in ("acc_second_pulse", "acc_hold_the_line", "acc_first_watch", "acc_cold_loop", "acc_meta_a", "acc_meta_b") else 8, cid)
             for part in c["parts"]:
                 for sid in c["sounds"][part]:
                     f = SONGS / "library" / c["loops"][part][sid]
@@ -538,7 +538,7 @@ class RealLibraryTests(unittest.TestCase):
                     self.assertIn(sid, self.idx["sounds"])
                     self.assertEqual(self.idx["sounds"][sid]["family"], part, f"{cid}: {sid} plays the {part} part")
                     count += 1
-        self.assertEqual(count, 117)
+        self.assertEqual(count, 141)
         self.assertEqual(len(list((SONGS / "library" / "loops").glob("*.ogg"))), count, "no stale loops")
         for sid, s in self.idx["sounds"].items():
             self.assertEqual(set(s), CONTRACT_SOUND_KEYS, sid)
@@ -596,7 +596,7 @@ class RealLibraryTests(unittest.TestCase):
         seam = 7 * TICKS_PER_BAR
         grooves = [k for k, v in c.items() if v["kind"] == "groove"]
         fills = [k for k, v in c.items() if v["kind"] == "fill"]
-        self.assertEqual((len(grooves), len(fills)), (8, 3))
+        self.assertEqual((len(grooves), len(fills)), (11, 3))
         for g in grooves:
             for f in fills:
                 cues = [q for p in c[g]["cues"].values() for q in p if q[0] < seam] + [q for p in c[f]["cues"].values() for q in p if q[0] >= seam]

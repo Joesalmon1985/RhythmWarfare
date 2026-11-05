@@ -222,6 +222,83 @@
    "placeholder": false,
    "produces": [],
    "blurb": "Backing sound: plays under the music, builds nothing."
+  },
+  "kick_cold": {
+   "family": "kick",
+   "name": "Cold Kick",
+   "placeholder": false,
+   "produces": [{"reward": "grenadier_squad", "share": 2}, {"reward": "rifle_squad", "share": 1}],
+   "blurb": "Cold kick: grenadier squads, with a rifle squad every third strike."
+  },
+  "snare_cold": {
+   "family": "snare",
+   "name": "Cold Snare",
+   "placeholder": false,
+   "produces": [{"reward": "pillbox", "share": 1}, {"reward": "turret", "share": 1}],
+   "blurb": "Cold snare: pillboxes and gun turrets in turn."
+  },
+  "kick_meta_a": {
+   "family": "kick",
+   "name": "Meta Kick A",
+   "placeholder": false,
+   "produces": [{"reward": "rifle_squad", "share": 2}, {"reward": "e3", "share": 1}],
+   "blurb": "Meta kick A: rifle squads with a rocket soldier now and then."
+  },
+  "kick_meta_b": {
+   "family": "kick",
+   "name": "Meta Kick B",
+   "placeholder": false,
+   "produces": [{"reward": "grenadier_squad", "share": 1}, {"reward": "e3", "share": 1}],
+   "blurb": "Meta kick B: grenadiers and rocket soldiers in equal measure."
+  },
+  "snare_meta": {
+   "family": "snare",
+   "name": "Meta Snare",
+   "placeholder": false,
+   "produces": [{"reward": "turret", "share": 2}, {"reward": "flame_tower", "share": 1}],
+   "blurb": "Meta snare: gun turrets, with a flame tower every third strike."
+  },
+  "bass_hard_harmonic": {
+   "family": "bass",
+   "name": "Hard Harmonic",
+   "placeholder": false,
+   "produces": [{"reward": "2tnk", "share": 1}, {"reward": "apc", "share": 1}],
+   "blurb": "Hard harmonic: medium tanks and APCs in turn."
+  },
+  "bass_flaring_anger": {
+   "family": "bass",
+   "name": "Flaring Anger",
+   "placeholder": false,
+   "produces": [{"reward": "1tnk", "share": 2}, {"reward": "arty", "share": 1}],
+   "blurb": "Flaring anger: light tanks, with artillery now and then."
+  },
+  "bass_trap": {
+   "family": "bass",
+   "name": "Trap Bass",
+   "placeholder": false,
+   "produces": [{"reward": "jeep", "share": 1}, {"reward": "1tnk", "share": 1}],
+   "blurb": "Trap bass: jeeps and light tanks in turn."
+  },
+  "backing_cold_loop": {
+   "family": "other",
+   "name": "Cold Percussion Loop",
+   "placeholder": false,
+   "produces": [],
+   "blurb": "Backing sound: plays under the music, builds nothing."
+  },
+  "backing_meta_a": {
+   "family": "other",
+   "name": "Meta Percussion A",
+   "placeholder": false,
+   "produces": [],
+   "blurb": "Backing sound: plays under the music, builds nothing."
+  },
+  "backing_meta_b": {
+   "family": "other",
+   "name": "Meta Percussion B",
+   "placeholder": false,
+   "produces": [],
+   "blurb": "Backing sound: plays under the music, builds nothing."
   }
  },
  "clips": {
@@ -241,6 +318,24 @@
    },
    "peak_db": {
     "other": {"ensemble": -14.1}
+   }
+  },
+  "acc_cold_loop": {
+   "kind": "backing",
+   "name": "Cold Percussion Loop",
+   "key": "",
+   "bars": 16,
+   "parts": ["other"],
+   "bound": true,
+   "sounds": {
+    "other": ["backing_cold_loop"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"backing_cold_loop": "loops/acc_cold_loop__other__backing_cold_loop.ogg"}
+   },
+   "peak_db": {
+    "other": {"backing_cold_loop": -10.0}
    }
   },
   "acc_counterpoint": {
@@ -441,6 +536,42 @@
     "other": {"ensemble": -14.53}
    }
   },
+  "acc_meta_a": {
+   "kind": "backing",
+   "name": "Meta Percussion A",
+   "key": "",
+   "bars": 16,
+   "parts": ["other"],
+   "bound": true,
+   "sounds": {
+    "other": ["backing_meta_a"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"backing_meta_a": "loops/acc_meta_a__other__backing_meta_a.ogg"}
+   },
+   "peak_db": {
+    "other": {"backing_meta_a": -10.0}
+   }
+  },
+  "acc_meta_b": {
+   "kind": "backing",
+   "name": "Meta Percussion B",
+   "key": "",
+   "bars": 16,
+   "parts": ["other"],
+   "bound": true,
+   "sounds": {
+    "other": ["backing_meta_b"]
+   },
+   "cues": {},
+   "loops": {
+    "other": {"backing_meta_b": "loops/acc_meta_b__other__backing_meta_b.ogg"}
+   },
+   "peak_db": {
+    "other": {"backing_meta_b": -10.0}
+   }
+  },
   "acc_second_pulse": {
    "kind": "backing",
    "name": "Second Pulse accompaniment",
@@ -457,6 +588,86 @@
    },
    "peak_db": {
     "other": {"ensemble": -13.91}
+   }
+  },
+  "bass_cold_2": {
+   "kind": "bass",
+   "name": "Cold Bass 2",
+   "key": "B minor",
+   "bars": 8,
+   "parts": ["bass"],
+   "bound": true,
+   "sounds": {
+    "bass": ["bass_hard_harmonic", "bass_flaring_anger", "bass_trap"]
+   },
+   "cues": {
+    "bass": [[0, 0, 3], [2880, 0, 3], [6720, 0, 1], [8880, 0, 3], [10800, 0, 3], [12720, 0, 3], [14640, 0, 3], [18240, 0, 3], [22080, 0, 1], [24240, 0, 3], [26160, 0, 3], [28080, 0, 3], [30000, 0, 3]]
+   },
+   "loops": {
+    "bass": {"bass_hard_harmonic": "loops/bass_cold_2__bass__bass_hard_harmonic.ogg", "bass_flaring_anger": "loops/bass_cold_2__bass__bass_flaring_anger.ogg", "bass_trap": "loops/bass_cold_2__bass__bass_trap.ogg"}
+   },
+   "peak_db": {
+    "bass": {"bass_hard_harmonic": -13.4, "bass_flaring_anger": -21.99, "bass_trap": -11.0}
+   }
+  },
+  "bass_cold_3": {
+   "kind": "bass",
+   "name": "Cold Bass 3",
+   "key": "A# minor",
+   "bars": 8,
+   "parts": ["bass"],
+   "bound": true,
+   "sounds": {
+    "bass": ["bass_hard_harmonic", "bass_flaring_anger", "bass_trap"]
+   },
+   "cues": {
+    "bass": [[0, 0, 1], [3840, 0, 3], [7680, 0, 4], [9600, 0, 4], [11520, 0, 4], [13440, 0, 4], [15360, 0, 1], [19200, 0, 3], [23040, 0, 4], [24960, 0, 4], [26880, 0, 4], [28800, 0, 4]]
+   },
+   "loops": {
+    "bass": {"bass_hard_harmonic": "loops/bass_cold_3__bass__bass_hard_harmonic.ogg", "bass_flaring_anger": "loops/bass_cold_3__bass__bass_flaring_anger.ogg", "bass_trap": "loops/bass_cold_3__bass__bass_trap.ogg"}
+   },
+   "peak_db": {
+    "bass": {"bass_hard_harmonic": -15.51, "bass_flaring_anger": -22.33, "bass_trap": -11.0}
+   }
+  },
+  "bass_cold_4": {
+   "kind": "bass",
+   "name": "Cold Bass 4",
+   "key": "F major",
+   "bars": 8,
+   "parts": ["bass"],
+   "bound": true,
+   "sounds": {
+    "bass": ["bass_hard_harmonic", "bass_flaring_anger", "bass_trap"]
+   },
+   "cues": {
+    "bass": [[0, 0, 1], [3360, 0, 2], [7200, 0, 2], [8640, 0, 3], [10560, 0, 3], [12480, 0, 3], [15360, 0, 1], [18720, 0, 2], [22560, 0, 2], [24000, 0, 3], [25920, 0, 3], [27840, 0, 3]]
+   },
+   "loops": {
+    "bass": {"bass_hard_harmonic": "loops/bass_cold_4__bass__bass_hard_harmonic.ogg", "bass_flaring_anger": "loops/bass_cold_4__bass__bass_flaring_anger.ogg", "bass_trap": "loops/bass_cold_4__bass__bass_trap.ogg"}
+   },
+   "peak_db": {
+    "bass": {"bass_hard_harmonic": -14.27, "bass_flaring_anger": -22.28, "bass_trap": -11.0}
+   }
+  },
+  "bass_cold_5": {
+   "kind": "bass",
+   "name": "Cold Bass 5",
+   "key": "E minor",
+   "bars": 8,
+   "parts": ["bass"],
+   "bound": true,
+   "sounds": {
+    "bass": ["bass_hard_harmonic", "bass_flaring_anger", "bass_trap"]
+   },
+   "cues": {
+    "bass": [[0, 0, 2], [5280, 0, 3], [7680, 0, 1], [9600, 0, 4], [11520, 0, 1], [13440, 0, 4], [15360, 0, 2], [20640, 0, 3], [23040, 0, 1], [24960, 0, 4], [26880, 0, 1], [28800, 0, 4]]
+   },
+   "loops": {
+    "bass": {"bass_hard_harmonic": "loops/bass_cold_5__bass__bass_hard_harmonic.ogg", "bass_flaring_anger": "loops/bass_cold_5__bass__bass_flaring_anger.ogg", "bass_trap": "loops/bass_cold_5__bass__bass_trap.ogg"}
+   },
+   "peak_db": {
+    "bass": {"bass_hard_harmonic": -9.98, "bass_flaring_anger": -16.73, "bass_trap": -7.14}
    }
   },
   "bass_hold_a": {
@@ -517,6 +728,26 @@
    },
    "peak_db": {
     "bass": {"bass_patrol": -8.11, "bass_reese": -8.38, "bass_growl": -8.89, "bass_command": -7.76, "bass_hollow": -8.04}
+   }
+  },
+  "bass_meta_1": {
+   "kind": "bass",
+   "name": "Meta Bass 1",
+   "key": "F major",
+   "bars": 8,
+   "parts": ["bass"],
+   "bound": true,
+   "sounds": {
+    "bass": ["bass_hard_harmonic", "bass_flaring_anger", "bass_trap"]
+   },
+   "cues": {
+    "bass": [[0, 0, 2], [3840, 0, 2], [7680, 0, 3], [11520, 0, 2], [15360, 0, 1], [18720, 0, 1], [22560, 0, 1], [26880, 0, 4]]
+   },
+   "loops": {
+    "bass": {"bass_hard_harmonic": "loops/bass_meta_1__bass__bass_hard_harmonic.ogg", "bass_flaring_anger": "loops/bass_meta_1__bass__bass_flaring_anger.ogg", "bass_trap": "loops/bass_meta_1__bass__bass_trap.ogg"}
+   },
+   "peak_db": {
+    "bass": {"bass_hard_harmonic": -15.02, "bass_flaring_anger": -22.82, "bass_trap": -11.0}
    }
   },
   "bass_octaves": {
@@ -671,6 +902,30 @@
     "snare": {"snare_guard": -9.02, "snare_crack": -9.56, "snare_clap": -9.4, "snare_rim": -13.42}
    }
   },
+  "groove_cold": {
+   "kind": "groove",
+   "name": "Cold Groove",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": true,
+   "sounds": {
+    "kick": ["kick_cold"],
+    "snare": ["snare_cold"]
+   },
+   "cues": {
+    "kick": [[0, 0, 1], [2400, 0, 1], [3840, 0, 1], [6240, 0, 1], [7680, 0, 1], [10080, 0, 1], [11520, 0, 1], [12000, 0, 1], [13440, 0, 1], [13920, 0, 1], [15360, 0, 1], [17760, 0, 1], [19200, 0, 1], [21600, 0, 1], [23040, 0, 1], [25440, 0, 1], [26880, 0, 1], [27360, 0, 1], [28320, 0, 1], [28800, 0, 1], [29280, 0, 1]],
+    "snare": [[960, 0, 4], [2880, 0, 4], [4800, 0, 4], [6720, 0, 4], [8640, 0, 4], [10560, 0, 4], [12480, 0, 4], [14400, 0, 4], [16320, 0, 4], [18240, 0, 4], [20160, 0, 4], [22080, 0, 4], [24000, 0, 4], [25920, 0, 4], [27840, 0, 4], [29760, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_cold": "loops/groove_cold__kick__kick_cold.ogg"},
+    "snare": {"snare_cold": "loops/groove_cold__snare__snare_cold.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_cold": -11.0},
+    "snare": {"snare_cold": -11.0}
+   }
+  },
   "groove_double_step": {
    "kind": "groove",
    "name": "Double Step",
@@ -717,6 +972,54 @@
    "peak_db": {
     "kick": {"kick_half_time": -11.0},
     "snare": {"snare_backbeat": -11.0}
+   }
+  },
+  "groove_meta_a": {
+   "kind": "groove",
+   "name": "Meta Groove A",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": true,
+   "sounds": {
+    "kick": ["kick_meta_a"],
+    "snare": ["snare_meta"]
+   },
+   "cues": {
+    "kick": [[0, 0, 1], [2400, 0, 1], [3840, 0, 1], [6240, 0, 1], [7680, 0, 1], [10080, 0, 1], [11520, 0, 1], [12000, 0, 1], [13440, 0, 1], [13920, 0, 1], [15360, 0, 1], [17760, 0, 1], [19200, 0, 1], [21600, 0, 1], [23040, 0, 1], [25440, 0, 1], [26880, 0, 1], [27360, 0, 1], [28320, 0, 1], [28800, 0, 1], [29280, 0, 1]],
+    "snare": [[960, 0, 4], [2880, 0, 4], [4800, 0, 4], [6720, 0, 4], [8640, 0, 4], [10560, 0, 4], [12480, 0, 4], [14400, 0, 4], [16320, 0, 4], [18240, 0, 4], [20160, 0, 4], [22080, 0, 4], [24000, 0, 4], [25920, 0, 4], [27840, 0, 4], [29760, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_meta_a": "loops/groove_meta_a__kick__kick_meta_a.ogg"},
+    "snare": {"snare_meta": "loops/groove_meta_a__snare__snare_meta.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_meta_a": -11.0},
+    "snare": {"snare_meta": -11.0}
+   }
+  },
+  "groove_meta_b": {
+   "kind": "groove",
+   "name": "Meta Groove B",
+   "key": "",
+   "bars": 8,
+   "parts": ["kick", "snare"],
+   "bound": true,
+   "sounds": {
+    "kick": ["kick_meta_b"],
+    "snare": ["snare_meta"]
+   },
+   "cues": {
+    "kick": [[0, 0, 1], [2400, 0, 1], [3840, 0, 1], [4320, 0, 1], [5760, 0, 1], [6240, 0, 1], [7680, 0, 1], [10080, 0, 1], [11520, 0, 1], [12000, 0, 1], [13440, 0, 1], [13920, 0, 1], [15360, 0, 1], [17760, 0, 1], [19200, 0, 1], [19680, 0, 1], [21120, 0, 1], [21600, 0, 1], [23040, 0, 1], [25440, 0, 1], [26400, 0, 1], [26880, 0, 1], [27360, 0, 1], [28320, 0, 1], [28800, 0, 1], [29280, 0, 1]],
+    "snare": [[960, 0, 4], [2880, 0, 4], [4800, 0, 4], [6720, 0, 4], [8640, 0, 4], [10560, 0, 4], [12480, 0, 4], [14400, 0, 4], [16320, 0, 4], [18240, 0, 4], [20160, 0, 4], [22080, 0, 4], [24000, 0, 4], [25920, 0, 4], [27840, 0, 4], [29760, 0, 4]]
+   },
+   "loops": {
+    "kick": {"kick_meta_b": "loops/groove_meta_b__kick__kick_meta_b.ogg"},
+    "snare": {"snare_meta": "loops/groove_meta_b__snare__snare_meta.ogg"}
+   },
+   "peak_db": {
+    "kick": {"kick_meta_b": -11.0},
+    "snare": {"snare_meta": -11.0}
    }
   },
   "groove_push": {
