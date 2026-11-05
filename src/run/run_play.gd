@@ -102,6 +102,7 @@ func _ready() -> void:
 		start = "warehouse" if data.nodes.has("warehouse") else start
 	engine = RunEngine.new(data)
 	journey = RunJourney.new(data)
+	journey.face_fn = _window_face
 	tap_policy = OS.get_environment("RW_RUN_TAPS") if OS.has_environment("RW_RUN_TAPS") and OS.get_environment("RW_RUN_TAPS") != "" else "scripted"
 	hotspots = RunHotspots.new(data, Session.run_progress.run_flags, Session.run_progress.flags)
 	engine.hotspots = hotspots
@@ -208,7 +209,7 @@ func _build_stage(world: String) -> Dictionary:
 		hv.glow_tex = assets.sprite("glow").get("tex", null)
 		var warm: Array = st.palettes.get("warm", [])
 		if not warm.is_empty():
-			hv.tint = (warm[0] as Color).lerp(Color(1.0, 0.9, 0.6), 0.55)
+			hv.tint = HotspotView.light_tint(warm[0] as Color)
 		hv.set_anchors_preset(Control.PRESET_FULL_RECT)
 		var layer := st.lowres.add_overlay(hv, "Hotspots")
 		layer.layer = 2
@@ -842,7 +843,7 @@ func hotspot_items() -> Array:
 		var sel := id == hotspots.selected
 		out.append({"hotspot": h, "state": "selected" if sel else "available", "t_state": float(_sel_t.get(id, 0.0)) if sel else 0.0})
 	if not _commit_view.is_empty():
-		if hud.now_t - float(_commit_view["t"]) < 2.5 * engine.beat_s:
+		if hud.now_t - float(_commit_view["t"]) < (HotspotView.FLASH_S + HotspotView.SETTLE_S) * 1.05:
 			out.append({"hotspot": _commit_view["hotspot"], "state": "committed", "t_state": float(_commit_view["t"])})
 		else:
 			_commit_view = {}
@@ -938,14 +939,34 @@ func _hotspot_cinematic(out: Dictionary, t: float) -> void:
 		_door_phase = engine.phase_n  # the cinematic is the move: no door walk is latched for this phase
 
 
-## The turn (degrees, relative to the camera's facing now) toward an actor, thing or waypoint of the scene's map; NAN when it cannot be placed.
+## What the camera holds in the picture for the hotspot window of `node_id` (RunJourney.face_fn): the window's hotspots as points [x, z, 1 for the default, height], which StoryPlayer's `face`
+## look frames from wherever the rail is (StoryPlayer.best_facing); [] when there is nothing to frame.
+func _window_face(node_id: String, _place: String) -> Array:
+	if hotspots == null or not stages.has(active_world) or node_id != engine.node_id:
+		return []
+	var st: StoryStage = stages[active_world]["stage"]
+	if st.map == null:
+		return []
+	var pts: Array = []
+	for h in hotspots.shown(3, true):
+		if RunHotspots.window_of(h) != "final":
+			continue
+		var r := HotspotView.resolve(h["anchor"], st.map, st.crowds)
+		if bool(r["ok"]):
+			var p: Vector3 = r["pos"]
+			pts.append([p.x, p.z, 1.0 if bool(h["default"]) else 0.0, p.y])
+	return pts
+
+
+## The turn (degrees, relative to the rail's facing now, which a glance is added to) toward an actor, thing or waypoint of the scene's map; NAN when it cannot be placed.
 func _look_by(target: String) -> float:
 	if not stages.has(active_world):
 		return NAN
 	var st: StoryStage = stages[active_world]["stage"]
-	var pose := _exit_pose()
-	if st.map == null or pose.is_empty():
+	if st.map == null or st.player == null:
 		return NAN
+	var full := st.player.pose_at(hud.now_t)
+	var pose := {"cam": full["cam"], "yaw": float(full.get("rail_yaw", full["yaw"])) + st.free_look.offset}
 	for key in ["actor", "thing", "waypoint"]:
 		var r := HotspotView.resolve({key: target}, st.map, st.crowds)
 		if bool(r["ok"]):

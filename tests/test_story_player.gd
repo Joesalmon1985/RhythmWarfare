@@ -168,6 +168,60 @@ func test_look_turns_to_face_a_waypoint_and_holds() -> void:
 	assert_near(float(p.pose_at(25.0 * b)["yaw"]), 0.0, 1e-6)
 
 
+func test_a_face_look_turns_to_a_point_holds_it_through_a_move_and_hands_back() -> void:
+	var p := _player()
+	var b := p.bar_s()
+	var spot := Vector2(-6.0, 4.0)
+	p.apply_action(_act(4.0 * b, "player_move", {"to": "steps", "style": "walk", "bars": 3.0}))  # the rail walks while the head is held
+	p.apply_action(_act(4.0 * b, "player_look", {"face": [[spot.x, spot.y, 1.0]], "bars": 5.0, "turn_bars": 1.0, "release_bars": 1.0}))
+	assert_near(float(p.face_at(3.9 * b)["w"]), 0.0, 1e-6, "nothing before it starts")
+	for k in [5.0, 6.0, 6.5, 7.5]:  # turned by the end of the first bar, held till the last (while the rail walks the facing trails it by a beat's smoothing)
+		var pose := p.pose_at(k * b)
+		var d := spot - (pose["pos"] as Vector2)
+		var want := rad_to_deg(atan2(-d.x, -d.y))
+		assert_near(absf(wrapf(float(pose["yaw"]) - want, -180.0, 180.0)), 0.0, 6.0 if k < 7.0 else 0.01, "facing the point at bar %.1f, wherever the rail has got to" % k)
+	var late := p.pose_at(9.5 * b)
+	assert_near(float(late["yaw"]), float(late["rail_yaw"]), 1e-6, "after it the head is the rail's again")
+	var mid := p.pose_at(4.5 * b)
+	assert_true(float(p.face_at(4.5 * b)["w"]) > 0.0 and float(p.face_at(4.5 * b)["w"]) < 1.0, "half way through the turn")
+	assert_true(absf(wrapf(float(mid["yaw"]) - float(mid["rail_yaw"]), -180.0, 180.0)) > 0.5, "the turn is under way")
+	var q := _player()
+	q.apply_action(_act(4.0 * b, "player_look", {"face": [[spot.x, spot.y, 1.0]], "bars": 5.0, "turn_bars": 1.0, "release_bars": 1.0}))
+	q.apply_action(_act(4.0 * b, "player_move", {"to": "steps", "style": "walk", "bars": 3.0}))
+	for k in [4.5, 6.0, 7.9]:
+		assert_near(float(q.pose_at(k * b)["yaw"]), float(p.pose_at(k * b)["yaw"]), 1e-6, "the same in any order of arrival")
+
+
+func _in_view(yaw: float, p: Vector2, from: Vector2) -> bool:
+	var a := rad_to_deg(atan2(-(p - from).x, -(p - from).y))
+	return absf(wrapf(a - yaw, -180.0, 180.0)) <= StoryPlayer.FACE_HALF_DEG + 0.01
+
+
+func test_best_facing_holds_the_kept_point_and_as_many_others_as_fit() -> void:
+	var from := Vector2.ZERO
+	assert_true(is_nan(StoryPlayer.best_facing([], from)), "nothing to face")
+	assert_true(is_nan(StoryPlayer.best_facing([Vector3(0.3, 0.2, 1.0)], from)), "a point at the player's feet gives no facing")
+	var a := StoryPlayer.best_facing([Vector3(-2.0, -6.0, 1.0), Vector3(2.0, -6.0, 0.0), Vector3(0.0, 8.0, 0.0)], from)
+	assert_near(absf(wrapf(a, -180.0, 180.0)), 0.0, 0.5, "the pair ahead, faced between them (toward -z)")
+	var b := StoryPlayer.best_facing([Vector3(-2.0, -6.0, 0.0), Vector3(2.0, -6.0, 0.0), Vector3(0.0, 8.0, 1.0)], from)
+	assert_near(absf(wrapf(b - 180.0, -180.0, 180.0)), 0.0, 0.5, "the kept one alone behind wins over two others ahead")
+	var pts := [Vector3(-5.0, -5.0, 1.0), Vector3(-1.0, -7.0, 0.0), Vector3(6.0, -1.0, 0.0)]
+	var c := StoryPlayer.best_facing(pts, from)
+	assert_true(_in_view(c, Vector2(-5.0, -5.0), from) and _in_view(c, Vector2(-1.0, -7.0), from), "the kept one and its neighbour are framed")
+	assert_eq(StoryPlayer.best_facing(pts, from), c, "deterministic")
+
+
+func test_face_tip_tips_the_head_down_only_for_points_below_the_picture() -> void:
+	var from := Vector2.ZERO
+	assert_eq(StoryPlayer.face_tip([Vector4(0.0, -8.0, 1.0, 1.0)], from, 0.0, 1.6), 0.0, "a point ahead at chest height needs no tip")
+	var tip := StoryPlayer.face_tip([Vector4(0.0, -4.0, 1.0, 0.0)], from, 0.0, 3.0)  # standing on a balcony, the eye three metres above it
+	assert_true(tip < -5.0 and tip >= -StoryPlayer.FACE_TIP_MAX, "below the picture: the head tips down (%.1f)" % tip)
+	var low := rad_to_deg(atan2(0.0 - 3.0, 4.0))
+	assert_true(low - tip >= -26.0, "and the point is then inside the picture")
+	assert_eq(StoryPlayer.face_tip([Vector4(0.0, 3.0, 1.0, 0.0)], from, 0.0, 4.6), 0.0, "a point behind the facing is left out")
+	assert_eq(StoryPlayer.face_tip([Vector3(0.0, -3.0, 1.0)], from, 0.0, 4.6), 0.0, "a point without a height is left out")
+
+
 func test_bob_is_locked_to_the_beat() -> void:
 	var p := _player()
 	var b := p.bar_s()

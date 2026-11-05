@@ -83,3 +83,12 @@ func test_the_projection_is_the_stage_camera() -> void:
 	assert_eq(lay[0]["centre"], want["screen"], "the layout is StoryProjector's")
 	var big := HotspotView.layout([_entry("a", {"pos": [0.0, 1.6, 0.0]})], m, {}, pose, view * 2.0)
 	assert_near((big[0]["centre"] as Vector2).x, (lay[0]["centre"] as Vector2).x * 2.0, 0.5, "it scales with the view, so the low-res draw and the screen hit test agree")
+
+
+func test_light_tint_keeps_the_hue_at_full_brightness() -> void:
+	for c in [Color(1.0, 0.7, 0.25), Color(0.2, 0.3, 0.9), Color(0.5, 0.5, 0.45), Color(0.9, 0.1, 0.6)]:
+		var t := HotspotView.light_tint(c)
+		assert_near(t.v, 1.0, 1e-4, "every world's lights are as bright")
+		assert_true(t.s >= 0.35 - 1e-4 and t.s <= 0.6 + 1e-4, "and pale enough to read as light (%.2f)" % t.s)
+		if c.s > 0.2:
+			assert_near(absf(wrapf(t.h - c.h, -0.5, 0.5)), 0.0, 1e-3, "in the world's own hue")

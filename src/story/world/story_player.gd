@@ -30,6 +30,7 @@ var _roles: Array = []  # {t0, role}
 var _queasy: Array = []  # {t0, t1, amount}
 var _sick: Array = []  # {t0, t1}
 var _glances: Array = []  # {t0, t1, by, pitch}: authored head turns (yaw `by` and/or pitch up) on top of the rail's facing
+var _faces: Array = []  # {t0, t1, pts: [Vector4 (x, z, 1 for the one to keep, height or NAN)], turn_s, release_s}: the head held on points of the room (player_look `face`), whatever the rail does underneath
 var _seq := 0
 
 
@@ -45,6 +46,7 @@ func reset() -> void:
 	_queasy = []
 	_sick = []
 	_glances = []
+	_faces = []
 	_seq = 0
 	errors = []
 
@@ -70,6 +72,15 @@ func apply_action(a: Dictionary) -> bool:
 		"player_walk":  # a walk inside a room (relative to where the rail is when it starts): see _plan_walk
 			_add({"kind": "move", "walk": args.duplicate(), "t0": t0, "t1": t0 + maxf(dur, 0.001), "to": str(args.get("to", "")), "style": str(args.get("style", "walk"))})
 		"player_look":
+			if args.has("face"):  # [[x, z, keep, height], ...]: the head turns to the best facing over these points (best_facing) over `turn_bars`, holds it from wherever the rail walks, hands back over `release_bars`
+				var pts: Array = []
+				for f in args["face"]:
+					var fa: Array = f
+					pts.append(Vector4(float(fa[0]), float(fa[1]), float(fa[2]) if fa.size() > 2 else 0.0, float(fa[3]) if fa.size() > 3 else NAN))
+				var tot := maxf(dur, 0.001)
+				var turn := clampf(float(args.get("turn_bars", 1.0)) * bar_s(), 0.001, tot)
+				_faces.append({"t0": t0, "t1": t0 + tot, "pts": pts, "turn_s": turn, "release_s": clampf(float(args.get("release_bars", 1.0)) * bar_s(), 0.001, tot)})
+				return true
 			if args.has("by") or args.has("pitch"):  # a glance: the head turns `by` degrees (and tips `pitch` up, negative down) from wherever the rail faces and comes back; it never touches the route
 				_glances.append({"t0": t0, "t1": t0 + maxf(dur, 0.001), "by": float(args.get("by", 0.0)), "pitch": float(args.get("pitch", 0.0))})
 				return true
@@ -408,13 +419,102 @@ static func drift_at(t: float) -> Vector2:
 	return Vector2(DRIFT_YAW * (0.65 * sin(TAU * t / 13.7) + 0.35 * sin(TAU * t / 5.3 + 1.3)), DRIFT_PITCH * (0.6 * sin(TAU * t / 9.1 + 0.7) + 0.4 * sin(TAU * t / 3.9 + 2.1)))
 
 
+const FACE_HALF_DEG := 36.0  # a `face` look holds its points within this much either side of the axis (the run's stage strip shows about 53)
+const FACE_NEAR_M := 1.5  # nearer than this a point is at the player's feet, under the picture whatever the facing
+const FACE_SMOOTH_BEATS := 1.0  # the facing is the mean of the best facings over the last beat, so a change of the best group is a turn, not a cut
+
+
+## The facing (degrees) that holds the most of `pts` (Vector3 or Vector4: x, z, keep > 0.5 for the one that must be held) within FACE_HALF_DEG either side, standing at `from`: of the groups that fit,
+## the one holding the kept point, then the most points, then the narrowest; aimed at the middle of the group. NAN when every point is at the player's feet. Pure.
+static func best_facing(pts: Array, from: Vector2) -> float:
+	var angs: Array = []
+	for q in pts:
+		var v: Vector4 = Vector4(q.x, q.y, q.z, 0.0) if q is Vector3 else q
+		var d := Vector2(v.x, v.y) - from
+		if d.length() < FACE_NEAR_M:
+			continue
+		angs.append(Vector2(rad_to_deg(atan2(-d.x, -d.y)), v.z))
+	if angs.is_empty():
+		return NAN
+	var best_aim := 0.0
+	var best_n := -1
+	var best_keep := false
+	var best_span := INF
+	for c in angs:
+		var lo: float = c.x
+		var n := 0
+		var keep := false
+		var span := 0.0
+		for q in angs:
+			var off := fposmod(float(q.x) - lo, 360.0)
+			if off <= 2.0 * FACE_HALF_DEG + 1.0e-4:
+				n += 1
+				keep = keep or float(q.y) > 0.5
+				span = maxf(span, off)
+		if best_n < 0 or (keep and not best_keep) or (keep == best_keep and n > best_n) or (keep == best_keep and n == best_n and span < best_span - 1.0e-4):
+			best_n = n
+			best_keep = keep
+			best_span = span
+			best_aim = lo + span * 0.5
+	return best_aim
+
+
+const FACE_TIP_MAX := 28.0  # how far a `face` look tips the head down for points below the picture (standing above them: a balcony, a stair)
+const FACE_TIP_MARGIN := 18.0  # the lowest held point is kept this far inside the bottom of the picture (the picture shows 26 degrees below the axis)
+
+
+## How far (degrees, 0 or negative) to tip the head so the lowest of `pts` held by `aim` is in the picture, from `from` at eye height `eye`. Points without a height are left out. Pure.
+static func face_tip(pts: Array, from: Vector2, aim: float, eye: float) -> float:
+	var lowest := 0.0
+	for q in pts:
+		if not (q is Vector4) or is_nan(float(q.w)):
+			continue
+		var d := Vector2(q.x, q.y) - from
+		var dist := d.length()
+		if dist < FACE_NEAR_M:
+			continue
+		if absf(wrapf(rad_to_deg(atan2(-d.x, -d.y)) - aim, -180.0, 180.0)) > FACE_HALF_DEG + 6.0:
+			continue
+		lowest = minf(lowest, rad_to_deg(atan2(float(q.w) - eye, dist)))
+	return clampf(minf(0.0, lowest + FACE_TIP_MARGIN), -FACE_TIP_MAX, 0.0)
+
+
+## The face look's facing at t: the best facing from where the rail is, averaged over the last FACE_SMOOTH_BEATS (deterministic: five samples of song time). NAN when none.
+func _face_yaw(pts: Array, t: float) -> float:
+	var sum := Vector2.ZERO
+	var step := FACE_SMOOTH_BEATS * 60.0 / bpm / 4.0
+	for k in 5:
+		var tk := t - float(k) * step
+		var ev := _event_at(tk)
+		var pos: Vector2 = (_initial_state() if ev.is_empty() else _state_in(ev, tk))["pos"]
+		var a := best_facing(pts, pos)
+		if not is_nan(a):
+			sum += StoryProjector.forward(a)
+	if sum.length() < 1.0e-4:
+		return NAN
+	return rad_to_deg(atan2(-sum.x, -sum.y))
+
+
+## How much a held `face` look owns the head at t (0 none, 1 fully on its points) and the points: {w, pts}. The latest one that is active wins.
+func face_at(t: float) -> Dictionary:
+	var out := {"w": 0.0, "pts": []}
+	for f in _faces:
+		var t0 := float(f["t0"])
+		var t1 := float(f["t1"])
+		if t < t0 or t >= t1:
+			continue
+		var w := minf(_smooth((t - t0) / float(f["turn_s"])), _smooth((t1 - t) / float(f["release_s"])))
+		out = {"w": w, "pts": f["pts"]}
+	return out
+
+
 ## True while an authored player_look is turning the head.
 func look_active(t: float) -> bool:
 	var ev := _event_at(t)
 	return not ev.is_empty() and ev["kind"] == "look" and t < float(ev["t1"])
 
 
-## The camera at song time t. {cam: Vector3, yaw, pitch, roll (degrees), pos: Vector2 (ground, without sway), sector, ground, moving, style, u, role, queasy, sick}.
+## The camera at song time t. {cam: Vector3, yaw, rail_yaw (the facing without a held `face` look), pitch, roll (degrees), pos: Vector2 (ground, without sway), sector, ground, moving, style, u, role, queasy, sick}.
 func pose_at(t: float) -> Dictionary:
 	var ev := _event_at(t)
 	var st: Dictionary
@@ -455,13 +555,25 @@ func pose_at(t: float) -> Dictionary:
 		bob.x += 0.05 * q * sin(PI * 0.25 * beats)
 		bob.z += 2.5 * q * sin(PI * 0.25 * beats + 1.0)
 	var drift := Vector2.ZERO if reduced or not drift_on else drift_at(t)
-	var yaw := float(st["yaw"]) + glance_at(t) + drift.x
-	var pitch := pitch_at(t) + drift.y
+	var rail_yaw := float(st["yaw"]) + glance_at(t)
+	var yaw := rail_yaw
+	var face_pitch := 0.0
+	if not _faces.is_empty():
+		var fc := face_at(t)
+		var fy := _face_yaw(fc["pts"], t) if float(fc["w"]) > 0.0 else NAN
+		if not is_nan(fy):
+			var fw := float(fc["w"])
+			if cut:
+				fw = 0.0 if fw < 0.5 else 1.0
+			yaw = _lerp_yaw(yaw, fy, fw)
+			face_pitch = face_tip(fc["pts"], st["pos"], fy, float(st["ground"]) + map.eye_height) * fw
+	yaw += drift.x
+	var pitch := pitch_at(t) + drift.y + face_pitch
 	var pos: Vector2 = st["pos"]
 	var ground := float(st["ground"])
 	var eye := ground + map.eye_height + bob.y - CROUCH_M * sick
 	var side := StoryProjector.right(yaw) * bob.x
-	return {"cam": Vector3(pos.x + side.x, eye, pos.y + side.y), "yaw": yaw, "pitch": pitch, "roll": bob.z, "pos": pos, "sector": str(st["sector"]), "ground": ground,
+	return {"cam": Vector3(pos.x + side.x, eye, pos.y + side.y), "yaw": yaw, "rail_yaw": rail_yaw + drift.x, "pitch": pitch, "roll": bob.z, "pos": pos, "sector": str(st["sector"]), "ground": ground,
 		"moving": moving, "style": style, "u": u, "role": role, "queasy": q, "sick": sick}
 
 
