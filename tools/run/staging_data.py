@@ -18,6 +18,8 @@ STAGING = {
     "warehouse.exit_bar": {"door_at": [6.85, 2.0]},
     "warehouse.exit_balcony": {"door_at": [-6.85, 1.75]},
     # --- the pilot: the Gospel, J04 Calling the Fishermen ------------------------------------------------------------------------
-    # Simon (f1) invites you to his boat; when the boat is the current choice its two men there wave you aboard too
+    # Simon (f1, the default person staging) beckons from his nets; the way up the hill is a sign post on the shore path (a door would be wrong on a beach); the boat out on the
+    # lake bobs and its lamp is lit when it is the current choice
+    "galilee.mount": {"door": "sign", "door_at": [0.6, -5.2]},
     # --- the pilot: the Bassment --------------------------------------------------------------------------------------------------
 }
