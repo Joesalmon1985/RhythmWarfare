@@ -305,10 +305,33 @@ func _draw_claim_free(e: Dictionary, pose: Dictionary, t: float, base: Color, wh
 	var r_m := float((h["look"] as Dictionary).get("ring_m", h["radius_m"]))
 	var breath := 0.0 if reduced else _pulse(t, 4.0)
 	var thick := maxf(2.0, sc * 0.06)
-	_disc(world, gy, r_m * 1.05, pose, Color(base.r, base.g, base.b, 0.1 + 0.06 * breath))
-	_disc(world, gy, r_m * 0.7, pose, Color(base.r, base.g, base.b, 0.08 + 0.04 * breath))
-	_claim_ring(world, gy, r_m * (1.0 + 0.03 * breath), pose, Color(base.r, base.g, base.b, 0.6 + 0.25 * breath), thick)
-	_claim_ring(world, gy, r_m * 1.18, pose, Color(white.r, white.g, white.b, 0.18 + 0.2 * breath), maxf(1.0, thick * 0.4))
+	var pool := Color(base.r, base.g, base.b, 0.1 + 0.06 * breath)
+	var core := Color(base.r, base.g, base.b, 0.08 + 0.04 * breath)
+	var bar := Color(base.r, base.g, base.b, 0.6 + 0.25 * breath)
+	var halo := Color(white.r, white.g, white.b, 0.18 + 0.2 * breath)
+	# drawn every frame of a visit: one projected ring, the others scaled from it on screen about the projected centre (close enough for soft light; the
+	# exact rings only when part of the ring is behind the eye)
+	var ring := _ring_points(world, gy, r_m, pose)
+	var cpr := StoryProjector.project(Vector3(world.x, gy, world.z), pose, size)
+	if ring.size() < 4 or float(cpr["depth"]) < StoryProjector.NEAR:
+		_disc(world, gy, r_m * 1.05, pose, pool)
+		_disc(world, gy, r_m * 0.7, pose, core)
+		_claim_ring(world, gy, r_m * (1.0 + 0.03 * breath), pose, bar, thick)
+		_claim_ring(world, gy, r_m * 1.18, pose, halo, maxf(1.0, thick * 0.4))
+		return
+	var cc: Vector2 = cpr["screen"]
+	draw_colored_polygon(_scaled(ring, cc, 1.05).slice(0, ring.size() - 1), pool)
+	draw_colored_polygon(_scaled(ring, cc, 0.7).slice(0, ring.size() - 1), core)
+	draw_polyline(_scaled(ring, cc, 1.0 + 0.03 * breath), bar, thick)
+	draw_polyline(_scaled(ring, cc, 1.18), halo, maxf(1.0, thick * 0.4))
+
+
+func _scaled(pts: PackedVector2Array, c: Vector2, k: float) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	out.resize(pts.size())
+	for i in pts.size():
+		out[i] = c + (pts[i] - c) * k
+	return out
 
 
 ## A warm wash round the edge of the whole picture (peripheral vision sees a touch counted); `a` is its strength at the very edge.
