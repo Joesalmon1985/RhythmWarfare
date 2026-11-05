@@ -14,6 +14,8 @@ const LIFT_M := 0.28
 const FLASH_S := 0.5
 const CURRENT_COL := Color(0.25, 1.0, 0.45)
 const OTHER_COL := Color(1.0, 0.32, 0.22)
+const CLAIM_BURST_S := 0.35  # the touch burst of the "claim" look
+const CLAIM_REFUSE_S := 0.8  # the refusal (a waved-off claim) plays out over this long
 
 var items_fn: Callable  # () -> Array of {hotspot: Dictionary, state: "available" | "selected" | "committed", t_state: float (song time the state began)}
 var pose_fn: Callable  # () -> {cam: Vector3, yaw, pitch} (empty: nothing to draw)
@@ -104,9 +106,9 @@ static func layout(entries: Array, map: StoryMap, crowds: Dictionary, pose: Dict
 		var pc := StoryProjector.project(p, pose, view)
 		var pg := StoryProjector.project(Vector3(p.x, float(r["ground"]), p.z), pose, view)
 		var min_r := float(h["min_px"]) * 0.5
-		var entry := {"id": str(h["id"]), "hotspot": h, "state": str(e["state"]), "t_state": float(e.get("t_state", 0.0)), "world": p, "ground_y": float(r["ground"]), "actor": bool(r["actor"]), "edge": false, "ok": true,
+		var entry := {"id": str(h["id"]), "hotspot": h, "state": str(e["state"]), "t_state": float(e.get("t_state", 0.0)), "t_commit": float(e.get("t_commit", 0.0)), "success": bool(e.get("success", true)), "world": p, "ground_y": float(r["ground"]), "actor": bool(r["actor"]), "edge": false, "ok": true,
 			"finished": bool(e.get("finished", false))}
-		var on_screen: bool = bool(pc["visible"]) and float(pc["depth"]) > 0.4 and pc["screen"].x >= 0.0 and pc["screen"].x <= view.x and pc["screen"].y >= 0.0 and pc["screen"].y <= view.y
+		var on_screen: bool = bool(pc["visible"]) and float(pc["depth"]) > 0.4 and pc["screen"].x >= 0.0 and pc["screen"].x <= view.x and (pc["screen"].y >= 0.0 and pc["screen"].y <= view.y or str((h["look"] as Dictionary).get("selected", "")) == "claim")  # a "claim" thing standing just below the picture still counts as in view (its beam rises into it)
 		if on_screen:
 			var sc := float(pc["scale"])
 			var rad := minf(maxf(float(h["radius_m"]) * sc, min_r), minf(view.x, view.y) * 0.5)
@@ -171,9 +173,15 @@ func _draw() -> void:
 	var lay := layout(items, stage.map, stage.crowds, pose, size)
 	lay.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["depth"]) > float(b["depth"]))  # far first
 	var opts: Dictionary = snap.get("options", {})
+	var shown_again := {}  # a "claim" hotspot waved off stays on show: its refusal replaces the plain look for a moment
+	for e in lay:
+		if str(e["state"]) == "committed":
+			shown_again[str(e["id"])] = true
 	for e in lay:
 		if opts.has(str(e["id"])):
 			e["role"] = str(opts[str(e["id"])]["role"])
+		if str(e["state"]) == "available" and shown_again.has(str(e["id"])):
+			continue
 		_draw_entry(e, pose, t)
 
 
@@ -253,7 +261,7 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 	var c: Vector2 = e["centre"]
 	var g: Vector2 = e["ground"]
 	var world: Vector3 = e["world"]
-	var r_m := float(h["radius_m"])
+	var r_m := float((look as Dictionary).get("ring_m", h["radius_m"]))  # the drawn ring: the touch radius unless look.ring_m says the thing is smaller
 	var u := maxf(t - float(e["t_state"]), 0.0)
 	var base := tint
 	var finished := bool(e.get("finished", false))  # a portal whose path has been finished (plan D10): its own tint and look
@@ -269,10 +277,16 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 	var strength := 0.32 + 0.3 * pulse + (0.2 if is_default else 0.0)
 	var white := base.lerp(Color(1, 1, 1), 0.7)
 	if bool(e["edge"]):
+		if str(look["selected"]) == "claim":  # a big touch target is not a big beacon
+			e = e.duplicate()
+			e["radius_px"] = minf(float(e["radius_px"]), size.y * 0.16)
 		_glow(c, float(e["radius_px"]) * (1.0 + 0.2 * pulse), white if state == "selected" else base, 0.45 + 0.3 * pulse + (0.25 if state == "selected" else 0.0))
 		draw_arc(c, float(e["radius_px"]) * 0.8, 0.0, TAU, 24, Color(white.r, white.g, white.b, 0.5 + 0.4 * pulse), maxf(1.0, sc * 0.02))
 		return
 	var width := maxf(1.0, sc * 0.035)
+	if str(look["selected"]) == "claim" and state in ["selected", "committed"]:
+		_draw_claim(e, state, pose, t, u, base, white)
+		return
 	match state:
 		"available":
 			var look_a := str(look["available"]) if not finished else str((look["finished"] as Dictionary).get("available", "crown"))
@@ -338,6 +352,119 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 				draw_polyline(ring3, Color(1, 1, 1, 0.95 * (1.0 - k)), width * 3.0 * (1.0 - k) + 1.0)
 			if role == "":  # (a staged option's commit is its door swinging wide and its people reacting: no flash over them)
 				_glow(c + Vector2(0.0, -LIFT_M * sc), r_m * sc * (0.8 + 1.4 * k), Color(1, 1, 1), 0.95 * (1.0 - k) + 0.1)
+
+
+# --- the "claim" look: touching a place you can sit at (the blackjack table). Bold shapes, no text: the picture is small and the eyes are on the pads. --------------------------
+
+## A warm wash round the edge of the whole picture (peripheral vision sees a touch counted); `a` is its strength at the very edge.
+func _frame_wash(col: Color, a: float) -> void:
+	var th := size.y * 0.035
+	for i in 6:
+		var f := 1.0 - float(i) / 6.0
+		var c := Color(col.r, col.g, col.b, a * f)
+		var o := th * float(i)
+		draw_rect(Rect2(0.0, o, size.x, th), c)
+		draw_rect(Rect2(0.0, size.y - o - th, size.x, th), c)
+		draw_rect(Rect2(o, 0.0, th, size.y), c)
+		draw_rect(Rect2(size.x - o - th, 0.0, th, size.y), c)
+
+
+## A ring on the floor drawn as far as it is in front of the camera (a ring round a table the camera stands close to reaches behind it).
+func _claim_ring(world: Vector3, ground_y: float, r: float, pose: Dictionary, col: Color, width: float) -> void:
+	var run := PackedVector2Array()
+	for i in SEGMENTS * 2 + 1:
+		var a := TAU * float(i) / float(SEGMENTS * 2)
+		var pr := StoryProjector.project(Vector3(world.x + cos(a) * r, ground_y, world.z + sin(a) * r), pose, size)
+		if float(pr["depth"]) < StoryProjector.NEAR:
+			if run.size() > 1:
+				draw_polyline(run, col, width)
+			run = PackedVector2Array()
+		else:
+			run.append(pr["screen"])
+	if run.size() > 1:
+		draw_polyline(run, col, width)
+
+
+## The floor disc inside a ring of radius `r` metres, filled with light.
+func _disc(world: Vector3, ground_y: float, r: float, pose: Dictionary, col: Color) -> void:
+	var pts := _ring_points(world, ground_y, r, pose)
+	if pts.size() > 3:
+		draw_colored_polygon(pts.slice(0, pts.size() - 1), col)
+
+
+## A tall beam of light standing on `g`, fading out at the top.
+func _claim_beam(g: Vector2, h_px: float, w_px: float, col: Color, a: float) -> void:
+	var top := g + Vector2(0.0, -h_px)
+	var cols := PackedColorArray([Color(col.r, col.g, col.b, a), Color(col.r, col.g, col.b, a), Color(col.r, col.g, col.b, 0.0), Color(col.r, col.g, col.b, 0.0)])
+	draw_polygon(PackedVector2Array([g + Vector2(-w_px, 0.0), g + Vector2(w_px, 0.0), top + Vector2(w_px * 0.45, 0.0), top + Vector2(-w_px * 0.45, 0.0)]), cols)
+	draw_line(g, top.lerp(g, 0.15), Color(1, 1, 1, a), maxf(2.0, w_px * 0.35))
+
+
+func _draw_claim(e: Dictionary, state: String, pose: Dictionary, t: float, u: float, base: Color, white: Color) -> void:
+	var h: Dictionary = e["hotspot"]
+	var sc := float(e["scale"])
+	var g: Vector2 = e["ground"]
+	var world: Vector3 = e["world"]
+	var gy := float(e["ground_y"])
+	var r_m := float((h["look"] as Dictionary).get("ring_m", h["radius_m"]))
+	var thick := maxf(3.0, sc * 0.11)
+	if state == "committed":
+		if bool(e["success"]):
+			_claim_success(pose, u, white, g, world, gy, r_m, sc, thick)
+		else:
+			_claim_refused(pose, u, g, world, gy, r_m, sc, thick)
+		return
+	var beat_ph := fmod(t, beat_s) / beat_s
+	var throb := 0.0 if reduced else pow(1.0 - beat_ph, 3.0)
+	# the whole floor disc: warm light, the ring throbbing on every beat, a tall beam over the table
+	_disc(world, gy, r_m, pose, Color(base.r, base.g, base.b, 0.3 + 0.12 * throb))
+	_claim_beam(g, sc * 3.0, maxf(5.0, sc * 0.3) * (1.0 + 0.2 * throb), white, 0.75)
+	_claim_ring(world, gy, r_m * (1.0 + 0.04 * throb), pose, Color(white.r, white.g, white.b, 0.85 + 0.15 * throb), thick * (1.0 + 0.5 * throb))
+	# the countdown: a ring closing in from well outside, on the main ring exactly at the decision (reduced: an arc filling clockwise)
+	var span := maxf(float(e["t_commit"]) - float(e["t_state"]), 0.05)
+	var left := clampf((float(e["t_commit"]) - t) / span, 0.0, 1.0)
+	if reduced:
+		draw_arc(g, r_m * sc * 0.5 + thick * 2.0, -PI * 0.5, -PI * 0.5 + TAU * (1.0 - left), 40, Color(1, 1, 1, 0.95), thick)
+	else:
+		_claim_ring(world, gy, r_m * (1.0 + 1.6 * left), pose, Color(1, 1, 1, 0.55 + 0.4 * (1.0 - left)), maxf(2.0, thick * 0.8))
+	# the instant of the touch: a flash on the floor, a thick ring flying out, and the picture's edge washed with light
+	if u < CLAIM_BURST_S and not reduced:
+		var k := u / CLAIM_BURST_S
+		_disc(world, gy, r_m, pose, Color(1, 1, 1, 0.55 * (1.0 - k)))
+		_claim_ring(world, gy, r_m * (1.0 + 1.4 * k), pose, Color(1, 1, 1, 0.95 * (1.0 - k)), thick * 2.2 * (1.0 - k) + 2.0)
+		_frame_wash(white, 0.5 * (1.0 - k))
+		_glow(Vector2(g.x, minf(g.y - sc * 0.5, size.y * 0.8)), r_m * sc * (0.9 + 0.8 * k), Color(1, 1, 1), 0.6 * (1.0 - k))
+
+
+## Sat down: a bigger, brighter version of the plain flash (the walk to the chair follows).
+func _claim_success(pose: Dictionary, u: float, white: Color, g: Vector2, world: Vector3, gy: float, r_m: float, sc: float, thick: float) -> void:
+	var k := clampf(u / (FLASH_S * 1.6), 0.0, 1.0)
+	_disc(world, gy, r_m, pose, Color(1, 1, 1, 0.85 * (1.0 - k) + 0.1))
+	_claim_ring(world, gy, r_m * (1.0 + 2.6 * k), pose, Color(1, 1, 1, 0.98 * (1.0 - k)), thick * 2.6 * (1.0 - k) + 2.0)
+	_claim_beam(g, sc * (3.0 + 2.0 * k), maxf(6.0, sc * 0.4), white, 0.95 * (1.0 - 0.6 * k))
+	_glow(Vector2(g.x, minf(g.y - sc * 0.6, size.y * 0.8)), r_m * sc * (1.0 + 1.6 * k), Color(1, 1, 1), 0.95 * (1.0 - k) + 0.1)
+	if not reduced:
+		_frame_wash(white, 0.8 * (1.0 - k))
+
+
+## Waved off: cold grey light, the ring breaks into segments that drop and fade, a short sideways shake. Nothing of it is warm or white.
+func _claim_refused(pose: Dictionary, u: float, g: Vector2, world: Vector3, gy: float, r_m: float, sc: float, thick: float) -> void:
+	var k := clampf(u / CLAIM_REFUSE_S, 0.0, 1.0)
+	var cold := Color(0.55, 0.62, 0.75) if not high_contrast else Color(0.75, 0.8, 0.9)
+	var shake := 0.0 if reduced else sin(u * 70.0) * (1.0 - k) * sc * 0.14
+	draw_set_transform(Vector2(shake, 0.0))
+	_disc(world, gy, r_m, pose, Color(cold.r, cold.g, cold.b, 0.35 * (1.0 - k)))
+	var ring := _ring_points(world, gy, r_m, pose)
+	if ring.size() > 2:
+		var per := 4
+		for i in 7:
+			var seg := PackedVector2Array()
+			var fall := 0.0 if reduced else k * k * sc * (0.9 + 0.35 * float(i % 3))
+			for j in range(i * per, i * per + per):  # four points per arc: three segments drawn, one left out as the gap
+				seg.append(ring[mini(j, ring.size() - 1)] + Vector2(0.0, fall))
+			draw_polyline(seg, Color(cold.r, cold.g, cold.b, 0.9 * (1.0 - k)), thick * (1.0 - 0.4 * k))
+	_claim_beam(g, sc * 3.0 * (1.0 - k), maxf(4.0, sc * 0.2), cold, 0.5 * (1.0 - k))
+	draw_set_transform(Vector2.ZERO)
 
 
 # --- the choice layer (docs/CHOICE_CLARITY.md) ----------------------------------------------------------------------------------

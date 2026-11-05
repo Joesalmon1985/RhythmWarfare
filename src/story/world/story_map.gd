@@ -85,7 +85,10 @@ func build(d: Dictionary, check_files: bool) -> void:
 		errors.append("eye_height must be positive")
 	textures = d.get("textures", {})
 	for k in textures:
-		if check_files and not FileAccess.file_exists("res://assets/story/%s/%s" % [art, str(textures[k])]) and not ResourceLoader.exists("res://assets/story/%s/%s" % [art, str(textures[k])]):
+		if check_files and str(textures[k]).begins_with("res://"):  # a `res://` texture lives outside the chapter (the blackjack table)
+			if not ResourceLoader.exists(str(textures[k])):
+				errors.append("texture %s: file %s is missing" % [k, textures[k]])
+		elif check_files and not FileAccess.file_exists("res://assets/story/%s/%s" % [art, str(textures[k])]) and not ResourceLoader.exists("res://assets/story/%s/%s" % [art, str(textures[k])]):
 			errors.append("texture %s: file %s is missing" % [k, textures[k]])
 	sky = d.get("sky", {}) if typeof(d.get("sky", {})) == TYPE_DICTIONARY else {}
 	rooms = d.get("rooms", {}) if typeof(d.get("rooms", {})) == TYPE_DICTIONARY else {}

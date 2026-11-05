@@ -40,6 +40,7 @@ var block_credit: Array = []
 var choice := ""  # the chosen destination node id ("" until the player picks one)
 var window_open := false
 var hotspots: RunHotspots = null  # when set, the route is the outcome of a hotspot (the tap is the intent, block 4 decides): see _hotspot_decision; null keeps the plain route choice (tests, RW_RUN_ARROWS=1)
+var hold := false  # a minigame owns the scene (MinigameController): the run stays here, no hotspot commits, the chart and the route lock agree on this node; phases, cues, judging and energy go on as usual
 var route_locked := false  # block 0 of the next phase has been charted: routes with another chart pack can no longer be chosen
 var _locked_chart := ""
 var grid_origin := 0.0  # song time this engine's beat grid starts at (0 for the run's own clock; a path's engine starts on the downbeat its clock was swapped in, docs/CONTINUOUS_RUN.md "Paths")
@@ -203,6 +204,7 @@ func t_of(phase_beat: float) -> float:
 	return phase_t0 + phase_beat * beat_s
 
 
+## The beat of a block at which it is judged (and a hotspot commits).
 func _decision_beat() -> float:
 	return maxf(timing("decision_beat"), timing("cue_span_beats") + judge.accept_s / beat_s + 0.05)
 
@@ -253,6 +255,8 @@ func route_allowed(to: String) -> bool:
 
 
 func selected_route() -> String:
+	if hold:
+		return node_id
 	if choice != "":
 		return choice
 	if hotspots != null and hotspots.selected != "":  # the route the selected hotspot leads to on success (the final outcome is only known at the commit)
@@ -442,8 +446,8 @@ func _decide(b: int, t_dec: float) -> void:
 	_emit({"kind": "block_result", "block": b, "credit": credit, "passed": passed, "energy": energy, "stage": stage, "next_stage": next_stage, "t": t_dec,
 		"node": node_id, "phase": phase_n, "lap": lap, "laps": laps})
 	block = b + 1
-	if hotspots != null and energy > 0.0:
-		_hotspot_decision(b, passed, t_dec)
+	if hotspots != null and energy > 0.0 and not hold:
+		_hotspot_decision(b, passed, t_dec, credit)
 	if energy <= 0.0:
 		_depleted_t = t_of(boundary_beat)
 		_over_t = _depleted_t + float(cfg["timing"]["fade_beats"]) * beat_s
@@ -467,20 +471,22 @@ func _decide(b: int, t_dec: float) -> void:
 		_chart_next_lap(passed)  # the scene goes on: the next lap's first block, in the stage this block leaves the mix in
 	else:
 		# the last block is over: chart the next phase's first block now from the selected route, and lock it
+		if hold:
+			choice = node_id
 		_chart_next_phase()
 
 
 ## The hotspot window's decisions at the block's decision beat (inside the cue-free guard): the early window (a way into the Bassment) commits at blocks 0 and 1, the final one at block 3 (the route
 ## lock beat), where the outcome's route becomes the engine's choice before the next phase is charted from it. The outcome's energy is applied here (never to the point of depletion).
-func _hotspot_decision(b: int, passed: bool, t_dec: float) -> void:
+func _hotspot_decision(b: int, passed: bool, t_dec: float, credit := -1.0) -> void:
 	hotspots.energy = energy
 	var out: Dictionary = {}
 	if b <= 2:
-		out = hotspots.on_block(b, passed)
+		out = hotspots.on_block(b, passed, credit)
 	elif lap < laps:
 		return  # (no window, no commit before the last lap)
 	else:
-		out = hotspots.commit_final(passed)
+		out = hotspots.commit_final(passed, credit)
 		if not out.is_empty():
 			choice = str(out["route"])
 	if out.is_empty():

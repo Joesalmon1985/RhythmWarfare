@@ -184,6 +184,50 @@
    "repeatable": true
   },
   {
+   "id": "ward.cards",
+   "world": "ward",
+   "scene": "ward",
+   "map": "mental_hospital",
+   "anchor": {
+    "pos": [
+     2.4,
+     0.5,
+     3.0
+    ]
+   },
+   "kind": "object",
+   "radius_m": 2.4,
+   "min_px": 220,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "claim",
+    "committed": "flash",
+    "ring_m": 1.7
+   },
+   "challenge": null,
+   "on_success": {
+    "cinematic": "ward.cards_sit",
+    "activity": "blackjack"
+   },
+   "on_failure": {
+    "cinematic": "ward.cards_waved_off",
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true,
+   "window": "any",
+   "pass_credit": 0.25,
+   "on_select": {
+    "cinematic": "ward.cards_approach"
+   }
+  },
+  {
    "id": "ward.art.exit_corridor",
    "world": "ward",
    "scene": "ward.art",

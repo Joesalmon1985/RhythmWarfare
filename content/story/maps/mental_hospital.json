@@ -48,7 +48,8 @@
   "wall_slit": "textures/wall_slit.png",
   "wall_speaker": "textures/wall_speaker.png",
   "wall_window": "textures/wall_window.png",
-  "thing_mural": "textures/thing_mural.png"
+  "thing_mural": "textures/thing_mural.png",
+  "cards_table": "res://assets/minigames/blackjack/world_table.png"
  },
  "sectors": [
   {"id": "dayroom", "polygon": [[-7, -3], [7, -3], [7, 9], [-7, 9]], "floor": 0, "ceiling": 3.0, "floor_tex": "floor_check", "ceil_tex": "ceil_tile", "wall_tex": "wall_mint", "light": 0.5, "tint": "#86ad92", "room": "main", "flags": ["dance_floor"], "activities": {"quiet": ["sit", "chat", "stand", "rock", "pace", "watch", "sit"], "dancing": ["dance", "dance", "dance", "dance", "dance", "sit", "chat"], "hype": ["dance", "dance", "dance", "dance", "dance", "wave", "point"], "euphoric": ["dance", "dance", "dance", "dance", "dance", "wave", "hug"]}, "ambient": 0.4},
@@ -272,7 +273,8 @@
   {"id": "lt_court_strings", "kind": "light", "at": [54.0, 6.0], "y": 2.8, "radius": 6.5, "color": "#ffd08a", "strength": 1.2},
   {"id": "lt_court_stage", "kind": "light", "at": [63.0, 7.0], "y": 2.9, "radius": 5.0, "color": "#ffd090", "strength": 1.6},
   {"id": "mural_door", "kind": "billboard", "sprite": "thing_mural", "at": [24, 7.85], "y": 1, "size": 2, "anim": "none"},
-  {"id": "lt_mural", "kind": "light", "at": [24, 7.2], "y": 1.8, "radius": 3, "color": "#ffd27a", "strength": 1}
+  {"id": "lt_mural", "kind": "light", "at": [24, 7.2], "y": 1.8, "radius": 3, "color": "#ffd27a", "strength": 1},
+  {"id": "lt_cards_lamp", "kind": "light", "at": [2.4, 3.1], "y": 2, "radius": 2.6, "color": "#ffc870", "strength": 1.2}
  ],
  "homes": [
   {"actor": "c01", "sector": "dayroom", "at": [0.0, 3.27]},
@@ -427,7 +429,8 @@
   {"id": "stage_door_r", "at": [62.6, 9.4], "yaw": 90, "sector": "c_stage"},
   {"id": "court_north", "at": [53, 1], "yaw": 90, "sector": "courtyard"},
   {"id": "court_south", "at": [53, 12], "yaw": 90, "sector": "courtyard"},
-  {"id": "treat_door", "at": [16, 8.6], "yaw": 0, "sector": "treatment"}
+  {"id": "treat_door", "at": [16, 8.6], "yaw": 0, "sector": "treatment"},
+  {"id": "day_cards", "at": [2.4, 6.4], "yaw": 0, "sector": "dayroom"}
  ],
  "spots": {
   "door": {"sector": "dayroom", "at": [0.0, -2.1], "slots": [[-2.25, -2.1], [-0.75, -2.1], [0.75, -2.1], [2.25, -2.1], [-2.25, -1.1], [-0.75, -1.1], [0.75, -1.1], [2.25, -1.1]]},
@@ -497,7 +500,9 @@
   {"id": "courtyard_s09", "at": [60.25, 11.14]},
   {"id": "courtyard_s10", "at": [59.9, 12.61]}
  ],
- "occluders": [],
+ "occluders": [
+  {"id": "cards_table", "sprite": "cards_table", "at": [2.4, 3], "width": 2.8, "height": 2.38}
+ ],
  "rooms": {"corridor": {"palette": "low"}, "art_room": {"palette": "warm"}},
  "sky": {"tex": "textures/sky_moon.png", "mode": "cylinder"},
  "fog": {"color": "#06110c", "density": 0.028},

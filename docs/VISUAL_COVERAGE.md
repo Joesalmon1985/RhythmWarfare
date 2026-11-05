@@ -90,6 +90,7 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | ward | ward | exit_dorm | exit | route ward.dorm | same door, staggering (-5 energy) | always | verified |
 | ward | ward | orderly | character | the orderly lets it pass (+4) | taken to the treatment room (-9) | always | verified |
 | ward | ward | window | feature | the barred window lets the light in (+5, music variation) | the bars rattle (-5, music dips) | always | verified |
+| ward | ward | cards | object | sit at the empty chair: blackjack, the run stays in the day room (minigame) | the dealer waves you off (-3), the scene goes on by its default exit | always | verified |
 | ward | ward.art | art.exit_corridor (default) | exit | route ward.corridor | same door, staggering (-5 energy) | always | verified |
 | ward | ward.art | art.painter | character | the painter shows a painting of a door (flag wd_painted: opens the courtyard from the corridor) (+6) | paint thrown over you (-6) | always | verified |
 | ward | ward.art | art.easel | object | paint your own (+5) | a smudge (-4) | always | verified |

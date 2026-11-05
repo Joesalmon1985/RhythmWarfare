@@ -733,6 +733,7 @@ func _load_hotspots(dir_path: String) -> void:
 				by_scene[sid] = []
 			by_scene[sid].append(HotspotContract.normalize(h, w, str(nodes[sid]["map"])))
 	var start_e := float((cfg.get("energy", {}) as Dictionary).get("start", 60.0))
+	var activities := MinigameController.registered_ids()  # read once for every scene, not once per scene
 	for sid in node_order:
 		var n: Dictionary = nodes[sid]
 		if not by_scene.has(sid):
@@ -759,7 +760,8 @@ func _load_hotspots(dir_path: String) -> void:
 				else:
 					routes.append(r)
 		HotspotContract.validate_scene(by_scene[sid], {"where": "scene %s" % sid, "map": str(n["map"]), "world": str(n["world"]), "routes": routes, "start_energy": start_e, "cinematics": cfg.get("cinematics", {}),
-			"default_route": str(n["next"][0]["to"]) if not (n["next"] as Array).is_empty() else "", "exit_routes_required": required}, errors)
+			"default_route": str(n["next"][0]["to"]) if not (n["next"] as Array).is_empty() else "", "exit_routes_required": required,
+			"max_available": int(n.get("max_hotspots", HotspotContract.MAX_PER_SCENE)), "activities": activities}, errors)
 		if str(n["ending"]) != "":  # an ending's default hotspot is the way back to the main run and marks the ending as reached
 			var want_flag := "keep:path_%s_%s" % [path_id, n["ending"]]
 			for h in by_scene[sid]:

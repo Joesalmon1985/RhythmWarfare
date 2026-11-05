@@ -5,7 +5,7 @@ extends RefCounted
 ##
 ## A file is {"world": "<run world id | bassment>", "hotspots": [ hotspot, ... ]}; a hotspot (every field except id, scene, anchor, kind, on_success is optional):
 ##   id, world, scene (a run scene id, or a Bassment passage number), map, anchor, kind, radius_m (0.8), min_px (72, never less), available, look, challenge, on_success, on_failure,
-##   cinematic, default, repeatable, trial_kind (the Bassment's name for `kind`: when present it is one of KINDS and equals `kind`), acting (what a person does in each state of the hotspot and
+##   cinematic, default, repeatable, window ("final" | "any"), on_select ({cinematic}), look.ring_m, pass_credit (0 to 1, with an activity), trial_kind (the Bassment's name for `kind`: when present it is one of KINDS and equals `kind`), acting (what a person does in each state of the hotspot and
 ##   after its outcome, docs/THREE_PATHS_AND_FACES_PLAN.md 2.3a: see validate_acting; a Bassment creature names a `figure` instead of an `actor`).
 ##
 ## The same family carries the other half of the acting contract, the `cast` lines of a scene node of run.json and of a cinematic (2.3b, 2.3c), validated by validate_cast.
@@ -18,10 +18,11 @@ extends RefCounted
 const KINDS := ["exit", "object", "character", "feature", "encounter", "secret"]
 const ANCHORS := ["thing", "waypoint", "actor", "pos"]
 const LOOK_AVAILABLE := ["glow", "pulse", "beckon", "flicker", "open", "crack"]
-const LOOK_SELECTED := ["ring"]
+const LOOK_SELECTED := ["ring", "claim"]
 const LOOK_COMMITTED := ["flash"]
 const LOOK_FINISHED := ["crown"]  # look.finished.available: what a portal shows once its path has been finished (plan D10): the pulse ringed by three orbiting motes, in the finished tint
 const FINISHED_TINT := "#ffd25a"
+const WINDOWS := ["final", "any"]  # `window`: "any" (a hotspot with an activity) is on show and commits in every block of the phase
 const FAMILIES := ["drums", "bass"]
 const MIN_PX := 72.0
 const MIN_PER_SCENE := 2
@@ -33,7 +34,7 @@ const PATH_PREFIX := "path:"  # a run route "path:<id>" is a portal into a siste
 const RUN_PREFIX := "run:"  # a path ending's route "run:warehouse" leads back to the main run
 const RUN_ROUTES := ["run:warehouse"]
 const KEEP_PREFIX := "keep:"  # a flag name with this prefix is persistent (RunProgress.flags, saved); any other is per run (RunProgress.run_flags)
-const OUTCOME_KEYS := ["route", "flags_set", "cinematic", "energy", "music", "pieces"]  # `pieces`: {on: [piece ids], off: [...]}, the map's set pieces a result switches (the storm goes, the tables fall)
+const OUTCOME_KEYS := ["route", "flags_set", "cinematic", "energy", "music", "pieces", "activity"]  # `pieces`: {on: [piece ids], off: [...]}, the map's set pieces a result switches (the storm goes, the tables fall); `activity`: a minigame the success sits the player into
 const CINEMATIC_KEYS := ["move", "to", "bars", "look_at", "role", "style"]
 const MOVES := ["place", "walk", "stagger", "run", "climb", "carried"]  # `place` is a cut (the drag to the cage); the others are RunRail styles (`walk` with a `style`)
 const MUSIC := ["variation", "dip", "lift", "drop", "fill", "none"]
@@ -144,6 +145,7 @@ static func normalize(h: Dictionary, world: String, map_id: String) -> Dictionar
 	out["look"] = lk
 	out["default"] = bool(out.get("default", false))
 	out["repeatable"] = bool(out.get("repeatable", false))
+	out["window"] = str(out.get("window", "final"))
 	return out
 
 
@@ -305,7 +307,7 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 		if typeof(oc) != TYPE_DICTIONARY:
 			errors.append("%s: %s must be an object" % [hw, key])
 			continue
-		_validate_outcome(h, key, oc, hw, routes, idx, ctx.get("cinematics", {}), errors)
+		_validate_outcome(h, key, oc, hw, routes, idx, ctx.get("cinematics", {}), errors, ctx.get("activities", null))
 	if kind == "exit" and str((h.get("on_success", {}) as Dictionary).get("route", "")) == "":
 		errors.append("%s: an exit's on_success needs a route" % hw)
 	var cin: Variant = h.get("cinematic", null)
@@ -325,6 +327,32 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 						errors.append("%s: cinematic '%s' must be an object" % [hw, cname])
 					else:
 						_validate_cine(cin[cname], "%s cinematic '%s'" % [hw, cname], idx, errors)
+	var has_act := typeof(h.get("on_success", null)) == TYPE_DICTIONARY and str((h["on_success"] as Dictionary).get("activity", "")) != ""
+	if h.has("window") and (typeof(h["window"]) != TYPE_STRING or str(h["window"]) not in WINDOWS):
+		errors.append("%s: window '%s' is not one of %s" % [hw, h["window"], ", ".join(PackedStringArray(WINDOWS))])
+	elif str(h.get("window", "final")) == "any" and not has_act:
+		errors.append("%s: window 'any' needs an on_success activity" % hw)
+	if h.has("pass_credit"):
+		var pc: Variant = h["pass_credit"]
+		if (typeof(pc) != TYPE_FLOAT and typeof(pc) != TYPE_INT) or float(pc) < 0.0 or float(pc) > 1.0:
+			errors.append("%s: pass_credit must be a number from 0 to 1" % hw)
+		elif not has_act:
+			errors.append("%s: pass_credit needs an on_success activity" % hw)
+	if h.has("on_select"):  # the walk the touch itself starts: {cinematic: <name>} resolved like an outcome's
+		var osel: Variant = h["on_select"]
+		if typeof(osel) != TYPE_DICTIONARY or (osel as Dictionary).keys() != ["cinematic"]:
+			errors.append("%s: on_select must be {cinematic: <name>}" % hw)
+		else:
+			var spec := resolve_cinematic(h, osel, ctx.get("cinematics", {}))
+			if spec.is_empty():
+				errors.append("%s: on_select.cinematic '%s' does not resolve" % [hw, str((osel as Dictionary)["cinematic"])])
+			else:
+				for st in spec["steps"]:
+					_validate_cine(st, "%s on_select" % hw, idx, errors)
+	if typeof(lk) == TYPE_DICTIONARY and (lk as Dictionary).has("ring_m"):  # the drawn floor ring's radius when it is not the touch radius
+		var rm: Variant = lk["ring_m"]
+		if (typeof(rm) != TYPE_FLOAT and typeof(rm) != TYPE_INT) or float(rm) <= 0.0 or float(rm) > 4.0:
+			errors.append("%s: look.ring_m must be above 0 and at most 4" % hw)
 	if typeof(h.get("default", false)) != TYPE_BOOL or typeof(h.get("repeatable", false)) != TYPE_BOOL:
 		errors.append("%s: default and repeatable are true or false" % hw)
 	if h.has("acting"):
@@ -333,7 +361,7 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 		ChoiceStaging.validate(h, hw, idx, errors)
 
 
-static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: String, routes: Array, idx: Dictionary, named: Dictionary, errors: Array) -> void:
+static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: String, routes: Array, idx: Dictionary, named: Dictionary, errors: Array, ctx_activities: Variant = null) -> void:
 	for k in oc:
 		if str(k) not in OUTCOME_KEYS:
 			errors.append("%s: %s.%s is not a field (%s)" % [hw, key, k, ", ".join(PackedStringArray(OUTCOME_KEYS))])
@@ -354,6 +382,17 @@ static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: St
 			errors.append("%s: a failure must not give energy" % hw)
 	if oc.has("pieces"):
 		validate_pieces(oc["pieces"], "%s: %s.pieces" % [hw, key], idx, errors)
+	if oc.has("activity"):  # a minigame the success sits the player into (MinigameController): only on success, never with a route, an id the registry knows
+		var act := str(oc["activity"]) if typeof(oc["activity"]) == TYPE_STRING else ""
+		if act == "":
+			errors.append("%s: %s.activity must be a non-empty string" % [hw, key])
+		else:
+			if key != "on_success":
+				errors.append("%s: activity is only allowed in on_success" % hw)
+			if route != "":
+				errors.append("%s: %s.activity cannot be combined with a route" % [hw, key])
+			if typeof(ctx_activities) == TYPE_ARRAY and act not in (ctx_activities as Array):
+				errors.append("%s: %s.activity '%s' is not a registered minigame (%s)" % [hw, key, act, ", ".join(PackedStringArray(ctx_activities as Array))])
 	if oc.has("music") and str(oc["music"]) not in MUSIC:
 		errors.append("%s: %s.music '%s' is not one of %s" % [hw, key, oc["music"], ", ".join(PackedStringArray(MUSIC))])
 	if oc.has("cinematic"):

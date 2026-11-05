@@ -89,10 +89,31 @@ class Ctx:
             self.actors[m] = {a["id"] for a in load(ROOT / f"content/story/{CHAPTER[m]}.json")["actors"]}
 
 
+def minigame_ids():
+    """Ids of the registered minigames: the `id` of every content/minigames/*.json (the file's basename when it has none); empty when the directory does not exist."""
+    out = set()
+    for f in sorted((ROOT / "content/minigames").glob("*.json")):
+        try:
+            out.add(str(json.loads(f.read_text()).get("id", f.stem)))
+        except (OSError, ValueError, AttributeError):
+            out.add(f.stem)
+    return out
+
+
 def outcome_keys_ok(o, where, errs):
     for k in o:
-        if k not in ("route", "flags_set", "cinematic", "energy", "music", "pieces"):
+        if k not in ("route", "flags_set", "cinematic", "energy", "music", "pieces", "activity"):
             errs.append(f"{where}: unknown outcome field {k}")
+    if "activity" in o:
+        if not isinstance(o["activity"], str) or not o["activity"]:
+            errs.append(f"{where}: activity must be a non-empty string")
+        else:
+            if not where.endswith("on_success"):
+                errs.append(f"{where}: activity is only allowed in on_success")
+            if o.get("route"):
+                errs.append(f"{where}: activity cannot be combined with a route")
+            if o["activity"] not in minigame_ids():
+                errs.append(f"{where}: activity '{o['activity']}' is not a registered minigame ({', '.join(sorted(minigame_ids()))})")
     if "energy" in o and not (isinstance(o["energy"], int) and -20 <= o["energy"] <= 20):
         errs.append(f"{where}: energy must be an int in -20..20")
     if "music" in o and o["music"] not in MUSIC:
@@ -190,10 +211,19 @@ def check_hotspot(h, ctx, errs):
             errs.append(f"{hid}: anchor kind {k}")
     if h["kind"] not in KINDS:
         errs.append(f"{hid}: kind {h['kind']}")
-    if h["look"].get("available") not in LOOKS or h["look"].get("selected") != "ring" or h["look"].get("committed") != "flash":
+    if h["look"].get("available") not in LOOKS or h["look"].get("selected") not in ("ring", "claim") or h["look"].get("committed") != "flash":
         errs.append(f"{hid}: look {h['look']}")
     if h["min_px"] < 72 or not (0.3 <= h["radius_m"] <= 3.0):
         errs.append(f"{hid}: radius_m 0.3 to 3, min_px at least 72")
+    if h.get("window", "final") not in ("final", "any"):
+        errs.append(f"{hid}: window {h.get('window')} is final or any")
+    has_act = bool(h["on_success"].get("activity"))
+    if h.get("window") == "any" and not has_act:
+        errs.append(f"{hid}: window any needs an on_success activity")
+    if "pass_credit" in h:
+        pc = h["pass_credit"]
+        if isinstance(pc, bool) or not isinstance(pc, (int, float)) or not (0 <= pc <= 1) or not has_act:
+            errs.append(f"{hid}: pass_credit is a number 0 to 1 and needs an on_success activity")
     av = h["available"]
     if set(av) != {"flags_all", "flags_none", "energy_min", "once"}:
         errs.append(f"{hid}: available fields {sorted(av)}")
@@ -210,6 +240,15 @@ def check_hotspot(h, ctx, errs):
         check_cin(o.get("cinematic"), h["map"], ctx, f"{hid} {which}", errs)
     if "cinematic" in h:
         check_cin(h["cinematic"], h["map"], ctx, f"{hid} hook", errs)
+    if "on_select" in h:
+        os_ = h["on_select"]
+        if not isinstance(os_, dict) or set(os_) != {"cinematic"} or not isinstance(os_["cinematic"], str):
+            errs.append(f"{hid}: on_select is {{cinematic: <name>}}")
+        else:
+            check_cin(os_["cinematic"], h["map"], ctx, f"{hid} on_select", errs)
+    rm = h["look"].get("ring_m")
+    if rm is not None and (isinstance(rm, bool) or not isinstance(rm, (int, float)) or not (0 < rm <= 4)):
+        errs.append(f"{hid}: look.ring_m is a number above 0 and at most 4")
     s, f = h["on_success"], h["on_failure"]
     if not f or not (f.get("route") or f.get("flags_set") or f.get("energy") or f.get("music") or f.get("cinematic")):
         errs.append(f"{hid}: failure is a dead end (no route, no state change)")
@@ -218,7 +257,7 @@ def check_hotspot(h, ctx, errs):
     if h["kind"] == "exit":
         if not s.get("route"):
             errs.append(f"{hid}: an exit leads somewhere")
-    elif not (s.get("route") or s.get("flags_set") or s.get("energy") or s.get("music") or s.get("cinematic")):
+    elif not (s.get("route") or s.get("activity") or s.get("flags_set") or s.get("energy") or s.get("music") or s.get("cinematic")):
         errs.append(f"{hid}: success changes nothing")
     if h["challenge"] is not None:
         c = h["challenge"]
@@ -246,8 +285,9 @@ def check_scene(sid, hs, ctx, errs, warns):
         errs.append(f"{sid}: no hotspots")
         return
     lo, hi = counts(hs)
-    if lo < 2 or hi > 4:
-        errs.append(f"{sid}: {lo} to {hi} hotspots available (must stay 2 to 4)")
+    cap = int(node.get("max_hotspots", 4))
+    if lo < 2 or hi > cap:
+        errs.append(f"{sid}: {lo} to {hi} hotspots available (must stay 2 to {cap})")
     exits = [h for h in hs if h["kind"] == "exit"]
     defaults = [h for h in exits if h["default"]]
     if len(defaults) != 1:
@@ -426,6 +466,9 @@ def main(argv):
             c = h.get(which, {}).get("cinematic")
             if isinstance(c, str):
                 used.add(c)
+        c = h.get("on_select", {}).get("cinematic")
+        if isinstance(c, str):
+            used.add(c)
     for c in ctx.cin:
         if c not in used:
             warns.append(f"cinematic {c} is not used by any outcome")

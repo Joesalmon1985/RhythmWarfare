@@ -16,6 +16,7 @@ var title_card := {}  # {kicker, text, t0} (RW_DEV_TEXT only)
 var now_t := 0.0
 var route_hint := ""
 var stage_h := 0.0  # height of the stage area above the pads (0: the whole control)
+var silent := false  # a minigame owns the picture: caption() and show_title() do nothing and no text is drawn while this is true (the meter and the stage pips stay)
 var fade := 0.0  # 0..1 black overlay for the end of a run
 var strings_drawn := 0  # draw_string calls made by `_outlined` (the silent-HUD test counts them)
 var frames_drawn := 0  # `_draw` passes made (so that test can show the HUD really drew)
@@ -29,19 +30,21 @@ func _ready() -> void:
 
 
 func caption(text: String, tone: String, t0: float, hold := 1.8) -> void:
-	if not DevText.on():
+	if silent or not DevText.on():
 		return
 	captions = captions.filter(func(c: Dictionary) -> bool: return now_t - float(c["t0"]) < float(c["hold"]) + 0.5)
 	captions.append({"text": text, "tone": tone, "t0": t0, "hold": hold})
 
 
 func show_title(kicker: String, text: String, t0: float) -> void:
-	if not DevText.on():
+	if silent or not DevText.on():
 		return
 	title_card = {"kicker": kicker, "text": text, "t0": t0}
 
 
 func _outlined(pos: Vector2, s: String, fs: int, col: Color, w := -1.0, align := HORIZONTAL_ALIGNMENT_LEFT) -> void:
+	if silent and (countdown.is_empty() or s != countdown):  # the count back in after a pause still shows
+		return
 	strings_drawn += 1
 	draw_string_outline(_font, pos, s, align, w, fs, 6, Color(0, 0, 0, col.a * 0.85))
 	draw_string(_font, pos, s, align, w, fs, col)
