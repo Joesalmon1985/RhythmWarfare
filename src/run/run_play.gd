@@ -65,6 +65,7 @@ var _until_phase := -1
 var _frame_ms: PackedFloat32Array = PackedFloat32Array()
 var _last_frame_us := 0
 var event_log: Array = []  # every engine event except judge/cues (scripted checks and recordings read it)
+var piece_log: Array = []  # [{t, on, off}] every set-piece switch (the tests and the walks read it)
 var build_log: Array = []  # [{world, ms}] how long each world stage took to build (the main thread stalls that long)
 var phase_log: Array = []  # [{phase, node, t}] for scripted checks
 var journey: RunJourney  # the player's rails (pure logic; the scene only hands its actions to the stages)
@@ -881,6 +882,7 @@ func _on_phase_start(ev: Dictionary) -> void:
 	if first and wp != "" and wp != str(rec["waypoint"]):  # starting on a level whose home is not the map's start: walk there during the countdown
 		_journey_apply({"world": world, "t0": t0 - 4.0 * engine.beat_s, "action": "player_move", "args": {"to": wp, "bars": 3.0, "style": "walk"}})
 		rec["waypoint"] = wp
+	_apply_pieces(st, node.get("pieces", {}), t0, true)  # the scene's own set pieces: those it lists are on from its downbeat, every other piece of the stage is off
 	_stage_action(st, "lights_low_pulse", t0)
 	if not first:
 		_stage_action(st, "room_swell", t0)  # a new room: its lamps rise over two beats from the downbeat (the title card is gone: the light says "somewhere new")
@@ -914,7 +916,45 @@ func _on_mix(ev: Dictionary) -> void:
 			_stage_action(st, "led_eq", t0)
 
 
+## Switches the set pieces of the stage `st` (a thing of the map with `"piece"`): spec {on: [...], off: [...]} at song time t. With `reset` every piece of the stage the spec does not turn on goes off first
+## (a new scene: the last one's storm or tables must not linger).
+func _apply_pieces(st: StoryStage, spec: Dictionary, t: float, reset := false) -> void:
+	var on: Array = spec.get("on", [])
+	if reset:
+		for pid in st._piece_ids:
+			if str(pid) not in on:
+				_stage_action(st, "piece_off", t, {"piece": str(pid)})
+	for pid in on:
+		_stage_action(st, "piece_on", t, {"piece": str(pid)})
+	for pid in spec.get("off", []):
+		_stage_action(st, "piece_off", t, {"piece": str(pid)})
+	if not spec.is_empty():
+		piece_log.append({"t": t, "on": on.duplicate(), "off": (spec.get("off", []) as Array).duplicate()})
+
+
+## A scene's block staging (`block_fx`): what a block's result does at the boundary after it, docs/CONTINUOUS_RUN.md "Paths". Pieces are switched and cast lines acted from the boundary.
+func _block_fx(ev: Dictionary) -> void:
+	if trial_state != "" or not data.nodes.has(str(ev["node"])):
+		return
+	var b := int(ev["block"])
+	var side := "pass" if bool(ev["passed"]) else "miss"
+	var tb := engine.t_of(float((b + 1) * int(engine.timing("block_beats"))))
+	for fx in data.nodes[str(ev["node"])].get("block_fx", []):
+		if int(fx["block"]) != b or not (fx as Dictionary).has(side):
+			continue
+		var eff: Dictionary = fx[side]
+		if eff.has("pieces") and stages.has(active_world):
+			_apply_pieces(stages[active_world]["stage"], eff["pieces"], tb)
+		var has_flag := func(f: String) -> bool: return hotspots != null and hotspots.has_flag(f)
+		for line in eff.get("cast", []):
+			if not RunActing.conditions_hold(line, engine.energy, has_flag):
+				continue
+			_on_cast({"t": tb, "beat": float((b + 1) * int(engine.timing("block_beats"))), "actor": str(line["actor"]), "act": str(line["act"]), "face": str(line.get("face", "")),
+				"look_at": str(line.get("look_at", "")), "beats": float(line.get("beats", RunActing.HOLD_BEATS)), "source": "block", "name": ""})
+
+
 func _on_block_result(ev: Dictionary) -> void:
+	_block_fx(ev)
 	var t := float(ev["t"]) + 0.2
 	if bool(ev["passed"]):
 		if int(ev["block"]) < 3:
@@ -956,6 +996,8 @@ func _on_cast(ev: Dictionary) -> void:
 		world = str(data.worlds.get(str(cin.get("world", "")), {}).get("map", ""))
 	var c := _crowd_of(str(ev["actor"]), world)
 	var t0 := float(ev["t"])
+	if c != null:
+		c.ensure_present(str(ev["actor"]))  # a person of a later group (the traitor and the guards of the grove) is in the scene from the beat that names them
 	var applied := c != null and c.direct_actor(str(ev["actor"]), str(ev["act"]), str(ev["face"]), t0, t0 + float(ev["beats"]) * engine.beat_s, str(ev["look_at"]), "cast")
 	cast_log.append({"t": t0, "beat": float(ev["beat"]), "actor": str(ev["actor"]), "act": str(ev["act"]), "face": str(ev["face"]), "look_at": str(ev["look_at"]), "source": str(ev["source"]), "applied": applied})
 
@@ -1089,6 +1131,8 @@ func _on_hotspot_commit(ev: Dictionary) -> void:
 		Session.run_progress.save()
 		hotspots.persist_dirty = false
 	_act_outcome(out, t)
+	if not (out.get("pieces", {}) as Dictionary).is_empty() and stages.has(active_world):
+		_apply_pieces(stages[active_world]["stage"], out["pieces"], t)
 	if not (out["cinematic"] as Dictionary).is_empty():
 		_hotspot_cinematic(out, t)
 	if str(out["window"]) == "early" and bool(out["success"]) and HotspotContract.is_trial_route(str(out["route"])):

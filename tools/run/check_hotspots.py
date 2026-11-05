@@ -91,7 +91,7 @@ class Ctx:
 
 def outcome_keys_ok(o, where, errs):
     for k in o:
-        if k not in ("route", "flags_set", "cinematic", "energy", "music"):
+        if k not in ("route", "flags_set", "cinematic", "energy", "music", "pieces"):
             errs.append(f"{where}: unknown outcome field {k}")
     if "energy" in o and not (isinstance(o["energy"], int) and -20 <= o["energy"] <= 20):
         errs.append(f"{where}: energy must be an int in -20..20")
@@ -269,6 +269,10 @@ def check_scene(sid, hs, ctx, errs, warns):
     ex = node["place"]["rail"]["exits"]
     for r in node["next"]:
         mine = [h for h in exits if h["on_success"].get("route") == r["to"]]
+        if PATH_ID and not mine:  # a path's route may be reached by a touch (a feature, an object, a person) instead of an exit of its own
+            if not any(h[w].get("route") == r["to"] for h in hs for w in ("on_success", "on_failure")):
+                errs.append(f"{sid}: no hotspot leads to route {r['to']}")
+            continue
         if len(mine) != 1:
             errs.append(f"{sid}: {len(mine)} exit hotspots for route {r['to']} (one)")
             continue

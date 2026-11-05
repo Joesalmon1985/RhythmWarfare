@@ -31,7 +31,7 @@ const PATH_PREFIX := "path:"  # a run route "path:<id>" is a portal into a siste
 const RUN_PREFIX := "run:"  # a path ending's route "run:warehouse" leads back to the main run
 const RUN_ROUTES := ["run:warehouse"]
 const KEEP_PREFIX := "keep:"  # a flag name with this prefix is persistent (RunProgress.flags, saved); any other is per run (RunProgress.run_flags)
-const OUTCOME_KEYS := ["route", "flags_set", "cinematic", "energy", "music"]
+const OUTCOME_KEYS := ["route", "flags_set", "cinematic", "energy", "music", "pieces"]  # `pieces`: {on: [piece ids], off: [...]}, the map's set pieces a result switches (the storm goes, the tables fall)
 const CINEMATIC_KEYS := ["move", "to", "bars", "look_at", "role", "style"]
 const MOVES := ["place", "walk", "stagger", "run", "climb", "carried"]  # `place` is a cut (the drag to the cage); the others are RunRail styles (`walk` with a `style`)
 const MUSIC := ["variation", "dip", "lift", "drop", "fill", "none"]
@@ -53,7 +53,7 @@ static var _maps: Dictionary = {}  # map id -> index
 static func map_index(map_id: String) -> Dictionary:
 	if _maps.has(map_id):
 		return _maps[map_id]
-	var idx := {"ok": false, "waypoints": {}, "things": {}, "actors": {}, "sectors": []}
+	var idx := {"ok": false, "waypoints": {}, "things": {}, "actors": {}, "sectors": [], "pieces": {}}
 	var path: String = StoryMap.PATH % map_id
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path)) if FileAccess.file_exists(path) else null
 	if typeof(parsed) == TYPE_DICTIONARY:
@@ -62,6 +62,8 @@ static func map_index(map_id: String) -> Dictionary:
 			idx["waypoints"][str(w["id"])] = true
 		for t in parsed.get("things", []):
 			idx["things"][str(t["id"])] = true
+			if t.has("piece"):
+				idx["pieces"][str(t["piece"])] = true
 		for h in parsed.get("homes", []):
 			idx["actors"][str(h["actor"])] = true
 		for s in parsed.get("sectors", []):
@@ -338,6 +340,8 @@ static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: St
 			errors.append("%s: %s.energy %s is outside %d..%d" % [hw, key, str(e), int(MAX_FAIL_ENERGY), int(MAX_GAIN_ENERGY)])
 		if key == "on_failure" and e > 0.0:
 			errors.append("%s: a failure must not give energy" % hw)
+	if oc.has("pieces"):
+		validate_pieces(oc["pieces"], "%s: %s.pieces" % [hw, key], idx, errors)
 	if oc.has("music") and str(oc["music"]) not in MUSIC:
 		errors.append("%s: %s.music '%s' is not one of %s" % [hw, key, oc["music"], ", ".join(PackedStringArray(MUSIC))])
 	if oc.has("cinematic"):
@@ -437,6 +441,22 @@ static func validate_acting(h: Dictionary, hw: String, idx: Dictionary, ctx: Dic
 
 ## The `cast` lines of a scene node or a cinematic (plan 2.3b and 2.3c): [{actor, at_beat, act, face?, look_at?, beats?, if_energy_below?, if_energy_above?, if_flags_all?, if_flags_none?}]. `idx` is the
 ## map's map_index. `last_beat` is the latest beat a line may name (a scene's 63; a cinematic's lines are relative to its start).
+## A set-piece switch {on: [ids], off: [ids]} (a scene node's `pieces`, a block effect's, an outcome's): every id is a piece thing of the map.
+static func validate_pieces(spec: Variant, where: String, idx: Dictionary, errors: Array) -> void:
+	if typeof(spec) != TYPE_DICTIONARY:
+		errors.append("%s: must be {on: [...], off: [...]}" % where)
+		return
+	for k in spec:
+		if str(k) not in ["on", "off"]:
+			errors.append("%s: '%s' is not a field (on, off)" % [where, k])
+		elif typeof(spec[k]) != TYPE_ARRAY:
+			errors.append("%s: %s must be a list of piece ids" % [where, k])
+		elif bool(idx["ok"]):
+			for pid in spec[k]:
+				if not (idx["pieces"] as Dictionary).has(str(pid)):
+					errors.append("%s: %s '%s' is not a piece thing of the map" % [where, k, pid])
+
+
 static func validate_cast(lines: Variant, where: String, idx: Dictionary, errors: Array, last_beat := CAST_LAST_BEAT) -> void:
 	if typeof(lines) != TYPE_ARRAY:
 		errors.append("%s: cast must be a list of lines" % where)

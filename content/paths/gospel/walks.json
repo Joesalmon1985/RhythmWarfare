@@ -1,0 +1,10 @@
+{
+ "road_end": {"bot": "perfect", "routes": ",,,,,,,,right", "until": 10, "start": "",
+  "expect": "jordan,jordan.baptism,jordan.nazareth,galilee,galilee.mount,road.loaves,road.entry,jerusalem,jerusalem.gethsemane,jerusalem.road,warehouse"},
+ "branch_a": {"bot": "perfect", "routes": ",right,right,right,right,left,right", "until": 8, "start": "",
+  "expect": "jordan,jordan.baptism,jordan.wilderness,galilee.capernaum,road,road.entry,jerusalem.gethsemane,jerusalem.road,warehouse"},
+ "branch_b": {"bot": "perfect", "routes": ",,right,,right,right,,,,right", "until": 13, "start": "",
+  "expect": "jordan,jordan.baptism,jordan.nazareth,galilee.capernaum,galilee.mount,galilee.storm,road,road.loaves,road.entry,jerusalem,jerusalem.trial,jerusalem.golgotha,jerusalem.tomb,warehouse"},
+ "branch_c": {"bot": "perfect", "routes": ",right,,right,,left,right,,,,right", "until": 12, "start": "",
+  "expect": "jordan,jordan.baptism,jordan.wilderness,galilee,galilee.storm,road.loaves,road,road.entry,jerusalem,jerusalem.gethsemane,jerusalem.trial,jerusalem.road,warehouse"}
+}

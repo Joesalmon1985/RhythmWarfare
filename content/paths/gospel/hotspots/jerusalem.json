@@ -1,0 +1,666 @@
+{
+ "world": "jerusalem",
+ "hotspots": [
+  {
+   "id": "jerusalem.garden",
+   "world": "jerusalem",
+   "scene": "jerusalem",
+   "map": "jerusalem",
+   "anchor": {
+    "waypoint": "temple.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem.gethsemane"
+   },
+   "on_failure": {
+    "route": "jerusalem.gethsemane",
+    "cinematic": "gospel.stagger_jerusalem_garden",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "jerusalem.tables",
+   "world": "jerusalem",
+   "scene": "jerusalem",
+   "map": "jerusalem",
+   "anchor": {
+    "thing": "temple.t2_up"
+   },
+   "kind": "object",
+   "radius_m": 1.4,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem.gethsemane",
+    "flags_set": [
+     "gospel_tables"
+    ],
+    "energy": 6,
+    "pieces": {
+     "on": [
+      "temple.t1_over",
+      "temple.t2_over",
+      "temple.t3_over"
+     ],
+     "off": [
+      "temple.t1_up",
+      "temple.t2_up",
+      "temple.t3_up"
+     ]
+    }
+   },
+   "on_failure": {
+    "route": "jerusalem.trial",
+    "cinematic": "gospel.walked_out",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "jerusalem.guards",
+   "world": "jerusalem",
+   "scene": "jerusalem",
+   "map": "jerusalem",
+   "anchor": {
+    "actor": "g1_temple"
+   },
+   "kind": "encounter",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "flicker",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem.trial",
+    "energy": 3
+   },
+   "on_failure": {
+    "route": "jerusalem.gethsemane",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "g1_temple",
+    "available": {
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "block",
+     "face": "anger",
+     "beats": 4
+    },
+    "success": {
+     "act": "salute",
+     "face": "resolve",
+     "beats": 8
+    },
+    "failure": {
+     "act": "stamp",
+     "face": "anger",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "jerusalem.gethsemane.trial",
+   "world": "jerusalem",
+   "scene": "jerusalem.gethsemane",
+   "map": "jerusalem",
+   "anchor": {
+    "waypoint": "grove.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem.trial"
+   },
+   "on_failure": {
+    "route": "jerusalem.trial",
+    "cinematic": "gospel.stagger_jerusalem_gethsemane_trial",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "jerusalem.gethsemane.sleepers",
+   "world": "jerusalem",
+   "scene": "jerusalem.gethsemane",
+   "map": "jerusalem",
+   "anchor": {
+    "actor": "d10"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem.trial",
+    "energy": 3
+   },
+   "on_failure": {
+    "route": "jerusalem.road",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "d10",
+    "available": {
+     "act": "sleep",
+     "face": "neutral"
+    },
+    "selected": {
+     "act": "sit",
+     "face": "fear",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "recoil",
+     "face": "fear",
+     "beats": 4
+    },
+    "success": {
+     "act": "nod",
+     "face": "shame",
+     "beats": 8
+    },
+    "failure": {
+     "act": "cover_face",
+     "face": "shame",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "jerusalem.gethsemane.shadowed",
+   "world": "jerusalem",
+   "scene": "jerusalem.gethsemane",
+   "map": "jerusalem",
+   "anchor": {
+    "waypoint": "grove.door_right"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem.road"
+   },
+   "on_failure": {
+    "route": "jerusalem.road",
+    "cinematic": "gospel.stagger_jerusalem_gethsemane_shadowed",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "jerusalem.trial.passage",
+   "world": "jerusalem",
+   "scene": "jerusalem.trial",
+   "map": "jerusalem",
+   "anchor": {
+    "waypoint": "praetorium.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem.golgotha"
+   },
+   "on_failure": {
+    "route": "jerusalem.golgotha",
+    "cinematic": "gospel.stagger_jerusalem_trial_passage",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "jerusalem.trial.gate",
+   "world": "jerusalem",
+   "scene": "jerusalem.trial",
+   "map": "jerusalem",
+   "anchor": {
+    "waypoint": "praetorium.door_right"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem.road"
+   },
+   "on_failure": {
+    "route": "jerusalem.road",
+    "cinematic": "gospel.stagger_jerusalem_trial_gate",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "jerusalem.golgotha.hill",
+   "world": "jerusalem",
+   "scene": "jerusalem.golgotha",
+   "map": "jerusalem",
+   "anchor": {
+    "waypoint": "hill.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem.tomb"
+   },
+   "on_failure": {
+    "route": "jerusalem.tomb",
+    "cinematic": "gospel.stagger_jerusalem_golgotha_hill",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "jerusalem.golgotha.women",
+   "world": "jerusalem",
+   "scene": "jerusalem.golgotha",
+   "map": "jerusalem",
+   "anchor": {
+    "actor": "w1_hill"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "gospel_stayed"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "w1_hill",
+    "available": {
+     "act": "cover_face",
+     "face": "grief"
+    },
+    "selected": {
+     "act": "kneel",
+     "face": "grief"
+    },
+    "committed": {
+     "act": "kneel",
+     "face": "grief",
+     "beats": 4
+    },
+    "success": {
+     "act": "kneel",
+     "face": "grief",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "relief",
+      "look_at": "camera",
+      "beats": 8
+     }
+    },
+    "failure": {
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "jerusalem.tomb.home",
+   "world": "jerusalem",
+   "scene": "jerusalem.tomb",
+   "map": "jerusalem",
+   "anchor": {
+    "waypoint": "tomb.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_gospel_tomb"
+    ]
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_gospel_tomb"
+    ],
+    "energy": -3
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "jerusalem.tomb.stone",
+   "world": "jerusalem",
+   "scene": "jerusalem.tomb",
+   "map": "jerusalem",
+   "anchor": {
+    "thing": "tomb.stone_rolled"
+   },
+   "kind": "feature",
+   "radius_m": 1.2,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_gospel_tomb"
+    ],
+    "energy": 8
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_gospel_tomb"
+    ],
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "gd1",
+    "available": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "tomb.door_up"
+    },
+    "selected": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "tomb.door_up"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "tomb.door_up",
+     "beats": 4
+    },
+    "success": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "tomb.door_up",
+     "beats": 8
+    },
+    "failure": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "tomb.door_up",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "jerusalem.road.home",
+   "world": "jerusalem",
+   "scene": "jerusalem.road",
+   "map": "jerusalem",
+   "anchor": {
+    "waypoint": "road.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_gospel_road"
+    ]
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "flags_set": [
+     "keep:path_gospel_road"
+    ],
+    "energy": -3
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "jerusalem.road.followers",
+   "world": "jerusalem",
+   "scene": "jerusalem.road",
+   "map": "jerusalem",
+   "anchor": {
+    "actor": "d02"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "gospel_followed"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "d02",
+    "available": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "nod",
+     "face": "relief",
+     "beats": 4
+    },
+    "success": {
+     "act": "laugh",
+     "face": "laugh",
+     "beats": 8,
+     "then": {
+      "act": "nod",
+      "face": "relief",
+      "beats": 8
+     }
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 8
+    }
+   }
+  }
+ ]
+}

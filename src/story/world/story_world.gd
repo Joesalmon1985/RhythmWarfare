@@ -23,6 +23,8 @@ var _metres: Dictionary = {}  # texture name -> metres per repeat
 var _sector_nodes: Dictionary = {}  # sector id -> {node: MeshInstance3D, mats: Array[StandardMaterial3D]}
 var _thing_nodes: Array = []  # {node: MeshInstance3D, mat, thing: Dictionary, base_scale: Vector3, base_y: float}
 var _sky: MeshInstance3D
+var _skies: Dictionary = {}  # sky name -> MeshInstance3D (the map sky's `by_name`: one cylinder each, only the camera sector's is shown)
+var _atmo := ""  # the atmosphere last set (a sector id), so a frame in the same sector does nothing
 var _sky_follow := true
 var triangle_count := 0
 var _anim_sectors: Dictionary = {}  # sectors that show an animated surface (their colour is rewritten every frame, the animation builds on it)
@@ -352,7 +354,17 @@ func _make_thing(t: Dictionary) -> void:
 func _make_sky() -> void:
 	if map.sky.is_empty() or str(map.sky.get("tex", "")) == "":
 		return
-	var tex := _load_tex(str(map.sky["tex"]))
+	_sky = _sky_mesh(str(map.sky["tex"]), "Sky")
+	var by_name: Variant = map.sky.get("by_name", {})
+	if typeof(by_name) == TYPE_DICTIONARY:
+		for nm in by_name:
+			var m := _sky_mesh(str(by_name[nm]), "Sky_" + str(nm))
+			m.visible = false
+			_skies[str(nm)] = m
+
+
+func _sky_mesh(file: String, nm: String) -> MeshInstance3D:
+	var tex := _load_tex(file)
 	var cyl := CylinderMesh.new()
 	cyl.top_radius = 80.0
 	cyl.bottom_radius = 80.0
@@ -363,12 +375,34 @@ func _make_sky() -> void:
 	var mat := _material(tex)
 	mat.disable_fog = true
 	mat.no_depth_test = false
-	_sky = MeshInstance3D.new()
-	_sky.name = "Sky"
-	_sky.mesh = cyl
-	_sky.material_override = mat
-	_sky.position.y = 20.0
-	add_child(_sky)
+	var mi := MeshInstance3D.new()
+	mi.name = nm
+	mi.mesh = cyl
+	mi.material_override = mat
+	mi.position.y = 20.0
+	add_child(mi)
+	return mi
+
+
+## The sky and the haze of the sector the camera is in (a map may hold a night room and a dawn one): the sector's `sky` names one of the map sky's `by_name`, its `fog` replaces the map's.
+func set_atmosphere(sec: Dictionary) -> void:
+	var sid := str(sec.get("id", ""))
+	if sid == _atmo or sid == "":
+		return
+	_atmo = sid
+	var want := str(sec.get("sky", ""))
+	if not _skies.is_empty():
+		for nm in _skies:
+			(_skies[nm] as MeshInstance3D).visible = (nm == want)
+		if _sky != null:
+			_sky.visible = not _skies.has(want)
+	if env != null:
+		var fg: Dictionary = sec.get("fog", {})
+		var fc: Color = Color.html(str(fg["color"])) if fg.has("color") else (Color.html(str(map.fog["color"])) if map.fog.has("color") else FOG_COLOR)
+		env.background_color = fc
+		env.fog_light_color = fc
+		if not OS.has_environment("RW_STORY_FOG"):
+			env.fog_density = float(fg.get("density", map.fog.get("density", FOG_DENSITY)))
 
 
 # --- light, a function of song time ------------------------------------------------------------------------------------------------------
@@ -491,6 +525,8 @@ func update(t: float, ctx: Dictionary) -> void:
 func follow(cam: Vector3) -> void:
 	if _sky != null:
 		_sky.position = Vector3(cam.x, 20.0, cam.z)
+	for nm in _skies:
+		(_skies[nm] as MeshInstance3D).position = Vector3(cam.x, 20.0, cam.z)
 
 
 ## An animated surface: every wall or floor showing the map texture `name` shows `tex` instead (the LED wall).

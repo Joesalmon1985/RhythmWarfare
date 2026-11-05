@@ -400,9 +400,9 @@ func _validate_routes(id: String, n: Dictionary) -> void:
 		var t: Dictionary = nodes[to]
 		var same_world := str(t["world"]) == str(n["world"])
 		if bool(n["exit_scene"]):
-			if same_world and not bool(e.get("loop", false)):
+			if same_world and not bool(e.get("loop", false)) and not is_path():  # (a path's exit scene may also lead on inside its world)
 				errors.append("exit scene %s: the route to %s stays in the world; mark it \"loop\": true or lead to another world" % [id, to])
-			if not bool(t["entry"]):
+			if not bool(t["entry"]) and not (is_path() and same_world):
 				errors.append("exit scene %s: the route to %s must lead to the entry scene of a world" % [id, to])
 			var nd := int(t["depth"])
 			if not same_world and nd != mini(int(n["depth"]) + 1, 99) and not (tier_of(int(n["depth"])) == TIERS and nd == int(n["depth"])):
@@ -565,6 +565,7 @@ func _validate_casts(out: Array) -> void:
 		var n: Dictionary = nodes[id]
 		if n.has("cast"):
 			validate_cast_lines(n, n["cast"], "scene %s" % id, out)
+		_validate_stage_fx(id, n, out)
 	var cines: Dictionary = cfg.get("cinematics", {})
 	for name in cines:
 		var c: Variant = cines[name]
@@ -575,6 +576,34 @@ func _validate_casts(out: Array) -> void:
 			out.append("cinematic %s: cast needs the cinematic's `world`" % name)
 			continue
 		HotspotContract.validate_cast(c["cast"], "cinematic %s" % name, HotspotContract.map_index(str(wd["map"])), out, HotspotContract.CINE_CAST_LAST_BEAT)
+
+
+## A scene may switch set pieces (`pieces`: {on, off}, applied at its downbeat) and stage its blocks (`block_fx`: [{block 0..3, pass?, miss?}] where each side is {pieces?, cast?}: what the block's result
+## does at its boundary, docs/CONTINUOUS_RUN.md "Paths": the Golgotha rule). Cast lines there use `at_beat` 0 (the boundary) and the same conditions as a scene's.
+func _validate_stage_fx(id: String, n: Dictionary, out: Array) -> void:
+	var idx := HotspotContract.map_index(str(n["map"]))
+	if n.has("pieces"):
+		HotspotContract.validate_pieces(n["pieces"], "scene %s pieces" % id, idx, out)
+	if not n.has("block_fx"):
+		return
+	if typeof(n["block_fx"]) != TYPE_ARRAY:
+		out.append("scene %s: block_fx must be a list" % id)
+		return
+	for fx in n["block_fx"]:
+		if typeof(fx) != TYPE_DICTIONARY or not (fx as Dictionary).has("block") or int(fx["block"]) < 0 or int(fx["block"]) > 3:
+			out.append("scene %s: a block_fx entry needs block 0 to 3" % id)
+			continue
+		for side in ["pass", "miss"]:
+			if not fx.has(side):
+				continue
+			var w := "scene %s block_fx %d %s" % [id, int(fx["block"]), side]
+			for k in (fx[side] as Dictionary):
+				if str(k) not in ["pieces", "cast"]:
+					out.append("%s: '%s' is not a field (pieces, cast)" % [w, k])
+			if (fx[side] as Dictionary).has("pieces"):
+				HotspotContract.validate_pieces(fx[side]["pieces"], w + " pieces", idx, out)
+			if (fx[side] as Dictionary).has("cast"):
+				HotspotContract.validate_cast(fx[side]["cast"], w, idx, out, 0.0)
 
 
 ## Checks `lines` (a scene node's `cast`) against the map of scene node `n`.

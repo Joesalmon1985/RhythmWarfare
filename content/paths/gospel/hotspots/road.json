@@ -1,0 +1,350 @@
+{
+ "world": "road",
+ "hotspots": [
+  {
+   "id": "road.loaves",
+   "world": "road",
+   "scene": "road",
+   "map": "bethany",
+   "anchor": {
+    "waypoint": "courtyard.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "road.loaves"
+   },
+   "on_failure": {
+    "route": "road.loaves",
+    "cinematic": "gospel.stagger_road_loaves",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "road.table",
+   "world": "road",
+   "scene": "road",
+   "map": "bethany",
+   "anchor": {
+    "actor": "s1"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "road.loaves",
+    "flags_set": [
+     "gospel_table"
+    ],
+    "energy": 8
+   },
+   "on_failure": {
+    "route": "road.entry",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "s1",
+    "available": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "offer",
+     "face": "happy",
+     "beats": 4
+    },
+    "success": {
+     "act": "nod",
+     "face": "happy",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "road.donkey",
+   "world": "road",
+   "scene": "road",
+   "map": "bethany",
+   "anchor": {
+    "thing": "courtyard.donkey"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "road.entry",
+    "energy": 5
+   },
+   "on_failure": {
+    "route": "road.loaves",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "road.loaves.entry",
+   "world": "road",
+   "scene": "road.loaves",
+   "map": "bethany",
+   "anchor": {
+    "waypoint": "hill_dusk.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "road.entry"
+   },
+   "on_failure": {
+    "route": "road.entry",
+    "cinematic": "gospel.stagger_road_loaves_entry",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "road.loaves.baskets",
+   "world": "road",
+   "scene": "road.loaves",
+   "map": "bethany",
+   "anchor": {
+    "thing": "hill_dusk.basket2"
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "road.entry",
+    "flags_set": [
+     "gospel_fed"
+    ],
+    "energy": 9,
+    "pieces": {
+     "on": [
+      "hill_dusk.full1",
+      "hill_dusk.full2",
+      "hill_dusk.full3"
+     ]
+    }
+   },
+   "on_failure": {
+    "route": "road",
+    "flags_set": [
+     "gospel_hungry"
+    ],
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "road.loaves.lantern",
+   "world": "road",
+   "scene": "road.loaves",
+   "map": "bethany",
+   "anchor": {
+    "actor": "tr1"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "road",
+    "energy": 4
+   },
+   "on_failure": {
+    "route": "road.entry",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "tr1",
+    "available": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "hill_dusk.door_left",
+     "beats": 4
+    },
+    "success": {
+     "act": "nod",
+     "face": "happy",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "road.entry.steps",
+   "world": "road",
+   "scene": "road.entry",
+   "map": "bethany",
+   "anchor": {
+    "waypoint": "gate.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem"
+   },
+   "on_failure": {
+    "route": "jerusalem",
+    "cinematic": "gospel.stagger_road_entry_steps",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "road.entry.grove",
+   "world": "road",
+   "scene": "road.entry",
+   "map": "bethany",
+   "anchor": {
+    "waypoint": "gate.door_left"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jerusalem.gethsemane"
+   },
+   "on_failure": {
+    "route": "jerusalem.gethsemane",
+    "cinematic": "gospel.stagger_road_entry_grove",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true
+  }
+ ]
+}

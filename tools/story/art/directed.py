@@ -70,6 +70,16 @@ def _acting_pairs(block: dict):
             st = st.get("then")
 
 
+def run_sources(root: str = ROOT) -> list:
+    """[(run.json, hotspots dir)] of the main run and of every path under content/paths."""
+    out = [(os.path.join(root, "content", "run", "run.json"), os.path.join(root, "content", "run", "hotspots"))]
+    pd = os.path.join(root, "content", "paths")
+    if os.path.isdir(pd):
+        for pid in sorted(os.listdir(pd)):
+            out.append((os.path.join(pd, pid, "run.json"), os.path.join(pd, pid, "hotspots")))
+    return out
+
+
 def directed(chapter: str, poses: dict | None = None, root: str = ROOT) -> dict:
     """{actor id: [(act, face, facings), ...]} for a chapter (see the module doc)."""
     if poses is None:
@@ -89,38 +99,42 @@ def directed(chapter: str, poses: dict | None = None, root: str = ROOT) -> dict:
         for aid, entries in (_load(p).get(chapter) or {}).items():
             for raw in entries:
                 add(aid, raw, f"directed_actors.json {chapter}/{aid}")
-    rp = os.path.join(root, "content", "run", "run.json")
-    run = _load(rp) if os.path.exists(rp) else {}
-    maps = {w["id"]: w.get("map", "") for w in run.get("worlds", [])}
-    hs = os.path.join(root, "content", "run", "hotspots")
-    if os.path.isdir(hs):
-        for fn in sorted(os.listdir(hs)):
-            if not fn.endswith(".json"):
+    for rp, hs in run_sources(root):  # the main run, then every path's own run (content/paths/<id>/run.json and its hotspots)
+        run = _load(rp) if os.path.exists(rp) else {}
+        maps = {w["id"]: w.get("map", "") for w in run.get("worlds", [])}
+        if os.path.isdir(hs):
+            for fn in sorted(os.listdir(hs)):
+                if not fn.endswith(".json"):
+                    continue
+                doc = _load(os.path.join(hs, fn))
+                for h in doc.get("hotspots", []):
+                    a = h.get("acting")
+                    if not a:
+                        continue
+                    if (h.get("map") or maps.get(h.get("world") or doc.get("world"), "")) != chapter:
+                        continue
+                    aid = a.get("actor") or (h.get("anchor") or {}).get("actor")
+                    if not aid:  # a Bassment creature (`figure`) is a billboard, not a baked person
+                        continue
+                    for act, face in _acting_pairs(a):
+                        add(aid, {"act": act, "face": face}, f"hotspot {h.get('id')}")
+        for node in run.get("nodes", []):
+            if maps.get(node.get("world", "")) != chapter:
                 continue
-            doc = _load(os.path.join(hs, fn))
-            for h in doc.get("hotspots", []):
-                a = h.get("acting")
-                if not a:
-                    continue
-                if (h.get("map") or maps.get(h.get("world") or doc.get("world"), "")) != chapter:
-                    continue
-                aid = a.get("actor") or (h.get("anchor") or {}).get("actor")
-                if not aid:  # a Bassment creature (`figure`) is a billboard, not a baked person
-                    continue
-                for act, face in _acting_pairs(a):
-                    add(aid, {"act": act, "face": face}, f"hotspot {h.get('id')}")
-    for node in run.get("nodes", []):
-        if maps.get(node.get("world", "")) != chapter:
-            continue
-        for line in node.get("cast", []) or []:
-            if line.get("actor") and line.get("act"):
-                add(line["actor"], {"act": line["act"], "face": line.get("face", "")}, f"cast {node.get('id')}")
-    for name, cine in (run.get("cinematics") or {}).items():  # an outcome's cinematic may carry cast lines too (plan 2.3c)
-        if maps.get(cine.get("world", "")) != chapter:
-            continue
-        for line in cine.get("cast", []) or []:
-            if line.get("actor") and line.get("act"):
-                add(line["actor"], {"act": line["act"], "face": line.get("face", "")}, f"cinematic {name}")
+            for line in node.get("cast", []) or []:
+                if line.get("actor") and line.get("act"):
+                    add(line["actor"], {"act": line["act"], "face": line.get("face", "")}, f"cast {node.get('id')}")
+            for fx in node.get("block_fx", []) or []:  # a path scene's block staging may carry cast lines too (RunPlay._block_fx)
+                for key in ("pass", "miss"):
+                    for line in (fx.get(key) or {}).get("cast", []) or []:
+                        if line.get("actor") and line.get("act"):
+                            add(line["actor"], {"act": line["act"], "face": line.get("face", "")}, f"block_fx {node.get('id')}")
+        for name, cine in (run.get("cinematics") or {}).items():  # an outcome's cinematic may carry cast lines too (plan 2.3c)
+            if maps.get(cine.get("world", "")) != chapter:
+                continue
+            for line in cine.get("cast", []) or []:
+                if line.get("actor") and line.get("act"):
+                    add(line["actor"], {"act": line["act"], "face": line.get("face", "")}, f"cinematic {name}")
     return found
 
 

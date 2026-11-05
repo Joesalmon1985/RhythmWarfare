@@ -2814,6 +2814,15 @@ class Painter:
                 m = np.where(face & (b.fc != 2), 0, M["hat"]).astype(np.uint8)
                 return m, -0.2 * (np.sin(lx * 0.8 + ly * 0.4) > 0.6)
             ellipse(cv, F(0, ry * 0.05), rx * 1.25, ry * 1.18, tilt, z, mf)
+        elif kind == "helmet":  # a plain plumeless helmet: a bronze dome, a rim, cheek guards (the Gospel path's soldiers)
+            ellipse(cv, F(0, -ry * 0.5), rx * 1.12, ry * 0.78, tilt, z, lambda lx, ly, u, v: (np.where(v > 0.5, 0, M["hat"]).astype(np.uint8), 0.25 * (u < -0.3) - 0.1 * (v > 0.2)))
+            seg(cv, F(-rx * 1.12, -ry * 0.22), F(rx * 1.12, -ry * 0.22), "hat2", MID, z + 0.01, 1.5 if S > 80 else 1.0)
+            if b.fc != 2:
+                for sg in ((-1, 1) if b.fc == 0 else (1,)):
+                    seg(cv, F(sg * rx * 1.02, -ry * 0.2), F(sg * rx * 0.95, ry * 0.5), "hat2", DARK, z + 0.01, 1.5 if S > 80 else 1.0)
+        elif kind == "turban":  # wrapped cloth: layered bands round the head
+            ellipse(cv, F(0, -ry * 0.5), rx * 1.14, ry * 0.8, tilt, z,
+                    lambda lx, ly, u, v: (np.where(v > 0.52, 0, np.where(np.sin((v * 5.0 + u * 1.5) * 3.14) > 0.45, M["hat2"], M["hat"])).astype(np.uint8), -0.05))
         elif kind == "halo":
             ellipse(cv, F(0, -ry * 1.4), rx * 0.9, ry * 0.18, 0, z, lambda lx, ly, u, v: np.where(u * u + v * v < 0.45, 0, M["lit"]).astype(np.uint8))
 

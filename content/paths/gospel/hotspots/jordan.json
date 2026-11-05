@@ -1,0 +1,475 @@
+{
+ "world": "jordan",
+ "hotspots": [
+  {
+   "id": "jordan.road",
+   "world": "jordan",
+   "scene": "jordan",
+   "map": "galilee_shore",
+   "anchor": {
+    "waypoint": "bank_night.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jordan.baptism"
+   },
+   "on_failure": {
+    "route": "jordan.baptism",
+    "cinematic": "gospel.stagger_jordan_road",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "jordan.shepherd",
+   "world": "jordan",
+   "scene": "jordan",
+   "map": "galilee_shore",
+   "anchor": {
+    "actor": "sh2"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "gospel_shepherds"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "sh2",
+    "available": {
+     "act": "beckon",
+     "face": "awe",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "bow",
+     "face": "awe"
+    },
+    "committed": {
+     "act": "kneel",
+     "face": "awe",
+     "beats": 4
+    },
+    "success": {
+     "act": "kneel",
+     "face": "awe",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "relief",
+      "look_at": "camera",
+      "beats": 8
+     }
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 6
+    }
+   }
+  },
+  {
+   "id": "jordan.baptism.nazareth",
+   "world": "jordan",
+   "scene": "jordan.baptism",
+   "map": "galilee_shore",
+   "anchor": {
+    "thing": "bank_dawn.town"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jordan.nazareth"
+   },
+   "on_failure": {
+    "route": "jordan.nazareth",
+    "cinematic": "gospel.stagger_jordan_baptism_nazareth",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "jordan.baptism.dove",
+   "world": "jordan",
+   "scene": "jordan.baptism",
+   "map": "galilee_shore",
+   "anchor": {
+    "thing": "bank_dawn.dove"
+   },
+   "kind": "feature",
+   "radius_m": 1.2,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "jordan.wilderness",
+    "flags_set": [
+     "gospel_baptised"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "route": "jordan.nazareth",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "b1",
+    "available": {
+     "act": "bow",
+     "face": "awe"
+    },
+    "selected": {
+     "act": "bow",
+     "face": "awe"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "bank_dawn.door_right",
+     "beats": 4
+    },
+    "success": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "bank_dawn.door_right",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 6
+    }
+   }
+  },
+  {
+   "id": "jordan.wilderness.path",
+   "world": "jordan",
+   "scene": "jordan.wilderness",
+   "map": "galilee_shore",
+   "anchor": {
+    "waypoint": "rocks.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "galilee"
+   },
+   "on_failure": {
+    "route": "galilee",
+    "cinematic": "gospel.stagger_jordan_wilderness_path",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true,
+   "acting": {
+    "actor": "t1",
+    "available": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 4
+    },
+    "success": {
+     "act": "recoil",
+     "face": "anger",
+     "beats": 8,
+     "then": {
+      "act": "shake_head",
+      "face": "anger",
+      "beats": 8
+     }
+    },
+    "failure": {
+     "act": "laugh",
+     "face": "laugh",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "jordan.wilderness.fires",
+   "world": "jordan",
+   "scene": "jordan.wilderness",
+   "map": "galilee_shore",
+   "anchor": {
+    "thing": "rocks.fires"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "galilee.capernaum"
+   },
+   "on_failure": {
+    "route": "galilee.capernaum",
+    "cinematic": "gospel.stagger_jordan_wilderness_fires",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "t1",
+    "available": {
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 4
+    },
+    "success": {
+     "act": "recoil",
+     "face": "anger",
+     "beats": 8,
+     "then": {
+      "act": "shake_head",
+      "face": "anger",
+      "beats": 8
+     }
+    },
+    "failure": {
+     "act": "laugh",
+     "face": "laugh",
+     "beats": 8
+    }
+   }
+  },
+  {
+   "id": "jordan.nazareth.road",
+   "world": "jordan",
+   "scene": "jordan.nazareth",
+   "map": "galilee_shore",
+   "anchor": {
+    "waypoint": "workshop.door_up"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "galilee"
+   },
+   "on_failure": {
+    "route": "galilee",
+    "cinematic": "gospel.stagger_jordan_nazareth_road",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "jordan.nazareth.neighbour",
+   "world": "jordan",
+   "scene": "jordan.nazareth",
+   "map": "galilee_shore",
+   "anchor": {
+    "actor": "n1"
+   },
+   "kind": "character",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "galilee.capernaum",
+    "energy": 5
+   },
+   "on_failure": {
+    "route": "galilee",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "acting": {
+    "actor": "n1",
+    "available": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "plead",
+     "face": "plea",
+     "beats": 4
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "shame",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "shame",
+      "beats": 8
+     }
+    }
+   }
+  },
+  {
+   "id": "jordan.nazareth.cart",
+   "world": "jordan",
+   "scene": "jordan.nazareth",
+   "map": "galilee_shore",
+   "anchor": {
+    "thing": "workshop.cart"
+   },
+   "kind": "object",
+   "radius_m": 0.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "galilee",
+    "energy": 5
+   },
+   "on_failure": {
+    "route": "galilee.capernaum",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true
+  }
+ ]
+}

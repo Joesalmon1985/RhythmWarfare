@@ -141,6 +141,8 @@ func _build_sectors(list: Array) -> void:
 			"light": float(s.get("light", 0.6)), "ambient": float(s.get("ambient", -1.0)), "tint": Color.html(str(s.get("tint", "#ffffff"))), "room": str(s.get("room", "main")),
 			"flags": s.get("flags", [])}
 		sec["activities"] = _build_activities(sid, s.get("activities", {}), sec["flags"])
+		sec["sky"] = str(s.get("sky", ""))  # a name of the map sky's `by_name`: the sky (and `fog`, {color, density}) this sector shows (a map holding a night room and a dawn one)
+		sec["fog"] = s.get("fog", {}) if typeof(s.get("fog", {})) == TYPE_DICTIONARY else {}
 		if pts.size() < 3:
 			errors.append("sector %s: a polygon needs 3 points or more" % sid)
 		else:

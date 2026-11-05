@@ -180,15 +180,23 @@ func test_portal_hotspots_follow_the_rules_and_stay_out_of_play_until_their_path
 	_remap_off()
 	var d := RunData.load_default()
 	assert_eq(d.errors, [])
-	assert_eq(d.skipped_portals.size(), 3, "gospel, squadron and ember are not written yet: their portals are left out (and logged)")
+	var missing: Array = ["gospel", "squadron", "ember"].filter(func(p: String) -> bool: return not RunData.path_exists(p))
+	assert_eq(d.skipped_portals.size(), missing.size(), "a path that is not written yet has its portal left out (and logged)")
+	var star_in := false
 	for h in d.hotspots_of("warehouse.balcony"):
-		assert_false(str(h["id"]) == "warehouse.balcony.star")
+		star_in = star_in or str(h["id"]) == "warehouse.balcony.star"
+	assert_eq(star_in, RunData.path_exists("gospel"), "the star is in play exactly when the gospel path exists")
 	_remap_on()
 	var r := RunData.load_default()
 	assert_eq(r.errors, [])
 	var skipped: Array = r.skipped_portals.map(func(s: Dictionary) -> String: return str(s["hotspot"]))
 	skipped.sort()
-	assert_eq(skipped, ["warehouse.bar.ember", "warehouse.booth.radio"], "the gospel portal plays once its path (here the stub) exists")
+	var want_skipped: Array = []
+	if not RunData.path_exists("ember"):
+		want_skipped.append("warehouse.bar.ember")
+	if not RunData.path_exists("squadron"):
+		want_skipped.append("warehouse.booth.radio")
+	assert_eq(skipped, want_skipped, "the gospel portal plays once its path (here the stub) exists")
 	var star: Dictionary = {}
 	for h in r.hotspots_of("warehouse.balcony"):
 		if str(h["id"]) == "warehouse.balcony.star":
@@ -629,7 +637,7 @@ func test_a_portal_into_a_path_that_does_not_exist_yet_is_not_on_show() -> void:
 	var scene: Node = d["scene"]
 	_run_until(scene, 52.0 * 60.0 / 174.0, func() -> bool: return false)
 	var ids: Array = scene.hotspots.shown(scene.engine.block, scene.engine.window_open).map(func(h: Dictionary) -> String: return str(h["id"]))
-	assert_false(ids.has("warehouse.balcony.star"), "no gospel path yet: the star stays out of play (%s)" % str(ids))
+	assert_eq(ids.has("warehouse.balcony.star"), RunData.path_exists("gospel"), "a portal is on show exactly when its path has data (%s)" % str(ids))
 	assert_true(ids.size() >= 2 and ids.size() <= 4)
 	_free(d)
 

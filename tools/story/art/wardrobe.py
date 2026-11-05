@@ -416,6 +416,167 @@ def ward(r: random.Random, arch: str) -> dict:
     return spec
 
 
+# ---- the Gospel path: robes, tunics and sandals (docs/THREE_PATHS_AND_FACES_PLAN.md 4.3) --------------------------------------------------------------------
+
+GOSPEL_MAPS = ("galilee_shore", "hillside", "bethany", "jerusalem")
+WOOL = ["#e6dcc0", "#d8c8a0", "#c8b088", "#bca078", "#a88860", "#8a6a48", "#d2c4a4", "#b8a688"]
+DYE = ["#8a4a30", "#4a5a7a", "#8a3a2a", "#5a6a48", "#6a4a6a", "#a8782a", "#3a6a6a", "#7a5a3a"]
+HEAD_CLOTH = ["#e8e0cc", "#d4c4a0", "#c8a878", "#a86a48", "#7a8aa8", "#b8b098"]
+MID_SKINS = SKINS[2:9]
+
+
+def gospel(r: random.Random, actor: dict) -> dict:
+    """The Gospel path's people. `wear` names who they are (fisher, villager, disciple, priest, soldier, merchant, sister / woman / mother, child, elder, governor, tempter, baptist,
+    shepherd, carpenter, gardener); undyed wool, stripes, headscarves, sandals; soldiers in a plain lamellar cuirass and a plumeless helmet, priests in white with a blue sash, the
+    governor in a white toga with one red band. No emblem of any real force and no copy of any painting."""
+    wear = str(actor.get("wear", "villager"))
+    spec = _build(r, height=(0.94, 1.08))
+    skin = r.choice(MID_SKINS)
+    hc = r.choice(["#1b1416", "#2a1c18", "#3b281e", "#523422", "#6e4426"])
+    cols = {"skin": skin, "hair": hc, "hair2": _lighter(hc, 0.25), "shoes": r.choice(["#6a4a32", "#8a6a48", "#5a3a28"]), "acc": "#5a3a22", "acc2": "#c8a050",
+            "hat": r.choice(HEAD_CLOTH), "outer": r.choice(WOOL), "outer2": r.choice(DYE)}
+    cols["hat2"] = _darker(cols["hat"], 0.3)
+    top = {"kind": "dress", "pattern": "plain", "neck": "v"}
+    bottom = {"kind": "dress_legs"}
+    outer = None
+    hat = None
+    acc: list = []
+    shoes = {"kind": "slippers"}
+    hair = {"style": r.choice(["short", "curly", "long", "wavy", "buzz"]), "part": round(r.uniform(-0.3, 0.3), 2)}
+    face = _face(r, 0.55)
+    c1 = r.choice(WOOL + DYE[:4])
+    c2 = r.choice(DYE)
+    cols.update(top=c1, top2=c2, top3=_darker(c1, 0.22), bottom=c1, bottom2=_darker(c1, 0.3))
+    fem = wear in ("sister", "woman", "mother")
+    if fem:
+        spec.update(curve=round(r.uniform(0.6, 1.0), 2), height=round(r.uniform(0.9, 1.0), 3))
+        hair = {"style": r.choice(["long", "bun", "braids", "wavy"])}
+        face = _face(r, 0.0)
+        hat = {"kind": "scarf"} if r.random() < 0.8 else None
+        top["pattern"] = r.choice(["plain", "band", "plain", "stripes"])
+        cols["top3"] = r.choice(DYE)
+    else:
+        spec.update(curve=round(r.uniform(0.0, 0.3), 2))
+    if wear == "disciple":
+        top["pattern"] = r.choice(["plain", "stripes", "band", "vstripes"])
+        outer = {"kind": "cape"} if r.random() < 0.35 else None
+        acc = ["sash"] if r.random() < 0.6 else (["belt"] if r.random() < 0.5 else [])
+        hat = {"kind": "scarf"} if r.random() < 0.25 else None
+    elif wear == "villager":
+        top["pattern"] = r.choice(["plain", "stripes", "plain"])
+        hat = {"kind": "scarf"} if r.random() < 0.4 else None
+        acc = ["belt"] if r.random() < 0.4 else []
+    elif wear in ("sister", "woman", "mother"):
+        acc = ["necklace"] if r.random() < 0.3 else []
+    elif wear == "fisher":
+        top = {"kind": "tank", "pattern": r.choice(["plain", "stripes"]), "neck": "scoop"}
+        bottom = {"kind": r.choice(["shorts", "baggy"])}
+        cols.update(top=r.choice(["#d8c8a0", "#bca078", "#9a8a68"]), bottom=r.choice(["#8a6a48", "#6a5a48", "#a89060"]), bottom2="#5a4a38")
+        spec.update(width=round(r.uniform(1.0, 1.2), 3))
+        hat = {"kind": "bandana"} if r.random() < 0.6 else None
+        cols["hat"] = r.choice(["#b04a30", "#c8b088", "#4a5a7a"])
+        shoes = {"kind": "bare"}
+        face["beard"] = r.choice(["beard", "stubble", "beard", None])
+        acc = ["belt"]
+    elif wear == "priest":
+        c = r.choice(["#f2eee4", "#ece6d6"])
+        cols.update(top=c, top3=_darker(c, 0.18), top2="#3a5a9a", bottom=c, acc="#3a5a9a", acc2="#d8c8a0")
+        top["pattern"] = "plain"
+        acc = ["sash"]
+        hat = {"kind": "turban"} if r.random() < 0.7 else None
+        cols["hat"] = "#e8e2d2"
+        cols["hat2"] = "#c8c0a8"
+        face["beard"] = r.choice(["beard", "beard", "moustache"])
+        spec.update(height=round(r.uniform(1.0, 1.1), 3))
+    elif wear == "soldier":
+        top = {"kind": "tee", "pattern": "check", "neck": "crew"}
+        bottom = {"kind": "shorts"}
+        cols.update(top="#a8864a", top2="#6a4a30", top3="#8a6a38", bottom="#7a3a2a", bottom2="#5a2a20", shoes="#4a3424", hat="#a8905a", hat2="#7a6a3a", metal="#a8905a", acc="#4a3424", acc2="#c8a050")
+        acc = ["plates", "belt"]
+        hat = {"kind": "helmet"}
+        shoes = {"kind": "boots"}
+        spec.update(width=round(r.uniform(1.05, 1.22), 3), height=round(r.uniform(1.0, 1.1), 3))
+        hair = {"style": "buzz"}
+        face["beard"] = r.choice([None, "stubble", "moustache"])
+    elif wear == "merchant":
+        top = {"kind": "longsleeve", "pattern": r.choice(["stripes", "band", "vstripes"]), "neck": "crew"}
+        bottom = {"kind": "trousers"}
+        outer = {"kind": "gilet", "pattern": "plain"} if r.random() < 0.6 else None
+        cols.update(top=r.choice(["#8a3a2a", "#a8782a", "#3a6a6a", "#6a4a6a"]), top2="#e6dcc0", bottom="#5a4a38", outer="#7a5a3a", hat=r.choice(["#a8782a", "#8a3a2a", "#3a6a6a"]))
+        hat = {"kind": "turban"}
+        acc = ["necklace", "belt"]
+        shoes = {"kind": "boots"}
+        spec.update(width=round(r.uniform(1.05, 1.2), 3))
+    elif wear == "child":
+        spec.update(height=round(r.uniform(0.6, 0.72), 3), head=1.28, width=round(r.uniform(0.9, 1.05), 3))
+        top = {"kind": "tee", "pattern": "plain", "neck": "crew"}
+        bottom = {"kind": "shorts"}
+        hair = {"style": r.choice(["short", "curly", "braids", "bob"])}
+        face = _face(r, 0.0)
+        hat = None
+        acc = []
+        shoes = {"kind": "bare"}
+    elif wear == "elder":
+        spec.update(height=round(r.uniform(0.9, 0.97), 3), curve=round(r.uniform(0.3, 0.7), 2))
+        hc = r.choice(["#d8d4cf", "#ece8e2", "#b8b4b0", "#c9c3bd"])
+        cols.update(hair=hc, hair2=_lighter(hc, 0.2))
+        hair = {"style": r.choice(["short", "bald", "wavy", "long"])}
+        face["beard"] = r.choice(["beard", "beard", None])
+        outer = {"kind": "cape"}
+        hat = {"kind": "scarf"} if r.random() < 0.5 else None
+    elif wear == "governor":
+        cols.update(top="#f4f0e6", top3="#a02a2a", top2="#a02a2a", bottom="#f4f0e6", outer="#f4f0e6", outer2="#a02a2a", acc="#a02a2a", acc2="#c8a050")
+        top = {"kind": "dress", "pattern": "band", "neck": "v"}
+        outer = {"kind": "cape"}
+        hair = {"style": "short"}
+        hat = None
+        spec.update(height=round(r.uniform(1.0, 1.06), 3), width=round(r.uniform(1.1, 1.2), 3))
+        face["beard"] = None
+        acc = ["necklace"]
+    elif wear == "tempter":
+        c = r.choice(["#b8a078", "#a89068", "#c0a880"])
+        cols.update(top=c, top3=_darker(c, 0.25), bottom=c, hat="#a08c64", hat2="#7a6a48")
+        top["pattern"] = "plain"
+        hat = {"kind": "scarf"}
+        spec.update(height=1.12, width=0.9)
+        face["beard"] = "stubble"
+        outer = {"kind": "cape"}
+    elif wear == "baptist":
+        cols.update(top="#8a6a40", top3="#6a4a28", bottom="#8a6a40", acc="#4a3018")
+        top = {"kind": "dress", "pattern": "plain", "neck": "v"}
+        hair = {"style": "long"}
+        face["beard"] = "beard"
+        acc = ["belt"]
+        shoes = {"kind": "bare"}
+        hat = None
+        spec.update(height=1.04, width=1.0)
+    elif wear == "shepherd":
+        cols.update(top=r.choice(["#c8b088", "#a88860", "#8a6a48"]), outer="#e6dcc0", outer2="#c8b088")
+        outer = {"kind": "gilet", "pattern": "plain"}
+        hat = {"kind": "scarf"}
+        acc = ["belt"]
+        face["beard"] = r.choice(["beard", "stubble", None])
+    elif wear == "carpenter":
+        top = {"kind": "longsleeve", "pattern": "plain", "neck": "crew"}
+        bottom = {"kind": "trousers"}
+        cols.update(top="#d8c8a0", bottom="#8a6a48", outer="#6a4a30", hat="#c8b088")
+        outer = {"kind": "gilet", "pattern": "plain"}
+        hair = {"style": "short"}
+        acc = ["belt"]
+        shoes = {"kind": "boots"}
+        face["beard"] = "stubble"
+    elif wear == "gardener":
+        top = {"kind": "longsleeve", "pattern": "plain", "neck": "crew"}
+        bottom = {"kind": "trousers"}
+        cols.update(top="#c8b088", bottom="#6a5a48", hat="#d8c070")
+        hat = {"kind": "bucket"}
+        acc = ["strap"]
+        shoes = {"kind": "boots"}
+        face["beard"] = r.choice(["stubble", None])
+    spec.update({"hair": hair, "top": top, "outer": outer, "bottom": bottom, "shoes": shoes, "hat": hat, "acc": acc, "face": face, "colours": cols})
+    return spec
+
+
 # ---- casting -----------------------------------------------------------------------------------------------------------------------------------------
 
 CHAPTER_FURNITURE = {"night_one": ("#4a3a4c", "#2a2230"), "mothership": ("#8aa0b8", "#4a5a70"), "underworld": ("#3a2a2a", "#1a1010"),
@@ -424,10 +585,16 @@ CHAPTER_FURNITURE = {"night_one": ("#4a3a4c", "#2a2230"), "mothership": ("#8aa0b
 
 def dress(chapter: str, actor: dict, salt: int = 0) -> dict:
     aid = str(actor["id"])
-    r = random.Random(seed_of(chapter, aid) + salt * 7919)
+    chapter_seed = chapter
+    if chapter in GOSPEL_MAPS:  # a look comes from the seed id: a disciple (d01..d12) wears the same face in every map of the path
+        aid = str(actor.get("seed_id", aid))
+        chapter_seed = "gospel" if (aid[0] == "d" and aid[1:].isdigit()) else chapter
+    r = random.Random(seed_of(chapter_seed, aid) + salt * 7919)
     arch = str(actor.get("archetype", ""))
     borrowed = str(actor.get("art", "")) == "night_one" or chapter == "night_one"
-    if borrowed:
+    if chapter in GOSPEL_MAPS:
+        spec = gospel(r, actor)
+    elif borrowed:
         spec = raver(r, arch)
     elif chapter == "mothership":
         spec = alien(r, arch)
@@ -443,8 +610,8 @@ def dress(chapter: str, actor: dict, salt: int = 0) -> dict:
     if str(actor.get("activity", "")) == "lie":
         cols["furn"], cols["furn2"] = ("#c8d0dc", "#e8ecf2") if chapter in ("hospital",) else ("#8a9a7a", "#c8ccc0")
     spec["colours"] = cols
-    spec["seed"] = seed_of(chapter, aid) % 100000
-    _face_detail(spec, chapter, aid, arch)
+    spec["seed"] = seed_of(chapter_seed, aid) % 100000
+    _face_detail(spec, chapter_seed, aid, arch)
     return spec
 
 

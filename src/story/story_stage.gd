@@ -340,6 +340,7 @@ func update(t: float, p_energy: float) -> void:
 			_vis_geo = map.visible_sectors(cpos, _vis_yaw, _vis_sec, size.x / maxf(size.y, 1.0), 7)  # the geometry is drawn deeper than the crowd is (long sightlines)
 			if world_active:
 				world.set_visible_sectors(_vis_geo)
+				world.set_atmosphere(map.sector(_vis_sec))
 		for id in crowds:
 			(crowds[id] as StoryCrowd).set_camera(ppose, size, _vis)
 	_sec_light = {}
