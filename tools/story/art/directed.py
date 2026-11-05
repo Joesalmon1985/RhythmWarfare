@@ -70,6 +70,30 @@ def _acting_pairs(block: dict):
             st = st.get("then")
 
 
+def _staging_defaults(root: str) -> dict:
+    p = os.path.join(root, "content", "run", "choice_staging.json")
+    return _load(p) if os.path.exists(p) else {}
+
+
+def staging_pairs(h: dict, defaults: dict):
+    """Every (actor, act, face) the choice layer directs for a hotspot (docs/CHOICE_CLARITY.md; src/run/choice_staging.gd decides the same): a PERSON option's current, other, touched,
+    committed and declined acts (the defaults of content/run/choice_staging.json under its own `staging`), and the people its `staging.states` steps name."""
+    st = h.get("staging") or {}
+    acting = h.get("acting") or {}
+    actor = st.get("actor") or acting.get("actor") or (h.get("anchor") or {}).get("actor") or ""
+    arch = st.get("archetype") or ("person" if actor else "")
+    if arch == "person" and actor:
+        for key in ("current", "other", "touched", "committed", "declined"):
+            spec = dict((defaults.get("person") or {}).get(key) or {})
+            spec.update(st.get(key) or {})
+            if spec.get("act"):
+                yield actor, str(spec["act"]), str(spec.get("face", ""))
+    for steps in (st.get("states") or {}).values():
+        for step in steps or []:
+            if step.get("actor") and step.get("act"):
+                yield str(step["actor"]), str(step["act"]), str(step.get("face", ""))
+
+
 def run_sources(root: str = ROOT) -> list:
     """[(run.json, hotspots dir)] of the main run and of every path under content/paths."""
     out = [(os.path.join(root, "content", "run", "run.json"), os.path.join(root, "content", "run", "hotspots"))]
@@ -99,6 +123,7 @@ def directed(chapter: str, poses: dict | None = None, root: str = ROOT) -> dict:
         for aid, entries in (_load(p).get(chapter) or {}).items():
             for raw in entries:
                 add(aid, raw, f"directed_actors.json {chapter}/{aid}")
+    sdef = _staging_defaults(root)
     for rp, hs in run_sources(root):  # the main run, then every path's own run (content/paths/<id>/run.json and its hotspots)
         run = _load(rp) if os.path.exists(rp) else {}
         maps = {w["id"]: w.get("map", "") for w in run.get("worlds", [])}
@@ -108,10 +133,12 @@ def directed(chapter: str, poses: dict | None = None, root: str = ROOT) -> dict:
                     continue
                 doc = _load(os.path.join(hs, fn))
                 for h in doc.get("hotspots", []):
+                    if (h.get("map") or maps.get(h.get("world") or doc.get("world"), "")) != chapter:
+                        continue
+                    for sa, act, face in staging_pairs(h, sdef):  # the choice layer's people (docs/CHOICE_CLARITY.md)
+                        add(sa, {"act": act, "face": face}, f"staging {h.get('id')}")
                     a = h.get("acting")
                     if not a:
-                        continue
-                    if (h.get("map") or maps.get(h.get("world") or doc.get("world"), "")) != chapter:
                         continue
                     aid = a.get("actor") or (h.get("anchor") or {}).get("actor")
                     if not aid:  # a Bassment creature (`figure`) is a billboard, not a baked person

@@ -329,6 +329,8 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 		errors.append("%s: default and repeatable are true or false" % hw)
 	if h.has("acting"):
 		validate_acting(h, hw, idx, ctx, errors)
+	if h.has("staging"):  # how the option shows it is the current choice or not (docs/CHOICE_CLARITY.md): ChoiceStaging
+		ChoiceStaging.validate(h, hw, idx, errors)
 
 
 static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: String, routes: Array, idx: Dictionary, named: Dictionary, errors: Array) -> void:

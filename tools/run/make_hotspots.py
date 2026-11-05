@@ -573,6 +573,8 @@ def write() -> None:
     lines += bassment_section()
     DOC.write_text("\n".join(lines), encoding="utf-8", newline="\n")
     print("%d hotspots in %d worlds, %d cinematics" % (sum(len(v) for v in HOTSPOTS.values()), len(HOTSPOTS), len(CINEMATICS)))
+    import apply_staging  # the choice layer's hand-authored staging blocks (docs/CHOICE_CLARITY.md) go back in
+    apply_staging.main([])
 
 
 if __name__ == "__main__":

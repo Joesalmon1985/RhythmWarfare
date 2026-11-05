@@ -23,6 +23,7 @@ var committed_count: Dictionary = {}  # hotspot id -> times committed this run (
 var last_outcome: Dictionary = {}
 var log: Array = []  # every outcome: the tests and the walks read it
 var persist_dirty := false  # a persistent flag changed since the owner last saved
+var preselect := false  # (run.json `choice.preselect`, off by default: an owner's decision) a staged final-window option may be touched before its window opens; the commit is unchanged
 
 var _list: Array = []
 
@@ -101,7 +102,7 @@ func is_shown(id: String, block: int, final_open: bool) -> bool:
 
 ## The player touches a hotspot. Allowed while it is on show and nothing has committed; changing the selection is always allowed until then. False when it cannot be selected.
 func select(id: String, block: int, final_open: bool) -> bool:
-	if not is_shown(id, block, final_open):
+	if not is_shown(id, block, final_open) and not (preselect and committed == "" and window_of(get_hotspot(id)) == "final" and staged(block).has(get_hotspot(id))):
 		return false
 	selected = id
 	return true
@@ -134,6 +135,44 @@ func default_hotspot() -> Dictionary:
 
 func default_route() -> String:
 	return str((default_hotspot().get("on_success", {}) as Dictionary).get("route", ""))
+
+
+## --- the current choice (docs/CHOICE_CLARITY.md) ------------------------------------------------------------------------------
+## The options the world stages in this visit (from the scene's first beat, whether or not their window is open yet): every available final-window hotspot until the
+## commit, then the committed one and the others as they were; an early-window one (the wizard) while its window can still come (blocks 0 and 1, not yet committed).
+func staged(block: int) -> Array:
+	var out: Array = []
+	for h in _list:
+		var id := str(h["id"])
+		if window_of(h) == "early":
+			if block <= 1 and committed_early == "" and committed == "" and is_available(h):
+				out.append(h)
+		elif id == committed or is_available(h):
+			out.append(h)
+	return out
+
+
+## The CURRENT choice: what happens if the player does nothing more. The committed hotspot once the commit is made; else the touched one while it is staged; else the default
+## exit. Exactly one at any time in a scene with a default (every run scene has one). Touching does not change what an untouched default does (commit_final still treats an
+## untouched default as nothing tapped): `current` is what the world shows, `selected` is still what the player did.
+func current_id(block: int) -> String:
+	if committed != "":
+		return committed
+	if selected != "":
+		for h in staged(block):
+			if str(h["id"]) == selected:
+				return selected
+	return str(default_hotspot().get("id", ""))
+
+
+## Where the player is going now: the route of the commit's outcome once made, else the current option's success route, else (an option that stays, then goes on) the default route.
+## A route into the Bassment or a path is returned as it is (no exit of the room leads there, so every door shows shut).
+func destination(block: int) -> String:
+	if committed != "" and not last_outcome.is_empty() and str(last_outcome.get("hotspot", "")) == committed:
+		return str(last_outcome.get("route", ""))
+	var h := get_hotspot(current_id(block))
+	var r := str((h.get("on_success", {}) as Dictionary).get("route", ""))
+	return r if r != "" else default_route()
 
 
 ## "available" | "selected" | "committed" | "" (not on show) for the view.
