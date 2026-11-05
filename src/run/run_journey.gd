@@ -13,6 +13,7 @@ var door_target := ""  # the scene a door walk was started toward ("" none)
 var skip_arrival := false  # the next phase start is a resume (the Bassment's return): the scene walks the camera itself
 var log: Array = []  # [{phase, block, node, place, kind, role, pos}] one per block decision
 var actions: Array = []  # every action emitted, with its world
+var cine_until := -1.0  # song time a hotspot cinematic's move ends (the next scene's door walk waits for it)
 
 
 func _init(p_data: RunData) -> void:
@@ -58,8 +59,13 @@ func _phase_start(ev: Dictionary, engine: RunEngine) -> Array:
 		skip_arrival = false
 	elif changed:
 		out.append_array(rail.arrival(t0, engine.level.notes))
-	elif new_scene:  # a path inside the world: a plain door walk, the stage stays
-		out.append_array(rail.door_walk(t0, engine.level.notes, door_target == id))
+	elif new_scene:  # a path inside the world: a plain door walk, the stage stays (after a hotspot cinematic that is still under way: when it has finished, if that is soon)
+		var t_walk := t0
+		var walked := door_target == id
+		if cine_until > t0:
+			walked = cine_until > t0 + 6.0 * engine.beat_s  # too long to wait: the cinematic is where the camera stays
+			t_walk = cine_until
+		out.append_array(rail.door_walk(t_walk, engine.level.notes, walked))
 	door_target = ""
 	out.append_array(rail.ambient(t0, int(ev["phase"]), 0, engine.level.notes))
 	node_id = id
@@ -76,6 +82,25 @@ func leave_walk(t: float, to: String, engine: RunEngine) -> Array:
 		wp = str(target["waypoint"])
 	door_target = to
 	var tagged := _tag(rail.leave(t, wp, engine.level.notes), world)
+	actions.append_array(tagged)
+	return tagged
+
+
+## The rail actions of a hotspot outcome's cinematic ({move, to, bars, look_at, role}, see HotspotContract) starting at song time `t` (a decision beat, inside the cue-free guard): the role, a look
+## at the target (`look_by`: the turn in degrees the scene worked out, NAN when none) and, when `move_ok`, the move to the waypoint, shortened where the chart is dense (RunRail.pick_bars).
+func hotspot_actions(spec: Dictionary, t: float, engine: RunEngine, look_by: float, move_ok: bool) -> Array:
+	var out: Array = []
+	if rail == null or spec.is_empty():
+		return out
+	if spec.has("role"):
+		out.append({"t0": t, "action": "player_role", "args": {"role": str(spec["role"])}})
+		rail.role = str(spec["role"])
+	if not is_nan(look_by):
+		out.append({"t0": t, "action": "player_look", "args": {"by": look_by, "pitch": 0.0, "bars": 2.0}})
+	if move_ok and spec.has("move") and spec.has("to"):
+		var bars := rail._move_to(out, t, str(spec["to"]), str(spec["move"]), float(spec.get("bars", 3.0)), engine.level.notes)
+		cine_until = t + bars * rail.bar_s()
+	var tagged := _tag(out, world)
 	actions.append_array(tagged)
 	return tagged
 

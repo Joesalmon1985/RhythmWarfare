@@ -847,15 +847,19 @@ func test_the_wizard_offers_the_trial_in_the_warehouse_only() -> void:
 	var d := _run_scene("")
 	var scene: Node = d["scene"]
 	assert_true(scene._gate.visible, "the wizard is in the Warehouse")
-	assert_eq(scene._gate_btn.text, "Enter the Trial")
+	assert_true(scene._gate_btn == null, "and carries no written option: he is a character hotspot")
 	var launched: Array = []
 	scene.trial_launcher = func() -> void: launched.append("trial")
-	scene._gate_btn.pressed.emit()
-	assert_eq(launched, ["trial"], "choosing the option asks for the dungeon")
-	var gate_rect := Rect2(scene._gate_btn.position, scene._gate_btn.size).merge(Rect2(scene._gate_wizard.position, scene._gate_wizard.size))
+	var beat := 60.0 / 174.0
+	_step_to(scene, 3.0 * beat)
+	assert_true(scene._gate_wizard.visible, "his picture stands in the room while his window is open")
 	var rects: Dictionary = scene.pad_view.button_rects()
 	for p in rects:
-		assert_false(gate_rect.intersects(rects[p] as Rect2), "the option does not sit on pad %d" % p)
+		assert_false(Rect2(scene._gate_wizard.position, scene._gate_wizard.size).intersects(rects[p] as Rect2), "the wizard does not sit on pad %d" % p)
+	assert_true(scene.hotspot_select("warehouse.floor.wizard"), "touching him selects him")
+	assert_eq(launched, [], "a selection alone leaves the run as it was: the performance decides")
+	_step_to(scene, 13.5 * beat)
+	assert_eq(launched, ["trial"], "the block he waited for was passed: the dungeon is asked for")
 	_end_run(d, saved, "user://test_trial_save.json")
 	var m := _run_scene("mothership")
 	assert_false((m["scene"] as Node)._gate.visible, "no wizard outside the Warehouse")

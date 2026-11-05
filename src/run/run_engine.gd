@@ -187,6 +187,8 @@ func default_route() -> String:
 
 ## The player picks a route (by destination id); allowed until the phase ends. Returns false when the id is not one of the routes.
 func choose(to: String) -> bool:
+	if hotspots != null:  # with hotspots the route is the outcome of the selected one: choosing a route taps the hotspot that leads there (scripted play, old callers)
+		return hotspots.select_route(to, block, window_open)
 	for e in data.nodes[node_id]["next"]:
 		if str(e["to"]) == to:
 			if not route_allowed(to):
@@ -209,7 +211,13 @@ func route_allowed(to: String) -> bool:
 
 
 func selected_route() -> String:
-	return choice if choice != "" else default_route()
+	if choice != "":
+		return choice
+	if hotspots != null and hotspots.selected != "":  # the route the selected hotspot leads to on success (the final outcome is only known at the commit)
+		var r := str((hotspots.get_hotspot(hotspots.selected).get("on_success", {}) as Dictionary).get("route", ""))
+		if r != "" and not r.begins_with(HotspotContract.TRIAL_PREFIX):
+			return r
+	return default_route()
 
 
 func press(pad: int, t: float, touch: int = 0) -> Dictionary:

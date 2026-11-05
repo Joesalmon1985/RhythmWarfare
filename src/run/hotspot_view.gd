@@ -98,11 +98,13 @@ static func layout(entries: Array, map: StoryMap, crowds: Dictionary, pose: Dict
 		var on_screen: bool = bool(pc["visible"]) and float(pc["depth"]) > 0.4 and pc["screen"].x >= 0.0 and pc["screen"].x <= view.x and pc["screen"].y >= 0.0 and pc["screen"].y <= view.y
 		if on_screen:
 			var sc := float(pc["scale"])
-			entry["centre"] = pc["screen"]
+			var rad := minf(maxf(float(h["radius_m"]) * sc, min_r), minf(view.x, view.y) * 0.5)
+			var sp: Vector2 = pc["screen"]
+			entry["centre"] = Vector2(clampf(sp.x, rad, view.x - rad), clampf(sp.y, rad, view.y - rad))  # the whole touch target stays inside the stage view, so never over the pads below it
 			entry["ground"] = pg["screen"] if bool(pg["visible"]) else pc["screen"]
 			entry["scale"] = sc
 			entry["depth"] = float(pc["depth"])
-			entry["radius_px"] = maxf(float(h["radius_m"]) * sc, min_r)
+			entry["radius_px"] = rad
 		else:  # out of sight: a beacon at the edge on the side it lies
 			var cam: Vector3 = pose["cam"]
 			var d := Vector2(p.x - cam.x, p.z - cam.z)

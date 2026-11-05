@@ -75,11 +75,9 @@ func test_a_path_inside_a_world_is_a_door_walk_with_no_passage_frame() -> void:
 	var d := _scene(Vector2(1152, 648), "perfect", "right")  # the floor: right is the bar
 	var scene: Node = d["scene"]
 	_run_to(scene, 50.0 * BEAT)
-	assert_true(scene._exits.visible, "the doorways are lit while the window is open")
-	assert_eq(scene._exits.items.size(), 2, "one lit door per path: the bar and the balcony")
-	assert_eq(scene._route_buttons.size(), 2, "and the touch arrows stay")
-	assert_eq((scene._route_buttons["right"] as Button).text.begins_with(">  The Bar"), true, "the button names the room")
-	assert_true((scene._route_buttons["right"] as Button).text.contains("[CHOSEN]") or (scene._route_buttons["right"] as Button).text.contains("[DEFAULT]"))
+	assert_eq(scene.hotspot_items().size(), 3, "the hotspots are on show while the window is open: the bar door, the balcony stair and the dancer (the wizard has an earlier window)")
+	assert_eq(scene._route_buttons.size(), 0, "and no arrows")
+	assert_eq(scene.engine.selected_route(), "warehouse.bar", "the scripted tap is on the bar door")
 	_run_to(scene, 60.0 * BEAT)
 	var walked_before: int = (scene.journey_log as Array).filter(func(a: Dictionary) -> bool: return a["action"] == "player_move" and float(a["t0"]) > 60.5 * BEAT).size()
 	assert_eq(walked_before, 0, "no door walk before beat 61")
@@ -95,7 +93,7 @@ func test_a_path_inside_a_world_is_a_door_walk_with_no_passage_frame() -> void:
 	assert_eq(scene.active_world, "night_one", "the same world stage stays")
 	assert_eq(scene.stages.size(), 1, "no second stage was built")
 	assert_eq(scene.journey.rail.node_id, "warehouse.bar", "the new scene's rail starts")
-	assert_false(scene._exits.visible, "the lights go out with the window")
+	assert_eq(scene.hotspot_items().size(), 0, "the hotspots go out with the window")
 	var st: StoryStage = scene.stages["night_one"]["stage"]
 	assert_true(str(st.player.pose_at(64.4 * BEAT)["sector"]) != "bar", "still walking through the door a little after the downbeat")
 	_run_to(scene, 76.0 * BEAT)
@@ -108,8 +106,7 @@ func test_the_world_swap_keeps_the_passage_frame() -> void:
 	var d := _scene(Vector2(1152, 648), "perfect", "left", "mothership.exit")  # the airlock: left is the hospital
 	var scene: Node = d["scene"]
 	_run_to(scene, 50.0 * BEAT)
-	assert_true(scene._exits.visible)
-	assert_eq(scene._exits.items.size(), 2, "one doorway per candidate world")
+	assert_eq(scene.hotspot_items().size(), 2, "one hotspot per candidate world")
 	assert_eq(scene._passage.aperture, 1.0, "the frame is open mid-window")
 	_run_to(scene, 63.9 * BEAT)
 	assert_true(scene._passage.aperture < 0.3, "shut to the doorway on the last beat before the swap (%f)" % scene._passage.aperture)
@@ -118,7 +115,7 @@ func test_the_world_swap_keeps_the_passage_frame() -> void:
 	assert_eq(scene.engine.node_id, "hospital")
 	assert_eq(scene.active_world, "hospital", "the world swapped on the downbeat")
 	assert_true(scene._passage.aperture < 0.5, "and opens from the doorway")
-	assert_false(scene._exits.visible, "the lights go out with the window")
+	assert_eq(scene.hotspot_items().size(), 0, "the hotspots go out with the window")
 	var st: StoryStage = scene.stages["hospital"]["stage"]
 	assert_eq(st.player.pose_at(62.0 * BEAT)["sector"], "ward", "in at the ward door")
 	assert_eq(Session.run_progress.reached_ids().has("hospital"), true)
