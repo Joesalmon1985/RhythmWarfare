@@ -75,7 +75,8 @@ not need it to place a cue.
 Header
 - `format` is exactly `rhythm_warfare.track.v1`. `id` equals the folder name: lower case letters, digits and
   underscores.
-- `duration_s` > 0 and equals the length of the stems.
+- `duration_s` > 0 and equals the real decoded length of the stems to within 5 ms (write it from the encoded
+  files, not from the source recording).
 
 Voices and stems
 - `voices` has exactly four entries. Their `pad` values are 1, 2, 3 and 4, each once. `key` is unique across
@@ -123,10 +124,15 @@ separation notes, tool version). The game ignores it.
   stems as one synchronised stream so they cannot drift.
 - Shows the four pads and the cues of the chosen chart (`RW_TRACK_CHART`, default `default_chart`) arriving in
   time, using the game's existing pad view, input and timing (latency and calibration as everywhere else).
-- All voices start audible. A missed cue, or a hold let go early, mutes that pad's voice (the stem keeps
-  running silently). The next cue hit on that pad brings it back. Backing never mutes.
-- A muted voice also comes back by itself when its next cue is more than `restore_after_idle_beats` beats
-  away (or it has no more cues), so a miss before a long rest does not leave the voice silent for the rest.
+- All voices start audible. A missed cue (the moment the press window closes, 0.14 s after the cue), or a
+  hold let go early, mutes that pad's voice (the stem keeps running silently). The next cue hit on that pad brings it back. Backing never mutes.
+- A muted voice also comes back by itself: if, at the moment it is muted, its next cue is more than
+  `restore_after_idle_beats` beats away (or it has no more cues), it returns that many beats after it was
+  muted. It never returns by itself before a cue the player could still hit, and a second miss while muted
+  restarts the wait. So a miss before a long rest costs a few beats of silence, not the rest of the track.
+- A hold counts as kept if it is released within 0.15 s of its end; released earlier, the voice mutes. A hold
+  that was started and then let go is counted as a hit plus a "let go", not as a miss; a hold never started
+  is a miss.
 - Pressing a pad when no cue is near costs nothing.
 - There is no failing and no battle: the track always plays to the end. At the end the game reports hits and
   misses per voice and how much of the time each voice was sounding.
