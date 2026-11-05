@@ -45,6 +45,7 @@ var _tag: Label
 var _timer_bar: ColorRect
 var _choice_layer: Control
 var hotspots: TrialHotspots
+var _hot_key := ""  # zone/passage/retry the lights were last built for
 var _items: Array = []  # the open window's hotspots: [{hs, index}] (index into the engine's choices)
 var _flash: ColorRect
 var _fade: ColorRect
@@ -376,11 +377,13 @@ func update(t: float, audio_t: float) -> void:
 	_handle(engine.update(t))
 	if _script_pick >= 0 and audio_t >= _script_pick_at:
 		if _script_taps:
-			var hit := tap_hotspot(_script_pick)
-			print("TRIAL tap %d -> %d" % [_script_pick, hit])
+			if not _hot.items.is_empty() and _hot.visible:  # (the finger waits for the room: the lights come up after a zone swap)
+				var hit := tap_hotspot(_script_pick)
+				print("TRIAL tap %d -> %d" % [_script_pick, hit])
+				_script_pick = -1
 		else:
 			pick(_script_pick)
-		_script_pick = -1
+			_script_pick = -1
 	_prebuild_in_guard(t)
 	if swap_t >= 0.0 and audio_t >= swap_t:
 		_do_swap()
@@ -398,6 +401,9 @@ func update(t: float, audio_t: float) -> void:
 	_choice_layer.visible = open
 	_hot.visible = open or _hot.flashing(audio_t)
 	if open:
+		if _hot_key != "%s/%d/%d" % [zone, engine.flow.passage, engine.flow.retry_index]:  # the zone swap landed: the lights come up in it
+			_hot.fade_from = audio_t
+			_sync_hotspots()
 		var span := float(TrialEngine.BLOCK_BEATS) * _beat_s
 		_timer_bar.scale = Vector2(clampf(engine.window_left(t) / span, 0.0, 1.0), 1.0)
 	_panel.visible = _panel.visible and not swapping
@@ -579,6 +585,7 @@ func _open_window(ev: Dictionary) -> void:
 		_sync_figure()
 	_hot.flash = {}
 	_hot.fade_from = float(ev["t"])
+	_hot_key = ""
 	_sync_hotspots()
 	_script_pick = -1
 	_script_pick_at = -1.0
@@ -596,6 +603,9 @@ func _open_window(ev: Dictionary) -> void:
 ## The hotspot layer's items from the open window and the engine's pick: where each anchor stands in its zone, which is the default (brighter) and which is selected.
 func _sync_hotspots() -> void:
 	var m := _map(zone)
+	if tdata.zone_of_passage(engine.flow.passage) != zone:  # the passage's zone is not on screen yet (a swap is pending): the lights wait for it
+		m = null
+	_hot_key = "%s/%d/%d" % [zone, engine.flow.passage, engine.flow.retry_index]
 	var def := engine.default_index()
 	var out: Array = []
 	if m != null:

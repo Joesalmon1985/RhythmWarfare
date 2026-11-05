@@ -96,3 +96,19 @@ stops; every world, scene, route, ending, secret and encounter reachable; the co
 ## 9. Risks
 Small projected targets on phones (minimum 72 px and nearest-within-radius); authoring volume (2 to 4 hotspots per scene, reconnecting branches); the Bassment's narrative without choice text
 (captions carry it); two plans on one engine (ownership in the music plan's section 6; the coordinator integrates).
+
+## 10. Progress log
+
+### D, the Bassment conversion (Sonnet, 2026-11-05)
+
+Commits "Visual, D hotspots", "Visual, D scene", "Visual, D tests, walks, shots and docs". `docs/VisualChoicePlan.md` was not in the repository when this was built: the plan's sections were the brief.
+
+* **Data**: `content/trial/hotspots.json` (made by `tools/trial/make_hotspots.py` from `passages.json`, never edited by hand): 95 hotspots for the 64 passages (63 plus the defeat passage), keyed by passage, `trial.<passage>.<n>` (n is the index in the passage's full choice list,
+  gated choices included): 74 exit (anchor `{"waypoint": exit_wp}`), 10 encounter (anchor a marker thing `hs_<creature>` at the figure's spot), 7 feature (the luck tests: junction box, pipes, barrels, mirror (marker `hs_mirror`), rope, palm path, the door), 4 object (the cracked crystal,
+  the dark archway, the velvet-rope token, the stone palm). Beyond the contract's keys each carries `choice` (the index) and `challenge.phrase`; `on_success.caption` is the consequence text; `on_failure` is `{hold, make_default, caption}` for a plain choice,
+  `{hold, make_default, lives, on_defeat: {route: "0"}, caption}` for a fight, `{route: <fail passage>}` for a luck test, null for the way out. The only edit to the zone maps is the 11 marker `thing` lines (ids starting `hs_`, `thing_glow` at size 0.05, rewritten on every run of the script).
+  `src/trial/trial_hotspots.gd` loads it (visible-with-items, anchor point) and validates it against `passages.json` and the maps; `check_maps.gd` and `tests/test_trial.gd` run that. It lives outside `trial_data.gd`, which the engine workstream owns.
+* **Scene**: caption band (narrative only; consequence and stumble lines kept), no floating labels or numbers, a thin no-text bar for the four bars, hotspots as light in the room (ring and glow, the default brighter with corner ticks, the selected gold with a second ring, a committed one flashing a beat), creatures standing in the room as soon as the window opens
+  (the fight is a tap on them), keys 1 to 4 kept, the wizard entry untouched (`run_play.gd` is not mine). `RW_TRIAL_TAPS` makes scripted picks real taps.
+* **Fallback to delete at the merge with A**: `src/trial/trial_hotspot_fallback.gd` (the lights, the hit test, edge chevrons for hotspots behind the camera) and in `trial_scene.gd` the `_hot` field, `_sync_hotspots`, `hotspot_items/rects`, `tap_at`, `tap_hotspot` and the `_hot_key` re-sync in `update`, replaced by A's `hotspot_view` fed the same data
+  (`TrialHotspots.visible`/`anchor_point` give availability and the anchor's world position; `hotspot_of(index)` the data). `RunExitsView` is no longer used by the Bassment.

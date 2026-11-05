@@ -1051,3 +1051,30 @@ func test_the_hotspot_file_agrees_with_the_passages_and_the_maps() -> void:
 	var without := hot.visible(gate, []).size()
 	var with_item := hot.visible(gate, ["token"]).size()
 	assert_eq(with_item, without + 1, "the token's hotspot appears once the token is held")
+
+
+func test_a_creature_stands_in_the_room_as_its_hotspot_before_the_fight_and_a_tap_chooses_it() -> void:
+	var d := _scene_at("The Flooded Boiler Room", "perfect")
+	var tr: TrialScene = d["tr"]
+	var scene: Node = d["scene"]
+	assert_true(_until(scene, func() -> bool: return tr.engine.window_open and _title_is(tr, "The Flooded Boiler Room") and tr.hotspot_items().size() == 2, 30.0))
+	assert_eq(tr.figure_pose(), "idle", "the eel is already in the room while the window is open: it is the hotspot")
+	var hs := tr.hotspot_of(0)
+	assert_eq(str(hs["kind"]), "encounter")
+	assert_eq(str(hs["anchor"]["thing"]), "hs_cable_eel", "anchored to the creature's thing")
+	var marker := {}
+	for t in tr._map("boiler").things:
+		if str(t["id"]) == "hs_cable_eel":
+			marker = t
+	assert_false(marker.is_empty(), "the creature's thing is in the zone map")
+	var spot: Vector2 = tr._fig["pos"]
+	assert_true((marker["at"] as Vector2).distance_to(spot) < 0.05, "and stands where the figure does: %s vs %s" % [marker["at"], spot])
+	assert_eq(str(tr.hotspot_of(1)["kind"]), "feature", "the pipes over the water are a luck test: a feature")
+	assert_true(tr.hotspot_items()[0]["default"], "the fight is the default (brighter)")
+	assert_eq(tr.tap_hotspot(1), 1, "a tap on the pipes")
+	assert_true(tr.hotspot_items()[1]["selected"] and not tr.hotspot_items()[0]["default"], "selects them instead")
+	assert_eq(tr.tap_hotspot(0), 0, "a tap on the eel changes the pick back")
+	assert_eq(tr.engine.selected, 0)
+	tr.bot = "perfect"
+	assert_true(_until(scene, func() -> bool: return _title_is(tr, "The Dry Landing"), 60.0), "the fight is played from the tap and won")
+	_free_scene(d)
