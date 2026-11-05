@@ -31,6 +31,14 @@ LODS = (1, 2, 4)  # the levels of detail: full, half, quarter size
 FACINGS = ("front", "side", "back")
 SIDE_DEG = 52.0  # the three-quarter turn (towards screen right; the runtime mirrors it for the left)
 
+# The fourteen faces (docs/THREE_PATHS_AND_FACES_PLAN.md 2.1): the four of the crowd and ten acted ones. At the quarter level of detail a face falls back to the
+# nearest of the four old ones (the head is two pixels wide there); StoryCharacter.FACES is the same list (tools/story/check_assets.py compares them).
+FACES = ("neutral", "happy", "cheer", "sad", "fear", "anger", "plea", "doubt", "relief", "awe", "grief", "laugh", "resolve", "shame")
+OLD_FACES = FACES[:4]
+ACT_FACES = FACES[4:]
+LOD4_FALLBACK = {"fear": "sad", "anger": "sad", "plea": "sad", "doubt": "neutral", "relief": "happy", "awe": "cheer", "grief": "sad", "laugh": "cheer",
+                 "resolve": "neutral", "shame": "sad"}
+
 BAYER4 = np.array([[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]], dtype=np.float32) / 16.0 - 0.47
 
 
@@ -404,7 +412,10 @@ class Body:
         self.lift = {"l": max(0.0, float(pose.get("lift_l", 0.0))) * S, "r": max(0.0, float(pose.get("lift_r", 0.0))) * S}
         dy = self.sit_dy + self.cdy
         self.hip = (0.0, hip_y + dy)
-        lean = float(pose.get("lean", 0.0))
+        # fwd: the body bent forward from the hips (a bow, a plea). The three-quarter view leans into the turn; the front and back views have no depth, so the
+        # trunk shortens (the head sinks towards the hips) instead.
+        fwd = float(pose.get("fwd", 0.0))
+        lean = float(pose.get("lean", 0.0)) + (0.7 * fwd if fc == 1 else 0.0)
         self.lean = lean
         # the torso's own points, relative to the hip joint, then leaned
         sw = 0.125 * W * (1.0 - 0.08 * cu) * S
@@ -416,6 +427,11 @@ class Body:
         self.t_neck = sh_y - hip_y - 0.01 * S + drop * 0.4
         self.t_chin = chin - hip_y + drop
         self.t_waist = -0.1 * S if legs >= 0.9 else (sh_y - hip_y) * 0.35
+        if fwd > 0.0:
+            ub = 1.0 - (0.07 if fc == 1 else 0.3) * fwd
+            self.t_shoulder *= ub
+            self.t_neck *= ub
+            self.t_chin *= ub
 
         def T(p):  # torso-local point -> rig point
             q = rot(p, lean)
@@ -1223,6 +1239,8 @@ class Painter:
             mood = "sing"  # head back to the music: singing along
         if face == "sleep":
             return "sleep", "closed"
+        if face in ACT_FACES:  # an acted face wins over the person's lost-in-the-music eyes
+            return face, {"relief": "bliss", "laugh": "bliss", "grief": "closed"}.get(face, "open")
         e = f.get("eyes", "open")
         if e == "closed":
             return mood, "bliss" if mood in ("happy", "cheer", "sing") else "closed"
@@ -1242,6 +1260,7 @@ class Painter:
         iris = "extra" if not spk else "eye_d"
         fc = b.fc
         glasses = f.get("glasses")
+        acting = mood in ACT_FACES
         if cls == "XS":
             # a far face: two eye shadows and, when they shout, the mouth
             if eyes == "open":
@@ -1260,12 +1279,21 @@ class Painter:
         if demon and spk in ("fiend", "queen"):
             lash = 2
         shape = f.get("eye", "almond")
-        for cols, sg in eye_cols:
-            self.eye(P, cols, sg, ey, cls, eyes, mood, lash, shape, iris, glasses, far=(fc == 1 and sg == 1))
+        small_act = acting and cls == "S"
+        if small_act:
+            self.act_small(P, dec, L, eye_cols, mood, f, demon, glasses)
+        for cols, sg in ([] if small_act else eye_cols):
+            if acting:
+                self.act_eye(P, cols, sg, ey, mood, lash, shape, iris, glasses, far=(fc == 1 and sg == 1), L=L)
+            else:
+                self.eye(P, cols, sg, ey, cls, eyes, mood, lash, shape, iris, glasses, far=(fc == 1 and sg == 1))
         # brows
-        if f.get("brows", True):
+        if f.get("brows", True) and not small_act:
             for cols, sg in eye_cols:
-                self.brow(P, cols, sg, L, mood, eyes, glasses, f.get("brow", "straight") if spk != "brute" else "thick")
+                if acting:
+                    self.act_brow(P, cols, sg, L, mood, glasses, f.get("brow", "straight") if spk != "brute" else "thick")
+                else:
+                    self.brow(P, cols, sg, L, mood, eyes, glasses, f.get("brow", "straight") if spk != "brute" else "thick")
         if spk == "brute":  # a heavy ridge over the eyes
             for x in range(-(ein + ew), ein + ew + 1):
                 if (x + sx, L["brow"] + 1) not in dec:
@@ -1276,10 +1304,358 @@ class Painter:
         # nose, cheeks, lines, freckles
         self.nose(P, L, f.get("nose", "straight") if not demon else ("wide" if spk == "brute" else "straight"))
         self.cheeks(P, dec, L, mood, f)
+        if acting and not small_act:
+            self.act_cheeks(P, L, mood)
         beard = f.get("beard") if not spk else None
         if beard:
             self.beard(P, dec, L, beard)
-        self.mouth(P, dec, L, mood, f, demon)
+        if acting:
+            if not small_act:
+                self.act_mouth(P, dec, L, mood, f, demon)
+        else:
+            self.mouth(P, dec, L, mood, f, demon)
+
+    # -- the acted faces (fear, anger, plea, doubt, relief, awe, grief, laugh, resolve, shame): the same face on the person's own traits --
+    def act_eye(self, P, cols, sg, ey, mood, lash, shape, iris, glasses, far, L=None):
+        """One eye of an acted face (cols outer to inner). The person's own lash, eye colour and shape stay; the lids, the whites and the iris carry the feeling:
+        wide with whites above (fear), wide and lit (awe), wide, looking up and wet (plea), narrowed with a heavy lid (anger), one narrowed (doubt), a crescent
+        (relief, laugh), closed and slanting down with a tear (grief), a straight steady lid (resolve), lowered and looking at the floor (shame)."""
+        n = len(cols)
+        out, inn = cols[0], cols[-1]
+        lash_m, lash_s = ("eye_d", EDGE) if lash >= 1 else ("skin", EDGE)
+        irs = DARK if iris == "extra" else EDGE
+        ir = cols[1] if n >= 3 else (cols[0] if far else cols[-1])
+
+        def lid(y, soft=True):
+            for i, x in enumerate(cols):
+                if soft and i == n - 1 and n >= 3:
+                    P(x, y, "skin", EDGE)
+                else:
+                    P(x, y, lash_m, lash_s)
+
+        def whites(y, skip=None):
+            for i, x in enumerate(cols):
+                if x != skip:
+                    P(x, y, "eye_w", DARK if i == 0 else MID)
+
+        if mood in ("fear", "awe", "plea"):
+            lid(ey - 2)
+            if mood == "plea":  # looking up, the lower rim wet
+                whites(ey - 1, skip=ir)
+                P(ir, ey - 1, iris, irs)
+                whites(ey)
+                P(out, ey + 1, "glass", LIT)
+            else:
+                whites(ey - 1)
+                whites(ey, skip=ir)
+                P(ir, ey, iris, irs)
+                if mood == "awe":  # the iris centred in the white, a catch light
+                    whites(ey + 1, skip=ir)
+                    P(inn if n < 3 else cols[0], ey - 1, "lit", LIT)
+        elif mood == "anger":  # narrowed: a heavy lid, the iris glaring, the lower lid up
+            lid(ey - 1, soft=False)
+            for i, x in enumerate(cols):
+                if i == 0 and n >= 2:
+                    P(x, ey, "eye_w", DARK)
+                else:
+                    P(x, ey, iris, irs)
+            P(ir, ey + 1, "skin", DARK)
+        elif mood == "doubt":
+            if sg < 0:  # the raised-brow side: the eye as it is
+                self.eye(P, cols, sg, ey, "L", "open", "neutral", lash, shape, iris, glasses, far)
+            else:  # the other eye narrowed
+                lid(ey - 1, soft=False)
+                whites(ey, skip=ir)
+                P(ir, ey, iris, irs)
+                for x in cols:
+                    P(x, ey + 1, "skin", DARK)
+        elif mood in ("relief", "laugh"):
+            self.eye(P, cols, sg, ey, "L", "bliss", "happy", lash, shape, iris, glasses, far)
+            if mood == "laugh":
+                P(out + sg, ey, "skin", DARK)  # the lines at the outer corner
+                P(out + sg, ey + 1, "skin", DARK)
+        elif mood == "grief":  # shut tight, slanting down to the outer corner, a tear
+            for i, x in enumerate(cols):
+                y = ey + 1 if i == 0 else ey
+                P(x, y, lash_m, lash_s)
+                P(x, y - 1, "skin", MID if i < n - 1 else LIT)
+            P(out, ey + 2, "glass", LIT)
+            P(out, ey + 3, "glass", MID)
+        elif mood == "resolve":  # a straight steady lid, the eye wide enough to hold
+            lid(ey - 1, soft=False)
+            whites(ey, skip=ir)
+            P(ir, ey, iris, irs)
+        elif mood == "shame":  # lowered lids, the iris down, looking at the floor
+            for x in cols:
+                P(x, ey - 1, "skin", LIT)
+                P(x, ey, lash_m, lash_s)
+            P(ir, ey + 1, iris, irs)
+            if n >= 3:
+                P(out, ey + 1, "eye_w", DARK)
+
+    def act_brow(self, P, cols, sg, L, mood, glasses, kind):
+        """A brow of an acted face: fear raised with the inner ends higher and drawn together; anger down and in with a furrow between; plea arched with the inner ends up;
+        doubt one up, one flat and low; relief up and relaxed; awe high and arched; grief inner ends high; laugh up; resolve flat and thick; shame flat, the inner end a little up."""
+        by = L["brow"] - (1 if glasses and L["cls"] == "L" else 0)
+        n = len(cols)
+        inn = cols[-1]
+        ext = inn - sg  # one step towards the middle of the face
+        # y offsets for the columns outer .. inner (three-column eyes; two-column eyes use the ends)
+        tab = {"fear": (-1, -1, -2), "anger": (-1, 0, 1), "plea": (0, -1, -2), "relief": (-1, -2, -1), "awe": (-2, -3, -2), "grief": (1, 0, -1), "laugh": (-1, -1, -1),
+               "resolve": (0, 0, 0), "shame": (0, 0, -1)}
+        if mood == "doubt":
+            offs = (-2, -2, -2) if sg < 0 else (0, 0, 1)
+        else:
+            offs = tab[mood]
+        for i, x in enumerate(cols):
+            j = 0 if i == 0 else (2 if i == n - 1 else 1)
+            y = by + offs[j]
+            st = DARK if kind == "thin" else EDGE
+            P(x, y, "hair", st)
+            if kind == "thick" or mood in ("resolve", "anger"):
+                P(x, y - 1, "hair", DARK)
+        if mood in ("fear", "anger", "grief", "plea") and L["sx"] == 0:  # drawn together
+            P(ext, by + offs[2], "hair", EDGE)
+        if mood == "anger" and sg < 0:
+            P(0, by - 1, "skin", DARK)  # the furrow between the brows
+            P(0, by, "skin", DARK)
+
+    def act_cheeks(self, P, L, mood):
+        """Fear's pallor, anger's flush, shame's blush, a laugh's warm cheeks."""
+        ey, ein, ew, sx = L["ey"], L["ein"], L["ew"], L["sx"]
+        sides = (-1, 1) if self.b.fc == 0 else (-1,)
+        for sg in sides:
+            cx = sx + sg * (ein + ew - 1)
+            if mood == "fear":
+                P(cx, ey + 2, "skin", LIT)
+                P(cx - sg, ey + 2, "skin", LIT)
+            elif mood == "anger":
+                P(cx, ey + 2, "skin2", MID)
+                P(cx - sg, ey + 3, "skin2", MID)
+            elif mood == "shame":
+                P(cx, ey + 2, "skin2", MID)
+                P(cx - sg, ey + 2, "skin2", MID)
+                P(cx, ey + 3, "skin2", DARK)
+            elif mood in ("laugh", "relief"):
+                P(cx, ey + 2, "skin2", DARK)
+
+    def act_mouth(self, P, dec, L, mood, f, demon=False):
+        """The mouth of an acted face, in the person's own lips: fear a small O pulled down; anger a tight line with the corners down (bared teeth on a brute); plea
+        parted with the corners down; doubt pulled to one side; relief a soft open smile with the lower lip loose; awe open and slack; grief turned down with a puckered
+        chin; laugh wide open with teeth and the lower lip; resolve closed and firm with the jaw set; shame small with the corners down."""
+        my, sx = L["mouth"], L["sx"]
+        fc = self.b.fc
+        lips = f.get("lips", "thin")
+        hw = 2 if lips == "wide" else 1
+        mc = sx
+        lo = mc - hw
+        hi = mc + (hw if fc == 0 else max(0, hw - 1) + 1)
+        two = fc == 0
+
+        def row(y, x0, x1, m, st):
+            for x in range(x0, x1 + 1):
+                P(x, y, m, st)
+        if mood == "fear":
+            P(mc, my - 1, "mouth", DARK)
+            row(my, mc - 1, mc + (1 if two else 1), "eye_d", EDGE)
+            row(my + 1, mc - 1, mc + 1, "eye_d", EDGE)
+            P(mc - 1, my, "mouth", EDGE)
+            if two:
+                P(mc + 1, my, "mouth", EDGE)
+            row(my + 2, mc - 1, mc + 1, "mouth", MID)
+        elif mood == "anger":
+            if demon and self.species == "brute":  # bared teeth
+                row(my - 1, lo, hi, "mouth", DARK)
+                row(my, lo, hi, "teeth", LIT)
+                row(my + 1, lo, hi, "mouth", EDGE)
+            else:
+                row(my, lo, hi, "mouth", EDGE)
+            P(lo - 1, my + 1, "mouth", DARK)
+            if two:
+                P(hi + 1, my + 1, "mouth", DARK)
+        elif mood == "plea":
+            row(my - 1, mc - 1, mc + 1, "mouth", DARK)
+            P(mc, my, "eye_d", EDGE)
+            P(mc - 1, my, "mouth", EDGE)
+            if two:
+                P(mc + 1, my, "mouth", EDGE)
+            row(my + 1, mc - 1, mc + 1, "mouth", MID)
+            P(mc - 2, my + 1, "mouth", DARK)
+            if two:
+                P(mc + 2, my + 1, "mouth", DARK)
+        elif mood == "doubt":
+            P(lo - 1, my + 1, "mouth", DARK)
+            P(lo, my + 1, "mouth", EDGE)
+            P(mc, my, "mouth", EDGE)
+            P(hi, my, "mouth", EDGE)
+            P(hi + 1, my - 1, "mouth", DARK)
+            if two:
+                P(hi + 2, my - 2, "skin", DARK)  # the dimple where the cheek is pulled
+        elif mood == "relief":
+            P(lo - 1, my - 1, "mouth", DARK)
+            if two:
+                P(hi + 1, my - 1, "mouth", DARK)
+            row(my, lo, hi, "eye_d", EDGE if hw == 1 else DARK)
+            row(my + 1, lo + 1, hi - 1 if two else hi, "mouth", LIT)
+            P(mc, my + 2, "mouth", MID)
+        elif mood == "awe":
+            row(my - 1, mc - 1, mc + 1, "mouth", DARK)
+            for y in (my, my + 1, my + 2):
+                row(y, mc - 1, mc + 1, "eye_d", EDGE)
+            row(my + 3, mc - 1, mc + 1, "mouth", MID)
+        elif mood == "grief":
+            row(my, mc - 1, mc + 1, "mouth", EDGE)
+            P(mc - 2, my + 1, "mouth", DARK)
+            if two:
+                P(mc + 2, my + 1, "mouth", DARK)
+            row(my + 2, mc - 1, mc + 1, "skin", DARK)  # the chin puckers
+            P(mc, my + 3, "skin", DARK)
+        elif mood == "laugh":
+            wlo, whi = lo - 1, hi + 1 if two else hi
+            row(my - 1, wlo, whi, "mouth", DARK)
+            row(my, wlo + 1, whi - (1 if two else 0), "teeth", LIT)
+            P(wlo, my, "mouth", EDGE)
+            if two:
+                P(whi, my, "mouth", EDGE)
+            row(my + 1, wlo + 1, whi - (1 if two else 0), "eye_d", EDGE)
+            P(mc, my + 1, "mouth", MID)
+            row(my + 2, wlo + 1, whi - (1 if two else 0), "mouth", MID)
+        elif mood == "resolve":
+            row(my, lo - 1, hi + 1 if two else hi, "mouth", EDGE)
+            row(my + 1, mc - 1, mc + 1, "mouth", LIT)
+            P(lo - 2, my - 1, "skin", DARK)
+            if two:
+                P(hi + 2, my - 1, "skin", DARK)
+        elif mood == "shame":
+            P(mc, my + 1, "mouth", EDGE)
+            P(mc - 1, my + 2, "mouth", DARK)
+            if two:
+                P(mc + 1, my + 2, "mouth", DARK)
+            else:
+                P(mc + 1, my + 2, "mouth", DARK)
+
+    def act_small(self, P, dec, L, eye_cols, mood, f, demon, glasses):
+        """The acted faces at the half level of detail: one pixel per eye, so the brows (a slant of two pixels), the eye's height and the mouth's shape carry it."""
+        ey, sx, my = L["ey"], L["sx"], L["mouth"]
+        fc = self.b.fc
+        mc = sx
+        two = fc == 0
+        for cols, sg in eye_cols:
+            ex = cols[0]
+            inner = ex - sg  # towards the middle of the face
+            outer = ex + sg
+            far = fc == 1 and sg == 1
+            # eyes
+            if mood in ("fear", "plea", "awe"):
+                P(ex, ey - 1, "lit" if mood == "awe" else "eye_w", LIT)
+                P(ex, ey, "eye_d", EDGE)
+            elif mood in ("relief", "laugh"):
+                P(ex, ey - 1 if mood == "laugh" else ey, "eye_d", DARK)
+            elif mood == "grief":
+                P(ex, ey, "eye_d", DARK)
+                if not far:
+                    P(ex, ey + 1, "glass", LIT)
+            elif mood == "shame":
+                P(ex, ey + 1, "eye_d", EDGE)
+            elif mood == "doubt" and sg > 0:
+                P(ex, ey, "eye_d", EDGE)
+                P(ex, ey + 1, "skin", DARK)
+            else:
+                P(ex, ey, "eye_d", EDGE)
+            # brows, outer .. inner
+            if mood == "anger":
+                P(inner, ey - 1, "hair", EDGE)
+                P(ex, ey - 1, "hair", EDGE)
+                P(outer, ey - 2, "hair", EDGE) if not far else None
+            elif mood in ("fear", "plea", "grief"):
+                P(ex, ey - 2, "hair", EDGE)
+                P(outer, ey - 1, "hair", EDGE) if not far else None
+            elif mood in ("awe", "relief"):
+                P(ex, ey - 2, "hair", EDGE)
+                P(outer, ey - 2, "hair", EDGE) if not far else None
+            elif mood == "doubt":
+                if sg < 0:
+                    P(ex, ey - 2, "hair", EDGE)
+                    P(outer, ey - 2, "hair", EDGE)
+                else:
+                    P(ex, ey - 1, "hair", EDGE)
+                    P(inner, ey, "hair", DARK)
+            elif mood == "resolve":
+                P(ex, ey - 1, "hair", EDGE)
+                P(inner, ey - 1, "hair", EDGE)
+            elif mood == "laugh":
+                P(ex, ey - 2, "hair", DARK)
+        if mood == "anger":
+            P(mc, ey - 1, "skin", DARK)
+        # cheeks
+        if mood in ("shame", "anger"):
+            for cols, sg in eye_cols:
+                if not (fc == 1 and sg == 1):
+                    P(cols[0] + sg, ey + 1, "skin2", MID)
+        if mood == "fear":
+            for cols, sg in eye_cols:
+                if not (fc == 1 and sg == 1):
+                    P(cols[0] + sg, ey + 1, "skin", LIT)
+        # mouth
+        if mood == "fear":
+            P(mc, my, "eye_d", EDGE)
+            P(mc, my + 1, "eye_d", EDGE)
+        elif mood == "awe":
+            P(mc, my, "eye_d", EDGE)
+            P(mc, my + 1, "eye_d", EDGE)
+            P(mc - 1, my, "mouth", DARK)
+            if two:
+                P(mc + 1, my, "mouth", DARK)
+        elif mood == "anger":
+            if demon and self.species == "brute":
+                P(mc, my, "teeth", LIT)
+                P(mc - 1, my, "teeth", MID)
+                if two:
+                    P(mc + 1, my, "teeth", MID)
+            else:
+                P(mc - 1, my, "mouth", EDGE)
+                P(mc, my, "mouth", EDGE)
+                if two:
+                    P(mc + 1, my, "mouth", EDGE)
+            P(mc - 2, my + 1, "mouth", DARK)
+            if two:
+                P(mc + 2, my + 1, "mouth", DARK)
+        elif mood == "plea":
+            P(mc, my, "eye_d", EDGE)
+            P(mc - 1, my + 1, "mouth", DARK)
+            if two:
+                P(mc + 1, my + 1, "mouth", DARK)
+        elif mood == "doubt":
+            P(mc - 1, my + 1, "mouth", DARK)
+            P(mc, my, "mouth", EDGE)
+            P(mc + 1, my - 1, "mouth", DARK)
+        elif mood == "relief":
+            P(mc, my, "eye_d", EDGE)
+            P(mc - 1, my - 1, "mouth", DARK)
+            if two:
+                P(mc + 1, my - 1, "mouth", DARK)
+            P(mc, my + 1, "mouth", LIT)
+        elif mood == "grief":
+            P(mc, my, "mouth", EDGE)
+            P(mc - 1, my + 1, "mouth", DARK)
+            if two:
+                P(mc + 1, my + 1, "mouth", DARK)
+            P(mc, my + 2, "skin", DARK)
+        elif mood == "laugh":
+            P(mc, my - 1, "mouth", DARK)
+            P(mc - 1, my, "teeth", MID)
+            P(mc, my, "teeth", LIT)
+            if two:
+                P(mc + 1, my, "teeth", MID)
+            P(mc, my + 1, "eye_d", EDGE)
+        elif mood == "resolve":
+            P(mc - 1, my, "mouth", EDGE)
+            P(mc, my, "mouth", EDGE)
+            if two:
+                P(mc + 1, my, "mouth", EDGE)
+            P(mc, my + 1, "mouth", LIT)
+        elif mood == "shame":
+            P(mc, my + 1, "mouth", DARK)
 
     def eye(self, P, cols, sg, ey, cls, eyes, mood, lash, shape, iris, glasses, far):
         """One eye. cols: outer to inner. Open: the upper lid's lash line, the white, the iris (and its pupil), a lit inner corner; closed: the lash line
@@ -1629,10 +2005,389 @@ class Painter:
             P(lo, my - 1, "teeth", LIT)
             P(hi, my - 1, "teeth", LIT)
 
+    # -- the acted faces in the other species' own vocabulary --
+    def act_skeleton(self, L, dec, mood):
+        """A skeleton cannot move its face: the sockets open wider (fear, awe, plea) or narrow (anger, resolve), droop (grief, shame) and a brow ridge slants over them;
+        the jaw is what acts: dropped far (fear, awe, laugh), a little (plea, grief, shame, relief), clenched (anger, resolve), skewed (doubt)."""
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        ey, ein, ew, sx, ny, my = L["ey"], L["ein"], L["ew"], L["sx"], L["nose"], L["mouth"]
+        fc = self.b.fc
+        big = L["cls"] == "L"
+        if mood in ("fear", "awe", "plea"):
+            rows = (ey - 2, ey - 1, ey)
+        elif mood in ("anger", "resolve"):
+            rows = (ey,)
+        elif mood in ("grief", "shame"):
+            rows = (ey, ey + 1)
+        elif mood in ("relief", "laugh"):
+            rows = (ey,)
+        else:
+            rows = (ey - 1, ey)
+        if not big:
+            rows = (ey,) if mood in ("anger", "resolve", "relief", "laugh") else (ey - 1, ey) if mood in ("fear", "awe", "plea") else (ey,)
+        for sg in (-1, 1):
+            if fc == 1 and sg == 1:
+                xs = [sx + ein]
+            else:
+                xs = [sx + sg * (ein + k) for k in range(max(1, ew - 1) if big else 1)]
+            narrow_one = mood == "doubt" and sg > 0
+            for x in xs:
+                for y in (rows if not narrow_one else (ey,)):
+                    P(x, y, "eye_d", EDGE)
+            if big:
+                inner = xs[-1]
+                outer = xs[0]
+                if mood in ("anger", "resolve") or narrow_one:
+                    P(inner, ey - 1, "horn", DARK)  # the brow ridge slants down to the nose
+                    P(outer, ey - 2, "horn", LIT)
+                elif mood in ("fear", "awe", "plea", "relief", "laugh"):
+                    P(inner, ey - 3 if mood in ("fear", "awe") else ey - 2, "horn", LIT)
+                    P(outer, ey - 2, "horn", MID)
+                else:
+                    P(inner, ey - 2, "horn", LIT)
+                if mood in ("fear", "awe", "plea", "doubt") and not narrow_one:
+                    P(outer, ey, "eye_w", MID)
+                if mood == "grief":
+                    P(outer, ey + 2, "glass", LIT)
+                    P(outer, ey + 3, "glass", MID)
+                if mood in ("relief", "laugh"):
+                    P(outer, ey + 1, "horn", LIT)  # the cheekbone lifted in a smile
+                P(outer + sg if fc == 0 else outer, ey + 1 + (1 if mood in ("grief", "shame") else 0), "horn", DARK)
+        if not big:
+            P(sx, my, "eye_d", EDGE if mood in ("fear", "awe", "laugh") else DARK)
+            if mood in ("fear", "awe", "laugh"):
+                P(sx, my + 1, "eye_d", EDGE)
+            return
+        P(sx, ny - 1, "eye_d", EDGE)
+        P(sx + 1 if fc == 1 else sx, ny, "eye_d", EDGE)
+        if fc == 0:
+            P(sx - 1, ny, "eye_d", DARK)
+        # the jaw: upper teeth on row my, the lower jaw `drop` rows below the upper
+        drop = {"fear": 2, "awe": 2, "laugh": 2, "plea": 1, "grief": 1, "shame": 1, "relief": 1, "anger": 0, "resolve": 0, "doubt": 0}[mood]
+        for x in range(sx - 2, sx + 3):
+            lit = LIT if (x % 2 == 0 or mood in ("anger", "resolve")) else MID
+            P(x, my, "teeth", lit)
+            ly = my + 1 + drop
+            if mood == "doubt" and x < sx:
+                ly += 1
+            P(x, ly, "teeth", MID if x % 2 == 0 else DARK)
+            for g in range(my + 1, ly):
+                P(x, g, "eye_d", EDGE)
+        P(sx - 3, my, "horn", EDGE)
+        P(sx + 3, my, "horn", EDGE)
+        if mood == "anger":
+            P(sx - 3, my + 1, "horn", DARK)
+            P(sx + 3, my + 1, "horn", DARK)
+
+    def act_grey(self, L, dec, mood):
+        """A grey's feeling is in its great eyes: wide with catch lights (fear, awe, plea), narrowed to slits (anger), one slit (doubt), closed arcs (relief, laugh),
+        closed and slanting down with a tear (grief), steady straight slits (resolve), lowered (shame); the small mouth follows."""
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        ey, sx = L["ey"], L["sx"]
+        rx = L["rx"]
+        fc = self.b.fc
+        big = L["cls"] == "L"
+        w = max(2, int(round(rx * 0.42))) if big else 1
+        gap = max(1, int(round(rx * 0.18)))
+        for sg in (-1, 1):
+            far = fc == 1 and sg == 1
+            ww = max(1, w - (2 if far else 0))
+            inner = sx + sg * gap
+            xs = [inner + sg * k for k in range(ww)]
+            slit = mood == "anger" or (mood == "doubt" and sg > 0)
+            for k, x in enumerate(xs):
+                t = k / max(1, ww - 1)
+                if mood in ("relief", "laugh"):
+                    P(x, ey - (1 if 0.2 < t < 0.85 else 0) if big else ey - 1, "eye_d", EDGE)
+                    P(x, ey + 1, "skin", LIT) if big else None
+                    continue
+                if mood == "grief":
+                    P(x, ey + (1 if t > 0.55 else 0), "eye_d", EDGE)
+                    if k == len(xs) - 1 and not far:
+                        P(x, ey + 2, "glass", LIT)
+                        P(x, ey + 3, "glass", MID)
+                    continue
+                if slit:
+                    P(x, ey - (1 if t > 0.5 else 0) + (0 if big else 0), "eye_d", EDGE)
+                    P(x, ey - (1 if t > 0.5 else 0) + 1, "eye_d", DARK) if (big and 0.2 < t < 0.8) else None
+                    continue
+                if mood == "resolve":
+                    for y in (ey - 1, ey):
+                        P(x, y, "eye_d", EDGE)
+                    continue
+                if mood == "shame":
+                    for y in (ey, ey + 1) + ((ey + 2,) if big and 0.15 < t < 0.85 else ()):
+                        P(x, y, "eye_d", EDGE if y < ey + 2 else DARK)
+                    continue
+                # wide: fear, awe, plea, and the open eye of doubt
+                lift = 1 if (t > 0.55 and big) else 0
+                top = ey - 1 - lift - (1 if mood in ("fear", "awe", "plea") else 0)
+                bot = ey + (1 if 0.15 < t < 0.85 and big else 0) + (1 if mood in ("fear", "awe", "plea") else 0)
+                for y in range(top, bot + 1):
+                    P(x, y, "eye_d", EDGE if y < bot or not big else DARK)
+            if big and not far and mood in ("fear", "awe", "plea", "doubt") and not slit:
+                P(xs[min(len(xs) - 1, 1)], ey - 2 if mood != "doubt" else ey - 1, "eye_w", LIT)
+                if mood in ("awe", "plea"):
+                    P(xs[0], ey, "eye_w", LIT)
+            if mood in ("anger", "doubt") and big and (mood == "anger" or sg > 0):
+                P(xs[0], ey - 2, "skin", DARK)  # a brow ridge over the slit
+        if not big:
+            return
+        ny, my = L["nose"] + 1, L["mouth"] + 1
+        P(sx - 1 if fc == 0 else sx, ny, "skin", EDGE)
+        P(sx + 1, ny, "skin", EDGE)
+        if mood in ("fear", "awe"):
+            for y in range(my, my + (3 if mood == "awe" else 2)):
+                P(sx, y, "mouth", EDGE)
+        elif mood == "laugh":
+            for x in (sx - 1, sx, sx + 1):
+                P(x, my, "mouth", EDGE)
+                P(x, my + 1, "mouth", DARK)
+            P(sx - 2, my - 1, "skin", DARK)
+            P(sx + 2, my - 1, "skin", DARK)
+        elif mood == "plea":
+            P(sx, my, "mouth", EDGE)
+            P(sx - 1, my + 1, "skin", DARK)
+            P(sx + 1, my + 1, "skin", DARK)
+        elif mood == "anger":
+            for x in (sx - 1, sx, sx + 1):
+                P(x, my, "mouth", EDGE)
+            P(sx - 2, my + 1, "skin", DARK)
+            P(sx + 2, my + 1, "skin", DARK)
+        elif mood == "doubt":
+            P(sx - 1, my + 1, "skin", DARK)
+            P(sx, my, "skin", EDGE)
+            P(sx + 1, my, "skin", EDGE)
+            P(sx + 2, my - 1, "skin", DARK)
+        elif mood == "relief":
+            for x in (sx - 1, sx, sx + 1):
+                P(x, my, "skin", EDGE)
+            P(sx - 2, my - 1, "skin", DARK)
+            P(sx + 2, my - 1, "skin", DARK)
+            P(sx, my + 1, "mouth", LIT)
+        elif mood in ("grief", "shame"):
+            for x in (sx - 1, sx, sx + 1) if mood == "grief" else (sx,):
+                P(x, my, "skin", EDGE)
+            P(sx - 1 if mood == "shame" else sx - 2, my + 1, "skin", DARK)
+            P(sx + 1 if mood == "shame" else sx + 2, my + 1, "skin", DARK)
+        elif mood == "resolve":
+            for x in (sx - 1, sx, sx + 1):
+                P(x, my, "skin", EDGE)
+            P(sx, my + 1, "skin", LIT)
+
+    def act_cyclops(self, L, dec, mood):
+        """One great eye: lids and the brow carry it. Wide with a ring of white (fear, awe, plea), pressed to a slit under a heavy lid (anger), half shut (doubt, shame),
+        a closed arc (relief, laugh), closed with a tear (grief), a straight lid (resolve); the brow slants as a face's would."""
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        ey, sx = L["ey"], L["sx"]
+        mood_eyes = {"relief": "arc", "laugh": "arc", "grief": "shut"}.get(mood, "open")
+        brow_dy = {"fear": lambda dx: -1 - (1 if abs(dx) <= 1 else 0), "awe": lambda dx: -2, "plea": lambda dx: -1 - (1 if abs(dx) <= 1 else 0),
+                   "anger": lambda dx: 1 if abs(dx) <= 1 else (0 if abs(dx) == 2 else -1), "doubt": lambda dx: -2 if dx < 0 else 1,
+                   "relief": lambda dx: -1, "laugh": lambda dx: -1, "grief": lambda dx: 1 - (2 if abs(dx) <= 1 else 0), "resolve": lambda dx: 1,
+                   "shame": lambda dx: 0}[mood]
+        if mood_eyes == "open":
+            wide = mood in ("fear", "awe", "plea")
+            lid = {"anger": 1, "doubt": 1, "shame": 1, "resolve": 0}.get(mood, -1 if wide else -1)  # the top row the eye shows
+            for dx in range(-3, 4):
+                for dy in range(-1, 2):
+                    if abs(dx) == 3 and dy != 0:
+                        continue
+                    if dy < lid:
+                        continue
+                    if mood == "shame" and dy == 1 and False:
+                        continue
+                    P(sx + dx, ey + dy, "eye_w", LIT if dy < 0 and dx < 0 else (MID if dy < 1 else DARK))
+            if wide:  # a ring of white above the iris
+                for dx in range(-2, 3):
+                    P(sx + dx, ey - 2, "eye_w", MID)
+            ioff = 1 if mood == "shame" else (-1 if mood == "plea" else 0)
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    if ey + dy + ioff - ey >= lid and (mood != "shame" or dy + ioff <= 1):
+                        P(sx + dx, ey + dy + ioff, "eye_d", MID if abs(dx) + abs(dy) == 2 else DARK)
+            P(sx, ey + ioff, "eye_d", EDGE)
+            P(sx - 1, ey - 1 + ioff, "eye_w", LIT)
+            if mood == "awe":
+                P(sx + 1, ey - 1, "lit", LIT)
+            for dx in range(-3, 4):  # the lid
+                P(sx + dx, ey + lid - 1, "skin", EDGE if abs(dx) < 3 else DARK)
+            if mood in ("anger", "doubt", "shame", "resolve"):
+                for dx in range(-3, 4):
+                    P(sx + dx, ey + lid - 2 if lid > -1 else ey - 2, "skin", DARK)
+        elif mood_eyes == "arc":
+            for dx in range(-3, 4):
+                P(sx + dx, ey - (1 if abs(dx) <= 1 else 0), "skin", EDGE)
+                P(sx + dx, ey + 1, "skin", LIT)
+        else:
+            for dx in range(-3, 4):
+                P(sx + dx, ey + (1 if abs(dx) >= 2 else 0), "skin", EDGE)
+                P(sx + dx, ey - 1, "skin", MID)
+            P(sx + 3, ey + 2, "glass", LIT)
+            P(sx + 3, ey + 3, "glass", MID)
+        by = ey - 3
+        for dx in range(-3, 4):
+            y = by + brow_dy(dx)
+            P(sx + dx, y, "hair" if (self.hair.get("style") not in ("none", None)) else "skin", EDGE)
+        f = {"lips": "wide"}
+        self.act_mouth(P, dec, L, mood, f, False)
+
+    def act_insect(self, L, dec, mood):
+        """Compound eyes that grow (fear, awe, plea), slant (anger, resolve), sag (grief, shame); the mandibles are the mouth: flung open (fear, awe, laugh), clamped
+        (anger, resolve), drooping (grief, shame, plea), one raised (doubt), loose (relief)."""
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        ey, sx = L["ey"], L["sx"]
+        rx = L["rx"]
+        fc = self.b.fc
+        big = L["cls"] == "L"
+        for sg in (-1, 1):
+            if fc == 1 and sg == 1:
+                cx = sx + int(round(rx * 0.5))
+            else:
+                cx = sx + sg * int(round(rx * 0.55))
+            if big:
+                pts = [(dx, dy) for dx in (-1, 0, 1) for dy in (-2, -1, 0, 1) if not (abs(dx) == 1 and dy in (-2, 1))]
+                if mood in ("fear", "awe", "plea"):
+                    pts += [(dx, -3) for dx in (0,)] + [(dx, 2) for dx in (0,)] + [(sg, -1), (-sg, 0)]
+                elif mood in ("anger", "resolve") or (mood == "doubt" and sg > 0):
+                    pts = [(dx, dy) for dx, dy in pts if dy >= -1]
+                    pts = [(dx, dy) for dx, dy in pts if not (dx == -sg and dy == -1)] + [(sg, -2)]  # slanted
+                elif mood in ("relief", "laugh"):
+                    pts = [(-1, 0), (0, -1), (1, 0)]
+                elif mood == "grief":
+                    pts = [(-1, 0), (0, 0), (1, 1)] + [(sg, 2), (sg, 3)]
+                elif mood == "shame":
+                    pts = [(dx, dy + 1) for dx, dy in pts if dy >= -1]
+            else:
+                pts = [(0, 0)] if mood not in ("fear", "awe", "plea") else [(0, 0), (0, -1)]
+            for dx, dy in pts:
+                x, y = cx + dx, ey + dy
+                tear = mood == "grief" and dy >= 2
+                st = DARK if (x + y) % 2 == 0 else MID
+                if tear:
+                    P(x, y, "glass", LIT if dy == 2 else MID)
+                else:
+                    P(x, y, "eye_d", st if big else EDGE)
+            if big and mood not in ("relief", "laugh", "grief"):
+                P(cx - 1 if sg < 0 or fc == 1 else cx, ey - 1 - (1 if mood in ("fear", "awe", "plea") else 0), "eye_w", LIT)
+                P(cx + (1 if sg > 0 else 0), ey + 1, "eye_d", EDGE)
+        if not big:
+            return
+        my = L["mouth"] + 1
+        sides = (-1, 1) if fc == 0 else (1,)
+        for sg in sides:
+            if mood in ("fear", "awe", "laugh"):
+                P(sx + sg * 3, my + 1, "horn", EDGE)
+                P(sx + sg * 3, my + 2, "horn", DARK)
+                P(sx + sg * 2, my, "horn", EDGE)
+            elif mood in ("anger", "resolve"):
+                P(sx + sg * 1, my, "horn", EDGE)
+                P(sx + sg * 1, my + 1, "horn", DARK)
+                P(sx + sg * 2, my - 1, "horn", DARK) if mood == "anger" else None
+            elif mood in ("grief", "shame", "plea"):
+                P(sx + sg * 2, my + 1, "horn", DARK)
+                P(sx + sg * 2, my + 2, "horn", EDGE)
+            elif mood == "doubt":
+                P(sx + sg * 1, my + (1 if sg < 0 else -1), "horn", EDGE)
+                P(sx + sg * 2, my + (2 if sg < 0 else -1), "horn", DARK)
+            else:
+                P(sx + sg * 2, my, "horn", EDGE)
+                P(sx + sg * 1, my + 1, "horn", MID)
+        if mood in ("fear", "awe", "laugh"):
+            P(sx, my, "mouth", EDGE)
+            P(sx, my + 1, "mouth", DARK)
+
+    def act_blob(self, L, dec, mood):
+        """Round eyes that go huge (fear, awe, plea), flat (anger, resolve), arcs (relief, laugh), shut with a tear (grief), dropped (shame), one flat (doubt); the wide
+        mouth is a frown, a O, a grin or a wobble."""
+        P = lambda x, y, m, st: self._P(dec, x, y, m, st)
+        ey, sx, ein = L["ey"], L["sx"], L["ein"]
+        fc = self.b.fc
+        big = L["cls"] == "L"
+        for sg in (-1, 1):
+            x0 = sx + sg * (ein + 1) if not (fc == 1 and sg == 1) else sx + ein + 1
+            x_lo = x0 - (1 if sg < 0 else 0)
+            if not big:
+                if mood in ("relief", "laugh", "grief"):
+                    P(x0, ey - (1 if mood != "grief" else 0), "eye_d", EDGE)
+                elif mood in ("fear", "awe", "plea"):
+                    P(x0, ey - 1, "eye_d", EDGE)
+                    P(x0, ey, "eye_d", EDGE)
+                elif mood == "shame":
+                    P(x0, ey + 1, "eye_d", EDGE)
+                else:
+                    P(x0, ey, "eye_d", EDGE)
+                continue
+            if mood in ("relief", "laugh"):
+                P(x_lo, ey, "eye_d", EDGE)
+                P(x_lo + 1, ey - 1, "eye_d", EDGE)
+                P(x_lo + 2, ey, "eye_d", EDGE)
+            elif mood == "grief":
+                for dx in (0, 1):
+                    P(x_lo + dx, ey, "eye_d", EDGE)
+                P(x_lo + (0 if sg < 0 else 1), ey + 1, "glass", LIT)
+                P(x_lo + (0 if sg < 0 else 1), ey + 2, "glass", MID)
+            elif mood in ("fear", "awe", "plea"):
+                for dx in (0, 1):
+                    for dy in (-2, -1, 0):
+                        P(x_lo + dx, ey + dy, "eye_d", EDGE)
+                P(x_lo, ey - 2, "eye_w", LIT)
+                if mood == "awe":
+                    P(x_lo + 1, ey - 1, "lit", LIT)
+            elif mood in ("anger", "resolve") or (mood == "doubt" and sg > 0):
+                for dx in (0, 1):
+                    P(x_lo + dx, ey, "eye_d", EDGE)
+                    P(x_lo + dx, ey - 1, "skin", DARK)
+            elif mood == "shame":
+                for dx in (0, 1):
+                    P(x_lo + dx, ey, "eye_d", EDGE)
+                    P(x_lo + dx, ey + 1, "eye_d", EDGE)
+                P(x_lo, ey - 1, "skin", DARK)
+            else:  # doubt, the open eye
+                for dx in (0, 1):
+                    for dy in (-1, 0):
+                        P(x_lo + dx, ey + dy, "eye_d", EDGE)
+                P(x_lo, ey - 1, "eye_w", LIT)
+        my = L["mouth"]
+        if not big:
+            P(sx, my + (1 if mood in ("grief", "shame", "fear", "plea") else 0), "mouth", EDGE)
+            return
+        w = 3
+        for x in range(sx - w, sx + w + 1):
+            e = abs(x - sx)
+            if mood in ("relief", "laugh"):
+                y = my + (1 if e < w else 0) - 1 + (1 if mood == "laugh" and e < 2 else 0)
+            elif mood in ("grief", "plea"):
+                y = my + (0 if e < w else 1)
+            elif mood == "shame":
+                if e > 1:
+                    continue
+                y = my + (0 if e < 1 else 1)
+            elif mood in ("anger", "resolve"):
+                y = my - 1 + (1 if e >= w and mood == "anger" else 0)
+            elif mood == "doubt":
+                y = my - 1 + (1 if x < sx else 0) - (1 if x > sx + 1 else 0)
+            else:  # fear, awe: the mouth is a round O
+                if e > 1:
+                    continue
+                y = my - 1
+            P(x, y, "mouth", EDGE)
+        if mood in ("fear", "awe"):
+            for x in range(sx - 1, sx + 2):
+                for y in range(my, my + (2 if mood == "fear" else 3)):
+                    P(x, y, "mouth", DARK)
+        elif mood == "laugh":
+            for x in range(sx - 2, sx + 3):
+                P(x, my + 1, "mouth", DARK)
+            P(sx - 1, my, "teeth", LIT)
+            P(sx + 1, my, "teeth", MID)
+
     # -- the faces of the other species --
     def face_skeleton(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if mood in ACT_FACES and L["cls"] != "XS":
+            self.act_skeleton(L, dec, mood)
+            return
         ey, ein, ew, sx, ny, my = L["ey"], L["ein"], L["ew"], L["sx"], L["nose"], L["mouth"]
         fc = self.b.fc
         if L["cls"] == "XS":
@@ -1672,6 +2427,9 @@ class Painter:
     def face_grey(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if mood in ACT_FACES and L["cls"] != "XS":
+            self.act_grey(L, dec, mood)
+            return
         ey, sx = L["ey"], L["sx"]
         rx, ry = L["rx"], L["ry"]
         fc = self.b.fc
@@ -1723,6 +2481,9 @@ class Painter:
     def face_cyclops(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if mood in ACT_FACES and L["cls"] != "XS":
+            self.act_cyclops(L, dec, mood)
+            return
         ey, sx = L["ey"], L["sx"]
         fc = self.b.fc
         if L["cls"] == "XS":
@@ -1767,6 +2528,9 @@ class Painter:
     def face_insect(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if mood in ACT_FACES and L["cls"] != "XS":
+            self.act_insect(L, dec, mood)
+            return
         ey, sx = L["ey"], L["sx"]
         rx = L["rx"]
         fc = self.b.fc
@@ -1800,6 +2564,9 @@ class Painter:
     def face_blob(self, L, dec):
         P = lambda x, y, m, st: self._P(dec, x, y, m, st)
         mood, eyes = self.face_mood()
+        if mood in ACT_FACES and L["cls"] != "XS":
+            self.act_blob(L, dec, mood)
+            return
         ey, sx, ein = L["ey"], L["sx"], L["ein"]
         fc = self.b.fc
         if L["cls"] == "XS":

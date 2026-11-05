@@ -14,14 +14,22 @@ const PAIRED := ["chat", "hug", "toast"]
 const TARGETED := ["watch", "stare", "point"]
 const PROPS := ["", "cup", "bottle", "tray", "phone", "clipboard", "tickets", "brush", "sketchbook", "drip", "headphones", "headphones_wrong", "mug"]
 const STATES := ["idle", "dance", "cheer", "sad", "clap", "hands_up", "walk", "footwork", "look", "solo", "drink", "toast", "chat", "point", "phone", "lean_wall", "sit", "lie", "sleep",
-	"paint", "pace", "carry", "serve", "check", "stare", "rock", "hug", "queue", "wave", "watch", "mix", "stand", "flair_toprock", "flair_drop", "flair_robot", "flair_spin"]
+	"paint", "pace", "carry", "serve", "check", "stare", "rock", "hug", "queue", "wave", "watch", "mix", "stand", "flair_toprock", "flair_drop", "flair_robot", "flair_spin",
+	"beckon", "nod", "shake_head", "recoil", "bow", "kneel", "offer", "plead", "collapse", "salute", "block", "cover_face", "stamp", "laugh", "write"]
+## The directed acts (docs/THREE_PATHS_AND_FACES_PLAN.md 2.2): what a named person can be told to do. They are baked only for the actors a hotspot or a cast line directs
+## (tools/story/art/people_sheets.py, content/story/directed_actors.json), start on the bar like the flair moves, and take any of the FACES.
+const ACTS := ["beckon", "nod", "shake_head", "recoil", "bow", "kneel", "offer", "plead", "collapse", "salute", "block", "cover_face", "stamp", "laugh", "write"]
+## The fourteen faces: the crowd's four and ten acted ones (tools/story/art/people.py draws them; its list is checked against this one by check_assets.py).
+const FACES := ["neutral", "happy", "cheer", "sad", "fear", "anger", "plea", "doubt", "relief", "awe", "grief", "laugh", "resolve", "shame"]
 ## Break-dance flair (docs/DANCE_POLISH.md): a few dancers carry one signature move and perform it now and then for a bar or two, on the bar, then go back to their
 ## dance (StoryCrowd picks who and when). Each move is one baked cycle that starts and ends near the ordinary dance stance; FLAIR_BARS is a burst's length.
 const FLAIR_MOVES := ["flair_toprock", "flair_drop", "flair_robot", "flair_spin"]
 const FLAIR_BARS := {"flair_toprock": 2, "flair_drop": 2, "flair_robot": 1, "flair_spin": 1}
 const FACE_OF := {"idle": "neutral", "dance": "happy", "cheer": "cheer", "sad": "sad", "clap": "happy", "hands_up": "cheer", "walk": "neutral",
 	"footwork": "happy", "look": "neutral", "solo": "cheer", "toast": "happy", "chat": "happy", "hug": "happy", "wave": "happy", "mix": "happy", "drink": "neutral",
-	"sleep": "neutral", "rock": "sad", "stare": "neutral", "flair_toprock": "happy", "flair_drop": "cheer", "flair_robot": "neutral", "flair_spin": "cheer"}
+	"sleep": "neutral", "rock": "sad", "stare": "neutral", "flair_toprock": "happy", "flair_drop": "cheer", "flair_robot": "neutral", "flair_spin": "cheer",
+	"beckon": "happy", "nod": "happy", "shake_head": "doubt", "recoil": "fear", "bow": "neutral", "kneel": "plea", "offer": "happy", "plead": "plea", "collapse": "grief",
+	"salute": "resolve", "block": "anger", "cover_face": "grief", "stamp": "anger", "laugh": "laugh", "write": "neutral"}
 ## The baked sprite sheets (docs/STORY_25D_ART_DIRECTION.md 2.E): each state is baked over one cycle of SHEET_CYCLES[state] = [beats, frames] from `sample()` with the
 ## canonical personal values (phase 0, rate 0.5, amplitude 1, style 0, the dance in each of its STYLES), by tools/story/dump_poses.gd and tools/story/art/people.py. The translations
 ## (bob, jump, sway_x, squash) stay live: a sheet frame is the limbs, the head and the lean; the beat's bounce is applied to it every frame from the same sample.
@@ -29,14 +37,17 @@ const SHEET_CYCLES := {"idle": [4.0, 4], "dance": [2.0, 8], "cheer": [2.0, 8], "
 	"footwork": [2.0, 8], "look": [8.0, 8], "drink": [8.0, 8], "toast": [4.0, 4], "chat": [16.0, 12], "point": [1.0, 2], "phone": [4.0, 4],
 	"lean_wall": [8.0, 4], "sit": [8.0, 4], "lie": [8.0, 4], "sleep": [8.0, 4], "paint": [4.0, 12], "pace": [2.0, 8], "serve": [2.0, 8], "carry": [4.0, 4],
 	"check": [6.0, 12], "stare": [16.0, 4], "rock": [4.0, 8], "hug": [4.0, 4], "queue": [16.0, 16], "wave": [1.0, 8], "watch": [4.0, 4], "mix": [2.0, 8],
-	"flair_toprock": [4.0, 16], "flair_drop": [8.0, 32], "flair_robot": [4.0, 16], "flair_spin": [4.0, 16]}
+	"flair_toprock": [4.0, 16], "flair_drop": [8.0, 32], "flair_robot": [4.0, 16], "flair_spin": [4.0, 16],
+	"beckon": [2.0, 8], "nod": [2.0, 4], "shake_head": [2.0, 6], "recoil": [2.0, 6], "bow": [4.0, 8], "kneel": [4.0, 6], "offer": [4.0, 4], "plead": [2.0, 6], "collapse": [4.0, 8],
+	"salute": [2.0, 6], "block": [8.0, 4], "cover_face": [4.0, 8], "stamp": [1.0, 4], "laugh": [2.0, 8], "write": [4.0, 8]}
 ## Kick-locked states keep a whole number of beats as the personal offset so the bounce stays on the beat; the slow ones shift by the personal phase.
 const SHEET_KICKED := ["dance", "cheer", "clap", "walk", "footwork", "pace", "serve", "mix", "wave", "point"]
 const BLEND_S := 0.32  # seconds of song time a state change cross-fades
 const STYLES := 5  # personal dance styles: arm pump, fist pump, shimmy, raised V, head-nod groove
-const POSE_KEYS := ["bob", "jump", "lean", "head_tilt", "head_drop", "arm_l", "arm_r", "elb_l", "elb_r", "leg_l", "leg_r", "sway_x", "squash", "spin", "roll", "crouch", "lift_l", "lift_r"]
+const POSE_KEYS := ["bob", "jump", "lean", "head_tilt", "head_drop", "arm_l", "arm_r", "elb_l", "elb_r", "leg_l", "leg_r", "sway_x", "squash", "spin", "roll", "crouch", "lift_l", "lift_r", "fwd"]
 ## crouch: the hips sink by this share of the height with the knees bent (feet stay on the floor); lift_l / lift_r: a foot raised by this share (the knee bends).
-## Baked into the sheets (people.py); the live rig fallback ignores them.
+## Baked into the sheets (people.py); the live rig fallback ignores them. fwd (0..1): the body bent forward from the hips (a bow, a plea): the three-quarter view leans into the turn, the front
+## and the back view shorten the trunk and drop the head (the rig has no depth); only the acts use it.
 
 var rig: Dictionary = {}  # the variant's manifest entry: {joints, parts, faces, glow_hand?, height}
 var assets: StoryAssets
@@ -486,6 +497,170 @@ func sample(st: String, beats: float, energy01: float, out: Dictionary = {}) -> 
 			p["elb_l"] = 1.15
 			p["elb_r"] = 1.15
 			p["lean"] = 0.06 + 0.02 * sin(w)
+		"beckon":  # the wave arm drawn in towards the body twice a cycle, the weight forward: come here
+			var bk := 0.5 - 0.5 * cos(TAU * beats)
+			p["bob"] = 1.5 * rise
+			p["arm_r"] = 1.45
+			p["elb_r"] = 0.35 + 1.55 * bk
+			p["arm_l"] = 0.16
+			p["elb_l"] = 0.2
+			p["fwd"] = 0.22
+			p["lean"] = 0.04
+			p["head_tilt"] = -0.06 + 0.05 * bk
+			p["head_drop"] = 1.5 * bk
+		"nod":  # the head down and up twice, the shoulders still: yes
+			var nd := 0.5 - 0.5 * cos(TAU * beats)
+			p["bob"] = 0.8 * rise
+			p["head_drop"] = 6.5 * nd
+			p["head_tilt"] = 0.03
+			p["arm_l"] = 0.14
+			p["arm_r"] = 0.14
+			p["elb_l"] = 0.2
+			p["elb_r"] = 0.24
+		"shake_head":  # the head tilting left and right twice, a hand half raised: no
+			var sh := sin(TAU * beats)
+			p["bob"] = 0.8 * rise
+			p["head_tilt"] = 0.2 * sh
+			p["head_drop"] = 1.0
+			p["lean"] = 0.015 * sh
+			p["arm_r"] = 1.05
+			p["elb_r"] = 1.7 + 0.1 * sh
+			p["arm_l"] = 0.16
+			p["elb_l"] = 0.22
+		"recoil":  # a step back, the arms flung up before the face, then held, trembling: afraid
+			var rt := fposmod(beats, 2.0)
+			var rec := _smooth01(rt / 0.5) * (1.0 - _smooth01((rt - 1.75) / 0.25))
+			p["bob"] = 1.0 * rise
+			p["arm_l"] = lerpf(0.14, 0.7, rec)
+			p["arm_r"] = lerpf(0.14, 0.7, rec)
+			p["elb_l"] = lerpf(0.2, 3.2, rec)
+			p["elb_r"] = lerpf(0.24, 3.2, rec)
+			p["lean"] = -0.1 * rec + 0.012 * rec * sin(TAU * beats * 2.0)
+			p["leg_l"] = 0.12 * rec
+			p["leg_r"] = -0.22 * rec
+			p["head_tilt"] = -0.1 * rec
+			p["head_drop"] = -1.0 * rec
+			p["crouch"] = 0.02 * rec
+		"bow":  # from the hips, the hands together, held, then up: respect, thanks
+			var bt := fposmod(beats, 4.0)
+			var bw := _smooth01(bt / 1.0) * (1.0 - _smooth01((bt - 3.0) / 1.0))
+			p["fwd"] = bw
+			p["head_drop"] = 9.0 * bw
+			p["arm_l"] = lerpf(0.14, 0.4, bw)
+			p["arm_r"] = lerpf(0.14, 0.4, bw)
+			p["elb_l"] = lerpf(0.2, 1.7, bw)
+			p["elb_r"] = lerpf(0.24, 1.7, bw)
+			p["bob"] = 0.6 * rise * (1.0 - bw)
+		"kneel":  # one knee down, the head down, held: worship, surrender, begging
+			var kt := fposmod(beats, 4.0)
+			var kn := _smooth01(kt / 1.2) * (1.0 - _smooth01((kt - 3.2) / 0.8))
+			p["crouch"] = 0.3 * kn
+			p["lift_r"] = 0.3 * kn
+			p["fwd"] = 0.35 * kn
+			p["head_drop"] = 7.0 * kn
+			p["arm_l"] = lerpf(0.14, 0.5, kn)
+			p["arm_r"] = lerpf(0.14, 0.5, kn)
+			p["elb_l"] = lerpf(0.2, 2.05, kn)
+			p["elb_r"] = lerpf(0.24, 2.05, kn)
+			p["lean"] = 0.03 * kn
+			p["leg_l"] = -0.05 * kn
+			p["leg_r"] = 0.35 * kn
+		"offer":  # both hands out, palms up: take this, help me with this
+			var of := 0.5 - 0.5 * cos(TAU * beats * 0.25)
+			p["bob"] = 1.2 * rise
+			p["arm_l"] = 0.82 + 0.05 * of
+			p["arm_r"] = 0.82 + 0.05 * of
+			p["elb_l"] = 0.5 + 0.08 * of
+			p["elb_r"] = 0.5 + 0.08 * of
+			p["fwd"] = 0.12 + 0.06 * of
+			p["head_tilt"] = 0.05
+			p["head_drop"] = 1.5
+		"plead":  # the hands clasped at the chest, leaning in, trembling: please
+			p["bob"] = 0.6 * rise
+			p["arm_l"] = 0.5
+			p["arm_r"] = 0.5
+			p["elb_l"] = 2.05
+			p["elb_r"] = 2.05
+			p["fwd"] = 0.3
+			p["head_tilt"] = 0.12 + 0.03 * sin(TAU * beats * 1.5)
+			p["head_drop"] = 2.0
+			p["lean"] = 0.012 * sin(TAU * beats * 3.0)
+		"collapse":  # the knees fold and the body sinks to the floor, the head in the hands, held, then up
+			var ct := fposmod(beats, 4.0)
+			var cl := _smooth01(ct / 1.6) * (1.0 - _smooth01((ct - 3.4) / 0.6))
+			p["crouch"] = 0.34 * cl
+			p["fwd"] = 0.55 * cl
+			p["head_drop"] = 11.0 * cl
+			p["arm_l"] = lerpf(0.14, 0.45, cl)
+			p["arm_r"] = lerpf(0.14, 0.45, cl)
+			p["elb_l"] = lerpf(0.2, 3.1, cl)
+			p["elb_r"] = lerpf(0.24, 3.1, cl)
+			p["leg_l"] = 0.3 * cl
+			p["leg_r"] = 0.3 * cl
+			p["lean"] = 0.04 * cl * sin(TAU * beats * 0.5)
+		"salute":  # the hand to the brow, a snap, held, dropped: the military way
+			var st2 := fposmod(beats, 2.0)
+			var sl := _smooth01(st2 / 0.2) * (1.0 - _smooth01((st2 - 1.5) / 0.3))
+			p["arm_r"] = lerpf(0.14, 2.0, sl)
+			p["elb_r"] = lerpf(0.24, 3.9, sl)
+			p["arm_l"] = 0.08
+			p["elb_l"] = 0.12
+			p["head_tilt"] = -0.04 * sl
+			p["lean"] = -0.02 * sl
+			p["head_drop"] = -1.0 * sl
+		"block":  # arms folded, feet apart, the chin up: you are not coming through
+			p["bob"] = 0.6 * rise
+			p["arm_l"] = 0.22
+			p["arm_r"] = 0.26
+			p["elb_l"] = 1.95
+			p["elb_r"] = 1.85
+			p["leg_l"] = 0.16
+			p["leg_r"] = 0.16
+			p["head_drop"] = -2.0
+			p["head_tilt"] = -0.04 + 0.02 * sin(w * 0.25)
+		"cover_face":  # both hands over the face, the shoulders shaking: weeping, shame
+			var shk := sin(TAU * beats * 1.0 + 0.8)
+			p["bob"] = 0.8 * rise
+			p["arm_l"] = 0.5
+			p["arm_r"] = 0.5
+			p["elb_l"] = 3.1 + 0.05 * shk
+			p["elb_r"] = 3.1 + 0.05 * shk
+			p["head_drop"] = 7.0
+			p["fwd"] = 0.15
+			p["lean"] = 0.02 * shk + 0.04
+			p["squash"] = 0.014 * absf(shk)
+		"stamp":  # one foot stamped on the kick, the fists down: rage, protest
+			var sf := fposmod(beats, 1.0)
+			p["lift_l"] = 0.1 * sin(PI * sf)
+			p["arm_l"] = 0.14
+			p["arm_r"] = 0.14
+			p["elb_l"] = 1.55
+			p["elb_r"] = 1.55
+			p["fwd"] = 0.12
+			p["head_drop"] = 2.5 * kick
+			p["squash"] = 0.03 * kick
+			p["lean"] = 0.03
+		"laugh":  # the head back, a hand on the belly, bouncing: mocking or merry (the face decides)
+			var lb := sin(TAU * beats * 2.0)
+			p["bob"] = 3.0 * absf(lb)
+			p["squash"] = 0.03 * absf(lb)
+			p["head_tilt"] = -0.2 + 0.03 * lb
+			p["head_drop"] = -2.0
+			p["lean"] = -0.1 + 0.025 * lb
+			p["arm_r"] = 0.75
+			p["elb_r"] = 1.65
+			p["arm_l"] = 0.45
+			p["elb_l"] = 0.9 + 0.2 * lb
+		"write":  # the clipboard held up, the pen hand moving: the stamp, the ledger, the chart
+			var wb := sin(w * 3.0)
+			p["bob"] = 0.6 * rise
+			p["arm_r"] = 0.75
+			p["elb_r"] = 1.85
+			p["arm_l"] = 0.66 + 0.04 * wb
+			p["elb_l"] = 1.9 + 0.12 * wb
+			p["head_drop"] = 4.5
+			p["head_tilt"] = 0.08
+			p["lean"] = 0.035
 		"solo":  # the hero's moment: every move in turn, a jump bar, and a spin on every fourth bar
 			var bar := int(floorf(beats / 4.0))
 			var keep := style
@@ -632,7 +807,13 @@ var _blend_t0 := -1.0
 var _blend_len := 0.3
 
 
+## The face a directed act is shown with ("" = the state's own, FACE_OF): set by StoryCrowd.direct (plan 2.3), picks the `state@face` sheet frames when the actor has them.
+var face_override := ""
+
+
 func face_name() -> String:
+	if face_override != "":
+		return face_override
 	return str(FACE_OF.get(state, "neutral"))
 
 
@@ -696,6 +877,8 @@ func sheet_pick(beats: float) -> Array:
 			flip = turn2[1]
 	elif st == "dance" and sync and states.has("dance_s0"):
 		st = "dance_s0"
+	if face_override != "" and face_override != str(FACE_OF.get(st, "neutral")) and states.has(st + "@" + face_override):
+		st = st + "@" + face_override  # the directed face's own frames
 	if not states.has(st):
 		st = str(SHEET_FALLBACK.get(st, "idle"))
 		if not states.has(st):
@@ -717,10 +900,10 @@ static func spin_facing(ang: float, fc: int, flip: bool) -> Array:
 
 ## Which frame of a state's cycle shows at song position `beats`: the canonical cycle shifted by the person's own phase (whole beats for the kick-locked states).
 func sheet_frame(st: String, cyc_beats: float, n: int, beats: float) -> int:
-	var base := "dance" if st.begins_with("dance") else st
+	var base := "dance" if st.begins_with("dance") else st.get_slice("@", 0)
 	var off := 0.0
-	if st.begins_with("flair"):
-		off = 0.0  # bar-locked: a burst starts on the bar with the move's first frame
+	if st.begins_with("flair") or base in ACTS:
+		off = 0.0  # bar-locked: a burst, or a directed act, starts on the bar with its first frame
 	elif not sync:
 		if base in SHEET_KICKED:
 			off = floorf(phase * 2.0 + 0.5)

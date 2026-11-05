@@ -16,7 +16,10 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
+sys.path.insert(0, HERE)
 STORY = os.path.join(ROOT, "assets", "story")
+from art import directed as directed_mod  # noqa: E402
+from art import people  # noqa: E402
 ART = os.path.join(STORY, "night_one")  # the folder being checked (set per chapter by validate)
 CHAPTERS = ("night_one", "mothership", "underworld", "hospital", "mental_hospital")
 INTERLUDE = {"mothership": ({"ufo", "tractor_beam", "ufo_glow", "sparkle", "light_flood"}, {"ufo_hover", "beam_floor"}),
@@ -117,6 +120,8 @@ def validate(chapter: str = "night_one") -> list:
         chapter_checks(errors, chapter, m, st)
     texture_checks(errors, chapter, m)
     people_checks(errors, chapter, m)
+    if chapter == CHAPTERS[0]:
+        pose_checks(errors)
     return errors
 
 
@@ -152,9 +157,29 @@ def texture_checks(errors, chapter, m) -> None:
 
 
 PEOPLE_STATES = {"idle", "walk"}  # every person has at least these
+POSES = json.load(open(os.path.join(STORY, "people_poses.json"), encoding="utf-8"))
+FACE_LIST = list(people.FACES)
+DIRECTED: dict = {}  # {actor id: [(act, face, facings)]} of the chapter being checked (directed.py: the data decides which people are baked in which acts and faces)
 SHEET_STATES = {"idle", "dance", "cheer", "hands_up", "sad", "clap", "walk", "footwork", "look", "drink", "toast", "chat", "point", "phone", "lean_wall", "sit", "lie",
                 "sleep", "paint", "pace", "serve", "carry", "check", "stare", "rock", "hug", "queue", "wave", "watch", "mix",
-                "dance_s0", "dance_s1", "dance_s2", "dance_s3", "dance_s4", "flair_toprock", "flair_drop", "flair_robot", "flair_spin"}
+                "dance_s0", "dance_s1", "dance_s2", "dance_s3", "dance_s4", "flair_toprock", "flair_drop", "flair_robot", "flair_spin",
+                "beckon", "nod", "shake_head", "recoil", "bow", "kneel", "offer", "plead", "collapse", "salute", "block", "cover_face", "stamp", "laugh", "write"}
+
+
+def pose_checks(errors) -> None:
+    """The dumped poses (tools/story/dump_poses.gd) and the pixel rig agree on the faces and the acts, and every face and act has a cycle and a default face."""
+    if list(POSES.get("faces", [])) != FACE_LIST:
+        errors.append(f"people_poses.json faces {POSES.get('faces')} != people.FACES {FACE_LIST} (rerun tools/story/dump_poses.gd)")
+    if list(POSES.get("acts", [])) != list(directed_mod.NEW_ACTS):
+        errors.append(f"people_poses.json acts {POSES.get('acts')} != directed.NEW_ACTS (rerun tools/story/dump_poses.gd)")
+    for act in directed_mod.NEW_ACTS:
+        if act not in POSES["states"]:
+            errors.append(f"people_poses.json has no cycle for {act}")
+        if POSES["face_of"].get(act) not in FACE_LIST:
+            errors.append(f"act {act} has no default face in FACE_OF")
+    for st, f in POSES["face_of"].items():
+        if f not in FACE_LIST:
+            errors.append(f"FACE_OF[{st}] = {f} is not a face")
 
 
 def people_checks(errors, chapter, m) -> None:
@@ -190,6 +215,11 @@ def people_checks(errors, chapter, m) -> None:
             break
     with open(os.path.join(ROOT, "content", "story", chapter + ".json"), encoding="utf-8") as fh:
         data = json.load(fh)
+    global DIRECTED
+    DIRECTED = directed_mod.directed(chapter, POSES)
+    for aid in DIRECTED:
+        if aid not in {str(a["id"]) for a in data["actors"]}:
+            errors.append(f"people: directed actor {aid} is not an actor of {chapter}")
     looks: dict = {}
     for a in data["actors"]:
         aid = str(a["id"])
@@ -206,7 +236,8 @@ def people_checks(errors, chapter, m) -> None:
         if not need <= set(st):
             errors.append(f"people: {aid} lacks states {sorted(need - set(st))}")
         for k, v in st.items():
-            if k not in SHEET_STATES:
+            base, _, face = k.partition("@")  # `beckon@plea`: a directed act shown with another face
+            if base not in SHEET_STATES or (face and face not in FACE_LIST):
                 errors.append(f"people: {aid} unknown state {k}")
             n = v[1]
             if v[2] is None or len(v[2]) != 3 * n:
@@ -214,6 +245,15 @@ def people_checks(errors, chapter, m) -> None:
             for lst in v[2:]:
                 if lst is not None and (len(lst) != 3 * n or max(lst) >= nfr):
                     errors.append(f"people: {aid}.{k} frame list malformed")
+        for act, face, facings in DIRECTED.get(aid, []):  # a directed person lacks no act and no face the story gives them
+            key = directed_mod.state_key(act, face, POSES["face_of"])
+            e2 = st.get(key)
+            if e2 is None:
+                errors.append(f"people: directed actor {aid} lacks {key}")
+                continue
+            for fcn in facings:
+                if e2[2 + people.FACINGS.index(fcn)] is None:
+                    errors.append(f"people: directed actor {aid}.{key} lacks the {fcn} facing")
         idle = st.get("idle")
         if idle:
             h = fr[idle[2][0] * 9 + 4]

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Zoomed head sheets of the baked people: `python3 tools/story/face_sheets.py <tag> [chapter...] [--zoom 8] [--out docs/shots/faces]`.
+"""Zoomed head sheets of the baked people: `python3 tools/story/face_sheets.py <tag> [chapter...] [--zoom 8] [--out docs/shots/faces]`
+(the tag `acting` writes the fourteen faces and the directed acts instead: docs/shots/faces/<chapter>_acting.jpg, see acting_sheet).
 
 docs/shots/faces/<chapter>_<tag>.jpg: for every actor of the chapter, the head cropped from the built sheets (assets/story/<chapter>/people/) and shown
 magnified (nearest neighbour, one sheet pixel = `zoom` x `zoom`, unlit) in the face states the actor has: neutral (idle), happy (dance / chat), cheer and
@@ -18,6 +19,7 @@ from PIL import Image, ImageDraw
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+from art import directed as directed_mod  # noqa: E402
 from art import people, wardrobe  # noqa: E402
 
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
@@ -136,6 +138,149 @@ def sheet(chapter, tag, out_dir, zoom):
     return path
 
 
+# ---- the acting sheet: the fourteen faces and the directed acts of the directed actors (plan 2.1, 2.2) ---------------------------------------------------------
+
+# the four old faces come from the states that wear them; the ten acted ones from `stare@<face>` (every directed actor has them baked)
+OLD_FACE_STATES = {"neutral": ("idle", "stare", "watch", "walk"), "happy": ("dance", "chat", "clap", "wave", "toast"), "cheer": ("cheer", "hands_up", "solo"),
+                   "sad": ("sad", "rock")}
+
+
+def face_state_keys(face):
+    return OLD_FACE_STATES[face] if face in OLD_FACE_STATES else (f"stare@{face}",)
+
+
+def pose_of(poses, key, frame=0):
+    base = key.partition("@")[0]
+    cyc = poses["states"].get("dance_s0" if base == "dance" else base)
+    return base, (dict(zip(poses["keys"], cyc["frames"][frame])) if cyc else None)
+
+
+def frame_image(doc, pages, pal, row, fidx):
+    """A whole frame as RGBA and its feet pivot."""
+    f = doc["frames"][fidx * 9:fidx * 9 + 9]
+    pg, x, y, w, h, px, py = f[:7]
+    idx = pages[pg][y:y + h, x:x + w]
+    out = np.zeros((h, w, 4), np.uint8)
+    on = idx > 0
+    colours = pal[row][idx & 127]
+    out[on] = colours[on]
+    out[on, 3] = 255
+    return Image.fromarray(out, "RGBA"), (px, py)
+
+
+def acting_sheet(chapter, out_dir, zoom=5, tag="acting"):
+    """docs/shots/faces/<chapter>_acting.jpg: for every directed actor the fourteen faces (front, three-quarter and the half level of detail) cropped from the built
+    sheets, and for actors directed in acts the acts (the middle frame of each cycle, front and three-quarter), unlit."""
+    doc, pages, pal = load(chapter)
+    data = json.load(open(os.path.join(ROOT, "content", "story", chapter + ".json"), encoding="utf-8"))
+    poses = json.load(open(os.path.join(ROOT, "assets", "story", "people_poses.json"), encoding="utf-8"))
+    cast = wardrobe.cast_chapter(chapter, data["actors"])
+    by_id = {str(a["id"]): a for a in data["actors"]}
+    dire = directed_mod.directed(chapter, poses)
+    ids = [aid for aid in dire if aid in doc["actors"]]
+    if not ids:
+        return None
+    faces = list(people.FACES)
+    sections = []  # (label, [(row title, [(cell label, image or None)])])
+    cw = ch = 0
+    for aid in ids:
+        a = doc["actors"][aid]
+        spec = cast[aid]
+        rows = []
+        for title, fc, lod in (("front", 0, 1), ("3/4", 1, 1), ("half size", 0, 2)):
+            cells = []
+            for face in faces:
+                im = None
+                for key in face_state_keys(face):
+                    e = a["states"].get(key)
+                    if not e or e[2 + fc] is None:
+                        continue
+                    base, pose = pose_of(poses, key)
+                    if pose is None:
+                        continue
+                    n = e[1]
+                    fidx = e[2 + fc][people.LODS.index(lod) * n]
+                    im = head_crop(doc, pages, pal, a["row"], fidx, spec, pose, "dance" if base.startswith("dance") else base, fc, lod)
+                    break
+                cells.append((face, im))
+                if im is not None and lod == 1:
+                    cw, ch = max(cw, im.width), max(ch, im.height)
+            rows.append((title, cells))
+        sections.append((f"{aid} {by_id[aid].get('archetype', '')}", rows))
+    cw, ch = cw * zoom, ch * zoom
+    gap = 4
+    W = len(faces) * (cw + gap) + 16
+    face_h = sum(len(rows) * (ch + 14) + 22 for _, rows in sections)
+    act_blocks = []
+    az = 2
+    for aid in ids:
+        a = doc["actors"][aid]
+        keys = [k for k in a["states"] if k in directed_mod.NEW_ACTS]
+        if keys:
+            keys.sort(key=lambda k: directed_mod.NEW_ACTS.index(k))
+            act_blocks.append((aid, keys))
+    frames_img = {}
+    acw = ach_up = ach_dn = 0
+    for aid, keys in act_blocks:
+        a = doc["actors"][aid]
+        for k in keys:
+            e = a["states"][k]
+            n = e[1]
+            for fc in (0, 1):
+                if e[2 + fc] is None:
+                    continue
+                im, piv = frame_image(doc, pages, pal, a["row"], e[2 + fc][n // 2])
+                frames_img[(aid, k, fc)] = (im, piv)
+                acw = max(acw, im.width)
+                ach_up = max(ach_up, int(piv[1]))
+                ach_dn = max(ach_dn, im.height - int(piv[1]))
+    per_line = max(1, (W - 16) // ((acw + 6) * az))
+    cell_h = (ach_up + ach_dn + 4) * az + 14
+    act_h = sum(22 + 2 * ((len(keys) + per_line - 1) // per_line) * cell_h for _, keys in act_blocks)
+    H = 30 + face_h + act_h + 10
+    img = Image.new("RGB", (W, H), BG)
+    dr = ImageDraw.Draw(img)
+    dr.text((8, 8), f"{chapter}: the fourteen faces (each directed actor: front, three-quarter, half size; heads from the built sheets, 1 sheet pixel = {zoom}x{zoom}, "
+            "unlit), then the acts (middle frame of each cycle, front and three-quarter)", fill=(220, 210, 240))
+    y = 30
+    for label, rows in sections:
+        dr.text((8, y), label, fill=(255, 255, 160))
+        y += 14
+        for title, cells in rows:
+            for k, (face, im) in enumerate(cells):
+                x = 8 + k * (cw + gap)
+                dr.rectangle((x, y, x + cw - 1, y + ch - 1), fill=CELL_BG)
+                if im is not None:
+                    zz = zoom * 2 if title == "half size" else zoom  # the half-size head is shown at twice the zoom, so it fills the cell
+                    big = im.resize((im.width * zz, im.height * zz), Image.NEAREST)
+                    img.paste(big, (x + (cw - big.width) // 2, y + (ch - big.height) // 2))
+                dr.text((x + 2, y + 1), face if title == "front" else title + (" x2" if title == "half size" else ""), fill=(150, 140, 180))
+            y += ch + 14
+        y += 8
+    for aid, keys in act_blocks:
+        dr.text((8, y), f"{aid} acts", fill=(255, 255, 160))
+        y += 14
+        for fc in (0, 1):
+            for line0 in range(0, len(keys), per_line):
+                for k, key in enumerate(keys[line0:line0 + per_line]):
+                    item = frames_img.get((aid, key, fc))
+                    x = 8 + k * (acw + 6) * az
+                    dr.rectangle((x, y, x + (acw + 4) * az - 1, y + (ach_up + ach_dn + 4) * az), fill=CELL_BG)
+                    if item:
+                        im, piv = item
+                        big = im.resize((im.width * az, im.height * az), Image.NEAREST)
+                        img.paste(big, (x + ((acw + 4 - im.width) // 2) * az, y + (ach_up - int(piv[1]) + 2) * az), big)
+                    dr.text((x + 2, y + 1), key + ("" if fc == 0 else " 3/4"), fill=(150, 140, 180))
+                y += cell_h
+        y += 8
+    img = img.crop((0, 0, W, min(H, y + 6)))
+    os.makedirs(out_dir, exist_ok=True)
+    path = os.path.join(out_dir, f"{chapter}_{tag}.jpg")
+    img.save(path, quality=90)
+    print(path, img.size)
+    return path
+
+
 def main(argv):
     out = os.path.join(ROOT, "docs", "shots", "faces")
     zoom = 8
@@ -158,7 +303,10 @@ def main(argv):
     tag, chs = args[0], args[1:]
     for c in chs or CHAPTERS:
         if os.path.exists(os.path.join(ROOT, "assets", "story", c, "people", "people.json")):
-            sheet(c, tag, out, zoom)
+            if tag == "acting":  # the fourteen faces and the directed acts: docs/shots/faces/<chapter>_acting.jpg
+                acting_sheet(c, out, zoom if "--zoom" in argv else 5)
+            else:
+                sheet(c, tag, out, zoom)
     return 0
 
 

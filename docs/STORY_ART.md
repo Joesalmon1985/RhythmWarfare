@@ -609,6 +609,29 @@ Every actor of every chapter is drawn as an individual and baked to their own pi
 - **Changing a look**: edit the chapter's function in `wardrobe.py` (or `people.py` for drawing), then `python3 tools/story/build_assets.py <chapter> people` and
   `godot --headless --path . --import`. Changing a pose in `StoryCharacter.sample` or a cycle in `SHEET_CYCLES`: rerun `dump_poses.gd` first.
 
+## Acting: fourteen faces and fifteen directed acts (docs/THREE_PATHS_AND_FACES_PLAN.md 2.1 and 2.2, stage 1a)
+
+- **Faces** (`people.FACES`, `StoryCharacter.FACES`): the crowd's `neutral`, `happy`, `cheer`, `sad` and ten acted ones, `fear`, `anger`, `plea`, `doubt`, `relief`, `awe`, `grief`, `laugh`,
+  `resolve`, `shame`. They are drawn on the person's own face traits (`Painter.act_eye`, `act_brow`, `act_mouth`, `act_cheeks`; `act_small` at the half level of detail, where an eye is one
+  pixel and the brows' slant, the eye's height and the mouth's shape carry the feeling). The species keep their vocabulary: a skeleton's jaw drops (fear, awe, laugh), clenches (anger) or
+  hangs (grief) while its sockets widen or narrow; a grey's eyes go wide with catch lights or narrow to slits; the cyclops's one eye is lidded or ringed with white and its brow slants; an insect's
+  compound eyes grow, slant or sag and its mandibles open, clamp or droop; a blob's round eyes and wide mouth do the same; a brute's anger bares its teeth. The quarter-size head has only the
+  four old faces: `people.LOD4_FALLBACK` maps each acted face to the nearest (fear, anger, plea, grief, shame to sad; doubt, resolve to neutral; relief to happy; awe, laugh to cheer).
+  The four old faces are drawn exactly as before. Hair or a hat brim that covers the brows hides them (as before); the eyes and the mouth carry the face for those people.
+- **Acts** (`StoryCharacter.ACTS`): `beckon`, `nod`, `shake_head`, `recoil`, `bow`, `kneel`, `offer`, `plead`, `collapse`, `salute`, `block`, `cover_face`, `stamp`, `laugh`, `write`; each a state with a
+  pose in `sample()`, a cycle in `SHEET_CYCLES` and a default face in `FACE_OF`. They start on the bar (bar-locked like the flair moves). The pixel rig is 2D, so a forward bend is the pose key
+  `fwd` (0 to 1): the three-quarter view leans into the turn, the front and back views shorten the trunk and sink the head; hands raised to the face are the forearm folded up from a hanging arm
+  (the rig cannot put a hand in front of a face seen from the front, so `cover_face` and `collapse` read through the head sunk to the hands and the grief face). `point`, `stare` and the other
+  old states take a face parameter too and keep their own default faces; `look_at` on `point` is the existing `toward` (stage 1b resolves a target id into it).
+- **Which people are baked in which acts** (`tools/story/art/directed.py`): only the directed people, never the whole crowd. The list is merged from `content/story/directed_actors.json` (the
+  test actors of stage 1a: per chapter one person with every act and face and a few with the ten faces, one per species or look), the `acting` blocks of `content/run/hotspots/*.json` and the
+  `cast` lines of `content/run/run.json` (stages 1b and 1d fill those; the reader is in place, entries may be `act`, `act@face` or `act@face:front+side`). A face other than the act's own
+  default is a separate frame set named `act@face` in `people.json` (`beckon@plea`); `StoryCharacter.face_override` picks it in `sheet_pick`. Frames are shared through the usual dedupe.
+  `check_assets.py` fails when a directed person lacks an act, a face or a facing, when a state names an unknown face, or when `people_poses.json` and `people.py` disagree about the faces and acts.
+- **Proof**: `python3 tools/story/face_sheets.py acting` writes `docs/shots/faces/<chapter>_acting.jpg`: each directed person's fourteen faces (front, three-quarter, half size) cropped from the
+  built sheets, then their acts (the middle frame of each cycle, front and three-quarter).
+- **Rebuild**: edit poses in `StoryCharacter.sample`, rerun `godot --headless --path . -s tools/story/dump_poses.gd`, then the five `build_assets.py <chapter> people` commands, as in `docs/FACE_POLISH.md`.
+
 ## The pixel look of the rooms (polish, art direction 2.D)
 
 - `tools/story/art/pixeltex.py`: tileable procedural textures drawn in numpy at tile size and quantised to a chapter palette ramp with 8x8 ordered dithering (bricks

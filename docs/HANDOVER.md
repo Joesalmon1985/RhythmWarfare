@@ -12,6 +12,18 @@ commands), `docs/PRD.md` sections 15 and 16 (the mission rules; section 16 is th
 `docs/CONTENT_TO_RENDER.md` (the owner's render list). Everything is committed on `main` at
 https://github.com/Joesalmon1985/RhythmWarfare.
 
+## Three paths and the acting system: progress (docs/THREE_PATHS_AND_FACES_PLAN.md)
+
+- **Stage 1a done (5 November 2026): fourteen faces and fifteen directed acts in the pixel people.** Faces `fear`, `anger`, `plea`, `doubt`, `relief`, `awe`, `grief`, `laugh`, `resolve`,
+  `shame` on top of the four old ones, per species (`tools/story/art/people.py`); acts `beckon`, `nod`, `shake_head`, `recoil`, `bow`, `kneel`, `offer`, `plead`, `collapse`, `salute`, `block`,
+  `cover_face`, `stamp`, `laugh`, `write` (`StoryCharacter.STATES`, `sample()`, `SHEET_CYCLES`, `FACE_OF`); baked only for the directed people (`content/story/directed_actors.json`, later the hotspots'
+  `acting` blocks and the scenes' `cast` lines, `tools/story/art/directed.py`); `check_assets.py` fails when a directed person lacks an act, a face or a facing; proof in
+  `docs/shots/faces/<chapter>_acting.jpg`; how it works in `docs/STORY_ART.md` "Acting". Divergences: the pose key `fwd` (a forward bend) was added to the dumped limb keys, because the pixel rig
+  is 2D; `point` and `stare` keep their old default faces (neutral) for the crowd, the directed data names `resolve` where the story wants it; `look_at` on `point` is the existing `toward`
+  (stage 1b resolves a target id into it); `StoryCharacter.face_override` and the `act@face` sheet key are the only runtime additions (`StoryCrowd.direct` is stage 1b).
+  Not verified: how the acts and faces look moving in a real run on the owner's phone (only the sheets, the poses and the tests were checked).
+- Stages 1b (acting contract), 1c (silent HUD), 1d (acting pass on the five worlds), 2 to 6 are not started.
+
 ## What the game is now
 
 A landscape phone rhythm defense game. Four illuminated pads play along with a 174 BPM drum and bass track; every
