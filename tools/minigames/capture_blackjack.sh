@@ -72,12 +72,18 @@ real 3 "bet@5,hand@13,exit@27" perfect "" 14_leaving_with_money:28.6
 real 3 "bet@5" "blocks:11111100" "" 15_chair_wobbling:66
 real 3 "bet@5" "blocks:111111000" "" 16_falling_off_the_chair:78
 
-# joining: the touch (a burst and the camera setting off), the wait (the camera at the table, the countdown ring closing), the refusal. A finer clock (0.05 s a frame), the touch at beat 18 of phase 1.
+# joining: the touch (a warm burst, the players' arms up, the camera setting off), the wait (the camera at the table, the four countdown lamps), the refusal (the dealer shaking his head,
+# the others shrugging, the ring breaking). A finer clock (0.05 s a frame), the touch at beat 13.2 of phase 1 (the table in view, the title card gone; judged at block 1's decision).
 RATE=0.05
-SEL="ward.cards@18"
-real 3 "bet@5" perfect "" 17_touch_registered:p18.5
-real 3 "bet@5" perfect "" 18_waiting_to_sit:p26.5
-real 3 "bet@5" none "" 19_waved_off:p29.1
+SEL="ward.cards@13.2"
+real 3 "bet@5" perfect "" 17_touch_registered:p13.35 32_pleased_at_the_touch:p15.5 18_waiting_to_sit:p27.6
+real 3 "bet@5" none "" 19_waved_off:p28.75 33_refusal_on_the_people:p29.6
+# the table in the room before any touch (docs/BLACKJACK_INTEGRATION.md, "The table in the room"): the invitation from the room's home; 31 is the same frame's table, enlarged
+SEL="none@0"
+real 3 "bet@5" perfect "" 30_invitation_from_across_the_room:p14.5
+if want 31_ && [ -f "$OUT/30_invitation_from_across_the_room.jpg" ]; then
+  ffmpeg -nostdin -y -loglevel error -i "$OUT/30_invitation_from_across_the_room.jpg" -vf "crop=560:260:640:110,scale=1120:520:flags=neighbor" -q:v 3 "$OUT/31_invitation_close.jpg" && echo "shot $OUT/31_invitation_close.jpg"
+fi
 RATE=0.25
 SEL=""
 

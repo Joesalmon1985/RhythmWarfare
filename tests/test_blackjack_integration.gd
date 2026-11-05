@@ -1230,3 +1230,214 @@ func test_with_the_table_never_touched_the_doors_change_nothing() -> void:
 	assert_false((scene.hotspot_log as Array).any(func(e: Dictionary) -> bool: return str(e["kind"]).begins_with("exit_")), "no exit bookkeeping at all")
 	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward.art"])
 	_free(d)
+
+
+# ---- 16: the table in the room: its players invite, cheer at the touch, welcome or refuse; nothing stands between the camera and the table ----------------------
+
+const TABLE_AT := Vector2(2.4, 3.0)  # tools/run/make_scenes.py CLEARINGS["mental_hospital"]: the table, the clearing round it and its sight lines
+const CLEAR_RADIUS := 1.6
+const CLEAR_HALF := 1.25
+const CLEAR_MARGIN := 0.35
+const CLEAR_BEHIND := 1.5
+const CLEAR_VIEWS := ["day_centre", "day_cards"]
+
+
+func _clearing_hull(map: StoryMap) -> PackedVector2Array:
+	var ends := [TABLE_AT + Vector2(-CLEAR_HALF - CLEAR_MARGIN, 0.0), TABLE_AT + Vector2(CLEAR_HALF + CLEAR_MARGIN, 0.0)]
+	var pts := PackedVector2Array()
+	for v in CLEAR_VIEWS:
+		var w: Vector2 = map.waypoint(v)["at"]
+		pts.append(w)
+		for e in ends:
+			pts.append(e)
+			pts.append(e + (e - w).normalized() * CLEAR_BEHIND)
+	return Geometry2D.convex_hull(pts)
+
+
+func _in_clearing(p: Vector2, hull: PackedVector2Array) -> bool:
+	if p.distance_to(TABLE_AT) < CLEAR_RADIUS or Geometry2D.is_point_in_polygon(p, hull):
+		return true
+	for i in hull.size() - 1:
+		if p.distance_to(Geometry2D.get_closest_point_to_segment(p, hull[i], hull[i + 1])) < CLEAR_MARGIN:
+			return true
+	return false
+
+
+## The table's mood as the room shows it now.
+func _mood(scene: Node) -> String:
+	return str((scene.card_table as RunCardTable).mood["loop"])
+
+
+## Every dancer drawn now whose feet stand between the camera and the table (inside the triangle from the eye to the table's two ends, nearer than the table).
+func _in_the_way(scene: Node) -> Array:
+	var st: StoryStage = scene.stages[scene.active_world]["stage"]
+	var cam3: Vector3 = scene._exit_pose()["cam"]
+	var cam := Vector2(cam3.x, cam3.z)
+	var to := TABLE_AT - cam
+	var side := Vector2(-to.y, to.x).normalized() * CLEAR_HALF
+	var tri := PackedVector2Array([cam, TABLE_AT + side, TABLE_AT - side])
+	var out: Array = []
+	for rid in st.crowds:
+		var c: StoryCrowd = st.crowds[rid]
+		for id in c.actors:
+			var a: Dictionary = c.actors[id]
+			if not (a["node"] as StoryCharacter).visible:
+				continue
+			var p: Vector2 = a["pos"]
+			if Geometry2D.is_point_in_polygon(p, tri) and (p - cam).dot(to.normalized()) < to.length() - 0.3:
+				out.append("%s at %s" % [str(id), str(p)])
+	return out
+
+
+func test_no_crowd_home_stands_in_the_tables_clearing_or_its_sight_lines() -> void:
+	var map := StoryMap.load_chapter("mental_hospital")
+	assert_true(map != null and map.errors.is_empty(), "the ward's map loads: %s" % (str(map.errors) if map != null else "null"))
+	var hull := _clearing_hull(map)
+	var n := 0
+	for h in map.homes:
+		if str(map.homes[h]["sector"]) != "dayroom":
+			continue
+		n += 1
+		assert_false(_in_clearing(map.homes[h]["at"], hull), "%s's home %s is clear of the card table and its sight lines" % [str(h), str(map.homes[h]["at"])])
+	assert_true(n >= 20, "the day room's crowd is still there (%d homes)" % n)
+	var occ: Array = map.occluders.filter(func(o: Dictionary) -> bool: return str(o["id"]) == RunCardTable.OCCLUDER)
+	assert_eq(occ.size(), 1, "the table stands in the map")
+	var meta: Dictionary = RunCardTable.new().meta
+	assert_near(float(occ[0]["width"]), float(meta["metres"][0]), 0.05, "the occluder is as wide as the art says")
+	assert_near(float(occ[0]["height"]), float(meta["metres"][1]), 0.05, "and as tall")
+
+
+func test_the_tables_people_invite_cheer_at_the_touch_refuse_a_wave_off_and_invite_again() -> void:
+	var d := _scene("none")
+	var scene: Node = d["scene"]
+	_to_beat(scene, 4.0)
+	assert_true(scene.card_table != null and (scene.card_table as RunCardTable).ok(), "the table's sheet is loaded")
+	assert_eq(_mood(scene), "invite", "the table is on show: they invite")
+	var st: StoryStage = scene.stages[scene.active_world]["stage"]
+	var props := 0
+	for rid in st.crowds:
+		for p in (st.crowds[rid] as StoryCrowd).props:
+			if (p as StoryCrowdProp).drawer.is_valid():
+				props += 1
+	assert_eq(props, 1, "the table's occluder is drawn by the run's table")
+	_to_beat(scene, 6.0)
+	var t_touch: float = scene._vt
+	assert_true(scene.hotspot_select("ward.cards"))
+	_run_to(scene, t_touch + 0.05)
+	assert_eq(_mood(scene), "pleased", "pleased the instant it is touched")
+	assert_near(float(scene.card_table.mood["t0"]), t_touch, 1e-6, "from the touch")
+	var t_dec: float = scene.engine.t_of(scene.engine._decision_beat())
+	var blocked: Array = []
+	while scene._vt < t_dec - 0.05:
+		_run_to(scene, scene._vt + STEP)
+		assert_eq(_mood(scene), "pleased", "and they keep it up while the camera walks over")
+		blocked.append_array(_in_the_way(scene))
+	assert_eq(blocked, [], "no dancer stands between the camera and the table during the walk and the claim")
+	_run_to(scene, t_dec + 0.1)
+	var commits: Array = (scene.hotspot_log as Array).filter(func(e: Dictionary) -> bool: return e["kind"] == "commit")
+	assert_false(bool(commits[0]["success"]), "no input: waved off")
+	assert_eq(_mood(scene), "refuse", "the people refuse too")
+	_run_to(scene, float(commits[0]["t"]) + 4.2 * BEAT)
+	assert_eq(_mood(scene), "invite", "then they invite again: the table can be touched again")
+	_free(d)
+
+
+func test_the_tables_people_welcome_the_player_and_give_way_to_the_close_up() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	_to_beat(scene, 6.0)
+	scene.hotspot_select("ward.cards")
+	_to_beat(scene, 13.5)
+	assert_eq(_mg(scene).state, "entering", "the block passed: the player sits at its end")
+	assert_eq(_mood(scene), "welcome", "they welcome the player to the chair")
+	_to_beat(scene, 16.05)
+	assert_eq(_mg(scene).state, "active", "seated on the downbeat")
+	_run_to(scene, _mg(scene).begin_t + 0.2 * BEAT)
+	assert_eq(_mood(scene), "welcome", "seated, the close-up still rising over them: the room's table is still there behind it")
+	_run_to(scene, _mg(scene).begin_t + 1.0 * BEAT)
+	assert_eq(_mg(scene).state, "active")
+	assert_eq(_mood(scene), "hidden", "seated: the close-up is the table, the room's version is not drawn behind it")
+	assert_eq((scene.card_table as RunCardTable).region("1"), Rect2(), "nothing to draw")
+	_to_beat(scene, 20.0)
+	assert_true(_mg(scene).tap("exit", scene._vt), "the exit between hands")
+	var ctx := _ctx("stick")
+	ctx["play"] = false
+	var moods := {}
+	var watch := func() -> bool:
+		if _mg(scene).state != "":
+			moods[_mood(scene)] = true
+		return _mg(scene).state == ""
+	assert_true(_until(scene, ctx, watch, 8.0), "left")
+	assert_eq(moods.keys(), ["hidden", "invite"], "getting up: hidden while the close-up is up, back in the room inviting as it sinks away")
+	_run_to(scene, scene._vt + 0.1)
+	assert_eq(_mood(scene), "invite", "up again: they invite again")
+	_free(d)
+
+
+func test_the_tables_frames_are_a_function_of_song_time_and_state_only() -> void:
+	var bs := BEAT
+	assert_eq(RunCardTable.mood_of({}, {}, "", 3.0, bs), {"loop": "idle", "t0": 0.0}, "not on show: they play among themselves")
+	var avail := {"state": "available", "t_state": 0.0}
+	var sel := {"state": "selected", "t_state": 2.0}
+	assert_eq(RunCardTable.mood_of(avail, {}, "", 3.0, bs)["loop"], "invite")
+	assert_eq(RunCardTable.mood_of(sel, {}, "", 3.0, bs), {"loop": "pleased", "t0": 2.0})
+	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": false}, "", 4.5, bs), {"loop": "refuse", "t0": 4.0}, "a wave-off outranks the table on show again")
+	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": false}, "", 4.0 + 4.01 * bs, bs)["loop"], "invite", "for four beats")
+	assert_eq(RunCardTable.mood_of({}, {"t": 4.0, "success": true}, "entering", 4.5, bs)["loop"], "welcome")
+	assert_eq(RunCardTable.mood_of({}, {"t": 4.0, "success": true}, "active", 4.5, bs)["loop"], "hidden")
+	assert_eq(RunCardTable.mood_of({}, {"t": 4.0, "success": true}, "active", 4.5, bs, "rising"), {"loop": "welcome", "t0": 4.0}, "the close-up still rising")
+	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": true}, "active", 9.0, bs, "sinking")["loop"], "invite", "the close-up sinking away")
+	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": true}, "leaving", 9.0, bs, "sinking")["loop"], "invite", "the close-up sinking away (a fall, a stop)")
+	assert_eq(RunCardTable.closeup_of({}, 5.0, bs), "none", "no activity: nothing covers the table")
+	assert_eq(RunCardTable.closeup_of({"phase": "sitting", "phase_t0": 5.0}, 5.0 + 0.1 * bs, bs), "rising", "the close-up only starting to rise")
+	assert_eq(RunCardTable.closeup_of({"phase": "sitting", "phase_t0": 5.0}, 5.0 + 1.0 * bs, bs), "up", "risen")
+	assert_eq(RunCardTable.closeup_of({"phase": "await_bet", "phase_t0": 5.0}, 9.0, bs), "up", "playing")
+	var leave := {"phase": "leaving", "phase_t0": 8.0, "pile": {"via": "pockets", "t0": 8.0, "dur": 4.0 * bs}}
+	assert_eq(RunCardTable.closeup_of(leave, 8.0 + 2.0 * bs, bs), "up", "gathering the money: still up")
+	assert_eq(RunCardTable.closeup_of(leave, 8.0 + 3.9 * bs, bs), "sinking", "sinking away at the end")
+	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": true}, "", 40.0, bs)["loop"], "invite", "after getting up")
+	# the same song times give the same frames whatever the frame steps that led there; a pose holds for half a beat and lands on the half beats
+	for loop in ["idle", "invite", "pleased", "refuse"]:
+		var by_step := {}
+		for step in [1.0 / 30.0, 1.0 / 60.0, 0.013]:
+			var t := 0.0
+			var seen := []
+			while t < 8.0:
+				t += step
+				for probe in [1.0, 2.5, 3.3, 5.75]:
+					if absf(t - probe) < step * 0.5:
+						seen.append([probe, RunCardTable.frame_of(loop, 1.0, probe, 8 if loop != "pleased" else 4, 2, bs, false)])
+			by_step[step] = seen
+		var keys := by_step.keys()
+		for k in keys:
+			assert_eq(by_step[k], by_step[keys[0]], "%s: the same frames at the same song times" % loop)
+	for i in 64:
+		var t0 := float(i) * bs * 0.5 + 0.001
+		var t1 := float(i) * bs * 0.5 + bs * 0.5 - 0.001
+		assert_eq(RunCardTable.frame_of("invite", 0.0, t0, 8, 2, bs, false), RunCardTable.frame_of("invite", 0.0, t1, 8, 2, bs, false), "a pose holds for its half beat")
+	assert_eq(RunCardTable.frame_of("pleased", 10.0, 10.0 + 0.2 * bs, 4, 2, bs, false), 0, "arms up at once at the touch")
+	assert_eq(RunCardTable.frame_of("refuse", 10.0, 10.0 + 30.0, 8, 2, bs, false), 7, "the refusal plays once and holds")
+	assert_eq(RunCardTable.frame_of("invite", 0.0, 7.7, 8, 2, bs, true), 0, "reduced motion: the key pose")
+
+
+func test_from_the_tables_waypoint_the_table_is_hit_and_the_other_day_room_hotspots_keep_their_centres() -> void:
+	var d := _scene("perfect", 7, "", Vector2(844, 390))
+	var scene: Node = d["scene"]
+	_to_beat(scene, 50.0)
+	assert_true(scene.hotspot_select("ward.cards"))
+	_to_beat(scene, 59.0)
+	assert_true(_cam_dist(scene, "day_cards") < 0.3, "the camera stands at the table: %.2f" % _cam_dist(scene, "day_cards"))
+	var items: Array = (scene.hotspot_items() as Array).filter(func(e: Dictionary) -> bool: return str(e["state"]) != "committed")
+	var stage := Rect2(scene._stage_host.global_position, scene._stage_host.size)
+	var st: StoryStage = scene.stages[scene.active_world]["stage"]
+	var lay := HotspotView.layout(items, st.map, st.crowds, scene._exit_pose(), stage.size)
+	var table: Dictionary = {}
+	for e in lay:
+		if str(e["id"]) == "ward.cards":
+			table = e
+	assert_false(table.is_empty())
+	assert_false(bool(table["edge"]), "the table is in the picture at its own waypoint")
+	assert_eq(HotspotView.hit(lay, table["centre"]), "ward.cards", "a touch on the table hits it")
+	for e in lay:
+		assert_eq(HotspotView.hit(lay, e["centre"]), str(e["id"]), "a touch on %s's centre selects it" % str(e["id"]))
+	_free(d)
