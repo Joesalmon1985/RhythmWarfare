@@ -42,7 +42,8 @@ const ACTING_PHASES := ["available", "selected", "committed", "success", "failur
 const LOOK_TARGETS := ["camera", "actor", "thing", "waypoint"]  # `look_at` is the word camera, or the id of an actor (a home), a thing or a waypoint of the scene's map
 const ACTING_KEYS := ["actor", "figure"]  # besides the phases
 const ACT_KEYS := ["act", "face", "look_at", "beats", "then"]
-const CAST_KEYS := ["actor", "at_beat", "act", "face", "look_at", "beats", "if_energy_below", "if_energy_above", "if_flags_all", "if_flags_none"]
+const CAST_KEYS := ["actor", "at_beat", "act", "face", "look_at", "beats", "if_energy_below", "if_energy_above", "if_flags_all", "if_flags_none", "piece", "op", "hide"]
+const PIECE_OPS := ["on", "off", "pulse"]  # a cast line with `piece` + `op` switches a set piece of the map (a thing with "piece": id) instead of directing a person; with `hide: true` it removes a person from the scene
 const CAST_LAST_BEAT := 63.0  # a scene's cast line fires inside its own 64 beats
 const CINE_CAST_LAST_BEAT := 16.0  # a cinematic's lines are relative to its start and run a few bars at most
 
@@ -473,7 +474,16 @@ static func validate_cast(lines: Variant, where: String, idx: Dictionary, errors
 			if str(k) not in CAST_KEYS:
 				errors.append("%s: '%s' is not a field (%s)" % [lw, k, ", ".join(PackedStringArray(CAST_KEYS))])
 		var who := str(ln.get("actor", ""))
-		if who == "":
+		var is_piece := ln.has("piece")
+		var is_hide := bool(ln.get("hide", false))
+		if is_piece:
+			if who != "" or ln.has("act") or is_hide:
+				errors.append("%s: a piece line has `piece` and `op` only (no actor, act or hide)" % lw)
+			if str(ln.get("op", "")) not in PIECE_OPS:
+				errors.append("%s: op must be one of %s" % [lw, ", ".join(PackedStringArray(PIECE_OPS))])
+			if bool(idx["ok"]) and not (idx["pieces"] as Dictionary).has(str(ln["piece"])):
+				errors.append("%s: piece '%s' is not a piece of the scene's map" % [lw, ln["piece"]])
+		elif who == "":
 			errors.append("%s: actor is required" % lw)
 		elif bool(idx["ok"]) and not (idx["actors"] as Dictionary).has(who):
 			errors.append("%s: actor '%s' has no home in the scene's map" % [lw, who])
@@ -483,7 +493,8 @@ static func validate_cast(lines: Variant, where: String, idx: Dictionary, errors
 		for k in ["act", "face", "look_at", "beats"]:
 			if ln.has(k):
 				spec[k] = ln[k]
-		_validate_act(spec, lw, idx, errors)
+		if not is_piece and not is_hide:
+			_validate_act(spec, lw, idx, errors)
 		for k in ["if_energy_below", "if_energy_above"]:
 			if ln.has(k) and (typeof(ln[k]) not in [TYPE_INT, TYPE_FLOAT] or float(ln[k]) < 0.0 or float(ln[k]) > 100.0):
 				errors.append("%s: %s must be a number from 0 to 100" % [lw, k])

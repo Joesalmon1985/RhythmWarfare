@@ -583,17 +583,26 @@ CHAPTER_FURNITURE = {"night_one": ("#4a3a4c", "#2a2230"), "mothership": ("#8aa0b
                      "hospital": ("#5a7a8a", "#3a4a5a"), "mental_hospital": ("#6a7a5a", "#3a4a3a")}
 
 
+PATH_WARDROBES = {"orchard", "birch_hall", "deep_halls", "ash_land"}  # the Ember Road's maps (tools/story/art/wardrobe_ember.py); other paths add theirs here
+
+
 def dress(chapter: str, actor: dict, salt: int = 0) -> dict:
     aid = str(actor["id"])
     chapter_seed = chapter
     if chapter in GOSPEL_MAPS:  # a look comes from the seed id: a disciple (d01..d12) wears the same face in every map of the path
         aid = str(actor.get("seed_id", aid))
         chapter_seed = "gospel" if (aid[0] == "d" and aid[1:].isdigit()) else chapter
+    elif chapter in PATH_WARDROBES:  # a named person who stands in several rooms (`person`) is dressed and faced the same in each, on every map of the Ember Road
+        aid = str(actor.get("person") or aid)
+        chapter_seed = "ember"
     r = random.Random(seed_of(chapter_seed, aid) + salt * 7919)
     arch = str(actor.get("archetype", ""))
     borrowed = str(actor.get("art", "")) == "night_one" or chapter == "night_one"
     if chapter in GOSPEL_MAPS:
         spec = gospel(r, actor)
+    elif chapter in PATH_WARDROBES:
+        from . import wardrobe_ember
+        spec = wardrobe_ember.dress(r, str(actor.get("kind", arch)), actor)
     elif borrowed:
         spec = raver(r, arch)
     elif chapter == "mothership":

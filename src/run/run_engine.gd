@@ -341,8 +341,13 @@ func _fire_cast(q: Dictionary) -> void:
 	var has_flag := func(f: String) -> bool: return hotspots != null and hotspots.has_flag(f)
 	if not RunActing.conditions_hold(line, energy, has_flag):
 		return
+	if line.has("piece"):  # a set piece switched on, off or pulsed (the river rising, the storm calming)
+		_emit({"kind": "cast", "t": float(q["t"]), "beat": float(q["beat"]), "index": int(q["index"]), "source": str(q["source"]), "name": str(q["name"]), "node": str(q["node"]), "phase": int(q["phase"]),
+			"actor": "", "act": "", "face": "", "look_at": "", "beats": 0.0, "piece": str(line["piece"]), "op": str(line["op"]), "hide": false})
+		return
 	_emit({"kind": "cast", "t": float(q["t"]), "beat": float(q["beat"]), "index": int(q["index"]), "source": str(q["source"]), "name": str(q["name"]), "node": str(q["node"]), "phase": int(q["phase"]),
-		"actor": str(line["actor"]), "act": str(line["act"]), "face": str(line.get("face", "")), "look_at": str(line.get("look_at", "")), "beats": float(line.get("beats", RunActing.HOLD_BEATS))})
+		"actor": str(line["actor"]), "act": str(line.get("act", "")), "face": str(line.get("face", "")), "look_at": str(line.get("look_at", "")), "beats": float(line.get("beats", RunActing.HOLD_BEATS)),
+		"piece": "", "op": "", "hide": bool(line.get("hide", false))})
 
 
 func _commit() -> void:

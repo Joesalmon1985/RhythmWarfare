@@ -41,6 +41,7 @@ def strip(raw: Path, name: str, label: str) -> Image.Image | None:
 
 def main() -> None:
     raw, out = Path(sys.argv[1]), Path(sys.argv[2])
+    prefix = sys.argv[sys.argv.index("--prefix") + 1] if "--prefix" in sys.argv else ""  # a path's shots are named <path>_<hotspot>
     out.mkdir(parents=True, exist_ok=True)
     by_world: dict = {}
     for world, hid, scene, actor, flags, cam in acting_frames.frames():
@@ -48,8 +49,8 @@ def main() -> None:
         im = strip(raw, name, f"{hid} ({actor})")
         if im is None:
             continue
-        im.save(out / f"{name}.jpg", quality=80)
-        print(out / f"{name}.jpg")
+        im.save(out / f"{prefix}{name}.jpg", quality=80)
+        print(out / f"{prefix}{name}.jpg")
         by_world.setdefault(world, []).append(im)
     for world, ims in by_world.items():
         sheet = Image.new("RGB", (ims[0].width, sum(i.height for i in ims)), (14, 10, 22))
@@ -57,8 +58,8 @@ def main() -> None:
         for i in ims:
             sheet.paste(i, (0, y))
             y += i.height
-        sheet.save(out / f"contact_acting_{world}.jpg", quality=80)
-        print(out / f"contact_acting_{world}.jpg")
+        sheet.save(out / f"contact_acting_{prefix}{world}.jpg", quality=80)
+        print(out / f"contact_acting_{prefix}{world}.jpg")
 
 
 if __name__ == "__main__":

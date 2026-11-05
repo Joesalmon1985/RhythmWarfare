@@ -405,7 +405,7 @@ func _validate_routes(id: String, n: Dictionary) -> void:
 			if not bool(t["entry"]) and not (is_path() and same_world):
 				errors.append("exit scene %s: the route to %s must lead to the entry scene of a world" % [id, to])
 			var nd := int(t["depth"])
-			if not same_world and nd != mini(int(n["depth"]) + 1, 99) and not (tier_of(int(n["depth"])) == TIERS and nd == int(n["depth"])):
+			if not is_path() and not same_world and nd != mini(int(n["depth"]) + 1, 99) and not (tier_of(int(n["depth"])) == TIERS and nd == int(n["depth"])):  # (a path's worlds may be left towards any depth: a setback goes back)
 				errors.append("exit scene %s (depth %d): route to %s at depth %d (world exits go one level deeper, or stay at the last depth)" % [id, int(n["depth"]), to, nd])
 		else:
 			if not same_world:

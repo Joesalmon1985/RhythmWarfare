@@ -2823,6 +2823,21 @@ class Painter:
         elif kind == "turban":  # wrapped cloth: layered bands round the head
             ellipse(cv, F(0, -ry * 0.5), rx * 1.14, ry * 0.8, tilt, z,
                     lambda lx, ly, u, v: (np.where(v > 0.52, 0, np.where(np.sin((v * 5.0 + u * 1.5) * 3.14) > 0.45, M["hat2"], M["hat"])).astype(np.uint8), -0.05))
+        elif kind == "hood":  # a cloak's hood (the Ember Road): the opening shows the face; `blank` fills it (the riders' dark with a red glint, the sentinel's pale blank face)
+            blank = hat.get("blank", "")
+
+            def hf(lx, ly, u, v):
+                opening = (u * u / 0.5 + (v - 0.14) ** 2 / 0.62) < 1.0
+                if blank and b.fc != 2:
+                    m = np.where(opening, M["hat2"] if blank == "dark" else M["skin"], M["hat"]).astype(np.uint8)
+                else:
+                    m = np.where(opening & (b.fc != 2), 0, M["hat"]).astype(np.uint8)
+                return m, -0.2 * (np.sin(lx * 0.7 + ly * 0.4) > 0.6)
+            ellipse(cv, F(0, ry * 0.02), rx * 1.32, ry * 1.22, tilt, z, hf)
+            if blank == "dark" and b.fc != 2 and self.lod < 4:  # the red glint of two eyes in the dark
+                off = rx * 0.38 if b.fc == 1 else 0.0
+                for sg in (-1, 1):
+                    cv.dot(*F(sg * rx * 0.34 + off, ry * 0.12), "acc2", LIT, z + 0.02)
         elif kind == "halo":
             ellipse(cv, F(0, -ry * 1.4), rx * 0.9, ry * 0.18, 0, z, lambda lx, ly, u, v: np.where(u * u + v * v < 0.45, 0, M["lit"]).astype(np.uint8))
 

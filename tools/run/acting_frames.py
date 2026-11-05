@@ -12,6 +12,7 @@ so the person fills the picture at about twice the size of an ordinary view. `fl
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -22,7 +23,8 @@ PITCH = -7.0
 
 def frames() -> list[tuple]:
     out = []
-    for fn in sorted((ROOT / "content/run/hotspots").glob("*.json")):
+    pid = os.environ.get("RW_PATH_ID", "")  # a path's hotspots (tools/run/capture_path.sh): content/paths/<id>/hotspots
+    for fn in sorted(((ROOT / "content/paths" / pid / "hotspots") if pid else (ROOT / "content/run/hotspots")).glob("*.json")):
         doc = json.loads(fn.read_text(encoding="utf-8"))
         for h in doc["hotspots"]:
             a = h.get("acting")

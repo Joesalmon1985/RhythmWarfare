@@ -994,8 +994,18 @@ func _on_cast(ev: Dictionary) -> void:
 	if str(ev["source"]) == "cinematic":  # a setback's cast acts in the world the cinematic belongs to
 		var cin: Dictionary = data.cfg.get("cinematics", {}).get(str(ev["name"]), {})
 		world = str(data.worlds.get(str(cin.get("world", "")), {}).get("map", ""))
-	var c := _crowd_of(str(ev["actor"]), world)
 	var t0 := float(ev["t"])
+	if str(ev.get("piece", "")) != "":  # a set piece of the scene's world (cast line `piece` + `op`)
+		var pw := world if world != "" else active_world
+		var pst: StoryStage = _build_stage(pw)["stage"]
+		_stage_action(pst, "piece_" + str(ev["op"]), t0, {"piece": str(ev["piece"]), "bars": 2.0})
+		cast_log.append({"t": t0, "beat": float(ev["beat"]), "piece": str(ev["piece"]), "op": str(ev["op"]), "source": str(ev["source"]), "applied": true})
+		return
+	var c := _crowd_of(str(ev["actor"]), world)
+	if bool(ev.get("hide", false)):  # a person who is not in this scene (a companion lost on the road)
+		var hid := c != null and c.hide_actor(str(ev["actor"]))
+		cast_log.append({"t": t0, "beat": float(ev["beat"]), "actor": str(ev["actor"]), "hide": true, "source": str(ev["source"]), "applied": hid})
+		return
 	if c != null:
 		c.ensure_present(str(ev["actor"]))  # a person of a later group (the traitor and the guards of the grove) is in the scene from the beat that names them
 	var applied := c != null and c.direct_actor(str(ev["actor"]), str(ev["act"]), str(ev["face"]), t0, t0 + float(ev["beats"]) * engine.beat_s, str(ev["look_at"]), "cast")

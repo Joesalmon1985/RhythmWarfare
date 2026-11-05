@@ -853,6 +853,18 @@ func ensure_present(id: String) -> bool:
 	return true
 
 
+## A person who is not in this scene (a cast line with `hide`: the companion lost on the road): gone from the crowd at once. A new run brings the people back (reset).
+func hide_actor(id: String) -> bool:
+	if not actors.has(id):
+		return false
+	actors[id]["present"] = false
+	actors[id]["alpha"] = 0.0
+	actors[id]["move"] = {}
+	actors[id]["dir"] = {}
+	(actors[id]["node"] as StoryCharacter).visible = false
+	return true
+
+
 ## A chain of acts played end to end: [{act, face, look_at, from, until}, ...] (RunActing.outcome_chain). Each hands over to the next when it ends; the last hands back to the person's own life.
 func direct_chain(id: String, segs: Array, src := "") -> bool:
 	if segs.is_empty() or not actors.has(id) or not bool(actors[id]["present"]):

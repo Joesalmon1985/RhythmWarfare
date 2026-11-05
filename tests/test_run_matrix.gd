@@ -109,7 +109,13 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "", start := "w
 				e.choose(str((opts[opts.size() - 1] as Dictionary)["to"]))
 			if taps != "none":
 				if seed == 2:
-					e.choose(str((opts[mini(1, opts.size() - 1)] as Dictionary)["to"]))
+					var pick := mini(1, opts.size() - 1)
+					if data.is_path() and nodes.has(str((opts[pick] as Dictionary)["to"])):  # a path's setbacks lead back: never take the second arrow to a scene already played while another is new
+						for k in opts.size():
+							if not nodes.has(str((opts[k] as Dictionary)["to"])):
+								pick = k
+								break
+					e.choose(str((opts[pick] as Dictionary)["to"]))
 				elif seed == 3:
 					e.choose(str((opts[rng.randi() % opts.size()] as Dictionary)["to"]))
 		# a path inside the world: the door walk starts three beats before the phase ends (the run scene latches it once per phase)
