@@ -8,8 +8,8 @@
   },
   "bass": {
    "rms_db": -12.0,
-   "peak_db": -1.57,
-   "sub_share": 0.502
+   "peak_db": -1.84,
+   "sub_share": 0.527
   },
   "other": {
    "rms_db": -28.0,

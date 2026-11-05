@@ -118,29 +118,45 @@ def hat(rng: np.random.Generator, open_: bool) -> np.ndarray:
     return x * (0.22 if open_ else 0.16)
 
 
-def _partials(f: float, n: int, wobble: np.ndarray | None, rolloff: float) -> np.ndarray:
-    t = _t(n)
-    out = np.zeros(n)
-    k = 2  # (the fundamental is the sub sine of bass_note, so the stack starts at the octave: a phone speaker plays the stack, a club plays the sub)
-    while f * k < 3500 and k < 14:
-        a = 1.0 / (k ** rolloff)
-        if wobble is not None and k > 1:
-            a = a * (0.25 + 0.75 * wobble)  # the wobble opens and closes the upper harmonics (a crude filter), the sub stays
-        out += a * np.sin(2 * np.pi * f * k * t + k)
-        k += 1
-    return out
+# The bass voice per genre (the audio polish, docs/HANDOVER.md "Audio polish"): a SUB sine at the root plus a MID layer (the harmonic stack from the octave up, saturated so it has the upper harmonics a
+# phone speaker plays, with a brightness envelope so every note speaks), mixed at `mid` times the sub's RMS (so the sub keeps its share under sub_hz). `bright_s` is how fast the upper partials close
+# after the attack, `drive` the mid layer's saturation, `pluck_s` (psytrance) a short decay on every note: a clear sixteenth pulse between the kicks.
+BASS_VOICES = {
+    "house": {"mid": 0.8, "bright_s": 0.22, "drive": 2.2, "pluck_s": 0.0, "rolloff": 1.0},
+    "dubstep": {"mid": 0.95, "bright_s": 0.0, "drive": 2.8, "pluck_s": 0.0, "rolloff": 0.8},
+    "psytrance": {"mid": 0.85, "bright_s": 0.045, "drive": 2.4, "pluck_s": 0.07, "rolloff": 0.9},
+}
 
 
-def bass_note(f: float, dur_s: float, wobble_hz: float, sub: float = 1.0) -> np.ndarray:
+def bass_note(f: float, dur_s: float, wobble_hz: float, sub: float = 1.0, voice: dict | None = None) -> np.ndarray:
+    v = voice or BASS_VOICES["house"]
     n = int((dur_s + 0.08) * SAMPLE_RATE)
     t = _t(n)
     wob = None
     if wobble_hz > 0.0:
         wob = 0.5 + 0.5 * np.sin(2 * np.pi * wobble_hz * t - np.pi / 2)
-    upper = _partials(f, n, wob, 1.0)
+    mid = np.zeros(n)
+    k = 2  # (the fundamental is the sub sine, so the stack starts at the octave: a phone speaker plays the stack, a club plays the sub)
+    while f * k < 4000 and k < 18:
+        a = 1.0 / (k ** float(v["rolloff"]))
+        if f * k < 150.0:
+            a *= 0.3  # the partials a phone speaker cannot play (under 150 Hz) stay light: the sub sine already fills that range, the mid layer is for the small speaker
+        if float(v["bright_s"]) > 0.0:
+            a = a * (0.35 + 0.65 * np.exp(-t * (k - 1) / (float(v["bright_s"]) * 6.0)))  # the higher a partial, the sooner it closes: a filter envelope
+        if wob is not None:
+            a = a * (0.2 + 0.8 * wob)  # the wobble opens and closes the upper harmonics, the sub stays
+        mid += a * np.sin(2 * np.pi * f * k * t + k)
+        k += 1
+    pk = float(np.abs(mid).max()) or 1.0
+    mid = np.tanh(float(v["drive"]) * mid / pk)  # saturated: odd harmonics on top of the stack, a body that reads on a small speaker
     subsine = np.sin(2 * np.pi * f * t)  # the sub: a plain sine at the root, under everything
-    env = np.minimum(1.0, t / 0.004) * np.where(t < dur_s, 1.0, np.exp(-(t - dur_s) / 0.02)) * (0.7 + 0.3 * np.exp(-t / 0.12))
-    return (1.2 * upper + sub * subsine) * env
+    mid *= float(v["mid"]) * math.sqrt(0.5) / max(float(np.sqrt((mid ** 2).mean())), 1e-9)
+    env = np.minimum(1.0, t / 0.004) * np.where(t < dur_s, 1.0, np.exp(-(t - dur_s) / 0.02))
+    if float(v["pluck_s"]) > 0.0:
+        env = env * (0.3 + 0.7 * np.exp(-t / float(v["pluck_s"])))
+    else:
+        env = env * (0.7 + 0.3 * np.exp(-t / 0.12))
+    return (mid + sub * subsine) * env
 
 
 def pad_chord(freqs: list[float], dur_s: float) -> np.ndarray:
@@ -217,7 +233,7 @@ def build_scene(bpm: int, mix: dict, rng: np.random.Generator, variant: int) -> 
         for (s, length, semi) in genre["bass"]:
             midi = key - 12 + root + semi
             dur_s = max(length * step_s * 0.92, 0.05)
-            put(bass, bass_note(hz(midi), dur_s, (1.0 / (beat_s / 2.0)) if genre["wobble"] > 0.0 else 0.0), t0 + s * step_s, 1.0)
+            put(bass, bass_note(hz(midi), dur_s, (1.0 / (beat_s / 2.0)) if genre["wobble"] > 0.0 else 0.0, voice=BASS_VOICES[mix["genre"]]), t0 + s * step_s, 1.0)
             bass_notes.append({"pitch": midi, "beat": bar * 4 + s / 4.0, "dur": length / 4.0, "vel": 112})
         if bar % int(genre["pad_every"]) == 0:
             span = int(genre["pad_every"]) * 4 * beat_s
@@ -356,8 +372,9 @@ def generate(path_id: str, out_root: Path = PACKS, force: bool = False, paths_ro
             continue
         write_scene_pack(out_root, path_id, node["scene"], node["id"], run["path"]["title"], bpm, mix, i)
         entries[node["id"]] = {"id": node["id"], "audio": pack_id, "chart": pack_id, "treatment": "none", "temporary": True}
-        if existing is not None and "prompt" in existing:
-            entries[node["id"]]["prompt"] = existing["prompt"]  # the owner's music prompt rides on the entry (docs/MUSIC_HANDOFF.md); a --force rewrite must not drop it
+        for keep in ("prompt", "bass_bus"):  # the owner's music prompt (docs/MUSIC_HANDOFF.md) and the scene's bass bus (the audio polish) ride on the entry; a --force rewrite must not drop them
+            if existing is not None and keep in existing:
+                entries[node["id"]][keep] = existing[keep]
         done.append(pack_id)
     music["nodes"] = [entries[n["id"]] for n in run["nodes"] if n["id"] in entries]
     write_json(music_path, music, indent=1)

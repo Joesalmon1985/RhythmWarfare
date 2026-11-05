@@ -33,7 +33,7 @@
    "tail_audible_s": 0.0,
    "laps_folded": 1,
    "gain_db": 0.0,
-   "peak_db": -1.57,
+   "peak_db": -1.69,
    "rms_db": -12.0,
    "source_seconds": 15.4839,
    "source_file": "synthesised"
@@ -1858,8 +1858,8 @@
   },
   "bass": {
    "rms_db": -12.0,
-   "peak_db": -1.57,
-   "sub_share": 0.533
+   "peak_db": -1.69,
+   "sub_share": 0.561
   },
   "other": {
    "rms_db": -28.0,
