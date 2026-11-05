@@ -1,0 +1,963 @@
+{
+ "art": "deep_halls",
+ "units_per_m": 1,
+ "eye_height": 1.6,
+ "palette_weight": 0.0,
+ "start": "halls_c",
+ "textures": {
+  "ceil_black": "textures/ceil_black.png",
+  "ceil_stars": "textures/ceil_stars.png",
+  "floor_boardwalk": "textures/floor_boardwalk.png",
+  "floor_bridge": "textures/floor_bridge.png",
+  "floor_deep": "textures/floor_deep.png",
+  "floor_lake": "textures/floor_lake.png",
+  "floor_wet_rock": "textures/floor_wet_rock.png",
+  "piece_drowned_thing": "textures/piece_drowned_thing.png",
+  "sky_falls": "textures/sky_falls.png",
+  "thing_boat": "textures/thing_boat.png",
+  "thing_bridge_rail": "textures/thing_bridge_rail.png",
+  "thing_cold_light": "textures/thing_cold_light.png",
+  "thing_drum": "textures/thing_drum.png",
+  "thing_ember": "textures/thing_ember.png",
+  "thing_horn": "textures/thing_horn.png",
+  "thing_lantern_boat": "textures/thing_lantern_boat.png",
+  "thing_mist": "textures/thing_mist.png",
+  "thing_pillar_deep": "textures/thing_pillar_deep.png",
+  "thing_rope_post": "textures/thing_rope_post.png",
+  "thing_stalagmite": "textures/thing_stalagmite.png",
+  "thing_waterfall_edge": "textures/thing_waterfall_edge.png",
+  "wall_deep": "textures/wall_deep.png",
+  "wall_deep_arch": "textures/wall_deep_arch.png",
+  "wall_falls": "textures/wall_falls.png",
+  "wall_rock_wet": "textures/wall_rock_wet.png"
+ },
+ "sectors": [
+  {
+   "id": "dh_hall",
+   "polygon": [
+    [
+     -10,
+     0
+    ],
+    [
+     10,
+     0
+    ],
+    [
+     10,
+     26
+    ],
+    [
+     -10,
+     26
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 9,
+   "floor_tex": "floor_deep",
+   "ceil_tex": "ceil_black",
+   "wall_tex": "wall_deep",
+   "light": 0.62,
+   "tint": "#8aaae0",
+   "room": "halls",
+   "flags": []
+  },
+  {
+   "id": "dh_lake",
+   "polygon": [
+    [
+     -10,
+     -16
+    ],
+    [
+     -1.5,
+     -16
+    ],
+    [
+     -1.5,
+     0
+    ],
+    [
+     -10,
+     0
+    ]
+   ],
+   "floor": -1.2,
+   "ceiling": 9,
+   "floor_tex": "floor_lake",
+   "ceil_tex": "ceil_black",
+   "wall_tex": "wall_rock_wet",
+   "light": 0.5,
+   "tint": "#6a8ac0",
+   "room": "halls",
+   "flags": []
+  },
+  {
+   "id": "dh_bridge",
+   "polygon": [
+    [
+     -1.5,
+     -16
+    ],
+    [
+     1.5,
+     -16
+    ],
+    [
+     1.5,
+     0
+    ],
+    [
+     -1.5,
+     0
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 9,
+   "floor_tex": "floor_bridge",
+   "ceil_tex": "ceil_black",
+   "wall_tex": "wall_deep",
+   "light": 0.62,
+   "tint": "#8aaae0",
+   "room": "halls",
+   "flags": []
+  },
+  {
+   "id": "dh_ledge",
+   "polygon": [
+    [
+     1.5,
+     -16
+    ],
+    [
+     10,
+     -16
+    ],
+    [
+     10,
+     0
+    ],
+    [
+     1.5,
+     0
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 9,
+   "floor_tex": "floor_wet_rock",
+   "ceil_tex": "ceil_black",
+   "wall_tex": "wall_rock_wet",
+   "light": 0.56,
+   "tint": "#7a9ad0",
+   "room": "halls",
+   "flags": []
+  },
+  {
+   "id": "dh_far",
+   "polygon": [
+    [
+     -10,
+     -30
+    ],
+    [
+     10,
+     -30
+    ],
+    [
+     10,
+     -16
+    ],
+    [
+     -10,
+     -16
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 9,
+   "floor_tex": "floor_deep",
+   "ceil_tex": "ceil_black",
+   "wall_tex": "wall_deep",
+   "light": 0.6,
+   "tint": "#84a4d8",
+   "room": "halls",
+   "flags": []
+  },
+  {
+   "id": "dh_tunnel",
+   "polygon": [
+    [
+     -2,
+     -40
+    ],
+    [
+     2,
+     -40
+    ],
+    [
+     2,
+     -30
+    ],
+    [
+     -2,
+     -30
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 5,
+   "floor_tex": "floor_deep",
+   "ceil_tex": "ceil_black",
+   "wall_tex": "wall_deep_arch",
+   "light": 0.55,
+   "tint": "#8aaae0",
+   "room": "falls",
+   "flags": []
+  },
+  {
+   "id": "dh_falls",
+   "polygon": [
+    [
+     -12,
+     -70
+    ],
+    [
+     12,
+     -70
+    ],
+    [
+     12,
+     -40
+    ],
+    [
+     -12,
+     -40
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 11,
+   "floor_tex": "floor_boardwalk",
+   "ceil_tex": "ceil_stars",
+   "wall_tex": "wall_rock_wet",
+   "light": 0.72,
+   "tint": "#a8c8f8",
+   "room": "falls",
+   "flags": []
+  }
+ ],
+ "walls": [
+  {
+   "from": [
+    -10.0,
+    0
+   ],
+   "to": [
+    -1.5,
+    0
+   ],
+   "sector": "dh_hall",
+   "portal": "dh_lake"
+  },
+  {
+   "from": [
+    -1.5,
+    0
+   ],
+   "to": [
+    1.5,
+    0
+   ],
+   "sector": "dh_hall",
+   "portal": "dh_bridge"
+  },
+  {
+   "from": [
+    3.75,
+    0
+   ],
+   "to": [
+    7.75,
+    0
+   ],
+   "sector": "dh_hall",
+   "portal": "dh_ledge"
+  },
+  {
+   "from": [
+    -10.0,
+    -16
+   ],
+   "to": [
+    -1.5,
+    -16
+   ],
+   "sector": "dh_far",
+   "portal": "dh_lake"
+  },
+  {
+   "from": [
+    -1.5,
+    -16
+   ],
+   "to": [
+    1.5,
+    -16
+   ],
+   "sector": "dh_far",
+   "portal": "dh_bridge"
+  },
+  {
+   "from": [
+    3.75,
+    -16
+   ],
+   "to": [
+    7.75,
+    -16
+   ],
+   "sector": "dh_far",
+   "portal": "dh_ledge"
+  },
+  {
+   "from": [
+    -1.5,
+    -30
+   ],
+   "to": [
+    1.5,
+    -30
+   ],
+   "sector": "dh_far",
+   "portal": "dh_tunnel"
+  },
+  {
+   "from": [
+    -1.5,
+    -40
+   ],
+   "to": [
+    1.5,
+    -40
+   ],
+   "sector": "dh_tunnel",
+   "portal": "dh_falls"
+  },
+  {
+   "from": [
+    -12,
+    -70
+   ],
+   "to": [
+    12,
+    -70
+   ],
+   "sector": "dh_falls",
+   "tex": "wall_falls"
+  }
+ ],
+ "things": [
+  {
+   "id": "pil_dl0",
+   "kind": "billboard",
+   "sprite": "thing_pillar_deep",
+   "at": [
+    -8.2,
+    4
+   ],
+   "size": 8.5,
+   "anim": "none",
+   "sector": "dh_hall"
+  },
+  {
+   "id": "pil_dr0",
+   "kind": "billboard",
+   "sprite": "thing_pillar_deep",
+   "at": [
+    8.2,
+    4
+   ],
+   "size": 8.5,
+   "anim": "none",
+   "sector": "dh_hall"
+  },
+  {
+   "id": "pil_dl1",
+   "kind": "billboard",
+   "sprite": "thing_pillar_deep",
+   "at": [
+    -8.2,
+    11
+   ],
+   "size": 8.5,
+   "anim": "none",
+   "sector": "dh_hall"
+  },
+  {
+   "id": "pil_dr1",
+   "kind": "billboard",
+   "sprite": "thing_pillar_deep",
+   "at": [
+    8.2,
+    11
+   ],
+   "size": 8.5,
+   "anim": "none",
+   "sector": "dh_hall"
+  },
+  {
+   "id": "pil_dl2",
+   "kind": "billboard",
+   "sprite": "thing_pillar_deep",
+   "at": [
+    -8.2,
+    18
+   ],
+   "size": 8.5,
+   "anim": "none",
+   "sector": "dh_hall"
+  },
+  {
+   "id": "pil_dr2",
+   "kind": "billboard",
+   "sprite": "thing_pillar_deep",
+   "at": [
+    8.2,
+    18
+   ],
+   "size": 8.5,
+   "anim": "none",
+   "sector": "dh_hall"
+  },
+  {
+   "id": "pil_dl3",
+   "kind": "billboard",
+   "sprite": "thing_pillar_deep",
+   "at": [
+    -8.2,
+    24
+   ],
+   "size": 8.5,
+   "anim": "none",
+   "sector": "dh_hall"
+  },
+  {
+   "id": "pil_dr3",
+   "kind": "billboard",
+   "sprite": "thing_pillar_deep",
+   "at": [
+    8.2,
+    24
+   ],
+   "size": 8.5,
+   "anim": "none",
+   "sector": "dh_hall"
+  },
+  {
+   "id": "pil_fl0",
+   "kind": "billboard",
+   "sprite": "thing_pillar_deep",
+   "at": [
+    -8.2,
+    -20
+   ],
+   "size": 8.5,
+   "anim": "none",
+   "sector": "dh_far"
+  },
+  {
+   "id": "pil_fr0",
+   "kind": "billboard",
+   "sprite": "thing_pillar_deep",
+   "at": [
+    8.2,
+    -20
+   ],
+   "size": 8.5,
+   "anim": "none",
+   "sector": "dh_far"
+  },
+  {
+   "id": "pil_fl1",
+   "kind": "billboard",
+   "sprite": "thing_pillar_deep",
+   "at": [
+    -8.2,
+    -27
+   ],
+   "size": 8.5,
+   "anim": "none",
+   "sector": "dh_far"
+  },
+  {
+   "id": "pil_fr1",
+   "kind": "billboard",
+   "sprite": "thing_pillar_deep",
+   "at": [
+    8.2,
+    -27
+   ],
+   "size": 8.5,
+   "anim": "none",
+   "sector": "dh_far"
+  },
+  {
+   "id": "cold",
+   "kind": "billboard",
+   "sprite": "thing_cold_light",
+   "at": [
+    0.0,
+    9.0
+   ],
+   "size": 3.6,
+   "anim": "none",
+   "y": 6.0,
+   "sector": "dh_hall"
+  },
+  {
+   "id": "drum",
+   "kind": "billboard",
+   "sprite": "thing_drum",
+   "at": [
+    6.2,
+    -5.0
+   ],
+   "size": 2.0,
+   "anim": "pulse",
+   "sector": "dh_ledge"
+  },
+  {
+   "id": "drowned",
+   "kind": "billboard",
+   "sprite": "piece_drowned_thing",
+   "at": [
+    -6.0,
+    -8.0
+   ],
+   "size": 4.4,
+   "anim": "none",
+   "y": 2.2,
+   "piece": "drowned",
+   "blend": "mix",
+   "sector": "dh_lake"
+  },
+  {
+   "id": "stalag0",
+   "kind": "billboard",
+   "sprite": "thing_stalagmite",
+   "at": [
+    -9.2,
+    -13.0
+   ],
+   "size": 2.6,
+   "anim": "none",
+   "sector": "dh_lake"
+  },
+  {
+   "id": "rail0",
+   "kind": "billboard",
+   "sprite": "thing_bridge_rail",
+   "at": [
+    -2.1,
+    -8.0
+   ],
+   "size": 1.2,
+   "anim": "none",
+   "sector": "dh_lake"
+  },
+  {
+   "id": "mist0",
+   "kind": "billboard",
+   "sprite": "thing_mist",
+   "at": [
+    -5.0,
+    -6.0
+   ],
+   "size": 2.2,
+   "anim": "sway",
+   "sector": "dh_lake"
+  },
+  {
+   "id": "blamp",
+   "kind": "billboard",
+   "sprite": "thing_lantern_boat",
+   "at": [
+    2.6,
+    21.0
+   ],
+   "size": 0.8,
+   "anim": "none",
+   "sector": "dh_hall"
+  },
+  {
+   "id": "lt_cold",
+   "kind": "light",
+   "at": [
+    0,
+    9
+   ],
+   "y": 7.0,
+   "radius": 20,
+   "color": "#b8d8ff",
+   "strength": 1.6,
+   "sector": "dh_hall"
+  },
+  {
+   "id": "lt_lake",
+   "kind": "light",
+   "at": [
+    -5.0,
+    -6.0
+   ],
+   "y": 4.0,
+   "radius": 12,
+   "color": "#6890c8",
+   "strength": 0.9,
+   "sector": "dh_lake"
+  },
+  {
+   "id": "lt_lamp",
+   "kind": "light",
+   "at": [
+    0.0,
+    18.0
+   ],
+   "y": 1.4,
+   "radius": 9.0,
+   "color": "#ffb878",
+   "strength": 1.5,
+   "sector": "dh_hall"
+  },
+  {
+   "id": "lt_far",
+   "kind": "light",
+   "at": [
+    0,
+    -22
+   ],
+   "y": 6.0,
+   "radius": 16,
+   "color": "#a0c0f0",
+   "strength": 1.1,
+   "sector": "dh_far"
+  },
+  {
+   "id": "falls_lip",
+   "kind": "billboard",
+   "sprite": "thing_waterfall_edge",
+   "at": [
+    0,
+    -67.0
+   ],
+   "size": 4.5,
+   "anim": "none",
+   "y": 1.0,
+   "sector": "dh_falls"
+  },
+  {
+   "id": "boat",
+   "kind": "billboard",
+   "sprite": "thing_boat",
+   "at": [
+    -5.0,
+    -50.0
+   ],
+   "size": 2.6,
+   "anim": "bob",
+   "sector": "dh_falls"
+  },
+  {
+   "id": "post0",
+   "kind": "billboard",
+   "sprite": "thing_rope_post",
+   "at": [
+    -3.0,
+    -50.0
+   ],
+   "size": 1.4,
+   "anim": "none",
+   "sector": "dh_falls"
+  },
+  {
+   "id": "horn",
+   "kind": "billboard",
+   "sprite": "thing_horn",
+   "at": [
+    6.5,
+    -50.0
+   ],
+   "size": 1.2,
+   "anim": "none",
+   "sector": "dh_falls"
+  },
+  {
+   "id": "mist1",
+   "kind": "billboard",
+   "sprite": "thing_mist",
+   "at": [
+    0,
+    -62
+   ],
+   "size": 3.0,
+   "anim": "sway",
+   "sector": "dh_falls"
+  },
+  {
+   "id": "rail1",
+   "kind": "billboard",
+   "sprite": "thing_bridge_rail",
+   "at": [
+    8.5,
+    -46.0
+   ],
+   "size": 1.2,
+   "anim": "none",
+   "sector": "dh_falls"
+  },
+  {
+   "id": "blamp2",
+   "kind": "billboard",
+   "sprite": "thing_lantern_boat",
+   "at": [
+    -3.8,
+    -48.0
+   ],
+   "size": 0.9,
+   "anim": "none",
+   "sector": "dh_falls"
+  },
+  {
+   "id": "lt_falls",
+   "kind": "light",
+   "at": [
+    0,
+    -56
+   ],
+   "y": 8.0,
+   "radius": 24,
+   "color": "#a8c8f8",
+   "strength": 1.2,
+   "sector": "dh_falls"
+  },
+  {
+   "id": "lt_boat",
+   "kind": "light",
+   "at": [
+    -4.0,
+    -48.5
+   ],
+   "y": 1.4,
+   "radius": 6.0,
+   "color": "#ffb060",
+   "strength": 1.2,
+   "sector": "dh_falls"
+  }
+ ],
+ "homes": [
+  {
+   "actor": "bram_d",
+   "sector": "dh_hall",
+   "at": [
+    -1.3,
+    19.8
+   ]
+  },
+  {
+   "actor": "warden_d",
+   "sector": "dh_hall",
+   "at": [
+    1.3,
+    20.0
+   ]
+  },
+  {
+   "actor": "bram_fb",
+   "sector": "dh_falls",
+   "at": [
+    -2.0,
+    -47.0
+   ]
+  },
+  {
+   "actor": "warden_f",
+   "sector": "dh_falls",
+   "at": [
+    2.4,
+    -47.2
+   ]
+  }
+ ],
+ "waypoints": [
+  {
+   "id": "halls_c",
+   "at": [
+    0,
+    23.0
+   ],
+   "yaw": 0,
+   "sector": "dh_hall"
+  },
+  {
+   "id": "halls_mid",
+   "at": [
+    0,
+    14.5
+   ],
+   "yaw": 0,
+   "sector": "dh_hall"
+  },
+  {
+   "id": "halls_edge",
+   "at": [
+    0,
+    5.5
+   ],
+   "yaw": 0,
+   "sector": "dh_hall"
+  },
+  {
+   "id": "halls_w",
+   "at": [
+    -6.0,
+    20.0
+   ],
+   "yaw": 12,
+   "sector": "dh_hall"
+  },
+  {
+   "id": "halls_e",
+   "at": [
+    6.0,
+    20.0
+   ],
+   "yaw": -12,
+   "sector": "dh_hall"
+  },
+  {
+   "id": "bridge_wp",
+   "at": [
+    0,
+    -1.2
+   ],
+   "yaw": 0,
+   "sector": "dh_bridge"
+  },
+  {
+   "id": "lake_edge",
+   "at": [
+    -5.0,
+    1.2
+   ],
+   "yaw": 8,
+   "sector": "dh_hall"
+  },
+  {
+   "id": "far_in",
+   "at": [
+    0,
+    -17.6
+   ],
+   "yaw": 0,
+   "sector": "dh_far"
+  },
+  {
+   "id": "falls_in",
+   "at": [
+    0,
+    -41.8
+   ],
+   "yaw": 0,
+   "sector": "dh_falls"
+  },
+  {
+   "id": "falls_c",
+   "at": [
+    0,
+    -43.5
+   ],
+   "yaw": 0,
+   "sector": "dh_falls"
+  },
+  {
+   "id": "falls_mid",
+   "at": [
+    0,
+    -50.0
+   ],
+   "yaw": 0,
+   "sector": "dh_falls"
+  },
+  {
+   "id": "falls_lip_wp",
+   "at": [
+    0,
+    -58.0
+   ],
+   "yaw": 0,
+   "sector": "dh_falls"
+  },
+  {
+   "id": "falls_w",
+   "at": [
+    -7.5,
+    -47.0
+   ],
+   "yaw": 15,
+   "sector": "dh_falls"
+  },
+  {
+   "id": "falls_e",
+   "at": [
+    7.5,
+    -47.0
+   ],
+   "yaw": -15,
+   "sector": "dh_falls"
+  },
+  {
+   "id": "boat_wp",
+   "at": [
+    -5.0,
+    -52.4
+   ],
+   "yaw": 8,
+   "sector": "dh_falls"
+  },
+  {
+   "id": "horn_wp",
+   "at": [
+    6.5,
+    -52.4
+   ],
+   "yaw": -8,
+   "sector": "dh_falls"
+  }
+ ],
+ "spots": {},
+ "silhouettes": [],
+ "occluders": [],
+ "sky": {
+  "tex": "textures/sky_falls.png",
+  "mode": "cylinder"
+ },
+ "fog": {
+  "color": "#050914",
+  "density": 0.02
+ },
+ "rooms": {},
+ "animated": [
+  {
+   "tex": "floor_lake",
+   "mode": "scroll",
+   "speed": [
+    0.05,
+    0.03
+   ]
+  },
+  {
+   "tex": "wall_falls",
+   "mode": "scroll",
+   "speed": [
+    0.0,
+    0.5
+   ]
+  }
+ ]
+}

@@ -1,0 +1,474 @@
+{
+ "world": "marsh",
+ "hotspots": [
+  {
+   "id": "marsh.path",
+   "world": "marsh",
+   "scene": "marsh",
+   "map": "ash_land",
+   "anchor": {
+    "waypoint": "marsh_path"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh.wall"
+   },
+   "on_failure": {
+    "route": "marsh.wall",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "marsh.hollow_one",
+   "world": "marsh",
+   "scene": "marsh",
+   "map": "ash_land",
+   "anchor": {
+    "actor": "ho_m"
+   },
+   "kind": "character",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh.stair",
+    "flags_set": [
+     "ember_hollow_trust"
+    ]
+   },
+   "on_failure": {
+    "route": "marsh.wall",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": false,
+   "acting": {
+    "actor": "ho_m",
+    "available": {
+     "act": "beckon",
+     "face": "plea",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "doubt",
+     "look_at": "marsh_path"
+    },
+    "success": {
+     "act": "beckon",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 6,
+     "then": {
+      "act": "laugh",
+      "face": "anger",
+      "look_at": "marsh_fwd",
+      "beats": 12
+     }
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "anger",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "anger",
+      "look_at": "camera"
+     }
+    }
+   }
+  },
+  {
+   "id": "marsh.lights",
+   "world": "marsh",
+   "scene": "marsh",
+   "map": "ash_land",
+   "anchor": {
+    "thing": "mlight1"
+   },
+   "kind": "feature",
+   "radius_m": 1.4,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh.wall",
+    "flags_set": [
+     "ember_lights"
+    ]
+   },
+   "on_failure": {
+    "route": "marsh.stair",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": false
+  },
+  {
+   "id": "marsh.wall.crack",
+   "world": "marsh",
+   "scene": "marsh.wall",
+   "map": "ash_land",
+   "anchor": {
+    "thing": "crack"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh.stair"
+   },
+   "on_failure": {
+    "route": "marsh.stair",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "marsh.wall.gate",
+   "world": "marsh",
+   "scene": "marsh.wall",
+   "map": "ash_land",
+   "anchor": {
+    "thing": "gate_black"
+   },
+   "kind": "encounter",
+   "radius_m": 1.8,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "flicker",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh.plain",
+    "flags_set": [
+     "ember_gate_open"
+    ]
+   },
+   "on_failure": {
+    "route": "mountain.taken",
+    "energy": -8,
+    "cinematic": "ember.riders_seize"
+   },
+   "default": false,
+   "repeatable": false
+  },
+  {
+   "id": "marsh.stair.side_path",
+   "world": "marsh",
+   "scene": "marsh.stair",
+   "map": "ash_land",
+   "anchor": {
+    "waypoint": "stair_side"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh.plain"
+   },
+   "on_failure": {
+    "route": "marsh.plain",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "marsh.stair.bells",
+   "world": "marsh",
+   "scene": "marsh.stair",
+   "map": "ash_land",
+   "anchor": {
+    "thing": "bells"
+   },
+   "kind": "feature",
+   "radius_m": 1.5,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "ember_no_vial"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh.plain",
+    "flags_set": [
+     "ember_bells_silent"
+    ]
+   },
+   "on_failure": {
+    "route": "marsh.plain",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": false
+  },
+  {
+   "id": "marsh.stair.bells_hard",
+   "world": "marsh",
+   "scene": "marsh.stair",
+   "map": "ash_land",
+   "anchor": {
+    "thing": "bells"
+   },
+   "kind": "feature",
+   "radius_m": 1.5,
+   "min_px": 72,
+   "available": {
+    "flags_all": [
+     "ember_no_vial"
+    ],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "marsh.plain",
+    "flags_set": [
+     "ember_bells_silent"
+    ]
+   },
+   "on_failure": {
+    "route": "mountain.taken",
+    "energy": -8,
+    "cinematic": "ember.riders_seize"
+   },
+   "default": false,
+   "repeatable": false
+  },
+  {
+   "id": "marsh.stair.sentinel",
+   "world": "marsh",
+   "scene": "marsh.stair",
+   "map": "ash_land",
+   "anchor": {
+    "actor": "sentinel"
+   },
+   "kind": "encounter",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "flicker",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mountain",
+    "flags_set": [
+     "ember_sentinel_asleep"
+    ],
+    "cinematic": "ember.sentinel_sleeps"
+   },
+   "on_failure": {
+    "route": "mountain.taken",
+    "energy": -8,
+    "cinematic": "ember.riders_seize"
+   },
+   "default": false,
+   "repeatable": false,
+   "acting": {
+    "actor": "sentinel",
+    "available": {
+     "act": "stare",
+     "face": "neutral",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "block",
+     "face": "neutral",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "stare",
+     "face": "neutral",
+     "look_at": "camera"
+    },
+    "success": {
+     "act": "bow",
+     "face": "neutral",
+     "beats": 10,
+     "then": {
+      "act": "sleep",
+      "face": "neutral"
+     }
+    },
+    "failure": {
+     "act": "stamp",
+     "face": "anger",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "neutral",
+      "look_at": "camera"
+     }
+    }
+   }
+  },
+  {
+   "id": "marsh.plain.road",
+   "world": "marsh",
+   "scene": "marsh.plain",
+   "map": "ash_land",
+   "anchor": {
+    "waypoint": "road_wp"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mountain"
+   },
+   "on_failure": {
+    "route": "mountain",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "marsh.plain.tower",
+   "world": "marsh",
+   "scene": "marsh.plain",
+   "map": "ash_land",
+   "anchor": {
+    "thing": "tower"
+   },
+   "kind": "feature",
+   "radius_m": 1.4,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "mountain.taken",
+    "flags_set": [
+     "ember_tower"
+    ]
+   },
+   "on_failure": {
+    "route": "mountain",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": false
+  }
+ ]
+}

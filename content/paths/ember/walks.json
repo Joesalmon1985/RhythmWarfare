@@ -1,0 +1,8 @@
+{
+ "kept": {"bot": "perfect", "routes": "up,up,up,up,left,up,up,up,up,up,right,up", "until": 12, "start": "",
+          "expect": "hollow,hollow.ford,hollow.inn,north,north.pass,deeps,deeps.falls,marsh,marsh.wall,marsh.plain,mountain,mountain.keeper,warehouse"},
+ "taken": {"bot": "perfect", "routes": "up,up,up,up,left,up,up,up,up,left,up,up,up,up", "until": 14, "start": "",
+           "expect": "hollow,hollow.ford,hollow.inn,north,north.pass,deeps,deeps.falls,marsh,marsh.wall,marsh.plain,mountain.taken,marsh.plain,mountain,mountain.spring,warehouse"},
+ "lantern": {"bot": "perfect", "routes": "up,left,up,up,right,up,up,right,up,up,up,up", "until": 12, "start": "",
+             "expect": "-"}
+}

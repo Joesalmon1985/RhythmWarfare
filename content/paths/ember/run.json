@@ -1,0 +1,2588 @@
+{
+ "schema": 1,
+ "path": {
+  "id": "ember",
+  "title": "The Ember Road",
+  "entry_from": "warehouse.bar.ember",
+  "returns_to": "warehouse",
+  "opens": "Take the stranger's VIP pass at the bar, then touch the small ember in the glass on the table (the bar)."
+ },
+ "timing": {
+  "bpm": 145,
+  "phase_beats": 64,
+  "block_beats": 16,
+  "cue_span_beats": 12.0,
+  "decision_beat": 12.5,
+  "fade_beats": 2.0
+ },
+ "start_node": "hollow",
+ "worlds": [
+  {
+   "id": "hollow",
+   "title": "The Hollow",
+   "map": "orchard",
+   "story": "res://content/story/orchard.json",
+   "depth": 1,
+   "blurb": "An orchard village at harvest, a black ford, a lantern inn."
+  },
+  {
+   "id": "north",
+   "title": "The Birch Hall",
+   "map": "birch_hall",
+   "story": "res://content/story/birch_hall.json",
+   "depth": 2,
+   "blurb": "A white hall of birch pillars and the snow pass above it."
+  },
+  {
+   "id": "deeps",
+   "title": "The Deep Halls",
+   "map": "deep_halls",
+   "story": "res://content/story/deep_halls.json",
+   "depth": 2,
+   "blurb": "A pillared dark with a lake, and the top of a waterfall."
+  },
+  {
+   "id": "marsh",
+   "title": "The Marsh and the Wall",
+   "map": "ash_land",
+   "story": "res://content/story/ash_land.json",
+   "depth": 3,
+   "blurb": "Lights under the reeds, a wall of black stone, a stair of bells, an ash plain."
+  },
+  {
+   "id": "mountain",
+   "title": "The Glass Mountain",
+   "map": "ash_land",
+   "story": "res://content/story/ash_land.json",
+   "depth": 4,
+   "blurb": "A tunnel lit red, a black pool and a shaft of light, the riders' camp."
+  }
+ ],
+ "nodes": [
+  {
+   "id": "hollow",
+   "world": "hollow",
+   "scene": "e00_orchard",
+   "title": "The Orchard",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "E00 The Orchard.",
+   "next": [
+    {
+     "to": "hollow.ford",
+     "dir": "up",
+     "label": "hollow.ford"
+    }
+   ],
+   "place": {
+    "waypoint": "orchard_c",
+    "rail": {
+     "good": [
+      {
+       "to": "orchard_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "orchard_near",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "orchard_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "orchard_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "orchard_c",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "orchard_gate"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "gran",
+     "at_beat": 0,
+     "act": "lie",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 40
+    },
+    {
+     "actor": "gran",
+     "at_beat": 44,
+     "act": "sleep",
+     "face": "neutral",
+     "beats": 20
+    },
+    {
+     "actor": "bram_o",
+     "at_beat": 30,
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 24
+    },
+    {
+     "actor": "vo0",
+     "at_beat": 52,
+     "act": "bow",
+     "face": "neutral",
+     "look_at": "gran",
+     "beats": 11
+    },
+    {
+     "actor": "vo1",
+     "at_beat": 52,
+     "act": "bow",
+     "face": "neutral",
+     "look_at": "gran",
+     "beats": 11
+    },
+    {
+     "actor": "vo2",
+     "at_beat": 53,
+     "act": "bow",
+     "face": "neutral",
+     "look_at": "gran",
+     "beats": 10
+    },
+    {
+     "actor": "vo3",
+     "at_beat": 53,
+     "act": "bow",
+     "face": "neutral",
+     "look_at": "gran",
+     "beats": 10
+    }
+   ]
+  },
+  {
+   "id": "hollow.ford",
+   "world": "hollow",
+   "scene": "e01_ford",
+   "title": "The Ford at Night",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "E01 The Ford at Night.",
+   "next": [
+    {
+     "to": "hollow.inn",
+     "dir": "up",
+     "label": "hollow.inn"
+    },
+    {
+     "to": "north",
+     "dir": "left",
+     "label": "north"
+    }
+   ],
+   "place": {
+    "waypoint": "ford_c",
+    "rail": {
+     "good": [
+      {
+       "to": "ford_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "ford_edge",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "ford_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "ford_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "ford_in",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "ford_cross",
+      "left": "lantern_wp"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "rd_f0",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "rd_f1",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "rd_f2",
+     "at_beat": 2,
+     "act": "stare",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "bram_f",
+     "at_beat": 16,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "bram_f",
+     "at_beat": 40,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "bram_f",
+     "at_beat": 48,
+     "act": "cover_face",
+     "face": "fear",
+     "beats": 14,
+     "if_energy_below": 35
+    },
+    {
+     "actor": "rd_f0",
+     "at_beat": 32,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 10
+    },
+    {
+     "actor": "rd_f2",
+     "at_beat": 34,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 10
+    }
+   ]
+  },
+  {
+   "id": "hollow.inn",
+   "world": "hollow",
+   "scene": "e02_inn",
+   "title": "The Lantern Inn",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "E02 The Lantern Inn.",
+   "next": [
+    {
+     "to": "north",
+     "dir": "up",
+     "label": "north"
+    },
+    {
+     "to": "north.pass",
+     "dir": "left",
+     "label": "north.pass"
+    }
+   ],
+   "place": {
+    "waypoint": "inn_c",
+    "rail": {
+     "good": [
+      {
+       "to": "inn_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "inn_near",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "inn_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "inn_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "inn_door",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "inn_back",
+      "left": "inn_fire"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "innkeeper",
+     "at_beat": 0,
+     "act": "write",
+     "face": "neutral",
+     "beats": 22
+    },
+    {
+     "actor": "innkeeper",
+     "at_beat": 24,
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "warden_i",
+     "beats": 22
+    },
+    {
+     "actor": "dk0",
+     "at_beat": 0,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "dk1",
+     "beats": 14
+    },
+    {
+     "actor": "dk1",
+     "at_beat": 10,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "dk0",
+     "beats": 14
+    },
+    {
+     "actor": "dk2",
+     "at_beat": 22,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "dk3",
+     "beats": 14
+    },
+    {
+     "actor": "dk3",
+     "at_beat": 34,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "dk2",
+     "beats": 12
+    },
+    {
+     "actor": "warden_i",
+     "at_beat": 16,
+     "act": "stare",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "warden_i",
+     "at_beat": 32,
+     "act": "beckon",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "piece": "rider_shadow",
+     "at_beat": 48,
+     "op": "on"
+    },
+    {
+     "piece": "rider_shadow",
+     "at_beat": 61,
+     "op": "off"
+    },
+    {
+     "actor": "dk0",
+     "at_beat": 50,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "rider_shadow",
+     "beats": 12
+    },
+    {
+     "actor": "dk1",
+     "at_beat": 50,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "rider_shadow",
+     "beats": 12
+    },
+    {
+     "actor": "dk2",
+     "at_beat": 51,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "rider_shadow",
+     "beats": 12
+    },
+    {
+     "actor": "dk3",
+     "at_beat": 51,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "rider_shadow",
+     "beats": 12
+    },
+    {
+     "actor": "innkeeper",
+     "at_beat": 50,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "rider_shadow",
+     "beats": 12
+    }
+   ]
+  },
+  {
+   "id": "north",
+   "world": "north",
+   "scene": "e03_birch_hall",
+   "title": "The Birch Hall",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "E03 The Birch Hall.",
+   "next": [
+    {
+     "to": "north.pass",
+     "dir": "up",
+     "label": "north.pass"
+    },
+    {
+     "to": "deeps",
+     "dir": "right",
+     "label": "deeps"
+    }
+   ],
+   "place": {
+    "waypoint": "hall_c",
+    "rail": {
+     "good": [
+      {
+       "to": "hall_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "hall_dais",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "hall_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "hall_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "hall_c",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "hall_far",
+      "right": "hall_table"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "lady",
+     "at_beat": 4,
+     "act": "offer",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "actor": "lady",
+     "at_beat": 24,
+     "act": "stare",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 22
+    },
+    {
+     "actor": "bf0",
+     "at_beat": 40,
+     "act": "bow",
+     "face": "neutral",
+     "look_at": "lady",
+     "beats": 12
+    },
+    {
+     "actor": "bf1",
+     "at_beat": 40,
+     "act": "bow",
+     "face": "neutral",
+     "look_at": "lady",
+     "beats": 12
+    },
+    {
+     "actor": "bf2",
+     "at_beat": 41,
+     "act": "bow",
+     "face": "neutral",
+     "look_at": "lady",
+     "beats": 12
+    },
+    {
+     "actor": "bf3",
+     "at_beat": 41,
+     "act": "bow",
+     "face": "neutral",
+     "look_at": "lady",
+     "beats": 12
+    },
+    {
+     "actor": "bf4",
+     "at_beat": 42,
+     "act": "bow",
+     "face": "neutral",
+     "look_at": "lady",
+     "beats": 12
+    },
+    {
+     "actor": "warden_h",
+     "at_beat": 32,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "table_map",
+     "beats": 14
+    },
+    {
+     "actor": "bram_h",
+     "at_beat": 12,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "lady",
+     "beats": 14
+    }
+   ]
+  },
+  {
+   "id": "north.pass",
+   "world": "north",
+   "scene": "e04_high_pass",
+   "title": "The High Pass",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "E04 The High Pass.",
+   "next": [
+    {
+     "to": "deeps",
+     "dir": "left",
+     "label": "deeps"
+    },
+    {
+     "to": "deeps.falls",
+     "dir": "right",
+     "label": "deeps.falls"
+    }
+   ],
+   "place": {
+    "waypoint": "pass_c",
+    "rail": {
+     "good": [
+      {
+       "to": "pass_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "pass_far",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "pass_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "pass_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "pass_in",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "left": "cave_wp",
+      "right": "ridge_wp"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "warden_p",
+     "at_beat": 0,
+     "hide": true,
+     "if_flags_all": [
+      "ember_warden_lost"
+     ]
+    },
+    {
+     "piece": "storm",
+     "at_beat": 0,
+     "op": "on"
+    },
+    {
+     "piece": "storm",
+     "at_beat": 56,
+     "op": "off",
+     "if_energy_above": 50
+    },
+    {
+     "actor": "bram_p",
+     "at_beat": 0,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "storm",
+     "beats": 14
+    },
+    {
+     "actor": "bram_p",
+     "at_beat": 24,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "warden_p",
+     "at_beat": 16,
+     "act": "beckon",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "warden_p",
+     "at_beat": 40,
+     "act": "beckon",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "bram_p",
+     "at_beat": 44,
+     "act": "cover_face",
+     "face": "fear",
+     "beats": 14,
+     "if_energy_below": 40
+    }
+   ]
+  },
+  {
+   "id": "deeps",
+   "world": "deeps",
+   "scene": "e05_deep_halls",
+   "title": "The Deep Halls",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "E05 The Deep Halls.",
+   "next": [
+    {
+     "to": "deeps.falls",
+     "dir": "up",
+     "label": "deeps.falls"
+    },
+    {
+     "to": "north.pass",
+     "dir": "left",
+     "label": "north.pass",
+     "loop": true
+    }
+   ],
+   "place": {
+    "waypoint": "halls_c",
+    "rail": {
+     "good": [
+      {
+       "to": "halls_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "halls_edge",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "halls_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "halls_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "halls_c",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "bridge_wp",
+      "left": "lake_edge"
+     }
+    }
+   },
+   "cast": [
+    {
+     "piece": "drowned",
+     "at_beat": 0,
+     "op": "off"
+    },
+    {
+     "actor": "bram_d",
+     "at_beat": 0,
+     "hide": true,
+     "if_flags_all": [
+      "ember_alone"
+     ]
+    },
+    {
+     "actor": "bram_d",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "drowned",
+     "beats": 16
+    },
+    {
+     "actor": "warden_d",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "drowned",
+     "beats": 16
+    },
+    {
+     "actor": "warden_d",
+     "at_beat": 20,
+     "act": "look",
+     "face": "awe",
+     "look_at": "drum",
+     "beats": 12
+    },
+    {
+     "piece": "drowned",
+     "at_beat": 46,
+     "op": "on"
+    },
+    {
+     "actor": "warden_d",
+     "at_beat": 48,
+     "act": "block",
+     "face": "resolve",
+     "look_at": "drowned",
+     "beats": 14
+    },
+    {
+     "actor": "bram_d",
+     "at_beat": 50,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "drowned",
+     "beats": 12
+    }
+   ]
+  },
+  {
+   "id": "deeps.falls",
+   "world": "deeps",
+   "scene": "e06_falls",
+   "title": "The Falls",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "E06 The Falls.",
+   "next": [
+    {
+     "to": "marsh",
+     "dir": "up",
+     "label": "marsh"
+    },
+    {
+     "to": "marsh.wall",
+     "dir": "right",
+     "label": "marsh.wall"
+    },
+    {
+     "to": "mountain.taken",
+     "dir": "left",
+     "label": "mountain.taken"
+    }
+   ],
+   "place": {
+    "waypoint": "falls_c",
+    "rail": {
+     "good": [
+      {
+       "to": "falls_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "falls_lip_wp",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "falls_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "falls_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "falls_in",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "boat_wp",
+      "right": "horn_wp",
+      "left": "horn_wp"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "warden_f",
+     "at_beat": 0,
+     "hide": true,
+     "if_flags_all": [
+      "ember_warden_lost"
+     ]
+    },
+    {
+     "piece": "drowned",
+     "at_beat": 0,
+     "op": "off"
+    },
+    {
+     "actor": "warden_f",
+     "at_beat": 6,
+     "act": "offer",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "bram_fb",
+     "at_beat": 6,
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 14
+    },
+    {
+     "actor": "bram_fb",
+     "at_beat": 36,
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 10
+    },
+    {
+     "actor": "warden_f",
+     "at_beat": 40,
+     "act": "point",
+     "face": "resolve",
+     "look_at": "horn",
+     "beats": 12
+    },
+    {
+     "actor": "bram_fb",
+     "at_beat": 52,
+     "act": "stare",
+     "face": "fear",
+     "look_at": "falls_lip",
+     "beats": 8,
+     "if_energy_below": 40
+    }
+   ]
+  },
+  {
+   "id": "marsh",
+   "world": "marsh",
+   "scene": "e07_reed_marsh",
+   "title": "The Reed Marsh",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "E07 The Reed Marsh.",
+   "next": [
+    {
+     "to": "marsh.wall",
+     "dir": "up",
+     "label": "marsh.wall"
+    },
+    {
+     "to": "marsh.stair",
+     "dir": "right",
+     "label": "marsh.stair"
+    }
+   ],
+   "place": {
+    "waypoint": "marsh_c",
+    "rail": {
+     "good": [
+      {
+       "to": "marsh_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "marsh_fwd",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "marsh_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "marsh_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "marsh_c",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "marsh_path",
+      "right": "lights_wp"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "bram_m",
+     "at_beat": 0,
+     "hide": true,
+     "if_flags_all": [
+      "ember_alone"
+     ]
+    },
+    {
+     "actor": "ho_m",
+     "at_beat": 0,
+     "act": "beckon",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 24
+    },
+    {
+     "actor": "ho_m",
+     "at_beat": 26,
+     "act": "stare",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 22
+    },
+    {
+     "actor": "ho_m",
+     "at_beat": 52,
+     "act": "laugh",
+     "face": "anger",
+     "look_at": "marsh_fwd",
+     "beats": 11
+    },
+    {
+     "actor": "bram_m",
+     "at_beat": 20,
+     "act": "stare",
+     "face": "fear",
+     "look_at": "mlight1",
+     "beats": 14
+    }
+   ]
+  },
+  {
+   "id": "marsh.wall",
+   "world": "marsh",
+   "scene": "e08_black_wall",
+   "title": "The Black Wall",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "E08 The Black Wall.",
+   "next": [
+    {
+     "to": "marsh.stair",
+     "dir": "right",
+     "label": "marsh.stair"
+    },
+    {
+     "to": "marsh.plain",
+     "dir": "up",
+     "label": "marsh.plain"
+    },
+    {
+     "to": "mountain.taken",
+     "dir": "left",
+     "label": "mountain.taken"
+    }
+   ],
+   "place": {
+    "waypoint": "wall_c",
+    "rail": {
+     "good": [
+      {
+       "to": "wall_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "wall_gate_wp",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "wall_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "wall_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "wall_in",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "right": "crack_wp",
+      "up": "wall_gate_wp",
+      "left": "camp_door"
+     }
+    }
+   },
+   "cast": [
+    {
+     "piece": "gate_mouths",
+     "at_beat": 0,
+     "op": "off"
+    },
+    {
+     "actor": "rd_w0",
+     "at_beat": 0,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 20
+    },
+    {
+     "actor": "rd_w1",
+     "at_beat": 1,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 20
+    },
+    {
+     "actor": "rd_w2",
+     "at_beat": 2,
+     "act": "block",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 20
+    },
+    {
+     "actor": "ho_w",
+     "at_beat": 16,
+     "act": "point",
+     "face": "doubt",
+     "look_at": "crack",
+     "beats": 14
+    },
+    {
+     "piece": "gate_mouths",
+     "at_beat": 34,
+     "op": "on"
+    },
+    {
+     "actor": "rd_w0",
+     "at_beat": 34,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 10
+    },
+    {
+     "actor": "rd_w2",
+     "at_beat": 36,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 10
+    },
+    {
+     "actor": "ho_w",
+     "at_beat": 46,
+     "act": "stare",
+     "face": "doubt",
+     "look_at": "gate_mouths",
+     "beats": 14
+    }
+   ]
+  },
+  {
+   "id": "marsh.stair",
+   "world": "marsh",
+   "scene": "e09_stair_of_bells",
+   "title": "The Stair of Bells",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "E09 The Stair of Bells.",
+   "next": [
+    {
+     "to": "marsh.plain",
+     "dir": "left",
+     "label": "marsh.plain"
+    },
+    {
+     "to": "mountain",
+     "dir": "up",
+     "label": "mountain"
+    },
+    {
+     "to": "mountain.taken",
+     "dir": "right",
+     "label": "mountain.taken"
+    }
+   ],
+   "place": {
+    "waypoint": "stair_c",
+    "rail": {
+     "good": [
+      {
+       "to": "stair_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "stair_up",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "stair_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "stair_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "stair_in",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "left": "stair_side",
+      "up": "stair_up",
+      "right": "bells_wp"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "sentinel",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 40
+    },
+    {
+     "actor": "ho_b",
+     "at_beat": 24,
+     "act": "cover_face",
+     "face": "shame",
+     "beats": 24
+    },
+    {
+     "actor": "ho_b",
+     "at_beat": 52,
+     "act": "stare",
+     "face": "shame",
+     "look_at": "sentinel",
+     "beats": 10
+    }
+   ]
+  },
+  {
+   "id": "marsh.plain",
+   "world": "marsh",
+   "scene": "e10_ash_plain",
+   "title": "The Ash Plain",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "E10 The Ash Plain.",
+   "next": [
+    {
+     "to": "mountain",
+     "dir": "up",
+     "label": "mountain"
+    },
+    {
+     "to": "mountain.taken",
+     "dir": "left",
+     "label": "mountain.taken"
+    }
+   ],
+   "place": {
+    "waypoint": "plain_c",
+    "rail": {
+     "good": [
+      {
+       "to": "plain_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "plain_far",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "plain_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "plain_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "plain_in",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "road_wp",
+      "left": "tower_wp"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "bram_pl",
+     "at_beat": 0,
+     "hide": true,
+     "if_flags_all": [
+      "ember_alone"
+     ]
+    },
+    {
+     "actor": "rd_pl0",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 20
+    },
+    {
+     "actor": "rd_pl1",
+     "at_beat": 4,
+     "act": "stare",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 20
+    },
+    {
+     "actor": "rd_pl2",
+     "at_beat": 8,
+     "act": "stare",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 20
+    },
+    {
+     "actor": "ho_pl",
+     "at_beat": 16,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 20
+    },
+    {
+     "actor": "ho_pl",
+     "at_beat": 42,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 18
+    },
+    {
+     "actor": "bram_pl",
+     "at_beat": 24,
+     "act": "offer",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 16
+    }
+   ]
+  },
+  {
+   "id": "mountain",
+   "world": "mountain",
+   "scene": "e11_throat",
+   "title": "The Throat",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "E11 The Throat.",
+   "next": [
+    {
+     "to": "mountain.spring",
+     "dir": "up",
+     "label": "mountain.spring"
+    },
+    {
+     "to": "mountain.keeper",
+     "dir": "right",
+     "label": "mountain.keeper"
+    }
+   ],
+   "place": {
+    "waypoint": "throat_c",
+    "rail": {
+     "good": [
+      {
+       "to": "throat_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "throat_low",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "throat_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "throat_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "throat_in",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "down_wp",
+      "right": "whisper_wp"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "ho_t",
+     "at_beat": 0,
+     "act": "stare",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 30
+    },
+    {
+     "actor": "ho_t",
+     "at_beat": 34,
+     "act": "stare",
+     "face": "anger",
+     "look_at": "camera",
+     "beats": 26
+    }
+   ]
+  },
+  {
+   "id": "mountain.spring",
+   "world": "mountain",
+   "scene": "e12_drowned_spring",
+   "title": "The Drowned Spring",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "E12 The Drowned Spring.",
+   "ending": "quenched",
+   "next": [
+    {
+     "to": "run:warehouse",
+     "dir": "up",
+     "label": "run:warehouse"
+    }
+   ],
+   "place": {
+    "waypoint": "spring_c",
+    "rail": {
+     "good": [
+      {
+       "to": "spring_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "spring_edge",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "spring_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "spring_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "spring_in",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "pool_wp"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "bram_s",
+     "at_beat": 0,
+     "hide": true,
+     "if_flags_all": [
+      "ember_alone"
+     ]
+    },
+    {
+     "piece": "shaft",
+     "at_beat": 0,
+     "op": "on"
+    },
+    {
+     "piece": "swell",
+     "at_beat": 0,
+     "op": "off"
+    },
+    {
+     "actor": "ho_s",
+     "at_beat": 0,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "pool_stones",
+     "beats": 26
+    },
+    {
+     "actor": "ho_s",
+     "at_beat": 28,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "pool_stones",
+     "beats": 18
+    },
+    {
+     "actor": "bram_s",
+     "at_beat": 40,
+     "act": "cheer",
+     "face": "cheer",
+     "look_at": "camera",
+     "beats": 16
+    },
+    {
+     "piece": "swell",
+     "at_beat": 48,
+     "op": "on"
+    }
+   ]
+  },
+  {
+   "id": "mountain.keeper",
+   "world": "mountain",
+   "scene": "e13_keeper",
+   "title": "The Keeper",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "E13 The Keeper.",
+   "ending": "kept",
+   "next": [
+    {
+     "to": "run:warehouse",
+     "dir": "up",
+     "label": "run:warehouse"
+    }
+   ],
+   "place": {
+    "waypoint": "keep_c",
+    "rail": {
+     "good": [
+      {
+       "to": "keep_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "keep_near",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "keep_w",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "keep_e",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "keep_in2",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "ember_wp"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "bram_k",
+     "at_beat": 0,
+     "hide": true,
+     "if_flags_all": [
+      "ember_alone"
+     ]
+    },
+    {
+     "piece": "long_shadow",
+     "at_beat": 0,
+     "op": "off"
+    },
+    {
+     "actor": "bram_k",
+     "at_beat": 0,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "altar",
+     "beats": 40
+    },
+    {
+     "actor": "ho_k",
+     "at_beat": 16,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 20
+    },
+    {
+     "actor": "ho_k",
+     "at_beat": 40,
+     "act": "bow",
+     "face": "neutral",
+     "look_at": "camera",
+     "beats": 20
+    },
+    {
+     "piece": "long_shadow",
+     "at_beat": 32,
+     "op": "on"
+    }
+   ]
+  },
+  {
+   "id": "mountain.taken",
+   "world": "mountain",
+   "scene": "e14_taken",
+   "title": "Taken",
+   "entry": true,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "E14 Taken.",
+   "next": [
+    {
+     "to": "marsh.plain",
+     "dir": "up",
+     "label": "marsh.plain",
+     "loop": true
+    },
+    {
+     "to": "marsh.wall",
+     "dir": "left",
+     "label": "marsh.wall",
+     "loop": true
+    }
+   ],
+   "place": {
+    "waypoint": "camp_c",
+    "rail": {
+     "good": [
+      {
+       "to": "camp_mid",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      },
+      {
+       "to": "camp_near",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3
+      }
+     ],
+     "bad": [
+      {
+       "to": "camp_n",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "camp_s",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      }
+     ],
+     "arrive": "camp_in",
+     "glances": [
+      {
+       "by": -12,
+       "pitch": 8,
+       "bars": 2
+      },
+      {
+       "by": -28,
+       "bars": 2
+      },
+      {
+       "pitch": 14,
+       "bars": 3
+      },
+      {
+       "by": 24,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 1.6,
+       "bars": 3
+      },
+      {
+       "turn": 35,
+       "fwd": 1.0,
+       "bars": 3
+      },
+      {
+       "right": 1.4,
+       "bars": 2
+      }
+     ],
+     "exits": {
+      "up": "stake_wp",
+      "left": "captain_wp"
+     }
+    }
+   },
+   "cast": [
+    {
+     "actor": "bram_c",
+     "at_beat": 0,
+     "hide": true,
+     "if_flags_all": [
+      "ember_alone"
+     ]
+    },
+    {
+     "actor": "rd_c0",
+     "at_beat": 0,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 18
+    },
+    {
+     "actor": "rd_c1",
+     "at_beat": 2,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 18
+    },
+    {
+     "actor": "rd_c2",
+     "at_beat": 4,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 18
+    },
+    {
+     "actor": "rd_c0",
+     "at_beat": 22,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 10
+    },
+    {
+     "actor": "rd_c1",
+     "at_beat": 24,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 10
+    },
+    {
+     "actor": "captain",
+     "at_beat": 16,
+     "act": "offer",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 22
+    },
+    {
+     "actor": "bram_c",
+     "at_beat": 8,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 20
+    }
+   ]
+  }
+ ],
+ "cinematics": {
+  "ember.river_rises": {
+   "world": "hollow",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "ford_mid",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "stake_l"
+    }
+   ],
+   "cast": [
+    {
+     "piece": "river_rise",
+     "at_beat": 0,
+     "op": "on"
+    },
+    {
+     "actor": "rd_f0",
+     "at_beat": 0.5,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "river_rise",
+     "beats": 8
+    },
+    {
+     "actor": "rd_f1",
+     "at_beat": 1,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "river_rise",
+     "beats": 8
+    },
+    {
+     "actor": "rd_f2",
+     "at_beat": 1.5,
+     "act": "recoil",
+     "face": "fear",
+     "look_at": "river_rise",
+     "beats": 8
+    }
+   ]
+  },
+  "ember.bram_falls": {
+   "world": "hollow",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "ford_edge",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger",
+     "look_at": "bram_f"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "rd_f0",
+     "at_beat": 0.5,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "bram_f",
+     "beats": 8
+    },
+    {
+     "actor": "rd_f1",
+     "at_beat": 1,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "bram_f",
+     "beats": 8
+    },
+    {
+     "actor": "rd_f2",
+     "at_beat": 1.5,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 8
+    }
+   ]
+  },
+  "ember.pass_calm": {
+   "world": "north",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "pass_far",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "cave"
+    }
+   ],
+   "cast": [
+    {
+     "piece": "storm",
+     "at_beat": 0,
+     "op": "off"
+    },
+    {
+     "actor": "bram_p",
+     "at_beat": 1,
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    }
+   ]
+  },
+  "ember.warden_falls": {
+   "world": "deeps",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "halls_edge",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger",
+     "look_at": "drowned"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "warden_d",
+     "at_beat": 0.5,
+     "act": "collapse",
+     "face": "grief",
+     "look_at": "drowned",
+     "beats": 12
+    },
+    {
+     "actor": "bram_d",
+     "at_beat": 1,
+     "act": "cover_face",
+     "face": "fear",
+     "beats": 10
+    },
+    {
+     "piece": "drowned",
+     "at_beat": 2,
+     "op": "off"
+    }
+   ]
+  },
+  "ember.riders_seize": {
+   "world": "marsh",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "wall_w",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger",
+     "look_at": "gate_black"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "rd_w0",
+     "at_beat": 0.5,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    },
+    {
+     "actor": "rd_w1",
+     "at_beat": 1,
+     "act": "stamp",
+     "face": "anger",
+     "beats": 8
+    },
+    {
+     "actor": "rd_w2",
+     "at_beat": 1.5,
+     "act": "laugh",
+     "face": "laugh",
+     "look_at": "camera",
+     "beats": 8
+    }
+   ]
+  },
+  "ember.sentinel_sleeps": {
+   "world": "marsh",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "stair_up",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "sentinel"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "ho_b",
+     "at_beat": 1,
+     "act": "cover_face",
+     "face": "shame",
+     "beats": 8
+    }
+   ]
+  },
+  "ember.snatched": {
+   "world": "mountain",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "spring_edge",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk",
+     "look_at": "ho_s"
+    }
+   ],
+   "cast": [
+    {
+     "actor": "ho_s",
+     "at_beat": 0,
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera",
+     "beats": 4
+    },
+    {
+     "actor": "ho_s",
+     "at_beat": 2,
+     "act": "collapse",
+     "face": "relief",
+     "look_at": "pool_stones",
+     "beats": 12
+    },
+    {
+     "piece": "swell",
+     "at_beat": 1,
+     "op": "on"
+    },
+    {
+     "actor": "bram_s",
+     "at_beat": 3,
+     "act": "cover_face",
+     "face": "grief",
+     "beats": 12
+    },
+    {
+     "actor": "bram_s",
+     "at_beat": 7,
+     "act": "cheer",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    }
+   ]
+  }
+ }
+}

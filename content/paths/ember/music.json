@@ -1,0 +1,215 @@
+{
+ "schema": 1,
+ "nodes": [
+  {
+   "id": "hollow",
+   "audio": "ember_e00_orchard",
+   "chart": "ember_e00_orchard",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM progressive psytrance, 8-bar seamless loop. Soft rolling kick, warm plucked arpeggios, rounded bass pulse, harvest-bell chimes and airy pads. Separate editable MIDI tracks."
+  },
+  {
+   "id": "hollow.ford",
+   "audio": "ember_e01_ford",
+   "chart": "ember_e01_ford",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM dark psytrance, 8-bar seamless loop. Driving kick, galloping 16th bass, metallic hoof percussion, low horn drones and tense rising leads. Separate editable MIDI tracks."
+  },
+  {
+   "id": "hollow.inn",
+   "audio": "ember_e02_inn",
+   "chart": "ember_e02_inn",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM full-on psytrance, 8-bar seamless loop. Punchy kick, bouncing bass, tavern-fiddle synth, clapping percussion and a whispering filtered lead. Separate editable MIDI tracks."
+  },
+  {
+   "id": "north",
+   "audio": "ember_e03_birch_hall",
+   "chart": "ember_e03_birch_hall",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM atmospheric psytrance, 8-bar seamless loop. Deep kick, glassy arpeggios, choir-like pads, flowing bass and birch-wind textures. Separate editable MIDI tracks."
+  },
+  {
+   "id": "north.pass",
+   "audio": "ember_e04_high_pass",
+   "chart": "ember_e04_high_pass",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM hypnotic psytrance, 8-bar seamless loop. Relentless kick, howling filtered noise, icy plucks, low throbbing bass and sparse hollow percussion. Separate editable MIDI tracks."
+  },
+  {
+   "id": "deeps",
+   "audio": "ember_e05_deep_halls",
+   "chart": "ember_e05_deep_halls",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM dark progressive psytrance, 8-bar seamless loop. Cavernous kick, sub-bass drones, dripping water percussion, dissonant stabs and distant drum hits. Separate editable MIDI tracks."
+  },
+  {
+   "id": "deeps.falls",
+   "audio": "ember_e06_falls",
+   "chart": "ember_e06_falls",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM melodic psytrance, 8-bar seamless loop. Cascading water arpeggios, deep kick, emotional lead, flowing bass and distant choir pads. Separate editable MIDI tracks."
+  },
+  {
+   "id": "marsh",
+   "audio": "ember_e07_reed_marsh",
+   "chart": "ember_e07_reed_marsh",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM swampy psytrance, 8-bar seamless loop. Wet kick, bubbling bass, croaking percussion, eerie whispered vocal synth and submerged pads. Separate editable MIDI tracks."
+  },
+  {
+   "id": "marsh.wall",
+   "audio": "ember_e08_black_wall",
+   "chart": "ember_e08_black_wall",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM industrial psytrance, 8-bar seamless loop. Hammering kick, grinding bass, iron-gate percussion, war-horn synth stabs and oppressive drones. Separate editable MIDI tracks."
+  },
+  {
+   "id": "marsh.stair",
+   "audio": "ember_e09_stair_of_bells",
+   "chart": "ember_e09_stair_of_bells",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM minimal psytrance, 8-bar seamless loop. Tiptoe kick, muted bass pulse, tuned bell percussion, held breath pads and a single tense lead. Separate editable MIDI tracks."
+  },
+  {
+   "id": "marsh.plain",
+   "audio": "ember_e10_ash_plain",
+   "chart": "ember_e10_ash_plain",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM driving psytrance, 8-bar seamless loop. Marching kick, scorched bass, dry rattling percussion, ash-wind noise sweeps and a distant tolling lead. Separate editable MIDI tracks."
+  },
+  {
+   "id": "mountain",
+   "audio": "ember_e11_throat",
+   "chart": "ember_e11_throat",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM dark psytrance, 8-bar seamless loop. Pounding kick, molten bass growls, crackling fire percussion, volcanic drones and a hypnotic whispering lead. Separate editable MIDI tracks."
+  },
+  {
+   "id": "mountain.spring",
+   "audio": "ember_e12_drowned_spring",
+   "chart": "ember_e12_drowned_spring",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM uplifting psytrance, 8-bar seamless loop. Clean kick, radiant arpeggios, warm bass, water-droplet percussion and a soaring resolving lead. Separate editable MIDI tracks."
+  },
+  {
+   "id": "mountain.keeper",
+   "audio": "ember_e13_keeper",
+   "chart": "ember_e13_keeper",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM sinister psytrance, 8-bar seamless loop. Slow-burn kick, seductive warm bass, glowing pad swells, ember-crackle percussion and a lead that never resolves. Separate editable MIDI tracks."
+  },
+  {
+   "id": "mountain.taken",
+   "audio": "ember_e14_taken",
+   "chart": "ember_e14_taken",
+   "treatment": "none",
+   "temporary": true,
+   "prompt": "145 BPM oppressive psytrance, 8-bar seamless loop. Heavy kick, chained metallic percussion, low horn drones, grinding bass and cold rising sirens. Separate editable MIDI tracks."
+  }
+ ],
+ "note": "Which pack each scene of the Ember Road plays. Written by tools/content/make_path_placeholders.py ember (synthesised, temporary); the owner's loops replace them with beatshaper.py import --path ember. `prompt` is the owner's music prompt for the scene, verbatim from docs/THREE_PATHS_AND_FACES_PLAN.md 6.2.",
+ "placeholder": {
+  "genre": "psytrance",
+  "key": 40,
+  "levels_db": {
+   "drums": -21.0,
+   "bass": -11.0,
+   "other": -28.0
+  },
+  "sub_hz": 90.0,
+  "sub_share_min": 0.45,
+  "bass_over_pad_db_min": 10.0
+ },
+ "prompts": {
+  "hollow": {
+   "scene": "E00",
+   "title": "The Orchard",
+   "prompt": "145 BPM progressive psytrance, 8-bar seamless loop. Soft rolling kick, warm plucked arpeggios, rounded bass pulse, harvest-bell chimes and airy pads. Separate editable MIDI tracks."
+  },
+  "hollow.ford": {
+   "scene": "E01",
+   "title": "The Ford at Night",
+   "prompt": "145 BPM dark psytrance, 8-bar seamless loop. Driving kick, galloping 16th bass, metallic hoof percussion, low horn drones and tense rising leads. Separate editable MIDI tracks."
+  },
+  "hollow.inn": {
+   "scene": "E02",
+   "title": "The Lantern Inn",
+   "prompt": "145 BPM full-on psytrance, 8-bar seamless loop. Punchy kick, bouncing bass, tavern-fiddle synth, clapping percussion and a whispering filtered lead. Separate editable MIDI tracks."
+  },
+  "north": {
+   "scene": "E03",
+   "title": "The Birch Hall",
+   "prompt": "145 BPM atmospheric psytrance, 8-bar seamless loop. Deep kick, glassy arpeggios, choir-like pads, flowing bass and birch-wind textures. Separate editable MIDI tracks."
+  },
+  "north.pass": {
+   "scene": "E04",
+   "title": "The High Pass",
+   "prompt": "145 BPM hypnotic psytrance, 8-bar seamless loop. Relentless kick, howling filtered noise, icy plucks, low throbbing bass and sparse hollow percussion. Separate editable MIDI tracks."
+  },
+  "deeps": {
+   "scene": "E05",
+   "title": "The Deep Halls",
+   "prompt": "145 BPM dark progressive psytrance, 8-bar seamless loop. Cavernous kick, sub-bass drones, dripping water percussion, dissonant stabs and distant drum hits. Separate editable MIDI tracks."
+  },
+  "deeps.falls": {
+   "scene": "E06",
+   "title": "The Falls",
+   "prompt": "145 BPM melodic psytrance, 8-bar seamless loop. Cascading water arpeggios, deep kick, emotional lead, flowing bass and distant choir pads. Separate editable MIDI tracks."
+  },
+  "marsh": {
+   "scene": "E07",
+   "title": "The Reed Marsh",
+   "prompt": "145 BPM swampy psytrance, 8-bar seamless loop. Wet kick, bubbling bass, croaking percussion, eerie whispered vocal synth and submerged pads. Separate editable MIDI tracks."
+  },
+  "marsh.wall": {
+   "scene": "E08",
+   "title": "The Black Wall",
+   "prompt": "145 BPM industrial psytrance, 8-bar seamless loop. Hammering kick, grinding bass, iron-gate percussion, war-horn synth stabs and oppressive drones. Separate editable MIDI tracks."
+  },
+  "marsh.stair": {
+   "scene": "E09",
+   "title": "The Stair of Bells",
+   "prompt": "145 BPM minimal psytrance, 8-bar seamless loop. Tiptoe kick, muted bass pulse, tuned bell percussion, held breath pads and a single tense lead. Separate editable MIDI tracks."
+  },
+  "marsh.plain": {
+   "scene": "E10",
+   "title": "The Ash Plain",
+   "prompt": "145 BPM driving psytrance, 8-bar seamless loop. Marching kick, scorched bass, dry rattling percussion, ash-wind noise sweeps and a distant tolling lead. Separate editable MIDI tracks."
+  },
+  "mountain": {
+   "scene": "E11",
+   "title": "The Throat",
+   "prompt": "145 BPM dark psytrance, 8-bar seamless loop. Pounding kick, molten bass growls, crackling fire percussion, volcanic drones and a hypnotic whispering lead. Separate editable MIDI tracks."
+  },
+  "mountain.spring": {
+   "scene": "E12",
+   "title": "The Drowned Spring",
+   "prompt": "145 BPM uplifting psytrance, 8-bar seamless loop. Clean kick, radiant arpeggios, warm bass, water-droplet percussion and a soaring resolving lead. Separate editable MIDI tracks."
+  },
+  "mountain.keeper": {
+   "scene": "E13",
+   "title": "The Keeper",
+   "prompt": "145 BPM sinister psytrance, 8-bar seamless loop. Slow-burn kick, seductive warm bass, glowing pad swells, ember-crackle percussion and a lead that never resolves. Separate editable MIDI tracks."
+  },
+  "mountain.taken": {
+   "scene": "E14",
+   "title": "Taken",
+   "prompt": "145 BPM oppressive psytrance, 8-bar seamless loop. Heavy kick, chained metallic percussion, low horn drones, grinding bass and cold rising sirens. Separate editable MIDI tracks."
+  }
+ }
+}

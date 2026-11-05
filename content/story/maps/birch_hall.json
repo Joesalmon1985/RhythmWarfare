@@ -1,0 +1,805 @@
+{
+ "art": "birch_hall",
+ "units_per_m": 1,
+ "eye_height": 1.6,
+ "palette_weight": 0.0,
+ "start": "hall_c",
+ "textures": {
+  "ceil_hall": "textures/ceil_hall.png",
+  "ceil_overcast": "textures/ceil_overcast.png",
+  "floor_birch": "textures/floor_birch.png",
+  "floor_snow": "textures/floor_snow.png",
+  "floor_snow_rock": "textures/floor_snow_rock.png",
+  "piece_storm_snow": "textures/piece_storm_snow.png",
+  "sky_snow": "textures/sky_snow.png",
+  "thing_banner_birch": "textures/thing_banner_birch.png",
+  "thing_birch_pillar": "textures/thing_birch_pillar.png",
+  "thing_birch_tree": "textures/thing_birch_tree.png",
+  "thing_cairn": "textures/thing_cairn.png",
+  "thing_cave_mouth": "textures/thing_cave_mouth.png",
+  "thing_chair_white": "textures/thing_chair_white.png",
+  "thing_door_far": "textures/thing_door_far.png",
+  "thing_ember": "textures/thing_ember.png",
+  "thing_ridge_marker": "textures/thing_ridge_marker.png",
+  "thing_silver_lamp": "textures/thing_silver_lamp.png",
+  "thing_snow_pine": "textures/thing_snow_pine.png",
+  "thing_table_map": "textures/thing_table_map.png",
+  "thing_vial_stand": "textures/thing_vial_stand.png",
+  "wall_birch": "textures/wall_birch.png",
+  "wall_cave": "textures/wall_cave.png",
+  "wall_hall": "textures/wall_hall.png",
+  "wall_hall_door": "textures/wall_hall_door.png",
+  "wall_rock_snow": "textures/wall_rock_snow.png"
+ },
+ "sectors": [
+  {
+   "id": "bh_hall",
+   "polygon": [
+    [
+     -8,
+     0
+    ],
+    [
+     8,
+     0
+    ],
+    [
+     8,
+     22
+    ],
+    [
+     -8,
+     22
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 5.8,
+   "floor_tex": "floor_birch",
+   "ceil_tex": "ceil_hall",
+   "wall_tex": "wall_hall",
+   "light": 0.78,
+   "tint": "#e8f0ff",
+   "room": "hall",
+   "flags": []
+  },
+  {
+   "id": "bh_porch",
+   "polygon": [
+    [
+     -2.5,
+     -8
+    ],
+    [
+     2.5,
+     -8
+    ],
+    [
+     2.5,
+     0
+    ],
+    [
+     -2.5,
+     0
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 4.2,
+   "floor_tex": "floor_birch",
+   "ceil_tex": "ceil_hall",
+   "wall_tex": "wall_hall",
+   "light": 0.66,
+   "tint": "#dce8ff",
+   "room": "pass",
+   "flags": []
+  },
+  {
+   "id": "bh_pass",
+   "polygon": [
+    [
+     -12,
+     -32
+    ],
+    [
+     12,
+     -32
+    ],
+    [
+     12,
+     -8
+    ],
+    [
+     -12,
+     -8
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 6,
+   "floor_tex": "floor_snow",
+   "ceil_tex": "ceil_overcast",
+   "wall_tex": "wall_rock_snow",
+   "light": 0.62,
+   "tint": "#c0d4f8",
+   "room": "pass",
+   "flags": []
+  }
+ ],
+ "walls": [
+  {
+   "from": [
+    -1.5,
+    0
+   ],
+   "to": [
+    1.5,
+    0
+   ],
+   "sector": "bh_hall",
+   "portal": "bh_porch"
+  },
+  {
+   "from": [
+    -1.5,
+    -8
+   ],
+   "to": [
+    1.5,
+    -8
+   ],
+   "sector": "bh_porch",
+   "portal": "bh_pass"
+  },
+  {
+   "from": [
+    -8,
+    0
+   ],
+   "to": [
+    -8,
+    22
+   ],
+   "sector": "bh_hall",
+   "tex": "wall_birch"
+  },
+  {
+   "from": [
+    8,
+    0
+   ],
+   "to": [
+    8,
+    22
+   ],
+   "sector": "bh_hall",
+   "tex": "wall_birch"
+  },
+  {
+   "from": [
+    -12,
+    -26
+   ],
+   "to": [
+    -12,
+    -17
+   ],
+   "sector": "bh_pass",
+   "tex": "wall_cave"
+  }
+ ],
+ "things": [
+  {
+   "id": "pil_l0",
+   "kind": "billboard",
+   "sprite": "thing_birch_pillar",
+   "at": [
+    -6.4,
+    4
+   ],
+   "size": 5.4,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "pil_r0",
+   "kind": "billboard",
+   "sprite": "thing_birch_pillar",
+   "at": [
+    6.4,
+    4
+   ],
+   "size": 5.4,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "pil_l1",
+   "kind": "billboard",
+   "sprite": "thing_birch_pillar",
+   "at": [
+    -6.4,
+    9
+   ],
+   "size": 5.4,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "pil_r1",
+   "kind": "billboard",
+   "sprite": "thing_birch_pillar",
+   "at": [
+    6.4,
+    9
+   ],
+   "size": 5.4,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "pil_l2",
+   "kind": "billboard",
+   "sprite": "thing_birch_pillar",
+   "at": [
+    -6.4,
+    14
+   ],
+   "size": 5.4,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "pil_r2",
+   "kind": "billboard",
+   "sprite": "thing_birch_pillar",
+   "at": [
+    6.4,
+    14
+   ],
+   "size": 5.4,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "pil_l3",
+   "kind": "billboard",
+   "sprite": "thing_birch_pillar",
+   "at": [
+    -6.4,
+    19
+   ],
+   "size": 5.4,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "pil_r3",
+   "kind": "billboard",
+   "sprite": "thing_birch_pillar",
+   "at": [
+    6.4,
+    19
+   ],
+   "size": 5.4,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "banner0",
+   "kind": "billboard",
+   "sprite": "thing_banner_birch",
+   "at": [
+    -4.0,
+    1.2
+   ],
+   "size": 3.4,
+   "anim": "none",
+   "y": 2.5,
+   "sector": "bh_hall"
+  },
+  {
+   "id": "banner1",
+   "kind": "billboard",
+   "sprite": "thing_banner_birch",
+   "at": [
+    4.0,
+    1.2
+   ],
+   "size": 3.4,
+   "anim": "none",
+   "y": 2.5,
+   "sector": "bh_hall"
+  },
+  {
+   "id": "lamp_h0",
+   "kind": "billboard",
+   "sprite": "thing_silver_lamp",
+   "at": [
+    -2.4,
+    6.5
+   ],
+   "size": 2.3,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "lamp_h1",
+   "kind": "billboard",
+   "sprite": "thing_silver_lamp",
+   "at": [
+    2.4,
+    6.5
+   ],
+   "size": 2.3,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "chair",
+   "kind": "billboard",
+   "sprite": "thing_chair_white",
+   "at": [
+    0,
+    2.6
+   ],
+   "size": 2.2,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "vial",
+   "kind": "billboard",
+   "sprite": "thing_vial_stand",
+   "at": [
+    1.5,
+    4.8
+   ],
+   "size": 1.2,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "table_map",
+   "kind": "billboard",
+   "sprite": "thing_table_map",
+   "at": [
+    4.8,
+    9.0
+   ],
+   "size": 1.5,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "tree_b0",
+   "kind": "billboard",
+   "sprite": "thing_birch_tree",
+   "at": [
+    -4.8,
+    1.0
+   ],
+   "size": 4.5,
+   "anim": "none",
+   "sector": "bh_hall"
+  },
+  {
+   "id": "lt_hall_a",
+   "kind": "light",
+   "at": [
+    0,
+    12
+   ],
+   "y": 4.4,
+   "radius": 14,
+   "color": "#dfeaff",
+   "strength": 1.2,
+   "sector": "bh_hall"
+  },
+  {
+   "id": "lt_hall_b",
+   "kind": "light",
+   "at": [
+    0,
+    4.5
+   ],
+   "y": 3.0,
+   "radius": 8,
+   "color": "#f0f4ff",
+   "strength": 1.2,
+   "sector": "bh_hall"
+  },
+  {
+   "id": "lt_vial",
+   "kind": "light",
+   "at": [
+    1.5,
+    4.8
+   ],
+   "y": 1.4,
+   "radius": 4.0,
+   "color": "#a8d0ff",
+   "strength": 1.1,
+   "sector": "bh_hall"
+  },
+  {
+   "id": "storm",
+   "kind": "billboard",
+   "sprite": "piece_storm_snow",
+   "at": [
+    0,
+    -22.0
+   ],
+   "size": 4.6,
+   "anim": "none",
+   "y": 2.4,
+   "piece": "storm",
+   "blend": "mix",
+   "sector": "bh_pass"
+  },
+  {
+   "id": "pine0",
+   "kind": "billboard",
+   "sprite": "thing_snow_pine",
+   "at": [
+    -9.5,
+    -12
+   ],
+   "size": 4.4,
+   "anim": "none",
+   "sector": "bh_pass"
+  },
+  {
+   "id": "pine1",
+   "kind": "billboard",
+   "sprite": "thing_snow_pine",
+   "at": [
+    -10.2,
+    -17
+   ],
+   "size": 4.800000000000001,
+   "anim": "none",
+   "sector": "bh_pass"
+  },
+  {
+   "id": "pine2",
+   "kind": "billboard",
+   "sprite": "thing_snow_pine",
+   "at": [
+    9.8,
+    -13
+   ],
+   "size": 5.2,
+   "anim": "none",
+   "sector": "bh_pass"
+  },
+  {
+   "id": "pine3",
+   "kind": "billboard",
+   "sprite": "thing_snow_pine",
+   "at": [
+    10.4,
+    -19
+   ],
+   "size": 4.4,
+   "anim": "none",
+   "sector": "bh_pass"
+  },
+  {
+   "id": "pine4",
+   "kind": "billboard",
+   "sprite": "thing_snow_pine",
+   "at": [
+    -6.5,
+    -27
+   ],
+   "size": 4.800000000000001,
+   "anim": "none",
+   "sector": "bh_pass"
+  },
+  {
+   "id": "pine5",
+   "kind": "billboard",
+   "sprite": "thing_snow_pine",
+   "at": [
+    7,
+    -28
+   ],
+   "size": 5.2,
+   "anim": "none",
+   "sector": "bh_pass"
+  },
+  {
+   "id": "cave",
+   "kind": "billboard",
+   "sprite": "thing_cave_mouth",
+   "at": [
+    -6.5,
+    -31.3
+   ],
+   "size": 4.0,
+   "anim": "none",
+   "y": 1.9,
+   "sector": "bh_pass"
+  },
+  {
+   "id": "ridge",
+   "kind": "billboard",
+   "sprite": "thing_ridge_marker",
+   "at": [
+    6.5,
+    -30.6
+   ],
+   "size": 3.0,
+   "anim": "none",
+   "sector": "bh_pass"
+  },
+  {
+   "id": "cairn",
+   "kind": "billboard",
+   "sprite": "thing_cairn",
+   "at": [
+    3.5,
+    -20.5
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "sector": "bh_pass"
+  },
+  {
+   "id": "lt_pass",
+   "kind": "light",
+   "at": [
+    0,
+    -18
+   ],
+   "y": 4.5,
+   "radius": 26,
+   "color": "#c4d8ff",
+   "strength": 1.0,
+   "sector": "bh_pass"
+  },
+  {
+   "id": "lt_cave",
+   "kind": "light",
+   "at": [
+    -6.5,
+    -30.0
+   ],
+   "y": 1.8,
+   "radius": 6.0,
+   "color": "#7090c8",
+   "strength": 0.9,
+   "sector": "bh_pass"
+  }
+ ],
+ "homes": [
+  {
+   "actor": "lady",
+   "sector": "bh_hall",
+   "at": [
+    0,
+    3.6
+   ]
+  },
+  {
+   "actor": "warden_h",
+   "sector": "bh_hall",
+   "at": [
+    3.4,
+    8.2
+   ]
+  },
+  {
+   "actor": "bram_h",
+   "sector": "bh_hall",
+   "at": [
+    -3.0,
+    14.2
+   ]
+  },
+  {
+   "actor": "bf0",
+   "sector": "bh_hall",
+   "at": [
+    -4.0,
+    6.0
+   ]
+  },
+  {
+   "actor": "bf1",
+   "sector": "bh_hall",
+   "at": [
+    4.2,
+    5.2
+   ]
+  },
+  {
+   "actor": "bf2",
+   "sector": "bh_hall",
+   "at": [
+    -4.8,
+    10.6
+   ]
+  },
+  {
+   "actor": "bf3",
+   "sector": "bh_hall",
+   "at": [
+    -2.2,
+    9.0
+   ]
+  },
+  {
+   "actor": "bf4",
+   "sector": "bh_hall",
+   "at": [
+    2.4,
+    11.8
+   ]
+  },
+  {
+   "actor": "bram_p",
+   "sector": "bh_pass",
+   "at": [
+    -1.4,
+    -14.6
+   ]
+  },
+  {
+   "actor": "warden_p",
+   "sector": "bh_pass",
+   "at": [
+    1.5,
+    -14.8
+   ]
+  }
+ ],
+ "waypoints": [
+  {
+   "id": "hall_c",
+   "at": [
+    0,
+    19.2
+   ],
+   "yaw": 0,
+   "sector": "bh_hall"
+  },
+  {
+   "id": "hall_mid",
+   "at": [
+    0,
+    13.0
+   ],
+   "yaw": 0,
+   "sector": "bh_hall"
+  },
+  {
+   "id": "hall_dais",
+   "at": [
+    0,
+    7.5
+   ],
+   "yaw": 0,
+   "sector": "bh_hall"
+  },
+  {
+   "id": "hall_w",
+   "at": [
+    -5.0,
+    16.5
+   ],
+   "yaw": 12,
+   "sector": "bh_hall"
+  },
+  {
+   "id": "hall_e",
+   "at": [
+    5.0,
+    16.5
+   ],
+   "yaw": -12,
+   "sector": "bh_hall"
+  },
+  {
+   "id": "hall_far",
+   "at": [
+    0,
+    1.6
+   ],
+   "yaw": 0,
+   "sector": "bh_hall"
+  },
+  {
+   "id": "hall_table",
+   "at": [
+    4.4,
+    10.8
+   ],
+   "yaw": 0,
+   "sector": "bh_hall"
+  },
+  {
+   "id": "pass_in",
+   "at": [
+    0,
+    -9.4
+   ],
+   "yaw": 0,
+   "sector": "bh_pass"
+  },
+  {
+   "id": "pass_c",
+   "at": [
+    0,
+    -11.5
+   ],
+   "yaw": 0,
+   "sector": "bh_pass"
+  },
+  {
+   "id": "pass_mid",
+   "at": [
+    0,
+    -17.5
+   ],
+   "yaw": 0,
+   "sector": "bh_pass"
+  },
+  {
+   "id": "pass_far",
+   "at": [
+    0,
+    -24
+   ],
+   "yaw": 0,
+   "sector": "bh_pass"
+  },
+  {
+   "id": "pass_w",
+   "at": [
+    -7.5,
+    -13.5
+   ],
+   "yaw": 20,
+   "sector": "bh_pass"
+  },
+  {
+   "id": "pass_e",
+   "at": [
+    7.5,
+    -13.5
+   ],
+   "yaw": -20,
+   "sector": "bh_pass"
+  },
+  {
+   "id": "cave_wp",
+   "at": [
+    -6.5,
+    -29.4
+   ],
+   "yaw": 10,
+   "sector": "bh_pass"
+  },
+  {
+   "id": "ridge_wp",
+   "at": [
+    6.5,
+    -29.4
+   ],
+   "yaw": -10,
+   "sector": "bh_pass"
+  }
+ ],
+ "spots": {},
+ "silhouettes": [],
+ "occluders": [],
+ "sky": {
+  "tex": "textures/sky_snow.png",
+  "mode": "cylinder"
+ },
+ "fog": {
+  "color": "#c8d4e8",
+  "density": 0.012
+ },
+ "rooms": {},
+ "animated": []
+}

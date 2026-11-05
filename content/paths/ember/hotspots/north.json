@@ -1,0 +1,214 @@
+{
+ "world": "north",
+ "hotspots": [
+  {
+   "id": "north.porch",
+   "world": "north",
+   "scene": "north",
+   "map": "birch_hall",
+   "anchor": {
+    "waypoint": "hall_far"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "north.pass"
+   },
+   "on_failure": {
+    "route": "north.pass",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "north.ladys_hand",
+   "world": "north",
+   "scene": "north",
+   "map": "birch_hall",
+   "anchor": {
+    "actor": "lady"
+   },
+   "kind": "character",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "deeps",
+    "flags_set": [
+     "ember_vial"
+    ]
+   },
+   "on_failure": {
+    "route": "north.pass",
+    "flags_set": [
+     "ember_no_vial"
+    ],
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": false,
+   "acting": {
+    "actor": "lady",
+    "available": {
+     "act": "offer",
+     "face": "awe",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "offer",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "success": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "fear",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "grief",
+      "look_at": "camera"
+     }
+    }
+   }
+  },
+  {
+   "id": "north.map_table",
+   "world": "north",
+   "scene": "north",
+   "map": "birch_hall",
+   "anchor": {
+    "thing": "table_map"
+   },
+   "kind": "object",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "north.pass",
+    "flags_set": [
+     "ember_map"
+    ]
+   },
+   "on_failure": {
+    "route": "deeps",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": false
+  },
+  {
+   "id": "north.pass.cave_mouth",
+   "world": "north",
+   "scene": "north.pass",
+   "map": "birch_hall",
+   "anchor": {
+    "thing": "cave"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "deeps",
+    "cinematic": "ember.pass_calm"
+   },
+   "on_failure": {
+    "route": "deeps",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "north.pass.ridge_path",
+   "world": "north",
+   "scene": "north.pass",
+   "map": "birch_hall",
+   "anchor": {
+    "thing": "ridge"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "deeps.falls"
+   },
+   "on_failure": {
+    "route": "deeps",
+    "energy": -6
+   },
+   "default": false,
+   "repeatable": true
+  }
+ ]
+}

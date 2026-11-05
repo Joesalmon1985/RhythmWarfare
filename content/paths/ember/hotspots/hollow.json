@@ -1,0 +1,281 @@
+{
+ "world": "hollow",
+ "hotspots": [
+  {
+   "id": "hollow.gate",
+   "world": "hollow",
+   "scene": "hollow",
+   "map": "orchard",
+   "anchor": {
+    "waypoint": "orchard_gate"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hollow.ford"
+   },
+   "on_failure": {
+    "route": "hollow.ford",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "hollow.ember_bowl",
+   "world": "hollow",
+   "scene": "hollow",
+   "map": "orchard",
+   "anchor": {
+    "thing": "ember_bowl"
+   },
+   "kind": "object",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "flags_set": [
+     "ember_held"
+    ],
+    "energy": 6
+   },
+   "on_failure": {
+    "energy": -3
+   },
+   "default": false,
+   "repeatable": true
+  },
+  {
+   "id": "hollow.ford.crossing",
+   "world": "hollow",
+   "scene": "hollow.ford",
+   "map": "orchard",
+   "anchor": {
+    "waypoint": "ford_cross"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hollow.inn"
+   },
+   "on_failure": {
+    "route": "hollow.inn",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "hollow.ford.lantern",
+   "world": "hollow",
+   "scene": "hollow.ford",
+   "map": "orchard",
+   "anchor": {
+    "actor": "bram_f"
+   },
+   "kind": "character",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "north",
+    "flags_set": [
+     "ember_bram_lamp"
+    ],
+    "cinematic": "ember.river_rises"
+   },
+   "on_failure": {
+    "route": "hollow.inn",
+    "energy": -8,
+    "cinematic": "ember.bram_falls"
+   },
+   "default": false,
+   "repeatable": false,
+   "acting": {
+    "actor": "bram_f",
+    "available": {
+     "act": "plead",
+     "face": "plea",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "relief",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "ford_cross"
+    },
+    "success": {
+     "act": "cheer",
+     "face": "relief",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "collapse",
+     "face": "grief",
+     "beats": 10,
+     "then": {
+      "act": "stare",
+      "face": "sad",
+      "look_at": "camera"
+     }
+    }
+   }
+  },
+  {
+   "id": "hollow.inn.back_door",
+   "world": "hollow",
+   "scene": "hollow.inn",
+   "map": "orchard",
+   "anchor": {
+    "waypoint": "inn_back"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "north"
+   },
+   "on_failure": {
+    "route": "north",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true
+  },
+  {
+   "id": "hollow.inn.hooded_man",
+   "world": "hollow",
+   "scene": "hollow.inn",
+   "map": "orchard",
+   "anchor": {
+    "actor": "warden_i"
+   },
+   "kind": "character",
+   "radius_m": 0.9,
+   "min_px": 72,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "north.pass",
+    "flags_set": [
+     "ember_warden_met"
+    ]
+   },
+   "on_failure": {
+    "route": "north",
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": false,
+   "acting": {
+    "actor": "warden_i",
+    "available": {
+     "act": "beckon",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "selected": {
+     "act": "nod",
+     "face": "resolve",
+     "look_at": "camera"
+    },
+    "committed": {
+     "act": "point",
+     "face": "resolve",
+     "look_at": "inn_back"
+    },
+    "success": {
+     "act": "beckon",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 8
+    },
+    "failure": {
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 8,
+     "then": {
+      "act": "stare",
+      "face": "resolve",
+      "look_at": "camera"
+     }
+    }
+   }
+  }
+ ]
+}
