@@ -1094,8 +1094,9 @@ func test_the_tables_people_welcome_the_player_and_give_way_to_the_close_up() ->
 	_to_beat(scene, 13.5)
 	assert_eq(_mg(scene).state, "entering", "the block passed: the player sits at its end")
 	assert_eq(_mood(scene), "welcome", "they welcome the player to the chair")
+	_to_beat(scene, 16.05)
+	assert_eq(_mg(scene).state, "active", "seated on the downbeat")
 	_run_to(scene, _mg(scene).begin_t + 0.2 * BEAT)
-	assert_eq(_mg(scene).state, "active")
 	assert_eq(_mood(scene), "welcome", "seated, the close-up still rising over them: the room's table is still there behind it")
 	_run_to(scene, _mg(scene).begin_t + 1.0 * BEAT)
 	assert_eq(_mg(scene).state, "active")
@@ -1107,11 +1108,11 @@ func test_the_tables_people_welcome_the_player_and_give_way_to_the_close_up() ->
 	ctx["play"] = false
 	var moods := {}
 	var watch := func() -> bool:
-		if _mg(scene).state == "leaving":
+		if _mg(scene).state != "":
 			moods[_mood(scene)] = true
 		return _mg(scene).state == ""
 	assert_true(_until(scene, ctx, watch, 8.0), "left")
-	assert_true(moods.has("hidden") and moods.has("invite"), "getting up: hidden while the close-up is up, back in the room as it sinks away (%s)" % str(moods.keys()))
+	assert_eq(moods.keys(), ["hidden", "invite"], "getting up: hidden while the close-up is up, back in the room inviting as it sinks away")
 	_run_to(scene, scene._vt + 0.1)
 	assert_eq(_mood(scene), "invite", "up again: they invite again")
 	_free(d)
@@ -1128,15 +1129,16 @@ func test_the_tables_frames_are_a_function_of_song_time_and_state_only() -> void
 	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": false}, "", 4.0 + 4.01 * bs, bs)["loop"], "invite", "for four beats")
 	assert_eq(RunCardTable.mood_of({}, {"t": 4.0, "success": true}, "entering", 4.5, bs)["loop"], "welcome")
 	assert_eq(RunCardTable.mood_of({}, {"t": 4.0, "success": true}, "active", 4.5, bs)["loop"], "hidden")
-	assert_eq(RunCardTable.mood_of({}, {"t": 4.0, "success": true}, "active", 4.5, bs, false)["loop"], "welcome", "the close-up still rising")
-	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": true}, "leaving", 9.0, bs, false)["loop"], "invite", "the close-up sinking away")
-	assert_false(RunCardTable.closeup_up({}, 5.0, bs), "no activity: nothing covers the table")
-	assert_false(RunCardTable.closeup_up({"phase": "sitting", "phase_t0": 5.0}, 5.0 + 0.1 * bs, bs), "the close-up only starting to rise")
-	assert_true(RunCardTable.closeup_up({"phase": "sitting", "phase_t0": 5.0}, 5.0 + 1.0 * bs, bs), "risen")
-	assert_true(RunCardTable.closeup_up({"phase": "await_bet", "phase_t0": 5.0}, 9.0, bs), "playing")
+	assert_eq(RunCardTable.mood_of({}, {"t": 4.0, "success": true}, "active", 4.5, bs, "rising"), {"loop": "welcome", "t0": 4.0}, "the close-up still rising")
+	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": true}, "active", 9.0, bs, "sinking")["loop"], "invite", "the close-up sinking away")
+	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": true}, "leaving", 9.0, bs, "sinking")["loop"], "invite", "the close-up sinking away (a fall, a stop)")
+	assert_eq(RunCardTable.closeup_of({}, 5.0, bs), "none", "no activity: nothing covers the table")
+	assert_eq(RunCardTable.closeup_of({"phase": "sitting", "phase_t0": 5.0}, 5.0 + 0.1 * bs, bs), "rising", "the close-up only starting to rise")
+	assert_eq(RunCardTable.closeup_of({"phase": "sitting", "phase_t0": 5.0}, 5.0 + 1.0 * bs, bs), "up", "risen")
+	assert_eq(RunCardTable.closeup_of({"phase": "await_bet", "phase_t0": 5.0}, 9.0, bs), "up", "playing")
 	var leave := {"phase": "leaving", "phase_t0": 8.0, "pile": {"via": "pockets", "t0": 8.0, "dur": 4.0 * bs}}
-	assert_true(RunCardTable.closeup_up(leave, 8.0 + 2.0 * bs, bs), "gathering the money: still up")
-	assert_false(RunCardTable.closeup_up(leave, 8.0 + 3.9 * bs, bs), "sinking away at the end")
+	assert_eq(RunCardTable.closeup_of(leave, 8.0 + 2.0 * bs, bs), "up", "gathering the money: still up")
+	assert_eq(RunCardTable.closeup_of(leave, 8.0 + 3.9 * bs, bs), "sinking", "sinking away at the end")
 	assert_eq(RunCardTable.mood_of(avail, {"t": 4.0, "success": true}, "", 40.0, bs)["loop"], "invite", "after getting up")
 	# the same song times give the same frames whatever the frame steps that led there; a pose holds for half a beat and lands on the half beats
 	for loop in ["idle", "invite", "pleased", "refuse"]:

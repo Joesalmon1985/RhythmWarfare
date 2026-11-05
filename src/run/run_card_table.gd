@@ -46,16 +46,16 @@ static func is_table(h: Dictionary) -> bool:
 
 
 ## What the players do at song time `t`. `entry`: the table's hotspot_items() entry on show now ({} when it is not on show); `last_commit`: {t, success} of the table's latest
-## decision ({} none); `mg_state`: the minigame controller's state ("" | "entering" | "active" | "leaving"); `closeup_up`: the close-up's picture covers the table now
-## (`closeup_up`, below: false while it rises at the sitting down and sinks at the getting up, so the room's table is not missing behind it). Returns {loop, t0}
-## (t0: when the loop started).
-static func mood_of(entry: Dictionary, last_commit: Dictionary, mg_state: String, t: float, p_beat_s: float, p_closeup_up := true) -> Dictionary:
+## decision ({} none); `mg_state`: the minigame controller's state ("" | "entering" | "active" | "leaving"); `closeup`: where the close-up's picture is (`closeup_of`, below:
+## "rising" at the sitting down and "sinking" at the getting up leave the room's table drawn behind it, so it is not missing there). Returns {loop, t0} (t0: when the loop started).
+static func mood_of(entry: Dictionary, last_commit: Dictionary, mg_state: String, t: float, p_beat_s: float, p_closeup := "up") -> Dictionary:
 	if mg_state == "active" or mg_state == "leaving":
-		if p_closeup_up:
-			return {"loop": "hidden", "t0": 0.0}  # seated: the close-up is the table
-		if mg_state == "active" and not last_commit.is_empty() and bool(last_commit["success"]):
-			return {"loop": "welcome", "t0": float(last_commit["t"])}  # the close-up still rising over them
-		return {"loop": "invite", "t0": 0.0}  # the close-up sinking away: the table is free again
+		match p_closeup:
+			"rising":  # the close-up still coming up over them
+				return {"loop": "welcome", "t0": float(last_commit["t"]) if not last_commit.is_empty() else 0.0}
+			"sinking", "none":  # the close-up going away: the table is free again
+				return {"loop": "invite", "t0": 0.0}
+		return {"loop": "hidden", "t0": 0.0}  # seated: the close-up is the table
 	if not last_commit.is_empty() and t >= float(last_commit["t"]):
 		if bool(last_commit["success"]) and mg_state == "entering":
 			return {"loop": "welcome", "t0": float(last_commit["t"])}
@@ -83,23 +83,23 @@ static func frame_of(loop: String, t0: float, t: float, n: int, fpb: int, p_beat
 	return posmod(int(floor(t / p_beat_s * float(fpb) + 1.0e-6)), n)
 
 
-## Whether the close-up's picture is up over the room at song time `t`, from the activity's `state()` snapshot ({} none): the blackjack view raises it over its first
-## RISE_BEATS when the player sits and lowers it over the last SINK_BEATS of the getting up (src/minigames/blackjack/blackjack_view.gd `_pose`); it counts as up from half
-## way. A pure function of the snapshot and song time.
-static func closeup_up(snap: Dictionary, t: float, p_beat_s: float) -> bool:
+## Where the close-up's picture is at song time `t`, from the activity's `state()` snapshot: "none" (no snapshot), "rising" (the blackjack view raises it over its
+## first RISE_BEATS when the player sits), "sinking" (it lowers it over the last SINK_BEATS of the getting up; src/minigames/blackjack/blackjack_view.gd `_pose`) or "up"; it
+## counts as up from half way. A pure function of the snapshot and song time.
+static func closeup_of(snap: Dictionary, t: float, p_beat_s: float) -> String:
 	if snap.is_empty():
-		return false
+		return "none"
 	var t0 := float(snap.get("phase_t0", 0.0))
 	match str(snap.get("phase", "")):
 		"sitting":
-			return t - t0 >= 0.5 * BlackjackView.RISE_BEATS * p_beat_s
+			return "up" if t - t0 >= 0.5 * BlackjackView.RISE_BEATS * p_beat_s else "rising"
 		"leaving":
 			var pile: Dictionary = snap.get("pile", {})
 			var end := t0
 			if str(pile.get("via", "")) == "pockets":
 				end = float(pile.get("t0", t0)) + float(pile.get("dur", 0.0))
-			return t < end - 0.5 * BlackjackView.SINK_BEATS * p_beat_s
-	return true
+			return "up" if t < end - 0.5 * BlackjackView.SINK_BEATS * p_beat_s else "sinking"
+	return "up"
 
 
 func set_mood(m: Dictionary, t: float) -> void:
