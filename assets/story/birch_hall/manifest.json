@@ -1,0 +1,214 @@
+{
+ "version": 1,
+ "level": "birch_hall",
+ "px_scale_note": "the Ember Road's maps have no rigs; their world is textures and sprite sheets only",
+ "textures": {
+  "ceil_hall": {
+   "file": "textures/ceil_hall.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "ceil_overcast": {
+   "file": "textures/ceil_overcast.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 6.0
+  },
+  "floor_birch": {
+   "file": "textures/floor_birch.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 2.5
+  },
+  "floor_snow": {
+   "file": "textures/floor_snow.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "floor_snow_rock": {
+   "file": "textures/floor_snow_rock.png",
+   "size": [
+    64,
+    64
+   ],
+   "metres": 3.0
+  },
+  "piece_storm_snow": {
+   "file": "textures/piece_storm_snow.png",
+   "size": [
+    256,
+    128
+   ],
+   "metres": 1.0
+  },
+  "sky_snow": {
+   "file": "textures/sky_snow.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "thing_banner_birch": {
+   "file": "textures/thing_banner_birch.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_birch_pillar": {
+   "file": "textures/thing_birch_pillar.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_birch_tree": {
+   "file": "textures/thing_birch_tree.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_cairn": {
+   "file": "textures/thing_cairn.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_cave_mouth": {
+   "file": "textures/thing_cave_mouth.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_chair_white": {
+   "file": "textures/thing_chair_white.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_door_far": {
+   "file": "textures/thing_door_far.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_ember": {
+   "file": "textures/thing_ember.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_ridge_marker": {
+   "file": "textures/thing_ridge_marker.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_silver_lamp": {
+   "file": "textures/thing_silver_lamp.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_snow_pine": {
+   "file": "textures/thing_snow_pine.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_table_map": {
+   "file": "textures/thing_table_map.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_vial_stand": {
+   "file": "textures/thing_vial_stand.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "wall_birch": {
+   "file": "textures/wall_birch.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_cave": {
+   "file": "textures/wall_cave.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_hall": {
+   "file": "textures/wall_hall.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_hall_door": {
+   "file": "textures/wall_hall_door.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 2.5
+  },
+  "wall_rock_snow": {
+   "file": "textures/wall_rock_snow.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  }
+ },
+ "people": {
+  "file": "people/people.json",
+  "pages": [
+   "people/page_0.png"
+  ],
+  "palette": "people/palette.png"
+ }
+}
