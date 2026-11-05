@@ -45,6 +45,16 @@ Companion plan: `docs/VISUAL_RHYTHM_ADVENTURE_PLAN.md` runs in parallel on `feat
   gain staging per family as the manifest does. Both catalogues updated. `check_assets`-style determinism: rebuild is byte-identical.
 - Tests extended; `validate` covers the new packs.
 
+### M4 Populate and M5 Verification (Sonnet, 2026-11-05; commits `Music, M4 ...`)
+Report: `docs/MUSIC_REPORT.md` (which music plays where and why, before/after metrics, limitations, the import commands, every verification result); per-scene tables: `docs/MUSIC_HANDOFF.md` (generated).
+- **Run**: all 36 scenes name an arrangement, a `slot` and two `alternates` (`<world>_1..3`; Warehouse 96 bars, Mothership and Underworld 80, Hospital and Ward 96, the late worlds 64). Entry = slot 0 on the family's base pack, exit = last slot, drop then ending.
+  Underworld = the `cold_fusion` family with `meta_fusion` as the one cross-family variation (`temporary: true`, the nearest match until Lv3 Hell has MIDI). Dungeon untouched (the trial engine plays one pack).
+- **Chapters**: `songs/story_<chapter>_1` and `_2` (ogg) for all five chapters, listed after the chapter's own recording; tiers lowered to 2 (Mothership 1 and 2, Underworld 2, Hospital 2) or 1 (Hospital 1) where the director flagged dense runs.
+- **Fixes to the merge and to M3's tooling**: `beatshaper.py validate` and `music_handoff.py` now read arrangement entries (`resolve_music_node`); `arrange.py` mapped the catalogue's `bs_<slug>` family ids to the packs (no cross-family variation was ever offered before) and
+  palettes may carry `cross` (the Underworld: `metaverse_*`; the others none); `tests/test_run_audio_sections.gd`, `test_run_progress.gd` and `test_run_lock.gd` compare against their own plain scenes instead of the shipped `music.json`.
+- **New tools**: `tools/content/music_metrics.py` (before/after numbers), `tools/content/check_chapter_audio.py` (a recording of a whole-chapter render against its stems and the logged gains), `RW_RUN_MUSIC` in `tools/story/check_run_audio.py`.
+- **Merge notes for the visual branch**: this branch changes no `src/`; `RunData` resolves arrangement entries into `node.audio`/`node.chart` = the first section's pack, so the route lock and the hotspot/routing code see plain nodes. Scenes of one world now play
+  different slots, so `beatshaper.py validate` prints route-lock warnings for every sibling pair, as before for the old packs.
 ### M3 Arrangement system (Sonnet, worktree; owns `tools/content/arrange.py`, `content/music/arrangements/*.json`, `src/run/run_audio.gd` (extension only), `src/run/run_data.gd` (music fields only), `tests/test_run_audio_sections.gd`, `tests/test_arrangements.py`)
 - An **arrangement** is data: `{id, family, seed, sections: [{bars: 8|16, pack: <pack id> | stems: {drums, bass, synth: <library clip/sound>}, mix: <recipe name or gains>, fills: [...], role: intro|build|drop|breakdown|variation|ending}]}`,
   built offline by `arrange.py` from the catalogue with a seeded, deterministic generator that respects the family rules (one family per arrangement unless the catalogue says compatible),
