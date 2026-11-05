@@ -64,9 +64,9 @@ not need it to place a cue.
     {"id": "intro1", "role": "intro", "start_s": 0.0, "end_s": 66.21}
   ],
   "focus": [
-    {"start_s": 0.0,   "end_s": 66.21,  "voice": "other", "lanes": ["Low", "", "", "High"]},
-    {"start_s": 66.21, "end_s": 110.34, "voice": "drums", "lanes": ["Kick", "Hat", "Perc", "Snare"]},
-    {"start_s": 110.34, "end_s": 132.41, "voice": "bass", "lanes": ["Low", "", "", "High"]}
+    {"start_s": 0.0,   "end_s": 66.21,  "voice": "other"},
+    {"start_s": 66.21, "end_s": 110.34, "voice": "drums"},
+    {"start_s": 110.34, "end_s": 132.41, "voice": "bass"}
   ],
   "charts": {
     "normal": [
@@ -90,8 +90,8 @@ Header
 
 Voices and stems
 - `voices` has one to six entries. `key` is unique across voices and backing: lower case letters, digits,
-  underscores. `label` is a short name shown to the player. `kind` is `drums` or `pitched` and says how the
-  voice's part is laid across the pads (see Charts). A voice has no pad of its own.
+  underscores. `label` is a short name shown to the player. `kind` is `drums` or `pitched`: information from the tools
+  about what the voice is (the game does not act on it). A voice has no pad of its own.
 - `backing` has zero or more entries. A backing stem is never muted.
 - Every `stem` is a relative path inside the pack (no `..`, no leading `/`), an Ogg Vorbis file, 48 kHz, stereo.
   All stems have the same length to within 5 ms and start at the same instant: sample 0 of every file is the
@@ -112,13 +112,11 @@ Tempo and sections (information for tools and HUD; the game must work if `sectio
   `drop`, `breakdown`, `outro`, `other`.
 
 Focus
-- `focus` is a list of stretches `{start_s, end_s, voice, lanes}` in time order that do not overlap and lie
+- `focus` is a list of stretches `{start_s, end_s, voice}` in time order that do not overlap and lie
   inside the track. `voice` is the key of one of `voices`. There may be gaps between stretches (nothing to
   play there) and the same voice may have many stretches. At least one stretch exists.
 - A stretch is at least 8 beats long. The tools make them much longer (whole phrases) and start and end them
   on bar lines.
-- `lanes` is four short names, one per pad from pad 1 to pad 4, saying what each pad is in this stretch, for
-  the player's display; a name may be empty. It is optional.
 - The focus is the same for every chart of the pack.
 
 Charts
@@ -134,10 +132,13 @@ Charts
 - A cue means its voice audibly plays something at `t`. The tools must not place cues where the voice is
   silent. `t` is the audible attack where there is one; for a legato part with no attack (a bass line sliding
   to a new note) it is the nearest 16th-note grid line to the pitch change.
-- How a voice's part is laid across the pads (the tools' job; the game only reads `pad`):
-  - `drums`: the kick on pad 1, the snare on pad 4, hats and other percussion on pads 2 and 3;
-  - `pitched`: lower notes to the left, higher to the right, so the pads follow the shape of the line. The
-    same note in the same stretch is always the same pad, and a phrase that repeats gets the same pads again.
+- How a voice's part is laid across the pads (the tools' job; the game only reads `pad`). The pads have no
+  names and mean the same kind of thing for every voice: lower sounds to the left, higher to the right, by
+  pitch where the part has one and by how low or bright the hit is where it does not (a kick is low, a snare
+  higher, a hat highest), so the thumbs follow the shape of the part. The same sound in the same stretch is
+  always the same pad, and a phrase that repeats gets the same pads again. Where strict height order would
+  make a part awkward (two sounds that alternate quickly landing on one thumb), the tools may move a sound
+  to the other thumb, keeping the order within each thumb.
 - Pads 1 and 2 are the left thumb, pads 3 and 4 the right (keys D F J K on a keyboard).
 - Playability, with B = one beat = 60 / `tempo.bpm` seconds:
   - same pad: two cues at least 0.5 B apart, and a cue never starts inside a hold on its own pad or sooner
@@ -158,7 +159,7 @@ separation notes, why each focus stretch was chosen, tool version). The game ign
   stems as one synchronised stream so they cannot drift.
 - Shows the four pads and the cues of the chosen chart (`RW_TRACK_CHART`, default `default_chart`) arriving in
   time, using the game's existing pad view, input and timing (latency and calibration as everywhere else).
-- Shows which voice the player is playing now (the focus stretch's voice and its `lanes` on the pads), and
+- Shows which voice the player is playing now (the focus stretch's voice; the pads carry no names), and
   announces a change of focus before it happens: from 8 beats ahead it shows the next voice's name and counts
   the beats down. Between stretches it shows that there is nothing to play.
 - All voices start audible. A missed cue (the moment the press window closes, 0.14 s after the cue), or a
@@ -172,7 +173,8 @@ separation notes, why each focus stretch was chosen, tool version). The game ign
 - A hold counts as kept if it is released within 0.15 s of its end; released earlier, the voice mutes. A hold
   that was started and then let go is counted as a hit plus a "let go", not as a miss; a hold never started
   is a miss.
-- Pressing a pad when no cue is near costs nothing.
+- Pressing a pad when no cue is near costs nothing. Pressing the wrong pad for a cue does not count as
+  playing it: the cue is missed when its window closes.
 - There is no failing and no battle: the track always plays to the end. At the end the game reports hits and
   misses per voice and how much of the time each voice was sounding.
 - `RW_AUTOPLAY=perfect|accuracy:<0..1>|none` plays by itself; `RW_TRACK_START=<seconds>` starts part-way in.
