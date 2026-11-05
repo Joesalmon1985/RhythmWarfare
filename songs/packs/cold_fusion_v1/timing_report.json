@@ -1,0 +1,211 @@
+{
+ "timing": {
+  "header_bpm": 120.0,
+  "profile": "beat_shaper_174x1",
+  "drum_fit": {
+   "hits": 20,
+   "matched": 20,
+   "fitted_bpm": 173.954,
+   "fitted_offset_ms": 5.5,
+   "max_abs_ms": 8.24,
+   "mean_ms": 6.18,
+   "median_ms": 6.29,
+   "within_limit": 1.0,
+   "worst_hits": [
+    {
+     "beat": 0.0,
+     "error_ms": 1.0
+    },
+    {
+     "beat": 13.0,
+     "error_ms": 8.2
+    },
+    {
+     "beat": 8.5,
+     "error_ms": 8.0
+    }
+   ]
+  },
+  "bass": [
+   {
+    "beat": 0.0,
+    "pitch": 34,
+    "error_ms": 0.0,
+    "how": "first sound in the file"
+   },
+   {
+    "beat": 4.0,
+    "pitch": 41,
+    "error_ms": 0.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 8.0,
+    "pitch": 42,
+    "error_ms": 6.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 10.0,
+    "pitch": 42,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 12.0,
+    "pitch": 42,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 13.0,
+    "pitch": 40,
+    "error_ms": -80.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 14.0,
+    "pitch": 42,
+    "error_ms": -0.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 15.5,
+    "pitch": 38,
+    "error_ms": -0.0,
+    "how": "largest spectral change near the note start"
+   }
+  ],
+  "tempo_verified": "strict",
+  "bass_timing": {
+   "mode": "audio_checked",
+   "why": "the audio bass detector agrees with the bass MIDI (median 3.0 ms)",
+   "median_error_ms": 3.0,
+   "notes_measured": 8,
+   "notes_out_of_line": 3
+  }
+ },
+ "import_report": {
+  "set": "Cold Fusion Interface (1)",
+  "drum_notes": {
+   "counts": {
+    "36": 12,
+    "40": 8,
+    "42": 64,
+    "46": 8
+   },
+   "mode": "standard",
+   "kick": [
+    36
+   ],
+   "snare": [
+    38,
+    40
+   ],
+   "why": "the standard notes: kick 36, snare 38/40"
+  },
+  "decisions": [
+   "WARNING bass: some note changes could not be placed within the limit (the detector reads a wobbling bass loosely): [{\"beat\": 10.0, \"pitch\": 42, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 12.0, \"pitch\": 42, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 13.0, \"pitch\": 40, \"error_ms\": -80.0, \"how\": \"largest spectral change near the note start\"}]"
+  ],
+  "rejected": [],
+  "tempo": {
+   "profile": "beat_shaper_174x1",
+   "verified": "strict",
+   "tried": [
+    {
+     "profile": "beat_shaper_87x2",
+     "fit": null,
+     "verified": null
+    },
+    {
+     "profile": "beat_shaper_174x1",
+     "fit": {
+      "hits": 20,
+      "matched": 20,
+      "fitted_bpm": 173.954,
+      "fitted_offset_ms": 5.5,
+      "max_abs_ms": 8.24,
+      "mean_ms": 6.18,
+      "median_ms": 6.29,
+      "within_limit": 1.0,
+      "worst_hits": [
+       {
+        "beat": 0.0,
+        "error_ms": 1.0
+       },
+       {
+        "beat": 13.0,
+        "error_ms": 8.2
+       },
+       {
+        "beat": 8.5,
+        "error_ms": 8.0
+       }
+      ]
+     },
+     "verified": "strict"
+    }
+   ]
+  }
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 291346,
+   "loop_frames": 264828,
+   "tail_frames": 26518,
+   "padded_frames": 0,
+   "tail_audible_s": 0.425,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -8.05,
+   "rms_db": -21.69,
+   "source_seconds": 6.0697,
+   "source_file": "Beat Shaper - Cold Fusion Interface-Drums (1).wav"
+  },
+  "bass": {
+   "frames_in": 262854,
+   "loop_frames": 264828,
+   "tail_frames": 0,
+   "padded_frames": 1974,
+   "tail_audible_s": 0.0,
+   "laps_folded": 0,
+   "gain_db": 3.0,
+   "peak_db": -13.16,
+   "rms_db": -21.42,
+   "source_seconds": 5.4761,
+   "source_file": "Beat Shaper - Cold Fusion Interface-Bass (1).wav"
+  },
+  "other": {
+   "frames_in": 329087,
+   "loop_frames": 264828,
+   "tail_frames": 64259,
+   "padded_frames": 0,
+   "tail_audible_s": 1.339,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -16.66,
+   "rms_db": -30.14,
+   "source_seconds": 6.856,
+   "source_file": "Beat Shaper - Cold Fusion Interface-Synth (1).wav"
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 12,
+   "bass": 6
+  },
+  "2": {
+   "drums": 14,
+   "bass": 6
+  },
+  "3": {
+   "drums": 17,
+   "bass": 7
+  },
+  "4": {
+   "drums": 20,
+   "bass": 8
+  }
+ },
+ "chart_problems": []
+}

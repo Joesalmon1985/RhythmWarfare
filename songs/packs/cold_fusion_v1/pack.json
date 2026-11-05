@@ -1,0 +1,646 @@
+{
+ "schema": 1,
+ "id": "cold_fusion_v1",
+ "label": "Cold Fusion Interface (1)",
+ "bpm": 174,
+ "phrase_beats": 16,
+ "loop_frames": 264828,
+ "profile": "beat_shaper_174x1",
+ "stems": {
+  "drums": "loops/drums.wav",
+  "bass": "loops/bass.wav",
+  "other": "loops/other.wav"
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 291346,
+   "loop_frames": 264828,
+   "tail_frames": 26518,
+   "padded_frames": 0,
+   "tail_audible_s": 0.425,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -8.05,
+   "rms_db": -21.69,
+   "source_seconds": 6.0697,
+   "source_file": "Beat Shaper - Cold Fusion Interface-Drums (1).wav"
+  },
+  "bass": {
+   "frames_in": 262854,
+   "loop_frames": 264828,
+   "tail_frames": 0,
+   "padded_frames": 1974,
+   "tail_audible_s": 0.0,
+   "laps_folded": 0,
+   "gain_db": 3.0,
+   "peak_db": -13.16,
+   "rms_db": -21.42,
+   "source_seconds": 5.4761,
+   "source_file": "Beat Shaper - Cold Fusion Interface-Bass (1).wav"
+  },
+  "other": {
+   "frames_in": 329087,
+   "loop_frames": 264828,
+   "tail_frames": 64259,
+   "padded_frames": 0,
+   "tail_audible_s": 1.339,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -16.66,
+   "rms_db": -30.14,
+   "source_seconds": 6.856,
+   "source_file": "Beat Shaper - Cold Fusion Interface-Synth (1).wav"
+  }
+ },
+ "kick_notes": [
+  36
+ ],
+ "snare_notes": [
+  38,
+  40
+ ],
+ "tiers": {
+  "1": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     3840,
+     3600,
+     3,
+     "bass"
+    ],
+    [
+     7680,
+     1440,
+     4,
+     "bass"
+    ],
+    [
+     9600,
+     1440,
+     4,
+     "bass"
+    ],
+    [
+     11520,
+     480,
+     4,
+     "bass"
+    ],
+    [
+     13440,
+     1200,
+     4,
+     "bass"
+    ]
+   ]
+  },
+  "2": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4320,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10080,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     3840,
+     3600,
+     3,
+     "bass"
+    ],
+    [
+     7680,
+     1440,
+     4,
+     "bass"
+    ],
+    [
+     9600,
+     1440,
+     4,
+     "bass"
+    ],
+    [
+     11520,
+     480,
+     4,
+     "bass"
+    ],
+    [
+     13440,
+     1200,
+     4,
+     "bass"
+    ]
+   ]
+  },
+  "3": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2400,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4320,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8160,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10080,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13920,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     3840,
+     3600,
+     3,
+     "bass"
+    ],
+    [
+     7680,
+     1440,
+     4,
+     "bass"
+    ],
+    [
+     9600,
+     1440,
+     4,
+     "bass"
+    ],
+    [
+     11520,
+     480,
+     4,
+     "bass"
+    ],
+    [
+     13440,
+     1200,
+     4,
+     "bass"
+    ],
+    [
+     14880,
+     0,
+     1,
+     "bass"
+    ]
+   ]
+  },
+  "4": {
+   "drums": [
+    [
+     0,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     480,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     960,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     2400,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     2880,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     3840,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4320,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     4800,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     6240,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     6720,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     7680,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8160,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     8640,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     10080,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     10560,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     11520,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     12000,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     12480,
+     0,
+     4,
+     "snare"
+    ],
+    [
+     13920,
+     0,
+     1,
+     "kick"
+    ],
+    [
+     14400,
+     0,
+     4,
+     "snare"
+    ]
+   ],
+   "bass": [
+    [
+     0,
+     3600,
+     1,
+     "bass"
+    ],
+    [
+     3840,
+     3600,
+     3,
+     "bass"
+    ],
+    [
+     7680,
+     1440,
+     4,
+     "bass"
+    ],
+    [
+     9600,
+     1440,
+     4,
+     "bass"
+    ],
+    [
+     11520,
+     480,
+     4,
+     "bass"
+    ],
+    [
+     12480,
+     720,
+     2,
+     "bass"
+    ],
+    [
+     13440,
+     1200,
+     4,
+     "bass"
+    ],
+    [
+     14880,
+     0,
+     1,
+     "bass"
+    ]
+   ]
+  }
+ },
+ "source": {
+  "project": "Cold Fusion Interface",
+  "variant": 1,
+  "files": {
+   "Bass": {
+    "mid": "Beat Shaper - Cold Fusion Interface-Bass (1).mid",
+    "wav": "Beat Shaper - Cold Fusion Interface-Bass (1).wav"
+   },
+   "Drums": {
+    "mid": "Beat Shaper - Cold Fusion Interface-Drums (1).mid",
+    "wav": "Beat Shaper - Cold Fusion Interface-Drums (1).wav"
+   },
+   "Synth": {
+    "mid": "Beat Shaper - Cold Fusion Interface-Synth (1).mid",
+    "wav": "Beat Shaper - Cold Fusion Interface-Synth (1).wav"
+   }
+  }
+ }
+}
