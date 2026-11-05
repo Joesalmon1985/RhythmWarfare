@@ -7,9 +7,9 @@
  "loop_frames": 743226,
  "profile": "gospel_x1",
  "stems": {
-  "drums": "loops/drums.wav",
-  "bass": "loops/bass.wav",
-  "other": "loops/other.wav"
+  "drums": "../_shared/drums_71bd019c9c6c.wav",
+  "bass": "../_shared/bass_d71ff1232d5d.wav",
+  "other": "../_shared/other_107a8b8f56c8.wav"
  },
  "loops": {
   "drums": {

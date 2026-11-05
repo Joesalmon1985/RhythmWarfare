@@ -7,9 +7,9 @@
  "loop_frames": 743226,
  "profile": "stub_x1",
  "stems": {
-  "drums": "loops/drums.wav",
-  "bass": "loops/bass.wav",
-  "other": "loops/other.wav"
+  "drums": "../_shared/drums_57836e3bd4cb.wav",
+  "bass": "../_shared/bass_6485f03e563c.wav",
+  "other": "../_shared/other_198c0225be71.wav"
  },
  "loops": {
   "drums": {

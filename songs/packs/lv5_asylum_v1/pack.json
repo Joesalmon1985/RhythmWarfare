@@ -7,9 +7,9 @@
  "loop_frames": 529655,
  "profile": "beat_shaper_87x2",
  "stems": {
-  "drums": "loops/drums.wav",
-  "bass": "loops/bass.wav",
-  "other": "loops/other.wav"
+  "drums": "../_shared/drums_6282c6546a4e.wav",
+  "bass": "../_shared/bass_719d58088300.wav",
+  "other": "../_shared/other_a0a7bba743b5.wav"
  },
  "loops": {
   "drums": {

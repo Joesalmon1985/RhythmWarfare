@@ -7,9 +7,9 @@
  "loop_frames": 329143,
  "profile": "squadron_x1",
  "stems": {
-  "drums": "loops/drums.wav",
-  "bass": "loops/bass.wav",
-  "other": "loops/other.wav"
+  "drums": "../_shared/drums_53126a38ecbd.wav",
+  "bass": "../_shared/bass_a06475939410.wav",
+  "other": "../_shared/other_a4da4558fb17.wav"
  },
  "loops": {
   "drums": {

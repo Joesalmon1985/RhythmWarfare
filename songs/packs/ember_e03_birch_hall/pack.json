@@ -7,9 +7,9 @@
  "loop_frames": 635586,
  "profile": "ember_x1",
  "stems": {
-  "drums": "loops/drums.wav",
-  "bass": "loops/bass.wav",
-  "other": "loops/other.wav"
+  "drums": "../_shared/drums_de8e99c15eeb.wav",
+  "bass": "../_shared/bass_38e00e1f1e6b.wav",
+  "other": "../_shared/other_9dcbedaf4251.wav"
  },
  "loops": {
   "drums": {
