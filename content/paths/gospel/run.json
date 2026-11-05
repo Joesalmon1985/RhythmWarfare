@@ -5,7 +5,8 @@
   "title": "The Life of Jesus",
   "entry_from": "warehouse.balcony.star",
   "returns_to": "warehouse",
-  "opens": "A figure of light under a projected star on the Warehouse balcony: touch it in time and follow."
+  "opens": "A figure of light under a projected star on the Warehouse balcony: touch it in time and follow.",
+  "laps": 2
  },
  "timing": {
   "bpm": 124,
@@ -72,6 +73,7 @@
    "exit_scene": false,
    "role": "dancer",
    "blurb": "Bethlehem: the Star",
+   "laps": 1,
    "next": [
     {
      "to": "jordan.baptism",
@@ -309,35 +311,35 @@
      "act": "bow",
      "face": "awe",
      "look_at": "camera",
-     "beats": 12
+     "beats": 24
     },
     {
      "actor": "b1",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "point",
      "face": "resolve",
      "look_at": "bank_dawn.door_right",
-     "beats": 12
+     "beats": 24
     },
     {
      "actor": "v2",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "cheer",
      "face": "cheer",
-     "beats": 12,
+     "beats": 24,
      "if_energy_above": 55
     },
     {
      "actor": "v3",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "cheer",
      "face": "cheer",
-     "beats": 12,
+     "beats": 24,
      "if_energy_above": 55
     },
     {
      "actor": "v1_bank_dawn",
-     "at_beat": 40,
+     "at_beat": 80,
      "act": "shake_head",
      "face": "doubt",
      "beats": 10,
@@ -345,7 +347,7 @@
     },
     {
      "actor": "v4",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "stare",
      "face": "awe",
      "look_at": "camera",
@@ -464,27 +466,27 @@
      "act": "stare",
      "face": "doubt",
      "look_at": "camera",
-     "beats": 16
-    },
-    {
-     "actor": "t1",
-     "at_beat": 16,
-     "act": "offer",
-     "face": "happy",
-     "look_at": "camera",
-     "beats": 14
+     "beats": 32
     },
     {
      "actor": "t1",
      "at_beat": 32,
+     "act": "offer",
+     "face": "happy",
+     "look_at": "camera",
+     "beats": 28
+    },
+    {
+     "actor": "t1",
+     "at_beat": 64,
      "act": "laugh",
      "face": "laugh",
-     "beats": 12,
+     "beats": 24,
      "if_energy_below": 50
     },
     {
      "actor": "t1",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "shake_head",
      "face": "doubt",
      "beats": 12,
@@ -597,26 +599,26 @@
      "at_beat": 0,
      "act": "write",
      "face": "neutral",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "c1",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "nod",
      "face": "happy",
      "beats": 10
     },
     {
      "actor": "n1",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "plead",
      "face": "plea",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "v1_workshop",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "watch",
      "face": "neutral",
      "look_at": "workshop.cart",
@@ -730,7 +732,7 @@
      "act": "stare",
      "face": "neutral",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "f2",
@@ -738,27 +740,27 @@
      "act": "stare",
      "face": "neutral",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "f1_lakeshore",
-     "at_beat": 16,
-     "act": "stare",
-     "face": "awe",
-     "look_at": "camera",
-     "beats": 16
-    },
-    {
-     "actor": "f2",
      "at_beat": 32,
      "act": "stare",
      "face": "awe",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "f2",
-     "at_beat": 61,
+     "at_beat": 64,
+     "act": "stare",
+     "face": "awe",
+     "look_at": "camera",
+     "beats": 32
+    },
+    {
+     "actor": "f2",
+     "at_beat": 125,
      "act": "cheer",
      "face": "cheer",
      "beats": 4,
@@ -768,7 +770,7 @@
     },
     {
      "actor": "f4",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "cheer",
      "face": "cheer",
      "beats": 3,
@@ -884,7 +886,7 @@
      "act": "plead",
      "face": "fear",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "p2",
@@ -892,19 +894,19 @@
      "act": "plead",
      "face": "plea",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "p1",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "plead",
      "face": "plea",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "e1",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "stare",
      "face": "doubt",
      "look_at": "camera",
@@ -912,7 +914,7 @@
     },
     {
      "actor": "k1_street",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "sit",
      "face": "happy",
      "beats": 3,
@@ -922,7 +924,7 @@
     },
     {
      "actor": "p1",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "collapse",
      "face": "relief",
      "beats": 3,
@@ -1038,7 +1040,7 @@
      "act": "sit",
      "face": "awe",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "c3",
@@ -1046,26 +1048,26 @@
      "act": "sit",
      "face": "awe",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "c5",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "sit",
      "face": "awe",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "h1",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "laugh",
      "face": "laugh",
-     "beats": 12
+     "beats": 24
     },
     {
      "actor": "d02_slope",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "point",
      "face": "resolve",
      "look_at": "slope.boat_far",
@@ -1073,7 +1075,7 @@
     },
     {
      "actor": "h1",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "cover_face",
      "face": "shame",
      "beats": 3,
@@ -1189,7 +1191,7 @@
      "act": "recoil",
      "face": "fear",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "d05",
@@ -1197,27 +1199,27 @@
      "act": "recoil",
      "face": "fear",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "d02_storm",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "plead",
      "face": "plea",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "d06",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "plead",
      "face": "fear",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "d04_storm",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "stare",
      "face": "awe",
      "beats": 3,
@@ -1227,7 +1229,7 @@
     },
     {
      "actor": "d02_storm",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "stare",
      "face": "relief",
      "beats": 3,
@@ -1350,7 +1352,7 @@
      "act": "offer",
      "face": "happy",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "s2",
@@ -1358,26 +1360,26 @@
      "act": "stare",
      "face": "doubt",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "s2",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "write",
      "face": "doubt",
-     "beats": 12
+     "beats": 24
     },
     {
      "actor": "d12",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "stare",
      "face": "shame",
      "look_at": "courtyard.door_right",
-     "beats": 20
+     "beats": 40
     },
     {
      "actor": "s1",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "offer",
      "face": "happy",
      "look_at": "camera",
@@ -1492,35 +1494,35 @@
      "act": "plead",
      "face": "plea",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "c5",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "plead",
      "face": "plea",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "c1",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "plead",
      "face": "plea",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "c7",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "plead",
      "face": "plea",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "c3",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "cheer",
      "face": "cheer",
      "beats": 3,
@@ -1530,7 +1532,7 @@
     },
     {
      "actor": "c6",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "laugh",
      "face": "laugh",
      "beats": 3,
@@ -1540,7 +1542,7 @@
     },
     {
      "actor": "c4",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "shake_head",
      "face": "sad",
      "beats": 3,
@@ -1550,7 +1552,7 @@
     },
     {
      "actor": "c8",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "sad",
      "face": "sad",
      "beats": 3,
@@ -1666,7 +1668,7 @@
      "act": "block",
      "face": "anger",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "pr2",
@@ -1674,26 +1676,26 @@
      "act": "block",
      "face": "anger",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "k1",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "offer",
      "face": "happy",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "cr2",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "cheer",
      "face": "cheer",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "pr1",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "stamp",
      "face": "anger",
      "beats": 12,
@@ -1701,7 +1703,7 @@
     },
     {
      "actor": "cr5",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "cheer",
      "face": "cheer",
      "beats": 12
@@ -1813,25 +1815,25 @@
      "at_beat": 0,
      "act": "write",
      "face": "neutral",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "mc2",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "laugh",
      "face": "laugh",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "mc3",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "write",
      "face": "neutral",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "g1_temple",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "stare",
      "face": "resolve",
      "look_at": "camera",
@@ -1839,7 +1841,7 @@
     },
     {
      "actor": "mc1",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "recoil",
      "face": "fear",
      "beats": 3,
@@ -1849,7 +1851,7 @@
     },
     {
      "actor": "mc2",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "recoil",
      "face": "fear",
      "beats": 3,
@@ -1859,7 +1861,7 @@
     },
     {
      "actor": "pr1",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "stamp",
      "face": "anger",
      "beats": 3,
@@ -1869,7 +1871,7 @@
     },
     {
      "actor": "pr2",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "stamp",
      "face": "anger",
      "beats": 3,
@@ -1988,15 +1990,15 @@
    "cast": [
     {
      "actor": "d11",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "sit",
      "face": "shame",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "d12",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "nod",
      "face": "resolve",
      "look_at": "g1_grove",
@@ -2004,7 +2006,7 @@
     },
     {
      "actor": "g1_grove",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "block",
      "face": "anger",
      "look_at": "camera",
@@ -2012,7 +2014,7 @@
     },
     {
      "actor": "g2_grove",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "block",
      "face": "anger",
      "look_at": "camera",
@@ -2020,7 +2022,7 @@
     },
     {
      "actor": "d12",
-     "at_beat": 56,
+     "at_beat": 120,
      "act": "point",
      "face": "resolve",
      "look_at": "camera",
@@ -2028,7 +2030,7 @@
     },
     {
      "actor": "g3",
-     "at_beat": 56,
+     "at_beat": 120,
      "act": "stare",
      "face": "neutral",
      "look_at": "camera",
@@ -2141,57 +2143,57 @@
      "at_beat": 0,
      "act": "write",
      "face": "neutral",
-     "beats": 16
-    },
-    {
-     "actor": "gov",
-     "at_beat": 16,
-     "act": "shake_head",
-     "face": "doubt",
-     "beats": 14
+     "beats": 32
     },
     {
      "actor": "gov",
      "at_beat": 32,
+     "act": "shake_head",
+     "face": "doubt",
+     "beats": 28
+    },
+    {
+     "actor": "gov",
+     "at_beat": 64,
      "act": "offer",
      "face": "resolve",
      "look_at": "praetorium.bowl",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "cr2",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "stamp",
      "face": "anger",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "cr4",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "stamp",
      "face": "anger",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "cr6",
-     "at_beat": 40,
+     "at_beat": 80,
      "act": "stamp",
      "face": "anger",
      "beats": 10
     },
     {
      "actor": "w1_praetorium",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "cover_face",
      "face": "grief",
      "beats": 14
     },
     {
      "actor": "sc1",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "write",
      "face": "neutral",
-     "beats": 12
+     "beats": 24
     }
    ]
   },
@@ -2204,6 +2206,7 @@
    "exit_scene": false,
    "role": "dancer",
    "blurb": "Golgotha",
+   "laps": 1,
    "next": [
     {
      "to": "jerusalem.tomb",
@@ -2578,62 +2581,62 @@
      "at_beat": 0,
      "act": "stare",
      "face": "grief",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "w2_tomb",
      "at_beat": 0,
      "act": "stare",
      "face": "grief",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "w1_tomb",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "recoil",
      "face": "fear",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "w2_tomb",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "recoil",
      "face": "fear",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "w1_tomb",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "stare",
      "face": "awe",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "w3_tomb",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "stare",
      "face": "awe",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "w1_tomb",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "cheer",
      "face": "cheer",
      "beats": 14
     },
     {
      "actor": "w2_tomb",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "cheer",
      "face": "cheer",
      "beats": 14
     },
     {
      "actor": "gd1",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "point",
      "face": "resolve",
      "look_at": "tomb.door_up",
@@ -2772,32 +2775,32 @@
      "act": "stare",
      "face": "relief",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "d02",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "laugh",
      "face": "laugh",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "sp1",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "bow",
      "face": "awe",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "g1_road",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "shake_head",
      "face": "doubt",
      "beats": 14
     },
     {
      "actor": "g2_road",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "shake_head",
      "face": "doubt",
      "beats": 14

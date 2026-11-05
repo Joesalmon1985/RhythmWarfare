@@ -5,7 +5,8 @@
   "title": "The Mission Count",
   "entry_from": "warehouse.booth.radio",
   "returns_to": "warehouse",
-  "opens": "A flickering military radio in the booth, with the shadow of a bomber on the wall behind it."
+  "opens": "A flickering military radio in the booth, with the shadow of a bomber on the wall behind it.",
+  "laps": 2
  },
  "timing": {
   "bpm": 140,
@@ -133,11 +134,11 @@
      "act": "point",
      "face": "resolve",
      "look_at": "board",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "a01",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "salute",
      "face": "resolve",
      "look_at": "camera",
@@ -145,7 +146,7 @@
     },
     {
      "actor": "a02",
-     "at_beat": 16.5,
+     "at_beat": 33,
      "act": "salute",
      "face": "resolve",
      "look_at": "camera",
@@ -153,7 +154,7 @@
     },
     {
      "actor": "a03",
-     "at_beat": 17,
+     "at_beat": 34,
      "act": "salute",
      "face": "resolve",
      "look_at": "camera",
@@ -161,15 +162,15 @@
     },
     {
      "actor": "a06",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "shake_head",
      "face": "fear",
      "look_at": "camera",
-     "beats": 12
+     "beats": 24
     },
     {
      "actor": "a04",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "salute",
      "face": "resolve",
      "look_at": "camera",
@@ -177,7 +178,7 @@
     },
     {
      "actor": "col",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "stare",
      "face": "resolve",
      "look_at": "camera",
@@ -285,27 +286,27 @@
      "act": "wave",
      "face": "happy",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "qm",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "offer",
      "face": "laugh",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "mech",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "stare",
      "face": "doubt",
      "look_at": "camera",
-     "beats": 16
+     "beats": 32
     },
     {
      "actor": "qm",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "laugh",
      "face": "laugh",
      "look_at": "camera",
@@ -413,27 +414,27 @@
      "act": "write",
      "face": "doubt",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "p01",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "laugh",
      "face": "laugh",
      "look_at": "camera",
-     "beats": 12
+     "beats": 24
     },
     {
      "actor": "surg",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "write",
      "face": "doubt",
      "look_at": "surg",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "p01",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "laugh",
      "face": "laugh",
      "look_at": "camera",
@@ -541,35 +542,35 @@
      "act": "stare",
      "face": "fear",
      "look_at": "nose_glass",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "crew1",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "recoil",
      "face": "fear",
      "look_at": "nose_glass",
-     "beats": 12
+     "beats": 24
     },
     {
      "actor": "gun_b",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "point",
      "face": "resolve",
      "look_at": "c04_b1",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "crew2",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "recoil",
      "face": "fear",
      "look_at": "camera",
-     "beats": 12
+     "beats": 24
     },
     {
      "actor": "crew1",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "cheer",
      "face": "relief",
      "look_at": "camera",
@@ -580,7 +581,7 @@
     },
     {
      "actor": "gun_b",
-     "at_beat": 61.5,
+     "at_beat": 125.5,
      "act": "collapse",
      "face": "grief",
      "look_at": "camera",
@@ -591,7 +592,7 @@
     },
     {
      "actor": "pilot",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "shake_head",
      "face": "doubt",
      "look_at": "camera",
@@ -703,11 +704,11 @@
      "act": "write",
      "face": "laugh",
      "look_at": "ledger",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "sc1",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "nod",
      "face": "happy",
      "look_at": "camera",
@@ -715,7 +716,7 @@
     },
     {
      "actor": "sc2",
-     "at_beat": 17,
+     "at_beat": 34,
      "act": "nod",
      "face": "happy",
      "look_at": "camera",
@@ -723,15 +724,15 @@
     },
     {
      "actor": "qm_s",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "offer",
      "face": "laugh",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "sc1",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "nod",
      "face": "happy",
      "look_at": "camera",
@@ -739,7 +740,7 @@
     },
     {
      "actor": "sc2",
-     "at_beat": 49,
+     "at_beat": 113,
      "act": "nod",
      "face": "happy",
      "look_at": "camera",
@@ -847,7 +848,7 @@
      "act": "plead",
      "face": "plea",
      "look_at": "clerk",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "clerk",
@@ -855,27 +856,27 @@
      "act": "write",
      "face": "neutral",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "clerk",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "stare",
      "face": "neutral",
      "look_at": "surg_o",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "surg_o",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "plead",
      "face": "plea",
      "look_at": "clerk",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "clerk",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "stare",
      "face": "neutral",
      "look_at": "camera",
@@ -984,11 +985,11 @@
      "act": "lie",
      "face": "fear",
      "look_at": "camera",
-     "beats": 46
+     "beats": 64
     },
     {
      "actor": "gun_c",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "lie",
      "face": "neutral",
      "look_at": "camera",
@@ -996,19 +997,19 @@
     },
     {
      "actor": "crew1c",
-     "at_beat": 16,
-     "act": "cover_face",
-     "face": "grief",
-     "look_at": "camera",
-     "beats": 20
-    },
-    {
-     "actor": "crew2c",
      "at_beat": 32,
      "act": "cover_face",
      "face": "grief",
      "look_at": "camera",
-     "beats": 20
+     "beats": 40
+    },
+    {
+     "actor": "crew2c",
+     "at_beat": 64,
+     "act": "cover_face",
+     "face": "grief",
+     "look_at": "camera",
+     "beats": 40
     },
     {
      "actor": "pilot_c",
@@ -1016,7 +1017,7 @@
      "act": "stare",
      "face": "resolve",
      "look_at": "nose_glass_r",
-     "beats": 60
+     "beats": 64
     }
    ],
    "place": {
@@ -1120,15 +1121,15 @@
      "act": "laugh",
      "face": "laugh",
      "look_at": "camera",
-     "beats": 12
+     "beats": 24
     },
     {
      "actor": "singer",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "offer",
      "face": "happy",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "mp1",
@@ -1136,27 +1137,27 @@
      "act": "block",
      "face": "anger",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "mp2",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "block",
      "face": "anger",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "kid_c",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "beckon",
      "face": "happy",
      "look_at": "camera",
-     "beats": 12
+     "beats": 24
     },
     {
      "actor": "kid_c",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "beckon",
      "face": "happy",
      "look_at": "camera",
@@ -1264,7 +1265,7 @@
      "act": "offer",
      "face": "resolve",
      "look_at": "camera",
-     "beats": 30
+     "beats": 60
     },
     {
      "actor": "aide_c",
@@ -1272,19 +1273,19 @@
      "act": "write",
      "face": "neutral",
      "look_at": "camera",
-     "beats": 30
+     "beats": 60
     },
     {
      "actor": "chap",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "shake_head",
      "face": "grief",
      "look_at": "camera",
-     "beats": 12
+     "beats": 24
     },
     {
      "actor": "chap",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "shake_head",
      "face": "grief",
      "look_at": "camera",
@@ -1393,35 +1394,35 @@
      "act": "collapse",
      "face": "grief",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "surv2",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "collapse",
      "face": "grief",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "wom",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "plead",
      "face": "plea",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "drunk",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "laugh",
      "face": "laugh",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "wom",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "plead",
      "face": "plea",
      "look_at": "night_train",
@@ -1531,7 +1532,7 @@
      "act": "point",
      "face": "resolve",
      "look_at": "count_board",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "h01",
@@ -1543,14 +1544,6 @@
     },
     {
      "actor": "h02",
-     "at_beat": 0.5,
-     "act": "salute",
-     "face": "resolve",
-     "look_at": "camera",
-     "beats": 3
-    },
-    {
-     "actor": "h03",
      "at_beat": 1,
      "act": "salute",
      "face": "resolve",
@@ -1558,28 +1551,12 @@
      "beats": 3
     },
     {
-     "actor": "h01",
-     "at_beat": 16,
-     "act": "salute",
-     "face": "resolve",
-     "look_at": "camera",
-     "beats": 6
-    },
-    {
-     "actor": "h02",
-     "at_beat": 16.5,
-     "act": "salute",
-     "face": "resolve",
-     "look_at": "camera",
-     "beats": 6
-    },
-    {
      "actor": "h03",
-     "at_beat": 17,
+     "at_beat": 2,
      "act": "salute",
      "face": "resolve",
      "look_at": "camera",
-     "beats": 6
+     "beats": 3
     },
     {
      "actor": "h01",
@@ -1587,11 +1564,35 @@
      "act": "salute",
      "face": "resolve",
      "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "h02",
+     "at_beat": 33,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "h03",
+     "at_beat": 34,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
+     "beats": 6
+    },
+    {
+     "actor": "h01",
+     "at_beat": 64,
+     "act": "salute",
+     "face": "resolve",
+     "look_at": "camera",
      "beats": 10
     },
     {
      "actor": "h02",
-     "at_beat": 32.5,
+     "at_beat": 65,
      "act": "salute",
      "face": "resolve",
      "look_at": "camera",
@@ -1599,7 +1600,7 @@
     },
     {
      "actor": "h03",
-     "at_beat": 33,
+     "at_beat": 66,
      "act": "salute",
      "face": "resolve",
      "look_at": "camera",
@@ -1607,7 +1608,7 @@
     },
     {
      "actor": "h01",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "salute",
      "face": "resolve",
      "look_at": "camera",
@@ -1615,7 +1616,7 @@
     },
     {
      "actor": "h02",
-     "at_beat": 48.5,
+     "at_beat": 112.5,
      "act": "salute",
      "face": "resolve",
      "look_at": "camera",
@@ -1623,7 +1624,7 @@
     },
     {
      "actor": "h03",
-     "at_beat": 49,
+     "at_beat": 113,
      "act": "salute",
      "face": "resolve",
      "look_at": "camera",
@@ -1631,15 +1632,15 @@
     },
     {
      "actor": "chap_h",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "cover_face",
      "face": "grief",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "chap_h",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "cover_face",
      "face": "grief",
      "look_at": "camera",
@@ -1747,7 +1748,7 @@
      "act": "beckon",
      "face": "fear",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "sent",
@@ -1755,19 +1756,19 @@
      "act": "stare",
      "face": "neutral",
      "look_at": "camera",
-     "beats": 30
+     "beats": 60
     },
     {
      "actor": "fish",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "nod",
      "face": "relief",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "sent",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "stare",
      "face": "shame",
      "look_at": "camera",
@@ -1778,7 +1779,7 @@
     },
     {
      "actor": "sent",
-     "at_beat": 61,
+     "at_beat": 125,
      "act": "point",
      "face": "resolve",
      "look_at": "camera",
@@ -1884,27 +1885,27 @@
      "act": "laugh",
      "face": "relief",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "quay_w",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "wave",
      "face": "happy",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "dock_c",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "laugh",
      "face": "laugh",
      "look_at": "camera",
-     "beats": 12
+     "beats": 24
     },
     {
      "actor": "kid_q",
-     "at_beat": 48,
+     "at_beat": 112,
      "act": "wave",
      "face": "happy",
      "look_at": "camera",
@@ -2014,7 +2015,7 @@
      "act": "block",
      "face": "anger",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "clerk_k",
@@ -2022,31 +2023,31 @@
      "act": "write",
      "face": "neutral",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "mate",
-     "at_beat": 16,
+     "at_beat": 32,
      "act": "shake_head",
      "face": "doubt",
      "look_at": "camera",
-     "beats": 12
+     "beats": 24
     },
     {
      "actor": "clerk_k",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "laugh",
      "face": "laugh",
      "look_at": "camera",
-     "beats": 14
+     "beats": 28
     },
     {
      "actor": "mate",
-     "at_beat": 32,
+     "at_beat": 64,
      "act": "point",
      "face": "resolve",
      "look_at": "latch",
-     "beats": 14
+     "beats": 28
     }
    ],
    "place": {

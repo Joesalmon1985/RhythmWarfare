@@ -29,6 +29,13 @@ import squadron_harbour  # noqa: E402
 import squadron_lib  # noqa: E402
 import squadron_story as st  # noqa: E402
 
+sys.path.insert(0, str(ROOT / "tools" / "run"))
+import laps as laps_mod  # noqa: E402
+
+# Two laps per scene (docs/CONTINUOUS_RUN.md "Two laps"): every scene of the Mission Count plays the 4-bar loop for two phases (the ending C13 too: the quay is where the player most wants to sit in the song).
+LAPS = 2
+SINGLE_LAP: tuple = ()
+
 PATHDIR = ROOT / "content" / "paths" / "squadron"
 
 TITLES = {"airfield": "The Airfield", "city": "The Old City", "harbour": "The Harbour"}
@@ -169,6 +176,7 @@ def main(argv) -> int:
     mbs = build_maps()
     run, music = build_run(), build_music()
     keep_mix(run, music)
+    run = laps_mod.finish_run(run, LAPS, SINGLE_LAP)
     dump(PATHDIR / "run.json", run)
     dump(PATHDIR / "music.json", music)
     for w, doc in build_hotspots().items():

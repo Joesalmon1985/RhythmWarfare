@@ -11,9 +11,16 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
+sys.path.insert(0, HERE)
+import laps as laps_mod  # noqa: E402
+
+# Two laps per scene (docs/CONTINUOUS_RUN.md "Two laps"): E00 is the prologue (the orchard, one way on) and stays at one lap; the endings E13 (the Spring) and E12 (the Keeper) take two.
+LAPS = 2
+SINGLE_LAP = ("hollow",)
 OUT = os.path.join(ROOT, "content", "paths", "ember")
 
 WORLDS = [
@@ -332,6 +339,7 @@ def main() -> int:
         old = json.load(open(os.path.join(OUT, "run.json"), encoding="utf-8"))
         if "mix" in old:
             run["mix"] = old["mix"]
+    run = laps_mod.finish_run(run, LAPS, SINGLE_LAP)
     write(os.path.join(OUT, "run.json"), run)
     by_world: dict = {}
     for h in HOTSPOTS:
