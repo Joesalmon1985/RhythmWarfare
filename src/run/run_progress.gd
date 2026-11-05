@@ -124,8 +124,11 @@ func set_flag(name: String) -> bool:
 
 
 func _on_wallet_changed() -> void:
+	var was := RunWallet.new()
+	was.load_dict(data.get("wallet", null))  # what a load of the data so far gives back (held stakes fold into the balance)
 	data["wallet"] = wallet.to_dict()
-	save()
+	if was.balance_pence() != wallet.balance_pence() + wallet.held_pence():  # a hold or a release only moves money into or out of a stake: a load would give back the same, so no write
+		save()
 
 
 func save() -> bool:

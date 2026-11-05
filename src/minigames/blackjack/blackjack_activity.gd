@@ -51,9 +51,17 @@ var _seats: Dictionary = {}
 var _pile: Dictionary = {}
 var _bet: Dictionary = {}
 var _wobble: Dictionary = {"level": 0, "t0": 0.0}
+## The snapshot is built once and reused until something can have changed it: `_ver` is bumped by every input and every step that fires (all of the activity's state changes inside those),
+## `_snap_until` is the next song time at which a card turns over or lands (the only parts of the snapshot that move with time alone), and the wallet's money is compared directly.
+var _ver := 0
+var _snap: Dictionary = {}
+var _snap_ver := -1
+var _snap_until := -INF
+var _snap_money := Vector2i(-1, -1)
 
 
 func setup(ctx: Dictionary) -> void:
+	_ver += 1
 	super.setup(ctx)
 	if wallet == null:
 		wallet = RunWallet.new()
@@ -75,6 +83,7 @@ func setup(ctx: Dictionary) -> void:
 func begin(t: float) -> void:
 	if began:
 		return
+	_ver += 1
 	super.begin(t)
 	_now = t
 	_last = t
@@ -112,6 +121,7 @@ func tap(target: String, t: float) -> bool:
 	if not began or _done:
 		return false
 	_advance(t)
+	_ver += 1
 	if not (target in targets()):
 		return false
 	match target:
@@ -133,11 +143,13 @@ func set_wobble(level: int, t: float) -> void:
 	_advance(t)
 	if level == int(_wobble["level"]):
 		return
+	_ver += 1
 	super.set_wobble(level, t)
 	_wobble = {"level": level, "t0": _now}
 
 
 func request_leave(t: float) -> void:
+	_ver += 1
 	if not began:
 		_finish("left")
 		return
@@ -148,6 +160,7 @@ func request_leave(t: float) -> void:
 
 
 func interrupt(reason: String, t: float) -> void:
+	_ver += 1
 	if not began:
 		_finish(reason)
 		return
@@ -164,7 +177,20 @@ func make_view() -> Control:
 	return BlackjackView.new()
 
 
+## The snapshot (schema above). Every call returns a fresh top-level dictionary; the nested parts are shared with other calls until something changes and are read-only.
 func state() -> Dictionary:
+	var money := Vector2i(wallet.balance_pence(), wallet.held_pence())
+	if _snap_ver != _ver or _now >= _snap_until or money != _snap_money:
+		_snap = _build_state()
+		_snap_ver = _ver
+		_snap_money = money
+	var out := _snap.duplicate()
+	out["t"] = _last
+	return out
+
+
+func _build_state() -> Dictionary:
+	_snap_until = INF
 	var seats := {}
 	var override := int(_wobble["level"]) == 1 and _phase != "falling" and _phase != ""
 	for seat in SEATS:
@@ -174,26 +200,40 @@ func state() -> Dictionary:
 		for c in s["cards"]:
 			var flip := float(c["t_flip"])
 			var up := bool(c["up"]) or (flip >= 0.0 and _now >= flip)
-			cards.append({"rank": c["rank"], "suit": c["suit"], "face_up": up, "t_deal": c["t_deal"], "t_land": c["t_land"], "t_flip": flip, "t_clear": c["t_clear"]})
+			cards.append(_frozen({"rank": c["rank"], "suit": c["suit"], "face_up": up, "t_deal": c["t_deal"], "t_land": c["t_land"], "t_flip": flip, "t_clear": c["t_clear"]}))
 			if up and _now >= float(c["t_land"]):
 				visible.append(c)
+			if flip > _now:
+				_snap_until = minf(_snap_until, flip)
+			if float(c["t_land"]) > _now:
+				_snap_until = minf(_snap_until, float(c["t_land"]))
 		var mood: Dictionary = (s["mood"] as Dictionary).duplicate()
 		var gaze: Dictionary = (s["gaze"] as Dictionary).duplicate()
 		if override and seat == "dealer":
 			mood = {"name": "concerned", "t0": _wobble["t0"]}
 			gaze = {"target": "player", "t0": _wobble["t0"]}
-		seats[seat] = {"cards": cards, "total": int(BlackjackGame.hand_value(visible)["total"]), "result": s["result"], "mood": mood, "gaze": gaze, "gesture": (s["gesture"] as Dictionary).duplicate()}
+		seats[seat] = _frozen({"cards": _frozen(cards), "total": int(BlackjackGame.hand_value(visible)["total"]), "result": s["result"], "mood": _frozen(mood), "gaze": _frozen(gaze),
+			"gesture": _frozen((s["gesture"] as Dictionary).duplicate())})
 	var tg := targets()
 	var balance: int = wallet.balance_pence()
 	return {
 		"phase": _phase, "phase_t0": _phase_t0, "t": _last, "hand": _hand, "stake_pence": _stake,
-		"wobble": _wobble.duplicate(), "seats": seats,
-		"pile": {"pence": 0 if _phase == "leaving" else balance, "from_pence": _pile["from"], "t0": _pile["t0"], "dur": _pile["dur"], "via": _pile["via"]},
-		"bet": {"pence": wallet.held_pence(), "from_pence": _bet["from"], "t0": _bet["t0"], "dur": _bet["dur"], "via": _bet["via"]},
-		"targets": tg,
-		"hints": {"bet": "bet" in tg, "deck": "deck" in tg, "hand": "hand" in tg, "exit": "exit" in tg, "exit_urged": _phase == "broke"},
+		"wobble": _frozen(_wobble.duplicate()), "seats": _frozen(seats),
+		"pile": _frozen({"pence": 0 if _phase == "leaving" else balance, "from_pence": _pile["from"], "t0": _pile["t0"], "dur": _pile["dur"], "via": _pile["via"]}),
+		"bet": _frozen({"pence": wallet.held_pence(), "from_pence": _bet["from"], "t0": _bet["t0"], "dur": _bet["dur"], "via": _bet["via"]}),
+		"targets": _frozen(tg),
+		"hints": _frozen({"bet": "bet" in tg, "deck": "deck" in tg, "hand": "hand" in tg, "exit": "exit" in tg, "exit_urged": _phase == "broke"}),
 		"done": _done, "done_reason": _reason,
 	}
+
+
+## Makes a part of the snapshot read-only (it is shared between snapshots) and returns it.
+static func _frozen(v: Variant) -> Variant:
+	if v is Dictionary:
+		(v as Dictionary).make_read_only()
+	elif v is Array:
+		(v as Array).make_read_only()
+	return v
 
 
 # time and schedule
@@ -222,6 +262,7 @@ func _advance(t: float) -> void:
 	while not _steps.is_empty() and float(_steps[0]["t"]) <= t:
 		var s: Dictionary = _steps.pop_front()
 		_now = maxf(_now, float(s["t"]))
+		_ver += 1
 		if int(s.get("pid", -1)) != -1 and int(s["pid"]) != _pid:
 			continue
 		_run(s)

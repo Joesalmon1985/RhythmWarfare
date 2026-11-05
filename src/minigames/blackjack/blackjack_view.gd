@@ -5,9 +5,10 @@ extends Control
 ## (for the response ring) and whether the picture was wobbling (to ease the rocking out).
 ##
 ## The host (RunMinigameHost) mounts it full-rect in the stage's low-res viewport and sets `now_fn`, `beat_s`, `reduced`, `high_contrast`, `state_fn` and `screen_size` (the stage area in screen pixels),
-## then calls `hit(local_pos)` with a tap in screen pixels. Everything is drawn into one child control (`_Pic`) so that the whole table can rise, sink, rock and tip as one picture: the
+## then calls `hit(local_pos)` with a tap in screen pixels. Everything is drawn under one child control (`_pic`) so that the whole table can rise, sink, rock and tip as one picture: the
 ## rise (sitting), the sink (leaving), the rocking (wobble) and the tumble (falling) are only that child's position and rotation, and `hit` undoes the same transform.
-## There is no text anywhere: every cue is a shape that moves.
+## The picture is a stack of layers (`_Layer`, back to front) that each frame are offered what they should show; a layer redraws only when that changed, so the static room, table and chair cost
+## nothing per frame and the people, money and cards cost only while they move. There is no text anywhere: every cue is a shape that moves.
 ##
 ## The money pile is drawn at 1.25 of the unit (a fiver is about 48 x 25 canvas pixels: big enough to find and touch on a phone) from the kit's `pile_origin` (see `pile_geometry`).
 ## What `pile_geometry` guarantees: the pile for any balance up to 10000 pence lies inside the canvas, clear of the player's cards and of the bet spot.
@@ -31,13 +32,17 @@ const PILE_SCALE := 1.25
 const TALLEST_PILE := 2000  # four fivers: the tallest column of notes the pile layout makes
 
 
-class _Pic:
+## One layer of the picture, a child of the picture control in draw order. It draws its `spec` with `fn` and keeps that drawing (the renderer replays it every frame) until the view offers a
+## different spec, so a layer whose inputs did not change costs no drawing at all: the room's light, the table and the chair are drawn once per canvas size, a head when the face, the gaze or the
+## beat's whole-pixel bob changes, arms when the pose does, the money and the cards only while something moves. A layer's draw function reads its spec and constants, nothing else.
+class _Layer:
 	extends Control
 	var fn: Callable
+	var spec: Array = []
 
 	func _draw() -> void:
-		if fn.is_valid():
-			fn.call(self)
+		if fn.is_valid() and not spec.is_empty():
+			fn.call(self, spec)
 
 
 var now_fn: Callable = Callable()
@@ -47,7 +52,8 @@ var reduced := false
 var high_contrast := false
 var screen_size := Vector2(844, 250)
 
-var _pic: _Pic
+var _pic: Control
+var _layers: Dictionary = {}  # name -> _Layer, created in draw order
 var _snap: Dictionary = {}
 var _now := 0.0
 var _mem: Dictionary = {}  # per person: {mood, prev, mood_t0, gaze, gaze_prev, gaze_t0}
@@ -58,13 +64,47 @@ var _geo: Dictionary = {}
 var _pile_cache := {"pence": -1, "origin": Vector2.ZERO, "items": []}
 var _bet_cache := {"pence": -1, "origin": Vector2.ZERO, "items": []}
 var _top_cache := {"pence": -1, "origin": Vector2.ZERO, "rect": Rect2()}
+## The card entries last made and what they were made from (the snapshot's seats, the bob of the hinted hand, the size, the beat), valid until `until`: the next song time at which a card
+## appears, turns or is cleared away (-INF while one moves).
+var _cards_memo := {"seats": null, "bob": 0.0, "size": Vector2.ZERO, "beat_s": 0.0, "until": -INF, "entries": []}
+var _cards_until := INF  # set by `_card_entries`
+## Per person, the inputs the last torso and arms states were made from (the torso moves only in a shrug, resting arms not at all).
+var _torso_in: Dictionary = {}
+var _arms_in: Dictionary = {}
 
 
 func _init() -> void:
-	_pic = _Pic.new()
+	_pic = Control.new()
 	_pic.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_pic.fn = _paint
 	add_child(_pic)
+	# back to front: the room's light, the table's shadow, the door, the people's bodies, the lamp and the table, the rings and the deck, the money, the people's arms, the cards, the
+	# chair, the player's hands, the light on the edges of what may be touched and the answer to a touch
+	_add_layer("backlight", _draw_backlight)
+	_add_layer("shadow", _draw_shadow)
+	_add_layer("door", _draw_door)
+	for who in PEOPLE:
+		_add_layer("torso_" + who, _draw_person)
+		_add_layer("head_" + who, _draw_person)
+	_add_layer("table", _draw_table)
+	_add_layer("rings", _draw_rings)
+	_add_layer("money", _draw_money)
+	_add_layer("money_over", _draw_money)
+	for who in PEOPLE:
+		_add_layer("arms_" + who, _draw_person)
+	_add_layer("cards", _draw_cards)
+	_add_layer("chair", _draw_chair)
+	_add_layer("hands", _draw_hands)
+	_add_layer("marks", _draw_marks)
+
+
+func _add_layer(name: String, fn: Callable) -> void:
+	var l := _Layer.new()
+	l.name = name
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	l.set_anchors_preset(Control.PRESET_FULL_RECT)  # the picture's size: a zero-size control is culled away once the picture rotates
+	l.fn = fn
+	_pic.add_child(l)
+	_layers[name] = l
 
 
 func _process(_delta: float) -> void:
@@ -76,7 +116,8 @@ func _process(_delta: float) -> void:
 	_pic.position = Vector2(0.0, float(pose["dy"]))
 	_pic.rotation = float(pose["ang"])
 	_pic.visible = _live(_snap) and not bool(pose["gone"])
-	_pic.queue_redraw()
+	if _pic.visible and is_visible_in_tree():
+		_prepare()
 
 
 # ------------------------------------------------------------------ the public surface
@@ -423,9 +464,16 @@ func _aim(name: String, snap: Dictionary, g: Dictionary, hand_c: Vector2) -> Vec
 
 # ------------------------------------------------------------------ painting
 
-func _paint(ci: Control) -> void:
-	if not _live(_snap):
-		return
+## Hands `spec` to a layer: it is redrawn only if the spec differs from the one it drew last.
+func _offer(name: String, spec: Array) -> void:
+	var l: _Layer = _layers[name]
+	if spec != l.spec:
+		l.spec = spec
+		l.queue_redraw()
+
+
+## The picture at the fetched snapshot and time, as one spec per layer (every frame the picture is on show).
+func _prepare() -> void:
 	var snap := _snap
 	var now := _now
 	var g := _geometry()
@@ -438,13 +486,14 @@ func _paint(ci: Control) -> void:
 	var hand_box := _hand_box(snap, now)
 	var hand_c := hand_box.get_center()
 	var lift := _lift(bp)
-	# the room's light on the people and the table's shadow on the room
-	_paint_backlight(ci, u, bp)
-	BlackjackDraw.draw_table_shadow(ci, size, u)
+	# the room's light on the people (it breathes through the layer's alpha, so its rows are drawn once per size) and the table's shadow on the room
+	var breathe := 0.0 if reduced else 0.03 * sin(TAU * bp / 4.0)
+	(_layers["backlight"] as _Layer).self_modulate = Color(1.0, 1.0, 1.0, 0.045 + breathe * 0.5)
+	_offer("backlight", [size, u])
+	_offer("shadow", [size, u])
 	# the door (always there; it swings and spills light on the beat only while it is a target)
-	BlackjackDraw.draw_exit(ci, size, u, bp if "exit" in tg else 0.5, bool(hints.get("exit_urged", false)))
-	# people: pose data once, then bodies, the lamp's light, table, ..., arms
-	var crew: Array = []
+	_offer("door", [size, u, bp if "exit" in tg else 0.5, bool(hints.get("exit_urged", false))])
+	# people: bodies before the table, arms after it
 	for who in PEOPLE:
 		var s: Dictionary = seats.get(who, {})
 		var mood: Dictionary = s.get("mood", {})
@@ -457,23 +506,40 @@ func _paint(ci: Control) -> void:
 		if gw < 1.0:
 			gp = _gaze_target(str(m["gaze_prev"]), who, snap, g).lerp(gp, gw)
 		var gs := _gesture_state(s.get("gesture", {}), now, who)
-		crew.append({"who": who, "face": face, "gaze": gp, "g": gs["name"], "t": gs["t"], "aim": _aim(str(gs["name"]), snap, g, hand_c)})
-	for c: Dictionary in crew:
-		BlackjackPeople.draw_person(ci, c["who"], BlackjackDraw.seat_pos(c["who"], size), u, c["face"], c["gaze"], c["g"], c["t"], bp, c["aim"], "body")
-	BlackjackDraw.draw_lamp(ci, size, u, "cone")
-	BlackjackDraw.draw_table(ci, size, u)
-	BlackjackDraw.draw_lamp(ci, size, u, "pool")
-	BlackjackDraw.draw_bet_ring(ci, g["bet_spot"], u * PILE_SCALE)
-	# rings of light on the baize under everything that may be touched now (the run's hotspot language: a warm ring that breathes on the beat)
+		var seat := BlackjackDraw.seat_pos(who, size)
+		var aim := _aim(str(gs["name"]), snap, g, hand_c)
+		var torso_in := [seat, u, gs["name"] == "shrug", gs["t"] if gs["name"] == "shrug" else 0.0]
+		if torso_in != _torso_in.get(who):
+			_torso_in[who] = torso_in
+			_offer("torso_" + who, [BlackjackPeople.person_state(who, seat, u, face, gp, gs["name"], gs["t"], bp, aim, "torso")])
+		_offer("head_" + who, [BlackjackPeople.person_state(who, seat, u, face, gp, gs["name"], gs["t"], bp, aim, "head")])
+		var arms_in := [seat, u, gs["name"], 0.0 if gs["name"] == "rest" else gs["t"], aim]  # resting arms do not depend on the gesture's time
+		if arms_in != _arms_in.get(who):
+			_arms_in[who] = arms_in
+			_offer("arms_" + who, [BlackjackPeople.person_state(who, seat, u, face, gp, gs["name"], gs["t"], bp, aim, "arms")])
+	_offer("table", [size, u, g["bet_spot"], u * PILE_SCALE])
+	# rings of light on the baize under everything that may be touched now (the run's hotspot language: a warm ring that breathes on the beat), and the deck
+	var rings: Array = []
 	for id: String in tg:
 		if id != "exit" and bool(hints.get(id, false)):
-			_hint_ring(ci, _thing_rect(id, snap, hand_box), u, lift, false)
-	_paint_deck(ci, g, u, lift if bool(hints.get("deck", false)) else 0.0)
-	_paint_money(ci, snap, now, g, bool(hints.get("bet", false)), lift)
-	for c: Dictionary in crew:
-		BlackjackPeople.draw_person(ci, c["who"], BlackjackDraw.seat_pos(c["who"], size), u, c["face"], c["gaze"], c["g"], c["t"], bp, c["aim"], "arms")
-	_paint_cards(ci, snap, now, g, -roundf(3.0 * u * lift) if bool(hints.get("hand", false)) else 0.0)
-	BlackjackDraw.draw_chair_back(ci, size, u)
+			rings.append(_thing_rect(id, snap, hand_box))
+	_offer("rings", [u, high_contrast, rings, lift if not rings.is_empty() else 0.0, g["deck"], lift if bool(hints.get("deck", false)) else 0.0])
+	# the money: the top fiver hops on the beat while the bet is hinted. The pile up to the first item that moves (in flight or hopping) is one layer, it and everything over it another,
+	# so the resting notes are not redrawn while one note hops or a few fly
+	var items := _pile_items(snap, now)
+	var top := -1
+	var split := items.size()
+	for i in items.size():
+		if bool(items[i].get("moving", false)):
+			split = mini(split, i)
+		elif bool(hints.get("bet", false)) and int(items[i]["denomination"]) == 500:
+			top = i
+	if top >= 0:
+		split = mini(split, top)
+	_offer("money", [g["pu"], u, items.slice(0, split), -1, 0.0, []])
+	_offer("money_over", [g["pu"], u, items.slice(split), top - split if top >= 0 else -1, lift if top >= 0 else 0.0, _bet_items(snap, now)])
+	_offer("cards", [u, _cards(snap, now, g, -roundf(3.0 * u * lift) if bool(hints.get("hand", false)) else 0.0)])
+	_offer("chair", [size, u])
 	var pg: Dictionary = (seats.get("player", {}) as Dictionary).get("gesture", {})
 	var pdur := float(pg.get("dur", 0.0))
 	var pt := 1.0 if pdur <= 0.0 else clampf((now - float(pg.get("t0", 0.0))) / pdur, 0.0, 1.0)
@@ -483,9 +549,8 @@ func _paint(ci: Control) -> void:
 	var pile_note := _top_note(maxi(int(pm.get("pence", 0)), int(pm.get("from_pence", 0))))
 	var tgt := {"bet": g["bet_spot"], "deck": g["deck"], "hand": hand_c, "pockets": g["pockets"]}
 	tgt["pile"] = pile_note.get_center() if pile_note.size.x > 0.0 else g["origin"]
-	BlackjackPeople.draw_player_hands(ci, size, u, str(pg.get("name", "none")), pt, tgt)
-	_paint_hints(ci, snap, g, hints, hand_box, lift)
-	_paint_feedback(ci, snap, now, g, hand_box)
+	_offer("hands", [size, u, str(pg.get("name", "none")), pt, tgt])
+	_offer("marks", [u, _hint_frames(snap, u, hints, hand_box, lift), _feedback(snap, now, u, hand_box)])
 
 
 ## How far a hinted thing has risen on the beat, 0..1: a quick swell up to the beat and an easy fall after it (the same breath the hotspot rings take). Steady at 0.5 in reduced motion.
@@ -497,32 +562,57 @@ func _lift(bp: float) -> float:
 
 
 ## Soft halos of the room's coloured light behind the three people, so they sit in the live room instead of on top of it (pink from the left, the lamp's warmth on the dealer, teal from the right).
-func _paint_backlight(ci: Control, u: float, bp: float) -> void:
-	var breathe := 0.0 if reduced else 0.03 * sin(TAU * bp / 4.0)
+## Drawn at full alpha: the layer's alpha is the light's strength (0.045, breathing on four beats).
+func _draw_backlight(ci: Control, s: Array) -> void:
+	var sz: Vector2 = s[0]
+	var u: float = s[1]
 	for who in PEOPLE:
-		var c := BlackjackDraw.seat_pos(who, size)
+		var c := BlackjackDraw.seat_pos(who, sz)
 		var col: Color = BACKLIGHT[who]
 		for i in 3:
 			var k := 1.0 - 0.22 * float(i)
-			BlackjackDraw.ell(ci, c.x, c.y + 16.0 * u, 52.0 * u * k, 48.0 * u * k, BlackjackDraw.shade(col, 0.045 + breathe * 0.5))
+			BlackjackDraw.ell(ci, c.x, c.y + 16.0 * u, 52.0 * u * k, 48.0 * u * k, col)
 
 
-func _paint_deck(ci: Control, g: Dictionary, u: float, hint: float) -> void:
-	var c: Vector2 = g["deck"]
+func _draw_shadow(ci: Control, s: Array) -> void:
+	BlackjackDraw.draw_table_shadow(ci, s[0], s[1])
+
+
+func _draw_door(ci: Control, s: Array) -> void:
+	BlackjackDraw.draw_exit(ci, s[0], s[1], s[2], s[3])
+
+
+func _draw_person(ci: Control, s: Array) -> void:
+	BlackjackPeople.draw_person_state(ci, s[0])
+
+
+## The lamp's cone, the table, the lamp's pool of light on the baize and the bet ring.
+func _draw_table(ci: Control, s: Array) -> void:
+	var sz: Vector2 = s[0]
+	var u: float = s[1]
+	BlackjackDraw.draw_lamp(ci, sz, u, "cone")
+	BlackjackDraw.draw_table(ci, sz, u)
+	BlackjackDraw.draw_lamp(ci, sz, u, "pool")
+	BlackjackDraw.draw_bet_ring(ci, s[2], s[3])
+
+
+func _draw_rings(ci: Control, s: Array) -> void:
+	var u: float = s[0]
+	for r: Rect2 in s[2]:
+		_hint_ring(ci, r, u, s[3], false, s[1])
+	var c: Vector2 = s[4]
+	var hint: float = s[5]
 	BlackjackDraw.draw_deck(ci, c, u)
 	if hint > 0.0:  # the top card slides out toward the player and back, on the beat
 		BlackjackDraw.draw_card(ci, {}, c + Vector2(-2.0 * u * hint, 8.0 * u * hint), u, false, 1.0, -0.12 * hint)
 
 
-func _paint_money(ci: Control, snap: Dictionary, now: float, g: Dictionary, hint_bet: bool, lift: float) -> void:
-	var pu: float = g["pu"]
-	var u: float = g["u"]
-	var items := _pile_items(snap, now)
-	var top := -1
-	if hint_bet:
-		for i in items.size():
-			if int(items[i]["denomination"]) == 500 and not bool(items[i].get("moving", false)):
-				top = i
+func _draw_money(ci: Control, s: Array) -> void:
+	var pu: float = s[0]
+	var u: float = s[1]
+	var items: Array = s[2]
+	var top: int = s[3]
+	var lift: float = s[4]
 	for i in items.size():
 		var it: Dictionary = items[i]
 		if i == top:  # the top fiver hops on the beat and lifts its near corner, as if it wanted picking up
@@ -531,7 +621,7 @@ func _paint_money(ci: Control, snap: Dictionary, now: float, g: Dictionary, hint
 			MoneyDraw.draw_item(ci, 500, pos, pu, -0.1 * lift, float(it.get("alpha", 1.0)))
 		else:
 			_draw_money_item(ci, it, pu, u)
-	for it: Dictionary in _bet_items(snap, now):
+	for it: Dictionary in s[5]:
 		_draw_money_item(ci, it, pu, u)
 
 
@@ -548,17 +638,33 @@ func _draw_money_item(ci: Control, it: Dictionary, pu: float, u: float) -> void:
 	MoneyDraw.draw_item(ci, d, it["pos"], pu * (1.0 + 0.2 * h), float(it["angle"]), a)
 
 
+## The card entries at `now`, made again only when something they depend on changed (see `_cards_memo`).
+func _cards(snap: Dictionary, now: float, g: Dictionary, hand_bob: float) -> Array:
+	var m := _cards_memo
+	var seats: Variant = snap.get("seats", {})
+	if is_same(m["seats"], seats) and m["bob"] == hand_bob and m["size"] == size and m["beat_s"] == beat_s and now < float(m["until"]):
+		return m["entries"]
+	var entries := _card_entries(snap, now, g, hand_bob)
+	_cards_memo = {"seats": seats, "bob": hand_bob, "size": size, "beat_s": beat_s, "until": _cards_until, "entries": entries}
+	return entries
 
-func _paint_cards(ci: Control, snap: Dictionary, now: float, g: Dictionary, hand_bob: float) -> void:
+
+## Every card on the table at `now` as {card, pos, ang, scale, alpha, flip, up}, in draw order: the landed ones, then the ones in flight over them. Sets `_cards_until` to the next song time
+## at which the entries change by time alone (-INF while a card moves, turns or is cleared away, or the player's cards scatter).
+func _card_entries(snap: Dictionary, now: float, g: Dictionary, hand_bob: float) -> Array:
 	var u: float = g["u"]
 	var bs := maxf(beat_s, 0.05)
 	var seats: Dictionary = snap.get("seats", {})
 	var pg: Dictionary = (seats.get("player", {}) as Dictionary).get("gesture", {})
 	var scatter := 0.0
+	var until := INF
 	if str(pg.get("name", "")) == "drop_cards":
-		scatter = _ease_out(clampf((now - float(pg.get("t0", 0.0))) / (0.6 * bs), 0.0, 1.0))
+		var st0 := float(pg.get("t0", 0.0))
+		scatter = _ease_out(clampf((now - st0) / (0.6 * bs), 0.0, 1.0))
+		until = st0 if now < st0 else (-INF if now < st0 + 0.6 * bs else until)
 	var deck: Vector2 = g["deck"]
 	var tray: Vector2 = g["tray"]
+	var landed: Array = []
 	var flying: Array = []
 	for seat in ["npc_a", "dealer", "npc_b", "player"]:
 		var cards: Array = (seats.get(seat, {}) as Dictionary).get("cards", [])
@@ -567,6 +673,7 @@ func _paint_cards(ci: Control, snap: Dictionary, now: float, g: Dictionary, hand
 			var c: Dictionary = cards[i]
 			var td := float(c["t_deal"])
 			if now < td:
+				until = minf(until, td)
 				continue
 			var spot := BlackjackDraw.card_spot(seat, i, size)
 			var pos := spot
@@ -577,6 +684,11 @@ func _paint_cards(ci: Control, snap: Dictionary, now: float, g: Dictionary, hand
 			var up := bool(c["face_up"])
 			var tl := float(c["t_land"])
 			var in_flight := now < tl
+			var tf := float(c["t_flip"])
+			if in_flight or (tf >= 0.0 and now >= tf and now < tf + FLIP_S):
+				until = -INF
+			elif tf > now:
+				until = minf(until, tf)
 			if in_flight:
 				var e := _ease_out(clampf((now - td) / maxf(tl - td, 0.001), 0.0, 1.0))
 				var spin := 0.8 * (1.0 if (int(c["rank"]) + int(c["suit"]) + i) % 2 == 0 else -1.0)
@@ -584,7 +696,6 @@ func _paint_cards(ci: Control, snap: Dictionary, now: float, g: Dictionary, hand
 				ang = (1.0 - e) * spin
 				scl = lerpf(1.0, sc, e)
 			else:
-				var tf := float(c["t_flip"])
 				if tf >= 0.0 and now >= tf and now < tf + FLIP_S:
 					flip = (now - tf) / FLIP_S
 					up = true
@@ -594,46 +705,59 @@ func _paint_cards(ci: Control, snap: Dictionary, now: float, g: Dictionary, hand
 					pos += Vector2(float((i * 37) % 5 - 2) * 5.0 * u, float(i % 2 * 2 - 1) * 4.0 * u) * scatter
 					ang = sin(float(i) * 2.1 + 1.0) * 0.35 * scatter
 			var tc := float(c["t_clear"])
+			if tc > now:
+				until = minf(until, tc)
 			if tc >= 0.0 and now >= tc:
 				var q := (now - tc) / (CLEAR_BEATS * bs)
 				if q >= 1.0:
 					continue
+				until = -INF
 				pos = pos.lerp(tray, _ease_in(q))
 				alpha = 1.0 - maxf(0.0, (q - 0.6) / 0.4)
-			var entry := {"card": c, "pos": pos, "ang": ang, "scale": scl, "alpha": alpha, "flip": flip, "up": up}
+			var entry := {"card": {"rank": c["rank"], "suit": c["suit"]}, "pos": pos, "ang": ang, "scale": scl, "alpha": alpha, "flip": flip, "up": up}
 			if in_flight:
 				flying.append(entry)
 			else:
-				_draw_card_entry(ci, entry, u)
-	for e: Dictionary in flying:
-		_draw_card_entry(ci, e, u)
+				landed.append(entry)
+	landed.append_array(flying)
+	_cards_until = until
+	return landed
 
 
-func _draw_card_entry(ci: Control, e: Dictionary, u: float) -> void:
-	BlackjackDraw.draw_card(ci, e["card"], e["pos"], u, bool(e["up"]), float(e["flip"]), float(e["ang"]), float(e["alpha"]), float(e["scale"]))
+func _draw_cards(ci: Control, s: Array) -> void:
+	var u: float = s[0]
+	for e: Dictionary in s[1]:
+		BlackjackDraw.draw_card(ci, e["card"], e["pos"], u, bool(e["up"]), float(e["flip"]), float(e["ang"]), float(e["alpha"]), float(e["scale"]))
 
 
+func _draw_chair(ci: Control, s: Array) -> void:
+	BlackjackDraw.draw_chair_back(ci, s[0], s[1])
 
-## A ring of warm light on the baize round the foot of `r` and a soft glow inside it, breathing with `lift` (0..1). `bright` is the touched flash.
-func _hint_ring(ci: Control, r: Rect2, u: float, lift: float, bright: bool) -> void:
+
+func _draw_hands(ci: Control, s: Array) -> void:
+	BlackjackPeople.draw_player_hands(ci, s[0], s[1], s[2], s[3], s[4])
+
+
+## A ring of warm light on the baize round the foot of `r` and a soft glow inside it, breathing with `lift` (0..1). `bright` is the touched flash; `hc` high contrast.
+func _hint_ring(ci: Control, r: Rect2, u: float, lift: float, bright: bool, hc_on: bool) -> void:
 	if r.size.x <= 0.0:
 		return
 	var c := Vector2(r.get_center().x, r.end.y - r.size.y * 0.25)
 	var rx := r.size.x * 0.5 + (6.0 + 3.0 * lift) * u
 	var ry := r.size.y * 0.42 + (4.0 + 2.0 * lift) * u
-	var hc := 1.0 if high_contrast else 0.0
+	var hc := 1.0 if hc_on else 0.0
 	BlackjackDraw.ell(ci, c.x, c.y, rx, ry, BlackjackDraw.shade(BlackjackDraw.WARM, 0.12 + 0.14 * lift + 0.1 * hc))
 	var pts := PackedVector2Array()
 	for i in RING_POINTS + 1:
 		var th := TAU * float(i) / float(RING_POINTS)
 		pts.append(Vector2(roundf(c.x + cos(th) * rx), roundf(c.y + sin(th) * ry)))
-	var wid := maxf(1.0, roundf(u * (2.0 if high_contrast or bright else 1.0)))
+	var wid := maxf(1.0, roundf(u * (2.0 if hc_on or bright else 1.0)))
 	ci.draw_polyline(pts, BlackjackDraw.shade(BlackjackDraw.WARM_HOT, 0.55 + 0.45 * lift if not bright else 1.0), wid)
 
 
-## Light catching the edges of every hinted thing (drawn over it), in the warm of the rings below.
-func _paint_hints(ci: Control, snap: Dictionary, g: Dictionary, hints: Dictionary, hand_box: Rect2, lift: float) -> void:
-	var u: float = g["u"]
+## Light catching the edges of every hinted thing (drawn over it), in the warm of the rings below: [frame rect, line width, colour] each.
+func _hint_frames(snap: Dictionary, u: float, hints: Dictionary, hand_box: Rect2, lift: float) -> Array:
+	var out: Array = []
 	var px := maxf(1.0, roundf(u * (2.0 if high_contrast else 1.0)))
 	for id: String in snap.get("targets", []):
 		if id == "exit" or not bool(hints.get(id, false)):
@@ -646,7 +770,42 @@ func _paint_hints(ci: Control, snap: Dictionary, g: Dictionary, hints: Dictionar
 				r.position.y -= roundf((1.0 + 3.0 * lift) * u)
 			"hand":
 				r.position.y -= roundf(3.0 * u * lift)
-		_frame(ci, r.grow(px), px, BlackjackDraw.shade(BlackjackDraw.WARM_HOT, 0.3 + 0.55 * lift))
+		out.append([r.grow(px), px, BlackjackDraw.shade(BlackjackDraw.WARM_HOT, 0.3 + 0.55 * lift)])
+	return out
+
+
+## The answer to a touch, as [the touched thing's rect, progress 0..1], or empty when there is none to show.
+func _feedback(snap: Dictionary, now: float, u: float, hand_box: Rect2) -> Array:
+	var el := now - float(_last_hit["t"])
+	var id := str(_last_hit["id"])
+	if id == "" or el < 0.0 or el > FEEDBACK_S:
+		return []
+	var r := _thing_rect(id, snap, hand_box)
+	if r.size.x <= 0.0:
+		return []
+	return [r, el / FEEDBACK_S]
+
+
+## The light on the hinted edges, then the answer to a touch: the thing flashes white and its ring of light opens out and fades (the run's committed-hotspot look).
+func _draw_marks(ci: Control, s: Array) -> void:
+	var u: float = s[0]
+	for f: Array in s[1]:
+		_frame(ci, f[0], f[1], f[2])
+	var fb: Array = s[2]
+	if fb.is_empty():
+		return
+	var r: Rect2 = fb[0]
+	var k: float = fb[1]
+	ci.draw_rect(r.grow(2.0 * u), Color(1.0, 0.98, 0.85, 0.55 * (1.0 - k) * (1.0 - k)))
+	var e := _ease_out(k)
+	var c := Vector2(r.get_center().x, r.end.y - r.size.y * 0.25)
+	var rx := r.size.x * 0.5 + (8.0 + 30.0 * e) * u
+	var ry := r.size.y * 0.42 + (5.0 + 14.0 * e) * u
+	var pts := PackedVector2Array()
+	for i in RING_POINTS + 1:
+		var th := TAU * float(i) / float(RING_POINTS)
+		pts.append(Vector2(roundf(c.x + cos(th) * rx), roundf(c.y + sin(th) * ry)))
+	ci.draw_polyline(pts, Color(1.0, 0.97, 0.78, 1.0 - k), maxf(1.0, roundf(u * 3.0 * (1.0 - k) + u)))
 
 
 func _frame(ci: Control, r: Rect2, px: float, col: Color) -> void:
@@ -667,26 +826,3 @@ func _thing_rect(id: String, snap: Dictionary, hand_box: Rect2) -> Rect2:
 		"hand":
 			return hand_box
 	return BlackjackDraw.exit_rect(size).grow(-6.0 * float(_geometry()["u"]))
-
-
-## The answer to a touch, at once: the thing flashes white and its ring of light opens out and fades (the run's committed-hotspot look).
-func _paint_feedback(ci: Control, snap: Dictionary, now: float, g: Dictionary, hand_box: Rect2) -> void:
-	var el := now - float(_last_hit["t"])
-	var id := str(_last_hit["id"])
-	if id == "" or el < 0.0 or el > FEEDBACK_S:
-		return
-	var u: float = g["u"]
-	var k := el / FEEDBACK_S
-	var r := _thing_rect(id, snap, hand_box)
-	if r.size.x <= 0.0:
-		return
-	ci.draw_rect(r.grow(2.0 * u), Color(1.0, 0.98, 0.85, 0.55 * (1.0 - k) * (1.0 - k)))
-	var e := _ease_out(k)
-	var c := Vector2(r.get_center().x, r.end.y - r.size.y * 0.25)
-	var rx := r.size.x * 0.5 + (8.0 + 30.0 * e) * u
-	var ry := r.size.y * 0.42 + (5.0 + 14.0 * e) * u
-	var pts := PackedVector2Array()
-	for i in RING_POINTS + 1:
-		var th := TAU * float(i) / float(RING_POINTS)
-		pts.append(Vector2(roundf(c.x + cos(th) * rx), roundf(c.y + sin(th) * ry)))
-	ci.draw_polyline(pts, Color(1.0, 0.97, 0.78, 1.0 - k), maxf(1.0, roundf(u * 3.0 * (1.0 - k) + u)))

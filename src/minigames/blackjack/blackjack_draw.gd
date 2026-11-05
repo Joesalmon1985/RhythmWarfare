@@ -54,6 +54,8 @@ const PIP_SMALL := [
 ]
 
 static var _table_cache: Dictionary = {}
+static var _cap_cache: Dictionary = {}  # radius -> a limb's round end as triangles (`_cap`)
+static var _ell_cache: Dictionary = {}  # [rx, ry, first row, last row] -> an ellipse's rows as triangles, or true once seen (`ell`)
 
 
 # ------------------------------------------------------------------ primitives
@@ -68,12 +70,30 @@ static func rect(ci: CanvasItem, x: float, y: float, w: float, h: float, col: Co
 
 
 ## A filled pixel ellipse built from rect rows (so it has no ragged edge). `top` and `bottom` clip the rows (offsets from the centre row, defaults: all).
+## An ellipse of eight rows or more that is drawn again (a head, an eye, a halo: most shapes come back every redraw) goes to the renderer as one cached triangle list (see `fill`): the same
+## pixels in one call instead of a rect per row. One whose size changes every frame (a breathing ring) stays rect rows.
 static func ell(ci: CanvasItem, cx: float, cy: float, rx: float, ry: float, col: Color, top := -1000, bottom := 1000) -> void:
 	var cxr := roundf(cx)
 	var cyr := roundf(cy)
 	var ryi := int(maxf(0.0, roundf(ry)))
+	var j0 := maxi(-ryi, top)
+	var j1 := mini(ryi, bottom)
+	if j1 - j0 >= 7:
+		var key := [rx, ry, j0, j1]
+		var hit: Variant = _ell_cache.get(key)
+		if hit is PackedVector2Array:
+			fill(ci, Transform2D(0.0, Vector2(cxr, cyr)) * (hit as PackedVector2Array), col)
+			return
+		if hit != null:  # seen once before: keep it
+			var rows := _row_tris(rx, ry, j0, j1)
+			_ell_cache[key] = rows
+			fill(ci, Transform2D(0.0, Vector2(cxr, cyr)) * rows, col)
+			return
+		if _ell_cache.size() >= 256:
+			_ell_cache.clear()
+		_ell_cache[key] = true
 	var rr := ry + 0.5
-	for j in range(maxi(-ryi, top), mini(ryi, bottom) + 1):
+	for j in range(j0, j1 + 1):
 		var k := float(j) / rr
 		var hw := floorf(rx * sqrt(maxf(0.0, 1.0 - k * k)) + 0.5)
 		ci.draw_rect(Rect2(cxr - hw, cyr + j, 2.0 * hw + 1.0, 1.0), col)
@@ -90,25 +110,86 @@ static func poly(ci: CanvasItem, pts: PackedVector2Array, col: Color) -> void:
 	ci.draw_colored_polygon(pts, col)
 
 
-## A filled polygon with an outline `t` pixels thick (the outline is the polygon stamped four times around the fill).
-static func poly_o(ci: CanvasItem, pts: PackedVector2Array, fill: Color, ink: Color, t := 1.0) -> void:
+## A filled polygon with an outline `t` pixels thick (the outline is the polygon stamped four times around the fill). The polygon is triangulated once, as the renderer would, and the
+## four stamps go as one triangle list, the fill as another.
+static func poly_o(ci: CanvasItem, pts: PackedVector2Array, fill_col: Color, ink: Color, t := 1.0) -> void:
+	var idx := Geometry2D.triangulate_polygon(pts)
+	if idx.is_empty():  # not a simple polygon: drawn as before, stamp by stamp
+		for off: Vector2 in [Vector2(t, 0), Vector2(-t, 0), Vector2(0, t), Vector2(0, -t)]:
+			ci.draw_colored_polygon(Transform2D(0.0, off) * pts, ink)
+		ci.draw_colored_polygon(pts, fill_col)
+		return
+	var tri := PackedVector2Array()
+	tri.resize(idx.size())
+	for i in idx.size():
+		tri[i] = pts[idx[i]]
+	var stamps := PackedVector2Array()
 	for off: Vector2 in [Vector2(t, 0), Vector2(-t, 0), Vector2(0, t), Vector2(0, -t)]:
-		var moved := PackedVector2Array()
-		moved.resize(pts.size())
-		for i in pts.size():
-			moved[i] = pts[i] + off
-		ci.draw_colored_polygon(moved, ink)
-	ci.draw_colored_polygon(pts, fill)
+		stamps.append_array(Transform2D(0.0, off) * tri)
+	fill(ci, stamps, ink)
+	fill(ci, tri, fill_col)
 
 
 ## A thick limb from `a` to `b` (widths `wa`, `wb`) with round ends.
 static func limb(ci: CanvasItem, a: Vector2, b: Vector2, wa: float, wb: float, col: Color) -> void:
+	var tris := PackedVector2Array()
+	limb_into(tris, a, b, wa, wb)
+	fill(ci, tris, col)
+
+
+## Adds a limb to a triangle list (see `fill`): the quad between the ends as two triangles, then each round end's rect rows (the rows `ell` draws) as two triangles each.
+static func limb_into(tris: PackedVector2Array, a: Vector2, b: Vector2, wa: float, wb: float) -> void:
 	var d := b - a
 	if d.length() > 0.5:
 		var n := Vector2(-d.y, d.x).normalized()
-		ci.draw_colored_polygon(PackedVector2Array([a + n * wa * 0.5, b + n * wb * 0.5, b - n * wb * 0.5, a - n * wa * 0.5]), col)
-	ell(ci, a.x, a.y, maxf(0.5, wa * 0.5 - 0.5), maxf(0.5, wa * 0.5 - 0.5), col)
-	ell(ci, b.x, b.y, maxf(0.5, wb * 0.5 - 0.5), maxf(0.5, wb * 0.5 - 0.5), col)
+		var p0 := a + n * wa * 0.5
+		var p2 := b - n * wb * 0.5
+		tris.append_array(PackedVector2Array([p0, b + n * wb * 0.5, p2, p0, p2, a - n * wa * 0.5]))
+	tris.append_array(Transform2D(0.0, Vector2(roundf(a.x), roundf(a.y))) * _cap(maxf(0.5, wa * 0.5 - 0.5)))
+	tris.append_array(Transform2D(0.0, Vector2(roundf(b.x), roundf(b.y))) * _cap(maxf(0.5, wb * 0.5 - 0.5)))
+
+
+## Draws a triangle list in one colour with one call: one polygon command (no triangulation, one set of buffers, one draw call) instead of a polygon and a rect per row for every shape.
+## The triangles cover exactly the pixels the shapes cover drawn one by one, so a run of shapes of one opaque colour (an outline pass, a hand's fingers) may share one list.
+static func fill(ci: CanvasItem, tris: PackedVector2Array, col: Color) -> void:
+	if not tris.is_empty():
+		RenderingServer.canvas_item_add_triangle_array(ci.get_canvas_item(), PackedInt32Array(), tris, PackedColorArray([col]))
+
+
+## A limb's round end of radius `r` (the rows of `ell(0, 0, r, r)`) as triangles, cached per radius (they come in a handful of sizes; the cache is cleared when it grows past 256).
+static func _cap(r: float) -> PackedVector2Array:
+	var hit: Variant = _cap_cache.get(r)
+	if hit != null:
+		return hit
+	var ri := int(maxf(0.0, roundf(r)))
+	var rows := _row_tris(r, r, -ri, ri)
+	if _cap_cache.size() >= 256:
+		_cap_cache.clear()
+	_cap_cache[r] = rows
+	return rows
+
+
+## The rect rows `j0`..`j1` of `ell(0, 0, rx, ry)` as two triangles each.
+static func _row_tris(rx: float, ry: float, j0: int, j1: int) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	out.resize((j1 - j0 + 1) * 6)
+	var rr := ry + 0.5
+	var i := 0
+	for j in range(j0, j1 + 1):
+		var k := float(j) / rr
+		var hw := floorf(rx * sqrt(maxf(0.0, 1.0 - k * k)) + 0.5)
+		var a := Vector2(-hw, j)
+		var b := Vector2(hw + 1.0, j)
+		var c := Vector2(hw + 1.0, j + 1)
+		var d := Vector2(-hw, j + 1)
+		out[i] = a
+		out[i + 1] = b
+		out[i + 2] = c
+		out[i + 3] = a
+		out[i + 4] = c
+		out[i + 5] = d
+		i += 6
+	return out
 
 
 static func shade(c: Color, alpha: float) -> Color:

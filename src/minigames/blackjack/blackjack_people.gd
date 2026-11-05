@@ -187,11 +187,19 @@ static func _blink(beat: float, seed_v: float) -> float:
 
 ## Draws person `who` (`npc_a`, `dealer`, `npc_b`) around `center` (the middle of the head). `face` is a parameter set from `face_params` / `blend`; `gaze_to` the canvas point the eyes look at;
 ## `gesture` one of `GESTURES` with `gesture_t` 0..1 (see the per-gesture notes below); `beat_phase` continuous beats (bob, blinks); `point_to` the canvas point a pointing, inviting, dealing, sweeping
-## or paying gesture goes to (zero: a sensible default). `layer` is `"all"`, `"body"` (head and torso, draw before the table) or `"arms"` (draw after it).
+## or paying gesture goes to (zero: a sensible default). `layer` is `"all"`, `"body"` (head and torso, draw before the table) or `"arms"` (draw after it); `"torso"` then `"head"` draw the body
+## in two parts.
 ## Gesture timing (gesture_t): `rest`, `invite`, `tap_table`, `wave_off`, `clap` loop (2 cycles per unit for tap, wave, clap; 1 for invite); `point_deck`, `point_hand` jab 2 times per unit and hold;
 ## `deal`, `sweep`, `pay`, `shrug`, `facepalm` are one-shots. Suggested lengths in beats: invite 2, point 2, deal 1, sweep 2, pay 2, shrug 2, clap 2, facepalm 3, tap_table 1, wave_off 2.
 static func draw_person(ci: CanvasItem, who: String, center: Vector2, u: float, face: Dictionary, gaze_to: Vector2, gesture: String, gesture_t: float, beat_phase: float, point_to := Vector2.ZERO, layer := "all") -> void:
-	var look: Dictionary = LOOKS.get(who, LOOKS["dealer"])
+	draw_person_state(ci, person_state(who, center, u, face, gaze_to, gesture, gesture_t, beat_phase, point_to, layer))
+
+
+## What `draw_person` draws for `layer`, resolved from its arguments (same arguments; `layer` may also be `"torso"` or `"head"`, the two halves of `"body"`): the person's place and unit,
+## for the torso the shrug's lift, for the head its motion, the face, the gaze point, the bob in whole pixels and the blink, for the arms the lift and the two arm poses. `draw_person_state`
+## reads nothing else, so two equal states draw the same pixels: a caller may keep a drawn layer until the state changes (the beat moves a head only by whole pixels, a few times a beat, and
+## a torso or resting arms not at all).
+static func person_state(who: String, center: Vector2, u: float, face: Dictionary, gaze_to: Vector2, gesture: String, gesture_t: float, beat_phase: float, point_to := Vector2.ZERO, layer := "all") -> Dictionary:
 	var g := gesture if GESTURES.has(gesture) else "rest"
 	var c := Vector2(roundf(center.x), roundf(center.y))
 	var lift := 0.0
@@ -200,13 +208,34 @@ static func draw_person(ci: CanvasItem, who: String, center: Vector2, u: float, 
 	var rel := Vector2.ZERO
 	if point_to != Vector2.ZERO:
 		rel = (point_to - c) / u
-	if layer != "arms":
-		_body(ci, who, c, u, look, lift)
-		var hm := _head_motion(g, gesture_t, rel)
-		_head(ci, who, c + Vector2(roundf(hm.x * u), roundf(hm.y * u)), u, look, face, gaze_to, beat_phase, hm.z)
-	if layer != "body":
-		var poses := _poses(g, gesture_t, rel, lift, point_to != Vector2.ZERO)
-		_arms(ci, who, c, u, look, poses, lift)
+	var st := {"who": who, "c": c, "u": u}
+	if layer != "head" and layer != "arms":
+		st["torso_lift"] = lift
+	if layer != "torso" and layer != "arms":
+		st["head_motion"] = _head_motion(g, gesture_t, rel)
+		st["face"] = face
+		st["gaze"] = gaze_to
+		st["bob"] = _bob(face, beat_phase, u)
+		st["blink"] = _blink(beat_phase, _blink_seed(who))
+	if layer == "all" or layer == "arms":
+		st["arms_lift"] = lift
+		st["poses"] = _poses(g, gesture_t, rel, lift, point_to != Vector2.ZERO)
+	return st
+
+
+## Draws a state from `person_state`: the torso, the head and the arms, as far as the state has them.
+static func draw_person_state(ci: CanvasItem, st: Dictionary) -> void:
+	var who: String = st["who"]
+	var look: Dictionary = LOOKS.get(who, LOOKS["dealer"])
+	var c: Vector2 = st["c"]
+	var u: float = st["u"]
+	if st.has("torso_lift"):
+		_body(ci, who, c, u, look, st["torso_lift"])
+	if st.has("face"):
+		var hm: Vector3 = st["head_motion"]
+		_head(ci, who, c + Vector2(roundf(hm.x * u), roundf(hm.y * u)), u, look, st["face"], st["gaze"], st["bob"], st["blink"], hm.z)
+	if st.has("poses"):
+		_arms(ci, who, c, u, look, st["poses"], st["arms_lift"])
 
 
 # ------------------------------------------------------------------ body
@@ -258,17 +287,25 @@ static func _body(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dicti
 
 # ------------------------------------------------------------------ head and face
 
-static func _head(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictionary, f: Dictionary, gaze_to: Vector2, beat: float, tilt_add := 0.0) -> void:
+## The head's bob on the beat in whole pixels (twice as fast in a laugh).
+static func _bob(f: Dictionary, beat: float, u: float) -> float:
+	var laugh := float(f.get("crescent", 0.0)) > 0.5
+	var bob_amp := (0.9 + float(f.get("head_bob", 0.0))) * u
+	var bph := beat * (2.0 if laugh else 1.0)
+	return roundf(bob_amp * pow(0.5 + 0.5 * cos(TAU * bph), 2.0))
+
+
+static func _blink_seed(who: String) -> float:
+	return 0.0 if who == "dealer" else (2.3 if who == "npc_a" else 4.1)
+
+
+static func _head(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictionary, f: Dictionary, gaze_to: Vector2, bob: float, blink: float, tilt_add := 0.0) -> void:
 	var skin: Color = look["skin"]
 	var sk: Color = look["skin_shade"]
 	var hair: Color = look["hair"]
 	var hw := _p(float(look["hw"]), u)
 	var hh := _p(float(look["hh"]), u)
 	var t := maxf(1.0, roundf(u))
-	var laugh := float(f.get("crescent", 0.0)) > 0.5
-	var bob_amp := (0.9 + float(f.get("head_bob", 0.0))) * u
-	var bph := beat * (2.0 if laugh else 1.0)
-	var bob := roundf(bob_amp * pow(0.5 + 0.5 * cos(TAU * bph), 2.0))
 	var pull := roundf(float(f.get("pull", 0.0)) * u)
 	var origin := c + Vector2(0.0, bob - pull)
 	var tilt := deg_to_rad(float(f.get("head_tilt", 0.0)) + tilt_add)
@@ -288,7 +325,7 @@ static func _head(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dicti
 		"dealer":
 			BlackjackDraw.rect(ci, -hw, -_p(13.0, u), t * 2.0, _p(10.0, u), look["hair"])
 			BlackjackDraw.rect(ci, hw - 2.0 * t + 1.0, -_p(13.0, u), t * 2.0, _p(10.0, u), look["hair"])
-	_face_features(ci, who, u, look, f, origin, tilt, gaze_to, beat)
+	_face_features(ci, who, u, look, f, origin, tilt, gaze_to, blink)
 	match who:
 		"dealer":
 			_visor(ci, u, hw, hh)
@@ -356,14 +393,12 @@ static func _wild_hair_front(ci: CanvasItem, u: float, look: Dictionary) -> void
 
 
 ## Eyes, brows, nose, mouth and extras, drawn in the head's local space (origin at the head centre).
-static func _face_features(ci: CanvasItem, who: String, u: float, look: Dictionary, f: Dictionary, origin: Vector2, tilt: float, gaze_to: Vector2, beat: float) -> void:
+static func _face_features(ci: CanvasItem, who: String, u: float, look: Dictionary, f: Dictionary, origin: Vector2, tilt: float, gaze_to: Vector2, blink: float) -> void:
 	var t := maxf(1.0, roundf(u))
 	var erx := maxf(2.0, _p(5.5, u))
 	var ery := maxf(3.0, _p(6.0, u))
 	var ex := maxf(erx + 3.0, _p(8.2, u))
 	var ey := -_p(1.0, u)
-	var seed_v := 0.0 if who == "dealer" else (2.3 if who == "npc_a" else 4.1)
-	var blink := _blink(beat, seed_v)
 	var glasses := who == "npc_a"
 	var brow_col: Color = look["brow"]
 	var sk: Color = look["skin_shade"]
@@ -669,6 +704,7 @@ static func _elbow(s: Vector2, h: Vector2, side: float) -> Vector2:
 
 
 static func _arms(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictionary, poses: Array, lift: float) -> void:
+	var ink := PackedVector2Array()  # the outline pass is all ink: both arms and hands go to the renderer as one triangle list
 	for pass_i in 2:
 		var dk := pass_i == 0
 		for si in 2:
@@ -680,10 +716,13 @@ static func _arms(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dicti
 			if dd.length() > ARM_L * 2.0 - 1.0:
 				hp = sh + dd.normalized() * (ARM_L * 2.0 - 1.0)
 			var el := _elbow(sh, hp, side)
-			_arm(ci, who, c, u, look, sh, el, hp, String(po["kind"]), float(po["ang"]), float(po["k"]), side, dk)
+			_arm(ci, who, c, u, look, sh, el, hp, String(po["kind"]), float(po["ang"]), float(po["k"]), side, dk, ink)
+		if dk:
+			BlackjackDraw.fill(ci, ink, INK)
 
 
-static func _arm(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictionary, sh: Vector2, el: Vector2, hp: Vector2, kind: String, ang: float, k: float, side: float, dk: bool) -> void:
+## One arm: in the outline pass (`dk`) its shapes, grown, are added to `ink`; in the fill pass they are drawn in their colours.
+static func _arm(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictionary, sh: Vector2, el: Vector2, hp: Vector2, kind: String, ang: float, k: float, side: float, dk: bool, ink: PackedVector2Array) -> void:
 	var g := maxf(1.0, roundf(u)) if dk else 0.0
 	var cloth: Color = look["cloth"]
 	var shade: Color = look["cloth_shade"]
@@ -694,58 +733,72 @@ static func _arm(ci: CanvasItem, who: String, c: Vector2, u: float, look: Dictio
 	var h := c + Vector2(roundf(hp.x * u), roundf(hp.y * u))
 	var wu := 10.0 * u
 	var wf := 8.4 * u
-	var ink := INK
-	BlackjackDraw.limb(ci, s, e, wu + 2.0 * g, wu - 0.6 * u + 2.0 * g, ink if dk else cloth)
-	if not dk:
-		BlackjackDraw.limb(ci, s.lerp(e, 0.45), e, wu * 0.4, wu * 0.35, shade)
-	var fcol: Color = skin if fore_skin else cloth
 	var ee := e
 	var fdir := (h - e).normalized() if (h - e).length() > 0.5 else Vector2(0.0, 1.0)
-	BlackjackDraw.limb(ci, ee, h, wf + 2.0 * g, wf - 0.8 * u + 2.0 * g, ink if dk else fcol)
+	if dk:
+		BlackjackDraw.limb_into(ink, s, e, wu + 2.0 * g, wu - 0.6 * u + 2.0 * g)
+		BlackjackDraw.limb_into(ink, ee, h, wf + 2.0 * g, wf - 0.8 * u + 2.0 * g)
+		if fore_skin:
+			BlackjackDraw.limb_into(ink, ee - fdir * 1.0, ee + fdir * maxf(3.0, 5.0 * u), wf + 3.4 * u + 2.0 * g, wf + 3.4 * u + 2.0 * g)
+		_hand_into(ink, h, ang, kind, k * 1.45, u, g, side)
+		return
+	BlackjackDraw.limb(ci, s, e, wu, wu - 0.6 * u, cloth)
+	BlackjackDraw.limb(ci, s.lerp(e, 0.45), e, wu * 0.4, wu * 0.35, shade)
+	var fcol: Color = skin if fore_skin else cloth
+	BlackjackDraw.limb(ci, ee, h, wf, wf - 0.8 * u, fcol)
 	if fore_skin:  # rolled sleeve at the elbow
-		BlackjackDraw.limb(ci, ee - fdir * 1.0, ee + fdir * maxf(3.0, 5.0 * u), wf + 3.4 * u + 2.0 * g, wf + 3.4 * u + 2.0 * g, ink if dk else cloth)
-		if not dk:
-			BlackjackDraw.limb(ci, ee + fdir * maxf(3.0, 5.0 * u) - fdir, ee + fdir * maxf(3.0, 5.0 * u), wf + 3.4 * u, wf + 3.4 * u, look["cloth_shade"])
-	elif not dk:
+		BlackjackDraw.limb(ci, ee - fdir * 1.0, ee + fdir * maxf(3.0, 5.0 * u), wf + 3.4 * u, wf + 3.4 * u, cloth)
+		BlackjackDraw.limb(ci, ee + fdir * maxf(3.0, 5.0 * u) - fdir, ee + fdir * maxf(3.0, 5.0 * u), wf + 3.4 * u, wf + 3.4 * u, look["cloth_shade"])
+	else:
 		var cuff: Color = look["accent"] if who == "npc_a" else Color("e8d8c8")
 		BlackjackDraw.limb(ci, h - fdir * maxf(4.0, 6.0 * u), h - fdir * maxf(2.0, 3.0 * u), wf + 0.8 * u, wf + 0.8 * u, cuff)
-	_hand(ci, h, ang, kind, k * 1.45, u, ink if dk else skin, g, side, skin if dk else look["skin_shade"])
+	_hand(ci, h, ang, kind, k * 1.45, u, skin, side, look["skin_shade"])
 
 
-## One hand at `p` with fingers pointing along `ang`. Kinds: `flat` (mitten and thumb), `fist`, `point` (index finger out), `open` (fanned fingers), `claw` (curled fingers).
-## Drawn in two passes: `g` > 0 is the outline pass (every shape grown by g pixels, drawn in `col`), 0 the fill pass.
-static func _hand(ci: CanvasItem, p: Vector2, ang: float, kind: String, k: float, u: float, col: Color, g: float, side: float, shade_col: Color) -> void:
+## A hand's fill pass: its shapes in `col` as one triangle list, then a fist's knuckle lines in `shade_col`.
+static func _hand(ci: CanvasItem, p: Vector2, ang: float, kind: String, k: float, u: float, col: Color, side: float, shade_col: Color) -> void:
+	var tris := PackedVector2Array()
+	_hand_into(tris, p, ang, kind, k, u, 0.0, side)
+	BlackjackDraw.fill(ci, tris, col)
+	if kind == "fist":
+		var d := Vector2(cos(ang), sin(ang))
+		var n := Vector2(-d.y, d.x)
+		var q := u * k
+		for fi in 3:
+			var off := (float(fi) - 1.0) * 2.7 * q
+			BlackjackDraw.limb(ci, p + n * off + d * 1.2 * q, p + n * off + d * 2.8 * q, 1.0, 1.0, shade_col)
+
+
+## One hand at `p` with fingers pointing along `ang`, added to a triangle list. Kinds: `flat` (mitten and thumb), `fist`, `point` (index finger out), `open` (fanned fingers), `claw` (curled fingers).
+## Drawn in two passes: `g` > 0 is the outline pass (every shape grown by g pixels, drawn in ink), 0 the fill pass.
+static func _hand_into(tris: PackedVector2Array, p: Vector2, ang: float, kind: String, k: float, u: float, g: float, side: float) -> void:
 	var d := Vector2(cos(ang), sin(ang))
 	var n := Vector2(-d.y, d.x)
 	var q := u * k
 	var gg := g * 2.0
 	match kind:
 		"point":
-			BlackjackDraw.limb(ci, p - d * 1.0 * q, p + d * 1.5 * q, 9.5 * q + gg, 9.5 * q + gg, col)
-			BlackjackDraw.limb(ci, p + d * 3.0 * q, p + d * 17.0 * q, 4.2 * q + gg, 3.6 * q + gg, col)
-			BlackjackDraw.limb(ci, p + n * side * 3.0 * q, p + n * side * 5.0 * q + d * 4.0 * q, 3.2 * q + gg, 3.0 * q + gg, col)
+			BlackjackDraw.limb_into(tris, p - d * 1.0 * q, p + d * 1.5 * q, 9.5 * q + gg, 9.5 * q + gg)
+			BlackjackDraw.limb_into(tris, p + d * 3.0 * q, p + d * 17.0 * q, 4.2 * q + gg, 3.6 * q + gg)
+			BlackjackDraw.limb_into(tris, p + n * side * 3.0 * q, p + n * side * 5.0 * q + d * 4.0 * q, 3.2 * q + gg, 3.0 * q + gg)
 		"fist":
-			BlackjackDraw.limb(ci, p - d * 1.0 * q, p + d * 2.0 * q, 10.0 * q + gg, 10.0 * q + gg, col)
-			BlackjackDraw.limb(ci, p + n * side * 2.0 * q + d * 2.0 * q, p + n * side * 5.0 * q + d * 5.0 * q, 3.2 * q + gg, 3.0 * q + gg, col)
+			BlackjackDraw.limb_into(tris, p - d * 1.0 * q, p + d * 2.0 * q, 10.0 * q + gg, 10.0 * q + gg)
+			BlackjackDraw.limb_into(tris, p + n * side * 2.0 * q + d * 2.0 * q, p + n * side * 5.0 * q + d * 5.0 * q, 3.2 * q + gg, 3.0 * q + gg)
 		"open", "claw":
 			var fl := 10.0 if kind == "open" else 7.5
-			BlackjackDraw.limb(ci, p - d * 1.0 * q, p + d * 2.0 * q, 9.0 * q + gg, 9.0 * q + gg, col)
+			BlackjackDraw.limb_into(tris, p - d * 1.0 * q, p + d * 2.0 * q, 9.0 * q + gg, 9.0 * q + gg)
 			var spread := [-0.42, -0.14, 0.14, 0.42] if kind == "open" else [-0.2, -0.07, 0.07, 0.2]
 			for a: float in spread:
 				var fd := Vector2(cos(ang + a), sin(ang + a))
-				BlackjackDraw.limb(ci, p + d * 3.0 * q + n * (a * 9.0 * q), p + fd * fl * q + n * (a * 3.0 * q), 2.9 * q + gg, 2.6 * q + gg, col)
+				BlackjackDraw.limb_into(tris, p + d * 3.0 * q + n * (a * 9.0 * q), p + fd * fl * q + n * (a * 3.0 * q), 2.9 * q + gg, 2.6 * q + gg)
 			var td := Vector2(cos(ang - side * 1.2), sin(ang - side * 1.2))
-			BlackjackDraw.limb(ci, p + n * side * 3.5 * q, p + td * 8.0 * q + n * side * 2.0 * q, 3.4 * q + gg, 3.0 * q + gg, col)
+			BlackjackDraw.limb_into(tris, p + n * side * 3.5 * q, p + td * 8.0 * q + n * side * 2.0 * q, 3.4 * q + gg, 3.0 * q + gg)
 		_:  # flat: a palm and four fingers held together, the thumb out to the side
-			BlackjackDraw.limb(ci, p - d * 2.0 * q, p + d * 2.0 * q, 9.6 * q + gg, 9.2 * q + gg, col)
+			BlackjackDraw.limb_into(tris, p - d * 2.0 * q, p + d * 2.0 * q, 9.6 * q + gg, 9.2 * q + gg)
 			for fo: float in [-3.3, -1.1, 1.1, 3.3]:
 				var fl2 := 8.5 - absf(fo) * 0.45
-				BlackjackDraw.limb(ci, p + d * 2.0 * q + n * fo * q, p + d * fl2 * q + n * fo * 1.05 * q, 2.6 * q + gg, 2.4 * q + gg, col)
-			BlackjackDraw.limb(ci, p + n * side * 4.0 * q - d * 1.0 * q, p + n * side * 6.5 * q + d * 3.0 * q, 3.4 * q + gg, 3.0 * q + gg, col)
-	if g == 0.0 and kind == "fist":
-		for fi in 3:
-			var off := (float(fi) - 1.0) * 2.7 * q
-			BlackjackDraw.limb(ci, p + n * off + d * 1.2 * q, p + n * off + d * 2.8 * q, 1.0, 1.0, shade_col)
+				BlackjackDraw.limb_into(tris, p + d * 2.0 * q + n * fo * q, p + d * fl2 * q + n * fo * 1.05 * q, 2.6 * q + gg, 2.4 * q + gg)
+			BlackjackDraw.limb_into(tris, p + n * side * 4.0 * q - d * 1.0 * q, p + n * side * 6.5 * q + d * 3.0 * q, 3.4 * q + gg, 3.0 * q + gg)
 
 
 # ------------------------------------------------------------------ the player's hands
@@ -885,6 +938,7 @@ static func _lining(ci: CanvasItem, p: Vector2, u: float, pull: float) -> void:
 
 
 static func _phand_pair(ci: CanvasItem, size: Vector2, u: float, lh: Dictionary, rh: Dictionary, wad: float) -> void:
+	var ink := PackedVector2Array()  # the outline pass is all ink: both sleeves and hands as one triangle list
 	for pass_i in 2:
 		var dk := pass_i == 0
 		for si in 2:
@@ -900,21 +954,31 @@ static func _phand_pair(ci: CanvasItem, size: Vector2, u: float, lh: Dictionary,
 			var anchor := Vector2(w.x + (w.x - size.x * 0.5) * 0.35 + side * 26.0 * u, size.y + 70.0 * u)
 			var elbow := anchor.lerp(wr, 0.5) + Vector2(side * 15.0 * u, 8.0 * u)
 			var wrist := wr + Vector2(0.0, 3.0 * u)
-			BlackjackDraw.limb(ci, anchor, elbow, ww * 1.75 + 2.0 * g, ww * 1.3 + 2.0 * g, INK if dk else SLEEVE)
-			BlackjackDraw.limb(ci, elbow, wrist, ww * 1.3 + 2.0 * g, ww * 0.88 + 2.0 * g, INK if dk else SLEEVE)
-			if not dk:
-				var fd := (wrist - elbow).normalized()
-				var fn := Vector2(-fd.y, fd.x) * (1.0 if Vector2(-fd.y, fd.x).x * side > 0.0 else -1.0)
-				var ud := (elbow - anchor).normalized()
-				var un := Vector2(-ud.y, ud.x) * (1.0 if Vector2(-ud.y, ud.x).x * side > 0.0 else -1.0)
-				BlackjackDraw.limb(ci, anchor + un * ww * 0.55, elbow + un * ww * 0.4, ww * 0.32, ww * 0.26, SLEEVE_LIGHT)
-				BlackjackDraw.limb(ci, elbow + fn * ww * 0.38, wrist - fd * 6.0 * u + fn * ww * 0.24, ww * 0.26, ww * 0.18, SLEEVE_LIGHT)
-				# the crease inside the elbow
-				BlackjackDraw.limb(ci, elbow - fn * ww * 0.45 - fd * 3.0 * u, elbow - fn * ww * 0.2 + fd * 4.0 * u, maxf(1.0, 2.0 * u), maxf(1.0, 1.5 * u), SLEEVE_DARK)
-				# the shirt cuff and its button
-				BlackjackDraw.limb(ci, wrist - fd * 6.0 * u, wrist - fd * 1.0 * u, ww * 0.82, ww * 0.82, CUFF)
-				BlackjackDraw.rect(ci, wrist.x - fd.x * 4.0 * u + fn.x * ww * 0.2, wrist.y - fd.y * 4.0 * u + fn.y * ww * 0.2, maxf(1.0, 2.0 * u), maxf(1.0, 2.0 * u), SLEEVE_DARK)
-			_hand(ci, wr, float(po["ang"]), String(po["kind"]), float(po["k"]), u, INK if dk else GLOVE_SKIN, g, side, Color("a06f48"))
+			if dk:
+				BlackjackDraw.limb_into(ink, anchor, elbow, ww * 1.75 + 2.0 * g, ww * 1.3 + 2.0 * g)
+				BlackjackDraw.limb_into(ink, elbow, wrist, ww * 1.3 + 2.0 * g, ww * 0.88 + 2.0 * g)
+				_hand_into(ink, wr, float(po["ang"]), String(po["kind"]), float(po["k"]), u, g, side)
+				continue
+			var sleeve := PackedVector2Array()
+			BlackjackDraw.limb_into(sleeve, anchor, elbow, ww * 1.75, ww * 1.3)
+			BlackjackDraw.limb_into(sleeve, elbow, wrist, ww * 1.3, ww * 0.88)
+			BlackjackDraw.fill(ci, sleeve, SLEEVE)
+			var fd := (wrist - elbow).normalized()
+			var fn := Vector2(-fd.y, fd.x) * (1.0 if Vector2(-fd.y, fd.x).x * side > 0.0 else -1.0)
+			var ud := (elbow - anchor).normalized()
+			var un := Vector2(-ud.y, ud.x) * (1.0 if Vector2(-ud.y, ud.x).x * side > 0.0 else -1.0)
+			var light := PackedVector2Array()
+			BlackjackDraw.limb_into(light, anchor + un * ww * 0.55, elbow + un * ww * 0.4, ww * 0.32, ww * 0.26)
+			BlackjackDraw.limb_into(light, elbow + fn * ww * 0.38, wrist - fd * 6.0 * u + fn * ww * 0.24, ww * 0.26, ww * 0.18)
+			BlackjackDraw.fill(ci, light, SLEEVE_LIGHT)
+			# the crease inside the elbow
+			BlackjackDraw.limb(ci, elbow - fn * ww * 0.45 - fd * 3.0 * u, elbow - fn * ww * 0.2 + fd * 4.0 * u, maxf(1.0, 2.0 * u), maxf(1.0, 1.5 * u), SLEEVE_DARK)
+			# the shirt cuff and its button
+			BlackjackDraw.limb(ci, wrist - fd * 6.0 * u, wrist - fd * 1.0 * u, ww * 0.82, ww * 0.82, CUFF)
+			BlackjackDraw.rect(ci, wrist.x - fd.x * 4.0 * u + fn.x * ww * 0.2, wrist.y - fd.y * 4.0 * u + fn.y * ww * 0.2, maxf(1.0, 2.0 * u), maxf(1.0, 2.0 * u), SLEEVE_DARK)
+			_hand(ci, wr, float(po["ang"]), String(po["kind"]), float(po["k"]), u, GLOVE_SKIN, side, Color("a06f48"))
+		if dk:
+			BlackjackDraw.fill(ci, ink, INK)
 	if wad > 0.5:  # the money in the hand: real fivers, the same notes that land on the table
 		var lw: Vector2 = lh["w"]
 		var rw: Vector2 = rh["w"]
