@@ -356,6 +356,8 @@ def generate(path_id: str, out_root: Path = PACKS, force: bool = False, paths_ro
             continue
         write_scene_pack(out_root, path_id, node["scene"], node["id"], run["path"]["title"], bpm, mix, i)
         entries[node["id"]] = {"id": node["id"], "audio": pack_id, "chart": pack_id, "treatment": "none", "temporary": True}
+        if existing is not None and "prompt" in existing:
+            entries[node["id"]]["prompt"] = existing["prompt"]  # the owner's music prompt rides on the entry (docs/MUSIC_HANDOFF.md); a --force rewrite must not drop it
         done.append(pack_id)
     music["nodes"] = [entries[n["id"]] for n in run["nodes"] if n["id"] in entries]
     write_json(music_path, music, indent=1)

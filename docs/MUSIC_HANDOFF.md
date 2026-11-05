@@ -81,8 +81,82 @@ A **world** is a small graph of **scenes**; each scene is one 64-beat phase at a
 
 - `underworld`: Lv3 Hell: the three WAVs are in `ToAddTry2/` but its three MIDI files are missing, so the importer cannot chart it. Until then every scene of the Underworld plays arrangements of the Cold Fusion Interface family (dark, aggressive, 174 BPM; with Metaverse Ready Fusion as a contrasting section) as the nearest match the catalogue offers.
 
+## The three paths (sister runs at their own tempo)
+
+Each path (`content/paths/<id>/run.json`, `docs/CONTINUOUS_RUN.md` "Paths") has its own tempo and its own packs (`songs/packs/<id>_*`, tagged `"path"`, never loaded by the 174 BPM run). A scene marked **placeholder** plays a synthesised stand-in (`tools/content/make_path_placeholders.py`, WAV not Ogg, bass-forward by measurement, never auditioned); drop the owner's export into `content/imports/<id>/<scene>/` and import it with `python tools/content/beatshaper.py --path <id> apply ...` (`docs/MUSIC_IMPORT.md` section 7), which replaces the pack and clears the flag. A loop at another tempo than the path's is refused, never stretched.
+
+### The Life of Jesus (`gospel`, 124 BPM, 17 scenes, entered from `warehouse.balcony.star`)
+
+17 of 17 scenes are placeholders; 0 play the owner's loops.
+
+| Scene id | Scene | Pack now | Status | The owner's prompt (verbatim) |
+| --- | --- | --- | --- | --- |
+| `jordan` | Bethlehem: the Star | `gospel_bethlehem` | placeholder | 124 BPM soulful house, 8-bar seamless loop. Soft kick, dusty claps, warm organ, gentle plucks, choir-like synth and rounded bass. Separate editable MIDI tracks. |
+| `jordan.baptism` | Baptism in the Jordan | `gospel_baptism` | placeholder | 124 BPM uplifting gospel house, 8-bar seamless loop. Shimmering keys, warm bass, handclaps, four-on-floor kick and sparkling water percussion. Separate editable MIDI tracks. |
+| `jordan.wilderness` | Temptation in the Wilderness | `gospel_wilderness` | placeholder | 124 BPM minimal deep house, 8-bar seamless loop. Dry kick, hollow percussion, sparse organ, uneasy bass pulse and desert-wind synth. Separate editable MIDI tracks. |
+| `jordan.nazareth` | Nazareth Workshop | `gospel_nazareth` | placeholder | 124 BPM organic house, 8-bar seamless loop. Wooden percussion, warm piano chords, mellow bass, soft shaker and gentle handclaps. Separate editable MIDI tracks. |
+| `galilee` | Calling the Fishermen | `gospel_lakeshore` | placeholder | 124 BPM funky house, 8-bar seamless loop. Bouncy bass, crisp claps, rhythmic guitar-like synth, bright organ and rolling hi-hats. Separate editable MIDI tracks. |
+| `galilee.capernaum` | Healing in Capernaum | `gospel_capernaum` | placeholder | 124 BPM soulful deep house, 8-bar seamless loop. Tender electric piano, rounded bass, soft drums, hopeful strings and delicate melodic responses. Separate editable MIDI tracks. |
+| `galilee.mount` | Sermon on the Mount | `gospel_mount` | placeholder | 124 BPM joyful gospel house, 8-bar seamless loop. Rich organ chords, celebratory claps, melodic bass, uplifting piano and spacious choir-like synth. Separate editable MIDI tracks. |
+| `galilee.storm` | Storm on Galilee | `gospel_storm` | placeholder | 124 BPM dark progressive house, 8-bar seamless loop. Thunderous kick, rolling toms, tense sub-bass, stormy pads and urgent arpeggios. Separate editable MIDI tracks. |
+| `road` | Bethany: the Shared Table | `gospel_bethany` | placeholder | 124 BPM warm soulful house, 8-bar seamless loop. Gentle Rhodes, soft kick, hand percussion, expressive bass and intimate organ chords. Separate editable MIDI tracks. |
+| `road.loaves` | Loaves and Fishes | `gospel_loaves` | placeholder | 124 BPM euphoric gospel house, 8-bar seamless loop. Layered piano stabs, warm bass, claps, jubilant synth harmonies and uplifting four-on-floor drums. Separate editable MIDI tracks. |
+| `road.entry` | Entry into Jerusalem | `gospel_entry` | placeholder | 124 BPM festival house, 8-bar seamless loop. Triumphant brass-like synths, driving kick, crowd-style percussion, bright organ and energetic bass. Separate editable MIDI tracks. |
+| `jerusalem` | The Temple | `gospel_temple` | placeholder | 124 BPM tense tech house, 8-bar seamless loop. Metallic percussion, sharp claps, distorted bass, clipped organ stabs and escalating rhythmic tension. Separate editable MIDI tracks. |
+| `jerusalem.gethsemane` | Gethsemane | `gospel_gethsemane` | placeholder | 124 BPM melancholic deep house, 8-bar seamless loop. Muted kick, sparse piano, low bass heartbeat, haunting pads and restrained percussion. Separate editable MIDI tracks. |
+| `jerusalem.trial` | The Trial | `gospel_trial` | placeholder | 124 BPM cinematic dark house, 8-bar seamless loop. Heavy kick, ominous organ, slow chord changes, deep bass and tense metallic percussion. Separate editable MIDI tracks. |
+| `jerusalem.golgotha` | Golgotha | `gospel_golgotha` | placeholder | 124 BPM atmospheric minimal house, 8-bar seamless loop. Sparse kick, distant bells, solemn organ, subdued sub-bass and slowly rising ambient strings. Separate editable MIDI tracks. |
+| `jerusalem.tomb` | The Empty Tomb | `gospel_tomb` | placeholder | 124 BPM uplifting melodic house, 8-bar seamless loop. Radiant piano, warm bass, soaring choir-like pads, bright claps and expansive harmonies. Separate editable MIDI tracks. |
+| `jerusalem.road` | The Road Beyond Jerusalem | `gospel_road_beyond` | placeholder | 124 BPM reflective organic house, 8-bar seamless loop. Gentle percussion, warm acoustic plucks, wandering bass melody, soft piano and hopeful atmospheric pads. Separate editable MIDI tracks. |
+
+### The Mission Count (`squadron`, 140 BPM, 14 scenes, entered from `warehouse.booth.radio`)
+
+0 of 14 scenes are placeholders; 14 play the owner's loops.
+
+| Scene id | Scene | Pack | Status | Gains drums / bass / synth (dB) | Import notes |
+| --- | --- | --- | --- | --- | --- |
+| `base` | The Briefing Room | `squadron_c01` | owner's loops imported | -4 / +11.5 / +12 | tempo strict, bass audio checked, needed --max-error-ms 40 (worst hit 37.71 ms) |
+| `base.c02` | The Flight Line | `squadron_c02` | owner's loops imported | -3.5 / +11 / +12 | tempo strict, bass audio checked, needed --max-error-ms 40 (worst hit 33.14 ms) |
+| `base.c03` | The Hospital | `squadron_c03` | owner's loops imported | -3.5 / +9.5 / +14 | tempo strict, bass audio checked |
+| `air` | The Bombing Mission | `squadron_c04` | owner's loops imported | -2.5 / +11.5 / +10 | tempo strict, bass audio checked, needed --max-error-ms 40 (worst hit 33.57 ms) |
+| `air.c05` | The Syndicate | `squadron_c05` | owner's loops imported | +0 / -2 / +9.5 | tempo strict, bass audio checked |
+| `air.c06` | The Surgeon's Office | `squadron_c06` | owner's loops imported | -1 / -1 / +9 | tempo strict, bass audio checked |
+| `city` | The Gunner's Last Flight | `squadron_c07` | owner's loops imported | -3 / +12.5 / +11 | tempo strict, bass audio checked |
+| `city.c08` | The Old City | `squadron_c08` | owner's loops imported | -5 / +12 / +8 | tempo strict, bass audio checked, needed --max-error-ms 40 (worst hit 33.29 ms) |
+| `city.c09` | The Colonel's Deal | `squadron_c09` | owner's loops imported | -1 / +6.5 / +12.5 | tempo strict, bass audio checked, needed --max-error-ms 40 (worst hit 33.0 ms) |
+| `city.c10` | The Ruined City | `squadron_c10` | owner's loops imported | -4.5 / +12.5 / +13.5 | tempo strict, bass audio checked |
+| `escape` | Endless Missions | `squadron_c11` | owner's loops imported | -4 / +6.5 / +10 | tempo strict, bass audio checked |
+| `escape.c12` | Escape North | `squadron_c12` | owner's loops imported | +0 / +10 / +10.5 | tempo strict, bass audio checked, needed --max-error-ms 40 (worst hit 37.86 ms) |
+| `escape.c13` | The Neutral Coast | `squadron_c13` | owner's loops imported | -6 / +11 / +10.5 | tempo strict, bass audio checked |
+| `escape.c14` | Captured | `squadron_c14` | owner's loops imported | +0 / +11 / +14 | tempo strict, bass audio checked |
+
+The Squadron loops are 16-beat (4-bar) phrases, not the 8 bars the prompts asked for; a 64-beat phase plays four laps, each with a new layer (`docs/CONTINUOUS_RUN.md` "Paths"). `docs/paths/squadron_music_report.json` has the full measurements; the bass is thin in C05 and C06 (see `docs/HANDOVER.md`).
+
+### The Ember Road (`ember`, 145 BPM, 15 scenes, entered from `warehouse.bar.ember`)
+
+15 of 15 scenes are placeholders; 0 play the owner's loops.
+
+| Scene id | Scene | Pack now | Status | The owner's prompt (verbatim) |
+| --- | --- | --- | --- | --- |
+| `hollow` | The Orchard | `ember_e00_orchard` | placeholder | 145 BPM progressive psytrance, 8-bar seamless loop. Soft rolling kick, warm plucked arpeggios, rounded bass pulse, harvest-bell chimes and airy pads. Separate editable MIDI tracks. |
+| `hollow.ford` | The Ford at Night | `ember_e01_ford` | placeholder | 145 BPM dark psytrance, 8-bar seamless loop. Driving kick, galloping 16th bass, metallic hoof percussion, low horn drones and tense rising leads. Separate editable MIDI tracks. |
+| `hollow.inn` | The Lantern Inn | `ember_e02_inn` | placeholder | 145 BPM full-on psytrance, 8-bar seamless loop. Punchy kick, bouncing bass, tavern-fiddle synth, clapping percussion and a whispering filtered lead. Separate editable MIDI tracks. |
+| `north` | The Birch Hall | `ember_e03_birch_hall` | placeholder | 145 BPM atmospheric psytrance, 8-bar seamless loop. Deep kick, glassy arpeggios, choir-like pads, flowing bass and birch-wind textures. Separate editable MIDI tracks. |
+| `north.pass` | The High Pass | `ember_e04_high_pass` | placeholder | 145 BPM hypnotic psytrance, 8-bar seamless loop. Relentless kick, howling filtered noise, icy plucks, low throbbing bass and sparse hollow percussion. Separate editable MIDI tracks. |
+| `deeps` | The Deep Halls | `ember_e05_deep_halls` | placeholder | 145 BPM dark progressive psytrance, 8-bar seamless loop. Cavernous kick, sub-bass drones, dripping water percussion, dissonant stabs and distant drum hits. Separate editable MIDI tracks. |
+| `deeps.falls` | The Falls | `ember_e06_falls` | placeholder | 145 BPM melodic psytrance, 8-bar seamless loop. Cascading water arpeggios, deep kick, emotional lead, flowing bass and distant choir pads. Separate editable MIDI tracks. |
+| `marsh` | The Reed Marsh | `ember_e07_reed_marsh` | placeholder | 145 BPM swampy psytrance, 8-bar seamless loop. Wet kick, bubbling bass, croaking percussion, eerie whispered vocal synth and submerged pads. Separate editable MIDI tracks. |
+| `marsh.wall` | The Black Wall | `ember_e08_black_wall` | placeholder | 145 BPM industrial psytrance, 8-bar seamless loop. Hammering kick, grinding bass, iron-gate percussion, war-horn synth stabs and oppressive drones. Separate editable MIDI tracks. |
+| `marsh.stair` | The Stair of Bells | `ember_e09_stair_of_bells` | placeholder | 145 BPM minimal psytrance, 8-bar seamless loop. Tiptoe kick, muted bass pulse, tuned bell percussion, held breath pads and a single tense lead. Separate editable MIDI tracks. |
+| `marsh.plain` | The Ash Plain | `ember_e10_ash_plain` | placeholder | 145 BPM driving psytrance, 8-bar seamless loop. Marching kick, scorched bass, dry rattling percussion, ash-wind noise sweeps and a distant tolling lead. Separate editable MIDI tracks. |
+| `mountain` | The Throat | `ember_e11_throat` | placeholder | 145 BPM dark psytrance, 8-bar seamless loop. Pounding kick, molten bass growls, crackling fire percussion, volcanic drones and a hypnotic whispering lead. Separate editable MIDI tracks. |
+| `mountain.spring` | The Drowned Spring | `ember_e12_drowned_spring` | placeholder | 145 BPM uplifting psytrance, 8-bar seamless loop. Clean kick, radiant arpeggios, warm bass, water-droplet percussion and a soaring resolving lead. Separate editable MIDI tracks. |
+| `mountain.keeper` | The Keeper | `ember_e13_keeper` | placeholder | 145 BPM sinister psytrance, 8-bar seamless loop. Slow-burn kick, seductive warm bass, glowing pad swells, ember-crackle percussion and a lead that never resolves. Separate editable MIDI tracks. |
+| `mountain.taken` | Taken | `ember_e14_taken` | placeholder | 145 BPM oppressive psytrance, 8-bar seamless loop. Heavy kick, chained metallic percussion, low horn drones, grinding bass and cold rising sirens. Separate editable MIDI tracks. |
+
 ## What to export next
 
+- **The paths:** the 17 Gospel scenes (124 BPM) and the 15 Ember scenes (145 BPM) still play synthesised placeholders; the prompts to give your music tool are in the section "The three paths" above (one per scene, 8-bar seamless loop, separate MIDI tracks). The 14 Squadron scenes already play your loops; if you re-export, C05 and C06 (thin bass) are the ones to look at first.
 - `Lv3 Hell`: export `Beat Shaper - Lv3 Hell-Drums.mid` and `-Bass.mid` (the Synth MIDI is not needed). The WAVs are already there. Then: `python tools/content/beatshaper.py import NewMusic --set "Lv3 Hell" --id lv3_hell`, add `lv3_*` families to the Underworld palette's first position (`content/music/palettes.json` already lists `lv3_*`) and run `arrange.py generate underworld --seed N --bars 80 --id underworld_N --write` (docs/MUSIC_REPORT.md, "Importing a new folder").
 - Optional: more `Lv1 Warehouse (n)`, `Lv2`, `Lv4`, `Lv5` takes: every pack of a family is one more loop for its arrangements (a new take only needs `beatshaper.py import` and a new `arrange.py generate`). The `DD Part1` variants are spare (the dungeon plays `dd_part1` and does not read arrangements).
 - A dungeon fight set and ambient set are imported (`dd_part2`, `dd_part1`); if you want a different feel per zone, export more `DD ...` projects.
