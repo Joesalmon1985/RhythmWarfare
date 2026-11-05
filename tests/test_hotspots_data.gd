@@ -40,7 +40,7 @@ func _has_error(d: RunData, needle: String) -> bool:
 func test_the_shipped_data_is_valid_and_every_scene_has_one_default_exit() -> void:
 	var d := RunData.load_default()
 	assert_eq(d.errors, [], "no errors")
-	assert_true(d.hotspots_authored.has("warehouse"), "the sample authors the Warehouse entry scene")
+	assert_true(d.hotspots_authored.has("warehouse"), "the Warehouse entry scene is authored")
 	for sid in d.node_order:
 		var list: Array = d.hotspots_of(sid)
 		assert_true(list.size() >= 1, "%s has hotspots" % sid)
@@ -63,9 +63,9 @@ func test_a_hotspot_is_normalised_with_the_contract_defaults() -> void:
 		assert_true(h.has(k), "has " + k)
 	assert_eq(h["map"], "night_one")
 	assert_true(float(h["min_px"]) >= 72.0)
-	var dancer := (d.hotspots_of("warehouse") as Array).filter(func(x: Dictionary) -> bool: return str(x["id"]).ends_with("dancer"))[0] as Dictionary
-	assert_eq(dancer["anchor"], {"actor": "c01"})
-	assert_eq(dancer["available"]["flags_none"], ["danced_with"])
+	var dancer := (d.hotspots_of("warehouse") as Array).filter(func(x: Dictionary) -> bool: return str(x["id"]) == "warehouse.dancer")[0] as Dictionary
+	assert_eq(dancer["anchor"], {"actor": "g07"})
+	assert_eq(dancer["available"]["flags_none"], ["wh_circle"])
 
 
 func test_a_good_authored_scene_passes() -> void:

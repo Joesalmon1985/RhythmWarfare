@@ -13,6 +13,7 @@ var door_target := ""  # the scene a door walk was started toward ("" none)
 var skip_arrival := false  # the next phase start is a resume (the Bassment's return): the scene walks the camera itself
 var log: Array = []  # [{phase, block, node, place, kind, role, pos}] one per block decision
 var actions: Array = []  # every action emitted, with its world
+var door_style := "walk"  # the walking style of the next door walk (an exit failure staggers)
 var cine_until := -1.0  # song time a hotspot cinematic's move ends (the next scene's door walk waits for it)
 
 
@@ -81,25 +82,42 @@ func leave_walk(t: float, to: String, engine: RunEngine) -> Array:
 	if wp == "":
 		wp = str(target["waypoint"])
 	door_target = to
-	var tagged := _tag(rail.leave(t, wp, engine.level.notes), world)
+	var tagged := _tag(rail.leave(t, wp, engine.level.notes, door_style), world)
+	door_style = "walk"
 	actions.append_array(tagged)
 	return tagged
 
 
-## The rail actions of a hotspot outcome's cinematic ({move, to, bars, look_at, role}, see HotspotContract) starting at song time `t` (a decision beat, inside the cue-free guard): the role, a look
-## at the target (`look_by`: the turn in degrees the scene worked out, NAN when none) and, when `move_ok`, the move to the waypoint, shortened where the chart is dense (RunRail.pick_bars).
-func hotspot_actions(spec: Dictionary, t: float, engine: RunEngine, look_by: float, move_ok: bool) -> Array:
+## The rail actions of a hotspot outcome's cinematic ({steps: [{move, to, bars, role, style, look_at}]}, see HotspotContract) starting at song time `t` (a decision beat, inside the cue-free
+## guard). The steps run one after another: a `walk` is a rail move (style, 2 to 4 bars, shortened where the chart is dense: RunRail.pick_bars), a `place` a cut, `role` a role change and `look_at` a
+## glance at the target (`look_fn(id) -> degrees`, NAN when it cannot be placed). With `move_ok` false (the outcome names a route: the door walk toward it is the camera's move) only the roles and
+## glances are given, and a step's walking style becomes the style of the door walk (an exit failure staggers through the same door).
+func hotspot_actions(spec: Dictionary, t: float, engine: RunEngine, look_fn: Callable, move_ok: bool) -> Array:
 	var out: Array = []
 	if rail == null or spec.is_empty():
 		return out
-	if spec.has("role"):
-		out.append({"t0": t, "action": "player_role", "args": {"role": str(spec["role"])}})
-		rail.role = str(spec["role"])
-	if not is_nan(look_by):
-		out.append({"t0": t, "action": "player_look", "args": {"by": look_by, "pitch": 0.0, "bars": 2.0}})
-	if move_ok and spec.has("move") and spec.has("to"):
-		var bars := rail._move_to(out, t, str(spec["to"]), str(spec["move"]), float(spec.get("bars", 3.0)), engine.level.notes)
-		cine_until = t + bars * rail.bar_s()
+	var cur := t
+	for st in spec.get("steps", []):
+		if st.has("role"):
+			out.append({"t0": cur, "action": "player_role", "args": {"role": str(st["role"])}})
+			rail.role = str(st["role"])
+		if st.has("look_at") and look_fn.is_valid():
+			var by: float = look_fn.call(str(st["look_at"]))
+			if not is_nan(by):
+				out.append({"t0": cur, "action": "player_look", "args": {"by": by, "pitch": 0.0, "bars": 2.0}})
+		if not st.has("to") or not st.has("move"):
+			continue
+		if not move_ok:
+			door_style = str(st.get("style", "walk"))
+			continue
+		if str(st["move"]) == "place":
+			out.append({"t0": cur, "action": "player_move", "args": {"to": str(st["to"]), "style": "walk", "bars": 0.01, "cut": true}})
+		else:
+			var style := str(st.get("style", st["move"] if str(st["move"]) in RunRail.STYLES else "walk"))
+			var bars := rail._move_to(out, cur, str(st["to"]), style, float(st.get("bars", 3.0)), engine.level.notes)
+			cur += bars * rail.bar_s()
+	if move_ok:
+		cine_until = maxf(cine_until, cur)
 	var tagged := _tag(out, world)
 	actions.append_array(tagged)
 	return tagged

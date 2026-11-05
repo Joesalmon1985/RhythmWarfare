@@ -852,11 +852,8 @@ func test_the_wizard_offers_the_trial_in_the_warehouse_only() -> void:
 	scene.trial_launcher = func() -> void: launched.append("trial")
 	var beat := 60.0 / 174.0
 	_step_to(scene, 3.0 * beat)
-	assert_true(scene._gate_wizard.visible, "his picture stands in the room while his window is open")
-	var rects: Dictionary = scene.pad_view.button_rects()
-	for p in rects:
-		assert_false(Rect2(scene._gate_wizard.position, scene._gate_wizard.size).intersects(rects[p] as Rect2), "the wizard does not sit on pad %d" % p)
-	assert_true(scene.hotspot_select("warehouse.floor.wizard"), "touching him selects him")
+	assert_false(scene._gate_wizard.visible, "the overlay picture is gone: the wizard is a thing in the room (wizard_floor)")
+	assert_true(scene.hotspot_select("warehouse.wizard"), "touching him selects him")
 	assert_eq(launched, [], "a selection alone leaves the run as it was: the performance decides")
 	_step_to(scene, 13.5 * beat)
 	assert_eq(launched, ["trial"], "the block he waited for was passed: the dungeon is asked for")

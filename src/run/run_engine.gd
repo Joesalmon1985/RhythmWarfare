@@ -215,7 +215,7 @@ func selected_route() -> String:
 		return choice
 	if hotspots != null and hotspots.selected != "":  # the route the selected hotspot leads to on success (the final outcome is only known at the commit)
 		var r := str((hotspots.get_hotspot(hotspots.selected).get("on_success", {}) as Dictionary).get("route", ""))
-		if r != "" and not r.begins_with(HotspotContract.TRIAL_PREFIX):
+		if r != "" and not HotspotContract.is_trial_route(r):
 			return r
 	return default_route()
 

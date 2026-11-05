@@ -347,14 +347,15 @@ func _load_hotspots(dir_path: String) -> void:
 		var required: Array = routes.duplicate()
 		for h in by_scene[sid]:  # the wizard's way into the Bassment ("trial:<passage>") is a route of its own kind
 			var r := str((h.get("on_success", {}) as Dictionary).get("route", ""))
-			if r.begins_with(HotspotContract.TRIAL_PREFIX):
+			if HotspotContract.is_trial_route(r):
+				var num := r.trim_prefix(HotspotContract.TRIAL_PREFIX)
 				if str(n.get("trial_gate", "")) == "":
 					errors.append("scene %s hotspot %s: the route '%s' (the Bassment) is only for a scene with a trial_gate" % [sid, h["id"], r])
-				elif not r.substr(HotspotContract.TRIAL_PREFIX.length()).is_valid_int():
+				elif not num.is_valid_int() or int(num) < 1:
 					errors.append("scene %s hotspot %s: the route '%s' needs a passage number" % [sid, h["id"], r])
 				else:
 					routes.append(r)
-		HotspotContract.validate_scene(by_scene[sid], {"where": "scene %s" % sid, "map": str(n["map"]), "world": str(n["world"]), "routes": routes, "start_energy": start_e,
+		HotspotContract.validate_scene(by_scene[sid], {"where": "scene %s" % sid, "map": str(n["map"]), "world": str(n["world"]), "routes": routes, "start_energy": start_e, "cinematics": cfg.get("cinematics", {}),
 			"default_route": str(n["next"][0]["to"]) if not (n["next"] as Array).is_empty() else "", "exit_routes_required": required}, errors)
 
 

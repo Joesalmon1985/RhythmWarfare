@@ -206,7 +206,7 @@ func test_nothing_tapped_takes_the_default_exit_and_a_miss_in_the_last_block_tak
 	var r := _play(func(_i: int) -> float: return 1.0 / 60.0, [])
 	assert_eq(r["nodes"][1], "warehouse.bar", "the default")
 	r = _play(func(_i: int) -> float: return 1.0 / 60.0, [{"beat": 52.0, "route": "warehouse.balcony"}], [[1, 3]])
-	assert_eq(r["nodes"][1], "warehouse.bar", "tapped the balcony, missed the last block: the failure route (the bar)")
+	assert_eq(r["nodes"][1], "warehouse.balcony", "tapped the balcony, missed the last block: the same door again (a stagger and -5 energy)")
 	assert_false(bool((r["commits"] as Array)[0]["success"]))
 	var ok := _play(func(_i: int) -> float: return 1.0 / 60.0, [{"beat": 52.0, "route": "warehouse.balcony"}])
 	assert_true(float(r["energy"]) < float(ok["energy"]), "the miss cost energy (the block's and the hotspot's)")
@@ -217,18 +217,18 @@ func test_nothing_tapped_takes_the_default_exit_and_a_miss_in_the_last_block_tak
 
 func test_an_object_hotspot_sets_flags_and_energy_and_the_scene_continues_by_the_default() -> void:
 	var rf := {}
-	var r := _play(func(_i: int) -> float: return 1.0 / 60.0, [{"beat": 52.0, "id": "warehouse.floor.dancer"}], [], 2, rf)
-	assert_true(rf.has("danced_with"), "the success flag is set")
+	var r := _play(func(_i: int) -> float: return 1.0 / 60.0, [{"beat": 52.0, "id": "warehouse.dancer"}], [], 2, rf)
+	assert_true(rf.has("wh_circle"), "the success flag is set")
 	assert_eq(r["nodes"][1], "warehouse.bar", "continued by the default exit")
 	var c: Dictionary = (r["commits"] as Array)[0]
 	assert_true(bool(c["success"]))
 	rf = {}
-	r = _play(func(_i: int) -> float: return 1.0 / 60.0, [{"beat": 52.0, "id": "warehouse.floor.dancer"}], [[1, 3]], 2, rf)
-	assert_true(rf.has("stumbled") and not rf.has("danced_with"), "a miss: the failure flag")
+	r = _play(func(_i: int) -> float: return 1.0 / 60.0, [{"beat": 52.0, "id": "warehouse.dancer"}], [[1, 3]], 2, rf)
+	assert_false(rf.has("wh_circle"), "a miss: no circle")
 
 
 func test_the_same_taps_give_the_same_outcomes_at_any_frame_step() -> void:
-	var taps := [{"beat": 50.0, "route": "warehouse.bar"}, {"beat": 55.0, "route": "warehouse.balcony"}, {"beat": 56.5, "id": "warehouse.floor.dancer"}]
+	var taps := [{"beat": 50.0, "route": "warehouse.bar"}, {"beat": 55.0, "route": "warehouse.balcony"}, {"beat": 56.5, "id": "warehouse.dancer"}]
 	var fns := {
 		"30": func(_i: int) -> float: return 1.0 / 30.0,
 		"60": func(_i: int) -> float: return 1.0 / 60.0,

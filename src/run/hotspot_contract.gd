@@ -18,10 +18,12 @@ const MIN_PER_SCENE := 2
 const MAX_PER_SCENE := 4
 const MAX_FAIL_ENERGY := -20.0  # a failure may cost at most this much energy (it must stay recoverable)
 const MAX_GAIN_ENERGY := 20.0
-const TRIAL_PREFIX := "trial:"  # a run route "trial:<passage>" is the wizard's way into the Bassment
+const TRIAL_PREFIX := "trial:"  # a run route "trial:<passage>", or just "<passage>" ("1": the first), is the wizard's way into the Bassment
 const KEEP_PREFIX := "keep:"  # a flag name with this prefix is persistent (RunProgress.flags, saved); any other is per run (RunProgress.run_flags)
 const OUTCOME_KEYS := ["route", "flags_set", "cinematic", "energy", "music"]
-const CINEMATIC_KEYS := ["move", "to", "bars", "look_at", "role"]
+const CINEMATIC_KEYS := ["move", "to", "bars", "look_at", "role", "style"]
+const MOVES := ["place", "walk", "stagger", "run", "climb", "carried"]  # `place` is a cut (the drag to the cage); the others are RunRail styles (`walk` with a `style`)
+const MUSIC := ["variation", "dip", "lift", "drop", "fill", "none"]
 
 static var _maps: Dictionary = {}  # map id -> index
 
@@ -48,6 +50,11 @@ static func map_index(map_id: String) -> Dictionary:
 			idx["sectors"].append({"poly": poly, "floor": float(s.get("floor", 0.0))})
 	_maps[map_id] = idx
 	return idx
+
+
+## A run route that is not a scene but a Bassment passage: "trial:1" or "1".
+static func is_trial_route(route: String) -> bool:
+	return route.begins_with(TRIAL_PREFIX) or (route != "" and route.is_valid_int())
 
 
 static func is_keep(flag: String) -> bool:
@@ -90,20 +97,24 @@ static func normalize(h: Dictionary, world: String, map_id: String) -> Dictionar
 	return out
 
 
-## The cinematic an outcome names: its own dictionary, or the hotspot's `cinematic` (one spec, or a map name -> spec). {} when none.
-static func resolve_cinematic(h: Dictionary, outcome: Dictionary) -> Dictionary:
+## The cinematic an outcome names, as {"steps": [step, ...]} (a step: {move, to, bars, role, style, look_at}); {} when none or unresolved. The outcome's `cinematic` is a name looked up in `named`
+## (run.json `cinematics`: name -> {world, steps}), else in the hotspot's own `cinematic` (one spec, which every name of the hotspot is, or a map name -> spec), or an object written inline.
+static func resolve_cinematic(h: Dictionary, outcome: Dictionary, named: Dictionary = {}) -> Dictionary:
 	if not outcome.has("cinematic"):
 		return {}
 	var c: Variant = outcome["cinematic"]
 	if typeof(c) == TYPE_DICTIONARY:
-		return c
+		return c if (c as Dictionary).has("steps") else {"steps": [c]}
+	if named.has(str(c)) and typeof(named[str(c)]) == TYPE_DICTIONARY and (named[str(c)] as Dictionary).has("steps"):
+		return {"steps": (named[str(c)] as Dictionary)["steps"]}
 	var spec: Variant = h.get("cinematic", null)
 	if typeof(spec) != TYPE_DICTIONARY:
 		return {}
 	for k in CINEMATIC_KEYS:
 		if (spec as Dictionary).has(k):
-			return spec  # one spec: every named cinematic of the hotspot is it
-	return (spec as Dictionary).get(str(c), {})
+			return {"steps": [spec]}
+	var one: Variant = (spec as Dictionary).get(str(c), null)
+	return {"steps": [one]} if typeof(one) == TYPE_DICTIONARY else {}
 
 
 ## Validates one scene's hotspot list. `ctx`: {where (a prefix for messages), map (map id), world, routes (Array of allowed route strings), start_energy, min_available (2), max_available (4),
@@ -235,7 +246,7 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 		if typeof(oc) != TYPE_DICTIONARY:
 			errors.append("%s: %s must be an object" % [hw, key])
 			continue
-		_validate_outcome(h, key, oc, hw, routes, idx, errors)
+		_validate_outcome(h, key, oc, hw, routes, idx, ctx.get("cinematics", {}), errors)
 	if kind == "exit" and str((h.get("on_success", {}) as Dictionary).get("route", "")) == "":
 		errors.append("%s: an exit's on_success needs a route" % hw)
 	var cin: Variant = h.get("cinematic", null)
@@ -259,12 +270,12 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 		errors.append("%s: default and repeatable are true or false" % hw)
 
 
-static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: String, routes: Array, idx: Dictionary, errors: Array) -> void:
+static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: String, routes: Array, idx: Dictionary, named: Dictionary, errors: Array) -> void:
 	for k in oc:
 		if str(k) not in OUTCOME_KEYS:
 			errors.append("%s: %s.%s is not a field (%s)" % [hw, key, k, ", ".join(PackedStringArray(OUTCOME_KEYS))])
 	var route := str(oc.get("route", ""))
-	if route != "" and route not in routes:
+	if route != "" and route not in routes:  # (a Bassment passage is a route when the scene has the trial gate: RunData adds it to `routes`)
 		errors.append("%s: %s route '%s' is not a route of the scene (%s)" % [hw, key, route, ", ".join(PackedStringArray(routes))])
 	if typeof(oc.get("flags_set", [])) != TYPE_ARRAY:
 		errors.append("%s: %s.flags_set must be a list" % [hw, key])
@@ -278,14 +289,15 @@ static func _validate_outcome(h: Dictionary, key: String, oc: Dictionary, hw: St
 			errors.append("%s: %s.energy %s is outside %d..%d" % [hw, key, str(e), int(MAX_FAIL_ENERGY), int(MAX_GAIN_ENERGY)])
 		if key == "on_failure" and e > 0.0:
 			errors.append("%s: a failure must not give energy" % hw)
-	if oc.has("music") and str(oc["music"]) == "":
-		errors.append("%s: %s.music is empty" % [hw, key])
+	if oc.has("music") and str(oc["music"]) not in MUSIC:
+		errors.append("%s: %s.music '%s' is not one of %s" % [hw, key, oc["music"], ", ".join(PackedStringArray(MUSIC))])
 	if oc.has("cinematic"):
-		var spec := resolve_cinematic(h, oc)
+		var spec := resolve_cinematic(h, oc, named)
 		if spec.is_empty():
-			errors.append("%s: %s.cinematic '%s' does not resolve (define the hotspot's cinematic, or give the outcome a cinematic object)" % [hw, key, str(oc["cinematic"])])
-		elif typeof(oc["cinematic"]) == TYPE_DICTIONARY:
-			_validate_cine(spec, "%s %s" % [hw, key], idx, errors)
+			errors.append("%s: %s.cinematic '%s' does not resolve (name an entry of run.json cinematics, define the hotspot's cinematic, or give the outcome a cinematic object)" % [hw, key, str(oc["cinematic"])])
+		else:
+			for st in spec["steps"]:
+				_validate_cine(st, "%s %s" % [hw, key], idx, errors)
 	# failure never dead-ends: with no route the scene's default exit takes the player on (the engine's rule), and the energy cost is bounded above
 
 
@@ -293,8 +305,10 @@ static func _validate_cine(c: Dictionary, where: String, idx: Dictionary, errors
 	for k in c:
 		if str(k) not in CINEMATIC_KEYS:
 			errors.append("%s: cinematic.%s is not a field (%s)" % [where, k, ", ".join(PackedStringArray(CINEMATIC_KEYS))])
-	if c.has("move") and str(c["move"]) not in RunRail.STYLES:
-		errors.append("%s: cinematic.move '%s' is not one of %s" % [where, c["move"], ", ".join(PackedStringArray(RunRail.STYLES))])
+	if c.has("move") and str(c["move"]) not in MOVES:
+		errors.append("%s: cinematic.move '%s' is not one of %s" % [where, c["move"], ", ".join(PackedStringArray(MOVES))])
+	if c.has("style") and str(c["style"]) not in RunRail.STYLES:
+		errors.append("%s: cinematic.style '%s' is not one of %s" % [where, c["style"], ", ".join(PackedStringArray(RunRail.STYLES))])
 	if c.has("role") and str(c["role"]) not in RunRail.ROLES:
 		errors.append("%s: cinematic.role '%s' is not a role" % [where, c["role"]])
 	if c.has("bars") and (float(c["bars"]) < RunRail.MOVE_BARS_MIN or float(c["bars"]) > RunRail.MOVE_BARS_MAX):

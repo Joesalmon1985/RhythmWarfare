@@ -75,7 +75,7 @@ func is_available(h: Dictionary) -> bool:
 
 ## "early" for a hotspot that leaves the run for the Bassment, "final" for every other.
 static func window_of(h: Dictionary) -> String:
-	return "early" if str((h.get("on_success", {}) as Dictionary).get("route", "")).begins_with(HotspotContract.TRIAL_PREFIX) else "final"
+	return "early" if HotspotContract.is_trial_route(str((h.get("on_success", {}) as Dictionary).get("route", ""))) else "final"
 
 
 ## The hotspots on show: `block` is the engine's block counter (0 to 3, the block being played), `final_open` the choice window (beat 48 on). The early window shows in blocks 0 and 1.
@@ -188,7 +188,7 @@ func _resolve(h: Dictionary, success: bool, tapped: bool, window: String) -> Dic
 	var oc: Dictionary = h.get(key, {})
 	var id := str(h["id"])
 	var out := {"hotspot": id, "kind": str(h["kind"]), "scene": node, "window": window, "success": success, "tapped": tapped, "defaulted": not tapped, "route": str(oc.get("route", "")),
-		"flags_set": (oc.get("flags_set", []) as Array).duplicate(), "cinematic": HotspotContract.resolve_cinematic(h, oc), "cinematic_name": str(oc.get("cinematic", "")) if typeof(oc.get("cinematic", "")) != TYPE_DICTIONARY else "inline",
+		"flags_set": (oc.get("flags_set", []) as Array).duplicate(), "cinematic": HotspotContract.resolve_cinematic(h, oc, data.cfg.get("cinematics", {}) if data != null else {}), "cinematic_name": str(oc.get("cinematic", "")) if typeof(oc.get("cinematic", "")) != TYPE_DICTIONARY else "inline",
 		"energy": float(oc.get("energy", 0.0)), "music": str(oc.get("music", "")), "look": h["look"], "continued": false}
 	for f in out["flags_set"]:
 		if HotspotContract.is_keep(str(f)):

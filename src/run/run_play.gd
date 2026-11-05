@@ -414,6 +414,7 @@ func _build_gate() -> void:
 		_gate_btn.modulate = Color(1.0, 0.9, 0.6)
 		_gate_btn.pressed.connect(func() -> void: trial_launcher.call())
 		_gate.add_child(_gate_btn)
+	_gate_wizard.visible = arrows  # with hotspots the wizard is a thing of the map
 	trial_launcher = func() -> void: arm_trial()
 	resized.connect(_layout_gate)
 	_layout_gate()
@@ -1065,25 +1066,9 @@ func _input(event: InputEvent) -> void:
 	hotspot_tap(pos)
 
 
-## The wizard is a character hotspot: his picture stands at its anchor in the room (scaled by the camera) while his window is open; the ring of light is drawn by the hotspot view.
-func _place_wizard(t: float) -> void:
-	var vis := false
-	if _gate.visible and hotspots != null and trial_state == "" and stages.has(active_world):
-		var st: StoryStage = stages[active_world]["stage"]
-		var pose := _exit_pose()
-		var items := hotspot_items().filter(func(e: Dictionary) -> bool: return RunHotspots.window_of(e["hotspot"]) == "early")
-		if not items.is_empty() and not pose.is_empty() and st.map != null and _stage_host.size.x > 1.0:
-			var lay := HotspotView.layout(items, st.map, st.crowds, pose, _stage_host.size)
-			if not lay.is_empty() and not bool(lay[0]["edge"]):
-				var h := clampf(1.8 * float(lay[0]["scale"]), 48.0, _stage_host.size.y * 0.7)
-				var sel := str(lay[0]["state"]) == "selected"
-				var bob := (-0.12 * h if sel else sin(t * 2.0) * 0.02 * h)
-				var g: Vector2 = lay[0]["ground"]
-				_gate_wizard.size = Vector2(h, h)
-				_gate_wizard.position = _stage_host.position + g - Vector2(h * 0.5, h) + Vector2(0.0, bob)
-				_gate_wizard.modulate = Color(1.25, 1.2, 1.0) if sel else Color(1, 1, 1)
-				vis = true
-	_gate_wizard.visible = vis
+## The wizard is a character hotspot anchored on a thing of the map (wizard_floor, wizard_chill): his picture is in the room, so the old overlay is never shown with hotspots.
+func _place_wizard(_t: float) -> void:
+	_gate_wizard.visible = false
 
 
 func _on_hotspot_commit(ev: Dictionary) -> void:
@@ -1097,21 +1082,21 @@ func _on_hotspot_commit(ev: Dictionary) -> void:
 		hotspots.persist_dirty = false
 	if not (out["cinematic"] as Dictionary).is_empty():
 		_hotspot_cinematic(out, t)
-	if str(out["window"]) == "early" and bool(out["success"]) and str(out["route"]).begins_with(HotspotContract.TRIAL_PREFIX):
+	if str(out["window"]) == "early" and bool(out["success"]) and HotspotContract.is_trial_route(str(out["route"])):
 		trial_launcher.call()  # the wizard's way in: the walk to the hatch is scheduled by arm_trial on the next cue-free guard
 
 
-## An outcome's cinematic is rail actions (RunJourney.hotspot_actions): a role, a look at someone, a move. The move replaces the door walk only when the scene simply continues by its default exit;
+## An outcome's cinematic is rail actions (RunJourney.hotspot_actions): steps of role, look and move. The move replaces the door walk only when the scene simply continues by its default exit;
 ## when the outcome names a route the door walk toward it is the camera's move.
 func _hotspot_cinematic(out: Dictionary, t: float) -> void:
 	var spec: Dictionary = out["cinematic"]
-	var by := NAN
-	if spec.has("look_at"):
-		by = _look_by(str(spec["look_at"]))
 	var move_ok := bool(out["continued"]) or str(out["window"]) == "early"
-	for a in journey.hotspot_actions(spec, t, engine, by, move_ok):
+	var steps_move := false
+	for st in spec.get("steps", []):
+		steps_move = steps_move or (st.has("move") and st.has("to"))
+	for a in journey.hotspot_actions(spec, t, engine, _look_by, move_ok):
 		_journey_apply(a)
-	if move_ok and spec.has("move") and str(out["window"]) == "final":
+	if move_ok and steps_move and str(out["window"]) == "final":
 		_door_phase = engine.phase_n  # the cinematic is the move: no door walk is latched for this phase
 
 

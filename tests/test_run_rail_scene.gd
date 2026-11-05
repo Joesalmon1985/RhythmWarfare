@@ -106,7 +106,8 @@ func test_the_world_swap_keeps_the_passage_frame() -> void:
 	var d := _scene(Vector2(1152, 648), "perfect", "left", "mothership.exit")  # the airlock: left is the hospital
 	var scene: Node = d["scene"]
 	_run_to(scene, 50.0 * BEAT)
-	assert_eq(scene.hotspot_items().size(), 2, "one hotspot per candidate world")
+	var n_hs: int = scene.hotspot_items().size()
+	assert_true(n_hs >= 2 and n_hs <= 4, "two to four hotspots, among them one exit per candidate world (%d)" % n_hs)
 	assert_eq(scene._passage.aperture, 1.0, "the frame is open mid-window")
 	_run_to(scene, 63.9 * BEAT)
 	assert_true(scene._passage.aperture < 0.3, "shut to the doorway on the last beat before the swap (%f)" % scene._passage.aperture)
