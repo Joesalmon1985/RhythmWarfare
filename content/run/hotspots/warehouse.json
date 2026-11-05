@@ -1207,7 +1207,15 @@
    "look": {
     "available": "pulse",
     "selected": "ring",
-    "committed": "flash"
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_gospel_road",
+      "keep:path_gospel_tomb"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
    },
    "challenge": null,
    "on_success": {
@@ -1243,7 +1251,14 @@
    "look": {
     "available": "pulse",
     "selected": "ring",
-    "committed": "flash"
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_squadron_free"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
    },
    "challenge": null,
    "on_success": {
@@ -1281,7 +1296,15 @@
    "look": {
     "available": "pulse",
     "selected": "ring",
-    "committed": "flash"
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_ember_kept",
+      "keep:path_ember_quenched"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
    },
    "challenge": null,
    "on_success": {

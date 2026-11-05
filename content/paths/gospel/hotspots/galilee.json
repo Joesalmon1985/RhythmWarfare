@@ -79,7 +79,7 @@
      "look_at": "camera"
     },
     "selected": {
-     "act": "stare",
+     "act": "nod",
      "face": "awe",
      "look_at": "camera"
     },

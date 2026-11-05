@@ -20,6 +20,8 @@ const ANCHORS := ["thing", "waypoint", "actor", "pos"]
 const LOOK_AVAILABLE := ["glow", "pulse", "beckon", "flicker", "open", "crack"]
 const LOOK_SELECTED := ["ring"]
 const LOOK_COMMITTED := ["flash"]
+const LOOK_FINISHED := ["crown"]  # look.finished.available: what a portal shows once its path has been finished (plan D10): the pulse ringed by three orbiting motes, in the finished tint
+const FINISHED_TINT := "#ffd25a"
 const FAMILIES := ["drums", "bass"]
 const MIN_PX := 72.0
 const MIN_PER_SCENE := 2
@@ -134,6 +136,11 @@ static func normalize(h: Dictionary, world: String, map_id: String) -> Dictionar
 	lk["available"] = str(lk.get("available", "glow"))
 	lk["selected"] = str(lk.get("selected", "ring"))
 	lk["committed"] = str(lk.get("committed", "flash"))
+	if typeof(lk.get("finished", null)) == TYPE_DICTIONARY:
+		var fin: Dictionary = lk["finished"]
+		fin["flags_any"] = fin.get("flags_any", [])
+		fin["available"] = str(fin.get("available", "crown"))
+		fin["tint"] = str(fin.get("tint", FINISHED_TINT))
 	out["look"] = lk
 	out["default"] = bool(out.get("default", false))
 	out["repeatable"] = bool(out.get("repeatable", false))
@@ -283,6 +290,8 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 			errors.append("%s: look.selected '%s' is not one of %s" % [hw, lk.get("selected"), ", ".join(PackedStringArray(LOOK_SELECTED))])
 		if str(lk.get("committed", "flash")) not in LOOK_COMMITTED:
 			errors.append("%s: look.committed '%s' is not one of %s" % [hw, lk.get("committed"), ", ".join(PackedStringArray(LOOK_COMMITTED))])
+		if (lk as Dictionary).has("finished"):
+			_validate_finished(lk["finished"], hw, errors)
 	var ch: Variant = h.get("challenge", null)
 	if ch != null:
 		if typeof(ch) != TYPE_DICTIONARY or str((ch as Dictionary).get("family", "")) not in FAMILIES or int((ch as Dictionary).get("tier", 0)) < 1 or int((ch as Dictionary).get("tier", 0)) > RunData.TIERS:
@@ -381,6 +390,36 @@ static func _validate_cine(c: Dictionary, where: String, idx: Dictionary, errors
 # --- the acting contract (docs/THREE_PATHS_AND_FACES_PLAN.md 2.3) ----------------------------------------------------------------
 
 ## True when `target` is something a person can look at in the map `idx` (map_index): the word camera, an actor (a home), a thing or a waypoint.
+## look.finished {flags_any, available?, tint?}: the look a hotspot takes once any of those persistent (keep:) flags is held (a portal whose path has been finished).
+static func _validate_finished(fin: Variant, hw: String, errors: Array) -> void:
+	if typeof(fin) != TYPE_DICTIONARY:
+		errors.append("%s: look.finished must be an object" % hw)
+		return
+	var fl: Variant = (fin as Dictionary).get("flags_any", [])
+	if typeof(fl) != TYPE_ARRAY or (fl as Array).is_empty():
+		errors.append("%s: look.finished.flags_any must be a non-empty list" % hw)
+	else:
+		for f in fl:
+			if not is_keep(str(f)):
+				errors.append("%s: look.finished.flags_any '%s' must be a keep: flag (it outlives the run)" % [hw, f])
+	var av := str((fin as Dictionary).get("available", "crown"))
+	if av not in LOOK_FINISHED and av not in LOOK_AVAILABLE:
+		errors.append("%s: look.finished.available '%s' is not one of %s" % [hw, av, ", ".join(PackedStringArray(LOOK_FINISHED + LOOK_AVAILABLE))])
+	if not Color.html_is_valid(str((fin as Dictionary).get("tint", FINISHED_TINT))):
+		errors.append("%s: look.finished.tint '%s' is not a colour" % [hw, (fin as Dictionary).get("tint")])
+
+
+## Whether a hotspot shows its finished look: one of look.finished.flags_any is held (`has_flag`: Callable(String) -> bool).
+static func finished_look(h: Dictionary, has_flag: Callable) -> bool:
+	var fin: Variant = (h.get("look", {}) as Dictionary).get("finished", null)
+	if typeof(fin) != TYPE_DICTIONARY or not has_flag.is_valid():
+		return false
+	for f in (fin as Dictionary).get("flags_any", []):
+		if bool(has_flag.call(str(f))):
+			return true
+	return false
+
+
 static func look_ok(target: String, idx: Dictionary) -> bool:
 	if target == "camera":
 		return true

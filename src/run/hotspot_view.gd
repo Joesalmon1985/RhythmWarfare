@@ -94,7 +94,8 @@ static func layout(entries: Array, map: StoryMap, crowds: Dictionary, pose: Dict
 		var pc := StoryProjector.project(p, pose, view)
 		var pg := StoryProjector.project(Vector3(p.x, float(r["ground"]), p.z), pose, view)
 		var min_r := float(h["min_px"]) * 0.5
-		var entry := {"id": str(h["id"]), "hotspot": h, "state": str(e["state"]), "t_state": float(e.get("t_state", 0.0)), "world": p, "ground_y": float(r["ground"]), "actor": bool(r["actor"]), "edge": false, "ok": true}
+		var entry := {"id": str(h["id"]), "hotspot": h, "state": str(e["state"]), "t_state": float(e.get("t_state", 0.0)), "world": p, "ground_y": float(r["ground"]), "actor": bool(r["actor"]), "edge": false, "ok": true,
+			"finished": bool(e.get("finished", false))}
 		var on_screen: bool = bool(pc["visible"]) and float(pc["depth"]) > 0.4 and pc["screen"].x >= 0.0 and pc["screen"].x <= view.x and pc["screen"].y >= 0.0 and pc["screen"].y <= view.y
 		if on_screen:
 			var sc := float(pc["scale"])
@@ -230,6 +231,9 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 	var r_m := float(h["radius_m"])
 	var u := maxf(t - float(e["t_state"]), 0.0)
 	var base := tint
+	var finished := bool(e.get("finished", false))  # a portal whose path has been finished (plan D10): its own tint and look
+	if finished:
+		base = Color.html(str((look["finished"] as Dictionary).get("tint", HotspotContract.FINISHED_TINT)))
 	if high_contrast:
 		base = Color(1.0, 1.0, 0.4)
 	var pulse := 0.0 if reduced else _pulse(t, 4.0 if str(look["available"]) != "pulse" else 1.0)
@@ -242,7 +246,7 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 	var width := maxf(1.0, sc * 0.035)
 	match state:
 		"available":
-			var look_a := str(look["available"])
+			var look_a := str(look["available"]) if not finished else str((look["finished"] as Dictionary).get("available", "crown"))
 			var ring := _ring_points(world, float(e["ground_y"]), r_m, pose)
 			if ring.size() > 2:
 				draw_polyline(ring, Color(base.r, base.g, base.b, strength), width * (1.6 if is_default else 1.0))
@@ -267,6 +271,16 @@ func _draw_entry(e: Dictionary, pose: Dictionary, t: float) -> void:
 					var top := Vector2(g.x, g.y - sc * 1.7)
 					draw_line(g, top, Color(white.r, white.g, white.b, 0.28 + 0.25 * pulse), width * 1.4)
 					draw_circle(top.lerp(g, 0.5 + 0.35 * sin(t * 3.0)), maxf(1.5, sc * 0.05), Color(white.r, white.g, white.b, 0.8))
+				"crown":  # a finished path: the portal's pulse ringed by three motes circling it, a ring of light round its heart
+					var orb := r_m * sc * 0.62
+					var spin := 0.0 if reduced else t * TAU / (beat_s * 8.0)
+					draw_arc(c, orb, 0.0, TAU, 32, Color(base.r, base.g, base.b, 0.6 + 0.3 * pulse), width * 1.6)
+					_glow(c, orb * 0.8, base, 0.45 + 0.3 * pulse)
+					for k in 3:
+						var ang := spin + TAU * float(k) / 3.0
+						var mp := c + Vector2(cos(ang), sin(ang) * 0.55) * orb
+						_glow(mp, maxf(5.0, sc * 0.16), base, 0.9)
+						draw_circle(mp, maxf(2.0, sc * 0.05), Color(base.lerp(Color(1, 1, 1), 0.5), 1.0))
 				"crack":  # a crack in the floor, glowing from inside
 					var rr := r_m * sc * 0.9
 					var pts := PackedVector2Array([g + Vector2(-rr, 0.0), g + Vector2(-rr * 0.45, -rr * 0.12), g + Vector2(-rr * 0.2, rr * 0.1), g + Vector2(rr * 0.15, -rr * 0.08), g + Vector2(rr * 0.5, rr * 0.12), g + Vector2(rr, 0.0)])

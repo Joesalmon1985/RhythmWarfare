@@ -176,8 +176,9 @@ ACTING: dict[str, dict] = {
         "success": a("sleep", "relief", None, 8), "failure": a("recoil", "fear", CAM, 6, then=a("cover_face", "fear", CAM)),
     },
     "ward_late.exit.stare": {  # x09: the long stare at the window, wonder or anger
-        "available": a("stare", "neutral", CAM), "selected": a("stare", "doubt", CAM), "committed": a("stare", "resolve", CAM, 1),
-        "success": a("stare", "awe", CAM, 8, then=a("cheer", "awe", CAM)), "failure": a("stare", "anger", CAM, 8, then=a("stamp", "anger", CAM)),
+        # (visual polish: each state its own body, not only a face: turned to the window, turned to you, arms up in wonder, a stamp)
+        "available": a("stare", "neutral"), "selected": a("stare", "doubt", CAM), "committed": a("stare", "resolve", CAM, 1),
+        "success": a("cheer", "awe", CAM, 8, then=a("stare", "awe", CAM)), "failure": a("stamp", "anger", CAM, 8, then=a("stare", "anger", CAM)),
     },
 }
 

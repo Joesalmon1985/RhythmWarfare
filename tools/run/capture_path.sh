@@ -52,8 +52,8 @@ if [ "$ACTING" = 1 ]; then
   while read -r _world hid scene actor flags cam; do
     want "$hid" || continue
     echo "acting $hid ($actor)"
-    acting_run "$hid" "$scene" "$flags" "$cam" perfect 50.5:available 56:selected 61.0:committed 62.6:success
-    acting_run "$hid" "$scene" "$flags" "$cam" blocks:1110 62.6:failure
+    acting_run "$hid" "$scene" "$flags" "$cam" perfect 50.5:available 56:selected 60.8:committed 61.8:success
+    acting_run "$hid" "$scene" "$flags" "$cam" blocks:1110 61.8:failure
   done < "$TMP/acting_frames.txt"
   RW_PATH_ID="$PID" python3 "$ROOTW/tools/run/contact_acting.py" "$TMP/acting" "$OUT" --prefix "${PID}_"
   rm -rf "$TMP"

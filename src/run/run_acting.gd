@@ -10,6 +10,7 @@ extends RefCounted
 const HOLD_BEATS := 8.0  # an outcome or cast act holds this long when the data gives no `beats`
 const THEN_BEATS := 16.0  # a `then` act (what the person settles into) holds this long unless it names `beats`
 const COMMITTED_BEATS := 2.0  # the commit flash: the `committed` act shows this long before the outcome's act
+const LEAVING_COMMITTED_BEATS := 0.5  # the commit flash of a hotspot whose scene is left at the downbeat (a passage frame or a door walk from beat 61): the outcome lands at beat 61, before the frame closes
 const STATE_S := 30.0  # an available or selected act lasts until the state changes (the old beckon's 30 s)
 const LEGACY_ACT := "wave"  # a hotspot anchored on a person that carries no `acting` block: the crowd's wave, exactly as before the acting contract
 
@@ -54,12 +55,16 @@ static func segment(spec: Dictionary, from_t: float, until_t: float) -> Dictiona
 
 
 ## The chain of acts after a commit at song time `t0`: the `committed` act for the flash, then the success or failure act for its `beats`, then each `then` in turn. Empty when the hotspot has none.
-static func outcome_chain(h: Dictionary, success: bool, t0: float, beat_s: float) -> Array:
+## `leaving`: the scene is left at the coming downbeat (the passage frame closes over beats 62 to 64, or the camera walks to a door from beat 61), so the flash is cut to LEAVING_COMMITTED_BEATS and
+## the outcome's act is on screen, frame open, before the scene goes. Route timing, the window and the judgement are untouched: only when the act starts.
+static func outcome_chain(h: Dictionary, success: bool, t0: float, beat_s: float, leaving := false) -> Array:
 	var chain: Array = []
 	var t := t0
 	var c := spec_of(h, "committed")
 	if not c.is_empty():
 		var dc := float(c.get("beats", COMMITTED_BEATS)) * beat_s
+		if leaving:
+			dc = minf(dc, LEAVING_COMMITTED_BEATS * beat_s)
 		chain.append(segment(c, t, t + dc))
 		t += dc
 	var s := spec_of(h, "success" if success else "failure")

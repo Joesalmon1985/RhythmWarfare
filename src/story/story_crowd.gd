@@ -18,6 +18,7 @@ var reduced := false
 var energy := 45.0
 var glow_on := false
 var lit_id := ""  # the dancer a followspot is on (drawn a touch brighter)
+const STORY_LIT := 1.25  # the light on a person a hotspot directs
 var actors: Dictionary = {}  # id -> {node, data, home: Vector2, pos: Vector2, present, depth, move: {}, dir: {}, thresh, scale}
 var _order: Array = []
 var _sils: Array = []
@@ -355,6 +356,8 @@ func update(t: float, p_energy: float) -> void:
 		if not vn.is_empty() and t >= float(vn["t0"]):
 			vu = clampf((t - float(vn["t0"])) / maxf(float(vn["t1"]) - float(vn["t0"]), 0.001), 0.0, 1.0)
 		var lit := 1.13 if id == lit_id else 1.0  # the followspot's dancer stands out from the crowd
+		if _story_lit(a, t):
+			lit = maxf(lit, STORY_LIT)  # a person acting for a hotspot or its outcome carries a light of their own (visual polish: they read in a dark room and in a crowd)
 		var alpha := float(a["alpha"]) * (1.0 - clampf((vu - 0.55) / 0.45, 0.0, 1.0))
 		var shown := _place_world(a, c, vu)  # false: behind a wall, out of view or too close: not drawn and not posed, but it keeps its state
 		if shown:
@@ -824,7 +827,7 @@ func direct(ids: Array, state: String, t0: float, seconds: float, sync := false,
 		if not actors.has(id):
 			continue
 		var a: Dictionary = actors[id]
-		if not a["present"] or str(a["lock"]) != "" or not _dancing_here(a):  # a directive moves the dancing crowd, not the people at the bar or a bouncer at his door
+		if not a["present"] or str(a["lock"]) != "" or not _dancing_here(a) or _acted(a, t0):  # a directive moves the dancing crowd, not the people at the bar or a bouncer at his door
 			continue
 		a["dir"] = {"state": state, "from": t0 + float(k) * stagger, "until": t0 + seconds + float(k) * stagger, "sync": sync}
 		k += 1
@@ -912,6 +915,19 @@ func look_point(target: String) -> Variant:
 	return null
 
 
+## Whether a person is acting for a hotspot (its available or selected act) or for a hotspot's outcome at `t`.
+func _story_lit(a: Dictionary, t: float) -> bool:
+	var dir: Dictionary = a["dir"]
+	return bool(dir.get("force", false)) and str(dir.get("src", "")) in ["hotspot", "outcome"] and t < float(dir.get("until", -1.0)) and t >= float(dir.get("from", -1.0))
+
+
+## Whether a person is acting for the story at `t` (a hotspot's act, an outcome or a cast line, all `force`d): the room's group moves (react, wave, direct) leave them alone, or a two-bar cheer
+## would wipe a selected act for good (the hotspot view directs a state once).
+func _acted(a: Dictionary, t: float) -> bool:
+	var dir: Dictionary = a["dir"]
+	return bool(dir.get("force", false)) and t < float(dir.get("until", -1.0))
+
+
 ## Puts a person back to their own life. With `only_src` it clears only an act that source asked for (the hotspot view stands its own down; a commit's outcome or a story beat keeps playing).
 func stand_down(id: String, only_src := "") -> void:
 	if not actors.has(id):
@@ -927,7 +943,7 @@ func stand_down(id: String, only_src := "") -> void:
 func wave(t0: float, seconds: float, hold: float, state := "cheer") -> void:
 	for id in present_ids():
 		var a: Dictionary = actors[id]
-		if str(a["lock"]) != "" or not _dancing_here(a):
+		if str(a["lock"]) != "" or not _dancing_here(a) or _acted(a, t0):
 			continue
 		var u := clampf((float((a["pos"] as Vector2).x) - floor_x.x) / maxf(floor_x.y - floor_x.x, 0.001), 0.0, 1.0)
 		a["dir"] = {"state": state, "from": t0 + u * seconds, "until": t0 + u * seconds + hold, "sync": false}
@@ -1117,7 +1133,7 @@ func react(passed: bool, grade: String, t0: float) -> void:
 		if _rng.randf() > share:
 			continue
 		var a: Dictionary = actors[ids[k]]
-		if str(a["lock"]) != "" or not _dancing_here(a):
+		if str(a["lock"]) != "" or not _dancing_here(a) or _acted(a, t0):
 			continue
 		if passed:
 			a["dir"] = {"state": "cheer" if energy > 45.0 else "dance", "from": t0, "until": t0 + 1.4, "sync": false}

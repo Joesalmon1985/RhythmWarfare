@@ -701,6 +701,11 @@ func _check_portal(sid: String, h: Dictionary, route: String) -> void:
 		errors.append("%s: a portal is a secret with look.available 'pulse'" % hw)
 	if bool(h["default"]):
 		errors.append("%s: a portal is never the default" % hw)
+	var fin: Variant = (h["look"] as Dictionary).get("finished", null)  # plan D10: once the path is finished the portal looks different; its flags are that path's endings
+	if typeof(fin) == TYPE_DICTIONARY:
+		for f in (fin as Dictionary).get("flags_any", []):
+			if not str(f).begins_with("keep:path_%s_" % pid):
+				errors.append("%s: look.finished flag '%s' is not an ending of the path '%s' (keep:path_%s_<ending>)" % [hw, f, pid, pid])
 	if not bool(h["repeatable"]):
 		errors.append("%s: a portal is repeatable" % hw)
 	var f: Dictionary = h.get("on_failure", {})

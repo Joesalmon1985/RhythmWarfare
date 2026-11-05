@@ -229,6 +229,47 @@ func test_portal_hotspots_follow_the_rules_and_stay_out_of_play_until_their_path
 	assert_eq(HotspotContract.path_of("path:squadron"), "squadron")
 
 
+## Plan D10 (visual polish): once a path has been finished (any of its endings' keep: flags), its Warehouse portal shows a look of its own; the data says which flags and which look.
+func test_a_finished_path_gives_its_portal_a_look_of_its_own() -> void:
+	var raw: Dictionary = _read("res://content/run/hotspots/warehouse.json")
+	var seen := 0
+	for h in raw["hotspots"]:
+		var route := str(h["on_success"].get("route", ""))
+		if not route.begins_with("path:"):
+			continue
+		var pid := route.trim_prefix("path:")
+		var fin: Dictionary = h["look"].get("finished", {})
+		assert_false(fin.is_empty(), "%s has a finished look" % h["id"])
+		var want: Array = []
+		var pd := RunData.load_path(pid)
+		for sid in pd.nodes:
+			if str(pd.nodes[sid].get("ending", "")) != "":
+				want.append("keep:path_%s_%s" % [pid, pd.nodes[sid]["ending"]])
+		want.sort()
+		var got: Array = (fin["flags_any"] as Array).duplicate()
+		got.sort()
+		assert_eq(got, want, "%s: its flags are exactly its path's endings" % h["id"])
+		assert_true(str(fin["available"]) in HotspotContract.LOOK_FINISHED, "a look of its own, not the pulse")
+		var held := {}
+		var has := func(f: String) -> bool: return held.has(f)
+		var hn := HotspotContract.normalize(h.duplicate(true), "warehouse", "night_one")
+		assert_false(HotspotContract.finished_look(hn, has), "%s: the plain pulse before any ending" % h["id"])
+		held[want[0]] = true
+		assert_true(HotspotContract.finished_look(hn, has), "%s: the finished look once an ending is kept" % h["id"])
+		seen += 1
+	assert_eq(seen, 3, "the three portals")
+	assert_eq(RunData.load_default().errors, [], "the main run validates with the finished looks")
+	var errors: Array = []
+	HotspotContract._validate_finished({"flags_any": ["path_gospel_tomb"]}, "t", errors)
+	assert_eq(errors.size(), 1, "a finished look reads keep: flags only (they outlive the run)")
+	errors = []
+	HotspotContract._validate_finished({"flags_any": ["keep:path_gospel_tomb"], "available": "sparkle"}, "t", errors)
+	assert_eq(errors.size(), 1, "an unknown finished look is refused")
+	errors = []
+	HotspotContract._validate_finished({"flags_any": []}, "t", errors)
+	assert_eq(errors.size(), 1, "no flags, no finished look")
+
+
 func test_the_portal_resolves_both_ways_through_the_hotspot_engine() -> void:
 	_remap_on()
 	var d := RunData.load_default()

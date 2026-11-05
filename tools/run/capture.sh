@@ -38,7 +38,7 @@ shot() {  # name node bot routes song_seconds [extra env assignments...]
 
 
 # --- the acting pass (--acting): every character hotspot in its five states, the actor framed by RW_STORY_CAM at about twice the usual size ---------------------------------------------------
-# One run with perfect play gives available (beat 50), selected (the scripted touch is at beat 52), committed (the commit is at beat 60.5, the flash lasts one beat) and success (two beats on); a second run that
+# One run with perfect play gives available (beat 50), selected (the scripted touch is at beat 52), committed (the commit is at beat 60.5; a scene left at the downbeat cuts the flash to half a beat, RunActing.LEAVING_COMMITTED_BEATS) and success (beat 61.8, before the passage frame closes at 62); a second run that
 # misses the last block gives failure. The camera stands where tools/run/acting_frames.py says for the whole run, so the person is in the picture whatever the room does.
 acting_run() {  # id scene flags cam policy shot_beat:state ...
   local hid="$1" scene="$2" flags="$3" cam="$4" bot="$5"; shift 5
@@ -58,8 +58,8 @@ if [ "$ACTING" = 1 ]; then
   while read -r _world hid scene actor flags cam; do
     want "$hid" || continue
     echo "acting $hid ($actor)"
-    acting_run "$hid" "$scene" "$flags" "$cam" perfect 50.5:available 56:selected 61.0:committed 62.6:success
-    acting_run "$hid" "$scene" "$flags" "$cam" blocks:1110 62.6:failure
+    acting_run "$hid" "$scene" "$flags" "$cam" perfect 50.5:available 56:selected 60.8:committed 61.8:success
+    acting_run "$hid" "$scene" "$flags" "$cam" blocks:1110 61.8:failure
   done < "$TMP/acting_frames.txt"
   python3 "$ROOT/tools/run/contact_acting.py" "$TMP/acting" "$OUT"
   rm -rf "$TMP"

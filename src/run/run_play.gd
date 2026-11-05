@@ -707,8 +707,8 @@ func _exit_pose() -> Dictionary:
 	var st: StoryStage = stages[active_world]["stage"]
 	if st.player == null:
 		return {}
-	var pose := st.player.pose_at(hud.now_t)
-	return {"cam": pose["cam"], "yaw": float(pose["yaw"]) + st.free_look.offset, "pitch": float(pose.get("pitch", 0.0))}
+	var pose := st.screen_pose(st.player.pose_at(hud.now_t))  # (a screenshot's RW_STORY_CAM stands the drawn camera elsewhere: the hotspots follow it)
+	return {"cam": pose["cam"], "yaw": float(pose["yaw"]) + (0.0 if st.cam_framed() else st.free_look.offset), "pitch": float(pose.get("pitch", 0.0))}
 
 
 ## What a scripted run did, for tools/run/walk_run.sh: the levels in order, the rail places per level, the journey's moves and glances, the worlds shown.
@@ -1002,6 +1002,10 @@ func _on_cast(ev: Dictionary) -> void:
 		cast_log.append({"t": t0, "beat": float(ev["beat"]), "piece": str(ev["piece"]), "op": str(ev["op"]), "source": str(ev["source"]), "applied": true})
 		return
 	var c := _crowd_of(str(ev["actor"]), world)
+	if str(ev["source"]) != "cinematic" and not bool(ev.get("hide", false)) and _touched_actor() == str(ev["actor"]):  # the person the player has touched keeps the touch's act (a scene's own beat on them would undo it)
+		cast_log.append({"t": t0, "beat": float(ev["beat"]), "actor": str(ev["actor"]), "act": str(ev["act"]), "face": str(ev["face"]), "look_at": str(ev["look_at"]), "source": str(ev["source"]), "applied": false,
+			"held_by_touch": true})
+		return
 	if bool(ev.get("hide", false)):  # a person who is not in this scene (a companion lost on the road)
 		var hid := c != null and c.hide_actor(str(ev["actor"]))
 		cast_log.append({"t": t0, "beat": float(ev["beat"]), "actor": str(ev["actor"]), "hide": true, "source": str(ev["source"]), "applied": hid})
@@ -1012,6 +1016,14 @@ func _on_cast(ev: Dictionary) -> void:
 	cast_log.append({"t": t0, "beat": float(ev["beat"]), "actor": str(ev["actor"]), "act": str(ev["act"]), "face": str(ev["face"]), "look_at": str(ev["look_at"]), "source": str(ev["source"]), "applied": applied})
 
 
+## The person of the hotspot the player has touched in this phase's window, until its commit ("" when none is selected).
+func _touched_actor() -> String:
+	if hotspots == null or hotspots.selected == "":
+		return ""
+	var h := hotspots.get_hotspot(hotspots.selected)
+	return RunActing.actor_of(h) if RunActing.has_acting(h) else ""
+
+
 ## A hotspot committed: its person plays the outcome's acts (the `committed` flash, then `success` or `failure`, then what follows) from the commit's song time. A hotspot with no `acting` block does
 ## nothing here (the view stands its person down, as it always did).
 func _act_outcome(out: Dictionary, t: float) -> void:
@@ -1019,13 +1031,21 @@ func _act_outcome(out: Dictionary, t: float) -> void:
 	if h.is_empty() or not RunActing.has_acting(h):
 		return
 	var who := RunActing.actor_of(h)
-	var chain := RunActing.outcome_chain(h, bool(out["success"]), t, engine.beat_s)
+	var chain := RunActing.outcome_chain(h, bool(out["success"]), t, engine.beat_s, _commit_leaves_scene(out))
 	if who == "" or chain.is_empty():
 		return
 	var c := _crowd_of(who)
 	if c != null:
 		c.direct_chain(who, chain, "outcome")
 	acting_log.append({"t": t, "hotspot": str(out["hotspot"]), "actor": who, "success": bool(out["success"]), "acts": chain.map(func(s: Dictionary) -> String: return str(s["act"]))})
+
+
+## Whether the scene a hotspot commits in is left at the coming downbeat: its route (the outcome's, else the one the phase will take) is another scene, another world or out of this run.
+func _commit_leaves_scene(out: Dictionary) -> bool:
+	var to := str(out.get("route", ""))
+	if to == "":
+		to = engine.selected_route()
+	return to != "" and to != engine.node_id
 
 
 # --- routes ---------------------------------------------------------------------------------------------------------------
@@ -1062,7 +1082,8 @@ func hotspot_items() -> Array:
 	for h in hotspots.shown(engine.block, engine.window_open):
 		var id := str(h["id"])
 		var sel := id == hotspots.selected
-		out.append({"hotspot": h, "state": "selected" if sel else "available", "t_state": float(_sel_t.get(id, 0.0)) if sel else 0.0})
+		out.append({"hotspot": h, "state": "selected" if sel else "available", "t_state": float(_sel_t.get(id, 0.0)) if sel else 0.0,
+			"finished": HotspotContract.finished_look(h, hotspots.has_flag)})  # a portal whose path has been finished (plan D10)
 	if not _commit_view.is_empty():
 		if hud.now_t - float(_commit_view["t"]) < 2.5 * engine.beat_s:
 			out.append({"hotspot": _commit_view["hotspot"], "state": "committed", "t_state": float(_commit_view["t"])})
