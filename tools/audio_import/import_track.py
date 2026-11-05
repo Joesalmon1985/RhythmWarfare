@@ -1,27 +1,38 @@
 #!/usr/bin/env python3
-"""Turn one finished recording into a track pack (docs/TRACK_PACK_FORMAT.md). No MIDI: everything from audio.
+"""Turn finished recordings into track packs (docs/TRACK_PACK_FORMAT.md, version 2). No MIDI: all from audio.
 
-    /home/joe/.venvs/rw-audio/bin/python tools/audio_import/import_track.py "<audio file>" [--id ID]
-        [--out /home/joe/rw-audio-work] [--model htdemucs] [--from STAGE | --only STAGE]
+    /home/joe/.venvs/rw-audio/bin/python tools/audio_import/import_track.py FILE_OR_FOLDER [...]
+        [--id ID] [--out /home/joe/rw-audio-work] [--model htdemucs] [--from STAGE | --only STAGE]
+        [--min-bars 8] [--focus VOICE] [--focus-at WHERE=VOICE ...] [--focus-auto]
 
-Stages, each cached under <out>/cache/<id>/ and skipped when its output exists (unless --from/--only reruns it):
-    separate  Demucs on the whole file           -> sep_<model>/{mix,<stem>}.npy, meta.json
-    analyse   tempo, grid, downbeat, sections    -> analysis.json
-    voices    four voices + backing, pads        -> voices.json, voices/<key>.npy
-    chart     events, ranking, easy/normal/hard  -> charts.json
-    pack      stems/*.ogg + track.json           -> <out>/packs/<id>/
-    preview   listening files                    -> <out>/packs/<id>/preview/
-    validate  validate_track.py on the pack, then the report -> <out>/packs/<id>/report.{json,txt}
+Several files or folders are processed one after another; one bad file never stops the batch, and the run ends
+with one summary line per track (also written to <out>/batch_summary.txt and a time-stamped copy).
+
+Stages, each cached under <out>/cache/<id>/ and skipped when its output exists; once a stage runs, every later
+stage runs too:
+    separate  Demucs on the whole file                -> sep_<model>/{mix,<stem>}.npy, meta.json
+    analyse   tempo, grid, downbeat, sections         -> analysis.json
+    voices    voices + backing                        -> voices.json, voices/<key>.npy
+    events    what each voice plays, how high, and its loudness as heard per bar -> events.json
+    focus     which voice is the player's, bar by bar -> focus.json
+    chart     pads by height, easy / normal / hard    -> charts.json
+    pack      stems/*.ogg (only when the voices changed) + track.json -> <out>/packs/<id>/
+    preview   listening files                         -> <out>/packs/<id>/preview/
+    validate  validate_track.py on the pack, then the evidence report -> <out>/packs/<id>/report.{json,txt}
+Focus options (--min-bars, --focus, --focus-at) are remembered per track in cache/<id>/focus_options.json and
+used again on later runs until --focus-auto clears them; changing them reruns from the focus stage.
 Heavy work runs on whatever OMP_NUM_THREADS says (use 3 and nice -n 10 on the shared laptop).
 """
 from __future__ import annotations
 
 import argparse
+import datetime
 import json
 import os
 import re
 import sys
 import time
+import traceback
 from pathlib import Path
 
 import numpy as np
@@ -29,8 +40,11 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from audio_io import mono, probe  # noqa: E402
 
-STAGES = ("separate", "analyse", "voices", "chart", "pack", "preview", "validate")
-VERSION = "audio_import 0.1"
+STAGES = ("separate", "analyse", "voices", "events", "focus", "chart", "pack", "preview", "validate")
+VERSION = "audio_import 0.2 (track format v2)"
+AUDIO_EXT = {".flac", ".mp3", ".wav", ".ogg", ".m4a", ".aiff", ".aif", ".opus", ".wma", ".aac"}
+CONTRACT_KIND = {"drums": "drums", "bass": "pitched", "melodic": "pitched", "vocal": "pitched"}
+VOICE_ORDER = ("drums", "kick", "tops", "bass", "other", "lead", "pads", "guitar", "piano", "vocals")
 
 
 def slug(text: str) -> str:
@@ -51,8 +65,8 @@ def guess_meta(path: Path) -> dict:
 
 
 class Ctx:
-    def __init__(self, a: argparse.Namespace):
-        self.src = Path(a.audio).resolve()
+    def __init__(self, src: Path, a: argparse.Namespace):
+        self.src = Path(src).resolve()
         self.meta = guess_meta(self.src)
         self.id = a.id or self.meta["id"]
         self.out = Path(a.out)
@@ -61,10 +75,22 @@ class Ctx:
         self.model = a.model
         self.sep_dir = self.cache / f"sep_{self.model}"
         self.timings: dict[str, float] = {}
+        self.cache.mkdir(parents=True, exist_ok=True)
         tf = self.cache / "timings.json"
         if tf.exists():
             self.timings = json.loads(tf.read_text())
-        self.cache.mkdir(parents=True, exist_ok=True)
+        # focus options: the command line wins and is remembered; --focus-auto forgets
+        of = self.cache / "focus_options.json"
+        saved = json.loads(of.read_text()) if of.exists() else {}
+        if a.focus_auto:
+            saved = {}
+        given = {k: v for k, v in (("min_bars", a.min_bars), ("fixed", a.focus), ("overrides", a.focus_at)) if v}
+        self.focus_opts = {"min_bars": 8, "fixed": None, "overrides": [], **saved, **given}
+        stored = {k: v for k, v in self.focus_opts.items() if v and not (k == "min_bars" and v == 8)}
+        if stored:
+            of.write_text(json.dumps(stored, indent=1))
+        elif of.exists():
+            of.unlink()
 
     def save_timings(self) -> None:
         (self.cache / "timings.json").write_text(json.dumps(self.timings, indent=1))
@@ -77,7 +103,7 @@ class Ctx:
 
 
 def _np(o):
-    if isinstance(o, (np.floating, np.integer)):
+    if isinstance(o, (np.floating, np.integer, np.bool_)):
         return o.item()
     if isinstance(o, np.ndarray):
         return o.tolist()
@@ -176,32 +202,36 @@ def sep_quality(name: str, rep: dict) -> float:
     return round(max(0.3, q), 2)
 
 
+
+
+def sep_word(name: str, rep: dict) -> str:
+    """Separation quality of a voice in one word for the batch summary."""
+    st = rep["stems"].get(name)
+    q = sep_quality(name, rep)
+    if st is None:
+        return "derived"
+    if q >= 0.9 and st["active_share"] >= 0.25:
+        return "clean"
+    if q >= 0.7:
+        return "fair"
+    return "poor"
+
+
 def st_voices(c: Ctx) -> None:
-    from chart import events
-    from voices import LABELS, assign_pads, choose_voices, co_occurrence
+    from voices import LABELS, choose_voices
     mix, stems, meta = _load_sep(c)
-    rate = meta["rate"]
-    an, g = _grid(c)
-    ch = choose_voices(mix, stems, rate, an["stem_report"])
+    an = c.jload("analysis.json")
+    ch = choose_voices(mix, stems, meta["rate"], an["stem_report"])
     vdir = c.cache / "voices"
     vdir.mkdir(exist_ok=True)
-    strong = {}
     for k, v in ch["voices"].items():
         np.save(vdir / f"{k}.npy", v["audio"].astype(np.float32))
-        evs = events(v["audio"], mix, rate, v["kind"], g)
-        ss = np.array([e.strength for e in evs if e.audible])
-        thr = np.percentile(ss, 50) if len(ss) else 0
-        strong[k] = np.array([e.t for e in evs if e.audible and e.strength >= thr])
     np.save(vdir / "backing.npy", ch["backing"])
-    co = co_occurrence(strong, g.beat_s)
-    pads, why = assign_pads(list(ch["voices"]), co)
-    why["basis"] = "strong onsets (provisional: the chart stage reassigns from candidate cues)"
     rep = an["stem_report"]
-    info = {k: {"pad": pads[k], "label": LABELS.get(k, k.title()), "from": v["from"], "op": v["op"], "kind": v["kind"],
+    info = {k: {"label": LABELS.get(k, k.title()), "from": v["from"], "op": v["op"], "kind": v["kind"],
                 "sep_quality": sep_quality(v["from"][0], rep) if v["op"] == "stem" else 0.6}
             for k, v in ch["voices"].items()}
-    c.jsave("voices.json", {"voices": info, "backing_from": ch["backing_from"], "notes": ch["notes"],
-                            "pads": why})
+    c.jsave("voices.json", {"voices": info, "backing_from": ch["backing_from"], "notes": ch["notes"]})
 
 
 def _voice_audio(c: Ctx) -> dict[str, np.ndarray]:
@@ -209,43 +239,77 @@ def _voice_audio(c: Ctx) -> dict[str, np.ndarray]:
     return {k: np.load(c.cache / "voices" / f"{k}.npy") for k in vj["voices"]}
 
 
-def st_chart(c: Ctx) -> None:
-    from chart import build_charts, events, rank
+def st_events(c: Ctx) -> None:
+    from chart import describe, events
+    from focus import perceived_bar_power
     mix, _stems, meta = _load_sep(c)
     rate = meta["rate"]
     an, g = _grid(c)
     vj = c.jload("voices.json")
-    va = _voice_audio(c)
+    edges = np.array(an["bar_edges"])
+    out, power = {}, {}
+    for k, x in _voice_audio(c).items():
+        kind = vj["voices"][k]["kind"]
+        evs = events(x, mix, rate, kind, g)
+        describe(evs, x, rate, kind)
+        out[k] = [e.to_json() for e in evs]
+        power[k] = perceived_bar_power(x, rate, edges)
+    c.jsave("events.json", {"events": out, "bar_power_weighted": power,
+                            "note": "bar_power_weighted: mean power per bar after the half-A weighting (focus.py)"})
+
+
+def _events(c: Ctx) -> dict:
+    from chart import Event
+    ej = c.jload("events.json")
+    return {k: [Event.from_json(d) for d in v] for k, v in ej["events"].items()}, ej
+
+
+def st_focus(c: Ctx) -> None:
+    import focus as F
+    an, g = _grid(c)
+    vj = c.jload("voices.json")
+    ve, ej = _events(c)
+    edges = np.array(an["bar_edges"])
+    keys = list(vj["voices"])
+    o = c.focus_opts
+    if o["fixed"] and o["fixed"] not in keys:
+        raise ValueError(f"--focus {o['fixed']!r}: voices are {keys}")
+    overrides = F.parse_overrides(o["overrides"], an["sections"], keys)
+    units = F.make_units(an["sections"], edges)
+    power = {k: np.array(ej["bar_power_weighted"][k]) for k in keys}
+    rows = F.unit_table(power, ve, units, edges, g.beat_s)
+    choice = F.decide(rows, keys, o["min_bars"], o["fixed"], overrides)
+    stretches, gaps = F.stretches(rows, choice, o["fixed"], overrides, an["sections"])
+    c.jsave("focus.json", {"options": o, "focus": stretches, "gaps": gaps, "units": rows,
+                           "timeline": F.short_timeline(stretches, gaps),
+                           "constants": {k: getattr(F, k) for k in ("MIN_SHARE", "MIN_EVENTS_PER_BAR", "PLAYABLE_STRENGTH",
+                                                                     "ACT_DB", "MOTION_DB", "ENTRY_DB", "CLOSE_DB",
+                                                                     "SWITCH_DB", "FATIGUE_DB", "GAP_DB", "PHRASE_BARS")}})
+
+
+def st_chart(c: Ctx) -> None:
+    from chart import build_charts, rank
+    an, g = _grid(c)
+    vj = c.jload("voices.json")
+    fj = c.jload("focus.json")
+    ve, _ = _events(c)
     kinds = {k: v["kind"] for k, v in vj["voices"].items()}
-    ve = {}
-    for k, x in va.items():
-        evs = events(x, mix, rate, kinds[k], g)
-        rank(evs, kinds[k], an["sections"])
-        ve[k] = evs
-    # pads from the candidate cues themselves: the hard selection does not depend on the pads, so count for each
-    # voice pair how many of their candidate presses fall within half a beat of each other (those could not all
-    # be kept on one thumb) and put the pairs that clash most on different thumbs
-    from chart import select
-    from voices import assign_pads, co_occurrence
+    focus = fj["focus"]
+    for k, evs in ve.items():
+        rank(evs, kinds[k], [f for f in focus if f["voice"] == k])
     sq = {k: v["sep_quality"] for k, v in vj["voices"].items()}
-    cand = select(ve, {k: 1 for k in ve}, kinds, an["sections"], g, an["duration_s"], sq, None, "hard")
-    times = {k: np.array([cu.t for cu in cand if cu.voice == k]) for k in ve}
-    co = co_occurrence(times, g.beat_s, 0.5, count=True)
-    pads, why = assign_pads(list(ve), co)
-    why["basis"] = "candidate hard cues within half a beat of each other (count)"
-    for k in vj["voices"]:
-        vj["voices"][k]["pad"] = pads[k]
-    vj["pads"] = why
-    c.jsave("voices.json", vj)
-    charts = build_charts(ve, pads, kinds, an["sections"], g, an["duration_s"], sq)
-    out = {"charts": {d: [dict(cu.as_json(), voice=cu.voice, score=round(cu.score, 3), ev_t=round(cu.ev.t, 4),
-                               natural=round(cu.natural, 3), kind=cu.ev.kind, dev_ms=round(cu.ev.dev_ms, 1))
-                          for cu in cues] for d, cues in charts.items()},
-           "events": {k: [{"t": round(e.t, 4), "s": round(e.strength, 3), "rel": round(e.rel_db, 1),
-                           "own": round(e.own_db, 1), "len": round(e.length, 3), "kind": e.kind, "pos": e.pos,
-                           "dev": round(e.dev_ms, 1), "score": round(e.score, 3), "aud": e.audible}
-                          for e in evs] for k, evs in ve.items()}}
-    c.jsave("charts.json", out)
+    charts, layouts = build_charts(ve, focus, kinds, an["sections"], g, an["duration_s"], sq)
+    c.jsave("charts.json", {
+        "charts": {d: [dict(cu.as_json(), score=round(cu.score, 3), ev_t=round(cu.ev.t, 4), stretch=cu.stretch,
+                            natural=round(cu.natural, 3), kind=cu.ev.kind, dev_ms=round(cu.ev.dev_ms, 1),
+                            h=None if not np.isfinite(cu.ev.height) else round(cu.ev.height, 2), s=round(cu.ev.strength, 3))
+                       for cu in cues] for d, cues in charts.items()},
+        "layouts": layouts})
+
+
+def _stamp(c: Ctx) -> str:
+    vd = c.cache / "voices"
+    return json.dumps({p.name: [p.stat().st_size, int(p.stat().st_mtime)] for p in sorted(vd.glob("*.npy"))})
 
 
 def st_pack(c: Ctx) -> None:
@@ -255,46 +319,64 @@ def st_pack(c: Ctx) -> None:
     an = c.jload("analysis.json")
     vj = c.jload("voices.json")
     ch = c.jload("charts.json")
+    fj = c.jload("focus.json")
+    keys = sorted(vj["voices"], key=lambda k: VOICE_ORDER.index(k) if k in VOICE_ORDER else len(VOICE_ORDER))
     va = _voice_audio(c)
-    voices = [{"key": k, "label": v["label"], "pad": v["pad"], "audio": va[k]} for k, v in vj["voices"].items()]
+    voices = [{"key": k, "label": vj["voices"][k]["label"], "kind": CONTRACT_KIND.get(vj["voices"][k]["kind"], "pitched"),
+               "audio": va[k]} for k in keys]
     backing = [{"key": "backing", "audio": np.load(c.cache / "voices" / "backing.npy")}]
-    clean = {d: [{k: cu[k] for k in ("t", "pad", "dur", "conf")} for cu in cues] for d, cues in ch["charts"].items()}
+    clean = {d: [{k: cu[k] for k in ("t", "pad", "dur", "conf", "voice")} for cu in cues] for d, cues in ch["charts"].items()}
     m = c.meta
+    lay = {x["stretch"]: {k: v for k, v in x.items() if k != "stretch"} for x in ch["layouts"]}
     tj_meta = {
         "id": c.id, "title": m["title"], "artist": m["artist"],
         "tempo": {"bpm": round(an["grid"]["bpm"], 4), "first_downbeat_s": round(an["first_downbeat_s"], 4),
                   "beats_per_bar": 4, "confidence": an["tempo_confidence"]},
         "sections": [{k: s[k] for k in ("id", "role", "start_s", "end_s")} for s in an["sections"]],
+        "focus": [{k: f[k] for k in ("start_s", "end_s", "voice")} for f in fj["focus"]],
         "charts": {d: clean[d] for d in ("easy", "normal", "hard")},
-        "source": {"input_file": c.src.name, "input_path": str(c.src), "input": {k: m["probe"][k] for k in ("codec", "rate", "channels", "duration")},
+        "source": {"input_file": c.src.name, "input_path": str(c.src),
+                   "input": {k: m["probe"][k] for k in ("codec", "rate", "channels", "duration")},
                    "tool": VERSION, "separation": {"model": c.model, "residual_db": an["stem_report"]["residual_db"]},
                    "voices": {k: {kk: v[kk] for kk in ("from", "op", "kind", "sep_quality")} for k, v in vj["voices"].items()},
-                   "backing_from": vj["backing_from"], "voice_notes": vj["notes"], "pad_choice": vj["pads"],
+                   "backing_from": vj["backing_from"], "voice_notes": vj["notes"],
                    "tempo_detail": {"constant": an["constant_tempo"], "beat_source": an["beat_source"],
                                     "residual_ms_rms": an["grid"]["residual_ms_rms"],
                                     "drift_ms_max_abs": an["grid"]["drift_ms_max_abs"],
                                     "candidates": an["tempo_candidates"]["candidates"],
                                     "downbeat_confidence": an["downbeat"]["confidence"]},
                    "sections_detail": [{k: s[k] for k in ("id", "bars", "intensity_db")} for s in an["sections"]],
+                   "focus_options": fj["options"],
+                   "focus_detail": [{**{k: f[k] for k in ("start_s", "end_s", "voice", "bars", "sections", "share",
+                                                          "runner_up", "runner_up_share", "why")},
+                                     "pads": lay.get(i)} for i, f in enumerate(fj["focus"])],
+                   "gaps": fj["gaps"],
+                   "focus_rule": "perceived loudness (half-A weighting) share per 8-bar phrase plus activity, "
+                                 "movement and entry bonuses; stretches by dynamic programming with hysteresis, a "
+                                 "minimum length and a handover between voices within 6 dB (see tools/audio_import/focus.py)",
+                   "pad_rule": "per stretch, sounds (semitones; drum hits clustered by band balance) laid out by "
+                               "height, split across thumbs so quick alternations land on two thumbs "
+                               "(tools/audio_import/layout.py)",
                    "chart_note": "cue times are the detected attack in the voice's own stem, or the 16th grid line "
                                  "when the attack is within 6 ms of it; conf blends separation quality, attack "
                                  "strength and how loud the voice is against the whole track there"}}
-    write_pack(c.pack, tj_meta, voices, backing, rate)
+    write_pack(c.pack, tj_meta, voices, backing, rate, _stamp(c))
 
 
-def pick_miss(an: dict, cues: list[dict], vj: dict) -> dict:
-    """A 30 s stretch of the loudest drop, with the bass (else the busiest voice) dropped for 4 bars from a cue
-    in the middle until its first cue after those bars, like a run of missed presses."""
+def pick_miss(an: dict, tj: dict) -> dict:
+    """30 s from the loudest drop with its focus voice silent from a cue 8 s in until that voice's first cue at
+    least 4 bars later, like a run of missed presses (the game brings the voice back on the next hit)."""
     drops = [s for s in an["sections"] if s["role"] == "drop"] or an["sections"]
     s = max(drops, key=lambda s: s["intensity_db"] + 0.01 * (s["end_s"] - s["start_s"]))
-    start = s["start_s"]
+    cues = tj["charts"]["normal"]
+    st = max(tj["focus"], key=lambda f: min(f["end_s"], s["end_s"]) - max(f["start_s"], s["start_s"]))
+    start = max(st["start_s"], s["start_s"]) - 2.0
     end = min(start + 30.0, an["duration_s"] - 0.5)
-    key = "bass" if "bass" in vj["voices"] else max(vj["voices"], key=lambda k: sum(1 for c in cues if c["pad"] == vj["voices"][k]["pad"]))
-    pad = vj["voices"][key]["pad"]
-    mine = [c for c in cues if c["pad"] == pad and start + 8 <= c["t"] < end]
+    key = st["voice"]
+    mine = [x["t"] for x in cues if x["voice"] == key and start + 8 <= x["t"] < end]
     bar = 4 * 60.0 / an["grid"]["bpm"]
-    m0 = mine[0]["t"] if mine else start + 8
-    after = [c["t"] for c in cues if c["pad"] == pad and c["t"] >= m0 + 4 * bar]
+    m0 = mine[0] if mine else start + 8
+    after = [x["t"] for x in cues if x["voice"] == key and x["t"] >= m0 + 4 * bar]
     m1 = after[0] if after else min(end - 1, m0 + 4 * bar)
     return {"key": key, "start_s": start, "end_s": end, "mute_from_s": m0, "mute_to_s": min(m1, end - 0.5)}
 
@@ -303,12 +385,9 @@ def st_preview(c: Ctx) -> None:
     from pack import write_previews
     mix, _stems, meta = _load_sep(c)
     an = c.jload("analysis.json")
-    vj = c.jload("voices.json")
     tj = json.loads((c.pack / "track.json").read_text())
-    va = _voice_audio(c)
-    voices = [{"key": k, "pad": v["pad"], "audio": va[k]} for k, v in vj["voices"].items()]
-    miss = pick_miss(an, tj["charts"]["normal"], vj)
-    write_previews(c.pack / "preview", mix, voices, tj["charts"]["normal"], meta["rate"], miss)
+    miss = pick_miss(an, tj)
+    write_previews(c.pack / "preview", mix, _voice_audio(c), tj["charts"]["normal"], tj["focus"], meta["rate"], miss)
     c.jsave("miss.json", miss)
 
 
@@ -316,8 +395,6 @@ def st_validate(c: Ctx) -> int:
     import report
     from validate_track import validate
     r, stats = validate(c.pack)
-    for n in r.notes:
-        print(n)
     for e in r.errors[:50]:
         print("VIOLATION:", e)
     print(f"{'FAIL' if r.errors else 'OK'}: {len(r.errors)} violation(s)")
@@ -325,37 +402,44 @@ def st_validate(c: Ctx) -> int:
     return 1 if r.errors else 0
 
 
-FUNCS = {"separate": st_separate, "analyse": st_analyse, "voices": st_voices, "chart": st_chart,
-         "pack": st_pack, "preview": st_preview, "validate": st_validate}
+FUNCS = {"separate": st_separate, "analyse": st_analyse, "voices": st_voices, "events": st_events, "focus": st_focus,
+         "chart": st_chart, "pack": st_pack, "preview": st_preview, "validate": st_validate}
 OUTPUTS = {"separate": lambda c: c.sep_dir / "meta.json", "analyse": lambda c: c.cache / "analysis.json",
-           "voices": lambda c: c.cache / "voices.json", "chart": lambda c: c.cache / "charts.json",
-           "pack": lambda c: c.pack / "track.json", "preview": lambda c: c.pack / "preview" / "mix_clicks_normal.ogg",
+           "voices": lambda c: c.cache / "voices.json", "events": lambda c: c.cache / "events.json",
+           "focus": lambda c: c.cache / "focus.json", "chart": lambda c: c.cache / "charts.json",
+           "pack": lambda c: c.pack / "track.json", "preview": lambda c: c.pack / "preview" / "focus_forward_normal.ogg",
            "validate": lambda c: None}
 
 
-def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("audio")
-    ap.add_argument("--id", help="pack id (default: artist_title from tags or file name)")
-    ap.add_argument("--out", default="/home/joe/rw-audio-work")
-    ap.add_argument("--model", default="htdemucs", choices=("htdemucs", "htdemucs_ft", "htdemucs_6s"))
-    g = ap.add_mutually_exclusive_group()
-    g.add_argument("--from", dest="start", choices=STAGES, help="rerun this stage and every later one")
-    g.add_argument("--only", choices=STAGES, help="run just this stage (earlier caches must exist)")
-    a = ap.parse_args(argv)
-    os.environ.setdefault("HF_HUB_OFFLINE", "1")
-    c = Ctx(a)
-    print(f"track {c.src.name} -> id {c.id}\n cache {c.cache}\n pack  {c.pack}")
+def _stale(c: Ctx, st: str) -> bool:
+    """A cached output made by older code or other options."""
+    try:
+        if st == "voices":
+            return any("pad" in v for v in c.jload("voices.json")["voices"].values())
+        if st == "focus":
+            return c.jload("focus.json").get("options") != c.focus_opts
+        if st == "pack":
+            return json.loads((c.pack / "track.json").read_text()).get("format") != "rhythm_warfare.track.v2"
+    except (OSError, ValueError, KeyError):
+        return True
+    return False
+
+
+def run_track(c: Ctx, a: argparse.Namespace) -> dict:
+    """All stages for one track; returns what the summary line needs."""
+    print(f"\n=== {c.src.name} -> id {c.id}\n cache {c.cache}\n pack  {c.pack}", flush=True)
     todo = [a.only] if a.only else STAGES[STAGES.index(a.start):] if a.start else STAGES
     rc = 0
+    running = False
     for st in STAGES:
-        rerun = st in todo and (a.only or a.start)
+        forced = bool(a.only or a.start) and st in todo
         out = OUTPUTS[st](c)
-        if st not in todo or (out is not None and out.exists() and not rerun and st != "validate"):
+        need = st == "validate" or forced or running or out is None or not out.exists() or _stale(c, st)
+        if st not in todo or not need:
             if st in todo:
-                print(f"[{st}] cached")
+                print(f"[{st}] cached", flush=True)
             continue
-        if st == "separate" and rerun and (c.sep_dir / "meta.json").exists():
+        if st == "separate" and (c.sep_dir / "meta.json").exists():
             (c.sep_dir / "meta.json").unlink()
         t0 = time.time()
         print(f"[{st}] running", flush=True)
@@ -363,8 +447,116 @@ def main(argv: list[str] | None = None) -> int:
         c.timings[st] = round(time.time() - t0, 1)
         c.save_timings()
         print(f"[{st}] {c.timings[st]} s", flush=True)
+        running = not a.only
         if st == "validate":
             rc = res
+    return {"rc": rc}
+
+
+def summary_line(c: Ctx | None, src: Path, err: str | None = None) -> tuple[str, list[str]]:
+    """One line a person can scan, and the warnings behind it."""
+    warn: list[str] = []
+    if c is None:
+        return f"{src.name}: ERROR {err}", [f"ERROR {err}"]
+    parts = [c.id]
+    try:
+        an = c.jload("analysis.json")
+        g = an["grid"]
+        parts.append(f"{g['bpm']:.2f} BPM {'constant' if an['constant_tempo'] else 'NOT constant'}"
+                     f" (drift {g['drift_ms_max_abs']:.0f} ms, conf {an['tempo_confidence']:.2f})")
+        if not an["constant_tempo"]:
+            warn.append(f"tempo not constant (drift {g['drift_ms_max_abs']} ms, {g['share_on_grid']:.0%} of drum onsets on the grid): check the cue timing by ear")
+        elif an["tempo_confidence"] < 0.5:
+            warn.append(f"tempo confidence {an['tempo_confidence']}: check the grid by ear")
+        vj = c.jload("voices.json")
+        words = {k: sep_word(v["from"][0], an["stem_report"]) if v["op"] == "stem" else "derived" for k, v in vj["voices"].items()}
+        parts.append("sep " + " ".join(f"{k}:{w}" for k, w in words.items()))
+        for k, w in words.items():
+            if w == "poor":
+                warn.append(f"{k} separated badly (cue confidence low; a miss on it may sound odd)")
+        fj = c.jload("focus.json")
+        B = 60.0 / g["bpm"]
+        parts.append("focus " + fj["timeline"])
+        if fj["options"].get("fixed") or fj["options"].get("overrides"):
+            parts.append(f"(overridden: {json.dumps({k: v for k, v in fj['options'].items() if v and k != 'min_bars'})})")
+        for gp in fj["gaps"]:
+            if gp["bars"] >= 16 and "forced" not in gp["why"]:
+                warn.append(f"{gp['bars']} bars with nothing to play ({gp['start_s']:.0f}-{gp['end_s']:.0f} s)")
+        total = sum(f["end_s"] - f["start_s"] for f in fj["focus"])
+        for k in vj["voices"]:
+            share = sum(f["end_s"] - f["start_s"] for f in fj["focus"] if f["voice"] == k) / max(total, 1e-9)
+            if share > 0.8 and len(vj["voices"]) > 1:
+                warn.append(f"{k} has the focus {share:.0%} of the playable time (little variety)")
+        tj = json.loads((c.pack / "track.json").read_text())
+        parts.append("cues " + " ".join(f"{d}:{len(tj['charts'][d])}" for d in ("easy", "normal", "hard")))
+        rj = json.loads((c.pack / "report.json").read_text()) if (c.pack / "report.json").exists() else {}
+        nv = rj.get("validation", {}).get("violations")
+        if nv:
+            warn.append(f"validator: {nv} violation(s), see {c.pack / 'report.txt'}")
+        elif nv is None:
+            warn.append("no validation result")
+        _ = B
+    except Exception as e:  # noqa: BLE001  a summary must never stop the batch
+        warn.append(f"summary incomplete: {type(e).__name__}: {e}")
+    if err:
+        warn.insert(0, f"ERROR {err}")
+    line = " | ".join(parts) + (" | " + " ; ".join(f"WARNING {w}" for w in warn) if warn else " | ok")
+    return line, warn
+
+
+def inputs(paths: list[str]) -> list[Path]:
+    out = []
+    for p in paths:
+        q = Path(p)
+        if q.is_dir():
+            out += sorted(x for x in q.iterdir() if x.is_file() and x.suffix.lower() in AUDIO_EXT)
+        else:
+            out.append(q)
+    return out
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("audio", nargs="+", help="audio files and/or folders of audio files")
+    ap.add_argument("--id", help="pack id (default: artist_title from tags or file name); one input only")
+    ap.add_argument("--out", default="/home/joe/rw-audio-work")
+    ap.add_argument("--model", default="htdemucs", choices=("htdemucs", "htdemucs_ft", "htdemucs_6s"))
+    g = ap.add_mutually_exclusive_group()
+    g.add_argument("--from", dest="start", choices=STAGES, help="rerun this stage and every later one")
+    g.add_argument("--only", choices=STAGES, help="run just this stage (earlier caches must exist)")
+    ap.add_argument("--min-bars", type=int, help="shortest focus stretch in bars (default 8)")
+    ap.add_argument("--focus", help="give the focus to this voice wherever it plays (drums, bass, other, vocals)")
+    ap.add_argument("--focus-at", action="append", metavar="WHERE=VOICE",
+                    help="force the focus in a section id or a time range: drop1=bass, 77.2-132.4=drums, "
+                         "breakdown1=none; repeatable")
+    ap.add_argument("--focus-auto", action="store_true", help="forget focus options remembered for the track")
+    a = ap.parse_args(argv)
+    os.environ.setdefault("HF_HUB_OFFLINE", "1")
+    files = inputs(a.audio)
+    if a.id and len(files) != 1:
+        ap.error("--id needs exactly one input file")
+    lines, rc = [], 0
+    for f in files:
+        c, err = None, None
+        try:
+            if not f.is_file():
+                raise FileNotFoundError(f"{f} not found")
+            c = Ctx(f, a)
+            res = run_track(c, a)
+            rc = max(rc, res["rc"])
+        except Exception as e:  # noqa: BLE001  one bad file never stops the batch
+            traceback.print_exc()
+            err = f"{type(e).__name__}: {e}"
+            rc = 2
+        line, _ = summary_line(c, f, err)
+        lines.append(line)
+    stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    text = f"# import_track.py {stamp}: {len(files)} track(s)\n" + "\n".join(lines) + "\n"
+    print("\n" + text)
+    out = Path(a.out)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "batch_summary.txt").write_text(text)
+    (out / f"batch_summary_{stamp}.txt").write_text(text)
     return rc
 
 

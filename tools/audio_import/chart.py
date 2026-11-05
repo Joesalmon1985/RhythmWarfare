@@ -1,18 +1,18 @@
-"""Stage 5: from each voice's audio to cues a player presses, as three nested charts (easy in normal in hard).
+"""From each voice's audio to the cues a player presses (track pack format v2: all four pads play the focus voice).
 
-1. events(): what the voice plays. Onsets with strength, refined to the steepest energy rise; for sustained
-   kinds (bass, melodic, vocal) also note changes heard as chroma changes, and the note length (how long the
-   voice stays within 12 dB of the note's peak before the next note). Every event records how loud the voice is
-   there and how loud the voice is against the whole recording, so cues never land where the voice is silent or
-   buried.
-2. rank(): a score per event: strength, audibility, metric position, and how regularly the same position in the
-   2-bar cycle is played across the section (this is what makes patterns repeat when the music repeats). Drum
-   events are labelled kick/snare/hat from band energy; the kit's backbone (kick and snare) ranks above hats.
-3. select(): per section and voice, the strongest recurring positions (see pattern_pick) up to a budget that depends on the section role and
-   difficulty, with a minimum spacing per voice. Hard is chosen from all events, normal from hard, easy from
-   normal.
-4. resolve(): all four pads together obey the contract's playability rules (checked by the validator's own
-   rule function); a conflict keeps the higher-ranked cue, and holds are shortened (or become taps) to make room.
+1. events(): what a voice plays. Onsets with strength, refined to the steepest energy rise; for sustained kinds
+   (bass, melodic, vocal) also note changes and note lengths. Every event records how loud the voice is there and
+   against the whole recording, so cues never land where the voice is silent or buried.
+2. describe(): how high each event is. Pitched parts by pitch (the bass by its tracked note, other parts by the
+   predominant pitch of a harmonic-summed constant-Q spectrum just after the attack); drum hits by how low or
+   bright they are (the spectral centroid of the first 40 ms, plus the low / mid / high band balance used to tell
+   one drum sound from another). Nothing is named.
+3. rank(): a score per event: strength, audibility, metric position, and how regularly the same position in the
+   cycle is played across the stretch (this is what makes patterns repeat when the music repeats).
+4. build_charts(): per focus stretch, the strongest recurring positions of the focus voice up to a budget per
+   difficulty (pattern_pick), laid across the pads by height (layout.py), then made playable across the whole
+   chart with the validator's own rule function. Hard is chosen from all events, normal from hard, easy from
+   normal; the pad of an event is decided once, from the hard selection, so the three charts agree.
 """
 from __future__ import annotations
 
@@ -25,13 +25,15 @@ from audio_io import db, frame_rms, mono
 from validate_track import playability_violations
 
 DIFFICULTIES = ("hard", "normal", "easy")
-# total cues per beat over all four pads in a drop; other roles scale this down
-BUDGET = {"hard": 1.3, "normal": 0.75, "easy": 0.4}
-ROLE_FACTOR = {"drop": 1.0, "build": 0.7, "other": 0.6, "breakdown": 0.5, "intro": 0.45, "outro": 0.45}
-# per voice: max cues per beat and minimum spacing in beats, per difficulty
-VOICE_CAP = {"hard": 0.9, "normal": 0.5, "easy": 0.25}
-MIN_GAP = {"hard": 0.5, "normal": 0.5, "easy": 1.0}
-PRIORITY = {"drums": 2.2, "bass": 1.1, "vocal": 0.9, "melodic": 0.9}
+# cues per beat for the focus voice in a drop; other section roles scale this down. Normal drums at 1.0 is the
+# kick and snare of a two-step bar (four hits); hard adds the hats and ghost notes.
+RATE = {"hard": {"drums": 1.75, "pitched": 1.25}, "normal": {"drums": 1.0, "pitched": 0.75},
+        "easy": {"drums": 0.5, "pitched": 0.4}}
+ROLE_FACTOR = {"drop": 1.0, "build": 0.9, "other": 0.85, "breakdown": 0.8, "intro": 0.75, "outro": 0.75}
+# minimum spacing in beats between two picked events of the part (two thumbs: hard may ask for 16ths that
+# alternate thumbs; the layout and resolve() keep one thumb at half a beat or more)
+MIN_GAP = {"hard": 0.25, "normal": 0.5, "easy": 1.0}
+CYCLE_BEATS = {"drums": 4, "bass": 8, "melodic": 16, "vocal": 16}
 SNAP_MS = 6.0          # an event this close to a 16th grid line is placed on the line
 MIN_REL_DB = -24.0     # voice level within 24 dB of the whole recording at the event
 MIN_OWN_DB = -30.0     # and within 30 dB of the voice's own loud level
@@ -87,6 +89,21 @@ class Event:
     score: float = 0.0
     audible: bool = True
     extra: dict = field(default_factory=dict)
+    height: float = float("nan")  # pitch (MIDI) or, for drum hits, log2 of the attack's spectral centroid
+    feat: list = field(default_factory=list)  # what tells one sound from another (see describe())
+
+    def to_json(self) -> dict:
+        return {"t": round(self.t, 4), "s": round(self.strength, 3), "rel": round(self.rel_db, 1),
+                "own": round(self.own_db, 1), "len": round(self.length, 3), "kind": self.kind, "pos": self.pos,
+                "dev": round(self.dev_ms, 1), "aud": self.audible,
+                "h": None if not np.isfinite(self.height) else round(self.height, 2),
+                "f": [round(float(v), 1) for v in self.feat], "x": self.extra}
+
+    @staticmethod
+    def from_json(d: dict) -> "Event":
+        return Event(t=d["t"], strength=d["s"], rel_db=d["rel"], own_db=d["own"], length=d["len"], kind=d["kind"],
+                     pos=d["pos"], dev_ms=d["dev"], audible=d["aud"], extra=dict(d.get("x", {})),
+                     height=float("nan") if d.get("h") is None else d["h"], feat=list(d.get("f", [])))
 
 
 def _level(env_db: np.ndarray, hop_s: float, t: float, span: float) -> float:
@@ -271,6 +288,68 @@ def _note_lengths(evs: list[Event], vdb: np.ndarray, hop_s: float, dur: float) -
         e.length = float(end * hop_s)
 
 
+# ---------------------------------------------------------------- height
+
+SAL_BPO = 36  # constant-Q bins per octave for the pitch salience
+
+
+def _salience(xm: np.ndarray, rate: int) -> tuple[np.ndarray, float, float]:
+    """Harmonic-summed constant-Q magnitude (C1 up, 8 octaves, 1/3 semitone): (salience, frames per s, MIDI of bin 0).
+    The bin with the most salience is the predominant pitch: robust on chords and stabs as well as single lines."""
+    import librosa
+    sr = 22050
+    hop = 256
+    y = librosa.resample(xm.astype(np.float32), orig_sr=rate, target_sr=sr)
+    fmin = float(librosa.note_to_hz("C1"))
+    C = np.abs(librosa.cqt(y, sr=sr, hop_length=hop, fmin=fmin, n_bins=SAL_BPO * 8, bins_per_octave=SAL_BPO))
+    sal = np.zeros_like(C)
+    for h, w in ((1, 1.0), (2, 0.8), (3, 0.6), (4, 0.5), (5, 0.4)):
+        off = int(round(SAL_BPO * np.log2(h)))
+        sal[: C.shape[0] - off] += w * C[off:]
+    return sal, sr / hop, float(librosa.hz_to_midi(fmin))
+
+
+def describe(evs: list[Event], x: np.ndarray, rate: int, kind: str) -> None:
+    """Set height and feat of every event (module doc, step 2)."""
+    if not evs:
+        return
+    xm = mono(x).astype(np.float32)
+    if kind == "drums":
+        import librosa
+        hop = 256
+        S = np.abs(librosa.stft(xm, n_fft=2048, hop_length=hop)) ** 2
+        f = librosa.fft_frequencies(sr=rate, n_fft=2048)
+        fps = rate / hop
+        lo, mid, hi = f < 150, (f >= 150) & (f < 2500), f >= 5000
+        for e in evs:
+            a = int(round(e.t * fps))
+            p = S[:, a:a + max(1, int(0.04 * fps))].mean(1) + 1e-12
+            tot = p.sum()
+            e.height = float(np.log2((p * f).sum() / tot + 1.0))
+            lv = [10 * np.log10(p[m].sum() / tot) for m in (lo, mid, hi)]
+            # band balance against the mid band: kick-like hits are high on the first, hat-like on the second
+            e.feat = [float(np.clip(lv[0] - lv[1], -40, 40)), float(np.clip(lv[2] - lv[1], -40, 40))]
+        return
+    if kind == "bass":
+        for e in evs:
+            p = e.extra.get("pitch")
+            if p:
+                e.height = float(p)
+                e.feat = [float(p)]
+        return
+    sal, fps, m0 = _salience(xm, rate)
+    for e in evs:
+        a = int((e.t + 0.02) * fps)
+        b = max(a + 1, int((e.t + 0.10) * fps) + 1)
+        if a >= sal.shape[1]:
+            continue
+        v = sal[:, a:b].mean(1)
+        if v.max() <= 0:
+            continue
+        e.height = float(m0 + int(np.argmax(v)) / (SAL_BPO / 12))
+        e.feat = [e.height]
+
+
 # ---------------------------------------------------------------- ranking
 
 def metric_weight(pos: float, dev_ms: float) -> float:
@@ -289,7 +368,8 @@ def metric_weight(pos: float, dev_ms: float) -> float:
 
 
 def rank(evs: list[Event], kind: str, sections: list[dict], beats_per_bar: int = 4) -> None:
-    """Score every event 0..1 (see module doc)."""
+    """Score every event 0..1 (see module doc). sections: the spans over which recurrence is counted (the
+    voice's focus stretches)."""
     if not evs:
         return
     s = np.array([e.strength for e in evs])
@@ -299,7 +379,7 @@ def rank(evs: list[Event], kind: str, sections: list[dict], beats_per_bar: int =
     cycle = 2 * beats_per_bar * 4  # 16ths in a 2-bar cycle
     sec_of = _section_index(evs, sections)
     recur = np.zeros(len(evs))
-    for si in set(sec_of):
+    for si in set(sec_of) - {-1}:  # events outside every section (stretch) get no recurrence
         idx = [i for i, x in enumerate(sec_of) if x == si]
         if not idx:
             continue
@@ -316,8 +396,11 @@ def rank(evs: list[Event], kind: str, sections: list[dict], beats_per_bar: int =
     for i, e in enumerate(evs):
         m = metric_weight(e.pos, e.dev_ms)
         if kind == "drums":
-            bonus = {"snare": 1.0, "kick": 0.7, "hat": 0.3}.get(e.kind, 0.5)
-            score = 0.25 * s_pct[i] + 0.10 * r_pct[i] + 0.35 * recur[i] + 0.15 * m + 0.15 * bonus
+            # the kit's backbone first: the low and the mid hits (kick- and snare-like by band level) carry the
+            # pattern of the bar; bright hits (hats) are what hard adds. Weighted above metric position so an
+            # off-beat kick (the "and" of 3 in a two-step) beats a hat on the beat.
+            bonus = {"snare": 1.0, "kick": 0.9, "hat": 0.2}.get(e.kind, 0.5)
+            score = 0.25 * s_pct[i] + 0.10 * r_pct[i] + 0.30 * recur[i] + 0.10 * m + 0.25 * bonus
         else:
             phrase = 1.0 if e.t - prev_t > 0.6 else 0.0
             held = min(1.0, e.length / 0.7)
@@ -333,13 +416,15 @@ def rank(evs: list[Event], kind: str, sections: list[dict], beats_per_bar: int =
 def _section_index(evs: list[Event], sections: list[dict]) -> list[int]:
     out = []
     for e in evs:
-        k = 0
+        k = -1
         for i, s in enumerate(sections):
             if s["start_s"] <= e.t < s["end_s"]:
                 k = i
                 break
         out.append(k)
     return out
+
+
 
 
 # ---------------------------------------------------------------- selection
@@ -352,12 +437,14 @@ class Cue:
     conf: float
     score: float
     voice: str
-    natural: float = 0.0  # note length before any shortening
+    natural: float = 0.0  # how long the note sounds (capped at the end of its focus stretch)
     ev: Event | None = None
-    prio: float = 0.0  # score weighted by the voice's priority: decides cross-pad conflicts
+    prio: float = 0.0     # decides playability conflicts: the higher survives
+    stretch: int = -1
 
     def as_json(self) -> dict:
-        return {"t": round(self.t, 4), "pad": self.pad, "dur": round(self.dur, 3), "conf": round(self.conf, 2)}
+        return {"t": round(self.t, 4), "pad": self.pad, "dur": round(self.dur, 3), "conf": round(self.conf, 2),
+                "voice": self.voice}
 
 
 def cue_time(e: Event, grid: Grid) -> float:
@@ -372,15 +459,12 @@ def confidence(e: Event, sep_quality: float) -> float:
     return float(np.clip(0.15 + 0.3 * sep_quality + 0.25 * min(1.0, e.strength) + 0.2 * a + 0.1 * g, 0, 1))
 
 
-CYCLE_BEATS = {"drums": 4, "bass": 8, "melodic": 16, "vocal": 16}
-
-
 def pattern_pick(evs: list[Event], quota: int, gap_beats: float, cycle_beats: int, B: float) -> list[Event]:
-    """Choose positions in the repeating cycle (2 bars for drums and bass, 4 bars for melodic and vocal parts),
+    """Choose positions in the repeating cycle (1 bar for drums, 2 for bass, 4 for melodic and vocal parts),
     best first by how strongly and how regularly the part plays there (summed score / number of cycles), then
     take every event at those positions: the same pattern in every cycle where the part plays it. Positions
     closer than gap_beats (cyclically) are not combined. Leftover budget goes to the best remaining events
-    (accents and one-off phrases), still keeping gap_beats between the voice's cues."""
+    (accents and one-off phrases), still keeping gap_beats between picked events."""
     if quota <= 0 or not evs:
         return []
     n16 = cycle_beats * 4
@@ -394,7 +478,7 @@ def pattern_pick(evs: list[Event], quota: int, gap_beats: float, cycle_beats: in
     slot_score = {sl: sum(e.score for e in es) / n_cycles for sl, es in by_slot.items()}
     chosen_slots: list[int] = []
     count = 0
-    for sl in sorted(slot_score, key=lambda k: -slot_score[k]):
+    for sl in sorted(slot_score, key=lambda k: (-slot_score[k], k)):
         if count >= quota:
             break
         if any(min((sl - c) % n16, (c - sl) % n16) < gap16 for c in chosen_slots):
@@ -404,42 +488,71 @@ def pattern_pick(evs: list[Event], quota: int, gap_beats: float, cycle_beats: in
         chosen_slots.append(sl)
         count += len(by_slot[sl])
     picked: list[Event] = []
-    for e in sorted((e for sl in chosen_slots for e in by_slot[sl]), key=lambda e: -e.score):
+    for e in sorted((e for sl in chosen_slots for e in by_slot[sl]), key=lambda e: (-e.score, e.t)):
         if all(abs(e.t - p.t) >= gap_beats * B - 1e-6 for p in picked):
             picked.append(e)
-    for e in sorted(evs, key=lambda e: -e.score):
+    for e in sorted(evs, key=lambda e: (-e.score, e.t)):
         if len(picked) >= quota:
             break
         if e not in picked and all(abs(e.t - p.t) >= gap_beats * B - 1e-6 for p in picked):
             picked.append(e)
-    return picked
+    return sorted(picked, key=lambda e: e.t)
 
 
-def select(voice_events: dict[str, list[Event]], pads: dict[str, int], kinds: dict[str, str],
-           sections: list[dict], grid: Grid, duration: float, sep_quality: dict[str, float],
-           pool: dict[str, set] | None, diff: str) -> list[Cue]:
-    """Pick cues per section and voice up to the budget, best score first, keeping the voice's own spacing.
-    pool (voice -> event times allowed) restricts the choice to a harder chart's cues."""
+def stretch_role(st: dict, sections: list[dict]) -> str:
+    best, role = 0.0, "other"
+    for s in sections:
+        ov = min(st["end_s"], s["end_s"]) - max(st["start_s"], s["start_s"])
+        if ov > best:
+            best, role = ov, s["role"]
+    return role
+
+
+def stretch_events(evs: list[Event], st: dict, duration: float, B: float) -> list[Event]:
+    """Audible events of the stretch's voice that can carry a cue: inside the stretch (not in its last quarter
+    beat, so even a tap belongs to it), after the first second and before the last 0.6 s."""
+    return [e for e in evs if e.audible and st["start_s"] <= e.t < st["end_s"] - 0.25 * B
+            and 1.0 <= e.t <= duration - 0.6]
+
+
+def build_charts(voice_events: dict[str, list[Event]], focus: list[dict], kinds: dict[str, str],
+                 sections: list[dict], grid: Grid, duration: float, sep_quality: dict[str, float]
+                 ) -> tuple[dict[str, list[Cue]], list[dict]]:
+    """Charts easy / normal / hard and, per stretch, the pad layout (see layout.py) with its reasons."""
+    from layout import layout_stretch
     B = grid.beat_s
-    chosen: list[Cue] = []
-    for sec in sections:
-        beats = (sec["end_s"] - sec["start_s"]) / B
-        total = BUDGET[diff] * ROLE_FACTOR.get(sec["role"], 0.6) * beats
-        avail = {}
-        for v, evs in voice_events.items():
-            ok = [e for e in evs if e.audible and sec["start_s"] <= e.t < sec["end_s"]
-                  and 1.0 <= e.t <= duration - 0.6 and (pool is None or round(e.t, 4) in pool[v])]
-            avail[v] = ok
-        w = {v: PRIORITY.get(kinds[v], 1.0) * np.sqrt(len(ok) / max(beats, 1)) for v, ok in avail.items()}
-        wsum = sum(w.values()) or 1.0
-        for v, ok in avail.items():
-            quota = int(round(min(total * w[v] / wsum, VOICE_CAP[diff] * beats)))
-            for e in pattern_pick(ok, quota, MIN_GAP[diff], CYCLE_BEATS.get(kinds[v], 8), B):
-                chosen.append(Cue(t=cue_time(e, grid), pad=pads[v], dur=0.0, conf=confidence(e, sep_quality.get(v, 0.5)),
-                                  score=e.score, voice=v, natural=e.length, ev=e,
-                                  prio=e.score * PRIORITY.get(kinds[v], 1.0)))
-    chosen.sort(key=lambda c: (c.t, c.pad))
-    return chosen
+    charts: dict[str, list[Cue]] = {}
+    layouts: list[dict] = []
+    pad_of: dict[tuple[int, float], int] = {}
+    pool: set | None = None
+    for diff in DIFFICULTIES:
+        cues: list[Cue] = []
+        for si, st in enumerate(focus):
+            v = st["voice"]
+            kind = kinds[v]
+            evs = [e for e in stretch_events(voice_events[v], st, duration, B)
+                   if pool is None or (si, round(e.t, 4)) in pool]
+            beats = (st["end_s"] - st["start_s"]) / B
+            r = RATE[diff]["drums" if kind == "drums" else "pitched"] * ROLE_FACTOR.get(stretch_role(st, sections), 0.85)
+            picked = pattern_pick(evs, int(round(r * beats)), MIN_GAP[diff], CYCLE_BEATS.get(kind, 8), B)
+            if diff == "hard":
+                lay = layout_stretch(picked, kind, B)
+                lay["stretch"] = si
+                layouts.append(lay)
+                for e, p in zip(picked, lay["pads"]):
+                    pad_of[(si, round(e.t, 4))] = p
+            for e in picked:
+                cues.append(Cue(t=cue_time(e, grid), pad=pad_of[(si, round(e.t, 4))], dur=0.0,
+                                conf=confidence(e, sep_quality.get(v, 0.5)), score=e.score, voice=v,
+                                natural=max(0.0, min(e.length, st["end_s"] - 0.01 - cue_time(e, grid))),
+                                ev=e, prio=e.score, stretch=si))
+        cues.sort(key=lambda c: (c.t, c.pad))
+        cues = resolve(cues, B, duration, {"bass", "melodic", "vocal"}, kinds)
+        charts[diff] = cues
+        pool = {(c.stretch, round(c.ev.t, 4)) for c in cues}
+    for lay in layouts:
+        lay.pop("pads", None)
+    return charts, layouts
 
 
 def resolve(cues: list[Cue], beat_s: float, duration: float, hold_kinds: set[str], kinds: dict[str, str]) -> list[Cue]:
@@ -448,12 +561,11 @@ def resolve(cues: list[Cue], beat_s: float, duration: float, hold_kinds: set[str
     until there is nothing to drop."""
     B = beat_s
     keep: list[Cue] = []
-    for c in sorted(cues, key=lambda c: -c.prio):
+    for c in sorted(cues, key=lambda c: (-c.prio, c.t)):
         c.dur = 0.0
         if not playability_violations([x.as_json() for x in sorted(keep + [c], key=lambda x: (x.t, x.pad))], 60.0 / B):
             keep.append(c)
     keep.sort(key=lambda c: (c.t, c.pad))
-    # holds
     for i, c in enumerate(keep):
         if kinds.get(c.voice) not in hold_kinds or c.natural < HOLD_MIN_BEATS * B:
             continue
@@ -480,16 +592,3 @@ def resolve(cues: list[Cue], beat_s: float, duration: float, hold_kinds: set[str
         else:
             keep.pop(worst)
     return keep
-
-
-def build_charts(voice_events: dict[str, list[Event]], pads: dict[str, int], kinds: dict[str, str],
-                 sections: list[dict], grid: Grid, duration: float, sep_quality: dict[str, float]) -> dict[str, list[Cue]]:
-    hold_kinds = {"bass", "melodic", "vocal"}
-    charts: dict[str, list[Cue]] = {}
-    pool = None
-    for diff in DIFFICULTIES:
-        cues = select(voice_events, pads, kinds, sections, grid, duration, sep_quality, pool, diff)
-        cues = resolve(cues, grid.beat_s, duration, hold_kinds, kinds)
-        charts[diff] = cues
-        pool = {v: {round(c.ev.t, 4) for c in cues if c.voice == v} for v in voice_events}
-    return charts

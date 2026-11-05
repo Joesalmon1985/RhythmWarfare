@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Check a track pack against docs/TRACK_PACK_FORMAT.md. Needs only numpy and ffmpeg/ffprobe.
+"""Check a track pack against docs/TRACK_PACK_FORMAT.md (version 2: voices with a kind and no pad, a focus
+timeline, cues that carry their voice). Needs only numpy and ffmpeg/ffprobe.
 
     python3 tools/audio_import/validate_track.py /home/joe/rw-audio-work/packs/<id> [--recording FILE]
         [--sum-tol-db -30] [--quick]
 
-Exits 1 on any violation, 0 otherwise, after printing every problem found and per-voice cue counts and
-densities. The recording (for the 'stems sum to the recording' and alignment checks) is taken from
+Exits 1 on any violation, 0 otherwise, after printing every problem found, the focus timeline and per-voice cue
+counts, rates over the voice's focus time and pad use. The recording (for the 'stems sum to the recording' and alignment checks) is taken from
 --recording or from source.input_path in track.json; if neither can be read that check is reported as skipped.
 --quick skips decoding the audio (header, voices, sections and charts only).
 """
@@ -23,7 +24,8 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from audio_io import PACK_RATE, db, decode, frame_rms, probe  # noqa: E402
 
-FORMAT = "rhythm_warfare.track.v1"
+FORMAT = "rhythm_warfare.track.v2"
+KINDS = {"drums", "pitched"}
 KEY_RE = re.compile(r"^[a-z0-9_]+$")
 ROLES = {"intro", "build", "drop", "breakdown", "outro", "other"}
 EPS = 1e-6  # same float slack as the game loader (src/track/track_pack.gd): a gap of exactly half a beat is allowed
@@ -98,12 +100,9 @@ def check_structure(pack: Path, tj: dict, r: Report) -> None:
         r.err(f"duration_s {dur!r} is not > 0")
     voices = tj.get("voices")
     backing = tj.get("backing", [])
-    if not isinstance(voices, list) or len(voices) != 4:
-        r.err(f"voices must have exactly 4 entries, has {len(voices) if isinstance(voices, list) else voices!r}")
+    if not isinstance(voices, list) or not 1 <= len(voices) <= 6:
+        r.err(f"voices must have one to six entries, has {len(voices) if isinstance(voices, list) else voices!r}")
         voices = voices if isinstance(voices, list) else []
-    pads = [v.get("pad") for v in voices if isinstance(v, dict)]
-    if sorted(p for p in pads if isinstance(p, int)) != [1, 2, 3, 4] or len(pads) != 4:
-        r.err(f"voice pads are {pads}, must be 1, 2, 3 and 4 once each")
     if not isinstance(backing, list):
         r.err("backing must be a list")
         backing = []
@@ -121,6 +120,10 @@ def check_structure(pack: Path, tj: dict, r: Report) -> None:
                 lab = v.get("label")
                 if not isinstance(lab, str) or not lab or len(lab) > 24:
                     r.err(f"voice {k}: label {lab!r} must be a short non-empty string")
+                if v.get("kind") not in KINDS:
+                    r.err(f"voice {k}: kind {v.get('kind')!r} must be one of {sorted(KINDS)}")
+                if "pad" in v:
+                    r.err(f"voice {k}: has a pad ({v['pad']!r}); in format v2 a voice has no pad of its own")
             g = v.get("gain", 1.0)
             if not _num(g) or not 0 <= g <= 2:
                 r.err(f"{kind} {k}: gain {g!r} not in 0..2")
@@ -164,6 +167,8 @@ def check_structure(pack: Path, tj: dict, r: Report) -> None:
     rules = tj.get("rules", {})
     if not isinstance(rules, dict) or not _num(rules.get("restore_after_idle_beats", 8)) or rules.get("restore_after_idle_beats", 8) <= 0:
         r.err("rules.restore_after_idle_beats must be a positive number")
+    vkeys = {v.get("key") for v in voices if isinstance(v, dict)}
+    focus = check_focus(tj.get("focus"), vkeys, dur if _num(dur) else None, tempo["bpm"], r)
     charts = tj.get("charts")
     if not isinstance(charts, dict) or tj.get("default_chart") not in charts:
         r.err(f"default_chart {tj.get('default_chart')!r} not among charts {list(charts) if isinstance(charts, dict) else charts!r}")
@@ -191,12 +196,52 @@ def check_structure(pack: Path, tj: dict, r: Report) -> None:
                 r.err(f"chart {name} cue {i}: t {cu['t']} is in the first second")
             if _num(dur) and cu["t"] + cu["dur"] > dur - 0.5 + 1e-9:
                 r.err(f"chart {name} cue {i}: ends at {cu['t'] + cu['dur']:.3f}, after duration - 0.5 s")
-            if i and cu["t"] < cues[i - 1]["t"]:
+            if i and _num(cues[i - 1].get("t")) and cu["t"] < cues[i - 1]["t"]:
                 r.err(f"chart {name} cue {i}: not sorted by t ({cu['t']} after {cues[i - 1]['t']})")
                 ok = False
+            if cu.get("voice") not in vkeys:
+                r.err(f"chart {name} cue {i}: voice {cu.get('voice')!r} is not one of the voices")
+                continue
+            if focus is not None:
+                st = next((f for f in focus if f["start_s"] - EPS <= cu["t"] < f["end_s"] - EPS), None)
+                if st is None:
+                    r.err(f"chart {name} cue {i} (t={cu['t']:.3f}): outside every focus stretch")
+                elif st["voice"] != cu["voice"]:
+                    r.err(f"chart {name} cue {i} (t={cu['t']:.3f}): voice {cu['voice']} but the focus there is {st['voice']}")
+                elif cu["t"] + cu["dur"] > st["end_s"] + EPS:
+                    r.err(f"chart {name} cue {i} (t={cu['t']:.3f}): hold ends at {cu['t'] + cu['dur']:.3f}, after its "
+                          f"focus stretch ({st['end_s']:.3f})")
         if ok:
             for i, msg in playability_violations(cues, tempo["bpm"]):
                 r.err(f"chart {name} cue {i} (t={cues[i]['t']:.3f}): {msg}")
+
+
+def check_focus(focus, vkeys: set, dur: float | None, bpm: float, r: Report) -> list[dict] | None:
+    """The focus rules; returns the stretches when they can be used to check cues, else None."""
+    if not isinstance(focus, list) or not focus:
+        r.err("focus must be a list with at least one stretch")
+        return None
+    B = 60.0 / bpm
+    prev_end = -math.inf
+    good = True
+    for i, f in enumerate(focus):
+        if not isinstance(f, dict) or not (_num(f.get("start_s")) and _num(f.get("end_s"))):
+            r.err(f"focus stretch {i}: needs numeric start_s and end_s: {f!r}")
+            good = False
+            continue
+        a, b = f["start_s"], f["end_s"]
+        if f.get("voice") not in vkeys:
+            r.err(f"focus stretch {i}: voice {f.get('voice')!r} is not one of the voices")
+            good = False
+        if b - a < 8 * B - EPS:
+            r.err(f"focus stretch {i} {a:.3f}..{b:.3f}: {(b - a) / B:.2f} beats, shorter than 8 beats")
+        if a < -EPS or (dur is not None and b > dur + EPS):
+            r.err(f"focus stretch {i} {a:.3f}..{b:.3f} not inside the track")
+        if a < prev_end - EPS:
+            r.err(f"focus stretch {i} starts at {a:.3f} before the previous one ends ({prev_end:.3f}) or out of order")
+            good = False
+        prev_end = max(prev_end, b)
+    return focus if good else None
 
 
 def check_audio(pack: Path, tj: dict, r: Report, recording: str | None, sum_tol_db: float) -> dict:
@@ -277,15 +322,14 @@ def check_audio(pack: Path, tj: dict, r: Report, recording: str | None, sum_tol_
         r.note("SKIPPED: stems-sum-to-recording and alignment (no readable recording; pass --recording)")
     # every cue on sound in its own voice
     mix_db = db(frame_rms(total.mean(1), PACK_RATE, 0.01, 0.02))
-    pad_key = {v["pad"]: v["key"] for v in tj["voices"]}
     vdb = {k: db(frame_rms(m, PACK_RATE, 0.01, 0.02)) for k, m in monos.items()}
     loud = {k: float(np.percentile(e, 95)) for k, e in vdb.items()}
     stats["silent_cues"] = {}
     for name, cues in tj["charts"].items():
         bad = 0
         for i, c in enumerate(cues):
-            k = pad_key.get(c["pad"])
-            if k is None:
+            k = c.get("voice")
+            if k not in vdb:
                 continue
             e = vdb[k]
             a = max(0, int((c["t"] - 0.02) / 0.01))
@@ -303,29 +347,30 @@ def check_audio(pack: Path, tj: dict, r: Report, recording: str | None, sum_tol_
                     problem = f"hold over near-silence (median {np.median(h) - loud[k]:.1f} dB)"
             if problem:
                 bad += 1
-                r.err(f"chart {name} cue {i} (t={c['t']:.3f}, pad {c['pad']} {k}): voice silent there: {problem}")
+                r.err(f"chart {name} cue {i} (t={c['t']:.3f}, {k} pad {c['pad']}): voice silent there: {problem}")
         stats["silent_cues"][name] = bad
     return stats
 
 
 def densities(tj: dict) -> list[str]:
     bpm = tj["tempo"]["bpm"]
+    B = 60.0 / bpm
     dur = tj["duration_s"]
-    beats = dur * bpm / 60
-    lines = []
-    keys = {v["pad"]: v["key"] for v in tj["voices"]}
+    lines = ["focus: " + ", ".join(f"{f['voice']} {f['start_s']:.1f}-{f['end_s']:.1f}" for f in tj["focus"])]
     for name, cues in tj["charts"].items():
         lines.append(f"chart {name}{' (default)' if name == tj.get('default_chart') else ''}: {len(cues)} cues, "
-                     f"{len(cues) / dur:.2f}/s, {len(cues) / beats:.3f}/beat")
-        for p in (1, 2, 3, 4):
-            cs = [c for c in cues if c["pad"] == p]
+                     f"{len(cues) / dur:.2f}/s, {len(cues) / (dur / B):.3f}/beat over the whole track")
+        for v in tj["voices"]:
+            k = v["key"]
+            span = sum(f["end_s"] - f["start_s"] for f in tj["focus"] if f["voice"] == k)
+            cs = [c for c in cues if c.get("voice") == k]
             holds = sum(1 for c in cs if c["dur"] > 0)
-            lines.append(f"  pad {p} {keys.get(p, '?'):<10} {len(cs):4d} cues ({holds} holds) "
-                         f"{len(cs) / dur * 60:6.1f}/min {len(cs) / beats:.3f}/beat")
+            pads = [sum(1 for c in cs if c["pad"] == p) for p in (1, 2, 3, 4)]
+            rate = f"{len(cs) / (span / B):.3f}/beat of its focus" if span > 0 else "no focus"
+            lines.append(f"  {k:<10} {len(cs):4d} cues ({holds} holds), {rate}, pads 1-4 {pads}")
         if len(cues) > 1:
             ts = np.array([c["t"] for c in cues])
-            together = int(np.sum(np.diff(ts) < 0.03))
-            lines.append(f"  two pads together: {together} times")
+            lines.append(f"  two pads together: {int(np.sum(np.diff(ts) < 0.03))} times")
     return lines
 
 
@@ -342,7 +387,10 @@ def validate(pack: str | Path, recording: str | None = None, sum_tol_db: float =
     except json.JSONDecodeError as e:
         r.err(f"track.json is not JSON: {e}")
         return r, {}
-    check_structure(pack, tj, r)
+    try:
+        check_structure(pack, tj, r)
+    except (KeyError, TypeError, AttributeError, ValueError) as e:  # a malformed file must not crash the check
+        r.err(f"track.json structure unreadable: {type(e).__name__}: {e}")
     stats: dict = {}
     if not quick and not r.errors:
         stats = check_audio(pack, tj, r, recording, sum_tol_db)
