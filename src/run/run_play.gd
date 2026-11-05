@@ -1025,6 +1025,11 @@ func hotspot_select(id: String) -> bool:
 	return ok
 
 
+## True when a world-state flag is set (this run's or a kept discovery).
+func run_flag_set(name: String) -> bool:
+	return Session.run_progress.has_flag(name)
+
+
 ## A touch or click at `pos` (viewport coordinates). Only the stage area counts (the pads are below it and never reach this), and never a point over a pad. The nearest hotspot within its projected
 ## radius, at least min_px wide, is selected. Returns the id selected ("" for a tap on nothing).
 func hotspot_tap(pos: Vector2) -> String:

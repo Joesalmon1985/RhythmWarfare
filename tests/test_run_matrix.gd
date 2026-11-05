@@ -4,6 +4,9 @@ extends TestCase
 ## StoryPlayer and checks the camera is always in a valid sector, and checks no move starts outside the cue-free guard or lasts outside 2 to 4 bars or sits on dense cues.
 ## A phase is a scene (a room of a world); the run records the worlds and scenes visited, the phases survived and the rails.
 ## The numbers are written to user://run_matrix.txt for the docs (docs/CONTINUOUS_RUN.md).
+## The route window is the hotspot window: the player taps through RunHotspots under a tap policy (RW_RUN_TAPS=scripted (default: seed 1 taps nothing, seed 2 the second exit, seed 3 a random one) |
+## none (never taps: the default exits) | changed (a decoy first, then the seed's pick) | failure (scripted taps and the last block of every phase missed: every tapped hotspot fails)); the
+## hotspots' cinematics are given to the journey like the scene does, so they are checked for guards, bars, density and valid sectors too.
 
 const BPM := 174.0
 const BEAT := 60.0 / 174.0
@@ -20,8 +23,11 @@ func _map(world: String) -> StoryMap:
 
 
 ## One scripted run. Returns {over, phases, depth, energy, nodes, places, kinds, moves, camera_bad, dense, bad_starts, glances, log}.
-func _simulate(policy: String, seed: int, data: RunData) -> Dictionary:
+func _simulate(policy: String, seed: int, data: RunData, taps := "") -> Dictionary:
+	if taps == "":
+		taps = OS.get_environment("RW_RUN_TAPS") if OS.get_environment("RW_RUN_TAPS") != "" else "scripted"
 	var e := RunEngine.new(data)
+	e.hotspots = RunHotspots.new(data, {}, {})
 	e.begin("warehouse")
 	var j := RunJourney.new(data)
 	var rng := RandomNumberGenerator.new()
@@ -51,11 +57,22 @@ func _simulate(policy: String, seed: int, data: RunData) -> Dictionary:
 	var places := {}
 	var actions: Array = []
 	var max_phase := 0
+	var commits := 0
+	var failures := 0
+	var cinematics := 0
 	while t < end_t and not e.over:
 		var events := e.update(t)
 		for ev in events:
 			if str(ev["kind"]) in ["phase_start", "block_result"]:
 				actions.append_array(j.on_event(ev, e))
+			if str(ev["kind"]) == "hotspot_commit":
+				var oc: Dictionary = ev["outcome"]
+				commits += 1
+				if not bool(oc["success"]):
+					failures += 1
+				if not (oc["cinematic"] as Dictionary).is_empty():
+					cinematics += 1
+					actions.append_array(j.hotspot_actions(oc["cinematic"], float(ev["t"]), e, Callable(), bool(oc["continued"]) or str(oc["window"]) == "early"))
 			if str(ev["kind"]) == "phase_start":
 				nodes.append(str(ev["node"]))
 				depth = maxi(depth, int(ev["depth"]))
@@ -64,6 +81,8 @@ func _simulate(policy: String, seed: int, data: RunData) -> Dictionary:
 		while next_i < e.level.notes.size() and float(e.level.notes[next_i]["time"]) <= t + 0.2:
 			var n: Dictionary = e.level.notes[next_i]
 			var hit := rng.randf() < hit_p
+			if taps == "failure" and int(n["block"]) == 3:
+				hit = false
 			var at := float(n["time"]) + (rng.randf_range(-jitter, jitter) if jitter > 0.0 else 0.0)
 			plan[next_i] = {"hit": hit, "at": at}
 			next_i += 1
@@ -84,10 +103,13 @@ func _simulate(policy: String, seed: int, data: RunData) -> Dictionary:
 		if e.window_open and not routes_done.has(e.phase_n) and e.phase_beat_at(t) > 52.0:
 			routes_done[e.phase_n] = true
 			var opts := e.options()
-			if seed == 2:
-				e.choose(str((opts[mini(1, opts.size() - 1)] as Dictionary)["to"]))
-			elif seed == 3:
-				e.choose(str((opts[rng.randi() % opts.size()] as Dictionary)["to"]))
+			if taps == "changed":  # a decoy first (the other exit), then the seed's pick below
+				e.choose(str((opts[opts.size() - 1] as Dictionary)["to"]))
+			if taps != "none":
+				if seed == 2:
+					e.choose(str((opts[mini(1, opts.size() - 1)] as Dictionary)["to"]))
+				elif seed == 3:
+					e.choose(str((opts[rng.randi() % opts.size()] as Dictionary)["to"]))
 		# a path inside the world: the door walk starts three beats before the phase ends (the run scene latches it once per phase)
 		if e.window_open and door_done != e.phase_n and e.phase_beat_at(t) >= 61.0:
 			door_done = e.phase_n
@@ -141,7 +163,7 @@ func _simulate(policy: String, seed: int, data: RunData) -> Dictionary:
 		if worlds_seen.is_empty() or worlds_seen[worlds_seen.size() - 1] != wid:
 			worlds_seen.append(wid)
 	return {"worlds": worlds_seen, "over": e.over, "phases": max_phase, "depth": depth, "energy": e.energy, "nodes": nodes, "places": places, "kinds": kinds, "moves": moves, "camera_bad": camera_bad,
-		"samples": samples, "dense": dense, "bad_starts": bad_starts, "bad_bars": bad_bars, "glances": glances, "log": j.log}
+		"samples": samples, "dense": dense, "bad_starts": bad_starts, "bad_bars": bad_bars, "glances": glances, "log": j.log, "commits": commits, "failures": failures, "cinematics": cinematics, "taps": taps}
 
 
 func test_policy_matrix_survival_depth_rails_and_camera() -> void:
@@ -196,3 +218,26 @@ func test_policy_matrix_survival_depth_rails_and_camera() -> void:
 		d9 += float(by["accuracy:0.9/%d" % seed]["phases"])
 		d5 += float(by["accuracy:0.5/%d" % seed]["phases"])
 	assert_true(d9 >= d5, "better play goes at least as far as sloppy play")
+
+
+func test_tap_policies_commit_inside_the_guard_and_keep_every_journey_valid() -> void:
+	var data := RunData.load_default()
+	for taps in ["none", "scripted", "changed", "failure"]:
+		for policy in ["perfect", "accuracy:0.8"]:
+			var r := _simulate(policy, 3, data, taps)
+			var tag := "%s taps, %s" % [taps, policy]
+			assert_eq(r["camera_bad"], 0, "%s: the camera is always in a valid sector" % tag)
+			assert_eq(r["bad_starts"], 0, "%s: every move (cinematics included) starts in a cue-free guard" % tag)
+			assert_eq(r["bad_bars"], 0, "%s: every move lasts 2 to 4 bars" % tag)
+			assert_eq(r["dense"], 0, "%s: no move sits on dense cues" % tag)
+			assert_true(int(r["commits"]) >= 1, "%s: hotspots commit (%d)" % [tag, int(r["commits"])])
+			var seq: Array = r["nodes"]
+			for k in range(1, seq.size()):
+				var ok := false
+				for e2 in data.nodes[str(seq[k - 1])]["next"]:
+					ok = ok or str(e2["to"]) == str(seq[k])
+				assert_true(ok, "%s: %s leads to %s" % [tag, seq[k - 1], seq[k]])
+			if taps == "failure" and policy == "perfect":
+				assert_true(int(r["failures"]) >= 1, "failure taps: the tapped hotspots fail (%d of %d)" % [int(r["failures"]), int(r["commits"])])
+			if taps == "scripted" and policy == "perfect":
+				assert_eq(int(r["failures"]), 0, "perfect play passes every last block")
