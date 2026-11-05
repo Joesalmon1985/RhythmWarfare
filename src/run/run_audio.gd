@@ -6,6 +6,9 @@ extends StemTransport
 ## sits on the grid to within a mix chunk and never drifts (every loop is a whole number of frames long). Bass and Synth are started
 ## together at the reveal and then keep running whatever the foreground is; the drums run from the phase downbeat.
 ##
+## A scene may play several LAPS (docs/CONTINUOUS_RUN.md "Two laps"): the next lap is no phase change here. The engine's `lap_start` event schedules nothing: the voices simply go on (every loop tiles a lap), the gains stay
+## where the stage mix put them, and a bass first revealed on the lap's downbeat is the ordinary `reveal` item.
+##
 ## A scene may play an ARRANGEMENT (content/music/arrangements, resolved by RunData into node.sections): two 8-bar sections or one 16-bar over its 64-beat phase.
 ## A section switch is another scheduled item on the same grid: at the section's first beat the previous section's voices stop and the new pack's voices start with the same
 ## lateness compensation as a phase start (drums from the section downbeat; bass and synth too once the bass has been revealed), so a voice group per section, no restart of
@@ -406,7 +409,7 @@ func _begin_phase(ev: Dictionary, t: float, now: float, ttnm: float) -> void:
 		prev["carry"] = true
 		prev["voices"]["bass"]["target"] = _carry_target()
 		_schedule_add({"t": t + float(carry.get("beats", 16.0)) * beat_s, "kind": "carry_end"})
-	var k := int(ev["phase"]) % 2
+	var k := (int(ev["phase"]) - int(ev.get("lap_extra", 0))) % 2  # (scenes alternate the two bus pairs; the extra laps of a scene stay on the pair it began on)
 	var pair: Array = BUS_PAIRS[k]
 	_apply_treatment(pair, str(ev["treatment"]))
 	_apply_bass_bus(str(TONE_BUSES[k]), node.get("bass_bus", {}))

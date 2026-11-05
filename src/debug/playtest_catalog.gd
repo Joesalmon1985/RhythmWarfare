@@ -77,7 +77,7 @@ static func scene_info(data: RunData, scene_id: String) -> Dictionary:
 	var audio := _audio(data, node)
 	return {"run": run_id, "run_title": "Main run" if run_id == "main" else str(data.path_info.get("title", run_id)), "id": scene_id, "title": str(node["title"]), "world": str(node["world"]),
 		"world_title": str(node["world_title"]), "map": str(node["map"]), "depth": depth, "tier": mini(depth, RunData.TIERS), "role": str(node.get("role", "")), "entry": bool(node["entry"]),
-		"exit": bool(node["exit_scene"]), "bpm": int(data.cfg["timing"]["bpm"]), "phase_beats": int(data.cfg["timing"]["phase_beats"]), "audio": audio, "mix": _mix(data, node), "visual": _visual(data, node)}
+		"exit": bool(node["exit_scene"]), "bpm": int(data.cfg["timing"]["bpm"]), "phase_beats": int(data.cfg["timing"]["phase_beats"]), "laps": int(node.get("laps", 1)), "audio": audio, "mix": _mix(data, node), "visual": _visual(data, node)}
 
 
 ## "The 174 BPM main run" / path title, then the world and scene, for headings.
@@ -340,7 +340,8 @@ static func shared_text(v: Dictionary) -> String:
 static func audio_sections(info: Dictionary) -> Array:
 	var a: Dictionary = info["audio"]
 	var out: Array = []
-	var head: Array = ["Source: %s" % str(a["source_label"]), "Tempo %d BPM, phase %d beats, difficulty tier %d%s" % [int(info["bpm"]), int(info["phase_beats"]), int(a["tier"]), "" if str(a["arrangement"]) == "" else ", arrangement %s" % str(a["arrangement"])]]
+	var laps := int(info.get("laps", 1))
+	var head: Array = ["Source: %s" % str(a["source_label"]), "Tempo %d BPM, %s, difficulty tier %d%s" % [int(info["bpm"]), ("phase %d beats" % int(info["phase_beats"])) if laps <= 1 else ("%d laps of %d beats (%d beats, the route window only in the last)" % [laps, int(info["phase_beats"]), laps * int(info["phase_beats"])]), int(a["tier"]), "" if str(a["arrangement"]) == "" else ", arrangement %s" % str(a["arrangement"])]]
 	if (a["arrangement_ids"] as Array).size() > 1:
 		head.append("Arrangement %d of %d (%s): %s" % [int(a["arrangement_pick"]) + 1, (a["arrangement_ids"] as Array).size(), ", ".join(PackedStringArray(a["arrangement_ids"])),
 			("chosen in the Debug options" if RunData.arrangement_override >= 0 else "picked by the per-run seed %d, as the game does" % int(a["seed"]))])
