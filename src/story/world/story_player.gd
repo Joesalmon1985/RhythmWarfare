@@ -32,6 +32,7 @@ var _sick: Array = []  # {t0, t1}
 var _glances: Array = []  # {t0, t1, by, pitch}: authored head turns (yaw `by` and/or pitch up) on top of the rail's facing
 var _faces: Array = []  # {t0, t1, pts: [Vector4 (x, z, 1 for the one to keep, height or NAN)], turn_s, release_s}: the head held on points of the room (player_look `face`), whatever the rail does underneath
 var _seq := 0
+var _face_memo := {"t": NAN}  # the last face facing worked out ({t, yaw}): pose_at is asked for the same t several times a frame
 
 
 func setup(p_map: StoryMap, p_bpm: float) -> void:
@@ -47,6 +48,7 @@ func reset() -> void:
 	_sick = []
 	_glances = []
 	_faces = []
+	_face_memo = {"t": NAN}
 	_seq = 0
 	errors = []
 
@@ -79,6 +81,7 @@ func apply_action(a: Dictionary) -> bool:
 					pts.append(Vector4(float(fa[0]), float(fa[1]), float(fa[2]) if fa.size() > 2 else 0.0, float(fa[3]) if fa.size() > 3 else NAN))
 				var tot := maxf(dur, 0.001)
 				var turn := clampf(float(args.get("turn_bars", 1.0)) * bar_s(), 0.001, tot)
+				_face_memo = {"t": NAN}
 				_faces.append({"t0": t0, "t1": t0 + tot, "pts": pts, "turn_s": turn, "release_s": clampf(float(args.get("release_bars", 1.0)) * bar_s(), 0.001, tot)})
 				return true
 			if args.has("by") or args.has("pitch"):  # a glance: the head turns `by` degrees (and tips `pitch` up, negative down) from wherever the rail faces and comes back; it never touches the route
@@ -110,6 +113,7 @@ func _add(ev: Dictionary) -> void:
 
 ## Every event starts from where the one before it had got to at that moment (so a move can interrupt a move, and events may arrive out of order).
 func _rebuild() -> void:
+	_face_memo = {"t": NAN}
 	errors = []
 	var st := _initial_state()
 	var prev: Dictionary = {}
@@ -560,7 +564,11 @@ func pose_at(t: float) -> Dictionary:
 	var face_pitch := 0.0
 	if not _faces.is_empty():
 		var fc := face_at(t)
-		var fy := _face_yaw(fc["pts"], t) if float(fc["w"]) > 0.0 else NAN
+		var fy := NAN
+		if float(fc["w"]) > 0.0:
+			if float(_face_memo["t"]) != t:
+				_face_memo = {"t": t, "yaw": _face_yaw(fc["pts"], t)}
+			fy = float(_face_memo["yaw"])
 		if not is_nan(fy):
 			var fw := float(fc["w"])
 			if cut:
