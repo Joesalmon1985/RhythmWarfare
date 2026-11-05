@@ -80,7 +80,7 @@ def build():
     qy.actor("dock3", "civilian_city", "b", 4.0, 3.0)
 
     # ---- the neutral coast (C13) ------------------------------------------------------------------------------------------------------------------------------------
-    co = mb.room("coast", (22, 0, 44, 14), -90, "coast", floor_tex=floor_sand, ceil_tex=ceil_sky_day, wall_tex=wall_dunes, ceiling=4.5, light=0.95, tint="#fff4d0", activities=QUIET_STAND)
+    co = mb.room("coast", (22, 0, 44, 14), -90, "coast", floor_tex=floor_sand, ceil_tex=ceil_sky_day, wall_tex=wall_dunes, ceiling=4.5, light=0.78, tint="#f4ecd8", activities=QUIET_STAND)
     co.standard_rail("c13", home=(2.2, 0), good=((5.0, -1.5), (9.0, 1.0)), bad=((1.5, 3.5), (2.8, -3.5)), arrive=(0.7, 0))
     co.wp("c13_x_up", 17.0, 0.0, 0)  # the shore
     co.thing("shore_boat", T("thing_shore_boat", "billboard", "the small fishing boat pulled up on the sand in bright sun, blue and white paint, nets drying, 256x128", 1.0, 256), 12.0, -3.2, 0.9, 2.2)

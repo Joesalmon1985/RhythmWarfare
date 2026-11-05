@@ -939,10 +939,10 @@
    "kind": "billboard",
    "sprite": "piece_rider_shadow",
    "at": [
-    24.0,
+    18.9,
     -18.4
    ],
-   "size": 1.8,
+   "size": 2.0,
    "anim": "none",
    "y": 1.6,
    "piece": "rider_shadow",
@@ -1040,10 +1040,10 @@
   },
   {
    "actor": "bram_f",
-   "sector": "o_bank",
+   "sector": "o_ford",
    "at": [
-    -1.3,
-    -25.0
+    -1.0,
+    -28.8
    ]
   },
   {

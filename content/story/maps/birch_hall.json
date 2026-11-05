@@ -583,16 +583,16 @@
    "actor": "warden_h",
    "sector": "bh_hall",
    "at": [
-    3.4,
-    8.2
+    2.2,
+    7.8
    ]
   },
   {
    "actor": "bram_h",
    "sector": "bh_hall",
    "at": [
-    -3.0,
-    14.2
+    -1.8,
+    8.6
    ]
   },
   {
@@ -639,16 +639,16 @@
    "actor": "bram_p",
    "sector": "bh_pass",
    "at": [
-    -1.4,
-    -14.6
+    -1.3,
+    -19.2
    ]
   },
   {
    "actor": "warden_p",
    "sector": "bh_pass",
    "at": [
-    1.5,
-    -14.8
+    1.4,
+    -19.4
    ]
   }
  ],
@@ -666,7 +666,7 @@
    "id": "hall_mid",
    "at": [
     0,
-    13.0
+    15.5
    ],
    "yaw": 0,
    "sector": "bh_hall"
@@ -675,7 +675,7 @@
    "id": "hall_dais",
    "at": [
     0,
-    7.5
+    12.5
    ],
    "yaw": 0,
    "sector": "bh_hall"
@@ -738,7 +738,7 @@
    "id": "pass_mid",
    "at": [
     0,
-    -17.5
+    -13.6
    ],
    "yaw": 0,
    "sector": "bh_pass"
@@ -747,7 +747,7 @@
    "id": "pass_far",
    "at": [
     0,
-    -24
+    -15.2
    ],
    "yaw": 0,
    "sector": "bh_pass"

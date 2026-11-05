@@ -63,7 +63,7 @@ def build():
         hut.actor(f"a{k:02d}", w, v, d, u)
 
     # ---- the flight line (C02) --------------------------------------------------------------------------------------------------------------------------------------
-    line = mb.room("line", (0, 0, 26, 14), -90, "line", floor_tex="floor_dust", ceil_tex="sky", wall_tex=wall_berm, ceiling=5.0, light=0.85, tint="#fff0cc", activities=BUSY)
+    line = mb.room("line", (0, 0, 26, 14), -90, "line", floor_tex="floor_dust", ceil_tex="sky", wall_tex=wall_berm, ceiling=5.0, light=0.72, tint="#f2ead8", activities=BUSY)
     line.standard_rail("c02", home=(2.2, 0), good=((5.0, -1.5), (8.5, 0.8)), bad=((1.5, -4.5), (2.5, 4.0)), arrive=(0.8, 0))
     line.wp("c02_x_up", 10.0, 5.0, 60)  # the ladder (to the bomber)
     line.wp("c02_x_right", 20.0, -3.0, -10)  # the crates
