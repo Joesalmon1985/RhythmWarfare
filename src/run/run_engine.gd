@@ -164,6 +164,7 @@ func t_of(phase_beat: float) -> float:
 	return phase_t0 + phase_beat * beat_s
 
 
+## The beat of a block at which it is judged (and a hotspot commits).
 func _decision_beat() -> float:
 	return maxf(timing("decision_beat"), timing("cue_span_beats") + judge.accept_s / beat_s + 0.05)
 
@@ -296,7 +297,7 @@ func _decide(b: int, t_dec: float) -> void:
 		"node": node_id, "phase": phase_n})
 	block = b + 1
 	if hotspots != null and energy > 0.0 and not hold:
-		_hotspot_decision(b, passed, t_dec)
+		_hotspot_decision(b, passed, t_dec, credit)
 	if energy <= 0.0:
 		_depleted_t = t_of(boundary_beat)
 		_over_t = _depleted_t + float(cfg["timing"]["fade_beats"]) * beat_s
@@ -325,13 +326,13 @@ func _decide(b: int, t_dec: float) -> void:
 
 ## The hotspot window's decisions at the block's decision beat (inside the cue-free guard): the early window (a way into the Bassment) commits at blocks 0 and 1, the final one at block 3 (the route
 ## lock beat), where the outcome's route becomes the engine's choice before the next phase is charted from it. The outcome's energy is applied here (never to the point of depletion).
-func _hotspot_decision(b: int, passed: bool, t_dec: float) -> void:
+func _hotspot_decision(b: int, passed: bool, t_dec: float, credit := -1.0) -> void:
 	hotspots.energy = energy
 	var out: Dictionary = {}
 	if b <= 2:
-		out = hotspots.on_block(b, passed)
+		out = hotspots.on_block(b, passed, credit)
 	else:
-		out = hotspots.commit_final(passed)
+		out = hotspots.commit_final(passed, credit)
 		if not out.is_empty():
 			choice = str(out["route"])
 	if out.is_empty():

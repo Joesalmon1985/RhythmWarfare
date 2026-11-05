@@ -32,6 +32,9 @@ var hotspots: RunHotspots  # the scene's hotspots: the world is the menu
 var hotspot_log: Array = []  # [{kind: select | tap_miss | commit, t, ...}] for the tests and the walks
 var tap_policy := "scripted"
 var _sel_t: Dictionary = {}  # hotspot id -> song time it was selected
+const CLAIM_TIP := -12.0  # degrees the camera tips down while a claim stands
+var _claim_id := ""  # the hotspot whose on_select walk has the camera now ("" none): the rail stands still meanwhile
+var _claim_to := ""  # the waypoint that walk goes to
 var _commit_view: Dictionary = {}  # {id, t, hotspot}: the committed hotspot stays drawn for a moment (the flash)
 var _last_tap_ms := -1000
 var _last_tap_pos := Vector2(-9999, -9999)
@@ -591,7 +594,7 @@ func _advance(t: float, audio_t: float) -> void:
 ## A path inside the world is a plain door walk (no frame, the stage stays): from beat 61 the camera walks to the doorway of the selected route, and on the downbeat on
 ## through it into the next scene (RunJourney.door_walk). Also latched once per phase.
 func _update_passage(t: float, audio_t: float) -> void:
-	if engine.window_open and t >= 0.0 and _door_phase != engine.phase_n and engine.phase_beat_at(t) >= 64.0 - RunPassage.DOOR_BEATS:
+	if engine.window_open and t >= 0.0 and _door_phase != engine.phase_n and _claim_id == "" and engine.phase_beat_at(t) >= 64.0 - RunPassage.DOOR_BEATS:
 		_door_phase = engine.phase_n
 		var to0 := engine.selected_route()
 		if _run_world_of(to0) == _run_world_of(engine.node_id) and to0 != engine.node_id:
@@ -696,7 +699,7 @@ func _scripted_pause(audio_t: float) -> void:
 
 func _handle(events: Array) -> void:
 	for ev in events:
-		if str(ev["kind"]) in ["phase_start", "block_result"] and trial_state == "" and not minigames.active():  # the journey first: the stage already holds its actions when the scene reacts
+		if str(ev["kind"]) in ["phase_start", "block_result"] and trial_state == "" and not minigames.active() and not (_claim_id != "" and str(ev["kind"]) == "block_result"):  # the journey first: the stage already holds its actions when the scene reacts
 			for a in journey.on_event(ev, engine):
 				_journey_apply(a)
 		if str(ev["kind"]) != "judge" and str(ev["kind"]) != "cues":
@@ -747,6 +750,8 @@ func _on_phase_start(ev: Dictionary) -> void:
 	var t0 := float(ev["t"])
 	phase_log.append({"phase": ev["phase"], "node": ev["node"], "t": t0})
 	_sel_t.clear()
+	_claim_id = ""
+	_claim_to = ""
 	if int(ev["phase"]) > 1 or trial_state == "":
 		_commit_view = {}
 	Session.run_progress.enter(str(node["world"]))  # "reached" is per world: a restart begins at the world's entry scene
@@ -849,24 +854,84 @@ func hotspot_items() -> Array:
 	for h in hotspots.shown(engine.block, engine.window_open):
 		var id := str(h["id"])
 		var sel := id == hotspots.selected
-		out.append({"hotspot": h, "state": "selected" if sel else "available", "t_state": float(_sel_t.get(id, 0.0)) if sel else 0.0})
+		out.append({"hotspot": h, "state": "selected" if sel else "available", "t_state": float(_sel_t.get(id, 0.0)) if sel else 0.0, "t_commit": _t_commit_of(h)})
 	if not _commit_view.is_empty():
 		if hud.now_t - float(_commit_view["t"]) < 2.5 * engine.beat_s:
-			out.append({"hotspot": _commit_view["hotspot"], "state": "committed", "t_state": float(_commit_view["t"])})
+			out.append({"hotspot": _commit_view["hotspot"], "state": "committed", "t_state": float(_commit_view["t"]), "t_commit": float(_commit_view["t"]), "success": bool(_commit_view.get("success", true))})
 		else:
 			_commit_view = {}
 	return out
+
+
+## Song time of the decision that will judge a selection of `h`: its window's next decision beat (a final-window hotspot waits for the last block's).
+func _t_commit_of(h: Dictionary) -> float:
+	var b := 3 if RunHotspots.window_of(h) == "final" else mini(engine.block, 3)
+	return engine.t_of(float(b * int(engine.timing("block_beats"))) + engine._decision_beat())
 
 
 ## The player (or the bot) touches a hotspot by id. Allowed while it is on show and nothing has committed; the selection can be changed until the commit. Returns whether it was selected.
 func hotspot_select(id: String) -> bool:
 	if hotspots == null or _ended or trial_state != "" or minigames.active():  # minigames: nothing is selected while seated
 		return false
+	var again := id != "" and hotspots.selected == id and str(hotspots.get_hotspot(id)["look"]["selected"]) == "claim"  # a repeat touch keeps the claim as it is
 	var ok := hotspots.select(id, engine.block, engine.window_open)
 	if ok:
-		_sel_t[id] = hud.now_t
+		if not again:
+			_sel_t[id] = hud.now_t
+		_on_select_walk(hotspots.get_hotspot(id), hud.now_t)
+		if str(_commit_view.get("id", "")) == id:  # touched again while its last outcome still shows (a table that can be touched again)
+			_commit_view = {}
 		hotspot_log.append({"kind": "select", "t": hud.now_t, "hotspot": id, "block": engine.block, "phase": engine.phase_n})
 	return ok
+
+
+## The touch itself moves the camera when the hotspot has an `on_select` cinematic (the table: the walk to the chair starts now); touching anything else gives the rail back.
+func _on_select_walk(h: Dictionary, t: float) -> void:
+	var id := str(h["id"])
+	if _claim_id == id:
+		return
+	if _claim_id != "":
+		_back_to_rail(t)
+		_claim_id = ""
+		_claim_to = ""
+	if not h.has("on_select") or journey == null or journey.rail == null:
+		return
+	var spec := HotspotContract.resolve_cinematic(h, h["on_select"], data.cfg.get("cinematics", {}))
+	if spec.is_empty():
+		return
+	for a in journey.hotspot_actions(spec, t, engine, _look_by, true):
+		_journey_apply(a)
+	_claim_id = id
+	for st in spec.get("steps", []):
+		if st.has("move") and st.has("to"):
+			_claim_to = str(st["to"])
+	_claim_frame(t, _t_commit_of(h))
+
+
+## While a claim stands the camera tips down so the table is in the picture (the glances overlap to hold the tip until the decision), and the glances queued for the walk's time are dropped:
+## an ambient glance must not swing the table out of the picture.
+func _claim_frame(t: float, t_commit: float) -> void:
+	if not stages.has(active_world):
+		return
+	var pl: StoryPlayer = (stages[active_world]["stage"] as StoryStage).player
+	if pl == null:
+		return
+	var span := 4.0 * engine.beat_s
+	pl._glances = pl._glances.filter(func(g: Dictionary) -> bool: return float(g["t1"]) <= t or float(g["t0"]) >= t_commit + span)
+	for k in int(ceil(maxf(t_commit - t, 0.0) / span)) + 1:
+		_journey_apply({"world": active_world, "t0": t + float(k) * span, "action": "player_look", "args": {"by": 0.0, "pitch": CLAIM_TIP, "bars": 2.0}})
+
+
+## The camera goes back to the rail: the rail starts again from here and the camera walks to the scene's home waypoint over two bars (also what is left of a minigame does).
+func _back_to_rail(t: float) -> void:
+	var j: RunJourney = journey
+	if j.rail == null or not stages.has(active_world):
+		return
+	j.rail.restart_here()
+	var wp := str(data.nodes[engine.node_id].get("waypoint", ""))
+	if wp != "":
+		_journey_apply({"world": active_world, "t0": t, "action": "player_move", "args": {"to": wp, "bars": 2.0, "style": "walk"}})
+	_journey_apply({"world": active_world, "t0": t, "action": "player_role", "args": {"role": "dancer"}})
 
 
 ## True when a world-state flag is set (this run's or a kept discovery).
@@ -928,23 +993,35 @@ func _on_hotspot_commit(ev: Dictionary) -> void:
 	var t := float(ev["t"])
 	hotspot_log.append({"kind": "commit", "t": t, "hotspot": str(out["hotspot"]), "success": bool(out["success"]), "route": str(out["route"]), "window": str(out["window"]), "tapped": bool(out["tapped"]),
 		"energy": float(ev["energy"]), "phase": int(ev["phase"]), "node": str(ev["node"]), "continued": bool(out["continued"]), "flags": out["flags_set"]})
-	_commit_view = {"id": str(out["hotspot"]), "t": t, "hotspot": hotspots.get_hotspot(str(out["hotspot"]))}
+	var claim_to := _claim_to if _claim_id == str(out["hotspot"]) else ""
+	if _claim_id == str(out["hotspot"]):  # the walk the touch started ends here: a failure gives the camera back to the rail (the last block's door walk takes it on from where it stands)
+		_claim_id = ""
+		_claim_to = ""
+		if not bool(out["success"]) and not bool(out["continued"]):
+			_back_to_rail(t)
+	_commit_view = {"id": str(out["hotspot"]), "t": t, "hotspot": hotspots.get_hotspot(str(out["hotspot"])), "success": bool(out["success"])}
 	if hotspots.persist_dirty:
 		Session.run_progress.save()
 		hotspots.persist_dirty = false
 	if str(out.get("activity", "")) != "" and bool(out["success"]):  # minigames: sit down on the next downbeat; the run stays here and no door walk starts
-		minigames.request(str(out["activity"]), t, engine.t_of(64.0))
+		minigames.request(str(out["activity"]), t, engine.t_of(float((int(ev["block"]) + 1) * int(engine.timing("block_beats")))))
 		_door_phase = engine.phase_n
 	if not (out["cinematic"] as Dictionary).is_empty():
-		_hotspot_cinematic(out, t)
+		_hotspot_cinematic(out, t, claim_to)
 	if str(out["window"]) == "early" and bool(out["success"]) and HotspotContract.is_trial_route(str(out["route"])):
 		trial_launcher.call()  # the wizard's way in: the walk to the hatch is scheduled by arm_trial on the next cue-free guard
 
 
 ## An outcome's cinematic is rail actions (RunJourney.hotspot_actions): steps of role, look and move. The move replaces the door walk only when the scene simply continues by its default exit;
 ## when the outcome names a route the door walk toward it is the camera's move.
-func _hotspot_cinematic(out: Dictionary, t: float) -> void:
+func _hotspot_cinematic(out: Dictionary, t: float, claim_to := "") -> void:
 	var spec: Dictionary = out["cinematic"]
+	if claim_to != "":  # the camera is already walking to (or standing at) that waypoint: no second walk
+		spec = spec.duplicate(true)
+		for st in spec.get("steps", []):
+			if str(st.get("to", "")) == claim_to:
+				st.erase("move")
+				st.erase("to")
 	var move_ok := bool(out["continued"]) or str(out["window"]) == "early" or bool(out.get("stays", false))
 	var steps_move := false
 	for st in spec.get("steps", []):

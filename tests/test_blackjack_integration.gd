@@ -698,3 +698,279 @@ func test_the_same_scripted_run_gives_the_same_log_and_wallet_at_30_and_60_steps
 	assert_eq(a["held"], b["held"])
 	for i in (a["times"] as Array).size():
 		assert_near(float(a["times"][i]), float(b["times"][i]), 1.0 / 30.0 + 1e-6, "log entry %d lands at the same song time (to a frame)" % i)
+
+
+# ---- 14: joining at any block, the touch walks the camera to the table -----------------------------------------------------------------------------
+
+func _cam_dist(scene: Node, wp: String) -> float:
+	var st: StoryStage = scene.stages[scene.active_world]["stage"]
+	var at: Vector2 = st.map.waypoint(wp)["at"]
+	var cam: Vector3 = scene._exit_pose()["cam"]
+	return Vector2(cam.x, cam.z).distance_to(at)
+
+
+func _moves_to(scene: Node, wp: String, from_t := -1.0) -> Array:
+	return (scene.journey_log as Array).filter(func(a: Dictionary) -> bool: return a["action"] == "player_move" and str((a["args"] as Dictionary).get("to", "")) == wp and float(a["t0"]) >= from_t)
+
+
+func test_a_touch_in_block_1_seats_the_player_at_the_end_of_that_block_and_the_run_stays_in_the_room() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	_to_beat(scene, 20.0)
+	assert_true(scene.hotspot_select("ward.cards"), "the table can be touched in block 1")
+	_to_beat(scene, 31.0)
+	assert_eq(_mg(scene).state, "entering")
+	assert_true(scene.engine.hold)
+	_to_beat(scene, 32.3)
+	assert_eq(_mg(scene).state, "active")
+	assert_near(_mg(scene).begin_t, scene.engine.t_of(32.0), 1e-9, "seated at the end of block 1")
+	var commit: Dictionary = (scene.hotspot_log as Array).filter(func(e: Dictionary) -> bool: return e["kind"] == "commit")[0]
+	assert_eq(str(commit["window"]), "any")
+	assert_true(bool(commit["success"]))
+	assert_eq(scene.journey.door_target, "", "no door walk started")
+	_to_beat(scene, 140.0)
+	assert_true(_nodes(scene).size() >= 2 and _nodes(scene).all(func(n: Variant) -> bool: return str(n) == "ward"), "the hold keeps the run in the day room across the phase ends")
+	assert_true(scene.engine.hold)
+	_free(d)
+
+
+func test_a_weak_block_between_the_tables_credit_and_the_runs_still_seats_the_player() -> void:
+	var d := _scene("none")
+	var scene: Node = d["scene"]
+	var e: RunEngine = scene.engine
+	var pressed := {}
+	var released := {}
+	var t_end := e.t_of(33.0)
+	var t: float = scene._vt
+	while t < t_end:  # block 1 played by hand: one cue in three is hit on time, the rest are missed (deterministic)
+		t += STEP
+		scene._vt = t
+		scene._step_virtual(t)
+		if scene.hotspots.selected == "" and e.phase_beat_at(t) >= 20.0 and scene._claim_id == "" and e.block == 1:
+			scene.hotspot_select("ward.cards")
+		var notes: Array = e.level.notes
+		for i in range(maxi(notes.size() - 400, 0), notes.size()):
+			var n: Dictionary = notes[i]
+			if int(n["phase"]) != 1 or int(n["block"]) != 1 or i % 3 != 0:
+				continue
+			if not pressed.has(i) and float(n["time"]) <= t:
+				pressed[i] = true
+				e.press(int(n["pad"]), float(n["time"]), int(n["pad"]))
+			if pressed.has(i) and n["type"] == "hold" and not released.has(i) and float(n["end_time"]) <= t:
+				released[i] = true
+				e.release(int(n["pad"]), float(n["end_time"]), int(n["pad"]))
+	var res: Dictionary = (_events(scene, "block_result").filter(func(x: Dictionary) -> bool: return int(x["phase"]) == 1 and int(x["block"]) == 1))[0]
+	var credit := float(res["credit"])
+	var passed := bool(res["passed"])
+	assert_true(credit >= 0.25 and credit < 0.6, "the bot's weak block lands between 0.25 and 0.6 (credit %.3f)" % credit)
+	assert_false(passed, "the run's own rule fails it")
+	assert_true(_mg(scene).state != "", "and the table's lenient rule still seats the player")
+	assert_true(bool(((scene.hotspot_log as Array).filter(func(e: Dictionary) -> bool: return e["kind"] == "commit"))[0]["success"]))
+	_free(d)
+
+
+func test_no_pad_input_waves_the_player_off_and_the_table_can_be_touched_again_later_in_the_phase() -> void:
+	var d := _scene("none")
+	var scene: Node = d["scene"]
+	_to_beat(scene, 20.0)
+	assert_true(scene.hotspot_select("ward.cards"))
+	_to_beat(scene, 30.0)
+	var commits: Array = (scene.hotspot_log as Array).filter(func(e: Dictionary) -> bool: return e["kind"] == "commit")
+	assert_eq(commits.size(), 1)
+	assert_false(bool(commits[0]["success"]), "no input: waved off")
+	assert_eq(_mg(scene).log, [], "no activity requested")
+	assert_false(scene.engine.hold)
+	var ids: Array = (scene.hotspot_items() as Array).filter(func(e: Dictionary) -> bool: return str(e["state"]) == "available").map(func(e: Dictionary) -> String: return str(e["hotspot"]["id"]))
+	assert_contains(ids, "ward.cards", "still on show after the wave-off")
+	_to_beat(scene, 36.0)
+	assert_true(scene.hotspot_select("ward.cards"), "touched again later in the phase")
+	assert_eq(scene.hotspots.selected, "ward.cards")
+	_to_beat(scene, 62.0)
+	assert_eq(_nodes(scene), ["ward"], "the scene's default exit is untouched so far")
+	_to_beat(scene, 66.0)
+	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward.art"], "and still commits at the final")
+	_free(d)
+
+
+func test_a_touch_near_the_tables_edge_hits_it_and_every_other_day_room_hotspot_keeps_its_own_centre() -> void:
+	var d := _scene("perfect", 7, "", Vector2(844, 390))
+	var scene: Node = d["scene"]
+	_to_beat(scene, 52.0)
+	var items: Array = scene.hotspot_items()
+	var stage := Rect2(scene._stage_host.global_position, scene._stage_host.size)
+	var st: StoryStage = scene.stages[scene.active_world]["stage"]
+	var pose: Dictionary = scene._exit_pose()
+	var lay := HotspotView.layout(items, st.map, st.crowds, pose, stage.size)
+	var table: Dictionary = {}
+	for e in lay:
+		if str(e["id"]) == "ward.cards":
+			table = e
+	assert_false(table.is_empty())
+	assert_true(float(table["radius_px"]) >= 110.0 - 0.01, "a 220 px target: %s" % str(table["radius_px"]))
+	var w: Vector3 = table["world"]
+	for off in [Vector3(1.2, 0, 0), Vector3(-1.2, 0, 0), Vector3(0, 0, -1.2), Vector3(0.9, 0, 0.9)]:
+		var pr := StoryProjector.project(Vector3(w.x, float(table["ground_y"]), w.z) + off, pose, stage.size)
+		if bool(pr["visible"]) and float(pr["depth"]) > 0.4:
+			assert_eq(HotspotView.hit(lay, pr["screen"]), "ward.cards", "a touch %s from the table's middle hits it" % str(off))
+	for e in lay:
+		assert_eq(HotspotView.hit(lay, e["centre"]), str(e["id"]), "a touch on %s's centre selects it, not the table" % str(e["id"]))
+	_free(d)
+
+
+func test_after_getting_up_mid_phase_the_table_is_on_show_again() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	_to_beat(scene, 20.0)
+	scene.hotspot_select("ward.cards")
+	_to_beat(scene, 38.0)
+	var mg := _mg(scene)
+	assert_eq(mg.state, "active")
+	assert_true(mg.tap("exit", scene._vt), "the exit between hands")
+	var ctx := _ctx("stick")
+	ctx["play"] = false
+	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", 8.0), "left")
+	assert_true(scene.engine.phase_beat_at(scene._vt) < 64.0 and scene.engine.phase_n == 1, "still inside the phase")
+	var ids: Array = (scene.hotspot_items() as Array).map(func(e: Dictionary) -> String: return str(e["hotspot"]["id"]))
+	assert_contains(ids, "ward.cards", "on show again straight away")
+	assert_true(scene.hotspot_select("ward.cards"), "and touchable")
+	_free(d)
+
+
+func test_a_touch_at_beat_52_still_sits_at_the_next_phase_start() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	var down := _sit(scene)
+	assert_near(_mg(scene).begin_t, down, 1e-9)
+	_free(d)
+
+
+func test_the_touch_walks_the_camera_to_the_table_at_once_and_the_rail_stands_still() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	var home := str(scene.data.nodes["ward"]["waypoint"])
+	_to_beat(scene, 6.0)
+	var before := _cam_dist(scene, "day_cards")
+	var rail_log: int = scene.journey.log.size()
+	var t_touch: float = scene._vt
+	assert_true(scene.hotspot_select("ward.cards"))
+	assert_eq(_moves_to(scene, "day_cards", t_touch - 0.001).size(), 1, "the walk is scheduled by the touch itself")
+	_run_to(scene, t_touch + 0.2)
+	assert_true(_cam_dist(scene, "day_cards") < before - 0.05, "the camera is under way within a few frames (%.2f -> %.2f)" % [before, _cam_dist(scene, "day_cards")])
+	_to_beat(scene, 14.5)
+	assert_true(_cam_dist(scene, "day_cards") < 0.3, "arrived and standing at the table before the next decision: %.2f" % _cam_dist(scene, "day_cards"))
+	assert_eq(scene.journey.log.size(), rail_log, "the rail made no step meanwhile (no block decision reached it)")
+	assert_true(_moves_to(scene, home, t_touch).is_empty(), "nothing walked the camera home")
+	_to_beat(scene, 16.5)
+	assert_eq(_mg(scene).state, "active", "seated at the block end")
+	assert_eq(_moves_to(scene, "day_cards", t_touch - 0.001).size(), 1, "the sit cinematic added no second walk")
+	assert_true(_cam_dist(scene, "day_cards") < 0.3, "no snap away")
+	assert_eq(scene.journey.door_target, "")
+	scene.hotspot_select("ward.cards")
+	assert_eq(_moves_to(scene, "day_cards", t_touch - 0.001).size(), 1, "a repeat touch does not restart the walk")
+	_free(d)
+
+
+func test_a_repeat_touch_keeps_the_claim_and_does_not_restart_the_walk_or_the_burst() -> void:
+	var d := _scene("none")
+	var scene: Node = d["scene"]
+	_to_beat(scene, 6.0)
+	scene.hotspot_select("ward.cards")
+	var t_state: float = scene._sel_t["ward.cards"]
+	_to_beat(scene, 8.0)
+	assert_true(scene.hotspot_select("ward.cards"))
+	assert_near(float(scene._sel_t["ward.cards"]), t_state, 1e-9, "the burst keeps its start")
+	assert_eq(_moves_to(scene, "day_cards").size(), 1)
+	_free(d)
+
+
+func test_a_wave_off_gives_the_camera_back_to_the_rail_and_the_table_stays_on_show() -> void:
+	var d := _scene("none")
+	var scene: Node = d["scene"]
+	var home := str(scene.data.nodes["ward"]["waypoint"])
+	_to_beat(scene, 6.0)
+	scene.hotspot_select("ward.cards")
+	var d0 := _cam_dist(scene, "day_cards")
+	_to_beat(scene, 12.0)
+	assert_true(_cam_dist(scene, "day_cards") < d0 - 0.5, "under way to the table before the decision")
+	_to_beat(scene, 13.5)
+	var commit: Dictionary = (scene.hotspot_log as Array).filter(func(e: Dictionary) -> bool: return e["kind"] == "commit")[0]
+	assert_false(bool(commit["success"]))
+	assert_false(_moves_to(scene, home, float(commit["t"]) - 0.001).is_empty(), "the camera walks back to the room's home")
+	_to_beat(scene, 24.0)
+	assert_true(_cam_dist(scene, home) < 0.5, "and is there: %.2f" % _cam_dist(scene, home))
+	var ids: Array = (scene.hotspot_items() as Array).map(func(e: Dictionary) -> String: return str(e["hotspot"]["id"]))
+	assert_contains(ids, "ward.cards")
+	_free(d)
+
+
+func test_touching_another_hotspot_after_the_table_restores_the_normal_progression() -> void:
+	var d := _scene("perfect")
+	var scene: Node = d["scene"]
+	var home := str(scene.data.nodes["ward"]["waypoint"])
+	_to_beat(scene, 49.5)
+	var d0 := _cam_dist(scene, "day_cards")
+	scene.hotspot_select("ward.cards")
+	_to_beat(scene, 55.0)
+	assert_true(_cam_dist(scene, "day_cards") < d0 - 0.5, "walking to the table")
+	var t_sel: float = scene._vt
+	assert_true(scene.hotspot_select("ward.exit_art"))
+	assert_false(_moves_to(scene, home, t_sel - 0.001).is_empty(), "the camera goes back")
+	assert_eq(scene._claim_id, "")
+	var rail_log: int = scene.journey.log.size()
+	_to_beat(scene, 62.0)
+	assert_true(scene.journey.log.size() > rail_log, "the rail steps at the last decision again")
+	_free(d)
+
+
+func test_a_failed_last_block_after_touching_the_table_still_leaves_by_the_default_exit() -> void:
+	var d := _scene("blocks:1110")
+	var scene: Node = d["scene"]
+	_to_beat(scene, 49.5)
+	scene.hotspot_select("ward.cards")
+	_to_beat(scene, 60.3)
+	assert_eq(scene.journey.door_target, "", "the door walk does not start while the table is selected")
+	_to_beat(scene, 62.0)
+	assert_eq(scene.journey.door_target, "ward.art", "the door walk starts from wherever the camera stands")
+	_to_beat(scene, 68.0)
+	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward.art"])
+	_free(d)
+
+
+func test_getting_up_in_the_phase_the_player_sat_down_in_still_walks_to_the_door_and_moves_on() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	_to_beat(scene, 6.0)
+	assert_true(scene.hotspot_select("ward.cards"), "touched in block 0")
+	_to_beat(scene, 20.0)
+	var mg := _mg(scene)
+	assert_eq(mg.state, "active", "seated at beat 16")
+	assert_true(mg.tap("exit", scene._vt), "the exit between hands")
+	var ctx := _ctx("stick")
+	ctx["play"] = false
+	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", 8.0), "left")
+	assert_true(scene.engine.phase_n == 1 and scene.engine.phase_beat_at(scene._vt) < 50.0, "still inside the first phase, well before the door")
+	_to_beat(scene, 62.0)
+	assert_eq(scene.journey.door_target, "ward.art", "the door walk starts at beat 61 although the player sat down in this phase")
+	_to_beat(scene, 68.0)
+	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward.art"], "the run moves on")
+	_free(d)
+
+
+func test_getting_up_after_the_route_lock_of_a_held_phase_keeps_the_run_in_the_day_room() -> void:
+	var d := _scene()
+	var scene: Node = d["scene"]
+	_to_beat(scene, 6.0)
+	scene.hotspot_select("ward.cards")
+	_to_beat(scene, 20.0)
+	var mg := _mg(scene)
+	assert_eq(mg.state, "active")
+	_to_beat(scene, 50.0)
+	_to_beat(scene, 62.0)  # past the route lock (beat 60.5) of the phase the player sat down in
+	assert_true(scene.engine.hold and scene.engine.phase_n == 1, "still seated in the first phase after the lock")
+	assert_true(mg.tap("exit", scene._vt), "the exit between hands")
+	var ctx := _ctx("stick")
+	ctx["play"] = false
+	assert_true(_until(scene, ctx, func() -> bool: return mg.state == "", 8.0), "left")
+	assert_eq(scene.journey.door_target, "", "no door walk: the route was locked to the day room")
+	assert_eq(_nodes(scene).slice(0, 2), ["ward", "ward"], "the next phase is the day room again")
+	_free(d)

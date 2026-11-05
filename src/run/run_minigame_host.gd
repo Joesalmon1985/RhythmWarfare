@@ -82,11 +82,6 @@ func hit(local: Vector2, area: Vector2) -> String:
 
 ## The activity is over: the camera walks back to the scene's home waypoint over two bars and the rail starts again from there.
 func _resume(t: float) -> void:
-	var j: RunJourney = play.journey
-	if j.rail == null or not play.stages.has(play.active_world):
-		return
-	j.rail.restart_here()
-	var wp := str(play.data.nodes[play.engine.node_id].get("waypoint", ""))
-	if wp != "":
-		play._journey_apply({"world": play.active_world, "t0": t, "action": "player_move", "args": {"to": wp, "bars": 2.0, "style": "walk"}})
-	play._journey_apply({"world": play.active_world, "t0": t, "action": "player_role", "args": {"role": "dancer"}})
+	if play._door_phase == play.engine.phase_n:  # the sit latched this phase's door walk off; getting up inside the same phase hands it back (the walk still starts at beat 61 unless the route is already locked to here)
+		play._door_phase = -1
+	play._back_to_rail(t)

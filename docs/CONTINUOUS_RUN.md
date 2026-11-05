@@ -403,6 +403,16 @@ Desktop: keys 1 to 4 select the hotspots on show in order, the arrow keys the on
 with a fixed activity), `flicker`, `open` (a slit of light standing at the doorway, spilling on the floor), `crack` (a glowing crack in the floor). The **default exit** is brighter, has a second ring and
 its door stands wider ajar. Selected = a bright ring, a second ring closing in, a lift of the glow and a spark; committed = a flash, the ring opening out, the glow surging (about half a second).
 
+**Joining any block (`window: "any"`, `pass_credit`, the "claim" look).** A hotspot whose `on_success` has an `activity` (the blackjack table) may say `window: "any"` (default `"final"`): it is on show in every block of the phase until
+a final commit has happened, and a touch in block 0, 1 or 2 commits at that block's decision beat (`RunHotspots.on_block`, the block's credit passed in by `RunEngine._hotspot_decision`). Success is the activity outcome (`route` = the scene, `stays`:
+the run holds here; the player is seated at the end of the block just judged, `RunPlay._on_hotspot_commit`); failure is `on_failure` with no route and no camera move. An "any" hotspot never latches `committed`, so it can be touched again after a wave-off
+or after getting up, and the scene's default exit still commits at the final as ever (in block 3 it commits like any final hotspot). `pass_credit` (0 to 1, only with an activity) makes it succeed when the judged block's credit is at least that,
+instead of the run's pass (0.6): the table uses 0.25. `radius_m` is the touch radius, `look.ring_m` the radius of the ring that is drawn (default `radius_m`), so a generous target does not draw a giant ring. `look.selected: "claim"` is the table's look: a burst
+at the touch (floor flash, a thick ring flying out, a wash round the picture's edge), then light filling the floor disc, a thick ring throbbing on every beat, a tall beam, and a second ring closing in from outside that lands on the first exactly at the decision
+(`t_commit` on the `hotspot_items()` entry); seated = a bigger flash, waved off = cold grey light, the ring breaking into segments that drop, a short shake. Reduced motion: no throb, burst or shake, the countdown is an arc filling clockwise.
+`on_select: {"cinematic": name}` is a walk the touch itself starts (the table's `ward.cards_approach` to the chair): `RunPlay._on_select_walk` plays it at the touch, the rail's block steps are held meanwhile, the sit cinematic skips a move to the same waypoint,
+and a wave-off, or touching another hotspot, gives the camera back to the rail with `RunPlay._back_to_rail` (the same restart-and-walk-home the end of a minigame uses).
+
 **Tests.** `tests/test_hotspots_data.gd` (the contract and every rule), `test_hotspots_engine.gd` (availability, selection, windows, commit, outcomes, flags, determinism at 30 / 60 / variable frame
 steps with scripted taps at song times), `test_hotspots_view.gd` (projection, 72 px, nearest, beacons), `test_hotspots_scene.gd` (the real scene: view in the viewport, tap/change/commit beat,
 default, failure, cinematic as the move, wizard arms or shrugs, keys, the flag), the touch-target test in `test_run_scene.gd` (844x390: on the stage, 72 px, never over the pads) and the matrix's tap

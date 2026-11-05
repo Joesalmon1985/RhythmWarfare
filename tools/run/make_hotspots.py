@@ -86,15 +86,23 @@ WORLD_MAP = {w["id"]: w["map"] for w in RUN["worlds"]}
 EXIT_LOOK = {"default": "open", "other": "glow"}
 
 
-def add(scene, name, kind, anchor, look, s, f, *, s_text, f_text, default=False, av=None, hook=None, radius=0.8, min_px=72, repeatable=True):
+def add(scene, name, kind, anchor, look, s, f, *, s_text, f_text, default=False, av=None, hook=None, radius=0.8, min_px=72, repeatable=True, selected="ring", window=None, pass_credit=None, on_select=None, ring_m=None):
     n = NODES[scene]
     world = n["world"]
     h = {"id": f"{scene}.{name}", "world": world, "scene": scene, "map": WORLD_MAP[world], "anchor": anchor, "kind": kind, "radius_m": radius, "min_px": min_px,
-         "available": av or avail(), "look": {"available": look, "selected": "ring", "committed": "flash"}, "challenge": None, "on_success": s, "on_failure": f}
+         "available": av or avail(), "look": {"available": look, "selected": selected, "committed": "flash"}, "challenge": None, "on_success": s, "on_failure": f}
+    if ring_m is not None:
+        h["look"]["ring_m"] = ring_m
     if hook:
         h["cinematic"] = hook
     h["default"] = default
     h["repeatable"] = repeatable
+    if window:
+        h["window"] = window
+    if pass_credit is not None:
+        h["pass_credit"] = pass_credit
+    if on_select:
+        h["on_select"] = {"cinematic": on_select}
     HOTSPOTS.setdefault(world, []).append(h)
     ROWS.append({"world": world, "scene": scene, "hotspot": h["id"], "kind": kind, "s": s_text, "f": f_text, "default": default,
                  "gate": (av or {}).get("flags_all", []) + ["not " + x for x in (av or {}).get("flags_none", [])]})
@@ -377,7 +385,9 @@ ft("ward", "window", T("wlight_d"), "glow",
 ob("ward", "cards", P(2.4, 0.5, 3.0), "beckon",
    out(activity="blackjack", cin=cin(w, "cards_sit", walk("day_cards", "dancer", "walk", 2))),
    out(energy=-3, cin=cin(w, "cards_waved_off", walk("day_cards", "dancer", "walk", 2))),
-   s_text="sit at the empty chair: blackjack, the run stays in the day room (minigame)", f_text="the dealer waves you off (-3), the scene goes on by its default exit")
+   s_text="sit at the empty chair: blackjack, the run stays in the day room (minigame)", f_text="the dealer waves you off (-3), the scene goes on by its default exit",
+   radius=2.4, min_px=220, ring_m=1.7, selected="claim", window="any", pass_credit=0.25,
+   on_select=cin(w, "cards_approach", walk("day_cards", "dancer", "walk", 2)))
 exits("ward.art")
 ch("ward.art", "painter", A("x10"), "beckon",
    out(flags=["wd_painted"], energy=6, cin=cin(w, "paint_look", walk("art_easels", "dancer", "walk", 3, look="x10"))),

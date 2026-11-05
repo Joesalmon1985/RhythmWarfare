@@ -40,7 +40,7 @@ real() {
   done
   local res=()
   [ -n "$win" ] && res=(--resolution "$win")
-  env XDG_DATA_HOME="$TMP/data" RW_RUN_VIRTUAL=1 RW_STORY_RATE=$RATE RW_RUN_START=ward RW_RUN_BOT="$bot" RW_RUN_SELECT="ward.cards@52" RW_MINIGAME_SEED="$seed" RW_MINIGAME_TAPS="$taps" \
+  env XDG_DATA_HOME="$TMP/data" RW_RUN_VIRTUAL=1 RW_STORY_RATE=$RATE RW_RUN_START=ward RW_RUN_BOT="$bot" RW_RUN_SELECT="${SEL:-ward.cards@52}" RW_MINIGAME_SEED="$seed" RW_MINIGAME_TAPS="$taps" \
     "$GODOT" --path "$ROOT" "${res[@]}" -s tools/shoot.gd -- res://src/run/run_play.tscn "$TMP" "${steps[@]}" 2>&1 </dev/null | grep -E "ERROR|SCRIPT" | grep -v "RID allocations\|leaked\|still in use\|ObjectDB" || true
   for nb in "$@"; do jpeg "${nb%%:*}"; done
 }
@@ -71,6 +71,15 @@ real 3 "bet@5,hand@13,exit@27" perfect "" 14_leaving_with_money:28.6
 # the chair: 2 missed blocks in a row wobble, 3 fall. 1111 = phase 1 passed (sit), 11 = blocks 4 and 5 passed, then misses
 real 3 "bet@5" "blocks:11111100" "" 15_chair_wobbling:66
 real 3 "bet@5" "blocks:111111000" "" 16_falling_off_the_chair:78
+
+# joining: the touch (a burst and the camera setting off), the wait (the camera at the table, the countdown ring closing), the refusal. A finer clock (0.05 s a frame), the touch at beat 18 of phase 1.
+RATE=0.05
+SEL="ward.cards@18"
+real 3 "bet@5" perfect "" 17_touch_registered:p18.5
+real 3 "bet@5" perfect "" 18_waiting_to_sit:p26.5
+real 3 "bet@5" none "" 19_waved_off:p29.1
+RATE=0.25
+SEL=""
 
 # demo-scene extras (small canvas, high contrast, reduced motion)
 demo "RW_GALLERY_LOW=1 RW_MINIGAME_SEED=3 RW_DEMO_TAPS=bet@5,hand@13" demo_low_await_bet:4.8 demo_low_player_turn:12.2

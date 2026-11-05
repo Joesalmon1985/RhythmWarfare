@@ -4652,6 +4652,18 @@
     }
    ]
   },
+  "ward.cards_approach": {
+   "world": "ward",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "day_cards",
+     "bars": 2,
+     "role": "dancer",
+     "style": "walk"
+    }
+   ]
+  },
   "ward.stagger_art_up": {
    "world": "ward",
    "steps": [

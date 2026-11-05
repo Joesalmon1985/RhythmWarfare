@@ -121,6 +121,39 @@ func test_releasing_after_the_lock_keeps_the_next_phase_here_and_the_one_after_l
 	assert_eq((_of_kind(events, "route_commit")[0] as Dictionary)["to"], "warehouse")
 
 
+## A mid-phase sit (touch the table in block 0, held from beat 13) leaves the first phase's timing, judging, charting and energy exactly as a phase that never touched it (the hold is the only change).
+func test_a_mid_phase_sit_changes_no_timing_charting_or_judging_of_the_phase() -> void:
+	var run := func(sit: bool) -> Array:
+		var d := RunData.load_default()
+		var e := RunEngine.new(d)
+		e.hotspots = RunHotspots.new(d, {}, {})
+		e.begin("ward")
+		var events := _drive(e, 3, func(en: RunEngine, t: float) -> void:
+			if sit and en.phase_n == 1 and en.phase_beat_at(t) > 6.0 and en.block == 0:
+				en.hotspots.select("ward.cards", en.block, en.window_open)
+			if sit:
+				en.hold = (en.phase_n == 1 and en.phase_beat_at(t) > 13.0) or (en.phase_n == 2 and en.phase_beat_at(t) < 10.0))
+		return events
+	var plain: Array = run.call(false)
+	var sat: Array = run.call(true)
+	var commits := _of_kind(sat, "hotspot_commit")
+	assert_eq(int((commits[0] as Dictionary)["block"]), 0, "committed at block 0's decision")
+	assert_eq(str((commits[0] as Dictionary)["outcome"]["activity"]), "blackjack")
+	var t_end := float((_of_kind(plain, "phase_start")[1] as Dictionary)["t"])
+	var same := func(events: Array) -> String:
+		var keep: Array = []
+		for ev in events:
+			if float(ev.get("t", 0.0)) >= t_end:
+				continue
+			if str(ev["kind"]) in ["block_result", "mix", "cues", "reveal", "route_window"] and (str(ev["kind"]) != "cues" or int(ev["phase"]) == 1):
+				keep.append(ev)
+		return JSON.stringify(keep)
+	assert_eq(same.call(sat), same.call(plain), "phase 1's block results, mixes and cues are identical")
+	var starts_a := _of_kind(plain, "phase_start").map(func(ev: Dictionary) -> float: return float(ev["t"]))
+	var starts_b := _of_kind(sat, "phase_start").map(func(ev: Dictionary) -> float: return float(ev["t"]))
+	assert_eq(starts_a.slice(0, 3), starts_b.slice(0, 3), "the phases start at the same song times")
+
+
 # --- the contract -----------------------------------------------------------------------------------------------------------
 
 func _hs(id: String, extra: Dictionary = {}) -> Dictionary:
