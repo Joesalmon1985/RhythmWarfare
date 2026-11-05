@@ -6,12 +6,14 @@ extends TestCase
 ## The numbers are written to user://run_matrix.txt for the docs (docs/CONTINUOUS_RUN.md).
 ## The route window is the hotspot window: the player taps through RunHotspots under a tap policy (RW_RUN_TAPS=scripted (default: seed 1 taps nothing, seed 2 the second exit, seed 3 a random one) |
 ## none (never taps: the default exits) | changed (a decoy first, then the seed's pick) | failure (scripted taps and the last block of every phase missed: every tapped hotspot fails)); the
-## hotspots' cinematics are given to the journey like the scene does, so they are checked for guards, bars, density and valid sectors too.
+## hotspots' cinematics are given to the journey like the scene does, so they are checked for guards, bars, density and valid sectors too. The journey's window turn (RunJourney.face_fn) is given
+## like the scene gives it (StoryPlayer.best_facing over the window's hotspots), and the hotspots in the picture at beat 49 of every phase are counted.
 
 const BPM := 174.0
 const BEAT := 60.0 / 174.0
 const MAX_PHASES := 20  # scenes: a path through the first three worlds is 13 to 14 phases
 const POLICIES := ["perfect", "accuracy:0.9", "accuracy:0.8", "accuracy:0.7", "accuracy:0.5", "sloppy", "none"]
+const STAGE_VIEW := Vector2(1280.0, 460.0)  # the stage strip of a 1280 x 720 window (the hotspot view's aspect)
 
 var _maps: Dictionary = {}
 
@@ -23,7 +25,7 @@ func _map(world: String) -> StoryMap:
 
 
 ## One scripted run. Returns {over, phases, depth, energy, nodes, places, kinds, moves, camera_bad, dense, bad_starts, glances, log}.
-func _simulate(policy: String, seed: int, data: RunData, taps := "", start := "warehouse") -> Dictionary:
+func _simulate(policy: String, seed: int, data: RunData, taps := "", start := "warehouse", face := true) -> Dictionary:
 	var bpm := float(data.cfg["timing"]["bpm"])  # (a path runs at its own tempo)
 	var beat := 60.0 / bpm
 	if OS.get_environment("RW_MATRIX_LAPS") != "":  # the matrix at another lap count (1 = the paths as they were before the two laps, for the energy comparison in docs/HANDOVER.md A12)
@@ -35,6 +37,17 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "", start := "w
 	e.hotspots = RunHotspots.new(data, {}, {})
 	e.begin(start)
 	var j := RunJourney.new(data)
+	var windows: Array = []  # [{t0, node, hs}] the hotspot window of every phase, as the block-2 decision sees it
+	if face:  # the run scene's window turn, with the map alone (actor anchors need the crowd: they are left out here)
+		j.face_fn = func(node_id: String, _place: String) -> Array:
+			var m := _map(str(data.nodes[node_id]["map"]))
+			var pts: Array = []
+			for h in e.hotspots.shown(3, true):
+				var r := HotspotView.resolve(h["anchor"], m, {})
+				if bool(r["ok"]):
+					var p: Vector3 = r["pos"]
+					pts.append([p.x, p.z, 1.0 if bool(h["default"]) else 0.0, p.y])
+			return pts
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 	var hit_p := 1.0
@@ -71,6 +84,8 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "", start := "w
 	while t < end_t and not e.over and e.away == "":  # (a path's ending hands the run back to the Warehouse: the simulation ends there)
 		var events := e.update(t)
 		for ev in events:
+			if str(ev["kind"]) == "block_result" and int(ev["block"]) == 2:
+				windows.append({"t0": e.phase_t0, "node": str(ev["node"]), "hs": e.hotspots.shown(3, true)})
 			if str(ev["kind"]) in ["phase_start", "block_result", "lap_start"]:
 				actions.append_array(j.on_event(ev, e))
 			if str(ev["kind"]) == "hotspot_commit":
@@ -171,13 +186,45 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "", start := "w
 			if m.sector(str(pose["sector"])).is_empty() or m.sector_at(Vector2(pose["pos"])) == "" or (p2.errors as Array).size() > 0:
 				camera_bad += 1
 			s += 0.25
+	# the window's hotspots in the picture at beat 49 (the window open, the turn done): how many, and the default (one at the player's feet counts: its ring is around them)
+	var win_n := 0
+	var win_any := 0
+	var win_default := 0
+	var win_all := 0
+	for wdw in windows:
+		var w2 := str(data.nodes[str(wdw["node"])]["map"])
+		var t49 := float(wdw["t0"]) + 49.0 * BEAT
+		if not players.has(w2) or t49 > t:
+			continue
+		var pose := (players[w2] as StoryPlayer).pose_at(t49)
+		var seen := 0
+		var placed := 0
+		var def_seen := false
+		for h in wdw["hs"]:
+			var r := HotspotView.resolve(h["anchor"], _map(w2), {})
+			if not bool(r["ok"]):
+				continue
+			placed += 1
+			var pc := StoryProjector.project(r["pos"], pose, STAGE_VIEW)
+			var sp: Vector2 = pc["screen"]
+			var at_feet := Vector2((r["pos"] as Vector3).x, (r["pos"] as Vector3).z).distance_to(pose["pos"]) < StoryPlayer.FACE_NEAR_M  # its ring is around the player
+			if at_feet or bool(pc["visible"]) and float(pc["depth"]) > 0.4 and sp.x >= 0.0 and sp.x <= STAGE_VIEW.x and sp.y >= 0.0 and sp.y <= STAGE_VIEW.y:
+				seen += 1
+				def_seen = def_seen or bool(h["default"])
+		if placed == 0:
+			continue
+		win_n += 1
+		win_any += 1 if seen > 0 else 0
+		win_default += 1 if def_seen else 0
+		win_all += 1 if seen == placed else 0
 	var worlds_seen: Array = []
 	for nid in nodes:
 		var wid := str(data.nodes[nid]["world"])
 		if worlds_seen.is_empty() or worlds_seen[worlds_seen.size() - 1] != wid:
 			worlds_seen.append(wid)
 	return {"worlds": worlds_seen, "over": e.over, "phases": max_phase, "depth": depth, "energy": e.energy, "nodes": nodes, "places": places, "kinds": kinds, "moves": moves, "camera_bad": camera_bad,
-		"away": e.away, "samples": samples, "dense": dense, "bad_starts": bad_starts, "bad_bars": bad_bars, "glances": glances, "log": j.log, "commits": commits, "failures": failures, "cinematics": cinematics, "taps": taps}
+		"away": e.away, "samples": samples, "dense": dense, "bad_starts": bad_starts, "bad_bars": bad_bars, "glances": glances, "log": j.log, "commits": commits, "failures": failures, "cinematics": cinematics, "taps": taps,
+		"windows": win_n, "win_any": win_any, "win_default": win_default, "win_all": win_all}
 
 
 func test_policy_matrix_survival_depth_rails_and_camera() -> void:
@@ -233,6 +280,31 @@ func test_policy_matrix_survival_depth_rails_and_camera() -> void:
 		d9 += float(by["accuracy:0.9/%d" % seed]["phases"])
 		d5 += float(by["accuracy:0.5/%d" % seed]["phases"])
 	assert_true(d9 >= d5, "better play goes at least as far as sloppy play")
+
+
+## The last block turns the camera to the window's hotspots (RunJourney.window_face): at beat 49 the default exit is in the picture (or at the player's feet) in at least 85% of the windows (a few stand just under the picture, a step or two away: the camera does not tip down), and at least one hotspot in every one.
+## The same runs without the turn are measured for comparison (the rail alone often faces away from the exits).
+func test_the_window_opens_facing_its_hotspots() -> void:
+	var data := RunData.load_default()
+	var tot := {"on": [0, 0, 0, 0], "off": [0, 0, 0, 0]}
+	for seed in [1, 2, 3]:
+		for face in [true, false]:
+			var r := _simulate("perfect", seed, data, "scripted", "warehouse", face)
+			var k := "on" if face else "off"
+			var a: Array = tot[k]
+			a[0] += int(r["windows"])
+			a[1] += int(r["win_any"])
+			a[2] += int(r["win_default"])
+			a[3] += int(r["win_all"])
+			if face:
+				assert_eq(r["camera_bad"], 0, "seed %d: the camera stays in valid sectors with the turn" % seed)
+				assert_eq(int(r["win_any"]), int(r["windows"]), "seed %d: some hotspot is in the picture when every window opens (%d of %d)" % [seed, int(r["win_any"]), int(r["windows"])])
+	var on: Array = tot["on"]
+	var off: Array = tot["off"]
+	print("  window at beat 49, with the turn: %d windows, a hotspot in view %d, the default %d, all %d; without: %d, %d, %d, %d" % [on[0], on[1], on[2], on[3], off[0], off[1], off[2], off[3]])
+	assert_true(int(on[0]) >= 30, "enough windows measured (%d)" % int(on[0]))
+	assert_true(float(on[2]) >= 0.85 * float(on[0]), "the default exit is in the picture (or at the player's feet) in at least 85%% of the windows (%d of %d)" % [int(on[2]), int(on[0])])
+	assert_true(int(on[2]) > int(off[2]) and int(on[3]) > int(off[3]), "the turn frames more of them than the rail alone")
 
 
 func test_tap_policies_commit_inside_the_guard_and_keep_every_journey_valid() -> void:

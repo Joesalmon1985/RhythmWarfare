@@ -13,7 +13,7 @@ Rhythm Warfare is a Godot 4.5.1 landscape phone rhythm game. Four lit pads are p
 | Two laps per path scene (A12) | yes, `path.laps` 2 | tests, recordings on the dummy driver | does it drag; energy for a 55 % player |
 | Audio polish: bass bus, bass carry (A10) | yes | `measure_mix.py`, recordings | everything audible (bass on a phone speaker, saturation, carry) |
 | Visual polish 1 and 2 (A9, A13): faces, kneel, rails | yes | stills looked at by agents | motion, phone-size reading |
-| Choice clarity (A14): current-choice engine, doors, wizard poses | engine + pilot scenes only | `tests/test_choice_clarity.gd`, strips | on a phone; most scenes are staged by defaults only; **the window camera is not built** |
+| Choice clarity (A14): current-choice engine, doors, wizard poses | engine + pilot scenes only | `tests/test_choice_clarity.gd`, strips | on a phone; most scenes are staged by defaults only; the window camera is the look pass's `face` look (A15, on `integrate/look-pass`, not yet on `main`) |
 | Debug / Playtest mode (A11) | yes | tests, shots | use on a phone, notes paste-back |
 | Wizard Duel (wifi) | yes | two headless processes over loopback | two real phones on a real network |
 | Android debug APK | yes (section 2) | aapt2 badging + apksigner | install and run on a phone: **never done** |
@@ -97,7 +97,7 @@ godot --headless --path . --import
 | `feature/choice-briefs` | **merged** (docs/choice) |
 | `feature/choice-clarity` | **merged** (A14) |
 | `feature/continuous-story-run`, `deathtrap-opening`, `face-polish`, `music-library`, `run-on-25d`, `story-25d`, `story-warehouse-music-test`, `visual-adventure`, `wizard-duel-lan` | already merged earlier (contained in main); safe to delete |
-| `feature/look-pass` | **NOT merged, paused** (hotspot light language, edge beacons, the camera facing the window, Bassment look; 4 commits, cut from older main 5efcfd20). It overlaps the choice-clarity work (camera toward the options, hotspot view); read it before doing item 5(a) "window camera", do not merge blind |
+| `feature/look-pass` | merged with main on `integrate/look-pass` (HANDOVER A15: hotspot light language, edge beacons, the camera facing the window, Bassment look; conflicts and the per-piece look verdict are there); not on `main` until the owner merges that branch |
 
 Nothing was deleted on origin. The merged branches can be deleted by the owner (`git push origin --delete <name>`) when he is happy. Worktrees are local only.
 
@@ -105,7 +105,7 @@ Nothing was deleted on origin. The merged branches can be deleted by the owner (
 
 ### (a) Choice clarity (owner's brief: every branching choice must be clear in the world)
 Read `docs/CHOICE_CLARITY.md` section 0 (status and the numbered pickup list), then `docs/choice/*.md` (the per-world art/authoring briefs: `main_a_warehouse_mothership_underworld.md`, `main_b_hospital_ward.md`, `bassment.md`, `path_gospel.md`, `path_squadron.md`, `path_ember.md`). Order:
-1. **Engine: the window camera (E1)**: turn the rail's camera toward the staged options in the route window (`src/run/run_rail.gd`, `WINDOW_GLANCE_DEG`; see `feature/look-pass` for an earlier attempt). Without it about half the options are edge beacons in play (the strips use a framed camera). Needs the owner's decision (section 5(b)).
+1. **Engine: the window camera (E1)**: built by the look pass as a held `face` look (`RunJourney.window_face`, `StoryPlayer.best_facing`; HANDOVER A15) once `integrate/look-pass` is merged. It frames the window's hotspot anchors (not the drawn door positions `door_at`): check on a phone, and consider framing `door_at` instead of the anchor for door options. Still needs the owner's decision (section 5(b)).
 2. Then per world, lanes A to F of section 6 of the doc: set `door_at` / `sign` / `pieces` per exit, `states` per object, re-anchor the five `pos` options of the Warehouse. Author by adding `"<hotspot id>": {...}` to `tools/run/staging_data.py`, run `python3 tools/run/apply_staging.py`, re-bake people if a new act/face is named, look with `bash tools/run/capture_choice.sh`. Many defaults put a door in the middle of a room until `door_at` is set.
 3. The art briefs (door skins per setting, object state pairs, a finger-post, creature frames, Bassment carriers and door-bar kits), E2 a key light on dark people, E3 a `people: [ids]` shorthand, E5 the briefs' new acts (rig + re-bake).
 Tests: `tests/test_choice_clarity.gd` covers every branching scene of the four runs.

@@ -403,10 +403,11 @@ where the radius is the projected `radius_m` but never under `min_px / 2` (so a 
 out of sight (behind the camera, round a corner) is a **beacon** of light at the edge of the picture on the side it lies, stacked down the edge, still touchable (free look is never required).
 Desktop: keys 1 to 4 select the hotspots on show in order, the arrow keys the one that leads that way.
 
-**Looks** (no text, no floating rectangles): available = a ring of light on the floor under the anchor (a perspective-correct ring projected point by point) and a glow on the thing, slowly pulsing; the
-`look.available` value picks the character: `glow`, `pulse` (one pulse a beat), `beckon` (a light column with a mote riding it; an actor anchor also *waves* through `StoryCrowd.beckon`, even a bartender
-with a fixed activity), `flicker`, `open` (a slit of light standing at the doorway, spilling on the floor), `crack` (a glowing crack in the floor). The **default exit** is brighter, has a second ring and
-its door stands wider ajar. Selected = a bright ring, a second ring closing in, a lift of the glow and a spark; committed = a flash, the ring opening out, the glow surging (about half a second).
+**Looks** (no text, no floating rectangles; the full language is in `docs/VISUAL_RHYTHM_ADVENTURE_HANDOVER.md` "Look"): available = a pool of light on the floor, a thick ring (projected point by point)
+kicking on every beat with a ripple, a shaft with motes, a glow on the thing; `look.available` adds `glow`, `pulse` (a harder beat), `beckon` (a taller shaft; an actor anchor also *waves* through
+`StoryCrowd.beckon`, even a bartender with a fixed activity), `flicker`, `open` (a lit slit standing in the doorway, its light spilling toward the player), `crack` (a glowing crack in the floor). The
+**default exit** is brighter with a second ring. Selected = white-hot ring thumping on the beat, four motes circling once a bar, the others dimmed; committed = a white flash bursting outward, then a
+calm light that fades (1.2 s). From the block-2 decision the camera holds the window's hotspots in the picture (a `face` look, `RunJourney.window_face`) until the lock beat.
 
 **Joining any block (`window: "any"`, `pass_credit`, the "claim" look).** A hotspot whose `on_success` has an `activity` (the blackjack table) may say `window: "any"` (default `"final"`): it is on show in every block of the phase until
 a final commit has happened, and a touch in block 0, 1 or 2 commits at that block's decision beat (`RunHotspots.on_block`, the block's credit passed in by `RunEngine._hotspot_decision`). Success is the activity outcome (`route` = the scene, `stays`:
