@@ -88,6 +88,15 @@ shot passage_doorway   warehouse.exit perfect up "$(python3 -c "print(64*60/174+
 shot passage_opening   warehouse.exit perfect up "$(python3 -c "print(64*60/174+0.75)")"
 shot passage_arrived   warehouse.exit perfect up "$(python3 -c "print(64*60/174+6.0)")"
 
+# --- hotspots: before a selection, after it, and after a success and a failure outcome (RW_RUN_SELECT=<hotspot id>@<phase beat> touches it; the bot misses the last block with blocks:1110) -------------
+shot hotspots_before     warehouse perfect "" "$(python3 -c "print(53*60/174)")"
+shot hotspots_selected   warehouse perfect "" "$(python3 -c "print(55*60/174)")" "RW_RUN_SELECT=warehouse.exit_balcony@52"
+shot hotspots_committed  warehouse perfect "" "$(python3 -c "print(60.9*60/174)")" "RW_RUN_SELECT=warehouse.exit_balcony@52"
+shot hotspots_success    warehouse perfect "" "$(python3 -c "print(66*60/174)")" "RW_RUN_SELECT=warehouse.dancer@52"
+shot hotspots_failure    warehouse blocks:1110 "" "$(python3 -c "print(66*60/174)")" "RW_RUN_SELECT=warehouse.dancer@52"
+shot hotspots_wizard     warehouse perfect "" "$(python3 -c "print(8*60/174)")" "RW_RUN_SELECT=warehouse.wizard@3"
+shot hotspots_phone      warehouse perfect "" "$(python3 -c "print(55*60/174)")" "RW_RUN_SELECT=warehouse.exit_balcony@52" RW_WINDOW=844x390
+
 # --- layouts and settings ---------------------------------------------------------------------------------------------------------------------------------------------------
 shot phone_route_window warehouse perfect right 19.0 RW_WINDOW=844x390
 shot phone_journey      warehouse perfect right 17.0 RW_WINDOW=844x390

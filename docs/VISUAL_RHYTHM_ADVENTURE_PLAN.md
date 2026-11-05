@@ -130,3 +130,13 @@ What A needs to know to wire it:
 
 Checks run: `check_hotspots.py` (0 errors), `--filter story_map` (16748 checks, 0 failures), `--filter run_` (0 failures), `--filter story_world`, `tools/story/check_assets.py` (OK), `make_scenes.py`
 idempotent. Screenshots of the new things in their rooms: wizard on the floor, headphones on the decks, the crack, the bandstand mic, the painted door.
+
+### Workstream A: the core interaction engine (Sonnet, 2026-11-04/05)
+
+Commits "Visual, A contract and validation / engine / view / RunPlay". `HotspotContract` (validator, vocabularies), `RunData` and `TrialData` load and validate the hotspot files, `RunHotspots` (pure
+engine), `HotspotView` (looks, projection, nearest-within-radius hit test, edge beacons), `RunPlay` (taps, keys 1 to 4, wizard as a character hotspot, outcomes to `RunEngine` / `RunJourney`), arrows and
+exits view behind `RW_RUN_ARROWS=1` (default off; the coordinator removes them once D has landed). Documented in `docs/CONTINUOUS_RUN.md` "Hotspots".
+Decisions: the outcome is resolved at the last block's decision (beat 60.5 to 60.75) *before* the next phase is charted, so the chart pack is the resolved route's (no late swap, section C's five
+diverting outcomes are safe); nothing tapped is the default exit regardless of performance; the wizard (route `"1"` or `"trial:N"`) has an *early* window (blocks 1 and 2) because the entry needs two
+guards; keep-flags are `keep:`-prefixed; the Bassment's minimum is 1 hotspot per passage (37 passages have one way on); `challenge` is validated but not consumed. Verified against C's 127 hotspots:
+validator 0 errors, `walk_run.sh perfect_a` OK, `walk_trial.sh` OK (the entry from the wizard hotspot), run and hotspot tests green.

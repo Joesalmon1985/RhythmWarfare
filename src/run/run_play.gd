@@ -481,6 +481,7 @@ func _bot_step(t: float) -> void:
 				engine.release(int(n["pad"]), end_t, int(n["pad"]))
 				pad_view.button_down[int(n["pad"])] = false
 	if hotspots != null:
+		_scripted_select(t)
 		_bot_taps(t)
 		return
 	if engine.window_open and _bot_route_done != engine.phase_n and engine.phase_beat_at(t) > 52.0:
@@ -513,6 +514,18 @@ func _bot_taps(t: float) -> void:
 				if str(h["on_success"].get("route", "")) == to:
 					hotspot_select(str(h["id"]))
 					break
+
+
+## RW_RUN_SELECT=<hotspot id>@<phase beat> (the screenshots): that hotspot is touched once, in the first phase, when its beat comes.
+var _select_done := false
+
+
+func _scripted_select(t: float) -> void:
+	if _select_done or not OS.has_environment("RW_RUN_SELECT") or engine.phase_n != 1:
+		return
+	var spec := OS.get_environment("RW_RUN_SELECT")
+	if engine.phase_beat_at(t) >= float(spec.get_slice("@", 1)):
+		_select_done = hotspot_select(spec.get_slice("@", 0)) or engine.phase_beat_at(t) > 62.0
 
 
 func _route_for_dir(k: int) -> String:
