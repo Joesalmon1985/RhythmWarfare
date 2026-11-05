@@ -145,6 +145,7 @@
   }
  ],
  "things": [
+  {"id": "hs_lampmoth", "kind": "billboard", "sprite": "thing_glow", "at": [0.00, 2.00], "y": 1.55, "size": 0.05, "anim": "none"},
   {
    "id": "door_back",
    "kind": "billboard",

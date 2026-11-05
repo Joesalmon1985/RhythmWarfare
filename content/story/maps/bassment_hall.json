@@ -209,6 +209,7 @@
   }
  ],
  "things": [
+  {"id": "hs_gargoyle", "kind": "billboard", "sprite": "thing_glow", "at": [0.00, 7.10], "y": 1.90, "size": 0.05, "anim": "none"},
   {
    "id": "hand_el0",
    "kind": "billboard",

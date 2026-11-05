@@ -118,6 +118,7 @@
   }
  ],
  "things": [
+  {"id": "hs_echo", "kind": "billboard", "sprite": "thing_glow", "at": [0.00, 2.80], "y": 1.00, "size": 0.05, "anim": "none"},
   {
    "id": "echo_door",
    "kind": "billboard",

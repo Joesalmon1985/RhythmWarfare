@@ -2,7 +2,7 @@
 
 The wizard in the Warehouse runs a trial in the cellars under the club: a gamebook-style dungeon, played on the same four pads, the same clock and the same music as the run. It is an original
 dungeon (63 passages in 16 zones, 10 creatures, 3 items, one victory) and it is **in the 2.5D world of the rest of the game**: each zone is a small Doom-style map on the story engine, the camera
-walks on rails between the passages' places, the choices are lit exits in the room, the creatures stand in the room, and entering and leaving are **seamless**: no scene change, no audio gap, no
+walks on rails between the passages' places, the choices are **hotspots in the room** (tap the lit exit, the creature, the rope), the creatures stand in the room, and entering and leaving are **seamless**: no scene change, no audio gap, no
 clock reset. **Only a death, three lost fight phrases, the victory or the back key lead back to the Warehouse.** This file is the single document for it. `assets/trial/PROVENANCE.md` says what is
 in the repository and where it came from.
 
@@ -13,15 +13,18 @@ godot --path .                      # Play; in the Warehouse level a wizard stan
 godot --path . res://src/trial/trial_play.tscn          # straight into the dungeon (hands over to the run scene, which hosts the dungeon)
 RW_TRIAL_START=12 godot --path . res://src/trial/trial_play.tscn       # start at any passage (12 the eel, 13 a death, 59 the Echo, 63 the victory)
 RW_TRIAL_BOT=perfect RW_TRIAL_CHOICES=d,d,1,0 godot --path . res://src/trial/trial_play.tscn   # scripted: the picks made in each window in turn
-bash tools/trial/walk_trial.sh      # scripted, headless: Warehouse > wizard > hatch > the default walk to the victory > back up into the Warehouse (isolated save)
-bash tools/trial/capture.sh         # a screenshot per zone and docs/shots/trial/contact_bassment.jpg
+RW_TRIAL_BOT=perfect RW_TRIAL_TAPS="d;d;1;0" godot --path . res://src/trial/trial_play.tscn      # the same, but each pick is a finger on the hotspot's centre, through the hit test
+bash tools/trial/walk_trial.sh      # scripted, headless: Warehouse > wizard > hatch > the default walk to the victory, then a walk whose picks are taps > back up into the Warehouse (isolated save)
+bash tools/trial/capture.sh         # a screenshot per zone, before and after a selection, a fight, a death, the victory (needs a display) and docs/shots/trial/contact_bassment.jpg
+python3 tools/trial/make_hotspots.py                                    # rewrite content/trial/hotspots.json (and the marker things of the maps) from passages.json
 godot --headless --path . -s tools/trial/validate.gd                    # check the data (passages, graph, zone maps, waypoints, exits)
-godot --headless --path . -s tools/trial/check_maps.gd [-- zone ...]    # check the zone maps and layouts one by one
+godot --headless --path . -s tools/trial/check_maps.gd [-- zone ...]    # check the zone maps, layouts and every hotspot's anchor one by one
 godot --headless --path . -s tests/run_tests.gd -- --filter trial       # the tests
 ```
 
 Bots: `perfect` plays every cue, `none` plays nothing, `no_fights` plays every cue except a fight's. `RW_TRIAL_CHOICES` is the pick made in each window in turn (an index, or `d` / empty for
-no pick, so the default applies). `RW_TRIAL_UNTIL=<passage>` with `RW_STORY_QUIT=1` quits when that passage is shown. In the run scene: `RW_TRIAL_ENTER=1` chooses the wizard at once,
+no pick, so the default applies); `RW_TRIAL_TAPS` is the same list (`;` or `,` between windows) but each pick is a **tap**: a finger on the centre of that hotspot's target, through the hit test a phone uses
+(it waits for the room to be lit after a zone swap and prints `TRIAL tap <aimed> -> <hit>`). `RW_TRIAL_UNTIL=<passage>` with `RW_STORY_QUIT=1` quits when that passage is shown. In the run scene: `RW_TRIAL_ENTER=1` chooses the wizard at once,
 `RW_TRIAL_LEAVE_AT=<song s>` presses the back key then, `RW_TRIAL_TRACE=1` prints every passage.
 
 ## The seamless entry and exit
@@ -41,29 +44,32 @@ no pick, so the default applies). `RW_TRIAL_UNTIL=<passage>` with `RW_STORY_QUIT
 
 ## How it plays
 
-* **Warehouse.** The wizard (`assets/trial/art/wizard.png`) waits at the left of the stage with a floating **Enter the Trial**, only in the Warehouse level. Ignoring it changes nothing:
-  the run goes on by its ordinary routes. Choosing it walks into the dungeon (see above).
+* **Warehouse.** The wizard (`assets/trial/art/wizard.png`) waits at the left of the stage with a floating **Enter the Trial**, only in the Warehouse level (the engine workstream turns him into a character hotspot;
+  the entry and the walk back out are unchanged). Ignoring it changes nothing: the run goes on by its ordinary routes. Choosing it walks into the dungeon (see above).
 * **The music game never stops.** Cues fall on the four pads the whole time, in 16-beat blocks (four bars) on the same clock, packs and judge as the run. Nothing pauses for reading
   or choosing.
-* **A passage.** The camera stands in the passage's place in its zone map, the title and two to four sentences appear over the room, the choices **float** at the right (big touch targets, keys 1
-  to 4) and each is also **lit in the room as a numbered exit** (a door, a ladder foot, a gap, the water's edge, a seam) where it lies; a footer names the zone and the items you carry.
-  The only inputs are the choices and the pads (the system back key leaves the dungeon; it is not a game input).
-* **Four bars to choose.** When a passage appears its choices float for exactly four bars, with a bar showing the time left. One choice is marked `[DEFAULT]`. Tap another to pick it (tap
-  again to change your mind, up to the last beat). When the four bars end the game moves on with your pick, or with the default if you picked nothing. A choice that needs an item you do
-  not hold is not shown.
-* **The phrase.** A committed choice is played as the next block of cues: a drums or bass phrase of the tier its data names. Between the choices and the phrase the music and the pads carry
+* **A passage.** The camera stands in the passage's place in its zone map. Across the top is the **caption band**: the title and two to four sentences of narrative (what the place is, what is
+  in it), never a choice, with the consequence of the last move or the stumble of a failed one on a line of its own. **Every choice is a hotspot in the room**, drawn as light and no words: a ring on the
+  floor and a glow on the thing, and four corner ticks on the default; an exit is lit where it lies (a door, a ladder foot, a gap, the water's edge, a seam), a creature **stands in the room** and
+  the fight is a tap on it, an item's place (the cracked crystal, the dark archway, a stone palm) is an object, a luck test is a feature (the pipes, the rope, the barrels, the door's grille). A hotspot behind
+  the camera is a chevron at the screen edge on its side, so everything can be tapped without turning. Targets are at least 72 px across and sit only in the picture above the pads. A footer names the
+  zone and the items you carry. The only inputs are the hotspots and the pads (the system back key leaves the dungeon; it is not a game input; keys 1 to 4 pick the hotspots in order on a desktop).
+* **Four bars to choose.** When a passage appears its hotspots are lit for exactly four bars; a thin bar along the bottom of the picture (no text) shows the time left. **One is brighter: the default**,
+  what happens if nobody chooses. Tap another to select it (it lights gold with a second ring and the default mark moves off; tap another to change your mind, up to the last beat). When the four bars end
+  the committed hotspot flashes for a beat and the game moves on with your pick, or with the default if you picked nothing. A choice that needs an item you do not hold has no hotspot.
+* **The phrase.** A committed hotspot is played as the next block of cues: a drums or bass phrase of the tier its data names (`challenge`). Between the choice and the phrase the music and the pads carry
   on without a break.
-* **A pass** walks through the chosen exit (the head turns to it when the choice is committed), shows the consequence line and opens a new four-bar window at once; if the next passage is in
-  another zone the passage frame closes on the exit and opens on the new zone on the next downbeat. **A failed phrase** keeps you where you stand with a stumble (the queasy look, a glance) and
-  the same choices; the one you failed reads "Try again: ..." and is now the default, so doing nothing retries it. Retry as often as you like.
-* **A fight** puts the creature in the room as a billboard figure in front of the camera (idle, attack and struck poses), plays the harder phrase, then an outcome: a win shows the struck pose and
-  the creature sinks and fades; a loss is a lunge in the attack pose, a red flash and the stumble. **Three lost phrases in the same
+* **A pass** walks through the chosen exit (the head turns to it when the choice is committed), shows the consequence line as a short caption and opens a new four-bar window at once; if the next passage is in
+  another zone the passage frame closes on the exit and opens on the new zone on the next downbeat (the new room's hotspots come up when it is on screen). **A failed phrase** keeps you where you stand with a
+  stumble (the queasy look, a glance) and the same hotspots; the one you failed is now the default (the bright one), so doing nothing retries it. Retry as often as you like.
+* **A fight.** The creature stands in the room (a billboard figure: idle, attack and struck poses) while the window is open, as the hotspot for the fight; tapping it (or leaving it as the default) plays the
+  harder phrase, then an outcome: a win shows the struck pose and the creature sinks and fades; a loss is a lunge in the attack pose, a red flash and the stumble. **Three lost phrases in the same
   fight end the trial** (the creature's own defeat text, then the Warehouse).
 * **A luck test** is one phrase with no second go: a pass goes one way, a miss the other (a setback that rejoins, or a death).
-* **Items and secrets.** Three items can be found (the brass lamp, the GUEST LIST token, the silver tuning fork). Each makes a choice appear somewhere else: a shortcut past the Fungus Farm,
+* **Items and secrets.** Three items can be found (the brass lamp, the GUEST LIST token, the silver tuning fork). Each makes a hotspot appear somewhere else: a shortcut past the Fungus Farm,
   a way past the bouncer without a fight, a hidden seam past the gargoyle. The footer lists what you carry.
-* **Death and victory** are the tableaux: a death shows YOU DIED, the camera looks down and the lights go out in a slow fade, with one choice, "Wake in the Warehouse" (also the default); the
-  victory is the dawn car park, a flash of daylight settling to warm light, with the same one choice. Then the walk back up the hatch.
+* **Death and victory** are the tableaux: a death shows YOU DIED, the camera looks down and the lights go out in a slow fade, with one hotspot, the way out (also the default); the
+  victory is the dawn car park, a flash of daylight settling to warm light, with the same one hotspot. Then the walk back up the hatch.
 
 ### The timeline
 
@@ -122,7 +128,8 @@ wizard's sandwich.
 
 ## Where to add the next passage
 
-Everything about the dungeon lives in `content/trial/passages.json`. A passage:
+Everything about the dungeon lives in `content/trial/passages.json`; **`content/trial/hotspots.json` is made from it** (`python3 tools/trial/make_hotspots.py`, never edited by hand: one hotspot per choice, keyed by
+passage, `id` `trial.<passage>.<n>` with n the choice's index, the contract of `docs/VISUAL_RHYTHM_ADVENTURE_PLAN.md` section 2). A passage:
 
 ```json
 "37": {
@@ -152,7 +159,11 @@ Everything about the dungeon lives in `content/trial/passages.json`. A passage:
 4. **Items** are under `"items"` (id to display name); `grants` gives one on entering a passage and `requires` hides a choice until it is held. The flow keeps them in `TrialFlow.flags`.
 5. Every passage also needs `"map"` and `"waypoint"` and every choice `"exit_wp"` (write them in `content/trial/layout/<zone>.json` and run `python3 tools/trial/apply_layout.py`; the validator
    checks them). New zone: add it under `"zones"` (`name`, `look`, `tier`, `scene`, `map`), a scene file and a map `content/story/maps/bassment_<zone>.json`; new creature: add a function to `tools/trial/make_creatures.py` and an entry under `"encounters"`.
-6. Run `godot --headless --path . -s tools/trial/validate.gd`: it lists every broken link, missing scene, phrase, item or encounter, unreachable passage, the walk by defaults, and prints the
+6. **Hotspots.** After any change to `passages.json` run `python3 tools/trial/make_hotspots.py`. The kind comes from the choice: a fight is an `encounter` (anchored to a marker thing `hs_<creature>` that the script writes
+   into the zone map where the creature stands, `TrialScene.figure_spot`; a new creature needs an entry in the script's `FIGURES` and in the scene's), a luck test is a `feature`, a choice that needs an item or whose
+   place grants one is an `object`, everything else an `exit` anchored to its `exit_wp`. Features and objects name an existing thing of the map in the script's `THINGS` table (the rope, the pipes, the door) or a marker.
+   `check_maps.gd` and `tests/test_trial.gd` fail when the file and the passages disagree (defaults, routes, challenge family and tier, availability, anchors that are not in the map).
+7. Run `godot --headless --path . -s tools/trial/validate.gd`: it lists every broken link, missing scene, phrase, item or encounter, unreachable passage, the walk by defaults, and prints the
    counts. Run `tests/test_trial.gd` for the content rules (60 to 80 passages, about ten fights, six luck tests, six deaths).
 
 `"music"` names the pack whose recordings and chart the phrases use (`audio`, `chart`, `treatment`). `fight_audio` and `fight_chart` are a second pack id for fights; they are read and
@@ -186,9 +197,11 @@ owner's `dd_part1` and `dd_part2`), point `audio`/`chart` at the ambient set and
 | Piece | File |
 | --- | --- |
 | data and validator (incl. zone maps, waypoints, exits) | `src/trial/trial_data.gd`, `content/trial/passages.json`, `content/story/maps/bassment_*.json`, `tools/trial/validate.gd`, `check_maps.gd` |
+| the hotspots: data, generator, which a player may see, where an anchor stands, the agreement check | `content/trial/hotspots.json`, `tools/trial/make_hotspots.py`, `src/trial/trial_hotspots.gd` |
+| the lights and the taps (a thin fallback, deleted when the engine workstream's `hotspot_view` is merged) | `src/trial/trial_hotspot_fallback.gd` |
 | rules (no nodes) | `src/trial/trial_flow.gd` |
 | the clock, blocks and windows (no nodes; `origin` is the downbeat it starts on) | `src/trial/trial_engine.gd` (uses `RunData` packs and `PadJudge`) |
-| the scene (zone stages, camera, exits, figures, tableaux) | `src/trial/trial_scene.gd`, hosted by `src/run/run_play.gd` (`arm_trial`, `trial_begin_now`, `trial_leave`); `trial_play.tscn` is a launcher |
+| the scene (zone stages, camera, caption band, hotspots, figures, tableaux) | `src/trial/trial_scene.gd`, hosted by `src/run/run_play.gd` (`arm_trial`, `trial_begin_now`, `trial_leave`); `trial_play.tscn` is a launcher |
 | the run side of the transitions | `RunEngine.resume`, `RunAudio` (unchanged: a `phase_start` per group), `RunPassage` |
 | the wizard | `src/run/run_play.gd` `_build_gate`, flag `trial_gate` on the Warehouse in `content/run/run.json`; the `hatch` waypoint in `content/story/maps/night_one.json` |
 | art | `tools/story/art/tex_bassment.py`, `tools/trial/make_creatures.py` |
@@ -196,26 +209,29 @@ owner's `dd_part1` and `dd_part2`), point `audio`/`chart` at the ambient set and
 
 ## Verification
 
-Automated (`tests/test_trial.gd`, 38 tests):
+Automated (`tests/test_trial.gd`, 42 tests):
 
 * **the content**: 63 passages (60 to 80), 16 zones, 10 fights each with a different creature and three lives, 7 luck tests, 6 deaths plus the defeat passage, one victory, 22 side passages,
   3 items behind 3 gated choices; **every zone's map is valid with 2 to 4 sectors and at least two lights; every passage's waypoint and every exit is a waypoint of its map, reachable by the
   rail and somewhere else in the room; a missing waypoint or exit is refused**;
 * **reachability and defaults**, **items**, **fights, luck, deaths**, **timing and music** (the music game never stops; windows last exactly 16 beats; the commit is on beat 12.75; a pick beats
   the default; a failed phrase reopens the window with the failed option as the default): on the engine, as before;
-* **the scene** in a phone-sized 844x390 view on the real run scene (virtual clock): a 2.5D stage with the exits lit and numbered, two floating choices of at least 140x40 px above the pads,
-  the bars-left readout, the zone footer, items in the footer; defaults walk through zone swaps (a swap lands on a block's downbeat, the frame is shut before it); death and victory walk back to
+* **the hotspots**: the file agrees with the passages (95 hotspots, a flat list: 74 exit, 10 encounter, 7 feature, 4 object by `trial_kind`), every anchor is in its zone map, the creature marker stands where the figure does,
+  an item's hotspot appears only with the item; every hotspot of every passage has a target of at least 72 px from where the camera stands and can be hit at its centre;
+* **the scene** in a phone-sized 844x390 view on the real run scene (virtual clock): a 2.5D stage with the hotspots lit (the default brighter), no button and no choice written anywhere, the caption band across
+  the top, a tap selecting and changing the pick (and keys 1 to 4), a tap off a target picking nothing, targets at least 72 px and never over the pads, the thin bar full at four bars, the zone footer, items in the footer; defaults walk through zone swaps (a swap lands on a block's downbeat, the frame is shut before it); death and victory walk back to
   the Warehouse; three lost phrases end the trial; a fight puts the creature on the floor of its zone, it lunges when the phrase is lost and shows struck when won;
 * **the wizard and the transitions**: "Enter the Trial" appears in the Warehouse only and does not touch the pads; ignoring it leaves by the default route; choosing it sends the camera to
   the hatch on the next guard, the dungeon takes the pads on the guard after, the Warehouse stays on screen until the downbeat, the Service Hatch opens on it, the dungeon's beat grid starts
   there and its first cue is on the run's grid; the back key leaves on a downbeat of that grid, the run resumes there as a fresh phase with the energy kept and the Warehouse on screen.
 
 Run by script: `bash tools/trial/walk_trial.sh` (a virtual run from the Warehouse into the dungeon, the default walk through all 16 zones to Daylight, about 330 s of song time, back into the
-Warehouse: `WALK OK`). Recorded in real time (`tools/story/record_music.gd` on the run scene with `RW_TRIAL_ENTER=1 RW_TRIAL_LEAVE_AT=30`, then `tools/trial/check_transition_audio.py`): the
+Warehouse, then the same with three of the picks made by taps through the hit test: `WALK OK`). Recorded in real time (`tools/story/record_music.gd` on the run scene with `RW_TRIAL_ENTER=1 RW_TRIAL_LEAVE_AT=30`, then `tools/trial/check_transition_audio.py`): the
 numbers are in the progress note of `docs/RUN_DUNGEON_MUSIC_PLAN.md` section 7.
 
-Seen (`docs/shots/trial/`, 1280x720 on a real window): `contact_bassment.jpg` and `zone_<zone>.png` for every zone, `entry_1` to `entry_5` (the walk to the hatch, the frame closing, the
-Service Hatch opening), `fight_1_eel`, `fight_2_eel_lunges`, `death_tableau`, `victory_tableau`.
+Seen (`docs/shots/trial/`, 1280x720 on a real window, `bash tools/trial/capture.sh`): `contact_bassment.jpg` and `zone_<zone>.png` for every zone (the hotspots lit, the default brighter),
+`select_before` / `select_after` (a tap moves the gold ring), `fight_1_hotspot` (the eel stands in the room as the fight's hotspot), `fight_2_phrase`, `fight_3_win`, `death_before` / `death_tableau`,
+`victory_before` / `victory_tableau`, and the older `entry_1` to `entry_5` (the walk to the hatch, the frame closing, the Service Hatch opening; not regenerated by capture.sh).
 
 Not done: nobody has played this by hand or on a phone; the camera has no pitch control in the zone maps' authored views, so the shaft and the pit are seen across rather than looked down into;
 the fight pack (`fight_audio`) is read and checked but one pack plays throughout; the creatures are enlarged portraits, not rigged figures.
