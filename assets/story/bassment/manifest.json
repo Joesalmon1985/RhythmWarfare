@@ -563,6 +563,14 @@
    ],
    "metres": 2.5
   },
+  "wall_burrow": {
+   "file": "textures/wall_burrow.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
   "wall_cable": {
    "file": "textures/wall_cable.png",
    "size": [
@@ -581,6 +589,14 @@
   },
   "wall_door": {
    "file": "textures/wall_door.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 3.0
+  },
+  "wall_echo": {
+   "file": "textures/wall_echo.png",
    "size": [
     128,
     128

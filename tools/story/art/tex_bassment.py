@@ -1,7 +1,7 @@
 """The Bassment's procedural pixel art (docs/RUN_DUNGEON_MUSIC_PLAN.md 2b): the wizard's cellars under the club, in a cellar palette.
 
 `build()` writes assets/story/bassment/textures/*.png and returns the manifest `textures` section {id: {file, size, metres}}:
-  surfaces (opaque tiles, 64 or 128 px, tileable): brick, damp brick, piped brick, barrel stacks, crystal, fungus stone, mirror glass, iron plates, record shelves, cave rock,
+  surfaces (opaque tiles, 64 or 128 px, tileable): brick, damp brick, piped brick, barrel stacks, crystal, fungus stone, mirror glass, iron plates, record shelves, cave rock, the echo chamber's pale carved ashlar, the warren's gnawed earth,
     planked doors, the hatch, kitchen tile, cabled brick, carved hands, brass; floors (flags, planks, grate, moss, kitchen checker, crystal, mirror, dirt, straw, pavement, water),
     ceilings (arches, pipes, rock, crystal, beams) and a dawn sky strip;
   billboards (`thing_*`, 128 x 128 RGBA, hard alpha): torch, crystal cluster, mushrooms, barrel, lamp, furnace, doorway, ladder, rope, cables, skull, coat rack, valve wheel, bones,
@@ -42,6 +42,8 @@ WATER = ramp("#02060a", "#06121c", "#0a2234", "#0e3a52", "#1a5c78", "#3a90a8", "
 STRAW = ramp("#120c04", "#2a1c0a", "#4a3414", "#7a5a22", "#a8842e", "#d4b04c")
 DIRT = ramp("#07050a", "#120d10", "#201820", "#32252a", "#483638", "#5e4a48")
 PAVE = ramp("#1a1c22", "#2e313a", "#464a54", "#666a74", "#8a8e98", "#b0b4bc")
+ECHO = ramp("#0c1018", "#1e2632", "#36414f", "#526073", "#76869c", "#a0afc4", "#ccd8e8")  # the echo chamber: cold pale stone
+EARTH = ramp("#0a0503", "#1e0f06", "#36200c", "#563614", "#7a5020", "#a2702e")  # the warren: packed warm earth
 FLAME = ramp("#3a0a04", "#8a1a06", "#e0480a", "#ff9a20", "#ffe070", "#fff8c8")
 
 
@@ -189,6 +191,47 @@ def wall_rock(n=128):
     sh = 0.2 + 0.4 * v + 0.2 * ridges ** 3
     sh *= 1.0 - 0.3 * grime(n, 623, 0.7)
     return _rgb(sh, STONE), 3.0
+
+
+def wall_echo(n=128):
+    """The echo chamber's bare stone: long pale ashlar courses, cold and clean, with the rings of a sound carved faintly across them (they tile: a toroidal distance)."""
+    sh, m = bricks(n, rows=4, cols=2, mortar=1, seed=681, wear=0.2)
+    x, y = grid(n)
+    dx = np.minimum(np.abs(x - n / 2), n - np.abs(x - n / 2))
+    dy = np.minimum(np.abs(y - n / 2), n - np.abs(y - n / 2))
+    d = np.sqrt(dx * dx + dy * dy)
+    groove = (np.sin(d * 0.42) > 0.9) & (d < n * 0.5)
+    sh = sh * 0.75 + 0.18 + (noise(n, 10, 682, 3) - 0.5) * 0.12 - 0.12 * groove - 0.1 * grime(n, 683, 0.35, drip=False)
+    rgb = _rgb(sh, ECHO)
+    return np.where((m > 0.5)[..., None], _rgb(np.full((n, n), 0.18, np.float32), ECHO), rgb), 3.0
+
+
+def wall_burrow(n=128):
+    """The warren's walls: packed earth in warm layers, gnawed into, with the round black mouths of rat holes (a lit lip under each) and gnaw scratches."""
+    x, y = grid(n)
+    strata = 0.5 + 0.5 * np.sin(y * 0.28 + noise(n, 16, 691, 3) * 5.0)
+    sh = 0.32 + 0.22 * noise(n, 12, 692, 4) + 0.14 * strata
+    rng = np.random.RandomState(693)
+    hole = np.zeros((n, n), bool)
+    lip = np.zeros((n, n), bool)
+    for _ in range(5):
+        cx, cy, rx = rng.rand() * n, rng.rand() * n, 5 + rng.rand() * 6
+        ddx = np.minimum(np.abs(x - cx), n - np.abs(x - cx))
+        ddy = np.minimum(np.abs(y - cy), n - np.abs(y - cy))
+        e = (ddx / rx) ** 2 + (ddy / (rx * 0.7)) ** 2
+        hole |= e < 1.0
+        lip |= (e >= 1.0) & (e < 1.7) & (((y - cy) % n) < n / 2) & (((y - cy) % n) > 0)
+    scratch = np.zeros((n, n), bool)
+    for _ in range(14):
+        sx, sy, ln = rng.rand() * n, rng.rand() * n, 4 + int(rng.rand() * 5)
+        for k in range(ln):
+            scratch[int(sy + k) % n, int(sx + k * 0.6) % n] = True
+            scratch[int(sy + k) % n, int(sx + 2 + k * 0.6) % n] = True
+    sh = sh + 0.3 * lip - 0.12 * scratch
+    rgb = _rgb(sh, EARTH)
+    rgb = _col(rgb, scratch.astype(np.float32) * (rng.rand(n, n) < 0.6), "#b07a3c")
+    rgb = _col(rgb, speckle(n, 0.006, 694), "#c89a58")
+    return np.where(hole[..., None], _rgb(np.full((n, n), 0.04, np.float32), EARTH), rgb), 3.0
 
 
 def wall_door(n=128):
@@ -576,7 +619,7 @@ PROPS = {"thing_torch": th_torch, "thing_crystal": th_crystal, "thing_mushroom":
 
 TILES = {"wall_brick": wall_brick, "wall_brick_dark": wall_brick_dark, "wall_pipe": wall_pipe, "wall_cable": wall_cable, "wall_barrel": wall_barrel, "wall_crystal": wall_crystal,
          "wall_fungus": wall_fungus, "wall_mirror": wall_mirror, "wall_iron": wall_iron, "wall_shelf": wall_shelf, "wall_rock": wall_rock, "wall_door": wall_door,
-         "wall_hatch": wall_hatch, "wall_tile": wall_tile, "wall_hands": wall_hands, "wall_brass": wall_brass,
+         "wall_hatch": wall_hatch, "wall_tile": wall_tile, "wall_hands": wall_hands, "wall_brass": wall_brass, "wall_echo": wall_echo, "wall_burrow": wall_burrow,
          "floor_flag": floor_flag, "floor_wood": floor_wood, "floor_grate": floor_grate, "floor_moss": floor_moss, "floor_kitchen": floor_kitchen, "floor_crystal": floor_crystal,
          "floor_mirror": floor_mirror, "floor_dirt": floor_dirt, "floor_straw": floor_straw, "floor_pavement": floor_pavement, "water": water,
          "ceil_arch": ceil_arch, "ceil_pipes": ceil_pipes, "ceil_rock": ceil_rock, "ceil_crystal": ceil_crystal, "ceil_beams": ceil_beams}

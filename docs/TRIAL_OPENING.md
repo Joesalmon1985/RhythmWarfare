@@ -49,13 +49,12 @@ no pick, so the default applies); `RW_TRIAL_TAPS` is the same list (`;` or `,` b
 * **The music game never stops.** Cues fall on the four pads the whole time, in 16-beat blocks (four bars) on the same clock, packs and judge as the run. Nothing pauses for reading
   or choosing.
 * **A passage.** (Since stage 1c the caption band, the title, the zone tag and the banners are **off during play**; `RW_DEV_TEXT=1` brings them back and the creature acts what the caption said, see `docs/CONTINUOUS_RUN.md` "The silent HUD".) The camera stands in the passage's place in its zone map. Across the top is the **caption band**: the title and two to four sentences of narrative (what the place is, what is
-  in it), never a choice, with the consequence of the last move or the stumble of a failed one on a line of its own. **Every choice is a hotspot in the room**, drawn as light and no words: a ring on the
-  floor and a glow on the thing, and four corner ticks on the default; an exit is lit where it lies (a door, a ladder foot, a gap, the water's edge, a seam), a creature **stands in the room** and
+  in it), never a choice, with the consequence of the last move or the stumble of a failed one on a line of its own. **Every choice is a hotspot in the room**, drawn as light and no words, in the run's own hotspot language (`docs/VISUAL_RHYTHM_ADVENTURE_HANDOVER.md` "Look": a pool of light, a ring kicking on the beat, a shaft, a glow; the default brighter with a second ring); an exit is lit where it lies (a door, a ladder foot, a gap, the water's edge, a seam), a creature **stands in the room** and
   the fight is a tap on it, an item's place (the cracked crystal, the dark archway, a stone palm) is an object, a luck test is a feature (the pipes, the rope, the barrels, the door's grille). A hotspot behind
-  the camera is a chevron at the screen edge on its side, so everything can be tapped without turning. Targets are at least 72 px across and sit only in the picture above the pads. A footer names the
+  the camera is a beacon of light at the screen edge on its side, so everything can be tapped without turning. Targets are at least 72 px across and sit only in the picture above the pads. A footer names the
   zone and the items you carry. The only inputs are the hotspots and the pads (the system back key leaves the dungeon; it is not a game input; keys 1 to 4 pick the hotspots in order on a desktop).
 * **Four bars to choose.** When a passage appears its hotspots are lit for exactly four bars; a thin bar along the bottom of the picture (no text) shows the time left. **One is brighter: the default**,
-  what happens if nobody chooses. Tap another to select it (it lights gold with a second ring and the default mark moves off; tap another to change your mind, up to the last beat). When the four bars end
+  what happens if nobody chooses. Tap another to select it (it goes white-hot, thumps on the beat with motes circling it, and the others dim; tap another to change your mind, up to the last beat). When the four bars end
   the committed hotspot flashes for a beat and the game moves on with your pick, or with the default if you picked nothing. A choice that needs an item you do not hold has no hotspot.
 * **The phrase.** A committed hotspot is played as the next block of cues: a drums or bass phrase of the tier its data names (`challenge`). Between the choice and the phrase the music and the pads carry
   on without a break.
@@ -189,7 +188,7 @@ owner's `dd_part1` and `dd_part2`), point `audio`/`chart` at the ambient set and
   `tools/trial/make_creatures.py` enlarged, with a lunging attack frame and the flashed struck frame) and the wizard. Deterministic. The creatures are billboards in the room (a deviation from
   the wardrobe and sheet pipeline: they need no skeleton); the player's hands are not shown.
 * **Flat pictures**: deleted in the bring-to-main pass. Only `assets/trial/scenes/stacks.png` remains, the Wizard Duel's backdrop (`src/duel/duel_play.gd`); `tools/trial/make_scenes.py` can still redraw it (it would redraw the others too: delete those again). The `scenes` block of `passages.json` keeps its ids and legacy `file` paths, which the data validator no longer checks.
-* **Text panel and light**: the passage text is a band across the top of the view (95 % wide, 60 % opaque), not a block over a third of it; the warren, echo chamber and cellar maps have a minimum `light` of 0.8 and `ambient` of 0.75 per sector. The other zones were not changed (a visual polish of the Bassment is still due).
+* **Text panel and light**: the passage text is a band across the top of the view (95 % wide, 60 % opaque), not a block over a third of it; the warren, echo chamber and cellar maps have a minimum `light` of 0.8 and `ambient` of 0.75 per sector. Look pass: the echo chamber's walls are `wall_echo` (pale carved ashlar), the warren's `wall_burrow` (gnawed warm earth) behind a warm brick stair, its fog lifted.
 * **Fights**: `dd_part2` is named in `music.fight` of `passages.json`, but the scene still plays the one pack (`dd_part1`); the fight pack is not switched to.
 
 ## How it is built

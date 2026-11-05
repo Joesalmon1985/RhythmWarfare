@@ -26,7 +26,7 @@ const ACTIONS := [
 	# the player's journey in the 2.5D world (docs/STORY_25D_PLAN.md section 4.1): player_move {to: waypoint, style, bars}, player_look {yaw | at | by (a glance), bars},
 	# player_role {role}, fx_queasy {amount 0..1, bars}, sick_beat {bars}
 	"player_move", "player_look", "player_role", "fx_queasy", "sick_beat",
-	# player_walk {to | fwd, right, face | turn, stop, in, style, bars}: a walk inside the room the rail is in (docs/STORY_25D_ART_DIRECTION.md 2.B); player_look also takes `pitch` (degrees up)
+	# player_walk {to | fwd, right, face | turn, stop, in, style, bars}: a walk inside the room the rail is in (docs/STORY_25D_ART_DIRECTION.md 2.B); player_look also takes `pitch` (degrees up), and `face` [x, z] with turn_bars and release_bars (the head held on a point: the run turns it to the hotspots for the window)
 	"player_walk",
 ]
 

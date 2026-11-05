@@ -271,7 +271,7 @@ func build_zone(z: String) -> Dictionary:
 		hv.glow_tex = _assets.sprite("glow").get("tex", null)
 		var warm: Array = st.palettes.get("warm", [])
 		if not warm.is_empty():
-			hv.tint = (warm[0] as Color).lerp(Color(1.0, 0.9, 0.6), 0.55)
+			hv.tint = HotspotView.light_tint(warm[0] as Color)
 		hv.set_anchors_preset(Control.PRESET_FULL_RECT)
 		var layer := st.lowres.add_overlay(hv, "Hotspots")
 		layer.layer = 2
@@ -643,7 +643,7 @@ func _view_items(z: String) -> Array:
 			var sel := i == engine.selected
 			out.append({"index": i, "hotspot": h, "state": "selected" if sel else "available", "t_state": float(_sel_t.get(i, 0.0)) if sel else 0.0})
 	if not _commit_view.is_empty() and str(_commit_view["zone"]) == z:
-		if _last_t - float(_commit_view["t"]) < 2.0 * _beat_s:
+		if _last_t - float(_commit_view["t"]) < (HotspotView.FLASH_S + HotspotView.SETTLE_S) * 1.05:
 			out.append({"index": int(_commit_view["index"]), "hotspot": _commit_view["hs"], "state": "committed", "t_state": float(_commit_view["t"])})
 		else:
 			_commit_view = {}
