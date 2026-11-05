@@ -931,10 +931,11 @@ func _figure_act(t: float) -> Dictionary:
 		phase = "selected"
 		t0 = maxf(float(_sel_t.get(int(_fig["acting"]["choice"]), t0)), t0)
 	var spec: Variant = block.get(phase, block.get("available", {}))
-	if phase == "available" and engine != null and engine.window_open and _items.size() >= 2:  # a creature that is one of two or more options shows whether it is the current choice: squared up to fight you, or backing off (docs/CHOICE_CLARITY.md)
+	if phase == "available" and engine != null and engine.window_open and _items.size() >= 2:  # a creature that is one of two or more options shows whether it is the current choice: its own waiting act, or backing off (docs/CHOICE_CLARITY.md)
 		var cur_i := engine.selected if engine.selected >= 0 else engine.default_index()
 		var cr: Dictionary = ChoiceStaging.defaults().get("creature", {})
-		spec = {"act": str(cr.get("current_act", "stamp")) if cur_i == int(_fig["acting"]["choice"]) else str(cr.get("other_act", "recoil"))}
+		if cur_i != int(_fig["acting"]["choice"]):  # (the current one keeps its own waiting act: block, offer, laugh... it is squared up to you)
+			spec = {"act": str(cr.get("other_act", "recoil"))}
 	if typeof(spec) != TYPE_DICTIONARY:
 		return none
 	return {"act": str((spec as Dictionary).get("act", "")), "u": maxf(t - t0, 0.0) / _beat_s}
