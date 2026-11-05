@@ -1,0 +1,24 @@
+# check_run_audio.py on the handoff recording after the audio polish (balcony star -> stub 124 BPM -> Warehouse; RW_RUN_BOT=perfect RW_RUN_START=warehouse.balcony RW_RUN_FLAGS=wh_saw_floor RW_RUN_PORTAL=warehouse.balcony.star RW_PATH_REMAP=gospel=stub, record_music.gd 115 s, dummy driver, 5 Nov 2026)
+recording 118.6 s at 48000 Hz; song started at wall 3.725; 5 phases in the log
+phase 1 warehouse.balcony 174 BPM (measured 174.000 *) treatment none       delay -153.83 ms
+phase 2 stub           124 BPM (measured 124.000) treatment none       delay -147.96 ms
+   block 1 stage 0 (Drums         ) fitted {'drums': 1.26}  expected {'drums': 1.2589}  explains  99.2%  ok
+   block 2 stage 1 (Bass enters   ) fitted {'drums': 0.64, 'bass': 1.36, 'other': 0.57}  expected {'drums': 0.6295, 'bass': 1.2589, 'other': 0.5665}  explains  99.5%  ok
+   block 3 stage 2 (Drums return  ) fitted {'drums': 1.26, 'bass': 1.16, 'other': 0.57}  expected {'drums': 1.2589, 'bass': 1.0701, 'other': 0.5665}  explains  99.5%  ok
+   block 4 stage 3 (Bass strongest) fitted {'drums': 0.51, 'bass': 1.36, 'other': 0.64, 'riser': 0.5}  expected {'drums': 0.5036, 'bass': 1.2589, 'other': 0.6295, 'riser': 0.5011872336272722}  explains  99.5%  ok
+   bass and synth started from beat 16 of the phase
+phase 3 stub.end       124 BPM (measured 124.000) treatment none       delay -154.08 ms
+   block 1 stage 0 (Drums         ) fitted {'drums': 1.26}  expected {'drums': 1.2589}  explains  99.3%  ok
+   block 2 stage 1 (Bass enters   ) fitted {'drums': 0.63, 'bass': 1.35, 'other': 0.57}  expected {'drums': 0.6295, 'bass': 1.2589, 'other': 0.5665}  explains  99.5%  ok
+   block 3 stage 2 (Drums return  ) fitted {'drums': 1.25, 'bass': 1.15, 'other': 0.57}  expected {'drums': 1.2589, 'bass': 1.0701, 'other': 0.5665}  explains  99.4%  ok
+   block 4 stage 3 (Bass strongest) fitted {'drums': 0.5, 'bass': 1.35, 'other': 0.64, 'riser': 0.5}  expected {'drums': 0.5036, 'bass': 1.2589, 'other': 0.6295, 'riser': 0.5011872336272722}  explains  99.5%  ok
+   bass and synth started from beat 16 of the phase
+phase 4 warehouse      174 BPM (measured 174.000 *) treatment none       delay -160.56 ms
+bass   sits -6.0 to -5.7 ms from its nominal start relative to the drums (6 blocks measured)
+other  sits -6.1 to -5.7 ms from its nominal start relative to the drums (6 blocks measured)
+riser  sits -0.4 to -0.0 ms from its nominal start relative to the drums (2 blocks measured)
+handoff at song time 22.069 s: the grid goes from 174 BPM (measured 174.000) to 124 BPM (measured 124.000); the drums of the new phase sit +2.16 ms from where the old phase's drums sat at its end (0 = the new grid's first downbeat is exactly the old phase's last; judge it against the mix chunk: 5.9 ms for 256 frames, 85 ms for the 4096-frame chunk the dummy driver may use; the ends of two phases are compared, not their starts, because the recorder drifts against the clock)
+handoff at song time 84.004 s: the grid goes from 124 BPM (measured 124.000) to 174 BPM (measured 174.000); the drums of the new phase sit -6.48 ms from where the old phase's drums sat at its end (0 = the new grid's first downbeat is exactly the old phase's last; judge it against the mix chunk: 5.9 ms for 256 frames, 85 ms for the 4096-frame chunk the dummy driver may use; the ends of two phases are compared, not their starts, because the recorder drifts against the clock)
+in-path phase boundary 2 -> 3 (the first after the handoff): the new drums sit -6.12 ms from the old phase's end (floor 29.4 ms)
+delay per phase: min -160.56 ms, max -147.96 ms, spread 12.60 ms
+RESULT CHECK

@@ -18,8 +18,10 @@ godot --path . res://src/run/run_play.tscn        # straight into the run (RW_RU
 | --- | --- | --- | --- |
 | 1-16 | Drums alone | 1.0 / 0 / 0 | drums |
 | 17-32 | Bass enters | 0.5 / 1.0 / 0.45 | bass |
-| 33-48 | Drums return | 1.0 / 0.5 / 0.45 | drums |
-| 49-64 | Bass strongest | 0.4 / 1.0 / 0.6 | bass, plus the direction choice |
+| 33-48 | Drums return | 1.0 / 0.85 / 0.45 (bass 0.5 before the audio polish) | drums |
+| 49-64 | Bass strongest | 0.4 / 1.0 / 0.5 (synth 0.6 before the audio polish) | bass, plus the direction choice |
+
+The audio polish (docs/HANDOVER.md A9) added `mix.recipe_bass_floor`, `mix.carry_bass` (the bass of the previous scene under the drums-alone block, same music family only), the bass bus (`mix.bass_bus`, per path and per scene) and the run level (`mix.gain_db`); `tools/run/measure_mix.py` measures it all.
 
 * **Advance or hold.** Each block is judged at its decision beat (12.75 of 16, once its last cue and hit window have resolved). A pass moves the stage one
   step on; a miss holds the stage (and so the cue family) for another block. Missing block 1 and passing block 2 reveals the bass on beat 33. The phase is still
@@ -383,7 +385,7 @@ only ever sees the resolved outcome (the five diverting outcomes of the data cha
 **World state.** `flags_set` names go to `RunProgress.run_flags` (one run, cleared by `run_started`) or, with the `keep:` prefix, to `RunProgress.flags` (persistent, in the save, written at once).
 `available`: `flags_all`, `flags_none` (both read both stores), `energy_min`, `once` (spent by any commit this run). `repeatable: false` (the default) spends an object/character after a *success* without a
 route; exits and `repeatable: true` are never spent. Energy outcomes apply at the commit (never to depletion: clamped to at least 1); `music` ("variation", "dip") rides on the `hotspot_commit` event
-for the audio layer: `dip` sinks the non-drum voices to 0.35 of their gain for 8 beats from the commit beat (`RunAudio`, through the existing gain ramps); `variation` is a documented no-op (a scene's arrangement is picked
+for the audio layer: `dip` sinks the non-drum voices to `mix.dip_gain` of their gain (0.55; 0.35 before the audio polish) for `mix.dip_beats` beats (6; 8 before) from the commit beat (`RunAudio`, through the existing gain ramps); `variation` is a documented no-op (a scene's arrangement is picked
 by the per-run seed when the data loads, and re-picking it for the next scene would change that scene's chart pack after the route lock compared it). `challenge` is validated and carried but not consumed (the last block decides).
 
 **Cinematics.** An outcome's `cinematic` is a name in run.json `cinematics` (`{world, steps: [{move: walk|place, to, bars 2..4, role, style, look_at}]}`), else the hotspot's own `cinematic` spec, or an

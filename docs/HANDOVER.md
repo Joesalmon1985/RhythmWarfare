@@ -91,7 +91,7 @@ the Birch Hall's and the lake's setbacks go to the High Pass across a world bord
 * *The 88 ms phase-change offset: found and fixed (commit `56adc157`, after the stages).* After a tempo handoff, `RunAudio._swap_clock` set the song base to the downbeat, but a new stream's position reads one mix period ahead after its first mix, so the clock (cues, voices, judge) ran that far ahead
   of the sound from every swap on: 88.5 ms with the dummy driver, estimated 5.9 to 20 ms on a device. `song_base` is now `t - mix_period`; `check_run_audio.py` asserts every in-path phase boundary within the dummy driver's 29.4 ms floor; the handoff recording went from -88.58 ms (spread 95.1 ms) to -6.12 ms
   (spread 12.6 ms) on the stub and -5.92 ms (spread 5.9 ms) on the real Gospel. Measured with the dummy driver only: whether a phone's handoff is tight is still to be heard.
-* *Squadron bass.* C05 and C06 have a short loud bass transient on a quiet body (peak-limited: RMS about -23 to -25 dBFS; at stage 2 the bass sits below the drums); C03, C05, C06, C09 and C11 are mid-heavy (8 to 31 % of the bass under 90 Hz). Nothing was edited; a re-export with the
+* *Squadron bass* (since lifted at the bus level, without touching the loops: A9). C05 and C06 have a short loud bass transient on a quiet body (peak-limited: RMS about -23 to -25 dBFS; at stage 2 the bass sits below the drums); C03, C05, C06, C09 and C11 are mid-heavy (8 to 31 % of the bass under 90 Hz). Nothing was edited; a re-export with the
   transient tamed, or a game-side limiter, would give more.
 * *Placeholders on a phone speaker.* Bass-forward by measurement (RMS: drums -20 to -21, bass -11 to -12, pad -28 dBFS; at least 45 to 50 % of the bass under 90 Hz); whether that is prominent enough on a phone speaker is the owner's to judge.
 
@@ -204,6 +204,84 @@ Checks after the pass: `bash tools/test.sh` **74,354 checks, 0 failures**, the P
 * The acting strips in `docs/shots/acting/` were not all re-shot: only the hotspots above (in `docs/shots/polish/`).
 
 **Only the owner's eyes on a phone can judge**: whether the half-beat flash and the outcome at beat 61 read in motion before the frame closes; whether the 1.35 swell flare is "somewhere new" or a flicker; the Golgotha darkness on a phone screen in daylight; the crown look at phone size; the brighter directed people (do they look lit or pasted on).
+
+## A9. Audio polish (5 November 2026, after Stage 6)
+
+The owner's brief: *the bass is not prominent enough, and some songs or phases do not sit with the player long enough.* An agent cannot listen, so everything below was **measured**, made **data**, and every call made on the owner's behalf has a one-line
+revert. Nothing in gameplay changed: judgement, energy, tap windows, cue families, charts, the reveal beat, the route window and the phase length are as they were (the 174 run's timing is untouched; the walks and the matrix still pass).
+The owner's Squadron WAVs and all MIDI are untouched on disk; the only audio files rewritten are the Gospel and Ember placeholders' bass stems (synthesised, see 4).
+
+### 1. The measuring tool
+
+`python tools/run/measure_mix.py [--run main|gospel|squadron|ember] [--out x.md] [--json x.json] [--before old.json] [--root other checkout]` renders every scene's 64-beat phase offline from the packs the way `RunAudio` plays it under perfect play (stage table, reveal on beat 16,
+arrangement sections and recipes, the bass bus, the run level, the carry) and reports per scene: seconds each voice is audible and the block it enters, seconds the bass leads, LUFS (BS.1770), the sample peak, BASS PROMINENCE (30-250 Hz and 30-80 Hz share of the mix
+with the bass in), bass minus drums and minus synth (dB), PHONE BASS (the bass's 150-1000 Hz energy against the mix's 150-8000 Hz: what a phone speaker can play), and a dwell table per run. The bass bus model was checked against Godot itself: in a real recording
+`check_run_audio.py` (which now fits the bass as it leaves the bus) explains 99.5 to 100 % of every block on the stub and on Squadron C08 and C10, and 96 % on C05 (its heavy setting: the model reads Godot's bass about 0.8 dB low there).
+Results: `docs/shots/audio/mix_before.md` (origin/main 710a96a5, measured with the same tool on an extracted copy) and `docs/shots/audio/mix_after.md` (with the before/after table at the top; both also as JSON).
+
+### 2. What the measurements said (before)
+
+| | main run (174) | Gospel (124) | Squadron (140) | Ember (145) |
+| --- | --- | --- | --- | --- |
+| phase / block | 22.1 s / 5.5 s | 31.0 / 7.7 s | 27.4 / 6.9 s | 26.5 / 6.6 s |
+| how long one song stays | a world's family: 4, 4 and 8 phases along the default route (88 to 177 s), but **two 8-bar sections per phase: the arrangement turns over every 11 s** | **one phase per loop (31 s)** | **one phase per loop (27 s)** | **one phase per loop (26.5 s)** |
+| bass audible / leading per phase | 16.6 s / **11.6 s** | 23.2 / 23.2 s | 20.6 / 19.6 s | 19.9 / 19.9 s |
+| bass minus drums | **+3.9 dB** | +10.0 | +11.0 (C05 **-1.3**, C06 **+1.8**) | +12.0 |
+| LUFS / worst peak | **-20.7** / -2.8 dBFS | -12.6 / **+1.0** | -14.3 / -0.5 | -12.6 / **+0.2** |
+
+The 174 run was the weak one: stage 2 ("drums return") cut the bass to 0.5, the arrangement recipes cut it again (`fragile` and `intro` 0.7: the Hospital's bass sat at 0.35 for a whole block), every scene change dropped the bass for the 16-beat drums-alone block
+(5.5 s of every 22 s), 24 hotspots dipped the bass 9 dB for 8 beats at the end of the strongest block, and the whole run was 6 to 8 LU quieter than the paths (a jump at every portal). The paths were already bass-led; Gospel and Ember clipped (+1.0 and +0.2 dBFS);
+Squadron C05/C06 had the bass under the drums.
+
+### 3. What changed (all data; the revert is the old value)
+
+| Decision | Where | Value now | Revert to |
+| --- | --- | --- | --- |
+| Stage 2 keeps the bass in (no strip-back while the drums return) | `content/run/run.json` `stages[2].gains.bass` (Gospel, Ember, stub inherit; Squadron has its own 0.9) | 0.85 | 0.5 |
+| The synth sits a little under the bass in the strongest block | `stages[3].gains.other` | 0.5 | 0.6 |
+| A recipe never takes the bass under 0.9 in the run (recipes themselves untouched: the chapters' renders use them) | `mix.recipe_bass_floor` | 0.9 | 0 |
+| **The bass carries over a scene change inside one music family** (same world: same key and sound): the old scene's bass plays on at half gain under the new scene's drums-alone block and fades as the new bass enters on beat 16. Never across a world change, a path handoff or a phase without a reveal | `mix.carry_bass` | `{gain 0.5, beats 16}` (31 of 36 main scenes carry; paths: every scene is its own loop, so none) | `gain: 0` |
+| A gentler hotspot dip | `mix.dip_gain`, `mix.dip_beats` | 0.55 (-5.2 dB) for 6 beats | 0.35 for 8 |
+| The bass bus (`RunBassToneA/B`, bass voice only, before the treatment): high-pass, low shelf, Godot WAVESHAPE drive with pre and post gain: harmonics a phone speaker plays, body lifted, peaks rounded | `mix.bass_bus` (main) | HP 30 Hz, shelf +2 dB at 110 Hz, drive 0.6, pre +6, post -9 dB | `enabled: false` |
+| per path | `content/paths/<id>/run.json` `mix.bass_bus` (merged key by key over the main run's) | Gospel and Ember: HP 25, no shelf, drive 0.4, post -2; Squadron: no HP (the sub stays), drive 0.4, pre +3, post -4 | remove the path's `mix` |
+| per scene (Squadron) | `content/paths/squadron/music.json` `bass_bus` | C05, C06: shelf +4 dB at 80 Hz, drive 0.6, pre +10, post -8 / -9 (lifts the quiet body under the transient); C03, C09, C11: shelf +4 dB at 80 Hz (weight for the mid-heavy basses) | remove the scene's `bass_bus` |
+| The run's level on the new `RunMix` bus (a plain bus volume: linear, no delay) | `mix.gain_db` | main +2, Gospel -3, Squadron -1.5, Ember -2 dB | 0 |
+| Placeholder bass re-synthesised (Gospel house, Ember psytrance; MIDI, charts, drums and pads byte-identical; deterministic) | `tools/content/make_path_placeholders.py` `BASS_VOICES`, then `make_path_placeholders.py gospel|ember --force` | sub sine + saturated mid layer (partials under 150 Hz kept light), psytrance notes plucked (a clear sixteenth pulse); the bass stem's 150-1000 Hz share 0.22 -> 0.34 (Gospel), 0.19 -> 0.35 (Ember), sub share still 47 to 66 % | `git revert` the regenerated-packs commit (+7.7 MiB of git: 6 unique new blobs) |
+
+The path generators (`make_gospel.py`, `make_ember.py`, `make_squadron.py`, `make_path_placeholders.py`) keep `mix` and each scene's `bass_bus` when they rewrite their files. `beatshaper.py apply` (an owner's import) writes a fresh music.json entry, so
+a scene-level `bass_bus` is dropped when its loop is replaced: re-measure with `measure_mix.py --run <path>` and set it again if needed. No limiter: a hard limiter would add a look-ahead delay to the whole run, so the peaks are held by data and
+`tools/content/test_mix_polish.py` fails if any scene of any run renders over -0.5 dBFS.
+
+### 4. After (`docs/shots/audio/mix_after.md`)
+
+| run | bass minus drums | bass leads s / phase | bass audible s / phase | phone bass | LUFS | worst peak |
+| --- | --- | --- | --- | --- | --- | --- |
+| main | +3.9 -> **+9.3 dB** | 11.6 -> **20.2 of 22.1** | 16.6 -> **21.3** (the carry) | -2.9 -> -1.3 dB | -20.7 -> **-14.8** | -2.8 -> -1.1 dBFS |
+| Gospel | +10.0 -> +12.0 | 23.2 -> 23.2 of 31.0 | 23.2 | -0.2 -> -0.2 | -12.6 -> -14.1 | +1.0 -> **-0.8** |
+| Squadron | +11.0 -> +14.4 (C05 -1.3 -> **+9.1**, C06 +1.8 -> **+10.4**) | 19.6 -> 20.6 of 27.4 | 20.6 | -1.2 -> -0.6 (C05 -5.0 -> -1.2) | -14.3 -> -12.9 | -0.5 -> -0.9 |
+| Ember | +12.0 -> +13.3 | 19.9 -> 19.9 of 26.5 | 19.9 | -0.2 -> -0.1 | -12.6 -> -13.1 | +0.2 -> **-1.3** |
+
+The four runs now sit within 2 LU of each other (they were 8 apart), so a portal no longer jumps in level. Ember's sub share of the whole mix fell (52 -> 44 %) because its new bass puts more energy where a phone can hear it; Squadron's thin-sub scenes gained a little
+(C11 10 -> 17 %). Recordings (dummy driver): `docs/shots/audio/handoff_check_after.txt` (balcony star -> stub -> Warehouse: every block fitted, 99.2 to 99.5 % explained, handoffs +2.2 ms in and -6.5 ms out, in-path boundary -6.1 ms, delay spread 12.6 ms:
+the same numbers as before the polish, so no regression in the grid; `RESULT CHECK` only because the stub's spread is over the script's 6 ms, as it was before) and `docs/shots/audio/squadron_check_after.txt` (C05, C08, C10: every block ok, boundaries +9.1 ms against the
+29.4 ms floor; spread 18.3 ms on a loaded machine).
+
+### 5. Not done: it would change gameplay (recommendations for the owner)
+
+1. **A second lap for the paths' loops.** Gospel, Squadron and Ember play each loop for exactly one phase (26 to 31 s) and then the scene, and so the song, changes. Letting a scene play two phases (a `laps: 2`, the route window only in the second) would double each song's
+   time with the player, but it doubles the blocks judged per scene (energy), moves every hotspot window and cast line, and breaks the 2 to 4 hotspot rule's pacing: the owner's call.
+2. **Bass in the first scene of a world's drums-alone block.** The carry fills block 0 after the first scene; at a world entry the block stays drums alone, because a bass started before the reveal would move the bass phrase (and the bass cues) off the reveal beat.
+3. **Fewer turnovers in the 174 run.** Most scenes play two 8-bar sections (a pack and a mix recipe change every 11 s). One 16-bar section per scene would hold one arrangement for the whole phase, but the second section's chart changes the cues of blocks 3 and 4: an
+   `arrange.py generate` option, and a gameplay change.
+4. **Squadron C05/C06** would gain most from a re-export with the bass transient tamed (the bus lifts the body; it cannot restore what the source lacks), and 8-bar loops would halve how often the loop repeats inside a phase.
+
+### 6. What only the owner's ears can judge (listen for these)
+
+1. **The carry, Warehouse floor -> bar (and every in-world door walk):** the floor's bass at half level under the bar's drums-alone block, then the bar's own bass on beat 16. Seamless, or a muddy overlap where the two bass lines differ? (`carry_bass.gain` 0 turns it off.)
+2. **The 174 bass's saturation on earbuds and on the phone speaker** (drive 0.6 with +6 dB in): audible on the phone speaker now, but is it fuzzy on the Underworld and Ward reese basses? (lower `drive` or `pre_gain_db`; raise `gain_db` to keep the level).
+3. **Squadron C05 and C06:** the body under the transient is lifted ~9 dB; does the hit still punch, or does it sound squashed? (their `bass_bus` in squadron music.json).
+4. **Drum blocks still readable:** in stage 2 the bass is now at 0.85 under the drum cues (was 0.5). Can the player still hear the kick and snare they tap? (`stages[2].gains.bass`).
+5. **Levels at the portals and the new placeholder bass:** the main run is ~6 LU louder than before and now level with the paths; the Gospel house and Ember psytrance bass were re-synthesised (sub + saturated mid, plucked sixteenths). Too loud, too buzzy, or right?
 
 ---
 
