@@ -4,12 +4,13 @@ A rhythm game in landscape for phones: play four illuminated pads in time with a
 2.5D, Doom-style worlds (a warehouse club, an alien mothership, an underworld arena, a night hospital, a ward). The story is one continuous run: every world is a
 series of rooms (scenes) and each scene is a 64-beat phase that starts with drums alone, brings the bass in as you play well, brings the drums back, then lets the bass take over while you choose which way to go
 next. Good play keeps the mix building, a missed block holds it for another go, and the crowd's energy is the meter that ends the run if it runs out. Standalone Godot 4.5.1
-project. Home has five buttons: Play (the run), Story chapters (the finished chapter-by-chapter campaign, with its own saves), Start from a reached level, Wizard Duel (wifi) (two phones or windows on one network, or practise alone), Settings.
+project. Home has six buttons: Play (the run), Story chapters (the finished chapter-by-chapter campaign, with its own saves), Start from a reached level, Wizard Duel (wifi) (two phones or windows on one network, or practise alone), Settings, Debug / Playtest (pick any of the 82 scenes, see exactly which song files and visuals it uses, and log what you do not like: `docs/DEBUG_MODE.md`).
 Three more adventures branch off the Warehouse (the Gospel at 124 BPM, the Mission Count at 140, the Ember Road at 145; see below). Inside the run the camera rides a rail through each world: a pass at a block steps you one place up the room (floor, steps, stage, balcony, booth), a miss steps you down
 the bad rail (floor edge, corridor, cubicle), and the route window lights the room's exits, doorways and things in the world to touch (no arrows, no written choices). Each world is a small graph of rooms with paths to choose between
 (the Warehouse floor > bar or balcony > chill-out or booth > the door; 3 to 5 phases, 66 to 110 s, each room with its own variant of the world's music); a path inside a world is a plain
 door walk, a change of world keeps the passage frame.
 
+* Playtesting: the home screen's **Debug / Playtest** lists every scene of the run and the three paths with the audio files and visual ids in use, and writes your "don't like the music / visuals" notes to a file you can paste back: `docs/DEBUG_MODE.md` (`python tools/run/playtest_notes_summary.py <notes.jsonl>` ranks them).
 * Design, route map, rails, paths, portals, tunables and verification: `docs/CONTINUOUS_RUN.md`; the plan and its progress log: `docs/RUN_DUNGEON_MUSIC_PLAN.md`.
 * Adding music (Beat Shaper exports, one command per level): `docs/MUSIC_IMPORT.md`; what each level and path plays and what to export (the Gospel and Ember prompts): `docs/MUSIC_HANDOFF.md`.
 * Authoring the worlds' scenes (rooms, paths, doorway waypoints, each scene's music): `tools/run/make_scenes.py`, described in `docs/CONTINUOUS_RUN.md`.
@@ -27,6 +28,8 @@ RW_RUN_BOT=perfect RW_RUN_ROUTES=up,left godot --path . res://src/run/run_play.t
 RW_RUN_VIRTUAL=1 RW_RUN_BOT=perfect RW_RUN_UNTIL_PHASE=3 RW_STORY_QUIT=1 godot --headless --path . res://src/run/run_play.tscn   # no audio, stepped clock
 RW_DEV_TEXT=1 godot --path . res://src/run/run_play.tscn               # the run writes nothing during play; this brings back the title card, captions, names, countdown and the Bassment's caption band
 godot --headless --path . -s tests/run_tests.gd -- --filter run_      # the run's tests
+RW_DEBUG=1 godot --path . res://src/run/run_play.tscn                  # the playtest overlay and feedback buttons on any run (docs/DEBUG_MODE.md); godot --path . res://src/debug/playtest_list.tscn opens the scene list
+bash tools/run/shoot_debug.sh                                           # screenshots of the list, a scene's Info, the overlay and the notes into docs/shots/debug (needs a display)
 godot --path . res://src/trial/trial_play.tscn                         # straight into the Bassment dungeon (RW_TRIAL_START=<passage>)
 bash tools/trial/walk_trial.sh                                          # scripted walk: Warehouse > hatch > the dungeon to the victory > back up into the Warehouse
 godot --path . res://src/duel/duel_lobby.tscn                          # the Wizard Duel lobby (host, join or practise); bash tools/duel/two_players.sh checks two processes agree

@@ -3,7 +3,7 @@
 State on 5 November 2026, after Stage 6 of `docs/THREE_PATHS_AND_FACES_PLAN.md` (the acting system on every world, the sister-run engine, and the three paths: The Life of Jesus, The Mission Count, The Ember Road).
 This is the single current handover. Part A is the newest work (read it first); Part B is the earlier defense-campaign state of 3 November 2026, kept as it was (its commands and caveats still apply to that code, which is still in the repository).
 Read this, then `README.md` (layout and commands), `docs/CONTINUOUS_RUN.md` (the run, paths, portals, acting, the silent HUD), `docs/paths/{gospel,squadron,ember}.md` (one note per path), `docs/STORY_ART.md` and `docs/MUSIC_HANDOFF.md`
-(the owner's shopping list). Everything is on `main` at https://github.com/Joesalmon1985/RhythmWarfare.
+(the owner's shopping list). **For playtesting use the home screen's Debug / Playtest (A11, `docs/DEBUG_MODE.md`).** Everything is on `main` at https://github.com/Joesalmon1985/RhythmWarfare.
 
 **In one paragraph.** Three adventures branch off the Warehouse club and are played on the same four pads: a house-music Gospel story (17 scenes, 124 BPM), a dubstep story about a bomber crew trapped by an absurd regulation (14 scenes, 140 BPM, on the
 owner's own loops) and a psytrance story about a small carrier bearing a cursed ember across a dangerous land (15 scenes, 145 BPM). In all eight worlds the people's faces and acts carry the story and nothing is written during play. Everything was built and
@@ -282,6 +282,19 @@ the same numbers as before the polish, so no regression in the grid; `RESULT CHE
 3. **Squadron C05 and C06:** the body under the transient is lifted ~9 dB; does the hit still punch, or does it sound squashed? (their `bass_bus` in squadron music.json).
 4. **Drum blocks still readable:** in stage 2 the bass is now at 0.85 under the drum cues (was 0.5). Can the player still hear the kick and snare they tap? (`stages[2].gains.bass`).
 5. **Levels at the portals and the new placeholder bass:** the main run is ~6 LU louder than before and now level with the paths; the Gospel house and Ember psytrance bass were re-synthesised (sub + saturated mid, plucked sixteenths). Too loud, too buzzy, or right?
+
+---
+
+## A11. Debug / Playtest mode (5 November 2026)
+
+The owner's brief: *a debug mode where I can simply choose each musical / visual scene, with the audio used clearly identified, so if I don't like a passage it is easy to identify which songs or visuals I don't like.*
+Built (`docs/DEBUG_MODE.md` is the manual): the home screen's **Debug / Playtest** button opens a scrollable list of all 82 scenes (the 174 run's 36, Gospel 17, Squadron 14, Ember 15; the stub only outside exports); a row starts the
+game AT the scene through the run's own start machinery; **Info** shows the pack ids, the stem files named as the owner's exports (from `pack.json`), OWNER / PLACEHOLDER / temporary from `music.json`, the MIDI the cues come from,
+the mix in force and the visual ids (map, view, light preset, pieces, cast, crowd, hotspots); an in-play overlay (debug only) shows the same live with the phase and block clock, and three feedback buttons (keys M, V, L)
+append to `user://playtest_notes.md` and `.jsonl`; a notes screen with Copy all; `tools/run/playtest_notes_summary.py` ranks the disliked songs and visuals. Pause shows Back to scene list.
+Decisions made: the list plays in a **throwaway save** (the owner's reached levels are never touched); **every 174-run scene has three arrangements and the game picks one by the per-run seed**, so the list has an arrangement option
+(`RunData.arrangement_override`, default off: the game's own pick) and the notes record the arrangement that played; the autoplay assist is the existing `RW_RUN_BOT=perfect`; no gameplay changed. Code in `src/debug/`, tests
+`tests/test_playtest.gd`, shots `docs/shots/debug/` (`tools/run/shoot_debug.sh`). Not run on a phone.
 
 ---
 
