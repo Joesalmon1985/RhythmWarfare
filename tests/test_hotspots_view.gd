@@ -92,3 +92,34 @@ func test_light_tint_keeps_the_hue_at_full_brightness() -> void:
 		assert_true(t.s >= 0.35 - 1e-4 and t.s <= 0.6 + 1e-4, "and pale enough to read as light (%.2f)" % t.s)
 		if c.s > 0.2:
 			assert_near(absf(wrapf(t.h - c.h, -0.5, 0.5)), 0.0, 1e-3, "in the world's own hue")
+
+
+func test_a_staged_option_is_lit_by_its_role_and_keeps_to_the_floor() -> void:
+	var view := HotspotView.new()
+	view.tint = HotspotView.light_tint(Color(1.0, 0.7, 0.25))
+	var e := _entry("a", {"pos": [0.0, 1.6, 0.0]}, {"default": true})
+	assert_eq(view._colours_of(e)[0], view.tint, "an unstaged hotspot is the world's light")
+	assert_false(view._staged(e), "no role, not staged")
+	assert_true(view._is_default(e), "its own default flag marks it")
+	e["role"] = "current"
+	assert_eq(view._colours_of(e)[0], HotspotView.CURRENT_COL, "the current choice is green")
+	assert_true(view._staged(e) and view._is_default(e), "staged, and the current option is the doubled one")
+	e["role"] = "other"
+	assert_eq(view._colours_of(e)[0], HotspotView.OTHER_COL, "any other option is red")
+	assert_false(view._is_default(e), "and single-ringed, even when it is the data's default")
+	e["role"] = "committed"
+	assert_eq(view._colours_of(e)[0], HotspotView.CURRENT_COL, "a committed option stays green")
+	view.high_contrast = true
+	assert_eq(view._colours_of(e)[0], Color(1.0, 1.0, 0.4), "high contrast overrides the role colour")
+	view.free()
+
+
+func test_a_finished_portal_keeps_its_own_tint_and_the_crown_look() -> void:
+	var view := HotspotView.new()
+	var e := _entry("p", {"pos": [0.0, 1.6, 0.0]}, {"look": {"available": "glow", "finished": {"flags_any": ["keep:done"], "tint": "#ffd25a"}}})
+	assert_eq(view._look_of(e), "glow", "an unfinished portal has its own look")
+	e["finished"] = true
+	e["role"] = "other"
+	assert_eq(view._look_of(e), "crown", "a finished portal has the crown look")
+	assert_eq(view._colours_of(e)[0], Color.html("#ffd25a"), "and its own tint, whatever its role")
+	view.free()

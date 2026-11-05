@@ -28,7 +28,7 @@ pilot strips are in `docs/shots/choice/`. Gameplay, the windows, the commit and 
 9. The Bassment: doors and creature recoil work; carriers, door-bar kits and creature frames from `docs/choice/bassment.md` are not built.
 
 **NOT started (pickup list, by priority)**
-10. **E1 the window camera**: turn the rail's camera to the staged options in the window (`src/run/run_rail.gd` `WINDOW_GLANCE_DEG`); without it half the options are edge beacons in play (the strips use a framed camera).
+10. **E1 the window camera**: built on `integrate/look-pass` (HANDOVER A15): from the block-2 decision the head is held on the window's hotspots (`RunJourney.window_face`, a `face` look; the rail's `WINDOW_GLANCE_DEG` is untouched). It frames the hotspots' anchors, not `door_at`; the strips below still use a framed camera.
 11. Per-world authoring lanes A to F (section 6): `door_at` / `sign` / `pieces` per exit, `states` per object, re-anchor the five `pos` options of the Warehouse.
 12. The art briefs of section 6 (door skins per setting, object state pairs, a finger-post, creature frames).
 13. E2 a lamp/key light on dark people and figures; E3 a `people: [ids]` shorthand; E5 the briefs' new acts (rig + re-bake).
