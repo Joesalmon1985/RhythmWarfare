@@ -67,6 +67,7 @@ var _last_frame_us := 0
 var event_log: Array = []  # every engine event except judge/cues (scripted checks and recordings read it)
 var piece_log: Array = []  # [{t, on, off}] every set-piece switch (the tests and the walks read it)
 var build_log: Array = []  # [{world, ms}] how long each world stage took to build (the main thread stalls that long)
+var lap_log: Array = []  # [{phase, lap, laps, node, t, stage}] one per lap after the first (a scene that plays several laps)
 var phase_log: Array = []  # [{phase, node, t}] for scripted checks
 var journey: RunJourney  # the player's rails (pure logic; the scene only hands its actions to the stages)
 var journey_log: Array = []  # every journey action given to a stage: {world, t0, action, args}
@@ -573,7 +574,7 @@ func _bot_taps(t: float) -> void:
 			_bot_portal_done = engine.phase_n
 			if hotspot_select(portal):
 				return
-	var k := engine.phase_n - 1
+	var k := engine.scene_index() - 1  # (the routes of a scripted run are one per scene, whatever its laps)
 	if tap_policy == "changed" and _bot_decoy_done != engine.phase_n and beat > 50.0:
 		_bot_decoy_done = engine.phase_n
 		var want := _route_for_dir(k)
@@ -596,7 +597,7 @@ var _select_done := false
 
 
 func _scripted_select(t: float) -> void:
-	if _select_done or not OS.has_environment("RW_RUN_SELECT") or engine.phase_n != 1:
+	if _select_done or not OS.has_environment("RW_RUN_SELECT") or engine.scene_index() != 1 or engine.lap < engine.laps:  # (the hotspots are on show in the last lap only)
 		return
 	var spec := OS.get_environment("RW_RUN_SELECT")
 	if engine.phase_beat_at(t) >= float(spec.get_slice("@", 1)):
@@ -695,7 +696,7 @@ func _advance(t: float, audio_t: float) -> void:
 		_handle(engine.update(minf(t, trial_entry_t - 0.001)))
 	else:
 		_handle(engine.update(t))
-	if not playtest.is_empty() and not bool(playtest.get("continue_run", true)) and engine.phase_n > 1 and not _ended:  # the list's "back to the list when the scene ends"
+	if not playtest.is_empty() and not bool(playtest.get("continue_run", true)) and engine.scene_index() > 1 and not _ended:  # the list's "back to the list when the scene ends"
 		_playtest_back()
 		return
 	if trial_state == "":
@@ -716,9 +717,9 @@ func _advance(t: float, audio_t: float) -> void:
 		_prebuild_in_guard(t)
 	if _debug_label.visible:
 		_debug_label.text = "t=%6.2f phase %d (%s) block %d stage %d energy %.0f rail %s (%s)  fps %d" % [t, engine.phase_n, engine.node_id, engine.block, engine.stage, engine.energy, journey.rail.place() if journey.rail != null else "-", journey.rail.role if journey.rail != null else "-", Engine.get_frames_per_second()]
-	if _until_phase > 0 and engine.phase_n > _until_phase and not _ended:
+	if _until_phase > 0 and engine.scene_index() > _until_phase and not _ended:
 		_ended = true
-		print("RUN reached phase %d at %s, energy %.0f" % [engine.phase_n, engine.node_id, engine.energy])
+		print("RUN reached phase %d at %s, energy %.0f" % [engine.scene_index(), engine.node_id, engine.energy])
 		print("RUN stage builds ", JSON.stringify(build_log))
 		print("RUN ", frame_stats())
 		print("RUN summary ", JSON.stringify(summary()))
@@ -731,7 +732,7 @@ func _advance(t: float, audio_t: float) -> void:
 ## A path inside the world is a plain door walk (no frame, the stage stays): from beat 61 the camera walks to the doorway of the selected route, and on the downbeat on
 ## through it into the next scene (RunJourney.door_walk). Also latched once per phase.
 func _update_passage(t: float, audio_t: float) -> void:
-	if path_leave_requested and engine.window_open and engine.phase_beat_at(t) >= 64.0 - RunPassage.DOOR_BEATS and engine.force_leave():  # the pause menu's "leave this path": the way back is this phase's route
+	if path_leave_requested and (engine.window_open or engine.lap < engine.laps) and engine.phase_beat_at(t) >= 64.0 - RunPassage.DOOR_BEATS and engine.force_leave():  # the pause menu's "leave this path": the way back is this phase's route (a lap before the last ends the scene)
 		path_leave_requested = false
 	if engine.window_open and t >= 0.0 and _door_phase != engine.phase_n and engine.phase_beat_at(t) >= 64.0 - RunPassage.DOOR_BEATS:
 		_door_phase = engine.phase_n
@@ -739,7 +740,7 @@ func _update_passage(t: float, audio_t: float) -> void:
 		if data.nodes.has(to0) and _run_world_of(to0) == _run_world_of(engine.node_id) and to0 != engine.node_id:
 			for a in journey.leave_walk(engine.t_of(64.0 - RunPassage.DOOR_BEATS), to0, engine):
 				_journey_apply(a)
-	if engine.window_open and _passage_swap < 0.0 and engine.phase_beat_at(t) >= 64.0 - RunPassage.CLOSE_BEATS and t >= 0.0:
+	if engine.exit_pending() and _passage_swap < 0.0 and engine.phase_beat_at(t) >= 64.0 - RunPassage.CLOSE_BEATS and t >= 0.0:
 		var to := engine.selected_route()
 		if not data.nodes.has(to) or _run_world_of(to) != _run_world_of(engine.node_id):  # another world, or out of this run (a portal, an ending's way back): the frame closes
 			_passage_swap = engine.t_of(64.0)
@@ -777,7 +778,7 @@ func summary() -> Dictionary:
 		var wid := str(p.get("world", data.nodes[str(p["node"])]["world"] if data.nodes.has(str(p["node"])) else ""))
 		if worlds_seen.is_empty() or worlds_seen[worlds_seen.size() - 1] != wid:
 			worlds_seen.append(wid)
-	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "worlds_seen": worlds_seen, "rail": rails, "moves": moves, "glances": looks, "strolls": walks, "worlds": stages.keys(),
+	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "laps": lap_log.map(func(l: Dictionary) -> String: return str(l["node"])), "worlds_seen": worlds_seen, "rail": rails, "moves": moves, "glances": looks, "strolls": walks, "worlds": stages.keys(),
 		"energy": snappedf(engine.energy, 0.1), "reached": Session.run_progress.reached_ids()}
 
 
@@ -844,7 +845,7 @@ func _scripted_pause(audio_t: float) -> void:
 
 func _handle(events: Array) -> void:
 	for ev in events:
-		if str(ev["kind"]) in ["phase_start", "block_result"] and trial_state == "":  # the journey first: the stage already holds its actions when the scene reacts
+		if str(ev["kind"]) in ["phase_start", "block_result", "lap_start"] and trial_state == "":  # the journey first: the stage already holds its actions when the scene reacts
 			for a in journey.on_event(ev, engine):
 				_journey_apply(a)
 		if str(ev["kind"]) != "judge" and str(ev["kind"]) != "cues":
@@ -859,6 +860,8 @@ func _handle(events: Array) -> void:
 				note_lane.refresh()
 			"phase_start":
 				_on_phase_start(ev)
+			"lap_start":
+				_on_lap_start(ev)
 			"mix":
 				_on_mix(ev)
 			"reveal":
@@ -882,10 +885,10 @@ func _handle(events: Array) -> void:
 			"run_over":
 				_over_at = float(Time.get_ticks_msec()) / 1000.0 + (0.4 if not virtual_mode else 0.0)
 				_ended = true if virtual_mode else _ended
-				Session.run_result = {"node": ev["node"], "phases": ev["phase"], "energy": ev["energy"], "reason": "the crowd left", "start": engine.node_id, "path": run_path}
+				Session.run_result = {"node": ev["node"], "phases": int(ev.get("scenes", ev["phase"])), "energy": ev["energy"], "reason": "the crowd left", "start": engine.node_id, "path": run_path}
 				if virtual_mode:
-					Session.run_progress.run_ended(int(ev["phase"]))
-					print("RUN over at phase %d (%s)" % [int(ev["phase"]), str(ev["node"])])
+					Session.run_progress.run_ended(int(ev.get("scenes", ev["phase"])))
+					print("RUN over at phase %d (%s)" % [int(ev.get("scenes", ev["phase"])), str(ev["node"])])
 					print("RUN summary ", JSON.stringify(summary()))
 					if OS.get_environment("RW_STORY_QUIT") == "1":
 						get_tree().quit()
@@ -933,6 +936,13 @@ func _on_phase_start(ev: Dictionary) -> void:
 		_stage_action(st, "room_swell", t0)  # a new room: its lamps rise over two beats from the downbeat (the title card is gone: the light says "somewhere new")
 	if int(ev["phase"]) == 1:
 		_stage_action(st, "doors_open", t0)
+
+
+## The next lap of the same scene (docs/CONTINUOUS_RUN.md "Two laps"): nothing is rebuilt or reset, the room, its lamps, set pieces, rail and people go on; only the log and the touch state start over.
+func _on_lap_start(ev: Dictionary) -> void:
+	lap_log.append({"phase": int(ev["phase"]), "lap": int(ev["lap"]), "laps": int(ev["laps"]), "node": str(ev["node"]), "t": float(ev["t"]), "stage": int(ev["stage"])})
+	_sel_t.clear()
+	_commit_view = {}
 
 
 ## Hands one journey action {world, t0, action, args} to its world's stage and keeps it in the log.
@@ -985,7 +995,7 @@ func _block_fx(ev: Dictionary) -> void:
 	var side := "pass" if bool(ev["passed"]) else "miss"
 	var tb := engine.t_of(float((b + 1) * int(engine.timing("block_beats"))))
 	for fx in data.nodes[str(ev["node"])].get("block_fx", []):
-		if int(fx["block"]) != b or not (fx as Dictionary).has(side):
+		if int(fx["block"]) != b or not (fx as Dictionary).has(side) or int(fx.get("lap", 1)) != int(ev.get("lap", 1)):  # (an entry without `lap` is the scene's first lap)
 			continue
 		var eff: Dictionary = fx[side]
 		if eff.has("pieces") and stages.has(active_world):
@@ -1462,7 +1472,7 @@ func _path_swap(ev: Dictionary) -> void:
 	engine = RunEngine.new(data)
 	hotspots = RunHotspots.new(data, Session.run_progress.run_flags, Session.run_progress.flags)
 	engine.hotspots = hotspots
-	engine.arrive(start, t_swap, carried, int(ev["phase"]))
+	engine.arrive(start, t_swap, carried, int(ev["phase"]), int(ev.get("lap_extra", 0)))
 	journey = RunJourney.new(data)
 	proxy.level = engine.level
 	for w in stages:

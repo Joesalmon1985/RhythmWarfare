@@ -13,6 +13,7 @@ const HOTSPOTS_DIR := "res://content/run/hotspots"  # <world>.json per run world
 const PATHS_DIR := "res://content/paths"  # <id>/run.json, music.json, hotspots/<world>.json: a sister run at its own tempo (docs/THREE_PATHS_AND_FACES_PLAN.md section 3)
 const INHERITED := ["judgement", "energy", "stages", "mix", "effects", "treatments"]  # a path's run.json may leave these out: the main run's apply
 const TIERS := 4  # difficulty tiers (pack.tiers "1".."4"); a node's tier is min(depth, TIERS)
+const MAX_LAPS := 4  # a scene plays 1 to MAX_LAPS laps (docs/CONTINUOUS_RUN.md "Two laps")
 ## The bass bus (RunAudio): run.json `mix.bass_bus`, a path's run.json `mix.bass_bus` over it, a scene's music.json `bass_bus` over that (docs/HANDOVER.md "Audio polish"). A key left out is the
 ## default here; `enabled: false` (or no `bass_bus` anywhere) is the bass straight onto its bus, as before the polish.
 const BASS_BUS_DEFAULT := {"enabled": false, "highpass_hz": 0.0, "shelf_hz": 100.0, "shelf_db": 0.0, "drive": 0.0, "pre_gain_db": 0.0, "gain_db": 0.0, "keep_hf_hz": 16000.0}
@@ -21,7 +22,7 @@ const BASS_BUS_DEFAULT := {"enabled": false, "highpass_hz": 0.0, "shelf_hz": 100
 static var arrangement_override := -1
 
 var cfg: Dictionary = {}
-## A node is a SCENE: one 64-beat phase at a place in a world. id -> {id, world (the run world's id: the save and the home cards), map (the art world the stage is built from), scene, title (the room),
+## A node is a SCENE: one 64-beat phase (or `laps` of them in a row: a path's `path.laps`, or the scene's own `laps`, 1 when neither says) at a place in a world. id -> {id, laps, world (the run world's id: the save and the home cards), map (the art world the stage is built from), scene, title (the room),
 ## world_title, entry, exit_scene, depth (the world's), waypoint (home), rail, role, blurb, next: [{to, dir, label, loop?}], audio, chart, treatment, temporary}
 var nodes: Dictionary = {}
 var node_order: Array = []
@@ -138,6 +139,7 @@ static func load_files(run_path: String, music_path: String, packs_dir: String, 
 		node["entry"] = bool(node.get("entry", false))
 		node["exit_scene"] = bool(node.get("exit_scene", false))
 		node["ending"] = str(node.get("ending", ""))
+		node["laps"] = int(node.get("laps", d.path_info.get("laps", 1)))  # laps in a row before the route window and the commit: the scene's own, else the path's, else 1
 		var m: Dictionary = assign.get(id, {})
 		if m.is_empty():
 			d.errors.append("music.json has no entry for node %s" % id)
@@ -227,6 +229,16 @@ func _resolve_music_mix(id: String, m: Dictionary) -> void:
 
 func is_path() -> bool:
 	return path_id != ""
+
+
+## Laps the scene `id` plays before its route window (1 for the 174 run and for any scene that does not name more).
+func laps_of(id: String) -> int:
+	return int((nodes[id] as Dictionary).get("laps", 1)) if nodes.has(id) else 1
+
+
+## The latest beat a scene's cast line may name: 64 beats per lap, counted from the scene's first downbeat.
+func cast_last_beat(id: String) -> float:
+	return float(cfg.get("timing", {}).get("phase_beats", 64)) * float(laps_of(id)) - 1.0
 
 
 ## Reads the arrangements and the mix recipes (only when some scene names an arrangement).
@@ -385,6 +397,7 @@ func _validate() -> void:
 		if not (cfg.get("treatments", {}) as Dictionary).has(str(n["treatment"])):
 			errors.append("node %s: treatment '%s' is not in run.json" % [id, n["treatment"]])
 		errors.append_array(RunRail.validate(id, n.get("rail")))
+		_validate_laps(id, n)
 		_validate_routes(id, n)
 	_validate_worlds()
 	_validate_places()
@@ -426,6 +439,19 @@ func _validate() -> void:
 			warnings.append("node %s cannot be reached from the start" % id)
 	if is_path():
 		_validate_path_graph()
+
+
+## Laps (docs/CONTINUOUS_RUN.md "Two laps"): a whole number from 1 to MAX_LAPS; only a path plays more than one (the 174 run keeps its single phase); a scene that plays an arrangement (the 174 run's sections)
+## plays one lap.
+func _validate_laps(id: String, n: Dictionary) -> void:
+	var laps := int(n.get("laps", 1))
+	if laps < 1 or laps > MAX_LAPS:
+		errors.append("scene %s: laps %d is outside 1 to %d" % [id, laps, MAX_LAPS])
+	elif laps > 1:
+		if not is_path():
+			errors.append("scene %s: laps %d, only a path's scenes play more than one lap" % [id, laps])
+		if str(n.get("arrangement", "")) != "":
+			errors.append("scene %s: laps %d with an arrangement (sections are one lap long)" % [id, laps])
 
 
 func _validate_routes(id: String, n: Dictionary) -> void:
@@ -646,6 +672,8 @@ func _validate_stage_fx(id: String, n: Dictionary, out: Array) -> void:
 		if typeof(fx) != TYPE_DICTIONARY or not (fx as Dictionary).has("block") or int(fx["block"]) < 0 or int(fx["block"]) > 3:
 			out.append("scene %s: a block_fx entry needs block 0 to 3" % id)
 			continue
+		if fx.has("lap") and (typeof(fx["lap"]) not in [TYPE_INT, TYPE_FLOAT] or int(fx["lap"]) < 1 or int(fx["lap"]) > laps_of(id)):
+			out.append("scene %s: a block_fx entry's lap must be 1 to the scene's %d laps" % [id, laps_of(id)])
 		for side in ["pass", "miss"]:
 			if not fx.has(side):
 				continue
@@ -661,7 +689,7 @@ func _validate_stage_fx(id: String, n: Dictionary, out: Array) -> void:
 
 ## Checks `lines` (a scene node's `cast`) against the map of scene node `n`.
 func validate_cast_lines(n: Dictionary, lines: Variant, where: String, out: Array) -> void:
-	HotspotContract.validate_cast(lines, where, HotspotContract.map_index(str(n["map"])), out)
+	HotspotContract.validate_cast(lines, where, HotspotContract.map_index(str(n["map"])), out, cast_last_beat(str(n.get("id", ""))))
 
 
 ## The scenes of a world in file order.

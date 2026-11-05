@@ -14,12 +14,14 @@ BEAT=$(python3 -c "print(60/124)")
 ONLY="${RW_SHOTS:-}"
 IDS=$(python3 -c "
 import json
-print(' '.join(n['id'] for n in json.load(open('content/paths/gospel/run.json'))['nodes']))")
-for id in $IDS; do
+run = json.load(open('content/paths/gospel/run.json'))
+print(' '.join('%s:%d' % (n['id'], 64 * (int(n.get('laps', run['path'].get('laps', 1))) - 1)) for n in run['nodes']))")  # (id:beats of the laps before the last: the hotspot window is in the last lap)
+for idl in $IDS; do
+  id="${idl%%:*}"; lapoff="${idl##*:}"
   [[ -z "$ONLY" || "$id" =~ $ONLY ]] || continue
   name="${id//./_}"
   a=$(python3 -c "print(int((${SHOT_A:-12}*$BEAT+2.0)/$RATE)+2)")
-  b=$(python3 -c "print(int((54*$BEAT+2.0)/$RATE)+2)")
+  b=$(python3 -c "print(int(((54+$lapoff)*$BEAT+2.0)/$RATE)+2)")
   env XDG_DATA_HOME="$TMP/data" APPDATA="$TMP/data" RW_RUN_VIRTUAL=1 RW_STORY_RATE=$RATE RW_RUN_PATH=gospel RW_RUN_START="$id" RW_RUN_BOT=perfect RW_RUN_ROUTES="" RW_RUN_CLEAN=1 ${RW_SHOT_ENV:-} \
     "$GODOT" --path "$ROOT" -s tools/shoot.gd -- res://src/run/run_play.tscn "$TMP" "$a:shot:${name}_a" "$b:shot:${name}_b" 2>&1 </dev/null | grep -E "ERROR|SCRIPT" | grep -v "RID allocations\|leaked\|still in use\|ObjectDB\|WASAPI\|ERR_CANT_OPEN" || true
   for s in a b; do

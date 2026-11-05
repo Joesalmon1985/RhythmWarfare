@@ -28,6 +28,8 @@ func on_event(ev: Dictionary, engine: RunEngine) -> Array:
 			out = _phase_start(ev, engine)
 		"block_result":
 			out = _block_result(ev, engine)
+		"lap_start":  # the same scene again, the rail where it has got to: only the glance and the stroll of the lap's first block
+			out = _tag(rail.ambient(float(ev["t"]), int(ev["phase"]), 0, engine.level.notes), world)
 	actions.append_array(out)
 	return out
 

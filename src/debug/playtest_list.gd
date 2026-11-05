@@ -194,7 +194,7 @@ func _build_row(rid: String, data: RunData, sid: String) -> void:
 	row.add_theme_constant_override("separation", 6)
 	_content.add_child(row)
 	var b := Button.new()
-	b.text = "%s%s   %s\n%d BPM  tier %d   %s" % ["! " if not (info["audio"]["problems"] as Array).is_empty() else "", sid, str(info["title"]), int(info["bpm"]), int(info["tier"]), PlaytestCatalog.row_audio_line(info)]
+	b.text = "%s%s   %s%s\n%d BPM  tier %d   %s" % ["! " if not (info["audio"]["problems"] as Array).is_empty() else "", sid, str(info["title"]), ("   x%d" % int(info["laps"])) if int(info.get("laps", 1)) > 1 else "", int(info["bpm"]), int(info["tier"]), PlaytestCatalog.row_audio_line(info)]
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	b.clip_text = false

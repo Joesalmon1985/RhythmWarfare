@@ -176,7 +176,8 @@ func live_state() -> Dictionary:
 	var pack := str(sec["pack"]) if not sec.is_empty() else str(node["audio"])
 	var gains: Dictionary = (play.audio.gains() if play.audio != null else {})
 	var stage_g: Dictionary = e.cfg["stages"][e.stage]["gains"]
-	return {"phase": e.phase_n, "block": clampi(e.block, 0, 3) + 1, "stage": e.stage, "stage_label": str(e.cfg["stages"][e.stage]["label"]), "cue": str(e.cfg["stages"][e.stage]["cue"]), "beat": beat, "t": t,
+	var lap_beats := float(e.cfg["timing"]["phase_beats"])
+	return {"phase": e.phase_n, "lap": e.lap, "laps": e.laps, "scene_beat": float(e.lap - 1) * lap_beats + beat, "scene_beats": float(e.laps) * lap_beats, "block": clampi(e.block, 0, 3) + 1, "stage": e.stage, "stage_label": str(e.cfg["stages"][e.stage]["label"]), "cue": str(e.cfg["stages"][e.stage]["cue"]), "beat": beat, "t": t,
 		"energy": e.energy, "section": sec_idx + 1, "sections": maxi(sections.size(), 1), "pack": pack, "chart_pack": data.chart_pack_at(e.node_id, maxf(beat, 0.0)), "gains": gains, "stage_gains": stage_g,
 		"counting_in": t < 0.0, "bassment": str(play.trial_state) != "", "bass_in": e.bass_origin >= 0}
 
@@ -190,8 +191,10 @@ static func lines(info: Dictionary, live: Dictionary) -> Array:
 	var v: Dictionary = info["visual"]
 	out.append("%s  %s  \"%s\"   %d BPM" % [str(info["run"]).to_upper(), str(info["id"]), str(info["title"]), int(info["bpm"])])
 	var beat := float(live["beat"])
-	out.append("phase %d | block %d/4 | stage %d %s (%s cues) | %s | energy %.0f" % [int(live["phase"]), int(live["block"]), int(live["stage"]) + 1, str(live["stage_label"]), str(live["cue"]),
-		("count-in" if bool(live.get("counting_in", false)) else "beat %.1f/%d" % [beat, int(info["phase_beats"])]), float(live["energy"])])
+	var laps := int(live.get("laps", 1))
+	var where := ("phase %d" % int(live["phase"])) if laps <= 1 else ("lap %d of %d" % [int(live.get("lap", 1)), laps])
+	var beat_txt := "count-in" if bool(live.get("counting_in", false)) else ("beat %.1f/%d" % [beat, int(info["phase_beats"])] if laps <= 1 else "beat %.1f/%d of the scene (%.1f of the lap)" % [float(live.get("scene_beat", beat)), int(live.get("scene_beats", info["phase_beats"])), beat])
+	out.append("%s | block %d/4 | stage %d %s (%s cues) | %s | energy %.0f" % [where, int(live["block"]), int(live["stage"]) + 1, str(live["stage_label"]), str(live["cue"]), beat_txt, float(live["energy"])])
 	var cur: Dictionary = a["sections"][0]
 	for s in a["sections"]:
 		if str(s["pack"]) == str(live["pack"]):

@@ -54,7 +54,7 @@ static func make_entry(info: Dictionary, live: Dictionary, verdict: String, text
 				stem_shared[key] = s["audio"]["voices"][key]["shared_with"]
 			charts = (s["chart"] as Dictionary).get("charts", {}).duplicate()
 	return {"ts": timestamp(), "verdict": verdict, "run": str(info.get("run", "")), "scene": str(info.get("id", "")), "scene_title": str(info.get("title", "")), "world": str(info.get("world", "")),
-		"phase": int(live.get("phase", 0)), "block": int(live.get("block", 0)), "stage": str(live.get("stage_label", "")), "beat": snappedf(float(live.get("beat", 0.0)), 0.1), "song_t": snappedf(float(live.get("t", 0.0)), 0.01),
+		"phase": int(live.get("phase", 0)), "lap": int(live.get("lap", 1)), "laps": int(live.get("laps", 1)), "block": int(live.get("block", 0)), "stage": str(live.get("stage_label", "")), "beat": snappedf(float(live.get("beat", 0.0)), 0.1), "song_t": snappedf(float(live.get("t", 0.0)), 0.01),
 		"bpm": int(info.get("bpm", 0)), "energy": snappedf(float(live.get("energy", 0.0)), 0.1),
 		"packs": a.get("packs", []), "pack_playing": live_pack, "pack_label": label, "stems": stems, "stem_roles": PlaytestCatalog.ROLES, "stem_files": stem_files, "stem_shared_with": stem_shared, "charts": charts, "source": str(a.get("source", "")), "temporary": bool(a.get("temporary", false)),
 		"arrangement": str(a.get("arrangement", "")), "tier": int(a.get("tier", 0)),
@@ -68,7 +68,7 @@ static func entry_markdown(e: Dictionary) -> String:
 	var lines: Array = []
 	lines.append("## %s   %s" % [str(e.get("ts", "")), str(VERDICTS.get(str(e.get("verdict", "")), str(e.get("verdict", ""))))])
 	lines.append("- run: %s   scene: %s (%s)   world: %s" % [str(e.get("run", "")), str(e.get("scene", "")), str(e.get("scene_title", "")), str(e.get("world", ""))])
-	lines.append("- clock: phase %d, block %d, stage \"%s\", beat %.1f, %d BPM, energy %.0f" % [int(e.get("phase", 0)), int(e.get("block", 0)), str(e.get("stage", "")), float(e.get("beat", 0.0)), int(e.get("bpm", 0)), float(e.get("energy", 0.0))])
+	lines.append("- clock: %s, block %d, stage \"%s\", beat %.1f, %d BPM, energy %.0f" % [("lap %d of %d" % [int(e.get("lap", 1)), int(e.get("laps", 1))]) if int(e.get("laps", 1)) > 1 else ("phase %d" % int(e.get("phase", 0))), int(e.get("block", 0)), str(e.get("stage", "")), float(e.get("beat", 0.0)), int(e.get("bpm", 0)), float(e.get("energy", 0.0))])
 	lines.append("- music: %s (%s)   %s%s" % [str(e.get("pack_playing", "")), str(e.get("pack_label", "")), str(PlaytestCatalog.SOURCE_LABELS.get(str(e.get("source", "")), str(e.get("source", "")))), "   [TEMPORARY]" if bool(e.get("temporary", false)) else ""])
 	lines.append("  - packs in this scene: %s   tier %d%s" % [", ".join(PackedStringArray(e.get("packs", []))), int(e.get("tier", 0)), ("   arrangement " + str(e["arrangement"])) if str(e.get("arrangement", "")) != "" else ""])
 	var st: Dictionary = e.get("stems", {})

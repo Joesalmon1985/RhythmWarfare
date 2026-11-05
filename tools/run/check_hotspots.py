@@ -358,9 +358,30 @@ def reachability(allh, ctx, errs):
     return len(seen_scenes), len(taken_routes), len(flags), portals, endings
 
 
+def check_laps(ctx, errs):
+    """Two laps (docs/CONTINUOUS_RUN.md "Two laps"): a scene's laps (its own, else the path's, else 1) is a whole number from 1 to 4, only a path plays more than one, and every cast line of a scene
+    names a beat inside its laps (0 to 64 * laps - 1). The hotspot rules above are per scene, not per lap: the hotspots are on show in the last lap only, so nothing else changes. Returns {laps: scenes}."""
+    default = int(ctx.run.get("path", {}).get("laps", 1)) if PATH_ID else 1
+    beats = int(ctx.run.get("timing", {}).get("phase_beats", 64))
+    count: dict = {}
+    for sid, n in ctx.nodes.items():
+        laps = n.get("laps", default)
+        if not isinstance(laps, int) or isinstance(laps, bool) or laps < 1 or laps > 4:
+            errs.append(f"scene {sid}: laps {laps!r} is not a whole number from 1 to 4")
+            continue
+        if laps > 1 and not PATH_ID:
+            errs.append(f"scene {sid}: laps {laps}, only a path's scenes play more than one lap")
+        count[laps] = count.get(laps, 0) + 1
+        for i, c in enumerate(n.get("cast", [])):
+            if not 0 <= float(c.get("at_beat", -1)) <= beats * laps - 1:
+                errs.append(f"scene {sid} cast[{i}]: at_beat {c.get('at_beat')} is outside the scene's {laps} lap(s) (0 to {beats * laps - 1})")
+    return count
+
+
 def main(argv):
     ctx = Ctx()
     errs, warns = [], []
+    lap_counts = check_laps(ctx, errs)
     want = set(argv[1:])
     allh = []
     files = sorted(hotspots_dir().glob("*.json"))
@@ -418,6 +439,7 @@ def main(argv):
     else:
         print(f"reachability: {ns}/{len(ctx.nodes)} scenes, {nr} routes taken, {nf} flags settable, Bassment via passage; portals into paths: {', '.join(sorted(portals)) or 'none'}")
     print(f"{len(allh)} hotspots, {len(ctx.cin)} cinematics")
+    print("laps: " + ", ".join(f"{n} scene(s) x{k}" for k, n in sorted(lap_counts.items())))
     for w in warns:
         print("warning:", w)
     for e in errs:

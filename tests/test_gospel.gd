@@ -208,8 +208,10 @@ func test_a_result_switches_the_pieces_the_tables_fall_and_the_next_scene_starts
 	assert_true(bool(st.piece_state("temple.t2_up", scene._vt)["visible"]), "the tables stand at first")
 	assert_false(bool(st.piece_state("temple.t2_over", scene._vt)["visible"]))
 	_run_until(scene, 51.0 * 60.0 / 124.0, func() -> bool: return false)
-	assert_true(scene.hotspot_select("jerusalem.tables"), "the money-changers' tables can be touched in the window")
-	_run_until(scene, 63.0 * 60.0 / 124.0, func() -> bool: return false)
+	assert_false(scene.hotspot_select("jerusalem.tables"), "the scene plays two laps: the window is not open in the first")
+	_run_until(scene, (64.0 + 51.0) * 60.0 / 124.0, func() -> bool: return false)
+	assert_true(scene.hotspot_select("jerusalem.tables"), "the money-changers' tables can be touched in the window (the second lap's)")
+	_run_until(scene, (64.0 + 63.0) * 60.0 / 124.0, func() -> bool: return false)
 	var t: float = scene._vt + 1.5
 	assert_true(bool(st.piece_state("temple.t2_over", t)["visible"]), "they are overturned after the commit")
 	assert_false(bool(st.piece_state("temple.t2_up", t)["visible"]), "and the standing ones are gone")

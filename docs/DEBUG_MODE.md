@@ -16,8 +16,10 @@ the two-scene **Stub** test path appears only in the editor and test runs (it is
 
 * **Tap a row** to start the game AT that scene (the same machinery as `RW_RUN_START` / `RW_RUN_PATH`: `Session.run_start_node` and `run_start_path`).
 * **Info** opens the scene's full identity (below) with a START HERE button and "Copy these details".
-* A row reads: `scene id   Title` / `BPM  tier  Set name(s)  [pack ids, ">" where the arrangement switches]  OWNER | OWNER stand-in (temp) | PLACEHOLDER`. A leading `!` marks a scene whose
-  packs or stems did not resolve (should never show).
+* A row reads: `scene id   Title   x2` / `BPM  tier  Set name(s)  [pack ids, ">" where the arrangement switches]  OWNER | OWNER stand-in (temp) | PLACEHOLDER`. A leading `!` marks a scene whose
+  packs or stems did not resolve (should never show). **`x2` after the title** marks a scene of a path that plays **two laps** (the scene's music and staging for two 64-beat phases before the route
+  commits, `docs/CONTINUOUS_RUN.md` "Two laps per path scene"): all of Gospel, Squadron and Ember but the prologue scenes and the Golgotha. Starting a two-lap scene from the list plays both laps
+  (the option "continue into the next scene" ends the scene after its last lap, not after the first).
 * **Options** (for scenes started from the list): continue into the next scene when it ends (default on, as the game would; off = back to the list at the scene's end); autoplay the pads
   (the test bot, `RW_RUN_BOT=perfect`: hear a whole arrangement without playing; it is the only assist and it already existed for the tests); give the hotspot flags the scene needs (so every hotspot is on offer);
   also show the old play text (`DevText`: title cards, captions, countdown); start energy (the run's 60, full 100, low 25); **main-run arrangement**.
@@ -48,7 +50,7 @@ the bass carry, the recipe bass floor, the hotspot dip. In play the overlay adds
 **VISUAL**: the art **map** (and its stage node), the **view** (the scene's home waypoint) and its sector and room, the **light preset** (the sector's sky: night / dawn / day / morning or "indoors (no sky)", the light level, tint, fog),
 the set **pieces** on (and how many are off), the **cast** (the people directed in this scene), the **crowd** homed in the room, and the **hotspots on offer** (id, kind, the person who acts, where it leads), with the flags they need.
 
-**The overlay** (in play): scene, BPM, `phase n | block k/4 | stage | beat | energy`, the pack playing right now (and `section 2/2` when the arrangement switches), the stem and MIDI file names, the mix, the visual line,
+**The overlay** (in play): scene, BPM, `phase n | block k/4 | stage | beat | energy` (in a two-lap scene `lap 2 of 2 | block k/4 | stage | beat 70.0/128 of the scene (6.0 of the lap) | energy`: the beat counts across both laps, the block is the lap's), the pack playing right now (and `section 2/2` when the arrangement switches), the stem and MIDI file names, the mix, the visual line,
 the cast and hotspot ids. The `PT` button (key `H`) hides the panel and the three buttons. `RW_DEBUG=1` or the list turns it on; no other play has it.
 
 ## Feedback: tell it what you did not like
@@ -62,7 +64,7 @@ Three big buttons on the stage, with hotkeys on a keyboard:
 | Like it | `L` | `like` |
 
 Each press appends one entry and shows a toast ("Saved: DON'T LIKE THE MUSIC | squadron/city | squadron_c07"). Pause also has a note field and **Save note** (`note`). An entry holds: time, run, scene id and title,
-phase, block, stage, beat, BPM, energy, the packs of the scene, **the pack and the stem and MIDI file names playing at that moment**, source and `temporary`, the arrangement and tier, the visual ids (map, view, sector, light, pieces on, cast, hotspots), the verdict and your text.
+phase (and, in a two-lap scene, "lap k of n"), block, stage, beat, BPM, energy, the packs of the scene, **the pack and the stem and MIDI file names playing at that moment**, source and `temporary`, the arrangement and tier, the visual ids (map, view, sector, light, pieces on, cast, hotspots), the verdict and your text.
 
 ## Where the notes are and how to send them back
 
@@ -84,7 +86,8 @@ Two files in the app's user folder (`user://`): `playtest_notes.md` (readable, o
 ## Checks and tools
 
 * `tests/test_playtest.gd`: the list holds exactly every scene of every run and path; every row's packs and stems resolve and carry the owner's names; the arrangement option; every scene starts through the debug route on the virtual clock;
-  the overlay, the buttons, the hotkeys and the notes (written, read back, parsed); the throwaway save; the home button; with the mode off there is no overlay and the HUD writes nothing.
+  the overlay, the buttons, the hotkeys and the notes (written, read back, parsed); the throwaway save; the home button; with the mode off there is no overlay and the HUD writes nothing; a two-lap scene's row
+  says `x2` and its overlay `lap 1 of 2` (`tests/test_run_laps.gd` also checks the overlay text of lap 2, the notes' `lap` / `laps` fields and the Info line "2 laps of 64 beats").
   `tools/content/test_playtest_notes_summary.py`: the summary.
 * `bash tools/run/shoot_debug.sh`: the screenshots in `docs/shots/debug/` (needs a display). Screenshot hooks: `RW_DEBUG_DETAIL=<run>/<scene>` opens a scene's Info, `RW_DEBUG_SCROLL=<run id>` scrolls the list.
 * Code: `src/debug/` (`playtest_mode.gd` the switch and options, `playtest_catalog.gd` the identity as data, `playtest_list.gd`, `playtest_overlay.gd`, `playtest_notes.gd`, `playtest_notes_screen.gd`); the hooks in `run_play.gd`

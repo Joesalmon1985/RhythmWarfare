@@ -22,6 +22,12 @@ sys.path.insert(0, str(ROOT / "tools" / "run"))
 
 from art import gospel_maps  # noqa: E402
 from acting_data import L, a  # noqa: E402
+import laps as laps_mod  # noqa: E402
+
+# Two laps per scene (docs/CONTINUOUS_RUN.md "Two laps"): J00 is the prologue (one way on, a night road) and J14 is the Golgotha staging (the sky darkens one step a block, a witness or a soldier a block: one
+# descent, which a second lap would only repeat), so they stay at one lap; the endings J15 and J16 take two (the finale is where the player most wants to sit in the song).
+LAPS = 2
+SINGLE_LAP = ("jordan", "jerusalem.golgotha")
 
 OUT = ROOT / "content" / "paths" / "gospel"
 gospel_maps.build_all(False)
@@ -412,9 +418,12 @@ def write_run():
     old = OUT / "run.json"
     if old.exists() and "mix" in json.loads(old.read_text(encoding="utf-8")):  # the path's mix (the audio polish: level, bass bus) is data kept across a rewrite
         run["mix"] = json.loads(old.read_text(encoding="utf-8"))["mix"]
+    run = laps_mod.finish_run(run, LAPS, SINGLE_LAP)
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "hotspots").mkdir(exist_ok=True)
     (OUT / "run.json").write_text(json.dumps(run, indent=1) + "\n", encoding="utf-8")
+    if "--run-only" in sys.argv:
+        return
     for w in WORLDS:
         (OUT / "hotspots" / f"{w['id']}.json").write_text(json.dumps({"world": w["id"], "hotspots": HOTSPOTS[w["id"]]}, indent=1) + "\n", encoding="utf-8")
     prompts = {sc[0]: {"scene": sc[1], "title": sc[7], "prompt": sc[9] + P_TAIL} for sc in SCENES}
@@ -442,5 +451,6 @@ def write_music():
 if __name__ == "__main__":
     if "--music-only" not in sys.argv:
         write_run()
-    write_music()
+    if "--run-only" not in sys.argv:
+        write_music()
     print("gospel:", len(SCENES), "scenes,", sum(len(v) for v in HOTSPOTS.values()), "hotspots,", len(CINEMATICS), "cinematics")

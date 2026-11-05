@@ -170,3 +170,12 @@ that the new line meets the old one. The 174 run has no swap and is unchanged.
 * The sky pieces of Golgotha (`dark1`..`dark3`) are billboards at 12 m: they dim the sky behind the hill but not the people in front; the grove's torch and the Bethlehem fire are lights, not animated art.
 * Mix of the placeholders: bass-forward by measurement; whether it is prominent enough on a phone speaker is the owner's to judge.
 * `tools/story/check_assets.py` still lists the five old chapters only; the gospel sheets are checked by `tests/test_gospel.gd` and `tools/content/test_gospel.py`.
+
+## Two laps per scene (5 November 2026, `docs/HANDOVER.md` A12)
+
+Scene timing changed: every scene of the Gospel plays its music and staging for **two 64-beat phases** ("laps", 2 x 31.0 s = 62.0 s) before the route window and the commit, except **J00 `jordan`** (the
+prologue, one way on) and **J14 `jerusalem.golgotha`** (the staging is one descent: `dark1`..`dark3` and a witness or a soldier a block, authored for one pass), which stay at 31.0 s. The endings J15 (tomb) and J16
+(road) take two laps. Lap 1 is the scene's full phase without the choice window (hotspots are on show in lap 2 only); lap 2 holds the bass at its strongest (no strip-back, no restart) and carries the window,
+the commit and the passage as the single phase did. The cast lines of the two-lap scenes are re-timed by `tools/run/laps.py` (the table in `make_gospel.py` is still authored for one phase): lines before beat 48
+are spread (b x 2), the last block's lines keep their place in the last lap (b + 64); J15's stone still rolls at block 0 of lap 1. A default walk through the Gospel is now about 11 minutes. To go back: `path.laps`
+to 1 in `content/paths/gospel/run.json` (or `LAPS = 1` in `make_gospel.py` and `python3 tools/content/make_gospel.py --run-only`).

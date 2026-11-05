@@ -11,6 +11,11 @@ A recording may cross into a PATH (docs/CONTINUOUS_RUN.md "Paths") and back: eac
 music.json and tempo, and the BEAT GRID is reported per phase: the drum loop is fitted at the start and at the end of the phase (beats 0-8 and 56-63), the drift between the two delays gives the tempo
 the recording really has (compared with the engine's), and at every change of tempo the line "handoff" says the grid before and after and how far the new phase's first downbeat sits from the old
 phase's delay (0 = the new grid starts on the downbeat).
+
+A scene of a path may play several LAPS (docs/CONTINUOUS_RUN.md "Two laps"): its phase_start event says `laps`, and the scene is then fitted as laps x 64 beats (blocks 1 to 4 x laps, the mix stage carried
+over a block that has no mix event, the riser or fall in the last block of the last lap, the bass origin at the reveal's own time). At every LAP BOUNDARY the drums are fitted in the 8 beats before and the 8 beats
+after: the delay must not jump (the beat grid goes on without a seam), and no voice may have been started at the boundary (the loops go on; the bass already in stays in, which the block fits show as the stage's
+gains with the bass at its strongest in the first block of the next lap).
 """
 from __future__ import annotations
 
@@ -138,6 +143,7 @@ def main() -> int:
     delays = []
     bad = 0
     voice_off: dict = {}
+    lap_bad: list = []  # [(scene, boundary, jump ms, voices started)] lap boundaries where the grid jumped or a voice restarted
     grid: list = []  # [{phase, path, bpm, measured_bpm, delay_ms, t0}] for the handoff report
     for ph in starts:
         cx = ctx_for(str(ph.get("path", "")))
@@ -149,7 +155,9 @@ def main() -> int:
         level = 10 ** (float(cx["run"]["mix"].get("gain_db", 0.0)) / 20.0)  # RunMix's volume: every voice but the riser and fall (on the Music bus)
         treated = mu["treatment"] != "none" or "arrangement" in mu  # (a scene that plays an arrangement switches packs inside the phase: only its delay and tempo are checked here, tools/content/check_section_audio.py does the rest)
         t0 = float(ph["t"])
-        if wall_of(t0 + 64 * BEAT) > len(rec) / rate:
+        nlaps = int(ph.get("laps", 1))
+        total = 64 * nlaps  # beats of the scene across its laps
+        if wall_of(t0 + total * BEAT) > len(rec) / rate:
             break
         loops_ = pack_loops(str(ph["audio"]))  # (the pack the engine resolved: the scene's own, or the first section's)
         a = int(round(wall_of(t0) * rate))
@@ -158,24 +166,40 @@ def main() -> int:
         mod = tiled(loops_["drums"], a - int(0.3 * rate), len(seg), a)
         d = xcorr_delay(seg, mod, rate, 0.4)
         delays.append(d * 1000.0)
-        a2 = a + int(round(56 * BEAT * rate))  # the same fit at the end of the phase: the drift between the two is the tempo error of the recording
+        a2 = a + int(round((total - 8) * BEAT * rate))  # the same fit at the end of the scene: the drift between the two is the tempo error of the recording
         seg2 = rec[a2 - int(0.3 * rate):a2 + int(7 * BEAT * rate)]
         d2 = d + xcorr_delay(seg2, tiled(loops_["drums"], a2 - int(0.3 * rate), len(seg2), a + int(round(d * rate))), rate, 0.1)  # searched round the start delay: a four-on-the-floor loop repeats every beat
-        measured_beat = BEAT * (1.0 + (d2 - d) / (56.0 * BEAT))
+        measured_beat = BEAT * (1.0 + (d2 - d) / ((total - 8) * BEAT))
         if "arrangement" in mu:  # two packs play inside the phase: the drum loop of the first does not fit its second half, so the end-of-phase fit says nothing about the tempo
             measured_beat = BEAT
         grid.append({"phase": int(ph["phase"]), "path": str(ph.get("path", "")), "bpm": cx["bpm"], "measured_bpm": 60.0 / measured_beat, "delay_ms": d * 1000.0, "end_delay_ms": d2 * 1000.0, "t0": t0})
-        print(f"phase {ph['phase']} {ph['node']:14s} {cx['bpm']:g} BPM (measured {60.0 / measured_beat:7.3f}{' *' if 'arrangement' in mu else ''}) treatment {mu['treatment']:10s} delay {d * 1000.0:+7.2f} ms")
+        print(f"phase {ph['phase']} {ph['node']:14s} {cx['bpm']:g} BPM{(' x%d laps' % nlaps) if nlaps > 1 else ''} (measured {60.0 / measured_beat:7.3f}{' *' if 'arrangement' in mu else ''}) treatment {mu['treatment']:10s} delay {d * 1000.0:+7.2f} ms")
+        for k in range(1, nlaps):  # the lap boundaries: the beat grid goes on (the drums' delay before and after), and no voice was started there (nothing restarts)
+            ab = a + int(round((64 * k - 8) * BEAT * rate))
+            aa = a + int(round(64 * k * BEAT * rate))
+            sb = rec[ab - int(0.3 * rate):ab + int(7 * BEAT * rate)]
+            sa = rec[aa - int(0.3 * rate):aa + int(7 * BEAT * rate)]
+            d_b = d + xcorr_delay(sb, tiled(loops_["drums"], ab - int(0.3 * rate), len(sb), a + int(round(d * rate))), rate, 0.1)
+            d_a = d + xcorr_delay(sa, tiled(loops_["drums"], aa - int(0.3 * rate), len(sa), a + int(round(d * rate))), rate, 0.1)
+            jump = (d_a - d_b) * 1000.0
+            started = [v for v in info.get("voices", []) if str(v.get("node", "")) == str(ph["node"]) and t0 + (64 * k - 1) * BEAT < float(v.get("target", -1e9)) < t0 + (64 * k + 1) * BEAT]
+            lap_ok = abs(jump) < 6.0 and not started
+            if not lap_ok:
+                lap_bad.append((ph["node"], k, round(jump, 2), len(started)))
+            print(f"   lap boundary {k} -> {k + 1}: drums delay {d_b * 1000.0:+7.2f} ms before, {d_a * 1000.0:+7.2f} ms after (jump {jump:+.2f} ms), voices started at the boundary: {len(started)}  {'ok' if lap_ok else 'CHECK'}")
         if treated:
             continue
         ad = a + int(round(d * rate))
         reveal_beat = None
         for e in events:
-            if e["kind"] == "reveal" and t0 - 1e-6 <= float(e["t"]) < t0 + 64 * BEAT:
-                reveal_beat = float(e["beat"])
-        for b in range(4):
+            if e["kind"] == "reveal" and t0 - 1e-6 <= float(e["t"]) < t0 + total * BEAT:
+                reveal_beat = round((float(e["t"]) - t0) / BEAT, 4)  # (in beats from the scene's first downbeat: a reveal in a later lap names its lap-relative beat)
+        stage_now = None
+        for b in range(4 * nlaps):
             mix = [m for m in mixes if t0 + b * 16 * BEAT - 1e-6 <= float(m["t"]) < t0 + (b + 1) * 16 * BEAT - 1e-6]
-            stage = int(mix[0]["stage"]) if mix else None
+            if mix:
+                stage_now = int(mix[0]["stage"])
+            stage = stage_now  # (a block with no mix event keeps the stage: the first block of a later lap, when the lap does not change it)
             if stage is None:
                 continue
             g = stages[stage]["gains"]
@@ -192,9 +216,9 @@ def main() -> int:
                 borigin = int(round(reveal_beat * BEAT * rate))
                 comps["bass"] = (bass_as_heard(str(ph["audio"]), float(g["bass"]), bb), borigin)
                 comps["other"] = (loops_["other"], borigin)
-            if b == 3:
+            if b == 4 * nlaps - 1:
                 eff = "riser" if stage == 3 else "fall"
-                comps[eff] = (fx[eff], int(48 * BEAT * rate))
+                comps[eff] = (fx[eff], int((total - 16) * BEAT * rate))
             shift = {k: 0 for k in comps}  # samples each voice sits from its nominal start (found below)
             y = rec[lo:lo + ln]
             for _ in range(3):
@@ -244,12 +268,14 @@ def main() -> int:
                 boundary_bad.append((g0["phase"], g1["phase"], round(step, 1)))
     if boundary_bad:
         print("CHECK: in-path phase boundaries off by more than the chunk floor:", boundary_bad)
+    if lap_bad:
+        print("CHECK: lap boundaries where the grid jumped or a voice restarted:", lap_bad)
     tempo_bad = [g for g in grid if abs(g["measured_bpm"] - g["bpm"]) > 0.35]
     if tempo_bad:
         print("CHECK: phases whose recorded tempo differs from the engine's:", [(g["phase"], round(g["measured_bpm"], 3), g["bpm"]) for g in tempo_bad])
     if delays:
         print(f"delay per phase: min {min(delays):+.2f} ms, max {max(delays):+.2f} ms, spread {max(delays) - min(delays):.2f} ms")
-    ok = bool(delays) and max(delays) - min(delays) < 6.0 and bad == 0 and not tempo_bad and not boundary_bad
+    ok = bool(delays) and max(delays) - min(delays) < 6.0 and bad == 0 and not tempo_bad and not boundary_bad and not lap_bad
     print("RESULT", "ok" if ok else "CHECK")
     return 0 if ok else 1
 

@@ -26,6 +26,9 @@ func _map(world: String) -> StoryMap:
 func _simulate(policy: String, seed: int, data: RunData, taps := "", start := "warehouse") -> Dictionary:
 	var bpm := float(data.cfg["timing"]["bpm"])  # (a path runs at its own tempo)
 	var beat := 60.0 / bpm
+	if OS.get_environment("RW_MATRIX_LAPS") != "":  # the matrix at another lap count (1 = the paths as they were before the two laps, for the energy comparison in docs/HANDOVER.md A12)
+		for nid in data.nodes:
+			(data.nodes[nid] as Dictionary)["laps"] = int(OS.get_environment("RW_MATRIX_LAPS"))
 	if taps == "":
 		taps = OS.get_environment("RW_RUN_TAPS") if OS.get_environment("RW_RUN_TAPS") != "" else "scripted"
 	var e := RunEngine.new(data)
@@ -54,7 +57,10 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "", start := "w
 	var routes_done := {}
 	var door_done := -1
 	var t := -0.5
-	var end_t := float(MAX_PHASES) * e.phase_s()
+	var max_laps := 1
+	for nid in data.nodes:
+		max_laps = maxi(max_laps, data.laps_of(nid))
+	var end_t := float(MAX_PHASES) * e.phase_s() * float(max_laps)  # (a scene of a path plays its laps: MAX_PHASES counts scenes)
 	var kinds := {}
 	var places := {}
 	var actions: Array = []
@@ -65,7 +71,7 @@ func _simulate(policy: String, seed: int, data: RunData, taps := "", start := "w
 	while t < end_t and not e.over and e.away == "":  # (a path's ending hands the run back to the Warehouse: the simulation ends there)
 		var events := e.update(t)
 		for ev in events:
-			if str(ev["kind"]) in ["phase_start", "block_result"]:
+			if str(ev["kind"]) in ["phase_start", "block_result", "lap_start"]:
 				actions.append_array(j.on_event(ev, e))
 			if str(ev["kind"]) == "hotspot_commit":
 				var oc: Dictionary = ev["outcome"]
@@ -269,7 +275,7 @@ func test_policy_matrix_on_every_path_under_every_tap_policy() -> void:
 			for policy in ["perfect", "accuracy:0.8", "sloppy", "none"]:
 				var r := _simulate(policy, 2, data, taps, data.start_node())
 				var tag := "path %s, %s taps, %s" % [pid, taps, policy]
-				rows.append("%-8s %-9s %-13s %s after %d phases, away %s, energy %3.0f, scenes %s" % [pid, taps, policy, "ENDED   " if r["over"] else "survived", r["phases"], r["away"], r["energy"], ">".join(PackedStringArray(r["nodes"]))])
+				rows.append("%-8s %-9s %-13s %s after %2d scenes (%2d phases), away %s, energy %3.0f, scenes %s" % [pid, taps, policy, "ENDED   " if r["over"] else "survived", (r["nodes"] as Array).size(), r["phases"], r["away"], r["energy"], ">".join(PackedStringArray(r["nodes"]))])
 				assert_eq(r["camera_bad"], 0, "%s: the camera is always in a valid sector" % tag)
 				assert_eq(r["bad_starts"], 0, "%s: every move starts in a cue-free guard" % tag)
 				assert_eq(r["bad_bars"], 0, "%s: every move lasts 2 to 4 bars" % tag)
@@ -292,7 +298,7 @@ func test_policy_matrix_on_every_path_under_every_tap_policy() -> void:
 					assert_eq(str(r["away"]), "run:warehouse", "%s: perfect play reaches an ending and is handed back" % tag)
 					assert_true(str(data.nodes[str(seq[seq.size() - 1])]["ending"]) != "", "%s: the last scene is an ending" % tag)
 				assert_true(absf(bpm - float(data.cfg["timing"]["bpm"])) < 1e-9)
-	var f := FileAccess.open("user://run_matrix_paths.txt", FileAccess.WRITE)
+	var f := FileAccess.open("user://run_matrix_paths%s.txt" % ("_laps" + OS.get_environment("RW_MATRIX_LAPS") if OS.get_environment("RW_MATRIX_LAPS") != "" else ""), FileAccess.WRITE)
 	f.store_string("\n".join(PackedStringArray(rows)) + "\n")
 	f.close()
 

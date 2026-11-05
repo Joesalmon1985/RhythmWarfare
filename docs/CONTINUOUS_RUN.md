@@ -12,7 +12,8 @@ godot --path . res://src/run/run_play.tscn        # straight into the run (RW_RU
 
 ## The phase
 
-174 BPM, 4/4. A phase is 64 beats (22.07 s) of one level, four blocks of 16 beats. One required cue family is active at a time.
+174 BPM, 4/4. A phase is 64 beats (22.07 s) of one level, four blocks of 16 beats. One required cue family is active at a time. (A scene of a PATH may play several phases in a row, its LAPS: the main run never
+does, see "Two laps per path scene" at the end.)
 
 | Beats | Stage | Mix (drums / bass / synth) | Cues |
 | --- | --- | --- | --- |
@@ -431,7 +432,7 @@ People are told what to do and what to feel by data, never by text.
 - **The crowd's `dir`** carries `state`, `from`, `until`, `sync`, `force` and now `face`, `look_at`, `src` and `chain` (the segments still to come). While it is in force `StoryCharacter.face_override` is
   the face (so `sheet_pick` chooses `act@face` frames when the person was baked with them, else the act's own) and a live `look_at` turns the person toward the target (`StoryCrowd.look_point`:
   `camera` is the eye, so they face us; an actor, a thing or a waypoint is its ground position; it also decides the arm of a `point`).
-- **`cast` on a scene node of `run.json`**: `[{actor, at_beat, act, face?, look_at?, beats?, if_energy_below?, if_energy_above?, if_flags_all?, if_flags_none?}]`, `at_beat` 0 to 63 of the scene's phase.
+- **`cast` on a scene node of `run.json`**: `[{actor, at_beat, act, face?, look_at?, beats?, if_energy_below?, if_energy_above?, if_flags_all?, if_flags_none?}]`, `at_beat` 0 to 63 of the scene's phase (0 to 64 x laps - 1 for a scene of a path that plays several laps, counted from the scene's first downbeat).
   `RunEngine` queues the lines when the scene begins and emits one `cast` event per line at `phase_t0 + at_beat * beat_s` (`t` is the line's own time, whatever the frame step; ties in file order; a
   line due on the same instant as a block decision goes first, so its conditions read the energy as it stood at that beat). Conditions read the crowd's energy and the world-state flags (run or `keep:`) at
   that beat; a line whose conditions fail emits nothing. A stall across several lines fires them all, in order. The lines of a scene left before they came due are dropped.
@@ -480,7 +481,7 @@ dubstep 140 BPM, 14 scenes in 4 worlds, on the owner's own loops) and `ember` (T
 `docs/paths/gospel.md`, `docs/paths/squadron.md`, `docs/paths/ember.md`; the whole project's state: `docs/HANDOVER.md`.
 
 ```
-content/paths/<id>/run.json        "path": {id, title, entry_from, returns_to: "warehouse", opens, dev?}, timing.bpm, worlds, nodes, cinematics (judgement, energy, stages, mix, effects, treatments are the main run's unless the file says otherwise)
+content/paths/<id>/run.json        "path": {id, title, entry_from, returns_to: "warehouse", opens, laps?, dev?}, timing.bpm, worlds, nodes, cinematics (judgement, energy, stages, mix, effects, treatments are the main run's unless the file says otherwise)
 content/paths/<id>/music.json      one entry per scene (audio / chart pack, "temporary": true for placeholders); "placeholder": {genre, key, levels_db, sub_hz, ...} = the mix of the synthesised stand-ins
 content/paths/<id>/hotspots/<world>.json     the path's hotspots (the same contract; an ending's default exit sets keep:path_<id>_<ending>)
 content/paths/<id>/walks.json      (optional) extra walks for tools/run/walk_run.sh --path
@@ -555,3 +556,57 @@ downbeat and the cues on the new grid, the audio clock swap, the real scene ente
 * **Save**: `user://story_run.json` has `paths: {"<id>": {"reached": [...], "endings": [...]}}`; a path's worlds are never in `reached`.
 * **The tempo handoff and the song clock**: the first phase change inside a path used to sit 88 ms off (a new stream's position reads one mix period ahead after its first mix, so the clock ran ahead of the sound after every swap). Fixed in `56adc157`: `RunAudio._swap_clock` sets `song_base = t - mix_period(ttnm)`,
   `clock_log` records the period, `tools/story/check_run_audio.py` asserts every in-path phase boundary within 29.4 ms (the dummy driver's floor). Measured with the dummy driver only.
+
+
+## Two laps per path scene (docs/HANDOVER.md A12)
+
+The audio polish (A10) found that the three paths' music turned over every phase (Gospel 31.0 s, Squadron 27.4 s, Ember 26.5 s), so the player never sat in a song. A scene of a path now plays its music and its
+staging for **two consecutive 64-beat phases ("laps") before the route commits**. The 174 BPM main run keeps one (and behaves, validates and tests exactly as before). (In `docs/paths/squadron.md` "lap" also names
+one repeat of the 4-bar loop inside a phase; here a lap is a whole 64-beat phase.)
+
+**Data.** `path.laps` in a path's `run.json` is the default of every scene of the path (1 when absent); a scene node may carry its own `laps`, which wins. A whole number from 1 to `RunData.MAX_LAPS` (4); only a
+path's scenes may play more than one (the main run refuses it) and a scene that plays an arrangement (the main run's two sections per phase) plays one. Shipped: `path.laps` 2 in `gospel`, `squadron` and `ember`;
+`"laps": 1` on **J00 `jordan`** (the prologue: a night road, one way on; a minute of it before the first story scene would be a wait, not a song), **J14 `jerusalem.golgotha`** (the sky darkens one step a block and
+a witness or a soldier steps forward a block: one descent, a second lap would only repeat it; its `block_fx` and its cast are authored for one pass) and **E00 `hollow`** (the orchard prologue, one way on). Every
+other scene takes two, **the endings included** (J15 tomb, J16 road, C13 quay, E12 spring, E13 keeper): the finale is where the player most wants to sit in the song, and the ending's flag is still set by its
+default exit at the end of the last lap. `stub` stays at one. `RunData.laps_of(scene)`.
+
+**What a lap is.** Each lap is a phase of the engine: its own phase number (`phase_n` counts laps; `RunEngine.scene_index()` = `phase_n - lap_extra` counts scenes), its own four blocks, cues and judge results,
+its own `block_result`. The per-block rules are the single phase's, untouched: the tap windows, the pass credit, the energy gain and loss of a block, the 16-beat blocks, the 12-beat cue span and the decision at
+12.5. `RunEngine` has `lap`, `laps`, `scene_t0` and `lap_extra`; `phase_start` carries `lap` (1), `laps` and `lap_extra`; `block_result` and `route_window` carry `lap`. At the end of a lap before the last the
+engine does not commit: it emits `lap_start` {node, lap, laps, t, phase, stage, lap_extra, scene_t0} on the downbeat and the scene goes on.
+
+* **Lap 1** is the scene's full phase by the stage table (drums alone; bass enters; drums return; bass strongest) with no route window, no hotspot window, no commit and no riser or fall: `choose()` is refused,
+  `RunHotspots.shown` is empty (the final window needs `window_open`), `_hotspot_decision` makes no final commit, no door walk is latched and no passage frame closes. Its last block is judged like any other.
+* **The boundary.** The stage of lap 2's first block is the stage of lap 1's last block, **one step on after a pass** (as at every block; `min(stage + 1, 3)`), so a player who earned the bass keeps it at its strongest:
+  a perfect player's stages over the scene are 0 1 2 3 | 3 3 3 3, and a miss in the last block holds the stage. **Nothing is stripped back and nothing restarts**: `RunAudio` schedules nothing for a lap (its
+  voices simply go on; every pack's phrase divides a 64-beat lap, which `RunData` validates), the engine emits a `mix` event at the boundary only if the stage changes and a `reveal` only if the bass enters on that very
+  downbeat. A player who earned nothing in lap 1 starts lap 2 on drums alone and the stage table brings the bass in again from there: a second chance, never a harsher one. `bass_origin` is kept (it counts modulo the
+  phrase, so lap 2's bass cues stay on the loop's own phrase) and the first block of lap 2 is charted at lap 1's last decision like any next block. The cue families of a perfect scene are drums, bass, drums, bass,
+  then **bass for all four blocks of lap 2** (the stage holds at "bass strongest": drums 0.4, bass 1.0, synth 0.5). The part offsets (`part_offset`) carry on.
+* **Lap 2 (the last lap)** is the phase as it always was from the player's side: hotspots on show from beat 49, the route window at beat 48 (riser if the strongest stage is in), the commit at the decision of the last
+  block (beat 60.5), the route lock, the door walk (beat 61), the passage frame (beats 62 to 64), the tempo handoff: all at the LAST lap's beats, none of them moved or resized. **Hotspots are available in lap 2 only**
+  (least risky: the 2 to 4 rule, `RunHotspots` and the whole hotspot contract are per scene and untouched; showing them in lap 1 would have needed a second, non-committing window state).
+* **Leaving a path** (the pause menu's "Leave this path", beat 61 on) now also works in a lap before the last: the scene ends at that lap's downbeat, through the passage frame (`RunEngine.exit_pending()`).
+* **Cast.** A scene's `cast` lines count `at_beat` from the scene's first downbeat across its laps: 0 to 64 x laps - 1 (`RunData.cast_last_beat`, `HotspotContract.validate_cast`'s `last_beat`). They are queued once when
+  the scene begins and fire at `scene_t0 + at_beat * beat_s` as ever (stamped with the phase of the lap they fall in); a line of a later lap waits for its lap, so a stalled frame cannot fire it early. `block_fx`
+  entries take an optional `lap` (1 to the scene's laps; default 1: an entry without it plays in the scene's first lap only, as it did).
+* **The staging goes on.** The scene's lamps, set pieces, rail, people and the stage's `lights_*` actions are not reset at the boundary (`RunPlay._on_lap_start` only logs and clears the touch state; there is no
+  `room_swell`, no `lights_low_pulse`, no pieces reset). `RunJourney` gives the lap's first block its glance and stroll and the rail keeps stepping, so the camera's walk goes on from where it was.
+* **Counting scenes.** The result screen and the save's "best phases" count scenes (`run_over.scenes`), the scripted bots' routes are one per scene, `RW_RUN_UNTIL_PHASE` and the debug list's "back to the list when
+  the scene ends" count scenes. `RunAudio` picks its bus pair from `phase - lap_extra`, so two scenes in a row still alternate pairs.
+
+**Cast re-timing (tools/run/laps.py, called by the three generators).** The generators' tables still author one phase (beats 0 to 63); `laps.finish_run(run, laps, single)` writes `path.laps`, gives the
+single-lap scenes `"laps": 1` and re-times the cast of the others: a line before beat 48 is spread over the laps (b x laps: 0, 16, 32 become 0, 32, 64; a line that holds 12 beats or more holds laps times as long, so
+the person stays in the act until the next line takes over) and a line from beat 48 on (the last block: the window, the commit, the reactions at beat 61) keeps its place in the LAST lap (b + 64 for two laps). Nothing is
+added or removed, so no text appears in play, and every reaction to a commit still lands at beats 125 to 127. After the change no cast beat lies between 96 and 111. Re-run
+`python3 tools/content/make_gospel.py --run-only`, `python3 tools/paths/make_squadron.py` or `python3 tools/run/make_ember.py` after editing a table.
+
+**Checks.** `tests/test_run_laps.gd` (the shipped laps, the validator, the window, commit and hotspots in the last lap only, the stage and cue families across the boundary, the bass phrase on the loop's own grid, a
+missed block and a late reveal, the energy per block against the single-phase formula, the cast across laps at any frame step and across a stall, leaving in lap 1, the handoff after two laps and the Warehouse grid,
+the main run without laps, the audio voices across the boundary, the real scene, the debug mode), `tools/content/test_laps.py`, `test_run_cast.gd`, `test_run_ember.gd`, `test_run_matrix.gd` (a scene of a path may take
+twice as long; `RW_MATRIX_LAPS=1` replays the matrix at one lap), `python3 tools/run/check_hotspots.py --path <id>` (laps and cast ranges), `bash tools/run/walk_run.sh --path <id>` (the lap_start sequence of every
+walk), `python tools/run/measure_mix.py --force-laps 1` (the before) against the data (the after), `tools/story/check_run_audio.py` (lap boundaries: no jump in the beat grid, no voice started there).
+
+**Revert.** Set `path.laps` to 1 in `content/paths/<id>/run.json` (or change `LAPS` in the path's generator and re-run it: the cast goes back to its authored beats; the walks and tests follow the data). One value per
+path; a scene's own `"laps": 1` stays. Nothing else in the data changes.

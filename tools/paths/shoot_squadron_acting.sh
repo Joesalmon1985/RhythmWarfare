@@ -15,7 +15,7 @@ acting_run() {  # id scene cam bot shot_beat:state ...
   local name="${hid//./_}" steps=() f
   for bs in "$@"; do
     local beat="${bs%%:*}" st="${bs##*:}"
-    f=$(python3 -c "print(int(($beat*$BEAT+2.0)/$RATE)+2)")
+    f=$(python3 -c "print(int((($beat+64)*$BEAT+2.0)/$RATE)+2)")  # (every scene of the Mission Count plays two laps: the hotspots are on show in the second)
     steps+=("$f:shot:${name}__${st}")
   done
   env XDG_DATA_HOME="$TMP/data" APPDATA="$TMP/data" RW_RUN_PATH=squadron RW_RUN_VIRTUAL=1 RW_STORY_RATE=$RATE RW_RUN_START="$scene" RW_RUN_BOT="$bot" RW_RUN_ROUTES="" RW_RUN_CLEAN=1 RW_STORY_CAM="$cam" RW_RUN_SELECT="$hid@52" \

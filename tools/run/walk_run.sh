@@ -83,6 +83,16 @@ if s:
     for a, b in zip(s["nodes"], s["nodes"][1:]):  # every step is a route of the scene before it
         if b not in [e["to"] for e in nodes[a]["next"]] and not (a in path_nodes and path_nodes[a].get("ending") and b == "warehouse"):
             bad("%s does not lead to %s" % (a, b))
+    # the laps (docs/CONTINUOUS_RUN.md "Two laps"): each scene played all its laps but the last one started (a lap_start per extra lap, in order); the scene the walk stopped in has played none, some or all
+    default_laps = int(prun["path"].get("laps", 1)) if path_id else 1
+    def laps_of(x):
+        return int(path_nodes[x].get("laps", default_laps)) if x in path_nodes else 1
+    want_laps = [x for x in s["nodes"][:-1] for _ in range(laps_of(x) - 1)]
+    got_laps = s.get("laps", [])
+    if got_laps[:len(want_laps)] != want_laps:
+        bad("laps %s, expected %s first" % (",".join(got_laps), ",".join(want_laps)))
+    elif any(x != s["nodes"][-1] for x in got_laps[len(want_laps):]) or len(got_laps) - len(want_laps) > laps_of(s["nodes"][-1]) - 1:
+        bad("laps of the last scene: %s" % ",".join(got_laps[len(want_laps):]))
     open(seen_file, "a").write("\n".join(s["nodes"]) + "\n")
     for r in s["rail"]:
         _, node, place = r.split(":")[0], r.split(":")[1], r.split(":")[2]

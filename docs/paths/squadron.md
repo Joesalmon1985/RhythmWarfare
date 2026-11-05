@@ -126,3 +126,12 @@ A cold blue night cut by white searchlight beams (fog `#0e1c34`): `hut2` (the br
 * Nobody listened to anything: no live audio, no phone. The bass gains and the stage mix come from measurements of the written loops, not from ears.
 * The shots are desktop frames on the virtual clock; how acts and faces read moving on a phone, and whether a reaction at beat 61 is seen by a player watching the pads, is not known.
 * The weaker pictures are listed in section 6.
+
+## 8. Two laps per scene (5 November 2026, `docs/HANDOVER.md` A12)
+
+Every scene of the Mission Count now plays **two 64-beat phases** (2 x 27.4 s = 54.9 s) before the route window and the commit; the ending C13 too. A **lap** in this section is a whole phase, not one repeat of the
+4-bar loop (the "four laps" of section 4 are the four 16-beat blocks, i.e. four repeats of the loop, and stay as they are): the loop now repeats eight times in a scene. Lap 1 is the stage table's four blocks
+(drums alone; drums 0.7 + bass 1.0; drums 1.0 + bass 0.9 + synth 0.5; drums 0.55 + bass 1.0 + synth 0.7) with no choice window; lap 2 holds the last stage (bass 1.0, synth 0.7 over drums 0.55; no strip-back, no
+restart; a player who has not earned it by then climbs the table again) and carries the window, the commit and the passage as before. Hotspots are on show in lap 2 only. The cast of every scene is re-timed by
+`tools/run/laps.py` (lines before beat 48 are spread b x 2, the last block's lines are b + 64). The 4-bar loops make this the path where the repetition is most audible: for the owner's ears, section 7's question
+"does it drag?" is asked of a 55-second scene on one 7-second loop. To go back: `path.laps` to 1 in `content/paths/squadron/run.json` (or `LAPS = 1` in `make_squadron.py` and re-run it).
