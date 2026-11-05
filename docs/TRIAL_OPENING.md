@@ -198,7 +198,7 @@ owner's `dd_part1` and `dd_part2`), point `audio`/`chart` at the ambient set and
 | --- | --- |
 | data and validator (incl. zone maps, waypoints, exits) | `src/trial/trial_data.gd`, `content/trial/passages.json`, `content/story/maps/bassment_*.json`, `tools/trial/validate.gd`, `check_maps.gd` |
 | the hotspots: data, generator, which a player may see, where an anchor stands, the agreement check | `content/trial/hotspots.json`, `tools/trial/make_hotspots.py`, `src/trial/trial_hotspots.gd` |
-| the lights and the taps (a thin fallback, deleted when the engine workstream's `hotspot_view` is merged) | `src/trial/trial_hotspot_fallback.gd` |
+| the lights and the hit test (the run's own view, one per zone stage; `TrialScene.hotspot_items` feeds it, `hotspot_tap` is the touch) | `src/run/hotspot_view.gd`, `src/trial/trial_scene.gd` |
 | rules (no nodes) | `src/trial/trial_flow.gd` |
 | the clock, blocks and windows (no nodes; `origin` is the downbeat it starts on) | `src/trial/trial_engine.gd` (uses `RunData` packs and `PadJudge`) |
 | the scene (zone stages, camera, caption band, hotspots, figures, tableaux) | `src/trial/trial_scene.gd`, hosted by `src/run/run_play.gd` (`arm_trial`, `trial_begin_now`, `trial_leave`); `trial_play.tscn` is a launcher |

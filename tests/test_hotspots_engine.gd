@@ -263,3 +263,36 @@ func test_run_flags_clear_each_run_and_keep_flags_persist_in_the_save() -> void:
 	for f in [path, path + ".tmp"]:
 		if FileAccess.file_exists(f):
 			DirAccess.remove_absolute(f)
+
+
+## Every shipped hotspot of the seven run worlds resolves both ways through the engine: success and failure each give an outcome whose route (when it names one) is a route of the scene or the
+## Bassment's first passage, whose flags are applied to the right store, and an object or feature that names no route continues by the scene's default exit (the coverage matrix's S and F columns).
+func test_every_shipped_hotspot_resolves_its_success_and_failure_outcomes() -> void:
+	var d := RunData.load_default()
+	assert_true(d.errors.is_empty())
+	var n := 0
+	for node_id in d.nodes:
+		var routes: Array = (d.nodes[node_id]["next"] as Array).map(func(o: Dictionary) -> String: return str(o["to"]))
+		for h in d.hotspots_of(node_id):
+			for success in [true, false]:
+				var run_flags := {}
+				var flags := {}
+				for f in (h["available"]["flags_all"] as Array):
+					run_flags[str(f)] = true
+				var hs := RunHotspots.new(d, run_flags, flags)
+				hs.begin_scene(node_id, 60.0)
+				var out: Dictionary
+				if RunHotspots.window_of(h) == "early":
+					hs.selected = str(h["id"])
+					out = hs.on_block(0, success)
+				else:
+					hs.selected = str(h["id"])
+					out = hs.commit_final(success)
+				assert_false(out.is_empty(), "%s resolves (%s)" % [h["id"], str(success)])
+				var r := str(out["route"])
+				if r != "":
+					assert_true(r in routes or HotspotContract.is_trial_route(r), "%s %s: route %s is a route of %s" % [h["id"], str(success), r, node_id])
+				for f in out["flags_set"]:
+					assert_true(run_flags.has(str(f)) or flags.has(str(f)), "%s: flag %s is applied" % [h["id"], f])
+				n += 1
+	assert_true(n >= 254, "every hotspot both ways (%d)" % n)

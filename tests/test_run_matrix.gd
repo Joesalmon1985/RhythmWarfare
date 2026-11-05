@@ -204,7 +204,8 @@ func test_policy_matrix_survival_depth_rails_and_camera() -> void:
 		for nid in p["nodes"]:
 			scene_count[nid] = true
 		assert_true(scene_count.size() >= 8, "at least eight distinct scenes: %d" % scene_count.size())
-		assert_eq(int((p["kinds"] as Dictionary).get("down", 0)) + int((p["kinds"] as Dictionary).get("bottom", 0)), 0, "perfect play never visits the bad rail")
+		if OS.get_environment("RW_RUN_TAPS") != "failure":  # (the failure policy misses the last block of every phase on purpose)
+			assert_eq(int((p["kinds"] as Dictionary).get("down", 0)) + int((p["kinds"] as Dictionary).get("bottom", 0)), 0, "perfect play never visits the bad rail")
 		assert_true(int((p["kinds"] as Dictionary).get("up", 0)) >= 3, "perfect play climbs")
 		var n: Dictionary = by["none/%d" % seed]
 		assert_true(n["over"], "no play depletes the crowd (seed %d)" % seed)

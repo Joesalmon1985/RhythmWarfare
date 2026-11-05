@@ -97,6 +97,12 @@ shot hotspots_failure    warehouse blocks:1110 "" "$(python3 -c "print(66*60/174
 shot hotspots_wizard     warehouse perfect "" "$(python3 -c "print(8*60/174)")" "RW_RUN_SELECT=warehouse.wizard@3"
 shot hotspots_phone      warehouse perfect "" "$(python3 -c "print(55*60/174)")" "RW_RUN_SELECT=warehouse.exit_balcony@52" RW_WINDOW=844x390
 
+# --- the hotspot window of every scene (nothing touched yet: the default brighter), then a contact sheet per world: docs/shots/run/contact_hotspots_<world>.jpg ------------------------------------
+while read -r node entry; do
+  shot "hotspots_${node//./_}" "$node" perfect "" "$(python3 -c "print(54*60/174)")"
+done < "$TMP/scenes.txt"
+if [ -z "$ONLY" ] || [[ "contact_hotspots" =~ $ONLY ]]; then python3 "$ROOT/tools/run/contact_hotspots.py" "$OUT"; fi
+
 # --- layouts and settings ---------------------------------------------------------------------------------------------------------------------------------------------------
 shot phone_route_window warehouse perfect right 19.0 RW_WINDOW=844x390
 shot phone_journey      warehouse perfect right 17.0 RW_WINDOW=844x390

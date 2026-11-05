@@ -291,8 +291,8 @@ them to the active world's `StoryStage`. Each node in `content/run/run.json` has
 * **Moves** are `player_move` of 2 to 4 bars that start on the decision beat; `RunRail.pick_bars` shortens one (never below 2 bars) when the chart would make more than half its bars dense
   (more than one note per beat), the rule of the chapter director's dense-run warning, which is therefore silent (asserted over the whole policy matrix).
 * **Every block** has a glance (`player_look by/pitch`, varied through the node's list) and most blocks an in-room walk (`player_walk`, skipped while a journey move is under way).
-* **Route window.** The touch arrows stay (phones need them) and, while the window is open, the room's exits are lit (`RunExitsView`): a pulsing doorway at the waypoint of each candidate route,
-  projected with the stage's own camera, or an arrow at the screen edge on the side it lies when it is out of sight; the chosen one is gold.
+* **Route window.** The window is the hotspot window (see "Hotspots" below): the room's exits are lit by `HotspotView` (a door ajar at the waypoint of each route, or a beacon at the screen edge when it is out
+  of sight), touched in the world; there are no arrows and no labels (the old arrows and `RunExitsView` are gone).
 * **World swap** (`RunPassage`, `RunPassageView`): when the selected route at beat 62 leads to another world the frame closes to a lit doorway over the last two beats, the swap happens on the
   downbeat exactly as before (audio untouched), and the new world's camera starts at its doorway (`arrive`, a cut hidden by the closed frame), walks to the start waypoint from beat 62 (the walk
   starts in the guard) while the frame opens over 2.5 beats. Same-world routes and loops do not close the frame. Everything is a function of song time.
@@ -340,8 +340,8 @@ cue-free guard from beat 12.6; the first stage of a run builds before the countd
 ## Hotspots (workstream A of the visual rhythm adventure)
 
 The route window is the **hotspot window**: no arrows, no labels, no `[DEFAULT]`. The player touches the world; the music never stops and the pads stay the only other input. Contract and plan:
-`docs/VISUAL_RHYTHM_ADVENTURE_PLAN.md` (section 2), the owner's brief `docs/VisualChoicePlan.md`. `RW_RUN_ARROWS=1` brings the old arrows, lit doors and the wizard's "Enter the Trial" button back
-(default off; to be removed once the Bassment's conversion has landed).
+`docs/VISUAL_RHYTHM_ADVENTURE_PLAN.md` (section 2), the owner's brief `docs/VisualChoicePlan.md`. The old arrows, lit-door view, labels and the wizard's "Enter the Trial" button are
+removed for good (the Bassment's conversion has landed: `TrialScene` draws and hit-tests with the same `HotspotView`).
 
 | Piece | File | What |
 | --- | --- | --- |
@@ -356,7 +356,7 @@ cue-free guard, exactly the old route lock). The *early* window belongs to a hot
 commits at the next block decision (two guards are needed to arm the entry). Selection changes freely until the commit; after it nothing can be selected. At the commit the block just judged decides:
 **passed -> `on_success`, missed -> `on_failure`**. Nothing tapped: the scene's default exit whatever the performance (no intent, no failure). The route of the outcome (or, for an outcome with none,
 the scene's default route) becomes `RunEngine.choice` *before* the next phase's first block is charted, so the chart pack is always the resolved route's: there is no late swap and the route lock
-only ever sees the resolved outcome (the five diverting outcomes of the data chart the right pack). `RunEngine.hotspots == null` keeps the plain route choice (the old tests, `RW_RUN_ARROWS=1`).
+only ever sees the resolved outcome (the five diverting outcomes of the data chart the right pack). `RunEngine.hotspots == null` keeps the plain route choice (engine-level tests and the scripted `RW_RUN_ROUTES` bot only; the scene always has hotspots).
 
 **World state.** `flags_set` names go to `RunProgress.run_flags` (one run, cleared by `run_started`) or, with the `keep:` prefix, to `RunProgress.flags` (persistent, in the save, written at once).
 `available`: `flags_all`, `flags_none` (both read both stores), `energy_min`, `once` (spent by any commit this run). `repeatable: false` (the default) spends an object/character after a *success* without a
