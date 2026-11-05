@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "underworld_3",
+ "family": "cold_fusion_interface",
+ "seed": 5,
+ "bars": 80,
+ "use": "run",
+ "compatible": ["metaverse_ready_fusion"],
+ "identity": {"palette": "underworld", "filters": {"family_glob": ["cold_*", "lv3_*"], "profile": ["beat_shaper_174x1"], "min_density": 2.0}},
+ "sections": [{"bars": 8, "role": "intro", "pack": "cold_fusion", "mix": "dark_breakdown", "fills": []}, {"bars": 8, "role": "build", "pack": "cold_fusion_v3", "mix": "build", "fills": [8]}, {"bars": 8, "role": "variation", "pack": "cold_fusion", "mix": "dark_drop", "fills": [8]}, {"bars": 8, "role": "drop", "pack": "cold_fusion_v3", "mix": "dark_drop", "fills": []}, {"bars": 8, "role": "build", "pack": "cold_fusion_v1", "mix": "build", "fills": [8]}, {"bars": 8, "role": "variation", "pack": "meta_fusion", "mix": "dark_drop", "fills": [8]}, {"bars": 8, "role": "drop", "pack": "cold_fusion_v3", "mix": "dark_drop", "fills": []}, {"bars": 8, "role": "breakdown", "pack": "cold_fusion", "mix": "dark_breakdown", "fills": []}, {"bars": 8, "role": "drop", "pack": "cold_fusion_v2", "mix": "dark_drop", "fills": []}, {"bars": 8, "role": "ending", "pack": "cold_fusion", "mix": "ending", "fills": []}]
+}

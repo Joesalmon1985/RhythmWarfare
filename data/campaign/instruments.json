@@ -28,5 +28,16 @@
  "bass_reese_round": {"produces": [{"reward": "1tnk", "share": 1}, {"reward": "apc", "share": 1}], "blurb": "Round reese: light tanks and APCs in turn."},
  "hats_driving": {"produces": [], "blurb": "Backing sound: plays under the music, builds nothing."},
  "hats_busy": {"produces": [], "blurb": "Backing sound: plays under the music, builds nothing."},
- "hats_offbeat": {"produces": [], "blurb": "Backing sound: plays under the music, builds nothing."}
+ "hats_offbeat": {"produces": [], "blurb": "Backing sound: plays under the music, builds nothing."},
+ "kick_cold": {"produces": [{"reward": "grenadier_squad", "share": 2}, {"reward": "rifle_squad", "share": 1}], "blurb": "Cold kick: grenadier squads, with a rifle squad every third strike."},
+ "snare_cold": {"produces": [{"reward": "pillbox", "share": 1}, {"reward": "turret", "share": 1}], "blurb": "Cold snare: pillboxes and gun turrets in turn."},
+ "kick_meta_a": {"produces": [{"reward": "rifle_squad", "share": 2}, {"reward": "e3", "share": 1}], "blurb": "Meta kick A: rifle squads with a rocket soldier now and then."},
+ "kick_meta_b": {"produces": [{"reward": "grenadier_squad", "share": 1}, {"reward": "e3", "share": 1}], "blurb": "Meta kick B: grenadiers and rocket soldiers in equal measure."},
+ "snare_meta": {"produces": [{"reward": "turret", "share": 2}, {"reward": "flame_tower", "share": 1}], "blurb": "Meta snare: gun turrets, with a flame tower every third strike."},
+ "bass_hard_harmonic": {"produces": [{"reward": "2tnk", "share": 1}, {"reward": "apc", "share": 1}], "blurb": "Hard harmonic: medium tanks and APCs in turn."},
+ "bass_flaring_anger": {"produces": [{"reward": "1tnk", "share": 2}, {"reward": "arty", "share": 1}], "blurb": "Flaring anger: light tanks, with artillery now and then."},
+ "bass_trap": {"produces": [{"reward": "jeep", "share": 1}, {"reward": "1tnk", "share": 1}], "blurb": "Trap bass: jeeps and light tanks in turn."},
+ "backing_cold_loop": {"produces": [], "blurb": "Backing sound: plays under the music, builds nothing."},
+ "backing_meta_a": {"produces": [], "blurb": "Backing sound: plays under the music, builds nothing."},
+ "backing_meta_b": {"produces": [], "blurb": "Backing sound: plays under the music, builds nothing."}
 }

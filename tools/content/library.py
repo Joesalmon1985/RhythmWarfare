@@ -3,7 +3,8 @@
     content/sounds.json                         sound ids, family, friendly name, placeholder synth settings
     content/library/<clip_id>/clip.json         kind, name, bars, key, source (derived / generated / owner / imported),
                                                 optional "sounds" (the renders the clip declares, see below) and
-                                                "audio_only" (accompaniment with no MIDI)
+                                                "audio_only" (accompaniment with no MIDI), "atonal" (an audio_only
+                                                percussion backing may leave out its key: it then goes with every bass line)
     content/library/<clip_id>/<part>.mid        the clip's structure, one file per part (kick, snare, bass, other)
     content/library/<clip_id>/<part>__<sound>.wav            an owner render (drop-in, never written by the build)
     content/library/<clip_id>/placeholder/<part>__<sound>.wav a generated placeholder (rewritten by the build)
@@ -93,6 +94,7 @@ class Clip:
     tempo_source: dict = field(default_factory=dict)
     sounds: dict = field(default_factory=dict)  # part -> [declared render sound ids] (absent: any sound of the family)
     audio_only: bool = False  # accompaniment with no MIDI: never cued, only played
+    atonal: bool = False  # an audio_only percussion backing with no key: the loadout offers it with every bass line
 
     @property
     def length_ticks(self) -> int:
@@ -154,9 +156,12 @@ class Library:
             raise ContentError(f"{rel(path)}: library clips are 174 BPM 4/4 (tempo_bpm / meter)")
         clip = Clip(cid, kind, d.get("name", cid), bars, path.parent, d, KINDS[kind], d.get("key", ""),
                     int(d.get("cue_min_velocity", 1)))
-        if kind in ("bass", "accompaniment") and not clip.key:
-            raise ContentError(f"{rel(path)}: pitched clips declare their key (\"key\": \"C# minor\")")
         clip.audio_only = bool(d.get("audio_only", False))
+        clip.atonal = bool(d.get("atonal", False))
+        if clip.atonal and not (kind == "accompaniment" and clip.audio_only):
+            raise ContentError(f"{rel(path)}: only an audio_only accompaniment (a percussion loop) can be atonal")
+        if kind in ("bass", "accompaniment") and not clip.key and not clip.atonal:
+            raise ContentError(f"{rel(path)}: pitched clips declare their key (\"key\": \"C# minor\"); an atonal percussion backing says \"atonal\": true")
         if clip.audio_only and kind != "accompaniment":
             raise ContentError(f"{rel(path)}: only accompaniment clips can be audio_only (every cued part needs its MIDI)")
         declared = d.get("sounds", {})
@@ -467,7 +472,7 @@ class Library:
             n = min(BACKING_FADE, len(src))
             src[len(src) - n:] *= np.linspace(1.0, 0.0, n, dtype=np.float32)[:, None]
             starts = [0]
-        elif clip.index_kind == "groove":
+        elif clip.index_kind in ("groove", "bass"):  # a shorter groove or bass line is tiled over the 8-bar loop
             starts = [tick_to_sample(k * clip.length_ticks) for k in range(bars // clip.bars)]
         elif clip.index_kind == "fill":
             starts = [tick_to_sample((bars - clip.bars) * TICKS_PER_BAR)]

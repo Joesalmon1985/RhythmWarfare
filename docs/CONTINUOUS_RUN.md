@@ -169,6 +169,28 @@ phase starts on drums alone, as ever, whichever pack it plays. Importing and ass
 (gallery `_v1`, reactor `_v3`), the Underworld arena, the Hospital corridor, the Ward day room, the late entries and every exit scene (`beatshaper.py validate` lists them as WARNINGs). 12.5 beats of
 free choice remain (the window opens at beat 48, the lock falls at 60.5).
 
+## Arrangements (music library, M3)
+
+A scene's `music.json` entry may name `"arrangement": "<id>"` (optional `"slot": k`, `"alternates": [ids of the same family]`) **instead of** `audio`/`chart`. The arrangement
+(`content/music/arrangements/<id>.json`, built by `tools/content/arrange.py generate`, checked by `validate`; format in that file's docstring) is a list of sections of 8 or 16 bars, each a pack
+(`pack`), a mix recipe (`content/music/mix_recipes.json`), fills and a role. A scene plays the 16-bar window `slot` of it (bars 16k+1 to 16k+16): one 16-bar section or two 8-bar ones. `RunData`
+resolves that into `node.sections` (`{bars, role, pack, mix, gains, start_beat, beats}`), sets `node.audio` and `node.chart` to the first section's pack (**so the route lock compares the chart
+pack of block 0 of the next scene exactly as before**) and exposes `chart_pack_at(scene, phase_beat)` / `section_start_at`.
+
+* **Sound.** `RunAudio` schedules one item per later section at `phase start + start_beat * beat`: at that moment (same `now + time_to_next_mix` rule as a phase start) the old section's voices
+  stop and the new pack's start `from` = how late the call is, so they sit on the grid; the clock stream is never touched, there is one voice group per section and no restart. The bass and synth
+  start in the new section only when the bass has been revealed in this phase (otherwise at the reveal, from the section playing then). Gains are the phase mix's stage gain **times** the section's recipe gain
+  (drums alone and the bass reveal stay the gameplay; a recipe never takes the bass under 0.5). The packs of every section are preloaded at the phase start. Fills are ignored in the run.
+* **Charts.** `RunEngine._chart_block` takes the pack of the section playing at the block (`chart_pack_at`) and starts the bass/drum phrase with the section (`max(bass origin, section start)`); at the
+  usual 16-beat blocks and 32-beat sections this changes nothing for scenes without an arrangement. Cue families per block stay the gameplay's.
+* **Seed.** Same seed, same sections and chart. The per-run seed is `RunProgress.data["seed"]` (added on load to older saves, version stays 2; a new one is drawn each time a run starts),
+  `RW_RUN_SEED=<n>` overrides it, and it picks between a scene's arrangement and its `alternates` by `hash("<seed>:<scene id>")`. `RW_RUN_MUSIC=<abs path>` makes `RunData.load_default` read another
+  `music.json` (recordings and tools).
+* **Checks.** `tests/test_run_audio_sections.gd` (resolution, per-block charts, the lock, the switch, the seed); a recording of the Warehouse on `warehouse_1` (`record_music.gd` +
+  `tools/content/check_section_audio.py`): one drums voice per section, every block fitted within 0.01 of stage gain x recipe, 99.8 to 100 % explained, the second section's drums 2.9 ms from the phase's.
+* **Chapters** play pre-rendered arrangements: `arrange.py render <arrangement> --bars N --chapter <id>` writes a mission-format pack (three stems the length of the chapter, `recorded_music` cues from the
+  sections' tiers); `content/story/<chapter>.json` may list `"music_packs": [...]` (first = the chapter's own recording); `StoryRun.pick_music_pack` chooses by seed (none = the first).
+
 ## Saves and migration
 
 `user://story_run.json` records every **world** (not scene) as *reached* the moment a phase starts on one of its scenes; the home screen's cards are worlds, and starting from a world (or retrying after a loss, or the pause

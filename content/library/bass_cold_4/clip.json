@@ -1,0 +1,61 @@
+{
+ "id": "bass_cold_4",
+ "kind": "bass",
+ "name": "Cold Bass 4",
+ "bars": 4,
+ "tempo_bpm": 174,
+ "key": "F major",
+ "note": "Bass4: eleven notes over 4 bars with short pickups. Key F major, estimate confidence 0.56.",
+ "sounds": {
+  "bass": [
+   "bass_hard_harmonic",
+   "bass_flaring_anger",
+   "bass_trap"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/cold_meta.json",
+  "source_dir": "ToAddTry3",
+  "parts": {
+   "bass": {
+    "midi": "Cold/Bass4.mid",
+    "sha256": "7612767043a8dcc363f4fcc84501d293e2f6df1b67111f7b271e0313ff1c1475",
+    "bars": [
+     1,
+     4
+    ],
+    "notes_kept": 11,
+    "notes_in_file": 11,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   }
+  },
+  "renders": {
+   "bass__bass_hard_harmonic": {
+    "file": "Cold/Bass4HardHarmonic.wav",
+    "sha256": "0af358e52cdab60ccf474e421786f7e5f40d7c2f8d46ffc8c0755df3a9e7b46e",
+    "sample_rate_in": 44100,
+    "gain_db": -11.925,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   },
+   "bass__bass_flaring_anger": {
+    "file": "Cold/Bass4FlaringAnger.wav",
+    "sha256": "f041bfd89b2e6f0c2ec60f2e2f3a0d0365bce06c5720a3963885999f24ba88b9",
+    "sample_rate_in": 44100,
+    "gain_db": -16.208,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   },
+   "bass__bass_trap": {
+    "file": "Cold/Bass4Trap.wav",
+    "sha256": "6c2a9c5a95ef88d00db80bc6525cb13a6aa27f0a8b90fb4f4aec6c408c88f8b4",
+    "sample_rate_in": 44100,
+    "gain_db": -11.27,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   }
+  }
+ }
+}

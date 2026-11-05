@@ -1,0 +1,61 @@
+{
+ "id": "bass_cold_3",
+ "kind": "bass",
+ "name": "Cold Bass 3",
+ "bars": 4,
+ "tempo_bpm": 174,
+ "key": "A# minor",
+ "note": "Bass3: eight notes over 4 bars. Key A# minor, estimate confidence 0.20 (the key is a guess).",
+ "sounds": {
+  "bass": [
+   "bass_hard_harmonic",
+   "bass_flaring_anger",
+   "bass_trap"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/cold_meta.json",
+  "source_dir": "ToAddTry3",
+  "parts": {
+   "bass": {
+    "midi": "Cold/Bass3.mid",
+    "sha256": "94b0dae682d8b8e996acfc0b9e073dbf4a4962f3d36e2d4c713e8f6992407d4b",
+    "bars": [
+     1,
+     4
+    ],
+    "notes_kept": 8,
+    "notes_in_file": 8,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   }
+  },
+  "renders": {
+   "bass__bass_hard_harmonic": {
+    "file": "Cold/Bass3HardHarmonic.wav",
+    "sha256": "0e1d3e26cde6832f5b3c349a39848bfc42b0acf5a64319dbd8e269f9618d380e",
+    "sample_rate_in": 44100,
+    "gain_db": -12.297,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   },
+   "bass__bass_flaring_anger": {
+    "file": "Cold/Bass3FlaringAnger.wav",
+    "sha256": "6ece90254a2ca1f1eb2af71b13aa4a95b06791992e40449c78e6b5a9121158e2",
+    "sample_rate_in": 44100,
+    "gain_db": -16.149,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   },
+   "bass__bass_trap": {
+    "file": "Cold/Bass3Trap.wav",
+    "sha256": "eb1462b20a544f16de152b22810a1ef02afc25fd62e1fcfd1597efa6cddd050f",
+    "sample_rate_in": 44100,
+    "gain_db": -11.381,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0
+   }
+  }
+ }
+}

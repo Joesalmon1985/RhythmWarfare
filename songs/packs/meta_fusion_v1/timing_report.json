@@ -1,0 +1,571 @@
+{
+ "timing": {
+  "header_bpm": 120.0,
+  "profile": "beat_shaper_174x1",
+  "drum_fit": {
+   "hits": 58,
+   "matched": 58,
+   "fitted_bpm": 173.967,
+   "fitted_offset_ms": 0.52,
+   "max_abs_ms": 26.0,
+   "mean_ms": 1.62,
+   "median_ms": 5.98,
+   "within_limit": 0.862,
+   "worst_hits": [
+    {
+     "beat": 29.0,
+     "error_ms": -26.0
+    },
+    {
+     "beat": 1.0,
+     "error_ms": -25.8
+    },
+    {
+     "beat": 19.0,
+     "error_ms": -24.7
+    }
+   ]
+  },
+  "bass": [
+   {
+    "beat": 0.0,
+    "pitch": 36,
+    "error_ms": 0.7,
+    "how": "first sound in the file"
+   },
+   {
+    "beat": 4.0,
+    "pitch": 36,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 8.0,
+    "pitch": 41,
+    "error_ms": -8.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 12.0,
+    "pitch": 36,
+    "error_ms": -2.0,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 16.0,
+    "pitch": 29,
+    "error_ms": 11.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 16.25,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 16.5,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 16.75,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 17.0,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 17.25,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 17.5,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 17.75,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 18.0,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 18.25,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 18.5,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 18.75,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 19.0,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 19.25,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 19.5,
+    "pitch": 32,
+    "error_ms": -18.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 19.75,
+    "pitch": 29,
+    "error_ms": 11.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 20.0,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 20.25,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 20.5,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 20.75,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 21.0,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 21.25,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 21.5,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 21.75,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 22.0,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 22.25,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 22.5,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 22.75,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 23.0,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 23.25,
+    "pitch": 29,
+    "error_ms": null,
+    "how": "same pitch legato: not measurable"
+   },
+   {
+    "beat": 23.5,
+    "pitch": 32,
+    "error_ms": -18.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 23.75,
+    "pitch": 29,
+    "error_ms": 27.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 24.0,
+    "pitch": 38,
+    "error_ms": -2.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 24.25,
+    "pitch": 50,
+    "error_ms": -18.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 24.5,
+    "pitch": 38,
+    "error_ms": -16.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 24.75,
+    "pitch": 50,
+    "error_ms": -18.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 25.0,
+    "pitch": 38,
+    "error_ms": 33.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 25.25,
+    "pitch": 50,
+    "error_ms": 23.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 25.5,
+    "pitch": 38,
+    "error_ms": 33.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 25.75,
+    "pitch": 50,
+    "error_ms": -20.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 26.0,
+    "pitch": 38,
+    "error_ms": -16.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 26.25,
+    "pitch": 50,
+    "error_ms": -18.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 26.5,
+    "pitch": 38,
+    "error_ms": 33.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 26.75,
+    "pitch": 50,
+    "error_ms": 23.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 27.0,
+    "pitch": 38,
+    "error_ms": 33.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 27.25,
+    "pitch": 50,
+    "error_ms": -20.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 27.5,
+    "pitch": 38,
+    "error_ms": -16.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 27.75,
+    "pitch": 50,
+    "error_ms": -18.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 28.0,
+    "pitch": 38,
+    "error_ms": 33.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 28.25,
+    "pitch": 50,
+    "error_ms": -20.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 28.5,
+    "pitch": 38,
+    "error_ms": 33.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 28.75,
+    "pitch": 50,
+    "error_ms": -22.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 29.0,
+    "pitch": 38,
+    "error_ms": 33.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 29.25,
+    "pitch": 50,
+    "error_ms": 21.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 29.5,
+    "pitch": 38,
+    "error_ms": 33.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 29.75,
+    "pitch": 50,
+    "error_ms": -20.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 30.0,
+    "pitch": 38,
+    "error_ms": -18.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 30.25,
+    "pitch": 50,
+    "error_ms": -18.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 30.5,
+    "pitch": 38,
+    "error_ms": 33.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 30.75,
+    "pitch": 50,
+    "error_ms": 21.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 31.0,
+    "pitch": 38,
+    "error_ms": 33.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 31.25,
+    "pitch": 50,
+    "error_ms": -20.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 31.5,
+    "pitch": 38,
+    "error_ms": -16.5,
+    "how": "largest spectral change near the note start"
+   },
+   {
+    "beat": 31.75,
+    "pitch": 50,
+    "error_ms": -18.5,
+    "how": "largest spectral change near the note start"
+   }
+  ],
+  "tempo_verified": "loose",
+  "bass_timing": {
+   "mode": "midi_fallback",
+   "why": "the bass detector could not place the notes within 12 ms (median 20.5 ms over 40 notes); charted from the MIDI timing instead",
+   "median_error_ms": 20.5,
+   "notes_measured": 40,
+   "notes_out_of_line": 34
+  }
+ },
+ "import_report": {
+  "set": "Metaverse Ready Fusion (1)",
+  "drum_notes": {
+   "counts": {
+    "36": 32,
+    "40": 26,
+    "42": 64
+   },
+   "mode": "standard",
+   "kick": [
+    36
+   ],
+   "snare": [
+    38,
+    40
+   ],
+   "why": "the standard notes: kick 36, snare 38/40"
+  },
+  "decisions": [
+   "tempo verified loosely: 86% of the cue hits are within 12 ms, outliers [{\"beat\": 29.0, \"error_ms\": -26.0}, {\"beat\": 1.0, \"error_ms\": -25.8}, {\"beat\": 19.0, \"error_ms\": -24.7}] (max 26.0 ms)",
+   "WARNING bass: the bass detector could not place the notes within 12 ms (median 20.5 ms over 40 notes); charted from the MIDI timing instead: [{\"beat\": 19.5, \"pitch\": 32, \"error_ms\": -18.5, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 23.5, \"pitch\": 32, \"error_ms\": -18.5, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 23.75, \"pitch\": 29, \"error_ms\": 27.5, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 24.25, \"pitch\": 50, \"error_ms\": -18.5, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 24.5, \"pitch\": 38, \"error_ms\": -16.5, \"how\": \"largest spectral change near the note start\"}, {\"beat\": 24.75, \"pitch\": 50, \"error_ms\": -18.5, \"how\": \"largest spectral change near the note start\"}]"
+  ],
+  "rejected": [],
+  "tempo": {
+   "profile": "beat_shaper_174x1",
+   "verified": "loose",
+   "tried": [
+    {
+     "profile": "beat_shaper_87x2",
+     "fit": null,
+     "verified": null
+    },
+    {
+     "profile": "beat_shaper_174x1",
+     "fit": {
+      "hits": 58,
+      "matched": 58,
+      "fitted_bpm": 173.967,
+      "fitted_offset_ms": 0.52,
+      "max_abs_ms": 26.0,
+      "mean_ms": 1.62,
+      "median_ms": 5.98,
+      "within_limit": 0.862,
+      "worst_hits": [
+       {
+        "beat": 29.0,
+        "error_ms": -26.0
+       },
+       {
+        "beat": 1.0,
+        "error_ms": -25.8
+       },
+       {
+        "beat": 19.0,
+        "error_ms": -24.7
+       }
+      ]
+     },
+     "verified": "loose"
+    }
+   ]
+  }
+ },
+ "loops": {
+  "drums": {
+   "frames_in": 562491,
+   "loop_frames": 529655,
+   "tail_frames": 32836,
+   "padded_frames": 0,
+   "tail_audible_s": 0.562,
+   "laps_folded": 1,
+   "gain_db": 0.0,
+   "peak_db": -7.63,
+   "rms_db": -20.51,
+   "source_seconds": 11.7186,
+   "source_file": "Beat Shaper - Metaverse Ready Fusion-Drums (1).wav"
+  },
+  "bass": {
+   "frames_in": 531313,
+   "loop_frames": 529655,
+   "tail_frames": 1658,
+   "padded_frames": 0,
+   "tail_audible_s": 0.035,
+   "laps_folded": 1,
+   "gain_db": 3.0,
+   "peak_db": -9.23,
+   "rms_db": -20.43,
+   "source_seconds": 11.069,
+   "source_file": "Beat Shaper - Metaverse Ready Fusion-Bass (1).wav"
+  },
+  "other": {
+   "frames_in": 601623,
+   "loop_frames": 529655,
+   "tail_frames": 71968,
+   "padded_frames": 0,
+   "tail_audible_s": 1.499,
+   "laps_folded": 1,
+   "gain_db": 10.0,
+   "peak_db": -16.41,
+   "rms_db": -27.25,
+   "source_seconds": 12.5338,
+   "source_file": "Beat Shaper - Metaverse Ready Fusion-Synth (1).wav"
+  }
+ },
+ "cue_counts": {
+  "1": {
+   "drums": 24,
+   "bass": 12
+  },
+  "2": {
+   "drums": 28,
+   "bass": 20
+  },
+  "3": {
+   "drums": 32,
+   "bass": 28
+  },
+  "4": {
+   "drums": 36,
+   "bass": 36
+  }
+ },
+ "chart_problems": []
+}

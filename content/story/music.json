@@ -1,256 +1,400 @@
 {
  "schema": 1,
- "note": "Which recordings and chart each SCENE plays (a scene is one 64-beat phase at a place in a world; run.json lists them). audio = the pack whose stems are heard, chart = the pack whose cues are played; a scene plays the difficulty tier min(depth, 4) of its chart pack, depth is per world. The entry scene of a world plays the world's base set and later scenes its variants; none of the variants has the base set's cues (each is its own chart), so sibling scenes that chart different packs fall under the route lock (docs/CONTINUOUS_RUN.md). treatment = a name from run.json treatments. temporary = true for stand-ins awaiting the owner's own recordings (the Underworld plays Lv2 Alien Spaceship renders until Lv3 Hell has MIDI). Scene ids are tools/run/make_scenes.py's PACK table; world ids never change.",
+ "note": "Which music each SCENE plays (a scene is one 64-beat phase at a place in a world; run.json lists them). Every scene names an `arrangement` (content/music/arrangements/<id>.json, built by tools/content/arrange.py, see docs/MUSIC_REPORT.md) and the `slot` k of it: the scene plays bars 16k+1 to 16k+16 (one 16-bar section or two 8-bar ones); `alternates` are other arrangements of the same family and the per-run seed picks between them (same seed, same music and chart). RunData sets a scene's audio and chart to the first section's pack, so the route lock compares the chart pack of block 0 of the next scene as before; the entry scene of a world opens on the family's base pack, the exit scene ends on a drop and an ending. A scene plays the difficulty tier min(depth, 4) of the section's chart pack. treatment = a name from run.json treatments. temporary = true marks the Underworld, which plays the Cold Fusion Interface family as the nearest match until Lv3 Hell has MIDI (docs/MUSIC_HANDOFF.md). Scene ids are tools/run/make_scenes.py's PACK table; world ids never change.",
  "nodes": [
   {
    "id": "warehouse",
-   "audio": "lv1_warehouse",
-   "chart": "lv1_warehouse",
+   "arrangement": "warehouse_1",
+   "slot": 0,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "warehouse.bar",
-   "audio": "lv1_warehouse_v1",
-   "chart": "lv1_warehouse_v1",
+   "arrangement": "warehouse_1",
+   "slot": 1,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "warehouse.balcony",
-   "audio": "lv1_warehouse_v2",
-   "chart": "lv1_warehouse_v2",
+   "arrangement": "warehouse_1",
+   "slot": 2,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "warehouse.chill",
-   "audio": "lv1_warehouse_v2",
-   "chart": "lv1_warehouse_v2",
+   "arrangement": "warehouse_1",
+   "slot": 3,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "warehouse.booth",
-   "audio": "lv1_warehouse_v1",
-   "chart": "lv1_warehouse_v1",
+   "arrangement": "warehouse_1",
+   "slot": 4,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "warehouse.exit",
-   "audio": "lv1_warehouse",
-   "chart": "lv1_warehouse",
+   "arrangement": "warehouse_1",
+   "slot": 5,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "mothership",
-   "audio": "lv2_alien_spaceship",
-   "chart": "lv2_alien_spaceship",
+   "arrangement": "mothership_1",
+   "slot": 0,
+   "alternates": [
+    "mothership_2",
+    "mothership_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "mothership.gallery",
-   "audio": "lv2_alien_spaceship_v1",
-   "chart": "lv2_alien_spaceship_v1",
+   "arrangement": "mothership_1",
+   "slot": 1,
+   "alternates": [
+    "mothership_2",
+    "mothership_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "mothership.reactor",
-   "audio": "lv2_alien_spaceship_v3",
-   "chart": "lv2_alien_spaceship_v3",
+   "arrangement": "mothership_1",
+   "slot": 2,
+   "alternates": [
+    "mothership_2",
+    "mothership_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "mothership.bridge",
-   "audio": "lv2_alien_spaceship_v2",
-   "chart": "lv2_alien_spaceship_v2",
+   "arrangement": "mothership_1",
+   "slot": 3,
+   "alternates": [
+    "mothership_2",
+    "mothership_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "mothership.exit",
-   "audio": "lv2_alien_spaceship",
-   "chart": "lv2_alien_spaceship",
+   "arrangement": "mothership_1",
+   "slot": 4,
+   "alternates": [
+    "mothership_2",
+    "mothership_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "underworld",
-   "audio": "lv2_alien_spaceship_v2",
-   "chart": "lv2_alien_spaceship_v2",
+   "arrangement": "underworld_1",
+   "slot": 0,
+   "alternates": [
+    "underworld_2",
+    "underworld_3"
+   ],
    "treatment": "none",
    "temporary": true
   },
   {
    "id": "underworld.court",
-   "audio": "lv2_alien_spaceship_v3",
-   "chart": "lv2_alien_spaceship_v3",
+   "arrangement": "underworld_1",
+   "slot": 1,
+   "alternates": [
+    "underworld_2",
+    "underworld_3"
+   ],
    "treatment": "none",
    "temporary": true
   },
   {
    "id": "underworld.furnace",
-   "audio": "lv2_alien_spaceship_v2",
-   "chart": "lv2_alien_spaceship_v2",
+   "arrangement": "underworld_1",
+   "slot": 2,
+   "alternates": [
+    "underworld_2",
+    "underworld_3"
+   ],
    "treatment": "none",
    "temporary": true
   },
   {
    "id": "underworld.pit",
-   "audio": "lv2_alien_spaceship_v3",
-   "chart": "lv2_alien_spaceship_v3",
+   "arrangement": "underworld_1",
+   "slot": 3,
+   "alternates": [
+    "underworld_2",
+    "underworld_3"
+   ],
    "treatment": "none",
    "temporary": true
   },
   {
    "id": "underworld.exit",
-   "audio": "lv2_alien_spaceship_v2",
-   "chart": "lv2_alien_spaceship_v2",
+   "arrangement": "underworld_1",
+   "slot": 4,
+   "alternates": [
+    "underworld_2",
+    "underworld_3"
+   ],
    "treatment": "none",
    "temporary": true
   },
   {
    "id": "hospital",
-   "audio": "lv4_hospital",
-   "chart": "lv4_hospital",
+   "arrangement": "hospital_1",
+   "slot": 0,
+   "alternates": [
+    "hospital_2",
+    "hospital_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "hospital.corridor",
-   "audio": "lv4_hospital_v2",
-   "chart": "lv4_hospital_v2",
+   "arrangement": "hospital_1",
+   "slot": 1,
+   "alternates": [
+    "hospital_2",
+    "hospital_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "hospital.dayroom",
-   "audio": "lv4_hospital_v3",
-   "chart": "lv4_hospital_v3",
+   "arrangement": "hospital_1",
+   "slot": 2,
+   "alternates": [
+    "hospital_2",
+    "hospital_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "hospital.cafeteria",
-   "audio": "lv4_hospital_v2",
-   "chart": "lv4_hospital_v2",
+   "arrangement": "hospital_1",
+   "slot": 3,
+   "alternates": [
+    "hospital_2",
+    "hospital_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "hospital.garden",
-   "audio": "lv4_hospital_v3",
-   "chart": "lv4_hospital_v3",
+   "arrangement": "hospital_1",
+   "slot": 4,
+   "alternates": [
+    "hospital_2",
+    "hospital_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "hospital.exit",
-   "audio": "lv4_hospital",
-   "chart": "lv4_hospital",
+   "arrangement": "hospital_1",
+   "slot": 5,
+   "alternates": [
+    "hospital_2",
+    "hospital_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "ward",
-   "audio": "lv5_asylum",
-   "chart": "lv5_asylum",
+   "arrangement": "ward_1",
+   "slot": 0,
+   "alternates": [
+    "ward_2",
+    "ward_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "ward.art",
-   "audio": "lv5_asylum_v1",
-   "chart": "lv5_asylum_v1",
+   "arrangement": "ward_1",
+   "slot": 1,
+   "alternates": [
+    "ward_2",
+    "ward_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "ward.dorm",
-   "audio": "lv5_asylum_v3",
-   "chart": "lv5_asylum_v3",
+   "arrangement": "ward_1",
+   "slot": 2,
+   "alternates": [
+    "ward_2",
+    "ward_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "ward.corridor",
-   "audio": "lv5_asylum_v1",
-   "chart": "lv5_asylum_v1",
+   "arrangement": "ward_1",
+   "slot": 3,
+   "alternates": [
+    "ward_2",
+    "ward_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "ward.courtyard",
-   "audio": "lv5_asylum_v3",
-   "chart": "lv5_asylum_v3",
+   "arrangement": "ward_1",
+   "slot": 4,
+   "alternates": [
+    "ward_2",
+    "ward_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "ward.exit",
-   "audio": "lv5_asylum",
-   "chart": "lv5_asylum",
+   "arrangement": "ward_1",
+   "slot": 5,
+   "alternates": [
+    "ward_2",
+    "ward_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "hospital_late",
-   "audio": "lv4_hospital_v1",
-   "chart": "lv4_hospital_v1",
+   "arrangement": "hospital_late_1",
+   "slot": 0,
+   "alternates": [
+    "hospital_late_2",
+    "hospital_late_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "hospital_late.cafe",
-   "audio": "lv4_hospital_v3",
-   "chart": "lv4_hospital_v3",
+   "arrangement": "hospital_late_1",
+   "slot": 1,
+   "alternates": [
+    "hospital_late_2",
+    "hospital_late_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "hospital_late.quiet",
-   "audio": "lv4_hospital_v2",
-   "chart": "lv4_hospital_v2",
+   "arrangement": "hospital_late_1",
+   "slot": 2,
+   "alternates": [
+    "hospital_late_2",
+    "hospital_late_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "hospital_late.exit",
-   "audio": "lv4_hospital_v1",
-   "chart": "lv4_hospital_v1",
+   "arrangement": "hospital_late_1",
+   "slot": 3,
+   "alternates": [
+    "hospital_late_2",
+    "hospital_late_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "ward_late",
-   "audio": "lv5_asylum_v2",
-   "chart": "lv5_asylum_v2",
+   "arrangement": "ward_late_1",
+   "slot": 0,
+   "alternates": [
+    "ward_late_2",
+    "ward_late_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "ward_late.treat",
-   "audio": "lv5_asylum_v2",
-   "chart": "lv5_asylum_v2",
+   "arrangement": "ward_late_1",
+   "slot": 1,
+   "alternates": [
+    "ward_late_2",
+    "ward_late_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "ward_late.dorm",
-   "audio": "lv5_asylum_v3",
-   "chart": "lv5_asylum_v3",
+   "arrangement": "ward_late_1",
+   "slot": 2,
+   "alternates": [
+    "ward_late_2",
+    "ward_late_3"
+   ],
    "treatment": "none",
    "temporary": false
   },
   {
    "id": "ward_late.exit",
-   "audio": "lv5_asylum_v2",
-   "chart": "lv5_asylum_v2",
+   "arrangement": "ward_late_1",
+   "slot": 3,
+   "alternates": [
+    "ward_late_2",
+    "ward_late_3"
+   ],
    "treatment": "none",
    "temporary": false
   }

@@ -4,8 +4,24 @@ extends TestCase
 ## the reactor play different variants of the Lv2 set) exactly as between sibling worlds (the Mothership and the Underworld at the Warehouse's exit).
 
 
+## The deck offers the gallery (Lv2 Alien Spaceship (1)) or the reactor (Lv2 Alien Spaceship (3)): two charts. The two scenes are plain (audio/chart named) here so the pair
+## differs whichever arrangements and per-run seed the shipped music.json has; every other scene is as shipped.
 func _data_with_two_charts() -> RunData:
-	return RunData.load_default()  # the deck offers the gallery (Lv2 Alien Spaceship (1)) or the reactor (Lv2 Alien Spaceship (3)): two charts
+	var music: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RunData.MUSIC_PATH))
+	for n in music["nodes"]:
+		var pack: String = {"mothership.gallery": "lv2_alien_spaceship_v1", "mothership.reactor": "lv2_alien_spaceship_v3"}.get(str(n["id"]), "")
+		if pack != "":
+			for k in ["arrangement", "slot", "alternates"]:
+				n.erase(k)
+			n["audio"] = pack
+			n["chart"] = pack
+	var path := "user://test_run_lock_music.json"
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	f.store_string(JSON.stringify(music, "\t"))
+	f.close()
+	var d := RunData.load_files(RunData.RUN_PATH, path, RunData.PACKS_DIR)
+	DirAccess.remove_absolute(path)
+	return d
 
 
 func _play(e: RunEngine, until_t: float, picks: Dictionary) -> void:

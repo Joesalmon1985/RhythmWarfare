@@ -1,0 +1,71 @@
+{
+ "id": "groove_meta_b",
+ "kind": "groove",
+ "name": "Meta Groove B",
+ "bars": 8,
+ "tempo_bpm": 174,
+ "note": "Meta Kick2 with Snare1: the busier kick pattern (52 notes in 16 bars); the first 8 bars are the clip.",
+ "sounds": {
+  "kick": [
+   "kick_meta_b"
+  ],
+  "snare": [
+   "snare_meta"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/cold_meta.json",
+  "source_dir": "ToAddTry3",
+  "parts": {
+   "kick": {
+    "midi": "Meta/Kick2.mid",
+    "sha256": "15afca96a7c1646b8d35060d5ffdd3717efe97a93db7de7305a6c05e9c881327",
+    "bars": [
+     1,
+     8
+    ],
+    "notes_kept": 26,
+    "notes_in_file": 52,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   },
+   "snare": {
+    "midi": "Meta/Snare1.mid",
+    "sha256": "a7a7f07fa2b582e36c292becb77c77f7aff7f70f3f8e76a16e27be9a39c8499c",
+    "bars": [
+     1,
+     8
+    ],
+    "notes_kept": 16,
+    "notes_in_file": 32,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   }
+  },
+  "renders": {
+   "kick__kick_meta_b": {
+    "file": "Meta/Kick2.wav",
+    "sha256": "eebd11a8bf4342f824af59f44ab4c731e24b3a3e09e16dd6a72f76369e50dbb7",
+    "sample_rate_in": 44100,
+    "gain_db": -10.976,
+    "tail_frames": 0,
+    "end_fade_ms": 0,
+    "frames_in": 1059311,
+    "dropped_frames": 529656,
+    "bars_in": 16.0
+   },
+   "snare__snare_meta": {
+    "file": "Meta/Snare1.wav",
+    "sha256": "e0d368743154e1a286611a6fbcf4a1ccfc97d98d05cdf2fd8b9ab3c56ece2760",
+    "sample_rate_in": 44100,
+    "gain_db": -11.239,
+    "tail_frames": 0,
+    "end_fade_ms": 0,
+    "frames_in": 1059311,
+    "dropped_frames": 529656,
+    "bars_in": 16.0
+   }
+  }
+ }
+}

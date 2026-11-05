@@ -38,9 +38,16 @@ var _auto_down: Dictionary = {}
 var _perf: PackedFloat32Array = PackedFloat32Array()
 
 
+## The seed that picks among a chapter's `music_packs`: RW_RUN_SEED when set (a recording or a test repeats), else the run seed mixed with the time of this start.
+func _music_seed() -> int:
+	if OS.get_environment("RW_RUN_SEED") != "":
+		return absi(int(OS.get_environment("RW_RUN_SEED")))
+	return (RunData.run_seed() ^ int(Time.get_ticks_usec())) & 0x7fffffff
+
+
 func _ready() -> void:
 	theme = UiStyle.theme()
-	var opts := {"loadout": Session.loadout(), "library": Session.library(), "unlocked": Session.campaign.unlocked_items()}
+	var opts := {"loadout": Session.loadout(), "library": Session.library(), "unlocked": Session.campaign.unlocked_items(), "music_seed": _music_seed()}
 	var chapters := StoryChapters.load_default()
 	var entry := chapters.chapter(Session.story_chapter)
 	if entry.is_empty():

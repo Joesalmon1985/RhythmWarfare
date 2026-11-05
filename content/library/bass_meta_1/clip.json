@@ -1,0 +1,70 @@
+{
+ "id": "bass_meta_1",
+ "kind": "bass",
+ "name": "Meta Bass 1",
+ "bars": 8,
+ "tempo_bpm": 174,
+ "key": "F major",
+ "note": "Meta Bass1: a 24-note line whose 8-bar pattern the 16-bar renders repeat once; the first 8 bars are the clip. Key F major, estimate confidence 0.82.",
+ "sounds": {
+  "bass": [
+   "bass_hard_harmonic",
+   "bass_flaring_anger",
+   "bass_trap"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/cold_meta.json",
+  "source_dir": "ToAddTry3",
+  "parts": {
+   "bass": {
+    "midi": "Meta/Bass1.mid",
+    "sha256": "a7d3540ff3a1550d362452e493be1a70cd905e9fe060d66409961f8145dbd662",
+    "bars": [
+     1,
+     8
+    ],
+    "notes_kept": 12,
+    "notes_in_file": 24,
+    "ppq": 96,
+    "tempo_source": "recorded_default"
+   }
+  },
+  "renders": {
+   "bass__bass_hard_harmonic": {
+    "file": "Meta/Bass1HardHarmonic.wav",
+    "sha256": "7fa2934065ffaeb4515d256062bae276ea6af13be80a7384fb478f9821149bf8",
+    "sample_rate_in": 44100,
+    "gain_db": -12.712,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0,
+    "frames_in": 1059311,
+    "dropped_frames": 529656,
+    "bars_in": 16.0
+   },
+   "bass__bass_flaring_anger": {
+    "file": "Meta/Bass1FlaringAnger.wav",
+    "sha256": "c19cfc357dc75beccf8389eceff8b5cc6f1702f88719daaf5dad84abec5bd375",
+    "sample_rate_in": 44100,
+    "gain_db": -16.391,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0,
+    "frames_in": 1059311,
+    "dropped_frames": 529656,
+    "bars_in": 16.0
+   },
+   "bass__bass_trap": {
+    "file": "Meta/Bass1Trap.wav",
+    "sha256": "49a868aea8f87b4566ae8f278f38d2dba788c2f5f9dec0703982797459d72312",
+    "sample_rate_in": 44100,
+    "gain_db": -11.453,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0,
+    "frames_in": 1059311,
+    "dropped_frames": 529656,
+    "bars_in": 16.0
+   }
+  }
+ }
+}

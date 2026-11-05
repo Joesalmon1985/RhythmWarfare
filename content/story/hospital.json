@@ -4,6 +4,7 @@
  "chapter": 4,
  "art": "hospital",
  "music_pack": "res://songs/m05_counterpoint",
+ "music_packs": ["res://songs/m05_counterpoint", "res://songs/story_hospital_1", "res://songs/story_hospital_2"],
  "description": "You wake in a hospital bed with your family around you. Was it all a dream? One more set, for the people who love you.",
  "intro": "You're awake. And everyone came.",
  "duration_bars": 56,

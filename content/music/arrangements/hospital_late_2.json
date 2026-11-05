@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "id": "hospital_late_2",
+ "family": "lv4_hospital",
+ "seed": 2,
+ "bars": 64,
+ "use": "run",
+ "compatible": [],
+ "identity": {"palette": "hospital", "filters": {"family_glob": ["lv4_*"], "profile": ["beat_shaper_174x1"], "min_density": 2.0}},
+ "sections": [{"bars": 8, "role": "intro", "pack": "lv4_hospital", "mix": "fragile", "fills": []}, {"bars": 8, "role": "breakdown", "pack": "lv4_hospital_v2", "mix": "fragile", "fills": []}, {"bars": 8, "role": "drop", "pack": "lv4_hospital_v1", "mix": "uplift", "fills": []}, {"bars": 8, "role": "breakdown", "pack": "lv4_hospital_v2", "mix": "fragile", "fills": []}, {"bars": 8, "role": "variation", "pack": "lv4_hospital_v3", "mix": "uplift", "fills": []}, {"bars": 8, "role": "drop", "pack": "lv4_hospital_v1", "mix": "uplift", "fills": []}, {"bars": 8, "role": "drop", "pack": "lv4_hospital_v3", "mix": "uplift", "fills": []}, {"bars": 8, "role": "ending", "pack": "lv4_hospital", "mix": "uplift", "fills": []}]
+}

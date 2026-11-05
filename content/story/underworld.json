@@ -4,6 +4,7 @@
  "chapter": 3,
  "art": "underworld",
  "music_pack": "res://songs/m09_iron_rhythm",
+ "music_packs": ["res://songs/m09_iron_rhythm", "res://songs/story_underworld_1", "res://songs/story_underworld_2"],
  "description": "The floor gave way and dropped you into hell's own nightclub. Win over the demons, and the humans dragged down with you might just see the morning.",
  "intro": "Hell is listening. Entertain them.",
  "duration_bars": 64,

@@ -1,0 +1,34 @@
+{
+ "id": "acc_cold_loop",
+ "kind": "accompaniment",
+ "name": "Cold Percussion Loop",
+ "bars": 16,
+ "tempo_bpm": 174,
+ "note": "Cold Other2: a busy 16-bar percussion loop (about 4.6 onsets per beat, no pitch).",
+ "audio_only": true,
+ "atonal": true,
+ "sounds": {
+  "other": [
+   "backing_cold_loop"
+  ]
+ },
+ "source": {
+  "type": "imported",
+  "manifest": "content/imports/cold_meta.json",
+  "source_dir": "ToAddTry3",
+  "parts": {},
+  "renders": {
+   "other__backing_cold_loop": {
+    "file": "Cold/Other2.wav",
+    "sha256": "3f9dde4e0bcbffa78890c12d2ac0ccc828074df1fb8060f051c03a7425bfb9bd",
+    "sample_rate_in": 44100,
+    "gain_db": -8.468,
+    "tail_frames": 0,
+    "end_fade_ms": 10.0,
+    "frames_in": 1059311,
+    "dropped_frames": 1,
+    "bars_in": 16.0
+   }
+  }
+ }
+}

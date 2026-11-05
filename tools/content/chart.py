@@ -7,7 +7,7 @@ backing) plays everywhere, as 8-bar loops. The cues of a loop are therefore a pr
     bass   the clip's distinct pitches, ascending, spread over pads 1..4 (data/campaign/rules.json chart.bass.pads
            "pitch"), taps only, thinned to chart.bass.min_gap_ticks between consecutive cues
 
-A groove of 2 bars is tiled over the 8-bar loop; a fill sits in the last bar of the loop; ghost notes below the clip's
+A groove (or a bass line) of 1, 2, 4 or 8 bars is tiled over the 8-bar loop; a fill sits in the last bar of the loop; ghost notes below the clip's
 `cue_min_velocity` are not cues. Cues are [tick, duration_ticks, pad] with ticks counted from the loop's first bar.
 """
 from __future__ import annotations
@@ -62,10 +62,10 @@ def clip_cues(clip, part: str, rules: dict) -> list[list[int]]:
         if clip.bars > LOOP_BARS:
             raise ContentError(f"{clip.id}: a fill is at most {LOOP_BARS} bars")
         shifts = [LOOP_BARS * TICKS_PER_BAR - length]
-    else:  # bass
-        if clip.bars != LOOP_BARS:
-            raise ContentError(f"{clip.id}: a bass line is {LOOP_BARS} bars (it is {clip.bars})")
-        shifts = [0]
+    else:  # bass: a line of 1, 2, 4 or 8 bars is tiled over the 8-bar loop like a groove
+        if LOOP_BARS % clip.bars:
+            raise ContentError(f"{clip.id}: a bass line of {clip.bars} bars does not tile an 8-bar loop (use 1, 2, 4 or 8 bars)")
+        shifts = [k * length for k in range(LOOP_BARS * TICKS_PER_BAR // length)]
     cues: list[list[int]] = []
     if part in ("kick", "snare"):
         pad = KICK_PAD if part == "kick" else SNARE_PAD
@@ -77,8 +77,8 @@ def clip_cues(clip, part: str, rules: dict) -> list[list[int]]:
             pads = pitch_pads(n["pitch"] for n in notes) if notes else {}
         else:
             pads = {n["pitch"]: 2 for n in notes}
-        raw = [[n["tick"], n["duration_ticks"] if chart["holds"] and n["duration_ticks"] >= rules["chart"]["hold_min_ticks"] else 0,
-                pads[n["pitch"]]] for n in notes]
+        raw = [[n["tick"] + shift, n["duration_ticks"] if chart["holds"] and n["duration_ticks"] >= rules["chart"]["hold_min_ticks"] else 0,
+                pads[n["pitch"]]] for shift in shifts for n in notes]
         gap = chart["min_gap_ticks"]
         for cue in sorted(raw, key=lambda c: (c[0], c[2])):
             if not cues or cue[0] - cues[-1][0] >= gap:

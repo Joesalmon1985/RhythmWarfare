@@ -102,17 +102,24 @@ func test_run_data_rejects_broken_routes_and_sibling_charts() -> void:
 	assert_eq(good.warnings.filter(func(w: String) -> bool: return w.contains("cannot be reached")), [], "every scene is reachable")
 	var d := _bad_run(func(run: Dictionary) -> void: (_scene(run, "mothership.exit")["next"] as Array).remove_at(1))  # a world exit keeps one route
 	assert_true(_has(d.errors, "at least 2 routes"), str(d.errors))
-	var bad_music: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RunData.MUSIC_PATH))
-	for n in bad_music["nodes"]:
-		if n["id"] == "warehouse.balcony":
-			n["audio"] = "lv1_warehouse_v1"
-			n["chart"] = "lv1_warehouse_v1"  # the bar's sibling charts the bar's pack: no route lock between them
+	# the siblings of the Warehouse floor: plain scenes (audio/chart named) so the charts are the test's own, whatever the shipped arrangements play
 	var mp := "user://test_run_bad_music.json"
-	_write_json(mp, bad_music)
-	var d2 := RunData.load_files(RunData.RUN_PATH, mp, RunData.PACKS_DIR)
-	assert_eq(d2.errors, [])
-	assert_false(d2.warnings.any(func(e: String) -> bool: return e.begins_with("scene warehouse:")), "same chart: no lock between the bar and the balcony")
-	assert_true(good.warnings.any(func(e: String) -> bool: return e.begins_with("scene warehouse:") and e.contains("route lock")), "different charts are flagged: the route lock applies")
+	var lock_warned: Array = []
+	for pair in [["lv1_warehouse_v1", "lv1_warehouse_v1"], ["lv1_warehouse_v1", "lv1_warehouse_v2"]]:
+		var bad_music: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RunData.MUSIC_PATH))
+		for n in bad_music["nodes"]:
+			var want: String = {"warehouse.bar": pair[0], "warehouse.balcony": pair[1]}.get(str(n["id"]), "")
+			if want != "":
+				for k in ["arrangement", "slot", "alternates"]:
+					n.erase(k)
+				n["audio"] = want
+				n["chart"] = want
+		_write_json(mp, bad_music)
+		var d2 := RunData.load_files(RunData.RUN_PATH, mp, RunData.PACKS_DIR)
+		assert_eq(d2.errors, [])
+		lock_warned.append(d2.warnings.any(func(e: String) -> bool: return e.begins_with("scene warehouse:") and e.contains("route lock")))
+	assert_eq(lock_warned, [false, true], "the bar's sibling charting the bar's pack: no route lock between them; a different pack: flagged")
+	assert_true(good.warnings.any(func(e: String) -> bool: return e.begins_with("scene warehouse.exit:") and e.contains("route lock")), "the world exits chart different packs: the route lock applies")
 	DirAccess.remove_absolute(mp)
 
 
