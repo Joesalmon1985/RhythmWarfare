@@ -4,7 +4,7 @@
  "chapter": 2,
  "art": "mothership",
  "music_pack": "res://songs/m10_last_light",
- "music_packs": ["res://songs/m10_last_light", "res://songs/story_mothership_1"],
+ "music_packs": ["res://songs/m10_last_light", "res://songs/story_mothership_1", "res://songs/story_mothership_2"],
  "description": "An alien ship has beamed the whole rave aboard. Stars stream past the windows and four decks of new friends are waiting: play them the set of their lives.",
  "intro": "Welcome aboard.",
  "duration_bars": 80,

@@ -1,0 +1,48 @@
+{
+ "schema_version": 4,
+ "level_id": "story_hospital_ch_hospital_2",
+ "number": 5,
+ "title": "Counterpoint (ch_hospital_2)",
+ "bpm": 174,
+ "ticks_per_beat": 960,
+ "time_signature": [4, 4],
+ "duration_ticks": 215040,
+ "seed": 1005,
+ "battlefield": "defense_02",
+ "roster": "openra_mvp_01",
+ "rules": {
+  "objective_hp": {
+   "command_core": 260000
+  },
+  "sockets_per_point": 4,
+  "walls": [[26, 18], [26, 24], [36, 14], [42, 14], [52, 18], [52, 24]],
+  "start_units": [{"actor": "e1", "count": 5, "point": "defense_1"}, {"actor": "e1", "count": 5, "point": "defense_2"}, {"actor": "e1", "count": 5, "point": "defense_3"}],
+  "prebuilt": [{"reward": "pillbox", "socket": "s1_1"}, {"reward": "pillbox", "socket": "s2_1"}, {"reward": "pillbox", "socket": "s3_1"}],
+  "units_per_point": 12
+ },
+ "sequence_threshold": 0.6,
+ "sequence_bars": 2,
+ "phases": [{"id": "p01", "start_tick": 0, "end_tick": 30720, "mode": "drums"}, {"id": "p02", "start_tick": 30720, "end_tick": 61440, "mode": "bass"}, {"id": "p03", "start_tick": 61440, "end_tick": 92160, "mode": "drums"}, {"id": "p04", "start_tick": 92160, "end_tick": 122880, "mode": "bass"}, {"id": "p05", "start_tick": 122880, "end_tick": 153600, "mode": "drums"}, {"id": "p06", "start_tick": 153600, "end_tick": 184320, "mode": "bass"}, {"id": "p07", "start_tick": 184320, "end_tick": 215040, "mode": "drums"}],
+ "waves": [{"id": "wave_01", "start_bar": 1, "entry": "left", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 720}], "start_tick": 0, "via_defense_point": "defense_1", "target_objective": "command_core", "target": "core"}, {"id": "wave_02", "start_bar": 6, "entry": "left", "groups": [{"actor": "e1", "count": 8, "spawn_spacing_ticks": 600}], "start_tick": 19200, "via_defense_point": "defense_1", "target_objective": "command_core", "target": "core"}, {"id": "wave_03", "start_bar": 10, "entry": "top", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e2", "count": 4, "spawn_spacing_ticks": 480}], "start_tick": 34560, "via_defense_point": "defense_2", "target_objective": "command_core", "target": "core"}, {"id": "wave_04", "start_bar": 14, "entry": "right", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e3", "count": 2, "spawn_spacing_ticks": 480}, {"actor": "jeep", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 49920, "via_defense_point": "defense_3", "target_objective": "command_core", "target": "core"}, {"id": "wave_05", "start_bar": 18, "entry": "left", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e4", "count": 4, "spawn_spacing_ticks": 480}], "start_tick": 65280, "via_defense_point": "defense_1", "target_objective": "command_core", "target": "core"}, {"id": "wave_06", "start_bar": 22, "entry": "top", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e2", "count": 2, "spawn_spacing_ticks": 480}, {"actor": "jeep", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 80640, "via_defense_point": "defense_2", "target_objective": "command_core", "target": "core"}, {"id": "wave_07", "start_bar": 26, "entry": "right", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e4", "count": 2, "spawn_spacing_ticks": 480}, {"actor": "jeep", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 96000, "via_defense_point": "defense_3", "target_objective": "command_core", "target": "core"}, {"id": "wave_08", "start_bar": 30, "entry": "left", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e3", "count": 2, "spawn_spacing_ticks": 480}, {"actor": "jeep", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 111360, "via_defense_point": "defense_1", "target_objective": "command_core", "target": "core"}, {"id": "wave_09", "start_bar": 34, "entry": "top", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e2", "count": 4, "spawn_spacing_ticks": 480}, {"actor": "1tnk", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 126720, "via_defense_point": "defense_2", "target_objective": "command_core", "target": "core"}, {"id": "wave_10", "start_bar": 38, "entry": "right", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e4", "count": 2, "spawn_spacing_ticks": 480}, {"actor": "apc", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 142080, "via_defense_point": "defense_3", "target_objective": "command_core", "target": "core"}, {"id": "wave_11", "start_bar": 42, "entry": "left", "groups": [{"actor": "e1", "count": 8, "spawn_spacing_ticks": 480}, {"actor": "e2", "count": 4, "spawn_spacing_ticks": 480}, {"actor": "1tnk", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 157440, "via_defense_point": "defense_1", "target_objective": "command_core", "target": "core"}],
+ "intros": [],
+ "base": {
+  "production": ["barracks", "factory"],
+  "entries": 3,
+  "points": 3,
+  "civilians": 0
+ },
+ "recorded_music": {
+  "source": "arrangement ch_hospital_2 (seed 22, family lv4_hospital, palette hospital)",
+  "loop_bars": 56,
+  "stems": {
+   "drums": {"file": "loops/drums.ogg", "mode": "drums", "families": ["kick", "snare"]},
+   "bass": {"file": "loops/bass.ogg", "mode": "bass", "families": ["bass"]},
+   "other": {"file": "loops/other.ogg", "mode": "always", "families": []}
+  },
+  "cues": {
+   "kick": [[0, 0, 1], [3840, 0, 1], [7200, 0, 1], [7680, 0, 1], [11520, 0, 1], [14880, 0, 1], [15360, 0, 1], [19200, 0, 1], [22560, 0, 1], [23040, 0, 1], [26880, 0, 1], [30240, 0, 1], [61440, 0, 1], [65280, 0, 1], [68640, 0, 1], [69120, 0, 1], [72960, 0, 1], [76320, 0, 1], [76800, 0, 1], [80640, 0, 1], [84000, 0, 1], [84480, 0, 1], [88320, 0, 1], [91680, 0, 1], [122880, 0, 1], [123840, 0, 1], [126720, 0, 1], [127680, 0, 1], [130560, 0, 1], [131520, 0, 1], [134400, 0, 1], [135360, 0, 1], [138240, 0, 1], [139200, 0, 1], [142080, 0, 1], [143040, 0, 1], [145920, 0, 1], [146880, 0, 1], [149760, 0, 1], [150720, 0, 1], [184320, 0, 1], [188160, 0, 1], [191520, 0, 1], [192000, 0, 1], [195840, 0, 1], [199200, 0, 1], [199680, 0, 1], [203520, 0, 1], [206880, 0, 1], [207360, 0, 1], [211200, 0, 1], [214560, 0, 1]],
+   "snare": [[960, 0, 4], [1920, 0, 4], [2880, 0, 4], [4800, 0, 4], [5760, 0, 4], [6720, 0, 4], [8640, 0, 4], [9600, 0, 4], [10560, 0, 4], [12480, 0, 4], [13440, 0, 4], [14400, 0, 4], [16320, 0, 4], [17280, 0, 4], [18240, 0, 4], [20160, 0, 4], [21120, 0, 4], [22080, 0, 4], [24000, 0, 4], [24960, 0, 4], [25920, 0, 4], [27840, 0, 4], [28800, 0, 4], [29760, 0, 4], [62400, 0, 4], [63360, 0, 4], [64320, 0, 4], [66240, 0, 4], [67200, 0, 4], [68160, 0, 4], [70080, 0, 4], [71040, 0, 4], [72000, 0, 4], [73920, 0, 4], [74880, 0, 4], [75840, 0, 4], [77760, 0, 4], [78720, 0, 4], [79680, 0, 4], [81600, 0, 4], [82560, 0, 4], [83520, 0, 4], [85440, 0, 4], [86400, 0, 4], [87360, 0, 4], [89280, 0, 4], [90240, 0, 4], [91200, 0, 4], [123840, 0, 4], [125760, 0, 4], [127680, 0, 4], [129600, 0, 4], [131520, 0, 4], [132960, 0, 4], [133440, 0, 4], [135360, 0, 4], [137280, 0, 4], [139200, 0, 4], [141120, 0, 4], [143040, 0, 4], [144960, 0, 4], [146880, 0, 4], [148320, 0, 4], [148800, 0, 4], [150720, 0, 4], [152640, 0, 4], [185280, 0, 4], [186240, 0, 4], [187200, 0, 4], [189120, 0, 4], [190080, 0, 4], [191040, 0, 4], [192960, 0, 4], [193920, 0, 4], [194880, 0, 4], [196800, 0, 4], [197760, 0, 4], [198720, 0, 4], [200640, 0, 4], [201600, 0, 4], [202560, 0, 4], [204480, 0, 4], [205440, 0, 4], [206400, 0, 4], [208320, 0, 4], [209280, 0, 4], [210240, 0, 4], [212160, 0, 4], [213120, 0, 4], [214080, 0, 4]],
+   "bass": [[30720, 3600, 1], [34560, 2880, 3], [38400, 5760, 3], [45120, 960, 3], [46080, 3600, 1], [49920, 2880, 3], [53760, 5760, 3], [60480, 960, 3], [92160, 3600, 4], [96000, 3600, 3], [99840, 3600, 1], [103680, 3840, 2], [107520, 3600, 4], [111360, 3600, 3], [115200, 3600, 1], [119040, 3840, 2], [153600, 5520, 2], [159360, 1680, 1], [161280, 3600, 4], [165120, 3840, 3], [168960, 5520, 2], [174720, 1680, 1], [176640, 3600, 4], [180480, 3840, 3]]
+  }
+ }
+}

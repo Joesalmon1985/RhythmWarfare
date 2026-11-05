@@ -1,0 +1,48 @@
+{
+ "schema_version": 4,
+ "level_id": "story_mental_hospital_ch_mental_hospital_1",
+ "number": 7,
+ "title": "Crossroads (ch_mental_hospital_1)",
+ "bpm": 174,
+ "ticks_per_beat": 960,
+ "time_signature": [4, 4],
+ "duration_ticks": 245760,
+ "seed": 1007,
+ "battlefield": "defense_02",
+ "roster": "openra_mvp_01",
+ "rules": {
+  "objective_hp": {
+   "command_core": 200000
+  },
+  "sockets_per_point": 5,
+  "prebuilt": [{"reward": "pillbox", "socket": "s1_1"}, {"reward": "turret", "socket": "s1_2"}, {"reward": "turret", "socket": "s2_1"}, {"reward": "pillbox", "socket": "s3_1"}, {"reward": "turret", "socket": "s3_2"}],
+  "walls": [[26, 18], [26, 24], [36, 14], [42, 14], [52, 18], [52, 24]],
+  "start_units": [{"actor": "e1", "count": 5, "point": "defense_1"}, {"actor": "e1", "count": 5, "point": "defense_2"}, {"actor": "e1", "count": 5, "point": "defense_3"}],
+  "units_per_point": 12
+ },
+ "sequence_threshold": 0.6,
+ "sequence_bars": 2,
+ "phases": [{"id": "p01", "start_tick": 0, "end_tick": 30720, "mode": "drums"}, {"id": "p02", "start_tick": 30720, "end_tick": 61440, "mode": "bass"}, {"id": "p03", "start_tick": 61440, "end_tick": 92160, "mode": "drums"}, {"id": "p04", "start_tick": 92160, "end_tick": 122880, "mode": "bass"}, {"id": "p05", "start_tick": 122880, "end_tick": 153600, "mode": "drums"}, {"id": "p06", "start_tick": 153600, "end_tick": 184320, "mode": "bass"}, {"id": "p07", "start_tick": 184320, "end_tick": 215040, "mode": "drums"}, {"id": "p08", "start_tick": 215040, "end_tick": 245760, "mode": "bass"}],
+ "waves": [{"id": "wave_01", "start_bar": 1, "entry": "left", "groups": [{"actor": "e1", "count": 8, "spawn_spacing_ticks": 600}], "start_tick": 0, "via_defense_point": "defense_1", "target_objective": "command_core", "target": "core"}, {"id": "wave_02", "start_bar": 5, "entry": "left", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}], "start_tick": 15360, "via_defense_point": "defense_1", "target_objective": "command_core", "target": "core"}, {"id": "wave_03", "start_bar": 9, "entry": "top", "groups": [{"actor": "e1", "count": 8, "spawn_spacing_ticks": 480}, {"actor": "e2", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 30720, "via_defense_point": "defense_2", "target_objective": "command_core", "target": "core"}, {"id": "wave_04", "start_bar": 13, "entry": "right", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e4", "count": 2, "spawn_spacing_ticks": 480}, {"actor": "jeep", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 46080, "via_defense_point": "defense_3", "target_objective": "command_core", "target": "core"}, {"id": "wave_05", "start_bar": 17, "entry": "left", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e2", "count": 4, "spawn_spacing_ticks": 480}, {"actor": "ftrk", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 61440, "via_defense_point": "defense_1", "target_objective": "command_core", "target": "core"}, {"id": "wave_06", "start_bar": 21, "entry": "top", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e4", "count": 2, "spawn_spacing_ticks": 480}, {"actor": "1tnk", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 76800, "via_defense_point": "defense_2", "target_objective": "command_core", "target": "core"}, {"id": "wave_07", "start_bar": 25, "entry": "right", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e3", "count": 2, "spawn_spacing_ticks": 480}, {"actor": "ftrk", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 92160, "via_defense_point": "defense_3", "target_objective": "command_core", "target": "core"}, {"id": "wave_08", "start_bar": 29, "entry": "left", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e4", "count": 2, "spawn_spacing_ticks": 480}, {"actor": "2tnk", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 107520, "via_defense_point": "defense_1", "target_objective": "command_core", "target": "core"}, {"id": "wave_09", "start_bar": 33, "entry": "top", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e2", "count": 4, "spawn_spacing_ticks": 480}, {"actor": "v2rl", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 122880, "via_defense_point": "defense_2", "target_objective": "command_core", "target": "core"}, {"id": "wave_10", "start_bar": 37, "entry": "right", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e4", "count": 2, "spawn_spacing_ticks": 480}, {"actor": "apc", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 138240, "via_defense_point": "defense_3", "target_objective": "command_core", "target": "core"}, {"id": "wave_11", "start_bar": 41, "entry": "left", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e3", "count": 2, "spawn_spacing_ticks": 480}, {"actor": "ftrk", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 153600, "via_defense_point": "defense_1", "target_objective": "command_core", "target": "core"}, {"id": "wave_12", "start_bar": 45, "entry": "top", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e4", "count": 2, "spawn_spacing_ticks": 480}, {"actor": "2tnk", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 168960, "via_defense_point": "defense_2", "target_objective": "command_core", "target": "core"}, {"id": "wave_13", "start_bar": 49, "entry": "right", "groups": [{"actor": "e1", "count": 6, "spawn_spacing_ticks": 480}, {"actor": "e2", "count": 4, "spawn_spacing_ticks": 480}, {"actor": "v2rl", "count": 2, "spawn_spacing_ticks": 480}], "start_tick": 184320, "via_defense_point": "defense_3", "target_objective": "command_core", "target": "core"}],
+ "intros": [],
+ "base": {
+  "production": ["barracks", "factory"],
+  "entries": 3,
+  "points": 3,
+  "civilians": 0
+ },
+ "recorded_music": {
+  "source": "arrangement ch_mental_hospital_1 (seed 21, family lv5_asylum, palette ward)",
+  "loop_bars": 64,
+  "stems": {
+   "drums": {"file": "loops/drums.ogg", "mode": "drums", "families": ["kick", "snare"]},
+   "bass": {"file": "loops/bass.ogg", "mode": "bass", "families": ["bass"]},
+   "other": {"file": "loops/other.ogg", "mode": "always", "families": []}
+  },
+  "cues": {
+   "kick": [[0, 0, 1], [1920, 0, 1], [3840, 0, 1], [5760, 0, 1], [7680, 0, 1], [9600, 0, 1], [11520, 0, 1], [13440, 0, 1], [14400, 0, 1], [15360, 0, 1], [17280, 0, 1], [19200, 0, 1], [21120, 0, 1], [23040, 0, 1], [24960, 0, 1], [26880, 0, 1], [28800, 0, 1], [29760, 0, 1], [61440, 0, 1], [69120, 0, 1], [73920, 0, 1], [76800, 0, 1], [84480, 0, 1], [89280, 0, 1], [122880, 0, 1], [124800, 0, 1], [126720, 0, 1], [128640, 0, 1], [130560, 0, 1], [132480, 0, 1], [134400, 0, 1], [136320, 0, 1], [137280, 0, 1], [138240, 0, 1], [140160, 0, 1], [142080, 0, 1], [144000, 0, 1], [145920, 0, 1], [147840, 0, 1], [149760, 0, 1], [151680, 0, 1], [152640, 0, 1], [184320, 0, 1], [192000, 0, 1], [196800, 0, 1], [199680, 0, 1], [207360, 0, 1], [212160, 0, 1]],
+   "snare": [[5280, 0, 4], [9120, 0, 4], [16800, 0, 4], [20640, 0, 4], [28320, 0, 4], [63360, 0, 4], [67200, 0, 4], [71040, 0, 4], [74880, 0, 4], [78720, 0, 4], [82560, 0, 4], [86400, 0, 4], [90240, 0, 4], [128160, 0, 4], [132000, 0, 4], [139680, 0, 4], [143520, 0, 4], [151200, 0, 4], [186240, 0, 4], [190080, 0, 4], [193920, 0, 4], [197760, 0, 4], [201600, 0, 4], [205440, 0, 4], [209280, 0, 4], [213120, 0, 4]],
+   "bass": [[31680, 1920, 1], [38400, 480, 1], [46080, 480, 1], [47040, 480, 4], [48480, 480, 1], [49920, 480, 1], [51840, 480, 1], [53280, 0, 2], [53760, 0, 2], [54240, 480, 2], [57600, 0, 1], [58080, 480, 3], [59520, 960, 1], [92160, 960, 1], [95040, 480, 2], [96480, 960, 1], [99840, 960, 1], [101280, 480, 2], [102720, 480, 2], [105600, 720, 1], [106560, 480, 2], [107520, 720, 1], [108480, 480, 4], [109440, 480, 4], [111360, 480, 3], [112320, 720, 3], [113280, 720, 2], [114240, 480, 1], [115200, 960, 1], [117120, 480, 4], [119040, 480, 3], [120000, 720, 1], [120960, 480, 3], [121920, 480, 1], [154560, 1920, 1], [161280, 480, 1], [168960, 480, 1], [169920, 480, 4], [171360, 480, 1], [172800, 480, 1], [174720, 480, 1], [176160, 0, 2], [176640, 0, 2], [177120, 480, 2], [180480, 0, 1], [180960, 480, 3], [182400, 960, 1], [215040, 480, 2], [222720, 0, 2], [223200, 480, 2], [230400, 1440, 1], [232320, 0, 1], [232800, 480, 2], [234240, 480, 4], [235200, 480, 4], [236160, 480, 4], [237120, 480, 3], [238080, 1440, 3], [240000, 960, 3], [242400, 1200, 1], [243840, 960, 3], [245280, 480, 3]]
+  }
+ }
+}

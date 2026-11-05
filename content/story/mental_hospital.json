@@ -4,6 +4,7 @@
  "chapter": 5,
  "art": "mental_hospital",
  "music_pack": "res://songs/m07_crossroads",
+ "music_packs": ["res://songs/m07_crossroads", "res://songs/story_mental_hospital_1", "res://songs/story_mental_hospital_2"],
  "description": "You come to on a hospital ward among a very eccentric, very kind company in fancy dress. None of it happened. Or did it? Time for one more set.",
  "intro": "Welcome to the ward. Tea's on, and the talent show is at four.",
  "duration_bars": 64,
