@@ -383,7 +383,8 @@ only ever sees the resolved outcome (the five diverting outcomes of the data cha
 **World state.** `flags_set` names go to `RunProgress.run_flags` (one run, cleared by `run_started`) or, with the `keep:` prefix, to `RunProgress.flags` (persistent, in the save, written at once).
 `available`: `flags_all`, `flags_none` (both read both stores), `energy_min`, `once` (spent by any commit this run). `repeatable: false` (the default) spends an object/character after a *success* without a
 route; exits and `repeatable: true` are never spent. Energy outcomes apply at the commit (never to depletion: clamped to at least 1); `music` ("variation", "dip") rides on the `hotspot_commit` event
-for the audio layer (a no-op today). `challenge` is validated and carried but not consumed (the last block decides).
+for the audio layer: `dip` sinks the non-drum voices to 0.35 of their gain for 8 beats from the commit beat (`RunAudio`, through the existing gain ramps); `variation` is a documented no-op (a scene's arrangement is picked
+by the per-run seed when the data loads, and re-picking it for the next scene would change that scene's chart pack after the route lock compared it). `challenge` is validated and carried but not consumed (the last block decides).
 
 **Cinematics.** An outcome's `cinematic` is a name in run.json `cinematics` (`{world, steps: [{move: walk|place, to, bars 2..4, role, style, look_at}]}`), else the hotspot's own `cinematic` spec, or an
 inline object. `RunJourney.hotspot_actions` turns steps into rail actions starting at the commit beat (in the guard): `walk` a `player_move` (pick_bars shortens it on dense cues), `place` a cut, `role`,

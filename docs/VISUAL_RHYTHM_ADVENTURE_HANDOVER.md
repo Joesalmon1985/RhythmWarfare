@@ -48,7 +48,7 @@ No flags are needed: open `project.godot` and press Play (Home, Play enters the 
 * The look is first-pass: the edge beacons for hotspots behind the camera are dim, and the camera faces away from the exits when the window opens (the Opus look pass).
 * `challenge` on a run hotspot is validated but not consumed (the last block decides); the Bassment's per-hotspot `challenge.phrase` is likewise informational (the choice's phrase is played by `TrialEngine`).
 * Five hotspot outcomes divert to a route with another chart pack than the default (the checker's warnings); they are safe because the outcome is resolved at the decision beat, before the next scene is charted.
-* A music `variation`/`dip` outcome rides on the `hotspot_commit` event but is a no-op until the music branch consumes it.
+* Music outcomes (merged with the music branch): `dip` is wired (`RunAudio`: bass and synth to 0.35 of their gain for 8 beats from the commit beat, through the gain ramps); `variation` stays a documented no-op, because the arrangement of a scene is resolved once at load by the per-run seed and re-picking it for the next scene would change its chart pack after the route lock compared it.
 * Android export was not smoke-tested here; screenshots use the desktop renderer.
 * Free look (drag, Q/E) is kept as an accessibility option and is never required.
 
