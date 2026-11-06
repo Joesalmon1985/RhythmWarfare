@@ -1,0 +1,19 @@
+picture                   p5   p50   p95   sat   crush  blown  lit mean         flags          guide
+bassment_boiler         0.08  0.12  0.27  0.49    0.0%   0.2%  #353d43 h203     FLAT           ok
+bassment_cables         0.05  0.08  0.41  0.54    0.3%   0.2%  #485d4d h135                    dim
+bassment_cellar         0.08  0.12  0.31  0.35    0.0%   0.2%  #3e3d34 h057     FLAT           ok
+bassment_cloakroom      0.07  0.09  0.44  0.52    0.0%   0.2%  #5d5d49 h060                    dim
+bassment_dawn           0.09  0.14  0.39  0.32    0.0%   0.2%  #413b2f h040                    ok
+bassment_door           0.09  0.15  0.44  0.71    0.0%   0.2%  #55411d h038     GARISH         ok
+bassment_echo           0.13  0.29  0.49  0.38    0.0%   0.2%  #445266 h213                    bright
+bassment_fungus         0.09  0.13  0.42  0.68    0.0%   0.2%  #235236 h144     GARISH         ok
+bassment_hall           0.09  0.13  0.29  0.42    0.0%   0.2%  #303842 h213     FLAT           ok
+bassment_hatch          0.07  0.12  0.29  0.56    0.0%   0.2%  #35424c h205     FLAT           ok
+bassment_kitchens       0.07  0.14  0.39  0.56    0.0%   0.2%  #4d392e h022                    ok
+bassment_mirrors        0.08  0.14  0.39  0.51    0.0%   0.2%  #343f4b h211                    ok
+bassment_pit            0.07  0.11  0.40  0.50    0.0%   0.2%  #3a4551 h210                    ok
+bassment_stacks         0.08  0.14  0.42  0.68    0.0%   0.2%  #3c4187 h235     GARISH         ok
+bassment_vaults         0.07  0.09  0.60  0.60    0.0%   0.2%  #70734a h064                    dim
+bassment_warren         0.08  0.14  0.34  0.73    0.0%   0.2%  #563722 h024     GARISH         ok
+ALL zones               0.07  0.13  0.42  0.53    0.0%   0.2%  #424546 h181                    ok
+ALL creatures           0.08  0.13  0.58  0.55    0.0%   0.2%  #585a52 h080                    ok
