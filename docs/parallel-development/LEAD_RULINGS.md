@@ -49,7 +49,7 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     Hospital) with hub-to-hub links inside each pair. The owner's second illustrative route cannot be walked
     in the order written (Mental Hospital before Alien Spaceship); it is tested in the walkable order: Alien
     Spaceship, LOTR, Alien Spaceship, Mental Hospital, Catch-22, Mental Hospital. The owner is told.
-19. The Bassment's passages that still offer fewer than three choices after the return object is added (41)
+19. The Bassment's passages that still offer fewer than three choices after the return object is added (42: the validator counts passage 23, whose third choice is item-locked)
     are the declared exception, reported by the validator on every run.
 
 ### After the document review
