@@ -22,11 +22,35 @@ var strings_drawn := 0  # draw_string calls made by `_outlined` (the silent-HUD 
 var frames_drawn := 0  # `_draw` passes made (so that test can show the HUD really drew)
 
 var _font: Font
+var _plate := StyleBoxFlat.new()
+var _pip := StyleBoxFlat.new()
+var _hide_at := -1.0  # wall time a fade_out() ends (-1: none)
+var _hide_s := 0.35
+var _shown_at := -10.0  # wall time the HUD was last shown: it fades in rather than popping back (after the Bassment, say)
+
+const FADE_IN_S := 0.35
+const INK := Color(0.075, 0.067, 0.122)  # #13111f
 
 
 func _ready() -> void:
 	_font = ThemeDB.fallback_font
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_VISIBILITY_CHANGED and is_visible_in_tree():
+		_shown_at = float(Time.get_ticks_msec()) / 1000.0
+		_hide_at = -1.0
+
+
+## Fades the HUD out over `seconds` of wall time, then hides it (instead of `visible = false`, which pops it away). Showing it again
+## (`visible = true`) fades it back in.
+func fade_out(seconds := FADE_IN_S) -> void:
+	if not visible:
+		return
+	_hide_at = float(Time.get_ticks_msec()) / 1000.0 + (0.0 if reduced else seconds)
+	_hide_s = maxf(seconds, 0.001)
+	queue_redraw()
 
 
 func caption(text: String, tone: String, t0: float, hold := 1.8) -> void:
@@ -65,29 +89,48 @@ func _draw() -> void:
 	var sz := size
 	var text_on := DevText.on()
 	var fs := int(clampf(sz.y * 0.045, 14.0, 28.0))
-	# energy meter: top left
+	var wall := float(Time.get_ticks_msec()) / 1000.0
+	modulate.a = 1.0 if reduced else clampf((wall - _shown_at) / FADE_IN_S, 0.0, 1.0)
+	if _hide_at >= 0.0:
+		modulate.a = minf(modulate.a, clampf((_hide_at - wall) / _hide_s, 0.0, 1.0))
+		if wall >= _hide_at:
+			_hide_at = -1.0
+			hide.call_deferred()
+	# the energy meter and the mix stages: top left, on one plate in the strip's style (the UI's corner radius, the shared ink, the neon edge)
 	var pad := 14.0
-	var bar := Rect2(pad, pad + fs * 1.1, minf(sz.x * 0.28, 320.0), fs * 0.55)
+	var bar := Rect2(pad + 12.0, pad + fs * 1.1, minf(sz.x * 0.26, 300.0), fs * 0.55)
 	var e := clampf(engine.energy / float(engine.cfg["energy"]["max"]), 0.0, 1.0)
 	if text_on:
-		_outlined(Vector2(pad, pad + fs * 0.9), "CROWD", int(fs * 0.8), Color(0.85, 0.9, 1.0, 0.9))
-	draw_rect(bar, Color(0.05, 0.06, 0.14, 0.85))
+		_outlined(Vector2(bar.position.x, pad + fs * 0.9), "CROWD", int(fs * 0.8), Color(0.85, 0.9, 1.0, 0.9))
+	var py := bar.end.y + fs * 0.45
+	var plate := Rect2(pad, bar.position.y - 10.0, bar.size.x + 24.0, py + fs * 0.42 + 10.0 - (bar.position.y - 10.0))
+	_plate.bg_color = Color(INK, 0.72)
+	_plate.border_color = Color(StoryStyle.EDGE, 0.55)
+	_plate.set_border_width_all(2)
+	_plate.set_corner_radius_all(10)
+	draw_style_box(_plate, plate)
 	var low := e < 0.25
-	var col := Color(1.0, 0.35, 0.3) if low else Color(0.35, 1.0, 0.8).lerp(Color(1.0, 0.85, 0.35), clampf((e - 0.6) / 0.4, 0.0, 1.0))
-	if low and not reduced:
-		col.a = 0.65 + 0.35 * sin(Time.get_ticks_msec() / 120.0)
-	draw_rect(Rect2(bar.position, Vector2(bar.size.x * e, bar.size.y)), col)
-	draw_rect(bar, Color(1, 1, 1, 0.35), false, 1.5)
-	# mix stages
+	var cells := 24
+	var cw := bar.size.x / float(cells)
+	draw_rect(bar, Color(0.12, 0.14, 0.24))
+	var pulse := 1.0 if (not low or reduced) else 0.65 + 0.35 * sin(Time.get_ticks_msec() / 120.0)
+	for k in cells:
+		var u := float(k) / float(cells)
+		if u >= e:
+			break
+		var col := Color(1.0, 0.35, 0.3) if low else Color(0.35, 1.0, 0.8).lerp(Color(1.0, 0.85, 0.35), clampf((u - 0.6) / 0.4, 0.0, 1.0))
+		draw_rect(Rect2(bar.position.x + cw * k + 1.0, bar.position.y, cw - 2.0, bar.size.y), Color(col, pulse))
+	# mix stages: four pips under the meter, the current one lit
 	var labels: Array = engine.cfg["stages"]
 	var px := bar.position.x
-	var py := bar.end.y + fs * 0.7
 	var pw := bar.size.x / 4.0
 	for i in 4:
 		var on := i == engine.stage
 		var done := i < engine.stage
 		var r := Rect2(px + i * pw + 2.0, py, pw - 4.0, fs * 0.42)
-		draw_rect(r, Color(0.35, 1.0, 0.8, 0.9) if on else (Color(0.3, 0.55, 0.9, 0.7) if done else Color(0.12, 0.14, 0.26, 0.8)))
+		_pip.bg_color = Color(0.35, 1.0, 0.8, 0.95) if on else (Color(0.3, 0.55, 0.9, 0.75) if done else Color(0.12, 0.14, 0.26, 0.9))
+		_pip.set_corner_radius_all(3)
+		draw_style_box(_pip, r)
 	# the route window: a thin bar along the bottom of the stage that empties as the 16 beats run out (the same bar the Bassment's four-bar window uses)
 	var left := window_left(now_t)
 	if left >= 0.0:

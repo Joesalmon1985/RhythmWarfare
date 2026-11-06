@@ -1,0 +1,223 @@
+{
+ "sizes": {
+  "bezel": [
+   40,
+   12
+  ],
+  "lamp": 8,
+  "panel": 96,
+  "plate": [
+   48,
+   12
+  ],
+  "trim": [
+   32,
+   8
+  ],
+  "well": [
+   40,
+   14
+  ]
+ },
+ "skins": {
+  "bassment": {
+   "display_bg": "#0a0808",
+   "display_edge": "#ffb050",
+   "display_line": "#ffb050",
+   "ink": "#100c10",
+   "knobs": false,
+   "label": "#f4e8dc",
+   "lamp": "#ffb050",
+   "pad_off": "#161214",
+   "pad_ring": "#463e3e",
+   "rim_light": "#625a54",
+   "spinners": false,
+   "vu": [
+    "#a0c080",
+    "#ffb050",
+    "#ff5040"
+   ]
+  },
+  "club": {
+   "display_bg": "#050310",
+   "display_edge": "#2fb6c8",
+   "display_line": "#66d8ff",
+   "ink": "#0a0618",
+   "knobs": true,
+   "label": "#e8e0ff",
+   "lamp": "#ff4fb0",
+   "pad_off": "#140f26",
+   "pad_ring": "#3d3070",
+   "rim_light": "#5a3f86",
+   "spinners": true,
+   "vu": [
+    "#3ae0a0",
+    "#ffcc40",
+    "#ff5068"
+   ]
+  },
+  "ember": {
+   "display_bg": "#100a06",
+   "display_edge": "#ff7a20",
+   "display_line": "#ffb050",
+   "ink": "#120c08",
+   "knobs": false,
+   "label": "#fff0e0",
+   "lamp": "#ff7a20",
+   "pad_off": "#18100a",
+   "pad_ring": "#4e3622",
+   "rim_light": "#7a5a38",
+   "spinners": false,
+   "vu": [
+    "#c8a060",
+    "#ffb050",
+    "#ff5a20"
+   ]
+  },
+  "gospel": {
+   "display_bg": "#14100c",
+   "display_edge": "#c8a878",
+   "display_line": "#ffc89a",
+   "ink": "#1e140c",
+   "knobs": false,
+   "label": "#fff0d8",
+   "lamp": "#ffb060",
+   "pad_off": "#1e160e",
+   "pad_ring": "#5a4228",
+   "rim_light": "#9a7448",
+   "spinners": false,
+   "vu": [
+    "#a8b860",
+    "#ffb060",
+    "#ff7a40"
+   ]
+  },
+  "hell": {
+   "display_bg": "#120404",
+   "display_edge": "#ff6a1a",
+   "display_line": "#ff9a50",
+   "ink": "#200d11",
+   "knobs": false,
+   "label": "#ffe0c8",
+   "lamp": "#ff6a1a",
+   "pad_off": "#1e0c0c",
+   "pad_ring": "#5a2a1e",
+   "rim_light": "#b06a38",
+   "spinners": false,
+   "vu": [
+    "#ffb050",
+    "#ff6a1a",
+    "#ff2a3a"
+   ]
+  },
+  "hospital": {
+   "display_bg": "#03100c",
+   "display_edge": "#5fd890",
+   "display_line": "#5fd890",
+   "ink": "#0c1636",
+   "knobs": false,
+   "label": "#e8f0ff",
+   "lamp": "#5fd890",
+   "pad_off": "#101c30",
+   "pad_ring": "#34486a",
+   "rim_light": "#6e809c",
+   "spinners": false,
+   "vu": [
+    "#5fd890",
+    "#e0b060",
+    "#ff6a60"
+   ]
+  },
+  "neutral": {
+   "display_bg": "#06060c",
+   "display_edge": "#9fc4e8",
+   "display_line": "#9fc4e8",
+   "ink": "#0c0a14",
+   "knobs": false,
+   "label": "#eef0ff",
+   "lamp": "#9fc4e8",
+   "pad_off": "#14121e",
+   "pad_ring": "#3a3448",
+   "rim_light": "#56506a",
+   "spinners": false,
+   "vu": [
+    "#9fc4e8",
+    "#eab278",
+    "#ff6a60"
+   ]
+  },
+  "ship": {
+   "display_bg": "#030c14",
+   "display_edge": "#7be0d0",
+   "display_line": "#7be0d0",
+   "ink": "#06081c",
+   "knobs": false,
+   "label": "#d8f4ff",
+   "lamp": "#7be0d0",
+   "pad_off": "#0c1424",
+   "pad_ring": "#2e4a5e",
+   "rim_light": "#56708a",
+   "spinners": false,
+   "vu": [
+    "#7be0d0",
+    "#b88cff",
+    "#ff7ab0"
+   ]
+  },
+  "squadron": {
+   "display_bg": "#0c0a04",
+   "display_edge": "#c8b070",
+   "display_line": "#ffd890",
+   "ink": "#14140c",
+   "knobs": false,
+   "label": "#fff4dc",
+   "lamp": "#ffd890",
+   "pad_off": "#1a1a10",
+   "pad_ring": "#4a4a30",
+   "rim_light": "#8a7a50",
+   "spinners": false,
+   "vu": [
+    "#c8d890",
+    "#ffd890",
+    "#ff8a40"
+   ]
+  },
+  "ward": {
+   "display_bg": "#060e0a",
+   "display_edge": "#c8e8d0",
+   "display_line": "#a8d8b8",
+   "ink": "#06110c",
+   "knobs": false,
+   "label": "#e8f4ea",
+   "lamp": "#e8c070",
+   "pad_off": "#0e1814",
+   "pad_ring": "#34483e",
+   "rim_light": "#4a6758",
+   "spinners": false,
+   "vu": [
+    "#a8d8b8",
+    "#e8c070",
+    "#e07050"
+   ]
+  }
+ },
+ "worlds": {
+  "airfield": "squadron",
+  "ash_land": "ember",
+  "bassment": "bassment",
+  "bethany": "gospel",
+  "birch_hall": "ember",
+  "city": "squadron",
+  "deep_halls": "ember",
+  "galilee_shore": "gospel",
+  "harbour": "squadron",
+  "hillside": "gospel",
+  "hospital": "hospital",
+  "jerusalem": "gospel",
+  "mental_hospital": "ward",
+  "mothership": "ship",
+  "night_one": "club",
+  "orchard": "ember",
+  "underworld": "hell"
+ }
+}
