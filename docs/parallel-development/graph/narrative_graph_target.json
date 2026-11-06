@@ -11,20 +11,20 @@
    "edges that returned to 'warehouse' from a quest are quest_return edges to '$checkpoint', the hub of the location the quest was entered from",
    "the pause-menu and back-key leaves are kept as hidden quest_return edges: they never count as choices",
    "on_miss twins of quest returns and of the three re-gated entrances are dropped: entries and returns are not rhythm-gated",
-   "warehouse.balcony.star, warehouse.booth.radio and warehouse.bar.ember lose their gating flags and rhythm; the wizard keeps its legacy gate (a declared exception)",
+   "warehouse.balcony.star, warehouse.booth.radio and warehouse.bar.ember lose their gating flags and rhythm; the wizard keeps its legacy gate and becomes an extra way in beside the new ungated Floor entrance (a declared exception)",
    "edges with 'previous_scene' go back to a scene from which this one can be reached (the player's route history picks which)"
   ],
   "counts": {
    "nodes": 146,
-   "edges": 959,
+   "edges": 960,
    "edges_by_status": {
     "existing": 561,
     "changed": 131,
-    "proposed": 267
+    "proposed": 268
    },
    "edges_by_kind": {
     "scene": 680,
-    "quest_entry": 41,
+    "quest_entry": 42,
     "quest_return": 238
    }
   }
@@ -10574,6 +10574,18 @@
     "flags_all": [],
     "flags_none": [],
     "outcome": "fight_lost"
+   }
+  },
+  {
+   "from": "main/warehouse",
+   "to": "bassment/1",
+   "via": "warehouse.enter_bassment",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "status": "proposed",
+   "condition": {
+    "flags_all": [],
+    "flags_none": []
    }
   },
   {

@@ -7,6 +7,10 @@ Where this document speaks of "the music stream" and "the narrative stream", it 
 `ONE_PC_PLAN.md` section 4. The narrative stream owns this design. The two streams meet only at
 `contract/transition_port.gd` and `INTEGRATION_CONTRACT.md`.
 
+Reviewed on 6 November 2026 against `LEAD_RULINGS.md`, which is binding and later than this text. Rulings 15 to 19 are applied here and in
+the data files: an ungated Dungeon entrance in every hub (20 new entrances), hubs of up to 10 objects, the seven extra path routes accepted
+as the working design, the walkable order of the second route, and the Bassment exception (41 passages).
+
 Marks used throughout: **existing** (in the repository now), **partial** (exists in another form or place),
 **proposed** (this design). Anything not marked is a statement of fact about the repository's data on this branch.
 
@@ -17,7 +21,7 @@ Files that go with this document, all in `graph/`:
 | `graph_today.json` | Today's route graph: 148 nodes, 700 edges, unchanged copy of the inventory's machine-readable graph. Its ids are the old style (`warehouse`, `gospel:jordan`, `bassment:1`). |
 | `narrative.schema.md` | Field-by-field schema of the new overlay file, format `rhythm_warfare.narrative.v1`. |
 | `overlay_proposed.json` | A complete proposed overlay instance. |
-| `narrative_graph_target.json` | The target graph: 146 nodes, 959 edges, ids in the contract's `"<path>/<node>"` form. |
+| `narrative_graph_target.json` | The target graph: 146 nodes, 960 edges, ids in the contract's `"<path>/<node>"` form. |
 | `validation_report.md` | The output of the check script on paper, with numbers and what it could not check. |
 
 The planning inputs behind the findings (the architects' reports, the decisions file) are not in the repository. Their findings
@@ -80,10 +84,10 @@ lost three times to passage 0 ("Defeated") (`src/trial/trial_flow.gd`). The targ
 |---|---|---|
 | A derived graph, built from the existing run, path and Bassment data plus one overlay file | design decision D3 | proposed |
 | Five locations, each with one hub scene showing all four quest entrances and at least one mainline exit | D3 | proposed |
-| Quest entry is never rhythm-gated and never needs another quest | D3 | proposed (exception: the wizard) |
+| Quest entry is never rhythm-gated and never needs another quest | D3, lead ruling 15 | proposed (the wizard stays as an extra, gated way in; he is not the Dungeon entrance) |
 | Every quest scene has a return object; the return lands on the hub of the location entered from | D3 | proposed |
 | Progress per quest, saved; re-entry resumes; a completed quest restarts and keeps `completed` | D3 | proposed |
-| Three choices everywhere | D3 | proposed (exception: 41 Bassment passages) |
+| Three choices everywhere | D3, lead ruling 19 | proposed (exception: 41 Bassment passages) |
 | Mainline routes kept as they are, plus hub-to-hub links between the paired locations, no ending yet | owner, 6 Nov 2026 | proposed |
 | `to_hub` routes, extra entrances on non-hub scenes, `restart` and second routes | this design, to make rule 5 hold in the data | proposed |
 
@@ -107,7 +111,7 @@ With these links a run can visit all five locations: Warehouse, Alien Spaceship,
 The mainline has no route back to the Warehouse. That is the owner's decision (no new routes beyond the paired links), and the check
 confirms it (rule 4).
 
-### 2.3 The 20 hub entrances
+### 2.3 The 20 hub entrances (20 new entrances, lead ruling 15)
 
 One object per (location, quest) cell, in the hub scene. Every object idea is **illustrative**: the visual design belongs to the
 interaction work (`INTERACTION_DESIGN.md`), and the ids are suggestions that the content stage may rename.
@@ -117,7 +121,7 @@ placed on the Floor (status partial). The original stays where it is, now ungate
 
 | Location | Quest | Hub scene | Object id | Status | Where it lives today | Illustrative idea |
 |---|---|---|---|---|---|---|
-| Warehouse Rave | Bassment | `main/warehouse` | `warehouse.wizard` | existing | The Floor `warehouse.wizard`, and the Chill-out `warehouse.chill.wizard`. Gated by a passed block in blocks 1 and 2 and by `wh_wizard_met`. | The wizard. Keeps its legacy mid-scene entrance (decision 5). |
+| Warehouse Rave | Bassment | `main/warehouse` | `warehouse.enter_bassment` | proposed | none. The wizard (`warehouse.wizard` on the Floor, `warehouse.chill.wizard` in the Chill-out) stays as an extra way in, gated by a passed block in blocks 1 and 2 and by `wh_wizard_met` | A cellar hatch in the Floor beside the bar door, taken at the lap's end through the port like the other three |
 | Warehouse Rave | Jesus | `main/warehouse` | `warehouse.enter_gospel` | partial | `warehouse.balcony.star` in the Balcony, gated by `wh_saw_floor` and a passed block | The projected star, copied to a stack on the Floor |
 | Warehouse Rave | Catch-22 | `main/warehouse` | `warehouse.enter_squadron` | partial | `warehouse.booth.radio` in the Booth, gated by a passed block | The military radio, copied to a speaker stack |
 | Warehouse Rave | Lord of the Rings | `main/warehouse` | `warehouse.enter_ember` | partial | `warehouse.bar.ember` in the Bar, gated by `wh_vip_pass` and a passed block | The ember in a glass, copied to a table at the edge of the Floor |
@@ -138,20 +142,20 @@ placed on the Floor (status partial). The original stays where it is, now ungate
 | Hell | Catch-22 | `main/underworld` | `underworld.enter_squadron` | proposed | none | A military radio hanging from the chains |
 | Hell | Lord of the Rings | `main/underworld` | `underworld.enter_ember` | proposed | none | A small ember in a glass beside the furnace mouth |
 
-Totals: 1 existing, 3 partial, 16 proposed. The 16 proposed are the 16 empty cells of section 1.2.
+Totals: 0 existing, 3 partial, 17 proposed, 20 new entrances in all (lead ruling 15, which replaces ruling 2's 19). The 16 empty cells of section 1.2
+are the 16 in the four new hubs; the Floor adds the three copies and the new hatch.
 
-The wizard stays a special case (decision 5). It is outside the port, rhythm-gated, and once a run. It is a declared, named exception
-(`legacy_wizard_entrance`) and the validator reports it as an exception. It means the Warehouse has no ungated way to the Bassment.
-Without the wizard, the fewest choices from the start to the Bassment are 5 (Floor, Bar, Chill-out, Door, then the Alien Spaceship's hatch): inside the limit, with no spare.
-A port entrance for the Bassment on the Floor, such as a cellar hatch, would make it 1. That is an open question (section 8).
+The wizard stays as he is (decision 5, ruling 15): mid-scene, outside the port, rhythm-gated, once a run. He is now an **extra** way into the Bassment
+from the Floor and the Chill-out, not the Floor's Dungeon entrance. He is a declared, named exception (`legacy_wizard_entrance`) and the validator
+reports him as an exception. Because the Floor has its own ungated hatch, every quest is 1 choice from the start without the wizard.
 
-The route to every other quest entrance from the start is 1 choice.
+The route to every quest entrance from the start is 1 choice, and none of the four needs a passed block.
 
 ### 2.4 The other routes the overlay adds
 
 | Route | Where | Count | Status | Why |
 |---|---|---|---|---|
-| Hub entrances | 5 hubs x 4 quests | 20 | see 2.3 | Rule 2 |
+| Hub entrances | 5 hubs x 4 quests | 20 (17 new objects and 3 copies) | see 2.3 | Rules 1 and 2 |
 | Hub-to-hub links | Alien <-> Hell, Hospital <-> Mental Hospital | 4 | proposed | Decision 3 |
 | `to_hub` | every mainline scene that is not a hub: 31 | 31 | proposed | Rule 2: a quest from every scene of a location, in at most 2 choices. Also a third choice. |
 | Extra entrances | non-hub mainline scenes that still have only two destinations: 17 (list below) | 17 | proposed | Rule 5 |
@@ -466,8 +470,9 @@ flowchart TB
   E -->|"return object"| H
 ```
 
-Object count against the cap of eight (`validation_report.md`, section 3): the Hospital Ward hub has 4 existing hotspots plus 5 added choices, 9 in all; the Mental Hospital 10, the Alien Spaceship 9, Hell 9,
-the Warehouse 7. Four hubs are over the cap by one or two. An existing reactive object has to be merged with an entrance or dropped. That is the interaction design's decision.
+Object count on the hubs (`validation_report.md`, section 3): the Hospital Ward hub has 4 existing hotspots plus 5 added choices, 9 in all; the Mental Hospital 10, the Alien Spaceship 9, Hell 9,
+the Warehouse 8. By lead rulings 1 and 16 the cap of 8 counts **choices** only (6 or 7 on a hub) and reactive objects are held apart, so no hub is over the cap; a hub that keeps all its
+existing objects in the old list may set `max_hotspots` up to 10, and the Mental Hospital's 10 is exactly the limit. Which existing objects become reactive objects is the interaction design's decision.
 
 ## 6. The validator
 
@@ -491,9 +496,9 @@ Exit code 0: no rule fails (exceptions allowed). 1: at least one failure. 2: an 
 Output, one line per rule and one per exception, then a summary (the shape is fixed; the numbers below are illustrative):
 
 ```
-narrative graph: 146 nodes, 959 edges, overlay content/narrative/graph.json
-RULE 01 PASS       quests within 5 choices: bassment 1, gospel 1, squadron 1, ember 1 (ungated entrances only: 5, 1, 1, 1)
-RULE 01 EXCEPTION  legacy_wizard_entrance: warehouse_rave.bassment is rhythm-gated; tracked by: later piece, move the entrance behind the port
+narrative graph: 146 nodes, 960 edges, overlay content/narrative/graph.json
+RULE 01 PASS       quests within 5 choices: bassment 1, gospel 1, squadron 1, ember 1 (ungated entrances only: 1, 1, 1, 1)
+RULE 01 EXCEPTION  legacy_wizard_entrance: the wizard, an extra way into the Bassment, is rhythm-gated; tracked by: later piece, move the entrance behind the port
 RULE 05 EXCEPTION  bassment_passages_under_three: 41 passages under three choices
 ...
 SUMMARY pass 7, exception 3, fail 0, not checked 0
@@ -508,13 +513,13 @@ reachability test (conservative); the Godot test covers flags.
 
 | # | Statement | Algorithm | Fails when | Paper result on the target |
 |---|---|---|---|---|
-| 1 | Each quest entry is at most `max_choices_to_quest` (5) choices from `start`, and no quest needs another quest or a rhythm result to enter | Breadth-first search by choice count from `start` over visible edges, to each quest's `entry`. Run twice: with all visible entrances, and with only entrances that are not rhythm-gated. Audit: no entrance or `entry_conditions` mentions a passed block, `on_miss` or another quest. | Either run exceeds the limit or reaches nothing. An undeclared gated entrance. | 1, 1, 1, 1; ungated 5, 1, 1, 1. One declared exception (wizard). |
+| 1 | Each quest entry is at most `max_choices_to_quest` (5) choices from `start`, and no quest needs another quest or a rhythm result to enter | Breadth-first search by choice count from `start` over visible edges, to each quest's `entry`. Run twice: with all visible entrances, and with only entrances that are not rhythm-gated. Audit: no entrance or `entry_conditions` mentions a passed block, `on_miss` or another quest. | Either run exceeds the limit or reaches nothing. An undeclared gated entrance. | 1, 1, 1, 1; ungated 1, 1, 1, 1. One declared exception (the wizard, an extra way in). |
 | 2 | From every mainline location and every scene of it, all four quests can be entered, and after a return the mainline continues | For each location and quest: search from the hub, and from every scene of the location (late worlds included). Each hub shows four entrances. After a return (landing on the hub) a mainline route leaves the hub. | A cell is empty, or a scene is more than the limit away, or a hub has no mainline route | 20 of 20 cells; hubs 1; worst scene 2 |
 | 3 | Every quest has a working return | For each quest and each of the 5 origins: enter by the hub entrance, collect every scene reachable inside the quest, and check each has a visible return object that lands on that origin's hub. Hidden leaves do not count. | A quest scene without a visible return, or not reachable from the entry | 110 of 110 |
 | 4 | Mainline locations are traversable | Search from `start` over mainline scene edges only. Every mainline scene is reached. From each hub every scene of its location is reached. Report the components that are mutually reachable. | A mainline scene not reached | 36 of 36; Alien and Hell are one component, Hospital and Mental Hospital are one; the Warehouse is left behind |
 | 5 | Every scene has at least `min_choices` (3) choices | Distinct destinations among visible, non-miss, flag-free edges; for `previous_scene` edges the worst case over the possible predecessors. The set of scenes listed in `bassment_passages_under_three` is excused. The exception fails when stale or too wide. | An unexcused scene under three, or a stale exception | 105 of 146; 41 excused |
 | 6 | No unintended dead ends | No scene without a visible way out; every scene is reachable from `start` by some route; every quest scene reaches a mainline scene; every mainline scene reaches the late loops. The late loops are the only declared terminal component. | Any of those fails outside a declared terminal | 0 dead ends, 0 unreachable, 0 trapped |
-| 7 | Every reference resolves | Every graph id against the three sources; every edge end; every existing or partial object id against the hotspot files; every proposed object id is unique and does not collide with an existing hotspot id; every overlay hub, world, entry, completion scene and source file; every non-Bassment scene has a `track_scenes.json` entry | Any unresolved reference | 1,764 checked, 0 unresolved |
+| 7 | Every reference resolves | Every graph id against the three sources; every edge end; every existing or partial object id against the hotspot files; every proposed object id is unique and does not collide with an existing hotspot id; every overlay hub, world, entry, completion scene and source file; every non-Bassment scene has a `track_scenes.json` entry | Any unresolved reference | 1,767 checked, 0 unresolved |
 | 8 | Scene and music metadata valid | Each scene has a well-formed track assignment; the named tracks exist in the catalogue; the Bassment's `music` block names its audio. With the packs present: each pack loads (a call into the music stream's validator). | A malformed assignment. A named track with no catalogue file is a warning until stage I4 has run. | Shape OK; 17 of 61 track ids lack a catalogue file; packs not checkable on paper |
 | 9 | Cycles and re-entry behave | Every cycle can be left (follows from 6). Scripted cases: for each quest and each origin, enter, move one scene, return, re-enter (resumes at the scene left), play to an ending, return, re-enter (restarts at `entry`, `completed` kept). Random walks with cancelled and failed requests. | Any case differs from section 3.4 | 20 of 20 scripted cases, 200 random walks, on the model only |
 | 10 | Route history and checkpoint stay consistent | After every `switched`, the invariants of 3.1 hold; a closed or cancelled request leaves the committed state byte for byte unchanged; a fallback landing recomputes the change. | Any invariant broken | 0 broken, on the model only |
@@ -537,7 +542,7 @@ Declared in the proposed overlay:
 | Id | Rule | Scope | Why |
 |---|---|---|---|
 | `bassment_passages_under_three` | 5 | 41 Bassment passages | Only the return is added in phase 1; raising choices is a later, separately sized piece (owner, 6 Nov 2026) |
-| `legacy_wizard_entrance` | 1 | the wizard on the Floor and in the Chill-out | Stays outside the port and rhythm-gated for now (owner, 6 Nov 2026) |
+| `legacy_wizard_entrance` | 1 | the wizard on the Floor and in the Chill-out | Stays outside the port and rhythm-gated for now, as an extra way in beside the Floor's ungated hatch (owner, 6 Nov 2026; lead ruling 15) |
 | `late_loops_have_no_ending` | 6 | `hospital_late`, `ward_late` | No ending yet (owner, 6 Nov 2026) |
 
 ## 7. Content work and system work
@@ -564,7 +569,7 @@ None of this adds navigation code per quest. A new quest is one entry in the ove
 
 | Piece | Count | Stage | Note |
 |---|---|---|---|
-| New quest entrance objects in the hubs | 16 | N2.4 | One hotspot record each, art, a place in the scene |
+| New quest entrance objects in the hubs | 17 (16 in the four new hubs, the Floor's cellar hatch) | N2.4 | One hotspot record each, art, a place in the scene |
 | Existing entrance objects placed on the Floor | 3 | N2.4 | Reuse of art and records |
 | Hub-link objects | 4 | N2.4 | |
 | `to_hub` objects | 31 placements | N2.4 | One definition per world, placed by a default rule |
@@ -576,7 +581,7 @@ None of this adds navigation code per quest. A new quest is one entry in the ove
 | Making the three re-gated Warehouse entrances ungated | 3 objects | N2.4 | |
 | Hospital, Mental Hospital, Alien Spaceship, Hell scene art for the new objects | 4 worlds | N2.4 | By world, in parallel |
 
-The system work is small beside the content. The content is mostly repetition of a few definitions, but the 71 new on-scene objects in the mainline (16 + 3 + 4 + 31 + 17) each need
+The system work is small beside the content. The content is mostly repetition of a few definitions, but the 72 new on-scene objects in the mainline (17 + 3 + 4 + 31 + 17) each need
 a place in a scene that already has up to eight other objects.
 
 Music: no new music is required. All 82 non-Bassment scenes have track assignments, and the Bassment has its own. The return and the entrance go through the port, so a quest change
@@ -594,16 +599,17 @@ does not cut the music: the music stream plans the change from the destination's
 | The wizard's mid-scene entrance to the Bassment stays as it is for now | Declared exception `legacy_wizard_entrance` |
 | The Bassment's passages with fewer than three choices are a named exception, a later piece | Declared exception `bassment_passages_under_three`, reported, neither passed silently nor failed |
 | The planning inputs are not committed | Their findings are restated here |
+| Lead rulings 15 to 19 (6 November 2026): an ungated Dungeon entrance in every hub, 20 new entrances; hubs may hold up to 10; the extra path routes are the working design; the second route is tested in the walkable order; the 41 Bassment passages are the exception | 2.3, 5.2, 6.3, 8.2 |
 
 ### 8.2 Still open
 
 | # | Question | Why it matters | The design's default |
 |---|---|---|---|
-| 1 | Should the Warehouse offer the Bassment through the port as well, for example a cellar hatch on the Floor? | The wizard is gated and once a run. Without it the fewest ungated choices to the Bassment from the start are 5, exactly the limit. | Not added |
-| 2 | Should any route lead back to the Warehouse or to the Alien Spaceship from the later locations? | Today and in this design the mainline is one-way. The owner's example order (Mental Hospital, then Alien Spaceship) cannot be walked. | No such route |
-| 3 | Which reactive objects are merged or dropped on the four hubs that exceed eight objects? | Hospital Ward 9, Mental Hospital 10, Alien Spaceship 9, Hell 9 | Left to the interaction design |
+| 1 | Should the Warehouse offer the Bassment through the port as well, for example a cellar hatch on the Floor? | **Settled by lead ruling 15: yes.** The wizard stays as an extra way in. | Added (`warehouse.enter_bassment`) |
+| 2 | Should any route lead back to the Warehouse or to the Alien Spaceship from the later locations? | Today and in this design the mainline is one-way. The owner's example order (Mental Hospital, then Alien Spaceship) cannot be walked; ruling 18 has it tested in the walkable order and the owner is told. | No such route |
+| 3 | Which reactive objects are merged or dropped on the four hubs that hold 9 or 10 objects? | **Settled in part by lead rulings 1 and 16:** the cap counts choices only and a hub may set `max_hotspots` up to 10. Which existing objects become reactive is the interaction design's. | Left to the interaction design |
 | 4 | The 17 extra entrances use a rotating choice of quest. Is that acceptable? | They exist to give three choices. | Rotation, changeable in the overlay |
-| 5 | The 5 `restart` options and the 2 second routes (`gospel/jordan` to `jordan.nazareth`, `ember/hollow` to `hollow.inn`) | Invented only to give three choices. The story owner should confirm or replace them. | As listed |
+| 5 | The 5 `restart` options and the 2 second routes (`gospel/jordan` to `jordan.nazareth`, `ember/hollow` to `hollow.inn`) | Invented only to give three choices. Accepted as the working design by lead ruling 17; the owner is asked to confirm or replace them. | As listed |
 | 6 | Should the Bassment's progress save carried items and the current passage, or restart at passage 1? | D3 says items and scene are kept. | Kept |
 | 7 | Scene lengths of 88 to 176 seconds and the every-fourth-bar rest | Never heard; not a narrative question. Decided by ear after M1. | Unchanged |
 
@@ -612,11 +618,11 @@ does not cut the music: the music stream plans the change from the destination's
 | Statement in DECISIONS.md | What the data shows |
 |---|---|
 | Quest scene: onward, back, return "alone gives three" (D3) | False for 7 path scenes (the 2 entry scenes, the 5 ending scenes). Fixed here with `restart` and second routes. |
-| All four quests reachable with 1 choice at the start (D3, early access) | True of visible entrances. The Bassment's only Warehouse entrance is gated and once a run; ungated it is 5. |
-| The hub shows all four entrances plus a mainline exit, and the interaction cap rises to eight (D3, D4) | Four hubs would hold 9 or 10 objects. |
+| All four quests reachable with 1 choice at the start (D3, early access) | True of the data once ruling 15 adds the Floor's ungated Dungeon entrance. Before it, the Bassment's only Warehouse entrance was the gated wizard, and ungated it was 5. |
+| The hub shows all four entrances plus a mainline exit, and the interaction cap rises to eight (D3, D4) | Four hubs would hold 9 or 10 objects in all. Settled by lead rulings 1 and 16: the cap counts choices, and a hub may set up to 10. |
 | `graph_today.json` models the Bassment's reachability | It lacks the lost-fight route to passage 0; passage 0 looked unreachable. Added in the target. |
 | The inventory's 6 choices to Jesus and Lord of the Rings | Uses a hidden back key. By the owner's rule (hidden options do not count) it is 25. |
-| N2.4 (ONE_PC_PLAN.md): "16 new entrances ... three distinct destinations in all 36 main-run scenes" | Needs 31 `to_hub` objects and 17 extra entrances in addition to the 16. |
+| N2.4 (ONE_PC_PLAN.md, before the review): "16 new entrances ... three distinct destinations in all 36 main-run scenes" | Needs 20 entrances (ruling 15), and 31 `to_hub` objects and 17 extra entrances in addition. The plan now says 20. |
 | N2.5: "three choices in every path scene (onward, back, return)" | Needs the 7 additions above. |
 
 ### 8.4 Licensing note

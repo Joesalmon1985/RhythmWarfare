@@ -43,7 +43,8 @@ leaves the game on the data it has. A change that breaks readers is `v2`, never 
 | `min_choices` | int | 3 | Rule 5 threshold. At least 1. |
 | `max_choices_to_quest` | int | 5 | Rule 1 threshold. |
 | `history_limit` | int | 32 | Length of `RouteState.history`. At least 8. |
-| `hotspot_cap` | int | 8 | Only used by the validator's hub-object report. |
+| `hotspot_cap` | int | 8 | Choices per scene (lead rulings 1 and 16). Only used by the validator's hub-object report. |
+| `hub_hotspot_cap` | int | 10 | The most a hub scene may set as `max_hotspots` (lead ruling 16). Only used by the same report. |
 
 ## 3. Location
 
@@ -102,10 +103,11 @@ is never stated here: it is the quest's `entry`, or the saved scene when the que
 | `quest` | quest id, required | |
 | `scene` | graph id, required | The scene holding the object. For the 20 hub entrances it is the location's hub. |
 | `object` | Object, required | The visible thing the player touches. |
-| `transition` | `"port"` or `"legacy_mid_scene"`, required | `port`: requested through `TransitionPort` (`kind: quest_entry`, `when: lap_end`). `legacy_mid_scene`: the existing wizard entrance, outside the port. Only the Bassment entrance on the Warehouse hub may use it, and it must name an exception. |
-| `rhythm_gate` | bool, required | `false` for every entrance except the legacy wizard. A `true` needs an exception that names this entrance. |
+| `transition` | `"port"` or `"legacy_mid_scene"`, required | `port`: requested through `TransitionPort` (`kind: quest_entry`, `when: lap_end`). Every one of the 20 hub entrances is `port` (lead ruling 15). `legacy_mid_scene` is used only inside `legacy_way`. |
+| `rhythm_gate` | bool, required | `false` for every entrance. A `true` is allowed only inside `legacy_way` and needs an exception that names this entrance. |
 | `conditions` | array of Condition, required, may be empty | Same rule as `entry_conditions`. |
 | `exception` | exception id, optional | Required when `rhythm_gate` is true or `transition` is `legacy_mid_scene`. |
+| `legacy_way` | object, optional | An extra, older way into the same quest that stays as it is: `{ object, transition, rhythm_gate, conditions, also_in, exception }`, with the same rules as above. Only the Warehouse's Dungeon entrance has one (the wizard, decision 5). It never replaces the ungated `port` entrance and does not count toward rule 1. |
 | `also_in`, `also_in_today` | array or string, planning | Other scenes that hold an object for the same quest. |
 | `status` | `existing` / `partial` / `proposed`, planning | |
 
