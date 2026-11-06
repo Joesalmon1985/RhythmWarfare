@@ -12,6 +12,7 @@
   "thing_basket_full": "textures/thing_basket_full.png",
   "thing_bush": "textures/thing_bush.png",
   "thing_cart": "textures/thing_cart.png",
+  "thing_door": "textures/thing_door.png",
   "thing_dove": "textures/thing_dove.png",
   "thing_fire": "textures/thing_fire.png",
   "thing_grass": "textures/thing_grass.png",
@@ -1261,6 +1262,24 @@
     -2.2
    ],
    "size": 0.8
+  },
+  {
+   "id": "workshop.door1",
+   "sprite": "thing_door",
+   "at": [
+    53.4,
+    -11.92
+   ],
+   "size": 2.0
+  },
+  {
+   "id": "workshop.door2",
+   "sprite": "thing_door",
+   "at": [
+    59.4,
+    -11.92
+   ],
+   "size": 2.0
   }
  ],
  "homes": [

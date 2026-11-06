@@ -16,6 +16,7 @@
   "thing_bush": "textures/thing_bush.png",
   "thing_cart": "textures/thing_cart.png",
   "thing_city_far": "textures/thing_city_far.png",
+  "thing_column": "textures/thing_column.png",
   "thing_cross": "textures/thing_cross.png",
   "thing_cypress": "textures/thing_cypress.png",
   "thing_dais": "textures/thing_dais.png",
@@ -1014,6 +1015,42 @@
     -7.6
    ],
    "size": 2.0
+  },
+  {
+   "id": "temple.col1",
+   "sprite": "thing_column",
+   "at": [
+    -7.4,
+    -11.9
+   ],
+   "size": 4.6
+  },
+  {
+   "id": "temple.col2",
+   "sprite": "thing_column",
+   "at": [
+    7.4,
+    -11.9
+   ],
+   "size": 4.6
+  },
+  {
+   "id": "temple.col3",
+   "sprite": "thing_column",
+   "at": [
+    -7.85,
+    -6.6
+   ],
+   "size": 4.6
+  },
+  {
+   "id": "temple.col4",
+   "sprite": "thing_column",
+   "at": [
+    7.85,
+    -6.6
+   ],
+   "size": 4.6
   },
   {
    "id": "grove.olive1",

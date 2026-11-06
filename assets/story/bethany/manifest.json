@@ -83,6 +83,14 @@
    ],
    "metres": 1.0
   },
+  "thing_crenels": {
+   "file": "textures/thing_crenels.png",
+   "size": [
+    896,
+    56
+   ],
+   "metres": 1.0
+  },
   "thing_donkey": {
    "file": "textures/thing_donkey.png",
    "size": [

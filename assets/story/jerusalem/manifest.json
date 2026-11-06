@@ -131,6 +131,14 @@
    ],
    "metres": 1.0
   },
+  "thing_column": {
+   "file": "textures/thing_column.png",
+   "size": [
+    96,
+    516
+   ],
+   "metres": 1.0
+  },
   "thing_cross": {
    "file": "textures/thing_cross.png",
    "size": [

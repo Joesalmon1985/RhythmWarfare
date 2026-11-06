@@ -115,6 +115,14 @@
    ],
    "metres": 1.0
   },
+  "thing_door": {
+   "file": "textures/thing_door.png",
+   "size": [
+    112,
+    224
+   ],
+   "metres": 1.0
+  },
   "thing_fire": {
    "file": "textures/thing_fire.png",
    "size": [

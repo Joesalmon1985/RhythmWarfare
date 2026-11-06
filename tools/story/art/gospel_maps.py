@@ -111,7 +111,8 @@ _v("rocks", "galilee_shore", 2, "day", "floor_dust", "wall_rock", "wall_rock", "
 _v("workshop", "galilee_shore", 3, "morning", "floor_clay", "wall_door", "wall_limestone", "wall_limestone", "wall_limestone",
    [T("bench", "thing_workbench", -3.2, -8.6, 1.3), T("planks", "thing_planks", -6.4, -7.0, 1.8), T("cart", "thing_cart", 5.0, -6.6, 1.6), T("jars", "thing_jars", 6.6, -9.6, 0.9),
     T("house", "thing_house_a", -6.6, -10.6, 3.4), T("stool", "thing_stool", -1.4, -6.4, 0.5), T("olive", "thing_olive_small", 7.0, -2.4, 2.6), T("grass1", "thing_grass", 0.4, -2.6, 0.5),
-    T("hay", "thing_hay", 3.2, -2.2, 0.8)],
+    T("hay", "thing_hay", 3.2, -2.2, 0.8),
+    T("door1", "thing_door", -0.6, -11.92, 2.0), T("door2", "thing_door", 5.4, -11.92, 2.0)],
    [P("c1", "carpenter", -2.2, -6.8, "check"), P("n1", "villager", 2.6, -9.0, "stand"), P("k1", "child", -5.0, -3.4, "stand"), P("v1", "woman", 0.2, -4.2, "watch")],
    exits={"up": (0.0, -10.0)})
 
@@ -129,7 +130,8 @@ _v("lakeshore", "hillside", 0, "day", "floor_shingle", "wall_hill", "wall_hill",
 _v("street", "hillside", 1, "day", "floor_cobble", "wall_limestone", "wall_door", "wall_limestone", "wall_limestone",
    [T("houseA", "thing_house_a", -5.4, -10.8, 3.6), T("houseB", "thing_house_b", 5.2, -10.8, 3.2), T("caravan", "thing_caravan", 1.0, -11.2, 2.2), T("jars", "thing_jars", -6.8, -4.4, 0.9),
     T("donkey", "thing_donkey", 6.4, -5.4, 1.3), T("mat", "thing_hay", -1.4, -6.0, 0.55), T("palm", "thing_palm", 7.2, -9.4, 5.0), T("bench", "thing_bench", -4.6, -2.0, 0.7),
-    T("jar2", "thing_jar", 3.0, -2.0, 0.7), T("grass1", "thing_grass", 4.6, -3.4, 0.5)],
+    T("jar2", "thing_jar", 3.0, -2.0, 0.7), T("grass1", "thing_grass", 4.6, -3.4, 0.5),
+    T("door1", "thing_door", -7.85, -9.6, 2.0), T("door2", "thing_door", -7.85, -5.2, 2.0)],
    [P("p1", "villager", -2.4, -4.6, "stand"), P("p2", "woman", -0.4, -4.8, "stand"), P("k1", "child", -1.4, -6.0, "lie"), P("e1", "elder", 2.6, -4.6, "stand"),
     P("v1", "villager", 5.0, -2.6, "watch"), P("v2", "woman", -6.0, -2.2, "stand"), P("v3", "villager", 3.8, -6.8, "stand")])
 
@@ -173,7 +175,8 @@ _v("hill_dusk", "bethany", 1, "dusk", "floor_grass", "wall_hill", "wall_hill", "
 
 _v("gate", "bethany", 2, "day", "floor_road", "wall_city", "wall_limestone", "wall_limestone", "wall_limestone",
    [T("gate", "thing_citygate", 0.0, -11.0, 7.5), T("palm1", "thing_palm", -6.6, -7.0, 5.4), T("palm2", "thing_palm", 6.6, -7.0, 5.4), T("palm3", "thing_palm", -7.0, -2.4, 5.0), T("palm4", "thing_palm", 7.0, -2.0, 5.0),
-    T("stairs", "thing_stairs", -5.4, -9.2, 2.4), T("olive", "thing_olive", 6.0, -10.0, 3.6), T("grass1", "thing_grass", 2.6, -2.6, 0.5), T("jar", "thing_jar", -3.6, -2.4, 0.7)],
+    T("stairs", "thing_stairs", -5.4, -9.2, 2.4), T("olive", "thing_olive", 6.0, -10.0, 3.6), T("grass1", "thing_grass", 2.6, -2.6, 0.5), T("jar", "thing_jar", -3.6, -2.4, 0.7),
+    T("crenA", "thing_crenels", -4.0, -11.96, 0.5, y=4.75), T("crenB", "thing_crenels", 4.0, -11.96, 0.5, y=4.75)],
    [P(f"cr{i}", w, x, z, "wave") for i, (w, x, z) in enumerate([("villager", -4.6, -3.0), ("woman", -2.8, -4.0), ("villager", -0.6, -3.0), ("elder", 1.6, -3.6), ("woman", 3.4, -3.0),
                                                               ("villager", 5.0, -4.2), ("villager", -6.0, -5.0), ("woman", 6.4, -5.8)], 1)]
    + [P("pr1", "priest", -1.6, -8.2, "stand"), P("pr2", "priest", 1.6, -8.2, "stand"), P("k1", "child", 0.2, -1.4, "stand")],
@@ -187,7 +190,8 @@ _v("temple", "jerusalem", 0, "day", "floor_flag", "wall_columns", "wall_columns"
     T("pillar4", "thing_pillar", 5.8, -3.4, 5.0),
     T("t1_up", "thing_table_coins", -3.8, -6.4, 1.1, piece="t1_up"), T("t2_up", "thing_table_coins", 0.0, -7.0, 1.1, piece="t2_up"), T("t3_up", "thing_table_coins", 3.8, -6.4, 1.1, piece="t3_up"),
     T("t1_over", "thing_table_over", -3.8, -6.4, 1.1, piece="t1_over"), T("t2_over", "thing_table_over", 0.0, -7.0, 1.1, piece="t2_over"), T("t3_over", "thing_table_over", 3.8, -6.4, 1.1, piece="t3_over"),
-    T("jar1", "thing_jar", -2.0, -4.4, 0.7), T("brazier", "thing_brazier", 2.0, -4.2, 1.0), T("spears", "thing_spears", 7.0, -7.6, 2.0)],
+    T("jar1", "thing_jar", -2.0, -4.4, 0.7), T("brazier", "thing_brazier", 2.0, -4.2, 1.0), T("spears", "thing_spears", 7.0, -7.6, 2.0),
+    T("col1", "thing_column", -7.4, -11.9, 4.6), T("col2", "thing_column", 7.4, -11.9, 4.6), T("col3", "thing_column", -7.85, -6.6, 4.6), T("col4", "thing_column", 7.85, -6.6, 4.6)],
    [P("mc1", "merchant", -3.8, -8.0, "stand"), P("mc2", "merchant", 0.0, -8.6, "stand"), P("mc3", "merchant", 3.8, -8.0, "stand"), P("pr1", "priest", -6.4, -6.0, "stand"), P("pr2", "priest", 6.4, -5.6, "stand"),
     P("g1", "soldier", -2.0, -10.4, "stand"), P("g2", "soldier", 2.0, -10.4, "stand"), P("v1", "villager", -1.6, -3.0, "watch"), P("v2", "woman", 1.8, -2.6, "watch")],
    exits={"up": (-5.2, -7.8), "left": (-6.4, -2.0), "right": (6.2, -8.2)}, wall_h=5.2)

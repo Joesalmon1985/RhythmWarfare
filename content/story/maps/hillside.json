@@ -15,6 +15,7 @@
   "thing_bush": "textures/thing_bush.png",
   "thing_caravan": "textures/thing_caravan.png",
   "thing_donkey": "textures/thing_donkey.png",
+  "thing_door": "textures/thing_door.png",
   "thing_fire": "textures/thing_fire.png",
   "thing_fishrack": "textures/thing_fishrack.png",
   "thing_flowers": "textures/thing_flowers.png",
@@ -1096,6 +1097,24 @@
     -3.4
    ],
    "size": 0.5
+  },
+  {
+   "id": "street.door1",
+   "sprite": "thing_door",
+   "at": [
+    10.15,
+    -9.6
+   ],
+   "size": 2.0
+  },
+  {
+   "id": "street.door2",
+   "sprite": "thing_door",
+   "at": [
+    10.15,
+    -5.2
+   ],
+   "size": 2.0
   },
   {
    "id": "slope.hill",

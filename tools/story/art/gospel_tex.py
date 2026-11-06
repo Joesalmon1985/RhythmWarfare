@@ -1071,9 +1071,13 @@ def _glow(rgb, az, el, rx, ry, col, k):
     return rgb + px.hexc(col)[None, None, :] * (np.clip(1 - d, 0, 1) ** 2 * k)[..., None]
 
 
+_LIGHTS = []  # discs painted since the last _finish: the sun keeps its full brightness when the sky is graded down
+
+
 def _disc(rgb, az, el, r, col, edge=None):
     X, Y = G(SW, SH)
     d = np.hypot(wrapd(X, _az(az), SW), Y - _el(el))
+    _LIGHTS.append(d <= r)
     if edge is not None:
         rgb = np.where(((d > r) & (d <= r + 1.0))[..., None], px.hexc(edge)[None, None, :], rgb)
     return np.where((d <= r)[..., None], px.hexc(col)[None, None, :], rgb)
@@ -1208,7 +1212,11 @@ def _ground(rgb, top_col, bot_col, seed, spec_col=None, density=0.0, water=False
 def _finish(rgb, levels: int = 20, gain: float = 1.0) -> np.ndarray:
     """gain: the exposure of the strip (the sky is not lit by the sector, so a daylight sky is graded down to the style guide's value range)."""
     b = BAYER[np.arange(SH)[:, None] % 8, np.arange(SW)[None, :] % 8][..., None]
-    v = np.clip(rgb * gain, 0.04, 0.93) * (levels - 1) + b
+    g = np.full((SH, SW, 1), gain, np.float32)
+    for m in _LIGHTS:
+        g[m] = 1.0
+    _LIGHTS.clear()
+    v = np.clip(rgb * g, 0.04, 0.93) * (levels - 1) + b
     return (np.clip(np.round(v), 0, levels - 1) / (levels - 1) * 255 + 0.5).astype(np.uint8)
 
 

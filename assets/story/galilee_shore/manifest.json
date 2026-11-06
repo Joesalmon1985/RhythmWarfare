@@ -99,6 +99,14 @@
    ],
    "metres": 1.0
   },
+  "thing_door": {
+   "file": "textures/thing_door.png",
+   "size": [
+    112,
+    224
+   ],
+   "metres": 1.0
+  },
   "thing_dove": {
    "file": "textures/thing_dove.png",
    "size": [

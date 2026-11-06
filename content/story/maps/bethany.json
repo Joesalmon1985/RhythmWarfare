@@ -12,6 +12,7 @@
   "thing_basket_full": "textures/thing_basket_full.png",
   "thing_bush": "textures/thing_bush.png",
   "thing_citygate": "textures/thing_citygate.png",
+  "thing_crenels": "textures/thing_crenels.png",
   "thing_donkey": "textures/thing_donkey.png",
   "thing_flowers": "textures/thing_flowers.png",
   "thing_grass": "textures/thing_grass.png",
@@ -785,6 +786,26 @@
     -2.4
    ],
    "size": 0.7
+  },
+  {
+   "id": "gate.crenA",
+   "sprite": "thing_crenels",
+   "at": [
+    32.0,
+    -11.96
+   ],
+   "size": 0.5,
+   "y": 4.75
+  },
+  {
+   "id": "gate.crenB",
+   "sprite": "thing_crenels",
+   "at": [
+    40.0,
+    -11.96
+   ],
+   "size": 0.5,
+   "y": 4.75
   }
  ],
  "homes": [
