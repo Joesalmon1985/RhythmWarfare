@@ -43,6 +43,7 @@ shots() {  # node flags cam name:seconds ...   (one Godot run per entrance and c
 PHASE_S=$(python3 -c "print(64*60/174)")
 # entrance       scene              flags          close camera (x:z:yaw:pitch, looking at the entrance and its herald)   routes from the Warehouse (- none)
 while read -r ent node flags cam via; do
+  [[ "$ent" == \#* ]] && continue  # (a comment line of the list)
   if [ "$via" = "-" ]; then start="$node"; ROUTES_=""; off=0; else start=warehouse; ROUTES_="$via"; off=$(python3 -c "print(len('$via'.split(','))*$PHASE_S)"); fi
   t0=$(python3 -c "print(round($off+3.0,2))"); t1=$(python3 -c "print(round($off+19.0,2))")
   ROUTES_="$ROUTES_" RW_RUN_START_="$start" shots "$start" "$flags" - "${TAG}_${ent}_start:$t0" "${TAG}_${ent}_route:$t1"
@@ -54,5 +55,16 @@ gospel_star    warehouse.balcony  wh_saw_floor   -7.5:1.4:90:6     up
 squadron_radio warehouse.booth    -              0.6:-4.6:0:4      up,left
 ember_glass    warehouse.bar      wh_vip_pass    7.6:2.2:-125:0    right
 chill_wizard   warehouse.chill    -              -                 right,right
+# Mental Hospital (N2.4)
+ward_bassment  ward               -              0.9:2.0:0:3       right,right,up,up,right,up,up,right
+ward_gospel    ward               -              2.5:2.0:0:3       right,right,up,up,right,up,up,right
+ward_squadron  ward               -              4.1:2.0:0:3       right,right,up,up,right,up,up,right
+ward_ember     ward               -              5.4:2.0:0:3       right,right,up,up,right,up,up,right
+ward_art_bassment ward.art           -              36.0:7.0:8:2      right,right,up,up,right,up,up,right,right
+ward_dorm_gospel ward.dorm          -              26.0:13.0:30:2    right,right,up,up,right,up,up,right,up
+ward_corridor_squadron ward.corridor      -              20.0:5.0:124:2    right,right,up,up,right,up,up,right,right,up
+ward_courtyard_ember ward.courtyard     -              55.5:6.5:-46:2    right,right,up,up,right,up,up,right,right,up,up
+ward_late_treat_bassment ward_late.treat    -              14.4:10.4:-90:2   right,right,up,up,right,up,up,left,up,left,up,up,right,left
+ward_late_dorm_gospel ward_late.dorm     -              26.0:13.0:30:2    right,right,up,up,right,up,up,left,up,left,up,up,right,right
 LIST
 rm -rf "$TMP"

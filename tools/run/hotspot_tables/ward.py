@@ -25,13 +25,13 @@ ob("ward", "cards", P(2.4, 0.5, 3.0), "beckon",
 # ---- the four quest entrances of the hub (work package N2.4; docs/narrative/N2_2_ROUTER.md, docs/art/HERALDS.md): secrets that pulse, ungated, taken at the lap's end through the port, never the default,
 # repeatable; a failure flickers out (-4) and the default exit takes over. Four lit gates in the back wall of the day room, each in its quest's colour with its herald beside it; the hub stays at
 # 9 choices on show (two exits, orderly, window, cards, these four), under max_hotspots 10.
-sc("ward", "enter_bassment", P(-4.6, 1.1, -2.7), "pulse", out(route="bassment"), out(energy=-4),
+sc("ward", "enter_bassment", P(0.5, 1.1, -2.7), "pulse", out(route="bassment"), out(energy=-4),
    s_text="the cellar hatch behind the radiator, chalk marks round its edge: the Bassment (route bassment)", f_text="the hatch is stuck fast (-4)")
-sc("ward", "enter_gospel", P(-2.2, 1.1, -2.7), "pulse", out(route="path:gospel"), out(energy=-4),
+sc("ward", "enter_gospel", P(2.1, 1.1, -2.7), "pulse", out(route="path:gospel"), out(energy=-4),
    s_text="the figure of light under a drawn star: the Gospel path (route path:gospel)", f_text="the light goes out (-4)")
-sc("ward", "enter_squadron", P(2.2, 1.1, -2.7), "pulse", out(route="path:squadron"), out(energy=-4),
+sc("ward", "enter_squadron", P(3.7, 1.1, -2.7), "pulse", out(route="path:squadron"), out(energy=-4),
    s_text="the military radio by the cards table: the Mission Count path (route path:squadron)", f_text="the radio crackles out (-4)")
-sc("ward", "enter_ember", P(4.0, 1.1, -2.7), "pulse", out(route="path:ember"), out(energy=-4),
+sc("ward", "enter_ember", P(5.3, 1.1, -2.7), "pulse", out(route="path:ember"), out(energy=-4),
    s_text="an ember in a tea glass: the Ember Road path (route path:ember)", f_text="the ember gutters out (-4)")
 
 exits("ward.art")
@@ -78,22 +78,22 @@ ob("ward.exit", "talent_lamp", T("cage_y"), "glow",
    s_text="the talent stage: a star turn (+10, music variation)", f_text="lights out (-10, music dips)")
 
 # ---- the quest entrances of the side scenes (graph extra_routes): the same shape, so that every scene offers three different destinations.
-sc("ward.art", "enter_bassment", P(46.7, 1.1, 4.6), "pulse", out(route="bassment"), out(energy=-4),
+sc("ward.art", "enter_bassment", P(34.9, 1.1, 0.5), "pulse", out(route="bassment"), out(energy=-4),
    s_text="a hatch in the kiln-room floor, chalk marks round it: the Bassment (route bassment)", f_text="the hatch is stuck fast (-4)")
-sc("ward.dorm", "enter_gospel", P(24.4, 1.1, 16.3), "pulse", out(route="path:gospel"), out(energy=-4),
+sc("ward.dorm", "enter_gospel", P(23.2, 1.1, 8.2), "pulse", out(route="path:gospel"), out(energy=-4),
    s_text="a figure of light in the alcove under a drawn star: the Gospel path (route path:gospel)", f_text="the light goes out (-4)")
 sc("ward.corridor", "enter_squadron", P(16.4, 1.1, 7.85), "pulse", out(route="path:squadron"), out(energy=-4),
    s_text="a military radio on the corridor shelf: the Mission Count path (route path:squadron)", f_text="the radio crackles out (-4)")
-sc("ward.courtyard", "enter_ember", P(58.6, 1.1, -1.7), "pulse", out(route="path:ember"), out(energy=-4),
+sc("ward.courtyard", "enter_ember", P(60.2, 1.1, 2.0), "pulse", out(route="path:ember"), out(energy=-4),
    s_text="an ember in a tea glass on the courtyard wall: the Ember Road path (route path:ember)", f_text="the ember gutters out (-4)")
 
 # ---- the heralds (lead ruling 25, docs/art/HERALDS.md): a character of each quest beside its entrance, gesturing towards it. Scenery of the entrance, never a choice.
 from heralds import herald  # noqa: E402
-herald("dungeon", "ward.enter_bassment", at=(-5.9, -1.9), gate=True)
-herald("gospel", "ward.enter_gospel", at=(-0.95, -2.2), gate=True)
-herald("squadron", "ward.enter_squadron", at=(0.95, -2.2), gate=True)
-herald("ember", "ward.enter_ember", at=(5.4, -0.6), gate=True)
-herald("dungeon", "ward.art.enter_bassment", at=(45.3, 3.4), gate=True)
-herald("gospel", "ward.dorm.enter_gospel", at=(23.0, 13.4), gate=True)
+herald("dungeon", "ward.enter_bassment", at=(1.3, -1.0), gate=True)
+herald("gospel", "ward.enter_gospel", at=(2.8, -0.8), gate=True)
+herald("squadron", "ward.enter_squadron", at=(4.6, -0.2), gate=True)
+herald("ember", "ward.enter_ember", at=(6.2, -0.9), gate=True)
+herald("dungeon", "ward.art.enter_bassment", at=(36.5, 2.2), gate=True)
+herald("gospel", "ward.dorm.enter_gospel", at=(23.0, 10.0), gate=True)
 herald("squadron", "ward.corridor.enter_squadron", at=(14.9, 7.0), gate=True)
-herald("ember", "ward.courtyard.enter_ember", at=(57.2, -0.4), gate=True)
+herald("ember", "ward.courtyard.enter_ember", at=(58.8, 3.4), gate=True)

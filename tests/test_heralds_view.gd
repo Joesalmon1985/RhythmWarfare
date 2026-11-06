@@ -17,7 +17,16 @@ const IN_FRAME := 0.75  # this much of a rectangle's area inside the visible pic
 const FLAGS := {"wh_saw_floor": true, "wh_vip_pass": true}
 ## scene -> the scenes the run passes through to get there from the Warehouse's first scene
 const ROUTES := {"warehouse": [], "warehouse.balcony": ["warehouse.balcony"], "warehouse.booth": ["warehouse.balcony", "warehouse.booth"], "warehouse.bar": ["warehouse.bar"],
-	"warehouse.chill": ["warehouse.bar", "warehouse.chill"]}
+	"warehouse.chill": ["warehouse.bar", "warehouse.chill"],
+	# Mental Hospital (N2.4): the hub and the side scenes of the ward and ward_late worlds, from the Warehouse through the mothership (and the hospital)
+	"ward": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "ward"],
+	"ward.art": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "ward", "ward.art"],
+	"ward.dorm": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "ward", "ward.dorm"],
+	"ward.corridor": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "ward", "ward.art", "ward.corridor"],
+	"ward.courtyard": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "ward", "ward.art", "ward.corridor", "ward.courtyard"],
+	"ward_late.treat": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "hospital", "hospital.corridor", "hospital.dayroom", "hospital.garden", "hospital.exit", "ward_late", "ward_late.treat"],
+	"ward_late.dorm": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "hospital", "hospital.corridor", "hospital.dayroom", "hospital.garden", "hospital.exit", "ward_late", "ward_late.dorm"],
+	}
 
 
 ## One scripted run to `target`: {player: StoryPlayer, t0: the target phase's downbeat, beat, hotspots: the target's herald entrances [{id, herald, early}]}.

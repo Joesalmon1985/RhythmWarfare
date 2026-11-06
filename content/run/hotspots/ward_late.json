@@ -617,9 +617,9 @@
    "map": "mental_hospital",
    "anchor": {
     "pos": [
-     24.4,
+     23.2,
      1.1,
-     16.3
+     8.2
     ]
    },
    "kind": "secret",
@@ -649,11 +649,11 @@
     "quest": "gospel",
     "at": [
      23.0,
-     13.4
+     10.0
     ],
     "toward": [
-     24.4,
-     16.3
+     23.2,
+     8.2
     ],
     "mark_y": 1.8,
     "gate": true
