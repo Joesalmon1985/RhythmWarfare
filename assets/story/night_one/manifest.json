@@ -2545,14 +2545,6 @@
     ],
     "px_scale": 1.0
    },
-   "prop_gospel_star": {
-    "file": "processed/prop_gospel_star.png",
-    "pivot": [
-     80.0,
-     160.0
-    ],
-    "px_scale": 1.0
-   },
    "prop_mop_bucket": {
     "file": "processed/prop_mop_bucket.png",
     "pivot": [
@@ -2565,7 +2557,7 @@
     "file": "processed/prop_radio.png",
     "pivot": [
      72.0,
-     224.0
+     144.0
     ],
     "px_scale": 1.0
    },

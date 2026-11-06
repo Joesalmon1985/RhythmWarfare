@@ -1439,27 +1439,7 @@ def prop_rail():
 
 
 def prop_radio():
-    """The Mission Count's entrance in the booth (1.75 m, 144 x 224): the set below on a flight case, so the dial glows at 1.2 m over the decks."""
-    top = _radio_set()
-    w, h = 144, 224
-    sp = Sprite(w, h)
-    sp.rgb[:144], sp.a[:144] = top[..., :3], top[..., 3]
-    x, y = grid2(w, h)
-    m = box(w, h, 14, 144, 130, h)
-    sp.paint(m, PLATE, 0.32 + _shade_lr(x, 14, 130, 0.15, 0.15) + (noise2(w, h, 8, 375) - 0.5) * 0.25)
-    sp.paint(m & ~box(w, h, 17, 147, 127, h - 3), SILVER, 0.5 + 0.3 * ((y < 146) | (x < 16)))
-    for cx in (14, 123):
-        for cy in (144, h - 7):
-            sp.paint(box(w, h, cx, cy, cx + 7, cy + 7), SILVER, 0.65 + 0.3 * ((x - cx) + (y - cy) < 4))
-    sp.paint(box(w, h, 60, 170, 84, 178), SILVER, 0.55 + 0.3 * (y < 172))
-    sp.paint(box(w, h, 24, 190, 50, 198), WHITE, 0.55)
-    sp.paint(oval(w, h, 72, 147, 40, 2), px.ramp("#3a2a08", "#ffd25a"), np.full((h, w), 0.35))  # the dial's light on the case lid
-    sp.edge()
-    return sp.rgba()
-
-
-def _radio_set():
-    """The radio on its crate (1.1 m, 144 x 144): an olive WW2 field radio standing on an ammunition crate, its canvas strap hanging,
+    """The Mission Count's entrance on the stage at the booth's corner (1.2 m, 144 x 144; the herald pass put it at [2.8, -6.6]): an olive WW2 field radio standing on an ammunition crate, its canvas strap hanging,
     the dial glowing the Squadron's gold (#ffd25a) with the needle across it, two bakelite knobs, a morse key and a headset on the crate, a whip aerial."""
     w = h = 144
     sp = Sprite(w, h)
@@ -1530,32 +1510,6 @@ def prop_ember_glass():
     sp.paint(box(w, h, 20, top - 3, 34, top - 1), MAGENTA, 0.5)
     sp.edge()
     return sp.rgba()
-
-
-def prop_gospel_star():
-    """The Gospel's entrance on the balcony (1.25 m, 160 x 160, drawn additive): a star thrown on the brick by a gobo projector, the Gospel's warm white
-    (#fff0c8): a sharp eight-pointed star of light, a dithered halo, the gobo's ring, the mortar lines showing through as darker streaks."""
-    w = h = 160
-    sp = Sprite(w, h)
-    x, y = grid2(w, h)
-    cx, cy = 79.5, 79.5
-    dx, dy = x - cx, y - cy
-    r = np.hypot(dx, dy)
-    a = np.arctan2(dy, dx)
-    ph = (a / (2 * np.pi) * 8) % 1.0
-    tri = 1 - np.abs(ph - 0.5) * 2  # 1 at a point, 0 between two
-    longp = (np.floor((a / (2 * np.pi) * 8) + 0.5) % 2) == 0
-    star = r < 10 + np.where(longp, 56, 30) * tri ** 2.2
-    halo = r < 74
-    k = np.clip(1 - r / 74.0, 0, 1)
-    LIGHT = px.ramp("#2a2418", "#6a5c40", "#b8a478", "#f0dcae", "#fff0c8", "#fffaf0")
-    sp.paint(halo & dmask(k ** 1.6 * 0.9), LIGHT, 0.15 + 0.35 * k)
-    sp.paint(halo & (np.abs(r - 70) < 1.5) & dmask(np.full((h, w), 0.6)), LIGHT, np.full((h, w), 0.4))
-    sp.paint(star, LIGHT, 0.6 + 0.4 * np.clip(1 - r / 60.0, 0, 1))
-    mortar = (((y + 2) % 9) < 1)
-    sp.paint(star & mortar & (r > 14), LIGHT, np.full((h, w), 0.5))
-    sp.paint(r < 6, LIGHT, np.full((h, w), 1.0))
-    return sp.rgba()  # (additive: no darker edge, the dark pixels add nothing)
 
 
 def prop_cellar_hatch():
@@ -1713,7 +1667,7 @@ def prop_silhouette(kind: str, up: bool) -> np.ndarray:
 
 PROPS = {  # id -> (drawing, pivot as a fraction of the size or None, metres the sprite's height stands for)
     "prop_truss_tower": prop_truss_tower, "prop_stack": prop_stack, "prop_stack_pair": prop_stack_pair, "prop_decks": prop_decks,
-    "prop_rail": prop_rail, "prop_radio": prop_radio, "prop_ember_glass": prop_ember_glass, "prop_gospel_star": prop_gospel_star,
+    "prop_rail": prop_rail, "prop_radio": prop_radio, "prop_ember_glass": prop_ember_glass,
     "prop_cellar_hatch": prop_cellar_hatch, "prop_flight_cases": prop_flight_cases, "prop_mop_bucket": prop_mop_bucket, "prop_crates": prop_crates,
     "prop_coffee_table": prop_coffee_table,
 }
