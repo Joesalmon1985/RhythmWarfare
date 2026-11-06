@@ -4,7 +4,7 @@ extends TestCase
 ## a herald stands in the crowd of its room only while its entrance is on offer.
 
 const BEAT := 60.0 / 174.0
-const ENTRANCES := {"warehouse.wizard": "dungeon", "warehouse.balcony.star": "gospel", "warehouse.booth.radio": "squadron", "warehouse.bar.ember": "ember"}
+const ENTRANCES := {"warehouse.wizard": "dungeon", "warehouse.balcony.star": "gospel", "warehouse.booth.radio": "squadron", "warehouse.bar.ember": "ember", "warehouse.chill.wizard": "dungeon"}
 
 
 func _all_hotspots() -> Array:
@@ -39,7 +39,7 @@ func test_the_four_entrances_of_today_carry_their_quests_herald_and_every_block_
 		var errs := StoryHeralds.validate(h["herald"], str(h["id"]))
 		assert_eq(errs, [], "%s: the herald block is good" % h["id"])
 		seen[str(h["id"])] = str(h["herald"]["quest"])
-	assert_eq(seen, ENTRANCES, "the Floor wizard, the balcony star, the booth radio and the bar's ember, each with its own quest's herald")
+	assert_eq(seen, ENTRANCES, "the Floor wizard, the balcony star, the booth radio, the bar's ember and the chill-out's wizard, each with its own quest's herald")
 	var route_of := {"dungeon": "1", "gospel": "path:gospel", "squadron": "path:squadron", "ember": "path:ember"}
 	for h in _all_hotspots():
 		if (h as Dictionary).has("herald"):
@@ -52,11 +52,15 @@ func test_validate_refuses_a_bad_block() -> void:
 	assert_false(StoryHeralds.validate({"quest": "gospel", "at": [0, 0], "toward": [1, 1], "route": "x"}, "x").is_empty(), "a herald has no routes or other fields")
 	assert_false(StoryHeralds.validate({"quest": "gospel", "self": "wizard_floor", "toward": [1, 1]}, "x").is_empty(), "only the wizard has billboard frames")
 	assert_eq(StoryHeralds.validate({"quest": "ember", "at": [0, 0], "toward": [1, 1], "mark_y": 1.5}, "x"), [])
+	assert_eq(StoryHeralds.validate({"quest": "gospel", "at": [0, 0], "toward": [1, 1], "mark_y": 2.55, "gate": true}, "x"), [], "a gate: a lit doorway at the entrance")
+	assert_false(StoryHeralds.validate({"quest": "gospel", "at": [0, 0], "toward": [1, 1], "gate": "yes"}, "x").is_empty(), "gate is a bool")
+	assert_false(StoryHeralds.validate({"quest": "gospel", "at": [0, 0], "toward": [1, 1], "gate": true, "mark_at": [2, 2]}, "x").is_empty(), "a gate stands under its own mark")
+	assert_eq(StoryHeralds.validate({"quest": "dungeon", "self": "wizard_chill", "at": [0, 0], "toward": [1, 1], "mark_at": [0, 0], "mark_y": 2.1}, "x"), [], "a self herald may carry the mark over himself")
 
 
 func test_a_herald_is_never_a_choice_the_counts_and_the_routes_are_as_without_it() -> void:
 	var d := RunData.load_default()
-	for scene in ["warehouse", "warehouse.balcony", "warehouse.booth", "warehouse.bar"]:
+	for scene in ["warehouse", "warehouse.balcony", "warehouse.booth", "warehouse.bar", "warehouse.chill"]:
 		var with := RunHotspots.new(d, {"wh_saw_floor": true, "wh_vip_pass": true}, {})
 		with.begin_scene(scene, 60.0)
 		var bare := RunData.load_default()

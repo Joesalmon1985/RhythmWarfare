@@ -132,6 +132,10 @@
    "herald": {
     "quest": "dungeon",
     "self": "wizard_floor",
+    "at": [
+     -5.2,
+     7.4
+    ],
     "toward": [
      -7.6,
      6.5
@@ -819,6 +823,23 @@
    },
    "default": false,
    "repeatable": true,
+   "herald": {
+    "quest": "dungeon",
+    "self": "wizard_chill",
+    "at": [
+     8.4,
+     9.7
+    ],
+    "toward": [
+     10.5,
+     6.55
+    ],
+    "mark_y": 2.1,
+    "mark_at": [
+     8.4,
+     9.7
+    ]
+   },
    "staging": {
     "archetype": "figure",
     "current_tex": "wizard_happy",
@@ -1231,9 +1252,9 @@
    "map": "night_one",
    "anchor": {
     "pos": [
-     -10.4,
-     1.8,
-     0.8
+     -10.75,
+     1.2,
+     0.5
     ]
    },
    "kind": "secret",
@@ -1272,14 +1293,15 @@
    "herald": {
     "quest": "gospel",
     "at": [
-     -10.646,
-     2.075
+     -10.05,
+     -0.55
     ],
     "toward": [
-     -10.4,
-     0.8
+     -10.75,
+     0.5
     ],
-    "mark_y": 2.85
+    "mark_y": 1.8,
+    "gate": true
    }
   },
   {
@@ -1289,9 +1311,9 @@
    "map": "night_one",
    "anchor": {
     "pos": [
-     1.5,
-     1.2,
-     -9.4
+     2.8,
+     0.6,
+     -6.6
     ]
    },
    "kind": "secret",
@@ -1327,14 +1349,14 @@
    "herald": {
     "quest": "squadron",
     "at": [
-     1.75,
-     -8.15
+     3.7,
+     -5.6
     ],
     "toward": [
-     1.5,
-     -9.4
+     2.8,
+     -6.6
     ],
-    "mark_y": 2.25
+    "mark_y": 1.65
    }
   },
   {
@@ -1344,9 +1366,9 @@
    "map": "night_one",
    "anchor": {
     "pos": [
-     10.0,
-     1.0,
-     5.0
+     11.75,
+     1.05,
+     3.75
     ]
    },
    "kind": "secret",
@@ -1385,14 +1407,14 @@
    "herald": {
     "quest": "ember",
     "at": [
-     10.695,
-     3.904
+     10.2,
+     2.9
     ],
     "toward": [
-     10.0,
-     5.0
+     11.75,
+     3.75
     ],
-    "mark_y": 2.05
+    "mark_y": 2.1
    }
   }
  ]

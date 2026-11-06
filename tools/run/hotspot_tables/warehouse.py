@@ -73,19 +73,23 @@ ch("warehouse.exit", "bouncer_vip", A("d01"), "beckon",
 # Each takes the place of something in its room's 2 to 4 rule: the star appears once the floor has been seen from the rail, the ember once the stranger's VIP pass is in the pocket, the radio always (the booth has room).
 # The route is "path:<id>"; RunData leaves a portal out of play until content/paths/<id>/run.json exists (RW_PATH_REMAP=gospel=stub plays the stub path through the balcony star).
 w = "warehouse"
-_portal = sc("warehouse.balcony", "star", P(-10.4, 1.8, 0.8), "pulse", out(route="path:gospel"), out(energy=-4),
+# (the entrances stand where the camera's rail can see them: docs/art/HERALDS.md, the visibility rule. The star is a lit doorway in the balcony's back wall, seen from the far end
+# of the balcony and over the shoulder from its door; the radio stands on the stage at the booth's corner, in front of the decks rather than behind them; the ember is a glass
+# on the bar counter, clear of the people by the curtain.)
+_portal = sc("warehouse.balcony", "star", P(-10.75, 1.2, 0.5), "pulse", out(route="path:gospel"), out(energy=-4),
    s_text="the figure under the projected star: the Gospel path (route path:gospel, house 124)", f_text="the star flickers out (-4)", av=avail(all=["wh_saw_floor"]))
 _portal["look"]["finished"] = finished("gospel")
-_portal = sc("warehouse.booth", "radio", P(1.5, 1.2, -9.4), "pulse", out(route="path:squadron"), out(energy=-4),
+_portal = sc("warehouse.booth", "radio", P(2.8, 0.6, -6.6), "pulse", out(route="path:squadron"), out(energy=-4),
    s_text="the flickering military radio and the bomber's shadow: the Mission Count path (route path:squadron, dubstep 140)", f_text="the radio crackles out (-4)")
 _portal["look"]["finished"] = finished("squadron")
-_portal = sc("warehouse.bar", "ember", P(10.0, 1.0, 5.0), "pulse", out(route="path:ember"), out(energy=-4),
+_portal = sc("warehouse.bar", "ember", P(11.75, 1.05, 3.75), "pulse", out(route="path:ember"), out(energy=-4),
    s_text="a warm ember in a glass: the Ember Road path (route path:ember, psytrance 145)", f_text="the ember gutters out (-4)", av=avail(all=["wh_vip_pass"]))
 _portal["look"]["finished"] = finished("ember")
 
 # ---- the heralds (lead ruling 25, docs/art/HERALDS.md): a character of each quest at its entrance, gesturing towards it. Scenery of the entrance, never a choice.
 from heralds import herald  # noqa: E402
 herald("dungeon", "warehouse.wizard", self_thing=True, toward=T("sign_wc_door"))  # the wizard IS the entrance: his staff held, his arm pointing to the corridor and the hatch
-herald("gospel", "warehouse.balcony.star", side="left")      # the shepherd of the first night, beside the star
-herald("squadron", "warehouse.booth.radio", at=(1.75, -8.15))  # the Gunner, at the booth's corner by the radio (the booth is too tight for a side)
-herald("ember", "warehouse.bar.ember", side="left")          # Bram, beside the glass with the Ember
+herald("gospel", "warehouse.balcony.star", at=(-10.05, -0.55), gate=True)  # the shepherd of the first night, beside the lit doorway (the star has no thing of its own)
+herald("squadron", "warehouse.booth.radio", at=(3.7, -5.6))  # the Gunner, on the stage beside the radio, seen from the decks
+herald("ember", "warehouse.bar.ember", at=(10.2, 2.9))  # Bram, under the bar's lamp, pointing to the glass on the counter
+herald("dungeon", "warehouse.chill.wizard", self_thing=True, toward=W("chill_door"), mark_over_self=True)  # the chill-out's wizard: the Bassment's mark over his hat, his arm to the way out
