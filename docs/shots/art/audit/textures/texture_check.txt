@@ -1,0 +1,722 @@
+map texture size colours smooth sat px/m flags
+airfield ceil_beams 64x64 14 0.00 0.50 32 LOWDENS
+airfield ceil_canvas 64x64 8 0.00 0.30 32 LOWDENS
+airfield ceil_fuselage 64x64 11 0.42 0.49 43 LOWDENS
+airfield ceil_hangar 64x64 8 0.00 0.23 26 LOWDENS
+airfield ceil_plaster 64x64 15 0.00 0.44 26 LOWDENS
+airfield floor_boards 64x64 11 0.00 0.42 32 LOWDENS
+airfield floor_concrete 64x64 15 0.00 0.13 26 LOWDENS
+airfield floor_dust 64x64 12 0.00 0.70 21 LOWDENS
+airfield floor_lino 64x64 13 0.00 0.38 32 LOWDENS
+airfield floor_metal 64x64 9 0.01 0.20 43 LOWDENS
+airfield sky_day 256x64 6 0.00 0.15 256 
+airfield thing_board 128x128 39 0.01 0.40 128 
+airfield thing_bomber_nose 256x128 60 0.03 0.29 256 
+airfield thing_certificate 128x128 22 0.00 0.43 128 
+airfield thing_cot_empty 128x128 69 0.03 0.34 128 
+airfield thing_cot_ward 128x128 56 0.08 0.19 128 
+airfield thing_crate_stack 128x128 49 0.01 0.45 128 
+airfield thing_desk_lamp 128x128 39 0.02 0.52 128 
+airfield thing_desk_office 128x128 42 0.01 0.47 128 
+airfield thing_door_office 128x128 37 0.00 0.52 128 
+airfield thing_door_open_light 128x128 27 0.10 0.32 128 
+airfield thing_drip_stand 128x128 49 0.02 0.21 128 
+airfield thing_emergency_box 128x128 32 0.00 0.65 128 
+airfield thing_filing_cabinet 128x128 28 0.01 0.12 128 
+airfield thing_flak_burst 128x128 468 0.15 0.54 128 
+airfield thing_fuel_drums 128x128 52 0.01 0.40 128 
+airfield thing_hangar_front 128x128 46 0.04 0.37 128 
+airfield thing_instrument_panel 128x128 37 0.22 0.46 128 
+airfield thing_jeep 128x128 60 0.02 0.30 128 
+airfield thing_kitchen_hatch 128x128 57 0.01 0.49 128 
+airfield thing_ladder 128x128 26 0.01 0.49 128 
+airfield thing_lamp_hang 128x128 45 0.05 0.48 128 
+airfield thing_lamp_red 128x128 32 0.03 0.50 128 
+airfield thing_ledger 128x128 72 0.00 0.45 128 
+airfield thing_nose_glass 128x128 24 0.15 0.53 128 
+airfield thing_release_lever 128x128 52 0.02 0.33 128 
+airfield thing_sandbags 128x128 31 0.00 0.40 128 
+airfield thing_scales 128x128 34 0.00 0.67 128 
+airfield thing_screen_cloth 128x128 16 0.00 0.24 128 
+airfield thing_shelves_tins 128x128 83 0.01 0.38 128 
+airfield thing_sign_ledgerless 128x128 23 0.00 0.49 128 
+airfield thing_stamp_big 128x128 35 0.01 0.61 128 
+airfield thing_stove 128x128 52 0.02 0.32 128 
+airfield thing_table_maps 128x128 77 0.01 0.56 128 
+airfield thing_tent_flap 128x128 28 0.00 0.25 128 
+airfield thing_truck 256x128 68 0.01 0.37 256 
+airfield thing_window_hut 128x128 24 0.00 0.47 128 
+airfield thing_window_office 128x128 26 0.00 0.36 128 
+airfield thing_windsock 128x128 37 0.01 0.37 128 
+airfield wall_berm 64x64 17 0.00 0.44 26 LOWDENS
+airfield wall_bomber 64x64 11 0.51 0.46 43 LOWDENS
+airfield wall_hangar 64x64 14 0.00 0.35 26 LOWDENS
+airfield wall_hut 64x64 11 0.00 0.37 32 LOWDENS
+airfield wall_office 64x64 17 0.00 0.46 26 LOWDENS
+airfield wall_tent 64x64 13 0.00 0.29 32 LOWDENS
+ash_land ceil_cavern 64x64 8 0.40 0.35 16 LOWDENS
+ash_land ceil_hot 64x64 7 0.00 0.92 21 LOWDENS
+ash_land ceil_mist_teal 128x128 8 0.00 0.80 21 LOWDENS
+ash_land ceil_smoke 128x128 258 0.11 0.21 21 LOWDENS
+ash_land floor_ash 64x64 10 0.00 0.20 21 LOWDENS
+ash_land floor_basalt 64x64 116 0.10 0.21 26 LOWDENS
+ash_land floor_camp 64x64 8 0.00 0.08 21 LOWDENS
+ash_land floor_cavern 64x64 7 0.54 0.35 21 LOWDENS
+ash_land floor_marsh 64x64 8 0.00 0.80 21 LOWDENS
+ash_land floor_mud 64x64 12 0.22 0.34 21 LOWDENS
+ash_land floor_pool 64x64 9 0.27 0.82 21 LOWDENS
+ash_land floor_red_rock 64x64 10 0.00 0.43 21 LOWDENS
+ash_land floor_stair 64x64 217 0.19 0.16 32 LOWDENS
+ash_land floor_vent 64x64 7 0.00 0.89 21 LOWDENS
+ash_land piece_gate_mouths 128x128 20 0.04 0.65 128 
+ash_land piece_light_shaft 128x128 80 0.32 0.08 128 
+ash_land piece_long_shadow 256x128 1220 0.36 0.47 256 
+ash_land piece_white_swell 256x128 5 0.05 0.01 256 
+ash_land sky_ash 256x64 932 0.32 0.52 256 
+ash_land thing_banner_rider 128x128 20 0.11 0.12 128 
+ash_land thing_bell 128x128 37 0.04 0.45 128 
+ash_land thing_bell_row 128x128 43 0.03 0.56 128 
+ash_land thing_brazier_red 128x128 28 0.05 0.36 128 
+ash_land thing_camp_fire 128x128 33 0.00 0.47 128 
+ash_land thing_chain_post 128x128 18 0.08 0.24 128 
+ash_land thing_dead_tree 128x128 13 0.20 0.22 128 
+ash_land thing_ember_altar 128x128 38 0.05 0.50 128 
+ash_land thing_gate_black 128x128 25 0.24 0.37 128 
+ash_land thing_glass_mountain 128x128 20 0.49 0.35 128 
+ash_land thing_marsh_light 128x128 12 0.02 0.64 128 
+ash_land thing_pool_stones 128x128 19 0.16 0.47 128 
+ash_land thing_reed_clump 128x128 30 0.04 0.73 128 
+ash_land thing_stake 128x128 25 0.05 0.39 128 
+ash_land thing_stalagmite_red 128x128 12 0.45 0.30 128 
+ash_land thing_tent 128x128 27 0.03 0.20 128 
+ash_land thing_tower_light 128x128 21 0.03 0.32 128 
+ash_land thing_vent_glow 128x128 19 0.02 0.53 128 
+ash_land thing_wall_crack 128x128 18 0.10 0.43 128 
+ash_land wall_ash_dune 128x128 350 0.12 0.21 43 LOWDENS
+ash_land wall_cavern 128x128 8 0.10 0.33 43 LOWDENS
+ash_land wall_cliff 128x128 59 0.00 0.34 43 LOWDENS
+ash_land wall_gate 128x128 309 0.07 0.46 43 LOWDENS
+ash_land wall_obsidian 128x128 11 0.07 0.38 43 LOWDENS
+ash_land wall_reed 128x128 388 0.20 0.72 43 LOWDENS
+ash_land wall_tent 128x128 295 0.22 0.21 51 
+ash_land wall_vent 128x128 9 0.00 0.86 43 LOWDENS
+bassment ceil_arch 128x128 6 0.02 0.54 51 
+bassment ceil_beams 64x64 4 0.00 0.70 32 LOWDENS
+bassment ceil_crystal 64x64 6 0.00 0.72 21 LOWDENS
+bassment ceil_pipes 128x128 7 0.00 0.35 51 
+bassment ceil_rock 64x64 3 0.00 0.30 21 LOWDENS
+bassment fig_barrel_knight_attack 128x128 14 0.00 0.56 128 
+bassment fig_barrel_knight_idle 128x128 13 0.00 0.36 128 
+bassment fig_barrel_knight_struck 128x128 12 0.00 0.19 128 
+bassment fig_bouncer_attack 128x128 13 0.00 0.60 128 
+bassment fig_bouncer_idle 128x128 12 0.00 0.48 128 
+bassment fig_bouncer_struck 128x128 11 0.00 0.25 128 
+bassment fig_cable_eel_attack 128x128 8 0.00 0.47 128 
+bassment fig_cable_eel_idle 128x128 7 0.00 0.45 128 
+bassment fig_cable_eel_struck 128x128 6 0.00 0.24 128 
+bassment fig_echo_attack 128x128 7 0.00 0.44 128 
+bassment fig_echo_idle 128x128 6 0.00 0.36 128 
+bassment fig_echo_struck 128x128 5 0.00 0.27 128 
+bassment fig_furnace_imp_attack 128x128 11 0.00 0.67 128 
+bassment fig_furnace_imp_idle 128x128 10 0.00 0.56 128 
+bassment fig_furnace_imp_struck 128x128 9 0.00 0.30 128 
+bassment fig_gargoyle_attack 128x128 9 0.00 0.36 128 
+bassment fig_gargoyle_idle 128x128 8 0.00 0.16 128 
+bassment fig_gargoyle_struck 128x128 7 0.01 0.09 128 
+bassment fig_lampmoth_attack 128x128 11 0.00 0.53 128 
+bassment fig_lampmoth_idle 128x128 10 0.00 0.35 128 
+bassment fig_lampmoth_struck 128x128 9 0.00 0.19 128 
+bassment fig_mildew_mother_attack 128x128 9 0.00 0.38 128 
+bassment fig_mildew_mother_idle 128x128 8 0.00 0.24 128 
+bassment fig_mildew_mother_struck 128x128 7 0.00 0.12 128 
+bassment fig_mirror_twin_attack 128x128 7 0.01 0.31 128 
+bassment fig_mirror_twin_idle 128x128 6 0.01 0.33 128 
+bassment fig_mirror_twin_struck 128x128 5 0.01 0.19 128 
+bassment fig_rat_king_attack 128x128 9 0.00 0.52 128 
+bassment fig_rat_king_idle 128x128 8 0.00 0.32 128 
+bassment fig_rat_king_struck 128x128 7 0.01 0.16 128 
+bassment fig_wizard_attack 128x128 2165 0.42 0.28 128 MANYCOL
+bassment fig_wizard_idle 128x128 2165 0.46 0.62 128 MANYCOL
+bassment floor_crystal 128x128 11 0.00 0.72 43 LOWDENS
+bassment floor_dirt 128x128 3 0.00 0.25 43 LOWDENS
+bassment floor_flag 128x128 4 0.00 0.29 51 
+bassment floor_grate 64x64 4 0.00 0.55 32 LOWDENS
+bassment floor_kitchen 64x64 5 0.00 0.10 32 LOWDENS
+bassment floor_mirror 64x64 6 0.00 0.58 32 LOWDENS
+bassment floor_moss 128x128 10 0.00 0.51 43 LOWDENS
+bassment floor_pavement 128x128 4 0.00 0.15 43 LOWDENS
+bassment floor_straw 128x128 5 0.00 0.73 51 
+bassment floor_wood 128x128 5 0.00 0.70 51 
+bassment sky_dawn 256x64 57 0.00 0.41 256 
+bassment thing_barrel 128x128 10 0.00 0.60 128 
+bassment thing_bones 128x128 3 0.00 0.71 128 
+bassment thing_cables 128x128 7 0.00 0.29 128 
+bassment thing_coatrack 128x128 6 0.00 0.61 128 
+bassment thing_crystal 128x128 10 0.00 0.53 128 
+bassment thing_door 128x128 7 0.00 0.56 128 
+bassment thing_furnace 128x128 9 0.00 0.46 128 
+bassment thing_glow 128x128 1 0.00 0.18 128 
+bassment thing_hand 128x128 4 0.00 0.27 128 
+bassment thing_ladder 128x128 5 0.00 0.42 128 
+bassment thing_lamp 128x128 7 0.00 0.80 128 
+bassment thing_mushroom 128x128 5 0.00 0.68 128 
+bassment thing_rope 128x128 4 0.00 0.73 128 
+bassment thing_sign 128x128 6 0.00 0.68 128 
+bassment thing_skull 128x128 5 0.00 0.68 128 
+bassment thing_stove 128x128 8 0.00 0.31 128 
+bassment thing_torch 128x128 10 0.00 0.69 128 
+bassment thing_valve 128x128 4 0.00 0.27 128 
+bassment wall_barrel 128x128 8 0.00 0.62 64 
+bassment wall_brass 128x128 6 0.00 0.85 43 LOWDENS
+bassment wall_brick 128x128 9 0.00 0.58 51 
+bassment wall_brick_dark 128x128 8 0.00 0.51 51 
+bassment wall_burrow 128x128 8 0.00 0.77 43 LOWDENS
+bassment wall_cable 128x128 11 0.00 0.49 51 
+bassment wall_crystal 128x128 14 0.00 0.72 51 
+bassment wall_door 128x128 9 0.00 0.63 43 LOWDENS
+bassment wall_echo 128x128 5 0.00 0.27 43 LOWDENS
+bassment wall_fungus 128x128 10 0.00 0.48 51 
+bassment wall_hands 128x128 5 0.01 0.30 43 LOWDENS
+bassment wall_hatch 128x128 6 0.00 0.28 43 LOWDENS
+bassment wall_iron 128x128 6 0.00 0.39 64 
+bassment wall_mirror 128x128 10 0.00 0.62 43 LOWDENS
+bassment wall_pipe 128x128 14 0.00 0.46 51 
+bassment wall_rock 128x128 4 0.00 0.28 43 LOWDENS
+bassment wall_shelf 128x128 10 0.01 0.55 64 
+bassment wall_tile 64x64 5 0.00 0.10 43 LOWDENS
+bassment water 64x64 6 0.00 0.79 21 LOWDENS
+bassment water_1 64x64 6 0.00 0.79 21 LOWDENS
+bassment water_2 64x64 6 0.00 0.79 21 LOWDENS
+bassment water_3 64x64 6 0.00 0.79 21 LOWDENS
+bethany floor_clay 64x64 8 0.00 0.56 32 LOWDENS
+bethany floor_grass 128x128 7 0.00 0.54 43 LOWDENS
+bethany floor_path 64x64 12 0.00 0.26 32 LOWDENS
+bethany floor_road 128x128 8 0.00 0.18 43 LOWDENS
+bethany sky_day 256x64 87 0.38 0.43 256 
+bethany sky_dusk 256x64 148 0.64 0.51 256 
+bethany thing_basket 40x40 6 0.00 0.65 40 
+bethany thing_basket_full 48x48 17 0.01 0.63 48 
+bethany thing_bush 64x56 37 0.40 0.42 64 
+bethany thing_citygate 256x192 108 0.29 0.24 256 
+bethany thing_donkey 96x80 25 0.00 0.22 96 
+bethany thing_flowers 64x40 51 0.49 0.58 64 
+bethany thing_grass 48x32 33 0.43 0.50 48 
+bethany thing_hay 64x48 6 0.00 0.62 64 
+bethany thing_hill_mount 256x96 38 0.53 0.13 256 
+bethany thing_house_b 128x112 162 0.26 0.28 128 
+bethany thing_jar 32x48 8 0.00 0.63 32 
+bethany thing_jars 64x56 14 0.00 0.54 64 
+bethany thing_lantern 32x56 16 0.00 0.39 32 
+bethany thing_olive 128x160 71 0.29 0.22 128 
+bethany thing_olive_small 96x112 69 0.27 0.23 96 
+bethany thing_palm 96x176 74 0.54 0.53 96 
+bethany thing_rock_b 96x72 32 0.43 0.24 96 
+bethany thing_stairs 160x96 42 0.30 0.21 160 
+bethany thing_stool 32x32 5 0.00 0.31 32 
+bethany thing_table_meal 128x72 22 0.00 0.41 128 
+bethany trim 64x64 6 0.00 0.18 64 
+bethany wall_city 128x128 11 0.00 0.22 21 LOWDENS
+bethany wall_hill 128x128 12 0.06 0.47 21 LOWDENS
+bethany wall_limestone 128x128 8 0.00 0.21 43 LOWDENS
+bethany wall_mudbrick 128x128 12 0.00 0.50 43 LOWDENS
+bethany wall_rock 128x128 10 0.00 0.22 32 LOWDENS
+birch_hall ceil_hall 64x64 32 0.01 0.09 21 LOWDENS
+birch_hall ceil_overcast 128x128 5 0.00 0.14 21 LOWDENS
+birch_hall floor_birch 64x64 8 0.00 0.15 26 LOWDENS
+birch_hall floor_snow 64x64 7 0.00 0.24 21 LOWDENS
+birch_hall floor_snow_rock 64x64 13 0.00 0.28 21 LOWDENS
+birch_hall piece_storm_snow 256x128 158 0.32 0.12 256 
+birch_hall sky_snow 256x64 145 0.13 0.15 256 
+birch_hall thing_banner_birch 128x128 23 0.02 0.15 128 
+birch_hall thing_birch_pillar 128x128 33 0.00 0.14 128 
+birch_hall thing_birch_tree 128x128 19 0.00 0.28 128 
+birch_hall thing_cairn 128x128 29 0.02 0.20 128 
+birch_hall thing_cave_mouth 128x128 20 0.16 0.39 128 
+birch_hall thing_chair_white 128x128 9 0.00 0.11 128 
+birch_hall thing_door_far 128x128 18 0.00 0.13 128 
+birch_hall thing_ember 128x128 28 0.01 0.67 128 
+birch_hall thing_ridge_marker 128x128 34 0.02 0.26 128 
+birch_hall thing_silver_lamp 128x128 20 0.00 0.18 128 
+birch_hall thing_snow_pine 128x128 22 0.02 0.52 128 
+birch_hall thing_table_map 128x128 14 0.00 0.17 128 
+birch_hall thing_vial_stand 128x128 25 0.00 0.21 128 
+birch_hall wall_birch 128x128 8 0.00 0.07 43 LOWDENS
+birch_hall wall_cave 128x128 13 0.35 0.59 43 LOWDENS
+birch_hall wall_hall 128x128 47 0.05 0.11 43 LOWDENS
+birch_hall wall_hall_door 128x128 85 0.04 0.15 51 
+birch_hall wall_rock_snow 128x128 8 0.00 0.39 43 LOWDENS
+city ceil_arcade 64x64 25 0.00 0.53 16 LOWDENS
+city ceil_fuselage 64x64 11 0.42 0.49 43 LOWDENS
+city ceil_night_red 64x64 9 0.00 0.82 16 LOWDENS
+city ceil_plaster 64x64 15 0.00 0.44 26 LOWDENS
+city floor_carpet 64x64 14 0.01 0.62 26 LOWDENS
+city floor_cobble 64x64 18 0.02 0.51 26 LOWDENS
+city floor_metal 64x64 9 0.01 0.20 43 LOWDENS
+city floor_rubble 64x64 29 0.05 0.38 21 LOWDENS
+city sky_dusk 256x64 8 0.00 0.40 256 
+city thing_arch_broken 128x128 39 0.01 0.46 128 
+city thing_awning 128x128 65 0.03 0.42 128 
+city thing_broken_wall 128x128 33 0.08 0.60 128 
+city thing_burnt_car 128x128 47 0.22 0.56 128 
+city thing_cafe_table 128x128 61 0.08 0.58 128 
+city thing_count_slate 128x128 28 0.35 0.36 128 
+city thing_desk_colonel 128x128 75 0.09 0.67 128 
+city thing_fire_barrel 128x128 41 0.01 0.65 128 
+city thing_flak_burst 128x128 468 0.15 0.54 128 
+city thing_globe 128x128 66 0.03 0.46 128 
+city thing_hq_door 128x128 79 0.06 0.59 128 
+city thing_instrument_panel 128x128 37 0.22 0.46 128 
+city thing_jacket_blood 128x128 69 0.02 0.63 128 
+city thing_lamp_alarm 128x128 26 0.02 0.55 128 
+city thing_map_wall 128x128 37 0.01 0.28 128 
+city thing_medal_case 128x128 61 0.03 0.71 128 
+city thing_medkit 128x128 56 0.02 0.17 128 
+city thing_night_train 256x128 40 0.28 0.55 256 
+city thing_nose_glass 128x128 24 0.15 0.53 128 
+city thing_rubble 128x128 58 0.04 0.43 128 
+city thing_staff_car 256x128 96 0.05 0.42 256 
+city thing_street_lamp 128x128 28 0.06 0.32 128 
+city thing_washing_line 128x128 44 0.05 0.46 128 
+city thing_window_dusk 128x128 56 0.04 0.60 128 
+city wall_bomber 64x64 11 0.51 0.46 43 LOWDENS
+city wall_panel 64x64 10 0.00 0.73 26 LOWDENS
+city wall_ruin 64x64 91 0.11 0.56 26 LOWDENS
+city wall_stucco 64x64 43 0.01 0.40 26 LOWDENS
+deep_halls ceil_black 128x128 4 0.62 0.79 32 LOWDENS
+deep_halls ceil_stars 128x128 452 0.56 0.57 21 LOWDENS
+deep_halls floor_boardwalk 64x64 15 0.01 0.27 32 LOWDENS
+deep_halls floor_bridge 64x64 11 0.00 0.63 32 LOWDENS
+deep_halls floor_deep 64x64 8 0.00 0.65 26 LOWDENS
+deep_halls floor_lake 64x64 7 0.20 0.82 21 LOWDENS
+deep_halls floor_wet_rock 64x64 12 0.01 0.74 21 LOWDENS
+deep_halls piece_drowned_thing 256x128 23 0.01 0.34 256 
+deep_halls sky_falls 256x64 2067 0.77 0.63 256 MANYCOL
+deep_halls thing_boat 128x128 28 0.00 0.40 128 
+deep_halls thing_bridge_rail 128x128 19 0.02 0.43 128 
+deep_halls thing_cold_light 128x128 19 0.03 0.39 128 
+deep_halls thing_drum 128x128 32 0.06 0.50 128 
+deep_halls thing_ember 128x128 28 0.01 0.67 128 
+deep_halls thing_horn 128x128 43 0.00 0.17 128 
+deep_halls thing_lantern_boat 128x128 23 0.04 0.50 128 
+deep_halls thing_mist 128x128 3 0.00 0.18 128 
+deep_halls thing_pillar_deep 128x128 14 0.06 0.40 128 
+deep_halls thing_rope_post 128x128 26 0.02 0.53 128 
+deep_halls thing_stalagmite 128x128 15 0.19 0.39 128 
+deep_halls thing_waterfall_edge 128x128 18 0.02 0.22 128 
+deep_halls wall_deep 128x128 29 0.03 0.62 43 LOWDENS
+deep_halls wall_deep_arch 128x128 12 0.23 0.72 43 LOWDENS
+deep_halls wall_falls 128x128 8 0.00 0.46 32 LOWDENS
+deep_halls wall_rock_wet 128x128 11 0.01 0.70 43 LOWDENS
+galilee_shore floor_clay 64x64 8 0.00 0.56 32 LOWDENS
+galilee_shore floor_dust 128x128 21 0.00 0.55 43 LOWDENS
+galilee_shore floor_path 64x64 12 0.00 0.26 32 LOWDENS
+galilee_shore floor_sand 64x64 17 0.00 0.30 32 LOWDENS
+galilee_shore floor_water 128x128 5 0.00 0.24 32 LOWDENS
+galilee_shore sky_dawn 256x64 162 0.42 0.42 256 
+galilee_shore sky_day 256x64 87 0.38 0.43 256 
+galilee_shore sky_morning 256x64 71 0.40 0.30 256 
+galilee_shore sky_night 256x64 60 0.80 0.62 256 
+galilee_shore thing_basket_full 48x48 17 0.01 0.63 48 
+galilee_shore thing_bush 64x56 37 0.40 0.42 64 
+galilee_shore thing_cart 128x96 19 0.00 0.47 128 
+galilee_shore thing_dove 96x96 60 0.44 0.16 96 
+galilee_shore thing_fire 48x64 62 0.45 0.55 48 
+galilee_shore thing_grass 48x32 33 0.43 0.50 48 
+galilee_shore thing_hay 64x48 6 0.00 0.62 64 
+galilee_shore thing_house_a 128x128 195 0.28 0.31 128 
+galilee_shore thing_jars 64x56 14 0.00 0.54 64 
+galilee_shore thing_olive_small 96x112 69 0.27 0.23 96 
+galilee_shore thing_palm 96x176 74 0.54 0.53 96 
+galilee_shore thing_planks 64x96 15 0.00 0.43 64 
+galilee_shore thing_reeds 64x80 54 0.43 0.57 64 
+galilee_shore thing_rock_a 64x48 30 0.42 0.24 64 
+galilee_shore thing_rock_b 96x72 32 0.43 0.24 96 
+galilee_shore thing_rock_c 128x112 30 0.41 0.24 128 
+galilee_shore thing_sheep 48x40 55 0.44 0.15 48 
+galilee_shore thing_sheep_lie 48x32 46 0.45 0.12 48 
+galilee_shore thing_stable 160x128 202 0.36 0.56 160 
+galilee_shore thing_star 128x128 29 0.65 0.28 128 
+galilee_shore thing_stool 32x32 5 0.00 0.31 32 
+galilee_shore thing_town_far 256x96 40 0.37 0.05 256 
+galilee_shore thing_waves 128x32 4 1.00 0.02 128 
+galilee_shore thing_workbench 128x72 15 0.00 0.50 128 
+galilee_shore trim 64x64 6 0.00 0.18 64 
+galilee_shore wall_door 128x128 16 0.00 0.26 43 LOWDENS
+galilee_shore wall_hill 128x128 12 0.06 0.47 21 LOWDENS
+galilee_shore wall_limestone 128x128 8 0.00 0.21 43 LOWDENS
+galilee_shore wall_reeds 64x64 14 0.07 0.51 21 LOWDENS
+galilee_shore wall_rock 128x128 10 0.00 0.22 32 LOWDENS
+harbour ceil_beams 64x64 14 0.00 0.50 32 LOWDENS
+harbour ceil_cell 64x64 11 0.08 0.55 32 LOWDENS
+harbour ceil_night_blue 64x64 8 0.00 0.74 16 LOWDENS
+harbour ceil_sky_day 64x64 10 0.00 0.62 16 LOWDENS
+harbour floor_boards 64x64 11 0.00 0.42 32 LOWDENS
+harbour floor_cell 128x128 14 0.04 0.54 64 
+harbour floor_quay 128x128 32 0.15 0.41 51 
+harbour floor_sand 128x128 14 0.00 0.65 43 LOWDENS
+harbour sky_harbour 256x64 10 0.00 0.75 256 
+harbour thing_aircraft_door 128x128 32 0.00 0.35 128 
+harbour thing_beam 128x128 80 0.57 0.05 128 
+harbour thing_birds 128x128 13 0.00 0.08 128 
+harbour thing_bollard 128x128 37 0.01 0.46 128 
+harbour thing_bunk 128x128 30 0.03 0.49 128 
+harbour thing_cell_door 128x128 289 0.03 0.50 128 
+harbour thing_count_board 128x128 25 0.00 0.43 128 
+harbour thing_crate_stack 128x128 49 0.01 0.45 128 
+harbour thing_fishing_boat 256x128 992 0.25 0.64 256 
+harbour thing_lamp_hang 128x128 45 0.05 0.48 128 
+harbour thing_nets 128x128 29 0.09 0.43 128 
+harbour thing_order_paper 128x128 397 0.02 0.52 128 
+harbour thing_pine_umbrella 128x128 27 0.00 0.74 128 
+harbour thing_quay_lamp 128x128 118 0.02 0.47 128 
+harbour thing_radio_broken 128x128 76 0.01 0.40 128 
+harbour thing_searchlight 128x128 222 0.14 0.30 128 
+harbour thing_shore_boat 256x128 60 0.00 0.66 256 
+harbour thing_stove 128x128 52 0.02 0.32 128 
+harbour thing_sunshade 128x128 43 0.00 0.49 128 
+harbour thing_window_hut 128x128 24 0.00 0.47 128 
+harbour thing_window_latch 128x128 472 0.05 0.54 128 
+harbour thing_wooden_post 128x128 32 0.00 0.41 128 
+harbour wall_cell 128x128 14 0.02 0.52 64 
+harbour wall_dunes 128x128 19 0.00 0.44 28 LOWDENS
+harbour wall_hut 64x64 11 0.00 0.37 32 LOWDENS
+harbour wall_quay 128x128 20 0.02 0.56 51 
+hillside floor_cobble 128x128 8 0.00 0.29 51 
+hillside floor_grass 128x128 7 0.00 0.54 43 LOWDENS
+hillside floor_path 64x64 12 0.00 0.26 32 LOWDENS
+hillside floor_shingle 64x64 5 0.00 0.18 32 LOWDENS
+hillside floor_water 128x128 5 0.00 0.24 32 LOWDENS
+hillside sky_day 256x64 87 0.38 0.43 256 
+hillside sky_storm 256x64 81 0.53 0.13 256 
+hillside thing_bench 96x40 8 0.00 0.31 96 
+hillside thing_boat 192x96 34 0.00 0.48 192 
+hillside thing_boat_far 64x40 14 0.00 0.45 64 
+hillside thing_bush 64x56 37 0.40 0.42 64 
+hillside thing_caravan 224x96 36 0.01 0.34 224 
+hillside thing_donkey 96x80 25 0.00 0.22 96 
+hillside thing_fire 48x64 62 0.45 0.55 48 
+hillside thing_fishrack 96x72 11 0.02 0.25 96 
+hillside thing_flowers 64x40 51 0.49 0.58 64 
+hillside thing_grass 48x32 33 0.43 0.50 48 
+hillside thing_hay 64x48 6 0.00 0.62 64 
+hillside thing_hill_mount 256x96 38 0.53 0.13 256 
+hillside thing_house_a 128x128 195 0.28 0.31 128 
+hillside thing_house_b 128x112 162 0.26 0.28 128 
+hillside thing_jar 32x48 8 0.00 0.63 32 
+hillside thing_jars 64x56 14 0.00 0.54 64 
+hillside thing_lightning 96x192 25 0.64 0.09 96 
+hillside thing_nets 96x96 23 0.00 0.43 96 
+hillside thing_olive_small 96x112 69 0.27 0.23 96 
+hillside thing_palm 96x176 74 0.54 0.53 96 
+hillside thing_rain 128x128 10 0.73 0.19 128 
+hillside thing_rock_a 64x48 30 0.42 0.24 64 
+hillside thing_rock_b 96x72 32 0.43 0.24 96 
+hillside thing_rock_c 128x112 30 0.41 0.24 128 
+hillside thing_storm_cloud 256x96 50 0.45 0.28 256 
+hillside thing_waves 128x32 4 1.00 0.02 128 
+hillside trim 64x64 6 0.00 0.18 64 
+hillside wall_door 128x128 16 0.00 0.26 43 LOWDENS
+hillside wall_hill 128x128 12 0.06 0.47 21 LOWDENS
+hillside wall_limestone 128x128 8 0.00 0.21 43 LOWDENS
+hillside wall_rock 128x128 10 0.00 0.22 32 LOWDENS
+hospital ceil_tile 128x128 40 0.48 0.45 53 
+hospital floor_cafe 64x64 38 0.58 0.49 40 LOWDENS
+hospital floor_check 128x128 81 0.67 0.37 64 
+hospital floor_lino 128x128 59 0.63 0.57 64 
+hospital floor_stone 128x128 21 0.34 0.38 43 LOWDENS
+hospital floor_ward 128x128 55 0.65 0.59 64 
+hospital floor_wood 64x64 1897 0.60 0.22 26 LOWDENS,MANYCOL
+hospital sky_night 256x64 36 0.86 0.77 256 
+hospital thing_bed 128x128 47 0.65 0.35 128 
+hospital thing_bench 128x128 17 0.79 0.48 128 
+hospital thing_chair 128x128 32 0.59 0.57 128 
+hospital thing_clock 64x64 14 0.64 0.13 64 
+hospital thing_desk 128x128 83 0.74 0.57 128 
+hospital thing_door_lit 128x128 24 0.58 0.39 128 
+hospital thing_drip 128x128 37 0.76 0.22 128 
+hospital thing_exit 64x64 15 0.38 0.55 64 
+hospital thing_lamppost 128x128 16 0.74 0.36 128 
+hospital thing_mic 128x128 48 0.58 0.33 128 
+hospital thing_monitor 128x128 63 0.65 0.47 128 
+hospital thing_nightlight 64x64 18 0.76 0.41 64 
+hospital thing_plant 64x64 23 0.16 0.57 64 
+hospital thing_tree 128x128 24 0.49 0.58 128 
+hospital trim 64x64 19 0.11 0.45 32 LOWDENS
+hospital wall_brick 128x128 67 0.25 0.39 21 LOWDENS
+hospital wall_cafe 128x128 44 0.47 0.59 27 LOWDENS
+hospital wall_counter 64x64 33 0.41 0.52 32 LOWDENS
+hospital wall_curtain 64x64 26 0.27 0.61 43 LOWDENS
+hospital wall_dayroom 128x128 75 0.49 0.41 58 
+hospital wall_door 128x128 79 0.51 0.44 49 
+hospital wall_hedge 64x64 35 0.46 0.66 21 LOWDENS
+hospital wall_quiet 64x64 27 0.54 0.44 27 LOWDENS
+hospital wall_station 128x128 58 0.49 0.43 49 
+hospital wall_tv 128x128 52 0.43 0.57 43 LOWDENS
+hospital wall_tv_wall 128x128 40 0.33 0.50 43 LOWDENS
+hospital wall_vending 128x128 60 0.47 0.49 27 LOWDENS
+hospital wall_vending_wall 128x128 80 0.45 0.51 27 LOWDENS
+hospital wall_ward 128x128 106 0.29 0.52 47 LOWDENS
+hospital wall_window 128x128 73 0.24 0.51 26 LOWDENS
+jerusalem floor_flag 128x128 7 0.00 0.18 43 LOWDENS
+jerusalem floor_garden 128x128 8 0.00 0.49 43 LOWDENS
+jerusalem floor_path 64x64 12 0.00 0.26 32 LOWDENS
+jerusalem floor_road 128x128 8 0.00 0.18 43 LOWDENS
+jerusalem floor_rock 128x128 12 0.07 0.23 43 LOWDENS
+jerusalem floor_soil 128x128 25 0.01 0.44 43 LOWDENS
+jerusalem sky_day 256x64 87 0.38 0.43 256 
+jerusalem sky_dusk 256x64 148 0.64 0.51 256 
+jerusalem sky_morning 256x64 71 0.40 0.30 256 
+jerusalem sky_night 256x64 60 0.80 0.62 256 
+jerusalem thing_bench 96x40 8 0.00 0.31 96 
+jerusalem thing_bowl_set 48x56 16 0.00 0.46 48 
+jerusalem thing_brazier 40x64 11 0.00 0.37 40 
+jerusalem thing_bush 64x56 37 0.40 0.42 64 
+jerusalem thing_cart 128x96 19 0.00 0.47 128 
+jerusalem thing_city_far 256x112 44 0.44 0.06 256 
+jerusalem thing_cross 40x96 47 0.38 0.47 40 
+jerusalem thing_cypress 56x144 37 0.43 0.40 56 
+jerusalem thing_dais 128x96 17 0.00 0.43 128 
+jerusalem thing_flowers 64x40 51 0.49 0.58 64 
+jerusalem thing_grass 48x32 33 0.43 0.50 48 
+jerusalem thing_hill_far 256x112 23 0.47 0.06 256 
+jerusalem thing_jar 32x48 8 0.00 0.63 32 
+jerusalem thing_olive 128x160 71 0.29 0.22 128 
+jerusalem thing_olive_small 96x112 69 0.27 0.23 96 
+jerusalem thing_pillar 48x192 56 0.28 0.20 48 
+jerusalem thing_rock_a 64x48 30 0.42 0.24 64 
+jerusalem thing_rock_b 96x72 32 0.43 0.24 96 
+jerusalem thing_rock_c 128x112 30 0.41 0.24 128 
+jerusalem thing_sheep 48x40 55 0.44 0.15 48 
+jerusalem thing_sky_dark1 128x64 0 0.00 0.00 128 
+jerusalem thing_sky_dark2 128x64 42 0.42 0.59 128 
+jerusalem thing_sky_dark3 128x64 45 0.43 0.59 128 
+jerusalem thing_spears 48x96 14 0.00 0.57 48 
+jerusalem thing_stone_closed 96x96 58 0.26 0.06 96 
+jerusalem thing_stone_rolled 96x72 66 0.30 0.06 96 
+jerusalem thing_table_coins 112x72 20 0.00 0.59 112 
+jerusalem thing_table_over 128x72 17 0.00 0.36 128 
+jerusalem thing_temple_front 256x160 94 0.36 0.25 256 
+jerusalem thing_tomb 192x144 93 0.44 0.23 192 
+jerusalem thing_torch 24x64 14 0.00 0.55 24 
+jerusalem thing_wall_low 128x48 8 0.00 0.25 128 
+jerusalem trim 64x64 6 0.00 0.18 64 
+jerusalem wall_columns 128x128 11 0.00 0.20 26 LOWDENS
+jerusalem wall_cypress 64x64 5 0.00 0.35 13 LOWDENS
+jerusalem wall_hill 128x128 12 0.06 0.47 21 LOWDENS
+jerusalem wall_limestone 128x128 8 0.00 0.21 43 LOWDENS
+jerusalem wall_olive 128x128 9 0.00 0.27 32 LOWDENS
+jerusalem wall_praetorium 128x128 18 0.00 0.27 26 LOWDENS
+jerusalem wall_rock 128x128 10 0.00 0.22 32 LOWDENS
+mental_hospital ceil_pale 128x128 15 0.05 0.23 51 
+mental_hospital ceil_tile 128x128 12 0.02 0.23 51 
+mental_hospital floor_art 128x128 19 0.39 0.25 43 LOWDENS
+mental_hospital floor_check 128x128 11 0.06 0.66 64 
+mental_hospital floor_dais 64x64 9 0.00 0.60 32 LOWDENS
+mental_hospital floor_paving 128x128 14 0.21 0.28 43 LOWDENS
+mental_hospital floor_wood 128x128 9 0.50 0.23 43 LOWDENS
+mental_hospital pad_tile 64x64 9 0.00 0.31 53 
+mental_hospital sky_moon 256x64 9 0.06 0.47 256 
+mental_hospital thing_bed 128x128 16 0.01 0.18 128 
+mental_hospital thing_cabinet 128x128 13 0.02 0.24 128 
+mental_hospital thing_cagelamp 128x128 8 0.00 0.59 128 
+mental_hospital thing_chair 128x128 9 0.00 0.41 128 
+mental_hospital thing_chair_b 128x128 8 0.00 0.34 128 
+mental_hospital thing_chair_c 128x128 9 0.00 0.44 128 
+mental_hospital thing_clock 128x128 12 0.02 0.16 128 
+mental_hospital thing_easel 128x128 17 0.00 0.54 128 
+mental_hospital thing_easel_b 128x128 17 0.00 0.59 128 
+mental_hospital thing_fan 128x128 9 0.18 0.21 128 
+mental_hospital thing_jars 128x128 28 0.07 0.31 128 
+mental_hospital thing_lamp 128x128 11 0.00 0.26 128 
+mental_hospital thing_mural 128x128 20 0.00 0.59 128 
+mental_hospital thing_phone 128x128 16 0.07 0.23 128 
+mental_hospital thing_radiator 128x128 9 0.00 0.24 128 
+mental_hospital thing_sink 128x128 13 0.00 0.25 128 
+mental_hospital thing_table 128x128 18 0.01 0.26 128 
+mental_hospital thing_trolley 128x128 15 0.00 0.20 128 
+mental_hospital thing_tube 128x128 9 0.00 0.18 128 
+mental_hospital thing_wheelchair 128x128 8 0.00 0.18 128 
+mental_hospital tx_floor 64x64 16 0.08 0.62 53 
+mental_hospital tx_tile 128x128 25 0.05 0.39 56 
+mental_hospital wall_archdoor 128x128 24 0.07 0.46 43 LOWDENS
+mental_hospital wall_art 128x128 46 0.06 0.30 28 LOWDENS
+mental_hospital wall_awindow 128x128 42 0.11 0.34 28 LOWDENS
+mental_hospital wall_brick 128x128 25 0.09 0.54 40 LOWDENS
+mental_hospital wall_cdoor 128x128 34 0.08 0.30 47 LOWDENS
+mental_hospital wall_cdoor2 128x128 40 0.10 0.33 47 LOWDENS
+mental_hospital wall_dado 128x128 33 0.11 0.34 58 
+mental_hospital wall_door 128x128 36 0.11 0.31 43 LOWDENS
+mental_hospital wall_dwindow 128x128 44 0.10 0.32 71 
+mental_hospital wall_end 128x128 38 0.02 0.51 43 LOWDENS
+mental_hospital wall_led 64x64 6 0.17 0.42 21 LOWDENS
+mental_hospital wall_mint 128x128 32 0.05 0.33 43 LOWDENS
+mental_hospital wall_office 128x128 35 0.01 0.58 47 LOWDENS
+mental_hospital wall_slit 64x64 25 0.06 0.33 71 
+mental_hospital wall_speaker 64x64 8 0.00 0.32 32 LOWDENS
+mental_hospital wall_window 128x128 46 0.08 0.34 43 LOWDENS
+mothership ceil_hazard 128x128 16 0.01 0.62 51 
+mothership ceil_hull 128x128 11 0.00 0.66 51 
+mothership floor_airlock 128x128 11 0.00 0.38 64 
+mothership floor_bridge 128x128 7 0.00 0.67 43 LOWDENS
+mothership floor_dais 128x128 6 0.00 0.30 64 
+mothership floor_grate 128x128 9 0.00 0.61 51 
+mothership floor_hex 128x128 11 0.00 0.65 51 
+mothership floor_lounge 64x64 690 0.44 0.80 21 LOWDENS,MANYCOL
+mothership med_ceil 128x128 8 0.00 0.19 64 
+mothership med_floor 128x128 7 0.00 0.28 64 
+mothership med_tile 128x128 9 0.00 0.29 58 
+mothership sky_space 256x64 6 0.16 0.85 256 
+mothership thing_bar 128x128 19 0.00 0.64 128 
+mothership thing_bunk 128x128 11 0.00 0.35 128 
+mothership thing_cabinet 128x128 27 0.00 0.52 128 
+mothership thing_cables 128x128 13 0.00 0.53 128 
+mothership thing_captain 128x128 15 0.00 0.63 128 
+mothership thing_console 128x128 17 0.00 0.56 128 
+mothership thing_core 128x128 4988 0.65 0.69 128 MANYCOL
+mothership thing_exam_table 128x128 15 0.00 0.33 128 
+mothership thing_monitor 128x128 11 0.00 0.58 128 
+mothership thing_pipes 128x128 13 0.00 0.38 128 
+mothership thing_planet 128x128 14 0.00 0.74 128 
+mothership thing_plant 128x128 19 0.00 0.59 128 
+mothership thing_probe_arm 128x128 12 0.00 0.39 128 
+mothership thing_screen 128x128 7 0.00 0.23 128 
+mothership thing_suit 128x128 19 0.00 0.43 128 
+mothership thing_surglamp 128x128 9 0.00 0.32 128 
+mothership thing_tube 128x128 20 0.00 0.63 128 
+mothership thing_tube2 128x128 23 0.00 0.53 128 
+mothership thing_warn 128x128 8 0.00 0.58 128 
+mothership thing_wheel 128x128 10 0.00 0.63 128 
+mothership trim 64x64 12 0.00 0.66 32 LOWDENS
+mothership wall_airlock 128x128 23 0.00 0.63 40 LOWDENS
+mothership wall_arch 64x64 1571 0.54 0.49 21 LOWDENS,MANYCOL
+mothership wall_console 128x128 24 0.00 0.64 30 LOWDENS
+mothership wall_door 64x64 1052 0.40 0.75 21 LOWDENS,MANYCOL
+mothership wall_gold 64x64 494 0.23 0.55 21 LOWDENS
+mothership wall_hatch 128x128 28 0.00 0.62 40 LOWDENS
+mothership wall_hull 128x128 17 0.00 0.62 51 
+mothership wall_led 64x64 232 0.12 0.82 21 LOWDENS
+mothership wall_planet 128x128 15 0.00 0.81 26 LOWDENS
+mothership wall_shelf 128x128 30 0.00 0.64 53 
+mothership wall_sofa 128x128 8 0.00 0.68 43 LOWDENS
+mothership wall_speaker 64x64 1260 0.29 0.69 32 LOWDENS,MANYCOL
+mothership wall_tube 128x128 19 0.00 0.64 51 
+mothership wall_window 128x128 14 0.00 0.81 32 LOWDENS
+night_one bar_front 128x128 44 0.00 0.54 53 
+night_one ceil_low 128x128 13 0.47 0.29 64 
+night_one ceil_stair 128x128 12 0.00 0.25 64 
+night_one ceil_truss 128x128 10 0.31 0.25 32 LOWDENS
+night_one ceil_wc 128x128 10 0.00 0.12 107 
+night_one cubicle_door 128x128 24 0.08 0.55 49 
+night_one cubicle_wall 128x128 22 0.00 0.62 107 
+night_one floor_boards 128x128 6 0.00 0.67 64 
+night_one floor_carpet 128x128 10 0.00 0.70 64 
+night_one floor_dark 128x128 7 0.16 0.15 43 LOWDENS
+night_one floor_led 128x128 21 0.03 0.75 64 
+night_one floor_stage 128x128 10 0.06 0.23 64 
+night_one thing_bin 64x64 10 0.00 0.19 64 
+night_one thing_bomber_shadow 128x128 5 0.00 0.63 128 
+night_one thing_booth_radio 128x128 18 0.03 0.52 128 
+night_one thing_bulb 64x64 6 0.28 0.31 64 
+night_one thing_bulbs 128x128 10 0.31 0.46 128 
+night_one thing_crack 128x128 10 0.00 0.58 128 
+night_one thing_decks 128x128 36 0.07 0.25 128 
+night_one thing_dryer 64x64 8 0.00 0.07 64 
+night_one thing_exit_sign 64x64 3 0.00 0.65 64 
+night_one thing_firedoor 128x128 13 0.16 0.20 128 
+night_one thing_headphones 64x64 14 0.11 0.40 64 
+night_one thing_lavalamp 64x64 13 0.00 0.60 64 
+night_one thing_pendant 64x64 8 0.12 0.63 64 
+night_one thing_rail 128x128 13 0.04 0.23 128 
+night_one thing_sign_wc 128x128 108 0.01 0.62 128 
+night_one thing_sink 128x128 17 0.01 0.29 128 
+night_one thing_sofa 128x128 11 0.00 0.71 128 
+night_one thing_toilet 128x128 17 0.12 0.15 128 
+night_one thing_truss_tower 128x128 9 0.04 0.21 128 
+night_one thing_tube 64x64 5 0.00 0.07 64 
+night_one thing_wizard 128x128 2072 0.41 0.63 128 MANYCOL
+night_one toilet_floor 128x128 11 0.20 0.23 85 
+night_one toilet_tile 128x128 13 0.00 0.15 85 
+night_one trim 128x128 7 0.19 0.25 64 
+night_one wall_bar 128x128 36 0.00 0.58 53 
+night_one wall_brick 128x128 16 0.00 0.51 64 
+night_one wall_chill 128x128 27 0.00 0.59 49 
+night_one wall_corridor 128x128 27 0.23 0.21 53 
+night_one wall_door 128x128 32 0.01 0.50 43 LOWDENS
+night_one wall_led 64x64 17 0.10 0.88 21 LOWDENS
+night_one wall_panel 128x128 23 0.02 0.42 40 LOWDENS
+night_one wall_speaker 128x128 14 0.25 0.25 64 
+orchard ceil_beams 64x64 18 0.00 0.71 26 LOWDENS
+orchard ceil_stars 128x128 305 0.35 0.73 21 LOWDENS
+orchard floor_bank 64x64 117 0.20 0.31 21 LOWDENS
+orchard floor_boards 64x64 5 0.00 0.77 32 LOWDENS
+orchard floor_flags 64x64 116 0.06 0.37 26 LOWDENS
+orchard floor_ford 64x64 8 0.00 0.79 21 LOWDENS
+orchard floor_grass 64x64 14 0.00 0.69 21 LOWDENS
+orchard floor_lane 64x64 9 0.00 0.61 26 LOWDENS
+orchard piece_rider_shadow 128x128 1 0.00 0.62 128 
+orchard piece_river_rise 128x128 135 0.03 0.69 128 
+orchard sky_dusk 256x64 12 0.00 0.68 256 
+orchard thing_apple_basket 128x128 25 0.00 0.70 128 
+orchard thing_apple_tree 128x128 44 0.01 0.62 128 
+orchard thing_barrel 128x128 21 0.00 0.57 128 
+orchard thing_cot 128x128 813 0.21 0.59 128 
+orchard thing_door_back 128x128 29 0.01 0.52 128 
+orchard thing_ember 128x128 28 0.01 0.67 128 
+orchard thing_gate 128x128 30 0.02 0.28 128 
+orchard thing_hanging_lamp 128x128 28 0.06 0.38 128 
+orchard thing_hay_bale 128x128 14 0.00 0.75 128 
+orchard thing_hearth 128x128 37 0.01 0.39 128 
+orchard thing_horse_far 128x128 23 0.08 0.25 128 
+orchard thing_inn_table 128x128 45 0.00 0.60 128 
+orchard thing_lantern_post 128x128 27 0.02 0.51 128 
+orchard thing_lantern_stake 128x128 40 0.03 0.52 128 
+orchard thing_rock_ford 128x128 23 0.01 0.40 128 
+orchard thing_signpost 128x128 31 0.01 0.56 128 
+orchard thing_stool 128x128 10 0.00 0.64 128 
+orchard thing_willow 128x128 17 0.01 0.61 128 
+orchard wall_cottage 128x128 12 0.00 0.50 43 LOWDENS
+orchard wall_fence 64x64 154 0.03 0.34 32 LOWDENS
+orchard wall_hedge 128x128 19 0.00 0.70 43 LOWDENS
+orchard wall_inn 128x128 32 0.01 0.72 51 
+orchard wall_inn_door 128x128 89 0.04 0.62 51 
+orchard wall_inn_window 128x128 28 0.07 0.69 51 
+orchard wall_reeds 128x128 84 0.06 0.72 43 LOWDENS
+underworld ceil_court 64x64 5 0.75 0.48 26 LOWDENS
+underworld ceil_pipes 128x128 649 0.08 0.28 51 
+underworld ceil_spikes 64x64 5 0.00 0.41 26 LOWDENS
+underworld floor_basalt 128x128 9 0.00 0.43 43 LOWDENS
+underworld floor_carpet 128x128 16 0.21 0.61 32 LOWDENS
+underworld floor_causeway 128x128 9 0.00 0.54 64 
+underworld floor_checker 128x128 11 0.01 0.64 43 LOWDENS
+underworld floor_dais 64x64 5 0.00 0.17 32 LOWDENS
+underworld floor_obsidian 128x128 8 0.39 0.44 51 
+underworld floor_orange 64x64 1071 0.47 0.60 21 LOWDENS,MANYCOL
+underworld floor_steel 64x64 178 0.03 0.16 43 LOWDENS
+underworld floor_tier 128x128 6 0.00 0.44 32 LOWDENS
+underworld lava 128x128 9 0.00 0.88 32 LOWDENS
+underworld sky_hell 256x64 181 0.53 0.89 256 
+underworld thing_anvil 128x128 11 0.00 0.27 128 
+underworld thing_booth 128x128 16 0.00 0.46 128 
+underworld thing_brazier 128x128 11 0.00 0.51 128 
+underworld thing_chain 128x128 5 0.00 0.13 128 
+underworld thing_column 128x128 9 0.42 0.44 128 
+underworld thing_crowd 128x128 5 0.00 0.51 128 
+underworld thing_furnace 128x128 11 0.00 0.37 128 
+underworld thing_rope 128x128 10 0.00 0.48 128 
+underworld thing_skull 128x128 13 0.00 0.33 128 
+underworld thing_throne 128x128 15 0.00 0.50 128 
+underworld thing_tongs 128x128 9 0.00 0.23 128 
+underworld trim 64x64 165 0.33 0.69 32 LOWDENS
+underworld wall_arena 128x128 10 0.01 0.68 51 
+underworld wall_bars 64x64 303 0.35 0.33 43 LOWDENS
+underworld wall_bone 128x128 7 0.00 0.43 64 
+underworld wall_cave 128x128 7 0.00 0.46 43 LOWDENS
+underworld wall_column 128x128 8 0.38 0.44 43 LOWDENS
+underworld wall_court 64x64 965 0.33 0.70 21 LOWDENS,MANYCOL
+underworld wall_face 64x64 2288 0.51 0.48 16 LOWDENS,MANYCOL
+underworld wall_fortress 64x64 1604 0.44 0.63 16 LOWDENS,MANYCOL
+underworld wall_hellmouth 64x64 1913 0.49 0.73 21 LOWDENS,MANYCOL
+underworld wall_plate 128x128 27 0.00 0.16 51 
+underworld wall_shelf 64x64 2264 0.39 0.57 32 LOWDENS,MANYCOL
+underworld wall_speaker 64x64 1374 0.37 0.56 32 LOWDENS,MANYCOL
+underworld wall_throne 64x64 1435 0.40 0.59 16 LOWDENS,MANYCOL
