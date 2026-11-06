@@ -271,8 +271,27 @@ func _make_plan(id: String) -> Dictionary:
 		plan["pick"] = (pick + k) % cands.size()
 		plan["index"] = int(c["index"])
 		plan["pack"] = res["pack"]
+		add_transition_meta(plan, raw if typeof(raw) == TYPE_DICTIONARY else {})
 		return plan
 	return {}
+
+
+## What the transition planner reads of a track scene (stage M2.4, docs/parallel-development/MUSIC_TRANSITIONS.md sections 3.5 and 4.1), made with the plan (off the frame, `warm`) so that
+## the director's lock reads no file: sidecar (content/music/transitions/<track>.json, {} when missing or invalid), sidecar_state, drift_ms_max (the pack's source.tempo_detail.drift_ms_max_abs,
+## 0 when absent), grid_ok (TransitionSidecars.grid_ok), drop_bar (the drop the plan's entry rule reads, the sidecar's first if it has one: TransitionSidecars.drop_bar_of; -1 for none).
+static func add_transition_meta(plan: Dictionary, raw: Dictionary) -> void:
+	var sc := TransitionSidecars.load_track(str(plan.get("track", "")))
+	var side: Dictionary = sc["sidecar"]
+	var src: Variant = raw.get("source", {})
+	var td: Variant = (src as Dictionary).get("tempo_detail", {}) if typeof(src) == TYPE_DICTIONARY else {}
+	var drift := float((td as Dictionary).get("drift_ms_max_abs", 0.0)) if typeof(td) == TYPE_DICTIONARY else 0.0
+	plan["sidecar"] = side
+	plan["sidecar_state"] = str(sc["state"])
+	plan["drift_ms_max"] = drift
+	plan["grid_ok"] = TransitionSidecars.grid_ok(side, drift, float(plan.get("bpm", 0.0)))
+	var pack: Variant = plan.get("pack", null)
+	var info := {"bpm": float(plan.get("bpm", 0.0)), "first_downbeat_s": float(plan.get("first_downbeat_s", 0.0)), "sections": (pack as TrackPack).sections if pack is TrackPack else []}
+	plan["drop_bar"] = TransitionSidecars.drop_bar_of(info, "drop2" if str(plan.get("entry", "")) == "drop2" else "drop1", side)
 
 
 func _warn(s: String) -> void:

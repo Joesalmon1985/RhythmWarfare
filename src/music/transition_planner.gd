@@ -38,8 +38,23 @@ extends RefCounted
 
 const MODES := [&"blend", &"halftime_blend", &"echo_out", &"cut"]
 
-## The one switch (see above). false = cut only.
+## The one switch (see above). false = cut only. TransitionDirector._init sets it from game_default().
 static var modes_enabled := false
+
+## Whether the game plans every mode (stage M2.4, step 8): RW_RUN_TRANSITIONS=cut turns them off, =full on; otherwise DEFAULT_ON when track scenes are on, and always off under the test runner
+## (the tests choose per director: TransitionDirector.modes_override).
+const DEFAULT_ON := false
+
+
+static func game_default() -> bool:
+	var env := OS.get_environment("RW_RUN_TRANSITIONS")
+	if env == "cut":
+		return false
+	if env == "full":
+		return true
+	if RunTrackScenes._under_test_runner():
+		return false
+	return DEFAULT_ON and RunTrackScenes.active()
 
 ## Section 3.2 says a missing sidecar means "use the pack as it is" and 3.5 repeats it: false (the default) plans from the pack's values. true reads "missing or invalid sidecar" as `cut`
 ## (reason &"sidecar"; needs `meta.out_state` and `meta.in_state`, TransitionSidecars.load_track's `state`). The 61 real sidecars exist, so this only matters for a new recording.
@@ -50,6 +65,8 @@ const MIN_LEAD_BARS := 5  # lead ruling 7
 const MAX_WINDOW_BARS := 12
 const SAME_TRACK_WINDOW_BARS := 4
 const SILENT_BARS_BEFORE_DROP := 4
+## The tail's level from T (spike Q8: the sum of two full tracks drives the limiter hard in the first bars). A recipe field, not a row of the table.
+const TAIL_GAIN_DB := -3.0
 const DEFAULT_STEMS := ["drums", "bass", "other", "vocals", "backing"]
 const DEFAULT_LINGER := ["other", "vocals"]
 
@@ -230,4 +247,4 @@ static func _recipe(mode: StringName, window: int, rate: float, out: Dictionary,
 		var kind := stem_kind(str(k), linger)
 		stems[str(k)] = {"kind": kind, "fade": kinds[kind]}
 	return {"mode": mode, "rate": rate, "window_bars": window, "bar_s": bar_in, "long": is_long, "stems": stems, "kinds": kinds, "highpass": highpass, "echo": echo, "drop_t": drop_t,
-		"deadline_t": deadline_t, "complete_t": complete_t, "floor_t": complete_t, "cents": cents(rate), "incoming": &"track"}
+		"deadline_t": deadline_t, "complete_t": complete_t, "floor_t": complete_t, "cents": cents(rate), "incoming": &"track", "tail_gain_db": TAIL_GAIN_DB}

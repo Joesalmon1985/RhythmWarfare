@@ -51,6 +51,8 @@ var path_data_fn: Callable = Callable()
 ## `completed` comes when song time reaches plan.complete_t.
 var audio_reports_silence := false
 var silence_grace_s := 2.0
+## -1: the planner's own switch (TransitionPlanner.modes_enabled, set by _init in the game); 0: cut only; 1: every mode. Tests and tools set it per director.
+var modes_override := -1
 
 ## Every signal emitted: {signal, args, t}; every lock: {id, t, boundary, dest, plan, recipe, observed, late}; every switch {id, t, landed, committed_to}.
 var log: Array[Dictionary] = []
@@ -75,6 +77,7 @@ var _seen_scene := false
 
 func _init() -> void:
 	planner = func(o: Dictionary, i: Dictionary, m: Dictionary, r: Dictionary) -> Dictionary: return TransitionPlanner.plan(o, i, m, r)
+	TransitionPlanner.modes_enabled = TransitionPlanner.game_default()
 
 
 ## ---------------------------------------------------------------- wiring calls
@@ -455,6 +458,11 @@ func _plan_for(res: Dictionary, b: float, may_defer: bool, deferred_once: bool) 
 	var mix: Dictionary = in_data.cfg.get("mix", {})
 	var carry: Dictionary = mix.get("carry_bass", {})
 	var meta := {"fade_s": float(mix.get("phase_fade_s", 0.6)), "carry_beats": float(carry.get("beats", 16.0)), "carry_gain": float(carry.get("gain", 0.0)) if in_data == data else 0.0}
+	_full_inputs(out, inc, meta, b, tp)
+	if in_data != data:
+		meta["modes_enabled"] = false  # a path hand-off (into a path or back to the main run) is always a cut (the brief of M2.4, after ruling 20)
+	elif modes_override >= 0:
+		meta["modes_enabled"] = modes_override == 1
 	var state := ""
 	if not tp.is_empty():
 		state = str(load_fn.call(in_data, node)) if load_fn.is_valid() else ("ready" if not ready_fn.is_valid() or bool(ready_fn.call(tp)) else "none")
@@ -463,6 +471,36 @@ func _plan_for(res: Dictionary, b: float, may_defer: bool, deferred_once: bool) 
 		push_error("transition director: the planner gave no plan; cut")
 		return TransitionPlanner._cut(out, inc, meta, b, true)
 	return pl
+
+
+## The planner's inputs between two track scenes (TransitionPlanner's header, stage M2.4), from the engine and the two scene plans (RunTrackScenes.add_transition_meta made the metadata off
+## the frame): the outgoing track, its length, where it is at T, its grid origin, its section at T, its stems; the incoming track, its entry and drop bars; both sidecars and grid flags.
+## A plan without that metadata (a synthetic one) counts as a steady grid with no sidecar.
+func _full_inputs(out: Dictionary, inc: Dictionary, meta: Dictionary, b: float, tp: Dictionary) -> void:
+	if engine.is_track_scene():
+		var op: Dictionary = engine.track
+		out["track"] = str(op.get("track", ""))
+		out["duration_s"] = float(op.get("duration_s", 0.0))
+		out["track_t_at_T"] = engine.track_t_at(b)
+		out["first_downbeat_s"] = float(op.get("first_downbeat_s", 0.0))
+		var pack: Variant = op.get("pack", null)
+		out["section_role"] = ""
+		if pack is TrackPack:
+			var tt := float(out["track_t_at_T"])
+			for s in (pack as TrackPack).sections:
+				if tt >= float(s["start_s"]) - 1e-6 and tt < float(s["end_s"]):
+					out["section_role"] = str(s.get("role", ""))
+			out["stem_keys"] = (pack as TrackPack).stems_in_order().map(func(s: Dictionary) -> String: return str(s["key"]))
+		meta["out"] = op.get("sidecar", {})
+		meta["out_state"] = str(op.get("sidecar_state", "missing"))
+		meta["out_grid_ok"] = bool(op.get("grid_ok", true))
+	if not tp.is_empty():
+		inc["track"] = str(tp.get("track", ""))
+		inc["entry_bar"] = int(tp.get("entry_bar", 0))
+		inc["drop_bar"] = int(tp.get("drop_bar", -1))
+		meta["in"] = tp.get("sidecar", {})
+		meta["in_state"] = str(tp.get("sidecar_state", "missing"))
+		meta["in_grid_ok"] = bool(tp.get("grid_ok", true))
 
 
 static func _track_plan(d: RunData, node: String) -> Dictionary:

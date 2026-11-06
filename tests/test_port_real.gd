@@ -2,12 +2,10 @@ extends TestCase
 ## The TransitionPort conformance cases (tests/port_conformance.gd) on the REAL director (TransitionDirector, `&"cut"` mode, stage M1.6) driving a real RunEngine on a virtual clock
 ## (tests/fixtures/transition/director_rig.gd), through the same factory shape as tests/test_port_mock.gd.
 ##
-## Run here (13 of 15): 1 to 11, 13 and 15. Case 14 is run too and must skip itself: it needs a blend (blend_beats 250), which the M1 director never makes.
+## Run here (14 of 15): 1 to 11, 13, 14 and 15. Case 14 (and the blend_beats of cases 1, 4 and 10) is staged by the rig as a blend of that many beats (director_rig._stage_blend).
 ## Not run, waiting for stage M2 or N2.2:
 ##   case 12 (`when == &"soonest"`): the engine leaves a scene only at a lap's end, never at a block boundary inside one; its only user, the Bassment entrance, is not behind the port
 ##           (lead ruling 20). The director takes "soonest" as "lap_end" (test_soonest_is_taken_at_the_lap_end below).
-##   case 14 (`&"blending"`): a cut's outgoing music is silent 0.6 s after the boundary, long before any next lock point; the deferral exists in the director (tested below on a
-##           completion held back) but the case can only be staged with a blend.
 
 const Conf := preload("res://tests/port_conformance.gd")
 const Rig := preload("res://tests/fixtures/transition/director_rig.gd")
@@ -78,10 +76,8 @@ func test_case_15_ids_increase() -> void:
 	_run_case(Conf.case_15_ids_increase)
 
 
-func test_case_14_needs_a_blend_and_skips_itself() -> void:
-	Conf.skipped.clear()
-	Conf.case_14_blending_defers(self, _factory())
-	assert_eq(Conf.skipped, ["case_14_blending_defers"] as Array[String], "deferred to M2: the cut director cannot stage a long blend")
+func test_case_14_blending_defers() -> void:
+	_run_case(Conf.case_14_blending_defers)  # (stage M2.4: the rig stages a blend of 250 beats on the real director)
 
 
 # --- the director's own readings, on the same rig ----------------------------------------------------------------------------------
