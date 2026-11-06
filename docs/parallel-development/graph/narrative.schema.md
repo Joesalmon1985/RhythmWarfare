@@ -43,6 +43,7 @@ leaves the game on the data it has. A change that breaks readers is `v2`, never 
 | `min_choices` | int | 3 | Rule 5 threshold. At least 1. |
 | `max_choices_to_quest` | int | 5 | Rule 1 threshold. |
 | `history_limit` | int | 32 | Length of `RouteState.history`. At least 8. |
+| `max_choices_to_quest_in_location` | int | 2 | Rule 2: the most ungated choices from any scene of a location to any quest. Added by the validator (N1.1). |
 | `hotspot_cap` | int | 8 | Choices per scene (lead rulings 1 and 16). Only used by the validator's hub-object report. |
 | `hub_hotspot_cap` | int | 10 | The most a hub scene may set as `max_hotspots` (lead ruling 16). Only used by the same report. |
 
@@ -112,7 +113,7 @@ is never stated here: it is the quest's `entry`, or the saved scene when the que
 | `status` | `existing` / `partial` / `proposed`, planning | |
 
 **Object**: `{ "id": string, "status": "existing" | "partial" | "proposed", "illustrative_idea": string }`.
-`id` is a hotspot id. For `existing` and `partial` it must be a hotspot id in `content/` (rule 7). For `proposed` it must not collide with any hotspot id.
+`id` is a hotspot id. For `existing` it must be a hotspot id in `content/` (rule 7). For `proposed` it must not collide with any hotspot id. A `partial` object is a new placement of an existing one: its `id` must not collide either, and the field `copy_of` (added by the validator, N1.1) names the existing hotspot id it copies; the validator removes the gate of that original in the target graph.
 `illustrative_idea` is a one-line suggestion. The visual design belongs to the interaction work; the validator ignores the idea.
 
 ## 6. RouteRule
@@ -142,6 +143,7 @@ A route added to one scene, because rule 5 needs it there.
 | `quest` | quest id | Required for `quest_entry`. |
 | `to` | graph id | Required for `restart` and `second_route`. |
 | `object` | Object, required | |
+| `owner_to_confirm` | bool | `true` on every `restart` and `second_route` (lead ruling 17): the owner confirms or replaces them. The validator requires it. Added by the validator (N1.1). |
 | `reason`, `needs_review` | string, planning | `needs_review` marks a destination chosen only so the graph is valid. |
 
 ## 8. Exception

@@ -1,0 +1,1007 @@
+{
+ "format": "rhythm_warfare.narrative.v1",
+ "status": "overlay v1: data only, not read by the game yet; everything marked proposed does not exist in the game data",
+ "date": "2026-11-06",
+ "start": "main/warehouse",
+ "settings": {
+  "min_choices": 3,
+  "max_choices_to_quest": 5,
+  "max_choices_to_quest_in_location": 2,
+  "history_limit": 32,
+  "hotspot_cap": 8,
+  "hub_hotspot_cap": 10
+ },
+ "locations": [
+  {
+   "id": "warehouse_rave",
+   "title": "Warehouse Rave",
+   "worlds": [
+    "warehouse"
+   ],
+   "hub": "main/warehouse",
+   "status": "existing",
+   "music": {
+    "registry": "content/run/track_scenes.json",
+    "path": "main"
+   },
+   "hub_links": []
+  },
+  {
+   "id": "hospital_ward",
+   "title": "Hospital Ward",
+   "worlds": [
+    "hospital",
+    "hospital_late"
+   ],
+   "hub": "main/hospital",
+   "status": "existing",
+   "note": "world ids from content/run/run.json; the late worlds count as parts of the location",
+   "music": {
+    "registry": "content/run/track_scenes.json",
+    "path": "main"
+   },
+   "hub_links": [
+    {
+     "to_location": "mental_hospital",
+     "to": "main/ward",
+     "object": {
+      "id": "hospital.to_ward",
+      "status": "proposed",
+      "illustrative_idea": "A door to the old wing, a sign half scratched off."
+     }
+    }
+   ]
+  },
+  {
+   "id": "mental_hospital",
+   "title": "Mental Hospital",
+   "worlds": [
+    "ward",
+    "ward_late"
+   ],
+   "hub": "main/ward",
+   "status": "existing",
+   "note": "world ids from content/run/run.json; the late worlds count as parts of the location",
+   "music": {
+    "registry": "content/run/track_scenes.json",
+    "path": "main"
+   },
+   "hub_links": [
+    {
+     "to_location": "hospital_ward",
+     "to": "main/hospital",
+     "object": {
+      "id": "ward.to_hospital",
+      "status": "proposed",
+      "illustrative_idea": "A door to the general ward with a window of clean light."
+     }
+    }
+   ]
+  },
+  {
+   "id": "alien_spaceship",
+   "title": "Alien Spaceship",
+   "worlds": [
+    "mothership"
+   ],
+   "hub": "main/mothership",
+   "status": "existing",
+   "music": {
+    "registry": "content/run/track_scenes.json",
+    "path": "main"
+   },
+   "hub_links": [
+    {
+     "to_location": "hell",
+     "to": "main/underworld",
+     "object": {
+      "id": "mothership.to_underworld",
+      "status": "proposed",
+      "illustrative_idea": "A rift in the deck floor, red light below."
+     }
+    }
+   ]
+  },
+  {
+   "id": "hell",
+   "title": "Hell",
+   "worlds": [
+    "underworld"
+   ],
+   "hub": "main/underworld",
+   "status": "existing",
+   "music": {
+    "registry": "content/run/track_scenes.json",
+    "path": "main"
+   },
+   "hub_links": [
+    {
+     "to_location": "alien_spaceship",
+     "to": "main/mothership",
+     "object": {
+      "id": "underworld.to_mothership",
+      "status": "proposed",
+      "illustrative_idea": "A beam of cold light through a hole in the arena ceiling."
+     }
+    }
+   ]
+  }
+ ],
+ "quests": [
+  {
+   "id": "bassment",
+   "title": "The Bassment",
+   "owner_label": "Dungeon / Basement",
+   "system": "trial",
+   "path": "bassment",
+   "scenes_source": "content/trial/passages.json",
+   "entry": "bassment/1",
+   "entry_conditions": [],
+   "completion": {
+    "scenes": [
+     "bassment/63"
+    ]
+   },
+   "return": {
+    "landing": "checkpoint",
+    "object": "bassment.return",
+    "placement": "all_scenes",
+    "overrides": [],
+    "hidden_fallbacks": [
+     "system_back_key"
+    ],
+    "status": "proposed"
+   },
+   "progress": {
+    "scene": "string, graph id",
+    "completed": "bool",
+    "visits": "int",
+    "flags": "items carried (ids from passages.json items)",
+    "resume": "start of the scene left; a completed quest restarts at its first scene"
+   },
+   "flag_prefixes": [],
+   "music": {
+    "registry": "content/trial/passages.json",
+    "key": "music",
+    "audio": "dd_part1",
+    "fight_audio": "dd_part2"
+   },
+   "status": "partial"
+  },
+  {
+   "id": "gospel",
+   "title": "The Life of Jesus",
+   "owner_label": "Jesus",
+   "system": "path",
+   "path": "gospel",
+   "scenes_source": "content/paths/gospel/run.json",
+   "entry": "gospel/jordan",
+   "entry_conditions": [],
+   "completion": {
+    "scenes": [
+     "gospel/jerusalem.tomb",
+     "gospel/jerusalem.road"
+    ]
+   },
+   "return": {
+    "landing": "checkpoint",
+    "object": "gospel.return",
+    "placement": "all_scenes",
+    "overrides": [],
+    "hidden_fallbacks": [
+     "pause_menu_leave"
+    ],
+    "status": "proposed"
+   },
+   "progress": {
+    "scene": "string, graph id",
+    "completed": "bool",
+    "visits": "int",
+    "flags": "run flags with the quest's prefixes, saved on leaving",
+    "resume": "start of the scene left; a completed quest restarts at its first scene"
+   },
+   "flag_prefixes": [
+    "gospel_"
+   ],
+   "music": {
+    "registry": "content/run/track_scenes.json",
+    "path": "gospel"
+   },
+   "status": "partial"
+  },
+  {
+   "id": "squadron",
+   "title": "The Mission Count",
+   "owner_label": "Catch-22",
+   "system": "path",
+   "path": "squadron",
+   "scenes_source": "content/paths/squadron/run.json",
+   "entry": "squadron/base",
+   "entry_conditions": [],
+   "completion": {
+    "scenes": [
+     "squadron/escape.c13"
+    ]
+   },
+   "return": {
+    "landing": "checkpoint",
+    "object": "squadron.return",
+    "placement": "all_scenes",
+    "overrides": [],
+    "hidden_fallbacks": [
+     "pause_menu_leave"
+    ],
+    "status": "proposed"
+   },
+   "progress": {
+    "scene": "string, graph id",
+    "completed": "bool",
+    "visits": "int",
+    "flags": "run flags with the quest's prefixes, saved on leaving",
+    "resume": "start of the scene left; a completed quest restarts at its first scene"
+   },
+   "flag_prefixes": [
+    "sq_"
+   ],
+   "music": {
+    "registry": "content/run/track_scenes.json",
+    "path": "squadron"
+   },
+   "status": "partial"
+  },
+  {
+   "id": "ember",
+   "title": "The Ember Road",
+   "owner_label": "Lord of the Rings",
+   "system": "path",
+   "path": "ember",
+   "scenes_source": "content/paths/ember/run.json",
+   "entry": "ember/hollow",
+   "entry_conditions": [],
+   "completion": {
+    "scenes": [
+     "ember/mountain.spring",
+     "ember/mountain.keeper"
+    ]
+   },
+   "return": {
+    "landing": "checkpoint",
+    "object": "ember.return",
+    "placement": "all_scenes",
+    "overrides": [],
+    "hidden_fallbacks": [
+     "pause_menu_leave"
+    ],
+    "status": "proposed"
+   },
+   "progress": {
+    "scene": "string, graph id",
+    "completed": "bool",
+    "visits": "int",
+    "flags": "run flags with the quest's prefixes, saved on leaving",
+    "resume": "start of the scene left; a completed quest restarts at its first scene"
+   },
+   "flag_prefixes": [
+    "ember_"
+   ],
+   "music": {
+    "registry": "content/run/track_scenes.json",
+    "path": "ember"
+   },
+   "status": "partial"
+  }
+ ],
+ "entrances": [
+  {
+   "id": "warehouse_rave.bassment",
+   "location": "warehouse_rave",
+   "quest": "bassment",
+   "scene": "main/warehouse",
+   "object": {
+    "id": "warehouse.enter_bassment",
+    "status": "proposed",
+    "illustrative_idea": "A cellar hatch on the Floor behind the speaker stacks, chalk marks round its edge."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed",
+   "note": "Ruling 15: an ungated Dungeon entrance on every hub, the Warehouse Floor included, taken at the lap's end through the port. The wizard stays as an extra, rhythm-gated way in.",
+   "legacy_way": {
+    "object": {
+     "id": "warehouse.wizard",
+     "status": "existing",
+     "illustrative_idea": "The wizard on the Floor (also in the Chill-out). Keeps its legacy mid-scene entrance as an extra way in (decision 5; ruling 15)."
+    },
+    "transition": "legacy_mid_scene",
+    "rhythm_gate": true,
+    "exception": "legacy_wizard_entrance",
+    "also_in": [
+     "main/warehouse.chill"
+    ],
+    "conditions": [
+     {
+      "flag_none": "wh_wizard_met"
+     },
+     {
+      "window": "blocks 1-2"
+     }
+    ]
+   }
+  },
+  {
+   "id": "warehouse_rave.gospel",
+   "location": "warehouse_rave",
+   "quest": "gospel",
+   "scene": "main/warehouse",
+   "object": {
+    "id": "warehouse.enter_gospel",
+    "status": "partial",
+    "illustrative_idea": "The projected star, copied to a stack on the Floor. The original is today on the Balcony (warehouse.balcony.star).",
+    "copy_of": "warehouse.balcony.star"
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "partial",
+   "also_in_today": "main/warehouse.balcony",
+   "changes_to_existing_object": [
+    "remove the passed-block gate and the on_miss route",
+    "remove the flag condition (wh_saw_floor / wh_vip_pass)"
+   ]
+  },
+  {
+   "id": "warehouse_rave.squadron",
+   "location": "warehouse_rave",
+   "quest": "squadron",
+   "scene": "main/warehouse",
+   "object": {
+    "id": "warehouse.enter_squadron",
+    "status": "partial",
+    "illustrative_idea": "The flickering military radio, copied to a speaker stack on the Floor. The original is today in the Booth (warehouse.booth.radio).",
+    "copy_of": "warehouse.booth.radio"
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "partial",
+   "also_in_today": "main/warehouse.booth",
+   "changes_to_existing_object": [
+    "remove the passed-block gate and the on_miss route",
+    "remove the flag condition (wh_saw_floor / wh_vip_pass)"
+   ]
+  },
+  {
+   "id": "warehouse_rave.ember",
+   "location": "warehouse_rave",
+   "quest": "ember",
+   "scene": "main/warehouse",
+   "object": {
+    "id": "warehouse.enter_ember",
+    "status": "partial",
+    "illustrative_idea": "The small ember in a glass, copied to a table at the edge of the Floor. The original is today in the Bar (warehouse.bar.ember).",
+    "copy_of": "warehouse.bar.ember"
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "partial",
+   "also_in_today": "main/warehouse.bar",
+   "changes_to_existing_object": [
+    "remove the passed-block gate and the on_miss route",
+    "remove the flag condition (wh_saw_floor / wh_vip_pass)"
+   ]
+  },
+  {
+   "id": "hospital_ward.bassment",
+   "location": "hospital_ward",
+   "quest": "bassment",
+   "scene": "main/hospital",
+   "object": {
+    "id": "hospital.enter_bassment",
+    "status": "proposed",
+    "illustrative_idea": "A service hatch with chalk marks behind the nurses' station."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "hospital_ward.gospel",
+   "location": "hospital_ward",
+   "quest": "gospel",
+   "scene": "main/hospital",
+   "object": {
+    "id": "hospital.enter_gospel",
+    "status": "proposed",
+    "illustrative_idea": "A figure of light under a star-shaped lamp above a bed."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "hospital_ward.squadron",
+   "location": "hospital_ward",
+   "quest": "squadron",
+   "scene": "main/hospital",
+   "object": {
+    "id": "hospital.enter_squadron",
+    "status": "proposed",
+    "illustrative_idea": "A crackling wartime radio on a bedside table, a bomber's shadow on the wall."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "hospital_ward.ember",
+   "location": "hospital_ward",
+   "quest": "ember",
+   "scene": "main/hospital",
+   "object": {
+    "id": "hospital.enter_ember",
+    "status": "proposed",
+    "illustrative_idea": "A small ember glowing in a water glass on the locker."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "mental_hospital.bassment",
+   "location": "mental_hospital",
+   "quest": "bassment",
+   "scene": "main/ward",
+   "object": {
+    "id": "ward.enter_bassment",
+    "status": "proposed",
+    "illustrative_idea": "A cellar hatch under the day-room radiator, chalk marks round its edge."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "mental_hospital.gospel",
+   "location": "mental_hospital",
+   "quest": "gospel",
+   "scene": "main/ward",
+   "object": {
+    "id": "ward.enter_gospel",
+    "status": "proposed",
+    "illustrative_idea": "A figure of light in the day-room window, under a drawn star."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "mental_hospital.squadron",
+   "location": "mental_hospital",
+   "quest": "squadron",
+   "scene": "main/ward",
+   "object": {
+    "id": "ward.enter_squadron",
+    "status": "proposed",
+    "illustrative_idea": "A military radio on the shelf beside the cards table."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "mental_hospital.ember",
+   "location": "mental_hospital",
+   "quest": "ember",
+   "scene": "main/ward",
+   "object": {
+    "id": "ward.enter_ember",
+    "status": "proposed",
+    "illustrative_idea": "An ember in a tea glass left on the table."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "alien_spaceship.bassment",
+   "location": "alien_spaceship",
+   "quest": "bassment",
+   "scene": "main/mothership",
+   "object": {
+    "id": "mothership.enter_bassment",
+    "status": "proposed",
+    "illustrative_idea": "A maintenance hatch in the deck plating, chalk marks beside it."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "alien_spaceship.gospel",
+   "location": "alien_spaceship",
+   "quest": "gospel",
+   "scene": "main/mothership",
+   "object": {
+    "id": "mothership.enter_gospel",
+    "status": "proposed",
+    "illustrative_idea": "A figure of light under a single star in the viewport."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "alien_spaceship.squadron",
+   "location": "alien_spaceship",
+   "quest": "squadron",
+   "scene": "main/mothership",
+   "object": {
+    "id": "mothership.enter_squadron",
+    "status": "proposed",
+    "illustrative_idea": "An old military radio wired into a comms console, a bomber's shadow on the bulkhead."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "alien_spaceship.ember",
+   "location": "alien_spaceship",
+   "quest": "ember",
+   "scene": "main/mothership",
+   "object": {
+    "id": "mothership.enter_ember",
+    "status": "proposed",
+    "illustrative_idea": "An ember glowing in a specimen jar on the deck."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "hell.bassment",
+   "location": "hell",
+   "quest": "bassment",
+   "scene": "main/underworld",
+   "object": {
+    "id": "underworld.enter_bassment",
+    "status": "proposed",
+    "illustrative_idea": "A trapdoor in the arena sand with a ladder and chalk marks."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "hell.gospel",
+   "location": "hell",
+   "quest": "gospel",
+   "scene": "main/underworld",
+   "object": {
+    "id": "underworld.enter_gospel",
+    "status": "proposed",
+    "illustrative_idea": "A figure of light standing under one white star in the dark."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "hell.squadron",
+   "location": "hell",
+   "quest": "squadron",
+   "scene": "main/underworld",
+   "object": {
+    "id": "underworld.enter_squadron",
+    "status": "proposed",
+    "illustrative_idea": "A military radio hanging from the chains, a bomber's shadow on the wall."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  },
+  {
+   "id": "hell.ember",
+   "location": "hell",
+   "quest": "ember",
+   "scene": "main/underworld",
+   "object": {
+    "id": "underworld.enter_ember",
+    "status": "proposed",
+    "illustrative_idea": "A small ember in a glass beside the furnace mouth."
+   },
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed"
+  }
+ ],
+ "route_rules": [
+  {
+   "id": "to_hub",
+   "applies_to": "mainline_non_hub",
+   "target": "hub_of_location",
+   "object": "<scene>.to_hub",
+   "kind": "scene",
+   "status": "proposed",
+   "note": "every mainline scene that is not a hub: the hub of its location"
+  },
+  {
+   "id": "back",
+   "applies_to": "path_quest_scenes",
+   "target": "previous_scene",
+   "object": "<quest>.back",
+   "kind": "scene",
+   "status": "proposed",
+   "note": "the previous scene comes from the route history; the graph carries one edge per possible predecessor"
+  },
+  {
+   "id": "return",
+   "applies_to": "all_quest_scenes",
+   "target": "checkpoint",
+   "object": "<quest>.return",
+   "kind": "quest_return",
+   "status": "proposed"
+  }
+ ],
+ "extra_routes": [
+  {
+   "scene": "main/mothership.gallery",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "object": {
+    "id": "mothership.gallery.enter_bassment",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/mothership.reactor",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "object": {
+    "id": "mothership.reactor.enter_gospel",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/mothership.bridge",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "object": {
+    "id": "mothership.bridge.enter_squadron",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/underworld.court",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "object": {
+    "id": "underworld.court.enter_bassment",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/underworld.furnace",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "object": {
+    "id": "underworld.furnace.enter_gospel",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/underworld.pit",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "object": {
+    "id": "underworld.pit.enter_squadron",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/hospital.dayroom",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "object": {
+    "id": "hospital.dayroom.enter_bassment",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/hospital.cafeteria",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "object": {
+    "id": "hospital.cafeteria.enter_gospel",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/hospital.garden",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "object": {
+    "id": "hospital.garden.enter_squadron",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/ward.art",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "object": {
+    "id": "ward.art.enter_bassment",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/ward.dorm",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "object": {
+    "id": "ward.dorm.enter_gospel",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/ward.corridor",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "object": {
+    "id": "ward.corridor.enter_squadron",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/ward.courtyard",
+   "kind": "quest_entry",
+   "quest": "ember",
+   "object": {
+    "id": "ward.courtyard.enter_ember",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/hospital_late.cafe",
+   "kind": "quest_entry",
+   "quest": "ember",
+   "object": {
+    "id": "hospital_late.cafe.enter_ember",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/hospital_late.quiet",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "object": {
+    "id": "hospital_late.quiet.enter_bassment",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/ward_late.treat",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "object": {
+    "id": "ward_late.treat.enter_bassment",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "main/ward_late.dorm",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "object": {
+    "id": "ward_late.dorm.enter_gospel",
+    "status": "proposed"
+   },
+   "reason": "the scene would otherwise offer fewer than three distinct destinations"
+  },
+  {
+   "scene": "gospel/jerusalem.tomb",
+   "kind": "restart",
+   "to": "gospel/jordan",
+   "object": {
+    "id": "gospel.restart",
+    "status": "proposed"
+   },
+   "reason": "restart a completed quest (design D3)",
+   "owner_to_confirm": true
+  },
+  {
+   "scene": "gospel/jerusalem.road",
+   "kind": "restart",
+   "to": "gospel/jordan",
+   "object": {
+    "id": "gospel.restart",
+    "status": "proposed"
+   },
+   "reason": "restart a completed quest (design D3)",
+   "owner_to_confirm": true
+  },
+  {
+   "scene": "squadron/escape.c13",
+   "kind": "restart",
+   "to": "squadron/base",
+   "object": {
+    "id": "squadron.restart",
+    "status": "proposed"
+   },
+   "reason": "restart a completed quest (design D3)",
+   "owner_to_confirm": true
+  },
+  {
+   "scene": "ember/mountain.spring",
+   "kind": "restart",
+   "to": "ember/hollow",
+   "object": {
+    "id": "ember.restart",
+    "status": "proposed"
+   },
+   "reason": "restart a completed quest (design D3)",
+   "owner_to_confirm": true
+  },
+  {
+   "scene": "ember/mountain.keeper",
+   "kind": "restart",
+   "to": "ember/hollow",
+   "object": {
+    "id": "ember.restart",
+    "status": "proposed"
+   },
+   "reason": "restart a completed quest (design D3)",
+   "owner_to_confirm": true
+  },
+  {
+   "scene": "gospel/jordan",
+   "kind": "second_route",
+   "to": "gospel/jordan.nazareth",
+   "object": {
+    "id": "gospel.jordan.skip",
+    "status": "proposed"
+   },
+   "reason": "the entry scene has one onward route",
+   "needs_review": "destination chosen only so that the scene has two onward routes; the story owner may pick another",
+   "owner_to_confirm": true
+  },
+  {
+   "scene": "ember/hollow",
+   "kind": "second_route",
+   "to": "ember/hollow.inn",
+   "object": {
+    "id": "ember.hollow.skip",
+    "status": "proposed"
+   },
+   "reason": "the entry scene has one onward route",
+   "needs_review": "destination chosen only so that the scene has two onward routes; the story owner may pick another",
+   "owner_to_confirm": true
+  }
+ ],
+ "exceptions": [
+  {
+   "id": "bassment_passages_under_three",
+   "rule": 5,
+   "status": "declared",
+   "kind": "named_exception",
+   "scope": {
+    "quest": "bassment",
+    "scenes": [
+     "bassment/0",
+     "bassment/2",
+     "bassment/6",
+     "bassment/7",
+     "bassment/9",
+     "bassment/11",
+     "bassment/12",
+     "bassment/13",
+     "bassment/14",
+     "bassment/17",
+     "bassment/19",
+     "bassment/21",
+     "bassment/22",
+     "bassment/23",
+     "bassment/24",
+     "bassment/25",
+     "bassment/27",
+     "bassment/29",
+     "bassment/31",
+     "bassment/32",
+     "bassment/33",
+     "bassment/34",
+     "bassment/36",
+     "bassment/38",
+     "bassment/39",
+     "bassment/41",
+     "bassment/44",
+     "bassment/46",
+     "bassment/47",
+     "bassment/49",
+     "bassment/50",
+     "bassment/51",
+     "bassment/53",
+     "bassment/54",
+     "bassment/55",
+     "bassment/56",
+     "bassment/57",
+     "bassment/58",
+     "bassment/60",
+     "bassment/61",
+     "bassment/62",
+     "bassment/63"
+    ]
+   },
+   "reason": "The Bassment is a text-and-choice crawl; only the return is added in phase 1 (ruling 19). Raising the choices of these passages is a later, separately sized piece (owner decision, 6 Nov 2026). The list has 42 passages: ruling 19 says 41, but passage 23 offers its third way (the lamp door) only to a player who carries the lamp, and an option that needs an item the player has not got is not counted.",
+   "tracked_by": "later piece after N2 (ONE_PC_PLAN.md, end of stage N2)",
+   "report_as": "exception"
+  },
+  {
+   "id": "legacy_wizard_entrance",
+   "rule": 1,
+   "status": "declared",
+   "kind": "named_exception",
+   "scope": {
+    "entrances": [
+     "warehouse_rave.bassment"
+    ],
+    "objects": [
+     "warehouse.wizard",
+     "warehouse.chill.wizard"
+    ]
+   },
+   "reason": "The wizard's mid-scene entrance to the Bassment stays as it is for now, as an extra way in beside the ungated Floor entrance of ruling 15 (owner, 6 Nov 2026; ruling 15): it is outside the port, gated by a passed block in blocks 1 and 2 and by the flag wh_wizard_met (once per run).",
+   "tracked_by": "later piece: move the entrance behind the port (when: soonest)",
+   "report_as": "exception"
+  },
+  {
+   "id": "late_loops_have_no_ending",
+   "rule": 6,
+   "status": "declared",
+   "kind": "terminal_component",
+   "scope": {
+    "worlds": [
+     "hospital_late",
+     "ward_late"
+    ]
+   },
+   "reason": "There is no ending yet (owner decision, 6 Nov 2026): the two late worlds loop on themselves and into each other.",
+   "tracked_by": "future decision on an ending",
+   "report_as": "exception"
+  }
+ ],
+ "note": "Brought into line with LEAD_RULINGS.md 15 to 19. Validate with: python tools/narrative/graph.py"
+}
