@@ -17,6 +17,8 @@ var _starts: Array = []  # song t of each track start
 var _dev: Array = []  # [song t, deviation s]
 var _start_cost_us := 0
 var _mem0 := 0
+var _next_cue := 0
+var _cost_t := 0.0
 
 
 func _initialize() -> void:
@@ -47,6 +49,7 @@ func _setup() -> void:
 	print("MEASURE memory static %+.1f MB for the first scene's stems in memory" % [float(OS.get_static_memory_usage() - m_before) / 1048576.0])
 	print("MEASURE load first scene %s: %.1f ms (worker thread, waited for before the start), mix rate %d, driver %s" % [start, ms, AudioServer.get_mix_rate(), AudioServer.get_driver_name() if AudioServer.has_method("get_driver_name") else "?"])
 	engine.begin(start)
+	audio.track.warm([data])  # (as RunPlay does: the scene plans on a worker thread)
 	for ev in engine.update(-0.001):
 		audio.on_event(ev)
 	audio.start()
@@ -66,18 +69,25 @@ func _process(_delta: float) -> bool:
 		_frames.append([t, float(now_us - _last_us) / 1000.0])
 	_last_us = now_us
 	var t0 := Time.get_ticks_usec()
+	while _next_cue < engine.level.notes.size() and float(engine.level.notes[_next_cue]["time"]) <= t:  # a perfect player (taps on the cue's time; a hold held to its end), so the run goes on
+		var n: Dictionary = engine.level.notes[_next_cue]
+		engine.press(int(n["pad"]), float(n["time"]), int(n["pad"]))
+		engine.release(int(n["pad"]), float(n["end_time"]) if str(n["type"]) == "hold" else float(n["time"]) + 0.05, int(n["pad"]))
+		_next_cue += 1
 	for ev in engine.update(t):
 		audio.on_event(ev)
 		if str(ev["kind"]) == "track_start":
 			_starts.append(float(ev["t"]))
 		if str(ev["kind"]) == "route_window":
 			audio.track.prefetch_for(data, engine.node_id)
-	var n_before := audio.track.log.size()
-	_start_cost_us = maxi(_start_cost_us, Time.get_ticks_usec() - t0) if n_before >= 0 else _start_cost_us
+	var cost := Time.get_ticks_usec() - t0
+	if cost > _start_cost_us:
+		_start_cost_us = cost
+		_cost_t = t
 	var g := audio.track.live()
 	if not g.is_empty() and t > float(g["t0"]) + 2.0 and float(g["position"]) >= 0.0:
 		var clock_pos := audio.playback_position()
-		_dev.append([t, (float(g["position"]) - clock_pos) - (float(g["track_t0"]) - float(g["t0"]))])
+		_dev.append([t, (float(g["position"]) - clock_pos) - (float(g["track_t0"]) - float(g["t0"])), float(g["t0"])])
 	if t >= _t_end:
 		_report()
 		return true
@@ -94,20 +104,31 @@ func _report() -> void:
 			if absf(float(f[0]) - float(s)) <= 0.5:
 				worst = maxf(worst, float(f[1]))
 		print("MEASURE entry at t=%.3f: worst frame %.1f ms within 0.5 s" % [float(s), worst])
+	var worst_f: Array = [0.0, 0.0]
+	for f in _frames:
+		if float(f[1]) > float(worst_f[1]):
+			worst_f = f
+	print("MEASURE worst frame %.1f ms at song t=%.2f" % [float(worst_f[1]), float(worst_f[0])])
 	var all := _frames.map(func(f: Array) -> float: return float(f[1]))
 	all.sort()
 	if not all.is_empty():
-		print("MEASURE frames %d: median %.1f ms, p99 %.1f ms, max %.1f ms; the frame with the most engine work %.2f ms" % [all.size(), all[all.size() / 2], all[int(all.size() * 0.99)], all[all.size() - 1], float(_start_cost_us) / 1000.0])
-	if _dev.size() > 2:
+		print("MEASURE frames %d: median %.1f ms, p99 %.1f ms, max %.1f ms; the frame with the most engine and audio-event work %.2f ms (at t=%.2f)" % [all.size(), all[all.size() / 2], all[int(all.size() * 0.99)], all[all.size() - 1], float(_start_cost_us) / 1000.0, _cost_t])
+	var by_group := {}
+	for d in _dev:
+		by_group.get_or_add(float(d[2]), []).append(d)
+	for g0 in by_group:
+		var ds: Array = by_group[g0]
+		if ds.size() < 3:
+			continue
 		var mx := 0.0
 		var sum := 0.0
-		for d in _dev:
+		for d in ds:
 			mx = maxf(mx, absf(float(d[1])))
 			sum += float(d[1])
-		var a: Array = _dev[0]
-		var b: Array = _dev[_dev.size() - 1]
+		var a: Array = ds[0]
+		var b: Array = ds[ds.size() - 1]
 		var slope := (float(b[1]) - float(a[1])) / maxf(float(b[0]) - float(a[0]), 0.001) * 100.0
-		print("MEASURE sync %d samples over %.1f s: max |track - clock| %.2f ms, mean %.2f ms, drift %.3f ms per 100 s" % [_dev.size(), float(b[0]) - float(a[0]), mx * 1000.0, sum / _dev.size() * 1000.0, slope * 1000.0])
+		print("MEASURE sync group from t=%.2f: %d samples over %.1f s: max |track - clock| %.2f ms, mean %.2f ms, drift %.3f ms per 100 s" % [float(g0), ds.size(), float(b[0]) - float(a[0]), mx * 1000.0, sum / ds.size() * 1000.0, slope * 1000.0])
 	print("MEASURE track log ", JSON.stringify(audio.track.log.filter(func(x: Dictionary) -> bool: return str(x["kind"]) in ["start", "seek", "end", "not_ready", "unloaded"])))
 	audio.stop()
 	quit()

@@ -195,6 +195,8 @@ func start() -> void:
 	_dip = false
 	_started = true
 	player.play(0.0)
+	if track != null:
+		track.start_with_clock()
 
 
 func pause() -> void:

@@ -178,11 +178,8 @@ func on_event(ev: Dictionary) -> void:
 
 ## One frame of RunAudio (song time `now` of the sound reaching the listener, `ttnm` the time to the next mix): due items run, idle restores come back, finished loads are taken, faded groups go.
 func step(now: float, ttnm: float) -> void:
-	var chunk_t := NAN
-	if run_audio != null and run_audio.player != null and run_audio.player.playing and not run_audio.player.stream_paused:
-		chunk_t = run_audio.playback_position()  # (the clock's position as of its last mix: where the next chunk, the one a stem started now first sounds in, begins)
 	while not _schedule.is_empty() and float(_schedule[0]["t"]) <= now + ttnm:
-		run_item(_schedule.pop_front(), now, ttnm, chunk_t)
+		run_item(_schedule.pop_front(), now, ttnm)
 	var g := _live()
 	if not g.is_empty() and notes_fn.is_valid():
 		_apply(g, (g["mutes"] as RunTrackMutes).advance(now, notes_fn.call()))
@@ -193,11 +190,9 @@ func step(now: float, ttnm: float) -> void:
 			_free_group(x)
 
 
-## Runs one scheduled item as if the frame were at `now` with `ttnm` to the next mix (the tests call it on a virtual clock). `chunk_t`: the song time the next mixed chunk begins at, the clock's
-## reported position (StemTransport.playback_position: a stream's position reads as of the END of its last mixed chunk, so a stem started now first sounds at the clock's position, not at
-## now + ttnm). A stem group started that way sits on the clock to the sample; the loops' rule (now + ttnm, RunAudio._start_voice) starts them one mix period early (88.5 ms on the Dummy
-## driver, measured: tests/fixtures/track_scenes/measure_track_audio.gd). Without a clock (NAN) the loops' rule is used. `late` may be negative: the group then starts that much earlier in the
-## track, which is the same sound at the right time.
+## Runs one scheduled item as if the frame were at `now` with `ttnm` to the next mix (the tests call it on a virtual clock). The stems start as far into the track as the call is late: the loops'
+## rule (now + ttnm, RunAudio._start_voice), measured on the Dummy driver to put a group on the running clock (tests/fixtures/track_scenes/measure_track_audio.gd). `chunk_t` (given): the song time
+## to start from instead (start_with_clock: 0, the clock's own start); `late` may then be negative, the group starting that much earlier in the track.
 func run_item(item: Dictionary, now: float, ttnm: float, chunk_t: float = NAN) -> void:
 	var t := float(item["t"])
 	var late := (chunk_t - t) if not is_nan(chunk_t) else maxf(now + ttnm - t, 0.0)
@@ -224,6 +219,14 @@ func run_item(item: Dictionary, now: float, ttnm: float, chunk_t: float = NAN) -
 				for key in _dip_keys(g2):
 					tr2.set_scale(str(key), dip_gain if bool(item["on"]) else 1.0)
 				log.append({"kind": "dip", "t": t, "on": bool(item["on"])})
+
+
+## The run's clock starts now (RunAudio.start, the end of the countdown): a group due on the first downbeat starts in the same call, at its own `track_t`, so the clock stream and the stems are
+## new streams together and share their first mix (a group started a frame later reads the clock's start-up position and lands up to a mix period off: measured 83 ms on the Dummy driver).
+func start_with_clock() -> void:
+	while not _schedule.is_empty() and float(_schedule[0]["t"]) <= 1e-9:
+		var item: Dictionary = _schedule.pop_front()
+		run_item(item, float(item["t"]), 0.0, float(item["t"]))
 
 
 func pause() -> void:
@@ -349,14 +352,27 @@ func _retain(plans: Array) -> void:
 		keep[str(p["dir"])] = true
 	for g in _groups:
 		keep[str(g["dir"])] = true
+	var dropped: Array = []
 	for d in _cache.keys():
 		if not keep.has(d):
 			if str(_cache[d]["state"]) == "loading":
 				_cache[d]["keep"] = false  # (dropped when its decode is done)
 			else:
+				dropped.append(_cache[d]["job"])
 				_cache.erase(d)
+	_release(dropped)
 	for p in plans:
 		_request(p)
+
+
+## Lets packs go on a worker thread: a decoded stem is thousands of Ogg packets, and freeing a pack on the main thread stalled a frame for up to 190 ms (measured on the Dummy driver).
+func _release(jobs: Array) -> void:
+	if jobs.is_empty():
+		return
+	_tasks.append(WorkerThreadPool.add_task(func() -> void:
+		for j in jobs:
+			(j as Dictionary)["streams"] = {}
+		jobs.clear()))
 
 
 func _request(plan: Dictionary) -> void:
@@ -396,6 +412,7 @@ func _poll() -> void:
 			_finish(e)
 			if not bool(e["keep"]):
 				_cache.erase(d)
+				_release([e["job"]])
 	for id in _tasks.duplicate():  # (the warms)
 		if WorkerThreadPool.is_task_completed(int(id)):
 			WorkerThreadPool.wait_for_task_completion(int(id))
