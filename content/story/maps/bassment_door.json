@@ -46,7 +46,7 @@
    "ceil_tex": "ceil_beams",
    "wall_tex": "wall_brick",
    "light": 0.4,
-   "tint": "#d8b070"
+   "tint": "#c1ab87"
   },
   {
    "id": "d_chamber",
@@ -90,7 +90,7 @@
    "ceil_tex": "ceil_arch",
    "wall_tex": "wall_brick",
    "light": 0.45,
-   "tint": "#e0b060"
+   "tint": "#c3a97d"
   },
   {
    "id": "d_dais",
@@ -118,7 +118,7 @@
    "ceil_tex": "ceil_arch",
    "wall_tex": "wall_iron",
    "light": 0.6,
-   "tint": "#ffc860"
+   "tint": "#dbbd84"
   }
  ],
  "walls": [
@@ -377,7 +377,7 @@
    ],
    "y": 2.2,
    "radius": 9,
-   "color": "#ffb840",
+   "color": "#d4ad6b",
    "strength": 1.8
   },
   {
@@ -389,7 +389,7 @@
    ],
    "y": 3.8,
    "radius": 8,
-   "color": "#e8b060",
+   "color": "#c9ab7f",
    "strength": 1.1
   },
   {
@@ -401,7 +401,7 @@
    ],
    "y": 1.6,
    "radius": 5,
-   "color": "#ff9a40",
+   "color": "#d49c6b",
    "strength": 1.3
   },
   {
@@ -413,7 +413,7 @@
    ],
    "y": 1.6,
    "radius": 5,
-   "color": "#ff9a40",
+   "color": "#d49c6b",
    "strength": 1.3
   },
   {
@@ -425,7 +425,7 @@
    ],
    "y": 2.4,
    "radius": 4,
-   "color": "#d09040",
+   "color": "#b08c60",
    "strength": 1.0
   }
  ],

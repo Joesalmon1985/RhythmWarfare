@@ -9,23 +9,23 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.0
   },
   "ceil_beams": {
    "file": "textures/ceil_beams.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.25
   },
   "ceil_crystal": {
    "file": "textures/ceil_crystal.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "ceil_pipes": {
    "file": "textures/ceil_pipes.png",
@@ -33,15 +33,15 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.0
   },
   "ceil_rock": {
    "file": "textures/ceil_rock.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "fig_barrel_knight_attack": {
    "file": "textures/fig_barrel_knight_attack.png",
@@ -305,7 +305,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "floor_dirt": {
    "file": "textures/floor_dirt.png",
@@ -313,7 +313,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "floor_flag": {
    "file": "textures/floor_flag.png",
@@ -321,31 +321,31 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.25
   },
   "floor_grate": {
    "file": "textures/floor_grate.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.0
   },
   "floor_kitchen": {
    "file": "textures/floor_kitchen.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.2
   },
   "floor_mirror": {
    "file": "textures/floor_mirror.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.0
   },
   "floor_moss": {
    "file": "textures/floor_moss.png",
@@ -353,7 +353,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "floor_pavement": {
    "file": "textures/floor_pavement.png",
@@ -361,7 +361,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "floor_straw": {
    "file": "textures/floor_straw.png",
@@ -369,7 +369,7 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.0
   },
   "floor_wood": {
    "file": "textures/floor_wood.png",
@@ -377,7 +377,7 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.0
   },
   "sky_dawn": {
    "file": "textures/sky_dawn.png",
@@ -453,6 +453,14 @@
   },
   "thing_hand": {
    "file": "textures/thing_hand.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
+  "thing_hatch": {
+   "file": "textures/thing_hatch.png",
    "size": [
     128,
     128
@@ -537,7 +545,7 @@
     128,
     128
    ],
-   "metres": 2.0
+   "metres": 1.25
   },
   "wall_brass": {
    "file": "textures/wall_brass.png",
@@ -545,7 +553,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "wall_brick": {
    "file": "textures/wall_brick.png",
@@ -553,7 +561,7 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.0
   },
   "wall_brick_dark": {
    "file": "textures/wall_brick_dark.png",
@@ -561,7 +569,7 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.0
   },
   "wall_burrow": {
    "file": "textures/wall_burrow.png",
@@ -569,7 +577,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "wall_cable": {
    "file": "textures/wall_cable.png",
@@ -577,7 +585,7 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.0
   },
   "wall_crystal": {
    "file": "textures/wall_crystal.png",
@@ -585,7 +593,7 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.25
   },
   "wall_door": {
    "file": "textures/wall_door.png",
@@ -593,7 +601,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "wall_echo": {
    "file": "textures/wall_echo.png",
@@ -601,7 +609,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "wall_fungus": {
    "file": "textures/wall_fungus.png",
@@ -609,7 +617,7 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.0
   },
   "wall_hands": {
    "file": "textures/wall_hands.png",
@@ -617,7 +625,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "wall_hatch": {
    "file": "textures/wall_hatch.png",
@@ -625,7 +633,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "wall_iron": {
    "file": "textures/wall_iron.png",
@@ -633,7 +641,7 @@
     128,
     128
    ],
-   "metres": 2.0
+   "metres": 1.0
   },
   "wall_mirror": {
    "file": "textures/wall_mirror.png",
@@ -641,7 +649,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "wall_pipe": {
    "file": "textures/wall_pipe.png",
@@ -649,7 +657,7 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.0
   },
   "wall_rock": {
    "file": "textures/wall_rock.png",
@@ -657,7 +665,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "wall_shelf": {
    "file": "textures/wall_shelf.png",
@@ -665,47 +673,47 @@
     128,
     128
    ],
-   "metres": 2.0
+   "metres": 1.25
   },
   "wall_tile": {
    "file": "textures/wall_tile.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 1.5
+   "metres": 1.2
   },
   "water": {
    "file": "textures/water.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "water_1": {
    "file": "textures/water_1.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "water_2": {
    "file": "textures/water_2.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "water_3": {
    "file": "textures/water_3.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 1.25
   }
  }
 }

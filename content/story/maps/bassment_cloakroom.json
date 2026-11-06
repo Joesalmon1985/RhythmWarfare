@@ -45,7 +45,7 @@
    "floor_tex": "floor_wood",
    "ceil_tex": "ceil_beams",
    "wall_tex": "wall_shelf",
-   "light": 0.4,
+   "light": 0.48,
    "tint": "#ffb868"
   },
   {
@@ -73,7 +73,7 @@
    "floor_tex": "floor_wood",
    "ceil_tex": "ceil_beams",
    "wall_tex": "wall_brick",
-   "light": 0.4,
+   "light": 0.48,
    "tint": "#ffa850"
   },
   {
@@ -101,7 +101,7 @@
    "floor_tex": "floor_straw",
    "ceil_tex": "ceil_beams",
    "wall_tex": "wall_shelf",
-   "light": 0.34,
+   "light": 0.41,
    "tint": "#ff9a50"
   }
  ],
@@ -193,7 +193,7 @@
    "y": 1.9,
    "radius": 6.5,
    "color": "#ffb050",
-   "strength": 2.0
+   "strength": 2.5
   },
   {
    "id": "l_lamp2",
@@ -205,7 +205,7 @@
    "y": 1.5,
    "radius": 5,
    "color": "#ff9a40",
-   "strength": 1.0
+   "strength": 1.25
   },
   {
    "id": "l_door",
@@ -217,7 +217,7 @@
    "y": 1.2,
    "radius": 3,
    "color": "#40ff90",
-   "strength": 0.8
+   "strength": 1
   },
   {
    "id": "rack1",
@@ -349,7 +349,7 @@
    "y": 1.2,
    "radius": 3,
    "color": "#ff7a50",
-   "strength": 0.9
+   "strength": 1.12
   }
  ],
  "waypoints": [

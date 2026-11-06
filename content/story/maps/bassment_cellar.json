@@ -9,10 +9,10 @@
   {"tex": "wall_barrel", "mode": "flicker", "amount": 0.08, "bright": 0.1}
  ],
  "sectors": [
-  {"id": "stairs", "polygon": [[-2, 12], [2, 12], [2, 7], [-2, 7]], "floor": 1.2, "ceiling": 3.6, "floor_tex": "floor_flag", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick_dark", "light": 0.8, "tint": "#ffb060", "ambient": 0.75},
-  {"id": "hall", "polygon": [[-8, 7], [4, 7], [4, -6], [-8, -6]], "floor": 0, "ceiling": 2.9, "floor_tex": "floor_flag", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick", "light": 0.8, "tint": "#ffa850", "ambient": 0.75},
-  {"id": "bar", "polygon": [[4, 5], [10, 5], [10, -3], [4, -3]], "floor": 0.4, "ceiling": 2.7, "floor_tex": "floor_wood", "ceil_tex": "ceil_beams", "wall_tex": "wall_shelf", "light": 0.8, "tint": "#ff9a40", "ambient": 0.75},
-  {"id": "back", "polygon": [[-8, -6], [4, -6], [4, -11], [-8, -11]], "floor": 0.9, "ceiling": 2.9, "floor_tex": "floor_wood", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick_dark", "light": 0.8, "tint": "#e8a050", "ambient": 0.75}
+  {"id": "stairs", "polygon": [[-2, 12], [2, 12], [2, 7], [-2, 7]], "floor": 1.2, "ceiling": 3.6, "floor_tex": "floor_flag", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick_dark", "light": 1, "tint": "#ffb060", "ambient": 0.75},
+  {"id": "hall", "polygon": [[-8, 7], [4, 7], [4, -6], [-8, -6]], "floor": 0, "ceiling": 2.9, "floor_tex": "floor_flag", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick", "light": 1, "tint": "#ffa850", "ambient": 0.75},
+  {"id": "bar", "polygon": [[4, 5], [10, 5], [10, -3], [4, -3]], "floor": 0.4, "ceiling": 2.7, "floor_tex": "floor_wood", "ceil_tex": "ceil_beams", "wall_tex": "wall_shelf", "light": 1, "tint": "#ff9a40", "ambient": 0.75},
+  {"id": "back", "polygon": [[-8, -6], [4, -6], [4, -11], [-8, -11]], "floor": 0.9, "ceiling": 2.9, "floor_tex": "floor_wood", "ceil_tex": "ceil_arch", "wall_tex": "wall_brick_dark", "light": 1, "tint": "#e8a050", "ambient": 0.75}
  ],
  "walls": [
   {"from": [-2, 7], "to": [2, 7], "sector": "stairs", "portal": "hall", "lower_tex": "floor_flag"},
@@ -69,15 +69,15 @@
   {"id": "back_ladder", "kind": "billboard", "sprite": "thing_ladder", "at": [-1.4, -10.7], "y": 1.6, "size": 3.0},
   {"id": "back_cables", "kind": "billboard", "sprite": "thing_cables", "at": [-6.6, -10.7], "y": 1.5, "size": 1.4},
   {"id": "back_stove", "kind": "billboard", "sprite": "thing_stove", "at": [-7.0, -7.0], "y": 0.9, "size": 1.6},
-  {"id": "lt_stair", "kind": "light", "at": [0, 10], "y": 2.4, "radius": 6, "color": "#ffb060", "strength": 1.2},
-  {"id": "lt_torch_a", "kind": "light", "at": [-6.8, 3.0], "y": 1.9, "radius": 6.5, "color": "#ff9a40", "strength": 2.4},
-  {"id": "lt_torch_b", "kind": "light", "at": [3.2, -4.2], "y": 1.9, "radius": 6.5, "color": "#ff8a30", "strength": 2.3},
-  {"id": "lt_torch_c", "kind": "light", "at": [9.0, 1.0], "y": 1.9, "radius": 5.5, "color": "#ff9a40", "strength": 1.4},
-  {"id": "lt_bar", "kind": "light", "at": [8, 1.8], "y": 1.9, "radius": 4.5, "color": "#ffc060", "strength": 1.7},
-  {"id": "lt_d", "kind": "light", "at": [-5.6, -10], "y": 1.9, "radius": 5, "color": "#ff9a40", "strength": 1.2},
-  {"id": "lt_arch", "kind": "light", "at": [1, -10], "y": 1.2, "radius": 4, "color": "#ffcc70", "strength": 1.0, "cone": {"yaw": 180, "angle": 45}},
-  {"id": "lt_hatch", "kind": "light", "at": [-3, -10], "y": 1.2, "radius": 4, "color": "#80c8a0", "strength": 1.1},
-  {"id": "lt_mid", "kind": "light", "at": [-1, 1], "y": 2.3, "radius": 7, "color": "#c07030", "strength": 1.5}
+  {"id": "lt_stair", "kind": "light", "at": [0, 10], "y": 2.4, "radius": 6, "color": "#ffb060", "strength": 1.44},
+  {"id": "lt_torch_a", "kind": "light", "at": [-6.8, 3.0], "y": 1.9, "radius": 6.5, "color": "#ff9a40", "strength": 2.5},
+  {"id": "lt_torch_b", "kind": "light", "at": [3.2, -4.2], "y": 1.9, "radius": 6.5, "color": "#ff8a30", "strength": 2.5},
+  {"id": "lt_torch_c", "kind": "light", "at": [9.0, 1.0], "y": 1.9, "radius": 5.5, "color": "#ff9a40", "strength": 1.68},
+  {"id": "lt_bar", "kind": "light", "at": [8, 1.8], "y": 1.9, "radius": 4.5, "color": "#ffc060", "strength": 2.04},
+  {"id": "lt_d", "kind": "light", "at": [-5.6, -10], "y": 1.9, "radius": 5, "color": "#ff9a40", "strength": 1.44},
+  {"id": "lt_arch", "kind": "light", "at": [1, -10], "y": 1.2, "radius": 4, "color": "#ffcc70", "strength": 1.2, "cone": {"yaw": 180, "angle": 45}},
+  {"id": "lt_hatch", "kind": "light", "at": [-3, -10], "y": 1.2, "radius": 4, "color": "#80c8a0", "strength": 1.32},
+  {"id": "lt_mid", "kind": "light", "at": [-1, 1], "y": 2.3, "radius": 7, "color": "#c07030", "strength": 1.8}
  ],
  "waypoints": [
   {"id": "stairs_top", "at": [0, 11.0], "yaw": 0.0, "sector": "stairs"},
