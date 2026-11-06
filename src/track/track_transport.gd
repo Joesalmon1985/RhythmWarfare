@@ -26,6 +26,7 @@ func load_pack_streams(pack: TrackPack) -> String:
 	_gain.clear()
 	_scale.clear()
 	_scale_target.clear()
+	_tail.clear()
 	for i in order.size():
 		var key: String = order[i]["key"]
 		var stream: AudioStream = pack.streams.get(key)
@@ -48,7 +49,27 @@ func load_pack_streams(pack: TrackPack) -> String:
 
 
 func effective_gain(key: String) -> float:
-	return super.effective_gain(key) * float(_gain.get(key, 1.0)) * float(_scale.get(key, 1.0))
+	return super.effective_gain(key) * float(_gain.get(key, 1.0)) * float(_scale.get(key, 1.0)) * float(_tail.get(key, 1.0))
+
+
+## A transition's tail (RunTrackAudio, stage M2.4): one more gain factor per stem (0 to 1), the recipe's fade at the current song time, applied at once (the recipe is a function of song time,
+## evaluated every frame, so it needs no ramp of its own). 1 everywhere unless set.
+var _tail: Dictionary = {}
+
+
+func set_tail_gain(key: String, factor: float) -> void:
+	var i := stem_keys.find(key)
+	if i < 0:
+		return
+	var f := clampf(factor, 0.0, 1.0)
+	if is_equal_approx(float(_tail.get(key, 1.0)), f):
+		return
+	_tail[key] = f
+	sync_stream.set_sync_stream_volume(i, StemTransport._to_db(effective_gain(key)))
+
+
+func tail_gain(key: String) -> float:
+	return float(_tail.get(key, 1.0))
 
 
 ## An extra gain factor per stem (0 to 1), ramped over `scale_ramp_s`: a track scene's hotspot "dip" (RunTrackAudio). 1 everywhere unless set; track mode never sets it.

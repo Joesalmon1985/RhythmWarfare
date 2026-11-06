@@ -8,7 +8,7 @@ extends RefCounted
 ##
 ## The loader is a stand-in for RunTrackAudio (load_fn / ready_fn): "ready" for every scene, "loading" for ever for &"not_ready_ids" (whose gate then says false: the scene plays as an
 ## ordinary one). &"fail_load_ids" are destinations the run has no scene for (the director's own validation refuses them). &"fail_after_lock_ids" are staged by sending the engine
-## to "fallback" right after the director locked them (as RunPlay._path_swap does when a path cannot be loaded). &"blend_beats" > 0 is refused: the M1 director only cuts.
+## to "fallback" right after the director locked them (as RunPlay._path_swap does when a path cannot be loaded). &"blend_beats" > 0 stages blends of that length (_stage_blend, stage M2.4).
 
 const NODES := ["start", "a", "b", "c", "d", "dflt", "late", "good", "slow", "doomed", "fallback", "hit", "miss",
 	"n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "m0", "m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9"]
@@ -105,7 +105,7 @@ func switch(name: StringName, value: Variant) -> bool:
 		&"miss_last_block":
 			miss_last_block = bool(value)
 		&"blend_beats":
-			return int(value) == 0  # (cut only in M1: a blend is stage M2's)
+			_stage_blend(int(value))
 		&"scene_specs":
 			for id in (value as Dictionary):
 				var spec: Dictionary = value[id]
@@ -116,6 +116,27 @@ func switch(name: StringName, value: Variant) -> bool:
 		_:
 			return false
 	return true
+
+
+## &"blend_beats" n > 0: every transition between two ready scenes is planned by the real planner and then STAGED as a blend of n incoming beats (the rig's synthetic plans carry no drop,
+## so plan_full alone would cut them; the conformance cases need a blend of a given length, 250 beats for case 14, longer than any real one). The director, its lock, its deferrals and
+## its `completed` at plan.complete_t (no audio here) are the real ones. 0: the planner as it is.
+func _stage_blend(n: int) -> void:
+	if n <= 0:
+		director.planner = func(o: Dictionary, i: Dictionary, m: Dictionary, r: Dictionary) -> Dictionary: return TransitionPlanner.plan(o, i, m, r)
+		return
+	director.planner = func(o: Dictionary, i: Dictionary, m: Dictionary, r: Dictionary) -> Dictionary:
+		var p := TransitionPlanner.plan(o, i, m, r)
+		if p.has("defer") or bool(p.get("fallback", false)) or StringName(str(i.get("kind", ""))) != &"track" or StringName(str(o.get("kind", ""))) != &"track":
+			return p
+		var T := float(o["boundary_t"])
+		var in_bpm := float(i["bpm"])
+		var ct := T + float(n) * 60.0 / in_bpm
+		p["mode"] = &"blend"
+		p["blend_beats"] = n
+		p["complete_t"] = ct
+		p["recipe"] = {"mode": &"blend", "rate": in_bpm / float(o["bpm"]), "window_bars": n / 4, "bar_s": 240.0 / in_bpm, "complete_t": ct, "floor_t": ct, "incoming": &"track", "staged": true}
+		return p
 
 
 func _feed(evs: Array) -> void:

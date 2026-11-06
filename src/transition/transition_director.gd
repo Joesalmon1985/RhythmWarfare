@@ -1,7 +1,8 @@
 class_name TransitionDirector
 extends TransitionPort
 ## The real TransitionPort (docs/parallel-development/INTEGRATION_CONTRACT.md): it turns a requested destination into a scene change at a lap's boundary, on the run's engine.
-## Stage M1.6 builds it in `&"cut"` mode only, which reproduces today's scene changes exactly; stage M2 replaces the planner (`planner`) and the audio recipe it hands to the audio
+## Stage M1.6 built it in `&"cut"` mode only. Stage M2.4 (docs/music/TRANSITIONS_BUILT.md) gives the planner its full inputs (_full_inputs), plans every mode when TransitionPlanner says so
+## (RW_RUN_TRANSITIONS=cut turns them off; a path hand-off is always a cut), and hands the audio the recipe with the incoming plan; the wiring below is M1's. Stage M2 replaced the planner and the audio recipe it hands to the audio
 ## class, not this wiring. docs/parallel-development/MUSIC_TRANSITIONS.md section 12 lists what this file and its hooks leave in place.
 ##
 ## HOW IT SITS ON THE RUN (contract section 7)
@@ -51,6 +52,8 @@ var path_data_fn: Callable = Callable()
 ## `completed` comes when song time reaches plan.complete_t.
 var audio_reports_silence := false
 var silence_grace_s := 2.0
+## -1: the planner's own switch (TransitionPlanner.modes_enabled, set by _init in the game); 0: cut only; 1: every mode. Tests and tools set it per director.
+var modes_override := -1
 
 ## Every signal emitted: {signal, args, t}; every lock: {id, t, boundary, dest, plan, recipe, observed, late}; every switch {id, t, landed, committed_to}.
 var log: Array[Dictionary] = []
@@ -75,6 +78,7 @@ var _seen_scene := false
 
 func _init() -> void:
 	planner = func(o: Dictionary, i: Dictionary, m: Dictionary, r: Dictionary) -> Dictionary: return TransitionPlanner.plan(o, i, m, r)
+	TransitionPlanner.modes_enabled = TransitionPlanner.game_default()
 
 
 ## ---------------------------------------------------------------- wiring calls
@@ -328,10 +332,16 @@ func _observe(route: String, b: float, late: bool) -> void:
 
 
 func _lock(taken: Dictionary, res: Dictionary, pl: Dictionary, b: float, observed: bool, late: bool) -> void:
-	var recipe: Dictionary = pl.get("recipe", {})
+	var recipe: Dictionary = (pl.get("recipe", {}) as Dictionary).duplicate(true)
 	var plan: Dictionary = pl.duplicate(true)
 	plan.erase("recipe")
 	var inc_plan := _track_plan(res["data"], str(res["node"]))
+	recipe["boundary_t"] = b
+	if StringName(str(recipe.get("incoming", &"ordinary"))) == &"track" and not inc_plan.is_empty():  # (the audio starts the incoming group early and muted from these: RunTrackAudio)
+		recipe["in"] = {"node": str(res["node"]), "track": str(inc_plan["track"]), "dir": str(inc_plan["dir"]), "entry_t": float(inc_plan["entry_t"]), "beat_s": float(inc_plan["beat_s"]),
+			"bpm": float(inc_plan["bpm"])}
+	if engine.is_track_scene():
+		recipe["out"] = {"node": engine.node_id, "track": str(engine.track["track"]), "dir": str(engine.track.get("dir", ""))}
 	_req["state"] = State.LOCKED
 	_req["taken"] = taken.duplicate(true)
 	_req["plan"] = plan
@@ -342,6 +352,10 @@ func _lock(taken: Dictionary, res: Dictionary, pl: Dictionary, b: float, observe
 	_req["committed_to"] = ""
 	var id := int(_req["id"])
 	lock_log.append({"id": id, "t": _now, "boundary": b, "dest": str(taken.get("id", "")), "route": str(res["route"]), "plan": plan, "recipe": recipe, "observed": observed, "late": late})
+	if not RunTrackScenes._under_test_runner():  # (MUSIC_TRANSITIONS.md 8.3: one line per transition; the walks list the modes from it)
+		print("RUN transition id=%d %s->%s mode=%s fallback=%s reason=%s bpm=%.4f->%.4f rate=%.6f W=%d T=%.3f complete=%.3f drop=%s" % [id, engine.node_id, str(res["node"]), str(plan.get("mode", "")),
+			str(plan.get("fallback", false)), str(recipe.get("reason", "-")), float(plan.get("outgoing_bpm", 0.0)), float(plan.get("incoming_bpm", 0.0)), float(recipe.get("rate", 1.0)),
+			int(recipe.get("window_bars", 0)), b, float(plan.get("complete_t", b)), "%.3f" % float(recipe["drop_t"]) if recipe.has("drop_t") else "-"])
 	if recipe_fn.is_valid():
 		recipe_fn.call(b, recipe)
 	_log_emit(&"locked", [id, _req["taken"], b, plan])
@@ -449,6 +463,11 @@ func _plan_for(res: Dictionary, b: float, may_defer: bool, deferred_once: bool) 
 	var mix: Dictionary = in_data.cfg.get("mix", {})
 	var carry: Dictionary = mix.get("carry_bass", {})
 	var meta := {"fade_s": float(mix.get("phase_fade_s", 0.6)), "carry_beats": float(carry.get("beats", 16.0)), "carry_gain": float(carry.get("gain", 0.0)) if in_data == data else 0.0}
+	_full_inputs(out, inc, meta, b, tp)
+	if in_data != data:
+		meta["modes_enabled"] = false  # a path hand-off (into a path or back to the main run) is always a cut (the brief of M2.4, after ruling 20)
+	elif modes_override >= 0:
+		meta["modes_enabled"] = modes_override == 1
 	var state := ""
 	if not tp.is_empty():
 		state = str(load_fn.call(in_data, node)) if load_fn.is_valid() else ("ready" if not ready_fn.is_valid() or bool(ready_fn.call(tp)) else "none")
@@ -457,6 +476,36 @@ func _plan_for(res: Dictionary, b: float, may_defer: bool, deferred_once: bool) 
 		push_error("transition director: the planner gave no plan; cut")
 		return TransitionPlanner._cut(out, inc, meta, b, true)
 	return pl
+
+
+## The planner's inputs between two track scenes (TransitionPlanner's header, stage M2.4), from the engine and the two scene plans (RunTrackScenes.add_transition_meta made the metadata off
+## the frame): the outgoing track, its length, where it is at T, its grid origin, its section at T, its stems; the incoming track, its entry and drop bars; both sidecars and grid flags.
+## A plan without that metadata (a synthetic one) counts as a steady grid with no sidecar.
+func _full_inputs(out: Dictionary, inc: Dictionary, meta: Dictionary, b: float, tp: Dictionary) -> void:
+	if engine.is_track_scene():
+		var op: Dictionary = engine.track
+		out["track"] = str(op.get("track", ""))
+		out["duration_s"] = float(op.get("duration_s", 0.0))
+		out["track_t_at_T"] = engine.track_t_at(b)
+		out["first_downbeat_s"] = float(op.get("first_downbeat_s", 0.0))
+		var pack: Variant = op.get("pack", null)
+		out["section_role"] = ""
+		if pack is TrackPack:
+			var tt := float(out["track_t_at_T"])
+			for s in (pack as TrackPack).sections:
+				if tt >= float(s["start_s"]) - 1e-6 and tt < float(s["end_s"]):
+					out["section_role"] = str(s.get("role", ""))
+			out["stem_keys"] = (pack as TrackPack).stems_in_order().map(func(s: Dictionary) -> String: return str(s["key"]))
+		meta["out"] = op.get("sidecar", {})
+		meta["out_state"] = str(op.get("sidecar_state", "missing"))
+		meta["out_grid_ok"] = bool(op.get("grid_ok", true))
+	if not tp.is_empty():
+		inc["track"] = str(tp.get("track", ""))
+		inc["entry_bar"] = int(tp.get("entry_bar", 0))
+		inc["drop_bar"] = int(tp.get("drop_bar", -1))
+		meta["in"] = tp.get("sidecar", {})
+		meta["in_state"] = str(tp.get("sidecar_state", "missing"))
+		meta["in_grid_ok"] = bool(tp.get("grid_ok", true))
 
 
 static func _track_plan(d: RunData, node: String) -> Dictionary:

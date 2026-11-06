@@ -239,7 +239,7 @@ func _report() -> void:
 			print("MEASURE seam %s %s at t=%.3f" % [str(x["signal"]), JSON.stringify(x["args"]), float(x["t"])])
 	for x in audio.transition_log:
 		print("MEASURE seam audio ", JSON.stringify(x))
-	print("MEASURE track log ", JSON.stringify(audio.track.log.filter(func(x: Dictionary) -> bool: return str(x["kind"]) in ["start", "seek", "end", "not_ready", "unloaded"])))
+	print("MEASURE track log ", JSON.stringify(audio.track.log.filter(func(x: Dictionary) -> bool: return str(x["kind"]) in ["start", "seek", "end", "not_ready", "unloaded", "corrected", "tail", "floor", "orphan"])))
 	if _cap != null:
 		var f := FileAccess.open(_cap_dir.path_join("run_track.f32"), FileAccess.WRITE)
 		f.store_buffer(_cap_buf.to_byte_array())

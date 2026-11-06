@@ -151,7 +151,8 @@ func test_the_track_plays_as_one_group_from_its_entry_bar_across_laps_and_fades_
 	assert_near(float(drums_next[0]["target"]), 4.0 * lap_s, 1e-9, "the next scene's loops start on their own downbeat, the same one")
 	assert_eq(a.track.active_group_count(), 1, "the faded group is still there until its fade has run (no frames here)")
 	var tr: TrackTransport = a.track._groups[0]["transport"]
-	assert_eq(tr.player.bus, RunTrackAudio.BUS)
+	assert_true(RunTrackAudio.SLOT_BUSES.has(str(tr.player.bus)), "on a slot bus (stage M2.4)")
+	assert_eq(str(AudioServer.get_bus_send(AudioServer.get_bus_index(str(tr.player.bus)))), RunTrackAudio.BUS, "which feeds the track bus")
 	var bi := AudioServer.get_bus_index(RunTrackAudio.BUS)
 	assert_true(bi >= 0)
 	assert_eq(str(AudioServer.get_bus_send(bi)), "Music", "the track bus feeds the music bus")

@@ -88,10 +88,14 @@ static func write_pack(id: String, spec: Dictionary) -> String:
 		"voices": [{"key": "drums", "label": "Drums", "kind": "drums", "stem": "stems/drums.ogg", "gain": 1.0}, {"key": "bass", "label": "Bass", "kind": "pitched", "stem": "stems/bass.ogg", "gain": 1.0}],
 		"backing": [{"key": "backing", "stem": "stems/backing.ogg", "gain": 1.0}], "sections": sections, "focus": focus, "charts": charts,
 		"default_chart": str((spec.get("charts", ["normal"]) as Array)[0]), "rules": {"restore_after_idle_beats": 8}, "source": {"sections_detail": details}}
+	if bool(spec.get("other", false)):  # (a third voice, "other", a pitched synth: what a transition's tail lets linger)
+		(pack["voices"] as Array).append({"key": "other", "label": "Synths", "kind": "pitched", "stem": "stems/other.ogg", "gain": 1.0})
 	var dir := root().path_join(id)
 	DirAccess.make_dir_recursive_absolute(dir.path_join("stems"))
 	for f in ["drums", "bass", "backing"]:
 		DirAccess.copy_absolute(ProjectSettings.globalize_path(STEMS_FROM.path_join(f + ".ogg")), dir.path_join("stems").path_join(f + ".ogg"))
+	if bool(spec.get("other", false)):
+		DirAccess.copy_absolute(ProjectSettings.globalize_path(STEMS_FROM.path_join("lead.ogg")), dir.path_join("stems").path_join("other.ogg"))
 	var fa := FileAccess.open(dir.path_join("track.json"), FileAccess.WRITE)
 	fa.store_string(JSON.stringify(pack, " "))
 	fa.close()
