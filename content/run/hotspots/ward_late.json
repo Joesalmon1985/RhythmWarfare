@@ -560,6 +560,104 @@
      }
     }
    }
+  },
+  {
+   "id": "ward_late.treat.enter_bassment",
+   "world": "ward_late",
+   "scene": "ward_late.treat",
+   "map": "mental_hospital",
+   "anchor": {
+    "pos": [
+     18.8,
+     1.1,
+     11.3
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bassment"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "dungeon",
+    "at": [
+     17.7,
+     10.0
+    ],
+    "toward": [
+     18.8,
+     11.3
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "ward_late.dorm.enter_gospel",
+   "world": "ward_late",
+   "scene": "ward_late.dorm",
+   "map": "mental_hospital",
+   "anchor": {
+    "pos": [
+     24.4,
+     1.1,
+     16.3
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:gospel"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "gospel",
+    "at": [
+     23.0,
+     13.4
+    ],
+    "toward": [
+     24.4,
+     16.3
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
   }
  ]
 }

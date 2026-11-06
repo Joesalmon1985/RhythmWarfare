@@ -459,7 +459,7 @@
    "scene": "main/ward",
    "object": {
     "id": "ward.enter_bassment",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A cellar hatch under the day-room radiator, chalk marks round its edge."
    },
    "transition": "port",
@@ -474,7 +474,7 @@
    "scene": "main/ward",
    "object": {
     "id": "ward.enter_gospel",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A figure of light in the day-room window, under a drawn star."
    },
    "transition": "port",
@@ -489,7 +489,7 @@
    "scene": "main/ward",
    "object": {
     "id": "ward.enter_squadron",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A military radio on the shelf beside the cards table."
    },
    "transition": "port",
@@ -504,7 +504,7 @@
    "scene": "main/ward",
    "object": {
     "id": "ward.enter_ember",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "An ember in a tea glass left on the table."
    },
    "transition": "port",
@@ -758,7 +758,7 @@
    "quest": "bassment",
    "object": {
     "id": "ward.art.enter_bassment",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
@@ -768,7 +768,7 @@
    "quest": "gospel",
    "object": {
     "id": "ward.dorm.enter_gospel",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
@@ -778,7 +778,7 @@
    "quest": "squadron",
    "object": {
     "id": "ward.corridor.enter_squadron",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
@@ -788,7 +788,7 @@
    "quest": "ember",
    "object": {
     "id": "ward.courtyard.enter_ember",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
@@ -818,7 +818,7 @@
    "quest": "bassment",
    "object": {
     "id": "ward_late.treat.enter_bassment",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
@@ -828,7 +828,7 @@
    "quest": "gospel",
    "object": {
     "id": "ward_late.dorm.enter_gospel",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },

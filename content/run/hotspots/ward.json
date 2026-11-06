@@ -228,6 +228,202 @@
    }
   },
   {
+   "id": "ward.enter_bassment",
+   "world": "ward",
+   "scene": "ward",
+   "map": "mental_hospital",
+   "anchor": {
+    "pos": [
+     -4.6,
+     1.1,
+     -2.7
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bassment"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "dungeon",
+    "at": [
+     -5.9,
+     -1.9
+    ],
+    "toward": [
+     -4.6,
+     -2.7
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "ward.enter_gospel",
+   "world": "ward",
+   "scene": "ward",
+   "map": "mental_hospital",
+   "anchor": {
+    "pos": [
+     -2.2,
+     1.1,
+     -2.7
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:gospel"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "gospel",
+    "at": [
+     -0.95,
+     -2.2
+    ],
+    "toward": [
+     -2.2,
+     -2.7
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "ward.enter_squadron",
+   "world": "ward",
+   "scene": "ward",
+   "map": "mental_hospital",
+   "anchor": {
+    "pos": [
+     2.2,
+     1.1,
+     -2.7
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:squadron"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "squadron",
+    "at": [
+     0.95,
+     -2.2
+    ],
+    "toward": [
+     2.2,
+     -2.7
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "ward.enter_ember",
+   "world": "ward",
+   "scene": "ward",
+   "map": "mental_hospital",
+   "anchor": {
+    "pos": [
+     4.0,
+     1.1,
+     -2.7
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:ember"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "ember",
+    "at": [
+     5.4,
+     -0.6
+    ],
+    "toward": [
+     4.0,
+     -2.7
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
    "id": "ward.art.exit_corridor",
    "world": "ward",
    "scene": "ward.art",
@@ -951,6 +1147,202 @@
    },
    "default": false,
    "repeatable": true
+  },
+  {
+   "id": "ward.art.enter_bassment",
+   "world": "ward",
+   "scene": "ward.art",
+   "map": "mental_hospital",
+   "anchor": {
+    "pos": [
+     46.7,
+     1.1,
+     4.6
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bassment"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "dungeon",
+    "at": [
+     45.3,
+     3.4
+    ],
+    "toward": [
+     46.7,
+     4.6
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "ward.dorm.enter_gospel",
+   "world": "ward",
+   "scene": "ward.dorm",
+   "map": "mental_hospital",
+   "anchor": {
+    "pos": [
+     24.4,
+     1.1,
+     16.3
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:gospel"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "gospel",
+    "at": [
+     23.0,
+     13.4
+    ],
+    "toward": [
+     24.4,
+     16.3
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "ward.corridor.enter_squadron",
+   "world": "ward",
+   "scene": "ward.corridor",
+   "map": "mental_hospital",
+   "anchor": {
+    "pos": [
+     16.4,
+     1.1,
+     7.85
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:squadron"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "squadron",
+    "at": [
+     14.9,
+     7.0
+    ],
+    "toward": [
+     16.4,
+     7.85
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "ward.courtyard.enter_ember",
+   "world": "ward",
+   "scene": "ward.courtyard",
+   "map": "mental_hospital",
+   "anchor": {
+    "pos": [
+     58.6,
+     1.1,
+     -1.7
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.8,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:ember"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "ember",
+    "at": [
+     57.2,
+     -0.4
+    ],
+    "toward": [
+     58.6,
+     -1.7
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
   }
  ]
 }

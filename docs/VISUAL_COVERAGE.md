@@ -91,6 +91,10 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | ward | ward | orderly | character | the orderly lets it pass (+4) | taken to the treatment room (-9) | always | verified |
 | ward | ward | window | feature | the barred window lets the light in (+5, music variation) | the bars rattle (-5, music dips) | always | verified |
 | ward | ward | cards | object | sit at the empty chair: blackjack, the run stays in the day room (minigame) | the dealer waves you off (-3), the scene goes on by its default exit | always | verified |
+| ward | ward | enter_bassment | secret | the cellar hatch behind the radiator, chalk marks round its edge: the Bassment (route bassment) | the hatch is stuck fast (-4) | always | verified |
+| ward | ward | enter_gospel | secret | the figure of light under a drawn star: the Gospel path (route path:gospel) | the light goes out (-4) | always | verified |
+| ward | ward | enter_squadron | secret | the military radio by the cards table: the Mission Count path (route path:squadron) | the radio crackles out (-4) | always | verified |
+| ward | ward | enter_ember | secret | an ember in a tea glass: the Ember Road path (route path:ember) | the ember gutters out (-4) | always | verified |
 | ward | ward.art | art.exit_corridor (default) | exit | route ward.corridor | same door, staggering (-5 energy) | always | verified |
 | ward | ward.art | art.painter | character | the painter shows a painting of a door (flag wd_painted: opens the courtyard from the corridor) (+6) | paint thrown over you (-6) | always | verified |
 | ward | ward.art | art.easel | object | paint your own (+5) | a smudge (-4) | always | verified |
@@ -107,6 +111,10 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | ward | ward.exit | exit.exit_hospital_late (default) | exit | route hospital_late | same door, staggering (-5 energy) | always | verified |
 | ward | ward.exit | exit.exit_ward_late | exit | route ward_late | same door, staggering (-5 energy) | always | verified |
 | ward | ward.exit | exit.talent_lamp | object | the talent stage: a star turn (+10, music variation) | lights out (-10, music dips) | always | verified |
+| ward | ward.art | art.enter_bassment | secret | a hatch in the kiln-room floor, chalk marks round it: the Bassment (route bassment) | the hatch is stuck fast (-4) | always | verified |
+| ward | ward.dorm | dorm.enter_gospel | secret | a figure of light in the alcove under a drawn star: the Gospel path (route path:gospel) | the light goes out (-4) | always | verified |
+| ward | ward.corridor | corridor.enter_squadron | secret | a military radio on the corridor shelf: the Mission Count path (route path:squadron) | the radio crackles out (-4) | always | verified |
+| ward | ward.courtyard | courtyard.enter_ember | secret | an ember in a tea glass on the courtyard wall: the Ember Road path (route path:ember) | the ember gutters out (-4) | always | verified |
 | hospital_late | hospital_late | exit_cafe (default) | exit | route hospital_late.cafe | same door, staggering (-5 energy) | always | verified |
 | hospital_late | hospital_late | exit_quiet | exit | route hospital_late.quiet | same door, staggering (-5 energy) | always | verified |
 | hospital_late | hospital_late | lamp | feature | the lamppost comes on (+5, music variation) | the bulb pops (-5) | not hp_lamp_lit | verified |
@@ -136,6 +144,8 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | ward_late | ward_late.exit | exit.exit_ward_late (default) | exit | route ward_late (round again) | same door, staggering (-5 energy) | always | verified |
 | ward_late | ward_late.exit | exit.exit_hospital_late | exit | route hospital_late | same door, staggering (-5 energy) | always | verified |
 | ward_late | ward_late.exit | exit.stare | character | he is staring at the bars; you look with him (+5) | he turns away (-5) | always | verified |
+| ward_late | ward_late.treat | treat.enter_bassment | secret | a hatch under the trolley bay, chalk marks round it: the Bassment (route bassment) | the hatch is stuck fast (-4) | always | verified |
+| ward_late | ward_late.dorm | dorm.enter_gospel | secret | a figure of light in the alcove under a drawn star: the Gospel path (route path:gospel) | the light goes out (-4) | always | verified |
 
 ## The Bassment (workstream D, drawn by the same HotspotView)
 
