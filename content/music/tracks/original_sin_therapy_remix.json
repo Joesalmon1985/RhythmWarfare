@@ -1,0 +1,611 @@
+{
+ "format": "rhythm_warfare.track.v2",
+ "id": "original_sin_therapy_remix",
+ "file": "19. Original Sin - Therapy (Remix).mp3",
+ "artist": "Original Sin",
+ "title": "Therapy (Remix)",
+ "album": "Drum & Bass Arena 2013",
+ "year": 2013,
+ "genre": "Drum & Bass",
+ "tool": "audio_import 0.3 (track format v2)",
+ "duration_s": 366.2106,
+ "tempo": {
+  "bpm": 175.0018,
+  "first_downbeat_s": 0.072,
+  "constant": true,
+  "drift_ms_max": 8.65,
+  "confidence": 0.707,
+  "ratio_to_174": 1.00576
+ },
+ "voices": [
+  {
+   "key": "kick",
+   "label": "Kick",
+   "kind": "drums",
+   "separation": null,
+   "focus_share_of_track": 0.09
+  },
+  {
+   "key": "tops",
+   "label": "Tops",
+   "kind": "drums",
+   "separation": null,
+   "focus_share_of_track": 0.258
+  },
+  {
+   "key": "other",
+   "label": "Synths",
+   "kind": "pitched",
+   "separation": "carries 18.6% of the energy, sounding in 98% of the track; little drum bleed (attack coincidence 1.1x chance).",
+   "focus_share_of_track": 0.637
+  }
+ ],
+ "sections": [
+  {
+   "id": "intro1",
+   "role": "intro",
+   "start_s": 0.0,
+   "end_s": 91.96,
+   "bar_from": 0,
+   "bar_to": 67,
+   "intensity_db": -50.9
+  },
+  {
+   "id": "build1",
+   "role": "build",
+   "start_s": 91.96,
+   "end_s": 119.39,
+   "bar_from": 67,
+   "bar_to": 87,
+   "intensity_db": -14.5
+  },
+  {
+   "id": "drop1",
+   "role": "drop",
+   "start_s": 119.39,
+   "end_s": 146.81,
+   "bar_from": 87,
+   "bar_to": 107,
+   "intensity_db": -1.0
+  },
+  {
+   "id": "build2",
+   "role": "build",
+   "start_s": 146.81,
+   "end_s": 157.78,
+   "bar_from": 107,
+   "bar_to": 115,
+   "intensity_db": -13.9
+  },
+  {
+   "id": "drop2",
+   "role": "drop",
+   "start_s": 157.78,
+   "end_s": 203.04,
+   "bar_from": 115,
+   "bar_to": 148,
+   "intensity_db": -1.0
+  },
+  {
+   "id": "breakdown1",
+   "role": "breakdown",
+   "start_s": 203.04,
+   "end_s": 245.56,
+   "bar_from": 148,
+   "bar_to": 179,
+   "intensity_db": -49.5
+  },
+  {
+   "id": "build3",
+   "role": "build",
+   "start_s": 245.56,
+   "end_s": 272.98,
+   "bar_from": 179,
+   "bar_to": 199,
+   "intensity_db": -13.3
+  },
+  {
+   "id": "drop3",
+   "role": "drop",
+   "start_s": 272.98,
+   "end_s": 300.41,
+   "bar_from": 199,
+   "bar_to": 219,
+   "intensity_db": -1.0
+  },
+  {
+   "id": "build4",
+   "role": "build",
+   "start_s": 300.41,
+   "end_s": 311.38,
+   "bar_from": 219,
+   "bar_to": 227,
+   "intensity_db": -13.5
+  },
+  {
+   "id": "drop4",
+   "role": "drop",
+   "start_s": 311.38,
+   "end_s": 360.75,
+   "bar_from": 227,
+   "bar_to": 263,
+   "intensity_db": -1.0
+  },
+  {
+   "id": "outro1",
+   "role": "outro",
+   "start_s": 360.75,
+   "end_s": 366.21,
+   "bar_from": 263,
+   "bar_to": 267,
+   "intensity_db": -70.3
+  }
+ ],
+ "focus": [
+  {
+   "voice": "other",
+   "start_s": 0.0,
+   "end_s": 91.96,
+   "bar_from": 0,
+   "bar_to": 67,
+   "sections": [
+    "intro1"
+   ],
+   "share": 0.957,
+   "runner_up": "kick"
+  },
+  {
+   "voice": "kick",
+   "start_s": 91.96,
+   "end_s": 102.93,
+   "bar_from": 67,
+   "bar_to": 75,
+   "sections": [
+    "build1"
+   ],
+   "share": 0.125,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 102.93,
+   "end_s": 113.9,
+   "bar_from": 75,
+   "bar_to": 83,
+   "sections": [
+    "build1"
+   ],
+   "share": 0.71,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 113.9,
+   "end_s": 130.36,
+   "bar_from": 83,
+   "bar_to": 95,
+   "sections": [
+    "build1",
+    "drop1"
+   ],
+   "share": 0.609,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 130.36,
+   "end_s": 141.33,
+   "bar_from": 95,
+   "bar_to": 103,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.364,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 141.33,
+   "end_s": 157.78,
+   "bar_from": 103,
+   "bar_to": 115,
+   "sections": [
+    "drop1",
+    "build2"
+   ],
+   "share": 0.482,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 157.78,
+   "end_s": 168.76,
+   "bar_from": 115,
+   "bar_to": 123,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.378,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 168.76,
+   "end_s": 179.73,
+   "bar_from": 123,
+   "bar_to": 131,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.33,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 179.73,
+   "end_s": 190.7,
+   "bar_from": 131,
+   "bar_to": 139,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.428,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 190.7,
+   "end_s": 203.04,
+   "bar_from": 139,
+   "bar_to": 148,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.369,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 203.04,
+   "end_s": 245.56,
+   "bar_from": 148,
+   "bar_to": 179,
+   "sections": [
+    "breakdown1"
+   ],
+   "share": 0.988,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "kick",
+   "start_s": 245.56,
+   "end_s": 256.53,
+   "bar_from": 179,
+   "bar_to": 187,
+   "sections": [
+    "build3"
+   ],
+   "share": 0.131,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 256.53,
+   "end_s": 267.5,
+   "bar_from": 187,
+   "bar_to": 195,
+   "sections": [
+    "build3"
+   ],
+   "share": 0.664,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 267.5,
+   "end_s": 283.95,
+   "bar_from": 195,
+   "bar_to": 207,
+   "sections": [
+    "build3",
+    "drop3"
+   ],
+   "share": 0.594,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 283.95,
+   "end_s": 300.41,
+   "bar_from": 207,
+   "bar_to": 219,
+   "sections": [
+    "drop3"
+   ],
+   "share": 0.365,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "kick",
+   "start_s": 300.41,
+   "end_s": 311.38,
+   "bar_from": 219,
+   "bar_to": 227,
+   "sections": [
+    "build4"
+   ],
+   "share": 0.187,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 311.38,
+   "end_s": 322.35,
+   "bar_from": 227,
+   "bar_to": 235,
+   "sections": [
+    "drop4"
+   ],
+   "share": 0.408,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 322.35,
+   "end_s": 333.33,
+   "bar_from": 235,
+   "bar_to": 243,
+   "sections": [
+    "drop4"
+   ],
+   "share": 0.49,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 333.33,
+   "end_s": 344.3,
+   "bar_from": 243,
+   "bar_to": 251,
+   "sections": [
+    "drop4"
+   ],
+   "share": 0.363,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 344.3,
+   "end_s": 360.75,
+   "bar_from": 251,
+   "bar_to": 263,
+   "sections": [
+    "drop4"
+   ],
+   "share": 0.533,
+   "runner_up": "tops"
+  }
+ ],
+ "focus_timeline_bars": "other 0-68, kick 68-76, other 76-84, tops 84-96, other 96-104, tops 104-116, other 116-124, tops 124-132, other 132-140, tops 140-149, other 149-180, kick 180-188, other 188-196, tops 196-208, other 208-220, kick 220-228, tops 228-236, other 236-244, tops 244-252, other 252-264, (none) 264-268",
+ "nothing_to_play": [
+  {
+   "start_s": 360.75,
+   "end_s": 366.21,
+   "bars": 4,
+   "why": "no voice loud enough with a playable part, even by the relaxed rules"
+  }
+ ],
+ "charts": {
+  "easy": {
+   "cues": 413,
+   "holds": 0,
+   "per_s": 1.128,
+   "per_beat_of_focus": 0.393,
+   "by_voice": {
+    "other": 238,
+    "kick": 42,
+    "tops": 133
+   }
+  },
+  "normal": {
+   "cues": 697,
+   "holds": 0,
+   "per_s": 1.903,
+   "per_beat_of_focus": 0.662,
+   "by_voice": {
+    "other": 409,
+    "kick": 70,
+    "tops": 218
+   }
+  },
+  "hard": {
+   "cues": 826,
+   "holds": 0,
+   "per_s": 2.256,
+   "per_beat_of_focus": 0.785,
+   "by_voice": {
+    "other": 518,
+    "kick": 77,
+    "tops": 231
+   }
+  }
+ },
+ "default_chart": "normal",
+ "validation": {
+  "violations": 0,
+  "stems_sum_error_db": -35.23
+ },
+ "quick": {
+  "bpm": 175.0,
+  "bpm_clarity": 11.2,
+  "bpm_runner_up": 140.0,
+  "ratio_to_174": 1.0057,
+  "loudness_db": -6.1,
+  "low_share": 0.564,
+  "brightness_hz": 2951,
+  "events_per_s": 4.75,
+  "dynamic_db": 15.5,
+  "loud_share": 0.51,
+  "first_drop_s": 98.7,
+  "drops": 4,
+  "block_s": 10.97,
+  "blocks_db": [
+   -16.6,
+   -15.6,
+   -17.1,
+   -15.0,
+   -11.1,
+   -10.2,
+   -9.0,
+   -7.8,
+   -7.9,
+   -3.5,
+   -3.1,
+   -1.6,
+   -1.1,
+   -0.5,
+   -0.6,
+   0.1,
+   0.1,
+   0.0,
+   -3.4,
+   -9.6,
+   -9.0,
+   -7.7,
+   -7.9,
+   -3.5,
+   -3.2,
+   -1.6,
+   -1.1,
+   -0.5,
+   -0.6,
+   0.1,
+   0.1,
+   -0.0,
+   -3.3,
+   -33.2
+  ],
+  "blocks_drive_db": [
+   -11.6,
+   -11.1,
+   -14.3,
+   -15.0,
+   -10.7,
+   -16.3,
+   -11.2,
+   -9.4,
+   -5.1,
+   -2.3,
+   -3.0,
+   -1.3,
+   -0.9,
+   -0.3,
+   -0.1,
+   -0.0,
+   0.0,
+   0.0,
+   -2.5,
+   -10.9,
+   -11.2,
+   -9.5,
+   -5.1,
+   -2.3,
+   -2.9,
+   -1.3,
+   -0.9,
+   -0.3,
+   -0.1,
+   0.0,
+   0.0,
+   0.0,
+   -3.3,
+   -21.1
+  ],
+  "rough_sections": [
+   {
+    "role": "opening",
+    "start_s": 0.0,
+    "end_s": 87.8,
+    "bars": 64,
+    "level_db": -12.5
+   },
+   {
+    "role": "lift",
+    "start_s": 87.8,
+    "end_s": 98.7,
+    "bars": 8,
+    "level_db": -5.1
+   },
+   {
+    "role": "loud",
+    "start_s": 98.7,
+    "end_s": 109.7,
+    "bars": 8,
+    "level_db": -2.3
+   },
+   {
+    "role": "quieter",
+    "start_s": 109.7,
+    "end_s": 120.7,
+    "bars": 8,
+    "level_db": -3.0
+   },
+   {
+    "role": "loud",
+    "start_s": 120.7,
+    "end_s": 208.5,
+    "bars": 64,
+    "level_db": -0.6
+   },
+   {
+    "role": "quieter",
+    "start_s": 208.5,
+    "end_s": 241.4,
+    "bars": 24,
+    "level_db": -10.5
+   },
+   {
+    "role": "quieter",
+    "start_s": 241.4,
+    "end_s": 252.3,
+    "bars": 8,
+    "level_db": -5.1
+   },
+   {
+    "role": "loud",
+    "start_s": 252.3,
+    "end_s": 263.3,
+    "bars": 8,
+    "level_db": -2.3
+   },
+   {
+    "role": "quieter",
+    "start_s": 263.3,
+    "end_s": 274.3,
+    "bars": 8,
+    "level_db": -2.9
+   },
+   {
+    "role": "loud",
+    "start_s": 274.3,
+    "end_s": 351.1,
+    "bars": 56,
+    "level_db": -0.4
+   },
+   {
+    "role": "ending",
+    "start_s": 351.1,
+    "end_s": 362.1,
+    "bars": 8,
+    "level_db": -3.3
+   },
+   {
+    "role": "ending",
+    "start_s": 362.1,
+    "end_s": 366.2,
+    "bars": 8,
+    "level_db": -21.1
+   }
+  ]
+ }
+}

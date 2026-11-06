@@ -1,0 +1,527 @@
+{
+ "format": "rhythm_warfare.track.v2",
+ "id": "dc_breaks_take_that_vip",
+ "file": "RAMM100D-009-DC_Breaks-Take_That_VIP.flac",
+ "artist": "DC Breaks",
+ "title": "Take That VIP",
+ "album": "Ram 100",
+ "year": 2011,
+ "genre": "Drum and Bass",
+ "tool": "audio_import 0.3 (track format v2)",
+ "duration_s": 293.7659,
+ "tempo": {
+  "bpm": 173.9996,
+  "first_downbeat_s": 0.0021,
+  "constant": true,
+  "drift_ms_max": 0.44,
+  "confidence": 0.985,
+  "ratio_to_174": 1.0
+ },
+ "voices": [
+  {
+   "key": "drums",
+   "label": "Drums",
+   "kind": "drums",
+   "separation": "carries 33.8% of the energy, sounding in 84% of the track; moves with bass (envelope correlation > 0.5: shared material or leakage).",
+   "focus_share_of_track": 0.376
+  },
+  {
+   "key": "other",
+   "label": "Synths",
+   "kind": "pitched",
+   "separation": "carries 19.9% of the energy, sounding in 97% of the track; little drum bleed (attack coincidence 1.1x chance).",
+   "focus_share_of_track": 0.549
+  },
+  {
+   "key": "vocals",
+   "label": "Vocals",
+   "kind": "pitched",
+   "separation": "carries 3.7% of the energy, sounding in 42% of the track; little drum bleed (attack coincidence 1.7x chance).",
+   "focus_share_of_track": 0.075
+  }
+ ],
+ "sections": [
+  {
+   "id": "intro1",
+   "role": "intro",
+   "start_s": 0.0,
+   "end_s": 44.14,
+   "bar_from": 0,
+   "bar_to": 32,
+   "intensity_db": -40.6
+  },
+  {
+   "id": "build1",
+   "role": "build",
+   "start_s": 44.14,
+   "end_s": 55.17,
+   "bar_from": 32,
+   "bar_to": 40,
+   "intensity_db": -29.2
+  },
+  {
+   "id": "drop1",
+   "role": "drop",
+   "start_s": 55.17,
+   "end_s": 132.42,
+   "bar_from": 40,
+   "bar_to": 96,
+   "intensity_db": -1.2
+  },
+  {
+   "id": "breakdown1",
+   "role": "breakdown",
+   "start_s": 132.42,
+   "end_s": 154.49,
+   "bar_from": 96,
+   "bar_to": 112,
+   "intensity_db": -41.2
+  },
+  {
+   "id": "build2",
+   "role": "build",
+   "start_s": 154.49,
+   "end_s": 165.52,
+   "bar_from": 112,
+   "bar_to": 120,
+   "intensity_db": -30.2
+  },
+  {
+   "id": "drop2",
+   "role": "drop",
+   "start_s": 165.52,
+   "end_s": 259.31,
+   "bar_from": 120,
+   "bar_to": 188,
+   "intensity_db": -0.9
+  },
+  {
+   "id": "outro1",
+   "role": "outro",
+   "start_s": 259.31,
+   "end_s": 293.77,
+   "bar_from": 188,
+   "bar_to": 213,
+   "intensity_db": -57.6
+  }
+ ],
+ "focus": [
+  {
+   "voice": "other",
+   "start_s": 0.0,
+   "end_s": 22.07,
+   "bar_from": 0,
+   "bar_to": 16,
+   "sections": [
+    "intro1"
+   ],
+   "share": 0.954,
+   "runner_up": "drums"
+  },
+  {
+   "voice": "vocals",
+   "start_s": 22.07,
+   "end_s": 33.11,
+   "bar_from": 16,
+   "bar_to": 24,
+   "sections": [
+    "intro1"
+   ],
+   "share": 0.472,
+   "runner_up": "other"
+  },
+  {
+   "voice": "drums",
+   "start_s": 33.11,
+   "end_s": 44.14,
+   "bar_from": 24,
+   "bar_to": 32,
+   "sections": [
+    "intro1"
+   ],
+   "share": 0.252,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 44.14,
+   "end_s": 55.17,
+   "bar_from": 32,
+   "bar_to": 40,
+   "sections": [
+    "build1"
+   ],
+   "share": 0.674,
+   "runner_up": "vocals"
+  },
+  {
+   "voice": "drums",
+   "start_s": 55.17,
+   "end_s": 66.21,
+   "bar_from": 40,
+   "bar_to": 48,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.401,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 66.21,
+   "end_s": 77.24,
+   "bar_from": 48,
+   "bar_to": 56,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.397,
+   "runner_up": "drums"
+  },
+  {
+   "voice": "drums",
+   "start_s": 77.24,
+   "end_s": 88.28,
+   "bar_from": 56,
+   "bar_to": 64,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.561,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 88.28,
+   "end_s": 99.31,
+   "bar_from": 64,
+   "bar_to": 72,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.351,
+   "runner_up": "drums"
+  },
+  {
+   "voice": "drums",
+   "start_s": 99.31,
+   "end_s": 110.35,
+   "bar_from": 72,
+   "bar_to": 80,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.542,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 110.35,
+   "end_s": 121.38,
+   "bar_from": 80,
+   "bar_to": 88,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.22,
+   "runner_up": "drums"
+  },
+  {
+   "voice": "drums",
+   "start_s": 121.38,
+   "end_s": 132.42,
+   "bar_from": 88,
+   "bar_to": 96,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.551,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 132.42,
+   "end_s": 143.45,
+   "bar_from": 96,
+   "bar_to": 104,
+   "sections": [
+    "breakdown1"
+   ],
+   "share": 0.943,
+   "runner_up": "drums"
+  },
+  {
+   "voice": "vocals",
+   "start_s": 143.45,
+   "end_s": 154.49,
+   "bar_from": 104,
+   "bar_to": 112,
+   "sections": [
+    "breakdown1"
+   ],
+   "share": 0.36,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 154.49,
+   "end_s": 165.52,
+   "bar_from": 112,
+   "bar_to": 120,
+   "sections": [
+    "build2"
+   ],
+   "share": 0.82,
+   "runner_up": "vocals"
+  },
+  {
+   "voice": "drums",
+   "start_s": 165.52,
+   "end_s": 176.55,
+   "bar_from": 120,
+   "bar_to": 128,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.436,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 176.55,
+   "end_s": 187.59,
+   "bar_from": 128,
+   "bar_to": 136,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.335,
+   "runner_up": "drums"
+  },
+  {
+   "voice": "drums",
+   "start_s": 187.59,
+   "end_s": 198.62,
+   "bar_from": 136,
+   "bar_to": 144,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.568,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 198.62,
+   "end_s": 209.66,
+   "bar_from": 144,
+   "bar_to": 152,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.36,
+   "runner_up": "drums"
+  },
+  {
+   "voice": "drums",
+   "start_s": 209.66,
+   "end_s": 231.73,
+   "bar_from": 152,
+   "bar_to": 168,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.63,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 231.73,
+   "end_s": 242.76,
+   "bar_from": 168,
+   "bar_to": 176,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.249,
+   "runner_up": "drums"
+  },
+  {
+   "voice": "drums",
+   "start_s": 242.76,
+   "end_s": 253.8,
+   "bar_from": 176,
+   "bar_to": 184,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.628,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 253.8,
+   "end_s": 293.77,
+   "bar_from": 184,
+   "bar_to": 213,
+   "sections": [
+    "drop2",
+    "outro1"
+   ],
+   "share": 0.883,
+   "runner_up": "drums"
+  }
+ ],
+ "focus_timeline_bars": "other 0-16, vocals 16-24, drums 24-32, other 32-40, drums 40-48, other 48-56, drums 56-64, other 64-72, drums 72-80, other 80-88, drums 88-96, other 96-104, vocals 104-112, other 112-120, drums 120-128, other 128-136, drums 136-144, other 144-152, drums 152-168, other 168-176, drums 176-184, other 184-213",
+ "nothing_to_play": [],
+ "charts": {
+  "easy": {
+   "cues": 337,
+   "holds": 1,
+   "per_s": 1.147,
+   "per_beat_of_focus": 0.396,
+   "by_voice": {
+    "other": 170,
+    "vocals": 20,
+    "drums": 147
+   }
+  },
+  "normal": {
+   "cues": 566,
+   "holds": 2,
+   "per_s": 1.927,
+   "per_beat_of_focus": 0.664,
+   "by_voice": {
+    "other": 291,
+    "vocals": 37,
+    "drums": 238
+   }
+  },
+  "hard": {
+   "cues": 683,
+   "holds": 2,
+   "per_s": 2.325,
+   "per_beat_of_focus": 0.802,
+   "by_voice": {
+    "other": 348,
+    "vocals": 54,
+    "drums": 281
+   }
+  }
+ },
+ "default_chart": "normal",
+ "validation": {
+  "violations": 0,
+  "stems_sum_error_db": -35.21
+ },
+ "quick": {
+  "bpm": 174.0,
+  "bpm_clarity": 11.5,
+  "bpm_runner_up": 139.2,
+  "ratio_to_174": 1.0,
+  "loudness_db": -6.2,
+  "low_share": 0.583,
+  "brightness_hz": 3320,
+  "events_per_s": 6.1,
+  "dynamic_db": 9.9,
+  "loud_share": 0.6,
+  "first_drop_s": 55.2,
+  "drops": 2,
+  "block_s": 11.03,
+  "blocks_db": [
+   -9.1,
+   -6.9,
+   -7.1,
+   -5.6,
+   -5.0,
+   -0.1,
+   0.1,
+   -0.2,
+   0.1,
+   -0.4,
+   -0.3,
+   -1.2,
+   -7.7,
+   -5.2,
+   -4.4,
+   0.4,
+   0.1,
+   -0.2,
+   -0.0,
+   -0.5,
+   -0.2,
+   -0.9,
+   -0.2,
+   -2.3,
+   -10.9,
+   -11.2,
+   -32.4
+  ],
+  "blocks_drive_db": [
+   -9.0,
+   -8.9,
+   -8.9,
+   -4.7,
+   -5.2,
+   0.1,
+   -0.2,
+   -0.4,
+   -0.1,
+   -0.4,
+   0.0,
+   -0.6,
+   -8.9,
+   -8.8,
+   -5.2,
+   0.5,
+   -0.2,
+   -0.4,
+   -0.1,
+   -0.5,
+   -0.0,
+   -0.5,
+   0.0,
+   -1.4,
+   -12.4,
+   -12.5,
+   -19.5
+  ],
+  "rough_sections": [
+   {
+    "role": "opening",
+    "start_s": 0.0,
+    "end_s": 55.2,
+    "bars": 40,
+    "level_db": -7.3
+   },
+   {
+    "role": "loud",
+    "start_s": 55.2,
+    "end_s": 132.4,
+    "bars": 56,
+    "level_db": -0.2
+   },
+   {
+    "role": "quieter",
+    "start_s": 132.4,
+    "end_s": 165.5,
+    "bars": 24,
+    "level_db": -7.6
+   },
+   {
+    "role": "loud",
+    "start_s": 165.5,
+    "end_s": 264.8,
+    "bars": 72,
+    "level_db": -0.3
+   },
+   {
+    "role": "ending",
+    "start_s": 264.8,
+    "end_s": 293.8,
+    "bars": 24,
+    "level_db": -14.8
+   }
+  ]
+ }
+}

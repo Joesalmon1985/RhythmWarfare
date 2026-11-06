@@ -1,7 +1,7 @@
 {
  "format": "rhythm_warfare.track_catalogue.v1",
  "tool": "catalogue_tracks 0.4",
- "generated": "2026-11-05",
+ "generated": "2026-11-06",
  "about": "Recordings available to the game's track mode (docs/TRACK_PACK_FORMAT.md). Metadata only: the audio is other people's music and is never in this repository. 'quick' is a few seconds' look at the whole mix (tempo, loudness, low_share = share of energy below 120 Hz, brightness, events_per_s, blocks_db = level of each 8-bar block relative to the track's loud level, blocks_drive_db = how hard the low end and the hits are going in each block, rough_sections from that drive); it is approximate and its sections are not bar-aligned. 'import' is present once tools/audio_import/import_track.py has been run on the recording, and is measured.",
  "source_folders": [
   "ToAddTry4"
@@ -9,7 +9,7 @@
  "packs_live_at": "/home/joe/rw-audio-work/packs",
  "counts": {
   "recordings": 61,
-  "imported": 2,
+  "imported": 44,
   "unreadable": 0
  },
  "unreadable": [],
@@ -144,7 +144,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.9998,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-8",
+     "build 8-32",
+     "drop 32-96",
+     "breakdown 96-104",
+     "build 104-128",
+     "drop 128-192",
+     "outro 192-196"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.469,
+     "bass": 0.327,
+     "other": 0.204
+    },
+    "cues": {
+     "easy": 290,
+     "normal": 475,
+     "hard": 603
+    },
+    "detail": "a_m_c_noise_of_thunder_original_mix.json"
+   }
   },
   {
    "id": "ac13_shostakovich",
@@ -313,25 +337,25 @@
    "imported": true,
    "import": {
     "bpm": 175.0009,
-    "tempo_constant": false,
+    "tempo_constant": true,
     "sections": [
-     "intro -23-23",
-     "build 23-31",
-     "drop 31-71",
-     "breakdown 71-111",
-     "build 111-119",
-     "drop 119-195"
+     "intro -1-39",
+     "build 39-47",
+     "drop 47-95",
+     "breakdown 95-132",
+     "build 132-143",
+     "drop 143-207",
+     "outro 207-217"
     ],
     "focus_share_of_track": {
-     "kick": 0.0,
-     "tops": 0.312,
-     "bass": 0.147,
-     "other": 0.183
+     "tops": 0.33,
+     "bass": 0.073,
+     "other": 0.56
     },
     "cues": {
-     "easy": 209,
-     "normal": 347,
-     "hard": 415
+     "easy": 284,
+     "normal": 463,
+     "hard": 556
     },
     "detail": "ac13_shostakovich.json"
    }
@@ -624,7 +648,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 176.9999,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-32",
+     "drop 32-64",
+     "breakdown 64-128",
+     "drop 128-192",
+     "outro 192-200"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.64,
+     "bass": 0.2,
+     "other": 0.04,
+     "vocals": 0.12
+    },
+    "cues": {
+     "easy": 326,
+     "normal": 533,
+     "hard": 666
+    },
+    "detail": "amplify_crossy_badman.json"
+   }
   },
   {
    "id": "annix_kingdom",
@@ -743,7 +790,28 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0046,
+    "tempo_constant": false,
+    "sections": [
+     "intro 0-47",
+     "drop 47-95",
+     "breakdown 95-119",
+     "build 119-127",
+     "drop 127-174"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.321,
+     "other": 0.679
+    },
+    "cues": {
+     "easy": 248,
+     "normal": 427,
+     "hard": 515
+    },
+    "detail": "annix_kingdom.json"
+   }
   },
   {
    "id": "bad_company_uk_trace_nitrous_audio_remix",
@@ -1060,7 +1128,28 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 173.9999,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-31",
+     "drop 31-95",
+     "breakdown 95-127",
+     "drop 127-194"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.385,
+     "other": 0.124,
+     "vocals": 0.491
+    },
+    "cues": {
+     "easy": 291,
+     "normal": 461,
+     "hard": 586
+    },
+    "detail": "bennie_jam_thieves_madting.json"
+   }
   },
   {
    "id": "black_sun_empire_extraction",
@@ -1237,7 +1326,29 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0014,
+    "tempo_constant": true,
+    "sections": [
+     "intro -1-63",
+     "drop 63-127",
+     "breakdown 127-159",
+     "drop 159-231",
+     "outro 231-236"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.506,
+     "bass": 0.068,
+     "other": 0.371
+    },
+    "cues": {
+     "easy": 356,
+     "normal": 575,
+     "hard": 732
+    },
+    "detail": "black_sun_empire_extraction.json"
+   }
   },
   {
    "id": "bou_kasra_trenchfoot",
@@ -1507,7 +1618,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.001,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-32",
+     "build 32-48",
+     "drop 48-128",
+     "build 128-136",
+     "drop 136-208",
+     "outro 208-216"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.666,
+     "bass": 0.296,
+     "other": 0.038
+    },
+    "cues": {
+     "easy": 328,
+     "normal": 554,
+     "hard": 657
+    },
+    "detail": "break_overstayed.json"
+   }
   },
   {
    "id": "bungle_cocooned",
@@ -1652,7 +1786,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-40",
+     "build 40-48",
+     "drop 48-144",
+     "breakdown 144-176",
+     "drop 176-224",
+     "outro 224-276"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.608,
+     "bass": 0.058,
+     "other": 0.29
+    },
+    "cues": {
+     "easy": 429,
+     "normal": 699,
+     "hard": 870
+    },
+    "detail": "bungle_cocooned.json"
+   }
   },
   {
    "id": "chase_status_no_problem_original_mix",
@@ -1791,7 +1948,29 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.9997,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-32",
+     "build 32-40",
+     "drop 40-91",
+     "breakdown 91-132",
+     "drop 132-198"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.541,
+     "other": 0.292,
+     "vocals": 0.167
+    },
+    "cues": {
+     "easy": 304,
+     "normal": 489,
+     "hard": 646
+    },
+    "detail": "chase_status_no_problem_original_mix.json"
+   }
   },
   {
    "id": "culture_shock_machine",
@@ -1909,7 +2088,29 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0006,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-32",
+     "drop 32-96",
+     "breakdown 96-116",
+     "drop 116-192",
+     "outro 192-199"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.763,
+     "bass": 0.04,
+     "other": 0.117
+    },
+    "cues": {
+     "easy": 297,
+     "normal": 454,
+     "hard": 553
+    },
+    "detail": "culture_shock_machine.json"
+   }
   },
   {
    "id": "dc_breaks_gambino_original_mix",
@@ -2306,7 +2507,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.998,
+    "tempo_constant": true,
+    "sections": [
+     "intro -1-15",
+     "build 15-31",
+     "drop 31-95",
+     "breakdown 95-143",
+     "drop 143-207",
+     "outro 207-215"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.593,
+     "other": 0.296,
+     "vocals": 0.074
+    },
+    "cues": {
+     "easy": 338,
+     "normal": 555,
+     "hard": 685
+    },
+    "detail": "dc_breaks_slugs_original_mix.json"
+   }
   },
   {
    "id": "dc_breaks_take_that_vip",
@@ -2428,7 +2652,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 173.9996,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-32",
+     "build 32-40",
+     "drop 40-96",
+     "breakdown 96-112",
+     "build 112-120",
+     "drop 120-188",
+     "outro 188-213"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.376,
+     "other": 0.549,
+     "vocals": 0.075
+    },
+    "cues": {
+     "easy": 337,
+     "normal": 566,
+     "hard": 683
+    },
+    "detail": "dc_breaks_take_that_vip.json"
+   }
   },
   {
    "id": "dj_fresh_tombraider_hq_6pfchcwomjg",
@@ -2859,7 +3107,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0007,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-8",
+     "build 8-32",
+     "drop 32-96",
+     "breakdown 96-120",
+     "build 120-128",
+     "drop 128-192",
+     "outro 192-196"
+    ],
+    "focus_share_of_track": {
+     "kick": 0.041,
+     "tops": 0.449,
+     "other": 0.49
+    },
+    "cues": {
+     "easy": 313,
+     "normal": 510,
+     "hard": 634
+    },
+    "detail": "exile_destructive_vibrations.json"
+   }
   },
   {
    "id": "fatboy_slim_fatboy_slim_right_here_right_now_one_in_the_jungle_remix_osrqel13kmo",
@@ -3015,7 +3287,29 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-47",
+     "drop 47-95",
+     "breakdown 95-127",
+     "drop 127-175",
+     "outro 175-180"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.267,
+     "other": 0.351,
+     "vocals": 0.356
+    },
+    "cues": {
+     "easy": 273,
+     "normal": 461,
+     "hard": 562
+    },
+    "detail": "fatboy_slim_fatboy_slim_right_here_right_now_one_in_the_jungle_remix_osrqel13kmo.json"
+   }
   },
   {
    "id": "floodlight_dnb_aid_for_pakistan_in_most_pulsar",
@@ -3275,7 +3569,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 173.9999,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-16",
+     "build 16-32",
+     "drop 32-96",
+     "breakdown 96-112",
+     "build 112-128",
+     "drop 128-192",
+     "outro 192-196"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.367,
+     "bass": 0.082,
+     "other": 0.531
+    },
+    "cues": {
+     "easy": 312,
+     "normal": 499,
+     "hard": 638
+    },
+    "detail": "floodlight_dnb_aid_for_pakistan_radiax_headway.json"
+   }
   },
   {
    "id": "floodlight_dnb_aid_for_pakistan_warm_roller_memory",
@@ -3408,7 +3726,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0008,
+    "tempo_constant": true,
+    "sections": [
+     "intro -1-15",
+     "build 15-31",
+     "drop 31-95",
+     "breakdown 95-111",
+     "build 111-127",
+     "drop 127-191",
+     "outro 191-227"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.491,
+     "other": 0.384
+    },
+    "cues": {
+     "easy": 320,
+     "normal": 532,
+     "hard": 614
+    },
+    "detail": "floodlight_dnb_aid_for_pakistan_warm_roller_memory.json"
+   }
   },
   {
    "id": "frankee_frankee_flim_flam_oggt1uhj5bs",
@@ -3537,7 +3878,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 173.9991,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-31",
+     "drop 31-95",
+     "breakdown 95-127",
+     "drop 127-191",
+     "outro 191-208"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.467,
+     "bass": 0.154,
+     "other": 0.303,
+     "vocals": 0.038
+    },
+    "cues": {
+     "easy": 324,
+     "normal": 532,
+     "hard": 655
+    },
+    "detail": "frankee_frankee_flim_flam_oggt1uhj5bs.json"
+   }
   },
   {
    "id": "freestylers_pendulum_sirreal_painkiller_noisia_remix",
@@ -3699,7 +4063,33 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.9736,
+    "tempo_constant": false,
+    "sections": [
+     "intro 0-47",
+     "drop 47-87",
+     "breakdown 87-95",
+     "drop 95-111",
+     "breakdown 111-119",
+     "drop 119-191",
+     "breakdown 191-199",
+     "drop 199-247",
+     "outro 247-261"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.426,
+     "bass": 0.153,
+     "vocals": 0.421
+    },
+    "cues": {
+     "easy": 413,
+     "normal": 690,
+     "hard": 856
+    },
+    "detail": "freestylers_pendulum_sirreal_painkiller_noisia_remix.json"
+   }
   },
   {
    "id": "fresh_the_gatekeeper_original_mix",
@@ -3834,7 +4224,29 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 173.9998,
+    "tempo_constant": false,
+    "sections": [
+     "intro -1-47",
+     "drop 47-114",
+     "breakdown 114-143",
+     "drop 143-191",
+     "outro 191-234"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.638,
+     "other": 0.226,
+     "vocals": 0.068
+    },
+    "cues": {
+     "easy": 357,
+     "normal": 583,
+     "hard": 725
+    },
+    "detail": "fresh_the_gatekeeper_original_mix.json"
+   }
   },
   {
    "id": "hamilton_soundboy_vip",
@@ -3956,7 +4368,28 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0003,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-32",
+     "drop 32-208",
+     "outro 208-211"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.567,
+     "bass": 0.076,
+     "other": 0.227,
+     "vocals": 0.113
+    },
+    "cues": {
+     "easy": 341,
+     "normal": 555,
+     "hard": 680
+    },
+    "detail": "hamilton_soundboy_vip.json"
+   }
   },
   {
    "id": "insideinfo_victory_over_death_feat_monikali",
@@ -4227,7 +4660,35 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0001,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-24",
+     "build 24-32",
+     "drop 32-56",
+     "build 56-64",
+     "drop 64-88",
+     "breakdown 88-120",
+     "build 120-128",
+     "drop 128-152",
+     "build 152-160",
+     "drop 160-180",
+     "outro 180-195"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.427,
+     "other": 0.491,
+     "vocals": 0.082
+    },
+    "cues": {
+     "easy": 302,
+     "normal": 522,
+     "hard": 635
+    },
+    "detail": "k_motionz_simula_phantasm_original_mix.json"
+   }
   },
   {
    "id": "loadstar_dr_karg_original_mix",
@@ -4355,7 +4816,27 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 172.0004,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-16",
+     "drop 16-176",
+     "outro 176-179"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.268,
+     "other": 0.357,
+     "vocals": 0.357
+    },
+    "cues": {
+     "easy": 282,
+     "normal": 470,
+     "hard": 566
+    },
+    "detail": "loadstar_dr_karg_original_mix.json"
+   }
   },
   {
    "id": "lsb_the_hurting",
@@ -4511,7 +4992,29 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 173.9999,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-79",
+     "drop 79-175",
+     "breakdown 175-207",
+     "drop 207-271",
+     "outro 271-294"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.459,
+     "other": 0.299,
+     "vocals": 0.218
+    },
+    "cues": {
+     "easy": 431,
+     "normal": 711,
+     "hard": 952
+    },
+    "detail": "lsb_the_hurting.json"
+   }
   },
   {
    "id": "madface_dawning",
@@ -4656,7 +5159,29 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0005,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-47",
+     "drop 47-111",
+     "breakdown 111-143",
+     "drop 143-211",
+     "outro 211-218"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.33,
+     "other": 0.563,
+     "vocals": 0.073
+    },
+    "cues": {
+     "easy": 329,
+     "normal": 559,
+     "hard": 685
+    },
+    "detail": "madface_dawning.json"
+   }
   },
   {
    "id": "mampi_swift_soldiers_gyrhlx7pafa",
@@ -4793,7 +5318,29 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.9998,
+    "tempo_constant": true,
+    "sections": [
+     "drop -1-15",
+     "breakdown 15-27",
+     "drop 27-127",
+     "breakdown 127-135",
+     "drop 135-219",
+     "outro 219-239"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.366,
+     "other": 0.634
+    },
+    "cues": {
+     "easy": 387,
+     "normal": 639,
+     "hard": 776
+    },
+    "detail": "mampi_swift_soldiers_gyrhlx7pafa.json"
+   }
   },
   {
    "id": "mantra_decibella_tim_reaper_stars_are_calling",
@@ -4937,7 +5484,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 168.0008,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-32",
+     "drop 32-128",
+     "breakdown 128-160",
+     "build 160-176",
+     "drop 176-208",
+     "outro 208-242"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.603,
+     "bass": 0.066,
+     "other": 0.331
+    },
+    "cues": {
+     "easy": 393,
+     "normal": 646,
+     "hard": 759
+    },
+    "detail": "mantra_decibella_tim_reaper_stars_are_calling.json"
+   }
   },
   {
    "id": "metal_work_freedom",
@@ -5206,7 +5776,35 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 173.9998,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-39",
+     "build 39-47",
+     "drop 47-71",
+     "build 71-79",
+     "drop 79-95",
+     "breakdown 95-119",
+     "build 119-127",
+     "drop 127-151",
+     "build 151-159",
+     "drop 159-175",
+     "outro 175-184"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.387,
+     "bass": 0.13,
+     "other": 0.435
+    },
+    "cues": {
+     "easy": 280,
+     "normal": 467,
+     "hard": 568
+    },
+    "detail": "metrik_metrik_hackers_chn2k5wwufc.json"
+   }
   },
   {
    "id": "metrik_t_2000",
@@ -5486,7 +6084,28 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-48",
+     "drop 48-144",
+     "breakdown 144-176",
+     "drop 176-273"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.678,
+     "bass": 0.117,
+     "other": 0.205
+    },
+    "cues": {
+     "easy": 430,
+     "normal": 695,
+     "hard": 876
+    },
+    "detail": "moving_fusion_makosa.json"
+   }
   },
   {
    "id": "mr_traumatik_ft_posk_lotus",
@@ -5838,7 +6457,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0008,
+    "tempo_constant": true,
+    "sections": [
+     "intro -1-15",
+     "build 15-47",
+     "drop 47-111",
+     "breakdown 111-143",
+     "drop 143-207",
+     "outro 207-243"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.622,
+     "bass": 0.098,
+     "other": 0.262
+    },
+    "cues": {
+     "easy": 385,
+     "normal": 639,
+     "hard": 790
+    },
+    "detail": "need_for_mirrors_zero_t_top_shelf_feat_spikey_tee.json"
+   }
   },
   {
    "id": "northern_zone_faint",
@@ -5999,7 +6641,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 173.0,
+    "tempo_constant": false,
+    "sections": [
+     "intro 0-31",
+     "build 31-47",
+     "drop 47-111",
+     "breakdown 111-127",
+     "build 127-143",
+     "drop 143-207",
+     "outro 207-228"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.351,
+     "bass": 0.035,
+     "other": 0.614
+    },
+    "cues": {
+     "easy": 353,
+     "normal": 568,
+     "hard": 739
+    },
+    "detail": "northern_zone_faint.json"
+   }
   },
   {
    "id": "nu_elementz_trenches",
@@ -6443,7 +7109,35 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0018,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-67",
+     "build 67-87",
+     "drop 87-107",
+     "build 107-115",
+     "drop 115-148",
+     "breakdown 148-179",
+     "build 179-199",
+     "drop 199-219",
+     "build 219-227",
+     "drop 227-263",
+     "outro 263-267"
+    ],
+    "focus_share_of_track": {
+     "kick": 0.09,
+     "tops": 0.258,
+     "other": 0.637
+    },
+    "cues": {
+     "easy": 413,
+     "normal": 697,
+     "hard": 826
+    },
+    "detail": "original_sin_therapy_remix.json"
+   }
   },
   {
    "id": "paralel_in_the_clouds",
@@ -6586,7 +7280,28 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-48",
+     "drop 48-112",
+     "breakdown 112-144",
+     "drop 144-211"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.469,
+     "other": 0.455,
+     "vocals": 0.076
+    },
+    "cues": {
+     "easy": 333,
+     "normal": 538,
+     "hard": 695
+    },
+    "detail": "paralel_in_the_clouds.json"
+   }
   },
   {
    "id": "particle_pyro",
@@ -6707,7 +7422,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0004,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-24",
+     "drop 24-96",
+     "breakdown 96-107",
+     "build 107-116",
+     "drop 116-176",
+     "outro 176-183"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.591,
+     "bass": 0.044,
+     "other": 0.279,
+     "vocals": 0.049
+    },
+    "cues": {
+     "easy": 281,
+     "normal": 455,
+     "hard": 547
+    },
+    "detail": "particle_pyro.json"
+   }
   },
   {
    "id": "ram_trilogy_evolution_marcus_intalex_st_files_remix",
@@ -7140,7 +7879,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-32",
+     "drop 32-96",
+     "breakdown 96-128",
+     "drop 128-188",
+     "outro 188-192"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.542,
+     "bass": 0.042,
+     "other": 0.375,
+     "vocals": 0.042
+    },
+    "cues": {
+     "easy": 291,
+     "normal": 512,
+     "hard": 625
+    },
+    "detail": "simula_lazy_horn.json"
+   }
   },
   {
    "id": "smg_sono_original_mix",
@@ -7289,7 +8051,34 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0008,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-16",
+     "build 16-32",
+     "drop 32-56",
+     "build 56-64",
+     "drop 64-96",
+     "build 96-112",
+     "drop 112-136",
+     "build 136-144",
+     "drop 144-176"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.409,
+     "bass": 0.227,
+     "other": 0.136,
+     "vocals": 0.227
+    },
+    "cues": {
+     "easy": 278,
+     "normal": 431,
+     "hard": 575
+    },
+    "detail": "smg_sono_original_mix.json"
+   }
   },
   {
    "id": "stimpy_party_last_sounds",
@@ -7428,7 +8217,32 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 172.0,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-15",
+     "build 15-31",
+     "drop 31-95",
+     "breakdown 95-107",
+     "build 107-127",
+     "drop 127-175",
+     "outro 175-196"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.631,
+     "bass": 0.081,
+     "other": 0.221,
+     "vocals": 0.041
+    },
+    "cues": {
+     "easy": 313,
+     "normal": 509,
+     "hard": 634
+    },
+    "detail": "stimpy_party_last_sounds.json"
+   }
   },
   {
    "id": "su3_ject_crystal_eyes",
@@ -7699,7 +8513,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 173.9996,
+    "tempo_constant": true,
+    "sections": [
+     "intro -1-15",
+     "drop 15-44",
+     "breakdown 44-79",
+     "drop 79-127",
+     "breakdown 127-159",
+     "drop 159-194",
+     "outro 194-199"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.293,
+     "other": 0.506,
+     "vocals": 0.16
+    },
+    "cues": {
+     "easy": 286,
+     "normal": 464,
+     "hard": 560
+    },
+    "detail": "sub_focus_rock_it.json"
+   }
   },
   {
    "id": "sub_focus_x_ray_metrik_remix",
@@ -7823,7 +8661,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0003,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-40",
+     "build 40-48",
+     "drop 48-96",
+     "breakdown 96-104",
+     "build 104-112",
+     "drop 112-160",
+     "outro 160-167"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.431,
+     "bass": 0.096,
+     "other": 0.43
+    },
+    "cues": {
+     "easy": 254,
+     "normal": 426,
+     "hard": 534
+    },
+    "detail": "sub_focus_x_ray_metrik_remix.json"
+   }
   },
   {
    "id": "teddy_killerz_teddy_killerz_night_train_t3ggcfz1vs",
@@ -7959,7 +8821,34 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0009,
+    "tempo_constant": false,
+    "sections": [
+     "intro 0-26",
+     "build 26-47",
+     "drop 47-63",
+     "build 63-71",
+     "drop 71-103",
+     "breakdown 103-111",
+     "build 111-135",
+     "drop 135-151",
+     "build 151-159",
+     "drop 159-213"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.614,
+     "other": 0.31,
+     "vocals": 0.038
+    },
+    "cues": {
+     "easy": 312,
+     "normal": 547,
+     "hard": 665
+    },
+    "detail": "teddy_killerz_teddy_killerz_night_train_t3ggcfz1vs.json"
+   }
   },
   {
    "id": "ternion_sound_artifice",
@@ -8065,7 +8954,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 140.004,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-4",
+     "build 4-16",
+     "drop 16-64",
+     "breakdown 64-72",
+     "build 72-96",
+     "drop 96-128",
+     "outro 128-149"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.268,
+     "other": 0.591,
+     "vocals": 0.107
+    },
+    "cues": {
+     "easy": 215,
+     "normal": 376,
+     "hard": 468
+    },
+    "detail": "ternion_sound_artifice.json"
+   }
   },
   {
    "id": "trex_chit_chat",
@@ -8183,7 +9096,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0005,
+    "tempo_constant": true,
+    "sections": [
+     "intro -1-31",
+     "drop 31-95",
+     "breakdown 95-111",
+     "drop 111-175",
+     "outro 175-194"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.451,
+     "bass": 0.041,
+     "other": 0.203,
+     "vocals": 0.287
+    },
+    "cues": {
+     "easy": 287,
+     "normal": 511,
+     "hard": 639
+    },
+    "detail": "trex_chit_chat.json"
+   }
   },
   {
    "id": "unglued_telefonik",
@@ -8312,7 +9248,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 172.0003,
+    "tempo_constant": true,
+    "sections": [
+     "intro -1-15",
+     "build 15-31",
+     "drop 31-95",
+     "breakdown 95-111",
+     "build 111-127",
+     "drop 127-191",
+     "outro 191-212"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.676,
+     "other": 0.188,
+     "vocals": 0.113
+    },
+    "cues": {
+     "easy": 336,
+     "normal": 555,
+     "hard": 666
+    },
+    "detail": "unglued_telefonik.json"
+   }
   },
   {
    "id": "visages_liber_primus",
@@ -8437,7 +9397,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 173.9999,
+    "tempo_constant": true,
+    "sections": [
+     "intro -1-27",
+     "build 27-47",
+     "drop 47-111",
+     "breakdown 111-143",
+     "drop 143-191",
+     "outro 191-199"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.32,
+     "other": 0.581,
+     "vocals": 0.04
+    },
+    "cues": {
+     "easy": 287,
+     "normal": 479,
+     "hard": 617
+    },
+    "detail": "visages_liber_primus.json"
+   }
   }
  ]
 }

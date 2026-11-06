@@ -1,0 +1,567 @@
+{
+ "format": "rhythm_warfare.track.v2",
+ "id": "northern_zone_faint",
+ "file": "Northern Zone - Faint.mp3",
+ "artist": "Northern Zone",
+ "title": "Faint",
+ "album": "Essential (Liquid) Drum and Bass compilation",
+ "year": 2015,
+ "genre": "Drum & Bass",
+ "tool": "audio_import 0.3 (track format v2)",
+ "duration_s": 316.369,
+ "tempo": {
+  "bpm": 173.0,
+  "first_downbeat_s": 0.0639,
+  "constant": false,
+  "drift_ms_max": 36.59,
+  "confidence": 0.069,
+  "ratio_to_174": 0.99425
+ },
+ "voices": [
+  {
+   "key": "tops",
+   "label": "Tops",
+   "kind": "drums",
+   "separation": null,
+   "focus_share_of_track": 0.351
+  },
+  {
+   "key": "bass",
+   "label": "Bass",
+   "kind": "pitched",
+   "separation": "carries 47.8% of the energy, sounding in 68% of the track; moves with drums (envelope correlation > 0.5: shared material or leakage); little drum bleed (attack coincidence 1.7x chance).",
+   "focus_share_of_track": 0.035
+  },
+  {
+   "key": "other",
+   "label": "Synths",
+   "kind": "pitched",
+   "separation": "carries 25.6% of the energy, sounding in 99% of the track; little drum bleed (attack coincidence 1.1x chance).",
+   "focus_share_of_track": 0.614
+  }
+ ],
+ "sections": [
+  {
+   "id": "intro1",
+   "role": "intro",
+   "start_s": 0.0,
+   "end_s": 43.07,
+   "bar_from": 0,
+   "bar_to": 31,
+   "intensity_db": -11.0
+  },
+  {
+   "id": "build1",
+   "role": "build",
+   "start_s": 43.07,
+   "end_s": 65.26,
+   "bar_from": 31,
+   "bar_to": 47,
+   "intensity_db": -36.3
+  },
+  {
+   "id": "drop1",
+   "role": "drop",
+   "start_s": 65.26,
+   "end_s": 154.08,
+   "bar_from": 47,
+   "bar_to": 111,
+   "intensity_db": -0.7
+  },
+  {
+   "id": "breakdown1",
+   "role": "breakdown",
+   "start_s": 154.08,
+   "end_s": 176.25,
+   "bar_from": 111,
+   "bar_to": 127,
+   "intensity_db": -51.2
+  },
+  {
+   "id": "build2",
+   "role": "build",
+   "start_s": 176.25,
+   "end_s": 198.44,
+   "bar_from": 127,
+   "bar_to": 143,
+   "intensity_db": -17.4
+  },
+  {
+   "id": "drop2",
+   "role": "drop",
+   "start_s": 198.44,
+   "end_s": 287.23,
+   "bar_from": 143,
+   "bar_to": 207,
+   "intensity_db": -0.9
+  },
+  {
+   "id": "outro1",
+   "role": "outro",
+   "start_s": 287.23,
+   "end_s": 316.37,
+   "bar_from": 207,
+   "bar_to": 228,
+   "intensity_db": -29.7
+  }
+ ],
+ "focus": [
+  {
+   "voice": "other",
+   "start_s": 0.0,
+   "end_s": 20.87,
+   "bar_from": 0,
+   "bar_to": 15,
+   "sections": [
+    "intro1"
+   ],
+   "share": 0.981,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 20.87,
+   "end_s": 31.97,
+   "bar_from": 15,
+   "bar_to": 23,
+   "sections": [
+    "intro1"
+   ],
+   "share": 0.125,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 31.97,
+   "end_s": 65.26,
+   "bar_from": 23,
+   "bar_to": 47,
+   "sections": [
+    "intro1",
+    "build1"
+   ],
+   "share": 0.896,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 65.26,
+   "end_s": 76.36,
+   "bar_from": 47,
+   "bar_to": 55,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.335,
+   "runner_up": "bass"
+  },
+  {
+   "voice": "other",
+   "start_s": 76.36,
+   "end_s": 87.46,
+   "bar_from": 55,
+   "bar_to": 63,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.287,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 87.46,
+   "end_s": 98.56,
+   "bar_from": 63,
+   "bar_to": 71,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.256,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 98.56,
+   "end_s": 109.67,
+   "bar_from": 71,
+   "bar_to": 79,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.432,
+   "runner_up": "bass"
+  },
+  {
+   "voice": "tops",
+   "start_s": 109.67,
+   "end_s": 120.76,
+   "bar_from": 79,
+   "bar_to": 87,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.429,
+   "runner_up": "bass"
+  },
+  {
+   "voice": "other",
+   "start_s": 120.76,
+   "end_s": 131.85,
+   "bar_from": 87,
+   "bar_to": 95,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.323,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 131.85,
+   "end_s": 142.95,
+   "bar_from": 95,
+   "bar_to": 103,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.41,
+   "runner_up": "bass"
+  },
+  {
+   "voice": "other",
+   "start_s": 142.95,
+   "end_s": 176.25,
+   "bar_from": 103,
+   "bar_to": 127,
+   "sections": [
+    "drop1",
+    "breakdown1"
+   ],
+   "share": 0.732,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 176.25,
+   "end_s": 187.35,
+   "bar_from": 127,
+   "bar_to": 135,
+   "sections": [
+    "build2"
+   ],
+   "share": 0.487,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 187.35,
+   "end_s": 198.44,
+   "bar_from": 135,
+   "bar_to": 143,
+   "sections": [
+    "build2"
+   ],
+   "share": 0.808,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "bass",
+   "start_s": 198.44,
+   "end_s": 209.54,
+   "bar_from": 143,
+   "bar_to": 151,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.234,
+   "runner_up": "other"
+  },
+  {
+   "voice": "tops",
+   "start_s": 209.54,
+   "end_s": 220.64,
+   "bar_from": 151,
+   "bar_to": 159,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.343,
+   "runner_up": "bass"
+  },
+  {
+   "voice": "other",
+   "start_s": 220.64,
+   "end_s": 231.74,
+   "bar_from": 159,
+   "bar_to": 167,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.403,
+   "runner_up": "bass"
+  },
+  {
+   "voice": "tops",
+   "start_s": 231.74,
+   "end_s": 242.83,
+   "bar_from": 167,
+   "bar_to": 175,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.273,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 242.83,
+   "end_s": 253.93,
+   "bar_from": 175,
+   "bar_to": 183,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.29,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 253.93,
+   "end_s": 265.03,
+   "bar_from": 183,
+   "bar_to": 191,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.406,
+   "runner_up": "bass"
+  },
+  {
+   "voice": "other",
+   "start_s": 265.03,
+   "end_s": 276.13,
+   "bar_from": 191,
+   "bar_to": 199,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.204,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 276.13,
+   "end_s": 287.23,
+   "bar_from": 199,
+   "bar_to": 207,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.383,
+   "runner_up": "bass"
+  },
+  {
+   "voice": "other",
+   "start_s": 287.23,
+   "end_s": 316.37,
+   "bar_from": 207,
+   "bar_to": 228,
+   "sections": [
+    "outro1"
+   ],
+   "share": 0.399,
+   "runner_up": "tops"
+  }
+ ],
+ "focus_timeline_bars": "other 0-16, tops 16-24, other 24-48, tops 48-56, other 56-64, tops 64-72, other 72-80, tops 80-88, other 88-96, tops 96-104, other 104-128, tops 128-136, other 136-144, bass 144-152, tops 152-160, other 160-168, tops 168-176, other 176-184, tops 184-192, other 192-200, tops 200-208, other 208-223",
+ "nothing_to_play": [],
+ "charts": {
+  "easy": {
+   "cues": 353,
+   "holds": 10,
+   "per_s": 1.116,
+   "per_beat_of_focus": 0.387,
+   "by_voice": {
+    "other": 195,
+    "tops": 148,
+    "bass": 10
+   }
+  },
+  "normal": {
+   "cues": 568,
+   "holds": 10,
+   "per_s": 1.795,
+   "per_beat_of_focus": 0.623,
+   "by_voice": {
+    "other": 307,
+    "tops": 251,
+    "bass": 10
+   }
+  },
+  "hard": {
+   "cues": 739,
+   "holds": 10,
+   "per_s": 2.336,
+   "per_beat_of_focus": 0.81,
+   "by_voice": {
+    "other": 373,
+    "tops": 356,
+    "bass": 10
+   }
+  }
+ },
+ "default_chart": "normal",
+ "validation": {
+  "violations": 0,
+  "stems_sum_error_db": -37.01
+ },
+ "quick": {
+  "bpm": 173.0,
+  "bpm_clarity": 11.3,
+  "bpm_runner_up": 129.74,
+  "ratio_to_174": 0.9943,
+  "loudness_db": -6.7,
+  "low_share": 0.52,
+  "brightness_hz": 2260,
+  "events_per_s": 5.54,
+  "dynamic_db": 7.7,
+  "loud_share": 0.56,
+  "first_drop_s": 66.6,
+  "drops": 2,
+  "block_s": 11.1,
+  "blocks_db": [
+   -12.7,
+   -7.5,
+   -4.5,
+   -4.5,
+   -8.0,
+   -7.5,
+   0.3,
+   0.1,
+   -0.0,
+   0.0,
+   -0.6,
+   -0.3,
+   -0.3,
+   -0.8,
+   -5.7,
+   -7.3,
+   -6.5,
+   -5.5,
+   0.2,
+   -0.2,
+   0.2,
+   -0.1,
+   -0.4,
+   -0.4,
+   -0.4,
+   -1.0,
+   -4.8,
+   -5.5,
+   -20.6
+  ],
+  "blocks_drive_db": [
+   -18.2,
+   -14.7,
+   -6.5,
+   -6.6,
+   -7.3,
+   -10.6,
+   0.4,
+   0.4,
+   -0.1,
+   -0.1,
+   -0.5,
+   -0.3,
+   -0.7,
+   -0.9,
+   -15.9,
+   -15.9,
+   -5.8,
+   -9.9,
+   0.1,
+   0.1,
+   0.0,
+   -0.2,
+   -0.4,
+   -0.2,
+   -0.3,
+   -0.9,
+   -3.4,
+   -4.3,
+   -17.8
+  ],
+  "rough_sections": [
+   {
+    "role": "opening",
+    "start_s": 0.0,
+    "end_s": 22.2,
+    "bars": 16,
+    "level_db": -16.5
+   },
+   {
+    "role": "opening",
+    "start_s": 22.2,
+    "end_s": 55.5,
+    "bars": 24,
+    "level_db": -6.8
+   },
+   {
+    "role": "opening",
+    "start_s": 55.5,
+    "end_s": 66.6,
+    "bars": 8,
+    "level_db": -10.6
+   },
+   {
+    "role": "loud",
+    "start_s": 66.6,
+    "end_s": 155.4,
+    "bars": 64,
+    "level_db": -0.2
+   },
+   {
+    "role": "quieter",
+    "start_s": 155.4,
+    "end_s": 177.6,
+    "bars": 16,
+    "level_db": -15.9
+   },
+   {
+    "role": "quieter",
+    "start_s": 177.6,
+    "end_s": 188.7,
+    "bars": 8,
+    "level_db": -5.8
+   },
+   {
+    "role": "quieter",
+    "start_s": 188.7,
+    "end_s": 199.8,
+    "bars": 8,
+    "level_db": -9.9
+   },
+   {
+    "role": "loud",
+    "start_s": 199.8,
+    "end_s": 288.6,
+    "bars": 64,
+    "level_db": -0.2
+   },
+   {
+    "role": "ending",
+    "start_s": 288.6,
+    "end_s": 310.8,
+    "bars": 16,
+    "level_db": -3.9
+   },
+   {
+    "role": "ending",
+    "start_s": 310.8,
+    "end_s": 316.4,
+    "bars": 8,
+    "level_db": -17.8
+   }
+  ]
+ }
+}

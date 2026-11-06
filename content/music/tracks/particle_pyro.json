@@ -1,0 +1,449 @@
+{
+ "format": "rhythm_warfare.track.v2",
+ "id": "particle_pyro",
+ "file": "PARTICLE - Pyro.flac",
+ "artist": "PARTICLE",
+ "title": "Pyro",
+ "album": null,
+ "year": 2024,
+ "genre": null,
+ "tool": "audio_import 0.3 (track format v2)",
+ "duration_s": 252.1779,
+ "tempo": {
+  "bpm": 174.0004,
+  "first_downbeat_s": 0.0022,
+  "constant": true,
+  "drift_ms_max": 0.49,
+  "confidence": 0.874,
+  "ratio_to_174": 1.0
+ },
+ "voices": [
+  {
+   "key": "drums",
+   "label": "Drums",
+   "kind": "drums",
+   "separation": "carries 29.8% of the energy, sounding in 83% of the track.",
+   "focus_share_of_track": 0.591
+  },
+  {
+   "key": "bass",
+   "label": "Bass",
+   "kind": "pitched",
+   "separation": "carries 53.0% of the energy, sounding in 70% of the track; little drum bleed (attack coincidence 1.7x chance).",
+   "focus_share_of_track": 0.044
+  },
+  {
+   "key": "other",
+   "label": "Synths",
+   "kind": "pitched",
+   "separation": "carries 8.8% of the energy, sounding in 72% of the track; little drum bleed (attack coincidence 1.6x chance).",
+   "focus_share_of_track": 0.279
+  },
+  {
+   "key": "vocals",
+   "label": "Vocals",
+   "kind": "pitched",
+   "separation": "carries 3.2% of the energy, sounding in 54% of the track; little drum bleed (attack coincidence 1.9x chance).",
+   "focus_share_of_track": 0.049
+  }
+ ],
+ "sections": [
+  {
+   "id": "intro1",
+   "role": "intro",
+   "start_s": 0.0,
+   "end_s": 33.11,
+   "bar_from": 0,
+   "bar_to": 24,
+   "intensity_db": -19.4
+  },
+  {
+   "id": "drop1",
+   "role": "drop",
+   "start_s": 33.11,
+   "end_s": 132.42,
+   "bar_from": 24,
+   "bar_to": 96,
+   "intensity_db": -1.2
+  },
+  {
+   "id": "breakdown1",
+   "role": "breakdown",
+   "start_s": 132.42,
+   "end_s": 147.59,
+   "bar_from": 96,
+   "bar_to": 107,
+   "intensity_db": -40.9
+  },
+  {
+   "id": "build1",
+   "role": "build",
+   "start_s": 147.59,
+   "end_s": 160.0,
+   "bar_from": 107,
+   "bar_to": 116,
+   "intensity_db": -24.4
+  },
+  {
+   "id": "drop2",
+   "role": "drop",
+   "start_s": 160.0,
+   "end_s": 242.76,
+   "bar_from": 116,
+   "bar_to": 176,
+   "intensity_db": -1.2
+  },
+  {
+   "id": "outro1",
+   "role": "outro",
+   "start_s": 242.76,
+   "end_s": 252.18,
+   "bar_from": 176,
+   "bar_to": 183,
+   "intensity_db": -78.2
+  }
+ ],
+ "focus": [
+  {
+   "voice": "other",
+   "start_s": 0.0,
+   "end_s": 11.04,
+   "bar_from": 0,
+   "bar_to": 8,
+   "sections": [
+    "intro1"
+   ],
+   "share": 0.229,
+   "runner_up": "vocals"
+  },
+  {
+   "voice": "drums",
+   "start_s": 11.04,
+   "end_s": 22.07,
+   "bar_from": 8,
+   "bar_to": 16,
+   "sections": [
+    "intro1"
+   ],
+   "share": 0.139,
+   "runner_up": "vocals"
+  },
+  {
+   "voice": "other",
+   "start_s": 22.07,
+   "end_s": 33.11,
+   "bar_from": 16,
+   "bar_to": 24,
+   "sections": [
+    "intro1"
+   ],
+   "share": 0.566,
+   "runner_up": "vocals"
+  },
+  {
+   "voice": "drums",
+   "start_s": 33.11,
+   "end_s": 55.17,
+   "bar_from": 24,
+   "bar_to": 40,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.542,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 55.17,
+   "end_s": 66.21,
+   "bar_from": 40,
+   "bar_to": 48,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.16,
+   "runner_up": "drums"
+  },
+  {
+   "voice": "drums",
+   "start_s": 66.21,
+   "end_s": 77.24,
+   "bar_from": 48,
+   "bar_to": 56,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.564,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 77.24,
+   "end_s": 88.28,
+   "bar_from": 56,
+   "bar_to": 64,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.242,
+   "runner_up": "drums"
+  },
+  {
+   "voice": "drums",
+   "start_s": 88.28,
+   "end_s": 132.42,
+   "bar_from": 64,
+   "bar_to": 96,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.797,
+   "runner_up": "bass"
+  },
+  {
+   "voice": "other",
+   "start_s": 132.42,
+   "end_s": 147.59,
+   "bar_from": 96,
+   "bar_to": 107,
+   "sections": [
+    "breakdown1"
+   ],
+   "share": 0.697,
+   "runner_up": "drums"
+  },
+  {
+   "voice": "vocals",
+   "start_s": 147.59,
+   "end_s": 160.0,
+   "bar_from": 107,
+   "bar_to": 116,
+   "sections": [
+    "build1"
+   ],
+   "share": 0.298,
+   "runner_up": "other"
+  },
+  {
+   "voice": "drums",
+   "start_s": 160.0,
+   "end_s": 182.07,
+   "bar_from": 116,
+   "bar_to": 132,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.646,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 182.07,
+   "end_s": 193.11,
+   "bar_from": 132,
+   "bar_to": 140,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.274,
+   "runner_up": "drums"
+  },
+  {
+   "voice": "drums",
+   "start_s": 193.11,
+   "end_s": 204.14,
+   "bar_from": 140,
+   "bar_to": 148,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.767,
+   "runner_up": "other"
+  },
+  {
+   "voice": "bass",
+   "start_s": 204.14,
+   "end_s": 215.17,
+   "bar_from": 148,
+   "bar_to": 156,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.158,
+   "runner_up": "drums"
+  },
+  {
+   "voice": "drums",
+   "start_s": 215.17,
+   "end_s": 242.76,
+   "bar_from": 156,
+   "bar_to": 176,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.762,
+   "runner_up": "bass"
+  }
+ ],
+ "focus_timeline_bars": "other 0-8, drums 8-16, other 16-24, drums 24-40, other 40-48, drums 48-56, other 56-64, drums 64-96, other 96-107, vocals 107-116, drums 116-132, other 132-140, drums 140-148, bass 148-156, drums 156-176, (none) 176-183",
+ "nothing_to_play": [
+  {
+   "start_s": 242.76,
+   "end_s": 252.18,
+   "bars": 7,
+   "why": "no voice loud enough with a playable part, even by the relaxed rules"
+  }
+ ],
+ "charts": {
+  "easy": {
+   "cues": 281,
+   "holds": 9,
+   "per_s": 1.114,
+   "per_beat_of_focus": 0.399,
+   "by_voice": {
+    "other": 64,
+    "drums": 198,
+    "vocals": 13,
+    "bass": 6
+   }
+  },
+  "normal": {
+   "cues": 455,
+   "holds": 11,
+   "per_s": 1.804,
+   "per_beat_of_focus": 0.646,
+   "by_voice": {
+    "other": 100,
+    "drums": 333,
+    "vocals": 16,
+    "bass": 6
+   }
+  },
+  "hard": {
+   "cues": 547,
+   "holds": 13,
+   "per_s": 2.169,
+   "per_beat_of_focus": 0.777,
+   "by_voice": {
+    "other": 125,
+    "drums": 400,
+    "vocals": 16,
+    "bass": 6
+   }
+  }
+ },
+ "default_chart": "normal",
+ "validation": {
+  "violations": 1,
+  "stems_sum_error_db": -37.63
+ },
+ "quick": {
+  "bpm": 174.0,
+  "bpm_clarity": 10.8,
+  "bpm_runner_up": 139.2,
+  "ratio_to_174": 1.0,
+  "loudness_db": -6.1,
+  "low_share": 0.714,
+  "brightness_hz": 1797,
+  "events_per_s": 5.13,
+  "dynamic_db": 13.9,
+  "loud_share": 0.7,
+  "first_drop_s": 44.1,
+  "drops": 2,
+  "block_s": 11.03,
+  "blocks_db": [
+   -14.5,
+   -14.3,
+   -7.5,
+   -8.9,
+   -0.6,
+   0.1,
+   -0.4,
+   -1.4,
+   -0.3,
+   0.3,
+   -0.4,
+   -1.8,
+   -12.0,
+   -11.0,
+   -1.3,
+   0.1,
+   -0.4,
+   -1.4,
+   -0.3,
+   0.3,
+   -0.4,
+   -1.7,
+   -32.0
+  ],
+  "blocks_drive_db": [
+   -12.5,
+   -11.0,
+   -11.6,
+   -10.0,
+   -0.3,
+   0.3,
+   -0.1,
+   -0.7,
+   -0.2,
+   0.1,
+   -0.4,
+   -1.2,
+   -11.6,
+   -8.4,
+   -1.1,
+   0.3,
+   -0.1,
+   -0.7,
+   -0.2,
+   0.1,
+   -0.4,
+   -1.2,
+   -20.3
+  ],
+  "rough_sections": [
+   {
+    "role": "opening",
+    "start_s": 0.0,
+    "end_s": 44.1,
+    "bars": 32,
+    "level_db": -11.3
+   },
+   {
+    "role": "loud",
+    "start_s": 44.1,
+    "end_s": 132.4,
+    "bars": 64,
+    "level_db": -0.3
+   },
+   {
+    "role": "quieter",
+    "start_s": 132.4,
+    "end_s": 143.4,
+    "bars": 8,
+    "level_db": -11.6
+   },
+   {
+    "role": "quieter",
+    "start_s": 143.4,
+    "end_s": 154.5,
+    "bars": 8,
+    "level_db": -8.4
+   },
+   {
+    "role": "loud",
+    "start_s": 154.5,
+    "end_s": 242.8,
+    "bars": 64,
+    "level_db": -0.4
+   },
+   {
+    "role": "ending",
+    "start_s": 242.8,
+    "end_s": 252.2,
+    "bars": 8,
+    "level_db": -20.3
+   }
+  ]
+ }
+}

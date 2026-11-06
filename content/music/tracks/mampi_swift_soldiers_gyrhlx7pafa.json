@@ -1,0 +1,538 @@
+{
+ "format": "rhythm_warfare.track.v2",
+ "id": "mampi_swift_soldiers_gyrhlx7pafa",
+ "file": "Mampi Swift - Soldiers-GyrhLX7PAfA.mp3",
+ "artist": "Mampi Swift",
+ "title": "Soldiers-GyrhLX7PAfA",
+ "album": null,
+ "year": null,
+ "genre": null,
+ "tool": "audio_import 0.2 (track format v2)",
+ "duration_s": 329.4935,
+ "tempo": {
+  "bpm": 174.9998,
+  "first_downbeat_s": 1.1137,
+  "constant": true,
+  "drift_ms_max": 3.82,
+  "confidence": 0.872,
+  "ratio_to_174": 1.00575
+ },
+ "voices": [
+  {
+   "key": "tops",
+   "label": "Tops",
+   "kind": "drums",
+   "separation": null,
+   "focus_share_of_track": 0.366
+  },
+  {
+   "key": "other",
+   "label": "Synths",
+   "kind": "pitched",
+   "separation": "carries 36.3% of the energy, sounding in 99% of the track; little drum bleed (attack coincidence 1.0x chance).",
+   "focus_share_of_track": 0.634
+  }
+ ],
+ "sections": [
+  {
+   "id": "drop1",
+   "role": "drop",
+   "start_s": 0.0,
+   "end_s": 21.69,
+   "bar_from": -1,
+   "bar_to": 15,
+   "intensity_db": -4.6
+  },
+  {
+   "id": "breakdown1",
+   "role": "breakdown",
+   "start_s": 21.69,
+   "end_s": 38.14,
+   "bar_from": 15,
+   "bar_to": 27,
+   "intensity_db": -25.6
+  },
+  {
+   "id": "drop2",
+   "role": "drop",
+   "start_s": 38.14,
+   "end_s": 175.29,
+   "bar_from": 27,
+   "bar_to": 127,
+   "intensity_db": -3.8
+  },
+  {
+   "id": "breakdown2",
+   "role": "breakdown",
+   "start_s": 175.29,
+   "end_s": 186.26,
+   "bar_from": 127,
+   "bar_to": 135,
+   "intensity_db": -20.6
+  },
+  {
+   "id": "drop3",
+   "role": "drop",
+   "start_s": 186.26,
+   "end_s": 301.46,
+   "bar_from": 135,
+   "bar_to": 219,
+   "intensity_db": -3.3
+  },
+  {
+   "id": "outro1",
+   "role": "outro",
+   "start_s": 301.46,
+   "end_s": 329.49,
+   "bar_from": 219,
+   "bar_to": 239,
+   "intensity_db": -8.3
+  }
+ ],
+ "focus": [
+  {
+   "voice": "other",
+   "start_s": 0.0,
+   "end_s": 38.14,
+   "bar_from": -1,
+   "bar_to": 27,
+   "sections": [
+    "drop1",
+    "breakdown1"
+   ],
+   "share": 0.766,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 38.14,
+   "end_s": 49.11,
+   "bar_from": 27,
+   "bar_to": 35,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.487,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 49.11,
+   "end_s": 60.09,
+   "bar_from": 35,
+   "bar_to": 43,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.472,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 60.09,
+   "end_s": 71.06,
+   "bar_from": 43,
+   "bar_to": 51,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.495,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 71.06,
+   "end_s": 82.03,
+   "bar_from": 51,
+   "bar_to": 59,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.499,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 82.03,
+   "end_s": 93.0,
+   "bar_from": 59,
+   "bar_to": 67,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.379,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 93.0,
+   "end_s": 103.97,
+   "bar_from": 67,
+   "bar_to": 75,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.466,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 103.97,
+   "end_s": 114.94,
+   "bar_from": 75,
+   "bar_to": 83,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.386,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 114.94,
+   "end_s": 125.91,
+   "bar_from": 83,
+   "bar_to": 91,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.495,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 125.91,
+   "end_s": 136.89,
+   "bar_from": 91,
+   "bar_to": 99,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.338,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 136.89,
+   "end_s": 147.86,
+   "bar_from": 99,
+   "bar_to": 107,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.472,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 147.86,
+   "end_s": 158.83,
+   "bar_from": 107,
+   "bar_to": 115,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.212,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 158.83,
+   "end_s": 197.23,
+   "bar_from": 115,
+   "bar_to": 143,
+   "sections": [
+    "drop2",
+    "breakdown2",
+    "drop3"
+   ],
+   "share": 0.862,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 197.23,
+   "end_s": 208.2,
+   "bar_from": 143,
+   "bar_to": 151,
+   "sections": [
+    "drop3"
+   ],
+   "share": 0.463,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 208.2,
+   "end_s": 219.17,
+   "bar_from": 151,
+   "bar_to": 159,
+   "sections": [
+    "drop3"
+   ],
+   "share": 0.46,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 219.17,
+   "end_s": 230.14,
+   "bar_from": 159,
+   "bar_to": 167,
+   "sections": [
+    "drop3"
+   ],
+   "share": 0.491,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 230.14,
+   "end_s": 241.11,
+   "bar_from": 167,
+   "bar_to": 175,
+   "sections": [
+    "drop3"
+   ],
+   "share": 0.554,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 241.11,
+   "end_s": 252.09,
+   "bar_from": 175,
+   "bar_to": 183,
+   "sections": [
+    "drop3"
+   ],
+   "share": 0.454,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 252.09,
+   "end_s": 263.06,
+   "bar_from": 183,
+   "bar_to": 191,
+   "sections": [
+    "drop3"
+   ],
+   "share": 0.622,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 263.06,
+   "end_s": 274.03,
+   "bar_from": 191,
+   "bar_to": 199,
+   "sections": [
+    "drop3"
+   ],
+   "share": 0.465,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 274.03,
+   "end_s": 285.0,
+   "bar_from": 199,
+   "bar_to": 207,
+   "sections": [
+    "drop3"
+   ],
+   "share": 0.676,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 285.0,
+   "end_s": 295.97,
+   "bar_from": 207,
+   "bar_to": 215,
+   "sections": [
+    "drop3"
+   ],
+   "share": 0.479,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 295.97,
+   "end_s": 329.49,
+   "bar_from": 215,
+   "bar_to": 239,
+   "sections": [
+    "drop3",
+    "outro1"
+   ],
+   "share": 0.768,
+   "runner_up": "tops"
+  }
+ ],
+ "focus_timeline_bars": "other 0-28, tops 28-36, other 36-44, tops 44-52, other 52-60, tops 60-68, other 68-76, tops 76-84, other 84-92, tops 92-100, other 100-108, tops 108-116, other 116-144, tops 144-152, other 152-160, tops 160-168, other 168-176, tops 176-184, other 184-192, tops 192-200, other 200-208, tops 208-216, other 216-241",
+ "nothing_to_play": [],
+ "charts": {
+  "easy": {
+   "cues": 387,
+   "holds": 2,
+   "per_s": 1.175,
+   "per_beat_of_focus": 0.403,
+   "by_voice": {
+    "other": 235,
+    "tops": 152
+   }
+  },
+  "normal": {
+   "cues": 639,
+   "holds": 2,
+   "per_s": 1.939,
+   "per_beat_of_focus": 0.665,
+   "by_voice": {
+    "other": 369,
+    "tops": 270
+   }
+  },
+  "hard": {
+   "cues": 776,
+   "holds": 2,
+   "per_s": 2.355,
+   "per_beat_of_focus": 0.807,
+   "by_voice": {
+    "other": 437,
+    "tops": 339
+   }
+  }
+ },
+ "default_chart": "normal",
+ "validation": {
+  "violations": 0,
+  "stems_sum_error_db": -34.73
+ },
+ "quick": {
+  "bpm": 175.0,
+  "bpm_clarity": 11.3,
+  "bpm_runner_up": 140.0,
+  "ratio_to_174": 1.0057,
+  "loudness_db": -6.1,
+  "low_share": 0.437,
+  "brightness_hz": 2880,
+  "events_per_s": 4.97,
+  "dynamic_db": 2.1,
+  "loud_share": 0.93,
+  "first_drop_s": 0.0,
+  "drops": 3,
+  "block_s": 10.97,
+  "blocks_db": [
+   0.6,
+   -1.1,
+   -0.5,
+   -1.9,
+   0.0,
+   -0.2,
+   -0.1,
+   -0.7,
+   -0.2,
+   -0.9,
+   -0.0,
+   -1.1,
+   -0.0,
+   -1.7,
+   0.2,
+   -0.8,
+   -0.5,
+   -2.0,
+   0.0,
+   -0.2,
+   -0.1,
+   -0.5,
+   -0.3,
+   -0.9,
+   -0.0,
+   -1.4,
+   0.5,
+   -1.3,
+   -2.3,
+   -2.1,
+   -11.7
+  ],
+  "blocks_drive_db": [
+   1.5,
+   -0.1,
+   -0.8,
+   -3.0,
+   0.0,
+   -0.2,
+   -0.1,
+   -0.8,
+   -0.2,
+   -0.5,
+   -0.0,
+   -1.2,
+   -0.1,
+   -1.5,
+   0.6,
+   0.0,
+   -0.7,
+   -2.9,
+   -0.0,
+   -0.2,
+   -0.0,
+   -0.7,
+   -0.2,
+   -0.5,
+   -0.0,
+   -1.9,
+   0.5,
+   -1.1,
+   -2.3,
+   -1.6,
+   -29.9
+  ],
+  "rough_sections": [
+   {
+    "role": "loud",
+    "start_s": 0.0,
+    "end_s": 32.9,
+    "bars": 24,
+    "level_db": 0.2
+   },
+   {
+    "role": "quieter",
+    "start_s": 32.9,
+    "end_s": 43.9,
+    "bars": 8,
+    "level_db": -3.0
+   },
+   {
+    "role": "loud",
+    "start_s": 43.9,
+    "end_s": 186.5,
+    "bars": 104,
+    "level_db": -0.4
+   },
+   {
+    "role": "quieter",
+    "start_s": 186.5,
+    "end_s": 197.5,
+    "bars": 8,
+    "level_db": -2.9
+   },
+   {
+    "role": "loud",
+    "start_s": 197.5,
+    "end_s": 329.1,
+    "bars": 96,
+    "level_db": -0.7
+   },
+   {
+    "role": "ending",
+    "start_s": 329.1,
+    "end_s": 329.5,
+    "bars": 8,
+    "level_db": -29.9
+   }
+  ]
+ }
+}

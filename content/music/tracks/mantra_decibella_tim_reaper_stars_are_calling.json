@@ -1,0 +1,467 @@
+{
+ "format": "rhythm_warfare.track.v2",
+ "id": "mantra_decibella_tim_reaper_stars_are_calling",
+ "file": "Mantra, Decibella & Tim Reaper - EQ50 Presents 4GAZA - 14 Stars Are Calling.flac",
+ "artist": "Mantra, Decibella & Tim Reaper",
+ "title": "Stars Are Calling",
+ "album": "EQ50 Presents 4GAZA",
+ "year": 2023,
+ "genre": null,
+ "tool": "audio_import 0.3 (track format v2)",
+ "duration_s": 345.7067,
+ "tempo": {
+  "bpm": 168.0008,
+  "first_downbeat_s": 0.003,
+  "constant": true,
+  "drift_ms_max": 1.37,
+  "confidence": 0.724,
+  "ratio_to_174": 0.96552
+ },
+ "voices": [
+  {
+   "key": "tops",
+   "label": "Tops",
+   "kind": "drums",
+   "separation": null,
+   "focus_share_of_track": 0.603
+  },
+  {
+   "key": "bass",
+   "label": "Bass",
+   "kind": "pitched",
+   "separation": "carries 55.3% of the energy, sounding in 55% of the track; moves with drums (envelope correlation > 0.5: shared material or leakage); little drum bleed (attack coincidence 1.0x chance).",
+   "focus_share_of_track": 0.066
+  },
+  {
+   "key": "other",
+   "label": "Synths",
+   "kind": "pitched",
+   "separation": "carries 11.8% of the energy, sounding in 71% of the track; little drum bleed (attack coincidence 1.3x chance).",
+   "focus_share_of_track": 0.331
+  }
+ ],
+ "sections": [
+  {
+   "id": "intro1",
+   "role": "intro",
+   "start_s": 0.0,
+   "end_s": 45.72,
+   "bar_from": 0,
+   "bar_to": 32,
+   "intensity_db": -40.7
+  },
+  {
+   "id": "drop1",
+   "role": "drop",
+   "start_s": 45.72,
+   "end_s": 182.86,
+   "bar_from": 32,
+   "bar_to": 128,
+   "intensity_db": -0.9
+  },
+  {
+   "id": "breakdown1",
+   "role": "breakdown",
+   "start_s": 182.86,
+   "end_s": 228.57,
+   "bar_from": 128,
+   "bar_to": 160,
+   "intensity_db": -30.0
+  },
+  {
+   "id": "build1",
+   "role": "build",
+   "start_s": 228.57,
+   "end_s": 251.43,
+   "bar_from": 160,
+   "bar_to": 176,
+   "intensity_db": -26.0
+  },
+  {
+   "id": "drop2",
+   "role": "drop",
+   "start_s": 251.43,
+   "end_s": 297.14,
+   "bar_from": 176,
+   "bar_to": 208,
+   "intensity_db": -0.8
+  },
+  {
+   "id": "outro1",
+   "role": "outro",
+   "start_s": 297.14,
+   "end_s": 345.71,
+   "bar_from": 208,
+   "bar_to": 242,
+   "intensity_db": -15.9
+  }
+ ],
+ "focus": [
+  {
+   "voice": "other",
+   "start_s": 0.0,
+   "end_s": 45.72,
+   "bar_from": 0,
+   "bar_to": 32,
+   "sections": [
+    "intro1"
+   ],
+   "share": 0.956,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 45.72,
+   "end_s": 57.15,
+   "bar_from": 32,
+   "bar_to": 40,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.689,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 57.15,
+   "end_s": 68.57,
+   "bar_from": 40,
+   "bar_to": 48,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.192,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 68.57,
+   "end_s": 80.0,
+   "bar_from": 48,
+   "bar_to": 56,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.7,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 80.0,
+   "end_s": 91.43,
+   "bar_from": 56,
+   "bar_to": 64,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.218,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 91.43,
+   "end_s": 137.15,
+   "bar_from": 64,
+   "bar_to": 96,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.768,
+   "runner_up": "bass"
+  },
+  {
+   "voice": "bass",
+   "start_s": 137.15,
+   "end_s": 148.57,
+   "bar_from": 96,
+   "bar_to": 104,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.153,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 148.57,
+   "end_s": 182.86,
+   "bar_from": 104,
+   "bar_to": 128,
+   "sections": [
+    "drop1"
+   ],
+   "share": 0.758,
+   "runner_up": "bass"
+  },
+  {
+   "voice": "other",
+   "start_s": 182.86,
+   "end_s": 205.72,
+   "bar_from": 128,
+   "bar_to": 144,
+   "sections": [
+    "breakdown1"
+   ],
+   "share": 0.958,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 205.72,
+   "end_s": 217.14,
+   "bar_from": 144,
+   "bar_to": 152,
+   "sections": [
+    "breakdown1"
+   ],
+   "share": 0.424,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 217.14,
+   "end_s": 228.57,
+   "bar_from": 152,
+   "bar_to": 160,
+   "sections": [
+    "breakdown1"
+   ],
+   "share": 0.553,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 228.57,
+   "end_s": 240.0,
+   "bar_from": 160,
+   "bar_to": 168,
+   "sections": [
+    "build1"
+   ],
+   "share": 0.758,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 240.0,
+   "end_s": 251.43,
+   "bar_from": 168,
+   "bar_to": 176,
+   "sections": [
+    "build1"
+   ],
+   "share": 0.314,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 251.43,
+   "end_s": 285.72,
+   "bar_from": 176,
+   "bar_to": 200,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.802,
+   "runner_up": "bass"
+  },
+  {
+   "voice": "bass",
+   "start_s": 285.72,
+   "end_s": 297.14,
+   "bar_from": 200,
+   "bar_to": 208,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.161,
+   "runner_up": "tops"
+  },
+  {
+   "voice": "tops",
+   "start_s": 297.14,
+   "end_s": 345.71,
+   "bar_from": 208,
+   "bar_to": 242,
+   "sections": [
+    "outro1"
+   ],
+   "share": 0.874,
+   "runner_up": "other"
+  }
+ ],
+ "focus_timeline_bars": "other 0-32, tops 32-40, other 40-48, tops 48-56, other 56-64, tops 64-96, bass 96-104, tops 104-128, other 128-144, tops 144-152, other 152-160, tops 160-168, other 168-176, tops 176-200, bass 200-208, tops 208-242",
+ "nothing_to_play": [],
+ "charts": {
+  "easy": {
+   "cues": 393,
+   "holds": 23,
+   "per_s": 1.137,
+   "per_beat_of_focus": 0.406,
+   "by_voice": {
+    "other": 104,
+    "tops": 266,
+    "bass": 23
+   }
+  },
+  "normal": {
+   "cues": 646,
+   "holds": 24,
+   "per_s": 1.869,
+   "per_beat_of_focus": 0.667,
+   "by_voice": {
+    "other": 165,
+    "tops": 457,
+    "bass": 24
+   }
+  },
+  "hard": {
+   "cues": 759,
+   "holds": 25,
+   "per_s": 2.196,
+   "per_beat_of_focus": 0.784,
+   "by_voice": {
+    "other": 182,
+    "tops": 552,
+    "bass": 25
+   }
+  }
+ },
+ "default_chart": "normal",
+ "validation": {
+  "violations": 1,
+  "stems_sum_error_db": -36.62
+ },
+ "quick": {
+  "bpm": 168.0,
+  "bpm_clarity": 10.5,
+  "bpm_runner_up": 134.4,
+  "ratio_to_174": 0.9655,
+  "loudness_db": -13.0,
+  "low_share": 0.646,
+  "brightness_hz": 3209,
+  "events_per_s": 6.94,
+  "dynamic_db": 12.2,
+  "loud_share": 0.6,
+  "first_drop_s": 45.7,
+  "drops": 2,
+  "block_s": 11.43,
+  "blocks_db": [
+   -12.3,
+   -12.1,
+   -12.1,
+   -9.4,
+   -2.4,
+   -2.4,
+   -2.3,
+   -3.4,
+   -0.1,
+   -0.2,
+   -0.2,
+   -2.0,
+   -0.2,
+   -0.1,
+   0.5,
+   -0.1,
+   -11.3,
+   -7.5,
+   -5.8,
+   -5.9,
+   -4.0,
+   -4.7,
+   0.1,
+   0.1,
+   0.6,
+   0.5,
+   -2.8,
+   -2.8,
+   -7.2,
+   -7.9,
+   -36.6
+  ],
+  "blocks_drive_db": [
+   -14.7,
+   -14.6,
+   -14.9,
+   -14.6,
+   -1.2,
+   -1.2,
+   -1.2,
+   -2.1,
+   -0.2,
+   -0.2,
+   -0.1,
+   -1.4,
+   -0.1,
+   -0.3,
+   0.2,
+   -0.2,
+   -18.1,
+   -15.8,
+   -7.6,
+   -8.0,
+   -2.6,
+   -4.1,
+   0.2,
+   0.2,
+   0.3,
+   0.1,
+   -1.9,
+   -1.9,
+   -7.5,
+   -8.1,
+   -19.8
+  ],
+  "rough_sections": [
+   {
+    "role": "opening",
+    "start_s": 0.0,
+    "end_s": 45.7,
+    "bars": 32,
+    "level_db": -14.7
+   },
+   {
+    "role": "loud",
+    "start_s": 45.7,
+    "end_s": 182.9,
+    "bars": 96,
+    "level_db": -0.7
+   },
+   {
+    "role": "quieter",
+    "start_s": 182.9,
+    "end_s": 205.7,
+    "bars": 16,
+    "level_db": -17.0
+   },
+   {
+    "role": "quieter",
+    "start_s": 205.7,
+    "end_s": 251.4,
+    "bars": 32,
+    "level_db": -5.6
+   },
+   {
+    "role": "loud",
+    "start_s": 251.4,
+    "end_s": 320.0,
+    "bars": 48,
+    "level_db": -0.5
+   },
+   {
+    "role": "ending",
+    "start_s": 320.0,
+    "end_s": 342.9,
+    "bars": 16,
+    "level_db": -7.8
+   },
+   {
+    "role": "ending",
+    "start_s": 342.9,
+    "end_s": 345.7,
+    "bars": 8,
+    "level_db": -19.8
+   }
+  ]
+ }
+}
