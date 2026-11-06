@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bohd3j6tf073u"
-path="res://.godot/imported/wall_door.png-75dea86d87dc3b037bc4044c29123ce1.ctex"
+uid="uid://d0xa3tfls04c0"
+path="res://.godot/imported/sky_grove.png-0195c2f8634643a91d852616b87ea3ba.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/hillside/textures/wall_door.png"
-dest_files=["res://.godot/imported/wall_door.png-75dea86d87dc3b037bc4044c29123ce1.ctex"]
+source_file="res://assets/story/jerusalem/textures/sky_grove.png"
+dest_files=["res://.godot/imported/sky_grove.png-0195c2f8634643a91d852616b87ea3ba.ctex"]
 
 [params]
 

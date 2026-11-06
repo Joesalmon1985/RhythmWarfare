@@ -36,10 +36,10 @@
   "thing_storm_cloud": "textures/thing_storm_cloud.png",
   "thing_waves": "textures/thing_waves.png",
   "trim": "textures/trim.png",
-  "wall_door": "textures/wall_door.png",
   "wall_hill": "textures/wall_hill.png",
   "wall_limestone": "textures/wall_limestone.png",
   "wall_rock": "textures/wall_rock.png",
+  "sky_lake": "textures/sky_lake.png",
   "sky_day": "textures/sky_day.png",
   "sky_storm": "textures/sky_storm.png"
  },
@@ -65,11 +65,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 0.8,
    "floor_tex": "floor_shingle",
    "ceil_tex": "sky",
    "wall_tex": "wall_hill",
-   "light": 0.74,
+   "light": 0.43,
    "tint": "#fff0d0",
    "room": "main",
    "flags": [],
@@ -94,7 +94,7 @@
      "watch"
     ]
    },
-   "sky": "day",
+   "sky": "lake",
    "fog": {
     "color": "#d6c8a8",
     "density": 0.01
@@ -121,11 +121,11 @@
     ]
    ],
    "floor": -0.4,
-   "ceiling": 3.0,
+   "ceiling": 0.8,
    "floor_tex": "floor_water",
    "ceil_tex": "sky",
    "wall_tex": "wall_hill",
-   "light": 0.74,
+   "light": 0.43,
    "tint": "#fff0d0",
    "room": "main",
    "flags": [],
@@ -150,7 +150,7 @@
      "watch"
     ]
    },
-   "sky": "day",
+   "sky": "lake",
    "fog": {
     "color": "#d6c8a8",
     "density": 0.01
@@ -177,11 +177,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 2.8,
    "floor_tex": "floor_cobble",
    "ceil_tex": "sky",
-   "wall_tex": "wall_door",
-   "light": 0.74,
+   "wall_tex": "wall_limestone",
+   "light": 0.43,
    "tint": "#fff0d0",
    "room": "street",
    "flags": [],
@@ -233,11 +233,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 0.8,
    "floor_tex": "floor_grass",
    "ceil_tex": "sky",
    "wall_tex": "wall_hill",
-   "light": 0.74,
+   "light": 0.43,
    "tint": "#fff0d0",
    "room": "slope",
    "flags": [],
@@ -262,7 +262,7 @@
      "watch"
     ]
    },
-   "sky": "day",
+   "sky": "lake",
    "fog": {
     "color": "#d6c8a8",
     "density": 0.01
@@ -289,11 +289,11 @@
     ]
    ],
    "floor": -0.5,
-   "ceiling": 2.9,
+   "ceiling": 0.8,
    "floor_tex": "floor_water",
    "ceil_tex": "sky",
    "wall_tex": "wall_hill",
-   "light": 0.74,
+   "light": 0.43,
    "tint": "#fff0d0",
    "room": "slope",
    "flags": [],
@@ -318,7 +318,7 @@
      "watch"
     ]
    },
-   "sky": "day",
+   "sky": "lake",
    "fog": {
     "color": "#d6c8a8",
     "density": 0.01
@@ -345,7 +345,7 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 0.8,
    "floor_tex": "floor_shingle",
    "ceil_tex": "sky",
    "wall_tex": "wall_hill",
@@ -401,7 +401,7 @@
     ]
    ],
    "floor": -0.4,
-   "ceiling": 3.0,
+   "ceiling": 0.8,
    "floor_tex": "floor_water",
    "ceil_tex": "sky",
    "wall_tex": "wall_hill",
@@ -486,7 +486,7 @@
      "watch"
     ]
    },
-   "sky": "day",
+   "sky": "lake",
    "fog": {
     "color": "#c0a880",
     "density": 0.012
@@ -638,7 +638,7 @@
     4.0
    ],
    "sector": "street",
-   "tex": "wall_door"
+   "tex": "wall_limestone"
   },
   {
    "from": [
@@ -1965,10 +1965,13 @@
  "silhouettes": [],
  "occluders": [],
  "sky": {
-  "tex": "textures/sky_day.png",
+  "tex": "textures/sky_lake.png",
   "mode": "cylinder",
+  "repeats": 1,
+  "horizon": 0.75,
   "by_name": {
    "day": "textures/sky_day.png",
+   "lake": "textures/sky_lake.png",
    "storm": "textures/sky_storm.png"
   }
  },
@@ -1982,8 +1985,8 @@
    "tex": "floor_water",
    "mode": "scroll",
    "speed": [
-    0.015,
-    0.006
+    0.05,
+    0.02
    ],
    "amount": 0.15,
    "bright": 0.2

@@ -59,11 +59,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 2.8,
    "floor_tex": "floor_clay",
    "ceil_tex": "sky",
    "wall_tex": "wall_mudbrick",
-   "light": 0.74,
+   "light": 0.43,
    "tint": "#fff0d0",
    "room": "main",
    "flags": [],
@@ -115,11 +115,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 1.2,
    "floor_tex": "floor_grass",
    "ceil_tex": "sky",
    "wall_tex": "wall_hill",
-   "light": 0.58,
+   "light": 0.5,
    "tint": "#ff9a60",
    "room": "hill_dusk",
    "flags": [],
@@ -175,7 +175,7 @@
    "floor_tex": "floor_road",
    "ceil_tex": "sky",
    "wall_tex": "wall_limestone",
-   "light": 0.74,
+   "light": 0.43,
    "tint": "#fff0d0",
    "room": "gate",
    "flags": [],
@@ -1299,6 +1299,8 @@
  "sky": {
   "tex": "textures/sky_day.png",
   "mode": "cylinder",
+  "repeats": 1,
+  "horizon": 0.75,
   "by_name": {
    "day": "textures/sky_day.png",
    "dusk": "textures/sky_dusk.png"

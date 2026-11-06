@@ -18,14 +18,18 @@ SPACING = 18.0
 X0, X1, Z0, Z1 = -8.0, 8.0, -12.0, 4.0
 EYE = 1.6
 
-SKY = {"night": "sky_night", "dawn": "sky_dawn", "day": "sky_day", "dusk": "sky_dusk", "storm": "sky_storm", "dark": "sky_dark", "morning": "sky_morning"}
+SKY = {"night": "sky_night", "dawn": "sky_dawn", "day": "sky_day", "dusk": "sky_dusk", "storm": "sky_storm", "morning": "sky_morning", "lake": "sky_lake", "grove": "sky_grove"}
+# Open-air views are not boxes (docs/art/VISUAL_AUDIT.md F7): their walls are low banks (OPEN_H metres, or OPEN_BAND_H when a lake or river runs in front of the far wall, whose floor sits 0.4 below),
+# so the sky strip's hills and far shore (tools/story/art/gospel_tex.py) rise behind them at eye level; the enclosed yards, streets and courts keep their tall house walls.
+OPEN_H = 1.2
+OPEN_BAND_H = 0.8
 # time of day: sector light (0..1), tint, distance fog colour/density
 TOD = {
     "night": (0.34, "#4a5ab0", "#10163a", 0.020),
-    "dawn": (0.62, "#ffc89a", "#e8c0a0", 0.014),
-    "day": (0.74, "#fff0d0", "#d6c8a8", 0.010),
-    "morning": (0.72, "#ffecc8", "#e2d4b0", 0.010),
-    "dusk": (0.58, "#ff9a60", "#c08060", 0.014),
+    "dawn": (0.5, "#ffc89a", "#e8c0a0", 0.014),
+    "day": (0.43, "#fff0d0", "#d6c8a8", 0.010),
+    "morning": (0.45, "#ffecc8", "#e2d4b0", 0.010),
+    "dusk": (0.5, "#ff9a60", "#c08060", 0.014),
     "storm": (0.36, "#6a80a8", "#2a3440", 0.022),
     "dark": (0.40, "#9070a0", "#30203a", 0.020),
     "indoor": (0.6, "#ffd8a0", "#c0a080", 0.010),
@@ -76,7 +80,7 @@ def _v(*a, **k):
 # galilee_shore: the world `jordan` (J00 to J03)
 # ======================================================================================================================================================
 _v("bank_night", "galilee_shore", 0, "night", "floor_dust", "wall_hill", "wall_hill", "wall_reeds", "wall_rock",
-   [T("stable", "thing_stable", 3.6, -9.0, 3.4), T("star", "thing_star", 3.6, -10.0, 3.2, piece="star", y=4.9, blend="add"),
+   [T("stable", "thing_stable", 3.6, -9.0, 3.4), T("star", "thing_star", 3.6, -10.0, 1.7, piece="star", y=5.2, blend="add"),
     T("fire", "thing_fire", -3.4, -4.4, 1.0, anim="flicker"), T("hay", "thing_hay", 5.8, -7.4, 0.9),
     T("sheep1", "thing_sheep", -6.2, -7.0, 0.75), T("sheep2", "thing_sheep", -5.0, -9.0, 0.75), T("sheep3", "thing_sheep_lie", -1.2, -8.2, 0.6), T("sheep4", "thing_sheep", 1.0, -6.6, 0.75),
     T("sheep5", "thing_sheep_lie", -7.0, -2.4, 0.6), T("rock1", "thing_rock_c", -7.2, -11.0, 2.8), T("rock2", "thing_rock_b", 7.2, -2.0, 1.4), T("rock3", "thing_rock_a", -2.4, -2.0, 0.8),
@@ -87,7 +91,7 @@ _v("bank_night", "galilee_shore", 0, "night", "floor_dust", "wall_hill", "wall_h
     P("m1", "mother", 2.0, -6.2, "stand"), P("el1", "elder", 5.6, -4.8, "watch")])
 
 _v("bank_dawn", "galilee_shore", 1, "dawn", "floor_sand", "wall_hill", "wall_reeds", "wall_reeds", "wall_rock",
-   [T("dove", "thing_dove", 0.0, -8.0, 2.4, piece="dove", y=4.2, blend="add"), T("palm1", "thing_palm", -6.8, -9.4, 5.2), T("palm2", "thing_palm", 6.8, -10.4, 5.0),
+   [T("dove", "thing_dove", 0.0, -8.0, 1.8, piece="dove", y=3.6, blend="mix"), T("palm1", "thing_palm", -6.8, -9.4, 5.2), T("palm2", "thing_palm", 6.8, -10.4, 5.0),
     T("town", "thing_town_far", 5.2, -11.6, 4.6), T("reeds1", "thing_reeds", -7.2, -3.2, 1.6), T("reeds2", "thing_reeds", 7.3, -2.6, 1.6), T("reeds3", "thing_reeds", -6.4, -7.2, 1.7),
     T("reeds4", "thing_reeds", 6.4, -7.6, 1.7), T("rock1", "thing_rock_b", 5.2, -3.4, 1.3), T("rock2", "thing_rock_a", -5.6, -1.6, 0.8), T("grass1", "thing_grass", 2.0, -1.6, 0.5),
     T("grass2", "thing_grass", -2.6, -3.0, 0.5), T("waves", "thing_waves", 0.0, -6.8, 0.7, blend="mix"),
@@ -233,6 +237,35 @@ _v("road", "jerusalem", 5, "morning", "floor_road", "wall_hill", "wall_hill", "w
 
 
 # ======================================================================================================================================================
+# the look of each room's boundary (art only: no wall, door, waypoint or anchor moves). vid: the walls' textures (far, left, right, back), the walls' height (the sectors' ceiling), the sky.
+# Open rooms get low banks, so the sky strip shows its hills; enclosed ones keep tall walls of seamless masonry (1.2 m repeats, 107 texels per metre).
+# ======================================================================================================================================================
+LOOK = {
+    "bank_night": dict(h=OPEN_H),
+    "bank_dawn": dict(h=OPEN_BAND_H, far="wall_reeds"),
+    "rocks": dict(h=OPEN_H),
+    "workshop": dict(far="wall_limestone", h=2.6),
+    "lakeshore": dict(h=OPEN_BAND_H, sky="lake"),
+    "street": dict(side_l="wall_limestone", h=2.8),
+    "courtyard": dict(h=2.8),
+    "praetorium": dict(h=4.4),
+    "slope": dict(h=OPEN_BAND_H, sky="lake"),
+    "storm": dict(h=OPEN_BAND_H),
+    "hill_dusk": dict(h=OPEN_H),
+    "grove": dict(h=OPEN_H, sky="grove"),
+    "hill": dict(h=OPEN_H),
+    "tomb": dict(h=OPEN_H),
+    "road": dict(h=OPEN_H),
+    "temple": dict(far="wall_limestone", side_l="wall_limestone", side_r="wall_limestone", h=4.6),
+}
+for _v_ in VIEWS:
+    _o = LOOK.get(_v_["id"], {})
+    for _k, _a in (("far", "far"), ("side_l", "side_l"), ("side_r", "side_r"), ("back", "back"), ("h", "wall_h"), ("sky", "sky")):
+        if _k in _o:
+            _v_[_a] = _o[_k]
+
+
+# ======================================================================================================================================================
 # the builder
 # ======================================================================================================================================================
 def _rect(x0, z0, x1, z1):
@@ -286,7 +319,7 @@ def build_map(map_id: str, views: list) -> tuple[dict, dict, dict]:
             sid = vid + suffix
             sec_ids.append((sid, za, zb, fh))
             textures[ftex] = f"textures/{ftex}.png"
-            sec = {"id": sid, "polygon": _rect(ox + X0, za, ox + X1, zb), "floor": fh, "ceiling": fh + v["wall_h"], "floor_tex": ftex, "ceil_tex": v["ceil"], "wall_tex": v["side_l"],
+            sec = {"id": sid, "polygon": _rect(ox + X0, za, ox + X1, zb), "floor": fh, "ceiling": v["wall_h"], "floor_tex": ftex, "ceil_tex": v["ceil"], "wall_tex": v["side_l"],
                    "light": light, "tint": tint, "room": room, "flags": [], "activities": v["acts"], "sky": v["sky"], "fog": {"color": fogc, "density": dens}}
             sectors.append(sec)
         # walls: the far edge of the farthest band, the sides of every band, the back of the nearest
@@ -366,13 +399,13 @@ def build_map(map_id: str, views: list) -> tuple[dict, dict, dict]:
     first_view = views[0]["id"]
     m = {"units_per_m": 1, "palette_weight": 0.0, "eye_height": EYE, "start": f"{first_view}.home", "textures": dict(sorted(textures.items())), "sectors": sectors, "walls": walls,
          "things": things, "homes": homes, "waypoints": wps, "spots": {}, "silhouettes": [], "occluders": [],
-         "sky": {"tex": f"textures/{SKY[views[0]['sky']]}.png", "mode": "cylinder", "by_name": {k: f"textures/{v}.png" for k, v in sorted(skies.items())}},
+         "sky": {"tex": f"textures/{SKY[views[0]['sky']]}.png", "mode": "cylinder", "repeats": 1, "horizon": 0.75, "by_name": {k: f"textures/{v}.png" for k, v in sorted(skies.items())}},
          "fog": {"color": "#40384a", "density": 0.012}, "rooms": {}, "animated": []}
     for k, v in skies.items():
         m["textures"][v] = f"textures/{v}.png"
     water = [t for t in textures if t == "floor_water"]
     if water:
-        m["animated"].append({"tex": "floor_water", "mode": "scroll", "speed": [0.015, 0.006], "amount": 0.15, "bright": 0.2})
+        m["animated"].append({"tex": "floor_water", "mode": "scroll", "speed": [0.05, 0.02], "amount": 0.15, "bright": 0.2})
     # the StoryData file: the people (their wardrobe archetype in `wear`; a Night One rig stands in as the live-rig fallback)
     rigs = ["groover", "ponytail", "hoodie", "curly", "bob", "punk"]
     sd_actors = []

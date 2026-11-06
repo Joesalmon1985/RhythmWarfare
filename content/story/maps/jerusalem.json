@@ -43,7 +43,6 @@
   "thing_torch": "textures/thing_torch.png",
   "thing_wall_low": "textures/thing_wall_low.png",
   "trim": "textures/trim.png",
-  "wall_columns": "textures/wall_columns.png",
   "wall_cypress": "textures/wall_cypress.png",
   "wall_hill": "textures/wall_hill.png",
   "wall_limestone": "textures/wall_limestone.png",
@@ -51,7 +50,7 @@
   "wall_praetorium": "textures/wall_praetorium.png",
   "wall_rock": "textures/wall_rock.png",
   "sky_day": "textures/sky_day.png",
-  "sky_night": "textures/sky_night.png",
+  "sky_grove": "textures/sky_grove.png",
   "sky_dusk": "textures/sky_dusk.png",
   "sky_morning": "textures/sky_morning.png"
  },
@@ -77,11 +76,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 5.2,
+   "ceiling": 4.6,
    "floor_tex": "floor_flag",
    "ceil_tex": "sky",
-   "wall_tex": "wall_columns",
-   "light": 0.74,
+   "wall_tex": "wall_limestone",
+   "light": 0.43,
    "tint": "#fff0d0",
    "room": "main",
    "flags": [],
@@ -133,7 +132,7 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.6,
+   "ceiling": 1.2,
    "floor_tex": "floor_soil",
    "ceil_tex": "sky",
    "wall_tex": "wall_olive",
@@ -162,7 +161,7 @@
      "watch"
     ]
    },
-   "sky": "night",
+   "sky": "grove",
    "fog": {
     "color": "#10163a",
     "density": 0.02
@@ -189,11 +188,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 5.2,
+   "ceiling": 4.4,
    "floor_tex": "floor_flag",
    "ceil_tex": "sky",
    "wall_tex": "wall_praetorium",
-   "light": 0.74,
+   "light": 0.43,
    "tint": "#fff0d0",
    "room": "praetorium",
    "flags": [],
@@ -245,11 +244,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 1.2,
    "floor_tex": "floor_rock",
    "ceil_tex": "sky",
    "wall_tex": "wall_rock",
-   "light": 0.58,
+   "light": 0.5,
    "tint": "#ff9a60",
    "room": "hill",
    "flags": [],
@@ -301,11 +300,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 4.5,
+   "ceiling": 1.2,
    "floor_tex": "floor_garden",
    "ceil_tex": "sky",
    "wall_tex": "wall_cypress",
-   "light": 0.72,
+   "light": 0.45,
    "tint": "#ffecc8",
    "room": "tomb",
    "flags": [],
@@ -357,11 +356,11 @@
     ]
    ],
    "floor": 0.0,
-   "ceiling": 3.4,
+   "ceiling": 1.2,
    "floor_tex": "floor_road",
    "ceil_tex": "sky",
    "wall_tex": "wall_hill",
-   "light": 0.72,
+   "light": 0.45,
    "tint": "#ffecc8",
    "room": "road",
    "flags": [],
@@ -460,7 +459,7 @@
     -12.0
    ],
    "sector": "temple",
-   "tex": "wall_columns"
+   "tex": "wall_limestone"
   },
   {
    "from": [
@@ -472,7 +471,7 @@
     4.0
    ],
    "sector": "temple",
-   "tex": "wall_columns"
+   "tex": "wall_limestone"
   },
   {
    "from": [
@@ -484,7 +483,7 @@
     4.0
    ],
    "sector": "temple",
-   "tex": "wall_columns"
+   "tex": "wall_limestone"
   },
   {
    "from": [
@@ -2513,11 +2512,13 @@
  "sky": {
   "tex": "textures/sky_day.png",
   "mode": "cylinder",
+  "repeats": 1,
+  "horizon": 0.75,
   "by_name": {
    "day": "textures/sky_day.png",
    "dusk": "textures/sky_dusk.png",
-   "morning": "textures/sky_morning.png",
-   "night": "textures/sky_night.png"
+   "grove": "textures/sky_grove.png",
+   "morning": "textures/sky_morning.png"
   }
  },
  "fog": {
