@@ -498,3 +498,212 @@ Both groups go out through the same buses and device, so they share one output l
 stays cached at the countdown (`SongClock.begin_countdown`); M2 does not refresh it during a blend.
 Calibration is unchanged. An effect with internal latency on a tail bus would delay the tail against the
 incoming track; that is why a real-time pitch shifter is not in the base design (7).
+
+## 7. Technology
+
+### 7.1 The candidates
+
+| Technique | What it gives | Cost | Android risk | Recommendation |
+|---|---|---|---|---|
+| `AudioStreamSynchronized`, per-stem `set_sync_stream_volume` | Stems of one track locked together; per-stem fades | already used (`StemTransport`, `TrackTransport`) | low; decoder count is the cost | **Use** for both groups |
+| A second synchronised group for the tail | Tail and incoming side by side, each with its own rate and bus | one more player, its decoders, one more pack in RAM | medium: 10 to 14 Vorbis decoders during a blend | **Use** |
+| `AudioStreamPlayer.pitch_scale` | Tail tempo-matched within 50 cents; pitch moves with it | none (resampler runs anyway) | low | **Use** for `blend` and `halftime_blend` |
+| `AudioEffectPitchShift` on the tail bus (with `pitch_scale` = rho, shift by 1/rho) | Real-time pitch-preserving stretch | FFT per buffer on the audio thread; adds its own latency, which pulls the tail off the beat | high (CPU) | **Do not use** unless the listening test fails on pitch alone; never on Android |
+| Tails pre-rendered offline (ffmpeg 9.0.1 on this PC has both `rubberband` and `atempo`) | Studio-quality pitch-preserving stretch of the lingering stems | render per (track, exit boundary, incoming tempo): about 5 boundaries x 6 tempos x 3 stems x 17 s for each track, about 60 MB a track, 3.6 GB for 61; cached in `C:\Users\joesa\rw-audio-work\cache\tails\`, never in Git; a third pack's worth of files on a phone | medium (storage, a third decoder set) | **Not built.** Only if the owner hears the 30 to 50 cent shift and dislikes it |
+| `AudioStreamInteractive` | Clip switching with fades, quantised to its own clips' beats and bars | small | low | **Unsuitable** (expected): it keeps its own transition timing per clip and cannot start a clip at an arbitrary song time on the run's clock; to confirm in 30 minutes of the spike |
+| `AudioStreamPlaylist` | Gapless sequence of streams | none | low | **Unsuitable**: sequential, no overlap |
+| `AudioEffectDelay`, `AudioEffectHighPassFilter` on the tail bus | `echo_out`; removing bleed of kick and bass from lingering stems | small, fixed | low | **Use** |
+| Tempo ramp of the incoming track | | | | **Excluded** (owner's rule: the incoming plays as recorded) |
+
+### 7.2 The spike (one day, stage M2.1, on this PC with the real WASAPI driver)
+
+Built as a throwaway scene under `tools/dev/transition_spike/` on the `wip/music-m2` branch, using two real
+packs from `C:\Users\joesa\rw-audio-work\packs` (`chase_status_no_problem_original_mix`,
+`stimpy_party_last_sounds`) and `ternion_sound_artifice` for the echo. Measured by recording the `Music` bus
+with `AudioEffectRecord` while logging song time, then analysed in Python (onsets of the incoming kick
+against cue times; cross-correlation of the tail's kick against the incoming grid), in the manner of
+`tools/story/check_run_audio.py`.
+
+| Q | Question | How | Pass | If it fails |
+|---|---|---|---|---|
+| Q1 | Do two synchronised players start, pause and resume in the same chunk and stay aligned? | 10 pause and resume cycles mid-blend; offset of tail beats against incoming beats before and after | offset changes by <= 1 ms per cycle | resume the tail with a measured `play(from)` re-start instead of `stream_paused` |
+| Q2 | Is the `pitch_scale` step at T clean, and are 10, 30 and 50 cents acceptable? | listening; the owner hears the three | no click; owner accepts 30 cents | narrow row 6 to 30 cents (more `echo_out`), or try the ramp |
+| Q3 | `AudioEffectPitchShift`: CPU, latency, sound | Task Manager CPU of the process with and without; offset of tail beats | under 3% of one core and under 5 ms added offset | keep it out (expected) |
+| Q4 | Offline render with `rubberband`: time and quality | ffmpeg on 12 bars of two stems | under 2 s a render, clean | not needed unless Q2 fails |
+| Q5 | Can `AudioStreamInteractive` start at an arbitrary song time? | read the 4.5 class reference, 30 minutes of trial | yes | expected no: drop it |
+| Q6 | Is `play(from)` on a synchronised Vorbis group sample-accurate? | start at `entry_t`, correlate the recording with the same span decoded by ffmpeg | <= 1 ms | start 1 bar earlier at -80 dB and unmute at T |
+| Q7 | Do per-frame stepped gains click on a half-beat cut and a 2-bar fade? | listening and spectrum of the recording | inaudible | longer minimum fade (1 beat) |
+| Q8 | How hard does the limiter work in the first bars of a blend? | peak of `RunMix` against `Music` (`AudioServer.get_bus_peak_volume_left_db`) | <= 3 dB reduction | tail starts at -3 dB, or the incoming's backing waits a bar |
+| Q9 | Does the 8,700 Hz clock run 3.4e-5 slow against 48 kHz music? | 300 s recording, drift of kicks against the clock | measured within 20% of 3.4e-5 | if confirmed: the 48 kHz clock (6.2) |
+
+Output: a written verdict in the M2 hand-over with CPU (percent of a core), memory (MB) and the offsets
+(ms), each marked "WASAPI, this PC". The simplest set that passes is kept: expected `pitch_scale`, two
+groups, delay and high-pass, nothing else.
+
+## 8. Preparation and failure
+
+### 8.1 Preloading and readiness
+
+| Moment | Action |
+|---|---|
+| `request(dest)` | Validate synchronously: the destination exists; `plan_of` was warmed (`RunTrackScenes.warm`), so no JSON is parsed on the frame. A destination that cannot exist closes with `&"unavailable"`. A track scene whose pack is present starts its decode on a worker thread (M1's loader); `destination_ready` fires when every stem is decoded |
+| `set_default(dest)` | The default destination is loaded too (M1 loads candidates when doors open; M2 keeps that) |
+| During a blend | No new decode starts until `completed`, except on the PC when the budget allows (9) |
+| Replaced or cancelled | The decoded pack stays as a cache of one, dropped when memory is needed |
+| At the lock | Readiness is asked once: decoded, or still loading, or failed |
+
+### 8.2 The single deferral and `cut` as the floor
+
+- Not ready and still loading at the lock: `deferred(id, next_boundary_t, &"not_ready")`, once per request.
+  The current scene goes on one lap (on the final lap of a track scene through the engine's extension, see
+  12; on an open lap it simply stays open).
+- Not ready at the next lock, or the load failed: `locked` with `mode = &"cut"`, `fallback = true`, and the
+  destination plays as an ordinary scene (M1's rule). Music never holds a transition for more than one lap.
+- Anything the planner cannot compute (missing plan fields, a negative window, an assertion) gives `cut`
+  with `fallback = true`. `cut` needs nothing but today's code.
+- After the lock a failure (a stream that will not attach) fails forward: the incoming starts as an ordinary
+  scene, `switched` carries `landed` (with `fallback` true if the scene itself changed), and `completed`
+  still fires when the tail's floor passes.
+
+### 8.3 What is logged
+
+One line per transition on stdout, and the same as a dictionary in `RunAudio.transition_log` for tests:
+
+```
+RUN transition id=12 balcony->chill mode=blend fallback=false reason=- bpm=174.9997->172.0000 rho=0.982859
+    cents=-29.9 W=12 T=243.886 complete=260.630 drop=266.211 margin_bars=4.0 lag_in_ms=3.1 lag_out_ms=2.4
+```
+
+Also logged: deferrals with their reason, every fallback with its cause (`not_ready`, `load_failed`,
+`no_blend`, `short_lead`, `grid`, `planner_error`), the hard floor being reached with any stem still above
+-60 dB (a recipe bug), and decode times per pack.
+
+## 9. Android
+
+### 9.1 What must be measured on a device (stage X4)
+
+| Measure | How | Budget to aim for |
+|---|---|---|
+| Output latency | `AudioServer.get_output_latency()`, and the calibration screen | under 60 ms; calibration covers the rest |
+| Mix chunk | `time_since_last_mix + time_to_next_mix` | under 25 ms |
+| Audio thread load with 10 to 14 Vorbis decoders | crackles by ear; logcat underrun messages; frame times | no underrun in a 20-minute run with 10 transitions |
+| Worst frame at a boundary | `Performance.TIME_PROCESS` around T | under 16.7 ms |
+| Memory with two packs | `Performance.MEMORY_STATIC` and `adb shell dumpsys meminfo` | under 300 MB for audio |
+| Decode time of one pack from storage | logged decode time | under one lap (22 s); expected a few seconds |
+| Thermal | the same 20-minute run, frame times at the end against the start | no drop |
+
+If the budget fails, a setting `transitions` with values `full`, `light` (tail rhythm stems stopped at T
+instead of faded, so only 2 or 3 tail decoders run; no `on_miss` preload) and `cut`. Android defaults to
+`light` until measured.
+
+### 9.2 Getting packs onto a device
+
+Packs are found only in `RW_TRACKS_DIR` or `user://track_packs` (`RunTrackScenes.packs_root`). There is no
+environment on Android, and `user://` is the app's private folder, where `adb push` cannot write. Stage X4:
+
+- **A third place to look.** `packs_root()` gains, on Android only and after the other two, the app's
+  external files folder: `/storage/emulated/0/Android/data/com.joesalmon.rhythmwarfare/files/track_packs`
+  (the package is `package/unique_name` in `export_presets.cfg`; a test checks the constant against it). The
+  app reads its own external folder without permissions; `adb push` can write there on most devices (to
+  verify on the owner's phone).
+- **A fallback needing no code** for a debug build: `adb push` to `/data/local/tmp/`, then
+  `adb shell run-as com.joesalmon.rhythmwarfare cp -r /data/local/tmp/track_packs files/` (into
+  `user://track_packs`).
+- **A script** `tools/android/push_packs.sh` (music stream): pushes a chosen subset, not all 61 (several GB):
+  by default the first-choice tracks of the Warehouse and one world plus the three listening pairs of M2.6,
+  about 12 packs and 1 GB; or a list given on the command line. It checks free space with `adb shell df`
+  first. A scene whose pack is not on the phone plays an alternate or an ordinary scene, as on the PC.
+- For the owner's testing only: an APK used with these packs is never given to anyone.
+
+## 10. Tests
+
+### 10.1 Automated (Godot suite and Python, synthetic fixture packs only, Dummy driver)
+
+| File | What it proves |
+|---|---|
+| `tests/test_transition_grid.gd` | Sidecar loading and every validation sentence; snapping and the three verdicts; `downbeat_offset_beats`; `grid_ok` from `drift_ms_max`; a corrected drop moves E in `RunTrackPlan` |
+| `tests/test_transition_planner.gd` | Every row of 4.2; thresholds at 49.9 and 50.1 cents; the half-time rows; `complete_t <= deadline_t` always; the Plan has exactly the contract's keys. All pairs of the catalogue in Git (`content/music/tracks/*.json`, 44 today, 61 after stage I4) get a mode and none crashes; the table of modes is printed |
+| `tests/test_transition_blend.gd` | On fixture packs at two tempos (for example 174 and 171): signal order `locked`, `switched`, `completed`; the tail's gains follow the recipe at sampled song times; all stems of one group keep one position; the tail is silent at `complete_t` and at least 4 bars before the drop; `song_time()` never decreases; `tempo_changed` at T |
+| `tests/test_transition_boundaries.gd` | The incoming starts at T on bar E; the tail's rate is set in the same item; a lock on an open lap and on a final lap; a path hand-off with a tail running; same track on both sides; a short lead-in gives `cut` |
+| `tests/test_transition_hits.gd` | Hit windows: a cue inside a blend is judged against the incoming grid with the same windows as anywhere else. A perfect bot scores perfect through ten transitions; bots early and late by 30 ms and 70 ms score as they do in mid-scene (same counts per window, against a control run with `cut`) |
+| `tests/test_transition_drift.gd` | Ten consecutive transitions on a virtual clock: accounting exact to 1e-6 s. On the Dummy driver in RunPlay: group start lags under one chunk at each boundary, no trend |
+| `tests/test_transition_fallback.gd` | No sidecar; invalid sidecar; missing field; pack missing; not ready once (one `deferred`, then a real mode); not ready twice (`cut`, `fallback`); load failed; `held` deferrals do not use up the `not_ready` one |
+| `tests/test_transition_perf.gd` | Counters: players alive after `completed` (the tail freed), packs in memory (never above the budget), no decode started during a blend |
+| `tests/test_port_real.gd` (stage X1) | The 15 conformance cases of the contract on the real director |
+| `tools/audio_import/test_drop_sheet.py` | The sheet tool (3.4) |
+
+`test_run_tracks_safety` must still match its baseline line for line: with track scenes off nothing of this
+runs.
+
+### 10.2 Which measurements need sound
+
+The walkers (`tools/run/walk_run.sh`) and `tools/run/frames.sh` run with `--audio-driver Dummy`. On it,
+cue-against-audio agreement and load-to-sound time cannot be measured (no real device, 88.5 ms chunks, no
+output latency). So:
+
+| Measure | Dummy (suite, walkers) | Real driver, this PC (WASAPI, idle machine, one Godot at a time) | Phone |
+|---|---|---|---|
+| Signal order, plans, gains as numbers, fallbacks, scene lengths, script errors | yes | | |
+| Cue against audio at T and after ten transitions; tail against incoming beat | no | **yes** (M2.5) | yes (X4) |
+| Pack decode time, worst frame at T, memory | indicative only | **yes** | **yes** |
+| Limiter reduction, clicks, CPU of the decoders | no | **yes** (spike) | yes |
+| Output latency, thermal, underruns | no | | **yes** |
+
+Every figure in the hand-over names its driver.
+
+### 10.3 Listening tests (M2.6, the owner)
+
+Three pairs, played as a short run from a fixed seed (`RW_RUN_START`), each twice: once as designed, once
+forced to `cut` for comparison. Half-time cannot be among them: no real pair exists (2.3).
+
+| Pair | Mode | Listen for |
+|---|---|---|
+| `chase_status_no_problem_original_mix` to `stimpy_party_last_sounds` (balcony to chill) | `blend`, -29.9 cents | Two rhythm sections never fight: drums out by bar 2; the tail's synths sit on the incoming beat; no pitch wobble on held notes; nothing of the old track in the 4 bars before the drop; level steady at T (no jump, no pumping) |
+| A pair 172 to 177 (for example `unglued_telefonik` to `amplify_crossy_badman`, set in the test run) | `blend`, +49.6 cents | The widest shift: is the old track's pitch audibly sharp? If yes, row 6 narrows (Q2) |
+| `ternion_sound_artifice` (140) to a 174 track | `echo_out` | The echo trails off within 2 bars; no flam of beats; the incoming intro starts cleanly on T |
+
+Per pair also: pause during the blend and resume (the blend carries on where it was); leave on the first
+departure lap; play the pads through the blend and say whether the cues feel on the beat.
+
+## 11. Risks
+
+| Risk | Effect | Fallback |
+|---|---|---|
+| The tail and incoming beats are 10 to 20 ms apart (start lags) | Flams for the first 2 bars | Rhythm leaves in 2 bars anyway; the phase nudge (5.3); or rhythm out in 1 bar |
+| A 30 to 50 cent shift is audible | The old track sounds out of tune for a few bars | Narrow row 6 to 30 cents; pre-rendered tails as the last resort (7.1) |
+| Wrong bar phase in a pack (downbeat confidence about 0.4) | Tail beats on the wrong beat of the bar; drop snapped a bar out | The sheet's audition and the phase verdict (3.3); `downbeat_offset_beats` |
+| 10 to 14 Vorbis decoders on a phone | Crackles | Setting `light`, then `cut` (9.1) |
+| Memory with two or three packs on a phone | The app is killed | No preload during a blend; no `on_miss` preload; `light` |
+| M1 builds the group or the clock differently than assumed here | Rework in M2 | The list in section 12 is given to M1 now; M2 owns `run_audio.gd` and `src/track/**` and adapts there, not in the narrative stream's files |
+| A drop entered wrongly by the owner | Fade ends early or late against the real drop | The snap verdict and the audition; `cut` if the snap says "grid suspect" with a lead-in under 5 bars |
+| The 3.4e-5 clock rate error is real | 6 ms over a long scene | The 48 kHz tempo-free clock (6.2) |
+| Pitch shifter or stretcher needed after all | CPU and latency | Pre-rendered tails, PC only |
+| The listening test rejects blending entirely | | `cut` everywhere: one constant in the planner; nothing else changes |
+
+## 12. What M1 must leave in place for M2
+
+M2 may not edit `src/run/run_play.gd`, `run_engine.gd` or `run_data.gd` (the narrative stream owns them
+after M1). So M1 must leave these hooks there:
+
+1. **Every engine event reaches the director**, in order, in the same frame, before or with
+   `audio.on_event` (including `hotspot_commit`, `track_last_lap`, `track_start`, `track_end`, `tempo`,
+   `route_commit`, `path_handoff`), and the director decides the music of a scene change, not `RunPlay`.
+2. **A readiness hook in the engine**: at the chart of the next scene (beat 60.5) the engine asks a callable
+   (for example `engine.track_ready_fn(scene_id) -> bool`) whether the destination is a track scene this
+   time; false charts it as an ordinary scene. Without it, `cut` with an unready pack would chart the track
+   while the loops play.
+3. **A one-lap extension** the director can ask for at a lock (`not_ready`), that is not the minigame
+   `hold` (no minigame semantics, no default exit afterwards): on a final lap it extends the scene by a lap
+   (`track_extend`), on an ordinary scene it re-enters it.
+4. **A `completed` report** from the audio class: a signal or callback when the outgoing group is silent,
+   carrying the boundary time, so the director emits `completed(id)`. In `cut` mode: after the 0.6 s fade.
+5. **The track group is its own player**, owned by the audio class, never stopped by `RunPlay` except on the
+   Bassment hand-off and the end of the run; `_path_swap` and `schedule_clock_swap` leave it playing.
+6. **A float-tempo clock that is continuous** (M1.4). Preferably tempo-free at 48 kHz and never swapped
+   inside one engine; in any case `song_time()` never jumps at a track-scene boundary.
+7. **A loader callable for any scene at any time** (`request()` and `set_default()`), with a readiness
+   query, a failure result and a memory cap, not only "when doors first open".
+8. **Start lags logged** for every group start (`from`, lateness), like `RunAudio.voice_log`, so M2.5 can
+   measure.
+9. **`TransitionDirector` in `&"cut"` mode** as the single place that turns a lock into a Plan, with the
+   planner as a separate call, so M2 replaces the planner and the audio recipe without touching the wiring.
