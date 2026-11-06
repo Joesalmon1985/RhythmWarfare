@@ -145,7 +145,7 @@ WETSTONE = ramp("#0c1624", "#16273c", "#243d58", "#365876", "#4f7694", "#76a0b6"
 WEED = ramp("#102418", "#1c3e26", "#2c5c36", "#42804a", "#68a860")
 SHED = ramp("#0c1a30", "#16294a", "#243f68", "#38598a", "#5479a8", "#7c9fc4")
 CELLG = ramp("#12161a", "#212a30", "#364249", "#4f5e66", "#6f808a", "#98a8b0")
-SANDC = ramp("#3a2814", "#58401f", "#7c5c30", "#a08040", "#c4a458", "#ecd496")
+SANDC = ramp("#4a3418", "#6c4e28", "#947038", "#bc9a4e", "#dcc072", "#f6e8ae")
 MARR = ramp("#3e5622", "#5e7a2c", "#84a43c", "#b0cc62")
 QUAYC = ramp("#0e1620", "#1a2634", "#2c3d50", "#445a72", "#62809a", "#88a8bc")
 
@@ -618,7 +618,7 @@ def wall_dunes():
     x, y = grid(n)
     ripple = 0.5 + 0.5 * np.sin((y / n) * 6.2832 * 5 + 3.0 * noise(n, 40, 511, 3))
     sh = 0.55 + 0.2 * ripple + 0.2 * (noise(n, 30, 512, 4) - 0.5) * 2 + 0.06 * _fine(n, 513)
-    sh = sh - 0.45 * (noise(n, 44, 516, 3) > 0.62) + 0.1 * (noise(n, 20, 517, 3) > 0.72)
+    sh = sh - 0.4 * (noise(n, 60, 516, 2) > 0.7) + 0.1 * (noise(n, 20, 517, 3) > 0.72)
     rgb = _q(sh, SANDC, 0.8)
     rng = _R(514)
     for _ in range(9):  # tufts of marram grass
@@ -635,7 +635,7 @@ def floor_sand():
     x, y = grid(n)
     ripple = 0.5 + 0.5 * np.sin(((x + 14 * noise(n, 30, 521, 3)) / n) * 6.2832 * 4)
     sh = 0.55 + 0.2 * ripple + 0.2 * (noise(n, 22, 522, 4) - 0.5) * 2 + 0.07 * _fine(n, 523)
-    sh = sh - 0.4 * (noise(n, 44, 526, 3) > 0.62) + 0.1 * (noise(n, 20, 527, 3) > 0.72)  # the shade of a pine and the sun's glare
+    sh = sh - 0.42 * (noise(n, 60, 526, 2) > 0.7) + 0.1 * (noise(n, 20, 527, 3) > 0.72)  # the shade of a pine and the sun's glare
     rgb = _q(sh, SANDC, 0.8)
     rng = _R(524)
     for _ in range(26):  # tiny shells

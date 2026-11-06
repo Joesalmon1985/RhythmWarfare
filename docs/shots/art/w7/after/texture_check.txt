@@ -6,7 +6,7 @@ airfield ceil_hangar 128x128 8 0.00 0.36 102 0.000
 airfield ceil_plaster 128x128 4 0.00 0.47 102 0.000 
 airfield floor_boards 128x128 8 0.00 0.55 128 0.000 
 airfield floor_concrete 128x128 10 0.00 0.15 102 0.000 
-airfield floor_dust 128x128 10 0.00 0.68 102 0.000 
+airfield floor_dust 128x128 11 0.00 0.69 102 0.000 
 airfield floor_lino 128x128 18 0.00 0.41 128 0.000 
 airfield floor_metal 128x128 7 0.00 0.15 128 0.000 
 airfield sky_day 256x64 20 0.00 0.30 256 0.000 
@@ -35,7 +35,6 @@ airfield thing_lamp_red 128x128 32 0.03 0.50 128 0.000
 airfield thing_ledger 128x128 72 0.00 0.45 128 0.000 
 airfield thing_nose_glass 128x128 24 0.15 0.53 128 0.000 
 airfield thing_release_lever 128x128 52 0.02 0.33 128 0.000 
-airfield thing_rope_loop 128x128 14 0.00 0.52 128 0.000 
 airfield thing_sandbags 128x128 31 0.00 0.40 128 0.000 
 airfield thing_scales 128x128 34 0.00 0.67 128 0.000 
 airfield thing_screen_cloth 128x128 16 0.00 0.24 128 0.000 
@@ -44,6 +43,7 @@ airfield thing_sign_ledgerless 128x128 23 0.00 0.49 128 0.000
 airfield thing_stamp_big 128x128 35 0.01 0.61 128 0.000 
 airfield thing_stove 128x128 52 0.02 0.32 128 0.000 
 airfield thing_table_maps 128x128 77 0.01 0.56 128 0.000 
+airfield thing_tent_eyelet 128x128 17 0.00 0.31 128 0.000 
 airfield thing_tent_flap 128x128 28 0.00 0.25 128 0.000 
 airfield thing_truck 256x128 68 0.01 0.37 256 0.000 
 airfield thing_window_hut 128x128 24 0.00 0.47 128 0.000 
@@ -97,9 +97,9 @@ harbour ceil_cell 128x128 6 0.00 0.28 128 0.000
 harbour floor_boards 128x128 8 0.00 0.55 128 0.000 
 harbour floor_cell 128x128 15 0.00 0.25 128 0.000 
 harbour floor_quay 128x128 8 0.00 0.44 128 0.000 
-harbour floor_sand 128x128 6 0.00 0.46 102 0.000 
+harbour floor_sand 128x128 9 0.00 0.56 102 0.000 
 harbour sky_harbour 256x64 20 0.00 0.72 256 0.000 
-harbour sky_harbour_day 256x64 14 0.00 0.60 256 0.000 
+harbour sky_harbour_day 256x64 14 0.00 0.49 256 0.000 
 harbour thing_aircraft_door 128x128 32 0.00 0.35 128 0.000 
 harbour thing_beam 128x128 80 0.57 0.05 128 1.000 
 harbour thing_birds 128x128 13 0.00 0.08 128 0.000 
@@ -123,6 +123,6 @@ harbour thing_window_hut 128x128 24 0.00 0.47 128 0.000
 harbour thing_window_latch 128x128 472 0.05 0.54 128 0.000 
 harbour thing_wooden_post 128x128 32 0.00 0.41 128 0.000 
 harbour wall_cell 128x128 12 0.01 0.26 128 0.000 
-harbour wall_dunes 128x128 7 0.00 0.44 102 0.000 
+harbour wall_dunes 128x128 9 0.00 0.57 102 0.000 
 harbour wall_hut 128x128 7 0.00 0.47 128 0.000 
 harbour wall_quay 128x128 10 0.00 0.58 128 0.000 

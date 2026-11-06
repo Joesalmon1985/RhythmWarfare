@@ -79,7 +79,7 @@ def build():
     qy.actor("dock3", "civilian_city", "b", 4.0, 3.0)
 
     # ---- the neutral coast (C13) ------------------------------------------------------------------------------------------------------------------------------------
-    co = mb.room("coast", (22, 0, 44, 14), -90, "coast", floor_tex=floor_sand, ceil_tex="sky", sky="day", fog={"color": "#7c96ae", "density": 0.006}, wall_tex=wall_dunes, ceiling=2.6, light=0.62, tint="#f4ecd8", activities=QUIET_STAND)
+    co = mb.room("coast", (22, 0, 44, 14), -90, "coast", floor_tex=floor_sand, ceil_tex="sky", sky="day", fog={"color": "#7c96ae", "density": 0.006}, wall_tex=wall_dunes, ceiling=2.6, light=0.5, tint="#f4ecd8", activities=QUIET_STAND)
     co.standard_rail("c13", home=(2.2, 0), good=((5.0, -1.5), (9.0, 1.0)), bad=((1.5, 3.5), (2.8, -3.5)), arrive=(0.7, 0))
     co.wp("c13_x_up", 17.0, 0.0, 0)  # the shore
     co.thing("shore_boat", T("thing_shore_boat", "billboard", "the small fishing boat pulled up on the sand in bright sun, blue and white paint, nets drying, 256x128", 1.0, 256), 12.0, -3.2, 0.9, 2.2)
@@ -90,7 +90,7 @@ def build():
     co.thing("nets_dry", "thing_nets", 9.0, -5.6, 0.9, 1.8)
     co.thing("shore_post", T("thing_wooden_post", "billboard", "a weathered wooden jetty post with a coil of rope and a bright blue-painted top", 1.0, 128), 19.5, 2.4, 0.9, 1.8)
     co.thing("sun_umbrella", T("thing_sunshade", "billboard", "a faded orange-and-white beach sunshade over a little table with a jug and cups", 1.0, 128), 7.0, 4.2, 1.0, 2.0)
-    co.light("lt_coast_sun", 10.0, 0.0, 8.0, 30.0, "#fff2c0", 1.1)
+    co.light("lt_coast_sun", 10.0, 0.0, 8.0, 30.0, "#fff2c0", 1.0)
     co.actor("fish_c", "fisherman", "a", 14.5, 1.2, fixed=True, same_as="fish", activity="stand")
     co.actor("quay_w", "civilian_city", "b", 18.5, -1.6, fixed=True, activity="stand")
     co.actor("kid_q", "civilian_city", "c", 17.0, 2.6, activity="stand")
