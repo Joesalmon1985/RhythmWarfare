@@ -600,7 +600,7 @@ def _sil_shape(kind, up):
     return s
 
 
-def build_silhouettes():
+def build_silhouettes_svg():
     out = {}
     fills = {"a": "#7a4a58", "b": "#6e4452", "c": "#80505a"}
     for kind in ("a", "b", "c"):
@@ -617,6 +617,12 @@ def build_silhouettes():
         entry["height"] = 100
         out[f"sil_{kind}"] = entry
     return out
+
+
+def build_silhouettes():
+    """The rear rows: pixel busts at the baked people's grain (hp_pix.spr_silhouette, PNG in processed/), no longer SVG shapes (audit F2). `build_silhouettes_svg` is the 2D original."""
+    from . import hp_pix
+    return hp_pix.write_silhouettes(lib.PNG_DIR)
 
 
 # ---- the 7 pieces of the main room ----------------------------------------------------------------------------------------------------------------
@@ -942,12 +948,11 @@ def build_stage():
     build_desk_top()
     sp: dict = {}
     spr_deck(sp)
-    sp["door_open"] = spr_door_open()
-    spr_woofer(sp)
-    spr_fixture(sp)
-    spr_disco_ball(sp)
     spr_glowstick(sp)
     sp.update(build_png_sprites())
+    from . import hp_pix
+    sp.update(hp_pix.write_sprites(lib.PNG_DIR))  # the PA speaker, the spot, the lantern, the open door and the big props: pixels (audit F2, F15, F1)
+    hp_pix.write_sky(lib.PNG_DIR)
     layers = []
     build_backdrop()
     layers.append(P.room_layer("backdrop", "backdrop.svg"))
@@ -981,10 +986,19 @@ def build_stage():
         "wall_left_x": FX0, "wall_right_x": FX1, "horizon_y": VPY,
         "bed": [640, 296, 310], "window": [1138, 72, 126, 144], "vanish": [640, 130],
     }
-    stage = {"design_size": [W, H], "layers": layers, "anchors": anchors, "sprites": sp, "pieces": pieces,
-             "pieces_note": "pos/size = top-left rectangle in design px; pivot (rotate/sway/flicker/bob/pulse) is in design px relative to pos; blend add = draw additively"}
     from . import hp_views  # corridor, cafeteria, garden + passage_frame
     views, passage = hp_views.build_views()
+    widths = hp_pix.write_pieces(lib.PNG_DIR)
+    for pc in pieces + [p for v in views for p in v.get("pieces", [])]:  # the soft `mix` pieces as pixels (same id, design size, anchor and pivot; the beams stay soft)
+        if pc["id"] in widths:
+            old = os.path.join(lib.ASSET_DIR, pc["file"])
+            for path_ in (old, old + ".import"):
+                if os.path.exists(path_):
+                    os.remove(path_)
+            pc["file"] = f"processed/piece_{pc['id']}.png"
+            pc["px_scale"] = round(pc["size"][0] / widths[pc["id"]], 6)
+    stage = {"design_size": [W, H], "layers": layers, "anchors": anchors, "sprites": sp, "pieces": pieces,
+             "pieces_note": "pos/size = top-left rectangle in design px; pivot (rotate/sway/flicker/bob/pulse) is in design px relative to pos; blend add = draw additively"}
     sp["passage_frame"] = passage
     stage["views"] = views
     return stage

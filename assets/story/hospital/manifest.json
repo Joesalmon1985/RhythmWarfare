@@ -2348,58 +2348,58 @@
  "silhouettes": {
   "sil_a": {
    "idle": {
-    "file": "source/silhouettes/sil_a_idle.svg",
+    "file": "processed/sil_a_idle.png",
     "pivot": [
-     168,
-     280
+     26.0,
+     45.5
     ],
-    "px_scale": 0.5
+    "px_scale": 2.461538
    },
    "up": {
-    "file": "source/silhouettes/sil_a_up.svg",
+    "file": "processed/sil_a_up.png",
     "pivot": [
-     168,
-     300
+     26.0,
+     56.875
     ],
-    "px_scale": 0.5
+    "px_scale": 2.461538
    },
    "height": 100
   },
   "sil_b": {
    "idle": {
-    "file": "source/silhouettes/sil_b_idle.svg",
+    "file": "processed/sil_b_idle.png",
     "pivot": [
-     168,
-     280
+     26.0,
+     45.5
     ],
-    "px_scale": 0.5
+    "px_scale": 2.461538
    },
    "up": {
-    "file": "source/silhouettes/sil_b_up.svg",
+    "file": "processed/sil_b_up.png",
     "pivot": [
-     168,
-     300
+     26.0,
+     56.875
     ],
-    "px_scale": 0.5
+    "px_scale": 2.461538
    },
    "height": 100
   },
   "sil_c": {
    "idle": {
-    "file": "source/silhouettes/sil_c_idle.svg",
+    "file": "processed/sil_c_idle.png",
     "pivot": [
-     168,
-     280
+     26.0,
+     45.5
     ],
-    "px_scale": 0.5
+    "px_scale": 2.461538
    },
    "up": {
-    "file": "source/silhouettes/sil_c_up.svg",
+    "file": "processed/sil_c_up.png",
     "pivot": [
-     168,
-     300
+     26.0,
+     56.875
     ],
-    "px_scale": 0.5
+    "px_scale": 2.461538
    },
    "height": 100
   }
@@ -2549,52 +2549,6 @@
     ],
     "px_scale": 0.5
    },
-   "door_open": {
-    "file": "source/props/door_open.svg",
-    "pivot": [
-     0,
-     0
-    ],
-    "px_scale": 0.5,
-    "pos": [
-     244,
-     130
-    ]
-   },
-   "woofer": {
-    "file": "source/props/woofer.svg",
-    "pivot": [
-     116,
-     116
-    ],
-    "px_scale": 0.5,
-    "radius": 50
-   },
-   "fixture": {
-    "file": "source/props/fixture.svg",
-    "pivot": [
-     44,
-     4
-    ],
-    "px_scale": 0.5,
-    "lens": [
-     0,
-     51
-    ]
-   },
-   "disco_ball": {
-    "file": "source/props/disco_ball.svg",
-    "pivot": [
-     114,
-     364
-    ],
-    "px_scale": 0.5,
-    "radius": 27,
-    "ball_centre": [
-     0,
-     66
-    ]
-   },
    "glowstick": {
     "file": "source/props/glowstick.svg",
     "pivot": [
@@ -2670,6 +2624,132 @@
     ],
     "note": "paper, petal, heart, star"
    },
+   "woofer": {
+    "file": "processed/woofer.png",
+    "pivot": [
+     48.0,
+     96.0
+    ],
+    "px_scale": 0.78125,
+    "radius": 50
+   },
+   "fixture": {
+    "file": "processed/fixture.png",
+    "pivot": [
+     26.0,
+     2.387
+    ],
+    "px_scale": 0.837838,
+    "lens": [
+     0,
+     51
+    ]
+   },
+   "disco_ball": {
+    "file": "processed/disco_ball.png",
+    "pivot": [
+     29.0,
+     1.021
+    ],
+    "px_scale": 1.959459,
+    "radius": 27,
+    "ball_centre": [
+     0,
+     66
+    ]
+   },
+   "door_open": {
+    "file": "processed/door_open.png",
+    "pivot": [
+     0,
+     0
+    ],
+    "px_scale": 0.867052,
+    "pos": [
+     244,
+     130
+    ]
+   },
+   "thing_bed": {
+    "file": "processed/thing_bed.png",
+    "pivot": [
+     128.0,
+     256.0
+    ],
+    "px_scale": 1.0
+   },
+   "thing_desk": {
+    "file": "processed/thing_desk.png",
+    "pivot": [
+     128.0,
+     256.0
+    ],
+    "px_scale": 1.0
+   },
+   "thing_door_lit": {
+    "file": "processed/thing_door_lit.png",
+    "pivot": [
+     128.0,
+     256.0
+    ],
+    "px_scale": 1.0
+   },
+   "thing_drip": {
+    "file": "processed/thing_drip.png",
+    "pivot": [
+     128.0,
+     256.0
+    ],
+    "px_scale": 1.0
+   },
+   "thing_lamppost": {
+    "file": "processed/thing_lamppost.png",
+    "pivot": [
+     192.0,
+     384.0
+    ],
+    "px_scale": 1.0
+   },
+   "thing_mic": {
+    "file": "processed/thing_mic.png",
+    "pivot": [
+     128.0,
+     256.0
+    ],
+    "px_scale": 1.0
+   },
+   "thing_monitor": {
+    "file": "processed/thing_monitor.png",
+    "pivot": [
+     128.0,
+     256.0
+    ],
+    "px_scale": 1.0
+   },
+   "thing_tree": {
+    "file": "processed/thing_tree.png",
+    "pivot": [
+     256.0,
+     512.0
+    ],
+    "px_scale": 1.0
+   },
+   "wall_tv": {
+    "file": "processed/wall_tv.png",
+    "pivot": [
+     128.0,
+     256.0
+    ],
+    "px_scale": 1.0
+   },
+   "wall_vending": {
+    "file": "processed/wall_vending.png",
+    "pivot": [
+     128.0,
+     256.0
+    ],
+    "px_scale": 1.0
+   },
    "passage_frame": {
     "file": "source/views/passage_frame.svg",
     "pivot": [
@@ -2703,7 +2783,7 @@
    },
    {
     "id": "fairy_lights",
-    "file": "source/pieces/fairy_lights.svg",
+    "file": "processed/piece_fairy_lights.png",
     "pos": [
      0,
      0
@@ -2712,14 +2792,14 @@
      1280,
      96
     ],
-    "px_scale": 0.5,
+    "px_scale": 1.500586,
     "anim": "flicker",
     "z": "front",
     "blend": "mix"
    },
    {
     "id": "balloon_bunch",
-    "file": "source/pieces/balloon_bunch.svg",
+    "file": "processed/piece_balloon_bunch.png",
     "pos": [
      14,
      90
@@ -2728,7 +2808,7 @@
      140,
      210
     ],
-    "px_scale": 0.5,
+    "px_scale": 0.909091,
     "pivot": [
      70,
      200
@@ -2739,7 +2819,7 @@
    },
    {
     "id": "cards_garland",
-    "file": "source/pieces/cards_garland.svg",
+    "file": "processed/piece_cards_garland.png",
     "pos": [
      290,
      100
@@ -2748,7 +2828,7 @@
      720,
      74
     ],
-    "px_scale": 0.5,
+    "px_scale": 0.723618,
     "pivot": [
      360,
      0
@@ -2759,7 +2839,7 @@
    },
    {
     "id": "heart_monitor",
-    "file": "source/pieces/heart_monitor.svg",
+    "file": "processed/piece_heart_monitor.png",
     "pos": [
      772,
      144
@@ -2768,7 +2848,7 @@
      64,
      58
     ],
-    "px_scale": 0.5,
+    "px_scale": 0.752941,
     "pivot": [
      32,
      27
@@ -2779,7 +2859,7 @@
    },
    {
     "id": "flower_vase",
-    "file": "source/pieces/flower_vase.svg",
+    "file": "processed/piece_flower_vase.png",
     "pos": [
      418,
      114
@@ -2788,7 +2868,7 @@
      64,
      92
     ],
-    "px_scale": 0.5,
+    "px_scale": 1.0,
     "pivot": [
      32,
      86
@@ -2799,7 +2879,7 @@
    },
    {
     "id": "paper_stars",
-    "file": "source/pieces/paper_stars.svg",
+    "file": "processed/piece_paper_stars.png",
     "pos": [
      300,
      0
@@ -2808,7 +2888,7 @@
      700,
      150
     ],
-    "px_scale": 0.5,
+    "px_scale": 0.97629,
     "pivot": [
      350,
      0
@@ -2824,7 +2904,7 @@
     "pieces": [
      {
       "id": "corridor_banner",
-      "file": "source/views/corridor_banner.svg",
+      "file": "processed/piece_corridor_banner.png",
       "pos": [
        340,
        28
@@ -2833,7 +2913,7 @@
        600,
        96
       ],
-      "px_scale": 0.5,
+      "px_scale": 1.5,
       "pivot": [
        300,
        6
@@ -2889,7 +2969,7 @@
     "pieces": [
      {
       "id": "cafeteria_lamps",
-      "file": "source/views/cafeteria_lamps.svg",
+      "file": "processed/piece_cafeteria_lamps.png",
       "pos": [
        280,
        40
@@ -2898,7 +2978,7 @@
        720,
        130
       ],
-      "px_scale": 0.5,
+      "px_scale": 1.804511,
       "pivot": [
        360,
        0
@@ -3014,7 +3094,7 @@
      },
      {
       "id": "garden_bunting",
-      "file": "source/views/garden_bunting.svg",
+      "file": "processed/piece_garden_bunting.png",
       "pos": [
        0,
        56
@@ -3023,7 +3103,7 @@
        1280,
        120
       ],
-      "px_scale": 0.5,
+      "px_scale": 2.1843,
       "pivot": [
        640,
        0
@@ -3034,7 +3114,7 @@
      },
      {
       "id": "garden_petals",
-      "file": "source/views/garden_petals.svg",
+      "file": "processed/piece_garden_petals.png",
       "pos": [
        380,
        80
@@ -3043,7 +3123,7 @@
        520,
        300
       ],
-      "px_scale": 0.5,
+      "px_scale": 1.173815,
       "pivot": [
        260,
        150
@@ -3132,15 +3212,15 @@
     128,
     128
    ],
-   "metres": 2.4
+   "metres": 1.28
   },
   "floor_cafe": {
    "file": "textures/floor_cafe.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 1.6
+   "metres": 1.28
   },
   "floor_check": {
    "file": "textures/floor_check.png",
@@ -3148,7 +3228,7 @@
     128,
     128
    ],
-   "metres": 2.0
+   "metres": 1.28
   },
   "floor_lino": {
    "file": "textures/floor_lino.png",
@@ -3156,7 +3236,7 @@
     128,
     128
    ],
-   "metres": 2.0
+   "metres": 1.28
   },
   "floor_stone": {
    "file": "textures/floor_stone.png",
@@ -3164,7 +3244,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.28
   },
   "floor_ward": {
    "file": "textures/floor_ward.png",
@@ -3172,15 +3252,15 @@
     128,
     128
    ],
-   "metres": 2.0
+   "metres": 1.28
   },
   "floor_wood": {
    "file": "textures/floor_wood.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.5
+   "metres": 1.28
   },
   "sky_night": {
    "file": "textures/sky_night.png",
@@ -3305,10 +3385,10 @@
   "trim": {
    "file": "textures/trim.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.0
   },
   "wall_brick": {
    "file": "textures/wall_brick.png",
@@ -3316,7 +3396,7 @@
     128,
     128
    ],
-   "metres": 6.0
+   "metres": 1.28
   },
   "wall_cafe": {
    "file": "textures/wall_cafe.png",
@@ -3324,23 +3404,23 @@
     128,
     128
    ],
-   "metres": 4.8
+   "metres": 1.3
   },
   "wall_counter": {
    "file": "textures/wall_counter.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.0
   },
   "wall_curtain": {
    "file": "textures/wall_curtain.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 1.5
+   "metres": 1.3
   },
   "wall_dayroom": {
    "file": "textures/wall_dayroom.png",
@@ -3348,7 +3428,7 @@
     128,
     128
    ],
-   "metres": 2.2
+   "metres": 1.1
   },
   "wall_door": {
    "file": "textures/wall_door.png",
@@ -3356,23 +3436,23 @@
     128,
     128
    ],
-   "metres": 2.6
+   "metres": 1.3
   },
   "wall_hedge": {
    "file": "textures/wall_hedge.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 1.3
   },
   "wall_quiet": {
    "file": "textures/wall_quiet.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.4
+   "metres": 1.2
   },
   "wall_station": {
    "file": "textures/wall_station.png",
@@ -3380,7 +3460,7 @@
     128,
     128
    ],
-   "metres": 2.6
+   "metres": 1.3
   },
   "wall_tv": {
    "file": "textures/wall_tv.png",
@@ -3388,7 +3468,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.3
   },
   "wall_tv_wall": {
    "file": "textures/wall_tv_wall.png",
@@ -3396,7 +3476,7 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.3
   },
   "wall_vending": {
    "file": "textures/wall_vending.png",
@@ -3404,7 +3484,7 @@
     128,
     128
    ],
-   "metres": 4.8
+   "metres": 1.28
   },
   "wall_vending_wall": {
    "file": "textures/wall_vending_wall.png",
@@ -3412,7 +3492,7 @@
     128,
     128
    ],
-   "metres": 4.8
+   "metres": 1.28
   },
   "wall_ward": {
    "file": "textures/wall_ward.png",
@@ -3420,7 +3500,7 @@
     128,
     128
    ],
-   "metres": 2.7
+   "metres": 1.3
   },
   "wall_window": {
    "file": "textures/wall_window.png",
@@ -3428,7 +3508,7 @@
     128,
     128
    ],
-   "metres": 5.0
+   "metres": 1.3
   }
  },
  "people": {
