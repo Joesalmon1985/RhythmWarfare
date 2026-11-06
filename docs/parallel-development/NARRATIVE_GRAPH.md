@@ -18,7 +18,7 @@ Files that go with this document, all in `graph/`:
 
 | File | What it is |
 |---|---|
-| `graph_today.json` | Today's route graph: 148 nodes, 700 edges, unchanged copy of the inventory's machine-readable graph. Its ids are the old style (`warehouse`, `gospel:jordan`, `bassment:1`). |
+| `graph_today.json` | Today's route graph: 146 nodes, 702 edges, regenerated from the game data by `tools/narrative/graph.py` (the inventory's copy had one wrong edge and lacked the ten lost-fight edges). Its ids are the new style (`main/warehouse`, `gospel/jordan`, `bassment/1`). |
 | `narrative.schema.md` | Field-by-field schema of the new overlay file, format `rhythm_warfare.narrative.v1`. |
 | `overlay_proposed.json` | A complete proposed overlay instance. |
 | `narrative_graph_target.json` | The target graph: 146 nodes, 960 edges, ids in the contract's `"<path>/<node>"` form. |
