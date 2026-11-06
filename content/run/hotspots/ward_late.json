@@ -11,7 +11,7 @@
    },
    "kind": "exit",
    "radius_m": 1.0,
-   "min_px": 72,
+   "min_px": 88,
    "available": {
     "flags_all": [],
     "flags_none": [],
@@ -45,7 +45,7 @@
    },
    "kind": "exit",
    "radius_m": 1.0,
-   "min_px": 72,
+   "min_px": 88,
    "available": {
     "flags_all": [],
     "flags_none": [],
@@ -79,7 +79,7 @@
    },
    "kind": "feature",
    "radius_m": 0.8,
-   "min_px": 72,
+   "min_px": 88,
    "available": {
     "flags_all": [],
     "flags_none": [],
@@ -113,7 +113,7 @@
    },
    "kind": "feature",
    "radius_m": 0.8,
-   "min_px": 72,
+   "min_px": 88,
    "available": {
     "flags_all": [],
     "flags_none": [],
@@ -148,7 +148,7 @@
    },
    "kind": "exit",
    "radius_m": 1.0,
-   "min_px": 72,
+   "min_px": 88,
    "available": {
     "flags_all": [],
     "flags_none": [],
@@ -182,7 +182,7 @@
    },
    "kind": "character",
    "radius_m": 0.8,
-   "min_px": 72,
+   "min_px": 88,
    "available": {
     "flags_all": [],
     "flags_none": [],
@@ -256,7 +256,7 @@
    },
    "kind": "object",
    "radius_m": 0.8,
-   "min_px": 72,
+   "min_px": 88,
    "available": {
     "flags_all": [],
     "flags_none": [],
@@ -288,7 +288,7 @@
    },
    "kind": "exit",
    "radius_m": 1.0,
-   "min_px": 72,
+   "min_px": 88,
    "available": {
     "flags_all": [],
     "flags_none": [],
@@ -322,7 +322,7 @@
    },
    "kind": "character",
    "radius_m": 0.8,
-   "min_px": 72,
+   "min_px": 88,
    "available": {
     "flags_all": [],
     "flags_none": [],
@@ -391,7 +391,7 @@
    },
    "kind": "object",
    "radius_m": 0.8,
-   "min_px": 72,
+   "min_px": 88,
    "available": {
     "flags_all": [],
     "flags_none": [],
@@ -428,7 +428,7 @@
    },
    "kind": "exit",
    "radius_m": 1.0,
-   "min_px": 72,
+   "min_px": 88,
    "available": {
     "flags_all": [],
     "flags_none": [],
@@ -462,7 +462,7 @@
    },
    "kind": "exit",
    "radius_m": 1.0,
-   "min_px": 72,
+   "min_px": 88,
    "available": {
     "flags_all": [],
     "flags_none": [],
@@ -496,7 +496,7 @@
    },
    "kind": "character",
    "radius_m": 0.8,
-   "min_px": 72,
+   "min_px": 88,
    "available": {
     "flags_all": [],
     "flags_none": [],

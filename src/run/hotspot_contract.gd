@@ -4,7 +4,7 @@ extends RefCounted
 ## RunData (content/run/hotspots/<world>.json) and TrialData (content/trial/hotspots.json) call. Pure: it reads the map json (cached) and the context it is given, nothing else.
 ##
 ## A file is {"world": "<run world id | bassment>", "hotspots": [ hotspot, ... ]}; a hotspot (every field except id, scene, anchor, kind, on_success is optional):
-##   id, world, scene (a run scene id, or a Bassment passage number), map, anchor, kind, radius_m (0.8), min_px (72, never less), available, look, challenge, on_success, on_failure,
+##   id, world, scene (a run scene id, or a Bassment passage number), map, anchor, kind, radius_m (0.8), min_px (88, never less; the Bassment 72), available, look, challenge, on_success, on_failure,
 ##   cinematic, default, repeatable, window ("final" | "any"), on_select ({cinematic}), look.ring_m, pass_credit (0 to 1, with an activity), trial_kind (the Bassment's name for `kind`: when present it is one of KINDS and equals `kind`), acting (what a person does in each state of the hotspot and
 ##   after its outcome, docs/THREE_PATHS_AND_FACES_PLAN.md 2.3a: see validate_acting; a Bassment creature names a `figure` instead of an `actor`).
 ##
@@ -24,9 +24,17 @@ const LOOK_FINISHED := ["crown"]  # look.finished.available: what a portal shows
 const FINISHED_TINT := "#ffd25a"
 const WINDOWS := ["final", "any"]  # `window`: "any" (a hotspot with an activity) is on show and commits in every block of the phase
 const FAMILIES := ["drums", "bass"]
-const MIN_PX := 72.0
+const MIN_PX := 88.0  # the smallest touch target of a run choice in the 1280x720 design, both directions (lead ruling 3; INTERACTION_DESIGN.md 3.5)
+const BASSMENT_MIN_PX := 72.0  # the Bassment keeps its own rules (lead ruling 20): TrialData passes it as ctx `min_px_floor`
+const TOUCH_MARGIN_PX := 24.0  # a choice's touch region lies within its object's visual bounds grown by at most this (INTERACTION_DESIGN.md 3.6, T5a)
 const MIN_PER_SCENE := 2
-const MAX_PER_SCENE := 4
+const MAX_PER_SCENE := 8  # choices available at once (lead ruling 1: reactive objects are a separate list and never count)
+const MAX_PER_HUB := 10  # the most a scene's own `max_hotspots` may allow (lead ruling 16)
+## Reactive objects (INTERACTION_DESIGN.md 2.1, 2.5; lead ruling 1): a file's `reactives` list beside `hotspots`. A reactive object reacts to a tap and leads nowhere: no route, no default, no
+## outcome, never counted in the cap, never sent to the port. {id, scene, anchor (thing | actor | pos), reaction, touch? {w, h} metres, effect? {flags_set: per-run flags}} (assumption A5: cosmetic
+## unless `effect` names a per-run flag). The reactions are drawn in code (HotspotView), no new art.
+const REACTIONS := ["flare", "pulse", "shake", "squash"]
+const REACTIVE_KEYS := ["id", "world", "scene", "map", "anchor", "reaction", "touch", "effect"]
 const MAX_FAIL_ENERGY := -20.0  # a failure may cost at most this much energy (it must stay recoverable)
 const MAX_GAIN_ENERGY := 20.0
 const TRIAL_PREFIX := "trial:"  # a run route "trial:<passage>", or just "<passage>" ("1": the first), is the wizard's way into the Bassment
@@ -174,7 +182,7 @@ static func resolve_cinematic(h: Dictionary, outcome: Dictionary, named: Diction
 	return {"steps": [one]} if typeof(one) == TYPE_DICTIONARY else {}
 
 
-## Validates one scene's hotspot list. `ctx`: {where (a prefix for messages), map (map id), world, routes (Array of allowed route strings), start_energy, min_available (2), max_available (4),
+## Validates one scene's hotspot list. `ctx`: {where (a prefix for messages), map (map id), world, routes (Array of allowed route strings), start_energy, min_available (2), max_available (8), min_px_floor (88),
 ## default_route (the route the default exit must lead to, "" = any), exit_routes_required (every one must be the success or failure route of some hotspot)}. Appends to `errors`.
 static func validate_scene(list: Array, ctx: Dictionary, errors: Array) -> void:
 	var where := str(ctx.get("where", "scene"))
@@ -266,8 +274,9 @@ static func _validate_one(h: Dictionary, hw: String, ctx: Dictionary, errors: Ar
 	var r := float(h.get("radius_m", 0.8))
 	if r <= 0.0 or r > 4.0:
 		errors.append("%s: radius_m must be above 0 and at most 4" % hw)
-	if float(h.get("min_px", MIN_PX)) < MIN_PX:
-		errors.append("%s: min_px must be at least %d (a phone fingertip)" % [hw, int(MIN_PX)])
+	var floor_px := float(ctx.get("min_px_floor", MIN_PX))
+	if float(h.get("min_px", MIN_PX)) < floor_px:
+		errors.append("%s: min_px must be at least %d (a phone fingertip)" % [hw, int(floor_px)])
 	var av: Variant = h.get("available", {})
 	if typeof(av) != TYPE_DICTIONARY:
 		errors.append("%s: available must be an object" % hw)
@@ -426,6 +435,93 @@ static func _validate_cine(c: Dictionary, where: String, idx: Dictionary, errors
 			var l := str(c["look_at"])
 			if not ((idx["actors"] as Dictionary).has(l) or (idx["things"] as Dictionary).has(l) or (idx["waypoints"] as Dictionary).has(l)):
 				errors.append("%s: cinematic.look_at '%s' is no actor, thing or waypoint of the map" % [where, l])
+
+
+# --- reactive objects (INTERACTION_DESIGN.md 2.5) ------------------------------------------------------------------------------------
+
+## A reactive object with every optional field filled in (a copy), shaped like a hotspot so that HotspotView.layout and hit place it the same way: kind "reactive", reactive true, a ring
+## radius, min_px, a look, never a default, no outcome.
+static func normalize_reactive(r: Dictionary, world: String, map_id: String) -> Dictionary:
+	var out: Dictionary = r.duplicate(true)
+	out["scene"] = str(out.get("scene", ""))
+	out["world"] = str(out.get("world", world))
+	out["map"] = str(out.get("map", map_id))
+	out["kind"] = "reactive"
+	out["reactive"] = true
+	out["reaction"] = str(out.get("reaction", "flare"))
+	out["radius_m"] = 0.6
+	out["min_px"] = MIN_PX
+	out["touch"] = (out.get("touch", {}) as Dictionary).duplicate() if typeof(out.get("touch", {})) == TYPE_DICTIONARY else {}
+	out["effect"] = (out.get("effect", {}) as Dictionary).duplicate(true) if typeof(out.get("effect", {})) == TYPE_DICTIONARY else {}
+	out["available"] = {"flags_all": [], "flags_none": [], "energy_min": 0.0, "once": false}
+	out["look"] = {"available": "glow", "selected": "ring", "committed": "flash"}
+	out["default"] = false
+	out["repeatable"] = true
+	out["window"] = "final"
+	out["on_success"] = {}
+	return out
+
+
+## True for a reactive object (a normalised reactive row); a hotspot (a choice) never is one.
+static func is_reactive(h: Dictionary) -> bool:
+	return bool(h.get("reactive", false))
+
+
+## Validates one scene's reactive list (the raw rows). `ctx`: {where, map, ids (the scene's hotspot ids: a reactive object may not reuse one)}. Appends to `errors`.
+static func validate_reactives(list: Array, ctx: Dictionary, errors: Array) -> void:
+	var where := str(ctx.get("where", "scene"))
+	var map_id := str(ctx.get("map", ""))
+	var idx := map_index(map_id)
+	var taken: Dictionary = (ctx.get("ids", {}) as Dictionary).duplicate()
+	for r in list:
+		if typeof(r) != TYPE_DICTIONARY:
+			errors.append("%s: a reactive object is not an object" % where)
+			continue
+		var rid := str(r.get("id", ""))
+		var rw := "%s reactive %s" % [where, rid if rid != "" else "(no id)"]
+		if rid == "" or taken.has(rid):
+			errors.append("%s: id missing or duplicated (unique among the scene's hotspots and reactive objects)" % rw)
+		taken[rid] = true
+		for k in r:
+			if str(k) not in REACTIVE_KEYS:
+				errors.append("%s: '%s' is not a field (%s): a reactive object leads nowhere" % [rw, k, ", ".join(PackedStringArray(REACTIVE_KEYS))])
+		if str(r.get("map", map_id)) != map_id:
+			errors.append("%s: map '%s' is not the scene's map '%s'" % [rw, r.get("map", ""), map_id])
+		var an: Variant = r.get("anchor", null)
+		if typeof(an) != TYPE_DICTIONARY or (an as Dictionary).size() != 1 or str((an as Dictionary).keys()[0]) not in ["thing", "actor", "pos"]:
+			errors.append("%s: anchor must be exactly one of {thing}, {actor}, {pos: [x, y, z]} (something drawn in the picture)" % rw)
+		elif bool(idx["ok"]):
+			var key := str((an as Dictionary).keys()[0])
+			var val: Variant = an[key]
+			if key == "thing" and not (idx["things"] as Dictionary).has(str(val)):
+				errors.append("%s: anchor thing '%s' is not in map %s" % [rw, val, map_id])
+			elif key == "actor" and not (idx["actors"] as Dictionary).has(str(val)):
+				errors.append("%s: anchor actor '%s' has no home in map %s" % [rw, val, map_id])
+			elif key == "pos" and (typeof(val) != TYPE_ARRAY or (val as Array).size() != 3):
+				errors.append("%s: anchor pos must be [x, y, z]" % rw)
+		if str(r.get("reaction", "")) not in REACTIONS:
+			errors.append("%s: reaction '%s' is not one of %s" % [rw, r.get("reaction", ""), ", ".join(PackedStringArray(REACTIONS))])
+		if r.has("touch"):
+			var t: Variant = r["touch"]
+			var ok := typeof(t) == TYPE_DICTIONARY
+			if ok:
+				for k in ["w", "h"]:
+					var v: Variant = (t as Dictionary).get(k, 0.0)
+					ok = ok and (typeof(v) == TYPE_FLOAT or typeof(v) == TYPE_INT) and float(v) > 0.0 and float(v) <= 6.0
+			if not ok:
+				errors.append("%s: touch must be {w, h} in metres, each above 0 and at most 6" % rw)
+		if r.has("effect"):
+			var e: Variant = r["effect"]
+			var only_flags := typeof(e) == TYPE_DICTIONARY
+			if only_flags:
+				for k in (e as Dictionary):
+					only_flags = only_flags and str(k) == "flags_set"
+			if not only_flags:
+				errors.append("%s: effect may only be {flags_set: [...]} (a reactive object never routes; assumption A5)" % rw)
+			else:
+				for f in (e as Dictionary).get("flags_set", []):
+					if str(f) == "" or is_keep(str(f)):
+						errors.append("%s: effect flag '%s' must be a per-run flag (not empty, not keep:)" % [rw, f])
 
 
 # --- the acting contract (docs/THREE_PATHS_AND_FACES_PLAN.md 2.3) ----------------------------------------------------------------

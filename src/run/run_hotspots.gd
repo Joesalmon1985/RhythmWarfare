@@ -7,6 +7,11 @@ extends RefCounted
 ## the commit: the decision beat of the window's last block (the early one's block, for the final window the last block, beat 60.5 to 60.75, the existing route lock). At the commit the block just
 ## judged decides: passed -> the hotspot's on_success, missed -> its on_failure. Nothing tapped -> the scene's default exit, whatever the performance.
 ##
+## SELECTION OPEN FOR THE WHOLE SCENE (INTERACTION_DESIGN.md 2.2, work package N2.1): the run scene asks `shown(block, true)` and `select(id, block, true)` while the port's selection_open() holds,
+## so a final-window choice is on show and touchable from the scene's first beat; the pick is held (across a path scene's laps, and across a track scene's laps before its doors open) and commits
+## once, at the lock of the next departure lap, exactly as before. The engine's own route window (`window_open`) still decides `choose()` and what the engine's callers pass here.
+## REACTIVE OBJECTS (reactives(), react()) are a separate list: they react to a tap and never touch the selection, the commit or a route.
+##
 ## World state: flags_set names go to `run_flags` (per run, cleared when a run starts) or, with the "keep:" prefix, to `flags` (persistent, saved by RunProgress). Availability reads both.
 ## The same taps at the same block results always give the same outcomes: nothing here depends on frame timing.
 
@@ -22,6 +27,7 @@ var spent: Dictionary = {}  # hotspot id -> times it was committed and used up (
 var committed_count: Dictionary = {}  # hotspot id -> times committed this run (any outcome)
 var last_outcome: Dictionary = {}
 var log: Array = []  # every outcome: the tests and the walks read it
+var reacted: Array = []  # every reactive object's reaction ({reactive, reaction, scene, flags_set}); never an outcome, never in `log`
 var persist_dirty := false  # a persistent flag changed since the owner last saved
 var preselect := false  # (run.json `choice.preselect`, off by default: an owner's decision) a staged final-window option may be touched before its window opens; the commit is unchanged
 
@@ -45,13 +51,16 @@ func begin_scene(node_id: String, p_energy: float) -> void:
 	_list = data.hotspots_of(node_id) if data != null else []
 
 
-## A track scene's next lap begins (docs/RUN_TRACK_SCENES.md "open laps"): the final window's touch state starts over (nothing selected, nothing committed), the crowd's energy follows. The early
-## window's commit (the wizard) and what is used up are kept, as across the laps of a path scene. Only the engine of a track scene calls this.
+## A track scene's next lap begins (docs/RUN_TRACK_SCENES.md "open laps"): nothing is committed, the crowd's energy follows. The early window's commit (the wizard) and what is used up are kept,
+## as across the laps of a path scene. Only the engine of a track scene calls this.
+## Selection is open for the whole scene (INTERACTION_DESIGN.md 2.2, N2.1): a pick is held until the next departure boundary. A lap that ended with a pick still standing was a lap before the doors
+## open (an exit touched on an open lap makes that lap the last), so the pick is kept for the next lap instead of being cleared; with nothing picked nothing changes.
 func begin_lap(p_energy: float) -> void:
 	energy = p_energy
-	selected = ""
 	committed = ""
 	last_outcome = {}
+	if selected != "" and window_of(get_hotspot(selected)) != "final":  # (a place to sit or the wizard touched after its block's decision: the touch state starts over, as before)
+		selected = ""
 
 
 func list() -> Array:
@@ -115,11 +124,50 @@ func is_shown(id: String, block: int, final_open: bool) -> bool:
 
 
 ## The player touches a hotspot. Allowed while it is on show and nothing has committed; changing the selection is always allowed until then. False when it cannot be selected.
+## `final_open`: whether final-window choices may be touched now. The engine's own callers pass its route window; the run scene passes the port's selection_open() (selection open for the
+## whole scene, INTERACTION_DESIGN.md 2.2), so a choice is touchable from the scene's first beat until the lock.
 func select(id: String, block: int, final_open: bool) -> bool:
 	if not is_shown(id, block, final_open) and not (preselect and committed == "" and window_of(get_hotspot(id)) == "final" and staged(block).has(get_hotspot(id))):
 		return false
 	selected = id
 	return true
+
+
+## The selection is withdrawn (the port closed its request, N2.2's request_closed handler): `id` stops being selected and the scene's default applies again. False when it was not selected.
+func deselect(id: String) -> bool:
+	if id == "" or selected != id:
+		return false
+	selected = ""
+	return true
+
+
+## --- reactive objects (INTERACTION_DESIGN.md 2.1, 2.5): they react to a tap and lead nowhere. Nothing here touches `selected`, `committed` or a route.
+
+## The scene's reactive objects (normalised rows, RunData.reactives_of).
+func reactives() -> Array:
+	return data.reactives_of(node) if data != null else []
+
+
+func get_reactive(id: String) -> Dictionary:
+	for r in reactives():
+		if str(r["id"]) == id:
+			return r
+	return {}
+
+
+## A reactive object is tapped: {reactive, reaction, scene, flags_set} ({} when it is not one of this scene's). Its optional effect sets per-run flags only (assumption A5); the selection, the commit
+## and the default are untouched.
+func react(id: String) -> Dictionary:
+	var r := get_reactive(id)
+	if r.is_empty():
+		return {}
+	var flags_set: Array = ((r.get("effect", {}) as Dictionary).get("flags_set", []) as Array).duplicate()
+	for f in flags_set:
+		if not HotspotContract.is_keep(str(f)):
+			run_flags[str(f)] = true
+	var out := {"reactive": id, "reaction": str(r["reaction"]), "scene": node, "flags_set": flags_set}
+	reacted.append(out)
+	return out
 
 
 ## The first hotspot on show whose success route is `to` (scripted play, desktop keys).
@@ -131,7 +179,7 @@ func select_route(to: String, block: int, final_open: bool) -> bool:
 	return false
 
 
-## The nth hotspot on show (keyboard 1 to 4 on the desktop), in file order.
+## The nth hotspot on show (keyboard 1 to 8 on the desktop), in file order.
 func select_index(i: int, block: int, final_open: bool) -> bool:
 	var s := shown(block, final_open)
 	if i < 0 or i >= s.size():

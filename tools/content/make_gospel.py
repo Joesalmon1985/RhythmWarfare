@@ -145,7 +145,7 @@ def cinematic(scene, name, steps, cast=None):
     return full
 
 
-def hs(scene, name, kind, anchor, s, f, *, default=False, av=None, radius=0.8, acting=None, look=None, repeatable=True, min_px=72):
+def hs(scene, name, kind, anchor, s, f, *, default=False, av=None, radius=0.8, acting=None, look=None, repeatable=True, min_px=88):
     world = WORLD_OF[scene]
     mp = next(w["map"] for w in WORLDS if w["id"] == world)
     h = {"id": f"{scene}.{name}", "world": world, "scene": scene, "map": mp, "anchor": anchor, "kind": kind, "radius_m": radius, "min_px": min_px, "available": av or avail(),

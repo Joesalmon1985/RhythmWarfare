@@ -117,7 +117,7 @@ def build_hotspots() -> dict:
             h = dict(h)
             h["world"] = s["world"]
             h["map"] = st.MAP_OF_WORLD[s["world"]]
-            h.setdefault("min_px", 72)
+            h.setdefault("min_px", 88)
             h["available"] = {"flags_all": [], "flags_none": [], "energy_min": 0, "once": False}
             h["look"] = {"available": h["look"]["available"], "selected": "ring", "committed": "flash"}
             h["challenge"] = None

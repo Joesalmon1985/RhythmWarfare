@@ -256,7 +256,7 @@ func load_hotspots(path: String) -> void:
 		for c in p2.get("choices", []):
 			required.append("exit" if c.get("to", null) == null else str(int(c["to"])))
 		HotspotContract.validate_scene(by_passage[n], {"where": "passage %d" % n, "map": str(p2.get("map", "")), "world": str(v.get("world", "bassment")), "routes": routes,
-			"start_energy": 60.0, "min_available": 1, "max_available": 4, "default_any_kind": true, "default_route": default_route, "exit_routes_required": required, "figures": encounters.keys()}, errors)
+			"start_energy": 60.0, "min_available": 1, "max_available": 4, "min_px_floor": HotspotContract.BASSMENT_MIN_PX, "default_any_kind": true, "default_route": default_route, "exit_routes_required": required, "figures": encounters.keys()}, errors)
 		hotspots[n] = by_passage[n]
 
 

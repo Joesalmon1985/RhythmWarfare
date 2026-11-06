@@ -199,12 +199,14 @@ func test_activity_is_rejected_in_on_failure_with_a_route_empty_or_unknown() -> 
 	assert_true(_has(_validate(_scene_list([_hs("t", {"on_success": {"activity": "fake"}})]), {"activities": []}), "not a registered minigame"), "an empty registry knows nothing")
 
 
-func test_a_scene_may_raise_its_cap_and_the_default_stays_four() -> void:
+func test_a_scene_may_raise_its_cap_and_the_default_is_eight() -> void:  # (N2.1: the default cap rose from 4 to 8, lead ruling 1)
+	var nine := _scene_list(["c", "d", "e", "f", "g", "h", "i"].map(func(x: String) -> Dictionary: return _hs(x)))
+	assert_eq(nine.size(), 9)
+	assert_true(_has(_validate(nine), "available at the start"), "nine hotspots break the default cap of 8")
+	assert_eq(_validate(nine, {"max_available": 9}), [], "max_available 9 allows nine")
+	assert_true(_has(_validate(nine, {"max_available": 8}), "available at the start"))
 	var five := _scene_list([_hs("c"), _hs("d"), _hs("e")])
-	assert_eq(five.size(), 5)
-	assert_true(_has(_validate(five), "available at the start"), "five hotspots break the default cap of 4")
-	assert_eq(_validate(five, {"max_available": 5}), [], "max_available 5 allows five")
-	assert_true(_has(_validate(five, {"max_available": 4}), "available at the start"))
+	assert_eq(_validate(five), [], "five fit under the default cap")
 
 
 # --- RunHotspots ------------------------------------------------------------------------------------------------------------
