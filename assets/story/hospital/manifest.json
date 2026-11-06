@@ -2750,6 +2750,102 @@
     ],
     "px_scale": 1.0
    },
+   "prop_gel": {
+    "file": "processed/prop_gel.png",
+    "pivot": [
+     13.0,
+     51.0
+    ],
+    "px_scale": 1.0
+   },
+   "prop_light_bar": {
+    "file": "processed/prop_light_bar.png",
+    "pivot": [
+     41.5,
+     13.0
+    ],
+    "px_scale": 1.0
+   },
+   "prop_linen_cart": {
+    "file": "processed/prop_linen_cart.png",
+    "pivot": [
+     51.0,
+     115.0
+    ],
+    "px_scale": 1.0
+   },
+   "prop_noticeboard": {
+    "file": "processed/prop_noticeboard.png",
+    "pivot": [
+     70.5,
+     102.0
+    ],
+    "px_scale": 1.0
+   },
+   "prop_phone": {
+    "file": "processed/prop_phone.png",
+    "pivot": [
+     14.0,
+     36.0
+    ],
+    "px_scale": 1.0
+   },
+   "prop_picture": {
+    "file": "processed/prop_picture.png",
+    "pivot": [
+     70.5,
+     102.0
+    ],
+    "px_scale": 1.0
+   },
+   "prop_trolley": {
+    "file": "processed/prop_trolley.png",
+    "pivot": [
+     57.5,
+     128.0
+    ],
+    "px_scale": 1.0
+   },
+   "prop_wall_sign": {
+    "file": "processed/prop_wall_sign.png",
+    "pivot": [
+     32.0,
+     38.0
+    ],
+    "px_scale": 1.0
+   },
+   "prop_ward_door_a": {
+    "file": "processed/prop_ward_door_a.png",
+    "pivot": [
+     67.0,
+     269.0
+    ],
+    "px_scale": 1.0
+   },
+   "prop_ward_door_b": {
+    "file": "processed/prop_ward_door_b.png",
+    "pivot": [
+     67.0,
+     269.0
+    ],
+    "px_scale": 1.0
+   },
+   "prop_whiteboard": {
+    "file": "processed/prop_whiteboard.png",
+    "pivot": [
+     57.5,
+     77.0
+    ],
+    "px_scale": 1.0
+   },
+   "prop_window_lit": {
+    "file": "processed/prop_window_lit.png",
+    "pivot": [
+     102.5,
+     192.0
+    ],
+    "px_scale": 1.0
+   },
    "passage_frame": {
     "file": "source/views/passage_frame.svg",
     "pivot": [

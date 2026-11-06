@@ -952,6 +952,8 @@ def build_stage():
     sp.update(build_png_sprites())
     from . import hp_pix
     sp.update(hp_pix.write_sprites(lib.PNG_DIR))  # the PA speaker, the spot, the lantern, the open door and the big props: pixels (audit F2, F15, F1)
+    from . import hp_wall
+    sp.update(hp_wall.write_props(lib.PNG_DIR))  # the wall scenery the periodic wall tiles no longer carry: doors, boards, signs, trolleys, the lit window
     hp_pix.write_sky(lib.PNG_DIR)
     layers = []
     build_backdrop()

@@ -605,8 +605,8 @@ def write_pieces(out_dir: str) -> dict:
 
 
 def write_sky(out_dir: str) -> None:
-    """The map's sky: 1024 x 128 texels once round the horizon (map sky.repeats 1), one moon to the east-north-east where the garden looks, pixel stars."""
+    """The map's sky: 1024 x 128 texels once round the horizon (map sky.repeats 1), one moon at az 262 degrees, 20 degrees up, in the view of the garden scenes' camera (which looks west), pixel stars."""
     os.makedirs(out_dir, exist_ok=True)
     from PIL import Image
-    a = sky_strip(1024, 128, 211, ((236, 57),))
+    a = sky_strip(1024, 128, 211, ((745, 40),))
     Image.fromarray(a, "RGB").save(os.path.join(out_dir, "sky_night_wide.png"), optimize=False, compress_level=9)
