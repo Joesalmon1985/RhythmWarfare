@@ -107,3 +107,16 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     the menu over **a live, slowly moving view of the Warehouse floor** in the chapters menu's neon style,
     without the engine version line. Package A3 (UI) builds these and may edit `src/scenes/main_menu.*`
     and `src/run/run_hud.gd` for them.
+30. The standard for a quest entrance, after the entrance-visibility work (`docs/art/HERALDS.md`,
+    `docs/shots/art/entrances/`): every entrance to a quest from the main flow is **a lit doorway or gate in
+    the quest's colour**, with **its herald beside it gesturing at it**, **the mark over it** and **a pool of
+    light on the floor**; and the scene's camera keeps the herald and the gate in frame for the scene's
+    opening bars (`herald_looks` in `src/run/run_journey.gd`; `tests/test_heralds_view.gd` checks it). A
+    small object alone (the radio, the ember, the star as first built) does not count as an entrance. The
+    owner was told of this on 6 November and may still ask for objects instead. N2.4 builds the twenty new
+    entrances to this standard; the Warehouse's radio and ember entrances are brought up to it in the same
+    package.
+31. Package A4 (choice art) is merged: `ChoiceProps.tex_in(name, map_id)` picks `assets/run/choice/<set>/`
+    by the map and falls back to the shared files. A new map gets its door set by a line in `SETS` in
+    `src/run/choice_props.gd` and a set in `tools/run/make_choice_art.py`; a world package that adds a map
+    asks stream A for the set and does not draw its own door.
