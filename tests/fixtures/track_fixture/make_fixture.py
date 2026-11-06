@@ -4,7 +4,7 @@ voices (drums, a lead and a bass, the last two pitched), one backing stem, and a
 lead (4 to 8 s), a gap with nothing to play (8 to 9 s), bass (9 to 16 s). The charts `normal` and `easy` hold taps,
 holds (the lead's ends 0.1 s before its stretch does), and two-pad chords on different thumbs in the drums stretch.
 Writes track.json and stems/*.ogg next to this file, plus three deliberately wrong stems in extra/ (short, mono,
-44.1 kHz) that the loader tests copy into temporary packs. Needs numpy and /usr/bin/ffmpeg (libvorbis).
+44.1 kHz) that the loader tests copy into temporary packs. Needs numpy and ffmpeg (libvorbis).
 
     python3 tests/fixtures/track_fixture/make_fixture.py
 """
@@ -102,7 +102,7 @@ def write_ogg(path, samples, channels=2, rate=SR):
         w.setframerate(rate)
         w.writeframes(pcm.tobytes())
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    subprocess.run(["/usr/bin/ffmpeg", "-y", "-loglevel", "error", "-i", wav_path, "-c:a", "libvorbis", "-q:a", "1",
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", wav_path, "-c:a", "libvorbis", "-q:a", "1",
                     "-ar", str(rate), "-ac", str(channels), path], check=True)
     os.unlink(wav_path)
 

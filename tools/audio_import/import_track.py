@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Turn finished recordings into track packs (docs/TRACK_PACK_FORMAT.md, version 2). No MIDI: all from audio.
 
-    /home/joe/.venvs/rw-audio/bin/python tools/audio_import/import_track.py FILE_OR_FOLDER [...]
-        [--id ID] [--out /home/joe/rw-audio-work] [--model htdemucs] [--from STAGE | --only STAGE]
+    <the audio venv python> tools/audio_import/import_track.py FILE_OR_FOLDER [...]
+        [--id ID] [--out WORK] [--device auto|cpu|cuda] [--model htdemucs] [--from STAGE | --only STAGE]
         [--min-bars 8] [--focus VOICE] [--focus-at WHERE=VOICE ...] [--focus-auto] [--skip-imported] [--prune-cache]
-    /home/joe/.venvs/rw-audio/bin/python tools/audio_import/import_track.py --rechart [ID ...]
+    <the audio venv python> tools/audio_import/import_track.py --rechart [ID ...]
+
+<the audio venv python> is /home/joe/.venvs/rw-audio/bin/python on Linux and
+C:/Users/joesa/rw-audio-work/venv/Scripts/python.exe on Windows. --out defaults to $RW_AUDIO_WORK, else ~/rw-audio-work.
 
 --rechart reruns focus, chart, pack, preview and validate of existing packs from the cached analysis and the
 encoded stems (no recording, no Demucs). Every summary line ends with ok, ok with warnings or FAILED; the exit
@@ -45,6 +48,10 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from audio_io import mono, probe  # noqa: E402
 
+def default_work_dir() -> str:
+    return os.environ.get("RW_AUDIO_WORK") or str(Path.home() / "rw-audio-work")
+
+
 STAGES = ("separate", "analyse", "voices", "events", "focus", "chart", "pack", "preview", "validate")
 VERSION = "audio_import 0.3 (track format v2)"
 AUDIO_EXT = {".flac", ".mp3", ".wav", ".ogg", ".m4a", ".aiff", ".aif", ".opus", ".wma", ".aac"}
@@ -77,7 +84,7 @@ class Ctx:
         self.out = Path(a.out)
         self.renamed_from = None
         if src is None:
-            tj = json.loads((self.out / "packs" / pack_id / "track.json").read_text())
+            tj = json.loads((self.out / "packs" / pack_id / "track.json").read_text(encoding="utf-8"))
             self.src = Path(tj.get("source", {}).get("input_path") or tj.get("source", {}).get("input_file", "unknown"))
             self.meta = {"artist": tj["artist"], "title": tj["title"], "id": pack_id,
                          "probe": {"codec": None, "rate": None, "channels": None, "duration": tj["duration_s"],
@@ -97,24 +104,25 @@ class Ctx:
         self.cache = self.out / "cache" / self.id
         self.pack = self.out / "packs" / self.id
         self.model = a.model
+        self.device = getattr(a, "device", "auto")
         self.sep_dir = self.cache / f"sep_{self.model}"
         self.timings: dict[str, float] = {}
         self.cache.mkdir(parents=True, exist_ok=True)
         if src is not None:
-            (self.cache / "source.txt").write_text(str(self.src) + "\n")
+            (self.cache / "source.txt").write_text(str(self.src) + "\n", encoding="utf-8")
         tf = self.cache / "timings.json"
         if tf.exists():
-            self.timings = json.loads(tf.read_text())
+            self.timings = json.loads(tf.read_text(encoding="utf-8"))
         # focus options: the command line wins and is remembered; --focus-auto forgets
         of = self.cache / "focus_options.json"
-        saved = json.loads(of.read_text()) if of.exists() else {}
+        saved = json.loads(of.read_text(encoding="utf-8")) if of.exists() else {}
         if a.focus_auto:
             saved = {}
         given = {k: v for k, v in (("min_bars", a.min_bars), ("fixed", a.focus), ("overrides", a.focus_at)) if v}
         self.focus_opts = {"min_bars": 8, "fixed": None, "overrides": [], **saved, **given}
         stored = {k: v for k, v in self.focus_opts.items() if v and not (k == "min_bars" and v == 8)}
         if stored:
-            of.write_text(json.dumps(stored, indent=1))
+            of.write_text(json.dumps(stored, indent=1), encoding="utf-8")
         elif of.exists():
             of.unlink()
 
@@ -122,21 +130,21 @@ class Ctx:
         """The id's cache or pack was made from another recording (same artist and title, another file)."""
         f = self.out / "cache" / pid / "source.txt"
         if f.is_file():
-            return f.read_text().strip() != str(self.src)
+            return f.read_text(encoding="utf-8").strip() != str(self.src)
         try:
-            tj = json.loads((self.out / "packs" / pid / "track.json").read_text())
+            tj = json.loads((self.out / "packs" / pid / "track.json").read_text(encoding="utf-8"))
             return Path(tj["source"]["input_path"]).resolve() != self.src
         except (OSError, ValueError, KeyError):
             return False
 
     def save_timings(self) -> None:
-        (self.cache / "timings.json").write_text(json.dumps(self.timings, indent=1))
+        (self.cache / "timings.json").write_text(json.dumps(self.timings, indent=1), encoding="utf-8")
 
     def jload(self, name: str) -> dict:
-        return json.loads((self.cache / name).read_text())
+        return json.loads((self.cache / name).read_text(encoding="utf-8"))
 
     def jsave(self, name: str, obj) -> None:
-        (self.cache / name).write_text(json.dumps(obj, indent=1, default=_np))
+        (self.cache / name).write_text(json.dumps(obj, indent=1, default=_np), encoding="utf-8")
 
 
 def _np(o):
@@ -153,7 +161,7 @@ def st_separate(c: Ctx) -> bool:
     from separate import separate
     if (c.sep_dir / "meta.json").exists():
         return False
-    separate(c.src, c.sep_dir, c.model)
+    separate(c.src, c.sep_dir, c.model, device=c.device)
     return True
 
 
@@ -177,14 +185,14 @@ def _stem_src(c: Ctx) -> Path | None:
         return d
     p = c.pack / "stems"
     if (p / ".made_from").is_file() and all((p / f"{k}.ogg").is_file() for k in keys):
-        info = json.loads((p / ".made_from").read_text())
+        info = json.loads((p / ".made_from").read_text(encoding="utf-8"))
         if not info.get("folded"):
             import shutil
             shutil.rmtree(d, ignore_errors=True)
             d.mkdir(parents=True)
             for k in keys:
                 _link(p / f"{k}.ogg", d / f"{k}.ogg")
-            (d / ".made_from").write_text(json.dumps(info))
+            (d / ".made_from").write_text(json.dumps(info), encoding="utf-8")
             return d
     return None
 
@@ -213,7 +221,7 @@ def _audio(c: Ctx, need_mix: bool = True) -> dict:
         raise RuntimeError(f"{c.id}: the separated audio is gone (pruned) and there are no encoded stems of every "
                            f"voice to work from; import the recording again without --from to separate it again")
     from audio_io import PACK_RATE, decode
-    info = json.loads((d / ".made_from").read_text())
+    info = json.loads((d / ".made_from").read_text(encoding="utf-8"))
     g = float(info.get("gain", 1.0))
     voices = {k: decode(d / f"{k}.ogg", rate=PACK_RATE)[0] * g for k in vj["voices"]}
     backing = decode(d / "backing.ogg", rate=PACK_RATE)[0] * g
@@ -533,7 +541,7 @@ def st_preview(c: Ctx) -> None:
     from pack import write_previews
     au = _audio(c)
     an = c.jload("analysis.json")
-    tj = json.loads((c.pack / "track.json").read_text())
+    tj = json.loads((c.pack / "track.json").read_text(encoding="utf-8"))
     miss = pick_miss(an, tj)
     write_previews(c.pack / "preview", au["mix"], au["voices"], tj["charts"]["normal"], tj["focus"], au["rate"], miss)
     c.jsave("miss.json", miss)
@@ -567,7 +575,7 @@ def _stale(c: Ctx, st: str) -> bool:
         if st == "focus":
             return c.jload("focus.json").get("options") != c.focus_opts
         if st == "pack":
-            return json.loads((c.pack / "track.json").read_text()).get("format") != "rhythm_warfare.track.v2"
+            return json.loads((c.pack / "track.json").read_text(encoding="utf-8")).get("format") != "rhythm_warfare.track.v2"
     except (OSError, ValueError, KeyError):
         return True
     return False
@@ -647,9 +655,9 @@ def summary_line(c: Ctx | None, src: Path, err: str | None = None) -> tuple[str,
             share = sum(f["end_s"] - f["start_s"] for f in fj["focus"] if f["voice"] == k) / max(total, 1e-9)
             if share > 0.8 and len(vj["voices"]) > 1:
                 warn.append(f"{k} has the focus {share:.0%} of the playable time (little variety)")
-        tj = json.loads((c.pack / "track.json").read_text())
+        tj = json.loads((c.pack / "track.json").read_text(encoding="utf-8"))
         parts.append("cues " + " ".join(f"{d}:{len(tj['charts'][d])}" for d in ("easy", "normal", "hard")))
-        rj = json.loads((c.pack / "report.json").read_text()) if (c.pack / "report.json").exists() else {}
+        rj = json.loads((c.pack / "report.json").read_text(encoding="utf-8")) if (c.pack / "report.json").exists() else {}
         nv = rj.get("validation", {}).get("violations")
         if nv:
             warn.append(f"validator: {nv} violation(s), see {c.pack / 'report.txt'}")
@@ -678,7 +686,7 @@ def inputs(paths: list[str]) -> list[Path]:
 def _imported(c: Ctx) -> bool:
     """A pack exists for this recording and its last validation found nothing wrong."""
     try:
-        rep = json.loads((c.pack / "report.json").read_text())
+        rep = json.loads((c.pack / "report.json").read_text(encoding="utf-8"))
         return (c.pack / "track.json").exists() and rep.get("validation", {}).get("violations") == 0
     except (OSError, ValueError):
         return False
@@ -697,7 +705,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("audio", nargs="*", help="audio files and/or folders of audio files (with --rechart: pack ids, "
                                              "or nothing for every pack under <out>/packs)")
     ap.add_argument("--id", help="pack id (default: artist_title from tags or file name); one input only")
-    ap.add_argument("--out", default="/home/joe/rw-audio-work")
+    ap.add_argument("--out", default=default_work_dir(), help="work folder (default: $RW_AUDIO_WORK, else ~/rw-audio-work)")
+    ap.add_argument("--device", default="auto", help="Demucs device: auto (CUDA when torch sees a GPU, else cpu), "
+                                                      "cpu, cuda, cuda:1")
     ap.add_argument("--model", default="htdemucs", choices=("htdemucs", "htdemucs_ft", "htdemucs_6s"))
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--from", dest="start", choices=STAGES, help="rerun this stage and every later one")
@@ -718,6 +728,9 @@ def main(argv: list[str] | None = None) -> int:
                          "1 GB each); its encoded stems stay in the cache, so --rechart and --from focus still work")
     a = ap.parse_args(argv)
     os.environ.setdefault("HF_HUB_OFFLINE", "1")
+    for stream in (sys.stdout, sys.stderr):  # track names with non-ASCII characters on a cp1252 console
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     if a.rechart:
         a.start = "focus"
         packs = Path(a.out) / "packs"
@@ -765,7 +778,7 @@ def main(argv: list[str] | None = None) -> int:
         nv = None
         if c is not None:
             try:
-                nv = json.loads((c.pack / "report.json").read_text()).get("validation", {}).get("violations")
+                nv = json.loads((c.pack / "report.json").read_text(encoding="utf-8")).get("validation", {}).get("violations")
             except (OSError, ValueError):
                 nv = None
         v = verdict(err, warn, nv)
@@ -781,8 +794,8 @@ def main(argv: list[str] | None = None) -> int:
     print("\n" + text)
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    (out / "batch_summary.txt").write_text(text)
-    (out / f"batch_summary_{stamp}.txt").write_text(text)
+    (out / "batch_summary.txt").write_text(text, encoding="utf-8")
+    (out / f"batch_summary_{stamp}.txt").write_text(text, encoding="utf-8")
     return rc
 
 

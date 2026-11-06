@@ -29,7 +29,9 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from audio_io import decode  # noqa: E402
-from import_track import AUDIO_EXT, guess_meta  # noqa: E402
+from import_track import AUDIO_EXT, default_work_dir, guess_meta  # noqa: E402
+
+_WORK = Path(default_work_dir())
 
 FORMAT = "rhythm_warfare.track_catalogue.v1"
 VERSION = "catalogue_tracks 0.4"
@@ -189,9 +191,9 @@ def import_facts(pack: Path) -> dict | None:
     tj = pack / "track.json"
     if not tj.exists():
         return None
-    t = json.loads(tj.read_text())
+    t = json.loads(tj.read_text(encoding="utf-8"))
     rj = pack / "report.json"
-    r = json.loads(rj.read_text()) if rj.exists() else {}
+    r = json.loads(rj.read_text(encoding="utf-8")) if rj.exists() else {}
     bpm = float(t["tempo"]["bpm"])
     bar_s = 240.0 / bpm
     d0 = float(t["tempo"].get("first_downbeat_s", 0.0))
@@ -294,13 +296,13 @@ def build(args: argparse.Namespace) -> int:
         cf = cache / f"{tid}.json"
         look = None
         if cf.exists():
-            c = json.loads(cf.read_text())
+            c = json.loads(cf.read_text(encoding="utf-8"))
             if c.get("size") == st.st_size and c.get("mtime") == int(st.st_mtime) and c.get("tool") == VERSION:
                 look = c["look"]
         if look is None:
             try:
                 look = quick_look(f)
-                cf.write_text(json.dumps({"size": st.st_size, "mtime": int(st.st_mtime), "tool": VERSION, "look": look}))
+                cf.write_text(json.dumps({"size": st.st_size, "mtime": int(st.st_mtime), "tool": VERSION, "look": look}), encoding="utf-8")
             except Exception as e:
                 failed.append({"file": f.name, "error": str(e).strip()[:200]})
                 print(f"[{n}/{len(files)}] {f.name}: quick look failed ({e})", flush=True)
@@ -321,7 +323,7 @@ def build(args: argparse.Namespace) -> int:
             (out / f"{tid}.json").write_text(json.dumps(
                 {"format": "rhythm_warfare.track_metadata.v1", "id": tid, "file": f.name, "artist": meta["artist"],
                  "title": meta["title"], "album": tags.get("album"), "year": _year(tags), "genre": tags.get("genre"),
-                 **facts, "quick": look}, indent=1) + "\n")
+                 **facts, "quick": look}, indent=1) + "\n", encoding="utf-8")
         tracks.append(entry)
         print(f"[{n}/{len(files)}] {tid}: {look['bpm']} BPM, {_mmss(info['duration'])}"
               f"{', imported' if facts else ''}", flush=True)
@@ -342,9 +344,9 @@ def build(args: argparse.Namespace) -> int:
         "unreadable": failed,
         "tracks": tracks,
     }
-    (out / "catalogue.json").write_text(json.dumps(cat, indent=1, allow_nan=False) + "\n")
+    (out / "catalogue.json").write_text(json.dumps(cat, indent=1, allow_nan=False) + "\n", encoding="utf-8")
     if args.doc:
-        Path(args.doc).write_text(_doc(cat, out))
+        Path(args.doc).write_text(_doc(cat, out), encoding="utf-8")
     print(f"{len(tracks)} recordings, {cat['counts']['imported']} imported, {len(failed)} unreadable -> {out}")
     return 0
 
@@ -388,7 +390,7 @@ def _doc(cat: dict, out: Path) -> str:
     if done:
         L += ["", "## Imported recordings", ""]
     for e in done:
-        d = json.loads((out / f"{e['id']}.json").read_text())
+        d = json.loads((out / f"{e['id']}.json").read_text(encoding="utf-8"))
         L += [f"### {e['artist']}: {e['title']} (`{e['id']}`)", "",
               f"{d['tempo']['bpm']:.4f} BPM ({d['tempo']['ratio_to_174']:.4f} x 174), "
               f"{'constant' if d['tempo']['constant'] else 'NOT constant'}; {_mmss(d['duration_s'])}; "
@@ -408,8 +410,8 @@ def _doc(cat: dict, out: Path) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("inputs", nargs="+", help="folders and/or audio files")
-    ap.add_argument("--packs", default="/home/joe/rw-audio-work/packs", help="where imported packs live")
-    ap.add_argument("--cache", default="/home/joe/rw-audio-work/cache/_catalogue", help="quick-look cache")
+    ap.add_argument("--packs", default=str(_WORK / "packs"), help="where imported packs live")
+    ap.add_argument("--cache", default=str(_WORK / "cache" / "_catalogue"), help="quick-look cache")
     ap.add_argument("--out", default=str(REPO / "content" / "music" / "tracks"))
     ap.add_argument("--doc", default=str(REPO / "docs" / "MUSIC_TRACKS.md"), help="'' to skip the table")
     return build(ap.parse_args())
