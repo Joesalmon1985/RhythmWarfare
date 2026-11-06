@@ -129,6 +129,15 @@
    },
    "default": false,
    "repeatable": true,
+   "herald": {
+    "quest": "dungeon",
+    "self": "wizard_floor",
+    "toward": [
+     -7.6,
+     6.5
+    ],
+    "mark_y": 2.55
+   },
    "staging": {
     "archetype": "figure",
     "current_tex": "wizard_happy",
@@ -1259,7 +1268,19 @@
     "energy": -4
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "herald": {
+    "quest": "gospel",
+    "at": [
+     -10.646,
+     2.075
+    ],
+    "toward": [
+     -10.4,
+     0.8
+    ],
+    "mark_y": 2.85
+   }
   },
   {
    "id": "warehouse.booth.radio",
@@ -1302,7 +1323,19 @@
     "energy": -4
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "herald": {
+    "quest": "squadron",
+    "at": [
+     1.75,
+     -8.15
+    ],
+    "toward": [
+     1.5,
+     -9.4
+    ],
+    "mark_y": 2.25
+   }
   },
   {
    "id": "warehouse.bar.ember",
@@ -1348,7 +1381,19 @@
     "energy": -4
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "herald": {
+    "quest": "ember",
+    "at": [
+     10.695,
+     3.904
+    ],
+    "toward": [
+     10.0,
+     5.0
+    ],
+    "mark_y": 2.05
+   }
   }
  ]
 }

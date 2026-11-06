@@ -82,3 +82,10 @@ _portal["look"]["finished"] = finished("squadron")
 _portal = sc("warehouse.bar", "ember", P(10.0, 1.0, 5.0), "pulse", out(route="path:ember"), out(energy=-4),
    s_text="a warm ember in a glass: the Ember Road path (route path:ember, psytrance 145)", f_text="the ember gutters out (-4)", av=avail(all=["wh_vip_pass"]))
 _portal["look"]["finished"] = finished("ember")
+
+# ---- the heralds (lead ruling 25, docs/art/HERALDS.md): a character of each quest at its entrance, gesturing towards it. Scenery of the entrance, never a choice.
+from heralds import herald  # noqa: E402
+herald("dungeon", "warehouse.wizard", self_thing=True, toward=T("sign_wc_door"))  # the wizard IS the entrance: his staff held, his arm pointing to the corridor and the hatch
+herald("gospel", "warehouse.balcony.star", side="left")      # the shepherd of the first night, beside the star
+herald("squadron", "warehouse.booth.radio", at=(1.75, -8.15))  # the Gunner, at the booth's corner by the radio (the booth is too tight for a side)
+herald("ember", "warehouse.bar.ember", side="left")          # Bram, beside the glass with the Ember
