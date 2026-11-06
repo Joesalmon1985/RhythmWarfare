@@ -92,6 +92,13 @@ def vnoise(h: int, w: int, cell: int, seed: int) -> np.ndarray:
     return (a * (1 - fx) + b * fx) * (1 - fy) + (c * (1 - fx) + d * fx) * fy
 
 
+def _fine(rp: np.ndarray, n: int = 8) -> np.ndarray:
+    t = np.linspace(0, len(rp) - 1, n)
+    i = np.minimum(t.astype(int), len(rp) - 2)
+    f = (t - i)[:, None]
+    return np.round(rp[i] * (1 - f) + rp[i + 1] * f)
+
+
 class Cv:
     """An RGBA canvas (float 0..255) with ramp painting: a value field 0..1 is quantised to a ramp through the 4x4 ordered dither."""
 
@@ -105,8 +112,11 @@ class Cv:
         self.a[mask, :3] = np.asarray(col, np.float32)
         self.a[mask, 3] = 255
 
-    def paint(self, mask: np.ndarray, val, rp: np.ndarray, spread: float = 0.9) -> None:
+    def paint(self, mask: np.ndarray, val, rp: np.ndarray, spread: float = 0.35, fine: bool = True) -> None:
+        """`fine`: the ramp is spread over 8 steps first, so the grain and wear of a surface move a short step, not a blotch from dark to light."""
         val = np.broadcast_to(np.asarray(val, np.float32), mask.shape)
+        if fine and len(rp) < 8:
+            rp = _fine(rp)
         n = len(rp)
         f = np.clip(val, 0, 1) * (n - 1) + (self.d - 0.5) * spread
         i = np.clip(np.floor(f + 0.5).astype(int), 0, n - 1)
@@ -159,7 +169,7 @@ def save(img: np.ndarray, name: str) -> None:
 def pat_steel(cv: Cv, seed: int) -> np.ndarray:
     n = vnoise(cv.h, cv.w, 9, seed)
     scratch = (hash2(cv.x // 2, cv.y, seed) > 0.985).astype(np.float32)
-    return 0.5 + 0.18 * (n - 0.5) + 0.12 * scratch
+    return 0.5 + 0.1 * (n - 0.5) + 0.1 * scratch
 
 
 def pat_planks(cv: Cv, x0: int, x1: int, boards: int, seed: int, horizontal: bool = False) -> np.ndarray:
@@ -236,25 +246,24 @@ def beyond(cv: Cv, inside: np.ndarray, box, spec: dict) -> None:
         cy = -0.8 + door_w * 0.9
         lit &= ~((fdy < cy) & (np.hypot(fdx / door_w, (fdy - cy) / (door_w * 0.9)) > 1.0))
     in_far = sc <= far
+    st = 1.0 / (len(rp) - 1)  # one step of the room ramp: the inside is drawn in flat steps, no dither (calm when it fills the screen)
     v = np.zeros(cv.x.shape, np.float32)
-    v = np.where(ceil, 0.04 + 0.22 * near ** 2, v)
-    v = np.where(wall, 0.10 + 0.30 * near ** 1.6, v)
-    shaft = np.abs(dx) / np.maximum(dyd, 1e-3) < door_w * 1.15
-    v = np.where(floor, 0.16 + 0.34 * near ** 1.4 + np.where(shaft, 0.2 * near, 0.0), v)
-    v = np.where(in_far, 0.36, v)
+    v = np.where(ceil, np.where(near > 0.72, 1, 0) * st, v)
+    v = np.where(wall, np.where(near > 0.55, 2, 1) * st, v)
+    v = np.where(floor, np.where(near > 0.8, 3, np.where(near > 0.5, 2, 1)) * st, v)
     glow = np.clip(1.0 - (np.maximum(np.abs(fdx) - door_w, 0) * 2.2 + np.maximum(-0.8 - fdy, 0) * 2.2), 0, 1)
-    v = np.where(in_far & ~lit, 0.30 + 0.18 * glow, v)
-    v = np.where(in_far & lit, 0.9 + 0.1 * (fdy > -0.25), v)
-    # the skirting line where the walls meet the floor, a step darker: it draws the room
-    seam = (np.abs(dyd - np.abs(dx)) < 0.012 / np.maximum(sc, 0.2)) & (cv.y + 0.5 > vy) & ~in_far
-    v = np.where(seam, v - 0.12, v)
-    cv.paint(inside, v, rp, spread=0.7)
+    v = np.where(in_far, np.where(glow > 0.75, 3, 2) * st, v)
+    v = np.where(in_far & lit, np.where((fdy > -0.72) & (np.abs(fdx) < door_w - 0.06), 5, 4) * st, v)
+    # the lines where the walls meet the floor and the ceiling, a step darker: they draw the room
+    seam = (np.abs(np.where(cv.y + 0.5 > vy, dyd, dyu) - np.abs(dx)) < 0.010 / np.maximum(sc, 0.2)) & ~in_far
+    v = np.where(seam, np.maximum(v - st, 0), v)
+    cv.paint(inside, v, rp, spread=0.0, fine=False)
 
 
 # --- the leaf painters: (cv, mask, u 0..1 across the leaf, v 0..1 down it, shade offset) -------------------------------------------
 def leaf_fire(cv, m, u, v, off, spec):
     """A steel fire door: a painted slab, a wired-glass vision panel, a push bar, scuffs low down."""
-    val = 0.52 + off + 0.12 * (vnoise(cv.h, cv.w, 8, 11) - 0.5) + 0.1 * (hash2(cv.x, cv.y, 4) > 0.97) * (v > 0.75)
+    val = 0.55 + off + 0.05 * (vnoise(cv.h, cv.w, 8, 11) - 0.5) + 0.1 * (hash2(cv.x, cv.y, 4) > 0.97) * (v > 0.75)
     cv.paint(m, val, spec["leaf"])
     win = m & (u > 0.36) & (u < 0.76) & (v > 0.12) & (v < 0.34)
     gl = 0.2 + off + 0.25 * (u - 0.36) + 0.3 * (v < 0.2)
@@ -271,7 +280,7 @@ def leaf_fire(cv, m, u, v, off, spec):
 
 def leaf_ward(cv, m, u, v, off, spec):
     """A ward door: pale painted leaf, a tall wired-glass panel, a steel kick plate and push plate."""
-    val = 0.6 + off + 0.08 * (vnoise(cv.h, cv.w, 10, 21) - 0.5)
+    val = 0.6 + off + 0.04 * (vnoise(cv.h, cv.w, 10, 21) - 0.5)
     cv.paint(m, val, spec["leaf"])
     win = m & (u > 0.24) & (u < 0.76) & (v > 0.1) & (v < 0.46)
     gl = 0.22 + off + 0.35 * np.clip(1 - v * 2.5, 0, 1)
@@ -288,7 +297,7 @@ def leaf_planks(cv, m, u, v, off, spec, straps: bool = True, studs: bool = True)
     nb = spec.get("boards", 5)
     b = np.floor(u * nb)
     tone = 0.5 + 0.2 * (hash2(b.astype(int), b.astype(int) * 3, spec.get("seed", 1)) - 0.5)
-    grain = 0.1 * np.sin(v * 70 + b * 1.7 + 4 * vnoise(cv.h, cv.w, 12, 31))
+    grain = 0.06 * np.sin(v * 70 + b * 1.7 + 4 * vnoise(cv.h, cv.w, 12, 31))
     seam = np.mod(u * nb, 1.0) < 0.05
     val = np.where(seam, 0.1, tone + grain + off)
     cv.paint(m, val, spec["leaf"])
