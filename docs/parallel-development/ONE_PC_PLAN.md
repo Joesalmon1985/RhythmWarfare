@@ -103,7 +103,7 @@ New constraints that the two-machine plan did not have:
 
 | Thing | Value |
 |---|---|
-| Plan branch | `feature/one-pc-plan` (this commit). Pushed |
+| Plan branch | `feature/one-pc-plan`, commit `ad5d1849` (child of `90a42877`). Pushed. This is the baseline of all the work |
 | Integration branch | `feature/one-pc`, created from the plan commit. The lead merges into it with `--no-ff` and a named merge commit, and pushes it at every milestone |
 | Stream branches | `wip/import`, `wip/doc-graph`, `wip/doc-interaction`, `wip/doc-music`, `wip/music-m1`, `wip/narr-n1`, then `wip/music-m2`, `wip/narr-n2-<world>`. Local only; deleted after their merge |
 | Worktrees | `C:\Users\joesa\Documents\Cursor\MusicGame-<name>`, one per stream branch, removed after the merge |
@@ -258,10 +258,10 @@ Everything happens behind the seam, in `src/music/**`, `src/transition/transitio
 |---|---|---|
 | M2.1 | Spike, time-boxed to one day: a second synchronised group for the tail; `pitch_scale` for small ratios; `AudioEffectPitchShift`; tails pre-rendered offline with ffmpeg; `AudioStreamInteractive`. The simplest that passes a listening test wins | A written verdict with CPU and memory figures on this PC |
 | M2.2 | Sidecars `content/music/transitions/<track>.json`: `first_drop_s` (owner's value, snapped to the nearest bar of the pack's grid, snap distance reported), optional intro, outro, mix-in and mix-out bars, `no_blend`. A script prints the detected drop of every track as a sheet the owner corrects | 61 sidecars; a large snap distance is flagged as a wrong grid |
-| M2.3 | The planner, a pure function from two tracks' metadata to a plan: `blend` (within 3%), `halftime_blend` (within 3% of 2:1), `echo_out` (larger differences such as 174 to 140), `cut` (always available, used when anything is missing) | Unit tests over all 61 by 61 pairs: every pair gets a mode; no pair crashes |
+| M2.3 | The planner, a pure function from two tracks' metadata to a plan: `blend` (up to 50 cents of pitch change on the tail, a tempo ratio within 2.93%; ruling 5), `halftime_blend` (the same limit around 2:1; fixture packs only, ruling 6), `echo_out` (larger differences such as 174 to 140), `cut` (always available, used when anything is missing) | Unit tests over all 61 by 61 pairs: every pair gets a mode; no pair crashes |
 | M2.4 | The blend: the incoming track starts on the boundary's downbeat at its own tempo and becomes the clock; the outgoing tail fades stem by stem, drums and bass within 2 bars, and is silent at least 4 bars before the incoming drop; `completed` fires then; a limiter on the run bus | Tests on fixture packs: order of signals, fade ends before the drop, `song_time()` never decreases |
 | M2.5 | Drift and hit windows: ten transitions in a row keep cue time and audio time within one mix chunk; a cue that falls inside a blend is judged against the incoming grid with the same window as anywhere else (a perfect bot scores perfect through every transition; an early and a late bot score as they do in mid-scene); missing metadata and unready audio fall back to `cut` | Tests on a virtual clock, and a measured run on real packs with the real audio driver |
-| M2.6 | Listening builds for the owner: three pairs chosen to cover blend, half-time and echo-out | The owner's verdict |
+| M2.6 | Listening builds for the owner: three pairs chosen to cover blend, echo-out and cut (ruling 6: no real pair is near 2:1) | The owner's verdict |
 
 ### Stage X. Integration, phone, `main` (lead, with Sonnet for tests and Opus for polish)
 

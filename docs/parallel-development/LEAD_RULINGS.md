@@ -51,3 +51,16 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     Spaceship, LOTR, Alien Spaceship, Mental Hospital, Catch-22, Mental Hospital. The owner is told.
 19. The Bassment's passages that still offer fewer than three choices after the return object is added (41)
     are the declared exception, reported by the validator on every run.
+
+### After the document review
+20. How the Bassment is entered and left through the port (the narrative graph document says through the
+    port; the music transitions document says `RunEngine.resume`, a `cut`) is decided by a short spike at
+    the start of N2.2, with the music stream's M1 code in hand. Until then both documents stand, and a
+    Bassment transition is always a `cut`.
+21. While the music stream holds `run_hotspots.gd` and `run_journey.gd` for M1, it does not edit
+    `tests/test_hotspots_*`. If an M1 change makes one of them fail, that is reported to the lead.
+22. The baseline of the work is the plan commit `ad5d1849` on `feature/one-pc-plan` (child of the handover
+    commit `90a42877`). `feature/one-pc` started from it.
+23. The coverage targets as the audit tool reads them stand: touch coverage at least 50% in at least 80% of
+    samples, and choice coverage at least 25% in at least 80% of samples, a sample with nothing selectable
+    counting as 0%. Measured on 6 November: 0 of 82 scenes pass (`coverage/baseline.md`).
