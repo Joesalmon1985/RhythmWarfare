@@ -1,0 +1,22 @@
+{
+  "format": "rhythm_warfare.transition.v1",
+  "track": "floodlight_dnb_aid_for_pakistan_in_most_pulsar",
+  "first_drop_s": 65.8625,
+  "second_drop_s": 181.724,
+  "downbeat_offset_beats": 0,
+  "intro_start_s": null,
+  "outro_start_s": 220.3445,
+  "mix_in_bar": null,
+  "mix_out_bar": null,
+  "no_blend": false,
+  "linger": null,
+  "checked": null,
+  "note": "",
+  "first_drop_bar": 47,
+  "first_drop_snap_ms": 0.0,
+  "origin": {
+    "first_drop_s": "detected",
+    "second_drop_s": "detected",
+    "outro_start_s": "detected"
+  }
+}

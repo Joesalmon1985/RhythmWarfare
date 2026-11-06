@@ -1,0 +1,22 @@
+{
+  "format": "rhythm_warfare.transition.v1",
+  "track": "smg_sono_original_mix",
+  "first_drop_s": 43.8855,
+  "second_drop_s": 87.771,
+  "downbeat_offset_beats": 0,
+  "intro_start_s": null,
+  "outro_start_s": null,
+  "mix_in_bar": null,
+  "mix_out_bar": null,
+  "no_blend": false,
+  "linger": null,
+  "checked": null,
+  "note": "",
+  "first_drop_bar": 32,
+  "first_drop_snap_ms": 0.1,
+  "origin": {
+    "first_drop_s": "detected",
+    "second_drop_s": "detected",
+    "outro_start_s": "detected"
+  }
+}

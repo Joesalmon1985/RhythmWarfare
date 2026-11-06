@@ -1,0 +1,22 @@
+{
+  "format": "rhythm_warfare.transition.v1",
+  "track": "culture_shock_machine",
+  "first_drop_s": 44.1564,
+  "second_drop_s": 160.018,
+  "downbeat_offset_beats": 0,
+  "intro_start_s": null,
+  "outro_start_s": 264.8453,
+  "mix_in_bar": null,
+  "mix_out_bar": null,
+  "no_blend": false,
+  "linger": null,
+  "checked": null,
+  "note": "",
+  "first_drop_bar": 32,
+  "first_drop_snap_ms": 0.0,
+  "origin": {
+    "first_drop_s": "detected",
+    "second_drop_s": "detected",
+    "outro_start_s": "detected"
+  }
+}

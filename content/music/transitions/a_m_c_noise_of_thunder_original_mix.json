@@ -1,0 +1,22 @@
+{
+  "format": "rhythm_warfare.transition.v1",
+  "track": "a_m_c_noise_of_thunder_original_mix",
+  "first_drop_s": 43.8863,
+  "second_drop_s": 175.5436,
+  "downbeat_offset_beats": 0,
+  "intro_start_s": null,
+  "outro_start_s": 263.3151,
+  "mix_in_bar": null,
+  "mix_out_bar": null,
+  "no_blend": false,
+  "linger": null,
+  "checked": null,
+  "note": "",
+  "first_drop_bar": 32,
+  "first_drop_snap_ms": 0.0,
+  "origin": {
+    "first_drop_s": "detected",
+    "second_drop_s": "detected",
+    "outro_start_s": "detected"
+  }
+}
