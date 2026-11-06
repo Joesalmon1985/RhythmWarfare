@@ -4,6 +4,7 @@ extends Control
 
 var pad_view: PadView
 var strength := 0.3  # darkest alpha, just above the pads
+static var draw_usec := 0
 
 
 func _process(_delta: float) -> void:
@@ -11,6 +12,12 @@ func _process(_delta: float) -> void:
 
 
 func _draw() -> void:
+	var t0 := Time.get_ticks_usec()
+	_draw_shade()
+	draw_usec += Time.get_ticks_usec() - t0
+
+
+func _draw_shade() -> void:
 	if pad_view == null:
 		return
 	var inv := get_global_transform_with_canvas().affine_inverse()
