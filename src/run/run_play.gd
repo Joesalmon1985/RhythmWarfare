@@ -1667,6 +1667,8 @@ func _on_lock_point(info: Dictionary, dir_hook: Callable) -> Variant:
 		info = info.duplicate()
 		info["route"] = fallback_route
 		info["leaving"] = fallback_route != engine.node_id
+	if router != null and bool(info.get("final", false)) and bool(info.get("chosen", false)) and not bool(info.get("leaving", false)) and director.state() != TransitionPort.State.PENDING:
+		return {}  # (the player's own choice keeps the scene, a seat at a table: the router's default, set for the port, must not take the run away from it; as before N2.2)
 	return dir_hook.call(info) if dir_hook.is_valid() else {}
 
 

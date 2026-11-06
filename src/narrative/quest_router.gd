@@ -65,6 +65,7 @@ func start_run(scene_id: String = "") -> Dictionary:
 	fresh.quest_progress = prev.quest_progress.duplicate(true)
 	fresh.revision = prev.revision + 1
 	fresh.newer_than_known = prev.newer_than_known
+	fresh.closed_on_load = prev.closed_on_load
 	var out := {"entered": "", "restore_flags": []}
 	if scene_id != "" and scene_id != graph.start and graph.resolves(scene_id):
 		if graph.is_mainline(scene_id):
@@ -100,6 +101,8 @@ func load_state(extra: Dictionary = {}) -> RouteState:
 		for q in graph.quest_ids():
 			path_of[q] = (graph.quest_meta.get(q, {}) as Dictionary).get("path", q)
 		s.migrate_from_paths(extra.get("paths"), path_of)
+	if s.location == "" and s.quest == "" and graph.is_mainline(s.current_scene()):  # (nothing saved yet, or a save without a location: the location of the scene it stands on)
+		s.location = graph.location_of(s.current_scene())
 	var errs := s.invariant_errors(graph)
 	if not errs.is_empty():
 		errors.append("the saved route state was repaired (%s)" % "; ".join(PackedStringArray(errs)))
