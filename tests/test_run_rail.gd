@@ -67,7 +67,7 @@ func test_the_authored_rails() -> void:
 		"hospital.garden": [["garden_edge", "bandstand"], ["garden_south", "garden_sw"]],
 		"ward": [["bars_in", "day_stage_in"], ["day_edge", "day_corner"]],
 		"ward.corridor": [["corr_mid"], ["treat", "quiet"]],
-		"hospital_late.quiet": [["quiet_door"], ["quiet_door", "corridor_in"]],
+		"hospital_late.quiet": [["quiet"], ["quiet_door", "corridor_in"]],
 		"ward_late.exit": [["day_centre", "day_stage_in"], ["day_corner", "bars_in"]],
 	}
 	for id in want:

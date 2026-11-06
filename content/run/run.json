@@ -3912,7 +3912,7 @@
     "rail": {
      "good": [
       {
-       "to": "quiet_door",
+       "to": "quiet",
        "role": "dancer",
        "style": "walk",
        "bars": 3
@@ -3932,7 +3932,7 @@
        "bars": 2
       }
      ],
-     "arrive": "quiet_door",
+     "arrive": "quiet",
      "glances": [
       {
        "by": 14.0,

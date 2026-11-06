@@ -289,7 +289,7 @@ CAMERA = {
     "hospital.exit": {"strolls": "no turn"},  # (the turn ended on the bandstand's hedge)
     "ward.dorm": {"good": [P("dorm_door")], "strolls": "no turn, half", "glances": "half"},  # dorm_bed: the alcove's window wall at 1.1 m; the look up met the alcove's low ceiling
     "ward.corridor": {"arrive": "corr_art_door", "strolls": "no turn, half", "good": [P("corr_mid")]},
-    "hospital_late.quiet": {"good": [P("quiet_door")], "strolls": "no turn, quarter", "glances": "half"},  # quiet_far: the end wall at 1.5 m (the room is 2.4 m wide)
+    "hospital_late.quiet": {"good": [P("quiet")], "arrive": "quiet", "strolls": "no turn, quarter", "glances": "half"},  # quiet_far: the end wall at 1.5 m (the room is 2.4 m wide); quiet_door: its choice door fills the picture
     "hospital_late.exit": {"strolls": "no turn"},
     "ward_late.treat": {"glances": "half"},  # (the look up met the bed alcove's low ceiling)
     "ward_late.dorm": {"good": [P("dorm_mid")], "strolls": "no turn, half", "glances": "half"},

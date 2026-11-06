@@ -6,6 +6,9 @@ the failing poses before and after the fixes. The check is `tools/art/camera_cle
 
     bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tools/art/camera_clearance.gd -- [--only <regex>] [--doc after] [--direct-all]
     bash tools/dev/godot.sh --headless --path . -s tools/art/camera_clearance.gd -- --waypoints <map id>     (every waypoint of a map: clearance at its yaw and +-30 degrees)
+    bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tools/art/camera_clearance.gd -- --search <scene id>   (tries smaller strolls and glances, other places)
+
+Every failing row gives the camera as `RW_STORY_CAM=@x:z:yaw:pitch`, so the frame can be shot with the screenshot aid of `src/story/story_stage.gd`.
 
 ## What is checked
 
@@ -18,7 +21,8 @@ the failing poses before and after the fixes. The check is `tools/art/camera_cle
   glances and strolls of every block, the heralds' opening look, the window's look at the hotspots, the walk out at beat 61) and the camera is
   `StoryPlayer.pose_at(t)`, as in `tests/test_heralds_view.gd`. A later scene is played at nine consecutive phase numbers (2 to 10): the block's glance and
   stroll are picked by `(phase * 4 + block + len(id))`, so these are every combination it can meet in a run.
-- **Every half beat** (the test: every beat), over every lap, from the first downbeat (a door walk: from the moment it starts, three beats before).
+- **Every half beat** (the tool and the test alike), over every lap, from the first downbeat (a door walk: from the moment it starts, three beats before).
+  The run data is loaded with seed 0, so the arrangement (and with it the chart's density, which shortens moves) is the same on every run of the check.
 - **Eleven rays across the picture** at the camera's pitch, edge to edge of the stage strip of a 1280 x 720 window (52 degrees high, 2.78 wide: the
   narrowest picture we ship), cast through the map's sectors: solid walls, the step walls and lintels at portals the ray cannot pass, floors and ceilings
   (sky sectors have no ceiling). The distance is the camera depth (along the view axis), which is what sets how far a wall's texels are magnified.
@@ -39,15 +43,80 @@ A pose **fails** when the centre ray meets a surface nearer than **2.5 m** *and*
 - **Facing within 60 degrees.** A wall seen at a slant recedes in perspective (a corridor's side, the near jamb of a door the camera looks past); it is not a
   magnified block. Floors and ceilings always count when the centre ray meets them nearer than 2.5 m (only a look well up or down does: the dormitory's
   alcove ceiling).
-- **Doorways in passing are not judged**: while a journey move is walking the camera through a doorway (within 0.9 m of a portal its route crosses), the
-  jambs pass in a beat; and while a move walks along a wall's own line (the gospel maps' spine: the route runs through the doorway midpoints on the rooms'
-  wall line) that wall is edge-on and the shots show the room beyond. Strolls are always judged.
+- **Held for a beat.** A stare shorter than one beat (two samples; 0.35 to 0.43 s at these tempos) is a head turning past a wall, not a pose.
+- **Doorways in passing are not judged**: while a journey move (a door walk, an arrival walk, a rail move; not a stroll) walks the camera through a doorway
+  (within 0.9 m of a portal its route crosses) or through a sector it only passes (a stair, a corridor between two rooms); and while a move walks along a
+  wall's own line (the gospel maps' spine: the route runs through the doorway midpoints on the rooms' wall line), where that wall is edge-on and the shots show
+  the room beyond. Strolls are always judged.
 
 ## What it does not see
 
 - Billboards, occluders and the choice layer's doors (a sprite can still fill the picture: look at the shots), people, and the herald.
 - The bad rail (the perfect bot never holds a block) and hotspot cinematics.
 - A camera off the scripted rail (a sloppy run stands elsewhere).
+
+## The fixes (package A5)
+
+All in the generators' data, the run files regenerated (`python tools/run/make_scenes.py`, `python tools/paths/make_squadron.py`,
+`python tools/run/make_ember.py --run-only`). Each generator has a `CAMERA` table of per-scene overrides of the rail's camera fields (`good`, `arrive`,
+`glances`, `strolls`); `"no turn"`, `"half"` and `"quarter"` keep the scene's own list and drop a stroll's turn or scale its distances and angles. No map,
+waypoint, hotspot, route, scene length or beat changed. Regenerating also rewrote two blocks that had drifted from their generators, unchanged in value: the
+main run's `mix.carry_bass` / `mix.bass_bus` (one key per line again) and the Ember run's `mix` (moved after `timing`).
+
+| scene | change | why |
+| --- | --- | --- |
+| warehouse.balcony | good `balcony_rail, balcony_far` -> `balcony_rail, balcony` | `balcony_far` faced the end wall from 0.8 m (the audit's mid and end frames) |
+| warehouse.chill | good `sofa_nook, sofa_front` -> `sofa_nook, chill`; strolls no turn, half | `sofa_front` stands in the sofa alcove facing its wall from 0.7 m |
+| warehouse.exit | strolls no turn | the 35-degree turn ended on the tunnel wall |
+| mothership.gallery | good `gallery_mid, planet_window` -> `gallery_mid, gallery_east`; strolls no turn, half | `planet_window` faced the window wall from 0.5 m |
+| mothership.reactor | good `catwalk_mid, reactor_core` -> `catwalk_mid, catwalk_bridge` (still `on_stage`) | `reactor_core` faced the core's tube wall from 1.4 m |
+| mothership.exit | good `airlock_door, airlock` -> `exam`; strolls no turn, half | `airlock` faced the hatch from 1.8 m; the strolls walked into the ramp's wall |
+| underworld | good `arena_gate, gate_dais` -> `gate_dais`; arrive `arena_tier_l` -> `arena_edge` | the arrival (the passage window, F16) and `arena_gate` faced the tier and dais walls from 0.5 m |
+| hospital | strolls no turn, half | the window's turn from the strolled spot met the ward wall by the door |
+| hospital.corridor | strolls no turn | the window look met the corridor's door wall from 0.5 m |
+| hospital.dayroom | good `dayroom_mid, day_tv_in` -> `dayroom_mid` | `day_tv_in` faced the television wall from 2.1 m |
+| hospital.cafeteria | good `cafe_mid, cafe_serving` -> `cafe_mid` | a glance from the counter met the end wall |
+| hospital.exit, hospital_late.exit | strolls no turn | the turn ended on the bandstand's hedge |
+| ward.dorm | good `dorm_mid, dorm_bed` -> `dorm_door`; strolls no turn, half; glances half | `dorm_bed` faced the alcove window from 1.1 m; the look up met the alcove's low ceiling |
+| ward.corridor | good `corr_mid, corr_east` -> `corr_mid`; arrive `corr_west` -> `corr_art_door`; strolls no turn, half | the window look met the door wall by `corr_east` from 2 m |
+| hospital_late.quiet | good `quiet_far` -> `quiet` (home); arrive `quiet_door` -> `quiet`; strolls no turn, quarter; glances half | `quiet_far` faced the end wall from 1.5 m; the room is 2.4 m wide, so the turn from the door's facing to the room's swept a side wall; standing at `quiet_door` puts its choice door over the whole picture |
+| ward_late.treat | glances half | the look up met the bed alcove's low ceiling |
+| ward_late.dorm | good `dorm_mid, dorm_bed` -> `dorm_mid`; strolls no turn, half; glances half | as ward.dorm |
+| squadron base.c03, air.c05 | strolls no turn, half | the turn ended on the berm and on the hangar wall |
+| squadron air | good `c04_g1, c04_g2` -> `c04_g1`; strolls no turn, quarter | `c04_g2` and the strolls faced the bomber's flak windows |
+| squadron city | good `c07_g1, c07_g2` -> `c07_home`; strolls no turn, quarter; glances half | inside the bomber: every step and turn met its wall |
+| squadron city.c09, escape.c14 | good `g1, g2` -> `g1`; strolls no turn, half | `c09_g2` faced the office wall, `c14_g2` the cell's tally-mark wall |
+| squadron escape.c13 | arrive `c13_arrive` -> `c13_home` | from `c13_arrive` the first glance met the quay wall from 1.3 m |
+| ember hollow.inn | strolls no turn, half | the turn ended on the inn's wall |
+
+The gospel path needed nothing: its scenes stand in open rooms, and the walks between them run along the spine on the rooms' wall line (judged edge-on,
+above). The audit's `gospel jordan.baptism -> next` frame is that walk.
+
+## Exceptions
+
+| scene | pose | why it stays | shot |
+| --- | --- | --- | --- |
+| hospital_late.quiet | the window look's turn in (beats 46 to 48) and its hand-back (61.5 to 62.5) | the quiet room is 2.4 m wide and its default exit is behind the standpoint: the turn to the choices (the exit and the nightlights on the side walls) sweeps across a side wall whichever way it turns. Only the map (a wider room: W4) or the hotspots (the nightlights off the side walls) can change it; reported to the lead | `docs/shots/art/a5/exception_hospital_late_quiet.jpg` |
+
+## Shots
+
+`docs/shots/art/a5/before_after_<main|squadron|ember>.jpg`: every changed scene, `tools/art/audit_capture.sh` frames (the scene started on its own, the
+perfect bot) at a24, mid, win and end, each before then after. `exception_hospital_late_quiet.jpg`: the quiet room's window turn at its worst
+(`RW_STORY_CAM=@14.20:10.31:-279.3:-0.2`, beat 47).
+
+## What still looks weak
+
+- Door walks look sideways: `StoryPlayer` turns the head from the start place's yaw to the arrival place's over the walk, not along the route, so a long
+  walk through a corridor shows its side wall for a few beats (judged as passing). A look along the route during door walks would be a `run_journey.gd` change.
+- The walk out of a scene is judged as passing and still shows a corridor wall close by for a beat or two (the quiet room's and the dormitories' `end`
+  frames).
+- Some after frames pass the check but are still mostly wall a few metres off: the Ember inn's fireplace wall (`hollow.inn` mid), the cell
+  (`escape.c14` mid), the reactor's tubes in the route window (`mothership.reactor` win), the exam room's tiles (`mothership.exit` mid).
+- Several waypoints still face a wall at arm's length and are simply no longer used by the rails (`balcony_far`, `planet_window`, `reactor_core`, `airlock`,
+  `day_tv_in`, `quiet_far`, `dorm_bed`, `sofa_front`, `arena_gate`, `arena_tier_l`, the squadron `g2` waypoints of C04, C07, C09, C14): their yaw is map data
+  (world packages). The bad rails still use some that face walls (`cubicle`, `bed_corner`, `day_corner`): the check plays the perfect bot only.
+
+## Before
 
 <!-- clearance:before -->
 | world | failing poses | scenes with one |
@@ -419,6 +488,8 @@ A pose **fails** when the centre ray meets a surface nearer than **2.5 m** *and*
 339 failing poses over 117 scene entries (step 0.50 beats).
 <!-- /clearance:before -->
 
+## After
+
 <!-- clearance:after -->
 | world | failing poses | scenes with one |
 | --- | --- | --- |
@@ -449,11 +520,12 @@ A pose **fails** when the centre ray meets a surface nearer than **2.5 m** *and*
 
 0 failing poses over 117 scene entries (step 0.50 beats).
 
-Accepted exceptions (3 poses):
+Accepted exceptions (4 poses):
 
 | scene | entry | phases | beats (from the scene's first downbeat) | pose | centre m | width near | nearest surface at the centre | camera (RW_STORY_CAM) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| hospital_late.quiet | door from hospital_late | 2 | 46.5 to 47.5 | window look | 1.81 | 65% | quiet wall (13.0, 16.0)-(13.0, 3.0) wall_quiet | @14.80:3.81:91.7:-4.3 |
-| hospital_late.quiet | door from hospital_late | 3,4,6,7,9,10 | 46.5 to 48.0 | window look | 1.21 | 80% | quiet wall (13.0, 16.0)-(13.0, 3.0) wall_quiet | @14.20:3.51:97.0:-4.5 |
-| hospital_late.quiet | door from hospital_late | 5,8 | 47.0 to 48.0 | window look | 1.21 | 60% | quiet wall (13.0, 16.0)-(13.0, 3.0) wall_quiet | @14.20:3.42:97.2:-4.2 |
+| hospital_late.quiet | door from hospital_late | 2,4,9 | 46.0 to 47.5 | window look | 0.61 | 85% | quiet wall (13.0, 16.0)-(13.0, 3.0) wall_quiet | @13.60:10.01:-283.0:-0.2 |
+| hospital_late.quiet | door from hospital_late | 2,4,5,8,9 | 61.5 to 62.5 | window look | 1.07 | 55% | quiet wall (13.0, 16.0)-(13.0, 3.0) wall_quiet | @13.64:9.43:-322.9:-2.1 |
+| hospital_late.quiet | door from hospital_late | 3,5,6,7,8,10 | 46.0 to 48.0 | window look | 1.21 | 95% | quiet wall (13.0, 16.0)-(13.0, 3.0) wall_quiet | @14.20:10.31:-279.3:-0.2 |
+| hospital_late.quiet | door from hospital_late | 3,6,7,10 | 61.5 to 62.5 | window look | 1.23 | 95% | quiet wall (15.4, 3.0)-(15.4, 16.0) wall_quiet | @14.20:5.57:-101.4:-0.5 |
 <!-- /clearance:after -->
