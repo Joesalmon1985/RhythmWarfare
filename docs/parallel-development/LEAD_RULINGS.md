@@ -34,3 +34,20 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
 14. A `&"blending"` deferral may repeat. `begin_scene` clears the default, so the narrative side sets the
     default again in its `switched` handler. A final lap reached while a blend is still running is extended
     by one lap without a signal.
+
+### Narrative graph (from the narrative graph agent)
+15. Every hub, the Warehouse Floor included, gets a Dungeon entrance that is **not** gated by rhythm and
+    is taken at the lap's end through the port, like the other three quests' entrances. The wizard stays
+    as he is (mid-scene, needs a passed block) as an extra way in. That makes **20** new entrances and
+    brings every quest to 1 ungated choice from the start. This supersedes ruling 2's count of 19.
+16. The cap of 8 choices is the default. A hub scene may set `max_hotspots` up to 10 (the per-node override
+    exists today; the `ward` node uses it).
+17. Seven path scenes cannot reach three choices from "onward, back, return" alone. The five restart routes
+    and two second routes proposed in `graph/overlay_proposed.json` are accepted as the working design and
+    are listed for the owner to confirm.
+18. The mainline stays one-way (Warehouse, then Alien Spaceship or Hell, then Hospital Ward or Mental
+    Hospital) with hub-to-hub links inside each pair. The owner's second illustrative route cannot be walked
+    in the order written (Mental Hospital before Alien Spaceship); it is tested in the walkable order: Alien
+    Spaceship, LOTR, Alien Spaceship, Mental Hospital, Catch-22, Mental Hospital. The owner is told.
+19. The Bassment's passages that still offer fewer than three choices after the return object is added (41)
+    are the declared exception, reported by the validator on every run.
