@@ -71,6 +71,40 @@ def playability_violations(cues: list[dict], bpm: float) -> list[tuple[int, str]
     return out
 
 
+class SoundLevels:
+    """Is a cue on sound in its own voice? The one audibility test shared by the validator and the chart stage
+    (chart.py removes any cue that fails it, with margin_db of safety for the Vorbis coding of the stems).
+
+    Levels are 20 ms RMS frames every 10 ms. A cue fails when, from 20 ms before to 80 ms after it, its voice
+    never comes within CUE_OWN_DB of the voice's loud level (95th percentile of its frames), or stays more than
+    CUE_REL_DB under the whole track; a hold also fails when its median level is CUE_OWN_DB - 5 dB under."""
+    HOP = 0.01
+
+    def __init__(self, voices: dict, mix_mono: np.ndarray, rate: int):
+        self.vdb = {k: db(frame_rms(m if m.ndim == 1 else m.mean(1), rate, self.HOP, 0.02)) for k, m in voices.items()}
+        self.mix_db = db(frame_rms(mix_mono, rate, self.HOP, 0.02))
+        self.loud = {k: float(np.percentile(e, 95)) for k, e in self.vdb.items()}
+
+    def problem(self, c: dict, margin_db: float = 0.0) -> str | None:
+        k = c["voice"]
+        e = self.vdb[k]
+        a = max(0, int((c["t"] - 0.02) / self.HOP))
+        b = int((c["t"] + 0.08) / self.HOP) + 1
+        if a >= len(e):
+            return "after the end of the audio"
+        lv = float(e[a:b].max())
+        rel = lv - float(self.mix_db[a:b].max())
+        if lv < self.loud[k] + CUE_OWN_DB + margin_db:
+            return f"{lv - self.loud[k]:.1f} dB under the voice's loud level"
+        if rel < CUE_REL_DB + margin_db:
+            return f"{rel:.1f} dB under the whole track"
+        if c.get("dur", 0) > 0:
+            h = e[int(c["t"] / self.HOP):int((c["t"] + c["dur"]) / self.HOP)]
+            if len(h) and np.median(h) < self.loud[k] + CUE_OWN_DB - 5 + margin_db:
+                return f"hold over near-silence (median {np.median(h) - self.loud[k]:.1f} dB)"
+        return None
+
+
 class Report:
     def __init__(self) -> None:
         self.errors: list[str] = []
@@ -320,31 +354,16 @@ def check_audio(pack: Path, tj: dict, r: Report, recording: str | None, sum_tol_
         r.note(f"alignment lags (samples at 3 points) per stem: {lags}")
     else:
         r.note("SKIPPED: stems-sum-to-recording and alignment (no readable recording; pass --recording)")
-    # every cue on sound in its own voice
-    mix_db = db(frame_rms(total.mean(1), PACK_RATE, 0.01, 0.02))
-    vdb = {k: db(frame_rms(m, PACK_RATE, 0.01, 0.02)) for k, m in monos.items()}
-    loud = {k: float(np.percentile(e, 95)) for k, e in vdb.items()}
+    # every cue on sound in its own voice (the same test the chart stage applies to itself: cue_sound_problem)
+    lv = SoundLevels(monos, total.mean(1), PACK_RATE)
     stats["silent_cues"] = {}
     for name, cues in tj["charts"].items():
         bad = 0
         for i, c in enumerate(cues):
             k = c.get("voice")
-            if k not in vdb:
+            if k not in lv.vdb:
                 continue
-            e = vdb[k]
-            a = max(0, int((c["t"] - 0.02) / 0.01))
-            b = int((c["t"] + 0.08) / 0.01) + 1
-            lv = float(e[a:b].max())
-            rel = lv - float(mix_db[a:b].max())
-            problem = None
-            if lv < loud[k] + CUE_OWN_DB:
-                problem = f"{lv - loud[k]:.1f} dB under the voice's loud level"
-            elif rel < CUE_REL_DB:
-                problem = f"{rel:.1f} dB under the whole track"
-            elif c["dur"] > 0:
-                h = e[int(c["t"] / 0.01):int((c["t"] + c["dur"]) / 0.01)]
-                if len(h) and np.median(h) < loud[k] + CUE_OWN_DB - 5:
-                    problem = f"hold over near-silence (median {np.median(h) - loud[k]:.1f} dB)"
+            problem = lv.problem(c)
             if problem:
                 bad += 1
                 r.err(f"chart {name} cue {i} (t={c['t']:.3f}, {k} pad {c['pad']}): voice silent there: {problem}")

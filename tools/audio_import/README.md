@@ -32,6 +32,8 @@ One track:
         "/path/to/Artist - Title.flac" [--id artist_title] [--out /home/joe/rw-audio-work] \
         [--model htdemucs|htdemucs_ft|htdemucs_6s] [--from STAGE | --only STAGE] \
         [--min-bars 8] [--focus VOICE] [--focus-at WHERE=VOICE ...] [--focus-auto]
+        [--skip-imported] [--prune-cache]
+    ... import_track.py --rechart [ID ...]       # re-chart existing packs, see below
 
 A batch: give several files and/or folders (every audio file directly inside a folder is taken, in name order):
 
@@ -66,7 +68,35 @@ code, run Godot's import once (`$GODOT --headless --path . --import`) so the new
 `--skip-imported` leaves alone any recording whose pack already exists and validated, so the same command can
 be run again after an interruption and carries on where it stopped. `--prune-cache` deletes a recording's
 cached separated audio (about 1 GB each) once its pack is written and validated; without it 60 recordings need
-60 GB of cache. A pruned recording that is imported again later (to change its focus, say) is separated again.
+60 GB of cache. What stays in `cache/<id>/` is small: the JSON of every stage and `stem_src/`, the encoded
+voices and backing as separated (hard links to the pack's own stems, so it costs disk only for a voice folded
+into the backing). That is enough to re-chart the track without separating it again.
+
+Files that would get the same id (same artist and title tags, two masters of one tune) never overwrite each
+other: the second gets `_2` (then `_3`), the summary line says so, and the same file keeps the same id on later
+runs (`cache/<id>/source.txt` records which file an id belongs to). A file with no tags gets its id from the
+file name (`Artist - Title.ext`, a leading track number dropped).
+
+### Re-chart after a rule change (no Demucs, no recordings needed)
+
+    OMP_NUM_THREADS=3 nice -n 10 /home/joe/.venvs/rw-audio/bin/python tools/audio_import/import_track.py --rechart
+    ... import_track.py --rechart acuna_go_back ac13_shostakovich      # only these packs
+
+reruns focus, chart, pack, preview and validate for every pack under `<out>/packs` (or the ids given) from the
+cached analysis and events and the encoded stems, and prints the usual summary. `--from focus` (or `--from
+chart`) on a pruned recording works the same way. Earlier stages (analyse, voices, events) need the separated
+audio: a rule change there means importing the recordings again.
+
+### What the end of a batch says
+
+Every line ends with the time the track took and one verdict:
+- `ok`: imported, valid, nothing to check.
+- `ok with warnings`: imported and valid (the game will load it); something is worth a listen (see the
+  warnings on the line). Warnings never change the exit code.
+- `FAILED`: not imported (an error; the traceback is above the summary) or the pack breaks the format
+  (validator violations; see `packs/<id>/report.txt`).
+The first line counts each verdict. The exit code is 0 when every track is `ok` or `ok with warnings`, 1 when a
+pack has validator violations, 2 when a track failed with an error.
 
 ### The catalogue (metadata in the repository)
 
@@ -81,8 +111,10 @@ per recording and is cached; run it again after importing more and commit the re
 
 ### The summary line and its warnings
 
-- `NNN.NN BPM constant|NOT constant (drift, conf)`: the tempo, the largest drift of 8-bar windows from one
-  constant grid, and the grid confidence. **WARNING tempo not constant**: the track speeds up or slows down
+- `NNN.NN BPM constant|NOT constant (drift over N of M 8-bar windows, conf)`: the tempo, the largest drift of
+  8-bar windows from one constant grid (judged only on windows with at least 24 drum onsets, after a running
+  median of three windows, and never carried across a drumless gap: so sparse drums do not raise a false alarm),
+  and the grid confidence. **WARNING tempo not constant**: the track speeds up or slows down
   (or the drums are too sparse to tell); cues come from detected beats and need an ear.
   **WARNING tempo confidence**: the grid or the downbeat is uncertain.
 - `sep drums:clean bass:fair ...`: separation per voice in a word (clean / fair / poor, from attack bleed and
@@ -92,6 +124,8 @@ per recording and is cached; run it again after importing more and commit the re
   `(none)` = nothing to play). **WARNING N bars with nothing to play**: a gap of 16 bars or more with no voice
   loud enough with a playable part (an ambient intro, a long breakdown on a held pad): check it is really empty.
   **WARNING X has the focus 80% of the playable time**: little variety; maybe force a section to another voice.
+- `nothing to play N/M bars (P%) from bar 16 to the last 8`: the part of the track that matters for a scene
+  (from a phrase in to the last bars) with no focus. Under 10% is the aim; more means a quiet or empty stretch.
 - `cues easy:N normal:N hard:N`.
 - **WARNING validator: N violation(s)**: the pack breaks the format; the game will refuse it. See report.txt.
 - **ERROR**: the track failed (the traceback is printed above the summary); the batch went on.
@@ -150,8 +184,16 @@ the 4-core laptop, 3 threads.
 - Stretches by dynamic programming: cost = how far below the phrase's leader the chosen voice is; a change of
   voice costs 1 dB (hysteresis); a stretch is at least `--min-bars` long (8); a phrase with an eligible voice
   left empty costs 12 dB; and every further phrase a voice keeps while another is within 6 dB costs 8 dB, so
-  two close voices hand the focus over phrase by phrase and a clear leader keeps it. Phrases where no voice is
-  eligible are gaps.
+  two close voices hand the focus over phrase by phrase and a clear leader keeps it.
+- Always something to play: a phrase where no voice is eligible is judged again with relaxed rules (a voice
+  with at least 20% of the perceived power and no more than 30 dB under the loudest phrase of the recording,
+  counting every event audible by level and strong for that phrase). The chart uses the same relaxed test
+  there (report: "relaxed rules"). Only phrases with no such voice are gaps.
+- A voice whose stem separated badly (sep_quality under 0.85) loses up to 4 dB of prominence.
+- A stretch longer than 24 bars costs 12 dB a phrase while another voice is eligible, so one voice does not
+  hold a whole drop; in a breakdown a drums voice loses 6 dB when a pitched voice is eligible.
+- A voice that never gets the focus and has no cue is not written as a voice: it goes into the backing
+  (`source.folded_into_backing` in track.json), e.g. the `kick` half of a split drum stem.
 
 ## How the part is laid on the pads (layout.py)
 
@@ -176,6 +218,20 @@ minimum spacing is a 16th on hard (alternating thumbs), an 8th on normal, a beat
 all events, normal from hard, easy from normal. Held notes of at least a beat become holds, ending inside the
 stretch. The whole chart is then made playable with the validator's own rule function. Cue times are the
 detected attack in the voice's stem, or the 16th line when the attack is within 6 ms of it.
+
+Ceilings in cues per beat of focus time, judged on the playable chart (Go Back, the reference, is under all):
+per stretch drums 1.45 / 1.0 / 0.5 and pitched parts 1.0 / 0.75 / 0.45 (hard / normal / easy); per chart
+0.84 / 0.67 / 0.41. A stretch over its ceiling, or the densest stretches of a chart over its ceiling, are
+picked again with a smaller budget (whole positions of the cycle go first, so the pattern still repeats).
+
+A stretch whose cues (4 or more) all land on one pad in a chart is spread over two by position in the bar
+(off-beat, else beats 2 and 4, else the second half of the bar, on the other thumb's inner pad), so a repeated
+phrase still gets the same pads. This is per chart: easy may then differ from hard there.
+
+Last, every cue is checked with the validator's own audibility test (`validate_track.SoundLevels`, 1.5 dB
+stricter for the Vorbis coding): a hold that fails becomes a tap, a tap that fails is removed, and the number
+removed is in `cache/<id>/charts.json` (`stats`) and printed. The chart stage never writes a cue the
+validator rejects as silent.
 
 ## Reading the report (`packs/<id>/report.txt`)
 

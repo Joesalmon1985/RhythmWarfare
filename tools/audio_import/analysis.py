@@ -9,6 +9,8 @@ import numpy as np
 from audio_io import db, frame_rms, mono
 
 HOP = 256  # onset envelope hop at 44.1 kHz = 5.8 ms
+MIN_WINDOW_ONSETS = 24  # an 8-bar window judges the tempo drift only with at least this many drum onsets
+MIN_WINDOWS_JUDGED = 3
 
 
 # ---------------------------------------------------------------- onsets
@@ -132,6 +134,15 @@ def _ls_grid(t: np.ndarray, w: np.ndarray, bpm: float, sub: int, tol_s: float, i
     return t0, step, tol_s
 
 
+def _med3(x: np.ndarray) -> np.ndarray:
+    """Running median of three (two at the ends): one window read off by a sparse or odd bar is not a drift,
+    a tempo change moves every window after it."""
+    x = np.asarray(x, float)
+    if len(x) < 3:
+        return x.copy()
+    return np.array([np.median(x[max(0, i - 1):i + 2]) for i in range(len(x))])
+
+
 def fit_grid(t: np.ndarray, w: np.ndarray, bpm: float, sub: int = 4, tol_s: float = 0.025,
              iters: int = 4) -> dict:
     """Weighted least-squares constant grid t = t0 + n * P/sub over every onset near a grid line.
@@ -153,11 +164,14 @@ def fit_grid(t: np.ndarray, w: np.ndarray, bpm: float, sub: int = 4, tol_s: floa
     win = 32 * beat
     drift = []
     local_bpm = []
+    n_windows = 0
+    wrapped_max = None
     if len(t):
         raw = []
         for s0 in np.arange(0, t.max() + 1e-9, win):
             m = (t >= s0) & (t < s0 + win)
-            if m.sum() < 24:  # drumless stretches: too few onsets for a local tempo; they do not judge drift
+            n_windows += 1
+            if m.sum() < MIN_WINDOW_ONSETS:  # drumless stretches: too few onsets for a local tempo; not judged
                 continue
             tl, wl = t[m], w[m]
             cands = np.arange(bpm_fit * 0.97, bpm_fit * 1.03, 0.02)
@@ -173,12 +187,27 @@ def fit_grid(t: np.ndarray, w: np.ndarray, bpm: float, sub: int = 4, tol_s: floa
                 off.append(r[1])
                 continue
             pr = raw[i - 1]
-            predicted = off[-1] + (r[4] - pr[4]) / step * ((pr[2] + r[2]) / 2 - step)
+            if r[0] - pr[0] > 1.5 * win:
+                # windows not adjacent (a drumless stretch between them): the local tempi are not good enough to
+                # carry the phase across a long gap (0.1 ms per 16th is a 16th after 50 s), so take the reading
+                # nearest the last one
+                predicted = off[-1]
+            else:
+                predicted = off[-1] + (r[4] - pr[4]) / step * ((pr[2] + r[2]) / 2 - step)
             k = np.round((predicted - r[1]) / step)
             off.append(r[1] + k * step)
         centre = float(np.median(off)) if off else 0.0  # the global grid's own phase is arbitrary to within this
         drift = [(round(r[0], 2), round(1000 * float(o - centre), 2), r[3]) for r, o in zip(raw, off)]
         local_bpm = [round(60.0 / (r[2] * sub), 3) for r in raw]
+        if raw:
+            # the same readings without unwrapping, each taken within half a 16th of their circular mean: a
+            # constant tempo keeps them all close; a real slide spreads them over the whole 16th either way
+            ph = np.array([r[1] for r in raw]) / step * 2 * np.pi
+            cm = float(np.angle(np.exp(1j * ph).mean())) / (2 * np.pi) * step
+            wr = (np.array([r[1] for r in raw]) - cm + step / 2) % step - step / 2
+            wr = _med3(wr)
+            wr = wr - np.median(wr)
+            wrapped_max = round(1000 * float(np.abs(wr).max()), 2)
     half = len(t) // 2
     halves = []
     for m in (keep & (np.arange(len(t)) < half), keep & (np.arange(len(t)) >= half)):
@@ -186,6 +215,8 @@ def fit_grid(t: np.ndarray, w: np.ndarray, bpm: float, sub: int = 4, tol_s: floa
             A = np.stack([np.ones(m.sum()), n[m]], 1)
             halves.append(60.0 / (np.linalg.lstsq(A, t[m], rcond=None)[0][1] * sub))
     dw = [d[1] for d in drift]
+    sm = _med3(np.array(dw)) if dw else np.zeros(0)
+    unwrapped_max = round(float(np.abs(sm - np.median(sm)).max()), 2) if len(sm) else 0.0
     return {
         "bpm": float(bpm_fit), "t0": float(t0), "beat_s": float(beat),
         "onsets_used": int(keep.sum()), "onsets_total": int(len(t)),
@@ -193,7 +224,13 @@ def fit_grid(t: np.ndarray, w: np.ndarray, bpm: float, sub: int = 4, tol_s: floa
         "residual_ms_median_abs": round(1000 * float(np.median(np.abs(dev[keep]))) if keep.any() else 0.0, 2),
         "residual_ms_rms": round(1000 * float(np.sqrt(np.average(dev[keep] ** 2, weights=w[keep]))) if keep.any() else 0.0, 2),
         "drift_windows_ms": drift,
-        "drift_ms_max_abs": round(max((abs(x) for x in dw), default=0.0), 2),
+        # drift over the judged windows after a running median of three (one odd window is not a tempo
+        # change), unwrapped window to window (not across a drumless gap). The wrapped reading is for the
+        # report only: a slide can wrap round to look steady
+        "drift_ms_max_abs": unwrapped_max,
+        "drift_ms_unwrapped_max_abs": unwrapped_max, "drift_ms_wrapped_max_abs": wrapped_max,
+        "drift_windows_judged": len(drift), "drift_windows_total": n_windows,
+        "drift_window_min_onsets": MIN_WINDOW_ONSETS,
         "drift_ms_first_last": [dw[0], dw[-1]] if dw else None,
         "local_bpm_range": [min(local_bpm), max(local_bpm)] if local_bpm else None,
         "bpm_first_half": round(halves[0], 4) if len(halves) == 2 else None,
@@ -202,6 +239,10 @@ def fit_grid(t: np.ndarray, w: np.ndarray, bpm: float, sub: int = 4, tol_s: floa
 
 
 def constant_tempo_ok(grid: dict, tol_ms: float = 12.0) -> bool:
+    """Constant when the drift over the judged windows stays within tol_ms and most drum onsets sit on the grid.
+    With fewer than MIN_WINDOWS_JUDGED windows judged the drift says little: the grid share decides."""
+    if grid.get("drift_windows_judged", MIN_WINDOWS_JUDGED) < MIN_WINDOWS_JUDGED:
+        return grid["share_on_grid"] >= 0.8
     return grid["drift_ms_max_abs"] <= tol_ms and grid["share_on_grid"] >= 0.5
 
 
