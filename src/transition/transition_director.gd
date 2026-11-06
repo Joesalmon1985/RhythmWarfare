@@ -328,10 +328,16 @@ func _observe(route: String, b: float, late: bool) -> void:
 
 
 func _lock(taken: Dictionary, res: Dictionary, pl: Dictionary, b: float, observed: bool, late: bool) -> void:
-	var recipe: Dictionary = pl.get("recipe", {})
+	var recipe: Dictionary = (pl.get("recipe", {}) as Dictionary).duplicate(true)
 	var plan: Dictionary = pl.duplicate(true)
 	plan.erase("recipe")
 	var inc_plan := _track_plan(res["data"], str(res["node"]))
+	recipe["boundary_t"] = b
+	if StringName(str(recipe.get("incoming", &"ordinary"))) == &"track" and not inc_plan.is_empty():  # (the audio starts the incoming group early and muted from these: RunTrackAudio)
+		recipe["in"] = {"node": str(res["node"]), "track": str(inc_plan["track"]), "dir": str(inc_plan["dir"]), "entry_t": float(inc_plan["entry_t"]), "beat_s": float(inc_plan["beat_s"]),
+			"bpm": float(inc_plan["bpm"])}
+	if engine.is_track_scene():
+		recipe["out"] = {"node": engine.node_id, "track": str(engine.track["track"]), "dir": str(engine.track.get("dir", ""))}
 	_req["state"] = State.LOCKED
 	_req["taken"] = taken.duplicate(true)
 	_req["plan"] = plan

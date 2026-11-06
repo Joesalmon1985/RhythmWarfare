@@ -1,20 +1,34 @@
 #!/usr/bin/env bash
-# One Godot at a time on this machine. Every worktree of the project shares one user:// folder, and the tests
-# write there, so two Godot runs at once corrupt each other. This wrapper stands in for the Godot binary:
+# The Godot binary for work in a worktree. It stands in for the real binary:
 #
 #     GODOT="$PWD/tools/dev/godot.sh" bash tools/test.sh --filter run_tracks
 #     bash tools/dev/godot.sh --headless --path . -s tests/run_tests.gd -- --filter port
 #
-# It waits for the lock, runs the real binary (GODOT_BIN, else the owner's Godot 4.5.1 console exe) with the
-# arguments it was given, and releases the lock. The lock is held for one invocation, so a script that starts
-# Godot several times (tools/test.sh: the import, then the run) lets other worktrees in between its steps.
-# A lock whose owner is gone (a killed run) is cleared. Wait longer than RW_GODOT_WAIT seconds (default 3600)
-# and it gives up with exit 75.
+# Every worktree of the project would share one user:// folder (%APPDATA%\Godot\app_userdata\Rhythm Warfare), and
+# the tests write there, so two Godot runs at once corrupt each other. So:
+#   * each worktree gets its OWN user data folder: <work>/userdata/<worktree folder name> is given to Godot as
+#     APPDATA, so user:// is private to the worktree and the owner's real save is never touched. Worktrees
+#     therefore run at the same time;
+#   * inside one worktree, one Godot at a time: a lock, held for one invocation (a script that starts Godot
+#     several times lets others in between its steps). A lock whose owner is gone is cleared. Wait longer than
+#     RW_GODOT_WAIT seconds (default 3600) and it gives up with exit 75.
+# A caller that has already pointed APPDATA somewhere else (tools/run/walk_run.sh uses a throwaway folder) keeps
+# its own folder. RW_GODOT_SHARED=1 goes back to the real user folder and one lock for the whole machine (for a
+# measurement that must have the machine to itself, or to reach the owner's real save on purpose).
 set -u
 BIN="${GODOT_BIN:-$USERPROFILE/Downloads/Godot_v4.5.1-stable_win64.exe/Godot_v4.5.1-stable_win64_console.exe}"
 LOCK_ROOT="${RW_GODOT_LOCK_DIR:-${RW_AUDIO_WORK:-$USERPROFILE/rw-audio-work}}"
 mkdir -p "$LOCK_ROOT" 2>/dev/null || LOCK_ROOT="${TMPDIR:-/tmp}"
 LOCK="$LOCK_ROOT/godot.lock.d"
+if [ -z "${RW_GODOT_SHARED:-}" ]; then
+  tree="$(basename "$(cd "$(dirname "$0")/../.." && pwd)")"
+  LOCK="$LOCK_ROOT/godot.lock.$tree.d"
+  norm() { printf '%s' "$1" | tr '\\' '/' | tr '[:upper:]' '[:lower:]' | sed 's#/*$##'; }
+  if [ "$(norm "${APPDATA:-}")" = "$(norm "$USERPROFILE/AppData/Roaming")" ]; then
+    export APPDATA="$LOCK_ROOT/userdata/$tree"
+    mkdir -p "$APPDATA"
+  fi
+fi
 WAIT="${RW_GODOT_WAIT:-3600}"
 waited=0
 while ! mkdir "$LOCK" 2>/dev/null; do

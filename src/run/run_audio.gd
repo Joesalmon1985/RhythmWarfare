@@ -199,7 +199,20 @@ func start() -> void:
 		track.start_with_clock()
 
 
+## Pause and resume set every player in one AudioServer.lock, so the clock, the track groups (a tail and the incoming one in a blend) and the loops stop and go on in the same mix chunk.
 func pause() -> void:
+	AudioServer.lock()
+	_pause_all()
+	AudioServer.unlock()
+
+
+func resume() -> void:
+	AudioServer.lock()
+	_resume_all()
+	AudioServer.unlock()
+
+
+func _pause_all() -> void:
 	player.stream_paused = true
 	for g in _groups:
 		for v in g["voices"].values():
@@ -211,7 +224,7 @@ func pause() -> void:
 		track.pause()
 
 
-func resume() -> void:
+func _resume_all() -> void:
 	player.stream_paused = false
 	for g in _groups:
 		for v in g["voices"].values():
@@ -647,9 +660,16 @@ var _watch: Array = []  # [{t (boundary), recipe, armed}]: armed when the phase 
 
 
 ## The director locked a transition at boundary `boundary_t` with this recipe (TransitionPlanner: {mode, fade_s, tail_s, carry, incoming}).
+## Stage M2.4: the recipe also carries `in` (the incoming track scene: node, track, dir, entry_t, beat_s) and `out`; the track audio starts the incoming group early and muted and, for
+## blend, halftime_blend and echo_out, plays the outgoing group on as the tail (RunTrackAudio.prepare_transition).
 func prepare_transition(boundary_t: float, recipe: Dictionary) -> void:
 	_watch.append({"t": boundary_t, "recipe": recipe.duplicate(true), "armed": false})
-	transition_log.append({"kind": "prepare", "t": boundary_t, "mode": str(recipe.get("mode", "")), "tail_s": float(recipe.get("tail_s", 0.0)), "incoming": str(recipe.get("incoming", ""))})
+	transition_log.append({"kind": "prepare", "t": boundary_t, "mode": str(recipe.get("mode", "")), "tail_s": float(recipe.get("tail_s", 0.0)), "incoming": str(recipe.get("incoming", "")),
+		"rate": float(recipe.get("rate", 1.0)), "window_bars": int(recipe.get("window_bars", 0)), "complete_t": float(recipe.get("complete_t", boundary_t + float(recipe.get("tail_s", 0.0)))),
+		"drop_t": float(recipe.get("drop_t", -1.0)), "reason": str(recipe.get("reason", "")), "in": str((recipe.get("in", {}) as Dictionary).get("track", "")),
+		"out": str((recipe.get("out", {}) as Dictionary).get("track", ""))})
+	if track != null:
+		track.prepare_transition(boundary_t, recipe)
 
 
 func _arm_watch(t: float) -> void:
