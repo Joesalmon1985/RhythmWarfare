@@ -7,7 +7,8 @@
   "min_choices": 3,
   "max_choices_to_quest": 5,
   "history_limit": 32,
-  "hotspot_cap": 8
+  "hotspot_cap": 8,
+  "hub_hotspot_cap": 10
  },
  "locations": [
   {
@@ -296,25 +297,35 @@
    "quest": "bassment",
    "scene": "main/warehouse",
    "object": {
-    "id": "warehouse.wizard",
-    "status": "existing",
-    "illustrative_idea": "The wizard on the Floor (also in the Chill-out). Keeps its legacy mid-scene entrance."
+    "id": "warehouse.enter_bassment",
+    "status": "proposed",
+    "illustrative_idea": "A cellar hatch in the Floor beside the bar door, chalk marks round its edge (ruling 15: an ungated entrance through the port; the wizard stays as an extra way in)."
    },
-   "transition": "legacy_mid_scene",
-   "rhythm_gate": true,
-   "conditions": [
-    {
-     "flag_none": "wh_wizard_met"
+   "transition": "port",
+   "rhythm_gate": false,
+   "conditions": [],
+   "status": "proposed",
+   "legacy_way": {
+    "object": {
+     "id": "warehouse.wizard",
+     "status": "existing",
+     "illustrative_idea": "The wizard on the Floor (also in the Chill-out). Keeps its legacy mid-scene entrance as an extra way in (decision 5; ruling 15)."
     },
-    {
-     "window": "blocks 1-2"
-    }
-   ],
-   "status": "existing",
-   "exception": "legacy_wizard_entrance",
-   "also_in": [
-    "main/warehouse.chill"
-   ]
+    "transition": "legacy_mid_scene",
+    "rhythm_gate": true,
+    "exception": "legacy_wizard_entrance",
+    "also_in": [
+     "main/warehouse.chill"
+    ],
+    "conditions": [
+     {
+      "flag_none": "wh_wizard_met"
+     },
+     {
+      "window": "blocks 1-2"
+     }
+    ]
+   }
   },
   {
    "id": "warehouse_rave.gospel",
@@ -958,7 +969,7 @@
      "warehouse.chill.wizard"
     ]
    },
-   "reason": "The wizard's mid-scene entrance to the Bassment stays as it is for now (owner decision, 6 Nov 2026): it is outside the port, gated by a passed block in blocks 1 and 2 and by the flag wh_wizard_met (once per run).",
+   "reason": "The wizard's mid-scene entrance to the Bassment stays as it is for now (owner decision, 6 Nov 2026), as an extra way in beside the ungated Floor entrance of ruling 15: it is outside the port, gated by a passed block in blocks 1 and 2 and by the flag wh_wizard_met (once per run).",
    "tracked_by": "later piece: move the entrance behind the port (when: soonest)",
    "report_as": "exception"
   },

@@ -3,6 +3,10 @@
 Status: planning document, written 6 November 2026 on the one-PC plan (`docs/parallel-development/ONE_PC_PLAN.md`). No game code is written here.
 Read "Windows" in older documents as the music stream and "Ubuntu" as the narrative stream. This document belongs to the narrative stream.
 
+Reviewed on 6 November 2026 against `LEAD_RULINGS.md` (binding, later than this text). Rulings 1, 3, 4, 15 and 16 are applied: the cap of 8 counts choices
+only; the smallest target stays 88 px; every hub, the Floor included, has an ungated Dungeon entrance through the port (20 new entrances in all); a hub may set
+`max_hotspots` up to 10.
+
 Companions: `INTEGRATION_CONTRACT.md` and `contract/transition_port.gd` (the one interface to the music side), `ONE_PC_PLAN.md` (stages N1 and N2 carry the work in section 9), `docs/CHOICE_CLARITY.md` (the legibility audit of the choice layer), `docs/STORY_25D_ART_DIRECTION.md` (the art pipeline's look).
 
 How to read the status words:
@@ -60,7 +64,7 @@ When a hotspot can be touched (existing, from the engine and `docs/RUN_TRACK_SCE
 | Early (the wizard) | Blocks 0 and 1 only | 32 of 64 beats, two scenes |
 | `window: any` (the card table) | Every block | Ward day room only |
 
-`preselect` (existing, `run.json` `choice.preselect`) would let the player touch a staged option before its window. It is built and off by default. The decisions of 6 November replace it with selection open for the whole scene (section 2).
+`preselect` (existing as the optional key `choice.preselect` of `run.json`, read in `RunPlay`; no file sets it) would let the player touch a staged option before its window. It is built and off by default. The decisions of 6 November replace it with selection open for the whole scene (section 2).
 
 ### 1.2 The numbers, and what kind of numbers they are
 
@@ -110,7 +114,7 @@ These came up while the code and data were checked. Each is resolved in the sect
 | 2 | The two touch-size rules cannot both hold for a small object. A target of 88 px needs a visual of at least 40 px a side under the "bounds plus 24 px" rule, and then its touch area is 4.8 times its visual area against the 1.5 times limit. | 3.6 |
 | 3 | The staging rectangles are in metres, so the margin around an object grows as the camera nears it. The door's touch rectangle (1.7 x 2.6 m) over its drawn prop (1.2 x 2.4 m) is 25 cm a side: 24 px at 5 m, 39 px at 3 m. | 3.6 |
 | 4 | 88 px is "about 50 dp" only up to 440 dpi. At 480 dpi it is 44 dp. 48 dp is 7.6 mm at any density. | 3.5, 7 |
-| 5 | The Floor holds only one quest entrance itself (the wizard). The other three live in the Bar, Balcony and Booth, behind flags and rhythm gates. The hub rule read literally adds 19 entrance objects, not 16. | 5.2, 9 |
+| 5 | The Floor holds only one quest entrance itself (the wizard). The other three live in the Bar, Balcony and Booth, behind flags and rhythm gates. The hub rule read literally adds 19 entrance objects, not 16 (lead ruling 2); lead ruling 15 then gives the Floor an ungated Dungeon hatch as well, which makes **20**. | 5.2, 9 |
 | 6 | `choice_audit.gd` places hotspots in a 1152 x 648 view, at four beats (4, 30, 50, 56), for every hotspot whatever its flags. The coverage tool needs 1280 x 720 and 1600 x 720, every beat, and only what is on show. | 4 |
 | 7 | The code enforces `MIN_PX = 72` and a test checks it. The decisions say 88. | 9 (N2.1 changes both) |
 | 8 | Squadron has no one-lap scenes (all 14 play two laps). Only `jordan`, `jerusalem.golgotha` and `hollow` are one-lap path scenes. | 8 |
@@ -131,7 +135,7 @@ A choice is a visible object that leads to a distinct destination. "Stay" is not
 
 ### 2.2 Selection is open for the whole scene
 
-`port.selection_open()` (existing in the contract, `contract/transition_port.gd`; the real director and the mock are not built yet) is true from the scene's first beat until each lock point (`lock_t(next_boundary_t())`, 3.5 beats before the boundary today). It is false from the lock to the boundary, and during documented cinematics.
+`port.selection_open()` (existing in the contract, `contract/transition_port.gd`; the mock director is built in `tests/mocks/`, the real director is not) is true from the scene's first beat until each lock point (`lock_t(next_boundary_t())`, 3.5 beats before the boundary today). It is false from the lock to the boundary, and during documented cinematics.
 
 | Fact | Value |
 |---|---|
@@ -182,7 +186,7 @@ Mapping rules for the narrative code (proposed): the object's state is derived f
 
 ### 2.5 The hotspot cap and the reactive list
 
-The cap of 8 per scene (decision, replaces `MAX_PER_SCENE = 4`) counts **choices**. A hub has six or seven (section 5.2), so 8 is enough. Reactive objects are held apart so that they never count against the cap, never need a default, and never take part in the "one default exit" rule: a `reactives` array in the scene's hotspot file with the fields id, anchor, a reaction name, an optional touch size, and an optional existing effect (proposed; the exact shape is for N2.1). Cosmetic by default (**assumption** A5).
+The cap of 8 per scene (decision, replaces `MAX_PER_SCENE = 4`) counts **choices** (lead ruling 1). A hub has six or seven (section 5.2), so 8 is enough; a hub scene may set `max_hotspots` up to 10 (lead ruling 16; the per-node key exists today and the `ward` node sets 5). Reactive objects are held apart so that they never count against the cap, never need a default, and never take part in the "one default exit" rule: a `reactives` array in the scene's hotspot file with the fields id, anchor, a reaction name, an optional touch size, and an optional existing effect (proposed; the exact shape is for N2.1). Cosmetic by default (**assumption** A5).
 
 ### 2.6 Keys
 
@@ -394,14 +398,15 @@ A hub scene shows the four quest entrances, its mainline exit or exits, and the 
 
 | Location | Hub scene | Quest entrances | Mainline exits today | Link to the pair | Choices |
 |---|---|---|---|---|---|
-| Warehouse Rave | `warehouse` (the Floor) | Dungeon (the wizard, existing, see below), Jesus, Catch-22, LOTR | `warehouse.bar`, `warehouse.balcony` | none | 6 |
+| Warehouse Rave | `warehouse` (the Floor) | all four; the Dungeon one is a new cellar hatch (ruling 15), the wizard is an extra way in (see below) | `warehouse.bar`, `warehouse.balcony` | none | 6 |
 | Alien Spaceship | `mothership` (the Deck) | all four, new | `mothership.gallery`, `mothership.reactor` | to Hell | 7 |
 | Hell | `underworld` (the Arena) | all four, new | `underworld.court`, `underworld.furnace` | to Alien Spaceship | 7 |
 | Hospital Ward | `hospital` (the Ward) | all four, new | `hospital.corridor` | to Mental Hospital | 6 |
 | Mental Hospital | `ward` (the Day Room) | all four, new | `ward.art`, `ward.dorm` | to Hospital Ward | 7 |
 
-- The Floor holds only the wizard today. The Jesus, Catch-22 and LOTR entrances are hidden objects in the Bar (`bar.ember`), Balcony (`balcony.star`) and Booth (`booth.radio`), behind flags and a passed block. The hub rule read literally puts all four on the Floor. Those three keep their doors in the sub-scenes as extra routes (assumption A11).
-- The wizard's mid-scene entrance to the Bassment stays as it is (owner's decision of 6 November): early window, blocks 0 and 1, a passed block needed, its own path through `arm_trial`. It is not a `port.request`. The Floor still has five port-based choices without it, so the hub rule holds.
+- The Floor holds only the wizard today. The Jesus, Catch-22 and LOTR entrances are hidden objects in the Bar (`bar.ember`), Balcony (`balcony.star`) and Booth (`booth.radio`), behind flags and a passed block. The hub rule puts all four on the Floor, ungated. Those three keep their doors in the sub-scenes as extra routes (assumption A11), also ungated.
+- The Floor gets a new, ungated Dungeon entrance (a cellar hatch, `warehouse.enter_bassment`, lead ruling 15), taken at a lap boundary through the port like the other three.
+- The wizard's mid-scene entrance to the Bassment stays as it is (owner's decision of 6 November), as an **extra** way in: early window, blocks 0 and 1, a passed block needed, its own path through `arm_trial`. It is not a `port.request`. The Floor has six port-based choices without it, so the hub rule holds.
 - The four new Dungeon entrances in the other hubs are ordinary quest entries (`kind: quest_entry`, `path: bassment`) taken at a lap boundary. Raising the Bassment's passages above one or two choices, and moving the wizard behind the port, are later pieces of work and declared exceptions.
 - Quest entrances are never rhythm-gated. Pass and miss outcomes stay only on the mainline flavour routes that have them (the Door's bouncer, the Airlock examiner, the Throne). A scene with both a gate and a selection takes the `on_miss` destination when the last block is missed (contract section 3).
 
@@ -439,7 +444,7 @@ A sketch for the Floor at one camera pose, 16:9, default pad strip: world 1280 x
 |---|---|---|---|---|
 | A | The Bar door | choice, door | 220 x 310 | `warehouse.bar` |
 | B | The radio | choice, quest entrance | 150 x 150 | Catch-22 |
-| C | The wizard | choice, existing early entrance | 130 x 200 | Dungeon (own path) |
+| C | The cellar hatch (new, ruling 15) | choice, quest entrance | 130 x 200 | Dungeon (through the port) |
 | D | The ember on its stand | choice, quest entrance | 120 x 140 | LOTR |
 | E | The star in the rigging | choice, quest entrance | 170 x 140 | Jesus |
 | F | The balcony stairs | choice, door | 240 x 310 | `warehouse.balcony` |
@@ -448,13 +453,15 @@ A sketch for the Floor at one camera pose, 16:9, default pad strip: world 1280 x
 | s | Speaker stack | reactive | 125 x 155 | none |
 | g, h | Two dancer groups | reactive | 130 x 190, 120 x 185 | none |
 
+The wizard (existing, early window in blocks 0 and 1, his own path into the Dungeon) is an extra choice that is not drawn. When he shows, he stands where the hatch is or beside it and leads to the same place, so the Floor still has six distinct destinations and its cap of 8 holds.
+
 Computed over this sketch on a 1 px grid (a drawing, not a measurement; the objects do not overlap, so the sum equals the union): choices 39.3%, reactive objects 28.3%, together 67.6%. The smallest choice is 120 x 140 px, above 88 in both directions. Nothing touches the bottom edge below the dancers' feet, and nothing enters the pad strip. Gaps between neighbouring objects are 20 to 40 px.
 
 Requirements this layout puts on the scene, in order of cost:
 
 1. **The camera holds the wide shot.** The hub's rail stays on a framing that shows all six choices from the first beat. Today `_window_face` turns the head to the window's hotspots from about beat 49; for a hub the framing must hold from beat 0 (proposed).
 2. **The choices have to be placed at 3 to 5 m**, at ground level or hung, and be drawn as objects, not as lights on empty spots (`bar.ember`, `balcony.star`, `booth.radio` are today `pos` anchors with no object).
-3. **Each quest entrance belongs to the place**, so the Deck's Catch-22 entrance is not a copy of the Floor's radio. What the object is, for each of the 19 entrances, is for the world agents of N2.4 to decide with the owner. The rule: the object must be one a person in that place would walk up to.
+3. **Each quest entrance belongs to the place**, so the Deck's Catch-22 entrance is not a copy of the Floor's radio. What the object is, for each of the 20 entrances, is for the world agents of N2.4 to decide with the owner. The rule: the object must be one a person in that place would walk up to.
 
 ### 5.4 Non-hub scenes
 
@@ -605,7 +612,7 @@ All 82 rows below are the model until the tool's baseline replaces them. Where t
 
 | Scene | Hotspots data/final | Touchable / destinations now | Destinations in the data | Union % (model) | In view + edge | Min px | Clarity | Choice objects to add | Reactives (est.) | Timing |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `warehouse` | 5/3 | 4/3 | wh.bar, wh.balcony, bassment:1 | 3.0 | 3+0 | 72* | inv | 3 entrances | 11 | OW |
+| `warehouse` | 5/3 | 4/3 | wh.bar, wh.balcony, bassment:1 | 3.0 | 3+0 | 72* | inv | 4 entrances | 11 | OW |
 | `warehouse.bar` | 5/4 | 4/2 | wh.chill, wh.booth, ember:hollow | 23.2 | 3+1 | 72* | inv | link to hub | 8 | OH |
 | `warehouse.balcony` | 5/4 | 4/2 | wh.chill, wh.booth, gospel:jordan | 28.5 | 4+0 | 139 | inv | link to hub | 7 | OH |
 | `warehouse.chill` | 4/3 | 4/2 | wh.exit, bassment:1 | 13.9 | 3+0 | 154 | inv | link to hub | 11 | OW |
@@ -714,7 +721,7 @@ All 82 rows below are the model until the tool's baseline replaces them. Where t
 | Median union % | 8.6 | 5.3 | 6.7 | 5.8 | 6.3 |
 | Scenes with a target under 88 px | 32 | 8 | 12 | 9 | 61 |
 | Final hotspots that are edge beacons (sum of the "edge" count) | 38 | 1 | 13 | 5 | 57 |
-| Choice objects to add | 71 | 34 | 27 | 30 | 162 |
+| Choice objects to add | 72 | 34 | 27 | 30 | 163 |
 | Reactive objects (est., 3.4% each) | 350 | 203 | 154 | 175 | 882 |
 
 Timing mix: 39 scenes are one-lap (36 main run, `jordan`, `jerusalem.golgotha`, `hollow`) and 43 are two-lap path scenes. Of the 82, 2 carry the wizard's early window, 1 the card table, 3 a pass or miss split, 3 a rhythm-gated quest entrance, and 5 an end door that returns to the Floor.
@@ -744,20 +751,20 @@ From the audit (model; the rules are those of section 8). "Make" is a new object
 
 | Choice objects | Count | Make or place | Notes |
 |---|---|---|---|
-| Quest entrances in the five hubs | 19 | Make, one by one | 16 in the four new hubs (4 locations x 4 quests) and 3 on the Floor. The plan's figure is 16; the Floor adds 3 |
+| Quest entrances in the five hubs | 20 | Make, one by one | 16 in the four new hubs (4 locations x 4 quests) and 4 on the Floor (the new hatch and the three copies). The plan's figure was 16 before lead ruling 15 |
 | Links between paired locations | 4 | Make 2 designs, one per direction | Alien Spaceship and Hell, Hospital Ward and Mental Hospital |
 | Links back to the hub, in the 31 non-hub main scenes | 31 | 5 designs (one per location), placed by rule | A per-scene override where the default spot collides |
 | Extra entrance or second exit in main scenes with only one way on | 17 | Make | Mostly the single-route scenes of the Alien Spaceship, Hell, Hospital and Mental Hospital |
 | Back objects in quest scenes | 43 | 4 designs (one per quest), placed by rule | Not in the first scene of a quest |
 | Return objects in quest scenes | 41 | 4 designs (one per quest), placed by rule | Plus the 5 end doors, which become returns that land on the hub |
 | Extra objects in quest scenes still short of three | 7 | Make | |
-| **Total** | **162** | about 47 made one by one, 115 placed from about 13 designs | |
+| **Total** | **163** | about 48 made one by one, 115 placed from about 13 designs | |
 
 ### 9.3 Content work: reactive objects
 
 | Scope | Scenes | Choice objects to add | Reactives (est.) |
 |---|---|---|---|
-| Warehouse Rave | 6 | 8 | 48 |
+| Warehouse Rave | 6 | 9 | 48 |
 | Alien Spaceship | 5 | 12 | 52 |
 | Hell | 5 | 12 | 53 |
 | Hospital Ward (with `hospital_late`) | 10 | 19 | 93 |
@@ -765,7 +772,7 @@ From the audit (model; the rules are those of section 8). "Make" is a new object
 | Gospel | 17 | 34 | 203 |
 | Squadron | 14 | 27 | 154 |
 | Ember | 15 | 30 | 175 |
-| **All** | **82** | **162** | **882** |
+| **All** | **82** | **163** | **882** |
 
 Median 12 reactive objects per scene; the range is 0 (`warehouse.booth`, where the model gives 54%) to 15. The hubs need 7 to 11 each. At 5% each, 613; at 8% each, 402.
 
@@ -774,7 +781,7 @@ How honest is this?
 - It is the largest quantity of work in the plan. The investigation put the gap at about 8 times in area and 3 times in time (model).
 - The supply of existing objects is large: the maps list 14 to 182 things each. How many are large enough on screen has not been surveyed. The first step of N2.6 is the survey with `--candidates` (4.5). Until then the split between "data row only" and "new sprite" is unknown.
 - Reactive objects are at their cheapest as a data row with a code reaction. A reaction that needs a new act on a person costs a people-sheet re-bake. The choice has to be made per object.
-- About 880 reactive rows plus 162 choice rows is about 1,040 new rows against the 240 hotspot rows in the data of the 82 scenes today. The reactive list (2.5) and the split tables (N2.3) are there to keep that manageable.
+- About 880 reactive rows plus 163 choice rows is about 1,040 new rows against the 240 hotspot rows in the data of the 82 scenes today. The reactive list (2.5) and the split tables (N2.3) are there to keep that manageable.
 - If a scene cannot reach 50% with honest objects, the fallback is a named exception for that scene (3.7), not a bigger hit area.
 
 ---
@@ -828,7 +835,7 @@ Run in the normal suite (`tools/test.sh`) unless stated. Files are proposed name
 |---|---|---|
 | 1 | Objects that react to a tap but lead nowhere count toward the 50% coverage | Section 2.1, T1 |
 | 2 | Mainline shape: keep today's routes; add hub-to-hub links between the paired locations (Alien Spaceship and Hell; Hospital Ward and Mental Hospital); no ending yet | A hub shows four quest entrances, its mainline exit or exits and the link to its pair (5.2) |
-| 3 | The wizard's mid-scene entrance to the Bassment stays as it is for now. The Bassment's passages with fewer than three choices are a declared exception and a later piece of work | 5.2, 3.7, 8.6 |
+| 3 | The wizard's mid-scene entrance to the Bassment stays as it is for now (as an extra way in, lead ruling 15). The Bassment's passages with fewer than three choices are a declared exception and a later piece of work (lead ruling 19) | 5.2, 3.7, 8.6 |
 
 Standing from the lead architect's decisions of the same day, restated: quest entry is never rhythm-gated; returns land on the hub of the location the player came from; selection is open for the whole scene except from the lock to the boundary and during documented cinematics; the hotspot cap goes from 4 to 8; the smallest target is 88 px in the 1280 x 720 design; a touch region lies within its object's bounds plus 24 px; the audit samples every beat; the working papers behind these are not in the repository, so everything needed is restated here.
 
@@ -848,7 +855,7 @@ Each has a default, used unless the owner says otherwise.
 | A8 | The 88 px minimum is 48 dp only up to 440 dpi (44 dp at 480 dpi). Raise it to 96 px? | Keep 88; decide after the phone test |
 | A9 | A scene may declare at most 25% of its beats as exceptions | 25% |
 | A10 | No sound on selection | None; the music stream decides if a sound is wanted |
-| A11 | The Bar, Balcony and Booth keep their hidden quest doors as extra routes once the Floor shows all four | Keep |
-| A12 | The four new Dungeon entrances in the other hubs are taken at a lap boundary like any other quest entry, while the Floor keeps the wizard | As stated |
+| A11 | The Bar, Balcony and Booth keep their quest doors (now ungated) as extra routes once the Floor shows all four | Keep |
+| A12 | All five Dungeon entrances, the Floor's new hatch included, are taken at a lap boundary like any other quest entry; the Floor keeps the wizard as an extra way in (lead ruling 15) | As stated |
 | A13 | The hub's rail holds a wide framing from beat 0 | Yes |
 | A14 | The per-scene figures in section 8 are the model, replaced by the tool's baseline when it exists | Yes |
