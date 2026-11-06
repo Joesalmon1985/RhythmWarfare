@@ -617,7 +617,11 @@ environment on Android, and `user://` is the app's private folder, where `adb pu
   by default the first-choice tracks of the Warehouse and one world plus the three listening pairs of M2.6,
   about 12 packs and 1 GB; or a list given on the command line. It checks free space with `adb shell df`
   first. A scene whose pack is not on the phone plays an alternate or an ordinary scene, as on the PC.
-- For the owner's testing only: an APK used with these packs is never given to anyone.
+- **Superseded for the final build (ruling 24, 6 November 2026).** The owner holds the rights to include
+  the tracks, and the final APK carries them: stage X4 of `ONE_PC_PLAN.md` adds a build step that
+  re-encodes the stems for the phone and a place to look inside the build (`res://`, or a `.pck` beside the
+  APK). The external folder and the push script above remain the way to try a few packs on a phone before
+  that build exists.
 
 ## 10. Tests
 

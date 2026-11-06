@@ -64,3 +64,12 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
 23. The coverage targets as the audit tool reads them stand: touch coverage at least 50% in at least 80% of
     samples, and choice coverage at least 25% in at least 80% of samples, a sample with nothing selectable
     counting as 0%. Measured on 6 November: 0 of 82 scenes pass (`coverage/baseline.md`).
+
+### From the owner, during the work
+24. On 6 November 2026 the owner stated that they hold the rights to include all the music tracks in the
+    game, and asked that, once the work is done, the Android APK be updated with the tracks included. So
+    the final build bundles the tracks (stage X4): a build step re-encodes the stems for the phone, the
+    packs are found inside the build, and nothing has to be pushed to the device by hand. The earlier
+    wording "a build with these recordings cannot be given to anyone" is withdrawn. Two things do not
+    change: audio is not committed to the public Git repository (the owner's statement was about the game,
+    and the packs are several GB), and `main` is not touched until the owner says so.

@@ -35,7 +35,10 @@ This is a plan. No game code was changed in writing it.
 Earlier decisions that still stand (from the laptop sessions; the full text is in the hand-copied
 `planning/DECISIONS.md` and `planning/claude_memory/`):
 
-- Third-party audio is never committed: not recordings, stems, previews or caches. The repository is public.
+- Audio from the recordings is never committed: not recordings, stems, previews or caches. The repository
+  is public, and the packs are several GB. On 6 November the owner stated that they hold the rights to
+  include all the tracks in the game, so the tracks **are bundled in the Android build** (stage X4, ruling
+  24); that does not put them in Git.
 - Tracks play as recorded. The incoming track is never stretched or re-pitched.
 - Each scene has its own track, entered about 16 bars before its first drop; staying is the default until
   half-way through the track; leaving is touching a door.
@@ -270,7 +273,7 @@ Everything happens behind the seam, in `src/music/**`, `src/transition/transitio
 | X1 | Merge M2 and N2 into `feature/one-pc`; `test_port_real.gd` runs the 15 conformance cases on the real director | Green |
 | X2 | The combined routes of the owner's brief, automated on real packs: navigation, saved state, choices available, the track changes, cues stay on the beat | 0 script errors; a table of routes and results |
 | X3 | Full suite, `SCRIPT ERROR` count, `check_hotspots.py` for the main run and the three paths, importer tests, `tools/export_smoke.gd`, narrative validator, coverage audit | All green; counts written in the hand-over |
-| X4 | Phone: a debug APK. Packs on the device need a small code change that no earlier package owns: packs are found only in `RW_TRACKS_DIR` or `user://track_packs`, and `user://` on Android is app-private, where `adb push` cannot write. The music stream adds a third place to look that `adb` can reach (the app's external files folder) and a script that pushes a chosen subset of packs (all 61 are several GB). Then latency, worst frame time and memory are measured on the phone. For the owner's own testing only: a build with these recordings cannot be given to anyone | Figures in the hand-over. Needs the owner's phone on USB |
+| X4 | Phone: the Android APK **with the tracks bundled** (ruling 24; the owner holds the rights). Three pieces that no earlier package owns, all the music stream's. (a) A build step, `tools/audio_import/build_android_packs.py`: re-encodes every pack's stems for the phone (the stems as imported are about 4.0 GB at about 500 kbps; the target is about 1 GB or less, the bitrate chosen by ear on three tracks) into a build folder that Git ignores, with `track.json` and the charts copied; previews and reports are left out. (b) A third place to look for packs, after `RW_TRACKS_DIR` and `user://track_packs`: inside the build (`res://`), with the export preset including that folder; if the APK cannot hold it, a separate `.pck` beside the APK, loaded at start. (c) The export itself, installed on the owner's phone. Then latency, worst frame time, memory and load time per scene are measured on the phone | The APK installs and plays every scene from its own tracks with no packs pushed by hand; size and figures in the hand-over. Needs the owner's phone on USB |
 | X5 | Visual polish (Opus): the 20 entrances (ruling 15), the selection feedback, the reactive objects | Before and after shots |
 | X6 | Docs: `GAME_GUIDE.md`, `HANDOVER.md` section, `PICKUP.md`; worktrees and `wip/` branches removed | Written |
 | X7 | The owner plays and listens, then says whether `feature/one-pc` is merged into `main` | The owner's word |
@@ -328,9 +331,10 @@ otherwise.
 | 6 | Scene lengths and the every-fourth-bar rest | Decided by ear after M1 |
 | 7 | May the planning inputs (`DECISIONS.md`, reports A to E; no audio) be committed to the public repository so that the documents can cite them? | No; the documents restate what they need |
 
-Publication and licences, kept apart from the engineering: the 61 recordings are other artists' commercial
-releases and cannot be distributed with a build without licences; the game can be developed and tested
-with them on the owner's own devices only. The Jesus quest uses traditional biblical episodes. The
+Publication and licences, kept apart from the engineering: on 6 November 2026 the owner stated that they
+hold the rights to include all 61 tracks in the game, and asked for the Android APK to carry them (ruling
+24, stage X4). The plan takes that statement as given and keeps no record of the licences themselves. The
+audio still stays out of the public Git repository. The Jesus quest uses traditional biblical episodes. The
 Catch-22 and LOTR quests are original-name stories that follow the shape of those books; whether that is
 enough for publication is a question for someone qualified, before any release.
 

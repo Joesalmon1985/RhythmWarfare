@@ -69,7 +69,7 @@ These are working defaults chosen by the lead or the documents, not yet the owne
 7. **The 17 extra quest entrances on non-hub scenes** use a rotating choice of quest, so that those scenes reach three choices (`NARRATIVE_GRAPH.md` 8.2, item 4).
 8. **The mainline stays one-way** (`NARRATIVE_GRAPH.md` 8.2, item 2): no route back to the Warehouse, and none from the Hospital Ward and Mental Hospital pair back to the Alien Spaceship and Hell pair. With the new pair links one run can visit all five locations.
 9. **Interaction assumptions A1 to A14** (`INTERACTION_DESIGN.md` 11.2), for example that tapping the selected object again keeps it selected.
-10. **Licences.** The 61 recordings cannot ship in a build; the Jesus quest, and the Catch-22 and LOTR shapes, need someone qualified before any release (`ONE_PC_PLAN.md` section 9).
+10. **Licences.** The owner stated on 6 November 2026 that they hold the rights to include the 61 tracks, so the Android build carries them (ruling 24); the audio still stays out of Git. The Jesus quest, and the Catch-22 and LOTR shapes, need someone qualified before any release (`ONE_PC_PLAN.md` section 9).
 
 ## Not done by these documents
 
