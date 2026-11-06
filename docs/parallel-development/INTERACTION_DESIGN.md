@@ -66,7 +66,7 @@ When a hotspot can be touched (existing, from the engine and `docs/RUN_TRACK_SCE
 
 Nothing in the repository measures touch coverage. The figures below come from a Python model that re-implemented `HotspotView.resolve`, `StoryProjector.project`, `HotspotView.layout` and the staging touch sizes over the shipped data, and rasterised the union of circles and rectangles on a 1280 x 460.8 stage view (the default 36% pad strip). It had to assume a camera pose for each scene: the camera standing at the last stop of the node's good rail chain, looking where the window camera looks. Real play moves the camera.
 
-**These are the report's model, not measurements.** The per-scene numbers in section 8 are the same model. They stay in this document until the measured baseline from `tools/run/coverage_audit.gd` (work package N1.5) replaces them. The model is trusted for its median, not for any single scene: a camera next to a hotspot swings one scene by tens of points.
+**These are the investigation's model, not measurements.** The per-scene numbers in section 8 are the same model. They stay in this document until the measured baseline from `tools/run/coverage_audit.gd` (work package N1.5) replaces them. The model is trusted for its median, not for any single scene: a camera next to a hotspot swings one scene by tens of points.
 
 | Quantity (model) | Value |
 |---|---|
@@ -524,7 +524,7 @@ All art is drawn by Python in `tools/story/art/` and `tools/run/make_choice_art.
 | **New sprite** | A thing added to the map's generator (`make_scenes.py` or the chapter's maps module), a 128 px tile drawn in `tex_<chapter>.py`, a stage rebuild | A new door, a new quest entrance object, a second frame for a prop |
 | **People re-bake** | A new act or face named in the staging or acting data; people sheets re-baked (the sheets are regenerated, never merged; frozen for both streams until the lead rebuilds them once) | A dancer that turns, a nurse that points |
 
-Adding one tappable object by hand today costs about four files and a generator edit (report, from reading the pipeline). The plan's answer is to keep the per-world tables in separate files (N2.3, byte-identical output) so that world agents can work in parallel.
+Adding one tappable object by hand today costs about four files and a generator edit (from reading the pipeline). The plan's answer is to keep the per-world tables in separate files (N2.3, byte-identical output) so that world agents can work in parallel.
 
 ---
 
@@ -570,4 +570,285 @@ Two pads sit under each thumb, the left pair at the left edge, the right pair at
 | 20:9 safe area | Read for the pads only (`pad_view.gd`) |
 | Anything on 16:9 tablets | Not looked at |
 
-<!-- NEXT -->
+---
+
+## 8. The scene audit
+
+### 8.1 The template
+
+One row per playable scene. The owner's columns and where they are in the tables below:
+
+| Owner's column | Table column |
+|---|---|
+| Current choices | Touchable / destinations now; Destinations in the data |
+| Missing required choices | Choice objects to add (against three, and against the hub rule for hubs) |
+| Destinations | Destinations in the data (flag-gated routes included, so it can list more than "now") |
+| Coverage | Union % (model), In view + edge |
+| Clarity | Clarity (`docs/CHOICE_CLARITY.md`: cle = clear, unc = unclear, inv = invisible) |
+| Touch accessibility | Min px (smallest single target; `*` = under 88 px) |
+| New objects or animations needed | Choice objects to add; Reactives (est.) |
+| Fit with transition timing | Timing |
+
+Columns in detail:
+
+- **Hotspots data/final**: hotspots in the scene's data file, and how many are touchable in the final window with no flags set (what the 2 to 4 rule counts).
+- **Touchable / destinations now**: touchable things at the start of a visit with no flags, and distinct places a touch can send the player (success routes, defaults resolved, "stay" not counted). The Day Room (`ward`) is counted as 2: its third "destination" is the card table, which stays in the room.
+- **Union % (model)**: the investigation's model for the camera at the last stop of the good rail chain. **Not a measurement.**
+- **In view + edge**: final hotspots in the picture, plus those shown as edge beacons.
+- **Choice objects to add**: what the rules add. Hub: the hub rule of 5.2. Mainline scene: a link to the location's hub, and an entrance (or a second exit) if the scene still has fewer than three destinations. Quest scene: a way back to the previous scene (not in the first scene of a quest) and a return to the mainline, plus more if still short. A final scene whose end door already leads out needs no separate return.
+- **Reactives (est.)**: reactive objects needed to bring the union from the model's figure, plus the new choice objects at 5% each, to a design target of 55%, at 3.4% for each reactive object. These are order-of-magnitude figures. At 5% each the total is 613, at 8% it is 402.
+- **Timing**: O = ordinary scene, one lap, selection can wait up to beat 60.5. P = path scene, two laps, a pick made in lap 1 waits for the lap-2 lock (conformance case 5). Letters after: W = the wizard's early window in blocks 0 and 1 (stays as it is; its own path, not a port request; it cancels any pending request when it fires); K = the card table, a minigame while seated (declared exception; the engine keeps the door the player got up toward as the pending pick); G = a pass or miss split on the last block (the router gives the port an `on_miss` destination); H = a quest entrance that is rhythm-gated today and must stop being so; R = the end door returns to the Warehouse floor today and must land on the hub it came from.
+
+All 82 rows below are the model until the tool's baseline replaces them. Where the tool and the model disagree, the tool wins and these rows are regenerated.
+
+### 8.2 Main run (36 scenes)
+
+| Scene | Hotspots data/final | Touchable / destinations now | Destinations in the data | Union % (model) | In view + edge | Min px | Clarity | Choice objects to add | Reactives (est.) | Timing |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `warehouse` | 5/3 | 4/3 | wh.bar, wh.balcony, bassment:1 | 3.0 | 3+0 | 72* | inv | 3 entrances | 11 | OW |
+| `warehouse.bar` | 5/4 | 4/2 | wh.chill, wh.booth, ember:hollow | 23.2 | 3+1 | 72* | inv | link to hub | 8 | OH |
+| `warehouse.balcony` | 5/4 | 4/2 | wh.chill, wh.booth, gospel:jordan | 28.5 | 4+0 | 139 | inv | link to hub | 7 | OH |
+| `warehouse.chill` | 4/3 | 4/2 | wh.exit, bassment:1 | 13.9 | 3+0 | 154 | inv | link to hub | 11 | OW |
+| `warehouse.booth` | 4/3 | 3/2 | wh.exit, squadron:base | 54.4 | 2+1 | 72* | inv | link to hub | 0 | OH |
+| `warehouse.exit` | 4/3 | 3/2 | ms, uw | 13.7 | 2+1 | 72* | inv | link to hub | 11 | OG |
+| `mothership` | 4/4 | 4/2 | ms.gallery, ms.reactor | 4.5 | 3+1 | 72* | inv | 4 entrances + link to Hell | 8 | O |
+| `mothership.gallery` | 3/3 | 3/1 | ms.bridge | 4.1 | 2+1 | 72* | inv | link to hub + 1 entrance | 13 | O |
+| `mothership.reactor` | 3/3 | 3/1 | ms.bridge | 2.9 | 1+2 | 72* | inv | link to hub + 1 entrance | 13 | O |
+| `mothership.bridge` | 3/2 | 2/1 | ms.exit | 1.7 | 1+1 | 72* | inv | link to hub + 1 entrance | 13 | O |
+| `mothership.exit` | 4/4 | 4/2 | hp, ward | 35.7 | 3+1 | 72* | inv | link to hub | 5 | OG |
+| `underworld` | 5/4 | 4/2 | uw.court, uw.furnace | 3.7 | 2+2 | 72* | unc | 4 entrances + link to Alien Spaceship | 8 | O |
+| `underworld.court` | 3/3 | 3/1 | uw.pit | 8.7 | 3+0 | 74* | inv | link to hub + 1 entrance | 11 | O |
+| `underworld.furnace` | 3/3 | 3/1 | uw.pit | 8.4 | 3+0 | 110 | inv | link to hub + 1 entrance | 11 | O |
+| `underworld.pit` | 3/3 | 3/1 | uw.exit | 2.5 | 2+1 | 72* | inv | link to hub + 1 entrance | 13 | O |
+| `underworld.exit` | 3/3 | 3/2 | hp, ward | 18.4 | 1+2 | 72* | inv | link to hub | 10 | OG |
+| `hospital` | 4/4 | 4/1 | hp.corridor | 7.2 | 3+1 | 72* | inv | 4 entrances + link to Mental Hospital | 7 | O |
+| `hospital.corridor` | 4/4 | 4/2 | hp.dayroom, hp.cafeteria | 20.3 | 3+1 | 72* | inv | link to hub | 9 | O |
+| `hospital.dayroom` | 3/3 | 3/1 | hp.garden | 3.7 | 2+1 | 72* | inv | link to hub + 1 entrance | 13 | O |
+| `hospital.cafeteria` | 3/3 | 3/1 | hp.garden | 10.1 | 1+2 | 72* | inv | link to hub + 1 entrance | 11 | O |
+| `hospital.garden` | 3/3 | 3/1 | hp.exit | 16.6 | 2+1 | 72* | unc | link to hub + 1 entrance | 9 | O |
+| `hospital.exit` | 3/3 | 3/2 | hp_late, ward_late | 36.7 | 2+1 | 72* | inv | link to hub | 4 | O |
+| `ward` | 5/4 | 5/2 | ward.art, ward.dorm | 3.9 | 4+0 | 75* | unc | 4 entrances + link to Hospital Ward | 8 | OK |
+| `ward.art` | 3/3 | 3/1 | ward.corridor | 3.0 | 2+1 | 72* | inv | link to hub + 1 entrance | 13 | O |
+| `ward.dorm` | 3/3 | 3/1 | ward.corridor | 6.3 | 2+1 | 72* | inv | link to hub + 1 entrance | 12 | O |
+| `ward.corridor` | 4/3 | 3/1 | ward.courtyard | 31.0 | 1+2 | 72* | inv | link to hub + 1 entrance | 5 | O |
+| `ward.courtyard` | 3/3 | 3/1 | ward.exit | 16.4 | 1+2 | 72* | inv | link to hub + 1 entrance | 9 | O |
+| `ward.exit` | 3/3 | 3/2 | hp_late, ward_late | 26.0 | 1+2 | 72* | inv | link to hub | 8 | O |
+| `hospital_late` | 5/4 | 4/2 | hp_late.cafe, hp_late.quiet | 7.3 | 2+2 | 72* | inv | link to hub | 13 | O |
+| `hospital_late.cafe` | 4/3 | 3/1 | hp_late.exit | 3.1 | 2+1 | 72* | inv | link to hub + 1 entrance | 13 | O |
+| `hospital_late.quiet` | 3/3 | 3/1 | hp_late.exit | 13.8 | 3+0 | 88 | inv | link to hub + 1 entrance | 10 | O |
+| `hospital_late.exit` | 4/3 | 3/2 | hp_late, ward_late | 36.7 | 2+1 | 72* | inv | link to hub | 4 | O |
+| `ward_late` | 4/4 | 4/2 | ward_late.treat, ward_late.dorm | 6.3 | 1+3 | 72* | inv | link to hub | 13 | O |
+| `ward_late.treat` | 3/3 | 3/1 | ward_late.exit | 11.5 | 2+1 | 72* | inv | link to hub + 1 entrance | 10 | O |
+| `ward_late.dorm` | 3/3 | 3/1 | ward_late.exit | 6.3 | 2+1 | 72* | inv | link to hub + 1 entrance | 12 | O |
+| `ward_late.exit` | 3/3 | 3/2 | ward_late, hp_late | 5.4 | 3+0 | 78* | inv | link to hub | 14 | O |
+
+### 8.3 The Life of Jesus (Gospel, 17 scenes, 124 BPM)
+
+| Scene | Hotspots data/final | Touchable / destinations now | Destinations in the data | Union % (model) | In view + edge | Min px | Clarity | Choice objects to add | Reactives (est.) | Timing |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `jordan` | 2/2 | 2/1 | jordan.baptism | 4.4 | 2+0 | 96 | unc | return + 1 more | 12 | O |
+| `jordan.baptism` | 2/2 | 2/2 | jordan.nazareth, jordan.wilderness | 5.3 | 2+0 | 74* | unc | back + return | 12 | P |
+| `jordan.wilderness` | 2/2 | 2/2 | galilee, galilee.capernaum | 2.4 | 2+0 | 75* | unc | back + return | 13 | P |
+| `jordan.nazareth` | 3/3 | 3/2 | galilee, galilee.capernaum | 4.3 | 3+0 | 78* | unc | back + return | 12 | P |
+| `galilee` | 3/3 | 3/2 | galilee.mount, galilee.storm | 10.6 | 3+0 | 86* | unc | back + return | 11 | P |
+| `galilee.capernaum` | 3/3 | 3/2 | galilee.mount, road | 5.0 | 3+0 | 81* | unc | back + return | 12 | P |
+| `galilee.mount` | 3/3 | 3/2 | road.loaves, galilee.storm | 6.1 | 3+0 | 73* | unc | back + return | 12 | P |
+| `galilee.storm` | 3/3 | 3/2 | road.loaves, road | 4.4 | 2+1 | 72* | inv | back + return | 12 | P |
+| `road` | 3/3 | 3/2 | road.loaves, road.entry | 6.6 | 3+0 | 104 | unc | back + return | 12 | P |
+| `road.loaves` | 3/3 | 3/2 | road.entry, road | 9.3 | 3+0 | 92 | unc | back + return | 11 | P |
+| `road.entry` | 2/2 | 2/2 | jerusalem, jerusalem.gethsemane | 4.3 | 2+0 | 98 | unc | back + return | 12 | P |
+| `jerusalem` | 3/3 | 3/2 | jerusalem.gethsemane, jerusalem.trial | 7.3 | 3+0 | 72* | unc | back + return | 12 | P |
+| `jerusalem.gethsemane` | 3/3 | 3/2 | jerusalem.trial, jerusalem.road | 5.2 | 3+0 | 94 | unc | back + return | 12 | P |
+| `jerusalem.trial` | 2/2 | 2/2 | jerusalem.golgotha, jerusalem.road | 3.5 | 2+0 | 89 | unc | back + return | 13 | P |
+| `jerusalem.golgotha` | 2/2 | 2/1 | jerusalem.tomb | 6.2 | 2+0 | 112 | unc | back + return | 12 | O |
+| `jerusalem.tomb` | 2/2 | 2/1 | wh | 6.1 | 2+0 | 125 | unc | back + 1 more (end door = return) | 12 | PR |
+| `jerusalem.road` | 2/2 | 2/1 | wh | 9.1 | 2+0 | 99 | unc | back + 1 more (end door = return) | 11 | PR |
+
+### 8.4 The Mission Count (Squadron, 14 scenes, 140 BPM)
+
+| Scene | Hotspots data/final | Touchable / destinations now | Destinations in the data | Union % (model) | In view + edge | Min px | Clarity | Choice objects to add | Reactives (est.) | Timing |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `base` | 2/2 | 2/2 | base.c03, base.c02 | 1.4 | 0+2 | 72* | inv | return | 15 | P |
+| `base.c02` | 2/2 | 2/2 | air, air.c05 | 4.3 | 1+1 | 72* | inv | back + return | 12 | P |
+| `base.c03` | 3/3 | 3/2 | air.c05, air.c06 | 11.4 | 1+2 | 72* | inv | back + return | 10 | P |
+| `air` | 2/2 | 2/2 | city, base.c03 | 30.1 | 1+1 | 72* | inv | back + return | 5 | P |
+| `air.c05` | 2/2 | 2/2 | city.c08, air.c06 | 8.5 | 1+1 | 72* | inv | back + return | 11 | P |
+| `air.c06` | 2/2 | 2/2 | base.c02, city.c09 | 4.8 | 1+1 | 72* | inv | back + return | 12 | P |
+| `city` | 2/2 | 2/2 | city.c10, base.c03 | 0.7 | 0+2 | 72* | inv | back + return | 14 | P |
+| `city.c08` | 2/2 | 2/2 | city.c10, city.c09 | 12.2 | 2+0 | 72* | unc | back + return | 10 | P |
+| `city.c09` | 2/2 | 2/2 | escape.c12, escape | 10.0 | 1+1 | 72* | inv | back + return | 11 | P |
+| `city.c10` | 2/2 | 2/2 | city.c09, escape.c12 | 2.1 | 1+1 | 72* | inv | back + return | 13 | P |
+| `escape` | 2/2 | 2/2 | base.c02, escape.c12 | 4.9 | 1+1 | 72* | inv | back + return | 12 | P |
+| `escape.c12` | 2/2 | 2/2 | escape.c14, escape.c13 | 9.7 | 2+0 | 90 | unc | back + return | 11 | P |
+| `escape.c13` | 2/2 | 2/1 | wh | 4.3 | 2+0 | 80* | unc | back + 1 more (end door = return) | 12 | PR |
+| `escape.c14` | 2/2 | 2/2 | escape, escape.c12 | 24.6 | 2+0 | 226 | inv | back + return | 6 | P |
+
+### 8.5 The Ember Road (15 scenes, 145 BPM)
+
+| Scene | Hotspots data/final | Touchable / destinations now | Destinations in the data | Union % (model) | In view + edge | Min px | Clarity | Choice objects to add | Reactives (est.) | Timing |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `hollow` | 2/2 | 2/1 | hollow.ford | 17.6 | 2+0 | 167 | unc | return + 1 more | 9 | O |
+| `hollow.ford` | 2/2 | 2/2 | hollow.inn, north | 8.3 | 1+1 | 72* | inv | back + return | 11 | P |
+| `hollow.inn` | 2/2 | 2/2 | north, north.pass | 20.4 | 2+0 | 130 | inv | back + return | 8 | P |
+| `north` | 3/3 | 3/2 | north.pass, deeps | 5.8 | 3+0 | 97 | inv | back + return | 12 | P |
+| `north.pass` | 2/2 | 2/2 | deeps, deeps.falls | 1.7 | 2+0 | 72* | cle | back + return | 13 | P |
+| `deeps` | 2/2 | 2/1 | deeps.falls, north.pass | 1.6 | 2+0 | 72* | unc | back + return | 13 | P |
+| `deeps.falls` | 4/3 | 3/2 | marsh, marsh.wall, mountain.taken | 10.0 | 2+1 | 72* | inv | back + return | 11 | P |
+| `marsh` | 3/3 | 3/2 | marsh.wall, marsh.stair | 6.2 | 3+0 | 72* | unc | back + return | 12 | P |
+| `marsh.wall` | 2/2 | 2/2 | marsh.stair, marsh.plain, mountain.taken | 2.6 | 2+0 | 72* | cle | back + return | 13 | P |
+| `marsh.stair` | 4/3 | 3/2 | marsh.plain, mountain.taken, mountain | 3.5 | 1+2 | 72* | inv | back + return | 13 | P |
+| `marsh.plain` | 2/2 | 2/2 | mountain, mountain.taken | 2.3 | 2+0 | 72* | unc | back + return | 13 | P |
+| `mountain` | 2/2 | 2/2 | mountain.spring, mountain.keeper | 11.2 | 1+1 | 72* | inv | back + return | 10 | P |
+| `mountain.spring` | 2/2 | 2/1 | wh | 4.1 | 2+0 | 129 | unc | back + 1 more (end door = return) | 13 | PR |
+| `mountain.keeper` | 2/2 | 2/1 | wh | 3.0 | 2+0 | 120 | unc | back + 1 more (end door = return) | 13 | PR |
+| `mountain.taken` | 3/3 | 3/2 | marsh.plain, marsh.wall | 8.8 | 3+0 | 125 | inv | back + return | 11 | P |
+
+### 8.6 What the audit says
+
+| Finding (model) | Main run | Gospel | Squadron | Ember | All |
+|---|---|---|---|---|---|
+| Scenes | 36 | 17 | 14 | 15 | 82 |
+| Fewer than three distinct destinations now | 35 | 17 | 14 | 15 | 81 |
+| Exactly one destination | 18 | 4 | 1 | 4 | 27 |
+| Fewer than three touchable things | 1 | 8 | 13 | 10 | 32 |
+| Median union % | 8.6 | 5.3 | 6.7 | 5.8 | 6.3 |
+| Scenes with a target under 88 px | 32 | 8 | 12 | 9 | 61 |
+| Final hotspots that are edge beacons (sum of the "edge" count) | 38 | 1 | 13 | 5 | 57 |
+| Choice objects to add | 71 | 34 | 27 | 30 | 162 |
+| Reactive objects (est., 3.4% each) | 350 | 203 | 154 | 175 | 882 |
+
+Timing mix: 39 scenes are one-lap (36 main run, `jordan`, `jerusalem.golgotha`, `hollow`) and 43 are two-lap path scenes. Of the 82, 2 carry the wizard's early window, 1 the card table, 3 a pass or miss split, 3 a rhythm-gated quest entrance, and 5 an end door that returns to the Floor.
+
+**The Bassment** (the Dungeon quest, 64 passages in `src/trial`, own tap handler) is summarised, not listed. 62 of 64 passages show fewer than three choices: 38 offer exactly one, 24 offer two, and only passages 20 and 48 offer three without items. It is entered mid-scene by the wizard. This design adds a visible return to the Bassment's passages (a work package of N2.5) and leaves the rest, raising the choices and moving the entrance behind the port, as a later separate piece of work. It is a declared exception in the audit (3.7).
+
+---
+
+## 9. System work and content work
+
+### 9.1 System work (narrative stream)
+
+| Work | Package | What | Files | Model | Size |
+|---|---|---|---|---|---|
+| The measuring tool | N1.5 | `coverage_audit.gd`, its geometry and Python summary, baseline table | `tools/run/coverage_*` (new) | Sonnet | Small to medium; no run-file edits |
+| Selection open for the whole scene | N2.1 | Choices shown from the first beat; reads the port; cap 8; smallest target 88 px; touch region built on screen from the visual plus 24 px; choice wins over reactive; refused and locked looks; `reactives` list; keys 1 to 8 | `hotspot_view.gd`, `run_hotspots.gd`, `hotspot_contract.gd`, the input and `hotspot_items` parts of `run_play.gd` | Opus | Medium; the largest system piece |
+| Contract tests moved | N2.1 | `MIN_PX` 72 to 88 in the contract and in `tests/test_hotspots_view.gd` and `test_hotspots_data.gd`; `check_hotspots.py` cap 8, hub and return rules; `test_run_tracks_safety` re-recorded on purpose, with the difference written down | tests, `tools/run/check_hotspots.py` | Opus | Small |
+| Table split | N2.3 | Per-world tables of `tools/run/make_hotspots.py`, output byte-identical | `tools/run/` | Sonnet | Small |
+| Light path, tint, hint cue, refusal | N2.1, X5 | Drawing in `hotspot_view.gd` and `choice_props.gd` | same | Opus | Small |
+| Tests | N1 to N2 | Section 10, automated list | `tests/test_interaction_*` | Sonnet | Medium |
+
+The time gap (25% to 94.5% of a scene) is closed by system work alone. The area gap is content.
+
+### 9.2 Content work: choice objects
+
+From the audit (model; the rules are those of section 8). "Make" is a new object or sprite; "place" is a rule that puts an existing definition into scenes.
+
+| Choice objects | Count | Make or place | Notes |
+|---|---|---|---|
+| Quest entrances in the five hubs | 19 | Make, one by one | 16 in the four new hubs (4 locations x 4 quests) and 3 on the Floor. The plan's figure is 16; the Floor adds 3 |
+| Links between paired locations | 4 | Make 2 designs, one per direction | Alien Spaceship and Hell, Hospital Ward and Mental Hospital |
+| Links back to the hub, in the 31 non-hub main scenes | 31 | 5 designs (one per location), placed by rule | A per-scene override where the default spot collides |
+| Extra entrance or second exit in main scenes with only one way on | 17 | Make | Mostly the single-route scenes of the Alien Spaceship, Hell, Hospital and Mental Hospital |
+| Back objects in quest scenes | 43 | 4 designs (one per quest), placed by rule | Not in the first scene of a quest |
+| Return objects in quest scenes | 41 | 4 designs (one per quest), placed by rule | Plus the 5 end doors, which become returns that land on the hub |
+| Extra objects in quest scenes still short of three | 7 | Make | |
+| **Total** | **162** | about 47 made one by one, 115 placed from about 13 designs | |
+
+### 9.3 Content work: reactive objects
+
+| Scope | Scenes | Choice objects to add | Reactives (est.) |
+|---|---|---|---|
+| Warehouse Rave | 6 | 8 | 48 |
+| Alien Spaceship | 5 | 12 | 52 |
+| Hell | 5 | 12 | 53 |
+| Hospital Ward (with `hospital_late`) | 10 | 19 | 93 |
+| Mental Hospital (with `ward_late`) | 10 | 20 | 104 |
+| Gospel | 17 | 34 | 203 |
+| Squadron | 14 | 27 | 154 |
+| Ember | 15 | 30 | 175 |
+| **All** | **82** | **162** | **882** |
+
+Median 12 reactive objects per scene; the range is 0 (`warehouse.booth`, where the model gives 54%) to 15. The hubs need 7 to 11 each. At 5% each, 613; at 8% each, 402.
+
+How honest is this?
+
+- It is the largest quantity of work in the plan. The investigation put the gap at about 8 times in area and 3 times in time (model).
+- The supply of existing objects is large: the maps list 14 to 182 things each. How many are large enough on screen has not been surveyed. The first step of N2.6 is the survey with `--candidates` (4.5). Until then the split between "data row only" and "new sprite" is unknown.
+- Reactive objects are at their cheapest as a data row with a code reaction. A reaction that needs a new act on a person costs a people-sheet re-bake. The choice has to be made per object.
+- About 880 reactive rows plus 162 choice rows is about 1,040 new rows against the 240 hotspot rows in the data of the 82 scenes today. The reactive list (2.5) and the split tables (N2.3) are there to keep that manageable.
+- If a scene cannot reach 50% with honest objects, the fallback is a named exception for that scene (3.7), not a bigger hit area.
+
+---
+
+## 10. Tests
+
+### 10.1 Automated
+
+Run in the normal suite (`tools/test.sh`) unless stated. Files are proposed names under the narrative stream's `tests/test_interaction_*`.
+
+| # | Test | Passes when | Needs |
+|---|---|---|---|
+| 1 | Coverage T1 and T2 | The audit of section 4 says PASS in all six cells, for every scene that is not a declared exception | The audit (X3 and N2.4 to N2.6) |
+| 2 | Target size T4 | No usable region has a short side under 88 px in any sample; the synthetic unit test also checks 72 now fails | Geometry unit test; audit |
+| 3 | Pad and HUD overlap T6 | 0 px² against pad rectangles at pad sizes 0, 1, 2 and views 1280 x 720 and 1600 x 720; no region under the pause button | Geometry unit test; audit |
+| 4 | Invisible hitboxes T5 | Every region within 24 px of its visual bounds; ratio at most 1.5 where the visual is 88 px or more | Audit |
+| 5 | Single tap changes the destination | On the mock director: a tap on a choice makes one `request`; `current()` holds that destination; the object is selected within one beat of virtual time | `MockTransitionDirector` (N1.4) |
+| 6 | Deselection | A second tap on another choice closes the first id with `&"replaced"`; the first object returns to idle in the same frame; only the second can lock | Mock |
+| 7 | Refusal and lock | With `fail_load_ids` the object shows refused and the scene default applies; a tap after `locked` is refused with `&"locked"` and the pending destination does not change | Mock |
+| 8 | Reactive taps leave the pick alone | Tapping reactive objects at every state of 2.3 does not change `current()` and makes no port call | Mock |
+| 9 | Independence from the pads | A pad held down does not stop a world tap; a pad tap never selects; a replay of the same notes with and without world taps gives the same hit results | `LaneInput` simulated; scene test |
+| 10 | Selection open share | On the mock, `selection_open()` is true for at least 94% of beats of a one-lap scene and at least 80% of beats of every scene with 2 to 12 laps | Mock |
+| 11 | Quest entries never gated | The validator finds no `on_miss` or passed-block condition on a quest entrance or a quest return | `tools/narrative/graph.py` |
+| 12 | Choices | Every playable scene has three distinct destinations among usable choices; every hub has five or more with its four entrances | Validator and audit T3 agree |
+| 13 | Data | `check_hotspots.py`: cap 8 for choices, reactive rows have an anchor, a reaction and a visual, exactly one default exit | `tools/run/check_hotspots.py` |
+| 14 | Determinism | Two audit runs of one scene give identical lines | Audit |
+| 15 | Safety baseline | `test_run_tracks_safety` matches its re-recorded baseline, the difference written down | Existing test |
+
+### 10.2 Needs eyes on a screen or a phone
+
+| # | Check | Who and how |
+|---|---|---|
+| 1 | Does every reaction read at a glance, door, person, portal, reactive? | Before and after contact sheets from `tools/run/capture.sh` and `capture_choice.sh` (run `python tools/shrink_shots.py` before any shot is committed) |
+| 2 | Is each reactive object a real object, and does it look like part of the place? | The owner's eye; the tool cannot tell a good object from a named rectangle |
+| 3 | Is the light path and the destination tint clear on a phone in daylight? | Phone |
+| 4 | Is 88 px comfortable for the owner's thumb? Is 96 better? | Phone |
+| 5 | Edge objects against the back gesture | Phone |
+| 6 | A world tap with one or two pads held (multi-touch cap) | Phone |
+| 7 | Tap to feedback in frames; selection latency | Phone, with a high-speed camera or the frame overlay |
+| 8 | 20:9 layout and safe area on the real phone, three pad sizes | Phone |
+| 9 | Can a player pick during the chart's rests? | The owner plays a scene |
+| 10 | Is the hub's wide shot held, and are the six or seven choices all seen? | One look per hub, five hubs |
+
+---
+
+## 11. Decisions taken by the owner on 6 November 2026, and assumptions still to confirm
+
+### 11.1 Decisions of 6 November 2026
+
+| # | Decision | Effect on this document |
+|---|---|---|
+| 1 | Objects that react to a tap but lead nowhere count toward the 50% coverage | Section 2.1, T1 |
+| 2 | Mainline shape: keep today's routes; add hub-to-hub links between the paired locations (Alien Spaceship and Hell; Hospital Ward and Mental Hospital); no ending yet | A hub shows four quest entrances, its mainline exit or exits and the link to its pair (5.2) |
+| 3 | The wizard's mid-scene entrance to the Bassment stays as it is for now. The Bassment's passages with fewer than three choices are a declared exception and a later piece of work | 5.2, 3.7, 8.6 |
+
+Standing from the lead architect's decisions of the same day, restated: quest entry is never rhythm-gated; returns land on the hub of the location the player came from; selection is open for the whole scene except from the lock to the boundary and during documented cinematics; the hotspot cap goes from 4 to 8; the smallest target is 88 px in the 1280 x 720 design; a touch region lies within its object's bounds plus 24 px; the audit samples every beat; the working papers behind these are not in the repository, so everything needed is restated here.
+
+### 11.2 Assumptions still to confirm
+
+Each has a default, used unless the owner says otherwise.
+
+| # | Assumption | Default |
+|---|---|---|
+| A1 | Tapping the selected choice again | It stays selected. The alternative is to deselect it and fall back to the default exit, which risks an accidental cancel |
+| A2 | A scene passes only when all six cells (two views, three pad sizes) pass | Yes |
+| A3 | The 3.5-beat lock window is not "active play" (5.5% of an ordinary scene); the report also shows the figure with it counted | Excluded, and shown |
+| A4 | The reading of the two touch-size rules in 3.6: 24 px always; the 1.5 times ratio only for objects of 88 px or more; an object under 40 px is not a target | As stated |
+| A5 | Reactive objects are cosmetic by default; an author may attach an existing small effect (a flag, energy, a music variation) | Cosmetic |
+| A6 | Edge beacons count for reachability and the touch union but not for the visual union, and do not meet the "three visible choices" rule | As stated |
+| A7 | Where a choice and a reactive object overlap, the choice takes the tap | Yes |
+| A8 | The 88 px minimum is 48 dp only up to 440 dpi (44 dp at 480 dpi). Raise it to 96 px? | Keep 88; decide after the phone test |
+| A9 | A scene may declare at most 25% of its beats as exceptions | 25% |
+| A10 | No sound on selection | None; the music stream decides if a sound is wanted |
+| A11 | The Bar, Balcony and Booth keep their hidden quest doors as extra routes once the Floor shows all four | Keep |
+| A12 | The four new Dungeon entrances in the other hubs are taken at a lap boundary like any other quest entry, while the Floor keeps the wizard | As stated |
+| A13 | The hub's rail holds a wide framing from beat 0 | Yes |
+| A14 | The per-scene figures in section 8 are the model, replaced by the tool's baseline when it exists | Yes |
