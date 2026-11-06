@@ -140,7 +140,7 @@
    ],
    "floor": 0,
    "ceiling": 3.0,
-   "light": 0.72,
+   "light": 0.64,
    "tint": "#f2ead8",
    "room": "line",
    "flags": [],
@@ -800,7 +800,7 @@
    "y": 4.0,
    "radius": 24.0,
    "color": "#fff4d0",
-   "strength": 1.3,
+   "strength": 1.15,
    "sector": "line"
   },
   {

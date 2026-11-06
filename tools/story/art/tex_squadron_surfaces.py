@@ -145,7 +145,7 @@ WETSTONE = ramp("#0c1624", "#16273c", "#243d58", "#365876", "#4f7694", "#76a0b6"
 WEED = ramp("#102418", "#1c3e26", "#2c5c36", "#42804a", "#68a860")
 SHED = ramp("#0c1a30", "#16294a", "#243f68", "#38598a", "#5479a8", "#7c9fc4")
 CELLG = ramp("#12161a", "#212a30", "#364249", "#4f5e66", "#6f808a", "#98a8b0")
-SANDC = ramp("#8a6a3c", "#aa8648", "#c8a458", "#e2c274", "#f2dc98", "#fbf0bc")
+SANDC = ramp("#3a2814", "#58401f", "#7c5c30", "#a08040", "#c4a458", "#ecd496")
 MARR = ramp("#3e5622", "#5e7a2c", "#84a43c", "#b0cc62")
 QUAYC = ramp("#0e1620", "#1a2634", "#2c3d50", "#445a72", "#62809a", "#88a8bc")
 
@@ -236,11 +236,13 @@ def hex_of(c) -> str:
     return "#%02x%02x%02x" % tuple(int(v * 255 + 0.5) for v in c)
 
 
-def _ground(n, pal, seed, grain=0.14, pebbles=0.0, tufts=0.0, ruts=False, pebble_pal=None, tuft_pal=None, base=0.55, scale=30):
+def _ground(n, pal, seed, grain=0.14, pebbles=0.0, tufts=0.0, ruts=False, pebble_pal=None, tuft_pal=None, base=0.55, scale=30, shade=0.0):
     sh = base + 0.3 * (noise(n, scale, seed, 4) - 0.5) * 2 + grain * _fine(n, seed + 1)
     if ruts:
         x, y = grid(n)
-        sh = sh - 0.14 * np.exp(-((((y - 38) % n) ** 2) / 90.0)) - 0.14 * np.exp(-((((y - 90) % n) ** 2) / 90.0)) * (0.5 + noise(n, 24, seed + 2, 2))
+        sh = sh - 0.24 * np.exp(-((((y - 38) % n) ** 2) / 90.0)) - 0.24 * np.exp(-((((y - 90) % n) ** 2) / 90.0)) * (0.5 + noise(n, 24, seed + 2, 2))
+    if shade > 0:
+        sh = sh - shade * (noise(n, 44, seed + 9, 3) > 0.64)
     rgb = _q(sh, pal, 0.8)
     rng = _R(seed + 4)
     if pebbles > 0 and pebble_pal is not None:
@@ -371,7 +373,7 @@ def wall_berm():
 
 
 def floor_dust():
-    return _ground(N, DUST, 351, pebbles=0.35, pebble_pal=BAGS, tufts=0.07, tuft_pal=hexs_to_arr(["#1c2a0c", "#4e6a22", "#7a9a34", "#a8c456"]), ruts=True, scale=26)
+    return _ground(N, DUST, 351, pebbles=0.35, pebble_pal=BAGS, tufts=0.07, tuft_pal=hexs_to_arr(["#1c2a0c", "#4e6a22", "#7a9a34", "#a8c456"]), ruts=True, scale=26, shade=0.3)
 
 
 def hexs_to_arr(hs):
@@ -615,7 +617,8 @@ def wall_dunes():
     n = N
     x, y = grid(n)
     ripple = 0.5 + 0.5 * np.sin((y / n) * 6.2832 * 5 + 3.0 * noise(n, 40, 511, 3))
-    sh = 0.62 + 0.14 * ripple + 0.18 * (noise(n, 30, 512, 4) - 0.5) * 2 + 0.06 * _fine(n, 513)
+    sh = 0.55 + 0.2 * ripple + 0.2 * (noise(n, 30, 512, 4) - 0.5) * 2 + 0.06 * _fine(n, 513)
+    sh = sh - 0.45 * (noise(n, 44, 516, 3) > 0.62) + 0.1 * (noise(n, 20, 517, 3) > 0.72)
     rgb = _q(sh, SANDC, 0.8)
     rng = _R(514)
     for _ in range(9):  # tufts of marram grass
@@ -631,7 +634,8 @@ def floor_sand():
     n = N
     x, y = grid(n)
     ripple = 0.5 + 0.5 * np.sin(((x + 14 * noise(n, 30, 521, 3)) / n) * 6.2832 * 4)
-    sh = 0.6 + 0.1 * ripple + 0.2 * (noise(n, 22, 522, 4) - 0.5) * 2 + 0.07 * _fine(n, 523)
+    sh = 0.55 + 0.2 * ripple + 0.2 * (noise(n, 22, 522, 4) - 0.5) * 2 + 0.07 * _fine(n, 523)
+    sh = sh - 0.4 * (noise(n, 44, 526, 3) > 0.62) + 0.1 * (noise(n, 20, 527, 3) > 0.72)  # the shade of a pine and the sun's glare
     rgb = _q(sh, SANDC, 0.8)
     rng = _R(524)
     for _ in range(26):  # tiny shells
@@ -824,8 +828,8 @@ def sky_harbour_day():
     """The coast's cobalt morning: saturated blue overhead to a pale gold horizon, cumulus bands, a low sun, gulls as 2-pixel marks, a far headland, and the sea line (the one saturated sky of the path)."""
     yy = np.arange(H, dtype=np.float32)[:, None]
     xx = np.arange(W, dtype=np.float32)[None, :]
-    pal = ramp("#1f4fa0", "#2f66b8", "#4a82cc", "#6ea0dc", "#98bee8", "#c4d8ee", "#e8e6d0")
-    base = 0.1 + 0.62 * np.clip(yy / HZ, 0, 1) ** 1.2
+    pal = ramp("#2c62b4", "#3f7acc", "#5e98dc", "#84b6ea", "#aed0f2", "#d4e6f6", "#f4f0dc")
+    base = 0.2 + 0.62 * np.clip(yy / HZ, 0, 1) ** 1.0
     cl = _band_noise(621, 1.0, 5.0, 4)
     band = np.clip((cl - 0.52) * 6, 0, 1) * np.clip(1 - np.abs(yy - 22) / 13.0, 0, 1)
     belly = np.clip((cl - 0.52) * 6, 0, 1) * np.clip((yy - 24) / 8.0, 0, 1) * (1 - np.clip((yy - 33) / 6, 0, 1))

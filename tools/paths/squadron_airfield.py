@@ -63,7 +63,7 @@ def build():
         hut.actor(f"a{k:02d}", w, v, d, u)
 
     # ---- the flight line (C02) --------------------------------------------------------------------------------------------------------------------------------------
-    line = mb.room("line", (0, 0, 26, 14), -90, "line", floor_tex="floor_dust", ceil_tex="sky", fog={"color": "#b9a47a", "density": 0.006}, wall_tex=wall_berm, ceiling=3.0, light=0.72, tint="#f2ead8", activities=BUSY)
+    line = mb.room("line", (0, 0, 26, 14), -90, "line", floor_tex="floor_dust", ceil_tex="sky", fog={"color": "#b9a47a", "density": 0.006}, wall_tex=wall_berm, ceiling=3.0, light=0.64, tint="#f2ead8", activities=BUSY)
     line.standard_rail("c02", home=(2.2, 0), good=((5.0, -1.5), (8.5, 0.8)), bad=((1.5, -4.5), (2.5, 4.0)), arrive=(0.8, 0))
     line.wp("c02_x_up", 10.0, 5.0, 60)  # the ladder (to the bomber)
     line.wp("c02_x_right", 20.0, -3.0, -10)  # the crates
@@ -78,7 +78,7 @@ def build():
     line.thing("hangar_front", T("thing_hangar_front", "billboard", "the front of a corrugated store hangar with a big sliding door ajar on dark, crates visible inside, 128x128", 1.0, 128), 25.5, -1.0, 2.0, 4.2)
     line.thing("sandbags", T("thing_sandbags", "billboard", "a low wall of sandbags with a lazy stack of ammunition boxes", 1.0, 128), 14.5, -6.2, 0.55, 1.2)
     line.thing("jeep", T("thing_jeep", "billboard", "an open dusty utility jeep, olive, no markings, a spare wheel on the back", 1.0, 128), 4.5, 5.5, 0.8, 1.8)
-    line.light("lt_line_sun", 12.0, 0.0, 4.0, 24.0, "#fff4d0", 1.3)
+    line.light("lt_line_sun", 12.0, 0.0, 4.0, 24.0, "#fff4d0", 1.15)
     line.actor("gun", "gunner", "a", 11.5, 5.0, fixed=True, activity="stand")
     line.actor("qm", "quartermaster", "a", 19.2, -2.4, fixed=True, activity="stand", prop="egg")
     line.actor("mech", "airman", "b", 8.4, 3.6)
