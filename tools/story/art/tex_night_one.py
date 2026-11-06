@@ -49,6 +49,14 @@ WHITE = px.ramp("#5a5c58", "#7c7e78", "#9ea09a", "#c2c2bc", "#e4e2da")
 SILVER = px.ramp("#2a2a32", "#4a4a54", "#707078", "#9a9aa2", "#c8c8ce")
 VELOUR = px.ramp("#14060a", "#260a12", "#3a101a", "#4e1822", "#62222c", "#7a3036")
 GREEN = px.ramp("#04200e", "#0a3a1a", "#12602a", "#1e8a3c", "#3cc060")
+# the redraw at 100 to 128 texels a metre (docs/art/STYLE_GUIDE.md 4 and 7): brick toward the guide's mauve brick #634e60, steel rusted like Rave.png's trusses
+BRICKM = px.ramp("#16080f", "#24111a", "#341a24", "#45242c", "#563034", "#683e3c", "#7c5046", "#8e6450")
+SOOTB = px.ramp("#0c070c", "#160d14", "#21141b", "#2d1b22", "#3a2429", "#4a2f31")
+TRUSS = px.ramp("#110b0f", "#21151a", "#33201f", "#4a2e24", "#64402a", "#805632", "#9c6e3e", "#ba8a52")
+MESH = px.ramp("#050407", "#0c0a10", "#16131b", "#221e28", "#2f2a36", "#40394a")
+PAINTG = px.ramp("#0f1614", "#17211e", "#202d29", "#2b3a34", "#374840", "#45574d")
+UVDYE = [px.ramp("#2a0820", "#5c1244", "#9a1e72", "#d02e94", "#f45ab8"), px.ramp("#2a1406", "#6a3810", "#a8621a", "#dc9028", "#f6c25a"),
+         px.ramp("#061c22", "#0c3a44", "#14646a", "#20908e", "#4ac4b8"), px.ramp("#140a2a", "#2c1658", "#4c2a90", "#7448c4", "#9c74e8")]
 
 
 # ---- helpers ----------------------------------------------------------------------------------------------------------------------------------------------
@@ -146,16 +154,17 @@ def wrap_mask(m: np.ndarray, dx: int, dy: int) -> np.ndarray:
 
 
 class Sprite:
-    """An RGBA billboard canvas: paint palette-quantised shapes, unpainted pixels stay transparent."""
+    """An RGBA billboard canvas: paint palette-quantised shapes, unpainted pixels stay transparent. Square (n) or w x h."""
 
-    def __init__(self, n: int = N):
-        self.n = n
-        self.rgb = np.zeros((n, n, 3), np.uint8)
-        self.a = np.zeros((n, n), np.uint8)
+    def __init__(self, n: int = N, h: int | None = None):
+        self.n = n  # the width
+        self.h = n if h is None else h
+        self.rgb = np.zeros((self.h, n, 3), np.uint8)
+        self.a = np.zeros((self.h, n), np.uint8)
 
     def paint(self, mask, pal, shade) -> None:
         m = np.asarray(mask, bool)
-        layer = q(shade, pal, shape=(self.n, self.n))
+        layer = q(shade, pal, shape=(self.h, self.n))
         self.rgb[m] = layer[m]
         self.a[m] = 255
 
@@ -164,8 +173,55 @@ class Sprite:
         self.rgb[m] = (px.hexc(hexc) * 255 + 0.5).astype(np.uint8)
         self.a[m] = 255
 
+    def edge(self, k: float = 0.72) -> None:
+        """The style guide's edge (section 6): the outermost ring of opaque pixels one step darker than their own colour, no outline colour."""
+        a = self.a > 0
+        rim = a & ~(np.roll(a, 1, 0) & np.roll(a, -1, 0) & np.roll(a, 1, 1) & np.roll(a, -1, 1))
+        rim[0, :] |= a[0, :]
+        rim[-1, :] |= a[-1, :]
+        rim[:, 0] |= a[:, 0]
+        rim[:, -1] |= a[:, -1]
+        self.rgb[rim] = (self.rgb[rim].astype(np.float32) * k).astype(np.uint8)
+
     def rgba(self) -> np.ndarray:
         return np.dstack([self.rgb, self.a])
+
+
+def grid2(w: int, h: int):
+    """x, y of a w x h canvas (h rows)."""
+    y, x = np.mgrid[0:h, 0:w].astype(np.float32)
+    return x, y
+
+
+def noise2(w: int, h: int, scale: float, seed: int, octaves: int = 3) -> np.ndarray:
+    """Value noise on a w x h canvas (cropped from a square field; sprites need not tile)."""
+    n = max(w, h)
+    return px.noise(n, scale, seed, octaves)[:h, :w]
+
+
+def box(w, h, x0, y0, x1, y1):
+    x, y = grid2(w, h)
+    return (x >= x0) & (x < x1) & (y >= y0) & (y < y1)
+
+
+def oval(w, h, cx, cy, rx, ry):
+    x, y = grid2(w, h)
+    return ((x + 0.5 - cx) / rx) ** 2 + ((y + 0.5 - cy) / ry) ** 2 <= 1.0
+
+
+def line2(w, h, x0, y0, x1, y1, wd=1.0):
+    x, y = grid2(w, h)
+    dx, dy = x1 - x0, y1 - y0
+    t = np.clip(((x + 0.5 - x0) * dx + (y + 0.5 - y0) * dy) / max(dx * dx + dy * dy, 1e-6), 0, 1)
+    return np.hypot(x + 0.5 - (x0 + t * dx), y + 0.5 - (y0 + t * dy)) <= wd * 0.5
+
+
+def droop(w, h, x0, x1, y0, depth, wd=1.2):
+    """A cable hanging between (x0, y0) and (x1, y0), sagging `depth` pixels in the middle."""
+    x, y = grid2(w, h)
+    u = np.clip((x - x0) / max(x1 - x0, 1), 0, 1)
+    yy = y0 + depth * np.sin(np.pi * u)
+    return (np.abs(y - yy) < wd * 0.5 + 0.1) & (x >= x0) & (x < x1)
 
 
 def save_rgba(path: str, rgba: np.ndarray) -> None:
@@ -178,274 +234,315 @@ def stretch_rows(m: np.ndarray, k: int) -> np.ndarray:
 
 
 # ---- walls -----------------------------------------------------------------------------------------------------------------------------------------------
+# Every surface is a 128 px tile (check_assets: tiles are square, at most 128 px) over 1.0 to 1.3 m, so 98 to 128 texels a metre (STYLE_GUIDE 7): one texel is about one
+# internal pixel at 3 m, the grain of the baked people. A tile that small repeats often, so no tile carries a single strong landmark (a poster, a fixing, a
+# blotch): the wear is many small marks, the low-frequency grime is weak, and the per-brick and per-board tones do the variation.
 
-def brick_wall(n=N, rows=16, cols=4, seed=11, pal=BRICK, grime=0.6, rust=0.35, soot_top=0.0) -> np.ndarray:
+def brick_field(n=N, rows=14, cols=4, seed=11, pal=BRICKM, grime=0.5, rust=0.25, burnt=0.12, mortar_lift=0.0) -> np.ndarray:
+    """Old warehouse brick at 1 m a tile (14 courses of 71 mm, 4 headers of 25 cm): each brick its own tone, sand grain, a lit top edge and a shadowed foot
+    (light from the upper left), chipped arrises, burnt clinkers, soot and lime bloom, mortar raked back and dirty."""
     x, y = px.grid(n)
-    sh, mort = px.bricks(n, rows=rows, cols=cols, seed=seed, wear=0.45)
-    g = px.grime(n, seed + 1, grime)
-    sh = sh - 0.4 * g - soot_top * np.clip(1 - y / (n * 0.5), 0, 1)
+    sh, mort = px.bricks(n, rows=rows, cols=cols, seed=seed, wear=0.55)
+    bh, bw = n / rows, n / cols
+    r = np.floor(y / bh)
+    off = (r % 2) * bw * 0.5
+    lx = ((x + off) % n) % bw
+    ly = y - r * bh
+    c = np.floor(((x + off) % n) / bw)
+    rng = np.random.RandomState(seed + 20)
+    burn = (rng.rand(rows, cols + 1) < burnt)[r.astype(int) % rows, c.astype(int) % (cols + 1)]
+    sh = sh + 0.07 * (lx < 2.5) - 0.08 * (lx > bw - 2.5)  # the header's left arris catches the light, its right one is in shadow
+    sh = sh + (px.speckle(n, 0.10, seed + 21) - px.speckle(n, 0.10, seed + 22)) * 0.16  # sand grain
+    g = px.grime(n, seed + 1, grime) * 0.7 + 0.3 * np.clip((px.noise(n, 6, seed + 9) - 0.55) * 3, 0, 1) * grime
+    sh = sh - 0.3 * g - 0.22 * burn
     out = q(sh, pal)
-    mo = q(0.55 - 0.5 * g + (px.noise(n, 4, seed + 3) - 0.5) * 0.5, MORTAR)
+    mo = q(0.42 + mortar_lift - 0.45 * g + (px.noise(n, 4, seed + 3) - 0.5) * 0.45 + 0.25 * (ly < 0.6), MORTAR)
     out = put(out, mort > 0.5, mo)
-    if rust > 0:
-        r = px.rust(n, seed + 2, rust)
-        out = put(out, dmask(r * 0.9) & (mort < 0.5), q(px.noise(n, 5, seed + 4) * 0.8, RUST))
-    # efflorescence and old paint flecks: a few pale specks
-    out = put(out, px.speckle(n, 0.004, seed + 5) > 0.5, q(np.full((n, n), 0.9), MORTAR))
-    return out
-
-
-def steel_shade(n, x0, x1, seed, horizontal=False):
-    """An I-beam's shading across its width: a lit flange, a dark web, a shadowed flange."""
-    x, y = px.grid(n)
-    a = y if horizontal else x
-    w = x1 - x0
-    u = (a - x0) / w
-    sh = 0.42 + 0.3 * (u < 0.16) - 0.18 * (u > 0.84) - 0.1 * ((u > 0.3) & (u < 0.7)) + (px.noise(n, 6, seed) - 0.5) * 0.25
-    return sh
-
-
-def wall_panel() -> np.ndarray:
-    """The main floor's walls (3.2 m a repeat): soot-black brick, a riveted steel stanchion, a conduit and cable tray, cables looping."""
-    n = N
-    x, y = px.grid(n)
-    out = brick_wall(n, rows=22, cols=4, seed=21, grime=0.75, rust=0.3)
-    out = (out.astype(np.float32) * 0.85).astype(np.uint8)
-    col = (x >= 6) & (x < 24)
-    sh = steel_shade(n, 6, 24, 22)
-    rv = ((np.abs(x - 8) < 1) | (np.abs(x - 21) < 1)) & ((y % 16) < 1.5)
-    sh = np.where(rv, 0.95, sh)
-    steel = q(sh, STEEL)
-    steel = put(steel, dmask(px.rust(n, 23, 0.55) * 0.9), q(px.noise(n, 4, 24) * 0.7, RUST))
-    out = put(out, col, steel)
-    # conduit pipes and a cable tray across the wall
-    for y0, y1 in ((30, 34), (36, 39)):
-        m = (y >= y0) & (y < y1)
-        u = (y - y0) / (y1 - y0)
-        out = put(out, m, q(0.75 - 0.6 * u + (px.noise(n, 8, y0) - 0.5) * 0.2, STEEL))
-    clips = ((x % 32) < 2) & (y >= 29) & (y < 40)
-    out = put(out, clips, q(np.full((n, n), 0.2), STEEL))
-    tray = (y >= 72) & (y < 75)
-    out = put(out, tray, q(np.full((n, n), 0.55) + (px.noise(n, 4, 25) - 0.5) * 0.3, STEEL))
-    cab = np.zeros((n, n), bool)
-    for i, (yy, d, ph) in enumerate(((75, 10, 0), (75, 16, 1), (76, 7, 2))):
-        x0 = (i * 43) % n
-        m = sag(n, yy, d, 1.3, 0, n)
-        cab |= np.roll(m, x0, 1)
-    out = put(out, cab, q(np.full((n, n), 0.08), STEEL))
-    out = put(out, cab & (np.roll(cab, 1, 0) == False), q(np.full((n, n), 0.3), STEEL))  # noqa: E712
+    if rust > 0:  # rust and iron bleeding from old fixings, along the bed joints
+        rr = px.rust(n, seed + 2, rust)
+        out = put(out, dmask(rr * 0.75) & (mort < 0.5), q(0.25 + px.noise(n, 5, seed + 4) * 0.5, RUST))
+    bloom = dmask(np.clip((px.noise(n, 10, seed + 6, 3) - 0.62) * 2.5, 0, 1)) & (mort < 0.5)  # lime bloom (efflorescence)
+    out = put(out, bloom & dmask(np.full((n, n), 0.35)), q(np.full((n, n), 0.8), MORTAR))
+    out = put(out, px.speckle(n, 0.003, seed + 5) > 0.5, q(np.full((n, n), 0.95), MORTAR))
     return out
 
 
 def wall_brick() -> np.ndarray:
-    """Tunnel, entrance and old walls: red-brown brick, sooty, rust bleeding from old fixings."""
+    """Tunnel, entrance and old walls (1.0 m): mauve-brown brick, sooty, rust bleeding along the courses, a few burnt headers."""
+    return brick_field(N, rows=14, cols=4, seed=11, grime=0.55, rust=0.35, burnt=0.14)
+
+
+def wall_panel() -> np.ndarray:
+    """The main floor's walls (1.28 m): brick painted black once and blistered by twenty years of smoke machines; the paint flakes off in patches to the
+    brick under it, soot runs down from the beams, a thin conduit clipped along the wall."""
     n = N
     x, y = px.grid(n)
-    out = brick_wall(n, rows=16, cols=4, seed=11, grime=0.65, rust=0.45)
-    # two old wall plugs with rust tears running down
-    for fx, fy in ((34, 20), (96, 70)):
-        out = put(out, (np.abs(x - fx) < 1.5) & (np.abs(y - fy) < 1.5), q(np.full((n, n), 0.1), STEEL))
-        tear = (np.abs(x - fx - 0.5 * np.sin(y * 0.3)) < 1.2) & (y > fy) & (y < fy + 26)
-        out = put(out, tear & dmask(1 - (y - fy) / 30.0), q(np.full((n, n), 0.45), RUST))
+    base = brick_field(n, rows=18, cols=4, seed=21, pal=BRICKM, grime=0.7, rust=0.15, burnt=0.15)
+    sh, mort = px.bricks(n, rows=18, cols=4, seed=21, wear=0.5)
+    flake = 0.6 * px.noise(n, 7, 23, 3) + 0.4 * px.noise(n, 3, 27, 2)
+    painted = flake < 0.5  # the black paint left on
+    blist = (np.abs(flake - 0.5) < 0.02)  # the paint's lifted edge catches the light
+    paint = q(0.68 + 0.35 * (sh - 0.5) - 0.25 * mort - 0.35 * px.grime(n, 24, 0.7) + (px.speckle(n, 0.08, 25) - 0.5) * 0.2, SOOTB)
+    out = put(base, painted, paint)
+    out = put(out, blist & (mort < 0.5), q(np.full((n, n), 0.85), SOOTB))
     return out
 
 
 def wall_speaker() -> np.ndarray:
-    """A speaker stack (2 m a repeat, four 1 m boxes): horns over 18-inch woofers, scuffed cabinets with steel corners."""
+    """A speaker cabinet (1.0 m a tile, so a wall is a stack of them): black-painted ply worn to the wood on the arrises, steel corners, a horn over a
+    perforated steel grille with the 15-inch cone dim behind the mesh, a strip of gaffer with the channel scrawled on it."""
     n = N
     x, y = px.grid(n)
-    lx, ly = x % 64, y % 64
-    top = y < 64
-    sh = 0.45 + (px.noise(n, 8, 31) - 0.5) * 0.3
-    out = q(sh, CAB)
-    edge = (lx < 2) | (ly < 2) | (lx > 61) | (ly > 61)
-    out = put(out, edge, q(np.full((n, n), 0.05), CAB))
-    corner = ((lx < 7) | (lx > 56)) & ((ly < 7) | (ly > 56)) & ((np.minimum(lx, 63 - lx) + np.minimum(ly, 63 - ly)) < 9)
-    out = put(out, corner, q(0.7 - 0.02 * (lx + ly) % 0.3, SILVER))
-    # woofers (bottom row)
-    cx, cy = lx - 31.5, ly - 31.5
-    r = np.hypot(cx, cy)
-    woof = (~top) & (r < 26)
-    cone = 0.25 + 0.35 * (r / 26.0) - 0.2 * (np.abs(r - 24) < 1.5) + 0.25 * ((cx + cy) < -10) * (r > 14) * 0.6
-    cone = np.where(r < 8, 0.65 - 0.04 * r + 0.2 * ((cx + cy) < -4), cone)
-    out = put(out, woof, q(cone, CONE))
-    out = put(out, (~top) & (np.abs(r - 27.5) < 1.2), q(np.full((n, n), 0.75), CONE))
-    bolts = (~top) & (np.abs(r - 28.5) < 1) & (((np.degrees(np.arctan2(cy, cx)) + 360) % 45) < 6)
-    out = put(out, bolts, q(np.full((n, n), 0.8), SILVER))
-    # horns (top row): a flared mouth with a throat, two small tweeters beside
-    hx, hy = lx - 31.5, ly - 26
-    horn = top & (np.abs(hx) < 22 - 0.0 * hy) & (np.abs(hy) < 15)
-    depth = np.maximum(np.abs(hx) / 22.0, np.abs(hy) / 15.0)
-    out = put(out, horn, q(0.05 + 0.55 * depth ** 2, CONE))
-    out = put(out, top & (np.abs(hx) < 4) & (np.abs(hy) < 3), q(np.full((n, n), 0.0), CONE))
-    for tx in (14, 49):
-        t = top & (np.hypot(lx - tx, ly - 52) < 5)
-        out = put(out, t, q(0.6 - 0.08 * np.hypot(lx - tx, ly - 52), CONE))
-    # a strip of gaffer and a stencil on one box, dust on the tops
-    out = put(out, (ly > 2) & (ly < 4) & top & (lx > 8) & (lx < 56), q(np.full((n, n), 0.3), CONE))
-    out = put(out, rect(n, 70, 4, 92, 9) & dmask(np.full((n, n), 0.7)), q(np.full((n, n), 0.75), SILVER))
+    nz = px.noise(n, 8, 31)
+    out = q(0.55 + (nz - 0.5) * 0.3 - 0.2 * px.grime(n, 32, 0.5, drip=False), CAB)
+    gap = (x < 2) | (y < 2)  # the joint between two cabinets
+    out = put(out, gap, q(np.full((n, n), 0.0), CAB))
+    arris = ((x >= 2) & (x < 4)) | ((y >= 2) & (y < 4))
+    wear = dmask(np.clip((px.noise(n, 3, 33) - 0.35) * 2, 0, 1))
+    out = put(out, arris & wear, q(0.45 + 0.4 * px.noise(n, 2, 34), WOOD))
+    out = put(out, ((x >= n - 3) | (y >= n - 3)) & ~gap, q(np.full((n, n), 0.08), CAB))
+    for cx in (2, n - 12):  # steel corners with a rivet
+        for cy in (2, n - 12):
+            m = rect(n, cx, cy, cx + 10, cy + 10)
+            out = put(out, m, q(0.55 + 0.3 * ((x - cx) + (y - cy) < 6) - 0.2 * ((x - cx) + (y - cy) > 14), SILVER))
+            out = put(out, (np.abs(x - cx - 5) < 1.2) & (np.abs(y - cy - 5) < 1.2), q(np.full((n, n), 0.15), SILVER))
+    # the horn: a rectangular flare, its walls lit from the upper left, the throat black
+    hx0, hx1, hy0, hy1 = 16, 112, 12, 46
+    horn = rect(n, hx0, hy0, hx1, hy1)
+    u = (x - (hx0 + hx1) / 2) / ((hx1 - hx0) / 2)
+    v = (y - (hy0 + hy1) / 2) / ((hy1 - hy0) / 2)
+    d = np.maximum(np.abs(u), np.abs(v))
+    wall = 0.08 + 0.55 * d ** 2.2 + 0.15 * ((u < 0) & (np.abs(u) > np.abs(v))) + 0.12 * ((v < 0) & (np.abs(v) >= np.abs(u))) - 0.12 * ((v > 0) & (np.abs(v) >= np.abs(u)))
+    out = put(out, horn, q(wall, CONE))
+    out = put(out, horn & (d < 0.16), q(np.full((n, n), 0.0), CONE))
+    out = put(out, horn & ((np.abs(u - v * 2.8) < 0.035) | (np.abs(u + v * 2.8) < 0.035)) & (d > 0.18), q(np.full((n, n), 0.45), CONE))  # the flare's folds
+    out = put(out, rect(n, hx0 - 2, hy0 - 2, hx1 + 2, hy0) | rect(n, hx0 - 2, hy0, hx0, hy1), q(np.full((n, n), 0.62), CONE))
+    # the grille: perforated steel over the cone
+    gx0, gx1, gy0, gy1 = 10, 118, 54, 120
+    gr = rect(n, gx0, gy0, gx1, gy1)
+    cx, cy = (gx0 + gx1) / 2, (gy0 + gy1) / 2 + 1
+    rr = np.hypot(x - cx, (y - cy) * 1.0)
+    cone = 0.15 + 0.4 * np.clip(rr / 30.0, 0, 1) * (rr < 31) + 0.35 * (np.abs(rr - 31) < 1.5) - 0.1 * (rr > 33) + 0.35 * (rr < 6) + 0.15 * ((x - cx + y - cy) < -12) * (rr < 30)
+    mesh = q(0.3 + 0.55 * cone, MESH)
+    holes = ((x % 3) == 1) & ((y % 3) == 1)
+    out = put(out, gr, mesh)
+    out = put(out, gr & holes, q(0.05 + 0.5 * cone, CONE))
+    out = put(out, gr & dmask(px.grime(n, 35, 0.6, drip=False) * 0.7), q(np.full((n, n), 0.15), MESH))  # dust in the mesh
+    out = put(out, (rect(n, gx0 - 2, gy0 - 2, gx1 + 2, gy1 + 2) & ~gr), q(0.5 + 0.3 * ((y < gy0) | (x < gx0)), MESH))
+    # gaffer strip with the channel scrawled on it
+    tape = rect(n, 40, 48, 76, 53)
+    out = put(out, tape, q(0.62 + 0.15 * (y == 48), WHITE))
+    out = put(out, tape & text_mask(n, "SUB2", 43, 48), q(np.full((n, n), 0.05), CAB))
     return out
 
 
 def trim() -> np.ndarray:
-    """The truss over the stage openings: a steel lattice girder every half metre against the dark roof."""
+    """The truss over the stage openings (1.0 m): a rusted box-truss girder at the top of the tile (the strip is 0.4 to 1 m deep), round chords, zig-zag lacing,
+    bolted plates at the nodes, a cable tied along the lower chord, the dark roof behind."""
     n = N
-    sh, m = px.truss(32, 41)
-    sh = np.tile(sh, (4, 4))
-    m = np.tile(m, (4, 4))
-    out = q(0.3 + (px.noise(n, 16, 42) - 0.5) * 0.3, DECK)
     x, y = px.grid(n)
-    lit = 0.35 + 0.35 * sh + 0.25 * ((y % 32) < 6)
-    return put(out, m > 0.5, q(lit, STEEL))
+    out = q(0.25 + (px.noise(n, 16, 41) - 0.5) * 0.15 + 0.06 * np.sin(x * 2 * np.pi / 12), PLATE)
+    t0, t1, b0, b1 = 6, 13, 44, 51  # the chords
+
+    def chord(y0, y1):
+        u = (y - y0) / (y1 - y0)
+        return rect(n, 0, y0, n, y1), 0.85 - 0.75 * u + 0.15 * (u < 0.2) + (px.noise(n, 5, int(y0)) - 0.5) * 0.25
+
+    lace = np.zeros((n, n), bool)
+    for k in range(4):  # 32 px bays, diagonals alternating
+        xa = k * 32
+        if k % 2 == 0:
+            lace |= seg(n, xa, t1, xa + 32, b0, 3.0)
+        else:
+            lace |= seg(n, xa, b0, xa + 32, t1, 3.0)
+    lace |= (np.abs(x % 64 - 0.5) < 1.6) & (y >= t1) & (y < b0)
+    lsh = 0.5 + 0.25 * (np.roll(lace, 1, 1) == False) - 0.2 * (np.roll(lace, -1, 1) == False)  # noqa: E712
+    out = put(out, lace, q(lsh + (px.noise(n, 4, 42) - 0.5) * 0.3, TRUSS))
+    for y0, y1 in ((t0, t1), (b0, b1)):
+        m, s = chord(y0, y1)
+        out = put(out, m, q(s, TRUSS))
+    node = ((x % 32 < 4) | (x % 32 > 28)) & (((y >= t0 - 1) & (y < t1 + 1)) | ((y >= b0 - 1) & (y < b1 + 1)))
+    out = put(out, node, q(0.5 + 0.3 * (x % 32 > 28), STEEL))
+    out = put(out, node & ((x % 32 == 1) & ((y == t0 + 2) | (y == b0 + 2))), q(np.full((n, n), 0.95), STEEL))
+    rr = px.rust(n, 43, 0.6)
+    out = put(out, dmask(rr * 0.8) & (lace | (y < b1)) & (y >= t0), q(0.2 + 0.4 * px.noise(n, 3, 44), RUST))
+    out = put(out, sag(n, b1 + 1, 7, 1.3, 0, 64) | sag(n, b1 + 1, 4, 1.3, 64, n), q(np.full((n, n), 0.05), CAB))  # a cable tied along the bottom chord
+    out = put(out, rect(n, 0, 70, n, 72) & dmask(np.full((n, n), 0.4)), q(np.full((n, n), 0.45), DECK))  # the roof's purlin far behind
+    return out
 
 
 def bar_front() -> np.ndarray:
-    """The back bar behind the bartender (2.4 m, floor to ceiling): mirror and shelves of bottles, the back counter with a till, lit fridges below."""
+    """The back bar (1.2 m a tile, three glass shelves to the tile): a smoky mirror behind, bottles of every shape with labels and a lit edge, an amber LED
+    strip under each shelf, a row of optics on some, glasses stacked upside down on others."""
     n = N
     x, y = px.grid(n)
     rng = np.random.RandomState(51)
-    out = q(0.15 + (px.noise(n, 6, 52) - 0.5) * 0.2, WOOD)
-    # mirror back with amber smears
-    mir = (y >= 7) & (y < 62)
-    msh = 0.35 + 0.25 * np.sin((x + y * 0.8) * 0.09) ** 8 + (px.noise(n, 16, 53) - 0.5) * 0.3
-    out = put(out, mir, q(msh, px.ramp("#120a12", "#22121a", "#3a2018", "#64381c", "#9a5e28")))
-    # shelves and bottles
-    for sy in (26, 44, 61):
-        xx = 1
-        while xx < n - 4:
-            w = int(rng.randint(3, 6))
-            h = int(rng.randint(9, 15))
-            hue = rng.randint(0, 5)
-            pal = [px.ramp("#0a2a14", "#14522a", "#2a8a48"), px.ramp("#3a1a06", "#7a3c0c", "#c07a1c"),
-                   px.ramp("#30343a", "#7a8a94", "#d0dce4"), px.ramp("#0a1a3a", "#1a3a7a", "#4a7ad0"),
-                   px.ramp("#3a0a10", "#7a1620", "#c0303a")][hue]
-            body = (x >= xx) & (x < xx + w) & (y >= sy - h + 4) & (y < sy)
-            neck = (x >= xx + w // 2 - 1) & (x < xx + w // 2 + 1) & (y >= sy - h) & (y < sy - h + 4)
-            out = put(out, body | neck, q(0.35 + 0.4 * ((x - xx) < 1.5), pal))
-            lab = body & (y >= sy - h // 2 - 2) & (y < sy - 2) & ((rng.rand() < 0.7))
-            out = put(out, lab, q(np.full((n, n), 0.9), WHITE))
+    mir = 0.25 + 0.2 * np.sin((x + y * 0.8) * 0.07) ** 8 + (px.noise(n, 16, 53) - 0.5) * 0.35 - 0.2 * px.grime(n, 52, 0.6, drip=False)
+    out = q(mir, px.ramp("#0e080e", "#1c1018", "#2e1a1a", "#4a2a1c", "#704220", "#9a6230"))
+    bottle_pals = [px.ramp("#06180c", "#0e3a1c", "#1c6030", "#3a9050", "#8ad0a0"), px.ramp("#2a1004", "#5a2a08", "#94500e", "#c8801e", "#f2c060"),
+                   px.ramp("#1e2228", "#4a5660", "#7a8a94", "#b0c0c8", "#e8f0f4"), px.ramp("#08142e", "#14306a", "#2a58b0", "#5a8ae0", "#a8c8ff"),
+                   px.ramp("#2a060c", "#5a1018", "#901c28", "#c83a40", "#f08a80"), px.ramp("#1a1406", "#3e3210", "#6a5a1c", "#a08a30", "#d8c060")]
+    shelves = (42, 85, 127)
+    for si, sy in enumerate(shelves):
+        top = sy - 42
+        xx = 1 + int(rng.randint(0, 3))
+        kind = si % 3
+        while xx < n - 3:
+            if kind == 2 and rng.rand() < 0.5:  # pint glasses stacked upside down
+                w = 5
+                h = int(rng.randint(8, 11))
+                g = rect(n, xx, sy - h, xx + w, sy)
+                out = put(out, g, q(0.35 + 0.35 * (x == xx) + 0.25 * (y == sy - h), GLASS))
+                xx += w + 1
+                continue
+            shape = int(rng.randint(0, 4))
+            w = [4, 5, 7, 4][shape]
+            h = [26, 20, 16, 30][shape] - int(rng.randint(0, 6))
+            h = min(h, sy - top - 4)
+            pal = bottle_pals[int(rng.randint(0, len(bottle_pals)))]
+            body = rect(n, xx, sy - int(h * 0.68), xx + w, sy)
+            sh_ = [0.3, 0.45, 0.4, 0.35][shape]
+            neck_w = 2 if w < 6 else 3
+            nx = xx + (w - neck_w) // 2
+            neck = rect(n, nx, sy - h, nx + neck_w, sy - int(h * 0.68))
+            shoulder = rect(n, xx + 1, sy - int(h * 0.68) - 2, xx + w - 1, sy - int(h * 0.68))
+            m = body | neck | shoulder
+            lit = sh_ + 0.45 * (x == xx + 1) - 0.18 * (x == xx + w - 1) + 0.1 * (y > sy - 4)
+            out = put(out, m, q(lit, pal))
+            out = put(out, rect(n, nx, sy - h - 1, nx + neck_w, sy - h + 1), q(np.full((n, n), 0.75), SILVER if rng.rand() < 0.6 else AMBER))
+            if rng.rand() < 0.8:  # a label
+                ly0 = sy - int(h * 0.5)
+                lab = rect(n, xx, ly0, xx + w, ly0 + max(3, int(h * 0.22)))
+                lp = [WHITE, AMBER, px.ramp("#3a0a10", "#c0303a", "#f08a80"), WHITE][int(rng.randint(0, 4))]
+                out = put(out, lab, q(0.55 + 0.3 * (x == xx), lp))
+                out = put(out, lab & (y == ly0 + 1) & (x % 2 == 0) & (x > xx) & (x < xx + w - 1), q(np.full((n, n), 0.05), CAB))
             xx += w + int(rng.randint(1, 3))
-        out = put(out, (y >= sy) & (y < sy + 2), q(np.full((n, n), 0.8), WOOD))
-        out = put(out, (y == sy + 2), q(np.full((n, n), 0.0), WOOD))
-    # back counter top with a till and a stack of glasses
-    out = put(out, (y >= 62) & (y < 66), q(0.6 + 0.3 * (y < 63), WOOD))
-    out = put(out, rect(n, 84, 50, 102, 62), q(0.3 + 0.2 * (y < 54), STEEL))
-    out = put(out, rect(n, 87, 52, 99, 55), q(np.full((n, n), 0.9), GREEN))
-    for gx in range(20, 40, 5):
-        out = put(out, rect(n, gx, 54, gx + 4, 62), q(0.45 + 0.4 * (x == gx), GLASS))
-    # fridges with lit shelves of bottles (left half), wooden cupboards (right half)
-    fr = (y >= 68) & (y < 124) & (x < 62)
-    fx = x % 31
-    inside = fr & (fx > 2) & (fx < 29) & (y > 70) & (y < 121)
-    out = put(out, fr, q(np.full((n, n), 0.55), STEEL))
-    glow = 0.55 + 0.35 * ((y - 70) % 13 < 2)
-    out = put(out, inside, q(glow + (px.noise(n, 4, 54) - 0.5) * 0.2, px.ramp("#1c2830", "#3a5a64", "#6a9aa0", "#b0e0dc")))
-    bott = inside & (((x * 7) // 5) % 3 == 0) & ((y - 70) % 13 > 4) & ((y - 70) % 13 < 12)
-    out = put(out, bott, q(np.full((n, n), 0.3), px.ramp("#2a1a08", "#6a3a10", "#a0601c")))
-    cup = (y >= 68) & (y < 124) & (x >= 64)
-    cx = (x - 64) % 32
-    out = put(out, cup, q(0.4 + 0.25 * (cx < 2) - 0.2 * (cx > 29) + np.sin(y * 0.6 + x * 0.05) * 0.06, WOOD))
-    out = put(out, cup & (np.abs(cx - 26) < 1.5) & (np.abs(y - 94) < 2), q(np.full((n, n), 0.9), AMBER))
-    out = put(out, (y >= 124), q(np.full((n, n), 0.05), WOOD))
+        if si == 0:  # optics: bottles upside down in brackets at the top shelf's front
+            for ox in range(6, n - 6, 21):
+                out = put(out, rect(n, ox, top + 3, ox + 6, top + 15), q(0.35 + 0.4 * (x == ox + 1), bottle_pals[(ox // 21) % 6]))
+                out = put(out, rect(n, ox + 1, top + 15, ox + 5, top + 19), q(0.7 + 0.2 * (x == ox + 1), SILVER))
+        out = put(out, (y >= sy - 1) & (y <= sy) if sy < n - 1 else (y >= n - 2), q(0.7 + 0.25 * (y == sy - 1), GLASS))
+        led = (y == (sy + 1) % n)
+        out = put(out, led, q(0.75 + 0.25 * ((x % 4) < 2), AMBER))
+        glow = (y > (sy + 1) % n) & (y < (sy + 6) % n) if sy < n - 1 else (y >= 0) & (y < 4)
+        out = put(out, glow & dmask(np.clip(1 - ((y - (sy + 1) % n) % n) / 6.0, 0, 1) * 0.6), q(np.full((n, n), 0.45), AMBER))
+    out = put(out, (x < 2) | (x >= n - 1), q(np.full((n, n), 0.2), WOOD))  # the uprights of the shelving bay
     return out
 
 
 def wall_bar() -> np.ndarray:
-    """The bar's other walls (2.4 m): flyers pasted over brick, a dado rail, dark wood panelling to the floor."""
+    """The bar's other walls (1.2 m): brick fly-posted the way a promoter does it, the same flyer in rows, paste wrinkles, torn down to older layers in
+    places, tags over them."""
     n = N
     x, y = px.grid(n)
-    out = brick_wall(n, rows=20, cols=4, seed=61, grime=0.5, rust=0.2)
+    out = brick_field(n, rows=17, cols=4, seed=61, grime=0.45, rust=0.15, burnt=0.08)
     rng = np.random.RandomState(62)
-    flyers = [("RAVE", MAGENTA), ("ACID", AMBER), ("PLUR", TEAL), ("DJ", WHITE), ("XTC", MAGENTA), ("4AM", AMBER)]
-    spots = [(4, 8), (30, 16), (58, 6), (82, 18), (104, 8), (44, 38)]
-    for (word, pal), (fx, fy) in zip(flyers, spots):
-        w, h = int(rng.randint(18, 24)), int(rng.randint(22, 28))
+    flyers = [("RAVE", MAGENTA, 2, 4, 28, 38), ("ACID", AMBER, 33, 2, 28, 36), ("PLUR", TEAL, 64, 6, 26, 34), ("4AM", WHITE, 94, 3, 30, 40),
+              ("XTC", MAGENTA, 6, 66, 26, 34), ("DJ", AMBER, 37, 62, 24, 30), ("RAVE", TEAL, 66, 68, 28, 36), ("ACID", MAGENTA, 98, 70, 26, 34)]
+    for word, pal, fx, fy, w, h in flyers:
         m = rect(n, fx, fy, fx + w, fy + h)
-        tear = (px.noise(n, 3, int(fx)) > 0.72) & ((np.abs(x - fx) < 3) | (np.abs(y - fy - h) < 3))
+        tear = (px.noise(n, 3, fx + fy * 7) > 0.66) & ((np.abs(x - fx) < 4) | (np.abs(y - fy - h) < 5) | (np.abs(x - fx - w) < 3))
         m &= ~tear
-        out = put(out, m, q(0.35 + 0.45 * (y - fy) / h, pal))
-        out = put(out, m & text_mask(n, word, fx + 2, fy + 3), q(np.full((n, n), 0.0), CAB))
-        circ = m & (np.hypot(x - fx - w * 0.5, y - fy - h * 0.62) < 5)
-        out = put(out, circ, q(np.full((n, n), 0.95), pal))
-        lines = m & (y > fy + h - 7) & (y % 2 == 0) & (x > fx + 2) & (x < fx + w - 3)
+        wrinkle = 0.08 * (np.abs(((x - fx) + (y - fy) * 0.3) % 11 - 5) < 1)
+        sh = 0.12 + 0.3 * (y - fy) / h - wrinkle - 0.3 * px.grime(n, fx + 5, 0.6) + (px.speckle(n, 0.1, fx + 3) - 0.5) * 0.15
+        out = put(out, m, q(sh, pal))
+        out = put(out, m & text_mask(n, word, fx + 3, fy + 4), q(np.full((n, n), 0.0), CAB))
+        circ = m & (np.abs(np.hypot(x - fx - w * 0.5, y - fy - h * 0.58) - 6) < 1.6)
+        out = put(out, circ, q(np.full((n, n), 0.6), pal))
+        lines = m & (y > fy + h - 8) & (y % 2 == 0) & (x > fx + 3) & (x < fx + w - 4)
         out = put(out, lines, q(np.full((n, n), 0.05), pal))
-    out = put(out, (y >= 70) & (y < 74), q(0.75 - 0.15 * (y - 70), WOOD))
-    pan = y >= 74
-    px_ = x % 21
-    out = put(out, pan, q(0.35 + 0.2 * (px_ < 2) - 0.15 * (px_ > 18) + (px.noise(n, 12, 63) - 0.5) * 0.25 - 0.2 * px.grime(n, 64, 0.5), WOOD))
-    out = put(out, (y >= 120), q(np.full((n, n), 0.08), WOOD))
+        under = tear & rect(n, fx, fy, fx + w, fy + h) & (px.noise(n, 2, fx + 9) > 0.5)  # an older poster's paper in the torn corners
+        out = put(out, under, q(np.full((n, n), 0.35), WHITE))
+    tags = np.zeros((n, n), bool)
+    for _ in range(3):
+        x0, y0 = rng.rand() * (n - 40), 30 + rng.rand() * 60
+        pts = [(x0, y0)]
+        a = rng.rand() * 6.28
+        for _ in range(9):
+            a += (rng.rand() - 0.5) * 3.0
+            pts.append((pts[-1][0] + abs(np.cos(a)) * 4 + 0.8, pts[-1][1] + np.sin(a) * 4))
+        for (a0, b0), (a1, b1) in zip(pts, pts[1:]):
+            tags |= seg(n, a0, b0, a1, b1, 1.4)
+    out = put(out, tags, q(np.full((n, n), 0.02), CAB))
     return out
 
 
 def wall_door() -> np.ndarray:
-    """The street end of the tunnel (3 m a repeat, 2 m high): steel doors propped open on a wet night street under sodium light."""
+    """The street end of the tunnel (2.0 m, the opening's own wall segment; brick to either side): steel doors folded back in a brick reveal, a wet night
+    street under one sodium lamp, terraces with a few lit windows, a puddle carrying the lamp."""
     n = N
     x, y = px.grid(n)
-    out = brick_wall(n, rows=16, cols=6, seed=71, grime=0.7, rust=0.5)
-    hole = rect(n, 30, 5, 98, 85)
-    sky = 0.05 + 0.75 * np.clip((y - 5) / 50.0, 0, 1) ** 1.5
+    out = brick_field(n, rows=28, cols=8, seed=71, grime=0.7, rust=0.4)
+    hole = rect(n, 12, 10, 116, n)
+    sky = 0.05 + 0.6 * np.clip((y - 10) / 60.0, 0, 1) ** 1.6
     street = q(sky, NIGHT)
-    stars = (px.speckle(n, 0.012, 72) > 0.5) & (y < 30)
-    street = put(street, stars, q(np.full((n, n), 1.0), WHITE))
-    bld = ((y > 26 + 10 * ((x // 9) % 3)) & (y < 66)) | ((x > 70) & (x < 86) & (y > 18) & (y < 66))
-    street = put(street, bld, q(np.full((n, n), 0.08), NIGHT))
-    win = bld & (x % 5 < 2) & (y % 6 < 3) & (px.noise(n, 3, 73) > 0.55)
-    street = put(street, win, q(0.6 + 0.4 * px.noise(n, 2, 74), AMBER))
-    road = y >= 66
-    refl = 0.15 + 0.6 * np.clip(1 - np.abs(x - 64) / 20.0, 0, 1) * (np.sin(y * 1.7) * 0.5 + 0.5) * ((y - 66) / 20.0)
-    street = put(street, road, q(refl, px.ramp("#0a0810", "#1a1418", "#3a2414", "#7a4a18", "#c0782c")))
-    post = (np.abs(x - 64) < 1) & (y > 26) & (y < 70)
-    street = put(street, post, q(np.full((n, n), 0.1), STEEL))
-    lamp = ell(n, 64.5, 25, 4, 2.5)
+    street = put(street, (px.speckle(n, 0.01, 72) > 0.5) & (y < 34), q(np.full((n, n), 0.75), WHITE))
+    roof = 48 + 6 * ((x // 11) % 3) - 4 * ((x // 23) % 2)
+    bld = (y > roof) & (y < 96)
+    chim = ((x % 23) > 17) & ((x % 23) < 20) & (y > roof - 5) & (y <= roof)
+    street = put(street, bld | chim, q(0.05 + 0.08 * ((x // 11) % 2), NIGHT))
+    win = bld & ((x % 7) < 3) & ((y % 9) > 2) & ((y % 9) < 6) & (px.noise(n, 3, 73) > 0.58)
+    street = put(street, win, q(0.55 + 0.4 * px.noise(n, 2, 74), AMBER))
+    road = y >= 96
+    refl = 0.1 + 0.55 * np.clip(1 - np.abs(x - 72) / 14.0, 0, 1) * ((np.sin(y * 1.9) * 0.5 + 0.5) ** 2) * ((y - 96) / 32.0) + 0.06 * (px.noise(n, 6, 75) - 0.5)
+    street = put(street, road, q(refl, px.ramp("#08060c", "#16121a", "#2c1e18", "#5a3816", "#a86a26", "#e8a848")))
+    kerb = (y >= 96) & (y < 98)
+    street = put(street, kerb, q(np.full((n, n), 0.35), CONC))
+    post = (np.abs(x - 72) < 1) & (y > 40) & (y < 98)
+    street = put(street, post, q(0.15 + 0.2 * (x < 72), STEEL))
+    street = put(street, rect(n, 69, 38, 76, 41), q(np.full((n, n), 0.3), STEEL))
+    lamp = ell(n, 72.5, 42, 3.5, 2.2)
+    halo = (np.hypot(x - 72, (y - 43) * 1.3) < 16) & ~lamp & ~post
+    street = put(street, halo & dmask(np.clip(1 - np.hypot(x - 72, (y - 43) * 1.3) / 16.0, 0, 1) * 0.55), q(np.full((n, n), 0.5), AMBER))
     street = put(street, lamp, q(np.full((n, n), 1.0), AMBER))
-    halo = (np.hypot(x - 64, (y - 26) * 1.2) < 14) & ~lamp & ~bld
-    street = put(street, halo & dmask(np.clip(1 - np.hypot(x - 64, y - 26) / 14.0, 0, 1) * 0.6), q(np.full((n, n), 0.55), AMBER))
     out = put(out, hole, street)
-    for d0, d1 in ((30, 38), (90, 98)):  # the two doors folded back against the reveals
-        m = rect(n, d0, 5, d1, 85)
-        out = put(out, m, q(0.3 + 0.2 * (x == d0) + (px.noise(n, 5, d0) - 0.5) * 0.3, px.ramp("#141a18", "#22302a", "#30443a", "#46584c")))
-    out = put(out, rect(n, 28, 3, 100, 5) | rect(n, 28, 3, 30, 86) | rect(n, 98, 3, 100, 86), q(np.full((n, n), 0.5), STEEL))
+    for d0, d1, s in ((12, 24, 1), (104, 116, -1)):  # the doors folded back against the reveals, the push bars catching the street light
+        m = rect(n, d0, 10, d1, n)
+        out = put(out, m, q(0.3 + 0.15 * (x == d0) + (px.noise(n, 5, d0) - 0.5) * 0.3 - 0.25 * px.grime(n, d0 + 1, 0.6), px.ramp("#121816", "#1e2a24", "#2c3c34", "#3e5046", "#566a5c")))
+        out = put(out, rect(n, d0 + 2, 70, d1 - 2, 73), q(np.full((n, n), 0.75), SILVER))
+        out = put(out, rect(n, d0 + 3, 26, d1 - 3, 44), q(0.25 + 0.15 * ((x + y) % 4 == 0), GLASS))
+    out = put(out, rect(n, 10, 7, 118, 10) | rect(n, 10, 7, 12, n) | rect(n, 116, 7, 118, n), q(0.45 + 0.3 * ((x < 11) | (y < 8)), STEEL))
     return out
 
 
 def wall_corridor() -> np.ndarray:
-    """The long corridor to the toilets (2.4 m): pipes under the ceiling, grimy painted plaster, a maroon band, white tiles to the floor."""
+    """The long corridor to the toilets (1.2 m): brick painted institutional green long ago, grimy to shoulder height, the paint peeling to the brick in
+    patches, scuffed by the queue, a sticker or two."""
     n = N
     x, y = px.grid(n)
-    g = px.grime(n, 81, 0.8)
-    out = q(0.55 - 0.45 * g + (px.noise(n, 10, 82) - 0.5) * 0.3, PAINT)
-    scuff = (px.noise(n, 5, 83) > 0.7) & (y > 40)
-    out = put(out, scuff, q(np.full((n, n), 0.15), PAINT))
-    for y0, y1, pal in ((2, 6, STEEL), (7, 10, RUST)):
-        m = (y >= y0) & (y < y1)
-        out = put(out, m, q(0.8 - 0.65 * (y - y0) / (y1 - y0), pal))
-    out = put(out, ((x % 42) < 2) & (y < 11), q(np.full((n, n), 0.15), STEEL))
-    out = put(out, sag(n, 12, 3, 1.2, 0, n), q(np.full((n, n), 0.05), STEEL))
-    sh, gr = px.tiles(n, count=16, grout=1, seed=84, gloss=0.25)
-    tl = q(sh - 0.5 * g, TILE)
-    tl = put(tl, gr > 0.5, q(0.6 - 0.6 * g, GROUT))
-    tl = put(tl, dmask(g * 0.9), q(0.6 * np.ones((n, n)), GRIMEP))
-    out = put(out, y >= 66, tl)
-    out = put(out, (y >= 63) & (y < 66), q(0.4 + 0.3 * (y == 63), LAM))
+    base = brick_field(n, rows=17, cols=4, seed=81, grime=0.5, rust=0.2, burnt=0.05)
+    sh, mort = px.bricks(n, rows=17, cols=4, seed=81, wear=0.4)
+    g = px.grime(n, 82, 0.8)
+    paint = q(0.62 + 0.25 * (sh - 0.5) - 0.3 * mort - 0.45 * g + (px.noise(n, 10, 83) - 0.5) * 0.25, PAINTG)
+    peel = px.noise(n, 12, 84, 4)
+    out = put(base, peel < 0.62, paint)
+    out = put(out, (np.abs(peel - 0.62) < 0.02) & (mort < 0.5), q(np.full((n, n), 0.95), PAINTG))
+    scuff = dmask(np.clip((px.noise(n, 5, 85) - 0.6) * 2.5, 0, 1)) & (peel < 0.62)
+    out = put(out, scuff, q(np.full((n, n), 0.12), PAINTG))
+    rng = np.random.RandomState(86)
+    for i in range(2):
+        sx, sy = int(rng.randint(8, n - 16)), int(rng.randint(10, n - 16))
+        pal = [MAGENTA, AMBER][i]
+        out = put(out, rect(n, sx, sy, sx + 9, sy + 6), q(0.5 + 0.35 * (y == sy), pal))
     return out
 
 
 def toilet_tile() -> np.ndarray:
-    """Toilet walls (1.5 m): glazed tiles gone yellow, black grout, grime running down, a cracked and a missing tile."""
+    """Toilet walls (1.0 m): eight glazed tiles a metre gone yellow, black grout, grime running down, a cracked and a chipped tile."""
     n = N
     x, y = px.grid(n)
     sh, gr = px.tiles(n, count=8, grout=1, seed=91, gloss=0.35)
-    g = px.grime(n, 92, 0.8)
+    g = px.grime(n, 92, 0.75)
     out = q(sh - 0.45 * g, TILE)
-    out = put(out, gr > 0.5, q(0.65 - 0.7 * g, GROUT))
-    out = put(out, dmask(g * 0.8) & (gr < 0.5), q(0.5 + 0.5 * px.noise(n, 4, 93), GRIMEP))
-    out = put(out, seg(n, 33, 17, 44, 30, 1.0) | seg(n, 44, 30, 40, 31, 1.0), q(np.full((n, n), 0.1), GROUT))
-    out = put(out, rect(n, 97, 65, 112, 80), q(0.3 + 0.4 * px.noise(n, 3, 94), MORTAR))
+    out = put(out, gr > 0.5, q(0.6 - 0.7 * g, GROUT))
+    out = put(out, dmask(g * 0.75) & (gr < 0.5), q(0.5 + 0.5 * px.noise(n, 4, 93), GRIMEP))
+    out = put(out, seg(n, 34, 18, 44, 28, 1.0) | seg(n, 44, 28, 41, 30, 1.0), q(np.full((n, n), 0.1), GROUT))
+    out = put(out, rect(n, 98, 66, 106, 74) & dmask(np.full((n, n), 0.7)), q(0.3 + 0.4 * px.noise(n, 3, 94), MORTAR))
     return out
 
 
 def toilet_floor() -> np.ndarray:
-    """Toilet floor (1.5 m): small black and grey tiles, dirt in the grout, wet patches catching the tube light."""
+    """Toilet floor (1.0 m): black and grey tiles of 12.5 cm, dirt in the grout, wet patches catching the tube light."""
     n = N
     x, y = px.grid(n)
     s = 16
@@ -516,7 +613,7 @@ def partition(n=N, gap_top=0, seed=121, post=True, words=(), dense=1.0) -> np.nd
 
 
 def cubicle_door() -> np.ndarray:
-    """The cubicle fronts (2.6 m, floor to ceiling): a dark gap over the partitions, laminate scrawled on, the gap above the floor."""
+    """The cubicle fronts (2.6 m, floor to ceiling, so the gaps fall where they are): a dark gap over the partitions, laminate scrawled on, the gap above the floor."""
     n = N
     x, y = px.grid(n)
     out = partition(n, gap_top=10, seed=121, words=[("PLUR", 18, 40, AMBER, 0.3), ("K+J", 74, 60, WHITE, -0.4), ("ACID", 50, 92, TEAL, 0.5)])
@@ -539,59 +636,73 @@ def cubicle_wall() -> np.ndarray:
 
 
 def wall_chill() -> np.ndarray:
-    """The chill-out room (2.6 m): brick painted aubergine, a tie-dye cloth hung from a pole, soft folds and tassels."""
+    """The chill-out room (1.3 m): every wall draped in UV tie-dye cloth, hung in loose vertical folds; the dye bands swirl and bleed into one another,
+    the folds shade them (light from the upper left), the cloth's weave shows as a fine dither."""
     n = N
     x, y = px.grid(n)
-    out = brick_wall(n, rows=18, cols=4, seed=141, pal=PURPLE, grime=0.4, rust=0.0)
-    cloth = (x >= 28) & (x < 100) & (y >= 14) & (y < 92 + 3 * np.sin(x * 0.5))
-    r = np.hypot(x - 64, (y - 52) * 1.2) + 3 * np.sin(np.arctan2(y - 52, x - 64) * 6)
-    band = (r // 6).astype(int) % 4
-    fold = 0.15 * np.sin((x - 28) * 0.45)
-    col = np.zeros((n, n, 3), np.uint8)
-    for i, pal in enumerate((MAGENTA, AMBER, TEAL, px.ramp("#1e0a3a", "#3c1872", "#6a32b0", "#9a5ae0"))):
-        layer = q(0.55 + fold + (np.abs((r % 6) - 3) < 1) * 0.15, pal)
-        col = put(col, band == i, layer)
-    out = put(out, cloth, col)
-    out = put(out, (y >= 11) & (y < 14) & (x >= 24) & (x < 104), q(0.8 - 0.25 * (y - 11), WOOD))
-    tass = (y >= 92) & (y < 97 + (x % 4)) & (x >= 28) & (x < 100) & (x % 4 == 1)
-    out = put(out, tass, q(np.full((n, n), 0.7), AMBER))
+    # a tileable swirl: two periodic fields bent by noise
+    a = 2 * np.pi * x / n
+    b = 2 * np.pi * y / n
+    warp = (px.noise(n, 32, 141, 3) - 0.5) * 5.0
+    f = np.sin(a * 2 + b * 1 + warp) + 0.8 * np.sin(a * 1 - b * 2 + warp * 0.7) + 0.5 * np.sin(a * 3 + b * 3 - warp)
+    band = np.floor((f + 2.3) / 4.6 * 8).astype(int) % 4
+    t = ((f + 2.3) / 4.6 * 8) % 1.0
+    fold = np.sin(2 * np.pi * x / n * 3 + 0.6 * np.sin(2 * np.pi * y / n)) * 0.5 + 0.5  # three folds a tile
+    sh = 0.2 + 0.32 * fold + 0.18 * (np.abs(t - 0.5) < 0.2) - 0.12 * (t < 0.12) + (px.speckle(n, 0.12, 142) - 0.5) * 0.12
+    out = np.zeros((n, n, 3), np.uint8)
+    for i, pal in enumerate(UVDYE):
+        out = put(out, band == i, q(sh, pal))
+    bleed = (t < 0.1) | (t > 0.9)  # the dye's dark bleed line between bands
+    out = put(out, bleed & dmask(np.full((n, n), 0.55)), q(sh * 0.4, PURPLE))
+    deep = fold < 0.07  # the inside of a fold
+    out = put(out, deep, q(np.full((n, n), 0.15), PURPLE))
     return out
 
 
 # ---- floors and ceilings ---------------------------------------------------------------------------------------------------------------------------------
 
 def floor_dark() -> np.ndarray:
-    """Warehouse concrete (3 m): a power-floated slab, cracks, spilt drinks, gum, a saw-cut joint every 1.5 m."""
+    """Warehouse concrete (1.28 m): a power-floated slab polished by feet, hairline cracks, spilt drinks drying sticky, flattened gum, fag ends."""
     n = N
     x, y = px.grid(n)
-    sh = 0.5 + (px.noise(n, 32, 151, 4) - 0.5) * 0.5 + (px.noise(n, 4, 152) - 0.5) * 0.2
-    blot = px.noise(n, 20, 153, 4)
-    sh = sh - 0.35 * np.clip((blot - 0.58) * 4, 0, 1)
+    sh = 0.5 + (px.noise(n, 24, 151, 4) - 0.5) * 0.35 + (px.noise(n, 4, 152) - 0.5) * 0.25 + (px.speckle(n, 0.12, 156) - 0.5) * 0.18
+    blot = px.noise(n, 18, 153, 4)
+    sh = sh - 0.3 * np.clip((blot - 0.6) * 4, 0, 1)
     out = q(sh, CONC)
-    crack = (np.abs(px.noise(n, 26, 154, 3) - 0.5) < 0.008)
+    crack = (np.abs(px.noise(n, 22, 154, 3) - 0.5) < 0.007)
     out = put(out, crack, q(np.full((n, n), 0.0), CONC))
-    joint = ((x % 64) < 1) | ((y % 64) < 1)
-    out = put(out, joint, q(np.full((n, n), 0.05), CONC))
-    out = put(out, px.speckle(n, 0.006, 155) > 0.5, q(np.full((n, n), 0.9), CONC))
+    out = put(out, np.roll(crack, 1, 0) & ~crack, q(np.full((n, n), 0.75), CONC))
+    gum = px.speckle(n, 0.0025, 155) > 0.5
+    out = put(out, gum | np.roll(gum, 1, 1), q(np.full((n, n), 0.92), CONC))
+    rng = np.random.RandomState(157)
+    for _ in range(1):  # a fag end
+        cx, cy = int(rng.randint(2, n - 6)), int(rng.randint(2, n - 3))
+        out = put(out, rect(n, cx, cy, cx + 4, cy + 1), q(np.full((n, n), 0.9), WHITE))
+        out = put(out, rect(n, cx + 4, cy, cx + 5, cy + 1), q(np.full((n, n), 0.6), AMBER))
     return out
 
 
 def floor_boards() -> np.ndarray:
-    """The bar's floor (2 m): dark boards, sticky with beer, worn pale along the bar."""
+    """The bar's floor (1.0 m): eight boards of 12.5 cm, dark with old varnish, sticky with beer, worn pale along the grain."""
     n = N
+    x, y = px.grid(n)
     sh, joint = px.planks(n, count=8, seed=161)
-    g = px.grime(n, 162, 0.6, drip=False)
-    out = q(sh - 0.35 * g, WOOD)
-    out = put(out, dmask(np.clip(px.noise(n, 16, 163, 3) - 0.6, 0, 1) * 3), q(np.full((n, n), 0.15), WOOD))
+    g = px.grime(n, 162, 0.55, drip=False)
+    worn = np.clip((px.noise(n, 20, 164, 3) - 0.55) * 2.5, 0, 1)
+    out = q(sh - 0.3 * g + 0.2 * worn + (px.speckle(n, 0.06, 165) - 0.5) * 0.1, WOOD)
+    out = put(out, joint > 0.5, q(np.full((n, n), 0.02), WOOD))
+    out = put(out, dmask(np.clip(px.noise(n, 14, 163, 3) - 0.62, 0, 1) * 3), q(np.full((n, n), 0.12), WOOD))
+    nails = ((x % 64) == 5) & ((y % 16) == 8) | ((x % 64) == 37) & ((y % 16) == 8)
+    out = put(out, nails, q(np.full((n, n), 0.1), STEEL))
     return out
 
 
 def floor_carpet() -> np.ndarray:
-    """Club carpet (2 m): maroon with amber diamonds, teal squiggles and magenta dots, burnt and worn through in patches."""
+    """Club carpet (1.0 m): maroon with amber diamonds, teal squiggles and magenta dots every 25 cm, burnt, flattened and worn through in patches."""
     n = N
     x, y = px.grid(n)
-    wear = np.clip((px.noise(n, 28, 171, 4) - 0.5) * 2.5, 0, 1)
-    out = q(0.5 + (px.noise(n, 3, 172) - 0.5) * 0.4 + 0.3 * wear, CARPET)
+    wear = np.clip((px.noise(n, 22, 171, 4) - 0.5) * 2.5, 0, 1)
+    out = q(0.5 + (px.noise(n, 3, 172) - 0.5) * 0.4 + 0.3 * wear + (px.speckle(n, 0.15, 174) - 0.5) * 0.15, CARPET)
     lx, ly = (x % 32) - 15.5, (y % 32) - 15.5
     d = np.abs(lx) + np.abs(ly)
     dia = (d > 9) & (d < 12)
@@ -607,71 +718,94 @@ def floor_carpet() -> np.ndarray:
 
 
 def floor_stage() -> np.ndarray:
-    """Stage and balcony decking (2 m): steel chequer plate, worn bright on the ridges, a gaffered cable run."""
+    """Stage and balcony decking (1.0 m): steel chequer plate with 6 cm lozenges, the ridges worn bright where feet go, dirt packed between them, scuffs."""
     n = N
     x, y = px.grid(n)
     lx, ly = x % 8, y % 8
     alt = ((x // 8) + (y // 8)) % 2 == 0
     a = np.where(alt, lx - ly, lx + ly - 7)
     ridge = (np.abs(a) < 1.2) & (np.abs(np.where(alt, lx + ly - 7, lx - ly)) < 4.5)
-    sh = 0.45 + (px.noise(n, 16, 181, 3) - 0.5) * 0.35 - 0.25 * px.grime(n, 182, 0.5, drip=False)
+    worn = np.clip((px.noise(n, 18, 184, 3) - 0.45) * 2.0, 0, 1)
+    sh = 0.42 + (px.noise(n, 12, 181, 3) - 0.5) * 0.3 - 0.25 * px.grime(n, 182, 0.5, drip=False) + (px.speckle(n, 0.08, 185) - 0.5) * 0.15
     out = q(sh, PLATE)
-    out = put(out, ridge, q(sh + 0.3, PLATE))
+    out = put(out, ridge, q(sh + 0.22 + 0.25 * worn, PLATE))
     out = put(out, ridge & np.roll(ridge == False, -1, 0), q(sh - 0.25, PLATE))  # noqa: E712
-    tape = (y >= 88) & (y < 98)
-    out = put(out, tape, q(0.25 + 0.1 * (y == 88) + (px.noise(n, 3, 183) - 0.5) * 0.15, CAB))
-    out = put(out, (np.abs(y - 93 - 0.0) < 1.6) & tape & (x % 5 < 4), q(np.full((n, n), 0.0), CAB))
-    out = put(out, sag(n, 20, 30, 1.6, 0, n), q(np.full((n, n), 0.05), CAB))
+    out = put(out, dmask(np.clip((px.noise(n, 10, 186) - 0.6) * 2.5, 0, 1)) & ~ridge, q(np.full((n, n), 0.3), RUST))
+    scuffs = np.zeros((n, n), bool)
+    rng = np.random.RandomState(187)
+    for _ in range(5):
+        x0, y0 = rng.rand() * n, rng.rand() * n
+        ang = rng.rand() * np.pi
+        scuffs |= seg(n, x0, y0, x0 + np.cos(ang) * 10, y0 + np.sin(ang) * 3, 1.0)
+    out = put(out, scuffs, q(np.full((n, n), 0.08), PLATE))
     return out
 
 
 def ceil_truss() -> np.ndarray:
-    """The warehouse roof (4 m): black corrugated decking crossed by lattice girders, cables slung between them."""
+    """The warehouse roof (1.28 m): corrugated decking with a rib every 12 cm, a rusted I-beam purlin across it, a cable tray, drips of rust from the bolts."""
     n = N
     x, y = px.grid(n)
-    out = q(0.35 + 0.25 * np.sin(x * 2 * np.pi / 8) + (px.noise(n, 16, 191) - 0.5) * 0.3, DECK)
-    sh, m = px.truss(64, 192)
-    band = np.zeros((n, n), np.float32)
-    bm = np.zeros((n, n), bool)
-    band[32:96, :] = np.tile(sh, (1, 2))
-    bm[32:96, :] = np.tile(m, (1, 2)) > 0.5
-    shv, mv = sh.T, m.T
-    vband = np.zeros((n, n), np.float32)
-    vm = np.zeros((n, n), bool)
-    vband[:, 32:96] = np.tile(shv, (2, 1))
-    vm[:, 32:96] = np.tile(mv, (2, 1)) > 0.5
-    out = put(out, vm, q(0.25 + 0.5 * vband, STEEL))
-    out = put(out, bm, q(0.35 + 0.55 * band, STEEL))
-    cab = sag(n, 8, 10, 1.2, 0, n) | sag(n, 100, 14, 1.2, 0, n)
-    out = put(out, cab, q(np.full((n, n), 0.0), STEEL))
+    rib = np.sin(y * 2 * np.pi / 16)
+    out = q(0.3 + 0.18 * rib + 0.08 * (rib > 0.85) + (px.noise(n, 16, 191) - 0.5) * 0.25 - 0.2 * px.grime(n, 192, 0.5, drip=False), PLATE)
+    out = put(out, dmask(px.rust(n, 193, 0.4) * 0.6), q(0.2 + 0.3 * px.noise(n, 4, 194), RUST))
+    b0, b1 = 52, 70  # the purlin's flange, running along z
+    beam = (x >= b0) & (x < b1)
+    u = (x - b0) / (b1 - b0)
+    bsh = 0.62 - 0.12 * ((u > 0.25) & (u < 0.75)) + 0.25 * (u < 0.12) - 0.3 * (u > 0.88) + (px.noise(n, 6, 195) - 0.5) * 0.25
+    out = put(out, beam, q(bsh, TRUSS))
+    out = put(out, beam & dmask(px.rust(n, 196, 0.6) * 0.8), q(0.3 + 0.3 * px.noise(n, 3, 197), RUST))
+    bolts = beam & ((y % 32) < 2) & ((np.abs(x - b0 - 3) < 1) | (np.abs(x - b1 + 4) < 1))
+    out = put(out, bolts, q(np.full((n, n), 0.95), STEEL))
+    drip = (np.abs(x - b1 - 2) < 1) & ((y % 32) < 14) & dmask(1 - ((y % 32) / 14.0))
+    out = put(out, drip, q(np.full((n, n), 0.4), RUST))
+    tray = (x >= 100) & (x < 106)
+    out = put(out, tray, q(0.4 + 0.3 * (x == 100) + 0.15 * ((y % 8) < 1), STEEL))
+    out = put(out, (x >= 101) & (x < 105) & ((y % 5) < 2), q(np.full((n, n), 0.05), CAB))
     return out
 
 
 def ceil_low() -> np.ndarray:
-    """Low ceilings of the bar, chill-out room and entrance (2 m): black-painted joists over boards, a pipe and a cable."""
+    """Low ceilings of the bar, chill-out room and entrance (1.2 m): three black-painted joists a tile over boards, a cable clipped along them, cobwebs."""
     n = N
     x, y = px.grid(n)
-    bx = x % 32
-    boards = q(0.4 + 0.2 * ((y % 16) < 1) * -1 + (px.noise(n, 8, 201) - 0.5) * 0.3, DECK)
-    joist = bx < 9
-    out = put(boards, joist, q(0.45 + 0.35 * (bx < 2) - 0.25 * (bx > 6), STEEL))
-    pipe = (np.abs(y - 80) < 3)
-    out = put(out, pipe, q(0.75 - 0.25 * (y - 77) / 3.0, RUST))
-    out = put(out, sag(n, 40, 5, 1.2, 0, n), q(np.full((n, n), 0.0), CAB))
+    span = n / 3.0
+    bx = x - np.floor(x / span) * span
+    boards = q(0.3 - 0.2 * ((y % 16) < 1) + (px.noise(n, 8, 201) - 0.5) * 0.3 + (px.speckle(n, 0.08, 202) - 0.5) * 0.15, PLATE)
+    joist = bx < 10
+    out = put(boards, joist, q(0.42 + 0.35 * (bx < 2) - 0.25 * (bx > 7) + (px.noise(n, 5, 203) - 0.5) * 0.2, STEEL))
+    clip = joist & ((y % 64) > 40) & ((y % 64) < 43)
+    cab = (np.abs(bx - 11.5) < 1.0)
+    out = put(out, cab, q(np.full((n, n), 0.02), CAB))
+    out = put(out, clip & (bx > 8), q(np.full((n, n), 0.7), WHITE))
+    web = (bx > 10) & (bx < 18) & (((y % 64) < 6) | ((y % 64) > 58)) & dmask(np.clip(1 - (bx - 10) / 8.0, 0, 1) * 0.35)
+    out = put(out, web, q(np.full((n, n), 0.55), MORTAR))
     return out
 
 
 def ceil_stair() -> np.ndarray:
-    """The tunnel's ceiling is the underside of the steel stair (2 m): treads with amber light leaking between them, two stringers."""
+    """The tunnel's ceiling is the underside of the steel stair (1.0 m): treads of 25 cm with amber light from the club leaking through the gaps, rust."""
     n = N
     x, y = px.grid(n)
-    ty = y % 16
-    out = q(0.35 + 0.4 * (ty < 3) - 0.2 * (ty > 12) + (px.noise(n, 6, 211) - 0.5) * 0.3, STEEL)
-    out = put(out, ty == 14, q(np.full((n, n), 0.85), AMBER))
+    ty = y % 32
+    out = q(0.32 + 0.35 * (ty < 4) - 0.2 * (ty > 26) + (px.noise(n, 6, 211) - 0.5) * 0.3 + 0.1 * ((x % 8) < 1), STEEL)
+    out = put(out, (ty == 29) | (ty == 30), q(0.7 + 0.3 * (ty == 30), AMBER))
     out = put(out, dmask(px.rust(n, 212, 0.5) * 0.8), q(px.noise(n, 4, 213) * 0.6, RUST))
-    for s0 in (10, 108):
-        m = (x >= s0) & (x < s0 + 10)
-        out = put(out, m, q(steel_shade(n, s0, s0 + 10, 214), STEEL))
+    out = put(out, (ty == 28) & dmask(np.full((n, n), 0.5)), q(np.full((n, n), 0.4), AMBER))
+    return out
+
+
+def wall_led() -> np.ndarray:
+    """The booth's LED wall when it is off (StoryWorld swaps in its own image while it plays): black modules in a steel frame, the dead RGB diodes faintly
+    coloured. Its metres stay 3.0: the runtime screen (story_world_fx.gd LED_W x LED_H) is laid out on that width."""
+    n = N
+    x, y = px.grid(n)
+    out = q(0.15 + (px.noise(n, 6, 221) - 0.5) * 0.15, MESH)
+    di = ((x % 3) == 1) & ((y % 3) == 1)
+    hue = ((x // 3) + (y // 3)) % 3
+    for i, c in enumerate(("#3a0e22", "#0e2a24", "#14183a")):
+        out = put(out, di & (hue == i), q(np.full((n, n), 0.5), px.ramp("#060508", c)))
+    frame = ((x % 32) < 1) | ((y % 32) < 1)
+    out = put(out, frame, q(np.full((n, n), 0.45), STEEL))
     return out
 
 
@@ -940,19 +1074,19 @@ def thing_rail() -> np.ndarray:
     return sp.rgba()
 
 def thing_wizard() -> np.ndarray:
-    """The wizard who runs the Bassment (128 px, 1.6 m): the trial's own wizard portrait (assets/trial/art/wizard.png) cut out and lifted into the club's light, a violet rim
-    on the shadow side and a warm amber edge on the lit side, so he stands in the warehouse like one of its dancers."""
+    """The wizard who runs the Bassment (128 px, 1.6 m): the trial's own wizard portrait (assets/trial/art/wizard.png) cut out, reduced to a 48-colour ramp
+    (it was a resampled crop of 2000 colours) and edged one step darker, with no coloured halo (STYLE_GUIDE 6). The people pipeline's wizard replaces him later (A2)."""
     from PIL import Image
     im = Image.open(os.path.join(lib.ROOT, "assets", "trial", "art", "wizard.png")).convert("RGBA").resize((N, N), Image.NEAREST)
     rgba = np.array(im, np.uint8)
     a = rgba[..., 3] > 127
-    x, y = px.grid(N)
-    lit = a & (np.roll(~a, 2, axis=1) | np.roll(~a, 2, axis=0))
-    rim = a & (np.roll(~a, -2, axis=1))
-    rgba[lit, :3] = (px.hexc("#f4bc4a") * 255 + 0.5).astype(np.uint8)
-    rgba[rim, :3] = (px.hexc("#8e1c66") * 255 + 0.5).astype(np.uint8)
-    rgba[..., 3] = np.where(a, 255, 0).astype(np.uint8)
-    return rgba
+    pal = Image.fromarray(rgba[..., :3], "RGB").quantize(colors=48, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert("RGB")
+    sp = Sprite(N)
+    sp.rgb = np.array(pal, np.uint8)
+    sp.a = np.where(a, 255, 0).astype(np.uint8)
+    sp.rgb[~a] = 0
+    sp.edge()
+    return sp.rgba()
 
 
 def thing_headphones() -> np.ndarray:
@@ -1048,6 +1182,578 @@ def thing_bomber_shadow() -> np.ndarray:
     return sp.rgba()
 
 
+# ---- the Warehouse's props at the world's grain (stage sprites, PNG in processed/) ------------------------------------------------------------------------
+# A billboard tile in textures/ may be at most 128 px (check_assets), so a 2.4 m deck or a 6.4 m truss tower came out at 20 to 53 texels a metre: magnified
+# blocks next to the fine people. These are drawn at 120 to 130 texels a metre at their real size and written as stage sprites (manifest stage.sprites,
+# `processed/<id>.png`, any size), which the map's things and occluders name. stage.py registers them; the old 2D sprites (woofer, fixture, disco ball, the
+# rear silhouettes) are redrawn here as pixels at the same design size, so nothing that reads their pivots changes.
+
+PPM = 128  # texels a metre of the props
+
+
+def _shade_lr(x, x0, x1, lit=0.25, dark=0.2):
+    """Light from the upper left across a body from x0 to x1: brighter at the left, darker at the right."""
+    u = np.clip((x - x0) / max(x1 - x0, 1), 0, 1)
+    return lit * (1 - u) - dark * u
+
+
+def prop_woofer():
+    """The pumping cone in front of a stack (1.6 m, 192 px; was an SVG target of rings): an 18-inch cone with a foam surround, the dust cap catching the
+    light, a steel basket ring with bolts, mounted on a square of black baffle."""
+    w = h = 192
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    c = 95.5
+    r = np.hypot(x - c, y - c)
+    ang = np.arctan2(y - c, x - c)
+    lit = -np.cos(ang + np.pi * 0.25)  # 1 on the upper left
+    sp.paint(r < 94, CAB, 0.35 + 0.15 * lit * (r > 86) + (noise2(w, h, 10, 301) - 0.5) * 0.2)
+    sp.paint((r >= 84) & (r < 90), SILVER, 0.35 + 0.3 * lit)
+    bolts = (np.abs(r - 87) < 2.2) & ((((ang + np.pi) / (2 * np.pi) * 8) % 1.0) < 0.06)
+    sp.paint(bolts, SILVER, np.full((h, w), 0.95))
+    sp.paint((r >= 74) & (r < 84), CONE, 0.35 + 0.3 * lit * np.sin(np.clip((r - 74) / 10, 0, 1) * np.pi))  # the foam surround: a half roll
+    cone = (r < 74) & (r >= 22)
+    sp.paint(cone, CONE, 0.18 + 0.35 * ((r - 22) / 52.0) + 0.18 * lit * ((r - 22) / 52.0) + (px.speckle(max(w, h), 0.06, 302)[:h, :w] - 0.5) * 0.1)
+    sp.paint(cone & (np.abs(r - 48) < 1.0), CONE, np.full((h, w), 0.08))
+    sp.paint(r < 22, CONE, 0.45 + 0.4 * lit * np.clip(r / 22.0, 0, 1) + 0.25 * (np.hypot(x - c + 8, y - c + 8) < 6))
+    sp.edge()
+    return sp.rgba()
+
+
+def prop_fixture():
+    """A par can on a yoke (0.8 m, 66 x 104): a black can lit along its left side, the yoke, a clamp to the truss above, the lens glowing white-gold."""
+    w, h = 66, 104
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    sp.paint(box(w, h, 24, 0, 42, 8), STEEL, 0.5 + 0.3 * (x < 28))  # clamp
+    sp.paint(box(w, h, 31, 8, 35, 18), STEEL, np.full((h, w), 0.45))
+    yoke = (box(w, h, 6, 18, 60, 22) | box(w, h, 6, 18, 10, 56) | box(w, h, 56, 18, 60, 56))
+    sp.paint(yoke, CAB, 0.45 + 0.35 * (x < 9) + 0.2 * (y < 20))
+    can = box(w, h, 12, 26, 54, 92)
+    sp.paint(can, CAB, 0.3 + _shade_lr(x, 12, 54, 0.45, 0.25) + 0.1 * ((y % 10) < 1))
+    sp.paint(oval(w, h, 33, 56, 4, 4) | oval(w, h, 8, 52, 4, 4) | oval(w, h, 58, 52, 4, 4), SILVER, np.full((h, w), 0.7))
+    sp.paint(box(w, h, 10, 90, 56, 96), SILVER, 0.4 + 0.3 * (x < 20))
+    sp.paint(oval(w, h, 33, 97, 21, 6), CAB, np.full((h, w), 0.1))
+    lens = oval(w, h, 33, 97, 17, 4.5)
+    sp.paint(lens, px.ramp("#806030", "#e8c070", "#fff0c8", "#fffbea"), 0.55 + 0.45 * (np.hypot(x - 28, (y - 96) * 3) < 8))
+    sp.edge()
+    return sp.rgba()
+
+
+def prop_disco_ball():
+    """The mirror ball (1.3 m with its chain, 106 x 166): a lattice of square mirror tiles, each tile lit by its own facing, a few flaring in the beams."""
+    w, h = 106, 166
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    cx, cy, R = 52.5, 113.0, 46.0
+    sp.paint(box(w, h, 51, 0, 54, cy - R + 2) & ((y % 4) < 3), STEEL, 0.55 + 0.3 * (x < 52))  # chain
+    sp.paint(box(w, h, 46, 4, 59, 12), CAB, 0.4 + 0.3 * (x < 50))  # motor
+    dx, dy = (x + 0.5 - cx) / R, (y + 0.5 - cy) / R
+    rr = dx * dx + dy * dy
+    ball = rr <= 1.0
+    z = np.sqrt(np.clip(1 - rr, 0, 1))
+    lon = np.arctan2(dx, z)
+    lat = np.arcsin(np.clip(dy, -1, 1))
+    tile_u = np.floor(lon / (np.pi / 14))
+    tile_v = np.floor(lat / (np.pi / 14))
+    gridl = ((lon / (np.pi / 14)) % 1.0 < 0.14 * (1 + rr)) | ((lat / (np.pi / 14)) % 1.0 < 0.14 * (1 + rr))
+    rng = np.random.RandomState(311)
+    tone = rng.rand(40, 40)
+    t = tone[(tile_u.astype(int) + 20) % 40, (tile_v.astype(int) + 20) % 40]
+    facing = np.clip(-0.55 * dx - 0.6 * dy + 0.6 * z, 0, 1)
+    sh = 0.15 + 0.55 * facing + 0.35 * (t - 0.5)
+    sp.paint(ball, px.ramp("#140c24", "#2a2048", "#4a4278", "#7a74a8", "#b8b4d8", "#eceaf8"), sh)
+    sp.paint(ball & gridl, px.ramp("#0a0614", "#1c1430"), 0.3 + 0.4 * facing)
+    flare = ball & ~gridl & (t > 0.93)
+    sp.paint(flare, px.ramp("#ff9ad0", "#ffffff"), 0.6 + 0.4 * facing)
+    cyan = ball & ~gridl & (t < 0.04)
+    sp.paint(cyan, px.ramp("#2fb6c8", "#bff6ff"), 0.7)
+    sp.edge()
+    return sp.rgba()
+
+
+def prop_truss_tower():
+    """A ground-supported box-truss tower (6.4 m, 40 x 820): two round chords, zig-zag lacing every half metre, a base plate with bolts, a sleeve block,
+    rust at the welds, a par can clamped halfway up."""
+    w, h = 40, 820
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    c0, c1 = 6, 34  # the two chords' centres
+    lace = np.zeros((h, w), bool)
+    bay = 64
+    for k in range(0, h // bay + 1):
+        y0 = k * bay
+        lace |= line2(w, h, c0, y0, c1, y0 + bay // 2, 2.2) | line2(w, h, c1, y0 + bay // 2, c0, y0 + bay, 2.2)
+        lace |= box(w, h, c0, y0 - 1, c1, y0 + 1)
+    lace &= y < h - 14
+    sp.paint(lace, TRUSS, 0.4 + 0.2 * (x < 20) + (noise2(w, h, 6, 321) - 0.5) * 0.3)
+    for cc in (c0, c1):
+        ch = (np.abs(x - cc) < 3) & (y < h - 14)
+        sp.paint(ch, TRUSS, 0.62 + 0.3 * (x < cc - 1) - 0.3 * (x > cc + 1) + (noise2(w, h, 5, 322 + cc) - 0.5) * 0.25)
+    sp.paint(dmask(np.clip((noise2(w, h, 8, 323) - 0.55) * 3, 0, 1)) & (lace | (np.abs(x - c0) < 3) | (np.abs(x - c1) < 3)) & (y < h - 14),
+             RUST, 0.3 + 0.4 * noise2(w, h, 3, 324))
+    for sy in (256, 512):  # sleeve blocks where the sections join
+        sp.paint(box(w, h, 0, sy - 5, w, sy + 5), STEEL, 0.55 + 0.3 * (y < sy - 3) - 0.2 * (x > 30))
+    sp.paint(box(w, h, 0, h - 14, w, h), STEEL, 0.4 + 0.3 * (y < h - 12))
+    sp.paint(box(w, h, 4, h - 10, 8, h - 7) | box(w, h, 32, h - 10, 36, h - 7), SILVER, np.full((h, w), 0.9))
+    sp.paint(box(w, h, 22, 380, 36, 386), STEEL, np.full((h, w), 0.5))  # clamp and a par can
+    sp.paint(box(w, h, 24, 386, 38, 410), CAB, 0.35 + 0.3 * (x < 27))
+    sp.paint(box(w, h, 24, 410, 38, 413), px.ramp("#806030", "#ffd890"), np.full((h, w), 0.9))
+    sp.edge()
+    return sp.rgba()
+
+
+def _cabinet(sp, w, h, x0, y0, x1, y1, kind, seed):
+    """One speaker box into a sprite: black ply worn on the arrises, steel corners, a horn (kind 'horn') or a grille over a cone (kind 'bass')."""
+    x, y = grid2(w, h)
+    m = box(w, h, x0, y0, x1, y1)
+    sp.paint(m, CAB, 0.42 + (noise2(w, h, 8, seed) - 0.5) * 0.3)
+    arr = m & ~box(w, h, x0 + 2, y0 + 2, x1 - 2, y1 - 2)
+    sp.paint(arr & dmask(np.clip((noise2(w, h, 3, seed + 1) - 0.4) * 2, 0, 1)), WOOD, 0.45 + 0.3 * noise2(w, h, 2, seed + 2))
+    sp.paint(box(w, h, x0, y1 - 2, x1, y1) | box(w, h, x1 - 2, y0, x1, y1), CAB, np.full((h, w), 0.05))
+    for cx in (x0, x1 - 8):
+        for cy in (y0, y1 - 8):
+            sp.paint(box(w, h, cx, cy, cx + 8, cy + 8), SILVER, 0.5 + 0.3 * ((x - cx) + (y - cy) < 5))
+    iw, ih = x1 - x0, y1 - y0
+    if kind == "horn":
+        hx0, hx1, hy0, hy1 = x0 + 10, x1 - 10, y0 + 10, y1 - 10
+        u = (x - (hx0 + hx1) / 2) / ((hx1 - hx0) / 2)
+        v = (y - (hy0 + hy1) / 2) / ((hy1 - hy0) / 2)
+        d = np.maximum(np.abs(u), np.abs(v))
+        hm = box(w, h, hx0, hy0, hx1, hy1)
+        sp.paint(hm, CONE, 0.06 + 0.55 * d ** 2.2 + 0.15 * ((u < 0) & (np.abs(u) > np.abs(v))) + 0.1 * ((v < 0) & (np.abs(v) >= np.abs(u))) - 0.1 * ((v > 0) & (np.abs(v) >= np.abs(u))))
+        sp.paint(hm & (d < 0.15), CONE, np.full((h, w), 0.0))
+    else:
+        gx0, gx1, gy0, gy1 = x0 + 7, x1 - 7, y0 + 7, y1 - 7
+        g = box(w, h, gx0, gy0, gx1, gy1)
+        cx, cy = (gx0 + gx1) / 2, (gy0 + gy1) / 2
+        rr = np.hypot(x - cx, y - cy)
+        R = min(gx1 - gx0, gy1 - gy0) * 0.45
+        cone = 0.15 + 0.4 * np.clip(rr / R, 0, 1) * (rr < R) + 0.35 * (np.abs(rr - R) < 1.5) + 0.3 * (rr < R * 0.2)
+        sp.paint(g, MESH, 0.3 + 0.5 * cone)
+        sp.paint(g & ((x % 3) == 1) & ((y % 3) == 1), CONE, 0.05 + 0.5 * cone)
+        sp.paint(box(w, h, gx0 - 2, gy0 - 2, gx1 + 2, gy1 + 2) & ~g, MESH, 0.45 + 0.3 * ((y < gy0) | (x < gx0)))
+
+
+def prop_stack():
+    """The floor's speaker stacks (an occluder 0.9 x 2.3 m, 116 x 294): a bass bin, a mid box and a horn box, gaffered together, a light on the top box."""
+    w, h = 116, 294
+    sp = Sprite(w, h)
+    _cabinet(sp, w, h, 0, 190, w, h, "bass", 331)
+    _cabinet(sp, w, h, 0, 96, w, 190, "bass", 332)
+    _cabinet(sp, w, h, 0, 18, w, 96, "horn", 333)
+    x, y = grid2(w, h)
+    sp.paint(box(w, h, 30, 186, 70, 194), WHITE, 0.6 + 0.2 * (y == 186))
+    sp.paint(box(w, h, 36, 4, 66, 18), CAB, 0.35 + 0.3 * (x < 40))  # a par can lying on the top
+    sp.paint(box(w, h, 66, 6, 70, 16), px.ramp("#806030", "#ffd890"), np.full((h, w), 0.9))
+    sp.edge()
+    return sp.rgba()
+
+
+def prop_stack_pair():
+    """The booth's stacks (2.0 x 2.6 m, 256 x 333): two columns of bass bins under horns, scuffed and stencilled."""
+    w, h = 256, 333
+    sp = Sprite(w, h)
+    for i, x0 in enumerate((0, 128)):
+        _cabinet(sp, w, h, x0, 213, x0 + 128, h, "bass", 341 + i)
+        _cabinet(sp, w, h, x0, 100, x0 + 128, 213, "bass", 343 + i)
+        _cabinet(sp, w, h, x0, 6, x0 + 128, 100, "horn", 345 + i)
+    sp.edge()
+    return sp.rgba()
+
+
+def prop_decks():
+    """The decks seen from the floor (an occluder 2.4 x 1.3 m, 288 x 156): a flight-cased table, two turntables with a record on each and a mixer between,
+    a water bottle and a towel on the left, a pint and an ashtray with a smoking cigarette on the right, cables looping down the front, stickers."""
+    w, h = 288, 156
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    top = 62
+    case = box(w, h, 2, top, w - 2, h)
+    sp.paint(case, PLATE, 0.32 + 0.12 * ((x % 96) < 3) + (noise2(w, h, 10, 351) - 0.5) * 0.3 - 0.2 * np.clip((y - top) / (h - top), 0, 1))
+    sp.paint(box(w, h, 2, top, w - 2, top + 4) | box(w, h, 2, h - 5, w - 2, h) | (case & ((x < 6) | (x >= w - 6))), SILVER, 0.5 + 0.3 * (y < top + 2))
+    for cx in (2, w - 12):  # ball corners
+        for cy in (top, h - 12):
+            sp.paint(box(w, h, cx, cy, cx + 10, cy + 12), SILVER, 0.6 + 0.3 * ((x - cx) + (y - cy) < 6))
+    for bx in (60, 170):  # butterfly catches
+        sp.paint(box(w, h, bx, top + 8, bx + 14, top + 16), SILVER, 0.55 + 0.3 * (y < top + 10))
+    sp.paint(box(w, h, 22, 92, 50, 108), MAGENTA, 0.55 + 0.2 * (y < 94))  # stickers
+    sp.paint(box(w, h, 206, 100, 228, 114), AMBER, 0.5)
+    sp.paint(box(w, h, 206, 100, 228, 114) & text_mask(h, "XX", 210, 104, w=w), CAB, np.full((h, w), 0.05))
+    sp.paint(box(w, h, 120, 120, 160, 128), WHITE, 0.55)
+    sp.paint(box(w, h, 120, 120, 160, 128) & text_mask(h, "RW 92", 122, 122, w=w), CAB, np.full((h, w), 0.05))
+    for t0 in (24, 176):  # turntables: plinth, platter with a record, tonearm, start light
+        sp.paint(box(w, h, t0, top - 12, t0 + 88, top), CAB, 0.4 + 0.3 * (y < top - 10) + _shade_lr(x, t0, t0 + 88, 0.1, 0.1))
+        rec = oval(w, h, t0 + 40, top - 13, 34, 5)
+        sp.paint(rec, CONE, 0.15 + 0.25 * (np.abs(((x - t0) % 7) - 3) < 1))
+        sp.paint(oval(w, h, t0 + 40, top - 13, 9, 2), MAGENTA, 0.7)
+        sp.paint(line2(w, h, t0 + 80, top - 26, t0 + 62, top - 16, 2.0), SILVER, np.full((h, w), 0.8))
+        sp.paint(box(w, h, t0 + 78, top - 28, t0 + 84, top - 18), SILVER, np.full((h, w), 0.6))
+        sp.col(box(w, h, t0 + 4, top - 5, t0 + 8, top - 2), "#ff3a30")
+    sp.paint(box(w, h, 116, top - 18, 172, top), CAB, 0.45 + 0.2 * (y < top - 16))  # the mixer: faders and knobs
+    for kx in range(120, 170, 7):
+        sp.paint(box(w, h, kx, top - 24, kx + 3, top - 18), SILVER, np.full((h, w), 0.75))
+        sp.col(box(w, h, kx, top - 12, kx + 3, top - 11), ["#30ff60", "#30ff60", "#ffd040", "#ff4040"][((kx - 120) // 7) % 4])
+    # water bottle and a towel (left)
+    sp.paint(box(w, h, 6, top - 44, 18, top) | box(w, h, 9, top - 50, 15, top - 44), px.ramp("#2a4a6a", "#6a9ac0", "#c0e4ff", "#f0faff"), 0.35 + 0.5 * (x < 9))
+    sp.paint(box(w, h, 6, top - 30, 18, top - 20), px.ramp("#1a3a8a", "#3a6ad0"), 0.5 + 0.4 * (y == top - 30))
+    sp.col(box(w, h, 9, top - 53, 15, top - 50), "#e0e8f0")
+    towel = box(w, h, 2, top - 2, 24, top + 36) & ~((x > 14) & (y > top + 20 + (x - 14)))
+    sp.paint(towel, WHITE, 0.45 + 0.3 * (x < 8) - 0.2 * ((y - top) % 8 < 1))
+    # pint and ashtray (right)
+    pint = box(w, h, 262, top - 36, 278, top)
+    sp.paint(pint, px.ramp("#5a2a08", "#a0600e", "#d8962a", "#f4c050"), 0.3 + 0.5 * (x < 265) + 0.15 * (y > top - 8))
+    sp.paint(box(w, h, 262, top - 41, 278, top - 35), WHITE, 0.7 + 0.3 * (y == top - 41))
+    sp.paint(box(w, h, 234, top - 6, 256, top), SILVER, 0.4 + 0.4 * (y == top - 6))
+    sp.paint(box(w, h, 240, top - 9, 252, top - 6), WHITE, np.full((h, w), 0.9))
+    sp.col(box(w, h, 238, top - 9, 240, top - 6), "#ff6a20")
+    smoke = (np.abs(x - 239 - 4 * np.sin((y - top) * 0.2)) < 1.2 + (top - y) * 0.05) & (y < top - 9) & (y > top - 58)
+    sp.paint(smoke & dmask(np.clip((y - (top - 58)) / 50.0, 0, 1) * 0.6), SILVER, np.full((h, w), 0.75))
+    for x0, x1, d in ((40, 96, 24), (130, 158, 38), (186, 250, 18), (100, 128, 12)):  # cables over the front
+        sp.paint(droop(w, h, x0, x1, top + 2, d, 2.2), CAB, np.full((h, w), 0.0))
+    sp.edge()
+    return sp.rgba()
+
+
+def prop_rail():
+    """The balcony rail (an occluder 2.0 x 1.1 m, 256 x 140): a scuffed steel handrail, a mid rail, posts with base flanges, a chequer kick plate, a
+    cable tie-wrapped along the top, a laminate pass and a glow stick hung on it."""
+    w, h = 256, 140
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    sp.paint(box(w, h, 0, 4, w, 13), STEEL, 0.85 - 0.07 * (y - 4) + (noise2(w, h, 6, 361) - 0.5) * 0.2)
+    sp.paint(box(w, h, 0, 66, w, 72), STEEL, 0.65 - 0.08 * (y - 66))
+    for px0 in (0, 124, w - 8):
+        sp.paint(box(w, h, px0, 13, px0 + 8, 122), STEEL, 0.5 + 0.3 * (x < px0 + 2) - 0.25 * (x >= px0 + 6))
+    sp.paint(box(w, h, 0, 118, w, h), PLATE, 0.32 + 0.3 * (y == 118) + 0.15 * (((x + y) % 6) == 0) + (noise2(w, h, 4, 362) - 0.5) * 0.3)
+    sp.paint(dmask(np.clip((noise2(w, h, 6, 363) - 0.55) * 3, 0, 1)) & (box(w, h, 0, 4, w, 13) | box(w, h, 0, 118, w, h)), RUST, 0.35)
+    sp.paint(droop(w, h, 8, 124, 14, 5, 2.0) | droop(w, h, 132, 248, 14, 7, 2.0), CAB, np.full((h, w), 0.0))
+    ties = ((x % 22) < 2) & (y >= 12) & (y < 16)
+    sp.paint(ties, WHITE, np.full((h, w), 0.6))
+    sp.paint(line2(w, h, 70, 13, 66, 30, 1.0) | line2(w, h, 70, 13, 76, 30, 1.0), CAB, np.full((h, w), 0.1))  # a laminate on a lanyard
+    sp.paint(box(w, h, 64, 30, 78, 48), WHITE, 0.6 + 0.3 * (y < 33))
+    sp.paint(box(w, h, 66, 36, 76, 40), MAGENTA, 0.7)
+    sp.paint(box(w, h, 190, 13, 193, 36), px.ramp("#20a060", "#a0ffc0"), 0.9)  # a glow stick tied on
+    sp.edge()
+    return sp.rgba()
+
+
+def prop_radio():
+    """The Mission Count's entrance in the booth (1.75 m, 144 x 224): the set below on a flight case, so the dial glows at 1.2 m over the decks."""
+    top = _radio_set()
+    w, h = 144, 224
+    sp = Sprite(w, h)
+    sp.rgb[:144], sp.a[:144] = top[..., :3], top[..., 3]
+    x, y = grid2(w, h)
+    m = box(w, h, 14, 144, 130, h)
+    sp.paint(m, PLATE, 0.32 + _shade_lr(x, 14, 130, 0.15, 0.15) + (noise2(w, h, 8, 375) - 0.5) * 0.25)
+    sp.paint(m & ~box(w, h, 17, 147, 127, h - 3), SILVER, 0.5 + 0.3 * ((y < 146) | (x < 16)))
+    for cx in (14, 123):
+        for cy in (144, h - 7):
+            sp.paint(box(w, h, cx, cy, cx + 7, cy + 7), SILVER, 0.65 + 0.3 * ((x - cx) + (y - cy) < 4))
+    sp.paint(box(w, h, 60, 170, 84, 178), SILVER, 0.55 + 0.3 * (y < 172))
+    sp.paint(box(w, h, 24, 190, 50, 198), WHITE, 0.55)
+    sp.paint(oval(w, h, 72, 147, 40, 2), px.ramp("#3a2a08", "#ffd25a"), np.full((h, w), 0.35))  # the dial's light on the case lid
+    sp.edge()
+    return sp.rgba()
+
+
+def _radio_set():
+    """The radio on its crate (1.1 m, 144 x 144): an olive WW2 field radio standing on an ammunition crate, its canvas strap hanging,
+    the dial glowing the Squadron's gold (#ffd25a) with the needle across it, two bakelite knobs, a morse key and a headset on the crate, a whip aerial."""
+    w = h = 144
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    OLIVE = px.ramp("#0e1008", "#1c2212", "#2c341c", "#3e4826", "#525e32", "#6a7840", "#86944e")
+    GOLD = px.ramp("#3a2a08", "#8a6418", "#d8a838", "#ffd25a", "#fff0b0")
+    # the crate (0.45 m): planks, rope handle, a stencil
+    cr = box(w, h, 22, 88, 122, h)
+    sp.paint(cr, WOOD, 0.38 + _shade_lr(x, 22, 122, 0.2, 0.15) - 0.2 * (((y - 88) % 14) < 1) + (noise2(w, h, 6, 371) - 0.5) * 0.25)
+    sp.paint(box(w, h, 22, 88, 122, 92), WOOD, 0.75)
+    sp.paint(box(w, h, 22, 88, 28, h) | box(w, h, 116, 88, 122, h), WOOD, 0.55)
+    sp.paint(box(w, h, 50, 108, 94, 122) & text_mask(h, "AMMO", 54, 110, 2, w=w), OLIVE, np.full((h, w), 0.85))
+    sp.paint(droop(w, h, 98, 114, 98, 6, 2.0), px.ramp("#3a2c18", "#8a7048"), np.full((h, w), 0.7))
+    # the set (0.5 m wide)
+    body = box(w, h, 28, 30, 116, 88)
+    sp.paint(body, OLIVE, 0.42 + _shade_lr(x, 28, 116, 0.3, 0.2) + 0.15 * (y < 33) + (noise2(w, h, 5, 372) - 0.5) * 0.2 - 0.2 * px.grime(max(w, h), 373, 0.5)[:h, :w])
+    sp.paint(box(w, h, 28, 30, 116, 32) | box(w, h, 28, 30, 30, 88), OLIVE, np.full((h, w), 0.85))
+    sp.paint(dmask(np.clip((noise2(w, h, 4, 374) - 0.6) * 3, 0, 1)) & body, STEEL, 0.6)  # paint chipped to the metal
+    for bx in (34, 108):  # latches
+        sp.paint(box(w, h, bx - 2, 48, bx + 4, 58), SILVER, 0.6 + 0.3 * (y < 50))
+    sp.paint(box(w, h, 40, 38, 84, 62), CAB, np.full((h, w), 0.1))  # the dial window, lit from within
+    dial = box(w, h, 42, 40, 82, 60)
+    sp.paint(dial, GOLD, 0.6 + 0.35 * (np.hypot(x - 62, y - 52) < 12) - 0.15 * (y > 56))
+    sp.paint(dial & ((x % 4) == 0) & (y < 45), GOLD, np.full((h, w), 0.2))
+    sp.paint(line2(w, h, 56, 58, 70, 42, 1.4), CAB, np.full((h, w), 0.1))
+    for kx in (94, 106):
+        sp.paint(oval(w, h, kx, 44, 5, 5), CAB, 0.45 + 0.4 * (x < kx - 1) * (y < 44))
+        sp.paint(oval(w, h, kx, 44, 1.5, 1.5), SILVER, np.full((h, w), 0.8))
+    sp.paint(box(w, h, 88, 62, 112, 82), CAB, np.full((h, w), 0.2))  # speaker grille
+    sp.paint(box(w, h, 88, 62, 112, 82) & ((y % 3) == 0), OLIVE, np.full((h, w), 0.35))
+    sp.col(box(w, h, 46, 70, 50, 74), "#ff4030")  # power lamp
+    sp.paint(box(w, h, 54, 70, 80, 80), OLIVE, 0.3 + 0.2 * (y == 70))
+    sp.paint(box(w, h, 40, 22, 104, 26) | box(w, h, 40, 22, 44, 30) | box(w, h, 100, 22, 104, 30), STEEL, 0.55 + 0.3 * (y < 23))  # handle
+    sp.paint(line2(w, h, 108, 30, 128, 2, 1.4), SILVER, np.full((h, w), 0.6))  # whip aerial
+    sp.paint(droop(w, h, 28, 46, 80, 26, 3.0), px.ramp("#2a2414", "#6a5a38", "#9a8a5a"), 0.6)  # strap hanging off the side
+    sp.paint(box(w, h, 6, 82, 22, 86) | oval(w, h, 9, 92, 4, 6) | oval(w, h, 19, 92, 4, 6), CAB, 0.35 + 0.3 * (x < 9))  # headset hung on the crate's edge
+    sp.paint(droop(w, h, 12, 40, 98, 18, 1.4), CAB, np.full((h, w), 0.05))
+    sp.edge()
+    return sp.rgba()
+
+
+def prop_ember_glass():
+    """The Ember Road's entrance in the bar (0.83 x 1.59 m, 104 x 200; the table top at 1.0 m): a tall steel poseur table, on it a straight pint glass holding a live coal that glows
+    the Ember's orange (#ff7a20), sparks lifting off it, its light on the table top and the rim of the glass."""
+    w, h = 104, 200
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    EMB = px.ramp("#3a0c04", "#8a2408", "#d8501a", "#ff7a20", "#ffb060", "#fff0c0")
+    top = 74
+    sp.paint(oval(w, h, 52, top, 46, 6), STEEL, 0.4 + 0.35 * (y < top - 2) + 0.35 * (np.hypot(x - 52, (y - top + 2) * 3) < 18))
+    sp.paint(box(w, h, 6, top, 98, top + 3), STEEL, 0.25)
+    sp.paint(box(w, h, 48, top + 3, 56, h - 8), STEEL, 0.45 + 0.35 * (x < 50) - 0.2 * (x > 54))
+    sp.paint(oval(w, h, 52, h - 5, 26, 4), STEEL, 0.35 + 0.3 * (y < h - 6))
+    sp.paint(oval(w, h, 52, top - 1, 20, 3) & ~oval(w, h, 52, top - 1, 9, 2), EMB, np.full((h, w), 0.45))  # the ember's light on the steel
+    gl = box(w, h, 42, top - 34, 62, top - 1)
+    sp.paint(gl, GLASS, 0.35 + 0.35 * (x < 44) + 0.25 * (x > 59))
+    inside = box(w, h, 44, top - 31, 60, top - 2)
+    sp.paint(inside, EMB, 0.35 + 0.3 * (y > top - 14))
+    coal = oval(w, h, 52, top - 9, 7, 6)
+    cn = noise2(w, h, 3, 381)
+    sp.paint(coal, EMB, 0.55 + 0.45 * (cn > 0.5) - 0.3 * (np.abs(cn - 0.5) < 0.05))
+    sp.paint(box(w, h, 42, top - 35, 62, top - 33), px.ramp("#ffb060", "#fff0c0"), 0.8)  # the rim catches the glow
+    rng = np.random.RandomState(382)
+    for _ in range(9):  # sparks rising
+        sx, sy = 52 + rng.randint(-10, 11), top - 36 - rng.randint(0, 50)
+        sp.paint(box(w, h, sx, sy, sx + 1 + (rng.rand() < 0.3), sy + 1), EMB, np.full((h, w), 0.8 + 0.2 * rng.rand()))
+    sp.paint(box(w, h, 66, top - 10, 76, top - 1), SILVER, 0.5 + 0.3 * (y == top - 10))  # a beer mat and a lighter
+    sp.paint(box(w, h, 20, top - 3, 34, top - 1), MAGENTA, 0.5)
+    sp.edge()
+    return sp.rgba()
+
+
+def prop_gospel_star():
+    """The Gospel's entrance on the balcony (1.25 m, 160 x 160, drawn additive): a star thrown on the brick by a gobo projector, the Gospel's warm white
+    (#fff0c8): a sharp eight-pointed star of light, a dithered halo, the gobo's ring, the mortar lines showing through as darker streaks."""
+    w = h = 160
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    cx, cy = 79.5, 79.5
+    dx, dy = x - cx, y - cy
+    r = np.hypot(dx, dy)
+    a = np.arctan2(dy, dx)
+    ph = (a / (2 * np.pi) * 8) % 1.0
+    tri = 1 - np.abs(ph - 0.5) * 2  # 1 at a point, 0 between two
+    longp = (np.floor((a / (2 * np.pi) * 8) + 0.5) % 2) == 0
+    star = r < 10 + np.where(longp, 56, 30) * tri ** 2.2
+    halo = r < 74
+    k = np.clip(1 - r / 74.0, 0, 1)
+    LIGHT = px.ramp("#2a2418", "#6a5c40", "#b8a478", "#f0dcae", "#fff0c8", "#fffaf0")
+    sp.paint(halo & dmask(k ** 1.6 * 0.9), LIGHT, 0.15 + 0.35 * k)
+    sp.paint(halo & (np.abs(r - 70) < 1.5) & dmask(np.full((h, w), 0.6)), LIGHT, np.full((h, w), 0.4))
+    sp.paint(star, LIGHT, 0.6 + 0.4 * np.clip(1 - r / 60.0, 0, 1))
+    mortar = (((y + 2) % 9) < 1)
+    sp.paint(star & mortar & (r > 14), LIGHT, np.full((h, w), 0.5))
+    sp.paint(r < 6, LIGHT, np.full((h, w), 1.0))
+    return sp.rgba()  # (additive: no darker edge, the dark pixels add nothing)
+
+
+def prop_cellar_hatch():
+    """The wizard's way down (1.0 m, 128 x 128): a cellar hatch in the corridor floor with its iron-strapped lid propped up, the ladder's rails rising out of
+    it, torch light (#ffb050) welling up from the Bassment and catching the lid's underside, a chain and a padlock hanging open."""
+    w = h = 128
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    TORCH = px.ramp("#3a1404", "#8a3a0c", "#d07a24", "#ffb050", "#ffe0a0")
+    # the opening seen at a slant: a dark trapezoid lit from below
+    hole = (y >= 104) & (y < 120) & (np.abs(x - 64) < 50 + (y - 104) * 0.5)
+    sp.paint(hole, TORCH, 0.25 + 0.7 * np.clip(1 - np.abs(x - 64) / 54.0, 0, 1) * np.clip((y - 104) / 14.0, 0.3, 1))
+    frame = ((y >= 100) & (y < 104) & (np.abs(x - 64) < 52)) | ((y >= 120) & (y < 124) & (np.abs(x - 64) < 60))
+    sp.paint(frame, STEEL, 0.45 + 0.3 * (y < 102))
+    # the lid, hinged at the far edge and propped up toward us
+    lid = (y >= 18) & (y < 100) & (np.abs(x - 64) < 34 + (y - 18) * 0.04)
+    lsh = 0.32 + _shade_lr(x, 24, 104, 0.15, 0.15) + 0.35 * np.clip((y - 50) / 42.0, 0, 1)  # the underside lit by the glow below
+    sp.paint(lid, WOOD, lsh - 0.12 * (((x - 24) % 16) < 1) + (noise2(w, h, 6, 391) - 0.5) * 0.2)
+    for sy in (26, 74):
+        sp.paint(lid & (y >= sy) & (y < sy + 5), STEEL, 0.4 + 0.3 * (y == sy) + 0.25 * np.clip((y - 50) / 42.0, 0, 1))
+        sp.paint(lid & (y >= sy + 1) & (y < sy + 3) & ((x % 12) == 3), SILVER, np.full((h, w), 0.9))
+    sp.paint(line2(w, h, 100, 104, 96, 62, 3.0), STEEL, 0.4)  # the prop bar
+    for rx in (40, 84):  # ladder rails rising out of the hole
+        sp.paint(box(w, h, rx, 84, rx + 4, 120), STEEL, 0.4 + 0.4 * (x < rx + 1) + 0.25 * np.clip((y - 100) / 20.0, 0, 1))
+    sp.paint(box(w, h, 40, 90, 88, 92), STEEL, np.full((h, w), 0.5))
+    sp.paint(droop(w, h, 14, 32, 100, 10, 2.0) & ((x % 3) < 2), SILVER, np.full((h, w), 0.6))
+    sp.paint(box(w, h, 27, 108, 33, 115), AMBER, 0.6)
+    sp.edge()
+    return sp.rgba()
+
+
+def prop_flight_cases():
+    """Flight cases stacked out of the way (1.0 m, 128 x 128): two black cases with aluminium edges, ball corners, butterfly catches, stencils and gaffer."""
+    w = h = 128
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    for (x0, y0, x1, y1, seed, word) in ((8, 64, 124, h, 401, "DECKS"), (20, 18, 110, 64, 402, "MIC")):
+        m = box(w, h, x0, y0, x1, y1)
+        sp.paint(m, PLATE, 0.32 + _shade_lr(x, x0, x1, 0.15, 0.15) + (noise2(w, h, 8, seed) - 0.5) * 0.25)
+        sp.paint(m & ~box(w, h, x0 + 3, y0 + 3, x1 - 3, y1 - 3), SILVER, 0.5 + 0.3 * ((y < y0 + 2) | (x < x0 + 2)))
+        sp.paint(m & (np.abs(y - (y0 + y1) / 2) < 1.5), SILVER, np.full((h, w), 0.55))
+        for cx in (x0, x1 - 7):
+            for cy in (y0, y1 - 7):
+                sp.paint(box(w, h, cx, cy, cx + 7, cy + 7), SILVER, 0.65 + 0.3 * ((x - cx) + (y - cy) < 4))
+        sp.paint(box(w, h, x0 + 10, y0 + 8, x0 + 10 + 4 * len(word) + 3, y0 + 15), WHITE, 0.55)
+        sp.paint(box(w, h, x0 + 10, y0 + 8, x0 + 10 + 4 * len(word) + 3, y0 + 15) & text_mask(h, word, x0 + 12, y0 + 9, w=w), CAB, np.full((h, w), 0.05))
+    sp.edge()
+    return sp.rgba()
+
+
+def prop_mop_bucket():
+    """A mop bucket by the bar (0.75 m, 96 x 96): a yellow wheeled bucket with its wringer, grey water, the mop handle leaning out, a wet patch."""
+    w = h = 96
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    YEL = px.ramp("#2a2006", "#6a5010", "#a88420", "#d8b030", "#f4d860")
+    sp.paint(oval(w, h, 48, 91, 40, 4), px.ramp("#141216", "#2a2a34"), np.full((h, w), 0.6))
+    body = (y >= 46) & (y < 86) & (np.abs(x - 48) < 30 - (y - 46) * 0.1)
+    sp.paint(body, YEL, 0.45 + _shade_lr(x, 18, 78, 0.3, 0.25) - 0.15 * ((y % 9) < 1))
+    sp.paint(box(w, h, 20, 44, 76, 48), YEL, 0.85)
+    sp.paint(box(w, h, 22, 46, 74, 50), px.ramp("#2a2a24", "#5a5a48"), 0.5)
+    sp.paint(box(w, h, 56, 30, 74, 46), STEEL, 0.4 + 0.3 * (y < 32))  # the wringer
+    sp.paint(line2(w, h, 40, 50, 18, 2, 3.0), WOOD, 0.6)  # the mop handle
+    sp.paint(oval(w, h, 40, 48, 8, 3), WHITE, 0.4)
+    for wx in (24, 72):
+        sp.paint(oval(w, h, wx, 88, 4, 4), CAB, 0.3)
+    sp.edge()
+    return sp.rgba()
+
+
+def prop_crates():
+    """Beer crates of empties stacked by the bar (0.75 m, 112 x 96): red plastic crates with hand holes, brown bottles' necks showing."""
+    w, h = 112, 96
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    RED = px.ramp("#2a0608", "#5a0e12", "#8a1a1c", "#b82a26", "#e05040")
+    for y0, x0 in ((50, 4), (6, 10)):
+        m = box(w, h, x0, y0 + 10, x0 + 100, y0 + 46)
+        sp.paint(m, RED, 0.42 + _shade_lr(x, x0, x0 + 100, 0.2, 0.2) + 0.15 * ((y - y0) % 12 < 1))
+        sp.paint(m & ((x - x0) % 12 < 2), RED, np.full((h, w), 0.2))
+        sp.paint(box(w, h, x0 + 40, y0 + 16, x0 + 60, y0 + 22), CAB, np.full((h, w), 0.05))  # hand hole
+        for bx in range(x0 + 6, x0 + 96, 12):
+            sp.paint(box(w, h, bx, y0, bx + 5, y0 + 10), px.ramp("#2a1004", "#6a3010", "#b06a28"), 0.4 + 0.4 * (x == bx))
+            sp.paint(box(w, h, bx + 1, y0, bx + 4, y0 + 2), SILVER, np.full((h, w), 0.6))
+    sp.edge()
+    return sp.rgba()
+
+
+def prop_coffee_table():
+    """The chill-out room's low table (1.1 x 0.55 m, 144 x 72): a scratched cable drum used as a table, an ashtray heaped full, a bottle of water, two cans,
+    a flyer and a tea light."""
+    w, h = 144, 72
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    sp.paint(oval(w, h, 72, 24, 66, 10), WOOD, 0.5 + 0.25 * (y < 22) + (noise2(w, h, 8, 411) - 0.5) * 0.3)
+    sp.paint(box(w, h, 22, 26, 122, 64), WOOD, 0.3 + _shade_lr(x, 22, 122, 0.2, 0.2) - 0.15 * (((x - 22) % 10) < 1))
+    sp.paint(oval(w, h, 72, 66, 54, 6), WOOD, np.full((h, w), 0.2))
+    sp.paint(box(w, h, 40, 10, 62, 18), SILVER, 0.4 + 0.3 * (y < 12))
+    sp.paint(box(w, h, 43, 7, 58, 11) & dmask(np.full((h, w), 0.7)), WHITE, np.full((h, w), 0.7))
+    sp.paint(box(w, h, 80, 0, 88, 20), px.ramp("#2a4a6a", "#6a9ac0", "#c0e4ff"), 0.4 + 0.4 * (x < 82))
+    for cx in (96, 104):
+        sp.paint(box(w, h, cx, 8, cx + 6, 20), [MAGENTA, SILVER][cx == 104], 0.5 + 0.3 * (x == cx))
+    sp.paint(box(w, h, 20, 18, 36, 24), AMBER, 0.6)
+    sp.paint(box(w, h, 112, 14, 118, 20), WHITE, 0.6)
+    sp.col(box(w, h, 114, 12, 116, 14), "#ffd060")
+    sp.edge()
+    return sp.rgba()
+
+
+SIL_SCALE = 128.0 / 52.0  # design units per pixel of a rear silhouette: the busts at the baked people's grain (about 62 px a metre)
+
+
+def prop_silhouette(kind: str, up: bool) -> np.ndarray:
+    """A rear-row figure from behind (head and shoulders, the old SVG shapes' sizes): a dark fill dithered toward the fog, the hair's own shape, one pixel
+    of cyan rim on the left and magenta on the right from the club's beams, arms up on the drop."""
+    s = 1.0 / SIL_SCALE
+    w = 52
+    h = 59 if up else 47
+    top = 140 if up else 112
+    sp = Sprite(w, h)
+    x, y = grid2(w, h)
+    X = (x + 0.5) / s - 64.0  # design units, origin bottom centre
+    Y = (y + 0.5) / s - top
+    sw = {"a": 38, "b": 30, "c": 44}[kind]
+    hr = {"a": (16, 19), "b": (14, 17), "c": (18, 20)}[kind]
+    torso = (Y > -50) & (Y < 4) & (np.abs(X) < sw - 6 * np.clip((Y + 50) / -1.0, 0, 1) - 8 * np.clip(-(Y + 26) / 24.0, 0, 1))
+    neck = (np.abs(X) < 9) & (Y > -60) & (Y <= -46)
+    head = ((X / hr[0]) ** 2 + ((Y + 74) / hr[1]) ** 2) <= 1.0
+    hair = np.zeros_like(head)
+    if kind == "a":
+        hair = ((X / (hr[0] + 1)) ** 2 + ((Y + 79) / (hr[1] - 2)) ** 2 <= 1.0) & (Y < -74)
+    elif kind == "b":
+        hair = (((X - 1) / 8) ** 2 + ((Y + 94) / 8) ** 2 <= 1.0) | ((X > 6) & (X < 22) & (Y > -82) & (Y < -50 - (X - 6) * 0.5))
+    else:
+        hair = ((Y < -78) & (Y > -102) & (np.abs(X) < 20)) | ((Y > -82) & (Y < -74) & (X < -16) & (X > -38))  # a cap and its peak
+    arms = np.zeros_like(head)
+    if up:
+        for sd in (-1, 1):
+            ax0, ay0, ax1, ay1 = sd * 26, -40, sd * 48, -116
+            dx, dy = ax1 - ax0, ay1 - ay0
+            t = np.clip(((X - ax0) * dx + (Y - ay0) * dy) / (dx * dx + dy * dy), 0, 1)
+            arms |= np.hypot(X - (ax0 + t * dx), Y - (ay0 + t * dy)) < 6.5
+            arms |= np.hypot(X - ax1 * 1.02, Y - ay1 - 4) < 7
+    body = torso | neck | head | hair | arms
+    SIL = px.ramp("#0a0618", "#110a22", "#181030", "#20163a")
+    sp.paint(body, SIL, 0.35 + 0.25 * (hair | (Y < -90)) * 0.0 + 0.3 * np.clip(-(Y + 20) / 80.0, 0, 1) + (px.speckle(64, 0.2, 421 + ord(kind))[:h, :w] - 0.5) * 0.25)
+    sp.paint(hair, SIL, np.full((h, w), 0.05))
+    left = body & ~np.roll(body, 1, 1)
+    right = body & ~np.roll(body, -1, 1)
+    topr = body & ~np.roll(body, 1, 0)
+    sp.paint(left | (topr & (X < 0)), px.ramp("#0f3a44", "#2fb6c8"), np.full((h, w), 0.6))
+    sp.paint(right | (topr & (X >= 0)), px.ramp("#5c1244", "#c23a8a"), np.full((h, w), 0.6))
+    return sp.rgba()
+
+
+PROPS = {  # id -> (drawing, pivot as a fraction of the size or None, metres the sprite's height stands for)
+    "prop_truss_tower": prop_truss_tower, "prop_stack": prop_stack, "prop_stack_pair": prop_stack_pair, "prop_decks": prop_decks,
+    "prop_rail": prop_rail, "prop_radio": prop_radio, "prop_ember_glass": prop_ember_glass, "prop_gospel_star": prop_gospel_star,
+    "prop_cellar_hatch": prop_cellar_hatch, "prop_flight_cases": prop_flight_cases, "prop_mop_bucket": prop_mop_bucket, "prop_crates": prop_crates,
+    "prop_coffee_table": prop_coffee_table,
+}
+
+
+def write_props(out_dir: str) -> dict:
+    """Write the props and the redrawn 2D sprites as PNGs into out_dir (the chapter's processed/ folder); returns {sprites: {...}, silhouettes: {...}}
+    entries for the manifest (file relative to the chapter folder, pivot in texture pixels, px_scale = design px a texture px)."""
+    os.makedirs(out_dir, exist_ok=True)
+    sprites = {}
+    for sid, fn in sorted(PROPS.items()):
+        a = fn()
+        save_rgba(os.path.join(out_dir, sid + ".png"), a)
+        sprites[sid] = {"file": f"processed/{sid}.png", "pivot": [a.shape[1] / 2.0, float(a.shape[0])], "px_scale": 1.0}
+    # the old 2D sprites at their old design size (texture px x px_scale = design px), now pixels
+    a = prop_woofer()
+    save_rgba(os.path.join(out_dir, "woofer.png"), a)
+    sprites["woofer"] = {"file": "processed/woofer.png", "pivot": [96.0, 96.0], "px_scale": round(106.0 / 192.0, 6), "radius": 50}
+    a = prop_fixture()
+    save_rgba(os.path.join(out_dir, "fixture.png"), a)
+    k = 62.0 / 104.0
+    sprites["fixture"] = {"file": "processed/fixture.png", "pivot": [33.0, round(2.0 / k, 3)], "px_scale": round(k, 6), "lens": [0, 51]}
+    a = prop_disco_ball()
+    save_rgba(os.path.join(out_dir, "disco_ball.png"), a)
+    k = 100.0 / 166.0
+    sprites["disco_ball"] = {"file": "processed/disco_ball.png", "pivot": [53.0, round(2.0 / k, 3)], "px_scale": round(k, 6), "radius": 28, "ball_centre": [0, 66]}
+    sils = {}
+    for kind in ("a", "b", "c"):
+        e = {}
+        for state in ("idle", "up"):
+            a = prop_silhouette(kind, state == "up")
+            fn = f"sil_{kind}_{state}.png"
+            save_rgba(os.path.join(out_dir, fn), a)
+            top = 140 if state == "up" else 112
+            e[state] = {"file": f"processed/{fn}", "pivot": [26.0, round(top / SIL_SCALE, 3)], "px_scale": round(SIL_SCALE, 6)}
+        e["height"] = 100
+        sils[f"sil_{kind}"] = e
+    return {"sprites": sprites, "silhouettes": sils}
+
+
 SPRITES = {
     "thing_decks": thing_decks, "thing_pendant": thing_pendant, "thing_bulb": thing_bulb, "thing_sink": thing_sink,
     "thing_dryer": thing_dryer, "thing_tube": thing_tube, "thing_toilet": thing_toilet, "thing_firedoor": thing_firedoor, "thing_exit_sign": thing_exit_sign,
@@ -1067,26 +1773,27 @@ def write_sprites(out_dir: str = OUT) -> list:
 def build() -> dict:
     """The opaque tiles {id: (rgb, metres)}; the RGBA props are written to the textures folder as a side effect (ids listed in tiles.NIGHT_ONE)."""
     write_sprites()
-    return {
-        "wall_brick": (wall_brick(), 2.0),
-        "wall_panel": (wall_panel(), 3.2),
-        "wall_speaker": (wall_speaker(), 2.0),
-        "wall_bar": (wall_bar(), 2.4),
-        "bar_front": (bar_front(), 2.4),
-        "wall_door": (wall_door(), 3.0),
-        "trim": (trim(), 2.0),
-        "toilet_tile": (toilet_tile(), 1.5),
-        "toilet_floor": (toilet_floor(), 1.5),
-        "cubicle_door": (cubicle_door(), 2.6),
+    return {  # metres a repeat: 128 px over 1.0 to 1.3 m is 98 to 128 texels a metre (the style guide's 96 to 160); the exceptions say why
+        "wall_brick": (wall_brick(), 1.0),
+        "wall_panel": (wall_panel(), 1.28),
+        "wall_speaker": (wall_speaker(), 1.0),
+        "wall_bar": (wall_bar(), 1.2),
+        "bar_front": (bar_front(), 1.2),
+        "wall_door": (wall_door(), 2.0),  # the street seen through the tunnel's end: one 2 x 2 m picture on its own wall segment (64 px/m, a view, not a surface)
+        "trim": (trim(), 1.0),
+        "toilet_tile": (toilet_tile(), 1.0),
+        "toilet_floor": (toilet_floor(), 1.0),
+        "cubicle_door": (cubicle_door(), 2.6),  # the partitions' gaps sit at the floor and the ceiling of a 2.6 m room: one repeat floor to ceiling (49 px/m)
         "cubicle_wall": (cubicle_wall(), 1.2),
-        "wall_corridor": (wall_corridor(), 2.4),
-        "wall_chill": (wall_chill(), 2.6),
+        "wall_corridor": (wall_corridor(), 1.2),
+        "wall_chill": (wall_chill(), 1.3),
         "ceil_wc": (ceil_wc(), 1.2),
-        "floor_dark": (floor_dark(), 3.0),
-        "floor_boards": (floor_boards(), 2.0),
-        "floor_carpet": (floor_carpet(), 2.0),
-        "floor_stage": (floor_stage(), 2.0),
-        "ceil_truss": (ceil_truss(), 4.0),
-        "ceil_low": (ceil_low(), 2.0),
-        "ceil_stair": (ceil_stair(), 2.0),
+        "floor_dark": (floor_dark(), 1.28),
+        "floor_boards": (floor_boards(), 1.0),
+        "floor_carpet": (floor_carpet(), 1.0),
+        "floor_stage": (floor_stage(), 1.0),
+        "ceil_truss": (ceil_truss(), 1.28),
+        "ceil_low": (ceil_low(), 1.2),
+        "ceil_stair": (ceil_stair(), 1.0),
+        "wall_led": (wall_led(), 3.0),  # replaced at runtime by the LED screen, which story_world_fx.gd lays out over 3 m (LED_W): the metres must stay
     }

@@ -549,24 +549,11 @@ def _sil_shape(kind: str, up: bool) -> str:
 
 
 def build_silhouettes() -> dict:
-    out = {}
-    fills = {"a": "#0d0828", "b": "#0b0622", "c": "#100a2e"}
-    for kind in ("a", "b", "c"):
-        entry = {}
-        for state in ("idle", "up"):
-            up = state == "up"
-            shape = _sil_shape(kind, up)
-            body = ""
-            for dx, dy, col in ((-2.2, -1.2, CYAN), (2.2, -1.2, MAGENTA)):  # rim lights from both sides
-                body += _recolor(shape, col, dx, dy)
-            body += _recolor(shape, fills[kind], 0, 0)
-            # a soft top light on the head so it is not a flat blob
-            top = -128 if up else -98
-            info = write_svg(f"silhouettes/sil_{kind}_{state}.svg", (-64, -140 if up else -112, 64, 4), body)
-            entry[state] = {"file": f"source/silhouettes/sil_{kind}_{state}.svg", "pivot": pivot_in(info, (0, 0)), "px_scale": 0.5}
-        entry["height"] = 100
-        out[f"sil_{kind}"] = entry
-    return out
+    """The rear rows: pixel busts at the baked people's grain (tex_night_one.prop_silhouette, PNG in processed/), no longer SVG shapes (audit F2).
+    `_sil_shape` stays for the chapters that still draw their own."""
+    from . import tex_night_one
+    from . import lib as _lib
+    return tex_night_one.write_props(_lib.PNG_DIR)["silhouettes"]
 
 
 def _recolor(shape: str, color: str, dx: float, dy: float) -> str:
@@ -595,9 +582,9 @@ def build_stage() -> dict:
     layers.append({"id": "desk_top", "file": "source/desk_top.svg", "pos": [0, 460], "size": [1280, 260], "px_scale": 0.5,
                    "note": "authored 1280 x 260; stretch to the pad-strip rectangle"})
     sprites: dict = {}
-    spr_woofer(sprites)
-    spr_fixture(sprites)
-    spr_disco_ball(sprites)
+    from . import tex_night_one
+    from . import lib as _lib
+    sprites.update(tex_night_one.write_props(_lib.PNG_DIR)["sprites"])  # the woofer, fixture and mirror ball as pixels, and the Warehouse's props (audit F1, F2, F10)
     spr_glowstick(sprites)
     sprites["door_open"] = spr_door_open(sprites)
     spr_deck(sprites)

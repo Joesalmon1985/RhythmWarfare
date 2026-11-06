@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://8qbsw1ws8k3q"
-path="res://.godot/imported/sil_c_idle.svg-8583efbde7757d7817be6e4da0c704b8.ctex"
+uid="uid://bv45xy6qirdxk"
+path="res://.godot/imported/sil_b_up.png-3cb1e643075fbd2636cf0118a14047ba.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/night_one/source/silhouettes/sil_c_idle.svg"
-dest_files=["res://.godot/imported/sil_c_idle.svg-8583efbde7757d7817be6e4da0c704b8.ctex"]
+source_file="res://assets/story/night_one/processed/sil_b_up.png"
+dest_files=["res://.godot/imported/sil_b_up.png-3cb1e643075fbd2636cf0118a14047ba.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false
