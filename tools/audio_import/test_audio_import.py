@@ -1,6 +1,6 @@
 """Unit tests on short synthetic audio made here (clicks and tones at a known tempo). No recordings, no Demucs.
 
-    /home/joe/.venvs/rw-audio/bin/python -m unittest discover -s tools/audio_import -p 'test_*.py' -v
+    <the audio venv python: /home/joe/.venvs/rw-audio/bin/python on Linux, C:/Users/joesa/rw-audio-work/venv/Scripts/python.exe on Windows> -m unittest discover -s tools/audio_import -p 'test_*.py' -v
 """
 from __future__ import annotations
 
@@ -400,7 +400,7 @@ def make_pack(root: Path, dur: float = 10.0) -> tuple[Path, Path]:
                                 {"t": 6.5, "pad": 3, "dur": 0.0, "conf": 0.5, "voice": "bass"}]},
           "default_chart": "normal", "rules": {"restore_after_idle_beats": 8},
           "source": {"input_path": str(recp)}}
-    (pack / "track.json").write_text(json.dumps(tj))
+    (pack / "track.json").write_text(json.dumps(tj), encoding="utf-8")
     return pack, recp
 
 
@@ -409,7 +409,7 @@ class ValidatorTests(unittest.TestCase):
     def setUpClass(cls):
         cls.tmp = tempfile.TemporaryDirectory()
         cls.pack, cls.rec = make_pack(Path(cls.tmp.name))
-        cls.good = json.loads((cls.pack / "track.json").read_text())
+        cls.good = json.loads((cls.pack / "track.json").read_text(encoding="utf-8"))
 
     @classmethod
     def tearDownClass(cls):
@@ -418,11 +418,11 @@ class ValidatorTests(unittest.TestCase):
     def run_with(self, mutate, quick=True):
         tj = copy.deepcopy(self.good)
         mutate(tj)
-        (self.pack / "track.json").write_text(json.dumps(tj))
+        (self.pack / "track.json").write_text(json.dumps(tj), encoding="utf-8")
         try:
             r, _ = validate(self.pack, quick=quick)
         finally:
-            (self.pack / "track.json").write_text(json.dumps(self.good))
+            (self.pack / "track.json").write_text(json.dumps(self.good), encoding="utf-8")
         return r.errors
 
     def test_good_pack_passes_with_audio(self):
@@ -752,7 +752,7 @@ class BatchFixTests(unittest.TestCase):
             for k, amp in parts.items():
                 x = (amp * np.sin(2 * np.pi * 220 * tt)).astype(np.float32)
                 encode_ogg(np.stack([x, x], 1), PACK_RATE, src / f"{k}.ogg", out_rate=PACK_RATE)
-            (src / ".made_from").write_text(json.dumps({"stamp": "s", "scale": 1.0, "gain": 1.0, "frames": n}))
+            (src / ".made_from").write_text(json.dumps({"stamp": "s", "scale": 1.0, "gain": 1.0, "frames": n}), encoding="utf-8")
             info = pack_stems(d / "pack", src, ["a", "b"], ["folded"])  # backing + folded = 1.2 in phase
             self.assertGreater(info["backing_gain"], 1.0)
             y, _ = decode(d / "pack" / "stems" / "backing.ogg", rate=PACK_RATE)

@@ -34,7 +34,7 @@ def write_stems(stems_dir: Path, voices: list[dict], backing: list[dict], rate: 
     Returns {"stamp", "gain", "scale", "frames"}."""
     made = stems_dir / ".made_from"
     if made.is_file():
-        old = json.loads(made.read_text())
+        old = json.loads(made.read_text(encoding="utf-8"))
         if old.get("stamp") == stamp and all((stems_dir / f"{e['key']}.ogg").is_file() for e in voices + backing):
             return old
     if stems_dir.exists():
@@ -48,7 +48,7 @@ def write_stems(stems_dir: Path, voices: list[dict], backing: list[dict], rate: 
     if (max(lengths.values()) - min(lengths.values())) / PACK_RATE > 0.002:
         raise RuntimeError(f"encoded stems disagree in length: {lengths}")
     info = {"stamp": stamp, "scale": scale, "gain": round(1.0 / scale, 6), "frames": min(lengths.values())}
-    made.write_text(json.dumps(info))
+    made.write_text(json.dumps(info), encoding="utf-8")
     return info
 
 
@@ -64,12 +64,12 @@ def pack_stems(pack_dir: Path, src_dir: Path, keys: list[str], folded: list[str]
     them): each kept voice is the same file (a hard link, no re-encoding); the backing is the same file too
     unless voices are folded into it, then it is decoded, summed with them and encoded once. Skipped when the
     pack already has stems made from the same source and fold."""
-    src = json.loads((src_dir / ".made_from").read_text())
+    src = json.loads((src_dir / ".made_from").read_text(encoding="utf-8"))
     stamp = json.dumps({"src": src["stamp"], "folded": sorted(folded)})
     stems_dir = pack_dir / "stems"
     made = stems_dir / ".made_from"
     if made.is_file():
-        old = json.loads(made.read_text())
+        old = json.loads(made.read_text(encoding="utf-8"))
         if old.get("stamp") == stamp and all((stems_dir / f"{k}.ogg").is_file() for k in [*keys, "backing"]):
             return old
     tmp = pack_dir / "stems.new"
@@ -102,7 +102,7 @@ def pack_stems(pack_dir: Path, src_dir: Path, keys: list[str], folded: list[str]
     info = {**{k: src[k] for k in ("scale", "gain", "frames")}, "stamp": stamp, "folded": sorted(folded)}
     if backing_gain is not None:
         info["backing_gain"] = backing_gain
-    (tmp / ".made_from").write_text(json.dumps(info))
+    (tmp / ".made_from").write_text(json.dumps(info), encoding="utf-8")
     if stems_dir.exists():
         shutil.rmtree(stems_dir)
     tmp.rename(stems_dir)
@@ -124,7 +124,7 @@ def write_pack(pack_dir: Path, meta: dict, voices: list[dict], backing: list[dic
           "voices": out_v, "backing": out_b, "sections": meta["sections"], "focus": meta["focus"],
           "charts": meta["charts"], "default_chart": "normal",
           "rules": {"restore_after_idle_beats": 8}, "source": {**meta["source"], "stem_scale": info["scale"]}}
-    (pack_dir / "track.json").write_text(json.dumps(tj, indent=1))
+    (pack_dir / "track.json").write_text(json.dumps(tj, indent=1), encoding="utf-8")
     return tj
 
 

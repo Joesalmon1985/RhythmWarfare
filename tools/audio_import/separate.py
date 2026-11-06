@@ -18,19 +18,30 @@ from audio_io import decode
 MODELS = ("htdemucs", "htdemucs_ft", "htdemucs_6s")
 
 
+def pick_device(device: str | None = None) -> str:
+    """'cuda' when torch sees a GPU, else 'cpu'; an explicit choice (cpu, cuda, cuda:1) wins."""
+    import torch
+    if device and device != "auto":
+        if device.startswith("cuda") and not torch.cuda.is_available():
+            raise RuntimeError(f"--device {device} asked for, but torch.cuda.is_available() is False")
+        return device
+    return "cuda" if torch.cuda.is_available() else "cpu"
+
+
 def separate(src: str | Path, out_dir: str | Path, model_name: str = "htdemucs", shifts: int = 1,
              overlap: float = 0.25, start_s: float | None = None, dur_s: float | None = None,
-             force: bool = False) -> dict:
+             force: bool = False, device: str | None = None) -> dict:
     """Separate `src` into out_dir/{mix,<stem>}.npy; returns the meta dict. Skips if out_dir/meta.json exists."""
     out = Path(out_dir)
     meta_path = out / "meta.json"
     if meta_path.exists() and not force:
-        return json.loads(meta_path.read_text())
+        return json.loads(meta_path.read_text(encoding="utf-8"))
     import torch
     from demucs.apply import apply_model
     from demucs.pretrained import get_model
 
     torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "3")))
+    device = pick_device(device)
     t0 = time.time()
     model = get_model(model_name)
     model.eval()
@@ -44,7 +55,7 @@ def separate(src: str | Path, out_dir: str | Path, model_name: str = "htdemucs",
     mean, std = ref.mean(), ref.std() + 1e-8
     with torch.no_grad():
         est = apply_model(model, ((wav - mean) / std)[None], shifts=shifts, split=True, overlap=overlap,
-                          progress=True, device="cpu")[0]
+                          progress=True, device=device)[0].cpu()
     # the mean goes back once in total, not once per stem, so the stems still sum to the mix
     est = est * std + mean / len(model.sources)
     out.mkdir(parents=True, exist_ok=True)
@@ -53,14 +64,14 @@ def separate(src: str | Path, out_dir: str | Path, model_name: str = "htdemucs",
         np.save(out / f"{name}.npy", s.numpy().T.astype(np.float32))
     meta = {"model": model_name, "sources": list(model.sources), "rate": rate, "frames": int(mix.shape[0]),
             "shifts": shifts, "overlap": overlap, "excerpt": [start_s, dur_s] if start_s is not None else None,
-            "seconds": round(time.time() - t0, 1), "threads": torch.get_num_threads()}
-    meta_path.write_text(json.dumps(meta, indent=1))
+            "seconds": round(time.time() - t0, 1), "device": device, "threads": torch.get_num_threads()}
+    meta_path.write_text(json.dumps(meta, indent=1), encoding="utf-8")
     return meta
 
 
 def load(out_dir: str | Path) -> tuple[np.ndarray, dict[str, np.ndarray], dict]:
     out = Path(out_dir)
-    meta = json.loads((out / "meta.json").read_text())
+    meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
     mix = np.load(out / "mix.npy")
     stems = {k: np.load(out / f"{k}.npy") for k in meta["sources"]}
     return mix, stems, meta

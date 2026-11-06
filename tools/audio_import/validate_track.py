@@ -2,7 +2,7 @@
 """Check a track pack against docs/TRACK_PACK_FORMAT.md (version 2: voices with a kind and no pad, a focus
 timeline, cues that carry their voice). Needs only numpy and ffmpeg/ffprobe.
 
-    python3 tools/audio_import/validate_track.py /home/joe/rw-audio-work/packs/<id> [--recording FILE]
+    python3 tools/audio_import/validate_track.py <work>/packs/<id> [--recording FILE]
         [--sum-tol-db -30] [--quick]
 
 Exits 1 on any violation, 0 otherwise, after printing every problem found, the focus timeline and per-voice cue
@@ -428,7 +428,7 @@ def validate(pack: str | Path, recording: str | None = None, sum_tol_db: float =
         r.err(f"{tjp} missing")
         return r, {}
     try:
-        tj = json.loads(tjp.read_text())
+        tj = json.loads(tjp.read_text(encoding="utf-8"))
     except json.JSONDecodeError as e:
         r.err(f"track.json is not JSON: {e}")
         return r, {}

@@ -95,7 +95,7 @@ def write(c, val_stats: dict, val_report) -> dict:
     ch = c.jload("charts.json")
     fj = c.jload("focus.json")
     ej = c.jload("events.json")
-    tj = json.loads((c.pack / "track.json").read_text())
+    tj = json.loads((c.pack / "track.json").read_text(encoding="utf-8"))
     B = 60.0 / tj["tempo"]["bpm"]
     dur = tj["duration_s"]
     out: dict = {"id": c.id, "input": c.src.name, "timings_s": c.timings}
@@ -109,6 +109,10 @@ def write(c, val_stats: dict, val_report) -> dict:
                     "downbeat": an["downbeat"], "confidence": tj["tempo"]["confidence"]}
     out["sections"] = an["sections"]
     out["separation"] = {"model": c.model, **{k: v for k, v in an["stem_report"].items()}}
+    try:  # the device Demucs ran on (cpu / cuda), from the separation cache when it is still there
+        out["separation"]["device"] = json.loads((c.sep_dir / "meta.json").read_text(encoding="utf-8")).get("device")
+    except (OSError, ValueError):
+        pass
     from voices import describe_stem
     out["separation"]["words"] = {k: describe_stem(k, s, an["stem_report"]) for k, s in an["stem_report"]["stems"].items()}
     out["voices"] = vj
@@ -170,8 +174,8 @@ def write(c, val_stats: dict, val_report) -> dict:
     out["drop_identity"] = drop_identity(tj, ch)
     out["validation"] = {"violations": len(val_report.errors), "first": val_report.errors[:10],
                          **{k: v for k, v in val_stats.items() if k != "lengths"}}
-    (c.pack / "report.json").write_text(json.dumps(out, indent=1, default=lambda o: o.item() if hasattr(o, "item") else str(o)))
-    (c.pack / "report.txt").write_text(text(out))
+    (c.pack / "report.json").write_text(json.dumps(out, indent=1, default=lambda o: o.item() if hasattr(o, "item") else str(o)), encoding="utf-8")
+    (c.pack / "report.txt").write_text(text(out), encoding="utf-8")
     print(text(out))
     return out
 

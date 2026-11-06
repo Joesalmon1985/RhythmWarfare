@@ -7,13 +7,25 @@ recording after resampling.
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 from pathlib import Path
 
 import numpy as np
 
-FFMPEG = "/usr/bin/ffmpeg"
-FFPROBE = "/usr/bin/ffprobe"
+
+
+def _find_tool(name: str) -> str:
+    """ffmpeg / ffprobe from PATH (Linux /usr/bin, Windows the full build on PATH); a clear error if missing."""
+    found = shutil.which(name)
+    if not found:
+        raise FileNotFoundError(f"{name} not found on PATH: install ffmpeg (a build with libvorbis and soxr) and put "
+                                f"its bin folder on PATH")
+    return found
+
+
+FFMPEG = _find_tool("ffmpeg")
+FFPROBE = _find_tool("ffprobe")
 PACK_RATE = 48000
 VORBIS_QUALITY = 10  # about 440 kbit/s stereo: separated stems partly cancel, so each stem's coding noise must be low for the sum to match the record (q6 -24 dB, q8 -29 dB, q10 -38 dB on this music)
 
