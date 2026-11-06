@@ -367,4 +367,207 @@ One JSON object per scene and cell on stdout, prefixed `COVER ` (as `choice_audi
 | One-scene smoke: `warehouse` in one cell, checks the columns exist | Same test file | The normal suite |
 | Full audit, 82 scenes, 6 cells | `tools/run/coverage_audit.gd` | X3 of the plan, and per world at N2.4 to N2.6 (acceptance there is "50% or more of the world in 80% or more of sampled frames; choices alone 25% or more; exceptions listed") |
 
+---
+
+## 5. Scene composition: how a scene of this game reaches 50%
+
+### 5.1 What the arithmetic says
+
+Share of the default world (589,824 px²) taken by one object standing at a given distance from the camera (model; focal length 472.4 px; the staging touch sizes of `content/run/choice_staging.json`):
+
+| Object (touch size) | 3 m | 4 m | 5 m | 6 m | 8 m |
+|---|---|---|---|---|---|
+| Door (1.7 x 2.6 m) | 18.6% (268 x 409 px) | 10.5% | 6.7% (161 x 246) | 4.6% | 2.6% |
+| Person (1.2 x 2.1 m) | 10.6% | 6.0% | 3.8% (113 x 198) | 2.6% | 1.5% (71 px wide) |
+| Object or feature (1.4 x 1.6 m) | 9.4% | 5.3% | 3.4% (132 x 151) | 2.4% | 1.3% |
+
+What follows from it:
+
+- **Distance does the work.** At 5 m three doors cover 20%. At 8 m they cover under 8%. The camera and the staging distance matter more than the number of objects.
+- **Choices alone at 25%** needs about five objects at 5 m, or three at about 3.5 m. A three-choice scene has to put its choices near.
+- **Reactive objects fill the rest.** To go from 25% to 50% takes about seven object-sized reactive objects at 5 m (3.4% each), or three or four large ones (a light rig, an LED wall, a stack of speakers, a crowd group: 6% to 9% each).
+- **Overlap wastes area.** The model adds areas; the tool measures the union. Plan on a design target of 55%.
+
+### 5.2 The five hubs
+
+A hub scene shows the four quest entrances, its mainline exit or exits, and the link to its paired location. The pairs are fixed by the owner's decision of 6 November: Alien Spaceship with Hell, Hospital Ward with Mental Hospital. The Warehouse has no pair. The routes stay as they are; there is no ending yet.
+
+| Location | Hub scene | Quest entrances | Mainline exits today | Link to the pair | Choices |
+|---|---|---|---|---|---|
+| Warehouse Rave | `warehouse` (the Floor) | Dungeon (the wizard, existing, see below), Jesus, Catch-22, LOTR | `warehouse.bar`, `warehouse.balcony` | none | 6 |
+| Alien Spaceship | `mothership` (the Deck) | all four, new | `mothership.gallery`, `mothership.reactor` | to Hell | 7 |
+| Hell | `underworld` (the Arena) | all four, new | `underworld.court`, `underworld.furnace` | to Alien Spaceship | 7 |
+| Hospital Ward | `hospital` (the Ward) | all four, new | `hospital.corridor` | to Mental Hospital | 6 |
+| Mental Hospital | `ward` (the Day Room) | all four, new | `ward.art`, `ward.dorm` | to Hospital Ward | 7 |
+
+- The Floor holds only the wizard today. The Jesus, Catch-22 and LOTR entrances are hidden objects in the Bar (`bar.ember`), Balcony (`balcony.star`) and Booth (`booth.radio`), behind flags and a passed block. The hub rule read literally puts all four on the Floor. Those three keep their doors in the sub-scenes as extra routes (assumption A11).
+- The wizard's mid-scene entrance to the Bassment stays as it is (owner's decision of 6 November): early window, blocks 0 and 1, a passed block needed, its own path through `arm_trial`. It is not a `port.request`. The Floor still has five port-based choices without it, so the hub rule holds.
+- The four new Dungeon entrances in the other hubs are ordinary quest entries (`kind: quest_entry`, `path: bassment`) taken at a lap boundary. Raising the Bassment's passages above one or two choices, and moving the wizard behind the port, are later pieces of work and declared exceptions.
+- Quest entrances are never rhythm-gated. Pass and miss outcomes stay only on the mainline flavour routes that have them (the Door's bouncer, the Airlock examiner, the Throne). A scene with both a gate and a selection takes the `on_miss` destination when the last block is missed (contract section 3).
+
+### 5.3 A layout for one hub: the Floor
+
+A sketch for the Floor at one camera pose, 16:9, default pad strip: world 1280 x 460.8 px, one character = 20 x 19.2 px. The pad strip is below the bottom edge and is not drawn. Choices are capital letters, reactive objects lower case. The names are illustrative; they reuse things the Floor already has (`wizard_floor`, `disco_ball`, the dancer `g07`).
+
+```
+................................................................
+...llllllllllll...........mmmmmmmmmmmm...........nnnnnnnnnnnn...
+...llllllllllll...........mmmmmmmmmmmm...........nnnnnnnnnnnn...
+...llllllllllll...........mmmmmmmmmmmm...........nnnnnnnnnnnn...
+...llllllllllll...........mmmmmmmmmmmm...........nnnnnnnnnnnn...
+.............sssssssdddddddddddddddddd..........................
+.AAAAAAAAAAA.sssssssdddddddddddddddddd.EEEEEEEEE..FFFFFFFFFFFF..
+.AAAAAAAAAAA.sssssssdddddddddddddddddd.EEEEEEEEE..FFFFFFFFFFFF..
+.AAAAAAAAAAA.sssssssdddddddddddddddddd.EEEEEEEEE..FFFFFFFFFFFF..
+.AAAAAAAAAAA.sssssssdddddddddddddddddd.EEEEEEEEE..FFFFFFFFFFFF..
+.AAAAAAAAAAA.sssssssdddddddddddddddddd.EEEEEEEEE..FFFFFFFFFFFF..
+.AAAAAAAAAAA.sssssssdddddddddddddddddd.EEEEEEEEE..FFFFFFFFFFFF..
+.AAAAAAAAAAA.sssssss..CCCCCCC..........EEEEEEEEE..FFFFFFFFFFFF..
+.AAAAAAAAAAA.sssssss..CCCCCCC........ggggggg......FFFFFFFFFFFF..
+.AAAAAAAAAAA.BBBBBBBB.CCCCCCC........ggggggghhhhhhFFFFFFFFFFFF..
+.AAAAAAAAAAA.BBBBBBBB.CCCCCCC.DDDDDD.ggggggghhhhhhFFFFFFFFFFFF..
+.AAAAAAAAAAA.BBBBBBBB.CCCCCCC.DDDDDD.ggggggghhhhhhFFFFFFFFFFFF..
+.AAAAAAAAAAA.BBBBBBBB.CCCCCCC.DDDDDD.ggggggghhhhhhFFFFFFFFFFFF..
+.AAAAAAAAAAA.BBBBBBBB.CCCCCCC.DDDDDD.ggggggghhhhhhFFFFFFFFFFFF..
+.AAAAAAAAAAA.BBBBBBBB.CCCCCCC.DDDDDD.ggggggghhhhhhFFFFFFFFFFFF..
+.AAAAAAAAAAA.BBBBBBBB.CCCCCCC.DDDDDD.ggggggghhhhhhFFFFFFFFFFFF..
+.....................................ggggggghhhhhh..............
+................................................................
+```
+
+| Mark | Object | Kind | Size (px) | Leads to |
+|---|---|---|---|---|
+| A | The Bar door | choice, door | 220 x 310 | `warehouse.bar` |
+| B | The radio | choice, quest entrance | 150 x 150 | Catch-22 |
+| C | The wizard | choice, existing early entrance | 130 x 200 | Dungeon (own path) |
+| D | The ember on its stand | choice, quest entrance | 120 x 140 | LOTR |
+| E | The star in the rigging | choice, quest entrance | 170 x 140 | Jesus |
+| F | The balcony stairs | choice, door | 240 x 310 | `warehouse.balcony` |
+| l, m, n | Three light rigs on the truss | reactive | 240 x 80 each | none |
+| d | LED wall with the disco ball | reactive | 360 x 120 | none |
+| s | Speaker stack | reactive | 125 x 155 | none |
+| g, h | Two dancer groups | reactive | 130 x 190, 120 x 185 | none |
+
+Computed over this sketch on a 1 px grid (a drawing, not a measurement; the objects do not overlap, so the sum equals the union): choices 39.3%, reactive objects 28.3%, together 67.6%. The smallest choice is 120 x 140 px, above 88 in both directions. Nothing touches the bottom edge below the dancers' feet, and nothing enters the pad strip. Gaps between neighbouring objects are 20 to 40 px.
+
+Requirements this layout puts on the scene, in order of cost:
+
+1. **The camera holds the wide shot.** The hub's rail stays on a framing that shows all six choices from the first beat. Today `_window_face` turns the head to the window's hotspots from about beat 49; for a hub the framing must hold from beat 0 (proposed).
+2. **The choices have to be placed at 3 to 5 m**, at ground level or hung, and be drawn as objects, not as lights on empty spots (`bar.ember`, `balcony.star`, `booth.radio` are today `pos` anchors with no object).
+3. **Each quest entrance belongs to the place**, so the Deck's Catch-22 entrance is not a copy of the Floor's radio. What the object is, for each of the 19 entrances, is for the world agents of N2.4 to decide with the owner. The rule: the object must be one a person in that place would walk up to.
+
+### 5.4 Non-hub scenes
+
+A scene with three choices needs three objects at about 3.5 m or more of them. The standard pattern:
+
+| Slot | What | Notes |
+|---|---|---|
+| Onward | The existing exit door or doorway, drawn as a door (not a light at a waypoint) | Today 52 of 117 main-run final hotspots are exits; most doorways are "a light, no door object" in the clarity audit |
+| Back or hub | A door back to the previous scene (quest) or to the location's hub (mainline) | One definition per quest or location, placed by rule |
+| Third | The quest return (quest scenes), a quest entrance or a second onward exit (mainline) | Quest scenes: return. Mainline scenes that only have one way onward: an entrance |
+| Fill | Reactive objects, up to the 50% | Section 5.5 |
+
+### 5.5 Where reactive objects come from
+
+| Source | What | Cost class |
+|---|---|---|
+| Things already in the scene's map | The maps list 14 to 182 `things` and up to 118 `homes` each (for example `night_one` 91 things and 43 homes, `hospital` 166 and 116, `mental_hospital` 182 and 116). Light rigs, props, speakers, screens, furniture. | Data row and a reaction name; no art |
+| The crowd and cast | Dancers, patients, staff as one object per group, bounded by the group's rectangle | Data row; a new act needs a people-sheet re-bake (6) |
+| Edge beacons | Last resort for a choice whose anchor cannot be in view | Do not use for coverage |
+
+A reactive object must be an object in the picture with a reaction the player can see. A tap on bare floor, wall or sky is not an object and does not count.
+
+How many exist that are large enough on screen has not been surveyed. The `--candidates` mode of the tool (4.5) answers it per scene.
+
+---
+
+## 6. Visual feedback catalogue
+
+All of it is drawn in code inside the renderer the project has (additive light passes in `HotspotView`, billboards in the low-resolution viewport, sprites baked by Python). Nothing here needs a new renderer.
+
+### 6.1 Per object kind
+
+| Kind | Idle hint | Select | Locked | Refused |
+|---|---|---|---|---|
+| **Door** (exit, return) | Existing: drawn door prop (`assets/run/choice/door_0..3.png`, 48 x 96) with a lamp and a spill of light; looks glow, open, crack. New: a destination tint on the spill, from the chapter accent (`HotspotView.light_tint`) | Existing: swings open, round green lamp, the others shut with square red lamps, ring thumps on the beat. New: the light path, a line of lit dashes on the floor from the camera to the door (drawn, no asset) | Existing: white flash 0.3 s, door walk from beat 61. New: the other choices go dark | New: the door shudders and shuts, 0.4 s, lamp flickers red |
+| **Person** (character beckons) | Existing: beckon, plead, look at the camera (`choice_staging.json`: current, other) | Existing: nod, happy face, 1.5 beats; committed: cheer, 4 beats | Existing: cheer. New: turns to the door they point to, where the art has it | Existing: plead, sad face, 2 beats (`declined`) |
+| **Object or feature** | Existing: lamp that bobs when it is current, still otherwise; glow, pulse, flicker | Existing: bob, ring, motes. New: a one-step tint or scale pulse in code | Existing: flash | New: a dull flicker or a shrink |
+| **Portal** (quest entrance) | Existing for secrets: a light on an empty spot; the "finished" crown on a completed quest. New: a real object of the place with a gleam of the quest's colour; the quest's colour is the destination tint | As door; plus the glow reaches across the floor | As door; the music side handles the sound | As door |
+| **Return object** | New: one definition per quest (4), a recurring motif in the quest's art, tinted for the mainline location it returns to | As door | As door | As door |
+| **Reactive object** | New: a slow ambient motion where the art allows (a rig sweeping, a dancer swaying); a gleam on the beat when hinting | New: one reaction per tap: flare, spin, turn, shake, nod, squash and spring back (code), or an act of the cast where one exists | Unchanged (it does not take part in the lock) | none (it cannot be refused) |
+| **Edge beacon** | Existing: half-sun with a ring at the picture's side (`_draw_edge`) | Existing: as the ring | Existing | none |
+
+### 6.2 What exists and what is new
+
+| Item | Status |
+|---|---|
+| Ring, pool, shaft, ripple per beat, motes, dim of the others (`DIM_OTHERS`), edge beacon, commit flash, settle | existing (`src/run/hotspot_view.gd`) |
+| Choice layer: door styles drawn, bars, sign, pieces, none; person acts; lamp and bob; figure frame swap (the wizard) | existing (`src/run/choice_staging.gd`, `choice_props.gd`, `assets/run/choice/`) |
+| Look vocabulary: available glow, pulse, beckon, flicker, open, crack; selected ring, claim; committed flash; finished | existing (`HotspotContract`) |
+| Claim look with a refusal (the card table) | existing, one hotspot only |
+| Feedback from the first beat, in every lap | proposed (N2.1) |
+| The light path to the selected door | proposed, code only |
+| Destination tint, hint cue every fourth bar | proposed, code only |
+| Refused reaction for doors, objects, portals | proposed, code only |
+| Reactive object reactions and the `reactives` list | proposed |
+| Sound on selection | none found; proposed only if the music side wants it (assumption A10) |
+| Door "ajar" frames showing a lit sliver of the destination | proposed, two more frames per door style in `tools/run/make_choice_art.py` |
+
+### 6.3 Cost in the art pipeline
+
+All art is drawn by Python in `tools/story/art/` and `tools/run/make_choice_art.py`; there is no hand-made art. Building: `python3 tools/story/build_assets.py [chapter] [chars|stage]`, checking: `tools/story/check_assets.py`.
+
+| Cost class | What it takes | Examples |
+|---|---|---|
+| **Code only** | A drawing routine in `hotspot_view.gd` or `choice_props.gd`; a test. No asset | Light path, tint, hint cue, refusal shake, scale and tint pulses |
+| **Data row** | A hotspot or `reactives` row anchored to an existing map thing or home | Making a speaker stack or a patient reactive |
+| **New sprite** | A thing added to the map's generator (`make_scenes.py` or the chapter's maps module), a 128 px tile drawn in `tex_<chapter>.py`, a stage rebuild | A new door, a new quest entrance object, a second frame for a prop |
+| **People re-bake** | A new act or face named in the staging or acting data; people sheets re-baked (the sheets are regenerated, never merged; frozen for both streams until the lead rebuilds them once) | A dancer that turns, a nurse that points |
+
+Adding one tappable object by hand today costs about four files and a generator edit (report, from reading the pipeline). The plan's answer is to keep the per-world tables in separate files (N2.3, byte-identical output) so that world agents can work in parallel.
+
+---
+
+## 7. Touch ergonomics on Android
+
+Nothing in this section has been tried on a phone. The repository has never been played on one; the debug APK predates this work.
+
+### 7.1 Sizes and spacing
+
+| Rule | Value | Why |
+|---|---|---|
+| Smallest target | 88 px design, both directions (50.3 dp at 420 dpi, 48.0 at 440, 44.0 at 480) | Section 3.5. A 96 px minimum would give 48 dp at 480 dpi (A8) |
+| Gap between two choices | 16 px or more (about 9 dp at 420 dpi), or abutting with the nearer-centre rule deciding | Stops a thumb landing on the wrong door |
+| Choice against reactive | No overlap: the choice wins | Section 2.3 |
+| Distance from the side edges | Centres at least 40 px in (about 24 dp at 420 dpi) | The system back gesture and the edge-to-edge setting (`edge_to_edge=false`, `immersive_mode=true` in `export_presets.cfg`) are untested; objects at the very edge may lose their taps |
+| Distance from the pad strip | The touch region ends at the world's bottom edge; the pad rectangle plus its 8% never meets it | Existing by construction |
+| Pause button | No touch region under it; its rectangle is removed from the world | `RunPlay._input` runs before the GUI and does not mark a tap handled, so a tap on the button could also reach `hotspot_tap` (not verified) |
+
+### 7.2 Multi-touch and the pads
+
+- The pads are the first thing a touch meets. A touch that starts on a pad is marked handled and never reaches the world (existing, `LaneInput`). A touch that starts in the world is a single press event with no multi-touch logic: it is independent of any pad held at the time, by position (existing, not tested on a device).
+- A world tap while a pad is held, and while another pad is tapped, is a third finger. `docs/HANDOVER.md` says "at most two touches count at once"; `lane_input.gd` as read has no such cap. Which is true on a device is unknown. The test is in section 10.
+- Touch index: each touch index presses once. A second finger on a held pad does nothing.
+
+### 7.3 Thumbs
+
+Two pads sit under each thumb, the left pair at the left edge, the right pair at the right edge, inside the pad strip. A player in dense passages has both thumbs busy. Reaching a choice means lifting a thumb or using another finger of the holding hand.
+
+- The rests in the chart (the plan's every-fourth-bar rest, decided by ear after M1) are when most taps will happen. This is a reason to keep selection open all scene: the player picks in the quiet bar.
+- Choices should not all be in the upper middle, the hardest place to reach for a thumb. The hub sketch places them across the full width and across the height (5.3).
+- Objects at the left and right edges are within reach of the thumbs but near the back gesture (7.1).
+
+### 7.4 What has never been tested on a device
+
+| Item | Why it matters |
+|---|---|
+| Whether 88 px (about 44 to 50 dp) is comfortable | The only guideline is a convention; the owner's thumb decides |
+| Edge taps against the back gesture | `edge_to_edge=false` |
+| A world tap while two pads are held | Possible touch cap; `HANDOVER.md` against `lane_input.gd` |
+| Latency of selection on a phone | `calibration_ms` default 0; "no real output latency measured" (hand-over) |
+| Tap to visual feedback in frames | Frame times on phones are not measured |
+| The pause button under a hotspot | See 7.1 |
+| 20:9 safe area | Read for the pads only (`pad_view.gd`) |
+| Anything on 16:9 tablets | Not looked at |
+
 <!-- NEXT -->
