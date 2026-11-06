@@ -274,9 +274,9 @@ def validate_sidecar(d: object, track_id: str, facts: dict | None = None) -> lis
     if sn is not None and (isinstance(sn, bool) or not isinstance(sn, (int, float))):
         errs.append("%s: first_drop_snap_ms must be a number or null" % name)
     org = d.get("origin")
-    if not isinstance(org, dict):
+    if org is not None and not isinstance(org, dict):
         errs.append("%s: origin must be an object" % name)
-    else:
+    elif org is not None:
         for k, v in org.items():
             if k not in DETECTABLE:
                 errs.append("%s: origin has an unknown field '%s'" % (name, k))
