@@ -24,6 +24,8 @@ var frames_drawn := 0  # `_draw` passes made (so that test can show the HUD real
 var _font: Font
 var _plate := StyleBoxFlat.new()
 var _pip := StyleBoxFlat.new()
+var _hide_at := -1.0  # wall time a fade_out() ends (-1: none)
+var _hide_s := 0.35
 var _shown_at := -10.0  # wall time the HUD was last shown: it fades in rather than popping back (after the Bassment, say)
 
 const FADE_IN_S := 0.35
@@ -38,6 +40,17 @@ func _ready() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_VISIBILITY_CHANGED and is_visible_in_tree():
 		_shown_at = float(Time.get_ticks_msec()) / 1000.0
+		_hide_at = -1.0
+
+
+## Fades the HUD out over `seconds` of wall time, then hides it (instead of `visible = false`, which pops it away). Showing it again
+## (`visible = true`) fades it back in.
+func fade_out(seconds := FADE_IN_S) -> void:
+	if not visible:
+		return
+	_hide_at = float(Time.get_ticks_msec()) / 1000.0 + (0.0 if reduced else seconds)
+	_hide_s = maxf(seconds, 0.001)
+	queue_redraw()
 
 
 func caption(text: String, tone: String, t0: float, hold := 1.8) -> void:
@@ -76,7 +89,13 @@ func _draw() -> void:
 	var sz := size
 	var text_on := DevText.on()
 	var fs := int(clampf(sz.y * 0.045, 14.0, 28.0))
-	modulate.a = 1.0 if reduced else clampf((float(Time.get_ticks_msec()) / 1000.0 - _shown_at) / FADE_IN_S, 0.0, 1.0)
+	var wall := float(Time.get_ticks_msec()) / 1000.0
+	modulate.a = 1.0 if reduced else clampf((wall - _shown_at) / FADE_IN_S, 0.0, 1.0)
+	if _hide_at >= 0.0:
+		modulate.a = minf(modulate.a, clampf((_hide_at - wall) / _hide_s, 0.0, 1.0))
+		if wall >= _hide_at:
+			_hide_at = -1.0
+			hide.call_deferred()
 	# the energy meter and the mix stages: top left, on one plate in the strip's style (the UI's corner radius, the shared ink, the neon edge)
 	var pad := 14.0
 	var bar := Rect2(pad + 12.0, pad + fs * 1.1, minf(sz.x * 0.26, 300.0), fs * 0.55)
