@@ -716,13 +716,18 @@ func entry_of(world: String) -> String:
 func _load_hotspots(dir_path: String) -> void:
 	var by_scene: Dictionary = {}
 	var raw_reactives: Dictionary = {}
+	var extra: Array = HotspotContract.extra_rows.get(path_id if path_id != "" else "main", [])  # (test fixtures only: rows added beside the files, HotspotContract.extra_rows)
 	for w in world_order:
 		var path := dir_path.path_join("%s.json" % w)
-		if not FileAccess.file_exists(path):
+		var rows_extra: Array = extra.filter(func(h: Variant) -> bool: return typeof(h) == TYPE_DICTIONARY and str((h as Dictionary).get("world", "")) == w)
+		if not FileAccess.file_exists(path) and rows_extra.is_empty():
 			continue
-		var v: Variant = _json(path, errors)
+		var v: Variant = _json(path, errors) if FileAccess.file_exists(path) else {"world": w, "hotspots": []}
 		if typeof(v) != TYPE_DICTIONARY:
 			continue
+		if not rows_extra.is_empty():
+			v = (v as Dictionary).duplicate()
+			v["hotspots"] = (v.get("hotspots", []) as Array) + rows_extra
 		if str(v.get("world", w)) != w:
 			errors.append("%s: world '%s' is not '%s'" % [path, v.get("world", ""), w])
 		for h in v.get("hotspots", []):
@@ -776,6 +781,14 @@ func _load_hotspots(dir_path: String) -> void:
 			var r := str((h.get("on_success", {}) as Dictionary).get("route", ""))
 			if HotspotContract.is_path_route(r):
 				_check_portal(sid, h, r)
+				if not routes.has(r):
+					routes.append(r)
+			elif HotspotContract.is_dungeon_route(r):  # a hub's entrance into the Bassment, at the lap's end (lead ruling 15): the main run's only
+				if is_path():
+					errors.append("scene %s hotspot %s: the route '%s' (the Bassment): a path does not lead into another quest" % [sid, h["id"], r])
+				elif not routes.has(r):
+					routes.append(r)
+			elif HotspotContract.is_run_route(r) and is_path():  # a return object (work package N2.5): the way back to the main run from any scene of a path, not only from an ending
 				if not routes.has(r):
 					routes.append(r)
 			elif HotspotContract.is_trial_route(r):

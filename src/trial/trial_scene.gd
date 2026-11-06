@@ -332,7 +332,8 @@ func _exit_pose() -> Dictionary:
 # --- begin and the frame loop ----------------------------------------------------------------------------------------------------
 
 ## Starts the dungeon. `p_origin` is the downbeat of the clock it begins on; `p_direct`: no walk-in, the first zone is simply shown (a launch straight into the dungeon).
-func begin(p_origin: float, start_passage: int, p_direct: bool) -> void:
+## `carried`: items held from the start (the narrative router's saved items of an earlier visit, work package N2.2).
+func begin(p_origin: float, start_passage: int, p_direct: bool, carried: Array = []) -> void:
 	origin = p_origin
 	direct = p_direct
 	ended = false
@@ -349,7 +350,7 @@ func begin(p_origin: float, start_passage: int, p_direct: bool) -> void:
 	_ap_t = -1.0
 	_script_i = 0
 	engine = TrialEngine.new(tdata, rdata)
-	engine.begin(start_passage, origin)
+	engine.begin(start_passage, origin, carried)
 	visible = true
 	_rebind_pads()
 	var m: Dictionary = tdata.raw["music"]

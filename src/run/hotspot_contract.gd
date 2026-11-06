@@ -41,6 +41,11 @@ const TRIAL_PREFIX := "trial:"  # a run route "trial:<passage>", or just "<passa
 const PATH_PREFIX := "path:"  # a run route "path:<id>" is a portal into a sister run (content/paths/<id>/run.json) at its own tempo (docs/THREE_PATHS_AND_FACES_PLAN.md 3.3)
 const RUN_PREFIX := "run:"  # a path ending's route "run:warehouse" leads back to the main run
 const RUN_ROUTES := ["run:warehouse"]
+const DUNGEON_ROUTE := "bassment"  # a run route "bassment" is a quest entrance into the Bassment taken at the lap's end (a hub's hatch, lead ruling 15; work package N2.2). Unlike the wizard's "trial:<n>" (the early
+## window, mid-scene) it is a final-window choice; the passage it starts on is the narrative router's (the saved passage of an unfinished visit, else the first). RunPlay arms the dungeon at the lock.
+## Test fixtures (work package N2.2): hotspot rows added to the content as it is read, {"main" | "<path id>": [row, ...]} (each row names its `world` and `scene`). RunData and NarrativeGraph read them
+## beside the files; empty in the game. Only tests set this (tests/test_narrative_run.gd), and they clear it.
+static var extra_rows: Dictionary = {}
 const KEEP_PREFIX := "keep:"  # a flag name with this prefix is persistent (RunProgress.flags, saved); any other is per run (RunProgress.run_flags)
 const OUTCOME_KEYS := ["route", "flags_set", "cinematic", "energy", "music", "pieces", "activity"]  # `pieces`: {on: [piece ids], off: [...]}, the map's set pieces a result switches (the storm goes, the tables fall); `activity`: a minigame the success sits the player into
 const CINEMATIC_KEYS := ["move", "to", "bars", "look_at", "role", "style"]
@@ -106,9 +111,19 @@ static func is_run_route(route: String) -> bool:
 	return route in RUN_ROUTES
 
 
+## "bassment": a hub's entrance into the Bassment, taken at the lap's end (not the wizard's mid-scene "trial:<n>").
+static func is_dungeon_route(route: String) -> bool:
+	return route == DUNGEON_ROUTE
+
+
+## A route that enters or leaves a quest: a portal into a path, the hub's Bassment entrance, the way back to the main run. Such a choice is never gated by rhythm (lead ruling 15).
+static func is_quest_route(route: String) -> bool:
+	return is_path_route(route) or is_dungeon_route(route) or is_run_route(route)
+
+
 ## A route that is not a scene of the run that carries it: the Bassment, a path, or the way back.
 static func is_special_route(route: String) -> bool:
-	return is_trial_route(route) or is_path_route(route) or is_run_route(route)
+	return is_trial_route(route) or is_path_route(route) or is_run_route(route) or is_dungeon_route(route)
 
 
 static func is_keep(flag: String) -> bool:

@@ -474,3 +474,40 @@ class RealData(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class N22Tools(unittest.TestCase):
+    """Work package N2.2: the cap of 8 choices (hubs up to 10, ruling 16) and the hub's Bassment route "bassment" (ruling 15)."""
+
+    def _hub_graph(self, k):
+        nodes = {"main/h": node("main/h", "mainline", location="A", hub=True), "main/x": node("main/x", "mainline", location="A")}
+        E = [edge("main/h", "main/x", f"h.o{i}") for i in range(k)]
+        g = G.Graph("target", nodes, E, [{"id": "A", "title": "A", "worlds": ["w"], "hub": "main/h"}], [], dict(G.DEFAULT_SETTINGS), "main/h")
+        g.data_problems, g.build_problems = [], []
+        return g
+
+    def test_the_cap_is_eight_and_a_hub_needs_an_override_only_above_it(self):
+        class FakeGame:
+            main = {"h": {}, "x": {}}
+        r8 = G.check_cap(self._hub_graph(8), None, FakeGame)
+        self.assertEqual(r8.data["cap"], 8)
+        self.assertEqual(r8.data["need_override"], [], "eight choices fit the default cap of a node without max_hotspots")
+        r9 = G.check_cap(self._hub_graph(9), None, FakeGame)
+        self.assertEqual(r9.data["need_override"], [("main/h", 9, 8)])
+        self.assertEqual(r9.fail, [], "a hub may hold up to 10")
+        r11 = G.check_cap(self._hub_graph(11), None, FakeGame)
+        self.assertTrue(r11.fail)
+
+    def test_the_bassment_route_is_an_ungated_hub_entrance_not_the_wizard(self):
+        game = G.Game(str(ROOT / "content"))
+        t = G._resolve_route(game, "bassment", None)
+        self.assertEqual(t, (game.entry_of("bassment"), "quest_entry", "bassment"))
+        self.assertIsNone(G._resolve_route(game, "trial:1", None))
+        # a hotspot row with the route on the Floor (a trial_gate scene) is not marked legacy; the wizard's passage number still is
+        h = {"id": "warehouse.enter_bassment", "scene": "warehouse", "kind": "secret", "on_success": {"route": "bassment"}, "on_failure": {"energy": -4}}
+        game.hotspots["main/warehouse"].append(h)
+        edges = G._scene_edges(game, "main/warehouse", None, game.main, "main/")
+        hatch = [e for e in edges if e["via"] == "warehouse.enter_bassment" and e["kind"] == "quest_entry"]
+        wiz = [e for e in edges if e["via"] == "warehouse.wizard" and e["kind"] == "quest_entry"]
+        self.assertTrue(hatch and not any(e.get("legacy") for e in hatch))
+        self.assertTrue(wiz and all(e.get("legacy") for e in wiz))

@@ -81,10 +81,10 @@ func count_in_s() -> float:
 	return (float(BLOCK_BEATS) - DECISION_BEAT) * beat_s
 
 
-func begin(start_passage: int = -1, p_origin := 0.0) -> void:
+func begin(start_passage: int = -1, p_origin := 0.0, carried: Array = []) -> void:
 	origin = p_origin
 	leave_requested = false
-	flow = TrialFlow.new(data, start_passage)
+	flow = TrialFlow.new(data, start_passage, carried)
 	level = Level.new()
 	level.mode = "defense"
 	level.bpm = float(rdata.cfg["timing"]["bpm"])

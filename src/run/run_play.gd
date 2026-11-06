@@ -189,6 +189,7 @@ func _ready() -> void:
 	if OS.get_environment("RW_RUN_FLAGS") != "":  # screenshot aid (tools/run/capture.sh --acting): world-state flags to start the run with, so a hotspot that needs one is on show
 		for f in OS.get_environment("RW_RUN_FLAGS").split(",", false):
 			hotspots.run_flags[f] = true
+	_setup_router(start)
 	if _trial_direct:  # a launch straight into the dungeon: the run's first phase is never heard
 		var sp := int(OS.get_environment("RW_TRIAL_START")) if OS.get_environment("RW_TRIAL_START") != "" else -1
 		trial.bot = OS.get_environment("RW_TRIAL_BOT") if OS.get_environment("RW_TRIAL_BOT") != "" else str(_bot.get("policy", ""))
@@ -226,7 +227,9 @@ func _wire_director() -> void:
 	if director == null or engine == null:
 		return
 	director.attach(engine, data)
-	director.path_data_fn = func(key: String) -> Variant: return main_data if key == "main" else _path_cache.get(key, null)
+	var dir_hook: Callable = engine.lock_hook
+	engine.lock_hook = func(info: Dictionary) -> Variant: return _on_lock_point(info, dir_hook)  # (the hub's Bassment entrance is armed here, before the director's say: N2.2, ruling 20)
+	director.path_data_fn = _run_data_of
 	if audio != null and audio.track != null and not director.audio_reports_silence:
 		director.ready_fn = audio.track.is_ready
 		director.load_fn = func(d: RunData, node: String) -> String: return audio.track.request_scene(d, node, true)
@@ -239,6 +242,20 @@ func _wire_director() -> void:
 ## The TransitionPort of this run (the narrative side's only way to ask for a scene change).
 func port() -> TransitionPort:
 	return director
+
+
+## The run data a destination names, for the director (path_data_fn): "main" the main run's (read now when the run began inside a path), a path id that path's (read now when no portal of
+## this run named it). Reading here is the fallback; the portals' paths are read before the countdown (_preload_portals).
+func _run_data_of(key: String) -> Variant:
+	if key == "main":
+		if main_data != null:
+			return main_data
+		if _main_cache == null:
+			_main_cache = RunData.load_default()
+		return _main_cache
+	if not _path_cache.has(key) and NarrativeGraph.SHIPPED_PATHS.has(key) and RunData.path_exists(key):
+		_path_cache[key] = RunData.load_path(key)
+	return _path_cache.get(key, null)
 
 
 ## The paths the Warehouse's portals lead to (those that exist): their data is read once, before the countdown (not on the downbeat of the handoff), and their start pack is loaded ahead on a thread.
@@ -805,11 +822,13 @@ func _advance(t: float, audio_t: float) -> void:
 		if OS.has_environment("RW_TRIAL_LEAVE_AT") and audio_t >= float(OS.get_environment("RW_TRIAL_LEAVE_AT")) and trial.active:
 			trial.request_leave()  # scripted: the back key, for the recordings
 		trial.update(t, audio_t)
+		_trial_route_sync()
 		return
 	_bot_step(t)
 	_trial_step(t)
 	if trial_state == "in":
 		trial.update(t, audio_t)
+		_trial_route_sync()
 		return
 	if trial_state == "armed" and trial_entry_t >= 0.0:
 		_handle(engine.update(minf(t, trial_entry_t - 0.001)))
@@ -838,7 +857,7 @@ func _advance(t: float, audio_t: float) -> void:
 	if trial_state == "":
 		_prebuild_in_guard(t)
 	if _debug_label.visible:
-		_debug_label.text = "t=%6.2f phase %d (%s) block %d stage %d energy %.0f rail %s (%s)  fps %d" % [t, engine.phase_n, engine.node_id, engine.block, engine.stage, engine.energy, journey.rail.place() if journey.rail != null else "-", journey.rail.role if journey.rail != null else "-", Engine.get_frames_per_second()] + _track_debug()
+		_debug_label.text = "t=%6.2f phase %d (%s) block %d stage %d energy %.0f rail %s (%s)  fps %d" % [t, engine.phase_n, engine.node_id, engine.block, engine.stage, engine.energy, journey.rail.place() if journey.rail != null else "-", journey.rail.role if journey.rail != null else "-", Engine.get_frames_per_second()] + _track_debug() + _route_debug()
 	if _until_phase > 0 and engine.scene_index() > _until_phase and not _ended:
 		_ended = true
 		print("RUN reached phase %d at %s, energy %.0f" % [engine.scene_index(), engine.node_id, engine.energy])
@@ -1044,6 +1063,7 @@ func _on_phase_start(ev: Dictionary) -> void:
 	_react_t.clear()
 	choice_request_id = 0
 	choice_request_of = ""
+	_bassment_pick = {}
 	_claim_id = ""
 	_claim_to = ""
 	if int(ev["phase"]) > 1 or trial_state == "":
@@ -1452,6 +1472,13 @@ func _choice_picked(id: String, prev: String) -> void:
 		choice_request_id = rid
 		choice_request_of = id
 		return
+	if rid < 0:  # N2.2: a pick the port does not carry (the wizard, a seat at a table, a hub's Bassment entrance held here): it takes the one slot, so a pending request is withdrawn
+		var old := choice_request_id
+		choice_request_id = 0
+		choice_request_of = id
+		if old > 0 and choice_cancel_fn.is_valid():
+			choice_cancel_fn.call(old)
+		return
 	hotspots.selected = prev  # the port kept the previous request (a refusal at once replaces nothing)
 	show_refused(id, director.last_refusal() if director != null else &"unavailable")
 
@@ -1461,6 +1488,8 @@ func hotspot_deselect(id: String) -> bool:
 	if hotspots == null or not selection_open() or not hotspots.deselect(id):
 		return false
 	_sel_t.erase(id)
+	if str(_bassment_pick.get("hotspot", "")) == id:
+		_bassment_pick = {}
 	hotspot_log.append({"kind": "deselect", "t": hud.now_t, "hotspot": id, "phase": engine.phase_n})
 	if choice_cancel_fn.is_valid() and choice_request_of == id and choice_request_id > 0:
 		choice_cancel_fn.call(choice_request_id)
@@ -1482,6 +1511,234 @@ func choice_closed(id: String, reason: StringName) -> void:
 		choice_request_of = ""
 	if reason == &"unavailable":
 		show_refused(id, reason)
+
+
+# --- THE ROUTER IN THE RUN (work package N2.2; docs/narrative/N2_2_ROUTER.md) ------------------------------------------------------------------------
+# The QuestRouter (src/narrative/) is made at every run start with the game's graph (NarrativeGraph.cached()) and a store on the run save (NarrativeRunStore: the `narrative` key of
+# user://story_run.json), loaded (an old save is migrated), started on the run's first scene and attached to the port. Then:
+#   a pick (hotspot_select -> _choice_picked -> _route_pick): router.destination_for + port.request + router.hold. A quest entrance or return is a destination like any other (kind quest_entry /
+#     quest_return, no on_miss: never gated by rhythm); the wizard, a seat at a table and an object the graph does not know stay on today's commit; a hub's Bassment entrance is held here;
+#   switched (the director) -> router.commit (the only change of the route state, saved) -> router.committed -> _on_route_committed (the quest's flags restored, a "keep:" flag saved);
+#   request_closed -> router.discard and _on_port_closed -> choice_closed (the pick deselects);
+#   the Bassment (ruling 20, not behind the port): a hub's entrance is armed at the lap's lock (_on_lock_point), the trial begins on the boundary (trial_begin_now: the router's commit for
+#     the hatch, commit_legacy for the wizard), its passages are committed as the dungeon moves (_trial_route_sync) and the way out lands on the checkpoint (trial_leave). These are the
+#     commits not made on `switched`: the declared exception, extended to the whole Bassment until the director accepts "bassment/*".
+# The router is off (the run behaves as in N2.1) with RW_NARRATIVE=0, with RW_PATH_REMAP (a remapped path is outside the graph), in a path the graph does not know (the stub), or if the
+# graph does not load (a warning; the game goes on).
+var router: QuestRouter  # null when off
+var route_log: Array = []  # [{kind: start | switched | bassment_enter | bassment_passage | bassment_leave | leave_request, t, ...}]: every route state change, for the tests and the walks
+var _bassment_pick: Dictionary = {}  # {hotspot, dest}: a hub's Bassment entrance picked (held here: the port refuses "bassment/*"); armed at the lock
+var _trial_entry: Dictionary = {}  # how the dungeon is being entered: {way: "legacy" (the wizard) | "hatch" | "direct", object, dest}
+var _trial_start_passage := -1  # the passage a hatch entry starts on (the router's: the saved passage of an unfinished visit)
+var _trial_passage_seen := -1
+var _trial_items: Array = []  # the items carried in the dungeon now (the router stores them on the way out, as "item:<id>" flags)
+var _keep_unsaved := false  # a "keep:" flag set at a lock waits for the next `switched` to be saved
+var _main_cache: RunData  # the main run's data read for a return when the run began inside a path
+
+
+func _router_wanted() -> bool:
+	if OS.get_environment("RW_NARRATIVE") == "0" or OS.get_environment("RW_PATH_REMAP") != "":
+		return false
+	return run_path == "" or NarrativeGraph.SHIPPED_PATHS.has(run_path)
+
+
+## The router of this run: graph, store, load (with the old-save migration), the run's start, the port. Called once in _ready, after the run's flags are set.
+func _setup_router(start: String) -> void:
+	if not _router_wanted() or director == null:
+		return
+	var g := NarrativeGraph.cached()
+	if not g.is_valid():
+		push_warning("narrative graph not valid, the router is off: %s" % "; ".join(PackedStringArray(g.errors.slice(0, 3))))
+		return
+	var store := NarrativeRunStore.new(Session.run_progress)
+	router = QuestRouter.new(g, store)
+	router.flags_source = _route_flags
+	router.load_state(store.extra())
+	var first := ("main" if run_path == "" else run_path) + "/" + start
+	var res := router.start_run(first)
+	_restore_flags(res.get("restore_flags", []))
+	router.attach(port())
+	router.committed.connect(_on_route_committed)
+	port().request_closed.connect(_on_port_closed)
+	choice_request_fn = _route_pick
+	choice_cancel_fn = func(rid: int) -> bool: return port().cancel(rid)
+	hotspots.ungated_quest_routes = true
+	route_log.append({"kind": "start", "t": 0.0, "scene": first, "closed_on_load": router.state.closed_on_load, "state": router.state.to_dict(), "errors": router.errors.duplicate()})
+
+
+## The run's flags as the router reads them: this run's, the kept ones, and the items carried in the dungeon ("item:<id>").
+func _route_flags() -> Dictionary:
+	var out: Dictionary = Session.run_progress.run_flags.duplicate()
+	out.merge(Session.run_progress.flags)
+	for it in _trial_items:
+		out["item:" + str(it)] = true
+	return out
+
+
+## A quest's own flags, saved when it was left, are set again when it is entered (a re-entered Ember keeps ember_no_vial). Items are the dungeon's (trial_begin_now).
+func _restore_flags(names: Array) -> void:
+	for f in names:
+		if not str(f).begins_with("item:"):
+			Session.run_progress.run_flags[str(f)] = true
+
+
+func _after_route_commit(res: Dictionary) -> void:
+	if bool(res.get("saved", false)):
+		_keep_unsaved = false
+	elif _keep_unsaved:
+		Session.run_progress.save()
+		_keep_unsaved = false
+
+
+## choice_request_fn: a new pick. > 0 the port's request id; 0 refused at once; -1 not carried by the port (today's commit carries it, or the Bassment entrance held here).
+func _route_pick(id: String) -> int:
+	_bassment_pick = {}
+	var h := hotspots.get_hotspot(id)
+	if h.is_empty() or RunHotspots.window_of(h) != "final":  # the wizard (early window, outside the port: ruling 15) and a seat at a table (an activity, never a route)
+		return -1
+	var dest := router.destination_for(id)
+	if dest.is_empty():
+		return -1  # (an object the graph does not know: today's commit; the director observes it)
+	if str(dest["path"]) == "bassment":
+		_bassment_pick = {"hotspot": id, "dest": dest}
+		if audio != null:
+			audio.preload_pack(str(tdata.raw["music"]["audio"]))  # (silent preparation; the dungeon's zone is built at the lock)
+		return -1
+	var rid := port().request(dest)
+	if rid <= 0:
+		return 0
+	router.hold(rid, dest)
+	return rid
+
+
+## request_closed: the pick of that request is withdrawn (replaced: nothing to do).
+func _on_port_closed(id: int, reason: StringName) -> void:
+	if id > 0 and id == choice_request_id:
+		choice_closed(choice_request_of, reason)
+
+
+## After every switch (QuestRouter.committed): the entered quest's flags come back, a "keep:" flag set at the lock is saved (the router's save wrote it, else a save here).
+func _on_route_committed(id: int, landed: Dictionary, res: Dictionary) -> void:
+	_restore_flags(res.get("restore_flags", []))
+	_after_route_commit(res)
+	route_log.append({"kind": "switched", "t": hud.now_t if hud != null else 0.0, "id": id, "landed": str(landed.get("id", "")), "fallback": bool(landed.get("fallback", false)),
+		"kind_of": str(landed.get("kind", "")), "result": res, "state": router.state.to_dict()})
+
+
+## The scene of the main run a way back lands on: the checkpoint (the hub of the location the quest was entered from), "" without a router.
+func _return_start() -> String:
+	if router == null:
+		return ""
+	var cp := router.state.checkpoint if router.state.checkpoint != "" else router.graph.hub_of_location(router.state.location)
+	return cp.trim_prefix("main/") if cp.begins_with("main/") else ""
+
+
+## The pause menu's "Leave this path" through the port: on a departure lap while selection is open, the hidden leave is requested like a pick (it replaces the player's pick, which deselects)
+## and locks at this lap's end. Otherwise (a lap before the last, or after the lock) it is today's leave (force_leave at beat 61) and the hand-off lands on the checkpoint (_path_swap).
+func _route_leave_now() -> bool:
+	if not selection_open() or not engine.is_departure_lap():
+		return false
+	var dest := router.destination_for(str(NarrativeGraph.HIDDEN_VIA["pause_menu_leave"]))
+	if dest.is_empty():
+		return false
+	var rid := port().request(dest)
+	if rid <= 0:
+		return false
+	router.hold(rid, dest)
+	if hotspots.selected != "":
+		_sel_t.erase(hotspots.selected)
+		hotspots.selected = ""
+	_bassment_pick = {}
+	choice_request_id = rid
+	choice_request_of = ""
+	route_log.append({"kind": "leave_request", "t": hud.now_t, "id": rid, "dest": str(dest["id"])})
+	return true
+
+
+## The engine's lock point, before the director's say: a hub's Bassment entrance committed here (engine.choice "bassment") arms the dungeon for this boundary (it is never gated: the
+## hotspot commits as a success whatever the block), the director is told (&"armed": nothing locks), and the engine never reaches its commit (its updates stop short of the boundary).
+func _on_lock_point(info: Dictionary, dir_hook: Callable) -> Variant:
+	if engine != null and HotspotContract.is_dungeon_route(engine.choice) and trial_state == "":
+		if bool(info.get("departure", false)) and not bool(info.get("hold", false)) and _arm_trial_at_lap_end(float(info["t"]), float(info["boundary_t"])):
+			dir_hook.call(info)  # (armed: the director locks nothing and keeps its count of laps)
+			return {}
+		var fallback_route := engine.default_route()  # (cannot go: the scene's default exit, never a crash on a route the engine does not know)
+		engine.take_route(fallback_route)
+		info = info.duplicate()
+		info["route"] = fallback_route
+		info["leaving"] = fallback_route != engine.node_id
+	if router != null and bool(info.get("final", false)) and bool(info.get("chosen", false)) and not bool(info.get("leaving", false)) and director.state() != TransitionPort.State.PENDING:
+		return {}  # (the player's own choice keeps the scene, a seat at a table: the router's default, set for the port, must not take the run away from it; as before N2.2)
+	return dir_hook.call(info) if dir_hook.is_valid() else {}
+
+
+## The hub's Bassment entrance taken at the lap's end: the dungeon takes the pads on the guard 3.25 beats before the boundary (as the wizard's entry does) and begins on the boundary. The music
+## hand-off is a cut (TrialScene brings its pack in on the downbeat, as today).
+func _arm_trial_at_lap_end(t_lock: float, boundary_t: float) -> bool:
+	if trial == null or trial_state != "":
+		return false
+	var dest: Dictionary = _bassment_pick.get("dest", {})
+	if dest.is_empty() and router != null:
+		dest = router.destination_for(str(_bassment_pick.get("hotspot", "")))
+	var passage := tdata.start
+	if str(dest.get("node", "")).is_valid_int():
+		passage = int(str(dest["node"]))
+	trial_state = "armed"
+	if director != null:
+		director.excursion(&"armed")
+	_trial_g1 = -1.0
+	_trial_g2 = boundary_t - 3.25 * engine.beat_s
+	trial_entry_t = boundary_t
+	_trial_start_passage = passage
+	_trial_entry = {"way": "hatch", "object": str(_bassment_pick.get("hotspot", "")), "dest": dest}
+	_bassment_pick = {}
+	_gate.visible = false
+	if audio != null:
+		audio.preload_pack(str(tdata.raw["music"]["audio"]))
+	trial.build_zone(tdata.zone_of_passage(passage))
+	trial_log.append({"kind": "armed", "t": t_lock, "g1": -1.0, "g2": _trial_g2, "entry": trial_entry_t, "beat": engine.phase_beat_at(t_lock), "way": "hatch", "passage": passage})
+	return true
+
+
+## The route state as the dungeon begins: the wizard's commit_legacy, the hatch's held destination, a direct launch's passage. Returns commit()'s result.
+func _route_enter_bassment(way: String, start_passage: int) -> Dictionary:
+	var res: Dictionary = {}
+	if router.state.quest == "bassment":
+		return res
+	if way == "legacy" and str(_trial_entry.get("object", "")) != "":
+		res = router.commit_legacy(str(_trial_entry["object"]))
+	elif way == "hatch" and not (_trial_entry.get("dest", {}) as Dictionary).is_empty():
+		res = router.commit(0, _trial_entry["dest"])
+	else:
+		var p := start_passage if start_passage >= 0 else tdata.start
+		res = router.commit(0, {"id": "bassment/%d" % p, "path": "bassment", "node": str(p), "kind": &"quest_entry", "quest": "bassment"})
+	_after_route_commit(res)
+	route_log.append({"kind": "bassment_enter", "t": hud.now_t, "way": way, "result": res, "state": router.state.to_dict()})
+	return res
+
+
+## While the dungeon runs: a new passage is committed to the route state (the dungeon has no port: ruling 20), and the items held are kept for the way out.
+func _trial_route_sync() -> void:
+	if (trial_state != "in" and trial_state != "leaving") or trial == null or trial.engine == null or trial.engine.flow == null:
+		return
+	_trial_items = (trial.engine.flow.flags as Array).duplicate()
+	var p := int(trial.engine.flow.passage)
+	if p == _trial_passage_seen:
+		return
+	_trial_passage_seen = p
+	if router == null or router.state.quest != "bassment":
+		return
+	var res := router.commit(0, {"id": "bassment/%d" % p, "path": "bassment", "node": str(p), "kind": &"scene", "quest": "bassment"})
+	_after_route_commit(res)
+	route_log.append({"kind": "bassment_passage", "t": hud.now_t, "passage": p, "result": res, "state": router.state.to_dict()})
+
+
+## The F3 line's route part (NARRATIVE_GRAPH.md 7.1, the developer overlay line): location, quest and checkpoint.
+func _route_debug() -> String:
+	if router == null:
+		return ""
+	var st := router.state
+	return "  route %s quest %s cp %s" % [st.location, st.quest if st.quest != "" else "-", st.checkpoint if st.checkpoint != "" else "-"]
 
 
 ## A choice did not take a touch: it recoils once (HotspotView.REFUSE_S) and the selection stays as it was. Logged as "refused" with the reason (&"locked", or the port's).
@@ -1659,7 +1916,10 @@ func _on_hotspot_commit(ev: Dictionary) -> void:
 			_back_to_rail(t)
 	_commit_view = {"id": str(out["hotspot"]), "t": t, "hotspot": hotspots.get_hotspot(str(out["hotspot"])), "success": bool(out["success"])}
 	if hotspots.persist_dirty:
-		Session.run_progress.save()
+		if router != null:
+			_keep_unsaved = true  # a "keep:" flag is saved at `switched`, not at the lock (NARRATIVE_GRAPH.md 3.2 rule 7): the router's save writes it
+		else:
+			Session.run_progress.save()
 		hotspots.persist_dirty = false
 	_act_outcome(out, t)
 	if not (out.get("pieces", {}) as Dictionary).is_empty() and stages.has(active_world):
@@ -1670,6 +1930,7 @@ func _on_hotspot_commit(ev: Dictionary) -> void:
 	if not (out["cinematic"] as Dictionary).is_empty():
 		_hotspot_cinematic(out, t, claim_to)
 	if str(out["window"]) == "early" and bool(out["success"]) and HotspotContract.is_trial_route(str(out["route"])):
+		_trial_entry = {"way": "legacy", "object": str(out["hotspot"])}  # (the wizard: committed to the route state when the trial begins, commit_legacy)
 		trial_launcher.call()  # the wizard's way in: the walk to the hatch is scheduled by arm_trial on the next cue-free guard
 
 
@@ -1900,6 +2161,8 @@ func _playtest_save_note() -> void:
 func request_path_leave() -> bool:
 	if run_path == "" or trial_state != "":
 		return false
+	if router != null and _route_leave_now():
+		return true
 	path_leave_requested = true
 	return true
 
@@ -1916,7 +2179,7 @@ func _path_swap(ev: Dictionary) -> void:
 	if entering:
 		new_data = _path_cache[str(ev["target"])] if _path_cache.has(str(ev["target"])) else RunData.load_path(str(ev["target"]))
 	else:
-		new_data = main_data if main_data != null else RunData.load_default()
+		new_data = main_data if main_data != null else (_main_cache if _main_cache != null else RunData.load_default())
 	var start := ""
 	if not new_data.errors.is_empty() or (entering and new_data.path_id == ""):
 		push_error("run path '%s' cannot be played: %s" % [str(ev.get("target", "")), "; ".join(PackedStringArray(new_data.errors))])
@@ -1932,6 +2195,8 @@ func _path_swap(ev: Dictionary) -> void:
 		start = "warehouse" if new_data.nodes.has("warehouse") else start
 	if start != "" and str(ev.get("start", "")) != "" and new_data.nodes.has(str(ev["start"])) and new_data != data:  # a destination the director locked names the scene of the other run
 		start = str(ev["start"])
+	elif not entering and new_data != data and new_data.nodes.has(_return_start()):  # (N2.2) a way back the port did not carry (an ending's default exit, the pause menu's leave late in a lap) lands on the checkpoint too
+		start = _return_start()
 	var swap_clock := new_data != data
 	var before := {"bpm": float(data.cfg["timing"]["bpm"]), "beat_s": engine.beat_s}
 	var prev_path := run_path
@@ -1950,6 +2215,7 @@ func _path_swap(ev: Dictionary) -> void:
 	engine = RunEngine.new(data)
 	hotspots = RunHotspots.new(data, Session.run_progress.run_flags, Session.run_progress.flags)
 	hotspots.preselect = bool((data.cfg.get("choice", {}) as Dictionary).get("preselect", false)) or OS.get_environment("RW_CHOICE_PRESELECT") == "1"  # (an owner decision, off: touch only in the window; the env turns it on for a strip)
+	hotspots.ungated_quest_routes = router != null
 	engine.hotspots = hotspots
 	_wire_track_audio()
 	_wire_director()
@@ -2044,7 +2310,7 @@ func _trial_step(t: float) -> void:
 		_trial_g1 = -1.0
 	if t >= _trial_g2:
 		_handle(engine.update(_trial_g2 + 0.001))
-		trial_begin_now(trial_entry_t, -1, false)
+		trial_begin_now(trial_entry_t, _trial_start_passage, false)
 
 
 func trial_begin_now(entry_t: float, start_passage: int, direct: bool) -> void:
@@ -2057,18 +2323,33 @@ func trial_begin_now(entry_t: float, start_passage: int, direct: bool) -> void:
 		director.excursion(&"enter")
 	if trial.bot == "":
 		trial.bot = str(_bot.get("policy", "")) if str(_bot.get("policy", "")) in ["perfect", "none"] else ""
-	trial.begin(entry_t, start_passage, direct)
+	var carried: Array = []
+	var way := str(_trial_entry.get("way", "direct" if direct else "legacy"))
+	if router != null:
+		var res := _route_enter_bassment(way, start_passage)
+		if bool(res.get("applied", false)) and router.state.quest == "bassment":
+			start_passage = int(router.state.current_scene().trim_prefix("bassment/"))
+			for f in res.get("restore_flags", []):
+				carried.append(str(f).trim_prefix("item:"))
+	_trial_items = carried.duplicate()
+	trial.begin(entry_t, start_passage, direct, carried)
+	_trial_passage_seen = trial.engine.flow.passage if trial.engine != null else -1
 	engine.phase_n += 1
-	trial_log.append({"kind": "entered", "t": hud.now_t, "entry": entry_t})
+	trial_log.append({"kind": "entered", "t": hud.now_t, "entry": entry_t, "way": way, "passage": _trial_passage_seen, "carried": carried})
 
 
 ## Left by a death, the victory or the back key: on the downbeat `t_swap` the frame opens on the Warehouse at the hatch, its pack re-enters and the run begins a fresh phase.
 func trial_leave(t_swap: float, reason: String) -> void:
+	_trial_route_sync()  # (the last passage and the items held, before the dungeon's engine goes)
 	trial.deactivate()
 	trial_state = ""
+	_trial_start_passage = -1
 	if director != null:
 		director.excursion(&"leave")
 	var node := "warehouse" if data.nodes.has("warehouse") else engine.node_id
+	var back := _return_start() if router != null and router.state.quest == "bassment" else ""
+	if back != "" and data.nodes.has(back):  # (N2.2) the way out of the Bassment lands on the checkpoint: the hub of the location it was entered from
+		node = back
 	var w := _world_of(node)
 	_show_world(w)
 	journey.skip_arrival = true  # the walk below puts the camera back on the floor: no door walk for the resumed scene
@@ -2083,7 +2364,14 @@ func trial_leave(t_swap: float, reason: String) -> void:
 	_last_guard_key = -1
 	_handle(engine.update(t_swap))
 	_journey_apply({"world": w, "t0": t_swap, "action": "player_move", "args": {"to": str(stages[w]["waypoint"]), "bars": 2.0, "style": "walk"}})
-	trial_log.append({"kind": "left", "t": t_swap, "reason": reason})
+	trial_log.append({"kind": "left", "t": t_swap, "reason": reason, "to": node})
+	if router != null and router.state.quest == "bassment":
+		var res := router.commit(0, {"id": "main/" + node, "path": "main", "node": node, "kind": &"quest_return", "quest": "bassment"})
+		_after_route_commit(res)
+		route_log.append({"kind": "bassment_leave", "t": t_swap, "landed": "main/" + node, "reason": reason, "result": res, "state": router.state.to_dict()})
+		port().set_default(router.default_destination())
+	_trial_items = []
+	_trial_entry = {}
 	print("TRIAL left (%s) on the downbeat t=%.3f; the run resumes at phase %d, energy %.1f" % [reason, t_swap, engine.phase_n, engine.energy])
 	if OS.get_environment("RW_STORY_QUIT") == "1" and OS.get_environment("RW_TRIAL_LEAVE_QUIT") == "1":
 		get_tree().quit()

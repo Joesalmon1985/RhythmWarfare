@@ -176,7 +176,7 @@ ACTING = {
 def hs(sid, name, kind, anchor, success, failure=None, *, default=False, repeatable=False, look=None, radius=None, flags_all=None, flags_none=None, acting=None, cinematic=None):
     world = BY_ID[sid]["world"]
     h = {"id": f"{sid}.{name}", "world": world, "scene": sid, "map": dict((w[0], w[2]) for w in WORLDS)[world], "anchor": anchor, "kind": kind, "radius_m": radius or (1.0 if kind == "exit" else 0.9),
-         "min_px": 72, "available": {"flags_all": flags_all or [], "flags_none": flags_none or [], "energy_min": 0, "once": False},
+         "min_px": 88, "available": {"flags_all": flags_all or [], "flags_none": flags_none or [], "energy_min": 0, "once": False},
          "look": {"available": look or {"exit": "open", "object": "glow", "character": "beckon", "feature": "pulse", "encounter": "flicker", "secret": "pulse"}[kind], "selected": "ring", "committed": "flash"},
          "challenge": None, "on_success": success}
     if failure is not None:
