@@ -225,6 +225,7 @@ func _enter(id: String, t0: float, chart_now: bool) -> void:
 	block = 0
 	bass_origin = -1
 	choice = ""
+	handoff_start = ""
 	window_open = false
 	route_locked = false
 	_locked_chart = ""
@@ -518,8 +519,11 @@ func _commit() -> void:
 		_emit({"kind": "route_commit", "from": node_id, "to": to, "chosen": true, "t": t0, "treatment": "none", "same_world": false})
 		window_open = false
 		away = to
-		_emit({"kind": "path_handoff", "route": to, "target": HotspotContract.path_of(to) if HotspotContract.is_path_route(to) else "warehouse", "from": node_id, "path": data.path_id,
-			"ending": str(data.nodes[node_id].get("ending", "")), "t": t0, "energy": energy, "phase": phase_n, "world": str(data.nodes[node_id]["world"]), "lap_extra": lap_extra})
+		var ho := {"kind": "path_handoff", "route": to, "target": HotspotContract.path_of(to) if HotspotContract.is_path_route(to) else "warehouse", "from": node_id, "path": data.path_id,
+			"ending": str(data.nodes[node_id].get("ending", "")), "t": t0, "energy": energy, "phase": phase_n, "world": str(data.nodes[node_id]["world"]), "lap_extra": lap_extra}
+		if handoff_start != "":  # (a destination the director locked names the other run's scene: RunPlay._path_swap starts there)
+			ho["start"] = handoff_start
+		_emit(ho)
 		_track_end(t0, "handoff", to)
 		return
 	_emit({"kind": "route_commit", "from": node_id, "to": to, "chosen": choice != "", "t": t0, "treatment": data.nodes[to]["treatment"],
@@ -598,6 +602,8 @@ func _decide(b: int, t_dec: float) -> void:
 		_emit({"kind": "depleted", "t": _depleted_t, "fade_s": _over_t - _depleted_t, "node": node_id})
 		_track_end(_depleted_t, "depleted", "")
 		return
+	if b == 3:
+		_lock_point(t_dec, passed)  # the transition seam: the director's say at the lock (nothing without a lock_hook)
 	if b == 3 and not track.is_empty():
 		_track_last_block(t_dec)
 	if b < 3:
@@ -639,10 +645,11 @@ func _track_last_block(t_dec: float) -> void:
 			if choice == node_id:  # (an activity that keeps the player here: nothing about leaving was chosen)
 				choice = ""
 			window_open = false
-	elif lap >= laps and hold:
+	elif lap >= laps and (hold or _extend_lap):
 		laps = lap + 1
 		window_open = false
 		_emit({"kind": "track_extend", "t": t_dec, "node": node_id, "track": str(track["track"]), "laps": laps})
+	_extend_lap = false
 
 
 ## Cues charted for block `b` of the current phase.
@@ -928,3 +935,76 @@ func apply_part_offset(part: String, phase: int, offset: float) -> void:
 		if fam_ok.call(str(n["family"])) and not judge.is_resolved(i):
 			n["time"] = float(n["time"]) + delta
 			n["end_time"] = float(n["end_time"]) + delta
+
+
+# --- the transition seam (stage M1.6; docs/parallel-development/MUSIC_TRANSITIONS.md section 12, INTEGRATION_CONTRACT.md section 7) ---------------------------------------
+## TransitionDirector (src/transition/transition_director.gd) sits beside the engine: every event reaches it through RunPlay._handle, and at the lock point of every lap (the last block's
+## decision, beat 60.5, after the hotspots' commit) the engine asks it, through `lock_hook`, what this lap's end does. Without a hook (the tests, the safety baseline) nothing here runs.
+##   lock_hook.call(info) -> {} (the engine decides, as ever) | {"route": to, "start": scene of the other run or ""} (the director's destination) | {"extend": true} (one more lap)
+##   info = {t, boundary_t, node, lap, laps, final, departure, passed, hold, track, leaving, route, chosen}: `leaving`/`route`/`chosen` are what the engine would do on its own (own_exit).
+var lock_hook: Callable = Callable()
+var handoff_start := ""  # the scene the other run starts on, for a route out of this run that the director locked ("" = that run's start, as ever)
+var _extend_lap := false  # the director asked for one more lap at this lock point (the final lap of a track scene: track_extend)
+
+
+## Beats from a lap's lock point to its boundary (3.5 with the run's timing: the decision at beat 60.5 of 64).
+func lock_lead_beats() -> float:
+	return timing("phase_beats") - (3.0 * timing("block_beats") + _decision_beat())
+
+
+## The first lap of the current scene whose end is a boundary the scene can be left at: a track scene's doors_from_lap, else the last lap (laps count from 1).
+func first_departure_lap() -> int:
+	return mini(doors_from_lap, laps) if not track.is_empty() and doors_from_lap > 0 else laps
+
+
+## The current lap's end is a boundary the scene can be left at.
+func is_departure_lap() -> bool:
+	return lap >= laps or _doors_open()
+
+
+## What the engine would do on its own at the end of the current lap: {leaving, route, chosen}. `chosen`: the route is the player's (a hotspot's outcome, choose(), the pause menu's
+## leave), not the scene's default exit.
+func own_exit() -> Dictionary:
+	if hold:
+		return {"leaving": false, "route": "", "chosen": false}
+	if lap >= laps:
+		var r := selected_route()
+		return {"leaving": r != node_id, "route": r, "chosen": choice != ""}
+	if not track.is_empty() and _doors_open():
+		var go := choice != "" and choice != node_id
+		return {"leaving": go, "route": choice if go else "", "chosen": go}
+	if choice == LEAVE_ROUTE:
+		return {"leaving": true, "route": LEAVE_ROUTE, "chosen": true}
+	return {"leaving": false, "route": "", "chosen": false}
+
+
+## The lock point of the current lap (the last block's decision `t_dec`; `passed`: that block's result).
+func _lock_point(t_dec: float, passed: bool) -> void:
+	if not lock_hook.is_valid():
+		return
+	var own := own_exit()
+	var ans: Variant = lock_hook.call({"t": t_dec, "boundary_t": t_of(timing("phase_beats")), "node": node_id, "lap": lap, "laps": laps, "final": lap >= laps,
+		"departure": is_departure_lap(), "passed": passed, "hold": hold, "track": not track.is_empty(), "leaving": own["leaving"], "route": own["route"], "chosen": own["chosen"]})
+	if typeof(ans) != TYPE_DICTIONARY:
+		return
+	if (ans as Dictionary).has("route"):
+		take_route(str(ans["route"]), str((ans as Dictionary).get("start", "")))
+	elif bool((ans as Dictionary).get("extend", false)):
+		extend_one_lap()
+
+
+## The director's destination is this lap's route, over the engine's own choice (call it at the lock point, before the next scene is charted). `start`: for a route out of this run
+## ("path:<id>", "run:warehouse"), the scene the other run starts on.
+func take_route(to: String, start := "") -> void:
+	choice = to
+	handoff_start = start
+
+
+## One more lap from this lock point, without a minigame's hold (no default exit afterwards, no activity): an open lap of a track scene stays open (nothing is taken), the final lap of a
+## track scene is extended by a lap (track_extend), the final lap of an ordinary scene re-enters the scene. A lap before the last of an ordinary scene has no boundary to move.
+func extend_one_lap() -> void:
+	if not track.is_empty():
+		choice = ""
+		_extend_lap = lap >= laps
+	elif lap >= laps:
+		choice = node_id

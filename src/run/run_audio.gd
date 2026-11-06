@@ -230,6 +230,7 @@ func stop() -> void:
 			(v["player"] as AudioStreamPlayer).stop()
 	_groups.clear()
 	_schedule.clear()
+	_watch.clear()
 	if track != null:
 		track.stop()
 
@@ -250,7 +251,7 @@ func on_event(ev: Dictionary) -> void:
 			_schedule_add({"t": float(ev["t"]), "kind": "phase", "ev": ev})
 			if ev.has("track"):  # a track scene: the track plays (RunTrackAudio), no loops start; the scene before fades as at any phase change
 				return
-			var secs: Array = data.nodes[str(ev["node"])].get("sections", [])
+			var secs: Array = (data.nodes.get(str(ev["node"]), {}) as Dictionary).get("sections", [])  # (the Bassment's phase_start names node "trial", which is no scene of the run: no sections)
 			for i in range(1, secs.size()):
 				_schedule_add({"t": float(ev["t"]) + float(secs[i]["start_beat"]) * beat_s, "kind": "section", "phase": int(ev["phase"]), "index": i, "section": secs[i]})
 			for sec in secs:
@@ -356,6 +357,7 @@ func _process(delta: float) -> void:
 		_fade_master = move_toward(_fade_master, _fade_target, _fade_speed * delta)
 		for g in _groups:
 			g["duck"] = 1.0 - _fade_master
+	check_silence(now)
 
 
 func _run(item: Dictionary, now: float, ttnm: float) -> void:
@@ -364,6 +366,7 @@ func _run(item: Dictionary, now: float, ttnm: float) -> void:
 			_swap_clock(item, now, ttnm)
 		"phase":
 			_begin_phase(item["ev"], float(item["t"]), now, ttnm)
+			_arm_watch(float(item["t"]))
 		"section":
 			_switch_section(item, now, ttnm)
 		"mix":
@@ -463,7 +466,7 @@ func _begin_phase(ev: Dictionary, t: float, now: float, ttnm: float) -> void:
 			v["target"] = 0.0
 	if ev.has("track"):  # a track scene: the loops of the scene before fade out, nothing starts here (no carried bass either)
 		return
-	var node: Dictionary = data.nodes[str(ev["node"])]
+	var node: Dictionary = data.nodes.get(str(ev["node"]), {})  # ({} for the Bassment, node "trial": its pack and treatment come with the event, no bass bus, no sections, no family)
 	var family := str(node.get("family", ""))
 	# the previous scene's bass carries on under this scene's drums-alone block when both play one music family (same key and sound): it fades out at the carry's end, as this scene's own bass enters
 	var carry: Dictionary = cfg.get("mix", {}).get("carry_bass", {})
@@ -630,3 +633,48 @@ func voice_origin(name: String) -> float:
 
 func active_phase_count() -> int:
 	return _groups.size()
+
+
+# --- the transition seam (stage M1.6; docs/parallel-development/MUSIC_TRANSITIONS.md section 12, item 4) -----------------------------------------------------------------
+## TransitionDirector hands the audio the recipe of each transition it locks (`prepare_transition`, at the lock point) and hears back when the outgoing music is silent
+## (`outgoing_silent`, carrying the boundary time), which is when it emits `completed`. The M1 recipe is always `cut`: the scene change itself is today's code (_begin_phase fades every
+## loop group over mix.phase_fade_s from the boundary, RunTrackAudio fades a track group on track_end or on the next phase_start), so the recipe is recorded and only the silence is
+## watched. Stage M2 executes its own recipes here (a tail group, its rate, its fades and its hard floor at complete_t) and reports silence the same way.
+signal outgoing_silent(boundary_t: float)
+
+var transition_log: Array = []  # {kind: prepare | silent, t (the boundary), at (song time), mode, ...} for the tests and the walks
+var _watch: Array = []  # [{t (boundary), recipe, armed}]: armed when the phase that starts on the boundary has begun
+
+
+## The director locked a transition at boundary `boundary_t` with this recipe (TransitionPlanner: {mode, fade_s, tail_s, carry, incoming}).
+func prepare_transition(boundary_t: float, recipe: Dictionary) -> void:
+	_watch.append({"t": boundary_t, "recipe": recipe.duplicate(true), "armed": false})
+	transition_log.append({"kind": "prepare", "t": boundary_t, "mode": str(recipe.get("mode", "")), "tail_s": float(recipe.get("tail_s", 0.0)), "incoming": str(recipe.get("incoming", ""))})
+
+
+func _arm_watch(t: float) -> void:
+	for w in _watch:
+		if absf(float(w["t"]) - t) < 1e-4:
+			w["armed"] = true
+
+
+## Something of the outgoing music still sounds: a loop group fading out (or a carried bass), or a track group fading.
+func outgoing_sounding() -> bool:
+	for g in _groups:
+		if bool(g["fading"]):
+			return true
+	return track != null and track.fading_count() > 0
+
+
+## Reports every armed transition whose outgoing music has gone (called every frame; tests call it with their own clock).
+func check_silence(now: float) -> void:
+	if _watch.is_empty():
+		return
+	for w in _watch.duplicate():
+		if not bool(w["armed"]) and now > float(w["t"]) + 30.0:
+			_watch.erase(w)  # (its phase never began: the Bassment took the boundary, or the run ended)
+			continue
+		if bool(w["armed"]) and not outgoing_sounding():
+			_watch.erase(w)
+			transition_log.append({"kind": "silent", "t": float(w["t"]), "at": now, "mode": str((w["recipe"] as Dictionary).get("mode", ""))})
+			outgoing_silent.emit(float(w["t"]))

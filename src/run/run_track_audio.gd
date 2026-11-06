@@ -33,6 +33,7 @@ var _seq := 0
 var _groups: Array = []  # {transport: TrackTransport, node, track, dir, t0, track_t0, beat_s, fading, mutes: RunTrackMutes}
 var _cache: Dictionary = {}  # pack folder -> {state: loading | ready | failed, track, pack, job, task, keep}
 var _tasks: Array = []  # worker tasks not yet waited for (decodes and warms)
+var _pinned: Dictionary = {}  # pack folder -> true: kept by _retain (request_scene with pin, the director's destinations)
 
 
 # --- the interface ------------------------------------------------------------------------------------------------------------
@@ -96,12 +97,21 @@ func prefetch_for(data: RunData, node_id: String, paths: Dictionary = {}, main: 
 
 
 ## Loads the stems of scene `node_id` ahead, at any time, without letting anything go (safe for a pack already loading or loaded). Returns its state: "" (no track scene), loading, ready or failed.
-func request_scene(data: RunData, node_id: String) -> String:
+## `pin`: the pack is also kept when the doors of a scene open (prefetch_for lets go of every pack but those of the routes and the one playing) until release_pins(): the director pins
+## the destinations it was asked for (the pending request, its on_miss, the default), at most three packs besides the routes' and the playing one.
+func request_scene(data: RunData, node_id: String, pin := false) -> String:
 	var p := _plan(data, node_id)
 	if p.is_empty():
 		return ""
+	if pin:
+		_pinned[str(p["dir"])] = true
 	_request(p)
 	return state_of(p)
+
+
+## Lets the pinned packs go back to the ordinary rule (they stay in memory until the next prefetch_for lets them go).
+func release_pins() -> void:
+	_pinned.clear()
 
 
 ## The state of a plan's stems: "none" (not asked for), loading, ready or failed.
@@ -347,7 +357,7 @@ static func _plan(data: RunData, node_id: String) -> Dictionary:
 
 ## Keeps the packs of `plans` (and of every group still sounding) and lets every other one go; starts the decodes still missing.
 func _retain(plans: Array) -> void:
-	var keep := {}
+	var keep := _pinned.duplicate()
 	for p in plans:
 		keep[str(p["dir"])] = true
 	for g in _groups:
@@ -445,3 +455,12 @@ static func _ensure_bus() -> void:
 	var lim := AudioEffectHardLimiter.new()
 	lim.ceiling_db = LIMIT_CEILING_DB
 	AudioServer.add_bus_effect(i, lim)
+
+
+## Track groups still fading out (the outgoing music of a transition; RunAudio.outgoing_sounding).
+func fading_count() -> int:
+	var n := 0
+	for g in _groups:
+		if bool(g["fading"]):
+			n += 1
+	return n

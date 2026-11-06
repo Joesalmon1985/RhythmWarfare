@@ -104,6 +104,7 @@ var playtest: Dictionary = {}  # the options of a start from the Debug / Playtes
 var playtest_overlay: PlaytestOverlay  # the playtest overlay; null unless PlaytestMode.on()
 var _pause_note: LineEdit
 var track_log: Array = []  # the track scenes played (see _on_track_event)
+var director: TransitionDirector  # the transition seam (src/transition/transition_director.gd): every engine event reaches it, it decides the music of each scene change; port() for the narrative side
 var _track_stay_phase := -1  # the phase whose open window is not the last lap's (route_window.last false): touching nothing stays, so no door shows the way out
 
 
@@ -141,6 +142,7 @@ func _ready() -> void:
 	hotspots = RunHotspots.new(data, Session.run_progress.run_flags, Session.run_progress.flags)
 	hotspots.preselect = bool((data.cfg.get("choice", {}) as Dictionary).get("preselect", false)) or OS.get_environment("RW_CHOICE_PRESELECT") == "1"  # (an owner decision, off: touch only in the window; the env turns it on for a strip)
 	engine.hotspots = hotspots
+	director = TransitionDirector.new()
 	minigames = MinigameController.new(engine, Session.run_progress.get("wallet"), Session.run_progress.run_seed())  # minigames: registry from content/minigames
 	minigames.load_registry()
 	_mg = RunMinigameHost.new(self)
@@ -152,6 +154,7 @@ func _ready() -> void:
 		var prep_ms := audio.track.prepare(data, start)
 		if prep_ms > 0.0:
 			print("RUN track stems of the first scene decoded in %.0f ms (before the countdown)" % prep_ms)
+	_wire_director()
 	engine.begin(start)
 	if float(playtest.get("energy", -1.0)) >= 0.0:  # the scene list's start-energy option
 		engine.energy = float(playtest["energy"])
@@ -210,8 +213,29 @@ func _ready() -> void:
 func _wire_track_audio() -> void:
 	if audio == null or audio.track == null or engine == null:
 		return
-	engine.track_gate = audio.track.is_ready
+	engine.track_gate = director.track_gate if director != null else audio.track.is_ready  # (the director answers for the destination it locked, else asks the track audio as before)
 	audio.track.notes_fn = func() -> Array: return engine.level.notes if engine != null and engine.level != null else []
+
+
+## THE TRANSITION SEAM (stage M1.6, docs/parallel-development/MUSIC_TRANSITIONS.md section 12): the director sits on the engine (its lock point and track gate), hears every engine event
+## (_handle), is stepped every frame (_advance) and learns from the audio when the outgoing music is silent. Again after every hand-off (a new engine). Nothing here changes what the run does.
+func _wire_director() -> void:
+	if director == null or engine == null:
+		return
+	director.attach(engine, data)
+	director.path_data_fn = func(key: String) -> Variant: return main_data if key == "main" else _path_cache.get(key, null)
+	if audio != null and audio.track != null and not director.audio_reports_silence:
+		director.ready_fn = audio.track.is_ready
+		director.load_fn = func(d: RunData, node: String) -> String: return audio.track.request_scene(d, node, true)
+		director.release_fn = audio.track.release_pins
+		director.recipe_fn = audio.prepare_transition
+		audio.outgoing_silent.connect(director.on_outgoing_silent)
+		director.audio_reports_silence = true
+
+
+## The TransitionPort of this run (the narrative side's only way to ask for a scene change).
+func port() -> TransitionPort:
+	return director
 
 
 ## The paths the Warehouse's portals lead to (those that exist): their data is read once, before the countdown (not on the downbeat of the handoff), and their start pack is loaded ahead on a thread.
@@ -727,6 +751,8 @@ func _step_virtual(t: float) -> void:
 
 func _advance(t: float, audio_t: float) -> void:
 	hud.now_t = audio_t
+	if director != null:
+		director.step(t)
 	if playtest_overlay != null:
 		playtest_overlay.refresh()
 	hud.stage_h = hud.size.y * (1.0 - float(Session.PAD_SIZES[clampi(Session.pad_size, 0, 2)]))  # (the thin route-window bar sits on the bottom edge of the picture, above the pads)
@@ -907,6 +933,8 @@ func _handle(events: Array) -> void:
 				_journey_apply(a)
 		if str(ev["kind"]) != "judge" and str(ev["kind"]) != "cues":
 			event_log.append(ev)
+		if director != null:
+			director.on_event(ev)  # (before the audio: the director decides the music of a scene change)
 		if audio != null:
 			audio.on_event(ev)
 		match str(ev["kind"]):
@@ -1705,6 +1733,8 @@ func _path_swap(ev: Dictionary) -> void:
 	else:
 		start = main_data.start_node() if main_data != null else new_data.start_node()
 		start = "warehouse" if new_data.nodes.has("warehouse") else start
+	if start != "" and str(ev.get("start", "")) != "" and new_data.nodes.has(str(ev["start"])) and new_data != data:  # a destination the director locked names the scene of the other run
+		start = str(ev["start"])
 	var swap_clock := new_data != data
 	var before := {"bpm": float(data.cfg["timing"]["bpm"]), "beat_s": engine.beat_s}
 	var prev_path := run_path
@@ -1725,6 +1755,7 @@ func _path_swap(ev: Dictionary) -> void:
 	hotspots.preselect = bool((data.cfg.get("choice", {}) as Dictionary).get("preselect", false)) or OS.get_environment("RW_CHOICE_PRESELECT") == "1"  # (an owner decision, off: touch only in the window; the env turns it on for a strip)
 	engine.hotspots = hotspots
 	_wire_track_audio()
+	_wire_director()
 	engine.arrive(start, t_swap, carried, int(ev["phase"]), int(ev.get("lap_extra", 0)))
 	journey = RunJourney.new(data)
 	proxy.level = engine.level
@@ -1791,6 +1822,8 @@ func arm_trial() -> bool:
 	if k > 2:
 		return false
 	trial_state = "armed"
+	if director != null:
+		director.excursion(&"armed")  # (the Bassment is not behind the port: nothing locks before the dungeon takes the run)
 	_trial_g1 = engine.t_of(float(k * 16) + 12.75)
 	_trial_g2 = _trial_g1 + 16.0 * engine.beat_s
 	trial_entry_t = _trial_g2 + 3.25 * engine.beat_s
@@ -1823,6 +1856,8 @@ func trial_begin_now(entry_t: float, start_passage: int, direct: bool) -> void:
 		hud.visible = false
 		_gate.visible = false
 	trial_state = "in"
+	if director != null:
+		director.excursion(&"enter")
 	if trial.bot == "":
 		trial.bot = str(_bot.get("policy", "")) if str(_bot.get("policy", "")) in ["perfect", "none"] else ""
 	trial.begin(entry_t, start_passage, direct)
@@ -1834,6 +1869,8 @@ func trial_begin_now(entry_t: float, start_passage: int, direct: bool) -> void:
 func trial_leave(t_swap: float, reason: String) -> void:
 	trial.deactivate()
 	trial_state = ""
+	if director != null:
+		director.excursion(&"leave")
 	var node := "warehouse" if data.nodes.has("warehouse") else engine.node_id
 	var w := _world_of(node)
 	_show_world(w)
