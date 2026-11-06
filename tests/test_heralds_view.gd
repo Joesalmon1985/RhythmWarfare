@@ -17,7 +17,13 @@ const IN_FRAME := 0.75  # this much of a rectangle's area inside the visible pic
 const FLAGS := {"wh_saw_floor": true, "wh_vip_pass": true}
 ## scene -> the scenes the run passes through to get there from the Warehouse's first scene
 const ROUTES := {"warehouse": [], "warehouse.balcony": ["warehouse.balcony"], "warehouse.booth": ["warehouse.balcony", "warehouse.booth"], "warehouse.bar": ["warehouse.bar"],
-	"warehouse.chill": ["warehouse.bar", "warehouse.chill"]}
+	"warehouse.chill": ["warehouse.bar", "warehouse.chill"],
+	# N2.4 Alien Spaceship (the mothership): from the Warehouse's exit, then the hub's own side scenes
+	"mothership": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership"],
+	"mothership.gallery": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery"],
+	"mothership.reactor": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.reactor"],
+	"mothership.bridge": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge"],
+	}
 
 
 ## One scripted run to `target`: {player: StoryPlayer, t0: the target phase's downbeat, beat, hotspots: the target's herald entrances [{id, herald, early}]}.

@@ -49,6 +49,13 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | mothership | mothership.exit | exit.exit_ward | exit | route ward | same door, staggering (-5 energy) | always | verified |
 | mothership | mothership.exit | exit.exam | character | the exam passes (+6) | strapped to the table, out the exam door (route ward, -8) | always | verified |
 | mothership | mothership.exit | exit.airlock_wheel | object | cycle the airlock (route hospital, +5) | the alarm; out anyway, shaken (route hospital, -6) | always | verified |
+| mothership | mothership | enter_gospel | secret | a figure of light under a single star in the viewport: the Gospel path (route path:gospel) | the star flickers out (-4) | always | verified |
+| mothership | mothership | enter_bassment | secret | the maintenance hatch in the deck plating, chalk marks beside it: the Bassment (route bassment) | the hatch rattles shut (-4) | always | verified |
+| mothership | mothership | enter_squadron | secret | the old military radio wired into the comms console, a bomber's shadow on the bulkhead: the Mission Count path (route path:squadron) | the radio crackles out (-4) | always | verified |
+| mothership | mothership | enter_ember | secret | an ember glowing in a specimen jar: the Ember Road path (route path:ember) | the ember gutters out (-4) | always | verified |
+| mothership | mothership.gallery | gallery.enter_bassment | secret | a hatch in the gallery floor: the Bassment (route bassment) | the hatch rattles shut (-4) | always | verified |
+| mothership | mothership.reactor | reactor.enter_gospel | secret | a figure of light under a star over the reactor catwalk: the Gospel path (route path:gospel) | the star flickers out (-4) | always | verified |
+| mothership | mothership.bridge | bridge.enter_squadron | secret | a radio on the comms console, a bomber's shadow on the screen: the Mission Count path (route path:squadron) | the radio crackles out (-4) | always | verified |
 | underworld | underworld | exit_court (default) | exit | route underworld.court | same door, staggering (-5 energy) | always | verified |
 | underworld | underworld | exit_furnace | exit | route underworld.furnace | same door, staggering (-5 energy) | always | verified |
 | underworld | underworld | bouncer | character | the demon bouncer waves you in (+5) | no ticket: shoved back (-7) | not wh_thrown_out | verified |

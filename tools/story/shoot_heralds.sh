@@ -43,6 +43,7 @@ shots() {  # node flags cam name:seconds ...   (one Godot run per entrance and c
 PHASE_S=$(python3 -c "print(64*60/174)")
 # entrance       scene              flags          close camera (x:z:yaw:pitch, looking at the entrance and its herald)   routes from the Warehouse (- none)
 while read -r ent node flags cam via; do
+  case "$ent" in "#"*) continue ;; esac  # (a comment line of the list)
   if [ "$via" = "-" ]; then start="$node"; ROUTES_=""; off=0; else start=warehouse; ROUTES_="$via"; off=$(python3 -c "print(len('$via'.split(','))*$PHASE_S)"); fi
   t0=$(python3 -c "print(round($off+3.0,2))"); t1=$(python3 -c "print(round($off+19.0,2))")
   ROUTES_="$ROUTES_" RW_RUN_START_="$start" shots "$start" "$flags" - "${TAG}_${ent}_start:$t0" "${TAG}_${ent}_route:$t1"
@@ -54,5 +55,10 @@ gospel_star    warehouse.balcony  wh_saw_floor   -7.5:1.4:90:6     up
 squadron_radio warehouse.booth    -              0.6:-4.6:0:4      up,left
 ember_glass    warehouse.bar      wh_vip_pass    7.6:2.2:-125:0    right
 chill_wizard   warehouse.chill    -              -                 right,right
+# N2.4 Alien Spaceship (mothership): the hub's four gates in one scene, then the three side scenes' extra entrances
+ms_hub         mothership         -              1.6:5.5:0:4       right,right,up,up
+ms_gallery     mothership.gallery -              15.5:5.8:-90:3    right,right,up,up,right
+ms_reactor     mothership.reactor -              31.5:5.5:0:3      right,right,up,up,up
+ms_bridge      mothership.bridge  -              43.0:4.5:-90:3    right,right,up,up,right,up
 LIST
 rm -rf "$TMP"
