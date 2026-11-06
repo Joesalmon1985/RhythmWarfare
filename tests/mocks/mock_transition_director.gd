@@ -4,12 +4,13 @@ extends TransitionPort
 ## No audio, no engine, no scene tree: advance(dt) moves song_time() and emits every signal in order.
 ##
 ## Model (the readings chosen where the contract is open; see also the notes in tests/port_conformance.gd):
-##  - A scene has `laps` laps of 64 beats at its own tempo. Laps are numbered from 0. A departure lap is a lap
-##    index >= doors_from_lap; the boundary of a departure lap is the end of that lap; its lock point is
-##    lock_lead_beats before it. Lock points exist only on departure laps, so doors_closed is never emitted.
-##  - The final lap is index max(laps - 1, doors_from_lap). With nothing pending at its lock point the default
+##  - A scene has `laps` laps of 64 beats at its own tempo. Laps are numbered from 1 (lead's ruling, 6 Nov 2026):
+##    a departure lap is lap >= doors_from_lap, and the last lap always is one (internally _doors is 0-based and
+##    clamped to the last lap). Its boundary is the end of that lap; its lock point is lock_lead_beats before it.
+##    Lock points exist only on departure laps, so doors_closed is never emitted.
+##  - The final lap is the last one (laps). With nothing pending at its lock point the default
 ##    is locked under a fresh id, or, if the default is {} (or a blend is still running), the scene gets one more lap.
-##  - A block is 8 beats (the engine's block). when == &"soonest" takes the first block boundary in a departure
+##  - A block is 16 beats (lead's ruling). when == &"soonest" takes the first block boundary in a departure
 ##    lap that is at least lock_lead_beats after the request; a deferral moves it by one block.
 ##  - request() of a destination in fail_load_ids returns an id and acknowledges it; the request is then closed
 ##    &"unavailable" on the next advance() (loading takes time). Other requests get destination_ready then, except
@@ -19,7 +20,7 @@ extends TransitionPort
 ##  - A transition that locks while a blend still runs is deferred with &"blending" (any number of times).
 
 const BEATS_PER_LAP := 64.0
-const BLOCK_BEATS := 8.0
+const BLOCK_BEATS := 16.0
 
 ## Destinations (by "id") that close as &"unavailable" shortly after request().
 var fail_load_ids: Array[String] = []
@@ -74,7 +75,7 @@ func begin_scene(dest: Dictionary, scene_bpm: float, laps: int, doors_from_lap: 
 	_scene_dest = dest
 	_bpm = scene_bpm
 	_laps = laps
-	_doors = doors_from_lap
+	_doors = clampi(doors_from_lap - 1, 0, maxi(laps - 1, 0))
 	_scene_start = _t
 	_default_dest = {}
 	if changed:
@@ -205,7 +206,7 @@ func _lap_end(k: int) -> float:
 
 
 func _final_lap() -> int:
-	return maxi(_laps - 1, _doors)
+	return _laps - 1
 
 
 ## The departure lap whose lock point is the next one to come.

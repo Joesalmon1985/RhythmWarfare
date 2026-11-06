@@ -24,9 +24,11 @@ extends RefCounted
 ## frame after a point). Departure laps are not hard-coded: cases ask next_boundary_t() and lock_t().
 ##
 ## Readings of the contract chosen here (also in the report that came with this file):
-##  - Laps are counted from 0, so doors_from_lap 2 with 4 laps has departure laps 2 and 3 and the final lap is 3.
+##  - Laps are counted from 1 (lead's ruling, 6 Nov 2026): doors_from_lap 2 with 4 laps has departure laps 2, 3 and 4;
+##    the last lap of a scene is always a departure lap.
 ##  - Lock points exist only on departure laps, so &"doors_closed" deferrals are tolerated but not required (case 5).
-##  - The order "closed(old) before acknowledged(new)" on a replace is not asserted (case 2).
+##  - A block is 16 beats (lead's ruling, 6 Nov 2026); on a replace, closed(old) comes before acknowledged(new) (case 2);
+##    tempo_changed comes before switched (case 13).
 
 const STEP := 0.05
 const EPS := 0.06
@@ -242,6 +244,8 @@ static func case_02_replace(t: TestCase, factory: Callable) -> void:
 	t.assert_eq(closed.size(), 1, "old request closed once")
 	if closed.size() == 1:
 		t.assert_eq((closed[0]["args"] as Array)[1], &"replaced")
+	t.assert_true(rec.index_of(&"request_closed", a) >= 0 and rec.index_of(&"request_closed", a) < rec.index_of(&"request_acknowledged", b),
+		"closed(old, replaced) is emitted before acknowledged(new) (lead's ruling, 6 Nov 2026)")
 	var acks := rec.of(&"request_acknowledged", b)
 	t.assert_eq(acks.size(), 1, "new request acknowledged")
 	if acks.size() == 1:
@@ -340,6 +344,7 @@ static func case_06_default_locks(t: TestCase, factory: Callable) -> void:
 	var r := _new(factory)
 	var port := _port(r)
 	var rec := _rec(r)
+	# Lead's ruling, 6 Nov 2026: a scene entry clears the default, so it is set again on every scene (begin_scene).
 	port.set_default(_d("dflt"))
 	t.assert_eq(port.state(), TransitionPort.State.NONE)
 	t.assert_true(_until_event(r, &"completed", -1), "default transition completes")
@@ -365,6 +370,7 @@ static func case_07_empty_default_stays(t: TestCase, factory: Callable) -> void:
 	var port := _port(r)
 	var rec := _rec(r)
 	var lap := _lap_s(r)
+	# Lead's ruling, 6 Nov 2026: a final lap with an empty default is extended by one lap without any signal.
 	port.set_default({})
 	# Find the final lap's boundary: the scene has 4 laps.
 	_until_time(r, 3.0 * lap + 1.0)
@@ -396,6 +402,7 @@ static func case_08_unavailable(t: TestCase, factory: Callable) -> void:
 		_skip("case_08_unavailable", "factory cannot make a destination fail to load")
 		return
 	var id := port.request(_d("bad"))
+	# Lead's ruling, 6 Nov 2026: either refused at once (id 0) or acknowledged and closed later is allowed.
 	if id == 0:
 		# Also allowed by transition_port.gd: refused at once.
 		t.assert_eq(port.last_refusal(), &"unavailable")
@@ -573,6 +580,9 @@ static func case_13_clock_and_tempo(t: TestCase, factory: Callable) -> void:
 		t.assert_near(float(ta[1]), 60.0 / 140.0, 1e-6, "beat_s argument")
 		var sw_b := rec.first(&"switched", ids[0])
 		t.assert_near(float(ta[2]), float((sw_b["args"] as Array)[2]), EPS, "at the switch of b")
+		var ti := rec.events.find(tempos[0])
+		t.assert_true(ti >= 0 and ti + 1 < rec.events.size() and rec.events[ti + 1]["name"] == &"switched",
+			"tempo_changed is emitted directly before switched (lead's ruling, 6 Nov 2026)")
 		t.assert_near(float((tempos[1]["args"] as Array)[0]), 174.0, 1e-6)
 		var sw_d := rec.first(&"switched", ids[2])
 		t.assert_near(float((tempos[1]["args"] as Array)[2]), float((sw_d["args"] as Array)[2]), EPS, "at the switch of d")
@@ -586,6 +596,7 @@ static func case_14_blending_defers(t: TestCase, factory: Callable) -> void:
 	var r := _new(factory)
 	var port := _port(r)
 	var rec := _rec(r)
+	# Lead's ruling, 6 Nov 2026: a &"blending" deferral may repeat until the blend has completed.
 	# 250 beats is longer than the two to three laps of the next scene before its lock points.
 	if not _sw(r, &"blend_beats", 250):
 		_skip("case_14_blending_defers", "factory cannot set a long blend")
