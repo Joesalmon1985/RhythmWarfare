@@ -256,3 +256,245 @@ On the packs of this PC four tracks fail the drift test: `freestylers_pendulum_s
 (163 ms), `northern_zone_faint` (37 ms). `annix_kingdom` is marked not constant but drifts 14.8 ms at most and
 keeps `grid_ok`. No per-bar beat map exists for drifting tracks and none is designed here: echoing out is the
 robust answer, and the cue chart already follows the audio.
+
+## 4. The planner
+
+### 4.1 What it is
+
+`TransitionPlanner.plan(out, inc, meta, ready) -> Dictionary`, a static pure function in
+`src/music/transition_planner.gd` (no nodes, no disk, no clock). The director calls it at the lock point and
+sends the public part as `plan` with `locked`; the private part (the recipe) goes to the audio class.
+
+| Input | Content |
+|---|---|
+| `out` | The outgoing scene: kind (`track`, `ordinary`, `trial`, `none` at the run's start), its track plan (`RunTrackPlan` fields), the outgoing track time at T, the section role at that time |
+| `inc` | The incoming scene: kind, its track plan (E, `entry_t`, laps), the incoming drop bar the plan used |
+| `meta` | Both sidecars as read (or `{}`), plus `grid_ok` of each track (3.5) |
+| `ready` | Whether the incoming pack's stems are decoded or still loading; whether this request was deferred once |
+
+Output: `{mode, fallback, outgoing_bpm, incoming_bpm, blend_beats, complete_t}` (the contract's Plan, no
+other keys) and, kept apart, the recipe `{rate, window_bars, stems: {key: [start_bar, end_bar, curve]},
+highpass, echo, drop_t, deadline_t}`.
+
+### 4.2 Decision table (first matching row wins)
+
+Definitions: rho = incoming BPM / outgoing BPM; c(x) = 1200 x log2(x) in cents; L = incoming bars from T to
+the incoming drop (16 with the default lead-in); R = outgoing bars left in the audio after T.
+
+| # | Condition | Mode | fallback | W (incoming bars) |
+|---|---|---|---|---|
+| 1 | Incoming is a track scene, its pack is still loading, request not yet deferred | defer once (`&"not_ready"`) | | |
+| 2 | Incoming pack still not ready after the deferral, or its load failed | `cut`; the incoming scene plays as an ordinary scene | true | |
+| 3 | Either side is not a track (ordinary, trial, run start) | `cut` | false | |
+| 4 | `no_blend` on either track | `cut` | false | |
+| 5 | L < 5 or R < 1 | `cut` | false | |
+| 6 | \|c(rho)\| <= 50 and `grid_ok` on both | `blend` | false | min(12, L - 4, R - 1); at most 4 for the same track on both sides |
+| 7 | \|c(rho / 2)\| <= 50 or \|c(2 rho)\| <= 50, and `grid_ok` on both | `halftime_blend` | false | as row 6 |
+| 8 | anything else (L >= 5 here) | `echo_out` | false | 2 if L >= 6, else 1 |
+
+If row 6 or 7 gives W < 2, the mode becomes `echo_out` with W = 1. 50 cents is 2.93% (rho between 0.9715
+and 1.0293).
+
+`blend_beats` = 4W (0 for `cut`); `complete_t` = T + W x incoming bar (`cut`: T + `mix.phase_fade_s`).
+The incoming drop is at `drop_t` = T + L x incoming bar, and `deadline_t` = `drop_t` - 4 incoming bars. By
+construction `complete_t` <= `deadline_t` in every row.
+
+### 4.3 Stem kinds and their fades
+
+Stems are grouped by key: **bass** (`bass`); **rhythm** (`drums`, `kick`, `tops`, and `backing`, which in a
+pack without a bass stem carries the kick and bass bleed); **linger** (`other`, `vocals`, or the sidecar's
+`linger`). An unknown key counts as rhythm (the safe side). Curve `cos` is g = cos(pi/2 x) for x from 0 to
+1 over the span (equal power); a gain under -60 dB is set to silence. Gains are functions of song time,
+never of accumulated frame deltas, so a pause freezes them.
+
+| Mode | bass | rhythm | linger | tail rate | tail bus | incoming |
+|---|---|---|---|---|---|---|
+| `blend` | cos over bars 0 to 1 | cos over 0 to 2 (long recipe: 0 to 4) | 1.0 to bar 2, then cos over 2 to W | rho from T | high-pass 20 to 250 Hz over bars 0 to 4, exponential | pack gains from T |
+| `halftime_blend` | as `blend` | as `blend` | as `blend` | rho / 2 or 2 rho, whichever is within 50 cents of 1 | as `blend` | pack gains |
+| `echo_out` | cos over 0 to 0.125 (half a beat) | cos over 0 to 0.125 | cos over 0 to 1 | 1.0 | echo on at T: delay 3/4 of an outgoing beat, feedback 0.4, wet -6 dB; high-pass 200 to 2,000 Hz over 0 to W | pack gains |
+| `cut` | every stem linear to 0 over 0.6 s from T (today's fade) | | | 1.0 | none | pack gains |
+
+At `complete_t`, whatever the curves say, the tail's player goes to -80 dB and stops, the tail bus effects
+are switched off and the audio class reports silence. That hard floor is **the rule that guarantees silence
+before the drop**: the window is sized so that the floor lands at least 4 incoming bars before `drop_t`, and
+nothing of the tail outlives it (echo repeats included: the bus is muted with the player).
+
+The long recipe applies when the tail starts at or after `mix_out_bar`, or inside a `breakdown` or `outro`
+section of the outgoing pack: those passages are made to be mixed, so the rhythm may stay twice as long.
+
+### 4.4 Pseudo-code
+
+```gdscript
+static func plan(out: Dictionary, inc: Dictionary, meta: Dictionary, ready: Dictionary) -> Dictionary:
+	var T: float = out["boundary_t"]
+	if inc["kind"] == &"track" and not ready["incoming"]:
+		if not ready["deferred_once"] and ready["loading"]:
+			return {"defer": &"not_ready"}                    # row 1
+		return _cut(out, inc, T, true)                       # row 2: the scene plays as an ordinary one
+	if out["kind"] != &"track" or inc["kind"] != &"track":
+		return _cut(out, inc, T, false)                      # row 3
+	if meta["out"].get("no_blend", false) or meta["in"].get("no_blend", false):
+		return _cut(out, inc, T, false)                      # row 4
+	var bar_in: float = 240.0 / inc["bpm"]
+	var L: int = inc["drop_bar"] - inc["entry_bar"]
+	var R: float = (out["duration_s"] - out["track_t_at_T"]) / (240.0 / out["bpm"])
+	if L < 5 or R < 1.0:
+		return _cut(out, inc, T, false)                      # row 5
+	var rho: float = inc["bpm"] / out["bpm"]
+	var grid: bool = meta["out_grid_ok"] and meta["in_grid_ok"]
+	var mode := &"echo_out"
+	var rate := 1.0
+	var W := 2 if L >= 6 else 1                              # row 8
+	if grid and absf(_cents(rho)) <= 50.0:
+		mode = &"blend"; rate = rho                          # row 6
+	elif grid and (absf(_cents(rho / 2.0)) <= 50.0 or absf(_cents(rho * 2.0)) <= 50.0):
+		mode = &"halftime_blend"; rate = rho / 2.0 if rho > 1.5 else rho * 2.0   # row 7
+	if mode != &"echo_out":
+		W = mini(12, mini(L - 4, int(floor(R)) - 1))
+		if out["track"] == inc["track"]:
+			W = mini(W, 4)
+		if W < 2:
+			mode = &"echo_out"; rate = 1.0; W = 1
+	var complete_t := T + W * bar_in
+	assert(complete_t <= T + (L - 4) * bar_in + 1e-6)       # the silence rule
+	return {"mode": mode, "fallback": false, "outgoing_bpm": out["bpm"], "incoming_bpm": inc["bpm"],
+		"blend_beats": 4 * W, "complete_t": complete_t, "recipe": _recipe(mode, W, rate, out, inc, meta)}
+```
+
+The director strips `recipe` before emitting `locked`, so the Plan has exactly the contract's keys.
+
+### 4.5 The cases
+
+| Case | What happens |
+|---|---|
+| Same track on both sides (a route between two scenes that pick one recording) | The incoming restarts the track at its bar E, at least one lap before where the outgoing is. rho = 1, so `blend` with W at most 4: two copies of one song for longer sound like a mistake. The two groups are separate players on the same files |
+| An ordinary scene on one side (no pack, or a pack not ready) | `cut`, exactly today's 0.6 s fade. Ordinary scenes are now only fallbacks; blending loop scenes is a later refinement, not in M2 |
+| The Bassment | Its entrance by the wizard is not behind the port in this phase: M1 stops the track group on the trial hand-off and M2 keeps that. Returning (`RunEngine.resume`) is `cut` (row 3: the outgoing music is the trial's loops). When the entrance moves behind the port later, it is row 3 as well |
+| A minigame hold | No lock happens while `engine.hold` is set; a pending request is deferred with `&"held"` at each lock point (this does not use up the single `&"not_ready"` deferral). A minigame started during a blend (the card table is touchable in every block) changes nothing: the tail's fades run on song time |
+| A scene left on its first departure lap | Safe by construction: the previous tail is silent by incoming bar 12 (beat 48 of lap 1), and the earliest next lock is beat 60.5 of lap `doors_from_lap` (>= 1). So contract rule 14 (`&"blending"`) is a guard that today's data never triggers; a test proves it with `doors_from_lap` 1 |
+| The destination changes at the last moment | Replacing before the lock is free (contract rule 1). The planner runs at the lock with the request as it stands, so a late pick is planned with its own readiness. Loading starts on `request()`, so a pick made 2 s before the lock may not be ready: row 1 (one more lap), then row 2 |
+| `on_miss` taken at the lock | Planned like any destination. Its pack is preloaded only if the memory budget allows (always on the PC, not on a phone: section 9); otherwise row 2 |
+| A path hand-off (main run to a path or back) | Same rows. The tail lives on its own player, so the clock swap and the new `RunEngine` of `RunPlay._path_swap` do not touch it (M1 must keep it so) |
+| A short lead-in (`entry: "start"`, a `start_bar` override, a drop before bar 16: `mampi_swift_soldiers_gyrhlx7pafa` has its first drop at bar 0, `sub_focus_rock_it` at bar 15) | W shrinks with L; under 5 bars, `cut` |
+| A tail that would run out of audio (a hold kept the scene near the end of its track) | W is capped at R - 1 bars; under 1 bar, `cut` |
+
+## 5. The transport
+
+### 5.1 Two groups, two slots, one sum
+
+```
+ slot A: AudioStreamPlayer + AudioStreamSynchronized (3 to 7 stems) -> RunTrackA [HighPass, Delay: off] --\
+ slot B: AudioStreamPlayer + AudioStreamSynchronized (3 to 7 stems) -> RunTrackB [HighPass, Delay: off] ---> RunMix -> Music [HardLimiter, -0.3 dB] -> Master
+ loop voices of ordinary scenes, unchanged: RunDrumsA/B, RunBassA/B, RunBassToneA/B ---------------------/
+ clock: RunAudio.player (silent) -> Music
+```
+
+- A scene's track group takes the free slot and keeps it for the whole scene. At T the outgoing slot becomes
+  the tail; nothing is rerouted (changing the bus of a playing player is avoided). The slots alternate, as
+  `RunAudio.BUS_PAIRS` do for loop scenes.
+- The effects are created once with the buses, disabled, and switched with
+  `AudioServer.set_bus_effect_enabled`; no effect is added or removed while music plays.
+- Per-stem gain: `AudioStreamSynchronized.set_sync_stream_volume(i, db)` every frame. The 4.5 source applies
+  it as one constant per mix chunk (no interpolation inside a chunk), so a fade is a staircase of about 60
+  steps a second: under 1 dB a step for fades of a bar or more, up to 6 dB for the half-beat cut of
+  `echo_out` (to verify in the spike that it does not click).
+- The limiter (M1 adds it) sits after the sum. Two full tracks in the first bar of a blend can reach +6 dB
+  over one; the rhythm leaves within 2 bars. The spike measures how hard the limiter works.
+
+### 5.2 Rate matching for small ratios
+
+`AudioStreamPlayer.pitch_scale` changes speed and pitch together (resampling). In the 4.5 source
+`AudioStreamPlaybackSynchronized::mix` passes one rate scale to every substream, so one assignment on the
+tail's player keeps its stems locked together. The step is made at T in the same `_process` pass that
+starts the incoming group (a scheduled item fires when `item.t <= now + time_to_next_mix`), so both land
+in the same mix chunk. Placing it one chunk wrong costs about 10 ms x 3% = 0.3 ms.
+
+The step from 1.0 to rho is heard as a pitch step of up to 50 cents on held notes. It falls on the incoming
+downbeat, which masks it. A ramp over the last outgoing bar was considered and left out of M2: it moves the
+tail's bar line off the incoming downbeat unless compensated. It is spike question Q2.
+
+### 5.3 Starting and aligning
+
+- The incoming group: at `locked` (T - 3.5 outgoing beats, 1.20 s at 175 BPM) the director attaches the
+  decoded streams to the free slot's player at -80 dB and schedules `{t: T, kind: "track_in"}`. At T it
+  calls `play(entry_t + lateness)` with `lateness = max(now + time_to_next_mix - T, 0)`, the pattern of
+  `RunAudio._start_voice`, and sets the pack gains. The engine's `track_start` at T then finds the group
+  already started and only records it (idempotent by scene and phase).
+- The tail: the outgoing group, already playing. At T its rate is set (5.2) and its fades begin.
+- Alignment: the tail's beat sits off the incoming beat by (start lag of the outgoing group) - (start lag of
+  the incoming group) + (clock rate error over the outgoing scene, 6.4). Each start lag is under one mix
+  chunk; both are logged. An optional phase nudge (absorb the measured offset by a small rate change over
+  the first incoming bar: 10 ms over 1.4 s is 0.7%, 12 cents) is off by default; the spike decides.
+- Seeking: the tail never seeks. The incoming seeks once, at its start, to `entry_t`. Whether a Vorbis start
+  inside a file is sample-accurate in 4.5 is to verify in the spike (Q6). `track_wrap` stays M1's.
+
+### 5.4 Memory and voices
+
+| Item | Figure |
+|---|---|
+| One pack in memory | 50 to 97 MB: Vorbis q10 packets are kept compressed and decoded in the mixer (`AudioStreamOggVorbis`; to confirm by measurement) |
+| During a blend | 2 packs (tail and incoming): up to about 200 MB |
+| With a requested next destination | 3 packs. Loading for the next destination waits for `completed` (the tail freed) unless the budget allows it (9) |
+| Vorbis decoders | 3 to 5 per group in today's packs (6 voices + backing at the format's limit): 10 in a blend today, 14 at most |
+| Other players | the clock and one-shot effects; no loop voices play in a track scene |
+
+### 5.5 Pause and focus loss
+
+`RunPlay._notification` pauses on `NOTIFICATION_APPLICATION_FOCUS_OUT` and `NOTIFICATION_APPLICATION_PAUSED`;
+`SongClock.pause` freezes song time and `RunAudio.pause` sets `stream_paused` on every player. M2 adds both
+slots to that. Because every fade, the rate step and the floor are functions of song time, a pause in the
+middle of a blend freezes it where it was, and the resume restarts both groups in the same frame. That they
+resume in the same mix chunk is spike question Q1. A lost audio device (headphones out, a call on Android)
+arrives as the same notifications; nothing else is done.
+
+## 6. The clock
+
+### 6.1 Where `song_time()` comes from
+
+| When | Source of song time | Grid (beat, origin) | What sounds |
+|---|---|---|---|
+| Before T | the silent clock, through `SongClock.audio_time()` | outgoing: its `beat_s`, origin its scene's first downbeat | outgoing group at rate 1 |
+| T to `complete_t` | the same silent clock, untouched | incoming: `_regrid(T, bpm_in)`, engine `tempo` event, port `tempo_changed` | incoming group at rate 1, tail at rate rho |
+| After | the same silent clock | incoming | incoming group |
+
+The clock is never handed from one music stream to another. The "transfer of the authoritative clock" is a
+change of grid at T, which already exists (`RunEngine._regrid`): `grid_beat0` keeps counting beats,
+`level.song_offset_ms` keeps ticks continuous, song time does not jump. The tail is never a source of time.
+
+### 6.2 Float tempos
+
+The engine's grid is already a float (`beat_s = 60 / bpm`). Only the clock stream is tied to an integer BPM
+(`clock_rate(bpm: int)`). Recommended to M1 (its M1.4): make the clock **tempo-free**, one silent loop at
+the project mix rate (48,000 Hz, `driver/mix_rate=48000`) of a fixed length (for example 2^20 frames,
+21.85 s), never swapped. Nothing reads the clock loop's length except wrap counting in
+`StemTransport.playback_position()`, so it need not be a whole number of beats. If M1 keeps a per-tempo
+clock, M2 needs only that it is not swapped at a track-scene boundary inside one engine.
+
+### 6.3 What the judge sees
+
+`judge_time()` = song time - `calibration_ms`. After T the only cues are the incoming chart's, placed by
+`_chart_track_block` at lap downbeat + (cue track time - lap track time); the tail has no cues and its
+stems never mute. No outgoing cue lives into the blend: cues end by beat 12 of a block (beat 60 of the lap),
+the accept window closes 140 ms later, and the boundary is 4 beats after beat 60. A cue inside a blend is
+judged on the incoming grid with the same windows as anywhere else (perfect 45 ms, great 90 ms, accept
+140 ms). Mutes work on the incoming group from T exactly as in mid-scene.
+
+### 6.4 Drift accounting
+
+| Source | Size | Accumulates over transitions? |
+|---|---|---|
+| Start lag of a group | under one mix chunk (about 10 ms expected on WASAPI; 88.5 ms chunks on the Dummy driver) | no: each scene's group starts fresh against the clock |
+| Clock rate error | The 8,700 Hz clock is resampled with a fixed-point step truncated to 1/65,536 (`AudioStreamPlaybackResampled::mix` in the 4.5 source): 8700 / 48000 x 65536 = 11,878.4, truncated to 11,878, so the clock runs 3.4e-5 slow: 3.0 ms over an 88 s scene, 6.0 ms over 176 s. Zero with a 48 kHz clock. To confirm by measurement (Q9) | within one scene only: a fresh group start resets it |
+| Tail rate quantisation | under 1/65,536 relative: 0.3 ms over a 17 s tail | no |
+| Track tempo not constant | up to 258 ms between the fitted grid and the audio (`teddy_killerz`) | cues follow the audio; such tails are not beat-matched (`grid_ok` false) |
+
+Tolerance asserted: at every boundary, and over ten consecutive transitions, |cue time - audio time of the
+same event| <= one mix chunk, with no trend (slope under 0.5 ms per transition). On a virtual clock the
+accounting is exact (1e-6 s).
+
+### 6.5 Latency and calibration
+
+Both groups go out through the same buses and device, so they share one output latency. `output_latency`
+stays cached at the countdown (`SongClock.begin_countdown`); M2 does not refresh it during a blend.
+Calibration is unchanged. An effect with internal latency on a tail bus would delay the tail against the
+incoming track; that is why a real-time pitch shifter is not in the base design (7).
