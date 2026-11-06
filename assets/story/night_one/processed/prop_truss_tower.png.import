@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d2r4jieh7p0ip"
-path="res://.godot/imported/sil_a_idle.svg-31c5b7efdd094d60b38c488b693c5081.ctex"
+uid="uid://dj2uxttjjc5qb"
+path="res://.godot/imported/prop_truss_tower.png-b16ab109259e82803dda27b38d6f5316.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/night_one/source/silhouettes/sil_a_idle.svg"
-dest_files=["res://.godot/imported/sil_a_idle.svg-31c5b7efdd094d60b38c488b693c5081.ctex"]
+source_file="res://assets/story/night_one/processed/prop_truss_tower.png"
+dest_files=["res://.godot/imported/prop_truss_tower.png-b16ab109259e82803dda27b38d6f5316.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b5iv2guvluscf"
-path="res://.godot/imported/sil_b_idle.svg-7c2a71e4554c3e68dbe7106fd5b66d82.ctex"
+uid="uid://dcxdgf07gch7h"
+path="res://.godot/imported/prop_mop_bucket.png-69da7972368230b40781163e577b502a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/night_one/source/silhouettes/sil_b_idle.svg"
-dest_files=["res://.godot/imported/sil_b_idle.svg-7c2a71e4554c3e68dbe7106fd5b66d82.ctex"]
+source_file="res://assets/story/night_one/processed/prop_mop_bucket.png"
+dest_files=["res://.godot/imported/prop_mop_bucket.png-69da7972368230b40781163e577b502a.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

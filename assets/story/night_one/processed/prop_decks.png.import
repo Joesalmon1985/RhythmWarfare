@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1n2lgmq203cm"
-path="res://.godot/imported/woofer.svg-f98c28851c285bf5359e8e9e83880710.ctex"
+uid="uid://cirgdgxg2ieac"
+path="res://.godot/imported/prop_decks.png-2d847dd471156c85cdcb8ca992067151.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/night_one/source/props/woofer.svg"
-dest_files=["res://.godot/imported/woofer.svg-f98c28851c285bf5359e8e9e83880710.ctex"]
+source_file="res://assets/story/night_one/processed/prop_decks.png"
+dest_files=["res://.godot/imported/prop_decks.png-2d847dd471156c85cdcb8ca992067151.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

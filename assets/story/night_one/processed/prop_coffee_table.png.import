@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://mwkrjngd1ui6"
-path="res://.godot/imported/sil_b_up.svg-408bc2ed27453d325adb7a8b28843986.ctex"
+uid="uid://cwe5h26r1y6bp"
+path="res://.godot/imported/prop_coffee_table.png-0ba49df12da638a911670d91e07d4198.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/night_one/source/silhouettes/sil_b_up.svg"
-dest_files=["res://.godot/imported/sil_b_up.svg-408bc2ed27453d325adb7a8b28843986.ctex"]
+source_file="res://assets/story/night_one/processed/prop_coffee_table.png"
+dest_files=["res://.godot/imported/prop_coffee_table.png-0ba49df12da638a911670d91e07d4198.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

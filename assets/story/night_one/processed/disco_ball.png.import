@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://xx6q64fgy4yv"
-path="res://.godot/imported/fixture.svg-7ccca2bfa7e8827e51f0504134fcdca0.ctex"
+uid="uid://cvxpu12ekimi6"
+path="res://.godot/imported/disco_ball.png-05c899ecd1764ab9666ba91c467d7a1a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/night_one/source/props/fixture.svg"
-dest_files=["res://.godot/imported/fixture.svg-7ccca2bfa7e8827e51f0504134fcdca0.ctex"]
+source_file="res://assets/story/night_one/processed/disco_ball.png"
+dest_files=["res://.godot/imported/disco_ball.png-05c899ecd1764ab9666ba91c467d7a1a.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false
