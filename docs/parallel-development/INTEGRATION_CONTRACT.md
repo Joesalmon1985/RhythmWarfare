@@ -1,22 +1,24 @@
 # Integration contract
 
-The single interface between the narrative / interaction side (Ubuntu laptop) and the music side (Windows
-PC). Both branches implement against this file and against `contract/transition_port.gd`, which is the same
-contract as code. If the two ever disagree, `transition_port.gd` wins and this file is corrected.
+The single interface between the narrative / interaction side (the narrative stream) and the music side (the
+music stream). The two streams are subagents of one lead session, each in its own git worktree on one Windows PC
+(`ONE_PC_PLAN.md` section 4). Both implement against this file and against `contract/transition_port.gd`, which
+is the same contract as code. If the two ever disagree, `transition_port.gd` wins and this file is corrected.
 
-Contract version: 1.
+Contract version: 1. The clarifications at the end of this file (6 November 2026) narrow version 1 and do not
+change it.
 
 ## 1. The four parts and what they map to in the repository
 
 | Conceptual part | In this repository | Owner |
 |---|---|---|
-| InteractionManager: visible objects, taps, the pending pick, feedback | `RunHotspots` (`src/run/run_hotspots.gd`), `HotspotView` (`src/run/hotspot_view.gd`), `hotspot_contract.gd`, the input path in `RunPlay` | Ubuntu |
-| NarrativeGraph / QuestRouter: valid destinations, quest entry and exit, return checkpoints, saved route state | new: `src/narrative/` (`NarrativeGraph`, `QuestRouter`, `RouteState`), data in `content/narrative/`, saved through `Session.run_progress` | Ubuntu |
-| MusicalTransitionDirector: turns a requested destination into a transition at a musical boundary | new: `src/transition/transition_director.gd` (`TransitionDirector extends TransitionPort`), fed by `RunEngine` events | Windows |
-| AdaptiveMusicTransport: playback, stems, tempo matching, crossfades, the clock | `RunAudio` (`src/run/run_audio.gd`), `SongClock`, `StemTransport`, `TrackTransport`, new code under `src/music/` | Windows |
+| InteractionManager: visible objects, taps, the pending pick, feedback | `RunHotspots` (`src/run/run_hotspots.gd`), `HotspotView` (`src/run/hotspot_view.gd`), `hotspot_contract.gd`, the input path in `RunPlay` | narrative stream |
+| NarrativeGraph / QuestRouter: valid destinations, quest entry and exit, return checkpoints, saved route state | new: `src/narrative/` (`NarrativeGraph`, `QuestRouter`, `RouteState`), data in `content/narrative/`, saved through `Session.run_progress` | narrative stream |
+| MusicalTransitionDirector: turns a requested destination into a transition at a musical boundary | new: `src/transition/transition_director.gd` (`TransitionDirector extends TransitionPort`), fed by `RunEngine` events | music stream |
+| AdaptiveMusicTransport: playback, stems, tempo matching, crossfades, the clock | `RunAudio` (`src/run/run_audio.gd`), `SongClock`, `StemTransport`, `TrackTransport`, new code under `src/music/` | music stream |
 
-`TransitionPort` (`src/transition/transition_port.gd`, copied from `contract/transition_port.gd`) is the only
-thing both sides see. Narrative code never calls `RunAudio`, `TrackTransport` or anything under `src/music/`.
+`TransitionPort` (`src/transition/transition_port.gd`, copied from `contract/transition_port.gd` in stage 0.3
+of the plan) is the only thing both sides see. Narrative code never calls `RunAudio`, `TrackTransport` or anything under `src/music/`.
 Music code never reads `QuestRouter`, `RouteState`, `RunHotspots` or the save. There is no other shared
 state: no new autoload, no shared global, no reaching through `RunPlay` fields.
 
@@ -34,8 +36,7 @@ mapping is in section 7 and is the director's private business.
   a longer run-in. Callers always ask `lock_t(boundary_t)` and never assume a number of beats.
 - **Departure lap**: a lap whose end is a boundary. For a track scene these are laps from `doors_from_lap`
   on; for an ordinary scene, its last lap.
-- **Selection is open**: `selection_open()` is true. The target (docs/parallel-development/
-  INTERACTION_DESIGN.md) is that this covers at least 80% of active play: from the scene's first beat until
+- **Selection is open**: `selection_open()` is true. The target (`docs/parallel-development/INTERACTION_DESIGN.md`) is that this covers at least 80% of active play: from the scene's first beat until
   each lock point, including laps that are not departure laps. A request made on a lap that is not a
   departure lap simply stays pending.
 
@@ -95,8 +96,8 @@ Rules, each of which is a test case in section 9:
    unless the destination failed after the lock, in which case it is the scene really entered with
    `landed["fallback"] == true`.
 10. **Complete**: `completed(id)` is emitted exactly once after `switched`, when the outgoing music is
-    silent. It must come before the incoming track's first drop (docs/parallel-development/
-    MUSIC_TRANSITIONS.md). A new request may be made before `completed`, but no new lock happens until it.
+    silent. It must come before the incoming track's first drop
+    (`docs/parallel-development/MUSIC_TRANSITIONS.md`). A new request may be made before `completed`, but no new lock happens until it.
 11. **No duplicates**: there is never a second `locked` for the same boundary, nor a `locked` while another
     id is LOCKED.
 
@@ -144,13 +145,13 @@ not depend on a plan being anything other than `&"cut"`.
 | `tempo_changed` | the engine's `tempo` event |
 | clock | `SongClock` through `RunPlay`; `lap_beat()` from `RunEngine` |
 
-The first deliverable of the Windows branch (milestone W1) installs this seam with `mode` always `&"cut"`,
-which reproduces today's behaviour exactly. Everything after W1 on the music side happens behind it.
+The first deliverable of the music stream (milestone M1) installs this seam with `mode` always `&"cut"`,
+which reproduces today's behaviour exactly. Everything after M1 on the music side happens behind it.
 
 ## 8. The mock
 
 `tests/mocks/mock_transition_director.gd`, `class_name MockTransitionDirector extends TransitionPort`, owned
-by the Ubuntu branch. No audio, no engine.
+by the narrative stream. No audio, no engine. Status on 6 November 2026: it is written (work package N1.4).
 
 - `MockTransitionDirector.new(bpm := 174.0, laps := 4, doors_from_lap := 2, lock_lead_beats := 3.5)`
 - `advance(dt: float)` moves `song_time()` and emits every signal the real director would, in order.
@@ -164,9 +165,10 @@ by the Ubuntu branch. No audio, no engine.
 
 ## 9. Conformance cases
 
-`tests/port_conformance.gd` (Ubuntu-owned; a plain script with one function per case taking a factory that
+`tests/port_conformance.gd` (owned by the narrative stream; a plain script with one function per case taking a factory that
 returns a `TransitionPort` and a way to advance time). `tests/test_port_mock.gd` runs it on the mock. At
-integration `tests/test_port_real.gd` runs the same cases on the real director with a virtual clock.
+integration (stage X1) `tests/test_port_real.gd` runs the same cases on the real director with a virtual clock.
+Status on 6 November 2026: the cases and the mock test are written; the real-director test is not.
 
 1. request, lock, switch, complete, in that order, with one id.
 2. replace before the lock: old id closed `&"replaced"`, only the new one locks.
@@ -191,7 +193,7 @@ Enter a quest from a hub and come back:
 
 ```gdscript
 # narrative side, on a tap (QuestRouter built the destination and holds the pending change)
-var dest := router.destination_for(hotspot_id)   # {"id":"gospel/annunciation","path":"gospel","node":"annunciation","kind":&"quest_entry","quest":"jesus"}
+var dest := router.destination_for(hotspot_id)   # {"id":"gospel/jordan","path":"gospel","node":"jordan","kind":&"quest_entry","quest":"gospel"}
 var id := port.request(dest)
 if id == 0:
 	view.show_refused(hotspot_id, port.last_refusal())
@@ -214,11 +216,23 @@ The player taps the dungeon door, then the stranger, then nothing more: two `req
 
 ## 11. Changing this contract
 
-Each branch's first commit copies `contract/transition_port.gd` and `contract/transition_port.gd.uid` to
+In stage 0.3 of the plan the lead copied `contract/transition_port.gd` and `contract/transition_port.gd.uid` to
 `src/transition/`, byte for byte (`cmp` must report no difference). The `.uid` file is copied too so that
-Godot does not invent a different one on each machine, which would conflict at the merge.
+Godot does not invent a different one in each worktree, which would conflict at the merge.
 
-Neither branch edits `src/transition/transition_port.gd`. A side that needs a change writes it up in
-`docs/parallel-development/requests/` on its own branch and carries on with what the contract allows. The
-owner or the integration session amends `contract/transition_port.gd` and this file on `main`, bumps
-`VERSION`, and both branches merge `main`.
+Neither stream edits `src/transition/transition_port.gd`. An agent that needs a change reports the need to
+the lead and carries on with what the contract allows. Only the lead amends `contract/transition_port.gd` and
+this file, bumps `VERSION`, copies the file to `src/transition/` again, and tells both streams.
+
+## Clarifications (6 November 2026)
+
+Six readings fixed by the lead (`LEAD_RULINGS.md`, rulings 9 to 14) after the mock and the conformance cases were
+written. They narrow version 1 and do not change it: no signal, argument, state, rule or conformance case above
+changes meaning, and `VERSION` stays 1.
+
+1. **Laps are numbered from 1**, as in the engine. `doors_from_lap` 2 with 4 laps gives departure laps 2, 3 and 4. The last lap of a scene is always a departure lap.
+2. **A block is 16 beats.** `when == &"soonest"` means the next 16-beat block boundary that is at least a lock lead away.
+3. **On a replace, `request_closed(old, &"replaced")` comes before `request_acknowledged(new, true, &"")`** (rule 1).
+4. **At a switch, `tempo_changed` comes before `switched`.**
+5. **An unavailable destination may be refused at once** (`request()` returns 0, reason `&"unavailable"`) **or acknowledged and then closed `&"unavailable"` before the lock.** Either way nothing is left pending.
+6. **A `&"blending"` deferral may repeat** at each lock point while the last blend has not completed. `begin_scene` clears the default, so the narrative side sets the default again in its `switched` handler (as the example in section 10 does). A final lap reached while a blend is still running is extended by one lap, without a signal.
