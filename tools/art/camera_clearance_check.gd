@@ -22,6 +22,7 @@ const CENTRE_M := 2.5  # the centre of the picture nearer than this ...
 const FRAME_M := 2.5  # ... and more than FRAME_SHARE of its width nearer than this: the frame is a wall
 const FRAME_SHARE := 0.5
 const FACE_COS := 0.5  # a wall counts only when it faces the eye within 60 degrees: a wall seen at a slant recedes (a corridor's side) and is not a magnified block
+const MIN_HOLD_BEATS := 1.0  # a stare shorter than a beat (0.35 to 0.43 s) is a turn passing a wall
 const RAYS := 11  # across the stage strip, edge to edge (equal steps of screen width)
 const VIEW_ASPECT := 1280.0 / 460.0  # the stage strip of a 1280 x 720 window, the narrowest picture we ship (tests/test_heralds_view.gd)
 const MAX_M := 60.0
@@ -29,6 +30,10 @@ const TRANSIT_M := 0.9  # a moving camera this near a doorway it walks through i
 const FLAGS := {"wh_saw_floor": true, "wh_vip_pass": true}  # every Warehouse entrance on offer (tests/test_heralds_view.gd)
 const PATHS := ["gospel", "squadron", "ember"]
 const SEED := 0
+## Poses accepted with a reason (docs/art/CAMERA_CLEARANCE.md, "Exceptions", each with a shot): scene id -> {kinds: pose kinds (prefixes), why}. Listed, not counted as failures.
+const EXCEPTIONS := {
+	"hospital_late.quiet": {"kinds": ["window look"], "why": "the quiet room is 2.4 m wide and its default exit is behind the standpoint: the window's turn to the choices sweeps across a side wall for about a beat and a half"},
+}
 ## The phase numbers a later scene is played at: the block's glance is glances[(phase * 4 + block + len(id)) % n] and its stroll strolls[floor(that / 3) % n] when that % 3 != 0
 ## (RunRail.ambient), so nine consecutive phases give every combination a scene can meet in a run (the run's own first scene is phase 1).
 const PHASES := [2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -130,7 +135,8 @@ static func sector_of(m: StoryMap, pos: Vector2, sec: String) -> String:
 
 
 ## What the camera sees at `pose`: {centre (m, camera depth), centre_what, share (of the picture's width nearer than FRAME_M), depths}.
-static func clearance(m: StoryMap, pose: Dictionary) -> Dictionary:
+## `full` false: when the centre ray already passes, the other rays are not cast (share 0): the pose cannot fail.
+static func clearance(m: StoryMap, pose: Dictionary, full := true) -> Dictionary:
 	var cam: Vector3 = pose["cam"]
 	var yaw := float(pose["yaw"])
 	var fwd0 := StoryProjector.forward(yaw)
@@ -161,7 +167,11 @@ static func clearance(m: StoryMap, pose: Dictionary) -> Dictionary:
 	var centre := MAX_M
 	var centre_what := ""
 	var centre_d := MAX_M
-	for i in RAYS:
+	var order: Array = range(RAYS)
+	var mid := (RAYS - 1) / 2
+	order.erase(mid)
+	order.push_front(mid)  # (the centre first)
+	for i in order:
 		var f := -1.0 + 2.0 * float(i) / float(RAYS - 1)
 		var h := fwd * cos(p) + rgt * (f * tan_h)
 		var hl := h.length()
@@ -173,11 +183,19 @@ static func clearance(m: StoryMap, pose: Dictionary) -> Dictionary:
 		var facing := float(r["face"]) >= FACE_COS
 		if dep < FRAME_M and facing:
 			near_w += w
-		if i == (RAYS - 1) / 2:
+		if i == mid:
 			centre = dep if facing else MAX_M
 			centre_d = dep
+			if not full and centre >= CENTRE_M:
+				return {"centre": centre, "centre_d": centre_d, "centre_what": str(r["what"]), "share": 0.0, "depths": [dep], "sector": sec}
 			centre_what = str(r["what"])
 	return {"centre": centre, "centre_d": centre_d, "centre_what": centre_what, "share": near_w / tot_w, "depths": depths, "sector": sec}
+
+
+## The pose as a screenshot camera (RW_STORY_CAM=@x:z:yaw:pitch, src/story/story_stage.gd): shoot the failing frame with tools/story/shoot_heralds.sh-style runs.
+static func cam_arg(pose: Dictionary) -> String:
+	var c: Vector3 = pose["cam"]
+	return "@%.2f:%.2f:%.1f:%.1f" % [c.x, c.z, float(pose["yaw"]), float(pose.get("pitch", 0.0))]
 
 
 static func fails(c: Dictionary) -> bool:
@@ -340,7 +358,7 @@ static func kind_at(run: Dictionary, t: float) -> String:
 
 
 ## True while the camera walks through a doorway: a journey move (not a stroll) under way whose route crosses a portal within TRANSIT_M of the eye (the jambs pass by
-## in a beat), or a move on a wall's line (a route along a row of doorways, the gospel maps' spine): that wall is edge-on to the eye, and the shots show the room beyond.
+## in a beat) or that is in a sector it only passes through (a stair, a corridor between two rooms), or a move on a wall's line (a route along a row of doorways, the gospel maps' spine): that wall is edge-on to the eye, and the shots show the room beyond.
 static func in_transit(m: StoryMap, pose: Dictionary, p: StoryPlayer, t: float) -> bool:
 	if not bool(pose.get("moving", false)):
 		return false
@@ -352,6 +370,9 @@ static func in_transit(m: StoryMap, pose: Dictionary, p: StoryPlayer, t: float) 
 	var poly: PackedVector2Array = m.sector(sec).get("poly", PackedVector2Array())
 	if poly.size() >= 3 and StoryMap._dist_to_boundary(o, poly) < StoryProjector.NEAR:
 		return true
+	var legs: Array = ev.get("legs", [])
+	if legs.size() > 2 and str(pose.get("sector", "")) != str(legs[0]) and str(pose.get("sector", "")) != str(legs[legs.size() - 1]):
+		return true  # (a room or a stair the move only passes through)
 	var pts: PackedVector2Array = ev.get("route", PackedVector2Array())
 	for i in range(1, pts.size() - 1):  # (the inner points of a route are the midpoints of the portals it crosses)
 		if pts[i].distance_to(o) < TRANSIT_M:
@@ -360,6 +381,7 @@ static func in_transit(m: StoryMap, pose: Dictionary, p: StoryPlayer, t: float) 
 
 
 ## The failing poses of one played entry, grouped into runs of consecutive samples of one kind: [{from_b, to_b, kind, centre, share, what, worst_t}]. Also counts samples.
+## A stare held for less than MIN_HOLD_BEATS (consecutive failing samples, whatever drives the camera) is a head turning past a wall, not a pose: it is left out.
 static func check_run(run: Dictionary, step_beats: float, dump: Array = []) -> Dictionary:
 	var p: StoryPlayer = run["player"]
 	var m: StoryMap = run["map"]
@@ -370,17 +392,25 @@ static func check_run(run: Dictionary, step_beats: float, dump: Array = []) -> D
 		t = t0  # (before the downbeat the passage frame is shut over the old world)
 	var t_end := float(run["t_end"]) - 0.05
 	var out: Array = []
+	var streak: Array = []  # the runs of the current streak of failing samples
+	var sf := {"from": 0.0}  # (a dictionary: the lambda below sees changes to it)
 	var cur: Dictionary = {}
 	var n := 0
+	var flush := func(last_b: float) -> void:
+		if not streak.is_empty() and last_b - float(sf["from"]) + step_beats >= MIN_HOLD_BEATS - 1.0e-3:
+			out.append_array(streak)
+		streak.clear()
 	while t <= t_end:
 		var pose := p.pose_at(t)
-		var c := clearance(m, pose)
+		var c := clearance(m, pose, not dump.is_empty())
 		var tr := in_transit(m, pose, p, t)
 		n += 1
 		var b := (t - t0) / beat
 		if not dump.is_empty():
 			dump.append("%s,%s,%s,%.2f,%.2f,%.2f,%s,%s,%s" % [run["id"], run["entry"]["kind"], run["entry"]["from"], b, float(c["centre"]), float(c["share"]), kind_at(run, t), tr, str(c["centre_what"]).replace(",", ";")])
 		if fails(c) and not tr:
+			if streak.is_empty():
+				sf["from"] = b
 			var kd := kind_at(run, t)
 			if not cur.is_empty() and str(cur["kind"]) == kd and b - float(cur["to_b"]) <= step_beats + 1.0e-3:
 				cur["to_b"] = b
@@ -389,12 +419,15 @@ static func check_run(run: Dictionary, step_beats: float, dump: Array = []) -> D
 					cur["share"] = c["share"]
 					cur["what"] = c["centre_what"]
 					cur["worst_t"] = t
+					cur["cam"] = cam_arg(pose)
 			else:
-				cur = {"from_b": b, "to_b": b, "kind": kd, "centre": c["centre"], "share": c["share"], "what": c["centre_what"], "worst_t": t}
-				out.append(cur)
+				cur = {"from_b": b, "to_b": b, "kind": kd, "centre": c["centre"], "share": c["share"], "what": c["centre_what"], "worst_t": t, "cam": cam_arg(pose)}
+				streak.append(cur)
 		else:
+			flush.call(b - step_beats)
 			cur = {}
 		t += step_beats * beat
+	flush.call((t - t0) / beat - step_beats)
 	return {"fails": out, "samples": n}
 
 
@@ -410,7 +443,7 @@ static func check_all(step_beats: float, only := "", dump: Array = [], direct_al
 		if re != null and re.search(id) == null:
 			continue
 		for entry in sc["entries"]:
-			var row := {"scene": id, "path": data.path_id, "entry": entry["kind"], "from": entry["from"], "fails": [], "samples": 0, "errors": []}
+			var row := {"scene": id, "path": data.path_id, "entry": entry["kind"], "from": entry["from"], "fails": [], "excepted": [], "samples": 0, "errors": []}
 			var seen := {}
 			for ph in ([1] if str(entry["kind"]) == "direct" else PHASES):
 				var run := play(data, id, entry, ph)
@@ -427,9 +460,16 @@ static func check_all(step_beats: float, only := "", dump: Array = [], direct_al
 					else:
 						f["phases"] = [ph]
 						seen[key] = f
-						row["fails"].append(f)
+						row["excepted" if excepted(id, str(f["kind"])) else "fails"].append(f)
 			out.append(row)
 	return out
+
+
+static func excepted(id: String, kind: String) -> bool:
+	for k in (EXCEPTIONS.get(id, {}) as Dictionary).get("kinds", []):
+		if kind.begins_with(str(k)):
+			return true
+	return false
 
 
 static func world_of(row: Dictionary) -> String:
@@ -438,16 +478,16 @@ static func world_of(row: Dictionary) -> String:
 	return w if str(row["path"]) == "" else "%s/%s" % [row["path"], w]
 
 
-static func table(rows: Array) -> String:
+static func table(rows: Array, key := "fails") -> String:
 	var lines: Array = []
-	lines.append("| scene | entry | phases | beats (from the scene's first downbeat) | pose | centre m | width near | nearest surface at the centre |")
-	lines.append("| --- | --- | --- | --- | --- | --- | --- | --- |")
+	lines.append("| scene | entry | phases | beats (from the scene's first downbeat) | pose | centre m | width near | nearest surface at the centre | camera (RW_STORY_CAM) |")
+	lines.append("| --- | --- | --- | --- | --- | --- | --- | --- | --- |")
 	for r in rows:
 		var sid := str(r["scene"]) if str(r["path"]) == "" else "%s: %s" % [r["path"], r["scene"]]
 		var ent := str(r["entry"]) + ("" if str(r["from"]) == "" else " from %s" % r["from"])
-		for f in r["fails"]:
+		for f in r.get(key, []):
 			var phs: Array = f.get("phases", [])
-			lines.append("| %s | %s | %s | %.1f to %.1f | %s | %.2f | %d%% | %s |" % [sid, ent, "all" if phs.size() == PHASES.size() else ",".join(phs.map(func(x: int) -> String: return str(x))), float(f["from_b"]), float(f["to_b"]), f["kind"], float(f["centre"]), roundi(100.0 * float(f["share"])), f["what"]])
+			lines.append("| %s | %s | %s | %.1f to %.1f | %s | %.2f | %d%% | %s | %s |" % [sid, ent, "all" if phs.size() == PHASES.size() else ",".join(phs.map(func(x: int) -> String: return str(x))), float(f["from_b"]), float(f["to_b"]), f["kind"], float(f["centre"]), roundi(100.0 * float(f["share"])), f["what"], f.get("cam", "")])
 	return "\n".join(lines)
 
 

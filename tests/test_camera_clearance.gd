@@ -1,14 +1,14 @@
 extends TestCase
 ## The run camera never stares into a wall from arm's length (docs/art/VISUAL_AUDIT.md F5 and F16, docs/art/CAMERA_CLEARANCE.md): every scene of the main run and of the three
 ## paths, entered every way the player can come into it (the run's start, the passage from another world, the door walk from each scene before it), is played on the real rail
-## camera with the perfect bot and the default exit, and at one sample a beat no pose may have the centre of the picture and more than half its width on a wall nearer than
-## 2.5 m (tools/art/camera_clearance_check.gd; the tool tools/art/camera_clearance.gd samples twice a beat and writes the table). A scene added later is checked too.
+## camera with the perfect bot and the default exit, and at two samples a beat no pose held for a beat may have the centre of the picture and more than half its width on a wall nearer than
+## 2.5 m (tools/art/camera_clearance_check.gd; the tool tools/art/camera_clearance.gd prints the table, the accepted exceptions are its EXCEPTIONS). A scene added later is checked too.
 
 const CC := preload("res://tools/art/camera_clearance_check.gd")
 
 
 func test_no_scene_pose_stares_into_a_wall() -> void:
-	var rows: Array = CC.check_all(1.0)
+	var rows: Array = CC.check_all(0.5)
 	var scenes := {}
 	var samples := 0
 	for r in rows:
