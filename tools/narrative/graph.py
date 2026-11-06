@@ -228,6 +228,8 @@ def _resolve_route(game, route, here_quest):
         return game.entry_of(p), "quest_entry", p
     if route == "run:warehouse":
         return game.start, "quest_return", here_quest
+    if route == "bassment":  # a hub's entrance into the Bassment, taken at the lap's end (ruling 15; N2.2): not the wizard's mid-scene passage number
+        return game.entry_of("bassment"), "quest_entry", "bassment"
     return None
 
 
@@ -271,7 +273,7 @@ def _scene_edges(game, gid, quest, nodes_of_run, prefix):
                 e["condition"]["continues_by_default_exit"] = True
             if kind == "quest_entry":
                 e["rhythm_gate"] = outcome == "on_pass"  # the entrance is touched in the final window; a miss does not enter (the failure has no route)
-                if str(node.get("trial_gate", "")) and q == "bassment":
+                if str(node.get("trial_gate", "")) and q == "bassment" and route != "bassment":
                     e["legacy"] = True  # the wizard: mid-scene entrance outside the port
             edges.append(e)
     if not hs:  # an automatic scene: it goes on by itself, which costs no choice
@@ -463,16 +465,25 @@ def build_target(game, ov):
 
     entrances = ov["entrances"]
     originals = set()  # existing objects whose gate the overlay removes (a "partial" entrance is a copy of one)
+    authored = set()  # entrance objects the content now has as hotspots (status "existing"): the overlay's ungated edge stands for the hotspot's own edges (N2.2)
     for en in entrances:
         o = en.get("object", {})
         if o.get("status") == "partial" and o.get("copy_of"):
             originals.add(o["copy_of"])
+        if o.get("status") == "existing" and o.get("id"):
+            authored.add(o["id"])
+    for x in ov.get("extra_routes", []):
+        xo = x.get("object", {})
+        if x.get("kind") == "quest_entry" and xo.get("status") == "existing" and xo.get("id"):
+            authored.add(xo["id"])
 
     edges = []
     for e in base.edges:
         if e.get("hidden"):
             continue  # the hidden leaves are rebuilt from the quests' `hidden_fallbacks`
         c = e["condition"]
+        if e["via"] in authored and e["kind"] != "quest_return":
+            continue  # an authored entrance: the overlay's edge below is its route (ungated, through the port)
         if e["via"] in originals:
             if c.get("outcome") == "on_miss":
                 continue  # an ungated entrance has no miss twin
@@ -506,7 +517,7 @@ def build_target(game, ov):
             problems.append(f"entrance {en.get('id')}: unknown quest {q}")
             continue
         o = en.get("object", {})
-        e = add(new_edge(en["scene"], entry_of[q], o.get("id", ""), "quest_entry", "proposed", quest=q, entrance=en["id"],
+        e = add(new_edge(en["scene"], entry_of[q], o.get("id", ""), "quest_entry", "existing" if o.get("id") in authored else "proposed", quest=q, entrance=en["id"],
                          rhythm_gate=bool(en.get("rhythm_gate")), transition=en.get("transition")))
         if o.get("status") == "partial":
             e["note"] = "a copy of " + str(o.get("copy_of")) + " on the hub"
@@ -566,7 +577,7 @@ def build_target(game, ov):
             if q not in entry_of:
                 problems.append(f"extra route on {x.get('scene')}: unknown quest {q}")
                 continue
-            add(new_edge(x["scene"], entry_of[q], x["object"]["id"], "quest_entry", "proposed", quest=q, link="extra_entrance", rhythm_gate=False,
+            add(new_edge(x["scene"], entry_of[q], x["object"]["id"], "quest_entry", "existing" if x["object"]["id"] in authored else "proposed", quest=q, link="extra_entrance", rhythm_gate=False,
                          transition="port"))
         elif kind in ("restart", "second_route"):
             if x.get("to") not in nodes:
@@ -1588,7 +1599,7 @@ def check_cap(g, ov=None, game=None):
         if k > lim:
             over.append(f"{n}: {k} choices (cap {lim})")
         node = game.main.get(n.split("/", 1)[1]) if game and n.startswith("main/") else None
-        data_cap = int(node.get("max_hotspots", 4)) if node is not None else None
+        data_cap = int(node.get("max_hotspots", cap)) if node is not None else None  # (a node without max_hotspots has the default cap of 8, ruling 1)
         if d.get("hub") and data_cap is not None and k > data_cap and k <= hub_cap:
             need_override.append((n, k, data_cap))
     r.fail += over

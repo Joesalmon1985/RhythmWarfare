@@ -10,7 +10,7 @@ extends RefCounted
 ##   ...deferred(id, ...)           ->  router.on_deferred(id)      # the request stays pending, the change is kept
 ##   ...switched(id, landed, t)     ->  router.commit(id, landed)   # the ONLY place the committed route state changes (it saves)
 ##   port.set_default(router.default_destination())                 # on every scene entry
-## attach(port) connects the three signals and sets the default for you.
+## attach(port) connects the three signals and sets the default for you; `committed` then reports every switch's commit() result (RunPlay restores the quest's flags from it).
 ##
 ## The change a request would make is computed when the destination is built and held in `state.pending` against the request id. commit() applies the
 ## change for the scene really entered: the held change when it is for that scene and still current, else a change computed from `landed` (a fallback
@@ -33,6 +33,9 @@ var errors: Array = []
 var last_refusal: StringName = &""
 var save_failures := 0
 
+## After attach(): emitted in the `switched` handler, after commit() and set_default(): the request id, the landed destination and commit()'s result.
+signal committed(id: int, landed: Dictionary, result: Dictionary)
+
 var _candidate: Dictionary = {}
 var _port: TransitionPort = null
 
@@ -53,14 +56,32 @@ func _fresh_state() -> RouteState:
 
 ## ---------------------------------------------------------------- run start and load
 
-## Begins a run on the start scene. Quest progress is kept (it belongs to the player, not the run); everything else is reset. Saves.
-func start_run() -> void:
+## Begins a run on the start scene, or on `scene_id` (a run started from a reached level). Quest progress is kept (it belongs to the player, not the run); everything else is reset. Saves.
+## A run that starts inside a quest (the level list's path worlds, a retry inside a path) enters that quest from the hub of the location the loaded state was last in (the checkpoint of a
+## save closed in the middle of a quest), else from the start's hub: that hub is the checkpoint. Returns {entered, restore_flags} for such a start ({entered: "", restore_flags: []} otherwise).
+func start_run(scene_id: String = "") -> Dictionary:
+	var prev := state
 	var fresh := _fresh_state()
-	fresh.quest_progress = state.quest_progress.duplicate(true)
-	fresh.revision = state.revision + 1
-	fresh.newer_than_known = state.newer_than_known
+	fresh.quest_progress = prev.quest_progress.duplicate(true)
+	fresh.revision = prev.revision + 1
+	fresh.newer_than_known = prev.newer_than_known
+	var out := {"entered": "", "restore_flags": []}
+	if scene_id != "" and scene_id != graph.start and graph.resolves(scene_id):
+		if graph.is_mainline(scene_id):
+			fresh.location = graph.location_of(scene_id)
+			fresh.history = [scene_id]
+		else:
+			var hub := graph.hub_of_scene(prev.current_scene())
+			if hub == "":
+				hub = graph.hub_of_scene(graph.start)
+			fresh.location = graph.location_of(hub)
+			fresh.history = [hub]
+			var info := _apply_landing(fresh, scene_id, hub)
+			out = {"entered": info["entered"], "restore_flags": info["restore"]}
 	state = fresh
+	_candidate = {}
 	_save()
+	return out
 
 
 ## Loads the route state from the store. `extra` is the rest of the save ({"paths": ...}): when the store holds nothing, a quest whose path already has
@@ -129,9 +150,10 @@ func _on_deferred(id: int, _next_boundary_t: float, _reason: StringName) -> void
 
 
 func _on_switched(id: int, landed: Dictionary, _t: float) -> void:
-	commit(id, landed)
+	var res := commit(id, landed)
 	if _port != null:
 		_port.set_default(default_destination())
+	committed.emit(id, landed, res)
 
 
 ## ---------------------------------------------------------------- what the player can do here
@@ -350,11 +372,12 @@ func commit(id: int, landed: Dictionary) -> Dictionary:
 
 
 ## The wizard's entrance is outside the port: the trial begins at once, and the change is committed then (the one commit not made on `switched`, a declared
-## exception). Lands on the quest's entry or saved scene. Returns the same dictionary as commit().
+## exception). Lands on the quest's entry or saved scene. Returns the same dictionary as commit(). The object's flag conditions are not read again: they were its availability
+## when it was touched, and its own success sets the flag that hides it (the wizard's wh_wizard_met) before the trial begins.
 func commit_legacy(object_id: String) -> Dictionary:
 	var scene := state.current_scene()
 	for e in graph.edges_from(scene):
-		if e["via"] == object_id and _is_legacy(e) and e["kind"] == "quest_entry" and _flags_ok(e, _flags()):
+		if e["via"] == object_id and _is_legacy(e) and e["kind"] == "quest_entry":
 			var dest := _dest_of(e)
 			if not dest.is_empty():
 				return commit(0, dest)

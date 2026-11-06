@@ -57,6 +57,21 @@ static func load_default() -> NarrativeGraph:
 	return load_files(CONTENT_DIR, OVERLAY_PATH)
 
 
+static var _cached: NarrativeGraph = null
+
+
+## The game's graph, built once per session (the content does not change while the game runs): RunPlay asks for it at every run start. clear_cache() makes the next call build it again
+## (tests that add fixture rows through HotspotContract.extra_rows).
+static func cached() -> NarrativeGraph:
+	if _cached == null:
+		_cached = load_default()
+	return _cached
+
+
+static func clear_cache() -> void:
+	_cached = null
+
+
 ## Reads the game data under `content_dir` and the overlay, and builds the target graph.
 static func load_files(content_dir: String = CONTENT_DIR, overlay_path: String = OVERLAY_PATH) -> NarrativeGraph:
 	var t0 := Time.get_ticks_usec()
@@ -139,6 +154,7 @@ static func _read_hotspot_dir(dir_path: String, prefix: String, game: Dictionary
 		return
 	var files := Array(DirAccess.get_files_at(dir_path))
 	files.sort()
+	var lists: Array = []
 	for f in files:
 		if not str(f).ends_with(".json"):
 			continue
@@ -146,7 +162,10 @@ static func _read_hotspot_dir(dir_path: String, prefix: String, game: Dictionary
 		if typeof(d) != TYPE_DICTIONARY or typeof((d as Dictionary).get("hotspots")) != TYPE_ARRAY:
 			errs.append("%s has no hotspots array" % dir_path.path_join(str(f)))
 			continue
-		for h in (d as Dictionary)["hotspots"]:
+		lists.append((d as Dictionary)["hotspots"])
+	lists.append(HotspotContract.extra_rows.get(prefix.trim_suffix("/"), []))  # (test fixtures only; empty in the game)
+	for hl in lists:
+		for h in hl:
 			if typeof(h) != TYPE_DICTIONARY:
 				continue
 			var key: String = prefix + str(h.get("scene", ""))
@@ -375,7 +394,7 @@ static func _scene_edges(game: Dictionary, gid: String, quest_id: String, nodes_
 				e["condition"]["continues_by_default_exit"] = true
 			if kind == "quest_entry":
 				e["rhythm_gate"] = pair[1] == "on_pass"  # the entrance is touched in the final window; a miss does not enter
-				if str(node.get("trial_gate", "")) != "" and t[2] == "bassment":
+				if str(node.get("trial_gate", "")) != "" and t[2] == "bassment" and route != HotspotContract.DUNGEON_ROUTE:
 					e["legacy"] = true  # the wizard: a mid-scene entrance outside the port
 			out.append(e)
 	if hs.is_empty():  # an automatic scene goes on by itself, which costs no choice
@@ -399,6 +418,8 @@ static func _target(game: Dictionary, route: String, nodes_of_run: Dictionary, p
 		return [entry_scene(game, p), "quest_entry", p]
 	if route == "run:warehouse":
 		return [game["start"], "quest_return", here_quest]
+	if route == HotspotContract.DUNGEON_ROUTE:  # a hub's entrance into the Bassment at the lap's end (ruling 15; N2.2), not the wizard's mid-scene passage number
+		return [entry_scene(game, "bassment"), "quest_entry", "bassment"]
 	return []
 
 
@@ -439,10 +460,17 @@ func _build(game: Dictionary, ov: Dictionary) -> void:
 		entry_of[str(q["id"])] = str(q["entry"])
 	var entrances: Array = ov["entrances"]
 	var originals := {}  # existing objects whose gate the overlay removes (a "partial" entrance is a copy of one)
+	var authored := {}  # entrance objects the content now has as hotspots (status "existing"): the overlay's ungated edge stands for the hotspot's own edges (N2.2)
 	for en in entrances:
 		var o: Dictionary = en.get("object", {})
 		if o.get("status") == "partial" and _truthy(o.get("copy_of")):
 			originals[str(o["copy_of"])] = true
+		if o.get("status") == "existing" and _truthy(o.get("id")):
+			authored[str(o["id"])] = true
+	for x in ov.get("extra_routes", []):
+		var xo0: Dictionary = x.get("object", {})
+		if str(x.get("kind", "")) == "quest_entry" and xo0.get("status") == "existing" and _truthy(xo0.get("id")):
+			authored[str(xo0["id"])] = true
 
 	var out: Array = []
 	for e0 in base["edges"]:
@@ -450,6 +478,8 @@ func _build(game: Dictionary, ov: Dictionary) -> void:
 		if e.get("hidden", false):
 			continue  # the hidden leaves are rebuilt from the quests' `hidden_fallbacks`
 		var c: Dictionary = e["condition"]
+		if authored.has(e["via"]) and e["kind"] != "quest_return":
+			continue  # an authored entrance: the overlay's edge below is its route (ungated, through the port)
 		if originals.has(e["via"]):
 			if c.get("outcome") == "on_miss":
 				continue  # an ungated entrance has no miss twin
@@ -479,7 +509,7 @@ func _build(game: Dictionary, ov: Dictionary) -> void:
 			problems.append("entrance %s: unknown quest %s" % [str(en.get("id", "")), q])
 			continue
 		var o: Dictionary = en.get("object", {})
-		var e := _edge(str(en["scene"]), entry_of[q], str(o.get("id", "")), "quest_entry", "proposed", q,
+		var e := _edge(str(en["scene"]), entry_of[q], str(o.get("id", "")), "quest_entry", "existing" if authored.has(str(o.get("id", ""))) else "proposed", q,
 			{"entrance": en["id"], "rhythm_gate": bool(en.get("rhythm_gate", false)), "transition": en.get("transition")})
 		out.append(e)
 		if o.get("status") == "partial":
@@ -563,7 +593,7 @@ func _build(game: Dictionary, ov: Dictionary) -> void:
 			if not entry_of.has(q2):
 				problems.append("extra route on %s: unknown quest %s" % [str(x["scene"]), q2])
 				continue
-			out.append(_edge(str(x["scene"]), entry_of[q2], str(xo["id"]), "quest_entry", "proposed", q2,
+			out.append(_edge(str(x["scene"]), entry_of[q2], str(xo["id"]), "quest_entry", "existing" if authored.has(str(xo["id"])) else "proposed", q2,
 				{"link": "extra_entrance", "rhythm_gate": false, "transition": "port"}))
 		elif kind == "restart" or kind == "second_route":
 			if not nodes.has(str(x.get("to", ""))):

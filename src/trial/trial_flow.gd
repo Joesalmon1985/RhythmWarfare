@@ -28,12 +28,13 @@ var flags: Array = []  # items the player carries (ids from the data's "items");
 var gained := ""  # the item picked up on entering the current passage ("" when none)
 
 
-func _init(p_data: TrialData = null, start_passage: int = -1) -> void:
+func _init(p_data: TrialData = null, start_passage: int = -1, carried: Array = []) -> void:
 	if p_data != null:
-		begin(p_data, start_passage)
+		begin(p_data, start_passage, carried)
 
 
-func begin(p_data: TrialData, start_passage: int = -1) -> void:
+## `carried`: the items the player had when they last left the dungeon (the narrative router's saved progress, work package N2.2): held again from the first passage.
+func begin(p_data: TrialData, start_passage: int = -1, carried: Array = []) -> void:
 	data = p_data
 	state = State.SCENE
 	passage = start_passage if start_passage >= 0 and data.passages.has(start_passage) else data.start
@@ -46,6 +47,9 @@ func begin(p_data: TrialData, start_passage: int = -1) -> void:
 	visited = [passage]
 	rejoined = []
 	flags = []
+	for it in carried:
+		if data.items.has(str(it)) and not flags.has(str(it)):
+			flags.append(str(it))
 	gained = ""
 	exit = ""
 	_collect()
