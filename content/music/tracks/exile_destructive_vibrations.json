@@ -11,10 +11,10 @@
  "duration_s": 268.9035,
  "tempo": {
   "bpm": 175.0007,
-  "first_downbeat_s": 0.0005,
+  "first_downbeat_s": 0.0006,
   "constant": true,
-  "drift_ms_max": 2.43,
-  "confidence": 0.832,
+  "drift_ms_max": 3.93,
+  "confidence": 0.782,
   "ratio_to_174": 1.00575
  },
  "voices": [
@@ -36,7 +36,7 @@
    "key": "other",
    "label": "Synths",
    "kind": "pitched",
-   "separation": "carries 9.6% of the energy, sounding in 93% of the track; sub-bass leaking in (8.1% below 60 Hz); little drum bleed (attack coincidence 1.4x chance).",
+   "separation": "carries 9.5% of the energy, sounding in 93% of the track; sub-bass leaking in (7.7% below 60 Hz); little drum bleed (attack coincidence 1.4x chance).",
    "focus_share_of_track": 0.49
   }
  ],
@@ -48,7 +48,7 @@
    "end_s": 10.97,
    "bar_from": 0,
    "bar_to": 8,
-   "intensity_db": -51.5
+   "intensity_db": -44.8
   },
   {
    "id": "build1",
@@ -57,7 +57,7 @@
    "end_s": 43.89,
    "bar_from": 8,
    "bar_to": 32,
-   "intensity_db": -40.0
+   "intensity_db": -33.0
   },
   {
    "id": "drop1",
@@ -66,7 +66,7 @@
    "end_s": 131.66,
    "bar_from": 32,
    "bar_to": 96,
-   "intensity_db": -2.0
+   "intensity_db": -1.8
   },
   {
    "id": "breakdown1",
@@ -75,7 +75,7 @@
    "end_s": 164.57,
    "bar_from": 96,
    "bar_to": 120,
-   "intensity_db": -34.3
+   "intensity_db": -34.0
   },
   {
    "id": "build2",
@@ -84,7 +84,7 @@
    "end_s": 175.54,
    "bar_from": 120,
    "bar_to": 128,
-   "intensity_db": -10.0
+   "intensity_db": -9.9
   },
   {
    "id": "drop2",
@@ -102,7 +102,7 @@
    "end_s": 268.9,
    "bar_from": 192,
    "bar_to": 196,
-   "intensity_db": -67.2
+   "intensity_db": -60.1
   }
  ],
  "focus": [
@@ -116,7 +116,7 @@
     "intro1",
     "build1"
    ],
-   "share": 0.891,
+   "share": 0.892,
    "runner_up": "tops"
   },
   {
@@ -129,7 +129,7 @@
     "build1",
     "drop1"
    ],
-   "share": 0.535,
+   "share": 0.555,
    "runner_up": "other"
   },
   {
@@ -153,7 +153,7 @@
    "sections": [
     "drop1"
    ],
-   "share": 0.744,
+   "share": 0.721,
    "runner_up": "other"
   },
   {
@@ -165,7 +165,7 @@
    "sections": [
     "drop1"
    ],
-   "share": 0.275,
+   "share": 0.272,
    "runner_up": "tops"
   },
   {
@@ -177,7 +177,7 @@
    "sections": [
     "drop1"
    ],
-   "share": 0.701,
+   "share": 0.691,
    "runner_up": "other"
   },
   {
@@ -189,7 +189,7 @@
    "sections": [
     "drop1"
    ],
-   "share": 0.228,
+   "share": 0.238,
    "runner_up": "tops"
   },
   {
@@ -201,7 +201,7 @@
    "sections": [
     "drop1"
    ],
-   "share": 0.757,
+   "share": 0.773,
    "runner_up": "other"
   },
   {
@@ -213,7 +213,7 @@
    "sections": [
     "breakdown1"
    ],
-   "share": 0.817,
+   "share": 0.846,
    "runner_up": "tops"
   },
   {
@@ -225,7 +225,7 @@
    "sections": [
     "build2"
    ],
-   "share": 0.106,
+   "share": 0.105,
    "runner_up": "other"
   },
   {
@@ -237,7 +237,7 @@
    "sections": [
     "drop2"
    ],
-   "share": 0.566,
+   "share": 0.571,
    "runner_up": "other"
   },
   {
@@ -249,35 +249,23 @@
    "sections": [
     "drop2"
    ],
-   "share": 0.207,
+   "share": 0.215,
    "runner_up": "tops"
   },
   {
    "voice": "tops",
    "start_s": 197.49,
-   "end_s": 208.46,
-   "bar_from": 144,
-   "bar_to": 152,
-   "sections": [
-    "drop2"
-   ],
-   "share": 0.619,
-   "runner_up": "other"
-  },
-  {
-   "voice": "other",
-   "start_s": 208.46,
    "end_s": 219.43,
-   "bar_from": 152,
+   "bar_from": 144,
    "bar_to": 160,
    "sections": [
     "drop2"
    ],
-   "share": 0.218,
-   "runner_up": "tops"
+   "share": 0.662,
+   "runner_up": "other"
   },
   {
-   "voice": "tops",
+   "voice": "other",
    "start_s": 219.43,
    "end_s": 230.4,
    "bar_from": 160,
@@ -285,11 +273,11 @@
    "sections": [
     "drop2"
    ],
-   "share": 0.619,
-   "runner_up": "other"
+   "share": 0.263,
+   "runner_up": "tops"
   },
   {
-   "voice": "other",
+   "voice": "tops",
    "start_s": 230.4,
    "end_s": 241.37,
    "bar_from": 168,
@@ -297,23 +285,35 @@
    "sections": [
     "drop2"
    ],
-   "share": 0.23,
+   "share": 0.643,
+   "runner_up": "other"
+  },
+  {
+   "voice": "other",
+   "start_s": 241.37,
+   "end_s": 252.34,
+   "bar_from": 176,
+   "bar_to": 184,
+   "sections": [
+    "drop2"
+   ],
+   "share": 0.242,
    "runner_up": "tops"
   },
   {
    "voice": "tops",
-   "start_s": 241.37,
+   "start_s": 252.34,
    "end_s": 263.31,
-   "bar_from": 176,
+   "bar_from": 184,
    "bar_to": 192,
    "sections": [
     "drop2"
    ],
-   "share": 0.69,
-   "runner_up": "other"
+   "share": 0.763,
+   "runner_up": "kick"
   }
  ],
- "focus_timeline_bars": "other 0-24, tops 24-48, other 48-56, tops 56-64, other 64-72, tops 72-80, other 80-88, tops 88-96, other 96-120, kick 120-128, tops 128-136, other 136-144, tops 144-152, other 152-160, tops 160-168, other 168-176, tops 176-192, (none) 192-197",
+ "focus_timeline_bars": "other 0-24, tops 24-48, other 48-56, tops 56-64, other 64-72, tops 72-80, other 80-88, tops 88-96, other 96-120, kick 120-128, tops 128-136, other 136-144, tops 144-160, other 160-168, tops 168-176, other 176-184, tops 184-192, (none) 192-197",
  "nothing_to_play": [
   {
    "start_s": 263.31,
@@ -324,43 +324,43 @@
  ],
  "charts": {
   "easy": {
-   "cues": 313,
-   "holds": 2,
-   "per_s": 1.164,
-   "per_beat_of_focus": 0.408,
+   "cues": 314,
+   "holds": 4,
+   "per_s": 1.168,
+   "per_beat_of_focus": 0.409,
    "by_voice": {
-    "other": 144,
-    "tops": 157,
-    "kick": 12
+    "other": 140,
+    "tops": 160,
+    "kick": 14
    }
   },
   "normal": {
-   "cues": 510,
-   "holds": 4,
-   "per_s": 1.897,
-   "per_beat_of_focus": 0.664,
+   "cues": 509,
+   "holds": 5,
+   "per_s": 1.893,
+   "per_beat_of_focus": 0.663,
    "by_voice": {
-    "other": 237,
-    "tops": 254,
-    "kick": 19
+    "other": 230,
+    "tops": 256,
+    "kick": 23
    }
   },
   "hard": {
-   "cues": 634,
-   "holds": 4,
-   "per_s": 2.358,
-   "per_beat_of_focus": 0.826,
+   "cues": 637,
+   "holds": 5,
+   "per_s": 2.369,
+   "per_beat_of_focus": 0.829,
    "by_voice": {
-    "other": 284,
-    "tops": 327,
-    "kick": 23
+    "other": 261,
+    "tops": 344,
+    "kick": 32
    }
   }
  },
  "default_chart": "normal",
  "validation": {
-  "violations": 1,
-  "stems_sum_error_db": -35.12
+  "violations": 0,
+  "stems_sum_error_db": -35.07
  },
  "quick": {
   "bpm": 175.0,

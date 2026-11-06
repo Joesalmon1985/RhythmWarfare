@@ -334,7 +334,7 @@
  },
  "default_chart": "normal",
  "validation": {
-  "violations": 1,
+  "violations": 0,
   "stems_sum_error_db": -37.63
  },
  "quick": {
