@@ -197,7 +197,7 @@ func _ready() -> void:
 		trial_begin_now(0.0, sp, true)
 		var ci: float = trial.engine.count_in_s()
 		_vt = -ci
-		hud.visible = false
+		hud.fade_out()
 		_gate.visible = false
 		if virtual_mode:
 			_step_virtual(_vt)
@@ -2316,7 +2316,7 @@ func _trial_step(t: float) -> void:
 func trial_begin_now(entry_t: float, start_passage: int, direct: bool) -> void:
 	if not direct:
 		_close_routes({})
-		hud.visible = false
+		hud.fade_out()
 		_gate.visible = false
 	trial_state = "in"
 	if director != null:

@@ -51,6 +51,12 @@ func fade_out(seconds := FADE_IN_S) -> void:
 	_hide_at = float(Time.get_ticks_msec()) / 1000.0 + (0.0 if reduced else seconds)
 	_hide_s = maxf(seconds, 0.001)
 	queue_redraw()
+	if is_inside_tree():  # the fade is drawn only when the run redraws the HUD: the hide itself must not depend on that
+		var due := _hide_at
+		get_tree().create_timer(_hide_s if not reduced else 0.0).timeout.connect(func() -> void:
+			if _hide_at == due:
+				_hide_at = -1.0
+				hide())
 
 
 func caption(text: String, tone: String, t0: float, hold := 1.8) -> void:
