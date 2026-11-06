@@ -49,6 +49,7 @@ var _acting: Dictionary = {}  # actor id -> "<state>|<hotspot id>" of the act th
 ## unset: no staging (the old look). From the scene's first beat every staged option shows whether it is the current choice (ChoiceStaging), not only in the window.
 var choice_fn: Callable
 var props: ChoiceProps = null
+var heralds: StoryHeralds = null  # the quest entrances' heralds (lead ruling 25): scenery of a staged entrance, never a hotspot
 var touch_rects := false  # a generous touch area on the thing itself (ChoiceStaging `touch`), besides the ring's radius
 var last_snapshot: Dictionary = {}
 var _mem: Dictionary = {}  # hotspot id -> {role, t_role, open, t_open, key_act, key_steps}
@@ -937,6 +938,12 @@ func _stage_choice(snap: Dictionary, t: float) -> void:
 		stage.world.add_child(props)
 	if props != null:
 		props.begin_frame()
+	if heralds == null:
+		heralds = StoryHeralds.new(stage)
+	heralds.stage = stage
+	heralds.beat_s = beat_s
+	heralds.reduced = reduced
+	heralds.begin_frame(t)
 	var opts: Dictionary = snap.get("options", {})
 	var u := (t / beat_s) if beat_s > 0.0 else 0.0
 	for id in opts:
@@ -993,6 +1000,8 @@ func _stage_choice(snap: Dictionary, t: float) -> void:
 			var ly := float(st.get("lamp_y", float(st.get("height_m", 2.4)) + 0.15 if str(st["archetype"]) == "door" else centre_y + 0.6))
 			props.put(id + "#lamp", "lamp_go" if lamp == "go" else "lamp_stop", foot + Vector3(0.0, ly, 0.0), 0.34, 1.0)
 		_play_steps(id, st, role, touched_now, foot, u, t)
+		heralds.put(h, role)
+	heralds.end_frame()
 	if props != null:
 		props.end_frame()
 
