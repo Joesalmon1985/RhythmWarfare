@@ -240,7 +240,7 @@ while sitting down the pile grows from nothing as the money comes out of the poc
 ### 9.6 Moving the table to another room
 
 Everything is in the two generators; the blackjack code names no room. In `tools/run/make_scenes.py`: move the `day_cards` waypoint (`NEW_WAYPOINTS`), the `cards_table` occluder (`NEW_OCCLUDERS`) and the `lt_cards_lamp` light (`NEW_LIGHTS`)
-to the new map and coordinates, and move `n["max_hotspots"] = 5` to the new scene if it already has four hotspots (or drop it). In `tools/run/make_hotspots.py`: move the `ob("ward", "cards", ...)` line under the new scene, with its anchor position
+to the new map and coordinates, and move `n["max_hotspots"] = 5` to the new scene if it already has four hotspots (or drop it). In `tools/run/hotspot_tables/ward.py` (the world tables moved out of `make_hotspots.py`): move the `ob("ward", "cards", ...)` line under the new scene, with its anchor position
 and the waypoint in its three cinematics. Then `python3 tools/run/make_hotspots.py && python3 tools/run/make_scenes.py && git checkout -- content/story/music.json && python3 tools/run/check_hotspots.py`.
 Two things found while placing it: an occluder nearer than about 3.3 m to the camera is culled, so the chair waypoint stands that far back; and "things" (billboards) are drawn behind the dancers, which is why the table is an occluder.
 
