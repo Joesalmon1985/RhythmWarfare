@@ -46,14 +46,20 @@ var _fade_s := 0.6
 var _requested: Dictionary = {}
 var _started := false
 var _effect_players: Array = []
+var track: RunTrackAudio  # TRACK SCENES (docs/RUN_TRACK_SCENES.md "Audio"): a whole recorded track under a track scene instead of its loops (src/run/run_track_audio.gd); every event is handed to it
 
 
 func configure(p_data: RunData) -> void:
 	data = p_data
 	cfg = data.cfg
 	retarget(p_data)
-	loop_seconds = float(cfg["timing"]["phase_beats"]) * beat_s
-	_clock_stream = silent_loop(int(cfg["timing"]["phase_beats"]), int(cfg["timing"]["bpm"]))
+	tempo_free = p_data.track_scenes != null or tempo_free
+	if tempo_free:
+		_clock_stream = free_clock()
+		loop_seconds = float(_clock_stream.loop_end) / float(_clock_stream.mix_rate)
+	else:
+		loop_seconds = float(cfg["timing"]["phase_beats"]) * beat_s
+		_clock_stream = silent_loop(int(cfg["timing"]["phase_beats"]), int(cfg["timing"]["bpm"]))
 	if player != null:  # added to the tree before configure()
 		player.stream = _clock_stream
 	_ensure_bus(MIX_BUS, AudioServer.get_bus_name(ensure_music_bus()))
@@ -63,6 +69,8 @@ func configure(p_data: RunData) -> void:
 	for k in 2:
 		_ensure_bus(str(TONE_BUSES[k]), str(BUS_PAIRS[k][1]))
 	apply_mix_level()
+	if track != null:
+		track.configure(cfg)
 
 
 ## A bus that sends to `send`, after it in the bus list (a bus can only send to one mixed after it, i.e. with a lower index).
@@ -97,6 +105,8 @@ func retarget(p_data: RunData) -> void:
 	beat_s = 60.0 / float(cfg["timing"]["bpm"])
 	_ramp_s = float(cfg["mix"]["ramp_s"])
 	_fade_s = float(cfg["mix"]["phase_fade_s"])
+	if track != null:
+		track.configure(cfg)
 
 
 ## The clock's mix rate for a tempo: one where a beat is a whole number of frames (60 / bpm * rate is an integer), so a 64-beat loop has no rounding at all. 174, 124, 140 and 145 BPM have the rates
@@ -119,6 +129,31 @@ static func _gcd(a: int, b: int) -> int:
 ## Frames in one beat of the clock loop at `bpm` (a whole number by construction).
 static func frames_per_beat(bpm: int) -> int:
 	return int(round(60.0 / float(bpm) * float(clock_rate(bpm))))
+
+
+## THE TEMPO-FREE CLOCK (track scenes on, M1.4): one silent loop at the mix rate itself (48,000 Hz here), FREE_FRAMES long, never swapped. A clock stream at another rate is resampled with a
+## truncated fixed-point step: the 8,700 Hz loop runs 7.7e-5 slow against a 48 kHz stem (measured on the Dummy driver, 40 s: 7.7 ms per 100 s), which a whole recorded track playing for up to
+## 176 s without a restart would hear as 13 ms of drift between its cues and its audio. At the mix rate the step is exactly 1, so song time and the track's playhead advance together, sample for
+## sample. Nothing reads the loop's length but the wrap counting (StemTransport.playback_position), so it need not be a whole number of beats: every tempo (a float) is just a beat length on
+## the engine's grid, and neither a track scene nor a path hand-off swaps the stream (song time never jumps). With track scenes off the run keeps its per-tempo loops exactly as before.
+const FREE_FRAMES := 1 << 20  # 21.85 s at 48 kHz
+var tempo_free := false
+
+
+static func free_clock() -> AudioStreamWAV:
+	var rate := int(AudioServer.get_mix_rate())
+	var s := AudioStreamWAV.new()
+	s.format = AudioStreamWAV.FORMAT_8_BITS
+	s.mix_rate = rate
+	s.stereo = false
+	var d := PackedByteArray()
+	d.resize(FREE_FRAMES)
+	d.fill(0)
+	s.data = d
+	s.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	s.loop_begin = 0
+	s.loop_end = FREE_FRAMES
+	return s
 
 
 ## A silent mono 8-bit loop of exactly `beats` beats: the mix rate is chosen so a beat is a whole number of frames, so the loop has no rounding.
@@ -144,6 +179,12 @@ func _ready() -> void:
 	super._ready()
 	if _clock_stream != null:
 		player.stream = _clock_stream
+	track = RunTrackAudio.new()
+	track.name = "TrackAudio"
+	track.run_audio = self
+	add_child(track)
+	if cfg != null and not cfg.is_empty():
+		track.configure(cfg)
 
 
 func start() -> void:
@@ -154,6 +195,8 @@ func start() -> void:
 	_dip = false
 	_started = true
 	player.play(0.0)
+	if track != null:
+		track.start_with_clock()
 
 
 func pause() -> void:
@@ -164,6 +207,8 @@ func pause() -> void:
 	for p in _effect_players:
 		if is_instance_valid(p):
 			(p as AudioStreamPlayer).stream_paused = true
+	if track != null:
+		track.pause()
 
 
 func resume() -> void:
@@ -174,6 +219,8 @@ func resume() -> void:
 	for p in _effect_players:
 		if is_instance_valid(p):
 			(p as AudioStreamPlayer).stream_paused = false
+	if track != null:
+		track.resume()
 
 
 func stop() -> void:
@@ -183,6 +230,8 @@ func stop() -> void:
 			(v["player"] as AudioStreamPlayer).stop()
 	_groups.clear()
 	_schedule.clear()
+	if track != null:
+		track.stop()
 
 
 ## Song time of the sound reaching the listener (what SongClock computes while playing).
@@ -194,9 +243,13 @@ func now_t() -> float:
 
 ## Feeds an engine event (phase_start, mix, reveal, route_window, depleted, run_over); everything is scheduled at the event's own song time.
 func on_event(ev: Dictionary) -> void:
+	if track != null:
+		track.on_event(ev)
 	match str(ev["kind"]):
 		"phase_start":
 			_schedule_add({"t": float(ev["t"]), "kind": "phase", "ev": ev})
+			if ev.has("track"):  # a track scene: the track plays (RunTrackAudio), no loops start; the scene before fades as at any phase change
+				return
 			var secs: Array = data.nodes[str(ev["node"])].get("sections", [])
 			for i in range(1, secs.size()):
 				_schedule_add({"t": float(ev["t"]) + float(secs[i]["start_beat"]) * beat_s, "kind": "section", "phase": int(ev["phase"]), "index": i, "section": secs[i]})
@@ -211,7 +264,8 @@ func on_event(ev: Dictionary) -> void:
 				_schedule_add({"t": float(ev["t"]), "kind": "dip", "on": true})
 				_schedule_add({"t": float(ev["t"]) + dip_beats() * beat_s, "kind": "dip", "on": false})
 		"route_window":
-			_schedule_add({"t": float(ev["t"]), "kind": "effect", "name": ev["effect"]})
+			if not ev.has("track"):  # (no riser or fall over a recorded track: they are cut for the loops, and would sound on every open lap)
+				_schedule_add({"t": float(ev["t"]), "kind": "effect", "name": ev["effect"]})
 		"depleted":
 			_schedule_add({"t": float(ev["t"]), "kind": "fade", "seconds": float(ev["fade_s"])})
 
@@ -279,6 +333,8 @@ func _process(delta: float) -> void:
 	while not _schedule.is_empty() and float(_schedule[0]["t"]) <= now + ttnm:
 		var item: Dictionary = _schedule.pop_front()
 		_run(item, now, ttnm)
+	if track != null:
+		track.step(now, ttnm)
 	var step := delta / maxf(_ramp_s, 0.01)
 	var drop: Array = []
 	for g in _groups:
@@ -365,6 +421,10 @@ func _run(item: Dictionary, now: float, ttnm: float) -> void:
 func _swap_clock(item: Dictionary, now: float, ttnm: float) -> void:
 	var t := float(item["t"])
 	var bpm := int(item["bpm"])
+	if tempo_free:  # the clock knows no tempo: the hand-off changes the run's level only, song time goes on untouched
+		apply_mix_level()
+		clock_log.append({"period": 0.0, "t": t, "bpm": bpm, "beat_s": 60.0 / float(bpm), "from": 0.0, "frames_per_beat": 0, "rate": _clock_stream.mix_rate, "loop_seconds": loop_seconds, "tempo_free": true})
+		return
 	_clock_stream = silent_loop(int(item["beats"]), bpm)
 	var from := maxf(now + ttnm - t, 0.0)
 	# The new stream's position is reported, like every stream's, as of the END of the last mixed chunk, and its first chunk starts at `from`: after the first mix it reads from + one mix period, a
@@ -396,13 +456,15 @@ func _live_group() -> Dictionary:
 
 func _begin_phase(ev: Dictionary, t: float, now: float, ttnm: float) -> void:
 	var prev := _live_group()
-	var node: Dictionary = data.nodes[str(ev["node"])]
-	var family := str(node.get("family", ""))
 	_end_carry()  # (a carry still running from the phase before is over)
 	for g in _groups:
 		g["fading"] = true
 		for v in g["voices"].values():
 			v["target"] = 0.0
+	if ev.has("track"):  # a track scene: the loops of the scene before fade out, nothing starts here (no carried bass either)
+		return
+	var node: Dictionary = data.nodes[str(ev["node"])]
+	var family := str(node.get("family", ""))
 	# the previous scene's bass carries on under this scene's drums-alone block when both play one music family (same key and sound): it fades out at the carry's end, as this scene's own bass enters
 	var carry: Dictionary = cfg.get("mix", {}).get("carry_bass", {})
 	if not prev.is_empty() and prev["voices"].has("bass") and float(carry.get("gain", 0.0)) > 0.0 and family != "" and str(prev.get("family", "")) == family:

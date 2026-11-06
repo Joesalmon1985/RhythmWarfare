@@ -103,6 +103,8 @@ var acting_log: Array = []  # [{t, hotspot, actor, success, acts}] every outcome
 var playtest: Dictionary = {}  # the options of a start from the Debug / Playtest scene list ({} otherwise): see PlaytestMode, docs/DEBUG_MODE.md
 var playtest_overlay: PlaytestOverlay  # the playtest overlay; null unless PlaytestMode.on()
 var _pause_note: LineEdit
+var track_log: Array = []  # the track scenes played (see _on_track_event)
+var _track_stay_phase := -1  # the phase whose open window is not the last lap's (route_window.last false): touching nothing stays, so no door shows the way out
 
 
 func _ready() -> void:
@@ -142,6 +144,14 @@ func _ready() -> void:
 	minigames = MinigameController.new(engine, Session.run_progress.get("wallet"), Session.run_progress.run_seed())  # minigames: registry from content/minigames
 	minigames.load_registry()
 	_mg = RunMinigameHost.new(self)
+	if not virtual_mode:  # (the audio before the first scene: a track scene's stems are decoded now, before the countdown, and the engine asks the audio whether a track is ready)
+		audio = RunAudio.new()
+		add_child(audio)
+		audio.configure(data)
+		_wire_track_audio()
+		var prep_ms := audio.track.prepare(data, start)
+		if prep_ms > 0.0:
+			print("RUN track stems of the first scene decoded in %.0f ms (before the countdown)" % prep_ms)
 	engine.begin(start)
 	if float(playtest.get("energy", -1.0)) >= 0.0:  # the scene list's start-energy option
 		engine.energy = float(playtest["energy"])
@@ -152,12 +162,11 @@ func _ready() -> void:
 	if virtual_mode:
 		clock = SongClock.new(null)
 	else:
-		audio = RunAudio.new()
-		add_child(audio)
-		audio.configure(data)
 		clock = SongClock.new(audio)
 		clock.calibration_ms = Session.calibration_ms
 	_preload_portals()
+	if audio != null:
+		audio.track.warm([data] + _path_cache.values())  # (every scene plan made on a worker thread: the engine never parses a track.json on a frame)
 	_build_layout(start)
 	_setup_bot()
 	if OS.get_environment("RW_RUN_CLEAN") == "1":  # screenshot aid: no falling notes and no HUD over the picture (tools/run/capture.sh --acting)
@@ -195,6 +204,14 @@ func _ready() -> void:
 		_step_virtual(_vt)
 	else:
 		clock.begin_countdown(COUNTDOWN_S)
+
+
+## TRACK SCENES: the engine asks the track audio whether a scene's stems are ready (else it is an ordinary scene this visit), and the mute rule reads the engine's cues. Again after every hand-off.
+func _wire_track_audio() -> void:
+	if audio == null or audio.track == null or engine == null:
+		return
+	engine.track_gate = audio.track.is_ready
+	audio.track.notes_fn = func() -> Array: return engine.level.notes if engine != null and engine.level != null else []
 
 
 ## The paths the Warehouse's portals lead to (those that exist): their data is read once, before the countdown (not on the downbeat of the handoff), and their start pack is loaded ahead on a thread.
@@ -583,6 +600,9 @@ func _bot_step(t: float) -> void:
 func _bot_taps(t: float) -> void:
 	if tap_policy == "none" or not engine.window_open:
 		return
+	if engine.is_track_scene() and engine.lap < engine.laps:  # a track scene's open lap: a tap would leave now. RW_RUN_TRACK_EXIT=first leaves at the first open lap; otherwise (end) the bot plays to the default end
+		if OS.get_environment("RW_RUN_TRACK_EXIT") != "first" or engine.lap != engine.doors_from_lap:
+			return
 	var beat := engine.phase_beat_at(t)
 	var portal := OS.get_environment("RW_RUN_PORTAL")
 	if portal != "" and run_path == "":  # the bot touches a portal (once per phase, at beat 51) and keeps it
@@ -747,7 +767,7 @@ func _advance(t: float, audio_t: float) -> void:
 	if trial_state == "":
 		_prebuild_in_guard(t)
 	if _debug_label.visible:
-		_debug_label.text = "t=%6.2f phase %d (%s) block %d stage %d energy %.0f rail %s (%s)  fps %d" % [t, engine.phase_n, engine.node_id, engine.block, engine.stage, engine.energy, journey.rail.place() if journey.rail != null else "-", journey.rail.role if journey.rail != null else "-", Engine.get_frames_per_second()]
+		_debug_label.text = "t=%6.2f phase %d (%s) block %d stage %d energy %.0f rail %s (%s)  fps %d" % [t, engine.phase_n, engine.node_id, engine.block, engine.stage, engine.energy, journey.rail.place() if journey.rail != null else "-", journey.rail.role if journey.rail != null else "-", Engine.get_frames_per_second()] + _track_debug()
 	if _until_phase > 0 and engine.scene_index() > _until_phase and not _ended:
 		_ended = true
 		print("RUN reached phase %d at %s, energy %.0f" % [engine.scene_index(), engine.node_id, engine.energy])
@@ -756,6 +776,12 @@ func _advance(t: float, audio_t: float) -> void:
 		print("RUN summary ", JSON.stringify(summary()))
 		if OS.get_environment("RW_STORY_QUIT") == "1":
 			get_tree().quit()
+
+
+## The F3 line's track part: " track <id> lap k/n entry bar E" in a track scene, "" elsewhere.
+func _track_debug() -> String:
+	var ti := engine.track_info()
+	return "" if ti.is_empty() else "  track %s lap %d/%d entry bar %d %.2f BPM" % [str(ti["track"]), int(ti["lap"]), int(ti["laps"]), int(ti["entry_bar"]), float(ti["bpm"])]
 
 
 ## A world change is a walk through a doorway: from beat 62 of a phase whose chosen route leads to another world the frame closes to a lit door, and it opens on the
@@ -810,7 +836,7 @@ func summary() -> Dictionary:
 		if worlds_seen.is_empty() or worlds_seen[worlds_seen.size() - 1] != wid:
 			worlds_seen.append(wid)
 	return {"nodes": phase_log.map(func(p: Dictionary) -> String: return str(p["node"])), "laps": lap_log.map(func(l: Dictionary) -> String: return str(l["node"])), "worlds_seen": worlds_seen, "rail": rails, "moves": moves, "glances": looks, "strolls": walks, "worlds": stages.keys(),
-		"energy": snappedf(engine.energy, 0.1), "reached": Session.run_progress.reached_ids(), "minigames": minigames.log.size()}
+		"energy": snappedf(engine.energy, 0.1), "reached": Session.run_progress.reached_ids(), "minigames": minigames.log.size(), "tracks": track_log}
 
 
 ## "FRAMES n mean .. p95 .. max .. ms" of the frames played so far, and how many ran over 50 ms (a stage build or a stall). Real-time runs only.
@@ -893,6 +919,10 @@ func _handle(events: Array) -> void:
 				_on_phase_start(ev)
 			"lap_start":
 				_on_lap_start(ev)
+			"tempo":
+				_on_tempo(ev)
+			"track_start", "track_lap", "track_last_lap", "track_extend", "track_end":
+				_on_track_event(ev)
 			"mix":
 				_on_mix(ev)
 			"reveal":
@@ -976,8 +1006,41 @@ func _on_phase_start(ev: Dictionary) -> void:
 ## The next lap of the same scene (docs/CONTINUOUS_RUN.md "Two laps"): nothing is rebuilt or reset, the room, its lamps, set pieces, rail and people go on; only the log and the touch state start over.
 func _on_lap_start(ev: Dictionary) -> void:
 	lap_log.append({"phase": int(ev["phase"]), "lap": int(ev["lap"]), "laps": int(ev["laps"]), "node": str(ev["node"]), "t": float(ev["t"]), "stage": int(ev["stage"])})
+	_track_stay_phase = -1
 	_sel_t.clear()
 	_commit_view = {}
+
+
+## A scene at another tempo begins (a track scene, or the scene after one): every cached beat length follows (the stages' dancers and lights, the hotspot views, the card table), as at a path hand-off.
+func _on_tempo(ev: Dictionary) -> void:
+	var bpm := float(ev["bpm"])
+	for w in stages:
+		(stages[w]["stage"] as StoryStage).set_tempo(bpm)
+		if stages[w].has("hotspot_view"):
+			(stages[w]["hotspot_view"] as HotspotView).beat_s = float(ev["beat_s"])
+	if card_table != null:
+		card_table.beat_s = float(ev["beat_s"])
+
+
+## The track scenes played, for the walks (summary "tracks"): {node, track, entry_bar, planned (laps at entry), laps (played), doors_from_lap, left_early, extended, bpm, end, seconds}.
+func _on_track_event(ev: Dictionary) -> void:
+	if str(ev["kind"]) == "track_start":
+		track_log.append({"node": str(ev["node"]), "track": str(ev["track"]), "entry_bar": int(ev["entry_bar"]), "planned": int(ev["laps"]), "laps": 1, "doors_from_lap": int(ev["doors_from_lap"]),
+			"left_early": false, "extended": 0, "bpm": snappedf(float(ev["bpm"]), 0.0001), "t": float(ev["t"])})
+		return
+	if track_log.is_empty():
+		return
+	var cur: Dictionary = track_log[track_log.size() - 1]
+	match str(ev["kind"]):
+		"track_lap":
+			cur["laps"] = int(ev["lap"])
+		"track_last_lap":
+			cur["left_early"] = true
+		"track_extend":
+			cur["extended"] = int(cur["extended"]) + 1
+		"track_end":
+			cur["end"] = str(ev["reason"])
+			cur["seconds"] = snappedf(float(ev["t"]) - float(cur["t"]), 0.001)
 
 
 ## Hands one journey action {world, t0, action, args} to its world's stage and keeps it in the log.
@@ -1145,7 +1208,10 @@ func _open_routes(ev: Dictionary) -> void:  # the hotspot window: the world is t
 		for o in ev["options"]:
 			if data.nodes.has(str(o["to"])):  # (an ending's way back is no scene)
 				audio.preload_pack(str(data.nodes[str(o["to"])]["audio"]))
-	hud.caption("RISER" if str(ev["effect"]) == "riser" else "FALL", "info", float(ev["t"]), 2.0)
+		audio.track.prefetch_for(data, engine.node_id, _path_cache, main_data)  # the stems of the track scenes this scene can lead to, on worker threads
+	_track_stay_phase = engine.phase_n if ev.has("track") and not bool(ev.get("last", true)) else -1
+	if not ev.has("track"):  # (no riser or fall sounds over a track)
+		hud.caption("RISER" if str(ev["effect"]) == "riser" else "FALL", "info", float(ev["t"]), 2.0)
 
 
 func _close_routes(_ev: Dictionary) -> void:
@@ -1211,7 +1277,12 @@ func _t_commit_of(h: Dictionary) -> float:
 func choice_state() -> Dictionary:
 	if hotspots == null or engine == null or trial_state != "" or _ended:
 		return {}
-	return {"staged": hotspots.staged(engine.block), "current": hotspots.current_id(engine.block), "committed": hotspots.committed, "dest": hotspots.destination(engine.block),
+	var cur := hotspots.current_id(engine.block)
+	var dest := hotspots.destination(engine.block)
+	if _track_stay_phase == engine.phase_n and engine.window_open and hotspots.committed == "" and not engine._exit_touched():  # a track scene's open lap before the last: nothing touched means staying, so no door is the way
+		cur = ""
+		dest = engine.node_id
+	return {"staged": hotspots.staged(engine.block), "current": cur, "committed": hotspots.committed, "dest": dest,
 		"default": str(hotspots.default_hotspot().get("id", "")), "touched": _sel_t, "changed_t": _choice_changed_t()}
 
 
@@ -1502,6 +1573,8 @@ func _pause() -> void:
 		return
 	clock.pause()
 	event_log.append({"kind": "paused", "t": clock.audio_time(), "usec": Time.get_ticks_usec()})
+	if audio != null:
+		audio.track.note_pause(clock.judge_time())  # (a hold the pause ends mutes nothing)
 	engine.judge.pause_interrupt(clock.judge_time())
 	lane_input.clear()
 	lane_input.enabled = false
@@ -1651,6 +1724,7 @@ func _path_swap(ev: Dictionary) -> void:
 	hotspots = RunHotspots.new(data, Session.run_progress.run_flags, Session.run_progress.flags)
 	hotspots.preselect = bool((data.cfg.get("choice", {}) as Dictionary).get("preselect", false)) or OS.get_environment("RW_CHOICE_PRESELECT") == "1"  # (an owner decision, off: touch only in the window; the env turns it on for a strip)
 	engine.hotspots = hotspots
+	_wire_track_audio()
 	engine.arrive(start, t_swap, carried, int(ev["phase"]), int(ev.get("lap_extra", 0)))
 	journey = RunJourney.new(data)
 	proxy.level = engine.level

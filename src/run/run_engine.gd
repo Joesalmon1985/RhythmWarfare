@@ -151,6 +151,7 @@ func begin(start_id: String) -> void:
 	lap_extra = 0
 	phase_t0 = 0.0
 	_next_phase_charted = false
+	_gate_latch.clear()
 	_enter(start_id, 0.0, true)
 
 
@@ -182,6 +183,7 @@ func resume(start_id: String, t0: float) -> void:
 	_over_t = -1.0
 	_next_phase_charted = false
 	phase_n = n
+	_gate_latch.clear()  # (back from the Bassment, or a hand-off: the scene asks the audio again)
 	_enter(start_id, t0, true)
 
 
@@ -198,6 +200,11 @@ func arrive(start_id: String, t0: float, p_energy: float, p_phase_n: int, p_lap_
 func _enter(id: String, t0: float, chart_now: bool) -> void:
 	var prev := node_id if phase_n > 0 else ""
 	var tp := track_plan_of(id)  # ({} for an ordinary scene, and always when track scenes are off)
+	if not _gate_latch.is_empty():  # (the gate's answers for the routes not taken are forgotten: their next visit asks again)
+		var kept: Variant = _gate_latch.get(id)
+		_gate_latch.clear()
+		if kept != null:
+			_gate_latch[id] = kept
 	var from_bpm := 60.0 / beat_s
 	if not tp.is_empty() or _regridded:
 		_regrid(t0, float(tp["bpm"]) if not tp.is_empty() else float(cfg["timing"]["bpm"]))
@@ -257,7 +264,24 @@ func _regrid(t0: float, bpm: float) -> void:
 
 ## The track plan of scene `id` ({} when it is not a track scene: no track_scenes data, no assignment, no pack). Data, not engine state: safe to call for any scene (the routes' scenes, for loading ahead).
 func track_plan_of(id: String) -> Dictionary:
-	return data.track_scenes.plan_of(id) if data != null and data.track_scenes != null else {}
+	var p: Dictionary = data.track_scenes.plan_of(id) if data != null and data.track_scenes != null else {}
+	if p.is_empty() or not track_gate.is_valid():
+		return p
+	if not _gate_latch.has(id):
+		_gate_latch[id] = bool(track_gate.call(p))
+	return p if bool(_gate_latch[id]) else {}
+
+
+## The audio side's say on a track scene (RunTrackAudio.is_ready, set by RunPlay when the run has audio): `(plan) -> bool`, asked the first time this engine needs scene `id`'s plan in a visit
+## (the route lock at the last decision of the scene before it, or the scene's own first downbeat). The answer is LATCHED for the visit, so the engine sees one answer from the chart of the scene's
+## first block to its last lap: false makes it an ordinary scene this time (its stems were not loaded in time). Unset (the tests, a virtual run): every plan is used.
+var track_gate: Callable = Callable()
+var _gate_latch: Dictionary = {}  # scene id -> the answer of this visit (cleared for every other scene when a scene is entered, and for all by begin and resume)
+
+
+## The gate's latched answer for scene `id`: 1 a track scene this visit, 0 an ordinary one, -1 not asked (or no gate).
+func track_gate_answer(id: String) -> int:
+	return (1 if bool(_gate_latch[id]) else 0) if _gate_latch.has(id) else -1
 
 
 func is_track_scene() -> bool:

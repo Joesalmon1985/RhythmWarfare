@@ -4,10 +4,12 @@
 # paths perfect_a to perfect_d visit all 36 scenes of the seven worlds (checked at the end of a full run). Fails on any ERROR or SCRIPT line, a wrong scene sequence, a step that
 # is not a route of the scene before it, a rail place that is not on the scene's rails, missing glances, a wrong run save (reached = the worlds visited, never a scene), or a
 # chapter save written by the run. Needs a display (the worlds are rendered). The save goes to the throwaway directory on Linux (XDG_DATA_HOME) and on Windows (APPDATA); the audio driver is Dummy.
-#   RW_WALK_IGNORE=<regex> drops matching ERROR lines from the check.
+#   RW_WALK_IGNORE=<regex> drops matching ERROR lines from the check. RW_WALK_TIMEOUT=<seconds> per walk (default 900; a run of track scenes plays several times longer).
 #   RW_RUN_TAPS=scripted|none|changed|failure  the tap policy of the hotspot window (default scripted: the bot taps the hotspot that leads where the path says; none: no taps, the default exits;
 #                changed: a decoy first, then the scripted tap; failure: scripted taps with the last block of every phase missed, so every tapped hotspot takes its failure outcome). With none and
 #                failure the scene sequence is not fixed (only "every step is a route of the scene before it" and the saves are checked, and the all-scenes check is skipped).
+#   RW_RUN_TRACK_EXIT=end|first  track scenes (docs/RUN_TRACK_SCENES.md): the bot plays every track scene to its default end (end, the default), or touches its route at the first open lap
+#                (first). Each track scene that ended is checked against its plan. Point RW_TRACKS_DIR at a packs folder on the command line to have track scenes at all.
 #   bash tools/run/walk_run.sh [path ...]     paths: perfect_a perfect_b perfect_c perfect_d sloppy none start_late   (default: all)
 #   bash tools/run/walk_run.sh --path <id> [walk ...]   a sister run (content/paths/<id>) started with RW_RUN_PATH: the walks are tools/run/path_walk_spec.py's (perfect: every default route to the first ending
 #                and back into the Warehouse; sloppy; none; and the ones in content/paths/<id>/walks.json). The save must hold the path's worlds under `paths`, never under `reached`.
@@ -48,7 +50,7 @@ for p in "${PATHS[@]}"; do
   DIR="$(mktemp -d)"
   echo "== path $p ($BOT, routes $ROUTES)${PATH_ID:+ in the path $PATH_ID}"
   env XDG_DATA_HOME="$DIR/data" APPDATA="$DIR/data" ${PATH_ID:+RW_RUN_PATH=$PATH_ID} RW_RUN_VIRTUAL=1 RW_STORY_RATE="$RATE" RW_STORY_QUIT=1 RW_RUN_BOT="$BOT" RW_RUN_ROUTES="$ROUTES" RW_RUN_UNTIL_PHASE="$UNTIL" RW_SEED=2 \
-      ${START:+RW_RUN_START=$START} timeout 900 "$GODOT" --audio-driver Dummy --path "$ROOT" res://src/run/run_play.tscn > "$DIR/out.txt" 2>&1
+      ${START:+RW_RUN_START=$START} timeout "${RW_WALK_TIMEOUT:-900}" "$GODOT" --audio-driver Dummy --path "$ROOT" res://src/run/run_play.tscn > "$DIR/out.txt" 2>&1
   rc=$?
   BAD="$(grep -E "ERROR|SCRIPT" "$DIR/out.txt" | grep -v "RID allocations\|leaked\|still in use\|ObjectDB" | grep -Ev "${RW_WALK_IGNORE:-^\$}" | head -5)"
   if [ -n "$BAD" ]; then echo "FAIL: errors in the run:"; echo "$BAD"; FAIL=1; fi
@@ -87,12 +89,33 @@ if s:
     default_laps = int(prun["path"].get("laps", 1)) if path_id else 1
     def laps_of(x):
         return int(path_nodes[x].get("laps", default_laps)) if x in path_nodes else 1
-    want_laps = [x for x in s["nodes"][:-1] for _ in range(laps_of(x) - 1)]
+    # a track scene (docs/RUN_TRACK_SCENES.md) plays the laps its summary entry says (in visit order); every other scene its data's laps
+    tracks = s.get("tracks", [])
+    visit_laps, ti = [], 0
+    for x in s["nodes"]:
+        if ti < len(tracks) and tracks[ti]["node"] == x:
+            visit_laps.append(int(tracks[ti]["laps"]))
+            ti += 1
+        else:
+            visit_laps.append(laps_of(x))
+    want_laps = [x for x, k in zip(s["nodes"][:-1], visit_laps[:-1]) for _ in range(k - 1)]
     got_laps = s.get("laps", [])
     if got_laps[:len(want_laps)] != want_laps:
         bad("laps %s, expected %s first" % (",".join(got_laps), ",".join(want_laps)))
-    elif any(x != s["nodes"][-1] for x in got_laps[len(want_laps):]) or len(got_laps) - len(want_laps) > laps_of(s["nodes"][-1]) - 1:
+    elif any(x != s["nodes"][-1] for x in got_laps[len(want_laps):]) or len(got_laps) - len(want_laps) > visit_laps[-1] - 1:
         bad("laps of the last scene: %s" % ",".join(got_laps[len(want_laps):]))
+    # the track scenes that ended reach their planned length (RW_RUN_TRACK_EXIT=end, the default), or end at their first open lap where the bot left (first)
+    exit_mode = os.environ.get("RW_RUN_TRACK_EXIT", "end")
+    for tr in tracks:
+        if tr.get("end") != "route":
+            continue
+        if tr["left_early"]:
+            if exit_mode != "first" or int(tr["laps"]) != int(tr["doors_from_lap"]):
+                bad("track scene %s (%s) left at lap %d of %d (exit %s)" % (tr["node"], tr["track"], int(tr["laps"]), int(tr["planned"]), exit_mode))
+        elif int(tr["laps"]) != int(tr["planned"]) + int(tr["extended"]):
+            bad("track scene %s (%s) played %d laps, planned %d" % (tr["node"], tr["track"], int(tr["laps"]), int(tr["planned"])))
+    if tracks:
+        print("track scenes:", " ".join("%s=%s:%d/%d%s" % (tr["node"], tr["track"], int(tr["laps"]), int(tr["planned"]), "" if tr.get("end") else "(on)") for tr in tracks))
     open(seen_file, "a").write("\n".join(s["nodes"]) + "\n")
     for r in s["rail"]:
         _, node, place = r.split(":")[0], r.split(":")[1], r.split(":")[2]
