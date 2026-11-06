@@ -278,6 +278,39 @@ def check_focus(focus, vkeys: set, dur: float | None, bpm: float, r: Report) -> 
     return focus if good else None
 
 
+ALIGN_MIN_RMS = 1e-3  # a stem quieter than this (-60 dBFS) in a probe window says nothing about its timing: the
+# correlation there is with the recording's leftovers (measured: wrong "lags" of 16 to 91 samples at rms 7e-5 to 4e-4,
+# normalised zero-lag correlation 0.0 to 0.26; a stem that is really there correlates at 0.99 at lag 0)
+
+
+def probe_lags(x: np.ndarray, target: np.ndarray, rate: int = PACK_RATE) -> list[dict]:
+    """The lag (samples, within +-96) that best aligns the stem x with what the recording leaves for it, at three
+    places of 4 s; each probe with its level so that a silent window can be told from a real measurement."""
+    out = []
+    n = len(x)
+    for c in (0.3, 0.55, 0.8):
+        a = int(c * n)
+        seg_x = x[a:a + 4 * rate]
+        seg_t = target[a:a + 4 * rate]
+        L = 96
+        if len(seg_x) <= 2 * L + 1:
+            continue
+        rms = float(np.sqrt((seg_x.astype(np.float64) ** 2).mean()))
+        cc = [float(np.dot(seg_x[L:-L], seg_t[L + l:len(seg_t) - L + l])) for l in range(-L, L + 1)]
+        out.append({"lag": int(np.argmax(cc)) - L, "rms": rms})
+    return out
+
+
+def alignment_offset(probes: list[dict]) -> int | None:
+    """The stem's offset in samples if it is really offset, else None. Only probes where the stem is audible count,
+    and most of them must show a lag (a real offset shows everywhere the stem plays; a single odd probe is noise)."""
+    live = [p for p in probes if p["rms"] >= ALIGN_MIN_RMS]
+    off = [p["lag"] for p in live if abs(p["lag"]) > 1]
+    if live and len(off) * 2 > len(live):
+        return int(np.median(off))
+    return None
+
+
 def check_audio(pack: Path, tj: dict, r: Report, recording: str | None, sum_tol_db: float) -> dict:
     """Stem format, length, alignment, sum against the recording, and that every cue sits on sound."""
     entries = [(v, True) for v in tj["voices"]] + [(b, False) for b in tj.get("backing", [])]
@@ -337,18 +370,11 @@ def check_audio(pack: Path, tj: dict, r: Report, recording: str | None, sum_tol_
             x, _ = decode(pack / v["stem"], rate=PACK_RATE)
             x = x[:n].mean(1) * float(v.get("gain", 1.0))
             target = rec[:n].mean(1) - (total[:n].mean(1) - x)
-            best = []
-            for c in (0.3, 0.55, 0.8):
-                a = int(c * n)
-                seg_x = x[a:a + 4 * PACK_RATE]
-                seg_t = target[a:a + 4 * PACK_RATE]
-                L = 96
-                if np.abs(seg_x).max() < 1e-4:
-                    continue
-                cc = [float(np.dot(seg_x[L:-L], seg_t[L + l:len(seg_t) - L + l])) for l in range(-L, L + 1)]
-                best.append(int(np.argmax(cc)) - L)
+            probes = probe_lags(x, target)
+            best = [b["lag"] for b in probes]
             lags[v["key"]] = best
-            if any(abs(b) > 1 for b in best):
+            bad = alignment_offset(probes)
+            if bad is not None:
                 r.err(f"{v['key']}: stem is offset from the recording by {best} samples")
         stats["align_lags"] = lags
         r.note(f"alignment lags (samples at 3 points) per stem: {lags}")

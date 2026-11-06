@@ -721,3 +721,64 @@ class BatchTests(unittest.TestCase):
             # a later run, alone: the second file still finds its own id, the first keeps its own
             self.assertEqual(Ctx(f2, a, meta=meta, taken=set()).id, "a_t_2")
             self.assertEqual(Ctx(f1, a, meta=meta, taken=set()).id, "a_t")
+
+
+# ---------------------------------------------------------------- fixes after the first whole-folder batch
+
+class BatchFixTests(unittest.TestCase):
+    def test_bass_note_at_the_very_start_with_a_grid_line_before_zero(self):
+        """A bass that sounds from sample 0 on a grid whose nearest line is before the file used to put the note at a
+        negative time and crash the level lookup (empty slice)."""
+        from chart import bass_notes
+        from analysis import db, frame_rms
+        rate = 22050
+        tt = np.arange(int(2.0 * rate)) / rate
+        x = (0.5 * np.sin(2 * np.pi * 55 * tt)).astype(np.float32)
+        g = Grid(bpm=120.0, first_downbeat=-0.015)
+        vdb = db(frame_rms(x, rate, 0.005, 0.02))
+        evs = bass_notes(x, rate, np.array([]), vdb, vdb, float(np.percentile(vdb, 95)), 0.005, g)
+        self.assertTrue(evs)
+        self.assertTrue(all(e.t >= 0.0 for e in evs))
+
+    def test_folded_backing_that_sums_past_full_scale_is_scaled_not_refused(self):
+        from audio_io import decode
+        from pack import pack_stems
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            src = d / "src"
+            n = PACK_RATE * 2
+            tt = np.arange(n) / PACK_RATE
+            parts = {"a": 0.5, "b": 0.5, "backing": 0.6, "folded": 0.6}
+            for k, amp in parts.items():
+                x = (amp * np.sin(2 * np.pi * 220 * tt)).astype(np.float32)
+                encode_ogg(np.stack([x, x], 1), PACK_RATE, src / f"{k}.ogg", out_rate=PACK_RATE)
+            (src / ".made_from").write_text(json.dumps({"stamp": "s", "scale": 1.0, "gain": 1.0, "frames": n}))
+            info = pack_stems(d / "pack", src, ["a", "b"], ["folded"])  # backing + folded = 1.2 in phase
+            self.assertGreater(info["backing_gain"], 1.0)
+            y, _ = decode(d / "pack" / "stems" / "backing.ogg", rate=PACK_RATE)
+            self.assertLess(float(np.abs(y).max()), 1.0)
+            # played at its gain it is still backing + folded
+            self.assertAlmostEqual(float(np.abs(y).max()) * info["backing_gain"], 1.2, delta=0.06)
+
+    def test_alignment_ignores_a_silent_probe_but_not_a_real_offset(self):
+        from validate_track import alignment_offset, probe_lags
+        rng = np.random.default_rng(3)
+        n = PACK_RATE * 20
+        sig = rng.standard_normal(n) * 0.1
+        # (1) aligned stem, one probe window (at 0.55) nearly silent in the stem: the correlation there is with
+        # leftovers of the recording, not a measurement
+        x = sig.copy()
+        a = int(0.55 * n)
+        x[a:a + 4 * PACK_RATE] *= 1e-3
+        target = sig.copy()
+        target[a:a + 4 * PACK_RATE] = 0.05 * rng.standard_normal(4 * PACK_RATE)  # the recording leaves other sound there
+        probes = probe_lags(x, target)
+        self.assertEqual(len(probes), 3)
+        self.assertGreater(abs(probes[1]["lag"]), 1)  # the old check would have failed the stem here
+        self.assertLess(probes[1]["rms"], 1e-3)
+        self.assertIsNone(alignment_offset(probes))
+        # (2) the same stem really offset by 240 samples: every probe sees it
+        off = np.concatenate([np.zeros(60), sig])[:n]
+        probes = probe_lags(off, sig)
+        self.assertTrue(all(abs(p["lag"]) > 1 for p in probes), probes)
+        self.assertIsNotNone(alignment_offset(probes))

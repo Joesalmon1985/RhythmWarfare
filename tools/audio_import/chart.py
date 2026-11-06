@@ -225,7 +225,7 @@ def bass_notes(xm, rate, onsets, vdb, mdb, loud, hop_s, grid: Grid) -> list[Even
             q = round(grid.position(np.array([t]))[0] * 4) / 4
             tq = float(grid.time_of(np.array([q]))[0])
             if abs(tq - t) <= 0.04:
-                t = tq
+                t = max(0.0, tq)  # a grid line before the start of the file is not a time
         lv = _level(vdb, hop_s, t, 0.08)
         lm = _level(mdb, hop_s, t, 0.08)
         e = Event(t=t, strength=float(np.clip((lv - loud + 20) / 20, 0, 1.2)), rel_db=lv - lm, own_db=lv - loud,
