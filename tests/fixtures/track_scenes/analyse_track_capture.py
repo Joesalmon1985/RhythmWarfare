@@ -6,14 +6,14 @@ Song time of capture frame f: p(f) = clock + (f - pushed) / rate, from the frame
 before f. A group started (or sought) at song time t0 on track time track_t0 should hold track time track_t0 + (p - t0) at song time p: that is where the engine puts its cues. Every 2 s
 a 0.5 s window of the capture (band 1 to 8 kHz) is cross-correlated against the pack's stems mixed at their gains, over +-80 ms: late_ms > 0 means the audio is later than the cues. The
 output latency is not in it (it delays every sound alike; calibration is for that)."""
-import json, os, sys
+import json, os, re, sys
 import numpy as np, soundfile as sf
 from scipy import signal
 
 F = sys.argv[1]
 SR = 48000
 SOS = signal.butter(4, [1000, 8000], btype="bandpass", fs=SR, output="sos")
-log = json.load(open(os.path.join(F, "run_track.json")))
+log = json.loads(re.sub(r"\bnan\b", "NaN", open(os.path.join(F, "run_track.json")).read()))  # (Godot writes a NaN as nan)
 capx = np.fromfile(os.path.join(F, "run_track.f32"), dtype=np.float32).reshape(-1, 2)
 rows = np.array(log["rows"], float)
 print("CAPTURE driver %s, output latency %.2f ms, %d frames (%.1f s), discarded %d" % (log["driver"], log["output_latency"] * 1000, len(capx), len(capx) / SR, log["discarded"]))

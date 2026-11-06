@@ -282,6 +282,12 @@ func on_event(ev: Dictionary) -> void:
 				_schedule_add({"t": float(ev["t"]), "kind": "effect", "name": ev["effect"]})
 		"depleted":
 			_schedule_add({"t": float(ev["t"]), "kind": "fade", "seconds": float(ev["fade_s"])})
+		"trial_exit":  # the Bassment is left on the downbeat t into a scene of the run (no lock: it is not behind the port, ruling 20): a track scene there gets the aligned start too
+			var node := str(ev.get("node", ""))
+			var tp: Dictionary = data.track_scenes.plan_of(node) if data != null and data.track_scenes != null and data.nodes.has(node) else {}
+			if track != null and not tp.is_empty():
+				track.prepare_transition(float(ev["t"]), {"mode": &"cut", "incoming": &"track", "boundary_t": float(ev["t"]), "unlocked": true,
+					"in": {"node": node, "track": str(tp["track"]), "dir": str(tp["dir"]), "entry_t": float(tp["entry_t"]), "beat_s": float(tp["beat_s"]), "bpm": float(tp["bpm"])}})
 
 
 func _schedule_add(item: Dictionary) -> void:

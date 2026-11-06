@@ -821,6 +821,8 @@ func _on_exit(ev: Dictionary) -> void:
 	leave_reason = str(ev["reason"])
 	left_t = next_boundary(t + 1.0e-6)
 	_ap_t = left_t
+	if host.audio != null:  # (the music stream, M2.4: the run's scene the dungeon returns to on left_t is started early and muted, aligned to the clock: RunAudio "trial_exit")
+		host.audio.on_event({"kind": "trial_exit", "t": left_t, "node": "warehouse"})
 	var span := (left_t - t) / (4.0 * _beat_s)
 	_move(zone, _last_exit, t, span)
 	_choice_layer.visible = false

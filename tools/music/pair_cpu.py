@@ -5,7 +5,7 @@ The samples start when the run writes its pid file, just before its clock starts
 import csv, json, os, re, sys
 
 for F in sys.argv[1:]:
-    j = json.loads(re.sub(r"nan", "NaN", open(os.path.join(F, "pair.json")).read()))
+    j = json.loads(re.sub(r"\bnan\b", "NaN", open(os.path.join(F, "pair.json")).read()))
     lk = j["lock"][0]
     T, C = float(lk["boundary"]), float(lk["plan"]["complete_t"])
     rows = [(float(r["unix"]), float(r["cpu_s"]), float(r["private_mb"])) for r in csv.DictReader(open(os.path.join(F, "cpu.csv")))]

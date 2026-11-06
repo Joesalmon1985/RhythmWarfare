@@ -23,7 +23,7 @@ SLOTS = ["RunTrackA", "RunTrackB"]
 class Pair:
     def __init__(self, F):
         self.F = F
-        self.j = json.loads(re.sub(r"nan", "NaN", open(os.path.join(F, "pair.json")).read()))  # (Godot writes a NaN as nan)
+        self.j = json.loads(re.sub(r"\bnan\b", "NaN", open(os.path.join(F, "pair.json")).read()))  # (Godot writes a NaN as nan)
         self.labels = self.j["labels"]
         self.rows = np.array(self.j["rows"], float)
         self.cap = {l: np.fromfile(os.path.join(F, l + ".f32"), dtype=np.float32).reshape(-1, 2) for l in self.labels}

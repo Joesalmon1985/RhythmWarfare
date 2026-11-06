@@ -193,3 +193,35 @@ func test_an_entry_at_the_start_of_the_audio_is_probed_then_started_at_t_with_th
 	assert_eq(corr.size(), 1)
 	assert_true(absf(float(corr[0]["final_ms"])) < 0.1, "it landed on the clock (%.4f ms)" % float(corr[0]["final_ms"]))
 	_cleanup()
+
+
+func test_the_return_from_the_bassment_gets_the_aligned_start_too() -> void:
+	# the dungeon's exit names its downbeat ahead (TrialScene._on_exit -> RunAudio "trial_exit"): no lock, no director, the same early muted start, adopted by the engine's track_start
+	var s := _setup()
+	var a: RunAudio = s["a"]
+	var d: RunData = s["d"]
+	assert_eq(a.track.request_scene(d, "warehouse"), "loading")
+	for _i in 400:
+		a.track._poll()
+		if not a.track.cached().values().has("loading"):
+			break
+		OS.delay_msec(5)
+	var wp := d.track_scenes.plan_of("warehouse")
+	var T := 200.0
+	a.on_event({"kind": "trial_exit", "t": T, "node": "warehouse"})
+	var sim := {"x": T - 1.0}
+	a.track.position_fn = func(g: Dictionary) -> Array: return [float(sim["x"]), float(g["entry_t"]) + float(sim["x"]) - T]
+	var t := T - 1.0
+	while t < T:
+		sim["x"] = t
+		a.track.step(t, 0.0)
+		t += 1.0 / 60.0
+	var pre: Array = a.track.log.filter(func(x: Dictionary) -> bool: return str(x["kind"]) == "prestart")
+	assert_eq(pre.size(), 1, "started early, muted")
+	assert_eq(str(pre[0]["track"]), "out_a")
+	a.track.run_item({"t": T, "kind": "start", "ev": {"t": T, "node": "warehouse", "track": "out_a", "dir": str(wp["dir"]), "track_t": float(wp["entry_t"]), "beat_s": float(wp["beat_s"])}}, T + 0.02, 0.0)
+	var st: Array = a.track.log.filter(func(x: Dictionary) -> bool: return str(x["kind"]) == "start")
+	assert_eq(st.size(), 1)
+	assert_true(bool(st[0]["prepared"]), "adopted at the return")
+	assert_true(absf(float(st[0]["residual_ms"])) < 0.1)
+	_cleanup()
