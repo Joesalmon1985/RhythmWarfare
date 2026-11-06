@@ -13,10 +13,15 @@ var rect: TextureRect
 var camera: Camera3D
 var world: StoryWorld
 var _env_node: WorldEnvironment
-var dither := false  # the ordered dither and palette clamp of the post-process (Session.story_dither, off with reduced effects; RW_STORY_DITHER=0|1 overrides)
-var clamp_lo := Color(0, 0, 0)
+var dither := false  # the ordered dither of the post-process (Session.story_dither, off with reduced effects; RW_STORY_DITHER=0|1 overrides)
+var clamp_lo := Color(0, 0, 0)  # (no longer used: the value range's floor follows the camera sector's fog, floor_of; the stage still sets these)
 var clamp_hi := Color(1, 1, 1)
-var post: ShaderMaterial  # queasy wobble, dimming and strobe on the finished low-res image (StoryLight.post_state feeds it)
+var post: ShaderMaterial  # the value range, queasy wobble, dimming and strobe on the finished low-res image (StoryLight.post_state feeds it); always on
+## The value range every world shares (style guide section 2, audit F4). Worlds tune their light against these, not the other way round.
+const FLOOR_LUMA := Vector2(0.042, 0.06)  # the toe's black: the fog colour scaled to a luminance in this range (a black fog becomes SHADOW_INK)
+const SHADOW_INK := Color(0.075, 0.067, 0.122)  # #13111f, the guide's darkest colour of a lit room
+const KNEE := 0.75  # the shoulder starts here; 1.0 comes out at 0.886
+const TOP := 1.05
 
 
 func _init() -> void:
@@ -117,10 +122,22 @@ func apply_pose(pose: Dictionary, look_offset_deg := 0.0) -> void:
 		world.follow(cam)
 
 
-## Feed the post-process from StoryLight.post_state (and the palette's colour for the bloom).
+## The toe's black for a fog colour: the same hue at a luminance in FLOOR_LUMA (Rec. 709, the weights tools/art/frame_check.py measures with).
+static func floor_of(fog: Color) -> Color:
+	var c := fog if fog.r + fog.g + fog.b > 0.003 else SHADOW_INK
+	var l := 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
+	var k := clampf(l, FLOOR_LUMA.x, FLOOR_LUMA.y) / maxf(l, 1.0e-4)
+	return Color(minf(c.r * k, 1.0), minf(c.g * k, 1.0), minf(c.b * k, 1.0))
+
+
+## Feed the post-process from StoryLight.post_state (and the palette's colour for the bloom). The value range is always on, so the shader always runs.
 func apply_post(st: Dictionary, flash_color := Color(0.6, 0.7, 1.0)) -> void:
-	var active := dither or float(st["queasy"]) > 0.001 or float(st["dim"]) > 0.004 or float(st["strobe"]) > 0.001 or float(st["flash"]) > 0.002 or float(st["vignette"]) > 0.001
-	rect.material = post if active else null  # a plain nearest-filtered blit is cheaper than the shader
+	rect.material = post
+	var fog := world.env.fog_light_color if world != null and world.env != null else StoryWorld.FOG_COLOR  # the camera sector's fog (StoryWorld.set_atmosphere)
+	var fl := floor_of(fog)
+	post.set_shader_parameter("floor_col", Vector3(fl.r, fl.g, fl.b))
+	post.set_shader_parameter("knee", KNEE)
+	post.set_shader_parameter("top", TOP)
 	post.set_shader_parameter("queasy", float(st["queasy"]))
 	post.set_shader_parameter("time_s", float(st["time"]))
 	post.set_shader_parameter("dim", float(st["dim"]))
@@ -130,8 +147,6 @@ func apply_post(st: Dictionary, flash_color := Color(0.6, 0.7, 1.0)) -> void:
 	post.set_shader_parameter("flash_color", Vector3(flash_color.r, flash_color.g, flash_color.b))
 	post.set_shader_parameter("dither_on", 1.0 if dither else 0.0)
 	post.set_shader_parameter("low_size", Vector2(sub.size))
-	post.set_shader_parameter("clamp_lo", Vector3(clamp_lo.r, clamp_lo.g, clamp_lo.b))
-	post.set_shader_parameter("clamp_hi", Vector3(clamp_hi.r, clamp_hi.g, clamp_hi.b))
 
 
 func projector_pose(pose: Dictionary, look_offset_deg := 0.0) -> Dictionary:

@@ -1,7 +1,7 @@
 class_name StoryWorld
 extends Node3D
 ## The 3D room of a chapter (docs/STORY_25D_PLAN.md section 2), built from a StoryMap: a floor and a ceiling polygon per sector, a quad per wall segment
-## (portals get a lower and an upper part where the neighbouring floor is higher or ceiling lower), billboard things, an optional sky cylinder. Everything is
+## (portals get a lower and an upper part where the neighbouring floor is higher or ceiling lower), billboard things, an optional sky at infinity. Everything is
 ## unshaded, nearest-filtered and flat: the Doom look comes from the low internal resolution (StoryLowRes) and from light that is a per-sector colour,
 ## not a real light. A sector's light and tint are functions of song time (light_of), written each frame to that sector's materials.
 ## The builder needs no renderer to run (headless tests build it); pixels only appear when it sits in a viewport.
@@ -13,6 +13,40 @@ const CEIL_SHADE := 0.8
 const LIGHT_CELL := 1.2  # metres: surfaces a light reaches are cut into cells of this size so the pool of light has a shape
 const LIT_AMBIENT := 0.62  # a sector with lights keeps this much of the flat light away from them (its `ambient` overrides)
 const MIN_GAIN := 0.5  # no sector reads as black: the light multiplier never falls below this (the fog and the ending fades are separate)
+const SKY_TEXELS_AROUND := 1024.0  # a sky strip is drawn so that this many texels wrap the horizon (style guide section 7): a 1024-wide strip once, a 256-wide one four times
+const SKY_HORIZON := 0.76  # the strip's row at eye level, as a fraction of its height from the top (the old 80 m cylinder put it here; map `sky.horizon` overrides)
+const SKY_FADE := 8.0  # texels over which the strip's top row dissolves into the zenith colour
+const SKY_SHADER := """
+shader_type sky;
+// StoryWorld's sky at infinity: the map's sky strip looked up by the view direction alone (StoryWorld.sky_params).
+uniform sampler2D strip : filter_nearest, repeat_enable;
+uniform vec2 size = vec2(256.0, 64.0);
+uniform float texel_rad = 0.006136;
+uniform float horizon_px = 48.64;
+uniform float fade_px = 8.0;
+uniform vec3 zenith = vec3(0.03, 0.02, 0.08);
+const float BAYER[16] = float[](0.0, 8.0, 2.0, 10.0, 12.0, 4.0, 14.0, 6.0, 3.0, 11.0, 1.0, 9.0, 15.0, 7.0, 13.0, 5.0);
+
+void sky() {
+	if (AT_CUBEMAP_PASS) {
+		COLOR = zenith;
+	} else {
+		vec3 d = normalize(EYEDIR);
+		float az = atan(d.x, -d.z);
+		float el = asin(clamp(d.y, -1.0, 1.0));
+		int x = int(mod(floor(az / texel_rad), size.x));
+		float v = horizon_px - el / texel_rad;
+		int y = int(clamp(floor(v), 0.0, size.y - 1.0));
+		vec3 c = texelFetch(strip, ivec2(x, y), 0).rgb;
+		if (v < 0.0) {
+			ivec2 p = ivec2(FRAGCOORD.xy);
+			float b = (BAYER[(p.y % 4) * 4 + (p.x % 4)] + 0.5) / 16.0;
+			c = clamp(-v / fade_px, 0.0, 1.0) > b ? zenith : c;
+		}
+		COLOR = c;
+	}
+}
+"""
 
 var map: StoryMap
 var assets: StoryAssets
@@ -22,8 +56,10 @@ var _tex: Dictionary = {}  # texture name -> Texture2D
 var _metres: Dictionary = {}  # texture name -> metres per repeat
 var _sector_nodes: Dictionary = {}  # sector id -> {node: MeshInstance3D, mats: Array[StandardMaterial3D]}
 var _thing_nodes: Array = []  # {node: MeshInstance3D, mat, thing: Dictionary, base_scale: Vector3, base_y: float}
-var _sky: MeshInstance3D
-var _skies: Dictionary = {}  # sky name -> MeshInstance3D (the map sky's `by_name`: one cylinder each, only the camera sector's is shown)
+var _sky: Sky  # the map's sky at infinity (the environment's background; null: the map has no sky)
+var _sky_mat: ShaderMaterial
+var _sky_tex: Dictionary = {}  # sky name ("" = the map's own) -> Texture2D (the map sky's `by_name`: the camera sector's `sky` picks one)
+var _sky_shown: Texture2D
 var _atmo := ""  # the atmosphere last set (a sector id), so a frame in the same sector does nothing
 var _sky_follow := true
 var triangle_count := 0
@@ -83,6 +119,11 @@ func _make_environment() -> Environment:
 	e.background_color = fc
 	e.fog_light_color = fc
 	e.fog_density = float(OS.get_environment("RW_STORY_FOG")) if OS.has_environment("RW_STORY_FOG") else float(map.fog.get("density", FOG_DENSITY))  # RW_STORY_FOG=0 turns the fog off
+	if _sky != null:  # the sky sectors' open ceilings show the sky at infinity, unfogged
+		e.background_mode = Environment.BG_SKY
+		e.sky = _sky
+		e.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
+		e.fog_sky_affect = 0.0
 	return e
 
 
@@ -358,34 +399,72 @@ func _make_thing(t: Dictionary) -> void:
 func _make_sky() -> void:
 	if map.sky.is_empty() or str(map.sky.get("tex", "")) == "":
 		return
-	_sky = _sky_mesh(str(map.sky["tex"]), "Sky")
+	_sky_tex[""] = _load_tex(str(map.sky["tex"]))
 	var by_name: Variant = map.sky.get("by_name", {})
 	if typeof(by_name) == TYPE_DICTIONARY:
 		for nm in by_name:
-			var m := _sky_mesh(str(by_name[nm]), "Sky_" + str(nm))
-			m.visible = false
-			_skies[str(nm)] = m
+			_sky_tex[str(nm)] = _load_tex(str(by_name[nm]))
+	var sh := Shader.new()
+	sh.code = SKY_SHADER
+	_sky_mat = ShaderMaterial.new()
+	_sky_mat.shader = sh
+	_sky = Sky.new()
+	_sky.sky_material = _sky_mat
+	_sky.radiance_size = Sky.RADIANCE_SIZE_32  # nothing is lit by the sky (ambient and reflections are off): the smallest cubemap, and the shader skips its work there
+	_sky.process_mode = Sky.PROCESS_MODE_QUALITY
+	_show_sky("")
 
 
-func _sky_mesh(file: String, nm: String) -> MeshInstance3D:
-	var tex := _load_tex(file)
-	var cyl := CylinderMesh.new()
-	cyl.top_radius = 80.0
-	cyl.bottom_radius = 80.0
-	cyl.height = 70.0
-	cyl.cap_top = false
-	cyl.cap_bottom = false
-	cyl.radial_segments = 24
-	var mat := _material(tex)
-	mat.disable_fog = true
-	mat.no_depth_test = false
-	var mi := MeshInstance3D.new()
-	mi.name = nm
-	mi.mesh = cyl
-	mi.material_override = mat
-	mi.position.y = 20.0
-	add_child(mi)
-	return mi
+## The sky at infinity (style guide sections 4 and 7, audit F7): a sky sector draws no ceiling, and the background there is the map's sky strip wrapped around the
+## horizon, looked up by the direction of the view only, so it never converges like a roof, never ends at a wall top and never moves when the eye walks. The strip
+## (W x H texels) wraps the horizon `repeats` times (map `sky.repeats`; default SKY_TEXELS_AROUND / W, so a 1024-wide strip wraps once and a 256-wide one four times):
+## one texel is 360 / (W x repeats) degrees both ways, about 2.4 internal pixels at 360 lines for the target 1024 texels around. Row `horizon` x H (map `sky.horizon`, a fraction
+## from the top, default SKY_HORIZON) sits at eye level; above the strip the top row fades over SKY_FADE texels (ordered dither) into the strip's zenith colour; below it the
+## bottom row continues. A pure function of the view direction: the same frame at the same song time.
+func sky_params(tex: Texture2D) -> Dictionary:
+	var w := maxi(tex.get_width(), 1) if tex != null else 256
+	var h := maxi(tex.get_height(), 1) if tex != null else 64
+	var reps := maxi(int(map.sky.get("repeats", 0)), 0)
+	if reps == 0:
+		reps = maxi(int(round(SKY_TEXELS_AROUND / float(w))), 1)
+	var hz := clampf(float(map.sky.get("horizon", SKY_HORIZON)), 0.0, 1.0)
+	return {"w": w, "h": h, "repeats": reps, "texel_deg": 360.0 / float(w * reps), "horizon_px": hz * float(h)}
+
+
+func _show_sky(nm: String) -> void:
+	if _sky_mat == null:
+		return
+	var tex: Texture2D = _sky_tex.get(nm, _sky_tex.get("", null))
+	if tex == _sky_shown and _sky_shown != null:
+		return
+	_sky_shown = tex
+	var sp := sky_params(tex)
+	_sky_mat.set_shader_parameter("strip", tex)
+	_sky_mat.set_shader_parameter("size", Vector2(float(sp["w"]), float(sp["h"])))
+	_sky_mat.set_shader_parameter("texel_rad", deg_to_rad(float(sp["texel_deg"])))
+	_sky_mat.set_shader_parameter("horizon_px", float(sp["horizon_px"]))
+	_sky_mat.set_shader_parameter("fade_px", SKY_FADE)
+	var z := _zenith_of(tex)
+	_sky_mat.set_shader_parameter("zenith", Vector3(z.r, z.g, z.b))
+
+
+## The mean colour of the strip's top two rows: what the sky is above the strip.
+static func _zenith_of(tex: Texture2D) -> Color:
+	var im: Image = tex.get_image() if tex != null else null
+	if im == null:
+		return FOG_COLOR
+	if im.is_compressed():
+		im.decompress()
+	var acc := Color(0, 0, 0)
+	var n := 0
+	for y in mini(2, im.get_height()):
+		for x in im.get_width():
+			var c := im.get_pixel(x, y)
+			acc.r += c.r
+			acc.g += c.g
+			acc.b += c.b
+			n += 1
+	return Color(acc.r / n, acc.g / n, acc.b / n) if n > 0 else FOG_COLOR
 
 
 ## The sky and the haze of the sector the camera is in (a map may hold a night room and a dawn one): the sector's `sky` names one of the map sky's `by_name`, its `fog` replaces the map's.
@@ -394,12 +473,7 @@ func set_atmosphere(sec: Dictionary) -> void:
 	if sid == _atmo or sid == "":
 		return
 	_atmo = sid
-	var want := str(sec.get("sky", ""))
-	if not _skies.is_empty():
-		for nm in _skies:
-			(_skies[nm] as MeshInstance3D).visible = (nm == want)
-		if _sky != null:
-			_sky.visible = not _skies.has(want)
+	_show_sky(str(sec.get("sky", "")))
 	if env != null:
 		var fg: Dictionary = sec.get("fog", {})
 		var fc: Color = Color.html(str(fg["color"])) if fg.has("color") else (Color.html(str(map.fog["color"])) if map.fog.has("color") else FOG_COLOR)
@@ -541,12 +615,9 @@ func update(t: float, ctx: Dictionary) -> void:
 		(th["mat"] as StandardMaterial3D).albedo_color = Color(col.r, col.g, col.b, alpha)
 
 
-## Keep the sky centred on the camera.
-func follow(cam: Vector3) -> void:
-	if _sky != null:
-		_sky.position = Vector3(cam.x, 20.0, cam.z)
-	for nm in _skies:
-		(_skies[nm] as MeshInstance3D).position = Vector3(cam.x, 20.0, cam.z)
+## The camera moved (the sky is at infinity and needs nothing; kept for the callers).
+func follow(_cam: Vector3) -> void:
+	pass
 
 
 ## An animated surface: every wall or floor showing the map texture `name` shows `tex` instead (the LED wall).
