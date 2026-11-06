@@ -90,3 +90,13 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     N2.4 to N2.6 add new objects as new files and follow the art stream's style guide. It starts with an
     audit (every scene captured, compared with the owner's references in `pixelexample/` and with
     `docs/STORY_25D_ART_DIRECTION.md`), then fixes by world in parallel.
+27. After the art audit (`docs/art/VISUAL_AUDIT.md`, `docs/art/STYLE_GUIDE.md`): the art packages are the
+    audit's section 4, and each owns only the files its row names. The world packages (W1 to W9) own their
+    world's map and chapter JSON under `content/story/**` as well as its art. A4 (choice art) may make the
+    one small change it needs in `src/run/choice_props.gd` (the door and lamp looked up per world). The
+    camera findings (F5, F16) wait for the entrance-visibility work, which is in the rails now. The style
+    guide binds every stream that adds an object.
+28. `tools/dev/godot.sh` gives each worktree its own user data folder (`<work>/userdata/<worktree>`), so
+    worktrees run Godot at the same time; the lock is per worktree. `RW_GODOT_SHARED=1` is the old
+    behaviour (the real user folder, one lock for the machine). This supersedes "one Godot at a time on
+    this machine" in the plan and in `FILE_OWNERSHIP.md`.
