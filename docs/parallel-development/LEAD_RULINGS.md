@@ -100,3 +100,10 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     worktrees run Godot at the same time; the lock is per worktree. `RW_GODOT_SHARED=1` is the old
     behaviour (the real user folder, one lock for the machine). This supersedes "one Godot at a time on
     this machine" in the plan and in `FILE_OWNERSHIP.md`.
+29. The owner's answers to the audit's questions of taste (6 November 2026): falling notes and holds are
+    drawn **as light** (a glowing outline with a faint body, holds a thin lit core; timing unchanged); the
+    pad strip has **a skin per world family** (club desk, ship console, hell's copper, a wooden board for
+    Galilee, an instrument panel for the Squadron, a carved board for the Ember road); the title screen is
+    the menu over **a live, slowly moving view of the Warehouse floor** in the chapters menu's neon style,
+    without the engine version line. Package A3 (UI) builds these and may edit `src/scenes/main_menu.*`
+    and `src/run/run_hud.gd` for them.
