@@ -185,7 +185,7 @@
   {"id": "exit_tunnel_glow", "kind": "billboard", "sprite": "glow", "at": [0, 18.8], "y": 1.75, "size": 0.8, "anim": "pulse", "blend": "add"},
   {"id": "wizard_floor", "kind": "billboard", "sprite": "thing_wizard", "at": [-5.2, 7.4], "y": 0.85, "size": 1.7, "anim": "sway"},
   {"id": "wizard_chill", "kind": "billboard", "sprite": "thing_wizard", "at": [8.4, 9.7], "y": 0.85, "size": 1.7, "anim": "sway"},
-  {"id": "booth_radio", "kind": "billboard", "sprite": "thing_booth_radio", "at": [1.5, -9.4], "y": 0.62, "size": 0.9, "anim": "flicker"},
+  {"id": "booth_radio", "kind": "billboard", "sprite": "thing_booth_radio", "at": [2.8, -6.6], "y": 0.45, "size": 0.9, "anim": "flicker"},
   {"id": "booth_bomber_shadow", "kind": "billboard", "sprite": "thing_bomber_shadow", "at": [0.4, -9.85], "y": 1.7, "size": 2.4, "anim": "pulse"},
   {"id": "headphones_booth", "kind": "billboard", "sprite": "thing_headphones", "at": [0.9, -8.4], "y": 1.15, "size": 0.5, "anim": "none"},
   {"id": "crack_door", "kind": "billboard", "sprite": "thing_crack", "at": [2.85, 10.7], "y": 1.2, "size": 2.4, "anim": "none"},

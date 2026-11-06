@@ -21,6 +21,17 @@ var face_fn: Callable
 
 const FACE_TURN_BEAT := 49.0  # the phase beat the window's hotspots are framed by
 const FACE_RELEASE_BEAT := 60.5  # the head hands back to the rail from the lock beat (the commit), by the phase's end
+## The heralds' look (docs/art/HERALDS.md, the visibility rule): in the opening of a scene the head turns to each quest entrance on offer and its herald, one entrance a block
+## (the first in block 0, the next in block 1, at most three), from HERALD_LOOK_FROM to HERALD_LOOK_TO beats into its block, turning in and handing back over HERALD_TURN_BARS.
+## A look, never a move: the rail and the route are untouched, and the block's own glance is left out so it never swings the entrance away.
+const HERALD_LOOK_FROM := 0.5
+const HERALD_LOOK_TO := 15.0
+const HERALD_TURN_BARS := 1.0
+const HERALD_MAX_LOOKS := 3
+
+var look_heralds := true  # the heralds' look and the window's herald points (the tests turn it off to see the rail's own camera)
+var _herald_blocks: Dictionary = {}  # block -> true: the blocks of this phase whose glance a herald look replaces
+static var _maps: Dictionary = {}
 
 
 func _init(p_data: RunData) -> void:
@@ -76,7 +87,9 @@ func _phase_start(ev: Dictionary, engine: RunEngine) -> Array:
 			t_walk = cine_until
 		out.append_array(rail.door_walk(t_walk, engine.level.notes, walked))
 	door_target = ""
-	out.append_array(rail.ambient(t0, int(ev["phase"]), 0, engine.level.notes))
+	var looks := herald_looks(id, t0, engine)
+	out.append_array(_without_glance(rail.ambient(t0, int(ev["phase"]), 0, engine.level.notes), 0))
+	out.append_array(looks)
 	node_id = id
 	world = w
 	run_world = rw
@@ -142,8 +155,58 @@ func _block_result(ev: Dictionary, engine: RunEngine) -> Array:
 		if not face.is_empty():
 			out.append(window_face(face, float(ev["t"]), engine))
 		else:
-			out.append_array(rail.ambient(engine.t_of(float(b + 1) * engine.timing("block_beats")), int(ev["phase"]), b + 1, notes))
+			out.append_array(_without_glance(rail.ambient(engine.t_of(float(b + 1) * engine.timing("block_beats")), int(ev["phase"]), b + 1, notes), b + 1))
 	return _tag(out, world)
+
+
+## The map of a run node (the heralds' points need its floors), loaded once.
+func _map_of(id: String) -> StoryMap:
+	var m := str((data.nodes.get(id, {}) as Dictionary).get("map", ""))
+	if m == "":
+		return null
+	if not _maps.has(m):
+		var sm := StoryMap.load_chapter(m, false)
+		_maps[m] = sm if sm.errors.is_empty() else null
+	return _maps[m]
+
+
+## The heralds of scene `id` on offer from its first beat (RunHotspots.staged: an entrance behind a flag only when the flag is set), in file order: [herald block, ...].
+func staged_heralds(id: String, engine: RunEngine) -> Array:
+	var out: Array = []
+	if engine == null or engine.hotspots == null or engine.hotspots.node != id:
+		return out
+	for h in engine.hotspots.staged(0):
+		if (h as Dictionary).has("herald"):
+			out.append(h["herald"])
+	return out
+
+
+## The heralds' opening look (the visibility rule, docs/art/HERALDS.md): one `face` look a staged entrance, in blocks 0, 1 and 2 of the phase starting at `t0`, holding the entrance,
+## its mark and its herald in the picture from wherever the rail is (StoryPlayer.best_facing). Data only: the herald block's points, never a hand-tuned angle.
+func herald_looks(id: String, t0: float, engine: RunEngine) -> Array:
+	_herald_blocks = {}
+	var out: Array = []
+	if not look_heralds:
+		return out
+	var m := _map_of(id)
+	var heralds := staged_heralds(id, engine)
+	var beat := engine.beat_s
+	var bb := float(engine.timing("block_beats"))
+	var bars := (HERALD_LOOK_TO - HERALD_LOOK_FROM) * beat / rail.bar_s()
+	for i in mini(heralds.size(), HERALD_MAX_LOOKS):
+		var pts := StoryHeralds.look_points(heralds[i], m)
+		if pts.is_empty():
+			continue
+		_herald_blocks[i] = true
+		out.append({"t0": t0 + (float(i) * bb + HERALD_LOOK_FROM) * beat, "action": "player_look", "args": {"face": pts, "bars": bars, "turn_bars": HERALD_TURN_BARS, "release_bars": HERALD_TURN_BARS, "herald": true}})
+	return out
+
+
+## `list` (a block's ambient actions) without its glance when a herald look holds that block.
+func _without_glance(list: Array, block: int) -> Array:
+	if not _herald_blocks.has(block):
+		return list
+	return list.filter(func(a: Dictionary) -> bool: return not (str(a["action"]) == "player_look" and not (a["args"] as Dictionary).has("face")))
 
 
 ## The last block's look: from the block-2 decision (in its cue-free guard) the head turns to frame `pts` ([[x, z, keep, height], ...], the window's hotspots) by beat 49, holds them from wherever the
@@ -153,4 +216,19 @@ func window_face(pts: Array, t: float, engine: RunEngine) -> Dictionary:
 	var t_end := engine.t_of(4.0 * engine.timing("block_beats"))
 	var turn := maxf(engine.t_of(FACE_TURN_BEAT) - t, 0.5 * bar)
 	var release := maxf(t_end - engine.t_of(FACE_RELEASE_BEAT), 0.25 * bar)
-	return {"t0": t, "action": "player_look", "args": {"face": pts.duplicate(true), "bars": (t_end - t) / bar, "turn_bars": turn / bar, "release_bars": release / bar}}
+	return {"t0": t, "action": "player_look", "args": {"face": with_heralds(pts, engine), "bars": (t_end - t) / bar, "turn_bars": turn / bar, "release_bars": release / bar}}
+
+
+## The window's points with the herald of every quest entrance on show in the window added (where it stands, not kept: the default exit still decides the group, and of the
+## groups holding it the one with the entrance and its herald counts one more, so it is framed whenever it fits beside the default).
+func with_heralds(pts: Array, engine: RunEngine) -> Array:
+	var out := pts.duplicate(true)
+	if not look_heralds or engine == null or engine.hotspots == null:
+		return out
+	var m := _map_of(engine.hotspots.node)
+	for h in engine.hotspots.shown(3, true):
+		if (h as Dictionary).has("herald") and RunHotspots.window_of(h) == "final":
+			var hp := StoryHeralds.look_points(h["herald"], m, 0.0)
+			if hp.size() >= 3:
+				out.append(hp[2])  # (the herald's feet: one point, like every option, so the window never trades the other choices for the herald)
+	return out

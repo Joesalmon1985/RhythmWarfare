@@ -85,8 +85,24 @@ def _find(entrance) -> dict:
     raise SystemExit(f"herald: no hotspot {entrance} (call herald() after the entrance is added)")
 
 
-def herald(quest: str, entrance, side: str | None = None, at=None, gap: float = 1.25, toward: dict | None = None, self_thing: bool = False) -> dict:
-    """Stand the herald of `quest` at `entrance` (a hotspot id or the dict add()/sc() returned). Returns the herald block."""
+GATE_H = 2.2  # a gate's height (tools/story/art/heralds.py GATE_H_M): its mark hangs in its crown
+NEAR_EYE = 1.6  # a herald nearer than this to a place the camera stands fills the picture (head to feet do not fit): refused
+
+
+def rail_places(scene: str) -> list:
+    """The waypoints the camera stands at in `scene`: home, the arrival, every place of the good and bad rails."""
+    pl = NODES[scene]["place"]
+    r = pl.get("rail", {})
+    out = [pl["waypoint"]] + ([r["arrive"]] if r.get("arrive") else [])
+    out += [p["to"] for p in r.get("good", []) + r.get("bad", [])]
+    return out
+
+
+def herald(quest: str, entrance, side: str | None = None, at=None, gap: float = 1.25, toward: dict | None = None, self_thing: bool = False, gate: bool = False,
+           mark_over_self: bool = False) -> dict:
+    """Stand the herald of `quest` at `entrance` (a hotspot id or the dict add()/sc() returned). Returns the herald block.
+    gate=True: the entrance has no thing of its own (a `pos` anchor): a lit doorway in the quest's colour stands there, its mark above it.
+    mark_over_self=True (with self_thing): the quest's mark hangs over the herald itself, who points at `toward` (the way)."""
     if quest not in QUESTS:
         raise SystemExit(f"herald: quest {quest} is not one of {QUESTS}")
     h = _find(entrance)
@@ -96,7 +112,12 @@ def herald(quest: str, entrance, side: str | None = None, at=None, gap: float = 
     if self_thing:
         if "thing" not in h["anchor"]:
             raise SystemExit(f"herald: {hid}: self_thing needs an entrance anchored on a thing of the map")
-        block = {"quest": quest, "self": h["anchor"]["thing"], "toward": [round(ex, 3), round(ez, 3)], "mark_y": round(ey + 0.55, 3)}  # (the mark over what it points at)
+        sx, sz, sy = ground_of(mp, h["anchor"])  # (where the thing stands: the camera's look holds it with what it points at)
+        block = {"quest": quest, "self": h["anchor"]["thing"], "at": [round(sx, 3), round(sz, 3)], "toward": [round(ex, 3), round(ez, 3)], "mark_y": round(ey + 0.55, 3)}  # (the mark over what it points at)
+        if mark_over_self:
+            th = next(t for t in mp["things"] if t["id"] == h["anchor"]["thing"])
+            block["mark_at"] = [round(sx, 3), round(sz, 3)]
+            block["mark_y"] = round(float(th.get("y", 0.85)) + 0.5 * float(th.get("size", 1.7)) + 0.4, 3)  # (over his hat)
         h["herald"] = block
         return block
     if at is not None:
@@ -126,7 +147,16 @@ def herald(quest: str, entrance, side: str | None = None, at=None, gap: float = 
             continue
         if math.hypot(hx - ox, hz - oz) < HALF_W + 0.3:
             raise SystemExit(f"herald: {hid}: stands on {o['id']}'s anchor")
+    for wid in rail_places(h["scene"]):
+        w = next((w for w in mp["waypoints"] if w["id"] == wid), None)
+        if w is not None and math.hypot(hx - w["at"][0], hz - w["at"][1]) < NEAR_EYE:
+            raise SystemExit(f"herald: {hid}: stands {math.hypot(hx - w['at'][0], hz - w['at'][1]):.2f} m from {wid}, where the camera stands: too near to be seen whole (needs {NEAR_EYE})")
     block = {"quest": quest, "at": [round(hx, 3), round(hz, 3)], "toward": [round(ex, 3), round(ez, 3)], "mark_y": round(ey + 1.05, 3)}
+    if gate:
+        if "pos" not in h["anchor"]:
+            raise SystemExit(f"herald: {hid}: a gate is for an entrance with no thing of its own (a pos anchor)")
+        block["gate"] = True
+        block["mark_y"] = round(GATE_H - 0.4, 3)  # (the mark in the doorway's crown, lit against its light: it stays in the picture with the herald even from a few metres)
     h["herald"] = block
     return block
 

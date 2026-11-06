@@ -146,16 +146,77 @@ def to_rgba(spec: dict, idx: np.ndarray):
 
 
 # ---- the wizard: his billboard art, the free arm pointing -------------------------------------------------------------------------------------------------------
-_WIZ_ARMS = [  # the sleeve's points from the shoulder to the wrist, and the orb's flare (1 on the beat)
-    ([(82, 64), (96, 56), (104, 44), (106, 32)], 1.0),
-    ([(82, 64), (96, 58), (107, 50), (114, 44)], 0.6),
-    ([(82, 64), (96, 61), (108, 58), (118, 56)], 0.4),
-    ([(82, 64), (97, 61), (109, 59), (120, 58)], 0.3),
-    ([(82, 64), (98, 62), (111, 60), (122, 59)], 1.0),
-    ([(82, 64), (97, 61), (109, 59), (120, 58)], 0.6),
-    ([(82, 64), (96, 61), (108, 58), (118, 56)], 0.4),
-    ([(82, 64), (96, 58), (107, 50), (114, 44)], 0.3),
+_WIZ_ARMS = [  # the sleeve's points from the shoulder to the wrist, and the orb's flare (1 on the beat); the reach stops short of the canvas' edge so the hand is whole
+    ([(86, 66), (95, 58), (101, 47), (103, 37)], 1.0),
+    ([(86, 66), (95, 60), (103, 53), (108, 48)], 0.6),
+    ([(86, 66), (96, 62), (105, 59), (112, 57)], 0.4),
+    ([(86, 66), (96, 62), (106, 60), (113, 59)], 0.3),
+    ([(86, 66), (97, 63), (107, 61), (115, 60)], 1.0),
+    ([(86, 66), (96, 62), (106, 60), (113, 59)], 0.6),
+    ([(86, 66), (96, 62), (105, 59), (112, 57)], 0.4),
+    ([(86, 66), (95, 60), (103, 53), (108, 48)], 0.3),
 ]
+WIZ_RIM_KEY = (244, 188, 74)  # the billboard's own outline: the warm key light on the left and top edges, the magenta rim on the right and below
+WIZ_RIM_BACK = (142, 28, 102)
+
+
+def _wizard_sleeve(img: np.ndarray, base: np.ndarray, pts: list) -> np.ndarray:
+    """The pointing sleeve drawn in the billboard's own manner (not a flat tube): it widens from the shoulder to a hanging cuff, its cloth is the robe's own dithered
+    pixels (sampled from the robe below the beard, so the noise and palette match), lit on top and dark underneath with a fold every few pixels, and outlined like the
+    rest of him (warm on top, magenta below). Returns the sleeve's mask."""
+    H, W = img.shape[:2]
+    y, x = np.mgrid[0:H, 0:W].astype(np.float32)
+    segs = list(zip(pts[:-1], pts[1:]))
+    lens = [float(np.hypot(b[0] - a[0], b[1] - a[1])) for a, b in segs]
+    total = sum(lens)
+    best = np.full((H, W), 1e9, np.float32)
+    along = np.zeros((H, W), np.float32)
+    side = np.zeros((H, W), np.float32)
+    acc = 0.0
+    for ((x0, y0), (x1, y1)), ln in zip(segs, lens):
+        dx, dy = (x1 - x0) / ln, (y1 - y0) / ln
+        u = np.clip((x - x0) * dx + (y - y0) * dy, 0.0, ln)
+        px, py = x0 + dx * u, y0 + dy * u
+        d = np.hypot(x - px, y - py)
+        cross = (x - x0) * dy - (y - y0) * dx  # > 0 below the arm when it points right
+        m = d < best
+        best[m] = d[m]
+        along[m] = ((acc + u) / total)[m]
+        side[m] = cross[m]
+        acc += ln
+    radius = 4.6 + 1.6 * along + 1.4 * np.clip((along - 0.8) / 0.2, 0, 1)  # the sleeve opens towards the cuff
+    sleeve = best < radius
+    v = np.clip(side / np.maximum(radius, 1e-3), -1, 1)  # -1 on top, +1 underneath
+    # cloth: the robe's own pixels, from the body below the beard (rows 92 to 120, columns 60 to 100), walked along the sleeve
+    sx = np.clip((60 + along * 38).astype(int), 0, W - 1)
+    sy = np.clip((104 + v * 10).astype(int), 0, H - 1)
+    cloth = base[sy, sx, :3].copy()
+    lum = cloth.mean(axis=-1, keepdims=True)
+    cloth = np.where(lum < 6, np.array([28, 42, 72], np.float32), cloth)  # (the robe's darkest pixels read as holes on a thin sleeve: a deep blue instead)
+    shade = 1.25 - 0.55 * (v + 1.0) / 2.0  # lit on top, falling to dark underneath
+    fold = (np.floor(along * total / 5.0) % 2 == 1) & (v > -0.2)
+    shade = np.where(fold, shade * 0.82, shade)
+    cuff = (along > 0.86) & (np.abs(v) < 0.95)
+    out = np.clip(cloth * shade[..., None], 0, 255)
+    out = np.where(cuff[..., None], np.clip(out * 1.18 + 6, 0, 255), out)
+    paint = sleeve & ~((base[..., 3] > 127) & (x < 92))  # (in front of the robe's edge it overlaps him; over his body it never paints)
+    img[paint, :3] = out[paint]
+    img[paint, 3] = 255
+    return paint
+
+
+def _wizard_outline(img: np.ndarray, base: np.ndarray, new: np.ndarray) -> None:
+    """The outline round what was added to the billboard (the sleeve and the hand), where it stands against the night: warm on the lit side (above, left), magenta below."""
+    H, W = img.shape[:2]
+    y = np.mgrid[0:H, 0:W][0]
+    ring = np.zeros_like(new)
+    for dy_, dx_ in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+        ring |= np.roll(np.roll(new, dy_, 0), dx_, 1)
+    ring &= ~(img[..., 3] > 127)
+    top = ring & (np.roll(new, -1, 0) | np.roll(new, -1, 1))  # (the cloth is below or right of the pixel: its lit side)
+    img[ring, :3] = WIZ_RIM_BACK
+    img[top & (y < 66), :3] = WIZ_RIM_KEY
+    img[ring, 3] = 255
 
 
 def wizard_frames() -> list:
@@ -164,33 +225,30 @@ def wizard_frames() -> list:
     import make_choice_art as mca  # the wizard's own pixel helpers (his eyes, his orb, the sleeve's colours)
     out = []
     y, x = np.mgrid[0:128, 0:128]
-    robe, robe_l, skin = mca.hexc("#1c2a48"), mca.hexc("#30447a"), mca.hexc("#c8ccd6")
+    skin, skin_d = mca.hexc("#c8ccd6"), mca.hexc("#8a8fa0")
+    base = mca._wizard()
     for pts, flare in _WIZ_ARMS:
-        img = mca._wizard()
+        img = base.copy()
         e = mca._eyes(img)
         img[e, :3] = mca.hexc("#fff4a0")
         img[e & (x % 2 == 0), :3] = mca.hexc("#ffffff")
         o = mca._orb(img)
         img[o, :3] = np.clip(img[o, :3] * (1.3 + 0.8 * flare) + 30 * flare, 0, 255)
-        for (x0, y0), (x1, y1) in zip(pts[:-1], pts[1:]):
-            for t in np.linspace(0, 1, 14):
-                cx, cy = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
-                mk = np.hypot(x - cx, y - cy) < 6.0
-                mca.put(img, mk, robe, 1.0)
-                mca.put(img, mk & (y < cy - 1.5), robe_l, 1.0)
+        added = _wizard_sleeve(img, base, pts)
         wx, wy = pts[-1]
         dx, dy = wx - pts[-2][0], wy - pts[-2][1]
         ln = max(np.hypot(dx, dy), 1e-6)
         ux, uy = dx / ln, dy / ln
-        hand = np.hypot(x - (wx + ux * 3.0), y - (wy + uy * 3.0)) < 4.2
+        hx, hy = wx + ux * 3.5, wy + uy * 3.5
+        hand = np.hypot(x - hx, y - hy) < 3.4
         mca.put(img, hand, skin)
+        mca.put(img, hand & (y > hy + 1), skin_d)  # (the hand's underside in the sleeve's shadow)
         if pts[-1][1] > 50:  # pointing: one finger out along the arm
-            for k in range(3, 8):
-                mca.put(img, (np.abs(x - (wx + ux * (3 + k))) < 1.0) & (np.abs(y - (wy + uy * (3 + k))) < 1.0), skin, 1.0 if k < 7 else 0.85)
+            for k in range(3, 7):
+                mca.put(img, (np.abs(x - (hx + ux * k)) < 1.0) & (np.abs(y - (hy + uy * k)) < 1.0), skin, 1.0 if k < 6 else 0.85)
         else:  # the beckon at the top: the fingers curled in
-            mca.put(img, (np.abs(x - (wx - 2)) < 2) & (np.abs(y - (wy - 6)) < 2), skin, 0.85)
-        rim = (img[..., 3] > 127) & ~np.roll(img[..., 3] > 127, -2, axis=0) & (x > 84) & (y < 66)
-        img[rim, :3] = mca.hexc("#f4bc4a")  # the warm rim along the top of the arm, the club light on him
+            mca.put(img, (np.abs(x - (hx - 2)) < 2) & (np.abs(y - (hy - 5)) < 2), skin, 0.85)
+        _wizard_outline(img, base, (added | ((img[..., 3] > 127) & (base[..., 3] <= 127))) & ~(base[..., 3] > 127))
         # the orb's flare: a ring of light pixels round the orb on the beat
         if flare >= 0.99:
             ring = (np.abs(np.hypot(x - 24.5, y - 25.5) - 9.0) < 0.8) & ((x + y) % 2 == 0)
@@ -202,7 +260,7 @@ def wizard_frames() -> list:
 
 # ---- the quest's mark over the entrance: a small sign in the quest's colour, lit by itself (drawn unlit at run time, swelling on the beat) ---------------------------
 MARK_PX = 24
-MARK_M = 0.42  # its size in the world
+MARK_M = 0.52  # its size in the world (big enough to read on a phone across a room: about 40 px tall at 6 m in a 720 px window)
 COLOURS = {"dungeon": "#9a7aff", "gospel": "#ffd25a", "squadron": "#8cff9a", "ember": "#ff9a30"}
 
 
@@ -258,6 +316,54 @@ def mark(quest: str) -> np.ndarray:
     return np.clip(img, 0, 255).astype(np.uint8)
 
 
+# ---- the gate: a lit doorway for an entrance that has no thing of its own to point at (the gospel's star on the balcony) -----------------------------------------
+GATE_PPM = 40  # sheet pixels a metre (the people's density at mid-room)
+GATE_W_M = 1.1
+GATE_H_M = 2.2
+_BAYER = np.array([[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]], np.float32) / 16.0
+
+
+def gate(quest: str):
+    """A plain arched doorway in a dark plaster wall frame (body: lit by the room at run time) with the quest's light in it (glow: drawn unlit): brightest low in the middle
+    where it spills over the threshold, dithered in 4 x 4 steps like the rooms' own light. Returns (body, glow, pivot at the threshold's centre)."""
+    w, h = int(GATE_W_M * GATE_PPM), int(GATE_H_M * GATE_PPM)
+    y, x = np.mgrid[0:h, 0:w].astype(np.float32) + 0.5
+    cx = w / 2.0
+    r_out = w / 2.0
+    r_in = r_out - 5.0
+    spring = r_out  # the arch springs this far below the top
+    outer = ((y >= spring) | (np.hypot(x - cx, y - spring) < r_out)) & (y < h)
+    inner = ((y >= spring) & (np.abs(x - cx) < r_in)) | (np.hypot(x - cx, y - spring) < r_in)
+    inner &= y < h - 2
+    frame = outer & ~inner
+    body = np.zeros((h, w, 4), np.float32)
+    stone, stone_l, stone_d = _rgb("#4a4252"), _rgb("#6c6276"), _rgb("#231e2b")
+    body[frame, :3] = stone
+    lit = frame & ((x - cx) * 0.6 + (y - spring) * -0.4 < -r_in * 0.4)  # (the upper left of the frame catches the room's light)
+    body[lit, :3] = stone_l
+    edge_in = frame & (np.hypot(x - cx, np.maximum(y, spring) - spring) >= r_in) & (np.hypot(x - cx, np.maximum(y, spring) - spring) < r_in + 1.2)
+    body[edge_in, :3] = stone_d  # (the reveal: the frame's inner edge in shadow)
+    blocks = frame & (((y // 7) % 2 == 0) & ((x // 3) % 4 == 0))
+    body[blocks, :3] = body[blocks, :3] * 0.8  # (the joints of the stones)
+    sill = (y >= h - 3) & (np.abs(x - cx) < r_out)
+    body[sill, :3] = stone_d
+    body[frame | sill, 3] = 255
+    col = _rgb(COLOURS[quest])
+    hot = np.minimum(col * 0.5 + 140, 255)
+    deep = col * 0.35
+    # the light in the doorway: a vertical gradient, brighter low and in the middle, quantised with the dither so it reads as pixel light, not a smooth wash
+    u = np.clip(1.0 - np.abs(x - cx) / r_in, 0, 1)
+    v = np.clip((y - 4) / (h - 6), 0, 1)
+    k = np.clip(0.25 + 0.55 * v + 0.35 * u * u, 0, 1)
+    lvl = np.floor(k * 4.0 + _BAYER[(y.astype(int) % 4), (x.astype(int) % 4)]) / 4.0
+    glow = np.zeros((h, w, 4), np.float32)
+    c = deep[None, None, :] + (col - deep)[None, None, :] * np.clip(lvl, 0, 1)[..., None]
+    c = np.where((lvl >= 1.0)[..., None], hot[None, None, :], c)
+    glow[inner, :3] = c[inner]
+    glow[inner, 3] = 255
+    return np.clip(body, 0, 255).astype(np.uint8), np.clip(glow, 0, 255).astype(np.uint8), (cx, float(h))
+
+
 def _trim(img: np.ndarray, pivot):
     a = img[..., 3] > 0
     ys, xs = np.nonzero(a)
@@ -298,6 +404,8 @@ def build() -> dict:
         meta[q] = {"title": h["title"], "chapter": h["chapter"], "who": h["who"], "px_per_m": {"1": ppm, "2": ppm / 2.0}}
     for q in HERALDS:
         items.append((q, 0, 0, mark(q), None, (MARK_PX / 2.0, MARK_PX / 2.0)))  # lod 0: the quest's mark (its pivot at its centre)
+        gb, gg, gp = gate(q)
+        items.append((q, -1, 0, gb, gg, gp))  # lod -1: the quest's gate (a lit doorway; its pivot the threshold's centre)
     # shelf packing, tallest first
     tiles = []
     for k, it in enumerate(items):
@@ -329,6 +437,10 @@ def build() -> dict:
     for k, (q, lod, i, body, glow, piv) in enumerate(items):
         if lod == 0:
             meta[q]["mark"] = {"rect": rect[(k, "body")], "px_per_m": round(MARK_PX / MARK_M, 4), "colour": COLOURS[q]}
+            continue
+        if lod == -1:
+            meta[q]["gate"] = {"rect": rect[(k, "body")], "glow": rect[(k, "glow")], "px_per_m": GATE_PPM, "pivot": [round(float(piv[0]), 2), round(float(piv[1]), 2)],
+                               "width_m": GATE_W_M, "height_m": GATE_H_M}
             continue
         lods = meta[q]["lods"].setdefault(str(lod), {"frames": [], "glow": []})
         lods["frames"].append(rect[(k, "body")] + [round(float(piv[0]), 2), round(float(piv[1]), 2)])

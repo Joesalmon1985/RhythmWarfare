@@ -18,9 +18,13 @@ const GAIN := 1.3  # the people's light, as their shader takes it (story_people.
 const MIN_LIGHT := 0.55
 const MAX_LIGHT := 1.12
 const LOD2_BELOW := 0.72  # screen pixels per sheet pixel under which the half-size frames are drawn
+const FOG_MIX := 0.82  # how far the depth fog takes a herald into the dark at its fullest (story_people.gdshader: fog * 0.82)
+const POOL_M := 1.1  # the radius of the quest's light on the floor round the entrance
 const FLIP_DEAD := 0.08  # metres: the entrance this close to straight ahead of the herald keeps the last facing (no flicker)
 const QUESTS := ["dungeon", "gospel", "squadron", "ember"]
 const POINT_FRAME := 4  # reduced motion: the point held still
+const LOOK_KNEE := 0.5  # metres: the lowest of a herald a camera look tips the head for
+const ENTRANCE_BELOW_MARK := 1.3  # metres: what a camera holds of an entrance reaches this far below its mark (the mark hangs 1.05 m over the anchor)
 
 static var _doc: Dictionary = {}
 static var _tex: Texture2D = null
@@ -86,7 +90,7 @@ static func validate(block: Variant, where: String) -> Array:
 	elif not (doc().get("heralds", {}) as Dictionary).has(str(b["quest"])):
 		errs.append("%s: no herald art for %s" % [where, b["quest"]])
 	for k in b:
-		if str(k) not in ["quest", "at", "toward", "mark_y", "self"]:
+		if str(k) not in ["quest", "at", "toward", "mark_y", "self", "gate", "mark_at"]:
 			errs.append("%s: herald.%s is not a field" % [where, k])
 	if typeof(b.get("toward", null)) != TYPE_ARRAY or (b["toward"] as Array).size() != 2:
 		errs.append("%s: herald.toward must be [x, z]" % where)
@@ -97,7 +101,46 @@ static func validate(block: Variant, where: String) -> Array:
 			errs.append("%s: the %s herald has no billboard frames to play on a thing" % [where, b.get("quest", "")])
 	elif typeof(b.get("at", null)) != TYPE_ARRAY or (b["at"] as Array).size() != 2:
 		errs.append("%s: herald.at must be [x, z]" % where)
+	if b.has("mark_at") and (typeof(b["mark_at"]) != TYPE_ARRAY or (b["mark_at"] as Array).size() != 2):
+		errs.append("%s: herald.mark_at must be [x, z]" % where)
+	if b.has("gate") and typeof(b["gate"]) != TYPE_BOOL:
+		errs.append("%s: herald.gate is true or false" % where)
+	if typeof(b.get("gate", false)) == TYPE_BOOL and b.get("gate", false) and b.has("mark_at"):
+		errs.append("%s: a gate stands at the entrance under its mark: no mark_at with a gate" % where)
 	return errs
+
+
+## Where the entrance's mark (and its light pool, and its gate) stands: `mark_at` when the block gives one (a self herald that carries its own sign), else what it points at.
+static func mark_point(b: Dictionary) -> Vector2:
+	var a: Array = b.get("mark_at", b["toward"])
+	return Vector2(float(a[0]), float(a[1]))
+
+
+## What a camera look holds in the picture for the herald block `b` of an entrance (the visibility rule, docs/art/HERALDS.md): the entrance (its ground and the top of its
+## mark) and the herald (knees and head), as `face` points [x, z, keep, height in world metres] (StoryPlayer `face` look). A `self` herald stands where its thing is (`at`).
+## Heights come from the floors of `map` (the balcony is 2.6 m up). [] when the block cannot be placed.
+static func look_points(b: Dictionary, map: StoryMap, keep := 1.0) -> Array:
+	if map == null or typeof(b.get("toward", null)) != TYPE_ARRAY:
+		return []
+	var toward := mark_point(b)
+	var out: Array = []
+	var ft := _floor_at(map, toward)
+	var my := float(b.get("mark_y", 1.5))
+	out.append([toward.x, toward.y, keep, ft + maxf(0.0, my - ENTRANCE_BELOW_MARK)])  # (the entrance itself: what the mark hangs over)
+	out.append([toward.x, toward.y, keep, ft + my + 0.25])  # (the top of the mark)
+	if typeof(b.get("at", null)) == TYPE_ARRAY:
+		var a: Array = b["at"]
+		var at := Vector2(float(a[0]), float(a[1]))
+		var fa := _floor_at(map, at)
+		var m: Dictionary = (doc().get("heralds", {}) as Dictionary).get(str(b.get("quest", "")), {})
+		out.append([at.x, at.y, keep, fa + LOOK_KNEE])  # (the knees, not the feet: a look tips the head down far enough for these, and a near herald's feet may go under the picture's edge)
+		out.append([at.x, at.y, keep, fa + float(m.get("height_m", 1.7))])
+	return out
+
+
+static func _floor_at(map: StoryMap, p: Vector2) -> float:
+	var sid := map.sector_at(p)
+	return float(map.sector(sid).get("floor", 0.0)) if sid != "" else 0.0
 
 
 func _init(p_stage: StoryStage = null) -> void:
@@ -162,7 +205,7 @@ func _make(id: String, b: Dictionary, toward: Vector2) -> Dictionary:
 	var m: Dictionary = (doc().get("heralds", {}) as Dictionary).get(str(b["quest"]), {})
 	if m.is_empty() or sheet() == null:
 		return {}
-	var a: Array = b.get("at", b["toward"])  # (a `self` herald stands nowhere of its own: only its mark is made, over what it points at)
+	var a: Array = b["toward"] if b.has("self") else b["at"]  # (a `self` herald is its thing (its `at` only tells the camera where): only its mark is made, over what it points at)
 	var at := Vector2(float(a[0]), float(a[1]))
 	var sec := stage.map.sector_at(at)
 	var room := stage.map.room_of(sec) if sec != "" else ""
@@ -172,12 +215,13 @@ func _make(id: String, b: Dictionary, toward: Vector2) -> Dictionary:
 	var rec := {"herald": null, "crowd": crowd, "block": b, "on": true, "at": at, "toward": toward, "quest": str(b["quest"])}
 	if not b.has("self"):
 		rec["herald"] = _herald_prop(id, m, sec, at, crowd)
-	var msec := stage.map.sector_at(toward)
+	var mpt := mark_point(b)
+	var msec := stage.map.sector_at(mpt)
 	if msec != "" and (m.get("mark", {}) as Dictionary).size() > 0:
 		var mp := StoryCrowdProp.new()
 		mp.kind = "occluder"
 		mp.name = "HeraldMark_" + id.replace(".", "_")
-		mp.set_meta("def", {"id": "herald_mark:" + id, "sector": msec, "at": toward, "width": 0.4, "height": float(b.get("mark_y", 1.5)) + 0.25})
+		mp.set_meta("def", {"id": "herald_mark:" + id, "sector": msec, "at": mpt, "width": 0.4, "height": float(b.get("mark_y", 1.5)) + 0.25})
 		mp.set_meta("tex", sheet())
 		mp.set_meta("herald", id)
 		mp.drawer = _draw_mark
@@ -237,26 +281,67 @@ func _draw_herald(prop: StoryCrowdProp) -> void:
 	prop.draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
-## The quest's mark over the entrance: its own light (unlit by the room), swelling a little on every beat.
+## The quest's mark over the entrance, and under it the entrance's light: a pool of the quest's colour on the floor and, for an entrance with no thing of its own
+## (`gate`), a lit doorway. The mark and the gate's light are their own light (unlit by the room), the gate's frame takes the room's light like a person; all of it swells a
+## little on every beat and fades into the room's depth fog as the people do.
 func _draw_mark(prop: StoryCrowdProp) -> void:
 	var rec := _rec_of(prop)
 	if rec.is_empty() or not bool(rec["on"]) or prop.items.is_empty():
 		return
-	var mk: Dictionary = doc()["heralds"][rec["quest"]].get("mark", {})
+	var hm: Dictionary = doc()["heralds"][rec["quest"]]
+	var mk: Dictionary = hm.get("mark", {})
 	if mk.is_empty():
 		return
 	var b: Dictionary = rec["block"]
 	var rect: Rect2 = prop.items[0][1]
 	var spm := rect.size.y / (float(b.get("mark_y", 1.5)) + 0.25)
-	var r: Array = mk["rect"]
 	var beat_u := fposmod(now / beat_s, 1.0)
-	var swell := 1.0 if reduced else 1.0 + 0.12 * maxf(0.0, 1.0 - beat_u * 3.0)
-	var k := spm / float(mk["px_per_m"]) * swell
-	var c := Vector2(0.0, -float(b.get("mark_y", 1.5)) * spm)
-	var half := Vector2(float(r[2]), float(r[3])) * 0.5 * k
+	var hit := 0.0 if reduced else maxf(0.0, 1.0 - beat_u * 3.0)  # 1 on the beat, gone by a third of it
+	var fog := _fog_of(prop, rec)
+	var keep := 1.0 - 0.6 * fog  # (lights carry through the haze further than people do)
 	var col := Color.html(str(mk["colour"]))
-	prop.draw_circle(c, half.x * 1.7, Color(col.r, col.g, col.b, 0.16))  # a soft halo of its light on the wall behind
-	prop.draw_texture_rect_region(sheet(), Rect2(c - half, half * 2.0), Rect2(float(r[0]), float(r[1]), float(r[2]), float(r[3])))
+	# the pool: the quest's light on the floor round the entrance, an ellipse as flat as the floor looks from the eye
+	var flat := clampf(_eye_over_floor(prop, rec) / maxf(prop.depth, 0.5), 0.12, 0.65)
+	var pr := POOL_M * spm
+	for k in 4:
+		var f := 1.0 - 0.22 * float(k)
+		prop.draw_set_transform(Vector2.ZERO, 0.0, Vector2(1.0, flat))
+		prop.draw_circle(Vector2.ZERO, pr * f, Color(col.r, col.g, col.b, (0.07 + 0.05 * hit) * keep))
+	prop.draw_set_transform_matrix(Transform2D.IDENTITY)
+	var gt: Dictionary = hm.get("gate", {})
+	if typeof(b.get("gate", false)) == TYPE_BOOL and b.get("gate", false) and not gt.is_empty():
+		var gk := spm / float(gt["px_per_m"])
+		var gr: Array = gt["rect"]
+		var gg: Array = gt["glow"]
+		var pv: Array = gt["pivot"]
+		var dst := Rect2(-float(pv[0]) * gk, -float(pv[1]) * gk, float(gr[2]) * gk, float(gr[3]) * gk)
+		var glow := (0.7 + 0.15 * hit) * keep  # (a doorway lit from inside, not a lamp: below the mark's own light)
+		prop.draw_texture_rect_region(sheet(), dst, Rect2(float(gg[0]), float(gg[1]), float(gg[2]), float(gg[3])), Color(glow, glow, glow, 1.0))
+		prop.draw_texture_rect_region(sheet(), dst, Rect2(float(gr[0]), float(gr[1]), float(gr[2]), float(gr[3])), _light(prop, rec))
+	var r: Array = mk["rect"]
+	var swell := 1.0 + 0.12 * hit
+	var k2 := spm / float(mk["px_per_m"]) * swell
+	var c := Vector2(0.0, -float(b.get("mark_y", 1.5)) * spm)
+	var half := Vector2(float(r[2]), float(r[3])) * 0.5 * k2
+	prop.draw_circle(c, half.x * 1.8, Color(col.r, col.g, col.b, (0.14 + 0.1 * hit) * keep))  # a soft halo of its light on the wall behind
+	prop.draw_texture_rect_region(sheet(), Rect2(c - half, half * 2.0), Rect2(float(r[0]), float(r[1]), float(r[2]), float(r[3])), Color(keep, keep, keep, 1.0))
+
+
+## The depth fog where the prop stands, 0 to 1, as the crowd fades its people (StoryCrowd.fog_m).
+func _fog_of(prop: StoryCrowdProp, rec: Dictionary) -> float:
+	var crowd: StoryCrowd = rec["crowd"]
+	if not is_instance_valid(crowd) or crowd.fog_m.y <= crowd.fog_m.x:
+		return 0.0
+	return clampf((prop.depth - crowd.fog_m.x) / (crowd.fog_m.y - crowd.fog_m.x), 0.0, 1.0)
+
+
+## How high the eye is over the floor the prop stands on (metres): the flattening of its light pool.
+func _eye_over_floor(prop: StoryCrowdProp, rec: Dictionary) -> float:
+	var crowd: StoryCrowd = rec["crowd"]
+	var o: Dictionary = prop.get_meta("def", {})
+	if not is_instance_valid(crowd) or crowd.cam_pose.is_empty() or stage == null or stage.map == null:
+		return 1.6
+	return maxf((crowd.cam_pose["cam"] as Vector3).y - _floor_at(stage.map, o["at"]), 0.2)
 
 
 func _light(prop: StoryCrowdProp, rec: Dictionary) -> Color:
@@ -264,11 +349,12 @@ func _light(prop: StoryCrowdProp, rec: Dictionary) -> Color:
 	var o: Dictionary = prop.get_meta("def", {})
 	if not crowd.light_fn.is_valid():
 		return Color.WHITE
-	if not rec.has("lamp"):
-		rec["lamp"] = crowd.light_fn.call(str(o["sector"]), o["at"], false)
-	var l: Color = (crowd.light_fn.call(str(o["sector"]), o["at"], true) as Color) * (rec["lamp"] as Color) * GAIN
+	if not prop.has_meta("lamp"):  # (the lamps round the spot, once: each prop of the entrance has its own spot)
+		prop.set_meta("lamp", crowd.light_fn.call(str(o["sector"]), o["at"], false))
+	var l: Color = (crowd.light_fn.call(str(o["sector"]), o["at"], true) as Color) * (prop.get_meta("lamp") as Color) * GAIN
 	var lo := 0.8 if high_contrast else MIN_LIGHT
-	return Color(clampf(l.r, lo, MAX_LIGHT), clampf(l.g, lo, MAX_LIGHT), clampf(l.b, lo, MAX_LIGHT), 1.0)
+	var fade := 1.0 - FOG_MIX * _fog_of(prop, rec)  # (the depth fog, as the people's shader mixes them into the dark: the fog colour is near black)
+	return Color(clampf(l.r, lo, MAX_LIGHT) * fade, clampf(l.g, lo, MAX_LIGHT) * fade, clampf(l.b, lo, MAX_LIGHT) * fade, 1.0)
 
 
 ## A `self` herald: the entrance's own billboard plays the gesture while the entrance is on offer and not current (in place of the sad frame; the red light on the floor still
