@@ -73,3 +73,20 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     wording "a build with these recordings cannot be given to anyone" is withdrawn. Two things do not
     change: audio is not committed to the public Git repository (the owner's statement was about the game,
     and the packs are several GB), and `main` is not touched until the owner says so.
+25. From the owner, 6 November 2026: the entrances to the quests from the main flow must be more obvious.
+    Each entrance has a **herald**: a character from that quest standing at the entrance and gesturing
+    towards it. A herald is scenery that belongs to the entrance: it is not a choice, does not count
+    towards the cap of choices (ruling 1) and never takes part in routing. The art stream builds the
+    herald (the character, the gesture, a way to attach one to an entrance) and shows it on the entrances
+    that exist today; N2.4 places one at every one of the 20 new entrances.
+26. From the owner, the same day: "a big visual polish so the graphics look seamless, and none of the
+    artwork is jarring", in parallel with the other work. So there is a third stream, **art (A)**, from now
+    until stage X (it replaces X5). It owns: `assets/**` art, the art builders under `tools/story/**` and
+    the art scripts `tools/run/make_choice_art.py`, `make_ember.py`, `acting_*.py`, the generated people
+    sheets (regenerated only by the art stream, one commit at a time, never merged), the look of the
+    stage in `src/story/**` (style, shaders, world drawing), and `docs/shots/art/`, `docs/art/`. It does
+    not edit `src/run/**`, `src/transition/**`, `src/narrative/**`, `src/track/**`, the tests of those, or
+    `tools/run/hotspot_tables/**` except where ruling 25 needs a herald attached. The narrative stream's
+    N2.4 to N2.6 add new objects as new files and follow the art stream's style guide. It starts with an
+    audit (every scene captured, compared with the owner's references in `pixelexample/` and with
+    `docs/STORY_25D_ART_DIRECTION.md`), then fixes by world in parallel.
