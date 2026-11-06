@@ -34,6 +34,7 @@ var recipes: Dictionary = {}  # mix recipe name -> {drums, bass, other}
 var seed_value := 0  # the per-run seed that picks between a scene's alternate arrangements (RW_RUN_SEED, else the save's)
 var hotspots: Dictionary = {}  # scene id -> Array of normalised hotspot dictionaries (the authored ones, else one exit per route made from the scene's doorways)
 var hotspots_authored: Dictionary = {}  # scene id -> true when its hotspots come from content/run/hotspots/<world>.json
+var reactives: Dictionary = {}  # scene id -> Array of normalised reactive objects (a hotspot file's `reactives`; INTERACTION_DESIGN.md 2.5): no route, no default, never in the cap
 var errors: Array = []
 var warnings: Array = []
 var path_id := ""  # the path this data belongs to ("" for the main run): run.json carries "path": {id, title, entry_from, returns_to, opens}
@@ -714,6 +715,7 @@ func entry_of(world: String) -> String:
 ## doorway the rail already knows (rail.exits), the first route the default: the run is playable and the old route graph reachable before a world's hotspots are authored.
 func _load_hotspots(dir_path: String) -> void:
 	var by_scene: Dictionary = {}
+	var raw_reactives: Dictionary = {}
 	for w in world_order:
 		var path := dir_path.path_join("%s.json" % w)
 		if not FileAccess.file_exists(path):
@@ -734,10 +736,33 @@ func _load_hotspots(dir_path: String) -> void:
 			if not by_scene.has(sid):
 				by_scene[sid] = []
 			by_scene[sid].append(HotspotContract.normalize(h, w, str(nodes[sid]["map"])))
+		for r in v.get("reactives", []):  # objects that react to a tap and lead nowhere (HotspotContract.validate_reactives): a list of their own, never a choice
+			if typeof(r) != TYPE_DICTIONARY:
+				errors.append("%s: a reactive object is not an object" % path)
+				continue
+			var rsid := str(r.get("scene", ""))
+			if not nodes.has(rsid) or str(nodes[rsid]["world"]) != w:
+				errors.append("%s: reactive %s: scene '%s' is not a scene of world %s" % [path, r.get("id", ""), rsid, w])
+				continue
+			if not raw_reactives.has(rsid):
+				raw_reactives[rsid] = []
+			raw_reactives[rsid].append(r)
 	var start_e := float((cfg.get("energy", {}) as Dictionary).get("start", 60.0))
 	var activities := MinigameController.registered_ids()  # read once for every scene, not once per scene
+	for sid in raw_reactives:
+		var rn: Dictionary = nodes[sid]
+		var ids := {}
+		for h in by_scene.get(sid, []):
+			ids[str(h["id"])] = true
+		HotspotContract.validate_reactives(raw_reactives[sid], {"where": "scene %s" % sid, "map": str(rn["map"]), "ids": ids}, errors)
+		var normed: Array = []
+		for r in raw_reactives[sid]:
+			normed.append(HotspotContract.normalize_reactive(r, str(rn["world"]), str(rn["map"])))
+		reactives[sid] = normed
 	for sid in node_order:
 		var n: Dictionary = nodes[sid]
+		if int(n.get("max_hotspots", HotspotContract.MAX_PER_SCENE)) > HotspotContract.MAX_PER_HUB:
+			errors.append("scene %s: max_hotspots %d is over %d (lead ruling 16: a hub may allow up to %d choices)" % [sid, int(n["max_hotspots"]), HotspotContract.MAX_PER_HUB, HotspotContract.MAX_PER_HUB])
 		if not by_scene.has(sid):
 			hotspots[sid] = _synth_hotspots(sid, n)
 			continue
@@ -826,3 +851,8 @@ func _synth_hotspots(sid: String, n: Dictionary) -> Array:
 ## The scene's hotspots in file order (normalised dictionaries).
 func hotspots_of(scene_id: String) -> Array:
 	return hotspots.get(scene_id, [])
+
+
+## The scene's reactive objects in file order (HotspotContract.normalize_reactive): they react to a tap and lead nowhere; never in hotspots_of, never counted in the cap.
+func reactives_of(scene_id: String) -> Array:
+	return reactives.get(scene_id, [])

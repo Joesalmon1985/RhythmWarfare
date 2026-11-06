@@ -31,7 +31,7 @@ func test_anchors_resolve_to_world_points() -> void:
 	assert_false(bool(HotspotView.resolve({"actor": "c01"}, m, {})["ok"]), "no crowd: an actor cannot be placed")
 
 
-func test_a_touch_target_is_never_under_min_px_and_stays_inside_the_view() -> void:
+func test_a_touch_target_is_never_under_min_px_and_stays_inside_the_view() -> void:  # (N2.1: the floor is 88 px, lead ruling 3)
 	var m := StoryMap.load_chapter("night_one")
 	var view := Vector2(844, 240)
 	var pose := _pose_at(m, "floor_centre")
@@ -39,7 +39,7 @@ func test_a_touch_target_is_never_under_min_px_and_stays_inside_the_view() -> vo
 	var lay := HotspotView.layout(ents, m, {}, pose, view)
 	assert_eq(lay.size(), 4)
 	for e in lay:
-		assert_true(float(e["radius_px"]) * 2.0 >= 72.0 - 0.001, "%s is at least 72 px wide (%s)" % [e["id"], str(float(e["radius_px"]) * 2.0)])
+		assert_true(float(e["radius_px"]) * 2.0 >= 88.0 - 0.001, "%s is at least 88 px wide (%s)" % [e["id"], str(float(e["radius_px"]) * 2.0)])
 		var c: Vector2 = e["centre"]
 		assert_true(c.x >= 0.0 and c.x <= view.x and c.y >= 0.0 and c.y <= view.y, "%s is on screen: %s" % [e["id"], str(c)])
 		assert_eq(HotspotView.hit(lay, c), str(e["id"]), "a tap on its centre hits it")
@@ -148,7 +148,10 @@ func test_hotspot_items_carry_the_decision_time_and_the_outcome() -> void:
 	var items: Array = scene.hotspot_items()
 	var table: Dictionary = (items.filter(func(x: Dictionary) -> bool: return str(x["hotspot"]["id"]) == "ward.cards"))[0]
 	assert_near(float(table["t_commit"]), e.t_of(e._decision_beat()), 1e-6, "the touch would be judged at block 0's decision")
-	assert_eq(items.size(), 1, "only the table is on show in block 0")
+	var finals := items.filter(func(x: Dictionary) -> bool: return RunHotspots.window_of(x["hotspot"]) == "final")
+	assert_eq(finals.size(), items.size() - 1, "in block 0 the table and every choice of the room are on show (N2.1: selection is open for the whole scene)")
+	for it in finals:
+		assert_near(float(it["t_commit"]), e.t_of(48.0 + e._decision_beat()), 1e-6, "a choice touched in block 0 still waits for the lock at the last block's decision")
 	_ward_to(scene, 20.0)
 	items = scene.hotspot_items()
 	table = (items.filter(func(x: Dictionary) -> bool: return str(x["hotspot"]["id"]) == "ward.cards"))[0]

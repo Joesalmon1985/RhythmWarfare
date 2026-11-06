@@ -543,15 +543,16 @@ func test_the_voices_play_on_across_the_lap_boundary_and_the_bass_never_drops() 
 
 # --- the real scene --------------------------------------------------------------------------------------------------------------
 
-func test_the_scene_plays_both_laps_of_a_path_scene_and_shows_the_hotspots_in_the_second_only() -> void:
+func test_the_scene_plays_both_laps_of_a_path_scene_and_shows_the_hotspots_in_both() -> void:  # (N2.1: selection is open for the whole scene; the route window is still the second lap's only)
 	var d := _scene({"RW_RUN_PATH": "gospel", "RW_RUN_START": "jordan.baptism", "RW_RUN_TAPS": "scripted"})
 	var scene: Node = d["scene"]
 	var bt: float = scene.engine.beat_s
 	assert_eq(scene.engine.laps, 2)
 	_run_until(scene, 55.0 * bt, func() -> bool: return false)
 	assert_eq(scene.engine.lap, 1)
-	assert_true(scene.hotspot_items().is_empty(), "no hotspot on show at beat 55 of the first lap")
-	assert_false(scene.engine.window_open)
+	var lap1: Array = scene.hotspot_items()
+	assert_true(lap1.size() >= 2 and lap1.size() <= 8, "the choices are on show at beat 55 of the first lap too (%d)" % lap1.size())
+	assert_false(scene.engine.window_open, "but the engine's route window is the last lap's")
 	_run_until(scene, 62.8 * bt, func() -> bool: return false)
 	assert_eq(scene._door_phase, -1, "no door walk is latched in the first lap")
 	assert_true(scene._passage_swap < 0.0, "and no frame closes")
@@ -562,7 +563,7 @@ func test_the_scene_plays_both_laps_of_a_path_scene_and_shows_the_hotspots_in_th
 	assert_eq(scene.phase_log.size(), 1, "the scene's own phase log has one entry per scene")
 	_run_until(scene, (64.0 + 55.0) * bt, func() -> bool: return false)
 	var items: Array = scene.hotspot_items()
-	assert_true(items.size() >= 2 and items.size() <= 4, "two to four hotspots on show in the second lap (%d)" % items.size())
+	assert_true(items.size() >= 2 and items.size() <= 8, "two to eight hotspots on show in the second lap (%d)" % items.size())
 	_run_until(scene, 140.0 * bt, func() -> bool: return scene.phase_log.size() >= 2)
 	assert_eq(scene.phase_log.size(), 2)
 	assert_eq(scene.engine.scene_index(), 2)

@@ -9,6 +9,9 @@ extends Control
 ## the player), a beckoning figure (the crowd's own wave, a taller shaft), a slow pulse (a harder beat), a flicker, a crack in the floor. The default is brighter, with a second ring inside.
 ## SELECTED: the ring goes white-hot and thumps on every beat, four motes circle it once a bar, the pool and the shaft brighten and the glow lifts; the other hotspots dim so the pick reads by contrast.
 ## COMMITTED: a white flash bursting outward (FLASH_S), then the pool settles to a steady warm light that fades (SETTLE_S).
+## REFUSED (N2.1): a choice that did not take a touch (the lock window; later the port's refusal) recoils for REFUSE_S: the claim look's refusal, short, without the dark wash.
+## REACTIVE OBJECTS (reactives_fn): drawn only while reacting (REACT_S): a flare, a pulse, a shake or a squash of the thing; idle, they are only their own picture.
+## Since N2.1 the run shows its choices for the whole scene (RunPlay.hotspot_items), so all of the above plays from the scene's first beat.
 ## An anchor out of sight (behind the camera, off to a side) is a beacon at the edge on the side it lies: light leaking in from beyond the frame, a half-sun at the border and the same ring,
 ## ripple and core as a hotspot in view, pulsing on the beat; still touchable: free look is never needed.
 ##
@@ -32,6 +35,8 @@ const CLAIM_BURST_S := 0.35  # the touch burst of the "claim" look (the blackjac
 const CLAIM_SUCCESS_S := 0.8  # a claim that is accepted flashes out over this long
 const CLAIM_REFUSE_S := 0.8  # the refusal (a waved-off claim) plays out over this long
 const DIM_STAGED := 0.75  # a staged option that is not the current choice stays this bright while another is selected (the red must still read)
+const REFUSE_S := 0.4  # a choice that did not take the tap (the lock, or later the port's refusal) recoils over this long: the claim look's refusal, short (INTERACTION_DESIGN.md 2.4, 6.1)
+const REACT_S := 0.6  # a reactive object's reaction to a tap (INTERACTION_DESIGN.md 6.1): flare, pulse, shake or squash, drawn in code
 
 var items_fn: Callable  # () -> Array of {hotspot: Dictionary, state: "available" | "selected" | "committed", t_state: float (song time the state began)}
 var pose_fn: Callable  # () -> {cam: Vector3, yaw, pitch} (empty: nothing to draw)
@@ -48,6 +53,8 @@ var _acting: Dictionary = {}  # actor id -> "<state>|<hotspot id>" of the act th
 ## The choice layer (docs/CHOICE_CLARITY.md): () -> {staged: [hotspot], current: id, committed: id, dest: route, default: id, touched: {id: song time of the last touch}}; empty or
 ## unset: no staging (the old look). From the scene's first beat every staged option shows whether it is the current choice (ChoiceStaging), not only in the window.
 var choice_fn: Callable
+var reactives_fn: Callable  # () -> Array of {hotspot: a normalised reactive object, state: "idle" | "reacting", t_state}: only a reacting one is drawn (an idle one is just its own picture)
+var _react_pose: Dictionary = {}  # reactive id -> the thing whose pose a shake or squash holds
 var props: ChoiceProps = null
 var heralds: StoryHeralds = null  # the quest entrances' heralds (lead ruling 25): scenery of a staged entrance, never a hotspot
 var touch_rects := false  # a generous touch area on the thing itself (ChoiceStaging `touch`), besides the ring's radius
@@ -105,6 +112,9 @@ func _process(_d: float) -> void:
 			var snap := choice_snapshot(_t)  # (the choice layer plays every frame the view is up, with hotspots on show or not: it also lets go of the world when the choice ends)
 			_stage_choice(snap, _t)
 			_manage_acting(items, _t, snap)
+			var reacting: Array = _reactions(_t)
+			if not reacting.is_empty():
+				items = items + reacting
 			if not items.is_empty():
 				_set_camera(pose)
 				_lay = layout(items, stage.map, stage.crowds, pose, size)
@@ -125,6 +135,45 @@ func _process(_d: float) -> void:
 	if had or not _lay.is_empty():  # nothing on show: nothing to redraw
 		queue_redraw()
 		_light.queue_redraw()
+
+
+## The reactive objects reacting now (reactives_fn), and their things posed for a shake or a squash (a pose let go of when the reaction is over).
+func _reactions(t: float) -> Array:
+	var out: Array = []
+	var posed := {}
+	if reactives_fn.is_valid():
+		for e in reactives_fn.call():
+			if str(e["state"]) != "reacting":
+				continue
+			out.append(e)
+			var h: Dictionary = e["hotspot"]
+			var an: Dictionary = h["anchor"]
+			var reaction := str(h.get("reaction", "flare"))
+			if an.has("thing") and reaction in ["shake", "squash"] and stage != null and stage.world != null:
+				var k := clampf((t - float(e["t_state"])) / REACT_S, 0.0, 1.0)
+				stage.world.thing_pose[str(an["thing"])] = reaction_pose(reaction, k, reduced)
+				posed[str(h["id"])] = str(an["thing"])
+	for id in _react_pose.keys():
+		if not posed.has(id) and stage != null and stage.world != null:
+			stage.world.thing_pose.erase(str(_react_pose[id]))
+	_react_pose = posed
+	return out
+
+
+## The pose of a thing `k` (0..1) into its reaction: {dy, sx, sy, dx} as ChoiceStaging.motion gives (a shake: a fading side to side; a squash: down and wide, then springing back).
+static func reaction_pose(reaction: String, k: float, still := false) -> Dictionary:
+	var m := {"dy": 0.0, "sx": 1.0, "sy": 1.0, "dx": 0.0}
+	var fade := 1.0 - k
+	if still:
+		return m
+	match reaction:
+		"shake":
+			m["dx"] = 0.08 * sin(k * TAU * 4.0) * fade
+		"squash":
+			var s := sin(k * PI) * fade
+			m["sy"] = 1.0 - 0.18 * s
+			m["sx"] = 1.0 + 0.12 * s
+	return m
 
 
 # --- pure projection and hit testing -------------------------------------------------------------------------------------------
@@ -170,7 +219,11 @@ static func resolve(anchor: Dictionary, map: StoryMap, crowds: Dictionary) -> Di
 
 ## Screen placement of every entry ({hotspot, state}) for a camera pose in a view of `view` pixels: [{id, hotspot, state, centre, ground, scale, depth, radius_px, edge, ok}]. A hotspot whose
 ## anchor is out of sight is placed at the edge of the picture on the side it lies (edge: true), so it can still be seen and touched. The touch radius is the projected radius_m, never under half of min_px.
-static func layout(entries: Array, map: StoryMap, crowds: Dictionary, pose: Dictionary, view: Vector2, rects := false) -> Array:
+## With `rects` (the run's taps, N2.1; INTERACTION_DESIGN.md 3.2, 3.6) the touch region of a hotspot in view is built ON SCREEN from its object's visual bounds (`visual_rect`: the drawn door, the
+## person, the thing of the map): those bounds grown by TOUCH_MARGIN_PX (24 px) on each side, widened to min_px (88 px) in a direction where they fall short, kept inside the view (so never over the
+## pads below it): `touch_rect`, with `hit_centre` its middle and no circle (radius_px 0). A hotspot with nothing drawn on it keeps the ring's circle only (the ring is what shows it). The card
+## table's claim look keeps its own region (the table and its players, a minigame). `widths`: thing id -> drawn width in metres (thing_widths), else a thing is taken as square.
+static func layout(entries: Array, map: StoryMap, crowds: Dictionary, pose: Dictionary, view: Vector2, rects := false, widths: Dictionary = {}) -> Array:
 	var out: Array = []
 	if pose.is_empty() or view.x <= 1.0:
 		return out
@@ -197,7 +250,15 @@ static func layout(entries: Array, map: StoryMap, crowds: Dictionary, pose: Dict
 			entry["scale"] = sc
 			entry["depth"] = float(pc["depth"])
 			entry["radius_px"] = rad
-			if rects:  # the thing itself is touchable: a rectangle of the staging's {w, h} metres standing on the floor under the anchor, inside the view
+			if rects and not uses_claim_look(h):  # the object itself is touchable: its visual bounds plus at most 24 px, at least min_px, inside the view
+				var vis := visual_rect(h, r, pose, view, map, widths)
+				entry["visual_rect"] = vis
+				if vis.size.x >= 1.0 and vis.size.y >= 1.0:
+					var tr := touch_rect_of(vis, float(h["min_px"]), view)
+					entry["touch_rect"] = tr
+					entry["hit_centre"] = tr.get_center()
+					entry["radius_px"] = 0.0
+			elif rects:  # the card table (claim look): a rectangle of the staging's {w, h} metres standing on the floor under the anchor, inside the view (the table and its players)
 				var tch: Dictionary = ChoiceStaging.of(h).get("touch", {})
 				var hw := float(tch.get("w", 1.2)) * sc * 0.5
 				var gy: float = (entry["ground"] as Vector2).y
@@ -223,17 +284,114 @@ static func layout(entries: Array, map: StoryMap, crowds: Dictionary, pose: Dict
 	return out
 
 
-## The id of the entry a tap at `point` hits: the nearest centre among those within their own radius (ties: the earlier in the list). "" when none.
+## The id of the entry a tap at `point` hits: the nearest centre among those within their own radius or touch rectangle (ties: the earlier in the list). "" when none. An entry laid out from its
+## visual bounds is measured from its `hit_centre` (the middle of its touch rectangle), so two neighbouring objects split the ground between them by the nearer middle.
 static func hit(layout_entries: Array, point: Vector2) -> String:
 	var best := ""
 	var best_d := INF
 	for e in layout_entries:
-		var d := (e["centre"] as Vector2).distance_to(point)
+		var d := (e.get("hit_centre", e["centre"]) as Vector2).distance_to(point)
 		var inside: bool = d <= float(e["radius_px"]) or (e.has("touch_rect") and (e["touch_rect"] as Rect2).has_point(point))
 		if inside and d < best_d - 1.0e-6:
 			best_d = d
 			best = str(e["id"])
 	return best
+
+
+## The touch rectangle built from an object's visual bounds `vis` (INTERACTION_DESIGN.md 3.6, T5a): grown by TOUCH_MARGIN_PX on each side, widened about its middle to `min_px` in a direction
+## where it is still short (an object under min_px - 48 px across: the 88 px floor wins over the 24 px margin, assumption A4 noted in docs/narrative/N2_1_BASELINE_CHANGES.md), then moved, not
+## cut, to lie inside the view (clipped only when it is larger than the view).
+static func touch_rect_of(vis: Rect2, min_px: float, view: Vector2) -> Rect2:
+	var tr := vis.grow(HotspotContract.TOUCH_MARGIN_PX)
+	if tr.size.x < min_px:
+		tr = Rect2(tr.get_center().x - min_px * 0.5, tr.position.y, min_px, tr.size.y)
+	if tr.size.y < min_px:
+		tr = Rect2(tr.position.x, tr.get_center().y - min_px * 0.5, tr.size.x, min_px)
+	tr.position.x = clampf(tr.position.x, 0.0, maxf(view.x - tr.size.x, 0.0))
+	tr.position.y = clampf(tr.position.y, 0.0, maxf(view.y - tr.size.y, 0.0))
+	return tr.intersection(Rect2(Vector2.ZERO, view))
+
+
+## The screen rectangle of the object a hotspot (or a reactive object) stands for, for the camera `pose` in a view of `view` px, clipped to the view; Rect2() when nothing is drawn there. `r` is
+## resolve(anchor). The drawn door of an exit (ChoiceStaging width_m x height_m at its door_at, or a sign post), the person it anchors on (StoryCrowd.HERO_M tall, PERSON_W wide), the thing of
+## the map (its size tall, `widths` wide), or for a reactive object on a spot its own `touch` {w, h}. Glow, ring, shaft and motes are effects, not the object (INTERACTION_DESIGN.md 3.2).
+static func visual_rect(h: Dictionary, r: Dictionary, pose: Dictionary, view: Vector2, map: StoryMap, widths: Dictionary = {}) -> Rect2:
+	if not bool(r.get("ok", false)) or map == null:
+		return Rect2()
+	var p: Vector3 = r["pos"]
+	var gy := float(r["ground"])
+	var an: Dictionary = h.get("anchor", {})
+	if HotspotContract.is_reactive(h):
+		if an.has("thing"):
+			return _thing_box(str(an["thing"]), map, pose, view, widths)
+		if an.has("actor"):
+			return _stand_box(p.x, p.z, gy, gy + StoryCrowd.HERO_M, PERSON_W, pose, view)
+		var t: Dictionary = h.get("touch", {})
+		if not t.is_empty():
+			return _stand_box(p.x, p.z, gy, gy + float(t.get("h", 1.0)), float(t.get("w", 1.0)), pose, view)
+		return Rect2()
+	var st := ChoiceStaging.of(h)
+	if str(st["archetype"]) == "door":
+		var fx := p.x
+		var fz := p.z
+		if st.has("door_at"):
+			fx = float((st["door_at"] as Array)[0])
+			fz = float((st["door_at"] as Array)[1])
+		match str(st.get("door", "drawn")):
+			"drawn":
+				return _stand_box(fx, fz, gy, gy + float(st.get("height_m", 2.4)), float(st.get("width_m", 1.2)), pose, view)
+			"sign":
+				return _stand_box(fx, fz, gy, gy + SIGN_H_M, SIGN_W_M, pose, view)
+	if an.has("actor"):
+		return _stand_box(p.x, p.z, gy, gy + StoryCrowd.HERO_M, PERSON_W, pose, view)
+	if an.has("thing"):
+		return _thing_box(str(an["thing"]), map, pose, view, widths)
+	return Rect2()
+
+
+const PERSON_W := 0.6  # metres: a person's body for the visual bounds (tools/run/coverage_audit.gd uses the same)
+const SIGN_W_M := 0.8
+const SIGN_H_M := 1.6
+const NEAR_DEPTH := 0.4  # the layout's own "on screen" depth
+
+
+## A box standing at (x, z) from y0 to y1 metres, w metres wide, on screen and clipped to the view; Rect2() behind the camera.
+static func _stand_box(x: float, z: float, y0: float, y1: float, w: float, pose: Dictionary, view: Vector2) -> Rect2:
+	var p0 := StoryProjector.project(Vector3(x, y0, z), pose, view)
+	var p1 := StoryProjector.project(Vector3(x, y1, z), pose, view)
+	if float(p0["depth"]) < NEAR_DEPTH or float(p1["depth"]) < NEAR_DEPTH:
+		return Rect2()
+	var sc := float(p0["scale"])
+	var a: Vector2 = p0["screen"]
+	var b: Vector2 = p1["screen"]
+	return Rect2(Vector2(a.x - w * sc * 0.5, minf(a.y, b.y)), Vector2(w * sc, absf(a.y - b.y))).intersection(Rect2(Vector2.ZERO, view))
+
+
+## A thing of the map as drawn (StoryWorld: a quad `size` tall standing at its `y`); a light of the map has no drawn body (Rect2()).
+static func _thing_box(id: String, map: StoryMap, pose: Dictionary, view: Vector2, widths: Dictionary) -> Rect2:
+	for t in map.things:
+		if str(t["id"]) == id:
+			var hh := float(t.get("size", 1.0))
+			var fl := float(map.sector(str(t["sector"])).get("floor", 0.0))
+			var yc := fl + float(t.get("y", hh * 0.5))
+			var at: Vector2 = t["at"]
+			return _stand_box(at.x, at.y, yc - hh * 0.5, yc + hh * 0.5, float(widths.get(id, hh)), pose, view)
+	return Rect2()
+
+
+## The drawn width in metres of every thing of a stage's world (its quad: the sprite's aspect at its size), for visual_rect; cached on the world.
+static func thing_widths(st: StoryStage) -> Dictionary:
+	if st == null or st.world == null:
+		return {}
+	if st.world.has_meta("hv_thing_widths"):
+		return st.world.get_meta("hv_thing_widths")
+	var out := {}
+	for th in st.world._thing_nodes:
+		var mi: MeshInstance3D = th["node"]
+		if mi != null and mi.mesh is QuadMesh:
+			out[str((th["thing"] as Dictionary)["id"])] = (mi.mesh as QuadMesh).size.x
+	st.world.set_meta("hv_thing_widths", out)
+	return out
 
 
 # --- drawing -----------------------------------------------------------------------------------------------------------------
@@ -421,7 +579,9 @@ func _draw() -> void:
 		return
 	for e in _lay:
 		var cols := _colours_of(e)
-		if bool(e["edge"]):
+		if HotspotContract.is_reactive(e["hotspot"]):
+			_draw_reaction(e, cols[1])
+		elif bool(e["edge"]):
 			_draw_edge(_beacon_of(e), cols[0], cols[1])
 		else:
 			_draw_marks(e, cols[0], cols[1])
@@ -433,15 +593,50 @@ func _draw_light() -> void:
 		return
 	for e in _lay:
 		var cols := _colours_of(e)
-		if bool(e["edge"]):
+		if HotspotContract.is_reactive(e["hotspot"]):
+			_light_reaction(e, cols[1])
+		elif bool(e["edge"]):
 			_light_edge(_beacon_of(e), cols[0], cols[1])
 		else:
 			_light_entry(e, cols[0], cols[1])
 
 
+## A reactive object's reaction, the crisp half: a flare is a ring bursting outward from the object, a pulse a ring that thumps twice; a shake or squash moves the thing itself (_reactions) and
+## shows a thin ring going out. Nothing stays after REACT_S: an idle reactive object is only its own picture.
+func _draw_reaction(e: Dictionary, hot: Color) -> void:
+	var k := clampf((_t - float(e["t_state"])) / REACT_S, 0.0, 1.0)
+	if k >= 1.0 or bool(e["edge"]):
+		return
+	var c: Vector2 = e.get("hit_centre", e["centre"])
+	var vr: Rect2 = e.get("visual_rect", Rect2())
+	var base_r := clampf(0.5 * minf(vr.size.x, vr.size.y) if vr.has_area() else 0.6 * float(e.get("scale", 50.0)), 8.0, maxf(size.y * 0.25, 8.0))
+	var a := 1.0 - k
+	match str(e["hotspot"].get("reaction", "flare")):
+		"flare":
+			var rr := base_r * (1.0 + 1.6 * k)
+			draw_arc(c, rr, 0.0, TAU, SEGMENTS, Color(OUTLINE.r, OUTLINE.g, OUTLINE.b, 0.6 * a), 5.0 * a + 1.0)
+			draw_arc(c, rr, 0.0, TAU, SEGMENTS, Color(1, 1, 1, 0.95 * a), 3.0 * a + 1.0)
+		"pulse":
+			var th := absf(sin(k * TAU))
+			draw_arc(c, base_r * (1.0 + 0.25 * th), 0.0, TAU, SEGMENTS, Color(hot.r, hot.g, hot.b, 0.9 * a), 3.0)
+		_:
+			draw_arc(c, base_r * (1.0 + 0.8 * k), 0.0, TAU, SEGMENTS, Color(hot.r, hot.g, hot.b, 0.7 * a), 2.0)
+
+
+## The light half of a reaction: a flare's glow, brightest at the tap and fading.
+func _light_reaction(e: Dictionary, hot: Color) -> void:
+	var k := clampf((_t - float(e["t_state"])) / REACT_S, 0.0, 1.0)
+	if k >= 1.0 or bool(e["edge"]) or str(e["hotspot"].get("reaction", "flare")) != "flare":
+		return
+	var c: Vector2 = e.get("hit_centre", e["centre"])
+	_glow(c, minf(size.y * 0.12, 60.0) * (0.8 + 0.6 * k), hot.lerp(Color(1, 1, 1), 0.5), 0.8 * (1.0 - k))
+
+
 func _light_entry(e: Dictionary, base: Color, hot: Color) -> void:
 	var h: Dictionary = e["hotspot"]
 	var state := str(e["state"])
+	if state == "refused":  # (a refusal is dark: all of it is in the crisp half)
+		return
 	var look := _look_of(e)
 	var is_default := _is_default(e)
 	var staged := _staged(e)
@@ -555,6 +750,9 @@ func _draw_marks(e: Dictionary, base: Color, hot: Color) -> void:
 	var white := Color(1, 1, 1)
 	if _is_claim(e):
 		_marks_claim(e, base, state)
+		return
+	if state == "refused":  # the tap was not taken (the lock): the claim look's refusal, short and without the dark wash round the picture
+		_marks_refused(e, world, gy, r_m, sc, maxf(2.0, sc * 0.06), u, REFUSE_S, false)
 		return
 	var sel_col := hot if staged else white  # the touched ring is white-hot; a staged option's keeps its role colour (pale green) so it still reads as the current choice
 	match state:
@@ -804,11 +1002,14 @@ func _marks_claim(e: Dictionary, base: Color, state: String) -> void:
 
 ## Waved off: the warm light goes out at once: a cold dark pool, the ring breaking into segments that drop and fade, a short hard sideways shake and the picture's edge darkening
 ## (the opposite of the warm wash of a touch). Nothing of it is warm or white.
-func _marks_refused(e: Dictionary, world: Vector3, gy: float, r_m: float, sc: float, thick: float, u: float) -> void:
-	var k := clampf(u / CLAIM_REFUSE_S, 0.0, 1.0)
+func _marks_refused(e: Dictionary, world: Vector3, gy: float, r_m: float, sc: float, thick: float, u: float, dur := CLAIM_REFUSE_S, wash := true) -> void:
+	var k := clampf(u / dur, 0.0, 1.0)
+	if k >= 1.0:
+		return
 	var cold := Color(0.5, 0.58, 0.74) if not high_contrast else Color(0.75, 0.8, 0.95)
 	var shake := 0.0 if reduced else sin(u * 70.0) * (1.0 - k) * sc * 0.2
-	_frame_wash(self, Color(0.02, 0.03, 0.08), 0.55 * (1.0 - k))
+	if wash:
+		_frame_wash(self, Color(0.02, 0.03, 0.08), 0.55 * (1.0 - k))
 	draw_set_transform_matrix(Transform2D(0.0, Vector2(shake, 0.0)))
 	if _fill_ring(world, gy, r_m * 1.05):
 		draw_colored_polygon(_ring, Color(0.03, 0.04, 0.09, 0.45 * (1.0 - k)))

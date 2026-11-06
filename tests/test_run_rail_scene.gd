@@ -92,7 +92,8 @@ func test_a_path_inside_a_world_is_a_door_walk_with_no_passage_frame() -> void:
 	assert_eq(scene.active_world, "night_one", "the same world stage stays")
 	assert_eq(scene.stages.size(), 1, "no second stage was built")
 	assert_eq(scene.journey.rail.node_id, "warehouse.bar", "the new scene's rail starts")
-	assert_eq(scene.hotspot_items().size(), 0, "the hotspots go out with the window")
+	var ids: Array = (scene.hotspot_items() as Array).map(func(e: Dictionary) -> String: return str(e["hotspot"]["id"]))
+	assert_true(not ids.is_empty() and ids.all(func(i: String) -> bool: return i.begins_with("warehouse.bar.")), "the floor's hotspots went with the scene; the bar's are on show from its first beat (N2.1: %s)" % str(ids))
 	var st: StoryStage = scene.stages["night_one"]["stage"]
 	assert_true(str(st.player.pose_at(64.4 * BEAT)["sector"]) != "bar", "still walking through the door a little after the downbeat")
 	_run_to(scene, 76.0 * BEAT)
@@ -115,7 +116,8 @@ func test_the_world_swap_keeps_the_passage_frame() -> void:
 	assert_eq(scene.engine.node_id, "hospital")
 	assert_eq(scene.active_world, "hospital", "the world swapped on the downbeat")
 	assert_true(scene._passage.aperture < 0.5, "and opens from the doorway")
-	assert_eq(scene.hotspot_items().size(), 0, "the hotspots go out with the window")
+	var ids: Array = (scene.hotspot_items() as Array).map(func(e: Dictionary) -> String: return str(e["hotspot"]["id"]))
+	assert_true(not ids.is_empty() and ids.all(func(i: String) -> bool: return i.begins_with("hospital.")), "the airlock's hotspots went with the scene; the hospital's are on show from its first beat (N2.1: %s)" % str(ids))
 	var st: StoryStage = scene.stages["hospital"]["stage"]
 	assert_eq(st.player.pose_at(62.0 * BEAT)["sector"], "ward", "in at the ward door")
 	assert_eq(Session.run_progress.reached_ids().has("hospital"), true)

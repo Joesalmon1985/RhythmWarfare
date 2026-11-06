@@ -62,7 +62,7 @@ func test_a_hotspot_is_normalised_with_the_contract_defaults() -> void:
 	for k in ["id", "world", "scene", "map", "anchor", "kind", "radius_m", "min_px", "available", "look", "on_success", "default", "repeatable"]:
 		assert_true(h.has(k), "has " + k)
 	assert_eq(h["map"], "night_one")
-	assert_true(float(h["min_px"]) >= 72.0)
+	assert_true(float(h["min_px"]) >= 88.0, "the smallest touch target is 88 px (lead ruling 3, N2.1)")
 	var dancer := (d.hotspots_of("warehouse") as Array).filter(func(x: Dictionary) -> bool: return str(x["id"]) == "warehouse.dancer")[0] as Dictionary
 	assert_eq(dancer["anchor"], {"actor": "g07"})
 	assert_eq(dancer["available"]["flags_none"], ["wh_circle"])
@@ -75,14 +75,19 @@ func test_a_good_authored_scene_passes() -> void:
 	_clean()
 
 
-func test_the_two_to_four_rule_and_the_single_default() -> void:
+func test_the_two_to_eight_rule_and_the_single_default() -> void:  # (N2.1: the cap of choices rose from 4 to 8, lead ruling 1)
 	var d := _load_with([_hs({"default": true}, "a")])
 	assert_true(_has_error(d, "1 hotspots are available at the start"), str(d.errors))
-	var five: Array = []
-	for i in 5:
-		five.append(_hs({"default": i == 0, "anchor": {"waypoint": ["to_bar", "to_balcony", "floor_centre", "steps", "stage"][i]}}, "n%d" % i))
-	d = _load_with(five)
-	assert_true(_has_error(d, "5 hotspots are available at the start"), str(d.errors))
+	var wps := ["to_bar", "to_balcony", "floor_centre", "steps", "stage"]
+	var eight: Array = []
+	for i in 8:
+		eight.append(_hs({"default": i == 0, "anchor": {"waypoint": wps[i % wps.size()]}}, "n%d" % i))
+	d = _load_with(eight)
+	assert_false(_has_error(d, "hotspots are available at the start"), "eight choices fit: " + str(d.errors))
+	var nine: Array = eight.duplicate(true)
+	nine.append(_hs({"anchor": {"waypoint": "stage"}}, "n8"))
+	d = _load_with(nine)
+	assert_true(_has_error(d, "9 hotspots are available at the start; a scene shows 2 to 8"), str(d.errors))
 	var two_defaults := _good_list()
 	two_defaults[1]["default"] = true
 	d = _load_with(two_defaults)
@@ -114,7 +119,8 @@ func test_routes_anchors_sizes_and_kinds_are_checked() -> void:
 		["anchor actor 'zz9'", {"anchor": {"actor": "zz9"}}],
 		["is not inside any sector", {"anchor": {"pos": [500.0, 1.0, 500.0]}}],
 		["anchor must be exactly one of", {"anchor": {"thing": "bar_glow", "waypoint": "to_bar"}}],
-		["min_px must be at least 72", {"min_px": 40}],
+		["min_px must be at least 88", {"min_px": 40}],
+		["min_px must be at least 88", {"min_px": 72}],
 		["radius_m must be above 0", {"radius_m": 0}],
 		["kind 'door' is not one of", {"kind": "door"}],
 		["look.available 'sparkle'", {"look": {"available": "sparkle"}}],

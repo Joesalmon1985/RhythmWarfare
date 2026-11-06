@@ -78,7 +78,7 @@ WORLD_MAP = {w["id"]: w["map"] for w in RUN["worlds"]}
 EXIT_LOOK = {"default": "open", "other": "glow"}
 
 
-def add(scene, name, kind, anchor, look, s, f, *, s_text, f_text, default=False, av=None, hook=None, radius=0.8, min_px=72, repeatable=True, selected="ring", window=None, pass_credit=None, on_select=None, ring_m=None):
+def add(scene, name, kind, anchor, look, s, f, *, s_text, f_text, default=False, av=None, hook=None, radius=0.8, min_px=88, repeatable=True, selected="ring", window=None, pass_credit=None, on_select=None, ring_m=None):
     n = NODES[scene]
     world = n["world"]
     h = {"id": f"{scene}.{name}", "world": world, "scene": scene, "map": WORLD_MAP[world], "anchor": anchor, "kind": kind, "radius_m": radius, "min_px": min_px,

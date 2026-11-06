@@ -8,9 +8,10 @@ route, secret and the Bassment are reachable through hotspots alone. Pure Python
 
 Rules (errors): every hotspot has the contract's fields; its world, scene and map agree with run.json; its anchor exists in the map (thing, waypoint, actor with a home, or a 3-float
 pos); kind and looks are in the vocabularies; every route is a route of the scene (its `next`) or a Bassment passage; every cinematic names an entry of run.json `cinematics` whose
-steps go to waypoints of the scene's map (look_at: a waypoint, thing or actor); every scene has 2 to 4 hotspots available at any time (over every combination of the flags its hotspots
+steps go to waypoints of the scene's map (look_at: a waypoint, thing or actor); every scene has 2 to 8 hotspots (choices) available at any time, or up to its own `max_hotspots` (at most 10) (over every combination of the flags its hotspots
 read, with once-only hotspots present or already used: the minimum counts without the once-only ones, the maximum with them all), exactly one default exit and it is the scene's first
-route, one exit hotspot per route anchored to that route's doorway; a failure outcome is never a dead end (a route, or a state change: flags, energy, music or a cinematic) and differs
+route, one exit hotspot per route anchored to that route's doorway; min_px at least 88 (the smallest touch target); a file's optional `reactives` list (objects that react to a tap
+and lead nowhere: id, scene, anchor, reaction, touch?, effect? with per-run flags only) is checked apart and never counted in the cap; a failure outcome is never a dead end (a route, or a state change: flags, energy, music or a cinematic) and differs
 from the success outcome. Reachability: from the start scene, following every route of every outcome (success and failure) and the default exits, every scene is reached, every route
 of every scene is taken by some exit hotspot, every Bassment hotspot target is a passage, and every hotspot (secrets included) can become available: its flags are set by some outcome
 of a reachable hotspot. A route "path:<id>" (a portal of the Warehouse) is accepted for a secret that pulses and is never the default, repeatable, whose failure has no route and costs energy; the path's run.json must exist (a warning
@@ -34,6 +35,11 @@ ROLES = {"dancer", "on_stage", "dj", "queasy", "sick", "recovered"}
 STYLES = {"walk", "stagger", "run", "climb", "carried"}
 MUSIC = {"variation", "dip"}
 FIELDS = ["id", "world", "scene", "map", "anchor", "kind", "radius_m", "min_px", "available", "look", "challenge", "on_success", "on_failure", "default", "repeatable"]
+MIN_PX = 88  # the smallest touch target in the 1280x720 design (lead ruling 3; HotspotContract.MIN_PX)
+CAP = 8  # choices available at once in a scene (lead ruling 1: reactive objects are not counted; HotspotContract.MAX_PER_SCENE)
+HUB_CAP = 10  # the most a scene's own `max_hotspots` may allow (lead ruling 16; HotspotContract.MAX_PER_HUB)
+REACTIONS = {"flare", "pulse", "shake", "squash"}  # HotspotContract.REACTIONS
+REACTIVE_FIELDS = {"id", "world", "scene", "map", "anchor", "reaction", "touch", "effect"}
 CHAPTER = {"night_one": "night_one", "mothership": "mothership", "underworld": "underworld", "hospital": "hospital", "mental_hospital": "mental_hospital"}
 
 
@@ -213,8 +219,8 @@ def check_hotspot(h, ctx, errs):
         errs.append(f"{hid}: kind {h['kind']}")
     if h["look"].get("available") not in LOOKS or h["look"].get("selected") not in ("ring", "claim") or h["look"].get("committed") != "flash":
         errs.append(f"{hid}: look {h['look']}")
-    if h["min_px"] < 72 or not (0.3 <= h["radius_m"] <= 3.0):
-        errs.append(f"{hid}: radius_m 0.3 to 3, min_px at least 72")
+    if h["min_px"] < MIN_PX or not (0.3 <= h["radius_m"] <= 3.0):
+        errs.append(f"{hid}: radius_m 0.3 to 3, min_px at least {MIN_PX}")
     if h.get("window", "final") not in ("final", "any"):
         errs.append(f"{hid}: window {h.get('window')} is final or any")
     has_act = bool(h["on_success"].get("activity"))
@@ -265,6 +271,51 @@ def check_hotspot(h, ctx, errs):
             errs.append(f"{hid}: challenge {c}")
 
 
+def check_reactive(r, ctx, errs):
+    """A reactive object (docs/parallel-development/INTERACTION_DESIGN.md 2.5, lead ruling 1): {id, scene, anchor, reaction, touch?, effect?}. It reacts to a tap and leads nowhere:
+    no route, no default, never counted in the cap. `effect` (optional, assumption A5) may only set per-run flags."""
+    rid = r.get("id", "?")
+    for k in r:
+        if k not in REACTIVE_FIELDS:
+            errs.append(f"reactive {rid}: unknown field {k}")
+    node = ctx.nodes.get(r.get("scene"))
+    if node is None:
+        errs.append(f"reactive {rid}: scene {r.get('scene')} is not in run.json")
+        return
+    if not str(rid).startswith(r["scene"] + "."):
+        errs.append(f"reactive {rid}: id must start with the scene id")
+    mapname = ctx.worlds[node["world"]]["map"]
+    if r.get("world", node["world"]) != node["world"] or r.get("map", mapname) != mapname:
+        errs.append(f"reactive {rid}: world/map disagree with the scene")
+    mp = ctx.maps[mapname]
+    a = r.get("anchor")
+    if not isinstance(a, dict) or len(a) != 1:
+        errs.append(f"reactive {rid}: anchor is one of thing, actor, pos")
+    else:
+        (k, v), = a.items()
+        if k == "thing" and v not in mp["things"]:
+            errs.append(f"reactive {rid}: thing {v} is not in map {mapname}")
+        elif k == "actor" and v not in mp["homes"]:
+            errs.append(f"reactive {rid}: actor {v} has no home in map {mapname}")
+        elif k == "pos" and not (isinstance(v, list) and len(v) == 3):
+            errs.append(f"reactive {rid}: pos is [x, y, z]")
+        elif k not in ("thing", "actor", "pos"):
+            errs.append(f"reactive {rid}: anchor {k} (a reactive object is a thing, a person or a spot with something drawn there)")
+    if r.get("reaction") not in REACTIONS:
+        errs.append(f"reactive {rid}: reaction {r.get('reaction')} not in {sorted(REACTIONS)}")
+    t = r.get("touch")
+    if t is not None and not (isinstance(t, dict) and set(t) <= {"w", "h"} and all(isinstance(t.get(x), (int, float)) and 0 < t[x] <= 6 for x in ("w", "h"))):
+        errs.append(f"reactive {rid}: touch is {{w, h}} in metres, each above 0 and at most 6")
+    e = r.get("effect")
+    if e is not None:
+        if not isinstance(e, dict) or set(e) - {"flags_set"}:
+            errs.append(f"reactive {rid}: effect is {{flags_set}} only (a reactive object never routes)")
+        else:
+            for f in e.get("flags_set", []):
+                if not isinstance(f, str) or not f or f.startswith("keep:"):
+                    errs.append(f"reactive {rid}: effect flag {f!r} must be a per-run flag")
+
+
 def counts(hs):
     """Min and max hotspots available at once, over every combination of the flags the scene's hotspots read and of the once-only ones used or not."""
     flags = sorted({f for h in hs for f in h["available"]["flags_all"] + h["available"]["flags_none"]})
@@ -285,7 +336,9 @@ def check_scene(sid, hs, ctx, errs, warns):
         errs.append(f"{sid}: no hotspots")
         return
     lo, hi = counts(hs)
-    cap = int(node.get("max_hotspots", 4))
+    cap = int(node.get("max_hotspots", CAP))
+    if cap > HUB_CAP:
+        errs.append(f"{sid}: max_hotspots {cap} is over the hub cap {HUB_CAP} (lead ruling 16)")
     if lo < 2 or hi > cap:
         errs.append(f"{sid}: {lo} to {hi} hotspots available (must stay 2 to {cap})")
     exits = [h for h in hs if h["kind"] == "exit"]
@@ -424,6 +477,7 @@ def main(argv):
     lap_counts = check_laps(ctx, errs)
     want = set(argv[1:])
     allh = []
+    allr = []
     files = sorted(hotspots_dir().glob("*.json"))
     worlds_found = set()
     for p in files:
@@ -435,7 +489,9 @@ def main(argv):
             continue
         for h in d.get("hotspots", []):
             allh.append(h)
-    ids = [h.get("id") for h in allh]
+        for r in d.get("reactives", []):
+            allr.append(r)
+    ids = [h.get("id") for h in allh] + [r.get("id") for r in allr]
     for i in {x for x in ids if ids.count(x) > 1}:
         errs.append(f"duplicate hotspot id {i}")
     for w in ctx.worlds:
@@ -446,6 +502,10 @@ def main(argv):
         if want and h.get("world") not in want:
             continue
         check_hotspot(h, ctx, errs)
+    for r in allr:
+        if want and ctx.nodes.get(r.get("scene"), {}).get("world") not in want:
+            continue
+        check_reactive(r, ctx, errs)
     rows = []
     for sid in ctx.nodes:
         hs = [h for h in allh if h.get("scene") == sid]
@@ -481,7 +541,7 @@ def main(argv):
         print(f"reachability: {ns}/{len(ctx.nodes)} scenes, {nr} routes taken, {nf} flags settable, endings {', '.join(ctx.nodes[e]['ending'] for e in sorted(endings)) or 'none'} left by run:warehouse")
     else:
         print(f"reachability: {ns}/{len(ctx.nodes)} scenes, {nr} routes taken, {nf} flags settable, Bassment via passage; portals into paths: {', '.join(sorted(portals)) or 'none'}")
-    print(f"{len(allh)} hotspots, {len(ctx.cin)} cinematics")
+    print(f"{len(allh)} hotspots, {len(allr)} reactive objects, {len(ctx.cin)} cinematics")
     print("laps: " + ", ".join(f"{n} scene(s) x{k}" for k, n in sorted(lap_counts.items())))
     for w in warns:
         print("warning:", w)

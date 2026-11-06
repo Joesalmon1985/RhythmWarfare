@@ -4,8 +4,9 @@ extends Control
 ## the downbeat; the clock, the beat grid, the judge and the crowd energy never restart.
 ##
 ## Scripted play for tests and recordings: RW_RUN_BOT=perfect|none|accuracy:<f>|blocks:<10110...>, RW_RUN_ROUTES=left,right,... (a direction per
-## phase: the bot taps the hotspot that leads there), RW_RUN_TAPS=scripted|none|changed|failure (the tap policy: the scripted taps, no taps at all (the default exits), a decoy tapped first and
-## then the scripted one, the scripted taps with the last block of every phase missed), RW_RUN_VIRTUAL=1 (no audio, a stepped clock), RW_RUN_UNTIL_PHASE=<n>, RW_RUN_START=<node id>.
+## phase: the bot taps the hotspot that leads there), RW_RUN_TAPS=scripted|none|changed|failure|early|mind (the tap policy: the scripted taps, no taps at all (the default exits), a decoy tapped first and
+## then the scripted one, the scripted taps with the last block of every phase missed; early: the scripted choice touched at beat 2 of the scene and held; mind: early, then a decoy at beat 40
+## and the scripted choice again at beat 58 of the departure lap), RW_RUN_VIRTUAL=1 (no audio, a stepped clock), RW_RUN_UNTIL_PHASE=<n>, RW_RUN_START=<node id>.
 ##
 ## The route window is the hotspot window (docs/CONTINUOUS_RUN.md "Hotspots"): the player touches the world (HotspotView, RunHotspots); the last block's result picks the outcome.
 ##
@@ -36,6 +37,8 @@ var hotspots: RunHotspots  # the scene's hotspots: the world is the menu
 var hotspot_log: Array = []  # [{kind: select | tap_miss | commit, t, ...}] for the tests and the walks
 var tap_policy := "scripted"
 var _sel_t: Dictionary = {}  # hotspot id -> song time it was selected
+var _refused: Dictionary = {}  # hotspot id -> {t, reason, hotspot}: a choice that did not take a touch recoils for HotspotView.REFUSE_S
+var _react_t: Dictionary = {}  # reactive object id -> song time it was last touched (it reacts for HotspotView.REACT_S)
 const CLAIM_TIP := -12.0  # degrees the camera tips down while a claim stands
 var _claim_id := ""  # the hotspot whose on_select walk has the camera now ("" none): the rail stands still meanwhile
 var _claim_to := ""  # the waypoint that walk goes to
@@ -338,6 +341,7 @@ func _build_stage(world: String, from: RunData = null) -> Dictionary:
 		hv.beat_s = engine.beat_s
 		hv.items_fn = hotspot_items
 		hv.choice_fn = choice_state  # the current choice staged in the world from the scene's first beat (docs/CHOICE_CLARITY.md)
+		hv.reactives_fn = reactive_items  # the reactive objects' reactions to a tap (INTERACTION_DESIGN.md 2.5)
 		hv.pose_fn = _exit_pose
 		hv.now_fn = func() -> float: return hud.now_t
 		hv.reduced = Session.reduced_effects
@@ -622,6 +626,9 @@ func _bot_step(t: float) -> void:
 ## The scripted taps (RW_RUN_TAPS): `scripted` taps the hotspot that leads where RW_RUN_ROUTES says (a direction per phase) at beat 52; `none` never taps; `changed` first taps a decoy at beat 50;
 ## `failure` is `scripted` with the last block missed (see _bot_wants). Taps go through hotspot_select exactly as a finger would (the same availability, the same window).
 func _bot_taps(t: float) -> void:
+	if tap_policy == "early" or tap_policy == "mind":
+		_bot_whole_scene(t)
+		return
 	if tap_policy == "none" or not engine.window_open:
 		return
 	if engine.is_track_scene() and engine.lap < engine.laps:  # a track scene's open lap: a tap would leave now. RW_RUN_TRACK_EXIT=first leaves at the first open lap; otherwise (end) the bot plays to the default end
@@ -652,6 +659,44 @@ func _bot_taps(t: float) -> void:
 				if str(h["on_success"].get("route", "")) == to:
 					hotspot_select(str(h["id"]))
 					break
+
+
+## The taps of selection open for the whole scene (INTERACTION_DESIGN.md 2.2, N2.1): `early` touches the scripted choice (RW_RUN_ROUTES; the default exit when none is scripted) at beat 2 of the
+## scene's first lap and keeps it; `mind` does the same, then changes its mind twice: a decoy (another choice of the room) at beat 40 of the departure lap, and the scripted choice again at beat 58,
+## two and a half beats before the lock. Either way the pick commits once, at the lock, and the run goes where the routes say.
+var _bot_scene_steps: Dictionary = {}  # scene index -> whole-scene steps done
+
+
+func _bot_whole_scene(t: float) -> void:
+	var idx := engine.scene_index()
+	var done := int(_bot_scene_steps.get(idx, 0))
+	var plan: Array = [[1, 2.0, "target"]] if tap_policy == "early" else [[1, 2.0, "target"], [0, 40.0, "decoy"], [0, 58.0, "target"]]  # [lap (1: the first, 0: the departure lap), beat, what]
+	if done >= plan.size() or t < 0.0:
+		return
+	var step: Array = plan[done]
+	var lap_ok := engine.lap == 1 if int(step[0]) == 1 else engine.is_departure_lap()
+	if not lap_ok or engine.phase_beat_at(t) < float(step[1]):
+		return
+	_bot_scene_steps[idx] = done + 1
+	var on_show := hotspots.shown(engine.block, selection_open())
+	var want := _route_for_dir(idx - 1)
+	if want == "":
+		want = hotspots.default_route()
+	var target := ""
+	for h in on_show:
+		if RunHotspots.window_of(h) == "final" and str((h["on_success"] as Dictionary).get("route", "")) == want:
+			target = str(h["id"])
+			break
+	var pick := target
+	if str(step[2]) == "decoy":
+		pick = ""
+		for h in on_show:
+			var r := str((h["on_success"] as Dictionary).get("route", ""))
+			if str(h["id"]) != target and RunHotspots.window_of(h) == "final" and not HotspotContract.is_special_route(r) and not h.has("on_select"):
+				pick = str(h["id"])
+				break
+	if pick != "":
+		hotspot_select(pick)
 
 
 ## RW_RUN_SELECT=<hotspot id>@<phase beat> (the screenshots): that hotspot is touched once, in the first phase, when its beat comes.
@@ -995,6 +1040,10 @@ func _on_phase_start(ev: Dictionary) -> void:
 	var t0 := float(ev["t"])
 	phase_log.append({"phase": ev["phase"], "node": ev["node"], "t": t0, "world": str(node["world"]), "path": run_path})
 	_sel_t.clear()
+	_refused.clear()
+	_react_t.clear()
+	choice_request_id = 0
+	choice_request_of = ""
 	_claim_id = ""
 	_claim_to = ""
 	if int(ev["phase"]) > 1 or trial_state == "":
@@ -1035,7 +1084,9 @@ func _on_phase_start(ev: Dictionary) -> void:
 func _on_lap_start(ev: Dictionary) -> void:
 	lap_log.append({"phase": int(ev["phase"]), "lap": int(ev["lap"]), "laps": int(ev["laps"]), "node": str(ev["node"]), "t": float(ev["t"]), "stage": int(ev["stage"])})
 	_track_stay_phase = -1
-	_sel_t.clear()
+	for id in _sel_t.keys():  # (a pick held across the lap keeps its touch time: selection is open for the whole scene)
+		if hotspots == null or str(id) != hotspots.selected:
+			_sel_t.erase(id)
 	_commit_view = {}
 
 
@@ -1246,28 +1297,41 @@ func _close_routes(_ev: Dictionary) -> void:
 	hud.route_hint = ""
 
 
-func _unhandled_key_input(event: InputEvent) -> void:  # desktop: 1 to 4 pick the hotspots on show, in order
+func _unhandled_key_input(event: InputEvent) -> void:  # desktop: 1 to 8 pick the choices on show, in order (INTERACTION_DESIGN.md 2.6: up to eight choices)
 	if hotspots == null or not (event is InputEventKey) or not event.pressed or event.echo or trial_state != "":
 		return
 	var kc := (event as InputEventKey).keycode
-	if kc >= KEY_1 and kc <= KEY_4:
-		var shown := hotspots.shown(engine.block, engine.window_open)
+	if kc >= KEY_1 and kc <= KEY_8:
+		var shown := hotspots.shown(engine.block, selection_open())
 		if kc - KEY_1 < shown.size():
 			hotspot_select(str(shown[kc - KEY_1]["id"]))
 
 
 # --- hotspots -------------------------------------------------------------------------------------------------------------
 
-## What the hotspot view draws and the taps hit: [{hotspot, state, t_state}] for the hotspots on show now, plus the one that has just committed (it stays for its flash).
+## What the hotspot view draws and the taps hit: [{hotspot, state, t_state}] for the hotspots on show now, plus the one that has just committed (it stays for its flash) and one that has just
+## refused a tap (it recoils for HotspotView.REFUSE_S). SELECTION IS OPEN FOR THE WHOLE SCENE (INTERACTION_DESIGN.md 2.2, N2.1): every available choice is on show while the port's
+## selection_open() holds, from the scene's first beat to the lock, in every lap; not only in the engine's route window.
 func hotspot_items() -> Array:
 	var out: Array = []
 	if hotspots == null or trial_state != "" or engine == null or minigames.active():  # minigames: the table's view owns the touches
 		return out
-	for h in hotspots.shown(engine.block, engine.window_open):
+	var now: float = hud.now_t
+	for h in hotspots.shown(engine.block, selection_open()):
 		var id := str(h["id"])
 		var sel := id == hotspots.selected
-		out.append({"hotspot": h, "state": "selected" if sel else "available", "t_state": float(_sel_t.get(id, 0.0)) if sel else 0.0, "t_commit": _t_commit_of(h),
-			"finished": HotspotContract.finished_look(h, hotspots.has_flag)})  # a portal whose path has been finished (plan D10)
+		var it := {"hotspot": h, "state": "selected" if sel else "available", "t_state": float(_sel_t.get(id, 0.0)) if sel else 0.0, "t_commit": _t_commit_of(h),
+			"finished": HotspotContract.finished_look(h, hotspots.has_flag)}  # a portal whose path has been finished (plan D10)
+		if _refused.has(id) and now - float(_refused[id]["t"]) < HotspotView.REFUSE_S:
+			it["state"] = "refused"
+			it["t_state"] = float(_refused[id]["t"])
+		out.append(it)
+	for id in _refused.keys():  # a refusal of a choice that is no longer on show (a tap on a door in the lock window): drawn on its own for its moment
+		var rf: Dictionary = _refused[id]
+		if now - float(rf["t"]) >= HotspotView.REFUSE_S:
+			_refused.erase(id)
+		elif not out.any(func(e: Dictionary) -> bool: return str(e["hotspot"]["id"]) == str(id)):
+			out.append({"hotspot": rf["hotspot"], "state": "refused", "t_state": float(rf["t"]), "t_commit": float(rf["t"])})
 	if not _commit_view.is_empty():
 		if hud.now_t - float(_commit_view["t"]) < (HotspotView.FLASH_S + HotspotView.SETTLE_S) * 1.05:
 			out.append({"hotspot": _commit_view["hotspot"], "state": "committed", "t_state": float(_commit_view["t"]), "t_commit": float(_commit_view["t"]), "success": bool(_commit_view.get("success", true))})
@@ -1294,8 +1358,13 @@ func _card_table_feed(t: float) -> void:
 	card_table.set_mood(RunCardTable.mood_of(entry, last, minigames.state, t, engine.beat_s, RunCardTable.closeup_of(snap, t, engine.beat_s)), t)
 
 
-## Song time of the decision that will judge a selection of `h`: its window's next decision beat (a final-window hotspot waits for the last block's).
+## Song time of the decision that will judge a selection of `h`: its window's next decision beat. A final-window choice commits at the lock of the next departure boundary (the port's
+## lock_t(next_boundary_t()): a pick on a path scene's first lap waits for the last lap's), else the last block's decision of this lap.
 func _t_commit_of(h: Dictionary) -> float:
+	if RunHotspots.window_of(h) == "final" and director != null:
+		var lt := director.lock_t(director.next_boundary_t())
+		if is_finite(lt):
+			return lt
 	var b := 3 if RunHotspots.window_of(h) == "final" else mini(engine.block, 3)
 	return engine.t_of(float(b * int(engine.timing("block_beats"))) + engine._decision_beat())
 
@@ -1323,20 +1392,131 @@ func _choice_changed_t() -> float:  # the last touch or commit of this scene's c
 	return t
 
 
-## The player (or the bot) touches a hotspot by id. Allowed while it is on show and nothing has committed; the selection can be changed until the commit. Returns whether it was selected.
+## The player (or the bot) touches a hotspot by id. Allowed while selection is open (selection_open(): from the scene's first beat until the lock) and the hotspot is on show; the selection can
+## be changed with one more touch until then (the old pick deselects in the same frame), and it is held until the commit at the next departure boundary. Touching the selected choice again keeps
+## it (assumption A1) and thumps it once more. A touch while the transition is locked is refused (the object recoils once, show_refused). Returns whether it is selected.
 func hotspot_select(id: String) -> bool:
 	if hotspots == null or _ended or trial_state != "" or minigames.active():  # minigames: nothing is selected while seated
 		return false
-	var again := id != "" and hotspots.selected == id and str(hotspots.get_hotspot(id)["look"]["selected"]) == "claim"  # a repeat touch keeps the claim as it is
-	var ok := hotspots.select(id, engine.block, engine.window_open)
+	if not selection_open():
+		if not hotspots.get_hotspot(id).is_empty():
+			show_refused(id, &"locked")
+		return false
+	var prev := hotspots.selected
+	var same := id != "" and prev == id
+	var again := same and str(hotspots.get_hotspot(id)["look"]["selected"]) == "claim"  # a repeat touch keeps the claim as it is
+	var ok := hotspots.select(id, engine.block, true)
 	if ok:
 		if not again:
 			_sel_t[id] = hud.now_t
 		_on_select_walk(hotspots.get_hotspot(id), hud.now_t)
 		if str(_commit_view.get("id", "")) == id:  # touched again while its last outcome still shows (a table that can be touched again)
 			_commit_view = {}
-		hotspot_log.append({"kind": "select", "t": hud.now_t, "hotspot": id, "block": engine.block, "phase": engine.phase_n})
+		_refused.erase(id)
+		hotspot_log.append({"kind": "select", "t": hud.now_t, "hotspot": id, "block": engine.block, "phase": engine.phase_n, "lap": engine.lap, "beat": engine.phase_beat_at(hud.now_t),
+			"again": same, "from": prev})
+		if not same:
+			_choice_picked(id, prev)
 	return ok
+
+
+## Whether a choice may be touched now: the port's selection_open() (true from the scene's first beat until each lock point, false from the lock to the boundary), and no excursion or activity
+## owning the touches. Without a port (never in the game) the engine's route window decides, as before N2.1.
+func selection_open() -> bool:
+	if engine == null or trial_state != "" or _ended:
+		return false
+	if director != null:
+		return director.selection_open()
+	return engine.window_open
+
+
+# --- THE ROUTER SEAM (work package N2.2) --------------------------------------------------------------------------------------
+# N2.1 keeps today's commit: the pick is RunHotspots.selected, committed by the engine at the lock of the departure lap and taken by the director as an observed lock. N2.2 routes a pick through
+# the port instead, here and nowhere else:
+#   choice_request_fn = func(hotspot_id: String) -> int: return router.submit(port(), hotspot_id)   # every new pick; 0 = refused at once (the pick is undone, the object recoils)
+#   choice_cancel_fn  = func(request_id: int) -> bool: return port().cancel(request_id)             # hotspot_deselect(), when the player withdraws a pick
+#   port().request_closed -> choice_closed(hotspot_id_of(request id), reason)                       # replaced: nothing to do; cancelled / unavailable: the object deselects (and recoils)
+# Quest entrances are never gated by rhythm (lead ruling 15): that is N2.2's routing, not this seam.
+var choice_request_fn: Callable = Callable()  # (hotspot id) -> request id (> 0), or 0 when the port refused at once
+var choice_cancel_fn: Callable = Callable()  # (request id) -> bool
+var choice_request_id := 0  # the port's id of the current pick (0: none, or N2.1 without the router)
+var choice_request_of := ""  # the hotspot that request is for
+
+
+## A new pick (not a repeat touch of the selected one). With N2.2's router wired the port is asked; a refusal at once puts the previous pick back and the object recoils.
+func _choice_picked(id: String, prev: String) -> void:
+	if not choice_request_fn.is_valid():
+		return
+	var rid := int(choice_request_fn.call(id))
+	if rid > 0:
+		choice_request_id = rid
+		choice_request_of = id
+		return
+	hotspots.selected = prev  # the port kept the previous request (a refusal at once replaces nothing)
+	show_refused(id, director.last_refusal() if director != null else &"unavailable")
+
+
+## The player withdraws the pick (no gesture does this in N2.1, assumption A1: a second touch keeps it; N2.2 or a later design may add one). The scene's default applies again.
+func hotspot_deselect(id: String) -> bool:
+	if hotspots == null or not selection_open() or not hotspots.deselect(id):
+		return false
+	_sel_t.erase(id)
+	hotspot_log.append({"kind": "deselect", "t": hud.now_t, "hotspot": id, "phase": engine.phase_n})
+	if choice_cancel_fn.is_valid() and choice_request_of == id and choice_request_id > 0:
+		choice_cancel_fn.call(choice_request_id)
+	choice_request_id = 0
+	choice_request_of = ""
+	return true
+
+
+## The port closed the request of `id` (N2.2's request_closed handler): &"replaced" changes nothing here (the new pick is already selected); &"cancelled" and &"unavailable" deselect it, and an
+## unavailable destination recoils (INTERACTION_DESIGN.md 2.3, 2.4).
+func choice_closed(id: String, reason: StringName) -> void:
+	if reason == &"replaced" or hotspots == null:
+		return
+	if hotspots.deselect(id):
+		_sel_t.erase(id)
+		hotspot_log.append({"kind": "closed", "t": hud.now_t, "hotspot": id, "reason": str(reason), "phase": engine.phase_n})
+	if choice_request_of == id:
+		choice_request_id = 0
+		choice_request_of = ""
+	if reason == &"unavailable":
+		show_refused(id, reason)
+
+
+## A choice did not take a touch: it recoils once (HotspotView.REFUSE_S) and the selection stays as it was. Logged as "refused" with the reason (&"locked", or the port's).
+func show_refused(id: String, reason: StringName) -> void:
+	var h := hotspots.get_hotspot(id) if hotspots != null else {}
+	if h.is_empty():
+		return
+	_refused[id] = {"t": hud.now_t, "reason": reason, "hotspot": h}
+	hotspot_log.append({"kind": "refused", "t": hud.now_t, "hotspot": id, "reason": str(reason), "phase": engine.phase_n})
+
+
+# --- reactive objects (INTERACTION_DESIGN.md 2.1, 2.5) ------------------------------------------------------------------------
+
+## The scene's reactive objects for the view and the taps: [{hotspot (the normalised reactive row), state: "idle" | "reacting", t_state}]. Empty in the Bassment and while seated.
+func reactive_items() -> Array:
+	var out: Array = []
+	if hotspots == null or trial_state != "" or engine == null or minigames.active():
+		return out
+	for r in hotspots.reactives():
+		var id := str(r["id"])
+		var t0 := float(_react_t.get(id, -INF))
+		out.append({"hotspot": r, "state": "reacting" if hud.now_t - t0 < HotspotView.REACT_S else "idle", "t_state": t0 if is_finite(t0) else 0.0})
+	return out
+
+
+## A reactive object is touched: it reacts (in every state of the scene, the lock included) and nothing else happens: no selection change, no port call, no route.
+func reactive_tap(id: String) -> bool:
+	if hotspots == null or _ended or trial_state != "" or minigames.active():
+		return false
+	var out := hotspots.react(id)
+	if out.is_empty():
+		return false
+	_react_t[id] = hud.now_t
+	hotspot_log.append({"kind": "react", "t": hud.now_t, "reactive": id, "reaction": str(out["reaction"]), "phase": engine.phase_n})
+	return true
 
 
 ## The touch itself moves the camera when the hotspot has an `on_select` cinematic (the table: the walk to the chair starts now); touching anything else gives the rail back.
@@ -1416,16 +1596,33 @@ func hotspot_tap(pos: Vector2) -> String:
 		if target != "":
 			hotspot_log.append({"kind": "minigame_tap", "t": hud.now_t, "target": target, "ok": minigames.tap(target, hud.now_t)})
 		return target
+	if _pause_btn != null and _pause_btn.visible and _pause_btn.get_global_rect().has_point(pos):  # (the pause button is HUD, never a touch region: INTERACTION_DESIGN.md 7.1)
+		return ""
 	var st: StoryStage = stages[active_world]["stage"]
 	var pose := _exit_pose()
 	if st.map == null or pose.is_empty():
 		return ""
+	var widths := HotspotView.thing_widths(st)
+	var at := pos - rect.position
 	var items := hotspot_items().filter(func(e: Dictionary) -> bool: return str(e["state"]) != "committed")
-	var id := HotspotView.hit(HotspotView.layout(items, st.map, st.crowds, pose, rect.size, true), pos - rect.position)  # (the thing itself is touchable: ChoiceStaging `touch`)
-	if id == "":
-		hotspot_log.append({"kind": "tap_miss", "t": hud.now_t, "pos": pos})
-		return ""
-	return id if hotspot_select(id) else ""
+	var id := HotspotView.hit(HotspotView.layout(items, st.map, st.crowds, pose, rect.size, true, widths), at)  # (the object itself is touchable: its visual bounds plus 24 px)
+	if id != "":  # a choice wins over a reactive object where they overlap (assumption A7)
+		return id if hotspot_select(id) else ""
+	if not selection_open():  # the lock: a touch on one of the choices still standing in the room is refused once (it recoils), the transition stays as it is
+		var staged: Array = hotspots.staged(engine.block).map(func(h: Dictionary) -> Dictionary: return {"hotspot": h, "state": "available", "t_state": 0.0})
+		var sid := HotspotView.hit(HotspotView.layout(staged, st.map, st.crowds, pose, rect.size, true, widths), at)
+		if sid != "":
+			show_refused(sid, &"locked")
+			return ""
+	var reacts := reactive_items()
+	if not reacts.is_empty():
+		var lay := HotspotView.layout(reacts, st.map, st.crowds, pose, rect.size, true, widths).filter(func(e: Dictionary) -> bool: return not bool(e["edge"]))  # (only a reactive object in view)
+		var rid := HotspotView.hit(lay, at)
+		if rid != "":
+			reactive_tap(rid)
+			return ""
+	hotspot_log.append({"kind": "tap_miss", "t": hud.now_t, "pos": pos})
+	return ""
 
 
 func _input(event: InputEvent) -> void:
