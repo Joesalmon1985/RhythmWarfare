@@ -935,4 +935,34 @@ def sky_fire():
     return rgb
 
 
-DRAW = {k: v for k, v in sorted(globals().items()) if callable(v) and k.startswith(("ceil_", "floor_", "wall_", "sky_")) and v.__module__ == __name__}
+# ---- a billboard the old canvas tiles carried as a repeat: the tent's guy-rope eyelet, an iron ring on a stitched canvas patch (hard alpha, a one-pixel darker edge, lit from the upper left) ----
+
+IRON_R = ramp("#0e1012", "#1e2226", "#343a40", "#505860", "#78828a", "#a4aeb4")
+
+
+def thing_tent_eyelet():
+    n = 128
+    x, y = grid(n)
+    cx, cy = 64.0, 66.0
+    patch = (np.abs(x - cx) < 30) & (np.abs(y - cy) < 30)
+    d = np.sqrt((x - cx) ** 2 + (y - cy) ** 2)
+    ring = (d > 11) & (d < 18)
+    hole = d <= 11
+    lit = np.clip(0.55 - ((x - cx) + (y - cy)) / 120.0, 0, 1)
+    rgb = _q(0.3 + 0.5 * lit + 0.1 * _fine(n, 701), CANV, 0.7)
+    stitch = (patch & ((np.abs(x - cx) > 25) & (np.abs(x - cx) < 27) | (np.abs(y - cy) > 25) & (np.abs(y - cy) < 27)) & (((x + y) % 5) < 3))
+    rgb = _col(rgb, stitch, "#3a2f20")
+    rgb = np.where(hole[..., None] & patch[..., None], _q(0.12 + 0.1 * lit, CANV, 0.5), rgb)
+    rgb = np.where(ring[..., None], _q(0.2 + 0.7 * lit, IRON_R, 0.6), rgb)
+    shadow = ((d > 18) & (d < 21)) & ((x - cx) + (y - cy) > 4)
+    rgb = np.where(shadow[..., None], (rgb * 0.7).astype(np.uint8), rgb)
+    m = patch
+    edge = m & ~(np.roll(m, 1, 0) & np.roll(m, -1, 0) & np.roll(m, 1, 1) & np.roll(m, -1, 1))
+    rgb = np.where(edge[..., None], (rgb * 0.5).astype(np.uint8), rgb)
+    out = np.zeros((n, n, 4), np.uint8)
+    out[..., :3] = rgb
+    out[..., 3] = np.where(m, 255, 0)
+    return out
+
+
+DRAW = {k: v for k, v in sorted(globals().items()) if callable(v) and k.startswith(("ceil_", "floor_", "wall_", "sky_", "thing_")) and v.__module__ == __name__}

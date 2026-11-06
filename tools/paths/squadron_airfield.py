@@ -97,6 +97,8 @@ def build():
         tent.thing(f"cot_r{k}", "thing_cot_ward", d + 0.6, 3.7, 0.5, 1.3)
     tent.thing("kitchen_hatch", T("thing_kitchen_hatch", "billboard", "a serving hatch cut in a wall with a shutter propped open, steam, a ladle and a bucket, a glimpse of a kitchen lamp", 1.0, 128), 6.4, 4.8, 1.3, 1.8, "flicker")
     tent.thing("tent_drip", T("thing_drip_stand", "billboard", "an iron drip stand with a bottle and tube", 1.0, 128), 5.0, -1.8, 1.0, 1.8)
+    for k, (d, u) in enumerate([(2.2, -4.85), (6.0, -4.85), (3.4, 4.85), (8.0, 4.85)]):  # the eyelets the old canvas tiles carried as a repeat
+        tent.thing(f"tent_eyelet{k}", T("thing_tent_eyelet", "billboard", "an iron guy-rope eyelet ring on a stitched canvas patch on the tent wall, 128x128", 1.0, 128), d, u, 1.9, 0.7)
     tent.thing("tent_lamp", "thing_lamp_hang", 5.0, 0.0, 2.5, 0.9, "sway")
     tent.thing("tent_curtain", T("thing_screen_cloth", "billboard", "a folding hospital screen of grey cloth on a wooden frame", 1.0, 128), 3.0, 1.2, 0.9, 1.7)
     tent.light("lt_tent", 5.0, 0.0, 2.6, 7.0, "#fff0d0", 1.1)

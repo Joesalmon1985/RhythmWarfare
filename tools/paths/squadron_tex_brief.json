@@ -821,6 +821,15 @@
    "airfield"
   ]
  },
+ "thing_tent_eyelet": {
+  "kind": "billboard",
+  "size": 128,
+  "metres": 1.0,
+  "desc": "an iron guy-rope eyelet ring on a stitched canvas patch on the tent wall, 128x128",
+  "maps": [
+   "airfield"
+  ]
+ },
  "thing_tent_flap": {
   "kind": "billboard",
   "size": 128,

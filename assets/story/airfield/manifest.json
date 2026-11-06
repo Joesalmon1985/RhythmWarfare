@@ -356,6 +356,14 @@
    ],
    "metres": 1.0
   },
+  "thing_tent_eyelet": {
+   "file": "textures/thing_tent_eyelet.png",
+   "size": [
+    128,
+    128
+   ],
+   "metres": 1.0
+  },
   "thing_tent_flap": {
    "file": "textures/thing_tent_flap.png",
    "size": [

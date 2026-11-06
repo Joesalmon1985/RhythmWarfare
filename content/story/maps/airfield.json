@@ -48,6 +48,7 @@
   "thing_stamp_big": "textures/thing_stamp_big.png",
   "thing_stove": "textures/thing_stove.png",
   "thing_table_maps": "textures/thing_table_maps.png",
+  "thing_tent_eyelet": "textures/thing_tent_eyelet.png",
   "thing_tent_flap": "textures/thing_tent_flap.png",
   "thing_truck": "textures/thing_truck.png",
   "thing_window_hut": "textures/thing_window_hut.png",
@@ -929,6 +930,58 @@
    ],
    "y": 1.0,
    "size": 1.8,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "tent_eyelet0",
+   "kind": "billboard",
+   "sprite": "thing_tent_eyelet",
+   "at": [
+    0.15,
+    -2.2
+   ],
+   "y": 1.9,
+   "size": 0.7,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "tent_eyelet1",
+   "kind": "billboard",
+   "sprite": "thing_tent_eyelet",
+   "at": [
+    0.15,
+    -6.0
+   ],
+   "y": 1.9,
+   "size": 0.7,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "tent_eyelet2",
+   "kind": "billboard",
+   "sprite": "thing_tent_eyelet",
+   "at": [
+    9.85,
+    -3.4
+   ],
+   "y": 1.9,
+   "size": 0.7,
+   "anim": "none",
+   "sector": "tent"
+  },
+  {
+   "id": "tent_eyelet3",
+   "kind": "billboard",
+   "sprite": "thing_tent_eyelet",
+   "at": [
+    9.85,
+    -8.0
+   ],
+   "y": 1.9,
+   "size": 0.7,
    "anim": "none",
    "sector": "tent"
   },
