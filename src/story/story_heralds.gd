@@ -315,7 +315,7 @@ func _draw_mark(prop: StoryCrowdProp) -> void:
 		var gg: Array = gt["glow"]
 		var pv: Array = gt["pivot"]
 		var dst := Rect2(-float(pv[0]) * gk, -float(pv[1]) * gk, float(gr[2]) * gk, float(gr[3]) * gk)
-		var glow := (0.82 + 0.18 * hit) * keep
+		var glow := (0.7 + 0.15 * hit) * keep  # (a doorway lit from inside, not a lamp: below the mark's own light)
 		prop.draw_texture_rect_region(sheet(), dst, Rect2(float(gg[0]), float(gg[1]), float(gg[2]), float(gg[3])), Color(glow, glow, glow, 1.0))
 		prop.draw_texture_rect_region(sheet(), dst, Rect2(float(gr[0]), float(gr[1]), float(gr[2]), float(gr[3])), _light(prop, rec))
 	var r: Array = mk["rect"]
