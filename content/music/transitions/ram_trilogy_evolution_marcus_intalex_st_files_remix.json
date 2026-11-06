@@ -1,0 +1,22 @@
+{
+  "format": "rhythm_warfare.transition.v1",
+  "track": "ram_trilogy_evolution_marcus_intalex_st_files_remix",
+  "first_drop_s": 110.3402,
+  "second_drop_s": 308.9525,
+  "downbeat_offset_beats": 0,
+  "intro_start_s": null,
+  "outro_start_s": 375.1565,
+  "mix_in_bar": null,
+  "mix_out_bar": null,
+  "no_blend": false,
+  "linger": null,
+  "checked": null,
+  "note": "",
+  "first_drop_bar": 80,
+  "first_drop_snap_ms": -0.0,
+  "origin": {
+    "first_drop_s": "detected",
+    "second_drop_s": "detected",
+    "outro_start_s": "detected"
+  }
+}

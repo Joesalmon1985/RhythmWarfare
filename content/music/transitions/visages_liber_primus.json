@@ -1,0 +1,22 @@
+{
+  "format": "rhythm_warfare.transition.v1",
+  "track": "visages_liber_primus",
+  "first_drop_s": 66.2065,
+  "second_drop_s": 198.6204,
+  "downbeat_offset_beats": 0,
+  "intro_start_s": null,
+  "outro_start_s": 264.8274,
+  "mix_in_bar": null,
+  "mix_out_bar": null,
+  "no_blend": false,
+  "linger": null,
+  "checked": null,
+  "note": "",
+  "first_drop_bar": 47,
+  "first_drop_snap_ms": 0.1,
+  "origin": {
+    "first_drop_s": "detected",
+    "second_drop_s": "detected",
+    "outro_start_s": "detected"
+  }
+}

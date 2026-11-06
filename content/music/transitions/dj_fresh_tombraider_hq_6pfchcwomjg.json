@@ -1,0 +1,22 @@
+{
+  "format": "rhythm_warfare.transition.v1",
+  "track": "dj_fresh_tombraider_hq_6pfchcwomjg",
+  "first_drop_s": 86.0951,
+  "second_drop_s": 278.3683,
+  "downbeat_offset_beats": 0,
+  "intro_start_s": null,
+  "outro_start_s": 409.9367,
+  "mix_in_bar": null,
+  "mix_out_bar": null,
+  "no_blend": false,
+  "linger": null,
+  "checked": null,
+  "note": "",
+  "first_drop_bar": 63,
+  "first_drop_snap_ms": 33.5,
+  "origin": {
+    "first_drop_s": "detected",
+    "second_drop_s": "detected",
+    "outro_start_s": "detected"
+  }
+}
