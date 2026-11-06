@@ -2,14 +2,14 @@
  "format": "rhythm_warfare.track_catalogue.v1",
  "tool": "catalogue_tracks 0.4",
  "generated": "2026-11-06",
- "about": "Recordings available to the game's track mode (docs/TRACK_PACK_FORMAT.md). Metadata only: the audio is other people's music and is never in this repository. 'quick' is a few seconds' look at the whole mix (tempo, loudness, low_share = share of energy below 120 Hz, brightness, events_per_s, blocks_db = level of each 8-bar block relative to the track's loud level, blocks_drive_db = how hard the low end and the hits are going in each block, rough_sections from that drive); it is approximate and its sections are not bar-aligned. 'import' is present once tools/audio_import/import_track.py has been run on the recording, and is measured.",
+ "about": "Recordings available to the game's track mode (docs/TRACK_PACK_FORMAT.md). Metadata only: the audio is never in this repository (it goes into the game's builds). 'quick' is a few seconds' look at the whole mix (tempo, loudness, low_share = share of energy below 120 Hz, brightness, events_per_s, blocks_db = level of each 8-bar block relative to the track's loud level, blocks_drive_db = how hard the low end and the hits are going in each block, rough_sections from that drive); it is approximate and its sections are not bar-aligned. 'import' is present once tools/audio_import/import_track.py has been run on the recording, and is measured.",
  "source_folders": [
   "ToAddTry4"
  ],
- "packs_live_at": "/home/joe/rw-audio-work/packs",
+ "packs_live_at": "C:\\Users\\joesa\\rw-audio-work\\packs",
  "counts": {
   "recordings": 61,
-  "imported": 44,
+  "imported": 61,
   "unreadable": 0
  },
  "unreadable": [],
@@ -968,7 +968,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 173.9995,
+    "tempo_constant": true,
+    "sections": [
+     "intro -1-23",
+     "drop 23-91",
+     "breakdown 91-119",
+     "drop 119-187",
+     "outro 187-213"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.336,
+     "bass": 0.093,
+     "other": 0.449,
+     "vocals": 0.075
+    },
+    "cues": {
+     "easy": 317,
+     "normal": 537,
+     "hard": 656
+    },
+    "detail": "bad_company_uk_trace_nitrous_audio_remix.json"
+   }
   },
   {
    "id": "bennie_jam_thieves_madting",
@@ -1160,7 +1183,7 @@
    "year": 2010,
    "genre": "Drum & Bass",
    "codec": "mp3",
-   "duration_s": 326.97,
+   "duration_s": 326.94,
    "quick": {
     "bpm": 174.0,
     "bpm_clarity": 11.1,
@@ -1480,7 +1503,29 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 172.0006,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-23",
+     "build 23-31",
+     "drop 31-95",
+     "breakdown 95-122",
+     "drop 122-196"
+    ],
+    "focus_share_of_track": {
+     "kick": 0.041,
+     "tops": 0.587,
+     "vocals": 0.372
+    },
+    "cues": {
+     "easy": 312,
+     "normal": 523,
+     "hard": 654
+    },
+    "detail": "bou_kasra_trenchfoot.json"
+   }
   },
   {
    "id": "break_overstayed",
@@ -1820,7 +1865,7 @@
    "year": 2013,
    "genre": "Drum & Bass",
    "codec": "mp3",
-   "duration_s": 271.18,
+   "duration_s": 271.13,
    "quick": {
     "bpm": 175.0,
     "bpm_clarity": 11.0,
@@ -2121,7 +2166,7 @@
    "year": 2015,
    "genre": "Dance",
    "codec": "mp3",
-   "duration_s": 244.9,
+   "duration_s": 244.86,
    "quick": {
     "bpm": 174.0,
     "bpm_clarity": 10.8,
@@ -2224,7 +2269,29 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0003,
+    "tempo_constant": true,
+    "sections": [
+     "intro -1-15",
+     "build 15-31",
+     "drop 31-79",
+     "build 79-111",
+     "drop 111-177"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.642,
+     "other": 0.132,
+     "vocals": 0.225
+    },
+    "cues": {
+     "easy": 289,
+     "normal": 454,
+     "hard": 517
+    },
+    "detail": "dc_breaks_gambino_original_mix.json"
+   }
   },
   {
    "id": "dc_breaks_proton_original_mix",
@@ -2235,7 +2302,7 @@
    "year": 2013,
    "genre": "Drum & Bass",
    "codec": "mp3",
-   "duration_s": 310.0,
+   "duration_s": 309.94,
    "quick": {
     "bpm": 175.0,
     "bpm_clarity": 11.1,
@@ -2371,7 +2438,32 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0011,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-32",
+     "build 32-48",
+     "drop 48-96",
+     "breakdown 96-136",
+     "build 136-144",
+     "drop 144-208",
+     "outro 208-226"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.531,
+     "bass": 0.071,
+     "other": 0.283,
+     "vocals": 0.071
+    },
+    "cues": {
+     "easy": 352,
+     "normal": 555,
+     "hard": 720
+    },
+    "detail": "dc_breaks_proton_original_mix.json"
+   }
   },
   {
    "id": "dc_breaks_slugs_original_mix",
@@ -2382,7 +2474,7 @@
    "year": 2013,
    "genre": "Drum & Bass",
    "codec": "mp3",
-   "duration_s": 296.28,
+   "duration_s": 296.23,
    "quick": {
     "bpm": 175.0,
     "bpm_clarity": 11.3,
@@ -2687,7 +2779,7 @@
    "year": null,
    "genre": null,
    "codec": "mp3",
-   "duration_s": 419.53,
+   "duration_s": 419.49,
    "quick": {
     "bpm": 176.0,
     "bpm_clarity": 10.7,
@@ -2871,7 +2963,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.9996,
+    "tempo_constant": false,
+    "sections": [
+     "intro 0-63",
+     "drop 63-163",
+     "breakdown 163-188",
+     "build 188-204",
+     "drop 204-300",
+     "outro 300-307"
+    ],
+    "focus_share_of_track": {
+     "kick": 0.023,
+     "tops": 0.442,
+     "bass": 0.286,
+     "other": 0.248
+    },
+    "cues": {
+     "easy": 489,
+     "normal": 800,
+     "hard": 975
+    },
+    "detail": "dj_fresh_tombraider_hq_6pfchcwomjg.json"
+   }
   },
   {
    "id": "drumsound_bassline_smith_vigilante",
@@ -2882,7 +2998,7 @@
    "year": 2010,
    "genre": "Drum & Bass",
    "codec": "mp3",
-   "duration_s": 267.52,
+   "duration_s": 267.46,
    "quick": {
     "bpm": 176.0,
     "bpm_clarity": 11.0,
@@ -2989,7 +3105,28 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 176.0002,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-24",
+     "drop 24-72",
+     "build 72-80",
+     "drop 80-184",
+     "outro 184-196"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.489,
+     "vocals": 0.511
+    },
+    "cues": {
+     "easy": 321,
+     "normal": 511,
+     "hard": 646
+    },
+    "detail": "drumsound_bassline_smith_vigilante.json"
+   }
   },
   {
    "id": "exile_destructive_vibrations",
@@ -3126,9 +3263,9 @@
      "other": 0.49
     },
     "cues": {
-     "easy": 313,
-     "normal": 510,
-     "hard": 634
+     "easy": 314,
+     "normal": 509,
+     "hard": 637
     },
     "detail": "exile_destructive_vibrations.json"
    }
@@ -3142,7 +3279,7 @@
    "year": null,
    "genre": null,
    "codec": "mp3",
-   "duration_s": 248.08,
+   "duration_s": 248.06,
    "quick": {
     "bpm": 174.0,
     "bpm_clarity": 10.8,
@@ -3437,7 +3574,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0008,
+    "tempo_constant": true,
+    "sections": [
+     "intro -1-18",
+     "build 18-47",
+     "drop 47-92",
+     "breakdown 92-131",
+     "drop 131-159",
+     "outro 159-179"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.267,
+     "bass": 0.044,
+     "other": 0.665
+    },
+    "cues": {
+     "easy": 263,
+     "normal": 467,
+     "hard": 585
+    },
+    "detail": "floodlight_dnb_aid_for_pakistan_in_most_pulsar.json"
+   }
   },
   {
    "id": "floodlight_dnb_aid_for_pakistan_radiax_headway",
@@ -3760,7 +3920,7 @@
    "year": null,
    "genre": null,
    "codec": "mp3",
-   "duration_s": 287.47,
+   "duration_s": 287.43,
    "quick": {
     "bpm": 174.0,
     "bpm_clarity": 11.4,
@@ -3912,7 +4072,7 @@
    "year": 2006,
    "genre": "Drum & Bass",
    "codec": "mp3",
-   "duration_s": 358.16,
+   "duration_s": 358.11,
    "quick": {
     "bpm": 174.98,
     "bpm_clarity": 11.2,
@@ -4100,7 +4260,7 @@
    "year": 2013,
    "genre": "Drum & Bass",
    "codec": "mp3",
-   "duration_s": 323.5,
+   "duration_s": 323.45,
    "quick": {
     "bpm": 174.0,
     "bpm_clarity": 10.4,
@@ -4507,7 +4667,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 172.0005,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-16",
+     "build 16-32",
+     "drop 32-112",
+     "build 112-128",
+     "drop 128-176",
+     "outro 176-194"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.454,
+     "other": 0.258,
+     "vocals": 0.289
+    },
+    "cues": {
+     "easy": 314,
+     "normal": 518,
+     "hard": 647
+    },
+    "detail": "insideinfo_victory_over_death_feat_monikali.json"
+   }
   },
   {
    "id": "k_motionz_simula_phantasm_original_mix",
@@ -4699,7 +4882,7 @@
    "year": 2013,
    "genre": "Drum & Bass",
    "codec": "mp3",
-   "duration_s": 250.31,
+   "duration_s": 250.26,
    "quick": {
     "bpm": 172.02,
     "bpm_clarity": 11.8,
@@ -5025,7 +5208,7 @@
    "year": 2014,
    "genre": "Drum & Bass",
    "codec": "mp3",
-   "duration_s": 299.73,
+   "duration_s": 299.69,
    "quick": {
     "bpm": 175.0,
     "bpm_clarity": 10.9,
@@ -5192,7 +5375,7 @@
    "year": null,
    "genre": null,
    "codec": "mp3",
-   "duration_s": 329.52,
+   "duration_s": 329.49,
    "quick": {
     "bpm": 175.0,
     "bpm_clarity": 11.3,
@@ -5632,7 +5815,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0001,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-32",
+     "drop 32-96",
+     "breakdown 96-112",
+     "drop 112-176",
+     "outro 176-192"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.542,
+     "bass": 0.042,
+     "other": 0.292,
+     "vocals": 0.042
+    },
+    "cues": {
+     "easy": 283,
+     "normal": 468,
+     "hard": 584
+    },
+    "detail": "metal_work_freedom.json"
+   }
   },
   {
    "id": "metrik_metrik_hackers_chn2k5wwufc",
@@ -5643,7 +5849,7 @@
    "year": null,
    "genre": null,
    "codec": "mp3",
-   "duration_s": 253.92,
+   "duration_s": 253.89,
    "quick": {
     "bpm": 174.0,
     "bpm_clarity": 11.2,
@@ -5939,7 +6145,32 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 173.9986,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-40",
+     "build 40-48",
+     "drop 48-96",
+     "breakdown 96-104",
+     "build 104-112",
+     "drop 112-160",
+     "outro 160-177"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.593,
+     "bass": 0.045,
+     "other": 0.271,
+     "vocals": 0.09
+    },
+    "cues": {
+     "easy": 265,
+     "normal": 474,
+     "hard": 585
+    },
+    "detail": "metrik_t_2000.json"
+   }
   },
   {
    "id": "moving_fusion_makosa",
@@ -6205,7 +6436,25 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0004,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-16",
+     "drop 16-176"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.592,
+     "vocals": 0.408
+    },
+    "cues": {
+     "easy": 283,
+     "normal": 460,
+     "hard": 578
+    },
+    "detail": "mr_traumatik_ft_posk_lotus.json"
+   }
   },
   {
    "id": "nectax_zephyr",
@@ -6313,7 +6562,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 172.0075,
+    "tempo_constant": false,
+    "sections": [
+     "intro 0-23",
+     "build 23-31",
+     "drop 31-79",
+     "breakdown 79-95",
+     "build 95-111",
+     "drop 111-152"
+    ],
+    "focus_share_of_track": {
+     "kick": 0.221,
+     "tops": 0.471,
+     "bass": 0.052,
+     "other": 0.256
+    },
+    "cues": {
+     "easy": 247,
+     "normal": 398,
+     "hard": 490
+    },
+    "detail": "nectax_zephyr.json"
+   }
   },
   {
    "id": "need_for_mirrors_zero_t_top_shelf_feat_spikey_tee",
@@ -6324,7 +6597,7 @@
    "year": 2015,
    "genre": "Drum & Bass",
    "codec": "mp3",
-   "duration_s": 336.64,
+   "duration_s": 336.61,
    "quick": {
     "bpm": 174.0,
     "bpm_clarity": 11.1,
@@ -6775,7 +7048,27 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 175.0,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-16",
+     "drop 16-80",
+     "breakdown 80-96",
+     "drop 96-160"
+    ],
+    "focus_share_of_track": {
+     "tops": 0.6,
+     "other": 0.4
+    },
+    "cues": {
+     "easy": 261,
+     "normal": 426,
+     "hard": 531
+    },
+    "detail": "nu_elementz_trenches.json"
+   }
   },
   {
    "id": "origin_unknown_valley_of_the_shadows_chase_status_remix",
@@ -6924,7 +7217,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 173.9984,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-20",
+     "build 20-48",
+     "drop 48-96",
+     "breakdown 96-109",
+     "build 109-128",
+     "drop 128-181"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.265,
+     "bass": 0.044,
+     "other": 0.358,
+     "vocals": 0.311
+    },
+    "cues": {
+     "easy": 277,
+     "normal": 469,
+     "hard": 579
+    },
+    "detail": "origin_unknown_valley_of_the_shadows_chase_status_remix.json"
+   }
   },
   {
    "id": "original_sin_therapy_remix",
@@ -7609,7 +7926,31 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0074,
+    "tempo_constant": true,
+    "sections": [
+     "intro 0-80",
+     "drop 80-176",
+     "breakdown 176-208",
+     "build 208-224",
+     "drop 224-272",
+     "outro 272-294"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.681,
+     "bass": 0.136,
+     "other": 0.082,
+     "vocals": 0.082
+    },
+    "cues": {
+     "easy": 471,
+     "normal": 671,
+     "hard": 904
+    },
+    "detail": "ram_trilogy_evolution_marcus_intalex_st_files_remix.json"
+   }
   },
   {
    "id": "ryme_tyme_optiv_btk_ignition_original_mix",
@@ -7763,7 +8104,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0001,
+    "tempo_constant": true,
+    "sections": [
+     "intro -1-47",
+     "drop 47-111",
+     "breakdown 111-135",
+     "drop 135-207",
+     "outro 207-226"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.506,
+     "bass": 0.035,
+     "other": 0.141,
+     "vocals": 0.317
+    },
+    "cues": {
+     "easy": 361,
+     "normal": 588,
+     "hard": 730
+    },
+    "detail": "ryme_tyme_optiv_btk_ignition_original_mix.json"
+   }
   },
   {
    "id": "simula_lazy_horn",
@@ -8367,7 +8731,30 @@
      }
     ]
    },
-   "imported": false
+   "imported": true,
+   "import": {
+    "bpm": 174.0,
+    "tempo_constant": false,
+    "sections": [
+     "intro -1-27",
+     "build 27-35",
+     "drop 35-95",
+     "breakdown 95-103",
+     "build 103-131",
+     "drop 131-194"
+    ],
+    "focus_share_of_track": {
+     "drums": 0.449,
+     "other": 0.16,
+     "vocals": 0.371
+    },
+    "cues": {
+     "easy": 291,
+     "normal": 503,
+     "hard": 628
+    },
+    "detail": "su3_ject_crystal_eyes.json"
+   }
   },
   {
    "id": "sub_focus_rock_it",
@@ -8696,7 +9083,7 @@
    "year": null,
    "genre": null,
    "codec": "mp3",
-   "duration_s": 291.87,
+   "duration_s": 291.83,
    "quick": {
     "bpm": 174.98,
     "bpm_clarity": 10.8,
