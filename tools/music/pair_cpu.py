@@ -2,10 +2,10 @@
    python pair_cpu.py <folder> [...]
 The samples start when the run writes its pid file, just before its clock starts, so sample time minus the first sample is about song time (within a frame or two). Prints the process's CPU
 (percent of one core) and private memory over 12 s of the outgoing scene alone before T and over the blend (T to complete_t), and the most memory seen."""
-import csv, json, os, sys
+import csv, json, os, re, sys
 
 for F in sys.argv[1:]:
-    j = json.load(open(os.path.join(F, "pair.json")))
+    j = json.loads(re.sub(r"nan", "NaN", open(os.path.join(F, "pair.json")).read()))
     lk = j["lock"][0]
     T, C = float(lk["boundary"]), float(lk["plan"]["complete_t"])
     rows = [(float(r["unix"]), float(r["cpu_s"]), float(r["private_mb"])) for r in csv.DictReader(open(os.path.join(F, "cpu.csv")))]

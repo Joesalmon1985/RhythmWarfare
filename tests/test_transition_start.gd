@@ -169,3 +169,27 @@ func test_groups_alternate_between_the_two_slot_buses_into_the_limited_track_bus
 	var st: Array = a.track.log.filter(func(x: Dictionary) -> bool: return str(x["kind"]) == "start")
 	assert_eq([int(st[0]["slot"]), int(st[1]["slot"])], [0, 1], "the second group takes the other slot")
 	_cleanup()
+
+
+func test_an_entry_at_the_start_of_the_audio_is_probed_then_started_at_t_with_the_lag_taken_off() -> void:
+	# entry bar 0 (loadstar_dr_karg_original_mix, measured on WASAPI): no audio before the entry to start early from. A muted probe learns the landing lag; the real start is at T.
+	var s := _setup()
+	var a: RunAudio = s["a"]
+	var r := _recipe(s["plan"])
+	(r["in"] as Dictionary)["entry_t"] = 0.0024
+	var T := 60.0
+	a.track.prepare_transition(T, r)
+	var frames := _sim(a, T - 1.2, T + 0.1, [0.0187, 0.008, 0.0187, 0.0187])
+	var pre: Array = a.track.log.filter(func(x: Dictionary) -> bool: return str(x["kind"]) == "prestart")
+	assert_true(bool(pre[0]["probe"]), "a probe")
+	var fs: Array = a.track.log.filter(func(x: Dictionary) -> bool: return str(x["kind"]) == "final_start")
+	assert_eq(fs.size(), 1, "one real start")
+	assert_near(float(fs[0]["comp_ms"]), 18.7, 1e-6, "with the lag the probes landed with")
+	assert_true(float(fs[0]["at"]) >= T - 0.0187 - 1e-9 and float(fs[0]["at"]) <= T + 1.0 / 60.0, "at T (%.4f)" % float(fs[0]["at"]))
+	for f in frames:
+		if float(f[0]) < float(fs[0]["at"]) - 1e-9:
+			assert_true(float(f[1]) <= -79.9, "the probe is never heard")
+	var corr: Array = a.track.log.filter(func(x: Dictionary) -> bool: return str(x["kind"]) == "corrected")
+	assert_eq(corr.size(), 1)
+	assert_true(absf(float(corr[0]["final_ms"])) < 0.1, "it landed on the clock (%.4f ms)" % float(corr[0]["final_ms"]))
+	_cleanup()

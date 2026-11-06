@@ -11,7 +11,7 @@ not in it: it delays every sound alike). Figures:
   silence    the tail bus after the floor (peak), and the last moment it is above -60 dBFS against the incoming drop (in incoming bars)
   limiter    RunTrack before and after its limiter in the first 4 incoming bars (peak in, reduction max and p95), and over 4 bars of the outgoing alone before T
 """
-import json, os, sys
+import json, os, re, sys
 import numpy as np, soundfile as sf
 from scipy import signal
 
@@ -23,7 +23,7 @@ SLOTS = ["RunTrackA", "RunTrackB"]
 class Pair:
     def __init__(self, F):
         self.F = F
-        self.j = json.load(open(os.path.join(F, "pair.json")))
+        self.j = json.loads(re.sub(r"nan", "NaN", open(os.path.join(F, "pair.json")).read()))  # (Godot writes a NaN as nan)
         self.labels = self.j["labels"]
         self.rows = np.array(self.j["rows"], float)
         self.cap = {l: np.fromfile(os.path.join(F, l + ".f32"), dtype=np.float32).reshape(-1, 2) for l in self.labels}

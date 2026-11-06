@@ -609,20 +609,34 @@ func _step_preps(now: float, ttnm: float) -> void:
 			var from := float(inc["entry_t"]) - lead
 			if lead < PREP_MIN_S:
 				p["skip"] = true  # too late to measure and correct: the engine's track_start starts it at T by the lateness rule
-			elif from >= 0.0:
-				g = _make_group(str(inc["node"]), str(inc["track"]), str(inc["dir"]), float(inc["beat_s"]), float(inc["entry_t"]), T, from, true)
+			else:
+				# an entry nearer the start of the audio than the lead (entry bar 0): no audio before it to pre-roll from, so the muted group is a PROBE started further in, whose
+				# restarts learn how late a start lands; the real start is made at T with that lag taken off (_final_start)
+				var probe := from < 0.0
+				var f0 := 1.0 if probe else from
+				g = _make_group(str(inc["node"]), str(inc["track"]), str(inc["dir"]), float(inc["beat_s"]), float(inc["entry_t"]), T, f0, true)
 				if g.is_empty():
 					p["skip"] = true
 				else:
 					g["prep_t"] = T
-					g["entry_t"] = float(inc["entry_t"])
+					g["entry_t"] = f0 + lead if probe else float(inc["entry_t"])
+					g["real_entry_t"] = float(inc["entry_t"])
+					g["probe"] = probe
 					g["start_x"] = x
 					p["group"] = g
-					log.append({"kind": "prestart", "t": T, "at": x, "node": g["node"], "track": g["track"], "from": from, "slot": int(g["slot"])})
-		if not g.is_empty() and bool(g.get("pending", false)) and is_instance_valid(g["transport"]):
-			_correct(g, p, x, period)
-			if not bool(p["unmuted"]) and x >= T - period - 0.02:
-				_unmute(g, p)
+					log.append({"kind": "prestart", "t": T, "at": x, "node": g["node"], "track": g["track"], "from": f0, "slot": int(g["slot"]), "probe": probe})
+		if not g.is_empty() and bool(p.get("final", false)) and is_instance_valid(g["transport"]):
+			_measure_final(g, p)
+		elif not g.is_empty() and bool(g.get("pending", false)) and is_instance_valid(g["transport"]):
+			if bool(g.get("probe", false)) and not bool(p.get("final", false)):
+				_correct(g, p, x, period)
+				var from_real := float(g["real_entry_t"]) - (T - x) + float(p.get("comp", 0.0))
+				if from_real >= 0.0 and x >= T - period - 0.02:
+					_final_start(g, p, x, from_real)
+			else:
+				_correct(g, p, x, period)
+				if not bool(p["unmuted"]) and x >= T - period - 0.02:
+					_unmute(g, p)
 		if not bool(p["tail"]) and x >= T:
 			p["tail"] = true
 			if TAIL_MODES.has(StringName(str(r.get("mode", "")))):
@@ -738,13 +752,44 @@ func _unmute(g: Dictionary, p: Dictionary) -> void:
 		"comp_ms": float(p.get("comp", 0.0)) * 1000.0})
 
 
+## The real start of a probed group (its entry too near the audio's start to pre-roll): at song time x, from track time `from` (the entry, as late as the call is, with the probes' landing
+## lag taken off), heard at once. It is not corrected after this (it is heard); what it measures is logged.
+func _final_start(g: Dictionary, p: Dictionary, x: float, from: float) -> void:
+	var tr: TrackTransport = g["transport"]
+	AudioServer.lock()
+	tr.player.pitch_scale = 1.0
+	tr.player.play(maxf(from, 0.0))
+	tr.start_at = maxf(from, 0.0)
+	tr.player.volume_db = 0.0
+	AudioServer.unlock()
+	g["entry_t"] = float(g["real_entry_t"])
+	p["final"] = true
+	p["unmuted"] = true
+	p["landed"] = true
+	p["final_ms"] = NAN
+	log.append({"kind": "final_start", "t": float(p["t"]), "at": x, "track": g["track"], "from": maxf(from, 0.0), "comp_ms": float(p.get("comp", 0.0)) * 1000.0, "probe_restarts": int(p.get("restarts", 0))})
+
+
+func _measure_final(g: Dictionary, p: Dictionary) -> void:
+	if not is_nan(float(p["final_ms"])):
+		return
+	var rd := _positions(g)
+	if rd.is_empty():
+		return
+	p["final_ms"] = (float(rd[1]) - (float(g["entry_t"]) + float(rd[0]) - float(p["t"]))) * 1000.0
+	log.append({"kind": "corrected", "t": float(p["t"]), "track": g["track"], "err_ms": float(p["err_ms"]), "final_ms": float(p["final_ms"]), "readings": int(p["readings"]),
+		"rate_min": 1.0, "rate_max": 1.0, "restarts": int(p.get("restarts", 0)), "landed": absf(float(p["final_ms"])) < 0.1, "comp_ms": float(p.get("comp", 0.0)) * 1000.0, "probe": true})
+
+
 ## The engine's track_start at T for a group started early: it is adopted (no second start). False when there is none for this scene and boundary.
 func _adopt(ev: Dictionary, t: float, x: float) -> bool:
 	for p in _preps:
 		var g: Dictionary = p["group"]
 		if g.is_empty() or not bool(g.get("pending", false)) or absf(float(p["t"]) - t) > 1e-4 or str(g["dir"]) != str(ev["dir"]):
 			continue
-		if not bool(p["unmuted"]):
+		if bool(g.get("probe", false)) and not bool(p.get("final", false)):
+			_final_start(g, p, x, float(g["real_entry_t"]) - (t - x) + float(p.get("comp", 0.0)))
+		elif not bool(p["unmuted"]):
 			_unmute(g, p)
 		for y in _groups:
 			if not is_same(y, g) and not bool(y["fading"]) and not bool(y.get("pending", false)):
