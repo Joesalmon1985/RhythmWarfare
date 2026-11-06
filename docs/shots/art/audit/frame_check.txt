@@ -1,0 +1,24 @@
+picture                   p5   p50   p95   sat   crush  blown  lit mean         flags
+ref Rave                0.08  0.22  0.62  0.47    0.0%   0.1%  #784e50 h357     
+ref Hospital            0.09  0.17  0.40  0.58    0.0%   0.0%  #2d405b h215     
+ref InsaneAsylum        0.04  0.15  0.44  0.43    5.6%   0.2%  #3b4b42 h145     
+warehouse               0.02  0.08  0.68  0.56   22.5%   0.2%  #766b6c h356     DARK
+mothership              0.02  0.07  0.50  0.70   32.9%   0.4%  #3e5f6c h196     DARK,GARISH
+underworld              0.03  0.07  0.41  0.71   18.7%   0.4%  #794441 h002     DARK,GARISH
+hospital                0.06  0.14  0.55  0.50    0.0%   0.5%  #4f5360 h225     
+ward                    0.04  0.07  0.47  0.43   10.5%   0.4%  #616063 h268     DARK
+hospital_late           0.05  0.15  0.58  0.48    0.1%   0.6%  #545560 h235     
+ward_late               0.03  0.08  0.43  0.43   10.8%   0.4%  #575755 h055     DARK
+gospel_jordan           0.09  0.35  0.74  0.36    0.0%   0.5%  #6f6963 h027     
+gospel_galilee          0.12  0.42  0.73  0.35    0.0%   0.6%  #707064 h061     
+gospel_road             0.17  0.43  0.81  0.42    0.0%   3.0%  #827165 h025     
+gospel_jerusalem        0.09  0.37  0.80  0.34    0.1%   2.6%  #796f65 h029     
+squadron_base           0.18  0.39  0.70  0.33    0.0%   0.7%  #746752 h037     
+squadron_air            0.17  0.34  0.52  0.28    0.0%   0.3%  #5d5547 h037     
+squadron_city           0.09  0.18  0.46  0.41    0.0%   0.2%  #4b3c2e h028     
+squadron_escape         0.04  0.18  0.77  0.54    3.6%   2.4%  #776e5e h038     
+ember_hollow            0.05  0.14  0.47  0.59    1.5%   0.2%  #574b35 h039     
+ember_north             0.36  0.57  0.88  0.17    0.0%   6.4%  #8a93a3 h217     BLOWN
+ember_deeps             0.02  0.07  0.44  0.62   23.6%   0.2%  #49586b h213     DARK,GARISH
+ember_marsh             0.04  0.09  0.34  0.37   11.9%   0.2%  #493e41 h344     
+ember_mountain          0.03  0.07  0.45  0.41   31.4%   0.3%  #614e50 h352     DARK
