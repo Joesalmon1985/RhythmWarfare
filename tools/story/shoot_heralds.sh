@@ -56,12 +56,12 @@ squadron_radio warehouse.booth    -              0.6:-4.6:0:4      up,left
 ember_glass    warehouse.bar      wh_vip_pass    7.6:2.2:-125:0    right
 chill_wizard   warehouse.chill    -              -                 right,right
 # N2.4 Hell (underworld): the arena's four gates, then one per side scene (close camera x:z:yaw:pitch)
-uw_bassment    underworld         -              3.0:-0.5:-90:2    right,left,up,right
+uw_bassment    underworld         -              3.2:-1.2:-90:2    right,left,up,right
 uw_gospel      underworld         -              1.6:-0.2:-90:2    right,left,up,right
 uw_ember       underworld         -              0.8:2.8:-90:2     right,left,up,right
-uw_squadron    underworld         -              2.0:4.6:-70:2     right,left,up,right
-uw_court_bass  underworld.court   -              17.0:3.0:-100:2   right,left,up,right,right
-uw_furn_gospel underworld.furnace -              -22.0:4.5:-95:2   right,left,up,right,left
-uw_pit_squad   underworld.pit     -              20.0:14.0:-20:2   right,left,up,right,right,up
+uw_squadron    underworld         -              1.0:2.2:-120:2    right,left,up,right
+uw_court_bass  underworld.court   -              17.0:3.0:-70:2    right,left,up,right,right
+uw_furn_gospel underworld.furnace -              -22.0:4.5:-115:2  right,left,up,right,left
+uw_pit_squad   underworld.pit     -              20.0:14.0:-145:2  right,left,up,right,right,up
 LIST
 rm -rf "$TMP"

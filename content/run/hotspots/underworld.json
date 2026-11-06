@@ -751,9 +751,9 @@
    "map": "underworld",
    "anchor": {
     "pos": [
-     6.5,
+     6.6,
      1.0,
-     -2.3
+     -2.2
     ]
    },
    "kind": "secret",
@@ -782,12 +782,12 @@
    "herald": {
     "quest": "dungeon",
     "at": [
-     6.0,
-     -0.9
+     5.3,
+     -2.9
     ],
     "toward": [
-     6.5,
-     -2.3
+     6.6,
+     -2.2
     ],
     "mark_y": 1.8,
     "gate": true
@@ -914,9 +914,9 @@
    "map": "underworld",
    "anchor": {
     "pos": [
-     4.8,
+     3.4,
      1.0,
-     3.2
+     3.9
     ]
    },
    "kind": "secret",
@@ -952,12 +952,12 @@
    "herald": {
     "quest": "squadron",
     "at": [
-     5.9,
-     4.4
+     4.5,
+     4.7
     ],
     "toward": [
-     4.8,
-     3.2
+     3.4,
+     3.9
     ],
     "mark_y": 1.8,
     "gate": true
@@ -1001,8 +1001,8 @@
    "herald": {
     "quest": "dungeon",
     "at": [
-     20.3,
-     0.9
+     22.4,
+     2.6
     ],
     "toward": [
      21.6,

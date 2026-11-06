@@ -59,7 +59,7 @@ ob("underworld.exit", "throne", T("uw_throne"), "glow",
 # entrances that fit beside it (docs/art/HERALDS.md), and from the dais the arena's west half is behind that turn. Far to near: the Bassment's violet in the back corner, the gold gate, the
 # ember's orange nearest the player (on the floor's checker, away from the dais's own fire), the Gunner's green beside the east tier's door.
 w = "underworld"
-sc("underworld", "enter_bassment", P(6.5, 1.0, -2.3), "pulse", out(route="bassment"), out(energy=-4),
+sc("underworld", "enter_bassment", P(6.6, 1.0, -2.2), "pulse", out(route="bassment"), out(energy=-4),
    s_text="a violet gate in the back corner of the arena, the wizard pointing down: the Bassment (route bassment)", f_text="the gate sinks out of sight (-4)")
 _portal = sc("underworld", "enter_gospel", P(4.4, 1.0, -0.6), "pulse", out(route="path:gospel"), out(energy=-4),
    s_text="a gold gate under one white star, the shepherd pointing: the Gospel path (route path:gospel)", f_text="the star gate flickers out (-4)")
@@ -67,7 +67,7 @@ _portal["look"]["finished"] = finished("gospel")
 _portal = sc("underworld", "enter_ember", P(2.9, 1.0, 1.0), "pulse", out(route="path:ember"), out(energy=-4),
    s_text="an orange gate on the floor's near edge, Bram holding up the ember: the Ember Road path (route path:ember)", f_text="the ember gutters out (-4)")
 _portal["look"]["finished"] = finished("ember")
-_portal = sc("underworld", "enter_squadron", P(4.8, 1.0, 3.2), "pulse", out(route="path:squadron"), out(energy=-4),
+_portal = sc("underworld", "enter_squadron", P(3.4, 1.0, 3.9), "pulse", out(route="path:squadron"), out(energy=-4),
    s_text="a green gate beside the east tier's door, the Gunner pointing: the Mission Count path (route path:squadron)", f_text="the radio gate gutters out (-4)")
 _portal["look"]["finished"] = finished("squadron")
 
@@ -83,10 +83,10 @@ _portal["look"]["finished"] = finished("squadron")
 
 # ---- the heralds (lead ruling 25, docs/art/HERALDS.md): scenery of the entrance, never a choice. Every entrance here is a gate (a `pos` anchor).
 from heralds import herald  # noqa: E402
-herald("dungeon", "underworld.enter_bassment", at=(6.0, -0.9), gate=True)
+herald("dungeon", "underworld.enter_bassment", at=(5.3, -2.9), gate=True)
 herald("gospel", "underworld.enter_gospel", at=(3.5, -1.7), gate=True)
 herald("ember", "underworld.enter_ember", at=(3.4, 2.3), gate=True)
-herald("squadron", "underworld.enter_squadron", at=(5.9, 4.4), gate=True)
-herald("dungeon", "underworld.court.enter_bassment", at=(20.3, 0.9), gate=True)
+herald("squadron", "underworld.enter_squadron", at=(4.5, 4.7), gate=True)
+herald("dungeon", "underworld.court.enter_bassment", at=(22.4, 2.6), gate=True)
 herald("gospel", "underworld.furnace.enter_gospel", at=(-18.4, 6.0), gate=True)
 herald("squadron", "underworld.pit.enter_squadron", at=(21.4, 18.6), gate=True)
