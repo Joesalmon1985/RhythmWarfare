@@ -13,6 +13,8 @@ const CEIL_SHADE := 0.8
 const LIGHT_CELL := 1.2  # metres: surfaces a light reaches are cut into cells of this size so the pool of light has a shape
 const LIT_AMBIENT := 0.62  # a sector with lights keeps this much of the flat light away from them (its `ambient` overrides)
 const MIN_GAIN := 0.5  # no sector reads as black: the light multiplier never falls below this (the fog and the ending fades are separate)
+const SHADOW_COLOR := Color(0.05, 0.045, 0.08, 0.55)  # a floor prop's contact shadow (style guide section 8): the shadow ink at 55 %
+const SHADOW_SIZE := Vector2(0.9, 0.3)  # its ellipse, as a share of the billboard's width (about 1.1 x 0.35 of the drawn footprint)
 const SKY_TEXELS_AROUND := 1024.0  # a sky strip is drawn so that this many texels wrap the horizon (style guide section 7): a 1024-wide strip once, a 256-wide one four times
 const SKY_HORIZON := 0.76  # the strip's row at eye level, as a fraction of its height from the top (the old 80 m cylinder put it here; map `sky.horizon` overrides)
 const SKY_FADE := 8.0  # texels over which the strip's top row dissolves into the zenith colour
@@ -63,6 +65,7 @@ var _sky_shown: Texture2D
 var _atmo := ""  # the atmosphere last set (a sector id), so a frame in the same sector does nothing
 var _sky_follow := true
 var triangle_count := 0
+var shadow_count := 0  # floor props with a contact shadow
 var _anim_sectors: Dictionary = {}  # sectors that show an animated surface (their colour is rewritten every frame, the animation builds on it)
 var _last_col: Dictionary = {}  # sector id -> the colour last written to its materials
 var _vis: Dictionary = {}  # sector id -> portal depth: only these are drawn and updated (empty: all)
@@ -91,6 +94,7 @@ func build(p_map: StoryMap, p_assets: StoryAssets) -> void:
 		_make_sector_mesh(s, by_sector[s["id"]])
 	for t in map.things:
 		_make_thing(t)
+	_make_shadows()
 	_make_sky()
 	env = _make_environment()
 
@@ -372,11 +376,12 @@ func _make_thing(t: Dictionary) -> void:
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.albedo_texture = tex
-	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
+	mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST  # a cut-out keeps its pixels (style guide section 7: nothing bilinear in the picture)
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	mat.alpha_scissor_threshold = 0.5
 	if blend == "add" or blend == "mix":  # soft art (glows, banners, sunbeams): alpha blended, never written to the depth buffer
 		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR  # (soft art stays soft: the only soft-edged things allowed)
 		mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
 		if blend == "add":
 			mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
@@ -393,7 +398,69 @@ func _make_thing(t: Dictionary) -> void:
 	add_child(mi)
 	if t.has("piece"):
 		mi.visible = false
-	_thing_nodes.append({"node": mi, "mat": mat, "thing": t, "base_y": y, "add": blend == "add", "tex0": tex, "h": h, "base_x": at.x})
+	var lamp := Color.WHITE  # the lamps around it, as the walls beside it get them (style guide section 5: one light model); soft art and `emissive` things give light, not take it
+	if blend == "" and not bool(t.get("emissive", false)):
+		lamp = _thing_light(at, y, sec)
+	_thing_nodes.append({"node": mi, "mat": mat, "thing": t, "base_y": y, "add": blend == "add", "tex0": tex, "h": h, "w": w, "base_x": at.x, "lamp": lamp, "floor": float(sec["floor"]),
+		"grounded": blend == "" and not t.has("piece") and not t.has("y") and str(t.get("anim", "none")) not in ["bob", "sway"]})
+
+
+## The static light at a billboard's centre (at most chest height): the flat shade of a sector without lamps, else the ambient plus the lamps' pools, the same falloff the
+## surfaces around it are baked with. The song-time light of the sector multiplies it.
+func _thing_light(at: Vector2, y: float, s: Dictionary) -> Color:
+	var lit := _lights_of(s)
+	if lit.is_empty():
+		var v := _flat_shade(s, 1.0).r
+		return Color(v, v, v)
+	return _vertex_light(Vector3(at.x, minf(y, float(s["floor"]) + 1.2), at.y), 1.0, s, lit)
+
+
+## Contact shadows (style guide section 8): a flat ellipse on the floor under every billboard that stands on it (no `y`, not soft art, not a set piece, not floating),
+## all in one mesh, drawn over the floor and under everything standing on it.
+func _make_shadows() -> void:
+	var v := PackedVector3Array()
+	var cols := PackedColorArray()
+	var idx := PackedInt32Array()
+	const SEG := 14
+	for th in _thing_nodes:
+		if not bool(th["grounded"]):
+			continue
+		var t: Dictionary = th["thing"]
+		var at: Vector2 = t["at"]
+		var rx := float(th["w"]) * SHADOW_SIZE.x * 0.5
+		var rz := float(th["w"]) * SHADOW_SIZE.y * 0.5
+		var y := float(th["floor"]) + 0.015
+		var base := v.size()
+		v.append(Vector3(at.x, y, at.y))
+		cols.append(SHADOW_COLOR)
+		for k in SEG:
+			var a := TAU * float(k) / float(SEG)
+			v.append(Vector3(at.x + cos(a) * rx, y, at.y + sin(a) * rz))
+			cols.append(SHADOW_COLOR)
+		for k in SEG:
+			idx.append_array([base, base + 1 + k, base + 1 + (k + 1) % SEG])
+	if idx.is_empty():
+		return
+	var arrays: Array = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = v
+	arrays[Mesh.ARRAY_COLOR] = cols
+	arrays[Mesh.ARRAY_INDEX] = idx
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.vertex_color_use_as_albedo = true
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.render_priority = -1
+	mesh.surface_set_material(0, mat)
+	var mi := MeshInstance3D.new()
+	mi.name = "Shadows"
+	mi.mesh = mesh
+	add_child(mi)
+	shadow_count = idx.size() / (3 * SEG)
 
 
 func _make_sky() -> void:
@@ -566,7 +633,7 @@ func update(t: float, ctx: Dictionary) -> void:
 			th["culled"] = false
 			if not t_def.has("piece"):
 				node.visible = true  # only hidden for being out of sight: back (pieces decide below; the show's own switches, like the disco ball, are applied after this)
-		var col: Color = sector_cols.get(str(t_def["sector"]), Color.WHITE)
+		var col: Color = sector_cols.get(str(t_def["sector"]), Color.WHITE) * (th["lamp"] as Color)
 		var sc := 1.0
 		var dy := 0.0
 		var alpha := 1.0

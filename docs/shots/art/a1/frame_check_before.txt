@@ -1,0 +1,24 @@
+picture                   p5   p50   p95   sat   crush  blown  lit mean         flags          guide
+ref Rave                0.08  0.22  0.62  0.47    0.0%   0.1%  #784e50 h357                    
+ref Hospital            0.09  0.17  0.40  0.58    0.0%   0.0%  #2d405b h215                    
+ref InsaneAsylum        0.04  0.15  0.44  0.43    5.6%   0.2%  #3b4b42 h145                    
+warehouse               0.02  0.10  0.55  0.54   15.6%   0.2%  #69595a h355                    p5<,dim,crushed
+mothership              0.02  0.07  0.55  0.76   36.9%   0.4%  #356869 h181     DARK,CRUSH,GARISH p5<,dim,crushed
+underworld              0.03  0.09  0.43  0.72   11.0%   0.4%  #7c4140 h000     GARISH         p5<,dim,crushed
+hospital                0.06  0.13  0.52  0.48    0.0%   0.6%  #4c5563 h217                    ok
+ward                    0.03  0.07  0.43  0.45   12.9%   0.3%  #5d6668 h189     DARK           p5<,dim,crushed
+hospital_late           0.12  0.17  0.54  0.45    0.0%   0.2%  #454b5d h225                    ok
+ward_late               0.03  0.07  0.41  0.47   11.6%   0.3%  #565f63 h198     DARK           p5<,dim,crushed
+gospel_jordan           0.17  0.33  0.57  0.38    0.0%   0.6%  #67584d h024                    ok
+gospel_galilee          0.23  0.47  0.72  0.41    0.0%   0.5%  #7a7969 h055                    bright
+gospel_road             0.13  0.27  0.50  0.52    0.0%   0.1%  #654741 h010                    ok
+gospel_jerusalem        0.23  0.45  0.85  0.26    0.0%   5.4%  #897f73 h032     BLOWN          bright,blown
+squadron_base           0.16  0.35  0.60  0.29    0.0%   1.0%  #645a45 h041                    ok
+squadron_air            0.16  0.34  0.47  0.26    0.0%   0.0%  #5a5247 h034                    ok
+squadron_city           0.08  0.17  0.40  0.39    0.0%   0.0%  #47362e h018                    ok
+squadron_escape         0.27  0.58  0.90  0.49    0.0%   8.5%  #9d956f h049     BLOWN          bright,blown
+ember_hollow            0.07  0.19  0.51  0.56    0.0%   0.4%  #574f2f h048                    ok
+ember_north             0.38  0.63  0.95  0.11    0.0%  12.6%  #9ea3ac h217     BLOWN          bright,blown
+ember_deeps             0.02  0.06  0.35  0.70   22.5%   0.2%  #4d5973 h221     DARK,GARISH    p5<,dim,crushed
+ember_marsh             0.04  0.07  0.33  0.44    9.0%   0.2%  #374e54 h193     DARK           dim
+ember_mountain          0.06  0.14  0.40  0.43    0.5%   0.3%  #4c3c3b h005                    ok

@@ -39,6 +39,7 @@ const HERO_M := 1.7  # a dancer is this tall in the world
 ## cap distance along their own bearing, so they stay whole and readable. A bigger finest level (people.json `h0` / min `lods`) moves the cap closer by itself.
 const FIG_CAP := 1.25
 const FIG_FADE := 1.05
+const SIL_NEAR_M := 8.0
 const OPEN_GAP := 0.42
 const POSE_RATE := 30.0
 const POSE_RATE_FAR := 15.0  # dancers further than FAR_M animate at this rate: they are a few pixels tall
@@ -594,7 +595,7 @@ func _update_props() -> void:
 			continue
 		var at2: Vector2 = s["at"]
 		var pr2 := StoryProjector.project_ground(at2.x, at2.y, _ground_of(sec2), cam_pose, view_size)
-		p2.visible = bool(pr2["visible"])
+		p2.visible = bool(pr2["visible"]) and float(pr2["depth"]) >= SIL_NEAR_M  # a rear-row silhouette never stands nearer than SIL_NEAR_M (style guide section 9)
 		if not p2.visible:
 			continue
 		var sway := sin((beats * 0.25 + float(s["ph"])) * TAU) * (2.0 + energy * 0.05)
