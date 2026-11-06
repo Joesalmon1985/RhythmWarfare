@@ -1,7 +1,8 @@
 class_name TransitionDirector
 extends TransitionPort
 ## The real TransitionPort (docs/parallel-development/INTEGRATION_CONTRACT.md): it turns a requested destination into a scene change at a lap's boundary, on the run's engine.
-## Stage M1.6 builds it in `&"cut"` mode only, which reproduces today's scene changes exactly; stage M2 replaces the planner (`planner`) and the audio recipe it hands to the audio
+## Stage M1.6 built it in `&"cut"` mode only. Stage M2.4 (docs/music/TRANSITIONS_BUILT.md) gives the planner its full inputs (_full_inputs), plans every mode when TransitionPlanner says so
+## (RW_RUN_TRANSITIONS=cut turns them off; a path hand-off is always a cut), and hands the audio the recipe with the incoming plan; the wiring below is M1's. Stage M2 replaced the planner and the audio recipe it hands to the audio
 ## class, not this wiring. docs/parallel-development/MUSIC_TRANSITIONS.md section 12 lists what this file and its hooks leave in place.
 ##
 ## HOW IT SITS ON THE RUN (contract section 7)
@@ -351,6 +352,10 @@ func _lock(taken: Dictionary, res: Dictionary, pl: Dictionary, b: float, observe
 	_req["committed_to"] = ""
 	var id := int(_req["id"])
 	lock_log.append({"id": id, "t": _now, "boundary": b, "dest": str(taken.get("id", "")), "route": str(res["route"]), "plan": plan, "recipe": recipe, "observed": observed, "late": late})
+	if not RunTrackScenes._under_test_runner():  # (MUSIC_TRANSITIONS.md 8.3: one line per transition; the walks list the modes from it)
+		print("RUN transition id=%d %s->%s mode=%s fallback=%s reason=%s bpm=%.4f->%.4f rate=%.6f W=%d T=%.3f complete=%.3f drop=%s" % [id, engine.node_id, str(res["node"]), str(plan.get("mode", "")),
+			str(plan.get("fallback", false)), str(recipe.get("reason", "-")), float(plan.get("outgoing_bpm", 0.0)), float(plan.get("incoming_bpm", 0.0)), float(recipe.get("rate", 1.0)),
+			int(recipe.get("window_bars", 0)), b, float(plan.get("complete_t", b)), "%.3f" % float(recipe["drop_t"]) if recipe.has("drop_t") else "-"])
 	if recipe_fn.is_valid():
 		recipe_fn.call(b, recipe)
 	_log_emit(&"locked", [id, _req["taken"], b, plan])

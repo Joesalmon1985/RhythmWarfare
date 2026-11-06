@@ -13,7 +13,8 @@ extends RefCounted
 ##
 ## HOW M2.4 TURNS THE MODES ON (nothing else in this file changes): set `TransitionPlanner.modes_enabled = true` once at start-up (a static, so the director's `planner` Callable needs no
 ## change), or pass `modes_enabled: true` in `meta` of one call (the key wins over the static; a test, or a setting such as `transitions = full | cut`, can use it). The director must then
-## also put the extra inputs below into `out`, `inc` and `meta`; without any of them `plan_full` returns `cut` with `fallback` true and reason `missing`. Nothing plays the recipes yet.
+## also put the extra inputs below into `out`, `inc` and `meta`; without any of them `plan_full` returns `cut` with `fallback` true and reason `missing`. Stage M2.4 does all of this: TransitionDirector._full_inputs
+## fills the inputs, RunTrackAudio plays the recipes (docs/music/TRANSITIONS_BUILT.md).
 ##
 ## Inputs (all Dictionaries; a missing key reads as its default):
 ##   out    {kind: &"track" | &"ordinary" | &"none", node, path, bpm, boundary_t, family}        the outgoing scene, boundary_t = T
@@ -43,7 +44,7 @@ static var modes_enabled := false
 
 ## Whether the game plans every mode (stage M2.4, step 8): RW_RUN_TRANSITIONS=cut turns them off, =full on; otherwise DEFAULT_ON when track scenes are on, and always off under the test runner
 ## (the tests choose per director: TransitionDirector.modes_override).
-const DEFAULT_ON := false
+const DEFAULT_ON := true
 
 
 static func game_default() -> bool:
@@ -65,8 +66,9 @@ const MIN_LEAD_BARS := 5  # lead ruling 7
 const MAX_WINDOW_BARS := 12
 const SAME_TRACK_WINDOW_BARS := 4
 const SILENT_BARS_BEFORE_DROP := 4
-## The tail's level from T (spike Q8: the sum of two full tracks drives the limiter hard in the first bars). A recipe field, not a row of the table.
-const TAIL_GAIN_DB := -3.0
+## The tail's level from T, a recipe field, not a row of the table. Spike Q8: the sum of two full tracks drives the limiter hard in the first bars. Measured on WASAPI (docs/music/TRANSITIONS_BUILT.md
+## "Headroom"): at -6 dB the limiter's p95 reduction in the first 4 incoming bars is within 0.3 dB of the incoming track alone (a cut) on the three spike pairs; at 0 dB it was up to 1.9 dB above.
+const TAIL_GAIN_DB := -6.0
 const DEFAULT_STEMS := ["drums", "bass", "other", "vocals", "backing"]
 const DEFAULT_LINGER := ["other", "vocals"]
 
