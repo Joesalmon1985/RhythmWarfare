@@ -8,6 +8,11 @@ extends SceneTree
 ## Frame pacing is off (vsync disabled, no fps cap) so the numbers are work, not waiting.
 
 const WARM := 240
+## The skinned layers' scripts, loaded by path (a SceneTree script compiles before the autoloads exist, so naming their classes here would not
+## compile): each keeps a static `draw_usec` counter.
+const PADS := "res://src/story/story_pad_view.gd"
+const NOTES := "res://src/story/story_note_lane.gd"
+const SHADE := "res://src/story/story_lane_shade.gd"
 const BLOCK := 90
 
 var _frame := 0
@@ -44,11 +49,11 @@ func _process(_delta: float) -> bool:
 			if node != null:
 				_layers.append(node)
 		for c in scene.get_children():
-			if c is StoryLaneShade:
+			if c.get_script() == load(SHADE):
 				_layers.append(c)
 		RenderingServer.viewport_set_measure_render_time(root.get_viewport_rid(), true)
 		print("DRAWCOST layers: ", _layers.map(func(x: Node) -> String: return x.name))
-		_usec0 = {"pads": StoryPadView.draw_usec, "notes": StoryNoteLane.draw_usec, "shade": StoryLaneShade.draw_usec}
+		_usec0 = {"pads": _usec(PADS), "notes": _usec(NOTES), "shade": _usec(SHADE)}
 	if _frame <= WARM:
 		return false
 	var k := (_frame - WARM - 1) / BLOCK
@@ -72,6 +77,10 @@ func _process(_delta: float) -> bool:
 	return false
 
 
+func _usec(path: String) -> int:
+	return int((load(path) as Script).get("draw_usec"))
+
+
 func _median(a: Array) -> float:
 	if a.is_empty():
 		return 0.0
@@ -86,6 +95,6 @@ func _report() -> void:
 	var ro := _median(_ron)
 	var rf := _median(_roff)
 	var n := maxf(float(_counted), 1.0)
-	print("DRAWCOST draw_us_per_frame pads %.1f notes %.1f shade %.1f (over %d shown frames)" % [(StoryPadView.draw_usec - int(_usec0["pads"])) / n,
-		(StoryNoteLane.draw_usec - int(_usec0["notes"])) / n, (StoryLaneShade.draw_usec - int(_usec0["shade"])) / n, _counted])
+	print("DRAWCOST draw_us_per_frame pads %.1f notes %.1f shade %.1f (over %d shown frames)" % [(_usec(PADS) - int(_usec0["pads"])) / n,
+		(_usec(NOTES) - int(_usec0["notes"])) / n, (_usec(SHADE) - int(_usec0["shade"])) / n, _counted])
 	print("DRAWCOST process_ms shown %.3f hidden %.3f delta %.3f | render_cpu_ms shown %.3f hidden %.3f delta %.3f | frames %d/%d" % [po, pf, po - pf, ro, rf, ro - rf, _on.size(), _off.size()])

@@ -36,6 +36,7 @@ LIGHT = np.array([-0.62, -0.78], np.float32)  # towards the light: upper left
 # colour (lamps, trim light). Runtime colours go to skins.json as they are.
 FAMILIES = {
     "club": {  # the Warehouse: the DJ desk, black anodised metal with a magenta neon tube and spinning platters
+        "plate_shape": [9.0, 0.0, 5.0], "bezel_shape": [6.0, 0.0, 5.0],
         "worlds": ["night_one"],
         "material": "anodised", "trim": "neon",
         "ramp": ["#0a0618", "#13111f", "#1b1530", "#251c40", "#30244f"],
@@ -47,6 +48,7 @@ FAMILIES = {
         "spinners": True, "knobs": True,
     },
     "ship": {  # the Mothership: a console of hull plates and rivets with a teal light strip
+        "plate_shape": [1.0, 9.0, 5.0], "bezel_shape": [1.0, 6.0, 4.0],
         "worlds": ["mothership"],
         "material": "hull", "trim": "lightstrip",
         "ramp": ["#06081c", "#0b0c1e", "#141c30", "#1e2a40", "#2a3a52"],
@@ -57,6 +59,7 @@ FAMILIES = {
         "vu": ["#7be0d0", "#b88cff", "#ff7ab0"], "label": "#d8f4ff",
     },
     "hell": {  # the Underworld: hammered copper sheets, rivets, an ember seam
+        "plate_shape": [2.0, 0.0, 6.0], "bezel_shape": [2.0, 0.0, 5.0],
         "worlds": ["underworld"],
         "material": "copper", "trim": "ember_band",
         "ramp": ["#200d11", "#2e1210", "#401a12", "#572618", "#6e3420"],
@@ -67,6 +70,7 @@ FAMILIES = {
         "vu": ["#ffb050", "#ff6a1a", "#ff2a3a"], "label": "#ffe0c8",
     },
     "hospital": {  # the Hospital: a clinical panel of blue enamel, screws, a chrome edge, a monitor-green lamp
+        "plate_shape": [5.0, 0.0, 4.0], "bezel_shape": [4.0, 0.0, 4.0],
         "worlds": ["hospital"],
         "material": "enamel", "trim": "chrome",
         "ramp": ["#0c1636", "#132036", "#18293d", "#22344c", "#2c3f5a"],
@@ -77,6 +81,7 @@ FAMILIES = {
         "vu": ["#5fd890", "#e0b060", "#ff6a60"], "label": "#e8f0ff",
     },
     "ward": {  # the Ward: the same clinical panel in the asylum's green enamel, chipped to rust, an office-lamp amber pilot
+        "plate_shape": [5.0, 0.0, 4.0], "bezel_shape": [4.0, 0.0, 4.0],
         "worlds": ["mental_hospital"],
         "material": "enamel_chipped", "trim": "chrome",
         "ramp": ["#06110c", "#0b1519", "#14211e", "#1c2b25", "#26372f"],
@@ -87,6 +92,7 @@ FAMILIES = {
         "vu": ["#a8d8b8", "#e8c070", "#e07050"], "label": "#e8f4ea",
     },
     "gospel": {  # Galilee and Jerusalem: a board of cedar planks, nail heads, an oil-lamp glow
+        "plate_shape": [1.0, 0.0, 6.0], "bezel_shape": [1.0, 0.0, 5.0],
         "worlds": ["galilee_shore", "hillside", "bethany", "jerusalem"],
         "material": "planks", "trim": "moulding",
         "ramp": ["#1e140c", "#2a1c12", "#3a2a1c", "#4a3622", "#5a4228"],
@@ -97,6 +103,7 @@ FAMILIES = {
         "vu": ["#a8b860", "#ffb060", "#ff7a40"], "label": "#fff0d8",
     },
     "squadron": {  # the 1940s airfield: an olive-drab instrument panel, screws, worn edges, brass, amber bulbs
+        "plate_shape": [3.0, 0.0, 5.0], "bezel_shape": [12.0, 0.0, 5.0],
         "worlds": ["airfield", "city", "harbour"],
         "material": "olive", "trim": "brass",
         "ramp": ["#14140c", "#1e1e12", "#2a2a18", "#343620", "#40422a"],
@@ -107,6 +114,7 @@ FAMILIES = {
         "vu": ["#c8d890", "#ffd890", "#ff8a40"], "label": "#fff4dc",
     },
     "ember": {  # the Ember road: dark timber with a carved knotwork band whose grooves glow with the Ember
+        "plate_shape": [1.0, 6.0, 6.0], "bezel_shape": [1.0, 5.0, 5.0],
         "worlds": ["orchard", "birch_hall", "deep_halls", "ash_land"],
         "material": "timber", "trim": "carved",
         "ramp": ["#120c08", "#1a1410", "#241a12", "#2e2216", "#3a2a1c"],
@@ -117,6 +125,7 @@ FAMILIES = {
         "vu": ["#c8a060", "#ffb050", "#ff5a20"], "label": "#fff0e0",
     },
     "bassment": {  # the dungeon under the club: stone blocks, an iron band with studs, torch light
+        "plate_shape": [0.0, 0.0, 6.0], "bezel_shape": [0.0, 0.0, 5.0],
         "worlds": ["bassment"],
         "material": "stone", "trim": "iron",
         "ramp": ["#100c10", "#181418", "#221c20", "#2c2428", "#362e30"],
@@ -277,7 +286,7 @@ def paint(shade, marks, fam):
 
 # ---- shapes: signed distance to a rounded rectangle, and a bevelled frame from it ---------------------------------------------------------------
 
-def sdf_round(w: int, h: int, inset: float, radius: float):
+def sdf_round(w: int, h: int, inset: float, radius: float, cham: float = 0.0):
     y, x = np.mgrid[0:h, 0:w].astype(np.float32)
     cx, cy = (w - 1) / 2.0, (h - 1) / 2.0
     hx, hy = (w - 1) / 2.0 - inset - radius, (h - 1) / 2.0 - inset - radius
@@ -286,14 +295,22 @@ def sdf_round(w: int, h: int, inset: float, radius: float):
     gx = np.sign(x - cx) * (qx > -0.5)
     gy = np.sign(y - cy) * (qy > -0.5)
     nrm = np.sqrt(gx * gx + gy * gy) + 1e-6
-    return out, gx / nrm, gy / nrm
+    gx, gy = gx / nrm, gy / nrm
+    if cham > 0:  # corners cut at 45 degrees
+        ex, ey = (w - 1) / 2.0 - inset, (h - 1) / 2.0 - inset
+        dc = (np.abs(x - cx) + np.abs(y - cy) - (ex + ey - cham)) / np.sqrt(2.0)
+        cut = dc > out
+        out = np.where(cut, dc, out)
+        gx = np.where(cut, np.sign(x - cx) / np.sqrt(2.0), gx)
+        gy = np.where(cut, np.sign(y - cy) / np.sqrt(2.0), gy)
+    return out, gx, gy
 
 
-def frame(fam, w, h, radius, band, kind, seed):
+def frame(fam, w, h, radius, band, kind, seed, cham=0.0):
     """A bevelled frame (RGBA). kind: 'raised' (a plate: rim lit at its outer upper left, centre the surface a step down),
     'well' (a recess: the inner wall shadowed at the upper left, lit at the lower right, centre near black),
     'bezel' (a raised ring with a transparent centre)."""
-    d, nx, ny = sdf_round(w, h, 0.5, radius)
+    d, nx, ny = sdf_round(w, h, 0.5, radius, cham)
     lit = -(nx * LIGHT[0] + ny * LIGHT[1])  # 1 where the edge faces the light
     lit = -lit
     rim = pal(fam["rim"])
@@ -340,12 +357,16 @@ def screws(img, fam, pts):
 
 
 def plate(fam, seed):
-    img = frame(fam, PLATE, PLATE, 9.0, 5.0, "raised", seed)
+    r, cham, band = fam.get("plate_shape", (9.0, 0.0, 5.0))
+    img = frame(fam, PLATE, PLATE, r, band, "raised", seed, cham)
     if fam["material"] not in ("anodised",):
         m = 3
         screws(img, fam, [(m + 1, m + 1), (PLATE - m - 2, m + 1), (m + 1, PLATE - m - 2), (PLATE - m - 2, PLATE - m - 2)])
+    if fam["trim"] == "carved":  # the Ember: a groove cut along the plate's rim, the Ember glowing in it
+        d, _, _ = sdf_round(PLATE, PLATE, 0.5, r, cham)
+        img[(d <= -2.0) & (d > -3.0), :3] = rgb(fam["accent"][0])
     if fam["trim"] == "neon":  # the club's plates carry a thin violet tube on their rim
-        d, _, _ = sdf_round(PLATE, PLATE, 0.5, 9.0)
+        d, _, _ = sdf_round(PLATE, PLATE, 0.5, r, cham)
         tube = (d <= -2.0) & (d > -3.0)
         img[tube, :3] = rgb(fam["rim"][3])
     return img
@@ -356,7 +377,11 @@ def well(fam, seed):
 
 
 def bezel(fam, seed):
-    img = frame(fam, BEZEL, BEZEL, 6.0, 5.0, "bezel", seed)
+    r, cham, band = fam.get("bezel_shape", (6.0, 0.0, 5.0))
+    img = frame(fam, BEZEL, BEZEL, r, band, "bezel", seed, cham)
+    if fam["trim"] == "carved":  # the Ember: a groove cut round the bezel, glowing
+        d, _, _ = sdf_round(BEZEL, BEZEL, 0.5, r, cham)
+        img[(d <= -2.0) & (d > -3.0), :3] = rgb(fam["accent"][0])
     if fam["material"] in ("olive", "hull", "copper", "stone", "enamel", "enamel_chipped"):
         screws(img, fam, [(3, 3), (BEZEL - 4, 3), (3, BEZEL - 4), (BEZEL - 4, BEZEL - 4)])
     return img

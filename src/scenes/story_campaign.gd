@@ -72,12 +72,16 @@ func _ready() -> void:
 		get_tree().create_timer(0.5).timeout.connect(func() -> void: get_tree().quit())
 
 
-## A small window onto the chapter's room (its backdrop art), darkened when the chapter is locked.
+## A small window onto the chapter's room, darkened when the chapter is locked: a frame of the room as the run draws it now
+## (assets/run/thumbs/<art>.jpg, made by tools/art/make_thumbs.sh), else the chapter's old backdrop art.
 func _thumbnail(data: StoryData, open: bool) -> Control:
 	if data == null:
 		return null
-	var assets := StoryAssets.load_art(data.art, false)
-	var tex := assets.texture(str(assets.layer("backdrop").get("file", "")))
+	var shot := "res://assets/run/thumbs/%s.jpg" % data.art
+	var tex: Texture2D = load(shot) as Texture2D if ResourceLoader.exists(shot) else null
+	if tex == null:
+		var assets := StoryAssets.load_art(data.art, false)
+		tex = assets.texture(str(assets.layer("backdrop").get("file", "")))
 	if tex == null:
 		return null
 	var frame := PanelContainer.new()
