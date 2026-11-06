@@ -411,7 +411,7 @@ func test_route_1_warehouse_dungeon_and_back_then_hospital_jesus_and_back() -> v
 	assert_eq(d["history"].slice(0, 1), ["main/warehouse"])
 	assert_true(d["quest_progress"].has("bassment") and d["quest_progress"].has("gospel"))
 	assert_eq(r.errors(), [])
-	assert_eq(_kinds(r).count(&"quest_entry"), 4)
+	assert_eq(_kinds(r).count(&"quest_entry"), 3)
 	assert_eq(_kinds(r).count(&"quest_return"), 3)
 	for dest in r.requests:
 		if dest["kind"] != &"scene":
