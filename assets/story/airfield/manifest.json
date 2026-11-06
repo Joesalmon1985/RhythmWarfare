@@ -7,82 +7,82 @@
   "ceil_beams": {
    "file": "textures/ceil_beams.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.25
   },
   "ceil_canvas": {
    "file": "textures/ceil_canvas.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.25
   },
   "ceil_fuselage": {
    "file": "textures/ceil_fuselage.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 1.5
+   "metres": 1.0
   },
   "ceil_hangar": {
    "file": "textures/ceil_hangar.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.5
+   "metres": 1.25
   },
   "ceil_plaster": {
    "file": "textures/ceil_plaster.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.5
+   "metres": 1.25
   },
   "floor_boards": {
    "file": "textures/floor_boards.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.0
   },
   "floor_concrete": {
    "file": "textures/floor_concrete.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.5
+   "metres": 1.25
   },
   "floor_dust": {
    "file": "textures/floor_dust.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "floor_lino": {
    "file": "textures/floor_lino.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.0
   },
   "floor_metal": {
    "file": "textures/floor_metal.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 1.5
+   "metres": 1.0
   },
   "sky_day": {
    "file": "textures/sky_day.png",
@@ -399,50 +399,50 @@
   "wall_berm": {
    "file": "textures/wall_berm.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.5
+   "metres": 1.25
   },
   "wall_bomber": {
    "file": "textures/wall_bomber.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 1.5
+   "metres": 1.0
   },
   "wall_hangar": {
    "file": "textures/wall_hangar.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.5
+   "metres": 1.0
   },
   "wall_hut": {
    "file": "textures/wall_hut.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.0
   },
   "wall_office": {
    "file": "textures/wall_office.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.5
+   "metres": 1.25
   },
   "wall_tent": {
    "file": "textures/wall_tent.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.0
   }
  },
  "people": {

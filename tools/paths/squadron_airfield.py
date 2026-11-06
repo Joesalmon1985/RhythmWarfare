@@ -18,24 +18,24 @@ def T(tid, kind, desc, metres=2.0, size=64):
 
 
 def build():
-    mb = MapBuilder(M, {"color": "#d8c79c", "density": 0.012}, T("sky_day", "sky", "bleached white-blue Mediterranean daylight strip (256x64), a pale haze at the horizon, a few thin streaks of cloud, grainy over-exposed", 1.0, 256))
+    mb = MapBuilder(M, {"color": "#3a2c1c", "density": 0.016}, T("sky_day", "sky", "bleached white-blue Mediterranean daylight strip (256x64), a pale haze at the horizon, a few thin streaks of cloud, grainy over-exposed", 1.0, 256))
     # ---- surfaces ---------------------------------------------------------------------------------------------------------------------------------------------------
-    wall_hut = T("wall_hut", "surface", "weathered bleached-khaki planked hut wall (vertical planks, nail heads, sun-faded paint peeling, dust streaks)", 2.0)
-    wall_tent = T("wall_tent", "surface", "dirty cream canvas tent wall with seams, rope loops, a faint red-brown stain; soft folds", 2.0)
-    wall_office = T("wall_office", "surface", "yellowed plaster upper wall over a dark green painted dado, a thin dark rail between, peeling patches", 2.5)
-    wall_hangar = T("wall_hangar", "surface", "corrugated iron, rust streaks, olive-drab paint worn to orange metal, bolts", 2.5)
-    wall_berm = T("wall_berm", "surface", "stacked sandbags and packed orange earth, bleached by the sun, tufts of dry grass", 2.5)
-    wall_bomber = T("wall_bomber", "surface", "riveted aircraft interior panels, dark green-black, a lighter ribbed strip, instrument-lamp scuffs", 1.5)
-    floor_boards = T("floor_boards", "surface", "worn pale wooden floorboards with gaps, dust, boot scuffs", 2.0)
-    floor_dust = T("floor_dust", "surface", "packed orange dust and gravel airfield ground, tyre tracks, tufts of dry grass", 3.0)
-    floor_lino = T("floor_lino", "surface", "cracked cream-and-green linoleum, dirty", 2.0)
-    floor_metal = T("floor_metal", "surface", "dark aircraft floor grating with a diamond tread plate strip, oil stains", 1.5)
-    floor_concrete = T("floor_concrete", "surface", "stained concrete hangar floor, expansion joints, oil and dust, scattered straw", 2.5)
-    ceil_beams = T("ceil_beams", "ceil", "plank ceiling with dark beams, cobwebs, a stovepipe stain", 2.0)
-    ceil_canvas = T("ceil_canvas", "ceil", "canvas tent roof lit from above, ridge seam, rope", 2.0)
-    ceil_hangar = T("ceil_hangar", "ceil", "dim corrugated iron roof with trusses and rust", 2.5)
-    ceil_fuselage = T("ceil_fuselage", "ceil", "curved aircraft ceiling ribs, wiring loom, dark green-black", 1.5)
-    ceil_plaster = T("ceil_plaster", "ceil", "yellowed plaster ceiling with a water stain and a bulb rose", 2.5)
+    wall_hut = T("wall_hut", "surface", "weathered bleached-khaki planked hut wall (vertical planks, nail heads, sun-faded paint peeling, dust streaks)", 1.0)
+    wall_tent = T("wall_tent", "surface", "dirty cream canvas tent wall with seams, rope loops, a faint red-brown stain; soft folds", 1.0)
+    wall_office = T("wall_office", "surface", "yellowed plaster upper wall over a dark green painted dado, a thin dark rail between, peeling patches", 1.25)
+    wall_hangar = T("wall_hangar", "surface", "corrugated iron, rust streaks, olive-drab paint worn to orange metal, bolts", 1.0)
+    wall_berm = T("wall_berm", "surface", "stacked sandbags and packed orange earth, bleached by the sun, tufts of dry grass", 1.25)
+    wall_bomber = T("wall_bomber", "surface", "riveted aircraft interior panels, dark green-black, a lighter ribbed strip, instrument-lamp scuffs", 1.0)
+    floor_boards = T("floor_boards", "surface", "worn pale wooden floorboards with gaps, dust, boot scuffs", 1.0)
+    floor_dust = T("floor_dust", "surface", "packed orange dust and gravel airfield ground, tyre tracks, tufts of dry grass", 1.25)
+    floor_lino = T("floor_lino", "surface", "cracked cream-and-green linoleum, dirty", 1.0)
+    floor_metal = T("floor_metal", "surface", "dark aircraft floor grating with a diamond tread plate strip, oil stains", 1.0)
+    floor_concrete = T("floor_concrete", "surface", "stained concrete hangar floor, expansion joints, oil and dust, scattered straw", 1.25)
+    ceil_beams = T("ceil_beams", "ceil", "plank ceiling with dark beams, cobwebs, a stovepipe stain", 1.25)
+    ceil_canvas = T("ceil_canvas", "ceil", "canvas tent roof lit from above, ridge seam, rope", 1.25)
+    ceil_hangar = T("ceil_hangar", "ceil", "dim corrugated iron roof with trusses and rust", 1.25)
+    ceil_fuselage = T("ceil_fuselage", "ceil", "curved aircraft ceiling ribs, wiring loom, dark green-black", 1.0)
+    ceil_plaster = T("ceil_plaster", "ceil", "yellowed plaster ceiling with a water stain and a bulb rose", 1.25)
 
     # ---- the briefing hut (C01) -------------------------------------------------------------------------------------------------------------------------------------
     hut = mb.room("hut", (-12, 0, 0, 8), 90, "main", floor_tex="floor_boards", ceil_tex="ceil_beams", wall_tex=wall_hut, ceiling=2.8, light=0.55, tint="#f0dcae", activities=QUIET_STAND)
@@ -63,7 +63,7 @@ def build():
         hut.actor(f"a{k:02d}", w, v, d, u)
 
     # ---- the flight line (C02) --------------------------------------------------------------------------------------------------------------------------------------
-    line = mb.room("line", (0, 0, 26, 14), -90, "line", floor_tex="floor_dust", ceil_tex="sky", wall_tex=wall_berm, ceiling=5.0, light=0.72, tint="#f2ead8", activities=BUSY)
+    line = mb.room("line", (0, 0, 26, 14), -90, "line", floor_tex="floor_dust", ceil_tex="sky", fog={"color": "#b9a47a", "density": 0.006}, wall_tex=wall_berm, ceiling=3.0, light=0.72, tint="#f2ead8", activities=BUSY)
     line.standard_rail("c02", home=(2.2, 0), good=((5.0, -1.5), (8.5, 0.8)), bad=((1.5, -4.5), (2.5, 4.0)), arrive=(0.8, 0))
     line.wp("c02_x_up", 10.0, 5.0, 60)  # the ladder (to the bomber)
     line.wp("c02_x_right", 20.0, -3.0, -10)  # the crates
@@ -88,7 +88,7 @@ def build():
     line.actor("l04", "airman", "a", 13.0, -3.8)
 
     # ---- the hospital tent (C03) ------------------------------------------------------------------------------------------------------------------------------------
-    tent = mb.room("tent", (0, -10, 10, 0), 0, "tent", floor_tex="floor_lino", ceil_tex="ceil_canvas", wall_tex=wall_tent, ceiling=3.0, light=0.6, tint="#fff2d8", activities=WARD)
+    tent = mb.room("tent", (0, -10, 10, 0), 0, "tent", floor_tex="floor_lino", ceil_tex="ceil_canvas", fog={"color": "#5a4a30", "density": 0.012}, wall_tex=wall_tent, ceiling=3.0, light=0.6, tint="#fff2d8", activities=WARD)
     tent.standard_rail("c03", home=(1.8, 0), good=((3.6, -1.0), (5.2, 1.0)), bad=((1.0, 2.8), (2.4, -2.8)), arrive=(0.7, 0))
     tent.wp("c03_x_up", 6.4, 3.6, 70)  # the kitchen hatch (east wall)
     tent.wp("c03_x_right", 5.4, -4.2, -90)  # the west door to the Surgeon's office
@@ -123,6 +123,7 @@ def build():
     office.thing("files", T("thing_filing_cabinet", "billboard", "two grey steel filing cabinets, drawers one open with paper spilling out", 1.0, 128), 6.0, -4.3, 0.9, 1.8)
     office.thing("office_lamp", T("thing_desk_lamp", "billboard", "a green-shaded desk lamp with a warm cone of light", 1.0, 128), 8.2, 0.9, 1.0, 0.7)
     office.thing("office_window", T("thing_window_office", "billboard", "a tall office window with a venetian blind half-drawn, white sun slats across it", 1.0, 128), 2.0, -4.8, 1.7, 1.6)
+    office.thing("office_bulb", "thing_lamp_hang", 5.0, 0.0, 2.45, 0.9, "sway")  # the bulb the old plaster tile carried as a ceiling rose
     office.light("lt_office", 7.0, 0.0, 2.4, 6.0, "#ffe3a0", 1.0)
     office.light("lt_office_lamp", 8.2, 0.9, 1.2, 3.0, "#ffd070", 1.2)
     office.actor("clerk", "clerk", "a", 9.2, 0.0, fixed=True, activity="stand", prop="stamp")
@@ -131,7 +132,7 @@ def build():
     office.actor("q02", "airman", "b", 4.2, 2.6, activity="queue")
 
     # ---- the bomber's nose at night (C04) ---------------------------------------------------------------------------------------------------------------------------
-    bomber = mb.room("bomber", (10, 14, 14, 22), 180, "bomber", floor_tex="floor_metal", ceil_tex="ceil_fuselage", wall_tex=wall_bomber, ceiling=2.2, light=0.6, ambient=0.9, tint="#a8d0a0", activities=SOMBRE)
+    bomber = mb.room("bomber", (10, 14, 14, 22), 180, "bomber", floor_tex="floor_metal", ceil_tex="ceil_fuselage", fog={"color": "#0e1c14", "density": 0.02}, wall_tex=wall_bomber, ceiling=2.2, light=0.6, ambient=0.9, tint="#a8d0a0", activities=SOMBRE)
     bomber.standard_rail("c04", home=(1.2, 0), good=((2.8, -0.6), (4.4, 0.7)), bad=((1.0, 1.3), (2.0, -1.3)), arrive=(0.5, 0))
     bomber.wp("c04_x_up", 5.4, 0.9, 0)  # the release lever
     bomber.wp("c04_x_right", 3.0, 1.4, 60)  # the emergency controls (right wall)
@@ -150,7 +151,7 @@ def build():
     bomber.actor("crew2", "airman", "a", 5.9, -0.9, activity="stand")
 
     # ---- the Quartermaster's store (C05) ----------------------------------------------------------------------------------------------------------------------------
-    store = mb.room("store", (26, 0, 38, 12), -90, "store", floor_tex="floor_concrete", ceil_tex="ceil_hangar", wall_tex=wall_hangar, ceiling=4.0, light=0.7, ambient=0.85, tint="#f0e0b8", activities=BUSY)
+    store = mb.room("store", (26, 0, 38, 12), -90, "store", floor_tex="floor_concrete", ceil_tex="ceil_hangar", wall_tex=wall_hangar, ceiling=3.0, light=0.7, ambient=0.85, tint="#f0e0b8", activities=BUSY)
     store.standard_rail("c05", home=(1.8, 0), good=((4.0, -1.4), (7.0, 1.2)), bad=((1.2, 3.0), (2.6, -3.2)), arrive=(0.8, 0))
     store.wp("c05_x_up", 8.0, 4.2, 40)  # the truck
     store.wp("c05_x_right", 9.0, -3.5, -20)  # the ledger

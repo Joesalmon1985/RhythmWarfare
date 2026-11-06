@@ -138,13 +138,17 @@
     ]
    ],
    "floor": 0,
-   "ceiling": 5.0,
+   "ceiling": 3.0,
    "light": 0.72,
    "tint": "#f2ead8",
    "room": "line",
    "flags": [],
    "floor_tex": "floor_dust",
    "ceil_tex": "sky",
+   "fog": {
+    "color": "#b9a47a",
+    "density": 0.006
+   },
    "wall_tex": "wall_berm",
    "activities": {
     "quiet": [
@@ -201,6 +205,10 @@
    "flags": [],
    "floor_tex": "floor_lino",
    "ceil_tex": "ceil_canvas",
+   "fog": {
+    "color": "#5a4a30",
+    "density": 0.012
+   },
    "wall_tex": "wall_tent",
    "activities": {
     "quiet": [
@@ -312,6 +320,10 @@
    "flags": [],
    "floor_tex": "floor_metal",
    "ceil_tex": "ceil_fuselage",
+   "fog": {
+    "color": "#0e1c14",
+    "density": 0.02
+   },
    "wall_tex": "wall_bomber",
    "ambient": 0.9,
    "activities": {
@@ -362,7 +374,7 @@
     ]
    ],
    "floor": 0,
-   "ceiling": 4.0,
+   "ceiling": 3.0,
    "light": 0.7,
    "tint": "#f0e0b8",
    "room": "store",
@@ -1078,6 +1090,19 @@
    "y": 1.7,
    "size": 1.6,
    "anim": "none",
+   "sector": "office"
+  },
+  {
+   "id": "office_bulb",
+   "kind": "billboard",
+   "sprite": "thing_lamp_hang",
+   "at": [
+    -5.0,
+    -5.0
+   ],
+   "y": 2.45,
+   "size": 0.9,
+   "anim": "sway",
    "sector": "office"
   },
   {
@@ -2602,8 +2627,8 @@
   "mode": "cylinder"
  },
  "fog": {
-  "color": "#d8c79c",
-  "density": 0.012
+  "color": "#3a2c1c",
+  "density": 0.016
  },
  "animated": []
 }

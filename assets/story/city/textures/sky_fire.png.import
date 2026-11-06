@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://pae85ggmecg0"
-path="res://.godot/imported/ceil_sky_day.png-0dfff301d6755b6362c2dcae5bb9f521.ctex"
+uid="uid://ca2y5qsa11gjf"
+path="res://.godot/imported/sky_fire.png-cca1dc493333ebbca2b6785ae88dda96.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/harbour/textures/ceil_sky_day.png"
-dest_files=["res://.godot/imported/ceil_sky_day.png-0dfff301d6755b6362c2dcae5bb9f521.ctex"]
+source_file="res://assets/story/city/textures/sky_fire.png"
+dest_files=["res://.godot/imported/sky_fire.png-cca1dc493333ebbca2b6785ae88dda96.ctex"]
 
 [params]
 

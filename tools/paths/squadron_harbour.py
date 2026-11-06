@@ -19,23 +19,22 @@ def T(tid, kind, desc, metres=2.0, size=64):
 
 def build():
     mb = MapBuilder(M, {"color": "#0e1c34", "density": 0.018}, T("sky_harbour", "sky", "a cold blue night strip (256x64): deep navy to a slightly lighter horizon, a few small stars, thin high cloud, a pale smear of moon glow", 1.0, 256))
-    wall_hut = T("wall_hut", "surface", "weathered bleached-khaki planked hut wall (vertical planks, nail heads, sun-faded paint peeling, dust streaks)", 2.0)
-    wall_quay = T("wall_quay", "surface", "cold dark harbour wall: wet stone blocks with green weed at the base, iron rings, blue night light", 2.5)
-    wall_shed = T("wall_shed", "surface", "dark corrugated net-shed wall in night blue, rust, hanging nets", 2.5)
-    wall_cell = T("wall_cell", "surface", "damp cell wall of grey stone blocks with scratched tally marks (scratches only), a pale smear of light, drips", 2.0)
-    wall_dunes = T("wall_dunes", "surface", "bright sandy dunes with tufts of green marram grass and a white wall of sea haze above, saturated warm", 4.5)
+    wall_hut = T("wall_hut", "surface", "weathered bleached-khaki planked hut wall (vertical planks, nail heads, sun-faded paint peeling, dust streaks)", 1.0)
+    wall_quay = T("wall_quay", "surface", "cold dark harbour wall: wet stone blocks with green weed at the base, iron rings, blue night light", 1.0)
+    wall_shed = T("wall_shed", "surface", "dark corrugated net-shed wall in night blue, rust, hanging nets", 1.0)
+    wall_cell = T("wall_cell", "surface", "damp cell wall of grey stone blocks with scratched tally marks (scratches only), a pale smear of light, drips", 1.0)
+    wall_dunes = T("wall_dunes", "surface", "bright sandy dunes with tufts of green marram grass and a white wall of sea haze above, saturated warm", 1.25)
     wall_sea = T("wall_sea", "surface", "a bright turquoise-blue sea horizon with sparkles and tiny white wave crests (lit, saturated)", 4.0)
-    floor_boards = T("floor_boards", "surface", "worn pale wooden floorboards with gaps, dust, boot scuffs", 2.0)
-    floor_quay = T("floor_quay", "surface", "wet dark quay planks and stone setts, puddles reflecting blue light, a coil of rope here and there", 2.5)
-    floor_sand = T("floor_sand", "surface", "warm bright sand with tiny shells, footprints, dry seaweed lines (saturated golden)", 3.0)
-    floor_cell = T("floor_cell", "surface", "cold stone cell floor with a drain, straw and a damp patch", 2.0)
-    ceil_beams = T("ceil_beams", "ceil", "plank ceiling with dark beams, cobwebs, a stovepipe stain", 2.0)
-    ceil_cell = T("ceil_cell", "ceil", "dark vaulted stone cell ceiling with a single iron ring", 2.0)
-    ceil_night_blue = T("ceil_night_blue", "ceil", "a painted cold night sky with searchlight smears crossing it, a few stars, high thin cloud", 4.0)
-    ceil_sky_day = T("ceil_sky_day", "ceil", "a bright saturated cobalt sky with soft white clouds (painted ceiling), warm sun glow, the only saturated sky of the path", 4.0)
+    floor_boards = T("floor_boards", "surface", "worn pale wooden floorboards with gaps, dust, boot scuffs", 1.0)
+    floor_quay = T("floor_quay", "surface", "wet dark quay planks and stone setts, puddles reflecting blue light, a coil of rope here and there", 1.0)
+    floor_sand = T("floor_sand", "surface", "warm bright sand with tiny shells, footprints, dry seaweed lines (saturated golden)", 1.25)
+    floor_cell = T("floor_cell", "surface", "cold stone cell floor with a drain, straw and a damp patch", 1.0)
+    ceil_beams = T("ceil_beams", "ceil", "plank ceiling with dark beams, cobwebs, a stovepipe stain", 1.25)
+    ceil_cell = T("ceil_cell", "ceil", "dark vaulted stone cell ceiling with a single iron ring", 1.0)
+    mb.sky_by_name["day"] = T("sky_harbour_day", "sky", "the coast's cobalt morning strip (256x64): saturated blue to a pale gold horizon, cloud bands, a low sun, gulls as small marks, a far headland and the sea line, the only saturated sky of the path", 1.0, 256)
 
     # ---- the briefing hut, again (C11) ------------------------------------------------------------------------------------------------------------------------------
-    h2 = mb.room("hut2", (-12, 0, 0, 8), 90, "main", floor_tex=floor_boards, ceil_tex=ceil_beams, wall_tex=wall_hut, ceiling=2.8, light=0.55, tint="#f0d0a0", activities=QUIET_STAND)
+    h2 = mb.room("hut2", (-12, 0, 0, 8), 90, "main", floor_tex=floor_boards, ceil_tex=ceil_beams, fog={"color": "#3a2c1c", "density": 0.016}, wall_tex=wall_hut, ceiling=2.8, light=0.55, tint="#f0d0a0", activities=QUIET_STAND)
     h2.standard_rail("c11", home=(1.8, 0), good=((4.0, -1.2), (6.0, 1.2)), bad=((1.0, 2.8), (2.4, -2.8)), arrive=(0.5, 0))
     h2.wp("c11_x_up", 0.8, -1.6, -30)  # the aircraft (the east door, the loop)
     h2.wp("c11_x_right", 9.2, -2.4, 10)  # the broken radio
@@ -57,7 +56,7 @@ def build():
         h2.actor(f"h{k:02d}", w, v, d, u)
 
     # ---- the harbour at night (C12) ---------------------------------------------------------------------------------------------------------------------------------
-    qy = mb.room("quay", (0, 0, 22, 12), -90, "quay", floor_tex=floor_quay, ceil_tex=ceil_night_blue, wall_tex=wall_quay, ceiling=6.0, light=0.55, ambient=0.8, tint="#7f9fe0", activities=CROWD_OUT)
+    qy = mb.room("quay", (0, 0, 22, 12), -90, "quay", floor_tex=floor_quay, ceil_tex="sky", wall_tex=wall_quay, ceiling=3.6, light=0.55, ambient=0.8, tint="#7f9fe0", activities=CROWD_OUT)
     qy.standard_rail("c12", home=(2.0, 0), good=((5.0, -1.5), (9.0, 1.0)), bad=((1.5, -4.0), (2.6, 3.6)), arrive=(0.6, 0))
     qy.wp("c12_x_up", 14.0, 4.0, -20)  # the searchlights
     qy.wp("c12_x_right", 17.5, -1.0, 10)  # the boat
@@ -80,7 +79,7 @@ def build():
     qy.actor("dock3", "civilian_city", "b", 4.0, 3.0)
 
     # ---- the neutral coast (C13) ------------------------------------------------------------------------------------------------------------------------------------
-    co = mb.room("coast", (22, 0, 44, 14), -90, "coast", floor_tex=floor_sand, ceil_tex=ceil_sky_day, wall_tex=wall_dunes, ceiling=4.5, light=0.78, tint="#f4ecd8", activities=QUIET_STAND)
+    co = mb.room("coast", (22, 0, 44, 14), -90, "coast", floor_tex=floor_sand, ceil_tex="sky", sky="day", fog={"color": "#7c96ae", "density": 0.006}, wall_tex=wall_dunes, ceiling=2.6, light=0.78, tint="#f4ecd8", activities=QUIET_STAND)
     co.standard_rail("c13", home=(2.2, 0), good=((5.0, -1.5), (9.0, 1.0)), bad=((1.5, 3.5), (2.8, -3.5)), arrive=(0.7, 0))
     co.wp("c13_x_up", 17.0, 0.0, 0)  # the shore
     co.thing("shore_boat", T("thing_shore_boat", "billboard", "the small fishing boat pulled up on the sand in bright sun, blue and white paint, nets drying, 256x128", 1.0, 256), 12.0, -3.2, 0.9, 2.2)

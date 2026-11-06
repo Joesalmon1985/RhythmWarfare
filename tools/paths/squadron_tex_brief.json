@@ -1,17 +1,8 @@
 {
- "ceil_arcade": {
-  "kind": "ceil",
-  "size": 64,
-  "metres": 4.0,
-  "desc": "dusk sky strip seen between sagging washing lines and wires: sepia-amber, smoke wisps",
-  "maps": [
-   "city"
-  ]
- },
  "ceil_beams": {
   "kind": "ceil",
   "size": 64,
-  "metres": 2.0,
+  "metres": 1.25,
   "desc": "plank ceiling with dark beams, cobwebs, a stovepipe stain",
   "maps": [
    "airfield",
@@ -21,7 +12,7 @@
  "ceil_canvas": {
   "kind": "ceil",
   "size": 64,
-  "metres": 2.0,
+  "metres": 1.25,
   "desc": "canvas tent roof lit from above, ridge seam, rope",
   "maps": [
    "airfield"
@@ -30,7 +21,7 @@
  "ceil_cell": {
   "kind": "ceil",
   "size": 64,
-  "metres": 2.0,
+  "metres": 1.0,
   "desc": "dark vaulted stone cell ceiling with a single iron ring",
   "maps": [
    "harbour"
@@ -39,7 +30,7 @@
  "ceil_fuselage": {
   "kind": "ceil",
   "size": 64,
-  "metres": 1.5,
+  "metres": 1.0,
   "desc": "curved aircraft ceiling ribs, wiring loom, dark green-black",
   "maps": [
    "airfield",
@@ -49,53 +40,26 @@
  "ceil_hangar": {
   "kind": "ceil",
   "size": 64,
-  "metres": 2.5,
+  "metres": 1.25,
   "desc": "dim corrugated iron roof with trusses and rust",
   "maps": [
    "airfield"
   ]
  },
- "ceil_night_blue": {
-  "kind": "ceil",
-  "size": 64,
-  "metres": 4.0,
-  "desc": "a painted cold night sky with searchlight smears crossing it, a few stars, high thin cloud",
-  "maps": [
-   "harbour"
-  ]
- },
- "ceil_night_red": {
-  "kind": "ceil",
-  "size": 64,
-  "metres": 4.0,
-  "desc": "a painted night sky ceiling (256 wide look): smoke clouds lit red-orange from below by fires, a few stars",
-  "maps": [
-   "city"
-  ]
- },
  "ceil_plaster": {
   "kind": "ceil",
   "size": 64,
-  "metres": 2.5,
+  "metres": 1.25,
   "desc": "yellowed plaster ceiling with a water stain and a bulb rose",
   "maps": [
    "airfield",
    "city"
   ]
  },
- "ceil_sky_day": {
-  "kind": "ceil",
-  "size": 64,
-  "metres": 4.0,
-  "desc": "a bright saturated cobalt sky with soft white clouds (painted ceiling), warm sun glow, the only saturated sky of the path",
-  "maps": [
-   "harbour"
-  ]
- },
  "floor_boards": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.0,
+  "metres": 1.0,
   "desc": "worn pale wooden floorboards with gaps, dust, boot scuffs",
   "maps": [
    "airfield",
@@ -105,7 +69,7 @@
  "floor_carpet": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.5,
+  "metres": 1.25,
   "desc": "a worn burgundy-brown office carpet with a pale border pattern",
   "maps": [
    "city"
@@ -114,7 +78,7 @@
  "floor_cell": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.0,
+  "metres": 1.0,
   "desc": "cold stone cell floor with a drain, straw and a damp patch",
   "maps": [
    "harbour"
@@ -123,7 +87,7 @@
  "floor_cobble": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.5,
+  "metres": 1.0,
   "desc": "sepia cobblestones, wheel ruts, puddles, scattered straw and paper",
   "maps": [
    "city"
@@ -132,7 +96,7 @@
  "floor_concrete": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.5,
+  "metres": 1.25,
   "desc": "stained concrete hangar floor, expansion joints, oil and dust, scattered straw",
   "maps": [
    "airfield"
@@ -141,7 +105,7 @@
  "floor_dust": {
   "kind": "surface",
   "size": 64,
-  "metres": 3.0,
+  "metres": 1.25,
   "desc": "packed orange dust and gravel airfield ground, tyre tracks, tufts of dry grass",
   "maps": [
    "airfield"
@@ -150,7 +114,7 @@
  "floor_lino": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.0,
+  "metres": 1.0,
   "desc": "cracked cream-and-green linoleum, dirty",
   "maps": [
    "airfield"
@@ -159,7 +123,7 @@
  "floor_metal": {
   "kind": "surface",
   "size": 64,
-  "metres": 1.5,
+  "metres": 1.0,
   "desc": "dark aircraft floor grating with a diamond tread plate strip, oil stains",
   "maps": [
    "airfield",
@@ -169,7 +133,7 @@
  "floor_quay": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.5,
+  "metres": 1.0,
   "desc": "wet dark quay planks and stone setts, puddles reflecting blue light, a coil of rope here and there",
   "maps": [
    "harbour"
@@ -178,7 +142,7 @@
  "floor_rubble": {
   "kind": "surface",
   "size": 64,
-  "metres": 3.0,
+  "metres": 1.0,
   "desc": "broken paving and rubble, brick dust, charred planks, glass glints",
   "maps": [
    "city"
@@ -187,7 +151,7 @@
  "floor_sand": {
   "kind": "surface",
   "size": 64,
-  "metres": 3.0,
+  "metres": 1.25,
   "desc": "warm bright sand with tiny shells, footprints, dry seaweed lines (saturated golden)",
   "maps": [
    "harbour"
@@ -211,11 +175,29 @@
    "city"
   ]
  },
+ "sky_fire": {
+  "kind": "sky",
+  "size": 256,
+  "metres": 1.0,
+  "desc": "the ruined city at night (256x64): black-red sky, smoke banks lit red-orange from below, a few stars, flak sparks, the ragged line of burning roofs",
+  "maps": [
+   "city"
+  ]
+ },
  "sky_harbour": {
   "kind": "sky",
   "size": 256,
   "metres": 1.0,
   "desc": "a cold blue night strip (256x64): deep navy to a slightly lighter horizon, a few small stars, thin high cloud, a pale smear of moon glow",
+  "maps": [
+   "harbour"
+  ]
+ },
+ "sky_harbour_day": {
+  "kind": "sky",
+  "size": 256,
+  "metres": 1.0,
+  "desc": "the coast's cobalt morning strip (256x64): saturated blue to a pale gold horizon, cloud bands, a low sun, gulls as small marks, a far headland and the sea line, the only saturated sky of the path",
   "maps": [
    "harbour"
   ]
@@ -590,6 +572,7 @@
   "desc": "a hanging bare bulb on a flex with a tin shade, warm glow, 128x128 (hangs from the top)",
   "maps": [
    "airfield",
+   "city",
    "harbour"
   ]
  },
@@ -923,7 +906,7 @@
  "wall_berm": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.5,
+  "metres": 1.25,
   "desc": "stacked sandbags and packed orange earth, bleached by the sun, tufts of dry grass",
   "maps": [
    "airfield"
@@ -932,7 +915,7 @@
  "wall_bomber": {
   "kind": "surface",
   "size": 64,
-  "metres": 1.5,
+  "metres": 1.0,
   "desc": "riveted aircraft interior panels, dark green-black, a lighter ribbed strip, instrument-lamp scuffs",
   "maps": [
    "airfield",
@@ -942,7 +925,7 @@
  "wall_cell": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.0,
+  "metres": 1.0,
   "desc": "damp cell wall of grey stone blocks with scratched tally marks (scratches only), a pale smear of light, drips",
   "maps": [
    "harbour"
@@ -951,7 +934,7 @@
  "wall_dunes": {
   "kind": "surface",
   "size": 64,
-  "metres": 4.5,
+  "metres": 1.25,
   "desc": "bright sandy dunes with tufts of green marram grass and a white wall of sea haze above, saturated warm",
   "maps": [
    "harbour"
@@ -960,7 +943,7 @@
  "wall_hangar": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.5,
+  "metres": 1.0,
   "desc": "corrugated iron, rust streaks, olive-drab paint worn to orange metal, bolts",
   "maps": [
    "airfield"
@@ -969,7 +952,7 @@
  "wall_hut": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.0,
+  "metres": 1.0,
   "desc": "weathered bleached-khaki planked hut wall (vertical planks, nail heads, sun-faded paint peeling, dust streaks)",
   "maps": [
    "airfield",
@@ -979,7 +962,7 @@
  "wall_office": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.5,
+  "metres": 1.25,
   "desc": "yellowed plaster upper wall over a dark green painted dado, a thin dark rail between, peeling patches",
   "maps": [
    "airfield"
@@ -988,7 +971,7 @@
  "wall_panel": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.5,
+  "metres": 1.0,
   "desc": "dark oak wall panelling with a gold-trimmed picture rail, polished, a sepia sheen",
   "maps": [
    "city"
@@ -997,7 +980,7 @@
  "wall_quay": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.5,
+  "metres": 1.0,
   "desc": "cold dark harbour wall: wet stone blocks with green weed at the base, iron rings, blue night light",
   "maps": [
    "harbour"
@@ -1006,7 +989,7 @@
  "wall_ruin": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.5,
+  "metres": 1.0,
   "desc": "blown-out brick wall, blackened by fire, rubble at its foot, bare lath, deep shadow",
   "maps": [
    "city"
@@ -1015,7 +998,7 @@
  "wall_stucco": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.5,
+  "metres": 1.25,
   "desc": "cracked ochre-and-grey stucco with bare brick showing through, faded shutters painted on, stains",
   "maps": [
    "city"
@@ -1024,7 +1007,7 @@
  "wall_tent": {
   "kind": "surface",
   "size": 64,
-  "metres": 2.0,
+  "metres": 1.0,
   "desc": "dirty cream canvas tent wall with seams, rope loops, a faint red-brown stain; soft folds",
   "maps": [
    "airfield"
