@@ -241,7 +241,7 @@ def check_hotspot(h, ctx, errs):
         r = o.get("route")
         if r and r.startswith("path:"):
             check_portal(h, which, r, errs)
-        elif r and r not in [n["to"] for n in node["next"]] and r not in ctx.passages:
+        elif r and r != "bassment" and r not in [n["to"] for n in node["next"]] and r not in ctx.passages:
             errs.append(f"{hid} {which}: route {r} is neither a route of {h['scene']} nor a Bassment passage")
         check_cin(o.get("cinematic"), h["map"], ctx, f"{hid} {which}", errs)
     if "cinematic" in h:
@@ -423,7 +423,7 @@ def reachability(allh, ctx, errs):
                             if r not in seen_scenes:
                                 seen_scenes.add(r)
                                 changed = True
-                        elif r in ctx.passages:
+                        elif r in ctx.passages or r == "bassment":
                             if not trial:
                                 trial = True
                                 changed = True
