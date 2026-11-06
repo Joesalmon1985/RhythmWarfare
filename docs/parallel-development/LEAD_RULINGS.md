@@ -120,3 +120,12 @@ Where a ruling changes the owner's numbers it says so, and the owner can overrul
     by the map and falls back to the shared files. A new map gets its door set by a line in `SETS` in
     `src/run/choice_props.gd` and a set in `tools/run/make_choice_art.py`; a world package that adds a map
     asks stream A for the set and does not draw its own door.
+32. The spike of ruling 20 is closed: **the Bassment stays outside the port.** Its entry at the lap's lock,
+    its passages and its return to the checkpoint are committed by the router outside `switched`, and a
+    Bassment change is always a `cut` through the engine. The director does not accept "bassment/*". The
+    music stream gives a scene entered without a lock (the return from the Bassment) the same aligned
+    start as a scene entered through a lock.
+33. Packages A1 (shared stage look) and W1 (Warehouse) are merged. The world packages tune light against
+    A1's values (`docs/shots/art/a1/frame_check_after.txt`): the post shader is always on, black is lifted
+    to the sector's fog colour, people are capped at 1.25x their sheet. A1's change to
+    `tests/test_story_crowd_world.gd` (two checks that assumed the old near fade) is accepted.
