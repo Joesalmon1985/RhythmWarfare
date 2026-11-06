@@ -1,5 +1,9 @@
 # Start here: picking up the laptop's work (6 November 2026)
 
+**Later the same day:** the work moved to one Windows PC. The plan for it is `ONE_PC_PLAN.md` in this
+folder, and the two-machine split described below no longer applies. This note is kept for its record of
+what the laptop left; stage D of that plan deletes it.
+
 The laptop restarted at about 07:53 on 6 November 2026 and stopped three pieces of work part-way through.
 This file says what exists, what is missing and what to do next on another machine. It is a status note,
 not one of the planned documents; delete it when the work it describes is finished.
