@@ -722,6 +722,27 @@ class BatchTests(unittest.TestCase):
             self.assertEqual(Ctx(f2, a, meta=meta, taken=set()).id, "a_t_2")
             self.assertEqual(Ctx(f1, a, meta=meta, taken=set()).id, "a_t")
 
+    def test_a_pack_made_on_another_machine_is_the_same_recording(self):
+        # the laptop's packs record /home/joe/...; on the PC the recording is at C:/Users/...: same file name, same
+        # recording, so the id is kept (and --skip-imported skips it) instead of importing it again as _2
+        import argparse
+        from import_track import Ctx
+        for other in ("/home/joe/Projects/MusicGame/ToAddTry4/one.flac", "C:\\Users\\joe\\ToAddTry4\\one.flac"):
+            with tempfile.TemporaryDirectory() as d:
+                a = argparse.Namespace(out=d, id=None, model="htdemucs", focus_auto=False, min_bars=None, focus=None,
+                                       focus_at=None)
+                meta = {"artist": "A", "title": "T", "id": "a_t", "probe": {}}
+                pack = Path(d) / "packs" / "a_t"
+                pack.mkdir(parents=True)
+                (pack / "track.json").write_text(json.dumps({"source": {"input_file": "one.flac", "input_path": other}}),
+                                                 encoding="utf-8")
+                c = Ctx(Path(d) / "one.flac", a, meta=meta, taken=set())
+                self.assertEqual((c.id, c.renamed_from), ("a_t", None), other)
+                # another file with the same artist and title still gets its own id
+                import shutil
+                shutil.rmtree(Path(d) / "cache")
+                self.assertEqual(Ctx(Path(d) / "two.flac", a, meta=meta, taken=set()).id, "a_t_2", other)
+
 
 # ---------------------------------------------------------------- fixes after the first whole-folder batch
 
