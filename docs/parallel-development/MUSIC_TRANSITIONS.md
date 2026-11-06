@@ -10,6 +10,10 @@ Words used here: **music stream** and **narrative stream** are the two lines of 
 song time of the boundary (the downbeat where the scene changes). Bars are 4 beats. "Incoming bar n" counts
 bars of the incoming track's grid from T (bar 0 starts at T).
 
+Reviewed on 6 November 2026 against `LEAD_RULINGS.md` (binding, later than this text): rulings 5 to 8 and 11 to 14 are applied.
+The widest pitch change of a `blend` is 50 cents (a tempo ratio within 2.93%); `halftime_blend` is built and tested on fixture packs only; a lead-in
+under 5 bars is entered with `cut`; the listening pairs are a blend, an echo-out and a cut.
+
 Status words, as in the rest of this folder: implemented / partial / missing, and for what is to be built
 straightforward / complex / uncertain. "To verify in the spike" marks every engine fact I could not confirm
 from the Godot 4.5 source or documentation.
@@ -371,7 +375,7 @@ The director strips `recipe` before emitting `locked`, so the Plan has exactly t
 | An ordinary scene on one side (no pack, or a pack not ready) | `cut`, exactly today's 0.6 s fade. Ordinary scenes are now only fallbacks; blending loop scenes is a later refinement, not in M2 |
 | The Bassment | Its entrance by the wizard is not behind the port in this phase: M1 stops the track group on the trial hand-off and M2 keeps that. Returning (`RunEngine.resume`) is `cut` (row 3: the outgoing music is the trial's loops). When the entrance moves behind the port later, it is row 3 as well |
 | A minigame hold | No lock happens while `engine.hold` is set; a pending request is deferred with `&"held"` at each lock point (this does not use up the single `&"not_ready"` deferral). A minigame started during a blend (the card table is touchable in every block) changes nothing: the tail's fades run on song time |
-| A scene left on its first departure lap | Safe by construction: the previous tail is silent by incoming bar 12 (beat 48 of lap 1), and the earliest next lock is beat 60.5 of lap `doors_from_lap` (>= 1). So contract rule 14 (`&"blending"`) is a guard that today's data never triggers; a test proves it with `doors_from_lap` 1 |
+| A scene left on its first departure lap | Safe by construction: the previous tail is silent by incoming bar 12 (beat 48 of lap 1), and the earliest next lock is beat 60.5 of lap `doors_from_lap` (>= 1). So conformance case 14 (`&"blending"`, contract rule 10) is a guard that today's data never triggers; a test proves it with `doors_from_lap` 1. Lead ruling 14 allows a `&"blending"` deferral to repeat, and a final lap reached while a blend still runs is extended by one lap without a signal |
 | The destination changes at the last moment | Replacing before the lock is free (contract rule 1). The planner runs at the lock with the request as it stands, so a late pick is planned with its own readiness. Loading starts on `request()`, so a pick made 2 s before the lock may not be ready: row 1 (one more lap), then row 2 |
 | `on_miss` taken at the lock | Planned like any destination. Its pack is preloaded only if the memory budget allows (always on the PC, not on a phone: section 9); otherwise row 2 |
 | A path hand-off (main run to a path or back) | Same rows. The tail lives on its own player, so the clock swap and the new `RunEngine` of `RunPlay._path_swap` do not touch it (M1 must keep it so) |
@@ -454,7 +458,7 @@ arrives as the same notifications; nothing else is done.
 | When | Source of song time | Grid (beat, origin) | What sounds |
 |---|---|---|---|
 | Before T | the silent clock, through `SongClock.audio_time()` | outgoing: its `beat_s`, origin its scene's first downbeat | outgoing group at rate 1 |
-| T to `complete_t` | the same silent clock, untouched | incoming: `_regrid(T, bpm_in)`, engine `tempo` event, port `tempo_changed` | incoming group at rate 1, tail at rate rho |
+| T to `complete_t` | the same silent clock, untouched | incoming: `_regrid(T, bpm_in)`, engine `tempo` event, port `tempo_changed` (emitted before `switched`, lead ruling 12) | incoming group at rate 1, tail at rate rho |
 | After | the same silent clock | incoming | incoming group |
 
 The clock is never handed from one music stream to another. The "transfer of the authoritative clock" is a
@@ -654,13 +658,17 @@ Every figure in the hand-over names its driver.
 ### 10.3 Listening tests (M2.6, the owner)
 
 Three pairs, played as a short run from a fixed seed (`RW_RUN_START`), each twice: once as designed, once
-forced to `cut` for comparison. Half-time cannot be among them: no real pair exists (2.3).
+forced to `cut` for comparison (the `cut` pair is the exception: it is heard once). They are a blend, an echo-out
+and a cut (lead ruling 6). Half-time cannot be among them: no real pair exists (2.3).
 
 | Pair | Mode | Listen for |
 |---|---|---|
 | `chase_status_no_problem_original_mix` to `stimpy_party_last_sounds` (balcony to chill) | `blend`, -29.9 cents | Two rhythm sections never fight: drums out by bar 2; the tail's synths sit on the incoming beat; no pitch wobble on held notes; nothing of the old track in the 4 bars before the drop; level steady at T (no jump, no pumping) |
-| A pair 172 to 177 (for example `unglued_telefonik` to `amplify_crossy_badman`, set in the test run) | `blend`, +49.6 cents | The widest shift: is the old track's pitch audibly sharp? If yes, row 6 narrows (Q2) |
 | `ternion_sound_artifice` (140) to a 174 track | `echo_out` | The echo trails off within 2 bars; no flam of beats; the incoming intro starts cleanly on T |
+| Any track into a scene whose track has a lead-in under 5 bars (for example `mampi_swift_soldiers_gyrhlx7pafa`, first drop at bar 0; set in the test run) | `cut` (row 5) | Today's 0.6 s fade is clean: nothing breaks, nothing of the old track lingers into the new scene |
+
+The widest `blend` (172 to 177, +49.6 cents, for example `unglued_telefonik` to `amplify_crossy_badman`) is not a fourth pair. It is checked in the spike (Q2): if the old
+track's pitch is audibly sharp there, row 6 narrows.
 
 Per pair also: pause during the blend and resume (the blend carries on where it was); leave on the first
 departure lap; play the pads through the blend and say whether the cues feel on the beat.
