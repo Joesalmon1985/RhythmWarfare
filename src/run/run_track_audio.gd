@@ -95,6 +95,21 @@ func prefetch_for(data: RunData, node_id: String, paths: Dictionary = {}, main: 
 	_retain(plans.filter(func(p: Dictionary) -> bool: return not p.is_empty()))
 
 
+## Loads the stems of scene `node_id` ahead, at any time, without letting anything go (safe for a pack already loading or loaded). Returns its state: "" (no track scene), loading, ready or failed.
+func request_scene(data: RunData, node_id: String) -> String:
+	var p := _plan(data, node_id)
+	if p.is_empty():
+		return ""
+	_request(p)
+	return state_of(p)
+
+
+## The state of a plan's stems: "none" (not asked for), loading, ready or failed.
+func state_of(plan: Dictionary) -> String:
+	_poll()
+	return str((_cache.get(str(plan.get("dir", "")), {}) as Dictionary).get("state", "none"))
+
+
 ## Makes every scene plan of these runs on a worker thread (RunTrackScenes.warm), so that RunEngine.track_plan_of never parses a track.json on a frame.
 func warm(datas: Array) -> void:
 	var list: Array = datas.filter(func(d: Variant) -> bool: return d != null and (d as RunData).track_scenes != null)
@@ -163,8 +178,11 @@ func on_event(ev: Dictionary) -> void:
 
 ## One frame of RunAudio (song time `now` of the sound reaching the listener, `ttnm` the time to the next mix): due items run, idle restores come back, finished loads are taken, faded groups go.
 func step(now: float, ttnm: float) -> void:
+	var chunk_t := NAN
+	if run_audio != null and run_audio.player != null and run_audio.player.playing and not run_audio.player.stream_paused:
+		chunk_t = run_audio.playback_position()  # (the clock's position as of its last mix: where the next chunk, the one a stem started now first sounds in, begins)
 	while not _schedule.is_empty() and float(_schedule[0]["t"]) <= now + ttnm:
-		run_item(_schedule.pop_front(), now, ttnm)
+		run_item(_schedule.pop_front(), now, ttnm, chunk_t)
 	var g := _live()
 	if not g.is_empty() and notes_fn.is_valid():
 		_apply(g, (g["mutes"] as RunTrackMutes).advance(now, notes_fn.call()))
@@ -175,10 +193,14 @@ func step(now: float, ttnm: float) -> void:
 			_free_group(x)
 
 
-## Runs one scheduled item as if the frame were at `now` with `ttnm` to the next mix (the tests call it on a virtual clock).
-func run_item(item: Dictionary, now: float, ttnm: float) -> void:
+## Runs one scheduled item as if the frame were at `now` with `ttnm` to the next mix (the tests call it on a virtual clock). `chunk_t`: the song time the next mixed chunk begins at, the clock's
+## reported position (StemTransport.playback_position: a stream's position reads as of the END of its last mixed chunk, so a stem started now first sounds at the clock's position, not at
+## now + ttnm). A stem group started that way sits on the clock to the sample; the loops' rule (now + ttnm, RunAudio._start_voice) starts them one mix period early (88.5 ms on the Dummy
+## driver, measured: tests/fixtures/track_scenes/measure_track_audio.gd). Without a clock (NAN) the loops' rule is used. `late` may be negative: the group then starts that much earlier in the
+## track, which is the same sound at the right time.
+func run_item(item: Dictionary, now: float, ttnm: float, chunk_t: float = NAN) -> void:
 	var t := float(item["t"])
-	var late := maxf(now + ttnm - t, 0.0)
+	var late := (chunk_t - t) if not is_nan(chunk_t) else maxf(now + ttnm - t, 0.0)
 	match str(item["kind"]):
 		"start":
 			_start(item["ev"], t, late)
@@ -186,7 +208,7 @@ func run_item(item: Dictionary, now: float, ttnm: float) -> void:
 			var g := _live()
 			if not g.is_empty():
 				var tr: TrackTransport = g["transport"]
-				tr.player.play(float(item["track_t"]) + late)
+				tr.player.play(maxf(float(item["track_t"]) + late, 0.0))
 				g["track_t0"] = float(item["track_t"])
 				g["t0"] = t
 				log.append({"kind": "seek", "t": t, "node": g["node"], "track": g["track"], "track_t": float(item["track_t"]), "from": float(item["track_t"]) + late, "lateness_ms": late * 1000.0})
@@ -268,7 +290,7 @@ func _start(ev: Dictionary, t: float, late: float) -> void:
 		push_error("track audio: %s: %s" % [str(ev["track"]), err])
 		tr.queue_free()
 		return
-	tr.start_at = float(ev["track_t"]) + late
+	tr.start_at = maxf(float(ev["track_t"]) + late, 0.0)
 	tr.start()
 	var mutes := RunTrackMutes.new()
 	mutes.setup(pack.voices.map(func(v: Dictionary) -> String: return str(v["key"])), float(ev["beat_s"]), pack.restore_after_idle_beats)
