@@ -55,18 +55,19 @@ func test_every_rail_sits_on_real_waypoints_and_every_step_has_a_route() -> void
 
 func test_the_authored_rails() -> void:
 	var want := {  # scene -> [good, bad]: the Warehouse floor keeps the chapter's rail, every other scene's rail stays within reach of its own room
+		# (the reactor's core, the arena's gate, the corridor's east end and the quiet room's far end faced a wall from arm's length: docs/art/CAMERA_CLEARANCE.md)
 		"warehouse": [["steps", "stage", "balcony", "booth"], ["floor_edge", "corridor", "cubicle"]],
 		"warehouse.bar": [["bar_taps", "bar_end"], ["bar_door", "floor_bar"]],
 		"warehouse.booth": [["booth_decks"], ["stage", "steps"]],
 		"mothership": [["deck_ramp", "deck_dais"], ["deck_edge", "deck_sw_corner"]],
-		"mothership.reactor": [["catwalk_mid", "reactor_core"], ["catwalk_door", "medbay"]],
-		"underworld": [["arena_gate", "gate_dais"], ["arena_edge", "tier_l_in"]],
+		"mothership.reactor": [["catwalk_mid", "catwalk_bridge"], ["catwalk_door", "medbay"]],
+		"underworld": [["gate_dais"], ["arena_edge", "tier_l_in"]],
 		"underworld.pit": [["pit_edge", "pit_stage"], ["pit_rim_e", "court_in"]],
 		"hospital": [["ward_chair", "ward_door"], ["bed_corner", "bed_far"]],
 		"hospital.garden": [["garden_edge", "bandstand"], ["garden_south", "garden_sw"]],
 		"ward": [["bars_in", "day_stage_in"], ["day_edge", "day_corner"]],
-		"ward.corridor": [["corr_mid", "corr_east"], ["treat", "quiet"]],
-		"hospital_late.quiet": [["quiet_far"], ["quiet_door", "corridor_in"]],
+		"ward.corridor": [["corr_mid"], ["treat", "quiet"]],
+		"hospital_late.quiet": [["quiet"], ["quiet_door", "corridor_in"]],
 		"ward_late.exit": [["day_centre", "day_stage_in"], ["day_corner", "bars_in"]],
 	}
 	for id in want:

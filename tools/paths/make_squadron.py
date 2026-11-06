@@ -72,7 +72,48 @@ def build_maps() -> dict:
     return out
 
 
+# Camera clearance (docs/art/CAMERA_CLEARANCE.md, package A5): per-scene overrides of the rail's camera fields (good, bad, arrive, glances, strolls) by scene code, checked by
+# tools/art/camera_clearance.gd. A glance or stroll that turned the head onto a near wall (the bomber's flak windows, the cell's tally marks) is re-aimed or shortened.
+# "no turn" / "half" / "quarter" (glances, strolls, combined with a comma) keep the generated list and drop the strolls' turn / scale the distances and angles; "top: first" leaves the last good
+# place out (the scene's second good waypoint faced a wall).
+CAMERA: dict = {
+    "C03": {"strolls": "no turn, half"},
+    "C04": {"strolls": "no turn, quarter", "good": "top: first"},  # the bomber's flak windows
+    "C05": {"strolls": "no turn, half"},
+    "C07": {"strolls": "no turn, quarter", "glances": "half", "good": [{"to": "c07_home", "role": "dancer", "style": "walk", "bars": 3}]},  # inside the bomber: it stays at home
+    "C09": {"strolls": "no turn, half", "good": "top: first"},
+    "C13": {"arrive": "c13_home"},  # c13_arrive faced the quay wall
+    "C14": {"strolls": "no turn, half", "good": "top: first"},  # the cell's tally-mark wall
+}
+
+
+def camera_field(key: str, have, v):
+    if key == "good" and v == "top: first":
+        return have[:1]
+    if key not in ("glances", "strolls") or not isinstance(v, str):
+        return json.loads(json.dumps(v))
+    out = []
+    for x in have:
+        x = dict(x)
+        if "no turn" in v:
+            x.pop("turn", None)
+        for word, f in (("half", 0.5), ("quarter", 0.25)):
+            if word in v:
+                for k in ("fwd", "right", "turn", "by", "pitch"):
+                    if k in x:
+                        x[k] = round(x[k] * f, 1)
+        out.append(x)
+    return out
+
+
 def rail_of(code: str, dirs: list) -> dict:
+    place = _rail_of(code, dirs)
+    for k, v in CAMERA.get(code, {}).items():
+        place["rail"][k] = camera_field(k, place["rail"][k], v)
+    return place
+
+
+def _rail_of(code: str, dirs: list) -> dict:
     p = code.lower()
     return {"waypoint": f"{p}_home", "rail": {
         "good": [{"to": f"{p}_g1", "role": "dancer", "style": "walk", "bars": 3}, {"to": f"{p}_g2", "role": "dancer", "style": "walk", "bars": 3}],

@@ -494,16 +494,15 @@
      ],
      "strolls": [
       {
-       "fwd": 1.2,
+       "fwd": 0.6,
        "bars": 3
       },
       {
-       "turn": 35,
-       "fwd": 0.8,
+       "fwd": 0.4,
        "bars": 3
       },
       {
-       "right": 1.0,
+       "right": 0.5,
        "bars": 2
       }
      ],
@@ -611,12 +610,6 @@
        "role": "dancer",
        "style": "walk",
        "bars": 3
-      },
-      {
-       "to": "c04_g2",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3
       }
      ],
      "bad": [
@@ -655,16 +648,15 @@
      ],
      "strolls": [
       {
-       "fwd": 1.2,
+       "fwd": 0.3,
        "bars": 3
       },
       {
-       "turn": 35,
-       "fwd": 0.8,
+       "fwd": 0.2,
        "bars": 3
       },
       {
-       "right": 1.0,
+       "right": 0.2,
        "bars": 2
       }
      ],
@@ -800,16 +792,15 @@
      ],
      "strolls": [
       {
-       "fwd": 1.2,
+       "fwd": 0.6,
        "bars": 3
       },
       {
-       "turn": 35,
-       "fwd": 0.8,
+       "fwd": 0.4,
        "bars": 3
       },
       {
-       "right": 1.0,
+       "right": 0.5,
        "bars": 2
       }
      ],
@@ -1025,13 +1016,7 @@
     "rail": {
      "good": [
       {
-       "to": "c07_g1",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3
-      },
-      {
-       "to": "c07_g2",
+       "to": "c07_home",
        "role": "dancer",
        "style": "walk",
        "bars": 3
@@ -1054,35 +1039,34 @@
      "arrive": "c07_arrive",
      "glances": [
       {
-       "by": -12,
-       "pitch": 8,
+       "by": -6.0,
+       "pitch": 4.0,
        "bars": 2
       },
       {
-       "by": -28,
+       "by": -14.0,
        "bars": 2
       },
       {
-       "pitch": 14,
+       "pitch": 7.0,
        "bars": 3
       },
       {
-       "by": 24,
+       "by": 12.0,
        "bars": 2
       }
      ],
      "strolls": [
       {
-       "fwd": 1.2,
+       "fwd": 0.3,
        "bars": 3
       },
       {
-       "turn": 35,
-       "fwd": 0.8,
+       "fwd": 0.2,
        "bars": 3
       },
       {
-       "right": 1.0,
+       "right": 0.2,
        "bars": 2
       }
      ],
@@ -1301,12 +1285,6 @@
        "role": "dancer",
        "style": "walk",
        "bars": 3
-      },
-      {
-       "to": "c09_g2",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3
       }
      ],
      "bad": [
@@ -1345,16 +1323,15 @@
      ],
      "strolls": [
       {
-       "fwd": 1.2,
+       "fwd": 0.6,
        "bars": 3
       },
       {
-       "turn": 35,
-       "fwd": 0.8,
+       "fwd": 0.4,
        "bars": 3
       },
       {
-       "right": 1.0,
+       "right": 0.5,
        "bars": 2
       }
      ],
@@ -1943,7 +1920,7 @@
        "bars": 2
       }
      ],
-     "arrive": "c13_arrive",
+     "arrive": "c13_home",
      "glances": [
       {
        "by": -12,
@@ -2059,12 +2036,6 @@
        "role": "dancer",
        "style": "walk",
        "bars": 3
-      },
-      {
-       "to": "c14_g2",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3
       }
      ],
      "bad": [
@@ -2103,16 +2074,15 @@
      ],
      "strolls": [
       {
-       "fwd": 1.2,
+       "fwd": 0.6,
        "bars": 3
       },
       {
-       "turn": 35,
-       "fwd": 0.8,
+       "fwd": 0.4,
        "bars": 3
       },
       {
-       "right": 1.0,
+       "right": 0.5,
        "bars": 2
       }
      ],

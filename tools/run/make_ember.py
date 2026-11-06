@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Authors the Ember Road's run data (docs/THREE_PATHS_AND_FACES_PLAN.md section 6): content/paths/ember/run.json, hotspots/<world>.json and the music prompts.
 
-    python3 tools/run/make_ember.py          # then: python3 tools/content/make_path_placeholders.py ember   (the synthesised stand-in loops, music.json)
+    python3 tools/run/make_ember.py [--run-only]          # then: python3 tools/content/make_path_placeholders.py ember   (the synthesised stand-in loops, music.json)
 
 Edit the tables below and run it again. Scenes are E00..E14 of the plan (`scene` is the plan's code); a scene's id is its world's id for the first scene of a world
 (the save's `reached` ids), `<world>.<name>` for the others. Maps are tools/story/ember_maps.py. No text anywhere: faces, acts, lights and pieces carry the story.
@@ -303,6 +303,13 @@ PROMPTS = {
 }
 
 
+# Camera clearance (docs/art/CAMERA_CLEARANCE.md, package A5): per-scene overrides of the rail's camera fields (good, bad, arrive, glances, strolls), checked by
+# tools/art/camera_clearance.gd. A glance or stroll that turned the head onto a near wall is re-aimed or shortened.
+CAMERA: dict = {
+    "hollow.inn": {"strolls": [{"fwd": 0.8, "bars": 3}, {"fwd": 0.5, "bars": 3}, {"right": 0.7, "bars": 2}]},  # STROLLS without the turn, half as far (the turn ended on the inn's wall)
+}
+
+
 def node_json(s: dict) -> dict:
     n = {"id": s["id"], "world": s["world"], "scene": f"{s['code'].lower()}_{s['name']}", "title": s["title"], "entry": bool(s.get("entry")), "exit_scene": bool(s.get("exit")),
          "role": "dancer", "blurb": f"{s['code']} {s['title']}."}
@@ -316,6 +323,8 @@ def node_json(s: dict) -> dict:
         n["next"].append(e)
     n["place"] = {"waypoint": s["home"], "rail": {"good": [place(w, "dancer", 3) for w in s["good"]], "bad": [place(w, "queasy", 2) for w in s["bad"]], "arrive": s["arrive"],
                                                   "glances": GLANCES, "strolls": STROLLS, "exits": s["exits"]}}
+    for k, v in CAMERA.get(s["id"], {}).items():
+        n["place"]["rail"][k] = json.loads(json.dumps(v))
     n["cast"] = CAST[s["id"]]
     return n
 
@@ -341,6 +350,9 @@ def main() -> int:
             run["mix"] = old["mix"]
     run = laps_mod.finish_run(run, LAPS, SINGLE_LAP)
     write(os.path.join(OUT, "run.json"), run)
+    if "--run-only" in sys.argv:  # (only run.json: the hotspot files and music.json are left as they are)
+        print(f"ember: {len(SCENES)} scenes, run.json only")
+        return 0
     by_world: dict = {}
     for h in HOTSPOTS:
         by_world.setdefault(h["world"], []).append(h)

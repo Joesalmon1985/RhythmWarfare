@@ -269,6 +269,50 @@ PACK = {
 TEMPORARY = {"underworld", "underworld.court", "underworld.furnace", "underworld.pit", "underworld.exit"}
 
 
+# ---- camera clearance (docs/art/CAMERA_CLEARANCE.md, package A5): per-scene overrides of the rail's camera fields, checked by tools/art/camera_clearance.gd --------------
+# A place whose waypoint faces a wall from arm's length (the planet window, the reactor core, the airlock hatch, the television, the dormitory window, the sofa) is swapped
+# for a waypoint of the same room that faces into it, or left out; a glance or a stroll that turns the head onto a near wall is re-aimed or shortened. Keys: good, bad, arrive,
+# glances, strolls (each replaces the generated field). "no turn" (strolls), "half" or "quarter" (glances, strolls), combined with a comma, keep the scene's own list and
+# drop the strolls' turn / scale the distances and angles.
+CAMERA = {
+    "warehouse.balcony": {"good": [P("balcony_rail"), P("balcony")]},  # balcony_far faced the end wall from 0.8 m
+    "warehouse.chill": {"good": [P("sofa_nook"), P("chill")], "strolls": "no turn, half"},  # sofa_front stood in the sofa's alcove facing its wall
+    "warehouse.exit": {"strolls": "no turn"},  # (the 35-degree turn ended on the tunnel wall)
+    "mothership.gallery": {"good": [P("gallery_mid"), P("gallery_east")], "strolls": "no turn, half"},  # planet_window: the window wall at 0.5 m
+    "mothership.reactor": {"good": [P("catwalk_mid"), P("catwalk_bridge", "on_stage")]},  # reactor_core faced the core's tube wall from 1.4 m
+    "mothership.exit": {"good": [P("exam")], "strolls": "no turn, half"},  # airlock: the hatch at 1.8 m
+    "underworld": {"good": [up("gate_dais", 3)], "arrive": "arena_edge"},  # arena_gate and the arrival at arena_tier_l faced the dais and tier walls from 0.5 m
+    "hospital": {"strolls": "no turn, half"},
+    "hospital.corridor": {"strolls": "no turn"},
+    "hospital.dayroom": {"good": [P("dayroom_mid")]},  # day_tv_in: the television wall at 2.1 m
+    "hospital.cafeteria": {"good": [P("cafe_mid")]},  # cafe_serving: the counter wall
+    "hospital.exit": {"strolls": "no turn"},  # (the turn ended on the bandstand's hedge)
+    "ward.dorm": {"good": [P("dorm_door")], "strolls": "no turn, half", "glances": "half"},  # dorm_bed: the alcove's window wall at 1.1 m; the look up met the alcove's low ceiling
+    "ward.corridor": {"arrive": "corr_art_door", "strolls": "no turn, half", "good": [P("corr_mid")]},
+    "hospital_late.quiet": {"good": [P("quiet")], "arrive": "quiet", "strolls": "no turn, quarter", "glances": "half"},  # quiet_far: the end wall at 1.5 m (the room is 2.4 m wide); quiet_door: its choice door fills the picture
+    "hospital_late.exit": {"strolls": "no turn"},
+    "ward_late.treat": {"glances": "half"},  # (the look up met the bed alcove's low ceiling)
+    "ward_late.dorm": {"good": [P("dorm_mid")], "strolls": "no turn, half", "glances": "half"},
+}
+
+def camera_field(key, have, v):
+    """A CAMERA override of field `key` applied to the generated value `have`: a value replaces it; for glances and strolls, "no turn" / "half" / "quarter" transform it."""
+    if key not in ("glances", "strolls") or not isinstance(v, str):
+        return json.loads(json.dumps(v))
+    out = []
+    for x in have:
+        x = dict(x)
+        if "no turn" in v:
+            x.pop("turn", None)
+        for word, f in (("half", 0.5), ("quarter", 0.25)):
+            if word in v:
+                for k in ("fwd", "right", "turn", "by", "pitch"):
+                    if k in x:
+                        x[k] = round(x[k] * f, 1)
+        out.append(x)
+    return out
+
+
 def build_nodes() -> list[dict]:
     wmap = {w["id"]: w for w in WORLDS}
     nodes = []
@@ -282,6 +326,8 @@ def build_nodes() -> list[dict]:
              "blurb": w["blurb"] if s["entry"] else s["title"],
              "next": [{"to": t[0], "dir": t[1], "label": t[2], **({"loop": True} if len(t) > 3 and t[3] else {})} for t in s["next"]],
              "place": {"waypoint": s["home"], "rail": {"good": s["good"], "bad": s["bad"], "arrive": s["arrive"], "glances": rot(gl), "strolls": rot(st), "exits": s["exits"]}}}
+        for k, v in CAMERA.get(s["id"], {}).items():
+            n["place"]["rail"][k] = camera_field(k, n["place"]["rail"][k], v)
         if s["id"] in acting_data.CAST:  # stage 1d: the story beats of the scene (tools/run/acting_data.py)
             n["cast"] = json.loads(json.dumps(acting_data.CAST[s["id"]]))
         if s["id"] in ("warehouse", "warehouse.chill"):  # the wizard waits on the floor and in the chill-out; the Bassment returns to the entry scene

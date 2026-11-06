@@ -85,8 +85,19 @@
   "dip_gain": 0.55,
   "dip_beats": 6.0,
   "recipe_bass_floor": 0.9,
-  "carry_bass": {"gain": 0.5, "beats": 16.0},
-  "bass_bus": {"enabled": true, "highpass_hz": 30.0, "shelf_hz": 110.0, "shelf_db": 2.0, "drive": 0.6, "pre_gain_db": 6.0, "gain_db": -9.0}
+  "carry_bass": {
+   "gain": 0.5,
+   "beats": 16.0
+  },
+  "bass_bus": {
+   "enabled": true,
+   "highpass_hz": 30.0,
+   "shelf_hz": 110.0,
+   "shelf_db": 2.0,
+   "drive": 0.6,
+   "pre_gain_db": 6.0,
+   "gain_db": -9.0
+  }
  },
  "effects": {
   "riser": "res://assets/run/riser.wav",
@@ -510,7 +521,7 @@
        "bars": 3
       },
       {
-       "to": "balcony_far",
+       "to": "balcony",
        "role": "dancer",
        "style": "walk",
        "bars": 3
@@ -634,7 +645,7 @@
        "bars": 3
       },
       {
-       "to": "sofa_front",
+       "to": "chill",
        "role": "dancer",
        "style": "walk",
        "bars": 3
@@ -676,16 +687,15 @@
      ],
      "strolls": [
       {
-       "fwd": 1.6,
+       "fwd": 0.8,
        "bars": 3
       },
       {
-       "turn": 35,
-       "fwd": 1.0,
+       "fwd": 0.5,
        "bars": 3
       },
       {
-       "right": 1.4,
+       "right": 0.7,
        "bars": 2
       }
      ],
@@ -925,7 +935,6 @@
        "bars": 3
       },
       {
-       "turn": 35,
        "fwd": 1.0,
        "bars": 3
       }
@@ -1128,7 +1137,7 @@
        "bars": 3
       },
       {
-       "to": "planet_window",
+       "to": "gallery_east",
        "role": "dancer",
        "style": "walk",
        "bars": 3
@@ -1170,16 +1179,15 @@
      ],
      "strolls": [
       {
-       "turn": -40,
-       "fwd": 0.9,
+       "fwd": 0.5,
        "bars": 3
       },
       {
-       "right": -1.3,
+       "right": -0.7,
        "bars": 2
       },
       {
-       "fwd": 1.5,
+       "fwd": 0.8,
        "bars": 3
       }
      ],
@@ -1251,10 +1259,10 @@
        "bars": 3
       },
       {
-       "to": "reactor_core",
+       "to": "catwalk_bridge",
        "role": "on_stage",
-       "style": "climb",
-       "bars": 4
+       "style": "walk",
+       "bars": 3
       }
      ],
      "bad": [
@@ -1493,13 +1501,7 @@
     "rail": {
      "good": [
       {
-       "to": "airlock_door",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3
-      },
-      {
-       "to": "airlock",
+       "to": "exam",
        "role": "dancer",
        "style": "walk",
        "bars": 3
@@ -1541,16 +1543,15 @@
      ],
      "strolls": [
       {
-       "turn": -40,
-       "fwd": 0.9,
+       "fwd": 0.5,
        "bars": 3
       },
       {
-       "right": -1.3,
+       "right": -0.7,
        "bars": 2
       },
       {
-       "fwd": 1.5,
+       "fwd": 0.8,
        "bars": 3
       }
      ],
@@ -1621,12 +1622,6 @@
     "rail": {
      "good": [
       {
-       "to": "arena_gate",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3
-      },
-      {
        "to": "gate_dais",
        "role": "on_stage",
        "style": "climb",
@@ -1647,7 +1642,7 @@
        "bars": 2
       }
      ],
-     "arrive": "arena_tier_l",
+     "arrive": "arena_edge",
      "glances": [
       {
        "by": 26,
@@ -2277,16 +2272,15 @@
      ],
      "strolls": [
       {
-       "fwd": 1.4,
+       "fwd": 0.7,
        "bars": 3
       },
       {
-       "turn": -30,
-       "fwd": 0.9,
+       "fwd": 0.5,
        "bars": 3
       },
       {
-       "right": 1.2,
+       "right": 0.6,
        "bars": 2
       }
      ],
@@ -2404,7 +2398,6 @@
      ],
      "strolls": [
       {
-       "turn": -30,
        "fwd": 0.9,
        "bars": 3
       },
@@ -2481,12 +2474,6 @@
      "good": [
       {
        "to": "dayroom_mid",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3
-      },
-      {
-       "to": "day_tv_in",
        "role": "dancer",
        "style": "walk",
        "bars": 3
@@ -2595,12 +2582,6 @@
      "good": [
       {
        "to": "cafe_mid",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3
-      },
-      {
-       "to": "cafe_serving",
        "role": "dancer",
        "style": "walk",
        "bars": 3
@@ -2891,7 +2872,6 @@
        "bars": 3
       },
       {
-       "turn": -30,
        "fwd": 0.9,
        "bars": 3
       }
@@ -3210,13 +3190,7 @@
     "rail": {
      "good": [
       {
-       "to": "dorm_mid",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3
-      },
-      {
-       "to": "dorm_bed",
+       "to": "dorm_door",
        "role": "dancer",
        "style": "walk",
        "bars": 3
@@ -3239,35 +3213,34 @@
      "arrive": "dorm_door",
      "glances": [
       {
-       "by": -26,
+       "by": -13.0,
        "bars": 2
       },
       {
-       "by": 12,
-       "pitch": 6,
+       "by": 6.0,
+       "pitch": 3.0,
        "bars": 2
       },
       {
-       "by": 22,
+       "by": 11.0,
        "bars": 2
       },
       {
-       "pitch": 12,
+       "pitch": 6.0,
        "bars": 3
       }
      ],
      "strolls": [
       {
-       "right": -1.4,
+       "right": -0.7,
        "bars": 2
       },
       {
-       "fwd": 1.5,
+       "fwd": 0.8,
        "bars": 3
       },
       {
-       "turn": 32,
-       "fwd": 1.0,
+       "fwd": 0.5,
        "bars": 3
       }
      ],
@@ -3335,12 +3308,6 @@
        "role": "dancer",
        "style": "walk",
        "bars": 3
-      },
-      {
-       "to": "corr_east",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3
       }
      ],
      "bad": [
@@ -3357,7 +3324,7 @@
        "bars": 3
       }
      ],
-     "arrive": "corr_west",
+     "arrive": "corr_art_door",
      "glances": [
       {
        "by": 12,
@@ -3379,16 +3346,15 @@
      ],
      "strolls": [
       {
-       "fwd": 1.5,
+       "fwd": 0.8,
        "bars": 3
       },
       {
-       "turn": 32,
-       "fwd": 1.0,
+       "fwd": 0.5,
        "bars": 3
       },
       {
-       "right": -1.4,
+       "right": -0.7,
        "bars": 2
       }
      ],
@@ -3946,7 +3912,7 @@
     "rail": {
      "good": [
       {
-       "to": "quiet_far",
+       "to": "quiet",
        "role": "dancer",
        "style": "walk",
        "bars": 3
@@ -3966,38 +3932,37 @@
        "bars": 2
       }
      ],
-     "arrive": "quiet_door",
+     "arrive": "quiet",
      "glances": [
       {
-       "by": 28,
+       "by": 14.0,
        "bars": 2
       },
       {
-       "pitch": -6,
-       "by": 10,
+       "pitch": -3.0,
+       "by": 5.0,
        "bars": 2
       },
       {
-       "by": -20,
+       "by": -10.0,
        "bars": 2
       },
       {
-       "pitch": 10,
+       "pitch": 5.0,
        "bars": 3
       }
      ],
      "strolls": [
       {
-       "right": 1.2,
+       "right": 0.3,
        "bars": 2
       },
       {
-       "fwd": 1.4,
+       "fwd": 0.3,
        "bars": 3
       },
       {
-       "turn": -30,
-       "fwd": 0.9,
+       "fwd": 0.2,
        "bars": 3
       }
      ],
@@ -4106,7 +4071,6 @@
        "bars": 3
       },
       {
-       "turn": -30,
        "fwd": 0.9,
        "bars": 3
       },
@@ -4335,20 +4299,20 @@
      "arrive": "treat_door",
      "glances": [
       {
-       "pitch": 12,
+       "pitch": 6.0,
        "bars": 3
       },
       {
-       "by": -26,
+       "by": -13.0,
        "bars": 2
       },
       {
-       "by": 12,
-       "pitch": 6,
+       "by": 6.0,
+       "pitch": 3.0,
        "bars": 2
       },
       {
-       "by": 22,
+       "by": 11.0,
        "bars": 2
       }
      ],
@@ -4431,12 +4395,6 @@
        "role": "dancer",
        "style": "walk",
        "bars": 3
-      },
-      {
-       "to": "dorm_bed",
-       "role": "dancer",
-       "style": "walk",
-       "bars": 3
       }
      ],
      "bad": [
@@ -4456,35 +4414,34 @@
      "arrive": "dorm_door",
      "glances": [
       {
-       "by": -26,
+       "by": -13.0,
        "bars": 2
       },
       {
-       "by": 12,
-       "pitch": 6,
+       "by": 6.0,
+       "pitch": 3.0,
        "bars": 2
       },
       {
-       "by": 22,
+       "by": 11.0,
        "bars": 2
       },
       {
-       "pitch": 12,
+       "pitch": 6.0,
        "bars": 3
       }
      ],
      "strolls": [
       {
-       "right": -1.4,
+       "right": -0.7,
        "bars": 2
       },
       {
-       "fwd": 1.5,
+       "fwd": 0.8,
        "bars": 3
       },
       {
-       "turn": 32,
-       "fwd": 1.0,
+       "fwd": 0.5,
        "bars": 3
       }
      ],
