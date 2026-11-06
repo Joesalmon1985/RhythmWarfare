@@ -33,7 +33,13 @@ var glow_colors: Array = [Color(0.4, 1.0, 0.95), Color(1.0, 0.4, 0.85), Color(1.
 ## The 2.5D world (StoryMap, docs/STORY_25D_PLAN.md): with a map attached positions are ground coordinates [x, z] in metres instead of design pixels, every
 ## actor's feet are projected through StoryProjector from the camera pose the stage hands over, dancers are sorted by distance and culled by sector visibility.
 const HERO_M := 1.7  # a dancer is this tall in the world
-const NEAR_FADE := Vector2(1.0, 1.8)  # dancers closer than this (m) to the eye fade out so a passer-by never fills the screen
+## The figure size cap (style guide section 7, audit F1(b) and F8): a person is never drawn larger than FIG_CAP internal pixels per pixel of the finest level of their
+## sheet (`mag`). Coming closer, a person of the crowd dissolves (an ordered-dither fade, story_people.gdshader) between FIG_FADE and FIG_CAP and is gone at the cap;
+## a person the story needs (the hero, the followspot's dancer, anyone acting for a hotspot or its outcome, anyone directed) is held back instead: drawn on the floor at the
+## cap distance along their own bearing, so they stay whole and readable. A bigger finest level (people.json `h0` / min `lods`) moves the cap closer by itself.
+const FIG_CAP := 1.25
+const FIG_FADE := 1.05
+const SIL_NEAR_M := 8.0
 const OPEN_GAP := 0.42
 const POSE_RATE := 30.0
 const POSE_RATE_FAR := 15.0  # dancers further than FAR_M animate at this rate: they are a few pixels tall
@@ -59,6 +65,11 @@ var _order_key := ""
 var people: StoryPeople  # the chapter's baked sheets (null: the live rig draws everyone)
 var light_fn := Callable()  # (sector id, ground position) -> Color: the light a person stands in (the stage sets it when the world is built)
 var fog_m := Vector2(5.5, 17.0)  # depth (m) where the back rows start fading into the fog, and where they are fully faded
+var fig_m := 112.0 / HERO_M  # sheet pixels per metre of the finest level (setup reads the chapter's sheets)
+var cap_max := 0.0  # the largest `mag` drawn last frame (the headless figure-cap check reads it)
+var cap_over := 0  # people drawn above FIG_CAP last frame (must stay 0)
+var cap_held := 0  # people held back at the cap last frame
+var cap_gone := 0  # crowd people inside the cap last frame (dissolved away)
 
 
 func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
@@ -66,6 +77,11 @@ func setup(p_assets: StoryAssets, p_data: StoryData) -> void:
 	data = p_data
 	_rng.seed = 4242
 	people = StoryPeople.for_assets(assets)
+	if people != null and people.ok():
+		var lmin := 1.0
+		for l in people.lods:
+			lmin = minf(lmin, float(l))
+		fig_m = people.h0 / maxf(lmin, 0.01) / HERO_M
 	var n := 0
 	for a in data.actors:
 		if str(a.get("view", "main")) != view:
@@ -311,6 +327,10 @@ func update(t: float, p_energy: float) -> void:
 	energy = p_energy
 	var e01 := clampf(energy / 100.0, 0.0, 1.0)
 	drawn = 0
+	cap_max = 0.0
+	cap_over = 0
+	cap_held = 0
+	cap_gone = 0
 	if map == null:
 		return  # a crowd stands in a world: attach_map first
 	if t < _last_t:  # a restart: fades start over
@@ -359,10 +379,14 @@ func update(t: float, p_energy: float) -> void:
 		if _story_lit(a, t):
 			lit = maxf(lit, STORY_LIT)  # a person acting for a hotspot or its outcome carries a light of their own (visual polish: they read in a dark room and in a crowd)
 		var alpha := float(a["alpha"]) * (1.0 - clampf((vu - 0.55) / 0.45, 0.0, 1.0))
-		var shown := _place_world(a, c, vu)  # false: behind a wall, out of view or too close: not drawn and not posed, but it keeps its state
+		var shown := _place_world(a, c, vu, id == lit_id or str(a["data"].get("role", "")) == "hero" or _held_by_story(a, t))  # false: behind a wall, out of view or inside the cap: not drawn and not posed, but it keeps its state
 		if shown:
 			alpha *= float(a["near"])
 			drawn += 1
+			var mag := float(a.get("mag", 0.0)) * (1.0 - 0.5 * vu)
+			cap_max = maxf(cap_max, mag)
+			if mag > FIG_CAP + 1.0e-3:
+				cap_over += 1
 		c.visible = shown
 		c.modulate = Color(lit, lit, lit * 0.97, alpha)
 		c.reduced = reduced
@@ -475,8 +499,9 @@ func _ground_of(sec: String) -> float:
 	return float(map.sector(sec).get("floor", 0.0)) if sec != "" else 0.0
 
 
-## Project one dancer: set its node's position and scale, `near` (a fade for a passer-by at the eye) and `depth`. False when it should not be drawn.
-func _place_world(a: Dictionary, c: StoryCharacter, vu: float) -> bool:
+## Project one dancer: set its node's position and scale, `near` (the dissolve towards the size cap), `mag` (internal pixels per sheet pixel) and `depth`. False when it
+## should not be drawn. `hold`: a person the story needs is held back at the cap distance instead of dissolving (FIG_CAP).
+func _place_world(a: Dictionary, c: StoryCharacter, vu: float, hold := false) -> bool:
 	if cam_pose.is_empty():
 		return false
 	var pos: Vector2 = a["pos"]
@@ -496,13 +521,26 @@ func _place_world(a: Dictionary, c: StoryCharacter, vu: float) -> bool:
 	if depth < StoryProjector.NEAR:
 		return false
 	var ppm := _focal / depth  # pixels per metre at this distance
+	var ppm_cap := FIG_CAP * fig_m  # the most pixels per metre a person may get
+	if ppm > ppm_cap and hold:  # held back: the same bearing, the feet on the floor at the cap distance
+		var d_cap := _focal / ppm_cap
+		var along2 := (d_cap - up * _sin_p) / _cos_p if _pitch != 0.0 else d_cap
+		rel *= along2 / maxf(along, 1.0e-3)
+		along = along2
+		depth = d_cap
+		a["depth"] = depth
+		ppm = ppm_cap
+		cap_held += 1
 	var cy := up * _cos_p - along * _sin_p if _pitch != 0.0 else up
 	var feet := Vector2(view_size.x * 0.5 + ppm * rel.dot(_rgt), view_size.y * 0.5 - ppm * cy)
 	var tall := HERO_M * ppm  # the dancer's height on screen: close ones have their feet below the edge but their body in view
 	if feet.x < -view_size.x * 0.25 or feet.x > view_size.x * 1.25 or feet.y - tall > view_size.y or feet.y < -view_size.y * 0.25:
 		return false
-	a["near"] = clampf((depth - NEAR_FADE.x) / (NEAR_FADE.y - NEAR_FADE.x), 0.0, 1.0)
+	var mag := ppm / fig_m
+	a["mag"] = mag
+	a["near"] = clampf((FIG_CAP - mag) / (FIG_CAP - FIG_FADE), 0.0, 1.0) if not hold else 1.0
 	if float(a["near"]) <= 0.0:
+		cap_gone += 1
 		return false
 	var pr := {"scale": ppm, "screen": feet}
 	var sc: float = ppm * float(a["k"]) * (1.0 - 0.5 * vu)
@@ -557,7 +595,7 @@ func _update_props() -> void:
 			continue
 		var at2: Vector2 = s["at"]
 		var pr2 := StoryProjector.project_ground(at2.x, at2.y, _ground_of(sec2), cam_pose, view_size)
-		p2.visible = bool(pr2["visible"])
+		p2.visible = bool(pr2["visible"]) and float(pr2["depth"]) >= SIL_NEAR_M  # a rear-row silhouette never stands nearer than SIL_NEAR_M (style guide section 9)
 		if not p2.visible:
 			continue
 		var sway := sin((beats * 0.25 + float(s["ph"])) * TAU) * (2.0 + energy * 0.05)
@@ -913,6 +951,12 @@ func look_point(target: String) -> Variant:
 		if str(t["id"]) == target:
 			return t["at"]
 	return null
+
+
+## Whether the story needs a person whole at `t` (held back at the size cap, never dissolved): a forced act is running (a hotspot's, an outcome's, a cast line's; not a room-wide wave).
+func _held_by_story(a: Dictionary, t: float) -> bool:
+	var dir: Dictionary = a["dir"]
+	return bool(dir.get("force", false)) and t < float(dir.get("until", -1.0)) and t >= float(dir.get("from", -1.0e9))
 
 
 ## Whether a person is acting for a hotspot (its available or selected act) or for a hotspot's outcome at `t`.

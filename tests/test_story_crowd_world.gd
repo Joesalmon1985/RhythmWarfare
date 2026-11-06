@@ -85,9 +85,9 @@ func test_dancers_sort_far_to_near() -> void:
 		assert_true(z >= prev_z - 1.0e-4, "%s is drawn after something further" % id)
 		prev_z = z
 	# nearer is later, whatever the ids
-	c.actors["c01"]["pos"] = Vector2(0.0, 4.9)
+	c.actors["c01"]["pos"] = Vector2(0.0, 2.0)  # (both outside the figure size cap: StoryCrowd.FIG_CAP)
 	c.actors["c01"]["sec"] = "floor"
-	c.actors["c10"]["pos"] = Vector2(0.4, 5.1)
+	c.actors["c10"]["pos"] = Vector2(0.4, 2.3)
 	c.actors["c10"]["sec"] = "floor"
 	_look_from(stage, "floor_centre", 2.0)
 	var o2 := c.drawn_order()
@@ -255,10 +255,28 @@ func test_projected_scale_follows_distance() -> void:
 func test_a_dancer_at_the_eye_fades_out() -> void:
 	var stage := _stage()
 	var c: StoryCrowd = stage.crowd
-	c.actors["c01"]["pos"] = Vector2(0.0, 6.0)  # half a metre in front of the dancer at floor_centre
+	c.actors["c10"]["pos"] = Vector2(0.0, 6.0)  # half a metre in front of the dancer at floor_centre
+	c.actors["c10"]["sec"] = "floor"
+	_look_from(stage, "floor_centre", 2.0)
+	assert_false((c.actors["c10"]["node"] as StoryCharacter).visible, "too close to draw")
+	assert_true(c.cap_gone >= 1, "counted as inside the size cap")
+	assert_eq(c.cap_over, 0, "nobody is drawn above the size cap")
+	assert_true(c.cap_max <= StoryCrowd.FIG_CAP + 1.0e-3, "the largest person drawn is within the cap (%.2f)" % c.cap_max)
+	stage.free()
+
+
+func test_the_hero_at_the_eye_is_held_back_at_the_size_cap() -> void:
+	var stage := _stage()
+	var c: StoryCrowd = stage.crowd
+	c.actors["c01"]["pos"] = Vector2(0.3, 6.0)  # the hero, half a metre in front of the eye: the story needs them, so they are held back, not dissolved
 	c.actors["c01"]["sec"] = "floor"
 	_look_from(stage, "floor_centre", 2.0)
-	assert_false((c.actors["c01"]["node"] as StoryCharacter).visible, "too close to draw")
+	var a: Dictionary = c.actors["c01"]
+	assert_true((a["node"] as StoryCharacter).visible, "the hero stays in the picture")
+	assert_true(absf(float(a["mag"]) - StoryCrowd.FIG_CAP) < 1.0e-3, "drawn at the cap (%.3f)" % float(a["mag"]))
+	assert_true(float(a["depth"]) > 1.5, "at the cap distance, not at the eye (%.2f m)" % float(a["depth"]))
+	assert_true(c.cap_held >= 1)
+	assert_eq(c.cap_over, 0)
 	stage.free()
 
 

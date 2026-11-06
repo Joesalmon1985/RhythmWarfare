@@ -11,6 +11,9 @@ mean hue of the lit pixels. The same numbers for the three references come first
   FLAT     p95 - p5 under 0.25 (no range)      CRUSH    more than 35 % under 0.04
   GARISH   mean saturation over 0.62
 The thresholds are derived from the references (median 0.14 to 0.21, p95 0.41 to 0.68, saturation 0.35 to 0.5).
+A last column checks the style guide's own rules (docs/art/STYLE_GUIDE.md section 2; the daylight worlds of DAY may run brighter):
+  p5<      p5 under 0.035              dim      median under 0.11              bright   median over 0.24 (DAY: 0.38)
+  crushed  more than 10 % under 0.04   blown    more than 1.5 % over 0.85      ok       none of these
 """
 import colorsys
 import glob
@@ -60,6 +63,24 @@ def measure(paths, crop=True):
     return r
 
 
+DAY = ("gospel_jordan", "gospel_galilee", "gospel_road", "gospel_jerusalem", "squadron_base", "squadron_air", "ember_hollow")
+
+
+def guide(name, r):
+    g = []
+    if r["p5"] < 0.035:
+        g.append("p5<")
+    if r["p50"] < 0.11:
+        g.append("dim")
+    if r["p50"] > (0.38 if name in DAY else 0.24):
+        g.append("bright")
+    if r["crush"] > 0.10:
+        g.append("crushed")
+    if r["blown"] > 0.015:
+        g.append("blown")
+    return ",".join(g) or "ok"
+
+
 def worlds():
     out = []
     r = json.load(open(os.path.join(ROOT, "content/run/run.json"), encoding="utf-8"))
@@ -72,16 +93,17 @@ def worlds():
     return out
 
 
-def row(name, r):
-    return "%-22s %5.2f %5.2f %5.2f  %4.2f  %5.1f%% %5.1f%%  %-16s %s" % (name, r["p5"], r["p50"], r["p95"], r["sat"], 100 * r["crush"], 100 * r["blown"], r["hue"], r["flags"])
+def row(name, r, ref=False):
+    return "%-22s %5.2f %5.2f %5.2f  %4.2f  %5.1f%% %5.1f%%  %-16s %-14s %s" % (name, r["p5"], r["p50"], r["p95"], r["sat"], 100 * r["crush"], 100 * r["blown"], r["hue"], r["flags"],
+                                                                            "" if ref else guide(name, r))
 
 
 def main():
     raw = sys.argv[1]
     refs = os.path.join(ROOT, "pixelexample")
-    print("%-22s %5s %5s %5s  %4s  %6s %6s  %-16s %s" % ("picture", "p5", "p50", "p95", "sat", "crush", "blown", "lit mean", "flags"))
+    print("%-22s %5s %5s %5s  %4s  %6s %6s  %-16s %-14s %s" % ("picture", "p5", "p50", "p95", "sat", "crush", "blown", "lit mean", "flags", "guide"))
     for f in ("Rave", "Hospital", "InsaneAsylum"):
-        print(row("ref " + f, measure([os.path.join(refs, f + ".png")], crop=False)))
+        print(row("ref " + f, measure([os.path.join(refs, f + ".png")], crop=False), ref=True))
     by = {}
     for pre, w, sid in worlds():
         by.setdefault(w, []).extend(glob.glob(os.path.join(raw, "%s%s__[am]*.jpg" % (pre, sid.replace(".", "_")))))
