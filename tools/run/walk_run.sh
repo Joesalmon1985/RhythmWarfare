@@ -4,7 +4,7 @@
 # paths perfect_a to perfect_d visit all 36 scenes of the seven worlds (checked at the end of a full run). Fails on any ERROR or SCRIPT line, a wrong scene sequence, a step that
 # is not a route of the scene before it, a rail place that is not on the scene's rails, missing glances, a wrong run save (reached = the worlds visited, never a scene), or a
 # chapter save written by the run. Needs a display (the worlds are rendered). The save goes to the throwaway directory on Linux (XDG_DATA_HOME) and on Windows (APPDATA); the audio driver is Dummy.
-#   RW_WALK_IGNORE=<regex> drops matching ERROR lines from the check.
+#   RW_WALK_IGNORE=<regex> drops matching ERROR lines from the check. RW_WALK_TIMEOUT=<seconds> per walk (default 900; a run of track scenes plays several times longer).
 #   RW_RUN_TAPS=scripted|none|changed|failure  the tap policy of the hotspot window (default scripted: the bot taps the hotspot that leads where the path says; none: no taps, the default exits;
 #                changed: a decoy first, then the scripted tap; failure: scripted taps with the last block of every phase missed, so every tapped hotspot takes its failure outcome). With none and
 #                failure the scene sequence is not fixed (only "every step is a route of the scene before it" and the saves are checked, and the all-scenes check is skipped).
@@ -50,7 +50,7 @@ for p in "${PATHS[@]}"; do
   DIR="$(mktemp -d)"
   echo "== path $p ($BOT, routes $ROUTES)${PATH_ID:+ in the path $PATH_ID}"
   env XDG_DATA_HOME="$DIR/data" APPDATA="$DIR/data" ${PATH_ID:+RW_RUN_PATH=$PATH_ID} RW_RUN_VIRTUAL=1 RW_STORY_RATE="$RATE" RW_STORY_QUIT=1 RW_RUN_BOT="$BOT" RW_RUN_ROUTES="$ROUTES" RW_RUN_UNTIL_PHASE="$UNTIL" RW_SEED=2 \
-      ${START:+RW_RUN_START=$START} timeout 900 "$GODOT" --audio-driver Dummy --path "$ROOT" res://src/run/run_play.tscn > "$DIR/out.txt" 2>&1
+      ${START:+RW_RUN_START=$START} timeout "${RW_WALK_TIMEOUT:-900}" "$GODOT" --audio-driver Dummy --path "$ROOT" res://src/run/run_play.tscn > "$DIR/out.txt" 2>&1
   rc=$?
   BAD="$(grep -E "ERROR|SCRIPT" "$DIR/out.txt" | grep -v "RID allocations\|leaked\|still in use\|ObjectDB" | grep -Ev "${RW_WALK_IGNORE:-^\$}" | head -5)"
   if [ -n "$BAD" ]; then echo "FAIL: errors in the run:"; echo "$BAD"; FAIL=1; fi
