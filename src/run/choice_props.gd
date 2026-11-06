@@ -18,6 +18,18 @@ static func tex(name: String) -> Texture2D:
 	return _tex[name]
 
 
+## Each world draws its own doors, lamps and boards (art package A4, ruling 27): the map's set folder first (tools/run/make_choice_art.py SET_MAPS), else the shared file.
+const SETS := {"night_one": "warehouse", "mothership": "ship", "underworld": "hell", "hospital": "hospital", "mental_hospital": "ward", "galilee_shore": "galilee",
+	"hillside": "galilee", "bethany": "galilee", "jerusalem": "jerusalem", "airfield": "airfield", "city": "city", "harbour": "harbour", "orchard": "orchard",
+	"birch_hall": "birch", "deep_halls": "deeps", "ash_land": "ash"}
+
+
+static func tex_in(name: String, map_id: String) -> Texture2D:
+	var set_id := "bassment" if map_id.begins_with("bassment") else str(SETS.get(map_id, ""))
+	var t: Texture2D = tex(set_id + "/" + name) if set_id != "" else null
+	return t if t != null else tex(name)
+
+
 func begin_frame() -> void:
 	_seen = {}
 
@@ -31,7 +43,8 @@ func end_frame() -> void:
 ## Stand prop `key` (a name unique in the stage) with texture `tex_name`, its bottom centre at `foot` (world), `height` metres tall; `ground`: a flat quad on the floor instead of a
 ## standing billboard; `light`: brightness (1 lit by itself, a lamp; under 1 a thing in the room's light); `alpha` 0..1.
 func put(key: String, tex_name: String, foot: Vector3, height: float, light := 0.85, alpha := 1.0, ground := false) -> void:
-	var t := tex(tex_name)
+	var sw := get_parent() as StoryWorld
+	var t := tex_in(tex_name, sw.map.id if sw != null and sw.map != null else "")
 	if t == null:
 		return
 	_seen[key] = true
