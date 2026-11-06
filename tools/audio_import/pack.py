@@ -78,6 +78,7 @@ def pack_stems(pack_dir: Path, src_dir: Path, keys: list[str], folded: list[str]
     tmp.mkdir(parents=True)
     for k in keys:
         _link(src_dir / f"{k}.ogg", tmp / f"{k}.ogg")
+    backing_gain = None
     if folded:
         x, _ = decode(src_dir / "backing.ogg", rate=PACK_RATE)
         for k in folded:
@@ -85,8 +86,13 @@ def pack_stems(pack_dir: Path, src_dir: Path, keys: list[str], folded: list[str]
             n = min(len(x), len(y))
             x = x[:n] + y[:n]
         peak = float(np.abs(x).max())
-        if peak > 1.0:  # cannot happen when the stems summed under full scale before; refuse rather than clip
-            raise RuntimeError(f"folded backing peaks at {peak:.3f}")
+        if peak > 1.0:  # the sum of backing and folded voices can pass full scale even when each part does not:
+            # scale the backing alone (never clip) and store the extra inverse in its own gain
+            extra = HEADROOM / peak
+            x = x * extra
+            backing_gain = round(src["gain"] / extra, 6)
+            if backing_gain > 2.0:
+                raise RuntimeError(f"folded backing peaks at {peak:.3f}: its gain would be {backing_gain}, over 2")
         encode_ogg(x, PACK_RATE, tmp / "backing.ogg", out_rate=PACK_RATE)
         n_b = len(decode(tmp / "backing.ogg", rate=PACK_RATE)[0])
         if abs(n_b - src["frames"]) / PACK_RATE > 0.002:
@@ -94,6 +100,8 @@ def pack_stems(pack_dir: Path, src_dir: Path, keys: list[str], folded: list[str]
     else:
         _link(src_dir / "backing.ogg", tmp / "backing.ogg")
     info = {**{k: src[k] for k in ("scale", "gain", "frames")}, "stamp": stamp, "folded": sorted(folded)}
+    if backing_gain is not None:
+        info["backing_gain"] = backing_gain
     (tmp / ".made_from").write_text(json.dumps(info))
     if stems_dir.exists():
         shutil.rmtree(stems_dir)
@@ -109,7 +117,8 @@ def write_pack(pack_dir: Path, meta: dict, voices: list[dict], backing: list[dic
     gain = info["gain"]
     out_v = [{"key": v["key"], "label": v["label"], "kind": v["kind"], "stem": f"stems/{v['key']}.ogg", "gain": gain}
              for v in voices]
-    out_b = [{"key": b["key"], "stem": f"stems/{b['key']}.ogg", "gain": gain} for b in backing]
+    out_b = [{"key": b["key"], "stem": f"stems/{b['key']}.ogg", "gain": info.get("backing_gain", gain)}
+             for b in backing]
     tj = {"format": FORMAT, "id": meta["id"], "title": meta["title"], "artist": meta["artist"],
           "duration_s": round(info["frames"] / PACK_RATE, 4), "tempo": meta["tempo"],
           "voices": out_v, "backing": out_b, "sections": meta["sections"], "focus": meta["focus"],
