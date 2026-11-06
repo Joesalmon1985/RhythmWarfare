@@ -31,7 +31,8 @@ var reacted: Array = []  # every reactive object's reaction ({reactive, reaction
 var persist_dirty := false  # a persistent flag changed since the owner last saved
 var preselect := false  # (run.json `choice.preselect`, off by default: an owner's decision) a staged final-window option may be touched before its window opens; the commit is unchanged
 ## (work package N2.2, lead ruling 15) A touched quest entrance or return (a route into a path or the Bassment, or the way back to the main run) commits as a success whatever the last block's
-## result: entering or leaving a quest is never gated by rhythm, so its own success effects run and its failure outcome is never taken. RunPlay turns it on with the narrative router;
+## result: entering or leaving a quest is never gated by rhythm, so its own success effects run and its failure outcome is never taken (unless that failure leads the same way: then it is
+## no gate, and its authored outcome, a cinematic, stays). RunPlay turns it on with the narrative router;
 ## off (the engine tests, the event baseline) the old rule holds: the block decides.
 var ungated_quest_routes := false
 
@@ -283,8 +284,9 @@ func commit_final(passed: bool, credit := -1.0) -> Dictionary:
 		if h.is_empty():
 			return {}
 	var success := _success_of(h, passed, credit) if tapped else true
-	if tapped and ungated_quest_routes and HotspotContract.is_quest_route(str((h.get("on_success", {}) as Dictionary).get("route", ""))):
-		success = true
+	var q_route := str((h.get("on_success", {}) as Dictionary).get("route", ""))
+	if tapped and ungated_quest_routes and HotspotContract.is_quest_route(q_route) and str((h.get("on_failure", {}) as Dictionary).get("route", "")) != q_route:
+		success = true  # (a failure that already leads the same way, e.g. the Ember pool's snatched ending, keeps its own authored outcome: it is no gate)
 	var out := _resolve(h, success, tapped, "final")
 	committed = str(h["id"])
 	if str(out["activity"]) != "":  # a minigame: the run stays at this scene while it lasts
