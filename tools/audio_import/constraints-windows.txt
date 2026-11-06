@@ -1,0 +1,11 @@
+# Windows 11, Python 3.13, NVIDIA GPU (RTX 3060). Install the CUDA build of torch first, from the PyTorch index:
+#   pip install --index-url https://download.pytorch.org/whl/cu130 torch==2.11.0+cu130 torchaudio==2.11.0+cu130
+# then:  pip install -c tools/audio_import/constraints-windows.txt demucs librosa soundfile numpy scipy mido
+# (torch 2.15.0, the Linux CPU version, has no CUDA wheel for Windows; 2.11.0 is the newest cu130 build that has a matching torchaudio.)
+torch==2.11.0+cu130
+torchaudio==2.11.0+cu130
+demucs==4.1.0
+librosa==1.0.0
+numpy==2.5.4
+scipy==1.18.1
+soundfile==0.14.0

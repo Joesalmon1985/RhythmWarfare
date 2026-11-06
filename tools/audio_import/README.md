@@ -23,6 +23,28 @@ The first separation downloads the Demucs weights to `~/.cache/huggingface/hub` 
 `HF_HUB_OFFLINE=1`). Versions used: Python 3.12.3, torch 2.15.0+cpu, torchaudio 2.11.1+cpu, demucs 4.1.0,
 librosa 1.0.0, numpy 2.5.4, scipy 1.18.1, soundfile 0.14.0. Version 2 added no package.
 
+### Install on Windows 11 (NVIDIA GPU)
+
+The Linux section above is the CPU install the tool was first written on. On the Windows PC (RTX 3060 12 GB) the
+audio venv is `C:/Users/joesa/rw-audio-work/venv` (Python 3.13; ffmpeg 9 full build on PATH; the tool finds
+`ffmpeg` and `ffprobe` with `shutil.which`):
+
+    py -3.13 -m venv C:/Users/joesa/rw-audio-work/venv
+    V=C:/Users/joesa/rw-audio-work/venv/Scripts/python.exe
+    $V -m pip install --index-url https://download.pytorch.org/whl/cu130 torch==2.11.0+cu130 torchaudio==2.11.0+cu130
+    $V -m pip install -c tools/audio_import/constraints-windows.txt demucs librosa soundfile numpy scipy mido
+    $V -c "import torch; print(torch.cuda.is_available())"      # must print True
+
+Versions in use: Python 3.13.11, torch 2.11.0+cu130, torchaudio 2.11.0+cu130, demucs 4.1.0, librosa 1.0.0,
+numpy 2.5.4, scipy 1.18.1, soundfile 0.14.0 (the laptop's torch 2.15.0 and torchaudio 2.11.1 have no Windows CUDA
+wheel; the numpy, scipy, librosa, soundfile and demucs versions are the same as on the laptop).
+
+Device: Demucs runs on CUDA when `torch.cuda.is_available()`, else on the CPU. `import_track.py --device cpu|cuda|cuda:1`
+overrides it (`--device auto` is the default); the device used is written to the separation cache's `meta.json`
+and to `report.json` (`separation.device`). The work folder defaults to `$RW_AUDIO_WORK`, else `~/rw-audio-work`.
+Run tools from Git Bash with `PYTHONUTF8=1` if a track name has characters the console cannot show (the tool also
+switches its own output to UTF-8). Resume-able batch: `tools/audio_import/run_batch.sh`.
+
 ## Use
 
 One track:
