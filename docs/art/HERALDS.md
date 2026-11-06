@@ -55,7 +55,7 @@ and stops with an error when the placement breaks a rule below.
   its staged options and its default are the same with and without the heralds.
 - **Shown with its entrance.** A herald stands while its entrance is staged, meaning on offer in this visit. That runs from the scene's first beat,
   for as long as the entrance is available. So the herald of an entrance behind a flag (the star, the ember) appears when the entrance
-  does. The self herald stops once another option has been taken.
+  does. The self herald (the Floor wizard) points the way while he is not the current choice, and beckons as before once touched.
 - **Placement** (checked by `tools/run/heralds.py`):
   - inside a sector of the scene's map;
   - at least the entrance's touch radius plus 0.45 m from the entrance, so the body never covers the touch ring;

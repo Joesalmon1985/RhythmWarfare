@@ -8,8 +8,9 @@ extends RefCounted
 ## How it stands in the world: like the day room's card table (RunCardTable), a StoryCrowdProp of the crowd of the room it stands in, as an "occluder" the crowd projects, culls
 ## by sector and sorts by distance with the dancers every frame; its `drawer` draws the herald's frame (assets/story/heralds, tools/story/art/heralds.py) in the light a person
 ## standing there gets. The frames point to screen right; the drawer mirrors them whenever the entrance is on the herald's left on screen, so the gesture always points at it.
-## A `self` herald (the Warehouse wizard, who IS the entrance) plays the gesture on the entrance's own billboard while the entrance is on offer (current or not: the floor's
-## green or red light still says which); once another option has been taken (declined) the choice layer's own look takes over again.
+## A `self` herald (the Warehouse wizard, who IS the entrance) plays the gesture on the entrance's own billboard while the entrance is on offer and not the current choice
+## (in place of the choice layer's sad slump: from the scene's first beat he points the way down); once touched he is the current choice and beckons happy as the choice
+## layer says, and once another option has been taken (declined) its look is left alone.
 ## Everything is a pure function of song time and the camera: the same frame at the same time.
 
 const DOC := "res://assets/story/heralds/heralds.json"
@@ -270,10 +271,10 @@ func _light(prop: StoryCrowdProp, rec: Dictionary) -> Color:
 	return Color(clampf(l.r, lo, MAX_LIGHT), clampf(l.g, lo, MAX_LIGHT), clampf(l.b, lo, MAX_LIGHT), 1.0)
 
 
-## A `self` herald: the entrance's own billboard plays the gesture while the entrance is on offer (it replaces the choice layer's happy and sad frames; the pool's colour still
-## tells current from not); declined, the choice layer's look is left alone.
+## A `self` herald: the entrance's own billboard plays the gesture while the entrance is on offer and not current (in place of the sad frame; the red light on the floor still
+## says it is not the current choice); current, committed or declined, the choice layer's own look plays.
 func _pose_self(id: String, b: Dictionary, toward: Vector2, role: String) -> void:
-	if stage.world == null or role == "declined":
+	if stage.world == null or role != "other":
 		return
 	var th := str(b["self"])
 	var at := Vector2.ZERO
