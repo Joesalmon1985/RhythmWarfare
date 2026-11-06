@@ -112,7 +112,7 @@ class Cv:
         self.a[mask, :3] = np.asarray(col, np.float32)
         self.a[mask, 3] = 255
 
-    def paint(self, mask: np.ndarray, val, rp: np.ndarray, spread: float = 0.35, fine: bool = True) -> None:
+    def paint(self, mask: np.ndarray, val, rp: np.ndarray, spread: float = 0.15, fine: bool = True) -> None:
         """`fine`: the ramp is spread over 8 steps first, so the grain and wear of a surface move a short step, not a blotch from dark to light."""
         val = np.broadcast_to(np.asarray(val, np.float32), mask.shape)
         if fine and len(rp) < 8:
