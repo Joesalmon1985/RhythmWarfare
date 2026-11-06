@@ -39,6 +39,7 @@ var warnings: Array = []
 var path_id := ""  # the path this data belongs to ("" for the main run): run.json carries "path": {id, title, entry_from, returns_to, opens}
 var path_info: Dictionary = {}
 var skipped_portals: Array = []  # [{hotspot, scene, path}] portals whose path has no run.json yet: left out of play, logged (a dev note, not an error)
+var track_scenes: RunTrackScenes = null  # the scenes that play a whole recorded track (content/run/track_scenes.json, docs/RUN_TRACK_SCENES.md); null when track scenes are off or unassigned
 
 
 static func load_default() -> RunData:
@@ -159,6 +160,7 @@ static func load_files(run_path: String, music_path: String, packs_dir: String, 
 			d.errors.append("music.json lists node %s that run.json does not have" % id)
 	d._validate()
 	d._load_hotspots(hotspots_dir)
+	RunTrackScenes.attach(d)  # (does nothing when track scenes are off)
 	return d
 
 

@@ -1,0 +1,1108 @@
+{
+  "format": "rhythm_warfare.track_scenes.v1",
+  "defaults": {
+    "entry": "drop1",
+    "lead_in_bars": 16,
+    "doors_from_lap": 2,
+    "chart": "normal",
+    "max_laps": 12
+  },
+  "paths": {
+    "main": {
+      "warehouse": {
+        "track": "acuna_go_back",
+        "alternates": [
+          {
+            "track": "dc_breaks_slugs_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "moving_fusion_makosa",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "warehouse.bar": {
+        "track": "need_for_mirrors_zero_t_top_shelf_feat_spikey_tee",
+        "alternates": [
+          {
+            "track": "bennie_jam_thieves_madting",
+            "entry": "drop1"
+          },
+          {
+            "track": "hamilton_soundboy_vip",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "warehouse.balcony": {
+        "track": "chase_status_no_problem_original_mix",
+        "alternates": [
+          {
+            "track": "sub_focus_rock_it",
+            "entry": "drop1"
+          },
+          {
+            "track": "amplify_crossy_badman",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "warehouse.chill": {
+        "track": "stimpy_party_last_sounds",
+        "alternates": [
+          {
+            "track": "annix_kingdom",
+            "entry": "drop1"
+          },
+          {
+            "track": "northern_zone_faint",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "warehouse.booth": {
+        "track": "fatboy_slim_fatboy_slim_right_here_right_now_one_in_the_jungle_remix_osrqel13kmo",
+        "alternates": [
+          {
+            "track": "dc_breaks_take_that_vip",
+            "entry": "drop1"
+          },
+          {
+            "track": "dc_breaks_gambino_original_mix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "warehouse.exit": {
+        "track": "fresh_the_gatekeeper_original_mix",
+        "alternates": [
+          {
+            "track": "dc_breaks_proton_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "bou_kasra_trenchfoot",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "mothership": {
+        "track": "smg_sono_original_mix",
+        "alternates": [
+          {
+            "track": "ram_trilogy_evolution_marcus_intalex_st_files_remix",
+            "entry": "drop1"
+          },
+          {
+            "track": "metrik_metrik_hackers_chn2k5wwufc",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "mothership.gallery": {
+        "track": "annix_kingdom",
+        "alternates": [
+          {
+            "track": "madface_dawning",
+            "entry": "drop1"
+          },
+          {
+            "track": "paralel_in_the_clouds",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "mothership.reactor": {
+        "track": "bad_company_uk_trace_nitrous_audio_remix",
+        "alternates": [
+          {
+            "track": "ryme_tyme_optiv_btk_ignition_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "metrik_t_2000",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "mothership.bridge": {
+        "track": "metrik_metrik_hackers_chn2k5wwufc",
+        "alternates": [
+          {
+            "track": "break_overstayed",
+            "entry": "drop1"
+          },
+          {
+            "track": "ram_trilogy_evolution_marcus_intalex_st_files_remix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "mothership.exit": {
+        "track": "culture_shock_machine",
+        "alternates": [
+          {
+            "track": "metrik_t_2000",
+            "entry": "drop1"
+          },
+          {
+            "track": "bad_company_uk_trace_nitrous_audio_remix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "underworld": {
+        "track": "exile_destructive_vibrations",
+        "alternates": [
+          {
+            "track": "black_sun_empire_extraction",
+            "entry": "drop1"
+          },
+          {
+            "track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "underworld.court": {
+        "track": "simula_lazy_horn",
+        "alternates": [
+          {
+            "track": "k_motionz_simula_phantasm_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "visages_liber_primus",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "underworld.furnace": {
+        "track": "particle_pyro",
+        "alternates": [
+          {
+            "track": "ryme_tyme_optiv_btk_ignition_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "bou_kasra_trenchfoot",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "underworld.pit": {
+        "track": "black_sun_empire_extraction",
+        "alternates": [
+          {
+            "track": "teddy_killerz_teddy_killerz_night_train_t3ggcfz1vs",
+            "entry": "drop1"
+          },
+          {
+            "track": "exile_destructive_vibrations",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "underworld.exit": {
+        "track": "visages_liber_primus",
+        "alternates": [
+          {
+            "track": "insideinfo_victory_over_death_feat_monikali",
+            "entry": "drop1"
+          },
+          {
+            "track": "ac13_shostakovich",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "hospital": {
+        "track": "sub_focus_x_ray_metrik_remix",
+        "alternates": [
+          {
+            "track": "floodlight_dnb_aid_for_pakistan_warm_roller_memory",
+            "entry": "drop1"
+          },
+          {
+            "track": "northern_zone_faint",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "hospital.corridor": {
+        "track": "loadstar_dr_karg_original_mix",
+        "alternates": [
+          {
+            "track": "trex_chit_chat",
+            "entry": "drop1"
+          },
+          {
+            "track": "original_sin_therapy_remix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "hospital.dayroom": {
+        "track": "northern_zone_faint",
+        "alternates": [
+          {
+            "track": "floodlight_dnb_aid_for_pakistan_warm_roller_memory",
+            "entry": "drop1"
+          },
+          {
+            "track": "paralel_in_the_clouds",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "hospital.cafeteria": {
+        "track": "su3_ject_crystal_eyes",
+        "alternates": [
+          {
+            "track": "bennie_jam_thieves_madting",
+            "entry": "drop1"
+          },
+          {
+            "track": "stimpy_party_last_sounds",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "hospital.garden": {
+        "track": "bungle_cocooned",
+        "alternates": [
+          {
+            "track": "madface_dawning",
+            "entry": "drop1"
+          },
+          {
+            "track": "frankee_frankee_flim_flam_oggt1uhj5bs",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "hospital.exit": {
+        "track": "sub_focus_rock_it",
+        "alternates": [
+          {
+            "track": "chase_status_no_problem_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "amplify_crossy_badman",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "ward": {
+        "track": "trex_chit_chat",
+        "alternates": [
+          {
+            "track": "unglued_telefonik",
+            "entry": "drop1"
+          },
+          {
+            "track": "frankee_frankee_flim_flam_oggt1uhj5bs",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "ward.art": {
+        "track": "k_motionz_simula_phantasm_original_mix",
+        "alternates": [
+          {
+            "track": "smg_sono_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "nectax_zephyr",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "ward.dorm": {
+        "track": "floodlight_dnb_aid_for_pakistan_warm_roller_memory",
+        "alternates": [
+          {
+            "track": "bungle_cocooned",
+            "entry": "drop1"
+          },
+          {
+            "track": "smg_sono_original_mix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "ward.corridor": {
+        "track": "unglued_telefonik",
+        "alternates": [
+          {
+            "track": "trex_chit_chat",
+            "entry": "drop1"
+          },
+          {
+            "track": "culture_shock_machine",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "ward.courtyard": {
+        "track": "floodlight_dnb_aid_for_pakistan_radiax_headway",
+        "alternates": [
+          {
+            "track": "dc_breaks_gambino_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "moving_fusion_makosa",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "ward.exit": {
+        "track": "hamilton_soundboy_vip",
+        "alternates": [
+          {
+            "track": "dc_breaks_take_that_vip",
+            "entry": "drop1"
+          },
+          {
+            "track": "sub_focus_rock_it",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "hospital_late": {
+        "track": "teddy_killerz_teddy_killerz_night_train_t3ggcfz1vs",
+        "alternates": [
+          {
+            "track": "black_sun_empire_extraction",
+            "entry": "drop1"
+          },
+          {
+            "track": "bad_company_uk_trace_nitrous_audio_remix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "hospital_late.cafe": {
+        "track": "a_m_c_noise_of_thunder_original_mix",
+        "alternates": [
+          {
+            "track": "dc_breaks_slugs_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "dc_breaks_proton_original_mix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "hospital_late.quiet": {
+        "track": "lsb_the_hurting",
+        "alternates": [
+          {
+            "track": "floodlight_dnb_aid_for_pakistan_in_most_pulsar",
+            "entry": "drop1"
+          },
+          {
+            "track": "insideinfo_victory_over_death_feat_monikali",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "hospital_late.exit": {
+        "track": "freestylers_pendulum_sirreal_painkiller_noisia_remix",
+        "alternates": [
+          {
+            "track": "exile_destructive_vibrations",
+            "entry": "drop1"
+          },
+          {
+            "track": "sub_focus_rock_it",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "ward_late": {
+        "track": "break_overstayed",
+        "alternates": [
+          {
+            "track": "drumsound_bassline_smith_vigilante",
+            "entry": "drop1"
+          },
+          {
+            "track": "a_m_c_noise_of_thunder_original_mix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "ward_late.treat": {
+        "track": "original_sin_therapy_remix",
+        "alternates": [
+          {
+            "track": "k_motionz_simula_phantasm_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "frankee_frankee_flim_flam_oggt1uhj5bs",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "ward_late.dorm": {
+        "track": "frankee_frankee_flim_flam_oggt1uhj5bs",
+        "alternates": [
+          {
+            "track": "floodlight_dnb_aid_for_pakistan_in_most_pulsar",
+            "entry": "drop1"
+          },
+          {
+            "track": "lsb_the_hurting",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "ward_late.exit": {
+        "track": "moving_fusion_makosa",
+        "alternates": [
+          {
+            "track": "freestylers_pendulum_sirreal_painkiller_noisia_remix",
+            "entry": "drop1"
+          },
+          {
+            "track": "metrik_t_2000",
+            "entry": "drop2"
+          }
+        ]
+      }
+    },
+    "gospel": {
+      "jordan": {
+        "track": "mantra_decibella_tim_reaper_stars_are_calling",
+        "alternates": [
+          {
+            "track": "insideinfo_victory_over_death_feat_monikali",
+            "entry": "drop1"
+          },
+          {
+            "track": "annix_kingdom",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "jordan.baptism": {
+        "track": "paralel_in_the_clouds",
+        "alternates": [
+          {
+            "track": "ram_trilogy_evolution_marcus_intalex_st_files_remix",
+            "entry": "drop1"
+          },
+          {
+            "track": "madface_dawning",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "jordan.wilderness": {
+        "track": "ac13_shostakovich",
+        "alternates": [
+          {
+            "track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
+            "entry": "drop1"
+          },
+          {
+            "track": "visages_liber_primus",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "jordan.nazareth": {
+        "track": "bennie_jam_thieves_madting",
+        "alternates": [
+          {
+            "track": "bungle_cocooned",
+            "entry": "drop1"
+          },
+          {
+            "track": "floodlight_dnb_aid_for_pakistan_warm_roller_memory",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "galilee": {
+        "track": "su3_ject_crystal_eyes",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "floodlight_dnb_aid_for_pakistan_radiax_headway",
+            "entry": "drop1"
+          },
+          {
+            "track": "mr_traumatik_ft_posk_lotus",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "galilee.capernaum": {
+        "track": "northern_zone_faint",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "loadstar_dr_karg_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "nectax_zephyr",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "galilee.mount": {
+        "track": "madface_dawning",
+        "alternates": [
+          {
+            "track": "dc_breaks_take_that_vip",
+            "entry": "drop1"
+          },
+          {
+            "track": "paralel_in_the_clouds",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "galilee.storm": {
+        "track": "bad_company_uk_trace_nitrous_audio_remix",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "freestylers_pendulum_sirreal_painkiller_noisia_remix",
+            "entry": "drop1"
+          },
+          {
+            "track": "teddy_killerz_teddy_killerz_night_train_t3ggcfz1vs",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "road": {
+        "track": "floodlight_dnb_aid_for_pakistan_warm_roller_memory",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "mr_traumatik_ft_posk_lotus",
+            "entry": "drop1"
+          },
+          {
+            "track": "bennie_jam_thieves_madting",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "road.loaves": {
+        "track": "amplify_crossy_badman",
+        "alternates": [
+          {
+            "track": "su3_ject_crystal_eyes",
+            "entry": "drop1"
+          },
+          {
+            "track": "stimpy_party_last_sounds",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "road.entry": {
+        "track": "dc_breaks_take_that_vip",
+        "alternates": [
+          {
+            "track": "dj_fresh_tombraider_hq_6pfchcwomjg",
+            "entry": "drop1"
+          },
+          {
+            "track": "chase_status_no_problem_original_mix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "jerusalem": {
+        "track": "dc_breaks_slugs_original_mix",
+        "alternates": [
+          {
+            "track": "drumsound_bassline_smith_vigilante",
+            "entry": "drop1"
+          },
+          {
+            "track": "a_m_c_noise_of_thunder_original_mix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "jerusalem.gethsemane": {
+        "track": "lsb_the_hurting",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "nectax_zephyr",
+            "entry": "drop1"
+          },
+          {
+            "track": "bungle_cocooned",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "jerusalem.trial": {
+        "track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
+        "alternates": [
+          {
+            "track": "fresh_the_gatekeeper_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "ac13_shostakovich",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "jerusalem.golgotha": {
+        "track": "visages_liber_primus",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "lsb_the_hurting",
+            "entry": "drop1"
+          },
+          {
+            "track": "floodlight_dnb_aid_for_pakistan_in_most_pulsar",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "jerusalem.tomb": {
+        "track": "insideinfo_victory_over_death_feat_monikali",
+        "alternates": [
+          {
+            "track": "mantra_decibella_tim_reaper_stars_are_calling",
+            "entry": "drop1"
+          },
+          {
+            "track": "annix_kingdom",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "jerusalem.road": {
+        "track": "paralel_in_the_clouds",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "mantra_decibella_tim_reaper_stars_are_calling",
+            "entry": "drop1"
+          },
+          {
+            "track": "mr_traumatik_ft_posk_lotus",
+            "entry": "drop1"
+          }
+        ]
+      }
+    },
+    "squadron": {
+      "base": {
+        "track": "mampi_swift_soldiers_gyrhlx7pafa",
+        "alternates": [
+          {
+            "track": "drumsound_bassline_smith_vigilante",
+            "entry": "drop1"
+          },
+          {
+            "track": "bou_kasra_trenchfoot",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "base.c02": {
+        "track": "nu_elementz_trenches",
+        "alternates": [
+          {
+            "track": "break_overstayed",
+            "entry": "drop1"
+          },
+          {
+            "track": "metrik_metrik_hackers_chn2k5wwufc",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "base.c03": {
+        "track": "ternion_sound_artifice",
+        "alternates": [
+          {
+            "track": "floodlight_dnb_aid_for_pakistan_in_most_pulsar",
+            "entry": "drop1"
+          },
+          {
+            "track": "northern_zone_faint",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "air": {
+        "track": "drumsound_bassline_smith_vigilante",
+        "alternates": [
+          {
+            "track": "mampi_swift_soldiers_gyrhlx7pafa",
+            "entry": "drop1"
+          },
+          {
+            "track": "black_sun_empire_extraction",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "air.c05": {
+        "track": "dc_breaks_proton_original_mix",
+        "alternates": [
+          {
+            "track": "culture_shock_machine",
+            "entry": "drop1"
+          },
+          {
+            "track": "bad_company_uk_trace_nitrous_audio_remix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "air.c06": {
+        "track": "metrik_t_2000",
+        "alternates": [
+          {
+            "track": "smg_sono_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "sub_focus_x_ray_metrik_remix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "city": {
+        "track": "nectax_zephyr",
+        "alternates": [
+          {
+            "track": "lsb_the_hurting",
+            "entry": "drop1"
+          },
+          {
+            "track": "insideinfo_victory_over_death_feat_monikali",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "city.c08": {
+        "track": "ram_trilogy_evolution_marcus_intalex_st_files_remix",
+        "alternates": [
+          {
+            "track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
+            "entry": "drop1"
+          },
+          {
+            "track": "smg_sono_original_mix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "city.c09": {
+        "track": "fresh_the_gatekeeper_original_mix",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "ac13_shostakovich",
+            "entry": "drop1"
+          },
+          {
+            "track": "visages_liber_primus",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "city.c10": {
+        "track": "bou_kasra_trenchfoot",
+        "alternates": [
+          {
+            "track": "mampi_swift_soldiers_gyrhlx7pafa",
+            "entry": "drop1"
+          },
+          {
+            "track": "exile_destructive_vibrations",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "escape": {
+        "track": "culture_shock_machine",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "dc_breaks_proton_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "metrik_t_2000",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "escape.c12": {
+        "track": "black_sun_empire_extraction",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "freestylers_pendulum_sirreal_painkiller_noisia_remix",
+            "entry": "drop1"
+          },
+          {
+            "track": "teddy_killerz_teddy_killerz_night_train_t3ggcfz1vs",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "escape.c13": {
+        "track": "metal_work_freedom",
+        "alternates": [
+          {
+            "track": "mantra_decibella_tim_reaper_stars_are_calling",
+            "entry": "drop1"
+          },
+          {
+            "track": "madface_dawning",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "escape.c14": {
+        "track": "exile_destructive_vibrations",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "bou_kasra_trenchfoot",
+            "entry": "drop1"
+          },
+          {
+            "track": "visages_liber_primus",
+            "entry": "drop1"
+          }
+        ]
+      }
+    },
+    "ember": {
+      "hollow": {
+        "track": "mr_traumatik_ft_posk_lotus",
+        "alternates": [
+          {
+            "track": "mantra_decibella_tim_reaper_stars_are_calling",
+            "entry": "drop1"
+          },
+          {
+            "track": "paralel_in_the_clouds",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "hollow.ford": {
+        "track": "dc_breaks_gambino_original_mix",
+        "alternates": [
+          {
+            "track": "k_motionz_simula_phantasm_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "ryme_tyme_optiv_btk_ignition_original_mix",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "hollow.inn": {
+        "track": "stimpy_party_last_sounds",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "su3_ject_crystal_eyes",
+            "entry": "drop1"
+          },
+          {
+            "track": "amplify_crossy_badman",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "north": {
+        "track": "bungle_cocooned",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "ram_trilogy_evolution_marcus_intalex_st_files_remix",
+            "entry": "drop1"
+          },
+          {
+            "track": "northern_zone_faint",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "north.pass": {
+        "track": "annix_kingdom",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "mantra_decibella_tim_reaper_stars_are_calling",
+            "entry": "drop1"
+          },
+          {
+            "track": "smg_sono_original_mix",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "deeps": {
+        "track": "ac13_shostakovich",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "k_motionz_simula_phantasm_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "floodlight_dnb_aid_for_pakistan_in_most_pulsar",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "deeps.falls": {
+        "track": "nectax_zephyr",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "su3_ject_crystal_eyes",
+            "entry": "drop1"
+          },
+          {
+            "track": "paralel_in_the_clouds",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "marsh": {
+        "track": "smg_sono_original_mix",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "k_motionz_simula_phantasm_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "floodlight_dnb_aid_for_pakistan_warm_roller_memory",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "marsh.wall": {
+        "track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "bou_kasra_trenchfoot",
+            "entry": "drop1"
+          },
+          {
+            "track": "ac13_shostakovich",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "marsh.stair": {
+        "track": "floodlight_dnb_aid_for_pakistan_in_most_pulsar",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "lsb_the_hurting",
+            "entry": "drop1"
+          },
+          {
+            "track": "metal_work_freedom",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "marsh.plain": {
+        "track": "dj_fresh_tombraider_hq_6pfchcwomjg",
+        "alternates": [
+          {
+            "track": "hamilton_soundboy_vip",
+            "entry": "drop1"
+          },
+          {
+            "track": "break_overstayed",
+            "entry": "drop2"
+          }
+        ]
+      },
+      "mountain": {
+        "track": "particle_pyro",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "ryme_tyme_optiv_btk_ignition_original_mix",
+            "entry": "drop1"
+          },
+          {
+            "track": "culture_shock_machine",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "mountain.spring": {
+        "track": "madface_dawning",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "metal_work_freedom",
+            "entry": "drop1"
+          },
+          {
+            "track": "insideinfo_victory_over_death_feat_monikali",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "mountain.keeper": {
+        "track": "simula_lazy_horn",
+        "entry": "drop2",
+        "alternates": [
+          {
+            "track": "exile_destructive_vibrations",
+            "entry": "drop1"
+          },
+          {
+            "track": "visages_liber_primus",
+            "entry": "drop1"
+          }
+        ]
+      },
+      "mountain.taken": {
+        "track": "ryme_tyme_optiv_btk_ignition_original_mix",
+        "alternates": [
+          {
+            "track": "teddy_killerz_teddy_killerz_night_train_t3ggcfz1vs",
+            "entry": "drop1"
+          },
+          {
+            "track": "black_sun_empire_extraction",
+            "entry": "drop2"
+          }
+        ]
+      }
+    }
+  }
+}
