@@ -127,13 +127,17 @@ class Ctx:
             of.unlink()
 
     def _owned_by_other(self, pid: str) -> bool:
-        """The id's cache or pack was made from another recording (same artist and title, another file)."""
+        """The id's cache or pack was made from another recording (same artist and title, another file).
+        Recordings are told apart by file name, not by whole path: a pack made on another machine (the laptop's
+        /home/joe/..., this PC's C:/Users/...) is still this recording's pack, and must not be imported again as _2."""
+        def name(path: str) -> str:
+            return re.split(r"[\\/]", path.strip())[-1]
         f = self.out / "cache" / pid / "source.txt"
         if f.is_file():
-            return f.read_text(encoding="utf-8").strip() != str(self.src)
+            return name(f.read_text(encoding="utf-8")) != self.src.name
         try:
             tj = json.loads((self.out / "packs" / pid / "track.json").read_text(encoding="utf-8"))
-            return Path(tj["source"]["input_path"]).resolve() != self.src
+            return name(tj["source"]["input_path"]) != self.src.name
         except (OSError, ValueError, KeyError):
             return False
 
