@@ -66,6 +66,13 @@ S = the outcome when the player's last block passes, F = when it fails. Status `
 | underworld | underworld.exit | exit.exit_hospital (default) | exit | route hospital | same door, staggering (-5 energy) | always | verified |
 | underworld | underworld.exit | exit.exit_ward | exit | route ward | same door, staggering (-5 energy) | always | verified |
 | underworld | underworld.exit | exit.throne | object | take the throne: resident DJ (+10, music variation) | devoured, dumped out the south door (route ward, -10) | always | verified |
+| underworld | underworld | enter_bassment | secret | a violet gate in the back corner of the arena, the wizard pointing down: the Bassment (route bassment) | the gate sinks out of sight (-4) | always | verified |
+| underworld | underworld | enter_gospel | secret | a gold gate under one white star, the shepherd pointing: the Gospel path (route path:gospel) | the star gate flickers out (-4) | always | verified |
+| underworld | underworld | enter_ember | secret | an orange gate on the floor's near edge, Bram holding up the ember: the Ember Road path (route path:ember) | the ember gutters out (-4) | always | verified |
+| underworld | underworld | enter_squadron | secret | a green gate beside the east tier's door, the Gunner pointing: the Mission Count path (route path:squadron) | the radio gate gutters out (-4) | always | verified |
+| underworld | underworld.court | court.enter_bassment | secret | a violet gate between the court's columns, the wizard pointing down: the Bassment (route bassment) | the gate sinks out of sight (-4) | always | verified |
+| underworld | underworld.furnace | furnace.enter_gospel | secret | a gold gate by the anvils, the shepherd pointing: the Gospel path (route path:gospel) | the gate flickers out (-4) | always | verified |
+| underworld | underworld.pit | pit.enter_squadron | secret | a green gate on the pit's deck, the Gunner pointing: the Mission Count path (route path:squadron) | the gate gutters out (-4) | always | verified |
 | hospital | hospital | exit_corridor (default) | exit | route hospital.corridor | same door, staggering (-5 energy) | always | verified |
 | hospital | hospital | nurse | character | the nurse wheels you on (+6) | back to bed (-7, queasy) | always | verified |
 | hospital | hospital | family | character | the family cheers (+8, music variation) | a visitor sleeps through it (-4) | always | verified |
