@@ -44,7 +44,7 @@
    "floor_tex": "floor_grate",
    "ceil_tex": "ceil_pipes",
    "wall_tex": "wall_cable",
-   "light": 0.38,
+   "light": 0.49,
    "tint": "#60ff90"
   },
   {
@@ -72,7 +72,7 @@
    "floor_tex": "floor_dirt",
    "ceil_tex": "ceil_pipes",
    "wall_tex": "wall_cable",
-   "light": 0.36,
+   "light": 0.47,
    "tint": "#ff6050"
   },
   {
@@ -100,7 +100,7 @@
    "floor_tex": "floor_grate",
    "ceil_tex": "ceil_rock",
    "wall_tex": "wall_cable",
-   "light": 0.36,
+   "light": 0.47,
    "tint": "#50ff80"
   }
  ],
@@ -350,7 +350,7 @@
    "y": 1.7,
    "radius": 5,
    "color": "#40ff70",
-   "strength": 1.0
+   "strength": 1.25
   },
   {
    "id": "l_a2",
@@ -362,7 +362,7 @@
    "y": 1.7,
    "radius": 4,
    "color": "#40ff70",
-   "strength": 0.9
+   "strength": 1.12
   },
   {
    "id": "l_lp",
@@ -374,7 +374,7 @@
    "y": 1.4,
    "radius": 3.5,
    "color": "#ffb050",
-   "strength": 1.2
+   "strength": 1.5
   },
   {
    "id": "l_j1",
@@ -386,7 +386,7 @@
    "y": 1.2,
    "radius": 4.5,
    "color": "#ff3a2a",
-   "strength": 1.8
+   "strength": 2.25
   },
   {
    "id": "l_j2",
@@ -398,7 +398,7 @@
    "y": 1.2,
    "radius": 4.5,
    "color": "#40ff60",
-   "strength": 1.6
+   "strength": 2
   },
   {
    "id": "l_nest",
@@ -410,7 +410,7 @@
    "y": 1.2,
    "radius": 5,
    "color": "#ff4a30",
-   "strength": 1.3
+   "strength": 1.62
   },
   {
    "id": "l_gap",
@@ -422,7 +422,7 @@
    "y": 0.6,
    "radius": 3.5,
    "color": "#c0ffc0",
-   "strength": 1.4
+   "strength": 1.75
   }
  ],
  "waypoints": [

@@ -11,10 +11,10 @@
   {"tex": "floor_moss", "mode": "pulse", "rate": 1.5, "amount": 0.2, "bright": 0.3}
  ],
  "sectors": [
-  {"id": "terrace_hi", "polygon": [[-9, 10], [3, 10], [4, 5], [-8, 4]], "floor": 1.6, "ceiling": 6.5, "floor_tex": "floor_moss", "ceil_tex": "ceil_rock", "wall_tex": "wall_fungus", "light": 0.55, "tint": "#70e090", "ambient": 0.55},
-  {"id": "terrace_mid", "polygon": [[-8, 4], [4, 5], [5, 0], [-9, -1]], "floor": 0.8, "ceiling": 6, "floor_tex": "floor_moss", "ceil_tex": "ceil_rock", "wall_tex": "wall_fungus", "light": 0.6, "tint": "#60e080", "ambient": 0.55},
-  {"id": "pool", "polygon": [[-9, -1], [5, 0], [6, -8], [-10, -9]], "floor": -0.2, "ceiling": 7.5, "floor_tex": "water", "ceil_tex": "ceil_rock", "wall_tex": "wall_rock", "light": 0.6, "tint": "#40d890", "ambient": 0.55},
-  {"id": "spore_stairs", "polygon": [[5, 0], [12, 0], [12, -8], [6, -8]], "floor": 2.0, "ceiling": 7, "floor_tex": "floor_dirt", "ceil_tex": "ceil_rock", "wall_tex": "wall_fungus", "light": 0.55, "tint": "#90e060", "ambient": 0.5}
+  {"id": "terrace_hi", "polygon": [[-9, 10], [3, 10], [4, 5], [-8, 4]], "floor": 1.6, "ceiling": 6.5, "floor_tex": "floor_moss", "ceil_tex": "ceil_rock", "wall_tex": "wall_fungus", "light": 0.55, "tint": "#89c79b", "ambient": 0.55},
+  {"id": "terrace_mid", "polygon": [[-8, 4], [4, 5], [5, 0], [-9, -1]], "floor": 0.8, "ceiling": 6, "floor_tex": "floor_moss", "ceil_tex": "ceil_rock", "wall_tex": "wall_fungus", "light": 0.6, "tint": "#7dc38e", "ambient": 0.55},
+  {"id": "pool", "polygon": [[-9, -1], [5, 0], [6, -8], [-10, -9]], "floor": -0.2, "ceiling": 7.5, "floor_tex": "water", "ceil_tex": "ceil_rock", "wall_tex": "wall_rock", "light": 0.6, "tint": "#62b68e", "ambient": 0.55},
+  {"id": "spore_stairs", "polygon": [[5, 0], [12, 0], [12, -8], [6, -8]], "floor": 2.0, "ceiling": 7, "floor_tex": "floor_dirt", "ceil_tex": "ceil_rock", "wall_tex": "wall_fungus", "light": 0.55, "tint": "#97c37d", "ambient": 0.5}
  ],
  "walls": [
   {"from": [-8, 4], "to": [4, 5], "sector": "terrace_hi", "portal": "terrace_mid", "lower_tex": "wall_fungus", "upper_tex": "wall_fungus"},
@@ -50,15 +50,15 @@
   {"id": "stair_glow", "kind": "billboard", "sprite": "thing_glow", "at": [11.5, -3.5], "y": 1.2, "size": 3.0, "anim": "pulse", "blend": "add"},
   {"id": "farm_barrel", "kind": "billboard", "sprite": "thing_barrel", "at": [-2.2, 9.2], "y": 0.4, "size": 1.0},
   {"id": "farm_lamp", "kind": "billboard", "sprite": "thing_lamp", "at": [-2.0, 5.4], "y": 0.8, "size": 0.7, "anim": "flicker"},
-  {"id": "lt_cap_big", "kind": "light", "at": [-6.5, 1.9], "y": 1.8, "radius": 8.4, "color": "#40ff80", "strength": 2.29},
-  {"id": "lt_cap_a", "kind": "light", "at": [-3, 8.6], "y": 2.2, "radius": 7.2, "color": "#60ff90", "strength": 1.89},
-  {"id": "lt_cap_f", "kind": "light", "at": [-8, -6], "y": 1.5, "radius": 7.2, "color": "#30ffa0", "strength": 1.89},
-  {"id": "lt_cap_h", "kind": "light", "at": [10.3, -1.2], "y": 2.8, "radius": 7.2, "color": "#a0ff50", "strength": 2.03},
-  {"id": "lt_pool", "kind": "light", "at": [-1, -4], "y": 1.5, "radius": 10.8, "color": "#20d0a0", "strength": 2.16},
-  {"id": "lt_pool2", "kind": "light", "at": [3, -5], "y": 1.2, "radius": 7.2, "color": "#60ffc0", "strength": 1.76},
-  {"id": "lt_cap_c", "kind": "light", "at": [1.8, 9], "y": 1.8, "radius": 6.0, "color": "#80ff90", "strength": 1.62},
-  {"id": "lt_stair_door", "kind": "light", "at": [11, -3.5], "y": 1.8, "radius": 6.0, "color": "#ffc070", "strength": 1.76},
-  {"id": "lt_haze", "kind": "light", "at": [-2, 3], "y": 1.2, "radius": 8.4, "color": "#90ffb0", "strength": 1.35}
+  {"id": "lt_cap_big", "kind": "light", "at": [-6.5, 1.9], "y": 1.8, "radius": 8.4, "color": "#6bd48e", "strength": 2.29},
+  {"id": "lt_cap_a", "kind": "light", "at": [-3, 8.6], "y": 2.2, "radius": 7.2, "color": "#84db9e", "strength": 1.89},
+  {"id": "lt_cap_f", "kind": "light", "at": [-8, -6], "y": 1.5, "radius": 7.2, "color": "#5fd09c", "strength": 1.89},
+  {"id": "lt_cap_h", "kind": "light", "at": [10.3, -1.2], "y": 2.8, "radius": 7.2, "color": "#a3d877", "strength": 2.03},
+  {"id": "lt_pool", "kind": "light", "at": [-1, -4], "y": 1.5, "radius": 10.8, "color": "#48a88e", "strength": 2.16},
+  {"id": "lt_pool2", "kind": "light", "at": [3, -5], "y": 1.2, "radius": 7.2, "color": "#84dbb9", "strength": 1.76},
+  {"id": "lt_cap_c", "kind": "light", "at": [1.8, 9], "y": 1.8, "radius": 6.0, "color": "#9de2a5", "strength": 1.62},
+  {"id": "lt_stair_door", "kind": "light", "at": [11, -3.5], "y": 1.8, "radius": 6.0, "color": "#dfbc90", "strength": 1.76},
+  {"id": "lt_haze", "kind": "light", "at": [-2, 3], "y": 1.2, "radius": 8.4, "color": "#a9e6bb", "strength": 1.35}
  ],
  "waypoints": [
   {"id": "farm_top", "at": [-1.5, 8.6], "yaw": -10.7, "sector": "terrace_hi"},

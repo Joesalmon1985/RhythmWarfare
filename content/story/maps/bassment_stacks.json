@@ -11,10 +11,10 @@
   {"tex": "ceil_crystal", "mode": "pulse", "rate": 2, "amount": 0.2, "bright": 0.4}
  ],
  "sectors": [
-  {"id": "approach", "polygon": [[-5, 12], [5, 12], [8, 4], [-8, 4]], "floor": 0, "ceiling": 9, "floor_tex": "floor_crystal", "ceil_tex": "ceil_crystal", "wall_tex": "wall_crystal", "light": 0.4, "tint": "#7a7aff"},
-  {"id": "hall", "polygon": [[-13, 4], [13, 4], [15, -6], [-15, -6]], "floor": 0, "ceiling": 11, "floor_tex": "floor_crystal", "ceil_tex": "ceil_crystal", "wall_tex": "wall_crystal", "light": 0.45, "tint": "#8a70ff"},
-  {"id": "ledge", "polygon": [[-15, -6], [15, -6], [11, -11], [-11, -11]], "floor": 2.2, "ceiling": 11, "floor_tex": "floor_crystal", "ceil_tex": "ceil_crystal", "wall_tex": "wall_rock", "light": 0.5, "tint": "#5aa0ff"},
-  {"id": "chasm", "polygon": [[15, -6], [22, -6], [22, -11], [11, -11]], "floor": -3, "ceiling": 11, "floor_tex": "floor_dirt", "ceil_tex": "ceil_crystal", "wall_tex": "wall_rock", "light": 0.4, "tint": "#6040c0"}
+  {"id": "approach", "polygon": [[-5, 12], [5, 12], [8, 4], [-8, 4]], "floor": 0, "ceiling": 9, "floor_tex": "floor_crystal", "ceil_tex": "ceil_crystal", "wall_tex": "wall_crystal", "light": 0.48, "tint": "#9898e1"},
+  {"id": "hall", "polygon": [[-13, 4], [13, 4], [15, -6], [-15, -6]], "floor": 0, "ceiling": 11, "floor_tex": "floor_crystal", "ceil_tex": "ceil_crystal", "wall_tex": "wall_crystal", "light": 0.54, "tint": "#9e90df"},
+  {"id": "ledge", "polygon": [[-15, -6], [15, -6], [11, -11], [-11, -11]], "floor": 2.2, "ceiling": 11, "floor_tex": "floor_crystal", "ceil_tex": "ceil_crystal", "wall_tex": "wall_rock", "light": 0.6, "tint": "#7fa6da"},
+  {"id": "chasm", "polygon": [[15, -6], [22, -6], [22, -11], [11, -11]], "floor": -3, "ceiling": 11, "floor_tex": "floor_dirt", "ceil_tex": "ceil_crystal", "wall_tex": "wall_rock", "light": 0.48, "tint": "#6e5da3"}
  ],
  "walls": [
   {"from": [-8, 4], "to": [8, 4], "sector": "approach", "portal": "hall"},
@@ -52,17 +52,17 @@
   {"id": "col_glow_1", "kind": "billboard", "sprite": "thing_glow", "at": [5, 1.2], "y": 5, "size": 7.0, "anim": "pulse", "blend": "add"},
   {"id": "col_glow_2", "kind": "billboard", "sprite": "thing_glow", "at": [0.5, -4.2], "y": 5, "size": 7.0, "anim": "pulse", "blend": "add"},
   {"id": "col_glow_3", "kind": "billboard", "sprite": "thing_glow", "at": [9.5, -2], "y": 5, "size": 7.0, "anim": "pulse", "blend": "add"},
-  {"id": "lt_door", "kind": "light", "at": [-12.2, 1.0], "y": 1.8, "radius": 6, "color": "#ffb060", "strength": 1.3},
-  {"id": "lt_crack", "kind": "light", "at": [-11.2, -2.4], "y": 2.5, "radius": 6, "color": "#ff66ff", "strength": 1.4},
-  {"id": "lt_c1", "kind": "light", "at": [-8.5, -3.2], "y": 4, "radius": 9, "color": "#6a6aff", "strength": 1.4},
-  {"id": "lt_c2", "kind": "light", "at": [5, 1.2], "y": 4, "radius": 9, "color": "#a060ff", "strength": 1.4},
-  {"id": "lt_c3", "kind": "light", "at": [0.5, -4.2], "y": 4, "radius": 9, "color": "#5ab0ff", "strength": 1.3},
-  {"id": "lt_c4", "kind": "light", "at": [9.5, -2], "y": 4, "radius": 9, "color": "#9070ff", "strength": 1.3},
-  {"id": "lt_ledge", "kind": "light", "at": [0, -8.5], "y": 5, "radius": 10, "color": "#60b8ff", "strength": 1.4},
-  {"id": "lt_chasm", "kind": "light", "at": [17, -8.5], "y": 0, "radius": 8, "color": "#b060ff", "strength": 1.5},
-  {"id": "lt_approach", "kind": "light", "at": [0, 9], "y": 3, "radius": 9, "color": "#7080ff", "strength": 1.2},
-  {"id": "lt_torch_l", "kind": "light", "at": [-3.5, 11], "y": 2, "radius": 5, "color": "#ff9a40", "strength": 1.2},
-  {"id": "lt_torch_r", "kind": "light", "at": [3.5, 11], "y": 2, "radius": 5, "color": "#ff9a40", "strength": 1.2}
+  {"id": "lt_door", "kind": "light", "at": [-12.2, 1.0], "y": 1.8, "radius": 6, "color": "#dbb084", "strength": 1.56},
+  {"id": "lt_crack", "kind": "light", "at": [-11.2, -2.4], "y": 2.5, "radius": 6, "color": "#dd88dd", "strength": 1.68},
+  {"id": "lt_c1", "kind": "light", "at": [-8.5, -3.2], "y": 4, "radius": 9, "color": "#8c8cdd", "strength": 1.68},
+  {"id": "lt_c2", "kind": "light", "at": [5, 1.2], "y": 4, "radius": 9, "color": "#a784db", "strength": 1.68},
+  {"id": "lt_c3", "kind": "light", "at": [0.5, -4.2], "y": 4, "radius": 9, "color": "#7faeda", "strength": 1.56},
+  {"id": "lt_c4", "kind": "light", "at": [9.5, -2], "y": 4, "radius": 9, "color": "#a290df", "strength": 1.56},
+  {"id": "lt_ledge", "kind": "light", "at": [0, -8.5], "y": 5, "radius": 10, "color": "#84b4db", "strength": 1.68},
+  {"id": "lt_chasm", "kind": "light", "at": [17, -8.5], "y": 0, "radius": 8, "color": "#b084db", "strength": 1.8},
+  {"id": "lt_approach", "kind": "light", "at": [0, 9], "y": 3, "radius": 9, "color": "#9099df", "strength": 1.44},
+  {"id": "lt_torch_l", "kind": "light", "at": [-3.5, 11], "y": 2, "radius": 5, "color": "#d49c6b", "strength": 1.44},
+  {"id": "lt_torch_r", "kind": "light", "at": [3.5, 11], "y": 2, "radius": 5, "color": "#d49c6b", "strength": 1.44}
  ],
  "waypoints": [
   {"id": "stacks_entry", "at": [0, 10.2], "yaw": 0.0, "sector": "approach"},

@@ -31,10 +31,10 @@
   "wall_tile": "textures/wall_tile.png"
  },
  "sectors": [
-  {"id": "kitchen", "polygon": [[-6, 9], [6, 9], [7, -1], [-7, -1]], "floor": 0, "ceiling": 3.5, "floor_tex": "floor_kitchen", "ceil_tex": "ceil_beams", "wall_tex": "wall_tile", "light": 0.4, "tint": "#ffb070"},
-  {"id": "counter", "polygon": [[-7, -1], [7, -1], [7, -3], [-7, -3]], "floor": 1.0, "ceiling": 3.5, "floor_tex": "floor_kitchen", "ceil_tex": "ceil_beams", "wall_tex": "wall_tile", "light": 0.42, "tint": "#ff9a50"},
-  {"id": "furnace", "polygon": [[-3, -3], [3, -3], [4, -7], [-4, -7]], "floor": 0.4, "ceiling": 4.6, "floor_tex": "floor_grate", "ceil_tex": "ceil_pipes", "wall_tex": "wall_brick", "light": 0.45, "tint": "#ff6a30"},
-  {"id": "cold", "polygon": [[6.65, 2.5], [6.85, 0.5], [12, -2], [14, 2], [13, 6], [8, 6]], "floor": 0.3, "ceiling": 2.3, "floor_tex": "floor_pavement", "ceil_tex": "ceil_pipes", "wall_tex": "wall_tile", "light": 0.4, "tint": "#a8d8ff"}
+  {"id": "kitchen", "polygon": [[-6, 9], [6, 9], [7, -1], [-7, -1]], "floor": 0, "ceiling": 3.5, "floor_tex": "floor_kitchen", "ceil_tex": "ceil_beams", "wall_tex": "wall_tile", "light": 0.46, "tint": "#ffb070"},
+  {"id": "counter", "polygon": [[-7, -1], [7, -1], [7, -3], [-7, -3]], "floor": 1.0, "ceiling": 3.5, "floor_tex": "floor_kitchen", "ceil_tex": "ceil_beams", "wall_tex": "wall_tile", "light": 0.48, "tint": "#ff9a50"},
+  {"id": "furnace", "polygon": [[-3, -3], [3, -3], [4, -7], [-4, -7]], "floor": 0.4, "ceiling": 4.6, "floor_tex": "floor_grate", "ceil_tex": "ceil_pipes", "wall_tex": "wall_brick", "light": 0.52, "tint": "#ff6a30"},
+  {"id": "cold", "polygon": [[6.65, 2.5], [6.85, 0.5], [12, -2], [14, 2], [13, 6], [8, 6]], "floor": 0.3, "ceiling": 2.3, "floor_tex": "floor_pavement", "ceil_tex": "ceil_pipes", "wall_tex": "wall_tile", "light": 0.46, "tint": "#a8d8ff"}
  ],
  "walls": [
   {"from": [-7, -1], "to": [7, -1], "sector": "kitchen", "portal": "counter", "lower_tex": "wall_brass"},
@@ -74,15 +74,15 @@
   {"id": "pipes_cold", "kind": "billboard", "sprite": "thing_cables", "at": [12.6, 5.2], "y": 1.1, "size": 1.4, "anim": "none"},
   {"id": "barrel_cold", "kind": "billboard", "sprite": "thing_barrel", "at": [10.5, 0.5], "y": 0.5, "size": 1.1, "anim": "none"},
   {"id": "crystal_cold", "kind": "billboard", "sprite": "thing_crystal", "at": [12.0, 5.4], "y": 0.6, "size": 1.2, "anim": "pulse"},
-  {"id": "lt_furnace", "kind": "light", "at": [0, -5.2], "y": 2.2, "radius": 12, "color": "#ff5a1a", "strength": 2.0, "sectors": ["furnace", "counter", "kitchen", "cold"]},
-  {"id": "lt_furnace_k", "kind": "light", "at": [0, 0.5], "y": 2.0, "radius": 8, "color": "#ff7a2a", "strength": 1.1},
-  {"id": "lt_stove_w", "kind": "light", "at": [-5.0, 4], "y": 1.6, "radius": 6, "color": "#ff8a30", "strength": 1.4},
-  {"id": "lt_stove_e", "kind": "light", "at": [5, -2.0], "y": 2.0, "radius": 5, "color": "#ff8030", "strength": 1.2},
-  {"id": "lt_stove_w2", "kind": "light", "at": [-5, -2.0], "y": 2.0, "radius": 5, "color": "#ff8030", "strength": 1.2},
-  {"id": "lt_book", "kind": "light", "at": [-3.5, -1.5], "y": 1.5, "radius": 4, "color": "#ffd040", "strength": 1.6, "sectors": ["kitchen", "counter"]},
-  {"id": "lt_door_k", "kind": "light", "at": [0, 8.7], "y": 2.0, "radius": 4, "color": "#ffc080", "strength": 0.9},
-  {"id": "lt_cold", "kind": "light", "at": [10, 4], "y": 1.8, "radius": 8, "color": "#a0d8ff", "strength": 1.5, "sectors": ["cold", "kitchen"]},
-  {"id": "lt_cold_door", "kind": "light", "at": [12.6, 3.8], "y": 1.5, "radius": 4, "color": "#e0f4ff", "strength": 1.2, "sectors": ["cold"]}
+  {"id": "lt_furnace", "kind": "light", "at": [0, -5.2], "y": 2.2, "radius": 12, "color": "#ff5a1a", "strength": 2.3, "sectors": ["furnace", "counter", "kitchen", "cold"]},
+  {"id": "lt_furnace_k", "kind": "light", "at": [0, 0.5], "y": 2.0, "radius": 8, "color": "#ff7a2a", "strength": 1.26},
+  {"id": "lt_stove_w", "kind": "light", "at": [-5.0, 4], "y": 1.6, "radius": 6, "color": "#ff8a30", "strength": 1.61},
+  {"id": "lt_stove_e", "kind": "light", "at": [5, -2.0], "y": 2.0, "radius": 5, "color": "#ff8030", "strength": 1.38},
+  {"id": "lt_stove_w2", "kind": "light", "at": [-5, -2.0], "y": 2.0, "radius": 5, "color": "#ff8030", "strength": 1.38},
+  {"id": "lt_book", "kind": "light", "at": [-3.5, -1.5], "y": 1.5, "radius": 4, "color": "#ffd040", "strength": 1.84, "sectors": ["kitchen", "counter"]},
+  {"id": "lt_door_k", "kind": "light", "at": [0, 8.7], "y": 2.0, "radius": 4, "color": "#ffc080", "strength": 1.03},
+  {"id": "lt_cold", "kind": "light", "at": [10, 4], "y": 1.8, "radius": 8, "color": "#a0d8ff", "strength": 1.72, "sectors": ["cold", "kitchen"]},
+  {"id": "lt_cold_door", "kind": "light", "at": [12.6, 3.8], "y": 1.5, "radius": 4, "color": "#e0f4ff", "strength": 1.38, "sectors": ["cold"]}
  ],
  "waypoints": [
   {"id": "kitchen_door", "at": [0.6, 8.3], "yaw": 0, "sector": "kitchen"},
