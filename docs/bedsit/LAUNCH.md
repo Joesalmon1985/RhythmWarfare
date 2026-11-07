@@ -119,3 +119,19 @@ Brief sections 3 and 4. A real node now: `space_rave` replaces its placeholder (
 - Lines touched outside the new files: `src/run/run_play.gd` (member `rave_host`; `_rave_enter` call at the top of `_on_phase_start`; `_rave_step` after `minigames.update`; the helpers `_rave_enter`, `_rave_step`, `rave_hit`),
   `src/run/run_minigame_host.gd` (`hit`: a view-less activity asks `rave_hit`), `src/story/story_stage.gd` (`crowd_cap` and its action), `src/story/world/story_map.gd` (a marked void is exempt from the reachability check),
   `tools/story/preview_map.gd` (screenshot env vars), `tests/test_bedsit.gd` (a landed rave is not a placeholder).
+
+## The Space rave's activities (integration, ruling 38, contract 10)
+
+`tools\dev\play_bedsit.cmd --rave space`: hub, then the west alcove (cloakroom), the east alcove (bar) and the stage (the bass knob) each play in the room, with the pads morphing into the activity's controls.
+
+| Scene | Route from the hub | Hold (the camera while the activity is seated) | Hotspot (window `any`) | The activity's things |
+| --- | --- | --- | --- | --- |
+| `space_cloakroom` | hub `w`: `cloak_door`, walks to `cloak_hold` (2 bars, then holds 10) | `cloak_hold`, in ring piece r7 facing the alcove | `space_cloakroom.cloakroom` on the map thing `cloak_counter` | coats on `cloak_rail`, the tag symbol over the counter; the customers `customer_0..7` and the `attendant` are crowd actors of the alcove; `cloak_lamp` lights when it is done |
+| `space_bar` | hub `e`: `bar_door`, walks to `bar_hold` | `bar_hold`, in ring piece r5 | `space_bar.bar` on `bar_counter` | the glass and the order bubble; the `customer` and `bartender`; `bar_shelf_1..4` light as drinks are served |
+| `space_stage` | hub `n` | `deck_view` | `space_stage.deck` | the bass knob (0.35 m, frames stuck, straining, free, up); the DJ beckons, waits, cheers |
+
+- Layouts (where the things stand) are in `content/bedsit/themes.json`: `cloakroom.space.layout` and `bar.space.layout`, written by `tools/story/build_space_rave.py` from the same numbers as the map, so they cannot drift. `tools/run/make_bedsit.py --bedsit` now keeps those blocks.
+- Placeholder art: the sheets under `assets/story/mothership/sprites/` (`cloak_coat`, `cloak_symbols_space`, `bar_glass_space`, `bar_order_space`, `sr_knob`, each with a `{"grid": [cols, rows]}` sidecar), the two piece sprites (`pc_lamp_lit`, `pc_glass_lit`) and every person (the ring's alien rigs).
+- A finished activity sets `rave.space.<activity>_done`; `SpaceRaveHost` re-lights its pieces on every entry and sets the run flag `space_<activity>_done` that hides the activity hotspot.
+- Shots: `tools/engine/shoot_space_activities.gd` (two window sizes) and `tools/dev/space_activities_sheet.py`: `docs/shots/bedsit/space/activities.jpg`.
+- Not done: the hangar (`space_race`) is still a placeholder; `view_pitch` is not implemented by the engine (no waypoint pitch), none is used.

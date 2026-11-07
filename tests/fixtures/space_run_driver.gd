@@ -131,6 +131,7 @@ func cloak_bot(wrong_at := -1) -> bool:
 ## One bot decision for the seated bar: the next ingredient of the recipe in the input phase (pad k + 1 is ingredient k), spaced past the debounce. `mistake_on` is a drink number
 ## (0 based) whose first press is the wrong ingredient. Returns true when it tapped.
 var _last_bar_tap := -10.0
+var _mistook := false
 
 
 func bar_bot(mistake_on := -1) -> bool:
@@ -145,7 +146,8 @@ func bar_bot(mistake_on := -1) -> bool:
 	if pos >= rec.size():
 		return false
 	var want := int(rec[pos])
-	if int(s["served"]) == mistake_on and pos == 0 and int(s["attempt"]) == 0:
+	if int(s["served"]) == mistake_on and pos == 0 and not _mistook:
+		_mistook = true
 		want = (want + 1) % 4
 	_last_bar_tap = t()
 	scene.dispatch_tap(pad(want + 1))

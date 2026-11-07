@@ -272,7 +272,7 @@
    "scene": "space_stage",
    "map": "space_rave",
    "anchor": {
-    "waypoint": "deck_view"
+    "waypoint": "stage_foot"
    },
    "kind": "exit",
    "radius_m": 1.2,
@@ -401,7 +401,7 @@
    "scene": "space_cloakroom",
    "map": "space_rave",
    "anchor": {
-    "waypoint": "cloak_view"
+    "waypoint": "cloak_door"
    },
    "kind": "exit",
    "radius_m": 1.2,
@@ -498,7 +498,7 @@
    "scene": "space_bar",
    "map": "space_rave",
    "anchor": {
-    "waypoint": "bar_view"
+    "waypoint": "bar_door"
    },
    "kind": "exit",
    "radius_m": 1.2,
@@ -562,7 +562,7 @@
    "scene": "space_race",
    "map": "space_rave",
    "anchor": {
-    "waypoint": "hangar_view"
+    "waypoint": "hangar_door"
    },
    "kind": "exit",
    "radius_m": 1.2,

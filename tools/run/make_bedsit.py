@@ -221,7 +221,7 @@ def space_hotspots() -> list:
             row("space_rave.home", "space_rave", {"thing": "home_hatch"}, "exit", "bedsit", default=True)]
     rows.append(row("space_stage.deck", "space_stage", {"thing": "deck"}, "object", window="any", success={"activity": "bass_knob"},
                     available={"flags_all": [], "flags_none": ["space_bass_fixed"], "energy_min": 0, "once": False}))
-    rows.append(row("space_stage.home", "space_stage", {"waypoint": "deck_view"}, "exit", "bedsit"))
+    rows.append(row("space_stage.home", "space_stage", {"waypoint": "stage_foot"}, "exit", "bedsit"))  # (an exit is staged as a door at its anchor: behind the camera at the deck, never over the deck)
     rows.append(row("space_stage.back", "space_stage", {"waypoint": "stage_foot"}, "exit", "space_rave", default=True))
     for sid, (title, home, door, act_id) in SPACE_STATIONS.items():
         if sid in SPACE_ACTIVITY_SCENES:  # the activity's hotspot: the counter, an object whose success outcome is {activity: id} (content/bedsit/cloakroom_hotspot_example.json); any window seats it at the end of the block
@@ -232,7 +232,7 @@ def space_hotspots() -> list:
             h["min_px"] = 220
             rows.append(h)
         rows.append(row("%s.back" % sid, sid, {"waypoint": door}, "exit", "space_rave", default=True))
-        rows.append(row("%s.home" % sid, sid, {"waypoint": home}, "exit", "bedsit"))
+        rows.append(row("%s.home" % sid, sid, {"waypoint": door}, "exit", "bedsit"))  # (the door is behind the camera at the hold: a door staged at the station's view point stood in front of the counter)
     return rows
 
 
