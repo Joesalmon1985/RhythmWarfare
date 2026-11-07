@@ -65,9 +65,9 @@
    "map": "hospital",
    "anchor": {
     "pos": [
-     14.7,
+     13.7,
      1.0,
-     6.8
+     8.0
     ]
    },
    "kind": "secret",
@@ -96,12 +96,12 @@
    "herald": {
     "quest": "dungeon",
     "at": [
-     13.7,
-     7.9
+     14.8,
+     6.9
     ],
     "toward": [
-     14.7,
-     6.8
+     13.7,
+     8.0
     ],
     "mark_y": 1.8,
     "gate": true
