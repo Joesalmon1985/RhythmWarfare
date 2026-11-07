@@ -24,21 +24,42 @@ WORLD = {"id": "doom_warehouse", "title": "The Warehouse (Doom worlds pilot)", "
          "blurb": "A fenced dance floor under steel trusses. The stage ahead, the bar on the left, the lounge on the right: follow the guide you like."}
 
 
-def P(to, role="dancer", style="walk", bars=3, hold=0, route=None):
-    d = {"to": to, "role": role, "style": style, "bars": bars, "route": route or [to]}  # `route`: the waypoint ids of the whole move (one hop today, the polyline later)
+def P(to, role="dancer", style="walk", bars=3, hold=0, via=None, choice=False):
+    """One rail place: the move to waypoint `to` (a polyline through the `via` waypoints, each leg traced through the map: docs/story/HEIGHTS_AND_PATHS.md), then the camera stands
+    still for `hold` bars; `choice` marks a choice viewpoint (it holds at least RunRail.CHOICE_HOLD_BARS)."""
+    d = {"to": to, "role": role, "style": style, "bars": bars}
+    if via:
+        d["via"] = list(via)
     if hold:
         d["hold_bars"] = hold
+    if choice:
+        d["choice"] = True
     return d
 
 
 EXITS = {"up": "wh_stage_top", "left": "wh_bar_door", "right": "wh_lounge_door", "down": "wh_ref"}
-ROUTES = {"up": ["wh_stage_approach", "wh_stage_steps", "wh_stage_top"], "left": ["wh_bar_approach", "wh_bar_door"], "right": ["wh_lounge_approach", "wh_lounge_door"]}
-GOOD = [P("wh_fence", bars=4, hold=4), P("wh_plinths", bars=4, hold=4), P("wh_platform", bars=4, hold=4), P("wh_ref", bars=4, hold=8, route=["wh_fence", "wh_ref"])]
+# The stay loop (the good rail) goes round the floor: the west band north of the bar, up on the pedestal, against the south railing on the floor, then back to the reference viewpoint, a
+# choice viewpoint (8 bars still). The via points are in the map (tools/doom/author_warehouse.py); tools/story/check_rail_paths.gd traces every leg.
+GOOD = [
+    P("wh_plinths", bars=4, hold=2, via=["wh_v_bar_e1", "wh_v_bar_mid", "wh_v_bar_e2"]),
+    P("wh_platform", bars=4, hold=2, via=["wh_v_gate_w_out", "wh_v_gate_w_in", "wh_v_court_n", "wh_ped_foot"]),
+    P("wh_fence", bars=3, hold=2, via=["wh_ped_foot"]),
+    P("wh_ref", bars=4, hold=8, choice=True, via=["wh_v_court_sw", "wh_v_gate_s", "wh_v_lounge_w"]),
+]
 BAD = [P("wh_ref_back", "queasy", "walk", 2), P("wh_sw_corner", "queasy", "stagger", 3)]  # a stumble back along the walkway
+# The routes out of the floor and back in, one polyline move each (the way the camera walks to the threshold of ahead / left / right, the arrival from the doorway, the stumble round the
+# corner and home), from the reference viewpoint unless it says `from`. They carry hold_bars (still at the end) like a rail place.
+ROUTE_MOVES = {
+    "up": P("wh_stage_top", "on_stage", bars=4, hold=1, via=["wh_v_lounge_w", "wh_v_gate_s", "wh_stage_approach", "wh_stage_steps"]),
+    "left": P("wh_bar_door", bars=2, hold=1, via=["wh_bar_approach"]),
+    "right": P("wh_lounge_door", bars=2, hold=1, via=["wh_lounge_approach"]),
+    "stumble": P("wh_ref", "recovered", "stagger", bars=3, via=["wh_ref_back", "wh_sw_corner"]),
+    "arrive": {**P("wh_ref", bars=3), "from": "wh_arrive"},
+}
 
 
 def rail(arrive="wh_arrive"):
-    return {"good": json.loads(json.dumps(GOOD)), "bad": json.loads(json.dumps(BAD)), "arrive": arrive, "exits": dict(EXITS), "routes": json.loads(json.dumps(ROUTES)), "_glances": True}
+    return {"good": json.loads(json.dumps(GOOD)), "bad": json.loads(json.dumps(BAD)), "arrive": arrive, "exits": dict(EXITS), "routes": json.loads(json.dumps(ROUTE_MOVES)), "_glances": True}
 
 
 # id, short name, title, entry, exit_scene, next [(to, dir, label, loop)], music slot

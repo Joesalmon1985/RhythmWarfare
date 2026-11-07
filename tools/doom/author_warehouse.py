@@ -22,6 +22,7 @@ TRACE = os.path.join(ROOT, "tools", "doom", "trace", "warehouse_pilot.json")
 NIGHT = "res://assets/story/night_one/textures/"
 OWN = "textures/"
 MARGIN = 0.5
+MARGINS = {"wh_v_bar_e1": 0.33, "wh_v_bar_mid": 0.33, "wh_v_bar_e2": 0.33}  # via points in the narrow walkway east of the bar: the loader's 0.3 m (StoryMap.WAYPOINT_MARGIN) plus a little
 MAX_STEP = 0.5  # metres: a floor change across a portal up to this is a step a walker takes (the map key `max_step`, docs/story/HEIGHTS_AND_PATHS.md); taller is a drop
 RAIL_TEX = "wh_railing"  # the lattice tile with alpha (tools/doom/art/make_railing.py)
 RAIL_HEIGHT = 1.0
@@ -59,8 +60,9 @@ WAYPOINTS = [
     ("wh_v_lounge_w", (-595, -557), (-360, -560), 0, "via: the ring west of the lounge, before the walkway between the lounge and the railing"),
     ("wh_v_gate_s", (-360, -560), (-360, -470), 0, "via: the walkway outside the south gate (between the lounge's north wall and the gate)"),
     ("wh_v_court_sw", (-352, -474), (-360, -560), 0, "via: the floor inside the south gate, west of the south plinth"),
-    ("wh_v_bar_e1", (-541, -458), (-563, -102), 0, "via: the walkway east of the bar, south end"),
-    ("wh_v_bar_e2", (-563, -102), (-640, 100), 0, "via: the west band north of the bar"),
+    ("wh_v_bar_e1", (-531, -448), (-534, -320), 0, "via: the walkway east of the bar, south end"),
+    ("wh_v_bar_mid", (-534, -320), (-564, -115), 0, "via: the walkway east of the bar, middle (keeps the line off the bar wall's north-east corner)"),
+    ("wh_v_bar_e2", (-564, -115), (-640, 100), 0, "via: the west band north of the bar"),
     ("wh_v_gate_w_out", (-586, -80), (-464, -64), 0, "via: the west band outside the west gate"),
     ("wh_v_gate_w_in", (-464, -64), (-128, -32), 0, "via: the floor inside the west gate"),
     ("wh_v_court_n", (-128, -32), (67, -134), 0, "via: the floor north of the stage, west of the pedestal"),
@@ -70,7 +72,7 @@ ROUTES = {  # the destination routes and the stay loop as lists of waypoint ids,
     "ahead": ["wh_v_lounge_w", "wh_v_gate_s", "wh_stage_approach", "wh_stage_steps", "wh_stage_top"],
     "left": ["wh_bar_approach", "wh_bar_door"],
     "right": ["wh_lounge_approach", "wh_lounge_door"],
-    "stay": ["wh_v_bar_e1", "wh_v_bar_e2", "wh_plinths", "wh_v_gate_w_out", "wh_v_gate_w_in", "wh_v_court_n", "wh_ped_foot", "wh_platform", "wh_ped_foot", "wh_fence",
+    "stay": ["wh_v_bar_e1", "wh_v_bar_mid", "wh_v_bar_e2", "wh_plinths", "wh_v_gate_w_out", "wh_v_gate_w_in", "wh_v_court_n", "wh_ped_foot", "wh_platform", "wh_ped_foot", "wh_fence",
              "wh_v_court_sw", "wh_v_gate_s", "wh_v_lounge_w", "wh_ref"],
     "arrive": ["wh_arrive", "wh_ref"],
     "stumble": ["wh_ref_back", "wh_sw_corner", "wh_ref"],
@@ -240,14 +242,15 @@ def main():
         x, z = m(*at)
         s = sector_of(d, x, z)
         floor0 = s["floor"] if s else None
-        if s is None or dist_to_edges(s["polygon"], x, z) < MARGIN:  # too near a piece edge (the decomposition's diagonals count): the nearest free spot on the same floor height
+        margin = MARGINS.get(wid, MARGIN)
+        if s is None or dist_to_edges(s["polygon"], x, z) < margin:  # too near a piece edge (the decomposition's diagonals count): the nearest free spot on the same floor height
             best = None
             for r in range(1, 41):
                 for k in range(16):
                     a = 2 * math.pi * k / 16
                     qx, qz = x + math.cos(a) * r * 0.1, z + math.sin(a) * r * 0.1
                     q = sector_of(d, qx, qz)
-                    if q is not None and (floor0 is None or abs(q["floor"] - floor0) < 0.01) and dist_to_edges(q["polygon"], qx, qz) >= MARGIN + 0.02:
+                    if q is not None and (floor0 is None or abs(q["floor"] - floor0) < 0.01) and dist_to_edges(q["polygon"], qx, qz) >= margin + 0.02:
                         best = (qx, qz, q)
                         break
                 if best:

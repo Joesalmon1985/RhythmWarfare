@@ -245,7 +245,7 @@
    "floor_tex": "floor_dark",
    "ceil_tex": "ceil_truss",
    "wall_tex": "wall_panel",
-   "light": 0.9,
+   "light": 1.0,
    "tint": "#d9dff3",
    "room": "main",
    "flags": [],
@@ -276,7 +276,7 @@
    "floor_tex": "floor_dark",
    "ceil_tex": "ceil_truss",
    "wall_tex": "wall_panel",
-   "light": 0.9,
+   "light": 1.0,
    "tint": "#d9dff3",
    "room": "main",
    "flags": [],
@@ -307,7 +307,7 @@
    "floor_tex": "floor_dark",
    "ceil_tex": "ceil_truss",
    "wall_tex": "wall_panel",
-   "light": 0.9,
+   "light": 1.0,
    "tint": "#d9dff3",
    "room": "main",
    "flags": [],
@@ -338,7 +338,7 @@
    "floor_tex": "floor_dark",
    "ceil_tex": "ceil_truss",
    "wall_tex": "wall_panel",
-   "light": 0.9,
+   "light": 1.0,
    "tint": "#d9dff3",
    "room": "main",
    "flags": [],
@@ -5432,19 +5432,28 @@
   {
    "id": "wh_v_bar_e1",
    "at": [
-    -17.3681,
-    14.5038
+    -16.5938,
+    14.0
    ],
-   "yaw": 1.1,
-   "sector": "10_3"
+   "yaw": 1.3,
+   "sector": "10_28"
+  },
+  {
+   "id": "wh_v_bar_mid",
+   "at": [
+    -16.6875,
+    10.0
+   ],
+   "yaw": 8.3,
+   "sector": "10_28"
   },
   {
    "id": "wh_v_bar_e2",
    "at": [
-    -17.7352,
-    3.3289
+    -17.625,
+    3.5938
    ],
-   "yaw": 19.3,
+   "yaw": 19.5,
    "sector": "10_26"
   },
   {
@@ -5863,6 +5872,7 @@
    ],
    "stay": [
     "wh_v_bar_e1",
+    "wh_v_bar_mid",
     "wh_v_bar_e2",
     "wh_plinths",
     "wh_v_gate_w_out",

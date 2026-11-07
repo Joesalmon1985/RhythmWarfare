@@ -126,7 +126,7 @@ static func stair_floor(map: StoryMap, ev: Dictionary, d: float, sid: String) ->
 
 
 ## Every move a run scene's rail can make ({from, args, where}): home to the first good and bad places, up the good rail, down and back along the bad rail (a back move
-## reverses the leg's `via`), a good place's drop to the bad rail, and the arrival walk.
+## reverses the leg's `via`), a good place's drop to the bad rail, the arrival walk, and each of the scene's `routes` (the polyline moves out to the thresholds and back).
 static func rail_moves(node_id: String, home: String, rail: Dictionary) -> Array:
 	var out: Array = []
 	var good: Array = rail.get("good", [])
@@ -151,6 +151,13 @@ static func rail_moves(node_id: String, home: String, rail: Dictionary) -> Array
 		prev = str(b["to"])
 	if str(rail.get("arrive", "")) != "" and str(rail["arrive"]) != home:
 		out.append({"from": str(rail["arrive"]), "args": {"to": home, "style": "walk"}, "where": "%s arrival (%s to %s)" % [node_id, rail["arrive"], home]})
+	var routes: Variant = rail.get("routes", {})  # the routes out and in (rail.routes: {name: a move spec {to, via?, style?, bars?, from?}}), each from `from` or home
+	if typeof(routes) == TYPE_DICTIONARY:
+		for k in (routes as Dictionary):
+			var spec: Variant = routes[k]
+			if typeof(spec) == TYPE_DICTIONARY and (spec as Dictionary).has("to"):
+				var from_wp := str((spec as Dictionary).get("from", home))
+				out.append({"from": from_wp, "args": spec, "where": "%s route %s (%s to %s)" % [node_id, k, from_wp, spec["to"]]})
 	return out
 
 
