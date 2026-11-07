@@ -191,7 +191,7 @@
     "hidden_fallbacks": [
      "pause_menu_leave"
     ],
-    "status": "proposed"
+    "status": "existing"
    },
    "progress": {
     "scene": "string, graph id",
@@ -231,7 +231,7 @@
     "hidden_fallbacks": [
      "pause_menu_leave"
     ],
-    "status": "proposed"
+    "status": "existing"
    },
    "progress": {
     "scene": "string, graph id",
@@ -272,7 +272,7 @@
     "hidden_fallbacks": [
      "pause_menu_leave"
     ],
-    "status": "proposed"
+    "status": "existing"
    },
    "progress": {
     "scene": "string, graph id",

@@ -3433,6 +3433,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/deeps",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/deeps",
@@ -3545,6 +3561,22 @@
    "link": "return",
    "quest": "ember",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/deeps.falls",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "ember.return"
   },
@@ -3739,6 +3771,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/hollow",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/hollow",
@@ -3837,6 +3885,22 @@
    "link": "return",
    "quest": "ember",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/hollow.ford",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "ember.return"
   },
@@ -3947,6 +4011,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/hollow.inn",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/hollow.inn",
@@ -4043,6 +4123,22 @@
    "link": "return",
    "quest": "ember",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/marsh",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "ember.return"
   },
@@ -4183,6 +4279,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/marsh.plain",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/marsh.plain",
@@ -4307,6 +4419,22 @@
    "link": "return",
    "quest": "ember",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/marsh.stair",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "ember.return"
   },
@@ -4499,6 +4627,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/marsh.wall",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/marsh.wall",
@@ -4630,6 +4774,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/mountain",
@@ -4747,6 +4907,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.keeper",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": [
      "keep:path_ember_kept"
     ],
@@ -4841,6 +5017,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.spring",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": [
      "keep:path_ember_quenched"
     ],
@@ -4928,6 +5120,22 @@
    "link": "return",
    "quest": "ember",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.taken",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "ember.return"
   },
@@ -5075,6 +5283,22 @@
    "link": "return",
    "quest": "ember",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/north",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "ember.return"
   },
@@ -5231,6 +5455,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/north.pass",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "ember",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/north.pass",
@@ -5339,6 +5579,22 @@
    "link": "return",
    "quest": "gospel",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/galilee",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "gospel.return"
   },
@@ -5491,6 +5747,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/galilee.capernaum",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/galilee.capernaum",
@@ -5629,6 +5901,22 @@
    "link": "return",
    "quest": "gospel",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/galilee.mount",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "gospel.return"
   },
@@ -5781,6 +6069,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/galilee.storm",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/galilee.storm",
@@ -5926,6 +6230,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/jerusalem",
@@ -6057,6 +6377,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.gethsemane",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/jerusalem.gethsemane",
@@ -6200,6 +6536,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.golgotha",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/jerusalem.golgotha",
@@ -6298,6 +6650,22 @@
    "link": "return",
    "quest": "gospel",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.road",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "gospel.return"
   },
@@ -6412,6 +6780,22 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.tomb",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -6501,6 +6885,22 @@
    "link": "return",
    "quest": "gospel",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.trial",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "gospel.return"
   },
@@ -6623,6 +7023,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jordan",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/jordan",
@@ -6721,6 +7137,22 @@
    "link": "return",
    "quest": "gospel",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jordan.baptism",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "gospel.return"
   },
@@ -6831,6 +7263,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jordan.nazareth",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/jordan.nazareth",
@@ -6960,6 +7408,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jordan.wilderness",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/jordan.wilderness",
@@ -7054,6 +7518,22 @@
    "link": "return",
    "quest": "gospel",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/road",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "gospel.return"
   },
@@ -7220,6 +7700,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/road.entry",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/road.entry",
@@ -7328,6 +7824,22 @@
    "link": "return",
    "quest": "gospel",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/road.loaves",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "gospel",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "gospel.return"
   },
@@ -12725,6 +13237,22 @@
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/air",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
     "previous_scene": true
    },
    "from": "squadron/air",
@@ -12822,6 +13350,22 @@
    "link": "return",
    "quest": "squadron",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/air.c05",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "squadron.return"
   },
@@ -12947,6 +13491,22 @@
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/air.c06",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
     "previous_scene": true
    },
    "from": "squadron/air.c06",
@@ -13064,6 +13624,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/base",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": [
      "sq_briefed"
     ],
@@ -13146,6 +13722,22 @@
    "link": "return",
    "quest": "squadron",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/base.c02",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "squadron.return"
   },
@@ -13278,6 +13870,22 @@
    "link": "return",
    "quest": "squadron",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/base.c03",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "squadron.return"
   },
@@ -13446,6 +14054,22 @@
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/city",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
     "previous_scene": true
    },
    "from": "squadron/city",
@@ -13549,6 +14173,22 @@
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/city.c08",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
     "previous_scene": true
    },
    "from": "squadron/city.c08",
@@ -13644,6 +14284,22 @@
    "link": "return",
    "quest": "squadron",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/city.c09",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "squadron.return"
   },
@@ -13788,6 +14444,22 @@
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/city.c10",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
     "previous_scene": true
    },
    "from": "squadron/city.c10",
@@ -13897,6 +14569,22 @@
    "link": "return",
    "quest": "squadron",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/escape",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "squadron.return"
   },
@@ -14014,6 +14702,22 @@
    "link": "return",
    "quest": "squadron",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/escape.c12",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "squadron.return"
   },
@@ -14204,6 +14908,22 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/escape.c13",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "squadron/escape.c13",
@@ -14254,6 +14974,22 @@
    "link": "return",
    "quest": "squadron",
    "status": "proposed",
+   "to": "$checkpoint",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/escape.c14",
+   "kind": "quest_return",
+   "note": "authored way back; lands on the Floor today, on the checkpoint in the target",
+   "quest": "squadron",
+   "status": "changed",
    "to": "$checkpoint",
    "via": "squadron.return"
   },
@@ -14334,14 +15070,14 @@
  ],
  "meta": {
   "counts": {
-   "edges": 957,
+   "edges": 1003,
    "edges_by_kind": {
     "quest_entry": 42,
-    "quest_return": 238,
+    "quest_return": 284,
     "scene": 677
    },
    "edges_by_status": {
-    "changed": 131,
+    "changed": 177,
     "existing": 565,
     "proposed": 261
    },
