@@ -861,3 +861,207 @@ func test_lounge_check_rail_paths_reports_no_problem() -> void:
 		if str(mv["where"]).contains(" route "):
 			named += 1
 	assert_eq(named, 5, "the five routes (up, left, right, stumble, arrive) are checked as moves")
+
+
+# --- THE LOADING DOCK (docs/doom/scenes/dock.md): its own block, its own map (doom_dock) and world (doom_dock) --------------------------------------------------------------------
+# MAP13 Downtown, invented from the painting: the reference viewpoint dk_ref on the concrete apron looking up the wet street, the Floor guide left (the club door), the Mothership guide ahead (the
+# street's end), the Underworld guide right (the furnace in the yard). The same checks as the Booth's, plus a sightline test from the camera to each guide against the solid walls.
+
+const DK_MAP := "doom_dock"
+const DK_GUIDES := ["dk_guide_mothership", "dk_guide_floor", "dk_guide_underworld"]
+const DK_HOLD_PLACES := ["dk_ref", "dk_street_view", "dk_door_view", "dk_yard_view"]
+const DK_NODES := ["doom_dock", "doom_dock.mothership", "doom_dock.floor", "doom_dock.underworld", "doom_dock.return"]
+const DK_EXITS := ["dk_moth", "dk_floor_door", "dk_under"]
+
+
+func _dk_map() -> StoryMap:
+	return StoryMap.load_chapter(DK_MAP, true)
+
+
+func _dk_pose(m: StoryMap, wp: String) -> Dictionary:
+	var p := StoryPlayer.new()
+	p.setup(m, 174.0)
+	p.apply_action({"t0": 0.0, "action": "player_move", "args": {"to": wp, "bars": 0.01, "cut": true}, "world": DK_MAP})
+	return p.pose_at(2.0)
+
+
+func test_dock_map_loads_with_routes_holds_and_the_reference_viewpoint() -> void:
+	var m := _dk_map()
+	assert_true(m != null and m.errors.is_empty(), "the dock map loads clean: %s" % str(m.errors if m != null else "null"))
+	if m == null:
+		return
+	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % DK_MAP))
+	assert_true(bool((doc["doom"] as Dictionary).get("approximate", false)), "dock: still flagged approximate")
+	var routes: Dictionary = doc["scene"]["routes"]
+	for k in ["ahead", "left", "right", "stay", "arrive", "stumble"]:
+		assert_true(routes.has(k), "dock route %s exists" % k)
+		for wid in routes[k]:
+			assert_true(m.has_waypoint(str(wid)), "dock route %s: waypoint %s exists" % [k, wid])
+	var holds := {}
+	for w in doc["waypoints"]:
+		holds[str(w["id"])] = float(w.get("hold_bars", 0.0))
+	assert_true(float(holds["dk_ref"]) >= CHOICE_REF_HOLD, "the dock's reference viewpoint holds at least 8 bars")
+	for id in DK_HOLD_PLACES:
+		assert_true(float(holds[id]) > 0.0, "%s has hold_bars" % id)
+	for id in DK_EXITS:
+		assert_true(float(holds[id]) > 0.0, "the threshold %s holds" % id)
+	assert_true(float((_dk_pose(m, "dk_ref")["pos"] as Vector2).distance_to(m.waypoint("dk_ref")["at"])) < 0.05, "the camera stands at the dock's reference viewpoint")
+	assert_eq(float(doc["max_step"]), 0.5, "dock: max_step 0.5")
+	assert_eq(str(doc["visibility"]["mode"]), "clip", "dock: visibility mode clip")
+	assert_true(doc.has("fog") and float(doc["fog"]["density"]) > 0.0, "dock: the map has its fog")
+
+
+func test_dock_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the_reference_viewpoint() -> void:
+	var m := _dk_map()
+	if m == null:
+		fail("dock map did not load")
+		return
+	var pose := _dk_pose(m, "dk_ref")
+	for asp in ASPECTS:
+		var view: Vector2 = ASPECTS[asp]
+		var rects := {}
+		for g in DK_GUIDES:
+			var r := _rect(m, g, pose, view)
+			rects[g] = r
+			var inside := r.intersection(Rect2(Vector2.ZERO, view)).get_area()
+			assert_true(r.get_area() > 0.0 and inside >= 0.95 * r.get_area(), "dock %s %s: inside the picture (%s)" % [asp, g, str(r)])
+			assert_true(r.end.y <= view.y, "dock %s %s: its feet are above the pad strip" % [asp, g])
+			assert_true(r.size.y >= MIN_GUIDE_PX, "dock %s %s: at least %d px tall (%.0f)" % [asp, g, int(MIN_GUIDE_PX), r.size.y])
+			for b in HUD_BOXES:
+				assert_false(r.intersects(b), "dock %s %s: clear of the HUD's corner" % [asp, g])
+			print("  dock %s %-22s rect %s" % [asp, g, str(r)])
+		for i in DK_GUIDES.size():
+			for j in range(i + 1, DK_GUIDES.size()):
+				assert_false((rects[DK_GUIDES[i]] as Rect2).intersects(rects[DK_GUIDES[j]]), "dock %s: %s and %s do not overlap" % [asp, DK_GUIDES[i], DK_GUIDES[j]])
+
+
+func test_dock_each_guide_is_seen_from_the_reference_viewpoint_no_solid_wall_between() -> void:
+	var m := _dk_map()
+	if m == null:
+		fail("dock map did not load")
+		return
+	var cam: Vector2 = m.waypoint("dk_ref")["at"]
+	for g in DK_GUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		var hit := ""
+		for w in m.resolved_walls():
+			if str(w["portal"]) != "":
+				continue  # (an opening, a kerb: the eye passes over or through)
+			if Geometry2D.segment_intersects_segment(cam, at, w["a"], w["b"]) != null:
+				hit = "%s-%s" % [str(w["a"]), str(w["b"])]
+				break
+		assert_eq(hit, "", "dock %s: the sightline from dk_ref stays clear of solid walls" % g)
+
+
+func test_dock_guides_keep_their_distance_from_the_camera_places() -> void:
+	var m := _dk_map()
+	if m == null:
+		fail("dock map did not load")
+		return
+	for g in DK_GUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		for wid in m.waypoints:
+			var d: float = (m.waypoints[wid]["at"] as Vector2).distance_to(at)
+			if str(wid) in DK_EXITS:
+				assert_true(d >= 1.2, "dock: %s is not on top of %s (%.1f m)" % [g, wid, d])
+			else:
+				assert_true(d >= 1.5, "dock: %s is at least 1.5 m from %s (%.1f m)" % [g, wid, d])
+
+
+func test_dock_overlay_world_nodes_hotspots_and_rail_validate() -> void:
+	var on := _doom_run()
+	assert_true(on.errors.is_empty(), "dock: the run loads clean with the flag: %s" % str(on.errors))
+	for id in DK_NODES:
+		assert_true(on.nodes.has(id), "dock: scene %s" % id)
+		assert_eq(str(on.nodes[id]["map"]), DK_MAP, "dock: %s stands on the dock map" % id)
+	assert_true(bool(on.nodes["doom_dock"]["entry"]) and str(on.nodes["doom_dock"]["world"]) == "doom_dock", "doom_dock is the entry scene of its world")
+	assert_true(on.nodes.has("doom_booth") and on.nodes.has("doom_lounge"), "the earlier worlds are still there beside the dock")
+	for id in DK_NODES:
+		var rail: Dictionary = on.nodes[id]["rail"]
+		assert_eq(RunRail.validate(id, rail), [], "%s: RunRail.validate" % id)
+		var routes: Dictionary = rail["routes"]
+		for k in ["up", "left", "right", "stumble", "arrive"]:
+			assert_true(routes.has(k) and routes[k].has("to"), "%s: route %s is a move" % [id, k])
+		for k in ["up", "left", "right", "stumble"]:
+			assert_false((routes[k].get("via", []) as Array).is_empty(), "%s: route %s has via waypoints" % [id, k])
+		for k in ["up", "left", "right"]:
+			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0, "%s: route %s holds at its threshold" % [id, k])
+		var ex: Dictionary = rail["exits"]
+		assert_eq([str(ex["up"]), str(ex["left"]), str(ex["right"])], DK_EXITS, "%s: rail.exits name the three thresholds" % id)
+		var dirs := ["up", "left", "right"]
+		for i in 3:
+			assert_eq(str(routes[dirs[i]]["to"]), DK_EXITS[i], "%s: the route's move ends at the threshold" % id)
+	var good: Array = on.nodes["doom_dock"]["rail"]["good"]
+	assert_eq(good.size(), 4, "dock: the stay loop has four places")
+	for i in 3:
+		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "dock: reveal viewpoint %s holds 2 bars" % good[i]["to"])
+		assert_false(bool(good[i].get("choice", false)), "dock: reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
+	assert_eq(str(good[3]["to"]), "dk_ref", "dock: the loop ends at the reference viewpoint")
+	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "dock: dk_ref is a choice viewpoint holding the whole window")
+	var hs: Array = on.hotspots.get("doom_dock", [])
+	assert_eq(hs.size(), 4, "dock: three guides and the stay hotspot")
+	var dests := []
+	for h in hs:
+		dests.append(str((h["on_success"] as Dictionary).get("route", "")))
+		assert_true(h.has("show"), "dock: hotspot %s declares show" % h["id"])
+		if str(h["id"]) != "doom_dock.exit_stay":
+			assert_eq(str((h["show"] as Dictionary)["archetype"]), "figure", "dock: %s is a figure (a guide, no ring)" % h["id"])
+	dests.sort()
+	assert_eq(dests, ["doom_dock", "doom_dock.floor", "doom_dock.mothership", "doom_dock.underworld"], "dock: ahead, left, right and stay")
+
+
+func test_dock_every_via_stands_in_a_walkable_piece_and_check_rail_paths_finds_nothing() -> void:
+	var on := _doom_run()
+	var m := _dk_map()
+	if m == null:
+		fail("dock map did not load")
+		return
+	var reach := m.reachable_from(str(m.start_waypoint()["sector"]))
+	for id in DK_NODES:
+		var node: Dictionary = on.nodes[id]
+		for mv in _moves_of(node["rail"]):
+			var ids: Array = (mv.get("via", []) as Array).duplicate()
+			ids.append(mv["to"])
+			if mv.has("from"):
+				ids.append(mv["from"])
+			for wid in ids:
+				assert_true(m.has_waypoint(str(wid)), "%s: waypoint %s exists" % [id, wid])
+				if not m.has_waypoint(str(wid)):
+					continue
+				var sid := str(m.waypoint(str(wid))["sector"])
+				assert_true(m.inside(m.waypoint(str(wid))["at"], sid, StoryMap.WAYPOINT_MARGIN) and reach.has(sid) and not m.is_void(sid), "%s: %s stands in a walkable piece" % [id, wid])
+		assert_eq(StoryRailCheck.check_rail(m, id, str(node["waypoint"]), node["rail"]), [], "%s: check_rail_paths finds nothing" % id)
+
+
+func test_dock_walls_decals_lights_and_the_art_are_in_the_map() -> void:
+	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % DK_MAP))
+	var textures: Dictionary = doc["textures"]
+	for k in textures:
+		var path := "res://assets/story/%s/%s" % [str(doc["art"]), str(textures[k])]
+		assert_true(FileAccess.file_exists(path) or ResourceLoader.exists(path), "dock: texture %s exists (%s)" % [k, path])
+	var decals := 0
+	var lit := 0
+	var lights := 0
+	for t in doc["things"]:
+		match str(t.get("kind", "")):
+			"decal":
+				decals += 1
+				if bool(t.get("emissive", false)):
+					lit += 1
+			"light":
+				lights += 1
+	assert_true(decals >= 15 and lit >= 8, "dock: wall decals (%d), the lit windows, towers and neon emissive (%d)" % [decals, lit])
+	assert_true(lights >= 12, "dock: light things (%d: sodium, blue spill, furnace, violet)" % lights)
+	for k in ["dk_wall_brick", "dk_wall_shutter", "dk_floor_asphalt", "dk_floor_conc", "dk_furnace", "dk_van", "dk_bollard", "dk_fence"]:
+		assert_true(textures.has(k), "dock: %s is one of the map's textures" % k)
+	for g in DK_GUIDES:
+		var stem: String = g.trim_prefix("dk_guide_")
+		for st in ["idle_0", "available_0", "selected_0", "committed_0"]:
+			assert_true(textures.has("guide_%s_%s" % [stem, st]), "dock: guide sprite %s_%s" % [stem, st])
+	var steps_ok := true
+	var m := _dk_map()
+	if m != null:
+		for p in m.portals():
+			if not bool(p["blocked"]) and absf(float(m.sector(str(p["a"]))["floor"]) - float(m.sector(str(p["b"]))["floor"])) > 0.5 + 1.0e-6:
+				steps_ok = false
+	assert_true(steps_ok, "dock: every portal a walker can use changes the floor by at most max_step")

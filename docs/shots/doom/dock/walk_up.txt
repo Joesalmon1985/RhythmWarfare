@@ -1,0 +1,14 @@
+MOVE dk_moth via=3 length=17.7
+WALK up 0 t=0.00 @1.000:-1.500:5.4:0.0:1.850 sector=0_0 ground=0.250 above=1.60 still=0.00
+WALK up 1 t=0.75 @0.959:-1.911:5.5:0.0:1.844 sector=0_0 ground=0.250 above=1.59 still=0.00
+WALK up 2 t=1.50 @0.846:-3.038:5.7:0.0:1.844 sector=0_0 ground=0.250 above=1.59 still=0.00
+WALK up 3 t=2.26 @0.678:-4.723:3.5:0.0:1.637 sector=3_0 ground=0.040 above=1.57 still=0.00
+WALK up 4 t=3.01 @0.635:-6.811:-0.3:0.0:1.584 sector=3_0 ground=0.000 above=1.58 still=0.00
+WALK up 5 t=3.76 @0.697:-9.143:-1.5:0.0:1.574 sector=3_0 ground=0.000 above=1.57 still=0.00
+WALK up 6 t=4.51 @0.761:-11.555:-3.7:0.0:1.574 sector=3_0 ground=0.000 above=1.57 still=0.00
+WALK up 7 t=5.27 @1.066:-13.846:-13.0:0.0:1.584 sector=3_0 ground=0.000 above=1.58 still=0.00
+WALK up 8 t=6.02 @1.693:-15.842:-3.6:0.0:1.597 sector=3_0 ground=0.000 above=1.60 still=0.00
+WALK up 9 t=6.77 @1.467:-17.405:9.1:0.0:1.594 sector=3_0 ground=0.000 above=1.59 still=0.00
+WALK up 10 t=7.52 @0.978:-18.427:5.6:0.0:1.594 sector=3_0 ground=0.000 above=1.59 still=0.00
+WALK up 11 t=8.28 @0.800:-18.800:0.0:0.0:1.600 sector=3_0 ground=0.000 above=1.60 still=0.00
+HOLD dk_moth 1.0 moved=0.0028 turned=0.000

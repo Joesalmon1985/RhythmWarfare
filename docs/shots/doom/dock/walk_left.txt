@@ -1,0 +1,14 @@
+MOVE dk_floor_door via=4 length=14.1
+WALK left 0 t=0.00 @1.000:-1.500:5.4:0.0:1.850 sector=0_0 ground=0.250 above=1.60 still=0.00
+WALK left 1 t=0.63 @0.737:-1.697:26.0:0.0:1.844 sector=0_0 ground=0.250 above=1.59 still=0.00
+WALK left 2 t=1.25 @0.018:-2.237:48.2:0.0:1.844 sector=0_0 ground=0.250 above=1.59 still=0.00
+WALK left 3 t=1.88 @-1.042:-3.059:44.1:0.0:1.847 sector=0_0 ground=0.250 above=1.60 still=0.00
+WALK left 4 t=2.51 @-2.014:-4.408:31.3:0.0:1.834 sector=0_0 ground=0.250 above=1.58 still=0.00
+WALK left 5 t=3.13 @-2.800:-6.007:13.2:0.0:1.824 sector=2_0 ground=0.250 above=1.57 still=0.00
+WALK left 6 t=3.76 @-2.800:-7.923:20.5:0.0:1.824 sector=2_0 ground=0.250 above=1.57 still=0.00
+WALK left 7 t=4.39 @-3.770:-8.900:67.6:0.0:1.834 sector=2_0 ground=0.250 above=1.58 still=0.00
+WALK left 8 t=5.02 @-5.427:-9.000:88.1:0.0:1.847 sector=5_0 ground=0.250 above=1.60 still=0.00
+WALK left 9 t=5.64 @-6.772:-9.000:90.0:0.0:1.844 sector=6_0 ground=0.250 above=1.59 still=0.00
+WALK left 10 t=6.27 @-7.672:-9.000:90.0:0.0:1.844 sector=6_0 ground=0.250 above=1.59 still=0.00
+WALK left 11 t=6.90 @-8.000:-9.000:90.0:0.0:1.850 sector=6_0 ground=0.250 above=1.60 still=0.00
+HOLD dk_floor_door 1.0 moved=0.0028 turned=0.000
