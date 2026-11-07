@@ -1,0 +1,4325 @@
+{
+ "units_per_m": 1,
+ "eye_height": 1.6,
+ "art": "rave_magic",
+ "start": "magic_arrive",
+ "max_step": 0.5,
+ "void_drop": 3.0,
+ "visibility": {
+  "mode": "clip",
+  "depth": 48,
+  "far": 0
+ },
+ "geography": {
+  "source": "content/story/maps/doom_lounge.json",
+  "note": "the Chill-out lounge (octagonal conversation pit), approximate: eight pieces in three stepped tiers round a sunken well, curtained alcoves"
+ },
+ "textures": {
+  "mg_floor_pearl": "textures/mg_floor_pearl.png",
+  "mg_floor_moss": "textures/mg_floor_moss.png",
+  "mg_floor_velvet": "textures/mg_floor_velvet.png",
+  "mg_floor_rug": "textures/mg_floor_rug.png",
+  "mg_floor_star": "textures/mg_floor_star.png",
+  "mg_floor_plank": "textures/mg_floor_plank.png",
+  "mg_wall_crystal": "textures/mg_wall_crystal.png",
+  "mg_wall_curtain": "textures/mg_wall_curtain.png",
+  "mg_wall_vine": "textures/mg_wall_vine.png",
+  "mg_wall_marble": "textures/mg_wall_marble.png",
+  "mg_wall_plank": "textures/mg_wall_plank.png",
+  "mg_trim": "textures/mg_trim.png",
+  "mg_ceil_dome": "textures/mg_ceil_dome.png",
+  "mg_arch": "textures/mg_arch.png",
+  "mg_window": "textures/mg_window.png",
+  "mg_moon": "textures/mg_moon.png",
+  "mg_pylon": "textures/mg_pylon.png",
+  "mg_panel": "textures/mg_panel.png",
+  "mg_rune": "textures/mg_rune.png",
+  "mg_stable_door": "textures/mg_stable_door.png",
+  "mg_counter": "textures/mg_counter.png",
+  "mg_cauldron": "textures/mg_cauldron.png",
+  "mg_cabinet": "textures/mg_cabinet.png",
+  "mg_rail": "textures/mg_rail.png",
+  "mg_console": "textures/mg_console.png",
+  "mg_deck": "textures/mg_deck.png",
+  "mg_hatch": "textures/mg_hatch.png",
+  "mg_carriage": "textures/mg_carriage.png",
+  "mg_unicorn": "textures/mg_unicorn.png",
+  "mg_mushroom": "textures/mg_mushroom.png",
+  "mg_crystal": "textures/mg_crystal.png",
+  "mg_lantern": "textures/mg_lantern.png",
+  "mg_plant": "textures/mg_plant.png",
+  "mg_knob_0": "textures/mg_knob_0.png",
+  "mg_knob_1": "textures/mg_knob_1.png",
+  "mg_knob_2": "textures/mg_knob_2.png",
+  "mg_knob_3": "textures/mg_knob_3.png",
+  "pc_glass_lit": "textures/pc_glass_lit.png",
+  "pc_lamp_lit": "textures/pc_lamp_lit.png",
+  "mg_wall_wood": "textures/mg_wall_wood.png"
+ },
+ "sky": {
+  "tex": "textures/mg_sky.png",
+  "mode": "cylinder"
+ },
+ "fog": {
+  "color": "#1a1038",
+  "density": 0.01
+ },
+ "sectors": [
+  {
+   "id": "t0_0",
+   "polygon": [
+    [
+     -6.006,
+     14.5
+    ],
+    [
+     -7.042,
+     17.0
+    ],
+    [
+     7.042,
+     17.0
+    ],
+    [
+     6.006,
+     14.5
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "mg_floor_pearl",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_crystal",
+   "light": 0.55,
+   "tint": "#ffd0f0",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t1_0",
+   "polygon": [
+    [
+     -4.971,
+     12.0
+    ],
+    [
+     -6.006,
+     14.5
+    ],
+    [
+     6.006,
+     14.5
+    ],
+    [
+     4.971,
+     12.0
+    ]
+   ],
+   "floor": -0.375,
+   "ceiling": 7.0,
+   "floor_tex": "mg_floor_moss",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_crystal",
+   "light": 0.55,
+   "tint": "#ffd0f0",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t2_0",
+   "polygon": [
+    [
+     -3.935,
+     9.5
+    ],
+    [
+     -4.971,
+     12.0
+    ],
+    [
+     4.971,
+     12.0
+    ],
+    [
+     3.935,
+     9.5
+    ]
+   ],
+   "floor": -0.75,
+   "ceiling": 8.0,
+   "floor_tex": "mg_floor_velvet",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_crystal",
+   "light": 0.55,
+   "tint": "#ffd0f0",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t0_1",
+   "polygon": [
+    [
+     6.006,
+     14.5
+    ],
+    [
+     7.042,
+     17.0
+    ],
+    [
+     17.0,
+     7.042
+    ],
+    [
+     14.5,
+     6.006
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "mg_floor_pearl",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_curtain",
+   "light": 0.55,
+   "tint": "#c8b8ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t1_1",
+   "polygon": [
+    [
+     4.971,
+     12.0
+    ],
+    [
+     6.006,
+     14.5
+    ],
+    [
+     14.5,
+     6.006
+    ],
+    [
+     12.0,
+     4.971
+    ]
+   ],
+   "floor": -0.375,
+   "ceiling": 7.0,
+   "floor_tex": "mg_floor_moss",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_curtain",
+   "light": 0.55,
+   "tint": "#c8b8ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t2_1",
+   "polygon": [
+    [
+     3.935,
+     9.5
+    ],
+    [
+     4.971,
+     12.0
+    ],
+    [
+     12.0,
+     4.971
+    ],
+    [
+     9.5,
+     3.935
+    ]
+   ],
+   "floor": -0.75,
+   "ceiling": 8.0,
+   "floor_tex": "mg_floor_velvet",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_curtain",
+   "light": 0.55,
+   "tint": "#c8b8ff",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t0_2",
+   "polygon": [
+    [
+     14.5,
+     6.006
+    ],
+    [
+     17.0,
+     7.042
+    ],
+    [
+     17.0,
+     -7.042
+    ],
+    [
+     14.5,
+     -6.006
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "mg_floor_pearl",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_vine",
+   "light": 0.55,
+   "tint": "#9ff0ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t1_2",
+   "polygon": [
+    [
+     12.0,
+     4.971
+    ],
+    [
+     14.5,
+     6.006
+    ],
+    [
+     14.5,
+     -6.006
+    ],
+    [
+     12.0,
+     -4.971
+    ]
+   ],
+   "floor": -0.375,
+   "ceiling": 7.0,
+   "floor_tex": "mg_floor_moss",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_vine",
+   "light": 0.55,
+   "tint": "#9ff0ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t2_2",
+   "polygon": [
+    [
+     9.5,
+     3.935
+    ],
+    [
+     12.0,
+     4.971
+    ],
+    [
+     12.0,
+     -4.971
+    ],
+    [
+     9.5,
+     -3.935
+    ]
+   ],
+   "floor": -0.75,
+   "ceiling": 8.0,
+   "floor_tex": "mg_floor_velvet",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_vine",
+   "light": 0.55,
+   "tint": "#9ff0ff",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t0_3",
+   "polygon": [
+    [
+     14.5,
+     -6.006
+    ],
+    [
+     17.0,
+     -7.042
+    ],
+    [
+     7.042,
+     -17.0
+    ],
+    [
+     6.006,
+     -14.5
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "mg_floor_pearl",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_crystal",
+   "light": 0.55,
+   "tint": "#ffe8a8",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t1_3",
+   "polygon": [
+    [
+     12.0,
+     -4.971
+    ],
+    [
+     14.5,
+     -6.006
+    ],
+    [
+     6.006,
+     -14.5
+    ],
+    [
+     4.971,
+     -12.0
+    ]
+   ],
+   "floor": -0.375,
+   "ceiling": 7.0,
+   "floor_tex": "mg_floor_moss",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_crystal",
+   "light": 0.55,
+   "tint": "#ffe8a8",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t2_3",
+   "polygon": [
+    [
+     9.5,
+     -3.935
+    ],
+    [
+     12.0,
+     -4.971
+    ],
+    [
+     4.971,
+     -12.0
+    ],
+    [
+     3.935,
+     -9.5
+    ]
+   ],
+   "floor": -0.75,
+   "ceiling": 8.0,
+   "floor_tex": "mg_floor_velvet",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_crystal",
+   "light": 0.55,
+   "tint": "#ffe8a8",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t0_4",
+   "polygon": [
+    [
+     6.006,
+     -14.5
+    ],
+    [
+     7.042,
+     -17.0
+    ],
+    [
+     -7.042,
+     -17.0
+    ],
+    [
+     -6.006,
+     -14.5
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "mg_floor_pearl",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_crystal",
+   "light": 0.55,
+   "tint": "#d8b8ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t1_4",
+   "polygon": [
+    [
+     4.971,
+     -12.0
+    ],
+    [
+     6.006,
+     -14.5
+    ],
+    [
+     -6.006,
+     -14.5
+    ],
+    [
+     -4.971,
+     -12.0
+    ]
+   ],
+   "floor": -0.375,
+   "ceiling": 7.0,
+   "floor_tex": "mg_floor_moss",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_crystal",
+   "light": 0.55,
+   "tint": "#d8b8ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t2_4",
+   "polygon": [
+    [
+     3.935,
+     -9.5
+    ],
+    [
+     4.971,
+     -12.0
+    ],
+    [
+     -4.971,
+     -12.0
+    ],
+    [
+     -3.935,
+     -9.5
+    ]
+   ],
+   "floor": -0.75,
+   "ceiling": 8.0,
+   "floor_tex": "mg_floor_velvet",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_crystal",
+   "light": 0.55,
+   "tint": "#d8b8ff",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t0_5",
+   "polygon": [
+    [
+     -6.006,
+     -14.5
+    ],
+    [
+     -7.042,
+     -17.0
+    ],
+    [
+     -17.0,
+     -7.042
+    ],
+    [
+     -14.5,
+     -6.006
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "mg_floor_pearl",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_curtain",
+   "light": 0.55,
+   "tint": "#ffb8e8",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t1_5",
+   "polygon": [
+    [
+     -4.971,
+     -12.0
+    ],
+    [
+     -6.006,
+     -14.5
+    ],
+    [
+     -14.5,
+     -6.006
+    ],
+    [
+     -12.0,
+     -4.971
+    ]
+   ],
+   "floor": -0.375,
+   "ceiling": 7.0,
+   "floor_tex": "mg_floor_moss",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_curtain",
+   "light": 0.55,
+   "tint": "#ffb8e8",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t2_5",
+   "polygon": [
+    [
+     -3.935,
+     -9.5
+    ],
+    [
+     -4.971,
+     -12.0
+    ],
+    [
+     -12.0,
+     -4.971
+    ],
+    [
+     -9.5,
+     -3.935
+    ]
+   ],
+   "floor": -0.75,
+   "ceiling": 8.0,
+   "floor_tex": "mg_floor_velvet",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_curtain",
+   "light": 0.55,
+   "tint": "#ffb8e8",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t0_6",
+   "polygon": [
+    [
+     -14.5,
+     -6.006
+    ],
+    [
+     -17.0,
+     -7.042
+    ],
+    [
+     -17.0,
+     7.042
+    ],
+    [
+     -14.5,
+     6.006
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "mg_floor_pearl",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_vine",
+   "light": 0.55,
+   "tint": "#a8ffe0",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t1_6",
+   "polygon": [
+    [
+     -12.0,
+     -4.971
+    ],
+    [
+     -14.5,
+     -6.006
+    ],
+    [
+     -14.5,
+     6.006
+    ],
+    [
+     -12.0,
+     4.971
+    ]
+   ],
+   "floor": -0.375,
+   "ceiling": 7.0,
+   "floor_tex": "mg_floor_moss",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_vine",
+   "light": 0.55,
+   "tint": "#a8ffe0",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t2_6",
+   "polygon": [
+    [
+     -9.5,
+     -3.935
+    ],
+    [
+     -12.0,
+     -4.971
+    ],
+    [
+     -12.0,
+     4.971
+    ],
+    [
+     -9.5,
+     3.935
+    ]
+   ],
+   "floor": -0.75,
+   "ceiling": 8.0,
+   "floor_tex": "mg_floor_velvet",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_vine",
+   "light": 0.55,
+   "tint": "#a8ffe0",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t0_7",
+   "polygon": [
+    [
+     -14.5,
+     6.006
+    ],
+    [
+     -17.0,
+     7.042
+    ],
+    [
+     -7.042,
+     17.0
+    ],
+    [
+     -6.006,
+     14.5
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 6.0,
+   "floor_tex": "mg_floor_pearl",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_curtain",
+   "light": 0.55,
+   "tint": "#c8c8ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t1_7",
+   "polygon": [
+    [
+     -12.0,
+     4.971
+    ],
+    [
+     -14.5,
+     6.006
+    ],
+    [
+     -6.006,
+     14.5
+    ],
+    [
+     -4.971,
+     12.0
+    ]
+   ],
+   "floor": -0.375,
+   "ceiling": 7.0,
+   "floor_tex": "mg_floor_moss",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_curtain",
+   "light": 0.55,
+   "tint": "#c8c8ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "t2_7",
+   "polygon": [
+    [
+     -9.5,
+     3.935
+    ],
+    [
+     -12.0,
+     4.971
+    ],
+    [
+     -4.971,
+     12.0
+    ],
+    [
+     -3.935,
+     9.5
+    ]
+   ],
+   "floor": -0.75,
+   "ceiling": 8.0,
+   "floor_tex": "mg_floor_velvet",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_curtain",
+   "light": 0.55,
+   "tint": "#c8c8ff",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim",
+   "lip_tex": "mg_wall_crystal"
+  },
+  {
+   "id": "well",
+   "polygon": [
+    [
+     3.935,
+     9.5
+    ],
+    [
+     9.5,
+     3.935
+    ],
+    [
+     9.5,
+     -3.935
+    ],
+    [
+     3.935,
+     -9.5
+    ],
+    [
+     -3.935,
+     -9.5
+    ],
+    [
+     -9.5,
+     -3.935
+    ],
+    [
+     -9.5,
+     3.935
+    ],
+    [
+     -3.935,
+     9.5
+    ]
+   ],
+   "floor": -1.125,
+   "ceiling": 12.0,
+   "floor_tex": "mg_floor_rug",
+   "ceil_tex": "sky",
+   "wall_tex": "mg_wall_crystal",
+   "light": 0.6,
+   "tint": "#ff9ae8",
+   "room": "main",
+   "flags": [
+    "dance_floor"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "drink",
+     "lean_wall",
+     "point"
+    ],
+    "dancing": [
+     "dance",
+     "dance",
+     "dance",
+     "chat",
+     "drink"
+    ],
+    "hype": [
+     "dance",
+     "dance",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "dance",
+     "dance",
+     "wave",
+     "point",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim"
+  },
+  {
+   "id": "home",
+   "polygon": [
+    [
+     -2.5,
+     17.0
+    ],
+    [
+     2.5,
+     17.0
+    ],
+    [
+     2.5,
+     22.0
+    ],
+    [
+     -2.5,
+     22.0
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 7.0,
+   "floor_tex": "mg_floor_pearl",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_curtain",
+   "light": 0.55,
+   "tint": "#ffd0f0",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   }
+  },
+  {
+   "id": "ap6_a",
+   "polygon": [
+    [
+     4.4,
+     -17.0
+    ],
+    [
+     -4.4,
+     -17.0
+    ],
+    [
+     -4.96,
+     -19.2
+    ],
+    [
+     4.96,
+     -19.2
+    ]
+   ],
+   "floor": 0.3,
+   "ceiling": 7.5,
+   "floor_tex": "mg_floor_pearl",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_crystal",
+   "light": 0.55,
+   "tint": "#d8b8ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim"
+  },
+  {
+   "id": "ap6_b",
+   "polygon": [
+    [
+     4.96,
+     -19.2
+    ],
+    [
+     -4.96,
+     -19.2
+    ],
+    [
+     -5.52,
+     -21.4
+    ],
+    [
+     5.52,
+     -21.4
+    ]
+   ],
+   "floor": 0.6,
+   "ceiling": 7.5,
+   "floor_tex": "mg_floor_pearl",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_crystal",
+   "light": 0.58,
+   "tint": "#d8b8ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   },
+   "step_tex": "mg_trim"
+  },
+  {
+   "id": "stage",
+   "polygon": [
+    [
+     5.52,
+     -21.4
+    ],
+    [
+     -5.52,
+     -21.4
+    ],
+    [
+     -7.2,
+     -28.0
+    ],
+    [
+     7.2,
+     -28.0
+    ]
+   ],
+   "floor": 0.9,
+   "ceiling": 8.5,
+   "floor_tex": "mg_floor_star",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_crystal",
+   "light": 0.62,
+   "tint": "#e8c8ff",
+   "room": "main",
+   "flags": [
+    "stage"
+   ],
+   "activities": {
+    "quiet": [
+     "stand",
+     "mix",
+     "point"
+    ],
+    "dancing": [
+     "mix",
+     "dance",
+     "point",
+     "wave"
+    ],
+    "hype": [
+     "mix",
+     "dance",
+     "wave",
+     "point"
+    ],
+    "euphoric": [
+     "mix",
+     "dance",
+     "wave",
+     "point"
+    ]
+   },
+   "step_tex": "mg_trim"
+  },
+  {
+   "id": "cloak",
+   "polygon": [
+    [
+     -9.475,
+     -14.566
+    ],
+    [
+     -14.566,
+     -9.475
+    ],
+    [
+     -19.516,
+     -13.011
+    ],
+    [
+     -13.011,
+     -19.516
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 7.0,
+   "floor_tex": "mg_floor_plank",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_curtain",
+   "light": 0.55,
+   "tint": "#d8b8ff",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   }
+  },
+  {
+   "id": "bar",
+   "polygon": [
+    [
+     14.566,
+     -9.475
+    ],
+    [
+     9.475,
+     -14.566
+    ],
+    [
+     13.011,
+     -19.516
+    ],
+    [
+     19.516,
+     -13.011
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 7.0,
+   "floor_tex": "mg_floor_plank",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_marble",
+   "light": 0.55,
+   "tint": "#ffb0e8",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   }
+  },
+  {
+   "id": "hangar",
+   "polygon": [
+    [
+     -15.557,
+     -8.485
+    ],
+    [
+     -16.971,
+     -7.071
+    ],
+    [
+     -20.719,
+     -10.394
+    ],
+    [
+     -18.88,
+     -12.233
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 7.0,
+   "floor_tex": "mg_floor_plank",
+   "ceil_tex": "mg_ceil_dome",
+   "wall_tex": "mg_wall_plank",
+   "light": 0.6,
+   "tint": "#ffd890",
+   "room": "main",
+   "flags": [],
+   "activities": {
+    "quiet": [
+     "stand",
+     "chat",
+     "lean_wall"
+    ],
+    "dancing": [
+     "stand",
+     "chat",
+     "drink",
+     "watch"
+    ],
+    "hype": [
+     "watch",
+     "wave",
+     "chat",
+     "drink"
+    ],
+    "euphoric": [
+     "wave",
+     "watch",
+     "chat",
+     "toast"
+    ]
+   }
+  }
+ ],
+ "walls": [
+  {
+   "from": [
+    7.042,
+    17.0
+   ],
+   "to": [
+    6.006,
+    14.5
+   ],
+   "sector": "t0_0",
+   "portal": "t0_1"
+  },
+  {
+   "from": [
+    6.006,
+    14.5
+   ],
+   "to": [
+    4.971,
+    12.0
+   ],
+   "sector": "t1_0",
+   "portal": "t1_1"
+  },
+  {
+   "from": [
+    4.971,
+    12.0
+   ],
+   "to": [
+    3.935,
+    9.5
+   ],
+   "sector": "t2_0",
+   "portal": "t2_1"
+  },
+  {
+   "from": [
+    6.006,
+    14.5
+   ],
+   "to": [
+    -6.006,
+    14.5
+   ],
+   "sector": "t0_0",
+   "portal": "t1_0"
+  },
+  {
+   "from": [
+    4.971,
+    12.0
+   ],
+   "to": [
+    -4.971,
+    12.0
+   ],
+   "sector": "t1_0",
+   "portal": "t2_0"
+  },
+  {
+   "from": [
+    3.935,
+    9.5
+   ],
+   "to": [
+    -3.935,
+    9.5
+   ],
+   "sector": "t2_0",
+   "portal": "well"
+  },
+  {
+   "from": [
+    17.0,
+    7.042
+   ],
+   "to": [
+    14.5,
+    6.006
+   ],
+   "sector": "t0_1",
+   "portal": "t0_2"
+  },
+  {
+   "from": [
+    14.5,
+    6.006
+   ],
+   "to": [
+    12.0,
+    4.971
+   ],
+   "sector": "t1_1",
+   "portal": "t1_2"
+  },
+  {
+   "from": [
+    12.0,
+    4.971
+   ],
+   "to": [
+    9.5,
+    3.935
+   ],
+   "sector": "t2_1",
+   "portal": "t2_2"
+  },
+  {
+   "from": [
+    14.5,
+    6.006
+   ],
+   "to": [
+    6.006,
+    14.5
+   ],
+   "sector": "t0_1",
+   "portal": "t1_1"
+  },
+  {
+   "from": [
+    12.0,
+    4.971
+   ],
+   "to": [
+    4.971,
+    12.0
+   ],
+   "sector": "t1_1",
+   "portal": "t2_1"
+  },
+  {
+   "from": [
+    9.5,
+    3.935
+   ],
+   "to": [
+    3.935,
+    9.5
+   ],
+   "sector": "t2_1",
+   "portal": "well"
+  },
+  {
+   "from": [
+    17.0,
+    -7.042
+   ],
+   "to": [
+    14.5,
+    -6.006
+   ],
+   "sector": "t0_2",
+   "portal": "t0_3"
+  },
+  {
+   "from": [
+    14.5,
+    -6.006
+   ],
+   "to": [
+    12.0,
+    -4.971
+   ],
+   "sector": "t1_2",
+   "portal": "t1_3"
+  },
+  {
+   "from": [
+    12.0,
+    -4.971
+   ],
+   "to": [
+    9.5,
+    -3.935
+   ],
+   "sector": "t2_2",
+   "portal": "t2_3"
+  },
+  {
+   "from": [
+    14.5,
+    -6.006
+   ],
+   "to": [
+    14.5,
+    6.006
+   ],
+   "sector": "t0_2",
+   "portal": "t1_2"
+  },
+  {
+   "from": [
+    12.0,
+    -4.971
+   ],
+   "to": [
+    12.0,
+    4.971
+   ],
+   "sector": "t1_2",
+   "portal": "t2_2"
+  },
+  {
+   "from": [
+    9.5,
+    -3.935
+   ],
+   "to": [
+    9.5,
+    3.935
+   ],
+   "sector": "t2_2",
+   "portal": "well"
+  },
+  {
+   "from": [
+    7.042,
+    -17.0
+   ],
+   "to": [
+    6.006,
+    -14.5
+   ],
+   "sector": "t0_3",
+   "portal": "t0_4"
+  },
+  {
+   "from": [
+    6.006,
+    -14.5
+   ],
+   "to": [
+    4.971,
+    -12.0
+   ],
+   "sector": "t1_3",
+   "portal": "t1_4"
+  },
+  {
+   "from": [
+    4.971,
+    -12.0
+   ],
+   "to": [
+    3.935,
+    -9.5
+   ],
+   "sector": "t2_3",
+   "portal": "t2_4"
+  },
+  {
+   "from": [
+    6.006,
+    -14.5
+   ],
+   "to": [
+    14.5,
+    -6.006
+   ],
+   "sector": "t0_3",
+   "portal": "t1_3"
+  },
+  {
+   "from": [
+    4.971,
+    -12.0
+   ],
+   "to": [
+    12.0,
+    -4.971
+   ],
+   "sector": "t1_3",
+   "portal": "t2_3"
+  },
+  {
+   "from": [
+    3.935,
+    -9.5
+   ],
+   "to": [
+    9.5,
+    -3.935
+   ],
+   "sector": "t2_3",
+   "portal": "well"
+  },
+  {
+   "from": [
+    -7.042,
+    -17.0
+   ],
+   "to": [
+    -6.006,
+    -14.5
+   ],
+   "sector": "t0_4",
+   "portal": "t0_5"
+  },
+  {
+   "from": [
+    -6.006,
+    -14.5
+   ],
+   "to": [
+    -4.971,
+    -12.0
+   ],
+   "sector": "t1_4",
+   "portal": "t1_5"
+  },
+  {
+   "from": [
+    -4.971,
+    -12.0
+   ],
+   "to": [
+    -3.935,
+    -9.5
+   ],
+   "sector": "t2_4",
+   "portal": "t2_5"
+  },
+  {
+   "from": [
+    -6.006,
+    -14.5
+   ],
+   "to": [
+    6.006,
+    -14.5
+   ],
+   "sector": "t0_4",
+   "portal": "t1_4"
+  },
+  {
+   "from": [
+    -4.971,
+    -12.0
+   ],
+   "to": [
+    4.971,
+    -12.0
+   ],
+   "sector": "t1_4",
+   "portal": "t2_4"
+  },
+  {
+   "from": [
+    -3.935,
+    -9.5
+   ],
+   "to": [
+    3.935,
+    -9.5
+   ],
+   "sector": "t2_4",
+   "portal": "well"
+  },
+  {
+   "from": [
+    -17.0,
+    -7.042
+   ],
+   "to": [
+    -14.5,
+    -6.006
+   ],
+   "sector": "t0_5",
+   "portal": "t0_6"
+  },
+  {
+   "from": [
+    -14.5,
+    -6.006
+   ],
+   "to": [
+    -12.0,
+    -4.971
+   ],
+   "sector": "t1_5",
+   "portal": "t1_6"
+  },
+  {
+   "from": [
+    -12.0,
+    -4.971
+   ],
+   "to": [
+    -9.5,
+    -3.935
+   ],
+   "sector": "t2_5",
+   "portal": "t2_6"
+  },
+  {
+   "from": [
+    -14.5,
+    -6.006
+   ],
+   "to": [
+    -6.006,
+    -14.5
+   ],
+   "sector": "t0_5",
+   "portal": "t1_5"
+  },
+  {
+   "from": [
+    -12.0,
+    -4.971
+   ],
+   "to": [
+    -4.971,
+    -12.0
+   ],
+   "sector": "t1_5",
+   "portal": "t2_5"
+  },
+  {
+   "from": [
+    -9.5,
+    -3.935
+   ],
+   "to": [
+    -3.935,
+    -9.5
+   ],
+   "sector": "t2_5",
+   "portal": "well"
+  },
+  {
+   "from": [
+    -17.0,
+    7.042
+   ],
+   "to": [
+    -14.5,
+    6.006
+   ],
+   "sector": "t0_6",
+   "portal": "t0_7"
+  },
+  {
+   "from": [
+    -14.5,
+    6.006
+   ],
+   "to": [
+    -12.0,
+    4.971
+   ],
+   "sector": "t1_6",
+   "portal": "t1_7"
+  },
+  {
+   "from": [
+    -12.0,
+    4.971
+   ],
+   "to": [
+    -9.5,
+    3.935
+   ],
+   "sector": "t2_6",
+   "portal": "t2_7"
+  },
+  {
+   "from": [
+    -14.5,
+    6.006
+   ],
+   "to": [
+    -14.5,
+    -6.006
+   ],
+   "sector": "t0_6",
+   "portal": "t1_6"
+  },
+  {
+   "from": [
+    -12.0,
+    4.971
+   ],
+   "to": [
+    -12.0,
+    -4.971
+   ],
+   "sector": "t1_6",
+   "portal": "t2_6"
+  },
+  {
+   "from": [
+    -9.5,
+    3.935
+   ],
+   "to": [
+    -9.5,
+    -3.935
+   ],
+   "sector": "t2_6",
+   "portal": "well"
+  },
+  {
+   "from": [
+    -7.042,
+    17.0
+   ],
+   "to": [
+    -6.006,
+    14.5
+   ],
+   "sector": "t0_7",
+   "portal": "t0_0"
+  },
+  {
+   "from": [
+    -6.006,
+    14.5
+   ],
+   "to": [
+    -4.971,
+    12.0
+   ],
+   "sector": "t1_7",
+   "portal": "t1_0"
+  },
+  {
+   "from": [
+    -4.971,
+    12.0
+   ],
+   "to": [
+    -3.935,
+    9.5
+   ],
+   "sector": "t2_7",
+   "portal": "t2_0"
+  },
+  {
+   "from": [
+    -6.006,
+    14.5
+   ],
+   "to": [
+    -14.5,
+    6.006
+   ],
+   "sector": "t0_7",
+   "portal": "t1_7"
+  },
+  {
+   "from": [
+    -4.971,
+    12.0
+   ],
+   "to": [
+    -12.0,
+    4.971
+   ],
+   "sector": "t1_7",
+   "portal": "t2_7"
+  },
+  {
+   "from": [
+    -3.935,
+    9.5
+   ],
+   "to": [
+    -9.5,
+    3.935
+   ],
+   "sector": "t2_7",
+   "portal": "well"
+  },
+  {
+   "from": [
+    -2.5,
+    17.0
+   ],
+   "to": [
+    2.5,
+    17.0
+   ],
+   "sector": "t0_0",
+   "portal": "home"
+  },
+  {
+   "from": [
+    4.4,
+    -17.0
+   ],
+   "to": [
+    -4.4,
+    -17.0
+   ],
+   "sector": "t0_4",
+   "portal": "ap6_a"
+  },
+  {
+   "from": [
+    -4.96,
+    -19.2
+   ],
+   "to": [
+    4.96,
+    -19.2
+   ],
+   "sector": "ap6_a",
+   "portal": "ap6_b"
+  },
+  {
+   "from": [
+    -5.52,
+    -21.4
+   ],
+   "to": [
+    5.52,
+    -21.4
+   ],
+   "sector": "ap6_b",
+   "portal": "stage"
+  },
+  {
+   "from": [
+    -9.4755,
+    -14.5665
+   ],
+   "to": [
+    -14.5665,
+    -9.4755
+   ],
+   "sector": "t0_5",
+   "portal": "cloak"
+  },
+  {
+   "from": [
+    14.5665,
+    -9.4755
+   ],
+   "to": [
+    9.4755,
+    -14.5665
+   ],
+   "sector": "t0_3",
+   "portal": "bar"
+  },
+  {
+   "from": [
+    -15.557,
+    -8.485
+   ],
+   "to": [
+    -16.971,
+    -7.071
+   ],
+   "sector": "t0_5",
+   "portal": "hangar"
+  }
+ ],
+ "homes": [
+  {
+   "actor": "dj",
+   "sector": "stage",
+   "at": [
+    -0.9,
+    -26.2
+   ]
+  },
+  {
+   "actor": "s1",
+   "sector": "ap6_a",
+   "at": [
+    3.0,
+    -18.0
+   ]
+  },
+  {
+   "actor": "s2",
+   "sector": "stage",
+   "at": [
+    4.6,
+    -24.0
+   ]
+  },
+  {
+   "actor": "s3",
+   "sector": "stage",
+   "at": [
+    -4.8,
+    -24.0
+   ]
+  },
+  {
+   "actor": "attendant",
+   "sector": "cloak",
+   "at": [
+    -15.981,
+    -14.849
+   ]
+  },
+  {
+   "actor": "customer_0",
+   "sector": "cloak",
+   "at": [
+    -12.94,
+    -14.779
+   ]
+  },
+  {
+   "actor": "customer_1",
+   "sector": "cloak",
+   "at": [
+    -12.445,
+    -15.274
+   ]
+  },
+  {
+   "actor": "customer_2",
+   "sector": "cloak",
+   "at": [
+    -11.95,
+    -15.768
+   ]
+  },
+  {
+   "actor": "customer_3",
+   "sector": "cloak",
+   "at": [
+    -11.455,
+    -16.263
+   ]
+  },
+  {
+   "actor": "customer_4",
+   "sector": "cloak",
+   "at": [
+    -13.223,
+    -15.627
+   ]
+  },
+  {
+   "actor": "customer_5",
+   "sector": "cloak",
+   "at": [
+    -12.728,
+    -16.122
+   ]
+  },
+  {
+   "actor": "customer_6",
+   "sector": "cloak",
+   "at": [
+    -12.233,
+    -16.617
+   ]
+  },
+  {
+   "actor": "customer_7",
+   "sector": "cloak",
+   "at": [
+    -11.738,
+    -17.112
+   ]
+  },
+  {
+   "actor": "bartender",
+   "sector": "bar",
+   "at": [
+    15.556,
+    -15.556
+   ]
+  },
+  {
+   "actor": "b1",
+   "sector": "bar",
+   "at": [
+    12.304,
+    -15.981
+   ]
+  },
+  {
+   "actor": "b2",
+   "sector": "bar",
+   "at": [
+    11.172,
+    -15.981
+   ]
+  },
+  {
+   "actor": "customer",
+   "sector": "bar",
+   "at": [
+    14.708,
+    -12.445
+   ]
+  },
+  {
+   "actor": "pilot",
+   "sector": "hangar",
+   "at": [
+    -19.234,
+    -9.616
+   ]
+  },
+  {
+   "actor": "a00",
+   "sector": "t2_0",
+   "at": [
+    1.108,
+    10.542
+   ]
+  },
+  {
+   "actor": "a01",
+   "sector": "t2_0",
+   "at": [
+    -1.815,
+    11.457
+   ]
+  },
+  {
+   "actor": "a02",
+   "sector": "t2_1",
+   "at": [
+    8.238,
+    6.671
+   ]
+  },
+  {
+   "actor": "a03",
+   "sector": "t2_1",
+   "at": [
+    6.818,
+    9.385
+   ]
+  },
+  {
+   "actor": "a04",
+   "sector": "t2_2",
+   "at": [
+    10.542,
+    -1.108
+   ]
+  },
+  {
+   "actor": "a05",
+   "sector": "t2_2",
+   "at": [
+    11.457,
+    1.815
+   ]
+  },
+  {
+   "actor": "a06",
+   "sector": "t2_3",
+   "at": [
+    6.671,
+    -8.238
+   ]
+  },
+  {
+   "actor": "a07",
+   "sector": "t2_4",
+   "at": [
+    -1.108,
+    -10.542
+   ]
+  },
+  {
+   "actor": "a08",
+   "sector": "t2_5",
+   "at": [
+    -8.238,
+    -6.671
+   ]
+  },
+  {
+   "actor": "a09",
+   "sector": "t2_6",
+   "at": [
+    -10.542,
+    1.108
+   ]
+  },
+  {
+   "actor": "a10",
+   "sector": "t2_6",
+   "at": [
+    -11.457,
+    -1.815
+   ]
+  },
+  {
+   "actor": "a11",
+   "sector": "t2_7",
+   "at": [
+    -6.671,
+    8.238
+   ]
+  },
+  {
+   "actor": "a12",
+   "sector": "t2_7",
+   "at": [
+    -9.385,
+    6.818
+   ]
+  },
+  {
+   "actor": "a13",
+   "sector": "well",
+   "at": [
+    0.684,
+    1.879
+   ]
+  },
+  {
+   "actor": "a14",
+   "sector": "well",
+   "at": [
+    4.713,
+    2.198
+   ]
+  },
+  {
+   "actor": "a15",
+   "sector": "well",
+   "at": [
+    1.879,
+    -0.684
+   ]
+  },
+  {
+   "actor": "a16",
+   "sector": "well",
+   "at": [
+    2.198,
+    -4.713
+   ]
+  },
+  {
+   "actor": "a17",
+   "sector": "well",
+   "at": [
+    -1.163,
+    -3.195
+   ]
+  },
+  {
+   "actor": "a18",
+   "sector": "well",
+   "at": [
+    -5.982,
+    -2.789
+   ]
+  },
+  {
+   "actor": "a19",
+   "sector": "well",
+   "at": [
+    -3.195,
+    1.163
+   ]
+  },
+  {
+   "actor": "a20",
+   "sector": "well",
+   "at": [
+    -2.789,
+    5.982
+   ]
+  },
+  {
+   "actor": "a21",
+   "sector": "t1_1",
+   "at": [
+    10.265,
+    8.613
+   ]
+  },
+  {
+   "actor": "a22",
+   "sector": "t1_2",
+   "at": [
+    13.349,
+    -1.168
+   ]
+  },
+  {
+   "actor": "a23",
+   "sector": "t1_6",
+   "at": [
+    -13.349,
+    1.168
+   ]
+  },
+  {
+   "actor": "a24",
+   "sector": "t1_7",
+   "at": [
+    -8.613,
+    10.265
+   ]
+  },
+  {
+   "actor": "a25",
+   "sector": "t0_1",
+   "at": [
+    13.106,
+    9.177
+   ]
+  },
+  {
+   "actor": "a26",
+   "sector": "t0_7",
+   "at": [
+    -13.106,
+    9.177
+   ]
+  },
+  {
+   "actor": "a27",
+   "sector": "t0_2",
+   "at": [
+    15.363,
+    -2.709
+   ]
+  },
+  {
+   "actor": "a28",
+   "sector": "t0_6",
+   "at": [
+    -15.363,
+    -2.709
+   ]
+  }
+ ],
+ "spots": {},
+ "silhouettes": [],
+ "occluders": [],
+ "waypoints": [
+  {
+   "id": "magic_arrive",
+   "at": [
+    0.0,
+    20.4
+   ],
+   "yaw": 0,
+   "sector": "home"
+  },
+  {
+   "id": "home_door",
+   "at": [
+    0.0,
+    19.0
+   ],
+   "yaw": 180,
+   "sector": "home"
+  },
+  {
+   "id": "stage_foot",
+   "at": [
+    0.0,
+    -15.2
+   ],
+   "yaw": 0,
+   "sector": "t0_4"
+  },
+  {
+   "id": "stage_steps",
+   "at": [
+    0.0,
+    -20.3
+   ],
+   "yaw": 0,
+   "sector": "ap6_b"
+  },
+  {
+   "id": "deck_view",
+   "at": [
+    0.0,
+    -22.6
+   ],
+   "yaw": 0,
+   "sector": "stage"
+  },
+  {
+   "id": "cloak_door",
+   "at": [
+    -10.748,
+    -10.748
+   ],
+   "yaw": 45,
+   "sector": "t0_5"
+  },
+  {
+   "id": "cloak_view",
+   "at": [
+    -14.142,
+    -14.142
+   ],
+   "yaw": 45,
+   "sector": "cloak"
+  },
+  {
+   "id": "cloak_hold",
+   "at": [
+    -11.597,
+    -11.597
+   ],
+   "yaw": 45,
+   "sector": "t0_5"
+  },
+  {
+   "id": "bar_door",
+   "at": [
+    10.748,
+    -10.748
+   ],
+   "yaw": -45,
+   "sector": "t0_3"
+  },
+  {
+   "id": "bar_view",
+   "at": [
+    14.142,
+    -14.142
+   ],
+   "yaw": -45,
+   "sector": "bar"
+  },
+  {
+   "id": "bar_hold",
+   "at": [
+    11.597,
+    -11.597
+   ],
+   "yaw": -45,
+   "sector": "t0_3"
+  },
+  {
+   "id": "hangar_door",
+   "at": [
+    -15.486,
+    -7.0
+   ],
+   "yaw": 45,
+   "sector": "t0_5"
+  },
+  {
+   "id": "hangar_view",
+   "at": [
+    -18.244,
+    -9.758
+   ],
+   "yaw": 45,
+   "sector": "hangar"
+  },
+  {
+   "id": "hub_view",
+   "at": [
+    0.0,
+    15.0
+   ],
+   "yaw": 0.0,
+   "sector": "t0_0",
+   "choice_view": true
+  },
+  {
+   "id": "well_s",
+   "at": [
+    0.0,
+    6.5
+   ],
+   "yaw": 0.0,
+   "sector": "well"
+  },
+  {
+   "id": "well_n",
+   "at": [
+    0.0,
+    -6.5
+   ],
+   "yaw": 0.0,
+   "sector": "well"
+  },
+  {
+   "id": "well_sw",
+   "at": [
+    -5.2,
+    5.2
+   ],
+   "yaw": 0.0,
+   "sector": "well"
+  },
+  {
+   "id": "well_se",
+   "at": [
+    5.2,
+    5.2
+   ],
+   "yaw": 0.0,
+   "sector": "well"
+  }
+ ],
+ "things": [
+  {
+   "id": "home_hatch",
+   "kind": "billboard",
+   "sprite": "mg_hatch",
+   "at": [
+    0.0,
+    19.9
+   ],
+   "size": 2.3,
+   "anim": "none",
+   "y": 1.15
+  },
+  {
+   "id": "deck",
+   "kind": "billboard",
+   "sprite": "mg_deck",
+   "at": [
+    0.0,
+    -25.2
+   ],
+   "size": 1.05,
+   "anim": "none",
+   "y": 0.525
+  },
+  {
+   "id": "stage_ball",
+   "kind": "billboard",
+   "sprite": "disco_ball",
+   "at": [
+    0.0,
+    -24.0
+   ],
+   "size": 1.4,
+   "anim": "rotate",
+   "y": 5.6
+  },
+  {
+   "id": "woofer_0",
+   "kind": "billboard",
+   "sprite": "woofer",
+   "at": [
+    4.2,
+    -23.0
+   ],
+   "size": 1.7,
+   "anim": "pump",
+   "y": 0.85
+  },
+  {
+   "id": "woofer_1",
+   "kind": "billboard",
+   "sprite": "woofer",
+   "at": [
+    -4.2,
+    -23.0
+   ],
+   "size": 1.7,
+   "anim": "pump",
+   "y": 0.85
+  },
+  {
+   "id": "stage_beams_l",
+   "kind": "billboard",
+   "sprite": "mg_aurora",
+   "at": [
+    4.4,
+    -25.8
+   ],
+   "size": 4.2,
+   "anim": "none",
+   "y": 3.0,
+   "piece": "mg_aurora"
+  },
+  {
+   "id": "stage_ring",
+   "kind": "billboard",
+   "sprite": "mg_sparkle_ring",
+   "at": [
+    0.0,
+    -22.6
+   ],
+   "size": 2.6,
+   "anim": "none",
+   "y": 0.9,
+   "piece": "mg_sparkle_ring"
+  },
+  {
+   "id": "stage_dome",
+   "kind": "billboard",
+   "sprite": "mg_orb_dome",
+   "at": [
+    0.0,
+    -26.4
+   ],
+   "size": 3.4,
+   "anim": "none",
+   "y": 2.6,
+   "piece": "mg_orb_dome"
+  },
+  {
+   "id": "glow_stage",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    0.0,
+    -25.5
+   ],
+   "size": 3.0,
+   "anim": "pulse",
+   "y": 1.4,
+   "blend": "add"
+  },
+  {
+   "id": "cloak_counter",
+   "kind": "billboard",
+   "sprite": "mg_cauldron",
+   "at": [
+    -14.566,
+    -14.566
+   ],
+   "size": 1.2,
+   "anim": "none",
+   "y": 0.6
+  },
+  {
+   "id": "cloak_lamp",
+   "kind": "billboard",
+   "sprite": "pc_lamp_lit",
+   "at": [
+    -14.107,
+    -14.885
+   ],
+   "size": 0.5,
+   "anim": "none",
+   "y": 1.5,
+   "piece": "cloak_lamp",
+   "emissive": true
+  },
+  {
+   "id": "cloak_rail",
+   "kind": "billboard",
+   "sprite": "mg_rail",
+   "at": [
+    -16.228,
+    -16.228
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "coat_cabinet",
+   "kind": "billboard",
+   "sprite": "mg_cabinet",
+   "at": [
+    -13.576,
+    -17.819
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "glow_bar",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    15.91,
+    -15.91
+   ],
+   "size": 2.2,
+   "anim": "pulse",
+   "y": 1.4,
+   "blend": "add"
+  },
+  {
+   "id": "bar_counter",
+   "kind": "billboard",
+   "sprite": "mg_counter",
+   "at": [
+    14.566,
+    -14.566
+   ],
+   "size": 1.3,
+   "anim": "none",
+   "y": 0.65
+  },
+  {
+   "id": "bar_cab_1",
+   "kind": "billboard",
+   "sprite": "mg_cabinet",
+   "at": [
+    18.314,
+    -14.071
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "bar_shelf_1",
+   "kind": "billboard",
+   "sprite": "pc_glass_lit",
+   "at": [
+    18.031,
+    -13.789
+   ],
+   "size": 0.6,
+   "anim": "none",
+   "y": 1.75,
+   "piece": "bar_shelf_1",
+   "emissive": true
+  },
+  {
+   "id": "bar_cab_2",
+   "kind": "billboard",
+   "sprite": "mg_cabinet",
+   "at": [
+    16.9,
+    -15.486
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "bar_shelf_2",
+   "kind": "billboard",
+   "sprite": "pc_glass_lit",
+   "at": [
+    16.617,
+    -15.203
+   ],
+   "size": 0.6,
+   "anim": "none",
+   "y": 1.75,
+   "piece": "bar_shelf_2",
+   "emissive": true
+  },
+  {
+   "id": "bar_cab_3",
+   "kind": "billboard",
+   "sprite": "mg_cabinet",
+   "at": [
+    15.486,
+    -16.9
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "bar_shelf_3",
+   "kind": "billboard",
+   "sprite": "pc_glass_lit",
+   "at": [
+    15.203,
+    -16.617
+   ],
+   "size": 0.6,
+   "anim": "none",
+   "y": 1.75,
+   "piece": "bar_shelf_3",
+   "emissive": true
+  },
+  {
+   "id": "bar_cab_4",
+   "kind": "billboard",
+   "sprite": "mg_cabinet",
+   "at": [
+    14.071,
+    -18.314
+   ],
+   "size": 1.8,
+   "anim": "none",
+   "y": 0.9
+  },
+  {
+   "id": "bar_shelf_4",
+   "kind": "billboard",
+   "sprite": "pc_glass_lit",
+   "at": [
+    13.789,
+    -18.031
+   ],
+   "size": 0.6,
+   "anim": "none",
+   "y": 1.75,
+   "piece": "bar_shelf_4",
+   "emissive": true
+  },
+  {
+   "id": "glow_hangar",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    -19.163,
+    -10.677
+   ],
+   "size": 3.0,
+   "anim": "pulse",
+   "y": 1.4,
+   "blend": "add"
+  },
+  {
+   "id": "hangar_racer",
+   "kind": "billboard",
+   "sprite": "mg_carriage",
+   "at": [
+    -19.022,
+    -10.536
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 0.5
+  },
+  {
+   "id": "hangar_console",
+   "kind": "billboard",
+   "sprite": "mg_console",
+   "at": [
+    -19.234,
+    -11.313
+   ],
+   "size": 1.3,
+   "anim": "none",
+   "y": 0.65
+  },
+  {
+   "id": "unicorn_e",
+   "kind": "billboard",
+   "sprite": "mg_unicorn",
+   "at": [
+    15.4,
+    0.0
+   ],
+   "size": 1.9,
+   "anim": "none",
+   "y": 0.95
+  },
+  {
+   "id": "unicorn_w",
+   "kind": "billboard",
+   "sprite": "mg_unicorn",
+   "at": [
+    -15.4,
+    -0.0
+   ],
+   "size": 1.9,
+   "anim": "none",
+   "y": 0.95
+  },
+  {
+   "id": "toadstool_0",
+   "kind": "billboard",
+   "sprite": "mg_mushroom",
+   "at": [
+    7.571,
+    10.813
+   ],
+   "size": 1.5,
+   "anim": "none",
+   "y": 0.75
+  },
+  {
+   "id": "toadstool_1",
+   "kind": "billboard",
+   "sprite": "mg_mushroom",
+   "at": [
+    13.196,
+    -2.327
+   ],
+   "size": 1.5,
+   "anim": "none",
+   "y": 0.75
+  },
+  {
+   "id": "toadstool_2",
+   "kind": "billboard",
+   "sprite": "mg_mushroom",
+   "at": [
+    -13.196,
+    -2.327
+   ],
+   "size": 1.5,
+   "anim": "none",
+   "y": 0.75
+  },
+  {
+   "id": "toadstool_3",
+   "kind": "billboard",
+   "sprite": "mg_mushroom",
+   "at": [
+    -7.571,
+    10.813
+   ],
+   "size": 1.5,
+   "anim": "none",
+   "y": 0.75
+  },
+  {
+   "id": "toadstool_4",
+   "kind": "billboard",
+   "sprite": "mg_mushroom",
+   "at": [
+    10.485,
+    -7.342
+   ],
+   "size": 1.5,
+   "anim": "none",
+   "y": 0.75
+  },
+  {
+   "id": "toadstool_5",
+   "kind": "billboard",
+   "sprite": "mg_mushroom",
+   "at": [
+    -10.485,
+    -7.342
+   ],
+   "size": 1.5,
+   "anim": "none",
+   "y": 0.75
+  },
+  {
+   "id": "crystal_0",
+   "kind": "billboard",
+   "sprite": "mg_crystal",
+   "at": [
+    9.058,
+    5.882
+   ],
+   "size": 1.4,
+   "anim": "none",
+   "y": 0.7
+  },
+  {
+   "id": "crystal_1",
+   "kind": "billboard",
+   "sprite": "mg_crystal",
+   "at": [
+    5.882,
+    -9.058
+   ],
+   "size": 1.4,
+   "anim": "none",
+   "y": 0.7
+  },
+  {
+   "id": "crystal_2",
+   "kind": "billboard",
+   "sprite": "mg_crystal",
+   "at": [
+    -9.058,
+    -5.882
+   ],
+   "size": 1.4,
+   "anim": "none",
+   "y": 0.7
+  },
+  {
+   "id": "crystal_3",
+   "kind": "billboard",
+   "sprite": "mg_crystal",
+   "at": [
+    -5.882,
+    9.058
+   ],
+   "size": 1.4,
+   "anim": "none",
+   "y": 0.7
+  },
+  {
+   "id": "crystal_4",
+   "kind": "billboard",
+   "sprite": "mg_crystal",
+   "at": [
+    2.162,
+    10.173
+   ],
+   "size": 1.4,
+   "anim": "none",
+   "y": 0.7
+  },
+  {
+   "id": "crystal_5",
+   "kind": "billboard",
+   "sprite": "mg_crystal",
+   "at": [
+    -2.162,
+    -10.173
+   ],
+   "size": 1.4,
+   "anim": "none",
+   "y": 0.7
+  },
+  {
+   "id": "lantern_0",
+   "kind": "billboard",
+   "sprite": "mg_lantern",
+   "at": [
+    -4.0,
+    -2.0
+   ],
+   "size": 0.9,
+   "anim": "bob",
+   "y": 3.4
+  },
+  {
+   "id": "lantern_glow_0",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    -4.0,
+    -2.0
+   ],
+   "size": 1.8,
+   "anim": "pulse",
+   "y": 3.5,
+   "blend": "add"
+  },
+  {
+   "id": "lantern_1",
+   "kind": "billboard",
+   "sprite": "mg_lantern",
+   "at": [
+    4.5,
+    -3.0
+   ],
+   "size": 0.9,
+   "anim": "bob",
+   "y": 3.9
+  },
+  {
+   "id": "lantern_glow_1",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    4.5,
+    -3.0
+   ],
+   "size": 1.8,
+   "anim": "pulse",
+   "y": 4.0,
+   "blend": "add"
+  },
+  {
+   "id": "lantern_2",
+   "kind": "billboard",
+   "sprite": "mg_lantern",
+   "at": [
+    0.0,
+    2.0
+   ],
+   "size": 0.9,
+   "anim": "bob",
+   "y": 4.4
+  },
+  {
+   "id": "lantern_glow_2",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    0.0,
+    2.0
+   ],
+   "size": 1.8,
+   "anim": "pulse",
+   "y": 4.5,
+   "blend": "add"
+  },
+  {
+   "id": "lantern_3",
+   "kind": "billboard",
+   "sprite": "mg_lantern",
+   "at": [
+    -5.5,
+    3.0
+   ],
+   "size": 0.9,
+   "anim": "bob",
+   "y": 3.4
+  },
+  {
+   "id": "lantern_glow_3",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    -5.5,
+    3.0
+   ],
+   "size": 1.8,
+   "anim": "pulse",
+   "y": 3.5,
+   "blend": "add"
+  },
+  {
+   "id": "lantern_4",
+   "kind": "billboard",
+   "sprite": "mg_lantern",
+   "at": [
+    5.5,
+    4.0
+   ],
+   "size": 0.9,
+   "anim": "bob",
+   "y": 3.9
+  },
+  {
+   "id": "lantern_glow_4",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    5.5,
+    4.0
+   ],
+   "size": 1.8,
+   "anim": "pulse",
+   "y": 4.0,
+   "blend": "add"
+  },
+  {
+   "id": "lantern_5",
+   "kind": "billboard",
+   "sprite": "mg_lantern",
+   "at": [
+    0.0,
+    -6.0
+   ],
+   "size": 0.9,
+   "anim": "bob",
+   "y": 4.4
+  },
+  {
+   "id": "lantern_glow_5",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    0.0,
+    -6.0
+   ],
+   "size": 1.8,
+   "anim": "pulse",
+   "y": 4.5,
+   "blend": "add"
+  },
+  {
+   "id": "plant_1",
+   "kind": "billboard",
+   "sprite": "mg_plant",
+   "at": [
+    12.869,
+    8.344
+   ],
+   "size": 1.3,
+   "anim": "none",
+   "y": 0.65
+  },
+  {
+   "id": "plant_7",
+   "kind": "billboard",
+   "sprite": "mg_plant",
+   "at": [
+    -8.344,
+    12.869
+   ],
+   "size": 1.3,
+   "anim": "none",
+   "y": 0.65
+  },
+  {
+   "id": "glow_well",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    0.0,
+    0.0
+   ],
+   "size": 5.0,
+   "anim": "pulse",
+   "y": 0.3,
+   "blend": "add"
+  },
+  {
+   "id": "glow_hub",
+   "kind": "billboard",
+   "sprite": "glow",
+   "at": [
+    0.0,
+    15.5
+   ],
+   "size": 2.6,
+   "anim": "pulse",
+   "y": 1.4,
+   "blend": "add"
+  },
+  {
+   "id": "lt_home",
+   "kind": "light",
+   "at": [
+    0.0,
+    20.0
+   ],
+   "y": 3.0,
+   "radius": 6.0,
+   "color": "#fff2c8",
+   "strength": 1.0
+  },
+  {
+   "id": "lt_stage_a",
+   "kind": "light",
+   "at": [
+    3.0,
+    -24.0
+   ],
+   "y": 5.0,
+   "radius": 9.0,
+   "color": "#ff7ad8",
+   "strength": 1.2
+  },
+  {
+   "id": "lt_stage_b",
+   "kind": "light",
+   "at": [
+    -3.0,
+    -24.0
+   ],
+   "y": 5.0,
+   "radius": 9.0,
+   "color": "#7ff0ff",
+   "strength": 1.2
+  },
+  {
+   "id": "lt_cloak",
+   "kind": "light",
+   "at": [
+    -14.849,
+    -14.849
+   ],
+   "y": 3.4,
+   "radius": 7.0,
+   "color": "#d8b8ff",
+   "strength": 1.1
+  },
+  {
+   "id": "lt_bar",
+   "kind": "light",
+   "at": [
+    14.849,
+    -14.849
+   ],
+   "y": 3.4,
+   "radius": 7.0,
+   "color": "#ff7ad8",
+   "strength": 1.2
+  },
+  {
+   "id": "lt_hangar",
+   "kind": "light",
+   "at": [
+    -19.799,
+    -11.313
+   ],
+   "y": 3.6,
+   "radius": 8.0,
+   "color": "#ffd890",
+   "strength": 1.3
+  },
+  {
+   "id": "lt_well",
+   "kind": "light",
+   "at": [
+    0.0,
+    0.0
+   ],
+   "y": 6.0,
+   "radius": 13.0,
+   "color": "#ff7ad8",
+   "strength": 1.1
+  },
+  {
+   "id": "lt_well_b",
+   "kind": "light",
+   "at": [
+    0.0,
+    0.0
+   ],
+   "y": 3.0,
+   "radius": 9.0,
+   "color": "#7ff0ff",
+   "strength": 0.8
+  },
+  {
+   "id": "lt_hub",
+   "kind": "light",
+   "at": [
+    0.0,
+    15.0
+   ],
+   "y": 3.6,
+   "radius": 7.0,
+   "color": "#ffd8f0",
+   "strength": 1.1
+  },
+  {
+   "id": "lt_ring_e",
+   "kind": "light",
+   "at": [
+    15.5,
+    0.0
+   ],
+   "y": 3.0,
+   "radius": 8.0,
+   "color": "#b8e8ff",
+   "strength": 1.0
+  },
+  {
+   "id": "lt_ring_w",
+   "kind": "light",
+   "at": [
+    -15.5,
+    -0.0
+   ],
+   "y": 3.0,
+   "radius": 8.0,
+   "color": "#d8b8ff",
+   "strength": 1.0
+  },
+  {
+   "id": "home_window",
+   "kind": "decal",
+   "sprite": "mg_moon",
+   "at": [
+    0.0,
+    21.985
+   ],
+   "y": 1.6,
+   "size": 1.0,
+   "yaw": 0,
+   "emissive": true
+  },
+  {
+   "id": "stage_arch",
+   "kind": "decal",
+   "sprite": "mg_arch",
+   "at": [
+    0.0,
+    -27.985
+   ],
+   "y": 0.9,
+   "size": 4.6,
+   "yaw": 180,
+   "emissive": true
+  },
+  {
+   "id": "stage_spk_l",
+   "kind": "decal",
+   "sprite": "mg_pylon",
+   "at": [
+    5.2,
+    -27.985
+   ],
+   "y": 0.9,
+   "size": 3.4,
+   "yaw": 180,
+   "emissive": true
+  },
+  {
+   "id": "stage_spk_r",
+   "kind": "decal",
+   "sprite": "mg_pylon",
+   "at": [
+    -5.2,
+    -27.985
+   ],
+   "y": 0.9,
+   "size": 3.4,
+   "yaw": 180,
+   "emissive": true
+  },
+  {
+   "id": "coat_hatch_0",
+   "kind": "decal",
+   "sprite": "mg_panel",
+   "at": [
+    -14.414,
+    -18.091
+   ],
+   "y": 0.0,
+   "size": 2.0,
+   "yaw": -135,
+   "emissive": true
+  },
+  {
+   "id": "coat_hatch_1",
+   "kind": "decal",
+   "sprite": "mg_panel",
+   "at": [
+    -16.253,
+    -16.253
+   ],
+   "y": 0.0,
+   "size": 2.0,
+   "yaw": -135,
+   "emissive": true
+  },
+  {
+   "id": "coat_hatch_2",
+   "kind": "decal",
+   "sprite": "mg_panel",
+   "at": [
+    -18.091,
+    -14.414
+   ],
+   "y": 0.0,
+   "size": 2.0,
+   "yaw": -135,
+   "emissive": true
+  },
+  {
+   "id": "bar_screen",
+   "kind": "decal",
+   "sprite": "mg_rune",
+   "at": [
+    16.253,
+    -16.253
+   ],
+   "y": 2.2,
+   "size": 0.9,
+   "yaw": 135,
+   "emissive": true
+  },
+  {
+   "id": "bar_window",
+   "kind": "decal",
+   "sprite": "mg_window",
+   "at": [
+    18.374,
+    -14.132
+   ],
+   "y": 1.0,
+   "size": 2.2,
+   "yaw": 135,
+   "emissive": true
+  },
+  {
+   "id": "bar_window_b",
+   "kind": "decal",
+   "sprite": "mg_moon",
+   "at": [
+    14.132,
+    -18.374
+   ],
+   "y": 1.0,
+   "size": 2.2,
+   "yaw": 135,
+   "emissive": true
+  },
+  {
+   "id": "hangar_door",
+   "kind": "decal",
+   "sprite": "mg_stable_door",
+   "at": [
+    -19.789,
+    -11.303
+   ],
+   "y": 0.0,
+   "size": 2.6,
+   "yaw": -135,
+   "emissive": true
+  },
+  {
+   "id": "win_1_0",
+   "kind": "decal",
+   "sprite": "mg_window",
+   "at": [
+    9.465,
+    14.556
+   ],
+   "y": 1.0,
+   "size": 2.4,
+   "yaw": 45,
+   "emissive": true
+  },
+  {
+   "id": "win_1_1",
+   "kind": "decal",
+   "sprite": "mg_window",
+   "at": [
+    14.556,
+    9.465
+   ],
+   "y": 1.0,
+   "size": 2.4,
+   "yaw": 45,
+   "emissive": true
+  },
+  {
+   "id": "rune_1",
+   "kind": "decal",
+   "sprite": "mg_rune",
+   "at": [
+    12.01,
+    12.01
+   ],
+   "y": 3.6,
+   "size": 0.9,
+   "yaw": 45,
+   "emissive": true
+  },
+  {
+   "id": "win_2_0",
+   "kind": "decal",
+   "sprite": "mg_window",
+   "at": [
+    16.985,
+    3.6
+   ],
+   "y": 1.0,
+   "size": 2.4,
+   "yaw": 90,
+   "emissive": true
+  },
+  {
+   "id": "win_2_1",
+   "kind": "decal",
+   "sprite": "mg_moon",
+   "at": [
+    16.985,
+    -3.6
+   ],
+   "y": 1.0,
+   "size": 2.4,
+   "yaw": 90,
+   "emissive": true
+  },
+  {
+   "id": "rune_2",
+   "kind": "decal",
+   "sprite": "mg_rune",
+   "at": [
+    16.985,
+    0.0
+   ],
+   "y": 3.6,
+   "size": 0.9,
+   "yaw": 90,
+   "emissive": true
+  },
+  {
+   "id": "win_6_0",
+   "kind": "decal",
+   "sprite": "mg_window",
+   "at": [
+    -16.985,
+    -3.6
+   ],
+   "y": 1.0,
+   "size": 2.4,
+   "yaw": -90,
+   "emissive": true
+  },
+  {
+   "id": "win_6_1",
+   "kind": "decal",
+   "sprite": "mg_moon",
+   "at": [
+    -16.985,
+    3.6
+   ],
+   "y": 1.0,
+   "size": 2.4,
+   "yaw": -90,
+   "emissive": true
+  },
+  {
+   "id": "rune_6",
+   "kind": "decal",
+   "sprite": "mg_rune",
+   "at": [
+    -16.985,
+    -0.0
+   ],
+   "y": 3.6,
+   "size": 0.9,
+   "yaw": -90,
+   "emissive": true
+  },
+  {
+   "id": "win_7_0",
+   "kind": "decal",
+   "sprite": "mg_window",
+   "at": [
+    -14.556,
+    9.465
+   ],
+   "y": 1.0,
+   "size": 2.4,
+   "yaw": -45,
+   "emissive": true
+  },
+  {
+   "id": "win_7_1",
+   "kind": "decal",
+   "sprite": "mg_window",
+   "at": [
+    -9.465,
+    14.556
+   ],
+   "y": 1.0,
+   "size": 2.4,
+   "yaw": -45,
+   "emissive": true
+  },
+  {
+   "id": "rune_7",
+   "kind": "decal",
+   "sprite": "mg_rune",
+   "at": [
+    -12.01,
+    12.01
+   ],
+   "y": 3.6,
+   "size": 0.9,
+   "yaw": -45,
+   "emissive": true
+  },
+  {
+   "id": "home_win_l",
+   "kind": "decal",
+   "sprite": "mg_window",
+   "at": [
+    -4.4,
+    16.985
+   ],
+   "y": 1.0,
+   "size": 2.2,
+   "yaw": 0,
+   "emissive": true
+  },
+  {
+   "id": "home_win_r",
+   "kind": "decal",
+   "sprite": "mg_window",
+   "at": [
+    4.4,
+    16.985
+   ],
+   "y": 1.0,
+   "size": 2.2,
+   "yaw": 0,
+   "emissive": true
+  }
+ ]
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Contact sheet of the Space rave's activities (tools/engine/shoot_space_activities.gd): docs/shots/bedsit/space/activities.jpg, under 1 MB.
-    python3 tools/dev/space_activities_sheet.py <shots dir> [out.jpg]
+"""Contact sheet of a rave's activities (tools/engine/shoot_space_activities.gd): docs/shots/bedsit/<theme>/activities.jpg, under 1 MB.
+    python3 tools/dev/space_activities_sheet.py <shots dir> [out.jpg] [theme]
 Rows: the 16:9 shots (1280x720) in two rows of four, then the 20:9 shots (1600x720)."""
 import os
 import sys
@@ -13,7 +13,8 @@ W = 480
 
 def main(argv):
     src = argv[0]
-    out = argv[1] if len(argv) > 1 else os.path.join(os.path.dirname(__file__), "..", "..", "docs", "shots", "bedsit", "space", "activities.jpg")
+    theme = argv[2] if len(argv) > 2 else "space"
+    out = argv[1] if len(argv) > 1 else os.path.join(os.path.dirname(__file__), "..", "..", "docs", "shots", "bedsit", theme, "activities.jpg")
     blocks = []
     for size in ("1280x720", "1600x720"):
         imgs = []

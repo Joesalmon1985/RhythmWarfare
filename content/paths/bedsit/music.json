@@ -83,6 +83,34 @@
    "chart": "bedsit_room",
    "treatment": "none",
    "temporary": false
+  },
+  {
+   "id": "magic_stage",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "magic_cloakroom",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "magic_bar",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "magic_race",
+   "audio": "bedsit_room",
+   "chart": "bedsit_room",
+   "treatment": "none",
+   "temporary": false
   }
  ]
 }

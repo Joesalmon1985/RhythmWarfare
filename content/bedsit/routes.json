@@ -9,7 +9,7 @@
  "landed": {
   "space_rave": true,
   "dino_rave": false,
-  "magic_rave": false,
+  "magic_rave": true,
   "transport_rave": false
  },
  "routes": {
