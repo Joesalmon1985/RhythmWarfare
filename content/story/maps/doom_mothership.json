@@ -92,7 +92,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 0,
@@ -125,7 +125,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 1,
@@ -158,7 +158,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 2,
@@ -191,7 +191,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 3,
@@ -224,7 +224,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 4,
@@ -257,7 +257,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 5,
@@ -290,7 +290,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 6,
@@ -323,7 +323,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 7,
@@ -356,7 +356,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 8,
@@ -389,7 +389,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 9,
@@ -422,7 +422,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 10,
@@ -455,7 +455,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 11,
@@ -488,7 +488,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 12,
@@ -521,7 +521,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 13,
@@ -554,7 +554,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 14,
@@ -587,7 +587,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#dccdff",
+   "tint": "#d1bdff",
    "room": "main",
    "flags": [],
    "doom_sector": 15,
@@ -620,7 +620,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#e3d8ff",
+   "tint": "#dbccff",
    "room": "main",
    "flags": [],
    "doom_sector": 16,
@@ -653,7 +653,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 17,
@@ -687,7 +687,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 18,
@@ -721,7 +721,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 19,
@@ -755,7 +755,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 20,
@@ -789,7 +789,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 21,
@@ -823,7 +823,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 22,
@@ -857,7 +857,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 23,
@@ -891,7 +891,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 24,
@@ -925,7 +925,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 25,
@@ -959,7 +959,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 26,
@@ -993,7 +993,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 27,
@@ -1027,7 +1027,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 28,
@@ -1061,7 +1061,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 29,
@@ -1095,7 +1095,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 30,
@@ -1129,7 +1129,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#b8e3c7",
+   "tint": "#a2dbb6",
    "room": "main",
    "flags": [],
    "doom_sector": 31,
@@ -1211,7 +1211,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_rib",
    "light": 1.0,
-   "tint": "#e9d8ff",
+   "tint": "#e2ccff",
    "room": "main",
    "flags": [],
    "doom_sector": 32,
@@ -1244,7 +1244,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_dark",
    "light": 1.0,
-   "tint": "#ffd8b1",
+   "tint": "#ffcc98",
    "room": "main",
    "flags": [],
    "doom_sector": 33,
@@ -1277,7 +1277,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_dark",
    "light": 1.0,
-   "tint": "#ffd8b1",
+   "tint": "#ffcc98",
    "room": "main",
    "flags": [],
    "doom_sector": 34,
@@ -1310,7 +1310,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_dark",
    "light": 1.0,
-   "tint": "#ffcdc2",
+   "tint": "#ffbdae",
    "room": "main",
    "flags": [],
    "doom_sector": 35,
@@ -1343,7 +1343,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_dark",
    "light": 1.0,
-   "tint": "#ffcdc2",
+   "tint": "#ffbdae",
    "room": "main",
    "flags": [],
    "doom_sector": 36,
@@ -1376,7 +1376,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_dark",
    "light": 1.0,
-   "tint": "#ffc2bc",
+   "tint": "#ffaea7",
    "room": "main",
    "flags": [],
    "doom_sector": 37,
@@ -1409,7 +1409,7 @@
    "ceil_tex": "ms_ceil",
    "wall_tex": "ms_wall_dark",
    "light": 1.0,
-   "tint": "#ffc2bc",
+   "tint": "#ffaea7",
    "room": "main",
    "flags": [],
    "doom_sector": 38,
@@ -2988,8 +2988,8 @@
     0.0,
     -4.82
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -3000,8 +3000,8 @@
     3.513,
     -5.519
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -3012,8 +3012,8 @@
     8.481,
     -10.487
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -3024,8 +3024,8 @@
     8.481,
     -17.513
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -3036,8 +3036,8 @@
     6.491,
     -20.491
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -3048,8 +3048,8 @@
     3.513,
     -22.481
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -3060,8 +3060,8 @@
     0.0,
     -23.18
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -3072,8 +3072,8 @@
     -3.513,
     -22.481
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -3084,8 +3084,8 @@
     -6.491,
     -20.491
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -3096,8 +3096,8 @@
     -8.481,
     -17.513
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -3108,8 +3108,8 @@
     -9.18,
     -14.0
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -3120,8 +3120,8 @@
     -8.481,
     -10.487
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -3132,8 +3132,8 @@
     -6.491,
     -7.509
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -3144,8 +3144,8 @@
     -3.513,
     -5.519
    ],
-   "y": 1.6,
-   "size": 3.6,
+   "y": 1.7,
+   "size": 2.2,
    "emissive": true
   },
   {
@@ -4094,10 +4094,10 @@
   {
    "id": "ms_uw_hatch",
    "at": [
-    13.168,
-    -13.079
+    12.882,
+    -13.325
    ],
-   "yaw": -94.0,
+   "yaw": -58.9,
    "sector": "38_0",
    "hold_bars": 1
   },
@@ -4114,10 +4114,10 @@
   {
    "id": "ms_dock_in",
    "at": [
-    8.3056,
-    -4.3017
+    8.614,
+    -5.08
    ],
-   "yaw": -136.6,
+   "yaw": -117.9,
    "sector": "34_0",
    "hold_bars": 1
   },

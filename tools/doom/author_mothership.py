@@ -27,7 +27,7 @@ MARGIN = 0.5
 MARGINS = {"ms_v_br": 0.4, "ms_booth_hatch": 0.45}
 MAX_STEP = 0.5
 RAIL_HEIGHT = 1.1  # the balustrade round the void, metres above the ring's floor
-LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 1.5, 0.55, 0.30, 2.4
+LIGHT_GAIN, LIGHT_FLOOR, TINT_LIFT, LAMP_GAIN = 1.3, 0.45, 0.08, 2.4
 REF_BEARING = 32.0  # the reference viewpoint looks this many degrees north of east
 PAINTING = "art/reference/doom_worlds/Mothership Ringwalk Over the Void-7.png"
 
@@ -58,7 +58,7 @@ def ahead(at_r, at_ang, deg=14.0):
 
 
 GUIDE_AT = {"underworld": P(11.6, 6.0), "booth": (0.0, 15.8), "dock": P(10.5, -38.0)}
-UW_AT, DK_AT = P(13.2, -4.0), P(12.8, -49.0)
+UW_AT, DK_AT = P(12.9, -3.0), P(12.4, -46.0)
 
 # id, point (m), look-at point (m), hold_bars (0 = a moving place), what it is.  Names starting ms_v_ are via points only: corners of the polyline moves, never stood on.
 WAYPOINTS = [
@@ -69,9 +69,9 @@ WAYPOINTS = [
     ("ms_hub_view", P(RING, -72.0), (0.0, 15.5), 2, "reveal: the ring's south, the platform in the void and the Booth guide across the railing"),
     ("ms_stair_view", P(RING, -28.0), P(13.0, 0.0), 2, "reveal: the ring's east, the stair and the hatch up to the Underworld"),
     ("ms_bridge_view", P(4.0, -90.0), P(11.0, -48.0), 2, "reveal: the middle of the bridge, the void on both sides, looking back along the ring to the Dock hatch"),
-    ("ms_uw_hatch", UW_AT, P(15.5, -4.0), 1, "THRESHOLD ahead (Underworld): the hatch at the top of the stair, the world transition happens here"),
+    ("ms_uw_hatch", UW_AT, P(14.0, 0.0), 1, "THRESHOLD ahead (Underworld): the hatch at the top of the stair, the world transition happens here"),
     ("ms_booth_hatch", (0.0, 13.6), (0.0, 17.0), 1, "THRESHOLD left (Booth): the hatch on the platform, the world transition happens here"),
-    ("ms_dock_in", DK_AT, P(15.0, -49.0), 1, "THRESHOLD right (Dock): through the outer wall's hatch onto the dock, the world transition happens here"),
+    ("ms_dock_in", DK_AT, P(13.1, -45.0), 1, "THRESHOLD right (Dock): through the outer wall's hatch onto the dock, the world transition happens here"),
     # via points (corners of the polyline moves; the ring ones are 22.5 degrees apart: the chord stays 1.1 m off the rim)
     ("ms_v_a1", P(RING, -90.0), P(RING, -76.0), 0, "via: the ring's south, in front of the bridge"),
     ("ms_v_a2", P(RING, -67.5), P(RING, -53.0), 0, "via: the ring"),
@@ -149,7 +149,7 @@ DECALS = []
 for _j in range(sc.N):
     if _j in (sc.DOCK_J, sc.UW_J):
         continue
-    DECALS.append(("ms_dc_oval_%d" % _j, "ms_oval_window", P(9.18, sc.centre(_j)), 3.6, 1.6, True))
+    DECALS.append(("ms_dc_oval_%d" % _j, "ms_oval_window", P(9.18, sc.centre(_j)), 2.2, 1.7, True))
 for _k, (_j, _off) in enumerate(((sc.DOCK_J, -10.0), (sc.DOCK_J, 10.0), (sc.UW_J, -10.0), (sc.UW_J, 10.0), (1, 0.0), (3, 0.0), (5, 0.0), (15, 0.0))):
     DECALS.append(("ms_dc_lamp_%d" % _k, "ms_wall_lamp", P(11.2 if _j in (sc.DOCK_J, sc.UW_J) else 9.16, sc.centre(_j) + _off), 0.5, 1.3, True))
 DECALS += [("ms_dc_hatch_dock", "ms_hatch_dock", P(13.1, -45.0), 2.6, 0.0, True), ("ms_dc_hatch_uw", "ms_hatch_uw", P(13.6, 0.0), 2.8, 0.0, True),

@@ -111,7 +111,7 @@ def rail_tile():
     """The balustrade round the void: a pale lilac stone rail with a top coping and an oval opening (the painting's), alpha 0 in the opening so the abyss shows through; a post at the left edge."""
     im = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
-    stone, light, dark = hexc("#a898c4"), hexc("#d8ccf0"), hexc("#4a3c68")
+    stone, light, dark = hexc("#6a5c84"), hexc("#9a8cb8"), hexc("#2c2244")
     d.rectangle([0, 0, S, 22], fill=(*stone, 255))  # the coping
     d.rectangle([0, 0, S, 5], fill=(*light, 255))
     d.rectangle([0, 18, S, 22], fill=(*dark, 255))

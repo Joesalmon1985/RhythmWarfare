@@ -63,3 +63,16 @@ No state-driven guides beyond what the existing choice staging does (sprite per 
 | Tests | `--filter doom_views` (the booth block at the end), `bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tools/doom/check_doom_map.gd -- doom_booth` |
 
 Details: `docs/doom/scenes/booth.md`.
+
+## The Mothership (scene `doom_mothership`, env-mothership block)
+
+| What | How |
+| --- | --- |
+| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_mothership` (world `doom_mothership`; routes: stay on the ring (default), `doom_mothership.underworld` ahead, `doom_mothership.booth` left, `doom_mothership.dock` right: stand-ins that lead to `doom_mothership.return`) |
+| Rebuild the geometry | `python -I tools/doom/trace/mothership_scene.py && python -I tools/doom/convert.py --scene mothership --trace tools/doom/trace/mothership_pilot.json && python -I tools/doom/author_mothership.py` |
+| Rebuild the art and guides | `python -I tools/doom/art/make_mothership_art.py && python -I tools/doom/art/make_mothership_guides.py`, then `godot --headless --import` |
+| Regenerate the overlay | `python tools/run/make_doom.py` (calls `tools/run/make_doom_mothership.py`) |
+| Shots | `python3 tools/doom/shoot_mothership.py` (`docs/shots/doom/mothership/contact.jpg`, `walk_strip.jpg`) |
+| Tests | `--filter doom_views` (the mothership block at the end), `bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tools/doom/check_doom_map.gd -- doom_mothership` |
+
+Details: `docs/doom/scenes/mothership.md`.
