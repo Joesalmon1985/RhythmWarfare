@@ -77,10 +77,11 @@ def hotspots(cinematics: dict) -> dict:
                    "radius_m": 1.0, "min_px": 88, "available": {"flags_all": [], "flags_none": [], "energy_min": 0, "once": False},
                    "look": {"available": "open", "selected": "ring", "committed": "flash"}, "challenge": None, "on_success": {"route": dest},
                    "on_failure": {"route": dest, "cinematic": cname, "energy": -5}, "default": False, "repeatable": True, "staging": staging(thing, stem)})
-    hs.append({"id": "doom_warehouse.exit_stay", "world": "doom_warehouse", "scene": "doom_warehouse", "map": "doom_warehouse", "anchor": {"pos": [0.0, 0.4, 14.4]}, "kind": "exit",
+    hs.append({"id": "doom_warehouse.exit_stay", "world": "doom_warehouse", "scene": "doom_warehouse", "map": "doom_warehouse", "anchor": {"pos": [-17.7, 0.4, 17.05]}, "kind": "exit",
                "radius_m": 1.4, "min_px": 88, "available": {"flags_all": [], "flags_none": [], "energy_min": 0, "once": False},
                "look": {"available": "open", "selected": "ring", "committed": "flash"}, "challenge": None, "on_success": {"route": "doom_warehouse"},
-               "on_failure": {"route": "doom_warehouse", "energy": -5}, "default": True, "repeatable": True})
+               "on_failure": {"route": "doom_warehouse", "energy": -5}, "default": True, "repeatable": True,
+               "staging": {"archetype": "none", "touch": {"w": 2.6, "h": 1.4}}})  # (no door and no lamp: the foreground is the place you stand; the choice layer draws nothing for it)
     return {"world": "doom_warehouse", "hotspots": hs}
 
 
