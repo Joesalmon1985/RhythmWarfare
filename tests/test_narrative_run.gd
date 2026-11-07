@@ -422,7 +422,7 @@ func test_an_old_save_migrates_and_keeps_the_players_progress() -> void:
 	assert_true(bool(_progress(sc, "gospel")["completed"]), "the Gospel has an ending: completed")
 	assert_false(bool(_progress(sc, "ember")["completed"]))
 	var v: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(TMP_SAVE))
-	assert_eq(int(v["version"]), 2)
+	assert_eq(int(v["version"]), RunProgress.VERSION, "a version 2 save is written back as version 3 (ruling 37)")
 	assert_eq(int(v["runs"]), 8, "the run count goes on")
 	assert_eq(int(v["best_phases"]), 12)
 	assert_true((v["reached"] as Dictionary).has("mothership"), "the reached levels are kept")
