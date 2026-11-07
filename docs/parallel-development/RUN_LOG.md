@@ -23,36 +23,35 @@ is `TO_MAIN_PLAN.md`. Rewritten by the lead at every checkpoint. Times are Europ
   state) and ruling 36 (the concept paintings are the bar; sprites like the guide crop,
   `art/reference/standard/`).
 
-## Now (8 November, evening)
+## Now (8 November, night)
 
-`feature/one-pc` `15dba656` (pushed): Ward, Hospital, both fix passes, A7 merged; filters green except `camera` 3 (herald
-looks during door walks / a 2.4 m room: the wiring step's engine rule). **Wiring step running** on `wip/wiring`
-(`MusicGame-wiring`, Opus). After it: the full suite, push, stage A's pause point (the owner plays
-`tools\dev\play_tracks.cmd --run` from `MusicGame-onepc`); `main` only on the owner's word.
+`feature/one-pc` `d01bb628` (pushed): + the Bassment viewpoint fix (`test_trial` green: since A7 removed the edge beacons a
+choice behind the camera has no tap target, so passages 2, 11, 28, 37 moved their viewpoints / raised the rope). All
+filters green except `camera` 3 (the wiring step's rule). **Wiring step running** on `wip/wiring` (Opus, resumed after the
+limit). After it: full suite, push, stage A's pause point (the owner plays `tools\dev\play_tracks.cmd --run` from
+`MusicGame-onepc`); `main` only on the owner's word.
 
-`feature/shared-contracts` `8db13e8f` (pushed): A7 and A8 merged (dynamic things, people states, feedback, the pad-slot
-morph: ruling 38, contract 10), all filters green. **Geography worlds (H1.6) running** on `wip/engine-geography`
-(`MusicGame-geo`, Opus): a world flagged `geography` is one scene that routes straight to other worlds' entry scenes, the
-threshold defaults to the route move's end, the threshold walk plays the route polyline, then the frame, the swap and the
-arrival. When it lands: merge into shared-contracts, then into env, and a generator change deletes the Doom stand-ins.
+`feature/shared-contracts` `97c6f53a` (pushed): geography worlds (H1.6) merged: a world flagged `geography` is one scene
+routing straight to other worlds' entry scenes; threshold = the route move's end; the threshold walk plays the polyline,
+then the frame, the swap, the arrival (`docs/engine/GEOGRAPHY_WORLDS.md`, `tests/test_geography.gd`). **Follow-ups on
+`wip/engine-geography`** (Opus): `commit_walk` (walk from the commit, built, 30628cc9) and ruling 39 (a geography guide's
+tap commits at once; the window hold gives way to the walk) running. Merge both when the second reports.
 
-`feature/doom-layout-worlds` `b6be9af6` (pushed): Warehouse, Booth (`doom_booth`), Copper Bar (`doom_bar`) and Chill-out
-Lounge (`doom_lounge`) as four worlds, 20 scenes, 0 rail problems; doom 3631, rail_paths 652, run_ 16029, playtest 2993,
-story 48770, all green. **Wave 2 running** (Sonnet, brief `docs/briefs/DOOM_WAVE2_BRIEF.md`): `wip/env-balcony` (MAP15,
-renames the Warehouse's `doom_balcony` stand-in to `doom_warehouse.balcony`), `wip/env-dock` (MAP13), `wip/env-mothership`
-(MAP11), `wip/env-underworld` (MAP29). Merge order at the end: each adds a two-line block to `make_doom.py`, a block at
-the end of `test_doom_views.gd` and a LAUNCH.md section; regenerate the overlay after every merge (never hand-merge
-`content/run/doom/*`). Lesson from the Bar and Lounge merges: resolve `make_doom.py` and `test_doom_views.gd` by
-rebuilding from the two sides' files (the Warehouse part + each block in order), not by regex over conflict markers.
+`feature/doom-layout-worlds` (pushed after the Balcony suites): ALL EIGHT Doom worlds in the overlay (Warehouse, Booth, Bar,
+Lounge, Dock, Underworld, Mothership, Balcony), 40 scenes, 0 rail problems, doom 6177 green; every scene still a 5-scene
+stand-in world. **Next**: merge shared-contracts (geography) into env, then the REWIRE (Opus): each Doom world one
+geography scene routing per the brief's table, stand-ins and return scenes deleted, test blocks updated, a real cut shot
+(Warehouse → Bar). Polish list for stage D from the reports: Dock/Mothership/Underworld threshold shots stare at walls;
+the Underworld's abyss does not read (needs a camera pitch on a waypoint); the Mothership's `void_top` haze hook; the
+Balcony and Underworld under-exposed; no rain/sky anywhere; all guides procedural.
 
-`feature/bedsit-raves` `e426ae1b` (pushed): the bedsit, the Space rave, the cloakroom, the bar, the bedsit fix, A7, A8;
-all filters green incl. run_matrix (the activity tests assert the pad-slot morph). **Running**: `wip/play-spacewire`
-(`MusicGame-spacewire`: generator keeps the themes.json blocks, the three activities placed in the Space rave through A8,
-real shots) and `wip/play-cardtable` (`MusicGame-cardtable`, Opus, A8b: the card table as in-room staging). Next: the
-race (Opus), the Magic/Dinos/Transport raves, progression.
-
-Known gaps carried: H3.1 choice viewpoint framing, H9.2/H9.3, no sfx files for cues, all Doom/rave/activity art placeholder
-(stage D), no phone runs, Gospel p5, A7's door-readability finding (lamp, spill, closer choice viewpoint).
+`feature/bedsit-raves` `8e438c54` (pushed): + the Space rave's activities staged in the room (spacewire) and A8b (the card
+table in the day room: cards/chips as things, dealer and players as actors, bet/twist/stick/get-up in the pad slots).
+All filters green. **Open owner decision**: A8b runs blackjack in `replace` mode (judging suspended while seated, no
+wobble/fall, the run cannot end at the table) against decisions B6/B7 (`rhythm`); the pad slots cannot be both the rhythm
+pads and the four card controls. Alternative if the owner keeps B6/B7: controls as in-world touches (deck = twist,
+chips = bet, dealer = stick, door = up) with the pads staying rhythm. Next on this stream: the race (Opus), the
+Magic/Dinos/Transport raves (no layouts yet), progression; the cloakroom queue reads semi-transparent (unexplained).
 
 ## Worktrees and agents
 
@@ -94,3 +93,5 @@ Known gaps carried: H3.1 choice viewpoint framing, H9.2/H9.3, no sfx files for c
   bedsit-raves `e426ae1b` (cloakroom, bar, Space rave, bedsit fix, A8).
 - 8 Nov evening: doom-layout-worlds `b6be9af6` (Bar, Lounge: four worlds, all filters green); eight agents running
   (wiring, geography, four wave-2 scenes, spacewire, card table).
+- 8 Nov night: one-pc `d01bb628`; shared-contracts `97c6f53a` (geography); doom-layout-worlds: eight worlds; bedsit-raves
+  `8e438c54` (spacewire, A8b). Running: wiring, geography ruling 39.
