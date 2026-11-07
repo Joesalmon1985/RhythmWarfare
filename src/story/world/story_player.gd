@@ -84,11 +84,13 @@ func apply_action(a: Dictionary) -> bool:
 			var via := via_of(args)
 			if not via.is_empty():  # a polyline: straight legs through these waypoints, then `to`
 				mv["via"] = via
+			if bool(args.get("threshold", false)):  # a walk out to another world (H1.6, ruling 39): a choice window's hold under way gives way to it, eased out over a beat
+				end_window_holds(t0)
 			if float(args.get("hold_bars", 0.0)) > 0.0:  # standing still at the end of the leg
 				_holds.append({"t0": float(mv["t1"]), "t1": float(mv["t1"]) + float(args["hold_bars"]) * bar_s()})
 			_add(mv)
-		"player_hold":  # the camera stands still: a choice window
-			_holds.append({"t0": t0, "t1": t0 + maxf(dur, 0.001)})
+		"player_hold":  # the camera stands still: a choice window (`hold: "window"`, which a threshold walk may end early: end_window_holds)
+			_holds.append({"t0": t0, "t1": t0 + maxf(dur, 0.001), "window": str(args.get("hold", "")) == "window"})
 		"player_walk":  # a walk inside a room (relative to where the rail is when it starts): see _plan_walk
 			_add({"kind": "move", "walk": args.duplicate(), "t0": t0, "t1": t0 + maxf(dur, 0.001), "to": str(args.get("to", "")), "style": str(args.get("style", "walk"))})
 		"player_look":
@@ -424,6 +426,19 @@ static func ramp_span(ramp: float, before: float, after: float) -> float:
 func move_plan(t: float) -> Dictionary:
 	var ev := _event_at(t)
 	return ev if not ev.is_empty() and ev["kind"] == "move" else {}
+
+
+## Every choice window's hold (`player_hold` with `hold: "window"`) still under way at `t` ends one beat after it (still_at eases it out over that beat); one that has not begun is dropped.
+func end_window_holds(t: float) -> void:
+	var beat := 60.0 / bpm
+	var keep: Array = []
+	for h in _holds:
+		if bool(h.get("window", false)) and float(h["t1"]) > t:
+			if float(h["t0"]) >= t:
+				continue
+			h["t1"] = minf(float(h["t1"]), t + beat)
+		keep.append(h)
+	_holds = keep
 
 
 ## How still the camera is at t: 1 inside a hold (a leg's hold_bars, a player_hold), easing in and out over a beat inside its span; 0 elsewhere.

@@ -1450,6 +1450,8 @@ func hotspot_select(id: String) -> bool:
 			"again": same, "from": prev})
 		if not same:
 			_choice_picked(id, prev)
+		if hotspots.selected == id:
+			engine.tap_commit(hud.now_t)  # (ruling 39: in a geography world a guide's tap is the decision; nothing for any other hotspot)
 	return ok
 
 

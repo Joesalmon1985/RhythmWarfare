@@ -49,8 +49,8 @@ Fixture: `scene_entry.json`. Tests: `test_scene_entry_and_exit_shapes`.
 - **Threshold (built, H1.6)**: the Doom scenes are **geography worlds** (`"geography": true` on the run.json `worlds` entry): one scene per world, its
   `down` route the stay (`loop: true`), its other routes leading to the entry scene of another geography world in any direction, at any depth, cycles
   through worlds allowed (`RunData._validate_geography_routes`). A route's threshold is the node's `thresholds[to]` when given, else the route's move
-  `rail.routes[dir].to` (`RunJourney.threshold_of` / `threshold_move`). A touched choice walks from its commit (`hotspot_commit`, final window,
-  `RunPlay._on_hotspot_commit` -> `RunJourney.commit_walk`; lead ruling "you chose, you go"); an untouched default walks from the lock, beat 61
+  `rail.routes[dir].to` (`RunJourney.threshold_of` / `threshold_move`). In a geography world a guide's tap is the decision (ruling 39): it commits at the
+  tap and walks from there (`RunEngine.tap_commit` -> `hotspot_commit` -> `RunPlay._on_hotspot_commit` -> `RunJourney.commit_walk`); an untouched default walks from the lock, beat 61
   (`RunPlay._update_passage` -> `RunJourney.threshold_leave`). Either walk follows the move's `via` polyline over its `bars` (clamped 2..4), cut to
   end by the boundary, with its `hold_bars` only when there is time; the pads keep playing. Then the passage frame shuts, the stage swaps on the downbeat, and the destination's `rail.arrival` cuts to its `rail.arrive` and walks home.
   Shape for a generator: `docs/engine/GEOGRAPHY_WORLDS.md`.
@@ -375,13 +375,24 @@ RunJourney.threshold_walk(t, t_boundary, wp, bars = 2, move = {})   one player_m
 RunJourney.threshold_leave(t, t_boundary, from, to) -> Array        the walk out ([] when the route has no threshold); the lock handler's, beat 61
 RunJourney.commit_walk(ev, engine) -> Array     a final-window hotspot_commit with tapped true and a route to another world: threshold_leave from ev.t
                                                 ([] for the untouched default, a stay, a same-world route, an activity); RunPlay then latches _door_phase
+RunHotspots.is_geography_exit(h) -> bool        a final-window hotspot of a geography scene whose success route is another geography world's scene
+RunHotspots.commit_tap() -> outcome | {}        the selected geography exit commits now: success, `committed` at once (the others declined), at_tap: true
+RunEngine.tap_commit(t) -> bool                 window open, last lap, not yet committed: hotspot_commit at t, choice set, route_commit now {t: boundary, at: t,
+                                                tapped: true, same_world: false}; the block-3 decision and the boundary give no second commit (_tap_routed)
+RunPlay.hotspot_select: after a pick, engine.tap_commit(now)   (a pick made before the window opens commits as it opens: _decide, b == 2)
+RunJourney.leaving                              after a threshold walk, the rail takes no step (log kind "leaving") until the next phase
+RunJourney player_hold {bars, hold: "window"}   the choice viewpoint's hold (beats 49 to 60.5)
+StoryPlayer.end_window_holds(t)                 a player_move with threshold: true ends every window hold under way one beat after t (eased); drops one not begun
 RunPlay.data_for_test (static, tests only)      the RunData the next run scene plays instead of content/run/run.json
 ```
-- Timing today: the final window commits at the last block's decision beat, 48 + `RunEngine._decision_beat()` = beat 60.5 in the 174 run, so a touched
-  choice's walk gets 3.5 beats (0.875 bar) and the default's 3 beats; neither has room for a hold. The commit walk gives the authored leg and hold only
-  when a commit comes earlier (tested with a synthetic commit at beat 44.5). Earlier commits for geography exits would be an engine change (not made).
-- The choice viewpoint's `player_hold` (RunJourney, beats 49 to 60.5) already ends at the commit beat; a commit before 60.5 would walk while the hold's
-  stillness (no bob or drift) still holds: StoryPlayer has no way to cut a hold short.
+- **Ruling 39 (lead)**: in a geography world a route guide's tap IS the decision. The choice viewpoint's hold runs through the window as before, but
+  a tap on a guide whose route leads to another geography world commits at the tap's own beat (the hotspot goes `committed` at once, `route_commit`
+  fires then, the other guides go `declined`); the walk then gets the authored leg and its hold whenever the tap comes early enough (a tap at beat 50
+  has 14 beats). Second and later taps in the same window are ignored. An untouched window keeps the default at the lock (the 3-beat walk). Every
+  non-geography hotspot keeps `window: "final"` (the tap an intent, the commit at the lock) exactly as before.
+- The tap commit is a success whatever the rhythm (like a quest entrance under ruling 15): the way on is never gated. A late tap's leg is shortened
+  to end on the boundary.
+- The early `route_commit` keeps `t` = the boundary (the director's lock reads it as the boundary) and adds `at` = the tap.
 - A geography world needs one entry scene whose id is the world id; `exit_scene` is optional (the entry may be the exit). In a path the flag is an error.
 - Non-geography worlds (the main run, the paths, the bedsit) keep every rule they had; a route from one into a geography world follows the old rules.
 
