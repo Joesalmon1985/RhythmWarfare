@@ -1,0 +1,295 @@
+{
+ "world": "doom_dock",
+ "hotspots": [
+  {
+   "id": "doom_dock.exit_mothership",
+   "world": "doom_dock",
+   "scene": "doom_dock",
+   "map": "doom_dock",
+   "anchor": {
+    "thing": "dk_guide_mothership"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "doom_dock.mothership"
+   },
+   "on_failure": {
+    "route": "doom_dock.mothership",
+    "cinematic": "doom_dock.stagger_mothership",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "figure",
+    "touch": {
+     "w": 1.8,
+     "h": 2.4
+    },
+    "states": {
+     "current": [
+      {
+       "thing": "dk_guide_mothership",
+       "sprite": "guide_mothership_available_0",
+       "motion": "still"
+      }
+     ],
+     "other": [
+      {
+       "thing": "dk_guide_mothership",
+       "sprite": "guide_mothership_idle_0",
+       "motion": "still"
+      }
+     ],
+     "touched": [
+      {
+       "thing": "dk_guide_mothership",
+       "sprite": "guide_mothership_selected_0",
+       "motion": "still"
+      }
+     ],
+     "committed": [
+      {
+       "thing": "dk_guide_mothership",
+       "sprite": "guide_mothership_committed_0",
+       "motion": "still"
+      }
+     ],
+     "declined": [
+      {
+       "thing": "dk_guide_mothership",
+       "sprite": "guide_mothership_idle_0",
+       "motion": "still"
+      }
+     ]
+    }
+   },
+   "show": {
+    "archetype": "figure"
+   }
+  },
+  {
+   "id": "doom_dock.exit_floor",
+   "world": "doom_dock",
+   "scene": "doom_dock",
+   "map": "doom_dock",
+   "anchor": {
+    "thing": "dk_guide_floor"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "doom_dock.floor"
+   },
+   "on_failure": {
+    "route": "doom_dock.floor",
+    "cinematic": "doom_dock.stagger_floor",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "figure",
+    "touch": {
+     "w": 1.8,
+     "h": 2.4
+    },
+    "states": {
+     "current": [
+      {
+       "thing": "dk_guide_floor",
+       "sprite": "guide_floor_available_0",
+       "motion": "still"
+      }
+     ],
+     "other": [
+      {
+       "thing": "dk_guide_floor",
+       "sprite": "guide_floor_idle_0",
+       "motion": "still"
+      }
+     ],
+     "touched": [
+      {
+       "thing": "dk_guide_floor",
+       "sprite": "guide_floor_selected_0",
+       "motion": "still"
+      }
+     ],
+     "committed": [
+      {
+       "thing": "dk_guide_floor",
+       "sprite": "guide_floor_committed_0",
+       "motion": "still"
+      }
+     ],
+     "declined": [
+      {
+       "thing": "dk_guide_floor",
+       "sprite": "guide_floor_idle_0",
+       "motion": "still"
+      }
+     ]
+    }
+   },
+   "show": {
+    "archetype": "figure"
+   }
+  },
+  {
+   "id": "doom_dock.exit_underworld",
+   "world": "doom_dock",
+   "scene": "doom_dock",
+   "map": "doom_dock",
+   "anchor": {
+    "thing": "dk_guide_underworld"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "doom_dock.underworld"
+   },
+   "on_failure": {
+    "route": "doom_dock.underworld",
+    "cinematic": "doom_dock.stagger_underworld",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "figure",
+    "touch": {
+     "w": 1.8,
+     "h": 2.4
+    },
+    "states": {
+     "current": [
+      {
+       "thing": "dk_guide_underworld",
+       "sprite": "guide_underworld_available_0",
+       "motion": "still"
+      }
+     ],
+     "other": [
+      {
+       "thing": "dk_guide_underworld",
+       "sprite": "guide_underworld_idle_0",
+       "motion": "still"
+      }
+     ],
+     "touched": [
+      {
+       "thing": "dk_guide_underworld",
+       "sprite": "guide_underworld_selected_0",
+       "motion": "still"
+      }
+     ],
+     "committed": [
+      {
+       "thing": "dk_guide_underworld",
+       "sprite": "guide_underworld_committed_0",
+       "motion": "still"
+      }
+     ],
+     "declined": [
+      {
+       "thing": "dk_guide_underworld",
+       "sprite": "guide_underworld_idle_0",
+       "motion": "still"
+      }
+     ]
+    }
+   },
+   "show": {
+    "archetype": "figure"
+   }
+  },
+  {
+   "id": "doom_dock.exit_stay",
+   "world": "doom_dock",
+   "scene": "doom_dock",
+   "map": "doom_dock",
+   "anchor": {
+    "pos": [
+     1.0,
+     0.4,
+     -3.2
+    ]
+   },
+   "kind": "exit",
+   "radius_m": 1.4,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "open",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "doom_dock"
+   },
+   "on_failure": {
+    "route": "doom_dock",
+    "energy": -5
+   },
+   "default": true,
+   "repeatable": true,
+   "staging": {
+    "archetype": "none",
+    "touch": {
+     "w": 2.6,
+     "h": 1.4
+    }
+   },
+   "show": {
+    "archetype": "none"
+   }
+  }
+ ]
+}

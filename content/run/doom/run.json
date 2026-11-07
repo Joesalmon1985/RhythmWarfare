@@ -31,6 +31,14 @@
    "depth": 2,
    "story": "res://content/run/doom/story_doom_lounge.json",
    "blurb": "A mustard octagon round a sunken conversation pit. Ahead the rain street to the Dock, on the left the bar, on the right the blue passage back to the dance floor: follow the guide you like."
+  },
+  {
+   "id": "doom_dock",
+   "title": "The Loading Dock (Doom worlds)",
+   "map": "doom_dock",
+   "depth": 2,
+   "story": "res://content/run/doom/story_doom_dock.json",
+   "blurb": "The club's loading dock in the rain. The street to the Mothership ahead, the club door and the dance floor on the left, the furnace and the Underworld on the right: follow the guide you like."
   }
  ],
  "nodes": [
@@ -3444,6 +3452,844 @@
      ]
     }
    }
+  },
+  {
+   "id": "doom_dock",
+   "world": "doom_dock",
+   "scene": "dock",
+   "title": "The Loading Dock",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The club's loading dock in the rain. The street to the Mothership ahead, the club door and the dance floor on the left, the furnace and the Underworld on the right: follow the guide you like.",
+   "next": [
+    {
+     "to": "doom_dock",
+     "dir": "down",
+     "label": "Stay on the dock",
+     "loop": true
+    },
+    {
+     "to": "doom_dock.mothership",
+     "dir": "up",
+     "label": "Up the street to the Mothership"
+    },
+    {
+     "to": "doom_dock.floor",
+     "dir": "left",
+     "label": "Through the club door to the Floor"
+    },
+    {
+     "to": "doom_dock.underworld",
+     "dir": "right",
+     "label": "Across the yard to the Underworld"
+    }
+   ],
+   "place": {
+    "waypoint": "dk_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "dk_street_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_s1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_door_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_yard_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_u1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_r1"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "dk_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "dk_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "dk_arrive",
+     "exits": {
+      "up": "dk_moth",
+      "left": "dk_floor_door",
+      "right": "dk_under",
+      "down": "dk_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "dk_moth",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 6,
+       "via": [
+        "dk_v_s1",
+        "dk_v_s2",
+        "dk_v_s3"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "dk_floor_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "dk_v_a1",
+        "dk_v_w1",
+        "dk_v_w2",
+        "dk_v_d"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "dk_under",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "dk_v_u1",
+        "dk_v_u2",
+        "dk_v_u3"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "dk_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "dk_ref_back",
+        "dk_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "dk_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "dk_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_dock.mothership",
+   "world": "doom_dock",
+   "scene": "dock_mothership",
+   "title": "The Mothership (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Mothership (stand-in)",
+   "next": [
+    {
+     "to": "doom_dock.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "dk_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "dk_street_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_s1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_door_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_yard_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_u1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_r1"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "dk_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "dk_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "dk_arrive",
+     "exits": {
+      "up": "dk_moth",
+      "left": "dk_floor_door",
+      "right": "dk_under",
+      "down": "dk_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "dk_moth",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 6,
+       "via": [
+        "dk_v_s1",
+        "dk_v_s2",
+        "dk_v_s3"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "dk_floor_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "dk_v_a1",
+        "dk_v_w1",
+        "dk_v_w2",
+        "dk_v_d"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "dk_under",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "dk_v_u1",
+        "dk_v_u2",
+        "dk_v_u3"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "dk_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "dk_ref_back",
+        "dk_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "dk_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "dk_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_dock.floor",
+   "world": "doom_dock",
+   "scene": "dock_floor",
+   "title": "The Floor (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Floor (stand-in)",
+   "next": [
+    {
+     "to": "doom_dock.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "dk_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "dk_street_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_s1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_door_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_yard_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_u1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_r1"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "dk_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "dk_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "dk_arrive",
+     "exits": {
+      "up": "dk_moth",
+      "left": "dk_floor_door",
+      "right": "dk_under",
+      "down": "dk_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "dk_moth",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 6,
+       "via": [
+        "dk_v_s1",
+        "dk_v_s2",
+        "dk_v_s3"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "dk_floor_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "dk_v_a1",
+        "dk_v_w1",
+        "dk_v_w2",
+        "dk_v_d"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "dk_under",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "dk_v_u1",
+        "dk_v_u2",
+        "dk_v_u3"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "dk_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "dk_ref_back",
+        "dk_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "dk_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "dk_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_dock.underworld",
+   "world": "doom_dock",
+   "scene": "dock_underworld",
+   "title": "The Underworld (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Underworld (stand-in)",
+   "next": [
+    {
+     "to": "doom_dock.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "dk_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "dk_street_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_s1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_door_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_yard_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_u1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_r1"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "dk_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "dk_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "dk_arrive",
+     "exits": {
+      "up": "dk_moth",
+      "left": "dk_floor_door",
+      "right": "dk_under",
+      "down": "dk_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "dk_moth",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 6,
+       "via": [
+        "dk_v_s1",
+        "dk_v_s2",
+        "dk_v_s3"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "dk_floor_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "dk_v_a1",
+        "dk_v_w1",
+        "dk_v_w2",
+        "dk_v_d"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "dk_under",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "dk_v_u1",
+        "dk_v_u2",
+        "dk_v_u3"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "dk_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "dk_ref_back",
+        "dk_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "dk_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "dk_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_dock.return",
+   "world": "doom_dock",
+   "scene": "dock_return",
+   "title": "Back to the Dock",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "Back to the Dock",
+   "next": [
+    {
+     "to": "doom_dock",
+     "dir": "up",
+     "label": "Round again",
+     "loop": true
+    },
+    {
+     "to": "doom_dock",
+     "dir": "left",
+     "label": "Round again",
+     "loop": true
+    }
+   ],
+   "place": {
+    "waypoint": "dk_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "dk_street_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_s1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_door_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_yard_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_u1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "dk_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "dk_v_r1"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "dk_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "dk_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "dk_arrive",
+     "exits": {
+      "up": "dk_moth",
+      "left": "dk_floor_door",
+      "right": "dk_under",
+      "down": "dk_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "dk_moth",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 6,
+       "via": [
+        "dk_v_s1",
+        "dk_v_s2",
+        "dk_v_s3"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "dk_floor_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "dk_v_a1",
+        "dk_v_w1",
+        "dk_v_w2",
+        "dk_v_d"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "dk_under",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 5,
+       "via": [
+        "dk_v_u1",
+        "dk_v_u2",
+        "dk_v_u3"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "dk_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "dk_ref_back",
+        "dk_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "dk_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "dk_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
   }
  ],
  "cinematics": {
@@ -3585,6 +4431,42 @@
     {
      "move": "walk",
      "to": "lg_floor_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_dock.stagger_mothership": {
+   "world": "doom_dock",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dk_moth",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_dock.stagger_floor": {
+   "world": "doom_dock",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dk_floor_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_dock.stagger_underworld": {
+   "world": "doom_dock",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "dk_under",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
