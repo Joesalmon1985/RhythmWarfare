@@ -126,7 +126,8 @@ ActivityResult  = {activity_id, completed: bool, score: int, flags_to_set: [Stri
                    race?: {won: bool, position: int, time_s: float}}
 ```
 Modes: cloakroom and bar `replace` (2 and 4 controls), race `overlay`, the bass knob `rhythm` (proposal: it is short; the knob is a target in the
-stage view like the blackjack table's; owner may prefer `replace`), blackjack stays `rhythm` (no `mode` key).
+stage view like the blackjack table's), blackjack `replace` since A8b (ruling 40, owner 8 November: while seated the pad
+slots are the four card controls and judging is suspended; getting up finishes on the resume boundary).
 
 Entry (all modes): hotspot outcome `{"activity": id}` commits (`run_play.gd:1927`) -> host builds ActivityRequest -> `MinigameController.request(id,
 t_commit, t_seat, exits)` (`minigame_controller.gd:80`; `t_seat` = the next block start) -> `engine.hold = true` (`:103`).
@@ -325,8 +326,8 @@ An activity is played in the room it is found in, through the stage, with the ru
 - **Tests**: an activity's state machine is tested without the stage (things()/frames as data); the view test
   shoots the scene at three moments with the things in place and checks each thing's screen rectangle is inside
   the stage strip and at least 48 px tall (as `test_doom_views` does for guides).
-- **The card table** (blackjack) is converted to this contract in package A8b; until then it is the one
-  exception, named in every report that mentions it.
+- **The card table** (blackjack) is converted to this contract by package A8b (merged on `feature/bedsit-raves`): cards, deck and
+  chips as dynamic things, the dealer and players as crowd actors, bet/twist/stick/get-up in the pad slots, `replace` mode (ruling 40).
 
 **Built (package A8, wip/engine-props).** The real signatures; the activity side's guide is `docs/engine/WORLD_THINGS.md`.
 
