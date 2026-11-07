@@ -15,6 +15,7 @@ const NODES := ["space_rave", "space_stage", "space_cloakroom", "space_bar", "sp
 const TRACK := "origin_unknown_valley_of_the_shadows_chase_status_remix"
 const STEM := "bass"
 const LIGHT_GROUP := ["pylon_beams", "ring_lights", "hologram_dome"]  # the stage's set pieces (content/story/maps/space_rave.json): the light group
+const ACTIVITY_PIECES := {"cloakroom": ["cloak_lamp"], "bar": ["bar_shelf_1", "bar_shelf_2", "bar_shelf_3", "bar_shelf_4"]}  # what a finished activity leaves lit (the maps' pieces)
 const QUIET_CAP := 25.0  # the crowd shows at most this energy (the quiet band) until the bass is back
 const RAMP_BEATS := 4.0  # one bar
 
@@ -54,6 +55,7 @@ func enter(node_id: String, t: float) -> void:
 		progress.set_rave_theme(THEME)
 	if dev_bass_fixed() and not bass_fixed() and progress != null:
 		progress.apply_activity_flag("rave.%s.bass_fixed" % THEME)
+	_activity_marks(t)
 	if bass_fixed():
 		_set_run_flag()
 		locked = false
@@ -67,6 +69,21 @@ func enter(node_id: String, t: float) -> void:
 		log.append({"kind": "lock", "t": t, "node": node_id})
 	if first:
 		log.append({"kind": "enter", "t": t, "node": node_id, "bass_fixed": bass_fixed()})
+
+
+## The two activities' visible change (ruling 38): once the cloakroom is done its counter lamp stays lit, once the bar is done its shelf glasses stay lit (pieces of the map, switched on
+## when the room is entered, as the activities switched them on at the payoff), and the run flags `space_<activity>_done` the activity hotspots hide themselves by are set.
+func _activity_marks(t: float) -> void:
+	if progress == null:
+		return
+	for act in ACTIVITY_PIECES:
+		var puzzle: String = "%s_done" % act
+		if progress.puzzle_done(THEME, puzzle):
+			progress.set_flag("%s_%s" % [THEME, puzzle])
+			if apply_fn.is_valid():
+				for p: String in ACTIVITY_PIECES[act]:
+					apply_fn.call({"t0": t, "action": "piece_on", "args": {"piece": p}})
+				log.append({"kind": "marks", "t": t, "activity": act})
 
 
 ## The rave is left (home, or the run goes on elsewhere): the bass stem is free again for whatever plays next.
@@ -121,25 +138,13 @@ func _set_run_flag() -> void:
 		progress.set_flag("%s_bass_fixed" % THEME)
 
 
-# --- ruling 38: the knob is an object in the room ---------------------------------------------------------------------------------
+# --- ruling 38: the knob is a thing in the room ---------------------------------------------------------------------------------
 
-## The knob's pose for the room (`StoryWorld.thing_pose["bass_knob"]`: its frame's texture and a sideways wobble in metres), from the activity's `things()` entry. Until the engine's dynamic
-## things (H8.1) land the map's own `bass_knob` thing is the knob and this is how its frame changes.
-func knob_pose(thing: Dictionary, frames: Array) -> Dictionary:
-	var f := clampi(int(thing.get("frame", 0)), 0, maxi(frames.size() - 1, 0))
-	var pose := {"dx": float((thing.get("at", [0.0, 0.0]) as Array)[0]) - BassKnobActivity.KNOB_AT.x}
-	if f < frames.size() and frames[f] != null:
-		pose["tex"] = frames[f]
-	return pose
-
-
-## The world region over the knob: a touch at `local` (pixels from the stage area's top-left) is "knob" when it lies within the knob's projected circle, at least 44 px wide on screen
-## (the touch minimum), seen from `pose` ({cam, yaw, pitch}) in a stage area of `area` pixels. The knob's world point is `knob_at` (x, z) at height `knob_y` above the floor.
-static func hit(local: Vector2, area: Vector2, pose: Dictionary, knob_at: Vector2 = BassKnobActivity.KNOB_AT, knob_y := 1.74) -> String:
-	var pr: Dictionary = StoryProjector.project(Vector3(knob_at.x, knob_y, knob_at.y), pose, area)
-	if not bool(pr.get("visible", pr.has("screen"))) or not pr.has("screen"):
+## The world region over the knob: a touch at `local` (stage pixels from the stage area's top-left) is "knob" when it lies within the circle round the knob's drawn rect (`rect`: what
+## StoryStage.thing_screen_rect("bass_knob") gives, null when it is not in the picture), at least 44 px wide on screen (the touch minimum) and 60 % of the rect's width otherwise.
+static func hit_rect(local: Vector2, rect: Variant) -> String:
+	if rect == null:
 		return ""
-	var c: Vector2 = pr["screen"]
-	var edge: Dictionary = StoryProjector.project(Vector3(knob_at.x + BassKnobActivity.KNOB_TAP_M, knob_y, knob_at.y), pose, area)
-	var r := maxf(44.0, (edge["screen"] as Vector2).distance_to(c) if edge.has("screen") else 44.0)
-	return "knob" if local.distance_to(c) <= r else ""
+	var r: Rect2 = rect
+	var radius := maxf(44.0, maxf(r.size.x, r.size.y) * 0.6)
+	return "knob" if local.distance_to(r.get_center()) <= radius else ""

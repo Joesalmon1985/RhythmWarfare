@@ -79,7 +79,7 @@ func test_the_hub_leads_to_five_places_and_the_stations_loop_back() -> void:
 	for to in ["space_stage", "space_cloakroom", "space_bar", "space_race", "bedsit"]:
 		assert_true(to in next, "the hub leads to %s" % to)
 	for id in ["space_cloakroom", "space_bar", "space_race"]:
-		assert_true(bool(d.nodes[id].get("placeholder", false)), "%s is a placeholder" % id)
+		assert_eq(bool(d.nodes[id].get("placeholder", false)), id == "space_race", "%s: only the hangar is still a placeholder" % id)
 		assert_true(d.nodes[id]["next"].any(func(e: Dictionary) -> bool: return str(e["to"]) == "space_rave" and bool(e.get("loop", false))), "%s loops back to the ring" % id)
 	assert_eq(ContractShapes.theme_data(theme), [], "content/raves/space.json has the contract-2 shape")
 
@@ -105,6 +105,19 @@ func test_the_bedsit_north_route_lands_in_the_real_space_rave_and_home_comes_bac
 
 
 # --- the knob
+
+## A stage of the Space rave's world (the real map, the Mothership's art) over a stage area of `size` px, as the run builds it.
+func _stage(size: Vector2) -> StoryStage:
+	var run := StoryRun.create({}, "res://content/story/space_rave.json")
+	var stage := StoryStage.new()
+	stage.size = size
+	tree.root.add_child(stage)
+	stage.setup(StoryAssets.load_art("mothership"), run.data, run)
+	stage.attach_world(stage.map, true)
+	stage.lowres.size = size
+	stage.lowres._fit()
+	return stage
+
 
 func _knob(beat_s: float) -> BassKnobActivity:
 	var a := BassKnobActivity.new()
@@ -152,15 +165,20 @@ func test_leaving_before_it_is_free_completes_nothing() -> void:
 
 
 func test_the_knob_is_touched_through_a_world_region_over_its_screen_point() -> void:
-	var m := StoryMap.load_chapter("space_rave")
-	var wp: Dictionary = m.waypoint("deck_view")
-	var at: Vector2 = wp["at"]
-	var pose := {"cam": Vector3(at.x, float(m.sector("stage")["floor"]) + 1.6, at.y), "yaw": float(wp["yaw"]), "pitch": 0.0}
-	var area := Vector2(844, 250)
-	var pr: Dictionary = StoryProjector.project(Vector3(0.0, 1.74, -25.12), pose, area)
-	assert_true(bool(pr["visible"]), "the knob is in the picture from the deck")
-	assert_eq(SpaceRaveHost.hit(pr["screen"], area, pose), "knob")
-	assert_eq(SpaceRaveHost.hit(pr["screen"] + Vector2(300, 0), area, pose), "")
+	var stage := _stage(Vector2(1280, 460))
+	stage.player.apply_action({"t0": 0.0, "action": "player_move", "args": {"to": "deck_view", "bars": 0.01, "cut": true}})
+	var a := _knob(60.0 / 174.0)
+	stage.set_things(a.things())
+	stage.update(2.0, 60.0)
+	var r: Variant = stage.thing_screen_rect("bass_knob")
+	assert_true(r != null, "the knob is in the picture from the deck")
+	if r != null:
+		var rr: Rect2 = r
+		assert_true(Rect2(Vector2.ZERO, stage.size).encloses(rr) and rr.size.y >= 48.0, "inside the strip and at least 48 px tall (%s)" % str(rr))
+		assert_eq(SpaceRaveHost.hit_rect(rr.get_center(), rr), "knob")
+		assert_eq(SpaceRaveHost.hit_rect(rr.get_center() + Vector2(300, 0), rr), "")
+	assert_eq(SpaceRaveHost.hit_rect(Vector2(10, 10), null), "", "no rect (not drawn): no region")
+	stage.free()
 
 
 # --- the bass lock

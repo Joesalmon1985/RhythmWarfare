@@ -529,17 +529,13 @@
    "relaxed": true,
    "treatment": "none",
    "id": "space_cloakroom",
-   "scene": "space_cloakroom",
-   "title": "PLACEHOLDER: Cloakroom",
+   "scene": "cloakroom",
+   "title": "Cloakroom",
    "entry": false,
    "exit_scene": true,
-   "placeholder": true,
-   "placeholder_for": {
-    "theme": "space",
-    "activity": "cloakroom"
-   },
+   "blurb": "The coat check in the ring's west alcove: a counter, a rail of coats and an attendant who wants the right coat for each symbol.",
    "theme": "space",
-   "blurb": "A stand-in for the cloakroom activity (id 'cloakroom' in content/raves/space.json activities), built elsewhere as a minigame. It loops back to the ring.",
+   "activity": "cloakroom",
    "next": [
     {
      "to": "space_rave",
@@ -554,19 +550,20 @@
     }
    ],
    "place": {
-    "waypoint": "cloak_view",
+    "waypoint": "cloak_door",
     "rail": {
      "good": [
       {
-       "to": "cloak_view",
+       "to": "cloak_hold",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 10
       }
      ],
      "bad": [
       {
-       "to": "cloak_view",
+       "to": "cloak_door",
        "role": "dancer",
        "style": "walk",
        "bars": 2
@@ -598,17 +595,13 @@
    "relaxed": true,
    "treatment": "none",
    "id": "space_bar",
-   "scene": "space_bar",
-   "title": "PLACEHOLDER: Bar",
+   "scene": "bar",
+   "title": "Bar",
    "entry": false,
    "exit_scene": true,
-   "placeholder": true,
-   "placeholder_for": {
-    "theme": "space",
-    "activity": "bar"
-   },
+   "blurb": "The bar in the ring's east alcove: a counter, a back shelf of glasses and a bartender who remembers the drinks.",
    "theme": "space",
-   "blurb": "A stand-in for the bar activity (id 'bar' in content/raves/space.json activities), built elsewhere as a minigame. It loops back to the ring.",
+   "activity": "bar",
    "next": [
     {
      "to": "space_rave",
@@ -623,19 +616,20 @@
     }
    ],
    "place": {
-    "waypoint": "bar_view",
+    "waypoint": "bar_door",
     "rail": {
      "good": [
       {
-       "to": "bar_view",
+       "to": "bar_hold",
        "role": "dancer",
        "style": "walk",
-       "bars": 2
+       "bars": 2,
+       "hold_bars": 10
       }
      ],
      "bad": [
       {
-       "to": "bar_view",
+       "to": "bar_door",
        "role": "dancer",
        "style": "walk",
        "bars": 2

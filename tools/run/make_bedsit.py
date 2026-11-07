@@ -47,6 +47,11 @@ SPACE_STATIONS = {  # activity scene -> (title, home waypoint, doorway waypoint,
     "space_bar": ("Bar", "bar_view", "bar_door", "bar"),
     "space_race": ("Hangar", "hangar_view", "hangar_door", "race"),
 }
+# the stations that are real scenes (ruling 38, contract 10): scene id -> (scene name, hold waypoint the activity is played from, the thing the hotspot is anchored on, minigame id, blurb)
+SPACE_ACTIVITY_SCENES = {
+    "space_cloakroom": ("cloakroom", "cloak_hold", "cloak_counter", "cloakroom", "The coat check in the ring's west alcove: a counter, a rail of coats and an attendant who wants the right coat for each symbol."),
+    "space_bar": ("bar", "bar_hold", "bar_counter", "bar", "The bar in the ring's east alcove: a counter, a back shelf of glasses and a bartender who remembers the drinks."),
+}
 
 
 def place(home: str) -> dict:
@@ -88,6 +93,12 @@ def space_nodes() -> list:
                      {"to": "deck_view", "role": "on_stage", "style": "walk", "bars": 2, "hold_bars": 4}], {"up": "stage_foot", "out": "stage_foot"})})
     out = [hub, stage]
     for sid, (title, home, door, act_id) in SPACE_STATIONS.items():
+        if sid in SPACE_ACTIVITY_SCENES:  # a real scene: the route from the hub ends at a hold facing the counter (contract 10's camera: hold_bars for the activity)
+            scene, hold, thing, mg, blurb = SPACE_ACTIVITY_SCENES[sid]
+            out.append(dict(base, id=sid, scene=scene, title=title, entry=False, exit_scene=True, blurb=blurb, theme="space", activity=mg,
+                            next=[{"to": "space_rave", "dir": "up", "label": "Back to the ring", "loop": True}, {"to": "bedsit", "dir": "out", "label": "Home"}],
+                            place={"waypoint": door, "rail": srail(door, [{"to": hold, "role": "dancer", "style": "walk", "bars": 2, "hold_bars": 10}], {"up": door, "out": door})}))
+            continue
         out.append(dict(base, id=sid, scene=sid, title="PLACEHOLDER: " + title, entry=False, exit_scene=True, placeholder=True, placeholder_for={"theme": "space", "activity": act_id}, theme="space",
                         blurb="A stand-in for the %s activity (id '%s' in content/raves/space.json activities), built elsewhere as a minigame. It loops back to the ring." % (title.lower(), act_id),
                         next=[{"to": "space_rave", "dir": "up", "label": "Back to the ring", "loop": True}, {"to": "bedsit", "dir": "out", "label": "Home"}],
@@ -213,6 +224,13 @@ def space_hotspots() -> list:
     rows.append(row("space_stage.home", "space_stage", {"waypoint": "deck_view"}, "exit", "bedsit"))
     rows.append(row("space_stage.back", "space_stage", {"waypoint": "stage_foot"}, "exit", "space_rave", default=True))
     for sid, (title, home, door, act_id) in SPACE_STATIONS.items():
+        if sid in SPACE_ACTIVITY_SCENES:  # the activity's hotspot: the counter, an object whose success outcome is {activity: id} (content/bedsit/cloakroom_hotspot_example.json); any window seats it at the end of the block
+            scene, hold, thing, mg, blurb = SPACE_ACTIVITY_SCENES[sid]
+            h = row("%s.%s" % (sid, mg), sid, {"thing": thing}, "object", window="any", success={"activity": mg},
+                    available={"flags_all": [], "flags_none": ["space_%s_done" % mg], "energy_min": 0, "once": False})
+            h["radius_m"] = 2.4
+            h["min_px"] = 220
+            rows.append(h)
         rows.append(row("%s.back" % sid, sid, {"waypoint": door}, "exit", "space_rave", default=True))
         rows.append(row("%s.home" % sid, sid, {"waypoint": home}, "exit", "bedsit"))
     return rows

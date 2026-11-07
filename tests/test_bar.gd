@@ -13,6 +13,7 @@ var _saved: RunProgress
 
 func _cfg(extra: Dictionary = {}) -> Dictionary:
 	var c: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(CONFIG_PATH))
+	c["layout"] = BarData.LAYOUT.duplicate(true)  # (these tests are about the test scene's map; the Space rave's own layout is themes.json bar.space.layout, tests/test_space_rave.gd)
 	c.merge(extra, true)
 	return c
 
@@ -544,7 +545,7 @@ func test_the_test_scene_map_has_the_counter_and_the_shelf_as_bar_pieces_and_the
 	# every thing the bar sets lies in a sector of that map, at the layout's places, and its sheet exists
 	var a := _bar()
 	a.update(float(a.state()["phase_t0"]) + float(a.state()["phase_dur"]) + 0.1)
-	var layout := BarData.layout({}, "space")
+	var layout := BarData.layout({"layout": BarData.LAYOUT}, "space")
 	assert_eq(layout["sector"], "bar_room")
 	for t: Dictionary in a.things():
 		assert_eq(str(t["sector"]), str((m.sectors[0] as Dictionary)["id"]), "the map's sector")

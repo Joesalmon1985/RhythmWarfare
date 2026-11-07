@@ -1173,24 +1173,18 @@ func _rave_step(t: float) -> void:
 		return
 	var act: MinigameActivity = minigames.activity if minigames.active() else null
 	rave_host.step(t, act.state() if act != null else {})
-	if act is BassKnobActivity and stages.has(active_world):  # the knob's frame in the room (its own map thing, posed)
-		if _knob_frames.is_empty():
-			for i in 4:
-				_knob_frames.append(load("res://assets/story/mothership/textures/sr_knob_%d.png" % i))
-		var w: StoryWorld = stages[active_world]["stage"].world
-		if w != null:
-			w.thing_pose["bass_knob"] = rave_host.knob_pose((act.things() as Array)[0], _knob_frames)
 
 
-var _knob_frames: Array = []
-
-
-## A touch in the room while a view-less activity is seated (the bass knob's world region).
+## A touch in the room while a view-less activity is seated (the bass knob's world region): over the knob thing's screen rect (ruling 38).
 func rave_hit(local: Vector2, area: Vector2) -> String:
 	if not (minigames.activity is BassKnobActivity) or not stages.has(active_world):
 		return ""
 	var st: StoryStage = stages[active_world]["stage"]
-	return SpaceRaveHost.hit(local, area, st.screen_pose(st.player.pose_at(hud.now_t)))
+	var r: Variant = st.thing_screen_rect("bass_knob")
+	if r != null and st.size.x > 0.0 and st.size.y > 0.0:  # (stage px to the area's)
+		var k := Vector2(area.x / st.size.x, area.y / st.size.y)
+		r = Rect2((r as Rect2).position * k, (r as Rect2).size * k)
+	return SpaceRaveHost.hit_rect(local, r)
 
 
 func _journey_apply(a: Dictionary) -> void:

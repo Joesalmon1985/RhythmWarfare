@@ -331,6 +331,39 @@
    "repeatable": true
   },
   {
+   "id": "space_cloakroom.cloakroom",
+   "world": "space_rave",
+   "scene": "space_cloakroom",
+   "map": "space_rave",
+   "anchor": {
+    "thing": "cloak_counter"
+   },
+   "kind": "object",
+   "radius_m": 2.4,
+   "min_px": 220,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "space_cloakroom_done"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "activity": "cloakroom"
+   },
+   "on_failure": {},
+   "default": false,
+   "repeatable": true,
+   "window": "any"
+  },
+  {
    "id": "space_cloakroom.back",
    "world": "space_rave",
    "scene": "space_cloakroom",
@@ -393,6 +426,39 @@
    },
    "default": false,
    "repeatable": true
+  },
+  {
+   "id": "space_bar.bar",
+   "world": "space_rave",
+   "scene": "space_bar",
+   "map": "space_rave",
+   "anchor": {
+    "thing": "bar_counter"
+   },
+   "kind": "object",
+   "radius_m": 2.4,
+   "min_px": 220,
+   "available": {
+    "flags_all": [],
+    "flags_none": [
+     "space_bar_done"
+    ],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "beckon",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "activity": "bar"
+   },
+   "on_failure": {},
+   "default": false,
+   "repeatable": true,
+   "window": "any"
   },
   {
    "id": "space_bar.back",
