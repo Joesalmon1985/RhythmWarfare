@@ -3045,7 +3045,7 @@
      "if_energy_below": 40
     }
    ],
-   "max_hotspots": 5
+   "max_hotspots": 10
   },
   {
    "id": "ward.art",

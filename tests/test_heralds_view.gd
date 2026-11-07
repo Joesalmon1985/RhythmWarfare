@@ -28,6 +28,14 @@ const ROUTES := {"warehouse": [], "warehouse.balcony": ["warehouse.balcony"], "w
 	"mothership.gallery": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery"],
 	"mothership.reactor": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.reactor"],
 	"mothership.bridge": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge"],
+	# Mental Hospital (N2.4): the hub and the side scenes of the ward and ward_late worlds, from the Warehouse through the mothership (and the hospital)
+	"ward": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "ward"],
+	"ward.art": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "ward", "ward.art"],
+	"ward.dorm": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "ward", "ward.dorm"],
+	"ward.corridor": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "ward", "ward.art", "ward.corridor"],
+	"ward.courtyard": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "ward", "ward.art", "ward.corridor", "ward.courtyard"],
+	"ward_late.treat": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "hospital", "hospital.corridor", "hospital.dayroom", "hospital.garden", "hospital.exit", "ward_late", "ward_late.treat"],
+	"ward_late.dorm": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery", "mothership.bridge", "mothership.exit", "hospital", "hospital.corridor", "hospital.dayroom", "hospital.garden", "hospital.exit", "ward_late", "ward_late.dorm"],
 	}
 
 

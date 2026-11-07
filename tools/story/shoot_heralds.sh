@@ -44,9 +44,11 @@ PHASE_S=$(python3 -c "print(64*60/174)")
 # entrance       scene              flags          close camera (x:z:yaw:pitch, looking at the entrance and its herald)   routes from the Warehouse (- none)
 while read -r ent node flags cam via; do
   case "$ent" in "#"*) continue ;; esac  # (a comment line of the list)
+  [[ "$ent" == \#* ]] && continue  # (a comment line of the list)
   if [ "$via" = "-" ]; then start="$node"; ROUTES_=""; off=0; else start=warehouse; ROUTES_="$via"; off=$(python3 -c "print(len('$via'.split(','))*$PHASE_S)"); fi
   t0=$(python3 -c "print(round($off+3.0,2))"); t1=$(python3 -c "print(round($off+19.0,2))")
-  ROUTES_="$ROUTES_" RW_RUN_START_="$start" shots "$start" "$flags" - "${TAG}_${ent}_start:$t0" "${TAG}_${ent}_route:$t1"
+  t0b=$(python3 -c "print(round($off+4.2,2))")  # (start_b: 4.2 s, beat 12: the camera has walked in through the door)
+  ROUTES_="$ROUTES_" RW_RUN_START_="$start" shots "$start" "$flags" - "${TAG}_${ent}_start:$t0" "${TAG}_${ent}_start_b:$t0b" "${TAG}_${ent}_route:$t1"
   ROUTES_=""
   [ "$cam" = "-" ] || [ "${RW_HERALD_CLOSE:-1}" = "0" ] || shots "$node" "$flags" "@$cam" "${TAG}_${ent}_close:5.0" "${TAG}_${ent}_close_b:5.4" "${TAG}_${ent}_close_route:19.0"
 done <<'LIST'
@@ -68,5 +70,16 @@ ms_hub         mothership         -              1.6:5.5:0:4       right,right,u
 ms_gallery     mothership.gallery -              15.5:5.8:-90:3    right,right,up,up,right
 ms_reactor     mothership.reactor -              31.5:5.5:0:3      right,right,up,up,up
 ms_bridge      mothership.bridge  -              43.0:4.5:-90:3    right,right,up,up,right,up
+# Mental Hospital (N2.4)
+ward_bassment  ward               -              1.8:5.4:-120:2    right,right,up,up,right,up,up,right
+ward_gospel    ward               -              1.8:5.4:-130:2    right,right,up,up,right,up,up,right
+ward_squadron  ward               -              2.6:5.4:-110:2    right,right,up,up,right,up,up,right
+ward_ember     ward               -              3.0:5.2:-100:2    right,right,up,up,right,up,up,right
+ward_art_bassment ward.art           -              41.0:8.0:137:2    right,right,up,up,right,up,up,right,right
+ward_dorm_gospel ward.dorm          -              26.0:9.6:156:0     right,right,up,up,right,up,up,right,up
+ward_corridor_squadron ward.corridor      -              20.0:5.0:124:2    right,right,up,up,right,up,up,right,right,up
+ward_courtyard_ember ward.courtyard     -              55.5:6.5:-70:2    right,right,up,up,right,up,up,right,right,up,up
+ward_late_treat_bassment ward_late.treat    -              14.6:8.6:-144:0    right,right,up,up,right,up,up,left,up,left,up,up,right,left
+ward_late_dorm_gospel ward_late.dorm     -              26.0:9.6:156:0    right,right,up,up,right,up,up,left,up,left,up,up,right,right
 LIST
 rm -rf "$TMP"

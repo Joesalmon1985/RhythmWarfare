@@ -10880,7 +10880,7 @@
    "kind": "quest_entry",
    "quest": "bassment",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "bassment/1",
    "transition": "port",
    "via": "ward.enter_bassment"
@@ -10896,7 +10896,7 @@
    "kind": "quest_entry",
    "quest": "ember",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "ember/hollow",
    "transition": "port",
    "via": "ward.enter_ember"
@@ -10912,7 +10912,7 @@
    "kind": "quest_entry",
    "quest": "gospel",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "gospel/jordan",
    "transition": "port",
    "via": "ward.enter_gospel"
@@ -11095,7 +11095,7 @@
    "kind": "quest_entry",
    "quest": "squadron",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "squadron/base",
    "transition": "port",
    "via": "ward.enter_squadron"
@@ -11111,7 +11111,7 @@
    "link": "extra_entrance",
    "quest": "bassment",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "bassment/1",
    "transition": "port",
    "via": "ward.art.enter_bassment"
@@ -11378,7 +11378,7 @@
    "link": "extra_entrance",
    "quest": "squadron",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "squadron/base",
    "transition": "port",
    "via": "ward.corridor.enter_squadron"
@@ -11394,7 +11394,7 @@
    "link": "extra_entrance",
    "quest": "ember",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "ember/hollow",
    "transition": "port",
    "via": "ward.courtyard.enter_ember"
@@ -11517,7 +11517,7 @@
    "link": "extra_entrance",
    "quest": "gospel",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "gospel/jordan",
    "transition": "port",
    "via": "ward.dorm.enter_gospel"
@@ -11878,7 +11878,7 @@
    "link": "extra_entrance",
    "quest": "gospel",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "gospel/jordan",
    "transition": "port",
    "via": "ward_late.dorm.enter_gospel"
@@ -12104,7 +12104,7 @@
    "link": "extra_entrance",
    "quest": "bassment",
    "rhythm_gate": false,
-   "status": "proposed",
+   "status": "existing",
    "to": "bassment/1",
    "transition": "port",
    "via": "ward_late.treat.enter_bassment"
@@ -15078,8 +15078,8 @@
    },
    "edges_by_status": {
     "changed": 177,
-    "existing": 572,
-    "proposed": 254
+    "existing": 582,
+    "proposed": 244
    },
    "nodes": 146
   },

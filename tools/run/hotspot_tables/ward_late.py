@@ -32,3 +32,12 @@ exits("ward_late.exit")
 ch("ward_late.exit", "stare", A("x09"), "beckon",
    out(flags=["wl_window"], energy=5, cin=cin(w, "stare", walk("bars_in", "dancer", "walk", 2, look="x09"))), out(energy=-5),
    s_text="he is staring at the bars; you look with him (+5)", f_text="he turns away (-5)")
+sc("ward_late.treat", "enter_bassment", P(16.4, 1.1, 11.8), "pulse", out(route="bassment"), out(energy=-4),
+   s_text="a hatch under the trolley bay, chalk marks round it: the Bassment (route bassment)", f_text="the hatch is stuck fast (-4)")
+sc("ward_late.dorm", "enter_gospel", P(24.6, 1.1, 13.0), "pulse", out(route="path:gospel"), out(energy=-4),
+   s_text="a figure of light in the alcove under a drawn star: the Gospel path (route path:gospel)", f_text="the light goes out (-4)")
+
+# ---- the heralds (lead ruling 25, docs/art/HERALDS.md).
+from heralds import herald  # noqa: E402
+herald("dungeon", "ward_late.treat.enter_bassment", at=(14.8, 11.9), gate=True)
+herald("gospel", "ward_late.dorm.enter_gospel", at=(23.8, 11.2), gate=True)
