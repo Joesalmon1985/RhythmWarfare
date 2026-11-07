@@ -1973,7 +1973,10 @@ func _on_hotspot_commit(ev: Dictionary) -> void:
 	if not (out.get("pieces", {}) as Dictionary).is_empty() and stages.has(active_world):
 		_apply_pieces(stages[active_world]["stage"], out["pieces"], t)
 	if str(out.get("activity", "")) != "" and bool(out["success"]):  # minigames: sit down on the next downbeat; the run stays here and no door walk starts
-		minigames.request(str(out["activity"]), t, engine.t_of(float((int(ev["block"]) + 1) * int(engine.timing("block_beats")))), _mg.exits_for(engine.node_id))
+		var aid := str(out["activity"])  # H4.3: in a rave the request is built from data (the theme's keys merged into the config, the station's pose to come back to)
+		var theme := Session.run_progress.rave_theme() if Session.run_progress != null else ""
+		var req := RunMinigameHost.build_request(aid, minigames.config_of(aid), theme, RunMinigameHost.theme_data_of(theme), engine.node_id, str(data.nodes[engine.node_id].get("waypoint", "")))
+		minigames.request(aid, t, engine.t_of(float((int(ev["block"]) + 1) * int(engine.timing("block_beats")))), _mg.exits_for(engine.node_id), req)
 		_door_phase = engine.phase_n
 	if not (out["cinematic"] as Dictionary).is_empty():
 		_hotspot_cinematic(out, t, claim_to)

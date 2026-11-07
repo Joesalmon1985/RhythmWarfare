@@ -87,6 +87,11 @@ static func _read_dir(dir: String) -> Array:
 	return out
 
 
+## The registered config of activity `id` (its content/minigames json; {} when unknown).
+func config_of(id: String) -> Dictionary:
+	return (_registry.get(id, {}) as Dictionary).get("config", {})
+
+
 func is_registered(id: String) -> bool:
 	return _registry.has(id)
 

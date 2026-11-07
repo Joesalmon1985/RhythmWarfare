@@ -33,6 +33,7 @@ var _was_active := false
 var controls_layer: RunActivityInput = null  # replace mode: the activity's controls in the pad strip (null while the pads own it)
 var regions_layer: RunActivityInput = null  # overlay mode: the four screen regions
 var _strip_saved := {}  # the pads' and the note lane's visibility before the controls stood in
+var _result_applied := false
 var mode_log: Array = []  # [{kind: controls_on | controls_off | regions_on | regions_off | control | region, t, ...}]
 
 const DEFAULT_REGIONS := {"top": [0.25, 0.0, 0.5, 0.42], "bottom": [0.25, 0.72, 0.5, 0.28], "left": [0.0, 0.0, 0.22, 1.0], "right": [0.78, 0.0, 0.22, 1.0]}  # CONTRACTS.md 5 (fixture input_ownership.json)
@@ -61,6 +62,11 @@ func step(t: float) -> void:
 				var ok := mg.tap(str(s["target"]), t)
 				play.hotspot_log.append({"kind": "minigame_tap", "t": t, "target": str(s["target"]), "ok": ok, "scripted": true})
 	_step_layers(t)
+	if mg.done_t >= 0.0 and not _result_applied:  # (read once, when the activity is done: the flags are saved then, not at the boundary)
+		_result_applied = true
+		apply_result(mg.last_result, str(mg.request_info.get("theme", "")))
+	elif mg.done_t < 0.0:
+		_result_applied = false
 	if _was_active and not mg.active():
 		_unmount()
 		_resume(mg.finish_t if mg.finish_t >= 0.0 and mg.finish_t <= t else t)  # (a replace activity: the camera goes back on the resume boundary)
@@ -206,6 +212,56 @@ func _resume(t: float) -> void:
 	if mg.last_route != "" and not _run_ending() and _leave_by(mg.last_route, t):
 		return
 	play._back_to_rail(t)
+
+
+## The ActivityRequest for activity `id` in a rave (CONTRACTS.md 4, hook H4.3), from data: the registered config with the theme file's `theme_keys` merged in and
+## "{theme}" filled in `flags_on_complete`; `mode` from the config; `return_pose` the station's choice viewpoint of the theme (`stations[kind].waypoint`, the race's
+## `race.entrance`), else `home` (the scene's waypoint). {} outside a rave (`theme` ""): the activity keeps its registered config, as the blackjack table does.
+static func build_request(id: String, cfg: Dictionary, theme: String, theme_data: Dictionary, scene_id: String, home: String) -> Dictionary:
+	if theme == "" or cfg.is_empty():
+		return {}
+	var config: Dictionary = cfg.duplicate(true)
+	for k: Variant in cfg.get("theme_keys", []):
+		if theme_data.has(str(k)):
+			config[str(k)] = (theme_data[str(k)] as Variant)
+	var flags: Array = []
+	for f: Variant in cfg.get("flags_on_complete", []):
+		flags.append(str(f).replace("{theme}", theme))
+	config["flags_on_complete"] = flags
+	var kind := str(cfg.get("kind", id))
+	var pose := ""
+	var st: Variant = (theme_data.get("stations", {}) as Dictionary).get(kind, null)
+	if typeof(st) == TYPE_DICTIONARY:
+		pose = str((st as Dictionary).get("waypoint", ""))
+	if pose == "" and kind == "race":
+		pose = str((theme_data.get("race", {}) as Dictionary).get("entrance", ""))
+	return {"activity_id": id, "mode": str(cfg.get("mode", "rhythm")), "theme": theme, "scene_id": scene_id, "return_pose": pose if pose != "" else home, "config": config}
+
+
+## The theme file of rave `theme` (content/bedsit/themes.json names it; {} when there is none yet).
+static func theme_data_of(theme: String, themes_path := "res://content/bedsit/themes.json") -> Dictionary:
+	if theme == "" or not FileAccess.file_exists(themes_path):
+		return {}
+	var th: Variant = JSON.parse_string(FileAccess.get_file_as_string(themes_path))
+	var p := str(((th as Dictionary).get("themes", {}) as Dictionary).get(theme, "")) if typeof(th) == TYPE_DICTIONARY else ""
+	if p == "" or not FileAccess.file_exists(p):
+		return {}
+	var d: Variant = JSON.parse_string(FileAccess.get_file_as_string(p))
+	return d if typeof(d) == TYPE_DICTIONARY else {}
+
+
+## The activity's result once it is done (CONTRACTS.md 4): its flags go to the save (RunProgress.apply_activity_flag: "rave.<theme>.<puzzle>", else a run flag), a race
+## record too. Applied once per activity.
+func apply_result(res: Dictionary, theme: String) -> void:
+	var prog: RunProgress = Session.run_progress
+	if prog == null or res.is_empty():
+		return
+	for f: Variant in res.get("flags_to_set", []):
+		prog.apply_activity_flag(str(f))
+	var race: Variant = res.get("race", null)
+	if typeof(race) == TYPE_DICTIONARY and theme != "":
+		prog.record_race(theme, bool(race.get("won", false)), float(race.get("time_s", 0.0)))
+	mode_log.append({"kind": "result", "activity": str(res.get("activity_id", "")), "flags": res.get("flags_to_set", []), "race": race != null})
 
 
 ## The ways out of scene `node_id` for the activity (MinigameActivity "exits"): one per exit hotspot of the scene available now (kind "exit", the final window, a scene route), the default first.

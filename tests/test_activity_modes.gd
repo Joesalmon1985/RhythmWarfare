@@ -343,3 +343,58 @@ func test_in_the_scene_an_overlay_activity_gets_the_four_regions_and_the_pads_st
 	assert_true(scene._mg.regions_layer == null, "the regions go with it")
 	_free(d)
 
+
+
+# --- the request from data (H4.3) and the result (H4.1) ------------------------------------------------------------------------
+
+func test_the_request_is_built_from_the_activity_and_theme_data() -> void:
+	var theme: Dictionary = ContractShapes.load_fixture("theme_space.json")
+	var cloak: Dictionary = ContractShapes.load_fixture("activity_cloakroom.json")
+	var req := RunMinigameHost.build_request("cloakroom", cloak, "space", theme, "rave.space", "space_floor")
+	assert_true(ContractShapes.activity_request(req).is_empty(), "the contract's shape: %s" % str(ContractShapes.activity_request(req)))
+	assert_eq(req["mode"], "replace")
+	assert_eq(req["return_pose"], "cloak_view", "back to the station's choice viewpoint")
+	assert_eq(req["config"]["cloakroom_symbols"], theme["cloakroom_symbols"], "the theme's keys merged into the config")
+	assert_eq(req["config"]["customers"], theme["customers"])
+	assert_eq(req["config"]["flags_on_complete"], ["rave.space.cloakroom_done"], "{theme} filled in")
+	assert_eq(cloak["flags_on_complete"], ["rave.{theme}.cloakroom_done"], "the registered config is not changed")
+	var race := RunMinigameHost.build_request("race", ContractShapes.load_fixture("activity_race.json"), "space", theme, "rave.space", "space_floor")
+	assert_eq(req["scene_id"], "rave.space")
+	assert_eq(race["return_pose"], "race_door", "the race comes back to its entrance")
+	assert_eq(race["mode"], "overlay")
+	assert_eq(RunMinigameHost.build_request("blackjack", {"id": "blackjack"}, "", {}, "warehouse", "wh_floor"), {}, "outside a rave: no request, the registered config as ever")
+	# the controller seats the activity with the request's config
+	var c := MinigameController.new(null)
+	c.register("fake_replace", FakeMinigame, REPLACE_CFG)
+	var r2 := {"activity_id": "fake_replace", "mode": "replace", "theme": "space", "scene_id": "rave.space", "return_pose": "x", "config": REPLACE_CFG.merged({"coats": 3})}
+	assert_true(c.request("fake_replace", 0.0, 1.0, [], r2))
+	assert_eq(int(c.activity.config["coats"]), 3, "the merged config reaches the activity")
+	assert_eq((c.activity as FakeMinigame).ctx_seen["request"], r2, "and the request itself")
+	assert_eq(c.request_info, r2)
+
+
+func test_the_default_result_and_the_save_it_reaches() -> void:
+	var a := MinigameActivity.new()
+	a.setup({"config": {"id": "bass_knob"}})
+	assert_eq(a.controls(), [], "no controls by default (the pads stay)")
+	a.interrupt("host", 0.0)
+	var r := a.result()
+	assert_true(ContractShapes.activity_result(r).is_empty(), str(ContractShapes.activity_result(r)))
+	assert_eq(r["activity_id"], "bass_knob")
+	assert_false(bool(r["completed"]))
+	assert_eq(r["reason"], "host")
+	# the host applies the flags and the race to the save
+	var saved: RunProgress = Session.run_progress
+	var path := "user://test_activity_modes_result.json"
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(path)
+	Session.run_progress = RunProgress.load_data(path, "user://none.json")
+	var host := RunMinigameHost.new(Control.new())
+	host.apply_result({"activity_id": "race", "completed": true, "score": 1, "flags_to_set": ["rave.space.bass_fixed", "met_the_dj"], "reason": "done",
+		"race": {"won": true, "position": 1, "time_s": 72.5}}, "space")
+	var q := RunProgress.load_data(path, "user://none.json")
+	assert_true(q.puzzle_done("space", "bass_fixed"), "the puzzle flag is saved")
+	assert_true(Session.run_progress.has_flag("met_the_dj"), "an ordinary flag is a run flag")
+	assert_eq(int(q.data["raves"]["space"]["race"]["wins"]), 1, "the race is recorded")
+	Session.run_progress = saved
+	DirAccess.remove_absolute(path)
