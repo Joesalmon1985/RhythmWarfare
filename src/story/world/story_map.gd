@@ -676,6 +676,79 @@ func floor_change(a: String, b: String, style := "walk") -> Dictionary:
 	return {"dh": dh, "kind": "step"}
 
 
+var _walls_by_sector: Dictionary = {}  # sector id -> its resolved walls
+
+
+## Walks the straight segment a to b from sector `sa` through the map (docs/story/HEIGHTS_AND_PATHS.md): {sectors: [...], points: PackedVector2Array, errors: [...]}, the
+## stretch ending at points[k] lying in sectors[k] (each portal crossing, then b). The segment may only leave a sector through a portal open to walkers (not a wall, not a
+## railing or a `blocked` opening), into a sector that is not a void, over a floor change that is a step for `style`, through an opening with room for the eye
+## (eye_height + 0.1 m). The first problem ends the walk and is the error. Needs a map without errors (resolved walls).
+func trace_segment(a: Vector2, b: Vector2, sa: String, style := "walk") -> Dictionary:
+	var out := {"sectors": [], "points": PackedVector2Array(), "errors": []}
+	if not _sector_index.has(sa):
+		out["errors"].append("starts in no sector (%s)" % sa)
+		return out
+	if _walls_by_sector.is_empty():
+		for w in _walls_out:
+			if not _walls_by_sector.has(str(w["sector"])):
+				_walls_by_sector[str(w["sector"])] = []
+			_walls_by_sector[str(w["sector"])].append(w)
+	var dir := b - a
+	var cur := sa
+	var t := 0.0
+	for guard in 4096:
+		var poly: PackedVector2Array = sector(cur)["poly"]
+		var t_exit := INF
+		if dir.length() > 1.0e-6:
+			for i in poly.size():
+				var q0 := poly[i]
+				var e := poly[(i + 1) % poly.size()] - q0
+				var nrm := Vector2(e.y, -e.x)  # outward (the polygon runs counter-clockwise)
+				var dn := dir.dot(nrm)
+				if dn <= 1.0e-12:
+					continue
+				var te := (q0 - a).dot(nrm) / dn
+				if te > t - 1.0e-7 and te < t_exit:
+					t_exit = te
+		if t_exit >= 1.0 - 1.0e-6:
+			out["sectors"].append(cur)
+			out["points"].append(b)
+			return out
+		var c := a + dir * t_exit
+		var nxt := ""
+		var shut := ""
+		for w in _walls_by_sector.get(cur, []):
+			if str(w["portal"]) != "" and _dist_to_segment(c, w["a"], w["b"]) < 2.0e-3:
+				if bool(w.get("blocked", false)):
+					shut = "the railing" if str(w.get("kind", "")) == "railing" else "the closed opening"
+					shut += " between %s and %s" % [cur, w["portal"]]
+					continue
+				nxt = str(w["portal"])
+				break
+		if nxt == "":
+			out["errors"].append(("crosses %s" % shut if shut != "" else "crosses a wall of %s" % cur) + " at (%.2f, %.2f)" % [c.x, c.y])
+			return out
+		var fc := floor_change(cur, nxt, style)
+		if str(fc["kind"]) == "void":
+			out["errors"].append("steps off %s into the void %s at (%.2f, %.2f)" % [cur, nxt, c.x, c.y])
+			return out
+		if str(fc["kind"]) == "drop":
+			out["errors"].append("crosses a drop of %.2f m from %s to %s at (%.2f, %.2f) (style %s; a step is at most %.2f m)" % [float(fc["dh"]), cur, nxt, c.x, c.y, style, max_climb if style == "climb" else max_step])
+			return out
+		var sc := sector(cur)
+		var sn := sector(nxt)
+		var opening := minf(float(sc["ceiling"]), float(sn["ceiling"])) - maxf(float(sc["floor"]), float(sn["floor"]))
+		if opening < eye_height + 0.1:
+			out["errors"].append("goes through an opening %.2f m high from %s to %s (the eye needs %.2f)" % [opening, cur, nxt, eye_height + 0.1])
+			return out
+		out["sectors"].append(cur)
+		out["points"].append(c)
+		cur = nxt
+		t = t_exit
+	out["errors"].append("does not end")
+	return out
+
+
 func neighbors(sid: String) -> Array:
 	var out: Array = []
 	for p in portals():
@@ -1110,8 +1183,11 @@ func validate_chapter(chapter_raw: Dictionary) -> void:
 		var args: Dictionary = ja["args"]
 		match str(ja["action"]):
 			"player_move":
-				if not waypoints.has(str(args.get("to", ""))):
-					errors.append("%s: player_move to %s is not a waypoint" % [ja["where"], args.get("to", "")])
+				if not waypoints.has(StoryPlayer.target_of(args)):
+					errors.append("%s: player_move to %s is not a waypoint" % [ja["where"], StoryPlayer.target_of(args)])
+				for v in StoryPlayer.via_of(args):
+					if not waypoints.has(str(v)):
+						errors.append("%s: player_move via %s is not a waypoint" % [ja["where"], v])
 				if str(args.get("style", "walk")) not in MOVE_STYLES:
 					errors.append("%s: unknown move style %s" % [ja["where"], args.get("style")])
 			"player_walk":
