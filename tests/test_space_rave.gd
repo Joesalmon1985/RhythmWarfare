@@ -343,3 +343,131 @@ func test_themes_json_keeps_the_cloakroom_and_bar_blocks_and_the_generator_merge
 			ProjectSettings.globalize_path("res://tools/run"), ProjectSettings.globalize_path("res://content/bedsit/themes.json")], out)
 	if code == 0:
 		assert_true(str(out[0]).contains("'bar'") and str(out[0]).contains("'cloakroom'"), "a regeneration keeps both blocks: %s" % str(out))
+
+
+# --- the whole rave in the real run scene (integration: ruling 38, contract 10) ---------------------------------------------------------------------
+
+const Driver := preload("res://tests/fixtures/space_run_driver.gd")
+
+
+func test_the_three_activity_nodes_exist_with_their_holds_hotspots_and_things_in_the_rooms_sectors() -> void:
+	var d := RunData.load_path("bedsit")
+	var m := StoryMap.load_chapter("space_rave")
+	var themes: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/bedsit/themes.json"))
+	var want := {"space_cloakroom": ["cloak_hold", "cloak_counter", "cloakroom"], "space_bar": ["bar_hold", "bar_counter", "bar"]}
+	for id: String in want:
+		var n: Dictionary = d.nodes[id]
+		assert_false(bool(n.get("placeholder", false)), "%s is a real scene" % id)
+		var good: Array = n["rail"]["good"]
+		assert_eq(str(good[good.size() - 1]["to"]), want[id][0], "%s: the route from the hub ends at the hold" % id)
+		assert_true(float(good[good.size() - 1]["hold_bars"]) >= 4.0, "%s: a hold for the activity" % id)
+		var hold: Dictionary = m.waypoint(str(want[id][0]))
+		var sec := str(hold["sector"])
+		assert_eq(sec, "cloak" if id == "space_cloakroom" else "bar", "the hold stands in the alcove")
+		var rows: Array = (d.hotspots[id] as Array).filter(func(h: Dictionary) -> bool: return (h["on_success"] as Dictionary).has("activity"))
+		assert_eq(rows.size(), 1, "%s: one hotspot carries the activity" % id)
+		assert_eq(str(rows[0]["on_success"]["activity"]), want[id][2])
+		assert_eq(str(rows[0]["anchor"]["thing"]), want[id][1], "anchored on the counter")
+		assert_true(m.things.any(func(t: Dictionary) -> bool: return str(t["id"]) == want[id][1]), "the counter is a map thing")
+		# the things the activity declares stand in the alcove's sector, inside its polygon
+		var layout: Dictionary = (themes["cloakroom" if id == "space_cloakroom" else "bar"]["space"] as Dictionary)["layout"]
+		assert_eq(str(layout["sector"]), sec)
+		var poly: PackedVector2Array = m.sector(sec)["poly"]
+		var pts: Array = []
+		if id == "space_cloakroom":
+			pts.append_array(layout["customer_slots"])
+			for k in ["attendant_at", "rail_at", "symbol_at", "prev_at"]:
+				pts.append(layout[k])
+			var r0: Array = layout["rail_at"]
+			var st: Array = layout["rail_step"]
+			pts.append([float(r0[0]) + 7.0 * float(st[0]), float(r0[1]) + 7.0 * float(st[1])])
+		else:
+			for k in ["customer_at", "customer_glass_at", "glass_at", "bubble_at"]:
+				pts.append(layout[k])
+		for p: Array in pts:
+			assert_true(Geometry2D.is_point_in_polygon(Vector2(float(p[0]), float(p[1])), poly), "%s: %s is inside the %s" % [id, str(p), sec])
+	# the customers, the attendant, the bartender and the DJ are crowd actors of those rooms, with homes there
+	var story: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/space_rave.json"))
+	var actors := (story["actors"] as Array).map(func(a: Dictionary) -> String: return str(a["id"]))
+	var homes: Dictionary = m.homes
+	var slots: Array = (themes["cloakroom"]["space"]["layout"] as Dictionary)["customer_slots"]
+	for k in 8:
+		assert_true(("customer_%d" % k) in actors and homes.has("customer_%d" % k), "customer_%d is a crowd actor with a home" % k)
+		assert_eq(str(homes["customer_%d" % k]["sector"]), "cloak")
+		assert_true((homes["customer_%d" % k]["at"] as Vector2).distance_to(Vector2(float(slots[k][0]), float(slots[k][1]))) < 0.05, "customer_%d's home is its slot in the layout" % k)
+	for id in ["attendant", "bartender", "customer", "dj"]:
+		assert_true(id in actors and homes.has(id), "%s is a crowd actor with a home" % id)
+	assert_eq(str(homes["customer"]["sector"]), "bar")
+	assert_eq(str(homes["attendant"]["sector"]), "cloak")
+	assert_eq(str(homes["bartender"]["sector"]), "bar")
+	# the pieces the activities switch are pieces of the map; the sheets have their sidecars
+	for p in ["cloak_lamp", "bar_shelf_1", "bar_shelf_2", "bar_shelf_3", "bar_shelf_4"]:
+		assert_true(m.things.any(func(t: Dictionary) -> bool: return str(t.get("piece", "")) == p), "%s is a map piece" % p)
+	for sheet in ["cloak_coat", "cloak_symbols_space", "bar_glass_space", "bar_order_space", "sr_knob"]:
+		var base := "res://assets/story/mothership/sprites/%s" % sheet
+		assert_true(FileAccess.file_exists(base + ".png") and FileAccess.file_exists(base + ".json"), "%s has its sheet and its grid sidecar" % sheet)
+		var g: Variant = JSON.parse_string(FileAccess.get_file_as_string(base + ".json"))
+		assert_true(typeof(g) == TYPE_DICTIONARY and (g as Dictionary).has("grid"), "%s: {grid}" % sheet)
+
+
+func test_the_run_plays_hub_cloakroom_hub_bar_stage_knob_and_home_with_the_save_flags_set() -> void:
+	var dr := Driver.new()
+	dr.start(tree, Vector2(1280, 720), "space_rave")
+	var sc: Node = dr.scene
+	var prog: RunProgress = Session.run_progress
+	assert_eq(dr.node(), "space_rave")
+	# --- the cloakroom
+	assert_true(dr.select("space_rave.cloakroom"), "the attendant is chosen in the hub")
+	assert_true(dr.in_node("space_cloakroom"), "the route leads to the cloakroom scene (%s)" % dr.node())
+	assert_true(dr.select("space_cloakroom.cloakroom"), "the counter is chosen")
+	assert_true(dr.seated(), "the cloakroom seats")
+	var cloak: Variant = dr.act()
+	assert_true(cloak is CloakroomActivity, "it is the cloakroom")
+	var layer: RunActivityInput = sc._mg.controls_layer
+	assert_true(layer != null and layer.ids == ["same", "different"], "two controls in the pad slots")
+	var guard := 0
+	while dr.mg().state == "active" and guard < 3000:
+		dr.cloak_bot()
+		dr.step()
+		guard += 1
+	assert_true(prog.puzzle_done("space", "cloakroom_done"), "the cloakroom flag is set in the save")
+	assert_true(dr.until(func() -> bool: return dr.mg().state == "", 30.0), "the strip is handed back")
+	assert_true(dr.select("space_cloakroom.back"), "the way back to the ring is chosen")
+	assert_true(dr.in_node("space_rave", 60.0), "leaving returns to the hub (%s)" % dr.node())
+	assert_true(prog.has_flag("space_cloakroom_done"), "and the activity's hotspot is gone for the run")
+	# --- the bar
+	assert_true(dr.select("space_rave.bar"), "the bartender is chosen in the hub")
+	assert_true(dr.in_node("space_bar"), "the route leads to the bar scene (%s)" % dr.node())
+	assert_true(dr.select("space_bar.bar"), "the counter is chosen")
+	assert_true(dr.seated(), "the bar seats")
+	assert_true(dr.act() is BarActivity)
+	guard = 0
+	while dr.mg().state == "active" and guard < 6000:
+		dr.bar_bot()
+		dr.step()
+		guard += 1
+	assert_true(prog.puzzle_done("space", "bar_done"), "the bar flag is set in the save")
+	assert_true(dr.until(func() -> bool: return dr.mg().state == "", 30.0))
+	assert_true(dr.select("space_bar.back"))
+	assert_true(dr.in_node("space_rave", 60.0), "back in the hub (%s)" % dr.node())
+	# --- the stage and the knob
+	assert_true(dr.select("space_rave.stage"))
+	assert_true(dr.in_node("space_stage"), "the stage (%s)" % dr.node())
+	assert_true(dr.select("space_stage.deck"))
+	assert_true(dr.seated(), "the deck seats the knob")
+	assert_true(dr.act() is BassKnobActivity)
+	for i in 3:
+		var kp: Variant = dr.knob_point()
+		assert_true(kp != null, "the knob is in the picture")
+		if kp == null:
+			break
+		assert_eq(sc.dispatch_tap(kp), "activity_view", "the tap is the room's")
+		dr.run_for(1.0)
+	assert_true(prog.puzzle_done("space", "bass_fixed") or dr.until(func() -> bool: return prog.puzzle_done("space", "bass_fixed"), 10.0), "the bass is fixed in the save")
+	assert_true(dr.until(func() -> bool: return dr.mg().state == "", 30.0))
+	# --- home
+	assert_true(dr.select("space_stage.home"))
+	assert_true(dr.in_node("bedsit", 60.0), "home is the bedsit (%s)" % dr.node())
+	for p in ["bass_fixed", "cloakroom_done", "bar_done"]:
+		assert_true(prog.puzzle_done("space", p), "saved: %s" % p)
+	dr.finish()
