@@ -2013,15 +2013,7 @@ func _window_face(node_id: String, _place: String) -> Array:
 	var st: StoryStage = stages[active_world]["stage"]
 	if st.map == null:
 		return []
-	var pts: Array = []
-	for h in hotspots.shown(3, true):
-		if RunHotspots.window_of(h) != "final":
-			continue
-		var r := HotspotView.resolve(h["anchor"], st.map, st.crowds)
-		if bool(r["ok"]):
-			var p: Vector3 = r["pos"]
-			pts.append([p.x, p.z, 1.0 if bool(h["default"]) else 0.0, p.y])
-	return pts
+	return RunJourney.window_points(hotspots.shown(3, true), st.map, st.crowds)  # (the entrances weigh more than a way back: RunJourney.WINDOW_ENTRANCE_W)
 
 
 ## The turn (degrees, relative to the rail's facing now, which a glance is added to) toward an actor, thing or waypoint of the scene's map; NAN when it cannot be placed.

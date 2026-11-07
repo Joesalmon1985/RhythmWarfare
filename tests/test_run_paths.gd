@@ -220,7 +220,8 @@ func test_portal_hotspots_follow_the_rules_and_stay_out_of_play_until_their_path
 			assert_eq(h["kind"], "secret")
 			assert_eq(h["look"]["available"], "pulse")
 			assert_false(h["default"])
-	assert_eq(found, {"warehouse.balcony.star": "path:gospel", "warehouse.booth.radio": "path:squadron", "warehouse.bar.ember": "path:ember"})
+	assert_eq(found, {"warehouse.balcony.star": "path:gospel", "warehouse.booth.radio": "path:squadron", "warehouse.bar.ember": "path:ember",
+		"warehouse.enter_gospel": "path:gospel", "warehouse.enter_squadron": "path:squadron", "warehouse.enter_ember": "path:ember"})  # (and the Floor's own copies, the shared wiring step)
 	for route in ["path:gospel", "path:ember", "path:x_1"]:
 		assert_true(HotspotContract.is_path_route(route))
 	assert_false(HotspotContract.is_path_route("path:"))
@@ -257,7 +258,7 @@ func test_a_finished_path_gives_its_portal_a_look_of_its_own() -> void:
 		held[want[0]] = true
 		assert_true(HotspotContract.finished_look(hn, has), "%s: the finished look once an ending is kept" % h["id"])
 		seen += 1
-	assert_eq(seen, 3, "the three portals")
+	assert_eq(seen, 6, "the three portals and their copies on the Floor")
 	assert_eq(RunData.load_default().errors, [], "the main run validates with the finished looks")
 	var errors: Array = []
 	HotspotContract._validate_finished({"flags_any": ["path_gospel_tomb"]}, "t", errors)
@@ -685,7 +686,7 @@ func test_a_portal_into_a_path_that_does_not_exist_yet_is_not_on_show() -> void:
 	_run_until(scene, 52.0 * 60.0 / 174.0, func() -> bool: return false)
 	var ids: Array = scene.hotspots.shown(scene.engine.block, scene.engine.window_open).map(func(h: Dictionary) -> String: return str(h["id"]))
 	assert_eq(ids.has("warehouse.balcony.star"), RunData.path_exists("gospel"), "a portal is on show exactly when its path has data (%s)" % str(ids))
-	assert_true(ids.size() >= 2 and ids.size() <= 4)
+	assert_true(ids.size() >= 2 and ids.size() <= 5, "two to five on show (the balcony's way back to the Floor among them): %s" % str(ids))
 	_free(d)
 
 

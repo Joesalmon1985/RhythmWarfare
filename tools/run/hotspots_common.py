@@ -112,6 +112,10 @@ def exits(scene, anchors=None, looks=None, f_energy=-5):
         dest = r["to"]
         short = dest.split(".")[-1] if "." in dest else dest
         name = "exit_" + short if "." in dest else "exit_" + dest
+        if r.get("to_hub"):  # the way back to the location's hub (graph route rule `to_hub`: `<scene>.to_hub`)
+            name = "to_hub"
+        elif r.get("hub_link"):  # the link to the partner hub (graph hub_links: `<hub>.to_<partner>`)
+            name = "to_" + dest
         look = looks.get(r["dir"], EXIT_LOOK["default"] if i == 0 else EXIT_LOOK["other"])
         fc = cin(NODES[scene]["world"], f"stagger_{scene.split('.', 1)[1] if '.' in scene else 'entry'}_{r['dir']}", walk(wp, "queasy", "stagger", 2))
         loop = " (round again)" if r.get("loop") else ""

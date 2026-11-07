@@ -46,7 +46,7 @@
      "to": "main/ward",
      "object": {
       "id": "hospital.to_ward",
-      "status": "proposed",
+      "status": "existing",
       "illustrative_idea": "A door to the old wing, a sign half scratched off."
      }
     }
@@ -72,7 +72,7 @@
      "to": "main/hospital",
      "object": {
       "id": "ward.to_hospital",
-      "status": "proposed",
+      "status": "existing",
       "illustrative_idea": "A door to the general ward with a window of clean light."
      }
     }
@@ -96,7 +96,7 @@
      "to": "main/underworld",
      "object": {
       "id": "mothership.to_underworld",
-      "status": "proposed",
+      "status": "existing",
       "illustrative_idea": "A rift in the deck floor, red light below."
      }
     }
@@ -120,7 +120,7 @@
      "to": "main/mothership",
      "object": {
       "id": "underworld.to_mothership",
-      "status": "proposed",
+      "status": "existing",
       "illustrative_idea": "A beam of cold light through a hole in the arena ceiling."
      }
     }
@@ -299,13 +299,13 @@
    "scene": "main/warehouse",
    "object": {
     "id": "warehouse.enter_bassment",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A cellar hatch on the Floor behind the speaker stacks, chalk marks round its edge."
    },
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed",
+   "status": "existing",
    "note": "Ruling 15: an ungated Dungeon entrance on every hub, the Warehouse Floor included, taken at the lap's end through the port. The wizard stays as an extra, rhythm-gated way in.",
    "legacy_way": {
     "object": {
@@ -336,14 +336,14 @@
    "scene": "main/warehouse",
    "object": {
     "id": "warehouse.enter_gospel",
-    "status": "partial",
+    "status": "existing",
     "illustrative_idea": "The projected star, copied to a stack on the Floor. The original is today on the Balcony (warehouse.balcony.star).",
     "copy_of": "warehouse.balcony.star"
    },
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "partial",
+   "status": "existing",
    "also_in_today": "main/warehouse.balcony",
    "changes_to_existing_object": [
     "remove the passed-block gate and the on_miss route",
@@ -357,14 +357,14 @@
    "scene": "main/warehouse",
    "object": {
     "id": "warehouse.enter_squadron",
-    "status": "partial",
+    "status": "existing",
     "illustrative_idea": "The flickering military radio, copied to a speaker stack on the Floor. The original is today in the Booth (warehouse.booth.radio).",
     "copy_of": "warehouse.booth.radio"
    },
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "partial",
+   "status": "existing",
    "also_in_today": "main/warehouse.booth",
    "changes_to_existing_object": [
     "remove the passed-block gate and the on_miss route",
@@ -378,14 +378,14 @@
    "scene": "main/warehouse",
    "object": {
     "id": "warehouse.enter_ember",
-    "status": "partial",
+    "status": "existing",
     "illustrative_idea": "The small ember in a glass, copied to a table at the edge of the Floor. The original is today in the Bar (warehouse.bar.ember).",
     "copy_of": "warehouse.bar.ember"
    },
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "partial",
+   "status": "existing",
    "also_in_today": "main/warehouse.bar",
    "changes_to_existing_object": [
     "remove the passed-block gate and the on_miss route",
@@ -405,7 +405,7 @@
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "hospital_ward.gospel",
@@ -420,7 +420,7 @@
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "hospital_ward.squadron",
@@ -435,7 +435,7 @@
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "hospital_ward.ember",
@@ -450,7 +450,7 @@
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "mental_hospital.bassment",
@@ -465,7 +465,7 @@
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "mental_hospital.gospel",
@@ -480,7 +480,7 @@
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "mental_hospital.squadron",
@@ -495,7 +495,7 @@
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "mental_hospital.ember",
@@ -510,7 +510,7 @@
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "alien_spaceship.bassment",
@@ -585,7 +585,7 @@
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "hell.gospel",
@@ -600,7 +600,7 @@
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "hell.squadron",
@@ -615,7 +615,7 @@
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "hell.ember",
@@ -630,7 +630,7 @@
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   }
  ],
  "route_rules": [
@@ -640,8 +640,8 @@
    "target": "hub_of_location",
    "object": "<scene>.to_hub",
    "kind": "scene",
-   "status": "proposed",
-   "note": "every mainline scene that is not a hub: the hub of its location"
+   "status": "existing",
+   "note": "every mainline scene that is not a hub: the hub of its location (authored by tools/run/make_scenes.py, the hotspot <scene>.to_hub)"
   },
   {
    "id": "back",
@@ -837,79 +837,86 @@
    "kind": "restart",
    "to": "gospel/jordan",
    "object": {
-    "id": "gospel.restart",
-    "status": "proposed"
+    "id": "jerusalem.tomb.restart",
+    "status": "existing"
    },
    "reason": "restart a completed quest (design D3)",
-   "owner_to_confirm": true
+   "owner_to_confirm": true,
+   "note": "authored by tools/run/path_routes.py (the hotspot of the same id)"
   },
   {
    "scene": "gospel/jerusalem.road",
    "kind": "restart",
    "to": "gospel/jordan",
    "object": {
-    "id": "gospel.restart",
-    "status": "proposed"
+    "id": "jerusalem.road.restart",
+    "status": "existing"
    },
    "reason": "restart a completed quest (design D3)",
-   "owner_to_confirm": true
+   "owner_to_confirm": true,
+   "note": "authored by tools/run/path_routes.py (the hotspot of the same id)"
   },
   {
    "scene": "squadron/escape.c13",
    "kind": "restart",
    "to": "squadron/base",
    "object": {
-    "id": "squadron.restart",
-    "status": "proposed"
+    "id": "escape.c13.restart",
+    "status": "existing"
    },
    "reason": "restart a completed quest (design D3)",
-   "owner_to_confirm": true
+   "owner_to_confirm": true,
+   "note": "authored by tools/run/path_routes.py (the hotspot of the same id)"
   },
   {
    "scene": "ember/mountain.spring",
    "kind": "restart",
    "to": "ember/hollow",
    "object": {
-    "id": "ember.restart",
-    "status": "proposed"
+    "id": "mountain.spring.restart",
+    "status": "existing"
    },
    "reason": "restart a completed quest (design D3)",
-   "owner_to_confirm": true
+   "owner_to_confirm": true,
+   "note": "authored by tools/run/path_routes.py (the hotspot of the same id)"
   },
   {
    "scene": "ember/mountain.keeper",
    "kind": "restart",
    "to": "ember/hollow",
    "object": {
-    "id": "ember.restart",
-    "status": "proposed"
+    "id": "mountain.keeper.restart",
+    "status": "existing"
    },
    "reason": "restart a completed quest (design D3)",
-   "owner_to_confirm": true
+   "owner_to_confirm": true,
+   "note": "authored by tools/run/path_routes.py (the hotspot of the same id)"
   },
   {
    "scene": "gospel/jordan",
    "kind": "second_route",
    "to": "gospel/jordan.nazareth",
    "object": {
-    "id": "gospel.jordan.skip",
-    "status": "proposed"
+    "id": "jordan.skip",
+    "status": "existing"
    },
    "reason": "the entry scene has one onward route",
    "needs_review": "destination chosen only so that the scene has two onward routes; the story owner may pick another",
-   "owner_to_confirm": true
+   "owner_to_confirm": true,
+   "note": "authored by tools/run/path_routes.py (the hotspot of the same id)"
   },
   {
    "scene": "ember/hollow",
    "kind": "second_route",
    "to": "ember/hollow.inn",
    "object": {
-    "id": "ember.hollow.skip",
-    "status": "proposed"
+    "id": "hollow.skip",
+    "status": "existing"
    },
    "reason": "the entry scene has one onward route",
    "needs_review": "destination chosen only so that the scene has two onward routes; the story owner may pick another",
-   "owner_to_confirm": true
+   "owner_to_confirm": true,
+   "note": "authored by tools/run/path_routes.py (the hotspot of the same id)"
   }
  ],
  "exceptions": [

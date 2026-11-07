@@ -94,13 +94,15 @@ func apply_action(a: Dictionary) -> bool:
 		"player_look":
 			if args.has("face"):  # [[x, z, keep, height], ...]: the head turns to the best facing over these points (best_facing) over `turn_bars`, holds it from wherever the rail walks, hands back over `release_bars`
 				var pts: Array = []
+				var wts: Array = []
 				for f in args["face"]:
 					var fa: Array = f
 					pts.append(Vector4(float(fa[0]), float(fa[1]), float(fa[2]) if fa.size() > 2 else 0.0, float(fa[3]) if fa.size() > 3 else NAN))
+					wts.append(float(fa[4]) if fa.size() > 4 else 1.0)  # (a point's weight in the count of the group that is framed: RunJourney.window_points)
 				var tot := maxf(dur, 0.001)
 				var turn := clampf(float(args.get("turn_bars", 1.0)) * bar_s(), 0.001, tot)
 				_face_memo = {"t": NAN}
-				_faces.append({"t0": t0, "t1": t0 + tot, "pts": pts, "turn_s": turn, "release_s": clampf(float(args.get("release_bars", 1.0)) * bar_s(), 0.001, tot), "herald": bool(args.get("herald", false))})
+				_faces.append({"t0": t0, "t1": t0 + tot, "pts": pts, "turn_s": turn, "release_s": clampf(float(args.get("release_bars", 1.0)) * bar_s(), 0.001, tot), "herald": bool(args.get("herald", false)), "wts": wts})
 				return true
 			if args.has("by") or args.has("pitch"):  # a glance: the head turns `by` degrees (and tips `pitch` up, negative down) from wherever the rail faces and comes back; it never touches the route
 				_glances.append({"t0": t0, "t1": t0 + maxf(dur, 0.001), "by": float(args.get("by", 0.0)), "pitch": float(args.get("pitch", 0.0))})
@@ -560,32 +562,33 @@ const FACE_SMOOTH_BEATS := 1.0  # the facing is the mean of the best facings ove
 
 ## The facing (degrees) that holds the most of `pts` (Vector3 or Vector4: x, z, keep > 0.5 for the one that must be held) within FACE_HALF_DEG either side, standing at `from`: of the groups that fit,
 ## the one holding the kept point, then the most points, then the narrowest; aimed at the middle of the group. NAN when every point is at the player's feet. Pure.
-static func best_facing(pts: Array, from: Vector2) -> float:
+static func best_facing(pts: Array, from: Vector2, weights: Array = []) -> float:
 	var angs: Array = []
-	for q in pts:
+	for i in pts.size():
+		var q = pts[i]
 		var v: Vector4 = Vector4(q.x, q.y, q.z, 0.0) if q is Vector3 else q
 		var d := Vector2(v.x, v.y) - from
 		if d.length() < FACE_NEAR_M:
 			continue
-		angs.append(Vector2(rad_to_deg(atan2(-d.x, -d.y)), v.z))
+		angs.append(Vector3(rad_to_deg(atan2(-d.x, -d.y)), v.z, float(weights[i]) if i < weights.size() else 1.0))
 	if angs.is_empty():
 		return NAN
 	var best_aim := 0.0
-	var best_n := -1
+	var best_n := -1.0
 	var best_keep := false
 	var best_span := INF
 	for c in angs:
 		var lo: float = c.x
-		var n := 0
+		var n := 0.0
 		var keep := false
 		var span := 0.0
 		for q in angs:
 			var off := fposmod(float(q.x) - lo, 360.0)
 			if off <= 2.0 * FACE_HALF_DEG + 1.0e-4:
-				n += 1
+				n += float(q.z)
 				keep = keep or float(q.y) > 0.5
 				span = maxf(span, off)
-		if best_n < 0 or (keep and not best_keep) or (keep == best_keep and n > best_n) or (keep == best_keep and n == best_n and span < best_span - 1.0e-4):
+		if best_n < 0.0 or (keep and not best_keep) or (keep == best_keep and n > best_n + 1.0e-6) or (keep == best_keep and absf(n - best_n) <= 1.0e-6 and span < best_span - 1.0e-4):
 			best_n = n
 			best_keep = keep
 			best_span = span
@@ -614,14 +617,14 @@ static func face_tip(pts: Array, from: Vector2, aim: float, eye: float) -> float
 
 
 ## The face look's facing at t: the best facing from where the rail is, averaged over the last FACE_SMOOTH_BEATS (deterministic: five samples of song time). NAN when none.
-func _face_yaw(pts: Array, t: float) -> float:
+func _face_yaw(pts: Array, t: float, wts: Array = []) -> float:
 	var sum := Vector2.ZERO
 	var step := FACE_SMOOTH_BEATS * 60.0 / bpm / 4.0
 	for k in 5:
 		var tk := t - float(k) * step
 		var ev := _event_at(tk)
 		var pos: Vector2 = (_initial_state() if ev.is_empty() else _state_in(ev, tk))["pos"]
-		var a := best_facing(pts, pos)
+		var a := best_facing(pts, pos, wts)
 		if not is_nan(a):
 			sum += StoryProjector.forward(a)
 	if sum.length() < 1.0e-4:
@@ -679,7 +682,7 @@ func face_at(t: float) -> Dictionary:
 		if t < t0 or t >= t1:
 			continue
 		var w := minf(_smooth((t - t0) / float(f["turn_s"])), _smooth((t1 - t) / float(f["release_s"])))
-		out = {"w": w, "pts": f["pts"], "herald": bool(f.get("herald", false))}
+		out = {"w": w, "pts": f["pts"], "herald": bool(f.get("herald", false)), "wts": f.get("wts", [])}
 	return out
 
 
@@ -748,7 +751,7 @@ func pose_at(t: float) -> Dictionary:
 		var fy := NAN
 		if float(fc["w"]) > 0.0:
 			if float(_face_memo["t"]) != t:
-				_face_memo = {"t": t, "yaw": _face_yaw(fc["pts"], t)}
+				_face_memo = {"t": t, "yaw": _face_yaw(fc["pts"], t, fc.get("wts", []))}
 			fy = float(_face_memo["yaw"])
 		if not is_nan(fy):
 			var fw := float(fc["w"])

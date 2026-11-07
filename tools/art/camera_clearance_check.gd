@@ -245,15 +245,7 @@ static func play(data: RunData, id: String, entry: Dictionary, phase := 2) -> Di
 	var map_id := str(node["map"])
 	var m := map_of(map_id)
 	j.face_fn = func(node_id: String, _place: String) -> Array:  # the run scene's window turn (RunPlay._window_face), with the map alone
-		var pts: Array = []
-		for h in e.hotspots.shown(3, true):
-			if RunHotspots.window_of(h) != "final":
-				continue
-			var r := HotspotView.resolve(h["anchor"], map_of(str(data.nodes[node_id]["map"])), {})
-			if bool(r["ok"]):
-				var hp: Vector3 = r["pos"]
-				pts.append([hp.x, hp.z, 1.0 if bool(h["default"]) else 0.0, hp.y])
-		return pts
+		return RunJourney.window_points(e.hotspots.shown(3, true), map_of(str(data.nodes[node_id]["map"])))
 	var actions: Array = []
 	var pre: Array = []
 	if kind == "direct":  # (RunPlay starts a first scene whose home is not the map's start with a walk there over the countdown)

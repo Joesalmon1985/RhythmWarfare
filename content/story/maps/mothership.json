@@ -407,7 +407,12 @@
   {"id": "med_door", "at": [34, 9.7], "yaw": 180, "sector": "medbay"},
   {"id": "med_alcove_in", "at": [29.8, 12], "yaw": 90, "sector": "med_alcove"},
   {"id": "exam_door", "at": [36.5, 12], "yaw": -90, "sector": "medbay"},
-  {"id": "airlock_door", "at": [34, 14.6], "yaw": 180, "sector": "medbay"}
+  {"id": "airlock_door", "at": [34, 14.6], "yaw": 180, "sector": "medbay"},
+  {"id": "deck_rift", "at": [-6.25, 6.25], "yaw": 180, "sector": "deck"},
+  {"id": "back_mothership_gallery", "at": [19.35, 8.05], "yaw": -90, "sector": "gallery"},
+  {"id": "back_mothership_reactor", "at": [28.6, 6.6], "yaw": -90, "sector": "catwalk"},
+  {"id": "back_mothership_bridge", "at": [48, 3.05], "yaw": -90, "sector": "bridge"},
+  {"id": "back_mothership_exit", "at": [35.4, 10.5], "yaw": 180, "sector": "medbay"}
  ],
  "spots": {
   "door": {"sector": "deck", "at": [0.0, 0.1], "slots": [[-2.25, 0.1], [-0.75, 0.1], [0.75, 0.1], [2.25, 0.1], [-2.25, 0.9], [-0.75, 0.9], [0.75, 0.9], [2.25, 0.9]]},

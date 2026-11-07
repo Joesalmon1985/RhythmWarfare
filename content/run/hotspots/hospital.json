@@ -39,6 +39,43 @@
    }
   },
   {
+   "id": "hospital.to_ward",
+   "world": "hospital",
+   "scene": "hospital",
+   "map": "hospital",
+   "anchor": {
+    "waypoint": "ward_old_wing"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "ward"
+   },
+   "on_failure": {
+    "route": "ward",
+    "cinematic": "hospital.stagger_entry_link",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "hospital.nurse",
    "world": "hospital",
    "scene": "hospital",
@@ -312,6 +349,43 @@
    }
   },
   {
+   "id": "hospital.corridor.to_hub",
+   "world": "hospital",
+   "scene": "hospital.corridor",
+   "map": "hospital",
+   "anchor": {
+    "waypoint": "back_hospital_corridor"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital"
+   },
+   "on_failure": {
+    "route": "hospital",
+    "cinematic": "hospital.stagger_corridor_hub",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "hospital.corridor.trolley",
    "world": "hospital",
    "scene": "hospital.corridor",
@@ -469,6 +543,43 @@
     "energy": -5
    },
    "default": true,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "hospital.dayroom.to_hub",
+   "world": "hospital",
+   "scene": "hospital.dayroom",
+   "map": "hospital",
+   "anchor": {
+    "waypoint": "back_hospital_dayroom"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital"
+   },
+   "on_failure": {
+    "route": "hospital",
+    "cinematic": "hospital.stagger_dayroom_hub",
+    "energy": -5
+   },
+   "default": false,
    "repeatable": true,
    "show": {
     "archetype": "door"
@@ -634,6 +745,43 @@
    }
   },
   {
+   "id": "hospital.cafeteria.to_hub",
+   "world": "hospital",
+   "scene": "hospital.cafeteria",
+   "map": "hospital",
+   "anchor": {
+    "waypoint": "back_hospital_cafeteria"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital"
+   },
+   "on_failure": {
+    "route": "hospital",
+    "cinematic": "hospital.stagger_cafeteria_hub",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
    "id": "hospital.cafeteria.vending",
    "world": "hospital",
    "scene": "hospital.cafeteria",
@@ -783,6 +931,43 @@
     "energy": -5
    },
    "default": true,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "hospital.garden.to_hub",
+   "world": "hospital",
+   "scene": "hospital.garden",
+   "map": "hospital",
+   "anchor": {
+    "waypoint": "back_hospital_garden"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital"
+   },
+   "on_failure": {
+    "route": "hospital",
+    "cinematic": "hospital.stagger_garden_hub",
+    "energy": -5
+   },
+   "default": false,
    "repeatable": true,
    "show": {
     "archetype": "door"
@@ -973,6 +1158,43 @@
    "on_failure": {
     "route": "ward_late",
     "cinematic": "hospital.stagger_exit_right",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
+  },
+  {
+   "id": "hospital.exit.to_hub",
+   "world": "hospital",
+   "scene": "hospital.exit",
+   "map": "hospital",
+   "anchor": {
+    "waypoint": "back_hospital_exit"
+   },
+   "kind": "exit",
+   "radius_m": 1.0,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "hospital"
+   },
+   "on_failure": {
+    "route": "hospital",
+    "cinematic": "hospital.stagger_exit_hub",
     "energy": -5
    },
    "default": false,
