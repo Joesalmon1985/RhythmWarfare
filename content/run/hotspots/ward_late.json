@@ -568,9 +568,9 @@
    "map": "mental_hospital",
    "anchor": {
     "pos": [
-     17.0,
+     16.4,
      1.1,
-     13.6
+     11.8
     ]
    },
    "kind": "secret",
@@ -599,12 +599,12 @@
    "herald": {
     "quest": "dungeon",
     "at": [
-     15.4,
-     12.7
+     14.8,
+     11.9
     ],
     "toward": [
-     17.0,
-     13.6
+     16.4,
+     11.8
     ],
     "mark_y": 1.8,
     "gate": true

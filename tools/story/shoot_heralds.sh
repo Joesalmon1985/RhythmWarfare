@@ -65,7 +65,7 @@ ward_art_bassment ward.art           -              41.0:8.0:137:2    right,righ
 ward_dorm_gospel ward.dorm          -              26.0:9.6:156:0     right,right,up,up,right,up,up,right,up
 ward_corridor_squadron ward.corridor      -              20.0:5.0:124:2    right,right,up,up,right,up,up,right,right,up
 ward_courtyard_ember ward.courtyard     -              55.5:6.5:-70:2    right,right,up,up,right,up,up,right,right,up,up
-ward_late_treat_bassment ward_late.treat    -              16.0:15.6:8:0     right,right,up,up,right,up,up,left,up,left,up,up,right,left
+ward_late_treat_bassment ward_late.treat    -              14.6:8.6:-144:0    right,right,up,up,right,up,up,left,up,left,up,up,right,left
 ward_late_dorm_gospel ward_late.dorm     -              26.0:9.6:156:0    right,right,up,up,right,up,up,left,up,left,up,up,right,right
 LIST
 rm -rf "$TMP"
