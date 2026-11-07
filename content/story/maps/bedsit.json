@@ -1,0 +1,863 @@
+{
+ "units_per_m": 1,
+ "palette_weight": 0.0,
+ "eye_height": 1.6,
+ "start": "bedsit_n",
+ "textures": {
+  "wall_paper_n": "textures/wall_paper_n.png",
+  "wall_paper_e": "textures/wall_paper_e.png",
+  "wall_paper_s": "textures/wall_paper_s.png",
+  "wall_paper_w": "textures/wall_paper_w.png",
+  "ceil_plaster": "textures/ceil_plaster.png",
+  "floor_room": "textures/floor_room.png",
+  "win_frame": "textures/win_frame.png",
+  "win_glass": "textures/win_glass.png",
+  "radiator": "textures/radiator.png",
+  "wardrobe": "textures/wardrobe.png",
+  "wardrobe_light": "textures/wardrobe_light.png",
+  "shelf": "textures/shelf.png",
+  "fairy_lights": "textures/fairy_lights.png",
+  "clothes_rail": "textures/clothes_rail.png",
+  "desk": "textures/desk.png",
+  "jungle_poster": "textures/jungle_poster.png",
+  "jungle_glow": "textures/jungle_glow.png",
+  "door": "textures/door.png",
+  "door_light": "textures/door_light.png",
+  "timetable": "textures/timetable.png",
+  "mirror": "textures/mirror.png",
+  "hooks": "textures/hooks.png",
+  "poster_0": "textures/poster_0.png",
+  "poster_1": "textures/poster_1.png",
+  "poster_2": "textures/poster_2.png",
+  "poster_3": "textures/poster_3.png",
+  "poster_4": "textures/poster_4.png",
+  "bed_side": "textures/bed_side.png",
+  "thing_rocket": "textures/thing_rocket.png",
+  "thing_mobile": "textures/thing_mobile.png",
+  "thing_unicorn": "textures/thing_unicorn.png",
+  "thing_dino": "textures/thing_dino.png",
+  "thing_headphones": "textures/thing_headphones.png",
+  "thing_fern": "textures/thing_fern.png",
+  "thing_car": "textures/thing_car.png",
+  "thing_indicator": "textures/thing_indicator.png",
+  "door_transom": "textures/door_transom.png",
+  "thing_lamp": "textures/thing_lamp.png",
+  "thing_glow_pink": "textures/thing_glow_pink.png",
+  "thing_glow_cyan": "textures/thing_glow_cyan.png",
+  "thing_glow_green": "textures/thing_glow_green.png"
+ },
+ "sectors": [
+  {
+   "id": "room",
+   "polygon": [
+    [
+     -2.0,
+     -2.5
+    ],
+    [
+     2.0,
+     -2.5
+    ],
+    [
+     2.0,
+     2.5
+    ],
+    [
+     -2.0,
+     2.5
+    ]
+   ],
+   "floor": 0,
+   "ceiling": 2.5,
+   "floor_tex": "floor_room",
+   "ceil_tex": "ceil_plaster",
+   "wall_tex": "wall_paper_n",
+   "light": 0.62,
+   "tint": "#fff0dc",
+   "room": "bedsit",
+   "flags": [
+    "bedsit"
+   ],
+   "activities": {
+    "quiet": [
+     "stand"
+    ],
+    "dancing": [
+     "stand"
+    ],
+    "hype": [
+     "stand"
+    ],
+    "euphoric": [
+     "stand"
+    ]
+   }
+  }
+ ],
+ "walls": [
+  {
+   "from": [
+    -2.0,
+    -2.5
+   ],
+   "to": [
+    2.0,
+    -2.5
+   ],
+   "sector": "room",
+   "tex": "wall_paper_n",
+   "portal": null
+  },
+  {
+   "from": [
+    2.0,
+    -2.5
+   ],
+   "to": [
+    2.0,
+    2.5
+   ],
+   "sector": "room",
+   "tex": "wall_paper_e",
+   "portal": null
+  },
+  {
+   "from": [
+    2.0,
+    2.5
+   ],
+   "to": [
+    -2.0,
+    2.5
+   ],
+   "sector": "room",
+   "tex": "wall_paper_s",
+   "portal": null
+  },
+  {
+   "from": [
+    -2.0,
+    2.5
+   ],
+   "to": [
+    -2.0,
+    -2.5
+   ],
+   "sector": "room",
+   "tex": "wall_paper_w",
+   "portal": null
+  }
+ ],
+ "things": [
+  {
+   "id": "n_window",
+   "kind": "decal",
+   "sprite": "win_frame",
+   "at": [
+    0.0,
+    -2.494
+   ],
+   "y": 0.78,
+   "size": 1.45,
+   "yaw": 180
+  },
+  {
+   "id": "n_glass",
+   "kind": "decal",
+   "sprite": "win_glass",
+   "at": [
+    0.0,
+    -2.497
+   ],
+   "y": 1.0675,
+   "size": 1.0375,
+   "yaw": 180
+  },
+  {
+   "id": "n_radiator",
+   "kind": "decal",
+   "sprite": "radiator",
+   "at": [
+    0.0,
+    -2.494
+   ],
+   "y": 0.1,
+   "size": 0.55,
+   "yaw": 180
+  },
+  {
+   "id": "n_poster_a",
+   "kind": "decal",
+   "sprite": "poster_0",
+   "at": [
+    -1.45,
+    -2.494
+   ],
+   "y": 1.22,
+   "size": 0.7,
+   "yaw": 180
+  },
+  {
+   "id": "n_poster_b",
+   "kind": "decal",
+   "sprite": "poster_2",
+   "at": [
+    1.38,
+    -2.494
+   ],
+   "y": 1.3,
+   "size": 0.7,
+   "yaw": 180
+  },
+  {
+   "id": "n_rocket",
+   "kind": "billboard",
+   "sprite": "thing_rocket",
+   "at": [
+    -0.55,
+    -2.34
+   ],
+   "size": 0.525,
+   "anim": "none",
+   "y": 1.3125
+  },
+  {
+   "id": "n_mobile",
+   "kind": "billboard",
+   "sprite": "thing_mobile",
+   "at": [
+    0.62,
+    -1.95
+   ],
+   "size": 0.775,
+   "anim": "sway",
+   "y": 2.1125
+  },
+  {
+   "id": "n_lamp",
+   "kind": "billboard",
+   "sprite": "thing_lamp",
+   "at": [
+    1.72,
+    -1.98
+   ],
+   "size": 1.625,
+   "anim": "none",
+   "emissive": true
+  },
+  {
+   "id": "n_moon",
+   "kind": "light",
+   "at": [
+    0.0,
+    -2.3
+   ],
+   "y": 1.5,
+   "radius": 3.4,
+   "color": "#7a68ff",
+   "strength": 1.15,
+   "cone": {
+    "yaw": 180,
+    "angle": 48
+   }
+  },
+  {
+   "id": "n_glow",
+   "kind": "light",
+   "at": [
+    0.0,
+    -2.3
+   ],
+   "y": 1.2,
+   "radius": 2.2,
+   "color": "#ff6ac8",
+   "strength": 0.55,
+   "cone": {
+    "yaw": 180,
+    "angle": 30
+   }
+  },
+  {
+   "id": "n_lamp_light",
+   "kind": "light",
+   "at": [
+    1.55,
+    -1.7
+   ],
+   "y": 1.7,
+   "radius": 4.4,
+   "color": "#ffc070",
+   "strength": 1.3
+  },
+  {
+   "id": "e_desk",
+   "kind": "decal",
+   "sprite": "desk",
+   "at": [
+    1.994,
+    0.0
+   ],
+   "y": 0.0,
+   "size": 1.4375,
+   "yaw": 90
+  },
+  {
+   "id": "e_jungle_glow",
+   "kind": "decal",
+   "sprite": "jungle_glow",
+   "at": [
+    1.997,
+    0.0
+   ],
+   "y": 1.4325,
+   "size": 0.5875,
+   "yaw": 90
+  },
+  {
+   "id": "e_jungle",
+   "kind": "decal",
+   "sprite": "jungle_poster",
+   "at": [
+    1.994,
+    0.0
+   ],
+   "y": 1.12,
+   "size": 1.25,
+   "yaw": 90
+  },
+  {
+   "id": "e_hooks",
+   "kind": "decal",
+   "sprite": "hooks",
+   "at": [
+    1.994,
+    -1.62
+   ],
+   "y": 1.25,
+   "size": 0.6,
+   "yaw": 90
+  },
+  {
+   "id": "e_poster",
+   "kind": "decal",
+   "sprite": "poster_3",
+   "at": [
+    1.994,
+    1.6
+   ],
+   "y": 1.3,
+   "size": 0.7,
+   "yaw": 90
+  },
+  {
+   "id": "e_dino",
+   "kind": "billboard",
+   "sprite": "thing_dino",
+   "at": [
+    1.75,
+    0.42
+   ],
+   "size": 0.35,
+   "anim": "none",
+   "y": 1.105
+  },
+  {
+   "id": "e_headphones",
+   "kind": "billboard",
+   "sprite": "thing_headphones",
+   "at": [
+    1.72,
+    -0.5
+   ],
+   "size": 0.325,
+   "anim": "none",
+   "y": 1.0625
+  },
+  {
+   "id": "e_fern",
+   "kind": "billboard",
+   "sprite": "thing_fern",
+   "at": [
+    1.68,
+    1.28
+   ],
+   "size": 0.875,
+   "anim": "none"
+  },
+  {
+   "id": "e_glow",
+   "kind": "billboard",
+   "sprite": "thing_glow_green",
+   "at": [
+    1.8,
+    0.0
+   ],
+   "size": 1.0625,
+   "anim": "none",
+   "y": 1.7312,
+   "blend": "add"
+  },
+  {
+   "id": "e_jungle_light",
+   "kind": "light",
+   "at": [
+    1.8,
+    0.0
+   ],
+   "y": 1.7,
+   "radius": 3.6,
+   "color": "#8aff70",
+   "strength": 1.1,
+   "cone": {
+    "yaw": 90,
+    "angle": 55
+   }
+  },
+  {
+   "id": "s_wardrobe",
+   "kind": "decal",
+   "sprite": "wardrobe",
+   "at": [
+    0.0,
+    2.494
+   ],
+   "y": 0.0,
+   "size": 2.1,
+   "yaw": 0
+  },
+  {
+   "id": "s_wardrobe_light",
+   "kind": "decal",
+   "sprite": "wardrobe_light",
+   "at": [
+    -0.0688,
+    2.497
+   ],
+   "y": 0.1375,
+   "size": 1.75,
+   "yaw": 0
+  },
+  {
+   "id": "s_shelf",
+   "kind": "decal",
+   "sprite": "shelf",
+   "at": [
+    -1.35,
+    2.494
+   ],
+   "y": 1.3,
+   "size": 0.275,
+   "yaw": 0
+  },
+  {
+   "id": "s_rail",
+   "kind": "decal",
+   "sprite": "clothes_rail",
+   "at": [
+    1.32,
+    2.494
+   ],
+   "y": 0.0,
+   "size": 1.8,
+   "yaw": 0
+  },
+  {
+   "id": "s_fairy",
+   "kind": "decal",
+   "sprite": "fairy_lights",
+   "at": [
+    0.0,
+    2.488
+   ],
+   "y": 2.05,
+   "size": 0.45,
+   "yaw": 0
+  },
+  {
+   "id": "s_unicorn",
+   "kind": "billboard",
+   "sprite": "thing_unicorn",
+   "at": [
+    -1.5,
+    2.26
+   ],
+   "size": 0.525,
+   "anim": "none",
+   "y": 1.6725
+  },
+  {
+   "id": "s_glow",
+   "kind": "billboard",
+   "sprite": "thing_glow_pink",
+   "at": [
+    -0.0688,
+    2.3
+   ],
+   "size": 1.25,
+   "anim": "none",
+   "y": 1.075,
+   "blend": "add"
+  },
+  {
+   "id": "s_glow2",
+   "kind": "billboard",
+   "sprite": "thing_glow_cyan",
+   "at": [
+    0.1313,
+    2.2
+   ],
+   "size": 1.0,
+   "anim": "none",
+   "y": 1.3,
+   "blend": "add"
+  },
+  {
+   "id": "s_leak_pink",
+   "kind": "light",
+   "at": [
+    -0.06875,
+    2.3
+   ],
+   "y": 1.2,
+   "radius": 3.4,
+   "color": "#ff6ad0",
+   "strength": 1.25,
+   "cone": {
+    "yaw": 0,
+    "angle": 58
+   }
+  },
+  {
+   "id": "s_leak_cyan",
+   "kind": "light",
+   "at": [
+    0.08124999999999999,
+    2.2
+   ],
+   "y": 1.0,
+   "radius": 2.6,
+   "color": "#6af0ff",
+   "strength": 0.85,
+   "cone": {
+    "yaw": 0,
+    "angle": 40
+   }
+  },
+  {
+   "id": "s_fairy_l",
+   "kind": "light",
+   "at": [
+    -1.2,
+    2.3
+   ],
+   "y": 2.1,
+   "radius": 2.6,
+   "color": "#ffd0f0",
+   "strength": 0.6
+  },
+  {
+   "id": "s_fairy_r",
+   "kind": "light",
+   "at": [
+    1.2,
+    2.3
+   ],
+   "y": 2.1,
+   "radius": 2.6,
+   "color": "#d0f0ff",
+   "strength": 0.6
+  },
+  {
+   "id": "w_bed",
+   "kind": "decal",
+   "sprite": "bed_side",
+   "at": [
+    -1.994,
+    -1.4
+   ],
+   "y": 0.0,
+   "size": 1.25,
+   "yaw": -90
+  },
+  {
+   "id": "w_door",
+   "kind": "decal",
+   "sprite": "door",
+   "at": [
+    -1.994,
+    0.6
+   ],
+   "y": 0.0,
+   "size": 2.1,
+   "yaw": -90
+  },
+  {
+   "id": "w_door_light",
+   "kind": "decal",
+   "sprite": "door_light",
+   "at": [
+    -1.997,
+    0.6
+   ],
+   "y": 0.025,
+   "size": 0.0625,
+   "yaw": -90
+  },
+  {
+   "id": "w_transom",
+   "kind": "decal",
+   "sprite": "door_transom",
+   "at": [
+    -1.994,
+    0.6
+   ],
+   "y": 2.13,
+   "size": 0.25,
+   "yaw": -90,
+   "emissive": true
+  },
+  {
+   "id": "w_timetable",
+   "kind": "decal",
+   "sprite": "timetable",
+   "at": [
+    -1.988,
+    0.5
+   ],
+   "y": 1.18,
+   "size": 0.4875,
+   "yaw": -90
+  },
+  {
+   "id": "w_mirror",
+   "kind": "decal",
+   "sprite": "mirror",
+   "at": [
+    -1.994,
+    1.78
+   ],
+   "y": 0.35,
+   "size": 1.45,
+   "yaw": -90
+  },
+  {
+   "id": "w_poster_a",
+   "kind": "decal",
+   "sprite": "poster_1",
+   "at": [
+    -1.994,
+    -1.65
+   ],
+   "y": 1.45,
+   "size": 0.7,
+   "yaw": -90
+  },
+  {
+   "id": "w_poster_b",
+   "kind": "decal",
+   "sprite": "poster_4",
+   "at": [
+    -1.994,
+    -0.95
+   ],
+   "y": 1.45,
+   "size": 0.6,
+   "yaw": -90
+  },
+  {
+   "id": "w_car",
+   "kind": "billboard",
+   "sprite": "thing_car",
+   "at": [
+    -1.55,
+    1.0
+   ],
+   "size": 0.175,
+   "anim": "none"
+  },
+  {
+   "id": "w_indicator",
+   "kind": "billboard",
+   "sprite": "thing_indicator",
+   "at": [
+    -1.9,
+    1.38
+   ],
+   "size": 0.175,
+   "anim": "pulse",
+   "y": 1.7075,
+   "emissive": true
+  },
+  {
+   "id": "w_street",
+   "kind": "light",
+   "at": [
+    -1.9,
+    0.6
+   ],
+   "y": 0.5,
+   "radius": 3.4,
+   "color": "#ffb347",
+   "strength": 1.25,
+   "cone": {
+    "yaw": -90,
+    "angle": 52
+   }
+  },
+  {
+   "id": "w_street_up",
+   "kind": "light",
+   "at": [
+    -1.9,
+    0.6
+   ],
+   "y": 2.0,
+   "radius": 2.2,
+   "color": "#ffe08a",
+   "strength": 0.5,
+   "cone": {
+    "yaw": -90,
+    "angle": 40
+   }
+  },
+  {
+   "id": "room_bulb",
+   "kind": "light",
+   "at": [
+    0.0,
+    0.0
+   ],
+   "y": 2.3,
+   "radius": 5.5,
+   "color": "#ffd9a0",
+   "strength": 0.75
+  },
+  {
+   "id": "bed_lamp",
+   "kind": "light",
+   "at": [
+    -1.5,
+    -0.7
+   ],
+   "y": 0.9,
+   "radius": 2.4,
+   "color": "#ffb870",
+   "strength": 0.6
+  }
+ ],
+ "homes": [],
+ "waypoints": [
+  {
+   "id": "bedsit_n",
+   "at": [
+    0,
+    0
+   ],
+   "yaw": 0,
+   "sector": "room",
+   "facing": "N",
+   "choice_view": true
+  },
+  {
+   "id": "bedsit_e",
+   "at": [
+    0,
+    0
+   ],
+   "yaw": -90,
+   "sector": "room",
+   "facing": "E",
+   "choice_view": true
+  },
+  {
+   "id": "bedsit_s",
+   "at": [
+    0,
+    0
+   ],
+   "yaw": 180,
+   "sector": "room",
+   "facing": "S",
+   "choice_view": true
+  },
+  {
+   "id": "bedsit_w",
+   "at": [
+    0,
+    0
+   ],
+   "yaw": 90,
+   "sector": "room",
+   "facing": "W",
+   "choice_view": true
+  },
+  {
+   "id": "threshold_n",
+   "at": [
+    0,
+    -1.55
+   ],
+   "yaw": 0,
+   "sector": "room"
+  },
+  {
+   "id": "threshold_e",
+   "at": [
+    1.45,
+    0
+   ],
+   "yaw": -90,
+   "sector": "room"
+  },
+  {
+   "id": "threshold_s",
+   "at": [
+    0,
+    1.65
+   ],
+   "yaw": 180,
+   "sector": "room"
+  },
+  {
+   "id": "threshold_w",
+   "at": [
+    -1.4,
+    0.6
+   ],
+   "yaw": 90,
+   "sector": "room"
+  }
+ ],
+ "spots": {},
+ "silhouettes": [],
+ "occluders": [],
+ "fog": {
+  "color": "#1a1210",
+  "density": 0.0
+ },
+ "bedsit": {
+  "note": "one room seen from one spot in four directions (bedsit_n/e/s/w are the same point at yaw 0, -90, 180, 90); each facing's wall carries a threshold into its rave",
+  "facings": {
+   "N": {
+    "yaw": 0,
+    "wall": "window and night sky",
+    "theme": "space"
+   },
+   "E": {
+    "yaw": -90,
+    "wall": "desk and jungle poster",
+    "theme": "dinos"
+   },
+   "S": {
+    "yaw": 180,
+    "wall": "wardrobe ajar",
+    "theme": "magic"
+   },
+   "W": {
+    "yaw": 90,
+    "wall": "door and bus timetable",
+    "theme": "transport"
+   }
+  }
+ }
+}

@@ -117,6 +117,8 @@ var _track_stay_phase := -1  # the phase whose open window is not the last lap's
 func _ready() -> void:
 	theme = UiStyle.theme()
 	var want_path := OS.get_environment("RW_RUN_PATH") if OS.get_environment("RW_RUN_PATH") != "" else Session.run_start_path
+	if want_path == "" and BedsitNav.enabled():  # RW_BEDSIT=1 starts the new opening (content/paths/bedsit, docs/bedsit/LAUNCH.md); off by default, RW_RUN_PATH still wins
+		want_path = BedsitNav.PATH_ID
 	Session.run_start_path = ""
 	playtest = PlaytestMode.consume_launch()
 	data = RunData.load_path(want_path) if want_path != "" else RunData.load_default()
@@ -860,7 +862,7 @@ func _advance(t: float, audio_t: float) -> void:
 	if trial_state == "":
 		_prebuild_in_guard(t)
 	if _debug_label.visible:
-		_debug_label.text = "t=%6.2f phase %d (%s) block %d stage %d energy %.0f rail %s (%s)  fps %d" % [t, engine.phase_n, engine.node_id, engine.block, engine.stage, engine.energy, journey.rail.place() if journey.rail != null else "-", journey.rail.role if journey.rail != null else "-", Engine.get_frames_per_second()] + _track_debug() + _route_debug()
+		_debug_label.text = "t=%6.2f phase %d (%s) block %d stage %d energy %.0f rail %s (%s)  fps %d" % [t, engine.phase_n, engine.node_id, engine.block, engine.stage, engine.energy, journey.rail.place() if journey.rail != null else "-", journey.rail.role if journey.rail != null else "-", Engine.get_frames_per_second()] + _track_debug() + _route_debug() + _bedsit_debug()
 	if _until_phase > 0 and engine.scene_index() > _until_phase and not _ended:
 		_ended = true
 		print("RUN reached phase %d at %s, energy %.0f" % [engine.scene_index(), engine.node_id, engine.energy])
@@ -1739,6 +1741,11 @@ func _trial_route_sync() -> void:
 	var res := router.commit(0, {"id": "bassment/%d" % p, "path": "bassment", "node": str(p), "kind": &"scene", "quest": "bassment"})
 	_after_route_commit(res)
 	route_log.append({"kind": "bassment_passage", "t": hud.now_t, "passage": p, "result": res, "state": router.state.to_dict()})
+
+
+## The F3 line's bedsit part: the compass letter and the theme the facing leads to; "" outside the bedsit path (src/bedsit/bedsit_nav.gd).
+func _bedsit_debug() -> String:
+	return BedsitNav.debug_line(Session.run_progress.data, run_path == BedsitNav.PATH_ID)
 
 
 ## The F3 line's route part (NARRATIVE_GRAPH.md 7.1, the developer overlay line): location, quest and checkpoint.

@@ -1103,6 +1103,12 @@
           }
         ]
       }
+    },
+    "bedsit": {
+      "bedsit": {
+        "track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
+        "note": "the bedsit's own track: the Chase & Status remix of Valley of the Shadows by Origin Unknown, a relaxed scene"
+      }
     }
   }
 }

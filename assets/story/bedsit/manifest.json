@@ -1,0 +1,339 @@
+{
+ "version": 1,
+ "level": "bedsit",
+ "px_scale_note": "texture px x px_scale = design px; the bedsit draws at 160 texels a metre (tools/story/art/tex_bedsit.py)",
+ "archetypes": {},
+ "silhouettes": {},
+ "stage": {},
+ "textures": {
+  "bed_side": {
+   "file": "textures/bed_side.png",
+   "size": [
+    336,
+    200
+   ],
+   "metres": 1.0
+  },
+  "ceil_plaster": {
+   "file": "textures/ceil_plaster.png",
+   "size": [
+    400,
+    400
+   ],
+   "metres": 2.5
+  },
+  "clothes_rail": {
+   "file": "textures/clothes_rail.png",
+   "size": [
+    176,
+    288
+   ],
+   "metres": 1.0
+  },
+  "desk": {
+   "file": "textures/desk.png",
+   "size": [
+    240,
+    230
+   ],
+   "metres": 1.0
+  },
+  "door": {
+   "file": "textures/door.png",
+   "size": [
+    176,
+    336
+   ],
+   "metres": 1.0
+  },
+  "door_light": {
+   "file": "textures/door_light.png",
+   "size": [
+    144,
+    10
+   ],
+   "metres": 1.0
+  },
+  "door_transom": {
+   "file": "textures/door_transom.png",
+   "size": [
+    144,
+    40
+   ],
+   "metres": 1.0
+  },
+  "fairy_lights": {
+   "file": "textures/fairy_lights.png",
+   "size": [
+    608,
+    72
+   ],
+   "metres": 1.0
+  },
+  "floor_room": {
+   "file": "textures/floor_room.png",
+   "size": [
+    800,
+    800
+   ],
+   "metres": 5.0
+  },
+  "hooks": {
+   "file": "textures/hooks.png",
+   "size": [
+    88,
+    96
+   ],
+   "metres": 1.0
+  },
+  "jungle_glow": {
+   "file": "textures/jungle_glow.png",
+   "size": [
+    86,
+    94
+   ],
+   "metres": 1.0
+  },
+  "jungle_poster": {
+   "file": "textures/jungle_poster.png",
+   "size": [
+    244,
+    200
+   ],
+   "metres": 1.0
+  },
+  "mirror": {
+   "file": "textures/mirror.png",
+   "size": [
+    88,
+    232
+   ],
+   "metres": 1.0
+  },
+  "poster_0": {
+   "file": "textures/poster_0.png",
+   "size": [
+    80,
+    112
+   ],
+   "metres": 1.0
+  },
+  "poster_1": {
+   "file": "textures/poster_1.png",
+   "size": [
+    80,
+    112
+   ],
+   "metres": 1.0
+  },
+  "poster_2": {
+   "file": "textures/poster_2.png",
+   "size": [
+    80,
+    112
+   ],
+   "metres": 1.0
+  },
+  "poster_3": {
+   "file": "textures/poster_3.png",
+   "size": [
+    80,
+    112
+   ],
+   "metres": 1.0
+  },
+  "poster_4": {
+   "file": "textures/poster_4.png",
+   "size": [
+    80,
+    112
+   ],
+   "metres": 1.0
+  },
+  "radiator": {
+   "file": "textures/radiator.png",
+   "size": [
+    160,
+    88
+   ],
+   "metres": 1.0
+  },
+  "shelf": {
+   "file": "textures/shelf.png",
+   "size": [
+    160,
+    44
+   ],
+   "metres": 1.0
+  },
+  "thing_car": {
+   "file": "textures/thing_car.png",
+   "size": [
+    52,
+    28
+   ],
+   "metres": 1.0
+  },
+  "thing_dino": {
+   "file": "textures/thing_dino.png",
+   "size": [
+    56,
+    56
+   ],
+   "metres": 1.0
+  },
+  "thing_fern": {
+   "file": "textures/thing_fern.png",
+   "size": [
+    128,
+    140
+   ],
+   "metres": 1.0
+  },
+  "thing_glow_cyan": {
+   "file": "textures/thing_glow_cyan.png",
+   "size": [
+    80,
+    160
+   ],
+   "metres": 1.0
+  },
+  "thing_glow_green": {
+   "file": "textures/thing_glow_green.png",
+   "size": [
+    150,
+    170
+   ],
+   "metres": 1.0
+  },
+  "thing_glow_pink": {
+   "file": "textures/thing_glow_pink.png",
+   "size": [
+    112,
+    200
+   ],
+   "metres": 1.0
+  },
+  "thing_headphones": {
+   "file": "textures/thing_headphones.png",
+   "size": [
+    48,
+    52
+   ],
+   "metres": 1.0
+  },
+  "thing_indicator": {
+   "file": "textures/thing_indicator.png",
+   "size": [
+    28,
+    28
+   ],
+   "metres": 1.0
+  },
+  "thing_lamp": {
+   "file": "textures/thing_lamp.png",
+   "size": [
+    76,
+    260
+   ],
+   "metres": 1.0
+  },
+  "thing_mobile": {
+   "file": "textures/thing_mobile.png",
+   "size": [
+    84,
+    124
+   ],
+   "metres": 1.0
+  },
+  "thing_rocket": {
+   "file": "textures/thing_rocket.png",
+   "size": [
+    36,
+    84
+   ],
+   "metres": 1.0
+  },
+  "thing_unicorn": {
+   "file": "textures/thing_unicorn.png",
+   "size": [
+    64,
+    84
+   ],
+   "metres": 1.0
+  },
+  "timetable": {
+   "file": "textures/timetable.png",
+   "size": [
+    56,
+    78
+   ],
+   "metres": 1.0
+  },
+  "wall_paper_e": {
+   "file": "textures/wall_paper_e.png",
+   "size": [
+    400,
+    400
+   ],
+   "metres": 2.5
+  },
+  "wall_paper_n": {
+   "file": "textures/wall_paper_n.png",
+   "size": [
+    400,
+    400
+   ],
+   "metres": 2.5
+  },
+  "wall_paper_s": {
+   "file": "textures/wall_paper_s.png",
+   "size": [
+    400,
+    400
+   ],
+   "metres": 2.5
+  },
+  "wall_paper_w": {
+   "file": "textures/wall_paper_w.png",
+   "size": [
+    400,
+    400
+   ],
+   "metres": 2.5
+  },
+  "wardrobe": {
+   "file": "textures/wardrobe.png",
+   "size": [
+    208,
+    336
+   ],
+   "metres": 1.0
+  },
+  "wardrobe_light": {
+   "file": "textures/wardrobe_light.png",
+   "size": [
+    18,
+    280
+   ],
+   "metres": 1.0
+  },
+  "win_frame": {
+   "file": "textures/win_frame.png",
+   "size": [
+    304,
+    232
+   ],
+   "metres": 1.0
+  },
+  "win_glass": {
+   "file": "textures/win_glass.png",
+   "size": [
+    180,
+    166
+   ],
+   "metres": 1.0
+  }
+ },
+ "people": {}
+}
