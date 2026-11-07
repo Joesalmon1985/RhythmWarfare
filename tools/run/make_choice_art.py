@@ -16,6 +16,8 @@ the stage's world first (assets/run/choice/<set>/<name>.png, SET_MAPS below) and
 * lamp_go          a lamp of the world (a cage lamp, a console light, a brazier, a call light, an oil lantern...) with a ROUND lens lit green, the light
                    inside it shaped as an up chevron. 44 x 44 px for 0.34 m.
 * lamp_stop        the same fixture with a SQUARE lens lit red, a bar of light across it.
+* lamp_lit         the same fixture with a plain round lens of warm white glass and no symbol in it (package A7, lead ruling 35b): the engine lights it by the choice's
+                   state (ChoiceShow: off, dim, lit, open; a red flicker for a cost) by tinting it, so it reads as a practical lamp of the room, not a sign.
 * sign_go/stop     an outdoor way: a post in the world's wood; GO its arrow board level and pointing on, STOP the board hanging askew with an X daubed on it.
 * spill            the light an open door throws on the floor (additive, the world's light colour, stepped and dithered).
 * wizard_happy/sad the Warehouse wizard (from assets/story/night_one/textures/thing_wizard.png) beckoning or bowed, his coloured rim light taken off
@@ -863,10 +865,11 @@ def _dk(h: str) -> str:
 
 # --- the lamp -------------------------------------------------------------------------------------------------------------------
 GO = ramp("#0a2a14", "#14682e", "#2ec85a", "#7aff9a", "#e8ffe8")
+PLAIN = ramp("#2a2420", "#7a6a58", "#d8c8a8", "#f4ead8", "#fffaf0")  # lamp_lit: warm white glass, tinted by the engine
 STOP = ramp("#2a0806", "#801810", "#e03020", "#ff7a5a", "#fff0e8")
 
 
-def lamp(sp: dict, go: bool) -> np.ndarray:
+def lamp(sp: dict, go) -> np.ndarray:
     """A lamp of the world: GO a round lens lit green with an up chevron of light in it; STOP a square lens lit red with a bar of light across it.
     The fixture is the world's: a wire cage on a stem, a console bezel, a ward call-light box, an oil lantern, a brazier on a chain."""
     L = sp["lamp"]
@@ -877,6 +880,9 @@ def lamp(sp: dict, go: bool) -> np.ndarray:
     rr = np.hypot(cv.x + 0.5 - cx, cv.y + 0.5 - cy)
     ax, ay = np.abs(cv.x + 0.5 - cx), np.abs(cv.y + 0.5 - cy)
     R = 11.5
+    plain = go is None  # lamp_lit: a round lens with nothing in it
+    if plain:
+        go = True
     lens = (rr < R) if go else ((ax < R - 1) & (ay < R - 1))
     rim = ((rr < R + 3) & ~lens) if go else (((ax < R + 2) & (ay < R + 2)) & ~lens)
     # the fixture behind and around the lens
@@ -908,10 +914,12 @@ def lamp(sp: dict, go: bool) -> np.ndarray:
         bowl = (cv.y >= cy + 3) & (cv.y < cy + R + 5) & (np.abs(cv.x + 0.5 - cx) < 15 - np.maximum(cv.y - cy - 3, 0) * 0.6)
         cv.paint(bowl, 0.45 + 0.3 * (cv.x < cx - 4) - 0.2 * (cv.x > cx + 6) + 0.2 * (cv.y == int(cy + 3)), mt)
     cv.paint(rim, 0.55 + 0.3 * ((cv.x + cv.y) < (cx + cy - 6)) - 0.25 * ((cv.x + cv.y) > (cx + cy + 8)), mt)
-    rp = GO if go else STOP
+    rp = PLAIN if plain else (GO if go else STOP)
     glow = np.clip(1.0 - (rr / (R + 1)) ** 1.5, 0, 1)
     cv.paint(lens, 0.35 + 0.45 * glow, rp, spread=0.6)
-    if go:
+    if plain:  # a filament's hot heart instead of a symbol
+        glyph = lens & (rr < 3.2)
+    elif go:
         vv = (cv.y + 0.5 - (cy - 5)) - np.abs(cv.x + 0.5 - cx) * 0.95
         glyph = lens & (vv >= 0) & (vv < 4.5) & (np.abs(cv.x + 0.5 - cx) < 8.5)
     else:
@@ -1096,7 +1104,7 @@ def wizard_sad() -> np.ndarray:
 
 
 # --- the run ---------------------------------------------------------------------------------------------------------------------
-NAMES = ["door_0", "door_1", "door_2", "door_3", "bars", "lamp_go", "lamp_stop", "sign_go", "sign_stop", "spill"]
+NAMES = ["door_0", "door_1", "door_2", "door_3", "bars", "lamp_go", "lamp_stop", "lamp_lit", "sign_go", "sign_stop", "spill"]
 SHARED = "warehouse"  # the set also written to the shared names (a stage whose map has no set of its own, the tests' maps)
 
 
@@ -1107,21 +1115,26 @@ def draw_set(sp: dict) -> dict:
     out["bars"] = bars(sp)
     out["lamp_go"] = lamp(sp, True)
     out["lamp_stop"] = lamp(sp, False)
+    out["lamp_lit"] = lamp(sp, None)
     out["sign_go"] = sign(sp, True)
     out["sign_stop"] = sign(sp, False)
     out["spill"] = spill(sp)
     return out
 
 
-def main() -> int:
+def main(only=None) -> int:
+    """Draws every set; `only` (--only name,name): write just those names (a new piece of art without rewriting the rest)."""
     sets = _sets()
     for sid, sp in sets.items():
         for name, img in draw_set(sp).items():
+            if only and name not in only:
+                continue
             save(img, "%s/%s" % (sid, name))
             if sid == SHARED:
                 save(img, name)
-    save(wizard_happy(), "wizard_happy")
-    save(wizard_sad(), "wizard_sad")
+    if not only:
+        save(wizard_happy(), "wizard_happy")
+        save(wizard_sad(), "wizard_sad")
     return 0
 
 
@@ -1189,4 +1202,6 @@ if __name__ == "__main__":
         sys.exit(check())
     if "--sheet" in sys.argv:
         sys.exit(contact_sheet(sys.argv[sys.argv.index("--sheet") + 1]))
+    if "--only" in sys.argv:
+        sys.exit(main(sys.argv[sys.argv.index("--only") + 1].split(",")))
     sys.exit(main())

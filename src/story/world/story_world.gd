@@ -858,6 +858,9 @@ func update(t: float, ctx: Dictionary) -> void:
 		var dx := 0.0
 		var tp: Dictionary = thing_pose.get(str(t_def["id"]), {})  # the choice layer's pose of an option's billboard (ChoiceStaging: a texture and a motion per state)
 		if not tp.is_empty():
+			if tp.has("light"):  # (ChoiceShow: a thing whose own light shows its state, brighter when selected, a red flicker for a cost: a multiplier on its light)
+				var lc: Color = tp["light"]
+				col = Color(col.r * lc.r, col.g * lc.g, col.b * lc.b, col.a)
 			sx = float(tp.get("sx", 1.0))
 			sy = float(tp.get("sy", 1.0))
 			dx = float(tp.get("dx", 0.0))
