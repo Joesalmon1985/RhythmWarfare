@@ -2513,6 +2513,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/deeps",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/deeps",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/deeps",
@@ -2657,6 +2687,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/deeps.falls",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/deeps.falls",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/deeps.falls",
@@ -2728,6 +2788,36 @@
    "status": "existing",
    "to": "ember/hollow.ford",
    "via": "hollow.gate"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/hollow",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/hollow",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
   },
   {
    "condition": {
@@ -2807,6 +2897,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/hollow.ford",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/hollow.ford",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/hollow.ford",
@@ -2876,6 +2996,36 @@
    "status": "existing",
    "to": "ember/north.pass",
    "via": "hollow.inn.hooded_man"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/hollow.inn",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/hollow.inn",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
   },
   {
    "condition": {
@@ -2985,6 +3135,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/marsh",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/marsh",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/marsh",
@@ -3054,6 +3234,36 @@
    "status": "existing",
    "to": "ember/mountain.taken",
    "via": "marsh.plain.tower"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/marsh.plain",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/marsh.plain",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
   },
   {
    "condition": {
@@ -3201,6 +3411,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/marsh.stair",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/marsh.stair",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/marsh.stair",
@@ -3270,6 +3510,36 @@
    "status": "existing",
    "to": "ember/mountain.taken",
    "via": "marsh.wall.gate"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/marsh.wall",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/marsh.wall",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
   },
   {
    "condition": {
@@ -3349,6 +3619,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/mountain",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/mountain",
@@ -3363,6 +3663,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/mountain.keeper",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.keeper",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": [
      "keep:path_ember_kept"
     ],
@@ -3442,6 +3772,36 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "pause menu: Leave this path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/mountain.spring",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.spring",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
   },
   {
    "condition": {
@@ -3621,6 +3981,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/mountain.taken",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/mountain.taken",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/mountain.taken",
@@ -3727,6 +4117,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/north",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/north",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "ember/north",
@@ -3794,6 +4214,36 @@
    "status": "existing",
    "to": "ember/deeps.falls",
    "via": "north.pass.ridge_path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "ember/north.pass",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "ember/north.pass",
+   "kind": "quest_return",
+   "quest": "ember",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "ember.return"
   },
   {
    "condition": {
@@ -3901,6 +4351,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/galilee",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/galilee",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/galilee",
@@ -3998,6 +4478,36 @@
    "status": "existing",
    "to": "gospel/road",
    "via": "galilee.capernaum.caravan"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/galilee.capernaum",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/galilee.capernaum",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
   },
   {
    "condition": {
@@ -4105,6 +4615,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/galilee.mount",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/galilee.mount",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/galilee.mount",
@@ -4202,6 +4742,36 @@
    "status": "existing",
    "to": "gospel/road.loaves",
    "via": "galilee.storm.loaves"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/galilee.storm",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/galilee.storm",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
   },
   {
    "condition": {
@@ -4309,6 +4879,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/jerusalem",
@@ -4409,6 +5009,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem.gethsemane",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.gethsemane",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/jerusalem.gethsemane",
@@ -4485,6 +5115,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem.golgotha",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.golgotha",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/jerusalem.golgotha",
@@ -4494,6 +5154,36 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "pause menu: Leave this path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem.road",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.road",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
   },
   {
    "condition": {
@@ -4581,6 +5271,36 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem.tomb",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.tomb",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -4720,6 +5440,36 @@
    "status": "existing",
    "to": "gospel/jerusalem.road",
    "via": "jerusalem.trial.gate"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jerusalem.trial",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jerusalem.trial",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
   },
   {
    "condition": {
@@ -4801,6 +5551,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jordan",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jordan",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/jordan",
@@ -4875,6 +5655,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jordan.baptism",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jordan.baptism",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/jordan.baptism",
@@ -4975,6 +5785,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jordan.nazareth",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jordan.nazareth",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/jordan.nazareth",
@@ -5042,6 +5882,36 @@
    "status": "existing",
    "to": "gospel/galilee.capernaum",
    "via": "jordan.wilderness.fires"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/jordan.wilderness",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/jordan.wilderness",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
   },
   {
    "condition": {
@@ -5149,6 +6019,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/road",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/road",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "gospel/road",
@@ -5216,6 +6116,36 @@
    "status": "existing",
    "to": "gospel/jerusalem.gethsemane",
    "via": "road.entry.grove"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/road.entry",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/road.entry",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
   },
   {
    "condition": {
@@ -5320,6 +6250,36 @@
    "status": "existing",
    "to": "gospel/road.entry",
    "via": "road.loaves.lantern"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "gospel/road.loaves",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "gospel/road.loaves",
+   "kind": "quest_return",
+   "quest": "gospel",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "gospel.return"
   },
   {
    "condition": {
@@ -6489,6 +7449,54 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "mothership.enter_bassment"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership",
+   "kind": "quest_entry",
+   "quest": "ember",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "mothership.enter_ember"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "mothership.enter_gospel"
+  },
+  {
+   "condition": {
     "continues_by_default_exit": true,
     "flags_all": [],
     "flags_none": [],
@@ -6520,6 +7528,66 @@
    "status": "existing",
    "to": "main/mothership.gallery",
    "via": "mothership.dj"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.gallery",
+   "via": "mothership.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.gallery",
+   "via": "mothership.enter_ember"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.gallery",
+   "via": "mothership.enter_gospel"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.gallery",
+   "via": "mothership.enter_squadron"
   },
   {
    "condition": {
@@ -6612,6 +7680,37 @@
    "status": "existing",
    "to": "main/mothership.reactor",
    "via": "mothership.exit_reactor"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "mothership.enter_squadron"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership.bridge",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.exit",
+   "via": "mothership.bridge.enter_squadron"
   },
   {
    "condition": {
@@ -6720,6 +7819,22 @@
    "status": "existing",
    "to": "main/mothership.exit",
    "via": "mothership.bridge.star_chart"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.bridge",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "mothership.bridge.enter_squadron"
   },
   {
    "condition": {
@@ -6846,6 +7961,37 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.gallery",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "mothership.gallery.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership.gallery",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.bridge",
+   "via": "mothership.gallery.enter_bassment"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -6942,6 +8088,22 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/mothership.reactor",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "mothership.reactor.enter_gospel"
+  },
+  {
+   "condition": {
     "continues_by_default_exit": true,
     "flags_all": [],
     "flags_none": [],
@@ -7014,6 +8176,21 @@
   },
   {
    "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/mothership.reactor",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/mothership.bridge",
+   "via": "mothership.reactor.enter_gospel"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -7041,6 +8218,54 @@
    "status": "existing",
    "to": "main/mothership.bridge",
    "via": "mothership.reactor.exit_bridge"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "underworld.enter_bassment"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld",
+   "kind": "quest_entry",
+   "quest": "ember",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "ember/hollow",
+   "via": "underworld.enter_ember"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "underworld.enter_gospel"
   },
   {
    "condition": {
@@ -7135,6 +8360,66 @@
   },
   {
    "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.court",
+   "via": "underworld.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.court",
+   "via": "underworld.enter_ember"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.court",
+   "via": "underworld.enter_gospel"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.court",
+   "via": "underworld.enter_squadron"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -7208,6 +8493,53 @@
    "status": "existing",
    "to": "main/underworld.furnace",
    "via": "underworld.exit_furnace"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "underworld.enter_squadron"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.court",
+   "kind": "quest_entry",
+   "quest": "bassment",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "bassment/1",
+   "via": "underworld.court.enter_bassment"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld.court",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.pit",
+   "via": "underworld.court.enter_bassment"
   },
   {
    "condition": {
@@ -7398,6 +8730,22 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.furnace",
+   "kind": "quest_entry",
+   "quest": "gospel",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "gospel/jordan",
+   "via": "underworld.furnace.enter_gospel"
+  },
+  {
+   "condition": {
     "continues_by_default_exit": true,
     "flags_all": [],
     "flags_none": [],
@@ -7427,6 +8775,21 @@
    "status": "existing",
    "to": "main/underworld.pit",
    "via": "underworld.furnace.anvil"
+  },
+  {
+   "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld.furnace",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.pit",
+   "via": "underworld.furnace.enter_gospel"
   },
   {
    "condition": {
@@ -7524,6 +8887,21 @@
   },
   {
    "condition": {
+    "continues_by_default_exit": true,
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_miss"
+   },
+   "from": "main/underworld.pit",
+   "kind": "scene",
+   "status": "existing",
+   "to": "main/underworld.exit",
+   "via": "underworld.pit.enter_squadron"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -7585,6 +8963,22 @@
    "status": "existing",
    "to": "main/underworld.exit",
    "via": "underworld.pit.lava_bridge"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "secret",
+    "outcome": "on_pass"
+   },
+   "from": "main/underworld.pit",
+   "kind": "quest_entry",
+   "quest": "squadron",
+   "rhythm_gate": true,
+   "status": "existing",
+   "to": "squadron/base",
+   "via": "underworld.pit.enter_squadron"
   },
   {
    "condition": {
@@ -9568,6 +10962,36 @@
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/air",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/air",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
     "object_kind": "exit",
     "outcome": "on_pass"
    },
@@ -9638,6 +11062,36 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "pause menu: Leave this path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/air.c05",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/air.c05",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
   },
   {
    "condition": {
@@ -9718,6 +11172,36 @@
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/air.c06",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/air.c06",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
     "object_kind": "exit",
     "outcome": "on_miss"
    },
@@ -9787,6 +11271,36 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "pause menu: Leave this path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/base",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/base",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
   },
   {
    "condition": {
@@ -9867,6 +11381,36 @@
     "flags_all": [],
     "flags_none": [],
     "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/base.c02",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/base.c02",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
     "object_kind": "exit",
     "outcome": "on_miss"
    },
@@ -9936,6 +11480,36 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "pause menu: Leave this path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/base.c03",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/base.c03",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
   },
   {
    "condition": {
@@ -10044,6 +11618,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/city",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/city",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": [
      "sq_kit"
     ],
@@ -10118,6 +11722,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/city.c08",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/city.c08",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": [
      "sq_car"
     ],
@@ -10187,6 +11821,36 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "pause menu: Leave this path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/city.c09",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/city.c09",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
   },
   {
    "condition": {
@@ -10269,6 +11933,36 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/city.c10",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/city.c10",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -10343,6 +12037,36 @@
   },
   {
    "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/escape",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/escape",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
     "default": true,
     "flags_all": [],
     "flags_none": [],
@@ -10414,6 +12138,36 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "pause menu: Leave this path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/escape.c12",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/escape.c12",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
   },
   {
    "condition": {
@@ -10563,6 +12317,36 @@
    "condition": {
     "flags_all": [],
     "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/escape.c13",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/escape.c13",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
     "flags_set": []
    },
    "from": "squadron/escape.c14",
@@ -10572,6 +12356,36 @@
    "status": "existing",
    "to": "main/warehouse",
    "via": "pause menu: Leave this path"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_miss"
+   },
+   "from": "squadron/escape.c14",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
+  },
+  {
+   "condition": {
+    "flags_all": [],
+    "flags_none": [],
+    "flags_set": [],
+    "object_kind": "object",
+    "outcome": "on_pass"
+   },
+   "from": "squadron/escape.c14",
+   "kind": "quest_return",
+   "quest": "squadron",
+   "status": "existing",
+   "to": "main/warehouse",
+   "via": "squadron.return"
   },
   {
    "condition": {
@@ -10636,14 +12450,14 @@
  ],
  "meta": {
   "counts": {
-   "edges": 702,
+   "edges": 822,
    "edges_by_kind": {
-    "quest_entry": 5,
-    "quest_return": 138,
-    "scene": 559
+    "quest_entry": 19,
+    "quest_return": 230,
+    "scene": 573
    },
    "edges_by_status": {
-    "existing": 702
+    "existing": 822
    },
    "nodes": 146
   },

@@ -147,10 +147,13 @@ func hotspot_actions(spec: Dictionary, t: float, engine: RunEngine, look_fn: Cal
 func _block_result(ev: Dictionary, engine: RunEngine) -> Array:
 	var b := int(ev["block"])
 	var notes := engine.level.notes
-	var out: Array = rail.step(bool(ev["passed"]), float(ev["t"]), notes)
+	var out: Array = rail.step(bool(ev["passed"]), float(ev["t"]), notes, engine.t_of(FACE_TURN_BEAT) if b == 2 else -1.0)
 	var last: Dictionary = rail.visited[rail.visited.size() - 1]
 	log.append({"phase": int(ev["phase"]), "block": b, "node": str(ev["node"]), "place": last["place"], "kind": last["kind"], "role": last["role"], "pos": last["pos"]})
-	if b < 3:  # the glance and the stroll of the next block; the last block's is the turn to the window's hotspots
+	if b == 2 and rail.at_choice():  # a choice viewpoint (docs/story/HEIGHTS_AND_PATHS.md): the camera stands still through the whole choice window, the viewpoint frames the choices
+		var w0 := engine.t_of(FACE_TURN_BEAT)
+		out.append({"t0": w0, "action": "player_hold", "args": {"bars": (engine.t_of(FACE_RELEASE_BEAT) - w0) / rail.bar_s()}})
+	elif b < 3:  # the glance and the stroll of the next block; the last block's is the turn to the window's hotspots
 		var face: Array = face_fn.call(str(ev["node"]), rail.place()) if b == 2 and face_fn.is_valid() else []
 		if not face.is_empty():
 			out.append(window_face(face, float(ev["t"]), engine))

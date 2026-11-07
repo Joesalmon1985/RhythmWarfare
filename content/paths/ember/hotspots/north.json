@@ -144,6 +144,117 @@
    "repeatable": false
   },
   {
+   "id": "ember.return",
+   "world": "north",
+   "scene": "north",
+   "map": "birch_hall",
+   "anchor": {
+    "pos": [
+     -3.41,
+     1.5,
+     8.59
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "custom",
+    "lamp": false,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
+    }
+   }
+  },
+  {
    "id": "north.pass.cave_mouth",
    "world": "north",
    "scene": "north.pass",
@@ -209,6 +320,117 @@
    },
    "default": false,
    "repeatable": true
+  },
+  {
+   "id": "ember.return",
+   "world": "north",
+   "scene": "north.pass",
+   "map": "birch_hall",
+   "anchor": {
+    "pos": [
+     -6.39,
+     1.5,
+     -20.49
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "custom",
+    "lamp": false,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
+    }
+   }
   }
  ]
 }

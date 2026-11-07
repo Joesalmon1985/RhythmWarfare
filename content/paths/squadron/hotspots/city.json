@@ -134,6 +134,117 @@
    }
   },
   {
+   "id": "squadron.return",
+   "world": "city",
+   "scene": "city",
+   "map": "city",
+   "anchor": {
+    "pos": [
+     10.87,
+     1.5,
+     -5.18
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "custom",
+    "lamp": false,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
+    }
+   }
+  },
+  {
    "id": "city.c08.arch",
    "world": "city",
    "scene": "city.c08",
@@ -268,6 +379,117 @@
      "face": "anger",
      "look_at": "camera",
      "beats": 8
+    }
+   }
+  },
+  {
+   "id": "squadron.return",
+   "world": "city",
+   "scene": "city.c08",
+   "map": "city",
+   "anchor": {
+    "pos": [
+     13.11,
+     1.5,
+     0.63
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "custom",
+    "lamp": false,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
     }
    }
   },
@@ -413,6 +635,117 @@
    }
   },
   {
+   "id": "squadron.return",
+   "world": "city",
+   "scene": "city.c09",
+   "map": "city",
+   "anchor": {
+    "pos": [
+     11.34,
+     1.5,
+     15.56
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "custom",
+    "lamp": false,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
+    }
+   }
+  },
+  {
    "id": "city.c10.hq",
    "world": "city",
    "scene": "city.c10",
@@ -541,6 +874,117 @@
      "face": "grief",
      "look_at": "camera",
      "beats": 8
+    }
+   }
+  },
+  {
+   "id": "squadron.return",
+   "world": "city",
+   "scene": "city.c10",
+   "map": "city",
+   "anchor": {
+    "pos": [
+     31.1,
+     1.5,
+     0.41
+    ]
+   },
+   "kind": "object",
+   "radius_m": 1.2,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "glow",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "run:warehouse"
+   },
+   "on_failure": {
+    "route": "run:warehouse",
+    "energy": -5
+   },
+   "default": false,
+   "repeatable": true,
+   "staging": {
+    "archetype": "custom",
+    "lamp": false,
+    "touch": {
+     "w": 2.2,
+     "h": 3.4
+    },
+    "states": {
+     "current": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "other": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "committed": [
+      {
+       "prop": "warehouse/door_3",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ],
+     "declined": [
+      {
+       "prop": "warehouse/door_1",
+       "size": 3.0,
+       "motion": "pulse"
+      },
+      {
+       "prop": "warehouse/lamp_go",
+       "at": [
+        0.0,
+        3.4,
+        0.0
+       ],
+       "size": 0.6
+      }
+     ]
     }
    }
   }

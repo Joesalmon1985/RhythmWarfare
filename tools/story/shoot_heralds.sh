@@ -62,6 +62,11 @@ uw_ember       underworld         -              0.8:2.8:-90:2     right,left,up
 uw_squadron    underworld         -              1.0:2.2:-120:2    right,left,up,right
 uw_court_bass  underworld.court   -              17.0:3.0:-70:2    right,left,up,right,right
 uw_furn_gospel underworld.furnace -              -22.0:4.5:-115:2  right,left,up,right,left
-uw_pit_squad   underworld.pit     -              20.0:14.0:-145:2  right,left,up,right,right,up
+uw_pit_squad   underworld.pit     -              19.0:13.0:-205:2  right,left,up,right,right,up
+# N2.4 Alien Spaceship (mothership): the hub's four gates in one scene, then the three side scenes' extra entrances
+ms_hub         mothership         -              1.6:5.5:0:4       right,right,up,up
+ms_gallery     mothership.gallery -              15.5:5.8:-90:3    right,right,up,up,right
+ms_reactor     mothership.reactor -              31.5:5.5:0:3      right,right,up,up,up
+ms_bridge      mothership.bridge  -              43.0:4.5:-90:3    right,right,up,up,right,up
 LIST
 rm -rf "$TMP"

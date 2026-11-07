@@ -191,7 +191,7 @@
     "hidden_fallbacks": [
      "pause_menu_leave"
     ],
-    "status": "proposed"
+    "status": "existing"
    },
    "progress": {
     "scene": "string, graph id",
@@ -231,7 +231,7 @@
     "hidden_fallbacks": [
      "pause_menu_leave"
     ],
-    "status": "proposed"
+    "status": "existing"
    },
    "progress": {
     "scene": "string, graph id",
@@ -272,7 +272,7 @@
     "hidden_fallbacks": [
      "pause_menu_leave"
     ],
-    "status": "proposed"
+    "status": "existing"
    },
    "progress": {
     "scene": "string, graph id",
@@ -519,13 +519,13 @@
    "scene": "main/mothership",
    "object": {
     "id": "mothership.enter_bassment",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A maintenance hatch in the deck plating, chalk marks beside it."
    },
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "alien_spaceship.gospel",
@@ -534,13 +534,13 @@
    "scene": "main/mothership",
    "object": {
     "id": "mothership.enter_gospel",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A figure of light under a single star in the viewport."
    },
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "alien_spaceship.squadron",
@@ -549,13 +549,13 @@
    "scene": "main/mothership",
    "object": {
     "id": "mothership.enter_squadron",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "An old military radio wired into a comms console, a bomber's shadow on the bulkhead."
    },
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "alien_spaceship.ember",
@@ -564,13 +564,13 @@
    "scene": "main/mothership",
    "object": {
     "id": "mothership.enter_ember",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "An ember glowing in a specimen jar on the deck."
    },
    "transition": "port",
    "rhythm_gate": false,
    "conditions": [],
-   "status": "proposed"
+   "status": "existing"
   },
   {
    "id": "hell.bassment",
@@ -668,7 +668,7 @@
    "quest": "bassment",
    "object": {
     "id": "mothership.gallery.enter_bassment",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
@@ -678,7 +678,7 @@
    "quest": "gospel",
    "object": {
     "id": "mothership.reactor.enter_gospel",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
@@ -688,7 +688,7 @@
    "quest": "squadron",
    "object": {
     "id": "mothership.bridge.enter_squadron",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
