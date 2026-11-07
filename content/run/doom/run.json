@@ -7,6 +7,14 @@
    "depth": 1,
    "story": "res://content/run/doom/story_doom_warehouse.json",
    "blurb": "A fenced dance floor under steel trusses. The stage ahead, the bar on the left, the lounge on the right: follow the guide you like."
+  },
+  {
+   "id": "doom_bar",
+   "title": "The Copper Bar (Doom worlds)",
+   "map": "doom_bar",
+   "depth": 2,
+   "story": "res://content/run/doom/story_doom_bar.json",
+   "blurb": "A brick passage under copper pipes, a drain channel crossed by grates. The booth up the stairs, the Floor to the left, the Chill-out across the water: follow the guide you like."
   }
  ],
  "nodes": [
@@ -32,7 +40,7 @@
      "label": "Up the stage steps to the balcony"
     },
     {
-     "to": "doom_bar",
+     "to": "doom_warehouse.bar",
      "dir": "left",
      "label": "Into the bar"
     },
@@ -359,14 +367,14 @@
    }
   },
   {
-   "id": "doom_bar",
+   "id": "doom_warehouse.bar",
    "world": "doom_warehouse",
    "scene": "bar",
-   "title": "The Bar (stand-in)",
+   "title": "The Bar (stand-in; the real scene is the world doom_bar, reached from the return scene)",
    "entry": false,
    "exit_scene": false,
    "role": "dancer",
-   "blurb": "The Bar (stand-in)",
+   "blurb": "The Bar (stand-in; the real scene is the world doom_bar, reached from the return scene)",
    "next": [
     {
      "to": "doom_warehouse.return",
@@ -707,10 +715,9 @@
      "loop": true
     },
     {
-     "to": "doom_warehouse",
+     "to": "doom_bar",
      "dir": "left",
-     "label": "Round again",
-     "loop": true
+     "label": "On to the Copper Bar"
     }
    ],
    "place": {
@@ -862,6 +869,834 @@
      ]
     }
    }
+  },
+  {
+   "id": "doom_bar",
+   "world": "doom_bar",
+   "scene": "bar",
+   "title": "The Copper Bar",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "A brick passage under copper pipes, a drain channel crossed by grates. The booth up the stairs, the Floor to the left, the Chill-out across the water: follow the guide you like.",
+   "next": [
+    {
+     "to": "doom_bar",
+     "dir": "down",
+     "label": "Stay in the bar",
+     "loop": true
+    },
+    {
+     "to": "doom_bar.booth",
+     "dir": "up",
+     "label": "Up the stairs to the booth"
+    },
+    {
+     "to": "doom_bar.floor",
+     "dir": "left",
+     "label": "Back to the floor"
+    },
+    {
+     "to": "doom_bar.chill",
+     "dir": "right",
+     "label": "Over the water to the chill-out"
+    }
+   ],
+   "place": {
+    "waypoint": "wb_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "wb_bridge",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_e"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_counter",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_e",
+        "wb_v_pass_n"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_way",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_n",
+        "wb_v_jamb"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "wb_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "wb_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "wb_arrive",
+     "exits": {
+      "up": "wb_booth_door",
+      "left": "wb_floor_door",
+      "right": "wb_chill_door",
+      "down": "wb_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "wb_booth_door",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_stairs_foot"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "wb_floor_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "wb_chill_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_pass_e"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "wb_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "wb_ref_back",
+        "wb_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "wb_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "from": "wb_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -12,
+       "bars": 2
+      },
+      {
+       "by": 14,
+       "bars": 2
+      },
+      {
+       "by": -8,
+       "pitch": 4,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.8,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_bar.booth",
+   "world": "doom_bar",
+   "scene": "booth",
+   "title": "The Booth (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Booth (stand-in)",
+   "next": [
+    {
+     "to": "doom_bar.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "wb_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "wb_bridge",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_e"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_counter",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_e",
+        "wb_v_pass_n"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_way",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_n",
+        "wb_v_jamb"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "wb_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "wb_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "wb_arrive",
+     "exits": {
+      "up": "wb_booth_door",
+      "left": "wb_floor_door",
+      "right": "wb_chill_door",
+      "down": "wb_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "wb_booth_door",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_stairs_foot"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "wb_floor_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "wb_chill_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_pass_e"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "wb_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "wb_ref_back",
+        "wb_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "wb_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "from": "wb_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -12,
+       "bars": 2
+      },
+      {
+       "by": 14,
+       "bars": 2
+      },
+      {
+       "by": -8,
+       "pitch": 4,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.8,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_bar.floor",
+   "world": "doom_bar",
+   "scene": "floor",
+   "title": "The Floor (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Floor (stand-in)",
+   "next": [
+    {
+     "to": "doom_bar.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "wb_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "wb_bridge",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_e"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_counter",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_e",
+        "wb_v_pass_n"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_way",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_n",
+        "wb_v_jamb"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "wb_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "wb_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "wb_arrive",
+     "exits": {
+      "up": "wb_booth_door",
+      "left": "wb_floor_door",
+      "right": "wb_chill_door",
+      "down": "wb_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "wb_booth_door",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_stairs_foot"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "wb_floor_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "wb_chill_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_pass_e"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "wb_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "wb_ref_back",
+        "wb_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "wb_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "from": "wb_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -12,
+       "bars": 2
+      },
+      {
+       "by": 14,
+       "bars": 2
+      },
+      {
+       "by": -8,
+       "pitch": 4,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.8,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_bar.chill",
+   "world": "doom_bar",
+   "scene": "chill",
+   "title": "The Chill-out (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Chill-out (stand-in)",
+   "next": [
+    {
+     "to": "doom_bar.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "wb_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "wb_bridge",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_e"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_counter",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_e",
+        "wb_v_pass_n"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_way",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_n",
+        "wb_v_jamb"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "wb_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "wb_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "wb_arrive",
+     "exits": {
+      "up": "wb_booth_door",
+      "left": "wb_floor_door",
+      "right": "wb_chill_door",
+      "down": "wb_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "wb_booth_door",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_stairs_foot"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "wb_floor_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "wb_chill_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_pass_e"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "wb_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "wb_ref_back",
+        "wb_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "wb_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "from": "wb_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -12,
+       "bars": 2
+      },
+      {
+       "by": 14,
+       "bars": 2
+      },
+      {
+       "by": -8,
+       "pitch": 4,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.8,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_bar.return",
+   "world": "doom_bar",
+   "scene": "return",
+   "title": "Back to the Bar",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "Back to the Bar",
+   "next": [
+    {
+     "to": "doom_bar",
+     "dir": "up",
+     "label": "Round again",
+     "loop": true
+    },
+    {
+     "to": "doom_bar",
+     "dir": "left",
+     "label": "Round again",
+     "loop": true
+    }
+   ],
+   "place": {
+    "waypoint": "wb_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "wb_bridge",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_e"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_counter",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_e",
+        "wb_v_pass_n"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_way",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_pass_n",
+        "wb_v_jamb"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "wb_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "wb_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "wb_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "wb_arrive",
+     "exits": {
+      "up": "wb_booth_door",
+      "left": "wb_floor_door",
+      "right": "wb_chill_door",
+      "down": "wb_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "wb_booth_door",
+       "role": "on_stage",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "wb_stairs_foot"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "wb_floor_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "wb_chill_door",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_pass_e"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "wb_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "wb_ref_back",
+        "wb_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "wb_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "wb_v_jamb"
+       ],
+       "from": "wb_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -12,
+       "bars": 2
+      },
+      {
+       "by": 14,
+       "bars": 2
+      },
+      {
+       "by": -8,
+       "pitch": 4,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.8,
+       "bars": 3
+      }
+     ]
+    }
+   }
   }
  ],
  "cinematics": {
@@ -895,6 +1730,42 @@
     {
      "move": "walk",
      "to": "wh_lounge_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_bar.stagger_booth": {
+   "world": "doom_bar",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "wb_booth_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_bar.stagger_floor": {
+   "world": "doom_bar",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "wb_floor_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_bar.stagger_chill": {
+   "world": "doom_bar",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "wb_chill_door",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
