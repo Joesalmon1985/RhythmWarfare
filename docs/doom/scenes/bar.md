@@ -38,7 +38,7 @@ route uses). The channel's long banks (passage, stairs, landing, nook) carry the
 * **Stay loop** (`good`, polyline moves with holds): the first grate crossing `wb_bridge` (hold 2), the counter `wb_counter` (2), the way to the Floor `wb_way` (2), back to `wb_ref` (choice viewpoint, `"choice": true`, 8 bars).
 * **Routes** (`rail.routes`): `up` through the stair foot to `wb_booth_door` (on the landing, 2.1 m from the desk guide), `left` through `wb_v_jamb` to `wb_floor_door`, `right` across the first grate to `wb_chill_door` (1.6 m from the Chill-out guide), `stumble`, `arrive`. `check_rail_paths`: 0 problems.
 * **Guides**: `wb_guide_booth/floor/chill`, 1.8 m, 256 px sheets (idle 1, available 5, selected 2, committed 2). Hotspot rows `doom_bar.exit_*` declare `show: {archetype: figure, light: wb_lamp_<who>}` (A7): the figure beckons when available, leans in when touched, gestures when committed, and the lamp over it brightens; no ring.
-* **Worlds**: the Bar is the world `doom_bar` (depth 2), entered from the Warehouse's exit scene; the guides lead to in-world stand-ins (`doom_bar.booth/floor/chill`) that loop back through `doom_bar.return`. The real cut to the Booth, the Floor and the Chill-out waits for hook H1.6 (see LAUNCH.md).
+* **Worlds**: the Bar is the geography world `doom_bar` (depth 2), one scene, entered from the Warehouse's left guide; its guides lead straight to `doom_booth` (up), `doom_warehouse` (left) and `doom_lounge` (right) (H1.6; see LAUNCH.md and `tests/test_doom_cuts.gd`).
 
 ## Shots (`docs/shots/doom/bar/`)
 
@@ -54,4 +54,4 @@ the guides' faces are weak and their poses stiff (placeholders, well below `art/
 
 ## Placeholders and not done
 
-Placeholders: every texture, decal and prop (procedural), the three guides, the cast, the music (the Warehouse's arrangement `warehouse_1`). Not done: curved counter, wet reflections, ceiling mains as geometry, water movement, the Floor/Booth/Chill-out transitions (H1.6), per-scene music, the guides' loop playback beyond the frames (engine).
+Placeholders: every texture, decal and prop (procedural), the three guides, the cast, the music (the Warehouse's arrangement `warehouse_1`). Not done: curved counter, wet reflections, ceiling mains as geometry, water movement, per-scene music, the guides' loop playback beyond the frames (engine).

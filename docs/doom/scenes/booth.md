@@ -20,7 +20,7 @@ Reference viewpoint `bt_ref` (0.5, 1.9) looks north (choice viewpoint, 8 bars st
 at 16:9 and 20:9 alike (`tests/test_doom_views.gd`, booth block, requires 60 px, inside the picture, apart, clear of the HUD).
 
 Rail (`tools/run/make_doom_booth.py`, merged by `make_doom.py`): stay loop = hatch view, window view (the landing), dock view (each 2 bars still, via polylines), then `bt_ref` (choice, 8 bars). `rail.routes`: `up` (aisle to the
-hatch), `left` (aisle, landing, door, porch, up the stair), `right` (aisle, through the dock door), `stumble`, `arrive`. Node `doom_booth` plus stand-ins `doom_booth.mothership/.balcony/.dock` and the exit scene `doom_booth.return`
+hatch), `left` (aisle, landing, door, porch, up the stair), `right` (aisle, through the dock door), `stumble`, `arrive`. One scene `doom_booth` (geography world, depth 2), its routes straight to `doom_mothership` (up), `doom_balcony` (left), `doom_dock` (right)
 (the Warehouse pilot's pattern); three guide hotspots (`staging` figure sprites per state and `show: figure`, no rings) and the stay hotspot.
 
 ## Shots (docs/shots/doom/booth/)
@@ -36,6 +36,6 @@ far below `art/reference/standard/guide_floor_sprite_standard.png`); the balcony
 
 ## Placeholders and not done
 
-Placeholders: every texture, prop, decal and the three guides (`tools/doom/art/make_booth_art.py`, procedural); the stand-in destinations; the music (Warehouse arrangements). Not done: the exits' door walks are checked (`rail.routes`) but the real next scenes do not exist; no state-driven guide animation beyond the sprite per state; no `src/` hook was needed.
+Placeholders: every texture, prop, decal and the three guides (`tools/doom/art/make_booth_art.py`, procedural); the music (Warehouse arrangements). Not done: no state-driven guide animation beyond the sprite per state; no `src/` hook was needed.
 
 Regenerate: see `docs/doom/LAUNCH.md` (booth block).
