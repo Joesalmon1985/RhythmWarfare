@@ -243,11 +243,12 @@ func test_the_table_is_a_72_px_touch_target_on_the_stage_and_the_day_room_alone_
 	var items: Array = scene.hotspot_items()
 	var ids: Array = items.map(func(e: Dictionary) -> String: return str(e["hotspot"]["id"]))
 	assert_contains(ids, "ward.cards", "the table is on show in the day room's final window: %s" % str(ids))
-	assert_eq(items.size(), 5, "the day room shows five hotspots")
+	var day_n: int = (RunData.load_default().hotspots["ward"] as Array).size()  # (the day room carries the quest entrances of N2.4 too: the count is read from the data, five or more)
+	assert_true(items.size() >= 5 and items.size() <= day_n, "the day room shows at least five hotspots (%d of %d authored)" % [items.size(), day_n])
 	var stage := Rect2(scene._stage_host.global_position, scene._stage_host.size)
 	var st: StoryStage = scene.stages[scene.active_world]["stage"]
 	var lay := HotspotView.layout(items, st.map, st.crowds, scene._exit_pose(), stage.size)
-	assert_eq(lay.size(), 5, "every hotspot has a place on the 844x390 screen")
+	assert_eq(lay.size(), items.size(), "every hotspot has a place on the 844x390 screen")
 	var pads: Dictionary = scene.pad_view.button_rects()
 	var found := false
 	for e in lay:
@@ -265,8 +266,8 @@ func test_the_table_is_a_72_px_touch_target_on_the_stage_and_the_day_room_alone_
 	assert_true(found, "the table has a layout entry")
 	var data: RunData = scene.data
 	assert_true(data.errors.is_empty(), "the content validates (at most four hotspots on show anywhere but the day room, five there): %s" % str(data.errors))
-	assert_eq(int(data.nodes["ward"].get("max_hotspots", 4)), 5, "the day room raises its own cap")
-	assert_eq((data.hotspots["ward"] as Array).size(), 5)
+	assert_true(int(data.nodes["ward"].get("max_hotspots", 4)) >= 5, "the day room raises its own cap")
+	assert_true((data.hotspots["ward"] as Array).size() >= 5)
 	assert_true(data.hotspots.keys().all(func(k: Variant) -> bool: return str(k) == "ward" or int(data.nodes[k].get("max_hotspots", 4)) == 4), "every other scene keeps the cap of four")
 	for id in data.nodes:
 		if str(id) == "ward":
