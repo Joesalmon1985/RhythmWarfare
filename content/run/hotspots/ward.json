@@ -1253,9 +1253,9 @@
    "map": "mental_hospital",
    "anchor": {
     "pos": [
-     16.4,
+     26.6,
      1.1,
-     7.85
+     6.0
     ]
    },
    "kind": "secret",
@@ -1284,12 +1284,12 @@
    "herald": {
     "quest": "squadron",
     "at": [
-     14.9,
-     7.0
+     28.4,
+     6.1
     ],
     "toward": [
-     16.4,
-     7.85
+     26.6,
+     6.0
     ],
     "mark_y": 1.8,
     "gate": true

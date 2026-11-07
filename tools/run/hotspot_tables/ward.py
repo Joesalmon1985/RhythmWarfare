@@ -82,7 +82,7 @@ sc("ward.art", "enter_bassment", P(37.6, 1.1, 11.7), "pulse", out(route="bassmen
    s_text="a hatch in the kiln-room floor, chalk marks round it: the Bassment (route bassment)", f_text="the hatch is stuck fast (-4)")
 sc("ward.dorm", "enter_gospel", P(24.6, 1.1, 13.0), "pulse", out(route="path:gospel"), out(energy=-4),
    s_text="a figure of light in the alcove under a drawn star: the Gospel path (route path:gospel)", f_text="the light goes out (-4)")
-sc("ward.corridor", "enter_squadron", P(16.4, 1.1, 7.85), "pulse", out(route="path:squadron"), out(energy=-4),
+sc("ward.corridor", "enter_squadron", P(26.6, 1.1, 6.0), "pulse", out(route="path:squadron"), out(energy=-4),
    s_text="a military radio on the corridor shelf: the Mission Count path (route path:squadron)", f_text="the radio crackles out (-4)")
 sc("ward.courtyard", "enter_ember", P(61.8, 1.1, 4.6), "pulse", out(route="path:ember"), out(energy=-4),
    s_text="an ember in a tea glass on the courtyard wall: the Ember Road path (route path:ember)", f_text="the ember gutters out (-4)")
@@ -95,5 +95,5 @@ herald("squadron", "ward.enter_squadron", at=(4.7, 7.3), gate=True)
 herald("ember", "ward.enter_ember", at=(5.6, 8.3), gate=True)
 herald("dungeon", "ward.art.enter_bassment", at=(39.2, 10.2), gate=True)
 herald("gospel", "ward.dorm.enter_gospel", at=(23.8, 11.2), gate=True)
-herald("squadron", "ward.corridor.enter_squadron", at=(14.9, 7.0), gate=True)
+herald("squadron", "ward.corridor.enter_squadron", at=(28.4, 6.1), gate=True)
 herald("ember", "ward.courtyard.enter_ember", at=(59.9, 4.0), gate=True)
