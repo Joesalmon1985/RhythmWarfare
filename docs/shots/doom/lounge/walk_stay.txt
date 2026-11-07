@@ -1,0 +1,20 @@
+MOVE lg_west via=2 length=8.6
+WALK stay 0 t=1.84 @-2.225:6.125:71.1:0.0:1.588 sector=0_2 ground=0.000 above=1.59 still=0.00
+WALK stay 1 t=3.68 @-5.237:3.420:37.1:0.0:1.588 sector=0_10 ground=0.000 above=1.59 still=0.00
+WALK stay 2 t=5.52 @-6.125:1.563:-81.8:0.0:1.600 sector=0_1 ground=0.000 above=1.60 still=0.00
+HOLD lg_west 2.0 moved=0.0028 turned=0.000
+MOVE lg_north via=2 length=12.3
+WALK stay 3 t=10.11 @-6.125:-1.623:-10.6:0.0:1.588 sector=0_1 ground=0.000 above=1.59 still=0.00
+WALK stay 4 t=11.95 @-2.910:-6.372:-61.1:0.0:1.588 sector=0_5 ground=0.000 above=1.59 still=0.00
+WALK stay 5 t=13.79 @0.000:-6.250:0.0:0.0:1.600 sector=0_4 ground=0.000 above=1.60 still=0.00
+HOLD lg_north 2.0 moved=0.0028 turned=0.000
+MOVE lg_east via=2 length=9.4
+WALK stay 6 t=18.39 @2.445:-6.129:-110.6:0.0:1.588 sector=0_4 ground=0.000 above=1.59 still=0.00
+WALK stay 7 t=20.23 @5.952:-3.262:-143.0:0.0:1.588 sector=0_6 ground=0.000 above=1.59 still=0.00
+WALK stay 8 t=22.07 @6.402:-1.291:-289.4:0.0:1.600 sector=0_3 ground=0.000 above=1.60 still=0.00
+HOLD lg_east 2.0 moved=0.0028 turned=0.000
+MOVE lg_ref via=2 length=11.8
+WALK stay 9 t=26.67 @6.182:1.752:-195.4:0.0:1.588 sector=0_3 ground=0.000 above=1.59 still=0.00
+WALK stay 10 t=28.51 @2.858:6.162:-242.9:0.0:1.588 sector=0_2 ground=0.000 above=1.59 still=0.00
+WALK stay 11 t=30.34 @0.000:6.125:-360.0:0.0:1.600 sector=0_2 ground=0.000 above=1.60 still=0.00
+HOLD lg_ref 8.0 moved=0.0028 turned=0.000
