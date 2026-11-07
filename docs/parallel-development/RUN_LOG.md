@@ -23,42 +23,31 @@ is `TO_MAIN_PLAN.md`. Rewritten by the lead at every checkpoint. Times are Europ
   state) and ruling 36 (the concept paintings are the bar; sprites like the guide crop,
   `art/reference/standard/`).
 
-## Now (8 November, morning)
+## Now (8 November, midday)
 
-`feature/one-pc` `7d6cc45d` (pushed): the Hospital (N2.4) merged on top of the Ward. Red right now, all assigned: `heralds_view`
-4 (the Ward's `ward.corridor`, `ward_late.dorm` route windows), `camera` 4 (ward arrival, ward.corridor from art and dorm,
-hospital_late.quiet), `blackjack` 2 (fixed by A7, lands with the shared-contracts merge). Fix passes running: `wip/narr-ward-fix`
-(`MusicGame-import`), `wip/narr-hospital-fix` (`MusicGame-music`: quiet room, re-shoot against the new art; the day-room
-gate's crowd is fixed by A7). Then: merge `feature/shared-contracts` (A7) into one-pc, the shared wiring step, the Floor's
-entrances, the full suite.
+`feature/one-pc` `b74aa327` (pushed): Ward, Hospital, both fix passes and `feature/shared-contracts` (A7: no rings) merged.
+Filters green (choice, hotspot, heralds_view, herald, blackjack, returns, interaction, narrative, story, run_, playtest);
+the only red is `camera` 3 (ward.corridor x2, hospital_late.quiet: a herald look swinging onto a wall during a door walk /
+in a 2.4 m room), an engine rule in the wiring step. **Wiring step running** on `wip/wiring` (`MusicGame-wiring`, Opus):
+hub-to-hub links and ways back, back/restart routes and the Bassment return, the herald-look clearance rule, the window
+look including returns, the wall test in heralds_view, the Floor's four entrances, then the full suite. After it: stage A's
+pause point (the owner plays `tools\dev\play_tracks.cmd --run` from `MusicGame-onepc`).
 
-`feature/shared-contracts` `6b7fdf48`: **A7 merged** (no rings anywhere: a choice's state is its own artwork, `ChoiceState`,
-`ChoiceShow`, `content/run/choice_show.json`, every hotspot row declares `show`, heralds use the crowd that owns their sector).
-A7's own finding for the polish: at the Warehouse opening's distance a door does not yet read as available vs selected (the
-lamp is a few pixels, the spill faint); needs a bigger lamp/stronger spill and the choice viewpoint holding closer (H3.1).
-Filters running. A8 (`wip/engine-props`, `MusicGame-props`, Opus) building the dynamic things, people states, feedback and
-the pad-slot morph (ruling 38).
+`feature/shared-contracts` `6b7fdf48` (pushed): A7 merged, all filters green. A8 running (`wip/engine-props`,
+`MusicGame-props`, Opus): dynamic things, people states, feedback, the pad-slot morph (ruling 38, contract 10), aligned to
+what the three activities used (`WorldThings` with piece_on/off/pulse; `pictogram`/`shape`+`color` controls; frown,
+raise_glass states; `thing_screen_point` for map things too).
 
-`feature/bedsit-raves` `a89f29ba`: the cloakroom and the Space rave merged (the bar `wip/play-bar` next). Known red: `run_matrix`
-76 ("bedsit leads to bedsit", the placeholder raves loop home) being fixed on `wip/play-bedsit-fix`. The activities are
-staged per ruling 38 as data (things, people, feedback) and need A8 to draw; their shots are data previews, not the stage.
+`feature/doom-layout-worlds` `bb1b7ccb` (pushed): Warehouse pilot on the new rail + A7; filters green. **Stage C wave 1
+running**: `wip/env-bar` (MAP02), `wip/env-booth` (MAP04), `wip/env-chill` (MAP08 lounge), worktrees `MusicGame-env-bar/
+-booth/-chill`, Sonnet, each on the pilot's pipeline. Wave 2 after: Balcony, Dock, Mothership, Underworld.
 
-`feature/shared-contracts` `7cfa6cc4` (pushed): the nine contracts, fixtures, the stem lock, the renderer and rail
-extension, the gameplay hooks (activity modes, save v3, holds, relaxed node, threshold walk, stem unlock), the
-art standard images.
-
-`feature/doom-layout-worlds` `f89d96f5`: the conversion chain, all eight maps traced (approximate), the Warehouse
-pilot on the new rail (via polylines, holds, choice viewpoint held 8 bars, railings, clipped visibility, 0 rail
-problems on the five Doom scenes). Not done there: the exit walks (ahead/left/right door walks) still jump to the
-next scene's arrival; `rail.routes` is checked and shot, not played. Filters after the merge: see the checkpoint
-line below.
-
-`feature/bedsit-raves` `9de607c6` (pushed): the bedsit (room, path, four facings, `RW_BEDSIT=1`,
-`tools\dev\play_bedsit.cmd`, placeholder rave nodes). Running on top, one agent each (Sonnet):
-`wip/play-space` (`MusicGame-space`: the Space rave on the Mothership geography, hub choice viewpoint, stage
-route, the bass-knob puzzle on `lock_stems`/`unlock_stem_at`), `wip/play-cloakroom` (`MusicGame-cloakroom`:
-same/different in replace mode, `src/minigames/cloakroom/`), `wip/play-bar` (`MusicGame-bar`: recipe memory,
-`src/minigames/bar/`). Then the race, the other three raves, progression.
+`feature/bedsit-raves` `3d1d4c01` (pushed): the bedsit, the Space rave (hub hold, bass knob), the cloakroom, the bar, the
+bedsit fix (placeholder raves end the path; the run matrix accepts a relaxed node) + A7; all filters green incl.
+run_matrix. The activities are staged as data (things, people, feedback, pad-slot controls) and draw nothing until A8 lands;
+`tools/run/make_bedsit.py --bedsit` rewrites themes.json WITHOUT the cloakroom and bar blocks (restore from Git after a
+regenerate, or teach the generator to keep them: a hook for the rave wave). Next on this stream after A8: the race, the
+Magic/Dinos/Transport raves, the activities placed in the Space rave, A8b (the card table converted to ruling 38).
 
 ## Worktrees and agents
 
@@ -70,12 +59,14 @@ same/different in replace mode, `src/minigames/cloakroom/`), `wip/play-bar` (`Mu
 | `MusicGame-play` | `feature/bedsit-raves` | integration, gameplay |
 | `MusicGame-engine` | `wip/engine-choice` | A7 merged |
 | `MusicGame-props` | `wip/engine-props` | A8 running (Opus): dynamic things, people states, feedback, pad-slot morph (ruling 38, contract 10) |
-| `MusicGame-music` | `wip/narr-hospital-fix` | Hospital fix running |
-| `MusicGame-import` | `wip/narr-ward-fix` | Ward fix running |
+| `MusicGame-music` | `wip/narr-hospital-fix` | merged |
+| `MusicGame-import` | `wip/narr-ward-fix` | merged |
+| `MusicGame-wiring` | `wip/wiring` | wiring running (Opus) |
+| `MusicGame-env-bar`, `-booth`, `-chill` | `wip/env-bar`, `-booth`, `-chill` | wave 1 running |
 | `MusicGame-space` | `wip/play-space` | merged |
 | `MusicGame-cloakroom` | `wip/play-cloakroom` | merged |
-| `MusicGame-bar` | `wip/play-bar` | to merge |
-| `MusicGame-bedsit` | `wip/play-bedsit-fix` | run_matrix fix running |
+| `MusicGame-bar` | `wip/play-bar` | merged |
+| `MusicGame-bedsit` | `wip/play-bedsit-fix` | merged |
 | `MusicGame-envwh` | `wip/env-warehouse-rail` | merged |
 | `MusicGame-envtools` | `wip/env-tools` | merged |
 | `MusicGame-graph`, `-herald`, `-narr`, `-art`, `-docs` | stage A wip branches | merged, to remove |
