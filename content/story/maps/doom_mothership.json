@@ -658,7 +658,8 @@
    "flags": [],
    "doom_sector": 17,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "18_0",
@@ -691,7 +692,8 @@
    "flags": [],
    "doom_sector": 18,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "19_0",
@@ -724,7 +726,8 @@
    "flags": [],
    "doom_sector": 19,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "20_0",
@@ -757,7 +760,8 @@
    "flags": [],
    "doom_sector": 20,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "21_0",
@@ -790,7 +794,8 @@
    "flags": [],
    "doom_sector": 21,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "22_0",
@@ -823,7 +828,8 @@
    "flags": [],
    "doom_sector": 22,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "23_0",
@@ -856,7 +862,8 @@
    "flags": [],
    "doom_sector": 23,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "24_0",
@@ -889,7 +896,8 @@
    "flags": [],
    "doom_sector": 24,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "25_0",
@@ -922,7 +930,8 @@
    "flags": [],
    "doom_sector": 25,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "26_0",
@@ -955,7 +964,8 @@
    "flags": [],
    "doom_sector": 26,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "27_0",
@@ -988,7 +998,8 @@
    "flags": [],
    "doom_sector": 27,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "28_0",
@@ -1021,7 +1032,8 @@
    "flags": [],
    "doom_sector": 28,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "29_0",
@@ -1054,7 +1066,8 @@
    "flags": [],
    "doom_sector": 29,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "30_0",
@@ -1087,7 +1100,8 @@
    "flags": [],
    "doom_sector": 30,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "31_0",
@@ -1120,7 +1134,8 @@
    "flags": [],
    "doom_sector": 31,
    "step_tex": "ms_wall_dark",
-   "lip_tex": "ms_trim"
+   "lip_tex": "ms_trim",
+   "void": true
   },
   {
    "id": "32_0",
@@ -2538,8 +2553,8 @@
    "kind": "billboard",
    "sprite": "guide_dock_idle_0",
    "at": [
-    6.749,
-    -5.957
+    8.274,
+    -7.536
    ],
    "y": 1.1,
    "size": 2.2,
@@ -3520,8 +3535,8 @@
    "id": "ms_lamp_dock",
    "kind": "light",
    "at": [
-    8.274,
-    -7.536
+    7.425,
+    -6.575
    ],
    "y": 2.6,
    "radius": 3.0,
@@ -3893,8 +3908,8 @@
   "ms_guide_dock": {
    "sector": "33_0",
    "at": [
-    6.749,
-    -5.957
+    8.274,
+    -7.536
    ]
   }
  },
@@ -4067,13 +4082,13 @@
    "hold_bars": 2
   },
   {
-   "id": "ms_void_view",
+   "id": "ms_bridge_view",
    "at": [
-    7.486,
-    -16.006
+    0.0,
+    -10.0
    ],
-   "yaw": 113.7,
-   "sector": "5_0",
+   "yaw": -119.6,
+   "sector": "16_0",
    "hold_bars": 2
   },
   {
@@ -4099,10 +4114,10 @@
   {
    "id": "ms_dock_in",
    "at": [
-    9.5676,
-    -5.5637
+    8.3056,
+    -4.3017
    ],
-   "yaw": -128.7,
+   "yaw": -136.6,
    "sector": "34_0",
    "hold_bars": 1
   },
@@ -4143,24 +4158,6 @@
    "sector": "3_0"
   },
   {
-   "id": "ms_v_a5",
-   "at": [
-    7.75,
-    -14.0
-   ],
-   "yaw": 7.0,
-   "sector": "4_0"
-  },
-  {
-   "id": "ms_v_a6",
-   "at": [
-    7.16,
-    -16.966
-   ],
-   "yaw": 29.3,
-   "sector": "5_0"
-  },
-  {
    "id": "ms_v_uw",
    "at": [
     7.8837,
@@ -4172,10 +4169,10 @@
   {
    "id": "ms_v_dk",
    "at": [
-    5.798,
-    -8.202
+    5.487,
+    -7.906
    ],
-   "yaw": -122.5,
+   "yaw": -141.2,
    "sector": "2_0"
   },
   {
@@ -4722,12 +4719,10 @@
     "ms_hub_view",
     "ms_v_a3",
     "ms_stair_view",
-    "ms_v_a5",
-    "ms_void_view",
-    "ms_v_a5",
-    "ms_v_a4",
     "ms_v_a3",
     "ms_v_a2",
+    "ms_v_a1",
+    "ms_bridge_view",
     "ms_v_a1",
     "ms_ref"
    ],

@@ -57,8 +57,8 @@ def ahead(at_r, at_ang, deg=14.0):
     return P(at_r, at_ang + deg)
 
 
-GUIDE_AT = {"underworld": P(11.6, 6.0), "booth": (0.0, 15.8), "dock": P(10.5, -50.0)}
-UW_AT, DK_AT = P(13.2, -4.0), P(12.8, -41.0)
+GUIDE_AT = {"underworld": P(11.6, 6.0), "booth": (0.0, 15.8), "dock": P(10.5, -38.0)}
+UW_AT, DK_AT = P(13.2, -4.0), P(12.8, -49.0)
 
 # id, point (m), look-at point (m), hold_bars (0 = a moving place), what it is.  Names starting ms_v_ are via points only: corners of the polyline moves, never stood on.
 WAYPOINTS = [
@@ -68,26 +68,24 @@ WAYPOINTS = [
     ("ms_sw_corner", P(RING, -140.0), REF_LOOK, 0, "recovery: along the rim"),
     ("ms_hub_view", P(RING, -72.0), (0.0, 15.5), 2, "reveal: the ring's south, the platform in the void and the Booth guide across the railing"),
     ("ms_stair_view", P(RING, -28.0), P(13.0, 0.0), 2, "reveal: the ring's east, the stair and the hatch up to the Underworld"),
-    ("ms_void_view", P(RING, 15.0), (-0.5, 12.5), 2, "reveal: the ring's north east looking back across the void at the bridge and the platform"),
+    ("ms_bridge_view", P(4.0, -90.0), P(11.0, -48.0), 2, "reveal: the middle of the bridge, the void on both sides, looking back along the ring to the Dock hatch"),
     ("ms_uw_hatch", UW_AT, P(15.5, -4.0), 1, "THRESHOLD ahead (Underworld): the hatch at the top of the stair, the world transition happens here"),
     ("ms_booth_hatch", (0.0, 13.6), (0.0, 17.0), 1, "THRESHOLD left (Booth): the hatch on the platform, the world transition happens here"),
-    ("ms_dock_in", DK_AT, P(15.0, -41.0), 1, "THRESHOLD right (Dock): through the outer wall's hatch onto the dock, the world transition happens here"),
+    ("ms_dock_in", DK_AT, P(15.0, -49.0), 1, "THRESHOLD right (Dock): through the outer wall's hatch onto the dock, the world transition happens here"),
     # via points (corners of the polyline moves; the ring ones are 22.5 degrees apart: the chord stays 1.1 m off the rim)
     ("ms_v_a1", P(RING, -90.0), P(RING, -76.0), 0, "via: the ring's south, in front of the bridge"),
     ("ms_v_a2", P(RING, -67.5), P(RING, -53.0), 0, "via: the ring"),
     ("ms_v_a3", P(RING, -45.0), P(RING, -31.0), 0, "via: the ring in front of the Dock hatch"),
     ("ms_v_a4", P(RING, -22.5), P(RING, -8.0), 0, "via: the ring"),
-    ("ms_v_a5", P(RING, 0.0), P(RING, 14.0), 0, "via: the ring, east"),
-    ("ms_v_a6", P(RING, 22.5), P(RING, 36.0), 0, "via: the ring, north east"),
     ("ms_v_uw", P(8.0, -8.0), P(13.0, -4.0), 0, "via: the foot of the Underworld stair"),
-    ("ms_v_dk", P(8.2, -45.0), P(12.0, -41.0), 0, "via: in front of the Dock hatch"),
+    ("ms_v_dk", P(8.2, -48.0), P(12.0, -49.0), 0, "via: in front of the Dock hatch"),
     ("ms_v_br", P(4.6, -90.0), (0.0, 13.6), 0, "via: the middle of the bridge"),
 ]
 ROUTES = {
     "ahead": ["ms_v_a1", "ms_v_a2", "ms_v_a3", "ms_v_a4", "ms_v_uw", "ms_uw_hatch"],
     "left": ["ms_v_a1", "ms_v_br", "ms_booth_hatch"],
     "right": ["ms_v_a1", "ms_v_a2", "ms_v_dk", "ms_dock_in"],
-    "stay": ["ms_v_a1", "ms_hub_view", "ms_v_a3", "ms_stair_view", "ms_v_a5", "ms_void_view", "ms_v_a5", "ms_v_a4", "ms_v_a3", "ms_v_a2", "ms_v_a1", "ms_ref"],
+    "stay": ["ms_v_a1", "ms_hub_view", "ms_v_a3", "ms_stair_view", "ms_v_a3", "ms_v_a2", "ms_v_a1", "ms_bridge_view", "ms_v_a1", "ms_ref"],
     "arrive": ["ms_arrive", "ms_ref"],
     "stumble": ["ms_ref_back", "ms_sw_corner", "ms_ref"],
 }
@@ -121,7 +119,7 @@ STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
 GUIDES = {  # id suffix: point (m), size (height m), lamp point (m)
     "underworld": (GUIDE_AT["underworld"], 2.2, P(11.6, -6.0)),
     "booth": (GUIDE_AT["booth"], 2.2, (-1.1, 15.8)),
-    "dock": (GUIDE_AT["dock"], 2.2, P(10.5, -38.0)),
+    "dock": (GUIDE_AT["dock"], 2.2, P(10.5, -45.0)),
 }
 BORROWED = ["thing_pendant", "trim"]
 
@@ -256,6 +254,8 @@ def main():
         f, w, c, tint, step = style_of(nm)
         s["floor_tex"], s["wall_tex"], s["ceil_tex"], s["tint"], s["step_tex"] = f, w, c, lift(tint), step
         s["lip_tex"] = "ms_trim"
+        if nm.startswith("void_"):
+            s["void"] = True  # marked: the depth rule cannot see it (its neighbours include the other wedges, as deep)
         s["room"] = "main"
         s["light"] = round(min(1.0, max(LIGHT_FLOOR if not nm.startswith("void_") else 0.35, float(s["light"]) * LIGHT_GAIN)), 3)
         for k in ("floor_tex", "wall_tex", "ceil_tex", "step_tex", "lip_tex"):

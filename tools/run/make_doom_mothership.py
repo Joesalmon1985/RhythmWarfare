@@ -25,12 +25,12 @@ def _rail(P):
     good = [
         P("ms_hub_view", bars=3, hold=2, via=["ms_v_a1"]),
         P("ms_stair_view", bars=3, hold=2, via=["ms_v_a3"]),
-        P("ms_void_view", bars=4, hold=2, via=["ms_v_a5"]),
-        P("ms_ref", bars=7, hold=8, choice=True, via=["ms_v_a5", "ms_v_a4", "ms_v_a3", "ms_v_a2", "ms_v_a1"]),
+        P("ms_bridge_view", bars=4, hold=2, via=["ms_v_a3", "ms_v_a2", "ms_v_a1"]),
+        P("ms_ref", bars=3, hold=8, choice=True, via=["ms_v_a1"]),
     ]
     bad = [P("ms_ref_back", "queasy", "walk", 2), P("ms_sw_corner", "queasy", "stagger", 3)]
     routes = {
-        "up": P("ms_uw_hatch", "dancer", bars=6, hold=1, via=ring + ["ms_v_uw"]),
+        "up": P("ms_uw_hatch", "dancer", bars=7, hold=1, via=ring + ["ms_v_uw"]),
         "left": P("ms_booth_hatch", "dancer", bars=4, hold=1, via=["ms_v_a1", "ms_v_br"]),
         "right": P("ms_dock_in", "dancer", bars=4, hold=1, via=["ms_v_a1", "ms_v_a2", "ms_v_dk"]),
         "stumble": P("ms_ref", "recovered", "stagger", bars=3, via=["ms_ref_back", "ms_sw_corner"]),

@@ -3510,12 +3510,14 @@
        "hold_bars": 2
       },
       {
-       "to": "ms_void_view",
+       "to": "ms_bridge_view",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
        "via": [
-        "ms_v_a5"
+        "ms_v_a3",
+        "ms_v_a2",
+        "ms_v_a1"
        ],
        "hold_bars": 2
       },
@@ -3523,12 +3525,8 @@
        "to": "ms_ref",
        "role": "dancer",
        "style": "walk",
-       "bars": 7,
+       "bars": 3,
        "via": [
-        "ms_v_a5",
-        "ms_v_a4",
-        "ms_v_a3",
-        "ms_v_a2",
         "ms_v_a1"
        ],
        "hold_bars": 8,
@@ -3561,7 +3559,7 @@
        "to": "ms_uw_hatch",
        "role": "dancer",
        "style": "walk",
-       "bars": 6,
+       "bars": 7,
        "via": [
         "ms_v_a1",
         "ms_v_a2",
@@ -3677,12 +3675,14 @@
        "hold_bars": 2
       },
       {
-       "to": "ms_void_view",
+       "to": "ms_bridge_view",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
        "via": [
-        "ms_v_a5"
+        "ms_v_a3",
+        "ms_v_a2",
+        "ms_v_a1"
        ],
        "hold_bars": 2
       },
@@ -3690,12 +3690,8 @@
        "to": "ms_ref",
        "role": "dancer",
        "style": "walk",
-       "bars": 7,
+       "bars": 3,
        "via": [
-        "ms_v_a5",
-        "ms_v_a4",
-        "ms_v_a3",
-        "ms_v_a2",
         "ms_v_a1"
        ],
        "hold_bars": 8,
@@ -3728,7 +3724,7 @@
        "to": "ms_uw_hatch",
        "role": "dancer",
        "style": "walk",
-       "bars": 6,
+       "bars": 7,
        "via": [
         "ms_v_a1",
         "ms_v_a2",
@@ -3844,12 +3840,14 @@
        "hold_bars": 2
       },
       {
-       "to": "ms_void_view",
+       "to": "ms_bridge_view",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
        "via": [
-        "ms_v_a5"
+        "ms_v_a3",
+        "ms_v_a2",
+        "ms_v_a1"
        ],
        "hold_bars": 2
       },
@@ -3857,12 +3855,8 @@
        "to": "ms_ref",
        "role": "dancer",
        "style": "walk",
-       "bars": 7,
+       "bars": 3,
        "via": [
-        "ms_v_a5",
-        "ms_v_a4",
-        "ms_v_a3",
-        "ms_v_a2",
         "ms_v_a1"
        ],
        "hold_bars": 8,
@@ -3895,7 +3889,7 @@
        "to": "ms_uw_hatch",
        "role": "dancer",
        "style": "walk",
-       "bars": 6,
+       "bars": 7,
        "via": [
         "ms_v_a1",
         "ms_v_a2",
@@ -4011,12 +4005,14 @@
        "hold_bars": 2
       },
       {
-       "to": "ms_void_view",
+       "to": "ms_bridge_view",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
        "via": [
-        "ms_v_a5"
+        "ms_v_a3",
+        "ms_v_a2",
+        "ms_v_a1"
        ],
        "hold_bars": 2
       },
@@ -4024,12 +4020,8 @@
        "to": "ms_ref",
        "role": "dancer",
        "style": "walk",
-       "bars": 7,
+       "bars": 3,
        "via": [
-        "ms_v_a5",
-        "ms_v_a4",
-        "ms_v_a3",
-        "ms_v_a2",
         "ms_v_a1"
        ],
        "hold_bars": 8,
@@ -4062,7 +4054,7 @@
        "to": "ms_uw_hatch",
        "role": "dancer",
        "style": "walk",
-       "bars": 6,
+       "bars": 7,
        "via": [
         "ms_v_a1",
         "ms_v_a2",
@@ -4185,12 +4177,14 @@
        "hold_bars": 2
       },
       {
-       "to": "ms_void_view",
+       "to": "ms_bridge_view",
        "role": "dancer",
        "style": "walk",
        "bars": 4,
        "via": [
-        "ms_v_a5"
+        "ms_v_a3",
+        "ms_v_a2",
+        "ms_v_a1"
        ],
        "hold_bars": 2
       },
@@ -4198,12 +4192,8 @@
        "to": "ms_ref",
        "role": "dancer",
        "style": "walk",
-       "bars": 7,
+       "bars": 3,
        "via": [
-        "ms_v_a5",
-        "ms_v_a4",
-        "ms_v_a3",
-        "ms_v_a2",
         "ms_v_a1"
        ],
        "hold_bars": 8,
@@ -4236,7 +4226,7 @@
        "to": "ms_uw_hatch",
        "role": "dancer",
        "style": "walk",
-       "bars": 6,
+       "bars": 7,
        "via": [
         "ms_v_a1",
         "ms_v_a2",
