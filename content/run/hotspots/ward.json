@@ -33,7 +33,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward.exit_dorm",
@@ -67,7 +70,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward.orderly",
@@ -143,6 +149,9 @@
       "beats": 12
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -181,7 +190,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "ward.cards",
@@ -225,6 +237,9 @@
    "pass_credit": 0.25,
    "on_select": {
     "cinematic": "ward.cards_approach"
+   },
+   "show": {
+    "archetype": "object"
    }
   },
   {
@@ -274,6 +289,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -323,6 +341,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -372,6 +393,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -421,6 +445,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -455,7 +482,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward.art.painter",
@@ -531,6 +561,9 @@
       "beats": 8
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -566,7 +599,10 @@
     "energy": -4
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "ward.dorm.exit_corridor",
@@ -600,7 +636,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward.dorm.sleeper",
@@ -670,6 +709,9 @@
       "look_at": "camera"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -707,7 +749,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "ward.corridor.exit_courtyard",
@@ -741,7 +786,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward.corridor.phone",
@@ -776,7 +824,10 @@
     "energy": -3
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "ward.corridor.king",
@@ -847,6 +898,9 @@
       "look_at": "camera"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -887,7 +941,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "ward.courtyard.exit_exit",
@@ -921,7 +978,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward.courtyard.chef",
@@ -999,6 +1059,9 @@
       "beats": 8
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -1036,7 +1099,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "ward.exit.exit_hospital_late",
@@ -1070,7 +1136,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward.exit.exit_ward_late",
@@ -1104,7 +1173,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward.exit.talent_lamp",
@@ -1146,7 +1218,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "ward.art.enter_bassment",
@@ -1195,6 +1270,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1244,6 +1322,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1293,6 +1374,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1342,6 +1426,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   }
  ]

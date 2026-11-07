@@ -308,7 +308,7 @@ func test_the_save_gains_paths_and_an_old_save_is_migrated() -> void:
 	var p := RunProgress.load_data(TMP_SAVE, "user://none.json")
 	assert_false(p.recovered_from_corrupt, "an old save is read, not set aside")
 	assert_eq(p.paths, {}, "the paths are added on load")
-	assert_eq(int(p.data["version"]), 2, "the version stays 2")
+	assert_eq(int(p.data["version"]), RunProgress.VERSION, "the version is the current one (3: ruling 37)")
 	assert_true(p.is_reached("mothership") and p.flags.has("keep:x"), "nothing else changes")
 	assert_true(p.path_enter("stub", "stub"), "a new path world is new")
 	assert_false(p.path_enter("stub", "stub"), "and then it is not")
@@ -319,7 +319,7 @@ func test_the_save_gains_paths_and_an_old_save_is_migrated() -> void:
 	assert_false(p.reached_ids().has("stub"), "a path's worlds never enter the main run's reached levels")
 	var q := RunProgress.load_data(TMP_SAVE, "user://none.json")
 	assert_eq(q.paths, {"stub": {"reached": ["stub"], "endings": ["done"]}}, "and it round-trips")
-	assert_eq(int(q.data["version"]), 2)
+	assert_eq(int(q.data["version"]), RunProgress.VERSION)
 	# a fresh save and the chapter migration carry the key too
 	_rm(TMP_SAVE)
 	var f := RunProgress.load_data(TMP_SAVE, "user://none.json")

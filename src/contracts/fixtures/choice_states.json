@@ -1,0 +1,33 @@
+{
+	"things": [
+		{
+			"hotspot": "space.stage_route",
+			"thing": "roadie_bot",
+			"archetype": "figure",
+			"target": {"bounds": "art", "margin_px": 24, "min_px": 88},
+			"states": {
+				"idle": {"frames": ["space/roadie_idle"], "motion": "still", "light": {"floor_glow": 0.0}},
+				"available": {"frames": ["space/roadie_wave_a", "space/roadie_wave_b"], "motion": "beckon", "frame_beats": 1.0, "light": {"floor_glow": 0.35, "tint": "#9fe8ff"}},
+				"selected": {"frames": ["space/roadie_point"], "motion": "lean", "light": {"floor_glow": 0.8, "tint": "#c8f4ff"}, "sound": "choice_select_soft"},
+				"committed": {"frames": ["space/roadie_lead"], "motion": "step_aside", "light": {"floor_glow": 1.0, "lamp": "open"}, "sound": "choice_commit"},
+				"declined": {"frames": ["space/roadie_idle"], "motion": "still", "light": {"floor_glow": 0.0}},
+				"cost": {"frames": ["space/roadie_shrug"], "motion": "slump", "light": {"floor_glow": 0.0, "lamp": "dim", "tint": "#ff7a5a"}, "sound": "choice_cost"}
+			}
+		},
+		{
+			"hotspot": "space.home",
+			"thing": "bedsit_portal",
+			"archetype": "door",
+			"target": {"bounds": "art", "margin_px": 24, "min_px": 88},
+			"states": {
+				"idle": {"frames": ["space/hatch_shut"], "motion": "still", "light": {"floor_glow": 0.0}},
+				"available": {"frames": ["space/hatch_shut"], "motion": "pulse", "light": {"floor_glow": 0.3, "lamp": "lit"}},
+				"selected": {"frames": ["space/hatch_ajar"], "motion": "still", "light": {"floor_glow": 0.7, "lamp": "lit"}, "sound": "door_creak"},
+				"committed": {"frames": ["space/hatch_open"], "motion": "still", "light": {"floor_glow": 1.0, "lamp": "open"}, "sound": "door_open"},
+				"declined": {"frames": ["space/hatch_shut"], "motion": "still", "light": {"floor_glow": 0.0, "lamp": "off"}},
+				"cost": {"frames": ["space/hatch_jammed"], "motion": "shake", "light": {"floor_glow": 0.0, "lamp": "dim", "tint": "#ff7a5a"}, "sound": "door_jam"}
+			}
+		}
+	],
+	"timing": {"respond_within_s": 0.1, "swap_beats": 1.0, "commit": "boundary", "cost_beats": 2.0}
+}

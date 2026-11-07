@@ -1,6 +1,6 @@
 extends TestCase
 ## Hotspot projection and hit testing (HotspotView.layout / hit): anchors project through StoryProjector, a touch target is at least min_px wide, the nearest hotspot within its radius wins,
-## and an anchor out of sight is still a touchable beacon at the edge of the picture.
+## and an anchor out of sight has no target with the rings off (package A7; with RINGS on it was a touchable beacon at the edge of the picture).
 
 
 func _entry(id: String, anchor: Dictionary, extra: Dictionary = {}) -> Dictionary:
@@ -37,7 +37,7 @@ func test_a_touch_target_is_never_under_min_px_and_stays_inside_the_view() -> vo
 	var pose := _pose_at(m, "floor_centre")
 	var ents := [_entry("a", {"waypoint": "to_bar"}), _entry("b", {"waypoint": "to_balcony"}), _entry("c", {"thing": "disco_ball"}), _entry("far", {"pos": [0.0, 1.0, -8.0]}, {"radius_m": 0.05})]
 	var lay := HotspotView.layout(ents, m, {}, pose, view)
-	assert_eq(lay.size(), 4)
+	assert_true(lay.size() >= (4 if HotspotView.RINGS else 3), "every anchor in the picture is laid out (one is out of sight from here: with the rings off it has no target) (%d)" % lay.size())
 	for e in lay:
 		assert_true(float(e["radius_px"]) * 2.0 >= 88.0 - 0.001, "%s is at least 88 px wide (%s)" % [e["id"], str(float(e["radius_px"]) * 2.0)])
 		var c: Vector2 = e["centre"]
@@ -63,6 +63,11 @@ func test_an_anchor_out_of_sight_is_a_beacon_at_the_edge_that_can_still_be_touch
 	pose["yaw"] = 0.0
 	var ents := [_entry("bar", {"thing": "bar_glow"}), _entry("behind", {"pos": [0.0, 1.0, 12.0]})]
 	var lay := HotspotView.layout(ents, m, {}, pose, view)
+	if not HotspotView.RINGS:  # (package A7, ruling 35b: no beacon; what is out of the picture has no target and a tap at the edge selects nothing)
+		assert_false(lay.any(func(e: Dictionary) -> bool: return str(e["id"]) == "behind"), "an anchor out of sight is not laid out: no beacon, no target")
+		assert_false(lay.any(func(e: Dictionary) -> bool: return bool(e["edge"])), "nothing stacked at the edge")
+		assert_eq(HotspotView.hit(lay, Vector2(view.x - 20.0, view.y * 0.3)), "", "a tap where the beacon stood selects nothing")
+		return
 	var edge := 0
 	for e in lay:
 		if bool(e["edge"]):

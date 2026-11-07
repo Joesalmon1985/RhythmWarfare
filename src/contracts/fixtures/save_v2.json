@@ -1,0 +1,12 @@
+{
+	"version": 2,
+	"reached": {"warehouse": {"entries": 3}},
+	"runs": 4,
+	"best_phases": 9,
+	"migrated_from": "",
+	"flags": {"keep:wh_saw_star": true},
+	"paths": {"gospel": {"reached": ["galilee"], "endings": []}},
+	"wallet": {"pence": 2000, "held": {}},
+	"seed": 12345,
+	"narrative": {"version": 1}
+}

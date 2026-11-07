@@ -17,6 +17,8 @@ const WINDOW_GLANCE_DEG := 8.0  # the glance of the hotspot window turns the hea
 const DENSE_PER_BAR := 4  # more notes than this in a bar (one per beat) is a dense bar
 const ROLES := ["dancer", "on_stage", "dj", "queasy", "sick", "recovered"]
 const STYLES := ["walk", "stagger", "run", "climb", "carried"]
+## A choice viewpoint (a rail place with "choice": true, docs/story/HEIGHTS_AND_PATHS.md) holds at least this many bars: the whole choice window (RunJourney's beats 49 to 60.5).
+const CHOICE_HOLD_BARS := 3.0
 
 var node_id := ""
 var home := ""
@@ -33,7 +35,8 @@ var holds := 0  # consecutive holds
 var role := "dancer"
 var queasy := 0.0
 var sick_played := false
-var busy_until := -1.0  # song time until which a journey move is under way
+var busy_until := -1.0  # song time until which a journey move is under way (and its hold)
+var hold_from := -1.0  # song time the last move's hold (`hold_bars`) starts
 var visited: Array = []  # [{place, pos, role, kind}] one entry per block decision (tests and playtests read it)
 var places_seen: Dictionary = {}  # place waypoint -> times stood there
 
@@ -63,6 +66,12 @@ static func validate(id: String, rail: Variant) -> Array:
 			var b := float(p.get("bars", 3.0))
 			if b < MOVE_BARS_MIN or b > MOVE_BARS_MAX:
 				errors.append("node %s: rail.%s place %s lasts %.1f bars; moves last %d to %d bars" % [id, key, p["to"], b, int(MOVE_BARS_MIN), int(MOVE_BARS_MAX)])
+			if p.has("via") and (typeof(p["via"]) != TYPE_ARRAY or (p["via"] as Array).any(func(v: Variant) -> bool: return str(v) == "")):
+				errors.append("node %s: rail.%s place %s: via is a list of waypoints" % [id, key, p["to"]])
+			if float(p.get("hold_bars", 0.0)) < 0.0:
+				errors.append("node %s: rail.%s place %s: hold_bars is not negative" % [id, key, p["to"]])
+			if bool(p.get("choice", false)) and float(p.get("hold_bars", 0.0)) < CHOICE_HOLD_BARS - 1.0e-6:
+				errors.append("node %s: rail.%s place %s is a choice viewpoint holding %.1f bars; a choice viewpoint holds at least %.1f (the whole choice window)" % [id, key, p["to"], float(p.get("hold_bars", 0.0)), CHOICE_HOLD_BARS])
 	if (r.get("glances", []) as Array).is_empty() or (r.get("strolls", []) as Array).is_empty():
 		errors.append("node %s: every block needs a glance and a stroll to draw from (rail.glances and rail.strolls)" % id)
 	return errors
@@ -89,6 +98,7 @@ func reset() -> void:
 	queasy = 0.0
 	sick_played = false
 	busy_until = -1.0
+	hold_from = -1.0
 
 
 ## The waypoint of rail position `p` (home for 0).
@@ -102,6 +112,20 @@ func place_at(p: int) -> String:
 
 func place() -> String:
 	return place_at(pos)
+
+
+## The rail entry of the current place ({} at home).
+func place_spec() -> Dictionary:
+	if pos > 0:
+		return good[mini(pos, good.size()) - 1]
+	if pos < 0:
+		return bad[mini(-pos, bad.size()) - 1]
+	return {}
+
+
+## True when the rail stands on a choice viewpoint (its place has "choice": true): the choice window is held still there.
+func at_choice() -> bool:
+	return bool(place_spec().get("choice", false))
 
 
 func at_top() -> bool:
@@ -157,19 +181,34 @@ func _action(t0: float, action: String, args: Dictionary) -> Dictionary:
 	return {"t0": t0, "action": action, "args": args}
 
 
-func _move_to(out: Array, t0: float, wp: String, style: String, want_bars: float, notes: Array) -> float:
+## A journey move. `spec` may carry the leg's `via` (a polyline) and `hold_bars` (standing still at its end); `arrive_by` (song time, when later than t0) shortens the move so it
+## lands by then (the walk to a choice viewpoint lands before the choice window). A spec without those keys gives exactly the old move.
+func _move_to(out: Array, t0: float, wp: String, style: String, want_bars: float, notes: Array, spec: Dictionary = {}, arrive_by := -1.0) -> float:
 	var bars := pick_bars(want_bars, notes, t0, bpm)
-	out.append(_action(t0, "player_move", {"to": wp, "style": style, "bars": bars}))
-	busy_until = t0 + bars * bar_s()
+	if arrive_by > t0:
+		bars = minf(bars, (arrive_by - t0) / bar_s())
+	var args := {"to": wp, "style": style, "bars": bars}
+	if typeof(spec.get("via")) == TYPE_ARRAY and not (spec["via"] as Array).is_empty():
+		args["via"] = (spec["via"] as Array).duplicate()
+	var hold := maxf(float(spec.get("hold_bars", 0.0)), 0.0)
+	if hold > 0.0:
+		args["hold_bars"] = hold
+	out.append(_action(t0, "player_move", args))
+	hold_from = t0 + bars * bar_s()
+	busy_until = hold_from + hold * bar_s()
 	return bars
 
 
 ## A block decision at song time `t` (the decision beat of the block). Returns the actions it causes, steps the rail and records the place.
 ## `notes` is the level's cue list (the next block is already charted when a decision is made).
-func step(passed: bool, t: float, notes: Array) -> Array:
+## `window_t` (song time, optional) is when the next choice window opens: a move to a choice viewpoint lands by then.
+func step(passed: bool, t: float, notes: Array, window_t := -1.0) -> Array:
 	var out: Array = []
 	var before := pos
 	var kind := ""
+	if _in_hold(t, 0.0):  # the camera stands still (a route's holds, a leg's hold_bars): the rail does not move until the hold is over (ruling 35a)
+		visited.append({"place": place(), "pos": pos, "from": before, "role": role, "kind": "hold", "t": t, "queasy": queasy})
+		return out
 	if passed:
 		holds = 0
 		if pos < 0:  # winning back: one place towards the floor
@@ -177,7 +216,8 @@ func step(passed: bool, t: float, notes: Array) -> Array:
 			kind = "back" if pos < 0 else "home"
 			role = "recovered" if pos < 0 else "dancer"
 			var spec := _spec_back(pos)
-			var bars := _move_to(out, t, place_at(pos), "walk", float(spec.get("bars", 3.0)), notes)
+			var back := _back_spec(before, spec)
+			var bars := _move_to(out, t, place_at(pos), "walk", float(spec.get("bars", 3.0)), notes, back, window_t if bool(back.get("choice", false)) else -1.0)
 			out.append(_action(t, "player_role", {"role": "recovered"}))
 			if queasy > 0.0:
 				queasy = 0.0
@@ -189,7 +229,7 @@ func step(passed: bool, t: float, notes: Array) -> Array:
 			pos += 1
 			kind = "up"
 			var spec2: Dictionary = good[pos - 1]
-			var bars2 := _move_to(out, t, str(spec2["to"]), str(spec2.get("style", "walk")), float(spec2.get("bars", 3.0)), notes)
+			var bars2 := _move_to(out, t, str(spec2["to"]), str(spec2.get("style", "walk")), float(spec2.get("bars", 3.0)), notes, spec2, window_t if bool(spec2.get("choice", false)) else -1.0)
 			role = str(spec2.get("role", "dancer"))
 			out.append(_action(t + bars2 * bar_s(), "player_role", {"role": role}))  # you are on the stage once you have got there
 		else:
@@ -200,7 +240,8 @@ func step(passed: bool, t: float, notes: Array) -> Array:
 			pos = -1 if pos > 0 else pos - 1
 			kind = "down"
 			var spec3: Dictionary = bad[-pos - 1]
-			var bars3 := _move_to(out, t, str(spec3["to"]), str(spec3.get("style", "walk")), float(spec3.get("bars", 3.0)), notes)
+			var leg3 := spec3 if before <= 0 else _without_via(spec3)  # (a via is written from the place before it: home for the first bad place)
+			var bars3 := _move_to(out, t, str(spec3["to"]), str(spec3.get("style", "walk")), float(spec3.get("bars", 3.0)), notes, leg3, window_t if bool(spec3.get("choice", false)) else -1.0)
 			role = str(spec3.get("role", "queasy"))
 			out.append(_action(t, "player_role", {"role": role}))
 			if at_bottom():
@@ -221,6 +262,26 @@ func step(passed: bool, t: float, notes: Array) -> Array:
 	return out
 
 
+func _without_via(spec: Dictionary) -> Dictionary:
+	var s := spec.duplicate()
+	s.erase("via")
+	return s
+
+
+## The leg of a walk back from bad position `from` (< 0) to the place before it: the reversed `via` of the leg that came, the target's hold and choice.
+func _back_spec(from: int, target: Dictionary) -> Dictionary:
+	var s := {}
+	for k in ["hold_bars", "choice"]:
+		if target.has(k):
+			s[k] = target[k]
+	var came: Dictionary = bad[mini(-from, bad.size()) - 1] if from < 0 else {}
+	if typeof(came.get("via")) == TYPE_ARRAY and not (came["via"] as Array).is_empty():
+		var rv: Array = (came["via"] as Array).duplicate()
+		rv.reverse()
+		s["via"] = rv
+	return s
+
+
 ## A passed block from the bad rail goes back through the bad places and then home: the spec of the move to position `p` (<= 0).
 func _spec_back(p: int) -> Dictionary:
 	if p < 0:
@@ -235,7 +296,9 @@ func ambient(t_block: float, phase_n: int, block: int, notes: Array) -> Array:
 	var beat := 60.0 / bpm
 	var idx := phase_n * 4 + block + node_id.length()
 	var window := block >= 3  # the last block is the hotspot window: the head stays on the room (no look at the ceiling, no turn away from the hotspots; visual polish)
-	if not glances.is_empty():
+	if window and at_choice():  # a choice viewpoint: the camera stands still through the window (RunJourney holds it)
+		return out
+	if not glances.is_empty() and not _in_hold(t_block + 5.0 * beat, float((glances[idx % glances.size()] as Dictionary).get("bars", 2.0)) * bar_s()):
 		var g: Dictionary = glances[idx % glances.size()]
 		var by := float(g.get("by", 0.0))
 		var pitch := float(g.get("pitch", 0.0))
@@ -256,6 +319,11 @@ func ambient(t_block: float, phase_n: int, block: int, notes: Array) -> Array:
 					args[k] = float(s[k])
 			out.append(_action(t_s, "player_walk", args))
 	return out
+
+
+## True when [t, t + dur] overlaps the last move's hold (a glance there would move a camera that stands still).
+func _in_hold(t: float, dur: float) -> bool:
+	return hold_from >= 0.0 and busy_until > hold_from and t < busy_until and t + dur > hold_from
 
 
 ## Stepping into this node's world from another one (the passage walk): a cut to the doorway, then the walk to the floor, starting in the guard two beats before

@@ -33,7 +33,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward_late.exit_dorm",
@@ -67,7 +70,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward_late.stage_lamp",
@@ -101,7 +107,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "ward_late.fireflies",
@@ -136,7 +145,10 @@
     "energy": -4
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "ward_late.treat.exit_exit",
@@ -170,7 +182,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward_late.treat.orderly",
@@ -244,6 +259,9 @@
       "beats": 12
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -276,7 +294,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "ward_late.dorm.exit_exit",
@@ -310,7 +331,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward_late.dorm.sleeper",
@@ -379,6 +403,9 @@
       "look_at": "camera"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -416,7 +443,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "ward_late.exit.exit_ward_late",
@@ -450,7 +480,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward_late.exit.exit_hospital_late",
@@ -484,7 +517,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "ward_late.exit.stare",
@@ -559,6 +595,9 @@
       "look_at": "camera"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -608,6 +647,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -657,6 +699,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   }
  ]

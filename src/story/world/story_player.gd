@@ -17,6 +17,13 @@ const STYLES := {  # vertical dip m, sideways m, roll deg, footfalls per beat, g
 	"carried": {"v": 0.02, "h": 0.05, "roll": 1.2, "rate": 0.5, "ramp": 0.8},
 }
 const CROUCH_M := 0.55  # eye drop with the head down (sick_beat)
+## Polyline moves (player_move `via` / `path`, docs/story/HEIGHTS_AND_PATHS.md): the facing turns from the start yaw to the way ahead over the first PATH_TURN_IN of the move,
+## follows the way ahead (from PATH_LOOK_M behind to PATH_LOOK_M ahead along the path: a corner turns over that much walk), and turns to the arrival yaw over the last
+## PATH_TURN_OUT. Bob and roll are restrained to PATH_BOB.
+const PATH_TURN_IN := 0.2
+const PATH_TURN_OUT := 0.3
+const PATH_LOOK_M := 2.0
+const PATH_BOB := 0.6
 
 var map: StoryMap
 var bpm := 174.0
@@ -31,6 +38,8 @@ var _queasy: Array = []  # {t0, t1, amount}
 var _sick: Array = []  # {t0, t1}
 var _glances: Array = []  # {t0, t1, by, pitch}: authored head turns (yaw `by` and/or pitch up) on top of the rail's facing
 var _faces: Array = []  # {t0, t1, pts: [Vector4 (x, z, 1 for the one to keep, height or NAN)], turn_s, release_s}: the head held on points of the room (player_look `face`), whatever the rail does underneath
+var _holds: Array = []  # {t0, t1}: the camera stands still (no bob, no drift, no glance), eased in and out over a beat inside the span: a leg's `hold_bars`, player_hold
+var start_at := ""  # a waypoint the rail starts at instead of the map's start (StoryRailCheck plays a move from any place)
 var _seq := 0
 var _face_memo := {"t": NAN}  # the last face facing worked out ({t, yaw}): pose_at is asked for the same t several times a frame
 
@@ -48,6 +57,7 @@ func reset() -> void:
 	_sick = []
 	_glances = []
 	_faces = []
+	_holds = []
 	_face_memo = {"t": NAN}
 	_seq = 0
 	errors = []
@@ -58,7 +68,7 @@ func bar_s() -> float:
 
 
 func _initial_state() -> Dictionary:
-	var w := map.start_waypoint()
+	var w := map.waypoint(start_at) if start_at != "" and map.has_waypoint(start_at) else map.start_waypoint()
 	var sec := str(w.get("sector", ""))
 	return {"pos": w.get("at", Vector2.ZERO), "sector": sec, "yaw": float(w.get("yaw", 0.0)), "ground": float(map.sector(sec).get("floor", 0.0))}
 
@@ -70,7 +80,15 @@ func apply_action(a: Dictionary) -> bool:
 	var dur := float(args.get("bars", 2.0)) * bar_s()
 	match str(a["action"]):
 		"player_move":
-			_add({"kind": "move", "t0": t0, "t1": t0 + maxf(dur, 0.001), "to": str(args.get("to", "")), "style": str(args.get("style", "walk"))})
+			var mv := {"kind": "move", "t0": t0, "t1": t0 + maxf(dur, 0.001), "to": target_of(args), "style": str(args.get("style", "walk"))}
+			var via := via_of(args)
+			if not via.is_empty():  # a polyline: straight legs through these waypoints, then `to`
+				mv["via"] = via
+			if float(args.get("hold_bars", 0.0)) > 0.0:  # standing still at the end of the leg
+				_holds.append({"t0": float(mv["t1"]), "t1": float(mv["t1"]) + float(args["hold_bars"]) * bar_s()})
+			_add(mv)
+		"player_hold":  # the camera stands still: a choice window
+			_holds.append({"t0": t0, "t1": t0 + maxf(dur, 0.001)})
 		"player_walk":  # a walk inside a room (relative to where the rail is when it starts): see _plan_walk
 			_add({"kind": "move", "walk": args.duplicate(), "t0": t0, "t1": t0 + maxf(dur, 0.001), "to": str(args.get("to", "")), "style": str(args.get("style", "walk"))})
 		"player_look":
@@ -135,8 +153,74 @@ func _rebuild() -> void:
 		prev = ev
 
 
+## The waypoints a player_move walks through before its target: `via`, or every id of `path` but the last.
+static func via_of(args: Dictionary) -> Array:
+	var path: Variant = args.get("path", [])
+	if typeof(path) == TYPE_ARRAY and (path as Array).size() > 0:
+		return (path as Array).slice(0, (path as Array).size() - 1).map(func(x: Variant) -> String: return str(x))
+	var via: Variant = args.get("via", [])
+	return (via as Array).map(func(x: Variant) -> String: return str(x)) if typeof(via) == TYPE_ARRAY else []
+
+
+## A player_move's target: `to`, or the last id of `path`.
+static func target_of(args: Dictionary) -> String:
+	var path: Variant = args.get("path", [])
+	if typeof(path) == TYPE_ARRAY and (path as Array).size() > 0:
+		return str((path as Array)[(path as Array).size() - 1])
+	return str(args.get("to", ""))
+
+
+## A polyline move: each leg traced straight through the map (StoryMap.trace_segment), its portal crossings becoming points of the route so the eye ramps at each.
+## A leg that would cross a wall, a railing, a drop or a void is a data error (StoryRailCheck finds it first): recorded, and that leg walks the portal route instead.
+func _plan_path(ev: Dictionary) -> void:
+	var st: Dictionary = ev["start"]
+	var pts := PackedVector2Array([st["pos"]])
+	var legs: Array = []
+	var cur: Vector2 = st["pos"]
+	var cur_sec := str(st["sector"])
+	for wid in (ev["via"] as Array) + [str(ev["to"])]:
+		var wp := map.waypoint(str(wid))
+		if wp.is_empty():
+			errors.append("player_move via unknown waypoint %s" % wid)
+			continue
+		var tr := map.trace_segment(cur, wp["at"], cur_sec, str(ev["style"]))
+		var seg_pts := PackedVector2Array(tr["points"])
+		var seg_secs: Array = tr["sectors"]
+		if not (tr["errors"] as Array).is_empty():
+			errors.append("player_move leg to %s %s" % [wid, tr["errors"][0]])
+			var r := map.route(cur, cur_sec, wp["at"], str(wp["sector"]))
+			if (r["points"] as PackedVector2Array).size() >= 2:
+				seg_pts = (r["points"] as PackedVector2Array).slice(1)
+				seg_secs = r["sectors"]
+			else:
+				seg_pts = PackedVector2Array([wp["at"]])
+				seg_secs = [str(wp["sector"])]
+		for k in seg_pts.size():
+			if seg_pts[k].distance_to(pts[pts.size() - 1]) < 1.0e-6:
+				continue
+			pts.append(seg_pts[k])
+			legs.append(str(seg_secs[mini(k, seg_secs.size() - 1)]))
+		cur = wp["at"]
+		cur_sec = str(wp["sector"])
+	if pts.size() < 2:
+		pts.append(pts[0])
+		legs.append(str(st["sector"]))
+	var target := map.waypoint(str(ev["to"]))
+	ev["route"] = pts
+	ev["legs"] = legs
+	ev["end_yaw"] = float(target.get("yaw", st["yaw"]))
+	ev["end_sector"] = str(target.get("sector", st["sector"]))
+	var cum: Array = [0.0]
+	for i in range(1, pts.size()):
+		cum.append(float(cum[i - 1]) + pts[i - 1].distance_to(pts[i]))
+	ev["cum"] = cum
+
+
 func _plan_move(ev: Dictionary) -> void:
 	var st: Dictionary = ev["start"]
+	if ev.has("via"):
+		_plan_path(ev)
+		return
 	var target: Dictionary = map.waypoint(str(ev["to"]))
 	if target.is_empty():
 		errors.append("player_move to unknown waypoint %s" % ev["to"])
@@ -304,7 +388,54 @@ func _state_in(ev: Dictionary, t: float) -> Dictionary:
 	if u >= 1.0:
 		pos = pts[pts.size() - 1]
 		sector = str(ev["end_sector"])
-	return {"pos": pos, "sector": sector, "yaw": _lerp_yaw(float(st["yaw"]), float(ev["end_yaw"]), e), "ground": _ground(ev, d)}
+	var yaw := _lerp_yaw(float(st["yaw"]), float(ev["end_yaw"]), e)
+	if ev.has("via") and not cut and total > 1.0e-4:  # a polyline faces the way ahead in between
+		var ahead := _point_at(ev, minf(d + PATH_LOOK_M, total)) - _point_at(ev, maxf(d - PATH_LOOK_M, 0.0))
+		var head := rad_to_deg(atan2(-ahead.x, -ahead.y)) if ahead.length() > 1.0e-4 else float(ev["end_yaw"])
+		yaw = _lerp_yaw(float(st["yaw"]), head, _smooth(u / PATH_TURN_IN))
+		yaw = _lerp_yaw(yaw, float(ev["end_yaw"]), _smooth((u - (1.0 - PATH_TURN_OUT)) / PATH_TURN_OUT))
+	return {"pos": pos, "sector": sector, "yaw": yaw, "ground": _ground(ev, d)}
+
+
+## The point d metres along a planned move's route.
+static func _point_at(ev: Dictionary, d: float) -> Vector2:
+	var pts: PackedVector2Array = ev["route"]
+	var cum: Array = ev["cum"]
+	var leg := 0
+	while leg < pts.size() - 2 and d > float(cum[leg + 1]):
+		leg += 1
+	var seg := float(cum[leg + 1]) - float(cum[leg])
+	return pts[leg].lerp(pts[leg + 1], clampf((d - float(cum[leg])) / seg, 0.0, 1.0) if seg > 1.0e-6 else 1.0)
+
+
+## How far along its route (metres) a planned move is at song time t (the eased share of its length).
+static func distance_at(ev: Dictionary, t: float) -> float:
+	var u := clampf((t - float(ev["t0"])) / (float(ev["t1"]) - float(ev["t0"])), 0.0, 1.0)
+	var cum: Array = ev["cum"]
+	return _smooth(u) * float(cum[cum.size() - 1])
+
+
+## The half-width of the eye's ramp at a floor change between legs of `before` and `after` metres, for a style ramping over `ramp`: never more than 45 % of either leg.
+static func ramp_span(ramp: float, before: float, after: float) -> float:
+	return maxf(minf(ramp, 0.45 * minf(before, after)), 0.05)
+
+
+## The move event in force at t (its planned route, legs, cumulative lengths, style), or {}: StoryRailCheck reads it.
+func move_plan(t: float) -> Dictionary:
+	var ev := _event_at(t)
+	return ev if not ev.is_empty() and ev["kind"] == "move" else {}
+
+
+## How still the camera is at t: 1 inside a hold (a leg's hold_bars, a player_hold), easing in and out over a beat inside its span; 0 elsewhere.
+func still_at(t: float) -> float:
+	var w := 0.0
+	var beat := 60.0 / bpm
+	for h in _holds:
+		var t0 := float(h["t0"])
+		var t1 := float(h["t1"])
+		if t >= t0 and t <= t1:
+			w = maxf(w, minf(_smooth((t - t0) / beat), _smooth((t1 - t) / beat)))
+	return w
 
 
 ## Floor height under the walker after d metres of the route: each portal crossed changes the floor over a smooth ramp centred on the portal.
@@ -324,8 +455,7 @@ func _ground(ev: Dictionary, d: float) -> float:
 		var at := float(cum[k])
 		var before := float(cum[k]) - float(cum[k - 1])
 		var after := float(cum[k + 1]) - float(cum[k]) if k + 1 < cum.size() else INF
-		var half := minf(ramp_half, 0.45 * minf(before, after))
-		half = maxf(half, 0.05)
+		var half := StoryPlayer.ramp_span(ramp_half, before, after)
 		h += (ha - hb) * _smooth((d - (at - half)) / (2.0 * half))
 	return h
 
@@ -547,6 +677,7 @@ func pose_at(t: float) -> Dictionary:
 	var q := queasy_at(t)
 	var sick := sick_at(t)
 	var beats := t * bpm / 60.0
+	var still := still_at(t) if not _holds.is_empty() else 0.0
 	var bob := Vector3.ZERO  # x sideways (m), y vertical (m), z roll (deg)
 	if not reduced:
 		if moving:
@@ -558,6 +689,8 @@ func pose_at(t: float) -> Dictionary:
 				var lurch := pow(sin(TAU * beats / 6.0), 3.0)
 				bob.x += 0.12 * lurch * env
 				bob.z += 3.0 * lurch * env
+			if ev.has("via"):  # a polyline move keeps the head quieter
+				bob *= PATH_BOB
 		else:
 			match role:
 				"dancer", "recovered":
@@ -569,7 +702,14 @@ func pose_at(t: float) -> Dictionary:
 		bob.x += 0.05 * q * sin(PI * 0.25 * beats)
 		bob.z += 2.5 * q * sin(PI * 0.25 * beats + 1.0)
 	var drift := Vector2.ZERO if reduced or not drift_on else drift_at(t)
-	var rail_yaw := float(st["yaw"]) + glance_at(t)
+	var glance := glance_at(t)
+	var glance_pitch := pitch_at(t)
+	if still > 0.0:  # a hold: no bob, no drift, no glance
+		bob *= 1.0 - still
+		drift *= 1.0 - still
+		glance *= 1.0 - still
+		glance_pitch *= 1.0 - still
+	var rail_yaw := float(st["yaw"]) + glance
 	var yaw := rail_yaw
 	var face_pitch := 0.0
 	if not _faces.is_empty():
@@ -586,13 +726,13 @@ func pose_at(t: float) -> Dictionary:
 			yaw = _lerp_yaw(yaw, fy, fw)
 			face_pitch = face_tip(fc["pts"], st["pos"], fy, float(st["ground"]) + map.eye_height) * fw
 	yaw += drift.x
-	var pitch := pitch_at(t) + drift.y + face_pitch
+	var pitch := glance_pitch + drift.y + face_pitch
 	var pos: Vector2 = st["pos"]
 	var ground := float(st["ground"])
 	var eye := ground + map.eye_height + bob.y - CROUCH_M * sick
 	var side := StoryProjector.right(yaw) * bob.x
 	return {"cam": Vector3(pos.x + side.x, eye, pos.y + side.y), "yaw": yaw, "rail_yaw": rail_yaw + drift.x, "pitch": pitch, "roll": bob.z, "pos": pos, "sector": str(st["sector"]), "ground": ground,
-		"moving": moving, "style": style, "u": u, "role": role, "queasy": q, "sick": sick}
+		"moving": moving, "style": style, "u": u, "role": role, "queasy": q, "sick": sick, "still": still}
 
 
 ## The roles held in order of their start (the starting role, dancer, is not included).

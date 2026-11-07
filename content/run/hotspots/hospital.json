@@ -33,7 +33,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital.nurse",
@@ -114,6 +117,9 @@
       "beats": 8
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -188,6 +194,9 @@
       "face": "grief"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -223,7 +232,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "hospital.corridor.exit_dayroom",
@@ -257,7 +269,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital.corridor.exit_cafeteria",
@@ -291,7 +306,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital.corridor.trolley",
@@ -369,6 +387,9 @@
       "beats": 8
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -411,7 +432,10 @@
     "energy": -4
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "hospital.dayroom.exit_garden",
@@ -445,7 +469,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital.dayroom.tv",
@@ -484,7 +511,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "hospital.dayroom.granny",
@@ -561,6 +591,9 @@
       "look_at": "tv_set"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -595,7 +628,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital.cafeteria.vending",
@@ -637,7 +673,10 @@
     "energy": -3
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "hospital.cafeteria.kid",
@@ -707,6 +746,9 @@
       "face": "sad"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -741,7 +783,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital.garden.lamp",
@@ -778,7 +823,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "hospital.garden.mum",
@@ -854,6 +902,9 @@
       "face": "grief"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -888,7 +939,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital.exit.exit_ward_late",
@@ -922,7 +976,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "hospital.exit.mic",
@@ -961,7 +1018,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "hospital.enter_ember",
@@ -1018,6 +1078,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1067,6 +1130,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1124,6 +1190,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1180,6 +1249,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1229,6 +1301,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1286,6 +1361,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1342,6 +1420,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   }
  ]

@@ -33,7 +33,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "underworld.exit_furnace",
@@ -67,7 +70,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "underworld.bouncer",
@@ -145,6 +151,9 @@
       "beats": 12
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -224,6 +233,9 @@
       "beats": 12
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -265,7 +277,10 @@
     "energy": -9
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "underworld.court.exit_pit",
@@ -299,7 +314,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "underworld.court.seal",
@@ -338,7 +356,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "underworld.court.queen",
@@ -413,6 +434,9 @@
       "look_at": "camera"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -447,7 +471,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "underworld.furnace.anvil",
@@ -485,7 +512,10 @@
     "energy": -8
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "underworld.furnace.ladle",
@@ -521,7 +551,10 @@
     "energy": -7
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "underworld.pit.exit_exit",
@@ -555,7 +588,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "underworld.pit.lava_bridge",
@@ -597,7 +633,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "underworld.pit.brazier",
@@ -632,7 +671,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "underworld.exit.exit_hospital",
@@ -666,7 +708,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "underworld.exit.exit_ward",
@@ -700,7 +745,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "underworld.exit.throne",
@@ -742,7 +790,10 @@
     "energy": -10
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "underworld.enter_bassment",
@@ -791,6 +842,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -848,6 +902,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -905,6 +962,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -961,6 +1021,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1010,6 +1073,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1067,6 +1133,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1123,6 +1192,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   }
  ]

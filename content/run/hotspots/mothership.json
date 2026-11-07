@@ -33,7 +33,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "mothership.exit_reactor",
@@ -67,7 +70,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "mothership.grey",
@@ -150,6 +156,9 @@
       "look_at": "camera"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -226,6 +235,9 @@
       "look_at": "camera"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -260,7 +272,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "mothership.gallery.window",
@@ -298,7 +313,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "mothership.gallery.menu",
@@ -338,7 +356,10 @@
     "energy": -6
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "mothership.reactor.exit_bridge",
@@ -372,7 +393,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "mothership.reactor.core",
@@ -414,7 +438,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "mothership.reactor.engineer",
@@ -489,6 +516,9 @@
       "face": "grief"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -523,7 +553,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "mothership.bridge.helm",
@@ -565,7 +598,10 @@
     "music": "dip"
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "mothership.bridge.star_chart",
@@ -609,7 +645,10 @@
     "energy": -4
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "mothership.exit.exit_hospital",
@@ -643,7 +682,10 @@
     "energy": -5
    },
    "default": true,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "mothership.exit.exit_ward",
@@ -677,7 +719,10 @@
     "energy": -5
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "door"
+   }
   },
   {
    "id": "mothership.exit.exam",
@@ -752,6 +797,9 @@
       "face": "neutral"
      }
     }
+   },
+   "show": {
+    "archetype": "figure"
    }
   },
   {
@@ -794,7 +842,10 @@
     "energy": -6
    },
    "default": false,
-   "repeatable": true
+   "repeatable": true,
+   "show": {
+    "archetype": "object"
+   }
   },
   {
    "id": "mothership.enter_gospel",
@@ -851,6 +902,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -900,6 +954,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -956,6 +1013,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1013,6 +1073,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1062,6 +1125,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1119,6 +1185,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   },
   {
@@ -1175,6 +1244,9 @@
     ],
     "mark_y": 1.8,
     "gate": true
+   },
+   "show": {
+    "archetype": "door"
    }
   }
  ]
