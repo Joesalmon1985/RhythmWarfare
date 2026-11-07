@@ -1,6 +1,6 @@
 """Authors the Warehouse pilot scene into content/story/maps/doom_warehouse.json (docs/doom/scenes/warehouse.md).
 
-    python -I tools/doom/convert.py --scene warehouse --trace tools/doom/trace/warehouse.json     # the geometry (this script's input)
+    python -I tools/doom/trace/warehouse_scene.py; python -I tools/doom/convert.py --scene warehouse --trace tools/doom/trace/warehouse_pilot.json     # the geometry (this script's input)
     python -I tools/doom/author_warehouse.py                                                      # waypoints, textures, things, lights, spots (idempotent; run after every convert)
 
 All coordinates below are Doom units (32 = 1 m, x east, y north) and are converted like convert.py does (x_m = x / 32, z_m = -y / 32). A waypoint names the sector that holds it and
@@ -18,7 +18,7 @@ import sys
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 MAP = os.path.join(ROOT, "content", "story", "maps", "doom_warehouse.json")
-TRACE = os.path.join(ROOT, "tools", "doom", "trace", "warehouse.json")
+TRACE = os.path.join(ROOT, "tools", "doom", "trace", "warehouse_pilot.json")
 NIGHT = "res://assets/story/night_one/textures/"
 OWN = "textures/"
 MARGIN = 0.5
@@ -36,21 +36,21 @@ def face(a, b):
 
 # id, doom point, look-at doom point (or a yaw), hold_bars (0 = a moving place), what it is
 WAYPOINTS = [
-    ("wh_arrive", (-390, 705), (-390, 540), 0, "arrival: the far end of the north corridor"),
-    ("wh_door", (-390, 548), (-390, -300), 0, "arrival: the corridor mouth, the floor below"),
-    ("wh_ref", (0, -520), (0, 400), 8, "THE reference viewpoint: the floor's corner, stage ahead, bar left, lounge right"),
-    ("wh_ref_back", (0, -572), (0, 400), 0, "recovery: a stumble back along the walkway"),
-    ("wh_sw_corner", (-140, -555), (0, 300), 0, "recovery: the south-west corner"),
-    ("wh_fence", (330, -60), (500, 250), 4, "reveal: along the fence, the lounge opening beyond"),
-    ("wh_plinths", (-330, 150), (-105, 145), 4, "reveal: behind the plinths, the floor across the fence"),
-    ("wh_platform", (0, 0), (0, 500), 4, "reveal: up on the central platform, the stage across the floor"),
-    ("wh_stage_approach", (0, 335), (0, 520), 2, "approach to the stage"),
-    ("wh_stage_steps", (0, 398), (0, 520), 0, "approach: the foot of the stage steps"),
-    ("wh_stage_top", (0, 472), (0, 520), 0, "THRESHOLD ahead: on the stage, the world transition happens here"),
-    ("wh_bar_approach", (-60, -335), (-300, -335), 2, "approach to the bar"),
-    ("wh_bar_door", (-130, -335), (-380, -335), 0, "THRESHOLD left: the bar's opening"),
-    ("wh_lounge_approach", (60, -335), (300, -335), 2, "approach to the lounge"),
-    ("wh_lounge_door", (130, -335), (380, -335), 0, "THRESHOLD right: the lounge's opening"),
+    ("wh_arrive", (-700, 640), (-690, 440), 0, "arrival: the ring's north-west corner (the nub off the terrace is not connected)"),
+    ("wh_door", (-690, 440), (-650, -600), 0, "arrival: down the west band"),
+    ("wh_ref", (-650, -600), (500, 500), 8, "THE reference viewpoint: the ring's south-west corner looking across the fenced floor, the stage ahead (NE), bar left, lounge right"),
+    ("wh_ref_back", (-715, -690), (500, 500), 0, "recovery: a stumble back into the corner"),
+    ("wh_sw_corner", (-710, -520), (500, 500), 0, "recovery: along the west band"),
+    ("wh_fence", (60, -640), (400, -500), 4, "reveal: along the south fence, the platforms across the floor"),
+    ("wh_plinths", (-640, 100), (0, 0), 4, "reveal: the west band, the platforms across the fence"),
+    ("wh_platform", (66, 22), (660, 680), 4, "reveal: up on the central pedestal (the lit cube), the stage across the floor"),
+    ("wh_stage_approach", (640, 300), (660, 700), 2, "approach to the stage, the east band"),
+    ("wh_stage_steps", (660, 535), (660, 700), 0, "approach: the foot of the stage steps"),
+    ("wh_stage_top", (660, 640), (660, 700), 0, "THRESHOLD ahead: on the stage, the world transition happens here"),
+    ("wh_bar_approach", (-655, -490), (-655, -300), 2, "approach to the bar"),
+    ("wh_bar_door", (-655, -420), (-655, -300), 0, "THRESHOLD left: the bar's canopy edge"),
+    ("wh_lounge_approach", (-705, -610), (-470, -600), 2, "approach to the lounge"),
+    ("wh_lounge_door", (-578, -600), (-470, -600), 0, "THRESHOLD right: the lounge's canopy edge"),
 ]
 ROUTES = {  # the three destination routes and the stay loop as lists of waypoint ids (the last is the threshold / the return)
     "ahead": ["wh_stage_approach", "wh_stage_steps", "wh_stage_top"],
@@ -62,40 +62,42 @@ ROUTES = {  # the three destination routes and the stay loop as lists of waypoin
 }
 # sector (by the trace's name) -> floor, wall, ceiling texture, tint
 STYLE = {
-    "arena_floor": ("floor_dark", "wall_panel", "ceil_truss", "#8fa8ff"),
-    "dance_floor": ("floor_led", "wall_led", "ceil_truss", "#5f7fff"),
-    "platform": ("floor_stage", "wall_panel", "ceil_truss", "#9fb4ff"),
-    "platform_step_s": ("floor_stage", "trim", "ceil_truss", "#9fb4ff"),
-    "platform_step_n": ("floor_stage", "trim", "ceil_truss", "#9fb4ff"),
+    "stone_ring": ("floor_dark", "wall_panel", "ceil_truss", "#8fa8ff"),
+    "courtyard": ("floor_led", "wall_led", "ceil_truss", "#5f7fff"),
+    "terrace": ("floor_boards", "wall_brick", "ceil_truss", "#7f90d8"),
+    "nub": ("floor_dark", "wall_corridor", "ceil_low", "#8aa0e0"),
+    "pedestal": ("floor_stage", "wall_led", "ceil_truss", "#ff7a9a"),
+    "ped_step_a": ("floor_stage", "trim", "ceil_truss", "#ff9ab0"),
+    "ped_step_b": ("floor_stage", "trim", "ceil_truss", "#ff9ab0"),
     "stage_step_a": ("floor_stage", "trim", "ceil_truss", "#b0b8ff"),
     "stage_step_b": ("floor_stage", "trim", "ceil_truss", "#b0b8ff"),
     "stage": ("floor_stage", "wall_panel", "ceil_truss", "#b8c4ff"),
     "bar": ("floor_boards", "wall_bar", "ceil_low", "#ffb070"),
     "lounge": ("floor_carpet", "wall_chill", "ceil_low", "#ffc080"),
-    "arrival_corridor": ("floor_dark", "wall_corridor", "ceil_low", "#8aa0e0"),
-    "arrival_room": ("floor_dark", "wall_corridor", "ceil_low", "#8aa0e0"),
 }
-for k in range(4):
-    STYLE["plinth%d" % k] = ("floor_dark", "wall_speaker", "ceil_truss", "#8fa8ff")
-BORROWED = ["floor_dark", "floor_led", "floor_stage", "floor_boards", "floor_carpet", "wall_panel", "wall_led", "wall_bar", "wall_chill", "wall_corridor", "wall_speaker",
+for k in ("plat_n", "plat_e", "plat_w", "plat_s"):
+    STYLE[k] = ("floor_dark", "wall_speaker", "ceil_truss", "#8fa8ff")
+for k in ("pit_n1", "pit_n2", "pit_s1", "pit_s2"):
+    STYLE[k] = ("floor_dark", "wall_panel", "ceil_truss", "#3a4a9a")
+BORROWED = ["floor_dark", "floor_led", "floor_stage", "floor_boards", "floor_carpet", "wall_panel", "wall_led", "wall_bar", "wall_chill", "wall_corridor", "wall_speaker", "wall_brick",
             "ceil_truss", "ceil_low", "trim", "thing_pendant", "thing_truss_tower", "thing_sofa", "thing_rail"]
 STATES = {"idle": 1, "available": 5, "selected": 2, "committed": 2}
 GUIDES = {  # id suffix: doom point, size (height m), lamp point
-    "stage": ((0, 522), 2.2, (0, 540)),
-    "bar": ((-205, -335), 2.2, (-300, -335)),
-    "lounge": ((205, -335), 2.2, (300, -335)),
+    "stage": ((660, 700), 2.2, (660, 735)),
+    "bar": ((-655, -300), 2.2, (-655, -250)),
+    "lounge": ((-470, -600), 2.2, (-440, -600)),
 }
 THINGS = [  # extra dressing: id, sprite, doom point, y, size
-    ("wh_pendant_a", "thing_pendant", (-250, -60), 3.2, 1.0), ("wh_pendant_b", "thing_pendant", (250, -60), 3.2, 1.0),
-    ("wh_pendant_c", "thing_pendant", (-250, 260), 3.2, 1.0), ("wh_pendant_d", "thing_pendant", (250, 260), 3.2, 1.0),
-    ("wh_truss_a", "thing_truss_tower", (-470, -60), 2.5, 5.0), ("wh_truss_b", "thing_truss_tower", (470, -60), 2.5, 5.0),
-    ("wh_truss_c", "thing_truss_tower", (470, 470), 2.5, 5.0), ("wh_sofa", "thing_sofa", (330, -300), 0.75, 1.5),
+    ("wh_pendant_a", "thing_pendant", (-300, -300), 3.2, 1.0), ("wh_pendant_b", "thing_pendant", (300, -300), 3.2, 1.0),
+    ("wh_pendant_c", "thing_pendant", (-300, 300), 3.2, 1.0), ("wh_pendant_d", "thing_pendant", (300, 300), 3.2, 1.0),
+    ("wh_truss_a", "thing_truss_tower", (-720, 720), 2.5, 5.0), ("wh_truss_b", "thing_truss_tower", (720, -720), 2.5, 5.0),
+    ("wh_truss_c", "thing_truss_tower", (730, 540), 2.5, 5.0), ("wh_sofa", "thing_sofa", (-440, -690), 0.75, 1.5),
 ]
 LIGHTS = [  # id, doom point, y, radius, colour, strength
-    ("wh_lt_floor", (0, 40), 5.0, 9.0, "#3a62ff", 1.3), ("wh_lt_cube", (0, 40), 1.9, 3.2, "#ff4b6e", 1.1),
-    ("wh_lt_spot_l", (-200, 150), 5.5, 6.0, "#4f7bff", 1.0), ("wh_lt_spot_r", (200, 150), 5.5, 6.0, "#4f7bff", 1.0),
-    ("wh_lt_stage", (0, 520), 3.4, 6.0, "#9fc4ff", 1.1), ("wh_lt_bar", (-300, -335), 2.6, 4.5, "#ffb060", 1.2), ("wh_lt_lounge", (300, -335), 2.6, 4.5, "#ffcf80", 1.2),
-    ("wh_lt_ref", (0, -450), 3.0, 8.0, "#6f90ff", 0.9),
+    ("wh_lt_floor", (0, 0), 6.0, 14.0, "#3a62ff", 1.3), ("wh_lt_cube", (66, 22), 3.2, 4.5, "#ff4b6e", 1.1),
+    ("wh_lt_spot_l", (-300, -150), 6.0, 9.0, "#4f7bff", 1.0), ("wh_lt_spot_r", (300, 150), 6.0, 9.0, "#4f7bff", 1.0),
+    ("wh_lt_stage", (660, 690), 3.6, 7.0, "#9fc4ff", 1.1), ("wh_lt_bar", (-655, -300), 2.7, 5.5, "#ffb060", 1.2), ("wh_lt_lounge", (-470, -600), 2.7, 5.5, "#ffcf80", 1.2),
+    ("wh_lt_ref", (-600, -550), 3.0, 8.0, "#6f90ff", 0.9),
 ]
 
 
@@ -220,11 +222,11 @@ def main():
     for e in ch["endings"].values():
         e["journey"] = []
     open(os.path.join(ROOT, "content", "run", "doom", "story_doom_warehouse.json"), "w", encoding="utf-8", newline="\n").write(json.dumps(ch, indent=1) + "\n")
-    floor_secs = [s for s in d["sectors"] if abs(s["floor"] + 0.5) < 0.01]
+    floor_secs = [s for s in d["sectors"] if abs(s["floor"] - 0.5) < 0.01 and s["doom_sector"] == names.index("courtyard")]
     pts = []
-    gx = -9.0
-    while gx <= 9.0:
-        gz = -3.0
+    gx = -15.0
+    while gx <= 15.0:
+        gz = -15.0
         while gz <= 15.0:
             for s in floor_secs:
                 if inside(s["polygon"], gx, gz) and dist_to_edges(s["polygon"], gx, gz) >= 0.32:
@@ -232,7 +234,6 @@ def main():
                     break
             gz += 0.8
         gx += 0.8
-    pts = [p for p in pts if abs(p[0]) < 6.0 or p[1] > 4.5 or p[1] < 1.5]
     pts.sort(key=lambda p: (int(p[0] * 977 + p[1] * 1931) * 2654435761) % 4294967296)
     need = len(ch["actors"]) + len(ch["silhouettes"])
     if len(pts) < need:
