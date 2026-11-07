@@ -63,8 +63,8 @@ static func fixture_rows() -> Dictionary:
 		var pd := RunData.load_path(p)
 		rows[p] = []
 		for sid in pd.node_order:
-			if not pd.hotspots_authored.has(sid):
-				continue
+			if not pd.hotspots_authored.has(sid) or _has_real(pd, sid, "%s.return" % p):
+				continue  # (N2.5: the paths carry their own return rows now; the fixture stays only for a scene that lacks one)
 			rows[p].append({"id": "%s.return" % p, "world": str(pd.nodes[sid]["world"]), "scene": sid, "anchor": _anchor_of(pd, sid), "kind": "exit",
 				"available": {"flags_all": [FX_FLAG]}, "on_success": {"route": "run:warehouse"}})
 	return rows

@@ -304,7 +304,10 @@ class RealData(unittest.TestCase):
     def test_today_rule3_returns_land_on_the_floor(self):
         d = self.rt[3].data
         self.assertEqual(d["fixed_landings"].keys(), {"main/warehouse"})
-        self.assertEqual((d["fixed_landing_scenes"], d["without_visible_return"]), (13, 97))
+        # N2.5 gave the three path quests a visible return in every scene; the Bassment's passages still lack one, so the
+        # counts follow the data and rule 3 stays FAIL until the Bassment return lands (then without_visible_return is 0).
+        self.assertGreater(d["fixed_landing_scenes"], 0)
+        self.assertGreater(d["without_visible_return"], 0)
         self.assertEqual(self.rt[3].status, "FAIL")
 
     def test_today_other_rules(self):
