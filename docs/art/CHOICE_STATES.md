@@ -52,3 +52,77 @@ tests that pin it. "Crisp" is `HotspotView._draw` (the canvas over the picture);
 | `src/run/hotspot_contract.gd:21` `LOOK_SELECTED ["ring", "claim"]` | the data word for the ring | selected | the validator |
 
 Nothing else in `src/` draws an abstract marker for a choice (`draw_arc`/`draw_circle` appear only in the duel, the story result and the characters' own effects).
+
+## The states (package A7)
+
+`HotspotView.RINGS` (`src/run/hotspot_view.gd`) is the one switch for the old look; it is `false`. With it off the view's canvas draws nothing for a choice
+(`drawn_kinds` stays empty), the heralds draw no mark, no go/stop lamp stands in the world, and a choice out of the picture has no beacon and no touch target.
+
+**State machine** (`src/run/choice_state.gd`, `ChoiceState`), from the run's own events (`RunPlay.choice_state` / `TrialScene.choice_state` and the hotspot items):
+
+| Event | State | Stamped with |
+| --- | --- | --- |
+| staged (on offer this visit), not the current choice | available | the event that made it so (a touch elsewhere) |
+| the current choice: the touched one, else the scene's default | selected | the touch's song time (`touched[id]`): the next frame shows it, inside 0.1 s |
+| the lock passed (no final-window choice in the items any more; `window_closed` when the snapshot carries it) | the others declined, the pick stays selected | the frame's song time |
+| the commit at the boundary (as today: `RunHotspots.commit_final` at the lock) | committed (success) or cost (a failed outcome); the others declined | the commit's song time (`changed_t`) |
+| no longer staged | idle (forgotten) | |
+
+A refused tap (the lock) is not a state: the option shakes and its lamp flickers red for `REFUSE_S`.
+
+**Data** (`src/run/choice_show.gd`, `ChoiceShow`; defaults `content/run/choice_show.json`). Every hotspot row carries a `show` block, written by
+`tools/run/apply_staging.py` (called by `make_hotspots.py`; the returns by `returns_common.py`) from the archetype its row gets by default, so nothing is
+hand-authored:
+
+```json
+"show": {"archetype": "door"}
+"show": {"archetype": "figure"}
+"show": {"archetype": "object"}
+"show": {"archetype": "door", "set": "warehouse"}
+```
+
+The full shape a block may give (merged over the archetype's defaults, a state key by key, its light key by key; validated by `ChoiceShow.validate` from
+`HotspotContract`):
+
+```json
+"show": {
+  "archetype": "door | figure | object | none",
+  "light": "lamp | self | gate | none | <thing id of the map>",
+  "floor_light": "spill | pool | none | <thing id of the map>",
+  "set": "<choice art set that wins over the map's>",
+  "states": {
+    "<idle|available|selected|committed|declined|cost>": {
+      "frames": ["door_2"], "frame_beats": 0.25, "over_s": 0.25,
+      "motion": "still|bob|beckon|slump|pulse|sway_left|sway_right|lean|step_aside|shake",
+      "light": {"floor_glow": 0.55, "lamp": "off|dim|lit|open", "tint": "#ffe0a0"},
+      "sound": "choice_door_open"
+    }
+  }
+}
+```
+
+The door defaults (`content/run/choice_show.json`):
+
+| State | Frames | Lamp | Floor | Tint | Motion | Sound |
+| --- | --- | --- | --- | --- | --- | --- |
+| idle | door_0 | off | 0 | | still | |
+| available | door_1 (ajar) | lit | 0.18 | warm #ffc27a | still | |
+| selected | door_2 (swung open) | open (eases up over 0.25 s) | 0.55 | #ffe0a0 | still | choice_door_open |
+| committed | door_3 (wide) | open | 1.0 (light spilling) | #fff2d6 | still | choice_commit |
+| declined | door_1, door_0 over 0.25 s | off | 0 | | still | choice_door_shut |
+| cost | door_1, door_0 over 0.25 s | dim, flickering for 2 beats | 0 | red #ff4a30 | shake | choice_cost |
+
+A figure: available `beckon`, selected `step_toward`, committed `gesture`, declined `step_back`, cost `recoil` (a person of the room plays the acts the choice layer
+already bakes for them: beckon happy, nod, cheer, plead; a billboard figure its `current_tex`/`other_tex`; a herald its gesture loop, the point held with a step
+toward, a step back into the dark, a recoil). An object: its own sprite (`self`), its own light pulsing (available), brighter (selected), held (committed), dimmed
+(declined), flickering red with a shake (cost). A quest entrance with a herald is a door whose lamp is its gate's light and whose floor light is its pool.
+
+The lamp is `lamp_lit` (new art, every set: `python tools/run/make_choice_art.py --only lamp_lit`): the world's own lamp fixture with a plain round lens and no
+symbol, tinted by the state. A thing of the map takes a `light` multiplier through `StoryWorld.thing_pose`.
+
+**Sounds.** The run has no sfx player for taps. Each state change with a sound emits `HotspotView.cue(sound, hotspot, state, t)` and logs it in
+`HotspotView.cues`; the ids (`choice_select`, `choice_door_open`, `choice_door_shut`, `choice_commit`, `choice_cost`) have no audio files yet.
+
+**Touch targets.** Unchanged API (`HotspotView.layout(..., rects)`, `hit`, `touch_rect_of`): the art's projected bounds (a drawn door, a gate, a person, a thing)
+plus at most 24 px, at least 88 px, inside the picture. A quest gate's target is the gate's bounds; a return door's the door's. An entry with nothing drawn keeps
+its 88 px circle. With RINGS off an anchor out of the picture is not laid out.

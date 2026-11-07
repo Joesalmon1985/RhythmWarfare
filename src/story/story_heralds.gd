@@ -220,9 +220,18 @@ func _make(id: String, b: Dictionary, toward: Vector2) -> Dictionary:
 	var at := Vector2(float(a[0]), float(a[1]))
 	var sec := stage.map.sector_at(at)
 	var room := stage.map.room_of(sec) if sec != "" else ""
-	var crowd: StoryCrowd = stage.crowds.get(room, stage.crowds.get("main", null))
+	var crowd: StoryCrowd = stage.crowds.get(room, null)
+	if crowd == null:  # a room with no crowd of its own: the crowd that already counts the sector (its people stand there), else the main crowd
+		for cid in stage.crowds:
+			if (stage.crowds[cid] as StoryCrowd).owns_sector(sec):
+				crowd = stage.crowds[cid]
+				break
+	if crowd == null:
+		crowd = stage.crowds.get("main", null)
 	if crowd == null or sec == "":
 		return {}
+	crowd.own_sector(sec)  # (else a crowd whose own room is out of sight projects nothing, and the herald and its gate vanish when the camera stands in their room: ward_late.treat)
+	crowd.own_sector(stage.map.sector_at(mark_point(b)))
 	var rec := {"herald": null, "crowd": crowd, "block": b, "on": true, "at": at, "toward": toward, "quest": str(b["quest"])}
 	if not b.has("self"):
 		rec["herald"] = _herald_prop(id, m, sec, at, crowd)

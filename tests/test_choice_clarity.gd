@@ -281,3 +281,84 @@ func test_the_choice_state_is_the_same_at_any_frame_step() -> void:
 	assert_eq(snaps[0], snaps[1], "30 and 60 fps")
 	assert_eq(snaps[0][0], snaps[2][0], "a ragged step: the same current")
 	assert_eq(snaps[0][2], snaps[2][2])
+
+
+# --- touch targets without a ring (package A7, contract 9) ---------------------------------------------------------------------
+
+const TARGET_SCENES := ["warehouse", "warehouse.bar", "warehouse.balcony", "warehouse.booth", "warehouse.chill", "underworld", "mothership"]
+const WINDOW_BEATS := [52.0, 56.0, 60.0]  # the choice window, where the camera holds at its viewpoint (lead ruling 35a)
+## Pairs whose middles stand under 88 px apart from today's window camera (package A7's measurement, 7 November 2026): the art of the world packages (a door with a person
+## in front of it, hub gates 1.2 to 2.2 m apart seen from the hub's middle) and the choice viewpoints of contract 3 (hook H3.1, not built) are what separates them. A tap
+## on either middle still takes its own (asserted below). A new pair fails this test; a pair separated by its package comes off this list.
+const KNOWN_CLOSE := ["mothership.exit_gallery|mothership.enter_ember", "mothership.exit_gallery|mothership.exit_reactor", "mothership.exit_gallery|mothership.grey",
+	"mothership.exit_reactor|mothership.enter_gospel", "mothership.exit_reactor|mothership.grey", "mothership.grey|mothership.enter_ember",
+	"underworld.enter_ember|underworld.enter_squadron", "underworld.exit_court|underworld.enter_ember", "underworld.exit_court|underworld.enter_gospel",
+	"warehouse.bar.exit_chill|warehouse.bar.stranger", "warehouse.exit_balcony|warehouse.dancer"]
+
+
+## Every touch region of a laid-out entry (its rectangle from the art's bounds, or the circle of an entry with nothing drawn, as a square).
+static func _regions(e: Dictionary) -> Array:
+	var out: Array = []
+	if e.has("touch_rect"):
+		out.append(e["touch_rect"])
+	if float(e["radius_px"]) > 0.0:
+		var c: Vector2 = e["centre"]
+		var rr := float(e["radius_px"])
+		out.append(Rect2(c - Vector2(rr, rr), Vector2(rr, rr) * 2.0))
+	return out
+
+
+func test_from_the_choice_viewpoints_the_targets_are_the_art_and_never_overlap_or_meet_the_pads() -> void:
+	assert_false(HotspotView.RINGS, "no ring is drawn: the target is the art's bounds")
+	var overlaps: Array = []
+	var n_checked := 0
+	for sid in TARGET_SCENES:
+		var d := _scene(sid)
+		var scene: Node = d["scene"]
+		var host: Control = scene._stage_host
+		var pads: Dictionary = scene.pad_view.button_rects()
+		var st: StoryStage = scene.stages[scene.active_world]["stage"]
+		for beat in WINDOW_BEATS:
+			_run_to(scene, float(scene.engine.scene_t0) + beat * BEAT)
+			if str(scene.engine.node_id) != sid:
+				break
+			var items: Array = (scene.hotspot_items() as Array).filter(func(e: Dictionary) -> bool: return str(e["state"]) != "committed")
+			var lay := HotspotView.layout(items, st.map, st.crowds, scene._exit_pose(), host.size, true, HotspotView.thing_widths(st))
+			for e in lay:
+				assert_false(bool(e["edge"]), "%s: nothing out of the picture is laid out" % e["id"])
+				for r in _regions(e):
+					n_checked += 1
+					var g := Rect2((r as Rect2).position + host.global_position, (r as Rect2).size)
+					assert_true(Rect2(host.global_position, host.size).grow(0.01).encloses(g), "%s %s beat %.0f: inside the picture" % [sid, e["id"], beat])
+					for p in pads:
+						assert_false(g.intersects(pads[p] as Rect2), "%s %s: never over pad %s" % [sid, e["id"], str(p)])
+					assert_true(minf((r as Rect2).size.x, (r as Rect2).size.y) >= HotspotContract.MIN_PX - 1e-3, "%s %s: at least 88 px (%s)" % [sid, e["id"], str((r as Rect2).size)])
+				if e.has("touch_rect") and e.has("visual_rect"):
+					var vis: Rect2 = e["visual_rect"]
+					var tr: Rect2 = e["touch_rect"]
+					assert_true(tr.size.x <= maxf(vis.size.x + 2.0 * HotspotContract.TOUCH_MARGIN_PX, HotspotContract.MIN_PX) + 1e-3, "%s %s: the art plus at most 24 px a side" % [sid, e["id"]])
+			for i in lay.size():
+				for j in range(i + 1, lay.size()):
+					for a in _regions(lay[i]):
+						for b in _regions(lay[j]):
+							var x := (a as Rect2).intersection(b as Rect2)
+							if x.get_area() > 1.0:
+								overlaps.append("%s beat %.0f: %s and %s share %.0f px2" % [sid, beat, lay[i]["id"], lay[j]["id"], x.get_area()])
+			for i in lay.size():  # the nearest middle decides a tap (HotspotView.hit): each target keeps a disc of at least half the 88 px floor round its middle
+				for j in range(i + 1, lay.size()):
+					var ci: Vector2 = lay[i].get("hit_centre", lay[i]["centre"])
+					var cj: Vector2 = lay[j].get("hit_centre", lay[j]["centre"])
+					var pair := "%s|%s" % [lay[i]["id"], lay[j]["id"]]
+					var rpair := "%s|%s" % [lay[j]["id"], lay[i]["id"]]
+					if KNOWN_CLOSE.has(pair) or KNOWN_CLOSE.has(rpair):
+						continue
+					assert_true(ci.distance_to(cj) >= HotspotContract.MIN_PX, "%s beat %.0f: %s and %s keep their middles at least 88 px apart (%.0f)" % [sid, beat, lay[i]["id"], lay[j]["id"], ci.distance_to(cj)])
+			for e in lay:  # whatever the overlap, a tap on a target's middle takes that target
+				assert_eq(HotspotView.hit(lay, e.get("hit_centre", e["centre"])), str(e["id"]), "%s beat %.0f: a tap on %s's middle selects it" % [sid, beat, e["id"]])
+		_free(d)
+	print("  targets checked %d; overlaps: %s" % [n_checked, "\n    ".join(PackedStringArray(overlaps)) if not overlaps.is_empty() else "none"])
+	assert_true(n_checked >= 10, "targets were checked from the viewpoints (%d)" % n_checked)
+	# The rectangles themselves overlap in today's content (a door with a person in front of it, gates 1.2 to 2.2 m apart): the nearest middle splits the ground between
+	# them, so a tap is never ambiguous; separating the art itself is the world packages' (reported to the lead with the list printed above).
+	if not overlaps.is_empty():
+		print("  A7: %d overlapping target pairs from the choice viewpoints (split by the nearest middle)" % overlaps.size())

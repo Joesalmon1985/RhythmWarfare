@@ -236,8 +236,9 @@ static func resolve(anchor: Dictionary, map: StoryMap, crowds: Dictionary) -> Di
 	return {"ok": false}
 
 
-## Screen placement of every entry ({hotspot, state}) for a camera pose in a view of `view` pixels: [{id, hotspot, state, centre, ground, scale, depth, radius_px, edge, ok}]. A hotspot whose
-## anchor is out of sight is placed at the edge of the picture on the side it lies (edge: true), so it can still be seen and touched. The touch radius is the projected radius_m, never under half of min_px.
+## Screen placement of every entry ({hotspot, state}) for a camera pose in a view of `view` pixels: [{id, hotspot, state, centre, ground, scale, depth, radius_px, edge, ok}]. With RINGS off
+## a hotspot whose anchor is out of sight is left out (no target: what is not in the picture cannot be touched); with RINGS on it is placed at the edge of the picture on the side it lies
+## (edge: true), so it can still be seen and touched. The touch radius is the projected radius_m, never under half of min_px.
 ## With `rects` (the run's taps, N2.1; INTERACTION_DESIGN.md 3.2, 3.6) the touch region of a hotspot in view is built ON SCREEN from its object's visual bounds (`visual_rect`: the drawn door, the
 ## person, the thing of the map): those bounds grown by TOUCH_MARGIN_PX (24 px) on each side, widened to min_px (88 px) in a direction where they fall short, kept inside the view (so never over the
 ## pads below it): `touch_rect`, with `hit_centre` its middle and no circle (radius_px 0). A hotspot with nothing drawn on it keeps the ring's circle only (the ring is what shows it). The card
@@ -285,6 +286,8 @@ static func layout(entries: Array, map: StoryMap, crowds: Dictionary, pose: Dict
 				var ty: float = top["screen"].y if bool(top["visible"]) else gy - float(tch.get("h", 2.0)) * sc
 				var rr := Rect2(Vector2(sp.x - hw, ty), Vector2(hw * 2.0, maxf(gy - ty, 1.0)))
 				entry["touch_rect"] = rr.intersection(Rect2(Vector2.ZERO, view))
+		elif not RINGS:  # out of sight (package A7, lead ruling 35b): no beacon, no touch target. The camera holds at a choice viewpoint where the choices are in the picture
+			continue  # (contract 3); a choice out of it is shown by the world itself (its door, its lamp, its light on the floor), not by a symbol stacked at the edge
 		else:  # out of sight: a beacon at the edge on the side it lies
 			var cam: Vector3 = pose["cam"]
 			var d := Vector2(p.x - cam.x, p.z - cam.z)
