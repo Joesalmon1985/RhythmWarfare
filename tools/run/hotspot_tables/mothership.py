@@ -53,3 +53,35 @@ ob("mothership.exit", "airlock_wheel", T("wheel_a"), "pulse",
    out(route="hospital", flags=["ms_airlock_cycled"], energy=5, cin=cin(w, "cycle_lock", walk("airlock_door", "dancer", "walk", 2))),
    out(route="hospital", flags=["ms_airlock_alarm"], energy=-6, cin=cin(w, "alarm_lock", walk("med_door", "queasy", "stagger", 2))),
    s_text="cycle the airlock (route hospital, +5)", f_text="the alarm; out anyway, shaken (route hospital, -6)")
+
+
+# ---- the quest entrances (work package N2.4, docs/narrative/N2_2_ROUTER.md "What N2.4 and N2.5 must author"): ungated secrets that pulse, repeatable, taken at the lap's end through the port; a miss
+# flickers out (-4) with no route. Each is a lit doorway in its quest's colour (herald(..., gate=True): the entrance has no thing of its own), its herald beside it gesturing at it, the mark in its crown.
+# The hub's four stand in a row on the far side of the dance floor, clear of the crowd (x -3 to 3, z 1 to 4.5), the exits (right wall) and the camera's own places (home, the ramp, the dais), so the
+# camera at the deck's opening sees all four with their heralds. The ids are the graph's (content/narrative/graph.json).
+w = "mothership"
+from heralds import herald  # noqa: E402
+
+
+def _entrance(scene, name, route, quest, pos, s_text, f_text, f_text_cost=-4):
+    h = sc(scene, name, P(*pos), "pulse", out(route=route), out(energy=f_text_cost), s_text=s_text, f_text=f_text, radius=0.7)
+    if route.startswith("path:"):
+        h["look"]["finished"] = finished(route[len("path:"):])
+    return h
+
+
+_entrance("mothership", "enter_gospel", "path:gospel", "gospel", (2.6, 1.2, 0.6), "a figure of light under a single star in the viewport: the Gospel path (route path:gospel)", "the star flickers out (-4)")
+_entrance("mothership", "enter_bassment", "bassment", "dungeon", (0.4, 1.2, 0.6), "the maintenance hatch in the deck plating, chalk marks beside it: the Bassment (route bassment)", "the hatch rattles shut (-4)")
+_entrance("mothership", "enter_squadron", "path:squadron", "squadron", (-1.8, 1.2, 0.6), "the old military radio wired into the comms console, a bomber's shadow on the bulkhead: the Mission Count path (route path:squadron)", "the radio crackles out (-4)")
+_entrance("mothership", "enter_ember", "path:ember", "ember", (4.8, 1.2, 0.6), "an ember glowing in a specimen jar: the Ember Road path (route path:ember)", "the ember gutters out (-4)")
+herald("gospel", "mothership.enter_gospel", at=(3.7, 1.1), gate=True)
+herald("dungeon", "mothership.enter_bassment", at=(1.5, 1.1), gate=True)
+herald("squadron", "mothership.enter_squadron", at=(-0.7, 1.1), gate=True)
+herald("ember", "mothership.enter_ember", at=(5.9, 1.1), gate=True)
+
+_entrance("mothership.gallery", "enter_bassment", "bassment", "dungeon", (17.8, 1.2, 4.6), "a hatch in the gallery floor: the Bassment (route bassment)", "the hatch rattles shut (-4)")
+herald("dungeon", "mothership.gallery.enter_bassment", side="left", gate=True)
+_entrance("mothership.reactor", "enter_gospel", "path:gospel", "gospel", (37.2, 1.2, 3.0), "a figure of light under a star over the reactor catwalk: the Gospel path (route path:gospel)", "the star flickers out (-4)")
+herald("gospel", "mothership.reactor.enter_gospel", at=(38.4, 3.2), gate=True)
+_entrance("mothership.bridge", "enter_squadron", "path:squadron", "squadron", (46.5, 1.2, 6.5), "a radio on the comms console, a bomber's shadow on the screen: the Mission Count path (route path:squadron)", "the radio crackles out (-4)")
+herald("squadron", "mothership.bridge.enter_squadron", side="right", gate=True)

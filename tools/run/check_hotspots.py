@@ -197,7 +197,7 @@ def check_hotspot(h, ctx, errs):
     if h["world"] != node["world"] or h["map"] != ctx.worlds[node["world"]]["map"]:
         errs.append(f"{hid}: world/map disagree with the scene")
         return
-    if not hid.startswith(h["scene"] + "."):
+    if not hid.startswith(h["scene"] + ".") and not (PATH_ID and hid == f"{PATH_ID}.return"):  # (a path's return object has the quest's one id in every scene: the router's object id, N2.5)
         errs.append(f"{hid}: id must start with the scene id")
     mp = ctx.maps[h["map"]]
     a = h["anchor"]
@@ -241,6 +241,8 @@ def check_hotspot(h, ctx, errs):
         r = o.get("route")
         if r and r.startswith("path:"):
             check_portal(h, which, r, errs)
+        elif r == "run:warehouse" and PATH_ID:  # a return object (N2.5): the way back to the main run from any scene of a path
+            pass
         elif r and r != "bassment" and r not in [n["to"] for n in node["next"]] and r not in ctx.passages:
             errs.append(f"{hid} {which}: route {r} is neither a route of {h['scene']} nor a Bassment passage")
         check_cin(o.get("cinematic"), h["map"], ctx, f"{hid} {which}", errs)
@@ -417,7 +419,8 @@ def reachability(allh, ctx, errs):
                             portals.add(r[len("path:"):])
                         elif r.startswith("run:"):
                             taken_routes.add((sid, r))
-                            endings.add(sid)
+                            if ctx.nodes[sid].get("ending"):  # (a return object leaves any scene of a path; only an ending's way back counts as leaving the ending)
+                                endings.add(sid)
                         elif r in ctx.nodes:
                             taken_routes.add((sid, r))
                             if r not in seen_scenes:
@@ -493,7 +496,12 @@ def main(argv):
             allr.append(r)
     ids = [h.get("id") for h in allh] + [r.get("id") for r in allr]
     for i in {x for x in ids if ids.count(x) > 1}:
+        if PATH_ID and i == f"{PATH_ID}.return":
+            continue  # one id in every scene of the quest (the scene's own rows stay unique: checked below)
         errs.append(f"duplicate hotspot id {i}")
+    keys = [(h.get("scene"), h.get("id")) for h in allh]
+    for k in {x for x in keys if keys.count(x) > 1}:
+        errs.append(f"duplicate hotspot id {k[1]} in scene {k[0]}")
     for w in ctx.worlds:
         if w not in worlds_found:
             errs.append(f"no hotspot file for world {w}")

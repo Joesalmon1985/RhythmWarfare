@@ -795,6 +795,387 @@
    },
    "default": false,
    "repeatable": true
+  },
+  {
+   "id": "mothership.enter_gospel",
+   "world": "mothership",
+   "scene": "mothership",
+   "map": "mothership",
+   "anchor": {
+    "pos": [
+     2.6,
+     1.2,
+     0.6
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.7,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_gospel_road",
+      "keep:path_gospel_tomb"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:gospel"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "gospel",
+    "at": [
+     3.7,
+     1.1
+    ],
+    "toward": [
+     2.6,
+     0.6
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "mothership.enter_bassment",
+   "world": "mothership",
+   "scene": "mothership",
+   "map": "mothership",
+   "anchor": {
+    "pos": [
+     0.4,
+     1.2,
+     0.6
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.7,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bassment"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "dungeon",
+    "at": [
+     1.5,
+     1.1
+    ],
+    "toward": [
+     0.4,
+     0.6
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "mothership.enter_squadron",
+   "world": "mothership",
+   "scene": "mothership",
+   "map": "mothership",
+   "anchor": {
+    "pos": [
+     -1.8,
+     1.2,
+     0.6
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.7,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_squadron_free"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:squadron"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "squadron",
+    "at": [
+     -0.7,
+     1.1
+    ],
+    "toward": [
+     -1.8,
+     0.6
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "mothership.enter_ember",
+   "world": "mothership",
+   "scene": "mothership",
+   "map": "mothership",
+   "anchor": {
+    "pos": [
+     4.8,
+     1.2,
+     0.6
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.7,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_ember_kept",
+      "keep:path_ember_quenched"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:ember"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "ember",
+    "at": [
+     5.9,
+     1.1
+    ],
+    "toward": [
+     4.8,
+     0.6
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "mothership.gallery.enter_bassment",
+   "world": "mothership",
+   "scene": "mothership.gallery",
+   "map": "mothership",
+   "anchor": {
+    "pos": [
+     17.8,
+     1.2,
+     4.6
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.7,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash"
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "bassment"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "dungeon",
+    "at": [
+     17.204,
+     3.447
+    ],
+    "toward": [
+     17.8,
+     4.6
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "mothership.reactor.enter_gospel",
+   "world": "mothership",
+   "scene": "mothership.reactor",
+   "map": "mothership",
+   "anchor": {
+    "pos": [
+     37.2,
+     1.2,
+     3.0
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.7,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_gospel_road",
+      "keep:path_gospel_tomb"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:gospel"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "gospel",
+    "at": [
+     38.4,
+     3.2
+    ],
+    "toward": [
+     37.2,
+     3.0
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
+  },
+  {
+   "id": "mothership.bridge.enter_squadron",
+   "world": "mothership",
+   "scene": "mothership.bridge",
+   "map": "mothership",
+   "anchor": {
+    "pos": [
+     46.5,
+     1.2,
+     6.5
+    ]
+   },
+   "kind": "secret",
+   "radius_m": 0.7,
+   "min_px": 88,
+   "available": {
+    "flags_all": [],
+    "flags_none": [],
+    "energy_min": 0,
+    "once": false
+   },
+   "look": {
+    "available": "pulse",
+    "selected": "ring",
+    "committed": "flash",
+    "finished": {
+     "flags_any": [
+      "keep:path_squadron_free"
+     ],
+     "available": "crown",
+     "tint": "#ffd25a"
+    }
+   },
+   "challenge": null,
+   "on_success": {
+    "route": "path:squadron"
+   },
+   "on_failure": {
+    "energy": -4
+   },
+   "default": false,
+   "repeatable": true,
+   "herald": {
+    "quest": "squadron",
+    "at": [
+     45.405,
+     7.197
+    ],
+    "toward": [
+     46.5,
+     6.5
+    ],
+    "mark_y": 1.8,
+    "gate": true
+   }
   }
  ]
 }

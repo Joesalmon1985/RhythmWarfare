@@ -14,6 +14,7 @@ const FX_FLAG := "fx_n22"
 const STEP := 1.0 / 30.0
 
 var _saved: RunProgress
+var _no_router_reported := false
 var _violations: Array = []  # route state changes not reported as a switch or a Bassment commit
 
 
@@ -32,21 +33,38 @@ static func _entrance_row(id: String, world: String, scene: String, anchor: Dict
 		"on_success": {"route": route}, "on_failure": {"energy": -4}, "repeatable": true}
 
 
+## True when the real hotspot data already has a row with this id in this scene (a world whose entrances are authored: the fixture must not shadow or duplicate it).
+static func _has_real(d: RunData, scene: String, id: String) -> bool:
+	for h in d.hotspots_of(scene):
+		if str(h.get("id", "")) == id:
+			return true
+	return false
+
+
+## Fixture entrances only where the real data has none: every hub entrance and the Floor's hatch that the graph (content/narrative/graph.json "entrances") lists and the hotspot tables do not yet
+## carry. A world whose entrances are authored (Hell, ...) uses its real rows and gets no fixture.
 static func fixture_rows() -> Dictionary:
 	var main := RunData.load_default()
 	var rows := {"main": []}
-	for hub in ["hospital", "ward", "mothership", "underworld"]:
-		var w := str(main.nodes[hub]["world"])
-		for q in ["bassment", "gospel", "squadron", "ember"]:
-			rows["main"].append(_entrance_row("%s.enter_%s" % [hub, q], w, hub, _anchor_of(main, hub), "bassment" if q == "bassment" else "path:" + q))
-	rows["main"].append(_entrance_row("warehouse.enter_bassment", "warehouse", "warehouse", _anchor_of(main, "warehouse.bar"), "bassment"))
-	rows["main"].back()["anchor"] = _anchor_of(main, "warehouse")
+	var graph: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://content/narrative/graph.json"))
+	for e in (graph as Dictionary).get("entrances", []):
+		var scene := str(e["scene"]).trim_prefix("main/")
+		var id := str(e["object"]["id"])
+		if _has_real(main, scene, id) or not main.nodes.has(scene):
+			continue
+		var q := str(e["quest"])
+		if scene == "warehouse" and q != "bassment":
+			continue  # (the Floor's other quests are entered at the stack star, radio and ember the Warehouse already has; only the hatch is a fixture)
+		var anchor := _anchor_of(main, scene)
+		if id == "warehouse.enter_bassment":
+			anchor = _anchor_of(main, "warehouse")
+		rows["main"].append(_entrance_row(id, str(main.nodes[scene]["world"]), scene, anchor, "bassment" if q == "bassment" else "path:" + q))
 	for p in ["gospel", "squadron", "ember"]:
 		var pd := RunData.load_path(p)
 		rows[p] = []
 		for sid in pd.node_order:
-			if not pd.hotspots_authored.has(sid):
-				continue
+			if not pd.hotspots_authored.has(sid) or _has_real(pd, sid, "%s.return" % p):
+				continue  # (N2.5: the paths carry their own return rows now; the fixture stays only for a scene that lacks one)
 			rows[p].append({"id": "%s.return" % p, "world": str(pd.nodes[sid]["world"]), "scene": sid, "anchor": _anchor_of(pd, sid), "kind": "exit",
 				"available": {"flags_all": [FX_FLAG]}, "on_success": {"route": "run:warehouse"}})
 	return rows
@@ -95,6 +113,7 @@ func _scene(env: Dictionary = {}, save_text: String = "", keep_save := false) ->
 	host.add_child(scene)
 	scene.size = host.size
 	_violations = []
+	_no_router_reported = false
 	return {"host": host, "scene": scene, "env": base.keys()}
 
 
@@ -111,7 +130,7 @@ func _free(d: Dictionary, keep_save := false) -> void:
 
 
 func _snap(scene: Node) -> String:
-	return (scene.router as QuestRouter).state.snapshot()
+	return _st(scene).snapshot()
 
 
 ## Steps the scene until `cond` holds (or `max_s` of song time). Every change of the committed route state must come with a route_log entry of a switch or a Bassment commit.
@@ -138,7 +157,14 @@ func _at(scene: Node, path: String, node: String) -> bool:
 	return scene.trial_state == "" and scene.run_path == path and scene.engine.node_id == node
 
 
+## The route state of the scene. Without a router (the run data failed to load, say) one clear failure is recorded once per test and an empty state is returned, so a broken setup is one
+## failure, not thousands of nil errors.
 func _st(scene: Node) -> RouteState:
+	if scene.router == null:
+		if not _no_router_reported:
+			_no_router_reported = true
+			fail("the scene has no router (the run data or the fixtures are invalid: see the log above)")
+		return RouteState.new()
 	return (scene.router as QuestRouter).state
 
 

@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT / "tools" / "run"))
 from art import gospel_maps  # noqa: E402
 from acting_data import L, a  # noqa: E402
 import laps as laps_mod  # noqa: E402
+import returns_common  # noqa: E402  (the return objects, N2.5)
 
 # Two laps per scene (docs/CONTINUOUS_RUN.md "Two laps"): J00 is the prologue (one way on, a night road) and J14 is the Golgotha staging (the sky darkens one step a block, a witness or a soldier a block: one
 # descent, which a second lap would only repeat), so they stay at one lap; the endings J15 and J16 take two (the finale is where the player most wants to sit in the song).
@@ -424,8 +425,9 @@ def write_run():
     (OUT / "run.json").write_text(json.dumps(run, indent=1) + "\n", encoding="utf-8")
     if "--run-only" in sys.argv:
         return
+    flat = returns_common.add_rows("gospel", [h for w in WORLDS for h in HOTSPOTS[w["id"]]], run)  # one `gospel.return` row per scene (N2.5)
     for w in WORLDS:
-        (OUT / "hotspots" / f"{w['id']}.json").write_text(json.dumps({"world": w["id"], "hotspots": HOTSPOTS[w["id"]]}, indent=1) + "\n", encoding="utf-8")
+        (OUT / "hotspots" / f"{w['id']}.json").write_text(json.dumps({"world": w["id"], "hotspots": [h for h in flat if h["world"] == w["id"]]}, indent=1) + "\n", encoding="utf-8")
     prompts = {sc[0]: {"scene": sc[1], "title": sc[7], "prompt": sc[9] + P_TAIL} for sc in SCENES}
     (OUT / "prompts.json").write_text(json.dumps(prompts, indent=1) + "\n", encoding="utf-8")
 

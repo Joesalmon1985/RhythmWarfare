@@ -15,6 +15,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 sys.path.insert(0, HERE)
 import staging_data  # noqa: E402
+import returns_common  # noqa: E402  (the staging of a path's return object, N2.5)
 
 
 def files() -> list:
@@ -33,6 +34,8 @@ def main(argv: list) -> int:
         changed = False
         for h in doc.get("hotspots", []):
             want = staging_data.STAGING.get(h["id"])
+            if want is None:
+                want = returns_common.staging_of(h["id"])
             if want is not None:
                 seen.add(h["id"])
             if want is None and "staging" in h:
