@@ -21,15 +21,17 @@ EYE = 1.6
 SKY = {"night": "sky_night", "dawn": "sky_dawn", "day": "sky_day", "dusk": "sky_dusk", "storm": "sky_storm", "morning": "sky_morning", "lake": "sky_lake", "grove": "sky_grove"}
 # Open-air views are not boxes (docs/art/VISUAL_AUDIT.md F7): their walls are low banks (OPEN_H metres, or OPEN_BAND_H when a lake or river runs in front of the far wall, whose floor sits 0.4 below),
 # so the sky strip's hills and far shore (tools/story/art/gospel_tex.py) rise behind them at eye level; the enclosed yards, streets and courts keep their tall house walls.
+SUN_K = 1.3  # the sun's pool over a daylight room; the rest of it keeps AMBIENT of the flat light (shade)
+AMBIENT = 0.42
 OPEN_H = 1.2
 OPEN_BAND_H = 0.8
 # time of day: sector light (0..1), tint, distance fog colour/density
 TOD = {
     "night": (0.34, "#4a5ab0", "#10163a", 0.020),
-    "dawn": (0.5, "#ffc89a", "#e8c0a0", 0.014),
-    "day": (0.43, "#fff0d0", "#d6c8a8", 0.010),
-    "morning": (0.45, "#ffecc8", "#e2d4b0", 0.010),
-    "dusk": (0.5, "#ff9a60", "#c08060", 0.014),
+    "dawn": (0.56, "#ffc89a", "#e8c0a0", 0.014),
+    "day": (0.64, "#fff0d0", "#d6c8a8", 0.010),
+    "morning": (0.62, "#ffecc8", "#e2d4b0", 0.010),
+    "dusk": (0.54, "#ff9a60", "#c08060", 0.014),
     "storm": (0.36, "#6a80a8", "#2a3440", 0.022),
     "dark": (0.40, "#9070a0", "#30203a", 0.020),
     "indoor": (0.6, "#ffd8a0", "#c0a080", 0.010),
@@ -325,6 +327,8 @@ def build_map(map_id: str, views: list) -> tuple[dict, dict, dict]:
             textures[ftex] = f"textures/{ftex}.png"
             sec = {"id": sid, "polygon": _rect(ox + X0, za, ox + X1, zb), "floor": fh, "ceiling": v["wall_h"], "floor_tex": ftex, "ceil_tex": v["ceil"], "wall_tex": v["side_l"],
                    "light": light, "tint": tint, "room": room, "flags": [], "activities": v["acts"], "sky": v["sky"], "fog": {"color": fogc, "density": dens}}
+            if v["tod"] in ("day", "morning"):
+                sec["ambient"] = AMBIENT
             sectors.append(sec)
         # walls: the far edge of the farthest band, the sides of every band, the back of the nearest
         sec_ids.sort(key=lambda s: s[1])
@@ -361,7 +365,10 @@ def build_map(map_id: str, views: list) -> tuple[dict, dict, dict]:
             wp_ids[name] = wid
         # things
         thing_ids = {}
-        for t in v["props"]:
+        extra = []
+        if v["tod"] in ("day", "morning"):  # sunlight: a broad warm pool over the room's middle, and the side walls and their feet in shade 
+            extra = [LT("sunlt", 0.0, -7.5, 6.0, 20.0, "#ffe6b8", SUN_K)]
+        for t in v["props"] + extra:
             d = dict(t)
             d["id"] = f"{vid}.{t['id']}"
             d["at"] = [ox + t["at"][0], t["at"][1]]

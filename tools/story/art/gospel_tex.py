@@ -23,6 +23,12 @@ R = px.ramp
 BAYER = px.BAYER8
 
 
+def SB(ramp, k=1.22, g=1.0):
+    """Sunlit colour: boost a ramp's saturation (k) and exposure (g) about its own luminance (the daylight rooms must read as warm sun, not grey haze)."""
+    lum = (ramp * np.array([0.2126, 0.7152, 0.0722], np.float32)).sum(-1, keepdims=True)
+    return np.clip((lum + (ramp - lum) * k) * g, 0, 1).astype(np.float32)
+
+
 # ---- small kit -------------------------------------------------------------------------------------------------------------------------------------------
 
 def hexu(h: str) -> np.ndarray:
@@ -217,35 +223,53 @@ def cracks(n: int, seed: int, sx: float = 14, sy: float = 14, width: float = 0.0
 # ---- palettes (dark to light; daylight mid-tones) ---------------------------------------------------------------------------------------------------------
 
 SAND = R("#a89570", "#bba67f", "#cdb98f", "#dccaa0", "#e8dab4")
+SAND = SB(SAND)
 DUST = R("#8e6538", "#a47940", "#b98e4f", "#cca262", "#dcb678")
+DUST = SB(DUST)
 PATHP = R("#a99575", "#b9a583", "#c9b794", "#d7c8a6", "#e3d6b8")
+PATHP = SB(PATHP)
 GRASS = R("#646230", "#7a7838", "#908c40", "#a69e4e", "#bcb264")
+GRASS = SB(GRASS)
 GARDEN = R("#566a30", "#687c3a", "#7a9048", "#8ea25a", "#a2b46c")
-SHING = R("#6c6358", "#80766a", "#948978", "#a89d88", "#bdb29b")
-WATER = R("#6c8ca4", "#80a0b6", "#96b4c6", "#adc7d6", "#c6dbe6")
+GARDEN = SB(GARDEN)
+SHING = R("#5a5148", "#6e6458", "#827766", "#968b76", "#aa9f88")
+WATER = R("#486e8a", "#5a809c", "#7096b0", "#8cb0c6", "#aac8da")
 COBB = R("#9a8668", "#ae9a79", "#c1ad8b", "#d1be9d", "#e0cfae")
+COBB = SB(COBB)
 COBBJ = R("#5e5038", "#6e5e46", "#806e54")
 FLAG = R("#aa9f86", "#b9ae94", "#c6bba2", "#d3c9af", "#ddd4bb")
+FLAG = SB(FLAG)
 FLAGJ = R("#7c705a", "#8c8068", "#9c9078")
 PLANK = R("#6a5640", "#7e6a50", "#927d62", "#a89478", "#bca98c")
 PLANKJ = R("#3e3224", "#4c3e2e", "#5c4c3a")
 CLAY = R("#a86a40", "#bc7c4a", "#cc8e58", "#da9f69", "#e6b27e")
+CLAY = SB(CLAY)
 CLAYT = R("#b8825a", "#c99468", "#d8a778", "#e4b98c")
 SOIL = R("#4a3a28", "#5a4832", "#6c593e", "#806a4a", "#947c58")
+SOIL = SB(SOIL)
 LEAF = R("#7a5a2c", "#92702e", "#a88838", "#7c7a38", "#98963f")
 ROCK = R("#6e665a", "#827a6c", "#968c7a", "#aa9f8a", "#bdb29b")
+ROCK = SB(ROCK)
 ROCKO = R("#7c6a4a", "#92805a", "#a8946a", "#bca67c", "#cdb98e")
+ROCKO = SB(ROCKO)
 ROCKJ = R("#4e463c", "#5a5044", "#665c50")
 ROAD = R("#9c927e", "#aca28d", "#bcb29b", "#cbc1a9", "#d6ccb4")
+ROAD = SB(ROAD)
 ROADJ = R("#6c6250", "#7c725e", "#8c826c")
 STRAW = R("#8a6c30", "#a28238", "#b89a48", "#cdb15a", "#ddc470")
+STRAW = SB(STRAW)
 LIME = R("#9d8f73", "#b0a285", "#c2b698", "#d1c6ab", "#ddd3b9")
+LIME = SB(LIME)
 LIMEJ = R("#7e7058", "#8c7e66", "#9c8e76")
 MUDO = R("#a87a48", "#bb8c56", "#cc9e68", "#dcb07a", "#e8c18c")
+MUDO = SB(MUDO)
 MUDB = R("#7c5634", "#8e6640", "#a07650", "#b08660")
+MUDB = SB(MUDB)
 MUDJ = R("#5e4026", "#6e4c30")
 HILLO = R("#665f34", "#7c743e", "#928848", "#a89c58", "#bdb06c")
+HILLO = SB(HILLO)
 HILLC = R("#7a6a3c", "#90804a", "#a69658", "#bcac6c", "#cfc084")
+HILLC = SB(HILLC)
 REEDS = R("#3a4624", "#4c5a2c", "#627238", "#7e8a44", "#a09a4e", "#c4b45e")
 REEDG = R("#52602e", "#6a7a38", "#86924a", "#a4a858")
 OLIVE = R("#3e4a34", "#56634a", "#6e7b5a", "#8a9674", "#a7b08f")
@@ -559,7 +583,7 @@ def wall_limestone() -> np.ndarray:
     n = 128
     X, Y = G(n)
     extra = -(pn(n, n, 3, 44, 202, 2, 1.8) - 0.5) * 0.14 - 0.05  # rain streaks run down
-    img, c, mort, sh = masonry(n, 4, 201, 64, LIME, LIMEJ, tone=0.12, wjit=0.28, extra=extra, wear=0.6, bevel=0.13, joint=1, scale=14)
+    img, c, mort, sh = masonry(n, 4, 201, 64, LIME, LIMEJ, tone=0.18, wjit=0.28, extra=extra, wear=0.75, bevel=0.17, joint=1, scale=14)
     return img
 
 
@@ -1222,24 +1246,24 @@ def _finish(rgb, levels: int = 20, gain: float = 1.0) -> np.ndarray:
 
 def sky_day() -> np.ndarray:
     """The Judean day: a deep blue overhead going to a dusty haze, fair-weather clouds, a sun to the right, three layers of hills (blue far, grey mid, ochre near)."""
-    rgb = _grad([(0, "#1e52b4"), (36, "#3a82d0"), (68, "#68b2e8"), (88, "#b8d8e4"), (96, "#e2dcc0")])
+    rgb = _grad([(0, "#123c96"), (40, "#2a6cc0"), (70, "#58a2de"), (88, "#b4d6e4"), (96, "#e2dcc0")])
     rgb = _cirrus(rgb, 501, 6, (50, 84), 12, 36, "#e8f0f4", 0.55)
-    rgb = _glow(rgb, 30, 24, 46, 46, "#fff0c0", 0.4)
-    rgb = _disc(rgb, 30, 24, 3.6, "#fffae0")
+    rgb = _glow(rgb, 30, 24, 90, 90, "#ffd890", 0.75)
+    rgb = _disc(rgb, 30, 24, 4.2, "#fff6c8")
     rgb = _cumulus(rgb, 502, 13, (40, 76), 16, 40, "#f4f6f2", "#d4dfe6", "#a2b8cc", keep_clear=(30, 36))
     rgb = _layer(rgb, _ridge(511, 16, 4.6, peaks=[(40, 8, 30), (610, 11, 44), (990, 6, 24)]), "#869cbc", "#dcd8c4", 14)
     rgb = _layer(rgb, _ridge(512, 10, 3.2, step=1, peaks=[(300, 4, 30), (820, 5, 20)]), "#7a8ea6", "#dcd6bc", 9)
     rgb = _layer(rgb, _ridge(513, 5, 1.8, harm=(3, 7, 12, 19), step=1), "#a39064", "#e0d4b0", 5)
     rgb = _ground(rgb, "#dcc8a0", "#b89a68", 514, "#7a6642", 0.008)
-    return _finish(rgb, 20, 0.7)
+    return _finish(rgb, 20, 0.72)
 
 
 def sky_lake() -> np.ndarray:
     """The Sea of Galilee: Hermon's snow far to the left, the flat Golan shore across the water, the water itself under the horizon with the sun's glitter."""
-    rgb = _grad([(0, "#1e58b8"), (34, "#3a86d4"), (66, "#6cb8ea"), (88, "#bcdce8"), (96, "#d4e4e4")])
+    rgb = _grad([(0, "#143e9a"), (38, "#2c70c4"), (68, "#5eaae2"), (88, "#b8dae8"), (96, "#d4e4e4")])
     rgb = _cirrus(rgb, 521, 5, (50, 84), 12, 36, "#e8f0f4", 0.5)
-    rgb = _glow(rgb, 32, 22, 46, 46, "#fff0c0", 0.4)
-    rgb = _disc(rgb, 32, 22, 3.6, "#fffae0")
+    rgb = _glow(rgb, 32, 22, 90, 90, "#ffd890", 0.75)
+    rgb = _disc(rgb, 32, 22, 4.2, "#fff6c8")
     rgb = _cumulus(rgb, 522, 11, (42, 80), 16, 38, "#f4f6f2", "#d4e0e8", "#a4bcd0", keep_clear=(32, 36))
     # Hermon: a pale blue mass with a snow cap whose lower edge steps in dithered ledges
     hermon = _ridge(531, 4, 1.2, peaks=[(930, 17, 54), (905, 6, 22)])
@@ -1256,7 +1280,7 @@ def sky_lake() -> np.ndarray:
     for y in range(HZ + 1, SH):
         for _ in range(3):
             rgb[y, int(_az(32) + rng.randn() * (2 + (y - HZ) * 0.35)) % SW] = px.hexc("#fff6d8")
-    return _finish(rgb, 20, 0.64)
+    return _finish(rgb, 20, 0.72)
 
 
 def sky_dawn() -> np.ndarray:
@@ -1271,21 +1295,21 @@ def sky_dawn() -> np.ndarray:
     rgb = _layer(rgb, _ridge(544, 7, 2.4, step=1), "#5e4680", "#eeb08c", 8)
     rgb = _layer(rgb, _ridge(545, 2.4, 1.2, harm=(3, 8, 14)), "#443468", "#e8a888", 4)
     rgb = _ground(rgb, "#f2c08c", "#9c6e62", 546, "#5a4468", 0.004)
-    return _finish(rgb, 20, 0.78)
+    return _finish(rgb, 20, 1.02)
 
 
 def sky_morning() -> np.ndarray:
     """A clear morning in the hill country: a pale blue going to gold, a low sun, olive-green hills in layers."""
     rgb = _grad([(0, "#5a94d4"), (34, "#86b8e4"), (66, "#c4d8d0"), (88, "#f0e4bc"), (96, "#f6e8b8")])
-    rgb = _glow(rgb, 32, 9, 60, 44, "#fff0b0", 0.5)
-    rgb = _disc(rgb, 32, 9, 3.6, "#fffae0")
+    rgb = _glow(rgb, 32, 9, 100, 80, "#ffd890", 0.7)
+    rgb = _disc(rgb, 32, 9, 4.2, "#fff6c8")
     rgb = _cumulus(rgb, 551, 9, (46, 78), 16, 36, "#fbf4e0", "#e4dcc4", "#bcb8a8", hmin=4, hmax=8, keep_clear=(32, 30))
     rgb = _cirrus(rgb, 552, 4, (52, 84), 12, 36, "#f6f0dc", 0.5)
     rgb = _layer(rgb, _ridge(553, 13, 3.8, peaks=[(60, 7, 30), (560, 9, 36)]), "#a6aa7c", "#f0e4b8", 12)
     rgb = _layer(rgb, _ridge(554, 8, 2.6), "#8a9250", "#eee0b0", 8)
     rgb = _layer(rgb, _ridge(555, 3, 1.4, harm=(3, 8, 14, 22)), "#6e8040", "#ecdca8", 5)
     rgb = _ground(rgb, "#f0e2ac", "#9a9c5c", 556, "#5a6a30", 0.008)
-    return _finish(rgb, 20, 0.7)
+    return _finish(rgb, 20, 0.72)
 
 
 def sky_dusk() -> np.ndarray:
@@ -1300,7 +1324,7 @@ def sky_dusk() -> np.ndarray:
     rgb = _layer(rgb, _ridge(564, 7, 2.4, step=1), "#52305a", "#e89258", 8)
     rgb = _layer(rgb, _ridge(565, 2.4, 1.2, harm=(3, 8, 14)), "#342244", "#e08450", 4)
     rgb = _ground(rgb, "#ea9c52", "#5e3c44", 566, "#2e1e3a", 0.006)
-    return _finish(rgb, 20, 0.78)
+    return _finish(rgb, 20, 1.08)
 
 
 def sky_night() -> np.ndarray:
@@ -1320,7 +1344,7 @@ def sky_night() -> np.ndarray:
         if fx % 2:
             rgb[y, fx + 1] = px.hexc("#e08a3c")
     rgb = _ground(rgb, "#3a4c84", "#101a3c", 577, "#2a3a70", 0.004)
-    return _finish(rgb, 24)
+    return _finish(rgb, 24, 1.4)
 
 
 def sky_grove() -> np.ndarray:
@@ -1360,7 +1384,7 @@ def sky_grove() -> np.ndarray:
             rgb[wy, wx] = px.hexc("#ffb458")
     rgb = _layer(rgb, _ridge(587, 2.6, 1.2, harm=(3, 8, 14)), "#141c44", "#344678", 4)
     rgb = _ground(rgb, "#445890", "#121c40", 588, "#26346a", 0.004)
-    return _finish(rgb, 24)
+    return _finish(rgb, 24, 1.4)
 
 
 def _deck(rgb, seed, rows, cols, ths, sx, sy):
@@ -1418,12 +1442,23 @@ TILES = [
 ]
 
 
+def grade(rgb: np.ndarray, k: float = 1.8, pivot: float = 0.56) -> np.ndarray:
+    """Daylight contrast for a surface tile: luminance is stretched about `pivot` (lights stay, shade goes deep) with the hue kept, so a sunlit wall is bright and its stones and joints are in shade."""
+    f = rgb.astype(np.float32) / 255.0
+    lum = (f * np.array([0.2126, 0.7152, 0.0722], np.float32)).sum(-1, keepdims=True)
+    nl = np.clip(pivot + (lum - pivot) * k, 0.03, 0.97)
+    out = np.clip(f * (nl / np.maximum(lum, 1e-3)), 0, 1)
+    return (out * 255 + 0.5).astype(np.uint8)
+
+
 def build(out_dir: str) -> dict:
     from PIL import Image
     os.makedirs(out_dir, exist_ok=True)
     out: dict = {}
     for name, fn, metres in TILES:
         rgb = fn()
+        if name.startswith(("floor_", "wall_")) and name not in ("floor_water",):
+            rgb = grade(rgb, 2.3, 0.52) if name.startswith("floor_") else grade(rgb)
         assert rgb.dtype == np.uint8 and rgb.ndim == 3 and rgb.shape[2] == 3, name
         im = Image.fromarray(rgb, "RGB")
         if len(np.unique(rgb.reshape(-1, 3), axis=0)) <= 256:  # a few-colour strip or tile is saved as an indexed PNG (a fraction of the bytes, the same pixels)
