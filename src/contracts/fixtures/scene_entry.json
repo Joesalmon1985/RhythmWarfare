@@ -1,0 +1,13 @@
+{
+	"entries": [
+		{"scene_id": "bedsit", "theme": "", "arrival_pose": "bedsit_n", "entered_from": {}, "transition": "world"},
+		{"scene_id": "rave.space", "theme": "space", "arrival_pose": "space_arrive", "entered_from": {"scene_id": "bedsit", "spot": "threshold_n"}, "transition": "world"},
+		{"scene_id": "bedsit", "theme": "", "arrival_pose": {"at": [0.0, 1.2], "yaw": 0.0}, "entered_from": {"scene_id": "rave.space", "spot": "home_door"}, "transition": "world"},
+		{"scene_id": "rave.space", "theme": "space", "arrival_pose": "race_door", "entered_from": {"scene_id": "race.space", "spot": "finish"}, "transition": "world"}
+	],
+	"exits": [
+		{"route": "rave.space", "transition": "world", "threshold": "threshold_n"},
+		{"route": "home", "transition": "world", "threshold": "home_door"},
+		{"route": "space.to_stage", "transition": "passage", "threshold": "stage_steps"}
+	]
+}

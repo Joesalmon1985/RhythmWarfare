@@ -7,42 +7,26 @@
   "ceil_beams": {
    "file": "textures/ceil_beams.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.25
   },
   "ceil_cell": {
    "file": "textures/ceil_cell.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
-  },
-  "ceil_night_blue": {
-   "file": "textures/ceil_night_blue.png",
-   "size": [
-    64,
-    64
-   ],
-   "metres": 4.0
-  },
-  "ceil_sky_day": {
-   "file": "textures/ceil_sky_day.png",
-   "size": [
-    64,
-    64
-   ],
-   "metres": 4.0
+   "metres": 1.0
   },
   "floor_boards": {
    "file": "textures/floor_boards.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.0
   },
   "floor_cell": {
    "file": "textures/floor_cell.png",
@@ -50,7 +34,7 @@
     128,
     128
    ],
-   "metres": 2.0
+   "metres": 1.0
   },
   "floor_quay": {
    "file": "textures/floor_quay.png",
@@ -58,7 +42,7 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.0
   },
   "floor_sand": {
    "file": "textures/floor_sand.png",
@@ -66,10 +50,18 @@
     128,
     128
    ],
-   "metres": 3.0
+   "metres": 1.25
   },
   "sky_harbour": {
    "file": "textures/sky_harbour.png",
+   "size": [
+    256,
+    64
+   ],
+   "metres": 1.0
+  },
+  "sky_harbour_day": {
+   "file": "textures/sky_harbour_day.png",
    "size": [
     256,
     64
@@ -258,7 +250,7 @@
     128,
     128
    ],
-   "metres": 2.0
+   "metres": 1.0
   },
   "wall_dunes": {
    "file": "textures/wall_dunes.png",
@@ -266,15 +258,15 @@
     128,
     128
    ],
-   "metres": 4.5
+   "metres": 1.25
   },
   "wall_hut": {
    "file": "textures/wall_hut.png",
    "size": [
-    64,
-    64
+    128,
+    128
    ],
-   "metres": 2.0
+   "metres": 1.0
   },
   "wall_quay": {
    "file": "textures/wall_quay.png",
@@ -282,7 +274,7 @@
     128,
     128
    ],
-   "metres": 2.5
+   "metres": 1.0
   }
  },
  "people": {

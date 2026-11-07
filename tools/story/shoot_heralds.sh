@@ -43,6 +43,7 @@ shots() {  # node flags cam name:seconds ...   (one Godot run per entrance and c
 PHASE_S=$(python3 -c "print(64*60/174)")
 # entrance       scene              flags          close camera (x:z:yaw:pitch, looking at the entrance and its herald)   routes from the Warehouse (- none)
 while read -r ent node flags cam via; do
+  case "$ent" in "#"*) continue ;; esac  # (a comment line of the list)
   if [ "$via" = "-" ]; then start="$node"; ROUTES_=""; off=0; else start=warehouse; ROUTES_="$via"; off=$(python3 -c "print(len('$via'.split(','))*$PHASE_S)"); fi
   t0=$(python3 -c "print(round($off+3.0,2))"); t1=$(python3 -c "print(round($off+19.0,2))")
   ROUTES_="$ROUTES_" RW_RUN_START_="$start" shots "$start" "$flags" - "${TAG}_${ent}_start:$t0" "${TAG}_${ent}_route:$t1"
@@ -54,5 +55,13 @@ gospel_star    warehouse.balcony  wh_saw_floor   -7.5:1.4:90:6     up
 squadron_radio warehouse.booth    -              0.6:-4.6:0:4      up,left
 ember_glass    warehouse.bar      wh_vip_pass    7.6:2.2:-125:0    right
 chill_wizard   warehouse.chill    -              -                 right,right
+# N2.4 Hell (underworld): the arena's four gates, then one per side scene (close camera x:z:yaw:pitch)
+uw_bassment    underworld         -              3.2:-1.2:-90:2    right,left,up,right
+uw_gospel      underworld         -              1.6:-0.2:-90:2    right,left,up,right
+uw_ember       underworld         -              0.8:2.8:-90:2     right,left,up,right
+uw_squadron    underworld         -              1.0:2.2:-120:2    right,left,up,right
+uw_court_bass  underworld.court   -              17.0:3.0:-70:2    right,left,up,right,right
+uw_furn_gospel underworld.furnace -              -22.0:4.5:-115:2  right,left,up,right,left
+uw_pit_squad   underworld.pit     -              20.0:14.0:-145:2  right,left,up,right,right,up
 LIST
 rm -rf "$TMP"

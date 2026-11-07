@@ -1,0 +1,12 @@
+{
+	"track": "origin_unknown_valley_of_the_shadows_chase_status_remix",
+	"pack_dir": "C:/Users/joesa/rw-audio-work/packs/origin_unknown_valley_of_the_shadows_chase_status_remix",
+	"stem_key": "bass",
+	"stem_file": "stems/bass.ogg",
+	"stem_format": "Ogg Vorbis, 48000 Hz, stereo, 250.07 s, 11.9 MB, pack gain 1.266",
+	"other_stems": ["drums", "other", "vocals", "backing"],
+	"locked_at_start": true,
+	"unlock": {"boundary": "bar", "ramp_beats": 2.0},
+	"applies_to": "track_scenes",
+	"scope": "per_run_per_theme"
+}

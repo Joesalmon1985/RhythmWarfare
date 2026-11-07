@@ -17,7 +17,12 @@ const IN_FRAME := 0.75  # this much of a rectangle's area inside the visible pic
 const FLAGS := {"wh_saw_floor": true, "wh_vip_pass": true}
 ## scene -> the scenes the run passes through to get there from the Warehouse's first scene
 const ROUTES := {"warehouse": [], "warehouse.balcony": ["warehouse.balcony"], "warehouse.booth": ["warehouse.balcony", "warehouse.booth"], "warehouse.bar": ["warehouse.bar"],
-	"warehouse.chill": ["warehouse.bar", "warehouse.chill"]}
+	"warehouse.chill": ["warehouse.bar", "warehouse.chill"],
+	# N2.4 Hell (underworld): out of the Warehouse by the exit's east door, then the arena and its side scenes
+	"underworld": ["warehouse.bar", "warehouse.booth", "warehouse.exit", "underworld"],
+	"underworld.court": ["warehouse.bar", "warehouse.booth", "warehouse.exit", "underworld", "underworld.court"],
+	"underworld.furnace": ["warehouse.bar", "warehouse.booth", "warehouse.exit", "underworld", "underworld.furnace"],
+	"underworld.pit": ["warehouse.bar", "warehouse.booth", "warehouse.exit", "underworld", "underworld.court", "underworld.pit"]}
 
 
 ## One scripted run to `target`: {player: StoryPlayer, t0: the target phase's downbeat, beat, hotspots: the target's herald entrances [{id, herald, early}]}.

@@ -1,0 +1,19 @@
+{
+	"id": "cloakroom",
+	"kind": "cloakroom",
+	"script": "res://src/minigames/cloakroom/cloakroom_activity.gd",
+	"mode": "replace",
+	"controls": 2,
+	"control_ids": ["same", "different"],
+	"lead_in_beats": 4.0,
+	"wobble_at": 0,
+	"fall_at": 0,
+	"coats": 8,
+	"symbols": 4,
+	"correct_s": 1.0,
+	"wrong_s": 3.0,
+	"match_share": 0.5,
+	"demo_trials": 2,
+	"theme_keys": ["cloakroom_symbols", "customers"],
+	"flags_on_complete": ["rave.{theme}.cloakroom_done"]
+}

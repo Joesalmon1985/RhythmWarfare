@@ -1,0 +1,22 @@
+{
+	"id": "race_street_space",
+	"theme": "space",
+	"map": "race_street_space",
+	"length_m": 1800.0,
+	"centreline": [[0.0, 0.0], [0.0, -600.0], [40.0, -1200.0], [40.0, -1900.0]],
+	"lanes": [{"id": "L", "x": -1.8}, {"id": "R", "x": 1.8}],
+	"eye_m": 1.15,
+	"blocks": [
+		{"side": "L", "from_m": 0.0, "to_m": 120.0, "height_m": 14.0},
+		{"side": "R", "from_m": 20.0, "to_m": 90.0, "height_m": 9.0},
+		{"side": "L", "from_m": 140.0, "to_m": 260.0, "height_m": 22.0}
+	],
+	"camera": {"fov_deg": 62.0, "pitch_deg": -2.0, "lane_ease_beats": 1.0, "speed_fov_gain": 6.0, "max_roll_deg": 0.0},
+	"cockpit": {"sprite": "race/cockpit_space", "height_frac": 0.24},
+	"regions": {"top": [0.25, 0.0, 0.5, 0.42], "bottom": [0.25, 0.72, 0.5, 0.28], "left": [0.0, 0.0, 0.22, 1.0], "right": [0.78, 0.0, 0.22, 1.0]},
+	"sample_vehicles": [
+		{"id": "rival_1", "kind": "rival", "sprite": "race/rival_red", "lane": 1.0, "distance_m": 35.0, "brake": false},
+		{"id": "traffic_bus", "kind": "traffic", "sprite": "race/bus_back", "lane": 0.0, "distance_m": 60.0, "brake": true},
+		{"id": "rival_2", "kind": "rival", "sprite": "race/rival_green", "lane": 0.5, "distance_m": 12.0, "brake": false}
+	]
+}

@@ -579,7 +579,7 @@
    "scene": "main/underworld",
    "object": {
     "id": "underworld.enter_bassment",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A trapdoor in the arena sand with a ladder and chalk marks."
    },
    "transition": "port",
@@ -594,7 +594,7 @@
    "scene": "main/underworld",
    "object": {
     "id": "underworld.enter_gospel",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A figure of light standing under one white star in the dark."
    },
    "transition": "port",
@@ -609,7 +609,7 @@
    "scene": "main/underworld",
    "object": {
     "id": "underworld.enter_squadron",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A military radio hanging from the chains, a bomber's shadow on the wall."
    },
    "transition": "port",
@@ -624,7 +624,7 @@
    "scene": "main/underworld",
    "object": {
     "id": "underworld.enter_ember",
-    "status": "proposed",
+    "status": "existing",
     "illustrative_idea": "A small ember in a glass beside the furnace mouth."
    },
    "transition": "port",
@@ -698,7 +698,7 @@
    "quest": "bassment",
    "object": {
     "id": "underworld.court.enter_bassment",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
@@ -708,7 +708,7 @@
    "quest": "gospel",
    "object": {
     "id": "underworld.furnace.enter_gospel",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
@@ -718,7 +718,7 @@
    "quest": "squadron",
    "object": {
     "id": "underworld.pit.enter_squadron",
-    "status": "proposed"
+    "status": "existing"
    },
    "reason": "the scene would otherwise offer fewer than three distinct destinations"
   },
