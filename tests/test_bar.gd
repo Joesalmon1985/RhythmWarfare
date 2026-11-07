@@ -391,42 +391,173 @@ func test_the_registered_config_agrees_with_the_contract_fixture() -> void:
 
 
 func test_no_text_is_drawn_anywhere_in_the_bar() -> void:
-	for f: String in ["bar_activity.gd", "bar_view.gd", "bar_draw.gd", "bar_data.gd"]:
+	for f: String in ["bar_activity.gd", "bar_draw.gd", "bar_data.gd"]:
 		var src := FileAccess.get_file_as_string("res://src/minigames/bar/" + f)
 		for bad in ["draw_string", "Label.new", "Button.new", "RichTextLabel", "tooltip_text", "FontFile", "SystemFont"]:
 			assert_false(src.contains(bad), "%s has no %s" % [f, bad])
 
 
-# --- the view --------------------------------------------------------------------------------------------------------------------
+# --- the staging (ruling 38): things, people, feedback, pieces, the map ---------------------------------------------------------------
 
-func test_the_view_hits_the_four_ingredients_and_the_door_only_when_live() -> void:
+func _thing(a: BarActivity, id: String) -> Dictionary:
+	for t: Dictionary in a.things():
+		if str(t["id"]) == id:
+			return t
+	return {}
+
+
+func _people(a: BarActivity, who: String) -> Array:
+	return (a.world().people_log as Array).filter(func(x: Dictionary) -> bool: return str(x["id"]) == who).map(func(x: Dictionary) -> String: return str(x["state"]))
+
+
+func test_the_order_bubble_is_a_thing_only_while_the_order_is_demonstrated() -> void:
 	BarActivity.forget_all()
 	var a := _bar()
-	var clock := {"t": 0.0}
-	var v := BarView.new()
-	v.size = Vector2(640, 190)
-	v.screen_size = Vector2(844, 250)
-	v.now_fn = func() -> float: return clock["t"]
-	v.state_fn = func() -> Dictionary: return a.state()
-	var to_screen := func(p: Vector2) -> Vector2: return p * v.screen_size / v.size
-	var rects := v.target_rects()
-	assert_false(rects.has("ing:0"), "no ingredient is live while the customer arrives")
-	assert_true(rects.has("exit"), "the door always is")
-	assert_eq(v.hit(to_screen.call((rects["exit"] as Rect2).get_center())), "exit")
-	clock["t"] = _to_input(a)
-	rects = v.target_rects()
-	for i in 4:
-		var id := "ing:%d" % i
-		assert_true(rects.has(id))
-		assert_eq(v.hit(to_screen.call((rects[id] as Rect2).get_center())), id, "the bottle is a touch target")
-	assert_eq(v.hit(to_screen.call(Vector2(250, 40))), "", "nothing in the empty air")
-	# a taller or wider view keeps the same canvas, centred
-	v.size = Vector2(1000, 190)
-	rects = v.target_rects()
-	var lay := v.layout()
-	assert_near(float((lay["offset"] as Vector2).x), 180.0, 1e-6)
-	assert_eq(v.hit(Vector2(v.screen_size.x * 0.5, v.screen_size.y * 0.5)), "", "the middle of the counter is no target")
-	v.free()
+	assert_true(_thing(a, "bar_order").is_empty(), "no bubble while the customer arrives")
+	var s := a.state()
+	var t0 := float(s["phase_t0"]) + float(s["phase_dur"]) + 0.001
+	a.update(t0)
+	var order := a.recipe()
+	var b := _thing(a, "bar_order")
+	assert_eq(b["sprite"], "bar_order_space")
+	assert_eq(int(b["frame"]), int(order[0]), "one frame per step: the first ingredient")
+	a.update(t0 + 0.85)
+	assert_eq(int(_thing(a, "bar_order")["frame"]), int(order[1]), "then the second")
+	_to_input(a)
+	assert_true(_thing(a, "bar_order").is_empty(), "hidden for the player's turn")
+	# every thing has the contract's keys, inside the sector of the map
+	var g := _thing(a, "bar_glass")
+	for k in ["id", "sprite", "at", "sector", "size", "frame"]:
+		assert_true(g.has(k), "a thing has %s" % k)
+	assert_eq(g["sprite"], "bar_glass_space")
+	assert_eq(int(g["frame"]), 0, "an empty glass")
+
+
+func test_the_glass_fills_a_layer_per_ingredient_overflows_on_a_mistake_and_slides_to_the_customer() -> void:
+	BarActivity.forget_all()
+	var a := _bar()
+	var order := a.recipe()
+	var t := _to_input(a)
+	var at0: Array = _thing(a, "bar_glass")["at"]
+	a.tap("ing:%d" % int(order[0]), t)
+	var g := _thing(a, "bar_glass")
+	assert_eq(int(g["frame"]), 1, "one layer")
+	assert_eq(g["layers"], [((a.state()["ingredients"] as Array)[int(order[0])]["color"] as Color).to_html(false)], "in the ingredient's colour")
+	a.tap("ing:%d" % int(order[1]), t + 0.4)
+	assert_eq(int(_thing(a, "bar_glass")["frame"]), 2)
+	# the handover: the glass slides toward the customer and goes with them
+	var s := a.state()
+	var t_s := float(s["phase_t0"])
+	a.update(t_s + 0.2 * 1.4)
+	var mid: Array = _thing(a, "bar_glass")["at"]
+	assert_true(float(mid[0]) < float(at0[0]), "sliding toward the customer: %s from %s" % [str(mid), str(at0)])
+	a.update(t_s + 0.55 * 1.4)
+	var end: Array = _thing(a, "bar_glass")["at"]
+	assert_near(float(end[0]), -0.8, 0.05, "at the customer")
+	a.update(t_s + 0.9 * 1.4)
+	assert_true(_thing(a, "bar_glass").is_empty(), "the customer leaves with it")
+	# a mistake: overflow, tipped, gone, a fresh glass
+	var b := _bar("space", 9)
+	var tb := _to_input(b)
+	_wrong_press(b, tb)
+	assert_eq(int(_thing(b, "bar_glass")["frame"]), 4, "overflow")
+	var t0 := float(b.state()["phase_t0"])
+	b.update(t0 + 0.5 * 3.0)
+	assert_eq(int(_thing(b, "bar_glass")["frame"]), 5, "tipped away")
+	b.update(t0 + 0.72 * 3.0)
+	assert_true(_thing(b, "bar_glass").is_empty(), "gone")
+	b.update(t0 + 0.9 * 3.0)
+	assert_eq(int(_thing(b, "bar_glass")["frame"]), 0, "a fresh glass")
+	assert_false(_thing(b, "bar_glass").has("layers"))
+
+
+func test_the_customer_and_the_bartender_are_directed_and_the_shelf_lights_as_drinks_are_served() -> void:
+	BarActivity.forget_all()
+	var a := _bar()
+	_to_input(a)
+	assert_eq(_people(a, "customer").back(), "waiting")
+	_wrong_press(a, float(a.state()["phase_t0"]) + 0.5)
+	assert_eq(_people(a, "customer").back(), "frown", "a mistake frowns")
+	assert_eq(_people(a, "bartender").back(), "hands_up")
+	_past_serve(a)
+	_serve_one(a)
+	assert_eq(_people(a, "customer").back(), "waiting", "the next customer waits")
+	assert_true(_people(a, "customer").has("happy"), "a served drink is happy")
+	assert_true(_people(a, "bartender").has("clap"))
+	var w: WorldThings = a.world()
+	var on: Array = (w.piece_log as Array).filter(func(x: Dictionary) -> bool: return x["op"] == "on").map(func(x: Dictionary) -> String: return str(x["piece"]))
+	assert_eq(on, ["bar_shelf_0"], "one shelf glass per served drink")
+	for _i in 2:
+		_serve_one(a)
+	_serve_one(a)
+	var ti := _to_input(a)
+	assert_true(ti >= 0.0)
+	_past_serve(a)
+	assert_eq(a.state()["phase"], "payoff")
+	assert_eq(_people(a, "bartender").back(), "raise_glass")
+	assert_eq(_people(a, "customer").back(), "hands_up")
+	var pulses: Array = (w.piece_log as Array).filter(func(x: Dictionary) -> bool: return x["op"] == "pulse").map(func(x: Dictionary) -> String: return str(x["piece"]))
+	assert_eq(pulses, ["bar_shelf_0", "bar_shelf_1", "bar_shelf_2", "bar_shelf_3"], "the payoff lights them all")
+
+
+func test_presses_give_feedback_on_the_glass_and_a_served_drink_glows_the_counter() -> void:
+	BarActivity.forget_all()
+	var a := _bar()
+	var order := a.recipe()
+	var t := _to_input(a)
+	a.tap("ing:%d" % int(order[0]), t)
+	a.tap("ing:%d" % ((int(order[1]) + 1) % 4), t + 0.4)
+	var fb: Array = (a.world().feedback_log as Array).map(func(x: Dictionary) -> String: return "%s:%s" % [x["thing"], x["kind"]])
+	assert_eq(fb, ["bar_glass:tick", "bar_glass:cross"])
+	var b := _bar("space", 3)
+	_serve_one(b)
+	assert_true((b.world().feedback_log as Array).any(func(x: Dictionary) -> bool: return x["thing"] == "bar_counter" and x["kind"] == "glow"))
+
+
+func test_a_host_world_receives_the_things_every_update() -> void:
+	BarActivity.forget_all()
+	var w := WorldThings.new()
+	var a := BarActivity.new()
+	a.setup({"seed": 7, "config": _cfg(), "request": {"theme": "dinos"}, "world": w})
+	a.begin(0.0)
+	assert_true(a.world() == w)
+	assert_eq(a.make_view(), null, "no canvas view: the stage draws the things")
+	var t := _to_input(a)
+	assert_true(t > 0.0)
+	assert_false(w.things.is_empty(), "set_things was called")
+	assert_eq(str((w.things[0] as Dictionary)["sprite"]), "bar_glass_dinos")
+	var ids: Array = (w.things as Array).map(func(x: Dictionary) -> String: return str(x["id"]))
+	assert_eq(ids, ["bar_glass"], "only the glass in the player's turn")
+
+
+func test_the_test_scene_map_has_the_counter_and_the_shelf_as_bar_pieces_and_the_things_stand_in_it() -> void:
+	var d: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/bar_scene/bar_room.json"))
+	var m := StoryMap.from_dict(d, "bar_test", false)
+	assert_eq(m.errors, [], "the map loads clean: %s" % str(m.errors))
+	var pieces: Array = []
+	for th: Dictionary in m.things:
+		if str(th.get("piece", "")) != "":
+			pieces.append(str(th["piece"]))
+	pieces.sort()
+	assert_eq(pieces, ["bar_back_shelf", "bar_counter", "bar_shelf_0", "bar_shelf_1", "bar_shelf_2", "bar_shelf_3"], "bar_* pieces, a shelf glass per drink")
+	assert_true(m.has_waypoint("bar_view"))
+	# every thing the bar sets lies in a sector of that map, at the layout's places, and its sheet exists
+	var a := _bar()
+	a.update(float(a.state()["phase_t0"]) + float(a.state()["phase_dur"]) + 0.1)
+	var layout := BarData.layout({}, "space")
+	assert_eq(layout["sector"], "bar_room")
+	for t: Dictionary in a.things():
+		assert_eq(str(t["sector"]), str((m.sectors[0] as Dictionary)["id"]), "the map's sector")
+		var at: Array = t["at"]
+		var poly: PackedVector2Array = (m.sectors[0] as Dictionary)["poly"]
+		assert_true(Geometry2D.is_point_in_polygon(Vector2(float(at[0]), float(at[1])), poly), "%s stands in the room" % t["id"])
+		var path := "res://assets/story/bar_test/sprites/%s.png" % t["sprite"]
+		assert_true(FileAccess.file_exists(path), "placeholder sheet %s" % path)
+	for th in ["space", "magic", "dinos", "transport"]:
+		var g := Image.load_from_file(ProjectSettings.globalize_path("res://assets/story/bar_test/sprites/bar_glass_%s.png" % th))
+		assert_eq(g.get_size(), Vector2i(64 * 6, 96), "glass sheet: six frames")
+		var o := Image.load_from_file(ProjectSettings.globalize_path("res://assets/story/bar_test/sprites/bar_order_%s.png" % th))
+		assert_eq(o.get_size(), Vector2i(128 * 4, 128), "order sheet: a frame per ingredient")
 
 
 # --- the engine and the run scene --------------------------------------------------------------------------------------------------
@@ -443,7 +574,7 @@ func test_the_controller_seats_the_bar_in_replace_mode_with_four_controls() -> v
 	c.update(1.0)
 	assert_true(c.owns_strip(1.0), "the ingredients own the strip")
 	assert_eq((c.activity.controls() as Array).size(), 4)
-	assert_true(c.activity.make_view() is BarView, "its view")
+	assert_eq(c.activity.make_view(), null, "no canvas view (ruling 38)")
 	assert_eq(c.activity.config["flags_on_complete"], ["rave.space.bar_done"])
 
 
@@ -510,7 +641,7 @@ func test_in_the_scene_the_bar_replaces_the_pads_costs_no_rhythm_and_resumes_on_
 	assert_true(layer != null and layer.ids == ["ing:0", "ing:1", "ing:2", "ing:3"], "four ingredient controls")
 	assert_false(scene.pad_view.visible, "the pads are hidden")
 	assert_false(scene.lane_input.enabled, "the lane input is off")
-	assert_true(scene._mg.view != null and scene._mg.view is BarView, "the bar's view is up in the stage")
+	assert_true(scene._mg.view == null, "no canvas layer over the room")
 	# arrive, demonstration: the strip taps are the controls' but not live yet
 	assert_eq(scene.dispatch_tap(pad1.get_center()), "activity_controls", "a strip tap reaches the controls, never a pad")
 	assert_eq(int(bar.state()["pos"]), 0)
@@ -529,7 +660,7 @@ func test_in_the_scene_the_bar_replaces_the_pads_costs_no_rhythm_and_resumes_on_
 	assert_eq((bar.state()["last_press"] as Dictionary)["id"], "ing:%d" % first)
 	scene._on_button_pressed(1, 0)
 	assert_eq(e.judge.strays, strays0, "no pad was pressed")
-	# a tap on a bottle in the stage is the same press (the view's hit), never a world choice
+	# a tap in the stage is never a world choice
 	var sel0: String = scene.hotspots.selected
 	_run_to(scene, scene._vt + 0.5)
 	assert_eq(scene.dispatch_tap(scene._stage_host.global_position + scene._stage_host.size * 0.5), "activity_view")

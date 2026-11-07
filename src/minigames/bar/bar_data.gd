@@ -12,6 +12,15 @@ extends RefCounted
 const THEMES_PATH := "res://content/bedsit/themes.json"
 const SHAPES := ["swirl", "comet", "star", "crescent", "rainbow", "cloud", "gem", "spiky", "leaf", "flame", "hex", "egg", "can", "ring", "shaker", "lemon"]
 const FALLBACK_SHAPES := ["star", "gem", "hex", "egg"]  # by position, for an ingredient with no shape of its own (four distinct silhouettes)
+## Where the bar's things stand in the room's map (tests/fixtures/bar_scene/bar_room.json is the test map); a theme's themes.json "bar" entry or the config's "layout" may override any key.
+## Metres: `at` is [x, z] on the ground plane, `y` the height of the thing's centre above the floor, `size` [w, h].
+const LAYOUT := {
+	"map": "bar_test", "sector": "bar_room",
+	"customer_at": [-1.2, 1.4], "customer_glass_at": [-0.8, 1.7],
+	"glass_at": [0.0, 2.0], "glass_y": 1.25, "glass_size": [0.3, 0.5],
+	"bubble_at": [-1.2, 1.4], "bubble_y": 2.35, "bubble_size": [0.9, 0.9],
+	"counter_piece": "bar_counter", "shelf_prefix": "bar_shelf_",
+}
 const BUILT_IN := {
 	"ingredients": [
 		{"id": "nebula_syrup", "color": "#8a4fd6", "shape": "swirl"},
@@ -68,6 +77,19 @@ static func resolve(config: Dictionary, theme: String, themes_path := THEMES_PAT
 	if customers.is_empty():
 		customers = [{"id": "regular", "body": Color("6fcf7f"), "kind": "antenna"}]
 	return {"ingredients": ings, "recipes": recipes, "customers": customers, "source": source}
+
+
+## The layout of theme `theme`: LAYOUT with the theme's, then the config's, overrides.
+static func layout(config: Dictionary, theme: String, themes_path := THEMES_PATH) -> Dictionary:
+	var out: Dictionary = LAYOUT.duplicate(true)
+	var bar: Variant = _read(themes_path).get("bar", {})
+	if theme != "" and typeof(bar) == TYPE_DICTIONARY and typeof((bar as Dictionary).get(theme, null)) == TYPE_DICTIONARY:
+		var l: Variant = ((bar as Dictionary)[theme] as Dictionary).get("layout", {})
+		if typeof(l) == TYPE_DICTIONARY:
+			out.merge(l, true)
+	if typeof(config.get("layout", null)) == TYPE_DICTIONARY:
+		out.merge(config["layout"], true)
+	return out
 
 
 ## A recipe as ingredient indices: [] when it is not 2 or 3 known ingredients or repeats one twice running.
