@@ -219,6 +219,61 @@
    ],
    "treatment": "none",
    "temporary": false
+  },
+  {
+   "id": "doom_mothership",
+   "arrangement": "warehouse_1",
+   "slot": 0,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_mothership.underworld",
+   "arrangement": "warehouse_1",
+   "slot": 2,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_mothership.booth",
+   "arrangement": "warehouse_1",
+   "slot": 1,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_mothership.dock",
+   "arrangement": "warehouse_1",
+   "slot": 3,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
+  },
+  {
+   "id": "doom_mothership.return",
+   "arrangement": "warehouse_1",
+   "slot": 5,
+   "alternates": [
+    "warehouse_2",
+    "warehouse_3"
+   ],
+   "treatment": "none",
+   "temporary": false
   }
  ]
 }

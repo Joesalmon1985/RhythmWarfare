@@ -31,6 +31,14 @@
    "depth": 2,
    "story": "res://content/run/doom/story_doom_lounge.json",
    "blurb": "A mustard octagon round a sunken conversation pit. Ahead the rain street to the Dock, on the left the bar, on the right the blue passage back to the dance floor: follow the guide you like."
+  },
+  {
+   "id": "doom_mothership",
+   "title": "The Mothership (Doom worlds)",
+   "map": "doom_mothership",
+   "depth": 2,
+   "story": "res://content/run/doom/story_doom_mothership.json",
+   "blurb": "A violet atrium, a ring walk over a glowing void. The stair to the Underworld ahead, the platform hatch of the Booth on the left, the dock hatch on the right: follow the guide you like."
   }
  ],
  "nodes": [
@@ -3444,6 +3452,864 @@
      ]
     }
    }
+  },
+  {
+   "id": "doom_mothership",
+   "world": "doom_mothership",
+   "scene": "mothership",
+   "title": "The Mothership",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "A violet atrium, a ring walk over a glowing void. The stair to the Underworld ahead, the platform hatch of the Booth on the left, the dock hatch on the right: follow the guide you like.",
+   "next": [
+    {
+     "to": "doom_mothership",
+     "dir": "down",
+     "label": "Stay on the ring",
+     "loop": true
+    },
+    {
+     "to": "doom_mothership.underworld",
+     "dir": "up",
+     "label": "Up the stair to the Underworld"
+    },
+    {
+     "to": "doom_mothership.booth",
+     "dir": "left",
+     "label": "Across the bridge to the Booth"
+    },
+    {
+     "to": "doom_mothership.dock",
+     "dir": "right",
+     "label": "Through the hatch to the Dock"
+    }
+   ],
+   "place": {
+    "waypoint": "ms_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "ms_hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "ms_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_stair_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "ms_v_a3"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_void_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a5"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 7,
+       "via": [
+        "ms_v_a5",
+        "ms_v_a4",
+        "ms_v_a3",
+        "ms_v_a2",
+        "ms_v_a1"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "ms_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "ms_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "ms_arrive",
+     "exits": {
+      "up": "ms_uw_hatch",
+      "left": "ms_booth_hatch",
+      "right": "ms_dock_in",
+      "down": "ms_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "ms_uw_hatch",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 6,
+       "via": [
+        "ms_v_a1",
+        "ms_v_a2",
+        "ms_v_a3",
+        "ms_v_a4",
+        "ms_v_uw"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "ms_booth_hatch",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a1",
+        "ms_v_br"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "ms_dock_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a1",
+        "ms_v_a2",
+        "ms_v_dk"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "ms_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "ms_ref_back",
+        "ms_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "ms_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "ms_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_mothership.underworld",
+   "world": "doom_mothership",
+   "scene": "mothership_underworld",
+   "title": "The Underworld (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Underworld (stand-in)",
+   "next": [
+    {
+     "to": "doom_mothership.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "ms_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "ms_hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "ms_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_stair_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "ms_v_a3"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_void_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a5"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 7,
+       "via": [
+        "ms_v_a5",
+        "ms_v_a4",
+        "ms_v_a3",
+        "ms_v_a2",
+        "ms_v_a1"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "ms_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "ms_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "ms_arrive",
+     "exits": {
+      "up": "ms_uw_hatch",
+      "left": "ms_booth_hatch",
+      "right": "ms_dock_in",
+      "down": "ms_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "ms_uw_hatch",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 6,
+       "via": [
+        "ms_v_a1",
+        "ms_v_a2",
+        "ms_v_a3",
+        "ms_v_a4",
+        "ms_v_uw"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "ms_booth_hatch",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a1",
+        "ms_v_br"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "ms_dock_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a1",
+        "ms_v_a2",
+        "ms_v_dk"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "ms_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "ms_ref_back",
+        "ms_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "ms_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "ms_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_mothership.booth",
+   "world": "doom_mothership",
+   "scene": "mothership_booth",
+   "title": "The Booth (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Booth (stand-in)",
+   "next": [
+    {
+     "to": "doom_mothership.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "ms_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "ms_hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "ms_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_stair_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "ms_v_a3"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_void_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a5"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 7,
+       "via": [
+        "ms_v_a5",
+        "ms_v_a4",
+        "ms_v_a3",
+        "ms_v_a2",
+        "ms_v_a1"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "ms_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "ms_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "ms_arrive",
+     "exits": {
+      "up": "ms_uw_hatch",
+      "left": "ms_booth_hatch",
+      "right": "ms_dock_in",
+      "down": "ms_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "ms_uw_hatch",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 6,
+       "via": [
+        "ms_v_a1",
+        "ms_v_a2",
+        "ms_v_a3",
+        "ms_v_a4",
+        "ms_v_uw"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "ms_booth_hatch",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a1",
+        "ms_v_br"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "ms_dock_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a1",
+        "ms_v_a2",
+        "ms_v_dk"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "ms_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "ms_ref_back",
+        "ms_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "ms_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "ms_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_mothership.dock",
+   "world": "doom_mothership",
+   "scene": "mothership_dock",
+   "title": "The Dock (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Dock (stand-in)",
+   "next": [
+    {
+     "to": "doom_mothership.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "ms_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "ms_hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "ms_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_stair_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "ms_v_a3"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_void_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a5"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 7,
+       "via": [
+        "ms_v_a5",
+        "ms_v_a4",
+        "ms_v_a3",
+        "ms_v_a2",
+        "ms_v_a1"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "ms_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "ms_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "ms_arrive",
+     "exits": {
+      "up": "ms_uw_hatch",
+      "left": "ms_booth_hatch",
+      "right": "ms_dock_in",
+      "down": "ms_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "ms_uw_hatch",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 6,
+       "via": [
+        "ms_v_a1",
+        "ms_v_a2",
+        "ms_v_a3",
+        "ms_v_a4",
+        "ms_v_uw"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "ms_booth_hatch",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a1",
+        "ms_v_br"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "ms_dock_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a1",
+        "ms_v_a2",
+        "ms_v_dk"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "ms_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "ms_ref_back",
+        "ms_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "ms_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "ms_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_mothership.return",
+   "world": "doom_mothership",
+   "scene": "mothership_return",
+   "title": "Back to the Mothership",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "Back to the Mothership",
+   "next": [
+    {
+     "to": "doom_mothership",
+     "dir": "up",
+     "label": "Round again",
+     "loop": true
+    },
+    {
+     "to": "doom_mothership",
+     "dir": "left",
+     "label": "Round again",
+     "loop": true
+    }
+   ],
+   "place": {
+    "waypoint": "ms_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "ms_hub_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "ms_v_a1"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_stair_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "via": [
+        "ms_v_a3"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_void_view",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a5"
+       ],
+       "hold_bars": 2
+      },
+      {
+       "to": "ms_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 7,
+       "via": [
+        "ms_v_a5",
+        "ms_v_a4",
+        "ms_v_a3",
+        "ms_v_a2",
+        "ms_v_a1"
+       ],
+       "hold_bars": 8,
+       "choice": true
+      }
+     ],
+     "bad": [
+      {
+       "to": "ms_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2
+      },
+      {
+       "to": "ms_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3
+      }
+     ],
+     "arrive": "ms_arrive",
+     "exits": {
+      "up": "ms_uw_hatch",
+      "left": "ms_booth_hatch",
+      "right": "ms_dock_in",
+      "down": "ms_ref"
+     },
+     "routes": {
+      "up": {
+       "to": "ms_uw_hatch",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 6,
+       "via": [
+        "ms_v_a1",
+        "ms_v_a2",
+        "ms_v_a3",
+        "ms_v_a4",
+        "ms_v_uw"
+       ],
+       "hold_bars": 1
+      },
+      "left": {
+       "to": "ms_booth_hatch",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a1",
+        "ms_v_br"
+       ],
+       "hold_bars": 1
+      },
+      "right": {
+       "to": "ms_dock_in",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "via": [
+        "ms_v_a1",
+        "ms_v_a2",
+        "ms_v_dk"
+       ],
+       "hold_bars": 1
+      },
+      "stumble": {
+       "to": "ms_ref",
+       "role": "recovered",
+       "style": "stagger",
+       "bars": 3,
+       "via": [
+        "ms_ref_back",
+        "ms_sw_corner"
+       ]
+      },
+      "arrive": {
+       "to": "ms_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 3,
+       "from": "ms_arrive"
+      }
+     },
+     "glances": [
+      {
+       "by": -10,
+       "bars": 2
+      },
+      {
+       "by": 12,
+       "bars": 2
+      },
+      {
+       "by": -6,
+       "pitch": 3,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.6,
+       "bars": 3
+      }
+     ]
+    }
+   }
   }
  ],
  "cinematics": {
@@ -3585,6 +4451,42 @@
     {
      "move": "walk",
      "to": "lg_floor_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_mothership.stagger_underworld": {
+   "world": "doom_mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "ms_uw_hatch",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_mothership.stagger_booth": {
+   "world": "doom_mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "ms_booth_hatch",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_mothership.stagger_dock": {
+   "world": "doom_mothership",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "ms_dock_in",
      "bars": 2,
      "role": "queasy",
      "style": "stagger"
