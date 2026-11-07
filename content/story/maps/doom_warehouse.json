@@ -1,60 +1,91 @@
 {
  "units_per_m": 1,
  "eye_height": 1.6,
- "art": "mothership",
+ "art": "doom_warehouse",
  "start": "doom_start",
  "textures": {
-  "floor_grate": "textures/floor_grate.png",
-  "floor_bridge": "textures/floor_bridge.png",
-  "floor_airlock": "textures/floor_airlock.png",
-  "ceil_hull": "textures/ceil_hull.png",
-  "wall_hull": "textures/wall_hull.png",
-  "trim": "textures/trim.png"
+  "ceil_low": "res://assets/story/night_one/textures/ceil_low.png",
+  "ceil_truss": "res://assets/story/night_one/textures/ceil_truss.png",
+  "floor_boards": "res://assets/story/night_one/textures/floor_boards.png",
+  "floor_carpet": "res://assets/story/night_one/textures/floor_carpet.png",
+  "floor_dark": "res://assets/story/night_one/textures/floor_dark.png",
+  "floor_led": "res://assets/story/night_one/textures/floor_led.png",
+  "floor_stage": "res://assets/story/night_one/textures/floor_stage.png",
+  "thing_pendant": "res://assets/story/night_one/textures/thing_pendant.png",
+  "thing_rail": "res://assets/story/night_one/textures/thing_rail.png",
+  "thing_sofa": "res://assets/story/night_one/textures/thing_sofa.png",
+  "thing_truss_tower": "res://assets/story/night_one/textures/thing_truss_tower.png",
+  "trim": "res://assets/story/night_one/textures/trim.png",
+  "wall_bar": "res://assets/story/night_one/textures/wall_bar.png",
+  "wall_chill": "res://assets/story/night_one/textures/wall_chill.png",
+  "wall_corridor": "res://assets/story/night_one/textures/wall_corridor.png",
+  "wall_led": "res://assets/story/night_one/textures/wall_led.png",
+  "wall_panel": "res://assets/story/night_one/textures/wall_panel.png",
+  "wall_speaker": "res://assets/story/night_one/textures/wall_speaker.png",
+  "guide_stage_idle_0": "textures/guide_stage_idle_0.png",
+  "guide_stage_available_0": "textures/guide_stage_available_0.png",
+  "guide_stage_available_1": "textures/guide_stage_available_1.png",
+  "guide_stage_available_2": "textures/guide_stage_available_2.png",
+  "guide_stage_available_3": "textures/guide_stage_available_3.png",
+  "guide_stage_available_4": "textures/guide_stage_available_4.png",
+  "guide_stage_selected_0": "textures/guide_stage_selected_0.png",
+  "guide_stage_selected_1": "textures/guide_stage_selected_1.png",
+  "guide_stage_committed_0": "textures/guide_stage_committed_0.png",
+  "guide_stage_committed_1": "textures/guide_stage_committed_1.png",
+  "guide_bar_idle_0": "textures/guide_bar_idle_0.png",
+  "guide_bar_available_0": "textures/guide_bar_available_0.png",
+  "guide_bar_available_1": "textures/guide_bar_available_1.png",
+  "guide_bar_available_2": "textures/guide_bar_available_2.png",
+  "guide_bar_available_3": "textures/guide_bar_available_3.png",
+  "guide_bar_available_4": "textures/guide_bar_available_4.png",
+  "guide_bar_selected_0": "textures/guide_bar_selected_0.png",
+  "guide_bar_selected_1": "textures/guide_bar_selected_1.png",
+  "guide_bar_committed_0": "textures/guide_bar_committed_0.png",
+  "guide_bar_committed_1": "textures/guide_bar_committed_1.png",
+  "guide_lounge_idle_0": "textures/guide_lounge_idle_0.png",
+  "guide_lounge_available_0": "textures/guide_lounge_available_0.png",
+  "guide_lounge_available_1": "textures/guide_lounge_available_1.png",
+  "guide_lounge_available_2": "textures/guide_lounge_available_2.png",
+  "guide_lounge_available_3": "textures/guide_lounge_available_3.png",
+  "guide_lounge_available_4": "textures/guide_lounge_available_4.png",
+  "guide_lounge_selected_0": "textures/guide_lounge_selected_0.png",
+  "guide_lounge_selected_1": "textures/guide_lounge_selected_1.png",
+  "guide_lounge_committed_0": "textures/guide_lounge_committed_0.png",
+  "guide_lounge_committed_1": "textures/guide_lounge_committed_1.png"
  },
- "sky": {
-  "tex": "textures/sky_space.png",
-  "mode": "cylinder"
- },
+ "sky": {},
  "sectors": [
   {
    "id": "0_0",
    "polygon": [
     [
-     8.75,
+     0.0,
+     7.5
+    ],
+    [
+     -5.9375,
+     3.125
+    ],
+    [
+     -8.75,
      -1.25
     ],
     [
-     6.25,
-     -13.75
+     -4.375,
+     3.125
     ],
     [
-     6.25,
-     -15.625
-    ],
-    [
-     15.625,
-     -15.625
-    ],
-    [
-     15.625,
-     -9.375
-    ],
-    [
-     15.625,
-     -1.25
-    ],
-    [
-     15.625,
-     15.625
+     -3.125,
+     4.375
     ]
    ],
    "floor": 0.0,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.5294,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 0
@@ -63,25 +94,25 @@
    "id": "0_1",
    "polygon": [
     [
-     2.8125,
-     -13.0
+     -8.75,
+     -1.25
     ],
     [
-     2.8125,
-     -13.75
+     -5.9375,
+     3.125
     ],
     [
-     6.25,
-     -13.75
+     -15.625,
+     3.125
     ]
    ],
    "floor": 0.0,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.5294,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 0
@@ -90,29 +121,37 @@
    "id": "0_2",
    "polygon": [
     [
-     -15.625,
-     -1.25
-    ],
-    [
-     2.8125,
-     -13.0
-    ],
-    [
-     6.25,
+     -6.25,
      -13.75
+    ],
+    [
+     -2.8125,
+     -13.0
     ],
     [
      0.0,
      -10.0
+    ],
+    [
+     -8.75,
+     -1.25
+    ],
+    [
+     -15.625,
+     3.125
+    ],
+    [
+     -15.625,
+     -15.625
     ]
    ],
    "floor": 0.0,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.5294,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 0
@@ -121,25 +160,33 @@
    "id": "0_3",
    "polygon": [
     [
-     8.75,
-     -1.25
+     -5.9375,
+     18.75
+    ],
+    [
+     -5.9375,
+     13.125
+    ],
+    [
+     -5.9375,
+     7.8125
+    ],
+    [
+     -5.9375,
+     3.125
     ],
     [
      0.0,
-     -10.0
-    ],
-    [
-     6.25,
-     -13.75
+     7.5
     ]
    ],
    "floor": 0.0,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.5294,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 0
@@ -147,6 +194,14 @@
   {
    "id": "0_4",
    "polygon": [
+    [
+     5.9375,
+     3.125
+    ],
+    [
+     -5.9375,
+     18.75
+    ],
     [
      0.0,
      7.5
@@ -162,19 +217,15 @@
     [
      8.75,
      -1.25
-    ],
-    [
-     15.625,
-     15.625
     ]
    ],
    "floor": 0.0,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.5294,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 0
@@ -183,25 +234,33 @@
    "id": "0_5",
    "polygon": [
     [
-     0.0,
-     7.5
+     5.9375,
+     3.125
     ],
     [
-     15.625,
-     15.625
+     5.9375,
+     7.8125
     ],
     [
-     -15.625,
-     15.625
+     5.9375,
+     13.125
+    ],
+    [
+     5.9375,
+     18.75
+    ],
+    [
+     -5.9375,
+     18.75
     ]
    ],
    "floor": 0.0,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.5294,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 0
@@ -210,37 +269,25 @@
    "id": "0_6",
    "polygon": [
     [
-     -8.75,
-     -1.25
-    ],
-    [
-     -4.375,
+     15.625,
      3.125
     ],
     [
-     -3.125,
-     4.375
+     5.9375,
+     3.125
     ],
     [
-     0.0,
-     7.5
-    ],
-    [
-     -15.625,
-     15.625
-    ],
-    [
-     -15.625,
+     8.75,
      -1.25
     ]
    ],
    "floor": 0.0,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.5294,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 0
@@ -249,31 +296,97 @@
    "id": "0_7",
    "polygon": [
     [
+     2.8125,
+     -13.0
+    ],
+    [
+     6.25,
+     -13.75
+    ],
+    [
+     15.625,
+     -15.625
+    ],
+    [
+     15.625,
+     3.125
+    ],
+    [
+     8.75,
+     -1.25
+    ],
+    [
      0.0,
      -10.0
-    ],
-    [
-     -8.75,
-     -1.25
-    ],
-    [
-     -15.625,
-     -1.25
     ]
    ],
    "floor": 0.0,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.5294,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 0
   },
   {
    "id": "0_8",
+   "polygon": [
+    [
+     6.25,
+     -13.75
+    ],
+    [
+     6.25,
+     -15.625
+    ],
+    [
+     15.625,
+     -15.625
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 8.0,
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
+   "light": 0.5294,
+   "tint": "#8fa8ff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 0
+  },
+  {
+   "id": "0_9",
+   "polygon": [
+    [
+     2.8125,
+     -13.0
+    ],
+    [
+     2.8125,
+     -13.75
+    ],
+    [
+     6.25,
+     -13.75
+    ]
+   ],
+   "floor": 0.0,
+   "ceiling": 8.0,
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
+   "light": 0.5294,
+   "tint": "#8fa8ff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 0
+  },
+  {
+   "id": "0_10",
    "polygon": [
     [
      -2.8125,
@@ -284,23 +397,23 @@
      -13.0
     ],
     [
-     -15.625,
-     -1.25
+     0.0,
+     -10.0
     ]
    ],
    "floor": 0.0,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.5294,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 0
   },
   {
-   "id": "0_9",
+   "id": "0_11",
    "polygon": [
     [
      -6.25,
@@ -313,25 +426,21 @@
     [
      -2.8125,
      -13.0
-    ],
-    [
-     -15.625,
-     -1.25
     ]
    ],
    "floor": 0.0,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.5294,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 0
   },
   {
-   "id": "0_10",
+   "id": "0_12",
    "polygon": [
     [
      -15.625,
@@ -352,23 +461,15 @@
     [
      -6.25,
      -13.75
-    ],
-    [
-     -15.625,
-     -1.25
-    ],
-    [
-     -15.625,
-     -9.375
     ]
    ],
    "floor": 0.0,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.5294,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 0
@@ -395,11 +496,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -422,11 +523,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -457,11 +558,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -496,11 +597,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -527,11 +628,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -562,11 +663,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -593,11 +694,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -624,11 +725,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -651,11 +752,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -682,11 +783,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -709,11 +810,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -744,11 +845,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -771,11 +872,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -798,11 +899,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -825,11 +926,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -860,11 +961,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -887,11 +988,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -914,11 +1015,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -941,11 +1042,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -976,11 +1077,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -1003,11 +1104,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -1042,11 +1143,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -1069,11 +1170,11 @@
    ],
    "floor": -0.5,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_led",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_led",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#5f7fff",
    "room": "main",
    "flags": [],
    "doom_sector": 1
@@ -1116,11 +1217,11 @@
    ],
    "floor": 1.0,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_stage",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.9,
-   "tint": "#ffffff",
+   "tint": "#9fb4ff",
    "room": "main",
    "flags": [],
    "doom_sector": 2
@@ -1147,11 +1248,11 @@
    ],
    "floor": 0.25,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_stage",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "trim",
    "light": 0.8314,
-   "tint": "#ffffff",
+   "tint": "#9fb4ff",
    "room": "main",
    "flags": [],
    "doom_sector": 3
@@ -1178,11 +1279,11 @@
    ],
    "floor": 0.25,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_stage",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "trim",
    "light": 0.8314,
-   "tint": "#ffffff",
+   "tint": "#9fb4ff",
    "room": "main",
    "flags": [],
    "doom_sector": 4
@@ -1209,11 +1310,11 @@
    ],
    "floor": 1.75,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_speaker",
    "light": 0.6118,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 5
@@ -1240,11 +1341,11 @@
    ],
    "floor": 1.75,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_speaker",
    "light": 0.6118,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 6
@@ -1271,11 +1372,11 @@
    ],
    "floor": 1.75,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_speaker",
    "light": 0.6118,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 7
@@ -1302,11 +1403,11 @@
    ],
    "floor": 1.75,
    "ceiling": 8.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_speaker",
    "light": 0.6118,
-   "tint": "#ffffff",
+   "tint": "#8fa8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 8
@@ -1333,11 +1434,11 @@
    ],
    "floor": 0.625,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_stage",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "trim",
    "light": 0.749,
-   "tint": "#ffffff",
+   "tint": "#b0b8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 9
@@ -1364,11 +1465,11 @@
    ],
    "floor": 1.25,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_stage",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "trim",
    "light": 0.7902,
-   "tint": "#ffffff",
+   "tint": "#b0b8ff",
    "room": "main",
    "flags": [],
    "doom_sector": 10
@@ -1391,15 +1492,19 @@
     [
      -6.25,
      -15.625
+    ],
+    [
+     -6.25,
+     -17.5
     ]
    ],
    "floor": 1.875,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_stage",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.8588,
-   "tint": "#ffffff",
+   "tint": "#b8c4ff",
    "room": "main",
    "flags": [],
    "doom_sector": 11
@@ -1417,20 +1522,16 @@
     ],
     [
      -6.25,
-     -15.625
-    ],
-    [
-     6.25,
-     -15.625
+     -17.5
     ]
    ],
    "floor": 1.875,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_stage",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.8588,
-   "tint": "#ffffff",
+   "tint": "#b8c4ff",
    "room": "main",
    "flags": [],
    "doom_sector": 11
@@ -1449,19 +1550,50 @@
     [
      2.8125,
      -14.5
-    ],
-    [
-     6.25,
-     -15.625
     ]
    ],
    "floor": 1.875,
    "ceiling": 8.0,
-   "floor_tex": "floor_airlock",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_stage",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
    "light": 0.8588,
-   "tint": "#ffffff",
+   "tint": "#b8c4ff",
+   "room": "main",
+   "flags": [],
+   "doom_sector": 11
+  },
+  {
+   "id": "11_3",
+   "polygon": [
+    [
+     6.25,
+     -17.5
+    ],
+    [
+     6.25,
+     -15.625
+    ],
+    [
+     6.25,
+     -13.75
+    ],
+    [
+     2.8125,
+     -14.5
+    ],
+    [
+     -6.25,
+     -17.5
+    ]
+   ],
+   "floor": 1.875,
+   "ceiling": 8.0,
+   "floor_tex": "floor_stage",
+   "ceil_tex": "ceil_truss",
+   "wall_tex": "wall_panel",
+   "light": 0.8588,
+   "tint": "#b8c4ff",
    "room": "main",
    "flags": [],
    "doom_sector": 11
@@ -1470,29 +1602,29 @@
    "id": "12_0",
    "polygon": [
     [
-     -15.625,
-     -9.375
+     -5.9375,
+     7.8125
     ],
     [
-     -15.625,
-     -1.25
+     -5.9375,
+     13.125
     ],
     [
-     -21.875,
-     -1.25
+     -11.875,
+     13.125
     ],
     [
-     -21.875,
-     -9.375
+     -11.875,
+     7.8125
     ]
    ],
    "floor": 0.0,
    "ceiling": 4.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_boards",
+   "ceil_tex": "ceil_low",
+   "wall_tex": "wall_bar",
    "light": 0.6118,
-   "tint": "#ffffff",
+   "tint": "#ffb070",
    "room": "main",
    "flags": [],
    "doom_sector": 12
@@ -1501,29 +1633,29 @@
    "id": "13_0",
    "polygon": [
     [
-     21.875,
-     -1.25
+     11.875,
+     13.125
     ],
     [
-     15.625,
-     -1.25
+     5.9375,
+     13.125
     ],
     [
-     15.625,
-     -9.375
+     5.9375,
+     7.8125
     ],
     [
-     21.875,
-     -9.375
+     11.875,
+     7.8125
     ]
    ],
    "floor": 0.375,
    "ceiling": 4.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_carpet",
+   "ceil_tex": "ceil_low",
+   "wall_tex": "wall_chill",
    "light": 0.5843,
-   "tint": "#ffffff",
+   "tint": "#ffc080",
    "room": "main",
    "flags": [],
    "doom_sector": 13
@@ -1550,11 +1682,11 @@
    ],
    "floor": 0.0,
    "ceiling": 4.0,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_low",
+   "wall_tex": "wall_corridor",
    "light": 0.502,
-   "tint": "#ffffff",
+   "tint": "#8aa0e0",
    "room": "main",
    "flags": [],
    "doom_sector": 14
@@ -1589,11 +1721,11 @@
    ],
    "floor": 0.0,
    "ceiling": 4.5,
-   "floor_tex": "floor_bridge",
-   "ceil_tex": "ceil_hull",
-   "wall_tex": "wall_hull",
+   "floor_tex": "floor_dark",
+   "ceil_tex": "ceil_low",
+   "wall_tex": "wall_corridor",
    "light": 0.4745,
-   "tint": "#ffffff",
+   "tint": "#8aa0e0",
    "room": "main",
    "flags": [],
    "doom_sector": 15
@@ -1603,42 +1735,14 @@
   {
    "from": [
     -15.625,
-    15.625
-   ],
-   "to": [
-    0.0,
-    7.5
-   ],
-   "sector": "0_5",
-   "portal": "0_6",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    -15.625,
-    -1.25
-   ],
-   "to": [
-    -15.625,
-    -9.375
-   ],
-   "sector": "0_10",
-   "portal": "12_0",
-   "lower_tex": "",
-   "upper_tex": "trim"
-  },
-  {
-   "from": [
-    -15.625,
-    -1.25
+    3.125
    ],
    "to": [
     -8.75,
     -1.25
    ],
-   "sector": "0_6",
-   "portal": "0_7",
+   "sector": "0_1",
+   "portal": "0_2",
    "lower_tex": "",
    "upper_tex": ""
   },
@@ -1649,52 +1753,10 @@
    ],
    "to": [
     -15.625,
-    -1.25
+    -15.625
    ],
-   "sector": "0_10",
-   "portal": "0_9",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    -15.625,
-    -1.25
-   ],
-   "to": [
-    -2.8125,
-    -13.0
-   ],
-   "sector": "0_8",
-   "portal": "0_9",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    0.0,
-    -10.0
-   ],
-   "to": [
-    -15.625,
-    -1.25
-   ],
-   "sector": "0_2",
-   "portal": "0_7",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    -15.625,
-    -1.25
-   ],
-   "to": [
-    2.8125,
-    -13.0
-   ],
-   "sector": "0_2",
-   "portal": "0_8",
+   "sector": "0_12",
+   "portal": "0_2",
    "lower_tex": "",
    "upper_tex": ""
   },
@@ -1707,7 +1769,7 @@
     -10.625,
     -15.625
    ],
-   "sector": "0_10",
+   "sector": "0_12",
    "portal": "14_0",
    "lower_tex": "",
    "upper_tex": "trim"
@@ -1728,6 +1790,20 @@
   },
   {
    "from": [
+    -5.9375,
+    3.125
+   ],
+   "to": [
+    -8.75,
+    -1.25
+   ],
+   "sector": "0_0",
+   "portal": "0_1",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
     -8.75,
     -1.25
    ],
@@ -1735,7 +1811,7 @@
     -4.375,
     3.125
    ],
-   "sector": "0_6",
+   "sector": "0_0",
    "portal": "1_0",
    "lower_tex": "trim",
    "upper_tex": "",
@@ -1820,7 +1896,7 @@
     -8.75,
     -1.25
    ],
-   "sector": "0_7",
+   "sector": "0_2",
    "portal": "1_13",
    "lower_tex": "trim",
    "upper_tex": "",
@@ -1835,9 +1911,23 @@
     -6.25,
     -13.75
    ],
-   "sector": "0_10",
+   "sector": "0_12",
    "portal": "11_0",
    "lower_tex": "trim",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -2.8125,
+    -13.0
+   ],
+   "to": [
+    -6.25,
+    -13.75
+   ],
+   "sector": "0_11",
+   "portal": "0_2",
+   "lower_tex": "",
    "upper_tex": ""
   },
   {
@@ -1849,7 +1939,7 @@
     -2.8125,
     -13.75
    ],
-   "sector": "0_9",
+   "sector": "0_11",
    "portal": "11_0",
    "lower_tex": "trim",
    "upper_tex": ""
@@ -1857,7 +1947,7 @@
   {
    "from": [
     -6.25,
-    -15.625
+    -17.5
    ],
    "to": [
     -2.8125,
@@ -1865,6 +1955,76 @@
    ],
    "sector": "11_0",
    "portal": "11_1",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -6.25,
+    -17.5
+   ],
+   "to": [
+    2.8125,
+    -14.5
+   ],
+   "sector": "11_1",
+   "portal": "11_3",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    0.0,
+    7.5
+   ],
+   "to": [
+    -5.9375,
+    18.75
+   ],
+   "sector": "0_3",
+   "portal": "0_4",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    5.9375,
+    3.125
+   ],
+   "to": [
+    -5.9375,
+    18.75
+   ],
+   "sector": "0_4",
+   "portal": "0_5",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    -5.9375,
+    13.125
+   ],
+   "to": [
+    -5.9375,
+    7.8125
+   ],
+   "sector": "0_3",
+   "portal": "12_0",
+   "lower_tex": "",
+   "upper_tex": "trim"
+  },
+  {
+   "from": [
+    0.0,
+    7.5
+   ],
+   "to": [
+    -5.9375,
+    3.125
+   ],
+   "sector": "0_0",
+   "portal": "0_3",
    "lower_tex": "",
    "upper_tex": ""
   },
@@ -1891,7 +2051,7 @@
     -3.125,
     4.375
    ],
-   "sector": "0_6",
+   "sector": "0_0",
    "portal": "1_2",
    "lower_tex": "trim",
    "upper_tex": ""
@@ -2003,7 +2163,7 @@
     0.0,
     7.5
    ],
-   "sector": "0_6",
+   "sector": "0_0",
    "portal": "1_2",
    "lower_tex": "trim",
    "upper_tex": "",
@@ -2018,9 +2178,23 @@
     -2.8125,
     -13.0
    ],
-   "sector": "0_9",
+   "sector": "0_11",
    "portal": "9_0",
    "lower_tex": "trim",
+   "upper_tex": ""
+  },
+  {
+   "from": [
+    0.0,
+    -10.0
+   ],
+   "to": [
+    -2.8125,
+    -13.0
+   ],
+   "sector": "0_10",
+   "portal": "0_2",
+   "lower_tex": "",
    "upper_tex": ""
   },
   {
@@ -2032,7 +2206,7 @@
     2.8125,
     -13.0
    ],
-   "sector": "0_8",
+   "sector": "0_10",
    "portal": "9_0",
    "lower_tex": "trim",
    "upper_tex": ""
@@ -2362,20 +2536,6 @@
   },
   {
    "from": [
-    15.625,
-    15.625
-   ],
-   "to": [
-    0.0,
-    7.5
-   ],
-   "sector": "0_4",
-   "portal": "0_5",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
     0.0,
     -10.0
    ],
@@ -2404,6 +2564,20 @@
   },
   {
    "from": [
+    2.8125,
+    -13.0
+   ],
+   "to": [
+    0.0,
+    -10.0
+   ],
+   "sector": "0_10",
+   "portal": "0_7",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
     0.0,
     -10.0
    ],
@@ -2418,20 +2592,6 @@
   },
   {
    "from": [
-    6.25,
-    -13.75
-   ],
-   "to": [
-    0.0,
-    -10.0
-   ],
-   "sector": "0_2",
-   "portal": "0_3",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
     8.75,
     -1.25
    ],
@@ -2439,7 +2599,7 @@
     0.0,
     -10.0
    ],
-   "sector": "0_3",
+   "sector": "0_7",
    "portal": "1_22",
    "lower_tex": "trim",
    "upper_tex": "",
@@ -2692,22 +2852,22 @@
     2.8125,
     -13.75
    ],
-   "sector": "0_1",
+   "sector": "0_9",
    "portal": "9_0",
    "lower_tex": "trim",
    "upper_tex": ""
   },
   {
    "from": [
-    6.25,
-    -13.75
-   ],
-   "to": [
     2.8125,
     -13.0
    ],
-   "sector": "0_1",
-   "portal": "0_2",
+   "to": [
+    6.25,
+    -13.75
+   ],
+   "sector": "0_7",
+   "portal": "0_9",
    "lower_tex": "",
    "upper_tex": ""
   },
@@ -2734,22 +2894,22 @@
     6.25,
     -13.75
    ],
-   "sector": "0_1",
+   "sector": "0_9",
    "portal": "11_2",
    "lower_tex": "trim",
    "upper_tex": ""
   },
   {
    "from": [
-    6.25,
-    -15.625
-   ],
-   "to": [
     2.8125,
     -14.5
    ],
-   "sector": "11_1",
-   "portal": "11_2",
+   "to": [
+    6.25,
+    -13.75
+   ],
+   "sector": "11_2",
+   "portal": "11_3",
    "lower_tex": "",
    "upper_tex": ""
   },
@@ -2854,6 +3014,34 @@
   },
   {
    "from": [
+    5.9375,
+    7.8125
+   ],
+   "to": [
+    5.9375,
+    13.125
+   ],
+   "sector": "0_5",
+   "portal": "13_0",
+   "lower_tex": "trim",
+   "upper_tex": "trim"
+  },
+  {
+   "from": [
+    8.75,
+    -1.25
+   ],
+   "to": [
+    5.9375,
+    3.125
+   ],
+   "sector": "0_4",
+   "portal": "0_6",
+   "lower_tex": "",
+   "upper_tex": ""
+  },
+  {
+   "from": [
     6.25,
     -13.75
    ],
@@ -2861,57 +3049,330 @@
     6.25,
     -15.625
    ],
-   "sector": "0_0",
-   "portal": "11_2",
+   "sector": "0_8",
+   "portal": "11_3",
    "lower_tex": "trim",
    "upper_tex": ""
   },
   {
    "from": [
-    8.75,
-    -1.25
-   ],
-   "to": [
     6.25,
     -13.75
    ],
-   "sector": "0_0",
-   "portal": "0_3",
+   "to": [
+    15.625,
+    -15.625
+   ],
+   "sector": "0_7",
+   "portal": "0_8",
    "lower_tex": "",
    "upper_tex": ""
   },
   {
    "from": [
-    15.625,
-    15.625
-   ],
-   "to": [
     8.75,
     -1.25
    ],
-   "sector": "0_0",
-   "portal": "0_4",
-   "lower_tex": "",
-   "upper_tex": ""
-  },
-  {
-   "from": [
-    15.625,
-    -9.375
-   ],
    "to": [
     15.625,
-    -1.25
+    3.125
    ],
-   "sector": "0_0",
-   "portal": "13_0",
-   "lower_tex": "trim",
-   "upper_tex": "trim"
+   "sector": "0_6",
+   "portal": "0_7",
+   "lower_tex": "",
+   "upper_tex": ""
   }
  ],
- "things": [],
+ "things": [
+  {
+   "id": "wh_guide_stage",
+   "kind": "billboard",
+   "sprite": "guide_stage_idle_0",
+   "at": [
+    0.0,
+    -16.3125
+   ],
+   "y": 1.1,
+   "size": 2.2,
+   "anim": "none"
+  },
+  {
+   "id": "wh_guide_bar",
+   "kind": "billboard",
+   "sprite": "guide_bar_idle_0",
+   "at": [
+    -6.4062,
+    10.4688
+   ],
+   "y": 1.1,
+   "size": 2.2,
+   "anim": "none"
+  },
+  {
+   "id": "wh_guide_lounge",
+   "kind": "billboard",
+   "sprite": "guide_lounge_idle_0",
+   "at": [
+    6.4062,
+    10.4688
+   ],
+   "y": 1.1,
+   "size": 2.2,
+   "anim": "none"
+  },
+  {
+   "id": "wh_pendant_a",
+   "kind": "billboard",
+   "sprite": "thing_pendant",
+   "at": [
+    -7.8125,
+    1.875
+   ],
+   "y": 3.2,
+   "size": 1.0,
+   "anim": "none"
+  },
+  {
+   "id": "wh_pendant_b",
+   "kind": "billboard",
+   "sprite": "thing_pendant",
+   "at": [
+    7.8125,
+    1.875
+   ],
+   "y": 3.2,
+   "size": 1.0,
+   "anim": "none"
+  },
+  {
+   "id": "wh_pendant_c",
+   "kind": "billboard",
+   "sprite": "thing_pendant",
+   "at": [
+    -7.8125,
+    -8.125
+   ],
+   "y": 3.2,
+   "size": 1.0,
+   "anim": "none"
+  },
+  {
+   "id": "wh_pendant_d",
+   "kind": "billboard",
+   "sprite": "thing_pendant",
+   "at": [
+    7.8125,
+    -8.125
+   ],
+   "y": 3.2,
+   "size": 1.0,
+   "anim": "none"
+  },
+  {
+   "id": "wh_truss_a",
+   "kind": "billboard",
+   "sprite": "thing_truss_tower",
+   "at": [
+    -14.6875,
+    1.875
+   ],
+   "y": 2.5,
+   "size": 5.0,
+   "anim": "none"
+  },
+  {
+   "id": "wh_truss_b",
+   "kind": "billboard",
+   "sprite": "thing_truss_tower",
+   "at": [
+    14.6875,
+    1.875
+   ],
+   "y": 2.5,
+   "size": 5.0,
+   "anim": "none"
+  },
+  {
+   "id": "wh_truss_c",
+   "kind": "billboard",
+   "sprite": "thing_truss_tower",
+   "at": [
+    14.6875,
+    -14.6875
+   ],
+   "y": 2.5,
+   "size": 5.0,
+   "anim": "none"
+  },
+  {
+   "id": "wh_sofa",
+   "kind": "billboard",
+   "sprite": "thing_sofa",
+   "at": [
+    10.3125,
+    9.375
+   ],
+   "y": 0.75,
+   "size": 1.5,
+   "anim": "none"
+  },
+  {
+   "id": "wh_lt_floor",
+   "kind": "light",
+   "at": [
+    0.0,
+    -1.25
+   ],
+   "y": 5.0,
+   "radius": 9.0,
+   "color": "#3a62ff",
+   "strength": 1.3
+  },
+  {
+   "id": "wh_lt_cube",
+   "kind": "light",
+   "at": [
+    0.0,
+    -1.25
+   ],
+   "y": 1.9,
+   "radius": 3.2,
+   "color": "#ff4b6e",
+   "strength": 1.1
+  },
+  {
+   "id": "wh_lt_spot_l",
+   "kind": "light",
+   "at": [
+    -6.25,
+    -4.6875
+   ],
+   "y": 5.5,
+   "radius": 6.0,
+   "color": "#4f7bff",
+   "strength": 1.0
+  },
+  {
+   "id": "wh_lt_spot_r",
+   "kind": "light",
+   "at": [
+    6.25,
+    -4.6875
+   ],
+   "y": 5.5,
+   "radius": 6.0,
+   "color": "#4f7bff",
+   "strength": 1.0
+  },
+  {
+   "id": "wh_lt_stage",
+   "kind": "light",
+   "at": [
+    0.0,
+    -16.25
+   ],
+   "y": 3.4,
+   "radius": 6.0,
+   "color": "#9fc4ff",
+   "strength": 1.1
+  },
+  {
+   "id": "wh_lt_bar",
+   "kind": "light",
+   "at": [
+    -9.375,
+    10.4688
+   ],
+   "y": 2.6,
+   "radius": 4.5,
+   "color": "#ffb060",
+   "strength": 1.2
+  },
+  {
+   "id": "wh_lt_lounge",
+   "kind": "light",
+   "at": [
+    9.375,
+    10.4688
+   ],
+   "y": 2.6,
+   "radius": 4.5,
+   "color": "#ffcf80",
+   "strength": 1.2
+  },
+  {
+   "id": "wh_lt_ref",
+   "kind": "light",
+   "at": [
+    0.0,
+    14.0625
+   ],
+   "y": 3.0,
+   "radius": 8.0,
+   "color": "#6f90ff",
+   "strength": 0.9
+  },
+  {
+   "id": "wh_lamp_stage",
+   "kind": "light",
+   "at": [
+    0.0,
+    -16.875
+   ],
+   "y": 2.8,
+   "radius": 3.0,
+   "color": "#ffd9a0",
+   "strength": 0.6
+  },
+  {
+   "id": "wh_lamp_bar",
+   "kind": "light",
+   "at": [
+    -9.375,
+    10.4688
+   ],
+   "y": 2.8,
+   "radius": 3.0,
+   "color": "#ffd9a0",
+   "strength": 0.6
+  },
+  {
+   "id": "wh_lamp_lounge",
+   "kind": "light",
+   "at": [
+    9.375,
+    10.4688
+   ],
+   "y": 2.8,
+   "radius": 3.0,
+   "color": "#ffd9a0",
+   "strength": 0.6
+  }
+ ],
  "homes": [],
- "spots": {},
+ "spots": {
+  "wh_guide_stage": {
+   "sector": "11_3",
+   "at": [
+    0.0,
+    -16.3125
+   ]
+  },
+  "wh_guide_bar": {
+   "sector": "12_0",
+   "at": [
+    -6.4062,
+    10.4688
+   ]
+  },
+  "wh_guide_lounge": {
+   "sector": "13_0",
+   "at": [
+    6.4062,
+    10.4688
+   ]
+  }
+ },
  "silhouettes": [],
  "occluders": [],
  "waypoints": [
@@ -2919,9 +3380,151 @@
    "id": "doom_start",
    "at": [
     0.0,
-    11.875
+    16.25
    ],
    "yaw": 0.0,
+   "sector": "0_5"
+  },
+  {
+   "id": "wh_arrive",
+   "at": [
+    -12.1875,
+    -22.0312
+   ],
+   "yaw": -180.0,
+   "sector": "15_0"
+  },
+  {
+   "id": "wh_door",
+   "at": [
+    -12.1875,
+    -17.125
+   ],
+   "yaw": -180.0,
+   "sector": "14_0"
+  },
+  {
+   "id": "wh_ref",
+   "at": [
+    0.0,
+    16.25
+   ],
+   "yaw": -0.0,
+   "sector": "0_5",
+   "hold_bars": 8
+  },
+  {
+   "id": "wh_ref_back",
+   "at": [
+    0.0,
+    17.875
+   ],
+   "yaw": -0.0,
+   "sector": "0_5"
+  },
+  {
+   "id": "wh_sw_corner",
+   "at": [
+    -4.175,
+    17.3438
+   ],
+   "yaw": -8.9,
+   "sector": "0_5"
+  },
+  {
+   "id": "wh_fence",
+   "at": [
+    10.3125,
+    1.875
+   ],
+   "yaw": -28.7,
+   "sector": "0_6",
+   "hold_bars": 4
+  },
+  {
+   "id": "wh_plinths",
+   "at": [
+    -10.3125,
+    -4.6875
+   ],
+   "yaw": -91.3,
+   "sector": "0_2",
+   "hold_bars": 4
+  },
+  {
+   "id": "wh_platform",
+   "at": [
+    0.0,
+    0.0
+   ],
+   "yaw": -0.0,
+   "sector": "2_0",
+   "hold_bars": 4
+  },
+  {
+   "id": "wh_stage_approach",
+   "at": [
+    -0.0,
+    -10.7688
+   ],
+   "yaw": -0.0,
+   "sector": "0_10",
+   "hold_bars": 2
+  },
+  {
+   "id": "wh_stage_steps",
+   "at": [
+    0.0,
+    -12.4375
+   ],
+   "yaw": -0.0,
+   "sector": "0_10"
+  },
+  {
+   "id": "wh_stage_top",
+   "at": [
+    -0.7391,
+    -15.0561
+   ],
+   "yaw": -31.8,
+   "sector": "11_1"
+  },
+  {
+   "id": "wh_bar_approach",
+   "at": [
+    -2.175,
+    10.4688
+   ],
+   "yaw": 90.0,
+   "sector": "0_3",
+   "hold_bars": 2
+  },
+  {
+   "id": "wh_bar_door",
+   "at": [
+    -4.0625,
+    10.4688
+   ],
+   "yaw": 90.0,
+   "sector": "0_3"
+  },
+  {
+   "id": "wh_lounge_approach",
+   "at": [
+    1.875,
+    10.4688
+   ],
+   "yaw": -90.0,
+   "sector": "0_5",
+   "hold_bars": 2
+  },
+  {
+   "id": "wh_lounge_door",
+   "at": [
+    4.0625,
+    10.4688
+   ],
+   "yaw": -90.0,
    "sector": "0_5"
   }
  ],
@@ -2943,7 +3546,9 @@
      "0_7",
      "0_8",
      "0_9",
-     "0_10"
+     "0_10",
+     "0_11",
+     "0_12"
     ],
     "floor": 0,
     "ceiling": 256,
@@ -3099,7 +3704,8 @@
     "pieces": [
      "11_0",
      "11_1",
-     "11_2"
+     "11_2",
+     "11_3"
     ],
     "floor": 60,
     "ceiling": 256,
@@ -3168,16 +3774,58 @@
   "approximate": true,
   "uncertain": [
    "The whole footprint is an estimate from knowledge of the level and from the supplied concept image, not read from the WAD or measured on the render.",
-   "Arena about 1000 units across, estimated (the first trace had 1400); proportions, outer rim and ceiling heights may differ.",
+   "Hall about 1000 units across with a 380 wide, 500 long vestibule, estimated (the first trace had a 1400 square arena); proportions, outer rim and ceiling heights may differ.",
    "The diamond dance floor with its two gates, the sunken -16 floor, the central platform (+32, two stair arms) and the four plinths (+56) are inventions from the concept image, which shows a fenced floor with speaker boxes and a lit cube; the real map's raised areas are unknown.",
-   "The stage with two steps on the north wall, the bar alcove (west, 200 x 260) and the lounge alcove (east, +12) are inventions from the concept image's guides; the real map's rooms differ.",
+   "The stage with two steps on the north wall, the bar alcove (west vestibule wall, 190 x 170) and the lounge alcove (east vestibule wall, +12) are inventions from the concept image's guides; the real map's rooms differ.",
    "The arrival corridor and room in the north-west corner are placeholders so the map has a way in and out; the real exits differ.",
    "Floors, ceilings and light values are invented in the Doom style; heights are relative only."
   ],
   "stats": {
    "doom_sectors": 16,
-   "pieces": 50,
-   "portals": 93
-  }
+   "pieces": 53,
+   "portals": 96
+  },
+  "authored": true
+ },
+ "fog": {
+  "color": "#050a22",
+  "density": 0.018
+ },
+ "palette_weight": 1.0,
+ "scene": {
+  "id": "doom_warehouse",
+  "reference": "art/reference/doom_worlds/Cobalt Warehouse Dance Floor-1.png",
+  "routes": {
+   "ahead": [
+    "wh_stage_approach",
+    "wh_stage_steps",
+    "wh_stage_top"
+   ],
+   "left": [
+    "wh_bar_approach",
+    "wh_bar_door"
+   ],
+   "right": [
+    "wh_lounge_approach",
+    "wh_lounge_door"
+   ],
+   "stay": [
+    "wh_fence",
+    "wh_plinths",
+    "wh_platform",
+    "wh_ref"
+   ],
+   "arrive": [
+    "wh_arrive",
+    "wh_door",
+    "wh_ref"
+   ],
+   "stumble": [
+    "wh_ref_back",
+    "wh_sw_corner",
+    "wh_ref"
+   ]
+  },
+  "note": "authored by tools/doom/author_warehouse.py; routes are lists of waypoint ids (one hop today, the polyline later); hold_bars on a waypoint is the still hold at a choice window"
  }
 }

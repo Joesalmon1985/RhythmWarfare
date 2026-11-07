@@ -1,0 +1,714 @@
+{
+ "worlds": [
+  {
+   "id": "doom_warehouse",
+   "title": "The Warehouse (Doom worlds pilot)",
+   "map": "doom_warehouse",
+   "depth": 1,
+   "blurb": "A fenced dance floor under steel trusses. The stage ahead, the bar on the left, the lounge on the right: follow the guide you like."
+  }
+ ],
+ "nodes": [
+  {
+   "id": "doom_warehouse",
+   "world": "doom_warehouse",
+   "scene": "floor",
+   "title": "The Dance Floor",
+   "entry": true,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "A fenced dance floor under steel trusses. The stage ahead, the bar on the left, the lounge on the right: follow the guide you like.",
+   "next": [
+    {
+     "to": "doom_warehouse",
+     "dir": "down",
+     "label": "Stay on the floor",
+     "loop": true
+    },
+    {
+     "to": "doom_balcony",
+     "dir": "up",
+     "label": "Up the stage steps to the balcony"
+    },
+    {
+     "to": "doom_bar",
+     "dir": "left",
+     "label": "Into the bar"
+    },
+    {
+     "to": "doom_lounge",
+     "dir": "right",
+     "label": "Into the chill-out"
+    }
+   ],
+   "place": {
+    "waypoint": "wh_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "wh_fence",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_fence"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_plinths",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_plinths"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_platform",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_platform"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_fence",
+        "wh_ref"
+       ],
+       "hold_bars": 8
+      }
+     ],
+     "bad": [
+      {
+       "to": "wh_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2,
+       "route": [
+        "wh_ref_back"
+       ]
+      },
+      {
+       "to": "wh_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3,
+       "route": [
+        "wh_sw_corner"
+       ]
+      }
+     ],
+     "arrive": "wh_arrive",
+     "exits": {
+      "up": "wh_stage_top",
+      "left": "wh_bar_door",
+      "right": "wh_lounge_door",
+      "down": "wh_ref"
+     },
+     "routes": {
+      "up": [
+       "wh_stage_approach",
+       "wh_stage_steps",
+       "wh_stage_top"
+      ],
+      "left": [
+       "wh_bar_approach",
+       "wh_bar_door"
+      ],
+      "right": [
+       "wh_lounge_approach",
+       "wh_lounge_door"
+      ]
+     },
+     "glances": [
+      {
+       "by": -12,
+       "bars": 2
+      },
+      {
+       "by": 14,
+       "bars": 2
+      },
+      {
+       "by": -8,
+       "pitch": 4,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.8,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_balcony",
+   "world": "doom_warehouse",
+   "scene": "balcony",
+   "title": "The Balcony (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Balcony (stand-in)",
+   "next": [
+    {
+     "to": "doom_warehouse.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "wh_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "wh_fence",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_fence"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_plinths",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_plinths"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_platform",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_platform"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_fence",
+        "wh_ref"
+       ],
+       "hold_bars": 8
+      }
+     ],
+     "bad": [
+      {
+       "to": "wh_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2,
+       "route": [
+        "wh_ref_back"
+       ]
+      },
+      {
+       "to": "wh_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3,
+       "route": [
+        "wh_sw_corner"
+       ]
+      }
+     ],
+     "arrive": "wh_arrive",
+     "exits": {
+      "up": "wh_stage_top",
+      "left": "wh_bar_door",
+      "right": "wh_lounge_door",
+      "down": "wh_ref"
+     },
+     "routes": {
+      "up": [
+       "wh_stage_approach",
+       "wh_stage_steps",
+       "wh_stage_top"
+      ],
+      "left": [
+       "wh_bar_approach",
+       "wh_bar_door"
+      ],
+      "right": [
+       "wh_lounge_approach",
+       "wh_lounge_door"
+      ]
+     },
+     "glances": [
+      {
+       "by": -12,
+       "bars": 2
+      },
+      {
+       "by": 14,
+       "bars": 2
+      },
+      {
+       "by": -8,
+       "pitch": 4,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.8,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_bar",
+   "world": "doom_warehouse",
+   "scene": "bar",
+   "title": "The Bar (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Bar (stand-in)",
+   "next": [
+    {
+     "to": "doom_warehouse.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "wh_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "wh_fence",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_fence"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_plinths",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_plinths"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_platform",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_platform"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_fence",
+        "wh_ref"
+       ],
+       "hold_bars": 8
+      }
+     ],
+     "bad": [
+      {
+       "to": "wh_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2,
+       "route": [
+        "wh_ref_back"
+       ]
+      },
+      {
+       "to": "wh_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3,
+       "route": [
+        "wh_sw_corner"
+       ]
+      }
+     ],
+     "arrive": "wh_arrive",
+     "exits": {
+      "up": "wh_stage_top",
+      "left": "wh_bar_door",
+      "right": "wh_lounge_door",
+      "down": "wh_ref"
+     },
+     "routes": {
+      "up": [
+       "wh_stage_approach",
+       "wh_stage_steps",
+       "wh_stage_top"
+      ],
+      "left": [
+       "wh_bar_approach",
+       "wh_bar_door"
+      ],
+      "right": [
+       "wh_lounge_approach",
+       "wh_lounge_door"
+      ]
+     },
+     "glances": [
+      {
+       "by": -12,
+       "bars": 2
+      },
+      {
+       "by": 14,
+       "bars": 2
+      },
+      {
+       "by": -8,
+       "pitch": 4,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.8,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_lounge",
+   "world": "doom_warehouse",
+   "scene": "lounge",
+   "title": "The Chill-out (stand-in)",
+   "entry": false,
+   "exit_scene": false,
+   "role": "dancer",
+   "blurb": "The Chill-out (stand-in)",
+   "next": [
+    {
+     "to": "doom_warehouse.return",
+     "dir": "up",
+     "label": "On"
+    }
+   ],
+   "place": {
+    "waypoint": "wh_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "wh_fence",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_fence"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_plinths",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_plinths"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_platform",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_platform"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_fence",
+        "wh_ref"
+       ],
+       "hold_bars": 8
+      }
+     ],
+     "bad": [
+      {
+       "to": "wh_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2,
+       "route": [
+        "wh_ref_back"
+       ]
+      },
+      {
+       "to": "wh_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3,
+       "route": [
+        "wh_sw_corner"
+       ]
+      }
+     ],
+     "arrive": "wh_arrive",
+     "exits": {
+      "up": "wh_stage_top",
+      "left": "wh_bar_door",
+      "right": "wh_lounge_door",
+      "down": "wh_ref"
+     },
+     "routes": {
+      "up": [
+       "wh_stage_approach",
+       "wh_stage_steps",
+       "wh_stage_top"
+      ],
+      "left": [
+       "wh_bar_approach",
+       "wh_bar_door"
+      ],
+      "right": [
+       "wh_lounge_approach",
+       "wh_lounge_door"
+      ]
+     },
+     "glances": [
+      {
+       "by": -12,
+       "bars": 2
+      },
+      {
+       "by": 14,
+       "bars": 2
+      },
+      {
+       "by": -8,
+       "pitch": 4,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.8,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "doom_warehouse.return",
+   "world": "doom_warehouse",
+   "scene": "return",
+   "title": "Back to the Floor",
+   "entry": false,
+   "exit_scene": true,
+   "role": "dancer",
+   "blurb": "Back to the Floor",
+   "next": [
+    {
+     "to": "doom_warehouse",
+     "dir": "up",
+     "label": "Round again",
+     "loop": true
+    },
+    {
+     "to": "doom_warehouse",
+     "dir": "left",
+     "label": "Round again",
+     "loop": true
+    }
+   ],
+   "place": {
+    "waypoint": "wh_ref",
+    "rail": {
+     "good": [
+      {
+       "to": "wh_fence",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_fence"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_plinths",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_plinths"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_platform",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_platform"
+       ],
+       "hold_bars": 4
+      },
+      {
+       "to": "wh_ref",
+       "role": "dancer",
+       "style": "walk",
+       "bars": 4,
+       "route": [
+        "wh_fence",
+        "wh_ref"
+       ],
+       "hold_bars": 8
+      }
+     ],
+     "bad": [
+      {
+       "to": "wh_ref_back",
+       "role": "queasy",
+       "style": "walk",
+       "bars": 2,
+       "route": [
+        "wh_ref_back"
+       ]
+      },
+      {
+       "to": "wh_sw_corner",
+       "role": "queasy",
+       "style": "stagger",
+       "bars": 3,
+       "route": [
+        "wh_sw_corner"
+       ]
+      }
+     ],
+     "arrive": "wh_arrive",
+     "exits": {
+      "up": "wh_stage_top",
+      "left": "wh_bar_door",
+      "right": "wh_lounge_door",
+      "down": "wh_ref"
+     },
+     "routes": {
+      "up": [
+       "wh_stage_approach",
+       "wh_stage_steps",
+       "wh_stage_top"
+      ],
+      "left": [
+       "wh_bar_approach",
+       "wh_bar_door"
+      ],
+      "right": [
+       "wh_lounge_approach",
+       "wh_lounge_door"
+      ]
+     },
+     "glances": [
+      {
+       "by": -12,
+       "bars": 2
+      },
+      {
+       "by": 14,
+       "bars": 2
+      },
+      {
+       "by": -8,
+       "pitch": 4,
+       "bars": 2
+      }
+     ],
+     "strolls": [
+      {
+       "fwd": 0.8,
+       "bars": 3
+      }
+     ]
+    }
+   }
+  }
+ ],
+ "cinematics": {
+  "doom_warehouse.stagger_balcony": {
+   "world": "doom_warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "wh_stage_top",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_warehouse.stagger_bar": {
+   "world": "doom_warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "wh_bar_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  },
+  "doom_warehouse.stagger_lounge": {
+   "world": "doom_warehouse",
+   "steps": [
+    {
+     "move": "walk",
+     "to": "wh_lounge_door",
+     "bars": 2,
+     "role": "queasy",
+     "style": "stagger"
+    }
+   ]
+  }
+ }
+}

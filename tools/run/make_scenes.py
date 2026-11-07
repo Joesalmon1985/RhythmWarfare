@@ -2,13 +2,15 @@
 """Authors the run's scenes (WP-A5): the worlds of content/run/run.json as small graphs of scenes, the doorway waypoints they need in the five world maps,
 and content/story/music.json (one entry per scene). Idempotent: run it again after editing the tables below.
 
-    python3 tools/run/make_scenes.py
+    python3 tools/run/make_scenes.py            # the legacy campaign only
+    python3 tools/run/make_scenes.py --doom     # plus the Doom worlds' overlay in content/run/doom/ (also RW_DOOM_WORLDS=1; docs/doom/LAUNCH.md)
 
 Everything written here is plain data the game validates (RunData, RunRail, tests/test_run_rail.gd). Yaw: 0 faces -z, 90 faces -x, 180 faces +z, -90 faces +x.
 """
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -581,6 +583,9 @@ def main() -> None:
     write_run(nodes, make_hotspots.CINEMATICS)
     make_hotspots.write()
     print("%d scenes in %d worlds, %d cinematics" % (len(nodes), len(WORLDS), len(make_hotspots.CINEMATICS)))
+    if "--doom" in sys.argv or os.environ.get("RW_DOOM_WORLDS") == "1":  # the Doom worlds' overlay (content/run/doom/; RunData merges it only when RW_DOOM_WORLDS=1), default off
+        import make_doom
+        make_doom.write({"GL": GL})
 
 
 if __name__ == "__main__":

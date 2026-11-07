@@ -98,11 +98,11 @@ def oct_(apothem, side_half):
 
 
 def warehouse():
-    """MAP07, second trace (7 November, for the pilot scene docs/doom/scenes/warehouse.md): a 1000 unit square arena with a fenced, sunken diamond dance floor, a raised central
-    platform and four speaker plinths on it, a stage with steps on the north wall, a bar alcove west, a lounge alcove east and the invented arrival corridor in the north-west corner."""
+    """MAP07, second trace (7 November, for the pilot scene docs/doom/scenes/warehouse.md): a 1000 unit square hall with a 380 unit wide vestibule on its south side (the viewpoint stands in it, the bar and lounge open from its walls) with a fenced, sunken diamond dance floor, a raised central
+    platform and four speaker plinths on it, a stage with steps on the north wall, a bar alcove and a lounge alcove on the vestibule's walls and the invented arrival corridor in the north-west corner."""
     S = []
-    arena = [(-500, -500), (500, -500), (500, 40), (500, 300), (500, 500), (200, 500), (200, 440), (90, 440), (90, 416), (-90, 416), (-90, 440), (-200, 440), (-200, 500),
-             (-340, 500), (-440, 500), (-500, 500), (-500, 300), (-500, 40)]
+    arena = [(-190, -600), (190, -600), (190, -420), (190, -250), (190, -100), (500, -100), (500, 500), (200, 500), (200, 440), (90, 440), (90, 416), (-90, 416), (-90, 440),
+             (-200, 440), (-200, 500), (-340, 500), (-440, 500), (-500, 500), (-500, -100), (-190, -100), (-190, -250), (-190, -420)]
     diamond = [(0, -240), (100, -140), (140, -100), (280, 40), (0, 320), (-280, 40), (-140, -100), (-100, -140)]
     complex_ = [(-45, -48), (45, -48), (45, -20), (60, -20), (60, 100), (45, 100), (45, 128), (-45, 128), (-45, 100), (-60, 100), (-60, -20), (-45, -20)]
     plinths = [(-105, -65), (105, -65), (-105, 145), (105, 145)]
@@ -115,20 +115,20 @@ def warehouse():
         S.append(sector("plinth%d" % k, [rect(cx - 25, cy - 25, cx + 25, cy + 25)], 56, 256, 150, "FLOOR5_1"))
     S.append(sector("stage_step_a", [rect(-90, 416, 90, 440)], 20, 256, 200, "STEP1"))
     S.append(sector("stage_step_b", [rect(-90, 440, 90, 464)], 40, 256, 215, "STEP1"))
-    S.append(sector("stage", [[(-200, 440), (-90, 440), (-90, 464), (90, 464), (90, 440), (200, 440), (200, 500), (-200, 500)]], 60, 256, 240, "FLOOR0_1"))
-    S.append(sector("bar", [rect(-700, 40, -500, 300)], 0, 128, 150, "FLOOR5_1"))
-    S.append(sector("lounge", [rect(500, 40, 700, 300)], 12, 128, 140, "FLOOR5_1"))
+    S.append(sector("stage", [[(-200, 440), (-90, 440), (-90, 464), (90, 464), (90, 440), (200, 440), (200, 560), (-200, 560)]], 60, 256, 240, "FLOOR0_1"))
+    S.append(sector("bar", [rect(-380, -420, -190, -250)], 0, 128, 150, "FLOOR5_1"))
+    S.append(sector("lounge", [rect(190, -420, 380, -250)], 12, 128, 140, "FLOOR5_1"))
     S.append(sector("arrival_corridor", [rect(-440, 500, -340, 640)], 0, 128, 110, "FLOOR4_8"))
     S.append(sector("arrival_room", [rect(-480, 640, -300, 760)], 0, 144, 100, "FLOOR5_1"))
     gates = {(120, -120), (-120, -120)}
     return build("MAP07", "Dead Simple (approximate trace, second pass)", S, [
         "The whole footprint is an estimate from knowledge of the level and from the supplied concept image, not read from the WAD or measured on the render.",
-        "Arena about 1000 units across, estimated (the first trace had 1400); proportions, outer rim and ceiling heights may differ.",
+        "Hall about 1000 units across with a 380 wide, 500 long vestibule, estimated (the first trace had a 1400 square arena); proportions, outer rim and ceiling heights may differ.",
         "The diamond dance floor with its two gates, the sunken -16 floor, the central platform (+32, two stair arms) and the four plinths (+56) are inventions from the concept image, which shows a fenced floor with speaker boxes and a lit cube; the real map's raised areas are unknown.",
-        "The stage with two steps on the north wall, the bar alcove (west, 200 x 260) and the lounge alcove (east, +12) are inventions from the concept image's guides; the real map's rooms differ.",
+        "The stage with two steps on the north wall, the bar alcove (west vestibule wall, 190 x 170) and the lounge alcove (east vestibule wall, +12) are inventions from the concept image's guides; the real map's rooms differ.",
         "The arrival corridor and room in the north-west corner are placeholders so the map has a way in and out; the real exits differ.",
         "Floors, ceilings and light values are invented in the Doom style; heights are relative only."],
-        [{"x": 0, "y": -380, "angle": 90, "type": 1, "flags": 7}], gates=gates)
+        [{"x": 0, "y": -520, "angle": 90, "type": 1, "flags": 7}], gates=gates)
 
 
 def mothership():

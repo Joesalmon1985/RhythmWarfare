@@ -21,8 +21,8 @@ Map: `content/story/maps/doom_warehouse.json`, an APPROXIMATE trace of MAP07 (se
 | Raised platform with the cube | `platform` +32 with stair arms `platform_step_s` / `_n` (+8) | centre of the diamond |
 | Speaker plinths | `plinth0..3` (50 units square, +56) | round the platform |
 | Stage | `stage` +60, `stage_step_a` +20, `stage_step_b` +40 | north wall, centred, x -200..200 |
-| Bar | `bar` alcove 200 x 260 units, ceiling 4 m, warm | west wall, y 40..300 |
-| Lounge | `lounge` alcove, floor +12 | east wall, y 40..300 |
+| Bar | `bar` alcove 200 x 260 units, ceiling 4 m, warm | west wall, y 120..380 |
+| Lounge | `lounge` alcove, floor +12 | east wall, y 120..380 |
 | Arrival | `arrival_corridor` and `arrival_room` | north-west corner, invented |
 
 **Reference viewpoint** (`wh_ref`): (0, -380) in Doom units (about 4.4 m from the apex of the fence), yaw 0, looking north along the diagonal axis. Stage ahead (distance about 24 m), bar and lounge at about 40 degrees left and right.
