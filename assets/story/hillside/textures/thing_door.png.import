@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bohd3j6tf073u"
-path="res://.godot/imported/wall_door.png-75dea86d87dc3b037bc4044c29123ce1.ctex"
+uid="uid://ceubtol6j678p"
+path="res://.godot/imported/thing_door.png-44d1e6003196b15aa5beefba373a06b8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/story/hillside/textures/wall_door.png"
-dest_files=["res://.godot/imported/wall_door.png-75dea86d87dc3b037bc4044c29123ce1.ctex"]
+source_file="res://assets/story/hillside/textures/thing_door.png"
+dest_files=["res://.godot/imported/thing_door.png-44d1e6003196b15aa5beefba373a06b8.ctex"]
 
 [params]
 

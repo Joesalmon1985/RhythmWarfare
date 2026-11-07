@@ -1171,6 +1171,76 @@ def thing_fence() -> np.ndarray:
     return s.rgba()
 
 
+def thing_door() -> np.ndarray:
+    """A plank door in a limestone frame, 1.0 x 2.0 m at 112 texels per metre: it stands where the old wall_door tile carried one (the carpenter's yard, the Capernaum street)."""
+    s = Spr(112, 224)
+    nz = vnoise(224, 112, 3, 40, 181, 3)
+    # the frame: two jambs of alternating blocks, a monolith lintel, a worn threshold step
+    for k, y0 in enumerate(range(30, 214, 30)):
+        for xa, xb in ((2, 20), (92, 110)):
+            ext = 0 if k % 2 == 0 else 3
+            m = s.rect(xa - (ext if xa < 50 else 0), y0, xb + (0 if xa < 50 else ext), min(y0 + 29, 214))
+            s.paint(m, STONE, 0.58 + 0.18 * (k % 2) + (nz - 0.5) * 0.3 + 0.1 * (s.xc < xa + 4) - 0.14 * (s.xc > xb - 4), edge=1)
+    s.paint(s.rect(0, 6, 112, 30), STONE, 0.7 + (nz - 0.5) * 0.3 - 0.2 * (s.yc > 24), edge=1)
+    s.paint(s.rect(4, 214, 108, 224), STONE, 0.62 + (nz - 0.5) * 0.3 - 0.2 * (s.yc > 220), edge=1)
+    # the leaf: four planks with grain, a dark gap between them, two iron straps with studs, a ring pull
+    leaf = s.rect(20, 30, 92, 214)
+    pw = 18.0
+    plank = np.floor((s.xc - 20) / pw)
+    tone = np.random.RandomState(182).rand(8).astype(np.float32)[np.clip(plank, 0, 7).astype(int)]
+    grain = vnoise(224, 112, 2.2, 60, 183, 3)
+    sh = 0.42 + (tone - 0.5) * 0.3 + (grain - 0.5) * 0.4 + 0.1 * (((s.xc - 20) % pw) < 3) - 0.14 * (((s.xc - 20) % pw) > pw - 3)
+    sh -= 0.2 * np.exp(-np.clip(s.yc - 30, 0, None) / 8.0)
+    s.paint(leaf, DWOOD, sh, edge=1)
+    s.fill(leaf & (((s.xc - 20) % pw) < 1.2), "#1e140e")
+    for sy in (52, 160):
+        strap = s.rect(20, sy, 92, sy + 9)
+        s.paint(strap, IRON, 0.5 + 0.25 * (s.yc < sy + 2) - 0.2 * (s.yc > sy + 7), edge=1)
+        for rx in range(26, 92, 18):
+            s.dot(rx, sy + 4, "#a29fa8")
+            s.dot(rx + 1, sy + 4, "#46444a")
+    s.paint(s.ell(80, 124, 6, 6) & ~s.ell(80, 124, 3.6, 3.6), IRON, 0.62, edge=1)
+    s.paint(s.rect(77, 117, 83, 121), IRON, 0.6, edge=1)
+    return s.rgba()
+
+
+def thing_column() -> np.ndarray:
+    """A fluted stone column of the Temple colonnade, 0.8 m across the base and 4.6 m tall at 112 texels per metre, with echinus and abacus above and a torus base below."""
+    s = Spr(96, 516)
+    cx = 48.0
+    nz = vnoise(516, 96, 4, 60, 191, 3)
+    y0, y1 = 64, 452
+    hw = 30.0 - 5.0 * (s.yc - y0) / (y1 - y0) * -1.0  # a slight entasis: wider at the foot
+    hw = 26.0 + 4.0 * np.clip((s.yc - y0) / (y1 - y0), 0, 1)
+    shaft = (np.abs(s.xc - cx) <= hw) & (s.yc >= y0) & (s.yc < y1)
+    u = np.clip((s.xc - cx) / hw, -1, 1)
+    th = np.arcsin(u)
+    t = (th / 0.5236) % 1.0
+    groove = 1 - np.abs(2 * t - 1)
+    lamb = np.clip(np.cos(th + 0.65), 0, 1)
+    sh = 0.22 + 0.66 * lamb - 0.16 * groove ** 1.3 + (nz - 0.5) * 0.12
+    s.paint(shaft, STONE, sh, edge=1)
+    for ya, yb, w, tone in ((44, 64, 33, 0.55), (28, 44, 38, 0.65), (10, 28, 42, 0.72)):
+        m = s.rect(cx - w, ya, cx + w, yb)
+        s.paint(m, STONE, tone + (nz - 0.5) * 0.2 - 0.14 * (s.xc > cx + w * 0.55) + 0.08 * (s.yc < ya + 3), edge=1)
+    for ya, yb, w, tone in ((452, 466, 34, 0.55), (466, 490, 38, 0.65), (490, 516, 42, 0.5)):
+        m = s.rect(cx - w, ya, cx + w, yb)
+        s.paint(m, STONE, tone + (nz - 0.5) * 0.2 - 0.14 * (s.xc > cx + w * 0.55) + 0.08 * (s.yc < ya + 3), edge=1)
+    return s.rgba()
+
+
+def thing_crenels() -> np.ndarray:
+    """A run of merlons for the top of the city wall: 0.6 m blocks with 0.4 m gaps, 8 m long and 0.5 m high at 112 texels per metre."""
+    w, h = 896, 56
+    s = Spr(w, h)
+    nz = vnoise(h, w, 20, 8, 201, 3)
+    for x0 in range(0, w, 112):
+        m = s.rect(x0 + 22, 0, x0 + 90, h)
+        s.paint(m, STONE, 0.6 + (nz - 0.5) * 0.3 + 0.12 * (s.xc < x0 + 28) - 0.16 * (s.xc > x0 + 82) - 0.1 * (s.yc > 46), edge=1)
+        s.fill(m & (s.yc == 27), "#6a604c")
+    return s.rgba()
+
+
 THINGS_ORDER: list[str] = []
 SPECS: dict[str, tuple] = {}
 
@@ -1215,6 +1285,9 @@ _reg("thing_tent", thing_tent, 160, 112)
 _reg("thing_dais", thing_dais, 128, 96)
 _reg("thing_wall_low", thing_wall_low, 128, 48)
 _reg("thing_fence", thing_fence, 96, 48)
+_reg("thing_door", thing_door, 112, 224)
+_reg("thing_column", thing_column, 96, 516)
+_reg("thing_crenels", thing_crenels, 896, 56)
 
 
 def build(out_dir: str) -> dict:

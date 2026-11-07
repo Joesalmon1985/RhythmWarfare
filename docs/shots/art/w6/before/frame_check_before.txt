@@ -1,0 +1,8 @@
+picture                   p5   p50   p95   sat   crush  blown  lit mean         flags          guide
+ref Rave                0.08  0.22  0.62  0.47    0.0%   0.1%  #784e50 h357                    
+ref Hospital            0.09  0.17  0.40  0.58    0.0%   0.0%  #2d405b h215                    
+ref InsaneAsylum        0.04  0.15  0.44  0.43    5.6%   0.2%  #3b4b42 h145                    
+gospel_jordan           0.11  0.37  0.74  0.37    0.0%   0.2%  #6f6964 h030                    ok
+gospel_galilee          0.16  0.42  0.75  0.32    0.0%   0.2%  #717268 h068                    bright
+gospel_road             0.19  0.42  0.80  0.38    0.0%   1.1%  #827368 h025                    bright
+gospel_jerusalem        0.11  0.39  0.78  0.34    0.0%   0.7%  #7a7168 h029                    bright
