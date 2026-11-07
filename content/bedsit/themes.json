@@ -54,7 +54,6 @@
   "dinos": "res://content/raves/dinos.json",
   "transport": "res://content/raves/transport.json"
  },
-<<<<<<< HEAD
  "cloakroom": {
   "space": {
    "symbols": [
@@ -87,7 +86,112 @@
      "body": "#e8803a",
      "skin": "#f8b08a",
      "extra": "#ffffff"
-=======
+    }
+   ]
+  },
+  "magic": {
+   "symbols": [
+    "unicorn",
+    "wand",
+    "potion",
+    "crown"
+   ],
+   "attendant": {
+    "kind": "wizard",
+    "body": "#7a3fd0",
+    "skin": "#f1c9a5",
+    "extra": "#ffd93d"
+   },
+   "customers": [
+    {
+     "kind": "wizard",
+     "body": "#4a6fd8",
+     "skin": "#f1c9a5",
+     "extra": "#ffd93d"
+    },
+    {
+     "kind": "fairy",
+     "body": "#e45bd4",
+     "skin": "#f8d8c8",
+     "extra": "#a8e6ff"
+    },
+    {
+     "kind": "wizard",
+     "body": "#2fa86a",
+     "skin": "#d9a77f",
+     "extra": "#e8503a"
+    }
+   ]
+  },
+  "dinos": {
+   "symbols": [
+    "egg",
+    "claw",
+    "fern",
+    "skull"
+   ],
+   "attendant": {
+    "kind": "dino",
+    "body": "#a8c83f",
+    "skin": "#a8c83f",
+    "extra": "#e8503a"
+   },
+   "customers": [
+    {
+     "kind": "dino",
+     "body": "#5ec04a",
+     "skin": "#5ec04a",
+     "extra": "#ffd93d"
+    },
+    {
+     "kind": "dino",
+     "body": "#e88a3a",
+     "skin": "#e88a3a",
+     "extra": "#a23fe8"
+    },
+    {
+     "kind": "dino",
+     "body": "#3fa0c8",
+     "skin": "#3fa0c8",
+     "extra": "#e8503a"
+    }
+   ]
+  },
+  "transport": {
+   "symbols": [
+    "bus",
+    "bike",
+    "train",
+    "boat"
+   ],
+   "attendant": {
+    "kind": "commuter",
+    "body": "#2a6a4a",
+    "skin": "#f1c9a5",
+    "extra": "#ffd93d"
+   },
+   "customers": [
+    {
+     "kind": "commuter",
+     "body": "#3a8ad8",
+     "skin": "#f1c9a5",
+     "extra": "#e8503a"
+    },
+    {
+     "kind": "cyclist",
+     "body": "#e8c83a",
+     "skin": "#d9a77f",
+     "extra": "#3fe89a"
+    },
+    {
+     "kind": "commuter",
+     "body": "#d8503a",
+     "skin": "#8a5a3a",
+     "extra": "#ffffff"
+    }
+   ]
+  }
+ },
  "bar": {
   "space": {
    "ingredients": [
@@ -165,43 +269,10 @@
      "id": "pink_alien",
      "body": "#e87fb8",
      "kind": "antenna"
->>>>>>> wip/play-bar
     }
    ]
   },
   "magic": {
-<<<<<<< HEAD
-   "symbols": [
-    "unicorn",
-    "wand",
-    "potion",
-    "crown"
-   ],
-   "attendant": {
-    "kind": "wizard",
-    "body": "#7a3fd0",
-    "skin": "#f1c9a5",
-    "extra": "#ffd93d"
-   },
-   "customers": [
-    {
-     "kind": "wizard",
-     "body": "#4a6fd8",
-     "skin": "#f1c9a5",
-     "extra": "#ffd93d"
-    },
-    {
-     "kind": "fairy",
-     "body": "#e45bd4",
-     "skin": "#f8d8c8",
-     "extra": "#a8e6ff"
-    },
-    {
-     "kind": "wizard",
-     "body": "#2fa86a",
-     "skin": "#d9a77f",
-     "extra": "#e8503a"
-=======
    "ingredients": [
     {
      "id": "rainbow_nectar",
@@ -277,43 +348,10 @@
      "id": "sprite_pink",
      "body": "#e87fb8",
      "kind": "hat"
->>>>>>> wip/play-bar
     }
    ]
   },
   "dinos": {
-<<<<<<< HEAD
-   "symbols": [
-    "egg",
-    "claw",
-    "fern",
-    "skull"
-   ],
-   "attendant": {
-    "kind": "dino",
-    "body": "#a8c83f",
-    "skin": "#a8c83f",
-    "extra": "#e8503a"
-   },
-   "customers": [
-    {
-     "kind": "dino",
-     "body": "#5ec04a",
-     "skin": "#5ec04a",
-     "extra": "#ffd93d"
-    },
-    {
-     "kind": "dino",
-     "body": "#e88a3a",
-     "skin": "#e88a3a",
-     "extra": "#a23fe8"
-    },
-    {
-     "kind": "dino",
-     "body": "#3fa0c8",
-     "skin": "#3fa0c8",
-     "extra": "#e8503a"
-=======
    "ingredients": [
     {
      "id": "fern_juice",
@@ -389,43 +427,10 @@
      "id": "stego_purple",
      "body": "#a77fe0",
      "kind": "crest"
->>>>>>> wip/play-bar
     }
    ]
   },
   "transport": {
-<<<<<<< HEAD
-   "symbols": [
-    "bus",
-    "bike",
-    "train",
-    "boat"
-   ],
-   "attendant": {
-    "kind": "commuter",
-    "body": "#2a6a4a",
-    "skin": "#f1c9a5",
-    "extra": "#ffd93d"
-   },
-   "customers": [
-    {
-     "kind": "commuter",
-     "body": "#3a8ad8",
-     "skin": "#f1c9a5",
-     "extra": "#e8503a"
-    },
-    {
-     "kind": "cyclist",
-     "body": "#e8c83a",
-     "skin": "#d9a77f",
-     "extra": "#3fe89a"
-    },
-    {
-     "kind": "commuter",
-     "body": "#d8503a",
-     "skin": "#8a5a3a",
-     "extra": "#ffffff"
-=======
    "ingredients": [
     {
      "id": "diesel_cola",
@@ -501,7 +506,6 @@
      "id": "driver_yellow",
      "body": "#e8c84f",
      "kind": "cap"
->>>>>>> wip/play-bar
     }
    ]
   }
