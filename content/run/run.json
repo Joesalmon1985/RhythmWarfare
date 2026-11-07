@@ -6025,7 +6025,8 @@
      "to": "day_cards",
      "bars": 2,
      "role": "dancer",
-     "style": "walk"
+     "style": "walk",
+     "hold_bars": 4
     }
    ]
   },
@@ -6049,7 +6050,8 @@
      "to": "day_cards",
      "bars": 2,
      "role": "dancer",
-     "style": "walk"
+     "style": "walk",
+     "hold_bars": 4
     }
    ]
   },

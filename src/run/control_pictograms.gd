@@ -8,7 +8,8 @@ extends RefCounted
 ## draw() answers false when the control has none of these (the caller then draws its label).
 
 const SHAPES := ["same", "different", "circle", "square", "diamond", "triangle", "star", "drop", "bottle", "leaf", "bolt",
-	"gem", "hex", "egg", "lemon", "spiky", "crescent", "moon", "ring", "swirl", "comet", "flame", "cloud", "rainbow", "can", "shaker", "box", "left", "right", "knob"]
+	"gem", "hex", "egg", "lemon", "spiky", "crescent", "moon", "ring", "swirl", "comet", "flame", "cloud", "rainbow", "can", "shaker", "box", "left", "right", "knob",
+	"chip", "card_draw", "flat_hand", "door"]  # (the card table's: a betting chip, a card drawn off the deck, a flat hand held over the cards, a door ajar)
 
 
 static func draw(ci: CanvasItem, spec: Dictionary, face: Rect2, a: float, base: Color, lit: bool) -> bool:
@@ -116,5 +117,29 @@ static func shape(ci: CanvasItem, name: String, c: Vector2, s: float, k: Color) 
 		"knob":
 			ci.draw_arc(c, s * 0.85, 0.0, TAU, 24, k, maxf(2.0, s * 0.3))
 			ci.draw_rect(Rect2(c + Vector2(-0.14, -1.05) * s, Vector2(0.28, 0.8) * s), k)
+		"chip":  # a chip seen from a little above: a flat disc on its rim, notches round the edge
+			var dk := Color(k.r * 0.45, k.g * 0.45, k.b * 0.45, k.a)
+			ci.draw_rect(Rect2(c + Vector2(-1.15, 0.0) * s, Vector2(2.3, 0.4) * s), dk)
+			var cp := PackedVector2Array()
+			for i in 20:
+				cp.append(c + Vector2(cos(TAU * float(i) / 20.0) * 1.15, sin(TAU * float(i) / 20.0) * 0.55) * s)
+			ci.draw_colored_polygon(cp, k)
+			for i in 4:
+				var ang := TAU * float(i) / 4.0 + PI * 0.25
+				ci.draw_rect(Rect2(c + Vector2(cos(ang) * 0.8 - 0.12, sin(ang) * 0.38 - 0.08) * s, Vector2(0.24, 0.16) * s), dk)
+		"card_draw":  # the deck, and a card lifting off it toward us
+			ci.draw_rect(Rect2(c + Vector2(-1.2, -0.2) * s, Vector2(1.3, 1.4) * s), Color(k.r * 0.6, k.g * 0.6, k.b * 0.6, k.a))
+			ci.draw_colored_polygon(PackedVector2Array([c + Vector2(-0.3, -1.2) * s, c + Vector2(0.9, -1.0) * s, c + Vector2(1.2, 0.6) * s, c + Vector2(0.0, 0.4) * s]), k)
+		"flat_hand":  # a palm held flat over the cards: four fingers together, the thumb out
+			ci.draw_rect(Rect2(c + Vector2(-0.9, 0.85) * s, Vector2(1.5, 0.3) * s), Color(k.r * 0.6, k.g * 0.6, k.b * 0.6, k.a))
+			ci.draw_rect(Rect2(c + Vector2(-1.1, -0.1) * s, Vector2(1.9, 0.75) * s), k)
+			for i in 4:
+				ci.draw_rect(Rect2(c + Vector2(-1.1 + 0.48 * float(i), -0.95) * s, Vector2(0.4, 0.9) * s), k)
+			ci.draw_colored_polygon(PackedVector2Array([c + Vector2(0.8, 0.05) * s, c + Vector2(1.35, -0.45) * s, c + Vector2(1.5, -0.25) * s, c + Vector2(0.8, 0.5) * s]), k)
+		"door":  # a door standing ajar in its frame
+			var dd := Color(k.r * 0.45, k.g * 0.45, k.b * 0.45, k.a)
+			ci.draw_rect(Rect2(c + Vector2(-0.9, -1.25) * s, Vector2(1.8, 2.5) * s), dd)
+			ci.draw_colored_polygon(PackedVector2Array([c + Vector2(-0.9, -1.25) * s, c + Vector2(0.35, -0.95) * s, c + Vector2(0.35, 1.45) * s, c + Vector2(-0.9, 1.25) * s]), k)
+			ci.draw_circle(c + Vector2(0.1, 0.15) * s, maxf(1.0, s * 0.12), dd)
 		_:
 			ci.draw_circle(c, s * 0.7, k)

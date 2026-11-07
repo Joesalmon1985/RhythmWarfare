@@ -77,6 +77,7 @@ func step(t: float) -> void:
 				play.hotspot_log.append({"kind": "minigame_tap", "t": t, "target": str(s["target"]), "ok": ok, "scripted": true})
 	_step_layers(t)
 	_step_things(t)
+	_step_view(t)
 	if feedback_layer != null:
 		feedback_layer.prune(t)
 	if mg.done_t >= 0.0 and not _result_applied:  # (read once, when the activity is done: the flags are saved then, not at the boundary)
@@ -472,6 +473,32 @@ func _step_things(t: float) -> void:
 		_things_stage = null
 		_port_things = []
 		mode_log.append({"kind": "things_off", "t": t})
+
+
+## The activity's view (CONTRACTS.md 10, `view_pitch` in its config, degrees, negative down): seated, the camera stands where the hotspot's walk ended (the journey is
+## not fed) and holds that pitch, a look of two bars put down every four beats from a beat before the seat until the activity is done (overlapping, so it never eases off
+## in between); after that the last look eases out as the camera goes back to the rail. No cut, no fade, no zoom.
+func _step_view(t: float) -> void:
+	var mg: MinigameController = play.minigames
+	if mg.activity == null or mg.state not in ["entering", "active", "leaving"]:
+		_pitch_k = -1
+		return
+	var pitch := float(mg.activity.config.get("view_pitch", 0.0))
+	if pitch == 0.0 or not play.stages.has(play.active_world):
+		return
+	var span := 4.0 * play.engine.beat_s
+	var t0 := mg.seat_t - play.engine.beat_s
+	if t < t0:
+		return
+	var k := int(floor((t - t0) / span))
+	if k <= _pitch_k:
+		return
+	_pitch_k = k
+	play._journey_apply({"world": play.active_world, "t0": t0 + float(k) * span, "action": "player_look", "args": {"by": 0.0, "pitch": pitch, "bars": 2.0}})
+	mode_log.append({"kind": "view_pitch", "t": t0 + float(k) * span, "pitch": pitch})
+
+
+var _pitch_k := -1  # the last four-beat slot the seated pitch was put down for (-1: none yet)
 
 
 ## RunWorldPort: the activity's things now (an activity without `things()` pushes them this way).

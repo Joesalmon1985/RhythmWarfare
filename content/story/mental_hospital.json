@@ -2138,6 +2138,30 @@
    "thresh": 0,
    "art": "night_one",
    "activity": "sleep"
+  },
+  {
+   "id": "cards_dealer",
+   "archetype": "orderly",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "stand"
+  },
+  {
+   "id": "cards_a",
+   "archetype": "curly",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "stand"
+  },
+  {
+   "id": "cards_b",
+   "archetype": "punk",
+   "variant": "b",
+   "group": "core",
+   "thresh": 0,
+   "activity": "stand"
   }
  ],
  "silhouettes": [

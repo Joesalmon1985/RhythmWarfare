@@ -16,11 +16,11 @@ ft("ward", "window", T("wlight_d"), "glow",
    out(energy=-5, music="dip"), s_text="the barred window lets the light in (+5, music variation)", f_text="the bars rattle (-5, music dips)")
 
 ob("ward", "cards", P(2.4, 0.5, 3.0), "beckon",
-   out(activity="blackjack", cin=cin(w, "cards_sit", walk("day_cards", "dancer", "walk", 2))),
+   out(activity="blackjack", cin=cin(w, "cards_sit", walk("day_cards", "dancer", "walk", 2, hold=4))),
    out(energy=-3, cin=cin(w, "cards_waved_off", walk("day_cards", "dancer", "walk", 2))),
    s_text="sit at the empty chair: blackjack, the run stays in the day room (minigame)", f_text="the dealer waves you off (-3), the scene goes on by its default exit",
    radius=2.4, min_px=220, ring_m=1.7, selected="claim", window="any", pass_credit=0.25,
-   on_select=cin(w, "cards_approach", walk("day_cards", "dancer", "walk", 2)))
+   on_select=cin(w, "cards_approach", walk("day_cards", "dancer", "walk", 2, hold=4)))  # the walk ends at a hold at the chair (contract 10); seated, the host holds it
 exits("ward.art")
 ch("ward.art", "painter", A("x10"), "beckon",
    out(flags=["wd_painted"], energy=6, cin=cin(w, "paint_look", walk("art_easels", "dancer", "walk", 3, look="x10"))),
