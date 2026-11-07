@@ -146,6 +146,20 @@ func threshold_leave(t: float, t_boundary: float, from: String, to: String) -> A
 	return threshold_walk(t, t_boundary, wp, 2.0, move if str(move.get("to", "")) == wp else {})
 
 
+## The walk out at a committed choice (lead ruling on H1.6, "you chose, you go"): a `hotspot_commit` event `ev` of the final window for a touched choice (not the untouched default)
+## whose route leads to another world with a threshold starts the threshold walk at the commit's own time, with the route move's authored bars (clamped 2 to 4) and its hold, each only
+## as far as it fits before the phase's boundary (a late commit is shortened, never run past it). [] otherwise: the lock (beat 61) then walks the default as before.
+func commit_walk(ev: Dictionary, engine: RunEngine) -> Array:
+	var out: Dictionary = ev.get("outcome", {})
+	if out.is_empty() or str(out.get("window", "")) != "final" or not bool(out.get("tapped", false)) or bool(out.get("stays", false)):
+		return []
+	var to := str(out.get("route", ""))
+	var from := str(ev.get("node", engine.node_id))
+	if not data.nodes.has(to) or not data.nodes.has(from) or to == from or str(data.nodes[to]["world"]) == str(data.nodes[from]["world"]):
+		return []
+	return threshold_leave(float(ev["t"]), engine.t_of(float(engine.timing("phase_beats"))), from, to)
+
+
 ## The threshold spot of the route out of scene `from` to `to` in another world: the node's `thresholds` {route id: waypoint} (data of contract 1), else the route's own move
 ## (threshold_move: its `to`); "" when there is neither.
 func threshold_of(from: String, to: String) -> String:

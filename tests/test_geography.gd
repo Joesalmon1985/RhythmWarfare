@@ -182,6 +182,11 @@ func _drive(d: RunData, start: String, picks: Array, until_phase: int) -> Dictio
 		for ev in e.update(t):
 			events.append(ev)
 			actions.append_array(j.on_event(ev, e))
+			if str(ev["kind"]) == "hotspot_commit" and door_phase != e.phase_n:  # RunPlay._on_hotspot_commit: a chosen way out walks from the commit
+				var cw := j.commit_walk(ev, e)
+				actions.append_array(cw)
+				if not cw.is_empty():
+					door_phase = e.phase_n
 		for i in e.level.notes.size():
 			var n: Dictionary = e.level.notes[i]
 			if not pressed.has(i) and float(n["time"]) <= t:
@@ -212,8 +217,8 @@ func test_a_floor_bar_floor_cycle_walks_out_cuts_and_arrives() -> void:
 	var wants := [["to_balcony", ["floor_edge"]], ["deck_reactor_door", ["deck_gallery_door"]], ["to_bar", ["floor_bar"]]]
 	for k in 3:
 		var t_b := float(phases[k + 1]["t"])
-		var walks := acts.filter(func(a: Dictionary) -> bool: return str(a["action"]) == "player_move" and bool((a["args"] as Dictionary).get("threshold", false)) and absf(float(a["t0"]) - (t_b - RunPassage.DOOR_BEATS * BEAT)) < 0.01)
-		assert_eq(walks.size(), 1, "one threshold walk out of phase %d" % (k + 1))
+		var walks := acts.filter(func(a: Dictionary) -> bool: return str(a["action"]) == "player_move" and bool((a["args"] as Dictionary).get("threshold", false)) and absf(float(a["t0"]) - (t_b - (16.0 - e._decision_beat()) * BEAT)) < 0.01)
+		assert_eq(walks.size(), 1, "one threshold walk out of phase %d, from the commit at the last block's decision" % (k + 1))
 		if walks.size() != 1:
 			continue
 		var w: Dictionary = walks[0]
@@ -239,6 +244,76 @@ func test_a_floor_bar_floor_cycle_walks_out_cuts_and_arrives() -> void:
 		assert_true(prog.reached_ids().has(wid))
 	if FileAccess.file_exists("user://test_geography_prog.json"):
 		DirAccess.remove_absolute("user://test_geography_prog.json")
+
+
+func _commit_ev(t: float, route: String, tapped := true, node := "geo_floor") -> Dictionary:
+	return {"kind": "hotspot_commit", "t": t, "block": 3, "node": node, "phase": 1, "energy": 60.0,
+		"outcome": {"hotspot": "x", "window": "final", "tapped": tapped, "success": true, "route": route, "continued": false, "cinematic": {}}}
+
+
+func test_an_early_commit_plays_the_whole_leg_and_its_hold() -> void:
+	var d := _data("early")
+	var e := RunEngine.new(d)
+	e.begin("geo_floor")
+	var j := RunJourney.new(d)
+	j.look_heralds = false
+	j.on_event({"kind": "phase_start", "node": "geo_floor", "t": 0.0, "phase": 1}, e)
+	var t_c := e.t_of(44.5)  # a commit well before the boundary (19.5 beats: room for 3 bars and the hold)
+	var w := j.commit_walk(_commit_ev(t_c, "geo_bar"), e)
+	assert_eq(w.size(), 1, "the walk starts at the commit")
+	if w.size() != 1:
+		return
+	var a: Dictionary = w[0]["args"]
+	assert_near(float(w[0]["t0"]), t_c, 1e-9)
+	assert_near(float(a["bars"]), 3.0, 1e-6, "the route move's authored 3 bars")
+	assert_near(float(a.get("hold_bars", 0.0)), 1.0, 1e-6, "and its hold at the threshold")
+	assert_eq(a["via"], ["floor_edge"])
+	assert_true(float(w[0]["t0"]) + (float(a["bars"]) + float(a.get("hold_bars", 0.0))) * j.rail.bar_s() <= e.t_of(64.0) + 1e-9, "walk and hold end by the boundary")
+	# a commit with less room: the hold goes first, then the leg is shortened
+	var w2 := j.commit_walk(_commit_ev(e.t_of(54.0), "geo_bar"), e)
+	assert_near(float(w2[0]["args"]["bars"]), 2.5, 1e-6, "10 beats: the leg is cut to 2.5 bars")
+	assert_false((w2[0]["args"] as Dictionary).has("hold_bars"), "no time for the hold")
+	var w3 := j.commit_walk(_commit_ev(e.t_of(52.0), "geo_bar"), e)
+	assert_near(float(w3[0]["args"]["bars"]), 3.0, 1e-6, "12 beats: the whole leg, no hold")
+	assert_false((w3[0]["args"] as Dictionary).has("hold_bars"))
+	# no walk at the commit: the untouched default, a stay, a commit after the boundary
+	assert_eq(j.commit_walk(_commit_ev(t_c, "geo_bar", false), e), [], "the untouched default waits for the lock")
+	assert_eq(j.commit_walk(_commit_ev(t_c, "geo_floor"), e), [], "the stay")
+	assert_eq(j.commit_walk(_commit_ev(e.t_of(64.0), "geo_bar"), e), [], "no time left")
+
+
+func test_the_real_commit_is_shortened_to_end_on_the_boundary() -> void:
+	var d := _data("late")
+	var r := _drive(d, "geo_floor", ["geo_bar"], 2)
+	var e: RunEngine = r["engine"]
+	var walks: Array = (r["actions"] as Array).filter(func(a: Dictionary) -> bool: return bool((a["args"] as Dictionary).get("threshold", false)))
+	assert_eq(walks.size(), 1)
+	if walks.size() != 1:
+		return
+	var dec := 48.0 + e._decision_beat()
+	assert_near(float(walks[0]["t0"]), dec * BEAT, 0.01, "from the commit at beat %.2f" % dec)
+	assert_near(float(walks[0]["args"]["bars"]), (64.0 - dec) / 4.0, 1e-6, "the 3-bar leg cut to the %.2f beats left" % (64.0 - dec))
+	assert_false((walks[0]["args"] as Dictionary).has("hold_bars"), "no hold")
+	assert_true(float(walks[0]["t0"]) + float(walks[0]["args"]["bars"]) * 4.0 * BEAT <= 64.0 * BEAT + 1e-6, "never past the boundary")
+
+
+func test_the_default_way_out_walks_from_the_lock() -> void:
+	var d := _data("default", func(run: Dictionary, _m: Dictionary) -> void:
+		var nx: Array = _node(run, "geo_floor")["next"]
+		nx.push_front(nx.pop_at(1)))  # the way up to the Bar is the Floor's default
+	assert_eq(d.errors, [])
+	var r := _drive(d, "geo_floor", [], 2)
+	var phases: Array = _of(r["events"], "phase_start")
+	assert_eq(phases.map(func(p: Dictionary) -> String: return str(p["node"])), ["geo_floor", "geo_bar"], "nothing touched: the default leads on")
+	var commits: Array = _of(r["events"], "hotspot_commit")
+	assert_true(not commits.is_empty() and not bool(commits[0]["outcome"]["tapped"]), "the commit was the untouched default")
+	var walks: Array = (r["actions"] as Array).filter(func(a: Dictionary) -> bool: return bool((a["args"] as Dictionary).get("threshold", false)))
+	assert_eq(walks.size(), 1)
+	if walks.size() != 1:
+		return
+	assert_near(float(walks[0]["t0"]), (64.0 - RunPassage.DOOR_BEATS) * BEAT, 0.01, "from the lock, beat 61")
+	assert_near(float(walks[0]["args"]["bars"]), RunPassage.DOOR_BEATS / 4.0, 1e-6, "the 3-beat walk")
+	assert_eq(walks[0]["args"]["via"], ["floor_edge"], "still the route's polyline")
 
 
 func test_staying_is_the_down_loop() -> void:
@@ -304,7 +379,7 @@ func test_the_run_scene_walks_the_route_then_swaps_the_world_and_back() -> void:
 	var walks: Array = (scene.journey_log as Array).filter(func(a: Dictionary) -> bool: return str(a["action"]) == "player_move" and bool((a["args"] as Dictionary).get("threshold", false)))
 	assert_eq(walks.size(), 1, "the lock handler walked to the threshold")
 	if walks.size() == 1:
-		assert_near(float(walks[0]["t0"]), 61.0 * BEAT, 0.01, "from beat 61")
+		assert_near(float(walks[0]["t0"]), (48.0 + scene.engine._decision_beat()) * BEAT, 0.01, "from the commit (the last block's decision beat), not the lock")
 		assert_eq(walks[0]["args"]["via"], ["floor_edge"], "along the route's polyline")
 		assert_eq(str(walks[0]["world"]), "night_one")
 	var st: StoryStage = scene.stages["night_one"]["stage"]

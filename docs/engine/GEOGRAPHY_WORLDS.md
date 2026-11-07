@@ -52,10 +52,14 @@ An example follows. Its waypoint names are made up for illustration; a working f
 
 1. The route window commits as usual (`RunEngine` gives `route_commit` with `same_world: false`). The departing scene's
    `exits[dir]` doorway and the chosen guide's `committed` state are unchanged.
-2. At beat 61 (3 beats before the downbeat), `RunPlay._update_passage` calls `RunJourney.threshold_leave`. This is one
-   `player_move` to the threshold along the route's `via`. It uses the move's `bars`, shortened so that it ends by the
-   boundary. Its `hold_bars` is kept only if there is time left before the boundary. A route with no move and no
-   threshold has no walk.
+2. The walk out is one `player_move` to the threshold along the route's `via`. It uses the move's `bars` (clamped to
+   2..4), shortened so that it ends by the boundary. Its `hold_bars` is kept only if there is time left before the
+   boundary. A route with no move and no threshold has no walk. The pads keep playing during the walk.
+   - A touched choice walks from its commit: `RunPlay._on_hotspot_commit` calls `RunJourney.commit_walk`. In today's
+     engine the final window commits at beat 60.5, so this walk gets 3.5 beats. An earlier commit would get the whole
+     leg and its hold.
+   - An untouched default walks from the lock at beat 61 (3 beats before the downbeat): `RunPlay._update_passage`
+     calls `RunJourney.threshold_leave`.
 3. From beat 62 the passage frame shuts to the doorway. On the downbeat the stage swaps to the destination's map.
 4. The destination's `rail.arrival` cuts to its `rail.arrive` and walks home. The frame opens again.
 

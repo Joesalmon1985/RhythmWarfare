@@ -1985,6 +1985,12 @@ func _on_hotspot_commit(ev: Dictionary) -> void:
 		_door_phase = engine.phase_n
 	if not (out["cinematic"] as Dictionary).is_empty():
 		_hotspot_cinematic(out, t, claim_to)
+	if _door_phase != engine.phase_n and trial_state == "":  # a chosen route to another world (H1.6, the lead's ruling): the threshold walk starts at the commit; the lock then walks nothing more
+		var walk := journey.commit_walk(ev, engine)
+		for a in walk:
+			_journey_apply(a)
+		if not walk.is_empty():
+			_door_phase = engine.phase_n
 	if str(out["window"]) == "early" and bool(out["success"]) and HotspotContract.is_trial_route(str(out["route"])):
 		_trial_entry = {"way": "legacy", "object": str(out["hotspot"])}  # (the wizard: committed to the route state when the trial begins, commit_legacy)
 		trial_launcher.call()  # the wizard's way in: the walk to the hatch is scheduled by arm_trial on the next cue-free guard

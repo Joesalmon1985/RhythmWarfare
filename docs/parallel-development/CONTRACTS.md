@@ -49,9 +49,10 @@ Fixture: `scene_entry.json`. Tests: `test_scene_entry_and_exit_shapes`.
 - **Threshold (built, H1.6)**: the Doom scenes are **geography worlds** (`"geography": true` on the run.json `worlds` entry): one scene per world, its
   `down` route the stay (`loop: true`), its other routes leading to the entry scene of another geography world in any direction, at any depth, cycles
   through worlds allowed (`RunData._validate_geography_routes`). A route's threshold is the node's `thresholds[to]` when given, else the route's move
-  `rail.routes[dir].to` (`RunJourney.threshold_of` / `threshold_move`). At beat 61 of the departure the lock handler (`RunPlay._update_passage` ->
-  `RunJourney.threshold_leave`) walks that move's `via` polyline to the threshold, ending by the boundary (its `hold_bars` only when there is time);
-  then the passage frame shuts, the stage swaps on the downbeat, and the destination's `rail.arrival` cuts to its `rail.arrive` and walks home.
+  `rail.routes[dir].to` (`RunJourney.threshold_of` / `threshold_move`). A touched choice walks from its commit (`hotspot_commit`, final window,
+  `RunPlay._on_hotspot_commit` -> `RunJourney.commit_walk`; lead ruling "you chose, you go"); an untouched default walks from the lock, beat 61
+  (`RunPlay._update_passage` -> `RunJourney.threshold_leave`). Either walk follows the move's `via` polyline over its `bars` (clamped 2..4), cut to
+  end by the boundary, with its `hold_bars` only when there is time; the pads keep playing. Then the passage frame shuts, the stage swaps on the downbeat, and the destination's `rail.arrival` cuts to its `rail.arrive` and walks home.
   Shape for a generator: `docs/engine/GEOGRAPHY_WORLDS.md`.
 - The bedsit must not be left by the rhythm (brief 2): its node's default destination is `{}` ("stay", port `set_default`) and it has no
   `on_miss`. Depletion would still end the run: hook H1.7.
@@ -371,9 +372,16 @@ RunData._validate_places: every routes[*].to / from / via waypoint is in the sce
 RunJourney.threshold_of(from, to) -> wp         thresholds[to], else threshold_move(from, to).to, else ""
 RunJourney.threshold_move(from, to) -> {}       the next entry to `to` gives dir; rail.routes[dir] ({} for down, same world, no move)
 RunJourney.threshold_walk(t, t_boundary, wp, bars = 2, move = {})   one player_move {to, via?, style, bars <= boundary, hold_bars? (if time), threshold: true}
-RunJourney.threshold_leave(t, t_boundary, from, to) -> Array        what the lock handler plays ([] when the route has no threshold)
+RunJourney.threshold_leave(t, t_boundary, from, to) -> Array        the walk out ([] when the route has no threshold); the lock handler's, beat 61
+RunJourney.commit_walk(ev, engine) -> Array     a final-window hotspot_commit with tapped true and a route to another world: threshold_leave from ev.t
+                                                ([] for the untouched default, a stay, a same-world route, an activity); RunPlay then latches _door_phase
 RunPlay.data_for_test (static, tests only)      the RunData the next run scene plays instead of content/run/run.json
 ```
+- Timing today: the final window commits at the last block's decision beat, 48 + `RunEngine._decision_beat()` = beat 60.5 in the 174 run, so a touched
+  choice's walk gets 3.5 beats (0.875 bar) and the default's 3 beats; neither has room for a hold. The commit walk gives the authored leg and hold only
+  when a commit comes earlier (tested with a synthetic commit at beat 44.5). Earlier commits for geography exits would be an engine change (not made).
+- The choice viewpoint's `player_hold` (RunJourney, beats 49 to 60.5) already ends at the commit beat; a commit before 60.5 would walk while the hold's
+  stillness (no bob or drift) still holds: StoryPlayer has no way to cut a hold short.
 - A geography world needs one entry scene whose id is the world id; `exit_scene` is optional (the entry may be the exit). In a path the flag is an error.
 - Non-geography worlds (the main run, the paths, the bedsit) keep every rule they had; a route from one into a geography world follows the old rules.
 
