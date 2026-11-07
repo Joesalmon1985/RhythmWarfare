@@ -63,3 +63,16 @@ No state-driven guides beyond what the existing choice staging does (sprite per 
 | Tests | `--filter doom_views` (the booth block at the end), `bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tools/doom/check_doom_map.gd -- doom_booth` |
 
 Details: `docs/doom/scenes/booth.md`.
+
+## The Loading Dock (scene `doom_dock`, env-dock block)
+
+| What | How |
+| --- | --- |
+| Play it | PowerShell: `& "<this checkout>\tools\dev\play_doom_worlds.cmd" --scene doom_dock` (world `doom_dock`, depth 2; routes: stay on the dock (default), `doom_dock.mothership` ahead, `doom_dock.floor` left, `doom_dock.underworld` right: stand-ins that lead to `doom_dock.return`) |
+| Rebuild the geometry | `python -I tools/doom/trace/dock_scene.py && python -I tools/doom/convert.py --scene dock --trace tools/doom/trace/dock_pilot.json && python -I tools/doom/author_dock.py` |
+| Rebuild the art and guides | `python -I tools/doom/art/make_dock_art.py` (calls `make_dock_guides.py`), then `godot --headless --import` |
+| Regenerate the overlay | `python tools/run/make_doom.py` (calls `tools/run/make_doom_dock.py`) |
+| Shots | `python3 tools/doom/shoot_dock.py` (`docs/shots/doom/dock/contact.jpg`, `walk_strip.jpg`) |
+| Tests | `--filter doom_views` (the dock block at the end), `bash tools/dev/godot.sh --headless --audio-driver Dummy --path . -s tools/doom/check_doom_map.gd -- doom_dock` |
+
+Details: `docs/doom/scenes/dock.md`.
