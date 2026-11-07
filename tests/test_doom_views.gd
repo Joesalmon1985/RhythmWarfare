@@ -1275,3 +1275,214 @@ func test_underworld_the_abyss_is_a_void_shut_by_railings_and_the_art_is_in_the_
 		for st in ["idle_0", "available_0", "selected_0", "committed_0"]:
 			assert_true(textures.has("guide_%s_%s" % [stem, st]), "underworld: guide sprite %s_%s" % [stem, st])
 			assert_true(FileAccess.file_exists("res://assets/story/doom_underworld/textures/guide_%s_%s.png" % [stem, st]), "underworld: the file guide_%s_%s.png exists" % [stem, st])
+
+
+# --- the Mothership (docs/doom/scenes/mothership.md): a separate block, its own constants -------------------------------------------------------------------------------------------
+
+const MS_MAP := "doom_mothership"
+const MS_GUIDES := ["ms_guide_underworld", "ms_guide_booth", "ms_guide_dock"]
+const MS_HOLD_PLACES := ["ms_ref", "ms_hub_view", "ms_stair_view", "ms_bridge_view"]
+const MS_NODES := ["doom_mothership", "doom_mothership.underworld", "doom_mothership.booth", "doom_mothership.dock", "doom_mothership.return"]
+const MS_EXITS := ["ms_uw_hatch", "ms_booth_hatch", "ms_dock_in"]
+
+
+func _ms_map() -> StoryMap:
+	return StoryMap.load_chapter(MS_MAP, true)
+
+
+func _ms_pose(m: StoryMap, wp: String) -> Dictionary:
+	var p := StoryPlayer.new()
+	p.setup(m, 174.0)
+	p.apply_action({"t0": 0.0, "action": "player_move", "args": {"to": wp, "bars": 0.01, "cut": true}, "world": MS_MAP})
+	return p.pose_at(2.0)
+
+
+func test_mothership_map_loads_with_routes_holds_and_the_reference_viewpoint() -> void:
+	var m := _ms_map()
+	assert_true(m != null and m.errors.is_empty(), "the mothership map loads clean: %s" % str(m.errors if m != null else "null"))
+	if m == null:
+		return
+	var doc: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % MS_MAP))
+	assert_true(bool((doc["doom"] as Dictionary).get("approximate", false)), "mothership: still flagged approximate")
+	var routes: Dictionary = doc["scene"]["routes"]
+	for k in ["ahead", "left", "right", "stay", "arrive", "stumble"]:
+		assert_true(routes.has(k), "mothership route %s exists" % k)
+		for wid in routes[k]:
+			assert_true(m.has_waypoint(str(wid)), "mothership route %s: waypoint %s exists" % [k, wid])
+	var holds := {}
+	for w in doc["waypoints"]:
+		holds[str(w["id"])] = float(w.get("hold_bars", 0.0))
+	assert_true(float(holds["ms_ref"]) >= CHOICE_REF_HOLD, "the mothership's reference viewpoint holds at least 8 bars")
+	for id in MS_HOLD_PLACES:
+		assert_true(float(holds[id]) > 0.0, "%s has hold_bars" % id)
+	for id in MS_EXITS:
+		assert_true(float(holds[id]) > 0.0, "the threshold %s holds" % id)
+	assert_true(float((_ms_pose(m, "ms_ref")["pos"] as Vector2).distance_to(m.waypoint("ms_ref")["at"])) < 0.05, "the camera stands at the mothership's reference viewpoint")
+
+
+func test_mothership_three_guides_are_in_frame_apart_and_off_the_pad_strip_from_the_reference_viewpoint() -> void:
+	var m := _ms_map()
+	if m == null:
+		fail("mothership map did not load")
+		return
+	var pose := _ms_pose(m, "ms_ref")
+	for asp in ASPECTS:
+		var view: Vector2 = ASPECTS[asp]
+		var rects := {}
+		for g in MS_GUIDES:
+			var r := _rect(m, g, pose, view)
+			rects[g] = r
+			var inside := r.intersection(Rect2(Vector2.ZERO, view)).get_area()
+			assert_true(r.get_area() > 0.0 and inside >= 0.95 * r.get_area(), "mothership %s %s: inside the picture (%s)" % [asp, g, str(r)])
+			assert_true(r.end.y <= view.y, "mothership %s %s: its feet are above the pad strip" % [asp, g])
+			assert_true(r.size.y >= MIN_GUIDE_PX, "mothership %s %s: at least %d px tall (%.0f)" % [asp, g, int(MIN_GUIDE_PX), r.size.y])
+			for b in HUD_BOXES:
+				assert_false(r.intersects(b), "mothership %s %s: clear of the HUD's corner" % [asp, g])
+			print("  mothership %s %-22s rect %s" % [asp, g, str(r)])
+		for i in MS_GUIDES.size():
+			for j in range(i + 1, MS_GUIDES.size()):
+				assert_false((rects[MS_GUIDES[i]] as Rect2).intersects(rects[MS_GUIDES[j]]), "mothership %s: %s and %s do not overlap" % [asp, MS_GUIDES[i], MS_GUIDES[j]])
+
+
+func test_mothership_each_guide_is_seen_from_the_reference_viewpoint_no_solid_wall_between() -> void:
+	var m := _ms_map()
+	if m == null:
+		fail("mothership map did not load")
+		return
+	var cam: Vector2 = m.waypoint("ms_ref")["at"]
+	for g in MS_GUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		var hit := ""
+		for w in m.resolved_walls():
+			if str(w["portal"]) != "":
+				continue  # (an opening, a stair step or the railing round the void: the eye passes over or through)
+			if Geometry2D.segment_intersects_segment(cam, at, w["a"], w["b"]) != null:
+				hit = "%s-%s" % [str(w["a"]), str(w["b"])]
+				break
+		assert_eq(hit, "", "mothership %s: the sightline from ms_ref stays clear of solid walls" % g)
+
+
+func test_mothership_guides_keep_their_distance_from_the_camera_places() -> void:
+	var m := _ms_map()
+	if m == null:
+		fail("mothership map did not load")
+		return
+	for g in MS_GUIDES:
+		var at: Vector2 = _thing(m, g)["at"]
+		for wid in m.waypoints:
+			var d: float = (m.waypoints[wid]["at"] as Vector2).distance_to(at)
+			if str(wid) in MS_EXITS:
+				assert_true(d >= 1.2, "mothership: %s is not on top of %s (%.1f m)" % [g, wid, d])
+			else:
+				assert_true(d >= 1.5, "mothership: %s is at least 1.5 m from %s (%.1f m)" % [g, wid, d])
+
+
+func test_mothership_overlay_world_nodes_hotspots_and_rail_validate() -> void:
+	var on := _doom_run()
+	assert_true(on.errors.is_empty(), "mothership: the run loads clean with the flag: %s" % str(on.errors))
+	for id in MS_NODES:
+		assert_true(on.nodes.has(id), "mothership: scene %s" % id)
+	assert_true(on.nodes.has("doom_warehouse"), "the warehouse pilot is still there beside the mothership")
+	for id in MS_NODES:
+		var rail: Dictionary = on.nodes[id]["rail"]
+		assert_eq(RunRail.validate(id, rail), [], "%s: RunRail.validate" % id)
+		var routes: Dictionary = rail["routes"]
+		for k in ["up", "left", "right", "stumble", "arrive"]:
+			assert_true(routes.has(k) and routes[k].has("to"), "%s: route %s is a move" % [id, k])
+		for k in ["up", "left", "right", "stumble"]:
+			assert_false((routes[k].get("via", []) as Array).is_empty(), "%s: route %s has via waypoints" % [id, k])
+		for k in ["up", "left", "right"]:
+			assert_true(float(routes[k].get("hold_bars", 0.0)) > 0.0, "%s: route %s holds at its threshold" % [id, k])
+			assert_eq(str(routes[k]["to"]), str((rail["exits"] as Dictionary)[k]), "%s: route %s ends at rail.exits.%s (the doorway)" % [id, k, k])
+	var good: Array = on.nodes["doom_mothership"]["rail"]["good"]
+	assert_eq(good.size(), 4, "mothership: the stay loop has four places")
+	for i in 3:
+		assert_eq(float(good[i]["hold_bars"]), REVEAL_HOLD, "mothership: reveal viewpoint %s holds 2 bars" % good[i]["to"])
+		assert_false(bool(good[i].get("choice", false)), "mothership: reveal viewpoint %s is not a choice viewpoint" % good[i]["to"])
+	assert_eq(str(good[3]["to"]), "ms_ref", "mothership: the loop ends at the reference viewpoint")
+	assert_true(bool(good[3].get("choice", false)) and float(good[3]["hold_bars"]) >= RunRail.CHOICE_HOLD_BARS, "mothership: ms_ref is a choice viewpoint holding the whole window")
+	var hs: Array = on.hotspots.get("doom_mothership", [])
+	assert_eq(hs.size(), 4, "mothership: three guides and the stay hotspot")
+	var dests := []
+	for h in hs:
+		dests.append(str((h["on_success"] as Dictionary).get("route", "")))
+		assert_true(h.has("show"), "mothership: hotspot %s declares show" % h["id"])
+		if str(h["id"]) != "doom_mothership.exit_stay":
+			assert_eq(str((h["show"] as Dictionary)["archetype"]), "figure", "mothership: %s is a figure (a guide, no ring)" % h["id"])
+	dests.sort()
+	assert_eq(dests, ["doom_mothership", "doom_mothership.booth", "doom_mothership.dock", "doom_mothership.underworld"], "mothership: ahead, left, right and stay")
+
+
+func test_mothership_every_via_stands_in_a_walkable_piece_and_check_rail_paths_finds_nothing() -> void:
+	var on := _doom_run()
+	var m := _ms_map()
+	if m == null:
+		fail("mothership map did not load")
+		return
+	var reach := m.reachable_from(str(m.start_waypoint()["sector"]))
+	for id in MS_NODES:
+		var node: Dictionary = on.nodes[id]
+		for mv in _moves_of(node["rail"]):
+			var ids: Array = (mv.get("via", []) as Array).duplicate()
+			ids.append(mv["to"])
+			if mv.has("from"):
+				ids.append(mv["from"])
+			for wid in ids:
+				assert_true(m.has_waypoint(str(wid)), "%s: waypoint %s exists" % [id, wid])
+				if not m.has_waypoint(str(wid)):
+					continue
+				var sid := str(m.waypoint(str(wid))["sector"])
+				assert_true(m.inside(m.waypoint(str(wid))["at"], sid, StoryMap.WAYPOINT_MARGIN) and reach.has(sid) and not m.is_void(sid), "%s: %s stands in a walkable piece (not in the void)" % [id, wid])
+		assert_eq(StoryRailCheck.check_rail(m, id, str(node["waypoint"]), node["rail"]), [], "%s: check_rail_paths finds nothing" % id)
+
+
+func test_mothership_the_void_is_shut_by_railings_visibility_decals_and_the_art_are_in_the_map() -> void:
+	var m := _ms_map()
+	if m == null:
+		fail("mothership map did not load")
+		return
+	var doc: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/story/maps/%s.json" % MS_MAP))
+	assert_eq(float(doc["max_step"]), 0.5, "mothership: max_step 0.5")
+	assert_eq(str(doc["visibility"]["mode"]), "clip", "mothership: visibility mode clip")
+	var textures: Dictionary = doc["textures"]
+	assert_true(textures.has("ms_rail"), "mothership: ms_rail is one of the map's textures")
+	var im := Image.load_from_file(ProjectSettings.globalize_path("res://assets/story/doom_mothership/textures/ms_rail.png"))
+	assert_true(im != null and im.get_width() == 128 and im.detect_alpha() != Image.ALPHA_NONE, "mothership: ms_rail is a 128 px tile with an alpha channel")
+	var rails := 0
+	for w in doc["walls"]:
+		if str(w.get("kind", "")) != "railing":
+			continue
+		rails += 1
+		assert_true(bool(w.get("blocked", false)), "mothership: a railing is shut to walkers")
+		assert_eq(str(w["tex"]), "ms_rail", "mothership: the railing is the balustrade tile")
+	assert_true(rails >= 24, "mothership: the void's rim, the platform's edge and the bridge's sides are railings (%d)" % rails)
+	# the void: sectors the player cannot enter; every portal into one is a railing, bar the one the loader's reachability rule keeps open
+	var voids := 0
+	var open_to_void := 0
+	for s in m.sectors:
+		if not m.is_void(str(s["id"])):
+			continue
+		voids += 1
+		assert_true(float(s["floor"]) <= -3.0, "mothership: the void %s lies far below the walk" % s["id"])
+		for p in m.portals():
+			if (str(p["a"]) == str(s["id"]) or str(p["b"]) == str(s["id"])) and not bool(p["blocked"]):
+				var other := str(p["b"]) if str(p["a"]) == str(s["id"]) else str(p["a"])
+				if not m.is_void(other):
+					open_to_void += 1
+					assert_eq(str(m.floor_change(other, str(s["id"]))["kind"]), "void", "mothership: the open edge to the void %s is a void crossing (the rail never takes it)" % s["id"])
+	assert_true(voids >= 10, "mothership: the void is made of marked sectors (%d)" % voids)
+	assert_true(open_to_void <= 1, "mothership: at most one unrailed edge into the void (%d)" % open_to_void)
+	for wid in m.waypoints:
+		assert_false(m.is_void(str(m.waypoints[wid]["sector"])), "mothership: waypoint %s is not in the void" % wid)
+	var decals := 0
+	var lit := 0
+	for t in doc["things"]:
+		if str(t.get("kind", "")) == "decal":
+			decals += 1
+			if bool(t.get("emissive", false)):
+				lit += 1
+	assert_true(decals >= 8 and lit >= 5, "mothership: wall decals (%d), the windows and lamps emissive (%d)" % [decals, lit])
+	for g in MS_GUIDES:
+		var stem: String = g.trim_prefix("ms_guide_")
+		for st in ["idle_0", "available_0", "selected_0", "committed_0"]:
+			assert_true(textures.has("guide_%s_%s" % [stem, st]), "mothership: guide sprite %s_%s" % [stem, st])
