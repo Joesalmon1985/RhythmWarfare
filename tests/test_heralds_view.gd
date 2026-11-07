@@ -22,7 +22,7 @@ const ROUTES := {"warehouse": [], "warehouse.balcony": ["warehouse.balcony"], "w
 	"underworld": ["warehouse.bar", "warehouse.booth", "warehouse.exit", "underworld"],
 	"underworld.court": ["warehouse.bar", "warehouse.booth", "warehouse.exit", "underworld", "underworld.court"],
 	"underworld.furnace": ["warehouse.bar", "warehouse.booth", "warehouse.exit", "underworld", "underworld.furnace"],
-	"underworld.pit": ["warehouse.bar", "warehouse.booth", "warehouse.exit", "underworld", "underworld.court", "underworld.pit"]}
+	"underworld.pit": ["warehouse.bar", "warehouse.booth", "warehouse.exit", "underworld", "underworld.court", "underworld.pit"],
 	# N2.4 Alien Spaceship (the mothership): from the Warehouse's exit, then the hub's own side scenes
 	"mothership": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership"],
 	"mothership.gallery": ["warehouse.bar", "warehouse.chill", "warehouse.exit", "mothership", "mothership.gallery"],
